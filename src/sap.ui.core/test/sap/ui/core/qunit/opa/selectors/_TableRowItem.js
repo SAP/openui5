@@ -4,10 +4,13 @@ sap.ui.define([
     "sap/ui/thirdparty/jquery",
     "sap/m/App",
     "sap/ui/core/mvc/View",
-    "sap/ui/core/mvc/ViewType",
-    "sap/ui/model/json/JSONModel"
-], function (_TableRowItem, $, App, View, ViewType, JSONModel) {
+    "sap/ui/model/json/JSONModel",
+    "sap/ui/core/library"
+], function (_TableRowItem, $, App, View, JSONModel, library) {
     "use strict";
+
+    // shortcut for sap.ui.core.mvc.ViewType
+    var ViewType = library.mvc.ViewType;
 
     var iTest = 0; // workaround for duplicate ids even after everything is destroyed
     function getViewContent() {

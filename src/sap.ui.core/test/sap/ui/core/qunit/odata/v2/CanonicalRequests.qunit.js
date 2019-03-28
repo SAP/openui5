@@ -179,16 +179,16 @@ sap.ui.define([
         return Promise.resolve();
     };
 
-    QUnit.test("ODataModel.canoncialRequestsEnabled", function (assert) {
+    QUnit.test("ODataModel.canonicalRequestsEnabled", function (assert) {
         var done = assert.async();
         var that = this;
         that.oModel.metadataLoaded()
             .then(function() {
-                assert.ok(that.oModel.canoncialRequestsEnabled(), 'canonical request calculation switched on');
+                assert.ok(that.oModel.canonicalRequestsEnabled(), 'canonical request calculation switched on');
                 var oModel = new ODataModel(that.sServiceUri, { canonicalRequests: false });
-                assert.ok(!oModel.canoncialRequestsEnabled(), 'canonical request calculation switched off');
+                assert.ok(!oModel.canonicalRequestsEnabled(), 'canonical request calculation switched off');
                 oModel = new ODataModel(that.sServiceUri, {});
-                assert.ok(!oModel.canoncialRequestsEnabled(), 'canonical request calculation switched off');
+                assert.ok(!oModel.canonicalRequestsEnabled(), 'canonical request calculation switched off');
             })
             .then(done);
     });

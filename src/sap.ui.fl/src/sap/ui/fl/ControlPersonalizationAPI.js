@@ -299,8 +299,77 @@ sap.ui.define([
 		},
 
 		/**
-		 * Deletes changes for controls which were passed as an input; Alternative a list of control equivalent entities can be passed;
-		 * Changes to be deleted can be filtered by specify change types.
+		 * Checks if personalization changes exists for control.
+		 *
+		 * @param {sap.ui.core.Element[] | map[]} aControls - an array of instances of controls, a map with control IDs including a app component or a mixture for which personalization exists
+		 * @param {array} [aChangeTypes] - Types of changes that have existing personalization.
+		 * @param {sap.ui.core.Component} aControls.appComponent - Application component of the controls at runtime in case a map has been used
+		 * @param {string} aControls.id - ID of the control in case a map has been used to specify the control
+		 *
+		 * @returns {Promise} Promie resolving with true if personalization changes exists, otherwise false.
+		 *
+		 * @method sap.ui.fl.ControlPersonalizationAPI.isPersonalized
+		 * @public
+		 */
+		isPersonalized: function(aControls, aChangeTypes) {
+			if (!aControls || aControls.length === 0) {
+				return this._reject("At least one control ID has to be provided as a parameter");
+			}
+
+			var oAppComponent = aControls[0].appComponent || Utils.getAppComponentForControl(aControls[0]);
+
+			if (!oAppComponent) {
+				return this._reject("App Component could not be determined");
+			}
+
+			var aIdsOfPassedControls = aControls.map(function (oControl) {
+				return oControl.id || oControl.getId();
+			});
+
+			var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
+			return oFlexController.getComponentChanges({currentLayer:"USER", includeCtrlVariants: true})
+			.then(this._filterBySelectors.bind(this, oAppComponent, aIdsOfPassedControls))
+			.then(this._filterByChangeType.bind(this, aChangeTypes))
+			.then(this._filterByFileType)
+			.then(this._checkForExistingChanges);
+		},
+
+		_reject: function (sMessage) {
+			Utils.log.error(sMessage);
+			return Promise.reject(sMessage);
+		},
+
+		_filterBySelectors: function(oAppComponent, aIdsOfPassedControls, aChanges) {
+			return aChanges.filter(function(oChange){
+				var oSelector = oChange.getSelector();
+				var sControlId = JsControlTreeModifier.getControlIdBySelector(oSelector, oAppComponent);
+				return aIdsOfPassedControls.indexOf(sControlId) != -1;
+			});
+		},
+
+		_filterByChangeType: function(aChangeTypes, aChanges) {
+			if (!aChangeTypes || aChangeTypes.length === 0) {
+				return aChanges;
+			}
+			return aChanges.filter(function(oChange){
+				var sChangeType = oChange.getChangeType();
+				return aChangeTypes.indexOf(sChangeType) != -1;
+			});
+		},
+
+		_filterByFileType: function(aChanges) {
+			return aChanges.filter(function(oChange){
+				var sChangeType = oChange.getFileType();
+				return sChangeType === "change";
+			});
+		},
+
+		_checkForExistingChanges: function(aChanges) {
+			return aChanges.length > 0;
+		},
+
+		/**
+		 * Deletes changes recorded for control. Changes to be deleted can be filtered by specification of change type(s).
 		 *
 		 * @param {sap.ui.core.Element[] | map[]} aControls - an array of instances of controls, a map with control IDs including a app component or a mixture for which the reset shall take place
 		 * @param {sap.ui.core.Component} aControls.appComponent - Application component of the controls at runtime in case a map has been used
@@ -313,18 +382,14 @@ sap.ui.define([
 		 * @public
 		 */
 		resetChanges: function(aControls, aChangeTypes) {
-			function reject(sMessage) {
-				Utils.log.error(sMessage);
-				return Promise.reject(sMessage);
-			}
 			if (!aControls || aControls.length === 0) {
-				return reject("At least one control ID has to be provided as a parameter");
+				return this._reject("At least one control ID has to be provided as a parameter");
 			}
 
 			var oAppComponent = aControls[0].appComponent || Utils.getAppComponentForControl(aControls[0]);
 
 			if (!oAppComponent) {
-				return reject("App Component could not be determined");
+				return this._reject("App Component could not be determined");
 			}
 
 			var aSelectorIds = aControls.map(function (vControl) {
@@ -353,7 +418,15 @@ sap.ui.define([
 				Utils.log.error(sErrorMessage);
 				return Promise.reject(sErrorMessage);
 			}
-			return FlexControllerFactory.createForControl(oManagedObject)._oChangePersistence.saveSequenceOfDirtyChanges(aChanges);
+			var mParameters = ControlPersonalizationAPI._determineParameters(oManagedObject);
+			var aVariantManagementReferences = Object.keys(mParameters.variantManagement).reduce(function (aReferences, sVariantForAssociationId) {
+				return aReferences.concat([mParameters.variantManagement[sVariantForAssociationId]]);
+			}, []);
+			return mParameters.flexController.saveSequenceOfDirtyChanges(aChanges)
+				.then(function(oResponse) {
+					mParameters.variantModel.checkDirtyStateForControlModels(aVariantManagementReferences);
+					return oResponse;
+				});
 		},
 
 		/**

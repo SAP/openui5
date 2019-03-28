@@ -2,15 +2,12 @@
 sap.ui.define([
 	'sap/ui/core/util/MockServer',
 	'sap/ui/model/odata/v2/ODataModel',
-	'sap/m/Input',
-	'sap/ui/qunit/utils/createAndAppendDiv'
-], function (MockServer, ODataModel, Input, createAndAppendDiv) {
+	'sap/m/Input'
+], function (MockServer, ODataModel, Input) {
 	"use strict";
 
-	// create content div
-	createAndAppendDiv('content');
 
-	QUnit.module("Canoncial Paths", {
+	QUnit.module("Messaging End2End", {
 		before: function () {
 			var that = this;
 
@@ -32,6 +29,7 @@ sap.ui.define([
 				severity: "error"
 			};
 
+			var bCreateRequestFailure = true;
 
 			aRequests.forEach(function (oRequest) {
 				var sPath = String(oRequest.path);
@@ -99,11 +97,23 @@ sap.ui.define([
 										Object.assign({ target: "('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct/Adress/ZIP" }, oMsgTemplate)
 									]
 								};
+							} else if (oXhr.url.indexOf("ContactSet") >= 0) {
+								if (bCreateRequestFailure){
+									status = 400;
+									content = JSON.stringify({
+										error:{
+											code: "MESSAGE/CODE",
+											message: "Operation failed",
+											severity: "error"
+											}
+									});
+								}
+								bCreateRequestFailure = !bCreateRequestFailure;
 							}
 							if (oMessages) {
 								headers["sap-message"] = JSON.stringify(oMessages);
 							}
-							oXhr._fnOrignalXHRRespond.apply(this, arguments);
+							oXhr._fnOrignalXHRRespond.apply(this, [status, headers, content]);
 						};
 					};
 				}
@@ -134,7 +144,7 @@ sap.ui.define([
 		});
 	};
 
-	QUnit.test("ODataMessageParser: Calculate targets with canonical request", function (assert) {
+	QUnit.test("Canonical Paths - ODataMessageParser: Calculate targets with canonical request", function (assert) {
 		var done = assert.async();
 		var that = this;
 		this.oModelCanonical = new ODataModel(this.sServiceUri, { canonicalRequests: true });
@@ -165,7 +175,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("ODataMessageParser: Not loaded entities", function (assert) {
+	QUnit.test("Canonical Paths - ODataMessageParser: Not loaded entities", function (assert) {
 		var done = assert.async();
 		var that = this;
 		this.oModelCanonical = new ODataModel(this.sServiceUri, { canonicalRequests: true });
@@ -186,7 +196,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("ODataMessageParser: Not loaded entities properties", function (assert) {
+	QUnit.test("Canonical Paths - ODataMessageParser: Not loaded entities properties", function (assert) {
 		var done = assert.async();
 		var that = this;
 		this.oModelCanonical = new ODataModel(this.sServiceUri, { canonicalRequests: true });
@@ -208,7 +218,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("ODataPropertyBinding: Propagation with deep paths", function(assert) {
+	QUnit.test("Canonical Paths - ODataPropertyBinding: Propagation with deep paths", function(assert) {
 		var done = assert.async();
 		var oModel = new ODataModel(this.sServiceUri);
 
@@ -232,5 +242,32 @@ sap.ui.define([
 			oInput.getBinding("value").attachEvent("AggregatedDataStateChange", fnChangeHandler);
 		});
 	});
+
+	QUnit.test("Affected Targets - ODataMessageParser._getAffectedTargets - Correct cleanup of newly created entries", function(assert){
+		var done = assert.async();
+		var oModel = new ODataModel(this.sServiceUri);
+
+		var oCreateEntryProduct = {
+			properties: {
+				"FirstName":"My Name"
+			}
+		};
+
+        oModel.metadataLoaded().then(function(){
+
+			var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+
+			oModel.createEntry("/ContactSet", oCreateEntryProduct);
+			oModel.submitChanges({success: function(){
+				assert.equal(oMessageModel.oData.length, 1, "One message with UID has been created.");
+				assert.equal(oMessageModel.oData[0].target.indexOf("/ContactSet('id"), 0, "Message contains UID.");
+				oModel.submitChanges({
+					success: function(){
+						assert.equal(oMessageModel.oData.length, 0, "Message with UID has been deleted.");
+						done();
+				}});
+			}});
+        });
+    });
 
 });

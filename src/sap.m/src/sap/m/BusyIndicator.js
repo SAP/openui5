@@ -7,9 +7,11 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/library',
+	'sap/m/Image',
+	'sap/m/Label',
 	"./BusyIndicatorRenderer"
 ],
-	function(library, Control, coreLibrary, BusyIndicatorRenderer) {
+	function(library, Control, coreLibrary, Image, Label, BusyIndicatorRenderer) {
 	"use strict";
 
 
@@ -213,7 +215,7 @@ sap.ui.define([
 
 	BusyIndicator.prototype._createCustomIcon = function(sName, sValue){
 		if (!this._iconImage) {
-			this._iconImage = new sap.m.Image(this.getId() + "-icon", {
+			this._iconImage = new Image(this.getId() + "-icon", {
 				width: "44px",
 				height: "44px"
 			}).addStyleClass("sapMBsyIndIcon");
@@ -231,7 +233,7 @@ sap.ui.define([
 
 	BusyIndicator.prototype._createLabel = function (sName, sValue) {
 		if (!this._busyLabel) {
-			this._busyLabel = new sap.m.Label(this.getId() + "-label", {
+			this._busyLabel = new Label(this.getId() + "-label", {
 				labelFor: this.getId(),
 				textAlign: "Center"
 			});

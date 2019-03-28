@@ -605,15 +605,22 @@ sap.ui.define([
 		oSplitApp.removeMasterPage(oNewMasterPage);
 		oSplitApp.removeDetailPage(oNewDetailPage);
 
+		aMaster = oSplitApp.getMasterPages();
+		aDetail = oSplitApp.getDetailPages();
 		assert.equal(aMaster.length, 2, "Master page aggregation contains the right number of pages");
 		assert.equal(aDetail.length, 2, "Detail page aggregation contains the right number of pages");
 
 		oSplitApp.addMasterPage(oNewMasterPage);
 		oSplitApp.addDetailPage(oNewDetailPage);
+		aMaster = oSplitApp.getMasterPages();
+		aDetail = oSplitApp.getDetailPages();
 		assert.equal(aMaster.length, 3, "Master page aggregation contains the right number of pages");
 		assert.equal(aDetail.length, 3, "Detail page aggregation contains the right number of pages");
+
 		oNewDetailPage.destroy();
 		oNewMasterPage.destroy();
+		aMaster = oSplitApp.getMasterPages();
+		aDetail = oSplitApp.getDetailPages();
 		assert.equal(aMaster.length, 2, "Master page aggregation contains the right number of pages");
 		assert.equal(aDetail.length, 2, "Detail page aggregation contains the right number of pages");
 
@@ -646,20 +653,28 @@ sap.ui.define([
 		oSplitApp.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		var aMaster = oSplitApp.getMasterPages();
-		var aDetail = oSplitApp.getDetailPages();
-
 		var oMovePage = new Page("movePagePage1",{
 			title : "Detail 1"
 		});
 
+		var aMaster;
+		var aDetail;
+
 		oSplitApp.addMasterPage(oMovePage);
+		aMaster = oSplitApp.getMasterPages();
+		aDetail = oSplitApp.getDetailPages();
 		assert.equal(aMaster.length, 3, "Master page aggregation contains the right number of pages");
 		assert.equal(aDetail.length, 2, "Detail page aggregation contains the right number of pages");
+
 		oSplitApp.addDetailPage(oMovePage);
+		aMaster = oSplitApp.getMasterPages();
+		aDetail = oSplitApp.getDetailPages();
 		assert.equal(aMaster.length, 2, "Master page aggregation contains the right number of pages");
 		assert.equal(aDetail.length, 3, "Detail page aggregation contains the right number of pages");
+
 		oSplitApp.removeDetailPage(oMovePage);
+		aMaster = oSplitApp.getMasterPages();
+		aDetail = oSplitApp.getDetailPages();
 		assert.equal(aMaster.length, 2, "Master page aggregation contains the right number of pages");
 		assert.equal(aDetail.length, 2, "Detail page aggregation contains the right number of pages");
 
@@ -690,8 +705,7 @@ sap.ui.define([
 		oSplitApp.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		var aMaster = oSplitApp.getMasterPages();
-		var aDetail = oSplitApp.getDetailPages();
+		var aMaster;
 
 		var oSpyInsertPage = this.spy(oSplitApp._oMasterNav, "insertPage");
 
@@ -700,6 +714,7 @@ sap.ui.define([
 		});
 
 		oSplitApp.insertMasterPage(oInsertPage, 1);
+		aMaster = oSplitApp.getMasterPages();
 		assert.equal(aMaster.length, 3, "Master page aggregation contains the right number of pages");
 		assert.equal(oSplitApp.indexOfMasterPage(oInsertPage), 1, "Master page is in the right position");
 		oInsertPage.destroy();
@@ -923,5 +938,75 @@ sap.ui.define([
 		// Check
 		oAppDom = getBgDomElement(oApp);
 		assert.strictEqual(oAppDom.onmouseover, oHandlerBeforeTest, "preserved handler value");
+	});
+
+	QUnit.module("Show Hide module", {
+		beforeEach: function () {
+			var oMasterPage = new sap.m.Page("master11", {
+				title: "Master"
+			});
+			var oDetailPage = new sap.m.Page("detail11", {
+				title: "Detail 1",
+				content: [],
+				showNavButton: jQuery.device.is.phone,
+				navButtonText: "Back",
+				navButtonPress: function() {
+					this.oSplitApp.backDetail();
+				},
+				subHeader: new sap.m.Bar({
+					contentMiddle: [
+						this.oStrechButton = new sap.m.Button({
+							text: "stretch/compress",
+							press: function() {
+								this.oSplitApp.setMode(sap.m.SplitAppMode.StretchCompressMode);
+							}.bind(this)
+						}),
+						this.oHideButton =  new sap.m.Button("saHideMasterMode", {
+							text: "hide",
+							press: function() {
+								this.oSplitApp.setMode(sap.m.SplitAppMode.HideMode);
+							}.bind(this)
+						})
+					]
+				})
+			}).addStyleClass("sapUiStdPage");
+			this.oSplitApp = new sap.m.SplitApp({
+				detailPages: [oDetailPage],
+				masterPages: [oMasterPage],
+				initialDetail: "detail11",
+				initialMaster: "master11"
+			});
+
+			this.oSplitApp.placeAt("content");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oSplitApp.destroy();
+			this.oSplitApp = null;
+
+			this.oStrechButton.destroy();
+			this.oStrechButton = null;
+
+			this.oHideButton.destroy();
+			this.oHideButton = null;
+		}
+	});
+
+	QUnit.test("encodes html-specific chars in backgroundImage style", function(assert) {
+		// Act
+		this.oHideButton.firePress();
+		sap.ui.getCore().applyChanges();
+
+		// Check
+		assert.strictEqual(this.oSplitApp._oShowMasterBtn.getTooltip(), "Show Master", 'Tooltip is should be "Show Master"');
+
+		// Act
+		this.oStrechButton.firePress();
+		sap.ui.getCore().applyChanges();
+		this.oHideButton.firePress();
+		sap.ui.getCore().applyChanges();
+
+		// Check
+		assert.strictEqual(this.oSplitApp._oShowMasterBtn.getTooltip(), "Show Master", 'Tooltip is should be "Show Master"');
 	});
 });

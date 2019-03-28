@@ -8,17 +8,20 @@
 sap.ui.define([
 	"sap/m/FlexItemData",
 	"sap/m/MessageBox",
+	"sap/ui/core/library",
 	"sap/ui/core/mvc/View", // sap.ui.view()
-	"sap/ui/core/mvc/ViewType",
 	"sap/ui/core/sample/common/Component",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils"
-], function (FlexItemData, MessageBox, View, ViewType, BaseComponent, BindingMode, JSONModel,
+], function (FlexItemData, MessageBox, library, View, BaseComponent, BindingMode, JSONModel,
 		ODataModelV2, ODataModelV4, TestUtils) {
 	"use strict";
+
+	// shortcut for sap.ui.core.mvc.ViewType
+	var ViewType = library.mvc.ViewType;
 
 	return BaseComponent.extend("sap.ui.core.sample.ViewTemplate.types.Component", {
 		metadata : "json",

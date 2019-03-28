@@ -11,8 +11,10 @@
 			"type": "XML",
 			"async": true
 		},
-		"libs": {
-			"sap.tnt": {}
+		"dependencies": {
+			"libs": {
+				"sap.tnt": {}
+			}
 		},
 		"config": {
 			"sample": {

@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/f/ShellBar",
 	"sap/f/shellBar/Factory",
+	"sap/f/ShellBarRenderer",
 	"sap/f/shellBar/ResponsiveHandler",
 	"sap/f/shellBar/AdditionalContentSupport",
 	"sap/f/shellBar/ContentButton",
@@ -12,11 +13,13 @@ sap.ui.define([
 	"sap/ui/core/theming/Parameters",
 	"sap/f/Avatar",
 	"sap/m/Menu",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/thirdparty/jquery"
 ],
 function (
 	ShellBar,
 	Factory,
+	ShellBarRenderer,
 	ResponsiveHandler,
 	AdditionalContentSupport,
 	ContentButton,
@@ -26,7 +29,8 @@ function (
 	Parameters,
 	Avatar,
 	Menu,
-	Core
+	Core,
+	jQuery
 ) {
 	"use strict";
 
@@ -132,7 +136,8 @@ function (
 			{name: "showCopilot", type: "boolean", defaultValue: false},
 			{name: "showSearch", type: "boolean", defaultValue: false},
 			{name: "showNotifications", type: "boolean", defaultValue: false},
-			{name: "showProductSwitcher", type: "boolean", defaultValue: false}];
+			{name: "showProductSwitcher", type: "boolean", defaultValue: false},
+			{name: "notificationsNumber", type: "string", defaultValue: ""}];
 
 		assert.deepEqual(this.getPropertiesObject(), oExpectedObject, "All properties setup as expected");
 	});
@@ -427,4 +432,180 @@ function (
 		assert.ok(this.oSB._aOverflowControls[4] === this.oSB._oProductSwitcher, "Control at index 4 is ProductSwitcher");
 	});
 
+	// Accessibility related tests
+	QUnit.module("Accessibility", {
+		beforeEach: function () {
+			this.oSB = new ShellBar({
+				title: "Application title",
+				secondTitle: "Short description",
+				homeIcon: "./resources/sap/ui/documentation/sdk/images/logo_ui5.png",
+				showNavButton: true,
+				showCopilot: true,
+				showSearch: true,
+				showNotifications: true,
+				showProductSwitcher: true,
+				showMenuButton: true
+			});
+			this.oSB.setAggregation("profile", new Avatar({initials: "UI"}));
+			this.oRb = Core.getLibraryResourceBundle("sap.f");
+			this.oSB.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oSB.destroy();
+			this.oRb = null;
+		}
+	});
+
+	QUnit.test("Hidden title is rendered", function (assert) {
+		var sHiddenTitleId = '#' + this.oSB.getId() + '-titleHidden',
+			$oHiddenTitle = jQuery(sHiddenTitleId),
+			sTitle = this.oSB.getTitle(),
+			sNewTitle = "Test title";
+
+		// Assert
+		assert.ok($oHiddenTitle.hasClass("sapFShellBarTitleHidden"), "Hidden title class is correct");
+		assert.strictEqual($oHiddenTitle.text(), sTitle, "Hidden title text is correct");
+		assert.strictEqual($oHiddenTitle.attr("role"), "heading", "Hidden title role is correct");
+		assert.strictEqual($oHiddenTitle.attr("aria-level"), "1", "Hidden title aria-level is correct");
+
+		// Act
+		this.oSB.setTitle(sNewTitle);
+		Core.applyChanges();
+		$oHiddenTitle = jQuery(sHiddenTitleId);
+
+		//Assert
+		assert.strictEqual($oHiddenTitle.text(), sNewTitle, "Hidden title new text is set correctly");
+	});
+
+	QUnit.test("Second title attributes", function (assert) {
+		var $oSecondTitle = this.oSB._oSecondTitle.$();
+
+		// Assert
+		assert.strictEqual($oSecondTitle.attr("role"), "heading", "Second title role is correct");
+		assert.strictEqual($oSecondTitle.attr("aria-level"), "2", "Second title aria-level is correct");
+	});
+
+	QUnit.test("Home icon tooltip", function (assert) {
+		var oHomeIcon = this.oSB._oHomeIcon,
+			sTooltip = this.oRb.getText("SHELLBAR_LOGO_TOOLTIP");
+
+		// Assert
+		assert.strictEqual(oHomeIcon.getTooltip(), sTooltip, "Home icon tooltip is correct");
+	});
+
+	QUnit.test("CoPilot attributes", function (assert) {
+		var oCopilot = this.oSB._oCopilot,
+			sTooltip = this.oRb.getText("SHELLBAR_COPILOT_TOOLTIP");
+
+		// Assert
+		assert.strictEqual(oCopilot.$().attr("role"), "button", "CoPilot role is correct");
+		assert.strictEqual(oCopilot.$().attr("aria-label"), sTooltip, "CoPilot aria-label is correct");
+		assert.strictEqual(oCopilot.getTooltip(), sTooltip, "CoPilot tooltip is correct");
+	});
+
+	QUnit.test("Search attributes", function (assert) {
+		var oSearch = this.oSB._oSearch,
+			sTooltip = this.oRb.getText("SHELLBAR_SEARCH_TOOLTIP");
+
+		// Assert
+		assert.strictEqual(oSearch.$().attr("aria-label"), sTooltip, "Search aria-label is correct");
+		assert.strictEqual(oSearch.getTooltip(), sTooltip, "Search tooltip is correct");
+	});
+
+	QUnit.test("Nav button attributes", function (assert) {
+		var oNavButton = this.oSB._oNavButton,
+			sTooltip = this.oRb.getText("SHELLBAR_BACK_TOOLTIP");
+
+		// Assert
+		assert.strictEqual(oNavButton.$().attr("aria-label"), sTooltip, "Nav button aria-label is correct");
+		assert.strictEqual(oNavButton.getTooltip(), sTooltip, "Nav button tooltip is correct");
+	});
+
+	QUnit.test("Menu button attributes", function (assert) {
+		var oMenuButton = this.oSB._oMenuButton,
+			$oMenuButton = oMenuButton.$(),
+			sTooltip = this.oRb.getText("SHELLBAR_MENU_TOOLTIP");
+
+		// Assert
+		assert.strictEqual($oMenuButton.attr("aria-haspopup"), "menu", "Menu button aria-haspopup is correct");
+		assert.strictEqual($oMenuButton.attr("aria-label"), sTooltip, "Menu button aria-label is correct");
+		assert.strictEqual(oMenuButton.getTooltip(), sTooltip, "Menu button tooltip is correct");
+	});
+
+	QUnit.test("Notifications attributes", function (assert) {
+		var oNotifications = this.oSB._oNotifications,
+			$oNotifications = oNotifications.$(),
+			sTooltip = this.oRb.getText("SHELLBAR_NOTIFICATIONS_TOOLTIP");
+
+		// Assert
+		assert.strictEqual($oNotifications.attr("aria-haspopup"), "dialog", "Notifications aria-haspopup is correct");
+		assert.strictEqual($oNotifications.attr("aria-label"), sTooltip, "Notifications aria-label is correct");
+		assert.strictEqual(oNotifications.getTooltip(), sTooltip, "Notifications tooltip is correct");
+
+		// Act
+		this.oSB.setNotificationsNumber("2");
+
+		// Assert
+		assert.strictEqual($oNotifications.attr("aria-label"), "2 " + sTooltip, "Notifications aria-label is updated");
+		assert.strictEqual(oNotifications.getTooltip(), "2 " + sTooltip, "Notifications tooltip is updated");
+
+		// Act
+		this.oSB.setNotificationsNumber(null);
+
+		// Assert
+		assert.strictEqual($oNotifications.attr("aria-label"), sTooltip, "Notifications aria-label is restored to default");
+		assert.strictEqual(oNotifications.getTooltip(), sTooltip, "Notifications tooltip is restored to default");
+
+	});
+
+	QUnit.test("Products attributes", function (assert) {
+		var oProducts = this.oSB._oProductSwitcher,
+			$oProducts = oProducts.$(),
+			sTooltip = this.oRb.getText("SHELLBAR_PRODUCTS_TOOLTIP");
+
+		// Assert
+		assert.strictEqual($oProducts.attr("aria-haspopup"), "menu", "Products aria-haspopup is correct");
+		assert.strictEqual($oProducts.attr("aria-label"), sTooltip, "Products aria-label is correct");
+		assert.strictEqual(oProducts.getTooltip(), sTooltip, "Products tooltip is correct");
+	});
+
+	QUnit.test("Avatar attributes", function (assert) {
+		var oAvatar = this.oSB._oAvatarButton,
+			$oAvatar = oAvatar.$(),
+			sTooltip = this.oRb.getText("SHELLBAR_PROFILE_TOOLTIP");
+
+		// Assert
+		assert.strictEqual($oAvatar.attr("aria-haspopup"), "menu", "Avatar aria-haspopup is correct");
+		assert.strictEqual($oAvatar.attr("aria-label"), sTooltip, "Avatar aria-label is correct");
+		assert.strictEqual(oAvatar.getTooltip(), sTooltip, "Avatar tooltip is correct");
+	});
+
+	QUnit.test("Notifications Badge basic functionality", function (assert) {
+		// Arrange
+		var sNotificationsButtonNumber,
+			sOverflowToolbarButtonNumber,
+			oRendererSpy = sinon.spy(ShellBarRenderer, "render");
+
+		// Act
+
+		this.oSB.setShowNotifications(true);
+		this.oSB.setNotificationsNumber("40");
+
+		// Arrange
+		sNotificationsButtonNumber = this.oSB._oNotifications.data("notifications");
+		sOverflowToolbarButtonNumber = this.oSB._oOverflowToolbar._getOverflowButton().data("notifications");
+
+		// Assert
+		assert.strictEqual(sNotificationsButtonNumber, "40", "Badge data rendered correctly inside notifications button");
+		assert.strictEqual(sOverflowToolbarButtonNumber, "40", "Badge data rendered correctly inside overflow button");
+
+		// Act
+		this.oSB.setNotificationsNumber("50");
+		// Assert
+		assert.strictEqual(oRendererSpy.callCount, 0, "Control didn`t rerender on property change");
+
+		sNotificationsButtonNumber = null;
+		sOverflowToolbarButtonNumber = null;
+	});
 });

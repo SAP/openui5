@@ -700,7 +700,7 @@ sap.ui.define([
 				}
 			};
 			sandbox.stub(LrepConnector, "createConnector").returns({
-				loadChanges: function(sName, oChanges) {
+				loadChanges: function(sName, mPropertyBag, oChanges) {
 					assert.ok(true, "loadChanges in FakeConnector was called");
 					assert.equal(sName, "name");
 					assert.equal(oChanges, "changes");

@@ -545,26 +545,27 @@ sap.ui.define([
 		mParameters = mParameters || {};
 		mParameters.id = mParameters.id || this.getId();
 
-		if (Element._trackEvent) {
-			Element._trackEvent(sEventId, this);
+		if (Element._interceptEvent) {
+			Element._interceptEvent(sEventId, this, mParameters);
 		}
 
 		return ManagedObject.prototype.fireEvent.call(this, sEventId, mParameters, bAllowPreventDefault, bEnableEventBubbling);
 	};
 
 	/**
-	 * Tracks event. This method is meant for private usages. Apps are not supposed to used it.
+	 * Intercepts an event. This method is meant for private usages. Apps are not supposed to used it.
 	 * It is created for an experimental purpose.
-	 * Implementation should be injected by outside(i.e. sap.ui.core.delegate.UsageAnalytics).
+	 * Implementation should be injected by outside.
 	 *
 	 * @param {string} sEventId the name of the event
 	 * @param {sap.ui.core.Element} oElement the element itself
+	 * @param {object} mParameters The parameters which complement the event. Hooks must not modify the parameters.
 	 * @function
 	 * @private
 	 * @experimental Since 1.58
 	 * @ui5-restricted
 	 */
-	Element._trackEvent = undefined;
+	Element._interceptEvent = undefined;
 
 	/**
 	 * Adds a delegate that listens to the events of this element.

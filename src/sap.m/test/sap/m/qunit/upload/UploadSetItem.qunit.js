@@ -94,6 +94,7 @@ sap.ui.define([
 		var oItem = this.oUploadSet.getItems()[0];
 
 		oItem.attachOpenPressed(function (oEvent) {
+			oEvent.preventDefault();
 			assert.ok(true, "openPressed event should have been called.");
 		});
 		oItem._getFileNameLink().firePress();
@@ -127,6 +128,9 @@ sap.ui.define([
 			oDeleteSpy = sinon.spy(UploadSet.prototype, "_handleItemDelete");
 
 		oItem.getListItem().focus();
+		oItem.attachOpenPressed(function (oEvent) {
+			oEvent.preventDefault();
+		});
 		this.oUploadSet.onkeydown({
 			target: oTarget,
 			keyCode: KeyCodes.ENTER
@@ -209,5 +213,24 @@ sap.ui.define([
 		fnAssertLazy(oItem._getProgressIndicator(), "progress indicator");
 		fnAssertLazy(oItem._getStateLabel(), "state label");
 		fnAssertLazy(oItem._getProgressLabel(), "progress label");
+	});
+
+	QUnit.test("Pre-parent manipulation of Edit/Remove button flags doesn't crash the control.", function (assert) {
+		assert.expect(5);
+
+		var oItem = new UploadSetItem({
+			fileName: "fileName.txt",
+			enabledRemove: false,
+			visibleRemove: false,
+			enabledEdit: false,
+			visibleEdit: false
+		});
+		assert.ok(true, "Control manipulation shouldn't have crashed so far.");
+
+		this.oUploadSet.insertItem(oItem);
+		assert.notOk(oItem._getDeleteButton().getVisible(), "Delete button should be invisible after parent is set.");
+		assert.notOk(oItem._getDeleteButton().getEnabled(), "Delete button should be disabled after parent is set.");
+		assert.notOk(oItem._getEditButton().getVisible(), "Edit button should be invisible after parent is set.");
+		assert.notOk(oItem._getEditButton().getEnabled(), "Edit button should be disabled after parent is set.");
 	});
 });

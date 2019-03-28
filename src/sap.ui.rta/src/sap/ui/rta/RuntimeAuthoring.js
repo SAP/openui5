@@ -644,20 +644,22 @@ function(
 				return oDesignTimePromise;
 			})
 			.then(function () {
+				// PopupManager sets the toolbar to already open popups' autoCloseAreas
+				// Since at this point the toolbar is not available, it waits for RTA to start,
+				// before adding it to the autoCloseAreas of the open popups
+				this.getPopupManager().setRta(this);
 				if (this.getShowToolbars()) {
+					// the show() method of the toolbar relies on this RTA instance being set on the PopupManager
 					return this.getToolbar().show();
 				}
 			}.bind(this))
 			.then(function () {
-				// Should be initialized after the Toolbar is rendered since it depends on it
-				this.getPopupManager().setRta(this);
-
 				if (Device.browser.name === "ff") {
 					// in FF shift+f10 also opens a browser context menu.
 					// It seems that the only way to get rid of it is to completely turn off context menu in ff..
 					jQuery(document).on('contextmenu', _ffContextMenuHandler);
 				}
-			}.bind(this))
+			})
 			.then(function() {
 				this.fnKeyDown = this._onKeyDown.bind(this);
 				jQuery(document).on("keydown", this.fnKeyDown);
@@ -1082,7 +1084,7 @@ function(
 		BusyIndicator.show(500);
 		return this._serializeToLrep().then(function () {
 			BusyIndicator.hide();
-			var bAppVariantRunning = FlexUtils.isApplicationVariant(this._oRootControl);
+			var bAppVariantRunning = FlexUtils.isApplicationVariant(this._oRootControl) && !FlexUtils.isVariantByStartupParameter(this._oRootControl);
 			return ((bAppVariantRunning) ? RtaAppVariantFeature.getAppVariantDescriptor(this._oRootControl) : Promise.resolve())
 				.then(function(oAppVariantDescriptor) {
 					var aAppVariantDescriptor = [];

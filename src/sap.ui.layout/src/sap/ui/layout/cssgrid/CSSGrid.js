@@ -184,8 +184,9 @@ sap.ui.define([
 			/**
 			 * The items contained by the control.
 			 */
-			items: { type: "sap.ui.core.Control", multiple: true, singularName: "item" }
-		}
+			items: { type: "sap.ui.core.Control", multiple: true, singularName: "item", dnd: true }
+		},
+		dnd: { draggable: false, droppable: true }
 	}});
 
 	/**

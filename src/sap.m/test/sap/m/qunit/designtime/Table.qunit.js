@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/m/Toolbar",
 	"sap/m/changeHandler/MoveTableColumns",
-	"sap/ui/rta/test/controlEnablingCheck",
+	"sap/ui/rta/enablement/controlTest",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/mvc/XMLView",

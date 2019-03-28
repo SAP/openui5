@@ -60,7 +60,18 @@
       {
         "id": "f45b9088fe930b065c8b105c64fd658d9ee96919",
         "type": "FIX",
-        "text": " sap.m.ObjectAttribute: wraps in Table correctly",
+        "text": "sap.m.ObjectAttribute: wraps in Table correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012005041000000126732019"
+          }
+        ]
+      },
+      {
+        "id": "5e84afc81a451c0390c84b28324a75a6052fbdff",
+        "type": "FEATURE",
+        "text": "sap.uxap.ObjectPageDynamicHeaderTitle: Single-line title on phone",
         "references": []
       }
     ]

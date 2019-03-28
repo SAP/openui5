@@ -7,25 +7,27 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.f.sample.FlexibleColumnLayoutSimple.FlexibleColumnLayout",
+			"viewName": "sap.f.sample.FlexibleColumnLayoutSimple.view.FlexibleColumnLayout",
 			"type": "XML",
 			"async": true
 		},
-		"libs": {
-			"sap.f": {}
+		"dependencies": {
+			"libs": {
+				"sap.f": {}
+			}
 		},
 		"config": {
 			"sample": {
 				"stretch": true,
 				"files": [
 					"Component.js",
-					"FlexibleColumnLayout.controller.js",
-					"FlexibleColumnLayout.view.xml",
-					"Master.controller.js",
-					"Master.view.xml",
-					"Detail.controller.js",
-					"Detail.view.xml",
-					"DetailDetail.view.xml",
+					"controller/FlexibleColumnLayout.controller.js",
+					"view/FlexibleColumnLayout.view.xml",
+					"controller/Master.controller.js",
+					"view/Master.view.xml",
+					"controller/Detail.controller.js",
+					"view/Detail.view.xml",
+					"view/DetailDetail.view.xml",
 					"manifest.json"
 				]
 			}

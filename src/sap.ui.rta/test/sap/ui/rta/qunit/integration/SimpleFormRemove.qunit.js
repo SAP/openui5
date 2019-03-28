@@ -9,8 +9,8 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/fl/Utils",
 	"sap/ui/core/UIComponent",
-	"sap/ui/layout/form/SimpleFormLayout",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/layout/library"
 ],
 function(
 	DesignTime,
@@ -21,11 +21,14 @@ function(
 	CommandFactory,
 	Utils,
 	UIComponent,
-	SimpleFormLayout,
-	sinon
+	sinon,
+	layoutLibrary
 ) {
 
 	"use strict";
+
+	// shortcut for sap.ui.layout.form.SimpleFormLayout
+	var SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
 
 	function fnParamerizedTest(oSimpleFormLayout) {
 		var oComponent;

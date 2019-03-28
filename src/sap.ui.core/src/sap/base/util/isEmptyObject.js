@@ -1,25 +1,27 @@
 /*!
  * ${copyright}
  */
-/*
- * IMPORTANT: This is a private module, its API must not be used and is subject to change.
- * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
- */
 sap.ui.define([], function() {
 	"use strict";
 	/**
 	 * Validates if the given object is empty
 	 *
+	 * @example
+	 * sap.ui.require(["sap/base/util/isEmptyObject"], function(isEmptyObject){
+	 *      isEmptyObject({}); // true
+	 *      isEmptyObject({test: '123'}); // false
+	 * });
+	 *
 	 * @function
-	 * @since 1.58
-	 * @private
+	 * @since 1.65
+	 * @public
 	 * @name module:sap/base/util/isEmptyObject
-	 * @param {Object} oToValidate - object to validate
-	 * @returns {boolean} flag if given object is empty
+	 * @param {Object} obj the object which is checked
+	 * @returns {boolean} whether or not the given object is empty
 	 */
-	return function(oToValidate) {
+	return function(obj) {
 		/*eslint-disable no-unused-vars */
-		for (var sName in oToValidate) {
+		for (var sName in obj) {
 			return false;
 		}
 		/*eslint-enable no-unused-vars */

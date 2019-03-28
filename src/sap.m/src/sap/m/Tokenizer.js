@@ -59,6 +59,7 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @public
+	 * @since 1.22
 	 * @alias sap.m.Tokenizer
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/token/ Tokenizer}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -109,9 +110,7 @@ sap.ui.define([
 		events : {
 
 			/**
-			 * Fired when the tokens aggregation changed (add / remove token)
-			 * @deprecated Since version 1.64.
-			 * Please use the new event tokenUpdate.
+			 * fired when the tokens aggregation changed (add / remove token)
 			 */
 			tokenChange : {
 				parameters : {
@@ -119,7 +118,7 @@ sap.ui.define([
 					/**
 					 * type of tokenChange event.
 					 * There are four TokenChange types: "added", "removed", "removedAll", "tokensChanged".
-					 * Use Tokenizer.TokenChangeType.Added for "added",	Tokenizer.TokenChangeType.Removed for "removed", Tokenizer.TokenChangeType.RemovedAll for "removedAll" and Tokenizer.TokenChangeType.TokensChanged for "tokensChanged".
+					 * Use sap.m.Tokenizer.TokenChangeType.Added for "added", sap.m.Tokenizer.TokenChangeType.Removed for "removed", sap.m.Tokenizer.TokenChangeType.RemovedAll for "removedAll" and sap.m.Tokenizer.TokenChangeType.TokensChanged for "tokensChanged".
 					 */
 					type: { type : "string"},
 
@@ -151,14 +150,15 @@ sap.ui.define([
 
 			/**
 			 * Fired when the tokens aggregation changed due to a user interaction (add / remove token)
+			 * @since 1.46
 			 */
 			tokenUpdate: {
 				allowPreventDefault : true,
 				parameters: {
 					/**
-					 * Type of tokenUpdate event.
+					 * Type of tokenChange event.
 					 * There are two TokenUpdate types: "added", "removed"
-					 * Use Tokenizer.TokenUpdateType.Added for "added" and Tokenizer.TokenUpdateType.Removed for "removed".
+					 * Use sap.m.Tokenizer.TokenUpdateType.Added for "added" and sap.m.Tokenizer.TokenUpdateType.Removed for "removed".
 					 */
 					type: {type: "string"},
 

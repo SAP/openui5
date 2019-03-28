@@ -4,9 +4,10 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/model/json/JSONModel",
-	"sap/f/cards/Data",
-	"sap/base/Log"
-], function (Control, JSONModel, Data, Log) {
+	"sap/f/cards/DataProviderFactory",
+	"sap/base/Log",
+	"sap/ui/core/Core"
+], function (Control, JSONModel, DataProviderFactory, Log, Core) {
 	"use strict";
 
 	/**
@@ -30,13 +31,6 @@ sap.ui.define([
 	 */
 	var BaseContent = Control.extend("sap.f.cards.BaseContent", {
 		metadata: {
-			properties: {
-
-				/**
-				 * The object configuration used to create a list content.
-				 */
-				configuration: { type: "object" }
-			},
 			aggregations: {
 
 				/**
@@ -48,18 +42,6 @@ sap.ui.define([
 				}
 			}
 		},
-		constructor: function (vId, mSettings) {
-			if (typeof vId !== "string") {
-				mSettings = vId;
-			}
-
-			if (mSettings && mSettings.serviceManager) {
-				this._oServiceManager = mSettings.serviceManager;
-				delete mSettings.serviceManager;
-			}
-
-			Control.apply(this, arguments);
-		},
 		renderer: function (oRm, oCardContent) {
 
 			// Add class the simple way. Add renderer hooks only if needed.
@@ -68,6 +50,7 @@ sap.ui.define([
 			var sName = oCardContent.getMetadata().getName();
 			var sType = sName.slice(sLibrary.length + 1, sName.length);
 			var sHeight = BaseContent.getMinHeight(sType, oCardContent.getConfiguration());
+			var oCard = oCardContent.getParent();
 			sClass += sType;
 
 			oRm.write("<div");
@@ -75,7 +58,11 @@ sap.ui.define([
 			oRm.addClass(sClass);
 			oRm.addClass("sapFCardBaseContent");
 			oRm.writeClasses();
-			oRm.addStyle("min-height", sHeight);
+
+			if (oCard && oCard.isA("sap.f.ICard") && oCard.getHeight() === "auto") { // if there is no height specified the default value is "auto"
+				oRm.addStyle("min-height", sHeight);
+			}
+
 			oRm.writeStyles();
 			oRm.write(">");
 
@@ -85,122 +72,192 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * Initialization hook.
+	 * @private
+	 */
 	BaseContent.prototype.init = function () {
-		var oModel = new JSONModel();
-		this.setModel(oModel);
+		this._aReadyPromises = [];
+		this._bReady = false;
+
+		// So far the ready event will be fired when the data is ready. But this can change in the future.
+		this._awaitEvent("_dataReady");
+
+		Promise.all(this._aReadyPromises).then(function () {
+			this._bReady = true;
+			this.fireEvent("_ready");
+		}.bind(this));
+
+		this.setBusyIndicatorDelay(0);
+	};
+
+	/**
+	 * Await for an event which controls the overall "ready" state of the content.
+	 *
+	 * @private
+	 * @param {string} sEvent The name of the event
+	 */
+	BaseContent.prototype._awaitEvent = function (sEvent) {
+		this._aReadyPromises.push(new Promise(function (resolve) {
+			this.attachEventOnce(sEvent, function () {
+				resolve();
+			});
+		}.bind(this)));
 	};
 
 	BaseContent.prototype.destroy = function () {
 		this.setAggregation("_content", null);
 		this.setModel(null);
-
-		if (this._dataChangeHandler && this._oDataService) {
-			this._oDataService.detachDataChanged(this._dataChangeHandler);
-			this._dataChangeHandler = null;
-			this._oDataService = null;
+		if (this._oDataProvider) {
+			this._oDataProvider.destroy();
+			this._oDataProvider = null;
 		}
-
+		this._aReadyPromises = null;
 		return Control.prototype.destroy.apply(this, arguments);
 	};
 
 	BaseContent.prototype.setConfiguration = function (oConfiguration) {
 
-		this.setProperty("configuration", oConfiguration);
+		this._oConfiguration = oConfiguration;
 
 		if (!oConfiguration) {
 			return this;
 		}
 
-		if (oConfiguration.data) {
-			this._setData(oConfiguration.data);
-		}
+		this._setData(oConfiguration.data);
 
-		if (oConfiguration.numberOfItems) {
-			this.getModel().setSizeLimit(oConfiguration.numberOfItems);
+		if (oConfiguration.maxItems) {
+			this.getModel().setSizeLimit(oConfiguration.maxItems);
 		}
 
 		return this;
+	};
+
+	BaseContent.prototype.getConfiguration = function () {
+		return this._oConfiguration;
 	};
 
 	/**
 	 * Requests data and bind it to the item template.
 	 *
 	 * @private
-	 * @param {Object} oData The data part of the configuration object
+	 * @param {Object} oDataSettings The data part of the configuration object
 	 */
-	BaseContent.prototype._setData = function (oData) {
-
-		this.setBusy(true);
-
-		var oRequest = oData.request;
-		var oService = oData.service;
-
-		this.bindElement({
-			path: oData.path || "/"
-		});
-
-		if (oData.json && !oRequest) {
-			this._updateModel(oData.json);
-			this.setBusy(false);
+	BaseContent.prototype._setData = function (oDataSettings) {
+		var sPath = "/";
+		if (oDataSettings && oDataSettings.path) {
+			sPath = oDataSettings.path;
 		}
 
-		if (oService) {
-			this._oServiceManager.getService("sap.ui.integration.services.Data").then(function (oDataService) {
-				if (oDataService) {
-					this._dataChangeHandler = function (oEvent) {
-						this._updateModel(oEvent.data);
-					}.bind(this);
+		this.bindObject(sPath);
 
-					oDataService.getData()
-						.then(function (data) {
-							this._updateModel(data);
-						}.bind(this))
-						.catch(function () {
-							this._handleError("Card content data service failed to get data");
-						})
-						.finally(function () {
-							this.setBusy(false);
-						}.bind(this));
+		if (this._oDataProvider) {
+			this._oDataProvider.destroy();
+		}
 
-					oDataService.attachDataChanged(this._dataChangeHandler, oData.service.parameters);
+		this._oDataProvider = DataProviderFactory.create(oDataSettings, this._oServiceManager);
 
-					this._oDataService = oDataService;
-				}
-			}.bind(this)).catch(function () {
-				this._handleError("Data service unavailable");
+		if (this._oDataProvider) {
+			this.setBusy(true);
+
+			// If a data provider is created use an own model. Otherwise bind to the one propagated from the card.
+			this.setModel(new JSONModel());
+
+			this._oDataProvider.attachDataChanged(function (oEvent) {
+				this._updateModel(oEvent.getParameter("data"));
 				this.setBusy(false);
-			});
-		} else if (oRequest) {
-			Data.fetch(oRequest)
-				.then(function (data) {
-					this._updateModel(data, oData.path);
-				}.bind(this))
-				.catch(function (oError) {
-					this._handleError("Card content data request failed");
-				})
-				.finally(function () {
-					this.setBusy(false);
-				}.bind(this));
+			}.bind(this));
+			this._oDataProvider.attachError(function (oEvent) {
+				this._handleError(oEvent.getParameter("message"));
+				this.setBusy(false);
+			}.bind(this));
+
+			this._oDataProvider.triggerDataUpdate().then(function () {
+				this.fireEvent("_dataReady");
+			}.bind(this));
+		} else {
+			this.fireEvent("_dataReady");
 		}
+	};
+
+	/**
+	 * @returns {boolean} If the content is ready or not.
+	 */
+	BaseContent.prototype.isReady = function () {
+		return this._bReady;
 	};
 
 	/**
 	 * Updates the model and binds the data to the list.
 	 *
 	 * @private
-	 * @param {Object} oData the data to set
+	 * @param {Object} oData The data to set.
 	 */
 	BaseContent.prototype._updateModel = function (oData) {
 		this.getModel().setData(oData);
-
-		// Have to trigger _updated on the first onAfterRendering after _updateModel is called.
-		setTimeout(function () {
-			this.fireEvent("_updated");
-		}.bind(this), 0);
 	};
 
 	BaseContent.prototype._handleError = function (sLogMessage) {
 		this.fireEvent("_error", { logMessage: sLogMessage });
+	};
+
+	BaseContent.prototype.setServiceManager = function (oServiceManager) {
+		this._oServiceManager = oServiceManager;
+		return this;
+	};
+
+	BaseContent.create = function (sType, oConfiguration, oServiceManager) {
+		return new Promise(function (resolve, reject) {
+			var fnCreateContentInstance = function (Content) {
+				var oContent = new Content();
+				oContent.setServiceManager(oServiceManager);
+				oContent.setConfiguration(oConfiguration);
+				resolve(oContent);
+			};
+
+			try {
+				switch (sType.toLowerCase()) {
+					case "list":
+						sap.ui.require(["sap/f/cards/ListContent"], fnCreateContentInstance);
+						break;
+					case "table":
+						sap.ui.require(["sap/f/cards/TableContent"], fnCreateContentInstance);
+						break;
+					case "object":
+						sap.ui.require(["sap/f/cards/ObjectContent"], fnCreateContentInstance);
+						break;
+					case "analytical":
+						Core.loadLibrary("sap.viz", {
+								async: true
+							})
+							.then(function () {
+								sap.ui.require(["sap/f/cards/AnalyticalContent"], fnCreateContentInstance);
+							})
+							.catch(function () {
+								reject("Analytical content type is not available with this distribution.");
+							});
+						break;
+					case "timeline":
+						Core.loadLibrary("sap.suite.ui.commons", {
+								async: true
+							})
+							.then(function() {
+								sap.ui.require(["sap/f/cards/TimelineContent"], fnCreateContentInstance);
+							})
+							.catch(function () {
+								reject("Timeline content type is not available with this distribution.");
+							});
+						break;
+					case "component":
+						sap.ui.require(["sap/f/cards/ComponentContent"], fnCreateContentInstance);
+						break;
+					default:
+						Log.error(sType.toUpperCase() + " content type is not supported.");
+				}
+			} catch (sError) {
+				reject(sError);
+			}
+		});
 	};
 
 	BaseContent.getMinHeight = function (sType, oContent) {
@@ -231,7 +288,7 @@ sap.ui.define([
 	};
 
 	BaseContent._getMinListHeight = function (oContent) {
-		var iCount = oContent.numberOfItems || 0,
+		var iCount = oContent.maxItems || 0,
 			oTemplate = oContent.item,
 			iItemHeight = 3;
 
@@ -247,7 +304,7 @@ sap.ui.define([
 	};
 
 	BaseContent._getMinTableHeight = function (oContent) {
-		var iCount = oContent.numberOfItems || 0,
+		var iCount = oContent.maxItems || 0,
 			iRowHeight = 3,
 			iTableHeaderHeight = 3;
 
@@ -255,7 +312,7 @@ sap.ui.define([
 	};
 
 	BaseContent._getMinTimelineHeight = function (oContent) {
-		var iCount = oContent.numberOfItems || 0,
+		var iCount = oContent.maxItems || 0,
 			iItemHeight = 6;
 
 		return iCount * iItemHeight;

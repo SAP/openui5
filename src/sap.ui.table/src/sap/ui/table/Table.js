@@ -158,7 +158,8 @@ sap.ui.define([
 			 * When the selection mode is changed, the current selection is removed.
 			 * <b>Note:</b> Since the group header visualization relies on the row selectors, the row selectors are always shown if the grouping
 			 * functionality (depends on table type) is enabled, even if <code>sap.ui.table.SelectionMode.None</code> is set.
-			 * <b>Note:</b> When the MultiSelectionPlugin is applied to the table, the selection mode is controlled by the plugin and cannot be changed manually.
+			 * <b>Note:</b> When a selection plugin is applied to the table, the selection mode is controlled by the plugin and cannot be
+			 * changed manually.
 			 */
 			selectionMode : {type : "sap.ui.table.SelectionMode", group : "Behavior", defaultValue : SelectionMode.MultiToggle},
 
@@ -380,6 +381,17 @@ sap.ui.define([
 			rows : {type : "sap.ui.table.Row", multiple : true, singularName : "row", bindable : "bindable", selector : "#{id}-tableCCnt", dnd : true},
 
 			/**
+			 * This row can be used for user input to create new data.
+			 * Like in any other row, the cells of this row are also managed by the table and must not be modified. The cell content is defined
+			 * via the <code>creationTemplate</code> aggregation of the {@link sap.ui.table.Column}.
+			 * If the creation row is set, the busy indicator will no longer cover the horizontal scrollbar, even if the creation row is invisible.
+			 *
+			 * @private
+			 * @ui5-restricted sap.ui.mdc
+			 */
+			creationRow : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"},
+
+			/**
 			 * The value for the noData aggregation can be either a string value or a control instance.
 			 * The control is shown, in case there is no data for the Table available. In case of a string
 			 * value this will simply replace the no data text.
@@ -446,6 +458,8 @@ sap.ui.define([
 			/**
 			 * fired when the row selection of the table has been changed (the event parameters can be used to determine
 			 * selection changes - to find out the selected rows you should better use the table selection API)
+			 *
+			 * <b>Note:</b> When a selection plugin is applied to the table, this event won't be fired.
 			 */
 			rowSelectionChange : {
 				parameters : {
@@ -821,6 +835,12 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype.init = function() {
+		// Skip propagation of properties (models and bindingContext).
+		this.mSkipPropagation = {
+			rowActionTemplate: true,
+			rowSettingsTemplate: true
+		};
+
 		// Todo: the base class shouldn't know that subclasses might set a variable before its own init
 		if (!this._SelectionAdapterClass) {
 			this._SelectionAdapterClass = SelectionModelPlugin;
@@ -1827,7 +1847,7 @@ sap.ui.define([
 		if (sSelectionMode === SelectionMode.Multi) {
 			sSelectionMode = SelectionMode.MultiToggle;
 			Log.warning("The selection mode 'Multi' is deprecated and must not be used anymore."
-						+ " Your setting was defaulted to selection mode 'MultiToggle'");
+						+ " Your setting was defaulted to selection mode 'MultiToggle'", this);
 		}
 
 		if (this._oSelectionPlugin.isA("sap.ui.table.plugins.SelectionModelPlugin")
@@ -1835,7 +1855,8 @@ sap.ui.define([
 			this.setProperty("selectionMode", sSelectionMode);
 			this._oSelectionPlugin.setSelectionMode(sSelectionMode);
 		} else {
-			Log.warning("When the MultiSelectionPlugin is applied to the table, the selection mode is controlled by the plugin and cannot be changed manually.");
+			Log.warning("When the MultiSelectionPlugin is applied to the table, the selection mode is controlled by the plugin and cannot be"
+						+ " changed manually.", this);
 		}
 
 		return this;
@@ -1846,8 +1867,7 @@ sap.ui.define([
 	 */
 	Table.prototype.setFirstVisibleRow = function(iRowIndex, bOnScroll, bSuppressEvent) {
 		if (parseInt(iRowIndex) < 0) {
-			Log.error("The index of the first visible row must be greater than or equal to 0." +
-								 " The value has been set to 0.", this);
+			Log.error("The index of the first visible row must be greater than or equal to 0. The value has been set to 0.", this);
 			iRowIndex = 0;
 		}
 		if (this._getTotalRowCount() > 0) {
@@ -1855,7 +1875,7 @@ sap.ui.define([
 
 			if (iMaxRowIndex < iRowIndex) {
 				Log.warning("The index of the first visible row must be lesser or equal than the scrollable row count minus the visible row count." +
-									   " The value has been set to " + iMaxRowIndex + ".", this);
+							" The value has been set to " + iMaxRowIndex + ".", this);
 				iRowIndex = iMaxRowIndex;
 			}
 		}
@@ -1919,6 +1939,7 @@ sap.ui.define([
 		}
 		this._iPendingRequests = 0;
 		this._bPendingRequest = false;
+		this._iBindingLength = null;
 		return Control.prototype.bindAggregation.call(this, "rows", Table._getSanitizedBindingInfo(arguments));
 	};
 
@@ -2088,7 +2109,8 @@ sap.ui.define([
 
 		var iFixedRowsCount = this.getFixedRowCount() + this.getFixedBottomRowCount();
 		if (iVisibleRowCount <= iFixedRowsCount && iFixedRowsCount > 0) {
-			Log.error("Table: " + this.getId() + " visibleRowCount('" + iVisibleRowCount + "') must be bigger than number of fixed rows('" + (this.getFixedRowCount() + this.getFixedBottomRowCount()) + "')", this);
+			Log.error("Table: " + this.getId() + " visibleRowCount('" + iVisibleRowCount + "') must be bigger than number of"
+					  + " fixed rows('" + (this.getFixedRowCount() + this.getFixedBottomRowCount()) + "')", this);
 			return this;
 		}
 
@@ -2137,7 +2159,7 @@ sap.ui.define([
 	 * @override
 	 */
 	Table.prototype.setTooltip = function(vTooltip) {
-		Log.warning("The aggregation tooltip is not supported for sap.ui.table.Table");
+		Log.warning("The aggregation tooltip is not supported for sap.ui.table.Table", this);
 		return this.setAggregation("tooltip", vTooltip, true);
 	};
 
@@ -2317,6 +2339,7 @@ sap.ui.define([
 			this._updateFixedBottomRows();
 			oScrollExtension.updateVerticalScrollbarVisibility();
 			oScrollExtension.updateVerticalScrollHeight();
+			oScrollExtension.updateVerticalScrollPosition();
 
 			if (!oBinding || !TableUtils.hasPendingRequests(this)) {
 				// A client binding -or- an $expand filled list binding does not fire dataReceived events. Therefore we need to update the no data area here.
@@ -2444,6 +2467,44 @@ sap.ui.define([
 	Table.prototype.destroyRows = function() {
 		Log.error("The control manages the rows aggregation. The method \"destroyRows\" cannot be used programmatically!", this);
 		return this;
+	};
+
+	/**
+	 * Sets the creation row.
+	 *
+	 * @param {sap.ui.table.CreationRow} oCreationRow Instance of the creation row
+	 * @returns {sap.ui.table.Table} Reference to <code>this</code> in order to allow method chaining
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
+	Table.prototype.setCreationRow = function(oCreationRow) {
+		if (!TableUtils.isA(oCreationRow, "sap.ui.table.CreationRow")) {
+			oCreationRow = null;
+		}
+
+		return this.setAggregation("creationRow", oCreationRow);
+	};
+
+	/**
+	 * Gets the creation row.
+	 *
+	 * @returns {sap.ui.table.CreationRow} oCreationRow Instance of the creation row
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
+	Table.prototype.getCreationRow = function() {
+		return this.getAggregation("creationRow");
+	};
+
+	/**
+	 * Destroys the creation row.
+	 *
+	 * @returns {sap.ui.table.Table} Reference to <code>this</code> in order to allow method chaining
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
+	Table.prototype.destroyCreationRow = function() {
+		return this.destroyAggregation("creationRow");
 	};
 
 	/**
@@ -2592,6 +2653,12 @@ sap.ui.define([
 			this._aSortedColumns.splice(iIndex, 1);
 		}
 		this.invalidateRowsAggregation();
+
+		var oCreationRow = this.getCreationRow();
+		if (oCreationRow) {
+			oCreationRow._update();
+		}
+
 		return oResult;
 	};
 
@@ -2602,6 +2669,12 @@ sap.ui.define([
 		var oResult = this.removeAllAggregation('columns');
 		this._aSortedColumns = [];
 		this.invalidateRowsAggregation();
+
+		var oCreationRow = this.getCreationRow();
+		if (oCreationRow) {
+			oCreationRow._update();
+		}
+
 		return oResult;
 	};
 
@@ -2612,6 +2685,12 @@ sap.ui.define([
 		var oResult = this.destroyAggregation('columns');
 		this._aSortedColumns = [];
 		this.invalidateRowsAggregation();
+
+		var oCreationRow = this.getCreationRow();
+		if (oCreationRow) {
+			oCreationRow._update();
+		}
+
 		return oResult;
 	};
 
@@ -2622,6 +2701,12 @@ sap.ui.define([
 	Table.prototype.addColumn = function(oColumn, bSuppressInvalidate) {
 		this.addAggregation('columns', oColumn, bSuppressInvalidate);
 		this.invalidateRowsAggregation();
+
+		var oCreationRow = this.getCreationRow();
+		if (oCreationRow) {
+			oCreationRow._update();
+		}
+
 		return this;
 	};
 
@@ -2631,6 +2716,12 @@ sap.ui.define([
 	Table.prototype.insertColumn = function(oColumn, iIndex, bSuppressInvalidate) {
 		this.insertAggregation('columns', oColumn, iIndex, bSuppressInvalidate);
 		this.invalidateRowsAggregation();
+
+		var oCreationRow = this.getCreationRow();
+		if (oCreationRow) {
+			oCreationRow._update();
+		}
+
 		return this;
 	};
 
@@ -3030,7 +3121,13 @@ sap.ui.define([
 			$SelectAll.toggleClass("sapUiTableSelAll", !bAllRowsSelected);
 			this._getAccExtension().setSelectAllState(bAllRowsSelected);
 
-			var sSelectAllResourceTextID = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
+			var mRenderConfig = this._oSelectionPlugin.getRenderConfig();
+			var sSelectAllResourceTextID;
+			if (mRenderConfig.headerSelector.type === "toggle") {
+				sSelectAllResourceTextID = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
+			} else if (mRenderConfig.headerSelector.type === "clear") {
+				sSelectAllResourceTextID = "TBL_DESELECT_ALL";
+			}
 			var sSelectAllText = TableUtils.getResourceText(sSelectAllResourceTextID);
 
 			if (this._getShowStandardTooltips()) {
@@ -3058,15 +3155,22 @@ sap.ui.define([
 		var aRowIndices = oEvent.getParameter("rowIndices");
 		var bSelectAll = oEvent.getParameter("selectAll");
 		var iRowIndex = this._iSourceRowIndex !== undefined ? this._iSourceRowIndex : this.getSelectedIndex();
+		var bLimitReached = oEvent.getParameter("limitReached");
+		if (bLimitReached) {
+			this.setFirstVisibleRow(Math.max(0, this.getSelectedIndex() - this.getVisibleRowCount() + 1));
+		}
 		this._updateSelection();
 
-		this.fireRowSelectionChange({
-			rowIndex: iRowIndex,
-			rowContext: this.getContextByIndex(iRowIndex),
-			rowIndices: aRowIndices,
-			selectAll: bSelectAll,
-			userInteraction: this._iSourceRowIndex !== undefined
-		});
+		if (this._oSelectionPlugin.isA("sap.ui.table.plugins.SelectionModelPlugin")
+			|| this._oSelectionPlugin.isA("sap.ui.table.plugins.BindingSelectionPlugin")) {
+			this.fireRowSelectionChange({
+				rowIndex: iRowIndex,
+				rowContext: this.getContextByIndex(iRowIndex),
+				rowIndices: aRowIndices,
+				selectAll: bSelectAll,
+				userInteraction: this._iSourceRowIndex !== undefined
+			});
+		}
 	};
 
 	/**
@@ -3378,7 +3482,8 @@ sap.ui.define([
 			this.setProperty("fixedRowCount", iFixedRowCount);
 			this._updateBindingContexts();
 		} else {
-			Log.error("Table '" + this.getId() + "' fixed rows('" + (iFixedRowCount + this.getFixedBottomRowCount()) + "') must be smaller than numberOfVisibleRows('" + this.getVisibleRowCount() + "')", this);
+			Log.error("Table '" + this.getId() + "' fixed rows('" + (iFixedRowCount + this.getFixedBottomRowCount()) + "') must be smaller than"
+					  + " numberOfVisibleRows('" + this.getVisibleRowCount() + "')", this);
 		}
 		return this;
 	};
@@ -3396,7 +3501,8 @@ sap.ui.define([
 			this.setProperty("fixedBottomRowCount", iFixedRowCount);
 			this._updateBindingContexts();
 		} else {
-			Log.error("Table '" + this.getId() + "' fixed rows('" + (iFixedRowCount + this.getFixedRowCount()) + "') must be smaller than numberOfVisibleRows('" + this.getVisibleRowCount() + "')", this);
+			Log.error("Table '" + this.getId() + "' fixed rows('" + (iFixedRowCount + this.getFixedRowCount()) + "') must be smaller than"
+					  + " numberOfVisibleRows('" + this.getVisibleRowCount() + "')", this);
 		}
 		return this;
 	};
@@ -3908,7 +4014,7 @@ sap.ui.define([
 	Table.prototype.setBusy = function(bBusy, sBusySection) {
 		var bBusyChanged = this.getBusy() != bBusy;
 
-		sBusySection = "sapUiTableCnt";
+		sBusySection = "sapUiTableGridCnt";
 		var vReturn = Control.prototype.setBusy.call(this, bBusy, sBusySection);
 		if (bBusyChanged) {
 			this.fireBusyStateChanged({busy: bBusy});
@@ -4061,21 +4167,25 @@ sap.ui.define([
 	Table.prototype.addPlugin = function(oPlugin) {
 		this.addAggregation("plugins", oPlugin);
 		this._initSelectionPlugin();
+		return this;
 	};
 
 	Table.prototype.insertPlugin = function(oPlugin, iIndex) {
 		this.insertAggregation("plugins", oPlugin, iIndex);
 		this._initSelectionPlugin();
+		return this;
 	};
 
 	Table.prototype.removePlugin = function(oPlugin) {
-		this.removeAggregation("plugins", oPlugin);
+		var vReturn = this.removeAggregation("plugins", oPlugin);
 		this._initSelectionPlugin();
+		return vReturn;
 	};
 
 	Table.prototype.removeAllPlugins = function() {
-		this.removeAllAggregation("plugins");
+		var vReturn = this.removeAllAggregation("plugins");
 		this._initSelectionPlugin();
+		return vReturn;
 	};
 
 	Table.prototype.getPlugin = function(sType) {

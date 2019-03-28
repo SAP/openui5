@@ -112,7 +112,7 @@ sap.ui.define([
 		aLabelledBy.push(sId + "-text");
 
 		aLabelledBy.push(
-			oControl.getValueState() === GenericTagValueState.Error ? sId + "-errorIcon" : this._getTagValueId(oControl)
+			oControl.getValueState() === GenericTagValueState.Error ? sId + "-errorIcon" : this._getTagValueId(oControl) + ' ' + this._getTagValueId(oControl) + '-state'
 		);
 
 		return aLabelledBy;
@@ -120,7 +120,6 @@ sap.ui.define([
 
 	GenericTagRenderer._getGenericTagStatusText = function(oControl) {
 		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
-			sRoleDescription = oResourceBundle.getText("GENERICTAG_ROLEDESCRIPTION"),
 			sARIAStatusText;
 
 		switch (oControl.getStatus()) {
@@ -140,7 +139,7 @@ sap.ui.define([
 				// No aria status text
 		}
 
-		return sRoleDescription + " " + sARIAStatusText;
+		return sARIAStatusText;
 	};
 
 	GenericTagRenderer._getTagValueId = function(oControl) {

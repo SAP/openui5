@@ -9,7 +9,7 @@
 		class="sapUiContentPadding"
 		width="100%">
 		<Label text="MultiInput with &quot;start with&quot; filtering: enter a search term, e.g. &quot;A&quot;, and see filtered list" width="100%" labelFor="multiInput1"/>
-		<MultiInput width="500px"
+		<MultiInput width="70%"
 			id="multiInput1"
 			suggestionItems="{
 				path: '/ProductCollection',
@@ -19,7 +19,7 @@
 			<core:Item key="{ProductId}" text="{Name}" />
 		</MultiInput>
 		<Label text="MultiInput with &quot;contains&quot; filtering: enter a search term, e.g. &quot;40&quot;, and see filtered list" width="100%" labelFor="multiInput2"/>
-		<MultiInput width="500px"
+		<MultiInput width="70%"
 			id="multiInput2"
 			suggestionItems="{
 				path: '/ProductCollection',

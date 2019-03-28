@@ -60,7 +60,8 @@
 		}
 	}
 
-	// check for optimized sources
+	// check for optimized sources by testing variable names in a local function
+	// (check for native API ".head" to make sure that the function's source can be retrieved)
 	window["sap-ui-optimized"] = window["sap-ui-optimized"]
 		|| (/\.head/.test(loadScripts) && !/pending/.test(loadScripts));
 

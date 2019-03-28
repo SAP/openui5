@@ -7,20 +7,22 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.f.sample.SemanticPage.V",
+			"viewName": "sap.f.sample.SemanticPage.view.SemanticPage",
 			"type": "XML",
 			"async": true
 		},
-		"libs": {
-			"sap.m": {}
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
 		},
 		"config": {
 			"sample": {
 				"stretch": true,
 				"files": [
-					"V.view.xml",
-					"C.controller.js",
-					"model.json",
+					"view/SemanticPage.view.xml",
+					"controller/SemanticPage.controller.js",
+					"model/model.json",
 					"manifest.json"
 				]
 			}

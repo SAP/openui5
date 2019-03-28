@@ -253,7 +253,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/Device'],
 	 * @returns {String}
 	 */
 	InputBaseRenderer.getLabelledByAnnouncement = function(oControl) {
-		return oControl._getPlaceholder() || "";
+		return "";
 	};
 
 	/**
@@ -298,7 +298,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/Device'],
 	 * @returns {String}
 	 */
 	InputBaseRenderer.getDescribedByAnnouncement = function(oControl) {
-		return oControl.getTooltip_AsString() || "";
+		return "";
 	};
 
 	/**

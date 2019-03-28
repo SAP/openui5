@@ -12,8 +12,10 @@
 			"async": true,
 			"id": "main"
 		},
-		"libs": {
-			"sap.ui.fl": {}
+		"dependencies": {
+			"libs": {
+				"sap.ui.fl": {}
+			}
 		},
 		"config": {
 			"sample": {

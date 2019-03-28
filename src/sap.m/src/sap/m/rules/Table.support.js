@@ -35,16 +35,17 @@ sap.ui.define(["sap/ui/support/library", "sap/m/ListBase", "sap/ui/core/library"
 				href: "https://sapui5.hana.ondemand.com/#/topic/6f778a805bc3453dbb66e246d8271839"
 			}],
 			check: function (oIssueManager, oCoreFacade, oScope) {
-				var count = 0;
 				oScope.getElementsByClassName("sap.m.Table").forEach(function (oTable) {
-					var aColumn = oTable.getColumns();
-					aColumn.forEach(function (oColumn) {
+					var aColumn = oTable.getColumns(),
+						bSomeColumnNoWidth;
+					if (!aColumn.length) {
+						return;
+					}
+					bSomeColumnNoWidth = aColumn.some(function (oColumn) {
 						var sWidth = oColumn.getWidth();
-						if (sWidth !== "auto" || sWidth !== "") {
-							count++;
-						}
+						return sWidth === "" || "auto";
 					});
-					if (count === aColumn.length) {
+					if (!bSomeColumnNoWidth) {
 						oIssueManager.addIssue({
 							severity: Severity.Medium,
 							details: "All the columns are configured with a width. This should be avoided.",

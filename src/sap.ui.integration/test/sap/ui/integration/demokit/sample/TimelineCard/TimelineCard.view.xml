@@ -4,16 +4,16 @@
         xmlns:mvc="sap.ui.core.mvc"
         xmlns:f="sap.f"
         xmlns:w="sap.ui.integration.widgets">
-    <f:CardContainer>
+    <f:GridContainer class="sapUiSmallMargin">
         <w:Card manifest="./test-resources/sap/ui/integration/demokit/sample/TimelineCard/model/TeamMembersManifest.json">
             <w:layoutData>
-                <f:CardItemLayoutData columns="4" />
+                <f:GridContainerItemLayoutData columns="4" />
             </w:layoutData>
         </w:Card>
         <w:Card manifest="./test-resources/sap/ui/integration/demokit/sample/TimelineCard/model/ActivitiesManifest.json">
             <w:layoutData>
-                <f:CardItemLayoutData columns="3" />
+                <f:GridContainerItemLayoutData columns="3" />
             </w:layoutData>
         </w:Card>
-    </f:CardContainer>
+    </f:GridContainer>
 </mvc:View>

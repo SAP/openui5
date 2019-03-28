@@ -65,6 +65,8 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 			oRm.writeStyles();
 			oRm.write(">");
 
+			this.renderDndPlaceholders(oRm, oControl, oControl.getAggregation("_blockersPlaceholders"));
+
 			for (var i = 0; i < iColumns; i++) {
 				var oColumnCalDate = new CalendarDate(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate() + i),
 					sDate = oControl._formatDayAsString(oColumnCalDate);
@@ -333,12 +335,21 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 
 				oRm.writeClasses();
 				oRm.write(">");
+
+				this.renderDndPlaceholders(oRm, oControl, oControl._dndPlaceholdersMap[oColumnCalDate]);
+
 				this.renderRows(oRm, oControl);
 				this.renderAppointments(oRm, oControl, oAppointmentsToRender[sDate], oColumnCalDate);
 				oRm.write("</div>"); // END .sapMSinglePCColumn
 			}
 
 			oRm.write("</div>"); // END .sapMSinglePCColumns
+		};
+
+		SinglePlanningCalendarGridRenderer.renderDndPlaceholders = function (oRm, oControl, aPlaceholders) {
+			oRm.write("<div class=\"sapMSinglePCOverlay\">");
+			aPlaceholders.forEach(oRm.renderControl);
+			oRm.write("</div>");
 		};
 
 		SinglePlanningCalendarGridRenderer.renderRows = function (oRm, oControl) {
@@ -565,7 +576,11 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 
 			oRm.write("</div>");
 
-			// this.renderResizeHandle(oRm, oRow, oAppointment);
+			if (oControl.getEnableAppointmentsResize()
+				&& !bAppStartIsOutsideVisibleStartHour
+				&& !bAppEndIsOutsideVisibleEndHour) {
+				this.renderResizeHandles(oRm);
+			}
 
 			oRm.write("</div>");
 			oRm.write("</div>");
@@ -603,6 +618,19 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 			}
 			oRm.write("</span>"); // END .sapMSinglePCNowMarkerText
 			oRm.write("</div>"); // END .sapMSinglePCNowMarker
+		};
+
+		SinglePlanningCalendarGridRenderer.renderResizeHandles = function(oRm) {
+			oRm.write("<span");
+			oRm.addClass("sapMSinglePCAppResizeHandleBottom");
+			oRm.writeClasses();
+			oRm.write(">");
+			oRm.write("</span>");
+			oRm.write("<span");
+			oRm.addClass("sapMSinglePCAppResizeHandleTop");
+			oRm.writeClasses();
+			oRm.write(">");
+			oRm.write("</span>");
 		};
 
 		return SinglePlanningCalendarGridRenderer;

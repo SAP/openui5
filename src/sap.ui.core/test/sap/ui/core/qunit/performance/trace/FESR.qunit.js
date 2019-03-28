@@ -20,7 +20,8 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		var oHandle = {
 			stepName:"undetermined_undefined",
 			appNameLong:"undetermined",
-			appNameShort:"undetermined"
+			appNameShort:"undetermined",
+			timeToInteractive: 0
 		};
 
 		var oHeaderSpy = sinon.spy(XMLHttpRequest.prototype, "setRequestHeader");
@@ -33,11 +34,12 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 			return {
 				stepName: "newStepName",
 				appNameLong: "newAppNameLong",
-				appNameShort: "newAppNameShort"
+				appNameShort: "newAppNameShort",
+				timeToInteractive: 1000
 			};
 		};
 
-		assert.expect(4);
+		assert.expect(5);
 
 		FESR.setActive(true);
 		Interaction.start();
@@ -49,11 +51,20 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		xhr.send();
 
 		assert.ok(oHeaderSpy.args.some(function(args) {
+			if (args[0] === "SAP-Perf-FESRec") {
+				var values = args[1].split(",");
+				// duration - end_to_end_time
+				return values[4] === "1000";
+			}
+		}), "Found the FESR header field values.");
+
+		assert.ok(oHeaderSpy.args.some(function(args) {
 			if (args[0] === "SAP-Perf-FESRec-opt") {
 				var values = args[1].split(",");
+				// application_name, step_name, application_name with 70 characters
 				return values[0] === "newAppNameShort" && values[1] === "newStepName" && values[19] === "newAppNameLong";
 			}
-		}), "Found the new FESR header field values.");
+		}), "Found the optional FESR header field values.");
 
 		Interaction.end(true);
 		Interaction.clear();

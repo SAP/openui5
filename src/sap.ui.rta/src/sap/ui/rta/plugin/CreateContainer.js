@@ -149,7 +149,11 @@ sap.ui.define([
 		if (!vAction) {
 			return sText;
 		}
-		var sContainerTitle = oDesignTimeMetadata.getAggregationDescription(vAction.aggregation, oElement).singular;
+		var oAggregationDescription = oDesignTimeMetadata.getAggregationDescription(vAction.aggregation, oElement);
+		if (!oAggregationDescription) {
+			return sText;
+		}
+		var sContainerTitle = oAggregationDescription.singular;
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		return oTextResources.getText(sText, sContainerTitle);
 	};

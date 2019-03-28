@@ -191,7 +191,7 @@ sap.ui.define([
 	 * @param {map} mPropertyBag Contains additional data needed for reading changes
 	 * @param {object} [mPropertyBag.appDescriptor] Manifest that belongs to the current running component
 	 * @param {string} [mPropertyBag.siteId] ID of the site belonging to the current running component
-	 * @param {string} [mPropertyBag.sCurrentLayer] Specifies a single layer for loading changes. If this parameter is set, the max layer filtering is not applied
+	 * @param {string} [mPropertyBag.currentLayer] Specifies a single layer for loading changes. If this parameter is set, the max layer filtering is not applied
 	 * @param {boolean} [mPropertyBag.ignoreMaxLayerParameter] Indicates that changes shall be loaded without layer filtering
 	 * @param {boolean} [mPropertyBag.includeVariants] Indicates that smart variants shall be included
 	 * @param {string} [mPropertyBag.cacheKey] Key to validate the cache entry stored on client side
@@ -213,11 +213,11 @@ sap.ui.define([
 				&& Array.isArray(oWrappedChangeFileContent.changes.changes)
 				&& oWrappedChangeFileContent.changes.changes.length !== 0;
 
-			var bVariantChangesExist = oWrappedChangeFileContent.changes
+			var bVariantSectionContainsContent = oWrappedChangeFileContent.changes
 				&& oWrappedChangeFileContent.changes.variantSection
 				&& !jQuery.isEmptyObject(oWrappedChangeFileContent.changes.variantSection);
 
-			if (!bFlexChangesExist && !bVariantChangesExist) {
+			if (!bFlexChangesExist && !bVariantSectionContainsContent) {
 				return [];
 			}
 
@@ -237,20 +237,20 @@ sap.ui.define([
 					}
 				}
 			}
-			var bIncludeControlVariants = mPropertyBag && mPropertyBag.includeCtrlVariants && bVariantChangesExist;
+			var bIncludeControlVariants = mPropertyBag && mPropertyBag.includeCtrlVariants && bVariantSectionContainsContent;
 
 			var sCurrentLayer = mPropertyBag && mPropertyBag.currentLayer;
 			var bFilterMaxLayer = !(mPropertyBag && mPropertyBag.ignoreMaxLayerParameter);
 			if (sCurrentLayer) {
 				aChanges = aChanges.filter(this._filterChangeForCurrentLayer.bind(this, sCurrentLayer));
-				if (!bIncludeControlVariants && bVariantChangesExist) {
+				if (!bIncludeControlVariants && bVariantSectionContainsContent) {
 					//although ctrl variant changes are not requested, still filtering on variant section data is necessary
 					this._getAllCtrlVariantChanges(oWrappedChangeFileContent.changes.variantSection, false, sCurrentLayer);
 				}
 			} else if (Utils.isLayerFilteringRequired() && bFilterMaxLayer) {
 				//If layer filtering required, excludes changes in higher layer than the max layer
 				aChanges = aChanges.filter(this._filterChangeForMaxLayer.bind(this));
-				if (!bIncludeControlVariants && bVariantChangesExist) {
+				if (!bIncludeControlVariants && bVariantSectionContainsContent) {
 					//although ctrl variant changes are not requested, still filtering on variant section data is necessary
 					this._getAllCtrlVariantChanges(oWrappedChangeFileContent.changes.variantSection, true);
 				}
@@ -320,7 +320,6 @@ sap.ui.define([
 
 		function getChange(oWrappedChangeFileContent, oChangeContent) {
 			var oChange;
-
 			if (!this._mChangesEntries[oChangeContent.fileName]) {
 				this._mChangesEntries[oChangeContent.fileName] = new Change(oChangeContent);
 			}
@@ -331,7 +330,6 @@ sap.ui.define([
 				var oVariant = findVariant(oWrappedChangeFileContent, oChange);
 				replaceChangeContentWithInstance(oVariant, oChange);
 			}
-
 			return oChange;
 		}
 	};
@@ -985,11 +983,7 @@ sap.ui.define([
 				return oResponse;
 			}.bind(this));
 		} else {
-			return aDirtyChangesClone.reduce(function (sequence, oDirtyChange) {
-				var saveAction = sequence.then(this._performSingleSaveAction(oDirtyChange));
-				saveAction.then(this._updateCacheAndDirtyState.bind(this, aDirtyChanges, oDirtyChange, bSkipUpdateCache));
-				return saveAction;
-			}.bind(this), Promise.resolve());
+			return this.saveSequenceOfDirtyChanges(aDirtyChangesClone, bSkipUpdateCache);
 		}
 	};
 
@@ -1006,10 +1000,10 @@ sap.ui.define([
 	ChangePersistence.prototype.saveSequenceOfDirtyChanges = function(aDirtyChanges, bSkipUpdateCache) {
 		var aAllDirtyChanges = this.getDirtyChanges();
 
-		return aDirtyChanges.reduce(function (sequence, oDirtyChange) {
-			var saveAction = sequence.then(this._performSingleSaveAction(oDirtyChange));
-			saveAction.then(this._updateCacheAndDirtyState.bind(this, aAllDirtyChanges, oDirtyChange, bSkipUpdateCache));
-			return saveAction;
+		return aDirtyChanges.reduce(function (oPreviousPromise, oDirtyChange) {
+			return oPreviousPromise
+				.then(this._performSingleSaveAction(oDirtyChange))
+				.then(this._updateCacheAndDirtyState.bind(this, aAllDirtyChanges, oDirtyChange, bSkipUpdateCache));
 		}.bind(this), Promise.resolve());
 	};
 
@@ -1257,15 +1251,30 @@ sap.ui.define([
 	};
 
 	/**
+	 * Collect changes from the internal map by names
+	 *
+	 * @param {string[]} aNames Names of changes
+	 * @returns {sap.ui.fl.Change[]} aChanges Array of changes with corresponding names
+	 * @private
+	 */
+	ChangePersistence.prototype._getChangesFromMapByNames = function (aNames) {
+		return this._mChanges.aChanges.filter(function(oChange) {
+			return aNames.indexOf(oChange.getFileName()) !== -1;
+		});
+	};
+
+	/**
 	 * Reset changes on the server. Specification of a generator, selector string or change type string is optional
 	 * but at least one of these parameters has to be filled.
+	 * This function returns an array of changes which need to be reverted from UI. When neither a selector nor a change type is provided,
+	 * an empty array is returned (this triggers a reset of the changes for an entire application component and reloads it).
 	 *
-	 * @param {string} sLayer - Layer for which changes shall be deleted
-	 * @param {string} [sGenerator] - Generator of changes (optional)
-	 * @param {string[]} [aSelectorIds] - Selector IDs in local format (optional)
-	 * @param {string[]} [aChangeTypes] - Types of changes (optional)
+	 * @param {string} sLayer Layer for which changes shall be deleted
+	 * @param {string} [sGenerator] Generator of changes (optional)
+	 * @param {string[]} [aSelectorIds] Selector IDs in local format (optional)
+	 * @param {string[]} [aChangeTypes] Types of changes (optional)
 	 *
-	 * @returns {Promise} promise that resolves with an array of content IDs of deleted changes in the response
+	 * @returns {Promise} Promise that resolves with an array of changes which need to be reverted from UI
 	 */
 	ChangePersistence.prototype.resetChanges = function (sLayer, sGenerator, aSelectorIds, aChangeTypes) {
 
@@ -1327,6 +1336,21 @@ sap.ui.define([
 			}
 
 			return this._oConnector.resetChanges(mParams);
+		}.bind(this))
+		.then(function(oResponse){
+			var aChangesToRevert = [];
+			//If reset changes for control, returns an array of deleted changes for reverting
+			if (aSelectorIds || aChangeTypes) {
+				var aNames = [];
+				if (oResponse && oResponse.response && oResponse.response.length > 0) {
+					oResponse.response.forEach(function (oChangeContentId) {
+						aNames.push(oChangeContentId.name);
+					});
+				}
+				Cache.removeChanges(this._mComponent, aNames);
+				aChangesToRevert =  this._getChangesFromMapByNames(aNames);
+			}
+			return aChangesToRevert;
 		}.bind(this));
 	};
 	return ChangePersistence;

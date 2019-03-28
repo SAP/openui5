@@ -315,7 +315,7 @@ sap.ui.define([
 
 		// clear panels
 		for ( var sContainerId in this.mContainers) {
-			_cleanContainer.call(this, sContainerId);
+			_cleanContainer.call(this, sContainerId, true);
 		}
 
 		// clear main Grid
@@ -533,12 +533,16 @@ sap.ui.define([
 	/*
 	 * clear content before delete panel
 	 */
-	function _deletePanel( oPanel ) {
+	function _deletePanel( oPanel, bDestroyLayout ) {
 
-		oPanel.setContent(null);
 		oPanel.setLayout(null);
 		oPanel.setContainer(null);
-		oPanel.destroy();
+
+		if (!bDestroyLayout || !oPanel.getParent()) {
+			// if in real control tree let the ManagedObject logic destroy the children
+			oPanel.setContent(null);
+			oPanel.destroy();
+		}
 
 	}
 
@@ -997,14 +1001,17 @@ sap.ui.define([
 	/*
 	 * clear internal variables before delete grid
 	 */
-	function _deleteGrid( oGrid ) {
+	function _deleteGrid( oGrid, bDestroyLayout ) {
 
 		if (oGrid.__myParentContainerId) {
 			oGrid.__myParentContainerId = undefined;
 		}
 		oGrid.__myParentLayout = undefined;
 
-		oGrid.destroy();
+		if (!bDestroyLayout || !oGrid.getParent()) {
+			// if in real control tree let the ManagedObject logic destroy the children
+			oGrid.destroy();
+		}
 
 	}
 
@@ -1164,20 +1171,20 @@ sap.ui.define([
 
 	}
 
-	function _cleanContainer( sContainerId ) {
+	function _cleanContainer( sContainerId, bDestroyLayout ) {
 
 		var aContainerContent = this.mContainers[sContainerId];
 
 		//delete Grid
 		var oGrid = aContainerContent[1];
 		if (oGrid) {
-			_deleteGrid(oGrid);
+			_deleteGrid(oGrid, bDestroyLayout);
 		}
 
 		//delete panel
 		var oPanel = aContainerContent[0];
 		if (oPanel) {
-			_deletePanel(oPanel);
+			_deletePanel(oPanel, bDestroyLayout);
 		}
 
 		delete this.mContainers[sContainerId];
@@ -1188,6 +1195,7 @@ sap.ui.define([
 
 		var aVisibleContainers = oForm.getVisibleFormContainers();
 		var oContainer;
+		var sContainerId;
 		var iLength = aVisibleContainers.length;
 		var iContentLenght = 0;
 		var i = 0;
@@ -1289,7 +1297,7 @@ sap.ui.define([
 				}
 				for ( i = iStartIndex; i < iLength; i++) {
 					oContainer = aVisibleContainers[i];
-					var sContainerId = oContainer.getId();
+					sContainerId = oContainer.getId();
 					if (this.mContainers[sContainerId]) {
 						if (this.mContainers[sContainerId][0]) {
 							// panel used
@@ -1301,8 +1309,24 @@ sap.ui.define([
 					}
 				}
 			}
-		} else if ( this._mainGrid ) {
-			this._mainGrid.__bIsUsed = false;
+		} else {
+			if ( this._mainGrid ) {
+				this._mainGrid.__bIsUsed = false;
+			}
+			// set container as parent for panels and Grid to have them in control tree
+			for (i = 0; i < iLength; i++) {
+				oContainer = aVisibleContainers[i];
+				sContainerId = oContainer.getId();
+				if (this.mContainers[sContainerId]) {
+					if (this.mContainers[sContainerId][0]) {
+						// panel used
+						oContainer.addDependent(this.mContainers[sContainerId][0]);
+					} else if (this.mContainers[sContainerId][1]) {
+						// no panel - used Grid directly
+						oContainer.addDependent(this.mContainers[sContainerId][1]);
+					}
+				}
+			}
 		}
 
 	}

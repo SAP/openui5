@@ -1513,10 +1513,6 @@ sap.ui.define([
 		assert.strictEqual($Input.attr("aria-disabled"), 'true', "Internal input's 'aria-disabled' attribute has correct value");
 		assert.ok($Input.is("[aria-required]"), "Internal Input has 'aria-required' attribute");
 		assert.strictEqual($Input.attr("aria-required"), 'true', "Internal input's 'aria-required' attribute has correct value");
-		assert.ok($Input.is("[aria-labelledby]"), "Internal Input has 'aria-labelledby' attribute");
-		assert.strictEqual($Input.attr("aria-labelledby"), oInput.getId() + '-labelledby', "Internal input's 'aria-labelledby' attribute has correct value");
-		assert.ok($Input.is("[aria-describedby]"), "Internal Input has 'aria-describedby' attribute");
-		assert.strictEqual($Input.attr("aria-describedby"), oInput.getId() + '-describedby', "Internal input's 'aria-describedby' attribute has correct value");
 		//clean
 		oSUT.destroy();
 	});

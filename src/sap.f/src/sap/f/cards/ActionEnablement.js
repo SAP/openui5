@@ -7,6 +7,13 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 
 		var ActionEnablement = {};
 
+		function _getServiceName(vService) {
+			if (vService && typeof vService === "object") {
+				return vService.name;
+			}
+			return vService;
+		}
+
 		function _attachActions(mItem, oControl) {
 			if (!mItem.actions) {
 				return;
@@ -47,7 +54,7 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 
 				if (!vValue.__promise) {
 					vValue.__promise = true;
-					that._oServiceManager.getService("sap.ui.integration.services.Navigation").then(function (oNavigationService) {
+					that._oServiceManager.getService(_getServiceName(oAction.service)).then(function (oNavigationService) {
 						if (oNavigationService) {
 							oNavigationService
 								.enabled({
@@ -88,7 +95,7 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 			mParameters = BindingResolver.resolveValue(oAction.parameters, oModel, sPath);
 
 			return new Promise(function (resolve) {
-				this._oServiceManager.getService("sap.ui.integration.services.Navigation")
+				this._oServiceManager.getService(_getServiceName(oAction.service))
 					.then(function (oNavigationService) {
 						if (oNavigationService) {
 							oNavigationService
@@ -111,7 +118,7 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 			}.bind(this));
 		}
 
-		// List card specific
+		// List and Table card specific
 		function _setActionEnabledState(oAction) {
 
 			var oBindingInfo;
@@ -137,6 +144,14 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 		// Header specific but could be generic
 		function _addHeaderClasses() {
 			this.addStyleClass("sapFCardHeaderClickable");
+		}
+
+		function _fireAction(oSource, oActionParams, oModel, sPath) {
+			this.fireEvent("action", {
+				type: "Navigation",
+				actionSource: oSource,
+				manifestParameters: BindingResolver.resolveValue(oActionParams, oModel, sPath)
+			});
 		}
 
 		function _attachNavigationAction(mItem, oControl) {
@@ -165,7 +180,7 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 						sPath = oBindingContext.getPath();
 					}
 
-					this._oServiceManager.getService("sap.ui.integration.services.Navigation")
+					this._oServiceManager.getService(_getServiceName(oAction.service))
 						.then(function (oNavigationService) {
 							if (oNavigationService) {
 								oNavigationService.navigate({
@@ -176,6 +191,8 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 						.catch(function (e) {
 							Log.error("Navigation service unavailable", e);
 						});
+
+					_fireAction.call(this, oEvent.getSource(), oAction.parameters, oModel, sPath);
 				};
 
 				// When there is a service let it handle the "enabled" state.
@@ -202,21 +219,21 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 						sUrl = BindingResolver.resolveValue(oAction.url, oModel, sPath);
 
 						window.open(sUrl, oAction.target || "_blank");
+
+						_fireAction.call(this, oEvent.getSource(), oAction.parameters, oModel, sPath);
 					};
 				} else {
 					fnHandler = function (oEvent) {
-						var oSource = oEvent.getSource();
-						var oBindingContext = oSource.getBindingContext();
-						var oModel = oSource.getModel();
-						var sPath;
+						var oSource = oEvent.getSource(),
+							oBindingContext = oSource.getBindingContext(),
+							oModel = oSource.getModel(),
+							sPath;
+
 						if (oBindingContext) {
 							sPath = oBindingContext.getPath();
 						}
 
-						this.fireEvent("onAction", {
-							type: "Navigation",
-							manifestParameters: BindingResolver.resolveValue(oAction.parameters, oModel, sPath)
-						});
+						_fireAction.call(this, oEvent.getSource(), oAction.parameters, oModel, sPath);
 					};
 				}
 			}
@@ -245,7 +262,7 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 			Control.prototype._attachNavigationAction = _attachNavigationAction;
 
 			// For simplicity do type checking for now.
-			if (Control.prototype.isA("sap.f.cards.ListContent")) {
+			if (Control.prototype.isA("sap.f.cards.ListContent") || Control.prototype.isA("sap.f.cards.TableContent")) {
 				Control.prototype._setItemTypeFormatter = _setItemTypeFormatter;
 				Control.prototype._setActionEnabledState = _setActionEnabledState;
 			}

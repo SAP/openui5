@@ -8,23 +8,37 @@ sap.ui.define([
 	"sap/ui/core/ResizeHandler",
 	"sap/m/GenericTileLineModeRenderer",
 	"sap/m/Text",
-	"sap/m/GenericTileScope",
-	"sap/m/GenericTileMode",
-	"sap/m/LoadState",
 	"sap/m/ScrollContainer",
 	"sap/m/FlexBox",
-	"sap/m/ValueColor",
-	"sap/m/FrameType",
-	"sap/m/DeviationIndicator",
 	"sap/m/GenericTileRenderer",
-	"sap/m/Size",
 	"sap/m/library",
-	"sap/ui/events/jquery/EventExtension", // used only indirectly
+	// used only indirectly
+	"sap/ui/events/jquery/EventExtension",
 	"jquery.sap.keycodes"
 ], function(jQuery, GenericTile, TileContent, NumericContent, Device, ResizeHandler, GenericTileLineModeRenderer,
-			Text, GenericTileScope, GenericTileMode, LoadState, ScrollContainer, FlexBox, ValueColor, FrameType, DeviationIndicator,
-			GenericTileRenderer, Size, library) {
+			Text, ScrollContainer, FlexBox, GenericTileRenderer, library) {
 	"use strict";
+
+	// shortcut for sap.m.Size
+	var Size = library.Size;
+
+	// shortcut for sap.m.DeviationIndicator
+	var DeviationIndicator = library.DeviationIndicator;
+
+	// shortcut for sap.m.FrameType
+	var FrameType = library.FrameType;
+
+	// shortcut for sap.m.ValueColor
+	var ValueColor = library.ValueColor;
+
+	// shortcut for sap.m.LoadState
+	var LoadState = library.LoadState;
+
+	// shortcut for sap.m.GenericTileMode
+	var GenericTileMode = library.GenericTileMode;
+
+	// shortcut for sap.m.GenericTileScope
+	var GenericTileScope = library.GenericTileScope;
 
 	var IMAGE_PATH = "test-resources/sap/m/images/";
 
@@ -2113,7 +2127,7 @@ sap.ui.define([
 		assert.equal(this.oGenericTile.$().attr("aria-label"), sAriaLabel, "GenericTile has correct ARIA-label");
 	});
 
-    QUnit.test("GenericTile tooltip provided by the control when TileContent is available", function(assert) {
+	QUnit.test("GenericTile tooltip provided by the control when TileContent is available", function(assert) {
         //Arrange
         var sAriaLabel = "header\nsubheader\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
         this.oGenericTile.getTileContent()[0].setFooter("Tile Footer");
@@ -2304,7 +2318,7 @@ sap.ui.define([
 		assert.equal(null, this.oGenericTile.$().attr("title"), "Truncated text tooltip is removed");
 	});
 
-    QUnit.test("GenericTile tooltip provided by the control when TileContent is available", function(assert) {
+	QUnit.test("GenericTile tooltip provided by the control when TileContent is available", function(assert) {
         if (Device.browser.phantomJS) {
             assert.expect(0);
             return;

@@ -5,20 +5,23 @@ sap.ui.define([
 	"sap/m/SplitContainer",
 	"sap/m/Page",
 	"sap/ui/core/routing/History",
-	"sap/ui/core/routing/HistoryDirection",
 	"sap/ui/Device",
-	"sap/m/InstanceManager"
+	"sap/m/InstanceManager",
+	"sap/ui/core/library"
 ], function(
 	TargetHandler,
 	NavContainer,
 	SplitContainer,
 	Page,
 	History,
-	HistoryDirection,
 	Device,
-	InstanceManager
+	InstanceManager,
+	library
 ) {
 	"use strict";
+
+	// shortcut for sap.ui.core.routing.HistoryDirection
+	var HistoryDirection = library.routing.HistoryDirection;
 
 	QUnit.module("add and execute navigations", {
 		beforeEach: function () {

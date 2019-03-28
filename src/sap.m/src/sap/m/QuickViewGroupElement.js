@@ -174,22 +174,18 @@ sap.ui.define([
 		};
 
 		GroupElement.prototype.setProperty = function (sName, oValue) {
-			var mNavContext,
-			bSupressInvalidate = true;
+			var oQuickView = this.getQuickViewBase(),
+				bSuppressInvalidate = false;
 
-			if (this.getParent() && this.getParent().getParent() && this.getParent().getParent().getNavContext()) {
-				mNavContext = this.getParent().getParent().getNavContext();
-
-				if (mNavContext && mNavContext.quickView && mNavContext.quickView.isA('sap.m.QuickViewCard')) {
-					bSupressInvalidate = false;
-				}
+			if (oQuickView && oQuickView.isA("sap.m.QuickView")) {
+				bSuppressInvalidate = true;
 			}
 
-			Element.prototype.setProperty.call(this, sName, oValue, bSupressInvalidate);
+			Element.prototype.setProperty.call(this, sName, oValue, bSuppressInvalidate);
 
 			var oGroup = this.getParent();
 			if (!oGroup) {
-				return;
+				return this;
 			}
 
 			var oPage = oGroup.getParent();
@@ -200,6 +196,13 @@ sap.ui.define([
 			return this;
 		};
 
+		GroupElement.prototype.getQuickViewBase = function () {
+			var oParent = this.getParent();
+			if (oParent && oParent.getQuickViewBase) {
+				return oParent.getQuickViewBase();
+			}
+			return null;
+		};
 
 		return GroupElement;
 

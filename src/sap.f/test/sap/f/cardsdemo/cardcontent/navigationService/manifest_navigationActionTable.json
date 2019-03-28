@@ -1,0 +1,67 @@
+{
+	"sap.app": {
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "Table",
+		"header": {
+			"title": "Table Card with Top 5 Products",
+			"subTitle": "These are the top sellers this month",
+			"icon": {
+				"src": "sap-icon://sales-order"
+			},
+			"status": {
+				"text": "5 of 100"
+			}
+		},
+		"content": {
+			"data": {
+				"json": [{
+						"Name": "Comfort Easy",
+						"Category": "PDA & Organizers",
+						"url": "https://www.sap.com"
+					},
+					{
+						"Name": "ITelO Vault",
+						"Category": "PDA & Organizers",
+						"url": "https://www.sap.com"
+					},
+					{
+						"Name": "Notebook Professional 15",
+						"Category": "Notebooks",
+						"url": "https://www.sap.com"
+					},
+					{
+						"Name": "Ergo Screen E-I",
+						"Category": "Monitors"
+					},
+					{
+						"Name": "Laser Professional Eco",
+						"Category": "Printers"
+					}
+				]
+			},
+			"row": {
+				"columns": [
+					{
+						"label": "Name",
+						"value": "{Name}"
+					},
+					{
+						"label": "Category",
+						"value": "{Category}"
+					}
+				],
+				"actions": [
+					{
+						"type": "Navigation",
+						"enabled": "{= ${url}}",
+						"parameters": {
+							"url": "{url}"
+						}
+					}
+				]
+			}
+		}
+	}
+}

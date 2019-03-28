@@ -1,4 +1,17 @@
-.sapFShellBar .CPImage {
+/* ============================= */
+/* CSS for control sap.f/ShellBar  */
+/* High Contrast Black theme     */
+/* ============================= */
+
+.sapFButtonNotifications[data-notifications],
+.sapFShellBarOverflowButton[data-notifications] {
+	&:after {
+        line-height: 1rem;
+        background: @sapUiGroupContentBackground;
+        border: solid 1px @sapUiGroupContentBorderColor;
+        color: @sapUiContentForegroundTextColor;
+    }
+}.sapFShellBar .CPImage {
 	.color1 {
 		stop-color: #FFFFFF;
 	}

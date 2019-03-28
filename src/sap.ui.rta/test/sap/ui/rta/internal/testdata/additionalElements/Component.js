@@ -2,25 +2,28 @@
 
 sap.ui.define([
 	"sap/ui/core/UIComponent",
-	"sap/ui/core/mvc/ViewType",
 	"sap/ui/fl/FakeLrepConnectorLocalStorage",
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/rta/util/UrlParser",
 	"sap/ui/fl/fieldExt/Access",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/App"
+	"sap/m/App",
+	"sap/ui/core/library"
 ], function(
 	UIComponent,
-	ViewType,
 	FakeLrepConnectorLocalStorage,
 	FakeLrepConnectorSessionStorage,
 	UrlParser,
 	Access,
 	JSONModel,
-	App
+	App,
+	library
 ) {
 
 	"use strict";
+
+	// shortcut for sap.ui.core.mvc.ViewType
+	var ViewType = library.mvc.ViewType;
 
 	return UIComponent.extend("sap.ui.rta.test.additionalElements.Component", {
 
@@ -89,7 +92,7 @@ sap.ui.define([
 		_enableExtensibility: function () {
 			Access.getBusinessContexts = function(sServiceUri, sEntityTypeName, sEntitySetName){
 				return Promise.resolve({
-					BusinessContexts: [sEntityTypeName + " EntityTypeContext", sEntitySetName + " EntitySetContext"],
+					BusinessContexts: [{ BusinessContext: sEntityTypeName + " EntityTypeContext", BusinessContextDescription: "Other BusinessContext description" }, { BusinessContext: sEntitySetName + " EntitySetContext" , BusinessContextDescription: "Some BusinessContext description"} ],
 					ServiceName: sServiceUri,
 					ServiceVersion: "some dummy ServiceVersion 0.0.1",
 					EntityType : sEntityTypeName

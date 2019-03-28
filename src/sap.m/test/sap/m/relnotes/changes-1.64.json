@@ -292,73 +292,299 @@
       {
         "id": "b8dcbf89044a4212d4f67347076b96fad7535054",
         "type": "FEATURE",
-        "text": " sap.m.SinglePlanningCalendar: Appointment all-day is reworked",
+        "text": "sap.m.SinglePlanningCalendar: Appointment all-day is reworked",
         "references": []
       },
       {
         "id": "5a91ebc76da14b9f2ae2ec782e6abfe44081cd7a",
         "type": "FIX",
-        "text": " Enums: fix visibility of enum values where inconsistent",
-        "references": []
+        "text": "Enums: fix visibility of enum values where inconsistent",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1984"
+          }
+        ]
       },
       {
         "id": "e5b2d31a2acacbf84913b17a0d844bd55c776180",
         "type": "FIX",
-        "text": " TimePickerSlider: Animation does not skip on arrow navigation",
-        "references": []
+        "text": "TimePickerSlider: Animation does not skip on arrow navigation",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2432"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970093104"
+          }
+        ]
       },
       {
         "id": "349af5e9ea2c2f5319ec631a3009015040aa43bb",
         "type": "FIX",
-        "text": " sap.m.ColorPalette: doesn\u0027t scroll on usage of the space key",
-        "references": []
+        "text": "sap.m.ColorPalette: doesn\u0027t scroll on usage of the space key",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980013526"
+          }
+        ]
       },
       {
         "id": "894c2c82464f9181c0f53add7fe46717c2831ffe",
         "type": "FIX",
-        "text": " sap.m.MultiIput: Sample adjustment",
-        "references": []
+        "text": "sap.m.MultiIput: Sample adjustment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970165031"
+          }
+        ]
       },
       {
         "id": "f45b9088fe930b065c8b105c64fd658d9ee96919",
         "type": "FIX",
-        "text": " sap.m.ObjectAttribute: wraps in Table correctly",
-        "references": []
+        "text": "sap.m.ObjectAttribute: wraps in Table correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012005041000000126732019"
+          }
+        ]
       },
       {
         "id": "a189c09af84be9925f27ee4b2c03366f82032dc0",
         "type": "FIX",
-        "text": " sap.m.ObjectHeader: example fixed for mobile",
-        "references": []
+        "text": "sap.m.ObjectHeader: example fixed for mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000981542019"
+          }
+        ]
       },
       {
         "id": "ab7d1df5426b3ff6d4f3d3c5c6c4207c26db7179",
         "type": "FIX",
-        "text": " sap.m.ObjectIdentifier: wraps on Edge correctly",
-        "references": []
+        "text": "sap.m.ObjectIdentifier: wraps on Edge correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970120816"
+          }
+        ]
       },
       {
         "id": "47b8b6e902b4afae681bb172eebdc8be4f27da0a",
         "type": "FIX",
-        "text": " sap.m.Popover: Popover does not close on navigation",
-        "references": []
+        "text": "sap.m.Popover: Popover does not close on navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880682612"
+          }
+        ]
       },
       {
         "id": "55934afafb7633cafd2012e65db32e54fc478454",
         "type": "FIX",
-        "text": " sap.m.Select: Arrow font size aligned with visual specification",
-        "references": []
+        "text": "sap.m.Select: Arrow font size aligned with visual specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980002916"
+          }
+        ]
       },
       {
         "id": "72da42f78e9ec3dd915aeb2a9429f56ef08bd323",
         "type": "FIX",
-        "text": " sap.m.Select: Prevented scrolling on SPACE key pressed",
-        "references": []
+        "text": "sap.m.Select: Prevented scrolling on SPACE key pressed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970178106"
+          }
+        ]
       },
       {
         "id": "f637a343af35784dee2c2e1facfdf5a804ba7488",
         "type": "FIX",
-        "text": " sap.m.SplitButton: Space fires press onkeyup and prevents scroll",
+        "text": "sap.m.SplitButton: Space fires press onkeyup and prevents scroll",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980014071"
+          }
+        ]
+      },
+      {
+        "id": "56fc44c42fd31f68f254ff129f888fe7fbfa71e5",
+        "type": "FEATURE",
+        "text": "sap.m.DatePicker: provides information on the validity of the last date entry",
+        "references": []
+      },
+      {
+        "id": "f085cc2559cde8bd5fa5771883d8283baff1f2b9",
+        "type": "FEATURE",
+        "text": "sap.m.Input, sap.m.MultiInput: Grouping in suggestions introduced",
+        "references": []
+      },
+      {
+        "id": "445bbeb27a4b8d74482852dd4b55e5209d67cbc4",
+        "type": "FIX",
+        "text": "ResponsiveTable: Improve ARIA roles",
+        "references": []
+      },
+      {
+        "id": "d2d20bec8ece470885e4a398680b4cb2314d6f42",
+        "type": "FIX",
+        "text": "sap.m.CheckBox: Propose and Commit actions enabled on SPACE key",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980029373"
+          }
+        ]
+      },
+      {
+        "id": "779537d72fc25c87f38d0506264ce2014281820f",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Behaviour with grouping in IE and Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980015037"
+          }
+        ]
+      },
+      {
+        "id": "8185e60e74bac40700cfbd09857e4a26271f73fd",
+        "type": "FIX",
+        "text": "sap.m.LightBox: Title and subtile of LightBox are now read out",
+        "references": []
+      },
+      {
+        "id": "a74b647c5a9ea6b2f2a5b29c1dbab55056c13d28",
+        "type": "FIX",
+        "text": "sap.m.MessagePage: Curly braces in binded properties are shown now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980023781"
+          }
+        ]
+      },
+      {
+        "id": "2d6dba4db930f52d38ca5c0dd085f53f21ff08e7",
+        "type": "FIX",
+        "text": "sap.m.ObjectAttribute: prevent scrolling on space",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980044176"
+          }
+        ]
+      },
+      {
+        "id": "4787552d0b22cb755581a39d89489854caffe23e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: stop showing appointments on OneMonth view if no date is selected on small screen",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970068322"
+          }
+        ]
+      },
+      {
+        "id": "9fe3c74d8fdb99f8078d6833a8530e9111d054ed",
+        "type": "FIX",
+        "text": "sap.m.Select: Correct update on child item \u0027key\u0027 changes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870551736"
+          }
+        ]
+      },
+      {
+        "id": "5fe868fa5adb5ee2f38c0a0c595831bc4eef1b43",
+        "type": "FIX",
+        "text": "sap.m.ToggleButton: fire press event on space keyup",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980024753"
+          }
+        ]
+      },
+      {
+        "id": "a4f9b0181a06a5a9b1089a12c073ff7275a4033e",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: Enable drag and drop of appointments",
+        "references": []
+      },
+      {
+        "id": "1be226e71dacceb8b5fbd1d25ea5aafaf21f346d",
+        "type": "FIX",
+        "text": " sap.m.CheckBox: Clicking on assigned label now sets the focus",
+        "references": []
+      },
+      {
+        "id": "1ffd45b373e36f0acfe481f1ef7447a069077a8d",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Grouping after SuggestionsPopover adoption",
+        "references": []
+      },
+      {
+        "id": "8323aa0757e8bb2e6ab9a2e902e67b434207c8c3",
+        "type": "FIX",
+        "text": " sap.m.GenericTag: Fixed vertical alignment in test pages",
+        "references": []
+      },
+      {
+        "id": "90ffbeb037c59d27bc0711a2bf34f75982cc4611",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Items with long activeTitle are now navigation type",
+        "references": []
+      },
+      {
+        "id": "2862b1d11ee81831f17d4c13385f43f7f1eee355",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Keyboard navigation with group headers",
+        "references": []
+      },
+      {
+        "id": "3885374677bcaa2d3b2dc482ee2390c42b9bb183",
+        "type": "FIX",
+        "text": " sap.m.NotificationListItem: Close and Collaps button are read out correctly now",
+        "references": []
+      },
+      {
+        "id": "d05437d1d819935f421c370ac33291cea4fdc46d",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: all active elements react on key up when SPACE is pressed",
+        "references": []
+      },
+      {
+        "id": "027aa73e2be3a0367a99140e21ebb22ca8ad44cc",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: prevent scrolling on \u0027SPACE\u0027",
+        "references": []
+      },
+      {
+        "id": "7de7e43f417e9d9bf8048d26717ae246c4090f11",
+        "type": "FIX",
+        "text": " sap.m.Switch: React on key up when SPACE is pressed",
+        "references": []
+      },
+      {
+        "id": "ad514af5f862a9fba364417cd8b960d0683d85c6",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Support rule enhancement",
         "references": []
       }
     ]

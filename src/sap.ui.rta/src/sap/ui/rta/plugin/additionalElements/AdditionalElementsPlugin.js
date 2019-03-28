@@ -605,7 +605,9 @@ sap.ui.define([
 					action : "develop"
 				},
 				params : {
-					businessContexts : this._oCurrentFieldExtInfo.BusinessContexts,
+					businessContexts : this._oCurrentFieldExtInfo.BusinessContexts.map( function( oBusinessContext){
+						return oBusinessContext.BusinessContext;
+					}),
 					serviceName : this._oCurrentFieldExtInfo.ServiceName,
 					serviceVersion : this._oCurrentFieldExtInfo.ServiceVersion,
 					entityType : this._oCurrentFieldExtInfo.EntityType

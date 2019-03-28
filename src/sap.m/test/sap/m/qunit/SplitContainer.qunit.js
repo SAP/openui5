@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/m/List",
 	"sap/m/Input",
 	"sap/m/Toolbar",
-	"sap/m/NavContainer"
+	"sap/m/NavContainer",
+	"sap/ui/model/json/JSONModel"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -31,7 +32,8 @@ sap.ui.define([
 	List,
 	Input,
 	Toolbar,
-	NavContainer
+	NavContainer,
+	JSONModel
 ) {
 	// shortcut for sap.m.ButtonType
 	var ButtonType = mobileLibrary.ButtonType;
@@ -988,7 +990,6 @@ sap.ui.define([
 
 		this.sut.to('master2', 'show');
 		sap.ui.getCore().applyChanges();
-
 		assert.equal(this.sut._oShowMasterBtn.getTooltip(), 'Show Master 2 Page ', 'Initial tooltip is correct');
 	});
 
@@ -1118,7 +1119,15 @@ sap.ui.define([
 		assert.strictEqual(this.sut.getPage(PAGE_ID2, false).sId, PAGE_ID2, "Expected page is is 'detail'");
 	});
 
+	QUnit.test("getDetailPages", function (assert) {
+		// Assert
+		assert.notEqual(this.sut.getDetailPages(), this.sut.getDetailPages(), "getDetailPages should return a copy of the detail pages.");
+	});
 
+	QUnit.test("getMasterPages", function (assert) {
+		// Assert
+		assert.notEqual(this.sut.getMasterPages(), this.sut.getMasterPages(), "getMasterPages should return a copy of the master pages.");
+	});
 
 	QUnit.module("Remove All pages API test", {
 		beforeEach : function () {
@@ -1191,5 +1200,41 @@ sap.ui.define([
 		//assert
 		assert.strictEqual(this.sut._oMasterNav.getPages()[0].getId(), "master1", "First page should be master1");
 		assert.strictEqual(this.sut._oDetailNav.getPages()[0].getId(), "master1", "First page should be master1");
+	});
+
+	QUnit.test("Detail pages via model", function (assert) {
+		// Arrange
+		var oModel1 = new JSONModel({
+			"Pages": [
+				{ title: "1" },
+				{ title: "2" },
+				{ title: "3" },
+				{ title: "4" },
+				{ title: "5" }
+			]
+		});
+
+		var oModel2 = new JSONModel({
+			"Pages": [
+				{ title: "6" }
+			]
+		});
+
+		var oSplitContainer = new SplitContainer();
+		oSplitContainer.bindAggregation("detailPages", {
+			path: "/Pages",
+			template: new sap.m.Page({ title: "{title}" })
+		});
+
+		// Act
+		oSplitContainer.setModel(oModel1);
+
+		// Assert
+		assert.equal(oSplitContainer.getDetailPages().length, 5, "Detail pages should be properly set through the model.");
+
+		// Act
+		oSplitContainer.setModel(oModel2);
+		assert.equal(oSplitContainer.getDetailPages().length, 1, "Detail pages should be properly set through the model.");
+
 	});
 });

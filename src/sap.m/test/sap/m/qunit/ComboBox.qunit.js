@@ -1,5 +1,6 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/qunit/QUnitUtils",
 	"sap/m/ComboBoxBase",
 	"sap/m/ComboBox",
 	"sap/m/ComboBoxTextField",
@@ -32,6 +33,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/sinon-qunit"
 ], function(
+	qutils,
 	ComboBoxBase,
 	ComboBox,
 	ComboBoxTextField,
@@ -149,6 +151,7 @@ sap.ui.define([
 		assert.ok(oComboBox._getList().hasStyleClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOX + "List"));
 		assert.strictEqual(oComboBox.getShowSecondaryValues(), false, 'By default the showSecondaryValues property of the ComboBox control is "false"');
 		assert.strictEqual(oComboBox.getFilterSecondaryValues(), false, 'By default the filterSecondaryValues property of the ComboBox control is "false"');
+		assert.ok(jQuery(oComboBox.getOpenArea()).hasClass("sapMInputBaseIconContainer"), "The correct dom is returned for the open area");
 
 		// cleanup
 		oComboBox.destroy();
@@ -2925,6 +2928,69 @@ sap.ui.define([
 		oLabel.destroy();
 	});
 
+	QUnit.test("it should close the picker when the ENTER key is pressed", function (assert) {
+
+		// system under test
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		// arrange
+		var aItems = [
+			new Item({
+				key: "0",
+				text: "Item 0"
+			}),
+
+			new Item({
+				key: "1",
+				text: "Item 1"
+			}),
+
+			new Item({
+				key: "2",
+				text: "Item 2"
+			})
+		],
+			oPickerTextField,
+			oPickerTextFieldDomRef,
+			fnChangeSpy,
+			oComboBox = new ComboBox({
+				items: aItems
+			});
+
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oComboBox.focus();
+		oComboBox.open();
+		// tick the clock ahead 1 milisecond, after the open animation is completed
+		this.clock.tick(1000);
+
+		oPickerTextField = oComboBox.getPickerTextField();
+		oPickerTextField.focus();
+		oPickerTextFieldDomRef = oPickerTextField.getFocusDomRef();
+		fnChangeSpy = this.spy(oComboBox, "fireChange");
+
+		oPickerTextFieldDomRef.value = "I";
+		sap.ui.qunit.QUnitUtils.triggerKeydown(oPickerTextFieldDomRef, KeyCodes.I);
+		sap.ui.qunit.QUnitUtils.triggerEvent("input", oPickerTextFieldDomRef);
+		this.clock.tick(300);
+		sap.ui.test.qunit.triggerKeydown(oPickerTextFieldDomRef, KeyCodes.ENTER);
+		this.clock.tick(300);
+
+		// assert
+		assert.strictEqual(fnChangeSpy.callCount, 1, "The change event was fired");
+		assert.strictEqual(oComboBox.getSelectedItem().getText(), "Item 0", "The correct item is selected");
+		assert.notOk(oComboBox.isOpen(), "The picker is closed");
+
+		// cleanup
+		oComboBox.destroy();
+		fnChangeSpy.restore();
+	});
 	QUnit.module("findFirstEnabledItem()");
 
 	QUnit.test("findFirstEnabledItem()", function (assert) {
@@ -10214,14 +10280,14 @@ sap.ui.define([
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, oComboBox.getRenderer().getAriaRole(), "AriaRole");
 		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_COMBO"), "Type");
-		assert.strictEqual(oInfo.description, "Value Placeholder Tooltip", "Description");
+		assert.strictEqual(oInfo.description, "Value", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, true, "Editable");
 		oComboBox.setValue("");
 		oComboBox.setEnabled(false);
 		oInfo = oComboBox.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "Placeholder Tooltip", "Description");
+		assert.strictEqual(oInfo.description, "", "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
@@ -11557,7 +11623,7 @@ sap.ui.define([
 		assert.strictEqual(aItems.length, 4, "Items of type sap.ui.core.Separator items are filtered out.");
 	});
 
-	QUnit.test(" Group header shown when filtering", function (assert) {
+	QUnit.test("Group header shown when filtering", function (assert) {
 		assert.expect(4);
 		var aItems;
 
@@ -11812,6 +11878,42 @@ sap.ui.define([
 		assert.ok(oExpectedListItem.hasStyleClass("sapMLIBFocused"), "The item has visual focus");
 	});
 
+	QUnit.test("No double focus when last item before close was group header", function (assert) {
+		var oExpectedItem = this.oComboBox.getItems()[1],
+			oExpectedSeparatorItem = this.oComboBox.getItems()[0],
+			oFocusDomRef = this.oComboBox.getFocusDomRef(),
+			oExpectedListItem, oExpectedListGroupHeader;
+
+		// arrange
+		this.oComboBox.focus();
+
+		// act
+		// Open it
+		sap.ui.test.qunit.triggerKeydown(oFocusDomRef, KeyCodes.F4);
+		this.clock.tick(500);
+		// Select group header
+		sap.ui.test.qunit.triggerKeydown(oFocusDomRef, KeyCodes.ARROW_UP);
+		// Close it again
+		sap.ui.test.qunit.triggerKeydown(oFocusDomRef, KeyCodes.F4);
+		this.clock.tick(500);
+
+		oExpectedListItem = this.oComboBox.getListItem(oExpectedItem);
+		oExpectedListGroupHeader = this.oComboBox.getListItem(oExpectedSeparatorItem);
+
+		// assert
+		assert.strictEqual(jQuery(oFocusDomRef).getSelectedText(), "item11", "Correct text was selected in the combo box.");
+		assert.ok(this.oComboBox.getSelectedItem() === oExpectedItem, "The expected item was selected.");
+
+		// act
+		// When the last item was header and we reopen it, there should not be double focus
+		sap.ui.test.qunit.triggerKeydown(oFocusDomRef, KeyCodes.F4);
+		this.clock.tick(500);
+
+		// assert
+		assert.ok(oExpectedListItem.hasStyleClass("sapMLIBFocused"), "The item has visual focus");
+		assert.ok(!oExpectedListGroupHeader.hasStyleClass("sapMLIBFocused"), "The group header does not have visual focus");
+	});
+
 	QUnit.module("Group header press");
 
 	QUnit.test("group header item press should not close the popover", function (assert) {
@@ -11904,5 +12006,99 @@ sap.ui.define([
 
 		// clean up
 		oComboBox.destroy();
+	});
+
+	QUnit.module("showItems functionality", {
+		beforeEach: function () {
+			var aData = [
+					{
+						name: "A Item 1", key: "a-item-1", group: "A"
+					}, {
+						name: "A Item 2", key: "a-item-2", group: "A"
+					}, {
+						name: "B Item 1", key: "a-item-1", group: "B"
+					}, {
+						name: "B Item 2", key: "a-item-2", group: "B"
+					}, {
+						name: "Other Item", key: "ab-item-1", group: "A B"
+					}
+				],
+				oModel = new JSONModel(aData);
+
+			this.oCombobox = new ComboBox({
+				items: {
+					path: "/",
+					template: new Item({text: "{name}", key: "{key}"})
+				}
+			}).setModel(oModel).placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+
+		},
+		afterEach: function () {
+			this.oCombobox.destroy();
+			this.oCombobox = null;
+		}
+	});
+
+	QUnit.test("Should restore default filtering function", function (assert) {
+		// Setup
+		var fnFilter = this.oCombobox.fnFilter;
+
+		// Act
+		this.oCombobox.showItems(function () {
+			return true;
+		});
+
+		// Assert
+		assert.strictEqual(this.oCombobox.fnFilter, fnFilter, "Default function has been restored");
+
+		// Act
+		fnFilter = function (sValue, oItem) {
+			return oItem.getText() === "A Item 1";
+		};
+		this.oCombobox.setFilterFunction(fnFilter);
+		this.oCombobox.showItems(function () {
+			return false;
+		});
+
+		// Assert
+		assert.strictEqual(this.oCombobox.fnFilter, fnFilter, "Custom filter function has been restored");
+	});
+
+	QUnit.test("Should show all the items", function (assert) {
+		// Setup
+		var fnGetVisisbleItems = function (aItems) {
+			return aItems.filter(function (oItem) {
+				return oItem.getVisible();
+			});
+		};
+
+		// Act
+		this.oCombobox.showItems();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oCombobox._oList.getItems().length, 5, "All the items are available");
+		assert.strictEqual(fnGetVisisbleItems(this.oCombobox._oList.getItems()).length, 5, "Shows all items");
+	});
+
+	QUnit.test("Should filter the items", function (assert) {
+		// Setup
+		var fnGetVisisbleItems = function (aItems) {
+			return aItems.filter(function (oItem) {
+				return oItem.getVisible();
+			});
+		};
+
+		// Act
+		this.oCombobox.showItems(function (sValue, oItem) {
+			return oItem.getText() === "A Item 1";
+		});
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oCombobox._oList.getItems().length, 5, "All the items are available");
+		assert.strictEqual(fnGetVisisbleItems(this.oCombobox._oList.getItems()).length, 1, "Only the matching items are visible");
 	});
 });

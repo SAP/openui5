@@ -35,6 +35,7 @@
 							sizeBehavior="{/sizeBehavior}">
 						<TileContent unit="{unit}" footer="{footer}">
 							<NumericContent
+									withMargin="false"
 									value="{kpivalue}"
 									valueColor="{color}"
 									indicator="{trend}"
@@ -111,6 +112,7 @@
 								sizeBehavior="{/sizeBehavior}">
 							<TileContent footer="{footer}">
 								<NumericContent
+										withMargin="false"
 										value="{kpivalue}"
 										valueColor="{color}"
 										indicator="{trend}"

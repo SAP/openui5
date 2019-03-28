@@ -329,6 +329,10 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("check aria-label", function(assert) {
+		assert.ok(this.oQuickViewCard.$().attr('aria-label'), 'aria-label is set');
+	});
+
 	QUnit.test("Checking if all link have width of 'auto'", function(assert) {
 		// act
 		var aLinks = this.oQuickViewCard.$().find(".sapMLnk");

@@ -33,6 +33,7 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.m.InputListItem
+	 * @see {@link fiori:/input-list-item/ Input List Item}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var InputListItem = ListItemBase.extend("sap.m.InputListItem", /** @lends sap.m.InputListItem.prototype */ { metadata : {

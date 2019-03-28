@@ -396,8 +396,28 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.base.ManagedObject | Element} vControl Control representation
 		 * @param  {string} sPropertyName  The property to be unbound
+		 * @public
 		 */
 		unbindProperty: function (vControl, sPropertyName) {},
+
+		/**
+		 * See {@link sap.ui.base.ManagedObject#bindAggregation} method
+		 *
+		 * @param {sap.ui.base.ManagedObject | Element} vControl Control representation
+		 * @param {string} sAggregationName Aggregation name
+		 * @param {object} vBindingInfos Binding info
+		 * @public
+		 */
+		bindAggregation: function (vControl, sAggregationName, vBindingInfos) {},
+
+		/**
+		 * See {@link sap.ui.base.ManagedObject#unbindAggregation} method
+		 *
+		 * @param {sap.ui.base.ManagedObject | Element} vControl Control representation
+		 * @param {string} sAggregationName The aggregation to be unbound
+		 * @public
+		 */
+		unbindAggregation: function (vControl, sAggregationName) {},
 
 		/**
 		 * See {@link sap.ui.base.ManagedObject#setProperty} method
@@ -625,12 +645,12 @@ sap.ui.define([
 		validateType: function(vControl, mAggregationMetadata, vParent, sFragment, iIndex) {},
 
 		/**
-		 * Loads a fragment and turns the result into an array of nodes. Also prefixes all the controls with a given namespace
-		 * Throws an Error if there is at least one control in the fragment without stable ID
+		 * Loads a fragment and turns the result into an array of nodes; also prefixes all the controls with a given namespace;
+		 * throws an error if there is at least one control in the fragment without a stable ID or has a duplicate ID in the given view
 		 *
-		 * @param {string} sFragment xml fragment as string
-		 * @param {string} sNamespace namespace of the app
-		 * @param {sap.ui.core.mvc.View} [oView] view for the fragment, only needed in JS case
+		 * @param {string} sFragment XML fragment as string
+		 * @param {string} sNamespace Namespace of the app
+		 * @param {sap.ui.core.mvc.View} oView View for the fragment
 		 * @returns {Element[]} Returns an array with the nodes of the controls of the fragment
 		 * @public
 		 */
@@ -657,7 +677,27 @@ sap.ui.define([
 		 * @returns {string} module path
 		 * @public
 		 */
-		getChangeHandlerModulePath: function(vControl) {}
+		getChangeHandlerModulePath: function(vControl) {},
 
+		/**
+		 * Attaches event on the specified ManagedObject
+		 *
+		 * @param {sap.ui.base.ManagedObject | Element} vControl control representation
+		 * @param {string} sEventName - Event name
+		 * @param {string} sFunctionPath - Absolute path to a function
+		 * @param {vData} vData - Predefined values for event handler function
+		 * @public
+		 */
+		attachEvent: function(oObject, sEventName, sFunctionPath, vData) {},
+
+		/**
+		 * Detaches event from the specified ManagedObject
+		 *
+		 * @param {sap.ui.base.ManagedObject | Element} vControl control representation
+		 * @param {string} sEventName - Event name
+		 * @param {string} sFunctionPath - Absolute path to a function
+		 * @public
+		 */
+		detachEvent: function(oObject, sEventName, sFunctionPath) {}
 	};
 });

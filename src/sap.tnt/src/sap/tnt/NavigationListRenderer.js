@@ -46,7 +46,7 @@ sap.ui.define(['sap/ui/core/Renderer'],
 			rm.writeClasses();
 
 			// ARIA
-			role = expanded ? 'tree' : 'toolbar';
+			role = !expanded || control.hasStyleClass("sapTntNavLIPopup") ? 'menubar' : 'tree';
 
 			rm.writeAttribute("role", role);
 

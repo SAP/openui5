@@ -5001,14 +5001,14 @@ sap.ui.define([
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, oMultiComboBox.getRenderer().getAriaRole(), "AriaRole");
 		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_MULTICOMBO"), "Type");
-		assert.strictEqual(oInfo.description, "Value Placeholder Tooltip", "Description");
+		assert.strictEqual(oInfo.description, "Value", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, true, "Editable");
 		oMultiComboBox.setValue("");
 		oMultiComboBox.setEnabled(false);
 		oInfo = oMultiComboBox.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "Placeholder Tooltip", "Description");
+		assert.strictEqual(oInfo.description, "", "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
@@ -5021,7 +5021,7 @@ sap.ui.define([
 		oMultiComboBox.setEditable(true);
 		oMultiComboBox.setSelectedKeys(["Item1", "Item2"]);
 		oInfo = oMultiComboBox.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "Placeholder Tooltip Item1 Item2", "Description");
+		assert.strictEqual(oInfo.description, "Item1 Item2", "Description");
 		oMultiComboBox.destroy();
 	});
 
@@ -5136,6 +5136,62 @@ sap.ui.define([
 		oNextItem = this.oMultiComboBox._getNextTraversalItem();
 		oPreviousItem = this.oMultiComboBox._getPreviousTraversalItem();
 		assert.ok(oNextItem.getText() !== 'Item1', "Should not return the first item anymore as it's selected already");
+		assert.ok(oPreviousItem.getText() !== 'Item3', "Should not return the last item anymore as it's selected already");
+	});
+
+	QUnit.test("_getNextTraversalItem should return the group header item when not opened", function (assert) {
+		// Arrange
+		var oGroupHeaderItem = new SeparatorItem({text: "Group Header"}),
+			oNextItem, oPreviousItem, aItems;
+
+		this.oMultiComboBox.insertItem(oGroupHeaderItem, 0);
+		sap.ui.getCore().applyChanges();
+
+		oNextItem = this.oMultiComboBox._getNextTraversalItem();
+		oPreviousItem = this.oMultiComboBox._getPreviousTraversalItem();
+		aItems = this.oMultiComboBox.getItems();
+
+		// Assert
+		assert.strictEqual(oNextItem.getText(), 'Item1', "Should return the first item");
+		assert.strictEqual(oPreviousItem.getText(), 'Item3', "Should return the last item");
+
+		// Act
+		this.oMultiComboBox.setSelectedItems([aItems[1], aItems[3]]); // The first and last item
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		oNextItem = this.oMultiComboBox._getNextTraversalItem();
+		oPreviousItem = this.oMultiComboBox._getPreviousTraversalItem();
+		assert.ok(oNextItem.getText() !== 'Item1', "Should not return the first item anymore as it's selected already");
+		assert.ok(oPreviousItem.getText() !== 'Item3', "Should not return the last item anymore as it's selected already");
+	});
+
+	QUnit.test("_getNextTraversalItem should return the first non group item when opened", function (assert) {
+		// Arrange
+		var oGroupHeaderItem = new SeparatorItem({text: "Group Header"}),
+			oNextItem, oPreviousItem, aItems;
+
+		this.oMultiComboBox.insertItem(oGroupHeaderItem, 0);
+		this.oMultiComboBox.open();
+		sap.ui.getCore().applyChanges();
+
+		oNextItem = this.oMultiComboBox._getNextTraversalItem();
+		oPreviousItem = this.oMultiComboBox._getPreviousTraversalItem();
+		aItems = this.oMultiComboBox.getItems();
+
+		// Assert
+		assert.strictEqual(oNextItem.getText(), 'Group Header', "Should return the first item");
+		assert.strictEqual(oPreviousItem.getText(), 'Item3', "Should return the last item");
+
+		// Act
+		this.oMultiComboBox.setSelectedItems([aItems[1], aItems[3]]); // The first and last item
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		oNextItem = this.oMultiComboBox._getNextTraversalItem();
+		oPreviousItem = this.oMultiComboBox._getPreviousTraversalItem();
+		assert.ok(oNextItem.getText() !== 'Item1', "Should not return the first item anymore as it's selected already");
+		assert.ok(oNextItem.getText() === 'Group Header', "Should return the group header item's text");
 		assert.ok(oPreviousItem.getText() !== 'Item3', "Should not return the last item anymore as it's selected already");
 	});
 
@@ -5388,6 +5444,59 @@ sap.ui.define([
 
 		oMultiComboBox.destroy();
 	});
+
+	QUnit.test("onsapenter on mobile device", function(assert) {
+
+		// system under test
+		this.stub(Device, "system", {
+			desktop: false,
+			tablet: false,
+			phone: true
+		});
+
+		// arrange
+		var oPickerTextField,
+			oPickerTextFieldDomRef,
+			oFirstItem = new Item({key: "Item1", text: "Item1"}),
+			oMultiComboBox = new MultiComboBox({
+				items: [
+					new SeparatorItem({ text: "First Group" }),
+					oFirstItem,
+					new Item({key: "Item2", text: "Item2"}),
+					new SeparatorItem({ text: "Second Group" }),
+					new Item({key: "Item3", text: "Item3"}),
+					new SeparatorItem({ text: "Third Group" }),
+					new Item({key: "XXX", text: "XXX"})
+				]
+			});
+
+		// act
+		oMultiComboBox.setSelectedItems([oFirstItem]);
+
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		oMultiComboBox.open();
+		this.clock.tick(300);
+
+		oPickerTextField = oMultiComboBox.getPickerTextField();
+		oPickerTextField.focus();
+		oPickerTextFieldDomRef = oPickerTextField.getFocusDomRef();
+
+		oPickerTextFieldDomRef.value = "I";
+		sap.ui.qunit.QUnitUtils.triggerEvent("input", oPickerTextFieldDomRef);
+		this.clock.tick(300);
+		sap.ui.test.qunit.triggerKeydown(oPickerTextFieldDomRef, KeyCodes.ENTER); //onsapenter
+		this.clock.tick(300);
+
+		// assert
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 2, "There are two selected item");
+		assert.notOk(oMultiComboBox.isOpen(), "The picker is closed");
+
+		// clean up
+		oMultiComboBox.destroy();
+	});
+
 
 	QUnit.test("Popup should have ariaLabelledBy that points to the PopupHiddenLabelId", function(assert) {
 		var oItem = new Item({
@@ -6439,5 +6548,99 @@ sap.ui.define([
 		assert.ok(oHandleInputEventSpy.called, "handleInputValidation should be called on input");
 		assert.notOk(oHandleTypeAheadSpy.called, "Type ahed should not be called while composing");
 		assert.notOk(oHandleFieldValueStateSpy.called, "Field Validation should not be called while composing");
+	});
+
+	QUnit.module("showItems functionality", {
+		beforeEach: function () {
+			var aData = [
+					{
+						name: "A Item 1", key: "a-item-1", group: "A"
+					}, {
+						name: "A Item 2", key: "a-item-2", group: "A"
+					}, {
+						name: "B Item 1", key: "a-item-1", group: "B"
+					}, {
+						name: "B Item 2", key: "a-item-2", group: "B"
+					}, {
+						name: "Other Item", key: "ab-item-1", group: "A B"
+					}
+				],
+				oModel = new JSONModel(aData);
+
+			this.oMultiComboBox = new MultiComboBox({
+				items: {
+					path: "/",
+					template: new Item({text: "{name}", key: "{key}"})
+				}
+			}).setModel(oModel).placeAt("MultiComboBox-content");
+
+			sap.ui.getCore().applyChanges();
+
+		},
+		afterEach: function () {
+			this.oMultiComboBox.destroy();
+			this.oMultiComboBox = null;
+		}
+	});
+
+	QUnit.test("Should restore default filtering function", function (assert) {
+		// Setup
+		var fnFilter = this.oMultiComboBox.fnFilter;
+
+		// Act
+		this.oMultiComboBox.showItems(function () {
+			return true;
+		});
+
+		// Assert
+		assert.strictEqual(this.oMultiComboBox.fnFilter, fnFilter, "Default function has been restored");
+
+		// Act
+		fnFilter = function (sValue, oItem) {
+			return oItem.getText() === "A Item 1";
+		};
+		this.oMultiComboBox.setFilterFunction(fnFilter);
+		this.oMultiComboBox.showItems(function () {
+			return false;
+		});
+
+		// Assert
+		assert.strictEqual(this.oMultiComboBox.fnFilter, fnFilter, "Custom filter function has been restored");
+	});
+
+	QUnit.test("Should show all the items", function (assert) {
+		// Setup
+		var fnGetVisisbleItems = function (aItems) {
+			return aItems.filter(function (oItem) {
+				return oItem.getVisible();
+			});
+		};
+
+		// Act
+		this.oMultiComboBox.showItems();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oMultiComboBox._oList.getItems().length, 5, "All the items are available");
+		assert.strictEqual(fnGetVisisbleItems(this.oMultiComboBox._oList.getItems()).length, 5, "Shows all items");
+	});
+
+	QUnit.test("Should filter the items", function (assert) {
+		// Setup
+		var fnGetVisisbleItems = function (aItems) {
+			return aItems.filter(function (oItem) {
+				return oItem.getVisible();
+			});
+		};
+
+		// Act
+		this.oMultiComboBox.showItems(function (sValue, oItem) {
+			return oItem.getText() === "A Item 1";
+		});
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oMultiComboBox._oList.getItems().length, 5, "All the items are available");
+		assert.strictEqual(fnGetVisisbleItems(this.oMultiComboBox._oList.getItems()).length, 1, "Only the matching items are visible");
 	});
 });

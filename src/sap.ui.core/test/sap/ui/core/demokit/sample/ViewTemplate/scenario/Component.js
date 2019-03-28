@@ -9,17 +9,20 @@
  */
 sap.ui.define([
 	"jquery.sap.script", // jQuery.sap.getUriParameters()
+	"sap/ui/core/library",
 	"sap/ui/core/mvc/View", // sap.ui.view()
-	"sap/ui/core/mvc/ViewType",
 	"sap/ui/core/sample/common/Component",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/core/util/XMLPreprocessor",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel"
-], function (jQuery, View, ViewType, BaseComponent, MockServer, XMLPreprocessor, JSONModel,
+], function (jQuery, library, View, BaseComponent, MockServer, XMLPreprocessor, JSONModel,
 		ODataModel, ODataModel2) {
 	"use strict";
+
+	// shortcut for sap.ui.core.mvc.ViewType
+	var ViewType = library.mvc.ViewType;
 
 	/*
 	 * Plug-in a visitor for XMLPreprocessor to replace

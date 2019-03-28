@@ -58,11 +58,13 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 }
 
 /**
- * For compatibility reasons text alignment should inherit from the table cells.
+ * For compatibility reasons text alignment should inherit from the table headers & cells.
  * Default value of textAlign property is Begin(not Initial) for the following controls
  * therefore they always set text-align as a style attribute in DOM, this blocks
- * alignment inheritance from the table cells.
+ * alignment inheritance from the table headers & cells.
  */
+.sapMColumnHeader > .sapMLabel,
+.sapMColumnHeader > .sapMText,
 .sapMListTblCell > .sapMSlt > .sapMSltLabel,
 .sapMListTblCell > .sapMObjectNumber,
 .sapMListTblCell > .sapMLabel,
@@ -222,7 +224,7 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 
 /* Ensuring that the row height is not smaller that 3rem in Cozy mode */
 .sapMListTblRow {
-	height: 3rem;
+	height: @sapUiElementLineHeight;
 }
 
 .sapMListTblCell.sapMListTblCellNoData {

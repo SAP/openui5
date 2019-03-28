@@ -2419,6 +2419,69 @@ function (
 				});
 		});
 
+		QUnit.test("_getChangesFromMapByNames returns array of changes with corresponding name", function (assert) {
+			var oAppComponent = {
+				id: "mockAppComponent"
+			};
+			var oChange0 = new Change(
+				Change.createInitialFileContent({
+					id: "fileNameChange0",
+					layer: "USER",
+					reference: "appComponentReference",
+					namespace: "namespace",
+					selector: {id: "group1"}
+				})
+			);
+			var oChange1 = new Change(
+				Change.createInitialFileContent({
+					id: "fileNameChange1",
+					layer: "USER",
+					reference: "appComponentReference",
+					namespace: "namespace",
+					selector: {id: "field3-2"},
+					dependentSelector: {
+						"alias": [{
+							id: "group3"
+						}, {
+							id: "group2"
+						}]
+					}
+				})
+			);
+			var oChange2 = new Change(
+				Change.createInitialFileContent({
+					id: "fileNameChange2",
+					layer: "USER",
+					reference: "appComponentReference",
+					namespace: "namespace",
+					selector: {id: "field3-2"},
+					dependentSelector: {
+						"alias": [{
+							id: "group2"
+						}, {
+							id: "group1"
+						}],
+						"alias2": {
+							id: "field3-2"
+						}
+					}
+				})
+			);
+			var aNames = ["fileNameChange0", "fileNameChange2"];
+			var aExpectedChanges = [oChange0, oChange2];
+
+			sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves([oChange0, oChange1, oChange2]);
+			sandbox.stub(Utils, "getComponentName").callThrough().withArgs(oAppComponent).returns("appComponentReference");
+
+			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {})
+				.then(function () {
+					return this.oChangePersistence._getChangesFromMapByNames(aNames);
+				}.bind(this))
+				.then(function (aChanges) {
+					assert.deepEqual(aChanges, aExpectedChanges, " 2 changes should be found");
+				});
+		});
+
 		QUnit.test("when calling transportAllUIChanges successfully", function(assert) {
 			var oMockTransportInfo = {
 				packageName : "PackageName",
@@ -2518,7 +2581,7 @@ function (
 			var oVENDORChange1 = new Change({
 				"fileType": "change",
 				"layer": "VENDOR",
-				"fileName": "a",
+				"fileName": "1",
 				"namespace": "b",
 				"packageName": "$TMP",
 				"changeType": "labelChange",
@@ -2535,7 +2598,7 @@ function (
 			var oVENDORChange2 = new Change({
 				"fileType": "change",
 				"layer": "VENDOR",
-				"fileName": "a",
+				"fileName": "2",
 				"namespace": "b",
 				"packageName": "c",
 				"changeType": "labelChange",
@@ -2551,6 +2614,7 @@ function (
 
 			var aChanges = [oVENDORChange1, oVENDORChange2];
 			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve(aChanges));
+			var aDeletedChangeContentIds = {response : [{name: "1"}, {name: "2"}]};
 
 			// Settings in registry
 			var oSetting = {
@@ -2563,16 +2627,21 @@ function (
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
 
 			// LREP Connector
-			var oLrepStub = sandbox.stub(this.oChangePersistence._oConnector, "send").returns(Promise.resolve());
+			var oLrepStub = sandbox.stub(this.oChangePersistence._oConnector, "send").returns(Promise.resolve(aDeletedChangeContentIds));
+			var oCacheRemoveChangesStub = sandbox.stub(Cache, "removeChanges");
+			var oGetChangesFromMapByNamesStub = sandbox.stub(this.oChangePersistence, "_getChangesFromMapByNames").returns(Promise.resolve());
 			var fnOpenTransportSelectionStub = sandbox.stub(this.oChangePersistence._oTransportSelection, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
 
-			this.oChangePersistence.resetChanges("VENDOR", "Change.createInitialFileContent").then(function() {
+			this.oChangePersistence.resetChanges("VENDOR", "Change.createInitialFileContent").then(function(aChanges) {
 				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
 				assert.ok(oLrepStub.calledOnce, "the LrepConnector is called once");
 				assert.equal(oLrepStub.args[0][0],
 					"/sap/bc/lrep/changes/?reference=MyComponent&appVersion=1.2.3&layer=VENDOR&changelist=transportId&generator=Change.createInitialFileContent",
 					"and with the correct URI");
 				assert.equal(oLrepStub.args[0][1], "DELETE", "and with the correct method");
+				assert.equal(oCacheRemoveChangesStub.callCount, 0, "the Cache.removeChanges is not called");
+				assert.equal(oGetChangesFromMapByNamesStub.callCount, 0,  "the getChangesFromMapByNames is not called");
+				assert.deepEqual(aChanges, [], "empty array is returned");
 				done();
 			});
 		});
@@ -2586,7 +2655,7 @@ function (
 			var oVENDORChange1 = new Change({
 				"fileType": "change",
 				"layer": "VENDOR",
-				"fileName": "a",
+				"fileName": "1",
 				"namespace": "b",
 				"packageName": "$TMP",
 				"changeType": "labelChange",
@@ -2603,7 +2672,7 @@ function (
 			var oVENDORChange2 = new Change({
 				"fileType": "change",
 				"layer": "VENDOR",
-				"fileName": "a",
+				"fileName": "2",
 				"namespace": "b",
 				"packageName": "c",
 				"changeType": "labelChange",
@@ -2619,6 +2688,7 @@ function (
 
 			var aChanges = [oVENDORChange1, oVENDORChange2];
 			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve(aChanges));
+			var aDeletedChangeContentIds = {response: [{name: "1"}, {name: "2"}]};
 
 			// Settings in registry
 			var oSetting = {
@@ -2631,8 +2701,10 @@ function (
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
 
 			// LREP Connector
-			var oLrepStub = sandbox.stub(this.oChangePersistence._oConnector, "send").returns(Promise.resolve());
+			var oLrepStub = sandbox.stub(this.oChangePersistence._oConnector, "send").returns(Promise.resolve(aDeletedChangeContentIds));
 			var fnOpenTransportSelectionStub = sandbox.stub(this.oChangePersistence._oTransportSelection, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
+			var oCacheRemoveChangesStub = sandbox.stub(Cache, "removeChanges");
+			var oGetChangesFromMapByNamesStub = sandbox.stub(this.oChangePersistence, "_getChangesFromMapByNames").returns(Promise.resolve());
 
 			return this.oChangePersistence.resetChanges("VENDOR", "", ["abc123"], ["labelChange"]).then(function() {
 				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
@@ -2641,6 +2713,10 @@ function (
 					"/sap/bc/lrep/changes/?reference=MyComponent&appVersion=1.2.3&layer=VENDOR&changelist=transportId&selector=abc123&changeType=labelChange",
 					"and with the correct URI");
 				assert.equal(oLrepStub.args[0][1], "DELETE", "and with the correct method");
+				assert.ok(oCacheRemoveChangesStub.calledOnce, "the Cache.removeChanges is called once");
+				assert.deepEqual(oCacheRemoveChangesStub.args[0][1], ["1", "2"], "and with the correct names");
+				assert.ok(oGetChangesFromMapByNamesStub.calledOnce, "the getChangesFromMapByNames is called once");
+				assert.deepEqual(oGetChangesFromMapByNamesStub.args[0][0], ["1", "2"], "and with the correct names");
 			});
 		});
 
@@ -2649,7 +2725,7 @@ function (
 			var oUserChange = new Change({
 				"fileType": "change",
 				"layer": "USER",
-				"fileName": "a",
+				"fileName": "1",
 				"namespace": "b",
 				"packageName": "c",
 				"changeType": "labelChange",
@@ -2666,7 +2742,7 @@ function (
 			var oCUSTOMERChange1 = new Change({
 				"fileType": "change",
 				"layer": "CUSTOMER",
-				"fileName": "a",
+				"fileName": "2",
 				"namespace": "b",
 				"packageName": "c",
 				"changeType": "labelChange",
@@ -2683,7 +2759,7 @@ function (
 			var oCUSTOMERChange2 = new Change({
 				"fileType": "change",
 				"layer": "CUSTOMER",
-				"fileName": "a",
+				"fileName": "3",
 				"namespace": "b",
 				"packageName": "c",
 				"changeType": "labelChange",
@@ -2699,6 +2775,7 @@ function (
 
 			var aChanges = [oCUSTOMERChange1, oUserChange, oCUSTOMERChange2];
 			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve(aChanges));
+			var aDeletedChangeContentIds = {response : [{name: "2"}, {name: "3"}]};
 
 			// Settings in registry
 			var oSetting = {
@@ -2711,20 +2788,26 @@ function (
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
 
 			// LREP Connector
-			var oLrepStub = sandbox.stub(this.oChangePersistence._oConnector, "send").returns(Promise.resolve());
+			var oLrepStub = sandbox.stub(this.oChangePersistence._oConnector, "send").returns(Promise.resolve(aDeletedChangeContentIds));
+			var oCacheRemoveChangesStub = sandbox.stub(Cache, "removeChanges");
+			var oGetChangesFromMapByNamesStub = sandbox.stub(this.oChangePersistence, "_getChangesFromMapByNames").returns(Promise.resolve());
 
-			return this.oChangePersistence.resetChanges("CUSTOMER", "Change.createInitialFileContent").then(function() {
+			return this.oChangePersistence.resetChanges("CUSTOMER", "Change.createInitialFileContent").then(function(aChanges) {
 				assert.ok(oLrepStub.calledOnce, "the LrepConnector is called once");
 				assert.equal(oLrepStub.args[0][0],
 					"/sap/bc/lrep/changes/?reference=MyComponent&appVersion=1.2.3&layer=CUSTOMER&changelist=ATO_NOTIFICATION&generator=Change.createInitialFileContent",
 					"and with the correct URI");
 				assert.equal(oLrepStub.args[0][1], "DELETE", "and with the correct method");
+				assert.equal(oCacheRemoveChangesStub.callCount, 0, "the Cache.removeChanges is not called");
+				assert.equal(oGetChangesFromMapByNamesStub.callCount, 0,  "the getChangesFromMapByNames is not called");
+				assert.deepEqual(aChanges, [], "empty array is returned");
 			});
 		});
 
 		QUnit.test("when calling resetChanges in CUSTOMER layer with selector IDs", function (assert) {
 
 			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([]));
+			var aDeletedChangeContentIds = {response : [{name: "1"}, {name: "2"}]};
 
 			// Settings in registry
 			var oSetting = {
@@ -2735,8 +2818,9 @@ function (
 				isAtoEnabled: function() {return true;}
 			};
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
-			var oLrepStub = sandbox.stub(this.oChangePersistence._oConnector, "send").returns(Promise.resolve());
-
+			var oLrepStub = sandbox.stub(this.oChangePersistence._oConnector, "send").returns(Promise.resolve(aDeletedChangeContentIds));
+			var oCacheRemoveChangesStub = sandbox.stub(Cache, "removeChanges");
+			var oGetChangesFromMapByNamesStub = sandbox.stub(this.oChangePersistence, "_getChangesFromMapByNames").returns(Promise.resolve());
 			var aControlIds = [
 				"view--control1",
 				"view--controlWithNoChanges",
@@ -2750,6 +2834,10 @@ function (
 					"selector=view--control1,view--controlWithNoChanges,feview--control2,feview--controlWithNoChanges",
 					"and with the correct URI");
 				assert.equal(oLrepStub.args[0][1], "DELETE", "and with the correct method");
+				assert.ok(oCacheRemoveChangesStub.calledOnce, "the Cache.removeChanges is called once");
+				assert.deepEqual(oCacheRemoveChangesStub.args[0][1], ["1", "2"], "and with the correct names");
+				assert.ok(oGetChangesFromMapByNamesStub.calledOnce, "the getChangesFromMapByNames is called once");
+				assert.deepEqual(oGetChangesFromMapByNamesStub.args[0][0], ["1", "2"], "and with the correct names");
 			});
 		});
 
@@ -2757,7 +2845,7 @@ function (
 
 			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([]));
 			var oTransportStub = sandbox.stub(this.oChangePersistence._oTransportSelection, "setTransports");
-
+			var aDeletedChangeContentIds = {response: [{name: "1"}, {name: "2"}]};
 			// Settings in registry
 			var oSetting = {
 				isKeyUser: true,
@@ -2767,7 +2855,9 @@ function (
 				isAtoEnabled: function() {return true;}
 			};
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
-			var oLrepStub = sandbox.stub(this.oChangePersistence._oConnector, "send").returns(Promise.resolve());
+			var oLrepStub = sandbox.stub(this.oChangePersistence._oConnector, "send").returns(Promise.resolve(aDeletedChangeContentIds));
+			var oCacheRemoveChangesStub = sandbox.stub(Cache, "removeChanges");
+			var oGetChangesFromMapByNamesStub = sandbox.stub(this.oChangePersistence, "_getChangesFromMapByNames").returns(Promise.resolve());
 
 			var aControlIds = [
 				"view--control1",
@@ -2783,6 +2873,10 @@ function (
 					"selector=view--control1,view--controlWithNoChanges,feview--control2,feview--controlWithNoChanges",
 					"and with the correct URI");
 				assert.equal(oLrepStub.args[0][1], "DELETE", "and with the correct method");
+				assert.ok(oCacheRemoveChangesStub.calledOnce, "the Cache.removeChanges is called once");
+				assert.deepEqual(oCacheRemoveChangesStub.args[0][1], ["1", "2"], "and with the correct names");
+				assert.ok(oGetChangesFromMapByNamesStub.calledOnce, "the getChangesFromMapByNames is called once");
+				assert.deepEqual(oGetChangesFromMapByNamesStub.args[0][0], ["1", "2"], "and with the correct names");
 			});
 		});
 

@@ -306,7 +306,6 @@ function (
 			this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
 			this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
 
-			assert.strictEqual(this.oCreateContainer.isAvailable(true, [this.oFormOverlay]), false, "then isAvailable is called and it returns false");
 			assert.strictEqual(this.oCreateContainer._isEditableCheck(this.oFormOverlay, true), false, "then the overlay is not editable");
 		});
 
@@ -383,9 +382,6 @@ function (
 			this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
 			this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
 
-			assert.strictEqual(this.oCreateContainer.isAvailable(false, [this.oFormOverlay]), true, "then isAvailable is called, then it returns true");
-			assert.strictEqual(this.oCreateContainer.isEnabled(false, [this.oFormOverlay]), true, "then isEnabled is called, then it returns true");
-
 			this.oCreateContainer.attachEventOnce("elementModified", function(oEvent) {
 				var oCommand = oEvent.getParameter("command");
 				assert.ok(oCommand, "then command is available");
@@ -428,13 +424,6 @@ function (
 					}
 				}
 			});
-
-			this.oCreateContainer.deregisterElementOverlay(this.oFormContainerOverlay);
-			this.oCreateContainer.registerElementOverlay(this.oFormContainerOverlay);
-
-			this.oFormContainerOverlay = OverlayRegistry.getOverlay(this.oFormContainer);
-			assert.strictEqual(this.oCreateContainer.isAvailable(true, [this.oFormContainerOverlay]), true, "then isAvailable is called, then it returns true");
-			assert.strictEqual(this.oCreateContainer.isEnabled(true, [this.oFormContainerOverlay]), true, "then isEnabled is called, then it returns true");
 
 			this.oCreateContainer.handleCreate(true, this.oFormContainerOverlay);
 		});
@@ -487,12 +476,6 @@ function (
 		QUnit.test("when a child overlay has propagated createContainer action designTime metadata and handleCreate() is called, ", function(assert) {
 			var fnDone = assert.async();
 
-			this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
-			this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
-
-			assert.strictEqual(this.oCreateContainer.isAvailable(false, [this.oFormOverlay]), true, "then isAvailable is called, then it returns true");
-			assert.strictEqual(this.oCreateContainer.isEnabled(false, [this.oFormOverlay]), true, "then isEnabled is called, then it returns true");
-
 			this.oCreateContainer.attachEventOnce("elementModified", function(oEvent) {
 				var oCommand = oEvent.getParameter("command");
 				assert.ok(oCommand, "then command is available");
@@ -508,12 +491,6 @@ function (
 
 		QUnit.test("when a sibling overlay has propagated createContainer action designTime metadata and handleCreate() is called, ", function(assert) {
 			var fnDone = assert.async();
-
-			this.oCreateContainer.deregisterElementOverlay(this.oGroupOverlay);
-			this.oCreateContainer.registerElementOverlay(this.oGroupOverlay);
-
-			assert.strictEqual(this.oCreateContainer.isAvailable(true, [this.oGroupOverlay]), true, "then isAvailable is called, then it returns true");
-			assert.strictEqual(this.oCreateContainer.isEnabled(true, [this.oGroupOverlay]), true, "then isEnabled is called, then it returns true");
 
 			this.oCreateContainer.attachEventOnce("elementModified", function(oEvent) {
 				var oCommand = oEvent.getParameter("command");
@@ -532,5 +509,4 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

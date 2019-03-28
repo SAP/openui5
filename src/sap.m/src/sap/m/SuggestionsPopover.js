@@ -54,6 +54,9 @@ sap.ui.define([
 	// shortcut for sap.m.ListType
 	var ListType = library.ListType;
 
+	// shortcut for sap.m.ListSeparators
+	var ListSeparators = library.ListSeparators;
+
 	/**
 	 * Provides a popover that should be used with an input control which requires suggestions.
 	 *
@@ -250,13 +253,7 @@ sap.ui.define([
 	 */
 	SuggestionsPopover.prototype._createSuggestionPopup = function () {
 		var oInput = this._oInput,
-			oMessageBundle = oInput._oRb, // TODO create own message bundle
-			bShouldNotDestroyItems = function (oList) {
-				// In case the list is in MultSelect mode, the popover might be opened by MultiComboBox.
-				// The MultiComboBox stores references to the list items in its items, so it can manage
-				// the synchronization of their selection state and the tokens created in the tokenizer.
-				return !(oList && oList instanceof List && oList.getMode() !== ListMode.MultiSelect);
-			};
+			oMessageBundle = oInput._oRb; // TODO create own message bundle
 
 		this._oPopover = !this._bUseDialog ?
 			(new Popover(oInput.getId() + "-popup", {
@@ -265,23 +262,12 @@ sap.ui.define([
 				placement: PlacementType.Vertical,
 				initialFocus: oInput,
 				horizontalScrolling: true
-			}).attachAfterClose(function() {
-				if (bShouldNotDestroyItems(this._oList)) {
-					return;
-				}
-
-				// only destroy items in simple suggestion mode
-				if (this._oList instanceof Table) {
-					this._oList.removeSelections(true);
-				} else {
-					this._oList.destroyItems();
-				}
-			}.bind(this)))
+			}))
 			:
 			(new Dialog(oInput.getId() + "-popup", {
 				beginButton : new Button(oInput.getId()
 					+ "-popup-closeButton", {
-					text : oMessageBundle.getText("MSGBOX_CLOSE")
+					text : oMessageBundle.getText("SUGGESTIONSPOPOVER_CLOSE_BUTTON")
 				}),
 				stretch : true,
 				customHeader : new Bar(oInput.getId()
@@ -290,17 +276,7 @@ sap.ui.define([
 				}),
 				horizontalScrolling : false,
 				initialFocus : this._oPopupInput
-			}).attachAfterClose(function() {
-				if (bShouldNotDestroyItems(this._oList)) {
-					return;
-				}
-
-				if (Table && !(this._oList instanceof Table)) {
-					this._oList.destroyItems();
-				} else {
-					this._oList.removeSelections(true);
-				}
-			}.bind(this)));
+			}));
 
 		this._registerAutocomplete();
 		this._oPopover.addStyleClass("sapMInputSuggestionPopup");
@@ -328,7 +304,8 @@ sap.ui.define([
 			this._oList = new List(oInput.getId() + "-popup-list", {
 				showNoData : false,
 				mode : ListMode.SingleSelectMaster,
-				rememberSelections : false
+				rememberSelections : false,
+				showSeparators: ListSeparators.None
 			});
 
 			this._oList.addEventDelegate({
@@ -695,7 +672,7 @@ sap.ui.define([
 			this._oSuggestionTable = new Table(oInput.getId() + "-popup-table", {
 				mode: ListMode.SingleSelectMaster,
 				showNoData: false,
-				showSeparators: "All",
+				showSeparators: ListSeparators.None,
 				width: "100%",
 				enableBusyIndicator: false,
 				rememberSelections : false,

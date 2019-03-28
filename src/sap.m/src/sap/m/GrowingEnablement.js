@@ -10,6 +10,7 @@ sap.ui.define([
 	'sap/ui/model/ChangeReason',
 	'sap/ui/base/ManagedObjectMetadata',
 	'sap/ui/core/HTML',
+	'sap/m/CustomListItem',
 	"sap/base/security/encodeXML"
 ],
 	function(
@@ -19,6 +20,7 @@ sap.ui.define([
 		ChangeReason,
 		ManagedObjectMetadata,
 		HTML,
+		CustomListItem,
 		encodeXML
 	) {
 	"use strict";
@@ -220,7 +222,7 @@ sap.ui.define([
 			}
 
 			// The growing button is changed to span tag as h1 tag was semantically incorrect.
-			this._oTrigger = new sap.m.CustomListItem({
+			this._oTrigger = new CustomListItem({
 				id: sTriggerID,
 				busyIndicatorDelay: 0,
 				type: ListType.Active,

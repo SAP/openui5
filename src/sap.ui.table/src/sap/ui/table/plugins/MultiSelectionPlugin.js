@@ -5,12 +5,18 @@ sap.ui.define([
 	'./SelectionPlugin',
 	'./SelectionModelPlugin',
 	'./BindingSelectionPlugin',
-	'../library'
+	'../library',
+	'sap/ui/core/Icon',
+	'sap/ui/core/IconPool',
+	'sap/ui/core/theming/Parameters'
 ], function(
 	SelectionPlugin,
 	SelectionModelPlugin,
 	BindingSelectionPlugin,
-	library
+	library,
+	Icon,
+	IconPool,
+	ThemeParameters
 ) {
 
 	"use strict";
@@ -73,7 +79,26 @@ sap.ui.define([
 	 */
 	MultiSelectionPlugin.prototype.init = function() {
 		SelectionPlugin.prototype.init.call(this);
+
+		var sapUiTableActionDeleteIcon = ThemeParameters.get("_sap_ui_table_DeleteIcon");
+		var oIcon = new Icon({src: IconPool.getIconURI(sapUiTableActionDeleteIcon), useIconTooltip: false});
+		oIcon.addStyleClass("sapUiTableSelectClear");
+
 		this._bLimitReached = false;
+		this.oSelectionPlugin = null;
+		this.oDeselectAllIcon = oIcon;
+	};
+
+	MultiSelectionPlugin.prototype.exit = function() {
+		if (this.oSelectionPlugin) {
+			this.oSelectionPlugin.destroy();
+			this.oSelectionPlugin = null;
+		}
+
+		if (this.oDeselectAllIcon) {
+			this.oDeselectAllIcon.destroy();
+			this.oDeselectAllIcon = null;
+		}
 	};
 
 	/**
@@ -85,7 +110,7 @@ sap.ui.define([
 		return {
 			headerSelector: {
 				type: "clear",
-				icon: "sap-icon://sys-cancel"
+				icon: this.oDeselectAllIcon
 			}
 		};
 	};
@@ -123,6 +148,10 @@ sap.ui.define([
 		}
 
 		var iLimit = this.getLimit();
+		// in case iIndexFrom is already selected the range starts from the next index
+		if (this.isIndexSelected(iIndexFrom)) {
+			iIndexFrom++;
+		}
 		var iLength = iIndexTo - iIndexFrom + 1;
 		var that = this;
 		var oBinding = this._getBinding();
@@ -134,7 +163,7 @@ sap.ui.define([
 			this.setLimitReached(true);
 		}
 
-		if (oBinding && iIndexFrom >= 0 && iLength > 0) {
+		if (oBinding && iIndexFrom >= 0 && iLength >= 0) {
 			loadMultipleContexts(oBinding, iIndexFrom, iLength).then(function () {
 				that.oSelectionPlugin.addSelectionInterval(iIndexFrom, iIndexTo);
 			});
@@ -196,6 +225,7 @@ sap.ui.define([
 	 */
 	MultiSelectionPlugin.prototype.clearSelection = function() {
 		if (this.oSelectionPlugin) {
+			this.setLimitReached(false);
 			this.oSelectionPlugin.clearSelection();
 		}
 	};
@@ -272,6 +302,7 @@ sap.ui.define([
 	 */
 	MultiSelectionPlugin.prototype.removeSelectionInterval = function(iIndexFrom, iIndexTo) {
 		if (this.oSelectionPlugin) {
+			this.setLimitReached(false);
 			this.oSelectionPlugin.removeSelectionInterval(iIndexFrom, iIndexTo);
 		}
 	};
@@ -283,6 +314,7 @@ sap.ui.define([
 	MultiSelectionPlugin.prototype.setSelectedIndex = function(iIndex) {
 		if (this.oSelectionPlugin) {
 			var that = this;
+			this.setLimitReached(false);
 			var oBinding = this._getBinding();
 			if (oBinding && iIndex >= 0) {
 				loadMultipleContexts(oBinding, iIndex, 1).then(function () {
@@ -329,12 +361,11 @@ sap.ui.define([
 
 		if (this.oSelectionPlugin) {
 			this.oSelectionPlugin.destroy();
-			this.oSelectionPlugin.detachEvent("selectionChange", this._onSelectionChange);
 			this.oSelectionPlugin = null;
 		}
 		if (oParent) {
 			this.oSelectionPlugin = new oParent._SelectionAdapterClass();
-			this.oSelectionPlugin.attachEvent("selectionChange", this._onSelectionChange, this);
+			this.oSelectionPlugin.attachSelectionChange(this._onSelectionChange, this);
 			oParent.setSelectionMode(SelectionMode.MultiToggle);
 		}
 
@@ -405,6 +436,10 @@ sap.ui.define([
 		if (this.oSelectionPlugin) {
 			return this.oSelectionPlugin._onBindingChange(oEvent);
 		}
+	};
+
+	MultiSelectionPlugin.prototype.onThemeChanged = function() {
+		this.oDeselectAllIcon.setSrc(ThemeParameters.get("_sap_ui_table_DeleteIcon"));
 	};
 
 	return MultiSelectionPlugin;

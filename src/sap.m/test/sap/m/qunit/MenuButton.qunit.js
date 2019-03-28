@@ -192,15 +192,9 @@ sap.ui.define([
 
 		var oInnerButton = this.sut._getButtonControl(),
 			oTextButton = oInnerButton._getTextButton(),
-			oArrowButton = oInnerButton._getArrowButton(),
-			oInvisibleTooltip = oInnerButton._oInvisibleTooltipInfoLabel,
-			aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" ");
+			oArrowButton = oInnerButton._getArrowButton();
 
 		//assert
-		assert.ok(oInvisibleTooltip, "There is a tooltip info label");
-		assert.strictEqual(oInvisibleTooltip.getText(), sTooltip, "The info label holds the tooltip text");
-		assert.ok(oInvisibleTooltip.getDomRef(), "The info label is rendered");
-		assert.ok(aAriaLabelledByIds.indexOf(oInvisibleTooltip.$().attr('id')) !== -1, "The info label is rendered at the correct place");
 		assert.strictEqual(oInnerButton.$().attr("title"), sTooltip, "The inner split button has a title property with the provided tooltip");
 		assert.ok(!oTextButton.getDomRef().hasAttribute("title"), "The inner '_textButton' button does not have and need DOM title property");
 		assert.ok(!oArrowButton.getDomRef().hasAttribute("title"), "The inner '_arrowButton' button does not have DOM title property set to its Icon name");
@@ -237,15 +231,9 @@ sap.ui.define([
 		this.sut.setIcon("sap-icon://" + sIconName);
 		sap.ui.getCore().applyChanges();
 
-		var oInnerButton = this.sut._getButtonControl(),
-			oInvisibleTooltip = oInnerButton._oInvisibleTooltipInfoLabel,
-			aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" ");
+		var oInnerButton = this.sut._getButtonControl();
 
 		//assert
-		assert.ok(oInvisibleTooltip, "There is an inner info label");
-		assert.strictEqual(oInvisibleTooltip.getText(), sTooltip, "The info label holds the tooltip text");
-		assert.ok(oInvisibleTooltip.getDomRef(), "The info label is rendered");
-		assert.ok(aAriaLabelledByIds.indexOf(oInvisibleTooltip.$().attr('id')) !== -1, "The info label is rendered at the correct place");
 		assert.strictEqual(oInnerButton.$().attr("title"), sTooltip, "The inner split button has a title property with the provided tooltip");
 	});
 
@@ -259,11 +247,9 @@ sap.ui.define([
 			bHasAriaLabeledBy = oInnerButton.getDomRef().hasAttribute("aria-labelledby"),
 			aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" "),
 			bAriaLabeledByHasCorrectValue1 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT")),
-			bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED")),
-			oInvisibleTooltip = oInnerButton._oInvisibleTooltipInfoLabel;
+			bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED"));
 
 		//assert
-		assert.ok(!oInvisibleTooltip, "There is no tooltip info label");
 		assert.ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct id references');
 	});
 
@@ -280,13 +266,9 @@ sap.ui.define([
 			bHasAriaLabeledBy = oInnerButton.getDomRef().hasAttribute("aria-labelledby"),
 			aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" "),
 			bAriaLabeledByHasCorrectValue1 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT")),
-			bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED")),
-			oInvisibleTooltip = oInnerButton._oInvisibleTooltipInfoLabel;
+			bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED"));
 
 		//assert
-		assert.ok(oInvisibleTooltip, "There is an inner info label");
-		assert.strictEqual(oInvisibleTooltip.getText(), sTooltip, "The info label holds the tooltip text");
-		assert.ok(oInvisibleTooltip.getDomRef(), "The info label is rendered");
 		assert.strictEqual(oInnerButton.$().attr("title"), sTooltip, "The inner split button has a title property with the provided tooltip");
 		assert.ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct id references');
 	});
@@ -326,9 +308,24 @@ sap.ui.define([
 			bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("BUTTON_ARIA_TYPE_REJECT"));
 
 		//assert
-		assert.ok(oInnerButton._oInvisibleTooltipInfoLabel.getDomRef(), "There is tooltip info label and it is rendered");
 		assert.ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct value');
 		assert.strictEqual(oInnerButton.$().attr('title'), sTooltip, "The icon tooltip is successfully set");
+	});
+
+	QUnit.test("Semantic MenuButton disabled in Split mode", function (assert) {
+		var sTooltip = "Some meaningful tooltip";
+		this.sut.setEnabled(false);
+		this.sut.setIcon("sap-icon://slim-arrow-down");
+		this.sut.setText("Hello");
+		this.sut.setType(ButtonType.Emphasized);
+		this.sut.setButtonMode(MenuButtonMode.Split);
+		sap.ui.getCore().applyChanges();
+
+		var oInnerButton = this.sut._getButtonControl();
+
+		//assert
+		assert.strictEqual(oInnerButton.$().attr("tabindex"), "-1", "The inner split button has a tabindex -1");
+		assert.ok(oInnerButton.$().children().hasClass("sapMSBInnerDisabled"), "The inner split button has disabled class");
 	});
 
 	QUnit.module("Accessibility (Labelling)", {

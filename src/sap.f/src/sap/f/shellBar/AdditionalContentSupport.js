@@ -5,15 +5,18 @@
 // Provides helper sap.f.shellBar.AdditionalContentSupport
 sap.ui.define([
 		"sap/m/OverflowToolbarLayoutData",
-		"sap/m/OverflowToolbarPriority",
-		"sap/base/Log"
+		"sap/base/Log",
+		"sap/m/library"
 	],
 	function(
 		OverflowToolbarLayoutData,
-		OverflowToolbarPriority,
-		Log
+		Log,
+		library
 	) {
 		"use strict";
+
+		// shortcut for sap.m.OverflowToolbarPriority
+		var OverflowToolbarPriority = library.OverflowToolbarPriority;
 
 		/**
 		 * @author SAP SE

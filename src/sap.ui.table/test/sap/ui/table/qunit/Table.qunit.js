@@ -13,18 +13,23 @@ sap.ui.define([
 	"sap/ui/table/RowActionItem",
 	"sap/ui/table/RowSettings",
 	"sap/ui/table/TableUtils",
-	'sap/ui/table/library',
-	'sap/ui/core/library',
+	"sap/ui/table/library",
+	"sap/ui/table/plugins/SelectionPlugin",
+	"sap/ui/table/plugins/MultiSelectionPlugin",
+	"sap/ui/core/library",
 	"sap/ui/core/Control",
 	"sap/ui/core/util/PasteHelper",
 	"sap/ui/Device", "sap/ui/model/json/JSONModel", "sap/ui/model/Sorter", "sap/ui/model/Filter", "sap/ui/model/type/Float",
 	"sap/m/Text", "sap/m/Input", "sap/m/Label", "sap/m/CheckBox", "sap/m/Button", "sap/m/Link", "sap/m/RatingIndicator", "sap/m/Image",
-	"sap/m/Toolbar", "sap/m/ToolbarDesign", "sap/ui/unified/Menu", "sap/ui/unified/MenuItem", "sap/m/Menu", "sap/m/MenuItem", "sap/base/Log"
+	"sap/m/Toolbar", "sap/ui/unified/Menu", "sap/ui/unified/MenuItem", "sap/m/Menu", "sap/m/MenuItem", "sap/base/Log", "sap/m/library"
 ], function(qutils, TableQUnitUtils, Table, Column, ColumnMenu, ColumnMenuRenderer, AnalyticalColumnMenuRenderer, TablePersoController, RowAction,
-			RowActionItem, RowSettings, TableUtils, TableLibrary, CoreLibrary, Control, PasteHelper,
+			RowActionItem, RowSettings, TableUtils, TableLibrary, SelectionPlugin, MultiSelectionPlugin, CoreLibrary, Control, PasteHelper,
 			Device, JSONModel, Sorter, Filter, FloatType,
-			Text, Input, Label, CheckBox, Button, Link, RatingIndicator, Image, Toolbar, ToolbarDesign, Menu, MenuItem, MenuM, MenuItemM, Log) {
+			Text, Input, Label, CheckBox, Button, Link, RatingIndicator, Image, Toolbar, Menu, MenuItem, MenuM, MenuItemM, Log, library) {
 	"use strict";
+
+	// shortcut for sap.m.ToolbarDesign
+	var ToolbarDesign = library.ToolbarDesign;
 
 	// Shortcuts
 	var SortOrder = TableLibrary.SortOrder;
@@ -311,10 +316,6 @@ sap.ui.define([
 		assert.equal(oTable.getBinding("rows").iLength, 200, "RowCount after removing filter");
 	});
 
-	QUnit.test("Selection Plugin", function(assert) {
-		assert.ok(oTable._oSelectionPlugin.isA("sap.ui.table.plugins.SelectionModelPlugin"), "SelectionModelPlugin is initialized");
-	});
-
 	QUnit.test("SelectionMode", function(assert) {
 		oTable.setSelectionMode(SelectionMode.MultiToggle);
 		assert.strictEqual(oTable.getSelectionMode(), SelectionMode.MultiToggle, "SelectionMode set to MultiToggle");
@@ -388,6 +389,19 @@ sap.ui.define([
 		oTable.addSelectionInterval(0, 0);
 		assert.ok(!$SelectAll.hasClass("sapUiTableSelAll"), "Selected the first row again: The SelectAll checkbox is checked");
 		assert.strictEqual($SelectAll.attr("title"), sDeselectAllTitleText, "Selected the first row again: The SelectAll title text is correct");
+	});
+
+	QUnit.test("Selection with MultiSelectionPlugin", function(assert){
+		var done = assert.async();
+		oTable.addPlugin(new MultiSelectionPlugin({limit: 5}));
+		assert.ok(oTable._oSelectionPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin"), "MultiSelectionPlugin is initialized");
+		oTable.setVisibleRowCount(3);
+		oTable._oSelectionPlugin.attachEvent("selectionChange", function(oEvent){
+			assert.ok(oEvent.mParameters.limitReached, "The selection limit was reached");
+			assert.strictEqual(oTable.getFirstVisibleRow(), 2, "The first visible row is properly set");
+			done();
+		});
+		oTable._oSelectionPlugin.addSelectionInterval(0,10);
 	});
 
 	QUnit.test("VisibleRowCount", function(assert) {
@@ -4140,34 +4154,6 @@ sap.ui.define([
 		assert.ok(oLastRow !== oLastRowAfterRowsUpdate, "Old row was replaced after row invalidation");
 		assert.ok(oLastRowFirstCell === oLastRowFirstCellAfterRowsUpdate, "Old cells recycled");
 		assert.ok(oLastRowFirstCell.getParent() === oLastRowAfterRowsUpdate, "Recycled cells have the last row as parent");
-
-		var fnInvalidateRowsAggregation = sinon.spy(oTable, "invalidateRowsAggregation");
-		oTable.getColumns()[0].setFlexible(false);
-		assert.equal(fnInvalidateRowsAggregation.callCount, 1, "invalidateRowsAggregation() called after changing the 'flexible' property");
-
-		oTable.getColumns()[0].setHeaderSpan(2);
-		assert.equal(fnInvalidateRowsAggregation.callCount, 2, "invalidateRowsAggregation() called after changing the 'headerSpan' property");
-
-		oTable.getColumns()[0].setVisible(false);
-		assert.equal(fnInvalidateRowsAggregation.callCount, 3, "invalidateRowsAggregation() called after changing the 'visible' property");
-
-		oTable.getColumns()[0].setHeaderSpan(1);
-		assert.equal(fnInvalidateRowsAggregation.callCount, 3,
-			"invalidateRowsAggregation() NOT called after changing the 'headerSpan' property for invisible column");
-
-		oTable.getColumns()[0].setFlexible(true);
-		assert.equal(fnInvalidateRowsAggregation.callCount, 3,
-			"invalidateRowsAggregation() NOT called after changing the 'flexible' property for invisible column");
-
-		oTable.getColumns()[0].setTemplate(new Control());
-		assert.equal(fnInvalidateRowsAggregation.callCount, 3,
-			"invalidateRowsAggregation() NOT called after changing the column template for invisible column");
-
-		oTable.getColumns()[0].setVisible(true);
-		assert.equal(fnInvalidateRowsAggregation.callCount, 4, "invalidateRowsAggregation() called after changing the 'visible' property");
-
-		oTable.getColumns()[0].setTemplate(new Control());
-		assert.equal(fnInvalidateRowsAggregation.callCount, 5, "invalidateRowsAggregation() called after changing the column template");
 	});
 
 	QUnit.test("Destruction of the table if showNoData = true", function(assert) {
@@ -4472,5 +4458,95 @@ sap.ui.define([
 		oRM.flush(Div);
 
 		assert.strictEqual(Div.childElementCount, 0, "Nothing should be rendered without synchronization enabled");
+	});
+
+	QUnit.module("Plugins", {
+		beforeEach: function() {
+			this.oTable = new Table();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("Selection plugin", function(assert) {
+		var TestSelectionPlugin = SelectionPlugin.extend("sap.ui.table.test.SelectionPlugin");
+
+		assert.ok(this.oTable._oSelectionPlugin.isA("sap.ui.table.plugins.SelectionModelPlugin"), "The default selection plugin is used");
+
+		this.oTable.setSelectionMode(SelectionMode.Single);
+		assert.strictEqual(this.oTable.getSelectionMode(), SelectionMode.Single,
+			"If the default selection plugin is used, the selection mode can be set");
+
+		this.oTable.addPlugin(new TestSelectionPlugin());
+		assert.ok(this.oTable._oSelectionPlugin.isA("sap.ui.table.test.SelectionPlugin"), "The selection plugin set to the table is used");
+
+		this.oTable.setSelectionMode(SelectionMode.MultiToggle);
+		assert.strictEqual(this.oTable.getSelectionMode(), SelectionMode.Single,
+			"If a selection plugin is set, the selection mode cannot be set");
+	});
+
+	QUnit.module("Model and context propagation", {
+		beforeEach: function() {
+			var oModel = new JSONModel();
+
+			this.oTable = new Table({
+				rowActionTemplate: new RowAction(),
+				rowSettingsTemplate: new RowSettings(),
+				columns: [
+					new Column({
+						label: new Text(),
+						template: new Text()
+					}).setCreationTemplate(new Text())
+				],
+				models: {
+					modelInConstructor: oModel
+				},
+				bindingContexts: {
+					modelInConstructor: oModel.createBindingContext("/path")
+				}
+			});
+			this.oTable.setModel(new JSONModel());
+			this.oTable.setModel(new JSONModel(), "modelName");
+			this.oTable.setBindingContext(this.oTable.getModel().createBindingContext("/path"));
+			this.oTable.setBindingContext(this.oTable.getModel("modelName").createBindingContext("/path"), "modelName");
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		},
+		assertModelAndContext: function(assert, oObject, sObjectName, bShouldHaveModelsAndContexts, bDirectChild) {
+			assert.strictEqual(oObject.getModel() != null, bShouldHaveModelsAndContexts,
+				sObjectName + ": " + (bShouldHaveModelsAndContexts ? "Has unnamed model"
+																   : "Has no unnamed model"));
+			assert.strictEqual(oObject.getModel("modelName") != null, bShouldHaveModelsAndContexts,
+				sObjectName + ": " + (bShouldHaveModelsAndContexts ? "Has named model"
+																   : "Has no named model"));
+			assert.strictEqual(oObject.getBindingContext() != null, bShouldHaveModelsAndContexts,
+				sObjectName + ": " + (bShouldHaveModelsAndContexts ? "Has binding context for unnamed model"
+																   : "Has no binding context for unnamed model"));
+			assert.strictEqual(oObject.getBindingContext("modelName") != null, bShouldHaveModelsAndContexts,
+				sObjectName + ": " + (bShouldHaveModelsAndContexts ? "Has binding context for named model"
+																   : "Has no binding context for named model"));
+
+			// Unfortunately, propagation to direct children of models and binding contexts passed to the constructor cannot be skipped.
+			if (!bDirectChild) {
+				assert.strictEqual(oObject.getModel("modelInConstructor") != null, bShouldHaveModelsAndContexts,
+					sObjectName + ": " + (bShouldHaveModelsAndContexts ? "Has model that was passed to the constructor"
+																	   : "Has no model that was passed to the constructor"));
+				assert.strictEqual(oObject.getBindingContext("modelInConstructor") != null, bShouldHaveModelsAndContexts,
+					sObjectName + ": " + (bShouldHaveModelsAndContexts ? "Has binding context model that was passed to the constructor"
+																	   : "Has no binding context model that was passed to the constructor"));
+			}
+		}
+	});
+
+	QUnit.test("Templates", function(assert) {
+		this.assertModelAndContext(assert, this.oTable, "Table", true);
+		this.assertModelAndContext(assert, this.oTable.getColumns()[0], "Column", true, true);
+		this.assertModelAndContext(assert, this.oTable.getRowActionTemplate(), "RowActionTemplate", false, true);
+		this.assertModelAndContext(assert, this.oTable.getRowSettingsTemplate(), "RowSettingsTemplate", false, true);
+		this.assertModelAndContext(assert, this.oTable.getColumns()[0].getLabel(), "Column label", true);
+		this.assertModelAndContext(assert, this.oTable.getColumns()[0].getTemplate(), "Column template", false, false);
+		this.assertModelAndContext(assert, this.oTable.getColumns()[0].getCreationTemplate(), "Column creationTemplate", false, false);
 	});
 });

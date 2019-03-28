@@ -142,6 +142,11 @@
 		// export resulting debug mode under legacy property
 		window["sap-ui-debug"] = vDebugInfo;
 
+		// check for optimized sources by testing variable names in a local function
+		// (check for native API ".location" to make sure that the function's source can be retrieved)
+		window["sap-ui-optimized"] = window["sap-ui-optimized"] ||
+			(/\.location/.test(_getOption) && !/oBootstrapScript/.test(_getOption));
+
 		if ( window["sap-ui-optimized"] && vDebugInfo ) {
 			// if current sources are optimized and any debug sources should be used, enable the "-dbg" suffix
 			window['sap-ui-loaddbg'] = true;

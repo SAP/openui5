@@ -123,7 +123,7 @@ sap.ui.define([
 			mergeDuplicates : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
-			 * Defines the control serialization function if <code>mergeDuplicates<code> property is set to <code>true</code>. The control itself uses this function to compare values of two repeating cells.
+			 * Defines the control serialization function if <code>mergeDuplicates</code> property is set to <code>true</code>. The control itself uses this function to compare values of two repeating cells.
 			 * Default value "getText" is suitable for <code>sap.m.Label</code> and <code>sap.m.Text</code> controls but for the <code>sap.ui.core.Icon</code> control "getSrc" function should be used to merge icons.
 			 * <b>Note:</b> You can pass one string parameter to given function after "#" sign. e.g. "data#myparameter"
 			 * @since 1.16

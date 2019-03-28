@@ -54,9 +54,9 @@ sap.ui.define([
 	 * Returns all Business Contexts for given service and EntityTypeName/EntitySetName. Note that either EntityTypeName or EntitySetName can be
 	 * supplied. Providing both results in an exception
 	 *
-	 * @param {string} sServiceUri
-	 * @param {string} sEntityTypeName
-	 * @param {string} sEntitySetName
+	 * @param {string}  sServiceUri
+	 * @param {string}  sEntityTypeName
+	 * @param {string}  sEntitySetName
 	 * @returns {array} aBusinessContexts
 	 * @public
 	 */
@@ -428,7 +428,7 @@ sap.ui.define([
 		if (aResults !== null && aResults.length > 0) {
 			for (var i = 0; i < aResults.length; i++) {
 				if (aResults[i].BusinessContext !== null) {
-					aBusinessContexts.push(aResults[i].BusinessContext);
+					aBusinessContexts.push({ BusinessContext: aResults[i].BusinessContext, BusinessContextDescription: aResults[i].BusinessContextDescription });
 				}
 			}
 		}

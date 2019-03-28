@@ -4,19 +4,15 @@
 
 sap.ui.define([
 	"./BaseTreeModifier",
-	"sap/ui/base/DataType",
-	"sap/ui/core/XMLTemplateProcessor",
+	"sap/ui/base/ManagedObject",
 	"sap/base/util/merge",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/util/XMLHelper",
 	// needed to have sap.ui.xmlfragment
 	"sap/ui/core/Fragment"
 ], function(
 	BaseTreeModifier,
-	DataType,
-	XMLTemplateProcessor,
+	ManagedObject,
 	merge,
-	jQuery,
 	XMLHelper
 ) {
 
@@ -39,7 +35,7 @@ sap.ui.define([
 			if (bVisible) {
 				oControl.removeAttribute("visible");
 			} else {
-				this.setProperty(oControl, "visible", bVisible);
+				oControl.setAttribute("visible", bVisible);
 			}
 		},
 
@@ -51,7 +47,7 @@ sap.ui.define([
 			if (!bStashed) {
 				oControl.removeAttribute("stashed");
 			} else {
-				this.setProperty(oControl, "stashed", bStashed);
+				oControl.setAttribute("stashed", bStashed);
 			}
 			this.setVisible(oControl, !bStashed);
 		},
@@ -69,18 +65,29 @@ sap.ui.define([
 			oControl.removeAttribute(sPropertyName);
 		},
 
-		setProperty: function (oControl, sPropertyName, oPropertyValue) {
-			oControl.setAttribute(sPropertyName, oPropertyValue);
+		setProperty: function (oControl, sPropertyName, vPropertyValue) {
+			var sValue = vPropertyValue;
+			var oPropertyInfo = this._getControlMetadata(oControl).getProperty(sPropertyName);
+			if (oPropertyInfo && oPropertyInfo.type === "object") {
+				//not a property like aggregation
+				//type object can be json objects
+				sValue = ManagedObject.bindingParser.escape(JSON.stringify(vPropertyValue));
+			}
+			oControl.setAttribute(sPropertyName, sValue);
 		},
 
 		getProperty: function (oControl, sPropertyName) {
-			var oPropertyInfo = this._getControlMetadata(oControl).getProperty(sPropertyName);
 			var vPropertyValue = oControl.getAttribute(sPropertyName);
+
+			var oPropertyInfo = this._getControlMetadata(oControl).getProperty(sPropertyName);
 			if (oPropertyInfo) { //not a property like aggregation
 				var oType = oPropertyInfo.getType();
 				if (vPropertyValue === null) {
 					vPropertyValue = oPropertyInfo.getDefaultValue() || oType.getDefaultValue();
 				} else {
+					//unescape binding like XMLTemplateProcessor, but we don't expect to get a real binding here
+					var sUnescaped = ManagedObject.bindingParser(vPropertyValue, undefined, true);
+					vPropertyValue = sUnescaped || vPropertyValue;
 					vPropertyValue = oType.parseValue(vPropertyValue);
 				}
 			}
@@ -167,12 +174,6 @@ sap.ui.define([
 					return oView.ownerDocument.getElementById(sId);
 				} else {
 					return oView.querySelector("[id='" + sId + "']");
-				}
-
-				// Use jQuery.find function to access control if getElementById(..) failed
-				var oNodes = jQuery(document.getElementById(sId));
-				if (oNodes.length === 1) {
-					return oNodes[0];
 				}
 			}
 		},
@@ -460,22 +461,27 @@ sap.ui.define([
 		},
 
 		/**
-		 * Loads a fragment and turns the result into an array of nodes. Also prefixes all the controls with a given namespace
-		 * Throws an Error if there is at least one control in the fragment without stable ID
-		 *
-		 * @param {string} sFragment xml fragment as string
-		 * @param {string} sNamespace namespace of the app
-		 * @returns {Node[]} Returns an array with the nodes of the controls of the fragment
+		 * @inheritDoc
 		 */
-		instantiateFragment: function(sFragment, sNamespace) {
+		instantiateFragment: function(sFragment, sNamespace, oView) {
+			var aControls;
 			var oFragment = XMLHelper.parse(sFragment);
 			oFragment = this._checkAndPrefixIdsInFragment(oFragment, sNamespace);
 
 			if (oFragment.localName === "FragmentDefinition") {
-				return this._getElementNodeChildren(oFragment);
+				aControls = this._getElementNodeChildren(oFragment);
 			} else {
-				return [oFragment];
+				aControls = [oFragment];
 			}
+
+			// check if there is already a field with the same ID and throw error if so
+			aControls.forEach(function(oNode) {
+				if (this._byId(oNode.getAttribute("id"), oView)) {
+					throw Error("The following ID is already in the view: " + oNode.getAttribute("id"));
+				}
+			}.bind(this));
+
+			return aControls;
 		},
 
 		/**

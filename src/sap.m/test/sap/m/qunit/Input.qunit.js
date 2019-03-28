@@ -2652,6 +2652,23 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Create Suggestions Popover after suggestion items are added", function(assert) {
+		// arrange
+		var oInput = new Input({
+			suggestionItems: [new Item({text: "test"})]
+		});
+
+		// act
+		oInput.setShowSuggestion(true); // set show suggestion after items are added
+
+		// assert
+		assert.ok(oInput._getSuggestionsPopover()._oList, "List should be created when enabling suggestions");
+
+		// clean up
+		oInput.destroy();
+		oInput = null;
+	});
+
 	QUnit.module("Key and Value");
 
 	function createInputWithSuggestions () {
@@ -2809,6 +2826,27 @@ sap.ui.define([
 		assert.equal(oInput.getSelectedKey(), "2", "selected key is correct");
 
 		oInput.destroy();
+	});
+
+	QUnit.test("Set selection should stop if input is destroyed after firing change event", function (assert) {
+		// Arrange
+		var oInput = createInputWithSuggestions(),
+			fnChangeHandler = function () {
+				oInput.destroy();
+			},
+			oSpy = sinon.spy(fnChangeHandler);
+
+		oInput.attachChange(oSpy);
+
+		// Act
+		oInput.setSelectedItem(oInput.getSuggestionItems()[1]);
+
+		// Assert
+		assert.ok(oSpy.calledOnce, "Should call handler. It is possible that this handler destroys the input.");
+		assert.strictEqual(oInput._oSuggPopover, null, "Suggestions popover is destroyed");
+
+		// Clean up
+		oInput = null;
 	});
 
 	QUnit.test("Set selection before suggestionItems", function(assert) {
@@ -3173,14 +3211,14 @@ sap.ui.define([
 		assert.strictEqual(oInfo.role, oInput.getRenderer().getAriaRole(), "AriaRole");
 		assert.strictEqual(oInput.getRenderer().getAriaRole(), "", "No custom ARIA role");
 		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_INPUT"), "Type");
-		assert.strictEqual(oInfo.description, "Value Placeholder Tooltip", "Description");
+		assert.strictEqual(oInfo.description, "Value", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, true, "Editable");
 		oInput.setValue("");
 		oInput.setEnabled(false);
 		oInfo = oInput.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "Placeholder Tooltip", "Description");
+		assert.strictEqual(oInfo.description, "", "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
@@ -3192,7 +3230,7 @@ sap.ui.define([
 		assert.strictEqual(oInfo.editable, false, "Editable");
 		oInput.setDescription("Description");
 		oInfo = oInput.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "Placeholder Tooltip Description", "Description");
+		assert.strictEqual(oInfo.description, "Description", "Description");
 		oInput.destroy();
 	});
 
@@ -3388,29 +3426,52 @@ sap.ui.define([
 
 	QUnit.module("API", {
 		beforeEach: function () {
-			this.input = new Input().placeAt("qunit-fixture");
+			this.oInput = new Input().placeAt("qunit-fixture");
 		},
 		afterEach: function () {
-			this.input.destroy();
-			this.input = null;
+			this.oInput.destroy();
+			this.oInput = null;
 		}
 	});
 
 	QUnit.test('Calling insertSuggestionRow', function (assert) {
 		// arrange
-		var fnInsertAggregation = sinon.spy(this.input, "insertAggregation");
-		this.input._synchronizeSuggestions = function() {};
+		var fnInsertAggregation = sinon.spy(this.oInput, "insertAggregation");
+		this.oInput._synchronizeSuggestions = function() {};
 		var oColumnListItem = new ColumnListItem();
 
 		// act
-		this.input.insertSuggestionRow(oColumnListItem, 1);
+		this.oInput.insertSuggestionRow(oColumnListItem, 1);
 
 		// assert
 		assert.strictEqual(fnInsertAggregation.called, true, 'should call insertAggregation');
 		assert.strictEqual(fnInsertAggregation.calledWithExactly("suggestionRows", oColumnListItem, 1), true, 'should call insertAggregation with correct parameters');
 
 		// clean
-		this.input.insertAggregation.restore();
+		this.oInput.insertAggregation.restore();
+	});
+
+	QUnit.test("Methods that should reflect on the Suggestions Popover", function (assert) {
+		// arrange
+		this.oInput.setShowSuggestion(true);
+		var bSuppressInvalidate = true;
+
+		// assert
+		assert.strictEqual(this.oInput.getMaxSuggestionWidth(), "", "Input initial suggestion width should be ''");
+		assert.strictEqual(this.oInput._oSuggPopover._sPopoverContentWidth, null, "Suggestions popover should be 'null' if the Input didn't set it");
+		assert.strictEqual(this.oInput.getEnableSuggestionsHighlighting(), this.oInput._oSuggPopover._bEnableHighlighting, "Input and Popover highlighting should be the same.");
+		assert.strictEqual(this.oInput.getAutocomplete(), this.oInput._oSuggPopover._bAutocompleteEnabled, "Input and Popover autocomplete should be the same.");
+
+		// act
+		this.oInput.setMaxSuggestionWidth("50rem", bSuppressInvalidate);
+		this.oInput.setEnableSuggestionsHighlighting(false, bSuppressInvalidate);
+		this.oInput.setAutocomplete(false, bSuppressInvalidate);
+		this.oInput._oSuggPopover._oPopover.open();
+
+		// assert
+		assert.strictEqual(this.oInput.getMaxSuggestionWidth(), this.oInput._oSuggPopover._sPopoverContentWidth, "Input and Popover widths should be the same.");
+		assert.strictEqual(this.oInput.getEnableSuggestionsHighlighting(), this.oInput._oSuggPopover._bEnableHighlighting, "Input and Popover highlighting should be the same.");
+		assert.strictEqual(this.oInput.getAutocomplete(), this.oInput._oSuggPopover._bAutocompleteEnabled, "Input and Popover autocomplete should be the same.");
 	});
 
 	QUnit.module("Input in a Dialog", {
@@ -3998,5 +4059,169 @@ sap.ui.define([
 		assert.notOk(oGroupHeader.hasStyleClass("sapMInputFocusedHeaderGroup"), "Styling is removed from the unselected group header.");
 	});
 
-	return waitForThemeApplied();
+	QUnit.module("showItems functionality: List", {
+			beforeEach: function () {
+				var aData = [
+						{
+							name: "A Item 1", key: "a-item-1", group: "A"
+						}, {
+							name: "A Item 2", key: "a-item-2", group: "A"
+						}, {
+							name: "B Item 1", key: "a-item-1", group: "B"
+						}, {
+							name: "B Item 2", key: "a-item-2", group: "B"
+						}, {
+							name: "Other Item", key: "ab-item-1", group: "A B"
+						}
+					],
+					oModel = new JSONModel(aData);
+
+				this.oInput = new Input({
+					showSuggestion: true,
+					suggestionItems: {
+						path: "/",
+						template: new Item({text: "{name}", key: "{group}"})
+					}
+				}).setModel(oModel).placeAt("content");
+
+				sap.ui.getCore().applyChanges();
+
+			},
+			afterEach: function () {
+				this.oInput.destroy();
+				this.oInput = null;
+			}
+		});
+
+	QUnit.test("Should restore default filtering function", function (assert) {
+		// Setup
+		var fnFilter = this.oInput._fnFilter;
+
+		// Act
+		this.oInput.showItems(function () {
+			return true;
+		});
+
+		// Assert
+		assert.strictEqual(this.oInput._fnFilter, fnFilter, "Default function has been restored");
+
+		// Act
+		fnFilter = function (sValue, oItem) {
+			return oItem.getText() === "A Item 1";
+		};
+		this.oInput.setFilterFunction(fnFilter);
+		this.oInput.showItems(function () {
+			return false;
+		});
+
+		// Assert
+		assert.strictEqual(this.oInput._fnFilter, fnFilter, "Custom filter function has been restored");
+	});
+
+	QUnit.test("Should show all the items", function (assert) {
+		// Act
+		this.oInput.showItems();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oInput._oSuggPopover._oList.getItems().length, 5, "Shows all items");
+	});
+
+	QUnit.test("Should filter the items", function (assert) {
+		// Act
+		this.oInput.showItems(function (sValue, oItem) {
+			return oItem.getText() === "A Item 1";
+		});
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oInput._oSuggPopover._oList.getItems().length, 1, "Show only the matching items");
+	});
+
+	QUnit.module("showItems functionality: Table", {
+		beforeEach: function () {
+			var aData = [
+					{
+						name: "A Item 1", key: "a-item-1", group: "A"
+					}, {
+						name: "A Item 2", key: "a-item-2", group: "A"
+					}, {
+						name: "B Item 1", key: "a-item-1", group: "B"
+					}, {
+						name: "B Item 2", key: "a-item-2", group: "B"
+					}, {
+						name: "Other Item", key: "ab-item-1", group: "A B"
+					}
+				],
+				oModel = new JSONModel(aData);
+
+			this.oInput = new Input({
+				showSuggestion: true,
+				suggestionColumns: [
+					new Column({
+						header: new Label({text: "Name"})
+					}),
+					new Column({
+						header: new Label({text: "Key"})
+					})
+				],
+				suggestionRows: {
+					path: "/",
+					template: new ColumnListItem({
+						type: "Active",
+						vAlign: "Middle",
+						cells: [
+							new Label({text: "{name}"}),
+							new Label({text: "{key}"})
+						]
+					})
+				}
+			}).setModel(oModel).placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+
+		},
+		afterEach: function () {
+			this.oInput.destroy();
+			this.oInput = null;
+		}
+	});
+
+	QUnit.test("Should show all the items", function (assert) {
+		// Setup
+		var fnGetVisisbleItems = function (aItems) {
+			return aItems.filter(function (oItem) {
+				return oItem.getVisible();
+			});
+		};
+
+		// Act
+		this.oInput.showItems();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oInput._oSuggPopover._oSuggestionTable.getItems().length, 5, "All the items are available");
+		assert.strictEqual(fnGetVisisbleItems(this.oInput._oSuggPopover._oSuggestionTable.getItems()).length, 5, "Shows all items");
+	});
+
+	QUnit.test("Should filter the items", function (assert) {
+		// Setup
+		var fnGetVisisbleItems = function (aItems) {
+			return aItems.filter(function (oItem) {
+				return oItem.getVisible();
+			});
+		};
+
+		// Act
+		this.oInput.showItems(function (sValue, oItem) {
+			return oItem.getCells()[0].getText() === "A Item 1";
+		});
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oInput._oSuggPopover._oSuggestionTable.getItems().length, 5, "All the items are available");
+		assert.strictEqual(fnGetVisisbleItems(this.oInput._oSuggPopover._oSuggestionTable.getItems()).length, 1, "Only the matching items are visible");
+	});
+
+	return waitForThemeApplied(this.oInput);
 });

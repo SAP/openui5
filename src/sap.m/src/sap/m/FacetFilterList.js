@@ -9,9 +9,10 @@ sap.ui.define([
 	'sap/ui/model/ChangeReason',
 	'sap/ui/model/Filter',
 	'./FacetFilterListRenderer',
+	'./FacetFilterItem',
 	"sap/base/Log"
 ],
-	function(List, library, ChangeReason, Filter, FacetFilterListRenderer, Log) {
+	function(List, library, ChangeReason, Filter, FacetFilterListRenderer, FacetFilterItem, Log) {
 	"use strict";
 
 
@@ -212,12 +213,12 @@ sap.ui.define([
 		var aSelectedItems = [];
 		// Track which items are added from the aggregation so that we don't add them again when adding the remaining selected key items
 		var oCurrentSelectedItemsMap = {};
-		var aCurrentSelectedItems = sap.m.ListBase.prototype.getSelectedItems.apply(this, arguments);
+		var aCurrentSelectedItems = List.prototype.getSelectedItems.apply(this, arguments);
 
 		// First add items according to what is selected in the 'items' aggregation. This maintains indexes of currently selected items in the returned array.
 		aCurrentSelectedItems.forEach(function(oItem) {
 
-			aSelectedItems.push(new sap.m.FacetFilterItem({
+			aSelectedItems.push(new FacetFilterItem({
 				text: oItem.getText(),
 				key: oItem.getKey(),
 				selected: true
@@ -235,7 +236,7 @@ sap.ui.define([
 			aSelectedKeys.forEach(function(sKey) {
 
 				if (!oCurrentSelectedItemsMap[sKey]) {
-					aSelectedItems.push(new sap.m.FacetFilterItem({
+					aSelectedItems.push(new FacetFilterItem({
 						text: oSelectedKeys[sKey],
 						key: sKey,
 						selected: true
@@ -255,10 +256,10 @@ sap.ui.define([
 	 */
 	FacetFilterList.prototype.getSelectedItem = function() {
 
-		var oItem = sap.m.ListBase.prototype.getSelectedItem.apply(this, arguments);
+		var oItem = List.prototype.getSelectedItem.apply(this, arguments);
 		var aSelectedKeys = Object.getOwnPropertyNames(this.getSelectedKeys());
 		if (!oItem && aSelectedKeys.length > 0) {
-			oItem = new sap.m.FacetFilterItem({
+			oItem = new FacetFilterItem({
 				text: this.getSelectedKeys()[aSelectedKeys[0]],
 				key: aSelectedKeys[0],
 				selected: true
@@ -277,7 +278,7 @@ sap.ui.define([
 		// See _resetItemsBinding to understand why we override the ListBase method
 		if (this._allowRemoveSelections) {
 
-			bAll ? this.setSelectedKeys() : sap.m.ListBase.prototype.removeSelections.call(this, bAll);
+			bAll ? this.setSelectedKeys() : List.prototype.removeSelections.call(this, bAll);
 		}
 		return this;
 	};
@@ -328,7 +329,7 @@ sap.ui.define([
 			}
 			this._selectItemsByKeys();
 		} else {
-			sap.m.ListBase.prototype.removeSelections.call(this);
+			List.prototype.removeSelections.call(this);
 		}
 	};
 
@@ -382,13 +383,13 @@ sap.ui.define([
 	 */
 	FacetFilterList.prototype.removeSelectedKeys = function() {
 		this._oSelectedKeys = {};
-		sap.m.ListBase.prototype.removeSelections.call(this, true);
+		List.prototype.removeSelections.call(this, true);
 	};
 
 	FacetFilterList.prototype.removeItem = function(vItem) {
 
 		// Update the selected keys cache if an item is removed
-		var oItem = sap.m.ListBase.prototype.removeItem.apply(this, arguments);
+		var oItem = List.prototype.removeItem.apply(this, arguments);
 		if (!this._filtering) {
 			oItem && oItem.getSelected() && this.removeSelectedKey(oItem.getKey(), oItem.getText());
 			return oItem;
@@ -491,7 +492,7 @@ sap.ui.define([
 
 			this._searchValue = ""; // Clear the search value since items are being reinitialized
 			this._allowRemoveSelections = false;
-			sap.m.ListBase.prototype._resetItemsBinding.apply(this, arguments);
+			List.prototype._resetItemsBinding.apply(this, arguments);
 			this._allowRemoveSelections = true;
 		}
 	};
@@ -803,7 +804,7 @@ sap.ui.define([
 		} else {
 			this._removeSelectedKey(oItem.getKey(), oItem.getText());
 		}
-		sap.m.ListBase.prototype.onItemSelectedChange.apply(this, arguments);
+		List.prototype.onItemSelectedChange.apply(this, arguments);
 
 		if (this.getMode() === ListMode.MultiSelect) {
 			/* At least one item needs to be selected to consider the list as active.
@@ -827,7 +828,7 @@ sap.ui.define([
 	 */
 	FacetFilterList.prototype.updateItems = function(sReason) {
 	  this._filtering = sReason === ChangeReason.Filter;
-	  sap.m.ListBase.prototype.updateItems.apply(this,arguments);
+	  List.prototype.updateItems.apply(this,arguments);
 	  this._filtering = false;
 	  // If this list is not set to growing or it has been filtered then we must make sure that selections are
 	  // applied to items matching keys contained in the selected keys cache.  Selections

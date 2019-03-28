@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/m/Input",
 	"sap/ui/core/ListItem",
-	"sap/m/StandardListItem"
+	"sap/m/StandardListItem",
+	"sap/ui/core/library"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -37,11 +38,14 @@ sap.ui.define([
 	jQuery,
 	Input,
 	ListItem,
-	StandardListItem
+	StandardListItem,
+	coreLibrary
 ) {
 	createAndAppendDiv("content");
 
 
+	// shortcut for sap.ui.core.OpenState
+	var OpenState = coreLibrary.OpenState;
 
 	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
@@ -806,7 +810,7 @@ sap.ui.define([
 
 	QUnit.test("onsapenter on mobile device", function (assert) {
 		// Setup
-		var oMI, sValue;
+		var oMI, sValue, oPickerTextFieldDomRef, sOpenState;
 
 		this.stub(Device, "system", {
 			desktop: false,
@@ -829,14 +833,73 @@ sap.ui.define([
 		assert.ok(oMI._oSuggPopover._oPopover.isOpen(), "The dialog is opened");
 
 		// Act
-		oMI._oSuggPopover._oPopupInput.setValue("test");
-		qutils.triggerKeydown(oMI._oSuggPopover._oPopupInput.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+		oPickerTextFieldDomRef = oMI._oSuggPopover._oPopupInput.getFocusDomRef();
+
+		sap.ui.test.qunit.triggerCharacterInput(oPickerTextFieldDomRef, "test");
+		qutils.triggerKeydown(oPickerTextFieldDomRef, KeyCodes.ENTER);
+
+		sOpenState = oMI._oSuggPopover._oPopover.oPopup.getOpenState();
 
 		// Assert
-		assert.ok(oMI._oSuggPopover._oPopover.isOpen(), "The dialog is still open after enter key");
+		assert.strictEqual(sOpenState === OpenState.CLOSED || sOpenState === OpenState.CLOSING, true, "The dialog is still open after enter key");
 		assert.strictEqual(sValue, 'test', "The change event is triggered and the right value is passed");
 
-		// // Cleanup
+		// Cleanup
+		oMI.destroy();
+	});
+
+	QUnit.test("oninput on mobile device", function (assert) {
+
+		// Setup
+		var oMI;
+
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+		var oSpy = sinon.spy(MultiInput.prototype, "_openSelectedItemsPicker"),
+			oSpy1 = sinon.spy(MultiInput.prototype, "_manageListsVisibility");
+
+		oMI = new MultiInput({
+			suggestionItems : [
+				new sap.ui.core.Item({
+					text : 'Damage',
+					key : 'damage'
+				}),
+				new sap.ui.core.Item({
+					text : 'another Damage',
+					key : 'damage'
+				}),
+				new sap.ui.core.Item({
+					text : 'demon',
+					key : 'demon'
+				})
+			]
+		}).placeAt( "qunit-fixture");
+		oMI.setTokens([
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"})
+		]);
+		sap.ui.getCore().applyChanges();
+
+		oMI.$().find(".sapMTokenizerIndicator")[0].click();
+		this.clock.tick(1);
+
+		// Assert
+		assert.ok(oSpy.called, "_openSelectedItemsPicker is called when N-more is pressed");
+
+		// Act
+		sap.ui.test.qunit.triggerCharacterInput(oMI._oSuggPopover._oPopupInput.getFocusDomRef(), "d");
+		this.clock.tick(1000);
+
+		// Assert
+		assert.ok(oSpy1.called, "_manageListsVisibility is called when N-more is pressed");
+		assert.ok(oSpy1.calledWith(false));
+
+		// Cleanup
+		oSpy.restore();
+		oSpy1.restore();
 		oMI.destroy();
 	});
 
@@ -1092,7 +1155,7 @@ sap.ui.define([
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, this.multiInput1.getRenderer().getAriaRole(), "AriaRole");
 		assert.strictEqual(oInfo.type, oResourceBundle.getText("ACC_CTR_TYPE_MULTIINPUT"), "Type");
-		assert.strictEqual(oInfo.description, "Value Placeholder Tooltip", "Description");
+		assert.strictEqual(oInfo.description, "Value", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, true, "Editable");
@@ -1103,7 +1166,7 @@ sap.ui.define([
 		oInfo = this.multiInput1.getAccessibilityInfo();
 
 		// assert
-		assert.strictEqual(oInfo.description, "Placeholder Tooltip", "Description");
+		assert.strictEqual(oInfo.description, "", "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
@@ -1123,7 +1186,7 @@ sap.ui.define([
 		oInfo = this.multiInput1.getAccessibilityInfo();
 
 		// assert
-		assert.strictEqual(oInfo.description, "Placeholder Tooltip Description", "Description");
+		assert.strictEqual(oInfo.description, "Description", "Description");
 
 		// act
 		this.multiInput1.addToken(new Token({text: "Token1"}));
@@ -1132,7 +1195,7 @@ sap.ui.define([
 		oInfo = this.multiInput1.getAccessibilityInfo();
 
 		// assert
-		assert.strictEqual(oInfo.description, "Placeholder Tooltip Description Token1 Token2", "Description");
+		assert.strictEqual(oInfo.description, "Description Token1 Token2", "Description");
 	});
 
 	QUnit.test("Tokens information should be read out", function(assert) {
@@ -1578,6 +1641,41 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		assert.notOk(oMultiInput._oReadOnlyPopover.isOpen(), "Readonly Popover should be closed");
+
+		// delete
+		oMultiInput.destroy();
+	});
+
+	QUnit.test("Read-only popover should not be closed when the scrolbar inside is clicked", function (assert) {
+		// arrange
+		var oMultiInput = new sap.m.MultiInput({
+			editable: false,
+			width: "50px",
+			tokens: [
+				new sap.m.Token({ text: "XXXX" }),
+				new sap.m.Token({ text: "XXXX" }),
+				new sap.m.Token({ text: "XXXX" }),
+				new sap.m.Token({ text: "XXXX" })
+			]
+		}), oListItemRef;
+
+		// act
+		oMultiInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oMultiInput._oReadOnlyPopover, "Readonly Popover should be created");
+
+		// act
+		oMultiInput._handleIndicatorPress();
+		this.clock.tick(300);
+
+		oMultiInput.onsapfocusleave({
+			relatedControlId: oMultiInput._oReadOnlyPopover.getId()
+		});
+		this.clock.tick(300);
+
+		assert.ok(oMultiInput._oReadOnlyPopover.isOpen(), "Readonly Popover should remain open");
 
 		// delete
 		oMultiInput.destroy();

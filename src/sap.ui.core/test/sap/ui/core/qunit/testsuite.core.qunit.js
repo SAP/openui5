@@ -286,6 +286,7 @@ sap.ui.define(function() {
 					"testdata/core/base/util/each.qunit",
 					"testdata/core/base/util/merge.qunit",
 					"testdata/core/base/util/includes.qunit",
+					"testdata/core/base/util/isEmptyObject.qunit",
 					"testdata/core/base/util/isPlainObject.qunit",
 					"testdata/core/base/util/JSTokenizer.qunit",
 					"testdata/core/base/util/defineLazyProperty.qunit",
@@ -490,6 +491,9 @@ sap.ui.define(function() {
 			},
 			"sap.ui.Global": {
 				title: "sap.ui.Global"
+			},
+			"support/usage/EventBroadcaster": {
+				title: "Event Broadcaster"
 			}
 		}
 	};

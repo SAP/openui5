@@ -1,0 +1,25 @@
+{
+  "1.65.0": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "295137b3501ad1b4482bc9b5eef74d9ee91d29be",
+        "type": "FIX",
+        "text": " AlignedFlowLayout: Overlapping issue of items fixed",
+        "references": []
+      },
+      {
+        "id": "9203a0f018cb7cf2e732f7c5b153e0789968af11",
+        "type": "FIX",
+        "text": " sap.m.Splitter: Endless resizing is now prevented",
+        "references": []
+      },
+      {
+        "id": "46f842385abeb16bcf4a301768941cf8e669e395",
+        "type": "FIX",
+        "text": " sap.ui.layout.Grid: Wrapping of Grid children in IE is fixed",
+        "references": []
+      }
+    ]
+  }
+}

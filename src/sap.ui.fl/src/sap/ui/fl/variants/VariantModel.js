@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/Base",
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/fl/variants/util/VariantUtil",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/base/util/includes"
 ], function(
 	jQuery,
 	JSONModel,
@@ -21,7 +22,8 @@ sap.ui.define([
 	BaseChangeHandler,
 	BusyIndicator,
 	VariantUtil,
-	fnBaseMerge
+	fnBaseMerge,
+	fnIncludes
 ) {
 	"use strict";
 
@@ -32,8 +34,8 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @param {object} oData either the URL where to load the JSON from or a JS object
-	 * @param {object} oFlexController the FlexController instance for the component which uses the variant model
-	 * @param {object} oAppComponent Application component instance that is currently loading
+	 * @param {sap.ui.fl.FlexController} oFlexController the FlexController instance for the component which uses the variant model
+	 * @param {sap.ui.core.Component} oAppComponent Application component instance that is currently loading
 	 * @param {boolean} bObserve whether to observe the JSON data for property changes (experimental)
 	 * @constructor
 	 * @private
@@ -46,20 +48,23 @@ sap.ui.define([
 	var VariantModel = JSONModel.extend("sap.ui.fl.variants.VariantModel", /** @lends sap.ui.fl.variants.VariantModel.prototype */
 	{
 		constructor: function(oData, oFlexController, oAppComponent, bObserve) {
+			// JSON model internal properties
 			this.pSequentialImportCompleted = Promise.resolve();
 			JSONModel.apply(this, arguments);
-
 			this.bObserve = bObserve;
+
+			// FlexControllerFactory creates a FlexController instance for an application component,
+			// which creates a ChangePersistence instance,
+			// which creates a VariantController instance.
+			// After retrieving changes for the created ChangePersistence instance,
+			// FlexControllerFactory creates a VariantModel instance for this application component.
 			this.oFlexController = oFlexController;
+			this.oChangePersistence = this.oFlexController._oChangePersistence;
+			this.oVariantController = this.oChangePersistence._oVariantController;
+			this.sVariantTechnicalParameterName = this.oVariantController.sVariantTechnicalParameterName;
 			this.oAppComponent = oAppComponent;
-			this.oVariantController = undefined;
 			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
 			this._oVariantSwitchPromise = Promise.resolve();
-
-			if (oFlexController && oFlexController._oChangePersistence) {
-				this.oVariantController = oFlexController._oChangePersistence._oVariantController;
-				this.sVariantTechnicalParameterName = this.oVariantController.sVariantTechnicalParameterName;
-			}
 
 			//initialize hash register
 			VariantUtil.initializeHashRegister.call(this);
@@ -70,8 +75,10 @@ sap.ui.define([
 						if (!oData[sKey].currentVariant && (oVariant.key === oData[sKey].defaultVariant)) { /*Case when initial variant is not set from URL*/
 							oData[sKey].currentVariant = oVariant.key;
 						}
+						// persisting original properties, since they're changed in real time in sap.ui.fl.variants.VariantManagement
 						oVariant.originalTitle = oVariant.title;
 						oVariant.originalFavorite = oVariant.favorite;
+						oVariant.originalVisible = oVariant.visible;
 					});
 					oData[sKey].originalCurrentVariant = oData[sKey].currentVariant;
 					oData[sKey].originalDefaultVariant = oData[sKey].defaultVariant;
@@ -110,30 +117,33 @@ sap.ui.define([
 			currentVariantReference: sCurrentVariantReference,
 			newVariantReference: sNewVariantReference
 		};
-		mChangesToBeSwitched = this.oFlexController._oChangePersistence.loadSwitchChangesMapForComponent(mPropertyBag);
+		mChangesToBeSwitched = this.oChangePersistence.loadSwitchChangesMapForComponent(mPropertyBag);
 
 		var fnSwitchVariantCallback = function() {
-			var oPromise = new Promise(function(resolve) {
-				return this.oFlexController.revertChangesOnControl(mChangesToBeSwitched.changesToBeReverted, oAppComponent || this.oAppComponent)
-				.then(this.oFlexController.applyVariantChanges.bind(this.oFlexController, mChangesToBeSwitched.changesToBeApplied, oAppComponent || this.oAppComponent))
-				.then(function() {
-					this.oData[sVariantManagementReference].originalCurrentVariant = sNewVariantReference;
-					this.oData[sVariantManagementReference].currentVariant = sNewVariantReference;
-					if (this.oData[sVariantManagementReference].updateVariantInURL) {
-						this._updateVariantInURL(sVariantManagementReference, sNewVariantReference);
-						this.oVariantController.updateCurrentVariantInMap(sVariantManagementReference, sNewVariantReference);
-					}
-					this.checkUpdate();
-					resolve();
-				}.bind(this))
-				// potential errors are not handled here, so we rethrow. But the switch is still finished, so we have to call resolve()
-				.catch(function(oError) {
-					resolve();
-					throw oError;
-				});
-			}.bind(this));
-			this.oFlexController.setVariantSwitchPromise(oPromise);
-			return oPromise;
+			var oPromiseMap = {};
+			// create a pending promise to set it in the FlexController
+			oPromiseMap.promise = new Promise(function(resolve) {
+				oPromiseMap.resolveFunction = resolve;
+			});
+			this.oFlexController.setVariantSwitchPromise(oPromiseMap.promise);
+			this.oFlexController.revertChangesOnControl(mChangesToBeSwitched.changesToBeReverted, oAppComponent || this.oAppComponent)
+			.then(this.oFlexController.applyVariantChanges.bind(this.oFlexController, mChangesToBeSwitched.changesToBeApplied, oAppComponent || this.oAppComponent))
+			.then(function() {
+				this.oData[sVariantManagementReference].originalCurrentVariant = sNewVariantReference;
+				this.oData[sVariantManagementReference].currentVariant = sNewVariantReference;
+				if (this.oData[sVariantManagementReference].updateVariantInURL) {
+					this._updateVariantInURL(sVariantManagementReference, sNewVariantReference);
+					this.oVariantController.updateCurrentVariantInMap(sVariantManagementReference, sNewVariantReference);
+				}
+				this.checkUpdate();
+				oPromiseMap.resolveFunction();
+			}.bind(this))
+			// potential errors are not handled here, so we rethrow. But the switch is still finished, so we have to call resolve()
+			.catch(function(oError) {
+				oPromiseMap.resolveFunction();
+				throw oError;
+			});
+			return oPromiseMap.promise;
 		}.bind(this);
 
 		// if there are multiple switches triggered very quickly this makes sure that they are being executed one after another
@@ -251,7 +261,7 @@ sap.ui.define([
 		return this.getVariant(sVariantReference).content.content[sProperty];
 	};
 
-	VariantModel.prototype._addChange = function(oChange) {
+	VariantModel.prototype.addChange = function(oChange) {
 		var sVariantReference = oChange.getVariantReference();
 		var sVariantManagementReference = this.getVariantManagementReference(sVariantReference).variantManagementReference;
 		//*marker for VariantManagement control
@@ -260,31 +270,23 @@ sap.ui.define([
 		return this.oVariantController.addChangeToVariant(oChange, sVariantManagementReference, sVariantReference);
 	};
 
-	VariantModel.prototype._removeChange = function(oChange) {
+	VariantModel.prototype.removeChange = function(oChange) {
 		var sVariantReference = oChange.getVariantReference();
 		var sVariantManagementReference = this.getVariantManagementReference(sVariantReference).variantManagementReference;
 		return this.oVariantController.removeChangeFromVariant(oChange, sVariantManagementReference, sVariantReference);
 	};
 
 	VariantModel.prototype._removeDirtyChanges = function(aVariantControlChanges, sVariantManagementReference, sVariantReference, oAppComponent) {
-		var aChanges = aVariantControlChanges.map(function(oChange) {
-			return oChange.getDefinition().fileName;
-		});
+		var aVariantDirtyChanges = this._getDirtyChangesFromVariantChanges(aVariantControlChanges);
 
-		var bFiltered;
-		var aDirtyChanges = this.oFlexController._oChangePersistence.getDirtyChanges().filter(function(oChange) {
-			bFiltered = aChanges.indexOf(oChange.getDefinition().fileName) > -1;
-			if (bFiltered) {
-				this.oVariantController.removeChangeFromVariant(oChange, sVariantManagementReference, sVariantReference);
-			}
-			return bFiltered;
-		}.bind(this));
-
-		aDirtyChanges.forEach(function(oChange) {
+		aVariantDirtyChanges.forEach(function(oChange) {
+			// remove from variant controller map
+			this.oVariantController.removeChangeFromVariant(oChange, sVariantManagementReference, sVariantReference);
+			// remove from change persistence
 			this.oFlexController.deleteChange(oChange, oAppComponent);
 		}.bind(this));
 
-		return this.oFlexController.revertChangesOnControl(aDirtyChanges.reverse(), oAppComponent);
+		return this.oFlexController.revertChangesOnControl(aVariantDirtyChanges.reverse(), oAppComponent);
 	};
 
 	VariantModel.prototype._getVariantTitleCount = function(sNewText, sVariantManagementReference) {
@@ -382,7 +384,8 @@ sap.ui.define([
 			rename: true,
 			change: true,
 			remove: true,
-			visible: true
+			visible: true,
+			originalVisible: true
 		};
 
 		//Flex Controller
@@ -390,7 +393,7 @@ sap.ui.define([
 
 		var aChanges = [];
 		[oVariant].concat(oVariant.getControlChanges()).forEach(function(oChange) {
-			aChanges.push(this.oFlexController._oChangePersistence.addDirtyChange(oChange));
+			aChanges.push(this.oChangePersistence.addDirtyChange(oChange));
 		}.bind(this));
 
 		//Variant Controller
@@ -405,7 +408,7 @@ sap.ui.define([
 	};
 
 	VariantModel.prototype.removeVariant = function(mPropertyBag) {
-		var aChangesToBeDeleted = this.oFlexController._oChangePersistence.getDirtyChanges().filter(function(oChange) {
+		var aChangesToBeDeleted = this.oChangePersistence.getDirtyChanges().filter(function(oChange) {
 			return (oChange.getVariantReference && oChange.getVariantReference() === mPropertyBag.variant.getId()) ||
 					oChange.getId() === mPropertyBag.variant.getId();
 		});
@@ -415,7 +418,7 @@ sap.ui.define([
 			this.oData[mPropertyBag.variantManagementReference].variants.splice(iIndex, 1); /* VariantModel */
 			this.checkUpdate(); /*For VariantManagement Control update*/
 			aChangesToBeDeleted.forEach( function(oChange) {
-				this.oFlexController._oChangePersistence.deleteChange(oChange);
+				this.oChangePersistence.deleteChange(oChange);
 			}.bind(this));
 		}.bind(this));
 	};
@@ -447,7 +450,7 @@ sap.ui.define([
 				};
 				aChanges.push(mPropertyBag);
 			}
-			if (!oVariant.visible) {
+			if (!oVariant.visible && oVariant.originalVisible) {
 				mPropertyBag = {
 						variantReference : oVariant.key,
 						changeType : "setVisible",
@@ -471,9 +474,19 @@ sap.ui.define([
 		return aChanges;
 	};
 
+	/**
+	 * Opens the manage dialog.
+	 * Returns a promise which resolves to changes made from the manage dialog, based on the parameters passed.
+	 * @param {sap.ui.fl.variants.VariantManagement} oVariantManagementControl Variant Management control
+	 * @param {String} sVariantManagementReference Variant Management reference
+	 * @param {String} sLayer Current layer
+	 * @returns {Promise} Returns a promise which resolves when "manage" event is fired from the variant management control
+	 * @public
+	 */
 	VariantModel.prototype.manageVariants = function(oVariantManagementControl, sVariantManagementReference, sLayer) {
+		// called from the ControlVariant plugin in Adaptation mode
 		return new Promise(function(resolve) {
-			oVariantManagementControl.attachManage({
+			oVariantManagementControl.attachEventOnce("manage", {
 				resolve: resolve,
 				variantManagementReference: sVariantManagementReference,
 				layer: sLayer
@@ -482,7 +495,25 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	VariantModel.prototype._setVariantProperties = function(sVariantManagementReference, mPropertyBag, bAddChange) {
+	/**
+	 * Sets the passed properties on a variant for the passed variant management reference.
+	 * Also adds or removes a change depending upon the parameters passed.
+	 * @param {sap.ui.fl.variants.VariantManagement} sVariantManagementReference Variant Management reference
+	 * @param {Object} mPropertyBag
+	 * @param {String} mPropertyBag.variantReference Variant Reference for which properties should be set
+	 * @param {String} mPropertyBag.changeType Change type due to which properties are being set
+	 * @param {String} mPropertyBag.layer Current layer
+	 * @param {String} mPropertyBag.appComponent App Component instance
+	 * @param {String} [mPropertyBag.title] App New title value for "setTitle" change type
+	 * @param {boolean} [mPropertyBag.visible] New visible value for "setVisible" change type
+	 * @param {boolean} [mPropertyBag.favorite] New favorite value for "setFavorite" change type
+	 * @param {String} [mPropertyBag.defaultVariant] New default variant for "setDefault" change type
+	 * @param {sap.ui.fl.Change} [mPropertyBag.change] Change to be deleted
+	 * @param {boolean} [bAddChange] if change needs to be added
+	 * @returns {sap.ui.fl.Change | null} Returns the created change object or null if no change is created
+	 * @public
+	 */
+	VariantModel.prototype.setVariantProperties = function(sVariantManagementReference, mPropertyBag, bAddChange) {
 		var iVariantIndex = -1;
 		var oVariant;
 		var oChange = null;
@@ -510,9 +541,10 @@ sap.ui.define([
 				break;
 			case "setVisible":
 				mAdditionalChangeContent.visible = mPropertyBag.visible;
-				mAdditionalChangeContent.createdByReset = false; // 'createdbyReset' is used by the backend to distinguish between setVisible change created via reset and delete
+				mAdditionalChangeContent.createdByReset = false; // 'createdByReset' is used by the backend to distinguish between setVisible change created via reset and delete
 				//Update Variant Model
 				oVariant.visible = mPropertyBag.visible;
+				oVariant.originalVisible = oVariant.visible;
 				break;
 			case "setDefault":
 				mAdditionalChangeContent.defaultVariant = mPropertyBag.defaultVariant;
@@ -560,7 +592,7 @@ sap.ui.define([
 		}
 
 		// add change
-		if (bAddChange) {
+		if (bAddChange === true) {
 			//create new change object
 			mNewChangeData.changeType = mPropertyBag.changeType;
 			mNewChangeData.layer = mPropertyBag.layer;
@@ -582,13 +614,13 @@ sap.ui.define([
 
 			//update VariantController and write change to ChangePersistence
 			this.oVariantController._updateChangesForVariantManagementInMap(oChange.getDefinition(), sVariantManagementReference, true);
-			this.oFlexController._oChangePersistence.addDirtyChange(oChange);
+			this.oChangePersistence.addDirtyChange(oChange);
 		} else {
 			// delete change
 			if (mPropertyBag.change) {
 				//update VariantController and write change to ChangePersistence
 				this.oVariantController._updateChangesForVariantManagementInMap(mPropertyBag.change.getDefinition(), sVariantManagementReference, false);
-				this.oFlexController._oChangePersistence.deleteChange(mPropertyBag.change);
+				this.oChangePersistence.deleteChange(mPropertyBag.change);
 			}
 		}
 		// set data to variant model
@@ -614,7 +646,8 @@ sap.ui.define([
 						originalTitle: this._oResourceBundle.getText("STANDARD_VARIANT_ORIGINAL_TITLE"),
 						favorite: true,
 						originalFavorite: true,
-						visible: true
+						visible: true,
+						originalVisible: true
 					}
 				]
 			};
@@ -686,7 +719,6 @@ sap.ui.define([
 			this._initializeManageVariantsEvents();
 		}
 		oControl.detachManage(this.fnManageClick, this); /* attach done below */
-		oControl.detachManage(this.fnManageClickRta, this); /* attach done in this.manageVariants() */
 
 		if (bDesignTimeMode) {
 			// Runtime Adaptation Settings
@@ -743,9 +775,9 @@ sap.ui.define([
 			var aConfigurationChanges = this.collectModelChanges(oData.variantManagementReference, Utils.getCurrentLayer(true));
 			aConfigurationChanges.forEach(function(oChangeProperties) {
 				oChangeProperties.appComponent = this.oAppComponent;
-				this._setVariantProperties(oData.variantManagementReference, oChangeProperties, true);
+				this.setVariantProperties(oData.variantManagementReference, oChangeProperties, true);
 			}.bind(this));
-			this.oFlexController._oChangePersistence.saveDirtyChanges();
+			this.oChangePersistence.saveDirtyChanges();
 		};
 	};
 
@@ -768,21 +800,11 @@ sap.ui.define([
 
 		if (oEvent.getParameter("overwrite")) {
 			// handle triggered "Save" button
-			var aAllDirtyChanges = this.oFlexController._oChangePersistence.getDirtyChanges();
-			var aChangeIds = aVariantChanges.map(function(oChange) {
-				return oChange.getDefinition().fileName;
-			});
-			var aDirtyChanges = aAllDirtyChanges.reduce(function(aReducedDirtyChanges, oDirtyChange) {
-				if (aChangeIds.indexOf(oDirtyChange.getId()) > -1) {
-					return aReducedDirtyChanges.concat(oDirtyChange);
-				} else {
-					return aReducedDirtyChanges;
-				}
-			}, []);
-			this.oFlexController._oChangePersistence.saveSequenceOfDirtyChanges(aDirtyChanges);
-			this.oData[sVariantManagementReference].modified = false;
-			this.checkUpdate(true);
-			return Promise.resolve();
+			return this.oFlexController.saveSequenceOfDirtyChanges(this._getDirtyChangesFromVariantChanges(aVariantChanges))
+				.then(function(oResponse) {
+					this.checkDirtyStateForControlModels([sVariantManagementReference]);
+					return oResponse;
+				}.bind(this));
 		} else {
 			// handle triggered "SaveAs" button
 			var sNewVariantReference = Utils.createDefaultFileName();
@@ -806,12 +828,12 @@ sap.ui.define([
 						layer: Utils.getCurrentLayer(true),
 						variantManagementReference: sVariantManagementReference
 					};
-					var oSetDefaultChange = this._setVariantProperties(sVariantManagementReference, mPropertyBagSetDefault, true);
+					var oSetDefaultChange = this.setVariantProperties(sVariantManagementReference, mPropertyBagSetDefault, true);
 					aCopiedVariantDirtyChanges.push(oSetDefaultChange);
 				}
 				this.oData[sVariantManagementReference].modified = false;
 				this.checkUpdate(true);
-				return this.oFlexController._oChangePersistence.saveSequenceOfDirtyChanges(aCopiedVariantDirtyChanges);
+				return this.oFlexController.saveSequenceOfDirtyChanges(aCopiedVariantDirtyChanges);
 			}.bind(this))
 			// unsaved changes on the source variant are removed
 			.then(this._removeDirtyChanges.bind(this, aVariantChanges, sVariantManagementReference, sSourceVariantReference, mPropertyBag.appComponent));
@@ -867,6 +889,45 @@ sap.ui.define([
 				VariantUtil.attachHashHandlers.call(this, sVariantManagementReference);
 			}
 		}
+	};
+
+	/**
+	 * Checks if the passed changes exist as dirty changes.
+	 * @param {sap.ui.fl.Change[]} aControlChanges Array of changes to be checked
+	 * @returns {sap.ui.fl.Change[]} Returns an array of filtered changes
+	 * @private
+	 */
+	VariantModel.prototype._getDirtyChangesFromVariantChanges = function(aControlChanges) {
+		var aChangeFileNames = aControlChanges.map(function(oChange) {
+			return oChange.getDefinition().fileName;
+		});
+
+		return this.oChangePersistence.getDirtyChanges().filter(function(oChange) {
+			return fnIncludes(aChangeFileNames, oChange.getId());
+		});
+	};
+
+	/**
+	 * Checks if dirty changes exist for the current variant inside the passed variant management reference.
+	 * If no dirty changes exist, it marks the associated 'modified' model property to false.
+	 * @param {string[]} aVariantManagementReferences Array of variant management references
+	 * @public
+	 */
+	VariantModel.prototype.checkDirtyStateForControlModels = function(aVariantManagementReferences) {
+		aVariantManagementReferences.forEach(function (sVariantManagementReference) {
+			var mVariantManagementModelData = this.oData[sVariantManagementReference];
+
+			if (mVariantManagementModelData.modified === true) {
+				var sCurrentVariantReference = this.getCurrentVariantReference(sVariantManagementReference);
+				var aCurrentVariantControlChanges = this.oVariantController.getVariantChanges(sVariantManagementReference, sCurrentVariantReference, true);
+				var aDirtyCurrentVariantChanges = this._getDirtyChangesFromVariantChanges(aCurrentVariantControlChanges);
+
+				if (aDirtyCurrentVariantChanges.length === 0) {
+					mVariantManagementModelData.modified = false;
+				}
+			}
+		}.bind(this));
+		this.checkUpdate(true);
 	};
 
 	return VariantModel;

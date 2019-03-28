@@ -42,6 +42,20 @@
 		"group": "Layout Examples"
 	},
 	{
+		"title": "CSSGrid Drag and Drop 1",
+		"description": "",
+		"route": "dnd",
+		"usage": "",
+		"group": "Layout Examples"
+	},
+	{
+		"title": "CSSGrid Drag and Drop 2",
+		"description": "",
+		"route": "dnd2",
+		"usage": "",
+		"group": "Layout Examples"
+	},
+	{
 		"title": "List Card",
 		"description": "Example page for Card of type List",
 		"route": "listContent",
@@ -96,9 +110,9 @@
 		"group": "Other Card Examples"
 	},
 	{
-		"title": "Card Container",
-		"description": "Card Container",
-		"route": "cardContainer",
+		"title": "Grid Container",
+		"description": "Grid Container",
+		"route": "gridContainer",
 		"group": "Other Card Examples"
 	},
 	{
@@ -117,6 +131,18 @@
 		"title": "Loading behavior",
 		"description": "Busy indicators and heights examples",
 		"route": "delayedLoading",
+		"group": "Other Card Examples"
+	},
+	{
+		"title": "No header / No content",
+		"description": "Examples of cards with no header or no content provided",
+		"route": "noHeaderNoContent",
+		"group": "Other Card Examples"
+	},
+	{
+		"title": "Min height of the card content",
+		"description": "Examples of cards with no height provided (default value) or with specified height",
+		"route": "minHeight",
 		"group": "Other Card Examples"
 	},
 	{

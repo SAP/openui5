@@ -904,7 +904,7 @@ sap.ui.define([
 	/* onsapspace()                   */
 	/* ------------------------------ */
 
-	QUnit.test("onsapselect SPACE", function (assert) {
+	QUnit.test("on SPACE", function (assert) {
 
 		// system under test
 		var oSwitch = new Switch({
@@ -917,7 +917,7 @@ sap.ui.define([
 		var fnFireChangeSpy = this.spy(oSwitch, "fireChange");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oSwitch.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+		sap.ui.test.qunit.triggerKeyup(oSwitch.getDomRef(), jQuery.sap.KeyCodes.SPACE);
 		this.clock.tick(1000);
 
 		// assert
@@ -928,7 +928,7 @@ sap.ui.define([
 		oSwitch.destroy();
 	});
 
-	QUnit.test("onsapselect ENTER", function (assert) {
+	QUnit.test("on ENTER", function (assert) {
 
 		// system under test
 		var oSwitch = new Switch({
@@ -949,6 +949,23 @@ sap.ui.define([
 		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
 
 		// cleanup
+		oSwitch.destroy();
+	});
+
+	QUnit.test("Space prevent scrolling", function (assert) {
+		// system under test
+		var oSwitch = new Switch({
+				state: true
+			}),
+			oEvent = { preventDefault: this.spy() };
+
+		// Act
+		oSwitch.onsapspace(oEvent);
+
+		// Assert
+		assert.equal(oEvent.preventDefault.callCount, 1, "preventDefault is called to prevent scrolling");
+
+		// Cleanup
 		oSwitch.destroy();
 	});
 

@@ -267,35 +267,45 @@
 
 						/* Full day appointments/blockers */
 						{
-							title: "2 full days - from 12th until 13th",
-							startDate: new Date(2018, 6, 12, 0, 0, 0),
-							endDate: new Date(2018, 6, 13, 0, 0, 0)
+							title: "3 full days - from 11th until 13th",
+							startDate: new Date(2018, 6, 11),
+							endDate: new Date(2018, 6, 13)
 						},
 						{
-							title: "3 full days - from 7th until 11th",
-							startDate: new Date(2018, 6, 7, 0, 0, 0),
-							endDate: new Date(2018, 6, 11, 0, 0, 0)
+							title: "5 full days - from 7th until 11th",
+							startDate: new Date(2018, 6, 7),
+							endDate: new Date(2018, 6, 11)
 						},
 						{
-							title: "10 full days - from 6th to 16th",
+							title: "11 full days - from 6th to 16th",
 							color: "#f230b1",
-							startDate: new Date(2018, 6, 6, 0, 0, 0),
-							endDate: new Date(2018, 6, 16, 0, 0, 0)
+							startDate: new Date(2018, 6, 6),
+							endDate: new Date(2018, 6, 16)
 						},
 						{
-							title: "6 full days - from 14th until 10th",
-							startDate: new Date(2018, 6, 14, 0, 0, 0),
-							endDate: new Date(2018, 6, 20, 0, 0, 0)
+							title: "7 full days - from 14th until 10th",
+							startDate: new Date(2018, 6, 14),
+							endDate: new Date(2018, 6, 20)
 						},
 						{
-							title: "2 full days - from 15th until 17th",
-							startDate: new Date(2018, 6, 15, 0, 0, 0),
-							endDate: new Date(2018, 6, 17, 0, 0, 0)
+							title: "3 full days - from 15th until 17th",
+							startDate: new Date(2018, 6, 15),
+							endDate: new Date(2018, 6, 17)
 						},
 						{
 							title: "2 full days - from 7th until 8th",
-							startDate: new Date(2018, 6, 7, 0, 0, 0),
-							endDate: new Date(2018, 6, 8, 0, 0, 0)
+							startDate: new Date(2018, 6, 7),
+							endDate: new Date(2018, 6, 8)
+						},
+						{
+							title: "1 full day - from 9th until 9th",
+							startDate: new Date(2018, 6, 9),
+							endDate: new Date(2018, 6, 9)
+						},
+						{
+							title: "1 full day - from 9th until 9th - second appointment",
+							startDate: new Date(2018, 6, 9),
+							endDate: new Date(2018, 6, 9)
 						}
 					];
 					var oModel = new JSONModel();
@@ -353,6 +363,36 @@
 
 							MessageToast.show("Appointment with title \n'" + sAppointmentTitle + "'\n has been " + sAppointmentSelected);
 						},
+						enableAppointmentsDragAndDrop: true,
+						enableAppointmentsResize: true,
+						appointmentDrop: function (oEvent) {
+							var oAppointment = oEvent.getParameter("appointment"),
+									oStartDate = oEvent.getParameter("startDate"),
+									oEndDate = oEvent.getParameter("endDate"),
+									sAppointmentTitle = oAppointment.getTitle();
+
+							oAppointment.setStartDate(oStartDate);
+							oAppointment.setEndDate(oEndDate);
+
+							sap.m.MessageToast.show("Appointment with title \n'"
+									+ sAppointmentTitle
+									+ "'\n has been dropped"
+							);
+						},
+						appointmentResize: function(oEvent) {
+							var oAppointment = oEvent.getParameter("appointment"),
+								oStartDate = oEvent.getParameter("startDate"),
+								oEndDate = oEvent.getParameter("endDate"),
+								sAppointmentTitle = oAppointment.getTitle();
+
+							oAppointment.setStartDate(oStartDate);
+							oAppointment.setEndDate(oEndDate);
+
+							sap.m.MessageToast.show("Appointment with title \n'"
+								+ sAppointmentTitle
+								+ "'\n has been resized"
+							);
+						},
 						headerDateSelect: function (oEvent) {
 							var oDate = oEvent.getParameter("date");
 
@@ -367,7 +407,8 @@
 					new App({
 						pages: new Page({
 							title: "SinglePlanningCalendar test page",
-							content: oSPC
+							content: oSPC,
+							footer: new sap.m.Bar()
 						})
 					}).placeAt("body");
 				});

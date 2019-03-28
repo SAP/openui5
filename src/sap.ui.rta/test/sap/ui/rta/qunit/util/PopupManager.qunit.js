@@ -20,7 +20,8 @@ sap.ui.define([
 	"sap/ui/core/UIArea",
 	"sap/base/util/merge",
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
-	"sap/ui/rta/util/PopupManager",
+	"sap/ui/dt/util/ZIndexManager",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -43,13 +44,14 @@ function(
 	UIArea,
 	merge,
 	FakeLrepConnectorSessionStorage,
-	PopupManager,
+	ZIndexManager,
+	XMLView,
 	sinon
 ) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
-	var oView, oApp;
+	var oView;
 	FakeLrepConnectorSessionStorage.enableFakeConnector();
 	var MockComponent = UIComponent.extend("MockController", {
 		metadata: {
@@ -62,20 +64,19 @@ function(
 			}
 		},
 		createContent : function() {
-			oApp = new App(this.createId("mockapp"));
 			var viewContent = '<mvc:View xmlns:mvc="sap.ui.core.mvc">' + '</mvc:View>';
-			oView = sap.ui.xmlview({
-				id: this.createId("mockview"),
+			oView = new XMLView(this.createId("mockview"), {
 				viewContent: viewContent
 			});
-			oApp.addPage(oView);
-			return oApp;
+			return oView;
 		}
 	});
 	var oComp = new MockComponent("testComponent");
-	new ComponentContainer("sap-ui-static", {
+	var oComponentContainer = new ComponentContainer("sap-ui-static", {
 		component: oComp
-	}).placeAt("qunit-fixture");
+	});
+	oComponentContainer.placeAt("qunit-fixture");
+	sap.ui.getCore().applyChanges();
 
 	var fnFindOverlay = function(oElement, oDesignTime) {
 		var aOverlays = oDesignTime.getElementOverlays();
@@ -88,6 +89,27 @@ function(
 		//setRTA instance for PopupManager
 		oRta.getPopupManager().setRta(oRta);
 	};
+
+	QUnit.module("Given PopupManager exists", {
+		beforeEach : function(assert) {
+			this.fnAddPopupFilterStub =  sandbox.stub(ZIndexManager, "addPopupFilter");
+		},
+		afterEach : function() {
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("when RTA is initialized", function(assert) {
+			assert.expect(3);
+			this.oRta = new RuntimeAuthoring({
+				rootControl : oComp.getAggregation("rootControl")
+			});
+			assert.ok(this.fnAddPopupFilterStub.calledTwice, "then 2 popup filters were added to the ZIndexManager");
+			this.oRta.getPopupManager()._aPopupFilters.forEach(function(fnFilter) {
+				assert.ok(this.fnAddPopupFilterStub.calledWith(fnFilter), "then ZIndexManager was called with the correct filter function");
+			}.bind(this));
+		});
+	});
+
 	QUnit.module("Given RTA instance is created without starting", {
 		beforeEach : function() {
 			this.oRta = new RuntimeAuthoring({
@@ -115,7 +137,6 @@ function(
 
 	QUnit.module("Given RTA instance is initialized", {
 		beforeEach : function(assert) {
-			var fnDone = assert.async();
 			//mock RTA instance
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oComp.getAggregation("rootControl")
@@ -123,12 +144,16 @@ function(
 			this.oRta._$document = jQuery(document);
 			sap.ui.getCore().applyChanges();
 			this.oRta._createToolsMenu(true);
-			this.oRta.getToolbar().show();
+			var oToolbarPromise = this.oRta.getToolbar().show();
 			//mock DesignTime
 			this.oRta._oDesignTime = new DesignTime({
 				rootElements : [oComp.getAggregation("rootControl")]
 			});
-			this.oRta._oDesignTime.attachEventOnce("synced", fnDone);
+			var oDesignTimePromise = new Promise(function(fnResolve) {
+				this.oRta._oDesignTime.attachEventOnce("synced", function () {
+					fnResolve();
+				});
+			}.bind(this));
 			this.oOriginalInstanceManager = merge({}, InstanceManager);
 			//spy functions
 			this.fnOverrideFunctionsSpy = sandbox.spy(this.oRta.getPopupManager(), "_overrideInstanceFunctions");
@@ -155,9 +180,11 @@ function(
 				this.oPopover = new Popover({
 					id: oComp.createId("SmartFormPopover"),
 					showHeader: false,
+					modal: false,
+					horizontalScrolling: false,
+					verticalScrolling: false,
 					contentMinWidth: "250px",
-					contentWidth: "20%",
-					modal: false
+					contentWidth: "20%"
 				});
 				this.oPopover.oPopup.setAutoClose(false); /*when focus is taken away popover might close - resulting in failing tests*/
 				this.oDialog.removeStyleClass("sapUiPopupWithPadding");
@@ -165,6 +192,7 @@ function(
 				oView.addContent(this.oPopover);
 			}.bind(this));
 			this.oNonRtaDialog = new Dialog("nonRtaDialog");
+			return Promise.all([oDesignTimePromise, oToolbarPromise]);
 		},
 		afterEach : function() {
 			if (this.oRta) {
@@ -361,7 +389,7 @@ function(
 					vPopupElement.blur();
 				});
 			}.bind(this));
-			this.oPopover.openBy(oComp.byId("mockview"));
+			this.oPopover.openBy(oComponentContainer);
 		});
 		//getCategorizedOpenPopups
 		QUnit.test("when getCategorizedOpenPopups is called", function(assert) {
@@ -384,7 +412,7 @@ function(
 						}.bind(this));
 						this.oDialog.close();
 					}.bind(this));
-					this.oPopover.openBy(oComp.byId("mockview"));
+					this.oPopover.openBy(oComponentContainer);
 				}.bind(this));
 				this.oNonRtaDialog.open();
 			}.bind(this));
@@ -418,7 +446,7 @@ function(
 				assert.notEqual(oPopup.onAfterRendering, fnDefaultOnAfterRendering, "then onAfterRendering was overwritten");
 				done();
 			}.bind(this));
-			this.oPopover.openBy(oComp.byId("mockview"));
+			this.oPopover.openBy(oComponentContainer);
 		});
 		//_getAppComponentForControl - runAsOwner
 		QUnit.test("when _getAppComponentForControl is called with a dialog created inside Component.runAsOwner", function(assert) {
@@ -494,7 +522,7 @@ function(
 				this.fnApplyPopupAttributes = sandbox.spy(this.oRta.getPopupManager(), "_applyPopupAttributes");
 				done();
 			}.bind(this));
-			this.oPopover.openBy(oComp.byId("mockview"));
+			this.oPopover.openBy(oComponentContainer);
 		});
 		//set PopOver to Modal (initial state = true)
 		QUnit.test("when _onModeChange is called on a modal popover", function(assert) {
@@ -519,74 +547,7 @@ function(
 				this.fnApplyPopupAttributes = sandbox.spy(this.oRta.getPopupManager(), "_applyPopupAttributes");
 				done();
 			}.bind(this));
-			this.oPopover.openBy(oComp.byId("mockview"));
-		});
-	});
-
-	QUnit.module("Given popups are already open", {
-		beforeEach : function(assert) {
-			var done = assert.async();
-			oComp.runAsOwner(function() {
-				this.oDialogAdaptable = new Dialog({
-					id: oComp.createId("Dialog1"),
-					showHeader: false,
-					contentHeight: "800px",
-					contentWidth: "1000px"
-				});
-				this.oPopoverAdaptable = new Popover({
-					id: oComp.createId("Popover"),
-					showHeader: false,
-					contentMinWidth: "250px",
-					contentWidth: "20%",
-					modal: false
-				});
-				this.oPopoverAdaptable.oPopup.setAutoClose(false); /*when focus is taken away popover might close - resulting in failing tests*/
-				this.oDialogAdaptable.removeStyleClass("sapUiPopupWithPadding");
-				oView.addContent(this.oDialogAdaptable);
-				oView.addContent(this.oPopoverAdaptable);
-			}.bind(this));
-
-			this.oDialogNonAdaptable = new Dialog({
-				id: oComp.createId("Dialog2"),
-				showHeader: false,
-				contentHeight: "800px",
-				contentWidth: "1000px"
-			});
-			oView.addContent(this.oDialogNonAdaptable);
-
-			this.oDialogAdaptable.attachAfterOpen(function() {
-				this.oPopoverAdaptable.attachAfterOpen(function() {
-					this.oDialogNonAdaptable.attachAfterOpen(function() {
-						// all popups are open at this point
-						done();
-					});
-					this.oDialogNonAdaptable.open();
-				}.bind(this));
-				this.oPopoverAdaptable.openBy(oComp.byId("mockview"));
-			}.bind(this));
-			this.oDialogAdaptable.open();
-
-			this.fn_calculateMaxAllowedZIndexSpy =  sandbox.spy(PopupManager.prototype, "_calculateMaxAllowedZIndex");
-			this.fnSetMaxAllowedZIndexSpy =  sandbox.spy(ElementUtil, "setMaxAllowedZIndex");
-		},
-		afterEach : function() {
-			this.oDialogAdaptable.destroy();
-			this.oPopoverAdaptable.destroy();
-			this.oDialogNonAdaptable.destroy();
-			sandbox.restore();
-		}
-	}, function () {
-		QUnit.test("when PopupManager is initialized", function(assert) {
-			this.oRta = new RuntimeAuthoring({
-				rootControl : oComp.getAggregation("rootControl")
-			});
-			assert.strictEqual(this.fn_calculateMaxAllowedZIndexSpy.callCount, 1, "then PopupManager._calculateMaxAllowedZIndex is called once");
-			var iMaxAllowedZIndex = 9999;
-			[this.oDialogAdaptable, this.oPopoverAdaptable, this.oDialogNonAdaptable].forEach(function(oPopupElement) {
-				var iPopupElementZIndex = parseInt(jQuery(oPopupElement.getDomRef()).css("z-index"));
-				iMaxAllowedZIndex = iMaxAllowedZIndex > iPopupElementZIndex ? iPopupElementZIndex : iMaxAllowedZIndex;
-			});
-			assert.ok(this.fnSetMaxAllowedZIndexSpy.calledWith(iMaxAllowedZIndex - 5), "then ElementUtil.setMaxAllowedZIndex is called with a value lower than the lowest popup z-index");
+			this.oPopover.openBy(oComponentContainer);
 		});
 	});
 
@@ -706,7 +667,6 @@ function(
 		}
 	}, function () {
 		QUnit.test("when dialog with same app component is already open", function(assert) {
-			var fnDone = assert.async();
 			var oRta = new RuntimeAuthoring({
 				rootControl : oComp.getAggregation("rootControl")
 			});
@@ -714,12 +674,9 @@ function(
 				assert.notEqual(oRta._oDesignTime.getRootElements().map(function(oRootElement){
 					return oRootElement.getId();
 				}).indexOf(this.oDialog.getId()), -1, "then the opened dialog was added as a root element");
-				oRta._oDesignTime.attachEventOnce("synced", function () {
-					assert.ok(fnFindOverlay(this.oDialog, oRta._oDesignTime), "then overlay exists for root dialog element");
-					oRta.getDependent('toolbar').destroy();
-					oRta.destroy();
-					fnDone();
-				}, this);
+				assert.ok(fnFindOverlay(this.oDialog, oRta._oDesignTime), "then overlay exists for root dialog element");
+				oRta.getDependent('toolbar').destroy();
+				oRta.destroy();
 			}.bind(this);
 
 			return oRta.start().then(fnAfterRTA.bind(this));

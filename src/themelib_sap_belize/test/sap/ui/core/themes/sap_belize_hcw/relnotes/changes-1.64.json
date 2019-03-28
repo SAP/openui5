@@ -27,7 +27,41 @@
       {
         "id": "16bbab7451d4b2ecf98ed94f4b8cf1cd1eb2e6c8",
         "type": "FIX",
-        "text": " sap.f.Avatar: Displaying transparent image is now correct",
+        "text": "sap.f.Avatar: Displaying transparent image is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970178419"
+          }
+        ]
+      },
+      {
+        "id": "5e84afc81a451c0390c84b28324a75a6052fbdff",
+        "type": "FEATURE",
+        "text": "sap.uxap.ObjectPageDynamicHeaderTitle: Single-line title on phone",
+        "references": []
+      },
+      {
+        "id": "11177a5d593a75274d49e45fbc71d144107d7c32",
+        "type": "FIX",
+        "text": "sap.uxap.HierarchicalSelect: Fixed visual state of background",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980009916"
+          }
+        ]
+      },
+      {
+        "id": "148312a03542ab816f2ec24e246e999ea59a06a0",
+        "type": "FIX",
+        "text": ": RTA Theme UX Consistency",
+        "references": []
+      },
+      {
+        "id": "47fbc9bc4c59ccafd21c46e11bad7b6235f96f17",
+        "type": "FEATURE",
+        "text": " sap.f.ShellBar: Created notifications badge element",
         "references": []
       }
     ]

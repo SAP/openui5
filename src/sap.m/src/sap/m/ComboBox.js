@@ -46,9 +46,6 @@ sap.ui.define([
 		// shortcut for sap.m.ListMode
 		var ListMode = library.ListMode;
 
-		// shortcut for sap.m.ListSeparators
-		var ListSeparators = library.ListSeparators;
-
 		/**
 		 * Constructor for a new ComboBox.
 		 *
@@ -480,16 +477,24 @@ sap.ui.define([
 		 * @private
 		 */
 		ComboBox.prototype.createPickerTextField = function() {
-			var oTextField = new ComboBoxTextField({
-				width: "100%",
-				showValueStateMessage: false,
-				showButton: false
-			}).addEventDelegate({
-				onsapenter: function() {
-					this.updateDomValue(oTextField.getValue());
-					this.onChange();
-				}
-			}, this);
+			var that = this,
+				sTextFieldValue,
+				oTextField = new ComboBoxTextField({
+					width: "100%",
+					showValueStateMessage: false,
+					showButton: false
+				}).addEventDelegate({
+					onsapenter: function() {
+						sTextFieldValue = oTextField.getValue();
+						this.updateDomValue(sTextFieldValue);
+						this.onChange();
+						if (sTextFieldValue) {
+							that.updateDomValue(sTextFieldValue);
+							that.onChange();
+							that.close();
+						}
+					}
+				}, this);
 
 			return oTextField;
 		};
@@ -534,6 +539,7 @@ sap.ui.define([
 					// Separator items were not part of the filtering before. So in order to keep
 					// the behaviour the same, those items are not shown in the filtered list
 					if (!oItem.getText()) {
+						this.getListItem(oItem).setVisible(false);
 						return;
 					}
 
@@ -552,19 +558,24 @@ sap.ui.define([
 				var bMatchedByText = fnFilter.call(this, mOptions.value, oItem, "getText");
 				var bMatchedByAdditionalText = fnFilter.call(this, mOptions.value, oItem, "getAdditionalText");
 
+				if ((bMatchedByText || bMatchedByAdditionalText) && bGrouped) {
+					aGroups[aGroups.length - 1].show = true;
+					bGrouped = false;
+				}
+
 				if (bMatchedByText) {
 					aFilteredItemsByText.push(oItem);
 					aFilteredItems.push(oItem);
 				} else if (bMatchedByAdditionalText && bFilterAdditionalText) {
 					aFilteredItems.push(oItem);
 				}
-
-				if ((bMatchedByText || bMatchedByAdditionalText) && bGrouped) {
-					aGroups[aGroups.length - 1].show = true;
-				}
 			}.bind(this));
 
 			aItems.forEach(function (oItem) {
+				if (oItem.isA("sap.ui.core.SeparatorItem")) {
+					return;
+				}
+
 				var bItemMached = aFilteredItems.indexOf(oItem) > -1;
 				var bItemTextMached = aFilteredItemsByText.indexOf(oItem) > -1;
 
@@ -760,6 +771,7 @@ sap.ui.define([
 
 		ComboBox.prototype.onBeforeRendering = function() {
 			ComboBoxBase.prototype.onBeforeRendering.apply(this, arguments);
+			this._fillList();
 			this.synchronizeSelection();
 		};
 
@@ -861,7 +873,8 @@ sap.ui.define([
 		};
 
 		ComboBox.prototype.onAfterRenderingList = function() {
-			var oSelectedItem = this.getSelectedItem();
+			var oSelectedItem = this.getSelectedItem(),
+				oSelectedListItem = this.getListItem(oSelectedItem);
 
 			if (this.bProcessingLoadItemsEvent && (this.getItems().length === 0)) {
 				return;
@@ -873,7 +886,8 @@ sap.ui.define([
 			this._highlightList(this._sInputValueBeforeOpen);
 
 			if (oSelectedItem) {
-				oList.setSelectedItem(this.getListItem(oSelectedItem));
+				oList.setSelectedItem(oSelectedListItem);
+				this.handleListItemsVisualFocus(oSelectedListItem);
 			}
 
 			if (oList) {
@@ -1105,11 +1119,6 @@ sap.ui.define([
 		ComboBox.prototype.onBeforeOpen = function() {
 			var fnPickerTypeBeforeOpen = this["onBeforeOpen" + this.getPickerType()],
 				oDomRef = this.getFocusDomRef();
-
-			// As the SuggestionsPopover destroys the items in the list,
-			// we need to add and sync them again
-			this._fillList();
-			this.synchronizeSelection();
 
 			// the dropdown list can be opened by calling the .open() method (without
 			// any end user interaction), in this case if items are not already loaded
@@ -1809,7 +1818,6 @@ sap.ui.define([
 
 			// configure the list
 			oList.setMode(ListMode.SingleSelectMaster)
-				.setShowSeparators(ListSeparators.None)
 				.setIncludeItemInSelection(true)
 				.setWidth("100%")
 				.setRememberSelections(false)
@@ -2240,6 +2248,32 @@ sap.ui.define([
 			}
 
 			return vItem;
+		};
+
+		/**
+		 * Applies Combobox specific filtering over the list items.
+		 * Called within showItems method.
+		 *
+		 * @since 1.64
+		 * @experimental Since 1.64
+		 * @protected
+		 * @sap-restricted
+		 */
+		ComboBox.prototype.applyShowItemsFilters = function () {
+			var oPicker = this.getPicker(),
+				fnPickerOpenListener = function () {
+					oPicker.detachBeforeOpen(fnPickerOpenListener, this);
+					oPicker = null;
+
+					this.filterItems({value: this.getValue() || "_", properties: this._getFilters()});
+				};
+
+			// Combobox uses onBeforeOpen of the picker in order to sync the items
+			// with the SuggestionsPopover. This leads to flickering of the Popover if filtering
+			// is applied directly to the list.
+			// Attaching to that event here, ensures that showItems filtering would happen
+			// after SuggestionsPopover's reset, but before the picker is opened.
+			oPicker.attachBeforeOpen(fnPickerOpenListener, this);
 		};
 
 		return ComboBox;

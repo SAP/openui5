@@ -60,6 +60,11 @@ sap.ui.define([
 		return null;
 	};
 
+	StaticBinding.prototype.updateRequired = function() {
+		// Static binding does never need to be updated, when models change
+		return true;
+	};
+
 	StaticBinding.prototype.getValue = function() {
 		return this.vValue;
 	};

@@ -17,19 +17,11 @@
 	background: @sapUiCardBackgroundColor;
 	border-bottom: 1px solid contrast(@sapUiCardBackgroundColor, lighten(@sapUiCardBackgroundColor, 20%), darken(@sapUiCardBackgroundColor, 20%));
 
-	&:hover {
+	&.sapFCardHeaderClickable:hover {
 		background: contrast(@sapUiCardBackgroundColor, lighten(@sapUiCardBackgroundColor, 5), darken(@sapUiCardBackgroundColor, 5));
 	}
 
-	&:active {
-		background: contrast(@sapUiCardBackgroundColor, lighten(@sapUiCardBackgroundColor, 3), darken(@sapUiCardBackgroundColor, 3));
-	}
-
-	&:hover .sapFCardIcon.sapFAvatar:not(.sapFAvatarImage):not(.sapFAvatarInitials) {
-		background: contrast(@sapUiCardBackgroundColor, lighten(@sapUiCardBackgroundColor, 5), darken(@sapUiCardBackgroundColor, 5));
-	}
-
-	&:active .sapFCardIcon.sapFAvatar:not(.sapFAvatarImage):not(.sapFAvatarInitials) {
+	&.sapFCardHeaderClickable:active {
 		background: contrast(@sapUiCardBackgroundColor, lighten(@sapUiCardBackgroundColor, 3), darken(@sapUiCardBackgroundColor, 3));
 	}
 

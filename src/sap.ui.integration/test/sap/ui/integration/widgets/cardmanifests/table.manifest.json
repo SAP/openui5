@@ -38,15 +38,17 @@
 					}
 				]
 			},
-			"columns": [{
-					"label": "Name",
-					"value": "{Name}"
-				},
-				{
-					"label": "Category",
-					"value": "{Category}"
-				}
-			]
+			"row": {
+				"columns": [{
+						"label": "Name",
+						"value": "{Name}"
+					},
+					{
+						"label": "Category",
+						"value": "{Category}"
+					}
+				]
+			}
 		}
 	}
 }

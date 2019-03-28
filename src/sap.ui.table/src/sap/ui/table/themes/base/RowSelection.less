@@ -122,10 +122,20 @@
 		position: absolute;
 		width: 100%;
 		vertical-align: baseline;
-        bottom: calc(~"(" @_sap_ui_table_ColumnHeaderHeight ~"-" @_sap_ui_table_RowSelector_CheckBoxSize ~") / 2");
+		font-size: @_sap_ui_table_RowSelector_CheckBoxIconSizeCozy;
+		line-height: @_sap_ui_table_RowSelector_CheckBoxSizeCozy;
+        bottom: calc(~"(" @_sap_ui_table_ColumnHeaderHeight ~"-" @_sap_ui_table_RowSelector_CheckBoxSizeCozy ~") / 2");
 
         .sapUiSizeCozy & {
             bottom: calc(~"(" @_sap_ui_table_ColumnHeaderHeightCozy ~"-" @_sap_ui_table_RowSelector_CheckBoxSizeCozy ~") / 2");
         }
     }
+
+	&:active {
+		// The active state background color and text color should not be applied if column reordering is in progress.
+		.sapUiTable:not(.sapUiTableDragDrop) & {
+			background-color: @sapUiListActiveBackground;
+			color: @sapUiListActiveTextColor;
+		}
+	}
 }

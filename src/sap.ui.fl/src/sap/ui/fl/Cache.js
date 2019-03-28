@@ -437,7 +437,29 @@ sap.ui.define([
 		}
 	};
 
-
+	/**
+	 * Remove changes for the given component from the cached changes.
+	 *
+	 * @param {object} oComponent Component data needed for adding change
+	 * @param {string} oComponent.name Name of the component
+	 * @param {string} oComponent.appVersion Current running version of application
+	 * @param {string[]} aChangeNames Array of names of the changes to be deleted
+	 * @public
+	 */
+	Cache.removeChanges = function (oComponent, aChangeNames) {
+		var oEntry = Cache.getEntry(oComponent.name, oComponent.appVersion);
+		oEntry.file.changes.changes = oEntry.file.changes.changes.filter( function( oChange ) {
+			return aChangeNames.indexOf( oChange.fileName ) === -1;
+		} );
+		var oVariantSection = oEntry.file.changes.variantSection;
+		Object.keys(oVariantSection).forEach(function(sId) {
+			oVariantSection[sId].variants.forEach(function(oVariant){
+				oVariant.controlChanges = oVariant.controlChanges.filter(function( oChange){
+					return aChangeNames.indexOf( oChange.getFileName() ) === -1;
+				});
+			});
+		});
+	};
 
 	/**
 	 * Retrieve a personalization object stored for an application under a given container ID and item name;

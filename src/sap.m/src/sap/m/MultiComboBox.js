@@ -986,6 +986,7 @@ function(
 					that.setValue(sValue);
 					that._selectItemByKey();
 					this.setValue(that._sOldInput);
+					that.close();
 				}
 			}
 		}).addEventDelegate({
@@ -1376,11 +1377,10 @@ function(
 		}
 
 		// Fill Tokenizer
-		var oToken = new sap.m.Token({
+		var oToken = new Token({
 			key: mOptions.key
 		});
 		oToken.setText(mOptions.item.getText());
-		oToken.setTooltip(mOptions.item.getText());
 
 		mOptions.item.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Token", oToken);
 
@@ -1969,7 +1969,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._createTokenizer = function() {
-		var oTokenizer = new sap.m.Tokenizer({
+		var oTokenizer = new Tokenizer({
 			tokens: []
 		}).attachTokenChange(this._handleTokenChange, this);
 		oTokenizer._setAdjustable(true);
@@ -2743,7 +2743,17 @@ function(
 	 * @since 1.26.0
 	 */
 	MultiComboBox.prototype._getUnselectedItems = function() {
-		return jQuery(this.getSelectableItems()).not(this.getSelectedItems()).get();
+		var aItems =  jQuery(this.getSelectableItems()).not(this.getSelectedItems()).get();
+
+		// If the MultiComboBox is not opened, we want to skip any items that
+		// represent group headers or separators.
+		if (!this.isOpen()) {
+			return aItems.filter(function (oItem) {
+				return !oItem.isA("sap.ui.core.SeparatorItem");
+			});
+		}
+
+		return aItems;
 	};
 
 	/**
@@ -2832,7 +2842,6 @@ function(
 			});
 
 			oToken.setText(oItem.getText());
-			oToken.setTooltip(oItem.getText());
 
 			oItem.data(oRenderer.CSS_CLASS_COMBOBOXBASE + "Token", oToken);
 			// TODO: Check this invalidation
@@ -3237,6 +3246,19 @@ function(
 		oInfo.type = core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_MULTICOMBO");
 		oInfo.description = ((oInfo.description || "") + " " + sText).trim();
 		return oInfo;
+	};
+
+	/**
+	 * Applies <code>MultiComboBox</code> specific filtering over the list items.
+	 * Called within showItems method.
+	 *
+	 * @since 1.64
+	 * @experimental Since 1.64
+	 * @protected
+	 * @sap-restricted
+	 */
+	MultiComboBox.prototype.applyShowItemsFilters = function () {
+		this.filterItems({value: this.getValue() || "_", items: this.getItems()});
 	};
 
 	return MultiComboBox;

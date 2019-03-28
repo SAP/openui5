@@ -418,9 +418,14 @@ sap.ui.define([
 				* The <code>titleCustomTextActions</code> are placed in the <code>TextActions</code> area of the
 				* <code>SemanticPage</code> title, right before the semantic text action.
 				*
-				* <b>Note:</b> If the <code>titleSnappedOnMobile</code> aggregation is set, its
+				* <b>Notes:</b>
+				* <ul>
+				* <li>If the <code>titleSnappedOnMobile</code> aggregation is set, its
 				* content overrides this aggregation when the control is viewed on a phone mobile
-				* device and the <code>SemanticPage</code> header is in its collapsed (snapped) state.
+				* device and the <code>SemanticPage</code> header is in its collapsed (snapped) state.</li>
+				* <li>Buttons that are part of this aggregation will always have their <code>type</code>
+				* property set to <code>Transparent</code> by design.</li>
+				* </ul>
 				*/
 				titleCustomTextActions: {type: "sap.m.Button", multiple: true},
 

@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/ResizeHandler",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/Control",
 	"sap/ui/Device",
 	"sap/ui/core/delegate/ScrollEnablement",
@@ -29,6 +30,7 @@ sap.ui.define([
 	jQuery,
 	ManagedObjectObserver,
 	ResizeHandler,
+	Configuration,
 	Control,
 	Device,
 	ScrollEnablement,
@@ -539,7 +541,7 @@ sap.ui.define([
 		this._iREMSize = parseInt(jQuery("body").css("font-size"));
 		this._iOffset = parseInt(0.25 * this._iREMSize);
 
-		this._iResizeId = ResizeHandler.register(this, this._onUpdateScreenSize.bind(this));
+		this._iResizeId = null;
 		this._iAfterRenderingDomReadyTimeout = null;
 
 		this._oABHelper = new ABHelper(this);
@@ -556,6 +558,11 @@ sap.ui.define([
 		var oHeaderContent,
 			bPinnable;
 
+		this._deregisterScreenSizeListener();
+
+		if (this._oLazyLoading) {
+			this._oLazyLoading.destroy();
+		}
 		// The lazy loading helper needs media information, hence instantiated on onBeforeRendering, where contextual width is available
 		this._oLazyLoading = new LazyLoading(this);
 
@@ -906,9 +913,15 @@ sap.ui.define([
 			sFooterAriaLabel,
 			iWidth = this._getWidth(this);
 
+		this._iResizeId = ResizeHandler.register(this, this._onUpdateScreenSize.bind(this));
+
 		this._ensureCorrectParentHeight();
 
 		this._cacheDomElements();
+
+		if (this._hasDynamicTitle()) {
+			this.addStyleClass("sapUxAPObjectPageHasDynamicTitle");
+		}
 
 		if (iWidth > 0) {
 			this._updateMedia(iWidth, ObjectPageLayout.MEDIA);
@@ -1051,9 +1064,7 @@ sap.ui.define([
 			this._oScroller = null;
 		}
 
-		if (this._iResizeId) {
-			ResizeHandler.deregister(this._iResizeId);
-		}
+		this._deregisterScreenSizeListener();
 
 		if (this._iContentResizeId) {
 			ResizeHandler.deregister(this._iContentResizeId);
@@ -1807,7 +1818,18 @@ sap.ui.define([
 
 			this.getHeaderTitle() && this._shiftHeaderTitle();
 
-			this._scrollTo(iScrollTo + iOffset, iDuration);
+			iScrollTo += iOffset;
+
+			if (!this._bStickyAnchorBar && this._shouldSnapHeaderOnScroll(iScrollTo)) {
+				// <code>scrollTo</code> position is the one with *snapped* header
+				// (because the header will snap DURING scroll,
+				// EXCEPT on slow machines, where it will snap only AFTER scroll)
+				// => snap the header in advance (before scrolling)
+				// to ensure page arrives at *correct* scroll position even on slow machines
+				this._scrollTo(this._getSnapPosition(), 0);
+			}
+
+			this._scrollTo(iScrollTo, iDuration);
 		}
 	};
 
@@ -2644,6 +2666,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * removes listener for screen resize
+	 * @private
+	 */
+	ObjectPageLayout.prototype._deregisterScreenSizeListener = function () {
+		if (this._iResizeId) {
+			ResizeHandler.deregister(this._iResizeId);
+			this._iResizeId = null;
+		}
+	};
+
+	/**
 	 * called when the user scrolls on the page
 	 * @param oEvent
 	 * @private
@@ -2991,6 +3024,14 @@ sap.ui.define([
 			this._$stickyAnchorBar.attr("aria-hidden", !bStuck);
 		}
 		this.fireToggleAnchorBar({fixed: bStuck});
+		if (!bStuck && !this.iAnchorBarHeight) {
+			// We expand => ensure we recalculate heights to remove any extra spacer height
+			// that was needed in the snapped mode only
+			// (Note: we need this call only if no <code>this.iAnchorBarHeight</code>
+			// because if <code>this.iAnchorBarHeight</code> then <code>_requestAdjustLayout</code>
+			// will be called anyway from the resize content listener)
+			this._requestAdjustLayout();
+		}
 	};
 
 	// use type 'object' because Metamodel doesn't know ScrollEnablement
@@ -3579,7 +3620,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._toggleFooter = function (bShow) {
-		var bUseAnimations = this.oCore.getConfiguration().getAnimation(),
+		var bUseAnimations = (this.oCore.getConfiguration().getAnimationMode() !== Configuration.AnimationMode.none),
 			oFooter = this.getFooter();
 
 		if (!exists(oFooter)) {
@@ -3596,17 +3637,22 @@ sap.ui.define([
 		if (bUseAnimations) {
 
 			if (!bShow) {
-				this._iFooterWrapperHideTimeout = setTimeout(function () {
-					this.$("footerWrapper").toggleClass("sapUiHidden", !bShow);
-				}.bind(this), ObjectPageLayout.FOOTER_ANIMATION_DURATION);
+				this._iFooterWrapperHideTimeout = setTimeout(
+					function() {
+						toggleFooterVisibility.call(this, bShow);
+					}.bind(this), ObjectPageLayout.FOOTER_ANIMATION_DURATION);
 			} else {
-				this.$("footerWrapper").toggleClass("sapUiHidden", !bShow);
+				toggleFooterVisibility.call(this, bShow);
 				this._iFooterWrapperHideTimeout = null;
 			}
 
 			setTimeout(function () {
 				oFooter.removeStyleClass("sapUxAPObjectPageFloatingFooterShow");
 			}, ObjectPageLayout.FOOTER_ANIMATION_DURATION);
+		}
+
+		if (!bUseAnimations) {
+			toggleFooterVisibility.call(this, bShow);
 		}
 
 		this._requestAdjustLayout();
@@ -4199,6 +4245,10 @@ sap.ui.define([
 		return Array.prototype.slice.call(arguments).every(function (oObject) {
 			return exists(oObject);
 		});
+	}
+
+	function toggleFooterVisibility (bShow) {
+		this.$("footerWrapper").toggleClass("sapUiHidden", !bShow);
 	}
 
 	return ObjectPageLayout;

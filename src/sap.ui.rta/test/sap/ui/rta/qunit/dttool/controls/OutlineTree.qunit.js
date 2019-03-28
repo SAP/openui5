@@ -3,15 +3,18 @@
 sap.ui.define([
 	"sap/m/StandardTreeItem",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/ListMode",
-	"sap/ui/rta/dttool/controls/OutlineTree"
+	"sap/ui/rta/dttool/controls/OutlineTree",
+	"sap/m/library"
 ], function (
 	StandardTreeItem,
 	JSONModel,
-	ListMode,
-	OutlineTree
+	OutlineTree,
+	mobileLibrary
 ) {
 	"use strict";
+
+	// shortcut for sap.m.ListMode
+	var ListMode = mobileLibrary.ListMode;
 
 	QUnit.module("OutlineTree API", function () {
 		QUnit.test("Selection by Path", function(assert){

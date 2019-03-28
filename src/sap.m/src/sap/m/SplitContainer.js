@@ -14,6 +14,7 @@ sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	'sap/m/NavContainer',
 	'sap/m/Popover',
+	'sap/m/Button',
 	'./SplitContainerRenderer',
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/Log",
@@ -30,6 +31,7 @@ function(
 	ManagedObject,
 	NavContainer,
 	Popover,
+	Button,
 	SplitContainerRenderer,
 	containsOrEquals,
 	Log,
@@ -1124,11 +1126,13 @@ function(
 	};
 
 	SplitContainer.prototype.getMasterPages = function() {
-		return this._aMasterPages;
+		// Return a shallow copy of the array instead of the array itself as reference
+		return this._aMasterPages.slice();
 	};
 
 	SplitContainer.prototype.getDetailPages = function() {
-		return this._aDetailPages;
+		// Return a shallow copy of the array instead of the array itself as reference
+		return this._aDetailPages.slice();
 	};
 
 	SplitContainer.prototype.indexOfMasterPage = function(oPage) {
@@ -1877,7 +1881,7 @@ function(
 			return;
 		}
 
-		this._oShowMasterBtn = new sap.m.Button(this.getId() + "-MasterBtn", {
+		this._oShowMasterBtn = new Button(this.getId() + "-MasterBtn", {
 			icon: IconPool.getIconURI("menu2"),
 			tooltip: this.getMasterButtonTooltip(),
 			type: ButtonType.Default,
@@ -1927,6 +1931,8 @@ function(
 			// showMasterBtn could have already be destroyed by destroying the customHeader of the previous page
 			// When this is the case, showMasterBtn will be instantiated again
 			this._createShowMasterButton();
+			//Tooltip should be update again also
+			this._updateMasterButtonTooltip();
 
 			this._oShowMasterBtn.removeStyleClass("sapMSplitContainerMasterBtnHidden");
 

@@ -2519,13 +2519,15 @@ sap.ui.define([
 	 */
 	ManagedObject.prototype.setParent = function(oParent, sAggregationName, bSuppressInvalidate) {
 		assert(oParent == null || oParent instanceof ManagedObject, "oParent either must be null, undefined or a ManagedObject");
+		var observer;
 
 		if ( !oParent ) {
 
 			//fire aggregation lifecycle event on current parent as the control is removed, but not inserted to a new parent
 			if (this.oParent) {
-				if (this.oParent._observer) {
-					this.oParent._observer.aggregationChange(this.oParent, this.sParentAggregationName, "remove", this);
+				observer = this._observer || this.oParent._observer;
+				if (observer) {
+					observer.parentChange(this,this.sParentAggregationName,"unset", this.oParent);
 				}
 
 				// "this" is now moved to a different place; remove any forwarding information
@@ -2627,9 +2629,10 @@ sap.ui.define([
 			this.iSuppressInvalidate--;
 		}
 
-		//fire aggregation lifecycle event on the new parent
-		if (oParent._observer) {
-			oParent._observer.aggregationChange(oParent, sAggregationName, "insert", this);
+		//observe the aggregation change
+		observer = this._observer || this.oParent._observer;
+		if (observer) {
+			observer.parentChange(this, sAggregationName, "set", this.oParent);
 		}
 		return this;
 	};
@@ -2743,7 +2746,7 @@ sap.ui.define([
 	/**
 	 * Cleans up the resources associated with this object and all its aggregated children.
 	 *
-	 * After an object has been destroyed, it can no longer be used in!
+	 * After an object has been destroyed, it can no longer be used!
 	 *
 	 * Applications should call this method if they don't need the object any longer.
 	 *
@@ -3536,7 +3539,6 @@ sap.ui.define([
 			that[oPropertyInfo._sMutator](oValue);
 			oBindingInfo.skipModelUpdate--;
 		}).catch(function(oException) {
-			oBindingInfo.skipModelUpdate--;
 			handleException(oException);
 		}).unwrap();
 	};

@@ -50,7 +50,7 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 			oRm.addStyle("text-align", "right");
 		}
 
-		if (oControl.getShowSuggestion()) {
+		if (oControl.getShowSuggestion() || oControl.getShowValueStateMessage()) {
 			oRm.writeAttribute("autocomplete", "off");
 		}
 

@@ -2,7 +2,7 @@ sap.ui.define([
 	"sap/ui/dt/test/report/QUnit",
 	"sap/ui/dt/test/ElementEnablementTest",
 	"sap/ui/layout/DynamicSideContent",
-	"sap/ui/rta/test/controlEnablingCheck"
+	"sap/ui/rta/enablement/controlTest"
 ], function(QUnitReport, ElementEnablementTest, DynamicSideContent, rtaControlEnablingCheck) {
 	"use strict";
 	var oElementEnablementTest = new ElementEnablementTest({

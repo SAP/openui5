@@ -434,4 +434,50 @@ function($, Core, KeyCodes, QUtils, Device, XMLView) {
 		}, 0);
 	});
 
+	QUnit.test("ObjectPageSection SPACE - browser scrolling is prevented", function (assert) {
+		var oSection = Core.byId("UxAP-70_KeyboardHandling--section-with-single-sub-section"),
+			oInput = Core.byId("UxAP-70_KeyboardHandling--input-single-sub-section"),
+			oEventSection = {
+				keyCode: KeyCodes.SPACE,
+				preventDefault: function () {},
+				srcControl: oSection
+			},
+			oSpySection = this.spy(oEventSection, "preventDefault"),
+			oEventInput = {
+				keyCode: KeyCodes.SPACE,
+				preventDefault: function () {},
+				srcControl: oInput
+			},
+			oSpyInput = this.spy(oEventInput, "preventDefault");
+
+		oSection.onkeydown(oEventSection);
+		assert.ok(oSpySection.calledOnce, "preventDefault is called on SPACE key for the section");
+
+		oInput.onkeydown(oEventInput);
+		assert.notOk(oSpyInput.called, "preventDefault is not called on SPACE key for the internal input");
+	});
+
+	QUnit.test("ObjectPageSubSection SPACE - browser scrolling is prevented", function (assert) {
+		var oSection = Core.byId("UxAP-70_KeyboardHandling--multiple-sub-section-1"),
+			oInput = Core.byId("UxAP-70_KeyboardHandling--input-multiple-sub-section"),
+			oEventSection = {
+				keyCode: KeyCodes.SPACE,
+				preventDefault: function () {},
+				srcControl: oSection
+			},
+			oSpySection = this.spy(oEventSection, "preventDefault"),
+			oEventInput = {
+				keyCode: KeyCodes.SPACE,
+				preventDefault: function () {},
+				srcControl: oInput
+			},
+			oSpyInput = this.spy(oEventInput, "preventDefault");
+
+		oSection.onkeydown(oEventSection);
+		assert.ok(oSpySection.calledOnce, "preventDefault is called on SPACE key for the subsection");
+
+		oInput.onkeydown(oEventInput);
+		assert.notOk(oSpyInput.called, "preventDefault is not called on SPACE key for the internal input");
+	});
+
 });

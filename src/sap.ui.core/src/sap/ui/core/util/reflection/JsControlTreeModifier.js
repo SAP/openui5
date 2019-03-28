@@ -111,6 +111,10 @@ sap.ui.define([
 			this.unbindProperty(oControl, sPropertyName);
 
 			if (oMetadata) {
+				if (oMetadata.type === "object"){
+					//For compatibility with XMLTreeModifier only pass serializable data to properties of type object
+					JSON.stringify(oPropertyValue);
+				}
 				var sPropertySetter = oMetadata._sMutator;
 				oControl[sPropertySetter](oPropertyValue);
 			}
@@ -218,7 +222,7 @@ sap.ui.define([
 		},
 
 		getParent: function (oControl) {
-			return oControl.getParent();
+			return oControl.getParent && oControl.getParent();
 		},
 
 		getControlType: function (oControl) {
@@ -259,15 +263,21 @@ sap.ui.define([
 		 *          iIndex <optional> - index to which it should be added/inserted
 		 */
 		insertAggregation: function (oParent, sName, oObject, iIndex) {
-			var oAggregation = this.findAggregation(oParent, sName);
-			if (oAggregation) {
-				if (oAggregation.multiple) {
-					var iInsertIndex = iIndex || 0;
-					oParent[oAggregation._sInsertMutator](oObject, iInsertIndex);
-				} else {
-					oParent[oAggregation._sMutator](oObject);
+			//special handling without invalidation for customData
+			if ( sName === "customData"){
+				oParent.insertAggregation(sName, oObject, iIndex, /*bSuppressInvalidate=*/true);
+			} else {
+				var oAggregation = this.findAggregation(oParent, sName);
+				if (oAggregation) {
+					if (oAggregation.multiple) {
+						var iInsertIndex = iIndex || 0;
+						oParent[oAggregation._sInsertMutator](oObject, iInsertIndex);
+					} else {
+						oParent[oAggregation._sMutator](oObject);
+					}
 				}
 			}
+
 		},
 
 		/**
@@ -281,16 +291,26 @@ sap.ui.define([
 		 *          oObject - aggregated object to be set
 		 */
 		removeAggregation: function (oControl, sName, oObject) {
-			var oAggregation = this.findAggregation(oControl, sName);
-			if (oAggregation) {
-				oControl[oAggregation._sRemoveMutator](oObject);
+			//special handling without invalidation for customData
+			if ( sName === "customData"){
+				oControl.removeAggregation(sName, oObject, /*bSuppressInvalidate=*/true);
+			} else {
+				var oAggregation = this.findAggregation(oControl, sName);
+				if (oAggregation) {
+					oControl[oAggregation._sRemoveMutator](oObject);
+				}
 			}
 		},
 
 		removeAllAggregation: function (oControl, sName) {
-			var oAggregation = this.findAggregation(oControl, sName);
-			if (oAggregation) {
-				oControl[oAggregation._sRemoveAllMutator]();
+			//special handling without invalidation for customData
+			if ( sName === "customData"){
+				oControl.removeAllAggregation(sName, /*bSuppressInvalidate=*/true);
+			} else {
+				var oAggregation = this.findAggregation(oControl, sName);
+				if (oAggregation) {
+					oControl[oAggregation._sRemoveAllMutator]();
+				}
 			}
 		},
 
@@ -375,13 +395,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Instantiates a fragment and turns the result into an array of controls. Also prefixes all the controls with a given namespace
-		 * Throws an Error if there is at least one control in the fragment without stable ID
-		 *
-		 * @param {string} sFragment xml fragment as string
-		 * @param {string} sNamespace namespace of the app
-		 * @param {sap.ui.core.mvc.View} oView view for the fragment
-		 * @returns {sap.ui.core.Control[]} Returns an array with the controls of the fragment
+		 * @inheritDoc
 		 */
 		instantiateFragment: function(sFragment, sNamespace, oView) {
 			var oFragment = XMLHelper.parse(sFragment);
@@ -417,6 +431,49 @@ sap.ui.define([
 			} else {
 				return undefined;
 			}
+		},
+
+		/**
+		 * @inheritDoc
+		 */
+		attachEvent: function (oObject, sEventName, sFunctionPath, vData) {
+			var fnCallback = ObjectPath.get(sFunctionPath);
+
+			if (typeof fnCallback !== "function") {
+				throw new Error("Can't attach event because the event handler function is not found or not a function.");
+			}
+
+			oObject.attachEvent(sEventName, vData, fnCallback);
+		},
+
+		/**
+		 * @inheritDoc
+		 */
+		detachEvent: function (oObject, sEventName, sFunctionPath) {
+			var fnCallback = ObjectPath.get(sFunctionPath);
+
+			if (typeof fnCallback !== "function") {
+				throw new Error("Can't attach event because the event handler function is not found or not a function.");
+			}
+
+			// EventProvider.detachEvent doesn't accept vData parameter, therefore it might lead
+			// to a situation when an incorrect event listener is detached.
+			oObject.detachEvent(sEventName, fnCallback);
+		},
+
+		/**
+		 * @inheritDoc
+		 */
+		bindAggregation: function (oControl, sAggregationName, oBindingInfo) {
+			oControl.bindAggregation(sAggregationName, oBindingInfo);
+		},
+
+		/**
+		 * @inheritDoc
+		 */
+		unbindAggregation: function (oControl, sAggregationName) {
+			// bSuppressReset is not supported
+			oControl.unbindAggregation(sAggregationName);
 		}
 	};
 

@@ -11,15 +11,16 @@
 				<OverflowToolbarLayoutData priority="NeverOverflow" />
 			</layoutData>
 		</Button>
-		<ToolbarSpacer />
-		<core:Icon src="sap-icon://activate">
-		</core:Icon>
 		<Text text="Name of the Tool" wrapping="false">
 			<layoutData>
 				<OverflowToolbarLayoutData priority="Disappear" />
 			</layoutData>
 		</Text>
 		<ToolbarSpacer />
+		<Select width="240px">
+			<core:Item text="option 1" key="o1"/>
+			<core:Item text="option 2" key="o2"/>
+		</Select>
 		<Button text="Alan Smith" type="Transparent" press="onUserNamePress">
 			<layoutData>
 				<OverflowToolbarLayoutData priority="NeverOverflow" />

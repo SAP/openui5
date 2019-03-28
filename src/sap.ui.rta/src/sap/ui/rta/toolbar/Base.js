@@ -6,13 +6,13 @@ sap.ui.define([
 	'sap/ui/rta/library',
 	'sap/m/HBox',
 	'sap/ui/rta/util/Animation',
-	'sap/ui/dt/util/getNextZIndex'
+	'sap/ui/dt/util/ZIndexManager'
 ],
 function(
 	library,
 	HBox,
 	Animation,
-	getNextZIndex
+	ZIndexManager
 ) {
 	"use strict";
 
@@ -203,7 +203,7 @@ function(
 	 * @public
 	 */
 	Base.prototype.bringToFront = function () {
-		this.setZIndex(getNextZIndex());
+		this.setZIndex(ZIndexManager.getNextZIndex());
 	};
 
 	/**

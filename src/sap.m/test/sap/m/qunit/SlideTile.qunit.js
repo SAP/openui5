@@ -3,16 +3,20 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/m/SlideTile",
 	"sap/m/GenericTile",
-	"sap/m/GenericTileScope",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/TileContent",
 	"sap/m/NewsContent",
 	"sap/ui/Device",
 	"sap/m/NumericContent",
+	"sap/m/library",
 	"sap/ui/events/jquery/EventExtension", // only used indirectly?
 	"jquery.sap.keycodes"
-], function(jQuery, SlideTile, GenericTile, GenericTileScope, JSONModel, TileContent, NewsContent, Device, NumericContent) {
+], function(jQuery, SlideTile, GenericTile, JSONModel, TileContent, NewsContent, Device, NumericContent, library) {
 	"use strict";
+
+
+	// shortcut for sap.m.GenericTileScope
+	var GenericTileScope = library.GenericTileScope;
 
 
 	QUnit.module("Property scope values", {

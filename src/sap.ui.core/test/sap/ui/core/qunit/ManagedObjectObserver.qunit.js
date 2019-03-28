@@ -152,6 +152,10 @@ sap.ui.define(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONModel
 
 
 		function compareObjects(o, p) {
+			if (o === undefined) {
+				return p === undefined;
+			}
+
 			var i, keysO = Object.keys(o).sort(),
 				keysP = Object.keys(p).sort();
 
@@ -805,6 +809,85 @@ sap.ui.define(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONModel
 
 			oObserver.disconnect();
 
+		});
+
+		QUnit.test("ManagedObjectObserver listening to parent change", function(assert) {
+			var oTestParent1 = new TestElement("parent1"), oTestParent2 = new TestElement("parent2");
+
+			//listen to parent changes
+			var oObserver = new ManagedObjectObserver(function(oChanges) {
+				setActual(oChanges);
+			});
+			oObserver.observe(this.obj, {
+				parent: true
+			});
+
+			assert.ok(true, "Observation of parent change started");
+
+			setExpected({
+				object: this.obj,
+				type: "parent",
+				name: "singleAggr",
+				mutation: "set",
+				parent: oTestParent1
+			});
+
+			oTestParent1.setAggregation("singleAggr", this.obj);
+			this.checkExpected("The test object observes the change from now parent to parent 1");
+
+			setExpected([
+				{
+					object: this.obj,
+					type: "parent",
+					name: "singleAggr",
+					mutation: "unset",
+					parent: oTestParent1
+				},
+				{
+					object: this.obj,
+					type: "parent",
+					name: "multiAggr",
+					mutation: "set",
+					parent: oTestParent2
+				}
+				]
+			);
+
+			oTestParent2.addAggregation("multiAggr", this.obj);
+			this.checkExpected("The test object observes the change from parent 1 to parent 2");
+
+			setExpected([
+				{
+					object: this.obj,
+					type: "parent",
+					name: "multiAggr",
+					mutation: "unset",
+					parent: oTestParent2
+				},
+				{
+					object: this.obj,
+					type: "parent",
+					name: "singleAggr",
+					mutation: "set",
+					parent: oTestParent2
+				}]
+			);
+
+			oTestParent2.setAggregation("singleAggr", this.obj);
+			this.checkExpected("Also a switch of aggregations inside the parent is observed");
+
+			setExpected({
+				object: this.obj,
+				type: "parent",
+				name: "singleAggr",
+				mutation: "unset",
+				parent: oTestParent2
+			});
+
+			oTestParent2.setAggregation("singleAggr", null);
+			this.checkExpected("Destroying via setParent null is also observed");
+
+			oObserver.disconnect();
 		});
 
 		QUnit.test("ManagedObjectObserver listening to aggregation changes for destroying aggegations", function(assert) {

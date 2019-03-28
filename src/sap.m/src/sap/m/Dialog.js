@@ -8,6 +8,7 @@ sap.ui.define([
 	'./InstanceManager',
 	'./AssociativeOverflowToolbar',
 	'./ToolbarSpacer',
+	'./Title',
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
@@ -35,6 +36,7 @@ function(
 	InstanceManager,
 	AssociativeOverflowToolbar,
 	ToolbarSpacer,
+	Title,
 	library,
 	Control,
 	IconPool,
@@ -61,6 +63,9 @@ function(
 		// shortcut for sap.m.DialogType
 		var DialogType = library.DialogType;
 
+		// shortcut for sap.m.DialogType
+		var DialogRoleType = library.DialogRoleType;
+
 		// shortcut for sap.ui.core.ValueState
 		var ValueState = coreLibrary.ValueState;
 
@@ -72,6 +77,9 @@ function(
 		// because of focusing and transition relate issues especially in IE,
 		// where 200ms transition sometimes seems to last a little longer
 		var iAnimationDuration = bUseAnimations ? 300 : 10;
+
+		// HTML container scrollbar width
+		var iScrollbarWidth = 17;
 
 		/**
 		* Constructor for a new Dialog.
@@ -225,7 +233,14 @@ function(
 					 * The function allows you to define custom behavior which will be executed when the Escape key is pressed. By default, when the Escape key is pressed, the Dialog is immediately closed.
 					 * @since 1.44
 					 */
-					escapeHandler : {type: "any", group: "Behavior", defaultValue: null}
+					escapeHandler : {type: "any", group: "Behavior", defaultValue: null},
+
+					/**
+					 * Specifies the ARIA role of the Dialog. If the state of the control is "Error" or "Warning" the role will be "AlertDialog" regardless of what is set.
+					 * @since 1.65
+					 * @private
+					 */
+					role: {type: "sap.m.DialogRoleType", group: "Data", defaultValue: DialogRoleType.Dialog, visibility: "hidden"}
 				},
 				defaultAggregation: "content",
 				aggregations: {
@@ -903,7 +918,6 @@ function(
 		Dialog.prototype._onResize = function () {
 			var $dialog = this.$(),
 				$dialogContent = this.$('cont'),
-				dialogClientWidth = $dialogContent[0].clientWidth,
 				dialogContentScrollTop,
 				sContentHeight = this.getContentHeight(),
 				sContentWidth = this.getContentWidth(),
@@ -945,17 +959,17 @@ function(
 			// Browsers except chrome do not increase the width of the container to include scrollbar (when width is auto). So we need to compensate
 			if (Device.system.desktop && !oBrowser.chrome) {
 
-				var iVerticalScrollBarWidth = Math.ceil($dialogContent.outerWidth() - dialogClientWidth),
+				var bHasVerticalScrollbar = $dialogContent[0].clientHeight < $dialogContent[0].scrollHeight,
 					iCurrentWidthAndHeight = $dialogContent.width() + "x" + $dialogContent.height();
 
 				if (iCurrentWidthAndHeight !== this._iLastWidthAndHeightWithScroll) { // apply the fix only if width or height did actually change
-					if (iVerticalScrollBarWidth > 0 &&					// - there is a vertical scroll
+					if (bHasVerticalScrollbar &&					// - there is a vertical scroll
 						(!sContentWidth || sContentWidth == 'auto') &&	// - when the developer hasn't set it explicitly
 						!this.getStretch() && 							// - when the dialog is not stretched
 						$dialogContent.width() < maxDialogWidth) {		// - if the dialog can't grow anymore
 
 						$dialog.addClass("sapMDialogVerticalScrollIncluded");
-						$dialogContent.css({"padding-right" : iVerticalScrollBarWidth});
+						$dialogContent.css({"padding-right" : iScrollbarWidth});
 						this._iLastWidthAndHeightWithScroll = iCurrentWidthAndHeight;
 					} else {
 						$dialog.removeClass("sapMDialogVerticalScrollIncluded");
@@ -1587,7 +1601,7 @@ function(
 			if (this._headerTitle) {
 				this._headerTitle.setText(sTitle);
 			} else {
-				this._headerTitle = new sap.m.Title(this.getId() + "-title", {
+				this._headerTitle = new Title(this.getId() + "-title", {
 					text: sTitle,
 					level: "H2"
 				}).addStyleClass("sapMDialogTitle");

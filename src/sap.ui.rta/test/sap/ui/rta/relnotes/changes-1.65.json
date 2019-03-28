@@ -1,0 +1,13 @@
+{
+  "1.65.0": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "475f0606325757ab8c0c0bcd40f6a269fe75b28f",
+        "type": "FIX",
+        "text": ": RTA Replace Remove Icon",
+        "references": []
+      }
+    ]
+  }
+}

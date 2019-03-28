@@ -5,9 +5,12 @@ sap.ui.define([
     "sap/ui/thirdparty/jquery",
     'sap/m/App',
     'sap/ui/core/mvc/View',
-    'sap/ui/core/mvc/ViewType'
-], function (RecordReplay, SearchField, $, App, View, ViewType) {
+    'sap/ui/core/library'
+], function (RecordReplay, SearchField, $, App, View, library) {
     "use strict";
+
+    // shortcut for sap.ui.core.mvc.ViewType
+    var ViewType = library.mvc.ViewType;
 
     QUnit.module("RecordReplay - control selector", {
         beforeEach: function () {

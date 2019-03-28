@@ -3766,6 +3766,34 @@ sap.ui.define([
 			oSelect.destroy();
 		});
 
+		QUnit.test("icon should be destroyed", function (assert) {
+
+			// system under test
+			var oSelect = new Select({
+				forceSelection: false,
+				items: [
+					new Item({
+						key: "1",
+						text: "First item"
+					}),
+					new ListItem({
+						key: "2",
+						text: "Second item",
+						icon: "sap-icon//competitor"
+					})
+				]
+			});
+
+			oSelect.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oSelect.destroy();
+
+			// assert
+			assert.strictEqual(oSelect._getValueIcon(), null, "icon is destroyed");
+		});
+
 		// BCP 1580101530
 		QUnit.test("it should correctly synchronize the selection after the properties (models and bindingContext) are propagated", function (assert) {
 
@@ -8894,7 +8922,7 @@ sap.ui.define([
 
 			// assert
 			assert.strictEqual(oSelect.getFocusDomRef().getAttribute("aria-expanded"), "true");
-			assert.strictEqual(oSelect.getDomRef().getAttribute("aria-owns"), oSelect.getList().getId(), 'the attribute "aria-owns" is set after the list is rendered');
+			assert.strictEqual(oSelect.getDomRef().getAttribute("aria-controls"), oSelect.getList().getId(), 'the attribute "aria-controls" is set after the list is rendered');
 			assert.strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), oExpectedItem.getId(), 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 			// cleanup

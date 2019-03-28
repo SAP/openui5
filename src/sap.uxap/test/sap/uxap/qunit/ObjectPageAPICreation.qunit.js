@@ -704,7 +704,7 @@ function (
 		helpers.renderObject(oObjectPage);
 	});
 
-	QUnit.module("Content resize", {
+	QUnit.module("Resizing", {
 		beforeEach: function () {
 			this.NUMBER_OF_SECTIONS = 3;
 			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, this.NUMBER_OF_SECTIONS, false);
@@ -742,6 +742,27 @@ function (
 
 		}.bind(this));
 
+		helpers.renderObject(oObjectPage);
+	});
+
+	QUnit.test("ObjectPage resize handler is regestered in onAfterRendering", function (assert) {
+		// arrange
+		var oObjectPage = this.oObjectPage,
+			done = assert.async(),
+			oDelegate = { onAfterRendering: function() {
+					oObjectPage.removeEventDelegate(oDelegate);
+					// assert
+					assert.ok(oObjectPage._iResizeId !== null, "Resize handler is registered in onAfterRendering function");
+					done();
+				}};
+
+		assert.expect(2);
+
+		// assert
+		assert.strictEqual(oObjectPage._iResizeId, null, "Resize handler is not registered before onAfterRendering function");
+
+		// act
+		oObjectPage.addEventDelegate(oDelegate);
 		helpers.renderObject(oObjectPage);
 	});
 
@@ -2021,6 +2042,13 @@ function (
 		}
 	});
 
+	QUnit.test("Object Page has the correct CSS class", function (assert) {
+		// Assert
+		assert.ok(this.oObjectPage.hasStyleClass("sapUxAPObjectPageHasDynamicTitle"),
+				"Object Page page has the sapUxAPObjectPageHasDynamicTitle CSS class" +
+				" when Dynamic Header Title is being used.");
+	});
+
 	QUnit.test("ObjectPageDynamicHeaderTitle with snappedTitleOnMobile on desktop", function (assert) {
 		// Arrange
 		var oObjectPage = this.oObjectPage,
@@ -2351,6 +2379,13 @@ function (
 		afterEach: function () {
 			this.oObjectPage.destroy();
 		}
+	});
+
+	QUnit.test("Object Page has the correct CSS class", function (assert) {
+		// Assert
+		assert.notOk(this.oObjectPage.hasStyleClass("sapUxAPObjectPageHasDynamicTitle"),
+				"Object Page page hasn't the sapUxAPObjectPageHasDynamicTitle CSS class" +
+				" when Dynamic Header Title is not being used.");
 	});
 
 	QUnit.test("Should change selectedSection", function (assert) {
@@ -2706,11 +2741,10 @@ function (
 			var $titleDescription = oObjectPage.getHeaderTitle().$().find('.sapUxAPObjectPageHeaderIdentifierDescription').get(0);
 			$titleDescription.innerText = sShortText;
 
-			setTimeout(function() {
-				assert.strictEqual(layoutCalcSpy.callCount, 1, "layout recalculations called once");
-				assert.strictEqual(headerCalcSpy.callCount, 1, "header height recalculation called");
-				done();
-			}, 100);
+			oObjectPage.getHeaderTitle()._onHeaderResize({ size: { width: "800px", height: "800px"}});
+			assert.strictEqual(layoutCalcSpy.callCount, 1, "layout recalculations called once");
+			assert.strictEqual(headerCalcSpy.callCount, 1, "header height recalculation called");
+			done();
 		});
 
 		helpers.renderObject(this.oObjectPage);

@@ -39,24 +39,6 @@ sap.ui.define([
 
 	var oFakeLrepConnector = new FakeLrepConnector("Dummy path");
 
-	var fnGetChanges = function(aChanges, sSelectorId, iLength, assert){
-		var aVarMgmtChanges = this.oFlexController._oChangePersistence._mChanges.mChanges[sSelectorId]
-			.map(function(oChange) {
-				return oChange.getDefinition().fileName;
-			});
-
-		for (var i = 0; i < aChanges.length; i++){
-
-			var iIndex = aVarMgmtChanges.indexOf(aChanges[i].getDefinition().fileName);
-			assert.ok(iIndex > -1, "change present in current map");
-			assert.ok(jQuery.isArray(this.oFlexController._oChangePersistence._mChanges.mDependencies[aChanges[i].getId()].dependencies), "dependency map present for change in current map");
-		}
-
-		assert.strictEqual(this.oFlexController._oChangePersistence._mChanges.mChanges["RTADemoAppMD---detail--GroupElementDatesShippingStatus"].length, iLength, "changes in map");
-		assert.strictEqual(Object.keys(this.oFlexController._oChangePersistence._mChanges.mDependencies).length, iLength - 1, "Dependency maps present");
-		assert.strictEqual(Object.keys(this.oFlexController._oChangePersistence._mChanges.mDependentChangesOnMe).length, iLength - 1, "DependentChangesOnMe maps present");
-	};
-
 	QUnit.module("Given an instance of FakeLrepConnector", {
 		beforeEach : function(assert) {
 			var done = assert.async();
@@ -1123,8 +1105,8 @@ sap.ui.define([
 							var oData = this.oFlexController.getVariantModelData();
 							this.oModel = new VariantModel(oData, this.oFlexController, this.oComponent);
 							sandbox.stub(this.oComponent, "getModel").returns(this.oModel);
-							this.oModelRemoveChangeStub = sandbox.stub(this.oModel, "_removeChange");
-							this.oModelAddChangeStub = sandbox.stub(this.oModel, "_addChange");
+							this.oModelRemoveChangeStub = sandbox.stub(this.oModel, "removeChange");
+							this.oModelAddChangeStub = sandbox.stub(this.oModel, "addChange");
 							done();
 						}.bind(this));
 
@@ -1141,34 +1123,13 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("when '_updateCurrentVariant' is triggered from a variant model to carry switch and revert of changes", function(assert) {
-		assert.expect(21);
-		assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[this.aRevertedChanges[1].getId()] instanceof Object);
-		fnGetChanges.call(this, this.aRevertedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 8, assert);
-
-		var sCurrentVariant = this.oModel.getCurrentVariantReference("idMain1--variantManagementOrdersTable");
-		assert.equal(sCurrentVariant, "variant0", "the current variant key before switch is correct");
-		var oCurrentVariant = this.oModel.getVariant("variant0");
-		assert.equal(oCurrentVariant.content.fileName, "variant0", "'getVariant' of the model returns the correct variant object");
-
-		return this.oModel.updateCurrentVariant("idMain1--variantManagementOrdersTable", "idMain1--variantManagementOrdersTable")
-		/*Dependencies still not updated as control doesn't exist*/
-		.then(function () {
-			assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[this.aExpectedChanges[1].getId()] instanceof Object);
-			fnGetChanges.call(this, this.aExpectedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 7, assert);
-			sCurrentVariant = this.oModel.getCurrentVariantReference("idMain1--variantManagementOrdersTable");
-			assert.equal(sCurrentVariant, "idMain1--variantManagementOrdersTable", "the current variant key after switch is correct");
-		}.bind(this));
-	});
-
-	QUnit.test("when triggering _addChange and _removeChange on a control via the VariantModel", function(assert) {
+	QUnit.test("when triggering addChange and removeChange on a control via the VariantModel", function(assert) {
 		var oMockControl = new Text("RTADemoAppMD---detail--GroupElementDatesShippingStatus");
 
 		sandbox.stub(this.oFlexController._oChangePersistence, "_addPropagationListener");
 
 		this.oFlexController.deleteChange(this.aRevertedChanges[1], this.oComponent);
 		assert.ok(this.oModelRemoveChangeStub.calledOnce, "remove change was called from model");
-
 
 		this.oFlexController.addPreparedChange(this.aExpectedChanges[1], this.oComponent);
 		assert.ok(this.oModelAddChangeStub.calledOnce, "add change was called from model");
@@ -1178,7 +1139,6 @@ sap.ui.define([
 
 	QUnit.module("Given a VariantController with variants", {
 		beforeEach : function() {
-
 			this.oTechnicalParameters = {
 				"sap-ui-fl-control-variant-id" : ["variant0"]
 			};

@@ -18,6 +18,7 @@ sap.ui.define([
 	'./Title',
 	'./Bar',
 	'./Toolbar',
+	'./StandardListItem',
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/IconPool',
 	'./MultiInputRenderer',
@@ -44,6 +45,7 @@ function(
 	Title,
 	Bar,
 	Toolbar,
+	StandardListItem,
 	ResizeHandler,
 	IconPool,
 	MultiInputRenderer,
@@ -167,7 +169,7 @@ function(
 						/**
 						 * Type of tokenChange event.
 						 * There are four TokenChange types: "added", "removed", "removedAll", "tokensChanged".
-						 * Use Tokenizer.TokenChangeType.Added for "added",    Tokenizer.TokenChangeType.Removed for "removed", Tokenizer.TokenChangeType.RemovedAll for "removedAll" and Tokenizer.TokenChangeType.TokensChanged for "tokensChanged".
+						 * Use sap.m.Tokenizer.TokenChangeType.Added for "added", sap.m.Tokenizer.TokenChangeType.Removed for "removed", sap.m.Tokenizer.TokenChangeType.RemovedAll for "removedAll" and sap.m.Tokenizer.TokenChangeType.TokensChanged for "tokensChanged".
 						 */
 						type: {type: "string"},
 
@@ -199,6 +201,7 @@ function(
 
 				/**
 				 * Fired when the tokens aggregation changed due to a user interaction (add / remove token)
+				 * @since 1.46
 				 */
 				tokenUpdate: {
 					allowPreventDefault : true,
@@ -206,7 +209,7 @@ function(
 						/**
 						 * Type of tokenChange event.
 						 * There are two TokenUpdate types: "added", "removed"
-						 * Use Tokenizer.TokenUpdateType.Added for "added" and Tokenizer.TokenUpdateType.Removed for "removed".
+						 * Use sap.m.Tokenizer.TokenUpdateType.Added for "added" and sap.m.Tokenizer.TokenUpdateType.Removed for "removed".
 						 */
 						type: {type: "string"},
 
@@ -924,12 +927,15 @@ function(
 			bNewFocusIsInTokenizer = false,
 			bNewFocusIsInMultiInput = this._checkFocus(),
 			oRelatedControlDomRef,
-			bFocusIsInSelectedItemPopup;
+			bFocusIsInSelectedItemPopup,
+			bNewFocusIsInReadOnlyPopover;
+
 		if (oPopup instanceof sap.m.Popover) {
 			if (oEvent.relatedControlId) {
 				oRelatedControlDomRef = sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef();
 				bNewFocusIsInSuggestionPopup = containsOrEquals(oPopup.getFocusDomRef(), oRelatedControlDomRef);
 				bNewFocusIsInTokenizer = containsOrEquals(this._tokenizer.getFocusDomRef(), oRelatedControlDomRef);
+				bNewFocusIsInReadOnlyPopover = containsOrEquals(this._oReadOnlyPopover && this._oReadOnlyPopover.getFocusDomRef(), oRelatedControlDomRef);
 
 				if (oSelectedItemsPopup) {
 					bFocusIsInSelectedItemPopup = containsOrEquals(oSelectedItemsPopup.getFocusDomRef(), oRelatedControlDomRef);
@@ -970,7 +976,7 @@ function(
 			this._tokenizer._useCollapsedMode(true);
 		}
 
-		if (this._oReadOnlyPopover && this._oReadOnlyPopover.isOpen() && !bNewFocusIsInTokenizer) {
+		if (this._oReadOnlyPopover && this._oReadOnlyPopover.isOpen() && !bNewFocusIsInTokenizer && !bNewFocusIsInReadOnlyPopover) {
 			this._oReadOnlyPopover.close();
 		}
 
@@ -1432,6 +1438,9 @@ function(
 			that._validateCurrentText();
 			that._setValueInvisible();
 
+			if (that._oSuggPopover._oPopupInput.getValue()) {
+				that._oSuggPopover._oPopover.close();
+			}
 			// Fire through the MultiInput Popup's input value and save it
 			that.onChange(oEvent, null, this.getValue());
 		};
@@ -1444,6 +1453,11 @@ function(
 
 			that._manageListsVisibility(that._bShowListWithTokens);
 		});
+
+		this._oSuggPopover._oPopupInput.oninput = function (oEvent) {
+			Input.prototype.oninput.call(this, oEvent);
+			that._manageListsVisibility(false);
+		};
 	};
 
 	/**
@@ -1640,7 +1654,7 @@ function(
 			return null;
 		}
 
-		var oListItem = new sap.m.StandardListItem({
+		var oListItem = new StandardListItem({
 			selected: true,
 			title: oToken.getText()
 		});

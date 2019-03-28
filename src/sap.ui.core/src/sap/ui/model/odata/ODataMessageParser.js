@@ -130,7 +130,6 @@ ODataMessageParser.prototype.setHeaderField = function(sFieldName) {
  * @param {object} oRequest - The original request that lead to this response
  * @param {map} mGetEntities - A map containing the entities requested from the back-end as keys
  * @param {map} mChangeEntities - A map containing the entities changed on the back-end as keys
- * @return {void}
  * @public
  */
 ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities, mChangeEntities) {
@@ -201,13 +200,17 @@ ODataMessageParser.prototype._isNavigationProperty = function(sParentEntity, sPr
  * @param {map} mChangeEntities - A map containing the entities changed on the back-end as keys
  * @returns {map} A map of affected targets where every affected target
  */
-ODataMessageParser.prototype._getAffectedTargets = function(aMessages, sRequestUri, mGetEntities, mChangeEntities) {
+ODataMessageParser.prototype._getAffectedTargets = function(aMessages, mRequestInfo, mGetEntities, mChangeEntities) {
 	var mAffectedTargets = jQuery.extend({
 		"": true // Allow global messages by default
 	}, mGetEntities, mChangeEntities);
 
+	if (mRequestInfo.request && mRequestInfo.request.key && mRequestInfo.request.created){
+		mAffectedTargets[mRequestInfo.request.key] = true;
+	}
+
 	// Get EntitySet for Requested resource
-	var sRequestTarget = this._parseUrl(sRequestUri).url;
+	var sRequestTarget = this._parseUrl(mRequestInfo.url).url;
 	if (sRequestTarget.indexOf(this._serviceUrl) === 0) {
 		// This is an absolute URL, remove the service part at the front
 		sRequestTarget = sRequestTarget.substr(this._serviceUrl.length + 1);
@@ -265,12 +268,11 @@ ODataMessageParser.prototype._getAffectedTargets = function(aMessages, sRequestU
  * @param {ODataMessageParser~RequestInfo} mRequestInfo - Info object about the request URL
  * @param {map} mGetEntities - A map containing the entities requested from the back-end as keys
  * @param {map} mChangeEntities - A map containing the entities changed on the back-end as keys
- * @return {void}
  */
 ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestInfo, mGetEntities, mChangeEntities) {
 	var i, sTarget;
 
-	var mAffectedTargets = this._getAffectedTargets(aMessages, mRequestInfo.url, mGetEntities, mChangeEntities);
+	var mAffectedTargets = this._getAffectedTargets(aMessages, mRequestInfo, mGetEntities, mChangeEntities);
 
 	var aRemovedMessages = [];
 	var aKeptMessages = [];
@@ -625,7 +627,6 @@ ODataMessageParser.prototype._parseBody = function(/* ref: */ aMessages, oRespon
  * @param {object} oResponse - The response object from which the body property will be used
  * @param {ODataMessageParser~RequestInfo} mRequestInfo - Info object about the request URL
  * @param {string} sContentType - The content type of the response (for the XML parser)
- * @return {void}
  */
 ODataMessageParser.prototype._parseBodyXML = function(/* ref: */ aMessages, oResponse, mRequestInfo, sContentType) {
 	try {
@@ -674,7 +675,6 @@ ODataMessageParser.prototype._parseBodyXML = function(/* ref: */ aMessages, oRes
  * @param {sap.ui.core.message.Message[]} aMessages - The Array into which the new messages are added
  * @param {object} oResponse - The response object from which the body property will be used
  * @param {ODataMessageParser~RequestInfo} mRequestInfo - Info object about the request URL
- * @return {void}
  */
 ODataMessageParser.prototype._parseBodyJSON = function(/* ref: */ aMessages, oResponse, mRequestInfo) {
 	try {

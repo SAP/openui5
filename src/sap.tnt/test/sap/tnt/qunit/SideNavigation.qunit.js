@@ -44,6 +44,14 @@ sap.ui.define([
 		assert.strictEqual(this.sideNavigation.getDomRef().classList.contains('sapTntSideNavigationNotExpanded'), false, 'should not has "sapTntSideNavigationNotExpanded" class');
 		assert.strictEqual(this.sideNavigation.getAggregation('item').getExpanded(), true, 'should not collapse the NavigationList in item aggregation');
 		assert.strictEqual(this.sideNavigation.getAggregation('fixedItem').getExpanded(), true, 'should not collapse the NavigationList in fixedItem aggregation');
+
+		this.sideNavigation.$().find('.sapTntNavLI').each(function (index, item) {
+			assert.strictEqual(item.getAttribute('role'), 'tree', 'ul should have role "tree"');
+		});
+
+		this.sideNavigation.$().find('.sapTntNavLIGroup.sapTntNavLIItem').each(function (index, item) {
+			assert.strictEqual(item.getAttribute('role'), 'treeitem', 'li should have role "treeitem"');
+		});
 	});
 
 	QUnit.test('SetExpanded false', function (assert) {
@@ -60,6 +68,13 @@ sap.ui.define([
 			assert.strictEqual(this.sideNavigation.getAggregation('item').getExpanded(), false, 'should collapse the NavigationList in item aggregation');
 			assert.strictEqual(this.sideNavigation.getAggregation('fixedItem').getExpanded(), false, 'should collapse the NavigationList in fixedItem aggregation');
 
+			this.sideNavigation.$().find('.sapTntNavLI').each(function (index, item) {
+				assert.strictEqual(item.getAttribute('role'), 'menubar', 'ul should have role "menubar"');
+			});
+
+			this.sideNavigation.$().find('.sapTntNavLIGroup.sapTntNavLIItem').each(function (index, item) {
+				assert.strictEqual(item.getAttribute('role'), 'menuitem', 'li should have role "menuitem"');
+			});
 			done();
 		}.bind(this), 1000);
 	});

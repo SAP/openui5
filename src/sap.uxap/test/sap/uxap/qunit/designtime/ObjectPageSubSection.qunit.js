@@ -1,5 +1,5 @@
 sap.ui.define([
-	"sap/ui/rta/test/controlEnablingCheck"
+	"sap/ui/rta/enablement/controlTest"
 ], function (rtaControlEnablingCheck) {
 
 	"use strict";

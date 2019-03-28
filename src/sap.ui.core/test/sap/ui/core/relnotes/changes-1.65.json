@@ -1,0 +1,73 @@
+{
+  "1.65.0": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "8730536b234cd87755030c45d8d1cd28a34a7b9d",
+        "type": "FIX",
+        "text": " ODataMessageParser: Affected message target calculation",
+        "references": []
+      },
+      {
+        "id": "d9049256fc824a376639a1aff30f088ed2d933a5",
+        "type": "FIX",
+        "text": " StaticBinding: Do not recreate static binding when models change",
+        "references": []
+      },
+      {
+        "id": "fede4d3e3e4f31599763d12ce8dda678931114fe",
+        "type": "FIX",
+        "text": " UIComponent: Only activate processing mode for XMLViews",
+        "references": []
+      },
+      {
+        "id": "7509173cabef1b4f524ea693fed965e2004e6a64",
+        "type": "FEATURE",
+        "text": " ManagedObjectObserver: Observe parent change",
+        "references": []
+      },
+      {
+        "id": "b4b52032bf0a602e4a615a33feed542a393c3584",
+        "type": "FEATURE",
+        "text": " SAPUI5 Analytics: Blacklist configuration",
+        "references": []
+      },
+      {
+        "id": "9a82780ee1985ef204c24ecfa7478c05b685d162",
+        "type": "FEATURE",
+        "text": " sap.ui.core.Hyphenation: leftmin and rightmin are changed",
+        "references": []
+      },
+      {
+        "id": "85c571b8d263c6cfab1befd51791b8c3c5d0f67e",
+        "type": "FIX",
+        "text": " Core: Ensure firing the ThemeChanged event when loading libs",
+        "references": []
+      },
+      {
+        "id": "afb96bcd3a2115bdf698015646997da4b8e3ce0f",
+        "type": "FIX",
+        "text": " SimpleType: Fix jsdoc for public methods",
+        "references": []
+      },
+      {
+        "id": "52d7a48db92675328d38152f97742c138c7ec614",
+        "type": "FIX",
+        "text": " SimpleType: Remove @public annotation",
+        "references": []
+      },
+      {
+        "id": "08c14bacde6eee987b4aaeaf37869985e6425825",
+        "type": "FIX",
+        "text": " UI5_QUNIT syncXHRBootstrap test fails",
+        "references": []
+      },
+      {
+        "id": "89921c25c2f0436e223a1be1ef83e5157362f987",
+        "type": "FIX",
+        "text": " XMLTemplateProcessor: run ExtensionPoints with correct owner ID",
+        "references": []
+      }
+    ]
+  }
+}

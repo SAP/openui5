@@ -4,46 +4,46 @@
         xmlns:mvc="sap.ui.core.mvc"
         xmlns:f="sap.f"
         xmlns:w="sap.ui.integration.widgets">
-    <f:CardContainer>
-        <w:Card height="23rem" manifest="{manifests>/line}">
+    <f:GridContainer class="sapUiSmallMargin">
+        <w:Card manifest="{manifests>/line}">
             <w:layoutData>
-                <f:CardItemLayoutData columns="4" />
+                <f:GridContainerItemLayoutData rows="5" columns="4" />
             </w:layoutData>
         </w:Card>
-        <w:Card height="23rem" manifest="{manifests>/stackedColumn}">
+        <w:Card manifest="{manifests>/stackedColumn}">
             <w:layoutData>
-                <f:CardItemLayoutData columns="3" />
+                <f:GridContainerItemLayoutData rows="5" columns="4" />
             </w:layoutData>
         </w:Card>
-        <w:Card height="11rem" manifest="{manifests>/donut1}">
+        <w:Card manifest="{manifests>/donut1}">
             <w:layoutData>
-                <f:CardItemLayoutData columns="2" />
+                <f:GridContainerItemLayoutData rows="3" columns="3" />
             </w:layoutData>
         </w:Card>
-        <w:Card height="11rem" manifest="{manifests>/donut2}">
+        <w:Card manifest="{manifests>/donut2}">
             <w:layoutData>
-                <f:CardItemLayoutData columns="2" />
+                <f:GridContainerItemLayoutData rows="3" columns="3" />
             </w:layoutData>
         </w:Card>
-        <w:Card height="11rem" manifest="{manifests>/donut3}">
+        <w:Card manifest="{manifests>/donut3}">
             <w:layoutData>
-                <f:CardItemLayoutData columns="2" />
+                <f:GridContainerItemLayoutData rows="3" columns="3" />
             </w:layoutData>
         </w:Card>
-        <w:Card height="11rem" manifest="{manifests>/donut4}">
+        <w:Card manifest="{manifests>/donut4}">
             <w:layoutData>
-                <f:CardItemLayoutData columns="2" />
+                <f:GridContainerItemLayoutData rows="3" columns="3" />
             </w:layoutData>
         </w:Card>
-        <w:Card height="11rem" manifest="{manifests>/donut5}">
+        <w:Card manifest="{manifests>/donut5}">
             <w:layoutData>
-                <f:CardItemLayoutData columns="2" />
+                <f:GridContainerItemLayoutData rows="3" columns="3" />
             </w:layoutData>
         </w:Card>
-        <w:Card height="11rem" manifest="{manifests>/donut6}">
+        <w:Card manifest="{manifests>/donut6}">
             <w:layoutData>
-                <f:CardItemLayoutData columns="2" />
+                <f:GridContainerItemLayoutData rows="3" columns="3" />
             </w:layoutData>
         </w:Card>
-    </f:CardContainer>
+    </f:GridContainer>
 </mvc:View>

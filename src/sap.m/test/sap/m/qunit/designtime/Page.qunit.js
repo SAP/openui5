@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/dt/test/report/QUnit",
 	"sap/ui/dt/test/ElementEnablementTest",
 	"dt/Page",
-	"sap/ui/rta/test/controlEnablingCheck"
+	"sap/ui/rta/enablement/controlTest"
 ], function(createAndAppendDiv, sapMPage, Bar, QUnitReport, ElementEnablementTest, Page, rtaControlEnablingCheck) {
 	"use strict";
 	createAndAppendDiv("content");
@@ -215,7 +215,7 @@ sap.ui.define([
 				parameter : function(oView){
 					return {
 						source : oView.byId("btn0"),
-						combineFields : [
+						combineElements : [
 							oView.byId("btn0"),
 							oView.byId("btn1")
 						]

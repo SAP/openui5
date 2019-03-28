@@ -17,6 +17,8 @@ sap.ui.define([
 	'sap/ui/unified/CalendarDateInterval',
 	'sap/ui/unified/CalendarWeekInterval',
 	'sap/ui/unified/CalendarOneMonthInterval',
+	'sap/ui/unified/CalendarMonthInterval',
+	'sap/ui/unified/CalendarTimeInterval',
 	'sap/ui/Device',
 	'sap/ui/core/Element',
 	'sap/ui/core/Renderer',
@@ -37,6 +39,8 @@ sap.ui.define([
 	'sap/m/StandardListItemRenderer',
 	'sap/m/PlanningCalendarRow',
 	'sap/m/PlanningCalendarRenderer',
+	'sap/m/PlanningCalendarView',
+	'sap/m/CheckBox',
 	'sap/m/library',
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
@@ -57,6 +61,8 @@ sap.ui.define([
 	CalendarDateInterval,
 	CalendarWeekInterval,
 	CalendarOneMonthInterval,
+	CalendarMonthInterval,
+	CalendarTimeInterval,
 	Device,
 	Element,
 	Renderer,
@@ -77,6 +83,8 @@ sap.ui.define([
 	StandardListItemRenderer,
 	PlanningCalendarRow,
 	PlanningCalendarRenderer,
+	PlanningCalendarView,
+	CheckBox,
 	library,
 	deepEqual,
 	Log,
@@ -1149,7 +1157,7 @@ sap.ui.define([
 			switch (sIntervalType) {
 				case CalendarIntervalType.Hour:
 					if (!this._oTimeInterval) {
-						this._oTimeInterval = new sap.ui.unified.CalendarTimeInterval(this.getId() + "-TimeInt", {
+						this._oTimeInterval = new CalendarTimeInterval(this.getId() + "-TimeInt", {
 							startDate: new Date(oStartDate.getTime()), // use new date object
 							items: iIntervals,
 							pickerPopup: true,
@@ -1220,7 +1228,7 @@ sap.ui.define([
 
 				case CalendarIntervalType.Month:
 					if (!this._oMonthInterval) {
-						this._oMonthInterval = new sap.ui.unified.CalendarMonthInterval(this.getId() + "-MonthInt", {
+						this._oMonthInterval = new CalendarMonthInterval(this.getId() + "-MonthInt", {
 							startDate: new Date(oStartDate.getTime()), // use new date object
 							months: iIntervals,
 							pickerPopup: true,
@@ -2347,7 +2355,7 @@ sap.ui.define([
 			switch (sViewKey) {
 				case oViewType.Hour:
 					return this._oViews[oViewType.Hour] ||
-						(this._oViews[oViewType.Hour] = new sap.m.PlanningCalendarView(this.getId() + "-HourView", {
+						(this._oViews[oViewType.Hour] = new PlanningCalendarView(this.getId() + "-HourView", {
 							key: oViewType.Hour,
 							intervalType: oIntervalType.Hour,
 							description: this._oRB.getText("PLANNINGCALENDAR_HOURS"),
@@ -2357,7 +2365,7 @@ sap.ui.define([
 						}));
 				case oViewType.Day:
 					return this._oViews[oViewType.Day] ||
-						(this._oViews[oViewType.Day] = new sap.m.PlanningCalendarView(this.getId() + "-DayView", {
+						(this._oViews[oViewType.Day] = new PlanningCalendarView(this.getId() + "-DayView", {
 							key: oViewType.Day,
 							intervalType: oIntervalType.Day,
 							description: this._oRB.getText("PLANNINGCALENDAR_DAYS"),
@@ -2367,7 +2375,7 @@ sap.ui.define([
 						}));
 				case oViewType.Month:
 					return  this._oViews[oViewType.Month] ||
-						(this._oViews[oViewType.Month] = new sap.m.PlanningCalendarView(this.getId() + "-MonthView", {
+						(this._oViews[oViewType.Month] = new PlanningCalendarView(this.getId() + "-MonthView", {
 							key: oViewType.Month,
 							intervalType: oIntervalType.Month,
 							description: this._oRB.getText("PLANNINGCALENDAR_MONTHS"),
@@ -2377,7 +2385,7 @@ sap.ui.define([
 						}));
 				case oViewType.Week:
 					return this._oViews[oViewType.Week] ||
-						(this._oViews[oViewType.Week] = new sap.m.PlanningCalendarView(this.getId() + "-WeekView", {
+						(this._oViews[oViewType.Week] = new PlanningCalendarView(this.getId() + "-WeekView", {
 							key: oViewType.Week,
 							intervalType: oIntervalType.Week,
 							description: this._oRB.getText("PLANNINGCALENDAR_WEEK"),
@@ -2387,7 +2395,7 @@ sap.ui.define([
 						}));
 				case oViewType.OneMonth:
 					return this._oViews[oViewType.OneMonth] ||
-						( this._oViews[oViewType.OneMonth] = new sap.m.PlanningCalendarView(this.getId() + "-OneMonthView", {
+						( this._oViews[oViewType.OneMonth] = new PlanningCalendarView(this.getId() + "-OneMonthView", {
 							key: oViewType.OneMonth,
 							intervalType: oIntervalType.OneMonth,
 							description: this._oRB.getText("PLANNINGCALENDAR_ONE_MONTH"),
@@ -2499,12 +2507,23 @@ sap.ui.define([
 	 */
 	PlanningCalendar.prototype._updateRowTimeline = function (oRow) {
 		var oRowTimeline = getRowTimeline(oRow),
-			sKey, oView, sIntervalType, iIntervals;
+			sKey, oView, sIntervalType, iIntervals,
+			bMobile1MonthView = this.getViewKey() === PlanningCalendarBuiltInView.OneMonth && this._iSize < 2,
+			oStartDate = this.getStartDate();
 
 		oRowTimeline.setNonWorkingDays(oRow.getNonWorkingDays());
 		oRowTimeline.setNonWorkingHours(oRow.getNonWorkingHours());
 
-		oRowTimeline.setStartDate(this.getStartDate());
+		//in onemonthview in mobile
+		//set the start dates of the newly created rows
+		//to match the currently selected day
+		if (bMobile1MonthView
+			&& this._oOneMonthInterval
+			&& this._oOneMonthInterval.getSelectedDates().length) {
+			oStartDate = this._oOneMonthInterval.getSelectedDates()[0].getStartDate();
+		}
+
+		oRowTimeline.setStartDate(oStartDate);
 		oRowTimeline.setShowIntervalHeaders(this.getShowIntervalHeaders());
 		oRowTimeline.setShowEmptyIntervalHeaders(this.getShowEmptyIntervalHeaders());
 		oRowTimeline.setGroupAppointmentsMode(this.getGroupAppointmentsMode());
@@ -2586,6 +2605,13 @@ sap.ui.define([
 
 					oListItem.setProperty(oChanges.name, oChanges.current);
 				}.bind(this),
+				tooltip: function (oChanges) {
+					if (oChanges.mutation === "insert") {
+						oRowHeader.setTooltip(oChanges.child);
+					} else if (oChanges.mutation === "remove") {
+						oRowHeader.setTooltip();
+					}
+				},
 				intervalHeaders: function (oChanges) {
 					oRowTimeline.invalidate();
 				},
@@ -2603,7 +2629,7 @@ sap.ui.define([
 			}
 		}).observe(oRow, {
 			properties: ["icon", "text", "title", "nonWorkingDays", "nonWorkingHours", "selected", "enableAppointmentsDragAndDrop", "enableAppointmentsResize", "enableAppointmentsCreate"],
-			aggregations: ["appointments", "intervalHeaders"],
+			aggregations: ["tooltip", "appointments", "intervalHeaders"],
 			destroy: true
 		});
 
@@ -3744,7 +3770,7 @@ sap.ui.define([
 			}
 		} else {
 			if (!this._oSelectAllCheckBox) {
-				this._oSelectAllCheckBox = new sap.m.CheckBox(this.getId() + "-All", {
+				this._oSelectAllCheckBox = new CheckBox(this.getId() + "-All", {
 					text: this._oRB.getText("COLUMNSPANEL_SELECT_ALL")
 				});
 				this._oSelectAllCheckBox.attachEvent("select", handleSelectAll, this);

@@ -1,5 +1,5 @@
 sap.ui.define([
-		"sap/ui/rta/test/controlEnablingCheck",
+		"sap/ui/rta/enablement/controlTest",
 		"sap/ui/dt/test/report/QUnit",
 		"sap/ui/dt/test/ElementEnablementTest"],
 function (rtaControlEnablingCheck, QUnitReport, ElementEnablementTest) {

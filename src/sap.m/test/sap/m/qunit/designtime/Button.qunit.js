@@ -1,9 +1,8 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/rta/test/controlEnablingCheck",
+	"sap/ui/rta/enablement/controlTest",
 	"sap/ui/dt/test/report/QUnit",
 	"sap/ui/dt/test/ElementEnablementTest",
 	"sap/m/changeHandler/CombineButtons",
@@ -11,9 +10,17 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer"
-], function(QUnitUtils, createAndAppendDiv,
-			rtaControlEnablingCheck, QUnitReport, ElementEnablementTest, CombineButtons,
-			JsControlTreeModifier, Change, UIComponent, ComponentContainer) {
+], function(
+	createAndAppendDiv,
+	rtaControlEnablingCheck,
+	QUnitReport,
+	ElementEnablementTest,
+	CombineButtons,
+	JsControlTreeModifier,
+	Change,
+	UIComponent,
+	ComponentContainer
+) {
 
 	'use strict';
 	createAndAppendDiv("content");
@@ -68,7 +75,7 @@ sap.ui.define([
 				parameter : function(oView){
 					return {
 						source : oView.byId("btn0"),
-						combineFields : [
+						combineElements : [
 							oView.byId("btn0"),
 							oView.byId("btn1"),
 							oView.byId("btn2")
@@ -229,7 +236,7 @@ sap.ui.define([
 				};
 
 			oChangeHandler.completeChangeContent(oChange, {
-				combineFieldIds: ["comp---view--btn1", "comp---view--btn2"]
+				combineElementIds: ["comp---view--btn1", "comp---view--btn2"]
 			}, oPropertyBag);
 
 			oChangeHandler.applyChange(oChange, oToolbar, oPropertyBag);
@@ -237,6 +244,10 @@ sap.ui.define([
 
 			oChangeHandler.revertChange(oChange, oToolbar, oPropertyBag);
 			assert.strictEqual(oToolbar.getContent().length, 2, "The change was successfully reverted.");
+		});
+
+		QUnit.done(function() {
+			jQuery("#content").hide();
 		});
 	});
 

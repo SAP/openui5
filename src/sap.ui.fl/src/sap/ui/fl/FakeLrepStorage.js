@@ -7,7 +7,7 @@ sap.ui.define(function () {
 
 	/**
 	 * Class handling the Fake Lrep in different storages
-	 * @param {Storage} oStorage - The storage to be used (e.g. window.sessionStorage)
+	 * @param {Storage} oStorage The storage to be used (e.g. window.sessionStorage)
 	 *
 	 * @class
 	 *
@@ -37,7 +37,7 @@ sap.ui.define(function () {
 		/**
 		 * Creates the  Lrep change key
 		 * @public
-		 * @param  {String} sId - the Lrep change id
+		 * @param  {String} sId The Lrep change id
 		 * @returns {String} the prefixed id
 		 */
 		FakeLrepStorage.createChangeKey = function(sId) {
@@ -49,7 +49,7 @@ sap.ui.define(function () {
 		/**
 		 * Creates the  Lrep variant key
 		 * @public
-		 * @param  {String} sId - the Lrep variant id
+		 * @param  {String} sId The Lrep variant id
 		 * @returns {String} the prefixed id
 		 */
 		FakeLrepStorage.createVariantKey = function(sId) {
@@ -61,20 +61,21 @@ sap.ui.define(function () {
 		/**
 		 * The iterator for the local  Lrep changes (localStorage)
 		 * @public
-		 * @param {function} fnPredicate - the function to apply for each  cahnge
+		 * @param {function} fnPredicate The function to apply for each  cahnge
 		 */
 		FakeLrepStorage.forEachLrepChangeInLocalStorage = function(fnPredicate) {
-			for (var sKey in oStorage) {
+			var aKeys = Object.keys(oStorage);
+			aKeys.forEach(function(sKey) {
 				if (sKey.includes(FL_LREP_CHANGE_KEY) || sKey.includes(FL_LREP_VARIANT_KEY)) {
 					fnPredicate(sKey);
 				}
-			}
+			});
 		};
 
 		/**
 		 * Get a specific  Lrep change (localStorage)
 		 * @public
-		 * @param  {String} sId - the Lrep change id
+		 * @param  {String} sId The Lrep change id
 		 * @returns {Object} the specific change
 		 */
 		FakeLrepStorage.getChange = function(sId) {
@@ -88,15 +89,25 @@ sap.ui.define(function () {
 		};
 
 		/**
-		 * Get all  Lrep changes (localStorage)
-		 * @returns {Object[]} all local  changes
+		 * Get all  Lrep changes (localStorage); If a reference or layer is given the changes are filtered
+		 *
+		 * @param {string} [sReference] Reference to the component
+		 * @param {string} [sLayer] Layer of the change
+		 * @returns {Object[]} All local changes
 		 */
-		FakeLrepStorage.getChanges = function() {
+		FakeLrepStorage.getChanges = function(sReference, sLayer) {
 			var aChanges = [],
 				oChange;
 
 			this.forEachLrepChangeInLocalStorage(function(sKey) {
 				oChange = JSON.parse(oStorage[sKey]);
+				var bSameReference = oChange.reference === sReference || oChange.reference + ".Component" === sReference;
+				var bSameLayer = oChange.layer === sLayer;
+				if (sReference && !bSameReference
+					|| sLayer && !bSameLayer
+				) {
+					return;
+				}
 				aChanges.push(oChange);
 			});
 
@@ -146,7 +157,7 @@ sap.ui.define(function () {
 		/**
 		 * Delete a specific  Lrep change (localStorage)
 		 * @public
-		 * @param  {String} sId - the Lrep change id
+		 * @param  {String} sId The Lrep change id
 		 */
 		FakeLrepStorage.deleteChange = function(sId) {
 			if (sId) {
@@ -171,8 +182,8 @@ sap.ui.define(function () {
 		/**
 		 * Save a  Lrep change (localStorage)
 		 * @public
-		 * @param  {String} sId - the Lrep change id
-		 * @param  {Object} oChange - the change object
+		 * @param  {String} sId The Lrep change id
+		 * @param  {Object} oChange The change object
 		 */
 		FakeLrepStorage.saveChange = function(sId, oChange) {
 			var sChangeKey, sChange;

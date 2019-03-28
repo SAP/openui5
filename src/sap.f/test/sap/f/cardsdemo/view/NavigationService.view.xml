@@ -3,38 +3,40 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:f="sap.f"
 	xmlns:w="sap.ui.integration.widgets"
-    controllerName="sap.f.cardsdemo.controller.NavigationService"
+	controllerName="sap.f.cardsdemo.controller.NavigationService"
 	displayBlock="true">
 
-    <Page title="{i18n>appTitle}">
+	<Page title="{i18n>appTitle}">
 
-        <subHeader>
-            <Toolbar>
-                <ToolbarSpacer/>
-                <Title text="Navigation scenarios"/>
-                <ToolbarSpacer/>
-            </Toolbar>
-        </subHeader>
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="Navigation scenarios"/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
 
-        <content>
-            <Panel>
+		<content>
+			<Panel>
 				<VBox>
 					<VBox class="sapUiMediumMarginLeft">
 						<Text text="Cards using navigation service."/>
 					</VBox>
 					<HBox>
-						<w:Card class="sapUiMediumMargin" manifest="./model/manifests/manifest_navigationService.json" width="400px" height="auto"/>
-                		<w:Card class="sapUiMediumMargin" manifest="./model/manifests/manifest_navigationService2.json" width="400px" height="auto"/>
-                		<w:Card class="sapUiMediumMargin" manifest="./model/manifests/manifest_navigationService3.json" width="400px" height="auto"/>
+						<w:Card class="sapUiMediumMargin" action="onActionLog" manifest="./cardcontent/navigationService/manifest_navigationService.json" width="400px" height="auto"/>
+						<w:Card class="sapUiMediumMargin" action="onActionLog" manifest="./cardcontent/navigationService/manifest_navigationService2.json" width="400px" height="auto"/>
+						<w:Card class="sapUiMediumMargin" action="onActionLog" manifest="./cardcontent/navigationService/manifest_navigationService3.json" width="400px" height="auto"/>
+						<w:Card class="sapUiMediumMargin" action="onActionLog" manifest="./cardcontent/navigationService/manifest_navigationService4.json" width="400px" height="auto"/>
 					</HBox>
 					<VBox class="sapUiMediumMarginLeft">
 						<Text text="Cards using navigation action event."/>
 					</VBox>
 					<HBox>
-						<w:Card id="CardNavigationActionEvent" class="sapUiMediumMargin" manifest="./model/manifests/manifest_navigationAction.json" width="400px" height="auto"/>
+						<w:Card action="onAction" class="sapUiMediumMargin" manifest="./cardcontent/navigationService/manifest_navigationAction.json" width="400px" height="auto"/>
+						<w:Card action="onAction" class="sapUiMediumMargin" manifest="./cardcontent/navigationService/manifest_navigationActionTable.json" width="400px" height="auto"/>
 					</HBox>
 				</VBox>
-            </Panel>
-        </content>
-    </Page>
+			</Panel>
+		</content>
+	</Page>
 </mvc:View>

@@ -3,6 +3,12 @@
 /* Fiori 3 theme                                */
 /* ============================================ */
 
+@sapUiFiori3HSBottomShadow: inset 0 -0.0625rem @sapUiObjectHeaderBorderColor;
+@sapUiFiori3HSTopShadow: 0 0.0625rem 0 0 @sapUiObjectHeaderBackground;
+@sapUiFiori3HSUnderlineOffsetAndHeight: 0.188rem;
+@sapUiFiori3HSUnderlineTopRadius: 0.125rem;
+@sapUiFiori3HSArrowDimensions: 2.375rem;
+
 html.sap-desktop .sapUxAPHierarchicalSelect {
 	border: none;
 	background-color: transparent;
@@ -101,46 +107,49 @@ html.sap-desktop .sapUxAPHierarchicalSelect {
 }
 
 /* styling needed to achieve underline of the select label on phone */
-html.sapUiMedia-Std-Phone, html.sap-phone {
+.sapUxAPObjectPageLayout-Std-Phone, html.sap-phone {
+
 	.sapUiSizeCompact .sapMSlt.sapUxAPHierarchicalSelect,
 	.sapMSlt.sapUxAPHierarchicalSelect {
-		height: 2.75rem;
+		height: @sapElement_LineHeight;
+		line-height: @sapElement_LineHeight;
+		box-shadow: @sapUiFiori3HSBottomShadow, @sapUiFiori3HSTopShadow;
+		background-color: transparent;
 	}
 
-	.sapUiSizeCompact .sapUxAPHierarchicalSelect .sapMSltLabel,
-	.sapUxAPHierarchicalSelect .sapMSltLabel,
-	.sapUiSizeCompact .sapUxAPHierarchicalSelect .sapMSltArrow,
-	.sapUxAPHierarchicalSelect .sapMSltArrow {
-		line-height: 2.75rem;
+	.sapUiSizeCompact .sapUxAPHierarchicalSelect,
+	.sapUxAPHierarchicalSelect {
+
+		& .sapMSltArrow {
+			line-height: @sapUiFiori3HSArrowDimensions;
+			height: @sapUiFiori3HSArrowDimensions;
+			width: @sapUiFiori3HSArrowDimensions;
+			margin: 0.1875rem; // 3px needed in order not to overlap the focus of the parent
+		}
+
+		& .sapMSltLabel {
+			line-height: @sapElement_LineHeight;
+
+			&::after {
+				content: "";
+				position: absolute;
+				width: 100%;
+				top: 1.6rem;
+				left: -@sapUiFiori3HSUnderlineOffsetAndHeight;
+				padding: (@sapUiFiori3HSUnderlineOffsetAndHeight / 2) @sapUiFiori3HSUnderlineOffsetAndHeight;
+				border-top-left-radius: @sapUiFiori3HSUnderlineTopRadius;
+				border-top-right-radius: @sapUiFiori3HSUnderlineTopRadius;
+				background-color: @sapUiActive;
+			}
+
+			& .sapMSelectListItemText {
+				color: @sapUiSelected;
+			}
+		}
 	}
 
 	.sapMSltPressed > .sapMSltArrow {
 		background: @sapUiFieldActiveBackground;
-	}
-
-	.sapMSltPressed > .sapMSltArrow::before {
-		color: @sapUiContentContrastIconColor;
-	}
-
-	.sapUxAPHierarchicalSelect .sapMSltLabel .sapMSelectListItemText::after {
-		content: "";
-		position: absolute;
-		top: 1.628rem;
-		left: -0.188rem;
-		right: -0.188rem;
-		border-top-left-radius: 0.125rem;
-		border-top-right-radius: 0.125rem;
-		background-color: @sapUiActive;
-		padding: 0.094rem 0;
-	}
-
-	.sapUxAPHierarchicalSelect .sapMSltArrow {
-		box-shadow: inset 0 -0.0625rem @sapUiObjectHeaderBorderColor, 0 0.0625rem 0 0 @sapUiObjectHeaderBackground;
-	}
-
-	.sapMSlt.sapUxAPHierarchicalSelect {
-		box-shadow: inset 0 -0.0625rem @sapUiObjectHeaderBorderColor, 0 0.0625rem 0 0 @sapUiObjectHeaderBackground;
-		background-color: transparent;
 	}
 }
 

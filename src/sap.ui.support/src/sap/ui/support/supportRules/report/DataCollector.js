@@ -70,7 +70,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/support/ToolsAPI", "sap/ui/thir
 				aSapApp = oComponent.getMetadata().getManifestEntry("sap.app"),
 				aSapFiori = oComponent.getMetadata().getManifestEntry("sap.fiori");
 
-			aAppInfos.push(aSapApp);
+			if (aSapApp) {
+				aAppInfos.push(aSapApp);
+			}
 
 			if (aSapFiori) {
 				aAppInfos.push(aSapFiori);

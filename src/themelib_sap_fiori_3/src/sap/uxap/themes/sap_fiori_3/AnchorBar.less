@@ -7,6 +7,10 @@
 Common compact/cozy
 **********************************/
 
+@sapUiFiori3AnchorBarBottomShadow: inset 0 -0.0625rem @sapUiObjectHeaderBorderColor;
+@sapUiFiori3ABUnderlineOffsetAndHeight: 0.188rem;
+@sapUiFiori3ABUnderlineTopRadius: 0.125rem;
+
 .sapUxAPAnchorBarFiori3Height {
 	height: @sapElement_LineHeight;
 }
@@ -54,7 +58,7 @@ Common compact/cozy
 .sapUxAPAnchorBar.sapMTB {
 	border: none;
 	background: @sapUiObjectHeaderBackground;
-	box-shadow: inset 0 -0.0625rem @sapUiObjectHeaderBorderColor;
+	box-shadow: @sapUiFiori3AnchorBarBottomShadow;
 
 	&.sapUxAPAnchorBarTransparent {
 		background: transparent;
@@ -100,24 +104,40 @@ html.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar.sapMTB
 .sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonSelected,
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonSelected {
 
-	.sapMSBTextIE {
-		overflow: visible; // needed for IE11
-		display: -ms-inline-grid; // needed for IE11
-	}
+	.sapMSB.sapMSBTransparent {
 
-	.sapMBtnContent {
-		overflow: visible;
+		.sapMBtnContent,
+		.sapUiIcon {
+			color: @sapUiSelected;
+		}
 
 		&::after {
 			content: "";
 			position: absolute;
-			top: 2.5rem;
-			left: -0.188rem;
-			right: -0.188rem;
-			border-top-left-radius: 0.125rem;
-			border-top-right-radius: 0.125rem;
+			width: 80%;
+			top: 2.55rem;
+			left: 10%;
+			padding: (@sapUiFiori3ABUnderlineOffsetAndHeight / 2) 0;
+			border-top-left-radius: @sapUiFiori3ABUnderlineTopRadius;
+			border-top-right-radius: @sapUiFiori3ABUnderlineTopRadius;
 			background-color: @sapUiActive;
-			padding: 0.094rem 0;
+		}
+	}
+
+	.sapMBtnDefault .sapMBtnContent {
+		overflow: visible;
+		color: @sapUiSelected;
+
+		&::after {
+			content: "";
+			position: absolute;
+			width: 100%;
+			top: 2.5rem;
+			left: -@sapUiFiori3ABUnderlineOffsetAndHeight;
+			padding: (@sapUiFiori3ABUnderlineOffsetAndHeight / 2) @sapUiFiori3ABUnderlineOffsetAndHeight;
+			border-top-left-radius: @sapUiFiori3ABUnderlineTopRadius;
+			border-top-right-radius: @sapUiFiori3ABUnderlineTopRadius;
+			background-color: @sapUiActive;
 		}
 	}
 }
@@ -168,7 +188,7 @@ html[dir=rtl] .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight
 	background: -webkit-linear-gradient(left, @sapUiObjectHeaderBackground 0%, @sapUiObjectHeaderBackground 75%, fade(@sapUiObjectHeaderBackground, 0) 100%); /* Chrome10+,Safari5.1+ */
 	background: linear-gradient(to right, @sapUiObjectHeaderBackground 0%, @sapUiObjectHeaderBackground 75%, fade(@sapUiObjectHeaderBackground, 0) 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#000000', endColorstr='#00000000', GradientType=1); /* IE6-9 */
-	box-shadow: inset 0 -0.0625rem @sapUiObjectHeaderBorderColor;
+	box-shadow: @sapUiFiori3AnchorBarBottomShadow;
 }
 
 .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight,
@@ -179,7 +199,7 @@ html[dir=rtl] .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft {
 	background: -webkit-linear-gradient(left, fade(@sapUiObjectHeaderBackground, 0) 0%, @sapUiObjectHeaderBackground 25%, @sapUiObjectHeaderBackground 100%); /* Chrome10+,Safari5.1+ */
 	background: linear-gradient(to right, fade(@sapUiObjectHeaderBackground, 0) 0%, @sapUiObjectHeaderBackground 25%, @sapUiObjectHeaderBackground 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00000000', endColorstr='#000000', GradientType=1); /* IE6-9 */
-	box-shadow: inset 0 -0.0625rem @sapUiObjectHeaderBorderColor;
+	box-shadow: @sapUiFiori3AnchorBarBottomShadow;
 }
 
 html[data-sap-ui-animation="on"] {

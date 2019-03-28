@@ -6,8 +6,10 @@
 		}
 	},
 	"sap.ui5": {
-		"libs": {
-			"sap.m": {}
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
 		},
 		"config": {
 			"sample": {

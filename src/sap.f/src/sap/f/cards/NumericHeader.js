@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/f/cards/ActionEnablement",
 	'sap/m/NumericContent',
 	'sap/m/Text',
-	'sap/f/cards/Data',
+	'sap/f/cards/DataProviderFactory',
 	'sap/ui/model/json/JSONModel',
 	"sap/f/cards/NumericSideIndicator",
 	"sap/f/cards/NumericHeaderRenderer"
@@ -15,7 +15,7 @@ sap.ui.define([
 		ActionEnablement,
 		NumericContent,
 		Text,
-		Data,
+		DataProviderFactory,
 		JSONModel,
 		NumericSideIndicator
 	) {
@@ -28,7 +28,17 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A control used to group a set of card numeric attributes in a header.
+	 * A control used to group a set of card attributes in a header.
+	 *
+	 * <h3>Overview</h3>
+	 * The <code>NumericHeader</code> shows general information about the card and allows the configuration of a numeric value visualization.
+	 * You can configure the title, subtitle, status text and icon, using properties.
+	 *
+	 * <h3>Usage</h3>
+	 * To show only basic information, use {@link sap.f.cards.Header Header} instead.
+	 * It is possible to add more side number indicators, using the <code>sideIndicators</code> aggregation.
+	 * You should always set a title.
+	 * You should always have a maximum of two side indicators.
 	 *
 	 * @extends sap.ui.core.Control
 	 *
@@ -92,10 +102,11 @@ sap.ui.define([
 				details: { "type": "string", group: "Appearance" }
 			},
 			aggregations: {
+
 				/**
 				 * Additional side number indicators. For example "Deviation" and "Target". Not more than two side indicators should be used.
 				 */
-				sideIndicators: { type: "sap.f.cards.NumericSideIndicator", multiple: true }, // TODO limit to 2, or describe in doc
+				sideIndicators: { type: "sap.f.cards.NumericSideIndicator", multiple: true },
 
 				/**
 				 * Used to display title text
@@ -129,20 +140,49 @@ sap.ui.define([
 				 */
 				press: {}
 			}
-		},
-		constructor: function (vId, mSettings) {
-			if (typeof vId !== "string") {
-				mSettings = vId;
-			}
-
-			if (mSettings && mSettings.serviceManager) {
-				this._oServiceManager = mSettings.serviceManager;
-				delete mSettings.serviceManager;
-			}
-
-			Control.apply(this, arguments);
 		}
 	});
+
+	/**
+	 * Initialization hook.
+	 * @private
+	 */
+	NumericHeader.prototype.init = function () {
+		this._aReadyPromises = [];
+		this._bReady = false;
+
+		// So far the ready event will be fired when the data is ready. But this can change in the future.
+		this._awaitEvent("_dataReady");
+
+		Promise.all(this._aReadyPromises).then(function () {
+			this._bReady = true;
+			this.fireEvent("_ready");
+		}.bind(this));
+
+		this.setBusyIndicatorDelay(0);
+	};
+
+	/**
+	 * Await for an event which controls the overall "ready" state of the header.
+	 *
+	 * @private
+	 * @param {string} sEvent The name of the event
+	 */
+	NumericHeader.prototype._awaitEvent = function (sEvent) {
+		this._aReadyPromises.push(new Promise(function (resolve) {
+			this.attachEventOnce(sEvent, function () {
+				resolve();
+			});
+		}.bind(this)));
+	};
+
+	/**
+	 * @public
+	 * @returns {boolean} If the header is ready or not.
+	 */
+	NumericHeader.prototype.isReady = function () {
+		return this._bReady;
+	};
 
 	/**
 	 * Sets the title.
@@ -365,7 +405,7 @@ sap.ui.define([
 	 * @param {map} mConfiguration A map containing the header configuration options.
 	 * @return {sap.f.cards.NumericHeader} The created NumericHeader
 	 */
-	NumericHeader.create = function(mConfiguration, oServiceManager) {
+	NumericHeader.create = function (mConfiguration, oServiceManager) {
 		var mSettings = {
 			title: mConfiguration.title,
 			subtitle: mConfiguration.subTitle,
@@ -386,51 +426,67 @@ sap.ui.define([
 			});
 		}
 
-		if (oServiceManager) {
-			mSettings.serviceManager = oServiceManager;
-		}
-
 		var oHeader = new NumericHeader(mSettings);
-
-		if (mConfiguration.data) {
-			this._handleData(oHeader, mConfiguration.data);
-		}
+		oHeader.setServiceManager(oServiceManager);
+		oHeader._setData(mConfiguration.data);
 
 		return oHeader;
 	};
 
+	NumericHeader.prototype.setServiceManager = function (oServiceManager) {
+		this._oServiceManager = oServiceManager;
+		return this;
+	};
+
 	/**
-	 * Creates an instance of NumericHeader with the given options
+	 * Sets a data provider to the header.
 	 *
 	 * @private
-	 * @static
-	 * @param {sap.f.cards.NumericHeader} oHeader The header for which the data is
-	 * @param {object} oData Data configuration
+	 * @param {object} oDataSettings The data settings
 	 */
-	NumericHeader._handleData = function (oHeader, oData) {
-		var oModel = new JSONModel();
-
-		var oRequest = oData.request;
-		if (oData.json && !oRequest) {
-			oModel.setData(oData.json);
+	NumericHeader.prototype._setData = function (oDataSettings) {
+		var sPath = "/";
+		if (oDataSettings && oDataSettings.path) {
+			sPath = oDataSettings.path;
 		}
 
-		if (oRequest) {
-			Data.fetch(oRequest).then(function (data) {
-				oModel.setData(data);
-				oModel.refresh();
-				oHeader.fireEvent("_updated");
-			}).catch(function (oError) {
-				// TODO: Handle errors. Maybe add error message
-			});
+		this.bindObject(sPath);
+
+		if (this._oDataProvider) {
+			this._oDataProvider.destroy();
 		}
 
-		oHeader.setModel(oModel)
-			.bindElement({
-				path: oData.path || "/"
-			});
+		this._oDataProvider = DataProviderFactory.create(oDataSettings, this._oServiceManager);
 
-		// TODO Check if model is destroyed when header is destroyed
+		if (this._oDataProvider) {
+			this.setBusy(true);
+
+			// If a data provider is created use an own model. Otherwise bind to the one propagated from the card.
+			this.setModel(new JSONModel());
+
+			this._oDataProvider.attachDataChanged(function (oEvent) {
+				this._updateModel(oEvent.getParameter("data"));
+				this.setBusy(false);
+			}.bind(this));
+			this._oDataProvider.attachError(function (oEvent) {
+				this._handleError(oEvent.getParameter("message"));
+				this.setBusy(false);
+			}.bind(this));
+
+			this._oDataProvider.triggerDataUpdate().then(function () {
+				this.fireEvent("_dataReady");
+			}.bind(this));
+		} else {
+			this.fireEvent("_dataReady");
+		}
+	};
+
+	NumericHeader.prototype._updateModel = function (oData) {
+		this.getModel().setData(oData);
+	};
+
+	NumericHeader.prototype._handleError = function (sLogMessage) {
+		this.fireEvent("_error", { logMessage: sLogMessage });
 	};
 
 	/**

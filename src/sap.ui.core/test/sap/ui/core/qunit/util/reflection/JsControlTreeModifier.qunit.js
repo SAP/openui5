@@ -3,19 +3,24 @@
 sap.ui.define([
 	'sap/m/Button',
 	'sap/m/Page',
-	'sap/f/DynamicPageTitle',
+	'sap/m/QuickViewPage',
 	'sap/ui/core/util/reflection/JsControlTreeModifier',
 	"sap/ui/core/StashedControlSupport",
 	"sap/ui/core/UIComponent",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/CustomData",
+	"sap/ui/thirdparty/sinon-4",
+	'sap/f/DynamicPageTitle' //used implicitly
 ],
 function(
 	Button,
 	Page,
-	DynamicPageTitle,
+	QuickViewPage,
 	JsControlTreeModifier,
 	StashedControlSupport,
 	UIComponent,
+	JSONModel,
+	CustomData,
 	sinon
 ) {
 	"use strict";
@@ -38,7 +43,6 @@ function(
 			sandbox.restore();
 		}
 	}, function() {
-
 		QUnit.test("the constructor processes parameters", function (assert) {
 			var sButtonText = "ButtonText";
 			this.oControl = JsControlTreeModifier.createControl('sap.m.Button', this.oComponent, undefined, "myButton", {'text' : sButtonText});
@@ -110,11 +114,183 @@ function(
 			// assert
 			assert.strictEqual(JsControlTreeModifier.findIndexInParentAggregation(this.oButton), 0, "then the index of the most recently created button is found correctly");
 		});
+
+		QUnit.test("the modifier is not invalidating controls for changes in custom data aggregation", function (assert) {
+			var mData = {
+				key : "key",
+				value : "value"
+			};
+			this.oCustomData = JsControlTreeModifier.createControl('sap.ui.core.CustomData', this.oComponent, undefined, undefined, mData);
+			this.oControl = JsControlTreeModifier.createControl('sap.m.Button', this.oComponent, undefined, "myButton");
+			var fnInvalidateSpy = sandbox.spy(this.oControl, "invalidate");
+
+			JsControlTreeModifier.insertAggregation(this.oControl, 'customData', this.oCustomData);
+			assert.deepEqual(this.oControl.data(), {
+				"key": "value"
+			}, "custom data is set");
+			JsControlTreeModifier.removeAggregation(this.oControl, 'customData', this.oCustomData);
+			assert.deepEqual(this.oControl.data(), {}, "custom data is removed");
+			JsControlTreeModifier.insertAggregation(this.oControl, 'customData', this.oCustomData);
+			JsControlTreeModifier.removeAllAggregation(this.oControl, 'customData');
+			assert.deepEqual(this.oControl.data(), {}, "all custom data is removed");
+
+			assert.strictEqual(fnInvalidateSpy.callCount, 0, "then the control is not invalidated (no rerendering needed)");
+		});
+
+		QUnit.test("attachEvent() — basic case", function (assert) {
+			this.oControl = new Button();
+
+			var oSpy = sandbox.spy();
+			window.$sap__qunit_presshandler = oSpy;
+
+			JsControlTreeModifier.attachEvent(this.oControl, "press", "$sap__qunit_presshandler", ["param0", "param1", { foo: "bar" }]);
+			this.oControl.firePress();
+			assert.strictEqual(oSpy.callCount, 1);
+			assert.strictEqual(oSpy.withArgs(sinon.match.any, ["param0", "param1", { foo: "bar" }]).callCount, 1);
+			delete window.$sap__qunit_presshandler;
+		});
+
+		QUnit.test("attachEvent() — several events of the same type with different event handlers and different set of parameters", function (assert) {
+			this.oControl = new Button();
+
+			var oSpy1 = sandbox.spy();
+			window.$sap__qunit_presshandler1 = oSpy1;
+			var oSpy2 = sandbox.spy();
+			window.$sap__qunit_presshandler2 = oSpy2;
+
+			JsControlTreeModifier.attachEvent(this.oControl, "press", "$sap__qunit_presshandler1", ["param0", "param1"]);
+			JsControlTreeModifier.attachEvent(this.oControl, "press", "$sap__qunit_presshandler2", ["param2", "param3"]);
+
+			this.oControl.firePress();
+
+			assert.strictEqual(oSpy1.callCount, 1);
+			assert.strictEqual(oSpy1.withArgs(sinon.match.any, ["param0", "param1"]).callCount, 1);
+			assert.strictEqual(oSpy2.callCount, 1);
+			assert.strictEqual(oSpy2.withArgs(sinon.match.any, ["param2", "param3"]).callCount, 1);
+
+			delete window.$sap__qunit_presshandler1;
+			delete window.$sap__qunit_presshandler2;
+		});
+
+		QUnit.test("attachEvent() — attempt to attach non-existent function", function (assert) {
+			this.oControl = new Button();
+
+			assert.throws(function () {
+				JsControlTreeModifier.attachEvent(this.oControl, "press", "$sap__qunit_presshandler");
+			});
+		});
+		QUnit.test("attachEvent() — attempt to attach 2 equal event handler functions with a different set of parameters", function (assert) {
+			this.oControl = new Button();
+
+			var oSpy = sandbox.spy();
+			window.$sap__qunit_presshandler = oSpy;
+
+			JsControlTreeModifier.attachEvent(this.oControl, "press", "$sap__qunit_presshandler", ["param0", "param1"]);
+			JsControlTreeModifier.attachEvent(this.oControl, "press", "$sap__qunit_presshandler", ["param2", "param3"]);
+
+			this.oControl.firePress();
+
+			assert.strictEqual(oSpy.callCount, 2);
+			assert.strictEqual(oSpy.withArgs(sinon.match.any, ["param0", "param1"]).callCount, 1);
+			assert.strictEqual(oSpy.withArgs(sinon.match.any, ["param2", "param3"]).callCount, 1);
+
+			delete window.$sap__qunit_presshandler;
+		});
+
+		QUnit.test("detachEvent() — basic case", function (assert) {
+			this.oControl = new Button();
+
+			var oSpy = sandbox.spy();
+			window.$sap__qunit_presshandler = oSpy;
+
+			JsControlTreeModifier.attachEvent(this.oControl, "press", "$sap__qunit_presshandler");
+			JsControlTreeModifier.detachEvent(this.oControl, "press", "$sap__qunit_presshandler");
+
+			this.oControl.firePress();
+
+			assert.strictEqual(oSpy.callCount, 0);
+			delete window.$sap__qunit_presshandler;
+		});
+
+		QUnit.test("detachEvent() — attempt to detach non-existent function", function (assert) {
+			this.oControl = new Button();
+
+			assert.throws(function () {
+				JsControlTreeModifier.detachEvent(this.oControl, "press", "$sap__qunit_presshandler");
+			});
+		});
+
+		QUnit.test("bindAggregation - basic functionality", function (assert) {
+			this.oControl = new Button();
+
+			var oModel = new JSONModel();
+			oModel.setData({
+				customData: [{
+					key: "foo",
+					value: "bar"
+				}]
+			});
+
+			var sModelName = "someModel";
+			this.oControl.setModel(oModel, sModelName);
+
+			JsControlTreeModifier.bindAggregation(this.oControl, "customData", {
+				path: sModelName + ">/customData",
+				template: new CustomData({
+					key: {
+						path: sModelName + ">key"
+					},
+					value: {
+						path: sModelName + ">value"
+					}
+				})
+			});
+
+			assert.strictEqual(this.oControl.getCustomData()[0].getKey(), "foo");
+			assert.strictEqual(this.oControl.getCustomData()[0].getValue(), "bar");
+
+			oModel.destroy();
+		});
+
+		QUnit.test("unbindAggregation - basic functionality", function (assert) {
+			this.oControl = new Button();
+
+			var oModel = new JSONModel();
+			oModel.setData({
+				customData: [{
+					key: "foo",
+					value: "bar"
+				}]
+			});
+
+			var sModelName = "someModel";
+			this.oControl.setModel(oModel, sModelName);
+
+			JsControlTreeModifier.bindAggregation(this.oControl, "customData", {
+				path: sModelName + ">/customData",
+				template: new CustomData({
+					key: {
+						path: sModelName + ">key"
+					},
+					value: {
+						path: sModelName + ">value"
+					}
+				})
+			});
+
+			assert.strictEqual(this.oControl.getCustomData()[0].getKey(), "foo");
+			assert.strictEqual(this.oControl.getCustomData()[0].getValue(), "bar");
+
+			JsControlTreeModifier.unbindAggregation(this.oControl, "customData");
+
+			assert.strictEqual(this.oControl.getCustomData().length, 0);
+
+			oModel.destroy();
+		});
 	});
 
 	QUnit.module("Given the JsControlTreeModifier...", {
 		beforeEach: function () {
-			sap.ui.loader.config({paths:{"sap/ui/test":"../../component/testdata"}});
 			this.oComponent = sap.ui.getCore().createComponent({
 				name: "sap.ui.test.other",
 				id: "testComponent"
@@ -235,6 +411,23 @@ function(
 			assert.ok(oUnstashedControl instanceof Button, "then the returned control is the unstashed control");
 			assert.ok(JsControlTreeModifier.setVisible.calledWith(oUnstashedControl, true), "then JsControlTreeModifier setVisible() called for the unstashed control");
 			oUnstashedControl.destroy();
+		});
+
+		QUnit.test("when getProperty is called for a property of type object", function(assert) {
+			this.oControl = new QuickViewPage();
+			var oSomeObject = new Button();
+			this.oControl.addDependent(oSomeObject); //for later cleanup
+
+			var mData = { key : "value"};
+			JsControlTreeModifier.setProperty(this.oControl, "crossAppNavCallback", mData);
+			assert.deepEqual(this.oControl.getCrossAppNavCallback(), mData, "then serializable data can be passed");
+
+			assert.throws(function(){
+				JsControlTreeModifier.setProperty(this.oControl, "crossAppNavCallback", oSomeObject);
+			},
+			/TypeError/,
+			"then passing non JSON data will throw a message");
+
 		});
 	});
 

@@ -10,8 +10,10 @@
 			"viewName": "sap.m.sample.HeaderContainer.Page",
 			"type": "XML"
 		},
-		"libs": {
-			"sap.ui.core": {}
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {}
+			}
 		},
 		"config": {
 			"sample": {

@@ -13,6 +13,11 @@
 	font-weight: bold;
 }
 
+.sapMIBar-CTX .sapMBtn:hover > .sapMBtnHoverable.sapMBtnEmphasized:not(.sapMBtnActive),
+span.sapMBtnInner.sapMBtnEmphasized {
+	text-shadow: none;
+}
+
 /* --------------------- */
 /* Inner area            */
 /* --------------------- */
@@ -131,7 +136,7 @@
 	.sapMBtnBack:not(.sapMBtnText) > .sapMBtnIconLeft,
 	.sapMBtnIconLeft + .sapMBtnIconRight,
 	.sapMBtnIconLeft + .sapMBtnIconLeft,
-	.sapMBtnInner .sapMBtnIcon {
+	.sapMBtnInner .sapMBtnIcon :not(img) {
 		padding-left: 0.4375rem;
 		padding-right: 0.4375rem;
 	}
@@ -147,6 +152,7 @@
 
 	.sapMBtnInner > img {
 		margin: 0;
+		padding: 0;
 	}
 
 	.sapMBtnInner.sapMBtnText.sapMBtnBack,

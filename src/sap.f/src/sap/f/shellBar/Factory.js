@@ -8,15 +8,14 @@ sap.ui.define([
 	"sap/tnt/InfoLabel",
 	"./ContentButton",
 	"sap/m/MenuButton",
-	"sap/m/ButtonType",
 	"sap/m/OverflowToolbar",
 	"sap/m/OverflowToolbarButton",
 	"./ControlSpacer",
 	"sap/m/ToolbarSpacer",
-	"sap/m/ToolbarDesign",
 	"sap/m/OverflowToolbarLayoutData",
-	"sap/m/OverflowToolbarPriority",
-	"./CoPilot"
+	"./CoPilot",
+	"./Accessibility",
+	"sap/m/library"
 ], function(
 	Element,
 	Label,
@@ -24,17 +23,25 @@ sap.ui.define([
 	InfoLabel,
 	ContentButton,
 	MenuButton,
-	ButtonType,
 	OverflowToolbar,
 	OverflowToolbarButton,
 	ControlSpacer,
 	ToolbarSpacer,
-	ToolbarDesign,
 	OverflowToolbarLayoutData,
-	OverflowToolbarPriority,
-	CoPilot
+	CoPilot,
+	Accessibility,
+	library
 ) {
 	"use strict";
+
+	// shortcut for sap.m.OverflowToolbarPriority
+	var OverflowToolbarPriority = library.OverflowToolbarPriority;
+
+	// shortcut for sap.m.ToolbarDesign
+	var ToolbarDesign = library.ToolbarDesign;
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = library.ButtonType;
 
 	/**
 	 * Factory class which is used to create internal controls used by the ShellBar control and care for their
@@ -47,6 +54,7 @@ sap.ui.define([
 	var Factory = function (oContext) {
 		this._oContext = oContext;
 		this._oControls = {};
+		this._oAcc = new Accessibility();
 	};
 
 	Factory.prototype.getOverflowToolbar = function () {
@@ -93,6 +101,7 @@ sap.ui.define([
 			this._oControls.oAvatarButton = new ContentButton({
 				icon: "none",
 				type: ButtonType.Transparent,
+				tooltip: this._oAcc.getEntityTooltip("PROFILE"),
 				iconDensityAware: false,
 				press: function () {
 					this._oContext.fireEvent("avatarPressed", {avatar: this._oControls.oAvatarButton.getAvatar()});
@@ -110,6 +119,7 @@ sap.ui.define([
 		if (!this._oControls.oHomeIcon) {
 			this._oControls.oHomeIcon = new Image({
 				densityAware: false,
+				tooltip: this._oAcc.getEntityTooltip("LOGO"),
 				press: function () {
 					this._oContext.fireEvent("homeIconPressed", {icon: this._oControls.oHomeIcon});
 				}.bind(this)
@@ -139,6 +149,7 @@ sap.ui.define([
 	Factory.prototype.getCopilot = function () {
 		if (!this._oControls.oCopilot) {
 			this._oControls.oCopilot = new CoPilot({
+				tooltip: this._oAcc.getEntityTooltip("COPILOT"),
 				press: function () {
 					this._oContext.fireEvent("copilotPressed", {image: this._oControls.oCopilot});
 				}.bind(this)
@@ -156,6 +167,7 @@ sap.ui.define([
 				text: "Search",
 				icon: "sap-icon://search",
 				type: ButtonType.Transparent,
+				tooltip: this._oAcc.getEntityTooltip("SEARCH"),
 				press: function () {
 					this._oContext.fireEvent("searchButtonPressed", {button: this._oControls.oSearch});
 				}.bind(this)
@@ -171,6 +183,7 @@ sap.ui.define([
 			this._oControls.oNavButton = new OverflowToolbarButton({
 				icon: "sap-icon://nav-back",
 				type: ButtonType.Transparent,
+				tooltip: this._oAcc.getEntityTooltip("BACK"),
 				press: function () {
 					this._oContext.fireEvent("navButtonPressed", {button: this._oControls.oNavButton});
 				}.bind(this)
@@ -185,7 +198,8 @@ sap.ui.define([
 		if (!this._oControls.oMenuButton) {
 			this._oControls.oMenuButton = new OverflowToolbarButton({
 				icon: "sap-icon://menu2",
-				type: ButtonType.Transparent
+				type: ButtonType.Transparent,
+				tooltip: this._oAcc.getEntityTooltip("MENU")
 			}).setLayoutData(new OverflowToolbarLayoutData({
 				priority: OverflowToolbarPriority.NeverOverflow
 			}));
@@ -199,10 +213,13 @@ sap.ui.define([
 				text: "Notifications",
 				icon: "sap-icon://bell",
 				type: ButtonType.Transparent,
+				tooltip: this._oAcc.getEntityTooltip("NOTIFICATIONS"),
 				press: function () {
 					this._oContext.fireEvent("notificationsPressed", {button: this._oControls.oNotifications});
 				}.bind(this)
-			}).setLayoutData(new OverflowToolbarLayoutData({
+			})
+			.addStyleClass("sapFButtonNotifications")
+			.setLayoutData(new OverflowToolbarLayoutData({
 				priority: OverflowToolbarPriority.Low
 			}));
 		}
@@ -215,6 +232,7 @@ sap.ui.define([
 				text: "My products",
 				icon: "sap-icon://grid",
 				type: ButtonType.Transparent,
+				tooltip: this._oAcc.getEntityTooltip("PRODUCTS"),
 				press: function () {
 					this._oContext.fireEvent("productSwitcherPressed", {button: this._oControls.oProductSwitcher});
 				}.bind(this)

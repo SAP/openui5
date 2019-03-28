@@ -5,14 +5,25 @@
 	xmlns:unified="sap.ui.unified"
 	xmlns="sap.m">
 	<VBox class="sapUiSmallMargin">
-		<Label text="Select sticky mode" labelFor="stickyModeSelect" />
-		<Select id="stickyModeSelect" change="handleStickyModeChange">
-			<items>
-				<core:ListItem text="None" />
-				<core:ListItem text="All" />
-				<core:ListItem text="NavBarAndColHeaders" />
-			</items>
-		</Select>
+		<HBox>
+			<VBox class="sapUiSmallMarginEnd">
+				<Label text="Select sticky mode" labelFor="stickyModeSelect" />
+
+				<Select id="stickyModeSelect" selectedKey="{settings>/stickyMode}">
+					<items>
+						<core:ListItem text="None" key="None" />
+						<core:ListItem text="All" key="All" />
+						<core:ListItem text="NavBarAndColHeaders" key="NavBarAndColHeaders" />
+					</items>
+				</Select>
+			</VBox>
+
+			<VBox>
+				<Label text="Enable Drag and Drop" labelFor="enableAppointmentsDragAndDrop" />
+
+				<CheckBox id="enableAppointmentsDragAndDrop" selected="{settings>/enableAppointmentsDragAndDrop}"></CheckBox>
+			</VBox>
+		</HBox>
 		<SinglePlanningCalendar
 			id="SPC1"
 			class="sapUiSmallMarginTop"
@@ -20,7 +31,10 @@
 			appointmentSelect="handleAppointmentSelect"
 			headerDateSelect="handleHeaderDateSelect"
 			startDateChange="handleStartDateChange"
+			appointmentDrop="handleAppointmentDrop"
 			startDate="{path: '/startDate'}"
+			enableAppointmentsDragAndDrop="{settings>/enableAppointmentsDragAndDrop}"
+			stickyMode="{settings>/stickyMode}"
 			appointments="{path: '/appointments'}">
 			<actions>
 				<Button id="addNewAppointment" icon="sap-icon://add" press="handleAppointmentCreate" tooltip="Add new appointment" />

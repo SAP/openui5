@@ -239,16 +239,13 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Messag
 			});
 			this.getView().setModel(oModel);
 
-			this.oModel = new sap.ui.model.json.JSONModel();
-			this.oModel.setData({allDay: false});
-			this.getView().setModel(this.oModel, "allDay");
-		},
+			oModel = new JSONModel();
+			oModel.setData({allDay: false});
+			this.getView().setModel(oModel, "allDay");
 
-		handleStickyModeChange: function (oEvent) {
-			var oSPC = this.byId("SPC1"),
-				sNewStickyMode = oEvent.getParameter("selectedItem").getText();
-
-			oSPC.setStickyMode(sNewStickyMode);
+			oModel = new JSONModel();
+			oModel.setData({ stickyMode: "None", enableAppointmentsDragAndDrop: true });
+			this.getView().setModel(oModel, "settings");
 		},
 
 		handleAppointmentSelect: function (oEvent) {
@@ -270,6 +267,21 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Messag
 			} else {
 				this._setPopoverInitialState(oAppointment);
 			}
+		},
+
+		handleAppointmentDrop: function (oEvent) {
+			var oAppointment = oEvent.getParameter("appointment"),
+				oStartDate = oEvent.getParameter("startDate"),
+				oEndDate = oEvent.getParameter("endDate"),
+				sAppointmentTitle = oAppointment.getTitle();
+
+			oAppointment.setStartDate(oStartDate);
+			oAppointment.setEndDate(oEndDate);
+
+			MessageToast.show("Appointment with title \n'"
+				+ sAppointmentTitle
+				+ "'\n has been moved"
+			);
 		},
 
 		/*

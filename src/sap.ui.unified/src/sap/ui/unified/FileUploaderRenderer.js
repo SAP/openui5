@@ -22,8 +22,7 @@ sap.ui.define(['sap/ui/unified/library', "sap/ui/thirdparty/jquery"],
 	 * @param {sap.ui.core.Control} oFileUploader An object representation of the control that should be rendered.
 	 */
 	FileUploaderRenderer.render = function(oRm, oFileUploader) {
-		var accessibility = sap.ui.getCore().getConfiguration().getAccessibility(),
-			bEnabled = oFileUploader.getEnabled(),
+		var bEnabled = oFileUploader.getEnabled(),
 			sAccDescription;
 
 		oRm.write('<div');
@@ -55,10 +54,6 @@ sap.ui.define(['sap/ui/unified/library', "sap/ui/thirdparty/jquery"],
 		oRm.write('<div ');
 		if (!oFileUploader.bMobileLib) {
 			oRm.write('class="sapUiFupInp"');
-		}
-		if (accessibility) {
-			oRm.writeAttribute("role", "textbox");
-			oRm.writeAttribute("aria-readonly", "true");
 		}
 		oRm.write('>');
 

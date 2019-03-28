@@ -143,9 +143,9 @@
 		  "target": "customContent"
 		},
 		{
-		  "pattern": "cardContainer",
-		  "name": "cardContainer",
-		  "target": "cardContainer"
+		  "pattern": "gridContainer",
+		  "name": "gridContainer",
+		  "target": "gridContainer"
 		},
 		{
 		  "pattern": "services",
@@ -229,9 +229,9 @@
 		  "viewName": "Custom",
 		  "viewLevel": 1
 		},
-		"cardContainer": {
-		  "viewId": "CardContainer",
-		  "viewName": "CardContainer",
+		"gridContainer": {
+		  "viewId": "GridContainer",
+		  "viewName": "GridContainer",
 		  "viewLevel": 1
 		},
 		"services": {

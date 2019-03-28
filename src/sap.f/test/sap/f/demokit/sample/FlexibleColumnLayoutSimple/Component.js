@@ -1,13 +1,10 @@
-sap.ui.define([
-	"sap/ui/core/UIComponent",
-	"sap/m/routing/Router"
-], function (UIComponent, Router) {
+sap.ui.define(["sap/ui/core/UIComponent"],
+function (UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.f.sample.FlexibleColumnLayoutSimple.Component", {
+	return UIComponent.extend("sap.f.sample.FlexibleColumnLayoutSimple.Component", {
 		metadata: {
 		    manifest: "json"
 		}
 	});
-	return Component;
 }, true);

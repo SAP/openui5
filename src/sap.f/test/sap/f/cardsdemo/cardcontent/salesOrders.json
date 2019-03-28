@@ -4,8 +4,7 @@
 			"SO_ID": "0000000001",
 			"title": "Sales Order 1",
 			"state": "at risk",
-			"semanticColor": "red",
-			"url": "https://www.sap.com"
+			"semanticColor": "red"
 		},
 		{
 			"SO_ID": "0000000002",
@@ -17,8 +16,7 @@
 			"SO_ID": "0000000003",
 			"title": "Sales Order 3",
 			"state": "finalized",
-			"semanticColor": "green",
-			"url": "https://www.sap.com"
+			"semanticColor": "green"
 		}
 	]
 }

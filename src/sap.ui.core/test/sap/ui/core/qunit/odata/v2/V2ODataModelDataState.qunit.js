@@ -8,11 +8,11 @@ sap.ui.define([
 	"sap/ui/model/type/Float",
 	"sap/ui/core/message/Message",
 	"sap/ui/core/message/ControlMessageProcessor",
-	"sap/ui/core/MessageType",
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/Input",
 	"sap/m/Text",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/ui/core/library"
 ], function(
 	MockServer,
 	ODataModel,
@@ -22,13 +22,16 @@ sap.ui.define([
 	Float,
 	Message,
 	ControlMessageProcessor,
-	MessageType,
 	VerticalLayout,
 	Input,
 	Text,
-	Button
+	Button,
+	library
 ) {
 	"use strict";
+
+	// shortcut for sap.ui.core.MessageType
+	var MessageType = library.MessageType;
 
 	//add divs for control tests
 	var oContent = document.createElement("div");

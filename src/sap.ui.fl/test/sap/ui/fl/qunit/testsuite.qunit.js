@@ -111,6 +111,11 @@ sap.ui.define(function () {
 					}
 				}
 			},
+			"util/ManagedObjectModel": {
+				coverage: {
+					only: ["sap/ui/fl/util/ManagedObjectModel"]
+				}
+			},
 
 			// ChangeHandler tests:
 			"changeHandler/AddXML": {
@@ -462,7 +467,15 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/fieldExt/Access"]
 				}
 			},
-
+			"designtime/appVariant/ChangeModifier": {
+				group: "designTime"
+			},
+			"designtime/appVariant/AppVariantUtils": {
+				group: "designTime"
+			},
+			"designtime/appVariant/AppVariantModifier": {
+				group: "designTime"
+			},
 			"integration/async/ComponentWithView": {
 				group: "integration/async",
 				ui5: {

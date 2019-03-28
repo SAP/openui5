@@ -43,6 +43,7 @@ function(
 	 * @public
 	 * @since 1.42
 	 * @alias sap.m.Tree
+	 * @see {@link fiori:/tree/ Tree}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Tree = ListBase.extend("sap.m.Tree", { metadata : {
@@ -363,17 +364,20 @@ function(
 		if (oBinding && oBinding.expand) {
 			var aIndices = this._preExpand(vParam),
 				oItem;
-			for (var i = 0; i < aIndices.length - 1; i++) {
-				oItem = this.getItems()[aIndices[i]];
+			if (aIndices.length > 0) {
+				for (var i = 0; i < aIndices.length - 1; i++) {
+					oItem = this.getItems()[aIndices[i]];
+					this._updateDeepestLevel(oItem);
+					oBinding.expand(aIndices[i], true);
+				}
+
+				oItem = this.getItems()[aIndices[aIndices.length - 1]];
 				this._updateDeepestLevel(oItem);
-				oBinding.expand(aIndices[i], true);
+
+				// trigger change
+				oBinding.expand(aIndices[aIndices.length - 1], false);
 			}
 
-			oItem = this.getItems()[aIndices[aIndices.length - 1]];
-			this._updateDeepestLevel(oItem);
-
-			// trigger change
-			oBinding.expand(aIndices[aIndices.length - 1], false);
 		}
 
 		return this;

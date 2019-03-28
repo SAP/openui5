@@ -10,11 +10,11 @@ sap.ui.define([
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/type/String",
 	"sap/ui/core/message/MessageManager",
-	"sap/ui/core/MessageType",
 	"sap/m/Input",
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/layout/HorizontalLayout"
+	"sap/ui/layout/HorizontalLayout",
+	"sap/ui/core/library"
 ], function(
 	fakeService,
 	Log,
@@ -24,13 +24,16 @@ sap.ui.define([
 	BindingMode,
 	String,
 	MessageManager,
-	MessageType,
 	Input,
 	Button,
 	VerticalLayout,
-	HorizontalLayout
+	HorizontalLayout,
+	library
 ) {
 	"use strict";
+
+	// shortcut for sap.ui.core.MessageType
+	var MessageType = library.MessageType;
 
 	//add divs for control tests
 	var oContent = document.createElement("div");
@@ -1451,9 +1454,9 @@ sap.ui.define([
 			var aMessages = oMessageModel.getProperty("/");
 			assert.equal(aMessages.length, 2, "Two messages from the back-end");
 			assert.equal(aMessages[0].target, "/Products(ContextId='CLF(12)SEMANTIC_OBJ(7)Product(10)OBJECT_KEY(11)ZTEST_GD_02(9)DRAFT_KEY(36)005056ba-1dcb-1ee7-8ec6-ae98ab359923')/ProductName", "Message has correct target");
-			assert.ok(oBinding.getDataState().getChanges(), "Messages propageted to binding");
-			assert.equal(oBinding.getDataState().getMessages().length, 1, " 1 Message propageted to binding");
-			assert.equal(oBinding.getDataState().getMessages()[0], aMessages[0], "Message propageted to binding");
+			assert.ok(oBinding.getDataState().getChanges(), "Messages propagated to binding");
+			assert.equal(oBinding.getDataState().getMessages().length, 1, " 1 Message propagated to binding");
+			assert.equal(oBinding.getDataState().getMessages()[0], aMessages[0], "Message propagated to binding");
 			oMessageManager.removeAllMessages();
 			assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set after removal of all messages");
 			return read("/Products(ContextId='CLF%2812%29SEMANTIC_OBJ%287%29Product%2810%29OBJECT_KEY%2811%29ZTEST_GD_02%289%29DRAFT_KEY%2836%29005056ba-1dcb-1ee7-8ec6-ae98ab359923')");
@@ -1494,9 +1497,9 @@ sap.ui.define([
 			var aMessages = oMessageModel.getProperty("/");
 			assert.equal(aMessages.length,1, "One message from the back-end");
 			assert.equal(aMessages[0].target, "/Suppliers(1)/Name", "Message has correct target");
-			assert.ok(oBinding.getDataState().getChanges(), "Messages propageted to binding");
-			assert.equal(oBinding.getDataState().getMessages().length, 1, " 1 Message propageted to binding");
-			assert.equal(oBinding.getDataState().getMessages()[0], aMessages[0], "Message propageted to binding");
+			assert.ok(oBinding.getDataState().getChanges(), "Messages propagated to binding");
+			assert.equal(oBinding.getDataState().getMessages().length, 1, " 1 Message propagated to binding");
+			assert.equal(oBinding.getDataState().getMessages()[0], aMessages[0], "Message propagated to binding");
 			assert.equal(oBinding.getDataState().getMessages()[0].message, "This is a server test message", "Message has correct message text");
 			oMessageManager.removeAllMessages();
 			assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set after removal of all messages");
@@ -1505,5 +1508,6 @@ sap.ui.define([
 		});
 	};
 
-		QUnit.test("Propagate Message: Binding to NavProp", fnTestNavProp);
+	QUnit.test("Propagate Message: Binding to NavProp", fnTestNavProp);
+
 });

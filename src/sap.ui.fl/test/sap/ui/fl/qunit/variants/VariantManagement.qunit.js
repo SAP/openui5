@@ -77,10 +77,12 @@ sap.ui.define([
 						}
 					]
 				}
-			}, {});
+			}, { _oChangePersistence: { _oVariantController: {} } });
 
 			sinon.stub(oModel, "updateCurrentVariant").returns(Promise.resolve());
-
+			// to suppress "manage" event listener in VariantModel
+			sinon.stub(oModel, "_initializeManageVariantsEvents");
+			oModel.fnManageClick = function() {};
 		},
 		afterEach: function() {
 			this.oVariantManagement.destroy();
@@ -153,11 +155,11 @@ sap.ui.define([
 			assert.ok(this.oVariantManagement.handleOpenCloseVariantPopover.called);
 		});
 
-		QUnit.test("Check onkeydown", function(assert) {
+		QUnit.test("Check onkeyup", function(assert) {
 
 			sinon.stub(this.oVariantManagement, "_openVariantList");
 
-			this.oVariantManagement.onkeydown({
+			this.oVariantManagement.onkeyup({
 				which: 32
 			});
 

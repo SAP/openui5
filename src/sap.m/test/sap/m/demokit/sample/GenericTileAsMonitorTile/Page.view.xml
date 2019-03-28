@@ -2,13 +2,13 @@
 	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Cumulative Totals" subheader="Expenses" press="press">
 		<TileContent unit="Unit" footer="Footer Text">
-			<NumericContent value="1762" icon="sap-icon://line-charts" />
+			<NumericContent value="1762" icon="sap-icon://line-charts" withMargin="false" />
 		</TileContent>
 	</GenericTile>
 
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Cumulative Totals" subheader="Expenses" press="press">
 		<TileContent unit="Unit" footer="Footer Text">
-			<NumericContent value="12" />
+			<NumericContent value="12" withMargin="false" />
 		</TileContent>
 	</GenericTile>
 </mvc:View>

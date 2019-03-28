@@ -21,7 +21,8 @@ sap.ui.define([
 	'./IconTabBarDragAndDropUtil',
 	'./IconTabHeaderRenderer',
 	"sap/ui/thirdparty/jquery",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/events/KeyCodes"
 ],
 function(
 	library,
@@ -40,7 +41,8 @@ function(
 	IconTabBarDragAndDropUtil,
 	IconTabHeaderRenderer,
 	jQuery,
-	Log
+	Log,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -1647,13 +1649,26 @@ function(
 	IconTabHeader.prototype.ontouchcancel = IconTabHeader.prototype.ontouchend;
 
 	/**
-	 * Fires keyboard navigation event when the user presses Enter or Space.
-	 *
-	 * @param {jQuery.Event} oEvent
+	 * Handle the key down event for SPACE and ENTER.
+	 * @param {jQuery.Event} oEvent - the keyboard event.
 	 * @private
 	 */
-	IconTabHeader.prototype.onsapselect = function(oEvent) {
-		this._handleActivation(oEvent);
+	IconTabHeader.prototype.onkeydown = function(oEvent) {
+		if (oEvent.which === KeyCodes.ENTER) {
+			this._handleActivation(oEvent);
+			oEvent.preventDefault();
+		}
+	};
+
+	/**
+	 * Handle the key up event for SPACE and ENTER.
+	 * @param {jQuery.Event} oEvent The fired event
+	 */
+	IconTabHeader.prototype.onkeyup = function(oEvent) {
+		if (oEvent.which === KeyCodes.SPACE) {
+			this._handleActivation(oEvent);
+			oEvent.preventDefault();
+		}
 	};
 
 	/* =========================================================== */

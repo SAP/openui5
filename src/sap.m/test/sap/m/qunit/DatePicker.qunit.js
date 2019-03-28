@@ -1507,14 +1507,13 @@ sap.ui.define([
 		var sDateAnnouncement = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("DATEPICKER_DATE_TYPE");
 
 		assert.strictEqual($DescribedByReference.text(), sDateAnnouncement, "Date announcement added into aria-describedby");
-		assert.strictEqual($LabelledByReference.text(), sPlaceholder, "Placholder announcement added into aria-labelledby");
 
 		oDP.setTooltip(sTooltip);
 		sap.ui.getCore().applyChanges();
 		$Input = jQuery(oDP.getFocusDomRef());
 		$DescribedByReference = jQuery.sap.byId($Input.attr("aria-describedby"));
 
-		assert.strictEqual($DescribedByReference.text(), sDateAnnouncement + " " + sTooltip, "Date announcement and tootip is added into aria-describedby");
+		assert.strictEqual($DescribedByReference.text(), sDateAnnouncement + " ", "Date announcement is added into aria-describedby");
 
 		oDP.destroy();
 	});
@@ -1530,14 +1529,14 @@ sap.ui.define([
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, oInput.getRenderer().getAriaRole(), "AriaRole");
 		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATEINPUT"), "Type");
-		assert.strictEqual(oInfo.description, "Value Placeholder Date Tooltip", "Description");
+		assert.strictEqual(oInfo.description, "Value  Date", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, true, "Editable");
 		oInput.setValue("");
 		oInput.setEnabled(false);
 		oInfo = oInput.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "Placeholder Date Tooltip", "Description");
+		assert.strictEqual(oInfo.description, "Date", "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
@@ -1551,7 +1550,7 @@ sap.ui.define([
 		oInput.setDisplayFormat("yyyy-MM-dd");
 		oInput.setValue("2014.03.26");
 		oInfo = oInput.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "2014-03-26 Placeholder Date Tooltip", "Description");
+		assert.strictEqual(oInfo.description, "2014-03-26  Date", "Description");
 		oInput.destroy();
 	});
 

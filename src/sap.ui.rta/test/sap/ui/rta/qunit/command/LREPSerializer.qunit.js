@@ -928,8 +928,8 @@ sap.ui.define([
 			sandbox.stub(oRemoveCommand1.getPreparedChange(), "getVariantReference").returns("test-variant");
 			sandbox.stub(oRemoveCommand2.getPreparedChange(), "getVariantReference").returns("test-variant");
 			sandbox.stub(oMockedAppComponent, "getModel").returns({
-				_removeChange: function(){},
-				_addChange: function(){},
+				removeChange: function(){},
+				addChange: function(){},
 				getVariant: function(){
 					return {
 						content : {
@@ -942,24 +942,24 @@ sap.ui.define([
 					};
 				}
 			});
-			oAddChangeSpy = sandbox.spy(oMockedAppComponent.getModel(), "_addChange");
-			oRemoveChangeSpy = sandbox.spy(oMockedAppComponent.getModel(), "_removeChange");
+			oAddChangeSpy = sandbox.spy(oMockedAppComponent.getModel(), "addChange");
+			oRemoveChangeSpy = sandbox.spy(oMockedAppComponent.getModel(), "removeChange");
 
 			return this.oCommandStack.pushAndExecute(oRemoveCommand1);
 		}.bind(this))
 
 		.then(function(){
-			assert.equal(oAddChangeSpy.callCount, 1, "then variant model's _addChange is called for both changes as VariantManagement Change is detected");
+			assert.equal(oAddChangeSpy.callCount, 1, "then variant model's addChange is called for both changes as VariantManagement Change is detected");
 			return this.oCommandStack.pushAndExecute(oRemoveCommand2);
 		}.bind(this))
 
 		.then(function(){
-			assert.equal(oAddChangeSpy.callCount, 2, "then variant model's _addChange is called for both changes as VariantManagement Change is detected");
+			assert.equal(oAddChangeSpy.callCount, 2, "then variant model's addChange is called for both changes as VariantManagement Change is detected");
 			return this.oCommandStack.undo();
 		}.bind(this))
 
 		.then(function(){
-			assert.equal(oRemoveChangeSpy.callCount, 1, "then variant model's _removeChange is called as VariantManagement Change is detected");
+			assert.equal(oRemoveChangeSpy.callCount, 1, "then variant model's removeChange is called as VariantManagement Change is detected");
 			return this.oSerializer.saveCommands();
 		}.bind(this))
 

@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/model/type/Date",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/unified/DateTypeRange",
 	"sap/ui/unified/CalendarLegend",
@@ -38,6 +39,7 @@ sap.ui.define([
 	qutils,
 	createAndAppendDiv,
 	TypeDate,
+	JSONModel,
 	CalendarDate,
 	DateTypeRange,
 	CalendarLegend,
@@ -818,6 +820,59 @@ sap.ui.define([
 		assert.deepEqual(_getListItem(oPCRow).getCustomData(), oPCRow.getCustomData(),
 			"getCustomData of PlanningCalendarRow is used by internal ColumnListItem");
 
+	});
+
+	QUnit.test("PlanningCalendarRow - propagate properties/aggregations updates", function(assert) {
+		// Arrange
+		var fnDone = assert.async(),
+			oModel = new JSONModel(),
+			oPC = new PlanningCalendar({
+				rows: {
+					path: '/',
+					template: new PlanningCalendarRow({
+						title: "{title}",
+						text: "{text}",
+						tooltip: "{tooltip}"
+					})
+				}
+			}),
+			oRowHeader;
+
+		assert.expect(6);
+
+		// Act
+		oModel.setData([{
+			title: "title",
+			text: "text",
+			tooltip: "tooltip"
+		}]);
+		oPC.setModel(oModel);
+
+		oRowHeader = _getRowHeader(oPC.getRows()[0]);
+
+		setTimeout(function () {
+			// Act
+			oModel.setData([{
+				title: "title UPDATED",
+				text: "text UPDATED",
+				tooltip: "tooltip UPDATED"
+			}]);
+
+			// Assert
+			assert.equal(oRowHeader.getTitle(), "title UPDATED", "title is set correctly");
+			assert.equal(oRowHeader.getDescription(), "text UPDATED", "text is set correctly");
+			assert.equal(oRowHeader.getTooltip(), "tooltip UPDATED", "tooltip is set correctly");
+
+			// Clean up
+			oPC.destroy();
+
+			fnDone();
+		});
+
+		// Assert
+		assert.equal(oRowHeader.getTitle(), "title", "title is set correctly");
+		assert.equal(oRowHeader.getDescription(), "text", "text is set correctly");
+		assert.equal(oRowHeader.getTooltip(), "tooltip", "tooltip is set correctly");
 	});
 
 	QUnit.test("Table", function(assert) {
@@ -3939,6 +3994,27 @@ sap.ui.define([
 		assert.strictEqual(oTimelineRendererSpy.callCount, 4, "'renderSingleDayInterval()' is called as expected"); //Two rows
 		//clean
 		oTimelineRendererSpy.restore();
+	});
+
+	QUnit.test("Adding a row adds a row timeline with the correct startDate", function(assert) {
+		//arrange
+		var oRow = new PlanningCalendarRow(),
+			oRowTimeline;
+
+		this._createCalendar();
+
+		this._oPC._oOneMonthInterval.removeAllSelectedDates();
+		this._oPC._oOneMonthInterval.addSelectedDate(new sap.ui.unified.DateRange({ startDate: new Date(2019, 1, 18) }));
+
+		//act
+		this._oPC.addRow(oRow);
+
+		oRowTimeline = _getRowTimeline(oRow);
+
+		//assert
+		assert.strictEqual(oRowTimeline.getStartDate().getFullYear(), 2019, "row's start date is correct");
+		assert.strictEqual(oRowTimeline.getStartDate().getDate(), 18, "row's start date is correct");
+		assert.strictEqual(oRowTimeline.getStartDate().getMonth(), 1, "row's start date is correct");
 	});
 
 	QUnit.test("Appointment select is fired", function (assert) {

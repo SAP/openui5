@@ -20,6 +20,10 @@ sap.ui.define([
 				hash: oOptions.hash,
 				autoWait: oOptions.autoWait
 			});
+		},
+
+		iTeardownTheApp: function() {
+			this.iTeardownMyUIComponent();
 		}
 	});
 });

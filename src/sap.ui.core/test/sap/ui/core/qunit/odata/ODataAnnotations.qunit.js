@@ -22,7 +22,6 @@ sap.ui.define([
 	 * @param {object} oValue - The value to be tested
 	 * @param {object} oExpected - The value that is tested against, containing the structure expected inside oValue
 	 * @param {string} sMessage - Message prefix for every sub-test. The property names of the structure will be prepended to this string
-	 * @returns {void}
 	 */
 	function deepContains(assert, oValue, oExpected, sMessage) {
 		for (var sKey in oExpected) {

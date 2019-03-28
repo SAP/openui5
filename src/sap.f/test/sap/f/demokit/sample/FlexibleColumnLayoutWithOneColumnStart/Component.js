@@ -1,14 +1,10 @@
 sap.ui.define(['sap/ui/core/UIComponent'],
-	function (UIComponent) {
-		"use strict";
+function (UIComponent) {
+	"use strict";
 
-		var Component = UIComponent.extend("sap.f.sample.FlexibleColumnLayoutWithOneColumnStart.Component", {
-
-			metadata: {
-				manifest: "json"
-			}
-
-		});
-
-		return Component;
+	return UIComponent.extend("sap.f.sample.FlexibleColumnLayoutWithOneColumnStart.Component", {
+		metadata: {
+			manifest: "json"
+		}
 	});
+});

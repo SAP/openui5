@@ -13,8 +13,8 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/uxap/ObjectPageLayout",
-	"sap/uxap/ObjectPageSubSectionLayout",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/uxap/library"
 ],
 function(
 	jQuery,
@@ -29,10 +29,13 @@ function(
 	ObjectPageSection,
 	ObjectPageSubSection,
 	ObjectPageLayout,
-	ObjectPageSubSectionLayout,
-	sinon
+	sinon,
+	uxapLibrary
 ) {
 	'use strict';
+
+	// shortcut for sap.uxap.ObjectPageSubSectionLayout
+	var ObjectPageSubSectionLayout = uxapLibrary.ObjectPageSubSectionLayout;
 
 	var sandbox = sinon.sandbox.create();
 
@@ -140,7 +143,7 @@ function(
 
 		QUnit.test("Given extensibility enabled and a custom field enabled bound control when isCustomFieldAvailable is called", function(assert) {
 			var oExtensibilityBusinessContext = {
-				BusinessContexts : ["some context"],
+				BusinessContexts : [{ BusinessContext: "some context", BusinessContextDescription: "Some context description"} ],
 				ServiceName : "servive name",
 				ServiceVersion : "some dummy ServiceVersion"
 			};

@@ -1,6 +1,6 @@
 sap.ui.define([
 	"sap/ui/dt/test/report/QUnit",
-	"sap/ui/rta/test/controlEnablingCheck",
+	"sap/ui/rta/enablement/controlTest",
 	"sap/ui/dt/test/ElementEnablementTest",
 	"sap/uxap/ObjectPageDynamicHeaderTitle",
     "sap/m/Text",
@@ -233,7 +233,7 @@ sap.ui.define([
             parameter : function(oView){
                 return {
                     source : oView.byId("action1"),
-                    combineFields : [
+                    combineElements : [
                         oView.byId("action1"),
                         oView.byId("action2"),
                         oView.byId("action3")

@@ -61,6 +61,27 @@ sap.ui.define([
 
 	var sandbox = sinon.sandbox.create();
 
+	var oManifestObj = {
+		"sap.app": {
+			id: "MyComponent",
+			"applicationVersion": {
+				"version": "1.2.3"
+			}
+		}
+	};
+
+	var oManifest = new Manifest(oManifestObj);
+
+	var fnGetMockComponent = function () {
+		return {
+			getLocalId: function () {
+				return "varMgtKey";
+			},
+			getModel: function () { return this.oModel; }.bind(this),
+			getManifest: function() { return oManifest; }
+		};
+	};
+
 	var checkTitle = function(assert, sExpectedTitle, sTitleToBeCopied) {
 		assert.strictEqual(this.oControlVariantPlugin._getVariantTitleForCopy(sTitleToBeCopied, "varMgtKey", this.oModel.getData()), sExpectedTitle, "then correct title returned for duplicate");
 	};
@@ -92,25 +113,11 @@ sap.ui.define([
 		beforeEach: function (assert) {
 			var done = assert.async();
 
-			// create fl objects and stubs
-			var oManifestObj = {
-				"sap.app": {
-					id: "MyComponent",
-					"applicationVersion": {
-						"version": "1.2.3"
-					}
-				}
-			};
-			var oManifest = new Manifest(oManifestObj);
-
-			var oMockedAppComponent = {
-				getLocalId: function () {
-					return "varMgtKey";
-				},
-				getModel: function () {return this.oModel;}.bind(this)
-			};
-
-			var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent, oManifest);
+			var oMockAppComponent = fnGetMockComponent.call(this);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockAppComponent);
+			sandbox.stub(Utils, "getComponentForControl").returns(oMockAppComponent);
+			sandbox.stub(Utils, "getComponentClassName").returns("Dummy.Component");
+			var oFlexController = FlexControllerFactory.createForControl(oMockAppComponent, oManifest);
 			this.oData = {
 				"varMgtKey": {
 					defaultVariant : "variant1",
@@ -129,10 +136,6 @@ sap.ui.define([
 					]
 				}
 			};
-
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
-			sandbox.stub(Utils, "getComponentForControl").returns(oMockedAppComponent);
-			sandbox.stub(Utils, "getComponentClassName").returns("Dummy.Component");
 
 			//	page
 			//		verticalLayout
@@ -162,7 +165,7 @@ sap.ui.define([
 					subSections: [this.oObjectPageSubSection]
 				});
 				this.sLocalVariantManagementId = "varMgtKey";
-				this.oModel = new VariantModel(this.oData, oFlexController, oMockedAppComponent);
+				this.oModel = new VariantModel(this.oData, oFlexController, oMockAppComponent);
 				this.oVariantManagementControl = new VariantManagement(this.sLocalVariantManagementId);
 				this.oVariantManagementControl.setModel(this.oModel, "$FlexVariants");
 				this.oObjectPageLayout = new ObjectPageLayout("objPage",{
@@ -548,34 +551,14 @@ sap.ui.define([
 		beforeEach: function (assert) {
 			var done = assert.async();
 
-			var oManifestObj = {
-				"sap.app": {
-					id: "MyComponent",
-					"applicationVersion": {
-						"version": "1.2.3"
-					}
-				}
-			};
+			var oMockAppComponent = fnGetMockComponent.call(this);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockAppComponent);
+			sandbox.stub(Utils, "getComponentClassName").returns("Dummy.Component");
 
-			var oMockedAppComponent = {
-				getModel: function () {
-					return this.oModel;
-				}.bind(this),
-				getLocalId: function () {
-					return "varMgtKey";
-				}
-			};
+			var oFlexController = FlexControllerFactory.createForControl(oMockAppComponent, oManifest);
 
-			var oManifest = new Manifest(oManifestObj);
-
-			var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent, oManifest);
-
-			this.oModel = new VariantModel({}, oFlexController, oMockedAppComponent);
-
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
-
+			this.oModel = new VariantModel({}, oFlexController, oMockAppComponent);
 			this.oVariantManagementControl = new VariantManagement("varMgtKey").placeAt("qunit-fixture");
-
 			this.oVariantManagementControl.setModel(this.oModel, "$FlexVariants");
 
 			var oVariantManagementDesignTimeMetadata = {
@@ -1132,25 +1115,11 @@ sap.ui.define([
 		beforeEach: function (assert) {
 			var done = assert.async();
 
-			// create fl objects and stubs
-			var oManifestObj = {
-				"sap.app": {
-					id: "MyComponent",
-					"applicationVersion": {
-						"version": "1.2.3"
-					}
-				}
-			};
-			var oManifest = new Manifest(oManifestObj);
-
-			var oMockedAppComponent = {
-				getLocalId: function () {
-					return "varMgtKey";
-				},
-				getModel: function () {return this.oModel;}.bind(this)
-			};
-
-			var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent, oManifest);
+			var oMockAppComponent = fnGetMockComponent.call(this);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockAppComponent);
+			sandbox.stub(Utils, "getComponentForControl").returns(oMockAppComponent);
+			sandbox.stub(Utils, "getComponentClassName").returns("Dummy.Component");
+			var oFlexController = FlexControllerFactory.createForControl(oMockAppComponent, oManifest);
 			this.oData = {
 				"varMgtKey": {
 					defaultVariant : "variant1",
@@ -1161,10 +1130,6 @@ sap.ui.define([
 					]
 				}
 			};
-
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
-			sandbox.stub(Utils, "getComponentForControl").returns(oMockedAppComponent);
-			sandbox.stub(Utils, "getComponentClassName").returns("Dummy.Component");
 
 			//	page
 			//		verticalLayout
@@ -1194,7 +1159,7 @@ sap.ui.define([
 				});
 				this.sLocalVariantManagementId = "varMgtKey";
 				this.sGlobalVariantManagementId = "Comp1--varMgtKey";
-				this.oModel = new VariantModel(this.oData, oFlexController, oMockedAppComponent);
+				this.oModel = new VariantModel(this.oData, oFlexController, oMockAppComponent);
 				this.oVariantManagementControl = new VariantManagement(this.sGlobalVariantManagementId);
 				this.oVariantManagementControl.setModel(this.oModel, "$FlexVariants");
 				this.oObjectPageLayout = new ObjectPageLayout("objPage",{
@@ -1255,25 +1220,11 @@ sap.ui.define([
 		beforeEach: function (assert) {
 			var done = assert.async();
 
-			// create fl objects and stubs
-			var oManifestObj = {
-				"sap.app": {
-					id: "MyComponent",
-					"applicationVersion": {
-						"version": "1.2.3"
-					}
-				}
-			};
-			var oManifest = new Manifest(oManifestObj);
-
-			var oMockedAppComponent = {
-				getLocalId: function () {
-					return "varMgtKey";
-				},
-				getModel: function () {return this.oModel;}.bind(this)
-			};
-
-			var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent, oManifest);
+			var oMockAppComponent = fnGetMockComponent.call(this);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockAppComponent);
+			sandbox.stub(Utils, "getComponentForControl").returns(oMockAppComponent);
+			sandbox.stub(Utils, "getComponentClassName").returns("Dummy.Component");
+			var oFlexController = FlexControllerFactory.createForControl(oMockAppComponent, oManifest);
 			this.oData = {
 				"varMgtKey": {
 					defaultVariant : "variant1",
@@ -1293,12 +1244,8 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
-			sandbox.stub(Utils, "getComponentForControl").returns(oMockedAppComponent);
-			sandbox.stub(Utils, "getComponentClassName").returns("Dummy.Component");
-
 			this.sLocalVariantManagementId = "varMgtKey";
-			this.oModel = new VariantModel(this.oData, oFlexController, oMockedAppComponent);
+			this.oModel = new VariantModel(this.oData, oFlexController, oMockAppComponent);
 			this.oVariantManagementControl = new VariantManagement(this.sLocalVariantManagementId);
 			this.oVariantManagementControl.setModel(this.oModel, "$FlexVariants");
 			this.oVariantManagementControl.setAssociation("for", "objPage", true);

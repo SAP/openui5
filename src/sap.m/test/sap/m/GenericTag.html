@@ -5,7 +5,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>GenericTag - sap.m</title>
 	<style>
-		.sapMGenericTag:not(:last-child)
+		.sapMGenericTag
 		{
 			margin-right: 0.5rem;
 		}
@@ -35,6 +35,7 @@
 				};
 
 				var oNeutralGenericTag = new GenericTag({
+					id: "genericTag",
 					text: "Text that truncates.",
 					design: GenericTagDesign.Full,
 					valueState: GenericTagValueState.None,
@@ -281,33 +282,58 @@
 				var oPage = new Page("myPage", {
 					title: "sap.m.GenericTag Test Page",
 					content: [
-						new HTML({ content: "<h3>sap.m.GenericTagDesign.Full + sap.m.GenericTagValueState.None</h3>" }),
-						oNeutralGenericTag,
-						oInformationGenericTag,
-						oErrorGenericTag,
-						oWarningGenericTag,
-						oSuccessGenericTag,
-						new HTML({ content: "<hr>" }),
-						new HTML({ content: "<h3>sap.m.GenericTagDesign.Full + sap.m.GenericTagValueState.Error</h3>" }),
-						oNeutralGenericTagError,
-						oInformationGenericTagError,
-						oErrorGenericTagError,
-						oWarningGenericTagError,
-						oSuccessGenericTagError,
-						new HTML({ content: "<hr>" }),
-						new HTML({ content: "<h3>sap.m.GenericTagDesign.StatusIconHidden + sap.m.GenericTagValueState.None</h3>" }),
-						oNeutralGenericTagIconHidden,
-						oInformationGenericTagIconHidden,
-						oErrorGenericTagIconHidden,
-						oWarningGenericTagIconHidden,
-						oSuccessGenericTagIconHidden,
-						new HTML({ content: "<hr>" }),
-						new HTML({ content: "<h3>sap.m.GenericTagDesign.StatusIconHidden + sap.m.GenericTagValueState.Error</h3>" }),
-						oNeutralGenericTagIconHiddenError,
-						oInformationGenericTagIconHiddenError,
-						oErrorGenericTagIconHiddenError,
-						oWarningGenericTagIconHiddenError,
-						oSuccessGenericTagIconHiddenError
+						new VerticalLayout({
+							width: "100%",
+							content: [
+								new HTML({ content: "<h3>sap.m.GenericTagDesign.Full + sap.m.GenericTagValueState.None</h3>" }),
+								new HBox({
+									wrap: sap.m.FlexWrap.Wrap,
+									items: [
+										oNeutralGenericTag,
+										oInformationGenericTag,
+										oErrorGenericTag,
+										oWarningGenericTag,
+										oSuccessGenericTag
+									]
+								}),
+								new HTML({ content: "<hr>" }),
+								new HTML({ content: "<h3>sap.m.GenericTagDesign.Full + sap.m.GenericTagValueState.Error</h3>" }),
+								new HBox({
+									wrap: sap.m.FlexWrap.Wrap,
+									items: [
+										oNeutralGenericTagError,
+										oInformationGenericTagError,
+										oErrorGenericTagError,
+										oWarningGenericTagError,
+										oSuccessGenericTagError
+									]
+								}),
+								new HTML({ content: "<hr>" }),
+								new HTML({ content: "<h3>sap.m.GenericTagDesign.StatusIconHidden + sap.m.GenericTagValueState.None</h3>" }),
+								new HBox({
+									wrap: sap.m.FlexWrap.Wrap,
+									items: [
+										oNeutralGenericTagIconHidden,
+										oInformationGenericTagIconHidden,
+										oErrorGenericTagIconHidden,
+										oWarningGenericTagIconHidden,
+										oSuccessGenericTagIconHidden
+									]
+								}),
+								new HTML({ content: "<hr>" }),
+								new HTML({ content: "<h3>sap.m.GenericTagDesign.StatusIconHidden + sap.m.GenericTagValueState.Error</h3>" }),
+								new HBox({
+									wrap: sap.m.FlexWrap.Wrap,
+									items: [
+										oNeutralGenericTagIconHiddenError,
+										oInformationGenericTagIconHiddenError,
+										oErrorGenericTagIconHiddenError,
+										oWarningGenericTagIconHiddenError,
+										oSuccessGenericTagIconHiddenError
+									]
+								})
+							]
+						})
 					]
 				});
 

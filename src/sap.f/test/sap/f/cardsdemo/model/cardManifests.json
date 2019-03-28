@@ -1080,7 +1080,7 @@
 					"icon": {
 						"src": "sap-icon://accept"
 					},
-					"title": "Card Title 2x2",
+					"title": "1. Card Title 2x2",
 					"subTitle": "Card subtitle",
 					"status": "Count"
 				},
@@ -1093,7 +1093,7 @@
 					"icon": {
 						"src": "sap-icon://accept"
 					},
-					"title": "Card Title 4x2",
+					"title": "2. Card Title 4x2",
 					"subTitle": "Card subtitle",
 					"status": "Count"
 				},
@@ -1106,7 +1106,7 @@
 					"icon": {
 						"src": "sap-icon://accept"
 					},
-					"title": "Card Title 1x1",
+					"title": "3. Card Title 1x1",
 					"subTitle": "Card subtitle",
 					"status": "Count"
 				},
@@ -1119,7 +1119,7 @@
 					"icon": {
 						"src": "sap-icon://accept"
 					},
-					"title": "Card Title 2x1",
+					"title": "4. Card Title 2x1",
 					"subTitle": "Card subtitle",
 					"status": "Count"
 				},
@@ -1132,7 +1132,7 @@
 					"icon": {
 						"src": "sap-icon://accept"
 					},
-					"title": "Card Title 1x1",
+					"title": "5. Card Title 1x1",
 					"subTitle": "Card subtitle",
 					"status": "Count"
 				},
@@ -1145,7 +1145,7 @@
 					"icon": {
 						"src": "sap-icon://accept"
 					},
-					"title": "Card Title 4x1",
+					"title": "6. Card Title 4x1",
 					"subTitle": "Card subtitle",
 					"status": "Count"
 				},
@@ -1158,7 +1158,7 @@
 					"icon": {
 						"src": "sap-icon://accept"
 					},
-					"title": "Card Title 2x6",
+					"title": "7. Card Title 2x6",
 					"subTitle": "Card subtitle",
 					"status": "Count"
 				},
@@ -1171,7 +1171,7 @@
 					"icon": {
 						"src": "sap-icon://accept"
 					},
-					"title": "Card Title 4x4",
+					"title": "8. Card Title 4x4",
 					"subTitle": "Card subtitle",
 					"status": "Count"
 				},
@@ -1184,7 +1184,7 @@
 					"icon": {
 						"src": "../images/Woman_avatar_01.png"
 					},
-					"title": "Card Title 4x4 with image",
+					"title": "9. Card Title 4x4 with image",
 					"subTitle": "Card subtitle",
 					"status": "Count"
 				},
@@ -1197,7 +1197,7 @@
 					"icon": {
 						"src": "sap-icon://accept"
 					},
-					"title": "Card Title 2x2",
+					"title": "10. Card Title 2x2",
 					"subTitle": "Card subtitle",
 					"status": "Count"
 				},
@@ -1210,7 +1210,7 @@
 					"icon": {
 						"src": "sap-icon://accept"
 					},
-					"title": "Card Title 2x2",
+					"title": "11. Card Title 2x2",
 					"subTitle": "Card subtitle",
 					"status": "Count"
 				},
@@ -1223,7 +1223,7 @@
 					"icon": {
 						"src": "sap-icon://accept"
 					},
-					"title": "Card Title 6x4",
+					"title": "12. Card Title 6x4",
 					"subTitle": "Card subtitle",
 					"status": "Count"
 				},
@@ -1236,7 +1236,7 @@
 					"icon": {
 						"src": "sap-icon://accept"
 					},
-					"title": "Card Title 6x4",
+					"title": "13. Card Title 6x4",
 					"subTitle": "Card subtitle",
 					"status": "Count"
 				},
@@ -1247,6 +1247,11 @@
 	"listContent": {
 		"card13": {
 			"sap.card": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/someitems.json"
+					}
+				},
 				"type": "List",
 				"header": {
 					"title": "Request list content Card",
@@ -1254,14 +1259,17 @@
 					"icon": {
 						"src": "sap-icon://accept"
 					},
-					"status": "100 of 200"
+					"status": {
+						"text": "8 of 17"
+					},
+					"actions": [
+						{
+							"type": "Navigation",
+							"url": "https://www.sap.com"
+						}
+					]
 				},
 				"content": {
-					"data": {
-						"request": {
-							"url": "./cardcontent/someitems.json"
-						}
-					},
 					"item": {
 						"icon": {
 							"src": "{icon}"
@@ -1292,7 +1300,9 @@
 					"icon": {
 						"src": "sap-icon://business-objects-experience"
 					},
-					"status": "100 of 200"
+					"status": {
+						"text": "5 of 17"
+					}
 				},
 				"content": {
 					"items":[
@@ -1343,6 +1353,111 @@
 					]
 				}
 			}
+		},
+		"largeList": {
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "Request list content Card",
+					"subTitle": "Card subtitle",
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"status": "100 of 200"
+				},
+				"content": {
+					"data": {
+						"request": {
+							"url": "./cardcontent/someitems.json"
+						}
+					},
+					"maxItems": 7,
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Name}"
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}"
+						},
+						"highlight": "{state}",
+						"info": {
+							"value": "{info}",
+							"state": "{infoState}"
+						}
+					}
+				}
+			}
+		},
+		"smallList": {
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "Tasks",
+					"subTitle": "Upcoming",
+					"icon": {
+						"src": "sap-icon://activities"
+					}
+				},
+				"content": {
+					"items":[
+						{
+							"title":"Call Simone",
+							"icon":"sap-icon://call",
+							"infoState":"Error"
+						},
+						{
+							"title":"Write to Elena",
+							"icon":"sap-icon://email",
+							"infoState":"Warning"
+						}
+					]
+				}
+			}
+		},
+		"mediumList": {
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "Contacts",
+					"subTitle": "Recent",
+					"icon": {
+						"src": "sap-icon://activities"
+					}
+				},
+				"content": {
+					"items":[
+						{
+							"title":"Alain Chevalier",
+							"icon":"sap-icon://person-placeholder"
+						},
+						{
+							"title":"Monique Legrand",
+							"icon":"sap-icon://account"
+						},
+						{
+							"title":"Elena Petrova",
+							"icon":"sap-icon://business-card"
+						},
+						{
+							"title":"Monique Legrand",
+							"icon":"sap-icon://account"
+						},
+						{
+							"title":"Alain Chevalier",
+							"icon":"sap-icon://account"
+						},
+						{
+							"title":"Elena Petrova",
+							"icon":"sap-icon://business-card"
+						}
+					]
+				}
+			}
 		}
 	},
 	"tableManifests": {
@@ -1360,29 +1475,31 @@
 						},
 						"path": "/names"
 					},
-					"columns": [
-						{
-							"label": "First Name",
-							"value": "{firstName}"
-						},
-						{
-							"label": "Last Name",
-							"value": "{lastName}"
-						},
-						{
-							"label": "Link",
-							"value": "{urlText}",
-							"url": "{url}"
-						},
-						{
-							"label": "Progress",
-							"progressIndicator": {
-								"percent": "{percent}",
-								"text": "{percentValue}",
-								"state": "{progressState}"
+					"row": {
+						"columns": [
+							{
+								"label": "First Name",
+								"value": "{firstName}"
+							},
+							{
+								"label": "Last Name",
+								"value": "{lastName}"
+							},
+							{
+								"label": "Link",
+								"value": "{urlText}",
+								"url": "{url}"
+							},
+							{
+								"label": "Progress",
+								"progressIndicator": {
+									"percent": "{percent}",
+									"text": "{percentValue}",
+									"state": "{progressState}"
+								}
 							}
-						}
-					]
+						]
+					}
 				}
 			}
 		},
@@ -1399,22 +1516,25 @@
 						},
 						"path": "/tableCard3"
 					},
-					"columns": [
-						{
-							"label": "Order ID",
-							"value": "{orderId}",
-							"url": "{orderUrl}"
-						},
-						{
-							"label": "Created By",
-							"value": "{name}"
-						},
-						{
-							"label": "Status",
-							"value": "{status}",
-							"state": "{statusState}"
-						}
-					]
+					"row": {
+						"columns": [
+							{
+								"label": "Order ID",
+								"value": "{orderId}",
+								"url": "{orderUrl}"
+							},
+							{
+								"label": "Created By",
+								"value": "{name}"
+							},
+							{
+								"label": "Status",
+								"value": "{status}",
+								"state": "{statusState}"
+							}
+						]
+					}
+
 				}
 			}
 		},
@@ -1431,26 +1551,28 @@
 						},
 						"path": "/tableCard4"
 					},
-					"columns": [
-						{
-							"label": "Sales Order",
-							"value": "{salesOrder}",
-							"identifier": true
-						},
-						{
-							"label": "Customer",
-							"value": "{name}"
-						},
-						{
-							"label": "Net Amount",
-							"value": "{netAmount}"
-						},
-						{
-							"label": "Status",
-							"value": "{status}",
-							"state": "{statusState}"
-						}
-					]
+					"row": {
+						"columns": [
+							{
+								"label": "Sales Order",
+								"value": "{salesOrder}",
+								"identifier": true
+							},
+							{
+								"label": "Customer",
+								"value": "{name}"
+							},
+							{
+								"label": "Net Amount",
+								"value": "{netAmount}"
+							},
+							{
+								"label": "Status",
+								"value": "{status}",
+								"state": "{statusState}"
+							}
+						]
+					}
 				}
 			}
 		}
@@ -1637,16 +1759,18 @@
 						},
 						"path": "/names"
 					},
-					"columns": [
-						{
-							"label": "First Name",
-							"value": "{firstName}"
-						},
-						{
-							"label": "Last Name",
-							"value": "{lastName}"
-						}
-					]
+					"row": {
+						"columns": [
+							{
+								"label": "First Name",
+								"value": "{firstName}"
+							},
+							{
+								"label": "Last Name",
+								"value": "{lastName}"
+							}
+						]
+					}
 				}
 			}
 		}
@@ -1822,6 +1946,7 @@
 							"valueColor": "Critical"
 						}
 					},
+					"title": "Project revenue",
 					"subTitle": "Success Rate",
 					"mainIndicator": {
 						"number": "{n}",
@@ -2112,5 +2237,537 @@
 		  }
 		}
 	  }
+	},
+	"noHeaderNoContent": {
+		"card131": {
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/someitems.json"
+					}
+				},
+				"type": "List",
+				"content": {
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Name}"
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}"
+						},
+						"highlight": "{state}",
+						"info": {
+							"value": "{info}",
+							"state": "{infoState}"
+						}
+					}
+				}
+			}
+		},
+		"card141": {
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "List Card",
+					"subTitle": "With static list items",
+					"icon": {
+						"src": "sap-icon://business-objects-experience"
+					},
+					"status": {
+						"text": "5 of 17"
+					}
+				}
+			}
+		},
+		"largeList": {
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "Request list content Card",
+					"subTitle": "Card subtitle",
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"status": "100 of 200"
+				},
+				"content": {
+					"data": {
+						"request": {
+							"url": "./cardcontent/someitems.json"
+						}
+					},
+					"maxItems": 7,
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Name}"
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}"
+						},
+						"highlight": "{state}",
+						"info": {
+							"value": "{info}",
+							"state": "{infoState}"
+						}
+					}
+				}
+			}
+		},
+		"smallList": {
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "Tasks",
+					"subTitle": "Upcoming",
+					"icon": {
+						"src": "sap-icon://activities"
+					}
+				},
+				"content": {
+					"items":[
+						{
+							"title":"Call Simone",
+							"icon":"sap-icon://call",
+							"infoState":"Error"
+						},
+						{
+							"title":"Write to Elena",
+							"icon":"sap-icon://email",
+							"infoState":"Warning"
+						}
+					]
+				}
+			}
+		},
+		"mediumList": {
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "Contacts",
+					"subTitle": "Recent",
+					"icon": {
+						"src": "sap-icon://activities"
+					}
+				},
+				"content": {
+					"items":[
+						{
+							"title":"Alain Chevalier",
+							"icon":"sap-icon://person-placeholder"
+						},
+						{
+							"title":"Monique Legrand",
+							"icon":"sap-icon://account"
+						},
+						{
+							"title":"Elena Petrova",
+							"icon":"sap-icon://business-card"
+						},
+						{
+							"title":"Monique Legrand",
+							"icon":"sap-icon://account"
+						},
+						{
+							"title":"Alain Chevalier",
+							"icon":"sap-icon://account"
+						},
+						{
+							"title":"Elena Petrova",
+							"icon":"sap-icon://business-card"
+						}
+					]
+				}
+			}
+		}
+	},
+	"minHeight": {
+		"line": {
+			"sap.card": {
+				"type": "Analytical",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"request": {
+							"url": "./cardcontent/kpi.json"
+						},
+						"path": "/kpiInfos/kpi"
+					},
+					"title": "Card with 32 rem height",
+					"subTitle": "Analytical Card",
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"number": "{number}",
+						"unit": "{unit}",
+						"trend": "{trend}",
+						"state": "{state}"
+					},
+					"details": "{details}",
+					"sideIndicators": [
+						{
+							"title": "Target",
+							"number": "{target/number}",
+							"unit": "{target/unit}"
+						},
+						{
+							"title": "Deviation",
+							"number": "{deviation/number}",
+							"unit": "%"
+						}
+					]
+				},
+				"content": {
+					"chartType": "Line",
+					"legend": {
+						"visible": true,
+						"position": "Right",
+						"alignment": "Center"
+					},
+					"plotArea": {
+						"dataLabel": {
+							"visible": true
+						}
+					},
+					"title": {
+						"text": "Line chart",
+						"visible": true,
+						"alignment": "Bottom"
+					},
+					"measureAxis": "valueAxis",
+					"dimensionAxis": "categoryAxis",
+					"data": {
+						"request": {
+							"url": "./cardcontent/revenue.json"
+						},
+						"path": "/list"
+					},
+					"dimensions": [
+						{
+							"label": "Weeks",
+							"value": "{Week}"
+						}
+					],
+					"measures": [
+						{
+							"label": "Revenue",
+							"value": "{Revenue}"
+						},
+						{
+							"label": "Cost",
+							"value": "{Cost}"
+						}
+					]
+				}
+			}
+		},
+		"stackedColumn": {
+			"sap.card": {
+				"type": "Analytical",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"n": "56",
+							"u": "%",
+							"trend": "Up",
+							"valueColor": "Good"
+						}
+					},
+					"title": "Card with 24 rem height",
+					"subTitle": "Analytical Card - Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
+					"sideIndicators": [
+						{
+							"title": "Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target",
+							"number": "3252.234",
+							"unit": "K"
+						},
+						{
+							"title": "Long Deviation Long Deviation",
+							"number": "22.43",
+							"unit": "%"
+						}
+					]
+				},
+				"content": {
+					"chartType": "StackedColumn",
+					"legend": {
+						"visible": false
+					},
+					"plotArea": {
+						"dataLabel": {
+							"visible": false,
+							"showTotal": true
+						}
+					},
+					"title": {
+						"text": "Stacked column chart",
+						"visible": true,
+						"alignment": "Bottom"
+					},
+					"measureAxis": "valueAxis",
+					"dimensionAxis": "categoryAxis",
+					"data": {
+						"request": {
+							"url": "./cardcontent/revenue.json"
+						},
+						"path": "/list"
+					},
+					"dimensions": [
+						{
+							"label": "Weeks",
+							"value": "{Week}"
+						}
+					],
+					"measures": [
+						{
+							"label": "Revenue",
+							"value": "{Revenue}"
+						},
+						{
+							"label": "Cost",
+							"value": "{Cost}"
+						}
+					]
+				}
+			}
+		},
+		"stackedBar": {
+			"sap.card": {
+				"type": "Analytical",
+				"header": {
+					"title": "Card with 12 rem height",
+					"subTitle": "Analytical Card"
+				},
+				"content": {
+					"chartType": "StackedBar",
+					"legend": {
+						"visible": true,
+						"position": "Bottom",
+						"alignment": "Center"
+					},
+					"plotArea": {
+						"dataLabel": {
+							"visible": true,
+							"showTotal": false
+						},
+						"categoryAxisText": {
+							"visible": false
+						}
+					},
+					"title": {
+						"text": "Stacked Bar chart",
+						"visible": true,
+						"alignment": "Bottom"
+					},
+					"measureAxis": "valueAxis",
+					"dimensionAxis": "categoryAxis",
+					"data": {
+						"request": {
+							"url": "./cardcontent/revenue.json"
+						},
+						"path": "/list"
+					},
+					"dimensions": [
+						{
+							"label": "Weeks",
+							"value": "{Week}"
+						}
+					],
+					"measures": [
+						{
+							"label": "Revenue",
+							"value": "{Revenue}"
+						}
+					]
+				}
+			}
+		},
+		"donut": {
+			"sap.card": {
+				"type": "Analytical",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"n": 6547394.45496,
+							"u": "М $",
+							"trend": "Down",
+							"valueColor": "Critical"
+						}
+					},
+					"title": "Card with NO height (content min-height 14 rem)",
+					"subTitle": "Analytical Card",
+					"mainIndicator": {
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"sideIndicators": [
+						{
+							"title": "Decrease",
+							"number": "24",
+							"unit": "weeks"
+						}
+					]
+				},
+				"content": {
+					"chartType": "Donut",
+					"legend": {
+						"visible": true,
+						"position": "Top",
+						"alignment": "Center"
+					},
+					"plotArea": {
+						"dataLabel": {
+							"visible": true,
+							"showTotal": true
+						}
+					},
+					"title": {
+						"text": "Donut chart",
+						"visible": true,
+						"alignment": "Bottom"
+					},
+					"measureAxis": "size",
+					"dimensionAxis": "color",
+					"data": {
+						"request": {
+							"url": "./cardcontent/cost.json"
+						},
+						"path": "/milk"
+					},
+					"dimensions": [
+						{
+							"label": "Store Name",
+							"value": "{Store Name}"
+						}
+					],
+					"measures": [
+						{
+							"label": "Revenue",
+							"value": "{Revenue}"
+						}
+					]
+				}
+			}
+		},
+		"largeList": {
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "NO height (content min-height 5 rem)",
+					"subTitle": "List Card",
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"status": "100 of 200"
+				},
+				"content": {
+					"data": {
+						"request": {
+							"url": "./cardcontent/someitems.json"
+						}
+					},
+					"maxItems": 7,
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Name}"
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}"
+						},
+						"highlight": "{state}",
+						"info": {
+							"value": "{info}",
+							"state": "{infoState}"
+						}
+					}
+				}
+			}
+		},
+		"smallList": {
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "NO height (content min-height 5 rem)",
+					"subTitle": "List Card",
+					"icon": {
+						"src": "sap-icon://activities"
+					}
+				},
+				"content": {
+					"items":[
+						{
+							"title":"Call Simone",
+							"icon":"sap-icon://call",
+							"infoState":"Error"
+						}
+					]
+				}
+			}
+		},
+		"mediumList": {
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "NO height (content min-height 5rem)",
+					"subTitle": "List Card",
+					"icon": {
+						"src": "sap-icon://activities"
+					}
+				},
+				"content": {
+					"items":[
+						{
+							"title":"Alain Chevalier",
+							"icon":"sap-icon://person-placeholder"
+						},
+						{
+							"title":"Monique Legrand",
+							"icon":"sap-icon://account"
+						},
+						{
+							"title":"Elena Petrova",
+							"icon":"sap-icon://business-card"
+						},
+						{
+							"title":"Monique Legrand",
+							"icon":"sap-icon://account"
+						},
+						{
+							"title":"Alain Chevalier",
+							"icon":"sap-icon://account"
+						},
+						{
+							"title":"Elena Petrova",
+							"icon":"sap-icon://business-card"
+						}
+					]
+				}
+			}
+		}
 	}
 }

@@ -2422,9 +2422,140 @@ sap.ui.define([
 			assert.equal(oModel.getProperty("/Products(0)/Supplier/Name"), "Supplier One", "Supplier Name is returned correctly");
 			assert.equal(oModel.hasPendingChanges(), false, "Has pending changes is false, after setting property to old value");
 
+			oModel.setProperty("/Products(0)/SupplierID", null);
+			assert.equal(oModel.getProperty("/Products(0)").Supplier.__ref, null, "Supplier is set to null");
+			assert.equal(oModel.getProperty("/Products(0)/Supplier/Name"), undefined, "Supplier Name is returned correctly");
+			assert.equal(oModel.hasPendingChanges(), true, "Has pending changes is true, after setting property to null");
+
 			oModel.setProperty("/Products(0)/CategoryID", 1);
 			assert.equal(oModel.getProperty("/Products(0)").Category.__ref, undefined, "Nav property is not updated if deferred");
 
+			done();
+		});
+	});
+
+	QUnit.test("test setProperty on property with referential constraint, submitChanges",function(assert) {
+		var done = assert.async();
+		var oModel = initModel(sURI, {useBatch : true});
+		oModel.attachMetadataLoaded(function() {
+			// create dummy testdata
+			oModel.oData = {
+				"Suppliers(0)" : {
+					Name : "Supplier One",
+					Address : {
+						City: "Boston",
+						Street: "140th",
+						Plz : 12345
+					},
+					"__metadata":{
+						uri : "http://test:8080/services.odata.org/V3/OData/OData.svc/Suppliers(0)",
+						type : "ODataDemo.Supplier"
+					}
+				},
+				"Suppliers(1)" : {
+					Name : "Supplier Two",
+					Address : {
+						City: "Chicago",
+						Street: "120th",
+						Plz : 23456
+					},
+					"__metadata":{
+						uri : "http://test:8080/services.odata.org/V3/OData/OData.svc/Suppliers(0)",
+						type : "ODataDemo.Supplier"
+					}
+				},
+				"Products(0)" : {
+					Name :"Beef",
+					SupplierID: 0,
+					CategoryID: 0,
+					Supplier : {
+						__ref: "Suppliers(0)"
+					},
+					Category : {
+						__deferred: "http://test:8080/services.odata.org/V3/OData/OData.svc/Products(0)/Category"
+					},
+					"__metadata":{
+						uri : "http://test:8080/services.odata.org/V3/OData/OData.svc/Products(0)",
+						type : "ODataDemo.Product"
+					}
+				}
+			};
+
+			assert.equal(oModel.getProperty("/Products(0)/Supplier/Name"), "Supplier One", "Supplier Name is returned correctly");
+			oModel.setProperty("/Products(0)/SupplierID", 1);
+			assert.equal(oModel.getProperty("/Products(0)").Supplier.__ref, "Suppliers(1)", "Nav property is updated after changing SupplierID");
+			assert.equal(oModel.getProperty("/Products(0)/Supplier/Name"), "Supplier Two", "Supplier Name is resolved after changing SupplierID");
+			assert.equal(oModel.hasPendingChanges(), true, "Has pending changes is true");
+
+			oModel.submitChanges({
+				success: function() {
+					assert.equal(oModel.hasPendingChanges(), false, "No more pending changes, after submitting data");
+					assert.equal(oModel.oData["Products(0)"].Supplier.__ref, "Suppliers(1)", "Nav property is updated in original entry");
+					done();
+				}
+			});
+
+		});
+	});
+
+	QUnit.test("test setProperty on property with referential constraint, resetChanges",function(assert) {
+		var done = assert.async();
+		var oModel = initModel(sURI, {useBatch : true});
+		oModel.attachMetadataLoaded(function() {
+			// create dummy testdata
+			oModel.oData = {
+				"Suppliers(0)" : {
+					Name : "Supplier One",
+					Address : {
+						City: "Boston",
+						Street: "140th",
+						Plz : 12345
+					},
+					"__metadata":{
+						uri : "http://test:8080/services.odata.org/V3/OData/OData.svc/Suppliers(0)",
+						type : "ODataDemo.Supplier"
+					}
+				},
+				"Suppliers(1)" : {
+					Name : "Supplier Two",
+					Address : {
+						City: "Chicago",
+						Street: "120th",
+						Plz : 23456
+					},
+					"__metadata":{
+						uri : "http://test:8080/services.odata.org/V3/OData/OData.svc/Suppliers(0)",
+						type : "ODataDemo.Supplier"
+					}
+				},
+				"Products(0)" : {
+					Name :"Beef",
+					SupplierID: 0,
+					CategoryID: 0,
+					Supplier : {
+						__ref: "Suppliers(0)"
+					},
+					Category : {
+						__deferred: "http://test:8080/services.odata.org/V3/OData/OData.svc/Products(0)/Category"
+					},
+					"__metadata":{
+						uri : "http://test:8080/services.odata.org/V3/OData/OData.svc/Products(0)",
+						type : "ODataDemo.Product"
+					}
+				}
+			};
+
+			assert.equal(oModel.getProperty("/Products(0)/Supplier/Name"), "Supplier One", "Supplier Name is returned correctly");
+			oModel.setProperty("/Products(0)/SupplierID", 1);
+			assert.equal(oModel.getProperty("/Products(0)").Supplier.__ref, "Suppliers(1)", "Nav property is updated after changing SupplierID");
+			assert.equal(oModel.getProperty("/Products(0)/Supplier/Name"), "Supplier Two", "Supplier Name is resolved after changing SupplierID");
+			assert.equal(oModel.hasPendingChanges(), true, "Has pending changes is true");
+
+			oModel.resetChanges();
+
+			assert.equal(oModel.hasPendingChanges(), false, "No more pending changes, after import of same property");
+			assert.equal(oModel.getProperty("/Products(0)").Supplier.__ref, "Suppliers(0)", "Nav property is updated after resetChanges");
+			assert.equal(oModel.getProperty("/Products(0)/Supplier/Name"), "Supplier One", "Supplier Name is returned correctly");
 
 			done();
 		});

@@ -205,6 +205,37 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		clock.restore();
 	});
 
+	QUnit.test("Slow CPU case", function (assert) {
+
+		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
+			sTargetSectionId = "UxAP-objectPageContentScrolling--secondSection",
+			iTargetPosition,
+			done = assert.async();
+
+		assert.expect(2);
+
+		// intercept
+		oObjectPage._moveAnchorBarToTitleArea = function () {
+			sap.uxap.ObjectPageLayout.prototype._moveAnchorBarToTitleArea.apply(oObjectPage, arguments);
+			assert.ok(oObjectPage._$opWrapper.scrollTop() < iTargetPosition, "header is snapped before reaching the target position");
+		};
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			oObjectPage._requestAdjustLayout(true);
+			iTargetPosition =  oObjectPage._oSectionInfo["UxAP-objectPageContentScrolling--subsection2-1"].positionTop;
+
+			oObjectPage.scrollToSection(sTargetSectionId);
+
+			oObjectPage._$opWrapper.scrollTop(iTargetPosition);
+			oObjectPage._onScroll({target: {scrollTop: iTargetPosition}});
+
+			assert.ok(oObjectPage._bStickyAnchorBar, "header is snapped");
+
+			done();
+		});
+
+	});
+
 	QUnit.test("Rerendering the page preserves the scroll position", function (assert) {
 		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
 			oSecondSection = this.oObjectPageContentScrollingView.byId("secondSection"),
@@ -497,6 +528,45 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			oObjectPageLayout._moveAnchorBarToContentArea();
 
 			assert.strictEqual(oObjectPageLayout.getDomRef().scrollTop, iScrollTopBefore, "scrollTop is preserved");
+			oObjectPageLayout.destroy();
+			done();
+		});
+
+		// arrange
+		oObjectPageLayout.placeAt('qunit-fixture');
+		Core.applyChanges();
+	});
+
+	QUnit.test("no scrollbar on unsnap if not needed", function (assert) {
+		var oObjectPageLayout = helpers.generateObjectPageWithContent(oFactory, 1 /* single section */),
+			oRequestAdjustLayoutSpy = sinon.spy(oObjectPageLayout, "_requestAdjustLayout"),
+			done = assert.async();
+
+		oObjectPageLayout.setHeaderTitle(oFactory.getDynamicPageTitle());
+		oObjectPageLayout.addHeaderContent(new sap.m.Panel({height: "100px"}));
+
+		function hasScrollbar() {
+			var oScrollContainer = oObjectPageLayout._$opWrapper.get(0);
+			return oScrollContainer.scrollHeight > oScrollContainer.offsetHeight;
+		}
+
+		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+			// Setup: snap the header to cause scrollbar to appear
+			// (as ObjectPage snaps by scrolling the header out of view)
+			oObjectPageLayout._snapHeader(true);
+			assert.strictEqual(hasScrollbar(), true, "has scrollbar");
+			oRequestAdjustLayoutSpy.reset();
+
+			// Act: unsnap the snapped header
+			oObjectPageLayout._expandHeader(false);
+
+			// Check
+			assert.strictEqual(oRequestAdjustLayoutSpy.called, true, "layout recalculation called");
+			// call explicitly *with no delay* to save timeout in this test
+			oObjectPageLayout._requestAdjustLayout(true);
+			assert.strictEqual(hasScrollbar(), false, "no more scrollbar");
+
 			oObjectPageLayout.destroy();
 			done();
 		});

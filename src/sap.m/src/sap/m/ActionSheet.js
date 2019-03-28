@@ -13,6 +13,7 @@ sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	'sap/ui/Device',
 	'./ActionSheetRenderer',
+	'./Button',
 	"sap/ui/thirdparty/jquery"
 ],
 	function(
@@ -25,6 +26,7 @@ sap.ui.define([
 		ManagedObject,
 		Device,
 		ActionSheetRenderer,
+		Button,
 		jQuery
 	) {
 	"use strict";
@@ -418,7 +420,7 @@ sap.ui.define([
 			var sCancelButtonText = (this.getCancelButtonText()) ? this.getCancelButtonText() : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACTIONSHEET_CANCELBUTTON_TEXT"),
 				that = this;
 	//			var sButtonStyle = (sap.ui.Device.os.ios) ? sap.m.ButtonType.Unstyled : sap.m.ButtonType.Default;
-			this._oCancelButton = new sap.m.Button(this.getId() + '-cancelBtn', {
+			this._oCancelButton = new Button(this.getId() + '-cancelBtn', {
 				text: sCancelButtonText,
 				type: ButtonType.Reject,
 				press : function() {

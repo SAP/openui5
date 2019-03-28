@@ -148,9 +148,9 @@
 		  "target": "sapfCard"
 		},
 		{
-		  "pattern": "cardContainer",
-		  "name": "cardContainer",
-		  "target": "cardContainer"
+		  "pattern": "gridContainer",
+		  "name": "gridContainer",
+		  "target": "gridContainer"
 		},
 		{
 		  "pattern": "timelineContent",
@@ -173,9 +173,29 @@
 		  "target": "objectContent"
 		},
 		{
-			"pattern": "delayedLoading",
-			"name": "delayedLoading",
-			"target": "delayedLoading"
+		  "pattern": "dnd",
+		  "name": "dnd",
+		  "target": "dnd"
+		},
+		{
+		  "pattern": "dnd2",
+		  "name": "dnd2",
+		  "target": "dnd2"
+		},
+		{
+		  "pattern": "delayedLoading",
+		  "name": "delayedLoading",
+		  "target": "delayedLoading"
+		},
+		{
+		  "pattern": "noHeaderNoContent",
+		  "name": "noHeaderNoContent",
+		  "target": "noHeaderNoContent"
+		},
+		{
+		  "pattern": "minHeight",
+		  "name": "minHeight",
+		  "target": "minHeight"
 		}
 	  ],
 	  "targets": {
@@ -259,9 +279,9 @@
 		  "viewName": "sapfCard",
 		  "viewLevel": 1
 		},
-		"cardContainer": {
-		  "viewId": "CardContainer",
-		  "viewName": "CardContainer",
+		"gridContainer": {
+		  "viewId": "GridContainer",
+		  "viewName": "GridContainer",
 		  "viewLevel": 1
 		},
 		"navigationService": {
@@ -288,8 +308,28 @@
 		  "viewId": "object",
 		  "viewName": "ObjectContent",
 		  "viewLevel": 1
+		},
+		"dnd": {
+		  "viewId": "dnd",
+		  "viewName": "Dnd",
+		  "viewLevel": 1
+		},
+		"dnd2": {
+		  "viewId": "dnd2",
+		  "viewName": "Dnd2",
+		  "viewLevel": 1
+		},
+		"noHeaderNoContent": {
+		  "viewId": "noHeaderNoContent",
+		  "viewName": "noHeaderNoContent",
+		  "viewLevel": 1
+		},
+		"minHeight": {
+		  "viewId": "minHeight",
+		  "viewName": "minHeight",
+		  "viewLevel": 1
 		}
-	  }
+		}
 	}
   }
 }

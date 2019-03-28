@@ -46,7 +46,6 @@ sap.ui.define([
 			this.setModuleName(oFile.moduleName);
 			this.setInitialApplyState();
 			this._oChangeProcessingPromises = {};
-			this._aQueuedProcesses = [];
 		},
 		metadata : {
 			properties : {
@@ -112,6 +111,7 @@ sap.ui.define([
 	};
 
 	Change.prototype.setInitialApplyState = function() {
+		this._aQueuedProcesses = [];
 		this.setApplyState(Change.applyState.INITIAL);
 	};
 
@@ -289,6 +289,18 @@ sap.ui.define([
 	Change.prototype.getChangeType = function () {
 		if (this._oDefinition) {
 			return this._oDefinition.changeType;
+		}
+	};
+
+	/**
+	 * Returns the file name
+	 *
+	 * @returns {String} fileName of the file
+	 * @public
+	 */
+	Change.prototype.getFileName = function () {
+		if (this._oDefinition) {
+			return this._oDefinition.fileName;
 		}
 	};
 

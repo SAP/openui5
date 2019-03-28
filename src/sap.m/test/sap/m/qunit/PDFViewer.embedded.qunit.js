@@ -5,9 +5,12 @@ sap.ui.define([
 	"./PDFViewerTestUtils",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/PDFViewerRenderer",
-	"sap/m/PDFViewerDisplayType"
-], function (jQuery, TestUtils, JSONModel, PDFViewerRenderer, PDFViewerDisplayType) {
+	"sap/m/library"
+], function (jQuery, TestUtils, JSONModel, PDFViewerRenderer, library) {
 	"use strict";
+
+	// shortcut for sap.m.PDFViewerDisplayType
+	var PDFViewerDisplayType = library.PDFViewerDisplayType;
 
 	var oPdfViewer = null;
 

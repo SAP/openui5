@@ -35,6 +35,24 @@
             "reference": "1970154891"
           }
         ]
+      },
+      {
+        "id": "8ace94b6a65792706859e2c9eebaa3ba7fb46788",
+        "type": "FIX",
+        "text": "Fixing the trimming of application variant ID",
+        "references": []
+      },
+      {
+        "id": "ee1cf3f411aa7ed1b2c6284af893e04ef248570f",
+        "type": "FIX",
+        "text": ": RTA Renaming Cursor",
+        "references": []
+      },
+      {
+        "id": "148312a03542ab816f2ec24e246e999ea59a06a0",
+        "type": "FIX",
+        "text": ": RTA Theme UX Consistency",
+        "references": []
       }
     ]
   }

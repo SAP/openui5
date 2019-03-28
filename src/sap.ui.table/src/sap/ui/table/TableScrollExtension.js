@@ -268,11 +268,16 @@ sap.ui.define([
 		 * @private
 		 */
 		getScrollAreas: function(oTable) {
+			var oDomRef = oTable.getDomRef();
+			var aScrollableColumnAreas;
+
+			if (oDomRef) {
+				aScrollableColumnAreas = Array.prototype.slice.call(oTable.getDomRef().querySelectorAll(".sapUiTableCtrlScr"));
+			}
+
 			var aScrollAreas = [
-				oTable._getScrollExtension().getHorizontalScrollbar(),
-				oTable.getDomRef("sapUiTableColHdrScr"), // Column header scroll area.
-				oTable.getDomRef("sapUiTableCtrlScr") // Content scroll area.
-			];
+				oTable._getScrollExtension().getHorizontalScrollbar()
+			].concat(aScrollableColumnAreas);
 
 			return aScrollAreas.filter(function(oScrollArea) {
 				return oScrollArea != null;
@@ -301,8 +306,8 @@ sap.ui.define([
 		updateScrollPosition: function(oTable, nScrollPosition, sTrigger, bPreventScroll) {
 			sTrigger = sTrigger == null ? ScrollTrigger.EXTENSION : sTrigger;
 
-			var oScrollExtension = oTable._getScrollExtension();
-			var oVSb = oScrollExtension.getVerticalScrollbar();
+			var oScrollExtension = oTable ? oTable._getScrollExtension() : null;
+			var oVSb = oScrollExtension ? oScrollExtension.getVerticalScrollbar() : null;
 
 			if (!oTable || !oVSb || !oScrollExtension.isVerticalScrollbarRequired() || internal(oTable).bVerticalScrollingSuspended) {
 				log("VerticalScrollingHelper#updateScrollPosition: Not executed - Guard clause not passed", oTable);

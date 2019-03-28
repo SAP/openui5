@@ -99,6 +99,24 @@ function(
 		 * {@link sap.m.TimePicker}, or {@link sap.m.DateTimePicker} instead.</li>
 		 * </ul>
 		 *
+		 * <b>Note:</b> The control uses a JavaScript number to keep its value, which
+		 * has a certain precision limitation.
+		 *
+		 * In general, exponential notation is used:
+		 * <ul>
+		 * <li>if there are more than 21 digits before the decimal point.</li>
+		 * <li>if number starts with "0." followed by more than five zeros.</li>
+		 * </ul>
+		 *
+		 * Exponential notation is not supported by the control and using it may lead to
+		 * unpredictable behavior.
+		 *
+		 * Also, the JavaScript number persists its precision up to 16 digits. If the user enters
+		 * a number with a greater precision, the value will be rounded.
+		 *
+		 * This limitation comes from JavaScript itself and it cannot be worked around in a
+		 * feasible way.
+		 *
 		 * @extends sap.ui.core.Control
 		 * @implements sap.ui.core.IFormContent
 		 *

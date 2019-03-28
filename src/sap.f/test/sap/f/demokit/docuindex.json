@@ -97,7 +97,7 @@
 		},
 		{
 		  "id": "sap.f.Card",
-		  "name": "Card Control",
+		  "name": "Card (sap.f)",
 		  "category": "Display",
 		  "since": "1.64",
 		  "samples": ["sap.f.sample.Card"]

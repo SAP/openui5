@@ -171,22 +171,10 @@ sap.ui.define([
 	// returns translated text for the state
 	ObjectNumber.prototype._getStateText = function() {
 
-		var sARIAStateText,
+		var sState = this.getState(),
 			oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
-			switch (this.getState()) {
-				case ValueState.Error:
-					sARIAStateText = oRB.getText("OBJECTNUMBER_ARIA_VALUE_STATE_ERROR");
-					break;
-				case ValueState.Warning:
-					sARIAStateText = oRB.getText("OBJECTNUMBER_ARIA_VALUE_STATE_WARNING");
-					break;
-				case ValueState.Success:
-					sARIAStateText = oRB.getText("OBJECTNUMBER_ARIA_VALUE_STATE_SUCCESS");
-					break;
-			}
-
-		return sARIAStateText;
+			return oRB.getText("OBJECTNUMBER_ARIA_VALUE_STATE_" + sState.toUpperCase(), [], true);
 	};
 
 	return ObjectNumber;

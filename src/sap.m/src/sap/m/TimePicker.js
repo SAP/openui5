@@ -21,6 +21,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
 	"sap/ui/core/InvisibleText",
+	'./Button',
 	"sap/ui/thirdparty/jquery"
 ],
 function(
@@ -41,6 +42,7 @@ function(
 	KeyCodes,
 	Log,
 	InvisibleText,
+	Button,
 	jQuery
 ) {
 		"use strict";
@@ -749,47 +751,7 @@ function(
 				oDomRef.removeAttribute("title");
 			}
 
-			this._handleTooltipHiddenTextLifecycle();
-
 			return this;
-		};
-
-		/**
-		 * Handles the addition/removal of the hidden span element (used as an hidden aria description) and its correct
-		 * reference with the TP inner input. This method requires <code>TimePicker</code> to be rendered in the DOM.
-		 * @private
-		 * @returns {void}
-		 */
-		TimePicker.prototype._handleTooltipHiddenTextLifecycle = function () {
-			var oRenderer,
-				sDescribedByReferences,
-				sAnnouncement,
-				sHiddenTextIdPattern,
-				bCreateHiddenText,
-				oHiddenAriaTooltipElement;
-
-			if (!sap.ui.getCore().getConfiguration().getAccessibility()) {
-				return;
-			}
-
-			oRenderer = this.getRenderer();
-			sDescribedByReferences = oRenderer.getAriaDescribedBy(this);
-			sAnnouncement = oRenderer.getDescribedByAnnouncement(this);
-			sHiddenTextIdPattern = this.getId() + "-describedby";
-			bCreateHiddenText = sDescribedByReferences.indexOf(sHiddenTextIdPattern) > -1;
-			oHiddenAriaTooltipElement = this.getDomRef("describedby");
-
-			if (bCreateHiddenText) {
-				oHiddenAriaTooltipElement = document.createElement("span");
-				oHiddenAriaTooltipElement.id = sHiddenTextIdPattern;
-				oHiddenAriaTooltipElement.setAttribute("aria-hidden", "true");
-				oHiddenAriaTooltipElement.className = "sapUiInvisibleText";
-				oHiddenAriaTooltipElement.textContent = sAnnouncement;
-				this.getDomRef().appendChild(oHiddenAriaTooltipElement);
-			} else {
-				this.getDomRef().removeChild(oHiddenAriaTooltipElement);
-			}
-			this._$input.attr("aria-describedby", sDescribedByReferences);
 		};
 
 		/**
@@ -1077,8 +1039,8 @@ function(
 				horizontalScrolling: false,
 				verticalScrolling: false,
 				placement: PlacementType.VerticalPreferedBottom,
-				beginButton: new sap.m.Button({ text: sOKButtonText, press: jQuery.proxy(this._handleOkPress, this) }),
-				endButton: new sap.m.Button({ text: sCancelButtonText, press: jQuery.proxy(this._handleCancelPress, this) }),
+				beginButton: new Button({ text: sOKButtonText, press: jQuery.proxy(this._handleOkPress, this) }),
+				endButton: new Button({ text: sCancelButtonText, press: jQuery.proxy(this._handleCancelPress, this) }),
 				content: [
 					new TimePickerSliders(this.getId() + "-sliders", {
 						support2400: this.getSupport2400(),

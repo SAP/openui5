@@ -23,7 +23,7 @@ sap.ui.define([
 
 		/**
 		 * Class for connecting to Fake LREP storing changes in different storages
-		 * @param {object} mSettings - map of FakeLrepConnector settings
+		 * @param {object} mSettings Map of FakeLrepConnector settings
 		 *
 		 * @class
 		 *
@@ -41,13 +41,14 @@ sap.ui.define([
 				"isAtoAvailable": false,
 				"isProductiveSystem": false
 			}, mSettings);
+			this._iChangeCounter = 0;
 		}
 
 		Object.assign(FakeLrepConnectorStorage.prototype, FakeLrepConnector.prototype);
 
 		/**
 		 * Creates a Fake Lrep change in localStorage
-		 * @param  {Object|Array} vChangeDefinitions - single or multiple changeDefinitions
+		 * @param  {Object|Array} vChangeDefinitions Single or multiple changeDefinitions
 		 * @returns {Promise} Returns a promise to the result of the request
 		 */
 		FakeLrepConnectorStorage.prototype.create = function(vChangeDefinitions) {
@@ -67,8 +68,13 @@ sap.ui.define([
 		};
 
 		FakeLrepConnectorStorage.prototype._saveChange = function(mChangeDefinition) {
+			var nCreationTimestamp;
 			if (!mChangeDefinition.creation){
-				mChangeDefinition.creation = new Date().toISOString();
+				// safari browser uses only 1 ms intervals to create a timestamp. This
+				// generates creation timestamp duplicates. But creation timestamp is
+				// used to define the order of the changes and needs to be unique
+				nCreationTimestamp =  Date.now() + this._iChangeCounter++;
+				mChangeDefinition.creation = new Date(nCreationTimestamp).toISOString();
 			}
 			oFakeLrepStorage.saveChange(mChangeDefinition.fileName, mChangeDefinition);
 			return mChangeDefinition;
@@ -83,36 +89,64 @@ sap.ui.define([
 		};
 
 		FakeLrepConnectorStorage.prototype.send = function(sUri, sMethod, oData, mOptions) {
-			function _changeShouldBeDeleted(oChangeDefinition, oResponse) {
-				if (
-					(oChangeDefinition.reference === oResponse.parameters[1] || oChangeDefinition.reference + ".Component" === oResponse.parameters[1])
-					&& oChangeDefinition.layer === oResponse.parameters[2]
-				) {
-					return true;
+			return FakeLrepConnector.prototype.send.apply(this, arguments);
+		};
+
+		/**
+		 * Resets changes; Filters by provided parameters like the application reference, layer,
+		 * the change type or changes on specific controls by their selector IDs.
+		 *
+		 * @param {String} mParameters property bag
+		 * @param {String} mParameters.sReference Application reference
+		 * @param {String} mParameters.sLayer Possible layers: VENDOR,PARTNER,CUSTOMER_BASE,CUSTOMER,USER
+		 * @param {String[]} mParameters.aSelectorIds Selector IDs of controls for which the reset should filter
+		 * @param {String[]} mParameters.aChangeTypes Change types of the changes which should be reset
+		 * @public
+		 */
+		FakeLrepConnectorStorage.prototype.resetChanges = function(mParameters) {
+			function _changeShouldBeDeleted(oChangeDefinition) {
+				var bDelete = true;
+
+				if (mParameters.aSelectorIds) {
+					if (oChangeDefinition.selector) {
+						bDelete = mParameters.aSelectorIds.indexOf(oChangeDefinition.selector.id) > -1;
+					} else {
+						bDelete = false;
+					}
 				}
+
+				if (bDelete && mParameters.aChangeTypes) {
+					bDelete = mParameters.aChangeTypes.indexOf(oChangeDefinition.changeType) > -1;
+				}
+
+				return bDelete;
 			}
 
-			if (sMethod === "DELETE") {
-				return FakeLrepConnector.prototype.send.apply(this, arguments).then(function(oResponse) {
-					oFakeLrepStorage.getChanges().forEach(function(oChangeDefinition) {
-						if (_changeShouldBeDeleted(oChangeDefinition, oResponse.response)) {
-							oFakeLrepStorage.deleteChange(oChangeDefinition.fileName);
-						}
-					});
-					return Promise.resolve({
-						response: undefined,
-						status: "nocontent"
-					});
+			return this.send(this._getUrlPrefix(), "DELETE")
+			.then(function() {
+				var aResponse = [];
+				oFakeLrepStorage.getChanges(mParameters.sReference, mParameters.sLayer).forEach(function(oChangeDefinition) {
+					if (_changeShouldBeDeleted(oChangeDefinition)) {
+						aResponse.push({
+							layer: oChangeDefinition.layer,
+							name: oChangeDefinition.fileName,
+							namespace: oChangeDefinition.namespace,
+							type: oChangeDefinition.fileType
+						});
+						oFakeLrepStorage.deleteChange(oChangeDefinition.fileName);
+					}
 				});
-			} else {
-				return FakeLrepConnector.prototype.send.apply(this, arguments);
-			}
+				return {
+					response: aResponse,
+					status: "success"
+				};
+			});
 		};
 
 		/**
 		 * Deletes a Fake Lrep change in localStorage
-		 * @param  {Object} oChange - The change object
-		 * @param  {Object} oChange.sChangeName - File name of the change object
+		 * @param  {Object} oChange The change object
+		 * @param  {Object} oChange.sChangeName File name of the change object
 		 * @returns {Promise} Returns a promise to the result of the request
 		 */
 		FakeLrepConnectorStorage.prototype.deleteChange = function(oChange) {
@@ -141,17 +175,17 @@ sap.ui.define([
 
 		/**
 		 * Loads the changes for the given Component class name
-		 * from the FakeLrepStorage
-		 * and also loads the mandatory FakeLrepConnector.json file.
+		 * from the FakeLrepStorage and also loads the mandatory FakeLrepConnector.json file;
 		 * The settings are take from the JSON file, but changes are replaced with
 		 * the changes from the local storage.
 		 *
-		 * @param {String} sComponentClassName - Component class name
-		 * @param {sap.ui.fl.Change[]} [aBackendChanges] - array of changes that will get added to the result
+		 * @param {String} sComponentClassName Component class name
+		 * @param {map} [mPropertyBag] Contains additional data needed for reading changes; Not used in this case
+		 * @param {sap.ui.fl.Change[]} [aBackendChanges] array of changes that will get added to the result
 		 * @returns {Promise} Returns a Promise with the changes and componentClassName
 		 * @public
 		 */
-		FakeLrepConnectorStorage.prototype.loadChanges = function(sComponentClassName, aBackendChanges) {
+		FakeLrepConnectorStorage.prototype.loadChanges = function(sComponentClassName, mPropertyBag, aBackendChanges) {
 			var aChanges = oFakeLrepStorage.getChanges();
 
 			if (aBackendChanges) {
@@ -407,10 +441,10 @@ sap.ui.define([
 		 * If the <code>sAppComponentName</code> is provided, replaces the connector instance of corresponding {@link sap.ui.fl.ChangePersistence} by a fake one.
 		 * After enabling fake LRep connector, function {@link sap.ui.fl.FakeLrepConnectorStorage.disableFakeConnector} must be called to restore the original connector.
 		 *
-		 * @param {object} [mSettings] - map of FakeLrepConnector settings
-		 * @param {string} [sAppComponentName] - Name of application component to overwrite the existing LRep connector
-		 * @param {string} [sAppVersion] - Version of application to overwrite the existing LRep connector
-		 * @param {boolean} [bSuppressCacheInvalidation] - If true the cache entry will not be deleted
+		 * @param {object} [mSettings] Map of FakeLrepConnector settings
+		 * @param {string} [sAppComponentName] Name of application component to overwrite the existing LRep connector
+		 * @param {string} [sAppVersion] Version of application to overwrite the existing LRep connector
+		 * @param {boolean} [bSuppressCacheInvalidation] If true the cache entry will not be deleted
 		 */
 		FakeLrepConnectorStorage.enableFakeConnector = function(mSettings, sAppComponentName, sAppVersion, bSuppressCacheInvalidation){
 			mSettings = mSettings || {};
@@ -457,8 +491,8 @@ sap.ui.define([
 		 * Restores the original {@link sap.ui.fl.LrepConnector.createConnector} factory function.
 		 * If the <code>sAppComponentName</code> is provided, restores the connector instance of corresponding {@link sap.ui.fl.ChangePersistence} by the original one.
 		 *
-		 * @param {string} [sAppComponentName] - Name of application component to restore the original LRep connector
-		 * @param {string} [sAppVersion] - Version of application to restore the original LRep connector
+		 * @param {string} [sAppComponentName] Name of application component to restore the original LRep connector
+		 * @param {string} [sAppVersion] Version of application to restore the original LRep connector
 		 */
 		FakeLrepConnectorStorage.disableFakeConnector = function(sAppComponentName, sAppVersion){
 

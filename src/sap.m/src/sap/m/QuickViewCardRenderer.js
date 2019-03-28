@@ -2,15 +2,16 @@
  * ${copyright}
  */
 
-sap.ui.define([],
-	function() {
+sap.ui.define(['sap/ui/core/Core'],
+	function(Core) {
 		"use strict";
 
 		/**
 		 * QuickViewCard renderer.
 		 * @namespace
 		 */
-		var QuickViewCardRenderer = {};
+		var QuickViewCardRenderer = {},
+			oRb = Core.getLibraryResourceBundle("sap.m");
 
 		/**
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -31,6 +32,12 @@ sap.ui.define([],
 			}
 			oRm.writeControlData(oQuickViewCard);
 			oRm.writeClasses();
+
+			// Accessibility state
+			oRm.writeAccessibilityState(oQuickViewCard, {
+				label: {value: oRb.getText("ARIA_ROLEDESCRIPTION_CARD"), append: true}
+			});
+
 			oRm.write(">");
 			oRm.renderControl(oContent);
 			oRm.write("</div>");

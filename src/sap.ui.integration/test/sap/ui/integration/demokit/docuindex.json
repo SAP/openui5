@@ -10,7 +10,7 @@
 		"entities": [
 			{
 				"id": "sap.ui.integration.widgets.Card",
-				"name": "Card",
+				"name": "Integration Card",
 				"category": "Display",
 				"since": "1.62",
 				"formFactors": "-",
@@ -19,7 +19,8 @@
 					"sap.ui.integration.sample.ListCard",
 					"sap.ui.integration.sample.AnalyticalCard",
 					"sap.ui.integration.sample.ObjectCard",
-					"sap.ui.integration.sample.TimelineCard"
+					"sap.ui.integration.sample.TimelineCard",
+					"sap.ui.integration.sample.Actions"
 				]
 			}
 		],
@@ -43,6 +44,11 @@
 				"id": "sap.ui.integration.sample.TimelineCard",
 				"name": "Timeline Card",
 				"description": "The timeline card is used to show time-related content."
+			},
+			{
+				"id": "sap.ui.integration.sample.Actions",
+				"name": "Actions",
+				"description": "Actions are used to add functionality to the cards."
 			},
 			{
 				"id": "sap.ui.integration.sample.Playground",

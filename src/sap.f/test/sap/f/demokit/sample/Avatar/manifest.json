@@ -7,19 +7,21 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.f.sample.Avatar.Avatar",
+			"viewName": "sap.f.sample.Avatar.view.Avatar",
 			"type": "XML",
 			"async": true
 		},
-		"libs": {
-			"sap.f": {}
+		"dependencies": {
+			"libs": {
+				"sap.f": {}
+			}
 		},
 		"config": {
 			"sample": {
 				"stretch": true,
 				"files": [
-					"Avatar.view.xml",
-					"Avatar.controller.js",
+					"view/Avatar.view.xml",
+					"controller/Avatar.controller.js",
 					"manifest.json"
 				]
 			}

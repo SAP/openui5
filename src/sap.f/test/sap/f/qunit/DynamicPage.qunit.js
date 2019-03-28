@@ -11,7 +11,9 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/m/OverflowToolbarButton",
 	"sap/f/DynamicPageAccessibleLandmarkInfo",
-	"sap/ui/core/mvc/XMLView"
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/events/KeyCodes"
 ],
 function (
 	$,
@@ -25,7 +27,9 @@ function (
 	UIComponent,
 	OverflowToolbarButton,
 	DynamicPageAccessibleLandmarkInfo,
-	XMLView
+	XMLView,
+	QUnitUtils,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -129,6 +133,26 @@ function (
 
 		this.oDynamicPage.setHeaderExpanded(false);
 		assert.ok($oPinButton.hasClass("sapUiHidden"), "Pin header button should be hidden again");
+	});
+
+	QUnit.test("DynamicPage headerExpanded=false expand via header should reset the property value", function (assert) {
+		// act
+		this.oDynamicPage.setHeaderExpanded(null);
+
+		// asert
+		assert.ok(this.oDynamicPage.getHeaderExpanded(), "DynamicPage headerExpanded value is default");
+
+		// act
+		this.oDynamicPage.setHeaderExpanded(false);
+
+		// asert
+		assert.notOk(this.oDynamicPage.getHeaderExpanded(), "DynamicPage header is snapped");
+
+		// act
+		this.oDynamicPage.setHeaderExpanded(undefined);
+
+		// asert
+		assert.ok(this.oDynamicPage.getHeaderExpanded(), "DynamicPage headerExpanded value is default");
 	});
 
 	QUnit.module("DynamicPage - API - header initially snapped without content", {
@@ -524,6 +548,48 @@ function (
 		assert.ok(oTitlePressSpy.calledOnce, "Title Pin Press Handler is called");
 	});
 
+	QUnit.test("DynamicPage On Title Press: onsapenter event", function (assert) {
+		var oTitlePressListenerSpy = sinon.spy(),
+			oTitle = this.oDynamicPage.getTitle();
+
+		// Arrange
+		oUtil.renderObject(this.oDynamicPage);
+		oTitle._focus();
+		this.oDynamicPage.getTitle().attachEvent("_titlePress", oTitlePressListenerSpy);
+
+		QUnitUtils.triggerKeydown(oTitle.getDomRef(), KeyCodes.ENTER);
+
+		assert.ok(oTitlePressListenerSpy.calledOnce, "Event was fired when ENTER key is pressed");
+	});
+
+	QUnit.test("DynamicPage On Title Press: onsapspace event", function (assert) {
+		var oTitlePressListenerSpy = sinon.spy(),
+			oTitle = this.oDynamicPage.getTitle();
+
+		// Arrange
+		oUtil.renderObject(this.oDynamicPage);
+		oTitle._focus();
+		this.oDynamicPage.getTitle().attachEvent("_titlePress", oTitlePressListenerSpy);
+
+		QUnitUtils.triggerKeyup(oTitle.getDomRef(), KeyCodes.SPACE);
+
+		assert.ok(oTitlePressListenerSpy.calledOnce, "Event was fired when SPACE key is pressed");
+	});
+
+	QUnit.test("DynamicPage On Title Press: onsapspace event with shift", function (assert) {
+		var oTitlePressListenerSpy = sinon.spy(),
+			oTitle = this.oDynamicPage.getTitle();
+
+		// Arrange
+		oUtil.renderObject(this.oDynamicPage);
+		oTitle._focus();
+		this.oDynamicPage.getTitle().attachEvent("_titlePress", oTitlePressListenerSpy);
+
+		QUnitUtils.triggerKeyup(oTitle.getDomRef(), KeyCodes.SPACE, true /*Shift*/);
+
+		assert.strictEqual(oTitlePressListenerSpy.callCount, 0, "Event was not fired when ENTER key is pressed");
+	});
+
 	QUnit.test("DynamicPage On Title Press: stateChange event is fired", function (assert) {
 		var oStateChangeListenerSpy = sinon.spy(),
 			oTitle = this.oDynamicPage.getTitle();
@@ -718,6 +784,32 @@ function (
 		assert.ok(oTitleMouseOverSpy.calledOnce, "DP: Expand Header Visual Indicator MouseOut Handler is called");
 		assert.ok(oTitleMouseOverSpy2.calledOnce, "DPTitle: Expand Header Visual Indicator MouseOut Handler is called");
 		assert.ok(!$oDynamicPage.hasClass("sapFDynamicPageTitleForceHovered"), "DPageTitle hover state removed");
+	});
+
+	QUnit.test("DynamicPage header resize", function (assert) {
+		var oHeader = this.oDynamicPage.getHeader(),
+			$oDynamicPage,
+			isHeaderSnappedWithScroll = function () {
+				return this.oDynamicPage._getScrollPosition() >= this.oDynamicPage._getSnappingHeight();
+			}.bind(this);
+
+		oHeader.addContent(new sap.m.Panel({height: "100px"}));
+
+		// setup
+		oUtil.renderObject(this.oDynamicPage);
+		this.oDynamicPage.setHeaderExpanded(false);
+
+		// assert init state
+		assert.ok(isHeaderSnappedWithScroll(), "header is snapped with scroll");
+
+		//Act
+		$oDynamicPage = this.oDynamicPage.$();
+		$oDynamicPage.find('.sapMPanel').get(0).style.height = "300px";
+		// explicitly call to avoid waiting for resize handler to detect change
+		this.oDynamicPage._onChildControlsHeightChange();
+
+		// Check
+		assert.ok(isHeaderSnappedWithScroll(), "header is still snapped with scroll");
 	});
 
 	/* --------------------------- DynamicPage Private functions ---------------------------------- */

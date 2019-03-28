@@ -1,0 +1,13 @@
+{
+  "1.65.0": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "37b06b7d543c675c5cb64ebc1445d29295b76ef4",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: When menu is collapsed items are now read correclty",
+        "references": []
+      }
+    ]
+  }
+}

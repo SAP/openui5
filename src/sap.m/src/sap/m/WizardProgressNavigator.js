@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/m/ActionSheet",
 	"./WizardProgressNavigatorRenderer",
+	"./Button",
 	"sap/ui/thirdparty/jquery"
 ],
 function(
@@ -20,6 +21,7 @@ function(
 	Device,
 	ActionSheet,
 	WizardProgressNavigatorRenderer,
+	Button,
 	jQuery
 ) {
 	"use strict";
@@ -637,7 +639,7 @@ function(
 			icon = this.getStepIcons()[i];
 			title = this._cachedSteps[i].childNodes[0].getAttribute("title");
 
-			this._actionSheet.addButton(new sap.m.Button({
+			this._actionSheet.addButton(new Button({
 				width: "200px",
 				text: title,
 				icon: icon,

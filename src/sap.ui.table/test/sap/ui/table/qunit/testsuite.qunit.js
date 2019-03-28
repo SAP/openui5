@@ -100,6 +100,8 @@ sap.ui.define([
 			},
 			"RowSettings": {
 			},
+			"CreationRow": {
+			},
 			"TablePersoController": {
 				ui5: {
 					libs: ["sap.ui.table", "sap.m"]
@@ -196,7 +198,8 @@ sap.ui.define([
 			},
 
 			"MultiSelectionPlugin": {
-				group: "Plugins"
+				group: "Plugins",
+				module: "./plugins/{name}.qunit"
 			}
 		}
 	};

@@ -7,8 +7,10 @@
 	},
 	"sap.ui5": {
 		"rootView": "sap.ui.core.sample.MessageManager.BasicODataMessages.View",
-		"libs": {
-			"sap.ui.layout": {}
+		"dependencies": {
+			"libs": {
+				"sap.ui.layout": {}
+			}
 		},
 		"config": {
 			"sample": {

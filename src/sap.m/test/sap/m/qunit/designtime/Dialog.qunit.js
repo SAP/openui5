@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/dt/test/ElementEnablementTest",
 	"sap/m/Dialog",
 	"sap/m/Text",
-	"sap/ui/rta/test/controlEnablingCheck",
+	"sap/ui/rta/enablement/controlTest",
 	"sap/m/Bar",
 	"sap/m/Button"
 ], function(

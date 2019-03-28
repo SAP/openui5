@@ -6,13 +6,16 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/m/MessageBox",
 	"sap/ui/core/Component",
+	"sap/ui/core/library",
 	"sap/ui/core/ListItem",
 	"sap/ui/core/mvc/View",
-	"sap/ui/core/mvc/ViewType",
 	"sap/ui/core/sample/common/Controller",
 	"sap/ui/util/XMLHelper"
-], function (jQuery, Log, MessageBox, Component, ListItem, View, ViewType, Controller, XMLHelper) {
+], function (jQuery, Log, MessageBox, Component, library, ListItem, View, Controller, XMLHelper) {
 	"use strict";
+
+	// shortcut for sap.ui.core.mvc.ViewType
+	var ViewType = library.mvc.ViewType;
 
 	function alertError(oError) {
 		Log.error(oError, oError.stack, "sap.ui.core.sample.ViewTemplate.scenario.Main");

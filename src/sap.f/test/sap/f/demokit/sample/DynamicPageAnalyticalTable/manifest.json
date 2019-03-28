@@ -7,19 +7,21 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.f.sample.DynamicPageAnalyticalTable.DynamicPageAnalyticalTable",
+			"viewName": "sap.f.sample.DynamicPageAnalyticalTable.view.DynamicPageAnalyticalTable",
 			"type": "XML",
 			"async": true
 		},
-		"libs": {
-			"sap.ui.unified": {}
+		"dependencies": {
+			"libs": {
+				"sap.ui.unified": {}
+			}
 		},
 		"config": {
 			"sample": {
 				"stretch": true,
 				"files": [
-					"DynamicPageAnalyticalTable.view.xml",
-					"DynamicPageAnalyticalTable.controller.js",
+					"view/DynamicPageAnalyticalTable.view.xml",
+					"controller/DynamicPageAnalyticalTable.controller.js",
 					"manifest.json"
 				]
 			}

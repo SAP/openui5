@@ -54,7 +54,7 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 
 	var DescriptorInlineChangeFactory = {};
 
-	DescriptorInlineChangeFactory.getDescriptorChangeTypes = function(){
+	DescriptorInlineChangeFactory.getDescriptorChangeTypes = function() {
 		return ["appdescr_ovp_addNewCard","appdescr_ovp_removeCard","appdescr_ovp_changeCard",
 		        "appdescr_app_addNewInbound", "appdescr_app_changeInbound", "appdescr_app_removeInbound", "appdescr_app_removeAllInboundsExceptOne",
 		        "appdescr_app_addNewOutbound", "appdescr_app_changeOutbound", "appdescr_app_removeOutbound",
@@ -62,9 +62,31 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 		        "appdescr_app_addAnnotationsToOData", "appdescr_app_addTechnicalAttributes", "appdescr_app_removeTechnicalAttributes",
 		        "appdescr_app_setTitle", "appdescr_app_setSubTitle", "appdescr_app_setShortTitle", "appdescr_app_setDescription", "appdescr_app_setInfo",
 		        "appdescr_app_setDestination", "appdescr_app_setKeywords", "appdescr_app_setAch", "appdescr_flp_setConfig",
-		        "appdescr_ui5_addNewModel", "appdescr_ui5_addNewModelEnhanceWith", "appdescr_ui5_removeModel", "appdescr_ui5_replaceComponentUsage",
+		        "appdescr_ui5_addNewModel", "appdescr_ui5_addNewModelEnhanceWith", "appdescr_ui5_removeModel", "appdescr_ui5_replaceComponentUsage", "appdescr_ui5_setMinUI5Version",
 		        "appdescr_smb_addNamespace", "appdescr_smb_changeNamespace", "appdescr_ui_generic_app_setMainPage", "appdescr_ui_setIcon", "appdescr_ui_setDeviceTypes",
 		        "appdescr_ui5_addLibraries", "appdescr_url_setUri", "appdescr_fiori_setRegistrationIds"];
+	};
+
+	/**
+	 * List of changeTypes that overwrite each other; Duplicates of these changeTypes can be condensed.
+	 */
+	DescriptorInlineChangeFactory.getCondensableDescriptorChangeTypes = function() {
+		return [
+				"appdescr_app_setTitle",
+				"appdescr_app_setInfo",
+				"appdescr_app_setShortTitle",
+				"appdescr_app_setSubTitle",
+				"appdescr_app_setDescription",
+				"appdescr_app_setDestination",
+				"appdescr_app_setKeywords",
+				"appdescr_app_setAch",
+				"appdescr_ui_setIcon",
+				"appdescr_ui_setDeviceTypes",
+				"appdescr_ui_setIcon",
+				"appdescr_ui_setDeviceTypes",
+				"appdescr_fiori_setRegistrationIds",
+				"appdescr_smb_changeNamespace"
+			];
 	};
 
 	DescriptorInlineChangeFactory.createNew = function(sChangeType,mParameters,mTexts) {
@@ -744,6 +766,22 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	DescriptorInlineChangeFactory.create_ui5_addLibraries = function(mParameters) {
 		Utils.checkParameterAndType(mParameters, "libraries", "object");
 		return this._createDescriptorInlineChange('appdescr_ui5_addLibraries', mParameters);
+	};
+
+	/**
+	 * Creates an inline change of change type appdescr_ui5_setMinUI5Version
+	 *
+	 * @param {object} mParameters parameters of the change type
+	 * @param {string} mParameters.minUI5Version the UI5 Version to be updated
+	 *
+	 * @return {Promise} resolving when creating the descriptor inline change was successful (without backend access)
+	 *
+	 * @private
+	 * @sap-restricted
+	 */
+	DescriptorInlineChangeFactory.create_ui5_setMinUI5Version = function(mParameters) {
+		Utils.checkParameterAndType(mParameters, "minUI5Version", "string");
+		return this._createDescriptorInlineChange('appdescr_ui5_setMinUI5Version', mParameters);
 	};
 
 	/**

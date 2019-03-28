@@ -307,16 +307,7 @@ sap.ui.define([
 			bSilentFocus = false;
 		}
 
-		function hasSelectableText(oElement) {
-			// Text selection is only supported for <input type="text|password|search|tel|url">
-			// In Chrome text selection could also be supported for other input types, but to have a consistent behavior we don't do that.
-			return oElement instanceof window.HTMLInputElement && /^(text|password|search|tel|url)$/.test(oElement.type);
-		}
-
-		// Clear text selection of the currently focused element.
-		if (hasSelectableText(document.activeElement)) {
-			document.activeElement.setSelectionRange(0, 0);
-		}
+		TableUtils.deselectElementText(document.activeElement);
 
 		if (bSilentFocus) {
 			oTable._getKeyboardExtension()._setSilentFocus(oElement);
@@ -324,9 +315,7 @@ sap.ui.define([
 			oElement.focus();
 		}
 
-		if (hasSelectableText(oElement)) {
-			oElement.select();
-		}
+		TableUtils.selectElementText(oElement);
 	};
 
 	/**
@@ -467,7 +456,12 @@ sap.ui.define([
 				if (!bActionMode && $ParentCell) {
 					$ParentCell.focus(); // A non-interactive element inside a cell is focused, focus the cell this element is inside.
 				} else {
-					oKeyboardExtension.setActionMode(false);
+					var oCreationRow = oTable.getCreationRow();
+
+					if (!oCreationRow || !oCreationRow._takeOverKeyboardHandling(oEvent)) {
+						// The CreationRow did not take over the focus.
+						oKeyboardExtension.setActionMode(false);
+					}
 				}
 			} else {
 				// Focus the data cell above/below the currently focused one.
@@ -1048,8 +1042,8 @@ sap.ui.define([
 			$Cell = TableUtils.getCell(this, oEvent.target);
 			oCellInfo = TableUtils.getCellInfo($Cell);
 
-			if (!$Cell) {
-				return; // Not a table cell or an element inside a table cell.
+			if (!oCellInfo.isOfType(CellType.ANYCONTENTCELL)) {
+				return; // Not a content cell or an element inside a content cell.
 			}
 
 			var oRow = this.getRows()[oCellInfo.rowIndex];
@@ -1136,7 +1130,7 @@ sap.ui.define([
 		} else if (oEvent.target === this.getDomRef("overlay")) {
 			oKeyboardExtension._setSilentFocus(this.$().find(".sapUiTableOuterAfter"));
 
-		} else if (!oCellInfo.cell) {
+		} else if (!oCellInfo.isOfType(CellType.ANY)) {
 			$Cell = TableUtils.getParentCell(this, oEvent.target);
 
 			if ($Cell) {
@@ -1157,8 +1151,8 @@ sap.ui.define([
 			$Cell = TableUtils.getCell(this, oEvent.target);
 			oCellInfo = TableUtils.getCellInfo($Cell);
 
-			if (!$Cell) {
-				return; // Not a table cell or an element inside a table cell.
+			if (!oCellInfo.isOfType(CellType.ANYCONTENTCELL)) {
+				return; // Not a content cell or an element inside a content cell.
 			}
 
 			var oRow = this.getRows()[oCellInfo.rowIndex];
@@ -1242,7 +1236,7 @@ sap.ui.define([
 		} else if (oEvent.target === this.getDomRef("overlay")) {
 			this._getKeyboardExtension()._setSilentFocus(this.$().find(".sapUiTableOuterBefore"));
 
-		} else if (!oCellInfo.cell) {
+		} else if (!oCellInfo.isOfType(CellType.ANY)) {
 			$Cell = TableUtils.getParentCell(this, oEvent.target);
 
 			if ($Cell) {

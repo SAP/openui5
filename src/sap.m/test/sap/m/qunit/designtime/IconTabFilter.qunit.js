@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/dt/test/ElementEnablementTest",
 	"sap/m/IconTabFilter",
 	"sap/m/Button",
-	"sap/ui/rta/test/controlEnablingCheck"
+	"sap/ui/rta/enablement/controlTest"
 ], function(QUnitUtils, createAndAppendDiv, QUnitReport, ElementEnablementTest, IconTabFilter, Button, rtaControlEnablingCheck) {
 	"use strict";
 	createAndAppendDiv("content");

@@ -55,6 +55,7 @@ sap.ui.define([
 			"sap.m.CarouselArrowsPlacement",
 			"sap.m.DateTimeInputType",
 			"sap.m.DialogType",
+			"sap.m.DialogRoleType",
 			"sap.m.DeviationIndicator",
 			"sap.m.DraftIndicatorState",
 			"sap.m.FacetFilterListDataType",
@@ -760,6 +761,26 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Enum for the ARIA role of {@link sap.m.Dialog} control.
+	 *
+	 * @enum {string}
+	 * @since 1.65
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.DialogRoleType = {
+
+		/**
+		 * Represents the ARIA role <code>dialog</code>.
+		 */
+		Dialog : "dialog",
+
+		/**
+		 * Represents the ARIA role <code>alertdialog</code>.
+		 */
+		AlertDialog : "alertdialog"
+	};
 
 	/**
 	 * Enum of the available deviation markers for the NumericContent control.

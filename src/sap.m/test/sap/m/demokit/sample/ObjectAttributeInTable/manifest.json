@@ -6,13 +6,15 @@
 		}
 	},
 	"sap.ui5": {
-	"rootView": {
+		"rootView": {
 			"viewName": "sap.m.sample.ObjectAttributeInTable.Table",
 			"type": "XML",
 			"async": true
 		},
-		"libs": {
-			"sap.m": {}
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
 		},
 		"config": {
 			"sample": {

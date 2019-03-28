@@ -44,7 +44,7 @@ sap.ui.define([
 			 * and the column context menu is opened.
 			 *
 			 * @param {sap.ui.table.Table} oTable Instance of the table.
-			 * @param {jQuery|HtmlElement} oElement The header or data cell, or an element inside, for which to open the context menu.
+			 * @param {jQuery|HTMLElement} oElement The header or data cell, or an element inside, for which to open the context menu.
 			 * @param {boolean} [bHoverFirstMenuItem] If <code>true</code>, the first item in the opened menu will be hovered.
 			 * @param {boolean} [bFireEvent=true] If <code>true</code>, an event will be fired.
 			 * 									  Fires the <code>ColumnSelect</code> event when a column context menu should be opened.
@@ -62,17 +62,10 @@ sap.ui.define([
 				if (!oTable || !oElement) {
 					return;
 				}
-				if (bFireEvent == null) {
-					bFireEvent = true;
-				}
 
-				var $Target = jQuery(oElement);
+				bFireEvent = bFireEvent !== false;
 
-				var $TableCell = MenuUtils.TableUtils.getCell(oTable, $Target);
-				if (!$TableCell) {
-					return;
-				}
-
+				var $TableCell = MenuUtils.TableUtils.getCell(oTable, oElement);
 				var oCellInfo = MenuUtils.TableUtils.getCellInfo($TableCell);
 				var iColumnIndex = oCellInfo.columnIndex;
 				var iRowIndex = oCellInfo.rowIndex;
@@ -216,12 +209,12 @@ sap.ui.define([
 			},
 
 			/**
-			 * Opens the context menu of a data cell.
-			 * If a context menu of another data cell is open, it will be closed.
+			 * Opens the context menu of a content cell.
+			 * If a context menu of another cell is open, it will be closed.
 			 *
 			 * @param {sap.ui.table.Table} oTable Instance of the table.
 			 * @param {sap.ui.table.TableUtils.CellInfo} oCellInfo An object containing information about the cell.
-			 * @param {boolean} [bHoverFirstMenuItem] If <code>true</code>, the first item in the opened menu will be hovered.
+			 * @param {boolean} [bHoverFirstMenuItem=false] If <code>true</code>, the first item in the opened menu will be hovered.
 			 * @param {jQuery.Event} oEvent event object
 			 * @see openContextMenu
 			 * @see closeDataCellContextMenu
@@ -230,38 +223,34 @@ sap.ui.define([
 			openDataCellContextMenu: function(oTable, oCellInfo, bHoverFirstMenuItem, oEvent) {
 				if (!oTable ||
 					!oCellInfo ||
-					!oCellInfo.cell || oCellInfo.rowIndex >= MenuUtils.TableUtils.getNonEmptyVisibleRowCount(oTable)) {
+					!oCellInfo.isOfType(MenuUtils.TableUtils.CELLTYPE.ANYCONTENTCELL) ||
+					oCellInfo.rowIndex >= MenuUtils.TableUtils.getNonEmptyVisibleRowCount(oTable)) {
 					return;
 				}
 
-				var iColumnIndex = oCellInfo.columnIndex;
-				var iRowIndex = oCellInfo.rowIndex;
+				bHoverFirstMenuItem = bHoverFirstMenuItem === true;
 
-				if (bHoverFirstMenuItem == null) {
-					bHoverFirstMenuItem = false;
-				}
-
-				var oColumns = oTable.getColumns();
-				if (iColumnIndex >= oColumns.length) {
-					return;
-				}
-
-				var oColumn = oColumns[iColumnIndex];
-				if (oColumn && !oColumn.getVisible()) {
-					return;
-				}
-
-				var oRow = oTable.getRows()[iRowIndex];
-
-				// Filtering or the contextMenu aggregation are possible as the cell context menu
+				// Custom Context Menu
 				if (MenuUtils.hasContextMenu(oTable)) {
-					var $row = oRow.$();
-					var bSumRow = $row.hasClass("sapUiAnalyticalTableSum");
-					var bGroupHeader = $row.hasClass("sapUiTableGroupHeader");
-					if (!bSumRow && !bGroupHeader) {
+					if (!MenuUtils.TableUtils.Grouping.isInSumRow(oCellInfo.cell)
+						&& !MenuUtils.TableUtils.Grouping.isInGroupingRow(oCellInfo.cell)) {
 						oTable.getContextMenu().openAsContextMenu(oEvent, oCellInfo.cell);
 					}
-				} else if (oTable.getEnableCellFilter() && oColumn && oColumn.isFilterableByMenu()) {
+					return;
+				}
+
+				var iRowIndex = oCellInfo.rowIndex;
+				var oRow = oTable.getRows()[iRowIndex];
+				var iColumnIndex = oCellInfo.columnIndex;
+				var aColumns = oTable.getColumns();
+				var oColumn = aColumns[iColumnIndex];
+
+				if (!oColumn || !oColumn.getVisible()) {
+					return;
+				}
+
+				// Cell Filter Menu
+				if (oTable.getEnableCellFilter() && oColumn && oColumn.isFilterableByMenu()) {
 					// Create the menu instance the first time it is needed.
 					if (!oTable._oCellContextMenu) {
 						oTable._oCellContextMenu = new Menu(oTable.getId() + "-cellcontextmenu");
@@ -297,22 +286,19 @@ sap.ui.define([
 					}
 
 					// Open the menu below the cell if is is not already open.
-					var oCell =  oRow.getCells()[iColumnIndex];
-					var $Cell =  MenuUtils.TableUtils.getParentCell(oTable, oCell.getDomRef());
-
-					if ($Cell && !MenuUtils.TableUtils.Grouping.isInGroupingRow($Cell)) {
-						oCell = $Cell[0];
+					if (!MenuUtils.TableUtils.Grouping.isInGroupingRow(oCellInfo.cell)) {
+						var oCell = oCellInfo.cell[0];
 
 						var bMenuOpenAtAnotherDataCell = oTable._oCellContextMenu.bOpen && oTable._oCellContextMenu.oOpenerRef !== oCell;
 						if (bMenuOpenAtAnotherDataCell) {
 							MenuUtils.closeDataCellContextMenu(oTable);
 						}
 
-						for (var i = 0; i < oColumns.length; i++) {
+						for (var i = 0; i < aColumns.length; i++) {
 							MenuUtils.closeColumnContextMenu(oTable, i);
 						}
 
-						oTable._oCellContextMenu.open(bHoverFirstMenuItem, oCell, Popup.Dock.BeginTop, Popup.Dock.BeginBottom, oCell, "none none");
+						oTable._oCellContextMenu.open(bHoverFirstMenuItem, oCell, Popup.Dock.BeginTop, Popup.Dock.BeginBottom, oCell);
 					}
 				}
 			},

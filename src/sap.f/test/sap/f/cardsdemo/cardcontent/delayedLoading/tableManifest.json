@@ -24,27 +24,29 @@
 				},
 				"path": "/content"
 			},
-			"numberOfItems": 9,
-			"columns": [
-				{
-					"label": "Sales Order",
-					"value": "{salesOrder}",
-					"identifier": true
-				},
-				{
-					"label": "Customer",
-					"value": "{name}"
-				},
-				{
-					"label": "Net Amount",
-					"value": "{netAmount}"
-				},
-				{
-					"label": "Status",
-					"value": "{status}",
-					"state": "{statusState}"
-				}
-			]
+			"maxItems": 9,
+			"row": {
+				"columns": [
+					{
+						"label": "Sales Order",
+						"value": "{salesOrder}",
+						"identifier": true
+					},
+					{
+						"label": "Customer",
+						"value": "{name}"
+					},
+					{
+						"label": "Net Amount",
+						"value": "{netAmount}"
+					},
+					{
+						"label": "Status",
+						"value": "{status}",
+						"state": "{statusState}"
+					}
+				]
+			}
 		}
 	}
 }

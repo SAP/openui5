@@ -10,7 +10,10 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	'sap/m/Text',
+	'sap/ui/events/KeyCodes',
 	'./ObjectHeaderRenderer',
+	'./ObjectMarker',
+	'./ObjectNumber',
 	"sap/ui/thirdparty/jquery"
 ],
 	function(
@@ -20,7 +23,10 @@ sap.ui.define([
 		coreLibrary,
 		Device,
 		Text,
+		KeyCodes,
 		ObjectHeaderRenderer,
+    ObjectMarker,
+    ObjectNumber,
 		jQuery
 	) {
 	"use strict";
@@ -218,8 +224,15 @@ sap.ui.define([
 			 * Determines whether the <code>ObjectHeader</code> is rendered with a different design that
 			 * reacts responsively to the screen sizes.
 			 *
-			 * <b>Note:</b> Be aware that the design and behavior of the responsive <code>ObjectHeader</code>
-			 * could change without further notification.
+			 * When the <code>responsive</code> property is set to <code>true</code>, the
+			 * following behavior specifics for the control exist:
+			 * <ul>
+			 * <li>If an image (or an icon font) is set to the <code>icon</code> property, it is
+			 * hidden in portrait mode on phone.</li>
+			 * <li>The title is truncated to 80 characters if longer. For portrait mode on phone,
+			 * the title is truncated to 50 characters.</li>
+			 * </ul>
+			 *
 			 * @since 1.21.1
 			 */
 			responsive : {type : "boolean", group : "Behavior", defaultValue : false},
@@ -701,7 +714,7 @@ sap.ui.define([
 		}
 
 		if (!bHasMarker) {
-			this.insertAggregation("markers", new sap.m.ObjectMarker({
+			this.insertAggregation("markers", new ObjectMarker({
 				id: this.getId() + oIds[markerType],
 				type: markerType,
 				visible: bMarked
@@ -739,7 +752,7 @@ sap.ui.define([
 		var oControl = this.getAggregation("_objectNumber");
 
 		if (!oControl) {
-			oControl = new sap.m.ObjectNumber(this.getId() + "-number", {
+			oControl = new ObjectNumber(this.getId() + "-number", {
 				emphasized: false
 			});
 
@@ -820,9 +833,6 @@ sap.ui.define([
 		if (!this.getResponsive() && this.getTitleActive() && ( sSourceId === this.getId() + "-title" ||
 				jQuery(oEvent.target).parent().attr('id') === this.getId() + "-title" || // check if the parent of the "h" tag is the "title"
 				sSourceId === this.getId() + "-titleText-inner" )) {
-			if (oEvent.type === "sapspace") {
-				oEvent.preventDefault();
-			}
 			sSourceId = this.getId() + "-title";
 
 			if (!this.getTitleHref()) {
@@ -836,9 +846,6 @@ sap.ui.define([
 				}
 			}
 		} else if (this.getResponsive() && this.getTitleActive() && ( sSourceId === this.getId() + "-txt" || jQuery(oEvent.target).parent().attr('id') === this.getId() + "-txt" )) {
-			if (oEvent.type === "sapspace") {
-				oEvent.preventDefault();
-			}
 			// The sourceId should be always the id of the "a", even if we click on the inside span element
 			sSourceId = this.getId() + "-txt";
 
@@ -853,18 +860,12 @@ sap.ui.define([
 				}
 			}
 		} else if (this.getIntroActive() && sSourceId === this.getId() + "-intro") {
-			if (oEvent.type === "sapspace") {
-				oEvent.preventDefault();
-			}
 			if (!this.getIntroHref()) {
 				this.fireIntroPress({
 					domRef : (sSourceId ? window.document.getElementById(sSourceId) : null)
 				});
 			}
 		} else if (this.getIconActive() && jQuery(oEvent.target).is('.sapMOHIcon,.sapMOHRIcon')){
-			if (oEvent.type === "sapspace") {
-				oEvent.preventDefault();
-			}
 
 			var iconOrImg = (this.getId() + "-icon" ? window.document.getElementById(this.getId() + "-icon") : null);
 			if (!iconOrImg) {
@@ -875,21 +876,32 @@ sap.ui.define([
 				domRef : iconOrImg
 			});
 		} else if (sSourceId === this.getId() + "-titleArrow") {
-			if (oEvent.type === "sapspace") {
-				oEvent.preventDefault();
-			}
 			this.fireTitleSelectorPress({
 				domRef : (sSourceId ? window.document.getElementById(sSourceId) : null)
 			});
 		}
 	};
 
+
 	/**
-	 * Handles space key
+	 * @private
+	 * @param {object} oEvent The fired event
+	 */
+	ObjectHeader.prototype.onsapspace = function(oEvent) {
+		// prevent scrolling on SAPCE
+		oEvent.preventDefault();
+	};
+
+	/**
+	 * Handles space key on kye up
 	 *
 	 * @private
 	*/
-	ObjectHeader.prototype.onsapspace = ObjectHeader.prototype._handleSpaceOrEnter;
+	ObjectHeader.prototype.onkeyup = function (oEvent) {
+		if (oEvent.which === KeyCodes.SPACE) {
+			this._handleSpaceOrEnter(oEvent);
+		}
+	};
 
 	/**
 	 * Handles enter key

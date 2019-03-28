@@ -1,4 +1,4 @@
-sap.ui.define([
+sap.ui.require([
 	"sap/m/App",
 	"sap/m/Page",
 	"sap/ui/core/ComponentContainer"
@@ -20,7 +20,8 @@ sap.ui.define([
 							name : "sap.m.sample.PlanningCalendar",
 							settings : {
 								id : "PlanningCalendar"
-							}
+							},
+							manifest:true
 						})
 					]
 				})

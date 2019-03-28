@@ -18,7 +18,7 @@ sap.ui.define([
 				},
 				revertChange : function(oChange, oControl, mPropertyBag) {
 					var sText = oControl.getText();
-					oControl.setText(sText.substring(0, sText.length - 1));
+					oControl.setText(sText.substring(0, sText.length - 2));
 				}
 			}
 		}

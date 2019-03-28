@@ -6,13 +6,14 @@ sap.ui.define([
 	"sap/ui/table/TableUtils",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
+	"sap/ui/table/CreationRow",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/library",
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
 	"sap/ui/table/RowSettings",
 	"sap/ui/base/Object"
-], function(TableQUnitUtils, qutils, TableUtils, Table, Column, RowAction, TableLibrary, CoreLibrary, Control, RowSettings, BaseObject) {
+], function(TableQUnitUtils, qutils, TableUtils, Table, Column, CreationRow, RowAction, TableLibrary, CoreLibrary, Control, RowSettings, BaseObject) {
 	"use strict";
 
 	// Shortcuts
@@ -30,6 +31,10 @@ sap.ui.define([
 	var initRowActions = window.initRowActions;
 
 	var TestControl = TableQUnitUtils.getTestControl();
+	var TestInputControl = TableQUnitUtils.getTestInputControl();
+
+	// loading CreationRow indirectly installed the sap.m variant of the TableHelper
+	TableQUnitUtils.setDummyTableHelper();
 
 	QUnit.module("TableUtils", {
 		beforeEach: function() {
@@ -182,6 +187,8 @@ sap.ui.define([
 		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_1_1"}));
 		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_3_2"}));
 		oTable.getColumns()[2].setHeaderSpan(2);
+		oTable.getColumns()[0].setCreationTemplate(new TestInputControl());
+		oTable.setCreationRow(new CreationRow());
 		sap.ui.getCore().applyChanges();
 
 		/* Data Cells */
@@ -296,6 +303,25 @@ sap.ui.define([
 		assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ANY), "Is ANY");
 		assert.strictEqual(oInfo.rowIndex, null, "Row Index: null");
 		assert.strictEqual(oInfo.columnIndex, -1, "Column Index: -1");
+		assert.strictEqual(oInfo.columnSpan, 1, "Span Length: 1");
+
+		/* Pseudo Cells */
+
+		oCell = oTable.getCreationRow()._getCellDomRef(0);
+		oInfo = TableUtils.getCellInfo(oCell);
+		assert.strictEqual(oInfo.cell.get(0), oCell.get(0), "Creation Row Pseudo Cell: Correct cell object returned");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.DATACELL), "Is not DATACELL");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER), "Is not COLUMNHEADER");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ROWHEADER), "Is not ROWHEADER");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ROWACTION), "Is not ROWACTION");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.COLUMNROWHEADER), "Is not COLUMNROWHEADER");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ANYCONTENTCELL), "Is not ANYCONTENTCELL");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ANYCOLUMNHEADER), "Is not ANYCOLUMNHEADER");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ANYROWHEADER), "Is not ANYROWHEADER");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ANY), "Is not ANY");
+		assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.PSEUDO), "Is PSEUDO");
+		assert.strictEqual(oInfo.rowIndex, -1, "Row Index: -1");
+		assert.strictEqual(oInfo.columnIndex, 0, "Column Index: 0");
 		assert.strictEqual(oInfo.columnSpan, 1, "Span Length: 1");
 
 		/* Not a table cell */
@@ -867,6 +893,8 @@ sap.ui.define([
 	QUnit.test("getCell", function(assert) {
 		oTable.setRowActionCount(2);
 		oTable.setRowActionTemplate(new RowAction());
+		oTable.getColumns()[0].setCreationTemplate(new TestInputControl());
+		oTable.setCreationRow(new CreationRow());
 		sap.ui.getCore().applyChanges();
 
 		assert.strictEqual(TableUtils.getCell(), null, "Returned null: Invalid input");
@@ -892,6 +920,12 @@ sap.ui.define([
 		oElement = getCell(0, 0);
 		assert.ok(TableUtils.getCell(oTable, oElement).is(oElement), "Returned Data Cell");
 		assert.ok(TableUtils.getCell(oTable, oElement.find(":first")).is(oElement), "Returned Data Cell");
+
+		oElement = oTable.getCreationRow()._getCellDomRef(0);
+		assert.strictEqual(TableUtils.getCell(oTable, oElement), null, "Returned null: Element is a Pseudo Cell");
+		assert.strictEqual(TableUtils.getCell(oTable, oElement.find(":first")), null, "Returned null: Element is in a Pseudo Cell");
+		assert.ok(TableUtils.getCell(oTable, oElement, true).is(oElement), "Returned Pseudo Cell in Creation Row");
+		assert.ok(TableUtils.getCell(oTable, oElement.find(":first"), true).is(oElement), "Returned Pseudo Cell in Creation Row");
 	});
 
 	QUnit.test("getResourceBundle", function(assert) {
@@ -1436,6 +1470,8 @@ sap.ui.define([
 	}
 
 	QUnit.test("getParentCell", function(assert) {
+		oTable.getColumns()[0].setCreationTemplate(new TestInputControl());
+		oTable.setCreationRow(new CreationRow());
 		initRowActions(oTable, 1, 1);
 
 		/* Data Cell */
@@ -1459,6 +1495,7 @@ sap.ui.define([
 		assert.strictEqual($ParentCell[0], oCell[0], "DOM element passed: The correct data cell was returned");
 
 		/* Row Action Cell */
+
 		oCell = getRowAction(0);
 		$ParentCell = TableUtils.getParentCell(oTable, _getFirstInteractiveElement(oCell));
 		assert.strictEqual($ParentCell.length, 1, "A row action cell was returned");
@@ -1468,6 +1505,21 @@ sap.ui.define([
 		assert.strictEqual($ParentCell.length, 1, "A row action cell was returned");
 		assert.strictEqual($ParentCell[0], oCell[0], "DOM element passed: The correct row action cell was returned");
 
+		/* Pseudo Cell */
+
+		oCell = oTable.getCreationRow()._getCellDomRef(0);
+
+		$ParentCell = TableUtils.getParentCell(oTable, _getFirstInteractiveElement(oCell));
+		assert.strictEqual($ParentCell, null, "Element is in a pseudo cell: Null was returned");
+
+		$ParentCell = TableUtils.getParentCell(oTable, _getFirstInteractiveElement(oCell), true);
+		assert.strictEqual($ParentCell.length, 1, "A creation row pseudo cell was returned");
+		assert.strictEqual($ParentCell[0], oCell[0], "jQuery object passed: The correct creation row pseudo cell was returned");
+
+		$ParentCell = TableUtils.getParentCell(oTable, _getFirstInteractiveElement(oCell[0]), true);
+		assert.strictEqual($ParentCell.length, 1, "A creation row pseudo cell was returned");
+		assert.strictEqual($ParentCell[0], oCell[0], "DOM element passed: The correct creation row pseudo cell was returned");
+
 		/* Invalid parameters */
 
 		$ParentCell = TableUtils.getParentCell(oTable);
@@ -1475,6 +1527,22 @@ sap.ui.define([
 
 		$ParentCell = TableUtils.getParentCell(null, _getFirstInteractiveElement(getCell(0, oTable.columnCount - 1)));
 		assert.strictEqual($ParentCell, null, "No table passed: Null was returned");
+	});
+
+	QUnit.test("selectElementText/deselectElementText", function(assert) {
+		TableQUnitUtils.addColumn(oTable, "Input", "inputvalue" /* will be "inputvalue1" */, true);
+		sap.ui.getCore().applyChanges();
+
+		var oCell = getCell(0, oTable.columnCount - 1);
+		var oInput = _getFirstInteractiveElement(oCell);
+
+		TableUtils.selectElementText(oInput);
+		assert.strictEqual(oInput.selectionStart, 0, "The selection starts from index 0");
+		assert.strictEqual(oInput.selectionEnd, 11, "The selection end as index 10");
+
+		TableUtils.deselectElementText(oInput);
+		assert.strictEqual(oInput.selectionStart, 0, "The selection starts from index 0");
+		assert.strictEqual(oInput.selectionEnd, 0, "The selection end as index 0");
 	});
 
 	QUnit.module("Debounce & Throttle", {

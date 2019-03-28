@@ -5,8 +5,8 @@ sap.ui.define([
 	"sap/f/FlexibleColumnLayoutSemanticHelper",
 	"sap/m/Page",
 	"sap/m/Button",
-	"sap/f/LayoutType",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/f/library"
 ],
 function (
 	$,
@@ -14,10 +14,14 @@ function (
 	FlexibleColumnLayoutSemanticHelper,
 	Page,
 	Button,
-	LT,
-	Core
+	Core,
+	library
 ) {
 	"use strict";
+
+	// shortcut for sap.f.LayoutType
+	var LT = library.LayoutType;
+
 	var sQUnitFixture = "qunit-fixture",
 		DESKTOP_SIZE = "1300px",
 		TABLET_SIZE = "1200px",

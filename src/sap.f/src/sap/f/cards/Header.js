@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/f/Avatar",
 	"sap/ui/Device",
-	'sap/f/cards/Data',
+	'sap/f/cards/DataProviderFactory',
 	'sap/ui/model/json/JSONModel',
 	"sap/f/cards/HeaderRenderer",
 	"sap/f/cards/ActionEnablement"
@@ -17,7 +17,7 @@ sap.ui.define([
 	Text,
 	Avatar,
 	Device,
-	Data,
+	DataProviderFactory,
 	JSONModel,
 	HeaderRenderer,
 	ActionEnablement
@@ -34,6 +34,14 @@ sap.ui.define([
 	 *
 	 * @class
 	 * A control used to group a set of card attributes in a header.
+	 *
+	 * <h3>Overview</h3>
+	 * The <code>Header</code> displays general information about the card.
+	 * You can configure the title, subtitle, status text and icon, using properties.
+	 *
+	 * <h3>Usage</h3>
+	 * You should always set a title.
+	 * To show a KPI or any numeric information, use {@link sap.f.cards.NumericHeader NumericHeader} instead.
 	 *
 	 * @extends sap.ui.core.Control
 	 * @implements sap.f.cards.IHeader
@@ -106,20 +114,49 @@ sap.ui.define([
 				 */
 				press: {}
 			}
-		},
-		constructor: function (vId, mSettings) {
-			if (typeof vId !== "string") {
-				mSettings = vId;
-			}
-
-			if (mSettings && mSettings.serviceManager) {
-				this._oServiceManager = mSettings.serviceManager;
-				delete mSettings.serviceManager;
-			}
-
-			Control.apply(this, arguments);
 		}
 	});
+
+	/**
+	 * Initialization hook.
+	 * @private
+	 */
+	Header.prototype.init = function () {
+		this._aReadyPromises = [];
+		this._bReady = false;
+
+		// So far the ready event will be fired when the data is ready. But this can change in the future.
+		this._awaitEvent("_dataReady");
+
+		Promise.all(this._aReadyPromises).then(function () {
+			this._bReady = true;
+			this.fireEvent("_ready");
+		}.bind(this));
+
+		this.setBusyIndicatorDelay(0);
+	};
+
+	/**
+	 * Await for an event which controls the overall "ready" state of the header.
+	 *
+	 * @private
+	 * @param {string} sEvent The name of the event
+	 */
+	Header.prototype._awaitEvent = function (sEvent) {
+		this._aReadyPromises.push(new Promise(function (resolve) {
+			this.attachEventOnce(sEvent, function () {
+				resolve();
+			});
+		}.bind(this)));
+	};
+
+	/**
+	 * @public
+	 * @returns {boolean} If the header is ready or not.
+	 */
+	Header.prototype.isReady = function () {
+		return this._bReady;
+	};
 
 	/**
 	 * Lazily creates a title and returns it.
@@ -240,39 +277,67 @@ sap.ui.define([
 			mSettings.statusText = mConfiguration.status.text;
 		}
 
-		if (oServiceManager) {
-			mSettings.serviceManager = oServiceManager;
-		}
-
 		var oHeader = new Header(mSettings);
+		oHeader.setServiceManager(oServiceManager);
+		oHeader._setData(mConfiguration.data);
 
 		return oHeader;
 	};
 
-	Header._handleData = function (oHeader, oData) {
-		var oModel = new JSONModel();
+	Header.prototype.setServiceManager = function (oServiceManager) {
+		this._oServiceManager = oServiceManager;
+		return this;
+	};
 
-		var oRequest = oData.request;
-		if (oData.json && !oRequest) {
-			oModel.setData(oData.json);
+	/**
+	 * Sets a data provider to the header.
+	 *
+	 * @private
+	 * @param {object} oDataSettings The data settings
+	 */
+	Header.prototype._setData = function (oDataSettings) {
+		var sPath = "/";
+		if (oDataSettings && oDataSettings.path) {
+			sPath = oDataSettings.path;
 		}
 
-		if (oRequest) {
-			Data.fetch(oRequest).then(function (data) {
-				oModel.setData(data);
-				oModel.refresh();
-				oHeader.fireEvent("_updated");
-			}).catch(function (oError) {
-				// TODO: Handle errors. Maybe add error message
-			});
+		this.bindObject(sPath);
+
+		if (this._oDataProvider) {
+			this._oDataProvider.destroy();
 		}
 
-		oHeader.setModel(oModel)
-			.bindElement({
-				path: oData.path || "/"
-			});
+		this._oDataProvider = DataProviderFactory.create(oDataSettings, this._oServiceManager);
 
-		// TODO Check if model is destroyed when header is destroyed
+		if (this._oDataProvider) {
+			this.setBusy(true);
+
+			// If a data provider is created use an own model. Otherwise bind to the one propagated from the card.
+			this.setModel(new JSONModel());
+
+			this._oDataProvider.attachDataChanged(function (oEvent) {
+				this._updateModel(oEvent.getParameter("data"));
+				this.setBusy(false);
+			}.bind(this));
+			this._oDataProvider.attachError(function (oEvent) {
+				this._handleError(oEvent.getParameter("message"));
+				this.setBusy(false);
+			}.bind(this));
+
+			this._oDataProvider.triggerDataUpdate().then(function () {
+				this.fireEvent("_dataReady");
+			}.bind(this));
+		} else {
+			this.fireEvent("_dataReady");
+		}
+	};
+
+	Header.prototype._updateModel = function (oData) {
+		this.getModel().setData(oData);
+	};
+
+	Header.prototype._handleError = function (sLogMessage) {
+		this.fireEvent("_error", { logMessage: sLogMessage });
 	};
 
 	ActionEnablement.enrich(Header);

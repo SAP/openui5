@@ -50,6 +50,9 @@ sap.ui.define([
 	// shortcut for sap.m.DialogType
 	var DialogType = mobileLibrary.DialogType;
 
+	// shortcut for sap.m.DialogRoleType
+	var DialogRoleType = mobileLibrary.DialogRoleType;
+
 	// shortcut for sap.m.ButtonType
 	var ButtonType = mobileLibrary.ButtonType;
 
@@ -892,6 +895,21 @@ sap.ui.define([
 		assert.strictEqual(oDialog._composeAggreNameInHeader('Begin'), 'contentLeft', '"Begin" should set the dialog in right position');
 		assert.strictEqual(oDialog._composeAggreNameInHeader('End'), 'contentRight', '"End" should set the dialog in right position');
 		assert.strictEqual(oDialog._composeAggreNameInHeader('-different'), 'content-different', 'Custom position will set custom header');
+
+		// Clean up
+		oDialog.destroy();
+	});
+
+	QUnit.test("Set role", function (assert) {
+		// Arrange
+		var oDialog = new Dialog();
+		oDialog.setProperty("role", DialogRoleType.AlertDialog);
+
+		// Act
+		oDialog.open();
+
+		// Assert
+		assert.strictEqual(oDialog.$().attr("role"), DialogRoleType.AlertDialog, "Should be able to set the role of the dialog.");
 
 		// Clean up
 		oDialog.destroy();

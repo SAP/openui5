@@ -83,7 +83,7 @@ sap.ui.define([
 		}
 	});
 
-	sap.ui.table.TableHelper = {
+	var oTableHelper = sap.ui.table.TableHelper = {
 		createLabel: function(mConfig) {
 			return new TestControl(mConfig);
 		},
@@ -439,6 +439,10 @@ sap.ui.define([
 		};
 	}
 
+	TableQUnitUtils.setDummyTableHelper = function() {
+		sap.ui.table.TableHelper = oTableHelper;
+	};
+
 	TableQUnitUtils.getTestControl = function() {
 		return TestControl;
 	};
@@ -461,7 +465,7 @@ sap.ui.define([
 			fnBeforePlaceAt = mOptions;
 			mOptions = TableClass;
 			TableClass = Table;
-		} else if (TableClass instanceof Function && TableClass !== Table && TableClass !== TreeTable && TableClass !== AnalyticalTable) {
+		} else if (typeof TableClass === "function" && TableClass !== Table && TableClass !== TreeTable && TableClass !== AnalyticalTable) {
 			fnBeforePlaceAt = TableClass;
 			TableClass = Table;
 		}
@@ -473,7 +477,7 @@ sap.ui.define([
 		addAsyncHelpers(oTable);
 		addHelpers(oTable);
 
-		if (fnBeforePlaceAt instanceof Function) {
+		if (typeof fnBeforePlaceAt === "function") {
 			fnBeforePlaceAt(oTable, mOptions);
 		}
 
