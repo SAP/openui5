@@ -183,12 +183,46 @@
 			oSlider13 = new sap.m.Slider({
 				enableTickmarks: true,
 				scale: new sap.m.ResponsiveScale({tickmarksBetweenLabels: 5})
+			}),
+
+			oSlider14 = new sap.m.Slider({
+				min: 1,
+				max: 48,
+				step: 1,
+				width: "70%",
+				enableTickmarks: true,
+				liveChange: function(oControlEvent) {
+					jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				},
+				change : function(oControlEvent) {
+					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				},
+				scale: new sap.m.ResponsiveScale({
+					tickmarksBetweenLabels: 2
+				})
+			}),
+
+			oSlider15 = new sap.m.Slider({
+				min: 1,
+				max: 48,
+				step: 1,
+				width: "300px",
+				enableTickmarks: true,
+				liveChange: function(oControlEvent) {
+					jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				},
+				change : function(oControlEvent) {
+					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				},
+				scale: new sap.m.ResponsiveScale({
+					tickmarksBetweenLabels: 2
+				})
 			});
 
 			// Wait for a tick, so the Page would be rendered and the Sliders could be resized properly on any browser
 			setTimeout(function () {
 				[oSlider0, oSlider1, oSlider2, oSlider3, oSlider4, oSlider5, oSlider6, oSlider7, oSlider8,
-					oSlider9, oSlider10, oSlider11, oSlider12, oSlider13].forEach(oPage1.addContent, oPage1);
+					oSlider9, oSlider10, oSlider11, oSlider12, oSlider13, oSlider14, oSlider15].forEach(oPage1.addContent, oPage1);
 			});
 		</script>
 	</head>
