@@ -94,7 +94,6 @@ sap.ui.define([
 					sFESR = null;
 					sFESRopt = null;
 					sFESRTransactionId = Passport.getTransactionId();
-					iStepCounter++;
 				}
 			}
 		});
@@ -221,6 +220,9 @@ sap.ui.define([
 				if (oFinishedInteraction.requests.length > 0 || bForced) {
 					createHeader(oFinishedInteraction, oFESRHandle);
 				}
+
+				// increase the step count for Passport and FESR
+				iStepCounter++;
 			};
 		} else if (!bActive && bFesrActive) {
 			bFesrActive = false;
