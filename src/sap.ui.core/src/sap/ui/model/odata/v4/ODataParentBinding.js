@@ -722,7 +722,9 @@ sap.ui.define([
 			}
 			// Ask dependents, they might have no cache, but pending changes in mCacheByResourcePath
 			return oDependent.hasPendingChangesInDependents();
-		});
+		})
+		|| this.oModel.withUnresolvedBindings("hasPendingChangesInCaches",
+				this.oModel.resolve(this.sPath, this.oContext).slice(1));
 	};
 
 	/**

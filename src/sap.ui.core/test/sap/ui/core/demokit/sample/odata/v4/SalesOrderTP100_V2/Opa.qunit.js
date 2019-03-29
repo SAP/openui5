@@ -30,7 +30,7 @@ sap.ui.getCore().attachInit(function () {
 				}],
 				i;
 
-			for (i = 0; i < 16; i++) {
+			for (i = 0; i < 16; i += 1) {
 				aExpectedLogs.push({
 					component : "sap.ui.model.odata.v4.lib._V2MetadataConverter",
 					level : Log.Level.WARNING,

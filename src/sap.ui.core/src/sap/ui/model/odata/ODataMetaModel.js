@@ -968,7 +968,6 @@ sap.ui.define([
 	 * Refresh not supported by OData meta model!
 	 *
 	 * @throws {Error}
-	 * @returns {void}
 	 * @public
 	 */
 	ODataMetaModel.prototype.refresh = function () {
@@ -981,7 +980,6 @@ sap.ui.define([
 	 * @param {boolean} bLegacySyntax
 	 *   must not be true!
 	 * @throws {Error} if <code>bLegacySyntax</code> is true
-	 * @returns {void}
 	 * @public
 	 */
 	ODataMetaModel.prototype.setLegacySyntax = function (bLegacySyntax) {
@@ -994,7 +992,6 @@ sap.ui.define([
 	 * Changes not supported by OData meta model!
 	 *
 	 * @throws {Error}
-	 * @returns {void}
 	 * @private
 	 */
 	ODataMetaModel.prototype.setProperty = function () {

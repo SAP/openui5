@@ -591,27 +591,10 @@ sap.ui.define([
 			},
 			assertions: {
 				checkButtonDisabled : function (sButtonId) {
-					return this.waitFor({
-						autoWait : false,
-						controlType : "sap.m.Button",
-						id : sButtonId,
-						success : function (oButton) {
-							Opa5.assert.ok(oButton.getEnabled() === false,
-								"Button is disabled: " + sButtonId);
-						},
-						viewName : sViewName
-					});
+					return Helper.checkButtonDisabled(this, sViewName, sButtonId);
 				},
 				checkButtonEnabled : function (sButtonId) {
-					return this.waitFor({
-						controlType : "sap.m.Button",
-						id : sButtonId,
-						matchers : new Interactable(),
-						success : function (oButton) {
-							Opa5.assert.ok(oButton.getEnabled(), "Button is enabled: " + sButtonId);
-						},
-						viewName : sViewName
-					});
+					return Helper.checkButtonEnabled(this, sViewName, sButtonId);
 				},
 				checkCompanyName : function (iRow, sExpectedCompanyName) {
 					return this.waitFor({

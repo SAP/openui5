@@ -207,8 +207,9 @@ sap.ui.define([
 	 *   has been detected; this should be shown to the user who needs to decide whether to try
 	 *   deletion again. If the entity does not exist, we assume it has already been deleted by
 	 *   someone else and report success.
-	 * @throws {Error} If the given group ID is invalid or if the context's root binding is
-	 *   suspended
+	 * @throws {Error} If the given group ID is invalid, if this context's root binding is
+	 *   suspended, or if this context is not transient (see {@link #isTransient}) and has pending
+	 *   changes (see {@link #hasPendingChanges})
 	 *
 	 * @function
 	 * @public
@@ -218,8 +219,12 @@ sap.ui.define([
 		var oGroupLock,
 			that = this;
 
-		this.oBinding.checkSuspended();
 		this.oModel.checkGroupId(sGroupId);
+		this.oBinding.checkSuspended();
+		if (!this.isTransient() && this.hasPendingChanges()) {
+			throw new Error("Cannot delete due to pending changes");
+		}
+
 		oGroupLock = this.oModel.lockGroup(sGroupId, true, this);
 		return this._delete(oGroupLock).catch(function (oError) {
 			oGroupLock.unlock(true);
@@ -514,7 +519,7 @@ sap.ui.define([
 	/**
 	 * Returns whether there are pending changes for bindings dependent on this context, or for
 	 * unresolved bindings which were dependent on this context at the time the pending change
-	 * was created.
+	 * was created. This includes the context itself being transient (see {@link #isTransient}).
 	 *
 	 * @returns {boolean}
 	 *   Whether there are pending changes
@@ -523,17 +528,24 @@ sap.ui.define([
 	 * @since 1.53.0
 	 */
 	Context.prototype.hasPendingChanges = function () {
-		return this.oModel.getDependentBindings(this).some(function (oDependentBinding) {
+		return this.isTransient()
+			|| this.oModel.getDependentBindings(this).some(function (oDependentBinding) {
 				return oDependentBinding.hasPendingChanges();
-			}) || this.withUnresolvedBindings("hasPendingChangesInCaches");
+			})
+			|| this.oModel.withUnresolvedBindings("hasPendingChangesInCaches", this.sPath.slice(1));
 	};
 
 	/**
-	 * Returns <code>true</code> if this context is transient, which means that the promise returned
-	 * by {@link #created} is not yet resolved or rejected.
+	 * For a context created using {@link sap.ui.model.odata.v4.ODataListBinding#create}, the
+	 * method returns <code>true</code> if the context is transient, meaning that the promise
+	 * returned by {@link #created} is not yet resolved or rejected, and returns <code>false</code>
+	 * if the context is not transient. The result of this function can also be accessed via
+	 * instance annotation "@$ui5.context.isTransient" at the entity.
 	 *
 	 * @returns {boolean}
-	 *   Whether this context is transient
+	 *   Whether this context is transient if it is created using
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding#create}; <code>undefined</code> if it is not
+	 *   created using {@link sap.ui.model.odata.v4.ODataListBinding#create}
 	 *
 	 * @public
 	 * @since 1.43.0
@@ -573,9 +585,9 @@ sap.ui.define([
 	 *   binding, the parameter must not be used.
 	 *   Supported since 1.55.0
 	 * @throws {Error}
-	 *   If the group ID is not valid, if the binding is not refreshable or has pending changes, or
-	 *   if its root binding is suspended or if the parameter <code>bAllowRemoval/code> is set for
-	 *   a context belonging to a context binding.
+	 *   If the group ID is not valid, if this context has pending changes, if the binding is not
+	 *   refreshable, if its root binding is suspended, or if the parameter
+	 *   <code>bAllowRemoval/code> is set for a context belonging to a context binding.
 	 *
 	 * @public
 	 * @since 1.53.0
@@ -603,7 +615,7 @@ sap.ui.define([
 				this.oBinding.refresh(sGroupId);
 			}
 		}
-		this.withUnresolvedBindings("removeCachesAndMessages");
+		this.oModel.withUnresolvedBindings("removeCachesAndMessages", this.sPath.slice(1));
 	};
 
 	/**
@@ -795,28 +807,6 @@ sap.ui.define([
 		}
 		return this.oBinding.withCache(fnProcessor,
 			sPath[0] === "/" ? sPath : _Helper.buildPath(this.sPath, sPath));
-	};
-
-	/**
-	 * Iterates over the model's unresolved bindings and calls the function with the given name on
-	 * each unresolved binding, passing the resource path of this context.
-	 * Iteration stops if a function call on some unresolved binding returns a truthy value.
-	 *
-	 * @param {string} sCallbackName The name of the function to be called on unresolved bindings;
-	 *   the function is called with this context's path without the leading "/"
-	 * @returns {boolean} <code>true</code> if for one unresolved binding the function call returned
-	 *   a truthy value.
-	 *
-	 * @private
-	 */
-	Context.prototype.withUnresolvedBindings = function (sCallbackName) {
-		var sResourcePath = this.sPath.slice(1);
-
-		return this.oModel.getAllBindings().filter(function (oBinding) {
-			return oBinding.isRelative() && !oBinding.getContext();
-		}).some(function (oBinding) {
-			return oBinding[sCallbackName](sResourcePath);
-		});
 	};
 
 	oModule = {

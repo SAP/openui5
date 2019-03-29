@@ -713,8 +713,12 @@ sap.ui.define([
 				oMinMaxAnnotation,
 				oModel = oInterface.getModel(),
 				oPathValueInterface = {
-					getModel : function () { return oModel; },
-					getPath : function () { return oPathValue.path; }
+					getModel : function () {
+						return oModel;
+					},
+					getPath : function () {
+						return oPathValue.path;
+					}
 				},
 				oProperty,
 				oResult = {result : "binding", value : sBindingPath},
@@ -831,7 +835,7 @@ sap.ui.define([
 				return sPath;
 			}
 			// continue after the schema index
-			for (var i = 4; i < aParts.length; i++) {
+			for (var i = 4; i < aParts.length; i += 1) {
 				sObjectPath = sObjectPath + "/" + aParts[i];
 				// if there is an index, first try a query for "name"
 				if (rInteger.test(aParts[i]) && !processProperty("name", i)) {

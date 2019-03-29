@@ -3970,7 +3970,7 @@ sap.ui.define([
 			sCommonLabel = "@com.sap.vocabularies.Common.v1.Label",
 			sCommonQuickInfo = "@com.sap.vocabularies.Common.v1.QuickInfo",
 			sCommonText = "@com.sap.vocabularies.Common.v1.Text",
-			sBaseUrl = "/" + window.location.pathname.split("/")[1]
+			sBaseUrl = window.location.pathname.split(/\/(?:test-|)resources\//)[0]
 				+ "/test-resources/sap/ui/core/qunit/odata/v4/data/",
 			oMetadata = getDataAsJson("metadata.json"),
 			oExpectedResult = clone(oMetadata),

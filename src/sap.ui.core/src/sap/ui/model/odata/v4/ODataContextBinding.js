@@ -184,7 +184,6 @@ sap.ui.define([
 	 * @returns {Promise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure.
-	 * @throws {Error} If the binding has pending changes
 	 *
 	 * @private
 	 */
@@ -194,9 +193,6 @@ sap.ui.define([
 		// a context binding without path can simply delegate to its parent context.
 		if (this.sPath === "" && this.oContext.delete) {
 			return this.oContext._delete(oGroupLock);
-		}
-		if (this.hasPendingChanges()) {
-			throw new Error("Cannot delete due to pending changes");
 		}
 
 		return this.deleteFromCache(oGroupLock, sEditUrl, "", function () {
@@ -624,21 +620,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Hook method for {@link sap.ui.model.odata.v4.ODataBinding#fetchCache} to create a cache for
-	 * this binding with the given resource path and query options.
-	 *
-	 * @param {string} sResourcePath
-	 *   The resource path, for example "EMPLOYEES('1')"
-	 * @param {object} mQueryOptions
-	 *   The query options
-	 * @returns {sap.ui.model.odata.v4.lib._Cache}
-	 *   The new cache instance
-	 *
-	 * @private
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#doCreateCache
 	 */
-	ODataContextBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions) {
+	ODataContextBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions, oContext,
+			sDeepResourcePath) {
 		return _Cache.createSingle(this.oModel.oRequestor, sResourcePath, mQueryOptions,
-			this.oModel.bAutoExpandSelect);
+			this.oModel.bAutoExpandSelect, function () {
+				return sDeepResourcePath;
+			});
 	};
 
 	/**

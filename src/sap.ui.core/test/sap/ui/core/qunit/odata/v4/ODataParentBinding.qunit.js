@@ -2473,16 +2473,24 @@ sap.ui.define([
 				oCachePromise : SyncPromise.resolve(Promise.resolve())
 			}),
 			oBinding = new ODataParentBinding({
+				oContext : {},
 				oModel :  {
-					getDependentBindings : function () {}
-				}
+					getDependentBindings : function () {},
+					resolve : function () {},
+					withUnresolvedBindings : function () {}
+				},
+				sPath : "path"
 			}),
 			oChild1CacheMock = this.mock(oCache1),
 			oChild1Mock = this.mock(oChild1),
 			oChild2Mock = this.mock(oChild2),
 			oChild3Mock = this.mock(oChild3),
 			oChild3CacheMock1 = this.mock(oCache31),
-			oChild3CacheMock2 = this.mock(oCache32);
+			oChild3CacheMock2 = this.mock(oCache32),
+			oModelMock = this.mock(oBinding.oModel),
+			bResult = {/*false,true*/};
+
+		oModelMock.expects("withUnresolvedBindings").never();
 
 		this.mock(oBinding).expects("getDependentBindings").exactly(7)
 			.withExactArgs()
@@ -2543,9 +2551,15 @@ sap.ui.define([
 		oChild3CacheMock1.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild3CacheMock2.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild3Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
+		oModelMock.expects("resolve")
+			.withExactArgs("path", sinon.match.same(oBinding.oContext))
+			.returns("/some/absolute/path");
+		oModelMock.expects("withUnresolvedBindings")
+			.withExactArgs("hasPendingChangesInCaches", "some/absolute/path")
+			.returns(bResult);
 
 		// code under test
-		assert.strictEqual(oBinding.hasPendingChangesInDependents(), false);
+		assert.strictEqual(oBinding.hasPendingChangesInDependents(), bResult);
 	});
 
 	//*********************************************************************************************

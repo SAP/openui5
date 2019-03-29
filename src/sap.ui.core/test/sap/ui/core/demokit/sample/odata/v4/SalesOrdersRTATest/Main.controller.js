@@ -196,7 +196,7 @@ sap.ui.define([
 						text : "{" + sBindingPath + "}"
 					});
 
-				that.iIdCounter ++;
+				that.iIdCounter += 1;
 				if (oItemsBinding) {
 					//TODO clarify: How to access template in change handler, there is no API?
 					oControl.getBindingInfo("items").template.addCell(oText);

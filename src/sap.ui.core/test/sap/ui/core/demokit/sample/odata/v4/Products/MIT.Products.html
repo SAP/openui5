@@ -18,7 +18,7 @@
 		<h3>Testing with mock data</h3>
 		Start the Products application with the following URL (adjust host and port if necessary):
 		<ul>
-			<li> local: <a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Products&sap-ui-language=EN">http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Products&sap-ui-language=EN</a></li>
+			<li> local: <a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Products&amp;sap-ui-language=EN">http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Products&amp;sap-ui-language=EN</a></li>
 		</ul>
 
 		<h3>Testing with backend</h3>
@@ -26,7 +26,7 @@
 		backend system.<br>
 		Start the Products application with the URL (adjust host and port if necessary):
 		<ul>
-			<li> local: <a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Products&amp;realOData=true&amp;sap-ui-language=EN">http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Products&amp;realOData=true&sap-ui-language=EN</a></li>
+			<li> local: <a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Products&amp;realOData=true&amp;sap-ui-language=EN">http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Products&amp;realOData=true&amp;sap-ui-language=EN</a></li>
 		</ul>
 
 		<h2>REALIZE and CHECK</h2>
@@ -134,6 +134,34 @@
 			<li>Change the price of the product 'Notebook New' to "EUR".</li>
 			<li><b>Check:</b> You see an error message and the price field shows an invalid data
 				state.</li>
+		</ul>
+		<h4>Test creation of a new entry</h4>
+		Test the following with mock data only
+		<ul>
+			<li>Enter a new entity in the 'New Entry' form. Set the product ID to '0123456789ABC'.
+				Select the next input field.</li>
+			<li><b>Check:</b> You see an error message and the product ID field shows an invalid
+				data state. The 'Add' button is disabled.</li>
+			<li>Press the 'Clear Row' button.</li>
+			<li><b>Check:</b> The 'Add' button is enabled.</li>
+			<li><b>Check:</b> Every field in the New Entry form is cleared and the error message
+				disappears.</li>
+			<li>Enter a new entity in the 'New Entry' form. Set the product ID to 'Do not add'.
+				Set the product name to 'Do not add'. Set the weight to '20 KG'. Set the price to
+				'600 USD'.</li>
+			<li>Press the 'Clear Row' button.</li>
+			<li><b>Check:</b> Every field in the New Entry form is cleared.</li>
+			<li>Enter a new entity in the 'New Entry' form. Set the product ID to 'H-100'.
+				Set the product name to 'Notebook Basic 16'. Set the weight to '18 KG'. Set the
+				price to '700 USD'.</li>
+			<li>Press the 'Add' button.</li>
+			<li><b>Check:</b> Every field in the 'New Entry' form is cleared and a new line is
+				added to the beginning of 'Products' table showing the data you just entered.
+				An error message "Value 'H-100' is not unique" is displayed and the product ID is
+				editable in that line.</li>
+			<li>Change the product ID to 'H-1001' and press Tab.</li>
+			<li><b>Check:</b> The product ID is not editable any longer. The other values remain
+				unchanged.</li>
 		</ul>
 	</body>
 </html>

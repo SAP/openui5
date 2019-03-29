@@ -840,7 +840,8 @@ sap.ui.define([
 			done();
 		});
 		oCacheMock.expects("createSingle")
-			.withExactArgs(sinon.match.object, "EntitySet('foo')", {"sap-client" : "111"}, false)
+			.withExactArgs(sinon.match.object, "EntitySet('foo')", {"sap-client" : "111"}, false,
+				sinon.match.func)
 			.returns({
 				fetchValue : function (sGroupId, sPath) {
 					assert.strictEqual(sPath, "property");
@@ -899,7 +900,7 @@ sap.ui.define([
 				// (don't) create parent cache, it won't be used
 				oCacheMock.expects("createSingle")
 					.withExactArgs(sinon.match.same(that.oModel.oRequestor), sContextPath.slice(1),
-						{"sap-client" : "111"}, false);
+						{"sap-client" : "111"}, false, sinon.match.func);
 				oControl.bindObject(sContextPath);
 
 				oContextBindingMock = that.mock(oControl.getObjectBinding());
@@ -936,7 +937,7 @@ sap.ui.define([
 					dataRequested : function (oEvent) {
 						assert.strictEqual(oEvent.getSource(), oControl.getBinding("text"),
 							"dataRequested - correct source");
-						iDataRequestedCount++;
+						iDataRequestedCount += 1;
 					},
 					dataReceived : function (oEvent) {
 						var oBinding = oControl.getBinding("text");
@@ -947,7 +948,7 @@ sap.ui.define([
 						assert.strictEqual(iDataRequestedCount, 1);
 						assert.strictEqual(oBinding.getType(), oType);
 						assert.strictEqual(oBinding.getValue(), oValue);
-						iDataReceivedCount++;
+						iDataReceivedCount += 1;
 						finishTest();
 					}
 				}});
@@ -1251,7 +1252,7 @@ sap.ui.define([
 			});
 
 		oCacheMock.expects("createSingle")
-			.withExactArgs(sinon.match.object, "EntitySet('foo')", {}, false)
+			.withExactArgs(sinon.match.object, "EntitySet('foo')", {}, false, sinon.match.func)
 			.returns({
 				fetchValue : function (sGroupId, sPath) {
 					return oPromise;

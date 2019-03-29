@@ -469,7 +469,7 @@ sap.ui.define([
 				i,
 				n = this.iCurrentStart + this.iCurrentLength;
 
-			for (i = this.iCurrentStart; i < n; i++) {
+			for (i = this.iCurrentStart; i < n; i += 1) {
 				aContexts.push(this.oList[this.aIndices[i]]);
 			}
 			if (this.oList.dataRequested) {
