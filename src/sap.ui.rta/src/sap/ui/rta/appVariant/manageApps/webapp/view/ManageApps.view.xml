@@ -9,43 +9,42 @@
 		inset="false"
 		growing="true"
 		growingThreshold="500"
+		sticky="ColumnHeaders"
 		items="{/appVariants}">
 		<columns>
 			<Column
-				width="6em"
+				width="8rem"
 				hAlign="Left">
-				<core:InvisibleText text="{i18n>MAA_DIALOG_APP_TYPE}" />
+				<Text text="{i18n>MAA_DIALOG_APP_TYPE}" />
 			</Column>
 			<Column
-				width="2em"
+				width="4rem"
 				minScreenWidth="tablet"
 				demandPopin="true"
-				popinDisplay="WithoutHeader"
+				popinDisplay="Inline"
 				hAlign="Left">
 				<core:InvisibleText text="{i18n>MAA_DIALOG_ICON}" />
 			</Column>
 			<Column
-				width="12em"
 				minScreenWidth="tablet"
 				demandPopin="true"
-				popinDisplay="WithoutHeader"
+				popinDisplay="Inline"
 				hAlign="Left">
-				<core:InvisibleText text="{i18n>MAA_DIALOG_TITLE_SUBTITLE}" />
+				<Text text="{i18n>MAA_DIALOG_TITLE}" />
 			</Column>
 			<Column
-				width="12em"
 				minScreenWidth="tablet"
 				demandPopin="true"
-				popinDisplay="WithoutHeader"
+				popinDisplay="Inline"
 				hAlign="Left">
-				<core:InvisibleText text="{i18n>MAA_DIALOG_DESCRIPTION}" />
+				<Text text="{i18n>MAA_DIALOG_DESCRIPTION}" />
 			</Column>
 			<Column
-				width="4em"
+				width="8rem"
 				minScreenWidth="Desktop"
 				demandPopin="true"
-				popinDisplay="WithoutHeader"
-				hAlign="Center">
+				popinDisplay="Inline"
+				hAlign="End">
 				<core:InvisibleText text="{i18n>MAA_DIALOG_ACTIONS}" />
 			</Column>
 		</columns>
