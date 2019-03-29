@@ -34,6 +34,8 @@ function setupFakeServer(mOptions) {
 
 function setupQUnitTests(mOptions) {
 
+	QUnit.config.autostart = false;
+
 	sap.ui.require([
 		"jquery.sap.global",
 		"sap/ui/thirdparty/URI",
@@ -204,6 +206,8 @@ function setupQUnitTests(mOptions) {
 
 					sap.ui.getCore().getConfiguration().setRTL(false);
 				});
+
+				QUnit.start();
 			});
 		});
 	});
