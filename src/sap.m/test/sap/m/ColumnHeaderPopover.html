@@ -148,8 +148,28 @@
 	oTable.attachEvent( "columnPress", function(oEvent) {
 		var oColumn = oEvent.getParameter("column");
 		if (oColumn === oTable.getColumns()[1]) {
+			var sSortProperty = oColumn.getHeader().getText();
+			// hand added key
+			var oSortItem = new sap.m.ColumnPopoverSortItem({
+				sortChildren: [
+					new sap.ui.core.Item({
+						text: sSortProperty
+					}),
+					new sap.ui.core.Item({
+						text: sSortProperty + "1"
+					})
+				],
+				sort: function(oEvent) {
+					var oTableBinding = oTable.getBinding("items"),
+					bAscending = false,
+
+					oSorter = new sap.ui.model.Sorter("name", !bAscending);
+					oTableBinding.sort([oSorter]);
+				}
+			});
 			// TODO: improve - no parent
 		//	oColumn.addDependent(oPopover);
+			oPopover.addItem(oSortItem);
 			oPopover.openBy(oColumn);
 		}
 
@@ -184,10 +204,8 @@
 			content: oList
 		},
 		{
-			type: "action",
-			visible : true,
-			text: "action",
-			icon: "sap-icon://add-photo"
+			type: "sort",
+			visible : true
 		},
 		{
 			type: "action",
@@ -201,12 +219,6 @@
 			text: "custom item tooltip",
 			icon: "sap-icon://money-bills",
 			content: new sap.m.Input()
-		},
-		{
-			type: "action",
-			visible : true,
-			text: "action",
-			icon: "sap-icon://meeting-room"
 		}
 
 		];
@@ -238,6 +250,10 @@
 					text: "{text}",
 					icon: "{icon}",
 					content: oItem.content
+				});
+			case "sort":
+				return new sap.m.ColumnPopoverSortItem({
+					visible: "{visible}"
 				});
 		}
 	});

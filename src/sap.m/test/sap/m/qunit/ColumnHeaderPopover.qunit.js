@@ -1,4 +1,4 @@
-/*global QUnit, jQuery */
+/*global QUnit, jQuery, sinon */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"jquery.sap.global",
@@ -6,10 +6,12 @@ sap.ui.define([
 	"sap/m/ColumnHeaderPopover",
 	"sap/m/ColumnPopoverActionItem",
 	"sap/m/ColumnPopoverCustomItem",
+	"sap/m/ColumnPopoverSortItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Button",
 	"sap/m/library",
 	"sap/m/Label",
+	"sap/ui/core/Item",
 	"jquery.sap.mobile"
 ], function(
 	createAndAppendDiv,
@@ -18,10 +20,12 @@ sap.ui.define([
 	ColumnHeaderPopover,
 	ColumnPopoverActionItem,
 	ColumnPopoverCustomItem,
+	ColumnPopoverSortItem,
 	JSONModel,
 	Button,
 	library,
-	Label) {
+	Label,
+	Item) {
 	"use strict";
 	createAndAppendDiv("content");
 
@@ -142,15 +146,15 @@ QUnit.test("Item render", function(assert){
 	var $spacer = $toolbar.find(".sapMTBSpacer");
 	assert.ok($spacer, "toolbar has a spacer");
 
+	var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	var sCloseText = oRB.getText("COLUMNHEADERPOPOVER_CLOSE_BUTTON");
 	var $buttons = $popover.find("button");
 	assert.equal($buttons.length, 4, "Popover has four buttons");
-	assert.equal($buttons[3].title, "Close", "last one item is close item");
+	assert.equal($buttons[3].title, sCloseText, "last one item is close item");
+
 	oButton.destroy();
 	oPopover.destroy();
 });
-
-
-
 
 QUnit.module("Aggregation");
 
@@ -263,6 +267,79 @@ QUnit.test("ColumnPopoverCustomItem", function(assert){
 	this.clock.tick(500);
 
 	assert.equal(oRBPopover.getContent()[1].getVisible(), true, "content of the first custom is still visible after the second custom item is deleted");
+
+	oButton.destroy();
+	oPopover.destroy();
+});
+
+QUnit.test("ColumnPopoverSortItem", function(assert){
+	var oPopover = createCHP("test5");
+	var oSortItem1 = new ColumnPopoverSortItem({
+		sortChildren:[
+			new Item({ text: "item1"})
+		]
+	});
+	var oSortItem2 = new ColumnPopoverSortItem({
+		sortChildren:[
+			new Item({ text: "item1", key: "item1"}),
+			new Item({ text: "item2", key: "item2"})
+		]
+	});
+
+	oPopover.addItem(oSortItem1);
+	oPopover.addItem(oSortItem2);
+
+	var oSortEventSpy = sinon.spy(function(oEvent) {
+		oSortEventSpy._mEventParameters = oEvent.mParameters;
+	});
+	oSortItem2.attachSort(oSortEventSpy);
+
+	var oButton = new Button({
+		text : "open columnHeaderPopover",
+		press: function(){
+			oPopover.openBy(this);
+		}
+	});
+
+	oButton.placeAt("content");
+	sap.ui.getCore().applyChanges();
+
+	oPopover.openBy(oButton);
+	this.clock.tick(500);
+
+	var oRBPopover = oPopover.getAggregation("_popover");
+	var $popover = oRBPopover.$();
+
+	var oSortButtonDom1 = oRBPopover.$().find("button")[3];
+	var oSortButtonDom2 = oRBPopover.$().find("button")[4];
+	var oSortButton1 = sap.ui.getCore().byId(oSortButtonDom1.id);
+	var oSortButton2 = sap.ui.getCore().byId(oSortButtonDom2.id);
+
+	assert.equal(oSortButtonDom1.title, "Sort", "two sort items are rendered");
+	assert.equal(oSortButtonDom2.title, "Sort", "two sort items are rendered");
+
+	qutils.triggerEvent("tap", oSortButton1.getId());
+	this.clock.tick(500);
+
+	assert.equal($popover[0].style.display, "none", "columnHeaderPopover is closed");
+
+	oPopover.openBy(oButton);
+	this.clock.tick(500);
+
+	qutils.triggerEvent("tap", oSortButton2.getId());
+	this.clock.tick(500);
+
+	assert.equal(oRBPopover.$().find("li").length, 2, "sort children are rendered");
+
+	var oSortItemDom = oRBPopover.$().find("li")[0];
+	var oSortItem = sap.ui.getCore().byId(oSortItemDom.id);
+
+	qutils.triggerEvent("tap", oSortItem.getId());
+	this.clock.tick(500);
+
+	assert.ok(oSortEventSpy.calledOnce, "The SortEvent event was called once");
+	assert.equal(oSortEventSpy._mEventParameters.property, "item1", "sort parameter is correct");
+	assert.equal($popover[0].style.display, "none", "columnHeaderPopover is closed");
 
 	oButton.destroy();
 	oPopover.destroy();

@@ -12,7 +12,9 @@ sap.ui.define([
 	'sap/ui/model/Filter',
 	'sap/ui/model/FilterOperator',
 	'sap/ui/dom/containsOrEquals',
-	'sap/m/ColumnPopoverItem'
+	'sap/m/ColumnPopoverItem',
+	'sap/m/StandardListItem',
+	'sap/m/List'
 ], function(
 	Control,
 	ManagedObjectModel,
@@ -24,7 +26,9 @@ sap.ui.define([
 	Filter,
 	FilterOperator,
 	containsOrEquals,
-	ColumnPopoverItem
+	ColumnPopoverItem,
+	StandardListItem,
+	List
 ) {
 	"use strict";
 
@@ -109,6 +113,8 @@ sap.ui.define([
 				oButton = that._createActionItem(id, oItem);
 			} else if (oItem.isA("sap.m.ColumnPopoverCustomItem")) {
 				oButton = that._createCustomItem(id, oItem);
+			} else if (oItem.isA("sap.m.ColumnPopoverSortItem")) {
+				oButton = that._createSortItem(id, oItem);
 			}
 
 			oItem._sRelatedId = oButton.sId;
@@ -225,6 +231,93 @@ sap.ui.define([
 			}
 		});
 
+	};
+
+	ColumnHeaderPopover.prototype._createSortItem = function(id, oItem) {
+		var that = this;
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			sSortText = oBundle.getText("COLUMNHEADERPOPOVER_SORT_BUTTON");
+		var aSortChildren = oItem.getSortChildren();
+
+		if (aSortChildren.length > 1) {
+			var oPopover = this.getAggregation("_popover");
+			var oList = new List();
+
+			for (var i = 0; i < aSortChildren.length; i++) {
+				var oListItem = new StandardListItem({
+					title: aSortChildren[i].getText(),
+					type: "Active"
+				});
+
+				oList.addItem(oListItem);
+				oListItem.data("key", aSortChildren[i].getKey());
+			}
+
+			oList.attachEvent( "itemPress", function(oEvent) {
+				// close the popover first to prevent focus lost
+				oPopover.close();
+
+				var oListItem = oEvent.getParameter("listItem");
+				oItem.fireSort({
+					property: oListItem.data("key")
+				});
+			});
+			oList.setVisible(false);
+			oPopover.addContent(oList);
+
+			return new ToggleButton(id, {
+				icon: "sap-icon://sort",
+				type: "Transparent",
+				tooltip: sSortText,
+				press: function() {
+					// between two custom items
+					if (that._oShownCustomContent) {
+						that._oShownCustomContent.setVisible(false);
+					}
+					if (this.getPressed()) {
+						// set other buttons unpressed
+						that._cleanSelection(oPopover, this);
+
+						if (oList) {
+							oList.setVisible(true);
+							that._oShownCustomContent = oList;
+						}
+
+					} else {
+						if (oList) {
+							oList.setVisible(false);
+							that._oShownCustomContent = null;
+						}
+					}
+
+				}
+			});
+
+		} else {
+
+			return new Button(id, {
+				icon: "sap-icon://sort",
+				type: "Transparent",
+				tooltip: sSortText,
+				press: function() {
+					var oPopover = that.getAggregation("_popover");
+
+					if (that._oShownCustomContent) {
+						that._oShownCustomContent.setVisible(false);
+						that._oShownCustomContent = null;
+
+						// set other buttons unpressed
+						that._cleanSelection(oPopover, this);
+					}
+
+					// close the popover first to prevent focus lost
+					oPopover.close();
+					oItem.fireSort({
+						property: aSortChildren[0] ? aSortChildren[0].getKey() : null
+					});
+				}
+			});
+		}
 	};
 
 	ColumnHeaderPopover.prototype._cleanSelection = function(oPopover, oButton) {
