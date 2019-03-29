@@ -4,6 +4,8 @@
 	template:require="{AnnotationHelper : 'sap/ui/model/odata/v4/AnnotationHelper'}"
 	xmlns="sap.m"
 	xmlns:ce="sap.ui.codeeditor"
+	xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
 	<template:alias name="format" value="AnnotationHelper.format">
@@ -19,7 +21,7 @@
 		</Panel>
 		<template:with path="meta>/ProductList/@com.sap.vocabularies.UI.v1.LineItem#short"
 			var="lineItem">
-			<Table growing="true" growingThreshold="20" items="{
+			<Table id="ProductList" growing="true" growingThreshold="5" items="{
 					path : '/ProductList',
 					parameters : {$count : true}}"
 				mode="SingleSelectMaster">
@@ -27,7 +29,7 @@
 					<Toolbar>
 					<Title level="H1" text="Products"/>
 					<ToolbarSpacer/>
-	 				<Link text="Unit Codes" target="unitCodes"
+					<Link text="Unit Codes" target="unitCodes"
 						href="{:= ${ui>/bRealOData} ? 'proxy/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/UnitsOfMeasure?$select=ExternalCode,DecimalPlaces,Text,ISOCode' : 'test-resources/sap/ui/core/demokit/sample/odata/v4/Products/data/UnitsOfMeasure.json'}"/>
 					<Link text="Currency Codes" target="currencyCodes"
 						href="{:= ${ui>/bRealOData} ? 'proxy/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/Currencies?$select=CurrencyCode,DecimalPlaces,Text,ISOCode' : 'test-resources/sap/ui/core/demokit/sample/odata/v4/Products/data/Currencies.json'}"/>
@@ -47,9 +49,11 @@
 				<ColumnListItem>
 					<template:repeat list="{lineItem>}" var="field">
 						<template:if test="{= ${field>Value/$Path@com.sap.vocabularies.Common.v1.FieldControl/$EnumMember}
-							=== 'com.sap.vocabularies.Common.v1.FieldControlType/ReadOnly' }">
+							=== 'com.sap.vocabularies.Common.v1.FieldControlType/ReadOnly'}">
 							<template:then>
-								<Text id="{field>Value/$Path}" text="{field>Value/@@format}"/>
+								<Input id="{field>Value/$Path}" textAlign="Right"
+									value="{field>Value/@@format}"
+									editable="{= %{@$ui5.context.isTransient} === true}"/>
 							</template:then>
 							<template:else>
 								<Input id="{field>Value/$Path}" textAlign="Right"
@@ -59,6 +63,22 @@
 					</template:repeat>
 				</ColumnListItem>
 			</Table>
+			<form:SimpleForm ariaLabelledBy="newEntryTitle" editable="true" id="newEntry"
+					layout="ResponsiveGridLayout">
+				<form:toolbar>
+					<Toolbar>
+						<Title id="newEntryTitle" level="H1" text="New Entry"/>
+						<ToolbarSpacer/>
+						<Button id="addButton" press="onAdd" text="Add"/>
+						<Button id="clearRowButton" press="onClearRow" text="Clear Row"/>
+					</Toolbar>
+				</form:toolbar>
+				<template:repeat list="{lineItem>}" var="field">
+					<Label text="{field>@@label}"/>
+					<Input id="{field>Value/$Path}::newEntry" value="{field>Value/@@format}"
+						change="enableAddButton"/>
+				</template:repeat>
+			</form:SimpleForm>
 		</template:with>
 	</VBox>
 	</template:alias>

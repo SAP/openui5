@@ -33,7 +33,7 @@ sap.ui.define([
 		sInvalidModel = "/invalid/model/",
 		sSalesOrderService = "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 		sTeaBusi = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
-		rTransientPredicate = /\(\$uid=.+\)/;
+		rTransientPredicate = /\(\$uid=[-\w]+\)/g;
 
 	/**
 	 * Creates a V4 OData model for <code>serviceroot.svc</code>
@@ -900,7 +900,8 @@ sap.ui.define([
 		 * @param {string|object} vRequest The request with the properties "method", "url" and
 		 *   "headers". A string is interpreted as URL with method "GET". Spaces inside the URL are
 		 *   percent encoded automatically.
-		 * @param {object} [oResponse] The response message to be returned from the requestor.
+		 * @param {object|Promise} [oResponse] The response message to be returned from the
+		 *   requestor or a promise on it.
 		 * @param {object} [mResponseHeaders] The response headers to be returned from the
 		 *   requestor.
 		 * @returns {object} The test instance for chaining
@@ -1195,7 +1196,7 @@ sap.ui.define([
 	);
 
 	//*********************************************************************************************
-	// Scenario: Nested list binding with own parameters causes a second request.
+	// Scenario: Dependent list binding with own parameters causes a second request.
 	// This scenario is similar to the "Sales Order Line Items" in the SalesOrders application.
 	testViewStart("Absolute ODCB with parameters and relative ODLB with parameters", '\
 <FlexBox binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'Name\'}}">\
@@ -1591,7 +1592,7 @@ sap.ui.define([
 		}).then(function () {
 
 			return that.checkValueState(assert,
-				that.oView.byId("table").getItems("items")[0].getCells()[0] , "Error", "Not found");
+				that.oView.byId("table").getItems("items")[0].getCells()[0], "Error", "Not found");
 		});
 	});
 
@@ -2316,6 +2317,122 @@ sap.ui.define([
 				.changeParameters({$filter : "SalesOrderID gt '0500000001'"});
 
 			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Delete multiple entities in a table. Ensure that the request to fill the gap uses
+	// the correct index.
+	// JIRA: CPOUI5UISERVICESV3-1769
+	// BCP:  1980007571
+	QUnit.test("multiple delete: index for gap-filling read requests", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" growing="true" growingThreshold="3" items="{/SalesOrderList}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="id" text="{SalesOrderID}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=3", {
+				"value" : [
+					{"SalesOrderID" : "0500000001"},
+					{"SalesOrderID" : "0500000002"},
+					{"SalesOrderID" : "0500000003"}
+				]
+			})
+			.expectChange("id", ["0500000001", "0500000002", "0500000003"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var aItems = that.oView.byId("table").getItems();
+
+			that.expectRequest({
+					method : "DELETE",
+					url : "SalesOrderList('0500000002')"
+				})
+				.expectRequest({
+					method : "DELETE",
+					url : "SalesOrderList('0500000003')"
+				})
+				.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=1&$top=2", {
+					"value" : [
+						{"SalesOrderID" : "0500000004"}
+					]
+				})
+				.expectChange("id", "0500000004", 1);
+
+			// code under test
+			return Promise.all([
+				aItems[1].getBindingContext().delete(),
+				aItems[2].getBindingContext().delete(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Delete in a growing table and then let it grow. Ensure that the gap caused by the
+	// delete is filled.
+	// JIRA: CPOUI5UISERVICESV3-1769
+	// BCP:  1980007571
+	QUnit.test("growing while deleting: index for gap-filling read request", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oTable,
+			sView = '\
+<Table id="table" growing="true" growingThreshold="3" items="{/SalesOrderList}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="id" text="{SalesOrderID}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=3", {
+				"value" : [
+					{"SalesOrderID" : "0500000001"},
+					{"SalesOrderID" : "0500000002"},
+					{"SalesOrderID" : "0500000003"}
+				]
+			})
+			.expectChange("id", ["0500000001", "0500000002", "0500000003"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oDeletePromise;
+
+			that.expectRequest({
+					method : "DELETE",
+					url : "SalesOrderList('0500000002')"
+				})
+				.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=2&$top=4", {
+					"value" : [
+						{"SalesOrderID" : "0500000004"}
+					]
+				})
+				.expectChange("id", "0500000004", 2);
+
+			oTable = that.oView.byId("table");
+
+			// code under test
+			oDeletePromise = oTable.getItems()[1].getBindingContext().delete();
+			that.oView.byId("table-trigger").firePress();
+
+			return Promise.all([
+				oDeletePromise,
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.deepEqual(
+				oTable.getBinding("items").getCurrentContexts().map(function (oContext) {
+					return oContext.getPath();
+				}),
+				[
+					"/SalesOrderList('0500000001')",
+					"/SalesOrderList('0500000003')",
+					"/SalesOrderList('0500000004')"
+				]
+			);
 		});
 	});
 
@@ -3643,7 +3760,7 @@ sap.ui.define([
 
 				oParentBinding.attachPatchCompleted(function (oEvent) {
 					assert.strictEqual(oEvent.getSource(), oParentBinding);
-					iPatchCompleted++;
+					iPatchCompleted += 1;
 					if (fnAfterPatchCompleted) {
 						fnAfterPatchCompleted();
 						fnAfterPatchCompleted = undefined;
@@ -3651,7 +3768,7 @@ sap.ui.define([
 				});
 				oParentBinding.attachPatchSent(function (oEvent) {
 					assert.strictEqual(oEvent.getSource(), oParentBinding);
-					iPatchSent++;
+					iPatchSent += 1;
 				});
 
 				that.expectRequest({
@@ -3980,9 +4097,9 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Enable autoExpandSelect mode for nested ODataContextBindings. The inner
+	// Scenario: Enable autoExpandSelect mode for dependent ODataContextBindings. The inner
 	// ODataContextBinding can use its parent binding's cache => it creates no own request.
-	QUnit.test("Auto-$expand/$select: Nested ODCB",
+	QUnit.test("Auto-$expand/$select: Dependent ODCB",
 			function (assert) {
 		var sView = '\
 <FlexBox binding="{path : \'/EMPLOYEES(\\\'2\\\')\',\
@@ -4564,10 +4681,10 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Enable autoExpandSelect mode for nested ODataContextBindings. The inner
+	// Scenario: Enable autoExpandSelect mode for dependent ODataContextBindings. The inner
 	// ODataContextBinding *cannot* use its parent binding's cache due to conflicting query options
 	// => it creates an own cache and request.
-	QUnit.test("Auto-$expand/$select: Nested ODCB with own request", function (assert) {
+	QUnit.test("Auto-$expand/$select: Dependent ODCB with own request", function (assert) {
 		var sView = '\
 <FlexBox binding="{path : \'/EMPLOYEES(\\\'2\\\')\',\
 			parameters : {\
@@ -5922,6 +6039,8 @@ sap.ui.define([
 
 			that.oView.byId("vbox").getObjectBinding()
 				.changeParameters({$expand : "TEAM_2_EMPLOYEES($filter=ID eq '2')"});
+
+			return that.waitForChanges(assert);
 		});
 	});
 
@@ -6079,7 +6198,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: ODataListBinding contains ODataContextBinding contains ODataPropertyBinding;
 	//   only one cache; refresh()
-	QUnit.test("refresh on nested bindings", function (assert) {
+	QUnit.test("refresh on dependent bindings", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sUrl = "TEAMS('42')?$select=Team_Id&$expand=TEAM_2_MANAGER($select=ID)",
 			sView = '\
@@ -6219,7 +6338,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: ODataListBinding contains ODataContextBinding contains ODataPropertyBinding;
 	//   only one cache; hasPendingChanges()
-	QUnit.test("hasPendingChanges on nested bindings", function (assert) {
+	QUnit.test("hasPendingChanges on dependent bindings", function (assert) {
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sUrl = "SalesOrderList?$select=SalesOrderID"
 				+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=100",
@@ -7399,7 +7518,7 @@ sap.ui.define([
 	//   After resume, a new request reflecting the changes is sent and the added fields are
 	//   updated.
 	[false, true].forEach(function (bRefresh) {
-		var sTitle = "suspend/resume: nested context bindings, refresh=" + bRefresh;
+		var sTitle = "suspend/resume: dependent context bindings, refresh=" + bRefresh;
 
 		QUnit.test(sTitle, function (assert) {
 			var oModel = createTeaBusiModel({autoExpandSelect : true}),
@@ -7471,7 +7590,7 @@ sap.ui.define([
 	//   field resp. a table column.
 	//   After resume, a new request reflecting the changes is sent and the added field/column is
 	//   updated.
-	QUnit.test("suspend/resume: context binding with nested list binding", function (assert) {
+	QUnit.test("suspend/resume: context binding with dependent list binding", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/TEAMS(\'TEAM_01\')}">\
@@ -7542,7 +7661,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Outer form with context binding is suspended after initialization; outer form
 	// contains inner table. The inner table is sorted resulting in a different order.
-	QUnit.test("suspend/resume: sort nested list binding", function (assert) {
+	QUnit.test("suspend/resume: sort dependent list binding", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/TEAMS(\'TEAM_01\')}">\
@@ -7998,8 +8117,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Deferred operation binding returns a collection. A nested list binding for "value"
-	// with auto-$expand/$select displays the result.
+	// Scenario: Deferred operation binding returns a collection. A dependent list binding for
+	// "value" with auto-$expand/$select displays the result.
 	QUnit.test("Deferred operation returns collection, auto-$expand/$select", function (assert) {
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
@@ -8075,7 +8194,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: ODataContextBinding for non-deferred function call which returns a collection. A
-	// nested list binding for "value" with auto-$expand/$select displays the result.
+	// dependent list binding for "value" with auto-$expand/$select displays the result.
 	// github.com/SAP/openui5/issues/1727
 	QUnit.test("Context: function returns collection, auto-$expand/$select", function (assert) {
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
@@ -8111,7 +8230,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: ODataContextBinding for non-deferred bound function call which returns a
-	// collection. A nested list binding for "value" with auto-$expand/$select displays the result.
+	// collection. A dependent list binding for "value" with auto-$expand/$select displays the
+	// result.
 	QUnit.test("Context: bound function returns coll., auto-$expand/$select", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sFunctionName = "com.sap.gateway.default.iwbep.tea_busi.v0001"
@@ -9117,8 +9237,6 @@ sap.ui.define([
 		</ColumnListItem>\
 	</items>\
 </Table>',
-			rMessage = new RegExp("^Failed to drill-down into \\(\\$uid=.+\\)\\/@\\$ui5\\.foo,"
-				+ " invalid segment: @\\$ui5\\.foo$"),
 			that = this;
 
 		this.expectRequest("Equipments?$skip=0&$top=100", {
@@ -9143,12 +9261,8 @@ sap.ui.define([
 			// code under test
 			oContext = oListBinding.create(oInitialData);
 
-			that.oLogMock.expects("error").withExactArgs(sinon.match(rMessage),
-				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/Equipments",
-				"sap.ui.model.odata.v4.lib._Cache");
-
 			// code under test
-			oContext.getProperty("@$ui5.foo");
+			assert.strictEqual(oContext.getProperty("@$ui5.foo"), undefined);
 		});
 	});
 
@@ -9947,18 +10061,14 @@ sap.ui.define([
 			// and the return value context ID changed.
 			// The list must be updated manually.
 			oRowContext = that.oView.byId("table").getItems()[0].getBindingContext();
-			bindObjectPage(oRowContext, false);
-
-			return that.waitForChanges(assert);
+			return bindObjectPage(oRowContext, false);
 		}).then(function () {
 			// clear the object page
 			that.expectChange("id", null)
 				.expectChange("isActive", null)
 				.expectChange("name", null);
 
-			bindObjectPage(null, false);
-
-			return that.waitForChanges(assert);
+			return bindObjectPage(null, false);
 		});
 	});
 
@@ -10127,10 +10237,10 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Master list and details containing a nested table with an own request. Use cached
-	// values in nested table if user switches between entries in the master list.
+	// Scenario: Master list and details containing a dependent table with an own request. Use
+	// cached values in dependent table if user switches between entries in the master list.
 	// See CPOUI5UISERVICESV3-1686.
-	QUnit.test("Reuse caches in nested tables with own request while switching master list entries",
+	QUnit.test("Reuse caches in dependent tables w/ own request while switching master list entry",
 			function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
@@ -11552,6 +11662,58 @@ sap.ui.define([
 			return Promise.all([
 				// code under test
 				oContext.delete(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Delete an entity from a relative ODLB with pending changes (POST) in siblings
+	// CPOUI5UISERVICESV3-1799
+	QUnit.test("Delete entity from rel. ODLB with pending changes in siblings", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
+			sView = '\
+<FlexBox id="detail" binding="{/TEAMS(\'TEAM_01\')}">\
+	<Text id="Team_Id" text="{Team_Id}"/>\
+	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
+		<columns><Column/></columns>\
+		<ColumnListItem>\
+			<Text id="name" text="{Name}"/>\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("TEAMS('TEAM_01')?$select=Team_Id"
+				+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
+				"Team_Id" : "TEAM_01",
+				"TEAM_2_EMPLOYEES" : [{
+					"ID" : "1",
+					"Name" : "Jonathan Smith"
+				}, {
+					"ID" : "2",
+					"Name" : "Frederic Fall"
+				}]
+			})
+			.expectChange("Team_Id", "TEAM_01")
+			.expectChange("name", ["Jonathan Smith", "Frederic Fall"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("name", ["John Doe", "Jonathan Smith", "Frederic Fall"]);
+
+			that.oView.byId("table").getBinding("items").create({Name : "John Doe"});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "DELETE",
+					url : "EMPLOYEES('1')"
+				})
+				.expectChange("name", "Frederic Fall", 1);
+
+			return Promise.all([
+				// code under test
+				that.oView.byId("table").getItems()[1].getBindingContext().delete("$auto"),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -13263,7 +13425,7 @@ sap.ui.define([
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
 		<columns><Column/></columns>\
 		<ColumnListItem>\
-			<Text id="id" text="{ID}" />\
+			<Input id="id" value="{ID}" />\
 		</ColumnListItem>\
 	</Table>\
 </FlexBox>',
@@ -13292,8 +13454,12 @@ sap.ui.define([
 					that.waitForChanges(assert)
 				]);
 			}).then(function () {
-				assert.strictEqual(oTeamCreatedContext.getPath(),
-					bKeepTransientPath ? sTransientPath : "/TEAMS('23')");
+				assert.strictEqual(
+					oTeamCreatedContext.getPath().replace(rTransientPredicate, "($uid=...)"),
+					bKeepTransientPath ? "/TEAMS($uid=...)" : "/TEAMS('23')");
+				if (bKeepTransientPath) {
+					assert.strictEqual(oTeamCreatedContext.getPath(), sTransientPath);
+				}
 
 				that.expectRequest("TEAMS('23')?$expand=TEAM_2_EMPLOYEES("
 						+ "$select=__CT__FAKE__Message/__FAKE__Messages,ID)", {
@@ -13320,9 +13486,9 @@ sap.ui.define([
 						"__CT__FAKE__Message" : {
 							"__FAKE__Messages" : [{
 								"code" : "1",
-								"message" : "Enter a name",
+								"message" : "Enter an ID",
 								"numericSeverity" : 3,
-								"target" : "Name",
+								"target" : "ID",
 								"transition" : false
 							}]
 						}
@@ -13331,13 +13497,11 @@ sap.ui.define([
 					.expectChange("id", ["7", "3"])
 					.expectMessages([{
 						"code" : "1",
-						"message" : "Enter a name",
+						"message" : "Enter an ID",
 						"persistent" : false,
 						"target" : bKeepTransientPath
-						//TODO why does ODataBinding.fetchCache compute a canonical path and how
-						// does this fit to message targets?
-							? "/TEAMS('23')/TEAM_2_EMPLOYEES($uid=...)/Name"
-							: "/TEAMS('23')/TEAM_2_EMPLOYEES('7')/Name",
+							? "/TEAMS($uid=...)/TEAM_2_EMPLOYEES($uid=...)/ID"
+							: "/TEAMS('23')/TEAM_2_EMPLOYEES('7')/ID",
 						"type" : "Warning"
 					}]);
 
@@ -13353,10 +13517,17 @@ sap.ui.define([
 					that.waitForChanges(assert)
 				]);
 			}).then(function () {
+				// the new one is at the top
+				var oInput = that.oView.byId("table").getItems("items")[0].getCells()[0];
+
 				assert.strictEqual(oEmployeeCreatedContext.getPath(),
 					bKeepTransientPath
 					? sNestedTransientPath
 					: "/TEAMS('23')/TEAM_2_EMPLOYEES('7')");
+				assert.strictEqual(oInput.getBindingContext().getPath(),
+					oEmployeeCreatedContext.getPath(), "we got the right input control");
+
+				return that.checkValueState(assert, oInput, "Warning", "Enter an ID");
 			});
 		});
 	});
@@ -13409,6 +13580,193 @@ sap.ui.define([
 				});
 
 			return this.createView(assert, sView, oModel);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Dependent binding uses $$canonicalPath; hasPendingChanges and refresh consider
+	// caches of the dependent binding.
+	// CPOUI5UISERVICESV3-1706
+	QUnit.test("hasPendingChanges and refresh with $$canonicalPath", function (assert) {
+		var oBusinessPartnerContext,
+			oBusinessPartnerList,
+			oForm,
+			oModel = createSalesOrdersModel({autoExpandSelect : true, updateGroupId : "update"}),
+			sView = '\
+<Table id="businessPartnerList" items="{/BusinessPartnerList}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="businessPartnerID" text="{BusinessPartnerID}" />\
+	</ColumnListItem>\
+</Table>\
+<FlexBox id="form" binding="{BP_2_SO(\'42\')}">\
+	<Text id="salesOrderID" text="{SalesOrderID}" />\
+	<Table id="table" items="{path : \'SO_2_SOITEM\', parameters : {$$canonicalPath : true}}">\
+		<columns><Column/></columns>\
+		<ColumnListItem>\
+			<Text id="productID" text="{ProductID}" />\
+			<Input id="note" value="{Note}" />\
+		</ColumnListItem>\
+	</Table>\
+	<FlexBox binding="{path : \'SO_2_BP/BP_2_SO(\\\'23\\\')\',\
+			parameters : {$$canonicalPath : true}}">\
+		<Input id="billingStatus" value="{BillingStatus}" />\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		function checkPendingChanges() {
+			assert.strictEqual(oBusinessPartnerList.getBinding("items").hasPendingChanges(), true);
+			assert.strictEqual(oBusinessPartnerContext.hasPendingChanges(), true);
+		}
+
+		function clearDetails() {
+			that.expectChange("billingStatus", null)
+				.expectChange("note", [])
+				.expectChange("productID", [])
+				.expectChange("salesOrderID", null);
+
+			oForm.setBindingContext(null);
+		}
+
+		function expectDetailRequests() {
+			// Note: this is requested anyway by autoExpandSelect, thus we might as well show it
+			that.expectRequest("BusinessPartnerList('0500000000')/BP_2_SO('42')"
+					+ "?$select=SalesOrderID", {
+					"SalesOrderID" : "42"
+				})
+				.expectRequest("SalesOrderList('42')/SO_2_SOITEM"
+					+ "?$select=ItemPosition,Note,ProductID,SalesOrderID&$skip=0&$top=100", {
+					"value" : [{
+						"ItemPosition" : "10",
+						"Note" : "Notebook Basic 15",
+						"ProductID" : "HT-1000",
+						"SalesOrderID" : "42"
+					}, {
+						"ItemPosition" : "20",
+						"Messages" : [{
+							"code" : "23",
+							"message" : "Just a test",
+							"numericSeverity" : 3,
+							"target" : "Note"
+						}],
+						"Note" : "ITelO Vault",
+						"ProductID" : "HT-1007",
+						"SalesOrderID" : "42"
+					}]
+				})
+				.expectRequest("SalesOrderList('42')/SO_2_BP/BP_2_SO('23')"
+					+ "?$select=BillingStatus,SalesOrderID", {
+					"BillingStatus" : "UNKNOWN",
+					"Messages" : [{
+						"code" : "00",
+						"message" : "Unknown billing status",
+						"numericSeverity" : 3,
+						"target" : "BillingStatus"
+					}],
+					"SalesOrderID" : "23"
+				})
+				.expectMessages([{
+					"code" : "23",
+					"message" : "Just a test",
+					"persistent" : false,
+					"target" : "/BusinessPartnerList('0500000000')/BP_2_SO('42')"
+						+ "/SO_2_SOITEM(SalesOrderID='42',ItemPosition='20')/Note",
+					"technical" : false,
+					"type" : "Warning"
+				}, {
+					"code" : "00",
+					"message" : "Unknown billing status",
+					"persistent" : false,
+					"target" : "/BusinessPartnerList('0500000000')/BP_2_SO('42')"
+						+ "/SO_2_BP/BP_2_SO('23')/BillingStatus",
+					"technical" : false,
+					"type" : "Warning"
+				}]);
+		}
+
+		function selectFirst() {
+			that.expectChange("billingStatus", "UNKNOWN")
+				.expectChange("note", ["Notebook Basic 15", "ITelO Vault"])
+				.expectChange("productID", ["HT-1000", "HT-1007"])
+				.expectChange("salesOrderID", "42");
+
+			oForm.setBindingContext(oBusinessPartnerContext);
+		}
+
+		this.expectRequest("BusinessPartnerList?$select=BusinessPartnerID&$skip=0&$top=100", {
+				"value" : [{
+					"BusinessPartnerID" : "0500000000"
+				}]
+			})
+			.expectChange("billingStatus")
+			.expectChange("businessPartnerID", ["0500000000"])
+			.expectChange("note", [])
+			.expectChange("productID", [])
+			.expectChange("salesOrderID");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oForm = that.oView.byId("form");
+			oBusinessPartnerList = that.oView.byId("businessPartnerList");
+			oBusinessPartnerContext = oBusinessPartnerList.getItems()[0].getBindingContext();
+
+			expectDetailRequests();
+			selectFirst();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oInput = that.oView.byId("table").getItems("items")[1].getCells()[1];
+
+			return that.checkValueState(assert, oInput, "Warning", "Just a test");
+		}).then(function () {
+			return that.checkValueState(assert, "billingStatus", "Warning",
+				"Unknown billing status");
+		}).then(function () {
+			clearDetails();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// set context for details again - take values from cache
+			selectFirst();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			clearDetails();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// refresh business partner
+			that.expectRequest("BusinessPartnerList('0500000000')?$select=BusinessPartnerID", {
+					"BusinessPartnerID" : "0500000000"
+				})
+				.expectMessages([]);
+
+			oBusinessPartnerContext.refresh();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// set context for details again - don't use cached data
+			expectDetailRequests();
+			selectFirst();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// change value in details
+			that.expectChange("note", "Foo", 0);
+
+			// Note: cannot call Input#setValue because of that.setFormatter
+			that.oView.byId("table").getItems()[0].getCells()[1].getBinding("value")
+				.setValue("Foo");
+
+			checkPendingChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// clear details and check pending changes
+			clearDetails();
+			checkPendingChanges();
+
+			return that.waitForChanges(assert);
 		});
 	});
 

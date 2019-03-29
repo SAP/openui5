@@ -340,7 +340,7 @@ sap.ui.define([
 			mParameters = {},
 			sUri;
 
-		for (i = 32; i < 127; i++) {
+		for (i = 32; i < 127; i += 1) {
 			sComplexString = sComplexString + String.fromCharCode(i);
 		}
 

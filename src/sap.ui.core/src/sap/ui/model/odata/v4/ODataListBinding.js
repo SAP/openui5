@@ -167,17 +167,13 @@ sap.ui.define([
 	 * @returns {Promise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure.
-	 * @throws {Error}
-	 *   If there are pending changes.
 	 *
 	 * @private
 	 */
 	ODataListBinding.prototype._delete = function (oGroupLock, sEditUrl, oContext) {
-		var that = this;
+		var bFireChange = false,
+			that = this;
 
-		if (!oContext.isTransient() && this.hasPendingChanges()) {
-			throw new Error("Cannot delete due to pending changes");
-		}
 		return this.deleteFromCache(oGroupLock, sEditUrl, String(oContext.iIndex),
 			function (iIndex, aEntities) {
 				var sContextPath, i, sPredicate, sResolvedPath, i$skipIndex;
@@ -220,8 +216,15 @@ sap.ui.define([
 					}
 				}
 				that.iMaxLength -= 1; // this doesn't change Infinity
+				bFireChange = true;
+			}
+		).then(function () {
+			// Fire the change asynchronously so that Cache#delete is finished and #getContexts can
+			// read the data synchronously. This is important for extended change detection.
+			if (bFireChange) {
 				that._fireChange({reason : ChangeReason.Remove});
-			});
+			}
+		});
 	};
 
 	/**
@@ -461,7 +464,10 @@ sap.ui.define([
 				that.iCreatedContexts -= 1;
 				that.aContexts.shift();
 				oContext.destroy();
-				that._fireChange({reason : ChangeReason.Remove});
+				return Promise.resolve().then(function () {
+					// fire asynchronously so that _delete is finished before
+					that._fireChange({reason : ChangeReason.Remove});
+				});
 			}
 		).then(function (oCreatedEntity) {
 			var sGroupId, sPredicate;
@@ -472,6 +478,7 @@ sap.ui.define([
 				sPredicate = _Helper.getPrivateAnnotation(oCreatedEntity, "predicate");
 				if (sPredicate) {
 					oContext.sPath = sResolvedPath + sPredicate;
+					that.oModel.checkMessages();
 				}
 			}
 			if (!bSkipRefresh && that.isRoot()) {
@@ -638,21 +645,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Hook method for {@link sap.ui.model.odata.v4.ODataBinding#fetchCache} to create a cache for
-	 * this binding with the given resource path and query options.
-	 *
-	 * @param {string} sResourcePath
-	 *   The resource path, for example "EMPLOYEES"
-	 * @param {object} mQueryOptions
-	 *   The query options
-	 * @param {sap.ui.model.Context} [oContext]
-	 *   The context instance to be used, must be <code>undefined</code> for absolute bindings
-	 * @returns {sap.ui.model.odata.v4.lib._Cache}
-	 *   The new cache instance, either a collection cache or an aggregation cache
-	 *
-	 * @private
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#doCreateCache
 	 */
-	ODataListBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions, oContext) {
+	ODataListBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions, oContext,
+			sDeepResourcePath) {
 		var bAggregate = this.oAggregation && (this.oAggregation.groupLevels.length
 				|| _AggregationHelper.hasMinOrMax(this.oAggregation.aggregate)
 				|| _AggregationHelper.hasGrandTotal(this.oAggregation.aggregate));
@@ -664,7 +661,7 @@ sap.ui.define([
 			? _AggregationCache.create(this.oModel.oRequestor, sResourcePath, this.oAggregation,
 				mQueryOptions)
 			: _Cache.create(this.oModel.oRequestor, sResourcePath, mQueryOptions,
-				this.oModel.bAutoExpandSelect);
+				this.oModel.bAutoExpandSelect, sDeepResourcePath);
 	};
 
 	/**

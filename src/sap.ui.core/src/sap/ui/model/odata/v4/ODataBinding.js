@@ -133,6 +133,27 @@ sap.ui.define([
 	};
 
 	/**
+	 * Hook method for {@link sap.ui.model.odata.v4.ODataBinding#fetchCache} to create a cache for
+	 * this binding with the given resource path and query options.
+	 *
+	 * @param {string} sResourcePath
+	 *   The resource path, for example "EMPLOYEES"
+	 * @param {object} mQueryOptions
+	 *   The query options
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context instance to be used, must be <code>undefined</code> for absolute bindings
+	 * @param {string} [sDeepResourcePath=sResourcePath]
+	 *   The deep resource path to be used to build the target path for bound messages
+	 * @returns {sap.ui.model.odata.v4.lib._Cache}
+	 *   The new cache instance
+	 *
+	 * @abstract
+	 * @function
+	 * @name sap.ui.model.odata.v4.ODataBinding#doCreateCache
+	 * @private
+	 */
+
+	/**
 	 * Creates a cache for this binding if a cache is needed and updates <code>oCachePromise</code>.
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
@@ -165,7 +186,7 @@ sap.ui.define([
 			if (mQueryOptions && !(oContext && oContext.getIndex
 					&& oContext.getIndex() === Context.VIRTUAL)) {
 				return that.fetchResourcePath(oContext).then(function (sResourcePath) {
-					var oCache, oError, iReturnValueContextId;
+					var oCache, sDeepResourcePath, oError, iReturnValueContextId;
 
 					// create cache only for the latest call to fetchCache
 					if (!oCachePromise || that.oFetchCacheCallToken === oCallToken) {
@@ -180,11 +201,14 @@ sap.ui.define([
 							if (oCache && oCache.$returnValueContextId === iReturnValueContextId) {
 								oCache.setActive(true);
 							} else {
+								sDeepResourcePath
+									= _Helper.buildPath(oContext.getPath(), that.sPath).slice(1);
 								oCache = that.doCreateCache(sResourcePath, that.mCacheQueryOptions,
-									oContext);
+									oContext, sDeepResourcePath);
 								that.mCacheByResourcePath[sResourcePath] = oCache;
-								oCache.$returnValueContextId = iReturnValueContextId;
+								oCache.$deepResourcePath = sDeepResourcePath;
 								oCache.$resourcePath = sResourcePath;
+								oCache.$returnValueContextId = iReturnValueContextId;
 							}
 						} else { // absolute binding
 							oCache = that.doCreateCache(sResourcePath, that.mCacheQueryOptions,
@@ -521,8 +545,10 @@ sap.ui.define([
 			return false;
 		}
 		return Object.keys(this.mCacheByResourcePath).some(function (sResourcePath) {
-			return sResourcePath.startsWith(sResourcePathPrefix)
-				&& that.mCacheByResourcePath[sResourcePath].hasPendingChangesForPath("");
+			var oCache = that.mCacheByResourcePath[sResourcePath];
+
+			return oCache.$deepResourcePath.startsWith(sResourcePathPrefix)
+				&& oCache.hasPendingChangesForPath("");
 		});
 	};
 
@@ -704,8 +730,10 @@ sap.ui.define([
 		}
 		if (this.mCacheByResourcePath) {
 			Object.keys(this.mCacheByResourcePath).forEach(function (sResourcePath) {
-				if (sResourcePath.startsWith(sResourcePathPrefix)) {
-					oModel.reportBoundMessages(sResourcePath, {});
+				var oCache = that.mCacheByResourcePath[sResourcePath];
+
+				if (oCache.$deepResourcePath.startsWith(sResourcePathPrefix)) {
+					oModel.reportBoundMessages(oCache.$deepResourcePath, {});
 					delete that.mCacheByResourcePath[sResourcePath];
 				}
 			});

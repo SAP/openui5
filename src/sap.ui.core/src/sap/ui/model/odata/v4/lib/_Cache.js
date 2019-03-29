@@ -98,7 +98,8 @@ sap.ui.define([
 	 *   should just sort always
 	 * @param {function} [fnGetOriginalResourcePath]
 	 *   A function that returns the cache's original resource path to be used to build the target
-	 *   path for bound messages; if unset, sResourcePath is used
+	 *   path for bound messages; if it is not given or returns nothing, <code>sResourcePath</code>
+	 *   is used instead
 	 *
 	 * @private
 	 */
@@ -109,6 +110,8 @@ sap.ui.define([
 		this.fnGetOriginalResourcePath = fnGetOriginalResourcePath;
 		this.sMetaPath = _Helper.getMetaPath("/" + sResourcePath);
 		this.mPatchRequests = {}; // map from path to an array of (PATCH) promises
+		// a promise with attached properties $count, $resolve existing while deletes are pending
+		this.oPendingDeletePromise = null;
 		this.mPostRequests = {}; // map from path to an array of entity data (POST bodies)
 		this.oRequestor = oRequestor;
 		this.sResourcePath = sResourcePath;
@@ -140,8 +143,17 @@ sap.ui.define([
 		var aSegments = sPath.split("/"),
 			vDeleteProperty = aSegments.pop(),
 			sParentPath = aSegments.join("/"),
+			fnResolve,
 			that = this;
 
+		if (!this.oPendingDeletePromise) {
+			this.oPendingDeletePromise = new Promise(function (resolve) {
+				fnResolve = resolve;
+			});
+			this.oPendingDeletePromise.$count = 0;
+			this.oPendingDeletePromise.$resolve = fnResolve;
+		}
+		this.oPendingDeletePromise.$count += 1;
 		return this.fetchValue(_GroupLock.$cached, sParentPath).then(function (vCacheData) {
 			var oEntity = vDeleteProperty
 					? vCacheData[Cache.from$skip(vDeleteProperty, vCacheData)]
@@ -158,7 +170,7 @@ sap.ui.define([
 			if (sTransientGroup) {
 				oGroupLock.unlock();
 				that.oRequestor.removePost(sTransientGroup, oEntity);
-				return Promise.resolve();
+				return undefined;
 			}
 			if (oEntity["$ui5.deleting"]) {
 				throw new Error("Must not delete twice: " + sEditUrl);
@@ -196,6 +208,12 @@ sap.ui.define([
 					that.oRequestor.getModelInterface().reportBoundMessages(that.sResourcePath, [],
 						[sEntityPath]);
 				});
+		}).finally(function () {
+			that.oPendingDeletePromise.$count -= 1;
+			if (!that.oPendingDeletePromise.$count) {
+				that.oPendingDeletePromise.$resolve();
+				that.oPendingDeletePromise = null;
+			}
 		});
 	};
 
@@ -306,6 +324,8 @@ sap.ui.define([
 					sPredicate;
 
 				_Helper.deletePrivateAnnotation(oEntityData, "transient");
+				oEntityData["@$ui5.context.isTransient"] = false;
+
 				// now the server has one more element
 				addToCount(that.mChangeListeners, sPath, aCollection, 1);
 				_Helper.removeByPath(that.mPostRequests, sPath, oEntityData);
@@ -345,6 +365,7 @@ sap.ui.define([
 		// remove any property starting with "@$ui5."
 		oEntityData = _Requestor.cleanPayload(oEntityData);
 		_Helper.setPrivateAnnotation(oEntityData, "transientPredicate", sTransientPredicate);
+		oEntityData["@$ui5.context.isTransient"] = true;
 
 		aCollection = this.fetchValue(_GroupLock.$cached, sPath).getResult();
 		if (!Array.isArray(aCollection)) {
@@ -478,8 +499,8 @@ sap.ui.define([
 				} else {
 					vValue = vValue[Cache.from$skip(sSegment, vValue)];
 				}
-				// missing advertisement is not an error
-				return vValue === undefined && sSegment[0] !== "#"
+				// missing advertisement or annotation is not an error
+				return vValue === undefined && sSegment[0] !== "#" &&  sSegment[0] !== "@"
 					? missingValue(oParentValue, sSegment, i + 1)
 					: vValue;
 			});
@@ -1013,7 +1034,7 @@ sap.ui.define([
 		function visitArray(aInstances, sMetaPath, sCollectionPath, sContextUrl) {
 			var mByPredicate = {}, i, iIndex, vInstance, sPredicate;
 
-			for (i = 0; i < aInstances.length; i++) {
+			for (i = 0; i < aInstances.length; i += 1) {
 				vInstance = aInstances[i];
 				iIndex = sCollectionPath === "" ? iStart + i : i;
 
@@ -1115,9 +1136,8 @@ sap.ui.define([
 		}
 		if (bHasMessages) {
 			this.oRequestor.getModelInterface().reportBoundMessages(
-				this.fnGetOriginalResourcePath
-					? this.fnGetOriginalResourcePath(oRoot)
-					: this.sResourcePath,
+				this.fnGetOriginalResourcePath && this.fnGetOriginalResourcePath(oRoot)
+					|| this.sResourcePath,
 				mPathToODataMessages, aCachePaths);
 		}
 	};
@@ -1138,9 +1158,14 @@ sap.ui.define([
 	 *   A map of key-value pairs representing the query string
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
+	 * @param {string} [sDeepResourcePath=sResourcePath]
+	 *   The deep resource path to be used to build the target path for bound messages
 	 */
-	function CollectionCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect) {
-		Cache.apply(this, arguments);
+	function CollectionCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
+			sDeepResourcePath) {
+		Cache.call(this, oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, function () {
+				return sDeepResourcePath;
+			});
 
 		this.sContext = undefined;         // the "@odata.context" from the responses
 		this.aElements = [];               // the available elements
@@ -1228,7 +1253,7 @@ sap.ui.define([
 			this.aElements.$tail = oPromise;
 			iEnd = this.aElements.length;
 		}
-		for (i = iStart; i < iEnd; i++) {
+		for (i = iStart; i < iEnd; i += 1) {
 			this.aElements[i] = oPromise;
 		}
 		this.oSyncPromiseAll = undefined;  // from now on, fetchValue has to wait again
@@ -1346,7 +1371,7 @@ sap.ui.define([
 			setCount(this.mChangeListeners, "", this.aElements, this.iLimit);
 		}
 		this.visitResponse(oResult, mTypeForMetaPath, undefined, undefined, undefined, iStart);
-		for (i = 0; i < iResultLength; i++) {
+		for (i = 0; i < iResultLength; i += 1) {
 			oElement = oResult.value[i];
 			this.aElements[iStart + i] = oElement;
 			sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
@@ -1408,6 +1433,7 @@ sap.ui.define([
 			aElementsRange,
 			iEnd,
 			iGapStart = -1,
+			oPromise = this.oPendingDeletePromise || this.aElements.$tail,
 			oRange,
 			that = this;
 
@@ -1418,8 +1444,8 @@ sap.ui.define([
 			throw new Error("Illegal length " + iLength + ", must be >= 0");
 		}
 
-		if (this.aElements.$tail) {
-			return this.aElements.$tail.then(function () {
+		if (oPromise) {
+			return oPromise.then(function () {
 				return that.read(iIndex, iLength, iPrefetchLength, oGroupLock, fnDataRequested);
 			});
 		}
@@ -1428,7 +1454,7 @@ sap.ui.define([
 		iEnd = Math.min(oRange.start + oRange.length, this.aElements.$created + this.iLimit);
 		n = Math.min(iEnd, Math.max(oRange.start, this.aElements.length) + 1);
 
-		for (i = oRange.start; i < n; i++) {
+		for (i = oRange.start; i < n; i += 1) {
 			if (this.aElements[i] !== undefined) {
 				if (iGapStart >= 0) {
 					this.requestElements(iGapStart, i, oGroupLock.getUnlockedCopy(),
@@ -1636,6 +1662,7 @@ sap.ui.define([
 		this.aElements[iIndex] = this.aElements.$byPredicate[sPredicate] = oElement;
 		sTransientPredicate = _Helper.getPrivateAnnotation(oOldElement, "transientPredicate");
 		if (sTransientPredicate) {
+			oElement["@$ui5.context.isTransient"] = false;
 			that.aElements.$byPredicate[sTransientPredicate] = oElement;
 			_Helper.setPrivateAnnotation(oElement, "transientPredicate", sTransientPredicate);
 		}
@@ -1850,9 +1877,10 @@ sap.ui.define([
 	 *   A map of key-value pairs representing the query string
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
-	 * @param {string} [fnGetOriginalResourcePath]
+	 * @param {function} [fnGetOriginalResourcePath]
 	 *   A function that returns the cache's original resource path to be used to build the target
-	 *   path for bound messages; if unset, sResourcePath is used
+	 *   path for bound messages; if it is not given or returns nothing, <code>sResourcePath</code>
+	 *   is used instead
 	 * @param {boolean} [bPost]
 	 *   Whether the cache uses POST requests. If <code>true</code>, only {@link #post} may lead to
 	 *   a request, {@link #read} may only read from the cache; otherwise {@link #post} throws an
@@ -2082,13 +2110,17 @@ sap.ui.define([
 	 *   {foo : ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
+	 * @param {string} [sDeepResourcePath=sResourcePath]
+	 *   The deep resource path to be used to build the target path for bound messages
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
 	 *
 	 * @public
 	 */
-	Cache.create = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect) {
-		return new CollectionCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect);
+	Cache.create = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
+			sDeepResourcePath) {
+		return new CollectionCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
+				sDeepResourcePath);
 	};
 
 	/**
@@ -2132,9 +2164,10 @@ sap.ui.define([
 	 *   {foo : ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
-	 * @param {string} [fnGetOriginalResourcePath]
+	 * @param {function} [fnGetOriginalResourcePath]
 	 *   A function that returns the cache's original resource path to be used to build the target
-	 *   path for bound messages; if unset, sResourcePath is used
+	 *   path for bound messages; if it is not given or returns nothing, <code>sResourcePath</code>
+	 *   is used instead
 	 * @param {boolean} [bPost]
 	 *   Whether the cache uses POST requests. If <code>true</code>, only {@link #post} may
 	 *   lead to a request, {@link #read} may only read from the cache; otherwise {@link #post}

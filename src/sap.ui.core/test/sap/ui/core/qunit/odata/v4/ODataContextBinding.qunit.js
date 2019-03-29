@@ -509,7 +509,7 @@ sap.ui.define([
 
 		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor),
-				"TEAMS('TEAM_01')/TEAM_2_MANAGER", {"sap-client": "111"}, false)
+				"TEAMS('TEAM_01')/TEAM_2_MANAGER", {"sap-client": "111"}, false, sinon.match.func)
 			.returns({});
 
 		// code under test
@@ -2145,19 +2145,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_delete: pending changes", function (assert) {
-		var oBinding = this.bindContext("/EMPLOYEES('42')");
-
-		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(true);
-		this.mock(oBinding).expects("deleteFromCache").never();
-		this.mock(oBinding).expects("_fireChange").never();
-
-		assert.throws(function () {
-			oBinding._delete({/*oGroupLock*/}, "EMPLOYEES('42')");
-		}, new Error("Cannot delete due to pending changes"));
-	});
-
-	//*********************************************************************************************
 	QUnit.test("refreshInternal", function (assert) {
 		var oBinding,
 			oBindingMock = this.mock(ODataContextBinding.prototype),
@@ -2371,18 +2358,28 @@ sap.ui.define([
 		QUnit.test("doCreateCache, " + i, function (assert) {
 			var oBinding = this.bindContext("/EMPLOYEES('1')"),
 				oCache = {},
-				mCacheQueryOptions = {};
+				mCacheQueryOptions = {},
+				oCreateSingleExpectation,
+				sDeepResourcePath = "deep/resource/path",
+				fnGetOriginalResourcePath;
 
 			this.oModel.bAutoExpandSelect = bAutoExpandSelect;
 
-			this.mock(_Cache).expects("createSingle")
+			oCreateSingleExpectation = this.mock(_Cache).expects("createSingle")
 				.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES('1')",
-					sinon.match.same(mCacheQueryOptions), bAutoExpandSelect)
+					sinon.match.same(mCacheQueryOptions), bAutoExpandSelect, sinon.match.func)
 				.returns(oCache);
 
 			// code under test
-			assert.strictEqual(oBinding.doCreateCache("EMPLOYEES('1')", mCacheQueryOptions),
+			assert.strictEqual(
+				oBinding.doCreateCache("EMPLOYEES('1')", mCacheQueryOptions, undefined,
+					sDeepResourcePath),
 				oCache);
+
+			fnGetOriginalResourcePath = oCreateSingleExpectation.args[0][4];
+
+			// code under test
+			assert.strictEqual(fnGetOriginalResourcePath(), sDeepResourcePath);
 		});
 	});
 

@@ -149,7 +149,7 @@ sap.ui.define([
 		oMetadataConverter.processor = function (sExpectedName, oElement) {
 			assert.strictEqual(oElement.nodeType, 1, "is an Element");
 			assert.strictEqual(oElement.localName, sExpectedName);
-			this[sExpectedName]++;
+			this[sExpectedName] += 1;
 		};
 
 		oMetadataConverter.traverse(oXML.documentElement, oSchemaConfig);
