@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides default renderer for control sap.ui.dt.test.report.Statistic
+// Provides default renderer for control sap.ui.dt.enablement.report.Statistic
 sap.ui.define(function() {
 	"use strict";
 
@@ -12,8 +12,7 @@ sap.ui.define(function() {
 	 * @version ${version}
 	 * @namespace
 	 */
-	var StatisticRenderer = {
-	};
+	var StatisticRenderer = {};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -40,4 +39,4 @@ sap.ui.define(function() {
 
 	return StatisticRenderer;
 
-}, /* bExport= */ true);
+});

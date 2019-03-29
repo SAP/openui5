@@ -1,33 +1,28 @@
 sap.ui.define([
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/dt/test/report/QUnit",
-	"sap/ui/dt/test/ElementEnablementTest",
 	"sap/m/Slider",
 	"sap/m/ResponsiveScale",
-	"sap/ui/rta/enablement/controlTest"
-], function(createAndAppendDiv, QUnitReport, ElementEnablementTest, Slider, ResponsiveScale, rtaControlEnablingCheck) {
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest"
+], function (
+	Slider,
+	ResponsiveScale,
+	elementDesigntimeTest,
+	elementActionTest
+) {
 	"use strict";
-	createAndAppendDiv("content");
 
-
-	var oElementEnablementTest = new ElementEnablementTest({
-		type: "sap.m.Slider",
-		create: function () {
-			return new Slider({
-				enableTickmarks: true,
-				scale: new ResponsiveScale({tickmarksBetweenLabels: 20})
-			});
-		}
-	});
-
-	return oElementEnablementTest.run()
-
-	.then(function (oData) {
-		new QUnitReport({
-			data: oData
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
+			type: "sap.m.Slider",
+			create: function () {
+				return new Slider({
+					enableTickmarks: true,
+					scale: new ResponsiveScale({tickmarksBetweenLabels: 20})
+				});
+			}
 		});
 	})
-
 	.then(function() {
 		var fnConfirmSliderIsInvisible = function (oAppComponent, oViewAfterAction, assert) {
 			assert.ok(oViewAfterAction.byId("slider").getVisible() === false, "then the Slider is invisible");
@@ -37,7 +32,7 @@ sap.ui.define([
 			assert.ok(oViewAfterAction.byId("slider").getVisible() === true, "then the Slider is visible");
 		};
 
-		rtaControlEnablingCheck("Checking the remove action for Slider", {
+		elementActionTest("Checking the remove action for Slider", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 			'<Slider id="slider" />' +
 			'</mvc:View>'
@@ -56,7 +51,7 @@ sap.ui.define([
 			afterRedo: fnConfirmSliderIsInvisible
 		});
 
-		rtaControlEnablingCheck("Checking the reveal action for a Slider", {
+		elementActionTest("Checking the reveal action for a Slider", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 			'<Slider id="slider" visible="false"/>' +
 			'</mvc:View>'
@@ -70,5 +65,4 @@ sap.ui.define([
 			afterRedo: fnConfirmSliderIsVisible
 		});
 	});
-
 });

@@ -2,18 +2,16 @@
  * ${copyright}
  */
 
-// Provides default renderer for control sap.ui.dt.test.report.Table
+// Provides default renderer for control sap.ui.dt.enablement.report.Table
 sap.ui.define(function() {
 	"use strict";
-
 
 	/**
 	 * @author SAP SE
 	 * @version ${version}
 	 * @namespace
 	 */
-	var TableRenderer = {
-	};
+	var TableRenderer = {};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -39,5 +37,4 @@ sap.ui.define(function() {
 	};
 
 	return TableRenderer;
-
-}, /* bExport= */ true);
+});

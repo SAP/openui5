@@ -1,42 +1,30 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/rta/enablement/controlTest",
-	"sap/ui/dt/test/report/QUnit",
-	"sap/ui/dt/test/ElementEnablementTest",
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest",
 	"sap/m/changeHandler/CombineButtons",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/Change",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer"
-], function(
-	createAndAppendDiv,
-	rtaControlEnablingCheck,
-	QUnitReport,
-	ElementEnablementTest,
+], function (
+	elementDesigntimeTest,
+	elementActionTest,
 	CombineButtons,
 	JsControlTreeModifier,
 	Change,
 	UIComponent,
 	ComponentContainer
 ) {
+	"use strict";
 
-	'use strict';
-	createAndAppendDiv("content");
-
-	var oElementEnablementTest = new ElementEnablementTest({
-		type: "sap.m.Button"
-	});
-
-	return oElementEnablementTest.run()
-
-	.then(function(oData) {
-		new QUnitReport({
-			data: oData
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
+			type: "sap.m.Button"
 		});
 	})
-
 	.then(function() {
 		// Combine Action
 		var fnConfirmButtonsAreCombined = function (oUiComponent,oViewAfterAction, assert) {
@@ -53,7 +41,7 @@ sap.ui.define([
 			);
 		};
 
-		rtaControlEnablingCheck("Checking the combine action for sap.m.Button", {
+		elementActionTest("Checking the combine action for sap.m.Button", {
 			jsOnly : true,
 			xmlView :
 			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
@@ -102,7 +90,7 @@ sap.ui.define([
 				"then the control has been renamed to the old value (Option 1)");
 		};
 
-		rtaControlEnablingCheck("Checking the rename action for a Button", {
+		elementActionTest("Checking the rename action for a Button", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">"' +
 			'<m:Button text="Option 1" id="button" />' +
 			'</mvc:View>'
@@ -131,7 +119,7 @@ sap.ui.define([
 			assert.strictEqual(oViewAfterAction.byId("button").getVisible(), true, "then the Button element is visible");
 		};
 
-		rtaControlEnablingCheck("Checking the remove action for Button", {
+		elementActionTest("Checking the remove action for Button", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">"' +
 			'<m:Button text="Option 1" id="button" />' +
 			'</mvc:View>'
@@ -150,7 +138,7 @@ sap.ui.define([
 			afterRedo: fnConfirmButtonIsInvisible
 		});
 
-		rtaControlEnablingCheck("Checking the reveal action for a Button", {
+		elementActionTest("Checking the reveal action for a Button", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">"' +
 			'<m:Button text="Option 1" id="button" visible="false"/>' +
 			'</mvc:View>'
@@ -215,7 +203,7 @@ sap.ui.define([
 					component : this.oUiComponent
 				});
 
-				this.oUiComponentContainer.placeAt("content");
+				this.oUiComponentContainer.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
 

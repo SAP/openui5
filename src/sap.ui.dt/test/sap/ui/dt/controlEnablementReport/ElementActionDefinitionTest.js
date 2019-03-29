@@ -2,25 +2,25 @@
  * ${copyright}
  */
 
-// Provides class sap.ui.dt.test.ElementEnablementTest.
 sap.ui.define([
 	'sap/ui/base/ManagedObject',
-	'sap/ui/dt/test/Element',
 	'sap/ui/fl/registry/ChangeRegistry',
 	"sap/base/util/ObjectPath"
-],
-function(ManagedObject, ElementTest, ChangeRegistry, ObjectPath) {
+], function (
+	ManagedObject,
+	ChangeRegistry,
+	ObjectPath
+) {
 	"use strict";
 
-
 	/**
-	 * Constructor for an ElementEnablementTest.
+	 * Constructor for an ElementActionDefinitionTest.
 	 *
 	 * @param {string} [sId] id for the new object, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new object
 	 *
 	 * @class
-	 * The ElementEnablementTest class allows to create a design time test
+	 * The ElementActionDefinitionTest class allows to create a design time test
 	 * which tests a given element on compatibility with the sap.ui.dt.DesignTime.
 	 * @extends sap.ui.base.ManagedObject
 	 *
@@ -29,11 +29,8 @@ function(ManagedObject, ElementTest, ChangeRegistry, ObjectPath) {
 	 *
 	 * @constructor
 	 * @private
-	 * @since 1.48
-	 * @alias sap.ui.dt.test.ElementEnablementTest2
-	 * @experimental Since 1.48. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
-	var ElementEnablementTest2 = ManagedObject.extend("sap.ui.dt.test.ElementEnablementTest2", /** @lends sap.ui.dt.test.ElementEnablementTest.prototype */ {
+	var ElementActionDefinitionTest = ManagedObject.extend("controlEnablementReport.ElementActionDefinitionTest", /** @lends sap.ui.dt.test.ElementActionDefinitionTest.prototype */ {
 		metadata : {
 			// ---- object ----
 
@@ -47,30 +44,11 @@ function(ManagedObject, ElementTest, ChangeRegistry, ObjectPath) {
 		}
 	});
 
-
-	/**
-	 * Called when the ElementEnablementTest is initialized
-	 * @protected
-	 */
-	ElementEnablementTest2.prototype.init = function() {
-
-	};
-
-
-	/**
-	 * Called when the ElementEnablementTest is destroyed
-	 * @protected
-	 */
-	ElementEnablementTest2.prototype.exit = function() {
-
-	};
-
-
 	/**
 	 * @return {Promise} A promise providing the test results.
 	 * @override
 	 */
-	ElementEnablementTest2.prototype.run = function() {
+	ElementActionDefinitionTest.prototype.run = function() {
 		return this._setup().then(function(oData) {
 
 			var sActions;
@@ -98,7 +76,7 @@ function(ManagedObject, ElementTest, ChangeRegistry, ObjectPath) {
 	/**
 	 * @private
 	 */
-	ElementEnablementTest2.prototype._setup = function() {
+	ElementActionDefinitionTest.prototype._setup = function() {
 		window.clearTimeout(this._iTimeout);
 		this._bNotSupported = false;
 		this._bError = false;
@@ -116,7 +94,7 @@ function(ManagedObject, ElementTest, ChangeRegistry, ObjectPath) {
 	/**
 	 * @private
 	 */
-	ElementEnablementTest2.prototype._testActions = function(oData) {
+	ElementActionDefinitionTest.prototype._testActions = function(oData) {
 
 		var sActionsResult;
 		var sPropagate;
@@ -183,6 +161,5 @@ function(ManagedObject, ElementTest, ChangeRegistry, ObjectPath) {
 		}
 	};
 
-
-	return ElementEnablementTest2;
-}, /* bExport= */ true);
+	return ElementActionDefinitionTest;
+});

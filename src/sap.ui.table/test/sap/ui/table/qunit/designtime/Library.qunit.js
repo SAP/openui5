@@ -3,7 +3,12 @@
 /**
  * General consistency checks on designtime metadata of controls in the sap.ui.table library
  */
-sap.ui.define(["sap/ui/dt/test/LibraryTest"], function(LibraryTest) {
+sap.ui.define([
+	"sap/ui/dt/enablement/libraryTest"
+], function(
+	libraryValidator
+) {
 	"use strict";
-	return LibraryTest("sap.ui.table", QUnit);
+
+	return libraryValidator("sap.ui.table", QUnit);
 });

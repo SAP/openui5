@@ -1,7 +1,6 @@
 sap.ui.define([
-	"sap/ui/dt/test/report/QUnit",
-	"sap/ui/rta/enablement/controlTest",
-	"sap/ui/dt/test/ElementEnablementTest",
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest",
 	"sap/m/Input",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormContainer",
@@ -9,48 +8,51 @@ sap.ui.define([
 	"sap/ui/layout/form/ResponsiveGridLayout",
 	"sap/m/Toolbar",
 	"sap/m/Title"
-], function (QUnitReport, rtaControlEnablingCheck, ElementEnablementTest, Input, Form, FormContainer, FormElement, ResponsiveGridLayout, Toolbar, Title) {
+], function (
+	elementDesigntimeTest,
+	elementActionTest,
+	Input,
+	Form,
+	FormContainer,
+	FormElement,
+	ResponsiveGridLayout,
+	Toolbar,
+	Title
+) {
 	"use strict";
 
-	var oElementEnablementTest = new ElementEnablementTest({
-		type: "sap.ui.layout.form.Form",
-		create: function () {
-			return new Form({
-				toolbar: new Toolbar({
-					content : [
-						new Title({text : "Title"})
-					]
-				}),
-				layout: new ResponsiveGridLayout(),
-				formContainers: [
-					new FormContainer({
-						formElements: [
-							new FormElement({
-								fields: [
-									new Input()
-								]
-							}),
-							new FormElement({
-								fields: [
-									new Input()
-								]
-							})
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
+			type: "sap.ui.layout.form.Form",
+			create: function () {
+				return new Form({
+					toolbar: new Toolbar({
+						content : [
+							new Title({text : "Title"})
 						]
-					})
-				]
-			});
-		}
-	});
-
-	return oElementEnablementTest.run()
-
-	.then(function(oData) {
-		var oReport = new QUnitReport({
-			data: oData
+					}),
+					layout: new ResponsiveGridLayout(),
+					formContainers: [
+						new FormContainer({
+							formElements: [
+								new FormElement({
+									fields: [
+										new Input()
+									]
+								}),
+								new FormElement({
+									fields: [
+										new Input()
+									]
+								})
+							]
+						})
+					]
+				});
+			}
 		});
-		oReport.destroy();
 	})
-
 	.then(function() {
 		// Create new formContainer
 		var fnConfirmFormContainerIsAddedWithNewTitle = function(oAppComponent, oViewAfterAction, assert) {
@@ -65,8 +67,8 @@ sap.ui.define([
 			assert.strictEqual(oViewAfterAction.byId("idForm").getFormContainers().length, 0, "then the new FormContainer control has been removed");
 		};
 
-		rtaControlEnablingCheck("Checking the createContainer action for Form control", {
-			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:m="sap.m">' +
+		elementActionTest("Checking the createContainer action for Form control", {
+			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form">' +
 				'<f:Form id="idForm">' +
 					'<f:layout>' +
 						'<f:ResponsiveGridLayout/>' +
@@ -104,7 +106,7 @@ sap.ui.define([
 				"then the control has been moved to the previous position");
 		};
 
-		rtaControlEnablingCheck("Checking the move action for Form control", {
+		elementActionTest("Checking the move action for Form control", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:m="sap.m">' +
 				'<f:Form id="idForm">' +
 					'<f:layout>' +

@@ -4,38 +4,25 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	'sap/ui/dt/test/Test',
+	'sap/ui/dt/enablement/Test',
 	'sap/ui/dt/DesignTime',
-	'sap/ui/dt/test/Element',
-	"sap/base/util/ObjectPath"
+	'sap/ui/dt/enablement/Util',
+	"sap/base/util/ObjectPath",
+	"sap/ui/dt/ElementOverlay",
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function(
 	jQuery,
 	Test,
 	DesignTime,
-	ElementTest,
-	ObjectPath
+	EnablementUtil,
+	ObjectPath,
+	ElementOverlay,
+	waitForThemeApplied,
+	sinon
 ) {
 	"use strict";
-
-	// Wait until the theme is changed
-	function themeChanged() {
-		return new Promise(function(resolve) {
-			function onChanged() {
-				sap.ui.getCore().detachThemeChanged(onChanged);
-				resolve();
-			}
-			sap.ui.getCore().attachThemeChanged(onChanged);
-		});
-	}
-	// Wait until the theme is applied
-	function whenThemeApplied() {
-		if (sap.ui.getCore().isThemeApplied()) {
-			return Promise.resolve();
-		} else {
-			return themeChanged();
-		}
-	}
 
 	/**
 	 * Constructor for an ElementEnablementTest.
@@ -81,6 +68,8 @@ function(
 		}
 	});
 
+	var iStubCounter = 0;
+	var oMutationObserverStub;
 
 	/**
 	 * Called when the ElementEnablementTest is initialized
@@ -91,6 +80,11 @@ function(
 		this._aAggregatedInfoResult = null;
 		this._sAggregation = null;
 		this._$TestAreaDomRef = null;
+
+		if (iStubCounter === 0) {
+			oMutationObserverStub = sinon.stub(ElementOverlay.prototype, "_subscribeToMutationObserver");
+		}
+		iStubCounter++;
 	};
 
 
@@ -101,6 +95,10 @@ function(
 	ElementEnablementTest.prototype.exit = function() {
 		if (this._oDesignTime) {
 			this._oDesignTime.destroy();
+		}
+		iStubCounter--;
+		if (iStubCounter === 0) {
+			oMutationObserverStub.restore();
 		}
 		window.clearTimeout(this._iTimeout);
 		this._oElement.destroy();
@@ -181,8 +179,8 @@ function(
 		this._bNoRenderer = false;
 		this._bErrorDuringRendering = false;
 
-		return new Promise(function(fnResolve, fnReject) {
-			whenThemeApplied().then(function() {
+		return new Promise(function(fnResolve) {
+			waitForThemeApplied().then(function() {
 				this._oElement = this._createElement();
 
 				try {
@@ -253,7 +251,7 @@ function(
 				Test.STATUS.ERROR
 			);
 		} else {
-			var mAggregationsTestInfo = ElementTest.getAggregationsInfo(this._oElement);
+			var mAggregationsTestInfo = EnablementUtil.getAggregationsInfo(this._oElement);
 
 			for (var sAggregationName in mAggregationsTestInfo) {
 
@@ -317,6 +315,5 @@ function(
 		}
 	};
 
-
 	return ElementEnablementTest;
-}, /* bExport= */ true);
+});

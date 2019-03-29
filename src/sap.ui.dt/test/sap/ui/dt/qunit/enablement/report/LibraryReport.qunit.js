@@ -1,14 +1,14 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/dt/test/LibraryEnablementTest",
+	"sap/ui/dt/enablement/report/LibraryReport",
 	"dt/control/SimpleScrollControl",
 	"sap/ui/thirdparty/sinon-4",
 	// ensure the test library is loaded so it can be used in the library enablement test
 	"sap/ui/testLibrary/library"
 ],
 function (
-	LibraryEnablementTest,
+	LibraryReport,
 	SimpleScrollControl,
 	sinon
 ) {
@@ -22,7 +22,7 @@ function (
 			this.fnSpyCreate = sinon.spy(fnCreate);
 
 			this.bCreateCalled = false;
-			this.oLibraryEnablementTest = new LibraryEnablementTest({
+			this.oLibraryReport = new LibraryReport({
 				libraryName : "sap.ui.testLibrary",
 				testData : {
 					"dt.control.SimpleScrollControl" : {
@@ -32,11 +32,11 @@ function (
 			});
 		},
 		afterEach: function() {
-			this.oLibraryEnablementTest.destroy();
+			this.oLibraryReport.destroy();
 		}
 	}, function () {
 		QUnit.test("when the test is started", function (assert) {
-			return this.oLibraryEnablementTest.run()
+			return this.oLibraryReport.run()
 			.then(function(oResult) {
 				assert.ok(oResult, "A result is returned");
 				assert.ok(oResult.children.length > 0, "Library Test was successfully performed");
@@ -46,7 +46,6 @@ function (
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
-
 });

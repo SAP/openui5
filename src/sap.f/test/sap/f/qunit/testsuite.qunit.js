@@ -149,22 +149,27 @@ sap.ui.define(function () {
 
 			"Designtime-DynamicPage": {
 				group: "Designtime",
+				sinon: false,
 				module: "./designtime/DynamicPage.qunit"
 			},
 			"Designtime-DynamicPageHeader": {
 				group: "Designtime",
+				sinon: false,
 				module: "./designtime/DynamicPageHeader.qunit"
 			},
 			"Designtime-DynamicPageTitle": {
 				group: "Designtime",
+				sinon: false,
 				module: "./designtime/DynamicPageTitle.qunit"
 			},
 			"Designtime-Library": {
 				group: "Designtime",
+				sinon: false,
 				module: "./designtime/Library.qunit"
 			},
 			"Designtime-SemanticPage": {
 				group: "Designtime",
+				sinon: false,
 				module: "./designtime/SemanticPage.qunit"
 			}
 		}

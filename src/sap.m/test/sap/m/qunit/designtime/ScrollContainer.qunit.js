@@ -1,33 +1,29 @@
 sap.ui.define([
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/dt/test/report/QUnit",
-	"sap/ui/dt/test/ElementEnablementTest",
 	"sap/m/ScrollContainer",
 	"sap/m/Text",
-	"sap/ui/rta/enablement/controlTest"
-], function(createAndAppendDiv, QUnitReport, ElementEnablementTest, ScrollContainer, Text, rtaControlEnablingCheck) {
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest"
+], function(
+	ScrollContainer,
+	Text,
+	elementDesigntimeTest,
+	elementActionTest
+) {
 	"use strict";
-	createAndAppendDiv("content");
 
-	var oElementEnablementTest = new ElementEnablementTest({
-		type: "sap.m.ScrollContainer",
-		create: function () {
-			return new ScrollContainer({
-				content: [
-					new Text({text: "Text"})
-				]
-			});
-		}
-	});
-
-	return oElementEnablementTest.run()
-
-	.then(function (oData) {
-		new QUnitReport({
-			data: oData
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
+			type: "sap.m.ScrollContainer",
+			create: function () {
+				return new ScrollContainer({
+					content: [
+						new Text({text: "Text"})
+					]
+				});
+			}
 		});
 	})
-
 	.then(function() {
 		// Move action
 		var fnConfirmElement1IsOn3rdPosition = function (oUiComponent, oViewAfterAction, assert) {
@@ -41,7 +37,7 @@ sap.ui.define([
 				"then the control has been moved to the previous position");
 		};
 
-		rtaControlEnablingCheck("Checking the move action for ScrollContainer control", {
+		elementActionTest("Checking the move action for ScrollContainer control", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 				'<ScrollContainer id="myContainer">' +
 					'<Text text="Text 1" id="text1" />' +
@@ -89,7 +85,7 @@ sap.ui.define([
 			assert.strictEqual(oViewAfterAction.byId("myContainer").getVisible(), true, "then the ScrollContainer element is visible");
 		};
 
-		rtaControlEnablingCheck("Checking the remove action for ScrollContainer", {
+		elementActionTest("Checking the remove action for ScrollContainer", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">"' +
 				'<ScrollContainer id="myContainer">' +
 					'<Text text="Text 1" id="text1" />' +
@@ -105,7 +101,7 @@ sap.ui.define([
 			afterRedo: fnConfirmScrollContainerIsInvisible
 		});
 
-		rtaControlEnablingCheck("Checking the reveal action for a ScrollContainer", {
+		elementActionTest("Checking the reveal action for a ScrollContainer", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">"' +
 				'<ScrollContainer id="myContainer" visible="false">' +
 					'<Text text="Text 1" id="text1" />' +
@@ -121,5 +117,4 @@ sap.ui.define([
 			afterRedo: fnConfirmScrollContainerIsVisible
 		});
 	});
-
 });
