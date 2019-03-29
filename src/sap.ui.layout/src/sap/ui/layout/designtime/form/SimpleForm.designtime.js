@@ -43,14 +43,15 @@ sap.ui.define([
 	function getSimpleFormFromChild(oControl) {
 		if (oControl.getMetadata().getName() === "sap.ui.layout.form.SimpleForm") {
 			return oControl;
-		} else {
+		} else if (oControl.getParent()) {
 			return getSimpleFormFromChild(oControl.getParent());
 		}
 	}
 
 	function checkContentForStableIds(oControl) {
 		var oSimpleForm = getSimpleFormFromChild(oControl);
-		return oSimpleForm.getContent().every(function(oContent) {
+		// this function is also invoked when a field is removed, then we won't find the SimpleForm
+		return oSimpleForm && oSimpleForm.getContent().every(function(oContent) {
 			return FlexUtils.checkControlId(oContent);
 		});
 	}
