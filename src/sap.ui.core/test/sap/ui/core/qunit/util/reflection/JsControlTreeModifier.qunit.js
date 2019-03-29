@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	'sap/m/Button',
+	'sap/m/Label',
 	'sap/m/Page',
 	'sap/m/QuickViewPage',
 	'sap/ui/core/util/reflection/JsControlTreeModifier',
@@ -14,6 +15,7 @@ sap.ui.define([
 ],
 function(
 	Button,
+	Label,
 	Page,
 	QuickViewPage,
 	JsControlTreeModifier,
@@ -427,6 +429,17 @@ function(
 			},
 			/TypeError/,
 			"then passing non JSON data will throw a message");
+
+		});
+
+		QUnit.test("when modifying association", function(assert) {
+			var sID = "SOME_ID";
+			this.oControl = new Label();
+			var oSomeObject = new Button(sID);
+			this.oControl.addDependent(oSomeObject); //for later cleanup
+
+			JsControlTreeModifier.setAssociation(this.oControl, "labelFor", oSomeObject);
+			assert.strictEqual(JsControlTreeModifier.getAssociation(this.oControl, "labelFor"), sID, "then association got set");
 
 		});
 	});

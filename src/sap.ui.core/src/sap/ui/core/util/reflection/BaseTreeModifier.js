@@ -524,6 +524,32 @@ sap.ui.define([
 		getControlType: function (vControl) {},
 
 		/**
+		 * See {@link sap.ui.base.ManagedObject#setAssociation} method
+		 *
+		 * @param {sap.ui.base.ManagedObject | Element}
+		 *          vParent The control which has the association
+		 * @param {string}
+		 *          sName Association name
+		 * @param {string | sap.ui.base.ManagedObject| Element}
+		 *          sId the ID of the managed object that is set as an association, or the managed object or XML node itself or null
+		 * @public
+		 */
+		setAssociation: function (vParent, sName, sId) {},
+
+		/**
+		 * See {@link sap.ui.base.ManagedObject#getAssociation} method
+		 *
+		 * @param {sap.ui.base.ManagedObject | Element}
+		 *          vParent The control which has the association
+		 * @param {string}
+		 *          sName Association name
+		 *
+		 * @returns {string | string[]} the ID of the associated managed object or an array of such IDs; may be null if the association has not been populated
+		 * @public
+		 */
+		getAssociation: function (vParent, sName) {},
+
+		/**
 		 * See {@link sap.ui.base.ManagedObjectMetadata#getAllAggregations} method
 		 *
 		 * @param {sap.ui.base.ManagedObject | Element} vControl Control representation

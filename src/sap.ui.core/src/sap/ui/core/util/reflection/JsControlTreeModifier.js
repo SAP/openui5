@@ -229,6 +229,38 @@ sap.ui.define([
 			return oControl && oControl.getMetadata().getName();
 		},
 
+		/**
+		 * See {@link sap.ui.base.ManagedObject#setAssociation} method
+		 *
+		 * @param {sap.ui.base.ManagedObject}
+		 *          vParent The control which has the association
+		 * @param {string}
+		 *          sName Association name
+		 * @param {string | sap.ui.base.ManagedObject}
+		 *          sId the ID of the managed object that is set as an association, or the managed object or XML node itself or null
+		 * @public
+		 */
+		setAssociation: function (vParent, sName, sId) {
+			var oMetadata = vParent.getMetadata().getAssociation(sName);
+			oMetadata.set(vParent, sId);
+		},
+
+		/**
+		 * See {@link sap.ui.base.ManagedObject#getAssociation} method
+		 *
+		 * @param {sap.ui.base.ManagedObject}
+		 *          vParent The control which has the association
+		 * @param {string}
+		 *          sName Association name
+		 *
+		 * @returns {string | string[]} the ID of the associated managed object or an array of such IDs; may be null if the association has not been populated
+		 * @public
+		 */
+		getAssociation: function (vParent, sName) {
+			var oMetadata = vParent.getMetadata().getAssociation(sName);
+			return oMetadata.get(vParent);
+		},
+
 		getAllAggregations: function (oParent) {
 			return oParent.getMetadata().getAllAggregations();
 		},

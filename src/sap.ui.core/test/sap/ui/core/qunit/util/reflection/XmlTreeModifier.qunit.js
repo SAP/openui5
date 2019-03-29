@@ -321,14 +321,44 @@ function(
 			var sStringifiedData = oControl.getAttribute("crossAppNavCallback");
 			assert.strictEqual(sStringifiedData, '\\{"key2":2\\}', "returns json value stringified and escaped");
 		});
-		QUnit.test("applySettings", function (assert) {
-			var oVBox = XmlTreeModifier._children(this.oXmlView)[0];
+
+		function getVisibleLabel(oXmlView){
+			var oVBox = XmlTreeModifier._children(oXmlView)[0];
 			var aChildNodes = XmlTreeModifier._children(oVBox);
 
-			var oVisibleLabel = aChildNodes[1];
-			XmlTreeModifier.applySettings(oVisibleLabel, {text: "Test", design: "Bold" });
+			return aChildNodes[1];
+		}
+
+		QUnit.test("applySettings", function (assert) {
+			var oVisibleLabel = getVisibleLabel(this.oXmlView);
+
+			XmlTreeModifier.applySettings(oVisibleLabel, {
+				design: "Bold", //simple property type string
+				required: true, //property type is not string
+				labelFor: this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT //association
+			});
 			assert.strictEqual(XmlTreeModifier.getProperty(oVisibleLabel, "design"), "Bold", "the design value is changed from applySettings");
-			assert.strictEqual(XmlTreeModifier.getProperty(oVisibleLabel, "text"), "Test", "the text value is changed from applySettings");
+			assert.strictEqual(XmlTreeModifier.getProperty(oVisibleLabel, "required"), true, "the required value is changed from applySettings");
+
+			var sAssociatedControlId = XmlTreeModifier.getAssociation(oVisibleLabel, "labelFor");
+			assert.strictEqual(sAssociatedControlId, this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT);
+		});
+
+		QUnit.test("applySetting with association as object", function (assert) {
+			var oVisibleLabel = getVisibleLabel(this.oXmlView);
+			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
+			XmlTreeModifier.applySettings(oVisibleLabel, {
+				labelFor: oControl //association
+			});
+			var sAssociatedControlId = XmlTreeModifier.getAssociation(oVisibleLabel, "labelFor");
+			assert.strictEqual(sAssociatedControlId, this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT);
+		});
+
+		QUnit.test("applySetting with property of type object", function (assert) {
+			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
+			var mData = { key2 : 2};
+			XmlTreeModifier.applySettings(oControl, {crossAppNavCallback: mData});
+			assert.deepEqual(XmlTreeModifier.getProperty(oControl, "crossAppNavCallback"), mData, "the property of type object returns in JSON notation");
 		});
 
 		QUnit.test("isPropertyInitial", function (assert) {
@@ -351,6 +381,22 @@ function(
 			assert.strictEqual(oVisibleLabel.getAttribute("visible"), null, "default value, property not in xml");
 		});
 
+		//label has single association labelFor
+		QUnit.test("setAssociation and removeAssociation works with single association and control id passed", function(assert) {
+			var oControl = getVisibleLabel(this.oXmlView);
+
+			XmlTreeModifier.setAssociation(oControl, "labelFor", this.HBOX_ID);
+			assert.strictEqual(XmlTreeModifier.getAssociation(oControl, "labelFor"), this.HBOX_ID);
+		});
+
+		QUnit.test("setAssociation works with single association and control instance passed", function(assert) {
+			var oControl = getVisibleLabel(this.oXmlView);
+			var oAssociatedControl = XmlTreeModifier._byId(this.HBOX_ID, this.oXmlView);
+
+			XmlTreeModifier.setAssociation(oControl, "labelFor", oAssociatedControl);
+			assert.strictEqual(XmlTreeModifier.getAssociation(oControl, "labelFor"), this.HBOX_ID, "associated control instance got converted to its ID");
+		});
+
 		QUnit.test("_byId finds the node specified", function (assert) {
 			var oExpectedHBox = XmlTreeModifier._children(this.oXmlView)[1];
 			oExpectedHBox.setAttributeNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.Internal/1", "id", true);
@@ -371,9 +417,12 @@ function(
 			assert.strictEqual(XmlTreeModifier.findIndexInParentAggregation(oTooltip), 0, "The function returned the correct index.");
 		});
 
+		function getButton(oXmlView) {
+			var oVBox = XmlTreeModifier._children(oXmlView)[3];
+			return oVBox.lastElementChild;
+		}
 		QUnit.test("findIndexInParentAggregation returns the correct value: case 2 - default aggregation only in xml tree", function (assert) {
-			var oVBox = XmlTreeModifier._children(this.oXmlView)[3];
-			var oButton = oVBox.lastElementChild;
+			var oButton = getButton(this.oXmlView);
 
 			assert.strictEqual(XmlTreeModifier.findIndexInParentAggregation(oButton), 2, "The function returned the correct index.");
 		});
