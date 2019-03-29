@@ -891,6 +891,7 @@ function(
 		var bVisible = !this._getSelectedView().isA("sap.m.SinglePlanningCalendarDayView");
 
 		this._getGrid()._getColumnHeaders().setVisible(bVisible);
+		this.toggleStyleClass("sapMSinglePCHiddenColHeaders", !bVisible);
 	};
 
 	/**
