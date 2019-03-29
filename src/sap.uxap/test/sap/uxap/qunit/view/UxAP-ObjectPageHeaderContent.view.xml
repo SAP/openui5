@@ -28,7 +28,8 @@
 					  showTitleInHeaderContent="true">
 		<headerTitle>
 			<ObjectPageHeader id="headerForTest"
-							  objectTitle="Denise Smith">
+							  objectTitle="Denise Smith"
+							  objectSubtitle="Senior Developer">
 			</ObjectPageHeader>
 		</headerTitle>
 		<headerContent>

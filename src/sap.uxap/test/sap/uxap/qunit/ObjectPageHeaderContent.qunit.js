@@ -69,6 +69,17 @@ function ($, Core, Label, Text, ObjectPageDynamicHeaderTitle, ObjectPageLayout, 
 		}
 	});
 
+	QUnit.test("Title and Subtitle IDs are correct", function (assert) {
+		var sId = "#UxAP-ObjectPageHeaderContent--headerForTest";
+
+		assert.strictEqual(jQuery(sId + "-title").length, 1, "Title in header ID is unique");
+		assert.strictEqual(jQuery(sId + "-title-content").length, 1, "Title in content ID is unique");
+		assert.strictEqual(jQuery(sId + "-innerTitle").length, 1, "Inner title in header ID is unique");
+		assert.strictEqual(jQuery(sId + "-innerTitle-content").length, 1, "Inner title in content ID is unique");
+		assert.strictEqual(jQuery(sId + "-subtitle").length, 1, "Subtitle in header ID is unique");
+		assert.strictEqual(jQuery(sId + "-subtitle-content").length, 1, "Subtitle in content ID is unique");
+	});
+
 	QUnit.test("indexOfHeaderContent", function (assert) {
 		assert.equal(this.contentView.byId("ObjectPageLayout").indexOfHeaderContent(Core.byId("UxAP-ObjectPageHeaderContent--testLink")), 0, "the Link inside the ContentHeader aggregation is on 0 position");
 	});
