@@ -9,6 +9,7 @@ sap.ui.define([
 
 		onInit: function () {
 			var oData = {
+				"SelectedProduct": "HT-1001",
 				"ProductCollection": [
 					{
 						"ProductId": "HT-1001",
