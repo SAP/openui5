@@ -1395,7 +1395,8 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype._modifySuggestionPicker = function () {
-		var that = this;
+		var that = this,
+			aTokens, bShowListWithTokens;
 
 		// on mobile the Input's suggestionList is used for displaying
 		// any suggestions or tokens related information
@@ -1407,7 +1408,9 @@ function(
 		this._oSuggPopover._oPopover.addContent(this._getTokensList());
 		this._oSuggPopover._oPopover
 			.attachBeforeOpen(function(){
-				that._manageListsVisibility(that._bShowListWithTokens);
+				aTokens = that.getTokens();
+				bShowListWithTokens =  aTokens.length ? true : false;
+				that._manageListsVisibility(bShowListWithTokens);
 				that._fillList();
 				that._updatePickerHeaderTitle();
 			})
