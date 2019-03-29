@@ -1194,4 +1194,32 @@ sap.ui.define([
 		assert.strictEqual(this.sut._oMasterNav.getPages()[0].getId(), "master1", "First page should be master1");
 		assert.strictEqual(this.sut._oDetailNav.getPages()[0].getId(), "master1", "First page should be master1");
 	});
+
+	QUnit.test("Test pages order in 'HideMode'" , function(assert) {
+		//arrange
+		var oSystem = {
+			desktop: false,
+			phone: true,
+			tablet: false
+		};
+
+		this.stub(Device, "system", oSystem);
+
+		this.sut = new SplitContainer({
+			mode:"HideMode",
+			detailPages : new Page("detailMobile", {
+				title : "detail"
+			}),
+			masterPages : [
+				new Page("master1Mobile", { title : "master1Mobile"}),
+				new Page("master2Mobile", { title : "master2Mobile"})
+			]
+		});
+		this.sut.onBeforeRendering();
+
+		//assert
+		assert.strictEqual(this.sut._oMasterNav.getInitialPage(), "detailMobile", "First page should be detail");
+
+	});
+
 });
