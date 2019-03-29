@@ -469,7 +469,9 @@ sap.ui.define([
 		return this.getChangesForComponent(mPropertyBag).then(function(aChanges) {
 			return aChanges.filter(isChangeValidForVariant);
 		}).then(function(aChanges) {
-			this._mVariantsChanges[sStableId] = {};
+			if (!this._mVariantsChanges[sStableId]) {
+				this._mVariantsChanges[sStableId] = {};
+			}
 			if (aChanges && aChanges.length === 0) {
 				return LRepConnector.isFlexServiceAvailable().then(function (bStatus) {
 					if (bStatus === false) {
