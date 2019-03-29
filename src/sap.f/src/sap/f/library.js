@@ -27,10 +27,14 @@ sap.ui.define(["sap/ui/base/DataType",
 			"sap.f.IDynamicPageStickyContent"
 		],
 		types: [
+			"sap.f.AvatarImageFitType",
+			"sap.f.AvatarShape",
+			"sap.f.AvatarSize",
+			"sap.f.AvatarType",
 			"sap.f.cards.HeaderPosition",
-			"sap.f.LayoutType",
 			"sap.f.DynamicPageTitleArea",
-			"sap.f.DynamicPageTitleShrinkRatio"
+			"sap.f.DynamicPageTitleShrinkRatio",
+			"sap.f.LayoutType"
 		],
 		controls: [
 			"sap.f.Avatar",
@@ -48,6 +52,7 @@ sap.ui.define(["sap/ui/base/DataType",
 			"sap.f.ShellBar"
 		],
 		elements: [
+			"sap.f.DynamicPageAccessibleLandmarkInfo",
 			"sap.f.GridContainerItemLayoutData",
 			"sap.f.semantic.AddAction",
 			"sap.f.semantic.CloseAction",
@@ -60,6 +65,7 @@ sap.ui.define(["sap/ui/base/DataType",
 			"sap.f.semantic.FlagAction",
 			"sap.f.semantic.FooterMainAction",
 			"sap.f.semantic.FullScreenAction",
+			"sap.f.semantic.MainAction",
 			"sap.f.semantic.MessagesIndicator",
 			"sap.f.semantic.NegativeAction",
 			"sap.f.semantic.PositiveAction",

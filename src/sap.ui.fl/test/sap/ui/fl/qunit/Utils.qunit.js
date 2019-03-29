@@ -4,10 +4,12 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Variant",
+	"sap/ui/fl/library",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/layout/HorizontalLayout",
 	"sap/m/Button",
 	"sap/ui/core/Component",
+	"sap/ui/core/UIComponent",
 	"sap/ui/thirdparty/hasher",
 	"sap/base/Log",
 	"sap/base/util/UriParameters",
@@ -18,10 +20,12 @@ function(
 	Utils,
 	Change,
 	Variant,
+	library,
 	VerticalLayout,
 	HorizontalLayout,
 	Button,
 	Component,
+	UIComponent,
 	hasher,
 	Log,
 	UriParameters,
@@ -29,6 +33,8 @@ function(
 	jQuery
 ){
 	"use strict";
+
+	var Scenario = library.Scenario;
 
 	var sandbox = sinon.sandbox.create();
 
@@ -621,8 +627,8 @@ function(
 		});
 
 		QUnit.test("getAppComponentForControl can determine the smart template special case", function (assert) {
-			var oComponent = new sap.ui.core.UIComponent();
-			var oAppComponent = new sap.ui.core.UIComponent();
+			var oComponent = new UIComponent();
+			var oAppComponent = new UIComponent();
 			oComponent.getAppComponent = function () {
 				return oAppComponent;
 			};
@@ -633,7 +639,7 @@ function(
 		});
 
 		QUnit.test("getAppComponentForControl can determine that the passed control is already the app component", function (assert) {
-			var oComponent = new sap.ui.core.UIComponent({
+			var oComponent = new UIComponent({
 				manifest: {
 					"sap.app": {
 						type: "application"
@@ -647,8 +653,8 @@ function(
 		});
 
 		QUnit.test("getAppComponentForControl can determine the OVP special case", function (assert) {
-			var oComponent = new sap.ui.core.UIComponent();
-			var oAppComponent = new sap.ui.core.UIComponent();
+			var oComponent = new UIComponent();
+			var oAppComponent = new UIComponent();
 			oComponent.oComponentData = {appComponent: oAppComponent};
 
 			var oDeterminedAppComponent = Utils.getAppComponentForControl(oComponent);
@@ -657,7 +663,7 @@ function(
 		});
 
 		QUnit.test("getAppComponentForControl returns the component if no Manifest is available", function (assert) {
-			var oComponent = new sap.ui.core.UIComponent();
+			var oComponent = new UIComponent();
 
 			var oDeterminedAppComponent = Utils.getAppComponentForControl(oComponent);
 
@@ -665,7 +671,7 @@ function(
 		});
 
 		QUnit.test("getAppComponentForControl searches further for the app component if the passed component is not of the type application", function (assert) {
-			var oComponent = new sap.ui.core.UIComponent();
+			var oComponent = new UIComponent();
 			var oParentComponent = {};
 			var oSapAppEntry = {
 				type: "definitelyNotAnApplication"
@@ -1904,7 +1910,7 @@ function(
 			var oAppVersions = Utils.getValidAppVersions({
 				appVersion: sCreationVersion,
 				developerMode: true,
-				scenario: sap.ui.fl.Scenario.VersionedAppVariant
+				scenario: Scenario.VersionedAppVariant
 			});
 			assert.equal(oAppVersions.creation, sCreationVersion, "the 'creation' is filled correctly");
 			assert.equal(oAppVersions.from, sCreationVersion, "the 'from' is filled correctly");
@@ -1916,7 +1922,7 @@ function(
 			var oAppVersions = Utils.getValidAppVersions({
 				appVersion: sCreationVersion,
 				developerMode: true,
-				scenario: sap.ui.fl.Scenario.AppVariant
+				scenario: Scenario.AppVariant
 			});
 			assert.equal(oAppVersions.creation, sCreationVersion, "the 'creation' is filled correctly");
 			assert.equal(oAppVersions.from, sCreationVersion, "the 'from' is filled correctly");
@@ -1928,7 +1934,7 @@ function(
 			var oAppVersions = Utils.getValidAppVersions({
 				appVersion: sCreationVersion,
 				developerMode: true,
-				scenario: sap.ui.fl.Scenario.AdaptationProject
+				scenario: Scenario.AdaptationProject
 			});
 			assert.equal(oAppVersions.creation, sCreationVersion, "the 'creation' is filled correctly");
 			assert.equal(oAppVersions.from, sCreationVersion, "the 'from' is filled correctly");
@@ -1948,19 +1954,19 @@ function(
 
 		QUnit.test("determination of the necessity of the validAppVersion.to parameter in case of a developer mode and a versioned app variant scenario", function (assert) {
 			var sCreationVersion = "1.0.0";
-			var bIsValidAppVersionToRequired = Utils._isValidAppVersionToRequired(sCreationVersion, true, sap.ui.fl.Scenario.VersionedAppVariant);
+			var bIsValidAppVersionToRequired = Utils._isValidAppVersionToRequired(sCreationVersion, true, Scenario.VersionedAppVariant);
 			assert.equal(bIsValidAppVersionToRequired, true, "the necessity of 'to' correct defined");
 		});
 
 		QUnit.test("determination of the necessity of the validAppVersion.to parameter in case of a developer mode and a app variant scenario", function (assert) {
 			var sCreationVersion = "1.0.0";
-			var bIsValidAppVersionToRequired = Utils._isValidAppVersionToRequired(sCreationVersion, true, sap.ui.fl.Scenario.AppVariant);
+			var bIsValidAppVersionToRequired = Utils._isValidAppVersionToRequired(sCreationVersion, true, Scenario.AppVariant);
 			assert.equal(bIsValidAppVersionToRequired, false, "the necessity of 'to' correct defined");
 		});
 
 		QUnit.test("determination of the necessity of the validAppVersion.to parameter in case of a developer mode and a adaptation project scenario", function (assert) {
 			var sCreationVersion = "1.0.0";
-			var bIsValidAppVersionToRequired = Utils._isValidAppVersionToRequired(sCreationVersion, true, sap.ui.fl.Scenario.AdaptationProject);
+			var bIsValidAppVersionToRequired = Utils._isValidAppVersionToRequired(sCreationVersion, true, Scenario.AdaptationProject);
 			assert.equal(bIsValidAppVersionToRequired, false, "the necessity of 'to' correct defined");
 		});
 	});
@@ -1972,69 +1978,69 @@ function(
 		},
 		afterEach: function() {}
 	}, function() {
-		QUnit.test("scenario " + sap.ui.fl.Scenario.VersionedAppVariant + ": New VersionedAppVariant", function(assert) {
+		QUnit.test("scenario " + Scenario.VersionedAppVariant + ": New VersionedAppVariant", function(assert) {
 			this.sErrorText += "in a versioned app variant scenario you additionally need a project ID";
 			var sLrepRootNamespace = "apps/baseId/appVariants/projectId/";
-			assert.equal(Utils.buildLrepRootNamespace("baseId", sap.ui.fl.Scenario.VersionedAppVariant, "projectId"), sLrepRootNamespace, "then the root namespace got build correctly");
+			assert.equal(Utils.buildLrepRootNamespace("baseId", Scenario.VersionedAppVariant, "projectId"), sLrepRootNamespace, "then the root namespace got build correctly");
 			assert.throws(
-				function() {Utils.buildLrepRootNamespace("", sap.ui.fl.Scenario.VersionedAppVariant, "projectId");},
+				function() {Utils.buildLrepRootNamespace("", Scenario.VersionedAppVariant, "projectId");},
 				Error(this.sNoBaseIdErrorText),
 				"without base id calling 'buildLrepRootNamespace' for app variants throws an error"
 			);
 			assert.throws(
-				function() {Utils.buildLrepRootNamespace("baseId", sap.ui.fl.Scenario.VersionedAppVariant, "");},
+				function() {Utils.buildLrepRootNamespace("baseId", Scenario.VersionedAppVariant, "");},
 				Error(this.sErrorText),
 				"without project id calling 'buildLrepRootNamespace' for app variants throws an error"
 			);
 		});
 
-		QUnit.test("scenario " + sap.ui.fl.Scenario.AppVariant + ": New AppVariant", function(assert) {
+		QUnit.test("scenario " + Scenario.AppVariant + ": New AppVariant", function(assert) {
 			this.sErrorText += "in an app variant scenario you additionally need a project ID";
 			var sLrepRootNamespace = "apps/baseId/appVariants/projectId/";
-			assert.equal(Utils.buildLrepRootNamespace("baseId", sap.ui.fl.Scenario.AppVariant, "projectId"), sLrepRootNamespace, "then the root namespace got build correctly");
+			assert.equal(Utils.buildLrepRootNamespace("baseId", Scenario.AppVariant, "projectId"), sLrepRootNamespace, "then the root namespace got build correctly");
 			assert.throws(
-				function() {Utils.buildLrepRootNamespace("", sap.ui.fl.Scenario.AppVariant, "projectId");},
+				function() {Utils.buildLrepRootNamespace("", Scenario.AppVariant, "projectId");},
 				Error(this.sNoBaseIdErrorText),
 				"without base id calling 'buildLrepRootNamespace' for app variants throws an error"
 			);
 			assert.throws(
-				function() {Utils.buildLrepRootNamespace("baseId", sap.ui.fl.Scenario.AppVariant, "");},
+				function() {Utils.buildLrepRootNamespace("baseId", Scenario.AppVariant, "");},
 				Error(this.sErrorText),
 				"without project id calling 'buildLrepRootNamespace' for app variants throws an error"
 			);
 		});
 
-		QUnit.test("scenario " + sap.ui.fl.Scenario.AdaptationProject + ": Customer adapts existing app", function(assert) {
+		QUnit.test("scenario " + Scenario.AdaptationProject + ": Customer adapts existing app", function(assert) {
 			this.sErrorText += "in a adaptation project scenario you additionally need a project ID";
 			var sLrepRootNamespace = "apps/baseId/adapt/projectId/";
-			assert.equal(Utils.buildLrepRootNamespace("baseId", sap.ui.fl.Scenario.AdaptationProject, "projectId"), sLrepRootNamespace, "then the root namespace got build correctly");
+			assert.equal(Utils.buildLrepRootNamespace("baseId", Scenario.AdaptationProject, "projectId"), sLrepRootNamespace, "then the root namespace got build correctly");
 			assert.throws(
-				function() {Utils.buildLrepRootNamespace("", sap.ui.fl.Scenario.AdaptationProject, "projectId");},
+				function() {Utils.buildLrepRootNamespace("", Scenario.AdaptationProject, "projectId");},
 				Error(this.sNoBaseIdErrorText),
 				"without base id calling 'buildLrepRootNamespace' for customer adaptations throws an error"
 			);
 			assert.throws(
-				function() {Utils.buildLrepRootNamespace("baseId", sap.ui.fl.Scenario.AdaptationProject, "");},
+				function() {Utils.buildLrepRootNamespace("baseId", Scenario.AdaptationProject, "");},
 				Error(this.sErrorText),
 				"without project id calling 'buildLrepRootNamespace' for customer adaptations throws an error"
 			);
 		});
 
-		QUnit.test("scenario " + sap.ui.fl.Scenario.FioriElementsFromScratch + ": Customer adapts new Fiori elements app", function(assert) {
+		QUnit.test("scenario " + Scenario.FioriElementsFromScratch + ": Customer adapts new Fiori elements app", function(assert) {
 			var sLrepRootNamespace = "apps/baseId/";
-			assert.equal(Utils.buildLrepRootNamespace("baseId", sap.ui.fl.Scenario.FioriElementsFromScratch), sLrepRootNamespace, "then the root namespace got build correctly");
+			assert.equal(Utils.buildLrepRootNamespace("baseId", Scenario.FioriElementsFromScratch), sLrepRootNamespace, "then the root namespace got build correctly");
 			assert.throws(
-				function() {Utils.buildLrepRootNamespace("", sap.ui.fl.Scenario.FioriElementsFromScratch);},
+				function() {Utils.buildLrepRootNamespace("", Scenario.FioriElementsFromScratch);},
 				Error(this.sNoBaseIdErrorText),
 				"without base id calling 'buildLrepRootNamespace' for adaptations on a new app throws an error"
 			);
 		});
 
-		QUnit.test("scenario " + sap.ui.fl.Scenario.UiAdaptation + ": Customer adapts existing app using RTA", function(assert) {
+		QUnit.test("scenario " + Scenario.UiAdaptation + ": Customer adapts existing app using RTA", function(assert) {
 			var sLrepRootNamespace = "apps/baseId/";
-			assert.equal(Utils.buildLrepRootNamespace("baseId", sap.ui.fl.Scenario.UiAdaptation), sLrepRootNamespace, "then the root namespace got build correctly");
+			assert.equal(Utils.buildLrepRootNamespace("baseId", Scenario.UiAdaptation), sLrepRootNamespace, "then the root namespace got build correctly");
 			assert.throws(
-				function() {Utils.buildLrepRootNamespace("", sap.ui.fl.Scenario.UiAdaptation);},
+				function() {Utils.buildLrepRootNamespace("", Scenario.UiAdaptation);},
 				Error(this.sNoBaseIdErrorText),
 				"without base id calling 'buildLrepRootNamespace' for adaptations on a new app throws an error"
 			);

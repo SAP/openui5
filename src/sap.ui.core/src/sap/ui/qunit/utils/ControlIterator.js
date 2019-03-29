@@ -70,6 +70,7 @@ sap.ui.define(['sap/ui/core/Core', "sap/base/util/ObjectPath", "sap/base/Log", "
 		"sap.ui.core.mvc.TemplateView",
 		"sap.ui.core.mvc.View",
 		"sap.ui.core.tmpl.Template",
+		"sap.ui.core.util.Export",
 		"sap.m.ColumnHeaderPopover",
 		"sap.m.FacetFilterItem",
 		"sap.m.LightBox",
