@@ -35,7 +35,6 @@ sap.ui.define([
 			When.onTheCreateNewSalesOrderDialog.confirmDialog();
 			When.onTheMainPage.pressSaveSalesOrdersButton();
 			When.onTheSuccessInfo.confirm();
-			When.onTheMainPage.rememberCreatedSalesOrder();
 			Then.onTheMainPage.checkTableLength(0, "SO_2_SOITEM");
 
 			// Create a new sales order line item; no refresh allowed; cancel created item
@@ -139,7 +138,6 @@ sap.ui.define([
 			When.onTheCreateNewSalesOrderDialog.confirmDialog();
 			When.onTheMainPage.pressSaveSalesOrdersButton();
 			When.onTheSuccessInfo.confirm();
-			When.onTheMainPage.rememberCreatedSalesOrder();
 			// test: refresh single reads expands
 			When.onTheMainPage.pressRefreshSelectedSalesOrdersButton();
 			Then.onTheMainPage.checkCompanyName(0, "SAP");
@@ -151,7 +149,7 @@ sap.ui.define([
 			When.onTheMainPage.pressRefreshSelectedSalesOrdersButton();
 			Then.onTheMainPage.checkTableLength(bRealOData ? 1 : 0, "SO_2_SOITEM");
 
-			// delete all created SalesOrders again
+			// delete created sales orders
 			When.onAnyPage.cleanUp("SalesOrderList");
 			Then.onAnyPage.checkLog(aExpectedErrors);
 			Then.onAnyPage.analyzeSupportAssistant();

@@ -12,9 +12,10 @@ sap.ui.define([
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/Interactable",
-	"sap/ui/test/matchers/Properties"
+	"sap/ui/test/matchers/Properties",
+	"sap/ui/test/TestUtils"
 ], function (MessageBox, Helper, Filter, FilterOperator, ODataUtils, QUnitUtils, Opa5, EnterText,
-		Press, Interactable, Properties) {
+		Press, Interactable, Properties, TestUtils) {
 	"use strict";
 	var COMPANY_NAME_COLUMN_INDEX = 1,
 		GROSS_AMOUNT_COLUMN_INDEX = 2,
@@ -238,7 +239,25 @@ sap.ui.define([
 					});
 				},
 				deleteSelectedSalesOrder : function () {
-					return pressButton(this, "deleteSalesOrder");
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrderList",
+						success : function (oSalesOrderTable) {
+							var sSalesOrderID,
+								oSelected = oSalesOrderTable.getSelectedItem().getBindingContext();
+							if (TestUtils.isRealOData() && oSelected.isTransient() === false) {
+								sSalesOrderID = oSelected.getProperty("SalesOrderID");
+							}
+							return pressButton(this, "deleteSalesOrder").then(function() {
+								if (sSalesOrderID &&
+									!(oSelected in oSalesOrderTable.getBinding("items")
+										.getCurrentContexts())) {
+									delete sap.ui.test.Opa.getContext().mOrderIDs[sSalesOrderID];
+								}
+							});
+						},
+						viewName : sViewName
+					});
 				},
 				deleteSelectedSalesOrderLineItem : function () {
 					return pressButton(this, "deleteSalesOrderLineItem");
@@ -415,7 +434,24 @@ sap.ui.define([
 					return pressButton(this, "createSalesOrderLineItem");
 				},
 				pressCreateSalesOrdersButton : function () {
-					return pressButton(this, "createSalesOrder");
+					var oPromise = pressButton(this, "createSalesOrder");
+					if (TestUtils.isRealOData()) {
+						// remember created sales order for cleanup
+						return oPromise.then(function() {
+							var oCreated = sap.ui.getCore().byId(sViewName).byId("SalesOrderList")
+									.getItems()[0].getBindingContext();
+							oCreated.created().then(function () {
+								var mOrderIDs = sap.ui.test.Opa.getContext().mOrderIDs || {},
+									sSalesOrderID = oCreated.getProperty("SalesOrderID");
+								mOrderIDs[oCreated.getProperty("SalesOrderID")] = sSalesOrderID;
+								if (!sap.ui.test.Opa.getContext().mOrderIDs) {
+									sap.ui.test.Opa.getContext().mOrderIDs = mOrderIDs;
+								}
+								Opa5.assert.ok(true, "Remembered SalesOrderID: " + sSalesOrderID);
+							});
+						});
+					}
+					return oPromise;
 				},
 				pressDeleteBusinessPartnerButton : function () {
 					return pressButton(this, "deleteBusinessPartner");
@@ -474,24 +510,6 @@ sap.ui.define([
 							Opa5.assert.ok(true, "ValueHelp on Product.TypeCode pressed");
 						},
 						viewName : sViewName
-					});
-				},
-				rememberCreatedSalesOrder : function () {
-					return this.waitFor({
-						controlType : "sap.m.Text",
-						success : function () {
-							var oCore = sap.ui.getCore(),
-								sSalesOrderId = oCore.byId(sViewName).byId("SalesOrderList")
-									.getItems()[0].getCells()[ID_COLUMN_INDEX].getText();
-							if (!sap.ui.test.Opa.getContext().aOrderIds) {
-								sap.ui.test.Opa.getContext().aOrderIds = [];
-							}
-							if (sap.ui.test.Opa.getContext().aOrderIds.indexOf(sSalesOrderId) < 0) {
-								sap.ui.test.Opa.getContext().aOrderIds.push(sSalesOrderId);
-							}
-
-							Opa5.assert.ok(true, "SalesOrderID remembered:" + sSalesOrderId);
-						}
 					});
 				},
 				resetSalesOrderListChanges : function () {

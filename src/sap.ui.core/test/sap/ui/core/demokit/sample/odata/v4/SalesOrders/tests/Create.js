@@ -14,7 +14,6 @@ sap.ui.define([
 					level : Log.Level.ERROR,
 					message : "POST on 'SalesOrderList' failed; will be repeated automatically"
 				},
-				i,
 				sModifiedNote = "Modified by OPA",
 				bRealOData = TestUtils.isRealOData();
 
@@ -99,12 +98,11 @@ sap.ui.define([
 			When.onTheCreateNewSalesOrderDialog.confirmDialog();
 			Then.onTheMainPage.checkID(0, "");
 			When.onTheMainPage.pressSaveSalesOrdersButton();
-			Then.onTheSuccessInfo.checkMessage(/SalesOrder created: \d*, SAP/);
+			Then.onTheSuccessInfo.checkMessage(/SalesOrder created: \w+, SAP/);
 			When.onTheSuccessInfo.confirm();
 			if (!bRealOData) {
 				Then.onTheMainPage.checkSalesOrdersCount(11);
 			}
-			When.onTheMainPage.rememberCreatedSalesOrder();
 			When.onTheMainPage.pressRefreshSalesOrdersButton();
 			Then.onTheMainPage.checkID(0);
 
@@ -257,18 +255,9 @@ sap.ui.define([
 				When.onTheMainPage.filterGrossAmount(undefined); // filter by remembered GrossAmount
 				// -> no items left because operator is GT
 				Then.onTheMainPage.checkSalesOrdersCount(0);
-
-				// create multiple
-				for (i = 0; i < 2; i += 1) {
-					When.onTheMainPage.pressCreateSalesOrdersButton();
-					When.onTheCreateNewSalesOrderDialog.confirmDialog();
-					When.onTheMainPage.pressSaveSalesOrdersButton();
-					When.onTheSuccessInfo.confirm();
-					Then.onTheMainPage.checkDifferentID(0, "");
-				}
 			}
 
-			// delete the last created SalesOrder again
+			// delete created sales orders
 			When.onAnyPage.cleanUp("SalesOrderList");
 			Then.onAnyPage.checkLog(bRealOData
 				? [oExpectedLog, oExpectedLog, oExpectedLog]
