@@ -166,7 +166,7 @@ sap.ui.define([
 
 
 		// sap.ui.model.odata.v2.ODataModel
-		sinon.assert.callCount(this.modelSpy.odataV2, 8);
+		sinon.assert.callCount(this.modelSpy.odataV2, 9);
 
 		// model: "default-with-annotations"
 		sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
@@ -221,6 +221,13 @@ sap.ui.define([
 			annotationURI: [ '/path/to/odata/annotations/with/sapclient/?sap-client=200&sap-language=EN' ],
 			metadataUrlParams: { "sap-language": "EN" }
 		});
+
+		// model: "v2-ODataModel-unknown-odataVersion"
+		sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+			serviceUrl: '/path/to/unknown/odataVersion?sap-client=foo&sap-server=bar',
+			metadataUrlParams: { "sap-language": "EN" }
+		});
+
 
 		// sap.ui.model.odata.v4.ODataModel
 		sinon.assert.callCount(this.modelSpy.odataV4, 1);
@@ -313,6 +320,7 @@ sap.ui.define([
 		sinon.assert.calledWithExactly(this.oLogSpy, "Component Manifest: dataSource \"json\" was expected to have type \"ODataAnnotation\" but was \"JSON\"", "[\"sap.app\"][\"dataSources\"][\"json\"]", this.oComponent.toString());
 		sinon.assert.calledWithExactly(this.oLogSpy, "Component Manifest: dataSource \"invalid\" for model \"dataSource-invalid\" not found or invalid", "[\"sap.app\"][\"dataSources\"][\"invalid\"]", this.oComponent.toString());
 		sinon.assert.calledWithExactly(this.oLogSpy, "Component Manifest: dataSource \"does-not-exist\" for model \"dataSource-not-found\" not found or invalid", "[\"sap.app\"][\"dataSources\"][\"does-not-exist\"]", this.oComponent.toString());
+		sinon.assert.calledWithExactly(this.oLogSpy, "Component Manifest: Provided OData version \"3.0\" in dataSource \"unknown-odataVersion\" for model \"v2-ODataModel-unknown-odataVersion\" is unknown. Falling back to default model type \"sap.ui.model.odata.v2.ODataModel\".", "[\"sap.app\"][\"dataSources\"][\"unknown-odataVersion\"]", this.oComponent.toString());
 
 
 		// check if models are set on component (and save them internally)
@@ -664,7 +672,7 @@ sap.ui.define([
 
 
 		// sap.ui.model.odata.v2.ODataModel
-		sinon.assert.callCount(this.modelSpy.odataV2, 8);
+		sinon.assert.callCount(this.modelSpy.odataV2, 9);
 
 		// model: "default-with-annotations"
 		sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
@@ -711,6 +719,12 @@ sap.ui.define([
 											"/path/to/other/odata/service/other2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/?sap-language=EN&sap-client=foo",
 											"/path/to/other3/odata/service/;o=sid(G1Y.400)/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value?sap-language=EN&sap-client=foo"
 											],
+			metadataUrlParams: { "sap-language": "EN" }
+		});
+
+		// model: "v2-ODataModel-unknown-odataVersion"
+		sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+			serviceUrl: '/path/to/unknown/odataVersion?sap-client=foo&sap-server=bar',
 			metadataUrlParams: { "sap-language": "EN" }
 		});
 
@@ -797,6 +811,7 @@ sap.ui.define([
 		sinon.assert.calledWithExactly(this.oLogSpy, "Component Manifest: dataSource \"json\" was expected to have type \"ODataAnnotation\" but was \"JSON\"", "[\"sap.app\"][\"dataSources\"][\"json\"]", this.oComponent.toString());
 		sinon.assert.calledWithExactly(this.oLogSpy, "Component Manifest: dataSource \"invalid\" for model \"dataSource-invalid\" not found or invalid", "[\"sap.app\"][\"dataSources\"][\"invalid\"]", this.oComponent.toString());
 		sinon.assert.calledWithExactly(this.oLogSpy, "Component Manifest: dataSource \"does-not-exist\" for model \"dataSource-not-found\" not found or invalid", "[\"sap.app\"][\"dataSources\"][\"does-not-exist\"]", this.oComponent.toString());
+		sinon.assert.calledWithExactly(this.oLogSpy, "Component Manifest: Provided OData version \"3.0\" in dataSource \"unknown-odataVersion\" for model \"v2-ODataModel-unknown-odataVersion\" is unknown. Falling back to default model type \"sap.ui.model.odata.v2.ODataModel\".", "[\"sap.app\"][\"dataSources\"][\"unknown-odataVersion\"]", this.oComponent.toString());
 
 
 		// check if models are set on component (and save them internally)
@@ -1084,7 +1099,7 @@ sap.ui.define([
 
 
 			// sap.ui.model.odata.v2.ODataModel
-			sinon.assert.callCount(this.modelSpy.odataV2, 8);
+			sinon.assert.callCount(this.modelSpy.odataV2, 9);
 
 			// model: "default-with-annotations"
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
@@ -1132,6 +1147,13 @@ sap.ui.define([
 											],
 			metadataUrlParams: { "sap-language": "EN" }
 		});
+
+			// model: "v2-ODataModel-unknown-odataVersion"
+			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+				serviceUrl: '/path/to/unknown/odataVersion?sap-client=foo&sap-server=bar',
+				metadataUrlParams: { "sap-language": "EN" }
+			});
+
 
 			// sap.ui.model.json.JSONModel
 			sinon.assert.callCount(this.modelSpy.json, 3);
@@ -1213,6 +1235,7 @@ sap.ui.define([
 			sinon.assert.calledWithExactly(this.oLogSpy, "Component Manifest: dataSource \"json\" was expected to have type \"ODataAnnotation\" but was \"JSON\"", "[\"sap.app\"][\"dataSources\"][\"json\"]", this.oComponent.toString());
 			sinon.assert.calledWithExactly(this.oLogSpy, "Component Manifest: dataSource \"invalid\" for model \"dataSource-invalid\" not found or invalid", "[\"sap.app\"][\"dataSources\"][\"invalid\"]", this.oComponent.toString());
 			sinon.assert.calledWithExactly(this.oLogSpy, "Component Manifest: dataSource \"does-not-exist\" for model \"dataSource-not-found\" not found or invalid", "[\"sap.app\"][\"dataSources\"][\"does-not-exist\"]", this.oComponent.toString());
+			sinon.assert.calledWithExactly(this.oLogSpy, "Component Manifest: Provided OData version \"3.0\" in dataSource \"unknown-odataVersion\" for model \"v2-ODataModel-unknown-odataVersion\" is unknown. Falling back to default model type \"sap.ui.model.odata.v2.ODataModel\".", "[\"sap.app\"][\"dataSources\"][\"unknown-odataVersion\"]", this.oComponent.toString());
 
 
 			// check if models are set on component (and save them internally)
