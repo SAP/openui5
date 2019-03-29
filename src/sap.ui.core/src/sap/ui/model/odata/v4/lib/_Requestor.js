@@ -268,7 +268,7 @@ sap.ui.define([
 
 			aChangeSet = aBatchQueue[0];
 			// restore changes in reverse order to get the same initial state
-			for (i = aChangeSet.length - 1; i >= 0; i--) {
+			for (i = aChangeSet.length - 1; i >= 0; i -= 1) {
 				oChangeRequest = aChangeSet[i];
 				if (oChangeRequest.$cancel && fnFilter(oChangeRequest)) {
 					oChangeRequest.$cancel();
