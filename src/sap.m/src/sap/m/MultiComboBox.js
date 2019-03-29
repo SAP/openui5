@@ -13,7 +13,6 @@ sap.ui.define([
 	'./List',
 	'./StandardListItem',
 	'./Popover',
-	'./SuggestionsPopover',
 	'./Toolbar',
 	'./GroupHeaderListItem',
 	'./library',
@@ -48,7 +47,6 @@ function(
 	List,
 	StandardListItem,
 	Popover,
-	SuggestionsPopover,
 	Toolbar,
 	GroupHeaderListItem,
 	library,
@@ -862,75 +860,27 @@ function(
 	};
 
 	/**
-	 * Creates a picker. To be overwritten by subclasses.
+	 * <code>MultiComboBox</code> picker configuration
 	 *
-	 * @param {string} sPickerType The picker type
-	 * @returns {sap.m.Popover | sap.m.Dialog} The picker pop-up to be used
+	 * @param {sap.m.Popover | sap.m.Dialog} oPicker Picker instance
 	 * @protected
-	 * @function
 	 */
-	MultiComboBox.prototype.createPicker = function(sPickerType) {
-		var oPicker = this.getAggregation("picker"),
-			oRenderer = this.getRenderer(),
+	MultiComboBox.prototype.configPicker = function (oPicker) {
+		var oRenderer = this.getRenderer(),
 			CSS_CLASS_MULTICOMBOBOX = oRenderer.CSS_CLASS_MULTICOMBOBOX;
 
-		if (oPicker) {
-			return oPicker;
-		}
-
-		this._oSuggestionPopover = this._createSuggestionsPopover();
-		oPicker = this._oSuggestionPopover._oPopover;
-		// define a parent-child relationship between the control's and the picker pop-up (Popover or Dialog)
-		this.setAggregation("picker", oPicker, true);
-
-		this["configure" + sPickerType](oPicker);
-
-		// configuration
 		oPicker.setHorizontalScrolling(false)
-				.addStyleClass(oRenderer.CSS_CLASS_COMBOBOXBASE + "Picker")
-				.addStyleClass(CSS_CLASS_MULTICOMBOBOX + "Picker")
-				.addStyleClass(CSS_CLASS_MULTICOMBOBOX + "Picker-CTX")
-				.attachBeforeOpen(this.onBeforeOpen, this)
-				.attachAfterOpen(this.onAfterOpen, this)
-				.attachBeforeClose(this.onBeforeClose, this)
-				.attachAfterClose(this.onAfterClose, this)
-				.addEventDelegate({
-					onBeforeRendering : this.onBeforeRenderingPicker,
-					onAfterRendering : this.onAfterRenderingPicker
-				}, this);
-
-		return oPicker;
-	};
-
-	/**
-	 * Creates a SuggestionsPopover and assigns it as aggregation to the MultiComboBox.
-	 * This method also:
-	 * 	- configures the SuggestionsPopover and its internal controls.
-	 * 	- assigns the control (Popover or Dialog) to the MultiComboBox's "picker" aggregation
-	 *
-	 * @private
-	 * @function
-	 */
-	MultiComboBox.prototype._createSuggestionsPopover = function () {
-		var bUseDialog = this.isPickerDialog(),
-			oSuggPopover;
-
-		oSuggPopover = new SuggestionsPopover(this);
-
-		if (bUseDialog) {
-			oSuggPopover._oPopupInput = this._createPickerTextField();
-		}
-
-		// Create the SuggestionsPopover's internal controls
-		oSuggPopover._createSuggestionPopup();
-		oSuggPopover._createSuggestionPopupContent(false, false, false);
-
-		// Ammend the suggestions popovers list
-		// this._oList is used by the ComboBoxBase
-		this._oList = oSuggPopover._oList;
-		this._configureList(this._oList);
-
-		return oSuggPopover;
+			.addStyleClass(oRenderer.CSS_CLASS_COMBOBOXBASE + "Picker")
+			.addStyleClass(CSS_CLASS_MULTICOMBOBOX + "Picker")
+			.addStyleClass(CSS_CLASS_MULTICOMBOBOX + "Picker-CTX")
+			.attachBeforeOpen(this.onBeforeOpen, this)
+			.attachAfterOpen(this.onAfterOpen, this)
+			.attachBeforeClose(this.onBeforeClose, this)
+			.attachAfterClose(this.onAfterClose, this)
+			.addEventDelegate({
+				onBeforeRendering : this.onBeforeRenderingPicker,
+				onAfterRendering : this.onAfterRenderingPicker
+			}, this);
 	};
 
 	/**
@@ -972,10 +922,10 @@ function(
 	 * Creates a new sap.m.Input control for the SuggestionsPopover dialog.
 
 	 * @returns {sap.m.Input} The newly created input control
-	 * @protected
+	 * @private
 	 * @function
 	 */
-	MultiComboBox.prototype._createPickerTextField = function () {
+	MultiComboBox.prototype.createPickerTextField = function () {
 		var that = this;
 
 		return new Input({
@@ -1245,21 +1195,12 @@ function(
 		var that = this,
 			oSelectAllButton = this.getFilterSelectedButton(),
 			oTextField = this._oSuggestionPopover._oPopupInput,
-			oTextFieldHandleEvent = oTextField._handleEvent,
 			oCustomHeaderToolbar = this.getCustomHeaderToolbar(),
 			oPickerInvisibleText = this.getPickerInvisibleTextId();
 
 		oCustomHeaderToolbar.addContent(oTextField);
 
-		// This code was taken from the ComboBoxBase
-		//TODO: To be refactored when the ComboBox control addopts the SuggestionsPopover
-		oTextField._handleEvent = function(oEvent) {
-			oTextFieldHandleEvent.apply(this, arguments);
-
-			if (/keydown|sapdown|sapup|saphome|sapend|sappagedown|sappageup|input/.test(oEvent.type)) {
-				that._handleEvent(oEvent);
-			}
-		};
+		this.setTextFieldHandler(oTextField);
 
 		oDialog.setStretch(true);
 		oDialog.setCustomHeader(this.getPickerCustomHeader());
@@ -2044,41 +1985,6 @@ function(
 			oList.getItems()[this._iFocusedIndex].focus();
 			this._iFocusedIndex = null;
 		}
-	};
-
-	/**
-	 * Collects information for dom refs of list items and passes them on to {@link sap.m.ComboBoxBase#highLightList}
-	 *
-	 * @param {string} sValue Currenly typed value of the input field
-	 * @private
-	 */
-	MultiComboBox.prototype._highlightList = function (sValue) {
-		var aListItemsDOM = [],
-			aListItemAdditionalText = [],
-			oItemAdditionalTextRef, oItemDomRef;
-
-		this._getList().getItems().forEach(function(oItem) {
-			oItemDomRef = oItem.getDomRef();
-
-			if (oItemDomRef) {
-				aListItemsDOM.push({
-					ref: oItemDomRef.getElementsByClassName("sapMSLITitleOnly")[0],
-					text: oItem.getTitle()
-				});
-
-				oItemAdditionalTextRef = oItemDomRef.querySelector(".sapMSLIInfo");
-
-				if (oItemAdditionalTextRef && oItem.getInfo) {
-					aListItemAdditionalText.push({
-						ref: oItemAdditionalTextRef,
-						text: oItem.getInfo()
-					});
-				}
-			}
-		});
-
-		this.highLightList(sValue, aListItemsDOM);
-		this.highLightList(sValue, aListItemAdditionalText);
 	};
 
 	/**
@@ -2879,17 +2785,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.setSelectable = function(oItem, bSelectable) {
-
-		if (this.indexOfItem(oItem) < 0) {
-			return;
-		}
-
-		oItem._bSelectable = bSelectable;
-		var oListItem = this.getListItem(oItem);
-
-		if (oListItem) {
-			oListItem.setVisible(bSelectable);
-		}
+		ComboBoxBase.prototype.setSelectable.call(this, oItem, bSelectable);
 
 		var oToken = this._getTokenByItem(oItem);
 
