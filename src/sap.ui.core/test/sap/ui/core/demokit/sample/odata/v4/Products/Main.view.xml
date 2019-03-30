@@ -23,7 +23,7 @@
 			var="lineItem">
 			<Table id="ProductList" growing="true" growingThreshold="5" items="{
 					path : '/ProductList',
-					parameters : {$count : true}}"
+					parameters : {$count : true, $select : ['Messages']}}"
 				mode="SingleSelectMaster">
 				<headerToolbar>
 					<Toolbar>

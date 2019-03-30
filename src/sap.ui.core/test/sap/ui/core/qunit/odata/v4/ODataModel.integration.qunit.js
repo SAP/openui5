@@ -16419,6 +16419,9 @@ sap.ui.define([
 	// Scenario: if a 1 to n navigation occurs we use the deep path for this case instead of the
 	// canonical path; the app can opt-out of this behavior with a binding specific parameter
 	// CPOUI5UISERVICESV3-1567
+	// Delete and Patch still use the canonical path. Messages have to be reported with the deep
+	// path.
+	// CPOUI5UISERVICESV3-1813
 	[false, true].forEach(function (bUseCanonicalPath) {
 		QUnit.test("read with deep path, $$canonicalPath: " + bUseCanonicalPath, function (assert) {
 			var sEntityPath = bUseCanonicalPath
@@ -16437,15 +16440,17 @@ sap.ui.define([
 		<layoutData><FlexItemData/></layoutData>\
 		<Text id="street" text="{Address/Street}" />\
 	</FlexBox>\
-	<Table items="{path : \'BP_2_PRODUCT\',\
+	<Table id="table" items="{path : \'BP_2_PRODUCT\',\
 		' + sParameters + '\
 		}">\
 		<columns><Column/></columns>\
 		<ColumnListItem>\
 			<Text text="{ProductID}" />\
+			<Input value="{Name}" />\
 		</ColumnListItem>\
 	</Table>\
-</FlexBox>';
+</FlexBox>',
+				that = this;
 
 			this.expectRequest("SalesOrderList('0500000000')/SO_2_BP?$select=BusinessPartnerID", {
 					"BusinessPartnerID" : "23"
@@ -16456,13 +16461,152 @@ sap.ui.define([
 					},
 					"BusinessPartnerID" : "23"
 				})
-				.expectRequest(sEntityPath + "/BP_2_PRODUCT?$select=ProductID&$skip=0&$top=100", {
+				.expectRequest(sEntityPath + "/BP_2_PRODUCT?$select=Name,ProductID&$skip=0&"
+						+ "$top=100", {
 					value : [{
-						"ProductID" : "1"
+						"@odata.etag" : "ETag",
+						"ProductID" : "1",
+						"Name" : "NoName"
 					}]
 				});
 
-			return this.createView(assert, sView, oModel);
+			return this.createView(assert, sView, oModel).then(function () {
+				var oError = new Error("Failure");
+
+				oError.error = {
+					"code" : "top_patch",
+					"message" : "Error occurred while processing the request",
+					"details" : [{
+						"code" : "bound_patch",
+						"message" : "Must not change mock data",
+						"@Common.longtextUrl" : "Messages(1)/LongText",
+						"@Common.numericSeverity" : 4,
+						"target" : "Name"
+					}]
+				};
+				that.oLogMock.expects("error")
+					.withExactArgs("Failed to update path /SalesOrderList('0500000000')/SO_2_BP/"
+							+ "BP_2_PRODUCT('1')/Name", sinon.match(oError.message),
+						"sap.ui.model.odata.v4.ODataPropertyBinding").twice();
+				that.expectRequest({
+						method : "PATCH",
+						url : "ProductList('1')",
+						headers : {"If-Match" : "ETag"},
+						payload : {"Name" : "A product with no name"}
+					}, oError)
+					.expectMessages([{
+						"code" : "top_patch",
+						"descriptionUrl" : undefined,
+						"message" : "Error occurred while processing the request",
+						"persistent" : true,
+						"target" : "",
+						"technical" : true,
+						"type" : "Error"
+					}, {
+						"code" : "bound_patch",
+						"descriptionUrl" : sSalesOrderService + "Messages(1)/LongText",
+						"message" : "Must not change mock data",
+						"persistent" : true,
+						"target" : "/SalesOrderList('0500000000')/SO_2_BP/BP_2_PRODUCT('1')/Name",
+						"technical" : false,
+						"type" : "Error"
+					}]);
+
+				// code under test
+				that.oView.byId("table").getItems("items")[0].getCells()[1].getBinding("value")
+					.setValue("A product with no name");
+
+				return that.waitForChanges(assert);
+			}).then(function () {
+				var oInput = that.oView.byId("table").getItems("items")[0].getCells()[1];
+
+				return that.checkValueState(assert, oInput, "Error", "Must not change mock data");
+			}).then(function () {
+				var oError = new Error("Failure");
+
+				oError.error = {
+					"code" : "top_delete",
+					"message" : "Error occurred while processing the request",
+					"details" : [{
+						"code" : "bound_delete",
+						"message" : "Must not delete mock data",
+						"@Common.longtextUrl" : "./Messages(1)/LongText",
+						"@Common.numericSeverity" : 4,
+						"target" : ""
+					}]
+				};
+
+				that.oLogMock.expects("error")
+					.withExactArgs("Failed to delete /SalesOrderList('0500000000')/SO_2_BP/"
+							+ "BP_2_PRODUCT('1')[0]", sinon.match(oError.message),
+						"sap.ui.model.odata.v4.Context");
+				that.expectRequest({
+						method : "DELETE",
+						url : "ProductList('1')",
+						headers : {"If-Match" : "ETag"}
+					}, oError)
+					.expectMessages([{
+						"code" : "top_delete",
+						"descriptionUrl" : undefined,
+						"message" : "Error occurred while processing the request",
+						"persistent" : true,
+						"target" : "",
+						"technical" : true,
+						"type" : "Error"
+					}, {
+						"code" : "bound_delete",
+						"descriptionUrl" : sSalesOrderService + "Messages(1)/LongText",
+						"message" : "Must not delete mock data",
+						"persistent" : true,
+						"target" : "/SalesOrderList('0500000000')/SO_2_BP/BP_2_PRODUCT('1')",
+						"technical" : false,
+						"type" : "Error"
+					}]);
+
+				sap.ui.getCore().getMessageManager().removeAllMessages();
+
+				return Promise.all([
+					// code under test
+					that.oView.byId("table").getBinding("items").getCurrentContexts()[0].delete()
+						.catch(function (oError0) {
+							assert.strictEqual(oError0, oError);
+						}),
+					that.waitForChanges(assert)
+				]);
+			}).then(function () {
+				that.expectRequest({
+						method : "PATCH",
+						url : "ProductList('1')",
+						headers : {"If-Match" : "ETag"},
+						payload : {"Name" : "A product name leads to PATCH success with a message"}
+					}, {
+						// "@odata.etag" : "ETag2",
+						"Name" : "A product name (from server)",
+						"Messages" : [{
+							"code" : "23",
+							"message" : "Enter a product name",
+							"numericSeverity" : 3,
+							"target" : "Name"
+						}]
+					})
+					.expectMessages([{
+						"code" : "23",
+						"descriptionUrl" : undefined,
+						"message" : "Enter a product name",
+						"persistent" : false,
+						"target" : "/SalesOrderList('0500000000')/SO_2_BP/BP_2_PRODUCT('1')/Name",
+						"technical" : false,
+						"type" : "Warning"
+					}]);
+
+				sap.ui.getCore().getMessageManager().removeAllMessages();
+
+				// code under test
+				that.oView.byId("table").getItems("items")[0].getCells()[1].getBinding("value")
+					.setValue("A product name leads to PATCH success with a message");
+
+				return that.waitForChanges(assert);
+			});
 		});
 	});
 
