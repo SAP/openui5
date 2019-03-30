@@ -39,6 +39,18 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 			assert.equal(console.error.callCount , 1, "error logged");
 		});
 
+		QUnit.test(sName + ": log error (with Error as details)", function(assert) {
+			console.error.callCount = 0;
+			try {
+				throw new Error("Error occured!");
+			} catch (ex) {
+				Log.error('error', ex);
+			}
+			assert.equal(console.error.callCount , 1, "error logged");
+			assert.equal(console.error.args[0][1], "\n", "New line logged");
+			assert.ok(console.error.args[0][2] instanceof Error, "Error object logged");
+		});
+
 		QUnit.test(sName + ": log warning", function(assert) {
 			console.warn.callCount = 0;
 			Log.warning('warning');

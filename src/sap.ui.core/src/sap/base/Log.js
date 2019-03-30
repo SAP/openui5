@@ -341,9 +341,13 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 	 * (or higher than the global level, if no component is given),
 	 * then no entry is created and <code>undefined</code> is returned.
 	 *
+	 * If an <code>Error</code> is passed via <code>sDetails</code> the stack
+	 * of the <code>Error</code> will be logged as a separate parameter in
+	 * the proper <code>console</code> function for the matching log level.
+	 *
 	 * @param {module:sap/base/Log.Level} iLevel One of the log levels FATAL, ERROR, WARNING, INFO, DEBUG, TRACE
 	 * @param {string} sMessage The message to be logged
-	 * @param {string} [sDetails] The optional details for the message
+	 * @param {string|Error} [sDetails] The optional details for the message; could be an Error which will be logged with the stack to easily find the root cause of the Error
 	 * @param {string} [sComponent] The log component under which the message should be logged
 	 * @param {function} [fnSupportInfo] Callback that returns an additional support object to be logged in support mode.
 	 *   This function is only called if support info mode is turned on with <code>logSupportInfo(true)</code>.
@@ -402,15 +406,33 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 			 */
 			/*eslint-disable no-console */
 			if (console) { // in IE and FF, console might not exist; in FF it might even disappear
-				var logText = oLogEntry.date + " " + oLogEntry.time + " " + oLogEntry.message + " - " + oLogEntry.details + " " + oLogEntry.component;
+				var isDetailsError = sDetails instanceof Error,
+					logText = oLogEntry.date + " " + oLogEntry.time + " " + oLogEntry.message + " - " + oLogEntry.details + " " + oLogEntry.component;
 				switch (iLevel) {
-				case Log.Level.FATAL:
-				case Log.Level.ERROR: console.error(logText); break;
-				case Log.Level.WARNING: console.warn(logText); break;
-				case Log.Level.INFO: console.info ? console.info(logText) : console.log(logText); break;    // info not available in iOS simulator
-				case Log.Level.DEBUG: console.debug ? console.debug(logText) : console.log(logText); break; // debug not available in IE, fallback to log
-				case Log.Level.TRACE: console.trace ? console.trace(logText) : console.log(logText); break; // trace not available in IE, fallback to log (no trace)
-				// no default
+					case Log.Level.FATAL:
+					case Log.Level.ERROR: isDetailsError ? console.error(logText, "\n", sDetails) : console.error(logText); break;
+					case Log.Level.WARNING: isDetailsError ? console.warn(logText, "\n", sDetails) : console.warn(logText); break;
+					case Log.Level.INFO:
+						if (console.info) { // info not available in iOS simulator
+							isDetailsError ? console.info(logText, "\n", sDetails) : console.info(logText);
+						} else {
+							isDetailsError ? console.log(logText, "\n", sDetails) : console.log(logText);
+						}
+						break;
+					case Log.Level.DEBUG:
+						if (console.debug) { // debug not available in IE, fallback to log
+							isDetailsError ? console.debug(logText, "\n", sDetails) : console.debug(logText);
+						} else {
+							isDetailsError ? console.log(logText, "\n", sDetails) : console.log(logText);
+						}
+						break;
+					case Log.Level.TRACE:
+						if (console.trace) { // trace not available in IE, fallback to log (no trace)
+							isDetailsError ? console.trace(logText, "\n", sDetails) : console.trace(logText);
+						} else {
+							isDetailsError ? console.log(logText, "\n", sDetails) : console.log(logText);
+						}
+						break;
 				}
 				if (console.info && oLogEntry.supportInfo) {
 					console.info(oLogEntry.supportInfo);
