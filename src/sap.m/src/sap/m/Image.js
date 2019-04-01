@@ -179,7 +179,8 @@ sap.ui.define([
 			 * @since 1.36.2
 			 */
 			error : {}
-		}
+		},
+		dnd: { draggable: true, droppable: false }
 	}});
 
 	Image._currentDevicePixelRatio = (function() {

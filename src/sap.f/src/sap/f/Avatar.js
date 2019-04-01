@@ -149,6 +149,7 @@ sap.ui.define([
 				 */
 				press: {}
 			},
+			dnd: { draggable: true, droppable: false },
 			designtime: "sap/f/designtime/Avatar.designtime"
 		}
 	});
