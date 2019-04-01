@@ -3239,13 +3239,6 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._adjustHeaderHeights = function () {
-		var oTitle = this.getHeaderTitle(),
-			bPreviewTitleHeightViaDomClone = true; // default
-
-		if (oTitle && !oTitle.supportsAdaptLayoutForDomElement()) {
-			bPreviewTitleHeightViaDomClone = false;
-		}
-
 		//checking the $headerTitle we prevent from checking the headerHeights multiple times during the first rendering
 		//$headerTitle is set in the objectPageLayout.onAfterRendering, thus before the objectPageLayout is fully rendered once, we don't enter here multiple times (performance tweak)
 		if (this._$headerTitle.length > 0) {
@@ -3268,14 +3261,14 @@ sap.ui.define([
 				this.iHeaderTitleHeightStickied = this._$headerTitle.height() - this.iAnchorBarHeight;
 
 				//adjust the headerTitle  -------------------------------
-				this.iHeaderTitleHeight = this._obtainExpandedTitleHeight(bPreviewTitleHeightViaDomClone);
+				this.iHeaderTitleHeight = this._obtainExpandedTitleHeight();
 			} else { //otherwise it's the sticky that we need to calculate
 
 				//read the headerTitle -----------------------------------
 				this.iHeaderTitleHeight = this._$headerTitle.is(":visible") ? this._$headerTitle.height() : 0;
 
 				//adjust headerTitleStickied ----------------------------
-				this.iHeaderTitleHeightStickied = this._obtainSnappedTitleHeight(bPreviewTitleHeightViaDomClone);
+				this.iHeaderTitleHeightStickied = this._obtainSnappedTitleHeight();
 			}
 
 			this._adjustHeaderBackgroundSize();
@@ -3286,36 +3279,20 @@ sap.ui.define([
 		}
 	};
 
-	ObjectPageLayout.prototype._appendTitleCloneToDOM = function (bEnableStickyMode) {
-
-		var $headerTitleClone = this._$headerTitle.clone();
-		//prepare: make sure it won't be visible ever and fix width to the original headerTitle which is 100%
-		$headerTitleClone.css({left: "-10000px", top: "-10000px", width: this._$headerTitle.width() + "px"});
-		$headerTitleClone.toggleClass("sapUxAPObjectPageHeaderStickied", bEnableStickyMode);
-		$headerTitleClone.appendTo(this._$headerTitle.parent());
-
-		if (bEnableStickyMode) {
-			this.getHeaderTitle() && this.getHeaderTitle()._adaptLayoutForDomElement($headerTitleClone);
-		}
-
-		return $headerTitleClone;
-	};
-
-	ObjectPageLayout.prototype._obtainSnappedTitleHeight = function (bViaClone) {
-
+	ObjectPageLayout.prototype._obtainSnappedTitleHeight = function () {
 		var oTitle = this.getHeaderTitle(),
-			$Clone,
 			iHeight;
 
-		if (bViaClone) {
-			// BCP: 1870298358 - setting overflow-y to hidden of the wrapper element during clone to eliminate unwanted
-			// scrollbar appearing during measurement of cloned header
-			this._$opWrapper.css("overflow-y", "hidden");
-			$Clone = this._appendTitleCloneToDOM(true /* enable snapped mode */);
-			iHeight = $Clone.height();
-			$Clone.remove(); //clean dom
-			this._$opWrapper.css("overflow-y", "auto");
-		} else if (oTitle && oTitle.snap) {
+		if (!oTitle) {
+			return 0;
+		}
+
+		if (oTitle.supportsAdaptLayoutForDomElement()) {
+			this._$headerTitle.toggleClass("sapUxAPObjectPageHeaderStickied", true);
+			oTitle._adaptLayoutForDomElement(oTitle.$());
+			iHeight = this._$headerTitle.height();
+			this._$headerTitle.toggleClass("sapUxAPObjectPageHeaderStickied", false);
+		} else {
 			oTitle.snap(false);
 			iHeight = oTitle.$().outerHeight();
 			oTitle.unSnap(false);
@@ -3324,22 +3301,21 @@ sap.ui.define([
 		return iHeight;
 	};
 
-	ObjectPageLayout.prototype._obtainExpandedTitleHeight = function (bViaClone) {
+	ObjectPageLayout.prototype._obtainExpandedTitleHeight = function () {
 		var oTitle = this.getHeaderTitle(),
-			$Clone,
 			iHeight,
 			iSectionsContainerHeight,
 			iSectionsContainerNewHeight;
 
-		if (bViaClone) {
-			// BCP: 1870298358 - setting overflow-y to hidden of the wrapper element during clone to eliminate unwanted
-			// scrollbar appearing during measurement of cloned header
-			this._$opWrapper.css("overflow-y", "hidden");
-			$Clone = this._appendTitleCloneToDOM(false /* disable snapped mode */);
-			iHeight = $Clone.is(":visible") ? $Clone.height() - this.iAnchorBarHeight : 0;
-			$Clone.remove(); //clean dom
-			this._$opWrapper.css("overflow-y", "auto");
-		} else if (oTitle && oTitle.unSnap) {
+		if (!oTitle) {
+			return 0;
+		}
+
+		if (oTitle.supportsAdaptLayoutForDomElement()) {
+			this._$headerTitle.toggleClass("sapUxAPObjectPageHeaderStickied", false);
+			iHeight = this._$headerTitle.is(":visible") ? this._$headerTitle.height() - this.iAnchorBarHeight : 0;
+			this._$headerTitle.toggleClass("sapUxAPObjectPageHeaderStickied", true);
+		} else {
 			iSectionsContainerHeight = this._$sectionsContainer.height();
 
 			oTitle.unSnap(false);
