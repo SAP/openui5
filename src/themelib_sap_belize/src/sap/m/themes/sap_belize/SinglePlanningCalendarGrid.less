@@ -1,4 +1,5 @@
 @_sap_m_SinglePlanningCalendarGrid_HoursBackground: @sapUiListBackground;
+@_sap_m_SinglePlanningCalendarStickyShadow: 0 0.2rem 0.3rem -0.1rem rgba(0, 0, 0, 0.15);
 
 .sapMSinglePCColumnHeader.sapUiCalRow {
 	background-color: @_sap_m_SinglePlanningCalendarGrid_HoursBackground;
@@ -13,9 +14,19 @@
 		}
 	}
 
+	.sapUiCalItems {
+		box-shadow: @_sap_m_SinglePlanningCalendarStickyShadow;
+	}
+
 	.sapUiCalItemNow {
 		border-color: @sapUiCalendarColorToday;
 	}
+}
+
+.sapMSinglePCHiddenColHeaders .sapMPCHeadNavToolbar {
+	// Column headers will be hidden in Day view, so the shadow
+	// should be applied on the navigation toolbar in such case.
+	box-shadow: @_sap_m_SinglePlanningCalendarStickyShadow;
 }
 
 .sapMSinglePCRowHeaders {
