@@ -3,10 +3,9 @@
  */
 
 sap.ui.define([
-	'sap/ui/rta/plugin/Plugin',
-	'sap/ui/rta/Utils',
-	'sap/ui/fl/Utils',
-	'sap/ui/dt/OverlayRegistry',
+	"sap/ui/rta/plugin/Plugin",
+	"sap/ui/rta/Utils",
+	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/dt/Overlay",
 	"sap/ui/dt/Util",
@@ -15,7 +14,6 @@ sap.ui.define([
 function (
 	Plugin,
 	Utils,
-	FlexUtils,
 	OverlayRegistry,
 	KeyCodes,
 	Overlay,
@@ -100,6 +98,7 @@ function (
 		}
 
 		oOverlay.attachBrowserEvent("click", this._selectOverlay, this);
+		oOverlay.attachBrowserEvent("contextmenu", this._selectOverlay, this);
 		oOverlay.attachBrowserEvent("keydown", this._onKeyDown, this);
 		oOverlay.attachBrowserEvent("mousedown", this._onMouseDown, this);
 		oOverlay.attachBrowserEvent("mouseover", this._onMouseover, this);
@@ -132,6 +131,7 @@ function (
 	 */
 	Selection.prototype.deregisterElementOverlay = function(oOverlay) {
 		oOverlay.detachBrowserEvent("click", this._selectOverlay, this);
+		oOverlay.detachBrowserEvent("contextmenu", this._selectOverlay, this);
 		oOverlay.detachBrowserEvent("keydown", this._onKeyDown, this);
 		oOverlay.detachBrowserEvent("mousedown", this._onMouseDown, this);
 		oOverlay.detachBrowserEvent("mouseover", this._onMouseover, this);
@@ -186,10 +186,14 @@ function (
 	Selection.prototype._selectOverlay = function (oEvent) {
 		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		var bMultiSelection = oEvent.metaKey || oEvent.ctrlKey;
+		var bContextMenu = oEvent.type === "contextmenu";
 
 		if (oOverlay && oOverlay.getSelectable()) {
 			if (oOverlay.isSelected()) {
-				this.getDesignTime().getSelectionManager().remove(oOverlay);
+				// don't deselect on right click!
+				if (!bContextMenu) {
+					this.getDesignTime().getSelectionManager().remove(oOverlay);
+				}
 			} else {
 				if (bMultiSelection) {
 					this.getDesignTime().getSelectionManager().add(oOverlay);

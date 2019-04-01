@@ -30,6 +30,11 @@
 				<TextArea value="{CreationDate}"></TextArea>
 			</smartForm:GroupElement>
 		</smartForm:Group>
+		<smartForm:Group label="Group without stable Id">
+			<smartForm:GroupElement id="FieldInGroupWithoutStableId">
+				<smartField:SmartField value="{FiscalYear}" />
+			</smartForm:GroupElement>
+		</smartForm:Group>
 	</smartForm:SmartForm>
 	<sap.ui.layout:VerticalLayout width="100%">
 		<smartForm:SmartForm id="MainForm1" title="Personal Data" editable="true" entityType="Header">
