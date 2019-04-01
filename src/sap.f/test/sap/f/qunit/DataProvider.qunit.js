@@ -111,8 +111,10 @@ function (DataProviderFactory, ServiceDataProvider, DataProvider, RequestDataPro
 		var oDataSettings = {
 			json: {
 				"key": "value"
-			}
+			},
+			updateInterval: 1
 		};
+		var fnSpy = sinon.spy(DataProvider.prototype, "setUpdateInterval");
 
 		// Act
 		var oDataProvider = DataProviderFactory.create(oDataSettings);
@@ -120,8 +122,12 @@ function (DataProviderFactory, ServiceDataProvider, DataProvider, RequestDataPro
 		// Assert
 		assert.ok(DataProvider.prototype.setSettings.calledOnce, "Should have called setSettings.");
 		assert.ok(DataProvider.prototype.setSettings.getCall(0).calledWith(oDataSettings), "Should have called setSettings with correct arguments.");
+		assert.ok(DataProvider.prototype.setUpdateInterval.calledOnce, "Should have called setUpdateInterval.");
 		assert.ok(oDataProvider, "Should have created a DataProvider instance.");
 		assert.ok(oDataProvider.isA("sap.f.cards.DataProvider"), "Should have created a DataProvider instance.");
+
+		// Cleanup
+		fnSpy.restore();
 	});
 
 	QUnit.module("DataProvider", {
@@ -135,6 +141,56 @@ function (DataProviderFactory, ServiceDataProvider, DataProvider, RequestDataPro
 	});
 
 	testSetSettings(DataProvider);
+
+	QUnit.test("Refreshing interval", function (assert) {
+
+		// Arrange
+		this.clock = sinon.useFakeTimers(0);
+		var oSettings = {
+			json: {
+				"key": "value"
+			}
+		};
+		var iInterval = 1;
+		var iTickInterval = iInterval * 1000;
+		this.oDataProvider.setSettings(oSettings);
+		var fnStub = sinon.stub(DataProvider.prototype, "triggerDataUpdate");
+
+		// Act
+		this.oDataProvider.setUpdateInterval(iInterval);
+
+		// Assert
+		this.clock.tick(iTickInterval);
+		assert.ok(fnStub.calledOnce, "Should call triggerDataUpdate");
+
+		this.clock.tick(iTickInterval);
+		assert.ok(fnStub.calledTwice, "Should call triggerDataUpdate");
+
+		this.clock.tick(iTickInterval);
+		assert.ok(fnStub.calledThrice, "Should call triggerDataUpdate");
+
+		// Cleanup
+		fnStub.restore();
+		this.clock.restore();
+	});
+
+	QUnit.test("Incorrect refreshing interval", function (assert) {
+
+		// Arrange
+		var oSettings = {
+			json: {
+				"key": "value"
+			}
+		};
+		var iInterval = "Incorrect interval";
+		this.oDataProvider.setSettings(oSettings);
+
+		// Act
+		this.oDataProvider.setUpdateInterval(iInterval);
+
+		// Assert
+		assert.notOk(this.oDataProvider._iIntervalId, "Should have NOT set an interval.");
+	});
 
 	QUnit.test("triggerDataUpdate - with JSON", function (assert) {
 

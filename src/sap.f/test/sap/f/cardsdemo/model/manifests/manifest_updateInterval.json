@@ -1,0 +1,44 @@
+{
+	"_version": "1.8.0",
+	"sap.app": {
+		"type": "card"
+	},
+	"sap.ui5": {
+		"services": {
+			"RandomSalesOrders": {
+				"factoryName": "cardsdemo.service.RandomSalesOrdersFactory"
+			}
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "Sales Orders",
+			"subTitle": "Static Data",
+			"icon": {
+				"src": "sap-icon://sales-order"
+			},
+			"status": {
+				"text": "100 of 200"
+			}
+		},
+		"content": {
+			"data": {
+				"service": "RandomSalesOrders",
+				"updateInterval": 5,
+				"path": "/items"
+			},
+			"item": {
+				"title": {
+					"value": "{title}"
+				},
+				"description": {
+					"value": "{state}"
+				},
+				"icon": {
+					"value": "sap-icon://sales-order"
+				}
+			}
+		}
+	}
+}

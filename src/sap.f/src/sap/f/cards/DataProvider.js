@@ -108,7 +108,31 @@ sap.ui.define(["sap/ui/base/ManagedObject"], function (ManagedObject) {
 		});
 	};
 
+	/**
+	 * Sets a data update interval.
+	 *
+	 * @param {number} iInterval The data update interval in seconds.
+	 */
+	DataProvider.prototype.setUpdateInterval = function (iInterval) {
+		var iValue = parseInt(iInterval);
+		if (!iValue) {
+			return;
+		}
+
+		if (this._iIntervalId) {
+			clearInterval(this._iIntervalId);
+		}
+
+		this._iIntervalId = setInterval(function () {
+			this.triggerDataUpdate();
+		}.bind(this), iValue * 1000);
+	};
+
 	DataProvider.prototype.destroy = function () {
+		if (this._iIntervalId) {
+			clearInterval(this._iIntervalId);
+			this._iIntervalId = null;
+		}
 		this._oSettings = null;
 		ManagedObject.prototype.destroy.apply(this, arguments);
 	};

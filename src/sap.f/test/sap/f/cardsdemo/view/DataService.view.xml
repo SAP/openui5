@@ -20,14 +20,25 @@
             <Panel>
 				<VBox>
 					<HBox class="sapUiMediumMarginLeft">
-						<Text class="sapUiMediumMarginRight" text="Cards using the same data service."/>
+						<Text class="sapUiMediumMarginRight" text="Cards using the same data service. Calling add data of the data service automatically updates both cards."/>
 						<Button text="Add data" press="onPress"/>
-						<Button text="Refresh Sales Orders" press="onRefresh"/>
 					</HBox>
 					<HBox>
 						<w:Card class="sapUiMediumMargin" manifest="./model/manifests/manifest_dataService.json" width="400px" height="auto"/>
 						<w:Card class="sapUiMediumMargin" manifest="./model/manifests/manifest_dataService2.json" width="400px" height="auto"/>
+					</HBox>
+					<HBox class="sapUiMediumMarginLeft">
+						<Text class="sapUiMediumMarginRight" text="Card refresh function. Can be called to retrigger backend requests manually."/>
+						<Button text="Refresh Sales Orders" press="onRefresh"/>
+					</HBox>
+					<HBox>
 						<w:Card id="SalesOrdersCard" class="sapUiMediumMargin" manifest="./model/manifests/manifest_refresh.json" width="400px" height="auto"/>
+					</HBox>
+					<HBox class="sapUiMediumMarginLeft">
+						<Text class="sapUiMediumMarginRight" text="Card data refreshing interval. The card below is triggering requests every 5 seconds."/>
+					</HBox>
+					<HBox>
+						<w:Card class="sapUiMediumMargin" manifest="./model/manifests/manifest_updateInterval.json" width="400px" height="auto"/>
 					</HBox>
 				</VBox>
             </Panel>
