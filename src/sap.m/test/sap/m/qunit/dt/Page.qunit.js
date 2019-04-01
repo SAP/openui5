@@ -1,4 +1,6 @@
 /* global QUnit */
+QUnit.config.autostart = false;
+
 (function () {
 	"use strict";
 
@@ -8,16 +10,6 @@
 		"dt/Page",
 		"sap/ui/rta/test/controlEnablingCheck"
 	], function (QUnitReport, ElementEnablementTest, Page, rtaControlEnablingCheck) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
-			type: "sap.m.Page",
-			create: Page.create
-		});
-		oElementEnablementTest.run().then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
 
 		// Rename title action module
 		var fnConfirmPageTitleRenamedWithNewValue = function (oRadioButton, oViewAfterAction, assert) {
@@ -272,5 +264,16 @@
 			afterRedo : fnConfirmGroupMenuButtonIsSplited
 		});
 
+		var oElementEnablementTest = new ElementEnablementTest({
+			type: "sap.m.Page",
+			create: Page.create
+		});
+		oElementEnablementTest.run().then(function (oData) {
+			new QUnitReport({
+				data: oData
+			});
+		}).then(function () {
+			QUnit.start();
+		});
 	});
 })();

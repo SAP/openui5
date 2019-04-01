@@ -1,3 +1,6 @@
+/* global QUnit */
+QUnit.config.autostart = false;
+
 (function () {
 	'use strict';
 
@@ -6,16 +9,6 @@
 			'sap/ui/dt/test/report/QUnit',
 			'sap/ui/dt/test/ElementEnablementTest'],
 		function (rtaControlEnablingCheck, QUnitReport, ElementEnablementTest) {
-
-			var oElementEnablementTest = new ElementEnablementTest({
-				type: "sap.m.Button"
-			});
-
-			oElementEnablementTest.run().then(function(oData) {
-				new QUnitReport({
-					data: oData
-				});
-			});
 
 			// Combine Action
 			var fnConfirmButtonsAreCombined = function (oUiComponent,oViewAfterAction, assert) {
@@ -146,6 +139,18 @@
 				afterAction: fnConfirmButtonIsVisible,
 				afterUndo: fnConfirmButtonIsInvisible,
 				afterRedo: fnConfirmButtonIsVisible
+			});
+
+			var oElementEnablementTest = new ElementEnablementTest({
+				type: "sap.m.Button"
+			});
+
+			oElementEnablementTest.run().then(function(oData) {
+				new QUnitReport({
+					data: oData
+				});
+			}).then(function () {
+				QUnit.start();
 			});
 		});
 })();

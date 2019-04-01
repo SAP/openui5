@@ -1,3 +1,6 @@
+/* global QUnit */
+QUnit.config.autostart = false;
+
 sap.ui.require([
 	"sap/ui/dt/test/report/QUnit",
 	"sap/ui/dt/test/ElementEnablementTest",
@@ -35,38 +38,6 @@ sap.ui.require([
 	JSONModel
 ) {
 	"use strict";
-
-	var oElementEnablementTest = new ElementEnablementTest({
-		type: "sap.m.Table",
-		create: function () {
-			return new Table({
-				columns: [
-					new Column({
-						header: new Text({text: "Header 1"})
-					})
-				],
-				items: [
-					new ColumnListItem({
-						cells: [
-							new Text({text: "text"})
-						]
-					})
-				],
-				headerToolbar: new Toolbar(),
-				swipeContent: new Text(),
-				infoToolbar: new Toolbar()
-			});
-		}
-	});
-	oElementEnablementTest.run()
-		.then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
-		})
-		.then(function () {
-			oElementEnablementTest.exit();
-		});
 
 	// Move columns
 	var fnConfirmColumn1IsOn3rdPosition = function (oUiComponent, oViewAfterAction, assert) {
@@ -279,5 +250,37 @@ sap.ui.require([
 		afterAction: fnAssertFactory(1),
 		afterUndo: fnAssertFactory(0),
 		afterRedo: fnAssertFactory(1)
+	});
+
+	var oElementEnablementTest = new ElementEnablementTest({
+		type: "sap.m.Table",
+		create: function () {
+			return new Table({
+				columns: [
+					new Column({
+						header: new Text({text: "Header 1"})
+					})
+				],
+				items: [
+					new ColumnListItem({
+						cells: [
+							new Text({text: "text"})
+						]
+					})
+				],
+				headerToolbar: new Toolbar(),
+				swipeContent: new Text(),
+				infoToolbar: new Toolbar()
+			});
+		}
+	});
+	oElementEnablementTest.run()
+	.then(function (oData) {
+		new QUnitReport({
+			data: oData
+		});
+	})
+	.then(function () {
+		QUnit.start();
 	});
 });

@@ -1,4 +1,5 @@
 /*global QUnit*/
+QUnit.config.autostart = false;
 
 (function () {
 	"use strict";
@@ -39,23 +40,6 @@
 			assert.ok(oForm, "Form was created");
 			assert.ok(FormElementDesignTime.domRef(oElement), "domRef is retrieved when label is present");
 			assert.ok(FormElementDesignTime.domRef(oElement2), "domRef is retrieved when label is not present");
-		});
-
-		// Element enablement test
-		var oElementEnablementTest = new ElementEnablementTest({
-			type: "sap.ui.layout.form.FormElement",
-			create: function () {
-				return new FormElement({
-					fields: [
-						new Input()
-					]
-				});
-			}
-		});
-		oElementEnablementTest.run().then(function(oData) {
-			new QUnitReport({
-				data: oData
-			});
 		});
 
 		// Rename action
@@ -171,6 +155,25 @@
 			afterAction: fnConfirmFormElementIsVisible,
 			afterUndo: fnConfirmFormElementIsInvisible,
 			afterRedo: fnConfirmFormElementIsVisible
+		});
+
+		// Element enablement test
+		var oElementEnablementTest = new ElementEnablementTest({
+			type: "sap.ui.layout.form.FormElement",
+			create: function () {
+				return new FormElement({
+					fields: [
+						new Input()
+					]
+				});
+			}
+		});
+		oElementEnablementTest.run().then(function(oData) {
+			new QUnitReport({
+				data: oData
+			});
+		}).then(function () {
+			QUnit.start();
 		});
 	});
 })();

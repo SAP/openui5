@@ -1,3 +1,6 @@
+/* global QUnit */
+QUnit.config.autostart = false;
+
 (function () {
 	"use strict";
 
@@ -8,24 +11,6 @@
 		"sap/m/Text",
 		"sap/ui/rta/test/controlEnablingCheck"
 	], function (QUnitReport, ElementEnablementTest, ActionSheet, Text, rtaControlEnablingCheck) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
-			type: "sap.m.ActionSheet",
-			create: function () {
-				return new ActionSheet("sheet", {
-					buttons: [
-						new sap.m.Button({ text: "text1" }),
-						new sap.m.Button({ text: "text2" }),
-						new sap.m.Button({ text: "text3" })
-					]
-				});
-			}
-		});
-		oElementEnablementTest.run().then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
 
 		// Move action
 		var fnConfirmElement1IsOn3rdPosition = function (oUiComponent, oViewAfterAction, assert) {
@@ -77,6 +62,26 @@
 			afterAction: fnConfirmElement1IsOn3rdPosition,
 			afterUndo: fnConfirmElement1IsOn1stPosition,
 			afterRedo: fnConfirmElement1IsOn3rdPosition
+		});
+
+		var oElementEnablementTest = new ElementEnablementTest({
+			type: "sap.m.ActionSheet",
+			create: function () {
+				return new ActionSheet("sheet", {
+					buttons: [
+						new sap.m.Button({ text: "text1" }),
+						new sap.m.Button({ text: "text2" }),
+						new sap.m.Button({ text: "text3" })
+					]
+				});
+			}
+		});
+		oElementEnablementTest.run().then(function (oData) {
+			new QUnitReport({
+				data: oData
+			});
+		}).then(function () {
+			QUnit.start();
 		});
 	});
 })();

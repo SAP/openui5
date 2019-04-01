@@ -18,23 +18,13 @@
 <script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 <script>
-
+QUnit.config.autostart = false;
 sap.ui.require([
 	'sap/ui/dt/test/report/QUnit',
 	'sap/ui/dt/test/ElementEnablementTest',
 	'dt/VerticalLayout',
 	'sap/ui/rta/test/controlEnablingCheck'
-], function (QUnit, ElementEnablementTest, VerticalLayout, rtaControlEnablingCheck) {
-
-	var oElementEnablementTest = new ElementEnablementTest({
-		type : "sap.ui.layout.VerticalLayout",
-		create : VerticalLayout.create
-	});
-	oElementEnablementTest.run().then(function(oData) {
-		var oReport = new QUnit({
-			data: oData
-		});
-	});
+], function (QUnitReport, ElementEnablementTest, VerticalLayout, rtaControlEnablingCheck) {
 
 	// Move action
 	var fnConfirmElement1IsOn3rdPosition = function (oUiComponent, oViewAfterAction, assert) {
@@ -111,6 +101,18 @@ sap.ui.require([
 		afterAction: fnConfirmLayoutIsInvisible,
 		afterUndo: fnConfirmLayoutIsVisible,
 		afterRedo: fnConfirmLayoutIsInvisible
+	});
+
+	var oElementEnablementTest = new ElementEnablementTest({
+		type : "sap.ui.layout.VerticalLayout",
+		create : VerticalLayout.create
+	});
+	oElementEnablementTest.run().then(function(oData) {
+		var oReport = new QUnitReport({
+			data: oData
+		});
+	}).then(function () {
+		QUnit.start();
 	});
 });
 

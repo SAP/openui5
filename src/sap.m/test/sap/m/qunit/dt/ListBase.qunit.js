@@ -1,3 +1,6 @@
+/* global QUnit */
+QUnit.config.autostart = false;
+
 (function () {
 	'use strict';
 
@@ -10,23 +13,6 @@
 		"sap/m/Toolbar",
 		"sap/ui/rta/test/controlEnablingCheck"
 	], function (QUnitReport, ElementEnablementTest, ListBase, ListItem, Button, Toolbar, rtaControlEnablingCheck) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
-			type: "sap.m.ListBase",
-			create: function () {
-				return new ListBase({
-					items: new ListItem({title: "List Item"}),
-					headerToolbar: new Toolbar(),
-					swipeContent: new Button(),
-					infoToolbar: new Toolbar()
-				});
-			}
-		});
-		oElementEnablementTest.run().then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
 
 		//Move action
 		var fnConfirmListItem1IsOn3rdPosition = function (oUiComponent, oViewAfterAction, assert) {
@@ -122,6 +108,25 @@
 			afterAction: fnConfirmListIsVisible,
 			afterUndo: fnConfirmListIsInvisible,
 			afterRedo: fnConfirmListIsVisible
+		});
+
+		var oElementEnablementTest = new ElementEnablementTest({
+			type: "sap.m.ListBase",
+			create: function () {
+				return new ListBase({
+					items: new ListItem({title: "List Item"}),
+					headerToolbar: new Toolbar(),
+					swipeContent: new Button(),
+					infoToolbar: new Toolbar()
+				});
+			}
+		});
+		oElementEnablementTest.run().then(function (oData) {
+			new QUnitReport({
+				data: oData
+			});
+		}).then(function () {
+			QUnit.start();
 		});
 	});
 })();

@@ -1,3 +1,6 @@
+/* global QUnit */
+QUnit.config.autostart = false;
+
 (function () {
 	"use strict";
 
@@ -11,28 +14,7 @@
 		"sap/ui/layout/form/SimpleForm",
 		"sap/m/Toolbar",
 		"sap/m/Button"
-	], function(QUnit, ElementEnablementTest, rtaControlEnablingCheck, Input, Label, Title, SimpleForm, Toolbar, Button) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
-			type: "sap.ui.layout.form.SimpleForm",
-			create: function () {
-				return new SimpleForm({
-					toolbar: new Toolbar({
-						content : [
-							Button({text: "Button"})
-						]
-					}),
-					content: [
-					]
-				});
-			}
-		});
-		oElementEnablementTest.run().then(function(oData) {
-			var oReport = new QUnit({
-				data: oData
-			});
-			oReport.destroy();
-		});
+	], function(QUnitReport, ElementEnablementTest, rtaControlEnablingCheck, Input, Label, Title, SimpleForm, Toolbar, Button) {
 
 		// Move Action
 		var fnConfirmElement2IsOn1stPosition = function (oUiComponent, oViewAfterAction, assert) {
@@ -134,6 +116,27 @@
 		// 	afterUndo: fnConfirmNewGroupIsRemoved,
 		// 	afterRedo: fnComfirmGroupIsAddedWithNewLabel
 		// });
-
+		var oElementEnablementTest = new ElementEnablementTest({
+			type: "sap.ui.layout.form.SimpleForm",
+			create: function () {
+				return new SimpleForm({
+					toolbar: new Toolbar({
+						content : [
+							new Button({text: "Button"})
+						]
+					}),
+					content: [
+					]
+				});
+			}
+		});
+		oElementEnablementTest.run().then(function(oData) {
+			var oReport = new QUnitReport({
+				data: oData
+			});
+			oReport.destroy();
+		}).then(function () {
+			QUnit.start();
+		});
 	});
 })();

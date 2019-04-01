@@ -1,3 +1,6 @@
+/* global QUnit */
+QUnit.config.autostart = false;
+
 (function () {
     "use strict";
 
@@ -14,24 +17,6 @@
         DynamicPageHeader,
         Text
     ) {
-
-        var oElementEnablementTest = new ElementEnablementTest({
-            type: "sap.f.DynamicPageHeader",
-            create: function () {
-                return new DynamicPageHeader({
-                    content : [
-                        new Text({text: "Header content 1"}),
-                        new Text({text: "Header content 2"}),
-                        new Text({text: "Header content 3"})
-                    ]
-                });
-            }
-        });
-        oElementEnablementTest.run().then(function (oData) {
-            new QUnitReport({
-                data: oData
-            });
-        });
 
         // ------------ HIDING THE CONTROL --------------
         // Check if the remove action is working properly
@@ -147,6 +132,26 @@
             afterUndo : fnConfirmHeaderlement1IsOn1stPosition,
             afterRedo : fnConfirmHeaderlement1IsOn3rdPosition
         });
+
+        var oElementEnablementTest = new ElementEnablementTest({
+            type: "sap.f.DynamicPageHeader",
+            create: function () {
+                return new DynamicPageHeader({
+                    content : [
+                        new Text({text: "Header content 1"}),
+                        new Text({text: "Header content 2"}),
+                        new Text({text: "Header content 3"})
+                    ]
+                });
+            }
+        });
+        oElementEnablementTest.run().then(function (oData) {
+            new QUnitReport({
+                data: oData
+            });
+        }).then(function () {
+			QUnit.start();
+		});
 
     });
 })();

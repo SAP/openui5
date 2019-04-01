@@ -1,3 +1,6 @@
+/* global QUnit */
+QUnit.config.autostart = false;
+
 (function () {
 	"use strict";
 
@@ -7,18 +10,6 @@
 		"sap/m/Image",
 		"sap/ui/rta/test/controlEnablingCheck"
 	], function (QUnitReport, ElementEnablementTest, Image, rtaControlEnablingCheck) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
-			type: "sap.m.Image",
-			create: function () {
-				return new Image();
-			}
-		});
-		oElementEnablementTest.run().then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
 
 		// Remove and reveal actions
 		var fnConfirmImageIsInvisible = function (oUiComponent, oViewAfterAction, assert) {
@@ -55,6 +46,20 @@
 			afterAction: fnConfirmImageIsVisible,
 			afterUndo: fnConfirmImageIsInvisible,
 			afterRedo: fnConfirmImageIsVisible
+		});
+
+		var oElementEnablementTest = new ElementEnablementTest({
+			type: "sap.m.Image",
+			create: function () {
+				return new Image();
+			}
+		});
+		oElementEnablementTest.run().then(function (oData) {
+			new QUnitReport({
+				data: oData
+			});
+		}).then(function () {
+			QUnit.start();
 		});
 	});
 })();

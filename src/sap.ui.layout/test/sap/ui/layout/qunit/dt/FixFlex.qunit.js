@@ -1,3 +1,6 @@
+/* global QUnit */
+QUnit.config.autostart = false;
+
 (function () {
 	"use strict";
 
@@ -8,25 +11,6 @@
 		"sap/m/Text",
 		"sap/ui/rta/test/controlEnablingCheck"
 	], function (QUnitReport, ElementEnablementTest, FixFlex, Text, rtaControlEnablingCheck) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
-			type: "sap.ui.layout.FixFlex",
-			create: function () {
-				return new FixFlex({
-					fixContent: [
-						new Text({text: "Text"})
-					],
-					flexContent: [
-						new Text({text: "Text"})
-					]
-				});
-			}
-		});
-		oElementEnablementTest.run().then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
 
 		// Move action
 		var fnConfirmElement1IsOn3rdPosition = function (oUiComponent, oViewAfterAction, assert) {
@@ -128,6 +112,27 @@
 			afterAction: fnConfirmFixFLexIsVisible,
 			afterUndo: fnConfirmFixFlexIsInvisible,
 			afterRedo: fnConfirmFixFLexIsVisible
+		});
+
+		var oElementEnablementTest = new ElementEnablementTest({
+			type: "sap.ui.layout.FixFlex",
+			create: function () {
+				return new FixFlex({
+					fixContent: [
+						new Text({text: "Text"})
+					],
+					flexContent: [
+						new Text({text: "Text"})
+					]
+				});
+			}
+		});
+		oElementEnablementTest.run().then(function (oData) {
+			new QUnitReport({
+				data: oData
+			});
+		}).then(function () {
+			QUnit.start();
 		});
 
 	});

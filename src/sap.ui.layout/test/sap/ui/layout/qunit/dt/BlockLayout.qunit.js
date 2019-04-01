@@ -1,3 +1,6 @@
+/* global QUnit */
+QUnit.config.autostart = false;
+
 (function () {
 	"use strict";
 
@@ -10,32 +13,6 @@
 		"sap/m/Text",
 		"sap/ui/rta/test/controlEnablingCheck"
 	], function (QUnitReport, ElementEnablementTest, BlockLayout, BlockLayoutRow, BlockLayoutCell, Text, rtaControlEnablingCheck) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
-			type: "sap.ui.layout.BlockLayout",
-			create: function () {
-				return new BlockLayout({
-					content: [
-						new BlockLayoutRow({
-							content: [
-								new BlockLayoutCell({
-									content: [
-										new Text({text: "Text"})
-									]
-								})
-							]
-						})
-					]
-				});
-			}
-		});
-
-
-		oElementEnablementTest.run().then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
 
 		// Move action
 		var fnConfirmElement1IsOn3rdPosition = function (oUiComponent, oViewAfterAction, assert) {
@@ -110,5 +87,32 @@
 			afterRedo: fnConfirmElement1IsOn3rdPosition
 		});
 
+		var oElementEnablementTest = new ElementEnablementTest({
+			type: "sap.ui.layout.BlockLayout",
+			create: function () {
+				return new BlockLayout({
+					content: [
+						new BlockLayoutRow({
+							content: [
+								new BlockLayoutCell({
+									content: [
+										new Text({text: "Text"})
+									]
+								})
+							]
+						})
+					]
+				});
+			}
+		});
+
+
+		oElementEnablementTest.run().then(function (oData) {
+			new QUnitReport({
+				data: oData
+			});
+		}).then(function () {
+			QUnit.start();
+		});
 	});
 })();

@@ -1,3 +1,6 @@
+/* global QUnit */
+QUnit.config.autostart = false;
+
 (function () {
 	'use strict';
 
@@ -7,20 +10,6 @@
 		"sap/m/StandardListItem",
 		"sap/ui/rta/test/controlEnablingCheck"
 	], function (QUnitReport, ElementEnablementTest, StandardListItem, rtaControlEnablingCheck) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
-			type: "sap.m.StandardListItem",
-			create: function () {
-				return new StandardListItem({
-					title: "Title"
-				});
-			}
-		});
-		oElementEnablementTest.run().then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
 
 		// Rename action
 		var fnConfirmTitleIsRenamedWithNewValue = function (oStandardListItem, oViewAfterAction, assert) {
@@ -102,6 +91,22 @@
 			afterAction: fnConfirmStandardListItemIsVisible,
 			afterUndo: fnConfirmStandardListItemIsInvisible,
 			afterRedo: fnConfirmStandardListItemIsVisible
+		});
+
+		var oElementEnablementTest = new ElementEnablementTest({
+			type: "sap.m.StandardListItem",
+			create: function () {
+				return new StandardListItem({
+					title: "Title"
+				});
+			}
+		});
+		oElementEnablementTest.run().then(function (oData) {
+			new QUnitReport({
+				data: oData
+			});
+		}).then(function () {
+			QUnit.start();
 		});
 	});
 })();

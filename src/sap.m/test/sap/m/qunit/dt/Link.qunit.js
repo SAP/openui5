@@ -1,3 +1,6 @@
+/* global QUnit */
+QUnit.config.autostart = false;
+
 (function () {
 	"use strict";
 
@@ -7,19 +10,6 @@
 		"sap/m/Link",
 		"sap/ui/rta/test/controlEnablingCheck"
 	], function (QUnitReport, ElementEnablementTest, Link, rtaControlEnablingCheck) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
-			type: "sap.m.Link",
-			create: function () {
-				return new Link();
-			}
-		});
-		oElementEnablementTest.run().then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
-
 		// Remove and reveal actions
 		var fnConfirmLinkIsInvisible = function (oUiComponent, oViewAfterAction, assert) {
 			assert.strictEqual(oViewAfterAction.byId("myLink").getVisible(), false, "then the Link element is invisible");
@@ -55,6 +45,20 @@
 			afterAction: fnConfirmLinkIsVisible,
 			afterUndo: fnConfirmLinkIsInvisible,
 			afterRedo: fnConfirmLinkIsVisible
+		});
+
+		var oElementEnablementTest = new ElementEnablementTest({
+			type: "sap.m.Link",
+			create: function () {
+				return new Link();
+			}
+		});
+		oElementEnablementTest.run().then(function (oData) {
+			new QUnitReport({
+				data: oData
+			});
+		}).then(function () {
+			QUnit.start();
 		});
 	});
 })();

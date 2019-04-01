@@ -1,3 +1,6 @@
+/*global QUnit*/
+QUnit.config.autostart = false;
+
 (function () {
 	"use strict";
 
@@ -8,22 +11,6 @@
 		"sap/m/Text",
 		"sap/ui/rta/test/controlEnablingCheck"
 	], function (QUnitReport, ElementEnablementTest, Grid, Text, rtaControlEnablingCheck) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
-			type: "sap.ui.layout.Grid",
-			create: function () {
-				return new Grid({
-					content: [
-						new Text({text: "Text"})
-					]
-				});
-			}
-		});
-		oElementEnablementTest.run().then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
 
 		// Move action
 		var fnConfirmElement1IsOn3rdPosition = function (oUiComponent, oViewAfterAction, assert) {
@@ -111,6 +98,24 @@
 			afterAction: fnConfirmGridIsVisible,
 			afterUndo: fnConfirmGridIsInvisible,
 			afterRedo: fnConfirmGridIsVisible
+		});
+
+		var oElementEnablementTest = new ElementEnablementTest({
+			type: "sap.ui.layout.Grid",
+			create: function () {
+				return new Grid({
+					content: [
+						new Text({text: "Text"})
+					]
+				});
+			}
+		});
+		oElementEnablementTest.run().then(function (oData) {
+			new QUnitReport({
+				data: oData
+			});
+		}).then(function () {
+			QUnit.start();
 		});
 	});
 })();

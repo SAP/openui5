@@ -1,4 +1,5 @@
-/*global QUnit*/
+/* global QUnit */
+QUnit.config.autostart = false;
 
 (function () {
 	'use strict';
@@ -21,26 +22,6 @@
 		rtaControlEnablingCheck,
 		SplitMenuButton,
 		DynamicPageTitle) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
-			type: "sap.m.MenuButton",
-			create: function () {
-				return new MenuButton({
-					menu: new Menu({
-						items: [
-							new MenuItem(),
-							new MenuItem()
-						]
-					})
-				});
-			}
-		});
-
-		oElementEnablementTest.run().then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
 
 		// Rename action
 		var fnConfirmMenuButtonIsRenamedWithNewValue = function (oMenuButton, oViewAfterAction, assert) {
@@ -258,6 +239,28 @@
 
 			assert.strictEqual(fnSplitHandlerHelper(oTitle, oAction1, "actions"), 0, "The function finds the corect index of the first action in its parrent aggregation.");
 			assert.strictEqual(fnSplitHandlerHelper(oTitle, oAction2, "actions"), 1, "The function finds the corect index of the second action in its parrent aggregation.");
+		});
+
+		var oElementEnablementTest = new ElementEnablementTest({
+			type: "sap.m.MenuButton",
+			create: function () {
+				return new MenuButton({
+					menu: new Menu({
+						items: [
+							new MenuItem(),
+							new MenuItem()
+						]
+					})
+				});
+			}
+		});
+
+		oElementEnablementTest.run().then(function (oData) {
+			new QUnitReport({
+				data: oData
+			});
+		}).then(function () {
+			QUnit.start();
 		});
 
 	});

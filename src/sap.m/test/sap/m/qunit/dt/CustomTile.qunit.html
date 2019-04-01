@@ -22,7 +22,7 @@
 sap.ui.require([
 	'sap/ui/dt/test/report/QUnit',
 	'sap/ui/dt/test/ElementEnablementTest'
-], function (QUnit, ElementEnablementTest) {
+], function (QUnitReport, ElementEnablementTest) {
 
 	var oElementEnablementTest = new ElementEnablementTest({
 		type: "sap.m.CustomTile",
@@ -30,9 +30,11 @@ sap.ui.require([
 		timeout : 300
 	});
 	oElementEnablementTest.run().then(function(oData) {
-		var oReport = new QUnit({
+		var oReport = new QUnitReport({
 			data: oData
 		});
+	}).then(function () {
+		QUnit.start();
 	});
 
 });

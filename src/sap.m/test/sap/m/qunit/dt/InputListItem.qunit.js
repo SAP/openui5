@@ -1,3 +1,6 @@
+/* global QUnit */
+QUnit.config.autostart = false;
+
 (function () {
 	'use strict';
 
@@ -8,23 +11,6 @@
 		"sap/m/InputBase",
 		"sap/ui/rta/test/controlEnablingCheck"
 	], function (QUnitReport, ElementEnablementTest, InputListItem, InputBase, rtaControlEnablingCheck) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
-			type: "sap.m.InputListItem",
-			create: function () {
-				return new InputListItem({
-					label: "Label",
-					content: [
-						new InputBase()
-					]
-				});
-			}
-		});
-		oElementEnablementTest.run().then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
 
 		// Move content
 		var fnConfirmInput1IsOn3rdPosition = function (oUiComponent, oViewAfterAction, assert) {
@@ -78,6 +64,25 @@
 			afterAction: fnConfirmInput1IsOn3rdPosition,
 			afterUndo: fnConfirmInput1IsOn1rdPosition,
 			afterRedo: fnConfirmInput1IsOn3rdPosition
+		});
+
+		var oElementEnablementTest = new ElementEnablementTest({
+			type: "sap.m.InputListItem",
+			create: function () {
+				return new InputListItem({
+					label: "Label",
+					content: [
+						new InputBase()
+					]
+				});
+			}
+		});
+		oElementEnablementTest.run().then(function (oData) {
+			new QUnitReport({
+				data: oData
+			});
+		}).then(function () {
+			QUnit.start();
 		});
 	});
 })();

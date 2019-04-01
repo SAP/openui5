@@ -1,3 +1,6 @@
+/* global QUnit */
+QUnit.config.autostart = false;
+
 (function () {
 	"use strict";
 
@@ -9,32 +12,6 @@
 		"sap/ui/layout/form/FormElement",
 		"sap/m/Input"
 	], function (QUnitReport, rtaControlEnablingCheck, ElementEnablementTest, FormContainer, FormElement, Input) {
-
-
-		var oElementEnablementTest = new ElementEnablementTest({
-			type: "sap.ui.layout.form.FormContainer",
-			create: function () {
-				return new FormContainer({
-					formElements: [
-						new FormElement({
-							fields: [
-								new Input()
-							]
-						}),
-						new FormElement({
-							fields: [
-								new Input()
-							]
-						})
-					]
-				});
-			}
-		});
-		oElementEnablementTest.run().then(function(oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
 
 		// Move action
 		var fnConfirmElement1IsOn2rdPosition = function (oUiComponent, oViewAfterAction, assert) {
@@ -238,6 +215,33 @@
 			afterAction: fnConfirmFormContainerIsInvisible,
 			afterUndo: fnConfirmFormContainerIsVisible,
 			afterRedo: fnConfirmFormContainerIsInvisible
+		});
+
+		var oElementEnablementTest = new ElementEnablementTest({
+			type: "sap.ui.layout.form.FormContainer",
+			create: function () {
+				return new FormContainer({
+					formElements: [
+						new FormElement({
+							fields: [
+								new Input()
+							]
+						}),
+						new FormElement({
+							fields: [
+								new Input()
+							]
+						})
+					]
+				});
+			}
+		});
+		oElementEnablementTest.run().then(function(oData) {
+			new QUnitReport({
+				data: oData
+			});
+		}).then(function () {
+			QUnit.start();
 		});
 	});
 })();

@@ -19,24 +19,13 @@
 <script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 <script>
-
+QUnit.config.autostart = false;
 sap.ui.require([
 		'sap/ui/dt/test/report/QUnit',
 		'sap/ui/dt/test/ElementEnablementTest',
 		'dt/Bar',
 		'sap/ui/rta/test/controlEnablingCheck'
-], function (QUnit, ElementEnablementTest, Bar, rtaControlEnablingCheck) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
-				type: "sap.m.Bar",
-				create : Bar.create,
-				timeout : Bar.timeout
-		});
-		oElementEnablementTest.run().then(function(oData) {
-				var oReport = new QUnit({
-						data: oData
-				});
-		});
+], function (QUnitReport, ElementEnablementTest, Bar, rtaControlEnablingCheck) {
 
 	var fnTestBarMoveActionInAggregation = function (sAggregationName) {
 		// Move action
@@ -96,6 +85,19 @@ sap.ui.require([
 	fnTestBarMoveActionInAggregation("contentLeft");
 	fnTestBarMoveActionInAggregation("contentMiddle");
 	fnTestBarMoveActionInAggregation("contentRight");
+
+	var oElementEnablementTest = new ElementEnablementTest({
+			type: "sap.m.Bar",
+			create : Bar.create,
+			timeout : Bar.timeout
+	});
+	oElementEnablementTest.run().then(function(oData) {
+		var oReport = new QUnitReport({
+				data: oData
+		});
+	}).then(function () {
+		QUnit.start();
+	});
 
 });
 

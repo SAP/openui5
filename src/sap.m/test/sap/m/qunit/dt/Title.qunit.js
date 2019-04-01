@@ -1,3 +1,6 @@
+/* global QUnit */
+QUnit.config.autostart = false;
+
 (function () {
 	"use strict";
 
@@ -7,18 +10,6 @@
 		"sap/m/Title",
 		"sap/ui/rta/test/controlEnablingCheck"
 	], function (QUnitReport, ElementEnablementTest, Title, rtaControlEnablingCheck) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
-			type: "sap.m.Title",
-			create: function () {
-				return new Title();
-			}
-		});
-		oElementEnablementTest.run().then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
 
 		// Rename action
 		var fnConfirmTitleIsRenamedWithNewValue = function (oUiComponent, oViewAfterAction, assert) {
@@ -88,6 +79,20 @@
 			afterAction: fnConfirmTitleIsVisible,
 			afterUndo: fnConfirmTitleIsInvisible,
 			afterRedo: fnConfirmTitleIsVisible
+		});
+
+		var oElementEnablementTest = new ElementEnablementTest({
+			type: "sap.m.Title",
+			create: function () {
+				return new Title();
+			}
+		});
+		oElementEnablementTest.run().then(function (oData) {
+			new QUnitReport({
+				data: oData
+			});
+		}).then(function () {
+			QUnit.start();
 		});
 	});
 })();

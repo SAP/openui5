@@ -1,3 +1,6 @@
+/* global QUnit */
+QUnit.config.autostart = false;
+
 (function () {
 	"use strict";
 
@@ -8,22 +11,6 @@
 		"sap/m/ResponsiveScale",
 		"sap/ui/rta/test/controlEnablingCheck"
 	], function (QUnitReport, ElementEnablementTest, Slider, ResponsiveScale, rtaControlEnablingCheck) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
-			type: "sap.m.Slider",
-			create: function () {
-				return new Slider({
-					enableTickmarks: true,
-					scale: new ResponsiveScale({tickmarksBetweenLabels: 20})
-				});
-			}
-		});
-
-		oElementEnablementTest.run().then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
 
 		var fnConfirmSliderIsInvisible = function (oAppComponent, oViewAfterAction, assert) {
 			assert.ok(oViewAfterAction.byId("slider").getVisible() === false, "then the Slider is invisible");
@@ -64,6 +51,24 @@
 			afterAction: fnConfirmSliderIsVisible,
 			afterUndo: fnConfirmSliderIsInvisible,
 			afterRedo: fnConfirmSliderIsVisible
+		});
+
+		var oElementEnablementTest = new ElementEnablementTest({
+			type: "sap.m.Slider",
+			create: function () {
+				return new Slider({
+					enableTickmarks: true,
+					scale: new ResponsiveScale({tickmarksBetweenLabels: 20})
+				});
+			}
+		});
+
+		oElementEnablementTest.run().then(function (oData) {
+			new QUnitReport({
+				data: oData
+			});
+		}).then(function () {
+			QUnit.start();
 		});
 	});
 })();

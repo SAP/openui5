@@ -19,24 +19,14 @@
 <script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 <script>
+QUnit.config.autostart = false;
 
 sap.ui.require([
 	'sap/ui/dt/test/report/QUnit',
 	'sap/ui/dt/test/ElementEnablementTest',
 	'dt/Toolbar',
 	'sap/ui/rta/test/controlEnablingCheck'
-], function (QUnit, ElementEnablementTest, Toolbar, rtaControlEnablingCheck) {
-
-	var oElementEnablementTest = new ElementEnablementTest({
-		type: "sap.m.Toolbar",
-		create: Toolbar.create,
-		timeout: Toolbar.timeout
-	});
-	oElementEnablementTest.run().then(function (oData) {
-		var oReport = new QUnit({
-			data: oData
-		});
-	});
+], function (QUnitReport, ElementEnablementTest, Toolbar, rtaControlEnablingCheck) {
 
 	// Move action
 	var fnConfirmElement1IsOn3rdPosition = function (oUiComponent, oViewAfterAction, assert) {
@@ -87,6 +77,19 @@ sap.ui.require([
 		afterAction: fnConfirmElement1IsOn3rdPosition,
 		afterUndo: fnConfirmElement1IsOn1stPosition,
 		afterRedo: fnConfirmElement1IsOn3rdPosition
+	});
+
+	var oElementEnablementTest = new ElementEnablementTest({
+		type: "sap.m.Toolbar",
+		create: Toolbar.create,
+		timeout: Toolbar.timeout
+	});
+	oElementEnablementTest.run().then(function (oData) {
+		var oReport = new QUnitReport({
+			data: oData
+		});
+	}).then(function () {
+		QUnit.start();
 	});
 });
 

@@ -1,3 +1,6 @@
+/* global QUnit */
+QUnit.config.autostart = false;
+
 (function () {
 	"use strict";
 
@@ -13,42 +16,6 @@
 		"sap/m/Toolbar",
 		"sap/m/Title"
 	], function (QUnitReport, rtaControlEnablingCheck, ElementEnablementTest, Input, Form, FormContainer, FormElement, ResponsiveGridLayout, Toolbar, Title) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
-			type: "sap.ui.layout.form.Form",
-			create: function () {
-				return new Form({
-					toolbar: new Toolbar({
-						content : [
-							new Title({text : "Title"})
-						]
-					}),
-					layout: new ResponsiveGridLayout(),
-					formContainers: [
-						new FormContainer({
-							formElements: [
-								new FormElement({
-									fields: [
-										new Input()
-									]
-								}),
-								new FormElement({
-									fields: [
-										new Input()
-									]
-								})
-							]
-						})
-					]
-				});
-			}
-		});
-		oElementEnablementTest.run().then(function(oData) {
-			var oReport = new QUnitReport({
-				data: oData
-			});
-			oReport.destroy();
-		});
 
 		// Create new formContainer
 		var fnConfirmFormContainerIsAddedWithNewTitle = function(oAppComponent, oViewAfterAction, assert) {
@@ -183,6 +150,44 @@
 			afterAction: fnConfirmElement1IsOn2rdPosition,
 			afterUndo: fnConfirmElement1IsOn1stPosition,
 			afterRedo: fnConfirmElement1IsOn2rdPosition
+		});
+
+		var oElementEnablementTest = new ElementEnablementTest({
+			type: "sap.ui.layout.form.Form",
+			create: function () {
+				return new Form({
+					toolbar: new Toolbar({
+						content : [
+							new Title({text : "Title"})
+						]
+					}),
+					layout: new ResponsiveGridLayout(),
+					formContainers: [
+						new FormContainer({
+							formElements: [
+								new FormElement({
+									fields: [
+										new Input()
+									]
+								}),
+								new FormElement({
+									fields: [
+										new Input()
+									]
+								})
+							]
+						})
+					]
+				});
+			}
+		});
+		oElementEnablementTest.run().then(function(oData) {
+			var oReport = new QUnitReport({
+				data: oData
+			});
+			oReport.destroy();
+		}).then(function () {
+			QUnit.start();
 		});
 	});
 })();

@@ -1,3 +1,6 @@
+/* global QUnit */
+QUnit.config.autostart = false;
+
 (function () {
 	"use strict";
 
@@ -8,28 +11,6 @@
 		"sap/m/Text",
 		"sap/ui/rta/test/controlEnablingCheck"
 	], function (QUnitReport, ElementEnablementTest, Popover, Text, rtaControlEnablingCheck) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
-			type: "sap.m.Popover",
-			create: function () {
-				return new Popover({
-					subHeader: new sap.m.Text({ text: "subheader" }),
-					footer: new sap.m.Text({ text: "footer" }),
-					beginButton: new sap.m.Button({ text: "begin" }),
-					endButton: new sap.m.Button({ text: "end" }),
-					contentWidth: "150px",
-					content: [
-						new Text({text: "Text"}),
-						new Text({text: "Text"})
-					]
-				});
-			}
-		});
-		oElementEnablementTest.run().then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
 
 		// Move action
 		var fnConfirmElement1IsOn3rdPosition = function (oUiComponent, oViewAfterAction, assert) {
@@ -81,6 +62,30 @@
 			afterAction: fnConfirmElement1IsOn3rdPosition,
 			afterUndo: fnConfirmElement1IsOn1stPosition,
 			afterRedo: fnConfirmElement1IsOn3rdPosition
+		});
+
+		var oElementEnablementTest = new ElementEnablementTest({
+			type: "sap.m.Popover",
+			create: function () {
+				return new Popover({
+					subHeader: new sap.m.Text({ text: "subheader" }),
+					footer: new sap.m.Text({ text: "footer" }),
+					beginButton: new sap.m.Button({ text: "begin" }),
+					endButton: new sap.m.Button({ text: "end" }),
+					contentWidth: "150px",
+					content: [
+						new Text({text: "Text"}),
+						new Text({text: "Text"})
+					]
+				});
+			}
+		});
+		oElementEnablementTest.run().then(function (oData) {
+			new QUnitReport({
+				data: oData
+			});
+		}).then(function () {
+			QUnit.start();
 		});
 	});
 })();

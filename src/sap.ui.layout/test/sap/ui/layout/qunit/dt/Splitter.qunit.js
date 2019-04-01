@@ -1,3 +1,6 @@
+/* global QUnit */
+QUnit.config.autostart = false;
+
 (function () {
 	"use strict";
 
@@ -8,23 +11,6 @@
 		"sap/m/Button",
 		"sap/ui/rta/test/controlEnablingCheck"
 	], function (QUnitReport, ElementEnablementTest, Splitter, Text, rtaControlEnablingCheck) {
-
-		var oElementEnablementTest = new ElementEnablementTest({
-			type: "sap.ui.layout.Splitter",
-			create: function () {
-				return new Splitter({
-					contentAreas: [new sap.m.Button(), new sap.m.Button()],
-					orientation: "Vertical"
-				});
-			}
-		});
-
-
-		oElementEnablementTest.run().then(function (oData) {
-			new QUnitReport({
-				data: oData
-			});
-		});
 
 		// Move action
 		var fnConfirmElement1IsOn2ndPosition = function (oUiComponent, oViewAfterAction, assert) {
@@ -133,5 +119,23 @@
 			afterRedo: fnConfirmSplitterIsVisible
 		});
 
+		var oElementEnablementTest = new ElementEnablementTest({
+			type: "sap.ui.layout.Splitter",
+			create: function () {
+				return new Splitter({
+					contentAreas: [new sap.m.Button(), new sap.m.Button()],
+					orientation: "Vertical"
+				});
+			}
+		});
+
+
+		oElementEnablementTest.run().then(function (oData) {
+			new QUnitReport({
+				data: oData
+			});
+		}).then(function () {
+			QUnit.start();
+		});
 	});
 })();
