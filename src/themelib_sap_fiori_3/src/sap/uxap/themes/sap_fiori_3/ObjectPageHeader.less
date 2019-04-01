@@ -33,9 +33,6 @@
 
 .sapUiSizeCompact .sapUxAPObjectPageHeaderIdentifier,
 .sapUxAPObjectPageHeaderIdentifier {
-	padding-top: 0.5rem;
-	padding-bottom: 0.5rem;
-
 	.sapUxAPObjectChildPage {
 		margin-top: -0.5rem;
 	}
@@ -44,11 +41,6 @@
 		&.sapUxAPObjectPageHeaderIdentifierActionsForce, .sapUxAPObjectPageHeaderStickied & {
 			right: 1.25rem;
 		}
-	}
-
-	.sapUxAPObjectPageHeaderIdentifierContainer {
-		padding-top: 1rem;
-		padding-bottom: 1rem;
 	}
 }
 
@@ -96,15 +88,15 @@ html .sapUiContainer-Narrow .sapUiSizeCompact.sapUxAPObjectPageHeaderLockBtn .sa
 }
 
 .sapUxAPObjectPageHeaderPlaceholder {
-	background-color: @sapUiContentImagePlaceholderBackground;
+	background-color: darken(@sapUiAccent7,8);
 }
 
 .sapUxAPObjectPageHeaderPlaceholder > .sapUiIcon {
-	color: @sapUiContentImagePlaceholderForegroundColor;
+	color: @sapUiContentContrastTextColor;
 }
 
 .sapUxAPObjectPageHeaderObjectImageContainer .sapUiIcon {
-	color: @sapUiContentIconColor;
+	color: @sapUiContentContrastTextColor;
 }
 
 .sapUxAPObjectPageHeaderTitle.sapUxAPObjectPageHeaderSnappedTitleOnMobile > .sapFDynamicPageTitle {
