@@ -74,6 +74,8 @@ sap.ui.define([
 		});
 
 		TableContent.prototype.exit = function () {
+			BaseContent.prototype.exit.apply(this, arguments);
+
 			if (this._oItemTemplate) {
 				this._oItemTemplate.destroy();
 				this._oItemTemplate = null;

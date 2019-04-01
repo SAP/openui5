@@ -196,139 +196,149 @@
 		  "pattern": "minHeight",
 		  "name": "minHeight",
 		  "target": "minHeight"
+		},
+		{
+		  "pattern": "dataMode",
+		  "name": "dataMode",
+		  "target": "dataMode"
 		}
 	  ],
-	  "targets": {
-		"main": {
-		  "viewId": "main",
-		  "viewName": "Main",
-		  "viewLevel": 1
-		},
-		"grid": {
-		  "viewId": "grid",
-		  "viewName": "Grid",
-		  "viewLevel": 1
-		},
-		"zflow": {
-		  "viewId": "zflow",
-		  "viewName": "Zflow",
-		  "viewLevel": 1
-		},
-		"flexibleHeight": {
-		  "viewId": "flexibleHeight",
-		  "viewName": "FlexibleHeight",
-		  "viewLevel": 1
-		},
-		"splitter": {
-		  "viewId": "splitter",
-		  "viewName": "Splitter",
-		  "viewLevel": 1
-		},
-		"nolayout": {
-		  "viewId": "nolayout",
-		  "viewName": "NoLayout",
-		  "viewLevel": 1
-		},
-		"notFound": {
-		  "viewId": "notFound",
-		  "viewName": "NotFound",
-		  "transition": "show"
-		},
-		"listContent": {
-		  "viewId": "listContent",
-		  "viewName": "ListContent",
-		  "viewLevel": 1
-		},
-		"tableContent": {
-		  "viewId": "tableContent",
-		  "viewName": "TableContent",
-		  "viewLevel": 1
-		},
-		"analyticalContent": {
-		  "viewId": "analyticalContent",
-		  "viewName": "AnalyticalContent",
-		  "viewLevel": 1
-		},
-		"flp": {
-		  "viewId": "flp",
-		  "viewName": "Flp",
-		  "viewLevel": 1
-		},
-		"numericHeader": {
-		  "viewId": "numericHeader",
-		  "viewName": "NumericHeader",
-		  "viewLevel": 1
-		},
-		"manifest": {
-		  "viewId": "manifest",
-		  "viewName": "Manifest",
-		  "viewLevel": 1
-		},
-		"customContent": {
-		  "viewId": "custom",
-		  "viewName": "Custom",
-		  "viewLevel": 1
-		},
-		"componentContent": {
-		  "viewId": "componentContent",
-		  "viewName": "ComponentContent",
-		  "viewLevel": 1
-		},
-		"sapfCard": {
-		  "viewId": "sapfCard",
-		  "viewName": "sapfCard",
-		  "viewLevel": 1
-		},
-		"gridContainer": {
-		  "viewId": "GridContainer",
-		  "viewName": "GridContainer",
-		  "viewLevel": 1
-		},
-		"navigationService": {
-		  "viewId": "navigationService",
-		  "viewName": "NavigationService",
-		  "viewLevel": 1
-		},
-		"dataService": {
-		  "viewId": "dataService",
-		  "viewName": "DataService",
-		  "viewLevel": 1
-		},
-		"delayedLoading": {
-		  "viewId": "delayedLoading",
-		  "viewName": "DelayedLoading",
-		  "viewLevel": 1
-		},
-		"timelineContent": {
-		  "viewId": "timelineContent",
-		  "viewName": "timelineContent",
-		  "viewLevel": 1
-		},
-		"objectContent": {
-		  "viewId": "object",
-		  "viewName": "ObjectContent",
-		  "viewLevel": 1
-		},
-		"dnd": {
-		  "viewId": "dnd",
-		  "viewName": "Dnd",
-		  "viewLevel": 1
-		},
-		"dnd2": {
-		  "viewId": "dnd2",
-		  "viewName": "Dnd2",
-		  "viewLevel": 1
-		},
-		"noHeaderNoContent": {
-		  "viewId": "noHeaderNoContent",
-		  "viewName": "noHeaderNoContent",
-		  "viewLevel": 1
-		},
-		"minHeight": {
-		  "viewId": "minHeight",
-		  "viewName": "minHeight",
-		  "viewLevel": 1
-		}
+		"targets": {
+			"main": {
+				"viewId": "main",
+				"viewName": "Main",
+				"viewLevel": 1
+			},
+			"grid": {
+				"viewId": "grid",
+				"viewName": "Grid",
+				"viewLevel": 1
+			},
+			"zflow": {
+				"viewId": "zflow",
+				"viewName": "Zflow",
+				"viewLevel": 1
+			},
+			"flexibleHeight": {
+				"viewId": "flexibleHeight",
+				"viewName": "FlexibleHeight",
+				"viewLevel": 1
+			},
+			"splitter": {
+				"viewId": "splitter",
+				"viewName": "Splitter",
+				"viewLevel": 1
+			},
+			"nolayout": {
+				"viewId": "nolayout",
+				"viewName": "NoLayout",
+				"viewLevel": 1
+			},
+			"notFound": {
+				"viewId": "notFound",
+				"viewName": "NotFound",
+				"transition": "show"
+			},
+			"listContent": {
+				"viewId": "listContent",
+				"viewName": "ListContent",
+				"viewLevel": 1
+			},
+			"tableContent": {
+				"viewId": "tableContent",
+				"viewName": "TableContent",
+				"viewLevel": 1
+			},
+			"analyticalContent": {
+				"viewId": "analyticalContent",
+				"viewName": "AnalyticalContent",
+				"viewLevel": 1
+			},
+			"flp": {
+				"viewId": "flp",
+				"viewName": "Flp",
+				"viewLevel": 1
+			},
+			"numericHeader": {
+				"viewId": "numericHeader",
+				"viewName": "NumericHeader",
+				"viewLevel": 1
+			},
+			"manifest": {
+				"viewId": "manifest",
+				"viewName": "Manifest",
+				"viewLevel": 1
+			},
+			"customContent": {
+				"viewId": "custom",
+				"viewName": "Custom",
+				"viewLevel": 1
+			},
+			"componentContent": {
+				"viewId": "componentContent",
+				"viewName": "ComponentContent",
+				"viewLevel": 1
+			},
+			"sapfCard": {
+				"viewId": "sapfCard",
+				"viewName": "sapfCard",
+				"viewLevel": 1
+			},
+			"gridContainer": {
+				"viewId": "GridContainer",
+				"viewName": "GridContainer",
+				"viewLevel": 1
+			},
+			"navigationService": {
+				"viewId": "navigationService",
+				"viewName": "NavigationService",
+				"viewLevel": 1
+			},
+			"dataService": {
+				"viewId": "dataService",
+				"viewName": "DataService",
+				"viewLevel": 1
+			},
+			"delayedLoading": {
+				"viewId": "delayedLoading",
+				"viewName": "DelayedLoading",
+				"viewLevel": 1
+			},
+			"timelineContent": {
+				"viewId": "timelineContent",
+				"viewName": "timelineContent",
+				"viewLevel": 1
+			},
+			"objectContent": {
+				"viewId": "object",
+				"viewName": "ObjectContent",
+				"viewLevel": 1
+			},
+			"dnd": {
+				"viewId": "dnd",
+				"viewName": "Dnd",
+				"viewLevel": 1
+			},
+			"dnd2": {
+				"viewId": "dnd2",
+				"viewName": "Dnd2",
+				"viewLevel": 1
+			},
+			"noHeaderNoContent": {
+				"viewId": "noHeaderNoContent",
+				"viewName": "noHeaderNoContent",
+				"viewLevel": 1
+			},
+			"minHeight": {
+				"viewId": "minHeight",
+				"viewName": "minHeight",
+				"viewLevel": 1
+			},
+			"dataMode": {
+				"viewId": "dataMode",
+				"viewName": "DataMode",
+				"viewLevel": 1
+			}
 		}
 	}
   }

@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/f/cards/ActionEnablement",
 	'sap/m/NumericContent',
 	'sap/m/Text',
-	'sap/f/cards/DataProviderFactory',
 	'sap/ui/model/json/JSONModel',
 	"sap/f/cards/NumericSideIndicator",
 	"sap/f/cards/NumericHeaderRenderer"
@@ -15,7 +14,6 @@ sap.ui.define([
 		ActionEnablement,
 		NumericContent,
 		Text,
-		DataProviderFactory,
 		JSONModel,
 		NumericSideIndicator
 	) {
@@ -160,6 +158,16 @@ sap.ui.define([
 		}.bind(this));
 
 		this.setBusyIndicatorDelay(0);
+	};
+
+	NumericHeader.prototype.exit = function () {
+		this._oServiceManager = null;
+		this._oDataProviderFactory = null;
+
+		if (this._oDataProvider) {
+			this._oDataProvider.destroy();
+			this._oDataProvider = null;
+		}
 	};
 
 	/**
@@ -405,7 +413,7 @@ sap.ui.define([
 	 * @param {map} mConfiguration A map containing the header configuration options.
 	 * @return {sap.f.cards.NumericHeader} The created NumericHeader
 	 */
-	NumericHeader.create = function (mConfiguration, oServiceManager) {
+	NumericHeader.create = function (mConfiguration, oServiceManager, oDataProviderFactory) {
 		var mSettings = {
 			title: mConfiguration.title,
 			subtitle: mConfiguration.subTitle,
@@ -428,6 +436,7 @@ sap.ui.define([
 
 		var oHeader = new NumericHeader(mSettings);
 		oHeader.setServiceManager(oServiceManager);
+		oHeader.setDataProviderFactory(oDataProviderFactory);
 		oHeader._setData(mConfiguration.data);
 
 		return oHeader;
@@ -435,6 +444,11 @@ sap.ui.define([
 
 	NumericHeader.prototype.setServiceManager = function (oServiceManager) {
 		this._oServiceManager = oServiceManager;
+		return this;
+	};
+
+	NumericHeader.prototype.setDataProviderFactory = function (oDataProviderFactory) {
+		this._oDataProviderFactory = oDataProviderFactory;
 		return this;
 	};
 
@@ -456,7 +470,7 @@ sap.ui.define([
 			this._oDataProvider.destroy();
 		}
 
-		this._oDataProvider = DataProviderFactory.create(oDataSettings, this._oServiceManager);
+		this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
 
 		if (this._oDataProvider) {
 			this.setBusy(true);
@@ -468,6 +482,7 @@ sap.ui.define([
 				this._updateModel(oEvent.getParameter("data"));
 				this.setBusy(false);
 			}.bind(this));
+
 			this._oDataProvider.attachError(function (oEvent) {
 				this._handleError(oEvent.getParameter("message"));
 				this.setBusy(false);

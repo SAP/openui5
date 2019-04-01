@@ -43,6 +43,8 @@ sap.ui.define(["sap/f/cards/BaseContent",
 		 * Called when control is destroyed.
 		 */
 		TimelineContent.prototype.exit = function () {
+			BaseContent.prototype.exit.apply(this, arguments);
+
 			if (this._oTimeLineItemTemplate) {
 				this._oTimeLineItemTemplate.destroy();
 				this._oTimeLineItemTemplate = null;

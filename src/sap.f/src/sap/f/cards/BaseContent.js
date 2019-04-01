@@ -4,10 +4,9 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/model/json/JSONModel",
-	"sap/f/cards/DataProviderFactory",
 	"sap/base/Log",
 	"sap/ui/core/Core"
-], function (Control, JSONModel, DataProviderFactory, Log, Core) {
+], function (Control, JSONModel, Log, Core) {
 	"use strict";
 
 	/**
@@ -91,6 +90,16 @@ sap.ui.define([
 		this.setBusyIndicatorDelay(0);
 	};
 
+	BaseContent.prototype.exit = function () {
+		this._oServiceManager = null;
+		this._oDataProviderFactory = null;
+
+		if (this._oDataProvider) {
+			this._oDataProvider.destroy();
+			this._oDataProvider = null;
+		}
+	};
+
 	/**
 	 * Await for an event which controls the overall "ready" state of the content.
 	 *
@@ -108,10 +117,6 @@ sap.ui.define([
 	BaseContent.prototype.destroy = function () {
 		this.setAggregation("_content", null);
 		this.setModel(null);
-		if (this._oDataProvider) {
-			this._oDataProvider.destroy();
-			this._oDataProvider = null;
-		}
 		this._aReadyPromises = null;
 		return Control.prototype.destroy.apply(this, arguments);
 	};
@@ -155,7 +160,7 @@ sap.ui.define([
 			this._oDataProvider.destroy();
 		}
 
-		this._oDataProvider = DataProviderFactory.create(oDataSettings, this._oServiceManager);
+		this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
 
 		if (this._oDataProvider) {
 			this.setBusy(true);
@@ -167,6 +172,7 @@ sap.ui.define([
 				this._updateModel(oEvent.getParameter("data"));
 				this.setBusy(false);
 			}.bind(this));
+
 			this._oDataProvider.attachError(function (oEvent) {
 				this._handleError(oEvent.getParameter("message"));
 				this.setBusy(false);
@@ -249,11 +255,17 @@ sap.ui.define([
 		return this;
 	};
 
-	BaseContent.create = function (sType, oConfiguration, oServiceManager) {
+	BaseContent.prototype.setDataProviderFactory = function (oDataProviderFactory) {
+		this._oDataProviderFactory = oDataProviderFactory;
+		return this;
+	};
+
+	BaseContent.create = function (sType, oConfiguration, oServiceManager, oDataProviderFactory) {
 		return new Promise(function (resolve, reject) {
 			var fnCreateContentInstance = function (Content) {
 				var oContent = new Content();
 				oContent.setServiceManager(oServiceManager);
+				oContent.setDataProviderFactory(oDataProviderFactory);
 				oContent.setConfiguration(oConfiguration);
 				resolve(oContent);
 			};
