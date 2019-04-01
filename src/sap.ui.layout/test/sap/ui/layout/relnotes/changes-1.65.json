@@ -19,6 +19,12 @@
         "type": "FIX",
         "text": " sap.ui.layout.Grid: Wrapping of Grid children in IE is fixed",
         "references": []
+      },
+      {
+        "id": "31d7e3687d50de1f97e2d780e6e3ea3af38ffb1c",
+        "type": "FIX",
+        "text": " ResponsiveGridLayout: internal Grid has no parent",
+        "references": []
       }
     ]
   }

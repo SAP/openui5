@@ -67,6 +67,54 @@
         "type": "FIX",
         "text": " XMLTemplateProcessor: run ExtensionPoints with correct owner ID",
         "references": []
+      },
+      {
+        "id": "7bc7ad626cd0fa9ffc40b90482748d9e9507a606",
+        "type": "FEATURE",
+        "text": " Opa: set default size for iframe",
+        "references": []
+      },
+      {
+        "id": "b61696d9d60647e188b3139e7311f29ce2dd74c3",
+        "type": "FEATURE",
+        "text": " sap.ui.core: multiple listeners in ManagedObject \u0026 XMLView",
+        "references": []
+      },
+      {
+        "id": "2016f6d36621f160a8a1a5183fce918a67c2fad7",
+        "type": "FEATURE",
+        "text": " sap/base/util/isEmptyObject: new module",
+        "references": []
+      },
+      {
+        "id": "c68c54fc4ddcc51ac65a7d6523912dd306584474",
+        "type": "FEATURE",
+        "text": " trace/FESR: Enhance onBeforeCreated hook to allow TTI provision",
+        "references": []
+      },
+      {
+        "id": "de3daddb4f8f6a31a777c0c2132cce6f39ce1042",
+        "type": "FIX",
+        "text": " Prevent jQuery UI Core from triggering lazy stubs",
+        "references": []
+      },
+      {
+        "id": "f72a5622b25e8d891d138e1a5341b34112c5f511",
+        "type": "FIX",
+        "text": " sap/ui/util/Mobile: Update favicon properly in IE",
+        "references": []
+      },
+      {
+        "id": "5d0cd00942801981b928d504ecfe11111a559e74",
+        "type": "FIX",
+        "text": " trace/FESR: Increase step counter on finished interaction",
+        "references": []
+      },
+      {
+        "id": "4743b15275c15eca8f900ba0f51c098ed470b74c",
+        "type": "FIX",
+        "text": " trace/Passport: Do not reset trace level on call of traceFlags",
+        "references": []
       }
     ]
   }

@@ -163,6 +163,78 @@
         "type": "FIX",
         "text": " sap.m: Added missing modules to sap.ui.define calls.",
         "references": []
+      },
+      {
+        "id": "1a1b2a539e2c51dba83cd6203be708a571740cd2",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Group headers are now read out",
+        "references": []
+      },
+      {
+        "id": "5e5ce62b6fb9bf44748e5b6f68e119ad472e430a",
+        "type": "FIX",
+        "text": " sap.m.ComboBoxBase: Refactoring of sap.m.ComboBox and sap.m.MultiComboBox",
+        "references": []
+      },
+      {
+        "id": "b029693939921d28e728a7bab57ddcbfc3b34fe4",
+        "type": "FIX",
+        "text": " sap.m.DateTimeInput: qunit test passes correctly on IE",
+        "references": []
+      },
+      {
+        "id": "1600bbe07c155992e27466fbab015be79f21d676",
+        "type": "FIX",
+        "text": " sap.m.GenericTag: Fixed onkeydown with SPACE key",
+        "references": []
+      },
+      {
+        "id": "7be4d91c8e13a55f703c8f1a179d3b0b273ff00b",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Disabled MenuButtonin split mode doesn\u0027t get the focus",
+        "references": []
+      },
+      {
+        "id": "3beb4c6d153a765677293427ec4065803d4ce9d6",
+        "type": "FIX",
+        "text": " sap.m.MessageBox: Apply alertdialog role via Dialog API",
+        "references": []
+      },
+      {
+        "id": "1ad052637745c7cc95e39a65879974b84b13828e",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: Title wraps on FireFox",
+        "references": []
+      },
+      {
+        "id": "c0faa5219925fef52200ce09361c2c2a604c2c04",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: value state \u0027Information\u0027 is handled correctly",
+        "references": []
+      },
+      {
+        "id": "3f5903cc33bfc2e978edfbe387d8073280278529",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Updated sample in test page",
+        "references": []
+      },
+      {
+        "id": "415116a37fd65a8c063cd90987a5256b48fe69aa",
+        "type": "FIX",
+        "text": " sap.m.Select: Demo Kit samples binding fix",
+        "references": []
+      },
+      {
+        "id": "8f273ec4a7676b3282584dde33274fa9ac47ebcc",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: correct now marker position on compact size",
+        "references": []
+      },
+      {
+        "id": "11e0337d9b96e7e1c5d8ab47f02639fcd67218dc",
+        "type": "FIX",
+        "text": " sap.m.Token: Font size is aligned with the visual specification",
+        "references": []
       }
     ]
   }

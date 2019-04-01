@@ -25,6 +25,12 @@
         "type": "FEATURE",
         "text": " sap.f.Avatar: Custom fallback icon implemented",
         "references": []
+      },
+      {
+        "id": "d47293478fde608a33dcc0054a299ec7c6bb3677",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fixed validation of headerExpanded property",
+        "references": []
       }
     ]
   }

@@ -7,6 +7,18 @@
         "type": "FIX",
         "text": " sap.m.Carousel: Bullets are now visible in Fiori 3",
         "references": []
+      },
+      {
+        "id": "1de4c33069f032c511c0cf3f77d3506591e29328",
+        "type": "FIX",
+        "text": " sap.m.ToggleButton: hover state for Accept and Reject fixed for fiori3",
+        "references": []
+      },
+      {
+        "id": "11e0337d9b96e7e1c5d8ab47f02639fcd67218dc",
+        "type": "FIX",
+        "text": " sap.m.Token: Font size is aligned with the visual specification",
+        "references": []
       }
     ]
   }
