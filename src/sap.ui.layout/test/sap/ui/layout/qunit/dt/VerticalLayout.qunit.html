@@ -17,21 +17,25 @@
 <script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 <script>
-
+QUnit.config.autostart = false;
 sap.ui.require([
 	'sap/ui/dt/test/report/QUnit',
 	'sap/ui/dt/test/ElementEnablementTest',
 	'dt/VerticalLayout'
-], function (QUnit, ElementEnablementTest, VerticalLayout) {
+], function (QUnitReport, ElementEnablementTest, VerticalLayout) {
 
 	var oElementEnablementTest = new ElementEnablementTest({
 		type : "sap.ui.layout.VerticalLayout",
 		create : VerticalLayout.create
 	});
 	oElementEnablementTest.run().then(function(oData) {
-		var oReport = new QUnit({
+		var oReport = new QUnitReport({
 			data: oData
 		});
+		oReport.destroy();
+		oElementEnablementTest.destroy();
+	}).then(function () {
+		QUnit.start();
 	});
 
 });

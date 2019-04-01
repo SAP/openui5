@@ -18,21 +18,25 @@
 <script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 <script>
-
+QUnit.config.autostart = false;
 sap.ui.require([
 	'sap/ui/dt/test/report/QUnit',
 	'sap/ui/dt/test/ElementEnablementTest',
 	'dt/CustomListItem'
-], function (QUnit, ElementEnablementTest, CustomListItem) {
+], function (QUnitReport, ElementEnablementTest, CustomListItem) {
 
 	var oElementEnablementTest = new ElementEnablementTest({
 		type: "sap.m.CustomListItem",
 		create : CustomListItem.create
 	});
 	oElementEnablementTest.run().then(function(oData) {
-		var oReport = new QUnit({
+		var oReport = new QUnitReport({
 			data: oData
 		});
+		oReport.destroy();
+		oElementEnablementTest.destroy();
+	}).then(function () {
+		QUnit.start();
 	});
 
 });
