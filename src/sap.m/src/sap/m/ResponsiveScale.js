@@ -216,7 +216,7 @@ sap.ui.define([
 
 				// As tickmarks are separated from the lables, we should ensure that if a label is visible,
 				// the corresponding tickmark should be visible too and vice versa.
-				if (aHiddenLabels[iIndex]) {
+				if (aHiddenLabels[iIndex] && !bShowTickmarks) {
 					oElem.style.display = "none";
 					oSiblingTickmark.style.visibility = 'hidden'; //visible- inherit from CSS
 				} else {
