@@ -541,6 +541,15 @@ sap.ui.define([
 		assert.strictEqual($Indicator.height(), oDiv2.$().height() , "Indicator's height is equal to dropped item's height.");
 		assert.strictEqual(mIndicatorOffset.top, mTargetOffset.top , "Indicator's top position is equal to dropped item's top position.");
 		assert.strictEqual(mIndicatorOffset.left, mTargetOffset.left + oDiv2.$().width(), "Indicator's left position is equal to dropped item's right position.");
+		assert.strictEqual(oEvent.dragSession.getDropPosition(), "After", "Drop position is set correctly");
+
+		// act for the RTL mode
+		sinon.stub(sap.ui.getCore().getConfiguration(), "getRTL").callsFake(function() {
+			return true;
+		});
+
+		oDiv2.$().trigger(oEvent);
+		assert.strictEqual(oEvent.dragSession.getDropPosition(), "Before", "Drop position is set correctly for the RTL mode");
 
 		// drop
 		oDiv2.$().trigger("drop");
