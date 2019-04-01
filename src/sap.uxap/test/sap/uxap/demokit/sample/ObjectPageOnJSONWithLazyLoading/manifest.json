@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.uxap.sample.ObjectPageOnJSONWithLazyLoading.ObjectPageOnJSONWithLazyLoading",
+			"viewName": "sap.uxap.sample.ObjectPageOnJSONWithLazyLoading.view.ObjectPageOnJSONWithLazyLoading",
 			"type": "XML",
 			"async": true
 		},
@@ -20,12 +20,12 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"ObjectPageOnJSONWithLazyLoading.view.xml",
-					"ObjectPageOnJSONWithLazyLoading.controller.js",
+					"view/ObjectPageOnJSONWithLazyLoading.view.xml",
+					"controller/ObjectPageOnJSONWithLazyLoading.controller.js",
 					"../SharedBlocks/employment/EmploymentBlockJob.js",
 					"../SharedBlocks/employment/EmploymentBlockJobCollapsed.view.xml",
 					"../SharedBlocks/employment/EmploymentBlockJobExpanded.view.xml",
-					"HRData.json",
+                    "../SharedJSONData/HRData.json",
 					"manifest.json"
 				]
 			}

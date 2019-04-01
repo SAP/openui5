@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.uxap.sample.ChildObjectPage.ChildObjectPage",
+			"viewName": "sap.uxap.sample.ChildObjectPage.view.ChildObjectPage",
 			"type": "XML",
 			"async": true
 		},
@@ -20,8 +20,8 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"ChildObjectPage.view.xml",
-					"ChildObjectPage.controller.js",
+					"view/ChildObjectPage.view.xml",
+					"controller/ChildObjectPage.controller.js",
 					"../SharedBlocks/goals/GoalsBlock.js",
 					"../SharedBlocks/goals/GoalsBlock.view.xml",
 					"../SharedBlocks/personal/BlockAdresses.js",
@@ -36,8 +36,8 @@
 					"../SharedBlocks/personal/PersonalBlockPart1.view.xml",
 					"../SharedBlocks/personal/PersonalBlockPart2.js",
 					"../SharedBlocks/personal/PersonalBlockPart2.view.xml",
-					"employee.json",
-					"products.json",
+                    "../SharedJSONData/employee.json",
+                    "../SharedJSONData/products.json",
 					"manifest.json"
 				]
 			}

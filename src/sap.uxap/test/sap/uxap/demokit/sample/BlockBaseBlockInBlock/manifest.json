@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.uxap.sample.BlockBaseBlockInBlock.BlockInBlock",
+			"viewName": "sap.uxap.sample.BlockBaseBlockInBlock.view.BlockBaseBlockInBlock",
 			"type": "XML",
 			"async": true
 		},
@@ -20,11 +20,11 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"BlockInBlock.view.xml",
-					"Block.js",
-					"Block.view.xml",
-					"InnerBlock.js",
-					"InnerBlock.view.xml",
+					"view/BlockBaseBlockInBlock.view.xml",
+					"controller/blocks/Block.js",
+					"view/blocks/Block.view.xml",
+					"controller/blocks/InnerBlock.js",
+					"view/blocks/InnerBlock.view.xml",
 					"manifest.json"
 				]
 			}

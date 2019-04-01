@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.uxap.sample.ObjectPageSubSectionMultiView.ObjectPageSubSectionMultiView",
+			"viewName": "sap.uxap.sample.ObjectPageSubSectionMultiView.view.ObjectPageSubSectionMultiView",
 			"type": "XML",
 			"async": true
 		},
@@ -20,10 +20,10 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"BlockEmpty.js",
-					"BlockEmpty.view.xml",
-					"ObjectPageSubSectionMultiView.controller.js",
-					"ObjectPageSubSectionMultiView.view.xml",
+					"controller/blocks/BlockEmpty.js",
+					"view/blocks/BlockEmpty.view.xml",
+                    "controller/ObjectPageSubSectionMultiView.controller.js",
+                    "view/ObjectPageSubSectionMultiView.view.xml",
 					"manifest.json"
 				]
 			}
