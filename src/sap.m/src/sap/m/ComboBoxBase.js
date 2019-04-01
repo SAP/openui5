@@ -137,7 +137,8 @@ sap.ui.define([
 					 * @since 1.38
 					 */
 					loadItems: {}
-				}
+				},
+				dnd: { draggable: false, droppable: true }
 			}
 		});
 

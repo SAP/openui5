@@ -226,7 +226,8 @@ function(
 						removedTokens: {type: "sap.m.Token[]"}
 					}
 				}
-			}
+			},
+			dnd: { draggable: false, droppable: true }
 		}
 	});
 
