@@ -3,13 +3,9 @@ sap.ui.define([
 ], function(UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.ui.layout.sample.GridXL.Component", {
-
+	return UIComponent.extend("sap.ui.layout.sample.GridXL.Component", {
 		metadata: {
 		    manifest: "json"
 		}
 	});
-
-	return Component;
-
 });

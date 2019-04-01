@@ -1,5 +1,5 @@
-<mvc:View controllerName="sap.ui.layout.sample.GridXL.Grid"
-	xmlns:l="sap.ui.layout" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core"
+<mvc:View controllerName="sap.ui.layout.sample.GridXL.controller.GridXL"
+	xmlns:l="sap.ui.layout" xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<l:Grid binding="{/InformationCollection}" hSpacing="0"
 		defaultSpan="XL6 L6 M6 S12" class="sapUiSmallMargin">
@@ -25,12 +25,12 @@
 				<l:GridData span="XL12 L12 M12 S12" indent="XL0 L0 M0" />
 			</layoutData>
 		</Title>
-		<Image src="{3/ProductPicUrl2}" desityAware="false" width="100%">
+		<Image src="{3/ProductPicUrl2}" densityAware="false" width="100%">
 			<layoutData>
 				<l:GridData moveForward="M6" />
 			</layoutData>
 		</Image>
-		<Image src="{1/ProductPicUrl}" desityAware="false" width="100%">
+		<Image src="{1/ProductPicUrl}" densityAware="false" width="100%">
 			<layoutData>
 				<l:GridData moveBackwards="M6" />
 			</layoutData>

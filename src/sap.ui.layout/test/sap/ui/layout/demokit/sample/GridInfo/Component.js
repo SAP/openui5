@@ -2,13 +2,9 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	function(UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.ui.layout.sample.GridInfo.Component", {
-
+	return UIComponent.extend("sap.ui.layout.sample.GridInfo.Component", {
 		metadata : {
 		    manifest: "json"
 		}
 	});
-
-	return Component;
-
 });
