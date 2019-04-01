@@ -200,7 +200,8 @@ function(
 					selectedItems: { type: "sap.ui.core.Item[]" }
 				}
 			}
-		}
+		},
+		dnd: { draggable: false, droppable: true }
 	}});
 
 	IconPool.insertFontFaceStyle();

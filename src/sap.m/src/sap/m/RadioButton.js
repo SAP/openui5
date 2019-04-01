@@ -207,6 +207,7 @@ function(
 			 */
 			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		},
+		dnd: { draggable: true, droppable: false },
 		designtime: "sap/m/designtime/RadioButton.designtime"
 	}});
 

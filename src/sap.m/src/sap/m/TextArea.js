@@ -168,7 +168,8 @@ function(
 					value : {type : "string"}
 				}
 			}
-		}
+		},
+		dnd: { draggable: false, droppable: true }
 	}});
 
 	/**

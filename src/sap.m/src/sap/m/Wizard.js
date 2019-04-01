@@ -151,7 +151,8 @@ sap.ui.define([
 					complete: {
 						parameters: {}
 					}
-				}
+				},
+				dnd: { draggable: false, droppable: true }
 			}
 		});
 
