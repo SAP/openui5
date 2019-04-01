@@ -159,7 +159,7 @@ describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 			element(by.id("__item4-button")).click();
 		} else {
 			element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
-			element(by.css("#__list1 li:nth-of-type(2)")).click();
+			element.all(by.cssContainingText(".sapMSelectListItem", "Work Week View")).click();
 		}
 	}
 
@@ -169,7 +169,7 @@ describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 			element(by.id("__item5-button")).click();
 		} else {
 			element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
-			element(by.css("#__list1 li:nth-of-type(3)")).click();
+			element.all(by.cssContainingText(".sapMSelectListItem", "Week View")).click();
 		}
 	}
 
