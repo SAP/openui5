@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/m/ScrollBar",
 	"sap/ui/core/ResizeHandler",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/delegate/ScrollEnablement",
 	"sap/ui/Device",
 	"sap/f/DynamicPageTitle",
@@ -21,6 +22,7 @@ sap.ui.define([
 	Control,
 	ScrollBar,
 	ResizeHandler,
+	Configuration,
 	ScrollEnablement,
 	Device,
 	DynamicPageTitle,
@@ -260,8 +262,6 @@ sap.ui.define([
 		return !!(oClientRect.width && oClientRect.height);
 	}
 
-	var bUseAnimations = sap.ui.getCore().getConfiguration().getAnimation();
-
 	// shortcut for sap.ui.core.AccessibleLandmarkRole
 	var AccessibleLandmarkRole = coreLibrary.AccessibleLandmarkRole;
 
@@ -478,7 +478,8 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._toggleFooter = function (bShow) {
-		var oFooter = this.getFooter();
+		var oFooter = this.getFooter(),
+			bUseAnimations = sap.ui.getCore().getConfiguration().getAnimationMode() !== Configuration.AnimationMode.none;
 
 		if (!exists(this.$())) {
 			return;
@@ -497,7 +498,7 @@ sap.ui.define([
 
 			if (!bShow) {
 				this._iFooterAnimationTimeout = setTimeout(function () {
-					this.$footerWrapper.toggleClass("sapUiHidden", !this.getShowFooter());
+					this.$footerWrapper.toggleClass("sapUiHidden", !bShow);
 				}.bind(this), DynamicPage.FOOTER_ANIMATION_DURATION);
 			} else {
 
@@ -506,12 +507,16 @@ sap.ui.define([
 					this._iFooterAnimationTimeout = null;
 				}
 
-				this.$footerWrapper.toggleClass("sapUiHidden", !this.getShowFooter());
+				this.$footerWrapper.toggleClass("sapUiHidden", !bShow);
 			}
 
 			setTimeout(function () {
 				oFooter.removeStyleClass("sapFDynamicPageActualFooterControlShow");
 			}, DynamicPage.FOOTER_ANIMATION_DURATION);
+		}
+
+		if (!bUseAnimations) {
+			this.$footerWrapper.toggleClass("sapUiHidden", !bShow);
 		}
 
 		this._updateScrollBar();
