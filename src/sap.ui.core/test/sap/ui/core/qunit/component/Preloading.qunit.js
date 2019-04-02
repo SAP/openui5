@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/UIComponentMetadata",
-	"sap/ui/core/Manifest"
-], function(jQuery, Log, Component, UIComponent, UIComponentMetadata, Manifest) {
+	"sap/ui/core/Manifest",
+	'sap/base/util/LoaderExtensions'
+], function(jQuery, Log, Component, UIComponent, UIComponentMetadata, Manifest, LoaderExtensions) {
 
 	"use strict";
 	/*global sinon, QUnit*/
@@ -650,6 +651,89 @@ sap.ui.define([
 			var oComponentPromise = sap.ui.component(oConfig);
 
 			oComponentPromise.then(fnCheckForModification.bind(oStorage));
+		});
+	});
+
+	QUnit.module("Consume Transitive dependency information", {
+		beforeEach: function() {
+			sap.ui.loader.config({
+				paths: {
+					"testlibs": "test-resources/sap/ui/core/qunit/testdata/libraries"
+				}
+			});
+		},
+		afterEach: function() {
+			sap.ui.loader.config({
+				paths:{
+					"testlibs": null
+				}
+			});
+		}
+	});
+
+
+	/**
+	 * Library Preload Scenario 15
+	 */
+	QUnit.test("Load library-preload.js instead of Component-preload.js when the Component.js is included in a library preload", function(assert) {
+		assert.equal(sap.ui.versioninfo, undefined, "no version info available at the beginning");
+
+		return LoaderExtensions.loadResource({
+			dataType: "json",
+			url: sap.ui.require.toUrl("testlibs/scenario15/sap-ui-version.json"),
+			async: true
+		}).then(function(versioninfo) {
+			sap.ui.versioninfo = versioninfo;
+
+			this.spy(sap.ui, 'require');
+			this.spy(sap.ui.loader._, 'loadJSResourceAsync');
+
+			this.spy(Manifest, 'load');
+
+			this.spy(LoaderExtensions, 'loadResource');
+
+			var pLoad =  Component.load({
+				name: "testlibs.scenario15.lib1.comp"
+			});
+
+			assert.equal(LoaderExtensions.loadResource.callCount, 1, "The loadResource call is called once");
+
+			var sURL = LoaderExtensions.loadResource.getCall(0).args[0].url;
+			assert.ok(/\/scenario15\/lib1\/comp\/manifest\.json/.test(sURL), "The manifest.json load request is sent");
+
+			var pLoadManifest = Manifest.load.getCall(0).returnValue;
+			pLoadManifest.then(function() {
+				// at this point the component should not be required yet
+				sinon.assert.neverCalledWith(sap.ui.require, ["testlibs/scenario15/lib1/comp/Component"]);
+
+				// no component preload
+				sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/Component-preload\.js$/));
+
+				// load of trans. dependencies should be triggered
+				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario15\/lib1\/library-preload\.js$/));
+				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario15\/lib3\/library-preload\.js$/));
+				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario15\/lib4\/library-preload\.js$/));
+				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario15\/lib6\/library-preload\.js$/));
+				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario15\/lib8\/library-preload\.js$/));
+				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario15\/lib9\/library-preload\.js$/));
+
+				// lib10 should not be requested yet, as it is not part of the version-info
+				sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario15\/lib10\/library-preload\.js$/));
+
+				// lib5 is still not requested --> lazy: true
+				sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario15\/lib5\/library-preload\.js$/));
+			});
+
+			return Promise.all([pLoadManifest, pLoad]);
+		}.bind(this)).then(function() {
+			// the component should be required now
+			sinon.assert.calledWith(sap.ui.require, ["testlibs/scenario15/lib1/comp/Component"]);
+
+			// lib10 is now requested, as a seperate request after all other libraries
+			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario15\/lib1\/library-preload\.js$/));
+
+			// lib5 is still not requested --> lazy: true
+			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario15\/lib5\/library-preload\.js$/));
 		});
 	});
 

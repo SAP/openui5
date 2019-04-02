@@ -1,0 +1,8 @@
+{
+	"version": "2.0",
+	"name": "testlibs.scenario15.lib5.library-preload",
+	"modules": {
+		"testlibs/scenario15/lib5/library.js": "sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/library'], function(Core, coreLib) {\n\t\"use strict\";\n\tsap.ui.getCore().initLibrary({\n\t\tname: 'testlibs.scenario15.lib5',\n\t\tdependencies: [\n\t\t],\n\t\tnoLibraryCSS: true\n\t});\n\treturn testlibs.scenario15.lib5; // eslint-disable-line no-undef\n});",
+		"testlibs/scenario15/lib5/manifest.json": "{\n\t\"sap.ui5\": {\n\t\t\"dependencies\": {\n\t\t\t\"libs\": {}\n\t\t}\n\t}\n}"
+	}
+}

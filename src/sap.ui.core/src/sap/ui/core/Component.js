@@ -16,7 +16,8 @@ sap.ui.define([
 	'sap/base/util/ObjectPath',
 	'sap/base/util/UriParameters',
 	'sap/base/util/isPlainObject',
-	'sap/base/util/LoaderExtensions'
+	'sap/base/util/LoaderExtensions',
+	'sap/ui/VersionInfo'
 ], function(
 	jQuery,
 	Manifest,
@@ -30,7 +31,8 @@ sap.ui.define([
 	ObjectPath,
 	UriParameters,
 	isPlainObject,
-	LoaderExtensions
+	LoaderExtensions,
+	VersionInfo
 ) {
 	"use strict";
 
@@ -2558,14 +2560,28 @@ sap.ui.define([
 
 			var sController = sComponentName + '.Component',
 				http2 = sap.ui.getCore().getConfiguration().getDepCache(),
-				sPreloadName;
+				sPreloadName,
+				oTransitiveDependencies,
+				aLibs;
 
 			// only load the Component-preload file if the Component module is not yet available
 			if ( bComponentPreload && sComponentName != null && !sap.ui.loader._.getModuleState(sController.replace(/\./g, "/") + ".js") ) {
 
 				if ( bAsync ) {
-					sPreloadName = sController.replace(/\./g, "/") + (http2 ? '-h2-preload.js' : '-preload.js'); // URN
-					return sap.ui.loader._.loadJSResourceAsync(sPreloadName, true);
+					// check whether component controller is included in a library preload
+					oTransitiveDependencies = VersionInfo._getTransitiveDependencyForComponent(sComponentName);
+
+					if (oTransitiveDependencies) {
+						aLibs = [oTransitiveDependencies.library];
+						// add all dependencies to aLibs
+						Array.prototype.push.apply(aLibs, oTransitiveDependencies.dependencies);
+
+						// load library preload for every transitive dependency
+						return sap.ui.getCore().loadLibraries( aLibs, { preloadOnly: true } );
+					} else {
+						sPreloadName = sController.replace(/\./g, "/") + (http2 ? '-h2-preload.js' : '-preload.js'); // URN
+						return sap.ui.loader._.loadJSResourceAsync(sPreloadName, true);
+					}
 				}
 
 				try {
