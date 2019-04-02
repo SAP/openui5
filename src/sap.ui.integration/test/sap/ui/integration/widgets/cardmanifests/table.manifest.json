@@ -40,11 +40,11 @@
 			},
 			"row": {
 				"columns": [{
-						"label": "Name",
+						"title": "Name",
 						"value": "{Name}"
 					},
 					{
-						"label": "Category",
+						"title": "Category",
 						"value": "{Category}"
 					}
 				]

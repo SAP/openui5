@@ -20,6 +20,7 @@
 					"sap.ui.integration.sample.AnalyticalCard",
 					"sap.ui.integration.sample.ObjectCard",
 					"sap.ui.integration.sample.TimelineCard",
+					"sap.ui.integration.sample.TableCard",
 					"sap.ui.integration.sample.Actions"
 				]
 			}
@@ -44,6 +45,11 @@
 				"id": "sap.ui.integration.sample.TimelineCard",
 				"name": "Timeline Card",
 				"description": "The timeline card is used to show time-related content."
+			},
+			{
+				"id": "sap.ui.integration.sample.TableCard",
+				"name": "Table Card",
+				"description": "The table card is used to display multiple items in table view."
 			},
 			{
 				"id": "sap.ui.integration.sample.Actions",
