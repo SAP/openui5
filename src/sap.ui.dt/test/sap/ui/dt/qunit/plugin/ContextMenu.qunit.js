@@ -146,6 +146,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("Showing the ContextMenu", function (assert) {
 			this.clock = sinon.useFakeTimers();
+			this.oButton2Overlay.setSelected(true);
 			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 			assert.ok(oContextMenuControl.getPopover().isOpen(), "ContextMenu should be open");
@@ -164,6 +165,7 @@ sap.ui.define([
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 			oContextMenuControl.attachEventOnce("Opened", function() {
 				assert.ok(oContextMenuControl.getPopover().isOpen(), "ContextMenu should be open");
+				this.oButton2Overlay.setSelected(true);
 				QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
 			}.bind(this));
 			oContextMenuControl.attachEventOnce("Closed", function() {
@@ -174,6 +176,7 @@ sap.ui.define([
 					done();
 				});
 			});
+			this.oButton1Overlay.setSelected(true);
 			QUnitUtils.triggerMouseEvent(this.oButton1Overlay.getDomRef(), "contextmenu");
 		});
 
@@ -186,6 +189,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Calling the _popupClosed function in expanded mode", function (assert) {
+			this.oButton2Overlay.setSelected(true);
 			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 			assert.ok(oContextMenuControl.bOpen, "ContextMenu should be opened");
@@ -194,6 +198,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When a context menu is open and selection changes", function (assert) {
+			this.oButton2Overlay.setSelected(true);
 			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 			var oContextMenuControlCloseSpy = oSandbox.spy(oContextMenuControl, "close");
@@ -571,6 +576,7 @@ sap.ui.define([
 				assert.ok(oContextMenuControl.bOpen, "ContextMenu should be open");
 				assert.strictEqual(oContextMenuControl.getFlexbox().getDirection(), "Column", "Flexbox should be set to Column");
 			}.bind(this);
+			this.oButton2Overlay.setSelected(true);
 			this.oButton2Overlay.attachBrowserEvent("keydown", _tempListener, this);
 			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "keydown");
 		});
@@ -591,6 +597,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Performing a right click when a Timeout from left-click/hover is active", function (assert) {
+			this.oButton2Overlay.setSelected(true);
 			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "click");
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 			assert.ok(!oContextMenuControl.bOpen, "ContextMenu should not be opened");
@@ -600,6 +607,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Clicking on a button in the ContextMenu", function (assert) {
+			this.oButton2Overlay.setSelected(true);
 			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 			assert.ok(oContextMenuControl.bOpen, "ContextMenu should be open");
@@ -746,6 +754,7 @@ sap.ui.define([
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 			oSandbox.stub(oContextMenuControl, "_getPopoverDimensions").returns({height : 250, width : 100});
 			oSandbox.stub(oContextMenuControl, "_getViewportDimensions").returns({width : 300, height : 300, top : 0, bottom : 300});
+			this.oButton2Overlay.setSelected(true);
 			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
 			assert.equal(oContextMenuControl.getPopover().getContentHeight(), "200px", "then vertical scrolling is added");
 			oSandbox.restore();
@@ -755,6 +764,7 @@ sap.ui.define([
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 			oSandbox.stub(oContextMenuControl, "_getPopoverDimensions").returns({height : 250, width : 500});
 			oSandbox.stub(oContextMenuControl, "_getViewportDimensions").returns({width : 800, height : 800, top : 0, bottom : 800});
+			this.oButton2Overlay.setSelected(true);
 			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
 			assert.equal(oContextMenuControl.getPopover().getContentWidth(), "400px", "then the width is limited to 400px");
 			oSandbox.restore();

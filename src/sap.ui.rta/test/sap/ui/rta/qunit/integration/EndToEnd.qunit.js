@@ -139,6 +139,7 @@ sap.ui.define([
 					this.oCompanyCodeFieldOverlay.focus();
 
 					// open context menu dialog
+					this.oCompanyCodeFieldOverlay.setSelected(true);
 					QUnitUtils.triggerKeydown(this.oCompanyCodeFieldOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 					var oContextMenuButton = this.oRta.getPlugins()["contextMenu"].oContextMenuControl.getButtons()[1];
 					oContextMenuButton.firePress();
@@ -191,6 +192,7 @@ sap.ui.define([
 
 			var oDialog = this.oRta.getPlugins()["additionalElements"].getDialog();
 			this.oCompanyCodeFieldOverlay.focus();
+			this.oCompanyCodeFieldOverlay.setSelected(true);
 
 			// open context menu (context menu) and select add field
 			QUnitUtils.triggerKeydown(this.oCompanyCodeFieldOverlay.getDomRef(), KeyCodes.F10, true, false, false);
@@ -357,6 +359,7 @@ sap.ui.define([
 					var oField = oFormContainer.getFormElements()[1];
 					var oFieldOverlay = OverlayRegistry.getOverlay(oField);
 					oFieldOverlay.focus();
+					oFieldOverlay.setSelected(true);
 
 					// open context menu (compact context menu)
 					QUnitUtils.triggerKeydown(oFieldOverlay.getDomRef(), KeyCodes.F10, true, false, false);
@@ -395,6 +398,7 @@ sap.ui.define([
 
 			// to reveal we have to remove the field first (otherwise it would be addODataProperty)
 			oFieldToHideOverlay.focus();
+			oFieldToHideOverlay.setSelected(true);
 			QUnitUtils.triggerKeydown(oFieldToHideOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 			oContextMenuControl.attachEventOnce("Opened", function() {
@@ -410,8 +414,8 @@ sap.ui.define([
 
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(this.oCompanyCodeField);
 			assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then there is no dirty change in the FL ChangePersistence");
-
 			this.oCompanyCodeFieldOverlay.focus();
+			this.oCompanyCodeFieldOverlay.setSelected(true);
 
 			// open context menu (expanded menu) and press rename button
 			QUnitUtils.triggerKeydown(this.oCompanyCodeFieldOverlay.getDomRef(), KeyCodes.F10, true, false, false);
@@ -464,6 +468,7 @@ sap.ui.define([
 
 			// open context menu (expanded context menu) on fucused overlay
 			oCombinedElementOverlay.focus();
+			oCombinedElementOverlay.setSelected(true);
 
 			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 			oContextMenuControl.attachEventOnce("Opened", function() {
