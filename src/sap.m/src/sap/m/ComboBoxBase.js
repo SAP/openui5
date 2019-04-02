@@ -55,6 +55,9 @@ sap.ui.define([
 		// shortcut for sap.m.PlacementType
 		var PlacementType = library.PlacementType;
 
+		var InputForwardableProperties = ["value", "enabled", "name", "placeholder",
+			"editable", "textAlign", "textDirection", "valueState", "valueStateText"];
+
 		/**
 		 * Constructor for a new <code>sap.m.ComboBoxBase</code>.
 		 *
@@ -595,9 +598,6 @@ sap.ui.define([
 			// sets the picker popup type
 			this.setPickerType(Device.system.phone ? "Dialog" : "Dropdown");
 
-			// initialize composites
-			this.createPicker(this.getPickerType());
-
 			// indicate whether the items are updated
 			this.bItemsUpdated = false;
 
@@ -773,7 +773,7 @@ sap.ui.define([
 				return;
 			}
 
-			var oPicker = this.getAggregation("picker"),
+			var oPicker = this.getPicker(),
 				oFocusDomRef = oRelatedControl && oRelatedControl.getFocusDomRef();
 
 			// to prevent the change event from firing when an item is pressed
@@ -923,10 +923,21 @@ sap.ui.define([
 				oControl = (oData && oData.srcControl) || this.getPickerTextField();
 
 			// propagate some property changes to the picker text field
-			if (/\bvalue\b|\benabled\b|\bname\b|\bplaceholder\b|\beditable\b|\btextAlign\b|\btextDirection\b|\bvalueState\b/.test(sProperty) &&
+			if (this.getInputForwardableProperties().indexOf(sProperty) > -1 &&
 				oControl && (typeof oControl[sMutator] === "function")) {
 				oControl[sMutator](sNewValue);
 			}
+		};
+
+		/**
+		 * Gets the input properties, which should be forwarded from the combobox  text field to the picker text field
+		 *
+		 * @returns {Array} Array of the forwardable properties
+		 * @protected
+		 * @since 1.66
+		 */
+		ComboBoxBase.prototype.getInputForwardableProperties = function() {
+			return InputForwardableProperties;
 		};
 
 		/*
@@ -1093,18 +1104,18 @@ sap.ui.define([
 		/**
 		 * Gets the control's picker popup.
 		 *
-		 * @returns {sap.m.Dialog | sap.m.Popover | null} The picker instance, creating it if necessary by calling
+		 * @returns {sap.m.Dialog | sap.m.Popover | null} The picker instance
 		 * the <code>createPicker()</code> method.
 		 * @protected
 		 */
-		ComboBoxBase.prototype.getPicker = function() {
+		ComboBoxBase.prototype.getPicker = function () {
+			var oPicker = this.getAggregation("picker");
 
-			if (this.bIsDestroyed) {
-				return null;
+			if (oPicker && !oPicker.bIsDestroyed && !this.bIsDestroyed) {
+				return oPicker;
 			}
 
-			// initialize the control's picker
-			return this.createPicker(this.getPickerType());
+			return null;
 		};
 
 		/**
@@ -1127,7 +1138,7 @@ sap.ui.define([
 		 */
 		ComboBoxBase.prototype.getPickerTextField = function() {
 			var oPicker = this.getPicker(),
-				oSubHeader = oPicker.getSubHeader();
+				oSubHeader = oPicker && oPicker.getSubHeader();
 			return oSubHeader && oSubHeader.getContent()[0] || null;
 		};
 
@@ -1654,7 +1665,7 @@ sap.ui.define([
 		 * @public
 		 */
 		ComboBoxBase.prototype.isOpen = function() {
-			var oPicker = this.getAggregation("picker");
+			var oPicker = this.getPicker();
 			return !!(oPicker && oPicker.isOpen());
 		};
 
@@ -1665,7 +1676,7 @@ sap.ui.define([
 		 * @public
 		 */
 		ComboBoxBase.prototype.close = function() {
-			var oPicker = this.getAggregation("picker");
+			var oPicker = this.getPicker();
 
 			if (oPicker) {
 				oPicker.close();

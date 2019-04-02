@@ -621,14 +621,14 @@ function(Press,
 		var oPicker = this.oComboBox.getPicker();
 		assert.strictEqual(this.oComboBox.getSelectedItem(), null, "By default the selected item of the ComboBox control is null");
 		assert.strictEqual(this.oComboBox.getValue(), "", "ComboBox's value is empty");
-		assert.strictEqual(oPicker.getDomRef(), null, "ComboBox's Popover does not exists in the DOM");
-		assert.ok(!oPicker.isOpen(), "ComboBox's Popover is closed");
+		assert.strictEqual(oPicker, null, "ComboBox's Popover does not exists");
 
 		var oPressArrow = new Press();
 		oPressArrow.executeOn(this.oComboBox);
 
-		this.clock.tick(500);
+		this.clock.tick(1000);
 
+		oPicker = this.oComboBox.getPicker();
 		var oOpenPickerDomRef = jQuery(oPicker.getDomRef());
 		assert.ok(oPicker.isOpen(), "ComboBox's Popover is open");
 		assert.equal(oOpenPickerDomRef.css("visibility"), "visible", "Checking Popover's visibility css property");
