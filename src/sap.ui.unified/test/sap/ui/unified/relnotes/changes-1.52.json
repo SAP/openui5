@@ -5,7 +5,7 @@
       {
         "id": "6657e51f2ce2456faeb7e3fb1985c501b83ca84b",
         "type": "FEATURE",
-        "text": "PlanningCalendar-accessibility for special dates & appointments",
+        "text": "PlanningCalendar-accessibility for special dates \u0026 appointments",
         "references": []
       },
       {
@@ -101,7 +101,7 @@
       {
         "id": "a3a5722f891643510e4de089485475dbebd36f5f",
         "type": "FIX",
-        "text": "sap.m.PlanningCalendar - appointment row focus outline covers all 4 sides for High Contrast Black & High Contrast White themes.",
+        "text": "sap.m.PlanningCalendar - appointment row focus outline covers all 4 sides for High Contrast Black \u0026 High Contrast White themes.",
         "references": [
           {
             "type": "BCP",
@@ -743,6 +743,17 @@
             "reference": "1880727749"
           }
         ]
+      }
+    ]
+  },
+  "1.52.27": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "2a3e0144e0dd8b499478e8f4bdab8da5a73c9e16",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarTimeInterval: Navigates to the correct date",
+        "references": []
       }
     ]
   }
