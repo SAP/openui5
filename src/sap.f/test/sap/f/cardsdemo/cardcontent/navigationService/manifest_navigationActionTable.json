@@ -16,40 +16,64 @@
 		},
 		"content": {
 			"data": {
-				"json": [{
+				"json": [
+					{
 						"Name": "Comfort Easy",
 						"Category": "PDA & Organizers",
-						"url": "https://www.sap.com"
+						"url": "https://www.sap.com",
+						"identifierUrl": "https://www.sap.com/corporate/en/company/innovation.html",
+						"Number": "356865544"
 					},
 					{
 						"Name": "ITelO Vault",
 						"Category": "PDA & Organizers",
-						"url": "https://www.sap.com"
+						"url": "https://www.sap.com",
+						"identifierUrl": "https://www.sap.com/corporate/en/company/innovation.html",
+						"Number": "356865544"
 					},
 					{
 						"Name": "Notebook Professional 15",
 						"Category": "Notebooks",
-						"url": "https://www.sap.com"
+						"url": "https://www.sap.com",
+						"identifierUrl": "https://www.sap.com/corporate/en/company/innovation.html",
+						"Number": "356865544"
 					},
 					{
 						"Name": "Ergo Screen E-I",
-						"Category": "Monitors"
+						"Category": "Monitors",
+						"url": "https://www.sap.com",
+						"Number": "356865544"
 					},
 					{
 						"Name": "Laser Professional Eco",
-						"Category": "Printers"
+						"Category": "Printers",
+						"url": "https://www.sap.com",
+						"identifierUrl": "https://www.sap.com/corporate/en/company/innovation.html",
+						"Number": "356865544"
 					}
 				]
 			},
 			"row": {
 				"columns": [
 					{
-						"label": "Name",
+						"title": "Name",
 						"value": "{Name}"
 					},
 					{
-						"label": "Category",
+						"title": "Link",
+						"value": "{Name}",
+						"url": "{url}"
+					},
+					{
+						"title": "Category",
 						"value": "{Category}"
+					},
+					{
+						"title": "Number",
+						"value": "{Number}",
+						"identifier": {
+							"url": "{identifierUrl}"
+						}
 					}
 				],
 				"actions": [

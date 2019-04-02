@@ -3,6 +3,8 @@
  */
 
 sap.ui.define([
+		"sap/f/library",
+		"sap/ui/base/ManagedObject",
 		"sap/m/Table",
 		"sap/f/cards/BaseContent",
 		"sap/m/Column",
@@ -13,8 +15,14 @@ sap.ui.define([
 		"sap/m/ObjectIdentifier",
 		"sap/m/ObjectStatus",
 		"sap/f/Avatar",
-		"sap/f/cards/ActionEnablement"
+		"sap/f/cards/ActionEnablement",
+		"sap/ui/core/VerticalAlign",
+		"sap/m/ListSeparators",
+		"sap/m/ListType",
+		"sap/f/cards/BindingResolver"
 	], function (
+		library,
+		ManagedObject,
 		ResponsiveTable,
 		BaseContent,
 		Column,
@@ -25,12 +33,19 @@ sap.ui.define([
 		ObjectIdentifier,
 		ObjectStatus,
 		Avatar,
-		ActionEnablement
+		ActionEnablement,
+		VerticalAlign,
+		ListSeparators,
+		ListType,
+		BindingResolver
 	) {
 		"use strict";
 
+		// shortcut for sap.f.AvatarSize
+		var AvatarSize = library.AvatarSize;
+
 		/**
-		 * Constructor for a new <code>Table</code>.
+		 * Constructor for a new <code>TableContent</code>.
 		 *
 		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 		 * @param {object} [mSettings] Initial settings for the new control
@@ -50,9 +65,8 @@ sap.ui.define([
 		 * @version ${version}
 		 *
 		 * @constructor
-		 * @experimental
-		 * @since 1.60
-		 * @see {@link TODO Card}
+		 * @private
+		 * @since 1.65
 		 * @alias sap.f.cards.TableContent
 		 */
 		var TableContent = BaseContent.extend("sap.f.cards.TableContent", {
@@ -76,7 +90,8 @@ sap.ui.define([
 
 			if (!oTable) {
 				oTable = new ResponsiveTable({
-					id: this.getId() + "-Table"
+					id: this.getId() + "-Table",
+					showSeparators: ListSeparators.None
 				});
 				this.setAggregation("_content", oTable);
 			}
@@ -84,16 +99,30 @@ sap.ui.define([
 			return oTable;
 		};
 
+		/**
+		 * Setter for configuring a <code>sap.f.cards.TableContent</code>.
+		 *
+		 * @public
+		 * @param {Object} oConfiguration Configuration object used to create the internal table.
+		 * @returns {sap.f.cards.TableContent} Pointer to the control instance to allow method chaining.
+		 */
 		TableContent.prototype.setConfiguration = function (oConfiguration) {
 			BaseContent.prototype.setConfiguration.apply(this, arguments);
 
 			if (!oConfiguration) {
-				return;
+				return this;
+			}
+
+			if (oConfiguration.rows && oConfiguration.columns) {
+				this._setStaticColumns(oConfiguration.rows, oConfiguration.columns);
+				return this;
 			}
 
 			if (oConfiguration.row && oConfiguration.row.columns) {
 				this._setColumns(oConfiguration.row);
 			}
+
+			return this;
 		};
 
 		TableContent.prototype._setColumns = function (oRow) {
@@ -102,12 +131,16 @@ sap.ui.define([
 				aColumns = oRow.columns;
 
 			aColumns.forEach(function (oColumn) {
-				this._getTable().addColumn(new Column({ header: new Text({ text: oColumn.label }) }));
+				this._getTable().addColumn(new Column({
+					header: new Text({ text: oColumn.title }),
+					width: oColumn.width
+				}));
 				aCells.push(this._createCell(oColumn));
 			}.bind(this));
 
 			this._oItemTemplate = new ColumnListItem({
-				cells: aCells
+				cells: aCells,
+				vAlign: VerticalAlign.Middle
 			});
 
 			this._attachActions(oRow, this._oItemTemplate);
@@ -116,6 +149,48 @@ sap.ui.define([
 				template: this._oItemTemplate
 			};
 			this._bindAggregation("items", oTable, oBindingInfo);
+		};
+
+		TableContent.prototype._setStaticColumns = function (aRows, aColumns) {
+			var oTable = this._getTable();
+
+			aColumns.forEach(function (oColumn) {
+				oTable.addColumn(new Column({
+					header: new Text({ text: oColumn.title }),
+					width: oColumn.width
+				}));
+			});
+
+			aRows.forEach(function (oRow) {
+				var oItem = new ColumnListItem({
+					vAlign: VerticalAlign.Middle
+				});
+
+
+				if (oRow.cells && Array.isArray(oRow.cells)) {
+					for (var j = 0; j < oRow.cells.length; j++) {
+						oItem.addCell(this._createCell(oRow.cells[j]));
+					}
+				}
+
+				// TO DO: move this part to ActionEnablement
+				if (oRow.actions && Array.isArray(oRow.actions)) {
+					// for now allow only 1 action of type navigation
+					var oAction = oRow.actions[0];
+
+					if (oAction.type === ListType.Navigation) {
+						oItem.setType(ListType.Navigation);
+					}
+
+					if (oAction.url) {
+						oItem.attachPress(function () {
+							window.open(oAction.url, oAction.target || "_blank");
+						});
+					}
+				}
+
+				oTable.addItem(oItem);
+			}.bind(this));
 		};
 
 		/**
@@ -130,14 +205,56 @@ sap.ui.define([
 			if (oColumn.url) {
 				return new Link({
 					text: oColumn.value,
-					href: oColumn.url
+					href: oColumn.url,
+					target: oColumn.target || "_blank"
 				});
 			}
 
 			if (oColumn.identifier) {
-				return new ObjectIdentifier({
+				var oIdentifier = new ObjectIdentifier({
 					title: oColumn.value
 				});
+
+				if (oColumn.identifier.url) {
+					var oBindingInfo = ManagedObject.bindingParser(oColumn.identifier.url);
+
+					if (oBindingInfo) {
+						oBindingInfo.formatter = function (vValue) {
+							if (typeof vValue === "string") {
+								return true;
+							}
+
+							return false;
+						};
+						oIdentifier.bindProperty("titleActive", oBindingInfo);
+					} else {
+						oIdentifier.setTitleActive(!!oColumn.identifier.url);
+					}
+
+					// TO DO: move this part to ActionEnablement
+					oIdentifier.attachTitlePress(function (oEvent) {
+
+						var oSource = oEvent.getSource(),
+							oBindingContext = oSource.getBindingContext(),
+							oModel = oSource.getModel(),
+							sPath,
+							sUrl,
+							sTarget;
+
+						if (oBindingContext) {
+							sPath = oBindingContext.getPath();
+						}
+
+						sUrl = BindingResolver.resolveValue(oColumn.identifier.url, oModel, sPath);
+						sTarget = BindingResolver.resolveValue(oColumn.identifier.target, oModel, sPath);
+
+						if (sUrl) {
+							window.open(sUrl, sTarget || "_blank");
+						}
+					});
+				}
+
+				return oIdentifier;
 			}
 
 			if (oColumn.state) {
@@ -156,7 +273,8 @@ sap.ui.define([
 			if (oColumn.icon) {
 				return new Avatar({
 					src: oColumn.icon.src,
-					displayShape: oColumn.icon.shape
+					displayShape: oColumn.icon.shape,
+					displaySize: AvatarSize.XS
 				});
 			}
 

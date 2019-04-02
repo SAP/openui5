@@ -464,26 +464,26 @@ function (
 				"row": {
 					"columns": [
 						{
-							"label": "Sales Order",
+							"title": "Sales Order",
 							"value": "{salesOrder}",
 							"identifier": true
 						},
 						{
-							"label": "Customer",
+							"title": "Customer",
 							"value": "{customer}"
 						},
 						{
-							"label": "Status",
+							"title": "Status",
 							"value": "{status}",
 							"state": "{statusState}"
 						},
 						{
-							"label": "Order ID",
+							"title": "Order ID",
 							"value": "{orderUrl}",
 							"url": "{orderUrl}"
 						},
 						{
-							"label": "Progress",
+							"title": "Progress",
 							"progressIndicator": {
 								"percent": "{percent}",
 								"text": "{percentValue}",
@@ -491,9 +491,16 @@ function (
 							}
 						},
 						{
-							"label": "Avatar",
+							"title": "Avatar",
 							"icon": {
 								"src": "{iconSrc}"
+							}
+						},
+						{
+							"title": "Sales Order",
+							"value": "{salesOrder}",
+							"identifier": {
+								"url": "{orderUrl}"
 							}
 						}
 					]
@@ -789,6 +796,10 @@ function (
 
 	QUnit.test("Initialization - AnalyticalContent", function (assert) {
 		testContentInitialization(oManifest_AnalyticalCard, assert);
+	});
+
+	QUnit.test("Initialization - TableContent", function (assert) {
+		testContentInitialization(oManifest_TableCard, assert);
 	});
 
 	QUnit.module("Card headers", {
@@ -1169,23 +1180,26 @@ function (
 			Core.applyChanges();
 
 			// Assert
-			assert.equal(aColumns.length, 6, "Should have 6 columns.");
+			assert.equal(aColumns.length, 7, "Should have 7 columns.");
 
 			// Columns titles
-			assert.equal(aColumns[0].getHeader().getText(), oManifestContent.row.columns[0].label, "Should have correct column title");
-			assert.equal(aColumns[1].getHeader().getText(), oManifestContent.row.columns[1].label, "Should have correct column title");
-			assert.equal(aColumns[2].getHeader().getText(), oManifestContent.row.columns[2].label, "Should have correct column title");
-			assert.equal(aColumns[3].getHeader().getText(), oManifestContent.row.columns[3].label, "Should have correct column title");
-			assert.equal(aColumns[4].getHeader().getText(), oManifestContent.row.columns[4].label, "Should have correct column title");
-			assert.equal(aColumns[5].getHeader().getText(), oManifestContent.row.columns[5].label, "Should have correct column title");
+			assert.equal(aColumns[0].getHeader().getText(), oManifestContent.row.columns[0].title, "Should have correct column title");
+			assert.equal(aColumns[1].getHeader().getText(), oManifestContent.row.columns[1].title, "Should have correct column title");
+			assert.equal(aColumns[2].getHeader().getText(), oManifestContent.row.columns[2].title, "Should have correct column title");
+			assert.equal(aColumns[3].getHeader().getText(), oManifestContent.row.columns[3].title, "Should have correct column title");
+			assert.equal(aColumns[4].getHeader().getText(), oManifestContent.row.columns[4].title, "Should have correct column title");
+			assert.equal(aColumns[5].getHeader().getText(), oManifestContent.row.columns[5].title, "Should have correct column title");
+			assert.equal(aColumns[5].getHeader().getText(), oManifestContent.row.columns[5].title, "Should have correct column title");
+			assert.equal(aColumns[6].getHeader().getText(), oManifestContent.row.columns[6].title, "Should have correct column title");
 
 			// Column cells types
-			assert.ok(aCells[0].isA("sap.m.ObjectIdentifier"), "Column with provided 'identifier' should be of type 'ObjectIdentifier'");
+			assert.ok(aCells[0].isA("sap.m.ObjectIdentifier"), "Column with 'identifier' set to 'true' should be of type 'ObjectIdentifier'");
 			assert.ok(aCells[1].isA("sap.m.Text"), "Column with 'value' only should be of type 'Text'");
 			assert.ok(aCells[2].isA("sap.m.ObjectStatus"), "Column with a 'state' should be of type 'ObjectStatus'");
 			assert.ok(aCells[3].isA("sap.m.Link"), "Column with an 'url' should be of type 'Link'");
 			assert.ok(aCells[4].isA("sap.m.ProgressIndicator"), "Column with a 'progressIndicator' should be of type 'ProgressIndicator'");
 			assert.ok(aCells[5].isA("sap.f.Avatar"), "Column with an 'icon' should be of type 'Avatar'");
+			assert.ok(aCells[6].isA("sap.m.ObjectIdentifier"), "Column with 'identifier' as an object should be of type 'ObjectIdentifier'");
 
 			// Column values
 			assert.equal(aCells[0].getTitle(), oManifestData[0].salesOrder, "Should have correct identifier value.");
@@ -1198,6 +1212,7 @@ function (
 			assert.equal(aCells[4].getDisplayValue(), oManifestData[0].percentValue, "Should have correct progress text.");
 			assert.equal(aCells[4].getState(), oManifestData[0].progressState, "Should have correct progress state.");
 			assert.equal(aCells[5].getSrc(), oManifestData[0].iconSrc, "Should have correct icon src.");
+			assert.ok(aCells[6].getTitleActive(), "Should be active identifier.");
 
 			done();
 		}.bind(this));

@@ -28,20 +28,20 @@
 			"row": {
 				"columns": [
 					{
-						"label": "Sales Order",
+						"title": "Sales Order",
 						"value": "{salesOrder}",
 						"identifier": true
 					},
 					{
-						"label": "Customer",
+						"title": "Customer",
 						"value": "{name}"
 					},
 					{
-						"label": "Net Amount",
+						"title": "Net Amount",
 						"value": "{netAmount}"
 					},
 					{
-						"label": "Status",
+						"title": "Status",
 						"value": "{status}",
 						"state": "{statusState}"
 					}

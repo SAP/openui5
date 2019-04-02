@@ -1460,123 +1460,6 @@
 			}
 		}
 	},
-	"tableManifests": {
-		"tablecard1": {
-			"sap.card": {
-				"type": "Table",
-				"header": {
-					"title": "Table Card",
-					"subTitle": "Table Card subtitle"
-				},
-				"content": {
-					"data": {
-						"request": {
-							"url": "./cardcontent/tableitems.json"
-						},
-						"path": "/names"
-					},
-					"row": {
-						"columns": [
-							{
-								"label": "First Name",
-								"value": "{firstName}"
-							},
-							{
-								"label": "Last Name",
-								"value": "{lastName}"
-							},
-							{
-								"label": "Link",
-								"value": "{urlText}",
-								"url": "{url}"
-							},
-							{
-								"label": "Progress",
-								"progressIndicator": {
-									"percent": "{percent}",
-									"text": "{percentValue}",
-									"state": "{progressState}"
-								}
-							}
-						]
-					}
-				}
-			}
-		},
-		"tablecard3": {
-			"sap.card": {
-				"type": "Table",
-				"header": {
-					"title": "New Purchase Orders"
-				},
-				"content": {
-					"data": {
-						"request": {
-							"url": "./cardcontent/tableitems.json"
-						},
-						"path": "/tableCard3"
-					},
-					"row": {
-						"columns": [
-							{
-								"label": "Order ID",
-								"value": "{orderId}",
-								"url": "{orderUrl}"
-							},
-							{
-								"label": "Created By",
-								"value": "{name}"
-							},
-							{
-								"label": "Status",
-								"value": "{status}",
-								"state": "{statusState}"
-							}
-						]
-					}
-
-				}
-			}
-		},
-		"tablecard4": {
-			"sap.card": {
-				"type": "Table",
-				"header": {
-					"title": "Sales Orders for Key Accounts"
-				},
-				"content": {
-					"data": {
-						"request": {
-							"url": "./cardcontent/tableitems.json"
-						},
-						"path": "/tableCard4"
-					},
-					"row": {
-						"columns": [
-							{
-								"label": "Sales Order",
-								"value": "{salesOrder}",
-								"identifier": true
-							},
-							{
-								"label": "Customer",
-								"value": "{name}"
-							},
-							{
-								"label": "Net Amount",
-								"value": "{netAmount}"
-							},
-							{
-								"label": "Status",
-								"value": "{status}",
-								"state": "{statusState}"
-							}
-						]
-					}
-				}
-			}
-		}
-	},
 	"kpiManifests": {
 		"kpicard1": {
 			"sap.card": {
@@ -1762,11 +1645,11 @@
 					"row": {
 						"columns": [
 							{
-								"label": "First Name",
+								"title": "First Name",
 								"value": "{firstName}"
 							},
 							{
-								"label": "Last Name",
+								"title": "Last Name",
 								"value": "{lastName}"
 							}
 						]
