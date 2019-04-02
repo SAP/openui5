@@ -1,4 +1,4 @@
-<mvc:View controllerName="sap.m.sample.Breadcrumbs.Page"
+<mvc:View controllerName="sap.m.sample.Breadcrumbs.controller.Breadcrumbs"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m"
 		xmlns:l="sap.ui.layout">

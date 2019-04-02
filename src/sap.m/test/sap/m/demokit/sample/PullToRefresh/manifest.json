@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.PullToRefresh.Page",
+			"viewName": "sap.m.sample.PullToRefresh.view.PullToRefresh",
 			"type": "XML",
 			"async": true
 		},
@@ -20,8 +20,8 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"Page.view.xml",
-					"Page.controller.js",
+					"view/PullToRefresh.view.xml",
+					"controller/PullToRefresh.controller.js",
 					"manifest.json"
 				]
 			}

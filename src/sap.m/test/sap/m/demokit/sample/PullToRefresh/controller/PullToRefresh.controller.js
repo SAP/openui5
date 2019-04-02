@@ -5,7 +5,7 @@ sap.ui.define([
 	], function(jQuery, Controller, JSONModel) {
 	"use strict";
 
-	var PageController = Controller.extend("sap.m.sample.PullToRefresh.Page", {
+	return Controller.extend("sap.m.sample.PullToRefresh.controller.PullToRefresh", {
 
 		onInit: function (oEvent) {
 
@@ -42,8 +42,4 @@ sap.ui.define([
 			}.bind(this), 1000);
 		}
 	});
-
-
-	return PageController;
-
 });

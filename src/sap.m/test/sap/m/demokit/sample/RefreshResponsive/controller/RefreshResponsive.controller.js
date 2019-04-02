@@ -7,7 +7,7 @@ sap.ui.define([
 	], function(jQuery, Device, Controller, Filter, JSONModel) {
 	"use strict";
 
-	var PageController = Controller.extend("sap.m.sample.RefreshResponsive.Page", {
+	return Controller.extend("sap.m.sample.RefreshResponsive.controller.RefreshResponsive", {
 
 		onInit: function (oEvent) {
 
@@ -73,8 +73,4 @@ sap.ui.define([
 			}, this), 1000);
 		}
 	});
-
-
-	return PageController;
-
 });

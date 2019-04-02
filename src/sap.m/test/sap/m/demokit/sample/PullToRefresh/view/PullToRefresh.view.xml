@@ -1,6 +1,6 @@
 <mvc:View
 	height="100%"
-	controllerName="sap.m.sample.PullToRefresh.Page"
+	controllerName="sap.m.sample.PullToRefresh.controller.PullToRefresh"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<Page
