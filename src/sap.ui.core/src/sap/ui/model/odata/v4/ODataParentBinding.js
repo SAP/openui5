@@ -395,7 +395,7 @@ sap.ui.define([
 							+ "' failed; will be repeated automatically", sClassName, oError);
 				}).then(function (oCreatedEntity) {
 					if (oCache.$resourcePath) {
-						// Ensure that a cache containing a persisted created entity is recreated
+						// Ensure that cache containing non-transient created entity is recreated
 						// when the parent binding changes to another row and back again.
 						delete that.mCacheByResourcePath[oCache.$resourcePath];
 					}

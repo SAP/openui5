@@ -449,9 +449,10 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[false, true].forEach(function (bCreated) {
 	["", "EMPLOYEE_2_EQUIPMENTS"].forEach(function (sParentPath) {
 		[false, true].forEach(function (bCount) {
-			var sTitle = "_Cache#removeElement, bCount = " + bCount
+			var sTitle = "_Cache#removeElement, bCreated = " + bCreated + ", bCount = " + bCount
 					+ ", sParentPath = " + sParentPath;
 
 			QUnit.test(sTitle, function (assert) {
@@ -463,17 +464,28 @@ sap.ui.define([
 						"@odata.etag" : "etag"
 					}, {
 						"@odata.etag" : "after"
-					}];
+					}],
+					// Assume there is no more data on the server; if element at index 1 is created
+					// on the client, then 1 element has been read from server otherwise all 3 are
+					// read from the server
+					iLimit = bCreated ? 1 : 3;
 
 				oCache.adjustReadRequests = function () {};
-				oCache.iLimit = 2;
+				if (sParentPath === "") {
+					oCache.iLimit = iLimit;
+				}
 				aCacheData.$byPredicate = {"('1')" : aCacheData[1]};
 				aCacheData.$count = bCount ? 3 : undefined;
+				if (bCreated) {
+					aCacheData[1]["@$ui5._"].transientPredicate = "$uid=1-23";
+					aCacheData.$byPredicate["$uid=1-23"] = aCacheData[1];
+				}
 				this.mock(_Helper).expects("updateExisting").exactly(bCount ? 1 : 0)
 					.withExactArgs(sinon.match.same(oCache.mChangeListeners), sParentPath,
 						sinon.match.same(aCacheData), {$count : 2})
 					.callThrough();
-				this.mock(oCache).expects("adjustReadRequests").exactly(sParentPath ? 0 : 1)
+				this.mock(oCache).expects("adjustReadRequests")
+					.exactly(sParentPath || bCreated ? 0 : 1)
 					.withExactArgs(1, -1);
 
 				// code under test
@@ -486,10 +498,15 @@ sap.ui.define([
 					"@odata.etag" : "after"
 				}]);
 				assert.deepEqual(aCacheData.$byPredicate, {});
-				assert.strictEqual(oCache.iLimit, sParentPath === "" ? 1 : 2);
+				if (sParentPath === "") {
+					assert.strictEqual(oCache.iLimit, bCreated ? 1 : 2);
+				} else {
+					assert.notOk("iLimit" in oCache);
+				}
 			});
 		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#registerChange", function (assert) {
@@ -2978,6 +2995,118 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("CollectionCache#getQueryString: no created entities", function (assert) {
+		var oCache = this.createCache("Employees");
+
+		oCache.sQueryString = "?foo=bar";
+
+		// code under test
+		assert.strictEqual(oCache.getQueryString(), oCache.sQueryString);
+
+		assert.strictEqual(oCache.sQueryString, "?foo=bar");
+	});
+
+	//*********************************************************************************************
+[undefined, "foo eq 'bar'"].forEach(function (sFilter) {
+	[false, true].forEach(function (bMultiple) {
+		var sTitle = "CollectionCache#getQueryString: one created entity, filter: " + sFilter
+				+ ", multiple persisted entities: " + bMultiple;
+
+	QUnit.test(sTitle, function (assert) {
+		var oCache = this.createCache("Employees", {/*mQueryOptions*/}),
+			oElement0 = {},
+			oElement1 = {"@$ui5.context.isTransient" : true},
+			oElement2 = {},
+			oElement3 = {},
+			sExclusiveFilter = bMultiple
+				? "not(EmployeeId eq '43' or EmployeeId eq '42')"
+				: "not(EmployeeId eq '42')",
+			oHelperMock = this.mock(_Helper),
+			sQueryString = "?foo=bar",
+			mTypeForMetaPath = {};
+
+		oCache.bSortExpandSelect = "bSortExpandSelect";
+		oCache.mQueryOptions.foo = "bar";
+		if (sFilter) {
+			oCache.mQueryOptions.$filter = sFilter;
+			sQueryString += "&$filter=(" + sFilter + ")";
+			this.oRequestorMock.expects("buildQueryString")
+				.withExactArgs(oCache.sMetaPath, {
+						foo : "bar",
+						$filter : "(" + sFilter + ")and " + sExclusiveFilter
+					}, false, "bSortExpandSelect")
+				.returns("?foo=bar&$filter=...");
+		}
+		oCache.sQueryString = sQueryString;
+		oCache.aElements.$created = bMultiple ? 4 : 1;
+		oCache.aElements.unshift(oElement0);
+		if (bMultiple) {
+			oCache.aElements.unshift(oElement1);
+			oCache.aElements.unshift(oElement2);
+			oCache.aElements.unshift(oElement3);
+			oHelperMock.expects("getKeyFilter")
+				.withExactArgs(sinon.match.same(oElement2), oCache.sMetaPath,
+					sinon.match.same(mTypeForMetaPath))
+				.returns("EmployeeId eq '43'");
+			oHelperMock.expects("getKeyFilter")
+				.withExactArgs(sinon.match.same(oElement3), oCache.sMetaPath,
+					sinon.match.same(mTypeForMetaPath))
+				.returns(undefined); // simulate missing key property --> silently ignored
+		}
+		this.mock(oCache).expects("fetchTypes")
+			.returns(SyncPromise.resolve(mTypeForMetaPath));
+		oHelperMock.expects("getKeyFilter")
+			.withExactArgs(sinon.match.same(oElement0), oCache.sMetaPath,
+				sinon.match.same(mTypeForMetaPath))
+			.returns("EmployeeId eq '42'");
+
+		// code under test
+		assert.strictEqual(oCache.getQueryString(),
+			sFilter ? "?foo=bar&$filter=..." : "?foo=bar&$filter=" + sExclusiveFilter);
+
+		assert.strictEqual(oCache.sQueryString, sQueryString);
+	});
+
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#getQueryString: no previous query string", function (assert) {
+		var oCache = this.createCache("Employees"),
+			oElement0 = {},
+			mTypeForMetaPath = {};
+
+		oCache.aElements.$created = 1;
+		oCache.aElements.unshift(oElement0);
+		this.mock(oCache).expects("fetchTypes")
+			.returns(SyncPromise.resolve(mTypeForMetaPath));
+		this.mock(_Helper).expects("getKeyFilter")
+			.withExactArgs(sinon.match.same(oElement0), oCache.sMetaPath,
+				sinon.match.same(mTypeForMetaPath))
+			.returns("EmployeeId eq '42'");
+
+		// code under test
+		assert.strictEqual(oCache.getQueryString(), "?$filter=not(EmployeeId eq '42')");
+
+		assert.strictEqual(oCache.sQueryString, "");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#getQueryString: only transient entities", function (assert) {
+		var oCache = this.createCache("Employees");
+
+		oCache.sQueryString = "?foo=bar";
+		oCache.aElements.$created = 1;
+		oCache.aElements.unshift({"@$ui5.context.isTransient" : true});
+		this.mock(oCache).expects("fetchTypes").never();
+
+		// code under test
+		assert.strictEqual(oCache.getQueryString(), "?foo=bar");
+
+		assert.strictEqual(oCache.sQueryString, "?foo=bar");
+	});
+
+	//*********************************************************************************************
 	[{
 		iEnd : Infinity,
 		sQueryString : "",
@@ -3055,7 +3184,7 @@ sap.ui.define([
 		QUnit.test("CollectionCache#getResourcePath: with create, " + i , function (assert) {
 			var oCache = this.createCache("Employees");
 
-			oCache.sQueryString = oFixture.sQueryString;
+			this.mock(oCache).expects("getQueryString").returns(oFixture.sQueryString);
 			this.oRequestorMock.expects("request").withArgs("POST", "Employees").twice()
 				.resolves({});
 			oCache.create(new _GroupLock("create"), SyncPromise.resolve("Employees"), "",
@@ -3097,7 +3226,6 @@ sap.ui.define([
 			var oCache = this.createCache("Employees"),
 				oCacheMock = this.mock(oCache),
 				mChangeListeners = {},
-				iCount = 4,
 				sDataContext = {/*string*/},
 				oElement0 = {},
 				oElement1 = {},
@@ -3111,31 +3239,29 @@ sap.ui.define([
 
 			oCache.mChangeListeners = mChangeListeners;
 			aElements.$byPredicate = {};
+			aElements.$created = 2;
 			oCache.aElements = aElements;
 			oCache.iLimit = iLimit;
 
 			if (bWithCount) {
-				oResult["@odata.count"] = iCount.toString(10);
+				oResult["@odata.count"] = "4";
 			}
-			this.mock(_Helper).expects("updateExisting")
-				.withExactArgs(sinon.match.same(mChangeListeners), "",
-					sinon.match.same(aElements), {$count : iCount})
-				.exactly(bWithCount ? 1 : 0)
-				.callsFake(function () {
-					oCache.aElements.$count = iCount;
-				});
 			oCacheMock.expects("visitResponse")
 				.withExactArgs(sinon.match.same(oResult), sinon.match.same(oFetchTypesResult),
 					undefined, undefined, undefined, 2)
 				.callsFake(function () {
 					_Helper.setPrivateAnnotation(oElement0, "predicate", "foo");
 				});
+			this.mock(_Helper).expects("updateExisting")
+				.withExactArgs(sinon.match.same(mChangeListeners), "",
+					sinon.match.same(aElements), {$count : 6})
+				.exactly(bWithCount ? 1 : 0);
 
 			// code under test
 			oCache.handleResponse(2, 4, oResult, oFetchTypesResult);
 
 			assert.strictEqual(oCache.sContext, sDataContext);
-			assert.strictEqual(oCache.iLimit, bWithCount ? iCount : iLimit);
+			assert.strictEqual(oCache.iLimit, bWithCount ? 4 : iLimit);
 			assert.strictEqual(oCache.aElements[2], oElement0);
 			assert.strictEqual(oCache.aElements[3], oElement1);
 			assert.strictEqual(oCache.aElements.$byPredicate["foo"], oElement0);
@@ -3149,42 +3275,49 @@ sap.ui.define([
 		iCount : 42,
 		iStart : 100,
 		iExpectedCount : 42,
-		iExpectedLength : 42
+		iExpectedLength : 42,
+		iExpectedLimit : 42
 	}, {
 		sTitle : "short read without server length",
 		iStart : 100,
 		vValue : [{}],
 		iExpectedCount : 101,
-		iExpectedLength : 101
+		iExpectedLength : 101,
+		iExpectedLimit : 101
 	}, {
 		sTitle : "empty read without knowing length",
 		iStart : 100,
 		iExpectedCount : undefined,
-		iExpectedLength : 100
+		iExpectedLength : 100,
+		iExpectedLimit : 100
 	}, {
 		sTitle : "empty read starting at 0",
 		iStart : 0,
 		iExpectedCount : 0,
-		iExpectedLength : 0
+		iExpectedLength : 0,
+		iExpectedLimit : 0
 	}, {
 		sTitle : "empty read before @odata.count returned from server",
 		iCount : 42,
 		iStart : 30,
 		iExpectedCount : 30,
-		iExpectedLength : 30
+		iExpectedLength : 30,
+		iExpectedLimit : 30
 	}, {
 		iCount : 3,
 		iCreated : 3,
-		iExpectedCount : 3,
+		iExpectedCount : 6,
 		iExpectedLength : 6,
+		iExpectedLimit : 3,
 		iStart : 5,
 		sTitle : "short read while created elements are present, @odata.count OK",
 		vValue : [{}]
 	}, {
 		iCount : 4, // maybe unrealistic, but spec allows for this
 		iCreated : 3,
-		iExpectedCount : 3,
+		iExpectedCount : 6,
 		iExpectedLength : 6,
+		iExpectedLimit : 3,
 		iStart : 5,
 		sTitle : "short read while created elements are present, @odata.count wrong",
 		vValue : [{}]
@@ -3195,7 +3328,6 @@ sap.ui.define([
 				aElements = [],
 				oFetchTypesResult = {},
 				oHelperMock = this.mock(_Helper),
-				iLimit = {},
 				oResult = {
 					"@odata.context" : "foo",
 					"value" : oFixture.vValue || []
@@ -3205,17 +3337,9 @@ sap.ui.define([
 			oCache.aElements = aElements;
 			oCache.aElements.$count = undefined;
 			oCache.aElements.$created = oFixture.iCreated || 0;
-			oCache.iLimit = iLimit;
 
 			if (oFixture.iCount) {
 				oResult["@odata.count"] = "" + oFixture.iCount;
-
-				oHelperMock.expects("updateExisting")
-					.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
-						sinon.match.same(oCache.aElements), {$count : oFixture.iCount})
-					.callsFake(function () {
-						oCache.aElements.$count = oFixture.iCount;
-					});
 			}
 			oCacheMock.expects("visitResponse").withExactArgs(sinon.match.same(oResult),
 				sinon.match.same(oFetchTypesResult), undefined, undefined, undefined,
@@ -3229,7 +3353,7 @@ sap.ui.define([
 				oFetchTypesResult);
 
 			assert.strictEqual(oCache.aElements.length, oFixture.iExpectedLength, "length");
-			assert.strictEqual(oCache.iLimit, oFixture.iExpectedCount, "iLimit");
+			assert.strictEqual(oCache.iLimit, oFixture.iExpectedLimit, "iLimit");
 		});
 	});
 
@@ -3703,7 +3827,7 @@ sap.ui.define([
 			var sResourcePath = "Employees",
 				oCache = this.createCache( sResourcePath);
 
-			this.mockRequest( sResourcePath, 10, bCount ? 30 : 10);
+			this.mockRequest(sResourcePath, 10, bCount ? 30 : 10);
 			this.oRequestorMock.expects("request")
 				.withExactArgs("GET", sResourcePath + "?$skip=5&$top=3", new _GroupLock("group"),
 					undefined, undefined, undefined)
@@ -3752,7 +3876,8 @@ sap.ui.define([
 					assert.strictEqual(
 						oCache.read(0, 10, 0, new _GroupLock("group")).getResult().value.$count, 27,
 						"now including the created element");
-					assert.strictEqual(oCache.iLimit, 27);
+					assert.strictEqual(oCache.iLimit, 26,
+						"created element cannot be reached via paging");
 				});
 		});
 	});
@@ -3929,6 +4054,8 @@ sap.ui.define([
 					}
 					oEntityDataCleaned.ID = oPostResult.ID;
 				});
+			// count is already updated when creating the tranisent entity
+			oCache.registerChange(sPathInCache + "/$count", oCountChangeListener);
 
 			// code under test
 			oCreatePromise = oCache.create(oGroupLock, SyncPromise.resolve(sPostPath), sPathInCache,
@@ -3937,7 +4064,7 @@ sap.ui.define([
 			// initial data is synchronously available
 			assert.strictEqual(aCollection[0], oEntityDataCleaned);
 			assert.strictEqual(aCollection.$byPredicate[sTransientPredicate], oEntityDataCleaned);
-			assert.strictEqual(aCollection.$count, 0);
+			assert.strictEqual(aCollection.$count, 1);
 			assert.strictEqual(aCollection.$created, 1);
 
 			// request is added to mPostRequests
@@ -3951,7 +4078,6 @@ sap.ui.define([
 				}
 			});
 
-			oCache.registerChange(sPathInCache + "/$count", oCountChangeListener);
 			this.spy(_Helper, "removeByPath");
 			return oCreatePromise.then(function (oEntityData) {
 				var oExpectedPrivateAnnotation = {};
@@ -4029,12 +4155,14 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), sPathInCache)
 			.returns(SyncPromise.resolve(aCollection));
 		this.mock(oGroupLock).expects("unlock").withExactArgs();
+		aCollection.$count = 42;
 
 		// code under test
 		oCache._delete(oGroupLock, "TEAMS('0')/TEAM_2_EMPLOYEES",
 			sPathInCache + "/-1", //TODO sPathInCache + sTransientPredicate
 			fnDeleteCallback);
 
+		assert.strictEqual(aCollection.$count, 41);
 		assert.strictEqual(aCollection.$created, 1);
 		assert.strictEqual(aCollection[0], oEntity1);
 		sinon.assert.calledWithExactly(_Helper.removeByPath, sinon.match.same(oCache.mPostRequests),
@@ -6502,4 +6630,3 @@ sap.ui.define([
 // TODO we cannot update a single property with value null, because the read delivers "204 No
 //      Content" and no oResult. Hence we do not have the ETag et al.
 //TODO key predicate calculation in the result of operations?
-//TODO Collection cache iLimit should never be undefined; see CPOUI5UISERVICESV3-1778
