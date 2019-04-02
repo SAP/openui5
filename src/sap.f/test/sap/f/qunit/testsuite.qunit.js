@@ -69,6 +69,11 @@ sap.ui.define(function () {
 					only: ["sap/f/DynamicPageTitle"]
 				}
 			},
+			"DynamicPageWithStickySubheader": {
+				coverage: {
+					only: ["sap/f/DynamicPage"]
+				}
+			},
 			"ExploredSamples": {
 				loader: {
 					map: {

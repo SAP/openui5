@@ -85,7 +85,7 @@ sap.ui.define([
 	 *<li>If you have a large number of tabs, you can scroll through them with the arrows. Additionally all tabs are available in an overflow button (property <code>showOverflowSelectList</code>).</li>
 	 *</ul>
 	 * @extends sap.ui.core.Control
-	 * @implements sap.m.ObjectHeaderContainer
+	 * @implements sap.m.ObjectHeaderContainer, sap.f.IDynamicPageStickyContent
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -98,7 +98,8 @@ sap.ui.define([
 	var IconTabBar = Control.extend("sap.m.IconTabBar", /** @lends sap.m.IconTabBar.prototype */ { metadata : {
 
 		interfaces : [
-			"sap.m.ObjectHeaderContainer"
+			"sap.m.ObjectHeaderContainer",
+			"sap.f.IDynamicPageStickyContent"
 		],
 		library : "sap.m",
 		properties : {
@@ -538,6 +539,34 @@ sap.ui.define([
 		return oControl;
 	};
 
+	IconTabBar.prototype._getStickyContent = function () {
+		return this._getIconTabHeader();
+	};
+
+	IconTabBar.prototype._returnStickyContent = function () {
+		if (this.bIsDestroyed) {
+			return;
+		}
+
+		this._getStickyContent().$().prependTo(this.$());
+	};
+
+	IconTabBar.prototype._setStickySubheaderSticked = function (bIsInStickyContainer) {
+		this._bStickyContentSticked = bIsInStickyContainer;
+	};
+
+	IconTabBar.prototype._getStickySubheaderSticked = function () {
+		return this._bStickyContentSticked;
+	};
+
+	IconTabBar.prototype.onBeforeRendering = function () {
+		var ITHDomRef = this._getIconTabHeader().$();
+
+		if (this._bStickyContentSticked && ITHDomRef) {
+			delete this._bStickyContentSticked;
+			this._getIconTabHeader().$().remove();
+		}
+	};
 	/* =========================================================== */
 	/*           begin: reflectors for header properties           */
 	/* =========================================================== */
