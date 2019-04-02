@@ -1,0 +1,25 @@
+<mvc:View xmlns:core="sap.ui.core"
+					xmlns:mvc="sap.ui.core.mvc"
+          xmlns="sap.m"
+					xmlns:html="http://www.w3.org/1999/xhtml"
+          width="100%"
+					displayBlock="true">
+
+    <Carousel loop="true" showPageIndicator="true">
+		<pages>
+			<VBox alignItems="Center">
+				<Image src="./test-resources/sap/ui/integration/images/Carousel_1.jpg" alt="Manager business development" width="100%"/>
+			</VBox>
+			<VBox alignItems="Center">
+				<Image src="./test-resources/sap/ui/integration/images/Carousel_2.jpg" alt="Marketing manager" width="100%"/>
+			</VBox>
+			<VBox alignItems="Center">
+				<Image src="./test-resources/sap/ui/integration/images/Carousel_3.jpg" alt="HR manager" width="100%"/>
+			</VBox>
+			<VBox alignItems="Center">
+				<Image src="./test-resources/sap/ui/integration/images/Carousel_4.jpg" alt="Sales manager" width="100%"/>
+			</VBox>
+		</pages>
+	</Carousel>
+
+</mvc:View>

@@ -17,6 +17,12 @@
 		</subHeader>
 
 		<content>
+			<SegmentedButton selectedKey="cozy" selectionChange="onFormFactorChange" class="sapUiSmallMargin">
+				<items>
+					<SegmentedButtonItem text="Cozy" key="cozy"/>
+					<SegmentedButtonItem text="Compact"/>
+				</items>
+			</SegmentedButton>
 			<f:GridContainer>
 				<Button text="Get Waldorf Weather" press="changeCity">
 					<layoutData>

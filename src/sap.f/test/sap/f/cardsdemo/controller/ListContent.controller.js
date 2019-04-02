@@ -49,6 +49,9 @@ sap.ui.define([
 			}
 			oEvent.getSource().setText(sButtonText);
 			Card.setParameters(oCity);
+		},
+		onFormFactorChange: function (oEvent) {
+			document.getElementsByClassName("sapFGridContainer")[0].classList.toggle("sapUiSizeCompact");
 		}
 	});
 });

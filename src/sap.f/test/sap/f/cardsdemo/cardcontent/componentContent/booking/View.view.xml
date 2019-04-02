@@ -1,14 +1,15 @@
-<mvc:View controllerName="sap.f.cardsdemo.cardcontent.componentContent.booking.Main"
-          xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
-          xmlns="sap.m" xmlns:html="http://www.w3.org/1999/xhtml"
-          width="100%">
+<mvc:View xmlns:core="sap.ui.core"
+          xmlns:mvc="sap.ui.core.mvc"
+          xmlns="sap.m"
+          xmlns:html="http://www.w3.org/1999/xhtml"
+          width="100%"
+          controllerName="sap.f.cardsdemo.cardcontent.componentContent.booking.Card">
     <VBox
-        height="115px"
         class="sapUiSmallMargin"
         justifyContent="SpaceBetween">
         <HBox justifyContent="SpaceBetween">
             <ComboBox
-                width="120px"
+                class="sapUiSmallMarginEnd"
                 placeholder="From City"
 				items="{
 					path: '/cities',
@@ -17,7 +18,6 @@
 				<core:Item key="{key}" text="{text}" />
 			</ComboBox>
             <ComboBox
-                width="120px"
                 placeholder="To City"
 				items="{
 					path: '/cities',
@@ -26,9 +26,10 @@
 				<core:Item key="{key}" text="{text}" />
 			</ComboBox>
         </HBox>
-        <HBox justifyContent="SpaceBetween">
-            <DatePicker width="186px" placeholder="Choose Date ..."/>
+        <DatePicker placeholder="Choose Date ..."/>
+        <Toolbar style="Clear" class="sapUiTinyMarginTop" >
+            <ToolbarSpacer/>
             <Button text="Book" press="onBookPress" type="Emphasized" />
-        </HBox>
+        </Toolbar>
     </VBox>
 </mvc:View>

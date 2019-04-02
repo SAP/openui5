@@ -25,6 +25,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 *
+	 * @experimental
 	 * @constructor
 	 * @private
 	 * @alias sap.f.cards.ComponentContent
@@ -41,7 +42,7 @@ sap.ui.define([
 		}
 
 		var oComponent = new ComponentContainer({
-			manifest: oConfiguration.manifest || oConfiguration,
+			manifest: oConfiguration,
 			async: true,
 			componentCreated: function () {
 				// TODO _updated event is always needed, so that the busy indicator knows when to stop. We should review this for contents which do not have data.

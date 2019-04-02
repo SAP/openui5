@@ -21,7 +21,8 @@
 					"sap.ui.integration.sample.ObjectCard",
 					"sap.ui.integration.sample.TimelineCard",
 					"sap.ui.integration.sample.TableCard",
-					"sap.ui.integration.sample.Actions"
+					"sap.ui.integration.sample.Actions",
+					"sap.ui.integration.sample.ComponentCard"
 				]
 			}
 		],
@@ -60,6 +61,11 @@
 				"id": "sap.ui.integration.sample.Playground",
 				"name": "Play and Explore Cards and Schema",
 				"description": "WYSIWYG editing of Card manifest"
+			},
+			{
+				"id": "sap.ui.integration.sample.ComponentCard",
+				"name": "Component Card",
+				"description": "The component card is used to display different types of content."
 			}
 		]
 	}

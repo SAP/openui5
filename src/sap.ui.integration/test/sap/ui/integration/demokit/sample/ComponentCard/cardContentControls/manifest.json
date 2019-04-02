@@ -1,7 +1,7 @@
 {
   "_version": "1.12.0",
   "sap.app": {
-    "id": "sap.f.cardsdemo.cardcontent.componentContent.booking",
+    "id": "sap.ui.integration.sample.ComponentCard.cardContentControls",
     "type": "card",
     "applicationVersion": {
       "version": "1.0.0"
@@ -9,7 +9,7 @@
   },
   "sap.ui5": {
     "rootView": {
-      "viewName": "sap.f.cardsdemo.cardcontent.componentContent.booking.View",
+      "viewName": "sap.ui.integration.sample.ComponentCard.cardContentControls.View",
       "type": "XML",
       "async": true,
       "id": "app"

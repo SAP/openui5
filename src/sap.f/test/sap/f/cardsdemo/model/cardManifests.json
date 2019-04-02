@@ -1719,58 +1719,59 @@
 	},
 	"tablecard1": {
 	  "sap.card": {
-		"header": {
-		  "type": "Numeric",
-		  "data": {
-			"request": {
-			  "url": "./cardcontent/kpi.json"
+			"headerPosition": "Bottom",
+			"header": {
+				"type": "Numeric",
+				"data": {
+				"request": {
+					"url": "./cardcontent/kpi.json"
+				},
+				"path": "/kpiInfos/kpi"
+				},
+				"title": "Project Cloud Transformation",
+				"subTitle": "Revenue",
+				"unitOfMeasurement": "EUR",
+				"mainIndicator": {
+				"number": "{number}",
+				"unit": "{unit}",
+				"trend": "{trend}",
+				"state": "{state}"
+				},
+				"details": "{details}",
+				"sideIndicators": [
+					{
+						"title": "Target",
+						"number": "{target/number}",
+						"unit": "{target/unit}"
+					},
+					{
+						"title": "Deviation",
+						"number": "{deviation/number}",
+						"unit": "%"
+					}
+				]
 			},
-			"path": "/kpiInfos/kpi"
-		  },
-		  "title": "Project Cloud Transformation",
-		  "subTitle": "Revenue",
-		  "unitOfMeasurement": "EUR",
-		  "mainIndicator": {
-			"number": "{number}",
-			"unit": "{unit}",
-			"trend": "{trend}",
-			"state": "{state}"
-		  },
-		  "details": "{details}",
-		  "sideIndicators": [
-			{
-			  "title": "Target",
-			  "number": "{target/number}",
-			  "unit": "{target/unit}"
-			},
-			{
-			  "title": "Deviation",
-			  "number": "{deviation/number}",
-			  "unit": "%"
+			"type": "Table",
+			"content": {
+				"data": {
+				"request": {
+					"url": "./cardcontent/tableitems.json"
+				},
+				"path": "/names"
+				},
+				"row": {
+					"columns": [
+							{
+							"label": "First Name",
+							"value": "{firstName}"
+							},
+							{
+							"label": "Last Name",
+							"value": "{lastName}"
+							}
+					]
+				}
 			}
-		  ]
-		},
-		"type": "Table",
-		"content": {
-		  "data": {
-			"request": {
-			  "url": "./cardcontent/tableitems.json"
-			},
-			"path": "/names"
-		  },
-		  "row": {
-			"columns": [
-			  {
-				"label": "First Name",
-				"value": "{firstName}"
-			  },
-			  {
-				"label": "Last Name",
-				"value": "{lastName}"
-			  }
-			]
-		  }
-		}
 	  }
 	}
   },

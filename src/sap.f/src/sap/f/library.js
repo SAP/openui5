@@ -27,6 +27,7 @@ sap.ui.define(["sap/ui/base/DataType",
 			"sap.f.IDynamicPageStickyContent"
 		],
 		types: [
+			"sap.f.cards.HeaderPosition",
 			"sap.f.LayoutType",
 			"sap.f.DynamicPageTitleArea",
 			"sap.f.DynamicPageTitleShrinkRatio"
@@ -463,6 +464,16 @@ sap.ui.define(["sap/ui/base/DataType",
 	 */
 
 	/**
+	 * Allows for a common header renderer between different card implementations.
+	 *
+	 * @returns {sap.f.cards.HeaderPosition} The position of the header of the card
+	 * @since 1.65
+	 * @public
+	 * @function
+	 * @name sap.f.ICard.getCardHeaderPosition
+	 */
+
+	/**
 	 * Marker interface for card headers
 	 *
 	 * @since 1.62
@@ -482,6 +493,29 @@ sap.ui.define(["sap/ui/base/DataType",
 	 * @interface
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
+
+	 /**
+	 * Different options for the position of the <code>Card</code> header.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.65
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.cards.HeaderPosition = {
+		/**
+		 * The Header is over the content.
+		 *
+		 * @public
+		 */
+		Top: "Top",
+		/**
+		 * The Header is under the content.
+		 *
+		 * @public
+		 */
+		Bottom: "Bottom"
+	};
 
 	return thisLib;
 

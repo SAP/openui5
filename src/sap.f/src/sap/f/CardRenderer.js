@@ -3,8 +3,13 @@
  */
 
 // Provides default renderer for control sap.f.Card
-sap.ui.define([], function () {
+sap.ui.define([
+	"sap/f/library"
+], function (
+	library
+) {
 	"use strict";
+	var HeaderPosition = library.cards.HeaderPosition;
 
 	/**
 	 * <code>Card</code> renderer.
@@ -22,14 +27,18 @@ sap.ui.define([], function () {
 	 */
 	CardRenderer.render = function (oRm, oCard) {
 		var oHeader = oCard.getCardHeader(),
-			sHeight = oCard.getHeight();
+			sHeight = oCard.getHeight(),
+			bCardHeaderBottom = oHeader && oCard.getCardHeaderPosition() === HeaderPosition.Bottom;
 
-		// start
+		//start
 		oRm.write("<div");
 		oRm.writeElementData(oCard);
 		oRm.addClass("sapFCard");
 		if (!oCard.getCardContent()) {
 			oRm.addClass("sapFCardNoContent");
+		}
+		if (bCardHeaderBottom) {
+			oRm.addClass("sapFCardBottomHeader");
 		}
 		oRm.writeClasses();
 
@@ -56,11 +65,18 @@ sap.ui.define([], function () {
 		oRm.writeStyles();
 		oRm.write(">");
 
-		//header
-		oRm.renderControl(oHeader);
+		//header at the top
+		if (oHeader && oCard.getCardHeaderPosition() === "Top") {
+			oRm.renderControl(oHeader);
+		}
 
 		//content
 		CardRenderer.renderContentSection(oRm, oCard);
+
+		//header at the bottom
+		if (bCardHeaderBottom) {
+			oRm.renderControl(oHeader);
+		}
 
 		//end
 		oRm.write("</div>");

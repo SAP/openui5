@@ -1,0 +1,35 @@
+<mvc:View
+        xmlns="sap.m"
+        xmlns:f="sap.f"
+        xmlns:mvc="sap.ui.core.mvc"
+        class="sapUiContentPadding"
+        xmlns:w="sap.ui.integration.widgets">
+
+    <f:GridContainer class="sapUiSmallMargin">
+        <w:Card width="100%" manifest="./test-resources/sap/ui/integration/demokit/sample/ComponentCard/cardContent/manifest.json">
+            <w:layoutData>
+                <f:GridContainerItemLayoutData rows="4" columns="4" />
+            </w:layoutData>
+        </w:Card>
+        <w:Card width="100%" manifest="./test-resources/sap/ui/integration/demokit/sample/ComponentCard/cardContentHeaderBottom/manifest.json">
+            <w:layoutData>
+                <f:GridContainerItemLayoutData rows="4" columns="4" />
+            </w:layoutData>
+        </w:Card>
+        <w:Card width="100%" manifest="./test-resources/sap/ui/integration/demokit/sample/ComponentCard/cardContentControls/manifest.json">
+            <w:layoutData>
+                <f:GridContainerItemLayoutData rows="4" columns="4" />
+            </w:layoutData>
+        </w:Card>
+        <w:Card width="100%" manifest="./test-resources/sap/ui/integration/demokit/sample/ComponentCard/cardContentCarousel/manifest.json">
+            <w:layoutData>
+                <f:GridContainerItemLayoutData columns="6" />
+            </w:layoutData>
+        </w:Card>
+         <w:Card width="100%" manifest="./test-resources/sap/ui/integration/demokit/sample/ComponentCard/cardContentListAndSearch/manifest.json">
+            <w:layoutData>
+                <f:GridContainerItemLayoutData columns="3" />
+            </w:layoutData>
+        </w:Card>
+    </f:GridContainer>
+</mvc:View>

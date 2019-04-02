@@ -1,0 +1,35 @@
+<mvc:View xmlns:core="sap.ui.core"
+          xmlns:mvc="sap.ui.core.mvc"
+          xmlns="sap.m"
+          xmlns:html="http://www.w3.org/1999/xhtml"
+          width="100%"
+          controllerName="sap.ui.integration.sample.ComponentCard.cardContentControls.Card">
+    <VBox
+        class="sapUiSmallMargin"
+        justifyContent="SpaceBetween">
+        <HBox justifyContent="SpaceBetween">
+            <ComboBox
+                class="sapUiSmallMarginEnd"
+                placeholder="From City"
+				items="{
+					path: '/cities',
+					sorter: { path: 'text' }
+				}">
+				<core:Item key="{key}" text="{text}" />
+			</ComboBox>
+            <ComboBox
+                placeholder="To City"
+				items="{
+					path: '/cities',
+					sorter: { path: 'text' }
+				}">
+				<core:Item key="{key}" text="{text}" />
+			</ComboBox>
+        </HBox>
+        <DatePicker placeholder="Choose Date ..."/>
+        <Toolbar style="Clear" class="sapUiTinyMarginTop" >
+            <ToolbarSpacer/>
+            <Button text="Book" press="onBookPress" type="Emphasized" />
+        </Toolbar>
+    </VBox>
+</mvc:View>

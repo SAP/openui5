@@ -2,7 +2,8 @@
         xmlns="sap.m"
         xmlns:mvc="sap.ui.core.mvc"
 		xmlns:w="sap.ui.integration.widgets"
-        displayBlock="true">
+        displayBlock="true"
+        controllerName="sap.f.cardsdemo.controller.ObjectContent">
 
     <Page title="{i18n>appTitle}">
 
@@ -15,7 +16,12 @@
         </subHeader>
 
         <content>
-
+            <SegmentedButton selectedKey="cozy" selectionChange="onFormFactorChange" class="sapUiSmallMargin">
+				<items>
+					<SegmentedButtonItem text="Cozy" key="cozy"/>
+					<SegmentedButtonItem text="Compact"/>
+				</items>
+			</SegmentedButton>
             <Panel>
                 <w:Card manifest="./cardcontent/objectcontent/datahandling_manifest.json" width="auto" height="auto" class="sapUiTinyMargin"/>
                 <w:Card manifest="./cardcontent/objectcontent/manifest.json" width="auto" height="auto" class="sapUiTinyMargin"/>

@@ -3,12 +3,16 @@
  */
 sap.ui.define([
 	"sap/ui/core/Control",
-	"sap/f/CardRenderer"
+	"sap/f/CardRenderer",
+	"sap/f/library"
 ], function (
 	Control,
-	CardRenderer
+	CardRenderer,
+	library
 ) {
 	"use strict";
+
+	var HeaderPosition = library.cards.HeaderPosition;
 
 	/**
 	 * Constructor for a new <code>Card</code>.
@@ -87,7 +91,13 @@ sap.ui.define([
 				/**
 				 * Defines the height of the card.
 				 */
-				height: { type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "auto" }
+				height: { type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "auto" },
+
+				/**
+				 * Defines the position of the Card Header.
+				 * @since 1.65
+				 */
+				headerPosition: { type: "sap.f.cards.HeaderPosition", group: "Appearance", defaultValue: HeaderPosition.Top }
 			},
 			aggregations: {
 
@@ -113,6 +123,17 @@ sap.ui.define([
 	 */
 	Card.prototype.getCardHeader = function () {
 		return this.getHeader();
+	};
+
+	/**
+	 * Implements sap.f.ICard interface.
+	 *
+	 * @returns {sap.f.cards.HeaderPosition} The position of the header of the card.
+	 * @protected
+	 * @since 1.65
+	 */
+	Card.prototype.getCardHeaderPosition = function () {
+		return this.getHeaderPosition();
 	};
 
 	/**

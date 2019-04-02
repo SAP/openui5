@@ -1,0 +1,9 @@
+<mvc:View xmlns:core="sap.ui.core"
+          xmlns:mvc="sap.ui.core.mvc"
+          xmlns="sap.m"
+          xmlns:html="http://www.w3.org/1999/xhtml"
+          width="100%"
+          displayBlock="true">
+
+    <Image width="100%" src="./test-resources/sap/ui/integration/images/Image_2.png"></Image>
+</mvc:View>

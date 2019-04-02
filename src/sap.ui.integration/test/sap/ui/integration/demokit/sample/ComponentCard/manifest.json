@@ -1,0 +1,46 @@
+{
+	"sap.app": {
+		"id": "sap.ui.integration.sample.ComponentCard",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.integration.sample.ComponentCard.ComponentCard",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.integration": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"Component.js",
+					"manifest.json",
+					"ComponentCard.view.xml",
+					"cardContent/Component.js",
+					"cardContent/manifest.json",
+					"cardContent/View.view.xml",
+					"cardContentCarousel/Component.js",
+					"cardContentCarousel/manifest.json",
+					"cardContentCarousel/View.view.xml",
+					"cardContentControls/Card.controller.js",
+					"cardContentControls/Component.js",
+					"cardContentControls/manifest.json",
+					"cardContentControls/View.view.xml",
+					"cardContentHeaderBottom/Component.js",
+					"cardContentHeaderBottom/manifest.json",
+					"cardContentHeaderBottom/View.view.xml",
+					"cardContentListAndSearch/Card.controller.js",
+					"cardContentListAndSearch/Component.js",
+					"cardContentListAndSearch/manifest.json",
+					"cardContentListAndSearch/View.view.xml"	
+				]
+			}
+		}
+	}
+}

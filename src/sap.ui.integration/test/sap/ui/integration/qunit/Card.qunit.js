@@ -819,15 +819,6 @@ sap.ui.define([
 			}
 		};
 
-		var oManifest_ComponentCard = {
-			"sap.card": {
-				"type": "Component",
-				"content": {
-					"manifest": "dummy-url-to-manifest"
-				}
-			}
-		};
-
 		var oManifest_ComponentCardAllInOne = {
 			"_version": "1.12.0",
 			"sap.app": {
@@ -1516,14 +1507,6 @@ sap.ui.define([
 		});
 
 		QUnit.module("Component Card");
-
-		QUnit.test("Component Card - card and component manifests are separate", function (assert) {
-			testComponentContentCreation(
-				oManifest_ComponentCard,
-				oManifest_ComponentCard["sap.card"].content.manifest,
-				assert
-			);
-		});
 
 		QUnit.test("Component Card - card and component manifests are in the same file", function (assert) {
 			testComponentContentCreation(

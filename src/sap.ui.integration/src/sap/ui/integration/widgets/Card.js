@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/m/Text",
 	'sap/ui/model/json/JSONModel',
-	"sap/f/CardRenderer"
+	"sap/f/CardRenderer",
+	"sap/f/library"
 ], function (
 	jQuery,
 	Control,
@@ -32,7 +33,8 @@ sap.ui.define([
 	Icon,
 	Text,
 	JSONModel,
-	CardRenderer
+	CardRenderer,
+	library
 ) {
 	"use strict";
 
@@ -40,11 +42,14 @@ sap.ui.define([
 		TYPE: "/sap.card/type",
 		DATA: "/sap.card/data",
 		HEADER: "/sap.card/header",
+		HEADER_POSITION: "/sap.card/headerPosition",
 		CONTENT: "/sap.card/content",
 		SERVICES: "/sap.ui5/services",
 		APP_TYPE: "/sap.app/type",
 		PARAMS: "/sap.card/configuration/parameters"
 	};
+
+	var HeaderPosition = library.cards.HeaderPosition;
 
 	/**
 	 * Constructor for a new <code>Card</code>.
@@ -57,20 +62,20 @@ sap.ui.define([
 	 *
 	 * <h3>Overview</h3>
 	 * Cards are small user interface elements which provide the most important information from an
-	 * application, related to a specific role or task in a compact manner, allowing for actions to be executed.
-	 * Cards can be described as small representations of an application which can be integrated in different systems.
+	 * app, related to a specific role or task. The information is represented in a compact manner, allowing for actions to be executed.
+	 * Cards can be described as small representations of an app which can be integrated in different systems.
 	 *
-	 * The integration card is defined in a declarative way, using a manifest.json to:
+	 * The integration card is defined in a declarative way, using a manifest.json to be:
 	 * <ul>
-	 * <li>Be easily integrated in applications</li>
-	 * <li>Be easily reused across various applications.</li>
-	 * <li>Be understandable by other technologies.</li>
-	 * <li>Be self-contained (without external configuration).</li>
-	 * <li>Be easily reconfigured in application layers (including backend).</li>
-	 * <li>Separate the roles of the card developer and the application developer.</li>
+	 * <li>Easily integrated into apps</li>
+	 * <li>Easily reused across apps</li>
+	 * <li>Understandable by other technologies</li>
+	 * <li>Self-contained (without external configuration)</li>
+	 * <li>Easily reconfigured in app layers (including backend)</li>
+	 * <li>Easy to separate the roles of the card and the app developers</li>
 	 * </ul>
 	 *
-	 * The role of the card developer is to describe the card in a manifest.json and define:
+	 * The role of the card developer is to describe the card in a manifest.json file and define:
 	 * <ul>
 	 * <li>Header</li>
 	 * <li>Content</li>
@@ -78,17 +83,17 @@ sap.ui.define([
 	 * <li>Possible actions</li>
 	 * </ul>
 	 *
-	 * The role of the application developer is to integrate the card into an application and define:
+	 * The role of the app developer is to integrate the card into the app and define:
 	 * <ul>
-	 * <li>The dimensions of the card inside a layout of choice, using the width and height properties.</li>
-	 * <li>The behavior for the actions described in the manifest.json, using the action event.</li>
+	 * <li>The dimensions of the card inside a layout of choice, using the <code>width</code> and <code>height</code> properties</li>
+	 * <li>The behavior for the actions described in the manifest.json file, using the action event</li>
 	 * </ul>
 	 *
 	 * <h3>Usage</h3>
 	 *
-	 * The "sap.app" type property of the manifest must be set to "card".
-	 * The namespace used to define a card is "sap.card".
-	 * Every card has a type which can be one of the following: List, Analytical, Timeline, Object, Table.
+	 * The <code>"sap.app"</code> <code>type</code> property in the manifest file must be set to <code>"card"</code>.
+	 * The namespace used to define a card is <code>"sap.card"</code>.
+	 * Every card has a type which can be one of the following: List, Analytical, Timeline, Object, Table, Component (experimental)
 	 *
 	 * An example of a manifest.json:
 	 *
@@ -113,7 +118,7 @@ sap.ui.define([
 	 *
 	 * Examples of header sections:
 	 *
-	 * The default header type can contain a title, a subtitle, an icon and status.
+	 * The default header type can contain title, subtitle, icon, and status.
 	 *  <pre>
 	 *  <code>
 	 * {
@@ -135,7 +140,7 @@ sap.ui.define([
 	 *  </code>
 	 *  </pre>
 	 *
-	 * The numeric header type can contain a title, a subtitle, unitOfMeasurement, details, main indicator and side indicators.
+	 * The numeric header type can contain title, subtitle, unitOfMeasurement, details, main indicator, and side indicators.
 	 *  <pre>
 	 *  <code>
 	 * {
@@ -172,17 +177,19 @@ sap.ui.define([
 	 *  </code>
 	 *  </pre>
 	 *
-	 * The content of the card is created, based on the card type. Possible card types:
+	 * The content of the card is created based on the card type. Possible card types:
 	 * <ul>
 	 * <li>List</li>
 	 * <li>Object</li>
 	 * <li>Timeline</li>
 	 * <li>Analytical</li>
 	 * <li>Table</li>
+	 * <li>Component (experimental)</li>
 	 * </ul>
 	 *
-	 * List card contains a set of items. The "item" property defines the template for all the items of the list.
-	 * "data" property provides the data.
+	 * List card contains a set of items. The <code>"item"</code> property defines the template for all the items of the list.
+	 * The <code>"data"</code> property provides the displayed information.
+	 *
 	 * Example:
 	 * <pre>
 	 * {
@@ -230,6 +237,7 @@ sap.ui.define([
 	 * </pre>
 	 *
 	 * Analytical card contains a chart visualization configuration. Supported chart types are Line, StackedBar, StackedColumn, Donut.
+	 *
 	 * Example:
 	 * <pre>
 	 * <code>
@@ -318,6 +326,7 @@ sap.ui.define([
 	 *
 	 * Object card contains information about an object. It is structured in groups.
 	 * Every group can have a title and items. The items contain display name (label) and value.
+	 *
 	 * Example:
 	 * <pre>
 	 * <code>
@@ -369,6 +378,7 @@ sap.ui.define([
 	 * </pre>
 	 *
 	 * Timeline card contains a set of timeline items. The "item" property defines the template for all the items of the timeline.
+	 *
 	 * Example:
 	 * <pre>
 	 * <code>
@@ -422,7 +432,8 @@ sap.ui.define([
 	 * </code>
 	 * </pre>
 	 *
-	 * Table card displays a set of items in a table format. The "row" property defines the template for all rows of the table.
+	 * Table card displays a set of items in a table format. The <code>"row"</code> property defines the template for all rows of the table.
+	 *
 	 * Example:
 	 * <pre>
 	 * <code>
@@ -488,10 +499,48 @@ sap.ui.define([
 	 * </code>
 	 * </pre>
 	 *
-	 * Item-based cards (Timeline and List) have an additional content property "maxItems" which defines the maximum number of items the card can have.
+	 * Component card can be used to display multiple controls (inside one Component). It is used as a custom approach for use cases, which do not fit in other card types and structures.
+	 * It provides much more flexibility and responsibility to the Card’s authors. Reusability is achieved on Component level and this type of Card is usable in LOB products that are based on the SAPUI5 Framework.
 	 *
-	 * <h3>Data handling</h3>
-	 * To add data to the card, you can add a data section to the card, header or content. The card will automatically create an unnamed model
+	 * Example:
+	 * <pre>
+	 * <code>
+	 *{
+	 *	"sap.app": {
+	 *		"id": "sap.ui.integration.sample.ComponentCard.cardContent",
+	 *		"type": "card",
+	 *		"applicationVersion": {
+	 *		"version": "1.0.0"
+	 *		}
+	 *	},
+	 *	"sap.ui5": {
+	 *		"rootView": {
+	 *			"viewName": "sap.ui.integration.sample.ComponentCard.cardContent.View",
+	 *			"type": "XML",
+	 *			"async": true,
+	 *			"id": "app"
+	 *		},
+	 *		"dependencies": {
+	 *			"minUI5Version": "1.38",
+	 *			"libs": {
+	 *				"sap.m": {}
+	 *			}
+	 *		}
+	 *	},
+	 *	"sap.card": {
+	 *		"type": "Component",
+	 *		"header": {
+	 *			"title": "Visit our workshop"
+	 *		}
+	 *	}
+	 *}
+	 * </code>
+	 * </pre>
+	 *
+	 * Item-based cards (Timeline and List) have an additional <code>"maxItems"</code> content property, which defines the maximum number of items the card can have.
+	 *
+	 * <h3>Data Handling</h3>
+	 * To add data to the card, you can add a data section, header or content. The card automatically creates an unnamed model
 	 * which can be used to resolve binding syntaxes inside the card manifest.
 	 *
 	 * Static data:
@@ -544,6 +593,7 @@ sap.ui.define([
 	 *
 	 * <h3>Actions</h3>
 	 * Actions add behavior to the card. To add a navigation action to the header and to the items, you can configure it inside the manifest.
+	 *
 	 * Actions have:
 	 * <ul>
 	 * <li>Type</li>
@@ -551,7 +601,7 @@ sap.ui.define([
 	 * <li>Enabled flag (true by default)</li>
 	 * </ul>
 	 *
-	 * In the example below, navigation action is added both to the header and the list items:
+	 * In the example below, a navigation action is added both to the header and the list items:
 	 * <pre>
 	 * <code>
 	 * {
@@ -611,7 +661,7 @@ sap.ui.define([
 	 *
 	 * <i>When to use</i>
 	 * <ul>
-	 * <li>When you want to reuse the card across applications.</li>
+	 * <li>When you want to reuse the card across apps.</li>
 	 * <li>When you need easy integration and configuration.</li>
 	 * </ul>
 	 *
@@ -619,7 +669,7 @@ sap.ui.define([
 	 * <ul>
 	 * <li>When you need more header and content flexibility.</li>
 	 * <li>When you have to achieve simple card visualization. For such cases, use: {@link sap.f.Card Card}.</li>
-	 * <li>When you have to use an application model.. For such cases, use: {@link sap.f.Card Card}.</li>
+	 * <li>When you have to use an application model. For such cases, use: {@link sap.f.Card Card}.</li>
 	 * <li>When you need complex behavior. For such cases, use: {@link sap.f.Card Card}.</li>
 	 * </ul>
 	 *
@@ -629,6 +679,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @public
 	 * @constructor
+	 * @see {@link topic:5b46b03f024542ba802d99d67bc1a3f4 Cards}
 	 * @since 1.62
 	 * @alias sap.ui.integration.widgets.Card
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -993,6 +1044,19 @@ sap.ui.define([
 	 */
 	Card.prototype.getCardHeader = function () {
 		return this.getAggregation("_header");
+	};
+
+	/**
+	 * Implements sap.f.ICard interface.
+	 *
+	 * @returns {sap.f.cards.HeaderPosition} The position of the header of the card.
+	 * @protected
+	 */
+	Card.prototype.getCardHeaderPosition = function () {
+		if (!this._oCardManifest) {
+			return "Top";
+		}
+		return this._oCardManifest.get(MANIFEST_PATHS.HEADER_POSITION) || HeaderPosition.Top;
 	};
 
 	/**
