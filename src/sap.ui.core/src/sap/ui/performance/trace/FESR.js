@@ -21,7 +21,6 @@ sap.ui.define([
 		CLIENT_DEVICE = setClientDevice(),
 		sAppVersion = "", // shortened app version with fesr delimiter e.g. "@1.7.1"
 		sAppVersionFull = "", // full app version e.g. 1.7.1-SNAPSHOT
-		iE2eTraceLevel,
 		sFESRTransactionId, // first transaction id of an interaction step, serves as identifier for the fesr-header
 		iStepCounter = 0, // counts FESR interaction steps
 		sFESR, // current header string
@@ -70,7 +69,7 @@ sap.ui.define([
 
 				// set passport with Root Context ID, Transaction ID, Component Info, Action
 				this.setRequestHeader("SAP-PASSPORT", Passport.header(
-					iE2eTraceLevel,
+					Passport.traceFlags(),
 					ROOT_ID,
 					Passport.getTransactionId(),
 					oPendingInteraction ? oPendingInteraction.component + sAppVersion : undefined,
@@ -210,7 +209,6 @@ sap.ui.define([
 			bFesrActive = true;
 			Passport.setActive(true);
 			Interaction.setActive(true);
-			iE2eTraceLevel = Passport.traceFlags();
 			registerXHROverride();
 			Interaction.onInteractionFinished = function(oFinishedInteraction) {
 				// only send FESR when requests have occured
@@ -226,7 +224,7 @@ sap.ui.define([
 			if (XHRInterceptor.isRegistered("PASSPORT_HEADER", "open")) {
 				XHRInterceptor.register("PASSPORT_HEADER", "open", function() {
 					// set passport with Root Context ID, Transaction ID for Trace
-					this.setRequestHeader("SAP-PASSPORT", Passport.header(iE2eTraceLevel, ROOT_ID, Passport.getTransactionId()));
+					this.setRequestHeader("SAP-PASSPORT", Passport.header(Passport.traceFlags(), ROOT_ID, Passport.getTransactionId()));
 				});
 			}
 			Interaction.onInteractionFinished = null;

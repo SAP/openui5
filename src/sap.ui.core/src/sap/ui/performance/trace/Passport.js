@@ -139,11 +139,13 @@ sap.ui.define(["sap/ui/performance/XHRInterceptor", "sap/ui/thirdparty/URI"], fu
 				iE2eTraceLevel = [0x9F, 0x0D];
 				break;
 			default:
-				iE2eTraceLevel = [];
-				iE2eTraceLevel.push((parseInt(lvl, 16) & 0xFF00) / 256);
-				iE2eTraceLevel.push((parseInt(lvl, 16) & 0xFF));
-		}
-		return iE2eTraceLevel;
+				if (!iE2eTraceLevel) {
+					iE2eTraceLevel = [];
+					iE2eTraceLevel.push((parseInt(lvl, 16) & 0xFF00) / 256);
+					iE2eTraceLevel.push((parseInt(lvl, 16) & 0xFF));
+				}
+			}
+			return iE2eTraceLevel;
 	};
 
 	/**
