@@ -256,7 +256,7 @@ sap.ui.define([
 		/**
 		 * Scrolls an item into the visual viewport.
 		 * @param {object} oItem The item to be scrolled
-		 *
+		 * @private
 		 */
 		ComboBox.prototype.scrollToItem = function(oItem) {
 			var oPicker = this.getPicker(),
@@ -341,6 +341,13 @@ sap.ui.define([
 			}
 		};
 
+		/**
+		 * Gets the text of the selected item.
+		 *
+		 * @param {sap.ui.core.Item | null} vItem The item which text should be taken
+		 * @returns {string} Items text or empty string
+		 * @private
+		 */
 		ComboBox.prototype._getSelectedItemText = function(vItem) {
 			vItem = vItem || this.getSelectedItem();
 
@@ -355,6 +362,13 @@ sap.ui.define([
 			return "";
 		};
 
+		/**
+		 * Sets the item's visibility.
+		 *
+		 * @param {sap.ui.core.Item} oItem The item to be set visible or not
+		 * @param {Boolean} bVisible Should the item be visible or not
+		 * @private
+		 */
 		ComboBox.prototype._setItemVisibility = function(oItem, bVisible) {
 			var $OItem = oItem && this.getListItem(oItem).$(),
 				CSS_CLASS = "sapMSelectListItemBaseInvisible";
@@ -390,9 +404,9 @@ sap.ui.define([
 		};
 
 		/**
-		 * Creates an instance of <code>sap.m.Popover</code>.
+		 * Configures the picker of type <code>sap.m.Popover</code>.
 		 *
-		 * @returns {sap.m.Popover} The popover instance
+		 * @param {sap.m.Popover} oDropdown The popover instance
 		 * @private
 		 */
 		ComboBox.prototype.configureDropdown = function(oDropdown) {
@@ -401,8 +415,9 @@ sap.ui.define([
 		};
 
 		/**
-		 * Configures a dialog.
+		 * Configures the picker of type <code>sap.m.Dialog</code>.
 		 *
+		 * @param {sap.m.Dialog} oDialog The dialog to be configured
 		 * @private
 		 */
 		ComboBox.prototype.configureDialog = function (oDialog) {
@@ -461,6 +476,11 @@ sap.ui.define([
 			return oTextField;
 		};
 
+		/**
+		 * Reverts the selection of the ComboBox to the previously selected item before the picker was opened.
+		 *
+		 * @private
+		 */
 		ComboBox.prototype.revertSelection = function() {
 			var sPickerTextFieldValue,
 				oPickerTextField = this.getPickerTextField();
@@ -482,7 +502,7 @@ sap.ui.define([
 		 *
 		 * @param {object} mOptions Settings for filtering
 		 * @private
-		 * @returns {sap.ui.core.item[]} Array of filtered items
+		 * @returns {sap.ui.core.Item[]} Array of filtered items
 		 */
 		ComboBox.prototype.filterItems = function(mOptions) {
 			var aItems = this.getItems(),
@@ -576,6 +596,12 @@ sap.ui.define([
 			return aFilteredItems;
 		};
 
+		/**
+		 * Gets the fields that will be used for filtering the ComboBox's items.
+		 *
+		 * @private
+		 * @returns {string[]} Array of fields to be filtered
+		 */
 		ComboBox.prototype._getFilters = function () {
 			return this.getFilterSecondaryValues() ? ["text", "additionalText"] : ["text"];
 		};
@@ -625,7 +651,7 @@ sap.ui.define([
 		 * Checks whether the text of the item starts with the input in the text field of the control.
 		 *
 		 * @param {sap.ui.core.Item} oItem The item to be checked against.
-		 * @param {String} sTypedValue The input from the field.
+		 * @param {string} sTypedValue The input from the field.
 		 * @returns {boolean} Whether the item starts with the given input.
 		 * @private
 		 */
@@ -657,7 +683,6 @@ sap.ui.define([
 		/**
 		 * Returns object containing the 0-based indexes of the first and last selected characters of the ComboBox
 		 *
-		 * @param {bool} bStart Should return the index of the first selected character.
 		 * @returns {int} The selection start index
 		 * @private
 		 */
@@ -902,7 +927,7 @@ sap.ui.define([
 		 * Handles the input event on the input field.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
-		 * @param {Boolean} bCompositionEvent True if the control is in composing state
+		 * @param {boolean} bCompositionEvent True if the control is in composing state
 		 * @private
 		 */
 		ComboBox.prototype.handleInputValidation = function (oEvent, bCompositionEvent) {
@@ -970,7 +995,7 @@ sap.ui.define([
 		 * @param {sap.m.ComboBoxTextField} oInput The input control
 		 * @param {sap.ui.core.Item[]} aItems The array of items
 		 * @param {string} sValue The input text value
-		 * @param {Boolean} bCompositionEvent True if the control is in composing state
+		 * @param {boolean} bCompositionEvent True if the control is in composing state
 		 * @private
 		 */
 		ComboBox.prototype.handleTypeAhead = function (oInput, aItems, sValue, bCompositionEvent) {
@@ -1021,6 +1046,7 @@ sap.ui.define([
 		 * Handles the <code>selectionChange</code> event on the list.
 		 *
 		 * @param {sap.ui.base.Event} oControlEvent The control event
+		 * @private
 		 */
 		ComboBox.prototype.onSelectionChange = function(oControlEvent) {
 			var oItem = this._getItemByListItem(oControlEvent.getParameter("listItem")),
@@ -1043,6 +1069,7 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.base.Event} oControlEvent The control event
 		 * @since 1.32.4
+		 * @private
 		 */
 		ComboBox.prototype.onItemPress = function (oControlEvent) {
 			var oListItem = oControlEvent.getParameter("listItem"),
@@ -1104,6 +1131,11 @@ sap.ui.define([
 			fnPickerTypeBeforeOpen && fnPickerTypeBeforeOpen.call(this);
 		};
 
+		/**
+		 * This event handler is called before the picker dialog is opened.
+		 *
+		 * @private
+		 */
 		ComboBox.prototype.onBeforeOpenDialog = function() {
 			var oPickerTextField = this.getPickerTextField();
 
@@ -1123,6 +1155,7 @@ sap.ui.define([
 		/**
 		 * This event handler is called after the picker popup is opened.
 		 *
+		 * @private
 		 */
 		ComboBox.prototype.onAfterOpen = function() {
 			var oDomRef = this.getFocusDomRef(),
@@ -1144,6 +1177,7 @@ sap.ui.define([
 		/**
 		 * This event handler is called before the picker popup is closed.
 		 *
+		 * @private
 		 */
 		ComboBox.prototype.onBeforeClose = function() {
 			ComboBoxBase.prototype.onBeforeClose.apply(this, arguments);
@@ -1164,6 +1198,7 @@ sap.ui.define([
 		/**
 		 * This event handler is called after the picker popup is closed.
 		 *
+		 * @private
 		 */
 		ComboBox.prototype.onAfterClose = function() {
 			var oDomRef = this.getFocusDomRef();
@@ -1191,6 +1226,7 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.base.Event} oControlEvent The control event
 		 * @since 1.28
+		 * @private
 		 */
 		ComboBox.prototype.onItemChange = function(oControlEvent) {
 			var sSelectedItemId = this.getAssociation("selectedItem"),
@@ -1228,8 +1264,8 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oControlEvent The control event
 		 * @private
 		 */
-		ComboBox.prototype._handleItemTap = function(oEvent) {
-			var oTappedControl = jQuery(oEvent.target).control(0);
+		ComboBox.prototype._handleItemTap = function(oControlEvent) {
+			var oTappedControl = jQuery(oControlEvent.target).control(0);
 
 			if (!oTappedControl.isA("sap.m.GroupHeaderListItem")) {
 				this.close();
@@ -1244,6 +1280,7 @@ sap.ui.define([
 		 * Handles the <code>keydown</code> event when any key is pressed.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
+		 * @private
 		 */
 		ComboBox.prototype.onkeydown = function(oEvent) {
 			var oControl = oEvent.srcControl;
@@ -1261,6 +1298,7 @@ sap.ui.define([
 		 * Handles the <code>cut</code> event when the CTRL and X keys are pressed.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
+		 * @private
 		 */
 		ComboBox.prototype.oncut = function(oEvent) {
 			var oControl = oEvent.srcControl;
@@ -1272,6 +1310,7 @@ sap.ui.define([
 		 * Handles the <code>sapenter</code> event when the Enter key is pressed.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
+		 * @private
 		 */
 		ComboBox.prototype.onsapenter = function(oEvent) {
 			var oControl = oEvent.srcControl,
@@ -1297,6 +1336,7 @@ sap.ui.define([
 		 * Handles the <code>sapdown</code> pseudo event when the Down arrow key is pressed.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
+		 * @private
 		 */
 		ComboBox.prototype.onsapdown = function(oEvent) {
 			var oControl = oEvent.srcControl;
@@ -1321,6 +1361,7 @@ sap.ui.define([
 		 * Handles the <code>sapup</code> pseudo event when the Up arrow key is pressed.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
+		 * @private
 		 */
 		ComboBox.prototype.onsapup = function(oEvent) {
 			var oControl = oEvent.srcControl;
@@ -1347,6 +1388,7 @@ sap.ui.define([
 		 * The first selectable item is selected and the input field is updated accordingly.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
+		 * @private
 		 */
 		ComboBox.prototype.onsaphome = function(oEvent) {
 			var oControl = oEvent.srcControl;
@@ -1374,6 +1416,7 @@ sap.ui.define([
 		 * The last selectable item is selected and the input field is updated accordingly.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
+		 * @private
 		 */
 		ComboBox.prototype.onsapend = function(oEvent) {
 			var oControl = oEvent.srcControl;
@@ -1399,6 +1442,7 @@ sap.ui.define([
 		 * Handles the <code>sappagedown</code> pseudo event when the Page Down key is pressed.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
+		 * @private
 		 */
 		ComboBox.prototype.onsappagedown = function(oEvent) {
 			var oControl = oEvent.srcControl;
@@ -1430,6 +1474,7 @@ sap.ui.define([
 		 * Handles the <code>sappageup</code> pseudo event when the Page Up key is pressed.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
+		 * @private
 		 */
 		ComboBox.prototype.onsappageup = function(oEvent) {
 			var oControl = oEvent.srcControl;
@@ -1461,6 +1506,7 @@ sap.ui.define([
 		 * Handles the <code>onsapshow</code> event when either F4 is pressed or Alt + Down arrow are pressed.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
+		 * @private
 		 */
 		ComboBox.prototype.onsapshow = function(oEvent) {
 			var aSelectableItems, oItem;
@@ -1489,6 +1535,7 @@ sap.ui.define([
 		 * Handles when Alt + Up arrow are pressed.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
+		 * @private
 		 */
 		ComboBox.prototype.onsaphide = ComboBox.prototype.onsapshow;
 
@@ -1496,6 +1543,7 @@ sap.ui.define([
 		 * Handles the <code>focusin</code> event.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
+		 * @private
 		 */
 		ComboBox.prototype.onfocusin = function(oEvent) {
 			var bDropdownPickerType = this.getPickerType() === "Dropdown";
@@ -1558,6 +1606,7 @@ sap.ui.define([
 		 * Handles the <code>sapfocusleave</code> pseudo event.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
+		 * @private
 		 */
 		ComboBox.prototype.onsapfocusleave = function(oEvent) {
 			this.bIsFocused = false;
@@ -1601,6 +1650,7 @@ sap.ui.define([
 		 * and <code>selectedKey</code> properties.
 		 *
 		 * @param {sap.ui.core.Item | null} vItem The selected item
+		 * @private
 		 */
 		ComboBox.prototype.setSelection = function(vItem) {
 			var oList = this._getList(),
@@ -1637,6 +1687,7 @@ sap.ui.define([
 		 * property are synchronized.
 		 *
 		 * @returns {boolean} Whether the selection is synchronized
+		 * @private
 		 * @since 1.24.0
 		 */
 		ComboBox.prototype.isSelectionSynchronized = function() {
@@ -1677,6 +1728,7 @@ sap.ui.define([
 		 * Indicates whether the list is filtered.
 		 *
 		 * @returns {boolean} True if the list is filtered
+		 * @private
 		 * @since 1.26.0
 		 */
 		ComboBox.prototype.isFiltered = function() {
@@ -1691,6 +1743,7 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.core.Item} oItem The item to be checked
 		 * @returns {boolean} Whether the item is visible.
+		 * @private
 		 * @since 1.32.0
 		 */
 		ComboBox.prototype.isItemVisible = function(oItem) {
@@ -1814,6 +1867,7 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.core.Item} vItem The item to be checked
 		 * @returns {boolean} True if the item is selected
+		 * @private
 		 * @since 1.24.0
 		 */
 		ComboBox.prototype.isItemSelected = function(vItem) {
@@ -1861,6 +1915,16 @@ sap.ui.define([
 			return this;
 		};
 
+		/**
+		 * Sets an association of the ComboBox with given name.
+		 *
+		 * @param {string} sAssociationName The name of the association.
+		 * @param {string} sId The ID which should be set as association.
+		 * @param {boolean} bSuppressInvalidate Should the control invalidation be suppressed.
+		 * @returns {sap.m.ComboBox} <code>this</code> to allow method chaining
+		 * @private
+		 * @since 1.22.1
+		 */
 		ComboBox.prototype.setAssociation = function(sAssociationName, sId, bSuppressInvalidate) {
 			var oList = this._getList();
 
@@ -1876,6 +1940,15 @@ sap.ui.define([
 			return ComboBoxBase.prototype.setAssociation.apply(this, arguments);
 		};
 
+		/**
+		 * Removes all the ids in the association named <code>sAssociationName</code>.
+		 *
+		 * @param {string} sAssociationName The name of the association.
+		 * @param {boolean} bSuppressInvalidate Should the control invalidation be suppressed.
+		 * @returns {string[]} An array with the removed IDs
+		 * @private
+		 * @since 1.22.1
+		 */
 		ComboBox.prototype.removeAllAssociation = function(sAssociationName, bSuppressInvalidate) {
 			var oList = this._getList();
 
@@ -1886,6 +1959,14 @@ sap.ui.define([
 			return ComboBoxBase.prototype.removeAllAssociation.apply(this, arguments);
 		};
 
+		/**
+		 * Clones the <code>sap.m.ComboBox</code> control.
+		 *
+		 * @param {string} sIdSuffix Suffix to be added to the ids of the new control and its internal objects.
+		 * @returns {sap.m.ComboBox} The cloned <code>sap.m.ComboBox</code> control.
+		 * @private
+		 * @since 1.22.1
+		 */
 		ComboBox.prototype.clone = function(sIdSuffix) {
 			var oComboBoxClone = ComboBoxBase.prototype.clone.apply(this, arguments),
 				oList = this._getList();
@@ -1937,11 +2018,16 @@ sap.ui.define([
 			return this;
 		};
 
+		/**
+		 * Searches and returns all aggregated objects of the internal <code>sap.m.List</code> control.
+		 *
+		 * @returns {Object[]} An array of all aggregated objects.
+		 * @private
+		 */
 		ComboBox.prototype.findAggregatedObjects = function() {
 			var oList = this._getList();
 
 			if (oList) {
-
 				// notice that currently there is only one aggregation
 				return List.prototype.findAggregatedObjects.apply(oList, arguments);
 			}
@@ -2073,6 +2159,12 @@ sap.ui.define([
 			return (vSelectedItem === null) ? null : core.byId(vSelectedItem) || null;
 		};
 
+		/**
+		 * Called whenever the binding of the aggregation named <code>items</code> is changed.
+		 *
+		 * @returns {undefined}
+		 * @private
+		 */
 		ComboBox.prototype.updateItems = function () {
 			var vResult,
 				oSelectedItem = this.getSelectedItem(), //Get selected item before model update
