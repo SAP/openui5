@@ -52,6 +52,13 @@ function(
 	};
 
 	/**
+	 * Map from cell to column.
+	 *
+	 * @type {WeakMapConstructor}
+	 */
+	var CellMap = new window.WeakMap();
+
+	/**
 	 * Constructor for a new Column.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
@@ -781,7 +788,7 @@ function(
 						// column is not sorted anymore -> reset default and remove sorter
 						aColumns[i].setProperty("sorted", false, true);
 						aColumns[i].setProperty("sortOrder", SortOrder.Ascending, true);
-						aColumns[i]._updateIcons();
+						aColumns[i]._updateIcons(true);
 						delete aColumns[i]._oSorter;
 					}
 				}
@@ -794,9 +801,12 @@ function(
 				// add sorters of all sorted columns to one sorter-array and update sort icon rendering for sorted columns
 				var aSorters = [];
 				for (var i = 0, l = aSortedCols.length; i < l; i++) {
-					aSortedCols[i]._updateIcons();
+					aSortedCols[i]._updateIcons(true);
 					aSorters.push(aSortedCols[i]._oSorter);
 				}
+
+				oTable._resetColumnHeaderHeights();
+				oTable._updateRowHeights(oTable._collectRowHeights(true), true);
 
 				var oBinding = oTable.getBinding("rows");
 				if (oBinding) {
@@ -819,7 +829,7 @@ function(
 		return this;
 	};
 
-	Column.prototype._updateIcons = function() {
+	Column.prototype._updateIcons = function(bSkipUpdateRowHeights) {
 		var oTable = this.getParent(),
 			bSorted = this.getSorted(),
 			bFiltered = this.getFiltered();
@@ -837,8 +847,10 @@ function(
 
 		oTable._getAccExtension().updateAriaStateOfColumn(this);
 
-		oTable._resetColumnHeaderHeights();
-		oTable._updateRowHeights(oTable._collectRowHeights(true), true);
+		if (!bSkipUpdateRowHeights) {
+			oTable._resetColumnHeaderHeights();
+			oTable._updateRowHeights(oTable._collectRowHeights(true), true);
+		}
 	};
 
 	Column.prototype._renderSortIcon = function() {
@@ -978,13 +990,10 @@ function(
 				oTable.getBinding("rows").filter(aFilters, FilterType.Control);
 
 				this._updateIcons();
-
 			}
-
 		}
 
 		return this;
-
 	};
 
 	Column.prototype._parseFilterValue = function(sValue) {
@@ -999,10 +1008,6 @@ function(
 		}
 
 		return sValue;
-	};
-
-	Column.prototype._restoreIcons = function() {
-		this._updateIcons();
 	};
 
 	/**
@@ -1132,9 +1137,7 @@ function(
 		}
 
 		if (oClone) {
-			// Update sap-ui-* as the column index in the column aggregation may have changed.
-			oClone.data("sap-ui-colindex", iIndex);
-			oClone.data("sap-ui-colid", this.getId());
+			CellMap.set(oClone, this);
 
 			var oTable = this.getParent();
 			if (oTable) {
@@ -1187,12 +1190,24 @@ function(
 	/**
 	 * Gets the table this column is inside.
 	 *
-	 * @return {sap.ui.table.Table|null} The instance of the table or <code>null</code>, if this column is not inside a table.
+	 * @returns {sap.ui.table.Table|null} The instance of the table or <code>null</code>, if this column is not inside a table.
 	 * @private
 	 */
 	Column.prototype._getTable = function() {
 		var oParent = this.getParent();
 		return TableUtils.isA(oParent, "sap.ui.table.Table") ? oParent : null;
+	};
+
+	/**
+	 * Returns the corresponding column of a table cell.
+	 *
+	 * @param {sap.ui.core.Control} oCell The table cell
+	 * @returns {sap.ui.table.Column | null} The column
+	 * @private
+	 * @static
+	 */
+	Column.ofCell = function(oCell) {
+		return CellMap.get(oCell) || null;
 	};
 
 	return Column;

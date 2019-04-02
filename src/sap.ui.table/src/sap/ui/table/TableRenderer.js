@@ -3,15 +3,16 @@
  */
 
 //Provides default renderer for control sap.ui.table.Table
-sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/Device', './library', './TableUtils', "./TableExtension",
+sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/Device', './library', "./Column", './TableUtils', "./TableExtension",
 			   'sap/ui/core/Renderer', 'sap/ui/core/IconPool', "sap/base/Log"],
-	function(Control, Parameters, Device, library, TableUtils, TableExtension, Renderer, IconPool, Log) {
+	function(Control, Parameters, Device, library, Column, TableUtils, TableExtension, Renderer, IconPool, Log) {
 	"use strict";
 
 
 	// shortcuts
-	var SelectionMode = library.SelectionMode,
-		VisibleRowCountMode = library.VisibleRowCountMode;
+	var SelectionMode = library.SelectionMode;
+	var VisibleRowCountMode = library.VisibleRowCountMode;
+	var SortOrder = library.SortOrder;
 
 	var mFlexCellContentAlignment = {
 		Begin: "flex-start",
@@ -456,7 +457,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.write("</div>");
 	};
 
-	TableRenderer.renderCol = function(rm, oTable, oColumn, iHeader, nSpan, bIsFirstColumn, bIsLastFixedColumn, bIsLastColumn) {
+	TableRenderer.renderCol = function(rm, oTable, oColumn, iHeader, nSpan, bIsFirstColumn, bIsLastFixedColumn, bIsLastColumn, bRenderIcons) {
 		var oLabel,
 			bInvisible = !nSpan,
 			iIndex = oColumn.getIndex(),
@@ -489,6 +490,23 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		if (nSpan > 1) {
 			rm.writeAttribute("colspan", nSpan);
 			mAccParams.colspan = true;
+		}
+
+		if (bRenderIcons) {
+			var bFiltered = oColumn.getFiltered();
+			var bSorted = oColumn.getSorted();
+
+			if (bFiltered) {
+				rm.addClass("sapUiTableColFiltered");
+			}
+
+			if (bSorted) {
+				rm.addClass("sapUiTableColSorted");
+
+				if (oColumn.getSortOrder() === SortOrder.Ascending) {
+					rm.addClass("sapUiTableColSortedD");
+				}
+			}
 		}
 
 		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "COLUMNHEADER", mAccParams);
@@ -899,7 +917,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		var count;
 		if (bHeader) {
 			for (row = iStartRow, count = iEndRow; row < count; row++) {
-				this.renderColumnHeaderRow(rm, oTable, row, bFixedTable, iStartColumn, iEndColumn, bRenderDummyColumn);
+				this.renderColumnHeaderRow(rm, oTable, row, bFixedTable, iStartColumn, iEndColumn, bRenderDummyColumn, row === count - 1);
 			}
 		} else {
 			// retrieve tooltip and aria texts only once and pass them to the rows _updateSelection function
@@ -966,7 +984,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.write("</div>");
 	};
 
-	TableRenderer.renderColumnHeaderRow = function(rm, oTable, iRow, bFixedTable, iStartColumn, iEndColumn, bHasOnlyFixedColumns) {
+	TableRenderer.renderColumnHeaderRow = function(rm, oTable, iRow, bFixedTable, iStartColumn, iEndColumn, bHasOnlyFixedColumns, bLastRow) {
 		rm.write("<tr");
 		rm.addClass("sapUiTableColHdrTr");
 		rm.writeClasses();
@@ -1013,8 +1031,15 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			this.renderCol(rm, oTable, oColumn, iRow, oColumn._nSpan,
 				iIndex === 0,
 				bFixedTable && (iIndex == iLastVisibleCol),
-				!bFixedTable && (iIndex == iLastVisibleCol));
-			oColumn._nSpan = undefined;
+				!bFixedTable && (iIndex == iLastVisibleCol),
+				oColumn._nSpan === 1 && !oColumn._bIconsRendered);
+
+			oColumn._bIconsRendered = oColumn._bIconsRendered || oColumn._nSpan === 1;
+			delete oColumn._nSpan;
+
+			if (bLastRow) {
+				delete oColumn._bIconsRendered;
+			}
 		}
 		aColumns.forEach(renderColumn.bind(this));
 
@@ -1094,10 +1119,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	};
 
 	TableRenderer.renderTableCell = function(rm, oTable, oRow, oCell, iCellIndex, bFixedTable, iStartColumn, iEndColumn, aVisibleColumns, bSelected) {
-		var iColIndex = oCell.data("sap-ui-colindex");
-		var aColumns = oTable.getColumns();
-		var oColumn = aColumns[iColIndex];
-		var oLastFixedColumn = aColumns[oTable.getFixedColumnCount() - 1];
+		var oColumn = Column.ofCell(oCell);
+		var iColIndex = oColumn.getIndex();
+		var oLastFixedColumn = oTable.getColumns()[oTable.getFixedColumnCount() - 1];
 
 		if (oColumn.shouldRender() && iStartColumn <= iColIndex && iEndColumn > iColIndex) {
 			rm.write("<td");

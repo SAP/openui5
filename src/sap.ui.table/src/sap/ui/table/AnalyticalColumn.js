@@ -371,6 +371,8 @@ sap.ui.define([
 		return false;
 	};
 
+	AnalyticalColumn.ofCell = Column.ofCell;
+
 	return AnalyticalColumn;
 
 });

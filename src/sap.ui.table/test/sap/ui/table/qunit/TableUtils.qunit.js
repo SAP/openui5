@@ -140,6 +140,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("hasRowActions", function(assert) {
+		assert.ok(!TableUtils.hasRowActions(), "No table passed: Returned false");
+
 		assert.ok(!TableUtils.hasRowActions(oTable), "Table has no row actions");
 		oTable.setRowActionCount(2);
 		assert.ok(!TableUtils.hasRowActions(oTable), "Table has still no row actions");
@@ -148,6 +150,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("getRowActionCount", function(assert) {
+		assert.strictEqual(TableUtils.getRowActionCount(), 0, "No table passed: Returned 0");
+
 		assert.equal(TableUtils.getRowActionCount(oTable), 0, "Table has no row actions");
 		oTable.setRowActionCount(2);
 		assert.equal(TableUtils.getRowActionCount(oTable), 0, "Table still has no row actions");

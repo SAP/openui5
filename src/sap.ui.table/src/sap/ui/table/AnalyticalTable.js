@@ -407,8 +407,7 @@ sap.ui.define([
 		var oBinding = this.getBinding("rows"),
 			iFirstRow = this.getFirstVisibleRow(),
 			iFixedBottomRowCount = this.getFixedBottomRowCount(),
-			iCount = this.getVisibleRowCount(),
-			aCols = this.getColumns();
+			iCount = this.getVisibleRowCount();
 
 		var aRows = this.getRows();
 		//check if the table has rows (data to display)
@@ -462,12 +461,11 @@ sap.ui.define([
 			// value mapping - this happens directly via the context!
 			var aCells = oRow.getCells();
 			for (var i = 0, lc = aCells.length; i < lc; i++) {
-				var iCol = aCells[i].data("sap-ui-colindex");
-				var oCol = aCols[iCol];
+				var oAnalyticalColumn = AnalyticalColumn.ofCell(aCells[i]);
 				var $td = jQuery(aCells[i].$().closest("td"));
-				if (oBinding.isMeasure(oCol.getLeadingProperty())) {
+				if (oBinding.isMeasure(oAnalyticalColumn.getLeadingProperty())) {
 					$td.addClass("sapUiTableMeasureCell");
-					$td.toggleClass("sapUiTableCellHidden", oContextInfo.nodeState.sum && !oCol.getSummed());
+					$td.toggleClass("sapUiTableCellHidden", oContextInfo.nodeState.sum && !oAnalyticalColumn.getSummed());
 				} else {
 					$td.removeClass("sapUiTableMeasureCell");
 				}
