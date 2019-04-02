@@ -179,14 +179,16 @@ sap.ui.define([
 		 * The settings are take from the JSON file, but changes are replaced with
 		 * the changes from the local storage.
 		 *
-		 * @param {String} sComponentClassName Component class name
+		 * @param {map} mComponent Map with information about the Component
+		 * @param {string} mComponent.name name of the component
+		 * @param {string} mComponent.appVersion version of the app
 		 * @param {map} [mPropertyBag] Contains additional data needed for reading changes; Not used in this case
 		 * @param {sap.ui.fl.Change[]} [aBackendChanges] array of changes that will get added to the result
 		 * @returns {Promise} Returns a Promise with the changes and componentClassName
 		 * @public
 		 */
-		FakeLrepConnectorStorage.prototype.loadChanges = function(sComponentClassName, mPropertyBag, aBackendChanges) {
-			var aChanges = oFakeLrepStorage.getChanges();
+		FakeLrepConnectorStorage.prototype.loadChanges = function(mComponent, mPropertyBag, aBackendChanges) {
+			var aChanges = oFakeLrepStorage.getChanges(mComponent.name);
 
 			if (aBackendChanges) {
 				aChanges = aChanges.concat(aBackendChanges);
@@ -198,7 +200,7 @@ sap.ui.define([
 					jQuery.getJSON(this.mSettings.sInitialComponentJsonPath).done(function (oResponse) {
 						mResult = {
 							changes: oResponse,
-							componentClassName: sComponentClassName
+							componentClassName: mComponent.name
 						};
 						resolve(mResult);
 					}).fail(function (error) {
@@ -207,7 +209,8 @@ sap.ui.define([
 				} else {
 					resolve(mResult);
 				}
-			}.bind(this)).then(function(mResult) {
+			}.bind(this))
+			.then(function(mResult) {
 				var aVariants = [];
 				var aControlVariantChanges = [];
 				var aControlVariantManagementChanges = [];
@@ -233,7 +236,7 @@ sap.ui.define([
 
 				mResult.changes.contexts = [];
 				mResult.changes.settings = this.mSettings;
-				mResult.componentClassName = sComponentClassName;
+				mResult.componentClassName = mComponent.name;
 
 				return mResult;
 			}.bind(this));
