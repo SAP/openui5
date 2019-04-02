@@ -19,7 +19,6 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 		 */
 		var SinglePlanningCalendarGridRenderer = {};
 
-
 		/**
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 		 *
@@ -418,7 +417,8 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 				bAppEndIsOutsideVisibleEndHour = oColumnEndDateAndHour.getTime() < oAppEndDate.getTime(),
 				iAppTop = bAppStartIsOutsideVisibleStartHour ? 0 : oControl._calculateTopPosition(oAppStartDate),
 				iAppBottom = bAppEndIsOutsideVisibleEndHour ? 0 : oControl._calculateBottomPosition(oAppEndDate),
-				iAppChunkWidth = 100 / (iMaxLevel + 1);
+				iAppChunkWidth = 100 / (iMaxLevel + 1),
+				sLegendItemType;
 
 			if (aAriaLabels.length > 0) {
 				mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + aAriaLabels.join(" ");
@@ -572,7 +572,12 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 			// }
 
 			oRm.write("<span id=\"" + sId + "-Descr\" class=\"sapUiInvisibleText\">" +
-				oControl._getAppointmentStartEndInfo(oAppointment) + "</span>");
+				oControl._getAppointmentStartEndInfo(oAppointment));
+			if (oControl._sLegendId) {
+				sLegendItemType = oControl._findCorrespondingLegendItem(oControl, oAppointment);
+				oRm.writeEscaped(sLegendItemType);
+			}
+			oRm.write("</span>");
 
 			oRm.write("</div>");
 

@@ -20,7 +20,10 @@
 	</script>
 
 	<script>
-		var oSPC;
+		var oSPC,
+			oDialog,
+			oLegend;
+
 		sap.ui.getCore().attachInit(function () {
 			sap.ui.require([
 					'sap/ui/model/json/JSONModel',
@@ -28,13 +31,18 @@
 					'sap/m/SinglePlanningCalendarDayView',
 					'sap/m/SinglePlanningCalendarWorkWeekView',
 					'sap/m/SinglePlanningCalendarWeekView',
+					'sap/m/PlanningCalendarLegend',
+					'sap/m/Dialog',
 					'sap/m/Button',
 					'sap/ui/unified/CalendarAppointment',
+					'sap/ui/unified/CalendarLegendItem',
 					'sap/m/MessageToast',
 					'sap/m/App',
 					'sap/m/Page'
 				],
-				function (JSONModel, SinglePlanningCalendar, SinglePlanningCalendarDayView, SinglePlanningCalendarWorkWeekView, SinglePlanningCalendarWeekView, Button, CalendarAppointment, MessageToast, App, Page) {
+				function (JSONModel, SinglePlanningCalendar, SinglePlanningCalendarDayView,
+							SinglePlanningCalendarWorkWeekView, SinglePlanningCalendarWeekView, PlanningCalendarLegend,
+							Dialog, Button, CalendarAppointment, CalendarLegendItem, MessageToast, App, Page) {
 					var aAppointments = [
 						{
 							title: "1 hour app. 0 without type and color",
@@ -312,6 +320,10 @@
 					oModel.setData({modelData: aAppointments});
 					sap.ui.getCore().setModel(oModel);
 
+					var oStateModel = new JSONModel();
+					oStateModel.setData({legendShown: false});
+					sap.ui.getCore().setModel(oStateModel, "stateModel");
+
 					var oDayView = new SinglePlanningCalendarDayView({
 								key: "DayView",
 								title: "Day View"
@@ -324,6 +336,51 @@
 								key: "WeekView",
 								title: "Week View"
 							});
+
+					oLegend = new PlanningCalendarLegend({
+						appointmentItems: [
+							new CalendarLegendItem({
+								type: sap.ui.unified.CalendarDayType.Type01,
+								text: "Type Private Appointment"
+							}),
+							new CalendarLegendItem({
+								type: sap.ui.unified.CalendarDayType.Type02,
+								text: "Type Face2Face Appointment"
+							}),
+							new CalendarLegendItem({
+								type: sap.ui.unified.CalendarDayType.Type03,
+								text: "Type Public Appointment"
+							}),
+							new CalendarLegendItem({
+								type: sap.ui.unified.CalendarDayType.Type04,
+								text: "Client Meeting"
+							}),
+							new CalendarLegendItem({
+								type: sap.ui.unified.CalendarDayType.Type05,
+								text: "Team Meeting"
+							}),
+							new CalendarLegendItem({
+								type: sap.ui.unified.CalendarDayType.Type06,
+								text: "Planning"
+							}),
+							new CalendarLegendItem({
+								type: sap.ui.unified.CalendarDayType.Type07,
+								text: "Out Of Office"
+							})
+						]
+					});
+
+					oDialog = new Dialog("D1", {
+						title: "Legend",
+						content: [oLegend],
+						endButton: new Button({
+							text: "Close",
+							press: function () {
+								oDialog.close();
+							}
+						})
+					});
+
 					oSPC = new SinglePlanningCalendar("SinglePlanningCalendar", {
 						title: "SinglePlanningCalendar",
 						startDate: new Date(2018, 6, 9),
@@ -341,6 +398,13 @@
 										this._updateRowHeaders(oCurrentDate);
 									};
 									oGrid._updateRowHeaderAndNowMarker();
+								}
+							}),
+							new Button({
+								icon: "sap-icon://legend",
+								tooltip: "Open PlanningCalendar legend",
+								press: function () {
+									oDialog.open();
 								}
 							})
 						],
@@ -365,6 +429,7 @@
 						},
 						enableAppointmentsDragAndDrop: true,
 						enableAppointmentsResize: true,
+						legend: oLegend,
 						appointmentDrop: function (oEvent) {
 							var oAppointment = oEvent.getParameter("appointment"),
 									oStartDate = oEvent.getParameter("startDate"),
