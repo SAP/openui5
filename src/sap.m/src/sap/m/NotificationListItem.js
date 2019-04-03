@@ -379,7 +379,13 @@ sap.ui.define(['./library', './NotificationListBase', 'sap/ui/core/InvisibleText
 	 * @private
 	 */
 	NotificationListItem.prototype._showHideTruncateButton = function () {
-		var notificationDomRef = this.getDomRef();
+
+		var notificationDomRef = this.getDomRef(),
+			oCore = sap.ui.getCore();
+
+		if (!notificationDomRef) {
+			return;
+		}
 
 		if (this._canTruncate() && (!this.getHideShowMoreButton())) { // if the Notification has long text
 			// show the truncate button
@@ -413,6 +419,8 @@ sap.ui.define(['./library', './NotificationListBase', 'sap/ui/core/InvisibleText
 		if (this.getTitle()) {
 			notificationDomRef.querySelector('.sapMNLI-Header').classList.remove('sapMNLI-TitleWrapper--initial-overwrite');
 		}
+
+		oCore.detachThemeChanged(this._showHideTruncateButton, this);
 	};
 
 	/**
@@ -443,7 +451,6 @@ sap.ui.define(['./library', './NotificationListBase', 'sap/ui/core/InvisibleText
 			//exit for invisible items
 			return;
 		}
-
 		that._resizeNotification();
 
 		this._sNotificationResizeHandler = ResizeHandler.register(notificationDomRef, function () {
