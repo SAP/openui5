@@ -1388,7 +1388,7 @@ sap.ui.define([
 	<columns><Column/><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="text" text="{Name}" />\
-		<Text id="age" text="{AGE}" />\
+		<Input id="age" value="{AGE}" />\
 	</ColumnListItem>\
 </Table>',
 			that = this;
@@ -1416,7 +1416,7 @@ sap.ui.define([
 					})
 					.expectChange("age", "10", 0); // caused by setValue
 
-				that.oView.byId("table").getItems()[0].getCells()[1].getBinding("text")
+				that.oView.byId("table").getItems()[0].getCells()[1].getBinding("value")
 					.setValue(10);
 
 				return that.waitForChanges(assert);
@@ -2602,7 +2602,7 @@ sap.ui.define([
 <Table id="table" items="{/SalesOrderList}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
-		<Text id="item" text="{SO_2_BP/CompanyName}" />\
+		<Input id="item" value="{SO_2_BP/CompanyName}" />\
 	</ColumnListItem>\
 </Table>',
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
@@ -2632,7 +2632,7 @@ sap.ui.define([
 				})
 				.expectChange("item", "Bar", 0);
 
-			that.oView.byId("table").getItems()[0].getCells()[0].getBinding("text")
+			that.oView.byId("table").getItems()[0].getCells()[0].getBinding("value")
 				.setValue("Bar");
 
 			return that.waitForChanges(assert);
@@ -2644,7 +2644,7 @@ sap.ui.define([
 	// Sample for this behavior: OData V4 TripPin service from odata.org
 	QUnit.test("Modify a property, server responds with 204 (No Content)", function (assert) {
 		var sView = '<FlexBox binding="{/EMPLOYEES(\'2\')}">\
-						<Text id="text" text="{Name}" />\
+						<Input id="text" value="{Name}" />\
 					</FlexBox>',
 			that = this;
 
@@ -2660,7 +2660,7 @@ sap.ui.define([
 				.expectChange("text", "Jonathan Schmidt");
 
 			// code under test
-			that.oView.byId("text").getBinding("text").setValue("Jonathan Schmidt");
+			that.oView.byId("text").getBinding("value").setValue("Jonathan Schmidt");
 
 			return that.waitForChanges(assert);
 		});
@@ -2673,7 +2673,7 @@ sap.ui.define([
 <Table id="table" items="{/EntitiesWithComplexKey}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
-		<Text id="item" text="{Value}" />\
+		<Input id="item" value="{Value}" />\
 	</ColumnListItem>\
 </Table>',
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
@@ -2702,7 +2702,7 @@ sap.ui.define([
 				})
 				.expectChange("item", "New", 0);
 
-			that.oView.byId("table").getItems()[0].getCells()[0].getBinding("text")
+			that.oView.byId("table").getItems()[0].getCells()[0].getBinding("value")
 				.setValue("New");
 
 			return that.waitForChanges(assert);
@@ -2717,7 +2717,7 @@ sap.ui.define([
 <Table id="table" items="{/SalesOrderList}">\
 	<columns><Column/><Column/></columns>\
 	<ColumnListItem>\
-		<Text id="note" text="{Note}" />\
+		<Input id="note" value="{Note}" />\
 		<Text id="companyName" binding="{SO_2_BP}" text="{CompanyName}"/>\
 	</ColumnListItem>\
 </Table>',
@@ -2752,7 +2752,7 @@ sap.ui.define([
 					.expectChange("companyName", "SAP");
 
 				oTable.getBinding("items").create({Note : "bar"}, bSkipRefresh);
-				oTable.getItems()[0].getCells()[0].getBinding("text").setValue("baz");
+				oTable.getItems()[0].getCells()[0].getBinding("value").setValue("baz");
 
 				return that.waitForChanges(assert);
 			}).then(function () {
@@ -2795,8 +2795,8 @@ sap.ui.define([
 <Table id="table" items="{/BusinessPartnerList}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
-		<Text id="city" text="{Address/City}" />\
-		<Text id="longitude" text="{Address/GeoLocation/Longitude}" />\
+		<Input id="city" value="{Address/City}" />\
+		<Input id="longitude" value="{Address/GeoLocation/Longitude}" />\
 	</ColumnListItem>\
 </Table>',
 			oModel = createSalesOrdersModel({
@@ -2831,8 +2831,8 @@ sap.ui.define([
 			that.expectChange("city", "Heidelberg", 0)
 				.expectChange("longitude", "8.700000000000", 0);
 
-			oTable.getItems()[0].getCells()[0].getBinding("text").setValue("Heidelberg");
-			oTable.getItems()[0].getCells()[1].getBinding("text").setValue("8.7");
+			oTable.getItems()[0].getCells()[0].getBinding("value").setValue("Heidelberg");
+			oTable.getItems()[0].getCells()[1].getBinding("value").setValue("8.7");
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -2878,7 +2878,7 @@ sap.ui.define([
 <Table id="table" items="{/SalesOrderList(\'42\')/SO_2_SOITEM}">\
 	<columns><Column/><Column/></columns>\
 	<ColumnListItem>\
-		<Text id="quantity" text="{Quantity}" />\
+		<Input id="quantity" value="{Quantity}" />\
 		<Text id="unit" text="{QuantityUnit}" />\
 	</ColumnListItem>\
 </Table>',
@@ -2912,7 +2912,7 @@ sap.ui.define([
 		}).then(function () {
 			that.expectChange("quantity", "2.000", 0);
 
-			oTable.getItems()[0].getCells()[0].getBinding("text").setValue("2.000");
+			oTable.getItems()[0].getCells()[0].getBinding("value").setValue("2.000");
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -3014,7 +3014,7 @@ sap.ui.define([
 <FlexBox binding="{\
 		path : \'/BusinessPartnerList(\\\'1\\\')/BP_2_SO(\\\'42\\\')/SO_2_SOITEM(\\\'0010\\\')\',\
 		parameters : {$select : \'Messages\'}}">\
-	<Text id="quantity" text="{Quantity}"/>\
+	<Input id="quantity" value="{Quantity}"/>\
 	<Text id="unit" text="{QuantityUnit}"/>\
 </FlexBox>',
 			oError = new Error("Error occurred while processing the request"),
@@ -3104,7 +3104,7 @@ sap.ui.define([
 						"type" : "Error"
 					}]);
 
-			that.oView.byId("quantity").getBinding("text").setValue("0.000");
+			that.oView.byId("quantity").getBinding("value").setValue("0.000");
 
 			return that.waitForChanges(assert);
 		});
@@ -3120,8 +3120,8 @@ sap.ui.define([
 			}),
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'42\')}">\
-	<Text id="note" text="{Note}"/>\
-	<Text id="amount" text="{GrossAmount}"/>\
+	<Input id="note" value="{Note}"/>\
+	<Input id="amount" value="{GrossAmount}"/>\
 </FlexBox>',
 			that = this;
 
@@ -3151,8 +3151,8 @@ sap.ui.define([
 				.expectChange("note", "Changed Note")
 				.expectChange("note", "Changed Note From Server");
 
-			that.oView.byId("amount").getBinding("text").setValue("1234.56");
-			that.oView.byId("note").getBinding("text").setValue("Changed Note");
+			that.oView.byId("amount").getBinding("value").setValue("1234.56");
+			that.oView.byId("note").getBinding("value").setValue("Changed Note");
 
 			return Promise.all([
 				that.oModel.submitBatch("update"),
@@ -3172,8 +3172,8 @@ sap.ui.define([
 <Table id="table" items="{/SalesOrderList}">\
 	<columns><Column/><Column/></columns>\
 	<ColumnListItem>\
-		<Text id="amount" text="{GrossAmount}"/>\
-		<Text id="note" text="{Note}"/>\
+		<Input id="amount" value="{GrossAmount}"/>\
+		<Input id="note" value="{Note}"/>\
 	</ColumnListItem>\
 </Table>',
 			that = this;
@@ -3197,10 +3197,10 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var aTableItems = that.oView.byId("table").getItems(),
-				oBindingAmount0 = aTableItems[0].getCells()[0].getBinding("text"),
-				oBindingAmount1 = aTableItems[1].getCells()[0].getBinding("text"),
-				oBindingNote0 = aTableItems[0].getCells()[1].getBinding("text"),
-				oBindingNote1 = aTableItems[1].getCells()[1].getBinding("text");
+				oBindingAmount0 = aTableItems[0].getCells()[0].getBinding("value"),
+				oBindingAmount1 = aTableItems[1].getCells()[0].getBinding("value"),
+				oBindingNote0 = aTableItems[0].getCells()[1].getBinding("value"),
+				oBindingNote1 = aTableItems[1].getCells()[1].getBinding("value");
 
 			that.expectRequest({
 					method : "PATCH",
@@ -3261,7 +3261,7 @@ sap.ui.define([
 <Table id="table" items="{/SalesOrderList}">\
 	<columns><Column/><Column/></columns>\
 	<ColumnListItem>\
-		<Text id="amount" text="{GrossAmount}"/>\
+		<Input id="amount" value="{GrossAmount}"/>\
 	</ColumnListItem>\
 </Table>',
 			that = this;
@@ -3291,8 +3291,8 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var aTableItems = that.oView.byId("table").getItems(),
-				oBindingAmount0 = aTableItems[0].getCells()[0].getBinding("text"),
-				oBindingAmount1 = aTableItems[1].getCells()[0].getBinding("text");
+				oBindingAmount0 = aTableItems[0].getCells()[0].getBinding("value"),
+				oBindingAmount1 = aTableItems[1].getCells()[0].getBinding("value");
 
 			that.expectRequest({
 					method : "PATCH",
@@ -3353,7 +3353,7 @@ sap.ui.define([
 			oSubmitBatchPromise,
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'42\')}">\
-	<Text id="note" text="{Note}"/>\
+	<Input id="note" value="{Note}"/>\
 </FlexBox>',
 			that = this;
 
@@ -3365,7 +3365,7 @@ sap.ui.define([
 			.expectChange("note", "Note");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			oBinding = that.oView.byId("note").getBinding("text");
+			oBinding = that.oView.byId("note").getBinding("value");
 
 			that.expectRequest({
 					method : "PATCH",
@@ -3423,7 +3423,7 @@ sap.ui.define([
 			oSubmitBatchPromise,
 			sView = '\
 <FlexBox binding="{/EMPLOYEES(\'1\')}">\
-	<Text id="name" text="{Name}" />\
+	<Input id="name" value="{Name}" />\
 	<FlexBox id="action" \
 			binding="{' + sAction + '(...)}">\
 		<layoutData><FlexItemData/></layoutData>\
@@ -3440,7 +3440,7 @@ sap.ui.define([
 			.expectChange("teamId", null);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			oBinding = that.oView.byId("name").getBinding("text");
+			oBinding = that.oView.byId("name").getBinding("value");
 
 			that.expectRequest({
 					method : "PATCH",
@@ -3503,7 +3503,7 @@ sap.ui.define([
 			fnRespond,
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'42\')}">\
-	<Text id="note" text="{Note}"/>\
+	<Input id="note" value="{Note}"/>\
 </FlexBox>',
 			that = this;
 
@@ -3515,7 +3515,7 @@ sap.ui.define([
 			.expectChange("note", "Note");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			oBinding = that.oView.byId("note").getBinding("text");
+			oBinding = that.oView.byId("note").getBinding("value");
 
 			that.expectRequest({
 					method : "PATCH",
@@ -3612,10 +3612,10 @@ sap.ui.define([
 			fnRespond42,
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'42\')}">\
-	<Text id="note42" text="{Note}"/>\
+	<Input id="note42" value="{Note}"/>\
 </FlexBox>\
 <FlexBox binding="{/SalesOrderList(\'77\')}">\
-	<Text id="note77" text="{Note}"/>\
+	<Input id="note77" value="{Note}"/>\
 </FlexBox>',
 			that = this;
 
@@ -3633,8 +3633,8 @@ sap.ui.define([
 			.expectChange("note77", "Note77");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			oBinding42 = that.oView.byId("note42").getBinding("text");
-			oBinding77 = that.oView.byId("note77").getBinding("text");
+			oBinding42 = that.oView.byId("note42").getBinding("value");
+			oBinding77 = that.oView.byId("note77").getBinding("value");
 
 			that.expectRequest({
 					method : "PATCH",
@@ -3735,8 +3735,8 @@ sap.ui.define([
 				fnRespond,
 				sView = '\
 <FlexBox binding="{/SalesOrderList(\'42\')}" id="parent">\
-	<Text id="lifecycleStatus" text="{LifecycleStatus}"/>\
-	<Text id="note" text="{Note}"/>\
+	<Input id="lifecycleStatus" value="{LifecycleStatus}"/>\
+	<Input id="note" value="{Note}"/>\
 </FlexBox>',
 				that = this;
 
@@ -3781,7 +3781,7 @@ sap.ui.define([
 					}))
 					.expectChange("note", "Changed Note");
 
-				that.oView.byId("note").getBinding("text").setValue("Changed Note");
+				that.oView.byId("note").getBinding("value").setValue("Changed Note");
 				if (sUpdateGroupId === "update") {
 					oBatchPromise0 = that.oModel.submitBatch(sUpdateGroupId).then(function () {
 						assert.ok(false, "unexpected success");
@@ -3841,7 +3841,7 @@ sap.ui.define([
 						});
 					}));
 
-				that.oView.byId("lifecycleStatus").getBinding("text").setValue("P");
+				that.oView.byId("lifecycleStatus").getBinding("value").setValue("P");
 
 				if (sUpdateGroupId === "update") {
 					oBatchPromise1 = that.oModel.submitBatch(sUpdateGroupId);
@@ -5197,7 +5197,7 @@ sap.ui.define([
 	</ColumnListItem>\
 </Table>\
 <VBox id="objectPage" binding="{path : \'\', parameters : {$$updateGroupId : \'update\'}}">\
-	<Text id="employeeName" text="{Name}"/>\
+	<Input id="employeeName" value="{Name}"/>\
 </VBox>',
 			that = this;
 
@@ -5245,7 +5245,7 @@ sap.ui.define([
 			that.expectChange("employeeName", "foo");
 
 			// Modify the employee name in the object page
-			that.oView.byId("employeeName").getBinding("text").setValue("foo");
+			that.oView.byId("employeeName").getBinding("value").setValue("foo");
 			assert.ok(oListBinding.hasPendingChanges());
 
 			return that.waitForChanges(assert);
@@ -5497,7 +5497,7 @@ sap.ui.define([
 	QUnit.test("Update quantity", function (assert) {
 		var sView = '\
 <FlexBox binding="{/SalesOrderList(\'42\')/SO_2_SOITEM(\'10\')}">\
-	<Text id="quantity" text="{Quantity}"/>\
+	<Input id="quantity" value="{Quantity}"/>\
 	<Text id="quantityUnit" text="{QuantityUnit}"/>\
 </FlexBox>',
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
@@ -5528,7 +5528,7 @@ sap.ui.define([
 				})
 				.expectChange("quantity", "11.000");
 
-			that.oView.byId("quantity").getBinding("text").setValue("11.000");
+			that.oView.byId("quantity").getBinding("value").setValue("11.000");
 
 			return that.waitForChanges(assert);
 		});
@@ -5543,7 +5543,7 @@ sap.ui.define([
 	<Table id="table" items="{LOCATION/City/EmployeesInCity}">\
 		<columns><Column/></columns>\
 		<ColumnListItem>\
-			<Text id="room" text="{ROOM_ID}"/>\
+			<Input id="room" value="{ROOM_ID}"/>\
 		</ColumnListItem>\
 	</Table>\
 </FlexBox>',
@@ -5573,7 +5573,7 @@ sap.ui.define([
 				})
 				.expectChange("room", "1.02", 0);
 
-			that.oView.byId("table").getItems()[0].getCells()[0].getBinding("text")
+			that.oView.byId("table").getItems()[0].getCells()[0].getBinding("value")
 				.setValue("1.02");
 
 			return that.waitForChanges(assert);
@@ -6348,7 +6348,7 @@ sap.ui.define([
 <Table id="table" items="{/SalesOrderList}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
-		<Text binding="{SO_2_BP}" text="{CompanyName}"/>\
+		<Input binding="{SO_2_BP}" value="{CompanyName}"/>\
 	</ColumnListItem>\
 </Table>',
 			that = this;
@@ -6374,7 +6374,7 @@ sap.ui.define([
 					payload : {"CompanyName" : "Bar, Inc"}
 				}, {});
 
-			oText.getBinding("text").setValue("Bar, Inc");
+			oText.getBinding("value").setValue("Bar, Inc");
 
 			// code under test
 			assert.strictEqual(oText.getElementBinding().hasPendingChanges(), true);
@@ -9191,7 +9191,7 @@ sap.ui.define([
 		var oModel = createTeaBusiModel(),
 			sView = '\
 <FlexBox binding="{/MANAGERS(\'1\')}" id="form">\
-	<Text id="foo" text="{= %{@$ui5.foo} }" />\
+	<Input id="foo" value="{= %{@$ui5.foo} }" />\
 	<Text id="id" text="{ID}" />\
 </FlexBox>',
 			that = this;
@@ -9207,7 +9207,7 @@ sap.ui.define([
 			var oContext = that.oView.byId("form").getBindingContext(),
 				oMatcher = sinon.match(
 					"/MANAGERS('1')/@$ui5.foo: Not a (navigation) property: @$ui5.foo"),
-				oPropertyBinding = that.oView.byId("foo").getBinding("text");
+				oPropertyBinding = that.oView.byId("foo").getBinding("value");
 
 			assert.strictEqual(oPropertyBinding.getValue(), 42);
 			that.oLogMock.expects("error")
@@ -9730,7 +9730,7 @@ sap.ui.define([
 	<Text id="city" text="{Address/City}" />\
 	<Text id="id" text="{ArtistID}" />\
 	<Text id="isActive" text="{IsActiveEntity}" />\
-	<Text id="name" text="{Name}" />\
+	<Input id="name" value="{Name}" />\
 </FlexBox>',
 				that = this;
 
@@ -9817,7 +9817,7 @@ sap.ui.define([
 					.expectChange("name", "foo");
 
 				// code under test: editing values is possible on the returned entity
-				that.oView.byId("name").getBinding("text").setValue("foo");
+				that.oView.byId("name").getBinding("value").setValue("foo");
 
 				return that.waitForChanges(assert);
 			}).then(function () {
@@ -9887,7 +9887,7 @@ sap.ui.define([
 <FlexBox id="objectPage" binding="{}">\
 	<Text id="id" text="{ArtistID}" />\
 	<Text id="isActive" text="{IsActiveEntity}" />\
-	<Text id="name" text="{Name}" />\
+	<Input id="name" value="{Name}" />\
 	<Table items="{path : \'_Publication\', parameters : {$$ownRequest : true}}">\
 		<columns><Column/></columns>\
 		<ColumnListItem>\
@@ -10035,7 +10035,7 @@ sap.ui.define([
 				}, {})
 				.expectChange("name", "The Beatles (modified)");
 
-			that.oView.byId("name").getBinding("text").setValue("The Beatles (modified)");
+			that.oView.byId("name").getBinding("value").setValue("The Beatles (modified)");
 			return that.waitForChanges(assert);
 		}).then(function () {
 			return action("ActivationAction", "42", "The Beatles (modified)");
@@ -11369,7 +11369,7 @@ sap.ui.define([
 </Table>\
 <VBox id="employeeDetails"\
 		binding="{path : \'EQUIPMENT_2_EMPLOYEE\', parameters : {$$updateGroupId : \'foo\'\}}">\
-	<Text id="employeeName" text="{Name}"/>\
+	<Input id="employeeName" value="{Name}"/>\
 </VBox>',
 			that = this;
 
@@ -11400,7 +11400,7 @@ sap.ui.define([
 			that.expectChange("employeeName", "Peter Burke");
 
 			// change the name of the employee
-			that.oView.byId("employeeName").getBinding("text").setValue("Peter Burke");
+			that.oView.byId("employeeName").getBinding("value").setValue("Peter Burke");
 
 			assert.ok(oContext0.hasPendingChanges());
 
@@ -11794,7 +11794,7 @@ sap.ui.define([
 			$$updateGroupId : \'foo\'\
 		}}" id="form">\
 	<Text id="id" text="{ID}" />\
-	<Text id="name" text="{Name}" />\
+	<Input id="name" value="{Name}" />\
 </FlexBox>',
 			that = this;
 
@@ -11807,7 +11807,7 @@ sap.ui.define([
 			.expectChange("name", "Jonathan Smith");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			oBinding = that.oView.byId("name").getBinding("text");
+			oBinding = that.oView.byId("name").getBinding("value");
 
 			that.expectRequest({
 					method : "PATCH",
@@ -11889,7 +11889,7 @@ sap.ui.define([
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
 		<columns><Column/></columns>\
 		<ColumnListItem>\
-			<Text id="name" text="{Name}" />\
+			<Input id="name" value="{Name}" />\
 		</ColumnListItem>\
 	</Table>\
 </FlexBox>',
@@ -11911,7 +11911,7 @@ sap.ui.define([
 			.expectMessages([]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			oBinding = that.oView.byId("table").getItems()[0].getCells()[0].getBinding("text");
+			oBinding = that.oView.byId("table").getItems()[0].getCells()[0].getBinding("value");
 			oContext = that.oView.byId("form").getBindingContext();
 
 			that.expectRequest({
@@ -11975,7 +11975,7 @@ sap.ui.define([
 		}}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
-		<Text id="name" text="{Name}" />\
+		<Input id="name" value="{Name}" />\
 	</ColumnListItem>\
 </Table>',
 			that = this;
@@ -11992,7 +11992,7 @@ sap.ui.define([
 			.expectMessages([]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			oBinding = that.oView.byId("table").getItems()[0].getCells()[0].getBinding("text");
+			oBinding = that.oView.byId("table").getItems()[0].getCells()[0].getBinding("value");
 
 			that.expectRequest({
 					method : "PATCH",
@@ -12050,7 +12050,7 @@ sap.ui.define([
 			parameters : {$$patchWithoutSideEffects : true}\
 		}"\
 		id="form">\
-	<Text id="netAmount" text="{NetAmount}"/>\
+	<Input id="netAmount" value="{NetAmount}"/>\
 	<Text id="grossAmount" text="{GrossAmount}"/>\
 </FlexBox>',
 			that = this;
@@ -12115,7 +12115,7 @@ sap.ui.define([
 					"type" : "Error"
 				}]);
 
-			that.oView.byId("netAmount").getBinding("text").setValue("-1");
+			that.oView.byId("netAmount").getBinding("value").setValue("-1");
 
 			// code under test
 			oPromise = that.oView.byId("form").getBindingContext().requestSideEffects([{
@@ -12152,7 +12152,7 @@ sap.ui.define([
 //					"SalesOrderID" : "42"
 				});
 
-			that.oView.byId("netAmount").getBinding("text").setValue("200");
+			that.oView.byId("netAmount").getBinding("value").setValue("200");
 
 			return Promise.all([
 					oModel.submitBatch("update"),
@@ -12163,7 +12163,7 @@ sap.ui.define([
 
 			that.expectChange("netAmount", "0.00"); // external value: 200.00 -> 0.00
 
-			that.oView.byId("netAmount").getBinding("text").setValue("0");
+			that.oView.byId("netAmount").getBinding("value").setValue("0");
 
 			// code under test
 			oPromise = that.oView.byId("form").getBindingContext().requestSideEffects([{
@@ -12243,11 +12243,11 @@ sap.ui.define([
 		parameters : {$$patchWithoutSideEffects : true}}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
-		<Text id="listNote" text="{Note}" />\
+		<Input id="listNote" value="{Note}" />\
 	</ColumnListItem>\
 </Table>\
 <FlexBox id="form" binding="{path : \'\', parameters : {$$ownRequest : true}}">\
-	<Text id="formNote" text="{Note}"/>\
+	<Input id="formNote" value="{Note}"/>\
 </FlexBox>',
 			that = this;
 
@@ -12274,7 +12274,7 @@ sap.ui.define([
 					"SalesOrderID" : "42"
 				});
 
-			that.oView.byId("table").getItems()[0].getCells()[0].getBinding("text")
+			that.oView.byId("table").getItems()[0].getCells()[0].getBinding("value")
 				.setValue("Note (entered)");
 
 			return that.waitForChanges(assert);
@@ -12304,7 +12304,7 @@ sap.ui.define([
 					"SalesOrderID" : "42"
 				});
 
-			that.oView.byId("formNote").getBinding("text").setValue("Note (entered)");
+			that.oView.byId("formNote").getBinding("value").setValue("Note (entered)");
 
 			return that.waitForChanges(assert);
 		});
@@ -12321,7 +12321,7 @@ sap.ui.define([
 			}),
 			sView = '\
 <FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
-	<Text id="id" text="{ArtistID}" />\
+	<Input id="id" value="{ArtistID}" />\
 	<Text id="inProcessByUser" text="{DraftAdministrativeData/InProcessByUser}" />\
 	<Text binding="{DraftAdministrativeData}" id="inProcessByUser2" text="{InProcessByUser}" />\
 </FlexBox>',
@@ -12345,7 +12345,7 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectChange("id", "TAFKAP");
 
-			that.oView.byId("id").getBinding("text").setValue("TAFKAP");
+			that.oView.byId("id").getBinding("value").setValue("TAFKAP");
 
 			that.expectRequest({
 					batchNo : 1,
@@ -13056,7 +13056,7 @@ sap.ui.define([
 	// Scenario: Automatic retry of failed PATCHes, along the lines of
 	// MIT.SalesOrderCreateRelative.html, but with $auto group
 	[function () {
-		var oStatusBinding = this.oView.byId("status").getBinding("text");
+		var oStatusBinding = this.oView.byId("status").getBinding("value");
 
 		this.expectChange("status", "Busy")
 			.expectRequest({
@@ -13071,7 +13071,7 @@ sap.ui.define([
 
 		oStatusBinding.setValue("Busy"); // a different field is changed
 	}, function () {
-		var oRoomIdBinding = this.oView.byId("roomId").getBinding("text");
+		var oRoomIdBinding = this.oView.byId("roomId").getBinding("value");
 
 		this.expectChange("roomId", "23")
 			.expectRequest({
@@ -13086,7 +13086,7 @@ sap.ui.define([
 		oRoomIdBinding.setValue("23"); // the same field is changed again
 	}, function () {
 		var sAction = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
-			oRoomIdBinding = this.oView.byId("roomId").getBinding("text");
+			oRoomIdBinding = this.oView.byId("roomId").getBinding("value");
 
 		this.expectRequest({
 				method : "PATCH",
@@ -13133,8 +13133,8 @@ sap.ui.define([
 			var oModel = createTeaBusiModel({updateGroupId : "$auto"}),
 				sView = '\
 <FlexBox binding="{/EMPLOYEES(\'3\')}">\
-	<Text id="roomId" text="{ROOM_ID}" />\
-	<Text id="status" text="{STATUS}" />\
+	<Input id="roomId" value="{ROOM_ID}" />\
+	<Input id="status" value="{STATUS}" />\
 </FlexBox>',
 				that = this;
 
@@ -13148,7 +13148,7 @@ sap.ui.define([
 				.expectChange("status", "Occupied");
 
 			return this.createView(assert, sView, oModel).then(function () {
-				var oRoomIdBinding = that.oView.byId("roomId").getBinding("text");
+				var oRoomIdBinding = that.oView.byId("roomId").getBinding("value");
 
 				that.expectChange("roomId", "42")
 					.expectRequest({
@@ -13199,9 +13199,9 @@ sap.ui.define([
 				oRoomIdBinding,
 				sView = '\
 <FlexBox binding="{/EMPLOYEES(\'3\')}">\
-	<Text id="age" text="{AGE}" />\
-	<Text id="roomId" text="{ROOM_ID}" />\
-	<Text id="status" text="{STATUS}" />\
+	<Input id="age" value="{AGE}" />\
+	<Input id="roomId" value="{ROOM_ID}" />\
+	<Input id="status" value="{STATUS}" />\
 </FlexBox>',
 				that = this;
 
@@ -13217,8 +13217,8 @@ sap.ui.define([
 				.expectChange("status", "Occupied");
 
 			return this.createView(assert, sView, oModel).then(function () {
-				oAgeBinding = that.oView.byId("age").getBinding("text");
-				oRoomIdBinding = that.oView.byId("roomId").getBinding("text");
+				oAgeBinding = that.oView.byId("age").getBinding("value");
+				oRoomIdBinding = that.oView.byId("roomId").getBinding("value");
 
 				that.expectChange("age", "67")
 					.expectChange("roomId", "42")
@@ -13283,7 +13283,7 @@ sap.ui.define([
 					that.waitForChanges(assert)
 				]);
 			}).then(function () {
-				var oStatusBinding = that.oView.byId("status").getBinding("text");
+				var oStatusBinding = that.oView.byId("status").getBinding("value");
 
 				that.expectChange("status", "Busy")
 					.expectRequest({
@@ -13314,8 +13314,8 @@ sap.ui.define([
 			oRoomIdBinding,
 			sView = '\
 <FlexBox binding="{/EMPLOYEES(\'3\')}">\
-	<Text id="age" text="{AGE}" />\
-	<Text id="roomId" text="{ROOM_ID}" />\
+	<Input id="age" value="{AGE}" />\
+	<Input id="roomId" value="{ROOM_ID}" />\
 </FlexBox>',
 			that = this;
 
@@ -13329,7 +13329,7 @@ sap.ui.define([
 			.expectChange("roomId", "2");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			oRoomIdBinding = that.oView.byId("roomId").getBinding("text");
+			oRoomIdBinding = that.oView.byId("roomId").getBinding("value");
 
 			that.expectChange("age", "67")
 				.expectChange("roomId", "42")
@@ -13345,7 +13345,7 @@ sap.ui.define([
 					fnReject = reject;
 				}));
 
-			that.oView.byId("age").getBinding("text").setValue(67); // Happy Birthday!
+			that.oView.byId("age").getBinding("value").setValue(67); // Happy Birthday!
 			oRoomIdBinding.setValue("42");
 
 			return that.waitForChanges(assert);
