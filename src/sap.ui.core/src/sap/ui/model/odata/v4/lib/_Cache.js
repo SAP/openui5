@@ -1608,7 +1608,8 @@ sap.ui.define([
 				sFilterOptions = mQueryOptions["$filter"],
 				sReadUrl = that.sResourcePath;
 
-
+			delete mQueryOptions["$count"];
+			delete mQueryOptions["$orderby"];
 			mQueryOptions["$filter"] = (sFilterOptions ? "(" + sFilterOptions + ") and " : "")
 				+ _Helper.getKeyFilter(oEntity, that.sMetaPath, mTypeForMetaPath);
 

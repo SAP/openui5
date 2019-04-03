@@ -1423,7 +1423,7 @@ sap.ui.define([
 			}).then(function () {
 				var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
 
-				that.expectRequest("EMPLOYEES?foo=bar&$orderby=AGE"
+				that.expectRequest("EMPLOYEES?foo=bar"
 						+ "&$filter=(AGE gt 42) and ID eq '0'"
 						+ "&$select=AGE,ID,Name", {"value" : []})
 					.expectChange("text", ["Jonathan Smith", "Peter Burke"])
@@ -1436,7 +1436,7 @@ sap.ui.define([
 			}).then(function () {
 				var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
 
-				that.expectRequest("EMPLOYEES?foo=bar&$orderby=AGE"
+				that.expectRequest("EMPLOYEES?foo=bar"
 						+ "&$filter=(AGE gt 42) and ID eq '1'"
 						+ "&$select=AGE,ID,Name", {
 						"value" : [{
@@ -4539,7 +4539,8 @@ sap.ui.define([
 <Table id="table"\
 		items="{\
 			path : \'/EMPLOYEES\',\
-			filters : {path : \'TEAM_ID\', operator : \'EQ\', value1 : \'77\'}\
+			filters : {path : \'TEAM_ID\', operator : \'EQ\', value1 : \'77\'},\
+			parameters : {$count : true}\
 		}">\
 	<columns><Column/><Column/></columns>\
 	<ColumnListItem>\
@@ -4549,8 +4550,9 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES?$filter=TEAM_ID eq '77'&$select=ID,Name,TEAM_ID"
+		this.expectRequest("EMPLOYEES?$count=true&$filter=TEAM_ID eq '77'&$select=ID,Name,TEAM_ID"
 				+ "&$skip=0&$top=100", {
+				"@odata.count" : 3,
 				"value" : [
 					{"ID" : "0", "Name" : "Frederic Fall", "TEAM_ID" : "77"},
 					{"ID" : "1", "Name" : "Jonathan Smith","TEAM_ID" : "77"},

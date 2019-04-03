@@ -6042,12 +6042,12 @@ sap.ui.define([
 		mQueryOptionsForRequest : {$filter: "(age gt 40) and ~key filter~"},
 		bRemoved : false
 	}, {
-		mBindingQueryOptions : {},
+		mBindingQueryOptions : {$count : true},
 		sQueryString : "?$filter=~key%20filter~",
 		mQueryOptionsForRequest : {$filter: "~key filter~"},
 		bRemoved : false
 	}, { // with transient predicate
-		mBindingQueryOptions : {},
+		mBindingQueryOptions : {$orderby : "key"},
 		sQueryString : "?$filter=~key%20filter~",
 		mQueryOptionsForRequest : {$filter: "~key filter~"},
 		bRemoved : true,
