@@ -31,6 +31,9 @@ sap.ui.define([
 
 		targets: "xmlTree",
 
+		/**
+		 * @inheritDoc
+		 */
 		setVisible: function (oControl, bVisible) {
 			if (bVisible) {
 				oControl.removeAttribute("visible");
@@ -39,10 +42,16 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		getVisible: function (oControl) {
 			return this.getProperty(oControl, "visible");
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		setStashed: function (oControl, bStashed) {
 			if (!bStashed) {
 				oControl.removeAttribute("stashed");
@@ -52,19 +61,31 @@ sap.ui.define([
 			this.setVisible(oControl, !bStashed);
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		getStashed: function (oControl) {
 			return this.getProperty(oControl, "stashed");
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		bindProperty: function (oControl, sPropertyName, vBindingInfos) {
 			oControl.setAttribute(sPropertyName, "{" + vBindingInfos + "}");
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		unbindProperty: function (oControl, sPropertyName) {
 			//reset the property
 			oControl.removeAttribute(sPropertyName);
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		setProperty: function (oControl, sPropertyName, vPropertyValue) {
 			var sValue = vPropertyValue;
 			var oPropertyInfo = this._getControlMetadata(oControl).getProperty(sPropertyName);
@@ -76,6 +97,9 @@ sap.ui.define([
 			oControl.setAttribute(sPropertyName, sValue);
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		getProperty: function (oControl, sPropertyName) {
 			var vPropertyValue = oControl.getAttribute(sPropertyName);
 
@@ -94,31 +118,30 @@ sap.ui.define([
 			return vPropertyValue;
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		isPropertyInitial: function (oControl, sPropertyName) {
 			var vPropertyValue = oControl.getAttribute(sPropertyName);
 			return (vPropertyValue == null);
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		setPropertyBinding: function (oControl, sPropertyName, oPropertyBinding) {
 			oControl.setAttribute(sPropertyName, oPropertyBinding);
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		getPropertyBinding: function (oControl, sPropertyName) {
 			return oControl.getAttribute(sPropertyName);
 		},
 
 		/**
-		 * Creates the control (as XML element or node)
-		 *
-		 * @param {string} sClassName - Class name for the control (for example, <code>sap.m.Button</code>)
-		 * @param {sap.ui.core.UIComponent} [oAppComponent] - Needed to calculate the correct ID in case you provide an ID
-		 * @param {Element} oView - XML node of the view, required to create nodes and to find elements
-		 * @param {object} [oSelector] - Selector to calculate the ID for the control that is created
-		 * @param {string} [oSelector.id] - Control ID targeted by the change
-		 * @param {boolean} [oSelector.isLocalId] - True if the ID within the selector is a local ID or a global ID
-		 * @param {object} [mSettings] - Further settings or properties for the control that is created
-		 * @param {boolean} bAsync - Determines whether a synchronous (promise) or an asynchronous value should be returned - is not valid for XmlTreeModifier
-		 * @returns {Promise | Element} - XML node of the control that is created. May be wrapped into a promise (if bAsync === true)
+		 * @inheritDoc
 		 */
 		createControl: function (sClassName, oAppComponent, oView, oSelector, mSettings, bAsync) {
 			var sId, sLocalName, oError;
@@ -149,6 +172,9 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		applySettings: function(oControl, mSettings) {
 			var oMetadata = this._getControlMetadata(oControl);
 			var mMetadata = oMetadata.getJSONKeys();
@@ -171,15 +197,9 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the control for the given id. Undefined if control cannot be found.
-		 *
-		 * @param {string} sId control id
-		 * @param {Element} oView Node of the view
-		 * @returns {Element} XML node of the control
-		 * @private
+		 * @inheritDoc
 		 */
 		_byId: function (sId, oView) {
-
 			// If function defined and operational use getElementById(sId) of document or view to access control
 			// ... Note: oView.ownerDocument.getElementById(sId) may fail under IE 11 indicating "permission denied"
 			if (oView) {
@@ -191,10 +211,16 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		getId: function (oControl) {
 			return oControl.getAttribute("id");
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		getParent: function (oControl) {
 			var oParent = oControl.parentNode;
 			if (!this.getId(oParent)) {
@@ -205,48 +231,49 @@ sap.ui.define([
 			return oParent;
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		_getLocalName: function (xmlElement) {
 			// localName for standard browsers, baseName for IE, nodeName in the absence of namespaces
 			return xmlElement.localName || xmlElement.baseName || xmlElement.nodeName;
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		getControlType: function (oControl) {
 			return this._getControlTypeInXml(oControl);
 		},
 
 		/**
-		* @param {Element}
-		*          vParent The control which has the association
-		* @param {string}
-		*          sName Association name
-		* @param {string | Element}
-		*          sId the ID of the managed object that is set as an association, or the XML node itself or null
-		* @public
-		*/
+		 * @inheritDoc
+		 */
 		setAssociation: function (vParent, sName, sId) {
 			if (typeof sId !== "string"){
 				sId = this.getId(sId);
 			}
 			vParent.setAttribute(sName, sId);
 		},
+
 		/**
-		* @param {Element}
-		*          vParent The control which has the association
-		* @param {string}
-		*          sName Association name
-		*
-		* @returns {string | string[]} the ID of the associated managed object or an array of such IDs; may be null if the association has not been populated
-		* @public
-		*/
+		 * @inheritDoc
+		 */
 		getAssociation: function (vParent, sName) {
 			return vParent.getAttribute(sName);
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		getAllAggregations: function (oControl) {
 			var oControlMetadata = this._getControlMetadata(oControl);
 			return oControlMetadata.getAllAggregations();
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		getAggregation: function (oParent, sName) {
 			var oAggregationNode = this._findAggregationNode(oParent, sName);
 			var bSingleValueAggregation = this._isSingleValueAggregation(oParent, sName);
@@ -264,15 +291,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Insert the control (as XML element or node) into the specified aggregation;
-		 * if the aggregation node is not available in the current XML and is needed
-		 * because it's not the default aggregation, the aggregation node will be created automatically.
-		 *
-		 * @param {Element} oParent XML node or element of the control in which to insert <code>oObject</code>
-		 * @param {string} sName Aggregation name
-		 * @param {Element} oObject XML node or element of the control that will be inserted
-		 * @param {int} iIndex Index for <code>oObject</code> in the aggregation
-		 * @param {Element} oView xml node/element of the view - needed to potentially create (aggregation) nodes
+		 * @inheritDoc
 		 */
 		insertAggregation: function (oParent, sName, oObject, iIndex, oView) {
 			var oAggregationNode = this._findAggregationNode(oParent, sName);
@@ -295,20 +314,16 @@ sap.ui.define([
 		},
 
 		/**
-		 * Removes the object from the aggregation of the given control
-		 *
-		 * @param {Element}
-		 *          oParent - the control for which the changes should be fetched
-		 * @param {string}
-		 *          sName - aggregation name
-		 * @param {Element}
-		 *          oObject - aggregated object to be set
+		 * @inheritDoc
 		 */
 		removeAggregation: function (oParent, sName, oObject) {
 			var oAggregationNode = this._findAggregationNode(oParent, sName);
 			oAggregationNode.removeChild(oObject);
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		removeAllAggregation: function (oControl, sName) {
 			var oAggregationNode = this._findAggregationNode(oControl, sName);
 			if (oControl === oAggregationNode) {
@@ -321,6 +336,9 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * @private
+		 */
 		_findAggregationNode: function (oParent, sName) {
 			var oAggregationNode;
 			var aChildren = this._children(oParent);
@@ -337,40 +355,61 @@ sap.ui.define([
 			return oAggregationNode;
 		},
 
+		/**
+		 * @private
+		 */
 		_isDefaultAggregation: function(oParent, sAggregationName) {
 			var oControlMetadata = this._getControlMetadata(oParent);
 			var oDefaultAggregation = oControlMetadata.getDefaultAggregation();
 			return oDefaultAggregation && sAggregationName === oDefaultAggregation.name;
 		},
 
+		/**
+		 * @private
+		 */
 		_isNotNamedAggregationNode: function(oParent, oChildNode) {
 			var mAllAggregatiosnMetadata = this.getAllAggregations(oParent);
 			var oAggregation = mAllAggregatiosnMetadata[oChildNode.localName];
 			return oParent.namespaceURI !== oChildNode.namespaceURI || !oAggregation; //same check as in XMLTemplateProcessor (handleChild)
 		},
 
+		/**
+		 * @private
+		 */
 		_isSingleValueAggregation: function(oParent, sAggregationName) {
 			var mAllAggregatiosnMetadata = this.getAllAggregations(oParent);
 			var oAggregationMetadata = mAllAggregatiosnMetadata[sAggregationName];
 			return !oAggregationMetadata.multiple;
 		},
 
+		/**
+		 * @private
+		 */
 		_isAltTypeAggregation: function(oParent, sAggregationName) {
 			var oControlMetadata = this._getControlMetadata(oParent);
 			var oAggregationMetadata = oControlMetadata.getAllAggregations()[sAggregationName];
 			return !!oAggregationMetadata.altTypes;
 		},
 
+		/**
+		 * @private
+		 */
 		_getControlMetadata: function(oControl) {
 			return this._getControlMetadataInXml(oControl);
 		},
 
+		/**
+		 * @private
+		 */
 		_getControlsInAggregation: function(oParent, oAggregationNode) {
 			//convert NodeList to Array
 			var aChildren = Array.prototype.slice.call(this._children(oAggregationNode));
 			return aChildren.filter(this._isNotNamedAggregationNode.bind(this, oParent));
 		},
 
+		/**
+		 * @private
+		 */
 		_children: function (oParent) {
 			if (oParent.children) {
 				return oParent.children;
@@ -386,6 +425,9 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		getBindingTemplate: function (oControl, sAggregationName) {
 			var oAggregationNode = this._findAggregationNode(oControl, sAggregationName);
 			if (oAggregationNode) {
@@ -396,10 +438,16 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		updateAggregation: function (oControl, sAggregationName) {
 			/*only needed in JS case to indicate binding (template) has changed, in XML case binding has not been created yet (see managed object)*/
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		findIndexInParentAggregation: function (oControl) {
 			var oParent,
 				sAggregationName,
@@ -431,6 +479,9 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		getParentAggregationName: function (oControl, oParent) {
 			var bNotNamedAggregation,
 				sAggregationName;
@@ -458,11 +509,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * checks the metadata of the given control and returns the aggregation matching the name
-		 *
-		 * @param {Element} oControl control whose aggregation is to be found
-		 * @param {string} sAggregationName name of the aggregation
-		 * @returns {object} Returns the instance of the aggregation or undefined
+		 * @inheritDoc
 		 */
 		findAggregation: function(oControl, sAggregationName) {
 			var oMetadata = this._getControlMetadata(oControl);
@@ -473,14 +520,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Validates if the control has the correct type for the aggregation.
-		 *
-		 * @param {Element} oControl control whose type is to be checked
-		 * @param {object} mAggregationMetadata Aggregation info object
-		 * @param {Element} oParent parent of the control
-		 * @param {string} sFragment path to the fragment that contains the control, whose type is to be checked
-		 * @param {int} iIndex index of the current control in the parent aggregation
-		 * @returns {boolean} Returns true if the type matches
+		 * @inheritDoc
 		 */
 		validateType: function(oControl, mAggregationMetadata, oParent, sFragment, iIndex) {
 			var sTypeOrInterface = mAggregationMetadata.type;
@@ -526,15 +566,16 @@ sap.ui.define([
 		},
 
 		/**
-		 * Destroys a given control
-		 *
-		 * @param {Element} oControl Control which will be destroyed
+		 * @inheritDoc
 		 */
 		destroy: function(oControl) {
 			var oParent = oControl.parentNode;
 			oParent.removeChild(oControl);
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		getChangeHandlerModulePath: function(oControl) {
 			if (!oControl){
 				return undefined;
