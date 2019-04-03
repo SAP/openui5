@@ -411,7 +411,7 @@ sap.ui.define([
 			assert.deepEqual(mStructure, mExpectedStructure, "then variant management structure returned");
 		});
 
-		QUnit.test("when _sortChanges is called with no existing variant management, with one control change", function (assert) {
+		QUnit.test("when loadChanges is called with no existing variant management, with two control changes", function (assert) {
 			FakeLrepConnectorSessionStorage.disableFakeConnector();
 			FakeLrepConnectorSessionStorage.enableFakeConnector({}, "json.component", "1.0.1");
 			this.oFakeLrepConnectorSessionStorage = sap.ui.fl.LrepConnector.createConnector();
@@ -420,6 +420,10 @@ sap.ui.define([
 				{
 					fileType: "change",
 					variantReference: "varMgmt"
+				},
+				{
+					fileType: "change",
+					variantReference: "varMgmt2"
 				}
 			];
 			sandbox.stub(FakeLrepSessionStorage, "getChanges").returns(aControlChanges);
@@ -429,10 +433,13 @@ sap.ui.define([
 				assert.equal(mResult.changes.variantSection["varMgmt"].variants.length, 1, "then standard variant added");
 				assert.equal(mResult.changes.variantSection["varMgmt"].variants[0].content.fileName, aControlChanges[0].variantReference, "then standard variant created with variant reference of control change");
 				assert.equal(mResult.changes.variantSection["varMgmt"].variants[0].controlChanges[0], aControlChanges[0], "then control change added to standard variant");
+				assert.equal(mResult.changes.variantSection["varMgmt2"].variants.length, 1, "then standard variant added");
+				assert.equal(mResult.changes.variantSection["varMgmt2"].variants[0].content.fileName, aControlChanges[1].variantReference, "then standard variant created with variant reference of control change");
+				assert.equal(mResult.changes.variantSection["varMgmt2"].variants[0].controlChanges[0], aControlChanges[1], "then control change added to standard variant");
 			});
 		});
 
-		QUnit.test("when _sortChanges is called with no existing variant management, with one variant change", function (assert) {
+		QUnit.test("when loadChanges is called with no existing variant management, with two variant change", function (assert) {
 			FakeLrepConnectorSessionStorage.disableFakeConnector();
 			FakeLrepConnectorSessionStorage.enableFakeConnector({}, "json.component", "1.0.1");
 			this.oFakeLrepConnectorSessionStorage = sap.ui.fl.LrepConnector.createConnector();
@@ -441,6 +448,10 @@ sap.ui.define([
 				fileType: "ctrl_variant_change",
 				changeType: "setTitle",
 				selector: { id: "varMgmt" }
+			},{
+				fileType: "ctrl_variant_change",
+				changeType: "setTitle",
+				selector: { id: "varMgmt2" }
 			}];
 			sandbox.stub(FakeLrepSessionStorage, "getChanges").returns(aVariantChanges);
 
@@ -448,11 +459,14 @@ sap.ui.define([
 			.then(function (mResult) {
 				assert.equal(mResult.changes.variantSection["varMgmt"].variants.length, 1, "then standard variant added");
 				assert.equal(mResult.changes.variantSection["varMgmt"].variants[0].content.fileName, aVariantChanges[0].selector.id, "then standard variant created with variant reference of variant change");
-				assert.deepEqual(mResult.changes.variantSection["varMgmt"].variants[0].variantChanges.setTitle, aVariantChanges, "then variant change added to standard variant");
+				assert.deepEqual(mResult.changes.variantSection["varMgmt"].variants[0].variantChanges.setTitle, [aVariantChanges[0]], "then variant change added to standard variant");
+				assert.equal(mResult.changes.variantSection["varMgmt2"].variants.length, 1, "then standard variant added");
+				assert.equal(mResult.changes.variantSection["varMgmt2"].variants[0].content.fileName, aVariantChanges[1].selector.id, "then standard variant created with variant reference of variant change");
+				assert.deepEqual(mResult.changes.variantSection["varMgmt2"].variants[0].variantChanges.setTitle, [aVariantChanges[1]], "then variant change added to standard variant");
 			});
 		});
 
-		QUnit.test("when _sortChanges is called with no existing variant management, with one variant management change", function (assert) {
+		QUnit.test("when loadChanges is called with no existing variant management, with two variant management change", function (assert) {
 			FakeLrepConnectorSessionStorage.disableFakeConnector();
 			FakeLrepConnectorSessionStorage.enableFakeConnector({}, "json.component", "1.0.1");
 			this.oFakeLrepConnectorSessionStorage = sap.ui.fl.LrepConnector.createConnector();
@@ -461,6 +475,10 @@ sap.ui.define([
 				fileType: "ctrl_variant_management_change",
 				changeType: "setDefault",
 				selector: { id: "varMgmt" }
+			}, {
+				fileType: "ctrl_variant_management_change",
+				changeType: "setDefault",
+				selector: { id: "varMgmt2" }
 			}];
 			sandbox.stub(FakeLrepSessionStorage, "getChanges").returns(aVariantManagementChanges);
 
@@ -468,7 +486,10 @@ sap.ui.define([
 			.then(function (mResult) {
 				assert.equal(mResult.changes.variantSection["varMgmt"].variants.length, 1, "then standard variant added");
 				assert.equal(mResult.changes.variantSection["varMgmt"].variants[0].content.fileName, aVariantManagementChanges[0].selector.id, "then standard variant created with selector of variant management change");
-				assert.deepEqual(mResult.changes.variantSection["varMgmt"].variantManagementChanges.setDefault, aVariantManagementChanges, "then variant management change added to standard variant");
+				assert.deepEqual(mResult.changes.variantSection["varMgmt"].variantManagementChanges.setDefault, [aVariantManagementChanges[0]], "then variant management change added to standard variant");
+				assert.equal(mResult.changes.variantSection["varMgmt2"].variants.length, 1, "then standard variant added");
+				assert.equal(mResult.changes.variantSection["varMgmt2"].variants[0].content.fileName, aVariantManagementChanges[1].selector.id, "then standard variant created with selector of variant management change");
+				assert.deepEqual(mResult.changes.variantSection["varMgmt2"].variantManagementChanges.setDefault, [aVariantManagementChanges[1]], "then variant management change added to standard variant");
 			});
 		});
 	});
@@ -519,12 +540,12 @@ sap.ui.define([
 					layer: "CUSTOMER"
 				}, {
 					fileType: "ctrl_variant_change",
-					fileName: "Change1",
+					fileName: "Change1123",
 					selector: { id: "variant0" },
 					changeType: "setTitle"
 				}, {
 					fileType: "ctrl_variant",
-					fileName: "Change1",
+					fileName: "Change1123123",
 					variantManagementReference: "idMain1--variantManagementOrdersTable"
 				}
 			];
@@ -716,8 +737,8 @@ sap.ui.define([
 			mResult = this.oFakeLrepConnectorSessionStorage._addChangesToMap(mResult, aChanges, aVariantChanges, aVariantManagementChanges);
 			assert.equal(mResult.changes.variantSection["varMgmt1"].variants[0].controlChanges.length, 2, "then two changes exist for variant ExistingVariant1");
 			assert.equal(mResult.changes.variantSection["varMgmt1"].variants[0].variantChanges["setTitle"].length, 2, "then two variant changes exist for variant ExistingVariant1");
-			assert.ok(mResult.changes.variantSection["varMgmt1"].variants[0].variantChanges["setTitle"][0].fileName === "Change5" &&
-			mResult.changes.variantSection["varMgmt1"].variants[0].variantChanges["setTitle"][1].fileName === "Change6", "then both variant changes passed as a parameter exist in order");
+			assert.ok(mResult.changes.variantSection["varMgmt1"].variants[0].variantChanges["setTitle"][0].fileName === "Change5", "then both variant changes passed as a parameter exist in order");
+			assert.ok(mResult.changes.variantSection["varMgmt1"].variants[0].variantChanges["setTitle"][1].fileName === "Change6", "then both variant changes passed as a parameter exist in order");
 			assert.equal(mResult.changes.changes.length, 2, "then two global changes exist");
 			assert.equal(mResult.changes.variantSection["varMgmt1"].variantManagementChanges.setDefault[0].fileName, "Change7", "then one setDefault variantManagement exist");
 		});
