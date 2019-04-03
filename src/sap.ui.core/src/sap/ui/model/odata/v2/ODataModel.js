@@ -6116,7 +6116,7 @@ sap.ui.define([
 	 *
 	 * This message parser analyzes the response and notifies the <code>MessageManager</code> about added and deleted messages.
 	 *
-	 * @param {object|null} [oParser] The <code>MessageParser</code> instance that parses the responses and adds messages to the<code>MessageManager</code>
+	 * @param {object|null} [oParser] The <code>MessageParser</code> instance that parses the responses and adds messages to the <code>MessageManager</code>
 	 * @return {sap.ui.model.odata.v2.ODataModel} Model instance for method chaining
 	 */
 	ODataModel.prototype.setMessageParser = function(oParser) {

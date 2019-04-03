@@ -53,6 +53,7 @@ sap.ui.define([
 	 *     and event {@link #event:validateFieldGroup validateFieldGroup}.
 	 *     The term <i>field</i> was chosen as most often this feature will be used to group editable
 	 *     fields in a form.</li>
+	 *     See the documentation for {@link topic:5b0775397e394b1fb973fa207554003e Field Groups} for more details.
 	 * <li><b>custom style classes</b>: all controls allow to add custom CSS classes to their rendered DOM
 	 *     without modifying their renderer code. See methods {@link #addStyleClass addStyleClass},
 	 *     {@link #removeStyleClass removeStyleClass}, {@link #toggleStyleClass toggleStyleClass}
@@ -128,7 +129,9 @@ sap.ui.define([
 				 * For backward compatibility with older releases, field group IDs are syntactically not
 				 * limited, but it is suggested to use only valid {@link sap.ui.core.ID}s.
 				 *
-				 * See {@link #attachValidateFieldGroup}.
+				 * See {@link #attachValidateFieldGroup} or consult the
+				 * {@link topic:5b0775397e394b1fb973fa207554003e Field Group} documentation.
+				 *
 				 * @since 1.31
 				 */
 				"fieldGroupIds" : { type: "string[]", defaultValue: [] }

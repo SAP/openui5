@@ -838,7 +838,7 @@ sap.ui.define([
 
 
 	/**
-	* Proxies the<code>sap.f.semantic.SemanticPage</code> <code>footerCustomActions</code> aggregation methods
+	* Proxies the <code>sap.f.semantic.SemanticPage</code> <code>footerCustomActions</code> aggregation methods
 	* to <code>OverflowToolbar</code>, using the <code>sap.f.semantic.SemanticFooter</code> wrapper class.
 	*
 	* @override

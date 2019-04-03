@@ -110,7 +110,7 @@ sap.ui.define([
 	 * The text is searched in this resource bundle according to the fallback chain described in
 	 * {@link jQuery.sap.util.ResourceBundle}. If no text could be found, the key itself is used as text.
 	 *
-	 * If the second parameter<code>aArgs</code> is given, then any placeholder of the form "{<i>n</i>}"
+	 * If the second parameter <code>aArgs</code> is given, then any placeholder of the form "{<i>n</i>}"
 	 * (with <i>n</i> being an integer) is replaced by the corresponding value from <code>aArgs</code>
 	 * with index <i>n</i>.  Note: This replacement is applied to the key if no text could be found.
 	 * For more details on the replacement mechanism refer to {@link jQuery.sap.formatMessage}.

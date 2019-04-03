@@ -70,7 +70,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * If set to<code>true</code>, the key for a vendor variant will be added manually.<br>
+				 * If set to <code>true</code>, the key for a vendor variant will be added manually.<br>
 				 * <b>Node:</b>This flag is only used internally in the app variant scenarios.
 				 */
 				manualVariantKey: {

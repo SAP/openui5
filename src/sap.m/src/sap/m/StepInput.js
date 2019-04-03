@@ -152,7 +152,7 @@ function(
 					 */
 					step: {type: "float", group: "Data", defaultValue: 1},
 					/**
-					 * Defines the calculation mode for the provided <code>step<code> and <code>largerStep</code>.
+					 * Defines the calculation mode for the provided <code>step</code> and <code>largerStep</code>.
 					 *
 					 * If the user increases/decreases the value by <code>largerStep</code>, this calculation will consider
 					 * it as well. For example, if the current <code>value</code> is 3, <code>step</code> is 5,

@@ -147,7 +147,7 @@ sap.ui.define(['./Control', './library', "sap/base/Log", "sap/base/security/enco
 	var mTextIds = Object.create(null);
 
 	/**
-	 * Returns the ID of a shared <code>InvisibleText<code> instance whose <code>text</code> property
+	 * Returns the ID of a shared <code>InvisibleText</code> instance whose <code>text</code> property
 	 * is retrieved from the given library resource bundle and text key.
 	 *
 	 * Calls with the same library and text key will return the same instance. The instance will be

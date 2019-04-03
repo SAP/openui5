@@ -650,7 +650,11 @@ sap.ui.define([
 	 * <li><code>type: <i>string</i></code> type of the new property. Must either be one of the built-in types 'string',
 	 *     'boolean', 'int', 'float', 'object', 'array', 'function' or 'any', or a type created and registered with
 	 *     {@link sap.ui.base.DataType.createType} or an array type based on one of the previous types.</li>
-	 * <li><code>byValue: <i>boolean<i></code> (either can be omitted or set to the boolean value <code>true</code>)
+	 * <li><code>visibility: <i>string</i></code> either 'hidden' or 'public', defaults to 'public'. Properties that
+	 *     belong to the API of a class must be 'public' whereas 'hidden' properties can only be used internally.
+	 *     Only public properties are accepted by the constructor or by <code>applySettings</code> or in declarative
+	 *     representations like an <code>XMLView</code>. Equally, only public properties are cloned.</li>
+	 * <li><code>byValue: <i>boolean</i></code> (either can be omitted or set to the boolean value <code>true</code>)
 	 *     If set to <code>true</code>, the property value will be {@link module:sap/base/util/deepClone deep cloned}
 	 *     on write and read operations to ensure that the internal value can't be modified by the outside. The property
 	 *     <code>byValue</code> is currently limited to a <code>boolean</code> value. Other types are reserved for future
@@ -702,6 +706,7 @@ sap.ui.define([
 	 * <li>bindFoo(c) - (only if property was defined to be 'bindable'): convenience function that wraps {@link #bindProperty}</li>
 	 * <li>unbindFoo() - (only if property was defined to be 'bindable'): convenience function that wraps {@link #unbindProperty}</li>
 	 * </ul>
+	 * For hidden properties, no methods are generated.
 	 *
 	 *
 	 * <b>'defaultProperty'</b> : <i>string</i><br>
@@ -720,8 +725,11 @@ sap.ui.define([
 	 *     Methods affecting multiple objects in an aggregation will use the plural name (e.g. getItems(), whereas methods that deal with a single object will use
 	 *     the singular name (e.g. addItem). The framework knows a set of common rules for building plural form of English nouns and uses these rules to determine
 	 *     a singular name on its own. if that name is wrong, a singluarName can be specified with this property. </li>
-	 * <li><code>[visibility]: <i>string</i></code> either 'hidden' or 'public', defaults to 'public'. Aggregations that belong to the API of a class must be 'public' whereas
-	 *     'hidden' aggregations typically are used for the implementation of composite classes (e.g. composite controls) </li>
+	 * <li><code>[visibility]: <i>string</i></code> either 'hidden' or 'public', defaults to 'public'. Aggregations that
+	 *     belong to the API of a class must be 'public' whereas 'hidden' aggregations typically are used for the
+	 *     implementation of composite classes (e.g. composite controls). Only public aggregations are accepted by
+	 *     the constructor or by <code>applySettings</code> or in declarative representations like an <code>XMLView</code>.
+	 *     Equally, only public aggregations are cloned.</li>
 	 * <li><code>bindable: <i>boolean|string</i></code> (either can be omitted or set to the boolean value <code>true</code> or the magic string 'bindable')
 	 *     If set to <code>true</code> or 'bindable', additional named methods <code>bind<i>Name</i></code> and <code>unbind<i>Name</i></code> are generated as convenience.
 	 *     Despite its name, setting this flag is not mandatory to make the managed aggregation bindable. The generic methods {@link #bindAggregation} and
@@ -812,7 +820,7 @@ sap.ui.define([
 	 * <li>bindItems(c) - (only if aggregation was defined to be 'bindable'): convenience function that wraps {@link #bindAggregation}</li>
 	 * <li>unbindItems() - (only if aggregation was defined to be 'bindable'): convenience function that wraps {@link #unbindAggregation}</li>
 	 * </ul>
-	 * For private or hidden aggregations, no methods are generated.
+	 * For hidden aggregations, no methods are generated.
 	 *
 	 *
 	 * <b>'defaultAggregation'</b> : <i>string</i><br>
@@ -839,6 +847,10 @@ sap.ui.define([
 	 *     Methods affecting multiple objects in an association will use the plural name (e.g. getItems(), whereas methods that deal with a single object will use
 	 *     the singular name (e.g. addItem). The framework knows a set of common rules for building plural form of English nouns and uses these rules to determine
 	 *     a singular name on its own. if that name is wrong, a singluarName can be specified with this property.</li>
+	 * <li><code>visibility: <i>string</i></code> either 'hidden' or 'public', defaults to 'public'. Associations that
+	 *     belong to the API of a class must be 'public' whereas 'hidden' associations can only be used internally.
+	 *     Only public associations are accepted by the constructor or by <code>applySettings</code> or in declarative
+	 *     representations like an <code>XMLView</code>. Equally, only public associations are cloned.</li>
 	 * </ul>
 	 * Association names should use camelCase notation, start with a lowercase letter and only use characters from the set [a-zA-Z0-9_$].
 	 * If an association in the literal is preceded by a JSDoc comment (doclet) and if the UI5 plugin and template are used for JSDoc3 generation, the doclet will
@@ -857,6 +869,7 @@ sap.ui.define([
 	 * <li>removeRef(v) - removes an object from the association 'items'. Internally calls {@link #removeAssociation}</li>
 	 * <li>removeAllRefs() - removes all objects from the association 'items'. Internally calls {@link #removeAllAssociation}</li>
 	 * </ul>
+	 * For hidden associations, no methods are generated.
 	 *
 	 *
 	 * <b>'events'</b> : <i>object</i><br>
@@ -4333,7 +4346,7 @@ sap.ui.define([
 	 * Omitting the model name (or using the value <code>undefined</code>) is explicitly allowed and
 	 * refers to the default model.
 	 *
-	 * A value of<code>null</code> for <code>oContext</code> hides the parent context. The parent context will
+	 * A value of <code>null</code> for <code>oContext</code> hides the parent context. The parent context will
 	 * no longer be propagated to aggregated child controls. A value of <code>undefined</code> removes a currently
 	 * active context or a <code>null</code> context and the parent context gets visible and propagated again.
 	 *
@@ -4365,7 +4378,7 @@ sap.ui.define([
 	 * Set the ObjectBinding context for this ManagedObject for the model with the given name. Only set internally
 	 * from a ContextBinding.
 	 *
-	 * A value of<code>null</code> for <code>oContext</code> hides the parent context. The parent context will
+	 * A value of <code>null</code> for <code>oContext</code> hides the parent context. The parent context will
 	 * no longer be propagated to aggregated child controls. A value of <code>undefined</code> removes a currently
 	 * active context or a <code>null</code> context and the parent context gets visible and propagated again.
 	 *

@@ -269,7 +269,7 @@ function(
 					beginButton: {type: "sap.m.Button", multiple: false},
 
 					/**
-					 * The button which is rendered to the right side (left side in RTL mode) of the <code>beginButton</code> in the footer area inside the Dialog. As of version 1.21.1, there's a new aggregation <code>buttons<code> created with which more than 2 buttons can be added to the footer area of Dialog. If the new <code>buttons</code> aggregation is set, any change made to this aggregation has no effect anymore. When running on a phone, this <code>button</code> (and the <code>beginButton</code> together when set) is (are) rendered at the center of the footer area. When running on other platforms, this <code>button</code> (and the <code>beginButton</code> together when set) is (are) rendered at the right side (left side in RTL mode) of the footer area.
+					 * The button which is rendered to the right side (left side in RTL mode) of the <code>beginButton</code> in the footer area inside the Dialog. As of version 1.21.1, there's a new aggregation <code>buttons</code> created with which more than 2 buttons can be added to the footer area of Dialog. If the new <code>buttons</code> aggregation is set, any change made to this aggregation has no effect anymore. When running on a phone, this <code>button</code> (and the <code>beginButton</code> together when set) is (are) rendered at the center of the footer area. When running on other platforms, this <code>button</code> (and the <code>beginButton</code> together when set) is (are) rendered at the right side (left side in RTL mode) of the footer area.
 					 * @since 1.15.1
 					 */
 					endButton: {type: "sap.m.Button", multiple: false},
@@ -1296,7 +1296,7 @@ function(
 
 		/**
 		 * Returns the custom header instance when the <code>customHeader</code> aggregation is set. Otherwise, it returns the internal managed
-		 * header instance. This method can be called within composite controls which use <code>sap.m.Dialog<code> inside.
+		 * header instance. This method can be called within composite controls which use <code>sap.m.Dialog</code> inside.
 		 *
 		 * @protected
 		 */

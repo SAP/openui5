@@ -417,7 +417,7 @@ sap.ui.define([
 
 	/**
 	 * Handles a GET response by extracting the minimum and the maximum values from the given
-	 * result, resolving the measure range promise and calling <code>fnHandleResponse<code> with the
+	 * result, resolving the measure range promise and calling <code>fnHandleResponse</code> with the
 	 * remaining values of <code>aResult</code>. Restores the original <code>handleResponse</code>.
 	 * This function needs to be called on the first level cache.
 	 *

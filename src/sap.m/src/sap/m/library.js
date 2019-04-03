@@ -1704,7 +1704,7 @@ sap.ui.define([
 	 *       <b>Note:</b> See: <code>onBeforeEnterOverflow</code> for details about the function's context.</li>
 	 *
 	 *       <li><code>getCustomImportance()</code> - A function that, if provided, will be called to determine the priority of the control.
-	 *       This function must return a value of type <code>sap.m.OverflowToolbarPriority</code>. The string "Medium" is also accepted and interpreted as priority between <code>Low</code> and <code>High<code>.
+	 *       This function must return a value of type <code>sap.m.OverflowToolbarPriority</code>. The string "Medium" is also accepted and interpreted as priority between <code>Low</code> and <code>High</code>.
 	 *
 	 *       <b>Note:</b> Normally priority in <code>sap.m.OverflowToolbar</code> is managed with the <code>priority</code> property of <code>sap.m.OverflowToolbarLayoutData</code>.
 	 *       However, some controls may have other means of defining priority, such as dedicated properties or other types of layout data for that purpose.
