@@ -241,8 +241,8 @@ sap.ui.define([
 			oObject.forEach(function (vItem, iIndex, aArray) {
 				if (typeof vItem === "object") {
 					process(vItem, oTranslator, iCurrentLevel + 1, iMaxLevel, oParams);
-				} else if (isProcessable(vItem)) {
-					aArray[iIndex] = processPlaceholder(vItem);
+				} else if (isProcessable(vItem, oObject, oParams)) {
+					aArray[iIndex] = processPlaceholder(vItem, oParams);
 				} else if (isTranslatable(vItem) && oTranslator) {
 					aArray[iIndex] = oTranslator.getText(vItem.substring(2, vItem.length - 2));
 				}
@@ -312,7 +312,7 @@ sap.ui.define([
 	CardManifest.prototype.processParameters = function (oParameters) {
 		var oManifestParams = this.get(MANIFEST_PARAMETERS);
 
-		if (oParameters !== null && !oManifestParams) {
+		if (oParameters && !oManifestParams) {
 			Log.error("If parameters property is set, parameters should be described in the manifest");
 		}
 

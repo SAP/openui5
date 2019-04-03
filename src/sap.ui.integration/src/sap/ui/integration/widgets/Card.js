@@ -784,9 +784,11 @@ sap.ui.define([
 	 * @returns {string|Object} Cloned of the parameters.
 	 */
 	Card.prototype.getManifest = function () {
-		var oClonedManifest = jQuery.extend(true, {}, this.getProperty("manifest"));
-
-		return oClonedManifest;
+		var vValue = this.getProperty("manifest");
+		if (vValue && typeof vValue === "object") {
+			return jQuery.extend(true, {}, vValue);
+		}
+		return vValue;
 	};
 
 	/**
@@ -811,9 +813,11 @@ sap.ui.define([
 	 * @returns {Object} A Clone of the parameters.
 	 */
 	Card.prototype.getParameters = function () {
-		var oClonedParameters = jQuery.extend(true, {}, this.getProperty("parameters"));
-
-		return oClonedParameters;
+		var vValue = this.getProperty("parameters");
+		if (vValue && typeof vValue === "object") {
+			return jQuery.extend(true, {}, vValue);
+		}
+		return vValue;
 	};
 
 	/**
