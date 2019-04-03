@@ -676,6 +676,16 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype.init = function () {
+		this._initReadyState();
+		this.setBusyIndicatorDelay(0);
+	};
+
+	/**
+	 * Inits the ready state of the card by waiting for the required events.
+	 *
+	 * @private
+	 */
+	Card.prototype._initReadyState = function () {
 		this._aReadyPromises = [];
 		this._bApplyManifest = true;
 
@@ -683,12 +693,21 @@ sap.ui.define([
 		this._awaitEvent("_contentReady");
 		this._awaitEvent("_cardReady");
 
-		Promise.all(this._aReadyPromises).then(function () {
+		this._oReadyPromise = Promise.all(this._aReadyPromises).then(function () {
 			this._bReady = true;
 			this.fireEvent("_ready");
 		}.bind(this));
+	};
 
-		this.setBusyIndicatorDelay(0);
+	/**
+	 * Clears the ready state of the card.
+	 *
+	 * @private
+	 */
+	Card.prototype._clearReadyState = function () {
+		this._bReady = false;
+		this._aReadyPromises = [];
+		this._oReadyPromise = null;
 	};
 
 	/**
@@ -726,10 +745,25 @@ sap.ui.define([
 
 	/**
 	 * @public
+	 * @experimental Since 1.65. The API might change.
 	 * @returns {boolean} If the card is ready or not.
 	 */
 	Card.prototype.isReady = function () {
 		return this._bReady;
+	};
+
+	/**
+	 * Refreshes the card by re-applying the manifest settings and triggering all data requests.
+	 *
+	 * @public
+	 * @experimental Since 1.65. The API might change.
+	 */
+	Card.prototype.refresh = function () {
+		if (this._oCardManifest && this.isReady()) {
+			this._clearReadyState();
+			this._initReadyState();
+			this._applyManifestSettings();
+		}
 	};
 
 	/**

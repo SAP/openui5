@@ -181,6 +181,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Helper function to bind an aggregation.
+	 *
+	 * @param {string} sAggregation The name of the aggregation to bind.
+	 * @param {sap.ui.core.Control} oControl The control which aggregation is going to be bound.
+	 * @param {Object} oBindingInfo The binding info.
+	 */
+	function _bind(sAggregation, oControl, oBindingInfo) {
+		var oBindingContext = this.getBindingContext();
+		if (oBindingContext) {
+			oBindingInfo.path = oBindingContext.getPath();
+			oControl.bindAggregation(sAggregation, oBindingInfo);
+		}
+	}
+
+	/**
 	 * Binds an aggregation to the binding context path of the BaseContent.
 	 *
 	 * NOTE:
@@ -201,16 +216,10 @@ sap.ui.define([
 			return;
 		}
 
-		var oBindingContext = this.getBindingContext();
-
-		if (oBindingContext) {
-			oBindingInfo.path = oBindingContext.getPath();
-			oControl.bindAggregation(sAggregation, oBindingInfo);
+		if (this.getBindingContext()) {
+			_bind.apply(this, arguments);
 		} else {
-			oControl.attachModelContextChange(function () {
-				oBindingInfo.path = this.getBindingContext().getPath();
-				oControl.bindAggregation(sAggregation, oBindingInfo);
-			}.bind(this));
+			oControl.attachModelContextChange(_bind.bind(this, sAggregation, oControl, oBindingInfo));
 		}
 	};
 
