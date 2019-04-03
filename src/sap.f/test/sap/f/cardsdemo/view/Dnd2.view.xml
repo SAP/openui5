@@ -38,7 +38,7 @@
 			<Panel headerText="Card Group 1">
 				<f:GridContainer
 					id="cssgrid"
-					itemsStretch="true"
+					snapToRow="true"
 					class="maxWidth1140">
 
 					<f:items>

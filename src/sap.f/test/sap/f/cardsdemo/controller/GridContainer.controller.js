@@ -61,15 +61,9 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		onItemsStretchChange: function (oEvent) {
+		onSnapToRowChange: function (oEvent) {
 			this._aGrids.forEach(function (oGrid) {
 				oGrid.setSnapToRow(oEvent.getParameter("state"));
-			});
-		},
-
-		onRowsAutoSpan: function (oEvent) {
-			this._aGrids.forEach(function (oGrid) {
-				oGrid.setRowsAutoSpan(oEvent.getParameter("state"));
 			});
 		},
 

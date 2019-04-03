@@ -6,7 +6,25 @@
 	position: relative;
 	display: grid;
 
-	.sapFGridContainerItemWrapper.sapFGridContainerItemLimitRows > * {
+	&.sapFGridContainerSnapToRow .sapFGridContainerItemWrapper > * {
+		min-height: 100%;
+	}
+
+	& .sapFGridContainerItemWrapper.sapFGridContainerItemFixedRows > * {
 		max-height: 100%;
+	}
+
+	.sapFCard.sapFCardAnalytical {
+		min-height: 100%;
+
+		.sapFCardContent {
+			min-height: 14rem;
+		}
+	}
+}
+
+html[data-sap-ui-browser^="ie"] .sapFGridContainer {
+	.sapFCard.sapFCardAnalytical {
+		height: 100%;
 	}
 }

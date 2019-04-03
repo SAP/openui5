@@ -34,31 +34,22 @@ sap.ui.define([
 
 	function getItemRowCount(item) {
 		var layoutData = item.getLayoutData();
-		return layoutData ? layoutData.getRows() : 1;
+		return layoutData ? layoutData.getActualRows() : 1;
 	}
 
-	function getItemRowsAutoSpan(item) {
+	function hasItemAutoHeight(item) {
 		var layoutData = item.getLayoutData();
-		return layoutData ? layoutData.getRowsAutoSpan() : true;
+		return layoutData ? layoutData.hasAutoHeight() : true;
 	}
 
-	function getScrollHeight($item) {
-		var childrenScrollHeight = 0;
-
-		if ($item.hasClass("sapMGT")) { // if generic tile
-			// TODO fix a bug with wrong scrollHeight for tiles
-			return 174;
-		}
+	function calcChildrenHeight($item) {
+		var height = 0;
 
 		$item.children().each(function () {
-			if (jQuery(this).css("position") === "absolute") {
-				// if child is with absolute position, it does not add to the total heigh
-				return;
-			}
-			childrenScrollHeight += this.scrollHeight;
+			height += jQuery(this).height();
 		});
 
-		return Math.max(childrenScrollHeight, $item[0].scrollHeight);
+		return height;
 	}
 
 	/**
@@ -163,16 +154,7 @@ sap.ui.define([
 				 * Should the items stretch to fill the rows which they occupy, or not.
 				 * If set to true the items will stretch.
 				 */
-				snapToRow: {type: "boolean", group: "Appearance", defaultValue: false},
-
-				/**
-				 * Should the row span increase if item does not fit in the rows which it was given.
-				 * Applies only for items with specified rows span. For all other items it is always on.
-				 *
-				 * @private
-				 * NOTE: Will be removed with the introduction of minRows
-				 */
-				rowsAutoSpan: {type: "boolean", group: "Appearance", defaultValue: false}
+				snapToRow: {type: "boolean", group: "Appearance", defaultValue: false}
 			},
 			defaultAggregation: "items",
 			aggregations: {
@@ -228,13 +210,8 @@ sap.ui.define([
 	};
 
 	GridContainer.prototype._onAfterItemRendering = function () {
-		var container = this.getParent(),
-			$item = this.$();
 
-		if ($item[0].style.height === "auto"
-			&& (container.getSnapToRow() || $item.hasClass("sapFCardStretchableContent"))) {
-			$item.height("100%");
-		}
+		var container = this.getParent();
 
 		if (!isGridSupportedByBrowser()) {
 			container._applyIEPolyfillForItem(this);
@@ -379,16 +356,16 @@ sap.ui.define([
 		if (isGridSupportedByBrowser()) {
 			var oContainer = this;
 			this.getItems().forEach(function (oItem) {
-				if (oContainer.getRowsAutoSpan() || getItemRowsAutoSpan(oItem)) {
-
+				if (hasItemAutoHeight(oItem)) {
 					var $item = oItem.$(),
-						height = getScrollHeight($item),
+						height = $item.height(),
 						$container = oContainer.$(),
 						rowHeight = parseInt($container.css("grid-auto-rows")),
-						gapSize = parseInt($container.css("grid-row-gap"));
+						gapSize = parseInt($container.css("grid-row-gap")),
+						rows = Math.ceil((height + gapSize) / (rowHeight + gapSize));
 
 					$item.parent().css({
-						'grid-row': 'span ' + Math.ceil((height + gapSize) / (rowHeight + gapSize))
+						'grid-row': 'span ' + Math.max(rows, getItemRowCount(oItem))
 					});
 				}
 			});
@@ -432,7 +409,7 @@ sap.ui.define([
 				position: 'absolute'
 			};
 
-		if (!this.getRowsAutoSpan() && !getItemRowsAutoSpan(oItem)) {
+		if (!hasItemAutoHeight(oItem)) {
 			var itemRowCount = getItemRowCount(oItem);
 			css.height = itemRowCount * itemHeight + (itemRowCount - 1) * gapSize;
 		}
@@ -469,32 +446,55 @@ sap.ui.define([
 			leftOffset: leftOffset ? leftOffset : 0
 		});
 
-		for (var i = 0; i < items.length; i++) {
-			var item = items[i];
-			var columns = getItemColumnCount(item);
-			var $child = jQuery($children.get(i));
+		var i,
+			item,
+			virtualGridItem,
+			columns,
+			$child,
+			$card,
+			rows,
+			height,
+			itemsRows = [];
 
-			var rows;
-			if (this.getRowsAutoSpan() || getItemRowsAutoSpan(item)) {
-				var height = getScrollHeight(jQuery($child.children().get(0)));
+		for (i = 0; i < items.length; i++) {
+			item = items[i];
+			columns = getItemColumnCount(item);
+			$child = jQuery($children.get(i));
+
+			if (hasItemAutoHeight(item)) {
+
+				$card = $child.find('.sapFCard');
+
+				// todo - check this
+				if ($card.length) {
+					height = $card.height();
+				} else {
+					height = calcChildrenHeight($child);
+				}
+
 				rows = Math.ceil((height + gapSize) / (itemHeight + gapSize));
 			} else {
 				rows = getItemRowCount(item);
 			}
+
+			itemsRows[i] = rows;
 
 			virtualGrid.fitElement(i + '', columns, rows);
 		}
 
 		virtualGrid.calculatePositions();
 
-		for (var i = 0; i < items.length; i++) {
-			var item = virtualGrid.getItems()[i];
-			var $child = jQuery($children.get(i));
+		for (i = 0; i < items.length; i++) {
+			item = items[i];
+			virtualGridItem = virtualGrid.getItems()[i];
+			$child = jQuery($children.get(i));
+			rows = itemsRows[i];
 
 			$child.css({
 				position: 'absolute',
-				top: item.top,
-				left: item.left
+				top: virtualGridItem.top,
+				left: virtualGridItem.left,
+				height: rows * itemHeight + (rows - 1) * gapSize
 			});
 		}
 

@@ -1125,7 +1125,7 @@ sap.ui.define([
 		}
 
 		if (sCardType === "analytical") {
-			this.$().addClass("sapFCardStretchableContent");
+			this.$().addClass("sapFCardAnalytical");
 		}
 	};
 

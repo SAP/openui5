@@ -100,7 +100,8 @@ sap.ui.define([
 				rows++;
 			}
 		}
-		return rows * (this.cellHeight + (this.iGapSize - 1));
+
+		return rows * this.cellHeight + (rows - 1) * this.iGapSize;
 	};
 
 	/**
