@@ -1599,4 +1599,55 @@ sap.ui.define([
 		oParentPopup.attachOpened(fnOpened);
 		oParentPopup.open(0);
 	});
+
+	QUnit.test("Verify blockLayerChange event", function(assert) {
+		var fnDone = assert.async();
+
+		var oPopup1DomRef = document.getElementById("popup1"),
+			oPopup1 = new Popup(oPopup1DomRef, true),
+			oPopup2DomRef = document.getElementById("popup2"),
+			oPopup2 = new Popup(oPopup2DomRef, true);
+
+		var oFireBlockLayerChangeSpy;
+
+		var fnClosingHandler = function() {
+			Popup.detachBlockLayerStateChange(fnClosingHandler);
+
+			var oSecondCallParams = oFireBlockLayerChangeSpy.getCall(1).args[1];
+			// Check whether event got fired with correct information
+			assert.ok(oFireBlockLayerChangeSpy.calledTwice,
+			"blockLayerChange event called twice");
+
+			assert.equal(oSecondCallParams.visible, false,
+				"Block layer should be set hidden after all popups have been closed");
+			assert.ok(oSecondCallParams.zIndex, "Contains popup zIndex for setting blocking layer");
+
+
+			oFireBlockLayerChangeSpy.restore();
+			fnDone();
+		};
+
+		var fnOpeningHandler = function () {
+			Popup.detachBlockLayerStateChange(fnOpeningHandler);
+
+			var oFirstCallParams = oFireBlockLayerChangeSpy.getCall(0).args[1];
+
+			assert.equal(oFirstCallParams.visible, true,
+				"Block layer should be set visible after first popup got opened");
+			assert.ok(oFirstCallParams.zIndex, "Contains blocking layer zIndex of last popup");
+
+			Popup.attachBlockLayerStateChange(fnClosingHandler);
+		};
+
+		Popup.attachBlockLayerStateChange(fnOpeningHandler);
+
+		oFireBlockLayerChangeSpy = sinon.spy(Popup._blockLayerStateProvider, "fireEvent");
+
+		oPopup1.open();
+		oPopup2.open();
+		oPopup2.close();
+		oPopup1.close();
+		oPopup1.destroy();
+		oPopup2.destroy();
+	});
 });
