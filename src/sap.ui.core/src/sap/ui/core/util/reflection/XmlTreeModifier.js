@@ -115,9 +115,13 @@ sap.ui.define([
 				if (vPropertyValue === null) {
 					vPropertyValue = oPropertyInfo.getDefaultValue() || oType.getDefaultValue();
 				} else {
-					//unescape binding like XMLTemplateProcessor, but we don't expect to get a real binding here
-					var sUnescaped = ManagedObject.bindingParser(vPropertyValue, undefined, true);
-					vPropertyValue = sUnescaped || vPropertyValue;
+					// unescape binding like XMLTemplateProcessor
+					var vUnescaped = ManagedObject.bindingParser(vPropertyValue, undefined, true);
+					// if it is a binding, return undefined as it has to be handled differently
+					if (vUnescaped && (vUnescaped.path || vUnescaped.parts)) {
+						return undefined;
+					}
+					vPropertyValue = vUnescaped || vPropertyValue;
 					vPropertyValue = oType.parseValue(vPropertyValue);
 				}
 			}
@@ -135,15 +139,24 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		setPropertyBinding: function (oControl, sPropertyName, oPropertyBinding) {
-			oControl.setAttribute(sPropertyName, oPropertyBinding);
+		setPropertyBinding: function (oControl, sPropertyName, sPropertyBinding) {
+			if (typeof sPropertyBinding !== "string") {
+				throw new Error("For XML, only strings are supported to be set as property binding.");
+			}
+			oControl.setAttribute(sPropertyName, sPropertyBinding);
 		},
 
 		/**
 		 * @inheritDoc
 		 */
 		getPropertyBinding: function (oControl, sPropertyName) {
-			return oControl.getAttribute(sPropertyName);
+			var vPropertyValue = oControl.getAttribute(sPropertyName);
+			if (vPropertyValue) {
+				var vUnescaped = ManagedObject.bindingParser(vPropertyValue, undefined, true);
+				if (vUnescaped && (vUnescaped.path || vUnescaped.parts)) {
+					return vUnescaped;
+				}
+			}
 		},
 
 		/**

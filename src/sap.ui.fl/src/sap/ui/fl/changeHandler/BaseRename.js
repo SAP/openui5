@@ -21,7 +21,6 @@ sap.ui.define([
 	 * @experimental Since 1.46
 	 */
 	var BaseRename = {
-
 		/**
 		 * Returns an instance of the rename change handler
 		 * @param  {object} mRenameSettings The settings required for the rename action
@@ -31,11 +30,9 @@ sap.ui.define([
 		 * @return {any} the rename change handler object
 		 */
 		createRenameChangeHandler: function(mRenameSettings) {
-
 			mRenameSettings.changePropertyName = mRenameSettings.changePropertyName || "newText";
 
 			return {
-
 				/**
 				 * Renames a control.
 				 *
@@ -54,16 +51,9 @@ sap.ui.define([
 					var sValue = sText.value;
 
 					if (oChangeDefinition.texts && sText && typeof (sValue) === "string") {
-						oChange.setRevertData(oModifier.getProperty(oControl, sPropertyName));
-
-						// The value can be a binding - e.g. for translatable values in WebIde
-						if (Utils.isBinding(sValue)) {
-							oModifier.setPropertyBinding(oControl, sPropertyName, sValue);
-						} else {
-							oModifier.setProperty(oControl, sPropertyName, sValue);
-						}
+						oChange.setRevertData(oModifier.getPropertyBindingOrProperty(oControl, sPropertyName));
+						oModifier.setPropertyBindingOrProperty(oControl, sPropertyName, sValue);
 						return true;
-
 					} else {
 						Utils.log.error("Change does not contain sufficient information to be applied: [" + oChangeDefinition.layer + "]" + oChangeDefinition.namespace + "/" + oChangeDefinition.fileName + "." + oChangeDefinition.fileType);
 						//however subsequent changes should be applied
@@ -81,12 +71,12 @@ sap.ui.define([
 				 * @public
 				 */
 				revertChange : function(oChange, oControl, mPropertyBag) {
-					var sOldText = oChange.getRevertData();
-					if (sOldText || sOldText === "") {
-						var oModifier = mPropertyBag.modifier;
-						var sPropertyName = mRenameSettings.propertyName;
-						oModifier.setProperty(oControl, sPropertyName, sOldText);
+					var oModifier = mPropertyBag.modifier;
+					var sPropertyName = mRenameSettings.propertyName;
+					var vOldValue = oChange.getRevertData();
 
+					if (vOldValue || vOldValue === "") {
+						oModifier.setPropertyBindingOrProperty(oControl, sPropertyName, vOldValue);
 						oChange.resetRevertData();
 						return true;
 					} else {

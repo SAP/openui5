@@ -22,11 +22,12 @@ function(
 
 	var sandbox = sinon.sandbox.create();
 
-	var XML_VIEW = '<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:form="sap.ui.layout.form">' +
-	'<form:SimpleForm id="testComponent---myView--myForm">' +
-	'<Title id="testComponent---myView--myGroup" />' +
-	'<Input id="testComponent---myView--myGroupElement" />' +
-	'</form:SimpleForm>' +
+	var XML_VIEW =
+	'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:form="sap.ui.layout.form">' +
+		'<form:SimpleForm id="testComponent---myView--myForm">' +
+			'<Title id="testComponent---myView--myGroup" />' +
+			'<Input id="testComponent---myView--myGroupElement" />' +
+		'</form:SimpleForm>' +
 	'</mvc:View>';
 
 	var fnMockNodeId = function(sToBeReplacedInId, sReplacementInId, oXmlNode) {
@@ -36,7 +37,6 @@ function(
 
 	QUnit.module("While handling xml views the BaseTreeModifier", {
 		beforeEach: function () {
-
 			this.oComponent = sap.ui.getCore().createComponent({
 				name: "sap.ui.test.other",
 				id: "testComponent"
@@ -46,7 +46,6 @@ function(
 			this.oXmlView = this.oDOMParser.parseFromString(XML_VIEW, "application/xml").documentElement;
 			return this.oXmlView;
 		},
-
 		afterEach: function () {
 			sandbox.restore();
 			this.oComponent.destroy();
@@ -127,7 +126,6 @@ function(
 
 	QUnit.module("While handling js views the BaseTreeModifier", {
 		beforeEach: function () {
-
 			this.oComponent = sap.ui.getCore().createComponent({
 				name: "sap.ui.test.other",
 				id: "testComponent"
@@ -141,7 +139,6 @@ function(
 			});
 			return this.oJsView;
 		},
-
 		afterEach: function () {
 			this.oComponent.destroy();
 			this.oJsView.destroy();
@@ -201,6 +198,9 @@ function(
 	});
 
 	QUnit.module("Given a BaseTreeModifier...", {
+		afterEach: function() {
+			sandbox.restore();
+		}
 	}, function() {
 		QUnit.test("when checkAndPrefixIdsInFragment is called with various fragments", function(assert) {
 			var oXML1 = jQuery.sap.parseXML(
@@ -370,6 +370,61 @@ function(
 
 			checkIdsOfAllChildren(aChildren, assert);
 		});
+
+		QUnit.test("when getPropertyBindingOrProperty is called", function(assert) {
+			sandbox.stub(BaseTreeModifier, "getPropertyBinding")
+				.onCall(0).returns(undefined)
+				.onCall(1).returns("propertyBinding")
+				.onCall(2).returns("propertyBinding");
+			sandbox.stub(BaseTreeModifier, "getProperty")
+				.onCall(0).returns("property")
+				.onCall(1).returns(undefined)
+				.onCall(2).returns("property");
+
+			assert.equal(BaseTreeModifier.getPropertyBindingOrProperty(), "property", "without propertyBinding the property is returned");
+			assert.equal(BaseTreeModifier.getPropertyBindingOrProperty(), "propertyBinding", "without property the propertyBinding is returned");
+			assert.equal(BaseTreeModifier.getPropertyBindingOrProperty(), "propertyBinding", "with both returning something the propertyBinding is returned");
+		});
+
+		QUnit.test("when setPropertyBindingOrProperty is called", function(assert) {
+			var oPropertyBindingStub = sandbox.stub(BaseTreeModifier, "setPropertyBinding");
+			var oPropertyStub = sandbox.stub(BaseTreeModifier, "setProperty");
+
+			// control and propertyName are not needed in this test
+			var vBindingOrValue;
+			BaseTreeModifier.setPropertyBindingOrProperty(undefined, undefined, vBindingOrValue);
+			assert.equal(oPropertyBindingStub.callCount, 0, "the propertyBindingStub was not called");
+			assert.equal(oPropertyStub.callCount, 1, "the propertyBindingStub was called");
+
+			vBindingOrValue = "";
+			BaseTreeModifier.setPropertyBindingOrProperty(undefined, undefined, vBindingOrValue);
+			assert.equal(oPropertyBindingStub.callCount, 0, "the propertyBindingStub was not called");
+			assert.equal(oPropertyStub.callCount, 2, "the propertyBindingStub was called");
+
+			vBindingOrValue = "property";
+			BaseTreeModifier.setPropertyBindingOrProperty(undefined, undefined, vBindingOrValue);
+			assert.equal(oPropertyBindingStub.callCount, 0, "the propertyBindingStub was not called");
+			assert.equal(oPropertyStub.callCount, 3, "the propertyBindingStub was called");
+
+			vBindingOrValue = "{property}";
+			BaseTreeModifier.setPropertyBindingOrProperty(undefined, undefined, vBindingOrValue);
+			assert.equal(oPropertyBindingStub.callCount, 1, "the propertyBindingStub was called");
+			assert.equal(oPropertyStub.callCount, 3, "the propertyBindingStub was not called");
+
+			vBindingOrValue = {
+				path: "foo"
+			};
+			BaseTreeModifier.setPropertyBindingOrProperty(undefined, undefined, vBindingOrValue);
+			assert.equal(oPropertyBindingStub.callCount, 2, "the propertyBindingStub was called");
+			assert.equal(oPropertyStub.callCount, 3, "the propertyBindingStub was not called");
+
+			vBindingOrValue = {
+				parts: "foo"
+			};
+			BaseTreeModifier.setPropertyBindingOrProperty(undefined, undefined, vBindingOrValue);
+			assert.equal(oPropertyBindingStub.callCount, 3, "the propertyBindingStub was called");
+			assert.equal(oPropertyStub.callCount, 3, "the propertyBindingStub was not called");
+		});
 	});
 
 
@@ -389,7 +444,6 @@ function(
 			sandbox.restore();
 		}
 	}, function () {
-
 		QUnit.test("checkControlId shall return false if the ID was generated", function (assert) {
 			assert.equal(BaseTreeModifier.checkControlId(this.oControlWithGeneratedId, this.oComponent), false);
 		});

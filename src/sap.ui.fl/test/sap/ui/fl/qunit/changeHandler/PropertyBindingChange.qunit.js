@@ -67,7 +67,7 @@ sap.ui.define([
 			this.oButton.setModel(oNamedModel, "namedModel");
 
 			var oDOMParser = new DOMParser();
-			var sXML = "<Input showValueHelp=\"" + this.OLD_BOOLEAN_VALUE + "\" value=\"" + this.OLD_VALUE_BINDING + "\" enabled=\"true\" />";
+			var sXML = "<Input xmlns='sap.m' showValueHelp=\"" + this.OLD_BOOLEAN_VALUE + "\" value=\"" + this.OLD_VALUE_BINDING + "\" enabled=\"true\" />";
 			var oXmlDocument = oDOMParser.parseFromString(sXML, "application/xml");
 			this.oXmlInput = oXmlDocument.childNodes[0];
 
@@ -243,8 +243,9 @@ sap.ui.define([
 			this.oChangeHandler.applyChange(this.oValueChange, this.oXmlInput, {modifier: XmlTreeModifier});
 			assert.equal(this.oXmlInput.getAttribute("value"), this.NEW_VALUE_BINDING, "property value has changed as expected");
 
-			this.oChangeHandler.revertChange(this.oValueChange, this.oXmlInput, {modifier: XmlTreeModifier});
-			assert.equal(this.oXmlInput.getAttribute("value"), this.OLD_VALUE_BINDING, "property value has changed as expected");
+			assert.throws(function() {
+				this.oChangeHandler.revertChange(this.oValueChange, this.oXmlInput, {modifier: XmlTreeModifier});
+			}, Error, "Revert change throws an error, because this is not supported yet.");
 		});
 
 		QUnit.test('When applying the showValueHelp property binding change on a xml control tree and reverting it afterwards, Then', function(assert) {

@@ -168,7 +168,6 @@ sap.ui.define([
 		 */
 		getPropertyBinding: function (oControl, sPropertyName) {
 			return oControl.getBindingInfo(sPropertyName);
-
 		},
 
 		/**
