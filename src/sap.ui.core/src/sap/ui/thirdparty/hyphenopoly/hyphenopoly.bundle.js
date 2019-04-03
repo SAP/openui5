@@ -145,26 +145,55 @@
 		var loadedScripts = [];
 
 		/**
+   * Fetches a binary file and reads it as an array buffer.
+   *
+   * @param {string} path The path to the requested binary
+   * @returns {Promise} A promise that resolves with an ArrayBuffer.
+   */
+		function loadBinary(path) {
+			return new Promise(function (resolve, reject) {
+				if (window.fetch) {
+					window.fetch(path).then(function (response) {
+						if (response.ok) {
+							response.arrayBuffer().then(resolve);
+						} else {
+							reject(response.status);
+						}
+					}).catch(function () {
+						reject("network failure");
+					});
+				} else {
+					var xhr = new XMLHttpRequest();
+					xhr.open('GET', path);
+					xhr.responseType = "arraybuffer";
+					xhr.onload = function () {
+						if (xhr.status === 200) {
+							resolve(new Uint8Array(xhr.response).buffer);
+						} else {
+							reject(xhr.status);
+						}
+					};
+					xhr.send();
+				}
+			});
+		}
+
+		/**
    * Read a wasm file
    * @returns {undefined}
    */
 		function loadWasm() {
-			var xhr = new XMLHttpRequest();
-			xhr.open('GET', H.c.paths.maindir + 'hyphenEngine.wasm');
-			xhr.responseType = "arraybuffer";
-			xhr.onload = function () {
-				if (xhr.status === 200) {
-					H.binaries.hyphenEngine = new Uint8Array(xhr.response).buffer;
-					H.events.dispatch("engineLoaded", { "msg": "wasm" });
-				} else {
-					H.events.dispatch("error", {
-						"key": "hyphenEngine",
-						"msg": H.c.paths.maindir + "hyphenEngine.wasm not found.\n" + xhr.status
-					});
-				}
-			};
-			xhr.send();
+			loadBinary(H.c.paths.maindir + 'hyphenEngine.wasm').then(function (responseBuffer) {
+				H.binaries.hyphenEngine = responseBuffer;
+				H.events.dispatch("engineLoaded", { "msg": "wasm" });
+			}).catch(function (message) {
+				H.events.dispatch("error", {
+					"key": "hyphenEngine",
+					"msg": H.c.paths.maindir + "hyphenEngine.wasm not found.\n" + message
+				});
+			});
 		}
+
 		/**
    * Read a asm file
    * @returns {undefined}
@@ -189,22 +218,16 @@
    * @returns {undefined}
    */
 		function loadHpb(lang) {
-			var xhr = new XMLHttpRequest();
-			xhr.open('GET', "" + H.c.paths.patterndir + lang + ".hpb");
-			xhr.responseType = "arraybuffer";
-			xhr.onload = function () {
-				if (xhr.status === 200) {
-					H.binaries[lang] = new Uint8Array(xhr.response).buffer;
-					H.events.dispatch("hpbLoaded", { "msg": lang });
-					hpb.push(lang);
-				} else {
-					H.events.dispatch("error", {
-						"key": lang,
-						"msg": "" + H.c.paths.patterndir + lang + ".hpb not found.\n" + xhr.status
-					});
-				}
-			};
-			xhr.send();
+			loadBinary(H.c.paths.patterndir + lang + ".hpb").then(function (responseBuffer) {
+				H.binaries[lang] = responseBuffer;
+				H.events.dispatch("hpbLoaded", { "msg": lang });
+				hpb.push(lang);
+			}).catch(function (message) {
+				H.events.dispatch("error", {
+					"key": lang,
+					"msg": "" + H.c.paths.patterndir + lang + ".hpb not found.\n" + message
+				});
+			});
 		}
 
 		/**
