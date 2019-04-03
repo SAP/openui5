@@ -488,8 +488,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.dom', 'jquery.s
 					}
 				});
 
-				// create favicon
-				$head.append($('<link rel="shortcut icon" href="' + oIcons["favicon"] + '" />'));
+				// for IE two DOM updates are necessary to render the favicon properly
+				if (Device.browser.msie) {
+					// create favicon w/o an href attribute for a first DOM update
+					var $link = jQuery('<link rel="shortcut icon" />');
+					$head.append($link);
+
+					// add href attribute to force a second DOM
+					$link.attr("href", oIcons["favicon"]);
+				} else {
+					// create favicon
+					$head.append(jQuery('<link rel="shortcut icon" href="' + oIcons["favicon"] + '" />'));
+				}
 			}
 
 			// mobile home screen icons
