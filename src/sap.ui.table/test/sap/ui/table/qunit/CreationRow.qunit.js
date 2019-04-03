@@ -124,6 +124,15 @@ sap.ui.define([
 		this.assertCells(assert, "Column0", "Column4", "Column8", "Column9");
 	});
 
+	QUnit.test("Accessibility", function(assert) {
+		var oRow = this.oTable.getCreationRow();
+		var $Row = oRow.$();
+		assert.strictEqual($Row.attr("role"), "form", "Aria Role of creation row root element");
+		assert.strictEqual($Row.attr("aria-labelledby"), oRow.getId() + "-label", "Label of creation row root element");
+		assert.ok(oRow._oDefaultToolbar.getAriaLabelledBy()[0] === oRow.getId() + "-label", "Default toolbar has correct label");
+		assert.strictEqual($Row.find("table").attr("role"), "presentation", "Aria Role of creation row inner table element");
+	});
+
 	QUnit.module("Toolbar", {
 		beforeEach: function() {
 		},

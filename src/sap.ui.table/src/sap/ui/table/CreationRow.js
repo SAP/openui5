@@ -174,7 +174,8 @@ sap.ui.define([
 					}
 				})
 			],
-			style: MLibrary.ToolbarStyle.Clear
+			style: MLibrary.ToolbarStyle.Clear,
+			ariaLabelledBy: [oCreationRow.getId() + "-label"]
 		});
 	}
 
