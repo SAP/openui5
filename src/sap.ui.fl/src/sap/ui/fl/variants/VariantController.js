@@ -208,7 +208,7 @@ sap.ui.define([
 		}
 
 		return this._mVariantManagement[sVariantManagementReference].variants
-			.some(function (oVariant, iIndex) {
+			.some(function (oVariant) {
 				if (oVariant.content.fileName === sVariantReference) {
 					oVariant.controlChanges = aChanges;
 					return true;
@@ -476,16 +476,13 @@ sap.ui.define([
 	};
 
 	VariantController.prototype.removeChangeFromVariant = function (oChange, sVariantManagementReference, sVariantReference) {
-		var aNewChanges = this.getVariantChanges(sVariantManagementReference, sVariantReference, true);
+		var aControlChanges = this.getVariantChanges(sVariantManagementReference, sVariantReference, true);
 
-		aNewChanges.forEach(function (oCurrentChange, iIndex) {
-			if (oCurrentChange.getId
-				&& (oCurrentChange.getId() === oChange.getId())) {
-				aNewChanges.splice(iIndex, 1);
-			}
+		aControlChanges = aControlChanges.filter(function (oCurrentChange) {
+			return oCurrentChange.getId() !== oChange.getId();
 		});
 
-		return this.setVariantChanges(sVariantManagementReference, sVariantReference, aNewChanges, true);
+		return this.setVariantChanges(sVariantManagementReference, sVariantReference, aControlChanges);
 	};
 
 	VariantController.prototype.addVariantToVariantManagement = function (oVariantData, sVariantManagementReference) {
