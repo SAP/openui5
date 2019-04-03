@@ -212,6 +212,23 @@ sap.ui.define(["./TableExtension", "./TableUtils", "./library"], function(TableE
 			var sHighlightText = oRowSettings._getHighlightText();
 
 			_writeAccText(oRm, oRow.getId(), "highlighttext", sHighlightText);
+		},
+
+		/**
+		 * Renders the hidden label for a creation row.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the Render-Output-Buffer.
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @param {sap.ui.table.CreationRow} oCreationRow Instance of the creation row.
+		 * @see sap.ui.table.CreationRowRenderer#render
+		 * @public
+		 */
+		writeAccCreationRowText: function(oRm, oTable, oCreationRow) {
+			if (!oTable._getAccExtension().getAccMode()) {
+				return;
+			}
+
+			_writeAccText(oRm, oCreationRow.getId(), "label", TableUtils.getResourceText("TBL_CREATEROW_LABEL"));
 		}
 	});
 
