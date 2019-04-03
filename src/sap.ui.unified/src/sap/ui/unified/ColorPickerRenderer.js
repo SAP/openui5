@@ -102,7 +102,7 @@ sap.ui.define(['./ColorPickerDisplayMode', "sap/ui/Device"],
 			this.renderEmptyDiv(oRm);
 		}
 
-		oRm.renderControl(oControl.getAggregation("_oAlphaField"));
+		oRm.renderControl(oControl.getAggregation("_oAlphaField2"));
 		oRm.write("</div>");
 
 		oRm.renderControl(oControl.getAggregation("_oButton"));
