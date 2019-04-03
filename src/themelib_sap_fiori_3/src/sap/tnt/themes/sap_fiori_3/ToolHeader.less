@@ -318,3 +318,48 @@ html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBItem:focus.sapMITBAll {
 		border-color: contrast(@sapShellColor, @sapUiContentFocusColor, @sapUiContentContrastFocusColor, @sapContent_ContrastTextThreshold);
 	}
 }
+
+// ==========================================================================
+// sap.m.ObjectStatus overriding
+// ==========================================================================
+
+.sapTntToolHeader {
+	.sapMObjStatus.sapMObjStatusError {
+		.sapMObjStatusText,
+		.sapMObjStatusIcon .sapUiIcon {
+			color: lighten(@sapUiNegativeElement,45);
+		}
+	}
+	.sapMObjStatus.sapMObjStatusInformation {
+		.sapMObjStatusText,
+		.sapMObjStatusIcon .sapUiIcon {
+			color: lighten(@sapUiInformativeElement,33);
+		}
+	}
+	.sapMObjStatus.sapMObjStatusNone {
+		.sapMObjStatusText,
+		.sapMObjStatusIcon .sapUiIcon {
+			color: lighten(@sapUiNeutralElement,35);
+		}
+	}
+	.sapMObjStatus.sapMObjStatusSuccess {
+		.sapMObjStatusText,
+		.sapMObjStatusIcon .sapUiIcon {
+			color: lighten(@sapUiPositiveElement,19);
+		}
+	}
+	.sapMObjStatus.sapMObjStatusWarning {
+		.sapMObjStatusText,
+		.sapMObjStatusIcon .sapUiIcon {
+			color: lighten(@sapUiCriticalElement,20);
+		}
+	}
+
+	.sapMObjStatus .sapMObjStatusTitle {
+		color: lighten(@sapUiNeutralElement,35);
+	}
+}
+
+html.sap-desktop .sapTntToolHeader .sapMObjStatusActive:focus .sapMObjStatusLink::after {
+	outline-color: contrast(@sapShellColor, @sapUiContentFocusColor, @sapUiContentContrastFocusColor, @sapContent_ContrastTextThreshold);
+}
