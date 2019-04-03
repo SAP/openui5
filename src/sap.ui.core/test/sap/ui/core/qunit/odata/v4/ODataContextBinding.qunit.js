@@ -2654,8 +2654,8 @@ sap.ui.define([
 
 			if (oFixture.aFetchValues) {
 				oFixture.aFetchValues.forEach(function (oFetchValue){
-					oContextMock.expects("fetchValue").withExactArgs(oFetchValue.sPath)
-						.returns(SyncPromise.resolve(oFetchValue.oEntity));
+					oContextMock.expects("getValue").withExactArgs(oFetchValue.sPath)
+						.returns(oFetchValue.oEntity);
 					oHelperMock.expects("getPrivateAnnotation")
 						.withExactArgs(sinon.match.same(oFetchValue.oEntity), "predicate")
 						.returns(oFetchValue.sPredicate);
@@ -2668,17 +2668,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getResolvedPath error: no key predicates", function (assert) {
+[{}, undefined].forEach(function (oEntity, i) {
+	QUnit.test("getResolvedPath error: no key predicates " + i, function (assert) {
 		var sPath = "/TEAMS($uid=id-1-23)",
 			oContext = Context.create(this.oModel, {}, sPath),
-			oEntity = {},
 			oBinding = this.bindContext("", oContext);
 
 		this.mock(this.oModel).expects("resolve").withExactArgs(oBinding.sPath,
 			sinon.match.same(oBinding.oContext)).returns(sPath);
-		this.mock(oContext).expects("fetchValue").withExactArgs(sPath)
-			.returns(SyncPromise.resolve(oEntity));
-		this.mock(_Helper).expects("getPrivateAnnotation")
+		this.mock(oContext).expects("getValue").withExactArgs(sPath).returns(oEntity);
+		this.mock(_Helper).expects("getPrivateAnnotation").exactly(oEntity ? 1 : 0)
 			.withExactArgs(sinon.match.same(oEntity), "predicate")
 			.returns(undefined);
 
@@ -2687,6 +2686,7 @@ sap.ui.define([
 			oBinding.getResolvedPath();
 		}, new Error("No key predicate known at " + sPath));
 	});
+});
 
 	//*********************************************************************************************
 	[{

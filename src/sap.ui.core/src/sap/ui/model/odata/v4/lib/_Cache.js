@@ -367,7 +367,7 @@ sap.ui.define([
 		_Helper.setPrivateAnnotation(oEntityData, "transientPredicate", sTransientPredicate);
 		oEntityData["@$ui5.context.isTransient"] = true;
 
-		aCollection = this.fetchValue(_GroupLock.$cached, sPath).getResult();
+		aCollection = this.getValue(sPath);
 		if (!Array.isArray(aCollection)) {
 			throw new Error("Create is only supported for collections; '" + sPath
 					+ "' does not reference a collection");
@@ -601,6 +601,20 @@ sap.ui.define([
 	 */
 	Cache.prototype.getMeasureRangePromise = function () {
 		return undefined;
+	};
+
+	/*
+	 * Returns the requested data if available synchronously.
+	 *
+	 * @param {string} [sPath]
+	 *   Relative path to drill-down into
+	 * @returns {any}
+	 *   The requested data or <code>undefined</code> if the data is not yet available
+	 *
+	 * @public
+	 */
+	Cache.prototype.getValue = function (sPath) {
+		throw new Error("Unsupported operation");
 	};
 
 	/**
@@ -931,8 +945,7 @@ sap.ui.define([
 			if (sUnitOrCurrencyPath) {
 				aUnitOrCurrencyPath = sUnitOrCurrencyPath.split("/");
 				sUnitOrCurrencyPath = _Helper.buildPath(sEntityPath, sUnitOrCurrencyPath);
-				sUnitOrCurrencyValue
-					= that.fetchValue(_GroupLock.$cached, sUnitOrCurrencyPath).getResult();
+				sUnitOrCurrencyValue = that.getValue(sUnitOrCurrencyPath);
 				if (sUnitOrCurrencyValue === undefined) {
 					Log.debug("Missing value for unit of measure " + sUnitOrCurrencyPath
 							+ " when updating " + sFullPath,
@@ -1341,6 +1354,18 @@ sap.ui.define([
 			sResourcePath += "&$top=" + iExpectedLength;
 		}
 		return sResourcePath;
+	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.lib._Cache#getValue
+	 */
+	CollectionCache.prototype.getValue = function (sPath) {
+		var oSyncPromise = this.drillDown(this.aElements, sPath);
+
+		if (oSyncPromise.isFulfilled()) {
+			return oSyncPromise.getResult();
+		}
 	};
 
 	/**
@@ -1963,6 +1988,21 @@ sap.ui.define([
 			}
 			return that.drillDown(oResult, sPath);
 		});
+	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.lib._Cache#getValue
+	 */
+	SingleCache.prototype.getValue = function (sPath) {
+		var oSyncPromise;
+
+		if (this.oPromise && this.oPromise.isFulfilled()) {
+			oSyncPromise = this.drillDown(this.oPromise.getResult(), sPath);
+			if (oSyncPromise.isFulfilled()) {
+				return oSyncPromise.getResult();
+			}
+		}
 	};
 
 	/**

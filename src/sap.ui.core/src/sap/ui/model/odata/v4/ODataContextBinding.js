@@ -825,8 +825,8 @@ sap.ui.define([
 				sPath += "/" + sSegment;
 				iTransientPredicate = sSegment.indexOf("($uid=");
 				if (iTransientPredicate >= 0) {
-					oEntity = that.oContext.fetchValue(sPath).getResult();
-					sPredicate = _Helper.getPrivateAnnotation(oEntity, "predicate");
+					oEntity = that.oContext.getValue(sPath);
+					sPredicate = oEntity && _Helper.getPrivateAnnotation(oEntity, "predicate");
 					if (!sPredicate) {
 						throw new Error("No key predicate known at " + sPath);
 					}
