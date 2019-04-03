@@ -158,7 +158,7 @@ sap.ui.define([
 	 *            Set this array to make custom response headers bindable via the entity's "__metadata/headers" property
 	 * @param {boolean} [mParameters.canonicalRequests=false]
 	 *            When setting this flag to <code>true</code> the model tries to calculate a canonical url to the data.
-	 *
+	 * @param {boolean} [mParameters.tokenHandlingForGet=false] Send CSRF token for GET requests in case read access logging is activated for the oData Service in the backend.
 	 * @class
 	 * Model implementation based on the OData protocol.
 	 *
@@ -203,6 +203,7 @@ sap.ui.define([
 				aBindableResponseHeaders,
 				sWarmupUrl,
 				bCanonicalRequests,
+				bTokenHandlingForGet,
 				that = this;
 
 			if (typeof (sServiceUrl) === "object") {
@@ -238,11 +239,13 @@ sap.ui.define([
 				aBindableResponseHeaders = mParameters.bindableResponseHeaders;
 				sWarmupUrl = mParameters.warmupUrl;
 				bCanonicalRequests = mParameters.canonicalRequests;
+				bTokenHandlingForGet = mParameters.tokenHandlingForGet;
 			}
 
 			this.mPathCache = {};
 			this.mInvalidatedPaths = {};
 			this.bCanonicalRequests = !!bCanonicalRequests;
+			this.bTokenHandlingForGet = !!bTokenHandlingForGet;
 			this.sMessageScope = MessageScope.RequestedObjects;
 			this.sWarmupUrl = sWarmupUrl;
 			this.bWarmup = !!sWarmupUrl;
@@ -2909,7 +2912,7 @@ sap.ui.define([
 		}
 
 		function readyForRequest(oRequest) {
-			if (that.bTokenHandling && oRequest.method !== "GET") {
+			if (that.bTokenHandling && (oRequest.method !== "GET" || that.bTokenHandlingForGet)) {
 				that.pReadyForRequest = that.securityTokenAvailable();
 			}
 			return that.pReadyForRequest;
@@ -2924,7 +2927,7 @@ sap.ui.define([
 			// token needs to be set directly on request headers, as request is already created
 			readyForRequest(oRequest).then(function(sToken) {
 				// Check bTokenHandling again, as updating the token might disable token handling
-				if (that.bTokenHandling && oRequest.method !== "GET") {
+				if (that.bTokenHandling && (oRequest.method !== "GET" || that.bTokenHandlingForGet)) {
 					oRequest.headers["x-csrf-token"] = sToken;
 				}
 				submit();
