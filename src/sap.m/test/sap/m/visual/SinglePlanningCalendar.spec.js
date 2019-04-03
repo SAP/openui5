@@ -20,7 +20,7 @@ describe("sap.m.SinglePlanningCalendar", function() {
 			if (presented) {
 				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
 				element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
-				element(by.css("#__list0 li:nth-of-type(2)")).click();
+				element.all(by.cssContainingText(".sapMSelectListItem", "Work Week View")).click();
 				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
 			} else {
 				element(by.id("__item1-button")).click();
@@ -38,7 +38,7 @@ describe("sap.m.SinglePlanningCalendar", function() {
 			if (presented) {
 				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
 				element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
-				element(by.css("#__list0 li:nth-of-type(3)")).click();
+				element.all(by.cssContainingText(".sapMSelectListItem", "Week View")).click();
 				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
 			} else {
 				element(by.id("__item2-button")).click();
