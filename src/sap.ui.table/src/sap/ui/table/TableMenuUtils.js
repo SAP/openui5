@@ -191,9 +191,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 				}
 
 				var oColumn = oColumns[iColumnIndex];
-				var oMenu = oColumn.getMenu();
-
-				oMenu.close();
+				oColumn._closeMenu();
 			},
 
 			/**

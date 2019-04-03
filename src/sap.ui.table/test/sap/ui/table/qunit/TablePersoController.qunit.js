@@ -381,8 +381,8 @@ sap.ui.require([
 			oController.savePersonalizations();
 
 			assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
-			assert.equal(oColorColumn.getVisible(), true, "Color column should be invisible.");
-			assert.equal(oNumberColumn.getVisible(), true, "Number column should be visible again.");
+			assert.equal(oColorColumn.getVisible(), true, "Color column should be visible again.");
+			assert.equal(oNumberColumn.getVisible(), true, "Number column should be visible.");
 
 			// clearing and refreshing the data should put the columns in the initial state (time when the table was set as association)
 			oController.getPersoService().delPersData();
