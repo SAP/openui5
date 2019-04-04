@@ -113,7 +113,30 @@
   "error-end-event": "0xe06F",
   "content-enricher": "0xe070",
   "realization": "0xe071",
-  "interface": "0xe07"
+  "interface": "0xe072",
+  "business-capability": "0xe073",
+  "progress-group": "0xe074",
+  "value-stream": "0xe075",
+  "value-flow": "0xe076",
+  "application": "0xe077",
+  "etl-job": "0xe078",
+  "business-service":"0xe079",
+  "application-service":"0xe07A",
+  "network-node": "0xe07B",
+  "network": "0xe07C",
+  "deployment-instance":  "0xe07D",
+  "intranet":"0xe07E",
+  "mobile-network": "0xe07F",
+  "private-cloud":  "0xe080",
+  "antenna": "0xe081",
+  "firewall": "0xe082",
+  "hub": "0xe083",
+  "modem": "0xe084",
+  "repeater": "0xe085",
+  "router": "0xe086",
+  "switch": "0xe087",
+  "satellite": "0xe088",
+  "system-2": "0xe089"
 }
 
 
