@@ -728,6 +728,11 @@ sap.ui.define([
 		/* Lifecycle methods                                           */
 		/* =========================================================== */
 
+		/**
+		 * This method will be called when the ComboBox is initially created.
+		 *
+		 * @protected
+		 */
 		ComboBox.prototype.init = function() {
 			this._oRb = core.getLibraryResourceBundle("sap.m");
 			ComboBoxBase.prototype.init.apply(this, arguments);
@@ -756,6 +761,11 @@ sap.ui.define([
 			this._bIsLastFocusedItemHeader = null;
 		};
 
+		/**
+		 * This event handler will be called before the ComboBox is rendered.
+		 *
+		 * @protected
+		 */
 		ComboBox.prototype.onBeforeRendering = function() {
 			ComboBoxBase.prototype.onBeforeRendering.apply(this, arguments);
 			this._fillList();
@@ -806,6 +816,11 @@ sap.ui.define([
 			}
 		};
 
+		/**
+		 * This method will be called when the ComboBox is being destroyed.
+		 *
+		 * @protected
+		 */
 		ComboBox.prototype.exit = function () {
 			ComboBoxBase.prototype.exit.apply(this, arguments);
 			this._oRb = null;
@@ -820,11 +835,21 @@ sap.ui.define([
 			}
 		};
 
+		/**
+		 * This event handler will be called before the ComboBox's Picker is rendered.
+		 *
+		 * @protected
+		 */
 		ComboBox.prototype.onBeforeRenderingPicker = function() {
 			var fnOnBeforeRenderingPickerType = this["onBeforeRendering" + this.getPickerType()];
 			fnOnBeforeRenderingPickerType && fnOnBeforeRenderingPickerType.call(this);
 		};
 
+		/**
+		 * This event handler will be called before the ComboBox' Picker of type <code>sap.m.Popover</code> is rendered.
+		 *
+		 * @protected
+		 */
 		ComboBox.prototype.onBeforeRenderingDropdown = function() {
 			var oPopover = this.getPicker(),
 				sWidth = (this.$().outerWidth() / parseFloat(library.BaseFontSize)) + "rem";
@@ -834,6 +859,11 @@ sap.ui.define([
 			}
 		};
 
+		/**
+		 * This event handler will be called before the ComboBox Picker's List is rendered.
+		 *
+		 * @protected
+		 */
 		ComboBox.prototype.onBeforeRenderingList = function() {
 
 			if (this.bProcessingLoadItemsEvent) {
@@ -850,6 +880,11 @@ sap.ui.define([
 			}
 		};
 
+		/**
+		 * This event handler will be called after the ComboBox's Picker is rendered.
+		 *
+		 * @protected
+		 */
 		ComboBox.prototype.onAfterRenderingPicker = function() {
 			var fnOnAfterRenderingPickerType = this["onAfterRendering" + this.getPickerType()];
 
@@ -859,6 +894,11 @@ sap.ui.define([
 			fnSelectedItemOnViewPort.call(this, false);
 		};
 
+		/**
+		 * This event handler will be called after the ComboBox Picker's List is rendered.
+		 *
+		 * @protected
+		 */
 		ComboBox.prototype.onAfterRenderingList = function() {
 			var oSelectedItem = this.getSelectedItem(),
 				oSelectedListItem = this.getListItem(oSelectedItem);
@@ -1985,7 +2025,7 @@ sap.ui.define([
 		/**
 		 * Opens the control's picker popup.
 		 *
-		 * @returns {sap.m.ComboBoxBase} <code>this</code> to allow method chaining.
+		 * @returns {sap.m.ComboBox} <code>this</code> to allow method chaining.
 		 * @protected
 		 */
 		ComboBox.prototype.open = function() {
