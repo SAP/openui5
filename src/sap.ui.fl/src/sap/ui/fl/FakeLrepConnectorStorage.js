@@ -376,10 +376,19 @@ sap.ui.define([
 				});
 			};
 
+			function checkIfVariantExists(mResult, sVariantReference) {
+				return Object.keys(mResult.changes.variantSection).some( function (sVariantManagementReference) {
+					var aVariants = mResult.changes.variantSection[sVariantManagementReference].variants;
+					return aVariants.some(function(oVariant) {
+						return oVariant.content.fileName === sVariantReference;
+					});
+				});
+			}
+
 			var mVariantManagementChanges = {};
 			aControlVariantManagementChanges.forEach(function(oVariantManagementChange) {
 				var sVariantManagementReference = oVariantManagementChange.selector.id;
-				if (Object.keys(mResult.changes.variantSection).length === 0) {
+				if (!mResult.changes.variantSection[sVariantManagementReference]) {
 					mResult.changes.variantSection[sVariantManagementReference] = this._getVariantManagementStructure(
 						[this._getVariantStructure(this._fakeStandardVariant(sVariantManagementReference), [], {})],
 						{}
@@ -395,11 +404,11 @@ sap.ui.define([
 			aChanges.forEach(function(oChange) {
 				if (!oChange.variantReference) {
 					mResult.changes.changes.push(oChange);
-				} else if (Object.keys(mResult.changes.variantSection).length === 0) {
-						mResult.changes.variantSection[oChange.variantReference] = this._getVariantManagementStructure(
-							[this._getVariantStructure(this._fakeStandardVariant(oChange.variantReference), [oChange], {})],
-							{}
-						);
+				} else if (!checkIfVariantExists(mResult, oChange.variantReference)) {
+					mResult.changes.variantSection[oChange.variantReference] = this._getVariantManagementStructure(
+						[this._getVariantStructure(this._fakeStandardVariant(oChange.variantReference), [oChange], {})],
+						{}
+					);
 				} else {
 					Object.keys(mResult.changes.variantSection).forEach(function(sVariantManagementReference) {
 						fnAddChangeToVariant(mResult, sVariantManagementReference, oChange);
@@ -408,7 +417,7 @@ sap.ui.define([
 			}.bind(this));
 
 			aControlVariantChanges.forEach(function(oVariantChange) {
-				if (Object.keys(mResult.changes.variantSection).length === 0) {
+				if (!checkIfVariantExists(mResult, oVariantChange.selector.id)) {
 					var mVariantChanges = {};
 					mVariantChanges[oVariantChange.changeType] = [oVariantChange];
 					mResult.changes.variantSection[oVariantChange.selector.id] = this._getVariantManagementStructure(
