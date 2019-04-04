@@ -25,7 +25,7 @@ sap.ui.define([
 	 * The class mirrors the ManagedObject API so that code that needs to work with ManagedObjects
 	 * in several representations can be written in a single way. The slight differences are handled
 	 * by specifying a super set of parameters that might not be needed in all use cases.
-	 * For example sap.ui.fl is using this class and its subtypes for change handlers that can be
+	 * For example sap.ui.fl uses this class and its subtypes for change handlers that can be
 	 * applied on XMLViews and normal ManagedObject instances.
 	 *
 	 * @namespace sap.ui.core.util.reflection.BaseTreeModifier
@@ -36,15 +36,15 @@ sap.ui.define([
 	return /** @lends sap.ui.core.util.reflection.BaseTreeModifier */{
 
 		/** Function determining the control targeted by the change.
-		* The function differs between local IDs generated starting with 1.40 and the global IDs generated in previous versions.
+		* The function distinguishes between local IDs generated starting with 1.40 and the global IDs generated in previous versions.
 		*
-		* @param {object} oSelector Target of a flexibility change
-		* @param {string} oSelector.id ID of the control targeted by the change
-		* @param {boolean} oSelector.isLocalId true if the ID within the selector is a local ID or a global ID
-		* @param {sap.ui.core.UIComponent} oAppComponent asd
-		* @param {Element} oView For XML processing only: XML node of the view
-		* @returns {sap.ui.base.ManagedObject | Element} Control representation targeted within the selector
-		* @throws {Error} in case no control could be determined an error is thrown
+		* @param {object} oSelector - Target of a flexibility change
+		* @param {string} oSelector.id - ID of the control targeted by the change
+		* @param {boolean} oSelector.isLocalId - <code>true</code> if the ID within the selector is a local ID or a global ID
+		* @param {sap.ui.core.UIComponent} oAppComponent - Application component
+		* @param {Element} oView - For XML processing only: XML node of the view
+		* @returns {sap.ui.base.ManagedObject|Element} Control representation targeted within the selector
+		* @throws {Error} In case no control could be determined, an error is thrown
 		* @public
 		*/
 		bySelector: function (oSelector, oAppComponent, oView) {
@@ -52,14 +52,14 @@ sap.ui.define([
 			return this._byId(sControlId, oView);
 		},
 
-		/** Function determining the control ID from selector.
-		* The function differs between local IDs generated starting with 1.40 and the global IDs generated in previous versions.
-		* @param {object} oSelector Target of a flexiblity change
-		* @param {string} oSelector.id ID of the control targeted by the change
-		* @param {boolean} oSelector.isLocalId True if the ID within the selector is a local ID or a global ID
-		* @param {sap.ui.core.UIComponent} oAppComponent Application Component
-		* @returns {string} Returns the ID of the control
-		* @throws {Error} in case no control could be determined an error is thrown
+		/** Function determining the control ID from the selector.
+		* The function distinguishes between local IDs generated starting with 1.40 and the global IDs generated in previous versions.
+		* @param {object} oSelector - Target of a flexiblity change
+		* @param {string} oSelector.id - ID of the control targeted by the change
+		* @param {boolean} oSelector.isLocalId - <code>true</code> if the ID within the selector is a local ID or a global ID
+		* @param {sap.ui.core.UIComponent} oAppComponent - Application component
+		* @returns {string} ID of the control
+		* @throws {Error} In case no control could be determined an error is thrown
 		* @protected
 		*/
 		getControlIdBySelector: function (oSelector, oAppComponent) {
@@ -99,17 +99,16 @@ sap.ui.define([
 		},
 
 
-		/** Function for determining the selector later used to apply a change for a given control.
-		 * The function differs between local IDs generated starting with 1.40 and the global IDs generated in previous versions.
+		/** Function for determining the selector that is used later to apply a change for a given control.
+		 * The function distinguishes between local IDs generated starting with 1.40 and the global IDs generated in previous versions.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element | string} vControl - control or ID string for which the selector should be determined
+		 * @param {sap.ui.base.ManagedObject|Element|string} vControl - Control or ID string for which the selector should be determined
 		 * @param {sap.ui.core.Component} oAppComponent - Application component, needed only if vControl is a string or XML node
 		 * @param {object} [mAdditionalSelectorInformation] - Additional mapped data which is added to the selector
 		 * @returns {object} oSelector
-		 * @returns {string} oSelector.id ID used for determination of the flexibility target
-		 * @returns {boolean} oSelector.idIsLocal flag if the selector.id has to be concatenated with the application component ID
-		 * while applying the change.
-		 * @throws {Error} in case no control could be determined an error is thrown
+		 * @returns {string} oSelector.id - ID used for determination of the flexibility target
+		 * @returns {boolean} oSelector.idIsLocal - <code>true</code> if the selector.id has to be concatenated with the application component ID while applying the change
+		 * @throws {Error} In case no control could be determined an error is thrown
 		 * @public
 		 */
 		getSelector: function (vControl, oAppComponent, mAdditionalSelectorInformation) {
@@ -148,12 +147,12 @@ sap.ui.define([
 		},
 
 		/**
-		 * Check if the control id is generated or maintained by the application
+		 * Checks if the control id is generated or maintained by the application.
 		 *
-		 * @param {sap.ui.core.Control | string} vControl Control instance or id
-		 * @param {sap.ui.core.Component} oAppComponent oAppComponent application component, needed only if vControl is string (id)
-		 * @param {boolean} [bSuppressLogging] bSuppressLogging flag to suppress the warning in the console
-		 * @returns {boolean} Returns true if the id is maintained by the application
+		 * @param {sap.ui.core.Control|string} vControl - Control instance or ID
+		 * @param {sap.ui.core.Component} oAppComponent - oAppComponent application component, needed only if vControl is a string (ID)
+		 * @param {boolean} [bSuppressLogging] bSuppressLogging - Flag to suppress the warning in the console
+		 * @returns {boolean} <code>true</code> if the ID is maintained by the application
 		 * @protected
 		 */
 		checkControlId: function (vControl, oAppComponent, bSuppressLogging) {
@@ -167,27 +166,26 @@ sap.ui.define([
 
 				var sHasConcatenatedId = sControlId.indexOf("--") !== -1;
 				if (!bSuppressLogging && !sHasConcatenatedId) {
-					Log.warning("Generated id attribute found, to offer flexibility a stable control id is needed " +
-						"to assign the changes to, but for this control the id was generated by SAPUI5", sControlId);
+					Log.warning("Control ID was generated dynamically by SAPUI5. To support SAPUI5 flexibility, a stable control ID is needed to assign the changes to.", sControlId);
 				}
 				return false;
 			}
 		},
 
 		/**
-		 * Checks if a control id has a prefix matching the application component it.
-		 * If this prefix exists the suffix after the component Id is called the local id.
+		 * Checks if a control ID has a prefix matching the application component.
+		 * If this prefix exists, the suffix after the component ID is called the local ID.
 		 *
-		 * @param {sap.ui.core.Control | string} vControl ui5 control or id to be checked if it is wihtin the generic application
-		 * @param {sap.ui.core.UIComponent} oAppComponent application component, needed only if vControl is string (id)
-		 * @returns {boolean} control has a local id
+		 * @param {sap.ui.core.Control|string} vControl - Control or ID to be checked if it is within the generic application
+		 * @param {sap.ui.core.UIComponent} oAppComponent - Application component, needed only if vControl is string (ID)
+		 * @returns {boolean} Whether control has a local ID
 		 * @protected
 		 */
 		hasLocalIdSuffix: function (vControl, oAppComponent) {
 			var sControlId = (vControl instanceof ManagedObject) ? vControl.getId() : vControl;
 
 			if (!oAppComponent) {
-				Log.error("determination of a local id suffix failed due to missing app component for " + sControlId);
+				Log.error("Determination of a local ID suffix failed due to missing app component for " + sControlId);
 				return false;
 			}
 
@@ -201,9 +199,9 @@ sap.ui.define([
 		 * Throws an error if any one of the controls in the fragment have no ID specified.
 		 * Aggregations will be ignored and don't need an ID.
 		 *
-		 * @param {Element} oFragment the fragment in XML
-		 * @param {string} sIdPrefix string which will be used to prefix the IDs
-		 * @returns {Element} Returns the original fragment in XML with updated IDs.
+		 * @param {Element} oFragment - Fragment in XML
+		 * @param {string} sIdPrefix - String which will be used to prefix the IDs
+		 * @returns {Element} Original fragment in XML with updated IDs
 		 */
 		_checkAndPrefixIdsInFragment: function(oFragment, sIdPrefix) {
 			var oParseError = XMLHelper.getParseError(oFragment);
@@ -242,10 +240,10 @@ sap.ui.define([
 		},
 
 		/**
-		 * Gets all the children of an XML Node that are element nodes
+		 * Gets all the children of an XML Node that are element nodes.
 		 *
-		 * @param {Element} oNode XML Node
-		 * @returns {Element[]} Returns an array with the children of the node.
+		 * @param {Element} oNode - XML node
+		 * @returns {Element[]} Array with the children of the node
 		 */
 		_getElementNodeChildren: function(oNode) {
 			var aChildren = [];
@@ -261,9 +259,9 @@ sap.ui.define([
 		/**
 		 * Checks if the element is an instance of the type.
 		 *
-		 * @param {object} oElement Element to be checked
-		 * @param {string} sType type That the element should be checked against
-		 * @returns {boolean} Returns true if the element is an instance of the type
+		 * @param {object} oElement - Element to be checked
+		 * @param {string} sType - Type that the element should be checked against
+		 * @returns {boolean} <code>true</code> if the element is an instance of the type
 		 */
 		_isInstanceOf: function(oElement, sType) {
 			var oInstance = ObjectPath.get(sType);
@@ -277,9 +275,9 @@ sap.ui.define([
 		/**
 		 * Checks if the element has the interface.
 		 *
-		 * @param {object} oElement Element
-		 * @param {string} sInterface Interface that should be in the element
-		 * @returns {boolean} Returns true if the element has the interface
+		 * @param {object} oElement - Element
+		 * @param {string} sInterface - Interface that should be in the element
+		 * @returns {boolean} <code>true</code> if the element has the interface
 		 */
 		_hasInterface: function(oElement, sInterface) {
 			var aInterfaces = oElement.getMetadata().getInterfaces();
@@ -287,10 +285,10 @@ sap.ui.define([
 		},
 
 		/**
-		 * Gets the Metadata of am XML control.
+		 * Gets the metadata of am XML control.
 		 *
-		 * @param {Element} oControl control in XML
-		 * @returns {sap.ui.base.Metadata} Returns the Metadata of the control
+		 * @param {Element} oControl - Control in XML
+		 * @returns {sap.ui.base.Metadata} Metadata of the control
 		 */
 		_getControlMetadataInXml: function(oControl) {
 			var sControlType = this._getControlTypeInXml(oControl);
@@ -300,10 +298,10 @@ sap.ui.define([
 		},
 
 		/**
-		 * Gets the ControlType of an XML control
+		 * Gets the ControlType of an XML control.
 		 *
-		 * @param {Element} oControl control in XML
-		 * @returns {string} Returns the control type as a string, e.g. 'sap.m.Button'.
+		 * @param {Element} oControl - Control in XML
+		 * @returns {string} Control type as a string, e.g. 'sap.m.Button'
 		 */
 		_getControlTypeInXml: function (oControl) {
 			var sControlType = oControl.namespaceURI;
@@ -314,12 +312,11 @@ sap.ui.define([
 		},
 
 		/**
-		 * Recursively goes through an XML Tree and calls a callback function for every control inside
-		 * Does not call the callback function for aggregations
+		 * Recursively goes through an XML tree and calls a callback function for every control inside.
+		 * Does not call the callback function for aggregations.
 		 *
-		 * @param {function} fnCallback function that will be called for every control with the following argument:
-		 * 								{Element} node Element
-		 * @param {Element} oRootNode rootnode from which we start traversing the tree
+		 * @param {function} fnCallback - Function that will be called for every control with the following arguments: fnCallback(<Element>)
+		 * @param {Element} oRootNode - Root node from which we start traversing the tree
 		 */
 		_traverseXmlTree: function(fnCallback, oRootNode) {
 			function recurse(oParent, oCurrentNode, bIsAggregation) {
@@ -341,144 +338,140 @@ sap.ui.define([
 			recurse.call(this, oRootNode, oRootNode, false);
 		},
 
-		//public methods for all modifiers, they are implemented in the sub classes:
-
 		/**
-		 * See {@link sap.ui.core.Control#setVisible} method
+		 * See {@link sap.ui.core.Control#setVisible} method.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element} vControl Control representation
-		 * @param {boolean} bVisible New value for property visible
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
+		 * @param {boolean} bVisible - New value for <code>visible</code> property
 		 * @public
 		 */
 		setVisible: function (vControl, bVisible) {},
 
 		/**
-		 * See {@link sap.ui.core.Control#getVisible} method
+		 * See {@link sap.ui.core.Control#getVisible} method.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element} vControl Control representation
-		 * @returns {boolean} whether the control's visible property is set or not
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
+		 * @returns {boolean} Whether the control's <code>visible</code> property is set or not
 		 * @public
 		 */
 		getVisible: function (vControl) {},
 
-
 		/**
-		 * See {@link sap.ui.core.StashedControlSupport#setVisible} method
+		 * See {@link sap.ui.core.StashedControlSupport#setVisible} method.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element} vControl Control representation
-		 * @param {boolean} bVisible New value for property stashed
-		 *
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
+		 * @param {boolean} bVisible - New value for <code>stashed</code> property
 		 * @public
 		 */
 		setStashed: function (vControl, bStashed) {},
 
 		/**
-		 * See {@link sap.ui.core.StashedControlSupport#getVisible} method
+		 * See {@link sap.ui.core.StashedControlSupport#getVisible} method.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element} vControl Control representation
-		 * @returns {boolean} whether the control is stashed or not
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
+		 * @returns {boolean} Whether the control is stashed or not
 		 * @public
 		 */
 		getStashed: function (vControl) {},
 
 		/**
-		 * See {@link sap.ui.base.ManagedObject#bindProperty} method
+		 * See {@link sap.ui.base.ManagedObject#bindProperty} method.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element} vControl Control representation
-		 * @param {string} sPropertyName property name
-		 * @param {object} vBindingInfos binding info
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
+		 * @param {string} sPropertyName - Property name
+		 * @param {object} vBindingInfos - Binding info
 		 * @public
 		 */
 		bindProperty: function (vControl, sPropertyName, vBindingInfos) {},
 
 		/**
-		 * See {@link sap.ui.base.ManagedObject#unbindProperty} method
+		 * See {@link sap.ui.base.ManagedObject#unbindProperty} method.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element} vControl Control representation
-		 * @param  {string} sPropertyName  The property to be unbound
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
+		 * @param  {string} sPropertyName - Property name to be unbound
 		 * @public
 		 */
 		unbindProperty: function (vControl, sPropertyName) {},
 
 		/**
-		 * See {@link sap.ui.base.ManagedObject#bindAggregation} method
+		 * See {@link sap.ui.base.ManagedObject#bindAggregation} method.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element} vControl Control representation
-		 * @param {string} sAggregationName Aggregation name
-		 * @param {object} vBindingInfos Binding info
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
+		 * @param {string} sAggregationName - Aggregation name
+		 * @param {object} vBindingInfos - Binding info
 		 * @public
 		 */
 		bindAggregation: function (vControl, sAggregationName, vBindingInfos) {},
 
 		/**
-		 * See {@link sap.ui.base.ManagedObject#unbindAggregation} method
+		 * See {@link sap.ui.base.ManagedObject#unbindAggregation} method.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element} vControl Control representation
-		 * @param {string} sAggregationName The aggregation to be unbound
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
+		 * @param {string} sAggregationName - Aggregation name to be unbound
 		 * @public
 		 */
 		unbindAggregation: function (vControl, sAggregationName) {},
 
 		/**
-		 * See {@link sap.ui.base.ManagedObject#setProperty} method
+		 * See {@link sap.ui.base.ManagedObject#setProperty} method.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element} vControl Control representation
-		 * @param {string} sPropertyName property name
-		 * @param {any} vPropertyValue new value for the property
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
+		 * @param {string} sPropertyName - Property name
+		 * @param {*} vPropertyValue - New value for the property
 		 * @public
 		 */
 		setProperty: function (vControl, sPropertyName, vPropertyValue) {},
 
 		/**
-		 * See {@link sap.ui.base.ManagedObject#getProperty} method
+		 * See {@link sap.ui.base.ManagedObject#getProperty} method.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element} vControl Control representation
-		 * @param {string} sPropertyName property name
-		 * @returns {any} value of the property
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
+		 * @param {string} sPropertyName - Property name
+		 * @returns {any} Value of the property
 		 * @public
 		 */
 		getProperty: function (vControl, sPropertyName)  {},
 
 		/**
-		 * See {@link sap.ui.base.ManagedObject#isPropertyInitial} method
+		 * See {@link sap.ui.base.ManagedObject#isPropertyInitial} method.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element} vControl Control representation
-		 * @param {string} sPropertyName property name
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
+		 * @param {string} sPropertyName - Property name
 		 * @returns {boolean} <code>true</code> if the property is initial
 		 * @public
 		 */
 		isPropertyInitial: function (oControl, sPropertyName) {},
 
 		/**
-		 * Similar as {@link #bindProperty}, but allows to specify binding like in control constructor
+		 * Similar as {@link #bindProperty}, but allows to specify binding like in control constructor.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element} vControl Control representation
-		 * @param {string} sPropertyName property name
-		 * @param {any} vPropertyBinding See {@link sap.ui.base.ManagedObject#extractBindingInfo} method
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
+		 * @param {string} sPropertyName - Property name
+		 * @param {any} vPropertyBinding - See {@link sap.ui.base.ManagedObject#extractBindingInfo} method
 		 * @public
 		 */
 		setPropertyBinding: function (vControl, sPropertyName, vPropertyBinding) {},
 
 		/**
-		 * See {@link sap.ui.base.ManagedObject#getBindingInfo} method
+		 * See {@link sap.ui.base.ManagedObject#getBindingInfo} method.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element} vControl Control representation
-		 * @param {string} sPropertyName property name
-		 * @returns {any} binding Info
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
+		 * @param {string} sPropertyName - Property name
+		 * @returns {*} Binding info
 		 * @public
 		 */
 		getPropertyBinding: function (vControl, sPropertyName) {},
 
 
 		/**
-		 * Creates the control in the corresponding representation
+		 * Creates the control in the corresponding representation.
 		 *
 		 * @param {string} sClassName - Class name for the control (for example, <code>sap.m.Button</code>), ensure the class is loaded (no synchronous requests are called)
 		 * @param {sap.ui.core.UIComponent} [oAppComponent] - Needed to calculate the correct ID in case you provide an ID
 		 * @param {Element} [oView] - XML node of the view, required for XML case to create nodes and to find elements
 		 * @param {object} [oSelector] - Selector to calculate the ID for the control that is created
 		 * @param {string} [oSelector.id] - Control ID targeted by the change
-		 * @param {boolean} [oSelector.isLocalId] - True if the ID within the selector is a local ID or a global ID
+		 * @param {boolean} [oSelector.isLocalId] - <code>true</code> if the ID within the selector is a local ID or a global ID
 		 * @param {object} [mSettings] - Further settings or properties for the control that is created
 		 * @param {boolean} bAsync - Determines whether a synchronous (promise) or an asynchronous value should be returned
 		 * @returns {Element|Promise} Element or promise with element of the control that is created
@@ -487,172 +480,160 @@ sap.ui.define([
 		createControl: function (sClassName, oAppComponent, oView, oSelector, mSettings, bAsync) {},
 
 		/**
-		 * See {@link sap.ui.base.ManagedObject#applySettings} method
+		 * See {@link sap.ui.base.ManagedObject#applySettings} method.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element} vControl - control representation
-		 * @param {object} mSettings Further settings or properties for the control
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
+		 * @param {object} mSettings - Further settings or properties for the control
 		 * @returns {Element} XML node of the control being created
 		 * @public
 		 */
 		applySettings: function(vControl, mSettings) {},
 
 		/**
-		 * See {@link sap.ui.base.ManagedObject#getId} method
+		 * Returns the control for the given ID. Please consider using {@link sap.ui.core.util.reflection.BaseTreeModifier.js#bySelector} instead if possible.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element} vControl Control representation
+		 * @param {string} sId - Control ID
+		 * @param {Element} oView - View that the control belongs to
+		 * @returns {sap.ui.core.Element|Element} - Control instance or element node or <code>undefined</code> if control cannot be found
+		 * @private
+		 */
+		_byId: function (sId, oView) {},
+
+		/**
+		 * See {@link sap.ui.base.ManagedObject#getId} method.
+		 *
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
 		 * @returns {string} ID
 		 * @public
 		 */
 		getId: function (vControl) {},
 
 		/**
-		 * See {@link sap.ui.base.ManagedObject#getParent} method
+		 * See {@link sap.ui.base.ManagedObject#getParent} method.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element} vControl Control representation
-		 * @returns {sap.ui.base.ManagedObject | Element} parent control in it's representation
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
+		 * @returns {sap.ui.base.ManagedObject|Element} Parent control in its representation
 		 * @public
 		 */
 		getParent: function (vControl) {},
 
 		/**
-		 * See {@link sap.ui.base.Metadata#getName} method
+		 * See {@link sap.ui.base.Metadata#getName} method.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element} vControl Control representation
-		 * @returns {string} control type
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
+		 * @returns {string} Control type
 		 * @public
 		 */
 		getControlType: function (vControl) {},
 
 		/**
-		 * See {@link sap.ui.base.ManagedObject#setAssociation} method
+		 * See {@link sap.ui.base.ManagedObject#setAssociation} method.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element}
-		 *          vParent The control which has the association
-		 * @param {string}
-		 *          sName Association name
-		 * @param {string | sap.ui.base.ManagedObject| Element}
-		 *          sId the ID of the managed object that is set as an association, or the managed object or XML node itself or null
+		 * @param {sap.ui.base.ManagedObject|Element} vParent - Control which has the association
+		 * @param {string} sName - Association name
+		 * @param {string|sap.ui.base.ManagedObject|Element} sId - ID of the managed object that is set as an association, or the managed object or XML node itself or <code>null</code>
 		 * @public
 		 */
 		setAssociation: function (vParent, sName, sId) {},
 
 		/**
-		 * See {@link sap.ui.base.ManagedObject#getAssociation} method
+		 * See {@link sap.ui.base.ManagedObject#getAssociation} method.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element}
-		 *          vParent The control which has the association
-		 * @param {string}
-		 *          sName Association name
-		 *
-		 * @returns {string | string[]} the ID of the associated managed object or an array of such IDs; may be null if the association has not been populated
+		 * @param {sap.ui.base.ManagedObject|Element} vParent - Control which has the association
+		 * @param {string} sName - Association name
+		 * @returns {string|string[]} ID of the associated managed object or an array of such IDs; may be null if the association has not been populated
 		 * @public
 		 */
 		getAssociation: function (vParent, sName) {},
 
 		/**
-		 * See {@link sap.ui.base.ManagedObjectMetadata#getAllAggregations} method
+		 * See {@link sap.ui.base.ManagedObjectMetadata#getAllAggregations} method.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element} vControl Control representation
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
 		 * @return {map} Map of aggregation info objects keyed by aggregation names
 		 * @public
 		 */
 		getAllAggregations: function (vControl) {},
 
 		/**
-		 * See {@link sap.ui.base.ManagedObject#getAggregation} method
+		 * See {@link sap.ui.base.ManagedObject#getAggregation} method.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element}
-		 *          vParent The control which has the aggregation
-		 * @param {string}
-		 *          sName Aggregation name
-		 *
-		 * @returns {sap.ui.base.ManagedObject[] | Element[]} the aggregation content
+		 * @param {sap.ui.base.ManagedObject|Element} vParent - Control which has the aggregation
+		 * @param {string} sName - Aggregation name
+		 * @returns {sap.ui.base.ManagedObject[]|Element[]} Aggregation content
 		 * @public
 		 */
 		getAggregation: function (vParent, sName) {},
 
 
 		/**
-		 * See {@link sap.ui.base.ManagedObject#insertAggregation} method
+		 * See {@link sap.ui.base.ManagedObject#insertAggregation} method.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element} vParent The control which has the aggregation
-		 * @param {string} sAggregationName Aggregation name
-		 * @param {sap.ui.base.ManagedObject | Element} oObject XML node or element of the control that will be inserted
-		 * @param {int} iIndex Index for <code>oObject</code> in the aggregation
-		 * @param {Element} [oView] xml node/element of the view - needed in XML case to potentially create (aggregation) nodes
+		 * @param {sap.ui.base.ManagedObject|Element} vParent - Control which has the aggregation
+		 * @param {string} sAggregationName - Aggregation name
+		 * @param {sap.ui.base.ManagedObject|Element} oObject - XML node or element of the control that will be inserted
+		 * @param {int} iIndex - Index for <code>oObject</code> in the aggregation
+		 * @param {Element} [oView] - XML node of the view - needed in XML case to potentially create (aggregation) nodes
 		 * @public
 		 */
 		insertAggregation: function (vParent, sAggregationName, oObject, iIndex, oView) {},
 
 
 		/**
-		 * See {@link sap.ui.base.ManagedObject#removeAggregation} method
-		 * Removes the object from the aggregation of the given control
+		 * Removes the object from the aggregation of the given control.
+		 * See {@link sap.ui.base.ManagedObject#removeAggregation} method.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element}
-		 *          vParent - control representation
-		 * @param {string}
-		 *          sAggregationName - aggregation name
-		 * @param {sap.ui.base.ManagedObject | Element}
-		 *          oObject - aggregated object to be set
+		 * @param {sap.ui.base.ManagedObject|Element} vParent - Control representation
+		 * @param {string} sAggregationName - Aggregation name
+		 * @param {sap.ui.base.ManagedObject|Element} oObject - Aggregated object to be set
 		 * @public
 		 */
 		removeAggregation: function (vParent, sAggregationName, oObject) {},
 
 		/**
-		 * See {@link sap.ui.base.ManagedObject#removeAllAggregation} method
-		 * Removes alls objects from the aggregation of the given control
+		 * Removes all objects from the aggregation of the given control.
+		 * See {@link sap.ui.base.ManagedObject#removeAllAggregation} method.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element}
-		 *          vParent - control representation
-		 * @param {string}
-		 *          sAggregationName - aggregation name
+		 * @param {sap.ui.base.ManagedObject|Element} vParent - Control representation
+		 * @param {string} sAggregationName - Aggregation name
 		 * @public
 		 */
 		removeAllAggregation: function (vParent, sAggregationName) {},
 
 		/**
-		 * Get the binding template from an aggregation
-		 * See {@link sap.ui.base.ManagedObject#getBindingInfo} method
+		 * Get the binding template from an aggregation.
+		 * See {@link sap.ui.base.ManagedObject#getBindingInfo} method.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element}
-		 *          vControl - control representation
-		 * @param {string}
-		 *          sAggregationName - aggregation name
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
+		 * @param {string} sAggregationName - Aggregation name
 		 * @public
 		 */
 		getBindingTemplate: function (vControl, sAggregationName) {},
 
 		/**
-		 * See {@link sap.ui.base.ManagedObject#updateAggregation} method
+		 * See {@link sap.ui.base.ManagedObject#updateAggregation} method.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element}
-		 *          vParent - control representation
-		 * @param {string}
-		 *          sAggregationName - aggregation name
+		 * @param {sap.ui.base.ManagedObject|Element} vParent - Control representation
+		 * @param {string} sAggregationName - Aggregation name
 		 * @public
 		 */
 		updateAggregation: function (vParent, sAggregationName) {},
 
 		/**
-		 * Finds the index of the control in it's parent aggregation
+		 * Finds the index of the control in its parent aggregation.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element}
-		 *          vParent - control representation
-		 * @returns {int} index of the control
+		 * @param {sap.ui.base.ManagedObject|Element} vParent - Control representation
+		 * @returns {int} Index of the control
 		 * @public
 		 */
 		findIndexInParentAggregation: function (vControl) {},
 
 		/**
-		 * Removes alls objects from the aggregation of the given control
+		 * Removes all objects from the aggregation of the given control.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element}
-		 *          vControl - control representation
-		 * @param {sap.ui.base.ManagedObject | Element}
-		 *          [vParent] - control representation of the parent only needed in XML case
-		 * @returns {string}
-		 *          parent aggregation name
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
+		 * @param {sap.ui.base.ManagedObject|Element} [vParent] - Control representation of the parent only needed in XML case
+		 * @returns {string} Parent aggregation name
 		 * @public
 		 */
 		getParentAggregationName: function (vControl, vParent) {},
@@ -660,55 +641,53 @@ sap.ui.define([
 		/**
 		 * Validates if the control has the correct type for the aggregation.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element} vControl control whose type is to be checked
-		 * @param {object} mAggregationMetadata Aggregation info object
-		 * @param {sap.ui.base.ManagedObject | Element} vParent parent of the control
-		 * @param {string} sFragment path to the fragment that contains the control, whose type is to be checked
-		 * @param {int} iIndex index of the current control in the parent aggregation
-		 * @returns {boolean} Returns true if the type matches
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control whose type is to be checked
+		 * @param {object} mAggregationMetadata - Aggregation info object
+		 * @param {sap.ui.base.ManagedObject|Element} vParent - Parent of the control
+		 * @param {string} sFragment - Path to the fragment that contains the control, whose type is to be checked
+		 * @param {int} iIndex - Index of the current control in the parent aggregation
+		 * @returns {boolean} <code>true</code> if the type matches
 		 * @public
 		 */
 		validateType: function(vControl, mAggregationMetadata, vParent, sFragment, iIndex) {},
 
 		/**
 		 * Loads a fragment and turns the result into an array of nodes; also prefixes all the controls with a given namespace;
-		 * throws an error if there is at least one control in the fragment without a stable ID or has a duplicate ID in the given view
+		 * throws an error if there is at least one control in the fragment without a stable ID or has a duplicate ID in the given view.
 		 *
-		 * @param {string} sFragment XML fragment as string
-		 * @param {string} sNamespace Namespace of the app
-		 * @param {sap.ui.core.mvc.View} oView View for the fragment
-		 * @returns {Element[]} Returns an array with the nodes of the controls of the fragment
+		 * @param {string} sFragment - XML fragment as string
+		 * @param {string} sNamespace - Namespace of the app
+		 * @param {sap.ui.core.mvc.View} oView - View for the fragment
+		 * @returns {Element[]} Array with the nodes of the controls of the fragment
 		 * @public
 		 */
 		instantiateFragment: function(sFragment, sNamespace, oView) {},
 
 		/**
-		 * See {@link sap.ui.base.ManagedObject#destroy} method
 		 * Cleans up the resources associated with this object and all its aggregated children.
+		 * See {@link sap.ui.base.ManagedObject#destroy} method.
 		 *
 		 * After an object has been destroyed, it can no longer be used!
-		 *
 		 * Applications should call this method if they don't need the object any longer.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element}
-		 *          vControl - Control representation
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
 		 * @public
 		 */
 		destroy: function(vControl) {},
 
 		/**
-		 * Returns the module path of an instance specific change handler
+		 * Returns the module path of an instance specific change handler.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element} vControl control representation
-		 * @returns {string} module path
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
+		 * @returns {string} Module path
 		 * @public
 		 */
 		getChangeHandlerModulePath: function(vControl) {},
 
 		/**
-		 * Attaches event on the specified ManagedObject
+		 * Attaches event on the specified ManagedObject.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element} vControl control representation
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
 		 * @param {string} sEventName - Event name
 		 * @param {string} sFunctionPath - Absolute path to a function
 		 * @param {vData} vData - Predefined values for event handler function
@@ -717,9 +696,9 @@ sap.ui.define([
 		attachEvent: function(oObject, sEventName, sFunctionPath, vData) {},
 
 		/**
-		 * Detaches event from the specified ManagedObject
+		 * Detaches event from the specified ManagedObject.
 		 *
-		 * @param {sap.ui.base.ManagedObject | Element} vControl control representation
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
 		 * @param {string} sEventName - Event name
 		 * @param {string} sFunctionPath - Absolute path to a function
 		 * @public

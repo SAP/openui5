@@ -397,7 +397,7 @@ function(
 			assert.strictEqual(XmlTreeModifier.getAssociation(oControl, "labelFor"), this.HBOX_ID, "associated control instance got converted to its ID");
 		});
 
-		QUnit.test("_byId finds the node specified", function (assert) {
+		QUnit.test("byId finds the node specified", function (assert) {
 			var oExpectedHBox = XmlTreeModifier._children(this.oXmlView)[1];
 			oExpectedHBox.setAttributeNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.Internal/1", "id", true);
 			var oExpectedText = oExpectedHBox.childNodes[1].childNodes[1];

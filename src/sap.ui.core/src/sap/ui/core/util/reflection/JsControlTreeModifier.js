@@ -31,6 +31,9 @@ sap.ui.define([
 
 		targets: "jsControlTree",
 
+		/**
+		 * @inheritDoc
+		 */
 		setVisible: function (oControl, bVisible) {
 			if (oControl.setVisible) {
 				this.unbindProperty(oControl, "visible");
@@ -40,6 +43,9 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		getVisible: function (oControl) {
 			if (oControl.getVisible) {
 				return oControl.getVisible();
@@ -48,6 +54,9 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		setStashed: function (oControl, bStashed, oAppComponent) {
 			bStashed = !!bStashed;
 			if (oControl.setStashed) {
@@ -81,6 +90,9 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		getStashed: function (oControl) {
 			if (oControl.getStashed) {
 				//check if it's a stashed control. If not, return the !visible property
@@ -90,15 +102,15 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		bindProperty: function (oControl, sPropertyName, vBindingInfos) {
 			oControl.bindProperty(sPropertyName, vBindingInfos);
 		},
 
 		/**
-		 * Unbind a property
-		 * The value should not be reset to default when unbinding (bSuppressReset = true)
-		 * @param  {sap.ui.core.Control} oControl  The control containing the property
-		 * @param  {string} sPropertyName  The property to be unbound
+		 * @inheritDoc
 		 */
 		unbindProperty: function (oControl, sPropertyName) {
 			if (oControl) {
@@ -106,6 +118,9 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		setProperty: function (oControl, sPropertyName, oPropertyValue) {
 			var oMetadata = oControl.getMetadata().getPropertyLikeSetting(sPropertyName);
 			this.unbindProperty(oControl, sPropertyName);
@@ -120,6 +135,9 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		getProperty: function (oControl, sPropertyName) {
 			var oMetadata = oControl.getMetadata().getPropertyLikeSetting(sPropertyName);
 			if (oMetadata) {
@@ -128,10 +146,16 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		isPropertyInitial: function (oControl, sPropertyName) {
 			return oControl.isPropertyInitial(sPropertyName);
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		setPropertyBinding: function (oControl, sPropertyName, oPropertyBinding) {
 			this.unbindProperty(oControl, sPropertyName);
 			var mSettings = {};
@@ -139,24 +163,16 @@ sap.ui.define([
 			oControl.applySettings(mSettings);
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		getPropertyBinding: function (oControl, sPropertyName) {
 			return oControl.getBindingInfo(sPropertyName);
 
 		},
 
 		/**
-		 * Creates the control.
-		 *
-		 * @param {string} sClassName - Class name for the control (for example, <code>sap.m.Button</code>), ensure that the class is loaded (no synchronous requests are called)
-		 * @param {sap.ui.core.UIComponent} [oAppComponent] - Needed to calculate the correct ID in case you provide an ID
-		 * @param {Element} [oView] - Empty in this case (XML node of the view, required for XML case to create nodes and to find elements)
-		 * @param {object} [oSelector] - Selector to calculate the ID for the control that is created
-		 * @param {string} [oSelector.id] - Control ID targeted by the change
-		 * @param {boolean} [oSelector.isLocalId] - True if the ID within the selector is a local ID or a global ID
-		 * @param {object} [mSettings] - Further settings or properties for the control that is created
-		 * @param {boolean} bAsync - Determines whether a synchronous (promise) or an asynchronous value should be returned
-		 * @returns {Element|Promise} Element or promise with element of the control that is created
-		 * @public
+		 * @inheritDoc
 		 */
 		createControl: function (sClassName, oAppComponent, oView, oSelector, mSettings, bAsync) {
 			var sErrorMessage;
@@ -191,54 +207,43 @@ sap.ui.define([
 			return new ClassObject(sId, mSettings);
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		applySettings: function(oControl, mSettings) {
 			oControl.applySettings(mSettings);
 		},
 
 		/**
-		 * Returns the control for the given id.
-		 * In case of changes favor bySelector
-		 *
-		 * @param {sap.ui.core.ID} sId Control id
-		 * @returns {sap.ui.core.Element} Control or undefined if control cannot be found.
-		 */
-		byId: function (sId) {
-			return this._byId(sId);
-		},
-
-		/**
-		 * Returns the control for the given id. Undefined if control cannot be found.
-		 *
-		 * @param {sap.ui.core.ID} sId Control id
-		 * @returns {sap.ui.core.Element} Control
-		 * @private
+		 * @inheritDoc
 		 */
 		_byId: function (sId) {
 			return sap.ui.getCore().byId(sId);
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		getId: function (oControl) {
 			return oControl.getId();
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		getParent: function (oControl) {
 			return oControl.getParent && oControl.getParent();
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		getControlType: function (oControl) {
 			return oControl && oControl.getMetadata().getName();
 		},
 
 		/**
-		 * See {@link sap.ui.base.ManagedObject#setAssociation} method
-		 *
-		 * @param {sap.ui.base.ManagedObject}
-		 *          vParent The control which has the association
-		 * @param {string}
-		 *          sName Association name
-		 * @param {string | sap.ui.base.ManagedObject}
-		 *          sId the ID of the managed object that is set as an association, or the managed object or XML node itself or null
-		 * @public
+		 * @inheritDoc
 		 */
 		setAssociation: function (vParent, sName, sId) {
 			var oMetadata = vParent.getMetadata().getAssociation(sName);
@@ -246,34 +251,22 @@ sap.ui.define([
 		},
 
 		/**
-		 * See {@link sap.ui.base.ManagedObject#getAssociation} method
-		 *
-		 * @param {sap.ui.base.ManagedObject}
-		 *          vParent The control which has the association
-		 * @param {string}
-		 *          sName Association name
-		 *
-		 * @returns {string | string[]} the ID of the associated managed object or an array of such IDs; may be null if the association has not been populated
-		 * @public
+		 * @inheritDoc
 		 */
 		getAssociation: function (vParent, sName) {
 			var oMetadata = vParent.getMetadata().getAssociation(sName);
 			return oMetadata.get(vParent);
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		getAllAggregations: function (oParent) {
 			return oParent.getMetadata().getAllAggregations();
 		},
 
 		/**
-		 * Returns the aggregation
-		 *
-		 * @param {sap.ui.core.Control}
-		 *          oParent The control which has the aggregation
-		 * @param {string}
-		 *          sName Aggregation name
-		 *
-		 * @return {sap.ui.core.Control[]} Returns the aggregation
+		 * @inheritDoc
 		 */
 		getAggregation: function (oParent, sName) {
 			var oAggregation = this.findAggregation(oParent, sName);
@@ -283,16 +276,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Adds an additional item of the aggregation or changes it in case it is not a multiple one
-		 *
-		 * @param {sap.ui.core.Control}
-		 *          oParent - the control for which the changes should be fetched
-		 * @param {string}
-		 *          sName - aggregation name
-		 * @param {object}
-		 *          oObject - aggregated object to be set
-		 * @param {int}
-		 *          iIndex <optional> - index to which it should be added/inserted
+		 * @inheritDoc
 		 */
 		insertAggregation: function (oParent, sName, oObject, iIndex) {
 			//special handling without invalidation for customData
@@ -313,14 +297,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Removes the object from the aggregation of the given control
-		 *
-		 * @param {sap.ui.core.Control}
-		 *          oControl - the parent control for which the changes should be fetched
-		 * @param {string}
-		 *          sName - aggregation name
-		 * @param {object}
-		 *          oObject - aggregated object to be set
+		 * @inheritDoc
 		 */
 		removeAggregation: function (oControl, sName, oObject) {
 			//special handling without invalidation for customData
@@ -334,6 +311,9 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		removeAllAggregation: function (oControl, sName) {
 			//special handling without invalidation for customData
 			if ( sName === "customData"){
@@ -346,11 +326,17 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		getBindingTemplate: function (oControl, sAggregationName) {
 			var oBinding = oControl.getBindingInfo(sAggregationName);
 			return oBinding && oBinding.template;
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		updateAggregation: function (oControl, sAggregationName) {
 			var oAggregation = this.findAggregation(oControl, sAggregationName);
 			if (oAggregation) {
@@ -359,6 +345,9 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		findIndexInParentAggregation: function(oControl) {
 			var oParent = this.getParent(oControl),
 				aControlsInAggregation;
@@ -383,16 +372,15 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		getParentAggregationName: function (oControl) {
 			return oControl.sParentAggregationName;
 		},
 
 		/**
-		 * checks the metadata of the given control and returns the aggregation matching the name
-		 *
-		 * @param {sap.ui.core.Control} oControl control whose aggregation is to be found
-		 * @param {string} sAggregationName name of the aggregation
-		 * @returns {object} Returns the instance of the aggregation or undefined
+		 * @inheritDoc
 		 */
 		findAggregation: function(oControl, sAggregationName) {
 			if (oControl) {
@@ -407,13 +395,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Validates if the control has the correct type for the aggregation.
-		 *
-		 * @param {sap.ui.core.Control} oControl control whose type is to be checked
-		 * @param {object} oAggregationMetadata metadata of the aggregation
-		 * @param {sap.ui.core.Control} oParent parent of the control
-		 * @param {string} sFragment path to the fragment that contains the control, whose type is to be checked
-		 * @returns {boolean} Returns true if the type matches
+		 * @inheritDoc
 		 */
 		validateType: function(oControl, oAggregationMetadata, oParent, sFragment) {
 			var sTypeOrInterface = oAggregationMetadata.type;
@@ -448,14 +430,15 @@ sap.ui.define([
 		},
 
 		/**
-		 * Destroys a given control
-		 *
-		 * @param {sap.ui.core.Control} oControl Control which will be destroyed
+		 * @inheritDoc
 		 */
 		destroy: function(oControl) {
 			oControl.destroy();
 		},
 
+		/**
+		 * @inheritDoc
+		 */
 		getChangeHandlerModulePath: function(oControl) {
 			if (typeof oControl === "object" && typeof oControl.data === "function"
 					&& oControl.data("sap-ui-custom-settings") && oControl.data("sap-ui-custom-settings")["sap.ui.fl"]){
