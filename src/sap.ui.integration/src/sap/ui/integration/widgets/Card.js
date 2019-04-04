@@ -795,7 +795,7 @@ sap.ui.define([
 	 */
 	Card.prototype.setManifest = function (vValue) {
 		this.setBusy(true);
-		this.setProperty("manifest", vValue, true);
+		this.setProperty("manifest", vValue);
 
 		if (typeof vValue === "string" && vValue !== "") {
 			this._oCardManifest = new CardManifest();
