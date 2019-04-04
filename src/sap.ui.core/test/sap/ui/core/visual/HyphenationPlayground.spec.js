@@ -42,7 +42,7 @@ describe("sap.ui.core.HyphenationPlayground", function() {
 		"cs" : "280px",
 		"da": "350px",
 		"nl" : "320px",
-		"en-us": "300px",
+		"en-us": "280px",
 		"et" : "350px",
 		"fi": "350px",
 		"fr" : "340px",
@@ -61,8 +61,8 @@ describe("sap.ui.core.HyphenationPlayground", function() {
 		"es" : "350px",
 		"sv" : "350px",
 		"th" : "320px",
-		"tr" : "350px",
-		"uk": "350px"
+		"tr" : "300px",
+		"uk": "200px"
 	};
 
 	var fnTakePictures = function(sLang, n) {
