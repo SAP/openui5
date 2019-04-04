@@ -1047,7 +1047,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	MultiInput.prototype.onfocusin = function (oEvent) {
 		this._bValueHelpOpen = false; //This means the ValueHelp is closed and the focus is back. So, reset that var
 
-		if (this.getEditable() && (this.getEnableMultiLineMode() || this._bUseDialog)) {
+		if (this.getEditable() && (this.getEnableMultiLineMode() || this._bUseDialog)  && (!oEvent.target.classList.contains("sapMInputValHelp") && !oEvent.target.classList.contains("sapMInputValHelpInner"))) {
 			this.openMultiLine();
 		}
 
