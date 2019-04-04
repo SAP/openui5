@@ -500,6 +500,25 @@
 		assert.strictEqual(textClassList.contains('sapMNLI-TextWrapper--is-expanded'), true, 'Notification text shouldn\'t be truncated.');
 	});
 
+	QUnit.test('Check if "Show more" button is shown when title is truncated a little', function(assert) {
+		// arrange
+		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m'),
+			expandText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_SHOW_MORE');
+
+		this.NotificationListItem.setTitle('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi id lorem at ' +
+			'magna laoreet lobortis quis id tortor. Cras in tellus a nibh cursus porttitor et vel purus. ');
+		this.list.setWidth('800px');
+
+		// act
+		sap.ui.getCore().applyChanges();
+		this.NotificationListItem._resizeNotification(); // Manually triggering resizing
+
+		// assert
+		var expandCollapseButton = this.NotificationListItem.getDomRef('expandCollapseButton');
+		assert.strictEqual(expandCollapseButton.classList.contains('sapMNLI-CollapseButtonHide'), false, 'The button expand/collapse is visible.');
+		assert.strictEqual(expandCollapseButton.textContent, expandText, 'The button text is "' + expandText + '".');
+	});
+
 	QUnit.test('Collapsing and expanding a notification', function(assert) {
 		// arrange
 		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
