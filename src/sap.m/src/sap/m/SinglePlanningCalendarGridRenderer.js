@@ -175,6 +175,17 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 			oRm.writeAccessibilityState(oBlocker, mAccProps);
 			oRm.addClass("sapMSinglePCAppointmentWrap");
 			oRm.addClass("sapUiCalendarRowApps"); // TODO: when refactor the CSS of appointments maybe we won't need this class
+			if (!sColor && sType !== CalendarDayType.None) {
+				oRm.addClass("sapUiCalendarApp" + sType);
+			}
+			if (sColor) {
+				if (sap.ui.getCore().getConfiguration().getRTL()) {
+					oRm.addStyle("border-right-color", sColor);
+				} else {
+					oRm.addStyle("border-left-color", sColor);
+				}
+			}
+
 			oRm.addStyle("top", iRowHeight * iBlockerLevel + 1 + "px"); // Adding 1px to render all of the blockers 1px below in order to have space on top of them.
 			oRm.addStyle(bIsRTL ? "right" : "left", Math.max(iLeftPosition, 0) + "%");
 			oRm.addStyle(bIsRTL ? "left" : "right", Math.max(iRightPosition, 0) + "%");
@@ -195,18 +206,6 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 
 			if (sIcon) {
 				oRm.addClass("sapUiCalendarAppWithIcon");
-			}
-
-			if (!sColor && sType && sType != CalendarDayType.None) {
-				oRm.addClass("sapUiCalendarApp" + sType);
-			}
-
-			if (sColor) {
-				if (sap.ui.getCore().getConfiguration().getRTL()) {
-					oRm.addStyle("border-right-color", sColor);
-				} else {
-					oRm.addStyle("border-left-color", sColor);
-				}
 			}
 
 			oRm.writeClasses();
@@ -455,6 +454,16 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 			oRm.writeAccessibilityState(oAppointment, mAccProps);
 			oRm.addClass("sapMSinglePCAppointmentWrap");
 			oRm.addClass("sapUiCalendarRowApps"); // TODO: when refactor the CSS of appointments maybe we won't need this class
+			if (!sColor && sType !== CalendarDayType.None) {
+				oRm.addClass("sapUiCalendarApp" + sType);
+			}
+			if (sColor) {
+				if (sap.ui.getCore().getConfiguration().getRTL()) {
+					oRm.addStyle("border-right-color", sColor);
+				} else {
+					oRm.addStyle("border-left-color", sColor);
+				}
+			}
 			oRm.addStyle("top", iAppTop + "px");
 			oRm.addStyle("bottom", iAppBottom + "px");
 			oRm.addStyle(sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left", iAppChunkWidth * iAppointmentLevel + "%");
@@ -501,18 +510,6 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 			// } else {
 			// 	oRm.writeAttribute("tabindex", "-1");
 			// }
-
-			if (!sColor && sType && sType != CalendarDayType.None) {
-				oRm.addClass("sapUiCalendarApp" + sType);
-			}
-
-			if (sColor) {
-				if (sap.ui.getCore().getConfiguration().getRTL()) {
-					oRm.addStyle("border-right-color", sColor);
-				} else {
-					oRm.addStyle("border-left-color", sColor);
-				}
-			}
 
 			oRm.writeClasses();
 			oRm.writeStyles();

@@ -9,3 +9,44 @@
 		}
 	}
 }
+
+.sapMSinglePCAppointmentWrap .sapUiCalendarApp {
+	margin-left: 0.25rem;
+}
+
+.sapMSinglePCAppointmentWrap.sapUiCalendarRowApps.sapUiCalendarApp {
+	width: calc(100% - 0.25rem)
+}
+
+.sapMSinglePC .sapUiCalendarAppCont{
+	border-left: 0.0625rem solid @sapUiContentForegroundBorderColor;
+}
+
+.calendarRowTypeColorMixIn(@class, @color){
+	.sapMSinglePCAppointments, .sapMSinglePCBlockers {
+		.@{class}.sapMSinglePCAppointmentWrap {
+			border-left-color: @color;
+		}
+	}
+}
+
+.calendarRowTypeColorMixIn(sapUiCalendarAppType01, @sapUiAccent1);
+.calendarRowTypeColorMixIn(sapUiCalendarAppType02, @sapUiAccent2);
+.calendarRowTypeColorMixIn(sapUiCalendarAppType03, @sapUiAccent3);
+.calendarRowTypeColorMixIn(sapUiCalendarAppType04, darken(saturate(@sapUiAccent2, 70), 5));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType05, @sapUiAccent4);
+.calendarRowTypeColorMixIn(sapUiCalendarAppType06, @sapUiAccent6);
+.calendarRowTypeColorMixIn(sapUiCalendarAppType07, @sapUiAccent7);
+.calendarRowTypeColorMixIn(sapUiCalendarAppType08, @sapUiAccent8);
+.calendarRowTypeColorMixIn(sapUiCalendarAppType09, darken(@sapUiAccent6, 15));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType10, darken(desaturate(@sapUiAccent4, 40), 2));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType11, lighten(saturate(@sapUiAccent1,15),20));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType12, lighten(desaturate(@sapUiAccent2,50),10));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType13, lighten(saturate(@sapUiAccent3,50),5));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType14, lighten(saturate(@sapUiAccent2,30),15));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType15, lighten(saturate(@sapUiAccent4,50),20));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType16, desaturate(@sapUiAccent1,20));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType17, lighten(saturate(@sapUiAccent7,30),15));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType18, darken(desaturate(@sapUiAccent8,50),15));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType19, lighten(desaturate(@sapUiAccent6,30),10));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType20, saturate(@sapUiAccent5,70));
