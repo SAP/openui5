@@ -1371,6 +1371,44 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the query options of the binding.
+	 *
+	 * @param {boolean} [bWithSystemQueryOptions=false]
+	 *   Whether system query options should be returned as well. The parameter value
+	 *   <code>true</code> is not supported.
+	 * @returns {object} mQueryOptions
+	 *   The object with the query options. Query options can be provided with
+	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList},
+	 *   {@link sap.ui.model.odata.v4.ODataModel#bindContext},
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding#changeParameters}, and
+	 *   {@link sap.ui.model.odata.v4.ODataContextBinding#changeParameters}. System query options
+	 *   can also be calculated, e.g. <code>$filter</code> can be calculated based on provided
+	 *   filter objects.
+	 * @throws {Error}
+	 *   If <code>bWithSystemQueryOptions</code> is <code>true</code>
+	 *
+	 * @public
+	 * @since 1.66.0
+	 */
+	ODataListBinding.prototype.getQueryOptions = function (bWithSystemQueryOptions) {
+		var oResult = {},
+			that = this;
+
+		if (bWithSystemQueryOptions) {
+			throw new Error("Unsupported parameter value: bWithSystemQueryOptions: "
+				+ bWithSystemQueryOptions);
+		}
+
+		Object.keys(this.mQueryOptions).forEach(function (sKey) {
+			if (sKey[0] !== "$") {
+				oResult[sKey] = _Helper.clone(that.mQueryOptions[sKey]);
+			}
+		});
+
+		return oResult;
+	};
+
+	/**
 	 * Enhance the inherited query options by the given query options if this binding does not have
 	 * any binding parameters. If both have a '$orderby', the resulting '$orderby' is the
 	 * concatenation of both '$orderby' with the given one first. If both have a '$filter', the
