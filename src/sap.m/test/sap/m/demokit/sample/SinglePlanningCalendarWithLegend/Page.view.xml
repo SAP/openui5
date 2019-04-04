@@ -13,7 +13,7 @@
 		containerQuery="true"
 		breakpointChanged="updateToggleButtonState">
 	<l:mainContent>
-	<VBox class="sapUiSmallMargin">
+	<VBox>
 		<SinglePlanningCalendar
 			id="SPC1"
 			class="sapUiSmallMarginTop"
@@ -46,8 +46,8 @@
 	</VBox>
 	</l:mainContent>
 		<l:sideContent width="200px">
-			<PlanningCalendarLegend id="SinglePlanningCalendarLegend"
-									appointmentItems="{path : '/legendAppointmentItems', templateShareable: 'true'}">
+			<PlanningCalendarLegend id="SinglePlanningCalendarLegend" appointmentItems="{path : '/legendAppointmentItems',
+									templateShareable: 'true'}" class="sapUiSmallMarginTop">
 				<appointmentItems>
 					<unified:CalendarLegendItem text="{text}" type="{type}" tooltip="{text}" />
 				</appointmentItems>

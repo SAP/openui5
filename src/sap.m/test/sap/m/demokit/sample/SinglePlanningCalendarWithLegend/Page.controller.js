@@ -35,7 +35,7 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Messag
 						endDate: new Date("2018", "6", "8", "6", "0")
 					}, {
 						title: "Discussion of the plan",
-						type: CalendarDayType.Type01,
+						type: CalendarDayType.Type08,
 						startDate: new Date("2018", "6", "8", "6", "0"),
 						endDate: new Date("2018", "6", "8", "7", "9")
 					}, {
@@ -68,7 +68,7 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Messag
 					}, {
 						title: "Discussion of the plan",
 						text: "Online meeting",
-						type: CalendarDayType.Type01,
+						type: CalendarDayType.Type08,
 						icon: "sap-icon://home",
 						tentative: true,
 						startDate: new Date("2018", "6", "8", "11", "0"),
@@ -145,7 +145,7 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Messag
 						endDate: new Date("2018", "6", "11", "9", "30")
 					}, {
 						title: "Workshop",
-						type: CalendarDayType.Type05,
+						type: CalendarDayType.Type01,
 						startDate: new Date("2018", "6", "11", "8", "30"),
 						endDate: new Date("2018", "6", "11", "12", "0")
 					}, {
@@ -211,7 +211,7 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Messag
 						endDate: new Date("2018", "6", "6", "13", "0")
 					}, {
 						title:"Discussion of the plan",
-						type: CalendarDayType.Type01,
+						type: CalendarDayType.Type08,
 						startDate: new Date("2018", "6", "16", "11", "0"),
 						endDate: new Date("2018", "6", "16", "12", "0")
 					}, {
@@ -238,23 +238,23 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Messag
 				],
 				legendAppointmentItems: [
 					{
-						text: "Reminder",
+						text: "Team Meeting",
 						type: CalendarDayType.Type01
 					},
 					{
-						text: "Client meeting",
+						text: "Personal",
 						type: CalendarDayType.Type05
 					},
 					{
-						text: "Team meeting",
+						text: "Discussions",
 						type: CalendarDayType.Type08
 					},
 					{
-						text: "Planning",
-						type: CalendarDayType.Type04
+						text: "Out of office",
+						type: CalendarDayType.Type09
 					},
 					{
-						text: "Out of office",
+						text: "Private meeting",
 						type: CalendarDayType.Type03
 					}
 				]
