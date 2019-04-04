@@ -222,7 +222,10 @@
 			return oSuite;
 		}
 
-		return whenLoaded.then(createSuite).catch(renderError);
+		return whenLoaded.then(createSuite).catch(function(oErr) {
+			renderError(oErr);
+			throw oErr; // rethrow to make testrunner aware of issue
+		});
 
 	};
 
