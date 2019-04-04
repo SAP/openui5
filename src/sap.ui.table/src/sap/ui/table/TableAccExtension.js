@@ -316,7 +316,7 @@ sap.ui.define([
 			var sLabel = "";
 			if (oCountChangeInfo.initial) {
 				var oTable = oExtension.getTable();
-				sLabel = oTable.getAriaLabelledBy().join(" ") + " " + oTable.getId() + "-ariadesc " + oTable.getId() + "-ariacount";
+				sLabel = oTable.getAriaLabelledBy().join(" ") + " " + oTable.getId() + "-ariacount";
 				if (oTable.getSelectionMode() !== SelectionMode.None) {
 					sLabel = sLabel + " " + oTable.getId() + "-ariaselection";
 				}
@@ -498,8 +498,10 @@ sap.ui.define([
 				aLabels.push(oTable.getId() + "-ariacolfiltered");
 			}
 
-			if (iSpan <= 1 && $Cell.attr("aria-haspopup") === "true") {
-				aLabels.push(oTable.getId() + "-ariacolmenu");
+			if (Device.browser.msie) {
+				if (iSpan <= 1 && $Cell.attr("aria-haspopup") === "true") {
+					aLabels.push(oTable.getId() + "-ariacolmenu");
+				}
 			}
 
 			ExtensionHelper.performCellModifications(this, $Cell, mAttributes["aria-labelledby"], mAttributes["aria-describedby"],
@@ -632,7 +634,9 @@ sap.ui.define([
 					break;
 
 				case TableAccExtension.ELEMENTTYPES.ROWHEADER:
-					mAttributes["aria-labelledby"] = [sTableId + "-ariarowheaderlabel"];
+					if (Device.browser.msie) {
+						mAttributes["aria-labelledby"] = [sTableId + "-ariarowheaderlabel"];
+					}
 					if (!TableUtils.Grouping.isTreeMode(oTable)) { // Otherwise there are strange announcements of the whole content in AnalyticalTable
 						mAttributes["role"] = ["rowheader"];
 					}
@@ -712,7 +716,6 @@ sap.ui.define([
 					if (TableUtils.Grouping.isTreeMode(oTable) && mParams && mParams.firstCol && mParams.row) {
 						var oBindingInfo = oTable.mBindingInfos["rows"];
 						if (mParams.row.getBindingContext(oBindingInfo && oBindingInfo.model)) {
-							mAttributes["aria-level"] = mParams.row._iLevel + 1;
 							mAttributes["aria-expanded"] = "" + mParams.row._bIsExpanded;
 						}
 					}
@@ -782,8 +785,6 @@ sap.ui.define([
 					break;
 
 				case TableAccExtension.ELEMENTTYPES.ROWHEADER_TD: //The "technical" row headers
-					mAttributes["role"] = "rowheader";
-					mAttributes["aria-labelledby"] = [sTableId + "-ariarowheaderlabel"];
 					mAttributes["headers"] = sTableId + "-colsel";
 					if (mParams && typeof mParams.index === "number") {
 						mAttributes["aria-owns"] = sTableId + "-rowsel" + mParams.index;
@@ -1066,26 +1067,28 @@ sap.ui.define([
 		}
 
 		if (sReason !== "Focus" && sReason !== TableUtils.RowsUpdateReason.Expand && sReason !== TableUtils.RowsUpdateReason.Collapse) {
-			// Set cell to busy when the focus stays on the same cell and only the content is replaced (e.g. on scroll or expand),
+			// when the focus stays on the same cell and only the content is replaced (e.g. on scroll or expand),
 			// to force screenreader announcements
 			if (oInfo.isOfType(CellType.DATACELL | CellType.ROWHEADER)) {
-				if (oTable._mTimeouts._cleanupACCCellBusy) {
-					clearTimeout(oTable._mTimeouts._cleanupACCCellBusy);
-					oTable._mTimeouts._cleanupACCCellBusy = null;
-				}
-				oTable._mTimeouts._cleanupACCCellBusy = setTimeout(function() {
-					for (var i = 0; i < this._busyCells.length; i++) {
-						this._busyCells[i].removeAttr("aria-hidden");
-						this._busyCells[i].removeAttr("aria-busy");
+				if (Device.browser.msie) {
+					if (oTable._mTimeouts._cleanupACCCellBusy) {
+						clearTimeout(oTable._mTimeouts._cleanupACCCellBusy);
+						oTable._mTimeouts._cleanupACCCellBusy = null;
 					}
-					oTable._mTimeouts._cleanupACCCellBusy = null;
-					this._busyCells = [];
-				}.bind(this), 100);
-				if (Device.browser.chrome) {
-					oInfo.cell.attr("aria-hidden", "true"); //Seems to be needed for Chrome
+					oTable._mTimeouts._cleanupACCCellBusy = setTimeout(function() {
+						for (var i = 0; i < this._busyCells.length; i++) {
+							this._busyCells[i].removeAttr("aria-hidden");
+							this._busyCells[i].removeAttr("aria-busy");
+						}
+						oTable._mTimeouts._cleanupACCCellBusy = null;
+						this._busyCells = [];
+					}.bind(this), 100);
+					oInfo.cell.attr("aria-busy", "true");
+					this._busyCells.push(oInfo.cell);
+				} else {
+					oInfo.cell.attr("role", "status");
+					oInfo.cell.attr("role", "gridcell");
 				}
-				oInfo.cell.attr("aria-busy", "true"); // Should be right thing, works in IE
-				this._busyCells.push(oInfo.cell);
 			} else {
 				return;
 			}

@@ -168,6 +168,7 @@ sap.ui.define([
 		Unbind: "Unbind",
 		Animation: "Animation",
 		Resize: "Resize",
+		Zoom: "Zoom",
 		Unknown: "Unknown"
 	};
 	for (var sProperty in ChangeReason) {
