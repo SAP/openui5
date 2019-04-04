@@ -51,7 +51,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/library"],
 				bResizable = oControl.getResizable(),
 				bDraggable = oControl.getDraggable(),
 				oValueStateText = oControl.getAggregation("_valueState"),
-				oCustomFooter = oControl._getFooter();
+				oCustomFooter = oControl.getCustomFooter();
 
 			// write the HTML into the render manager
 			// the initial size of the dialog have to be 0, because if there is a large dialog content the initial size can be larger than the html's height (scroller)

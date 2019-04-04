@@ -1321,19 +1321,6 @@ function(
 			}
 		};
 
-		Dialog.prototype._getFooter = function() {
-			var footer = this.getCustomFooter();
-
-			if(footer) {
-				
-				//ensure no borders. 
-				footer.addStyleClass("sapMTBNoBorders");
-				
-			}
-
-			return footer;
-		}
-
 		/**
 		 *
 		 * @private
@@ -1458,7 +1445,7 @@ function(
 		 */
 		Dialog.prototype._getToolbar = function () {
 			if (!this._oToolbar) {
-				this._oToolbar = new AssociativeOverflowToolbar(this.getId() + "-footer").addStyleClass("sapMTBNoBorders");
+				this._oToolbar = new AssociativeOverflowToolbar(this.getId() + "-footer");
 
 				this.setAggregation("_toolbar", this._oToolbar);
 			}
