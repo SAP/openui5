@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/ui/model/resource/ResourceModel",
 	"sap/m/App",
 	"sap/m/Page",
-	"sap/ui/layout/form/SimpleForm"
-], function (Opa5, LabelFor, Input, Label, Button, ResourceModel, App, Page, SimpleForm) {
+	"sap/ui/layout/form/SimpleForm",
+	"sap/m/Link"
+], function (Opa5, LabelFor, Input, Label, Button, ResourceModel, App, Page, SimpleForm, Link) {
 	"use strict";
 
 	var BUNDLE_URL = "test-resources/sap/ui/core/qunit/opa/matchers/I18NText.properties";
@@ -20,6 +21,8 @@ sap.ui.define([
 			this.oInput = new Input({id: sInputId});
 			this.oLabel = new Label({id: "name_label" ,text: "First name", labelFor: this.oInput});
 			this.oModel = new ResourceModel({ bundleUrl: BUNDLE_URL });
+			this.oLink = new Link({text: "click"});
+			this.oLabelWithNoAssoc = new Label({id: "non_label", text: "Non labelable", labelFor: this.oLink});
 
 			this.oLabelWithNoInput = new Label({id: "no_input", text: "No input", labelFor: null});
 			this.oInvisibleLabel = new Label({
@@ -58,7 +61,9 @@ sap.ui.define([
 					this.oLabeli18n,
 					this.oForm,
 					this.oButton,
-					this.oLabelForButton
+					this.oLabelForButton,
+					this.oLink,
+					this.oLabelWithNoAssoc
 				]
 			})).setModel(this.oModel, "i18n").placeAt("qunit-fixture");
 
@@ -166,4 +171,9 @@ sap.ui.define([
 		assert.ok(bResult, "Match button");
 	});
 
+	QUnit.test("Should not match non-labelable control", function(assert) {
+		var oMatcher = new LabelFor({text: "click"});
+		var bResult = oMatcher.isMatching(this.oLink);
+		assert.ok(!bResult, "Did not match non-labelable Link");
+	});
 });
