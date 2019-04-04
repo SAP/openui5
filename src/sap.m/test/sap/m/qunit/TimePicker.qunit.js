@@ -3036,6 +3036,23 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Initialisation of the mask is done when new dateValue is set", function(assert) {
+		//prepare
+		var oTP = new TimePicker({
+				value: "12:00"
+			}).placeAt("content"),
+			oInitMaskSpy = this.spy(oTP, "_initMask");
+
+		sap.ui.getCore().applyChanges();
+
+		//act
+		oTP.setDateValue();
+
+		//assert
+		assert.equal(oInitMaskSpy.calledOnce, true, "the _initMask method is called once");
+
+	});
+
 	QUnit.module("maskMode property", {
 		beforeEach: function () {
 			this.oTp = new TimePicker();
