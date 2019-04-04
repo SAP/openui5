@@ -1321,6 +1321,19 @@ function(
 			}
 		};
 
+		Dialog.prototype._getFooter = function() {
+			var footer = this.getCustomFooter();
+
+			if(footer) {
+				
+				//ensure no borders. 
+				footer.addStyleClass("sapMTBNoBorders");
+				
+			}
+
+			return footer;
+		}
+
 		/**
 		 *
 		 * @private
