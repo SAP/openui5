@@ -762,7 +762,8 @@ sap.ui.define([
 		if (this._oCardManifest && this.isReady()) {
 			this._clearReadyState();
 			this._initReadyState();
-			this._applyManifestSettings();
+			this._bApplyManifest = true;
+			this.invalidate();
 		}
 	};
 
