@@ -487,6 +487,22 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("ARIA role and role descrption of buttons", function (assert) {
+		var aAnchorBarContent = this.oObjectPage.getAggregation("_anchorBar").getContent(),
+			iAnchorBarContentLength = aAnchorBarContent.length,
+			sAriaRoleDescription = Core.getLibraryResourceBundle("sap.uxap").getText("ANCHOR_BAR_MENUITEM"),
+			oCurrentButton,
+			iIndex;
+
+		for (iIndex = 0; iIndex < iAnchorBarContentLength; iIndex++) {
+			oCurrentButton = aAnchorBarContent[iIndex];
+			checkButtonAriaAttribute(assert, oCurrentButton, "role", "menuitemradio",
+				"aria role of the button is set correctly");
+			checkButtonAriaAttribute(assert, oCurrentButton, "aria-roledescription", sAriaRoleDescription,
+				"aria role description of the button is set correctly");
+		}
+	});
+
 	QUnit.test("Enhance accessibility for submenu buttons is called", function (assert) {
 		var	oAnchorBarButton = this.oObjectPage.getAggregation("_anchorBar").getContent()[0],
 			oSplitButton = oAnchorBarButton._getButtonControl(),
