@@ -591,6 +591,14 @@ sap.ui.define([
 	 * @private
 	 */
 	var fnRectEqual = function(oRectOne, oRectTwo) {
+		if ((!oRectOne && oRectTwo) || (oRectOne && !oRectTwo)) {
+			return false;
+		}
+
+		if (!oRectOne && !oRectTwo) {
+			return true;
+		}
+
 		var iPuffer = 3;
 		var iLeft = Math.abs(oRectOne.left - oRectTwo.left);
 		var iTop = Math.abs(oRectOne.top - oRectTwo.top);
@@ -2627,7 +2635,27 @@ sap.ui.define([
 	Popup.checkDocking = function(){
 		if (this.getOpenState() === OpenState.OPEN) {
 			var oCurrentOfRef = this._getOfDom(this._oLastPosition.of),
-				oCurrentOfRect = jQuery(oCurrentOfRef).rect();
+				oCurrentOfRect;
+
+			if (oCurrentOfRef) {
+				if ((oCurrentOfRef === window.document) || containsOrEquals(document.documentElement, oCurrentOfRef)) {
+					// When the current Of reference is window.document or it's contained in the DOM tree,
+					// The client bounding rect can be calculated
+					oCurrentOfRect = jQuery(oCurrentOfRef).rect();
+				} else if (oCurrentOfRef.id) {
+					// Otherwise when the Of reference has an id,
+					// the 'of' was rerendered so the newest DOM-element has to be updated for the corresponding rect-object.
+					// Because the id of the 'of' may be still the same but due to its rerendering the reference changed and has to be updated
+					var oNewestOf = window.document.getElementById(oCurrentOfRef.id);
+					var oNewestOfRect = jQuery(oNewestOf).rect();
+
+					// if there is a newest corresponding DOM-reference and it differs from the current -> use the newest one
+					if (oNewestOfRect && !fnRectEqual(oCurrentOfRect, oNewestOfRect)) {
+						oCurrentOfRect = oNewestOfRect;
+						this._oLastPosition.of = oNewestOf;
+					}
+				}
+			}
 
 			// it's not possible to check for the width/height because the "of" could be window.document and the
 			// document doesn't have a height/width
@@ -2646,26 +2674,6 @@ sap.ui.define([
 				if (!oCurrentOfRect) {
 					this.close();
 					return;
-				}
-			}
-
-			// Check if the current 'of' dom element is removed from the dom tree which indicates that it
-			// was rerendered and all corresponding stuff has to be updated to position the popup
-			// properly again
-			if (!containsOrEquals(document.documentElement, oCurrentOfRef)) {
-				if (oCurrentOfRef.id) {
-					// The 'of' was rerendered so the newest DOM-element has to be updated for the corresponding rect-object.
-					// Because the id of the 'of' may be still the same but due to its rerendering the reference changed and has to be updated
-					var oNewestOf = window.document.getElementById(oCurrentOfRef.id);
-					var oNewestOfRect = jQuery(oNewestOf).rect();
-
-					// if there is a newest corresponding DOM-reference and it differs from the current -> use the newest one
-					if (oNewestOfRect && !fnRectEqual(oCurrentOfRect, oNewestOfRect)) {
-						oCurrentOfRect = oNewestOfRect;
-
-						delete this._oLastPosition.of;
-						this._oLastPosition.of = oNewestOf;
-					}
 				}
 			}
 
