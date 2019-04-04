@@ -717,6 +717,11 @@ function(
 
 		};
 
+		TimePicker.prototype.setDateValue = function(sValue) {
+			this._initMask();
+			return DateTimeField.prototype.setDateValue.apply(this, arguments);
+		};
+
 		/**
 		 * Sets tooltip of the control.
 		 *
