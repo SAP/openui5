@@ -21,6 +21,7 @@ sap.ui.define([
 	return Promise.resolve()
 	.then(function () {
 		return elementDesigntimeTest({
+			timeout: 100, // timeout is required, see sap.ui.layout.form.SimpleForm#onAfterRendering method
 			type: "sap.ui.layout.form.SimpleForm",
 			create: function () {
 				return new SimpleForm({
