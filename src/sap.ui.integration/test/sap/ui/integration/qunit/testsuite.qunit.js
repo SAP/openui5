@@ -24,12 +24,14 @@ sap.ui.define(function () {
 			"Card": {
 				coverage: {
 					only: [
-						"sap/ui/integration/widgets/Card"
+						"sap/ui/integration/widgets/Card",
+						"sap/f/cards/ActionEnablement"
 					]
 				},
 				module: [
 					'./Card.qunit',
-					'./CardDataHandling.qunit'
+					'./CardDataHandling.qunit',
+					'./ActionEnablement.qunit'
 				]
 			},
 			"util/CardManifest": {

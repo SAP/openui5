@@ -127,6 +127,7 @@ sap.ui.define([
 
 		// So far the ready event will be fired when the data is ready. But this can change in the future.
 		this._awaitEvent("_dataReady");
+		this._awaitEvent("_actionHeaderReady");
 
 		Promise.all(this._aReadyPromises).then(function () {
 			this._bReady = true;

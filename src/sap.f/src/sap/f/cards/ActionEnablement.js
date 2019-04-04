@@ -16,13 +16,18 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 
 		function _attachActions(mItem, oControl) {
 			if (!mItem.actions) {
+				//For now firing the event here, after refactor nee to think of a way to sync async navigation setters
+				this.fireEvent("_actionHeaderReady");
 				return;
 			}
 
 			// For now we allow for only one action of type navigation.
 			var oAction = mItem.actions[0];
-			if (oAction.type === "Navigation") {
+			if (oAction && oAction.type === "Navigation") {
 				this._attachNavigationAction(mItem, oControl || this);
+			} else {
+				//For now firing the event here, after refactor nee to think of a way to sync async navigation setters
+				this.fireEvent("_actionHeaderReady");
 			}
 		}
 
@@ -146,15 +151,19 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 			this.addStyleClass("sapFCardHeaderClickable");
 		}
 
-		function _fireAction(oSource, oActionParams, oModel, sPath) {
+		ActionEnablement._fireAction = function (oSource, oActionParams, oModel, sPath) {
 			this.fireEvent("action", {
 				type: "Navigation",
 				actionSource: oSource,
 				manifestParameters: BindingResolver.resolveValue(oActionParams, oModel, sPath)
 			});
-		}
+		};
 
-		function _attachNavigationAction(mItem, oControl) {
+		ActionEnablement.openUrl = function (sUrl, oAction) {
+			window.open(sUrl, oAction.target || "_blank");
+		};
+
+		ActionEnablement._attachNavigationAction = function (mItem, oControl) {
 			var oAction = mItem.actions[0];
 			var fnHandler;
 			var bCheckEnabledState = true;
@@ -190,10 +199,10 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 						})
 						.catch(function (e) {
 							Log.error("Navigation service unavailable", e);
-						});
-
-					_fireAction.call(this, oEvent.getSource(), oAction.parameters, oModel, sPath);
-				};
+						}).finally( function () {
+							ActionEnablement._fireAction.call(this, oEvent.getSource(), oAction.parameters, oModel, sPath);
+						}.bind(this));
+				}.bind(this);
 
 				// When there is a service let it handle the "enabled" state.
 				// attachPress();
@@ -217,11 +226,11 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 							sPath = oBindingContext.getPath();
 						}
 						sUrl = BindingResolver.resolveValue(oAction.url, oModel, sPath);
+						//we are able to mock tests
+						ActionEnablement.openUrl(sUrl, oAction);
 
-						window.open(sUrl, oAction.target || "_blank");
-
-						_fireAction.call(this, oEvent.getSource(), oAction.parameters, oModel, sPath);
-					};
+						ActionEnablement._fireAction.call(this, oEvent.getSource(), oAction.parameters, oModel, sPath);
+					}.bind(this);
 				} else {
 					fnHandler = function (oEvent) {
 						var oSource = oEvent.getSource(),
@@ -233,8 +242,8 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 							sPath = oBindingContext.getPath();
 						}
 
-						_fireAction.call(this, oEvent.getSource(), oAction.parameters, oModel, sPath);
-					};
+						ActionEnablement._fireAction.call(this, oEvent.getSource(), oAction.parameters, oModel, sPath);
+					}.bind(this);
 				}
 			}
 
@@ -243,7 +252,8 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 					if (bEnabled) {
 						attachPress();
 					}
-				});
+					this.fireEvent("_actionHeaderReady");
+				}.bind(this));
 				return;
 			} else {
 				// Handle the "enabled" state when there is no service and item template with formatter.
@@ -254,12 +264,13 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 				} else {
 					attachPress();
 				}
+				this.fireEvent("_actionHeaderReady");
 			}
-		}
+		};
 
 		ActionEnablement.enrich = function (Control) {
 			Control.prototype._attachActions = _attachActions;
-			Control.prototype._attachNavigationAction = _attachNavigationAction;
+			Control.prototype._attachNavigationAction = this._attachNavigationAction;
 
 			// For simplicity do type checking for now.
 			if (Control.prototype.isA("sap.f.cards.ListContent") || Control.prototype.isA("sap.f.cards.TableContent")) {
