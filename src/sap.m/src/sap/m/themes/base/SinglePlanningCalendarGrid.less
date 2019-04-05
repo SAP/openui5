@@ -40,6 +40,10 @@
 	}
 }
 
+.sapMSinglePCGrid.sapUiDnDDragging {
+	opacity: 1;
+}
+
 
 /*****************
 	GRID CONTENT
@@ -48,6 +52,10 @@
 .sapMSinglePCGridContent {
 	display: flex;
 	position: relative;
+}
+
+.sapMSinglePCGrid {
+	cursor: default;
 }
 
 .sapMSinglePCRowHeaders {
@@ -160,6 +168,7 @@
 	right: 0.125rem;
 	left: 0.125rem;
 	bottom: 0;
+	pointer-events: none;
 }
 
 .sapMSinglePCAppointmentWrap.sapUiCalendarRowApps {
@@ -167,6 +176,7 @@
 	box-sizing: border-box;
 	padding: 0.0625rem;
 	position: absolute;
+	pointer-events: all;
 
 	&:focus {
 		outline: none;
@@ -255,6 +265,12 @@
 	min-height: auto;
 	height: auto;
 	overflow: visible;
+}
+
+.sapMSinglePCGrid .sapUiAppCreate {
+	border-top: 2px solid @sapUiContentForegroundBorderColor;
+	border-bottom: 2px solid @sapUiContentForegroundBorderColor;
+	border-right: 2px solid @sapUiContentForegroundBorderColor;
 }
 
 .sapUiSizeCompact {

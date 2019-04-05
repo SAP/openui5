@@ -140,6 +140,69 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
+	QUnit.test("setLegend", function (assert){
+		// prepare
+		var oSPC = new SinglePlanningCalendar(),
+			oLegend = new PlanningCalendarLegend();
+
+		// act
+		oSPC.setLegend(oLegend);
+
+		//assert
+		assert.equal(oSPC.getAssociation("legend"), oLegend.getId(), "the legend is successfully set");
+
+		//cleanup
+		oSPC.destroy();
+	});
+
+	QUnit.test("setEnableAppointmentsDragAndDrop propagates to the internal grid", function (assert) {
+		// arrange
+		var oSPC = new SinglePlanningCalendar(),
+			oGridSetEnableAppointmentsDragAndDropSpy = this.spy(oSPC._getGrid(), "setEnableAppointmentsDragAndDrop");
+
+		// act
+		oSPC.setEnableAppointmentsDragAndDrop(true);
+
+		// assert
+		assert.ok(oGridSetEnableAppointmentsDragAndDropSpy.calledWith(true), "setEnableAppointmentsDragAndDrop of the grid is called with right params");
+
+		// cleanup
+		oGridSetEnableAppointmentsDragAndDropSpy.restore();
+		oSPC.destroy();
+	});
+
+	QUnit.test("setEnableAppointmentsResize propagates to the internal grid", function (assert) {
+		// arrange
+		var oSPC = new SinglePlanningCalendar(),
+			oGridSetEnableAppointmentsResizeSpy = this.spy(oSPC._getGrid(), "setEnableAppointmentsResize");
+
+		// act
+		oSPC.setEnableAppointmentsResize(true);
+
+		// assert
+		assert.ok(oGridSetEnableAppointmentsResizeSpy.calledWith(true), "setEnableAppointmentsResize of the grid is called with right params");
+
+		// cleanup
+		oGridSetEnableAppointmentsResizeSpy.restore();
+		oSPC.destroy();
+	});
+
+	QUnit.test("setEnableAppointmentsCreate propagates to the internal grid", function (assert) {
+		// arrange
+		var oSPC = new SinglePlanningCalendar(),
+			oGridSetEnableAppointmentsCreateSpy = this.spy(oSPC._getGrid(), "setEnableAppointmentsCreate");
+
+		// act
+		oSPC.setEnableAppointmentsCreate(true);
+
+		// assert
+		assert.ok(oGridSetEnableAppointmentsCreateSpy.calledWith(true), "setEnableAppointmentsCreate of the grid is called with right params");
+
+		// cleanup
+		oGridSetEnableAppointmentsCreateSpy.restore();
+		oSPC.destroy();
+	});
+
 	QUnit.module("Events");
 
 	QUnit.test("appointmentSelect", function (assert) {
@@ -272,18 +335,54 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("setLegend", function (assert){
-		// prepare
+	QUnit.test("appointmentDrop is fired when internal grid event appointmentDrop is fired", function (assert) {
+		// arrange
 		var oSPC = new SinglePlanningCalendar(),
-			oLegend = new PlanningCalendarLegend();
+			oGrid = oSPC._getGrid(),
+			oFireAppointmentDropSpy = this.spy(oSPC, "fireAppointmentDrop");
 
 		// act
-		oSPC.setLegend(oLegend);
+		oGrid.fireEvent("appointmentDrop", {});
 
-		//assert
-		assert.equal(oSPC.getAssociation("legend"), oLegend.getId(), "the legend is successfully set");
+		// assert
+		assert.equal(oFireAppointmentDropSpy.callCount, 1, "fireAppointmentDrop of the SinglePlanningCalendar is called once");
 
-		//cleanup
+		// cleanup
+		oFireAppointmentDropSpy.restore();
+		oSPC.destroy();
+	});
+
+	QUnit.test("appointmentResize is fired when internal grid event appointmentResize is fired", function (assert) {
+		// arrange
+		var oSPC = new SinglePlanningCalendar(),
+			oGrid = oSPC._getGrid(),
+			oFireAppointmentResizeSpy = this.spy(oSPC, "fireAppointmentResize");
+
+		// act
+		oGrid.fireEvent("appointmentResize", {});
+
+		// assert
+		assert.equal(oFireAppointmentResizeSpy.callCount, 1, "fireAppointmentResize of the SinglePlanningCalendar is called once");
+
+		// cleanup
+		oFireAppointmentResizeSpy.restore();
+		oSPC.destroy();
+	});
+
+	QUnit.test("appointmentCreate is fired when internal grid event appointmentCreate is fired", function (assert) {
+		// arrange
+		var oSPC = new SinglePlanningCalendar(),
+			oGrid = oSPC._getGrid(),
+			oFireAppointmentCreateSpy = this.spy(oSPC, "fireAppointmentCreate");
+
+		// act
+		oGrid.fireEvent("appointmentCreate", {});
+
+		// assert
+		assert.equal(oFireAppointmentCreateSpy.callCount, 1, "fireAppointmentCreate of the SinglePlanningCalendar is called once");
+
+		// cleanup
+		oFireAppointmentCreateSpy.restore();
 		oSPC.destroy();
 	});
 
@@ -871,15 +970,6 @@ sap.ui.define([
 			this.oSPCGrid.destroy();
 			this.oSPCGrid = null;
 		}
-	});
-
-	QUnit.test("resize config is always added", function(assert) {
-		var oDragConfig = this.oSPCGrid.getDragDropConfig();
-
-		//assert
-		assert.equal(oDragConfig[2].getSourceAggregation(), "appointments", "Source aggregation is correct");
-		assert.equal(oDragConfig[2].getTargetAggregation(), "_intervalPlaceholders", "Source aggregation is correct");
-		assert.equal(oDragConfig[2].getGroupName(), "ResizeConfig", "Group name is correct");
 	});
 
 	QUnit.test("_calcResizeNewHoursAppPos: Calculate new size of the appointment", function(assert) {

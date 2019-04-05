@@ -18,10 +18,22 @@
 				</Select>
 			</VBox>
 
-			<VBox>
+			<VBox class="sapUiSmallMarginEnd">
 				<Label text="Enable Drag and Drop" labelFor="enableAppointmentsDragAndDrop" />
 
 				<CheckBox id="enableAppointmentsDragAndDrop" selected="{settings>/enableAppointmentsDragAndDrop}"></CheckBox>
+			</VBox>
+
+			<VBox class="sapUiSmallMarginEnd">
+				<Label text="Enable Appointments Resize" labelFor="enableAppointmentsResize" />
+
+				<CheckBox id="enableAppointmentsResize" selected="{settings>/enableAppointmentsResize}"></CheckBox>
+			</VBox>
+
+			<VBox>
+				<Label text="Enable Appointments Create" labelFor="enableAppointmentsCreate" />
+
+				<CheckBox id="enableAppointmentsCreate" selected="{settings>/enableAppointmentsCreate}"></CheckBox>
 			</VBox>
 		</HBox>
 		<SinglePlanningCalendar
@@ -32,8 +44,12 @@
 			headerDateSelect="handleHeaderDateSelect"
 			startDateChange="handleStartDateChange"
 			appointmentDrop="handleAppointmentDrop"
+			appointmentResize="handleAppointmentResize"
+			appointmentCreate="handleAppointmentCreateDnD"
 			startDate="{path: '/startDate'}"
 			enableAppointmentsDragAndDrop="{settings>/enableAppointmentsDragAndDrop}"
+			enableAppointmentsResize="{settings>/enableAppointmentsResize}"
+			enableAppointmentsCreate="{settings>/enableAppointmentsCreate}"
 			stickyMode="{settings>/stickyMode}"
 			appointments="{path: '/appointments'}">
 			<actions>
