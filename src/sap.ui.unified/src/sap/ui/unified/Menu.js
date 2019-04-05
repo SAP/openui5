@@ -389,10 +389,15 @@ sap.ui.define([
 		this.bIgnoreOpenerDOMRef = false;
 
 		// Open the sap.ui.core.Popup
-		this.getPopup().open(0, my, at, of, offset || "0 0", collision || "_sapUiCommonsMenuFlip _sapUiCommonsMenuFlip", function() {
+		this.getPopup().open(0, my, at, of, offset || "0 0", collision || "_sapUiCommonsMenuFlip _sapUiCommonsMenuFlip", function(oPopupPosition) {
 			var oOfDom = this.getPopup()._getOfDom(of);
-			if (!oOfDom || !jQuery(oOfDom).is(":visible")) {
+			if (!oOfDom || !jQuery(oOfDom).is(":visible") || !_isElementInViewport(oOfDom)) {
+				// close the menu if the opener is not visible or not in the viewport anymore
 				this.close();
+			} else {
+				// else the Menu should follow the opener
+				// for example in ObjectPage, where we have scrolling, but the opener button is sticked
+				this.getPopup()._applyPosition(oPopupPosition.lastPosition);
 			}
 		}.bind(this));
 		this.bOpen = true;
@@ -1197,6 +1202,27 @@ sap.ui.define([
 		} else {
 			$Menu.css("max-height", "").toggleClass("sapUiMnuScroll", false);
 		}
+	}
+
+	function _isElementInViewport(oDomElement) {
+		var mRect;
+
+		if (!oDomElement) {
+			return false;
+		}
+
+		if (oDomElement instanceof jQuery) {
+			oDomElement = oDomElement.get(0);
+		}
+
+		mRect = oDomElement.getBoundingClientRect();
+
+		return (
+			mRect.top >= 0 &&
+			mRect.left >= 0 &&
+			mRect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+			mRect.right <= (window.innerWidth || document.documentElement.clientWidth)
+		);
 	}
 
 	//**********************************************
