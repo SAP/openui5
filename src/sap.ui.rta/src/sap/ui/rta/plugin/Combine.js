@@ -78,6 +78,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks the binding compatibility of all given elements. Absolute binding will not be considered
+	 *
+	 * @param {sap.ui.core.Element[]|sap.ui.core.Component[]} aControls - Array of controls to be checked for binding compatibility
+	 * @param {sap.ui.model.Model} oModel - Model for filtering irrelevant binding paths
+	 * @return {boolean} <code>true</code> when the controls have compatible bindings.
+	 */
+	Combine.prototype._checkBindingCompatibilityOfControls = function(aControls, oModel) {
+		return aControls.every(function(oSource) {
+			return aControls.every(function(oTarget) {
+				return oSource !== oTarget ? Utils.checkSourceTargetBindingCompatibility(oSource, oTarget, oModel) : true;
+			});
+		});
+	};
+
+	/**
 	 * Checks if Combine is available for oOverlay
 	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @return {boolean} true if available
@@ -131,28 +146,10 @@ sap.ui.define([
 			return true;
 		}, this);
 
-		// check if all the target elements have the same binding context
 		if (bActionCheck) {
-			var oFirstControl = aControls.shift();
-			var aBindings = BindingsExtractor.getBindings(oFirstControl, oFirstControl.getModel());
-			if (aBindings.length > 0 && oFirstControl.getBindingContext()) {
-				var sFirstElementBindingContext = Utils.getEntityTypeByPath(
-					oFirstControl.getModel(),
-					oFirstControl.getBindingContext().getPath()
-				);
-
-				bActionCheck = aControls.some(function(oControl) {
-					if (oControl.getBindingContext()) {
-						var sBindingContext = Utils.getEntityTypeByPath(
-							oControl.getModel(),
-							oControl.getBindingContext().getPath()
-						);
-						return sFirstElementBindingContext === sBindingContext;
-					} else {
-						return false;
-					}
-				});
-			}
+			// check if all the target elements have the same binding context
+			var oDefaultModel = aControls[0] && aControls[0].getModel();
+			return this._checkBindingCompatibilityOfControls(aControls, oDefaultModel);
 		}
 
 		return bActionCheck;
