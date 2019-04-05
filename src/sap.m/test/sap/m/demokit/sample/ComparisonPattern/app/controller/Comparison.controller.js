@@ -201,7 +201,6 @@ sap.ui.define( [
 		_getModelData: function (aSelectedProducts) {
 			var allProps = [],
 				ilastPage = this._iFirstItem + this._iPagesCount,
-				iCounter = 0,
 				oProp,
 				oCurrentProduct,
 				oCurrentProductInformation,
@@ -217,11 +216,6 @@ sap.ui.define( [
 					oProp = {};
 					oProp.key = key;
 					oProp.values = [];
-
-					iCounter++;
-					if (iCounter >= 12) {
-						break;
-					}
 
 					for (var i = this._iFirstItem; i < this._iLastItem; i++) {
 						oCurrentProduct = aSelectedProducts[i];
