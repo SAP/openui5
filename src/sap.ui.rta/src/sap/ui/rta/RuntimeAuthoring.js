@@ -363,9 +363,7 @@ function(
 			});
 
 			// Context Menu (context menu)
-			this._mDefaultPlugins["contextMenu"] = new ContextMenuPlugin({
-				styleClass: Utils.getRtaStyleClassName()
-			});
+			this._mDefaultPlugins["contextMenu"] = new ContextMenuPlugin();
 
 			// Tab Handling
 			this._mDefaultPlugins["tabHandling"] = new TabHandlingPlugin();
@@ -596,8 +594,10 @@ function(
 					jQuery(Overlay.getOverlayContainer()).addClass("sapUiRta");
 					if (this.getLayer() === "USER") {
 						jQuery(Overlay.getOverlayContainer()).addClass("sapUiRtaPersonalize");
+					} else {
+						// RTA Visual Improvements
+						jQuery("body").addClass("sapUiRtaMode");
 					}
-
 					this._oDesignTime.getSelectionManager().attachChange(function(oEvent) {
 						this.fireSelectionChange({selection: oEvent.getParameter("selection")});
 					}, this);
@@ -835,6 +835,7 @@ function(
 			.catch(fnShowTechnicalError)
 			.then(function () {
 				this._sStatus = STOPPED;
+				jQuery("body").removeClass("sapUiRtaMode");
 			}.bind(this));
 	};
 
@@ -1521,6 +1522,7 @@ function(
 			this._oDesignTime.setEnabled(bOverlaysEnabled);
 			this.getPlugins()['tabHandling'][bOverlaysEnabled ? 'removeTabIndex' : 'restoreTabIndex']();
 			this.setProperty('mode', sNewMode);
+			document.activeElement.blur();
 			this.fireModeChanged({mode: sNewMode});
 		}
 	};
