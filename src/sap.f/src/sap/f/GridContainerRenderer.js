@@ -25,7 +25,7 @@ sap.ui.define([],
 
 			rm.addClass("sapFGridContainer");
 
-			if (control.getItemsStretch()) {
+			if (control.getSnapToRow()) {
 				rm.addClass("sapFGridContainerStretchItems");
 			}
 
