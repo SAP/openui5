@@ -44,11 +44,11 @@ sap.ui.define([
 						return this._highlightNewCreatedAppVariant(aAppVariantOverviewAttributes);
 					}.bind(this));
 				} else {
-					AppVariantUtils.publishEventBus();
+					AppVariantUtils.closeOverviewDialog();
 					return this._showMessageWhenNoAppVariantsExist();
 				}
 			}.bind(this))["catch"](function(oError) {
-				AppVariantUtils.publishEventBus();
+				AppVariantUtils.closeOverviewDialog();
 				var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_MANAGE_APPS_FAILED", oError);
 				oErrorInfo.overviewDialog = true;
 				BusyIndicator.hide();
@@ -71,7 +71,9 @@ sap.ui.define([
 			var oTable = this.byId("Table1");
 
 			aAppVariantOverviewAttributes.forEach(function(oAppVariantDescriptor, index) {
-				if (oAppVariantDescriptor.currentStatus) {
+				if (oAppVariantDescriptor.currentStatus === oI18n.getText("MAA_NEW_APP_VARIANT")
+					|| oAppVariantDescriptor.currentStatus === oI18n.getText("MAA_OPERATION_IN_PROGRESS")
+				) {
 					if (oTable.getItems().length >= index) {
 						oTable.getItems()[index].focus();
 					}
@@ -186,14 +188,14 @@ sap.ui.define([
 
 				oNavigationService.toExternal(oNavigationParams);
 
-				AppVariantUtils.publishEventBus();
+				AppVariantUtils.closeOverviewDialog();
 				return true;
 			} else {
 				return false;
 			}
 		},
 		saveAsAppVariant: function(oEvent) {
-			AppVariantUtils.publishEventBus();
+			AppVariantUtils.closeOverviewDialog();
 
 			var sDescriptorUrl = this.getModelProperty("descriptorUrl", oEvent.getSource().getBindingContext());
 
@@ -209,34 +211,27 @@ sap.ui.define([
 		},
 		deleteAppVariant: function(oEvent) {
 			var oInfo = {};
+			if (!oI18n) {
+				this._createResourceBundle();
+			}
 			var sMessage = oI18n.getText("MSG_APP_VARIANT_DELETE_CONFIRMATION");
 			oInfo.text = sMessage;
 			oInfo.deleteAppVariant = true;
 
 			var sAppVarId = this.getModelProperty("appId", oEvent.getSource().getBindingContext());
-			var bIsRunningAppVariant = this.getModelProperty("isAppVariant", oEvent.getSource().getBindingContext());
+			var bIsAppVariant = this.getModelProperty("isAppVariant", oEvent.getSource().getBindingContext());
 			var sCurrentStatus = this.getModelProperty("currentStatus", oEvent.getSource().getBindingContext());
+			var bCurrentlyAdapting = sCurrentStatus === oI18n.getText("MAA_CURRENTLY_ADAPTING");
 
-			return AppVariantUtils.showRelevantDialog(oInfo).then(function() {
 
-				if (!oI18n) {
-					this._createResourceBundle();
-				}
-
-				return AppVariantUtils.triggerDeleteAppVariantFromLREP(sAppVarId).then(function() {
-					if (bIsRunningAppVariant && sCurrentStatus === oI18n.getText("MAA_CURRENTLY_ADAPTING")) {
-						AppVariantUtils.publishEventBus();
-						AppVariantUtils.navigateToFLPHomepage();
-					} else {
-						AppVariantUtils.publishEventBus();
-						return RtaAppVariantFeature.onGetOverview(true);
-					}
+			return AppVariantUtils.showRelevantDialog(oInfo)
+				.then(function() {
+					// is this necessary? in which case is there no i18n?
+					return RtaAppVariantFeature.onDeleteFromOverviewDialog(sAppVarId, bIsAppVariant, bCurrentlyAdapting, false);
 				}).catch(function() {
 					return true;
 				});
-			}.bind(this)).catch(function() {
-				return;
-			});
 		}
+
 	});
 });

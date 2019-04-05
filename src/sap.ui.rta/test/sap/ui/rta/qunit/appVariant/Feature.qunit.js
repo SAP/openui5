@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/rta/appVariant/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/rta/appVariant/AppVariantManager",
+	"sap/ui/rta/appVariant/S4HanaCloudBackend",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/command/Stack",
@@ -22,6 +23,7 @@ sap.ui.define([
 	AppVariantOverviewUtils,
 	AppVariantUtils,
 	AppVariantManager,
+	S4HanaCloudBackend,
 	Settings,
 	FlUtils,
 	Stack,
@@ -118,8 +120,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when onGetOverview() is called,", function(assert) {
-			var done = assert.async();
-
 			var oMockedDescriptorData = {
 				"sap.app": {
 					id: "id1"
@@ -166,7 +166,6 @@ sap.ui.define([
 			return RtaAppVariantFeature.onGetOverview(true).then(function(oAppVariantOverviewDialog) {
 				assert.ok(true, "the the promise got resolved and AppVariant Overview Dialog is opened");
 				oAppVariantOverviewDialog.fireCancel();
-				done();
 			});
 		});
 
@@ -211,7 +210,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when isPlatFormEnabled() is called for FLP apps", function(assert) {
-
 			var oMockedDescriptorData = {
 				"sap.app": {
 					id: "BaseAppId"
@@ -235,7 +233,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when isPlatFormEnabled() is called for standalone apps", function(assert) {
-
 			var oMockedDescriptorData = {
 				"sap.app": {
 					id: "BaseAppId"
@@ -374,7 +371,6 @@ sap.ui.define([
 	}, function() {
 
 		QUnit.test("when onSaveAsFromOverviewDialog() method is called", function(assert) {
-			var done = assert.async();
 			var oDescriptor = {
 				"sap.app" : {
 					id : "TestId",
@@ -496,12 +492,10 @@ sap.ui.define([
 				assert.ok(fnTriggerCatalogAssignment.calledOnce, "then the triggerCatalogAssignment method is called once");
 				assert.ok(fnShowSuccessMessageAndTriggerActionFlow.calledOnce, "then the showSuccessMessageAndTriggerActionFlow method is called once");
 				assert.ok(fnNotifyKeyUserWhenTileIsReadySpy.calledOnce, "then the notifyKeyUserWhenTileIsReady method is called once");
-				done();
 			});
 		});
 
 		QUnit.test("when onSaveAs() is triggered from RTA toolbar", function(assert) {
-			var done = assert.async();
 			var oDescriptor = {
 				"sap.app" : {
 					id : "TestId",
@@ -540,6 +534,130 @@ sap.ui.define([
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oDescriptor);
 
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oComponent);
+
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":false,
+					"isAtoEnabled":false,
+					"isProductiveSystem":false
+				})
+			);
+
+				var oResponse = {
+					"transports": [{
+						"transportId": "4711",
+						"owner": "TESTUSER",
+						"description": "test transport1",
+						"locked" : true
+					}]
+				};
+
+				this.oServer.respondWith("GET", /\/sap\/bc\/lrep\/actions\/gettransports/, [
+					200,
+					{
+						"Content-Type": "application/json"
+					},
+					JSON.stringify(oResponse)
+				]);
+
+				this.oServer.respondWith("HEAD", /\/sap\/bc\/lrep\/actions\/getcsrftoken/, [
+					200,
+					{
+						"X-CSRF-Token": "0987654321"
+					},
+					""
+				]);
+
+			oResponse = {
+				"id": "AppVariantId",
+				"reference":"ReferenceAppId",
+				"content": []
+			};
+
+			this.oServer.respondWith("POST", /\/sap\/bc\/lrep\/appdescr_variants/, [
+				200,
+				{
+					"Content-Type": "application/json",
+					"X-CSRF-Token": "0987654321"
+				},
+				JSON.stringify(oResponse)
+			]);
+
+			oResponse = {
+				response: {
+					"VariantId" : "customer.TestId",
+					"IAMId" : "IAMId",
+					"CatalogIds" : ["TEST_CATALOG"]
+				}
+			};
+
+			var fnTriggerCatalogAssignment = sandbox.stub(AppVariantManager.prototype, "triggerCatalogAssignment").returns(oResponse);
+
+			var fnNotifyKeyUserWhenTileIsReadySpy = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenTileIsReady").resolves();
+			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
+
+			this.oServer.autoRespond = true;
+
+			sandbox.stub(Log,"error").callThrough().withArgs("App variant error: ", "IAM App Id: IAMId").returns();
+
+			var fnCreateDescriptorSpy = sandbox.spy(AppVariantManager.prototype, "createDescriptor");
+			var fnSaveAppVariantToLREP = sandbox.spy(AppVariantManager.prototype, "saveAppVariantToLREP");
+			var fnCopyUnsavedChangesToLREP = sandbox.stub(AppVariantManager.prototype, "copyUnsavedChangesToLREP").resolves(true);
+			var fnShowSuccessMessageAndTriggerActionFlow = sandbox.spy(AppVariantManager.prototype, "showSuccessMessageAndTriggerActionFlow");
+			var fnNavigateToFLPHomepage = sandbox.stub(AppVariantUtils, "navigateToFLPHomepage").resolves();
+
+			return RtaAppVariantFeature.onSaveAsFromRtaToolbar(true, true).then(function() {
+				assert.ok(fnCreateDescriptorSpy.calledOnce, "then the create descriptor method is called once");
+				assert.ok(fnProcessSaveAsDialog.calledOnce, "then the processSaveAsDialog method is called once");
+				assert.ok(fnSaveAppVariantToLREP.calledOnce, "then the saveAppVariantToLREP method is called once");
+				assert.ok(fnCopyUnsavedChangesToLREP.calledOnce, "then the copyUnsavedChangesToLREP method is called once");
+				assert.ok(fnTriggerCatalogAssignment.calledOnce, "then the triggerCatalogAssignment method is called once");
+				assert.ok(fnShowSuccessMessageAndTriggerActionFlow.calledOnce, "then the showSuccessMessageAndTriggerActionFlow method is called once");
+				assert.ok(fnNavigateToFLPHomepage.calledOnce, "then the _navigateToFLPHomepage method is called once");
+				assert.ok(fnNotifyKeyUserWhenTileIsReadySpy.calledOnce, "then the notifyKeyUserWhenTileIsReady method is called once");
+			});
+		});
+
+		QUnit.test("when onDeleteFromOverviewDialog() method is called on S4/Hana Cloud with published catalogs", function(assert) {
+
+			var oDescriptor = {
+				"sap.app" : {
+					id : "TestId",
+					crossNavigation: {
+						inbounds: {}
+					}
+				}
+			};
+
+			var oAppVariantData = {
+				idBaseApp: "BaseAppId",
+				idRunningApp: "RunningAppId",
+				title: "Title",
+				subTitle: "Subtitle",
+				description: "Description",
+				icon: "sap-icon://history",
+				mode: "DELETION",
+				inbounds: {},
+				getId: function() {
+					return "TestId";
+				}
+			};
+
+			var fnCreateDeletionSpy = sandbox.stub(AppVariantUtils, "createDeletion").resolves(oAppVariantData);
+
+			var oManifest = new Manifest(oDescriptor);
+			var oComponent = {
+				name: "testComponent",
+				appVersion: "1.2.3",
+				getManifest : function() {
+					return oManifest;
+				}
+			};
+
+			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oComponent);
+
+			var onGetOverviewSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
@@ -592,35 +710,244 @@ sap.ui.define([
 
 			oResponse = {
 				response: {
-					"VariantId" : "customer.TestId",
 					"IAMId" : "IAMId",
-					"CatalogIds" : ["TEST_CATALOG"]
+					"inProgress" : true
 				}
 			};
 
-			var fnTriggerCatalogAssignment = sandbox.stub(AppVariantManager.prototype, "triggerCatalogAssignment").returns(oResponse);
-
-			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
+			var fnTriggerCatalogUnAssignment = sandbox.stub(AppVariantManager.prototype, "triggerCatalogUnAssignment").returns(oResponse);
 
 			this.oServer.autoRespond = true;
 
-			sandbox.stub(Log,"error").callThrough().withArgs("App variant error: ", "IAM App Id: IAMId").returns();
+			var fnNotifyWhenUnpublishingIsReadyStub = sandbox.spy(AppVariantManager.prototype, "notifyWhenUnpublishingIsReady");
+			var fnNotifyFlpCustomizingIsReadyStub = sandbox.stub(S4HanaCloudBackend.prototype, "notifyFlpCustomizingIsReady").resolves();
 
-			var fnCreateDescriptorSpy = sandbox.spy(AppVariantManager.prototype, "createDescriptor");
-			var fnSaveAppVariantToLREP = sandbox.spy(AppVariantManager.prototype, "saveAppVariantToLREP");
-			var fnCopyUnsavedChangesToLREP = sandbox.stub(AppVariantManager.prototype, "copyUnsavedChangesToLREP").resolves(true);
-			var fnShowSuccessMessageAndTriggerActionFlow = sandbox.spy(AppVariantManager.prototype, "showSuccessMessageAndTriggerActionFlow");
-			var fnNavigateToFLPHomepage = sandbox.stub(AppVariantUtils, "navigateToFLPHomepage").resolves();
+			var fnTriggerDeleteAppVariantFromLREP = sandbox.stub(AppVariantUtils, "triggerDeleteAppVariantFromLREP").resolves();
 
-			return RtaAppVariantFeature.onSaveAsFromRtaToolbar(true, true).then(function() {
-				assert.ok(fnCreateDescriptorSpy.calledOnce, "then the create descriptor method is called once");
-				assert.ok(fnProcessSaveAsDialog.calledOnce, "then the processSaveAsDialog method is called once");
-				assert.ok(fnSaveAppVariantToLREP.calledOnce, "then the saveAppVariantToLREP method is called once");
-				assert.ok(fnCopyUnsavedChangesToLREP.calledOnce, "then the copyUnsavedChangesToLREP method is called once");
-				assert.ok(fnTriggerCatalogAssignment.calledOnce, "then the triggerCatalogAssignment method is called once");
-				assert.ok(fnShowSuccessMessageAndTriggerActionFlow.calledOnce, "then the showSuccessMessageAndTriggerActionFlow method is called once");
-				assert.ok(fnNavigateToFLPHomepage.calledOnce, "then the _navigateToFLPHomepage method is called once");
-				done();
+			return RtaAppVariantFeature.onDeleteFromOverviewDialog("AppVarId", false).then(function() {
+				assert.ok(onGetOverviewSpy.calledOnce, "then the App variant dialog gets opened when the polling starts");
+				assert.ok(fnCreateDeletionSpy.calledOnce, "then the create deletion method is called once");
+				assert.ok(fnTriggerCatalogUnAssignment.calledOnce, "then the triggerCatalogAssignment method is called once");
+				assert.ok(fnNotifyWhenUnpublishingIsReadyStub.calledOnce, "then the notifyWhenUnpublishingIsReady method is called once");
+				assert.ok(fnNotifyFlpCustomizingIsReadyStub.calledOnce, "then the notifyFlpCustomizingIsReady method is called once");
+				assert.ok(fnTriggerDeleteAppVariantFromLREP.calledOnce, "then the triggerDeleteAppVariantFromLREP method is called once");
+			});
+		});
+
+		QUnit.test("when onDeleteFromOverviewDialog() method is called on S4/Hana Cloud with unpublished catalogs", function(assert) {
+
+			var oDescriptor = {
+				"sap.app" : {
+					id : "TestId",
+					crossNavigation: {
+						inbounds: {}
+					}
+				}
+			};
+
+			var oAppVariantData = {
+				idBaseApp: "BaseAppId",
+				idRunningApp: "RunningAppId",
+				title: "Title",
+				subTitle: "Subtitle",
+				description: "Description",
+				icon: "sap-icon://history",
+				mode: "DELETION",
+				inbounds: {}
+			};
+
+			var fnCreateDeletionSpy = sandbox.stub(AppVariantUtils, "createDeletion").resolves(oAppVariantData);
+			var oManifest = new Manifest(oDescriptor);
+			var oComponent = {
+				name: "testComponent",
+				appVersion: "1.2.3",
+				getManifest : function() {
+					return oManifest;
+				}
+			};
+
+			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oComponent);
+
+			var onGetOverviewSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
+
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":false,
+					"isAtoEnabled":false,
+					"isProductiveSystem":false
+				})
+			);
+
+			var oResponse = {
+				"transports": [{
+					"transportId": "4711",
+					"owner": "TESTUSER",
+					"description": "test transport1",
+					"locked" : true
+				}]
+			};
+
+			this.oServer.respondWith("GET", /\/sap\/bc\/lrep\/actions\/gettransports/, [
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify(oResponse)
+			]);
+
+			this.oServer.respondWith("HEAD", /\/sap\/bc\/lrep\/actions\/getcsrftoken/, [
+				200,
+				{
+					"X-CSRF-Token": "0987654321"
+				},
+				""
+			]);
+
+			oResponse = {
+				"id": "AppVariantId",
+				"reference":"ReferenceAppId",
+				"content": []
+			};
+
+			this.oServer.respondWith("POST", /\/sap\/bc\/lrep\/appdescr_variants/, [
+				200,
+				{
+					"Content-Type": "application/json",
+					"X-CSRF-Token": "0987654321"
+				},
+				JSON.stringify(oResponse)
+			]);
+
+			oResponse = {
+				response: {
+					"IAMId" : "IAMId",
+					"inProgress" : false
+				}
+			};
+
+
+			var fnTriggerCatalogUnAssignment = sandbox.stub(AppVariantManager.prototype, "triggerCatalogUnAssignment").returns(oResponse);
+
+			this.oServer.autoRespond = true;
+
+			var fnNotifyWhenUnpublishingIsReadyStub = sandbox.spy(AppVariantManager.prototype, "notifyWhenUnpublishingIsReady");
+
+			var fnTriggerDeleteAppVariantFromLREP = sandbox.stub(AppVariantUtils, "triggerDeleteAppVariantFromLREP").resolves();
+
+			return RtaAppVariantFeature.onDeleteFromOverviewDialog(oDescriptor, false).then(function() {
+				assert.ok(onGetOverviewSpy.notCalled, "then the App variant dialog does not get opened again");
+				assert.ok(fnCreateDeletionSpy.calledOnce, "then the create deletion method is called once");
+				assert.ok(fnTriggerCatalogUnAssignment.calledOnce, "then the triggerCatalogAssignment method is called once");
+				assert.ok(fnNotifyWhenUnpublishingIsReadyStub.notCalled, "then the notifyWhenUnpublishingIsReady method is not called");
+				assert.ok(fnTriggerDeleteAppVariantFromLREP.calledOnce, "then the triggerDeleteAppVariantFromLREP method is called once");
+			});
+		});
+
+		QUnit.test("when onDeleteFromOverviewDialog() method is called on S4/Hana on premise", function(assert) {
+
+			var oDescriptor = {
+				"sap.app" : {
+					id : "TestId",
+					crossNavigation: {
+						inbounds: {}
+					}
+				}
+			};
+
+			var oAppVariantData = {
+				idBaseApp: "BaseAppId",
+				idRunningApp: "RunningAppId",
+				title: "Title",
+				subTitle: "Subtitle",
+				description: "Description",
+				icon: "sap-icon://history",
+				mode: "DELETION",
+				inbounds: {}
+			};
+
+			var fnCreateDeletionSpy = sandbox.stub(AppVariantUtils, "createDeletion").resolves(oAppVariantData);
+
+			// sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
+
+			var oManifest = new Manifest(oDescriptor);
+			var oComponent = {
+				name: "testComponent",
+				appVersion: "1.2.3",
+				getManifest : function() {
+					return oManifest;
+				}
+			};
+
+			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oComponent);
+
+			var onGetOverviewSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
+
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":false,
+					"isAtoEnabled":false,
+					"isProductiveSystem":false
+				})
+			);
+
+			var oResponse = {
+				"transports": [{
+					"transportId": "4711",
+					"owner": "TESTUSER",
+					"description": "test transport1",
+					"locked" : true
+				}]
+			};
+
+			this.oServer.respondWith("GET", /\/sap\/bc\/lrep\/actions\/gettransports/, [
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify(oResponse)
+			]);
+
+			this.oServer.respondWith("HEAD", /\/sap\/bc\/lrep\/actions\/getcsrftoken/, [
+				200,
+				{
+					"X-CSRF-Token": "0987654321"
+				},
+				""
+			]);
+
+			oResponse = {
+				"id": "AppVariantId",
+				"reference":"ReferenceAppId",
+				"content": []
+			};
+
+			this.oServer.respondWith("POST", /\/sap\/bc\/lrep\/appdescr_variants/, [
+				200,
+				{
+					"Content-Type": "application/json",
+					"X-CSRF-Token": "0987654321"
+				},
+				JSON.stringify(oResponse)
+			]);
+
+			oResponse = undefined;
+
+			var fnTriggerCatalogUnAssignment = sandbox.stub(AppVariantManager.prototype, "triggerCatalogUnAssignment").returns(oResponse);
+
+			this.oServer.autoRespond = true;
+
+			var fnNotifyWhenUnpublishingIsReadyStub = sandbox.spy(AppVariantManager.prototype, "notifyWhenUnpublishingIsReady");
+
+			var fnTriggerDeleteAppVariantFromLREP = sandbox.stub(AppVariantUtils, "triggerDeleteAppVariantFromLREP").resolves();
+
+			return RtaAppVariantFeature.onDeleteFromOverviewDialog(oDescriptor, false).then(function() {
+				assert.ok(onGetOverviewSpy.notCalled, "then the App variant dialog does not get opened again");
+				assert.ok(fnCreateDeletionSpy.calledOnce, "then the create deletion method is called once");
+				assert.ok(fnTriggerCatalogUnAssignment.calledOnce, "then the triggerCatalogAssignment method is called once");
+				assert.ok(fnNotifyWhenUnpublishingIsReadyStub.notCalled, "then the notifyWhenUnpublishingIsReady method is not called");
+				assert.ok(fnTriggerDeleteAppVariantFromLREP.calledOnce, "then the triggerDeleteAppVariantFromLREP method is called once");
 			});
 		});
 	});

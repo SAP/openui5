@@ -78,6 +78,171 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana Cloud with app var status 'U'", function (assert) {
+			var oAppVariantInfo = {
+				appId : "id1",
+				title : "title1",
+				originLayer: "VENDOR",
+				isAppVariant: true,
+				descriptorUrl : "url1",
+				hasStartableIntent: true,
+				startWith: {
+					"semanticObject": "SemObj",
+					"action": "Action"
+				},
+				appVarStatus: 'U'
+			};
+
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":true,
+					"isAtoEnabled":true,
+					"isProductiveSystem":false
+				})
+			);
+
+			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true).then(function(oAppVariantAttributes) {
+				assert.strictEqual(oAppVariantAttributes.subTitle, "", "then the subtitle is an empty string");
+				assert.strictEqual(oAppVariantAttributes.description, "", "then the description is an empty string");
+				assert.strictEqual(oAppVariantAttributes.icon, "", "then the icon is an empty string");
+				assert.equal(oAppVariantAttributes.isS4HanaCloud, true, "then it is a S4/Hana Cloud system");
+				assert.equal(oAppVariantAttributes.adaptUIButtonEnabled, false, "then the button Adapt UI is enabled");
+				assert.equal(oAppVariantAttributes.delAppVarButtonVisibility, true, "then the button Delete App Variant is available on an app variant");
+				assert.equal(oAppVariantAttributes.delAppVarButtonEnabled, true, "then the button Delete App Variant is enabled on an app variant");
+			});
+		});
+
+		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana Cloud with adaptUi button disabled", function (assert) {
+			var oAppVariantInfo = {
+				appId : "id1",
+				title : "title1",
+				originLayer: "VENDOR",
+				isAppVariant: true,
+				descriptorUrl : "url1",
+				hasStartableIntent: false,
+				appVarStatus: 'R'
+			};
+
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":true,
+					"isAtoEnabled":true,
+					"isProductiveSystem":false
+				})
+			);
+
+			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true).then(function(oAppVariantAttributes) {
+				assert.strictEqual(oAppVariantAttributes.subTitle, "", "then the subtitle is an empty string");
+				assert.strictEqual(oAppVariantAttributes.description, "", "then the description is an empty string");
+				assert.strictEqual(oAppVariantAttributes.icon, "", "then the icon is an empty string");
+				assert.equal(oAppVariantAttributes.isS4HanaCloud, true, "then it is a S4/Hana Cloud system");
+				assert.equal(oAppVariantAttributes.adaptUIButtonEnabled, false, "then the button Adapt UI is enabled");
+				assert.equal(oAppVariantAttributes.delAppVarButtonVisibility, true, "then the button Delete App Variant is available on an app variant");
+				assert.equal(oAppVariantAttributes.delAppVarButtonEnabled, false, "then the button Delete App Variant is not enabled on an app variant");
+			});
+		});
+
+		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana onPremise and it has no target mappings", function (assert) {
+			var oAppVariantInfo = {
+				appId : "id1",
+				title : "title1",
+				originLayer: "VENDOR",
+				isAppVariant: true,
+				descriptorUrl : "url1",
+				hasStartableIntent: false
+			};
+
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":false,
+					"isAtoEnabled":false,
+					"isProductiveSystem":false
+				})
+			);
+
+			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true).then(function(oAppVariantAttributes) {
+				assert.strictEqual(oAppVariantAttributes.subTitle, "", "then the subtitle is an empty string");
+				assert.strictEqual(oAppVariantAttributes.description, "", "then the description is an empty string");
+				assert.strictEqual(oAppVariantAttributes.icon, "", "then the icon is an empty string");
+				assert.equal(oAppVariantAttributes.isS4HanaCloud, false, "then it is a S4/Hana on premise system");
+				assert.equal(oAppVariantAttributes.adaptUIButtonEnabled, false, "then the button Adapt UI is enabled");
+				assert.equal(oAppVariantAttributes.delAppVarButtonVisibility, true, "then the button Delete App Variant is available on an app variant");
+				assert.equal(oAppVariantAttributes.delAppVarButtonEnabled, true, "then the button Delete App Variant is not enabled on an app variant");
+			});
+		});
+
+		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana onPremise and it has target mappings", function (assert) {
+			var oAppVariantInfo = {
+				appId : "id1",
+				title : "title1",
+				originLayer: "VENDOR",
+				isAppVariant: true,
+				descriptorUrl : "url1",
+				hasStartableIntent: true,
+				startWith: {
+					"semanticObject": "SemObj",
+					"action": "Action"
+				}
+			};
+
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":false,
+					"isAtoEnabled":false,
+					"isProductiveSystem":false
+				})
+			);
+
+			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true).then(function(oAppVariantAttributes) {
+				assert.strictEqual(oAppVariantAttributes.subTitle, "", "then the subtitle is an empty string");
+				assert.strictEqual(oAppVariantAttributes.description, "", "then the description is an empty string");
+				assert.strictEqual(oAppVariantAttributes.icon, "", "then the icon is an empty string");
+				assert.equal(oAppVariantAttributes.isS4HanaCloud, false, "then it is a S4/Hana on premise system");
+				assert.equal(oAppVariantAttributes.adaptUIButtonEnabled, true, "then the button Adapt UI is enabled");
+				assert.equal(oAppVariantAttributes.delAppVarButtonVisibility, true, "then the button Delete App Variant is available on an app variant");
+				assert.equal(oAppVariantAttributes.delAppVarButtonEnabled, false, "then the button Delete App Variant is not enabled on an app variant");
+			});
+		});
+
+		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana Cloud with status 'Operation in Progress'", function (assert) {
+			var oAppVariantInfo = {
+				appId : "id1",
+				title : "title1",
+				originLayer: "VENDOR",
+				isAppVariant: true,
+				descriptorUrl : "url1",
+				hasStartableIntent: true,
+				startWith: {
+					"semanticObject": "SemObj",
+					"action": "Action"
+				},
+				appVarStatus: 'R'
+			};
+
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":true,
+					"isAtoEnabled":true,
+					"isProductiveSystem":false
+				})
+			);
+
+			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true).then(function(oAppVariantAttributes) {
+				assert.strictEqual(oAppVariantAttributes.subTitle, "", "then the subtitle is an empty string");
+				assert.strictEqual(oAppVariantAttributes.description, "", "then the description is an empty string");
+				assert.strictEqual(oAppVariantAttributes.icon, "", "then the icon is an empty string");
+				assert.equal(oAppVariantAttributes.isS4HanaCloud, true, "then it is a S4/Hana Cloud system");
+				assert.equal(oAppVariantAttributes.adaptUIButtonEnabled, false, "then the button Adapt UI is not enabled");
+				assert.equal(oAppVariantAttributes.delAppVarButtonVisibility, true, "then the button Delete App Variant is available on an app variant");
+				assert.equal(oAppVariantAttributes.delAppVarButtonEnabled, false, "then the button Delete App Variant is not enabled on an app variant");
+			});
+		});
+
 		QUnit.test("When getAppVariantOverviewAttributes() method is called with no intent parameters (Key user view) in on prem system", function (assert) {
 			var oAppVariantInfo = {
 				appId : "id1",
@@ -385,6 +550,70 @@ sap.ui.define([
 				assert.ok(AppVariantOverviewUtils.sendRequest.calledOnce, "then the sendRequest is called once");
 				assert.strictEqual(sendRequestStub.firstCall.args[0], "/sap/bc/lrep/app_variant_overview/?sap.app/id=testId&layer=CUSTOMER*", "then the route is correct");
 				assert.strictEqual(sendRequestStub.firstCall.args[1], "GET", "then the operation is correct");
+			});
+		});
+
+		QUnit.test("When getAppVariantOverview() method is called with current status 'Operation in Process'", function (assert) {
+			var oResult = {
+				response: {
+					items: [
+						{
+							appId : "id1",
+							title : "title1",
+							subTitle : "subTitle1",
+							description : "description1",
+							iconUrl : "sap-icon://history",
+							originLayer: "VENDOR",
+							isOriginal : false,
+							isAppVariant: true,
+							descriptorUrl : "url1",
+							hasStartableIntent: true,
+							startWith: {
+								"semanticObject": "SemObj",
+								"action": "Action",
+								"parameters": {
+									"sap-appvar-id" : {
+										value: "id1"
+									}
+								}
+							},
+							appVarStatus: 'R'
+						}
+					]
+				}
+			};
+
+			var sendRequestStub = sandbox.stub(AppVariantOverviewUtils, "sendRequest").resolves(oResult);
+
+			var oResourceBundlePromise = jQuery.sap.resources({
+				url: jQuery.sap.getModulePath("sap.ui.rta.appVariant.manageApps.webapp.i18n", "/i18n.properties"),
+				async: true
+			});
+
+			AppVariantUtils.setNewAppVariantId(null);
+
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":true,
+					"isAtoEnabled":true,
+					"isProductiveSystem":false
+				})
+			);
+
+			return Promise.all([AppVariantOverviewUtils.getAppVariantOverview("testId", true), oResourceBundlePromise]).then(function(aParams) {
+				var aAppVariantOverviewAttributes = aParams[0], oResourceBundle = aParams[1];
+
+				assert.ok(aAppVariantOverviewAttributes, "then the result contains app variant overview properties");
+
+				assert.strictEqual(aAppVariantOverviewAttributes[0].icon, "sap-icon://history", "then the icon of first app(variant) is correct");
+				assert.equal(aAppVariantOverviewAttributes[0].iconText, "history", "then the icon tooltip text of a first app(variant) is correct");
+				assert.strictEqual(aAppVariantOverviewAttributes[0].semanticObject, "SemObj", "then the semantic object of first app(variant) is correct");
+				assert.strictEqual(aAppVariantOverviewAttributes[0].action, "Action", "then the action of first app(variant) is correct");
+				assert.equal(aAppVariantOverviewAttributes[0].adaptUIButtonEnabled, false, "then the first app(variant) is not adaptable");
+				assert.equal(aAppVariantOverviewAttributes[0].currentStatus, oResourceBundle.getText("MAA_OPERATION_IN_PROGRESS"), "then the first app(variant) is highlighted blue");
+				assert.ok(AppVariantOverviewUtils.sendRequest.calledOnce, "then the sendRequest is called once");
+				assert.strictEqual(sendRequestStub.firstCall.args[0], "/sap/bc/lrep/app_variant_overview/?sap.app/id=testId&layer=CUSTOMER*", "then the route is correct");
 			});
 		});
 	});

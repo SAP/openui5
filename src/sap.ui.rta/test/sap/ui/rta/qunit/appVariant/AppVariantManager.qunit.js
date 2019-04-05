@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/rta/command/Stack",
 	"sap/ui/rta/command/LREPSerializer",
 	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
+	"sap/ui/fl/descriptorRelated/internal/Utils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/Utils",
@@ -26,6 +27,7 @@ function (
 	Stack,
 	LREPSerializer,
 	DescriptorVariantFactory,
+	DescriptorUtils,
 	Settings,
 	FlUtils,
 	RtaUtils,
@@ -221,12 +223,34 @@ function (
 		});
 
 		QUnit.test("When notifyKeyUserWhenTileIsReady() method is called on S4/Hana Cloud", function (assert) {
-			sandbox.stub(S4HanaCloudBackend.prototype, "checkFlpCustomizingIsReady").resolves(true);
-			sandbox.stub(RtaUtils, "_showMessageBox").resolves(true);
+			var fnNotifyFlpCustomizingIsReadyStub =  sandbox.stub(S4HanaCloudBackend.prototype, "notifyFlpCustomizingIsReady").resolves(true);
+			var fnShowMessageBoxStub = sandbox.stub(RtaUtils, "_showMessageBox").resolves(true);
 			return this.oAppVariantManager.notifyKeyUserWhenTileIsReady("IamID", "AppvarID").then(function(oResult) {
-				assert.strictEqual(oResult.iamAppId, "IamID", "then the IAM Id is correct");
-				assert.equal(oResult.flpCustomizingIsReady, true, "then the FLP customizing for app variant is done and FLP tile is ready");
+				assert.ok(fnNotifyFlpCustomizingIsReadyStub.calledOnceWith("IamID", true), "then the function notifyFlpCustomizingIsReady() is called once and with right parameters");
+				assert.ok(fnShowMessageBoxStub.calledOnce, "then the function _showMessageBox() is called once");
 			});
+		});
+
+		QUnit.test("When notifyWhenUnpublishingIsReady() method is called on S4/Hana Cloud", function (assert) {
+			var fnNotifyFlpCustomizingIsReadyStub =  sandbox.stub(S4HanaCloudBackend.prototype, "notifyFlpCustomizingIsReady").resolves(true);
+
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":false,
+					"isAtoEnabled":false,
+					"isProductiveSystem":false
+				})
+			);
+
+			return DescriptorVariantFactory.createNew({
+				id: "customer.TestId",
+				reference: "TestIdBaseApp"
+			}).then(function(oDescriptor) {
+				return this.oAppVariantManager.notifyWhenUnpublishingIsReady("IamID", oDescriptor.getId()).then(function(oResult) {
+					assert.ok(fnNotifyFlpCustomizingIsReadyStub.calledOnceWith("IamID", false), "then the function notifyFlpCustomizingIsReady() is called once and with right parameters");
+				});
+			}.bind(this));
 		});
 
 		QUnit.test("When notifyKeyUserWhenTileIsReady() method is failed on S4/Hana Cloud", function (assert) {
@@ -245,6 +269,39 @@ function (
 					assert.ok(checkFlpCustomizingIsReadyStub.calledOnceWith("IamID"), "then the method notifyFlpCustomizingIsReady is called once with correct parameters");
 				}
 			);
+		});
+
+		QUnit.test("When notifyWhenUnpublishingIsReady() method is failed on S4/Hana Cloud", function (assert) {
+			var checkFlpCustomizingIsReadyStub = sandbox.stub(S4HanaCloudBackend.prototype, "notifyFlpCustomizingIsReady").callsFake(function(sIamAppId) {
+				return Promise.reject({
+					iamAppId : sIamAppId
+				});
+			});
+
+			sandbox.stub(Log,"error").callThrough().withArgs("App variant error: ", "IAM App Id: IamID").returns();
+
+			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.reject(false));
+
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":false,
+					"isAtoEnabled":false,
+					"isProductiveSystem":false
+				})
+			);
+
+			return DescriptorVariantFactory.createNew({
+				id: "customer.TestId",
+				reference: "TestIdBaseApp"
+			}).then(function(oDescriptor) {
+				return this.oAppVariantManager.notifyWhenUnpublishingIsReady("IamID", oDescriptor.getId()).catch(
+					function(bSuccess) {
+						assert.equal(bSuccess, false, "Error: An unexpected exception occured" );
+						assert.ok(checkFlpCustomizingIsReadyStub.calledOnceWith("IamID"), "then the method notifyFlpCustomizingIsReady is called once with correct parameters");
+					}
+				);
+			}.bind(this));
 		});
 
 		QUnit.test("When createDescriptor() method is failed on S4/Hana cloud", function (assert) {
@@ -456,40 +513,90 @@ function (
 				})
 			);
 
-			oServer.respondWith("HEAD", /\/sap\/bc\/lrep\/actions\/getcsrftoken/, [
-				200,
-				{
-					"X-CSRF-Token": "0987654321"
-				},
-				""
-			]);
-
 			var oResponse = {
 				"VariantId" : "customer.TestId",
 				"IAMId" : "IAMId",
 				"CatalogIds" : ["TEST_CATALOG"]
 			};
 
-			oServer.respondWith("POST", /\/sap\/bc\/lrep\/appdescr_variants\/customer.TestId/, [
-				200,
-				{
-					"Content-Type": "application/json",
-					"X-CSRF-Token": "0987654321"
-				},
-				JSON.stringify(oResponse)
-			]);
-
-			oServer.autoRespond = true;
+			var oDescriptorUtilsStub = sandbox.stub(DescriptorUtils, "sendRequest").resolves(oResponse);
 
 			return DescriptorVariantFactory.createNew({
 				id: "customer.TestId",
 				reference: "TestIdBaseApp"
 			}).then(function(oDescriptor) {
 				return this.oAppVariantManager.triggerCatalogAssignment(oDescriptor).then(function(oResult) {
-					assert.strictEqual(oResult.response.IAMId, "IAMId", "then the IAM id is correct");
-					assert.strictEqual(oResult.response.VariantId, "customer.TestId", "then the variant id is correct");
-					assert.strictEqual(oResult.response.CatalogIds[0], "TEST_CATALOG", "then the new app variant has been added to a correct catalog ");
+					assert.ok(oDescriptorUtilsStub.calledOnceWith("/sap/bc/lrep/appdescr_variants/customer.TestId?action=assignCatalogs&assignFromAppId=TestIdBaseApp", 'POST'), "then the sendRequest() method is called once and with right parameters");
+					assert.strictEqual(oResult.IAMId, "IAMId", "then the IAM id is correct");
+					assert.strictEqual(oResult.VariantId, "customer.TestId", "then the variant id is correct");
+					assert.strictEqual(oResult.CatalogIds[0], "TEST_CATALOG", "then the new app variant has been added to a correct catalog ");
 				});
+			}.bind(this));
+		});
+
+		QUnit.test("When triggerCatalogUnAssignment() method is called on S4/Hana Cloud", function (assert) {
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":true,
+					"isAtoEnabled":true,
+					"isProductiveSystem":false
+				})
+			);
+
+			var oResponse = {
+				"IAMId" : "IAMId",
+				"inProgress": true
+			};
+
+			var oDescriptorUtilsStub = sandbox.stub(DescriptorUtils, "sendRequest").resolves(oResponse);
+
+			return DescriptorVariantFactory.createNew({
+				id: "customer.TestId",
+				reference: "TestIdBaseApp"
+			}).then(function(oDescriptor) {
+				return this.oAppVariantManager.triggerCatalogUnAssignment(oDescriptor).then(function(oResult) {
+					assert.ok(oDescriptorUtilsStub.calledOnceWith("/sap/bc/lrep/appdescr_variants/customer.TestId?action=unassignCatalogs", 'POST'), "then the sendRequest() method is called once and with right parameters");
+					assert.strictEqual(oResult.IAMId, "IAMId", "then the IAM id is correct");
+					assert.equal(oResult.inProgress, true, "then the inProgress property is true");
+				});
+			}.bind(this));
+		});
+
+		QUnit.test("When triggerCatalogUnAssignment() method is called and response is failed", function (assert) {
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":true,
+					"isAtoEnabled":true,
+					"isProductiveSystem":false
+				})
+			);
+
+			var oDescriptorUtilsStub = sandbox.stub(DescriptorUtils, "sendRequest").returns(Promise.reject("Error"));
+
+			sandbox.stub(MessageBox, "show").callsFake(function(sText, mParameters) {
+				mParameters.onClose("Close");
+			});
+
+			sandbox.stub(Log,"error").callThrough().withArgs("App variant error: ", "error").returns();
+
+			var fnShowRelevantDialog = sandbox.spy(AppVariantUtils, "showRelevantDialog");
+			var oErrorInfo = {appVariantId:  "customer.TestId"};
+			var fnBuildErrorInfoStub = sandbox.stub(AppVariantUtils, "buildErrorInfo").returns(oErrorInfo);
+
+			return DescriptorVariantFactory.createNew({
+				id: "customer.TestId",
+				reference: "TestIdBaseApp"
+			}).then(function(oDescriptor) {
+				return this.oAppVariantManager.triggerCatalogUnAssignment(oDescriptor).catch(
+					function() {
+						assert.ok(oDescriptorUtilsStub.calledOnceWith("/sap/bc/lrep/appdescr_variants/customer.TestId?action=unassignCatalogs", 'POST'), "then the sendRequest() method is called once and with right parameters");
+						assert.ok("then the promise got rejected");
+						assert.ok(fnBuildErrorInfoStub.calledOnce, "then the buildErrorInfo method is called once");
+						assert.ok(fnShowRelevantDialog.calledOnceWith(oErrorInfo, false), "then the showRelevantDialog method is called once and with correct parameters");
+					}
+				);
 			}.bind(this));
 		});
 
@@ -503,12 +610,38 @@ function (
 				})
 			);
 
+			var fnTriggerCatalogAssignmentSpy = sandbox.spy(AppVariantUtils, "triggerCatalogAssignment");
+
 			return DescriptorVariantFactory.createNew({
 				id: "customer.TestId",
 				reference: "TestIdBaseApp"
 			}).then(function(oDescriptor) {
 				return this.oAppVariantManager.triggerCatalogAssignment(oDescriptor).then(function(oResult) {
 					assert.ok(true, "then the promise is resolved");
+					assert.ok(fnTriggerCatalogAssignmentSpy.notCalled, "then the method triggerCatalogAssignment() is not called");
+				});
+			}.bind(this));
+		});
+
+		QUnit.test("When triggerCatalogUnAssignment() method is called on S4/Hana on premise", function (assert) {
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":false,
+					"isAtoEnabled":false,
+					"isProductiveSystem":false
+				})
+			);
+
+			var fnTriggerCatalogUnAssignmentSpy = sandbox.spy(AppVariantUtils, "triggerCatalogUnAssignment");
+
+			return DescriptorVariantFactory.createNew({
+				id: "customer.TestId",
+				reference: "TestIdBaseApp"
+			}).then(function(oDescriptor) {
+				return this.oAppVariantManager.triggerCatalogUnAssignment(oDescriptor).then(function(oResult) {
+					assert.ok(true, "then the promise is resolved");
+					assert.ok(fnTriggerCatalogUnAssignmentSpy.notCalled, "then the method triggerCatalogUnAssignment() is not called");
 				});
 			}.bind(this));
 		});
@@ -523,16 +656,7 @@ function (
 				})
 			);
 
-			oServer.respondWith("POST", /\/sap\/bc\/lrep\/appdescr_variants\/customer.TestId/, [
-				400,
-				{
-					"Content-Type": "application/json",
-					"X-CSRF-Token": "0987654321"
-				},
-				"Backend Error"
-			]);
-
-			oServer.autoRespond = true;
+			var oDescriptorUtilsStub = sandbox.stub(DescriptorUtils, "sendRequest").returns(Promise.reject("Error"));
 
 			sandbox.stub(MessageBox, "show").callsFake(function(sText, mParameters) {
 				mParameters.onClose("Close");
@@ -541,6 +665,8 @@ function (
 			sandbox.stub(Log,"error").callThrough().withArgs("App variant error: ", "error").returns();
 
 			var fnShowRelevantDialog = sandbox.spy(AppVariantUtils, "showRelevantDialog");
+			var oErrorInfo = {appVariantId:  "customer.TestId"};
+			var fnBuildErrorInfoStub = sandbox.stub(AppVariantUtils, "buildErrorInfo").returns(oErrorInfo);
 
 			return DescriptorVariantFactory.createNew({
 				id: "customer.TestId",
@@ -548,8 +674,10 @@ function (
 			}).then(function(oDescriptor) {
 				return this.oAppVariantManager.triggerCatalogAssignment(oDescriptor).catch(
 					function() {
+						assert.ok(oDescriptorUtilsStub.calledOnceWith("/sap/bc/lrep/appdescr_variants/customer.TestId?action=assignCatalogs&assignFromAppId=TestIdBaseApp", 'POST'), "then the sendRequest() method is called once and with right parameters");
 						assert.ok("then the promise got rejected");
-						assert.ok(fnShowRelevantDialog.calledOnce, "then the showRelevantDialog method is called once");
+						assert.ok(fnBuildErrorInfoStub.calledOnce, "then the buildErrorInfo method is called once");
+						assert.ok(fnShowRelevantDialog.calledOnceWith(oErrorInfo, false), "then the showRelevantDialog method is called once and with correct parameters");
 					}
 				);
 			}.bind(this));

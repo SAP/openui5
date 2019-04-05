@@ -44,57 +44,63 @@ function(
 			return undefined;
 		};
 
-		Utils._calculateCurrentStatus = function(sAppVariantInfoId) {
+		Utils._calculateCurrentStatus = function(sAppVariantInfoId, sAppVarStatus) {
 			// Get the id of a new created app variant
 			var sNewAppVariantId = AppVariantUtils.getNewAppVariantId();
 
 			if (sNewAppVariantId === sAppVariantInfoId) {
 				return  oI18n.getText("MAA_NEW_APP_VARIANT");
+			} else if (sAppVarStatus === 'R') {
+				return oI18n.getText("MAA_OPERATION_IN_PROGRESS");
 			}
 
 			return undefined;
 		};
 
-		Utils._checkDeleteButtonOptions = function(oPreparedObject, bAdaptUIButtonEnabled) {
-			var oDelAppVarObject = {};
+		Utils._checkMenuItemOptions = function(oPreparedObject, bAdaptUIButtonEnabled) {
+			var oAppVarObject = {};
 
 			if (oPreparedObject.isKeyUser) {
 				if (oPreparedObject.isOriginal) {
-					oDelAppVarObject.delAppVarButtonEnabled = false;
-					oDelAppVarObject.delAppVarButtonVisibility = false;
-					return oDelAppVarObject;
+					oAppVarObject.delAppVarButtonEnabled = false;
+					oAppVarObject.delAppVarButtonVisibility = false;
+					return oAppVarObject;
+				}
+				// If the catalogs bound to the app variants are hanging in one of the following states, then the Save As button is disabled => Should be applicable only for S4/Cloud
+				// Unpublished state ('U')
+				// Error state ('E')
+				// Running state ('R')
+				if (oPreparedObject.appVarStatus === 'U' || oPreparedObject.appVarStatus === 'E' || oPreparedObject.appVarStatus === 'R') {
+					oAppVarObject.saveAsButtonEnabled = false;
 				}
 
 				if (bAdaptUIButtonEnabled) {
 					if (oPreparedObject.isS4HanaCloud) {
 						// S4 Hana Cloud and target mappings => deleteable
-						oDelAppVarObject.delAppVarButtonEnabled = true;
-						// TODO: When deletion works E2E, then uncomment line 73 and remove line 74
-						// oDelAppVarObject.delAppVarButtonVisibility = true;
-						oDelAppVarObject.delAppVarButtonVisibility = false;
+						oAppVarObject.delAppVarButtonEnabled = true;
+						oAppVarObject.delAppVarButtonVisibility = true;
 					} else {
 						// S4 Hana on premise and target mappings => not deleteable
-						oDelAppVarObject.delAppVarButtonEnabled = false;
-						oDelAppVarObject.delAppVarButtonVisibility = true;
+						oAppVarObject.delAppVarButtonEnabled = false;
+						oAppVarObject.delAppVarButtonVisibility = true;
 					}
-				} else if (oPreparedObject.isS4HanaCloud) {
-					// S4 Hana Cloud and no target mappings => not deleteable
-					oDelAppVarObject.delAppVarButtonEnabled = false;
-					// TODO: When deletion works E2E, then uncomment line 82 and remove line 83
-					// oDelAppVarObject.delAppVarButtonVisibility = true;
-					oDelAppVarObject.delAppVarButtonVisibility = false;
 				} else {
-					// S4 Hana on Premise and no target mappings => deleteable
-					oDelAppVarObject.delAppVarButtonEnabled = true;
-					oDelAppVarObject.delAppVarButtonVisibility = true;
+					oAppVarObject.delAppVarButtonVisibility = true;
+					if (oPreparedObject.appVarStatus === 'R') {
+						// catalog unpublishing or publishing is currently in progress => not deleteable
+						oAppVarObject.delAppVarButtonEnabled = false;
+					} else {
+						// S/4HANA on Premise or Cloud and no target mappings => deleteable
+						oAppVarObject.delAppVarButtonEnabled = true;
+					}
 				}
 			} else {
 				// Not a key user => not deleteable
-				oDelAppVarObject.delAppVarButtonEnabled = false;
-				oDelAppVarObject.delAppVarButtonVisibility = false;
+				oAppVarObject.delAppVarButtonEnabled = false;
+				oAppVarObject.delAppVarButtonVisibility = false;
 			}
 
-			return oDelAppVarObject;
+			return oAppVarObject;
 		};
 
 		Utils._getNavigationInfo = function(oPreparedObject) {
@@ -115,11 +121,15 @@ function(
 
 				if (aResult.length && oPreparedObject.isKeyUser) {
 					oNavigationObject.adaptUIButtonEnabled = true;
-					oDeleteButtonProperties = this._checkDeleteButtonOptions(oPreparedObject, true);
+
+					if (oPreparedObject.appVarStatus === 'R' || oPreparedObject.appVarStatus === 'U' || oPreparedObject.appVarStatus === 'E' ) {
+						oNavigationObject.adaptUIButtonEnabled = false;
+					}
 				} else {
 					oNavigationObject.adaptUIButtonEnabled = false;
-					oDeleteButtonProperties = this._checkDeleteButtonOptions(oPreparedObject, false);
 				}
+
+				oDeleteButtonProperties = this._checkMenuItemOptions(oPreparedObject, oNavigationObject.adaptUIButtonEnabled);
 
 				oNavigationObject.semanticObject = sSemanticObject;
 				oNavigationObject.action = sAction;
@@ -149,7 +159,8 @@ function(
 				iconText : oAppVariantInfo.iconText,
 				isOriginal : oAppVariantInfo.isOriginal,
 				isAppVariant : oAppVariantInfo.isAppVariant,
-				descriptorUrl : oAppVariantInfo.descriptorUrl
+				descriptorUrl : oAppVariantInfo.descriptorUrl,
+				appVarStatus : oAppVariantInfo.appVarStatus
 			};
 		};
 
@@ -170,7 +181,8 @@ function(
 			oAppVariantAttributes.typeOfApp = this._checkAppType(oAppVariantInfo.isOriginal, oAppVariantInfo.isAppVariant);
 
 			// Calculate current status of application required for Overview Dialog
-			oAppVariantAttributes.currentStatus = this._calculateCurrentStatus(oAppVariantInfo.appId);
+			oAppVariantAttributes.currentStatus = this._calculateCurrentStatus(oAppVariantInfo.appId, oAppVariantInfo.appVarStatus);
+
 
 			var bIsS4HanaCloud;
 			return Settings.getInstance().then(function(oSettings) {
@@ -181,7 +193,8 @@ function(
 				var oPreparedObject = {
 					isKeyUser: bKeyUser,
 					isOriginal: oAppVariantInfo.isOriginal,
-					isS4HanaCloud: bIsS4HanaCloud
+					isS4HanaCloud: bIsS4HanaCloud,
+					appVarStatus : oAppVariantInfo.appVarStatus
 				};
 
 				if (oAppVariantInfo.hasStartableIntent) {
@@ -192,7 +205,7 @@ function(
 					});
 				} else {
 					oAppVariantAttributes.adaptUIButtonEnabled = false;
-					var oDeleteButtonProperties = this._checkDeleteButtonOptions(oPreparedObject, false);
+					var oDeleteButtonProperties = this._checkMenuItemOptions(oPreparedObject, false);
 					oAppVariantAttributes = Object.assign({}, oAppVariantAttributes, oDeleteButtonProperties);
 					return Promise.resolve(oAppVariantAttributes);
 				}
