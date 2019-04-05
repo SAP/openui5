@@ -100,16 +100,33 @@ sap.ui.define(['./library', 'sap/ui/core/library', "sap/base/Log"],
 			return blockLayoutCell.getId() + "-Title";
 		};
 
+		BlockLayoutCellRenderer.hasTitle = function (blockLayoutCell) {
+			return blockLayoutCell.getTitleLink() || blockLayoutCell.getTitle();
+		};
+
 		BlockLayoutCellRenderer.addContent = function (rm, blockLayoutCell) {
 			var content = blockLayoutCell.getContent(),
-				contentClass = "sapUiBlockCellContent ";
+				bHasTitle = this.hasTitle(blockLayoutCell);
+
+			rm.write("<div");
+			rm.addClass("sapUiBlockCellContent");
 
 			if (blockLayoutCell.getTitleAlignment() === "Center") {
-				contentClass += "sapUiBlockCellCenteredContent";
+				rm.addClass("sapUiBlockCellCenteredContent");
 			}
 
-			rm.write("<div class='" + contentClass + "' aria-labelledby='" + this.getTitleId(blockLayoutCell) +  "' >");
-			this.addTitle(rm, blockLayoutCell);
+			rm.writeClasses();
+
+			if (bHasTitle) {
+				rm.writeAttribute("aria-labelledby", this.getTitleId(blockLayoutCell));
+			}
+
+			rm.write(">");
+
+			if (bHasTitle) {
+				this.addTitle(rm, blockLayoutCell);
+			}
+
 			content.forEach(rm.renderControl, rm);
 			rm.write("</div>");
 		};
