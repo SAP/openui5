@@ -62,6 +62,8 @@ sap.ui.define([
 		// shortcut for sap.m.PlacementType
 		var PlacementType = library.PlacementType;
 
+		// a buffer width for the HTML container scrollbar
+		var iScrollbarWidth = 20;
 		/**
 		* Constructor for a new Popover.
 		*
@@ -962,6 +964,41 @@ sap.ui.define([
 			}
 
 			this.oPopup._applyPosition(this.oPopup._oLastPosition, true);
+			this._includeScrollWidth();
+		};
+
+		/**
+		 * Adjusts the content width based on how the browser handles layouting and scrollbar inclusion
+		 *
+		 * @private
+		 */
+		Popover.prototype._includeScrollWidth = function () {
+			var sContentWidth = this.getContentWidth(),
+				$popover = this.$(),
+				iMaxWidth =  Math.floor(window.innerWidth * 0.9), //90% of the max screen size
+				$popoverContent = this.$('cont');
+
+			// Browsers except chrome do not increase the width of the container to include scrollbar
+			if (Device.system.desktop && !Device.browser.chrome) {
+
+				var bHasVerticalScrollbar = $popoverContent[0].clientHeight < $popoverContent[0].scrollHeight,
+					sCurrentWidthAndHeight = $popoverContent.width() + "x" + $popoverContent.height();
+
+				if (sCurrentWidthAndHeight !== this._iLastWidthAndHeightWithScroll) {
+					if (bHasVerticalScrollbar &&					// - there is a vertical scroll
+						(!sContentWidth || sContentWidth == 'auto') &&	// - when the developer hasn't set it explicitly
+						$popoverContent.width() < iMaxWidth) {		// - if the popover hasn't reached a threshold size
+
+						$popover.addClass("sapMPopoverVerticalScrollIncluded");
+						$popoverContent.css({"padding-right" : iScrollbarWidth});
+						this._iLastWidthAndHeightWithScroll = sCurrentWidthAndHeight;
+					} else {
+						$popover.removeClass("sapMPopoverVerticalScrollIncluded");
+						$popoverContent.css({"padding-right" : ""});
+						this._iLastWidthAndHeightWithScroll = null;
+					}
+				}
+			}
 		};
 
 		/**
@@ -2068,6 +2105,7 @@ sap.ui.define([
 
 			setTimeout(function () {
 				$Ref.css("display", "block");
+				that._includeScrollWidth();
 
 				that._animation(function () {
 					if (!that.oPopup || that.oPopup.getOpenState() !== OpenState.OPENING) {
