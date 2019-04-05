@@ -19,7 +19,7 @@ describe("sap.m.FacetFilter", function() {
 	});
 
 	it("should update list in listUpdateModelAsync FacetFilter", function () {
-		element(by.css("[title='Back']")).click();
+		element.all(by.css(".sapMBarLeft .sapMBtn")).first().click();
 		_takeScreenshot("listUpdateModelAsync_updatedFacetPage");
 	});
 
