@@ -233,19 +233,8 @@ function(
 		// Binding context is not relevant if the element is being moved inside its parent
 		if (oMovedOverlay.getParent().getElement() !== oTargetElement) {
 			// check if binding context is the same
-			var aBindings = BindingsExtractor.getBindings(oMovedElement, oMovedElement.getModel());
-			if (Object.keys(aBindings).length > 0 && oMovedElement.getBindingContext() && oTargetElement.getBindingContext()) {
-				var sMovedElementBindingContext = Utils.getEntityTypeByPath(
-					oMovedElement.getModel(),
-					oMovedElement.getBindingContext().getPath()
-				);
-				var sTargetElementBindingContext = Utils.getEntityTypeByPath(
-					oTargetElement.getModel(),
-					oTargetElement.getBindingContext().getPath()
-				);
-				if (!(sMovedElementBindingContext === sTargetElementBindingContext)) {
-					return false;
-				}
+			if (!Utils.checkSourceTargetBindingCompatibility(oMovedElement, oTargetElement)) {
+				return false;
 			}
 		}
 
