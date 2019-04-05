@@ -52,15 +52,6 @@ sap.ui.define(function() {
 			},
 			ComponentSupport: {
 				title: "Component Support - sap.ui.core",
-				loader: {
-					paths: {
-						// TODO check whether a common namespace could be used for the fixture
-						// internally, the fixtures use "sap.ui.test"
-						// ComponentSupport checks for the internal name, therefore it must use the right namespace
-						// Other tests only need successful loading, so the name doesn't matter
-						"sap/ui/test": "test-resources/sap/ui/core/qunit/component/testdata/"
-					}
-				},
 				qunit: {
 					// second test case invalidates (breaks) first one
 					reorder: false
