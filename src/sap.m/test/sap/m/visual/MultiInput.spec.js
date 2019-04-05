@@ -108,7 +108,7 @@ describe('sap.m.MultiInput', function() {
 
 	//Show selected multi input no placeholder
 	it("should show multiInput no placeholder", function () {
-		browser.executeScript('document.getElementById("multiInputReadOnlyInitial").scrollIntoView()').then(function() {
+		browser.executeScript('document.getElementById("multiInputNotEditable").scrollIntoView()').then(function() {
 			element(by.id("multiInputNotEditable")).click();
 			expect(takeScreenshot(element(by.id("multiInputNotEditable")))).toLookAs("multi-input-not-editable-selected");
 		});
