@@ -424,17 +424,6 @@ sap.ui.define([
 		return this._icon;
 	};
 
-	// Escape single quotes. BCP: 1780430119
-	Avatar.prototype._getEscapedSrc = function () {
-		var sSrc = this.getSrc();
-
-		if (!sSrc) {
-			return '';
-		}
-
-		return sSrc.replace(/'/g, "\\'");
-	};
-
 	Avatar.prototype._getDefaultTooltip = function() {
 		return sap.ui.getCore().getLibraryResourceBundle("sap.f").getText("AVATAR_TOOLTIP");
 	};
