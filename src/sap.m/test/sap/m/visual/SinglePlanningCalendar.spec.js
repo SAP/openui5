@@ -38,7 +38,7 @@ describe("sap.m.SinglePlanningCalendar", function() {
 			if (presented) {
 				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
 				element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
-				element.all(by.cssContainingText(".sapMSelectListItem", "Week View")).click();
+				element.all(by.css('.sapMSelectList li')).last().click();
 				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
 			} else {
 				element(by.id("__item2-button")).click();
