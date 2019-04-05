@@ -273,7 +273,16 @@
 	border-right: 2px solid @sapUiContentForegroundBorderColor;
 }
 
+.sapMSinglePCColumnHeader.sapUiCalRow .sapUiCalItems,
+.sapMSinglePCColumnHeader.sapUiCalRow .sapUiCalItems > .sapUiCalItem {
+	height: @_sap_m_SinglePlanningCalendarGrid_CompactRowHeight;
+}
+
 .sapUiSizeCompact {
+	.sapMSinglePCColumnHeader.sapUiCalRow .sapUiCalItems,
+	.sapMSinglePCColumnHeader.sapUiCalRow .sapUiCalItems > .sapUiCalItem {
+		height:2rem;
+	}
 	// TODO: Consider refactoring of the CSS of PlanningCalendar DatesRow CSS and fix the styles in one place
 	// for sapUiCalItems
 	.sapMSinglePCColumnHeader .sapUiCalItems {
