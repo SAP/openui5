@@ -931,5 +931,223 @@
 			"i",
 			"hexagon"
 		]
+	},
+	"business-capability": {
+		"tags": [
+			"business",
+			"architecture",
+			"enterprise",
+			"capability",
+			"pentagon"
+		]
+	},
+	"progress-group": {
+		"tags": [
+			"business",
+			"architecture",
+			"enterprise",
+			"process",
+			"group",
+			"chevron",
+			"square"
+		]
+	},
+	"value-stream": {
+		"tags": [
+			"business",
+			"architecture",
+			"enterprise",
+			"value",
+			"dollar",
+			"square"
+		]
+	},
+	"value-flow": {
+		"tags": [
+			"business",
+			"architecture",
+			"enterprise",
+			"value",
+			"dollar",
+			"chevron"
+		]
+	},
+	"application": {
+		"tags": [
+			"app",
+			"architecture",
+			"enterprise",
+			"application",
+			"program"
+		]
+	},
+	"etl-job": {
+		"tags": [
+			"architecture",
+			"enterprise",
+			"application",
+			"etl",
+			"extract",
+			"transform",
+			"load",
+			"configuration",
+			"setting"
+		]
+	},
+	"business-service": {
+		"tags": [
+			"business",
+			"enterprise",
+			"application",
+			"service",
+			"pentagon",
+			"setting",
+			"architecture"
+		]
+	},
+	"application-service": {
+		"tags": [
+			"architecture",
+			"enterprise",
+			"application",
+			"service",
+			"app",
+			"setting"
+		]
+	},
+	"network-node": {
+		"tags": [
+			"architecture",
+			"enterprise",
+			"infrastructure",
+			"arrow",
+			"circle",
+			"node"
+		]
+	},
+	"network": {
+		"tags": [
+			"architecture",
+			"enterprise",
+			"infrastructure",
+			"circle",
+			"node"
+		]
+	},
+	"deployment-instance": {
+		"tags": [
+			"architecture",
+			"enterprise",
+			"infrastructure",
+			"square",
+			"setting"
+		]
+	},
+	"intranet": {
+		"tags": [
+			"architecture",
+			"enterprise",
+			"infrastructure",
+			"house",
+			"world",
+			"globe"
+		]
+	},
+	"mobile-network": {
+		"tags": [
+			"architecture",
+			"enterprise",
+			"infrastructure",
+			"mobile",
+			"network",
+			"tower",
+			"power",
+			"pole"
+		]
+	},
+	"private-cloud": {
+		"tags": [
+			"architecture",
+			"enterprise",
+			"infrastructure",
+			"cloud",
+			"lock",
+			"secure",
+			"safe"
+		]
+	},
+	"antenna": {
+		"tags": [
+			"architecture",
+			"enterprise",
+			"antenna",
+			"transmit"
+		]
+	},
+	"firewall": {
+		"tags": [
+			"architecture",
+			"enterprise",
+			"firewall",
+			"brick",
+			"wall",
+			"secure",
+			"safe"
+		]
+	},
+	"hub": {
+		"tags": [
+			"architecture",
+			"enterprise",
+			"grid"
+		]
+	},
+	"modem": {
+		"tags": [
+			"architecture",
+			"enterprise",
+			"grid",
+			"internet",
+			"web"
+		]
+	},
+	"repeater": {
+		"tags": [
+			"architecture",
+			"enterprise",
+			"grid",
+			"internet",
+			"repeat"
+		]
+	},
+	"router": {
+		"tags": [
+			"architecture",
+			"enterprise",
+			"grid",
+			"internet"
+		]
+	},
+	"switch": {
+		"tags": [
+			"architecture",
+			"enterprise",
+			"grid"
+		]
+	},
+	"satellite": {
+		"tags": [
+			"architecture",
+			"enterprise",
+			"space"
+		]
+	},
+	"system-2": {
+		"tags": [
+			"architecture",
+			"enterprise",
+			"square",
+			"node"
+		]
 	}
 }
