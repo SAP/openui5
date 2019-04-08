@@ -428,11 +428,15 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 		};
 
 		SinglePlanningCalendarGridRenderer.renderAppointment = function(oRm, oControl, iMaxLevel, iAppointmentLevel, iAppointmentWidth, oAppointment, oColumnDate) {
-			var iRowHeight = oControl._getRowHeight(),
+			var oGridCalStart = CalendarDate.fromLocalJSDate(oControl.getStartDate()),
+				oGridCalEnd = new CalendarDate(oGridCalStart),
+				iRowHeight = oControl._getRowHeight(),
 				oColumnStartDateAndHour = new UniversalDate(oColumnDate.getYear(), oColumnDate.getMonth(), oColumnDate.getDate(), oControl._getVisibleStartHour()),
 				oColumnEndDateAndHour = new UniversalDate(oColumnDate.getYear(), oColumnDate.getMonth(), oColumnDate.getDate(), oControl._getVisibleEndHour(), 59, 59),
 				oAppStartDate = oAppointment.getStartDate(),
 				oAppEndDate = oAppointment.getEndDate(),
+				oAppCalStart = CalendarDate.fromLocalJSDate(oAppStartDate),
+				oAppCalEnd = CalendarDate.fromLocalJSDate(oAppEndDate),
 				sTooltip = oAppointment.getTooltip_AsString(),
 				sType = oAppointment.getType(),
 				sColor = oAppointment.getColor(),
@@ -453,7 +457,18 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 				iAppTop = bAppStartIsOutsideVisibleStartHour ? 0 : oControl._calculateTopPosition(oAppStartDate),
 				iAppBottom = bAppEndIsOutsideVisibleEndHour ? 0 : oControl._calculateBottomPosition(oAppEndDate),
 				iAppChunkWidth = 100 / (iMaxLevel + 1),
-				sLegendItemType;
+				sLegendItemType,
+				iStartDayDiff,
+				iEndDayDiff,
+				bArrowLeft,
+				bArrowRight,
+				aClasses;
+
+			oGridCalEnd.setDate(oGridCalEnd.getDate() + oControl._getColumns() - 1);
+			iStartDayDiff = CalendarUtils._daysBetween(oAppCalStart, oGridCalStart);
+			iEndDayDiff = CalendarUtils._daysBetween(oGridCalEnd, oAppCalEnd);
+			bArrowLeft = oColumnDate.isSame(oGridCalStart);
+			bArrowRight = oColumnDate.isSame(oGridCalEnd);
 
 			if (aAriaLabels.length > 0) {
 				mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + aAriaLabels.join(" ");
@@ -563,14 +578,24 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 			oRm.writeClasses();
 			oRm.write(">"); // div element
 
+			if (bArrowLeft && iStartDayDiff < 0) {
+				aClasses = ["sapUiCalendarAppArrowIconLeft", "sapUiCalendarAppArrowIcon"];
+				oRm.writeIcon("sap-icon://arrow-left", aClasses, { title: null });
+			}
+
 			if (sIcon) {
-				var aClasses = ["sapUiCalendarAppIcon"];
+				aClasses = ["sapUiCalendarAppIcon"];
 				var mAttributes = {};
 
 				mAttributes["id"] = sId + "-Icon";
 				mAttributes["title"] = null;
 				oRm.writeIcon(sIcon, aClasses, mAttributes);
 			}
+
+			oRm.write("<div");
+			oRm.addClass("sapUiCalendarAppTitleWrapper");
+			oRm.writeClasses();
+			oRm.write(">");
 
 			if (sTitle) {
 				oRm.write("<span");
@@ -590,6 +615,13 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 				oRm.write(">"); // span element
 				oRm.writeEscaped(sText, true);
 				oRm.write("</span>");
+			}
+
+			oRm.write("</div>");
+
+			if (bArrowRight && iEndDayDiff < 0) {
+				aClasses = ["sapUiCalendarAppArrowIconRight", "sapUiCalendarAppArrowIcon"];
+				oRm.writeIcon("sap-icon://arrow-right", aClasses, { title: null });
 			}
 
 			// ARIA information about start and end

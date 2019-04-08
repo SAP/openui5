@@ -173,11 +173,38 @@
 	& > .sapMSinglePCAppointmentWrap.sapUiCalendarRowApps {
 		z-index: 2;
 	}
-}
 
-.sapMSinglePCBlockersRow > .sapMSinglePCBlockersColumns > .sapMSinglePCBlockersColumn,
-.sapMSinglePCGridContent .sapMSinglePCColumns .sapMSinglePCRow {
-	z-index: 1;
+	.sapUiCalendarApp {
+		&.sapUiCalendarAppSel::after {
+			content: "";
+			position: absolute;
+			display: block;
+			top: 0px;
+			bottom: 0px;
+			right: 0px;
+			left: 0px;
+			z-index: 0;
+			color: @sapUiListActiveTextColor;
+			background-color: fade(@sapUiSelected, 90%);
+			border-radius: 0 0.125rem 0.125rem 0.125rem;
+		}
+
+		.sapUiCalendarAppCont {
+			.sapUiCalendarAppTitleWrapper,
+			.sapUiIcon,
+			.sapUiCalendarAppIcon,
+			.sapUiCalendarAppTitle,
+			.sapUiCalendarAppText {
+				z-index: 1;
+			}
+		}
+	}
+
+	.sapMSinglePCAppointmentWrap:focus {
+		.sapUiCalendarAppCont::after {
+			z-index: 1;
+		}
+	}
 }
 
 html.sap-desktop {
@@ -191,6 +218,77 @@ html.sap-desktop {
 		bottom: 0;
 		border: 0.0625rem dotted @sapUiContentFocusColor;
 		pointer-events: none;
+	}
+
+	.sapMSinglePCBlockers,
+	.sapMSinglePCAppointments {
+		.sapUiCalendarApp {
+			&.sapUiCalendarAppSel:hover::after {
+				background-color: darken(@sapUiSelected, 10);
+			}
+
+			&:hover::after {
+				background-color: @sapUiListHoverBackground;
+			}
+		}
+	}
+}
+
+.sapMSinglePCGrid {
+	.sapUiCalendarAppTitleWrapper,
+	.sapUiCalendarAppTitle,
+	.sapUiCalendarAppText {
+		width: 100%;
+		margin-right: 0.125rem;
+		& + .sapUiCalendarAppArrowIconRight {
+			margin-left: 0.25rem;
+		}
+	}
+}
+
+.sapMSinglePCAppointments,
+.sapMSinglePCBlockersColumns {
+	.sapUiCalendarAppCont {
+		display: flex;
+	}
+
+	.sapUiCalendarAppArrowIconRight {
+		top: 0;
+		right: 0;
+		padding-right: 0.125rem;
+	}
+
+	.sapUiCalendarAppArrowIconLeft {
+		top: 0;
+		left: 0;
+		padding-left: 0.25rem;
+	}
+
+	.sapUiCalendarAppIcon {
+		left: 0;
+		margin-right: 0;
+		padding-left: 0.375rem;
+	}
+}
+
+.sapMSinglePCBlockersColumns {
+	.sapUiCalendarAppCont {
+		align-items: center;
+	}
+
+	.sapUiCalendarApp > .sapUiCalendarAppCont > .sapUiCalendarAppIcon {
+		top: 0;
+	}
+
+	.sapUiCalendarAppIcon + .sapUiCalendarAppTitle {
+		padding-left: 0.375rem;
+	}
+}
+
+.sapMSinglePCAppointments {
+	.sapUiCalendarAppArrowIconLeft,
+	.sapUiCalendarAppArrowIconRight {
+		padding-top: 0.25rem;
 	}
 }
 
@@ -220,6 +318,7 @@ html.sap-desktop {
 		border-left: 0;
 		position: relative;
 		min-width: auto;
+		margin-left: 0.25rem;
 		height: calc(~"100% - 0.0625rem");
 		-webkit-user-select: none;
 		-moz-user-select: none;
@@ -258,28 +357,9 @@ html.sap-desktop {
 	}
 }
 
-.sapMSinglePCBlockersColumns .sapUiCalendarAppCont {
-	display: flex;
-	align-items: center;
-	padding: 0 0.25rem;
-}
-
 .sapUiCalendarAppCont .sapUiIcon .sapUiCalendarAppArrowIcon {
 	font-size: 0.75rem;
 	color: @sapUiContentLabelColor;
-}
-
-.sapUiCalendarAppArrowIcon.sapUiCalendarAppArrowIconLeft,
-.sapUiCalendarAppArrowIcon.sapUiCalendarAppArrowIconRight {
-	top: 0;
-}
-
-.sapUiCalendarAppArrowIcon.sapUiCalendarAppArrowIconLeft {
-	left: 0;
-}
-
-.sapUiCalendarAppArrowIcon.sapUiCalendarAppArrowIconRight {
-	right: 0;
 }
 
 .sapMSinglePCGrid .sapUiCalendarRowApps {
@@ -336,7 +416,8 @@ html.sap-desktop {
 }
 
 .sapMSinglePCGrid .sapUiCalendarAppIcon {
-	position: absolute;
+	min-width: 1rem;
+	position: relative;
 	top: 0.2rem;
 }
 
