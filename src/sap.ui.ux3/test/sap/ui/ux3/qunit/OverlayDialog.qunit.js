@@ -38,7 +38,8 @@ sap.ui.define([
 	QUnit.test("OverlayDialog exists", function (assert) {
 		var oDomRef = oOverlayDialog.getDomRef();
 		assert.ok(oDomRef, "Rendered OverlayDialog should exist in the page");
-		assert.equal(oDomRef.className, "sapUiUx3OD sapUiUx3Overlay", "Rendered OverlayDialog should have the classes 'sapUiUx3OD' and 'sapUiUx3Overlay'");
+		assert.ok(oDomRef.classList.contains("sapUiUx3OD"), "Rendered OverlayDialog should have the class 'sapUiUx3OD'");
+		assert.ok(oDomRef.classList.contains("sapUiUx3Overlay"), "Rendered OverlayDialog should have the class 'sapUiUx3Overlay'");
 		oDomRef = oOverlayDialog.getDomRef("close");
 		assert.ok(oDomRef, "close button should be rendered");
 		oDomRef = oOverlayDialog.getDomRef("openNew");
