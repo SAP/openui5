@@ -519,7 +519,7 @@ function(
 	Toolbar.prototype._getContextOptions  = BarInPageEnabler.prototype._getContextOptions;
 
 	/**
-	 * Gets accessibility role of the Root HTML element.
+	 * Sets accessibility role of the Root HTML element.
 	 *
 	 * @param {string} sRole AccessibilityRole of the root Element
 	 * @returns {sap.m.IBar} <code>this</code> to allow method chaining

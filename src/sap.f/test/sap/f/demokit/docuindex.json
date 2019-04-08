@@ -91,10 +91,12 @@
 		},
 		{
 		  "id": "sap.f.ShellBar",
-		  "name": "Shell Bar (Experimental)",
+		  "name": "ShellBar",
 		  "category": "Display",
 		  "since": "1.63",
-		  "samples": ["sap.f.sample.ShellBar"]
+			"samples": [
+				"sap.f.sample.ShellBar"
+			]
 		},
 		{
 		  "id": "sap.f.Card",
@@ -182,8 +184,13 @@
 		},
 		{
 		  "id": "sap.f.sample.ShellBar",
-		  "name": "Shell Bar (Experimental)",
-		  "description": "The ShellBar is used as the uppermost section (shell) of the app."
+		  "name": "ShellBar",
+		  "description": "Shellbar control with title mega menu."
+		},
+		{
+		  "id": "sap.f.sample.ShellBarIconMenu",
+		  "name": "ShellBar",
+		  "description": "Shellbar control with navigation button."
 		},
 		{
 		  "id": "sap.f.sample.Card",

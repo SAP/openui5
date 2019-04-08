@@ -232,6 +232,58 @@ function (
 		});
 	});
 
+	QUnit.test("Additional content support", function (assert) {
+		// Arrange
+		var oAdditionalButtonFirst = new OverflowToolbarButton({id: "additionalButtonFirst",
+		text: "Text of First Additional Button"}),
+			oAdditionalButtonSecond = new OverflowToolbarButton({id: "additionalButtonSecond",
+			text: "Text of Second Additional Button"});
+
+		// Act
+		this.oSB.insertAdditionalContent(oAdditionalButtonFirst, -1);
+		// Assert
+		assert.strictEqual(this.oSB._aAdditionalContent[0], oAdditionalButtonFirst, "Additional " +
+		"content on index '0' is the First Button");
+		// Act
+		this.oSB.insertAdditionalContent(oAdditionalButtonSecond, 0);
+		// Assert
+		assert.strictEqual(this.oSB._aAdditionalContent[0], oAdditionalButtonSecond, "Additional " +
+		"content on index '0' is the Second Button");
+		assert.strictEqual(this.oSB._aAdditionalContent[1], oAdditionalButtonFirst, "Additional " +
+		"content on index '1' is the First Button");
+
+		// Act
+		this.oSB.insertAdditionalContent(oAdditionalButtonFirst, 100);
+
+		// Assert
+		assert.strictEqual(this.oSB._aAdditionalContent[0], oAdditionalButtonSecond, "Additional" +
+		"content on index '0' is the Second Button");
+		assert.strictEqual(this.oSB._aAdditionalContent[1], oAdditionalButtonFirst, "Additional " +
+		"content on index '1' is the First Button");
+		assert.strictEqual(this.oSB._aAdditionalContent[2], oAdditionalButtonFirst, "Additional " +
+		"content on index '2' is the First Button");
+
+		// Act
+		this.oSB.removeAdditionalContent(oAdditionalButtonFirst);
+		this.oSB.removeAdditionalContent(oAdditionalButtonSecond);
+		this.oSB.destroyAdditionalContent();
+		// Assert
+		assert.strictEqual(this.oSB.indexOfAdditionalContent(oAdditionalButtonFirst), 0, "Additional " +
+		"content removed properly and index returned correctly");
+		assert.strictEqual(this.oSB.indexOfAdditionalContent(oAdditionalButtonSecond), -1, "Additional " +
+		"content removed properly and index returned correctly");
+
+		// Act
+		this.oSB.removeAdditionalContent("additionalButtonFirst");
+		// Assert
+		assert.strictEqual(this.oSB._aAdditionalContent.length, 0, "Additional content removed" +
+		" properly by ID");
+
+		// Cleanup
+		oAdditionalButtonFirst.destroy();
+		oAdditionalButtonSecond.destroy();
+	});
+
 	QUnit.module("Rendering", {
 		beforeEach: function () {
 			this.oSB = new ShellBar();
@@ -430,6 +482,95 @@ function (
 		assert.ok(this.oSB._aOverflowControls[2] === oAdditionalButton1, "Control at index 2 is AdditionalButton 1");
 		assert.ok(this.oSB._aOverflowControls[3] === oAdditionalButton2, "Control at index 3 is AdditionalButton 2");
 		assert.ok(this.oSB._aOverflowControls[4] === this.oSB._oProductSwitcher, "Control at index 4 is ProductSwitcher");
+	});
+
+	// Responsiveness
+	QUnit.module("Utility methods", {
+		beforeEach: function () {
+			this.oSB = new ShellBar();
+		},
+		afterEach: function () {
+			this.oSB.destroy();
+		}
+	});
+
+	QUnit.test("ResponsiveHandler _handleResize on size changed", function (assert) {
+
+		// Arrange
+		var fnDone = assert.async(),
+			oControl = this.oSB,
+			oStub;
+
+		oControl.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+		oStub = sinon.stub(oControl._oResponsiveHandler, "_handleResize").callsFake( function() {
+			//Assert
+			assert.ok(true, "Responsivehandler delegated event called");
+			fnDone();
+		});
+		// Act
+		oControl._oOverflowToolbar.attachEvent("_controlWidthChanged", oStub, this);
+		oControl._oOverflowToolbar.fireEvent("_controlWidthChanged");
+
+		// Assert
+		assert.expect(1);
+
+		//Cleanup
+		oControl._oResponsiveHandler._handleResize.restore();
+		fnDone = null; oControl = null; oStub = null;
+	});
+
+	QUnit.test("ResponsiveHandler _initSizes method", function (assert) {
+
+		// Arrange
+		var oControl = this.oSB;
+
+		oControl.setHomeIcon(sap.ui.require.toUrl("sap/ui/documentation/sdk/images/logo_sap.png"));
+		oControl.setShowNavButton(true);
+		oControl.setShowMenuButton(true);
+		oControl.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+			// Act
+			oControl._oResponsiveHandler._initResize();
+
+			// Assert
+			assert.strictEqual(oControl._oResponsiveHandler._iStaticWidth, oControl._oHomeIcon.$().outerWidth(true) /*logo*/ + 36 + 4 * 2 /*nav button*/ + 36 + 4 * 2 /*menu button*/,
+			"We calculate size of the logo image " +
+			"side margins of the three elements + twice incrementing with 36 (size of the button)");
+
+
+	});
+
+	QUnit.test("ResponsiveHandler phone/regular transformation test", function (assert) {
+
+		// Arrange
+		var oControl = this.oSB;
+		oControl.setSecondTitle("Second title");
+		oControl.setHomeIcon(sap.ui.require.toUrl("sap/ui/documentation/sdk/images/logo_sap.png"));
+
+		oControl.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Act
+		document.getElementById(DOM_RENDER_LOCATION).style.width = 300 + "px";
+		this.oSB._oResponsiveHandler._handleResize();
+
+		// Assert
+
+		assert.strictEqual(oControl._oSecondTitle.getVisible(), false, "phone mode requirements passed");
+		assert.strictEqual(oControl._oHomeIcon.getVisible(), false, "phone mode requirements passed");
+
+		// Act
+		document.getElementById(DOM_RENDER_LOCATION).style.width = 1024 + "px";
+		this.oSB._oResponsiveHandler._handleResize();
+
+		// Assert
+
+		assert.strictEqual(oControl._oSecondTitle.getVisible(), true, "regular mode requirements passed");
+		assert.strictEqual(oControl._oHomeIcon.getVisible(), true, "regular mode requirements passed");
+
+
 	});
 
 	// Accessibility related tests

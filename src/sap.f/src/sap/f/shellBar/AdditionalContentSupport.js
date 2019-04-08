@@ -23,7 +23,6 @@ sap.ui.define([
 		 * @version ${version}
 		 *
 		 * @private
-		 * @experimental Since 1.63. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 		 * @since 1.64
 		 * @alias sap.f.shellBar.AdditionalContentSupport
 		 * @function

@@ -27,7 +27,6 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @private
-	 * @experimental Since 1.64. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 * @since 1.64
 	 * @alias sap.f.shellBar.CoPilot
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
