@@ -39,8 +39,9 @@ function(TreeItemBaseRenderer, Renderer) {
 
 		this.renderEntityType(oRm, oControl);
 
-		oRm.write('<a href="' + oControl.getHref() + '">');
-
+		oRm.write('<a');
+		oRm.writeAttributeEscaped("href", oControl.getHref());
+		oRm.write('>');
 		oRm.write('<span');
 		oRm.addClass("sapDemokitTreeItemTitle");
 		oRm.addClass("sapUiTinyMarginEnd");
