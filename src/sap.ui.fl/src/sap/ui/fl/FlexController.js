@@ -97,7 +97,7 @@ sap.ui.define([
 		if (this._oChangePersistence &&
 				this._oChangePersistence._oVariantController._mVariantManagement &&
 				Object.keys(this._oChangePersistence._oVariantController._mVariantManagement).length > 0) {
-			oData = this._oChangePersistence._oVariantController._fillVariantModel();
+			oData = this._oChangePersistence._oVariantController.fillVariantModel();
 		}
 
 		return oData;

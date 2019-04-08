@@ -151,7 +151,7 @@ function (
 
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oWrappedFileContent));
 			sandbox.stub(Utils, "getAppComponentForControl").withArgs(oComponent).returns(oAppComponent);
-			var fnSetChangeFileContentStub = sandbox.stub(this.oChangePersistence._oVariantController, "_setChangeFileContent");
+			var fnSetChangeFileContentStub = sandbox.stub(this.oChangePersistence._oVariantController, "checkAndSetVariantContent");
 
 			return this.oChangePersistence.getChangesForComponent({ component: oComponent })
 				.then(function () {
@@ -195,20 +195,20 @@ function (
 				}
 			};
 
-			var fnSetChangeFileContentSpy = sandbox.spy(this.oChangePersistence._oVariantController, "_setChangeFileContent");
+			var fnSetChangeFileContentSpy = sandbox.spy(this.oChangePersistence._oVariantController, "checkAndSetVariantContent");
 			var fnLoadInitialChangesStub = sandbox.stub(this.oChangePersistence._oVariantController, "loadInitialChanges").returns([]);
 			var fnApplyChangesOnVariantManagementStub = sandbox.stub(this.oChangePersistence._oVariantController, "_applyChangesOnVariantManagement");
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
 
 			return this.oChangePersistence.getChangesForComponent().then(function () {
-				assert.ok(fnSetChangeFileContentSpy.calledOnce, "then _setChangeFileContent of VariantManagement called once as file content is not set");
+				assert.ok(fnSetChangeFileContentSpy.calledOnce, "then VariantController.checkAndSetVariantContent() was called once since file content was not set");
 				assert.ok(fnLoadInitialChangesStub.calledOnce, "then loadDefaultChanges of VariantManagement called for the first time");
 				assert.ok(fnApplyChangesOnVariantManagementStub.calledOnce, "then applyChangesOnVariantManagement called once for one variant management reference, as file content is not set");
 			}).then(function () {
 				this.oChangePersistence.getChangesForComponent().then(function () {
-					assert.ok(fnSetChangeFileContentSpy.calledOnce, "then _setChangeFileContent of VariantManagement not called again as file content is set");
-					assert.ok(fnLoadInitialChangesStub.calledTwice, "then loadDefaultChanges of VariantManagement called again");
-					assert.ok(fnApplyChangesOnVariantManagementStub.calledOnce, "then applyChangesOnVariantManagement not called again as file content is set\"");
+					assert.ok(fnSetChangeFileContentSpy.calledTwice, "then VariantController.checkAndSetVariantContent() was called again");
+					assert.ok(fnLoadInitialChangesStub.calledTwice, "then loadDefaultChanges of VariantManagement was called again");
+					assert.ok(fnApplyChangesOnVariantManagementStub.calledOnce, "then applyChangesOnVariantManagement was not called again as file content was set");
 				});
 			}.bind(this));
 		});
@@ -244,21 +244,21 @@ function (
 				}
 			};
 
-			var fnSetChangeFileContentSpy = sandbox.spy(this.oChangePersistence._oVariantController, "_setChangeFileContent");
+			var fnSetChangeFileContentSpy = sandbox.spy(this.oChangePersistence._oVariantController, "checkAndSetVariantContent");
 			var fnLoadInitialChangesStub = sandbox.stub(this.oChangePersistence._oVariantController, "loadInitialChanges").returns([]);
 			var fnApplyChangesOnVariantManagementStub = sandbox.stub(this.oChangePersistence._oVariantController, "_applyChangesOnVariantManagement");
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
 
 			return this.oChangePersistence.getChangesForComponent().then(function () {
-				assert.ok(fnSetChangeFileContentSpy.calledOnce, "then _setChangeFileContent of VariantManagement called once as file content is not set");
+				assert.ok(fnSetChangeFileContentSpy.calledOnce, "then VariantController.checkAndSetVariantContent() was called once since file content was not set");
 				assert.ok(fnLoadInitialChangesStub.calledOnce, "then loadDefaultChanges of VariantManagement called for the first time");
 				assert.ok(fnApplyChangesOnVariantManagementStub.calledOnce, "then applyChangesOnVariantManagement called once for one variant management reference, as file content is not set");
 				assert.notOk(fnSetChangeFileContentSpy.getCall(0).args[1], "then technical parameters were not passed, since not available");
 			}).then(function () {
 				this.oChangePersistence.getChangesForComponent().then(function () {
-					assert.ok(fnSetChangeFileContentSpy.calledOnce, "then _setChangeFileContent of VariantManagement not called again as file content is set");
-					assert.ok(fnLoadInitialChangesStub.calledTwice, "then loadDefaultChanges of VariantManagement called again");
-					assert.ok(fnApplyChangesOnVariantManagementStub.calledOnce, "then applyChangesOnVariantManagement not called again as file content is set\"");
+					assert.ok(fnSetChangeFileContentSpy.calledTwice, "then VariantController.checkAndSetVariantContent() was called again");
+					assert.ok(fnLoadInitialChangesStub.calledTwice, "then loadDefaultChanges of VariantManagement was called again");
+					assert.ok(fnApplyChangesOnVariantManagementStub.calledOnce, "then applyChangesOnVariantManagement was not called again as file content was set");
 				});
 			}.bind(this));
 		});
@@ -324,7 +324,7 @@ function (
 				}
 			};
 
-			var fnSetChangeFileContentStub = sandbox.stub(this.oChangePersistence._oVariantController, "_setChangeFileContent");
+			var fnSetChangeFileContentStub = sandbox.stub(this.oChangePersistence._oVariantController, "checkAndSetVariantContent");
 			sandbox.stub(this.oChangePersistence._oVariantController, "loadInitialChanges").returns([]);
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
 			var mPropertyBag = {
@@ -350,7 +350,7 @@ function (
 				}
 			};
 
-			var fnSetChangeFileContentStub = sandbox.stub(this.oChangePersistence._oVariantController, "_setChangeFileContent");
+			var fnSetChangeFileContentStub = sandbox.stub(this.oChangePersistence._oVariantController, "checkAndSetVariantContent");
 			sandbox.stub(this.oChangePersistence._oVariantController, "loadInitialChanges").returns([]);
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
 			var mPropertyBag = {
@@ -372,7 +372,7 @@ function (
 		});
 
 		QUnit.test("when getChangesForComponent is called with global control change and control changes in different variants", function (assert) {
-			var aWrappedContent = {
+			var oWrappedContent = {
 				changes: {
 					changes: [
 						{
@@ -502,13 +502,14 @@ function (
 					}
 				}
 			};
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(aWrappedContent));
+			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oWrappedContent));
 			return this.oChangePersistence.getChangesForComponent().then(function (aChanges) {
-				assert.equal(aChanges[0].getId(), aWrappedContent.changes.changes[0].fileName, "then global control change is received");
-				assert.equal(aChanges[1].getId(), aWrappedContent.changes.variantSection["varMgmt"].variants[1].controlChanges[0].getId(), "then control change for default variant is received");
+				var mVariantControllerContent = this.oChangePersistence._oVariantController.getChangeFileContent();
+				assert.equal(aChanges[0].getId(), oWrappedContent.changes.changes[0].fileName, "then global control change is received");
+				assert.equal(aChanges[1].getId(), mVariantControllerContent["varMgmt"].variants[1].controlChanges[0].getId(), "then control change for default variant is received, which is also set to the variantController");
 				assert.ok(aChanges[0] instanceof Change, "then global control change is instance of sap.ui.fl.Change");
 				assert.ok(aChanges[1] instanceof Change, "then control change is instance of sap.ui.fl.Change");
-			});
+			}.bind(this));
 		});
 
 		QUnit.test("when _getAllCtrlVariantChanges is called with max layer parameter, standard variant, variant (layer above) with no setVisible, variant (max layer) with setVisible on the layer above, variant (max layer) with setVisible on max layer", function(assert) {
@@ -892,7 +893,100 @@ function (
 			assert.strictEqual(this.oChangePersistence._bHasChangesOverMaxLayer, true, "then the flag _bHasChangesOverMaxLayer is set");
 
 		});
+		QUnit.test("when getChangesForComponent is called with a change instance already existing in the Cache response", function(assert) {
+			var oExistingChangeInstance = new Change({
+				"variantReference":"variantManagementId",
+				"fileName":"controlChange0",
+				"fileType":"change",
+				"content":{},
+				"selector":{
+					"id":"selectorId"
+				}
+			});
 
+			var oMockedWrappedContent = {
+				"changes" : {
+					"changes": [],
+					"variantSection" : {
+						"variantManagementId" : {
+							"variants" : [
+								{
+									"content" : {
+										"fileName": "variantManagementId",
+										"content" : {
+											"title": "variant 0"
+										},
+										"fileType": "ctrl_variant",
+										"variantManagementReference": "variantManagementId"
+									},
+									"controlChanges": [oExistingChangeInstance],
+									"variantChanges": {}
+								}
+							],
+							"variantManagementChanges": {}
+						}
+					}
+				}
+			};
+
+			sandbox.spy(this.oChangePersistence, "_getAllCtrlVariantChanges");
+			sandbox.spy(this.oChangePersistence._oVariantController, "checkAndSetVariantContent");
+
+			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
+			return this.oChangePersistence.getChangesForComponent({includeCtrlVariants: true}).then(function(aChanges) {
+				assert.strictEqual(aChanges.length, 1, "then one change was returned");
+				assert.ok(aChanges[0].sId, oExistingChangeInstance.sId, "then no new change instance was created");
+			});
+		});
+		QUnit.test("when getChangesForComponent is called with no pre-existing change instance", function(assert) {
+			var oMockedWrappedContent = {
+				"changes" : {
+					"changes": [],
+					"variantSection" : {
+						"variantManagementId" : {
+							"variants" : [
+								{
+									"content" : {
+										"fileName": "variantManagementId",
+										"content" : {
+											"title": "variant 0"
+										},
+										"fileType": "ctrl_variant",
+										"variantManagementReference": "variantManagementId"
+									},
+									"controlChanges": [{
+										"variantReference":"variantManagementId",
+										"fileName":"controlChange0",
+										"fileType":"change",
+										"content":{},
+										"selector":{
+											"id":"selectorId"
+										}
+									}],
+									"variantChanges": {}
+								}
+							],
+							"variantManagementChanges": {}
+						}
+					}
+				}
+			};
+
+			sandbox.stub(Cache, "getChangesFillingCache").resolves(oMockedWrappedContent);
+			sandbox.stub(Cache, "setVariantManagementSection");
+			return this.oChangePersistence.getChangesForComponent({includeCtrlVariants: true}).then(function(aChanges) {
+				var mVariantControllerMap = this.oChangePersistence._oVariantController.getChangeFileContent();
+				var sChangeInstanceId = aChanges[0].sId;
+				assert.strictEqual(aChanges.length, 1, "then one change was returned");
+				assert.ok(aChanges[0] instanceof Change, "then a change instance was returned");
+				assert.strictEqual(mVariantControllerMap["variantManagementId"].variants[0].controlChanges[0].getId(), aChanges[0].getId(), "then variant change content was replaced with a change instance");
+				assert.ok(Cache.setVariantManagementSection.calledWith(this._mComponentProperties, mVariantControllerMap), "then Cache.setVariantManagementSection was called to sync the variant section");
+				return this.oChangePersistence.getChangesForComponent({includeCtrlVariants: true}).then(function(aChanges) {
+					assert.strictEqual(aChanges.length, 1, "then one change was returned");
+					assert.strictEqual(aChanges[0].sId, sChangeInstanceId, "then the existing change instance was returned");
+				});
+			}.bind(this));
+		});
 		QUnit.test("when getChangesForComponent is called with includeCtrlVariants and includeVariants set to true", function(assert) {
 			var oMockedWrappedContent = {
 				"changes" : {
@@ -1031,9 +1125,9 @@ function (
 				}
 			};
 			var fnGetCtrlVariantChangesSpy = sandbox.spy(this.oChangePersistence, "_getAllCtrlVariantChanges");
-			var fnSetChangeFileContentSpy = sandbox.spy(this.oChangePersistence._oVariantController, "_setChangeFileContent");
+			var fnSetChangeFileContentSpy = sandbox.spy(this.oChangePersistence._oVariantController, "checkAndSetVariantContent");
 			var oInvisibleVariant = oMockedWrappedContent.changes.variantSection.variantManagementId.variants[2];
-			var aInvisibleChangFileNames = [
+			var aInvisibleChangeFileNames = [
 				oInvisibleVariant.content.fileName,
 				oInvisibleVariant.controlChanges[0].fileName,
 				oInvisibleVariant.variantChanges.setVisible[0].fileName
@@ -1042,11 +1136,11 @@ function (
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
 			return this.oChangePersistence.getChangesForComponent({includeCtrlVariants: true, includeVariants: true}).then(function(aChanges) {
 				var aFilteredChanges = aChanges.filter( function (oChange) {
-					return aInvisibleChangFileNames.indexOf(oChange.getId()) > -1;
+					return aInvisibleChangeFileNames.indexOf(oChange.getId()) > -1;
 				});
 				assert.ok(aFilteredChanges.length === 0, "then no changes belonging to invisible variant returned");
 				assert.equal(aChanges.length, 8, "then all the visible variant related changes are part of the response");
-				assert.ok(fnSetChangeFileContentSpy.calledAfter(fnGetCtrlVariantChangesSpy), "then VariantController.setChangeFileContent called after _getAllCtrlVariantChanges is called (for max-layer/current filtering)");
+				assert.ok(fnSetChangeFileContentSpy.calledAfter(fnGetCtrlVariantChangesSpy), "then VariantController.checkAndSetVariantContent called after _getAllCtrlVariantChanges is called (for max-layer/current filtering)");
 			});
 		});
 
@@ -1070,7 +1164,7 @@ function (
 				}
 			));
 			return this.oChangePersistence.getChangesForComponent().then(function() {
-				assert.equal(fnGetCtrlVariantChangesSpy.callCount, 0, "then VariantController.setChangeFileContent called after _getAllCtrlVariantChanges is called (for max-layer/current layer filtering)");
+				assert.equal(fnGetCtrlVariantChangesSpy.callCount, 0, "then  _getAllCtrlVariantChanges is not called");
 			});
 		});
 
@@ -1344,7 +1438,7 @@ function (
 			});
 		});
 
-		QUnit.test("getChangesForComponent shall only return flex changes in the max layer or below", function(assert) {
+		QUnit.test("when getChangesForComponent is called with a max layer parameter and includeCtrlVariants set to true", function(assert) {
 
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({
 				changes: {
@@ -1392,16 +1486,27 @@ function (
 			}));
 
 			Utils.setMaxLayerParameter("CUSTOMER");
-			var fnGetCtrlVariantChangesStub = sandbox.stub(this.oChangePersistence, "_getAllCtrlVariantChanges");
-			sandbox.stub(this.oChangePersistence._oVariantController, "_setChangeFileContent");
+			var aMockVariantChangeContent = [
+				{fileName: "mockVarChange0", fileType: "change"},
+				{fileName: "mockVarChange1", fileType: "change"}
+			];
+			sandbox.stub(this.oChangePersistence, "_getAllCtrlVariantChanges")
+				.withArgs(sinon.match.any, true)
+				.returns(aMockVariantChangeContent);
+			sandbox.stub(this.oChangePersistence._oVariantController, "checkAndSetVariantContent");
 			sandbox.stub(this.oChangePersistence._oVariantController, "loadInitialChanges");
 
-			return this.oChangePersistence.getChangesForComponent().then(function(oChanges) {
-				assert.strictEqual(oChanges.length, 3, "only changes which are under max layer are returned");
-				assert.ok(oChanges[0].getId() === "change2", "with correct ID");
-				assert.ok(oChanges[1].getId() === "change4", "with correct ID");
-				assert.ok(oChanges[2].getId() === "change5", "with correct ID");
-				assert.ok(fnGetCtrlVariantChangesStub.calledOnce, "then _getCtrlVariantChanges called when max layer parameter is set");
+			return this.oChangePersistence.getChangesForComponent({includeCtrlVariants: true}).then(function(aChanges) {
+				assert.strictEqual(aChanges.length, 5, "only changes which are under max layer are returned");
+				assert.ok(aChanges[0].getId() === "change2", "with correct ID");
+				assert.ok(aChanges[1].getId() === "change4", "with correct ID");
+				assert.ok(aChanges[2].getId() === "change5", "with correct ID");
+				assert.ok(this.oChangePersistence._getAllCtrlVariantChanges.calledOnce, "then _getCtrlVariantChanges called when max layer parameter is set");
+				assert.deepEqual(
+					aChanges.slice(3).map(function(oChange) { return oChange.getFileName(); }),
+					aMockVariantChangeContent.map(function(oChangeContent) { return oChangeContent.fileName; }),
+					"then max layer filtered variant changes are returned"
+				);
 				assert.strictEqual(this.oChangePersistence._bHasChangesOverMaxLayer, true, "then the flag _bHasChangesOverMaxLayer is set");
 			}.bind(this));
 		});
@@ -3375,6 +3480,7 @@ function (
 		});
 
 		QUnit.test("Shall not add a variant related change to the cache", function (assert) {
+			sandbox.stub(Cache, "setVariantManagementSection");
 			var oChangeContent;
 
 			oChangeContent = {
@@ -3431,8 +3537,9 @@ function (
 
 			var oAddChangeSpy = sandbox.spy(Cache, "addChange");
 			return this.oChangePersistence.saveDirtyChanges().then(function(){
+				assert.ok(Cache.setVariantManagementSection.calledWith(this.oChangePersistence._mComponent, this.oChangePersistence._oVariantController.getChangeFileContent()), "then variant controller content was synced with the Cache");
 				assert.equal(oAddChangeSpy.callCount, 1, "then addChange was only called for the change not related to variants");
-			});
+			}.bind(this));
 		});
 
 		QUnit.test("(Save As scenario) after a change creation has been saved for the new app variant, the change shall not be added to the cache", function (assert) {

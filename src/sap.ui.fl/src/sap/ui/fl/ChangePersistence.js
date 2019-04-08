@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/base/util/isEmptyObject"
 ], function(
 	Change,
 	Variant,
@@ -33,7 +34,8 @@ sap.ui.define([
 	MessageBox,
 	JSONModel,
 	jQuery,
-	fnBaseUtilMerge
+	merge,
+	isEmptyObject
 ) {
 	"use strict";
 
@@ -78,7 +80,7 @@ sap.ui.define([
 		};
 
 		//_mChangesInitial contains a clone of _mChanges to recreated dependencies if changes need to be reapplied
-		this._mChangesInitial = fnBaseUtilMerge({}, this._mChanges);
+		this._mChangesInitial = merge({}, this._mChanges);
 
 		this._mVariantsChanges = {};
 
@@ -142,12 +144,13 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.fl.context.Context[]} aActiveContexts Array of current active contexts
 	 * @param {boolean} [bIncludeVariants] Indicates that smart variants shall be included
-	 * @param {object} oChangeContent Content of the change
+	 * @param {object} oChangeOrChangeContent Change instance or content of the change
 	 *
 	 * @returns {boolean} <code>true</code> if all the preconditions are fulfilled
 	 * @public
 	 */
-	ChangePersistence.prototype._preconditionsFulfilled = function(aActiveContexts, bIncludeVariants, oChangeContent) {
+	ChangePersistence.prototype._preconditionsFulfilled = function(aActiveContexts, bIncludeVariants, oChangeOrChangeContent) {
+		var oChangeContent = oChangeOrChangeContent instanceof Change ? oChangeOrChangeContent.getDefinition() : oChangeOrChangeContent;
 		if (!oChangeContent.fileName) {
 			Utils.log.warning("A change without fileName is detected and excluded from component: " + this._mComponent.name);
 			return false;
@@ -201,59 +204,59 @@ sap.ui.define([
 	 * @returns {Promise} Promise resolving with an array of changes
 	 * @public
 	 */
-	ChangePersistence.prototype.getChangesForComponent = function(mPropertyBag) {
-		return Cache.getChangesFillingCache(this._oConnector, this._mComponent, mPropertyBag).then(function(oWrappedChangeFileContent) {
+	ChangePersistence.prototype.getChangesForComponent = function(mPropertyBag, bInvalidateCache) {
+		return Cache.getChangesFillingCache(this._oConnector, this._mComponent, mPropertyBag, bInvalidateCache).then(function(oWrappedChangeFileContent) {
+			var oChangeFileContent = merge({}, oWrappedChangeFileContent);
 			var oAppComponent = mPropertyBag && mPropertyBag.component && Utils.getAppComponentForControl(mPropertyBag.component);
 
-			if (oWrappedChangeFileContent.changes && oWrappedChangeFileContent.changes.settings){
-				Settings._storeInstance(oWrappedChangeFileContent.changes.settings);
+			if (oChangeFileContent.changes && oChangeFileContent.changes.settings){
+				Settings._storeInstance(oChangeFileContent.changes.settings);
 			}
 
-			var bFlexChangesExist = oWrappedChangeFileContent.changes
-				&& Array.isArray(oWrappedChangeFileContent.changes.changes)
-				&& oWrappedChangeFileContent.changes.changes.length !== 0;
+			var bFlexChangesExist = oChangeFileContent.changes
+				&& Array.isArray(oChangeFileContent.changes.changes)
+				&& oChangeFileContent.changes.changes.length !== 0;
 
-			var bVariantSectionContainsContent = oWrappedChangeFileContent.changes
-				&& oWrappedChangeFileContent.changes.variantSection
-				&& !jQuery.isEmptyObject(oWrappedChangeFileContent.changes.variantSection);
+			var bVariantSectionContainsContent = oChangeFileContent.changes
+				&& oChangeFileContent.changes.variantSection
+				&& !isEmptyObject(oChangeFileContent.changes.variantSection);
 
 			if (!bFlexChangesExist && !bVariantSectionContainsContent) {
 				return [];
 			}
 
-			var aChanges = oWrappedChangeFileContent.changes.changes;
+			var oComponentData = oAppComponent
+				? oAppComponent.getComponentData()
+				: (mPropertyBag && mPropertyBag.componentData || {});
+
+			var aChanges = oChangeFileContent.changes.changes;
 
 			//Binds a json model of message bundle to the component the first time a change within the vendor layer was detected
 			//It enables the translation of changes
 
-			if (!this._oMessagebundle && oWrappedChangeFileContent.messagebundle && oAppComponent) {
+			if (!this._oMessagebundle && oChangeFileContent.messagebundle && oAppComponent) {
 				if (!oAppComponent.getModel("i18nFlexVendor")) {
 					if (aChanges.some(function(oChange) {
 							return oChange.layer === "VENDOR";
 						})) {
-							this._oMessagebundle = oWrappedChangeFileContent.messagebundle;
+							this._oMessagebundle = oChangeFileContent.messagebundle;
 							var oModel = new JSONModel(this._oMessagebundle);
 							oAppComponent.setModel(oModel, "i18nFlexVendor");
 					}
 				}
 			}
-			var bIncludeControlVariants = mPropertyBag && mPropertyBag.includeCtrlVariants && bVariantSectionContainsContent;
+			var bIncludeControlVariants = mPropertyBag && mPropertyBag.includeCtrlVariants;
 
 			var sCurrentLayer = mPropertyBag && mPropertyBag.currentLayer;
 			var bFilterMaxLayer = !(mPropertyBag && mPropertyBag.ignoreMaxLayerParameter);
+			var aVariantFilterArguments = [oChangeFileContent.changes.variantSection];
 			if (sCurrentLayer) {
 				aChanges = aChanges.filter(this._filterChangeForCurrentLayer.bind(this, sCurrentLayer));
-				if (!bIncludeControlVariants && bVariantSectionContainsContent) {
-					//although ctrl variant changes are not requested, still filtering on variant section data is necessary
-					this._getAllCtrlVariantChanges(oWrappedChangeFileContent.changes.variantSection, false, sCurrentLayer);
-				}
+				aVariantFilterArguments.push(/*bFilterMaxLayer*/false, sCurrentLayer);
 			} else if (Utils.isLayerFilteringRequired() && bFilterMaxLayer) {
 				//If layer filtering required, excludes changes in higher layer than the max layer
 				aChanges = aChanges.filter(this._filterChangeForMaxLayer.bind(this));
-				if (!bIncludeControlVariants && bVariantSectionContainsContent) {
-					//although ctrl variant changes are not requested, still filtering on variant section data is necessary
-					this._getAllCtrlVariantChanges(oWrappedChangeFileContent.changes.variantSection, true);
-				}
+				aVariantFilterArguments.push(/*bFilterMaxLayer*/true);
 			} else if (this._bHasChangesOverMaxLayer && !bFilterMaxLayer) {
 				// ignoreMaxLayerParameter = true is set from flexController.hasHigherLayerChanges(),
 				// triggered by rta.stop(), to check if reload needs to be performed
@@ -262,44 +265,41 @@ sap.ui.define([
 				return this.HIGHER_LAYER_CHANGES_EXIST;
 			}
 
-			if (bIncludeControlVariants) {
-				aChanges = aChanges.concat(this._getAllCtrlVariantChanges(oWrappedChangeFileContent.changes.variantSection));
+			if (bVariantSectionContainsContent) {
+				// if variant changes should be included in response OR if filtering is required for variant changes
+				if (bIncludeControlVariants || aVariantFilterArguments.length > 1) {
+					// by calling this function variantSection is filtered for max layer or current layer, if applicable
+					// all types of variant changes are returned inside an array
+					var aFilteredVariantChanges = this._getAllCtrlVariantChanges.apply(this, aVariantFilterArguments);
+					// variant changes array should be added to the response array if includeCtrlVariants parameter is set
+					aChanges = bIncludeControlVariants ? aChanges.concat(aFilteredVariantChanges) : aChanges;
+				}
+
+				this._oVariantController.checkAndSetVariantContent(oChangeFileContent, oComponentData && oComponentData.technicalParameters);
 			}
 
-			var oComponentData = oAppComponent
-				? oAppComponent.getComponentData()
-				: (mPropertyBag && mPropertyBag.componentData || {});
-
-			if ( oWrappedChangeFileContent.changes.variantSection
-				&& Object.keys(oWrappedChangeFileContent.changes.variantSection).length !== 0
-				&& Object.keys(this._oVariantController._getChangeFileContent()).length === 0 ) {
-
-				this._oVariantController._setChangeFileContent(oWrappedChangeFileContent, oComponentData && oComponentData.technicalParameters);
-			}
-
-			if (Object.keys(this._oVariantController._getChangeFileContent()).length > 0) {
-				var aVariantChanges = this._oVariantController.loadInitialChanges();
-				aChanges = bIncludeControlVariants ? aChanges : aChanges.concat(aVariantChanges);
+			if ( !bIncludeControlVariants && !isEmptyObject(this._oVariantController.getChangeFileContent()) ) {
+				// load changes of fileType "change" from currently active variants
+				aChanges = aChanges.concat(this._oVariantController.loadInitialChanges());
 			}
 
 			var bIncludeVariants = mPropertyBag && mPropertyBag.includeVariants;
 
-			var aContextObjects = oWrappedChangeFileContent.changes.contexts || [];
+			var aContextObjects = oChangeFileContent.changes.contexts || [];
 			return new Promise(function (resolve) {
 				ContextManager.getActiveContexts(aContextObjects).then(function (aActiveContexts) {
 					resolve(aChanges
-						.map(function(vChange) { return vChange instanceof Change ? vChange.getDefinition() : vChange; })
 						.filter(this._preconditionsFulfilled.bind(this, aActiveContexts, bIncludeVariants))
-						.map(getChange.bind(this, oWrappedChangeFileContent))
+						.map(getChangeInstance.bind(this, oChangeFileContent))
 					);
 				}.bind(this));
 			}.bind(this));
 		}.bind(this));
 
-		function findVariant(oWrappedChangeFileContent, oChange) {
+		function findVariant(mVariantControllerContent, oChange) {
 			var oFoundVariant;
-			Object.keys(oWrappedChangeFileContent.changes.variantSection).some(function(sVariantManagementReference) {
-				return oWrappedChangeFileContent.changes.variantSection[sVariantManagementReference].variants.some(function(oVariant) {
+			Object.keys(mVariantControllerContent).some(function(sVariantManagementReference) {
+				return mVariantControllerContent[sVariantManagementReference].variants.some(function(oVariant) {
 					if (oVariant.content.fileName === oChange.getDefinition().variantReference) {
 						oFoundVariant = oVariant;
 						return true;
@@ -318,17 +318,30 @@ sap.ui.define([
 			});
 		}
 
-		function getChange(oWrappedChangeFileContent, oChangeContent) {
+		function getChangeInstance(oFileContent, oChangeOrChangeContent) {
 			var oChange;
-			if (!this._mChangesEntries[oChangeContent.fileName]) {
-				this._mChangesEntries[oChangeContent.fileName] = new Change(oChangeContent);
-			}
-			oChange = this._mChangesEntries[oChangeContent.fileName];
-			oChange.setState(Change.states.PERSISTED);
+			if (oChangeOrChangeContent instanceof Change) {
+				oChange = oChangeOrChangeContent; // can have other states
+				this._mChangesEntries[oChange.getFileName()] = oChange;
+			} else {
 
-			if (oChangeContent.variantReference) {
-				var oVariant = findVariant(oWrappedChangeFileContent, oChange);
-				replaceChangeContentWithInstance(oVariant, oChange);
+				if (!this._mChangesEntries[oChangeOrChangeContent.fileName]) {
+					this._mChangesEntries[oChangeOrChangeContent.fileName] = new Change(oChangeOrChangeContent);
+				}
+				oChange = this._mChangesEntries[oChangeOrChangeContent.fileName];
+				oChange.setState(Change.states.PERSISTED); // persisted change
+
+				// if change instance was passed, it will be already present in the variant
+				// if change content was passed, then replace the newly created change instance in the variant
+				if (oChange.getVariantReference()) {
+					var mVariantControllerContent = this._oVariantController.getChangeFileContent();
+					var oVariant = findVariant.call(this, mVariantControllerContent, oChange);
+					if (oVariant && replaceChangeContentWithInstance(oVariant, oChange)) {
+						// if the change content is replaced in the variant controller, then a sync with the Cache entry is required
+						Cache.setVariantManagementSection(this._mComponent, mVariantControllerContent);
+					}
+				}
+
 			}
 			return oChange;
 		}
@@ -734,7 +747,7 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype.loadChangesMapForComponent = function (oAppComponent, mPropertyBag) {
 
-		mPropertyBag.component = !jQuery.isEmptyObject(oAppComponent) && oAppComponent;
+		mPropertyBag.component = !isEmptyObject(oAppComponent) && oAppComponent;
 		return this.getChangesForComponent(mPropertyBag).then(createChangeMap.bind(this));
 
 		function createChangeMap(aChanges) {
@@ -748,7 +761,7 @@ sap.ui.define([
 
 			aChanges.forEach(this._addChangeAndUpdateDependencies.bind(this, oAppComponent));
 
-			this._mChangesInitial = fnBaseUtilMerge({}, this._mChanges);
+			this._mChangesInitial = merge({}, this._mChanges);
 
 			return this.getChangesMapForComponent.bind(this);
 		}
@@ -781,7 +794,7 @@ sap.ui.define([
 	 * @returns {object} Returns the mChanges object with the updated dependencies
 	 */
 	ChangePersistence.prototype.copyDependenciesFromInitialChangesMap = function(oChange, fnDependencyValidation) {
-		var mInitialDependencies = fnBaseUtilMerge({}, this._mChangesInitial.mDependencies);
+		var mInitialDependencies = merge({}, this._mChangesInitial.mDependencies);
 		var oInitialDependency = mInitialDependencies[oChange.getId()];
 
 		if (oInitialDependency) {
@@ -1027,20 +1040,22 @@ sap.ui.define([
 	};
 
 	/**
-	  * @param {boolean} [bSkipUpdateCache] If true, then the dirty change shall be saved for the new created app variant, but not for the current app;
-	  * therefore, the cache update of the current app is skipped because the dirty change is not saved for the running app.
+	 * Updates the cache with the dirty change passed and removes it from the array of dirty changes if present.
+	 * @param {array} aDirtyChanges Dirty changes to be added or deleted
+	 * @param {sap.ui.fl.Change} oDirtyChange Dirty change
+	 * @param {boolean} [bSkipUpdateCache] If true, then the dirty change shall be saved for the new created app variant, but not for the current app
+	 * therefore, the cache update of the current app is skipped
 	 */
 	ChangePersistence.prototype._updateCacheAndDirtyState = function (aDirtyChanges, oDirtyChange, bSkipUpdateCache) {
 		if (!bSkipUpdateCache) {
-			if (oDirtyChange.getPendingAction() === "NEW" &&
-				oDirtyChange.getFileType() !== "ctrl_variant_change" &&
-				oDirtyChange.getFileType() !== "ctrl_variant_management_change" &&
-				oDirtyChange.getFileType() !== "ctrl_variant" &&
-				!oDirtyChange.getVariantReference()
-			) {
-				Cache.addChange(this._mComponent, oDirtyChange.getDefinition());
+			if (oDirtyChange.getPendingAction() === "NEW") {
+				Utils.isChangeRelatedToVariants(oDirtyChange)
+					? Cache.setVariantManagementSection(this._mComponent, merge({}, this._oVariantController.getChangeFileContent()))
+					: Cache.addChange(this._mComponent, oDirtyChange.getDefinition());
 			} else if (oDirtyChange.getPendingAction() === "DELETE") {
-				Cache.deleteChange(this._mComponent, oDirtyChange.getDefinition());
+				Utils.isChangeRelatedToVariants(oDirtyChange)
+					? Cache.setVariantManagementSection(this._mComponent, merge({}, this._oVariantController.getChangeFileContent()))
+					: Cache.deleteChange(this._mComponent, oDirtyChange.getDefinition());
 			}
 		}
 
@@ -1354,6 +1369,15 @@ sap.ui.define([
 			}
 			return aChangesToRevert;
 		}.bind(this));
+	};
+
+	/**
+	 * Resets variant controller map
+	 * @param {boolean} bResetAtRuntime If the map is reset at runtime
+	 * @returns {Promise} Promise resolving when variant controller map has been reset and current changes have been reverted
+	 */
+	ChangePersistence.prototype.resetVariantMap = function (bResetAtRuntime) {
+		return this._oVariantController.resetMap(bResetAtRuntime);
 	};
 	return ChangePersistence;
 }, true);
