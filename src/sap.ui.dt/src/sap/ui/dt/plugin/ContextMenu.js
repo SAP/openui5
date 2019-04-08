@@ -3,13 +3,12 @@
  */
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	'sap/ui/dt/Plugin',
-	'sap/ui/dt/ContextMenuControl',
-	'sap/ui/dt/Util',
-	'sap/ui/Device',
+	"sap/ui/dt/Plugin",
+	"sap/ui/dt/ContextMenuControl",
+	"sap/ui/dt/Util",
+	"sap/ui/Device",
 	"sap/base/assert",
-	"sap/ui/events/KeyCodes",
-	"sap/base/util/merge"
+	"sap/ui/events/KeyCodes"
 ], function(
 	jQuery,
 	Plugin,
@@ -17,8 +16,7 @@ sap.ui.define([
 	Utils,
 	Device,
 	assert,
-	KeyCodes,
-	merge
+	KeyCodes
 ) {
 	"use strict";
 
@@ -64,7 +62,6 @@ sap.ui.define([
 	});
 
 	ContextMenu.prototype.init = function () {
-		this.iMenuLeftclickOpeningDelay = 0;
 		this.iMenuHoverOpeningDelay = 500;
 		this.iMenuHoverClosingDelay = 250; //Should be lower than iMenuHoverOpeningDelay, otherwise ContextMenu is instantly closed
 
@@ -122,9 +119,9 @@ sap.ui.define([
 	 * @override
 	 */
 	ContextMenu.prototype.registerElementOverlay = function (oOverlay) {
-		oOverlay.attachBrowserEvent("click", this._onClickorTouch, this);
-		oOverlay.attachBrowserEvent("touchstart", this._onClickorTouch, this);
-		oOverlay.attachBrowserEvent("contextmenu", this._onContextMenu, this);
+		oOverlay.attachBrowserEvent("click", this._onContextMenuOrClick, this);
+		oOverlay.attachBrowserEvent("touchstart", this._onContextMenuOrClick, this);
+		oOverlay.attachBrowserEvent("contextmenu", this._onContextMenuOrClick, this);
 		// oOverlay.attachBrowserEvent("mouseover", this._onHover, this); FIXME: wait for hover PoC from UX colleagues
 		// oOverlay.attachBrowserEvent("mouseout", this._clearHoverTimeout, this);
 		oOverlay.attachBrowserEvent("keydown", this._onKeyDown, this);
@@ -138,9 +135,9 @@ sap.ui.define([
 	 * @override
 	 */
 	ContextMenu.prototype.deregisterElementOverlay = function (oOverlay) {
-		oOverlay.detachBrowserEvent("click", this._onClickorTouch, this);
-		oOverlay.detachBrowserEvent("touchstart", this._onClickorTouch, this);
-		oOverlay.detachBrowserEvent("contextmenu", this._onContextMenu, this);
+		oOverlay.detachBrowserEvent("click", this._onContextMenuOrClick, this);
+		oOverlay.detachBrowserEvent("touchstart", this._onContextMenuOrClick, this);
+		oOverlay.detachBrowserEvent("contextmenu", this._onContextMenuOrClick, this);
 		// oOverlay.detachBrowserEvent("mouseover", this._onHover, this); FIXME: wait for hover PoC from UX colleagues
 		// oOverlay.detachBrowserEvent("mouseout", this._clearHoverTimeout, this);
 		oOverlay.detachBrowserEvent("keydown", this._onKeyDown, this);
@@ -280,10 +277,28 @@ sap.ui.define([
 				return true;
 			}
 		}, this);
-
 	};
 
+	ContextMenu.prototype._onContextMenuOrClick = function(oEvent) {
+		if (!this.fnDebounced) {
+			this.fnDebounced = Utils.debounce(function() {
+				if (this._oCurrentEvent.type === "contextmenu") {
+					this._onContextMenu(this._oCurrentEvent);
+				} else {
+					this._onClickorTouch(this._oCurrentEvent);
+				}
+				this._oCurrentEvent = undefined;
+				this.fnDebounced = undefined;
+			}.bind(this), 50);
+		}
 
+		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
+		if (oOverlay && oOverlay.isSelectable() && oOverlay.getSelected()) {
+			this._oCurrentEvent = oEvent;
+			oEvent.stopPropagation();
+			this.fnDebounced();
+		}
+	};
 
 	/**
 	 * Called when the user clicks or touches an overlay
@@ -291,23 +306,13 @@ sap.ui.define([
 	 * @private
 	 */
 	ContextMenu.prototype._onClickorTouch = function (oEvent) {
-		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
-		if (oOverlay && oOverlay.isSelectable() && oOverlay.getSelected() && this.getOpenOnClick()) {
-
+		if (this.getOpenOnClick()) {
 			if (this.isMenuOpeningLocked()) {
 				this.unlockMenuOpening();
 				this.oContextMenuControl.close();
 			}
-
-			this._startOpeningWithDelay(oEvent);
+			this._startOpening(oEvent);
 		}
-	};
-
-	ContextMenu.prototype._startOpeningWithDelay = function(oEvent) {
-		var oCurrentEvent = merge({}, oEvent);
-		this.clickTimeout = setTimeout(function () {
-			this._startOpening(oCurrentEvent, true);
-		}.bind(this), this.iMenuLeftclickOpeningDelay);
 	};
 
 	/**
@@ -321,10 +326,6 @@ sap.ui.define([
 	ContextMenu.prototype._startOpening = function (oEvent, bLockOpening) {
 		clearTimeout(this.hoverTimeout);
 		this._bOpenedByHover = false;
-
-		if (this._oTempTarget != oEvent.currentTarget.id) {
-			clearTimeout(this.clickTimeout);
-		}
 
 		this._oTempTarget = oEvent.currentTarget.id;
 
@@ -483,8 +484,6 @@ sap.ui.define([
 			clearTimeout(this.hoverTimeout);
 
 			this._ensureSelection(oOverlay);
-
-			clearTimeout(this.clickTimeout);
 
 			this.lockMenuOpening();
 			this.oContextMenuControl.setOpenNew(true);
