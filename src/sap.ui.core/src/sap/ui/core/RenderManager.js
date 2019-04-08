@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/base/security/encodeXML",
 	"sap/base/assert",
 	"sap/ui/performance/Measurement",
-	"sap/base/Log"
+	"sap/base/Log",
+	"./InvisibleRenderer"
 ], function(
 	LabelEnablement,
 	BaseObject,
@@ -26,19 +27,20 @@ sap.ui.define([
 	encodeXML,
 	assert,
 	Measurement,
-	Log
+	Log,
+	InvisibleRenderer
 ) {
 
 	"use strict";
 
 	var aCommonMethods = ["renderControl", "translate", "getConfiguration", "getHTML", "cleanupControlWithoutRendering"];
 
-	var aStringRendererMethods = ["write", "writeEscaped", "writeAcceleratorKey", "writeControlData", "writeInvisiblePlaceholderData",
-		"writeElementData", "writeAttribute", "writeAttributeEscaped", "addClass", "writeClasses", "addStyle", "writeStyles",
+	var aStringRendererMethods = ["write", "writeEscaped", "writeAcceleratorKey", "writeControlData", "writeElementData",
+		"writeAttribute", "writeAttributeEscaped", "addClass", "writeClasses", "addStyle", "writeStyles",
 		"writeAccessibilityState", "writeIcon"];
 
 	var aDomRendererMethods = ["openStart", "openEnd", "close", "voidStart", "voidEnd", "text", "attr", "class", "style", "controlData",
-		"elementData", "accessibilityState", "invisiblePlaceholderData", "icon", "unsafeHtml"];
+		"elementData", "accessibilityState", "icon", "unsafeHtml"];
 
 	var aNonRendererMethods = ["render", "flush", "destroy"];
 
@@ -545,32 +547,6 @@ sap.ui.define([
 		this.accessibilityState = this.writeAccessibilityState;
 
 		/**
-		 * Writes necessary invisible control/element placeholder data into the HTML.
-		 *
-		 * Controls should use this method only if the standard implementation of the RenderManager doesn't fit their needs.
-		 * That standard implementation renders an invisible &lt;span&gt; element for controls with <code>visible:false</code> to improve
-		 * re-rendering performance. Due to the fault tolerance of the HTML5 standard, such &lt;span&gt; elements are accepted in many
-		 * scenarios and won't appear in the render tree of the browser, However, in some cases, controls may need to write a different
-		 * element when the &lt;span&gt; is not an allowed element (e.g. within the &lt;tr&gt; or &lt;li&gt; group).
-		 *
-		 * The caller needs to start an opening HTML tag, then call this method, then complete the opening and closing tag.
-		 *
-		 * <pre>
-		 *
-		 *   oRenderManager.write("&lt;tr");
-		 *   oRenderManager.writeInvisiblePlaceholderData(oControl);
-		 *   oRenderManager.write("&gt;&lt;/tr");
-		 *
-		 * </pre>
-		 *
-		 * @param {sap.ui.core.Element} oElement An instance of sap.ui.core.Element
-		 * @return {sap.ui.core.RenderManager} This render manager instance to allow chaining
-		 * @private
-		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
-		 */
-		this.invisiblePlaceholderData = this.writeInvisiblePlaceholderData;
-
-		/**
 		 * Writes either an &lt;img&gt; tag for normal URI or a &lt;span&gt; tag with needed properties for an icon URI.
 		 *
 		 * Additional classes and attributes can be added to the tag with the second and third parameter.
@@ -1013,7 +989,7 @@ sap.ui.define([
 					var oldDomNode = oControl.getDomRef();
 					if ( !oldDomNode || RenderManager.isPreservedContent(oldDomNode) ) {
 						// In case no old DOM node was found or only preserved DOM, search for a placeholder (invisible or preserved DOM placeholder)
-						oldDomNode = ((RenderPrefixes.Invisible + oControl.getId() ? window.document.getElementById(RenderPrefixes.Invisible + oControl.getId()) : null)) || ((RenderPrefixes.Dummy + oControl.getId() ? window.document.getElementById(RenderPrefixes.Dummy + oControl.getId()) : null));
+						oldDomNode = document.getElementById(RenderManager.createInvisiblePlaceholderId(oControl)) || document.getElementById(RenderPrefixes.Dummy + oControl.getId());
 					}
 
 					var bNewTarget = oldDomNode && oldDomNode.parentNode != oTargetDomNode;
@@ -1179,45 +1155,6 @@ sap.ui.define([
 	RenderManager.prototype.writeControlData = function(oControl) {
 		assert(oControl && BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control");
 		this.writeElementData(oControl);
-		return this;
-	};
-
-	/**
-	 * Writes necessary invisible control/element placeholder data into the HTML.
-	 *
-	 * Controls should use this method only if the standard implementation of the RenderManager doesn't fit their needs.
-	 * That standard implementation renders an invisible &lt;span&gt; element for controls with <code>visible:false</code> to improve
-	 * re-rendering performance. Due to the fault tolerance of the HTML5 standard, such &lt;span&gt; elements are accepted in many
-	 * scenarios and won't appear in the render tree of the browser, However, in some cases, controls may need to write a different
-	 * element when the &lt;span&gt; is not an allowed element (e.g. within the &lt;tr&gt; or &lt;li&gt; group).
-	 *
-	 * The caller needs to start an opening HTML tag, then call this method, then complete the opening and closing tag.
-	 *
-	 * <pre>
-	 *
-	 *   oRenderManager.write("&lt;tr");
-	 *   oRenderManager.writeInvisiblePlaceholderData(oControl);
-	 *   oRenderManager.write("&gt;&lt;/tr");
-	 *
-	 * </pre>
-	 *
-	 * @param {sap.ui.core.Element} oElement An instance of sap.ui.core.Element
-	 * @return {sap.ui.core.RenderManager} This render manager instance to allow chaining
-	 * @protected
-	 */
-	RenderManager.prototype.writeInvisiblePlaceholderData = function(oElement) {
-		assert(BaseObject.isA(oElement, 'sap.ui.core.Element'), "oElement must be an instance of sap.ui.core.Element");
-
-		var sPlaceholderId = RenderManager.createInvisiblePlaceholderId(oElement),
-			sPlaceholderHtml = ' ' +
-				'id="' + sPlaceholderId + '" ' +
-				'class="sapUiHiddenPlaceholder" ' +
-				'data-sap-ui="' + sPlaceholderId + '" ' +
-				'style="display: none;"' +
-				'aria-hidden="true" ';
-
-		this.write(sPlaceholderHtml);
-
 		return this;
 	};
 
@@ -1574,7 +1511,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.core
 		 */
-		Invisible: "sap-ui-invisible-",
+		Invisible: InvisibleRenderer.PlaceholderPrefix,
 
 		/**
 		 * A dummy element is rendered with the intention of replacing it with the real content
@@ -1646,7 +1583,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	RenderManager.createInvisiblePlaceholderId = function(oElement) {
-		return RenderPrefixes.Invisible + oElement.getId();
+		return InvisibleRenderer.createInvisiblePlaceholderId(oElement);
 	};
 
 
@@ -1898,25 +1835,6 @@ sap.ui.define([
 
 		return bDomPatching;
 	}
-
-	/**
-	 * Renders an invisible dummy element for controls that have set their visible-property to
-	 * false. In case the control has its own visible property, it has to handle rendering itself.
-	 */
-	var InvisibleRenderer = {
-		/**
-		 * Renders the invisible dummy element
-		 *
-		 * @param {sap.ui.core.RenderManager} [oRm] The RenderManager instance
-		 * @param {sap.ui.core.Control} [oControl] The instance of the invisible control
-		 */
-		render: function(oRm, oControl) {
-			oRm.openStart("span");
-			oRm.invisiblePlaceholderData(oControl);
-			oRm.openEnd();
-			oRm.close("span");
-		}
-	};
 
 	return RenderManager;
 

@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/m/Toolbar",
 	"sap/m/library",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/RenderManager",
+	"sap/ui/core/InvisibleRenderer",
 	"sap/m/ToolbarSeparator",
 	"sap/m/Button",
 	"sap/m/Title",
@@ -21,7 +21,7 @@ sap.ui.define([
 	Toolbar,
 	mobileLibrary,
 	jQuery,
-	RenderManager,
+	InvisibleRenderer,
 	ToolbarSeparator,
 	Button,
 	Title,
@@ -80,7 +80,7 @@ sap.ui.define([
 		assert.ok(oTB.$().hasClass("sapMTB"), "Toolbar has correct class name");
 		oTB.setVisible(false);
 		Core.applyChanges();
-		var $ToolbarPlaceHolder = jQuery("#" + RenderManager.createInvisiblePlaceholderId(oTB));
+		var $ToolbarPlaceHolder = jQuery("#" + InvisibleRenderer.createInvisiblePlaceholderId(oTB));
 		assert.strictEqual(oTB.$().length, 0, "Toolbar is no longer in DOM after setting it to invisible");
 		assert.strictEqual($ToolbarPlaceHolder.length, 1, "Toolbar placeholder is in DOM after setting it to invisible");
 		assert.strictEqual($ToolbarPlaceHolder.css("display"), "none", "Toolbar placeholder should have display none when invisible");

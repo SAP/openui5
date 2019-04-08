@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/library"], function(coreLibrary) {
+sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer"], function(coreLibrary, InvisibleRenderer) {
 	'use strict';
 
 	// shortcut for sap.ui.core.Priority
@@ -279,10 +279,7 @@ sap.ui.define(["sap/ui/core/library"], function(coreLibrary) {
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 	 */
 	NotificationListGroupRenderer.renderInvisibleItem = function(oRm, oControl) {
-		oRm.write("<li");
-		oRm.writeInvisiblePlaceholderData(oControl);
-		oRm.write(">");
-		oRm.write("</li>");
+		InvisibleRenderer.render(oRm, oControl, "li");
 	};
 
 	//================================================================================

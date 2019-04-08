@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
-	function(library, Device, InvisibleText) {
+sap.ui.define(["./library", "sap/ui/Device", "sap/ui/core/InvisibleText", "sap/ui/core/InvisibleRenderer"],
+	function(library, Device, InvisibleText, InvisibleRenderer) {
 	"use strict";
 
 
@@ -22,10 +22,7 @@ sap.ui.define(["./library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 	var ListItemBaseRenderer = {};
 
 	ListItemBaseRenderer.renderInvisible = function(rm, oLI) {
-		this.openItemTag(rm, oLI);
-		rm.writeInvisiblePlaceholderData(oLI);
-		rm.write(">");
-		this.closeItemTag(rm, oLI);
+		InvisibleRenderer.render(rm, oLI, oLI.TagName);
 	};
 
 	/**
