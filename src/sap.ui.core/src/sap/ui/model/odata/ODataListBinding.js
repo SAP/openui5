@@ -38,7 +38,7 @@ sap.ui.define([
 
 	/**
 	 * @class
-	 * List binding implementation for oData format.
+	 * List binding implementation for OData format.
 	 *
 	 * @param {sap.ui.model.odata.ODataModel} oModel Model that this list binding belongs to
 	 * @param {string} sPath Path into the model data, relative to the given <code>oContext</code>

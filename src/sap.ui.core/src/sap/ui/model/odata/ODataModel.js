@@ -86,7 +86,7 @@ sap.ui.define([
 	 * @param {boolean} [mParameters.skipMetadataAnnotationParsing] Whether to skip the automated loading of annotations from the metadata document. Loading annotations from metadata does not have any effects (except the lost performance by invoking the parser) if there are not annotations inside the metadata document
 	 *
 	 * @class
-	 * Model implementation for oData format
+	 * Model implementation for OData format
 	 *
 	 *
 	 * @author SAP SE

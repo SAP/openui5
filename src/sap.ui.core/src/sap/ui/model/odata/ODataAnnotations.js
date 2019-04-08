@@ -22,7 +22,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.ODataMetadata} oMetadata
 	 * @param {object} mParams
 	 *
-	 * @class Implementation to access oData Annotations
+	 * @class Implementation to access OData Annotations
 	 *
 	 * @author SAP SE
 	 * @version
