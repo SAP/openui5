@@ -60,6 +60,18 @@ describe("sap.m.SinglePlanningCalendar", function() {
 		expect(takeScreenshot(oSPC)).toLookAs("opened_picker");
 	});
 
+	it("should close calendar picker on focusout", function () {
+		var oSPC = element(by.id("SinglePlanningCalendar"));
+
+		_checkForOverflowButton();
+
+		element(by.id("overrideTime")).click();
+		element(by.id("SinglePlanningCalendar-Header-NavToolbar-PickerBtn")).click();
+		element(by.id("SinglePlanningCalendar-Header-NavToolbar-PrevBtn")).click();
+
+		expect(takeScreenshot(oSPC)).toLookAs("closed_picker");
+	});
+
 	it("should select 2 appointments with Ctrl/Cmd + Click", function () {
 		var oSPC = element(by.id("SinglePlanningCalendar"));
 
