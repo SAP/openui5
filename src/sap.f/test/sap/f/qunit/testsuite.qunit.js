@@ -104,6 +104,18 @@ sap.ui.define(function () {
 					only: ["sap/f/FlexibleColumnLayout"]
 				}
 			},
+			"GridContainer": {
+				coverage: {
+					only: [
+						"sap/f/GridContainer",
+						"sap/f/GridContainerSettings",
+						"sap/f/GridContainerItemLayoutData"
+					]
+				},
+				sinon: {
+					useFakeTimers: true
+				}
+			},
 			"GridList": {
 				coverage: {
 					only: ["sap/f/GridList"]
