@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/layout/HorizontalLayout",
 	"sap/ui/Device",
 	"sap/ui/core/CustomData",
+	"sap/ui/core/Control",
 	"./HierarchicalSelect",
 	"./library",
 	"sap/uxap/AnchorBarRenderer",
@@ -23,7 +24,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/events/F6Navigation"
 ], function (jQuery, Button, MenuButton, mobileLibrary, Toolbar, IconPool, Item, ResizeHandler,	ScrollEnablement,
-		HorizontalLayout, Device, CustomData, HierarchicalSelect, library, AnchorBarRenderer, Log, KeyCodes, F6Navigation) {
+		HorizontalLayout, Device, CustomData, Control, HierarchicalSelect, library, AnchorBarRenderer, Log, KeyCodes, F6Navigation) {
 	"use strict";
 
 	// shortcut for sap.m.SelectType
@@ -540,7 +541,8 @@ sap.ui.define([
 	AnchorBar.prototype._adjustSize = function () {
 
 		//size changed => check if switch in display-mode (phone-view vs. desktop-view) needed
-		var sNewMode = library.Utilities.isPhoneScenario(this._getCurrentMediaContainerRange()) ?
+		var oMediaRange = Device.media.getCurrentRange(Device.media.RANGESETS.SAP_STANDARD, this._getWidth(this)),
+			sNewMode = library.Utilities.isPhoneScenario(oMediaRange) ?
 			AnchorBarRenderer._AnchorBarHierarchicalSelectMode.Text :
 			AnchorBarRenderer._AnchorBarHierarchicalSelectMode.Icon;
 
@@ -621,10 +623,11 @@ sap.ui.define([
 	AnchorBar.prototype.scrollToSection = function (sId, iDuration) {
 
 		if (this._bHasButtonsBar) {
-			var iDuration = iDuration || AnchorBar.SCROLL_DURATION,
+			var oMediaRange = Device.media.getCurrentRange(Device.media.RANGESETS.SAP_STANDARD, this._getWidth(this)),
+				iDuration = iDuration || AnchorBar.SCROLL_DURATION,
 				iScrollTo;
 
-			if (!library.Utilities.isPhoneScenario(this._getCurrentMediaContainerRange())
+			if (!library.Utilities.isPhoneScenario(oMediaRange)
 				&& this._oSectionInfo[sId]) {
 
 				if (this._bRtlScenario && Device.browser.firefox) {
@@ -1073,6 +1076,17 @@ sap.ui.define([
 		if (this.oLibraryResourceBundleOP) {
 			this.oLibraryResourceBundleOP = null;
 		}
+	};
+
+	/**
+	 * Determines the width of a control safely. If the control doesn't exist, it returns 0.
+	 * If it exists, it returns the DOM element width.
+	 * @param  {sap.ui.core.Control} oControl
+	 * @return {Number} the width of the control
+	 */
+	AnchorBar.prototype._getWidth = function (oControl) {
+		var oDomReference = oControl.getDomRef();
+		return !(oControl instanceof Control) ? 0 : (oDomReference && oDomReference.offsetWidth) || 0;
 	};
 
 	return AnchorBar;
