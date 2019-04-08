@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/Panel",
 	"sap/ui/base/ManagedObjectMetadata",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/dt/Overlay",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/AggregationOverlay",
@@ -35,6 +36,7 @@ function(
 	Page,
 	Panel,
 	ManagedObjectMetadata,
+	ManagedObject,
 	Overlay,
 	ElementOverlay,
 	AggregationOverlay,
@@ -841,30 +843,6 @@ function(
 			}.bind(this));
 		});
 
-		QUnit.test("when the button is an invalid element for the layout and DesignTime is created", function(assert){
-			var fnDone = assert.async();
-			var fnOriginalIsElementValid = ElementUtil.isElementValid;
-
-			// TODO: stub.withArgs doesn't work in sinon 1.14.1, replace after update to sinon-4
-			ElementUtil.isElementValid = function (oElement) {
-				return oElement === this.oButton1 ? false : fnOriginalIsElementValid(oElement);
-			}.bind(this);
-
-			this.oDesignTime = new DesignTime({
-				rootElements: [this.oLayout1]
-			});
-
-			this.oDesignTime.attachEventOnce("synced", function() {
-				sap.ui.getCore().applyChanges();
-				var oButton1Overlay = OverlayRegistry.getOverlay(this.oButton1);
-				var oLayout1Overlay = OverlayRegistry.getOverlay(this.oLayout1);
-				assert.ok(oLayout1Overlay, "then the layout overlay is created");
-				assert.notOk(oButton1Overlay, "but the button overlay is not created");
-				ElementUtil.isElementValid = fnOriginalIsElementValid;
-				fnDone();
-			}.bind(this));
-		});
-
 		QUnit.test("when the design time is initialized", function(assert){
 			var fnDone = assert.async();
 
@@ -1342,12 +1320,13 @@ function(
 			this.oDesignTime.createOverlay({}).then(
 				// Fulfilled
 				function () {
-					assert.ok(false, 'this must never be called, no overlay could be created without an element');
+					assert.ok(false, "this must never be called, no overlay could be created without an element");
 				},
 				// Rejected
 				function (oError) {
-					assert.ok(true, 'promise is rejected');
-					assert.ok(oError instanceof Error, 'proper rejection error is specified');
+					assert.ok(true, "promise is rejected");
+					assert.ok(oError instanceof Error, "proper error object is provided");
+					assert.ok(oError.message.includes("Cannot create overlay — no element is specified"), 'proper rejection reason is provided');
 					fnDone();
 				}
 			);
@@ -1360,12 +1339,32 @@ function(
 			}).then(
 				// Fulfilled
 				function () {
-					assert.ok(false, 'this must never be called, no overlay could be created without an element');
+					assert.ok(false, "this must never be called, no overlay could be created without an element");
 				},
 				// Rejected
 				function (oError) {
-					assert.ok(true, 'promise is rejected');
-					assert.ok(oError instanceof Error, 'proper rejection reason is provided');
+					assert.ok(true, "promise is rejected");
+					assert.ok(oError instanceof Error, "proper error object is provided");
+					assert.ok(oError.message.includes("Cannot create overlay without a valid element"), 'proper rejection reason is provided');
+					fnDone();
+				}
+			);
+		});
+
+		QUnit.test("when called with unsupported ManagedObject element", function (assert) {
+			var fnDone = assert.async();
+			this.oDesignTime.createOverlay({
+				element: new ManagedObject()
+			}).then(
+				// Fulfilled
+				function () {
+					assert.ok(false, "this must never be called, no overlay could be created without an element");
+				},
+				// Rejected
+				function (oError) {
+					assert.ok(true, "promise is rejected");
+					assert.ok(oError instanceof Error, "proper error object is provided");
+					assert.ok(oError.message.includes("Cannot create overlay without a valid element"), 'proper rejection reason is provided');
 					fnDone();
 				}
 			);
@@ -1378,12 +1377,13 @@ function(
 			this.oDesignTime.createOverlay(oButton).then(
 				// Fulfilled
 				function () {
-					assert.ok(false, 'this must never be called, no overlay could be created without destroyed element');
+					assert.ok(false, "this must never be called, no overlay could be created without destroyed element");
 				},
 				// Rejected
 				function (oError) {
-					assert.ok(true, 'promise is rejected');
-					assert.ok(oError instanceof Error, 'proper rejection reason is provided');
+					assert.ok(true, "promise is rejected");
+					assert.ok(oError instanceof Error, "proper error object is provided");
+					assert.ok(oError.message.includes("Cannot create overlay — the element is already destroyed"), "proper rejection reason is provided");
 					fnDone();
 				}
 			);
@@ -1581,6 +1581,16 @@ function(
 				}
 				return fnCreateOverlayOriginal.apply(this, arguments);
 			});
+
+			// Avoid error about destroyed element in console (as it's a managed destroy during the test)
+			sandbox.stub(Log, "error")
+				.callThrough()
+				.withArgs(
+					sinon.match(function (sMessage) {
+						return sMessage.includes("Cannot create overlay");
+					})
+				)
+				.returns();
 
 			oLayout.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();

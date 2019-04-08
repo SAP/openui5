@@ -83,10 +83,10 @@ function (
 			},
 			associations: {
 				/**
-				 * Element associated with an overlay
+				 * ManagedObject associated with an overlay
 				 */
 				element: {
-					type: "sap.ui.core.Element"
+					type: "sap.ui.base.ManagedObject"
 				}
 			},
 			aggregations: {
@@ -184,7 +184,13 @@ function (
 			Element.apply(this, arguments);
 
 			if (!this.getElement()) {
-				throw new Error("sap.ui.dt: can't create overlay without element");
+				throw Util.createError(
+					"Overlay#constructor",
+					Util.printf(
+						"Cannot create overlay without a valid element. Expected a descendant of sap.ui.core.Element or sap.ui.core.Component, but {0} was given",
+						Util.getObjectType(arguments[0].element)
+					)
+				);
 			}
 
 			this.asyncInit()

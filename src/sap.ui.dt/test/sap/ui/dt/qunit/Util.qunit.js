@@ -2,11 +2,13 @@
 
 sap.ui.define([
 	"sap/ui/dt/Util",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
 	Util,
+	ManagedObject,
 	jQuery,
 	sinon
 ) {
@@ -170,6 +172,20 @@ function(
 			assert.strictEqual(oErrorPropagated, oError, "same Error object is returned");
 			assert.ok(oErrorPropagated.message.indexOf('original error message') !== -1, "message contains original message");
 			assert.ok(oErrorPropagated.message.indexOf('custom error message') === -1, "message contains custom message");
+		});
+	});
+
+	QUnit.module('getObjectType()', function () {
+		QUnit.test("when called with a ManagedObject object", function (assert) {
+			var oObject = new ManagedObject();
+			var sType = Util.getObjectType(oObject);
+			assert.ok(sType.includes(oObject.getMetadata().getName()));
+			assert.ok(sType.includes(oObject.getId()));
+			oObject.destroy();
+		});
+
+		QUnit.test("when called with a string", function (assert) {
+			assert.strictEqual(Util.getObjectType("foo"), "string");
 		});
 	});
 

@@ -6,17 +6,17 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/Object",
-	"sap/ui/base/ManagedObject",
 	"sap/ui/dt/Util",
 	"sap/base/Log",
+	"sap/ui/core/Element",
 	"sap/ui/core/Component"
 ],
 function(
 	jQuery,
 	BaseObject,
-	ManagedObject,
 	Util,
 	Log,
+	Element,
 	Component
 ) {
 	"use strict";
@@ -338,22 +338,22 @@ function(
 	};
 
 	/**
-	 * Checks whether specified Element is a ManagedObject
-	 * @param oElement
-	 * @param sElementType
-	 * @param sAggregationName
-	 * @returns {boolean}
+	 * Checks whether specified Element is a valid ManagedObject. The allowed objects must be
+	 * descendants of sap.ui.core.Element or sap.ui.core.Component classes.
+	 *
+	 * @param {sap.ui.base.Object} oObject - Object for validation
+	 * @returns {boolean} <code>true</code> if object is supported
 	 */
-	ElementUtil.isElementValid = function (oElement, sElementType, sAggregationName) {
-		var bIsManagedObject = oElement instanceof ManagedObject && !oElement.bIsDestroyed;
-		if (!bIsManagedObject && sElementType && sAggregationName) {
-			Log.error([
-				"sap.ui.dt.DesignTime: child element in aggregation " + sAggregationName + " of '" + sElementType,
-				"' should be a descendant of 'sap.ui.base.ManagedObject' and it is a '" + typeof oElement + "'. ",
-				"Please ignore the aggregation '" + sAggregationName + "' in the .designtime configuration"
-			].join(''));
-		}
-		return bIsManagedObject;
+	ElementUtil.isElementValid = function (oObject) {
+		var bValid = (
+			(
+				oObject instanceof Element
+				|| oObject instanceof Component
+			)
+			&& !oObject.bIsDestroyed
+		);
+
+		return bValid;
 	};
 
 	ElementUtil.getParent = function (oElement) {

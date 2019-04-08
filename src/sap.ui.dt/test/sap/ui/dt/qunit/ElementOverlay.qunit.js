@@ -22,6 +22,7 @@ sap.ui.define([
 	"dt/control/SimpleScrollControl",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Popup",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/dt/DOMUtil",
 	"sap/ui/thirdparty/sinon-4"
 ],
@@ -47,6 +48,7 @@ function (
 	SimpleScrollControl,
 	jQuery,
 	Popup,
+	ManagedObject,
 	DOMUtil,
 	sinon
 ) {
@@ -1459,7 +1461,6 @@ function (
 			var $ScrollContainerOverlayDomRef = this.oLayoutOverlay.getScrollContainerById(1);
 			var $ScrollContainerDomRef = this.oLayoutOverlay.getDesignTimeMetadata().getAssociatedDomRef(this.oLayout, this.oLayoutOverlay.getScrollContainers()[1].domRef);
 
-
 			// FIXME: remove timeout when #1870203056 is implemented
 			setTimeout(function () {
 				assert.equal(
@@ -1469,6 +1470,23 @@ function (
 				);
 				fnDone();
 			}, 200);
+		});
+	});
+
+	QUnit.module("Error handling", function () {
+		QUnit.test("when creating an ElementOverlay with incorrect elemement object", function (assert) {
+			var oManagedObject = new ManagedObject();
+
+			assert.throws(
+				function () {
+					new ElementOverlay({
+						element: oManagedObject
+					});
+				},
+				/Cannot create overlay without a valid element/
+			);
+
+			oManagedObject.destroy();
 		});
 	});
 

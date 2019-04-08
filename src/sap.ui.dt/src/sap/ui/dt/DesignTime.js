@@ -637,12 +637,9 @@ function (
 		});
 
 		// 1. Validation
-		if (!mParams.element || mParams.element.bIsDestroyed || !ElementUtil.isElementValid(mParams.element)) {
+		if (!mParams.element || !ElementUtil.isElementValid(mParams.element)) {
 			this._oTaskManager.cancel(iTaskId);
-			return Promise.reject(Util.createError(
-				"DesignTime#createOverlay",
-				"can't create overlay without element"
-			));
+			return this._rejectCreateOverlay(mParams.element);
 		} else {
 			var sElementId = mParams.element.getId();
 			var oElementOverlay = OverlayRegistry.getOverlay(sElementId);
@@ -729,6 +726,31 @@ function (
 	};
 
 	/**
+	 * Calculates reasonable rejection reason and returns a rejected Promise with it inside.
+	 * @param {sap.ui.base.ManagedObject} [oElement] - Element which doesn't pass the validation
+	 * @return {Promise} Rejected promise with detailed error inside.
+	 * @private
+	 */
+	DesignTime.prototype._rejectCreateOverlay = function (oElement) {
+		var sReason;
+
+		if (!oElement) {
+			sReason = "Cannot create overlay — no element is specified.";
+		} else if (oElement.bIsDestroyed) {
+			sReason = "Cannot create overlay — the element is already destroyed.";
+		} else {
+			sReason = Util.printf(
+				"Cannot create overlay without a valid element. Expected a descendant of sap.ui.core.Element or sap.ui.core.Component, but {0} was given",
+				Util.getObjectType(oElement)
+			);
+		}
+
+		return Promise.reject(
+			Util.createError("DesignTime#createOverlay", sReason)
+		);
+	};
+
+	/**
 	 * Creates ElementOverlay
 	 * @param {sap.ui.core.Element} mParams.element - Element for which ElementOverlay should be created
 	 * @param {boolean} [mParams.root] - Proxy for "isRoot" property of sap.ui.dt.ElementOverlay constructor
@@ -805,6 +827,7 @@ function (
 		return Promise.all(
 			oElementOverlay.getAggregationNames().map(function (sAggregationName) {
 				var oElement = oElementOverlay.getElement();
+				var sElementClassName = oElement.getMetadata().getName();
 				var mAggregationMetadata = MetadataPropagationUtil.propagateMetadataToAggregationOverlay(
 					oElementOverlay.getDesignTimeMetadata().getAggregation(sAggregationName),
 					oElement,
@@ -831,7 +854,7 @@ function (
 						oElement,
 						sAggregationName
 					)
-						.map(function (oElement) {
+						.map(function (sParentElementClassName, oElement) {
 							return this.createOverlay({
 								element: oElement,
 								root: false,
@@ -839,9 +862,11 @@ function (
 							})
 								// If creation of one of the children is aborted, we still continue our execution
 								.catch(function (oError) {
-									return oError;
-								});
-						}, this)
+									var mError = this._enrichChildCreationError(oError, oElement, sParentElementClassName, sAggregationName);
+									Log[mError.severity](mError.message);
+									return mError.errorObject;
+								}.bind(this));
+						}.bind(this, sElementClassName))
 				).then(function (aChildrenElementOverlays) {
 					aChildrenElementOverlays.map(function (oChildElementOverlay) {
 						if (
@@ -864,6 +889,44 @@ function (
 				}
 			});
 		});
+	};
+
+	/**
+	 * Enriches the error object, decides on severity and formats the outgoing error text.
+	 * @param {Error} oError - Error object
+	 * @param {sap.ui.base.ManagedObject} oElement - Element for which the overlay cannot be created
+	 * @param {string} sParentElementClassName - Class name of the parent element relatively to oElement
+	 * @param {string} sAggregationName - Aggregation name in parent element where oElement is located
+	 * @returns {{severity: string, errorObject: Error, message: string}}
+	 * @private
+	 */
+	DesignTime.prototype._enrichChildCreationError = function (oError, oElement, sParentElementClassName, sAggregationName) {
+		var sSeverity = "error";
+		var sError = Util.errorToString(oError);
+
+		if (oError.message.includes("Cannot create overlay without a valid element")) {
+			sSeverity = "warning";
+			oError = Util.createError(
+				"DesignTime#_createChildren",
+				Util.printf(
+					[
+						"Child element in aggregation '{0}' of {1} must be a descendant of sap.ui.core.Element or ",
+						"sap.ui.core.Component, but {2} was give. Consider ignoring the aggregation '{0}' ",
+						"in the .designtime configuration of the control."
+					].join(''),
+					sAggregationName,
+					sParentElementClassName,
+					Util.getObjectType(oElement)
+				)
+			);
+			sError = oError.toString(); // excluding stack trace
+		}
+
+		return {
+			errorObject: oError,
+			severity: sSeverity,
+			message: sError
+		};
 	};
 
 	/**
