@@ -24,7 +24,10 @@ sap.ui.define([
 			oObjectImage = new Image({
 				densityAware: oHeader.getObjectImageDensityAware(),
 				alt: ManagedObject.escapeSettingsValue(oHeader.getObjectImageAlt()),
-				decorative: false
+				decorative: false,
+				mode: "Background",
+				backgroundSize: "contain",
+				backgroundPosition: "center"
 			});
 
 			oObjectImage.addStyleClass("sapUxAPObjectPageHeaderObjectImage");
