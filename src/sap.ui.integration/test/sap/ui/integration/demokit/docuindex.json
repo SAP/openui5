@@ -22,7 +22,8 @@
 					"sap.ui.integration.sample.TimelineCard",
 					"sap.ui.integration.sample.TableCard",
 					"sap.ui.integration.sample.Actions",
-					"sap.ui.integration.sample.ComponentCard"
+					"sap.ui.integration.sample.ComponentCard",
+					"sap.ui.integration.sample.CardsLayout"
 				]
 			}
 		],
@@ -66,6 +67,11 @@
 				"id": "sap.ui.integration.sample.ComponentCard",
 				"name": "Component Card",
 				"description": "The component card is used to display different types of content."
+			},
+			{
+				"id": "sap.ui.integration.sample.CardsLayout",
+				"name": "Cards in GridContainer",
+				"description": "Cards can be arranged using sap.f.GridContainer"
 			}
 		]
 	}
