@@ -43,6 +43,35 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function (LoaderExtensions) {
 	 */
 	var oVersionInfoPromise = null;
 
+	var oVersionInfo;
+
+	/**
+	 * Mapping of library name to it's dependencies.
+	 * Extracted from sap.ui.versioninfo.
+	 */
+	var mKnownLibs;
+
+	/**
+	 * Mapping of component names to it's dependencies.
+	 * Extracted from sap.ui.versioninfo.
+	 */
+	var mKnownComponents;
+
+	Object.defineProperty(sap.ui, "versioninfo", {
+		configurable: true,
+		enumerable: true,
+		get: function() {
+			return oVersionInfo;
+		},
+		set: function(oNewVersionInfo) {
+			oVersionInfo = oNewVersionInfo;
+
+			// reset known libs and components
+			mKnownLibs = null;
+			mKnownComponents = null;
+		}
+	});
+
 	/**
 	 * Version retrieval. Used by {@link sap.ui.getVersionInfo} and {@link sap.ui.VersionInfo.load}
 	 *
@@ -152,18 +181,6 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function (LoaderExtensions) {
 			return mOptions.async ? Promise.resolve(oResult) : oResult;
 		}
 	};
-
-	/**
-	 * Mapping of library name to it's dependencies.
-	 * Extracted from sap.ui.versioninfo.
-	 */
-	var mKnownLibs;
-
-	/**
-	 * Mapping of component names to it's dependencies.
-	 * Extracted from sap.ui.versioninfo.
-	 */
-	var mKnownComponents;
 
 	/**
 	 * Transforms the sap.ui.versioninfo to an easier consumable map.

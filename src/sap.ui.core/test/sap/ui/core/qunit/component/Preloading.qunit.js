@@ -676,8 +676,6 @@ sap.ui.define([
 	 * Library Preload Scenario 15
 	 */
 	QUnit.test("Load library-preload.js instead of Component-preload.js when the Component.js is included in a library preload", function(assert) {
-		assert.equal(sap.ui.versioninfo, undefined, "no version info available at the beginning");
-
 		return LoaderExtensions.loadResource({
 			dataType: "json",
 			url: sap.ui.require.toUrl("testlibs/scenario15/sap-ui-version.json"),
