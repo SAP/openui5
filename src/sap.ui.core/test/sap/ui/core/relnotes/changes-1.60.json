@@ -1029,5 +1029,28 @@
         "references": []
       }
     ]
+  },
+  "1.60.12": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "49d348969fd9f5a5af88099522cd1a3e00d83a94",
+        "type": "FIX",
+        "text": " Core: Ensure firing the ThemeChanged event when loading libs",
+        "references": []
+      },
+      {
+        "id": "38ee9581ebbd7e951c41e01dc4a20baa35314605",
+        "type": "FIX",
+        "text": " sap/ui/util/Mobile: Update favicon properly in IE",
+        "references": []
+      },
+      {
+        "id": "9773f9fe213603c9e7f252fae4cbaa8b7907976b",
+        "type": "FIX",
+        "text": " trace/Passport: Do not reset trace level on call of traceFlags",
+        "references": []
+      }
+    ]
   }
 }

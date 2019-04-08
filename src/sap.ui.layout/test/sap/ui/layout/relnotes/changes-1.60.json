@@ -193,5 +193,16 @@
         "references": []
       }
     ]
+  },
+  "1.60.12": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "cefa55627062e80b00d47575f0da4c44c11486c5",
+        "type": "FIX",
+        "text": " sap.ui.rta: fix cut\u0026paste in SimpleForm",
+        "references": []
+      }
+    ]
   }
 }

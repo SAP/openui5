@@ -2727,5 +2727,46 @@
         "references": []
       }
     ]
+  },
+  "1.60.12": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "0f0b228d9a9e3ec64fb5b42c3f0b7c85808fe0e6",
+        "type": "FIX",
+        "text": " sap.m.MessageBox: Apply alertdialog role via Dialog API",
+        "references": []
+      },
+      {
+        "id": "a2225aedbf78d6cf018aa08fcbb8647c97003a7a",
+        "type": "FIX",
+        "text": " sap.m.NotificationListItem: DomRef is aways peresent now",
+        "references": []
+      },
+      {
+        "id": "0706df40f7c76cbbe5b34df72bbdb2d69ec07f42",
+        "type": "FIX",
+        "text": " sap.m.NotificationListItem: Show more button was improved",
+        "references": []
+      },
+      {
+        "id": "35d01822a1d971d769d75c86f39f7c16e28c426c",
+        "type": "FIX",
+        "text": " sap.m.ResponsiveScale: Hiding of tickmarks",
+        "references": []
+      },
+      {
+        "id": "45bf2f2eb0b2ba6103140485e8269dc5e6d573b4",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: Hide master page in \"HideMode\" on mobile",
+        "references": []
+      },
+      {
+        "id": "89260869ce12304773231b8aaeeee09eaa5f7005",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: setDateValue initialises mask",
+        "references": []
+      }
+    ]
   }
 }

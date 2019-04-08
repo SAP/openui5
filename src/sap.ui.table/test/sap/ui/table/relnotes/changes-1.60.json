@@ -282,5 +282,16 @@
         "references": []
       }
     ]
+  },
+  "1.60.12": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "9aedf3734569ef89095203b0f01d36aa0d18b4eb",
+        "type": "FIX",
+        "text": " Table: Open cell filter menus on correct cell",
+        "references": []
+      }
+    ]
   }
 }

@@ -4419,5 +4419,28 @@
         "references": []
       }
     ]
+  },
+  "1.52.27": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "93dc808e1372e5a2521f62d9ae281226cd95d578",
+        "type": "FIX",
+        "text": " Core: Trigger ThemeCheck when a library has been initialized",
+        "references": []
+      },
+      {
+        "id": "7be37529d13310988d8bd452408cc97f586ce7ba",
+        "type": "FIX",
+        "text": " ViewSettingsDialog: OK when custom item is used for filtering",
+        "references": []
+      },
+      {
+        "id": "514df6b5d810df06c0026efbbd001b17f0a5699d",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: In compact mode zoomed out sliders are aligned",
+        "references": []
+      }
+    ]
   }
 }
