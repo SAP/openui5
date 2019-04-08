@@ -1600,6 +1600,35 @@ sap.ui.define([
 		oParentPopup.open(0);
 	});
 
+	QUnit.test("Avoid calling getBoundingClientRect if the 'of' DOM element is removed from DOM tree", function(assert) {
+		var done = assert.async();
+
+		var my = Popup.Dock.CenterBottom;
+		var at = Popup.Dock.LeftTop;
+		var of = document.createElement("input");
+
+		document.body.appendChild(of);
+
+		this.oPopup.setPosition(my, at, of);
+		this.oPopup.setFollowOf(true);
+		this.oPopup.open();
+
+		try {
+			// simulate rerendering and make the of a dangling DOM
+			this.oPopup._oLastPosition.of = document.createElement("input");
+
+			var oSpy = this.spy(Popup, "checkDocking");
+
+			window.setTimeout(function() {
+				assert.ok(oSpy.callCount > 0, "checkDocking method is called");
+				done();
+			}, 300);
+		} catch (e) {
+			assert.ok(false, "Error occurred during check docking");
+			done();
+		}
+	});
+
 	QUnit.test("Verify blockLayerChange event", function(assert) {
 		var fnDone = assert.async();
 
