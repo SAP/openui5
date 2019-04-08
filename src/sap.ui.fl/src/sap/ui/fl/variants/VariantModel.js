@@ -134,17 +134,8 @@ sap.ui.define([
 	 */
 	VariantModel.prototype.updateCurrentVariant = function(sVariantManagementReference, sNewVariantReference, oAppComponent) {
 		var sCurrentVariantReference, mChangesToBeSwitched;
-		var aVariantControlChanges;
 
 		sCurrentVariantReference = this.oData[sVariantManagementReference].originalCurrentVariant;
-
-		// Delete dirty personalized changes
-		// Triggered from _handleCurrentVariantChange
-		if (this.oData[sVariantManagementReference].modified) {
-			aVariantControlChanges = this.oVariantController.getVariantChanges(sVariantManagementReference, sCurrentVariantReference, true);
-			this._removeDirtyChanges(aVariantControlChanges, sVariantManagementReference, sCurrentVariantReference, oAppComponent || this.oAppComponent);
-			this.oData[sVariantManagementReference].modified = false;
-		}
 
 		var mPropertyBag = {
 			variantManagementReference: sVariantManagementReference,
@@ -163,6 +154,7 @@ sap.ui.define([
 			this.oFlexController.revertChangesOnControl(mChangesToBeSwitched.changesToBeReverted, oAppComponent || this.oAppComponent)
 			.then(this.oFlexController.applyVariantChanges.bind(this.oFlexController, mChangesToBeSwitched.changesToBeApplied, oAppComponent || this.oAppComponent))
 			.then(function() {
+				// update current variant in model
 				this.oData[sVariantManagementReference].originalCurrentVariant = sNewVariantReference;
 				this.oData[sVariantManagementReference].currentVariant = sNewVariantReference;
 				if (this.oData[sVariantManagementReference].updateVariantInURL) {
@@ -310,6 +302,14 @@ sap.ui.define([
 		return this.oVariantController.removeChangeFromVariant(oChange, sVariantManagementReference, sVariantReference);
 	};
 
+	/**
+	 * Removes passed control changes which are in DIRTY state from the variant controller and flex controller
+	 * @param {sap.ui.fl.Change[]} aVariantControlChanges Array of control changes
+	 * @param {string} sVariantManagementReference Variant management reference
+	 * @param {string} sVariantReference Variant reference
+	 * @param {sap.ui.core.Component} oAppComponent App Component
+	 * @private
+	 */
 	VariantModel.prototype._removeDirtyChanges = function(aVariantControlChanges, sVariantManagementReference, sVariantReference, oAppComponent) {
 		var aVariantDirtyChanges = this._getDirtyChangesFromVariantChanges(aVariantControlChanges);
 
@@ -319,8 +319,6 @@ sap.ui.define([
 			// remove from change persistence
 			this.oFlexController.deleteChange(oChange, oAppComponent);
 		}.bind(this));
-
-		return this.oFlexController.revertChangesOnControl(aVariantDirtyChanges.reverse(), oAppComponent);
 	};
 
 	VariantModel.prototype._getVariantTitleCount = function(sNewText, sVariantManagementReference) {
@@ -819,6 +817,14 @@ sap.ui.define([
 		};
 	};
 
+	/**
+	 * Event handler listening to title binding change on a variant management control
+	 * @see sap.ui.fl.variants.VariantManagement
+	 * @param {object} oEvent Event object
+	 * @param {object} mControl
+	 * @param {sap.ui.fl.variants.VariantManagement} mControl.control Variant management control
+	 * @private
+	 */
 	VariantModel.prototype._handleCurrentVariantChange = function(oEvent, mControl) {
 		var oPropertyBinding = oEvent.getSource();
 		var sVariantManagementReference = oPropertyBinding.getContext().getPath().replace(/^\//, '');
@@ -827,7 +833,19 @@ sap.ui.define([
 			ObjectPath.get([sVariantManagementReference, "currentVariant"], this.oData)
 			&& this.oData[sVariantManagementReference].currentVariant !== this.oData[sVariantManagementReference].originalCurrentVariant
 		) {
-			this.updateCurrentVariant(sVariantManagementReference, oPropertyBinding.getValue(), Utils.getAppComponentForControl(mControl.control));
+			var sSourceVariantReference = this.oData[sVariantManagementReference].originalCurrentVariant;
+			this.updateCurrentVariant(sVariantManagementReference, oPropertyBinding.getValue(), Utils.getAppComponentForControl(mControl.control))
+			.then( function() {
+				// when variant is switched without saving source variant changes
+				// happens only in personalization mode
+				if (this.oData[sVariantManagementReference].modified) {
+					var aSourceVariantChanges = this.oVariantController.getVariantChanges(sVariantManagementReference, sSourceVariantReference, /*bChangeInstance*/true);
+					this.oData[sVariantManagementReference].modified = false;
+					this.checkUpdate(true);
+					// remove dirty source variant changes - no revert
+					this._removeDirtyChanges(aSourceVariantChanges, sVariantManagementReference, sSourceVariantReference, this.oAppComponent);
+				}
+			}.bind(this));
 		}
 	};
 
@@ -837,11 +855,11 @@ sap.ui.define([
 		var oAppComponent = Utils.getAppComponentForControl(oVariantManagementControl);
 		var sVariantManagementReference = this.getLocalId(oVariantManagementControl.getId(), oAppComponent);
 		var sSourceVariantReference = this.getCurrentVariantReference(sVariantManagementReference);
-		var aVariantChanges = this.oVariantController.getVariantChanges(sVariantManagementReference, sSourceVariantReference, true);
+		var aSourceVariantChanges = this.oVariantController.getVariantChanges(sVariantManagementReference, sSourceVariantReference, true);
 
 		if (oEvent.getParameter("overwrite")) {
 			// handle triggered "Save" button
-			return this.oFlexController.saveSequenceOfDirtyChanges(this._getDirtyChangesFromVariantChanges(aVariantChanges))
+			return this.oFlexController.saveSequenceOfDirtyChanges(this._getDirtyChangesFromVariantChanges(aSourceVariantChanges))
 				.then(function(oResponse) {
 					this.checkDirtyStateForControlModels([sVariantManagementReference]);
 					return oResponse;
@@ -877,7 +895,7 @@ sap.ui.define([
 				return this.oFlexController.saveSequenceOfDirtyChanges(aCopiedVariantDirtyChanges);
 			}.bind(this))
 			// unsaved changes on the source variant are removed
-			.then(this._removeDirtyChanges.bind(this, aVariantChanges, sVariantManagementReference, sSourceVariantReference, mPropertyBag.appComponent));
+			.then(this._removeDirtyChanges.bind(this, aSourceVariantChanges, sVariantManagementReference, sSourceVariantReference, mPropertyBag.appComponent));
 		}
 	};
 
