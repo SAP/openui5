@@ -115,6 +115,42 @@
         "type": "FIX",
         "text": " trace/Passport: Do not reset trace level on call of traceFlags",
         "references": []
+      },
+      {
+        "id": "dcacfab913aac73a39838aae64c30ab630a8b959",
+        "type": "FEATURE",
+        "text": " Core: Enhance library preload with transitive dependency closure",
+        "references": []
+      },
+      {
+        "id": "84af149f6829e9c5887cad1814b0b0d3df0935c2",
+        "type": "FEATURE",
+        "text": " ODataModel(v2): CSRF token handling for GET requests",
+        "references": []
+      },
+      {
+        "id": "afe08587cbad54bd55e72950dde265c5875fc1a8",
+        "type": "FEATURE",
+        "text": " sap/ui/core/Popup: Add static \"blockLayerStateChange\" event",
+        "references": []
+      },
+      {
+        "id": "81dcb9558071ff156853afbdcd7d18d78dc8fdd5",
+        "type": "FIX",
+        "text": " ComponentSupport: do not throw error for unknown props/events",
+        "references": []
+      },
+      {
+        "id": "f370a90bda3124decad2a470e0d052f0bd063062",
+        "type": "FIX",
+        "text": " dnd: Drop position fix for the horizontal layout in RTL mode",
+        "references": []
+      },
+      {
+        "id": "897cd0efbb3393ec9f645ca77157820a3e16f47a",
+        "type": "FIX",
+        "text": " sap.ui.core.Hyphenation: Update Hyphenopoly bundle",
+        "references": []
       }
     ]
   }

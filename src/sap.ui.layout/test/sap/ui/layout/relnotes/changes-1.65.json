@@ -25,6 +25,12 @@
         "type": "FIX",
         "text": " ResponsiveGridLayout: internal Grid has no parent",
         "references": []
+      },
+      {
+        "id": "2f063a6179c881a749fb58a0caa346fe462e55fd",
+        "type": "FIX",
+        "text": " sap.ui.rta: fix cut\u0026paste in SimpleForm",
+        "references": []
       }
     ]
   }

@@ -31,6 +31,24 @@
         "type": "FIX",
         "text": " sap.f.DynamicPage: Fixed validation of headerExpanded property",
         "references": []
+      },
+      {
+        "id": "27c3dc378facf71afb2620da37aaf13941ea29a1",
+        "type": "FEATURE",
+        "text": " sap.f.DynamicPage: Implemented sticky subheader",
+        "references": []
+      },
+      {
+        "id": "0f6aaeb528c9a758fe23ef12c17aae725eb4f120",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Table Card implemented",
+        "references": []
+      },
+      {
+        "id": "2c15336833d6a671ba16965e9d2bc76b0a678c63",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Allowed non-animated footer toggle",
+        "references": []
       }
     ]
   }

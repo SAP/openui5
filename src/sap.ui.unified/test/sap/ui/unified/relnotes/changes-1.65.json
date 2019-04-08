@@ -13,6 +13,18 @@
         "type": "FIX",
         "text": " sap.ui.unified.CalendarMonthInterval: destroyed correctly now",
         "references": []
+      },
+      {
+        "id": "866fe7bc82cbee1d7a61307143d394ea4c96f60a",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: New \"legend\" association added",
+        "references": []
+      },
+      {
+        "id": "e576ab105d6bc4bb7650d049d91378cfd3ad429b",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: Alpha field is properly updated now",
+        "references": []
       }
     ]
   }

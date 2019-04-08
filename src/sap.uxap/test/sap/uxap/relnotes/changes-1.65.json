@@ -73,6 +73,30 @@
         "type": "FIX",
         "text": " sap.uxap.ObjectPageSection: Showing empty title in RTA is fixed",
         "references": []
+      },
+      {
+        "id": "de9969e2ac28b498f33a4970c5721342169c636c",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageHeader: Image styling aligned with Avatar",
+        "references": []
+      },
+      {
+        "id": "f3c3f55647fe1677d560a449bc37994d34a157d6",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Added ARIA role description to menu buttons",
+        "references": []
+      },
+      {
+        "id": "97a8618acef9c594bd68ce8317b810b1cda499e3",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fixed form paddings",
+        "references": []
+      },
+      {
+        "id": "dc573252bb4915dea93de026954f90207d6b5442",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Prevent unwanted content resize",
+        "references": []
       }
     ]
   }

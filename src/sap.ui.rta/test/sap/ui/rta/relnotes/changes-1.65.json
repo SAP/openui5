@@ -19,6 +19,12 @@
         "type": "FIX",
         "text": " createContainer - avoid exception on missing aggregation descriptions",
         "references": []
+      },
+      {
+        "id": "c28e6b2b898d0f63f38761f8ce68bfd512c2cde3",
+        "type": "FIX",
+        "text": " sap.ui.rta - do not stretch as long as any plugins are busy",
+        "references": []
       }
     ]
   }
