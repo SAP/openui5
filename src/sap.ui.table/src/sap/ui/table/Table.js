@@ -4207,6 +4207,12 @@ sap.ui.define([
 		return null;
 	};
 
+	Table.prototype.destroyPlugins = function() {
+		var oResult = this.destroyAggregation('plugins');
+		this._initSelectionPlugin();
+		return oResult;
+	};
+
 	Table.prototype._validateRow = function(oRow) {
 		return oRow && oRow instanceof Row && oRow.getParent() === this;
 	};

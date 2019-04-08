@@ -4478,12 +4478,34 @@ sap.ui.define([
 		assert.strictEqual(this.oTable.getSelectionMode(), SelectionMode.Single,
 			"If the default selection plugin is used, the selection mode can be set");
 
-		this.oTable.addPlugin(new TestSelectionPlugin());
-		assert.ok(this.oTable._oSelectionPlugin.isA("sap.ui.table.test.SelectionPlugin"), "The selection plugin set to the table is used");
+		var oPlugin = new TestSelectionPlugin();
+		this.oTable.addPlugin(oPlugin);
+		assert.ok(this.oTable._oSelectionPlugin.isA("sap.ui.table.test.SelectionPlugin"),
+			"Plugin added -> the selection plugin set to the table is used");
+
+		this.oTable.removePlugin(oPlugin);
+		assert.ok(this.oTable._oSelectionPlugin.isA("sap.ui.table.plugins.SelectionModelPlugin"),
+			"Plugin removed -> the default selection plugin is used");
+
+		this.oTable.insertPlugin(oPlugin, 0);
+		assert.ok(this.oTable._oSelectionPlugin.isA("sap.ui.table.test.SelectionPlugin"),
+			"Plugin inserted -> The selection plugin set to the table is used");
+
+		this.oTable.removeAllPlugins();
+		assert.ok(this.oTable._oSelectionPlugin.isA("sap.ui.table.plugins.SelectionModelPlugin"),
+			"All plugins removed -> the default selection plugin is used");
+
+		this.oTable.addPlugin(oPlugin);
+		assert.ok(this.oTable._oSelectionPlugin.isA("sap.ui.table.test.SelectionPlugin"),
+			"Plugin added again -> the selection plugin set to the table is used");
 
 		this.oTable.setSelectionMode(SelectionMode.MultiToggle);
 		assert.strictEqual(this.oTable.getSelectionMode(), SelectionMode.Single,
 			"If a selection plugin is set, the selection mode cannot be set");
+
+		this.oTable.destroyPlugins();
+		assert.ok(this.oTable._oSelectionPlugin.isA("sap.ui.table.plugins.SelectionModelPlugin"),
+			"Plugins destroyed -> the default selection plugin is used");
 	});
 
 	QUnit.module("Model and context propagation", {
