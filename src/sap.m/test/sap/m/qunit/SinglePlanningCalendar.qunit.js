@@ -1154,6 +1154,69 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
+	QUnit.module("Visibility of actions toolbar", {
+		beforeEach: function () {
+			this.oSPC = new SinglePlanningCalendar().placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oSPC.destroy();
+		}
+	});
+
+	QUnit.test("The actions toolbar is not visible when there are no title, actions and views set", function (assert) {
+		//assert
+		assert.equal(this.oSPC._getHeader()._getActionsToolbar().getProperty("visible"), false, "the actions toolbar is not visible");
+	});
+
+	QUnit.test("The actions toolbar is visible when only title is set", function (assert) {
+		// Arrange
+		this.oSPC.setTitle("SPC title");
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.equal(this.oSPC._getHeader()._getActionsToolbar().getProperty("visible"), true, "the actions toolbar is visible");
+	});
+
+	QUnit.test("The actions toolbar is visible when actions are set", function (assert) {
+		// Arrange
+		this.oSPC.addAction(new sap.m.Button({
+			text: "SPC button"
+		}));
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.equal(this.oSPC._getHeader()._getActionsToolbar().getProperty("visible"), true, "the actions toolbar is visible");
+	});
+
+	QUnit.test("The actions toolbar is not visible when only one view is set", function (assert) {
+		// Arrange
+		this.oSPC.addView(new SinglePlanningCalendarDayView({
+			key: "DayView",
+			title: "Day View"
+		}));
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.equal(this.oSPC._getHeader()._getActionsToolbar().getProperty("visible"), false, "the actions toolbar is not visible");
+	});
+
+	QUnit.test("The actions toolbar is visible when more than one view is set", function (assert) {
+		// Arrange
+		this.oSPC.addView(new SinglePlanningCalendarDayView({
+			key: "DayView",
+			title: "Day View"
+		}));
+		this.oSPC.addView(new SinglePlanningCalendarWeekView({
+			key: "WeekView",
+			title: "Week View"
+		}));
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.equal(this.oSPC._getHeader()._getActionsToolbar().getProperty("visible"), true, "the actions toolbar is visible");
+	});
+
 	QUnit.module("Resize Appointments", {
 		beforeEach: function() {
 			this.oSPCGrid = new SinglePlanningCalendarGrid({

@@ -447,7 +447,6 @@ function(
 		var oPopup = new Popup();
 
 		oPopup.setAutoClose(true);
-		oPopup.setAutoCloseAreas([this.getDomRef()]);
 		oPopup.setDurations(0, 0); // no animations
 		oPopup.onsapescape = function(oEvent) {
 			this.onsapescape(oEvent);
