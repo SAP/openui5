@@ -4,6 +4,7 @@
 		<title>Opa tests for Demokit 2.0</title>
 		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
 		<meta charset="utf-8">
+		<link rel="stylesheet" href="../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.css">
 		<!-- The namespace sap.ui.demo.cart.test.arrangement.Arrangement is used to run the IFrame or the component without changes to the test code -->
 		<script id="sap-ui-bootstrap"
 				src="../../../../../../resources/sap-ui-core.js"
@@ -17,10 +18,14 @@
 					"sap.ui.documentation.sdk.test.arrangement.Arrangement": "./arrangement/component/Arrangement"
 				}'>
 		</script>
+		<script src="../../../../../../resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"></script>
 		<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script>
 			// we want to be able to load our tests asynchronously - pause QUnit until we loaded everything
 			QUnit.config.autostart = false;
+
+			// Demo Kit in static navigation mode
+			window['sap-ui-documentation-static'] = true;
 
 			sap.ui.getCore().attachInit(function () {
 				"use strict";
