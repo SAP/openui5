@@ -491,4 +491,100 @@ sap.ui.define([
 		);
 		assert.deepEqual(this.oColumn._aTemplateClones, [], "The clone stack has been cleared");
 	});
+
+	QUnit.module("Column Visibility Submenu", {
+		beforeEach: function() {
+			var oModel = new JSONModel();
+			oModel.setData([{myProp: "someValue", myOtherProp: "someOtherValue"}]);
+			this._oTable = new Table();
+			this._oTable.bindRows("/");
+			this._oTable.setModel(oModel);
+			this._oTable.setShowColumnVisibilityMenu(true);
+
+			this._oColumn1 = new Column({
+				template: new Text({text: "col1value"}),
+				label: new Text({text: "col1header"})
+			});
+
+			this._oColumn2 = new Column({
+				template: new Text({text: "col2value"}),
+				label: new Text({text: "col2header"})
+			});
+
+			this._oTable.addColumn(this._oColumn1);
+			this._oTable.addColumn(this._oColumn2);
+
+			this._oTable.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this._oTable.destroy();
+		}
+	});
+
+	QUnit.test("Visibility Submenu number of items", function(assert) {
+		this._oColumn1._openMenu();
+		var oColumnMenuBefore = this._oColumn1.getMenu();
+		var oVisibilitySubmenu = oColumnMenuBefore.getItems()[0].getSubmenu();
+		assert.strictEqual(oVisibilitySubmenu.getItems().length, 2, "The visibility submenu has 2 items");
+
+		this._oTable.removeColumn(this._oColumn2);
+		this._oColumn1._openMenu();
+		var oColumnMenuAfter = this._oColumn1.getMenu();
+		oVisibilitySubmenu = oColumnMenuAfter.getItems()[0].getSubmenu();
+		assert.strictEqual(oColumnMenuBefore, oColumnMenuAfter, "The column menu is not being recreated");
+		assert.strictEqual(oVisibilitySubmenu.getItems().length, 1, "The visibility submenu has 1 items");
+
+		oColumnMenuBefore = oColumnMenuAfter;
+		this._oTable.removeAllColumns();
+		this._oTable.addColumn(this._oColumn1);
+		this._oTable.addColumn(this._oColumn2);
+		this._oColumn3 = new Column({
+			template: new Text({text: "col3value"}),
+			label: new Text({text: "col3header"})
+		});
+		this._oTable.addColumn(this._oColumn3);
+		this._oColumn1._openMenu();
+		oColumnMenuAfter = this._oColumn1.getMenu();
+		oVisibilitySubmenu = oColumnMenuAfter.getItems()[0].getSubmenu();
+		assert.strictEqual(oColumnMenuBefore, oColumnMenuAfter, "The column menu is not being recreated");
+		assert.strictEqual(oVisibilitySubmenu.getItems().length, 3, "The visibility submenu has 3 items");
+
+		var spy = this.spy(this._oColumn3, "exit");
+		this._oColumn3.destroy();
+		assert.ok(spy.calledOnce, "The exit function was called");
+	});
+
+	QUnit.test("Set Visibility", function(assert) {
+		this._oColumn1._openMenu();
+		var oColumnMenuBefore = this._oColumn1.getMenu();
+		var oVisibilitySubmenuBefore = oColumnMenuBefore.getItems()[0].getSubmenu();
+		assert.strictEqual(oVisibilitySubmenuBefore.getItems()[0].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
+		assert.strictEqual(oVisibilitySubmenuBefore.getItems()[1].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
+
+		this._oColumn2.setVisible(false);
+		this._oColumn1._openMenu();
+		var oColumnMenuAfter = this._oColumn1.getMenu();
+		var oVisibilitySubmenuAfter = oColumnMenuAfter.getItems()[0].getSubmenu();
+		assert.strictEqual(oColumnMenuBefore, oColumnMenuAfter, "The column menu is not being recreated");
+		assert.strictEqual(oVisibilitySubmenuBefore, oVisibilitySubmenuAfter, "The column visibility submenu is not being recreated");
+
+		assert.strictEqual(oVisibilitySubmenuAfter.getItems()[0].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
+		assert.strictEqual(oVisibilitySubmenuAfter.getItems()[1].getIcon(), "", "The visibility submenu item is not checked");
+	});
+
+	QUnit.test("Reorder Columns", function(assert) {
+		this._oColumn1._openMenu();
+		var oColumnMenu = this._oColumn1.getMenu();
+		var oVisibilitySubmenu = oColumnMenu.getItems()[0].getSubmenu();
+		assert.strictEqual(oVisibilitySubmenu.getItems()[0].getProperty("text"), "col1header", "The columns are initially in the correct order");
+		assert.strictEqual(oVisibilitySubmenu.getItems()[1].getProperty("text"), "col2header", "The columns are initially in the correct order");
+		this._oTable.removeColumn(this._oColumn1);
+		this._oTable.insertColumn(this._oColumn1, 1);
+		this._oColumn1._openMenu();
+		var oColumnMenu = this._oColumn1.getMenu();
+		var oVisibilitySubmenu = oColumnMenu.getItems()[0].getSubmenu();
+		assert.strictEqual(oVisibilitySubmenu.getItems()[0].getProperty("text"), "col2header", "The columns are in the correct order after reordering");
+		assert.strictEqual(oVisibilitySubmenu.getItems()[1].getProperty("text"), "col1header", "The columns are in the correct order after reordering");
+	});
 });
