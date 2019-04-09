@@ -216,12 +216,19 @@ html.sap-desktop .sapMDialog {
 	opacity: 0;
 }
 
-.sapUiPopupWithPadding .sapMDialogScrollCont {
-	padding: @_sap_m_Dialog_Padding;
-}
+.sapMDialog.sapUiPopupWithPadding:not(.sapUiNoContentPadding) {
 
-.sapUiPopupWithPadding .sapMDialogScrollCont.sapMDialogStretchContent {
-	height: calc(~"100% - 2 * " @_sap_m_Dialog_Padding);
+	&.sapMDialogWithScrollCont .sapMDialogScrollCont {
+		height: 100%;
+	}
+
+	.sapMDialogScrollCont {
+		padding: @_sap_m_Dialog_Padding;
+
+		&.sapMDialogStretchContent {
+			height: calc(~"100% - 2 * " @_sap_m_Dialog_Padding);
+		}
+	}
 }
 
 .sapMDialogScrollCont.sapMDialogStretchContent {
@@ -240,9 +247,6 @@ html.sap-desktop .sapMDialog {
 	  http://stackoverflow.com/questions/8468066/child-inside-parent-with-min-height-100-not-inheriting-height
   */
 	position: relative;
-}
-.sapUiPopupWithPadding.sapMDialogWithScrollCont .sapMDialogScrollCont {
-	height: 100%;
 }
 
 .sapMDialogWithScrollCont .sapMDialogScrollCont {
