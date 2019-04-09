@@ -52,6 +52,10 @@ function (ServiceDataProvider, RequestDataProvider, DataProvider) {
 			oDataProvider.createServiceInstances(oServiceManager);
 		}
 
+		if (oDataSettings.updateInterval) {
+			oDataProvider.setUpdateInterval(oDataSettings.updateInterval);
+		}
+
 		return oDataProvider;
 	};
 
