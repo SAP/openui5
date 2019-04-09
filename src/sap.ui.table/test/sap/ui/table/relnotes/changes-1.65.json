@@ -7,6 +7,12 @@
         "type": "FIX",
         "text": " AnalyticalTable: Correctly open group row context menu",
         "references": []
+      },
+      {
+        "id": "a00e413d0dfe44ef9fc637595b3bcfd9759153fd",
+        "type": "FIX",
+        "text": " Table: Open cell filter menus on correct cell",
+        "references": []
       }
     ]
   }

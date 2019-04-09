@@ -1,14 +1,14 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/rta/enablement/controlTest"
+	"sap/ui/rta/enablement/elementActionTest"
 ], function (
-	rtaControlEnablingCheck
+	elementActionTest
 ) {
 	"use strict";
 
 	// Test "only" function + straightforward execution
-	rtaControlEnablingCheck.only("remove");
+	elementActionTest.only("remove");
 
 	var fnConfirmFormElementIsInvisible = function(oUiComponent, oViewAfterAction, assert){
 		assert.ok(oViewAfterAction.byId("formelement").getVisible() === false, "then the form element is invisible");
@@ -18,8 +18,8 @@ sap.ui.define([
 		assert.ok(oViewAfterAction.byId("formelement").getVisible() === true, "then the form element is visible");
 	};
 
-	// Use rtaControlEnablingCheck to check if a control is ready for the remove action of UI adaptation
-	rtaControlEnablingCheck("Checking the remove action for a simple control", {
+	// Use elementActionTest to check if a control is ready for the remove action of UI adaptation
+	elementActionTest("Checking the remove action for a simple control", {
 		xmlView :
 			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.layout.form">' +
 				'<Form id="form">' +
@@ -53,7 +53,7 @@ sap.ui.define([
 	var fnConfirmFormContainerIsVisible = function(oUiComponent, oViewAfterAction, assert){
 		assert.strictEqual(oViewAfterAction.byId("container").getVisible(), true, "then the form container is visible");
 	};
-	rtaControlEnablingCheck("Checking the remove action for a simple control with always async view and preprocessors", {
+	elementActionTest("Checking the remove action for a simple control with always async view and preprocessors", {
 		xmlView : {
 			viewContent : '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.layout.form">' +
 								'<Form id="form">' +

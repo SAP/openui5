@@ -28,9 +28,6 @@ sap.ui.define([
 		}
 	};
 
-
-
-
 	QUnit.module("sap.ui.core.mvc.EventHandlerResolver - handler function", {
 		beforeEach: function() {
 			thisContext = null;
@@ -368,5 +365,39 @@ sap.ui.define([
 		}, function(err){
 			return err.message.indexOf("Bad") > -1;
 		}, "Error should be thrown for non-closed double quotes");
+	});
+
+	QUnit.module("sap.ui.core.mvc.EventHandlerResolver - parse()");
+
+	QUnit.test("one event handler", function (assert) {
+		assert.deepEqual(EventHandlerResolver.parse(".fnControllerMethod"), [".fnControllerMethod"]);
+	});
+
+	QUnit.test("several event handlers", function (assert) {
+		assert.deepEqual(
+			EventHandlerResolver.parse(".fnControllerMethod; globalFunction"),
+			[".fnControllerMethod", "globalFunction"]
+		);
+	});
+
+	QUnit.test("several event handlers with trailing semicolon", function (assert) {
+		assert.deepEqual(
+			EventHandlerResolver.parse(".fnControllerMethod; globalFunction;"),
+			[".fnControllerMethod", "globalFunction"]
+		);
+	});
+
+	QUnit.test("several event handlers with parameters", function (assert) {
+		assert.deepEqual(
+			EventHandlerResolver.parse(".fnControllerMethod; .fnControllerMethod(${  path:'/someModelProperty', formatter: '.myFormatter', type: 'sap.ui.model.type.String'}    ); globalFunction"),
+			[".fnControllerMethod", ".fnControllerMethod(${  path:'/someModelProperty', formatter: '.myFormatter', type: 'sap.ui.model.type.String'}    )", "globalFunction"]
+		);
+	});
+
+	QUnit.test("several event handlers with parameters and string literals", function (assert) {
+		assert.deepEqual(
+			EventHandlerResolver.parse(".fnControllerMethod('bad);luck'); .fnControllerMethod(\"\\\");\"); globalFunction"),
+			[".fnControllerMethod('bad);luck')", ".fnControllerMethod(\"\\\");\")", "globalFunction"]
+		);
 	});
 });

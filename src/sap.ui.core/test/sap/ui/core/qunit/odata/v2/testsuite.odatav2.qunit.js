@@ -26,6 +26,10 @@ sap.ui.define(function() {
 			datajs: {
 				title: "sap.ui.thirdparty.datajs - QUnit tests"
 			},
+			PendingChanges: {
+				title: "sap.ui.model.odata.v2.ODataModel - Get all pending changes",
+				sinon: 1 /* MockServer usage */
+			},
 			ODataAnnotationsV2: {
 				title: "sap.ui.model.odata.v2.ODataAnnotations - QUnit tests"
 			},

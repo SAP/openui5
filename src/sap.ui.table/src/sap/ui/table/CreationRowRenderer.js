@@ -34,13 +34,15 @@ sap.ui.define([
 		oRm.write("<div");
 		oRm.writeElementData(oCreationRow);
 		oRm.writeAttribute("data-sap-ui-fastnavgroup", "true");
-		// TODO: role=form ?
+		oTable._getAccRenderExtension().writeAriaAttributesFor(oRm, oTable, "CREATIONROW", {creationRow: oCreationRow});
 		oRm.addClass("sapUiTableCreationRow");
 		oRm.writeClasses();
 		oRm.write(">");
 
 		this.renderRowForm(oRm, oCreationRow, oTable);
 		this.renderToolbar(oRm, oCreationRow);
+
+		oTable._getAccRenderExtension().writeAccCreationRowText(oRm, oTable, oCreationRow);
 
 		oRm.write("</div>");
 	};

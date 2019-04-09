@@ -18,7 +18,9 @@
 			"icon": {
 				"src": "sap-icon://sales-order"
 			},
-			"status": "100 of 200"
+			"status": {
+				"text": "100 of 200"
+			}
 		},
 		"content": {
 			"data": {
@@ -28,15 +30,15 @@
 				"path": "/items"
 			},
 			"item": {
-                "title": {
-                    "value": "{title}"
-                },
-                "description": {
-                    "value": "{state}"
-                },
-                "icon": {
-                    "value": "sap-icon://sales-order"
-                },
+				"title": {
+					"value": "{title}"
+				},
+				"description": {
+					"value": "{state}"
+				},
+				"icon": {
+					"src": "sap-icon://sales-order"
+				},
 				"actions": [
 					{
 						"type": "Navigation",

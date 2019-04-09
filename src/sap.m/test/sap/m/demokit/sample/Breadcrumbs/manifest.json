@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.Breadcrumbs.Page",
+			"viewName": "sap.m.sample.Breadcrumbs.view.Breadcrumbs",
 			"type": "XML",
 			"async": true
 		},
@@ -19,8 +19,8 @@
 		"config": {
 			"sample": {
 				"files": [
-					"Page.view.xml",
-					"Page.controller.js",
+					"view/Breadcrumbs.view.xml",
+					"controller/Breadcrumbs.controller.js",
 					"manifest.json"
 				]
 			}

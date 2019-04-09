@@ -28,10 +28,6 @@ sap.ui.define(['./TreeItemBaseRenderer', 'sap/ui/core/Renderer'],
 		rm.addClass("sapMSTI");
 	};
 
-	StandardTreeItemRenderer.getAriaLabelledBy = function(oLI) {
-		return oLI.getId() + "-content";
-	};
-
 	return StandardTreeItemRenderer;
 
 }, /* bExport= */ true);

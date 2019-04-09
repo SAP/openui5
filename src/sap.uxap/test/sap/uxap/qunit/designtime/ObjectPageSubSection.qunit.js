@@ -1,6 +1,6 @@
 sap.ui.define([
-	"sap/ui/rta/enablement/controlTest"
-], function (rtaControlEnablingCheck) {
+	"sap/ui/rta/enablement/elementActionTest"
+], function (elementActionTest) {
 
 	"use strict";
 
@@ -14,8 +14,8 @@ sap.ui.define([
 			oViewAfterAction.byId("subSection").getActions() [0].getId(),   // Id of third element in group after change has been applied
 			"then the control has been moved to the previous position");
 	};
-	// Use rtaControlEnablingCheck to check if a control is ready for the move action of UI adaptation
-	rtaControlEnablingCheck("Checking the move action for a sap.uxap.ObjectPageSubSection control", {
+	// Use elementActionTest to check if a control is ready for the move action of UI adaptation
+	elementActionTest("Checking the move action for a sap.uxap.ObjectPageSubSection control", {
 		xmlView :
 		'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
 		' xmlns:m="sap.m" xmlns:uxap="sap.uxap" >' +
@@ -93,7 +93,7 @@ sap.ui.define([
 			'</uxap:ObjectPageLayout>' +
 		'</mvc:View>';
 
-	rtaControlEnablingCheck("Checking the rename action for a SubSection", {
+	elementActionTest("Checking the rename action for a SubSection", {
 		xmlView: XML_VIEW,
 		action: {
 			name: "rename",
@@ -119,7 +119,7 @@ sap.ui.define([
 		assert.strictEqual(oViewAfterAction.byId(sSubSectionId).getVisible(), true, "then the SubSection element is visible");
 	};
 
-	rtaControlEnablingCheck("Checking the remove action for SubSection", {
+	elementActionTest("Checking the remove action for SubSection", {
 		xmlView: XML_VIEW,
 		action: {
 			name: "remove",
@@ -135,7 +135,7 @@ sap.ui.define([
 		afterRedo: fnConfirmSubSectionIsInvisible.bind(null, "subSection")
 	});
 
-	rtaControlEnablingCheck("Checking the reveal action for a SubSection", {
+	elementActionTest("Checking the reveal action for a SubSection", {
 		xmlView: XML_VIEW,
 		action: {
 			name: "reveal",

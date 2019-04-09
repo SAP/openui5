@@ -9,8 +9,19 @@ sap.ui.define([
 	"sap/base/strings/formatMessage",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	"sap/base/util/LoaderExtensions"
-], function(LrepConnector, Utils, VariantUtil, formatMessage, Log, jQuery, LoaderExtensions) {
+	"sap/base/util/LoaderExtensions",
+	"sap/base/util/ObjectPath"
+],
+function(
+	LrepConnector,
+	Utils,
+	VariantUtil,
+	formatMessage,
+	Log,
+	jQuery,
+	LoaderExtensions,
+	ObjectPath
+) {
 	"use strict";
 
 	/**
@@ -387,6 +398,25 @@ sap.ui.define([
 		}
 
 		aChanges.push(oChange);
+	};
+
+	/**
+	 * Syncs the passed variant management section with the component's cache entry.
+	 *
+	 * @param {sap.ui.core.Component} oComponent - Cache entry's component
+	 * @param {object} oVariantControllerFileContent Variant Controller applicable to the passed component
+	 * @public
+	 */
+	Cache.setVariantManagementSection = function (oComponent, oVariantControllerFileContent) {
+		var sComponentName = oComponent.name;
+		var sAppVersion = oComponent.appVersion || Utils.DEFAULT_APP_VERSION;
+		var oEntry = Cache.getEntry(sComponentName, sAppVersion);
+
+		if (!ObjectPath.get("file.changes.variantSection", oEntry)) {
+			return;
+		}
+
+		oEntry.file.changes.variantSection = oVariantControllerFileContent;
 	};
 
 	/**

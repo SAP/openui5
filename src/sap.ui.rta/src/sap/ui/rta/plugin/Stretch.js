@@ -135,9 +135,12 @@ function (
 	};
 
 	Stretch.prototype._onElementModified = function(oEvent) {
+		if (this.getDesignTime().getBusyPlugins().length) {
+			return;
+		}
+
 		var oParams = oEvent.getParameters();
 		var oOverlay = oEvent.getSource();
-
 		if (oParams.type === "afterRendering") {
 			if (!this.fnDebounced) {
 				// the timeout should be changed to 0 as soon as DT refactoring is done

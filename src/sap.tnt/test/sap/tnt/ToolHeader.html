@@ -229,7 +229,6 @@
 						new sap.m.IconTabFilter ({text: "Filter 2"}),
 						new sap.m.IconTabFilter ({text: "Filter 3"})
 					]
-
 				}),
 				new sap.m.IconTabHeader({
 					backgroundDesign: "Transparent",
@@ -238,11 +237,54 @@
 						new sap.m.IconTabFilter ({text: "Filter 2", enabled: false}),
 						new sap.m.IconTabFilter ({text: "Filter 3"})
 					]
-
 				})
 			]
 		}).addStyleClass("sapUiLargeMarginTop");
 		toolHeaderITB.placeAt('content');
+
+		var toolHeaderObjStatus = new sap.tnt.ToolHeader({
+			content: [
+					new sap.m.ObjectStatus({
+						title:'Error Status Title',
+						text:'Error Status Text',
+						icon:'sap-icon://status-negative',
+						state:sap.ui.core.ValueState.Error
+					}),
+					new sap.m.ObjectStatus({
+						text:'Warning Status Text',
+						icon:'sap-icon://status-critical',
+						state:sap.ui.core.ValueState.Warning,
+						active: true
+					}),
+					new sap.m.ObjectStatus({
+						text:'Information Status Text',
+						icon:'sap-icon://hint',
+						state:sap.ui.core.ValueState.Information
+					}),
+					new sap.m.ObjectStatus({
+						title:'Success Status Title',
+						text:'Success Status Text',
+						icon:'sap-icon://status-positive',
+						state:sap.ui.core.ValueState.Success
+					}),
+					new sap.m.ObjectStatus({
+						title:'None Status Title',
+						text:'None Status Text',
+						icon:'sap-icon://status-inactive',
+						state:sap.ui.core.ValueState.None
+					}),
+					new sap.m.ObjectStatus({
+						text:'Only text followed with only icon',
+						state:sap.ui.core.ValueState.Information
+					}),
+					new sap.m.ObjectStatus({
+						icon:'sap-icon://hint',
+						state:sap.ui.core.ValueState.Information
+					}),
+
+			]
+		}).addStyleClass("sapUiLargeMarginTop");
+		toolHeaderObjStatus.placeAt('content');
 	</script>
 
 </head>

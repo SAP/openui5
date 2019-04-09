@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.uxap.sample.ObjectPageXML.ObjectPageXML",
+			"viewName": "sap.uxap.sample.ObjectPageXML.view.ObjectPageXML",
 			"type": "XML",
 			"async": true
 		},
@@ -20,8 +20,8 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"ObjectPageXML.view.xml",
-					"ObjectPageXML.controller.js",
+					"view/ObjectPageXML.view.xml",
+					"controller/ObjectPageXML.controller.js",
 					"manifest.json"
 				]
 			}

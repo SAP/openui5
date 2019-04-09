@@ -328,6 +328,51 @@ sap.ui.define([
 		oDateRangeSelection.destroy();
 	});
 
+	QUnit.test("using all types of dashes as a delimiter when empty string is passed to delimiter property", function(assert) {
+		//arrange
+		var oDateRangeSelection = new DateRangeSelection({
+				displayFormat: "dd.MM.yyyy",
+				displayFormatType: CalendarType.Gregorian,
+				delimiter:'',
+				dateValue: new Date(2019,0,17),
+				secondDateValue: new Date(2019,0,18)
+			}),
+			aDates;
+
+		// act
+		aDates = oDateRangeSelection._splitValueByDelimiter("17.01.2019 " + String.fromCharCode(45) + " 18.01.2019");
+		//assert
+		assert.notEqual(aDates[0], null, "Using hyphen(45) as delimiter: The first value exists");
+		assert.notEqual(aDates[1], undefined, "Using dash 45 as delimiter: The second value exists");
+
+		// act
+		aDates = oDateRangeSelection._splitValueByDelimiter("17.01.2019 " + String.fromCharCode(8211) + " 18.01.2019");
+		//assert
+		assert.notEqual(aDates[0], null, "Using endash(8211) as delimiter: The first value exists");
+		assert.notEqual(aDates[1], undefined, "Using dash 8211 as delimiter: The second value exists");
+
+		// act
+		aDates = oDateRangeSelection._splitValueByDelimiter("17.01.2019 " + String.fromCharCode(8212) + " 18.01.2019");
+		//assert
+		assert.notEqual(aDates[0], null, "Using emdash(8212) as delimiter: The first value exists");
+		assert.notEqual(aDates[1], undefined, "Using dash 8212 as delimiter: The second value exists");
+
+		// act
+		aDates = oDateRangeSelection._splitValueByDelimiter("17.01.2019");
+		//assert
+		assert.notEqual(aDates[0], null, "Passing only one date without a delimiter: The first value exists");
+		assert.ok(!aDates[1], "Passing only one date without a delimiter: The second value does not exist");
+
+		// act
+		aDates = oDateRangeSelection._splitValueByDelimiter("");
+		//assert
+		assert.ok(Array.isArray(aDates), "Passing an empty string as a value: The returned value is an array");
+		assert.equal(aDates.length, 0, "Passing an empty string as a value: The returned array is empty");
+
+		//clean
+		oDateRangeSelection.destroy();
+	});
+
 	QUnit.module("Accessibility");
 
 	QUnit.test("getAccessibilityInfo", function(assert) {

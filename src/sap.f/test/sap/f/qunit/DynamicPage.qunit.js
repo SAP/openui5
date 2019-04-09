@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/UIComponent",
+	"sap/ui/core/Configuration",
 	"sap/m/OverflowToolbarButton",
 	"sap/f/DynamicPageAccessibleLandmarkInfo",
 	"sap/ui/core/mvc/XMLView",
@@ -25,6 +26,7 @@ function (
 	Core,
 	ComponentContainer,
 	UIComponent,
+	Configuration,
 	OverflowToolbarButton,
 	DynamicPageAccessibleLandmarkInfo,
 	XMLView,
@@ -438,6 +440,29 @@ function (
 		assert.equal(this.oDynamicPage._iFooterAnimationTimeout, null, "Footer animation timeout has been cleared");
 	});
 
+	QUnit.test("DynamicPage Footer visibility when animations disabled", function (assert) {
+		var $footerWrapper = this.oDynamicPage.$("footerWrapper"),
+			sOriginalMode = Core.getConfiguration().getAnimationMode();
+
+		//setup
+		Core.getConfiguration().setAnimationMode(Configuration.AnimationMode.none);
+
+		// Act: toggle to 'true'
+		this.oDynamicPage.setShowFooter(true);
+
+		// Check
+		assert.ok(!$footerWrapper.hasClass("sapUiHidden"), "footer is shown");
+
+		// Act: toggle to 'false'
+		this.oDynamicPage.setShowFooter(false);
+
+		// Check
+		assert.ok($footerWrapper.hasClass("sapUiHidden"), "footer is hidden");
+
+		// Clean up
+		Core.getConfiguration().setAnimationMode(sOriginalMode);
+	});
+
 	/* --------------------------- DynamicPage Mobile Rendering ---------------------------------- */
 	QUnit.module("DynamicPage - Rendering - Mobile", {
 		beforeEach: function () {
@@ -758,7 +783,7 @@ function (
 		oUtil.renderObject(this.oDynamicPage);
 
 		// Act
-		oTitle.$().trigger("mouseover");
+		oTitle.onmouseover();
 		$oDynamicPage = this.oDynamicPage.$();
 
 		// Assert
@@ -777,7 +802,7 @@ function (
 		oUtil.renderObject(this.oDynamicPage);
 
 		// Act
-		oTitle.$().trigger("mouseout");
+		oTitle.onmouseout();
 		$oDynamicPage = this.oDynamicPage.$();
 
 		// Assert

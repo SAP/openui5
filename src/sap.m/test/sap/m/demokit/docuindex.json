@@ -286,6 +286,14 @@
 		  "samples": ["sap.m.sample.CustomListItem"]
 		},
 		{
+			"id": "sap.m.ComparisonPattern",
+			"name": "Comparison Pattern",
+			"category": "Display",
+			"since": "1.63",
+			"formFactors": "-",
+			"samples": ["sap.m.sample.ComparisonPattern"]
+		},
+		{
 		  "id": "sap.m.CustomTreeItem",
 		  "name": "Custom Tree Item",
 		  "category": "List",
@@ -940,7 +948,8 @@
 			"category": "User Input",
 			"since": "1.61",
 			"formFactors": "L",
-			"samples": ["sap.m.sample.SinglePlanningCalendar"]
+			"samples": ["sap.m.sample.SinglePlanningCalendar",
+			"sap.m.sample.SinglePlanningCalendarWithLegend"]
 		},
 		{
 		  "id": "sap.m.Popover",
@@ -1705,6 +1714,11 @@
 			"id": "sap.m.sample.CarouselWithMorePages",
 			"name": "Carousel with Multiple Items at Once",
 			"description": "The customLayout aggregation determines how many pages are displayed in Carousel's visible area."
+		},
+		{
+			"id": "sap.m.sample.ComparisonPattern",
+			"name": "Comparison Pattern",
+			"description": "The pattern allows users to select multiple items from an sap.m.Table and display information about them in a structured way - all items are displayed next to each other for easy comparison, based on their specifics."
 		},
 		{
 		  "id": "sap.m.sample.NavContainer",
@@ -3113,6 +3127,11 @@
 		  "id": "sap.m.sample.SinglePlanningCalendar",
 		  "name": "Single Planning Calendar",
 		  "description": "SinglePlanningCalendar, contains sap.m.Dialog for creating a new appointment and sap.m.ResponsivePopover for editing an already created appointment. Note: Illustrates how the SinglePlanningCalendar can be used in combination with the sap.m.Dialog control for creating new appoitments and sap.m.ResponsivePopover for editing alredy created appointments. This feature is NOT part of the control."
+		},
+		{
+		  "id": "sap.m.sample.SinglePlanningCalendarWithLegend",
+		  "name": "Single Planning Calendar - with legend",
+		  "description": "SinglePlanningCalendar inside the main part of a sap.ui.layout.DynamicSideContent and a sap.m.PlanningCalendarLegend inside the side part."
 		},
 		{
 		  "id": "sap.m.sample.ImageContent",

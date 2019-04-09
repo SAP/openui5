@@ -21,7 +21,7 @@
 
 .sapMSliderInner:hover > .sapMSliderHandle {
 	background: @sapUiButtonBackground;
-	border: 0.125rem solid @sapUiActive;
+	border: 0.125rem solid @sapUiFieldBorderColor;
 }
 
 /* slider handle */
@@ -30,11 +30,13 @@
 	height: 1.625rem;
 	top: -0.85rem;
 	background: @sapUiButtonBackground;
-	border: 0.125rem solid @sapUiActive;
+	border: 0.125rem solid @sapUiFieldBorderColor;
+	box-shadow: 0 0.0625rem 0.125rem 0 fade(@sapUiContentShadowColor, 20);
 }
 
 .sapMSliderInner .sapMSliderHandle:hover {
 	background-color: @sapUiButtonHoverBackground;
+	border-color: @sapUiActive;
 }
 
 .sapMSliderTickLabel .sapMSliderLabel {

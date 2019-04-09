@@ -2,8 +2,18 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/base/Object", "sap/ui/core/Manifest"], function (BaseObject, Manifest) {
+sap.ui.define([
+	"sap/ui/base/Object",
+	"sap/ui/core/Manifest",
+	"sap/base/Log"
+	], function (
+	BaseObject,
+	Manifest,
+	Log
+) {
 	"use strict";
+
+	var MANIFEST_PARAMETERS =  "/sap.card/configuration/parameters";
 
 	/**
 	 * Creates a new CardManifest object.
@@ -134,16 +144,18 @@ sap.ui.define(["sap/ui/base/Object", "sap/ui/core/Manifest"], function (BaseObje
 	 * and replacing all placeholders.
 	 *
 	 * @private
+	 * @param {Object} oParams Parameters that should be replaced in the manifest.
 	 */
-	CardManifest.prototype.processManifest = function () {
+	CardManifest.prototype.processManifest = function (oParams) {
 		var iCurrentLevel = 0,
 			iMaxLevel = 15,
-			oProcessedJson = this.getJson();
+			//Always need the unprocessed manifest
+			oUnprocessedJson = jQuery.extend(true, {}, this._oManifest.getRawJson());
 
-		process(oProcessedJson, this.oTranslator, iCurrentLevel, iMaxLevel);
-		deepFreeze(oProcessedJson);
+		process(oUnprocessedJson, this.oTranslator, iCurrentLevel, iMaxLevel, oParams);
+		deepFreeze(oUnprocessedJson);
 
-		this.oJson = oProcessedJson;
+		this.oJson = oUnprocessedJson;
 	};
 
 	/**
@@ -186,7 +198,7 @@ sap.ui.define(["sap/ui/base/Object", "sap/ui/core/Manifest"], function (BaseObje
 	 */
 	function isProcessable (vValue) {
 		return (typeof vValue === "string")
-			&& (vValue.indexOf("{TODAY_ISO}") > -1 || vValue.indexOf("{NOW_ISO}") > -1);
+			&& (vValue.indexOf("{{parameters.") > -1);
 	}
 
 	/**
@@ -194,12 +206,19 @@ sap.ui.define(["sap/ui/base/Object", "sap/ui/core/Manifest"], function (BaseObje
 	 *
 	 * @private
 	 * @param {string} sPlaceholder The value to process.
+	 * @param {Object} oParam The parameter from the configuration.
 	 * @returns {string} The string with replaced placeholders.
 	 */
-	function processPlaceholder (sPlaceholder) {
+	function processPlaceholder (sPlaceholder, oParam) {
 		var sISODate = new Date().toISOString();
-		var sProcessed = sPlaceholder.replace("{NOW_ISO}", sISODate);
-		sProcessed = sProcessed.replace("{TODAY_ISO}", sISODate.slice(0, 10));
+		var sProcessed = sPlaceholder.replace("{{parameters.NOW_ISO}}", sISODate);
+		sProcessed = sProcessed.replace("{{parameters.TODAY_ISO}}", sISODate.slice(0, 10));
+		if (oParam) {
+			for (var oProperty in oParam) {
+				sProcessed = sProcessed.replace("{{parameters." + oProperty + "}}", oParam[oProperty].value);
+			}
+		}
+
 		return sProcessed;
 	}
 
@@ -211,8 +230,9 @@ sap.ui.define(["sap/ui/base/Object", "sap/ui/core/Manifest"], function (BaseObje
 	 * @param {Object} oTranslator The translator.
 	 * @param {number} iCurrentLevel The current level of recursion.
 	 * @param {number} iMaxLevel The maximum level of recursion.
+	 * @param {Object} oParams The parameters to be replaced in the manifest.
 	 */
-	function process (oObject, oTranslator, iCurrentLevel, iMaxLevel) {
+	function process (oObject, oTranslator, iCurrentLevel, iMaxLevel, oParams) {
 		if (iCurrentLevel === iMaxLevel) {
 			return;
 		}
@@ -220,21 +240,21 @@ sap.ui.define(["sap/ui/base/Object", "sap/ui/core/Manifest"], function (BaseObje
 		if (Array.isArray(oObject)) {
 			oObject.forEach(function (vItem, iIndex, aArray) {
 				if (typeof vItem === "object") {
-					process(vItem, oTranslator, iCurrentLevel + 1, iMaxLevel);
-				} else if (isTranslatable(vItem)) {
+					process(vItem, oTranslator, iCurrentLevel + 1, iMaxLevel, oParams);
+				} else if (isProcessable(vItem, oObject, oParams)) {
+					aArray[iIndex] = processPlaceholder(vItem, oParams);
+				} else if (isTranslatable(vItem) && oTranslator) {
 					aArray[iIndex] = oTranslator.getText(vItem.substring(2, vItem.length - 2));
-				} else if (isProcessable(vItem)) {
-					aArray[iIndex] = processPlaceholder(vItem);
 				}
 			}, this);
 		} else {
 			for (var sProp in oObject) {
 				if (typeof oObject[sProp] === "object") {
-					process(oObject[sProp], oTranslator, iCurrentLevel + 1, iMaxLevel);
-				} else if (isTranslatable(oObject[sProp])) {
+					process(oObject[sProp], oTranslator, iCurrentLevel + 1, iMaxLevel, oParams);
+				}  else if (isProcessable(oObject[sProp], oObject, oParams)) {
+					oObject[sProp] = processPlaceholder(oObject[sProp], oParams);
+				} else if (isTranslatable(oObject[sProp]) && oTranslator) {
 					oObject[sProp] = oTranslator.getText(oObject[sProp].substring(2, oObject[sProp].length - 2));
-				} else if (isProcessable(oObject[sProp])) {
-					oObject[sProp] = processPlaceholder(oObject[sProp]);
 				}
 			}
 		}
@@ -254,7 +274,7 @@ sap.ui.define(["sap/ui/base/Object", "sap/ui/core/Manifest"], function (BaseObje
 		// manifest object and return the concrete value, e.g. "/sap.ui5/extends"
 		if (oObject && sPath && typeof sPath === "string" && sPath[0] === "/") {
 			var aPaths = sPath.substring(1).split("/"),
-			    sPathSegment;
+				sPathSegment;
 			for (var i = 0, l = aPaths.length; i < l; i++) {
 				sPathSegment = aPaths[i];
 
@@ -282,6 +302,52 @@ sap.ui.define(["sap/ui/base/Object", "sap/ui/core/Manifest"], function (BaseObje
 		// return the value directly from the manifest
 		return oObject && oObject[sPath];
 	}
+
+	/**
+	 * Processes passed parameters.
+	 *
+	 * @param {Object} oParameters Parameters set in the card trough parameters property.
+	 * @private
+	 */
+	CardManifest.prototype.processParameters = function (oParameters) {
+		var oManifestParams = this.get(MANIFEST_PARAMETERS);
+
+		if (oParameters && !oManifestParams) {
+			Log.error("If parameters property is set, parameters should be described in the manifest");
+		}
+
+		if (oManifestParams) {
+			var oParams = this._syncParameters(oParameters, oManifestParams);
+			this.processManifest(oParams);
+		}
+	};
+
+	/**
+	 * Syncs parameters from property.
+	 *
+	 * @param {Object} oParameters Parameters set in the card trough parameters property.
+	 * @param {Object} oManifestParameters Parameters set in the manifest.
+	 * @private
+	 */
+	CardManifest.prototype._syncParameters = function (oParameters, oManifestParameters) {
+		if (!oParameters) {
+			return oManifestParameters;
+		}
+
+		var oClonedManifestParams = jQuery.extend(true, {}, oManifestParameters),
+			oParamProps = Object.getOwnPropertyNames(oParameters),
+			oManifestParamsProps = Object.getOwnPropertyNames(oClonedManifestParams);
+
+		for (var i = 0; i < oManifestParamsProps.length; i++) {
+			for (var j = 0; j < oParamProps.length; j++) {
+				if (oManifestParamsProps[i] === oParamProps[j]) {
+					oClonedManifestParams[oManifestParamsProps[i]].value = oParameters[oParamProps[j]];
+				}
+			}
+		}
+
+		return oClonedManifestParams;
+	};
 
 	return CardManifest;
 }, true);

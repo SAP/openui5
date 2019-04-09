@@ -70,35 +70,78 @@ sap.ui.define([
 	}
 
 	/**
-	 * Constructor for a new <code>GridContainer</code>.
+	 * Constructor for a new <code>sap.f.GridContainer</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A container control which uses css display grid to show items in a grid.
-	 * Main usage is to position cards and tiles on a home page.
+	 * A layout container control used for aligning items with various sizes in a simple grid
 	 *
 	 * <h3>Overview</h3>
-	 * TODO
+	 *
+	 * Layout container control used to align Tiles, Cards or other controls in configuration like a home page or a dashboard.
+	 * It represents a grid layout, with specific row and column sizes, in which the items can take any number of rows and columns.
+	 *
+	 * The number of columns and rows each item should take can be configured using the <code>sap.f.GridContainerItemLayoutData</code>.
+	 * All rows have the same height and all columns have the same width. Their sizes can be configured by using <code>layout</code> aggregation and <code>GridContainerSettings</code>.
 	 *
 	 * <h3>Usage</h3>
-	 * TODO
 	 *
-	 * <h3>Responsive Behavior</h3>
-	 * TODO
+	 * <i>When to use</i>
+	 * <ul>
+	 * <li>For aligning home page and dashboard items like Tiles and Cards in a simple grid system with equally sized rows and columns.</li>
+	 * </ul>
 	 *
-	 * @extends sap.ui.core.Control
+	 * <i>When not to use</i>
+	 * <ul>
+	 * <li>If a more complex layout grid system, where columns and rows may vary in size, is needed.</li>
+	 * </ul>
+	 *
+	 * <h3>Example</h3>
+	 * <pre>
+	 * <f:GridContainer>
+	 * 	<f:layout>
+	 * 		<f:GridContainerSettings rowSize="5rem" columnSize="5rem" gap="1rem" />
+	 * 	</f:layout>
+	 * 	<f:layoutS>
+	 * 		<f:GridContainerSettings rowSize="4rem" columnSize="4rem" gap="0.5rem" />
+	 * 	</f:layoutS>
+	 * 	<f:items>
+	 * 		<GenericTile header="Sales Fulfillment">
+	 * 			<layoutData>
+	 * 				<f:GridContainerItemLayoutData rows="2" columns="2" />
+	 * 			</layoutData>
+	 * 		</GenericTile>
+	 * 		<w:Card manifest="url-to-manifest">
+	 * 			<w:layoutData>
+	 * 				<f:GridContainerItemLayoutData rows="6" columns="3" />
+	 * 			</w:layoutData>
+	 * 		</w:Card>
+	 * 		<Panel>
+	 * 			<layoutData>
+	 * 				<f:GridContainerItemLayoutData columns="4" />
+	 * 			</layoutData>
+	 * 			<Text text="Sales information" />
+	 * 		</Panel>
+	 * 	</f:items>
+	 * </f:GridContainer>
+	 * </pre>
+	 *
+	 * @see {@link topic:32d4b9c2b981425dbc374d3e9d5d0c2e Grid Controls}
+	 * @see {@link topic:5b46b03f024542ba802d99d67bc1a3f4 Cards}
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @constructor
-	 * @experimental
+	 * @extends sap.ui.core.Control
+	 *
+	 * @experimental Since 1.65 This class is experimental. The API may change.
 	 * @since 1.65
-	 * @see {@link TODO Card}
+	 * @public
+	 * @constructor
 	 * @alias sap.f.GridContainer
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	var GridContainer = Control.extend("sap.f.GridContainer", /** @lends sap.f.GridContainer.prototype */ {
 		metadata: {
@@ -117,13 +160,17 @@ sap.ui.define([
 				height: {type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: ""},
 
 				/**
-				 * Should the items stretch to fill the rows which they occupy
+				 * Should the items stretch to fill the rows which they occupy, or not.
+				 * If set to true the items will stretch.
 				 */
-				itemsStretch: {type: "boolean", group: "Appearance", defaultValue: false},
+				snapToRow: {type: "boolean", group: "Appearance", defaultValue: false},
 
 				/**
 				 * Should the row span increase if item does not fit in the rows which it was given.
 				 * Applies only for items with specified rows span. For all other items it is always on.
+				 *
+				 * @private
+				 * NOTE: Will be removed with the introduction of minRows
 				 */
 				rowsAutoSpan: {type: "boolean", group: "Appearance", defaultValue: false}
 			},
@@ -133,8 +180,10 @@ sap.ui.define([
 				 * The items contained by the control.
 				 */
 				items: {type: "sap.ui.core.Control", multiple: true, singularName: "item", dnd: true },
+
 				/**
 				 * The sap.f.GridContainerSettings applied if no settings are provided for a specific size
+				 * If no layout is given, a default layout will be used. See the default values for <code>sap.f.GridContainerSettings</code>.
 				 */
 				layout: { type: "sap.f.GridContainerSettings", multiple: false },
 
@@ -183,7 +232,7 @@ sap.ui.define([
 			$item = this.$();
 
 		if ($item[0].style.height === "auto"
-			&& (container.getItemsStretch() || $item.hasClass("sapFCardStretchableContent"))) {
+			&& (container.getSnapToRow() || $item.hasClass("sapFCardStretchableContent"))) {
 			$item.height("100%");
 		}
 

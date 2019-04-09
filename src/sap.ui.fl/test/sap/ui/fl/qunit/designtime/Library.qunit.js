@@ -4,19 +4,11 @@
  * General consistency checks on designtime metadata of controls in the sap.ui.fl library
  */
 sap.ui.define([
-	"sap/ui/dt/test/LibraryTest",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/dt/enablement/libraryTest"
 ], function (
-	LibraryTest,
-	jQuery
+	libraryValidator
 ) {
 	"use strict";
 
-	var pTestsCreated = LibraryTest("sap.ui.fl", QUnit);
-
-	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
-	});
-
-	return pTestsCreated;
+	return libraryValidator("sap.ui.fl", QUnit);
 });

@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.RefreshResponsive.Page",
+			"viewName": "sap.m.sample.RefreshResponsive.view.RefreshResponsive",
 			"type": "XML",
 			"async": true
 		},
@@ -20,8 +20,8 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"Page.view.xml",
-					"Page.controller.js",
+					"view/RefreshResponsive.view.xml",
+					"controller/RefreshResponsive.controller.js",
 					"manifest.json"
 				]
 			}

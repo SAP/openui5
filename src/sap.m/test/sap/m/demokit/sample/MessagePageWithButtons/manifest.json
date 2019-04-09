@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.MessagePageWithButtons.Page",
+			"viewName": "sap.m.sample.MessagePageWithButtons.view.MessagePage",
 			"type": "XML",
 			"async": true
 		},
@@ -20,7 +20,7 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"Page.view.xml",
+					"view/MessagePage.view.xml",
 					"manifest.json"
 				]
 			}

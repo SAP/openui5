@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.uxap.sample.ObjectPageHeaderWithAllControls.ObjectPageHeaderWithAllControls",
+			"viewName": "sap.uxap.sample.ObjectPageHeaderWithAllControls.view.ObjectPageHeaderWithAllControls",
 			"type": "XML",
 			"async": true
 		},
@@ -20,8 +20,8 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"ObjectPageHeaderWithAllControls.view.xml",
-					"ObjectPageHeaderWithAllControls.controller.js",
+					"view/ObjectPageHeaderWithAllControls.view.xml",
+					"controller/ObjectPageHeaderWithAllControls.controller.js",
 					"../SharedBlocks/goals/GoalsBlock.js",
 					"../SharedBlocks/goals/GoalsBlock.view.xml",
 					"../SharedBlocks/personal/BlockAdresses.js",
@@ -36,10 +36,10 @@
 					"../SharedBlocks/personal/PersonalBlockPart1.view.xml",
 					"../SharedBlocks/personal/PersonalBlockPart2.js",
 					"../SharedBlocks/personal/PersonalBlockPart2.view.xml",
-					"employee.json",
-					"products.json",
-					"Popover.fragment.xml",
-					"PopoverLock.fragment.xml",
+					"../SharedJSONData/employee.json",
+					"../SharedJSONData/products.json",
+					"view/Popover.fragment.xml",
+					"view/PopoverLock.fragment.xml",
 					"manifest.json"
 				]
 			}

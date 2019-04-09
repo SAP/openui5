@@ -82,9 +82,5 @@ sap.ui.define(["sap/ui/integration/services/Data", "sap/ui/base/EventProvider"],
 		return Promise.resolve(oData);
 	};
 
-	UserRecent.prototype.enabled = function (oDataContext) {
-		return Promise.resolve(true);
-	};
-
 	return UserRecent;
 });

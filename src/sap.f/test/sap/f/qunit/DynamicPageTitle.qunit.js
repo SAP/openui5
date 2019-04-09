@@ -1089,4 +1089,52 @@ function (
 		assert.notOk($MainArea.hasClass("sapUiHidden"), "Dynamic Page Title Main area is visible while Snapped Wrapper isn't.");
 		assert.notOk(bIsExpandButtonVisible, "Expand Button isn't visible while Snapped wrapper isn't.");
 	});
+
+	QUnit.module("DynamicPage Title - Events", {
+		beforeEach: function () {
+			this.oDynamicPage = oFactory.getDynamicPage();
+			this.oDynamicPageTitle = this.oDynamicPage.getTitle();
+		},
+		afterEach: function () {
+			this.oDynamicPage.destroy();
+			this.oDynamicPage = null;
+			this.oDynamicPageTitle = null;
+		}
+	});
+
+	QUnit.test("MouseOut/MouseOver events should be prevented when target is child", function (assert) {
+		var oTitle = this.oDynamicPageTitle,
+			oTitleMouseOverSpy = this.spy(this.oDynamicPage, "_onTitleMouseOver"),
+			oTitleMouseOutSpy = this.spy(this.oDynamicPage, "_onTitleMouseOut"),
+			oEventOnMouseOut = {};
+
+		// Act
+		oUtil.renderObject(this.oDynamicPage);
+
+		oEventOnMouseOut.target = oTitle.getHeading().getDomRef();
+		oTitle.onmouseover();
+
+		// Assert
+		assert.ok(oTitleMouseOverSpy.calledOnce, "mouseover event was not fired");
+
+		// Act
+		oTitle.onmouseout(oEventOnMouseOut);
+
+		// Assert
+		assert.ok(oTitleMouseOutSpy.notCalled, "mouseout event was not fired because target element is child of title");
+
+		// Act
+		oTitle.onmouseover();
+
+		// Assert
+		assert.ok(oTitleMouseOverSpy.calledOnce, "mouseover event was not fired because event source is child of title");
+
+		// Act
+		oEventOnMouseOut.target = this.oDynamicPage.getContent().getDomRef();
+		oTitle.onmouseout(oEventOnMouseOut);
+
+		// Assert
+		assert.ok(oTitleMouseOverSpy.calledOnce, "_titleMouseOver was fired only once");
+		assert.ok(oTitleMouseOutSpy.calledOnce, "_titleMouseOut was fired only once");
+	});
 });

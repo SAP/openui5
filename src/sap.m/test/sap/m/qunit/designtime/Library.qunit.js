@@ -1,6 +1,14 @@
 /*global QUnit */
-sap.ui.define(["sap/ui/dt/test/LibraryTest", "sap/ui/qunit/QUnitUtils"], function(LibraryTest, QUnitUtils) {
+
+/**
+ * General consistency checks on designtime metadata of controls in the sap.f library
+ */
+sap.ui.define([
+	"sap/ui/dt/enablement/libraryTest"
+], function (
+	libraryValidator
+) {
 	"use strict";
 
-	return LibraryTest("sap.m", QUnit);
+	return libraryValidator("sap.m", QUnit);
 });

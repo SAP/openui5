@@ -421,11 +421,13 @@ sap.ui.define([
 	};
 
 	Element.prototype.insertDependent = function(oElement, iIndex) {
-		return this.insertAggregation("dependents", oElement, iIndex, true);
+		this.insertAggregation("dependents", oElement, iIndex, true);
+		return this; // explicitly return 'this' to fix controls that override insertAggregation wrongly
 	};
 
 	Element.prototype.addDependent = function(oElement) {
-		return this.addAggregation("dependents", oElement, true);
+		this.addAggregation("dependents", oElement, true);
+		return this; // explicitly return 'this' to fix controls that override addAggregation wrongly
 	};
 
 	Element.prototype.removeDependent = function(vElement) {
@@ -437,7 +439,8 @@ sap.ui.define([
 	};
 
 	Element.prototype.destroyDependents = function() {
-		return this.destroyAggregation("dependents", true);
+		this.destroyAggregation("dependents", true);
+		return this; // explicitly return 'this' to fix controls that override destroyAggregation wrongly
 	};
 
 

@@ -3,13 +3,19 @@
 describe("sap.m.Wizard", function() {
 	"use strict";
 
+	var bPhone = null;
+
 	it("should load test page", function () {
 		// disable CSS animations as they are messing with intrinsic waits
 		// this is workaround, remove when data-sap-ui-animation=off is supported by sap.m.Wizard
 		browser.executeScript(function(){
 			jQuery(".sapMWizard .sapMWizardNextButton").css("transition","none !important");
 		});
-
+		browser.executeScript(function () {
+			return sap.ui.Device.system.phone;
+		}).then(function (response) {
+			bPhone = response;
+		});
 		expect(takeScreenshot()).toLookAs('initial');
 	});
 
@@ -53,6 +59,9 @@ describe("sap.m.Wizard", function() {
 			closeBtn = element(by.id("close-dialog-btn")),
 			navigateBtn = element(by.id("navigate-btn"));
 
+		if (bPhone) {
+			element(by.id("branch-wiz-page-navButton")).click();
+		}
 		// navigate to test app page and open dialog
 		element(by.id("dialog-integration-wiz-sel")).click();
 		openBtn.click();

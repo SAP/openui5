@@ -1,18 +1,18 @@
 /* global QUnit */
 
 sap.ui.define([
-	'sap/uxap/ObjectPageSection',
-	'sap/uxap/ObjectPageSubSection',
-	'sap/uxap/ObjectPageLayout',
-	'sap/ui/rta/RuntimeAuthoring',
-	'qunit/RtaQunitUtils',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/fl/registry/ChangeRegistry',
-	'sap/m/Page',
-	'sap/m/Button',
-	'sap/ui/events/KeyCodes',
-	'sap/ui/qunit/QUnitUtils',
-	'sap/ui/thirdparty/sinon-4'
+	"sap/uxap/ObjectPageSection",
+	"sap/uxap/ObjectPageSubSection",
+	"sap/uxap/ObjectPageLayout",
+	"sap/ui/rta/RuntimeAuthoring",
+	"qunit/RtaQunitUtils",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/m/Page",
+	"sap/m/Button",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function(
 	ObjectPageSection,
@@ -30,7 +30,7 @@ function(
 ) {
 	"use strict";
 
-	var oCompCont = RtaQunitUtils.renderRuntimeAuthoringAppAt("qunit-fixture");
+	var oCompCont = RtaQunitUtils.renderTestAppAt("qunit-fixture");
 	var oComp = oCompCont.getComponentInstance();
 
 	var sandbox = sinon.sandbox.create();
@@ -55,14 +55,13 @@ function(
 			this.oPage = sap.ui.getCore().byId("Comp1---idMain1--mainPage");
 			this.oSmartForm = sap.ui.getCore().byId("Comp1---idMain1--MainForm");
 			this.oGroup = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument");
-			this.oBoundGroupElement = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.CompanyCode");
-			this.oMandatoryGroupElement = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.Mandatory");
-			this.oUnBoundGroupElement = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.UnboundButton");
-			this.oMultipleFieldOneBoundGroupElement = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.BoundButton");
+			this.oBoundGroupElement = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
+			this.oAnotherBoundGroupElement = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.Name");
+			this.oUnBoundGroupElement = sap.ui.getCore().byId("Comp1---idMain1--Victim");
+			this.oMultipleFieldTwoBoundGroupElements = sap.ui.getCore().byId("Comp1---idMain1--Dates.BoundButton35");
 			this.oMultipleBoundFieldGroupElement = sap.ui.getCore().byId("Comp1---idMain1--Dates.BoundButton35");
 			this.oFieldInGroupWithoutStableId = sap.ui.getCore().byId("Comp1---idMain1--FieldInGroupWithoutStableId");
 			this.oSimpleFormWithTitles = sap.ui.getCore().byId("Comp1---idMain1--SimpleForm");
-			this.oSimpleFormWithToolbars = sap.ui.getCore().byId("Comp1---idMain1--SimpleFormWithToolbars");
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oComp.getAggregation("rootControl"),
@@ -80,7 +79,6 @@ function(
 			fnKeyboardGroupElement.call(this, assert);
 			fnMouseGroup.call(this, assert);
 			fnKeyboardSmartForm.call(this, assert);
-			fnMouseMandatoryGroupElement.call(this, assert);
 			fnMouseTwoSelectedGroupElementsWithBoundFields.call(this, assert);
 			fnMouseTwoSelectedGroupElementsWithOneBoundField.call(this, assert);
 			fnMouseTwoGroupElementsWithOneBoundField.call(this, assert);
@@ -93,13 +91,13 @@ function(
 			fnKeyboardSimpleFormFormElement.call(this, assert);
 			fnKeyboardSimpleFormWithTitle.call(this, assert);
 			fnKeyboardSimpleFormGroup.call(this, assert);
-			fnSimpleFormFormContainer.call(this, assert);
 			fnContextMenuOpenWithTestData.call(this, assert);
 		});
 
 		function fnKeyboardGroupElement(assert) {
 			var oGroupElementOverlay = OverlayRegistry.getOverlay(this.oBoundGroupElement);
 			oGroupElementOverlay.focus();
+			oGroupElementOverlay.setSelected(true);
 			fnTriggerKeydown(oGroupElementOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 
 			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
@@ -130,32 +128,17 @@ function(
 		function fnKeyboardSmartForm(assert) {
 			var oFormOverlay = OverlayRegistry.getOverlay(this.oSmartForm);
 			oFormOverlay.focus();
+			oFormOverlay.setSelected(true);
 			fnTriggerKeydown(oFormOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 
 			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 			assert.ok(oContextMenuControl.bOpen, "when context menu (context menu) is opened (via keyboard) for a sap.ui.comp.smartform.SmartForm");
-			assert.equal(oContextMenuControl.getButtons().length, 3, "3 Menu Buttons are available");
+			assert.equal(oContextMenuControl.getButtons().length, 1, "1 Menu Buttons is available");
 			assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_CREATE_CHILD_CONTAINER", "we can create group");
-			assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_CUT", "we can cut a group");
-			assert.equal(oContextMenuControl.getButtons()[2].data("id"), "CTX_PASTE", "we can paste a group");
-		}
-
-		function fnMouseMandatoryGroupElement(assert) {
-			var oGroupElementOverlay = OverlayRegistry.getOverlay(this.oMandatoryGroupElement);
-			fnTriggerContextMenuClick(oGroupElementOverlay);
-
-			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-			assert.ok(oContextMenuControl.bOpen, "when context menu (context menu) is opened (via mouse) for a mandatory selected GroupElement");
-			assert.equal(oContextMenuControl.getButtons().length, 5, "5 Menu Buttons are available");
-			assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "we can rename a label");
-			assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "we can add field");
-			assert.equal(oContextMenuControl.getButtons()[2].data("id"), "CTX_REMOVE", "we can remove field");
-			assert.equal(oContextMenuControl.getButtons()[3].data("id"), "CTX_CUT", "we can cut field");
-			assert.equal(oContextMenuControl.getButtons()[4].data("id"), "CTX_PASTE", "we can paste field");
 		}
 
 		function fnMouseTwoSelectedGroupElementsWithBoundFields(assert) {
-			var oGroupElementOverlay1 = OverlayRegistry.getOverlay(this.oMandatoryGroupElement);
+			var oGroupElementOverlay1 = OverlayRegistry.getOverlay(this.oAnotherBoundGroupElement);
 			var oGroupElementOverlay2 = OverlayRegistry.getOverlay(this.oBoundGroupElement);
 			this.oRta._oDesignTime.getSelectionManager().set([oGroupElementOverlay1, oGroupElementOverlay2]);
 			fnTriggerContextMenuClick(oGroupElementOverlay1);
@@ -196,7 +179,7 @@ function(
 		}
 
 		function fnMouseTwoGroupElementsWithOneBoundField(assert) {
-			var oGroupElementOverlay = OverlayRegistry.getOverlay(this.oMultipleFieldOneBoundGroupElement);
+			var oGroupElementOverlay = OverlayRegistry.getOverlay(this.oMultipleFieldTwoBoundGroupElements);
 			fnTriggerContextMenuClick(oGroupElementOverlay);
 
 			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
@@ -267,6 +250,7 @@ function(
 				oSettings.registerElementOverlay(oGroupOverlay);
 
 				oGroupOverlay.focus();
+				oGroupOverlay.setSelected(true);
 				fnTriggerKeydown(oGroupOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 
 				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
@@ -280,6 +264,7 @@ function(
 			this.oPage._headerTitle = null;
 			var oPageOverlay = OverlayRegistry.getOverlay(this.oPage);
 			oPageOverlay.focus();
+			oPageOverlay.setSelected(true);
 			fnTriggerKeydown(oPageOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 
 			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
@@ -294,6 +279,7 @@ function(
 			var oFormElement = oLabel.getParent();
 			var oFormElementOverlay = OverlayRegistry.getOverlay(oFormElement);
 			oFormElementOverlay.focus();
+			oFormElementOverlay.setSelected(true);
 			fnTriggerKeydown(oFormElementOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 
 			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
@@ -310,6 +296,7 @@ function(
 			var oForm = this.oSimpleFormWithTitles.getAggregation("form");
 			var oFormOverlay = OverlayRegistry.getOverlay(oForm);
 			oFormOverlay.focus();
+			oFormOverlay.setSelected(true);
 			fnTriggerKeydown(oFormOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 
 			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
@@ -323,6 +310,7 @@ function(
 			var oFormContainer = oTitle.getParent();
 			var oFormContainerOverlay = OverlayRegistry.getOverlay(oFormContainer);
 			oFormContainerOverlay.focus();
+			oFormContainerOverlay.setSelected(true);
 			fnTriggerKeydown(oFormContainerOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 
 			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
@@ -334,26 +322,6 @@ function(
 			assert.equal(oContextMenuControl.getButtons()[2].data("id"), "CTX_CREATE_SIBLING_CONTAINER", "create group is available");
 			assert.equal(oContextMenuControl.getButtons()[3].data("id"), "CTX_REMOVE", "remove group is available");
 			assert.equal(oContextMenuControl.getButtons()[4].data("id"), "CTX_PASTE", "paste field is available");
-		}
-
-		function fnSimpleFormFormContainer(assert) {
-			var oToolbar = this.oSimpleFormWithToolbars.getContent()[0];
-			var oFormContainer = oToolbar.getParent();
-			var oFormContainerOverlay = OverlayRegistry.getOverlay(oFormContainer);
-			oFormContainerOverlay.focus();
-			fnTriggerKeydown(oFormContainerOverlay.getDomRef(), KeyCodes.F10, true, false, false);
-
-			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-			assert.ok(oContextMenuControl.bOpen, "when context menu (context menu) is opened (via keyboard) for a SimpleForm FormContainer with Toolbar");
-			assert.equal(oContextMenuControl.getButtons().length, 6, "6 Menu Buttons are available");
-			assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "rename toolbar is available");
-			assert.equal(oContextMenuControl.getButtons()[0].getEnabled(), false, "but rename toolbar is disabled");
-			assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_CHILD", "add field is available");
-			assert.equal(oContextMenuControl.getButtons()[2].data("id"), "CTX_CREATE_SIBLING_CONTAINER", "create group is available");
-			assert.equal(oContextMenuControl.getButtons()[2].getEnabled(), false, "but creating group is disabled");
-			assert.equal(oContextMenuControl.getButtons()[3].data("id"), "CTX_REMOVE", "remove group is available");
-			assert.equal(oContextMenuControl.getButtons()[4].data("id"), "CTX_CUT", "cut field is available");
-			assert.equal(oContextMenuControl.getButtons()[5].data("id"), "CTX_PASTE", "paste field is available");
 		}
 
 		function fnContextMenuOpenWithTestData(assert) {

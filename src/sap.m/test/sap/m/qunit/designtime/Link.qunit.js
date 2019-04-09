@@ -1,29 +1,23 @@
 sap.ui.define([
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/dt/test/report/QUnit",
-	"sap/ui/dt/test/ElementEnablementTest",
 	"sap/m/Link",
-	"sap/ui/rta/enablement/controlTest"
-], function(createAndAppendDiv, QUnitReport, ElementEnablementTest, Link, rtaControlEnablingCheck) {
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest"
+], function (
+	Link,
+	elementDesigntimeTest,
+	elementActionTest
+) {
 	"use strict";
-	createAndAppendDiv("content");
 
-
-	var oElementEnablementTest = new ElementEnablementTest({
-		type: "sap.m.Link",
-		create: function () {
-			return new Link();
-		}
-	});
-
-	return oElementEnablementTest.run()
-
-	.then(function (oData) {
-		new QUnitReport({
-			data: oData
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
+			type: "sap.m.Link",
+			create: function () {
+				return new Link();
+			}
 		});
 	})
-
 	.then(function() {
 		// Remove and reveal actions
 		var fnConfirmLinkIsInvisible = function (oUiComponent, oViewAfterAction, assert) {
@@ -34,7 +28,7 @@ sap.ui.define([
 			assert.strictEqual(oViewAfterAction.byId("myLink").getVisible(), true, "then the Link element is visible");
 		};
 
-		rtaControlEnablingCheck("Checking the remove action for Link", {
+		elementActionTest("Checking the remove action for Link", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">"' +
 			'<Link id="myLink" text="Open SAP Homepage" target="_blank" href="http://www.sap.com"/>' +
 			'</mvc:View>'
@@ -48,7 +42,7 @@ sap.ui.define([
 			afterRedo: fnConfirmLinkIsInvisible
 		});
 
-		rtaControlEnablingCheck("Checking the reveal action for a Link", {
+		elementActionTest("Checking the reveal action for a Link", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">"' +
 			'<Link id="myLink" text="Open SAP Homepage" target="_blank" href="http://www.sap.com" visible="false"/>' +
 			'</mvc:View>'
@@ -62,5 +56,4 @@ sap.ui.define([
 			afterRedo: fnConfirmLinkIsVisible
 		});
 	});
-
 });

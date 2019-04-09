@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/SimpleChanges",
 	"sap/ui/core/UIComponent",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/Device",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	jQuery,
@@ -41,6 +42,7 @@ sap.ui.define([
 	SimpleChanges,
 	UIComponent,
 	KeyCodes,
+	Device,
 	sinon
 ) {
 	"use strict";
@@ -353,6 +355,17 @@ sap.ui.define([
 			assert.notOk(oOverlay.isSelected(), "then this overlay is not selected");
 		});
 
+		QUnit.test("Pressing ENTER on an Overlay", function (assert) {
+			var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
+			this.oSelectionManager.add(oOverlay1);
+			var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
+			oOverlay2.focus();
+			this.oEvent.keyCode = KeyCodes.ENTER;
+			oOverlay2.$().trigger(this.oEvent);
+			assert.notOk(oOverlay1.isSelected(), "then Overlay1 is not selected");
+			assert.ok(oOverlay2.isSelected(), "then Overlay2 is selected");
+		});
+
 		QUnit.test("Pressing CTRL-ENTER on an Overlay", function (assert) {
 			var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
 			this.oSelectionManager.add(oOverlay1);
@@ -401,8 +414,28 @@ sap.ui.define([
 			assert.ok(Utils.getFocusedOverlay() === oNextSiblingOverlay, "Next Sibling Overlay is focused");
 		});
 
+		QUnit.test("Invoking 'contextmenu' on an Overlay which is selectable", function (assert) {
+			var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
+			this.oSelectionManager.add(oOverlay1);
+			var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
+			var oMouseEvent = jQuery.Event('contextmenu');
+			oOverlay2.$().trigger(oMouseEvent);
+			assert.notOk(oOverlay1.isSelected(), "then Overlay1 is not selected");
+			assert.ok(oOverlay2.isSelected(), "then Overlay2 is selected");
+		});
+
+		QUnit.test("Invoking 'click' on an Overlay which is selectable", function (assert) {
+			var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
+			this.oSelectionManager.add(oOverlay1);
+			var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
+			var oMouseEvent = jQuery.Event('click');
+			oOverlay2.$().trigger(oMouseEvent);
+			assert.notOk(oOverlay1.isSelected(), "then Overlay1 is not selected");
+			assert.ok(oOverlay2.isSelected(), "then Overlay2 is selected");
+		});
+
 		QUnit.test("Invoking Mouse-Down on an Overlay which is selectable", function (assert) {
-			sandbox.stub(sap.ui.Device.browser, "name").value("ie");
+			sandbox.stub(Device.browser, "name").value("ie");
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
 			assert.notOk(document.activeElement === oOverlay.getDomRef(), "when the Overlay is initially not focused");
 			var oMouseEvent = jQuery.Event('mousedown');
@@ -411,7 +444,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Invoking Mouse-Down on an Overlay which is not selectable", function (assert) {
-			sandbox.stub(sap.ui.Device.browser, "name").value("ie");
+			sandbox.stub(Device.browser, "name").value("ie");
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
 			oOverlay.setSelectable(false);
 			oOverlay.setFocusable(true);

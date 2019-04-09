@@ -156,6 +156,10 @@ sap.ui.define([
 		dnd: { draggable: false, droppable: true }
 	}});
 
+	var HYPHEN = String.fromCharCode(45),
+		ENDASH = String.fromCharCode(8211),
+		EMDASH = String.fromCharCode(8212);
+
 	/**
 	 * This file defines behavior for the control
 	 * @public
@@ -542,7 +546,8 @@ sap.ui.define([
 			sValue = sValue.trim();
 			sValue = _trim(sValue, [sDelimiter, " "]);
 
-			aDates = sValue.split(sDelimiter);
+			aDates = this._splitValueByDelimiter(sValue, sDelimiter);
+
 			if (aDates.length === 2) {
 				// if delimiter only appears once in value (not part of date pattern) remove " " to be more flexible for input
 				if (aDates[0].slice(aDates[0].length - 1,aDates[0].length) == " ") {
@@ -583,6 +588,28 @@ sap.ui.define([
 		}
 
 		return [oDate1, oDate2];
+
+	};
+
+	// Handles the splitting of the value into parts logic regarding a valid delimiter
+	DateRangeSelection.prototype._splitValueByDelimiter = function (sValue, sDelimiter) {
+		var aDelimiters = [HYPHEN, ENDASH, EMDASH],
+			i;
+
+		if (sDelimiter) { // if there is a passed delimiter - use it
+			if (aDelimiters.indexOf(sDelimiter) === -1) { // if the passed delimiter is not a variety of a dash - split by it
+				return sValue.split(sDelimiter);
+			}
+		}
+
+		for (i = 0; i < aDelimiters.length; i++) {
+			if (sValue.indexOf(aDelimiters[i]) > 0) { // there is no delimiter passed - split by dash
+				return sValue.split(aDelimiters[i]);
+			}
+		}
+
+		// only one date value is used
+		return sValue ? sValue.split(" ") : [];
 
 	};
 

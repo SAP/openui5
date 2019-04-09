@@ -1599,4 +1599,84 @@ sap.ui.define([
 		oParentPopup.attachOpened(fnOpened);
 		oParentPopup.open(0);
 	});
+
+	QUnit.test("Avoid calling getBoundingClientRect if the 'of' DOM element is removed from DOM tree", function(assert) {
+		var done = assert.async();
+
+		var my = Popup.Dock.CenterBottom;
+		var at = Popup.Dock.LeftTop;
+		var of = document.createElement("input");
+
+		document.body.appendChild(of);
+
+		this.oPopup.setPosition(my, at, of);
+		this.oPopup.setFollowOf(true);
+		this.oPopup.open();
+
+		try {
+			// simulate rerendering and make the of a dangling DOM
+			this.oPopup._oLastPosition.of = document.createElement("input");
+
+			var oSpy = this.spy(Popup, "checkDocking");
+
+			window.setTimeout(function() {
+				assert.ok(oSpy.callCount > 0, "checkDocking method is called");
+				done();
+			}, 300);
+		} catch (e) {
+			assert.ok(false, "Error occurred during check docking");
+			done();
+		}
+	});
+
+	QUnit.test("Verify blockLayerChange event", function(assert) {
+		var fnDone = assert.async();
+
+		var oPopup1DomRef = document.getElementById("popup1"),
+			oPopup1 = new Popup(oPopup1DomRef, true),
+			oPopup2DomRef = document.getElementById("popup2"),
+			oPopup2 = new Popup(oPopup2DomRef, true);
+
+		var oFireBlockLayerChangeSpy;
+
+		var fnClosingHandler = function() {
+			Popup.detachBlockLayerStateChange(fnClosingHandler);
+
+			var oSecondCallParams = oFireBlockLayerChangeSpy.getCall(1).args[1];
+			// Check whether event got fired with correct information
+			assert.ok(oFireBlockLayerChangeSpy.calledTwice,
+			"blockLayerChange event called twice");
+
+			assert.equal(oSecondCallParams.visible, false,
+				"Block layer should be set hidden after all popups have been closed");
+			assert.ok(oSecondCallParams.zIndex, "Contains popup zIndex for setting blocking layer");
+
+
+			oFireBlockLayerChangeSpy.restore();
+			fnDone();
+		};
+
+		var fnOpeningHandler = function () {
+			Popup.detachBlockLayerStateChange(fnOpeningHandler);
+
+			var oFirstCallParams = oFireBlockLayerChangeSpy.getCall(0).args[1];
+
+			assert.equal(oFirstCallParams.visible, true,
+				"Block layer should be set visible after first popup got opened");
+			assert.ok(oFirstCallParams.zIndex, "Contains blocking layer zIndex of last popup");
+
+			Popup.attachBlockLayerStateChange(fnClosingHandler);
+		};
+
+		Popup.attachBlockLayerStateChange(fnOpeningHandler);
+
+		oFireBlockLayerChangeSpy = sinon.spy(Popup._blockLayerStateProvider, "fireEvent");
+
+		oPopup1.open();
+		oPopup2.open();
+		oPopup2.close();
+		oPopup1.close();
+		oPopup1.destroy();
+		oPopup2.destroy();
+	});
 });

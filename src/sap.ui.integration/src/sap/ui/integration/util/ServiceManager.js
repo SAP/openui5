@@ -76,7 +76,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @param {string} sName The name of the service or a service configuration object.
-	 * @returns {Promise} A promise resolved when the service instance is ready.
 	 */
 	ServiceManager.prototype._initService = function (sName) {
 		var oServiceRef = this._mServices[sName] || {};
@@ -89,8 +88,6 @@ sap.ui.define([
 			});
 
 		this._mServices[sName] = oServiceRef;
-
-		return oServiceRef.promise;
 	};
 
 	/**
@@ -106,11 +103,16 @@ sap.ui.define([
 			if (!sServiceName
 				|| !this._mServices[sServiceName]
 				|| !Object.keys(this._mServices[sServiceName])) {
-				return Promise.reject(sErrorMessage);
+				fnReject(sErrorMessage);
+				return;
 			}
 
 			this._mServices[sServiceName].promise.then(function () {
-				fnResolve(this._mServices[sServiceName].instance);
+				if (this._mServices[sServiceName].instance) {
+					fnResolve(this._mServices[sServiceName].instance);
+				} else {
+					fnReject(sErrorMessage);
+				}
 			}.bind(this)).catch(fnReject);
 		}.bind(this));
 	};
@@ -126,15 +128,18 @@ sap.ui.define([
 			var oServiceEntry,
 				sFactory;
 			if (oInstance.bIsDestroyed) {
-				return Promise.reject(new Error("Service " + sName + " could not be loaded as the requestor " + oInstance.getMetadata().getName() + " was destroyed."));
+				fnReject(new Error("Service " + sName + " could not be loaded as the requestor " + oInstance.getMetadata().getName() + " was destroyed."));
+				return;
 			}
 			if (!mServices) {
-				return Promise.reject(new Error("No Services declared"));
+				fnReject(new Error("No Services declared"));
+				return;
 			} else {
 				oServiceEntry = mServices[sName];
 			}
 			if (!oServiceEntry || !oServiceEntry.factoryName) {
-				return Promise.reject(new Error("No Service '" + sName + "' declared or factoryName missing"));
+				fnReject(new Error("No Service '" + sName + "' declared or factoryName missing"));
+				return;
 			} else {
 				sFactory = oServiceEntry.factoryName;
 			}

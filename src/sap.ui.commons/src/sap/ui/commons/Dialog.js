@@ -329,6 +329,7 @@ sap.ui.define([
 			}
 			this.oPopup.setInitialFocusId(sId);
 			this.setAssociation("initialFocus", sId, /* suppress invalidate */ true);
+			return this;
 		};
 
 		/**

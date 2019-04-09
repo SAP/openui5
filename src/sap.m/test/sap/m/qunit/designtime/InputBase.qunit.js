@@ -1,8 +1,8 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/rta/enablement/controlTest"
-], function(QUnitUtils, createAndAppendDiv, rtaControlEnablingCheck) {
+	"sap/ui/rta/enablement/elementActionTest"
+], function(QUnitUtils, createAndAppendDiv, elementActionTest) {
 	'use strict';
 	createAndAppendDiv("content");
 
@@ -16,7 +16,7 @@ sap.ui.define([
 		assert.strictEqual(oViewAfterAction.byId("input").getVisible(), true, "then the InputBase element is visible");
 	};
 
-	rtaControlEnablingCheck("Checking the remove action for InputBase", {
+	elementActionTest("Checking the remove action for InputBase", {
 		xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">"' +
 		'<m:InputBase id="input" />' +
 		'</mvc:View>'
@@ -30,7 +30,7 @@ sap.ui.define([
 		afterRedo: fnConfirmInputIsInvisible
 	});
 
-	rtaControlEnablingCheck("Checking the reveal action for an InputBase", {
+	elementActionTest("Checking the reveal action for an InputBase", {
 		xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">"' +
 		'<m:InputBase id="input" visible="false"/>' +
 		'</mvc:View>'

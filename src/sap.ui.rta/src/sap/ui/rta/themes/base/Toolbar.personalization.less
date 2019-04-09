@@ -1,14 +1,15 @@
 /******************************************************************
 	Style of the Personalization Toolbar - base Theme
 *******************************************************************/
-@_sap_ui_rta_Toolbar_Personalization_TextColor: @sapUiWhite;  // #fff
-@_sap_ui_rta_Toolbar_Personalization_TextShadowColor : @sapUiDeepBG;  // #000
+@_sap_ui_rta_Toolbar_Personalization_TextColor: @sapUiWhite;												// #fff
+@_sap_ui_rta_Toolbar_Personalization_TextShadowColor : @sapUiDeepBG;										// #000
+@_sap_ui_rta_Toolbar_Personalization_BaseColor : darken(desaturate(@sapChart_OrderedColor_1, 48%), 14%);	// #435060
 
 .sapUiRtaToolbar.type_personalization {
 	top: auto;
 	top: initial;
 	bottom: 0;
-	background-color: @_sap_ui_rta_Toolbar_Personalization_TextColor;
+	background-color: @_sap_ui_rta_Toolbar_Personalization_BaseColor;
 	padding: 0 1rem;
 	opacity: 0.9;
 	height: 48px;

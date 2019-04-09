@@ -49,6 +49,54 @@
         "type": "FIX",
         "text": " sap.uxap.ObjectPageSection: SPACE key behavior handled correctly",
         "references": []
+      },
+      {
+        "id": "404a1d372c6dfc669d1afd10821dd1c522202e70",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageHeader: Action button parameter introduced",
+        "references": []
+      },
+      {
+        "id": "d007bf79146dcb8a194ce086aec0db0ad42fc31d",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Title and Subtitle IDs are now unique",
+        "references": []
+      },
+      {
+        "id": "3ce6c5d73eae9345e5883182da4b8940cb007c3d",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSection: SPACE key action preventing fixed",
+        "references": []
+      },
+      {
+        "id": "cd8ee4897ca3c58e31d4fec360701f8914b11b91",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSection: Showing empty title in RTA is fixed",
+        "references": []
+      },
+      {
+        "id": "de9969e2ac28b498f33a4970c5721342169c636c",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageHeader: Image styling aligned with Avatar",
+        "references": []
+      },
+      {
+        "id": "f3c3f55647fe1677d560a449bc37994d34a157d6",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Added ARIA role description to menu buttons",
+        "references": []
+      },
+      {
+        "id": "97a8618acef9c594bd68ce8317b810b1cda499e3",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fixed form paddings",
+        "references": []
+      },
+      {
+        "id": "dc573252bb4915dea93de026954f90207d6b5442",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Prevent unwanted content resize",
+        "references": []
       }
     ]
   }

@@ -1,4 +1,4 @@
-<core:View height="100%" xmlns:core="sap.ui.core"
+<mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc"
            xmlns="sap.uxap" xmlns:blockcolor="sap.uxap.sample.SharedBlocks">
 
 	<ObjectPageLayout id="ObjectPageLayout">
@@ -19,4 +19,4 @@
 			</ObjectPageSection>
 		</sections>
 	</ObjectPageLayout>
-</core:View>
+</mvc:View>

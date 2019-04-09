@@ -869,18 +869,74 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Preloads the expected first visible (sub)sections
+	 * on *initial* rendering  on the page
+	 * to make their data early available
+	 * (so that the user does not have to wait to see data).
+	 * @private
+	 */
 	ObjectPageLayout.prototype._preloadSectionsOnBeforeFirstRendering = function () {
-		var aToLoad;
-		if (!this.getEnableLazyLoading()) {
-			// In case we are not lazy loaded make sure that we connect the blocks properly...
-			aToLoad = this._getSectionsToRender(); // load all renderable sections
-
-		} else { //lazy loading, so connect first visible subsections
-			var aSectionBasesToLoad = this.getUseIconTabBar() ? this._grepCurrentTabSectionBases() : this._aSectionBases;
-			aToLoad = this._oLazyLoading.getSubsectionsToPreload(aSectionBasesToLoad);
-		}
+		var aToLoad = this._getSectionsToPreloadOnBeforeFirstRendering();
 
 		this._connectModelsForSections(aToLoad);
+
+		// early notify that subSections are being loaded
+		if (this.getEnableLazyLoading()) {
+			aToLoad.forEach(function (subSection) {
+				this.fireEvent("subSectionPreload", {
+					subSection: subSection
+				});
+			}, this);
+		}
+	};
+
+	/**
+	 * Returns a subset (or all) of the visible (sub)sections to be loaded on initial rendering.
+	 *
+	 * In case of *no* lazyLoading, it will return *all visible* sections
+	 *
+	 * In case of lazyLoading, it will return only the *first visible* subSections,
+	 * where *first visible* depends on:
+	 * (1) the currently <code>selectedSection</code>
+	 * (2) the static configuration for the count of items to preload in <code>sap.uxap._helpers.LazyLoading</code>
+	 *
+	 * @returns the subSections list
+	 */
+	ObjectPageLayout.prototype._getSectionsToPreloadOnBeforeFirstRendering = function () {
+		var aSectionBases,
+			oSelectedSection,
+			iIndexOfSelectedSection;
+
+		if (!this.getEnableLazyLoading()) {
+			// In case we are not lazy loaded make sure that we connect the blocks properly...
+			return this._getSectionsToRender(); // load *all* renderable sections
+		}
+
+		if (this.getUseIconTabBar()) { //lazy loading and tabs => connect first visible subsections of current tab
+			return this._oLazyLoading.getSubsectionsToPreload(this._grepCurrentTabSectionBases());
+		}
+
+		// connect the first visible subsections
+		// first visible depends on selectedSection => obtain latest selectedSection first:
+		this._adjustSelectedSectionByUXRules();
+		oSelectedSection = this.oCore.byId(this.getSelectedSection());
+
+		if (!oSelectedSection || (oSelectedSection === this._oFirstVisibleSection)) {
+			return this._oLazyLoading.getSubsectionsToPreload(this._aSectionBases); // no offset needed, as selectedSection is the firstVisible
+		}
+
+		// return only subsections that include and follow the selectedSection
+		// => discard sections *above* the selected one
+		// as they will not be within the first visible in the viewport
+		iIndexOfSelectedSection = this.indexOfSection(oSelectedSection);
+		var fnFilterSections = function (oSectionBase) {
+			var oSection = oSectionBase.isA("sap.uxap.ObjectPageSection") ? oSectionBase : oSectionBase.getParent();
+			return this.indexOfSection(oSection) >= iIndexOfSelectedSection;
+		}.bind(this);
+
+		aSectionBases = this._aSectionBases.filter(fnFilterSections);
+		return this._oLazyLoading.getSubsectionsToPreload(aSectionBases);
 	};
 
 	ObjectPageLayout.prototype._grepCurrentTabSectionBases = function () {
@@ -1814,7 +1870,7 @@ sap.ui.define([
 				}.bind(this), iDuration);
 			}
 
-			this._preloadSectionsOnScroll(oSection);
+			this._preloadSectionsOnBeforeScroll(oSection);
 
 			this.getHeaderTitle() && this._shiftHeaderTitle();
 
@@ -1861,7 +1917,17 @@ sap.ui.define([
 		return iScrollTo;
 	};
 
-	ObjectPageLayout.prototype._preloadSectionsOnScroll = function (oTargetSection) {
+	/**
+	 * Preloads the next visible subsections.
+	 * The function should be called upon request [by anchorBar click or API call] to scroll to a new section,
+	 * in order to preload the target section so that its data is available by the time the scroll animation completed.
+	 *
+	 * The total count of subSections (within or after the target section) to preload depends on the static configuration
+	 * for preload in <code>sap.uxap._helpers.LazyLoading</code>
+	 * @param {object} oTargetSection the section
+	 * @private
+	 */
+	ObjectPageLayout.prototype._preloadSectionsOnBeforeScroll = function (oTargetSection) {
 
 		var sId = oTargetSection.getId(),
 			aToLoad;
@@ -3241,19 +3307,22 @@ sap.ui.define([
 			$Clone,
 			iHeight;
 
+		// BCP: 1870298358 - setting overflow-y to hidden of the wrapper element to eliminate unwanted
+		// scrollbar appearing during measurement of the snapped title height
+		this._$opWrapper.css("overflow-y", "hidden");
+
 		if (bViaClone) {
-			// BCP: 1870298358 - setting overflow-y to hidden of the wrapper element during clone to eliminate unwanted
-			// scrollbar appearing during measurement of cloned header
-			this._$opWrapper.css("overflow-y", "hidden");
 			$Clone = this._appendTitleCloneToDOM(true /* enable snapped mode */);
 			iHeight = $Clone.height();
 			$Clone.remove(); //clean dom
-			this._$opWrapper.css("overflow-y", "auto");
 		} else if (oTitle && oTitle.snap) {
 			oTitle.snap(false);
 			iHeight = oTitle.$().outerHeight();
 			oTitle.unSnap(false);
 		}
+
+		// restore scrolling
+		this._$opWrapper.css("overflow-y", "auto");
 
 		return iHeight;
 	};

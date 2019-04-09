@@ -1,10 +1,14 @@
-/* global QUnit*/
+/* global QUnit */
 sap.ui.define([
 	"sap/ui/core/util/reflection/XmlTreeModifier",
+	"sap/ui/util/XMLHelper",
+	"sap/ui/base/Event",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
 	XmlTreeModifier,
+	XMLHelper,
+	Event,
 	sinon
 ) {
 	"use strict";
@@ -28,7 +32,6 @@ function(
 					'xmlns:mvc="sap.ui.core.mvc" ' +
 					'xmlns="sap.m" ' +
 					'xmlns:f="sap.f" ' +
-					'xmlns:layout="sap.ui.layout" ' +
 					'xmlns:fl="sap.ui.fl">' +
 					'<VBox>\n' +
 						'<tooltip>\n</tooltip>' +	//empty 0..1 aggregation
@@ -46,16 +49,16 @@ function(
 					'<Bar tooltip="barTooltip">' + //control without default aggregation, tooltip aggregation filled with altType
 					'</Bar>\n' +
 					'<VBox id="foo.' + this.HBOX_ID + '">' +
-						'<Button text="Button1"></Button>' +
+						'<Button text="Button1" id="button1"></Button>' +
 						'<Button text="Button2"></Button>\n' +
 						'<Button text="Button3"></Button>' +
 					'</VBox>' +
 					'<f:DynamicPageTitle id="title1">\n' +
-						'<actions>\n' +
+						'<f:actions>\n' +
 							'<Button text="Action1"></Button>\n' +
 							'<Button text="Action2"></Button>\n' +
 							'<Button text="Action3"></Button>' +
-						'</actions>' +
+						'</f:actions>' +
 					'</f:DynamicPageTitle>' +
 					'<VBox id="vbox2">' +
 						'<tooltip>\n</tooltip>' +
@@ -64,16 +67,16 @@ function(
 						'<Button text="Button3"></Button>' +
 					'</VBox>' +
 					'<f:DynamicPageTitle id="title2" fl:flexibility="' + this.CHANGE_HANDLER_PATH + '">' +
-						'<actions>' +
+						'<f:actions>' +
 							'<Button text="Action1"></Button>' +
 							'<Button text="Action2"></Button>' +
 							'<Button text="Action3"></Button>' +
-						'</actions>' +
-						'<snappedContent>' +
-							'<text text="text1"></text>' +
-							'<text text="text2"></text>' +
-							'<text text="text3"></text>' +
-						'</snappedContent>' +
+						'</f:actions>' +
+						'<f:snappedContent>' +
+							'<Text text="text1"></Text>' +
+							'<Text text="text2"></Text>' +
+							'<Text text="text3"></Text>' +
+						'</f:snappedContent>' +
 					'</f:DynamicPageTitle>' +
 					'<VBox id="stashedExperiments">' +
 						'<Label text="visibleLabel" stashed="false"></Label>' +
@@ -81,7 +84,7 @@ function(
 					'</VBox>' +
 					'<QuickViewPage id="' + this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT + '" crossAppNavCallback="\\{&quot;key&quot;:&quot;value&quot;\\}" />' +
 				'</mvc:View>';
-			this.oXmlView = jQuery.sap.parseXML(this.oXmlString, "application/xml").documentElement;
+			this.oXmlView = XMLHelper.parse(this.oXmlString, "application/xml").documentElement;
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -321,14 +324,44 @@ function(
 			var sStringifiedData = oControl.getAttribute("crossAppNavCallback");
 			assert.strictEqual(sStringifiedData, '\\{"key2":2\\}', "returns json value stringified and escaped");
 		});
-		QUnit.test("applySettings", function (assert) {
-			var oVBox = XmlTreeModifier._children(this.oXmlView)[0];
+
+		function getVisibleLabel(oXmlView){
+			var oVBox = XmlTreeModifier._children(oXmlView)[0];
 			var aChildNodes = XmlTreeModifier._children(oVBox);
 
-			var oVisibleLabel = aChildNodes[1];
-			XmlTreeModifier.applySettings(oVisibleLabel, {text: "Test", design: "Bold" });
+			return aChildNodes[1];
+		}
+
+		QUnit.test("applySettings", function (assert) {
+			var oVisibleLabel = getVisibleLabel(this.oXmlView);
+
+			XmlTreeModifier.applySettings(oVisibleLabel, {
+				design: "Bold", //simple property type string
+				required: true, //property type is not string
+				labelFor: this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT //association
+			});
 			assert.strictEqual(XmlTreeModifier.getProperty(oVisibleLabel, "design"), "Bold", "the design value is changed from applySettings");
-			assert.strictEqual(XmlTreeModifier.getProperty(oVisibleLabel, "text"), "Test", "the text value is changed from applySettings");
+			assert.strictEqual(XmlTreeModifier.getProperty(oVisibleLabel, "required"), true, "the required value is changed from applySettings");
+
+			var sAssociatedControlId = XmlTreeModifier.getAssociation(oVisibleLabel, "labelFor");
+			assert.strictEqual(sAssociatedControlId, this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT);
+		});
+
+		QUnit.test("applySetting with association as object", function (assert) {
+			var oVisibleLabel = getVisibleLabel(this.oXmlView);
+			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
+			XmlTreeModifier.applySettings(oVisibleLabel, {
+				labelFor: oControl //association
+			});
+			var sAssociatedControlId = XmlTreeModifier.getAssociation(oVisibleLabel, "labelFor");
+			assert.strictEqual(sAssociatedControlId, this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT);
+		});
+
+		QUnit.test("applySetting with property of type object", function (assert) {
+			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
+			var mData = { key2 : 2};
+			XmlTreeModifier.applySettings(oControl, {crossAppNavCallback: mData});
+			assert.deepEqual(XmlTreeModifier.getProperty(oControl, "crossAppNavCallback"), mData, "the property of type object returns in JSON notation");
 		});
 
 		QUnit.test("isPropertyInitial", function (assert) {
@@ -351,7 +384,23 @@ function(
 			assert.strictEqual(oVisibleLabel.getAttribute("visible"), null, "default value, property not in xml");
 		});
 
-		QUnit.test("_byId finds the node specified", function (assert) {
+		//label has single association labelFor
+		QUnit.test("setAssociation and removeAssociation works with single association and control id passed", function(assert) {
+			var oControl = getVisibleLabel(this.oXmlView);
+
+			XmlTreeModifier.setAssociation(oControl, "labelFor", this.HBOX_ID);
+			assert.strictEqual(XmlTreeModifier.getAssociation(oControl, "labelFor"), this.HBOX_ID);
+		});
+
+		QUnit.test("setAssociation works with single association and control instance passed", function(assert) {
+			var oControl = getVisibleLabel(this.oXmlView);
+			var oAssociatedControl = XmlTreeModifier._byId(this.HBOX_ID, this.oXmlView);
+
+			XmlTreeModifier.setAssociation(oControl, "labelFor", oAssociatedControl);
+			assert.strictEqual(XmlTreeModifier.getAssociation(oControl, "labelFor"), this.HBOX_ID, "associated control instance got converted to its ID");
+		});
+
+		QUnit.test("byId finds the node specified", function (assert) {
 			var oExpectedHBox = XmlTreeModifier._children(this.oXmlView)[1];
 			oExpectedHBox.setAttributeNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.Internal/1", "id", true);
 			var oExpectedText = oExpectedHBox.childNodes[1].childNodes[1];
@@ -371,9 +420,12 @@ function(
 			assert.strictEqual(XmlTreeModifier.findIndexInParentAggregation(oTooltip), 0, "The function returned the correct index.");
 		});
 
+		function getButton(oXmlView) {
+			var oVBox = XmlTreeModifier._children(oXmlView)[3];
+			return oVBox.lastElementChild;
+		}
 		QUnit.test("findIndexInParentAggregation returns the correct value: case 2 - default aggregation only in xml tree", function (assert) {
-			var oVBox = XmlTreeModifier._children(this.oXmlView)[3];
-			var oButton = oVBox.lastElementChild;
+			var oButton = getButton(this.oXmlView);
 
 			assert.strictEqual(XmlTreeModifier.findIndexInParentAggregation(oButton), 2, "The function returned the correct index.");
 		});
@@ -479,6 +531,155 @@ function(
 			var aControls = XmlTreeModifier.instantiateFragment(sFragment, "foo", this.oXmlView);
 			assert.equal(aControls.length, 1, "there is 1 control returned");
 			assert.equal(aControls[0].getAttribute("id"), "foo.button123", "the ID got prefixed");
+		});
+	});
+
+	QUnit.module("Events", {
+		before: function () {
+			this.createView = function (oXmlView) {
+				return sap.ui.xmlview({
+					viewContent: XMLHelper.serialize(oXmlView)
+				});
+			};
+		},
+		beforeEach: function () {
+			this.oComponent = sap.ui.getCore().createComponent({
+				name: "sap.ui.test.other",
+				id: "testComponent"
+			});
+
+			this.oXmlString = (
+				'<mvc:View ' +
+					'id="testComponent---myView" ' +
+					'xmlns:mvc="sap.ui.core.mvc" ' +
+					'xmlns="sap.m"' +
+				'>' +
+						'<Button text="Button1" id="button1"></Button>' +
+				'</mvc:View>'
+			);
+			this.oXmlView = XMLHelper.parse(this.oXmlString, "application/xml").documentElement;
+
+			this.oButton = XmlTreeModifier._byId('button1', this.oXmlView);
+
+			this.oSpy1 = sandbox.spy();
+			window.$sap__qunit_presshandler1 = this.oSpy1;
+
+			this.oSpy2 = sandbox.spy();
+			window.$sap__qunit_presshandler2 = this.oSpy2;
+		},
+		afterEach: function () {
+			if (this.oView) {
+				this.oView.destroy();
+			}
+			this.oComponent.destroy();
+			delete window.$sap__qunit_presshandler1;
+			delete window.$sap__qunit_presshandler2;
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("attachEvent() — basic case", function (assert) {
+			XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1");
+
+			this.oView = this.createView(this.oXmlView);
+			this.oView.byId("button1").firePress();
+
+			assert.strictEqual(this.oSpy1.callCount, 1);
+			assert.strictEqual(this.oSpy1.withArgs(sinon.match.instanceOf(Event)).callCount, 1);
+		});
+
+		QUnit.test("attachEvent() — basic case with parameters", function (assert) {
+			XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1", { foo: "bar" }]);
+
+			this.oView = this.createView(this.oXmlView);
+			this.oView.byId("button1").firePress();
+
+			assert.strictEqual(this.oSpy1.callCount, 1);
+			assert.strictEqual(this.oSpy1.withArgs(sinon.match.instanceOf(Event), ["param0", "param1", { foo: "bar" }]).callCount, 1);
+		});
+
+		QUnit.test("attachEvent() — two different event handlers with different set of parameters for the same event name", function (assert) {
+			XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1"]);
+			XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler2", ["param2", "param3"]);
+
+			this.oView = this.createView(this.oXmlView);
+			this.oView.byId("button1").firePress();
+
+			assert.strictEqual(this.oSpy1.callCount, 1);
+			assert.strictEqual(this.oSpy1.withArgs(sinon.match.instanceOf(Event), ["param0", "param1"]).callCount, 1);
+			assert.strictEqual(this.oSpy2.callCount, 1);
+			assert.strictEqual(this.oSpy2.withArgs(sinon.match.instanceOf(Event), ["param2", "param3"]).callCount, 1);
+		});
+
+		QUnit.test("attachEvent() — attempt to attach non-existent function", function (assert) {
+			assert.throws(
+				function () {
+					XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_non_existent_handler");
+				}.bind(this),
+				/function is not found/
+			);
+		});
+
+		QUnit.test("attachEvent() — two equal event handlers with a different set of parameters", function (assert) {
+			XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1"]);
+			XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param2", "param3"]);
+
+			this.oView = this.createView(this.oXmlView);
+			this.oView.byId("button1").firePress();
+
+			assert.strictEqual(this.oSpy1.callCount, 2);
+			assert.strictEqual(this.oSpy1.withArgs(sinon.match.instanceOf(Event), ["param0", "param1"]).callCount, 1);
+			assert.strictEqual(this.oSpy1.withArgs(sinon.match.instanceOf(Event), ["param2", "param3"]).callCount, 1);
+		});
+
+		QUnit.test("detachEvent() — basic case", function (assert) {
+			assert.notOk(this.oButton.hasAttribute("press"));
+
+			XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1");
+			XmlTreeModifier.detachEvent(this.oButton, "press", "$sap__qunit_presshandler1");
+
+			assert.notOk(this.oButton.hasAttribute("press"));
+
+			this.oView = this.createView(this.oXmlView);
+			this.oView.byId("button1").firePress();
+
+			assert.strictEqual(this.oSpy1.callCount, 0);
+		});
+
+		QUnit.test("detachEvent() — basic case", function (assert) {
+			assert.notOk(this.oButton.hasAttribute("press"));
+
+			XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1");
+			XmlTreeModifier.detachEvent(this.oButton, "press", "$sap__qunit_presshandler1");
+
+			assert.notOk(this.oButton.hasAttribute("press"));
+
+			this.oView = this.createView(this.oXmlView);
+			this.oView.byId("button1").firePress();
+
+			assert.strictEqual(this.oSpy1.callCount, 0);
+		});
+
+		QUnit.test("detachEvent() — three event handlers, two of them are with a different set of parameters", function (assert) {
+			XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1");
+			XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler2", ["param0", "param1"]);
+			XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler2", ["param2", "param3"]);
+			XmlTreeModifier.detachEvent(this.oButton, "press", "$sap__qunit_presshandler2");
+
+			this.oView = this.createView(this.oXmlView);
+			this.oView.byId("button1").firePress();
+
+			assert.strictEqual(this.oSpy1.callCount, 1);
+			assert.strictEqual(this.oSpy2.callCount, 1);
+			assert.strictEqual(this.oSpy2.withArgs(sinon.match.instanceOf(Event), ["param2", "param3"]).callCount, 1);
+		});
+
+		QUnit.test("detachEvent() — attempt to detach non-existent function", function (assert) {
+			assert.throws(
+				function () {
+					XmlTreeModifier.detachEvent(this.oButton, "press", "$sap__qunit_non_existent_handler");
+				}.bind(this),
+				/function is not found/
+			);
 		});
 	});
 });

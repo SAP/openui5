@@ -1,47 +1,41 @@
 sap.ui.define([
-	"sap/ui/dt/test/report/QUnit",
-	"sap/ui/dt/test/ElementEnablementTest",
 	"sap/ui/layout/BlockLayout",
 	"sap/ui/layout/BlockLayoutRow",
 	"sap/ui/layout/BlockLayoutCell",
 	"sap/m/Text",
-	"sap/ui/rta/enablement/controlTest"
-], function (QUnitReport,
-			 ElementEnablementTest,
-			 BlockLayout,
-			 BlockLayoutRow,
-			 BlockLayoutCell,
-			 Text,
-			 rtaControlEnablingCheck) {
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest"
+], function (
+	BlockLayout,
+	BlockLayoutRow,
+	BlockLayoutCell,
+	Text,
+	elementDesigntimeTest,
+	elementActionTest
+) {
 	"use strict";
 
-	var oElementEnablementTest = new ElementEnablementTest({
-		type: "sap.ui.layout.BlockLayoutCell",
-		create: function () {
-			return new BlockLayout({
-				content: [
-					new BlockLayoutRow({
-						content: [
-							new BlockLayoutCell({
-								content: [
-									new Text({text: "Text"})
-								]
-							})
-						]
-					})
-				]
-			});
-		}
-	});
-
-	return oElementEnablementTest.run()
-
-	.then(function (oData) {
-		new QUnitReport({
-			data: oData
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
+			type: "sap.ui.layout.BlockLayoutCell",
+			create: function () {
+				return new BlockLayout({
+					content: [
+						new BlockLayoutRow({
+							content: [
+								new BlockLayoutCell({
+									content: [
+										new Text({text: "Text"})
+									]
+								})
+							]
+						})
+					]
+				});
+			}
 		});
 	})
-
 	.then(function() {
 		// Move action
 		var fnConfirmElement1IsOn2rdPosition = function (oUiComponent, oViewAfterAction, assert) {
@@ -55,7 +49,7 @@ sap.ui.define([
 				"then the control has been moved to the previous position");
 		};
 
-		rtaControlEnablingCheck("Checking the move action for BlockLayoutCell control", {
+		elementActionTest("Checking the move action for BlockLayoutCell control", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">' +
 			'<l:BlockLayout id="blockLayout">' +
 				'<l:content>' +
@@ -108,7 +102,7 @@ sap.ui.define([
 			assert.strictEqual(oViewAfterAction.byId("cell1").getVisible(), true, "then the BlockLayoutCell element is visible");
 		};
 
-		rtaControlEnablingCheck("Checking the remove action for BlockLayoutCell", {
+		elementActionTest("Checking the remove action for BlockLayoutCell", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">' +
 			'<l:BlockLayout id="blockLayout">' +
 				'<l:content>' +
@@ -143,7 +137,7 @@ sap.ui.define([
 			afterRedo: fnConfirmRowInvisible
 		});
 
-		rtaControlEnablingCheck("Checking the reveal action for a BlockLayoutCell", {
+		elementActionTest("Checking the reveal action for a BlockLayoutCell", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">' +
 			'<l:BlockLayout id="blockLayout">' +
 				'<l:content>' +
@@ -190,7 +184,7 @@ sap.ui.define([
 				"then the control has been renamed to the old value (Cell Title)");
 		};
 
-		rtaControlEnablingCheck("Checking the rename action for a BlockLayoutCell", {
+		elementActionTest("Checking the rename action for a BlockLayoutCell", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">' +
 			'<l:BlockLayout id="blockLayout">' +
 				'<l:content>' +

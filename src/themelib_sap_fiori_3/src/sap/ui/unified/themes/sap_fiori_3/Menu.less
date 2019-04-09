@@ -7,20 +7,22 @@
 	opacity: @sapUiContentDisabledOpacity;
 }
 
-
 /** Cozy Mode **/
 
 .sapUiMnu.sapUiMnuCozySupport.sapUiSizeCozy {
-	
+
 	.sapUiMnuDiv > hr {
 		left: 0rem;
 		right: 0rem;
-	  	margin-top: 0;
+		margin-top: 0;
 		margin-bottom: 0;
 	}
 
 	.sapUiMnuDiv {
 	  height: 1px;
 	}
+}
 
+.sapUiMnuItm.sapUiMnuItmSubMnuOpen.sapUiMnuItmHov:hover {
+	background-color: @sapUiListSelectionHoverBackground;
 }

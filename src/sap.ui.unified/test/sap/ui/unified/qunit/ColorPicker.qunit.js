@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/m/RadioButton",
 	"sap/m/Slider",
 	"sap/ui/core/InvisibleText",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/waitForThemeApplied"
-], function(ColorPicker, InputBase, Label, RadioButtonGroup, RadioButton, Slider, InvisibleText, waitForThemeApplied) {
+], function(ColorPicker, InputBase, Label, RadioButtonGroup, RadioButton, Slider, InvisibleText, qutils, waitForThemeApplied) {
 	"use strict";
 
 	(function () {
@@ -93,13 +94,15 @@ sap.ui.define([
 				"The alpha slider value should be 0 - transparent");
 			oAssert.strictEqual(this.oCP.oAlphaField.getValue(), "0",
 				"The alpha field value should be '0' - transparent");
+			oAssert.strictEqual(this.oCP.oAlphaField2.getValue(), "0",
+			"The second alpha field value should be '0' - transparent");
 			oAssert.strictEqual(this.oCP.oHexField.getValue(), "000000",
 				"The hex field value should be '000000'");
 		});
 
 		QUnit.module("Internals", {
 			beforeEach: function () {
-				this.oCP = new ColorPicker();
+				this.oCP = new ColorPicker("cp");
 			},
 			afterEach: function () {
 				this.oCP.destroy();
@@ -178,8 +181,46 @@ sap.ui.define([
 			// Assert
 			oAssert.strictEqual(this.oCP.oHexField.getValue(), "427dae",
 				"The hex value will change when changing the Alpha slider in HSL output mode");
+			oAssert.strictEqual(this.oCP.oAlphaField.getValue(), "0.2",
+			"The alpha value will change when changing the Alpha slider in HSL output mode");
+			oAssert.strictEqual(this.oCP.oAlphaField2.getValue(), "0.2",
+			"The second alpha value will change when changing the Alpha slider in HSL output mode");
+
 			oAssert.strictEqual(oPHSLCSpy.callCount, 1, "_processHSLChanges should be called once");
 			oAssert.strictEqual(oPRGBCSpy.callCount, 0, "_processRGBChanges should not be called");
+		});
+
+		QUnit.test("Alpha fields and alpha slider are in sync", function (oAssert) {
+			// Arrange
+			this.oCP.setColorString("427cac");
+			this.oCP.setMode(sap.ui.unified.ColorPickerMode.HSL);
+			this.oCP.placeAt("qunit-fixture");
+			applyChanges();
+
+			// Act - simulate typing in the first alpha value field.
+			this.oCP.oAlphaField.focus();
+			jQuery("#cp-aF").find("input").val("0.5");
+			qutils.triggerKeyboardEvent("cp-aF-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+			jQuery("#cp-aF").find("input").change();
+
+			// Assert
+			oAssert.strictEqual(this.oCP.oAlphaField2.getValue(), "0.5",
+			"The second alpha value will change when we type in the first alpha field");
+			oAssert.strictEqual(this.oCP.oAlphaSlider.getValue(), 0.5,
+			"The alpha slider value will change when we type in the first alpha field");
+
+			// Act - simulate typing in the second alpha value field.
+			this.oCP.oAlphaField.focus();
+			jQuery("#cp-aF2").find("input").val("0.3");
+			qutils.triggerKeyboardEvent("cp-aF2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+			jQuery("#cp-aF2").find("input").change();
+
+			// Assert
+			oAssert.strictEqual(this.oCP.oAlphaField.getValue(), "0.3",
+			"The first alpha value will change when typing in the second alpha field");
+			oAssert.strictEqual(this.oCP.oAlphaSlider.getValue(), 0.3,
+			"The alpha slider value will change when we type in the second alpha field");
+
 		});
 
 		QUnit.module("Accessibility", {
@@ -251,6 +292,9 @@ sap.ui.define([
 
 			oAssert.strictEqual(this.oCP.oAlphaField.getAriaLabelledBy()[0], InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_ALPHA"),
 				"Alpha input is properly labelled by an invisible text.");
+
+			oAssert.strictEqual(this.oCP.oAlphaField2.getAriaLabelledBy()[0], InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_ALPHA"),
+			"Second Alpha input is properly labelled by an invisible text.");
 
 			oAssert.strictEqual(this.oCP.oValField.getAriaLabelledBy()[0], InvisibleText.getStaticId("sap.ui.unified", "COLORPICKER_VALUE"),
 				"Value input is properly labelled by an invisible text.");
@@ -422,6 +466,7 @@ sap.ui.define([
 			// Assert - internally created controls which have a pointer on the control context should be destroyed
 			['oCPBox',
 			'oAlphaField',
+			'oAlphaField2',
 			'oAlphaSlider',
 			'oBlueField',
 			'oGreenField',

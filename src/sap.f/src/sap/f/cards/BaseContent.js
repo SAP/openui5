@@ -181,6 +181,49 @@ sap.ui.define([
 	};
 
 	/**
+	 * Helper function to bind an aggregation.
+	 *
+	 * @param {string} sAggregation The name of the aggregation to bind.
+	 * @param {sap.ui.core.Control} oControl The control which aggregation is going to be bound.
+	 * @param {Object} oBindingInfo The binding info.
+	 */
+	function _bind(sAggregation, oControl, oBindingInfo) {
+		var oBindingContext = this.getBindingContext();
+		if (oBindingContext) {
+			oBindingInfo.path = oBindingContext.getPath();
+			oControl.bindAggregation(sAggregation, oBindingInfo);
+		}
+	}
+
+	/**
+	 * Binds an aggregation to the binding context path of the BaseContent.
+	 *
+	 * NOTE:
+	 * For now items will always be bound to the content's binding context path.
+	 * Later on this can be changed so that the content and items can have different binding context paths.
+	 *
+	 * Used for Card Content types which support aggregation binding (List, Table, Timeline).
+	 *
+	 * @protected
+	 * @param {string} sAggregation The name of the aggregation to bind.
+	 * @param {sap.ui.core.Control} oControl The control which aggregation is going to be bound.
+	 * @param {Object} oBindingInfo The binding info.
+	 */
+	BaseContent.prototype._bindAggregation = function (sAggregation, oControl, oBindingInfo) {
+		var bAggregation = sAggregation && typeof sAggregation === "string";
+		var bBindingInfo = oBindingInfo && typeof oBindingInfo === "object";
+		if (!bAggregation || !oControl || !bBindingInfo) {
+			return;
+		}
+
+		if (this.getBindingContext()) {
+			_bind.apply(this, arguments);
+		} else {
+			oControl.attachModelContextChange(_bind.bind(this, sAggregation, oControl, oBindingInfo));
+		}
+	};
+
+	/**
 	 * @returns {boolean} If the content is ready or not.
 	 */
 	BaseContent.prototype.isReady = function () {

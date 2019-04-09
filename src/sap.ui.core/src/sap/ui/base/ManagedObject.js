@@ -82,8 +82,12 @@ sap.ui.define([
 	 * <li>for 0..n aggregations, the value has to be an array of instances of the aggregated type or a single instance</li>
 	 * <li>for 0..1 associations, an instance of the associated type or an id (string) is accepted</li>
 	 * <li>for 0..n associations, an array of instances of the associated type or of IDs is accepted</li>
-	 * <li>for events either a function (event handler) is accepted or an array of length 2
-	 *     where the first element is a function and the 2nd element is an object to invoke the method on.</li>
+	 * <li>for events, either a function (event handler) is accepted or an array of length 2
+	 *     where the first element is a function and the 2nd element is an object to invoke the method on;
+	 *     or an array of length 3, where the first element is an arbitrary payload object, the
+	 *     second one is a function and the 3rd one is an object to invoke the method on;
+	 *     or an array of arrays where each nested array has the 2 or 3 element structure
+	 *     described before (multiple listeners).</li>
 	 * </ul>
 	 *
 	 * Each subclass should document the name and type of its supported settings in its constructor documentation.
@@ -1073,6 +1077,10 @@ sap.ui.define([
 			}
 		}
 
+		function attachListener(aArgs) {
+			that[oKeyInfo._sMutator](aArgs[0], aArgs[1], aArgs[2]);
+		}
+
 		// checks whether given type name has an object/any primitive type
 		function isObjectType(sType) {
 			var oType = DataType.getType(sType),
@@ -1193,8 +1201,10 @@ sap.ui.define([
 				case 5: // EVENT
 					if ( typeof oValue == "function" ) {
 						this[oKeyInfo._sMutator](oValue);
+					} else if (Array.isArray(oValue[0]) && (oValue.length <= 1 || Array.isArray(oValue[1])) ) {
+						oValue.forEach(attachListener);
 					} else {
-						this[oKeyInfo._sMutator](oValue[0], oValue[1], oValue[2]);
+						attachListener(oValue);
 					}
 					break;
 				case -1: // SPECIAL_SETTING

@@ -1,15 +1,13 @@
 sap.ui.define([
-	"sap/ui/dt/test/report/QUnit",
-	"sap/ui/dt/test/ElementEnablementTest",
-	"sap/ui/rta/enablement/controlTest",
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/m/Toolbar",
 	"sap/m/Button",
 	"sap/ui/layout/library"
-], function(
-	QUnit,
-	ElementEnablementTest,
-	rtaControlEnablingCheck,
+], function (
+	elementDesigntimeTest,
+	elementActionTest,
 	SimpleForm,
 	Toolbar,
 	Button,
@@ -20,30 +18,23 @@ sap.ui.define([
 	// shortcut for sap.ui.layout.form.SimpleFormLayout
 	var SimpleFormLayout = library.form.SimpleFormLayout;
 
-	var oElementEnablementTest = new ElementEnablementTest({
-		type: "sap.ui.layout.form.SimpleForm",
-		create: function () {
-			return new SimpleForm({
-				toolbar: new Toolbar({
-					content : [
-						new Button({text: "Button"})
-					]
-				}),
-				content: [
-				]
-			});
-		}
-	});
-
-	return oElementEnablementTest.run()
-
-	.then(function(oData) {
-		var oReport = new QUnit({
-			data: oData
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
+			timeout: 100, // timeout is required, see sap.ui.layout.form.SimpleForm#onAfterRendering method
+			type: "sap.ui.layout.form.SimpleForm",
+			create: function () {
+				return new SimpleForm({
+					toolbar: new Toolbar({
+						content : [
+							new Button({text: "Button"})
+						]
+					}),
+					content: []
+				});
+			}
 		});
-		oReport.destroy();
 	})
-
 	.then(function() {
 		function fnParameterizedTest(sSimpleFormLayout) {
 			function buildXMLForSimpleForm() {
@@ -87,7 +78,7 @@ sap.ui.define([
 					"then the input has moved as well");
 			}
 
-			rtaControlEnablingCheck("Checking the move action for SimpleForm with Layout=" + sSimpleFormLayout + " when moving title1 to first position", {
+			elementActionTest("Checking the move action for SimpleForm with Layout=" + sSimpleFormLayout + " when moving title1 to first position", {
 				xmlView: buildXMLForSimpleForm(),
 				action: {
 					name: "move",
@@ -133,7 +124,7 @@ sap.ui.define([
 					"then the input has been moved as well");
 			}
 
-			rtaControlEnablingCheck("Checking the move action for SimpleForm with Layout=" + sSimpleFormLayout + "when moving within group0 label00 to position of label01", {
+			elementActionTest("Checking the move action for SimpleForm with Layout=" + sSimpleFormLayout + "when moving within group0 label00 to position of label01", {
 				xmlView: buildXMLForSimpleForm(),
 				action: {
 					name: "move",
@@ -179,7 +170,7 @@ sap.ui.define([
 					"then the input has been moved as well");
 			}
 
-			rtaControlEnablingCheck("Checking the move action for SimpleForm with Layout=" + sSimpleFormLayout + "when moving label01 to position of label1 (different group)", {
+			elementActionTest("Checking the move action for SimpleForm with Layout=" + sSimpleFormLayout + "when moving label01 to position of label1 (different group)", {
 				xmlView: buildXMLForSimpleForm(),
 				action: {
 					name: "move",
@@ -225,7 +216,7 @@ sap.ui.define([
 					"then the input has been moved as well");
 			}
 
-			rtaControlEnablingCheck("Checking the move action for SimpleForm with Layout=" + sSimpleFormLayout + "when moving label00 into empty group", {
+			elementActionTest("Checking the move action for SimpleForm with Layout=" + sSimpleFormLayout + "when moving label00 into empty group", {
 				xmlView: buildXMLForSimpleForm(),
 				action: {
 					name: "move",
@@ -268,7 +259,7 @@ sap.ui.define([
 				assert.equal(oViewAfterAction.byId("simpleForm").getContent().length, 8, "then the length is back to 8");
 			}
 
-			rtaControlEnablingCheck("Checking the move action for SimpleForm with Layout=" + sSimpleFormLayout + "when adding a new group", {
+			elementActionTest("Checking the move action for SimpleForm with Layout=" + sSimpleFormLayout + "when adding a new group", {
 				xmlView: buildXMLForSimpleForm(),
 				action: {
 					name: "createContainer",

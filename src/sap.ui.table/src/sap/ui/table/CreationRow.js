@@ -77,6 +77,7 @@ sap.ui.define([
 	CreationRow.prototype.setApplyEnabled = function(bEnabled) {
 		this.setProperty("applyEnabled", bEnabled, true);
 		this._updateDefaultToolbar();
+		return this;
 	};
 
 	/**
@@ -86,6 +87,7 @@ sap.ui.define([
 	CreationRow.prototype.setParent = function(oParent) {
 		Control.prototype.setParent.apply(this, arguments);
 		this._update();
+		return this;
 	};
 
 	/**
@@ -172,7 +174,8 @@ sap.ui.define([
 					}
 				})
 			],
-			style: MLibrary.ToolbarStyle.Clear
+			style: MLibrary.ToolbarStyle.Clear,
+			ariaLabelledBy: [oCreationRow.getId() + "-label"]
 		});
 	}
 

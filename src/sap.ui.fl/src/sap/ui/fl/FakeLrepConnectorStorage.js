@@ -179,14 +179,16 @@ sap.ui.define([
 		 * The settings are take from the JSON file, but changes are replaced with
 		 * the changes from the local storage.
 		 *
-		 * @param {String} sComponentClassName Component class name
+		 * @param {map} mComponent Map with information about the Component
+		 * @param {string} mComponent.name name of the component
+		 * @param {string} mComponent.appVersion version of the app
 		 * @param {map} [mPropertyBag] Contains additional data needed for reading changes; Not used in this case
 		 * @param {sap.ui.fl.Change[]} [aBackendChanges] array of changes that will get added to the result
 		 * @returns {Promise} Returns a Promise with the changes and componentClassName
 		 * @public
 		 */
-		FakeLrepConnectorStorage.prototype.loadChanges = function(sComponentClassName, mPropertyBag, aBackendChanges) {
-			var aChanges = oFakeLrepStorage.getChanges();
+		FakeLrepConnectorStorage.prototype.loadChanges = function(mComponent, mPropertyBag, aBackendChanges) {
+			var aChanges = oFakeLrepStorage.getChanges(mComponent.name);
 
 			if (aBackendChanges) {
 				aChanges = aChanges.concat(aBackendChanges);
@@ -198,7 +200,7 @@ sap.ui.define([
 					jQuery.getJSON(this.mSettings.sInitialComponentJsonPath).done(function (oResponse) {
 						mResult = {
 							changes: oResponse,
-							componentClassName: sComponentClassName
+							componentClassName: mComponent.name
 						};
 						resolve(mResult);
 					}).fail(function (error) {
@@ -207,7 +209,8 @@ sap.ui.define([
 				} else {
 					resolve(mResult);
 				}
-			}.bind(this)).then(function(mResult) {
+			}.bind(this))
+			.then(function(mResult) {
 				var aVariants = [];
 				var aControlVariantChanges = [];
 				var aControlVariantManagementChanges = [];
@@ -233,7 +236,7 @@ sap.ui.define([
 
 				mResult.changes.contexts = [];
 				mResult.changes.settings = this.mSettings;
-				mResult.componentClassName = sComponentClassName;
+				mResult.componentClassName = mComponent.name;
 
 				return mResult;
 			}.bind(this));
@@ -347,7 +350,7 @@ sap.ui.define([
 			var aReferencedChanges = [];
 			withVariant(mResult, oCurrentVariant.content.variantManagementReference, oCurrentVariant.content.variantReference, function (oVariant) {
 				aReferencedChanges = oVariant.controlChanges.filter( function (oReferencedChange) {
-					return Utils.compareAgainstCurrentLayer(oReferencedChange.layer) === -1;
+					return Utils.compareAgainstCurrentLayer(oReferencedChange.layer, oCurrentVariant.layer) === -1;
 				});
 				if (oVariant.content.variantReference) {
 					aReferencedChanges = aReferencedChanges.concat(this._getReferencedChanges(mResult, oVariant));
@@ -373,10 +376,19 @@ sap.ui.define([
 				});
 			};
 
+			function checkIfVariantExists(mResult, sVariantReference) {
+				return Object.keys(mResult.changes.variantSection).some( function (sVariantManagementReference) {
+					var aVariants = mResult.changes.variantSection[sVariantManagementReference].variants;
+					return aVariants.some(function(oVariant) {
+						return oVariant.content.fileName === sVariantReference;
+					});
+				});
+			}
+
 			var mVariantManagementChanges = {};
 			aControlVariantManagementChanges.forEach(function(oVariantManagementChange) {
 				var sVariantManagementReference = oVariantManagementChange.selector.id;
-				if (Object.keys(mResult.changes.variantSection).length === 0) {
+				if (!mResult.changes.variantSection[sVariantManagementReference]) {
 					mResult.changes.variantSection[sVariantManagementReference] = this._getVariantManagementStructure(
 						[this._getVariantStructure(this._fakeStandardVariant(sVariantManagementReference), [], {})],
 						{}
@@ -392,11 +404,11 @@ sap.ui.define([
 			aChanges.forEach(function(oChange) {
 				if (!oChange.variantReference) {
 					mResult.changes.changes.push(oChange);
-				} else if (Object.keys(mResult.changes.variantSection).length === 0) {
-						mResult.changes.variantSection[oChange.variantReference] = this._getVariantManagementStructure(
-							[this._getVariantStructure(this._fakeStandardVariant(oChange.variantReference), [oChange], {})],
-							{}
-						);
+				} else if (!checkIfVariantExists(mResult, oChange.variantReference)) {
+					mResult.changes.variantSection[oChange.variantReference] = this._getVariantManagementStructure(
+						[this._getVariantStructure(this._fakeStandardVariant(oChange.variantReference), [oChange], {})],
+						{}
+					);
 				} else {
 					Object.keys(mResult.changes.variantSection).forEach(function(sVariantManagementReference) {
 						fnAddChangeToVariant(mResult, sVariantManagementReference, oChange);
@@ -405,7 +417,7 @@ sap.ui.define([
 			}.bind(this));
 
 			aControlVariantChanges.forEach(function(oVariantChange) {
-				if (Object.keys(mResult.changes.variantSection).length === 0) {
+				if (!checkIfVariantExists(mResult, oVariantChange.selector.id)) {
 					var mVariantChanges = {};
 					mVariantChanges[oVariantChange.changeType] = [oVariantChange];
 					mResult.changes.variantSection[oVariantChange.selector.id] = this._getVariantManagementStructure(
@@ -463,7 +475,7 @@ sap.ui.define([
 				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sAppComponentName, sAppVersion);
 				if (!(oChangePersistence._oConnector instanceof FakeLrepConnectorStorage)) {
 					if (!bSuppressCacheInvalidation) {
-						Cache.clearEntry(sAppComponentName, sAppVersion);
+						FakeLrepConnectorStorage.clearCacheAndResetVariants(sAppComponentName, sAppVersion, oChangePersistence);
 					}
 					if (!FakeLrepConnectorStorage._oBackendInstances[sAppComponentName]){
 						FakeLrepConnectorStorage._oBackendInstances[sAppComponentName] = {};
@@ -507,7 +519,7 @@ sap.ui.define([
 			if (sAppComponentName && sAppVersion) {
 				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sAppComponentName, sAppVersion);
 				if (!(oChangePersistence._oConnector instanceof LrepConnector)){
-					Cache.clearEntry(sAppComponentName, sAppVersion);
+					FakeLrepConnectorStorage.clearCacheAndResetVariants(sAppComponentName, sAppVersion, oChangePersistence);
 					if (FakeLrepConnectorStorage._oBackendInstances[sAppComponentName] && FakeLrepConnectorStorage._oBackendInstances[sAppComponentName][sAppVersion]) {
 						oChangePersistence._oConnector = FakeLrepConnectorStorage._oBackendInstances[sAppComponentName][sAppVersion];
 						FakeLrepConnectorStorage._oBackendInstances[sAppComponentName][sAppVersion] = undefined;
@@ -519,6 +531,11 @@ sap.ui.define([
 
 			Cache.clearEntries();
 			restoreConnectorFactory();
+		};
+
+		FakeLrepConnectorStorage.clearCacheAndResetVariants = function (sComponentName, sAppVersion, oChangePersistence) {
+			Cache.clearEntry(sComponentName, sAppVersion);
+			oChangePersistence.resetVariantMap(/*bResetAtRuntime*/true);
 		};
 
 		return FakeLrepConnectorStorage;

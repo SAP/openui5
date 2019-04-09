@@ -16,4 +16,7 @@
 }, {
 	"text": "Timeline Card",
 	"url": "./manifests/timeline.manifest.json"
+}, {
+	"text": "Table Card",
+	"url": "./manifests/table.manifest.json"
 }]

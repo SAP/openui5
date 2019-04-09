@@ -1,30 +1,26 @@
 /* global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/Page",
 	"sap/m/Bar",
-	"sap/ui/dt/test/report/QUnit",
-	"sap/ui/dt/test/ElementEnablementTest",
 	"dt/Page",
-	"sap/ui/rta/enablement/controlTest"
-], function(createAndAppendDiv, sapMPage, Bar, QUnitReport, ElementEnablementTest, Page, rtaControlEnablingCheck) {
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest"
+], function(
+	sapMPage,
+	Bar,
+	Page,
+	elementDesigntimeTest,
+	elementActionTest
+) {
 	"use strict";
-	createAndAppendDiv("content");
 
-
-	var oElementEnablementTest = new ElementEnablementTest({
-		type: "sap.m.Page",
-		create: Page.create
-	});
-
-	return oElementEnablementTest.run()
-
-	.then(function (oData) {
-		new QUnitReport({
-			data: oData
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
+			type: "sap.m.Page",
+			create: Page.create
 		});
 	})
-
 	.then(function() {
 		// Rename title action module
 		var fnConfirmPageTitleRenamedWithNewValue = function (oRadioButton, oViewAfterAction, assert) {
@@ -39,7 +35,7 @@ sap.ui.define([
 				"then the page title has been renamed to the old value (Old Title)");
 		};
 
-		rtaControlEnablingCheck("Checking the rename action for a Page title", {
+		elementActionTest("Checking the rename action for a Page title", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">"' +
 			'<m:Page title="Old Title" id="page" />' +
 			'</mvc:View>'
@@ -91,7 +87,7 @@ sap.ui.define([
 				"then the control has been moved to the previous position");
 		};
 
-		rtaControlEnablingCheck("Checking the move action for Page headerContent", {
+		elementActionTest("Checking the move action for Page headerContent", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">"' +
 				'<Page id="myPageId">' +
 					'<headerContent>' +
@@ -143,7 +139,7 @@ sap.ui.define([
 				"then the control has been moved to the previous position");
 		};
 
-		rtaControlEnablingCheck("Checking the move action for Page content", {
+		elementActionTest("Checking the move action for Page content", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">"' +
 			'<Page id="myPageId">' +
 			'<content>' +
@@ -198,7 +194,7 @@ sap.ui.define([
 			);
 		};
 
-		rtaControlEnablingCheck("Checking the combine action for sap.m.Button in sap.m.Page headerContent", {
+		elementActionTest("Checking the combine action for sap.m.Button in sap.m.Page headerContent", {
 			jsOnly : true,
 			xmlView :
 			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
@@ -242,7 +238,7 @@ sap.ui.define([
 
 		};
 
-		rtaControlEnablingCheck("Checking the split action for sap.m.MenuButton in sap.m.Page headerContent", {
+		elementActionTest("Checking the split action for sap.m.MenuButton in sap.m.Page headerContent", {
 			jsOnly : true,
 			xmlView :
 			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
@@ -279,5 +275,4 @@ sap.ui.define([
 			afterRedo : fnConfirmGroupMenuButtonIsSplited
 		});
 	});
-
 });

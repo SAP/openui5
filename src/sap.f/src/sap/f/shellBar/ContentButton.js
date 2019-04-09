@@ -26,7 +26,6 @@ function(library, Button, ContentButtonRenderer) {
 	 *
 	 * @constructor
 	 * @private
-	 * @experimental Since 1.63. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 * @since 1.63
 	 * @alias sap.f.shallBar.ContentButton
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel

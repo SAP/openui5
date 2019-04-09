@@ -616,6 +616,7 @@ sap.ui.define([
 		// Implementation of API method
 		ThingInspector.prototype.destroyActionBar = function() {
 			this._oThingViewer.destroyActionBar();
+			return this;
 		};
 		// Implementation of API method
 		ThingInspector.prototype.insertHeaderContent = function(oHeaderContent, iIndex) {
@@ -655,6 +656,7 @@ sap.ui.define([
 		// Implementation of API method
 		ThingInspector.prototype.setSelectedFacet = function(selectedFacet) {
 			this._oThingViewer.setSelectedFacet(selectedFacet);
+			return this;
 		};
 		// Implementation of API method
 		ThingInspector.prototype.getSelectedFacet = function(selectedFacet) {

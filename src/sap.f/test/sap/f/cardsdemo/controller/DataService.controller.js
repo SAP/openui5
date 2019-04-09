@@ -14,6 +14,10 @@ sap.ui.define([
 					"category": "Private"
 				});
 			});
+		},
+		onRefresh: function () {
+			var oCard = this.getView().byId("SalesOrdersCard");
+			oCard.refresh();
 		}
     });
 

@@ -812,6 +812,7 @@ function(
 	 */
 	TileContainer.prototype.addTile = function(oTile) {
 		this.insertTile(oTile,this.getTiles().length);
+		return this;
 	};
 
 	/**

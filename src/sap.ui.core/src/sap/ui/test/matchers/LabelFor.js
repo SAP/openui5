@@ -10,18 +10,47 @@ sap.ui.define([
   var oI18nMatcher = new I18NText();
 
   /**
+   *  The controls which should not be referenced by a "for" attribute (Specified in the HTML standard). See {@link sap.ui.core.LabelEnablement}
+   */
+	var NON_LABELABLE_CONTROLS = ["sap.ui.comp.navpopover.SmartLink", "sap.m.Link", "sap.m.Label", "sap.m.Text"];
+
+  /**
    * @class
-   * The LabelFor matcher searches for given control associated with labelFor property.
-   * The matcher does automatically
+   * The LabelFor matcher checks if a given control has a label associated with it.
+   * For every Label on the page, the matcher checks if:
    * <ul>
    *     <li>
-   *         retrieve control associated by label by given text
+   *          its labelFor association is to the given control
    *     </li>
    *     <li>
-   *         retrieve control associated by label by given i18n key, modelName, parameters or propertyName. See {@link sap.ui.test.matchers.I18NText}
+   *          its properties match a condition
+   *     </li>
+   * </ul>
+   * Labels can be matched by:
+   * <ul>
+   *     <li>
+   *          text
    *     </li>
    *     <li>
-   *         combination of text and key is not possible
+   *          i18n key, modelName, parameters or propertyName. See {@link sap.ui.test.matchers.I18NText}
+   *     </li>
+   *     <li>
+   *          combination of text and key is not possible
+   *     </li>
+   * </ul>
+   * Some control types cannot be in a labelFor association:
+   * <ul>
+   *     <li>
+   *          sap.ui.comp.navpopover.SmartLink
+   *     </li>
+   *     <li>
+   *          sap.m.Link
+   *     </li>
+   *     <li>
+   *          sap.m.Label
+   *     </li>
+   *     <li>
+   *          sap.m.Text
    *     </li>
    * </ul>
    *
@@ -97,6 +126,11 @@ sap.ui.define([
       }
       if (!sLabelText && !sKey) {
         this._oLogger.error("Text and key properties are not defined but exactly one is required");
+        return false;
+      }
+
+      if (NON_LABELABLE_CONTROLS.indexOf(oControl.getMetadata().getName()) > -1 ) {
+        this._oLogger.error("Control cannot have an associated label according to HTML standard");
         return false;
       }
 

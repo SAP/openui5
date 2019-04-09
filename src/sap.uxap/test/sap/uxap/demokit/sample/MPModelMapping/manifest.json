@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.uxap.sample.MPModelMapping.ModelMapping",
+			"viewName": "sap.uxap.sample.MPModelMapping.view.ModelMapping",
 			"type": "XML",
 			"async": true
 		},
@@ -20,11 +20,11 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"ModelMapping.view.xml",
-					"ModelMapping.controller.js",
-					"ModelMappingBlock.js",
-					"ModelMappingBlock.view.xml",
-					"manifest.json"
+					"view/ModelMapping.view.xml",
+					"controller/ModelMapping.controller.js",
+					"view/blocks/ModelMappingBlock.view.xml",
+                    "controller/blocks/ModelMappingBlock.js",
+                    "manifest.json"
 				]
 			}
 		}

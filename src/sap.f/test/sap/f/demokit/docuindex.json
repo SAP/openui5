@@ -29,7 +29,8 @@
 		  "since": "1.42",
 		  "samples": [
 			"sap.f.sample.DynamicPageFreeStyle",
-			"sap.f.sample.DynamicPageAnalyticalTable"
+			"sap.f.sample.DynamicPageAnalyticalTable",
+			"sap.f.sample.DynamicPageWithStickySubheader"
 		  ]
 		},
 		{
@@ -90,10 +91,12 @@
 		},
 		{
 		  "id": "sap.f.ShellBar",
-		  "name": "Shell Bar (Experimental)",
+		  "name": "ShellBar",
 		  "category": "Display",
 		  "since": "1.63",
-		  "samples": ["sap.f.sample.ShellBar"]
+			"samples": [
+				"sap.f.sample.ShellBar"
+			]
 		},
 		{
 		  "id": "sap.f.Card",
@@ -113,6 +116,11 @@
 		  "id": "sap.f.sample.DynamicPageAnalyticalTable",
 		  "name": "Dynamic Page with Analytical Table",
 		  "description": "Dynamic Page containing an Analytical Table in the content area and filters in the header aligned with the SAP Fiori 2 List Report floorplan."
+		},
+		{
+		  "id": "sap.f.sample.DynamicPageWithStickySubheader",
+		  "name": "Dynamic Page with Sticky Subheader",
+		  "description": "Dynamic Page containing an sap.m.IconTabBar in the sticky subheader content area."
 		},
 		{
 		  "id": "sap.f.sample.FlexibleColumnLayoutWithOneColumnStart",
@@ -176,8 +184,13 @@
 		},
 		{
 		  "id": "sap.f.sample.ShellBar",
-		  "name": "Shell Bar (Experimental)",
-		  "description": "The ShellBar is used as the uppermost section (shell) of the app."
+		  "name": "ShellBar",
+		  "description": "Shellbar control with title mega menu."
+		},
+		{
+		  "id": "sap.f.sample.ShellBarIconMenu",
+		  "name": "ShellBar",
+		  "description": "Shellbar control with navigation button."
 		},
 		{
 		  "id": "sap.f.sample.Card",

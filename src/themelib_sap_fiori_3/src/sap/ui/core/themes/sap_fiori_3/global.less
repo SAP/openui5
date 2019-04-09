@@ -590,7 +590,6 @@
 @sapUiShellHoverBackground: darken(@sapUiShellColor, 7);
 @sapUiShellActiveBackground: darken(@sapUiShellColor, 10);
 @sapUiShellActiveTextColor: contrast(@sapUiShellActiveBackground, @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
-@sapUiShellHoverToggleBackground: darken(@sapUiShellColor, 10);
 @sapUiShellContainerBackground: @sapUiGroupContentBackground;
 @sapUiShellAltContainerBackground: @sapUiShellContainerBackground;
 @sapUiShellGroupTextColor: @sapUiTextTitle;
@@ -610,10 +609,10 @@
 @sapUiUx3ExactLstContentTop: 25px;
 
 // Link
-@sapUiLinkActive:     @sapUiLink;
-@sapUiLinkVisited:    @sapUiLink;
-@sapUiLinkHover:      darken(@sapUiLink, 10);
-@sapUiLinkInverted:   lighten(saturate(@sapUiLink, 9), 48);
+@sapUiLinkActive: @sapUiLink;
+@sapUiLinkVisited: @sapUiLink;
+@sapUiLinkHover: darken(@sapUiLink, 10);
+@sapUiLinkInverted: lighten(@sapUiLink, 48);
 
 // Notification Bar
 @sapUiNotificationBarBG: fade(@sapUiPrimary7, 98);
@@ -698,10 +697,10 @@
 @sapUiListFooterBackground: darken(@sapUiListBackground, 2);
 @sapUiListFooterTextColor: @sapUiListTextColor;
 @sapUiListGroupHeaderBackground: @sapUiListBackground;
-@sapUiListTableGroupHeaderBackground: darken(@sapUiListBackground, 3);
+@sapUiListTableGroupHeaderBackground: darken(@sapUiListBackground, 5);
 @sapUiListTableGroupHeaderBorderColor: darken(@sapUiListBorderColor, 8);
 @sapUiListTableGroupHeaderTextColor: contrast(@sapUiListTableGroupHeaderBackground, @sapUiListTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
-@sapUiListTableFooterBorder: @sapUiListBorderColor;
+@sapUiListTableFooterBorder: darken(@sapUiListBorderColor, 8);
 @sapUiListTableFixedBorder: darken(@sapUiListBorderColor, 8);
 @sapUiListTableTextSize: 0.875rem;
 @sapUiListTableIconSize: 1rem;
@@ -709,7 +708,7 @@
 @sapUiPageFooterBorderColor: contrast(@sapUiPageFooterBackground, darken(@sapUiPageFooterBackground, 15), lighten(@sapUiPageFooterBackground, 12), @sapUiContentContrastTextThreshold);
 
 @sapUiInfobarHoverBackground: darken(@sapUiInfobarBackground, 3);
-@sapUiInfobarActiveBackground: @sapUiListActiveBackground;
+@sapUiInfobarActiveBackground: darken(@sapUiInfobarBackground, 11);
 
 @sapUiObjectHeaderBorderColor: darken(@sapUiObjectHeaderBackground, 15);
 
@@ -718,9 +717,9 @@
 @sapUiDragAndDropColor: @sapUiContentNonInteractiveIconColor;
 @sapUiDragAndDropBackground: @sapUiGroupContentBackground;
 @sapUiDragAndDropBorderColor: @sapUiContentForegroundBorderColor;
-@sapUiDragAndDropActiveColor: @sapUiLink;
-@sapUiDragAndDropActiveBackground: fade(@sapUiLink, 5);
-@sapUiDragAndDropActiveBorderColor: @sapUiLink;
+@sapUiDragAndDropActiveColor: @sapUiActive;
+@sapUiDragAndDropActiveBackground: fade(@sapUiDragAndDropActiveColor, 5);
+@sapUiDragAndDropActiveBorderColor: @sapUiDragAndDropActiveColor;
 
 @sapUiShadowLevel0: 0 0 0 1px fade(@sapUiContentShadowColor, 15);
 @sapUiShadowLevel1: 0 0.125rem 0.5rem 0 fade(@sapUiContentShadowColor, 15), @sapUiShadowLevel0;

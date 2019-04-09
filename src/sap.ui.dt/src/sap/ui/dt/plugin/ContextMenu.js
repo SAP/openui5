@@ -469,7 +469,7 @@ sap.ui.define([
 	};
 
 	ContextMenu.prototype._openContextMenu = function(oEvent, oOverlay, mPosition){
-		if (oOverlay && oOverlay.isSelectable()) {
+		if (oOverlay && oOverlay.isSelectable() && oOverlay.getSelected()) {
 			oEvent.preventDefault();
 			this._oCurrentOverlay = oOverlay;
 			this.oContextMenuControl.close(true);

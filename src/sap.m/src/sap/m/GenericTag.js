@@ -207,6 +207,11 @@ sap.ui.define([
 			this._toggleActiveGenericTag(true);
 		}
 
+		// Prevent browser scrolling in case of SPACE key
+		if (oEvent.which === KeyCodes.SPACE) {
+			oEvent.preventDefault();
+		}
+
 		if (oEvent.which === KeyCodes.ENTER) {
 			this.firePress(/* no parameters */);
 		}

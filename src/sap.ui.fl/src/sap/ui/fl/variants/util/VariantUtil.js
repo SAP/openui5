@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/core/routing/History",
 	"sap/ui/core/routing/HashChanger",
 	"sap/base/Log",
-	"sap/base/util/deepEqual"
+	"sap/base/util/deepEqual",
+	"sap/ui/base/ManagedObjectObserver"
 ], function(
 	jQuery,
 	Component,
@@ -17,7 +18,8 @@ sap.ui.define([
 	History,
 	HashChanger,
 	Log,
-	deepEqual
+	deepEqual,
+	ManagedObjectObserver
 ) {
 	"use strict";
 
@@ -57,20 +59,29 @@ sap.ui.define([
 				oHashChanger.attachEvent("hashChanged", VariantUtil._navigationHandler, this);
 
 				// de-register method to process hash changes
-				var fnOriginalDestroy = this.oAppComponent.destroy;
-				this.oAppComponent.destroy = function () {
-					// deregister navigation filter if ushell is available
-					VariantUtil._setOrUnsetCustomNavigationForParameter.call(this, false);
-					// detach handler to check if hash was replaced
-					oHashChanger.detachEvent("hashReplaced", VariantUtil._handleHashReplaced, this);
-					// detach navigation handler
-					oHashChanger.detachEvent("hashChanged", VariantUtil._navigationHandler, this);
-					// clear variant controller map
-					this.oVariantController.resetMap();
-					// destroy VariantModel
-					this.destroy();
-					fnOriginalDestroy.apply(this.oAppComponent, arguments);
-				}.bind(this);
+				var fnObserverHandler = function () {
+					// variant switch promise needs to be checked, since there might be a pending on-going variants switch
+					// which might result in unnecessary data being stored
+					return this._oVariantSwitchPromise.then( function() {
+						// deregister navigation filter if ushell is available
+						VariantUtil._setOrUnsetCustomNavigationForParameter.call(this, false);
+						// detach handler to check if hash was replaced
+						oHashChanger.detachEvent("hashReplaced", VariantUtil._handleHashReplaced, this);
+						// detach navigation handler
+						oHashChanger.detachEvent("hashChanged", VariantUtil._navigationHandler, this);
+						// clear variant controller map
+						this.oChangePersistence.resetVariantMap();
+						// destroy VariantModel
+						this.destroy();
+						// destroy oAppComponent.destroy() observer
+						this.oComponentDestroyObserver.unobserve(this.oAppComponent, { destroy: true });
+						this.oComponentDestroyObserver.destroy();
+					}.bind(this));
+				};
+
+				// observer for oAppComponent.destroy()
+				this.oComponentDestroyObserver = new ManagedObjectObserver(fnObserverHandler.bind(this));
+				this.oComponentDestroyObserver.observe(this.oAppComponent, { destroy: true });
 
 				VariantUtil._navigationHandler.call(this);
 			}

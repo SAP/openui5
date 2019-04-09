@@ -89,6 +89,7 @@ sap.ui.define([
 					 */
 					content: {type: "sap.ui.core.Control", multiple: true, singularName: "content"}
 				},
+				dnd: { draggable: false, droppable: true },
 				designtime: "sap/m/designtime/ScrollContainer.designtime"
 			}
 		});

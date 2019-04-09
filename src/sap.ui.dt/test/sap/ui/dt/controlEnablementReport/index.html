@@ -1,0 +1,170 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Control Enablement Report</title>
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-xx-bindingSyntax="complex"
+				data-sap-ui-preload="async"
+				data-sap-ui-compatVersion="edge"
+				data-sap-ui-libs="sap.ui.fl,sap.ui.table,sap.ui.core, sap.m,sap.ui.layout,sap.ui.comp,sap.ui.dt"
+				data-sap-ui-resourceroots='{"controlEnablementReport": "./"}'
+				src="../../../../../resources/sap-ui-core.js">
+		</script>
+		<script>
+			sap.ui.getCore().attachInit(function () {
+				sap.ui.require([
+					'controlEnablementReport/LibraryScanner',
+					'sap/ui/core/util/Export',
+					'sap/ui/core/util/ExportTypeCSV'
+				], function (LibraryScanner, Export, ExportTypeCSV) {
+					var aLibs = sap.ui.getVersionInfo().libraries.filter(function(sLib) {
+						if (sLib.name.indexOf("sap.ui.server") === -1 &&
+							sLib.name.indexOf("themelib_")  === -1 &&
+							sLib.name !== "sap.ui.core" &&
+							sLib.name !== "sap.ui.fl") {
+								return sLib;
+						}
+					});
+
+					var oJSONModel = new sap.ui.model.json.JSONModel({
+						libs: aLibs
+					});
+
+					var oTemplateItem = new sap.ui.core.Item({
+						key : "{name}",
+						text : "{name}"
+					});
+
+					var oMultiComboBox = new sap.m.MultiComboBox("combobox", {
+						items : {
+							path : "/libs",
+							sorter : { path : "Name" },
+							template : oTemplateItem
+						}
+					}).setModel(oJSONModel);
+
+					var oFilterBar = new sap.ui.comp.filterbar.FilterBar("filterbar", {
+						showFilterConfiguration : false,
+						showClearButton : true,
+						showClearOnFB : true,
+						filterBarExpanded : false,
+						filterItems : [
+							new sap.ui.comp.filterbar.FilterItem("fbItem", {
+								name : "Search",
+								label : "Libraries",
+								control : oMultiComboBox
+							})
+						],
+						search : function(oEvent) {
+							var oStaticReport;
+							var oReport;
+							var aLibraries = oMultiComboBox.getSelectedKeys();
+
+							oStaticReport = sap.ui.getCore().byId("statistic");
+							if (oStaticReport) {
+								oStaticReport.destroy();
+							}
+							oReport = sap.ui.getCore().byId("table");
+							if (oReport) {
+								oReport.destroy();
+							}
+
+							var oLibraryEnablementTest2 = new LibraryScanner();
+
+							oLibraryEnablementTest2.run(aLibraries).then(function(oData) {
+								var oModel;
+								if (oData) {
+									oModel = new sap.ui.model.json.JSONModel(oData);
+								} else {
+									oModel = null;
+								}
+
+								var fnExportToExcel = function(oEvent) {
+									var oExport = new Export({
+										exportType : new ExportTypeCSV({
+											separatorChar : ";"
+										}),
+										models : oModel,
+										rows : {
+											path : "/results"
+										},
+										columns : [
+											{
+												name : "Name",
+												template : {
+													content : "{name}"
+												}
+											},
+											{
+												name : "Actions",
+												template : {
+													content : "{actions}"
+												}
+											}
+										]
+									});
+
+									oExport.saveFile().catch(function(oError) {
+										MessageBox.error("Error when downloading data. Browser might not be supported!\n\n" + oError);
+									}).then(function() {
+										oExport.destroy();
+									});
+								};
+
+								var oHeaderToolbar = new sap.m.Toolbar("toolbar", {
+									content : [
+	//									new sap.m.ToolbarSpacer("toolbar-spacer"),
+										new sap.m.Button("toolbar-export-button", {
+											text : "Export to Excel",
+											press : fnExportToExcel
+										})
+									]
+								});
+								var oReport = new sap.ui.table.Table("table", {
+									extension : [oHeaderToolbar],
+									columns : [
+										new sap.ui.table.Column("table-column-name", {
+											label : "Name",
+											width : "30em",
+											sorted : true,
+											template : new sap.m.Text({
+												text : "{name}"
+											})
+										}),
+										new sap.ui.table.Column("table-column-actions", {
+											label : "Actions",
+											template : new sap.m.Text({
+												text : "{actions}"
+											})
+										})
+									],
+									rows : "{path:'/results'}"
+								}).setModel(oModel);
+								oReport.placeAt("content");
+							});
+						},
+						clear : function(oEvent) {
+							oMultiComboBox.clearSelection();
+						}
+					});
+
+					var oVLayout = new sap.ui.layout.VerticalLayout("layout", {
+						width: "100%",
+						content : [oFilterBar]
+					});
+
+					oVLayout.placeAt("selection");
+
+				});
+			});
+		</script>
+	</head>
+	<body class="sapUiBody">
+		<h1>Control Enablement Report</h1>
+		<div id="selection"></div>
+		<div id="content"></div>
+	</body>
+</html>

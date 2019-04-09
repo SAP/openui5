@@ -16,7 +16,8 @@ sap.ui.define([
 	'sap/base/util/ObjectPath',
 	'sap/base/util/UriParameters',
 	'sap/base/util/isPlainObject',
-	'sap/base/util/LoaderExtensions'
+	'sap/base/util/LoaderExtensions',
+	'sap/ui/VersionInfo'
 ], function(
 	jQuery,
 	Manifest,
@@ -30,7 +31,8 @@ sap.ui.define([
 	ObjectPath,
 	UriParameters,
 	isPlainObject,
-	LoaderExtensions
+	LoaderExtensions,
+	VersionInfo
 ) {
 	"use strict";
 
@@ -1251,14 +1253,24 @@ sap.ui.define([
 						oDataSource.type = 'OData';
 					}
 
+					var sODataVersion;
+
 					// read out type and translate to model class
 					// (only if no model type was set to allow overriding)
 					if (!oModelConfig.type) {
 						switch (oDataSource.type) {
 							case 'OData':
-								if (oDataSource.settings && oDataSource.settings.odataVersion === "4.0") {
+								sODataVersion = oDataSource.settings && oDataSource.settings.odataVersion;
+								if (sODataVersion === "4.0") {
 									oModelConfig.type = 'sap.ui.model.odata.v4.ODataModel';
+								} else if (!sODataVersion || sODataVersion === "2.0") {
+									// 2.0 is the default in case no version is provided
+									oModelConfig.type = 'sap.ui.model.odata.v2.ODataModel';
 								} else {
+									Log.error('Component Manifest: Provided OData version "' + sODataVersion + '" in ' +
+									'dataSource "' + oModelConfig.dataSource + '" for model "' + sModelName + '" is unknown. ' +
+									'Falling back to default model type "sap.ui.model.odata.v2.ODataModel".',
+									'["sap.app"]["dataSources"]["' + oModelConfig.dataSource + '"]', sLogComponentName);
 									oModelConfig.type = 'sap.ui.model.odata.v2.ODataModel';
 								}
 								break;
@@ -2548,14 +2560,28 @@ sap.ui.define([
 
 			var sController = sComponentName + '.Component',
 				http2 = sap.ui.getCore().getConfiguration().getDepCache(),
-				sPreloadName;
+				sPreloadName,
+				oTransitiveDependencies,
+				aLibs;
 
 			// only load the Component-preload file if the Component module is not yet available
 			if ( bComponentPreload && sComponentName != null && !sap.ui.loader._.getModuleState(sController.replace(/\./g, "/") + ".js") ) {
 
 				if ( bAsync ) {
-					sPreloadName = sController.replace(/\./g, "/") + (http2 ? '-h2-preload.js' : '-preload.js'); // URN
-					return sap.ui.loader._.loadJSResourceAsync(sPreloadName, true);
+					// check whether component controller is included in a library preload
+					oTransitiveDependencies = VersionInfo._getTransitiveDependencyForComponent(sComponentName);
+
+					if (oTransitiveDependencies) {
+						aLibs = [oTransitiveDependencies.library];
+						// add all dependencies to aLibs
+						Array.prototype.push.apply(aLibs, oTransitiveDependencies.dependencies);
+
+						// load library preload for every transitive dependency
+						return sap.ui.getCore().loadLibraries( aLibs, { preloadOnly: true } );
+					} else {
+						sPreloadName = sController.replace(/\./g, "/") + (http2 ? '-h2-preload.js' : '-preload.js'); // URN
+						return sap.ui.loader._.loadJSResourceAsync(sPreloadName, true);
+					}
 				}
 
 				try {

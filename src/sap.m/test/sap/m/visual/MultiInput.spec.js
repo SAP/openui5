@@ -93,8 +93,10 @@ describe('sap.m.MultiInput', function() {
 
 
 	//Show multi input with N-more and whole N-more label
-	it("should show  multiInput with N-more and reduced width", function () {
-		expect(takeScreenshot(element(by.id("minWidthMI")))).toLookAs("multi-input-min-width");
+	it("should show multiInput with N-more and reduced width", function () {
+		browser.executeScript('document.getElementById("minWidthMI").scrollIntoView()').then(function() {
+			expect(takeScreenshot(element(by.id("minWidthMI")))).toLookAs("multi-input-min-width");
+		});
 	});
 
 	//Multiinput read-only
@@ -105,9 +107,11 @@ describe('sap.m.MultiInput', function() {
 	});
 
 	//Show selected multi input no placeholder
-	it("should show   multiInput no placeholder", function () {
-		element(by.id("multiInputNotEditable")).click();
-		expect(takeScreenshot(element(by.id("multiInputNotEditable")))).toLookAs("multi-input-not-editable-selected");
+	it("should show multiInput no placeholder", function () {
+		browser.executeScript('document.getElementById("multiInputNotEditable").scrollIntoView()').then(function() {
+			element(by.id("multiInputNotEditable")).click();
+			expect(takeScreenshot(element(by.id("multiInputNotEditable")))).toLookAs("multi-input-not-editable-selected");
+		});
 	});
 
 	it("multiinput should be in condensed mode", function() {

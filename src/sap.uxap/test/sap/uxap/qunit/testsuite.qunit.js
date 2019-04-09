@@ -283,30 +283,37 @@ sap.ui.define(function () {
 
 			"Designtime-Library": {
 				group: "Designtime",
+				sinon: false,
 				module: "./designtime/Library.qunit"
 			},
 			"Designtime-ObjectPageDynamicHeaderTitle": {
 				group: "Designtime",
+				sinon: false,
 				module: "./designtime/ObjectPageDynamicHeaderTitle.qunit"
 			},
 			"Designtime-ObjectPageHeader": {
 				group: "Designtime",
+				sinon: false,
 				module: "./designtime/ObjectPageHeader.qunit"
 			},
 			"Designtime-ObjectPageHeaderActionButton": {
 				group: "Designtime",
+				sinon: false,
 				module: "./designtime/ObjectPageHeaderActionButton.qunit"
 			},
 			"Designtime-ObjectPageLayout": {
 				group: "Designtime",
+				sinon: false,
 				module: "./designtime/ObjectPageLayout.qunit"
 			},
 			"Designtime-ObjectPageSection": {
 				group: "Designtime",
+				sinon: false,
 				module: "./designtime/ObjectPageSection.qunit"
 			},
 			"Designtime-ObjectPageSubSection": {
 				group: "Designtime",
+				sinon: false,
 				module: "./designtime/ObjectPageSubSection.qunit"
 			}
 		}

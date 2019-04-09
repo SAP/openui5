@@ -1,25 +1,23 @@
 sap.ui.define([
-	"sap/ui/dt/test/report/QUnit",
-	"sap/ui/dt/test/ElementEnablementTest",
 	"sap/ui/layout/DynamicSideContent",
-	"sap/ui/rta/enablement/controlTest"
-], function(QUnitReport, ElementEnablementTest, DynamicSideContent, rtaControlEnablingCheck) {
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest"
+], function (
+	DynamicSideContent,
+	elementDesigntimeTest,
+	elementActionTest
+) {
 	"use strict";
-	var oElementEnablementTest = new ElementEnablementTest({
-		type: "sap.ui.layout.DynamicSideContent",
-		create: function () {
-			return new DynamicSideContent({});
-		}
-	});
 
-	return oElementEnablementTest.run()
-
-	.then(function (oData) {
-		return new QUnitReport({
-			data: oData
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
+			type: "sap.ui.layout.DynamicSideContent",
+			create: function () {
+				return new DynamicSideContent({});
+			}
 		});
 	})
-
 	.then(function() {
 		// Remove and reveal actions
 		var fnConfirmDynamicSideContentInvisible = function (oUiComponent, oViewAfterAction, assert) {
@@ -30,7 +28,7 @@ sap.ui.define([
 			assert.strictEqual(oViewAfterAction.byId("dynamicsc").getVisible(), true, "then the DynamicSideContent element is visible");
 		};
 
-		rtaControlEnablingCheck("Checking the remove action for DynamicSideContent", {
+		elementActionTest("Checking the remove action for DynamicSideContent", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:l="sap.ui.layout">' +
 				'<l:DynamicSideContent id="dynamicsc">' +
 					'<l:mainContent>' +
@@ -57,7 +55,7 @@ sap.ui.define([
 			afterRedo: fnConfirmDynamicSideContentInvisible
 		});
 
-		rtaControlEnablingCheck("Checking the reveal action for a DynamicSideContent", {
+		elementActionTest("Checking the reveal action for a DynamicSideContent", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:l="sap.ui.layout">' +
 				'<l:DynamicSideContent id="dynamicsc" visible="false">' +
 					'<l:mainContent>' +
@@ -94,7 +92,7 @@ sap.ui.define([
 				"then the control has been moved to the previous position");
 		};
 
-		rtaControlEnablingCheck("Checking the move action for mainContent of DynamicSideContent", {
+		elementActionTest("Checking the move action for mainContent of DynamicSideContent", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:l="sap.ui.layout">' +
 				'<l:DynamicSideContent id="dynamicsc">' +
 					'<l:mainContent>' +
@@ -145,7 +143,7 @@ sap.ui.define([
 				"then the control has been moved to the previous position");
 		};
 
-		rtaControlEnablingCheck("Checking the move action for sideContent of DynamicSideContent", {
+		elementActionTest("Checking the move action for sideContent of DynamicSideContent", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:l="sap.ui.layout">' +
 				'<l:DynamicSideContent id="dynamicsc">' +
 					'<l:mainContent>' +

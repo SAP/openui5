@@ -46,7 +46,7 @@ sap.ui.define([
 			},
 			"enablement/ControlValidator": {
 				coverage: {
-					only: ["sap/ui/rta/enablement/controlTest"]
+					only: ["sap/ui/rta/enablement/elementActionTest"]
 				}
 			},
 
@@ -483,6 +483,7 @@ sap.ui.define([
 					ui5: {
 						resourceroots: {
 							"qunit": "test-resources/sap/ui/rta/qunit/",
+							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
 							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
 						}
 					}

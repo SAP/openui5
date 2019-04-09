@@ -53,7 +53,7 @@ sap.ui.define([
 			this.sVariantManagementReference = "variantManagementReference-1";
 			this.oVariantManagement = new VariantManagement(this.sVariantManagementReference, {});
 
-			var oModel = new VariantModel({}, { _oChangePersistence: { _oVariantController: {} } });
+			var oModel = new VariantModel({}, { _oChangePersistence: { _oVariantController: { assignResetMapListener: function() {} } } });
 			this.oMockedAppComponent = this.fnGetMockedAppComponent(oModel);
 
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oMockedAppComponent);

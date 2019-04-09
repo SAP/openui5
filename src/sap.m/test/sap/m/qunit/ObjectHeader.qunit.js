@@ -834,13 +834,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("TestIconTap", function(assert) {
+		ohe._oImageControl.firePress();
 
-		qutils.triggerEvent("tap", oheId + "-img");
 		assert.ok(domRef, "domRef is set");
 		assert.equal(domRef.id, oheId + "-img", "Icon should be clickable");
 		domRef = null;
 
-		qutils.triggerEvent("tap", ohBasicId + "-img");
+		ohBasic._oImageControl.firePress();
 		assert.ok(domRef === null, ohBasicId + " icon should not be clickable");
 		domRef = null;
 	});
@@ -858,9 +858,9 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//Act
-		var oImg = jQuery("#" + ohResponsiveIcon.getId() + "-titleIcon");
-		oImg.focus();
-		sap.ui.test.qunit.triggerKeyup(oImg, jQuery.sap.KeyCodes.SPACE);
+		var $oImageControlRef = ohResponsiveIcon._oImageControl.$();
+		$oImageControlRef.focus();
+		sap.ui.test.qunit.triggerKeyup($oImageControlRef, jQuery.sap.KeyCodes.SPACE);
 
 		//Assert
 		assert.ok(domRef, "Icon should fire 'iconPress' event when object header is responsive");
@@ -994,8 +994,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Active icon has aria attributes", function(assert){
-		assert.ok(jQuery(".sapMOHIcon.sapMPointer").attr("aria-haspopup"), "ActiveIcon has attribute aria-haspopup");
-		assert.equal(jQuery(".sapMOHIcon.sapMPointer").attr("role"), "link", "ActiveIcon has role=link");
+		assert.equal(jQuery(".sapMOHIcon.sapMPointer .sapUiIcon.sapUiIconPointer").attr("role"), "button", "ActiveIcon has role=button");
 	});
 
 	QUnit.test("Title has level H1", function(assert){

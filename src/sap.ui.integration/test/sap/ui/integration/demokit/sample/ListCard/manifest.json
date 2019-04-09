@@ -20,7 +20,6 @@
 			"sample": {
 				"files": [
 					"ListCard.view.xml",
-					"ListCard.controller.js",
 					"model/cardManifest.json",
 					"manifest.json"
 				]

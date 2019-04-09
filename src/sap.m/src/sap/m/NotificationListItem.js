@@ -364,17 +364,23 @@ function(
 	 * @returns {boolean} Whether the control should be truncated.
 	 */
 	NotificationListItem.prototype._canTruncate = function () {
-		var titleHeight = this.getDomRef('title').offsetHeight;
-		var titleWrapperHeight = this.getDomRef('title').parentElement.offsetHeight;
-		var textHeight;
-		var textWrapperHeight;
-		if (this._getDescriptionText().getText()) {
-			textHeight = this.getDomRef("body").offsetHeight;
-			textWrapperHeight = this.getDomRef("body").parentElement.offsetHeight;
+		var iTitleHeight = this.getDomRef('title-inner').scrollHeight,
+			iTitleWrapperHeight = this.$('title').parent().height();
+
+		if (iTitleHeight > iTitleWrapperHeight) {
+			return true;
 		}
 
+		if (this.getDomRef('body-inner')) {
+			var iBodyHeight = this.getDomRef('body-inner').scrollHeight,
+				iBodyWrapperHeight = this.$('body').parent().height();
 
-		return textHeight > textWrapperHeight || titleHeight > titleWrapperHeight;
+			if (iBodyHeight > iBodyWrapperHeight) {
+				return true;
+			}
+		}
+
+		return false;
 	};
 
 	/**
@@ -464,20 +470,24 @@ function(
 	 * @private
 	 */
 	NotificationListItem.prototype._resizeNotification = function () {
-		var notificationDomRef = this.getDomRef();
-		var core = sap.ui.getCore();
+		var notificationDomRef = this.getDomRef(),
+			oDescriptionWrapper = notificationDomRef.querySelector('.sapMNLI-TextWrapper'),
+			oHeaderWrapper = notificationDomRef.querySelector('.sapMNLI-Header'),
+			core = sap.ui.getCore();
 
 		if (notificationDomRef.offsetWidth >= 640) {
 			notificationDomRef.classList.add('sapMNLI-LSize');
 		} else {
 			notificationDomRef.classList.remove('sapMNLI-LSize');
 		}
-		if (this._getDescriptionText().getText()) {
-			notificationDomRef.querySelector('.sapMNLI-TextWrapper').classList.remove('sapMNLI-TextWrapper--is-expanded');
-			notificationDomRef.querySelector('.sapMNLI-TextWrapper').classList.add('sapMNLI-TextWrapper--initial-overwrite');
+
+		if (oDescriptionWrapper) {
+			oDescriptionWrapper.classList.remove('sapMNLI-TextWrapper--is-expanded');
+			oDescriptionWrapper.classList.add('sapMNLI-TextWrapper--initial-overwrite');
 		}
-		notificationDomRef.querySelector('.sapMNLI-Header').classList.remove('sapMNLI-TitleWrapper--is-expanded');
-		notificationDomRef.querySelector('.sapMNLI-Header').classList.add('sapMNLI-TitleWrapper--initial-overwrite');
+
+		oHeaderWrapper.classList.remove('sapMNLI-TitleWrapper--is-expanded');
+		oHeaderWrapper.classList.add('sapMNLI-TitleWrapper--initial-overwrite');
 
 		if (core.isThemeApplied()) {
 			this._showHideTruncateButton();

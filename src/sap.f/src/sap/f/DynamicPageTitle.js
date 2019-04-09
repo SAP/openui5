@@ -535,11 +535,21 @@ sap.ui.define([
 	};
 
 	DynamicPageTitle.prototype.onmouseover = function () {
+		if (this._bTitleMouseOverFired) {
+			return;
+		}
+
 		this.fireEvent("_titleMouseOver");
+		this._bTitleMouseOverFired = true;
 	};
 
-	DynamicPageTitle.prototype.onmouseout = function () {
+	DynamicPageTitle.prototype.onmouseout = function (oEvent) {
+		if (oEvent && this.getDomRef().contains(oEvent.target)) {
+			return;
+		}
+
 		this.fireEvent("_titleMouseOut");
+		this._bTitleMouseOverFired = false;
 	};
 
 	DynamicPageTitle.prototype.onkeyup = function (oEvent) {

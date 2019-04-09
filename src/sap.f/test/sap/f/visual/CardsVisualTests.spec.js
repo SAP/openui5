@@ -17,8 +17,8 @@ describe("sap.f.CardsVisualTests", function () {
 
 	it('Default Headers', function() {
 		browser.executeScript("window.history.back()");
-		browser.executeScript('document.getElementById("__item0-container-cardsVisualTests---main--useCases-2").scrollIntoView()');
-		element(by.id("__item0-container-cardsVisualTests---main--useCases-2")).click();
+		browser.executeScript('document.getElementById("__item0-container-cardsVisualTests---main--useCases-3").scrollIntoView()');
+		element(by.id("__item0-container-cardsVisualTests---main--useCases-3")).click();
 
 
 		var Header1 = element(by.css("#container-cardsVisualTests---nolayout--somedfault > div"));
@@ -58,8 +58,8 @@ describe("sap.f.CardsVisualTests", function () {
 
 	it('Numeric Header', function() {
 		browser.executeScript("window.history.back()");
-		browser.executeScript('document.getElementById("__item0-container-cardsVisualTests---main--useCases-3").scrollIntoView()');
-		element(by.id("__item0-container-cardsVisualTests---main--useCases-3")).click();
+		browser.executeScript('document.getElementById("__item0-container-cardsVisualTests---main--useCases-4").scrollIntoView()');
+		element(by.id("__item0-container-cardsVisualTests---main--useCases-4")).click();
 
 		var oCard1 = element(by.css("#container-cardsVisualTests---numericHeader--header1 .sapFCardHeader"));
 		expect(takeScreenshot(oCard1)).toLookAs("3_NumericHeader_1");
@@ -92,8 +92,8 @@ describe("sap.f.CardsVisualTests", function () {
 
 	it('Grid Container', function() {
 		browser.executeScript("window.history.back()");
-		browser.executeScript('document.getElementById("__item0-container-cardsVisualTests---main--useCases-4").scrollIntoView()');
-		element(by.id("__item0-container-cardsVisualTests---main--useCases-4")).click();
+		browser.executeScript('document.getElementById("__item0-container-cardsVisualTests---main--useCases-5").scrollIntoView()');
+		element(by.id("__item0-container-cardsVisualTests---main--useCases-5")).click();
 
 		var oCard = element(by.css("#container-cardsVisualTests---GridContainer--cContainer"));
 		expect(takeScreenshot(oCard)).toLookAs("4_GridContainer");
@@ -106,5 +106,17 @@ describe("sap.f.CardsVisualTests", function () {
 
 		var oCard = element(by.css("#container-cardsVisualTests---objectContent--objectId"));
 		expect(takeScreenshot(oCard)).toLookAs("5_Object_Card_1");
+	});
+
+	it("Table Card", function () {
+		browser.executeScript("window.history.back()");
+		browser.executeScript('document.getElementById("__item0-container-cardsVisualTests---main--useCases-1").scrollIntoView()');
+		element(by.id("__item0-container-cardsVisualTests---main--useCases-1")).click();
+
+		var oCard = element(by.css("#container-cardsVisualTests---tableContent--tablecard1"));
+		expect(takeScreenshot(oCard)).toLookAs("6_Table_Card_1");
+
+		var oCard2 = element(by.css("#container-cardsVisualTests---tableContent--tablecard2"));
+		expect(takeScreenshot(oCard2)).toLookAs("6_Table_Card_2");
 	});
 });

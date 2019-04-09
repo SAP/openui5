@@ -16,6 +16,9 @@ sap.ui.define(function() {
 			"jquery.sap.global": {
 				title: "QUnit Page for jquery.sap.global"
 			},
+			"jquery.sap.stubs-jquery-ui-core": {
+				bootCore: false
+			},
 
 			"jquery.sap.stubs: lazy-loading, chunk 1": {
 				page: "test-resources/sap/ui/core/qunit/compat/jquery.sap.stubs.qunit.html?test-mode=lazy-loading&chunk=1"

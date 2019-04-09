@@ -213,6 +213,8 @@ sap.ui.define([
 			 * <ul>
 			 *  <li>Only client models are supported (e.g. {@link sap.ui.model.json.JSONModel}). Grouping does not work with OData models.</li>
 			 *  <li>The table can only be grouped by <b>one</b> column at a time. Grouping by another column will remove the current grouping.</li>
+			 *  <li>For the grouping to work correctly, {@link sap.ui.table.Column#getSortProperty sortProperty} must be set for the grouped
+			 *      column.</li>
 			 *  <li>If grouping has been done, sorting and filtering is not possible. Any existing sorting and filtering rules do no longer apply.
 			 *      The UI is not updated accordingly (e.g. menu items, sort and filter icons).</li>
 			 *  <li>The column, by which the table is grouped, is not visible. It will become visible again only if the table is grouped by another
@@ -442,6 +444,8 @@ sap.ui.define([
 
 			/**
 			 * The column by which the table is grouped. Grouping will only be performed if <code>enableGrouping</code> is set to <code>true</code>.
+			 * Setting <code>groupBy</code> in the view does not work and throws an error. It can only be set if the column by which the table
+			 * is grouped is already part of the <code>columns</code> aggregation of the table.
 			 *
 			 * @experimental Since 1.28. This feature has a limited functionality.
 			 * @see sap.ui.table.Table#setEnableGrouping
@@ -4201,6 +4205,12 @@ sap.ui.define([
 		}
 
 		return null;
+	};
+
+	Table.prototype.destroyPlugins = function() {
+		var oResult = this.destroyAggregation('plugins');
+		this._initSelectionPlugin();
+		return oResult;
 	};
 
 	Table.prototype._validateRow = function(oRow) {

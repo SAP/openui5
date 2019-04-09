@@ -23,7 +23,8 @@ sap.ui.define(["sap/ui/base/DataType",
 		interfaces: [
 			"sap.f.cards.IHeader",
 			"sap.f.ICard",
-			"sap.f.IShellBar"
+			"sap.f.IShellBar",
+			"sap.f.IDynamicPageStickyContent"
 		],
 		types: [
 			"sap.f.LayoutType",
@@ -360,6 +361,30 @@ sap.ui.define(["sap/ui/base/DataType",
 		 */
 		Custom: "Custom"
 	};
+
+	/**
+	 * Interface for controls suitable for the <code>stickySubheaderProvider</code>
+	 * association of <code>{@link sap.f.DynamicPage}</code>.
+	 *
+	 * Controls that implemenet this interface should have the following methods:
+	 * <ul>
+	 * <li><code>_getStickyContent</code> - returns the content (control) used in the
+	 * subheader</li>
+	 * <li><code>_returnStickyContent</code> - accepts control as argument and ensures
+	 * that the control is placed back in its place in the provider</li>
+	 * <li><code>_getStickySubHeaderSticked</code> - returns boolean value that shows
+	 * where the sticky content is placed (in its provider or in the
+	 * <code>DynamicPage</code>)</li>
+	 * <li><code>_setStickySubHeaderSticked</code> - accepts a boolean argument to notify
+	 * the provider where its sticky content is placed</li>
+	 * </ul>
+	 *
+	 * @since 1.65
+	 * @name sap.f.IDynamicPageStickyContent
+	 * @interface
+	 * @public
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
 
 	/**
 	 * Types of {@link sap.f.Avatar} based on the displayed content.

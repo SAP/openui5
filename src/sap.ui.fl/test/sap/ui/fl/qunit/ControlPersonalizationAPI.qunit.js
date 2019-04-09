@@ -97,7 +97,8 @@ sap.ui.define([
 				_oChangePersistence: {
 					_oVariantController: {
 						getVariant: function () {},
-						sVariantTechnicalParameterName: "sap-ui-fl-control-variant-id"
+						sVariantTechnicalParameterName: "sap-ui-fl-control-variant-id",
+						assignResetMapListener: function() {}
 					}
 				}
 			};
@@ -768,11 +769,10 @@ sap.ui.define([
 			this.oControl = new Control("controlId1");
 			var aControls = [this.oControl];
 
-			var oChangeContent0 = {"fileName":"change0", "fileType":"change", "variantReference":"", selector:{"id":"controlId1", "idIsLocal":false}, changeType: "changeType1"};
-			var oChangeContent1 = {"fileName":"change1", "fileType":"change", "variantReference":"variantManagementId", selector:{"id":"controlId1", "idIsLocal":false}, changeType: "changeType1"};
-			var oChangeContent2 = {"fileName":"change2", "fileType":"change", "variantReference":"variantManagementId", selector:{"id":"controlId1", "idIsLocal":false}, changeType: "changeType2"};
-			var oChangeContent3 = {"fileName":"change3", "fileType":"change", "variantReference":"variant1", selector:{"id":"controlId1", "idIsLocal":false}, changeType: "changeType2"};
-			var oChangeContent4 = {"fileName":"change4", "fileType":"change", "variantReference":"variant1", selector:{"id":"controlId1", "idIsLocal":false}, changeType: "changeType2"};
+			var oChangeContent0 = {"fileName":"change0", "fileType":"change", "variantReference":"", "selector":{"id":"controlId1", "idIsLocal":false}, "changeType": "changeType1", "layer": "USER"};
+			var oChangeContent1 = {"fileName":"change1", "fileType":"change", "variantReference":"variantManagementId", "selector":{"id":"controlId1", "idIsLocal":false}, "changeType": "changeType1", "layer": "USER"};
+			var oChangeContent2 = {"fileName":"change2", "fileType":"change", "variantReference":"variantManagementId", "selector":{"id":"controlId1", "idIsLocal":false}, "changeType": "changeType2", "layer": "USER"};
+			var oChangeContent3 = {"fileName":"change3", "fileType":"change", "variantReference":"variant1", "selector":{"id":"controlId1", "idIsLocal":false}, "changeType": "changeType2", "layer": "USER"};
 
 			var oMockedWrappedContent = {
 				"changes" : {
@@ -799,7 +799,7 @@ sap.ui.define([
 										"title": "variant 1"
 									}
 								},
-								"controlChanges" : [oChangeContent3, oChangeContent4],
+								"controlChanges" : [oChangeContent3],
 								"variantChanges" : {}
 							}],
 							"variantManagementChanges": {}

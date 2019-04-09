@@ -3,8 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory"
-], function (DescriptorInlineChangeFactory) {
+	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
+	"sap/base/util/includes"
+], function (DescriptorInlineChangeFactory, fnIncludes) {
 	"use strict";
 
 	var AppVariantModifier = {};
@@ -14,7 +15,7 @@ sap.ui.define([
 	var APPVARIANTFILENAME = "/manifest.appdescr_variant";
 
 	function _isCondensable(sChangeType) {
-		return _aCondesableChangeTypes.includes(sChangeType);
+		return fnIncludes(_aCondesableChangeTypes, sChangeType);
 	}
 
 	function sortByTimeStamp(oChangeContentA, oChangeContentB) {
@@ -24,23 +25,23 @@ sap.ui.define([
 		return oChangeContentA.creation > oChangeContentB.creation ? 1 : -1;
 	}
 
-	/** Filters, orders and condenses app descriptor changes.
+	/** Collects all app descriptor changes; orders and condenses them; saves changes in new app variant; all other files remain untouched;
+	 * Output order of descriptor changes is important: First the old appdescr_variant changes, second descriptor changes sorted by their creation date, last new app variant changes.
 	 * @param {Object} oNewAppVariantManifest App variant in creation
 	 * @param {map[]} aFiles Files provided for the app variant creation
-	 * @param {String} aFiles.fileName Complete file name with name space, file name and file type
+	 * @param {string} aFiles.fileName Complete file name with name space, file name and file type
 	 * @param {string} aFiles.content File content as string
 	 * @returns {map[]} Adjusted array of files; new app variant is always added to this array.
 	 */
 	AppVariantModifier.modify = function (oNewAppVariantManifest, aFiles) {
 		// aFiles could be empty if the basis app has no UI flex, no descriptor changes and if it has no app variant
 		if (aFiles.length !== 0) {
-			var aChanges = AppVariantModifier._filterDescriptorChanges(aFiles);
-			var aDescriptorChanges = aChanges.descriptorChanges;
-			var aFiles = aChanges.filteredFiles;
-			aDescriptorChanges = aDescriptorChanges.concat(oNewAppVariantManifest.content);
-			var aDescriptorChangesCondensed = AppVariantModifier._condenseDescriptorChanges(aDescriptorChanges);
-
-			oNewAppVariantManifest.content = aDescriptorChangesCondensed;
+			var oSeparatedFiles = AppVariantModifier._separateDescriptorAndManifestChangesFromOtherFiles(aFiles);
+			var aRelevantChanges = oSeparatedFiles.manifestChanges
+									.concat(oSeparatedFiles.descriptorChanges.sort(sortByTimeStamp))
+									.concat(oNewAppVariantManifest.content);
+			oNewAppVariantManifest.content = AppVariantModifier._condenseDescriptorChanges(aRelevantChanges);
+			aFiles = oSeparatedFiles.noChangeFiles;
 		}
 
 		aFiles.push({ fileName: APPVARIANTFILENAME, content: JSON.stringify(oNewAppVariantManifest) });
@@ -48,37 +49,41 @@ sap.ui.define([
 	};
 
 	/**
-	 * Filters input for descriptor file changes; Output order is important: First the old appdescr_variant, second descriptor changes sorted by their creation date.
+	 * Separates descriptor from non-descriptor file changes;
 	 * @param {map[]} aFiles Files provided for the app variant creation
 	 * @returns {Object} Object containing two properties; an array of descriptor changes and an array of filtered files
+	 * @private
 	 */
-	AppVariantModifier._filterDescriptorChanges = function (aFiles) {
+	AppVariantModifier._separateDescriptorAndManifestChangesFromOtherFiles = function (aFiles) {
 		var aDescriptorChangesContent = [];
-		var aFilteredFiles = [];
+		var oManifestChangeContent = [];
+		var aOtherFiles = [];
+
 		aFiles.forEach(function (oFile) {
+
 			if (oFile.fileName.startsWith("/descriptorChanges")) {
 				var oChangeContent = JSON.parse(oFile.content);
 				aDescriptorChangesContent.push(oChangeContent);
-			} else if (oFile.fileName !== APPVARIANTFILENAME) {
-				aFilteredFiles.push(oFile);
-			}
-		});
-		aDescriptorChangesContent.sort(sortByTimeStamp);
-
-		aFiles.forEach(function (oFile) {
-			if (oFile.fileName === APPVARIANTFILENAME) {
+			} else if (oFile.fileName === APPVARIANTFILENAME) {
 				var oManifestContent = JSON.parse(oFile.content);
-				var oManifestChangeContent = oManifestContent.content;
-				aDescriptorChangesContent = oManifestChangeContent.concat(aDescriptorChangesContent);
+				oManifestChangeContent = oManifestContent.content;
+			} else {
+				aOtherFiles.push(oFile);
 			}
 		});
-		return { descriptorChanges: aDescriptorChangesContent, filteredFiles: aFilteredFiles };
+
+		return {
+				 descriptorChanges: aDescriptorChangesContent,
+				 manifestChanges: oManifestChangeContent,
+				 noChangeFiles: aOtherFiles
+				};
 	};
 
 	/**
 	 * Removes duplicates of condensable changes, keeps last change.
 	 * @param {map[]} aDescriptorChanges All changes that are descriptor for the new app variant
 	 * @returns {map[]} Array of changes where duplicates of condensable changeTypes are removed
+	 * @private
 	 */
 	AppVariantModifier._condenseDescriptorChanges = function (aDescriptorChanges) {
 		var aCheckedCondensableChangeTypes = [];
@@ -86,7 +91,7 @@ sap.ui.define([
 
 		aDescriptorChanges.reverse().forEach(function (oChange) {
 			var sChangeType = oChange.changeType;
-			if (!aCheckedCondensableChangeTypes.includes(sChangeType)) {
+			if (!fnIncludes(aCheckedCondensableChangeTypes, sChangeType)) {
 				aCondensedDescriptorChanges.push(oChange);
 				if (_isCondensable(sChangeType)) {
 					aCheckedCondensableChangeTypes.push(sChangeType);

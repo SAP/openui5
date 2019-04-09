@@ -73,7 +73,7 @@ sap.ui.define([
 	};
 
 	StandardTreeItem.prototype.getContentAnnouncement = function() {
-		return " "; // Labeling is done via aria-labelledby (see StandardTreeItemRenderer.getAriaLabelledBy)
+		return this.getTitle();
 	};
 
 	StandardTreeItem.prototype.exit = function() {

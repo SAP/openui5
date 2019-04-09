@@ -42,7 +42,8 @@ sap.ui.define([
 		HEADER: "/sap.card/header",
 		CONTENT: "/sap.card/content",
 		SERVICES: "/sap.ui5/services",
-		APP_TYPE: "/sap.app/type"
+		APP_TYPE: "/sap.app/type",
+		PARAMS: "/sap.card/configuration/parameters"
 	};
 
 	/**
@@ -87,7 +88,7 @@ sap.ui.define([
 	 *
 	 * The "sap.app" type property of the manifest must be set to "card".
 	 * The namespace used to define a card is "sap.card".
-	 * Every card has a type which can be one of the following: List, Analytical, Timeline, Object.
+	 * Every card has a type which can be one of the following: List, Analytical, Timeline, Object, Table.
 	 *
 	 * An example of a manifest.json:
 	 *
@@ -177,6 +178,7 @@ sap.ui.define([
 	 * <li>Object</li>
 	 * <li>Timeline</li>
 	 * <li>Analytical</li>
+	 * <li>Table</li>
 	 * </ul>
 	 *
 	 * List card contains a set of items. The "item" property defines the template for all the items of the list.
@@ -184,47 +186,47 @@ sap.ui.define([
 	 * Example:
 	 * <pre>
 	 * {
-     *   "sap.app": {
-     *     "type": "card"
-     *   },
-     *   "sap.card": {
-     *     "type": "List",
-     *     "header": {
+	 *   "sap.app": {
+	 *     "type": "card"
+	 *   },
+	 *   "sap.card": {
+	 *     "type": "List",
+	 *     "header": {
 	 *       ...
-     *     },
-     *     "content": {
-     *       "data": {
-     *         "json": [{
-     *             "Name": "Comfort Easy",
-     *             "Description": "A 32 GB Digital Assistant with a high-resolution color screen",
-     *             "Highlight": "Error"
-     *           },
-     *           {
-     *             "Name": "ITelO Vault",
-     *             "Description": "A Digital Organizer with state-of-the-art Storage Encryption",
-     *             "Highlight": "Warning"
-     *           },
-     *           {
-     *             "Name": "Notebook Professional 15",
-     *             "Description": "Notebook Professional 15 description",
-     *             "Highlight": "Success"
-     *           }
-     *         ]
-     *       },
-     *       "item": {
-     *         "title": {
-     *           "label": "{{title_label}}",
-     *           "value": "{Name}"
-     *         },
-     *         "description": {
-     *           "label": "{{description_label}}",
-     *           "value": "{Description}"
-     *         },
-     *         "highlight": "{Highlight}"
-     *       }
-     *     }
-     *   }
-     * }
+	 *     },
+	 *     "content": {
+	 *       "data": {
+	 *         "json": [{
+	 *             "Name": "Comfort Easy",
+	 *             "Description": "A 32 GB Digital Assistant with a high-resolution color screen",
+	 *             "Highlight": "Error"
+	 *           },
+	 *           {
+	 *             "Name": "ITelO Vault",
+	 *             "Description": "A Digital Organizer with state-of-the-art Storage Encryption",
+	 *             "Highlight": "Warning"
+	 *           },
+	 *           {
+	 *             "Name": "Notebook Professional 15",
+	 *             "Description": "Notebook Professional 15 description",
+	 *             "Highlight": "Success"
+	 *           }
+	 *         ]
+	 *       },
+	 *       "item": {
+	 *         "title": {
+	 *           "label": "{{title_label}}",
+	 *           "value": "{Name}"
+	 *         },
+	 *         "description": {
+	 *           "label": "{{description_label}}",
+	 *           "value": "{Description}"
+	 *         },
+	 *         "highlight": "{Highlight}"
+	 *       }
+	 *     }
+	 *   }
+	 * }
 	 * </pre>
 	 *
 	 * Analytical card contains a chart visualization configuration. Supported chart types are Line, StackedBar, StackedColumn, Donut.
@@ -232,85 +234,85 @@ sap.ui.define([
 	 * <pre>
 	 * <code>
 	 * {
-     *   "sap.app": {
-     *     "type": "card"
-     *   },
-     *   "sap.card": {
-     *     "type": "Analytical",
-     *     "header": {
+	 *   "sap.app": {
+	 *     "type": "card"
+	 *   },
+	 *   "sap.card": {
+	 *     "type": "Analytical",
+	 *     "header": {
 	 *       ...
-     *     },
-     *     "content": {
-     *       "chartType": "Line",
-     *       "legend": {
-     *         "visible": true,
-     *         "position": "Bottom",
-     *         "alignment": "Left"
-     *       },
-     *       "plotArea": {
-     *         "dataLabel": {
-     *           "visible": true
-     *         },
-     *         "categoryAxisText": {
-     *           "visible": false
-     *         },
-     *         "valueAxisText": {
-     *           "visible": false
-     *         }
-     *       },
-     *       "title": {
-     *         "text": "Line chart",
-     *         "visible": true,
-     *         "alignment": "Left"
-     *       },
-     *       "measureAxis": "valueAxis",
-     *       "dimensionAxis": "categoryAxis",
-     *       "data": {
-     *         "json": {
-     *           "list": [
-     *             {
-     *               "Week": "CW14",
-     *               "Revenue": 431000.22,
-     *               "Cost": 230000.00,
-     *               "Cost1": 24800.63,
-     *               "Cost2": 205199.37,
-     *               "Cost3": 199999.37,
-     *               "Target": 500000.00,
-     *               "Budget": 210000.00
-     *             },
-     *             {
-     *               "Week": "CW15",
-     *               "Revenue": 494000.30,
-     *               "Cost": 238000.00,
-     *               "Cost1": 99200.39,
-     *               "Cost2": 138799.61,
-     *               "Cost3": 200199.37,
-     *               "Target": 500000.00,
-     *               "Budget": 224000.00
-     *             }
-     *           ]
-     *         },
-     *         "path": "/list"
-     *       },
-     *       "dimensions": [
+	 *     },
+	 *     "content": {
+	 *       "chartType": "Line",
+	 *       "legend": {
+	 *         "visible": true,
+	 *         "position": "Bottom",
+	 *         "alignment": "Left"
+	 *       },
+	 *       "plotArea": {
+	 *         "dataLabel": {
+	 *           "visible": true
+	 *         },
+	 *         "categoryAxisText": {
+	 *           "visible": false
+	 *         },
+	 *         "valueAxisText": {
+	 *           "visible": false
+	 *         }
+	 *       },
+	 *       "title": {
+	 *         "text": "Line chart",
+	 *         "visible": true,
+	 *         "alignment": "Left"
+	 *       },
+	 *       "measureAxis": "valueAxis",
+	 *       "dimensionAxis": "categoryAxis",
+	 *       "data": {
+	 *         "json": {
+	 *           "list": [
+	 *             {
+	 *               "Week": "CW14",
+	 *               "Revenue": 431000.22,
+	 *               "Cost": 230000.00,
+	 *               "Cost1": 24800.63,
+	 *               "Cost2": 205199.37,
+	 *               "Cost3": 199999.37,
+	 *               "Target": 500000.00,
+	 *               "Budget": 210000.00
+	 *             },
+	 *             {
+	 *               "Week": "CW15",
+	 *               "Revenue": 494000.30,
+	 *               "Cost": 238000.00,
+	 *               "Cost1": 99200.39,
+	 *               "Cost2": 138799.61,
+	 *               "Cost3": 200199.37,
+	 *               "Target": 500000.00,
+	 *               "Budget": 224000.00
+	 *             }
+	 *           ]
+	 *         },
+	 *         "path": "/list"
+	 *       },
+	 *       "dimensions": [
 	 *         {
-     *           "label": "Weeks",
-     *           "value": "{Week}"
-     *         }
+	 *           "label": "Weeks",
+	 *           "value": "{Week}"
+	 *         }
 	 *       ],
-     *       "measures": [
+	 *       "measures": [
 	 *         {
-     *           "label": "Revenue",
-     *           "value": "{Revenue}"
-     *         },
-     *         {
-     *           "label": "Cost",
-     *           "value": "{Cost}"
-     *         }
-     *       ]
-     *     }
-     *   }
-     * }
+	 *           "label": "Revenue",
+	 *           "value": "{Revenue}"
+	 *         },
+	 *         {
+	 *           "label": "Cost",
+	 *           "value": "{Cost}"
+	 *         }
+	 *       ]
+	 *     }
+	 *   }
+	 * }
 	 * </code>
 	 * </pre>
 	 *
@@ -320,10 +322,10 @@ sap.ui.define([
 	 * <pre>
 	 * <code>
 	 * {
-     *   "sap.app": {
-     *     "type": "card"
-     *   },
-     *   "sap.card": {
+	 *   "sap.app": {
+	 *     "type": "card"
+	 *   },
+	 *   "sap.card": {
 	 * 	    "type": "Object",
 	 *      "header": {
 	 *        ...
@@ -371,52 +373,118 @@ sap.ui.define([
 	 * <pre>
 	 * <code>
 	 * {
-     *   "sap.app": {
-     *     "type": "card"
-     *   },
-     *   "sap.card": {
-     *     "type": "Timeline",
-     *     "header": {
+	 *   "sap.app": {
+	 *     "type": "card"
+	 *   },
+	 *   "sap.card": {
+	 *     "type": "Timeline",
+	 *     "header": {
 	 *       ...
-     *     },
-     *     "content": {
-     *       "data": {
-     *         "json": [
-     *           {
-     *             "Title": "Weekly sync: Marketplace / Design Stream",
-     *             "Description": "MRR WDF18 C3.2(GLASSBOX)",
-     *             "Icon": "sap-icon://appointment-2",
-     *             "Time": "10:00 - 10:30"
-     *           },
-     *           {
-     *             "Title": "Video Conference for FLP@SF, S4,Hybris",
-     *             "Icon": "sap-icon://my-view",
-     *             "Time": "14:00 - 15:30"
-     *           },
-     *           {
-     *             "Title": "Call 'Project Nimbus'",
-     *             "Icon": "sap-icon://outgoing-call",
-     *             "Time": "16:00 - 16:30"
-     *           }
-     *         ]
+	 *     },
+	 *     "content": {
+	 *       "data": {
+	 *         "json": [
+	 *           {
+	 *             "Title": "Weekly sync: Marketplace / Design Stream",
+	 *             "Description": "MRR WDF18 C3.2(GLASSBOX)",
+	 *             "Icon": "sap-icon://appointment-2",
+	 *             "Time": "10:00 - 10:30"
+	 *           },
+	 *           {
+	 *             "Title": "Video Conference for FLP@SF, S4,Hybris",
+	 *             "Icon": "sap-icon://my-view",
+	 *             "Time": "14:00 - 15:30"
+	 *           },
+	 *           {
+	 *             "Title": "Call 'Project Nimbus'",
+	 *             "Icon": "sap-icon://outgoing-call",
+	 *             "Time": "16:00 - 16:30"
+	 *           }
+	 *         ]
 	 *       },
-     *       "item": {
-     *         "dateTime": {
-     *           "value": "{Time}"
-     *         },
-     *         "description" : {
-     *           "value": "{Description}"
-     *         },
-     *         "title": {
-     *           "value": "{Title}"
-     *         },
-     *         "icon": {
-     *           "src": "{Icon}"
-     *         }
-     *       }
-     *     }
-     *   }
-     * }
+	 *       "item": {
+	 *         "dateTime": {
+	 *           "value": "{Time}"
+	 *         },
+	 *         "description" : {
+	 *           "value": "{Description}"
+	 *         },
+	 *         "title": {
+	 *           "value": "{Title}"
+	 *         },
+	 *         "icon": {
+	 *           "src": "{Icon}"
+	 *         }
+	 *       }
+	 *     }
+	 *   }
+	 * }
+	 * </code>
+	 * </pre>
+	 *
+	 * Table card displays a set of items in a table format. The "row" property defines the template for all rows of the table.
+	 * Example:
+	 * <pre>
+	 * <code>
+	 * {
+	 *   "sap.app": {
+	 *     "type": "card"
+	 *   },
+	 *   "sap.card": {
+	 *     "type": "Table",
+	 *     "header": {
+	 *       ...
+	 *     },
+	 *     "content": {
+	 *       "data": {
+	 *         "json": [
+	 *           {
+	 *            "salesOrder": "5000010050",
+	 *            "customerName": "Robert Brown Entertainment",
+	 *            "netAmount": "2K USD",
+	 *            "status": "Delivered",
+	 *            "statusState": "Success"
+	 *           },
+	 *           {
+	 *            "salesOrder": "5000010051",
+	 *            "customerName": "Entertainment Argentinia",
+	 *            "netAmount": "127k USD",
+	 *            "status": "Canceled",
+	 *            "statusState": "Error"
+	 *           },
+	 *           {
+	 *            "salesOrder": "5000010052",
+	 *            "customerName": "Brazil Technologies",
+	 *            "netAmount": "8K USD",
+	 *            "status": "In Progress",
+	 *            "statusState": "Warning"
+	 *           }
+	 *         ]
+	 *       },
+	 *       "row": {
+	 *         "columns": [{
+	 *            "title": "Sales Order",
+	 *            "value": "{salesOrder}",
+	 *            "identifier": true
+	 *           },
+	 *           {
+	 *             "title": "Customer",
+	 *             "value": "{customerName}"
+	 *           },
+	 *           {
+	 *              "title": "Net Amount",
+	 *              "value": "{netAmount}"
+	 *           },
+	 *           {
+	 *              "title": "Status",
+	 *              "value": "{status}",
+	 *              "state": "{statusState}"
+	 *           }
+	 *         ]
+	 *       }
+	 *     }
+	 *   }
+	 * }
 	 * </code>
 	 * </pre>
 	 *
@@ -431,28 +499,28 @@ sap.ui.define([
 	 * <code>
 	 * {
 	 *   ...
-     *   "content": {
-     *     "data": {
-     *       "json": {
+	 *   "content": {
+	 *     "data": {
+	 *       "json": {
 	 *         "items": [
-     *           {
-     *             "Title": "Weekly sync: Marketplace / Design Stream",
-     *             "Description": "MRR WDF18 C3.2(GLASSBOX)",
-     *             "Icon": "sap-icon://appointment-2",
-     *             "Time": "10:00 - 10:30"
-     *           },
-     *           {
-     *             "Title": "Video Conference for FLP@SF, S4,Hybris",
-     *             "Icon": "sap-icon://my-view",
-     *             "Time": "14:00 - 15:30"
-     *           }
-     *         ]
+	 *           {
+	 *             "Title": "Weekly sync: Marketplace / Design Stream",
+	 *             "Description": "MRR WDF18 C3.2(GLASSBOX)",
+	 *             "Icon": "sap-icon://appointment-2",
+	 *             "Time": "10:00 - 10:30"
+	 *           },
+	 *           {
+	 *             "Title": "Video Conference for FLP@SF, S4,Hybris",
+	 *             "Icon": "sap-icon://my-view",
+	 *             "Time": "14:00 - 15:30"
+	 *           }
+	 *         ]
 	 *       },
-     *       "path": "/items"
-     *     },
+	 *       "path": "/items"
+	 *     },
 	 *     ...
 	 *   }
-     * }
+	 * }
 	 * </code>
 	 * </pre>
 	 *
@@ -461,16 +529,16 @@ sap.ui.define([
 	 * <code>
 	 * {
 	 *   ...
-     *   "content": {
-     *     "data": {
+	 *   "content": {
+	 *     "data": {
 	 *       "request": {
 	 *         "url": "/path/to/data"
 	 *       },
-     *       "path": "/items"
-     *     },
+	 *       "path": "/items"
+	 *     },
 	 *     ...
 	 *   }
-     * }
+	 * }
 	 * </code>
 	 * </pre>
 	 *
@@ -487,57 +555,57 @@ sap.ui.define([
 	 * <pre>
 	 * <code>
 	 * {
-     *   "sap.app": {
-     *     "type": "card"
-     *   },
-     *   "sap.card": {
-     *     "type": "List",
-     *     "header": {
-     *       "title": "Request list content Card",
-     *       "subTitle": "Card Subtitle",
-     *       "icon": {
-     *         "src": "sap-icon://accept"
-     *       },
-     *       "status": "100 of 200",
-     *       "actions": [
-     *         {
-     *           "type": "Navigation",
-     *           "parameters": {
-     *             "url": "/some/relative/path"
-     *           }
-     *         }
-     *       ]
-     *     },
-     *     "content": {
-     *       "data": {
-     *         "request": {
-     *           "url": "./cardcontent/someitems_services2.json"
-     *         },
-     *         "path": "/items"
-     *       },
-     *       "item": {
-     *         "icon": {
-     *           "src": "{icon}"
-     *         },
-     *         "title": {
-     *           "value": "{Name}"
-     *         },
-     *         "description": {
-     *           "value": "{Description}"
-     *         },
-     *         "actions": [
-     *           {
-     *             "type": "Navigation",
-     *             "enabled": "{= ${url}}",
-     *             "parameters": {
-     *               "url": "{url}"
-     *             }
-     *           }
-     *         ]
-     *       }
-     *     }
-     *   }
-     * }
+	 *   "sap.app": {
+	 *     "type": "card"
+	 *   },
+	 *   "sap.card": {
+	 *     "type": "List",
+	 *     "header": {
+	 *       "title": "Request list content Card",
+	 *       "subTitle": "Card Subtitle",
+	 *       "icon": {
+	 *         "src": "sap-icon://accept"
+	 *       },
+	 *       "status": "100 of 200",
+	 *       "actions": [
+	 *         {
+	 *           "type": "Navigation",
+	 *           "parameters": {
+	 *             "url": "/some/relative/path"
+	 *           }
+	 *         }
+	 *       ]
+	 *     },
+	 *     "content": {
+	 *       "data": {
+	 *         "request": {
+	 *           "url": "./cardcontent/someitems_services2.json"
+	 *         },
+	 *         "path": "/items"
+	 *       },
+	 *       "item": {
+	 *         "icon": {
+	 *           "src": "{icon}"
+	 *         },
+	 *         "title": {
+	 *           "value": "{Name}"
+	 *         },
+	 *         "description": {
+	 *           "value": "{Description}"
+	 *         },
+	 *         "actions": [
+	 *           {
+	 *             "type": "Navigation",
+	 *             "enabled": "{= ${url}}",
+	 *             "parameters": {
+	 *               "url": "{url}"
+	 *             }
+	 *           }
+	 *         ]
+	 *       }
+	 *     }
+	 *   }
+	 * }
 	 * </code>
 	 * </pre>
 	 *
@@ -577,6 +645,15 @@ sap.ui.define([
 				manifest: {
 					type: "any",
 					defaultValue: ""
+				},
+
+				/**
+				 * The parameters used in the manifest.
+				 * @experimental Since 1.65. This property might be changed in future.
+				 */
+				parameters: {
+					type: "object",
+					defaultValue: null
 				},
 
 				/**
@@ -666,18 +743,57 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype.init = function () {
+		this._initReadyState();
+		this.setBusyIndicatorDelay(0);
+	};
+
+	/**
+	 * Inits the ready state of the card by waiting for the required events.
+	 *
+	 * @private
+	 */
+	Card.prototype._initReadyState = function () {
 		this._aReadyPromises = [];
+		this._bApplyManifest = true;
 
 		this._awaitEvent("_headerReady");
 		this._awaitEvent("_contentReady");
 		this._awaitEvent("_cardReady");
 
-		Promise.all(this._aReadyPromises).then(function () {
+		this._oReadyPromise = Promise.all(this._aReadyPromises).then(function () {
 			this._bReady = true;
 			this.fireEvent("_ready");
 		}.bind(this));
+	};
 
-		this.setBusyIndicatorDelay(0);
+	/**
+	 * Clears the ready state of the card.
+	 *
+	 * @private
+	 */
+	Card.prototype._clearReadyState = function () {
+		this._bReady = false;
+		this._aReadyPromises = [];
+		this._oReadyPromise = null;
+	};
+
+	/**
+	 * Called on before rendering of the control.
+	 * @private
+	 */
+	Card.prototype.onBeforeRendering = function () {
+		var sConfig = this.getHostConfigurationId(),
+			oParameters = this.getParameters();
+
+		if (sConfig) {
+			this.addStyleClass(sConfig.replace(/-/g, "_"));
+		}
+
+		if (this._oCardManifest && this._bApplyManifest) {
+			this._oCardManifest.processParameters(oParameters);
+			this._applyManifestSettings();
+			this._bApplyManifest = false;
+		}
 	};
 
 	/**
@@ -696,10 +812,26 @@ sap.ui.define([
 
 	/**
 	 * @public
+	 * @experimental Since 1.65. The API might change.
 	 * @returns {boolean} If the card is ready or not.
 	 */
 	Card.prototype.isReady = function () {
 		return this._bReady;
+	};
+
+	/**
+	 * Refreshes the card by re-applying the manifest settings and triggering all data requests.
+	 *
+	 * @public
+	 * @experimental Since 1.65. The API might change.
+	 */
+	Card.prototype.refresh = function () {
+		if (this._oCardManifest && this.isReady()) {
+			this._clearReadyState();
+			this._initReadyState();
+			this._bApplyManifest = true;
+			this.invalidate();
+		}
 	};
 
 	/**
@@ -723,7 +855,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Setter for card manifest.
+	 * Overwrites setter for card manifest.
 	 *
 	 * @public
 	 * @param {string|Object} vValue The manifest object or its URL.
@@ -731,19 +863,63 @@ sap.ui.define([
 	 */
 	Card.prototype.setManifest = function (vValue) {
 		this.setBusy(true);
-		this.setProperty("manifest", vValue, true);
+		this.setProperty("manifest", vValue);
 
 		if (typeof vValue === "string" && vValue !== "") {
 			this._oCardManifest = new CardManifest();
 			this._oCardManifest.load({ manifestUrl: vValue }).then(function () {
-				this._applyManifestSettings();
+				this._bApplyManifest = true;
+				this.invalidate();
 			}.bind(this));
 		} else if (typeof vValue === "object" && !jQuery.isEmptyObject(vValue)) {
+			this._bApplyManifest = true;
 			this._oCardManifest = new CardManifest(vValue);
-			this._applyManifestSettings();
 		}
 
 		return this;
+	};
+
+	/**
+	 * Overwrites getter for card manifest.
+	 *
+	 * @public
+	 * @returns {string|Object} Cloned of the parameters.
+	 */
+	Card.prototype.getManifest = function () {
+		var vValue = this.getProperty("manifest");
+		if (vValue && typeof vValue === "object") {
+			return jQuery.extend(true, {}, vValue);
+		}
+		return vValue;
+	};
+
+	/**
+	 * Overwrites setter for card params.
+	 *
+	 * @public
+	 * @param {Object} vValue oParameters Parameters set in the card trough parameters property.
+	 * @returns {sap.ui.integration.widgets.Card} Pointer to the control instance to allow method chaining.
+	 */
+	Card.prototype.setParameters = function (vValue) {
+		this._bApplyManifest = true;
+		this.setBusy(true);
+		this.setProperty("parameters", vValue);
+
+		return this;
+	};
+
+	/**
+	 * Overwrites getter for card parameters.
+	 *
+	 * @public
+	 * @returns {Object} A Clone of the parameters.
+	 */
+	Card.prototype.getParameters = function () {
+		var vValue = this.getProperty("parameters");
+		if (vValue && typeof vValue === "object") {
+			return jQuery.extend(true, {}, vValue);
+		}
+		return vValue;
 	};
 
 	/**
@@ -753,7 +929,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype._applyManifestSettings = function () {
-		if (this._oCardManifest.get(MANIFEST_PATHS.APP_TYPE) !== "card") {
+		var sAppType = this._oCardManifest.get(MANIFEST_PATHS.APP_TYPE);
+		if (sAppType && sAppType !== "card") {
 			Log.error("sap.app/type entry in manifest is not 'card'");
 		}
 
@@ -857,11 +1034,11 @@ sap.ui.define([
 	 */
 	Card.prototype._applyContentManifestSettings = function () {
 		var sCardType = this._oCardManifest.get(MANIFEST_PATHS.TYPE),
-			bIsComponent = sCardType.toLowerCase() === "component",
+			bIsComponent = sCardType && sCardType.toLowerCase() === "component",
 			oManifestContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
 			bHasContent = !!oManifestContent;
 
-		if (!sCardType) {
+		if (bHasContent && !sCardType) {
 			Log.error("Card type property is mandatory!");
 			this.fireEvent("_contentReady");
 			return;
@@ -899,8 +1076,8 @@ sap.ui.define([
 	 * @param {sap.f.cards.IHeader} CardHeader The header to be created
 	 */
 	Card.prototype._setCardHeader = function (CardHeader) {
-		var oSettings = this._oCardManifest.get(MANIFEST_PATHS.HEADER);
-		var oHeader = CardHeader.create(oSettings, this._oServiceManager);
+		var oSettings = this._oCardManifest.get(MANIFEST_PATHS.HEADER),
+			oHeader = CardHeader.create(oSettings, this._oServiceManager);
 
 		oHeader.attachEvent("action", function (oEvent) {
 			this.fireEvent("action", {
@@ -934,17 +1111,6 @@ sap.ui.define([
 				this.fireEvent(sReadyEventName);
 				this.setBusy(false);
 			}.bind(this));
-		}
-	};
-
-	/**
-	 * Called on before rendering of the control.
-	 * @private
-	 */
-	Card.prototype.onBeforeRendering = function () {
-		var sConfig = this.getHostConfigurationId();
-		if (sConfig) {
-			this.addStyleClass(sConfig.replace(/-/g, "_"));
 		}
 	};
 
@@ -1008,9 +1174,9 @@ sap.ui.define([
 					oContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
 					sHeight = BaseContent.getMinHeight(sType, oContent);
 
-					if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
-						oHBox.$().css({ "min-height": sHeight });
-					}
+				if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
+					oHBox.$().css({ "min-height": sHeight });
+				}
 			}
 		}, this);
 
@@ -1057,9 +1223,10 @@ sap.ui.define([
 				var sType = this._oCardManifest.get(MANIFEST_PATHS.TYPE) + "Content",
 					oContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
 					sHeight = BaseContent.getMinHeight(sType, oContent);
-					if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
-						oError.$().css({ "min-height": sHeight });
-					}
+
+				if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
+					oError.$().css({ "min-height": sHeight });
+				}
 			}
 		}, this);
 

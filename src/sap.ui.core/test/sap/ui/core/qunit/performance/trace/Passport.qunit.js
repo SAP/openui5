@@ -31,8 +31,11 @@ sap.ui.define(['sap/ui/performance/trace/Passport'], function(Passport) {
 	QUnit.test("traceFlags", function(assert) {
 		assert.deepEqual(Passport.traceFlags(), [0,0], "default");
 		assert.deepEqual(Passport.traceFlags("low"), [0,0], "low");
+		assert.deepEqual(Passport.traceFlags(), [0,0], "low");
 		assert.deepEqual(Passport.traceFlags("medium"), [137,10], "medium");
+		assert.deepEqual(Passport.traceFlags(), [137,10], "medium");
 		assert.deepEqual(Passport.traceFlags("high"), [159,13], "high");
+		assert.deepEqual(Passport.traceFlags(), [159,13], "high");
 	});
 
 	QUnit.test("createGUID", function(assert) {

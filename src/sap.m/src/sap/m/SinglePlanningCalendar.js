@@ -20,7 +20,8 @@ sap.ui.define([
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/unified/calendar/CalendarUtils',
-	'sap/ui/unified/DateRange'
+	'sap/ui/unified/DateRange',
+	'sap/ui/base/ManagedObjectObserver'
 ],
 function(
 	library,
@@ -39,7 +40,8 @@ function(
 	DateFormat,
 	CalendarDate,
 	CalendarUtils,
-	DateRange
+	DateRange,
+	ManagedObjectObserver
 ) {
 	"use strict";
 
@@ -145,7 +147,16 @@ function(
 			 *
 			 * @since 1.65
 			 */
-			enableAppointmentsResize: { type: "boolean", group: "Misc", defaultValue: false }
+			enableAppointmentsResize: { type: "boolean", group: "Misc", defaultValue: false },
+
+			/**
+			 * Determines whether the appointments can be created by dragging on empty cells.
+			 *
+			 * See {@link #property:enableAppointmentsResize enableAppointmentsResize} for the specific points for events snapping
+			 *
+			 * @since 1.65
+			 */
+			enableAppointmentsCreate: { type: "boolean", group: "Misc", defaultValue: false }
 		},
 
 		aggregations : {
@@ -208,7 +219,15 @@ function(
 			/**
 			 * Corresponds to the currently selected view.
 			 */
-			selectedView: { type: "sap.m.SinglePlanningCalendarView", multiple: false }
+			selectedView: { type: "sap.m.SinglePlanningCalendarView", multiple: false },
+
+			/**
+			 * Association to the <code>PlanningCalendarLegend</code> explaining the colors of the <code>Appointments</code>.
+			 *
+			 * <b>Note:</b> The legend does not have to be rendered but must exist, and all required types must be assigned.
+			 * @since 1.65.0
+			 */
+			legend: { type: "sap.m.PlanningCalendarLegend", multiple: false}
 
 		},
 
@@ -280,6 +299,24 @@ function(
 			},
 
 			/**
+			 * Fired if an appointment is created.
+			 * @since 1.65
+			 */
+			appointmentCreate: {
+				parameters: {
+					/**
+					 * Start date of the created appointment, as a JavaScript date object.
+					 */
+					startDate: {type: "object"},
+
+					/**
+					 * End date of the created appointment, as a JavaScript date object.
+					 */
+					endDate: {type: "object"}
+				}
+			},
+
+			/**
 			 * Fired if a date is selected in the calendar header.
 			 */
 			headerDateSelect: {
@@ -334,8 +371,17 @@ function(
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype.onBeforeRendering = function () {
+		var oLegend = sap.ui.getCore().byId(this.getLegend());
+
 		// We can apply/remove sticky classes even before the control is rendered.
 		this._toggleStickyClasses();
+
+		//this is temporary & will be removed when SPC has a specialDates aggregation also
+		//for now in the SPC standartItems will not be rendered
+		if (oLegend) {
+			oLegend._bShouldRenderStandardItems = false;
+		}
+
 	};
 
 	/**
@@ -416,6 +462,12 @@ function(
 		this._getGrid().setEnableAppointmentsResize(bEnabled);
 
 		return this.setProperty("enableAppointmentsResize", bEnabled, true);
+	};
+
+	SinglePlanningCalendar.prototype.setEnableAppointmentsCreate = function(bEnabled) {
+		this._getGrid().setEnableAppointmentsCreate(bEnabled);
+
+		return this.setProperty("enableAppointmentsCreate", bEnabled, true);
 	};
 
 	/**
@@ -590,6 +642,29 @@ function(
 		return this._getGrid().getSelectedAppointments();
 	};
 
+	SinglePlanningCalendar.prototype.setLegend = function (vLegend) {
+		var oLegendDestroyObserver,
+			oLegend;
+
+		this.setAssociation("legend", vLegend);
+
+		if (this.getLegend()) {
+			this._getGrid()._sLegendId = this.getLegend();
+			oLegend = sap.ui.getCore().byId(this.getLegend());
+		}
+
+		if (oLegend) { //destroy of the associated legend should rerender the SPC
+			oLegendDestroyObserver = new ManagedObjectObserver(function(oChanges) {
+				this.invalidate();
+			}.bind(this));
+			oLegendDestroyObserver.observe(oLegend, {
+				destroy: true
+			});
+		}
+
+		return this;
+	};
+
 	/**
 	 * Switches the visibility of the SegmentedButton in the _header and aligns the columns in the grid after an
 	 * operation (add, insert, remove, removeAll, destroy) with the views is performed.
@@ -722,6 +797,13 @@ function(
 		oGrid.attachEvent("appointmentResize", function(oEvent) {
 			this.fireAppointmentResize({
 				appointment: oEvent.getParameter("appointment"),
+				startDate: oEvent.getParameter("startDate"),
+				endDate: oEvent.getParameter("endDate")
+			});
+		}, this);
+
+		oGrid.attachEvent("appointmentCreate", function(oEvent) {
+			this.fireAppointmentCreate({
 				startDate: oEvent.getParameter("startDate"),
 				endDate: oEvent.getParameter("endDate")
 			});
@@ -891,6 +973,7 @@ function(
 		var bVisible = !this._getSelectedView().isA("sap.m.SinglePlanningCalendarDayView");
 
 		this._getGrid()._getColumnHeaders().setVisible(bVisible);
+		this.toggleStyleClass("sapMSinglePCHiddenColHeaders", !bVisible);
 	};
 
 	/**

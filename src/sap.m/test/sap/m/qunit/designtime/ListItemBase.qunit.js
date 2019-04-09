@@ -1,7 +1,7 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/rta/enablement/controlTest"
-], function(createAndAppendDiv, rtaControlEnablingCheck) {
+	"sap/ui/rta/enablement/elementActionTest"
+], function(createAndAppendDiv, elementActionTest) {
 	'use strict';
 
 	createAndAppendDiv("content");
@@ -18,7 +18,7 @@ sap.ui.define([
 	};
 
 
-	rtaControlEnablingCheck("Checking the remove action for " + listItem, {
+	elementActionTest("Checking the remove action for " + listItem, {
 		xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">"' +
 		'<m:List id="list">' +
 			'<' + listItem + ' id="listItem1" title="Item"/>' +
@@ -36,7 +36,7 @@ sap.ui.define([
 		afterRedo: fnConfirmListItemIsInvisible
 	});
 
-	rtaControlEnablingCheck("Checking the reveal action for " + listItem, {
+	elementActionTest("Checking the reveal action for " + listItem, {
 		xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">"' +
 		'<m:List id="list">' +
 			'<' + listItem + ' id="listItem1" title="Item" visible="false"/>' +

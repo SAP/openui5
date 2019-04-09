@@ -758,6 +758,7 @@ sap.ui.define([
 
 		this.aSectionTitles.push(oSection.getTitle());
 
+		return this;
 	};
 
 	/**

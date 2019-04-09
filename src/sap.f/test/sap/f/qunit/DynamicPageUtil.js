@@ -7,6 +7,8 @@ sap.ui.define([
 	"sap/ui/layout/Grid",
 	"sap/m/Panel",
 	"sap/m/MessageStrip",
+	"sap/m/IconTabBar",
+	"sap/m/IconTabFilter",
 	"sap/m/Button",
 	"sap/m/Title",
 	"sap/m/Label",
@@ -24,6 +26,8 @@ sap.ui.define([
 	Grid,
 	Panel,
 	MessageStrip,
+	IconTabBar,
+	IconTabFilter,
 	Button,
 	Title,
 	Label,
@@ -46,6 +50,22 @@ sap.ui.define([
 				header: this.getDynamicPageHeader(),
 				content: this.getContent(100),
 				footer: this.getFooter()
+			});
+		},
+		getDynamicPageWithStickySubheader: function (bPreserveHeaderStateOnScroll, bHasHeader, bHasVisibleHeader, bHasTitle) {
+			var oHeader = bHasHeader ? this.getDynamicPageHeader() : null,
+				oContent = this.getIconTabBar();
+
+			if (oHeader && !bHasVisibleHeader) {
+				oHeader.setVisible(false);
+			}
+
+			return new DynamicPage({
+				preserveHeaderStateOnScroll: bPreserveHeaderStateOnScroll,
+				stickySubheaderProvider: oContent.getId(),
+				title: bHasTitle ? this.getDynamicPageTitle() : null,
+				header: oHeader,
+				content: oContent
 			});
 		},
 		getDynamicPageHeaderSnapped: function () {
@@ -256,6 +276,23 @@ sap.ui.define([
 			return new Grid({
 				defaultSpan: "XL2 L3 M4 S6",
 				content: this.getMessageStrips(iNumber)
+			});
+		},
+		getIconTabBar: function () {
+			return new IconTabBar("iconTabBar", {
+				items: [
+					this.getIconTabFilter("Info"),
+					this.getIconTabFilter("Attachments"),
+					this.getIconTabFilter("Notes"),
+					this.getIconTabFilter("People")
+				]
+			});
+		},
+		getIconTabFilter: function (sFilterName) {
+			return new IconTabFilter({
+				text: sFilterName,
+				key: sFilterName,
+				content: this.getContent(200)
 			});
 		},
 		getMessageStrip: function (iNumber) {
