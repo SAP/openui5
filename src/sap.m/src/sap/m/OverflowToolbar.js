@@ -93,6 +93,7 @@ sap.ui.define([
 	 * <li>{@link sap.m.Select}</li>
 	 * <li>{@link sap.m.TimePicker}</li>
 	 * <li>{@link sap.m.ToggleButton}</li>
+	 * <li>{@link sap.m.ToolbarSeparator}</li>
 	 * <li>{@link sap.ui.comp.smartfield.SmartField}</li>
 	 * <li>{@link sap.ui.comp.smartfield.SmartLabel}</li></ul>
 	 *

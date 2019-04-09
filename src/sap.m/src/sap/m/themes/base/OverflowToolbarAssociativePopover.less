@@ -30,6 +30,13 @@
 	  display: block;
 	}
 
+	&> .sapMTBSeparator.sapMTBSeparatorOverflowToolbar {
+		&:first-child,
+		&:last-child {
+			display: none;
+		}
+	}
+
 	/* Button, ToggleButton, OverflowToolbarButton */
 	&> button.sapMBtn {
 	  width: 100% !important;

@@ -222,12 +222,57 @@
 	</OverflowToolbar>
 
 	<MessageStrip
+			class="sapUiTinyMargin"
+			text="Toolbar separators are shown as horizontal lines in the overflow area. If the separator happens to be
+				the first or the last element in the overflow area, it won't be displayed. It is recommended to use
+				the separator within group, so it won't be left behind in an inappropriate positions."
+			type="Information"
+			showIcon="true">
+	</MessageStrip>
+
+	<OverflowToolbar id="otb6">
+		<Label text="Buttons within separated groups:"/><Label/>
+		<ToolbarSpacer/>
+		<Button text="Never" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData
+						priority="NeverOverflow"/>
+			</layoutData>
+		</Button>
+		<Button text="Group 1" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData group="1"/>
+			</layoutData>
+		</Button>
+		<Button text="Group 1" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData group="1"/>
+			</layoutData>
+		</Button>
+		<ToolbarSeparator>
+			<layoutData>
+				<OverflowToolbarLayoutData group="2"/>
+			</layoutData>
+		</ToolbarSeparator>
+		<Button text="Group 2" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData group="2"/>
+			</layoutData>
+		</Button>
+		<Button text="Group 2" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData group="2"/>
+			</layoutData>
+		</Button>
+	</OverflowToolbar>
+
+	<MessageStrip
 		class="sapUiTinyMargin"
 		text="Segmented buttons are shown as Selects when in the overflow area."
 		type="Information" showIcon="true">
 	</MessageStrip>
 
-	<OverflowToolbar id="otb6">
+	<OverflowToolbar id="otb7">
 		<ToolbarSpacer/>
 		<Select>
 			<items>
@@ -255,7 +300,7 @@
 		type="Information"
 		showIcon="true">
 	</MessageStrip>
-	<OverflowToolbar id="otb7">
+	<OverflowToolbar id="otb8">
 		<Label text="Buttons:"/>
 			<layoutData>
 				<OverflowToolbarLayoutData
@@ -330,7 +375,7 @@
 		type="Information"
 		showIcon="true">
 	</MessageStrip>
-	<OverflowToolbar id="otb8">
+	<OverflowToolbar id="otb9">
 		<Label text="Grouping:"/>
 		<ToolbarSpacer />
 		<Label text="Select:" labelFor="labeledSelectGroup1">
@@ -368,7 +413,7 @@
 		type="Information"
 		showIcon="true">
 	</MessageStrip>
-	<OverflowToolbar id="otb9">
+	<OverflowToolbar id="otb10">
 		<Label text="Multiple Generic Tag instances:"/>
 		<ToolbarSpacer />
 		<GenericTag text="Project Cost" design="StatusIconHidden" status="Error">

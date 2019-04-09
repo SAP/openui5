@@ -5,7 +5,7 @@ sap.ui.define([
 	function(Controller, JSONModel) {
 	"use strict";
 
-	var OverflowToolbarController = Controller.extend("sap.m.sample.OverflowToolbarSimple.OverflowToolbar", {
+	return Controller.extend("sap.m.sample.OverflowToolbarSimple.OverflowToolbar", {
 		onInit : function () {
 			var oViewModel = new JSONModel();
 			oViewModel.setData({
@@ -26,9 +26,7 @@ sap.ui.define([
 			this.byId("otb7").setWidth(iValue + "%");
 			this.byId("otb8").setWidth(iValue + "%");
 			this.byId("otb9").setWidth(iValue + "%");
+			this.byId("otb10").setWidth(iValue + "%");
 		}
 	});
-
-	return OverflowToolbarController;
-
 });
