@@ -1,5 +1,6 @@
 /*global QUnit, sinon*/
-sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Interaction', 'sap/ui/performance/XHRInterceptor'], function(FESR, Interaction, XHRInterceptor) {
+sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Interaction', 'sap/ui/performance/XHRInterceptor', 'sap/ui/performance/trace/Passport'],
+	function(FESR, Interaction, XHRInterceptor, Passport) {
 	"use strict";
 
 	QUnit.module("FESR");
@@ -25,6 +26,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		};
 
 		var oHeaderSpy = sinon.spy(XMLHttpRequest.prototype, "setRequestHeader");
+		var fnOnBeforeCreated = FESR.onBeforeCreated;
 
 		// implement hook
 		FESR.onBeforeCreated = function(oFESRHandle, oInteraction) {
@@ -69,7 +71,46 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		Interaction.end(true);
 		Interaction.clear();
 		FESR.setActive(false);
+		FESR.onBeforeCreated = fnOnBeforeCreated;
 		oHeaderSpy.restore();
+	});
+
+	QUnit.test("Client ID", function(assert) {
+
+		var oHeaderSpy = sinon.spy(XMLHttpRequest.prototype, "setRequestHeader");
+		var oPassportHeaderSpy = sinon.spy(Passport, "header");
+		assert.expect(1);
+
+		FESR.setActive(true);
+
+		// trigger Passport header creation (which gets called with the actual "action")
+		var xhr = new XMLHttpRequest();
+		xhr.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now());
+		xhr.send();
+		var sPassportAction = oPassportHeaderSpy.args[oPassportHeaderSpy.args.length - 1][4];
+
+
+		Interaction.start();
+		// first interaction ends with notifyStepStart - second interaction starts
+		Interaction.notifyStepStart("click", true);
+		// trigger initial FESR header creation (which should include the actual "action")
+		xhr = new XMLHttpRequest();
+		xhr.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now());
+		xhr.send();
+
+		assert.ok(oHeaderSpy.args.some(function(args) {
+			if (args[0] === "SAP-Perf-FESRec") {
+				var values = args[1].split(",");
+				// duration - end_to_end_time
+				return values[6] === sPassportAction;
+			}
+		}), "Found the FESR header field values.");
+
+		Interaction.end(true);
+		Interaction.clear();
+		FESR.setActive(false);
+		oHeaderSpy.restore();
+		oPassportHeaderSpy.restore();
 	});
 
 });
