@@ -872,6 +872,54 @@
 				}
 			});
 
+			var oDialogCustomFooter = new sap.m.Dialog({
+				title: "This Dialog has a custom footer",
+				resizable: true,
+				draggable: true,
+				content: [
+					new sap.ui.core.HTML({
+						content: '<h2>Incoming Request</h2>'
+					})
+				],
+				customFooter: new sap.m.OverflowToolbar({
+					content: [
+						new sap.m.Button({
+							text: "Accept",
+							type: "Accept",
+							press: closeCustomFooter
+						}),
+						new sap.m.Button({
+							text: "Reject",
+							type: "Reject",
+							press: closeCustomFooter
+						}),
+						new sap.m.Button({
+							text: "Ignore",
+							type: "Emphasized",
+							press: closeCustomFooter
+						}),
+						new sap.m.Button({
+							text: "Disabled",
+							enabled: false,
+							press: closeCustomFooter
+						}),
+						new sap.m.ToolbarSpacer(),
+						new sap.m.Button({
+							text: "Info",
+							press: closeCustomFooter
+						}),
+						new sap.m.Button({
+							text: "Cancel",
+							press: closeCustomFooter
+						})
+					]
+				})
+			});
+
+			function closeCustomFooter(oEvent) {
+				oDialogCustomFooter.close();
+			}
+
 			//=================================================================
 			// Real use cases
 			//=================================================================
@@ -1598,6 +1646,14 @@
 						text: "Escape Handler",
 						press: function () {
 							oEscapePreventDialog.open();
+						}
+					}),
+					new sap.ui.core.HTML({content: "<br>"}),
+					new sap.m.Button({
+						text: "Custom Footer",
+						width: _buttonWidth,
+						press: function () {
+							oDialogCustomFooter.open();
 						}
 					}),
 					new sap.m.Label({text: "Starting on"}).addStyleClass("specialLabelDialogPage"),

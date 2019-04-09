@@ -262,6 +262,8 @@ function(
 					 */
 					customHeader: {type: "sap.m.IBar", multiple: false},
 
+					customFooter: {type: "sap.m.IBar", multiple: false},
+
 					/**
 					 * The button which is rendered to the left side (right side in RTL mode) of the <code>endButton</code> in the footer area inside the Dialog. As of version 1.21.1, there's a new aggregation <code>buttons</code> created with which more than 2 buttons can be added to the footer area of the Dialog. If the new <code>buttons</code> aggregation is set, any change made to this aggregation has no effect anymore. When running on a phone, this <code>button</code> (and the <code>endButton</code> together when set) is (are) rendered at the center of the footer area. When running on other platforms, this <code>button</code> (and the <code>endButton</code> together when set) is (are) rendered at the right side (left side in RTL mode) of the footer area.
 					 * @since 1.15.1
@@ -498,8 +500,6 @@ function(
 					vertical: this.getVerticalScrolling()
 				});
 			}
-
-			this._createToolbarButtons();
 
 			if (sap.ui.getCore().getConfiguration().getAccessibility() && this.getState() != ValueState.None) {
 				var oValueState = new InvisibleText({text: this.getValueStateString(this.getState())});
@@ -1395,7 +1395,7 @@ function(
 		};
 
 		Dialog.prototype._createToolbarButtons = function () {
-			var toolbar = this._getToolbar();
+			var toolbar = this._getAnyFooter();
 			var buttons = this.getButtons();
 			var beginButton = this.getBeginButton();
 			var endButton = this.getEndButton(),
@@ -1435,19 +1435,24 @@ function(
 			}
 		};
 
-		/*
-		 *
-		 * @returns {*|sap.m.IBar|null}
-		 * @private
-		 */
-		Dialog.prototype._getToolbar = function () {
-			if (!this._oToolbar) {
-				this._oToolbar = new AssociativeOverflowToolbar(this.getId() + "-footer").addStyleClass("sapMTBNoBorders");
+		Dialog.prototype._getAnyFooter = function() {
 
-				this.setAggregation("_toolbar", this._oToolbar);
+			if(!this._footer) {
+				var customFooter = this.getCustomFooter(),
+					beginButton = this.getBeginButton(),
+					endButton = this.getEndButton(),
+					buttons = this.getButtons();
+
+				if(customFooter) {
+					this._footer = customFooter;                                                      
+				} else if(beginButton || endButton || buttons.length) {
+					this._footer = new AssociativeOverflowToolbar(this.getId() + "-footer");
+					this.setAggregation("_toolbar", this._oToolbar);
+					this._createToolbarButtons();
+				}
 			}
 
-			return this._oToolbar;
+			return this._footer;
 		};
 
 		/**
