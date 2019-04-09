@@ -13,9 +13,10 @@ sap.ui.define([
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/matchers/Properties",
+	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/TestUtils"
 ], function (MessageBox, Helper, Filter, FilterOperator, ODataUtils, QUnitUtils, Opa5, EnterText,
-		Press, Interactable, Properties, TestUtils) {
+		Press, Interactable, Properties, PropertyStrictEquals, TestUtils) {
 	"use strict";
 	var COMPANY_NAME_COLUMN_INDEX = 1,
 		GROSS_AMOUNT_COLUMN_INDEX = 2,
@@ -922,6 +923,17 @@ sap.ui.define([
 				},
 				checkSalesOrdersCount : function (iExpectedCount) {
 					return checkCount(this, iExpectedCount, "salesOrderListTitle");
+				},
+				checkSalesOrdersSelectionMode : function (sMode) {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrderList",
+						matchers : new PropertyStrictEquals({name : "mode", value : sMode}),
+						success : function () {
+							Opa5.assert.ok(true, "SelectionMode is: " + sMode);
+						},
+						viewName : sViewName
+					});
 				},
 				checkSalesOrderSelected : function (iRow) {
 					return this.waitFor({

@@ -180,21 +180,20 @@ sap.ui.define([
 				"Quantity" : "1.000",
 				"QuantityUnit" : "EA"
 			});
-
 			// select the newly created one
 			this.byId("SO_2_SOITEM").setSelectedItem(
 				this.byId("SO_2_SOITEM").getItems()[oContext.getIndex()]);
 			this._setSalesOrderLineItemBindingContext(oContext);
-			this.toggleSelectionMode(false);
+			this.setSelectionMode(oContext);
 			this.byId("SO_2_SOITEM").getItems()[0].focus();
 
-			// Note: this promise fails only if the transient entity is deleted
+			// Note: this promise fails only if the transient entity is delete or canceled
 			this.oSalesOrderLineItemCreated = oContext.created().then(function () {
-				that.toggleSelectionMode(true);
 				MessageBox.success("Line item created: " + oContext.getProperty("ItemPosition"));
-			}, function (oError) {
-				// delete of transient entity
-				that.toggleSelectionMode(true);
+			}).catch(function () {
+				// avoid 'Uncaught (in promise)' console errors
+			}).finally(function () {
+				that.setSelectionMode(oContext);
 			});
 		},
 
@@ -330,6 +329,7 @@ sap.ui.define([
 		},
 
 		onInit : function () {
+			this.iTransientItems = 0;
 			this.initMessagePopover("showMessages");
 		},
 
@@ -531,6 +531,30 @@ sap.ui.define([
 		},
 
 		/**
+		 * Sets the selection mode for the sales orders table. The selection has to be set to
+		 * <code>None</code> in order to prevent changing the context for the relative list binding
+		 * for the line items as long as transient line items exist.
+		 *
+		 * @param {sap.ui.model.odata.v4.Context} oContext
+		 *   The context of the created sales order line item
+		 */
+		setSelectionMode : function (oContext) {
+			var oTable = this.byId("SalesOrderList"),
+				oSelectedItem = oTable.getSelectedItem(),
+				oUIModel = this.getView().getModel("ui");
+
+			this.iTransientItems += oContext.isTransient() ? 1 : -1;
+			oUIModel.setProperty("/bCreateItemPending", this.iTransientItems > 0);
+
+			if (oSelectedItem) {
+				this.iSelectedSalesOrder = oSelectedItem.getBindingContext().getIndex();
+			} else if (this.iTransientItems === 0) {
+				oTable.setSelectedItem(oTable.getItems()[this.iSelectedSalesOrder]);
+				this.iSelectedSalesOrder = undefined;
+			}
+		},
+
+		/**
 		 * Submits the given batch group while the view is locked.
 		 *
 		 * @param {string} sGroupId
@@ -548,31 +572,6 @@ sap.ui.define([
 
 			oView.setBusy(true);
 			return oView.getModel().submitBatch(sGroupId).then(resetBusy, resetBusy);
-		},
-
-		/**
-		 * Toggles the selection mode for the sales order table. Remembers or restores the last
-		 * selected item.
-		 *
-		 * @param {boolean} bSingleSelectMaster
-		 *   If <code>true</code> the selection mode is set to <code>SingleSelectMaster</code>
-		 *   and the last selected item is restored. Otherwise the selection mode is set to <code>
-		 *   None</code> and the currently selected item is remembered.
-		 */
-		toggleSelectionMode : function (bSingleSelectMaster) {
-			var oTable = this.byId("SalesOrderList"),
-				oSelectedItem = oTable.getSelectedItem();
-
-			// Note: The table's selection mode depends on bCreateItemPending, - see view
-			this.getView().getModel("ui").setProperty("/bCreateItemPending", !bSingleSelectMaster);
-
-			if (!bSingleSelectMaster) {
-				this.iSelectedSalesOrder = oSelectedItem.getBindingContext().getIndex();
-			} else if (this.iSelectedSalesOrder !== undefined) {
-				oTable.setSelectedItem(oTable.getItems()[this.iSelectedSalesOrder]);
-				this.iSelectedSalesOrder = undefined;
-			}
 		}
 	});
-
 });
