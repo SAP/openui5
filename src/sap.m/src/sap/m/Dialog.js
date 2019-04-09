@@ -1437,15 +1437,15 @@ function(
 
 		Dialog.prototype._getAnyFooter = function() {
 
-			if(!this._footer) {
+			if (!this._footer) {
 				var customFooter = this.getCustomFooter(),
 					beginButton = this.getBeginButton(),
 					endButton = this.getEndButton(),
 					buttons = this.getButtons();
 
-				if(customFooter) {
+				if (customFooter) {
 					this._footer = customFooter;                                                      
-				} else if(beginButton || endButton || buttons.length) {
+				} else if (beginButton || endButton || buttons.length) {
 					this._footer = new AssociativeOverflowToolbar(this.getId() + "-footer");
 					this.setAggregation("_toolbar", this._oToolbar);
 					this._createToolbarButtons();
