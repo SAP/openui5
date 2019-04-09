@@ -21,8 +21,10 @@ sap.ui.define([], function () {
 	 * @param {sap.ui.core.Control} oCard an object representation of the control that should be rendered
 	 */
 	CardRenderer.render = function (oRm, oCard) {
-		var oHeader = oCard.getCardHeader();
-		//start
+		var oHeader = oCard.getCardHeader(),
+			sHeight = oCard.getHeight();
+
+		// start
 		oRm.write("<div");
 		oRm.writeElementData(oCard);
 		oRm.addClass("sapFCard");
@@ -30,8 +32,13 @@ sap.ui.define([], function () {
 			oRm.addClass("sapFCardNoContent");
 		}
 		oRm.writeClasses();
+
 		oRm.addStyle("width", oCard.getWidth());
-		oRm.addStyle("height", oCard.getHeight());
+
+		if (sHeight && sHeight !== 'auto') {
+			oRm.addStyle("height", sHeight);
+		}
+
 		//Accessibility state
 		oRm.writeAccessibilityState(oCard, {
 			role: "region",

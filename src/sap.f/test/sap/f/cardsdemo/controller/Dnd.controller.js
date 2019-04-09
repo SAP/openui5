@@ -61,10 +61,10 @@ sap.ui.define([
 		onRowSpanChange: function (oEvent) {
 			if (oEvent.getParameter("state")) {
 				jQuery(".sapFGridContainer").css({gridAutoRows: "min-content"});
-				jQuery(".sapFGridContainer").removeClass("sapFGridContainerStretchItems");
+				jQuery(".sapFGridContainer").removeClass("sapFGridContainerSnapToRow");
 			} else {
 				jQuery(".sapFGridContainer").css({gridAutoRows: "80px"});
-				jQuery(".sapFGridContainer").addClass("sapFGridContainerStretchItems");
+				jQuery(".sapFGridContainer").addClass("sapFGridContainerSnapToRow");
 			}
 
 			jQuery(".sapFGridContainer").children().each(function (iIndex, oElement) {

@@ -40,8 +40,12 @@ sap.ui.define(['sap/ui/core/LayoutData'],
 					 */
 					columns: {type: "int", group: "Misc", defaultValue: 1},
 					/**
-					 * Specifies the number of rows, which the item should take
-					 * If not specified, the <code>sap.f.GridContainer</code> will calculate how many rows the item needs. Based on it's height.
+					 * Specifies the minimum number of rows, which the item should take.
+					 */
+					minRows: {type: "int", group: "Misc"},
+					/**
+					 * Specifies the number of rows, which the item should take.
+					 * @private
 					 */
 					rows: {type: "int", group: "Misc"}
 				}
@@ -49,14 +53,23 @@ sap.ui.define(['sap/ui/core/LayoutData'],
 		});
 
 		/**
-		 * Returns true if rows span should grow automatically for that item.
+		 * Returns if the item has auto height.
 		 *
+		 * @returns {boolean} True if the item has auto height
 		 * @private
-		 * @returns {bool} True if they should grow, false if the item should be limited to the initial rows span
 		 */
-		GridContainerItemLayoutData.prototype.getRowsAutoSpan = function () {
-			// TODO we can make this a property
+		GridContainerItemLayoutData.prototype.hasAutoHeight = function () {
 			return !this.getRows();
+		};
+
+		/**
+		 * Returns the actual number of rows.
+		 *
+		 * @returns {int} The actual number of rows
+		 * @private
+		 */
+		GridContainerItemLayoutData.prototype.getActualRows = function () {
+			return Math.max(this.getRows() || 1, this.getMinRows() || 1);
 		};
 
 		return GridContainerItemLayoutData;

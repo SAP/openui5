@@ -31,7 +31,7 @@
 			<Panel headerText="Card Group 1">
 				<f:GridContainer
 					id="cssgrid"
-					itemsStretch="true"
+					snapToRow="true"
 					width="60%">
 
 					<f:items>
@@ -91,7 +91,7 @@
 			<Panel headerText="Card Group 2">
 				<f:GridContainer
 					id="cssgrid2"
-					itemsStretch="true"
+					snapToRow="true"
 					width="60%">
 
 					<f:items>

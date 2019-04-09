@@ -17,12 +17,8 @@
 			<Panel headerText="Experimental switches">
 				<HBox>
 					<HBox alignItems="Center">
-						<Label class="sapUiSmallMargin" text="Items stretch:"/>
-						<Switch change="onItemsStretchChange" state="false" />
-					</HBox>
-					<HBox alignItems="Center">
-						<Label class="sapUiSmallMargin" text="Rows auto span:"/>
-						<Switch change="onRowsAutoSpan" state="false" />
+						<Label class="sapUiSmallMargin" text="Snap to Row:"/>
+						<Switch change="onSnapToRowChange" state="false" />
 					</HBox>
 					<HBox alignItems="Center">
 						<Label class="sapUiSmallMargin" text="Dense auto fill:"/>
@@ -46,7 +42,7 @@
 					<f:items>
 						<GenericTile header="Sales Fulfillment Application Title" subheader="Subtitle">
 							<layoutData>
-								<f:GridContainerItemLayoutData rows="2" columns="2" />
+								<f:GridContainerItemLayoutData columns="2" />
 							</layoutData>
 							<TileContent unit="EUR" footer="Current Quarter">
 								<ImageContent src="sap-icon://home-share" />
@@ -64,6 +60,11 @@
 						<w:Card manifest="{manifests>/listContent/card13}">
 							<w:layoutData>
 								<f:GridContainerItemLayoutData rows="6" columns="3" />
+							</w:layoutData>
+						</w:Card>
+						<w:Card manifest="{manifests>/listContent/card13}">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData minRows="6" columns="3" />
 							</w:layoutData>
 						</w:Card>
 						<w:Card manifest="{manifests>/analyticalContent/line}">

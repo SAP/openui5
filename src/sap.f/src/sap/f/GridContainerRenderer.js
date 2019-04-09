@@ -26,7 +26,7 @@ sap.ui.define([],
 			rm.addClass("sapFGridContainer");
 
 			if (control.getSnapToRow()) {
-				rm.addClass("sapFGridContainerStretchItems");
+				rm.addClass("sapFGridContainerSnapToRow");
 			}
 
 			this.addGridStyles(rm, control);
@@ -85,12 +85,12 @@ sap.ui.define([],
 					rm.addStyle("grid-column", "span " + oLayoutData.getColumns());
 				}
 
-				if (oLayoutData.getRows()) {
-					rm.addStyle("grid-row", "span " + oLayoutData.getRows());
+				if (oLayoutData.getRows() || oLayoutData.getMinRows()) {
+					rm.addStyle("grid-row", "span " + oLayoutData.getActualRows());
 				}
 
-				if (!oLayoutData.getRowsAutoSpan()) {
-					rm.addClass("sapFGridContainerItemLimitRows");
+				if (!oLayoutData.hasAutoHeight()) {
+					rm.addClass("sapFGridContainerItemFixedRows");
 				}
 			}
 
