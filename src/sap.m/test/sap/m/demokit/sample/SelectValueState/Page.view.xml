@@ -32,7 +32,7 @@
 					forceSelection="true"
 					selectedKey="{/SelectedProductWarningCollection}"
 					valueState="Warning"
-					valueStateText="warning value state text"
+					valueStateText="This is a Level 1 explanation. The items Lorem and Ipsum are not recommended from the system."
 					items="{
 						path: '/WarningProductCollection',
 						sorter: { path: 'Name' }

@@ -300,95 +300,40 @@ html[data-sap-ui-browser^="ed"] .sapMSltWithArrow .sapMSltArrow {
 /* ------------------------------ */
 /* picker                         */
 /* ------------------------------ */
-@_sap_m_SltPicker_SubHeader_BarHeight: 2rem;
 
 div.sapMSltPicker {
 	border: none;
 	box-shadow: @sapUiShadowLevel1;
-	.sapMDialogSubHeader,
-	.sapMPopoverSubHeader {
-		/*
-			using height:0 instead of display:none becase of the calculations
-			for the PopOver's content, since window.getComputedStyle gets the height,
-			even though you have specified display:none.
-			This results in a wrong calculation for the height of the content.
-		*/
-		height: 0;
-		.sapMSltPickerValueState.sapMSltPickerNoneState {
+
+	&.sapUiPopupWithPadding .sapMDialogScrollCont.sapMDialogStretchContent {
+		height: 100%;
+	}
+
+	.sapMSltPickerValueState {
+		padding: 0.5625rem 1rem;
+		color: @sapUiBaseText;
+		font-size: @sapMFontSmallSize;
+		box-shadow: inset 0 -0.0625rem @sapUiPageHeaderBorderColor;
+
+		&.sapMSltPickerErrorState {
+			background: @sapUiErrorBG;
+		}
+
+		&.sapMSltPickerSuccessState {
+			background: @sapUiSuccessBG;
+		}
+
+		&.sapMSltPickerWarningState {
+			background: @sapUiWarningBG;
+		}
+
+		&.sapMSltPickerInformationState {
+			background: @sapUiInformationBG;
+		}
+
+		&.sapMSltPickerNoneState {
 			display: none;
 		}
-	}
-
-	&.sapMDialogWithSubHeader {
-		//the picker has a default subheader that is hidden by default
-		padding-top: @_sap_m_Dialog_BarHeight;
-	}
-
-	&.sapMDialogWithSubHeader.sapMSltPickerWithSubHeader {
-		padding-top: @_sap_m_Dialog_BarHeight + @_sap_m_SltPicker_SubHeader_BarHeight;
-	}
-
-	&.sapMSltPickerWithSubHeader {
-		.sapMPopoverSubHeader,
-		.sapMDialogSubHeader {
-			height: @_sap_m_SltPicker_SubHeader_BarHeight;
-
-			.sapMSltPickerValueState {
-				padding-left: 1rem;
-				height: @_sap_m_SltPicker_SubHeader_BarHeight;
-				line-height: @_sap_m_SltPicker_SubHeader_BarHeight;
-
-				.sapMSltPickerSubHeaderTitle {
-					color: @sapUiBaseText;
-					font-size: @sapMFontSmallSize;
-				}
-
-				&.sapMSltPickerErrorState {
-					background: @sapUiErrorBG;
-				}
-
-				&.sapMSltPickerSuccessState {
-					background: @sapUiSuccessBG;
-				}
-
-				&.sapMSltPickerWarningState {
-					background: @sapUiWarningBG;
-				}
-
-				&.sapMSltPickerInformationState {
-					background: @sapUiInformationBG;
-				}
-
-				.sapMSltPickerSubHeaderTitle.sapMTitle {
-					padding-left: 0.75rem;
-					font-size: @sapMFontSmallSize;
-					line-height: 1.875rem;
-				}
-			}
-		}
-	}
-}
-
-/* Compact size */
-.sapUiSizeCompact div.sapMSltPicker.sapMDialogWithSubHeader {
-	padding-top: @_sap_m_Dialog_BarCompactHeight;
-
-	.sapMDialogSubHeader,
-	.sapMPopoverSubHeader {
-		/*
-			using height:0 instead of display:none becase of the calculations
-			for the PopOver's content, since window.getComputedStyle gets the height,
-			even though you have specified display:none.
-			This results in a wrong calculation for the height of the content.
-		*/
-		height: 0;
-		.sapMSltPickerValueState.sapMSltPickerNoneState {
-			display: none;
-		}
-	}
-
-	&.sapMSltPickerWithSubHeader {
-		padding-top: @_sap_m_Dialog_BarCompactHeight + @_sap_m_SltPicker_SubHeader_BarHeight;
 	}
 }
 

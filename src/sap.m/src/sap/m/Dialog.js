@@ -407,7 +407,7 @@ function(
 			this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
 
 			// used to judge if enableScrolling needs to be disabled
-			this._scrollContentList = ["sap.m.NavContainer", "sap.m.Page", "sap.m.ScrollContainer", "sap.m.SplitContainer", "sap.m.MultiInput"];
+			this._scrollContentList = ["sap.m.NavContainer", "sap.m.Page", "sap.m.ScrollContainer", "sap.m.SplitContainer", "sap.m.MultiInput", "sap.ui.layout.SimpleFixFlex"];
 
 			this.oPopup = new Popup();
 			this.oPopup.setShadow(true);

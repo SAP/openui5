@@ -22,7 +22,9 @@ sap.ui.define([
 	'sap/ui/core/InvisibleText',
 	'./SelectRenderer',
 	"sap/ui/dom/containsOrEquals",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	'./Text',
+	'sap/ui/layout/SimpleFixFlex'
 ],
 function(
 	Dialog,
@@ -44,7 +46,9 @@ function(
 	InvisibleText,
 	SelectRenderer,
 	containsOrEquals,
-	KeyCodes
+	KeyCodes,
+	Text,
+	SimpleFixFlex
 ) {
 		"use strict";
 
@@ -328,8 +332,8 @@ function(
 					/**
 					 * Internal aggregation to hold the picker's subheader.
 					 */
-					_pickerSubHeader: {
-						type: "sap.m.Bar",
+					_pickerValueStateContent: {
+						type: "sap.m.Text",
 						multiple: false,
 						visibility: "hidden"
 					}
@@ -573,29 +577,31 @@ function(
 		 * @private
 		 */
 		Select.prototype.scrollToItem = function(oItem) {
-			var oPicker = this.getPicker(),
-				oPickerDomRef = oPicker.getDomRef("cont"),
+			var oPickerDomRef = this.getPicker().getDomRef(),
 				oItemDomRef = oItem && oItem.getDomRef();
 
-			if (!oPicker || !oPickerDomRef || !oItemDomRef) {
+			if (!oPickerDomRef || !oItemDomRef) {
 				return;
 			}
 
-			var iPickerScrollTop = oPickerDomRef.scrollTop,
-				iItemOffsetTop = oItemDomRef.offsetTop,
-				iPickerHeight = oPickerDomRef.clientHeight,
+			var oPickerSelectListDomRef = oPickerDomRef.querySelector('.sapUiSimpleFixFlexFlexContent'),
+				oPickerValueStateContentDomRef = oPickerDomRef.querySelector('.sapMSltPickerValueState'),
+				iPickerValueStateContentHeight = oPickerValueStateContentDomRef ? oPickerValueStateContentDomRef.clientHeight : 0,
+				iPickerScrollTop = oPickerSelectListDomRef.scrollTop,
+				iItemOffsetTop = oItemDomRef.offsetTop - iPickerValueStateContentHeight,
+				iPickerHeight = oPickerSelectListDomRef.clientHeight,
 				iItemHeight = oItemDomRef.offsetHeight;
 
 			if (iPickerScrollTop > iItemOffsetTop) {
 
 				// scroll up
-				oPickerDomRef.scrollTop = iItemOffsetTop;
+				oPickerSelectListDomRef.scrollTop = iItemOffsetTop;
 
 			// bottom edge of item > bottom edge of viewport
 			} else if ((iItemOffsetTop + iItemHeight) > (iPickerScrollTop + iPickerHeight)) {
 
 				// scroll down, the item is partly below the viewport of the list
-				oPickerDomRef.scrollTop = Math.ceil(iItemOffsetTop + iItemHeight - iPickerHeight);
+				oPickerSelectListDomRef.scrollTop = Math.ceil(iItemOffsetTop + iItemHeight - iPickerHeight);
 			}
 		};
 
@@ -853,20 +859,15 @@ function(
 		 * @returns {sap.m.Bar} Picker's header
 		 * @private
 		 */
-		Select.prototype._getPickerSubHeader = function() {
-			var CSS_CLASS = this.getRenderer().CSS_CLASS,
-				sPickerTitleClass = CSS_CLASS + "PickerSubHeaderTitle",
-				sPickerSubHeaderValueStateClass = CSS_CLASS + "PickerValueState";
-
-			if (!this.getAggregation("_pickerSubHeader")) {
-				this.setAggregation("_pickerSubHeader", new Bar({
-					contentLeft: new Title(this._getPickerSubHeaderId(), {
-						text: this._getTextForPickerSubHeader()
-					}).addStyleClass(sPickerTitleClass)
-				}).addStyleClass(sPickerSubHeaderValueStateClass));
+		Select.prototype._getPickerValueStateContent = function() {
+			if (!this.getAggregation("_pickerValueStateContent")) {
+				this.setAggregation("_pickerValueStateContent", new Text({
+					wrapping: true,
+					text: this._getTextForPickerValueStateContent()
+				}));
 			}
 
-			return this.getAggregation("_pickerSubHeader");
+			return this.getAggregation("_pickerValueStateContent");
 		};
 
 		/**
@@ -874,14 +875,13 @@ function(
 		 * @returns {void}
 		 * @private
 		 */
-		Select.prototype._updatePickerSubHeaderText = function() {
-			var oPicker = this.getPicker(),
-				oPickerSubHeader = oPicker.getSubHeader(),
+		Select.prototype._updatePickerValueStateContentText = function() {
+			var oPickerValueStateContent = this.getPicker().getContent()[0].getFixContent(),
 				sText;
 
-			if (oPickerSubHeader) {
-				sText = this._getTextForPickerSubHeader();
-				oPickerSubHeader.getContentLeft()[0].setText(sText);
+			if (oPickerValueStateContent) {
+				sText = this._getTextForPickerValueStateContent();
+				oPickerValueStateContent.setText(sText);
 			}
 		};
 
@@ -891,14 +891,14 @@ function(
 		 * @returns {string}
 		 * @private
 		 */
-		Select.prototype._getTextForPickerSubHeader = function() {
+		Select.prototype._getTextForPickerValueStateContent = function() {
 			var sValueStateText = this.getValueStateText(),
 				sText;
 
 			if (sValueStateText) {
 				sText = sValueStateText;
 			} else {
-				sText = this._getDefaultTextForPickerSubHeader();
+				sText = this._getDefaultTextForPickerValueStateContent();
 			}
 			return sText;
 		};
@@ -908,7 +908,7 @@ function(
 		 * @returns {string}
 		 * @private
 		 */
-		Select.prototype._getDefaultTextForPickerSubHeader = function() {
+		Select.prototype._getDefaultTextForPickerValueStateContent = function() {
 			var sValueState = this.getValueState(),
 				oResourceBundle,
 				sText;
@@ -927,7 +927,7 @@ function(
 		 * Updates CSS classes for the <code>valueStateText</code> in the picker's subheader.
 		 * @private
 		 */
-		Select.prototype._updatePickerSubHeaderStyles = function() {
+		Select.prototype._updatePickerValueStateContentStyles = function() {
 			var sValueState = this.getValueState(),
 				mValueState = ValueState,
 				CSS_CLASS =  this.getRenderer().CSS_CLASS,
@@ -935,10 +935,10 @@ function(
 				sCssClass = PICKER_CSS_CLASS + sValueState + "State",
 				sPickerWithSubHeader = PICKER_CSS_CLASS + "WithSubHeader",
 				oPicker = this.getPicker(),
-				oCustomHeader = oPicker.getSubHeader();
+				oCustomHeader = oPicker.getContent()[0].getFixContent();
 
 			if (oCustomHeader) {
-				this._removePickerSubHeaderValueStateClasses(oPicker);
+				this._removeValueStateClassesForPickerValueStateContent(oPicker);
 				oCustomHeader.addStyleClass(sCssClass);
 
 				if (sValueState !== mValueState.None) {
@@ -955,11 +955,11 @@ function(
 		 * @returns {void}
 		 * @private
 		 */
-		Select.prototype._removePickerSubHeaderValueStateClasses = function(oPicker) {
+		Select.prototype._removeValueStateClassesForPickerValueStateContent = function(oPicker) {
 			var mValueState = ValueState,
 				CSS_CLASS =  this.getRenderer().CSS_CLASS,
 				PICKER_CSS_CLASS = CSS_CLASS + "Picker",
-				subHeader = oPicker.getSubHeader();
+				subHeader = oPicker.getContent()[0].getFixContent();
 
 			Object.keys(mValueState).forEach(function (key) {
 				var sOldCssClass = PICKER_CSS_CLASS + key + "State";
@@ -983,13 +983,12 @@ function(
 			var oPicker = new Popover({
 				showArrow: false,
 				showHeader: false,
-				subHeader: this._getPickerSubHeader(),
 				placement: PlacementType.VerticalPreferredBottom,
 				offsetX: 0,
 				offsetY: 0,
 				initialFocus: this,
 				bounce: false,
-				ariaLabelledBy: [this._getPickerSubHeaderId(), this._getPickerHiddenLabelId()]
+				ariaLabelledBy: [this.getPickerValueStateContentId(), this._getPickerHiddenLabelId()]
 			});
 
 			// detect when the scrollbar or an item is pressed
@@ -1049,9 +1048,8 @@ function(
 			var that = this;
 			return new Dialog({
 				stretch: true,
-				ariaLabelledBy: [this._getPickerSubHeaderId(), this._getPickerHiddenLabelId()],
+				ariaLabelledBy: [this.getPickerValueStateContentId(), this._getPickerHiddenLabelId()],
 				customHeader: this._getPickerHeader(),
-				subHeader: this._getPickerSubHeader(),
 				beforeOpen: function() {
 					that.updatePickerHeaderTitle();
 				}
@@ -1107,7 +1105,7 @@ function(
 			return InvisibleText.getStaticId("sap.m", "INPUT_AVALIABLE_VALUES");
 		};
 
-		Select.prototype._getPickerSubHeaderId = function() {
+		Select.prototype.getPickerValueStateContentId = function() {
 			return this.getId() + "-valueStateText";
 		};
 
@@ -1183,8 +1181,8 @@ function(
 				forceSelection: this.getForceSelection()
 			});
 
-			this._updatePickerSubHeaderText();
-			this._updatePickerSubHeaderStyles();
+			this._updatePickerValueStateContentText();
+			this._updatePickerValueStateContentStyles();
 		};
 
 		Select.prototype.onAfterRendering = function() {
@@ -1809,7 +1807,8 @@ function(
 		 */
 		Select.prototype.createPicker = function(sPickerType) {
 			var oPicker = this.getAggregation("picker"),
-				CSS_CLASS = this.getRenderer().CSS_CLASS;
+				CSS_CLASS = this.getRenderer().CSS_CLASS,
+				sPickerValueStateContentValueStateClass = CSS_CLASS + "PickerValueState";
 
 			if (oPicker) {
 				return oPicker;
@@ -1832,7 +1831,12 @@ function(
 						onBeforeRendering: this.onBeforeRenderingPicker,
 						onAfterRendering: this.onAfterRenderingPicker
 					}, this)
-					.addContent(this.createList());
+					.addContent(new SimpleFixFlex({
+						id: this.getPickerValueStateContentId(),
+						fixContent: this._getPickerValueStateContent()
+									.addStyleClass(sPickerValueStateContentValueStateClass),
+						flexContent: this.createList()
+					}));
 
 			return oPicker;
 		};
@@ -2543,8 +2547,8 @@ function(
 
 			this.updateValueStateClasses(sValueState, sOldValueState);
 			this.updateAriaLabelledBy(sValueState, sOldValueState);
-			this._updatePickerSubHeaderText();
-			this._updatePickerSubHeaderStyles();
+			this._updatePickerValueStateContentText();
+			this._updatePickerValueStateContentStyles();
 			return this;
 		};
 
@@ -2557,8 +2561,8 @@ function(
 				return this;
 			}
 
-			this._updatePickerSubHeaderText();
-			this._updatePickerSubHeaderStyles();
+			this._updatePickerValueStateContentText();
+			this._updatePickerValueStateContentStyles();
 		};
 
 		/**
