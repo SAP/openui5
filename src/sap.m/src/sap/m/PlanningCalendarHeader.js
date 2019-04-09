@@ -286,7 +286,7 @@ function(
 	};
 
 	PlanningCalendarHeader.prototype.onBeforeRendering = function () {
-		var bVisible = !!this.getActions().length || !!this.getTitle() || this._getOrCreateViewSwitch().getItems() > 1;
+		var bVisible = !!this.getActions().length || !!this.getTitle() || this._getOrCreateViewSwitch().getItems().length > 1;
 
 		this._getActionsToolbar().setProperty("visible", bVisible, true);
 	};
