@@ -802,7 +802,7 @@ sap.ui.define([
 				var oDate2Old = this.getSecondDateValue();
 
 				// the selected range includes all of the hours from the second date
-				oDate2.setHours(11, 59, 59);
+				oDate2.setHours(23, 59, 59, 999);
 
 				var sValue;
 				if (!deepEqual(oDate1, oDate1Old) || !deepEqual(oDate2, oDate2Old)) {
