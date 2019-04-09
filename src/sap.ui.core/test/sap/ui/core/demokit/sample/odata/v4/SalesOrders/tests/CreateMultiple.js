@@ -85,6 +85,28 @@ sap.ui.define([
 			Then.onTheMainPage.checkDifferentID(0, "");
 			Then.onTheMainPage.checkDifferentID(1, "");
 
+			// Test scenario: create multiple relative
+			// Create a new sales order and save, create two line items and check right position,
+			// save and check that context can be changed
+			When.onTheMainPage.pressCreateSalesOrdersButton();
+			When.onTheCreateNewSalesOrderDialog.changeNote("new 3");
+			When.onTheCreateNewSalesOrderDialog.confirmDialog();
+			When.onTheMainPage.pressSaveSalesOrdersButton();
+			When.onTheSuccessInfo.confirm();
+			Then.onTheMainPage.checkDifferentID(0, "");
+
+			When.onTheMainPage.pressCreateSalesOrderItemButton();
+			Then.onTheMainPage.checkSalesOrdersSelectionMode("None");
+			Then.onTheMainPage.checkSalesOrderLineItemNote(0, "");
+			When.onTheMainPage.changeNoteInFirstLineItem("new 10");
+			When.onTheMainPage.pressCreateSalesOrderItemButton();
+			Then.onTheMainPage.checkSalesOrderLineItemNote(1, "new 10");
+			When.onTheMainPage.changeNoteInFirstLineItem("new 20");
+			When.onTheMainPage.pressSaveSalesOrderButton();
+			When.onTheSuccessInfo.confirm();
+			When.onTheSuccessInfo.confirm();
+			Then.onTheMainPage.checkSalesOrdersSelectionMode("SingleSelectMaster");
+
 			// delete created sales orders
 			When.onAnyPage.cleanUp("SalesOrderList");
 			Then.onAnyPage.checkLog([oExpectedLog, oExpectedLog]);
