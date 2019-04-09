@@ -232,6 +232,7 @@ sap.ui.define([
 
 		// act
 		oInputBase.openValueStateMessage();
+		this.clock.tick(100);
 
 		// assert
 		var oValueStateMessage = document.getElementById(oInputBase.getValueStateMessageId());
@@ -239,6 +240,7 @@ sap.ui.define([
 
 		// cleanup
 		oInputBase.destroy();
+
 	});
 
 	QUnit.test("it should not throw an exeption", function (assert) {

@@ -3845,6 +3845,7 @@ sap.ui.define([
 
 		this.input.setValueState("Error");
 		this.input.onfocusin();
+		this.clock.tick(300);
 
 		assert.ok(parseFloat(jQuery(this.input._oValueStateMessage._oPopup.getContent()).css('z-index')) > 1, 'z-index is correct');
 	});
