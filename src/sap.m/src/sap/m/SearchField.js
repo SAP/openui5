@@ -80,7 +80,10 @@ sap.ui.define([
 	*/
 	var SearchField = Control.extend("sap.m.SearchField", /** @lends sap.m.SearchField.prototype */ { metadata : {
 
-		interfaces : ["sap.ui.core.IFormContent"],
+		interfaces : [
+			"sap.ui.core.IFormContent",
+			"sap.f.IShellBar"
+		],
 		library : "sap.m",
 		properties : {
 
