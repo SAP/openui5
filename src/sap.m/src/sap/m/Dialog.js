@@ -1438,11 +1438,6 @@ function(
 			}
 		};
 
-		/*
-		* Returns dialog footer if exists. 
-		* @returns {sap.m.IBar} The footer of the dialog
-		* @private
-		*/
 		Dialog.prototype._getAnyFooter = function() {
 
 			if(!this._footer) {

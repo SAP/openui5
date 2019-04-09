@@ -82,7 +82,6 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/library"],
 
 			oRm.addClass(DialogRenderer._mStateClasses[sState]);
 
-			// No Footer
 			if (!oFooter) {
 				oRm.addClass("sapMDialog-NoFooter");
 			}
