@@ -23,7 +23,7 @@ sap.ui.define(['sap/ui/core/LayoutData'],
 		 *
 		 * @extends sap.ui.core.LayoutData
 		 *
-	     * @experimental Since 1.65 This class is experimental. The API may change.
+		 * @experimental Since 1.65 This class is experimental. The API may change.
 		 * @since 1.65
 		 * @public
 		 * @constructor
@@ -45,7 +45,7 @@ sap.ui.define(['sap/ui/core/LayoutData'],
 					minRows: {type: "int", group: "Misc"},
 					/**
 					 * Specifies the number of rows, which the item should take.
-					 * @private
+					 * @experimental Since 1.65 this property may soon be removed, use minRows instead
 					 */
 					rows: {type: "int", group: "Misc"}
 				}
