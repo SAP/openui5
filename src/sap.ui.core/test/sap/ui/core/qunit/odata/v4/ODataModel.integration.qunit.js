@@ -3471,7 +3471,8 @@ sap.ui.define([
 	//  Table control: sap.ui.table.Table
 	//  Additional tests: update last, transient: update of POST payload expected
 	// CPOUI5UISERVICESV3-1792
-	QUnit.test("All pairs test for multi create (2)", function (assert) {
+	//TODO Runs unstable, probably due to use of GridTable with setFirstVisibleRow
+	QUnit.skip("All pairs test for multi create (2)", function (assert) {
 		var oBinding,
 			oCreatedContext0,
 			oCreatedContext1,
@@ -3617,7 +3618,8 @@ sap.ui.define([
 	//  Delete: Context.delete
 	//  Table control: sap.ui.table.Table
 	// CPOUI5UISERVICESV3-1792
-	QUnit.test("All pairs test for multi create (3)", function (assert) {
+	//TODO Runs unstable, probably due to use of GridTable with setFirstVisibleRow
+	QUnit.skip("All pairs test for multi create (3)", function (assert) {
 		var oCreatedContext0,
 			oCreatedContext1,
 			oCreatedContext2,
@@ -4039,7 +4041,8 @@ sap.ui.define([
 	//  Delete: Context.refresh(bAllowRemoval=true)
 	//  Table control: sap.ui.table.Table
 	// CPOUI5UISERVICESV3-1792
-	QUnit.test("All pairs test for multi create (6)", function (assert) {
+	//TODO Runs unstable, probably due to use of GridTable with setFirstVisibleRow
+	QUnit.skip("All pairs test for multi create (6)", function (assert) {
 		var oBinding,
 			oCreatedContext0,
 			oCreatedContext1,
@@ -4782,7 +4785,8 @@ sap.ui.define([
 	//  Delete: Context.delete
 	//  Table control: sap.ui.table.Table
 	// CPOUI5UISERVICESV3-1792
-	QUnit.test("All pairs test for multi create (14)", function (assert) {
+	//TODO Runs unstable, probably due to use of GridTable with setFirstVisibleRow
+	QUnit.skip("All pairs test for multi create (14)", function (assert) {
 		var oBinding,
 			oCreatedContext0,
 			oCreatedContext1,
