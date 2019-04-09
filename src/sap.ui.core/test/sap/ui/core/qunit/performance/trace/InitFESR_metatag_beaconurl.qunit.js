@@ -8,7 +8,7 @@ sap.ui.define(function () {
 		var FESR = sap.ui.require("sap/ui/performance/trace/FESR");
 		assert.ok(FESR, "FESR module has been loaded");
 		assert.ok(FESR.getActive(), "FESR is active");
-		assert.notOk(FESR.getBeaconURL(), "Beacon URL has not been set");
+		assert.strictEqual(FESR.getBeaconURL(), "example.url",  "Beacon URL has not been set");
 	});
 
 });

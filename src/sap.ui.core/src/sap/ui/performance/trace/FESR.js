@@ -7,12 +7,15 @@ sap.ui.define([
 	'sap/ui/performance/trace/Passport',
 	'sap/ui/performance/trace/Interaction',
 	'sap/ui/performance/XHRInterceptor',
+	'sap/ui/performance/BeaconRequest',
 	'sap/base/util/Version'
-], function (URI, Device, Passport, Interaction, XHRInterceptor, Version) {
+], function (URI, Device, Passport, Interaction, XHRInterceptor, BeaconRequest, Version) {
 	"use strict";
 
 	// activation by meta tag or url parameter as fallback
 	var bFesrActive = false,
+		sBeaconURL,
+		oBeaconRequest,
 		ROOT_ID = Passport.getRootId(), // static per session
 		HOST = window.location.host, // static per session
 		CLIENT_OS = Device.os.name + "_" + Device.os.version,
@@ -52,9 +55,11 @@ sap.ui.define([
 		return sHost && sHost !== HOST;
 	}
 
-	function registerXHROverride() {
+	function passportHeaderOverride() {
 
-		XHRInterceptor.register("PASSPORT_HEADER", "open", function() {
+		// only use Passport for non CORS requests
+		if (!isCORSRequest(arguments[1])) {
+			var oPendingInteraction = Interaction.getPending();
 
 			// only use Passport for non CORS requests
 			if (!isCORSRequest(arguments[1])) {
@@ -68,27 +73,36 @@ sap.ui.define([
 					sPassportAction
 				));
 			}
-		});
 
-		XHRInterceptor.register("FESR", "open" ,function() {
+			// set passport with Root Context ID, Transaction ID, Component Info, Action
+			this.setRequestHeader("SAP-PASSPORT", Passport.header(
+				Passport.traceFlags(),
+				ROOT_ID,
+				Passport.getTransactionId(),
+				oPendingInteraction ? oPendingInteraction.component + sAppVersion : undefined,
+				oPendingInteraction ? oPendingInteraction.trigger + "_" + oPendingInteraction.event + "_" + iStepCounter : undefined
+			));
+		}
+	}
 
-			// only use FESR for non CORS requests
-			if (!isCORSRequest(arguments[1])) {
+	function fesrHeaderOverride() {
 
-				// remember the TransactionId of the first request when FESR is active
-				if (!sFESRTransactionId) {
-					sFESRTransactionId = Passport.getTransactionId();
-				}
+		// only use FESR for non CORS requests
+		if (!isCORSRequest(arguments[1])) {
 
-				if (sFESR) {
-					this.setRequestHeader("SAP-Perf-FESRec", sFESR);
-					this.setRequestHeader("SAP-Perf-FESRec-opt", sFESRopt);
-					sFESR = null;
-					sFESRopt = null;
-					sFESRTransactionId = Passport.getTransactionId();
-				}
+			// remember the TransactionId of the first request when FESR is active
+			if (!sFESRTransactionId) {
+				sFESRTransactionId = Passport.getTransactionId();
 			}
-		});
+
+			if (sFESR && sFESRopt) {
+				this.setRequestHeader("SAP-Perf-FESRec", sFESR);
+				this.setRequestHeader("SAP-Perf-FESRec-opt", sFESRopt);
+				sFESR = null;
+				sFESRopt = null;
+				sFESRTransactionId = Passport.getTransactionId();
+			}
+		}
 	}
 
 	// creates mandatory FESR header string
@@ -176,6 +190,12 @@ sap.ui.define([
 			createHeader(oFinishedInteraction, oFESRHandle);
 		}
 
+		// use the sendBeacon API instead of the piggyback approach
+		if (oBeaconRequest && sFESR && sFESRopt) {
+			oBeaconRequest.append("SAP-Perf-FESRec", sFESR);
+			oBeaconRequest.append("SAP-Perf-FESRec-opt", sFESRopt);
+		}
+
 		var oPendingInteraction = Interaction.getPending();
 
 		if (oPendingInteraction) {
@@ -220,20 +240,31 @@ sap.ui.define([
 	 */
 	var FESR = {};
 
+	FESR.getBeaconURL = function() {
+		return sBeaconURL;
+	};
+
 	/**
 	 * @param {boolean} bActive State of the FESR header creation
+	 * @param {string} [sUrl] beacon url
 	 * @private
 	 * @ui5-restricted sap.ui.core
 	 */
-	FESR.setActive = function (bActive) {
+	FESR.setActive = function (bActive, sUrl) {
+		oBeaconRequest = sUrl ? BeaconRequest.isSupported() && new BeaconRequest({url: sUrl}) : null;
+		sBeaconURL = sUrl;
 		if (bActive && !bFesrActive) {
 			bFesrActive = true;
 			Passport.setActive(true);
 			Interaction.setActive(true);
-			registerXHROverride();
+			XHRInterceptor.register("PASSPORT_HEADER", "open", passportHeaderOverride);
+			if (!oBeaconRequest) {
+				XHRInterceptor.register("FESR", "open" , fesrHeaderOverride);
+			}
 			Interaction.onInteractionFinished = onInteractionFinished;
 		} else if (!bActive && bFesrActive) {
 			bFesrActive = false;
+			sBeaconURL = null;
 			Interaction.setActive(false);
 			XHRInterceptor.unregister("FESR", "open");
 			// passport stays active so far
