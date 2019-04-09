@@ -49,7 +49,9 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 				iMaxLevel = oControl._getBlockersToRender().iMaxlevel,
 				oStartDate = oControl.getStartDate(),
 				// hackie thing to calculate the container witdth. When we have more than 1 line of blockers - we must add 3 px in order to render the blockers visually in the container.
-				iContainerHeight = (iMaxLevel + 1) * oControl._getBlockerRowHeight() + 3;
+				iContainerHeight = (iMaxLevel + 1) * oControl._getBlockerRowHeight() + 3,
+				oFormat = oControl._getDateFormatter();
+
 
 			oRm.write("<div");
 			oRm.addClass("sapMSinglePCBlockersRow");
@@ -67,12 +69,15 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 			this.renderDndPlaceholders(oRm, oControl, oControl.getAggregation("_blockersPlaceholders"));
 
 			for (var i = 0; i < iColumns; i++) {
-				var oColumnCalDate = new CalendarDate(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate() + i),
-					sDate = oControl._formatDayAsString(oColumnCalDate);
+				var oColumnCalDate = new CalendarDate(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate() + i);
 
 				oRm.write("<div");
-				oRm.writeAttribute("data-sap-day", sDate);
+				oRm.writeAttribute("data-sap-start-date", oFormat.format(oColumnCalDate.toLocalJSDate()));
+				oRm.writeAttribute("data-sap-end-date", oFormat.format(oColumnCalDate.toLocalJSDate()));
+				oRm.writeAttribute("aria-labelledby", InvisibleText.getStaticId("sap.m", "SPC_BLOCKERS") +
+				" " + "fullDay-" + oFormat.format(oColumnCalDate.toLocalJSDate()) + "-Descr");
 				oRm.addClass("sapMSinglePCBlockersColumn");
+				oRm.writeAttribute("tabindex", -1);
 
 				if (oColumnCalDate.isSame(new CalendarDate())) {
 					oRm.addClass("sapMSinglePCBlockersColumnToday");
@@ -83,7 +88,17 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 				}
 
 				oRm.writeClasses();
+				oRm.writeStyles();
 				oRm.write(">");
+
+				oRm.write("<span");
+				oRm.writeAttribute("id", "fullDay-" + oFormat.format(oColumnCalDate.toLocalJSDate()) + "-Descr");
+				oRm.addClass("sapUiInvisibleText");
+				oRm.writeClasses();
+				oRm.write(">");
+				oRm.write(oControl._getCellStartEndInfo(oColumnCalDate.toLocalJSDate()));
+				oRm.write("</span>");
+
 				oRm.write("</div>"); // END .sapMSinglePCColumn
 			}
 			this.renderBlockers(oRm, oControl);
@@ -317,7 +332,8 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 
 			for (var i = 0; i < iColumns; i++) {
 				var oColumnCalDate = new CalendarDate(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate() + i),
-					sDate = oControl._formatDayAsString(oColumnCalDate);
+				oFormat = oControl._getDateFormatter(),
+					sDate = oFormat.format(oColumnCalDate.toLocalJSDate());
 
 				oRm.write("<div");
 				oRm.writeAttribute("data-sap-day", sDate);
@@ -336,7 +352,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 
 				this.renderDndPlaceholders(oRm, oControl, oControl._dndPlaceholdersMap[oColumnCalDate]);
 
-				this.renderRows(oRm, oControl);
+				this.renderRows(oRm, oControl, sDate);
 				this.renderAppointments(oRm, oControl, oAppointmentsToRender[sDate], oColumnCalDate);
 				oRm.write("</div>"); // END .sapMSinglePCColumn
 			}
@@ -350,21 +366,41 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 			oRm.write("</div>");
 		};
 
-		SinglePlanningCalendarGridRenderer.renderRows = function (oRm, oControl) {
+		SinglePlanningCalendarGridRenderer.renderRows = function (oRm, oControl, sDate) {
 			var iStartHour = oControl._getVisibleStartHour(),
-				iEndHour = oControl._getVisibleEndHour();
+				iEndHour = oControl._getVisibleEndHour(),
+				oFormat = oControl._getDateFormatter(),
+				oCellStartDate,
+				oCellEndDate;
 
 			for (var i = iStartHour; i <= iEndHour; i++) {
+				oCellStartDate = oControl._parseDateStringAndHours(sDate, i);
+				oCellEndDate = new Date(oCellStartDate.getFullYear(), oCellStartDate.getMonth(), oCellStartDate.getDate(), oCellStartDate.getHours() + 1);
+
 				oRm.write("<div");
 				oRm.addClass("sapMSinglePCRow");
 
 				if (!oControl._isVisibleHour(i)) {
 					oRm.addClass("sapMSinglePCNonWorkingRow");
 				}
-				oRm.writeAttribute("data-sap-hour", i);
 
+				oRm.writeAttribute("data-sap-hour", i);
+				oRm.writeAttribute("data-sap-start-date", oFormat.format(oCellStartDate));
+				oRm.writeAttribute("data-sap-end-date", oFormat.format(oCellEndDate));
+				oRm.writeAttribute("aria-labelledby", oFormat.format(oCellStartDate) + "-Descr");
+				oRm.writeAttribute("tabindex", -1);
+				oRm.writeClasses();
+				oRm.writeStyles();
+				oRm.write(">");
+
+				oRm.write("<span");
+				oRm.writeAttribute("id", oFormat.format(oCellStartDate) + "-Descr");
+				oRm.addClass("sapUiInvisibleText");
 				oRm.writeClasses();
 				oRm.write(">");
+				oRm.write(oControl._getCellStartEndInfo(oCellStartDate, oCellEndDate));
+				oRm.write("</span>");
+
 				oRm.write("</div>"); // END .sapMSinglePCRow
 			}
 		};

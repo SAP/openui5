@@ -20,7 +20,8 @@ sap.ui.define([
 		'sap/ui/unified/calendar/CalendarUtils',
 		'sap/ui/events/KeyCodes',
 		'./SinglePlanningCalendarGridRenderer',
-		'sap/ui/Device'
+		'sap/ui/Device',
+		'sap/ui/core/delegate/ItemNavigation'
 	],
 	function (
 		SinglePlanningCalendarUtilities,
@@ -39,7 +40,8 @@ sap.ui.define([
 		CalendarUtils,
 		KeyCodes,
 		SinglePlanningCalendarGridRenderer,
-		Device
+		Device,
+		ItemNavigation
 	) {
 		"use strict";
 
@@ -254,6 +256,23 @@ sap.ui.define([
 							 */
 							endDate: {type: "object"}
 						}
+					},
+
+					/**
+					 * Fired when a grid cell is focused.
+					 * @since 1.65
+					 */
+					cellPress: {
+						parameters: {
+							/**
+							 * The start date as a JavaScript date object of the focused grid cell.
+							 */
+							startDate: {type: "object"},
+							/**
+							 * The end date as a JavaScript date object of the focused grid cell.
+							 */
+							endDate: {type: "object"}
+						}
 					}
 				}
 			}
@@ -277,14 +296,28 @@ sap.ui.define([
 			this._configureAppointmentsCreate();
 
 			this._oUnifiedRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
-			this._oFormatAria = DateFormat.getDateTimeInstance({
+			this._oFormatAriaApp = DateFormat.getDateTimeInstance({
 				pattern: "EEEE dd/MM/YYYY 'at' HH:mm:ss a"
+			});
+			this._oFormatAriaFullDayCell = DateFormat.getDateTimeInstance({
+				pattern: "EEEE dd/MM/YYYY"
+			});
+			this._oFormatAriaCell = DateFormat.getDateTimeInstance({
+				pattern: "EEEE dd/MM/YYYY 'at' HH"
 			});
 
 			//the id of the SPC's legend if any
 			this._sLegendId = undefined;
 
 			setTimeout(this._updateRowHeaderAndNowMarker.bind(this), iDelay);
+		};
+
+		SinglePlanningCalendarGrid.prototype.exit = function () {
+			if (this._oItemNavigation) {
+				this.removeDelegate(this._oItemNavigation);
+				this._oItemNavigation.destroy();
+				delete this._oItemNavigation;
+			}
 		};
 
 		SinglePlanningCalendarGrid.prototype.onBeforeRendering = function () {
@@ -793,7 +826,7 @@ sap.ui.define([
 			if (iRowHeight === ROW_HEIGHT_COMPACT) {
 				for (var i = 0; i < iColumns; i++) {
 					var oColumnCalDate = new CalendarDate(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate() + i),
-						sDate = this._formatDayAsString(oColumnCalDate),
+						sDate = this._getDateFormatter().format(oColumnCalDate.toLocalJSDate()),
 						oColumnStartDateAndHour = new UniversalDate(oColumnCalDate.getYear(), oColumnCalDate.getMonth(), oColumnCalDate.getDate(), this._getVisibleStartHour()),
 						oColumnEndDateAndHour = new UniversalDate(oColumnCalDate.getYear(), oColumnCalDate.getMonth(), oColumnCalDate.getDate(), this._getVisibleEndHour(), 59, 59);
 					this._adjustAppointmentsHeightforCompact(sDate, oColumnStartDateAndHour, oColumnEndDateAndHour);
@@ -802,6 +835,21 @@ sap.ui.define([
 			}
 
 			this._updateRowHeaderAndNowMarker();
+			_initItemNavigation.call(this);
+		};
+
+		/**
+		 * Remove selection class from the selected appointments when focusing a cell
+		 * and fires appointmentSelect event
+		 */
+		SinglePlanningCalendarGrid.prototype._removeAppointmentSelection = function() {
+			jQuery(".sapUiCalendarApp").removeClass("sapUiCalendarAppSel");
+			this.getSelectedAppointments().forEach(function(oAppointment) {
+				oAppointment.setProperty("selected", false, true); // do not invalidate
+				this.fireAppointmentSelect({
+					appointment: oAppointment
+				});
+			}.bind(this));
 		};
 
 		/**
@@ -810,21 +858,96 @@ sap.ui.define([
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		SinglePlanningCalendarGrid.prototype.onkeydown = function (oEvent) {
-			var oAppointment;
+			var oAppointment = oEvent.srcControl,
+				bIsAppointment = oAppointment && oAppointment.isA("sap.ui.unified.CalendarAppointment"),
+				oGridCell = oEvent.target;
 
 			if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
-				oAppointment = sap.ui.getCore().byId(oEvent.target.id);
-
-				if (oAppointment && oAppointment.isA("sap.ui.unified.CalendarAppointment")) {
+				if (bIsAppointment) {
 					this._toggleAppointmentSelection(oAppointment, !(oEvent.ctrlKey || oEvent.metaKey));
 					this.fireAppointmentSelect({
 						appointment: oAppointment
 					});
 				}
 
+				if (oGridCell.classList.contains("sapMSinglePCRow") ||
+					oGridCell.classList.contains("sapMSinglePCBlockersColumn")) {
+
+					this.fireEvent("cellPress", {
+						startDate: this._getDateFormatter().parse(oGridCell.getAttribute("data-sap-start-date")),
+						endDate: this._getDateFormatter().parse(oGridCell.getAttribute("data-sap-end-date"))
+					});
+				}
+
 				// Prevent scrolling
 				oEvent.preventDefault();
 			}
+		};
+
+		/**
+		 * Ensures that the focus is moved from an appointment to the correct cell from the visible grid area or
+		 * borderReached event is fired when the correct cell to focus is outside of the visible grid area
+		 * and removes the appointments selection.
+		 *
+		 * @param {object} oEvent The event object that is passed to the onsapup, onsapdown, onsapright, on sapleft handlers
+		 * @param {int} iDirection Number representing the key code of the pressed arrow from the keyboard
+		 * @private
+		 */
+		SinglePlanningCalendarGrid.prototype._appFocusHandler = function(oEvent, iDirection) {
+			var oAppointment = sap.ui.getCore().byId(oEvent.target.id),
+				bIsAppointment = oAppointment && oAppointment.isA("sap.ui.unified.CalendarAppointment");
+
+			if (bIsAppointment) {
+				this._removeAppointmentSelection();
+				this._focusCellWithKeyboard(oAppointment, iDirection);
+
+				// Prevent scrolling
+				oEvent.preventDefault();
+			}
+		};
+
+		/**
+		 * Ensures that the borderReached event is fired when the focus is on a cell and border is reached.
+		 *
+		 * @param {object} oEvent The event object that is passed to the onsapup, onsapdown, onsapright, on sapleft handlers
+		 * @param {int} iDirection Number representing the key code of the pressed arrow from the keyboard
+		 * @private
+		 */
+		SinglePlanningCalendarGrid.prototype._cellFocusHandler = function(oEvent, iDirection) {
+			var oGridCell = oEvent.target,
+				oFormat = this._getDateFormatter(),
+				oFocusedElement;
+
+			if (oGridCell.classList.contains("sapMSinglePCRow") ||
+				oGridCell.classList.contains("sapMSinglePCBlockersColumn")) {
+
+				oFocusedElement = oFormat.parse(oGridCell.getAttribute("data-sap-start-date"));
+				if (this._isBorderReached(oFocusedElement, iDirection)) {
+					this.fireEvent("borderReached", {
+						startDate: oFocusedElement,
+						next: iDirection === KeyCodes.ARROW_RIGHT,
+						fullDay: oGridCell.classList.contains("sapMSinglePCBlockersColumn")
+					});
+				}
+			}
+		};
+
+		SinglePlanningCalendarGrid.prototype.onsapup = function (oEvent) {
+			this._appFocusHandler(oEvent, KeyCodes.ARROW_UP);
+		};
+
+		SinglePlanningCalendarGrid.prototype.onsapdown = function (oEvent) {
+			this._appFocusHandler(oEvent, KeyCodes.ARROW_DOWN);
+		};
+
+		SinglePlanningCalendarGrid.prototype.onsapright = function (oEvent) {
+			this._appFocusHandler(oEvent, KeyCodes.ARROW_RIGHT);
+			this._cellFocusHandler(oEvent, KeyCodes.ARROW_RIGHT);
+		};
+
+		SinglePlanningCalendarGrid.prototype.onsapleft = function (oEvent) {
+			this._appFocusHandler(oEvent, KeyCodes.ARROW_LEFT);
+			this._cellFocusHandler(oEvent, KeyCodes.ARROW_LEFT);
 		};
 
 		SinglePlanningCalendarGrid.prototype.setStartDate = function (oStartDate) {
@@ -881,18 +1004,99 @@ sap.ui.define([
 		};
 
 		/**
+		 * Checking when an arrow key is pressed from the keyboard weather the cell focus should go in
+		 * the next or preveous day or week
+		 *
+		 * @param {sap.ui.unified.CalendarDate} oCellStartDate The start date the cell or the visible part of the appointment
+		 * @param {integer} iDirection The key the was pressed
+		 * @returns {boolean} Idicator if the gird border is reached
+		 * @private
+		 */
+		SinglePlanningCalendarGrid.prototype._isBorderReached = function(oFocusedElement, iDirection) {
+			var oGridStartDate = CalendarDate.fromLocalJSDate(this.getStartDate()),
+				oGridEndDate = new CalendarDate(oGridStartDate.getYear(), oGridStartDate.getMonth(), oGridStartDate.getDate() + this._getColumns() - 1),
+				oTargetStartDate = CalendarDate.fromLocalJSDate(oFocusedElement),
+				bLeft = iDirection === KeyCodes.ARROW_LEFT && oTargetStartDate.isSame(oGridStartDate),
+				bRight = iDirection === KeyCodes.ARROW_RIGHT && oTargetStartDate.isSame(oGridEndDate);
+
+			return bLeft || bRight;
+		};
+
+		/**
+		 * Ensures that the focus is moved from an appointment to the correct cell from the visible grid area or
+		 * borderReached event is fired when the correct cell to focus is outside of the visible grid area.
+		 *
+		 * @param {object} oEvent The event object that is passed to the onsapup, onsapdown, onsapright, on sapleft handlers
+		 * @param {int} iDirection Number representing the key code of the pressed arrow from the keyboard
+		 * @private
+		 */
+		SinglePlanningCalendarGrid.prototype._focusCellWithKeyboard = function (oAppointment, iDirection) {
+			var bFullDayApp = this.isAllDayAppointment(oAppointment.getStartDate(), oAppointment.getEndDate()),
+				oFormat = this._getDateFormatter(),
+				oAppStartDate = new Date(oAppointment.getStartDate().getFullYear(), oAppointment.getStartDate().getMonth(), oAppointment.getStartDate().getDate(), oAppointment.getStartDate().getHours()),
+				oGridStartDate = new Date(this.getStartDate().getFullYear(), this.getStartDate().getMonth(), this.getStartDate().getDate(), this.getStartDate().getHours());
+
+			// If an appointment start hour is before the visible grid start date
+			// we will use the grid start date as the appointment start date.
+			if (oAppStartDate < oGridStartDate) {
+				oAppStartDate = oGridStartDate;
+			}
+
+			if (this._isBorderReached(oAppStartDate, iDirection)) {
+				this.fireEvent("borderReached", {
+					startDate: oAppStartDate,
+					next: iDirection === KeyCodes.ARROW_RIGHT,
+					fullDay: bFullDayApp
+				});
+				return;
+			}
+
+			switch (iDirection) {
+				case KeyCodes.ARROW_UP:
+					if (!bFullDayApp) {
+						oAppStartDate.setHours(oAppStartDate.getHours() - 1);
+					}
+					break;
+				case KeyCodes.ARROW_DOWN:
+					if (!bFullDayApp) {
+						oAppStartDate.setHours(oAppStartDate.getHours() + 1);
+					}
+					break;
+				case KeyCodes.ARROW_LEFT:
+					oAppStartDate.setDate(oAppStartDate.getDate() - 1);
+					break;
+				case KeyCodes.ARROW_RIGHT:
+					oAppStartDate.setDate(oAppStartDate.getDate() + 1);
+					break;
+				default:
+			}
+
+			if (bFullDayApp && iDirection !== KeyCodes.ARROW_DOWN) {
+				jQuery("[data-sap-start-date='" + oFormat.format(oAppStartDate) + "'].sapMSinglePCBlockersColumn").focus();
+			} else {
+				jQuery("[data-sap-start-date='" + oFormat.format(oAppStartDate) + "'].sapMSinglePCRow").focus();
+			}
+		};
+
+		/**
 		 * Handles the <code>tap</code> event on the grid.
 		 *
 		 * @param {jQuery.Event} oEvent The event object
 		 */
 		SinglePlanningCalendarGrid.prototype.ontap = function (oEvent) {
-			var oAppointment = sap.ui.getCore().byId(oEvent.target.parentElement.id);
+			var oAppointment = sap.ui.getCore().byId(oEvent.target.parentElement.id),
+				oGridCell = oEvent.target;
 
 			if (oAppointment && oAppointment.isA("sap.ui.unified.CalendarAppointment")) {
 				this._toggleAppointmentSelection(oAppointment, !(oEvent.ctrlKey || oEvent.metaKey));
 				this.fireAppointmentSelect({
 					appointment: oAppointment
 				});
+			}
+
+			if (oGridCell.classList.contains("sapMSinglePCRow") ||
+				oGridCell.classList.contains("sapMSinglePCBlockersColumn")) {
+					this._removeAppointmentSelection();
 			}
 		};
 
@@ -969,28 +1173,29 @@ sap.ui.define([
 		};
 
 		/**
-		 * Formats a given date to a string. Example: 2 Jun 2018 -> "20180502"
+		 * Takes a string date and integer hour and returns a JS Date object as a result.
+		 * Example: this._parseDateStringAndHours("20180614-0000", 4) -> Thu Jun 14 2018 04:00:00 GMT+0300 (Eastern European Summer Time)
 		 *
-		 * @param {CalendarDate} oCalDate the date to be formatted
-		 * @returns {string} the formatted string
+		 * @param {string} iRow the row to be checked
+		 * @param {int} iRow the row to be checked
+		 * @returns {Date} The parsed JavaScript date object.
 		 * @private
 		 */
-		SinglePlanningCalendarGrid.prototype._formatDayAsString = function (oCalDate) {
-			var sResult = "" + oCalDate.getYear(),
-				sMonth =  oCalDate.getMonth(),
-				sDate =  oCalDate.getDate();
+		SinglePlanningCalendarGrid.prototype._parseDateStringAndHours = function (sDay, iHours) {
+			var oDate = this._getDateFormatter().parse(sDay);
 
-			if (sMonth < 10) {
-				sResult += "0";
+			if (iHours) {
+				oDate.setHours(iHours);
 			}
-			sResult += sMonth;
 
-			if (sDate < 10) {
-				sResult += "0";
+			return oDate;
+		};
+
+		SinglePlanningCalendarGrid.prototype._getDateFormatter = function () {
+			if (!(this._oDateFormat instanceof DateFormat)) {
+				this._oDateFormat = DateFormat.getDateTimeInstance({ pattern: "YYYYMMdd-HHmm" });
 			}
-			sResult += sDate;
-
-			return sResult;
+			return this._oDateFormat;
 		};
 
 		/**
@@ -1129,7 +1334,7 @@ sap.ui.define([
 					oCurrentAppCalEndDate = CalendarDate.fromLocalJSDate(oAppEndDate);
 
 					while (oCurrentAppCalStartDate.isSameOrBefore(oCurrentAppCalEndDate)) {
-						sDay = that._formatDayAsString(oCurrentAppCalStartDate);
+						sDay = that._getDateFormatter().format(oCurrentAppCalStartDate.toLocalJSDate());
 
 						if (!oMap.appointments[sDay]) {
 							oMap.appointments[sDay] = [];
@@ -1164,7 +1369,7 @@ sap.ui.define([
 
 			for (var i = 0; i < iColumns; i++) {
 				oCalDate = new CalendarDate(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate() + i);
-				sDate = this._formatDayAsString(oCalDate);
+				sDate = this._getDateFormatter().format(oCalDate.toLocalJSDate());
 				fnIsVisiblePredicate = this._isAppointmentFitInVisibleHours(oCalDate);
 
 				if (oAppointments[sDate]) {
@@ -1621,8 +1826,8 @@ sap.ui.define([
 		SinglePlanningCalendarGrid.prototype._getAppointmentStartEndInfo = function (oAppointment) {
 			var sStartTime = this._oUnifiedRB.getText("CALENDAR_START_TIME"),
 				sEndTime = this._oUnifiedRB.getText("CALENDAR_END_TIME"),
-				sFormattedStartDate = this._oFormatAria.format(oAppointment.getStartDate()),
-				sFormattedEndDate = this._oFormatAria.format(oAppointment.getEndDate());
+				sFormattedStartDate = this._oFormatAriaApp.format(oAppointment.getStartDate()),
+				sFormattedEndDate = this._oFormatAriaApp.format(oAppointment.getEndDate());
 
 			return sStartTime + ": " + sFormattedStartDate + "; " + sEndTime + ": " + sFormattedEndDate + "; ";
 		};
@@ -1641,6 +1846,25 @@ sap.ui.define([
 			if (oControl.getId() === this._getColumnHeaders().getId()) {
 				mAriaProps.labelledby = InvisibleText.getStaticId("sap.m", "PLANNINGCALENDAR_DAYS");
 			}
+		};
+
+		/**
+		 * Gets Start/End information for a given a appointment or cell.
+		 *
+		 * @param {Date} oStartDate - The appointment or cell start JS date for which Start information will be generated.
+		 * @param {Date} oEndDate - The appointment or cell end JS date for which End information will be generated.
+		 * @returns {string}
+		 * @private
+		 */
+		SinglePlanningCalendarGrid.prototype._getCellStartEndInfo = function (oStartDate, oEndDate) {
+			var sStartTime = this._oUnifiedRB.getText("CALENDAR_START_TIME"),
+				sEndTime = this._oUnifiedRB.getText("CALENDAR_END_TIME"),
+				bFullDay = !oEndDate;
+
+			if (bFullDay) {
+				return sStartTime + ": " + this._oFormatAriaFullDayCell.format(oStartDate) + "; ";
+			}
+			return sStartTime + ": " + this._oFormatAriaCell.format(oStartDate) + "; " + sEndTime + ": " + this._oFormatAriaCell.format(oEndDate) + "; ";
 		};
 
 		/**
@@ -1781,6 +2005,40 @@ sap.ui.define([
 			}
 			return sLegendItemText;
 		};
+
+		function _initItemNavigation(){
+			// Collect the dom references of the items
+			var oRootRef = this.getDomRef(),
+				aCellsInRow = this.$().find(".sapMSinglePCBlockersColumn").toArray();
+				this._aGridCells = Array.prototype.concat(aCellsInRow);
+
+			for (var hour = 0; hour <= this._getVisibleEndHour(); ++hour) {
+				aCellsInRow = this.$().find("div[data-sap-hour='" + hour + "']").toArray();
+				this._aGridCells = this._aGridCells.concat(aCellsInRow);
+			}
+
+			// Initialize the delegate and apply it to the control (only once)
+			if (!this._oItemNavigation) {
+				this._oItemNavigation = new ItemNavigation();
+				this.addDelegate(this._oItemNavigation);
+			}
+			// After each rendering the delegate needs to be initialized as well
+
+			// Set the root dom node that surrounds the items
+			this._oItemNavigation.setRootDomRef(oRootRef);
+
+			// Set the array of dom nodes representing the items
+			this._oItemNavigation.setItemDomRefs(this._aGridCells);
+
+			// Turn of the cycling
+			this._oItemNavigation.setCycling(false);
+
+			// explicitly setting table mode
+			this._oItemNavigation.setTableMode(true, true).setColumns(this._getColumns());
+
+			// Set the page size
+			this._oItemNavigation.setPageSize(this._aGridCells.length);
+		}
 
 		return SinglePlanningCalendarGrid;
 	});

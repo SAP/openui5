@@ -109,6 +109,7 @@
 	border-top-width: 0;
 	height: @_sap_m_SinglePlanningCalendarGrid_RowHeight;
 	position: relative;
+	outline: none;
 }
 
 .sapMSinglePCBlockersColumn {
@@ -163,12 +164,34 @@
 .sapMSinglePCAppointments,
 .sapMSinglePCBlockers {
 	position: absolute;
-	z-index: 2;
 	top: 0;
 	right: 0.125rem;
 	left: 0.125rem;
 	bottom: 0;
 	pointer-events: none;
+
+	& > .sapMSinglePCAppointmentWrap.sapUiCalendarRowApps {
+		z-index: 2;
+	}
+}
+
+.sapMSinglePCBlockersRow > .sapMSinglePCBlockersColumns > .sapMSinglePCBlockersColumn,
+.sapMSinglePCGridContent .sapMSinglePCColumns .sapMSinglePCRow {
+	z-index: 1;
+}
+
+html.sap-desktop {
+	.sapMSinglePCBlockersRow > .sapMSinglePCBlockersColumns > .sapMSinglePCBlockersColumn:focus::after,
+	.sapMSinglePCGridContent .sapMSinglePCColumns .sapMSinglePCRow:focus::after {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		border: 0.0625rem dotted @sapUiContentFocusColor;
+		pointer-events: none;
+	}
 }
 
 .sapMSinglePCAppointmentWrap.sapUiCalendarRowApps {
