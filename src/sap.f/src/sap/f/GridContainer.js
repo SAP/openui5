@@ -67,15 +67,16 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A layout container control used for aligning items with various sizes in a simple grid
+	 * A layout container control used for aligning items with various sizes in a simple grid.
 	 *
 	 * <h3>Overview</h3>
 	 *
-	 * Layout container control used to align Tiles, Cards or other controls in configuration like a home page or a dashboard.
-	 * It represents a grid layout, with specific row and column sizes, in which the items can take any number of rows and columns.
+	 * The control is used to align tiles, cards and other controls in configuration, such as a home page or a dashboard.
+	 * It represents a grid layout with specific row and column sizes, in which the items can take any number of rows and columns.
 	 *
-	 * The number of columns and rows each item should take can be configured using the <code>sap.f.GridContainerItemLayoutData</code>.
-	 * All rows have the same height and all columns have the same width. Their sizes can be configured by using <code>layout</code> aggregation and <code>GridContainerSettings</code>.
+	 * The number of columns and rows each item takes can be configured with the use of the <code>{@link sap.f.GridContainerItemLayoutData}</code>.
+	 *
+	 * All rows have the same height and all columns have the same width. Their sizes can be configured with the use of the <code>layout</code> aggregation and <code>{@link sap.f.GridContainerSettings}</code>.
 	 *
 	 * <h3>Usage</h3>
 	 *
@@ -89,36 +90,37 @@ sap.ui.define([
 	 * <li>If a more complex layout grid system, where columns and rows may vary in size, is needed.</li>
 	 * </ul>
 	 *
-	 * <h3>Example</h3>
+	 * <h3>Example:</h3>
 	 * <pre>
-	 * <f:GridContainer>
-	 * 	<f:layout>
-	 * 		<f:GridContainerSettings rowSize="5rem" columnSize="5rem" gap="1rem" />
-	 * 	</f:layout>
-	 * 	<f:layoutS>
-	 * 		<f:GridContainerSettings rowSize="4rem" columnSize="4rem" gap="0.5rem" />
-	 * 	</f:layoutS>
-	 * 	<f:items>
-	 * 		<GenericTile header="Sales Fulfillment">
-	 * 			<layoutData>
-	 * 				<f:GridContainerItemLayoutData rows="2" columns="2" />
-	 * 			</layoutData>
-	 * 		</GenericTile>
-	 * 		<w:Card manifest="url-to-manifest">
-	 * 			<w:layoutData>
-	 * 				<f:GridContainerItemLayoutData rows="6" columns="3" />
-	 * 			</w:layoutData>
-	 * 		</w:Card>
-	 * 		<Panel>
-	 * 			<layoutData>
-	 * 				<f:GridContainerItemLayoutData columns="4" />
-	 * 			</layoutData>
-	 * 			<Text text="Sales information" />
-	 * 		</Panel>
-	 * 	</f:items>
-	 * </f:GridContainer>
+	 * &lt;f:GridContainer&gt;
+	 * 	&lt;f:layout&gt;
+	 * 		&lt;f:GridContainerSettings rowSize=&quot;5rem&quot; columnSize=&quot;5rem&quot; gap=&quot;1rem&quot; /&gt;
+	 * 	&lt;/f:layout&gt;
+	 * 	&lt;f:layoutS&gt;
+	 * 		&lt;f:GridContainerSettings rowSize=&quot;4rem&quot; columnSize=&quot;4rem&quot; gap=&quot;0.5rem&quot; /&gt;
+	 * 	&lt;/f:layoutS&gt;
+	 * 	&lt;f:items&gt;
+	 * 		&lt;GenericTile header=&quot;Sales Fulfillment&quot;&gt;
+	 * 			&lt;layoutData&gt;
+	 * 				&lt;f:GridContainerItemLayoutData rows=&quot;2&quot; columns=&quot;2&quot; /&gt;
+	 * 			&lt;/layoutData&gt;
+	 * 		&lt;/GenericTile&gt;
+	 * 		&lt;w:Card manifest=&quot;url-to-manifest&quot;&gt;
+	 * 			&lt;w:layoutData&gt;
+	 * 				&lt;f:GridContainerItemLayoutData rows=&quot;6&quot; columns=&quot;3&quot; /&gt;
+	 * 			&lt;/w:layoutData&gt;
+	 * 		&lt;/w:Card&gt;
+	 * 		&lt;Panel&gt;
+	 * 			&lt;layoutData&gt;
+	 * 				&lt;f:GridContainerItemLayoutData columns=&quot;4&quot; /&gt;
+	 * 			&lt;/layoutData&gt;
+	 * 			&lt;Text text=&quot;Sales information&quot; /&gt;
+	 * 		&lt;/Panel&gt;
+	 * 	&lt;/f:items&gt;
+	 * &lt;/f:GridContainer&gt;
 	 * </pre>
 	 *
+	 * @see {@link topic:cca5ee5d63ca44c89318f8496a58f9f2 Grid Container (Experimental)}
 	 * @see {@link topic:32d4b9c2b981425dbc374d3e9d5d0c2e Grid Controls}
 	 * @see {@link topic:5b46b03f024542ba802d99d67bc1a3f4 Cards}
 	 *
