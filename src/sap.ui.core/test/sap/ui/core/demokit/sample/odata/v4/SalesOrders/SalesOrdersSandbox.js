@@ -57,8 +57,14 @@ sap.ui.define([
 			"SalesOrderList?custom-option=value&$count=true&$filter=SalesOrderID%20ge%20'0500000000'%20and%20LifecycleStatus%20eq%20'N'%20and%20(SO_2_BP/CompanyName%20ge%20'M')&$select=BuyerID,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=5&$top=5" : {
 				source : "SalesOrderList_skip5.json"
 			},
+			"SalesOrderList?custom-option=value&$count=true&$filter=SalesOrderID%20ge%20'0500000000'%20and%20LifecycleStatus%20eq%20'N'%20and%20(SO_2_BP/CompanyName%20ge%20'M')&$select=BuyerID,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=5&$top=3" : {
+				source : "SalesOrderList_skip5_top3.json"
+			},
 			"SalesOrderList?custom-option=value&$count=true&$filter=SalesOrderID%20ge%20'0500000000'%20and%20LifecycleStatus%20eq%20'N'%20and%20(SO_2_BP/CompanyName%20ge%20'M')&$select=BuyerID,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=5&$top=4" : {
 				source : "SalesOrderList_skip5_top4.json"
+			},
+			"SalesOrderList?custom-option=value&$count=true&$filter=SalesOrderID%20ge%20'0500000000'%20and%20LifecycleStatus%20eq%20'N'%20and%20(SO_2_BP/CompanyName%20ge%20'M')&$select=BuyerID,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=8&$top=2" : {
+				source : "SalesOrderList_skip8_top2.json"
 			},
 			"SalesOrderList?custom-option=value&$count=true&$filter=SalesOrderID%20ge%20'0500000000'%20and%20LifecycleStatus%20eq%20'N'%20and%20(SO_2_BP/CompanyName%20ge%20'M')&$select=BuyerID,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=10" : {
 				source : "SalesOrderList_skip0_top10.json"
@@ -141,17 +147,44 @@ sap.ui.define([
 			"SalesOrderList('0500000009')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$select=DeliveryDate,GrossAmount,ItemPosition,Messages,Note,ProductID,Quantity,QuantityUnit,SalesOrderID&$filter=ItemPosition%20gt%20'0000000000'&$skip=0&$top=100" : {
 				source : "SalesOrderItemsList_9.json"
 			},
-			"SalesOrderList('')?custom-option=value&$select=ChangedAt,CreatedAt,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=Address/City,Address/PostalCode,BusinessPartnerID,CompanyName,PhoneNumber),SO_2_SCHDL($select=DeliveryDate,ScheduleKey)" : {
-				source : "SalesOrderList_new.json"
+			"SalesOrderList('NEW1')?custom-option=value&$select=ChangedAt,CreatedAt,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=Address/City,Address/PostalCode,BusinessPartnerID,CompanyName,PhoneNumber),SO_2_SCHDL($select=DeliveryDate,ScheduleKey)" : {
+				source : "SalesOrderList('NEW1').json"
 			},
-			"SalesOrderList('')?custom-option=value&$select=BuyerID,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
-				source : "SalesOrderList_new_refresh.json"
+			"SalesOrderList('NEW1')?custom-option=value&$select=BuyerID,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
+				source : "SalesOrderList('NEW1')_refresh.json"
 			},
-			"SalesOrderList('')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$select=DeliveryDate,GrossAmount,ItemPosition,Messages,Note,ProductID,Quantity,QuantityUnit,SalesOrderID&$filter=ItemPosition%20gt%20'0000000000'&$skip=0&$top=100" : {
-				source : "SalesOrderItemsList_new.json"
+			"SalesOrderList('NEW1')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$select=DeliveryDate,GrossAmount,ItemPosition,Messages,Note,ProductID,Quantity,QuantityUnit,SalesOrderID&$filter=ItemPosition%20gt%20'0000000000'&$skip=0&$top=100" : {
+				source : "SalesOrderItemsList_empty.json"
 			},
-			"POST SalesOrderList('')/SO_2_SOITEM?custom-option=value" : {
-				source : "SalesOrderItemsList_created.json"
+			"POST SalesOrderList('NEW1')/SO_2_SOITEM?custom-option=value" : {
+				source : "POST-SalesOrderList('NEW1')-SO_2_SOITEM.json"
+			},
+			"SalesOrderList('NEW2')?custom-option=value&$select=ChangedAt,CreatedAt,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=Address/City,Address/PostalCode,BusinessPartnerID,CompanyName,PhoneNumber),SO_2_SCHDL($select=DeliveryDate,ScheduleKey)" : {
+				source : "SalesOrderList('NEW2').json"
+			},
+			"SalesOrderList('NEW2')?custom-option=value&$select=BuyerID,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
+				source : "SalesOrderList('NEW2')_refresh.json"
+			},
+			"SalesOrderList('NEW2')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$select=DeliveryDate,GrossAmount,ItemPosition,Messages,Note,ProductID,Quantity,QuantityUnit,SalesOrderID&$filter=ItemPosition%20gt%20'0000000000'&$skip=0&$top=100" : {
+				source : "SalesOrderItemsList_empty.json"
+			},
+			"SalesOrderList('NEW3')?custom-option=value&$select=ChangedAt,CreatedAt,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=Address/City,Address/PostalCode,BusinessPartnerID,CompanyName,PhoneNumber),SO_2_SCHDL($select=DeliveryDate,ScheduleKey)" : {
+				source : "SalesOrderList('NEW3').json"
+			},
+			"SalesOrderList('NEW3')?custom-option=value&$select=BuyerID,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
+				source : "SalesOrderList('NEW3')_refresh.json"
+			},
+			"SalesOrderList('NEW3')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$select=DeliveryDate,GrossAmount,ItemPosition,Messages,Note,ProductID,Quantity,QuantityUnit,SalesOrderID&$filter=ItemPosition%20gt%20'0000000000'&$skip=0&$top=100" : {
+				source : "SalesOrderItemsList_empty.json"
+			},
+			"SalesOrderList('NEW4')?custom-option=value&$select=ChangedAt,CreatedAt,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=Address/City,Address/PostalCode,BusinessPartnerID,CompanyName,PhoneNumber),SO_2_SCHDL($select=DeliveryDate,ScheduleKey)" : {
+				source : "SalesOrderList('NEW4').json"
+			},
+			"SalesOrderList('NEW4')?custom-option=value&$select=BuyerID,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
+				source : "SalesOrderList('NEW4')_refresh.json"
+			},
+			"SalesOrderList('NEW4')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$select=DeliveryDate,GrossAmount,ItemPosition,Messages,Note,ProductID,Quantity,QuantityUnit,SalesOrderID&$filter=ItemPosition%20gt%20'0000000000'&$skip=0&$top=100" : {
+				source : "SalesOrderItemsList_empty.json"
 			},
 			"/sap/opu/odata4/sap/zui5_testv4/f4/sap/h_tcurc-sh/0001;ps=%27default-zui5_epm_sample-0002%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0002.ET-SALESORDER.CURRENCY_CODE%27/$metadata" : {
 				source : "VH_CurrencyCode.xml"
@@ -198,9 +231,26 @@ sap.ui.define([
 			"SalesOrderList('0500000001')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$select=DeliveryDate,GrossAmount,ItemPosition,Messages,Note,NoteLanguage,Quantity,QuantityUnit,SalesOrderID&$filter=ItemPosition%20gt%20'0000000000'&$skip=0&$top=100" : {
 				source : "SalesOrderItemsList_1.json"
 			},
-			"POST SalesOrderList?custom-option=value" : {
-				source : "SalesOrderList_created.json"
-			},
+			"POST SalesOrderList?custom-option=value" : [{
+					code: 400,
+					ifMatch : /,"Note":"RAISE_ERROR"/g,
+					source : "POST-SalesOrderList.Error.json"
+			}, {
+				code: 200,
+				ifMatch : /,"Note":"new 2"/g,
+				source : "POST-SalesOrderList_NEW2.json"
+			}, {
+				code: 200,
+				ifMatch : /,"Note":"new 3"/g,
+				source : "POST-SalesOrderList_NEW3.json"
+			}, {
+				code: 200,
+				ifMatch : /,"Note":"new 4"/g,
+				source : "POST-SalesOrderList_NEW4.json"
+			}, {
+				code: 200,
+				source : "POST-SalesOrderList_NEW1.json"
+			}],
 			"POST SalesOrderList('0500000004')/SO_2_SOITEM?custom-option=value" : [{
 					code: 400,
 					ifMatch : /,"Quantity":"0",/g,

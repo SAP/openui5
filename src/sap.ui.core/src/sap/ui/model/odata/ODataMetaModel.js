@@ -366,7 +366,7 @@ sap.ui.define([
 					// Set the resolver on the internal JSON model, so that resolving does not use
 					// this._getObject itself.
 					this.oResolver = this.oResolver || new Resolver({models: this.oModel});
-					for (i = 0; i < oNode.length; i++) {
+					for (i = 0; i < oNode.length; i += 1) {
 						this.oResolver.bindObject(sProcessedPath + i);
 						this.oResolver.bindProperty("any", oBinding);
 						try {

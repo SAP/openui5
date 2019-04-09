@@ -27,17 +27,20 @@
 				mode="SingleSelectMaster">
 				<headerToolbar>
 					<Toolbar>
-					<Title level="H1" text="Products"/>
-					<ToolbarSpacer/>
-					<Link text="Unit Codes" target="unitCodes"
-						href="{:= ${ui>/bRealOData} ? 'proxy/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/UnitsOfMeasure?$select=ExternalCode,DecimalPlaces,Text,ISOCode' : 'test-resources/sap/ui/core/demokit/sample/odata/v4/Products/data/UnitsOfMeasure.json'}"/>
-					<Link text="Currency Codes" target="currencyCodes"
-						href="{:= ${ui>/bRealOData} ? 'proxy/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/Currencies?$select=CurrencyCode,DecimalPlaces,Text,ISOCode' : 'test-resources/sap/ui/core/demokit/sample/odata/v4/Products/data/Currencies.json'}"/>
-					<Button icon="sap-icon://message-popup" id="messagesButton"
-						press="onToggleMessagePopover" text="{ui>/iMessages}"
-						tooltip="Show messages"
-						type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
-				</Toolbar>
+						<Title level="H1" text="Products"/>
+						<ToolbarSpacer/>
+						<Button id="resetChanges" icon="sap-icon://sys-cancel-2"
+							press="onResetChanges" text="Reset Changes"
+							tooltip="Reset Products Changes"/>
+						<Link text="Unit Codes" target="unitCodes"
+							href="{:= ${ui>/bRealOData} ? 'proxy/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/UnitsOfMeasure?$select=ExternalCode,DecimalPlaces,Text,ISOCode' : 'test-resources/sap/ui/core/demokit/sample/odata/v4/Products/data/UnitsOfMeasure.json'}"/>
+						<Link text="Currency Codes" target="currencyCodes"
+							href="{:= ${ui>/bRealOData} ? 'proxy/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/Currencies?$select=CurrencyCode,DecimalPlaces,Text,ISOCode' : 'test-resources/sap/ui/core/demokit/sample/odata/v4/Products/data/Currencies.json'}"/>
+						<Button icon="sap-icon://message-popup" id="messagesButton"
+							press="onToggleMessagePopover" text="{ui>/iMessages}"
+							tooltip="Show messages"
+							type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
+					</Toolbar>
 				</headerToolbar>
 				<columns>
 					<template:repeat list="{lineItem>}" var="field">
@@ -51,12 +54,18 @@
 						<template:if test="{= ${field>Value/$Path@com.sap.vocabularies.Common.v1.FieldControl/$EnumMember}
 							=== 'com.sap.vocabularies.Common.v1.FieldControlType/ReadOnly'}">
 							<template:then>
-								<Input id="{field>Value/$Path}" textAlign="Right"
-									value="{field>Value/@@format}"
-									editable="{= %{@$ui5.context.isTransient} === true}"/>
+								<Input id="{field>Value/$Path}"
+									editable="{= %{@$ui5.context.isTransient} === true}"
+									textAlign="{= ${field>Value/$Path@com.sap.vocabularies.UI.v1.Visualization/$EnumMember}
+										=== 'com.sap.vocabularies.UI.v1.VisualizationType/Number'
+										? 'Right' : 'Left'}"
+									value="{field>Value/@@format}"/>
 							</template:then>
 							<template:else>
-								<Input id="{field>Value/$Path}" textAlign="Right"
+								<Input id="{field>Value/$Path}"
+									textAlign="{= ${field>Value/$Path@com.sap.vocabularies.UI.v1.Visualization/$EnumMember}
+										=== 'com.sap.vocabularies.UI.v1.VisualizationType/Number'
+										? 'Right' : 'Left'}"
 									value="{field>Value/@@format}"/>
 							</template:else>
 						</template:if>

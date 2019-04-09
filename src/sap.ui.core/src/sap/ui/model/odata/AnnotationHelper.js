@@ -110,7 +110,7 @@ sap.ui.define([
 			 * oControl.applySettings({"someProperty" : vPropertySetting});
 			 * </pre>
 			 *
-			 * @param {any[]} vParts
+			 * @param {any[]} aParts
 			 *   array of parts
 			 * @param {function} [fnRootFormatter]
 			 *   root formatter function; default: <code>Array.prototype.join(., " ")</code>
@@ -125,12 +125,12 @@ sap.ui.define([
 			 * @public
 			 * @since 1.31.0
 			 */
-			createPropertySetting : function (vParts, fnRootFormatter) {
+			createPropertySetting : function (aParts, fnRootFormatter) {
 				var bMergeNeeded = false,
 					vPropertySetting;
 
-				vParts = vParts.slice(); // shallow copy to avoid changes visible to caller
-				vParts.forEach(function (vPart, i) {
+				aParts = aParts.slice(); // shallow copy to avoid changes visible to caller
+				aParts.forEach(function (vPart, i) {
 					switch (typeof vPart) {
 					case "boolean":
 					case "number":
@@ -146,7 +146,7 @@ sap.ui.define([
 									+ vPropertySetting.functionsNotFound.join(", ")
 									+  " not found");
 							}
-							vParts[i] = vPart = vPropertySetting;
+							aParts[i] = vPart = vPropertySetting;
 						}
 						// falls through
 					case "object":
@@ -164,7 +164,7 @@ sap.ui.define([
 
 				vPropertySetting = {
 					formatter : fnRootFormatter,
-					parts : vParts
+					parts : aParts
 				};
 				if (bMergeNeeded) {
 					BindingParser.mergeParts(vPropertySetting);

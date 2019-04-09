@@ -35,13 +35,12 @@ sap.ui.define([
 			When.onTheCreateNewSalesOrderDialog.confirmDialog();
 			When.onTheMainPage.pressSaveSalesOrdersButton();
 			When.onTheSuccessInfo.confirm();
-			When.onTheMainPage.rememberCreatedSalesOrder();
 			Then.onTheMainPage.checkTableLength(0, "SO_2_SOITEM");
 
 			// Create a new sales order line item; no refresh allowed; cancel created item
 			When.onTheMainPage.pressCreateSalesOrderItemButton();
 			Then.onTheMainPage.checkTableLength(1, "SO_2_SOITEM");
-			Then.onTheMainPage.checkSalesOrderItemsCount(0); // server side count is still 0
+			Then.onTheMainPage.checkSalesOrderItemsCount(1);
 			When.onTheMainPage.pressRefreshSalesOrdersButton();
 			When.onTheRefreshConfirmation.cancel();
 			// canceling different group does not remove created sales order item
@@ -49,6 +48,7 @@ sap.ui.define([
 			Then.onTheMainPage.checkTableLength(1, "SO_2_SOITEM");
 			When.onTheMainPage.pressCancelSalesOrderChangesButton();
 			Then.onTheMainPage.checkTableLength(0, "SO_2_SOITEM");
+			Then.onTheMainPage.checkSalesOrderItemsCount(0);
 
 			// Delete transient sales order line item
 			When.onTheMainPage.pressCreateSalesOrderItemButton();
@@ -63,6 +63,9 @@ sap.ui.define([
 			When.onTheMainPage.selectSalesOrderItemWithPosition("");
 			When.onTheMainPage.pressSaveSalesOrderButton();
 			When.onTheSuccessInfo.confirm();
+			// saving the sales order causing a refresh of the entity; mock server cannot
+			// differentiate between fist call with empty content and second call with the created
+			// line item.
 			Then.onTheMainPage.checkSalesOrderItemsCount(bRealOData ? 1 : 0);
 
 			if (bRealOData) {
@@ -139,7 +142,6 @@ sap.ui.define([
 			When.onTheCreateNewSalesOrderDialog.confirmDialog();
 			When.onTheMainPage.pressSaveSalesOrdersButton();
 			When.onTheSuccessInfo.confirm();
-			When.onTheMainPage.rememberCreatedSalesOrder();
 			// test: refresh single reads expands
 			When.onTheMainPage.pressRefreshSelectedSalesOrdersButton();
 			Then.onTheMainPage.checkCompanyName(0, "SAP");
@@ -151,7 +153,7 @@ sap.ui.define([
 			When.onTheMainPage.pressRefreshSelectedSalesOrdersButton();
 			Then.onTheMainPage.checkTableLength(bRealOData ? 1 : 0, "SO_2_SOITEM");
 
-			// delete all created SalesOrders again
+			// delete created sales orders
 			When.onAnyPage.cleanUp("SalesOrderList");
 			Then.onAnyPage.checkLog(aExpectedErrors);
 			Then.onAnyPage.analyzeSupportAssistant();
