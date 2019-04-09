@@ -39,16 +39,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Returns the collection's $count.
-	 *
-	 * @param {array} aCollection The collection
-	 * @returns {number} The count or <code>Infinity</code> if the count is unknown
-	 */
-	function getCount(aCollection) {
-		return aCollection.$count !== undefined ? aCollection.$count : Infinity;
-	}
-
-	/**
 	 * Returns <code>true</code> if <code>sRequestPath</code> is a sub-path of <code>sPath</code>.
 	 *
 	 * @param {string} sRequestPath The request path
@@ -60,8 +50,8 @@ sap.ui.define([
 	}
 
 	/**
-	 * Sets the collection's $count: a number representing the element count on server-side. The
-	 * server-side element count does not include transient entities. It may be
+	 * Sets the collection's $count: a number representing the sum of the element count on
+	 * server-side and the number of transient elements created on the client. It may be
 	 * <code>undefined</code>, but not <code>Infinity</code>.
 	 *
 	 * @param {object} mChangeListeners A map of change listeners by path
@@ -299,6 +289,7 @@ sap.ui.define([
 			_Helper.removeByPath(that.mPostRequests, sPath, oEntityData);
 			aCollection.splice(aCollection.indexOf(oEntityData), 1);
 			aCollection.$created -= 1;
+			addToCount(that.mChangeListeners, sPath, aCollection, -1);
 			delete aCollection.$byPredicate[sTransientPredicate];
 			if (!sPath) {
 				// Note: sPath is empty only in a CollectionCache, so we may call adjustReadRequests
@@ -329,10 +320,6 @@ sap.ui.define([
 
 				_Helper.deletePrivateAnnotation(oEntityData, "transient");
 				oEntityData["@$ui5.context.isTransient"] = false;
-
-				// now the server has one more element
-				addToCount(that.mChangeListeners, sPath, aCollection, 1);
-				that.iLimit += 1;
 				_Helper.removeByPath(that.mPostRequests, sPath, oEntityData);
 				that.visitResponse(oCreatedEntity, aResult[1],
 					_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sPath)),
@@ -379,6 +366,7 @@ sap.ui.define([
 		}
 		aCollection.unshift(oEntityData);
 		aCollection.$created += 1;
+		addToCount(this.mChangeListeners, sPath, aCollection, 1);
 		// if the nested collection is empty $byPredicate is not available, create it on demand
 		aCollection.$byPredicate = aCollection.$byPredicate || {};
 		aCollection.$byPredicate[sTransientPredicate] = oEntityData;
@@ -702,14 +690,13 @@ sap.ui.define([
 		if (sTransientPredicate) {
 			aElements.$created -= 1;
 			delete aElements.$byPredicate[sTransientPredicate];
-		}
-		addToCount(this.mChangeListeners, sParentPath, aElements, -1);
-		if (!sParentPath) {
+		} else if (!sParentPath) {
 			// Note: sParentPath is empty only in a CollectionCache, so we may use iLmit and
 			// adjustReadRequests
 			this.iLimit -= 1;
 			this.adjustReadRequests(iIndex, -1);
 		}
+		addToCount(this.mChangeListeners, sParentPath, aElements, -1);
 	};
 
 	/**
@@ -1192,14 +1179,15 @@ sap.ui.define([
 				return sDeepResourcePath;
 			});
 
-		this.sContext = undefined;         // the "@odata.context" from the responses
-		this.aElements = [];               // the available elements
+		this.sContext = undefined; // the "@odata.context" from the responses
+		this.aElements = []; // the available elements
 		this.aElements.$byPredicate = {};
 		this.aElements.$count = undefined; // see setCount
-		this.aElements.$created = 0;       // number of (client-side) created elements
-		this.aElements.$tail = undefined;  // promise for a read w/o $top
-		this.iLimit = Infinity;            // the upper limit for the count (for the case that the
-										   // exact value is unknown)
+		this.aElements.$created = 0; // number of (client-side) created elements
+		this.aElements.$tail = undefined; // promise for a read w/o $top
+		// upper limit for @odata.count, maybe sharp; assumes #getQueryString can $filter out all
+		// created elements
+		this.iLimit = Infinity;
 		// an array of objects with ranges for pending read requests; each having the following
 		// properties:
 		// - iStart: the start (inclusive)
@@ -1307,6 +1295,52 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the query string with $filter adjusted as needed to exclude non-transient created
+	 * elements (which have all key properties available).
+	 *
+	 * @returns {string}
+	 *   The query string; it is empty if there are no options; it starts with "?" otherwise
+	 *
+	 * @private
+	 */
+	CollectionCache.prototype.getQueryString = function () {
+		var mQueryOptions = Object.assign({}, this.mQueryOptions),
+			oElement,
+			sExclusiveFilter,
+			sFilterOptions = mQueryOptions["$filter"],
+			i,
+			sKeyFilter,
+			aKeyFilters = [],
+			sQueryString = this.sQueryString,
+			mTypeForMetaPath;
+
+		for (i = 0; i < this.aElements.$created; i += 1) {
+			oElement = this.aElements[i];
+			if (!oElement["@$ui5.context.isTransient"]) {
+				mTypeForMetaPath = mTypeForMetaPath
+					|| this.fetchTypes().getResult(); // Note: $metadata already read
+				sKeyFilter = _Helper.getKeyFilter(oElement, this.sMetaPath, mTypeForMetaPath);
+				if (sKeyFilter) {
+					aKeyFilters.push(sKeyFilter);
+				}
+			}
+		}
+
+		if (aKeyFilters.length) {
+			sExclusiveFilter = "not(" + aKeyFilters.join(" or ") + ")";
+			if (sFilterOptions) {
+				mQueryOptions["$filter"] = "(" + sFilterOptions + ")and " + sExclusiveFilter;
+				sQueryString = this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions,
+					false, this.bSortExpandSelect);
+			} else {
+				sQueryString += (sQueryString ? "&" : "?") + "$filter=" + sExclusiveFilter;
+			}
+		}
+
+		return sQueryString;
+	};
+
+	/**
 	 * Calculates the index range to be read for the given start, length and prefetch length.
 	 * Checks if <code>aElements</code> entries are available for half the prefetch length left and
 	 * right to it. If not, the full prefetch length is added to this side.
@@ -1371,9 +1405,10 @@ sap.ui.define([
 	 */
 	CollectionCache.prototype.getResourcePath = function (iStart, iEnd) {
 		var iCreated = this.aElements.$created,
-			sDelimiter = this.sQueryString ? "&" : "?",
+			sQueryString = this.getQueryString(),
+			sDelimiter = sQueryString ? "&" : "?",
 			iExpectedLength = iEnd - iStart,
-			sResourcePath = this.sResourcePath + this.sQueryString;
+			sResourcePath = this.sResourcePath + sQueryString;
 
 		if (iStart < iCreated) {
 			throw new Error("Must not request created element");
@@ -1415,19 +1450,16 @@ sap.ui.define([
 	 * @private
 	 */
 	CollectionCache.prototype.handleResponse = function (iStart, iEnd, oResult, mTypeForMetaPath) {
-		var iCount,
+		var iCount = -1,
 			sCount,
+			iCreated = this.aElements.$created,
 			oElement,
 			i,
+			iOld$count = this.aElements.$count,
 			sPredicate,
 			iResultLength = oResult.value.length;
 
 		this.sContext = oResult["@odata.context"];
-		sCount = oResult["@odata.count"];
-		if (sCount) {
-			this.iLimit = parseInt(sCount);
-			setCount(this.mChangeListeners, "", this.aElements, this.iLimit);
-		}
 		this.visitResponse(oResult, mTypeForMetaPath, undefined, undefined, undefined, iStart);
 		for (i = 0; i < iResultLength; i += 1) {
 			oElement = oResult.value[i];
@@ -1437,18 +1469,30 @@ sap.ui.define([
 				this.aElements.$byPredicate[sPredicate] = oElement;
 			}
 		}
+		sCount = oResult["@odata.count"];
+		if (sCount) {
+			this.iLimit = iCount = parseInt(sCount);
+		}
 		if (iResultLength < iEnd - iStart) { // a short read
-			iCount = Math.min(getCount(this.aElements),
-				iStart + iResultLength - this.aElements.$created);
-			this.aElements.length = this.aElements.$created + iCount;
+			if (iCount === -1) {
+				// use formerly computed $count
+				iCount = iOld$count && iOld$count - iCreated;
+			}
+			iCount = Math.min(
+				iCount !== undefined ? iCount : Infinity,
+				iStart - iCreated + iResultLength);
+			this.aElements.length = iCreated + iCount;
+			this.iLimit = iCount;
 			// If the server did not send a count, the calculated count is greater than 0
 			// and the element before has not been read yet, we do not know the count:
 			// The element might or might not exist.
-			if (!sCount && iCount > 0 && !this.aElements[iCount - 1]){
+			if (!sCount && iCount > 0 && !this.aElements[iCount - 1]) {
 				iCount = undefined;
 			}
-			setCount(this.mChangeListeners, "", this.aElements, iCount);
-			this.iLimit = iCount;
+		}
+		if (iCount !== -1) {
+			setCount(this.mChangeListeners, "", this.aElements,
+				iCount !== undefined ? iCount + iCreated : undefined);
 		}
 	};
 

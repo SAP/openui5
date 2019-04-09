@@ -572,41 +572,35 @@ sap.ui.define([
 		},
 
 		/**
-		 * Helper to create a third sales order in a table. Performs checks on change events and
-		 * requests.
+		 * Helper to create a third sales order in a table. Performs checks on change events,
+		 * requests and $count.
 		 *
 		 * @returns {sap.ui.model.odata.v4.Context} Context of the created sales order
 		 */
 		createThird : function () {
-			//TODO: CPOUI5UISERVICESV3-1798: avoid reading duplicates
-			this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=2&$top=1", {
-					"value" : [{
-						"Note" : "New 2a",
-						"SalesOrderID" : "44a"
-					}]
-				})
-				.expectChange("id", ["", "44", "43", "42", "43a", "44a"])
-				.expectChange("note",
-					["New 3", "New 2", "New 1", "First SalesOrder", "New 1a", "New 2a"]);
+			this.expectChange("count", "4")
+				.expectChange("id", ["", "44", "43", "42"])
+				.expectChange("note", ["New 3", "New 2", "New 1", "First SalesOrder"]);
 
 			return this.oView.byId("table").getBinding("items").create({Note : "New 3"}, true);
 		},
 
 		/**
 		 * Helper to create two sales orders in a table, saved after each create. Performs checks on
-		 * change events and requests.
+		 * change events, requests and $count.
 		 *
 		 * @param {object} assert The QUnit assert object
 		 * @returns {Promise} Promise resolving when the test is through
 		 */
 		createTwiceSaveInBetween : function (assert) {
-			var oCreatedContext,
+			var oBinding,
+				oCreatedContext,
 				oModel = createSalesOrdersModel({
 					autoExpandSelect : true,
 					updateGroupId : "update"
 				}),
-				oTable,
 				sView = '\
+<Text id="count" text="{$count}"/>\
 <Table id="table" items="{/SalesOrderList}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
@@ -617,21 +611,30 @@ sap.ui.define([
 				that = this;
 
 			this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
+//					"@odata.count" : "1", // short read no $count parameter needed
 					"value" : [{
 						"Note" : "First SalesOrder",
 						"SalesOrderID" : "42"
 					}]
 				})
+				.expectChange("count")
 				.expectChange("id", ["42"])
 				.expectChange("note", ["First SalesOrder"]);
 
 			return this.createView(assert, sView, oModel).then(function () {
-				oTable = that.oView.byId("table");
+				oBinding = that.oView.byId("table").getBinding("items");
 
-				that.expectChange("id", ["", "42"])
+				that.expectChange("count", "1");
+
+				that.oView.byId("count").setBindingContext(oBinding.getHeaderContext());
+
+				return that.waitForChanges(assert);
+			}).then(function () {
+				that.expectChange("count", "2")
+					.expectChange("id", ["", "42"])
 					.expectChange("note", ["New 1", "First SalesOrder"]);
 
-				oCreatedContext = oTable.getBinding("items").create({Note : "New 1"}, true);
+				oCreatedContext = oBinding.create({Note : "New 1"}, true);
 
 				return that.waitForChanges(assert);
 			}).then(function () {
@@ -651,22 +654,11 @@ sap.ui.define([
 					that.waitForChanges(assert)
 				]);
 			}).then(function () {
-				//TODO: CPOUI5UISERVICESV3-1798: avoid reading duplicates
-				// when an entity is persisted we increase the counter of server side entries as the
-				// persisted entity might be read from server with a next paging request.
-				// When creating a new entity the client recognizes that there are entries on the
-				// server that have not yet been read and triggers a read request for getting the
-				// missing entities.
-				that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=1&$top=1", {
-						"value" : [{
-							"Note" : "New 1a",
-							"SalesOrderID" : "43a"
-						}]
-					})
-					.expectChange("id", ["", "43", "42", "43a"])
-					.expectChange("note", ["New 2", "New 1", "First SalesOrder", "New 1a"]);
+				that.expectChange("count", "3")
+					.expectChange("id", ["", "43", "42"])
+					.expectChange("note", ["New 2", "New 1", "First SalesOrder"]);
 
-				oCreatedContext = oTable.getBinding("items").create({Note : "New 2"}, true);
+				oCreatedContext = oBinding.create({Note : "New 2"}, true);
 
 				return that.waitForChanges(assert);
 			}).then(function () {
@@ -3013,7 +3005,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Create multiple w/o refresh: (2) Create two new entities without save in between,
 	// save (CPOUI5UISERVICESV3-1759)
-	QUnit.test("Create multiple w/o refresh: (2)", function (assert) {
+	QUnit.test("Create multiple w/o refresh, with $count: (2)", function (assert) {
 		var oBinding,
 			oCreatedContext0,
 			oCreatedContext1,
@@ -3022,7 +3014,8 @@ sap.ui.define([
 				updateGroupId : "update"
 			}),
 			sView = '\
-<Table id="table" items="{/SalesOrderList}">\
+<Text id="count" text="{$count}"/>\
+<Table id="table" items="{path : \'/SalesOrderList\', parameters : {$count : true}}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="id" text="{SalesOrderID}" />\
@@ -3031,30 +3024,47 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
+		this.expectRequest("SalesOrderList?$count=true&$select=Note,SalesOrderID&$skip=0&$top=100",
+			{
+				"@odata.count" : "1",
 				"value" : [{
 					"Note" : "First SalesOrder",
 					"SalesOrderID" : "42"
 				}]
 			})
+			.expectChange("count")
 			.expectChange("id", ["42"])
 			.expectChange("note", ["First SalesOrder"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oBinding = that.oView.byId("table").getBinding("items");
 
-			that.expectChange("id", ["", "42"])
+			assert.strictEqual(oBinding.getLength(), 1);
+
+			that.expectChange("count", "1");
+
+			that.oView.byId("count").setBindingContext(oBinding.getHeaderContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("count", "2")
+				.expectChange("id", ["", "42"])
 				.expectChange("note", ["New 1", "First SalesOrder"]);
 
 			oCreatedContext0 = oBinding.create({Note : "New 1"}, true);
 
+			assert.strictEqual(oBinding.getLength(), 2);
+
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectChange("id", "", 1)
+			that.expectChange("count", "3")
+				.expectChange("id", "", 1)
 				.expectChange("id", "42", 2)
 				.expectChange("note", ["New 2", "New 1", "First SalesOrder"]);
 
 			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
+
+			assert.strictEqual(oBinding.getLength(), 3);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -3082,6 +3092,8 @@ sap.ui.define([
 				that.oModel.submitBatch("update"),
 				that.waitForChanges(assert)
 			]);
+		}).then(function () {
+			assert.strictEqual(oBinding.getLength(), 3);
 		});
 	});
 
@@ -3117,10 +3129,11 @@ sap.ui.define([
 					method : "DELETE",
 					url : "SalesOrderList('45')"
 				})
+				.expectChange("count", "3")
 				.expectChange("id", null) // events for unresolved ODPB after deletion
 				.expectChange("note", null)
-				.expectChange("id", ["44", "43", "42", "43a", "44a"])
-				.expectChange("note", ["New 2", "New 1", "First SalesOrder", "New 1a", "New 2a"]);
+				.expectChange("id", ["44", "43", "42"])
+				.expectChange("note", ["New 2", "New 1", "First SalesOrder"]);
 
 			return Promise.all([
 				oCreatedContext.delete("$auto"),
@@ -3160,8 +3173,9 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			// no request
-			that.expectChange("id", ["44", "43", "42", "43a", "44a"])
-				.expectChange("note", ["New 2", "New 1", "First SalesOrder", "New 1a", "New 2a"]);
+			that.expectChange("count", "3")
+				.expectChange("id", ["44", "43", "42"])
+				.expectChange("note", ["New 2", "New 1", "First SalesOrder"]);
 
 			return Promise.all([
 				oCreatedContext.created().catch(function () {/* avoid uncaught (in promise) */}),
@@ -3202,10 +3216,11 @@ sap.ui.define([
 					method : "DELETE",
 					url : "SalesOrderList('44')"
 				})
+				.expectChange("count", "3")
 				.expectChange("id", null) // events for unresolved ODPB after deletion
 				.expectChange("note", null)
-				.expectChange("id", [, "43", "42", "43a", "44a"])
-				.expectChange("note", [, "New 1", "First SalesOrder", "New 1a", "New 2a"]);
+				.expectChange("id", [, "43", "42"])
+				.expectChange("note", [, "New 1", "First SalesOrder"]);
 
 			return Promise.all([
 				that.oView.byId("table").getItems()[1].getBindingContext().delete("$auto"),
@@ -3219,7 +3234,7 @@ sap.ui.define([
 	// check remaining contexts are still transient and reference the expected data. Read next
 	// elements from server.
 	// CPOUI5UISERVICESV3-1759, CPOUI5UISERVICESV3-1784
-	QUnit.test("Create multiple w/o refresh: (7)", function (assert) {
+	QUnit.test("Create multiple w/o refresh, with $count: (7)", function (assert) {
 		var oBinding,
 			oCreatedContext0,
 			oCreatedContext1,
@@ -3229,7 +3244,9 @@ sap.ui.define([
 				updateGroupId : "update"
 			}),
 			sView = '\
-<Table id="table" growing="true" growingThreshold="2" items="{/SalesOrderList}">\
+<Text id="count" text="{$count}"/>\
+<Table id="table" growing="true" growingThreshold="2"\
+		items="{path : \'/SalesOrderList\', parameters : {$count : true}}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="id" text="{SalesOrderID}" />\
@@ -3238,7 +3255,8 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=2", {
+		this.expectRequest("SalesOrderList?$count=true&$select=Note,SalesOrderID&$skip=0&$top=2", {
+				"@odata.count" : "3",
 				"value" : [{
 					"Note" : "First SalesOrder",
 					"SalesOrderID" : "42"
@@ -3247,13 +3265,21 @@ sap.ui.define([
 					"SalesOrderID" : "43"
 				}]
 			})
+			.expectChange("count")
 			.expectChange("id", ["42", "43"])
 			.expectChange("note", ["First SalesOrder", "Second SalesOrder"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oBinding = that.oView.byId("table").getBinding("items");
 
-			that.expectChange("id", "", 0)
+			that.expectChange("count", "3");
+
+			that.oView.byId("count").setBindingContext(oBinding.getHeaderContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("count", "4")
+				.expectChange("id", "", 0)
 				.expectChange("note", "New 1", 0);
 
 			// never persisted or deleted
@@ -3261,14 +3287,16 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectChange("id", "", 0)
+			that.expectChange("count", "5")
+				.expectChange("id", "", 0)
 				.expectChange("note", "New 2", 0);
 
 			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectChange("id", "", 0)
+			that.expectChange("count", "6")
+				.expectChange("id", "", 0)
 				.expectChange("note", "New 3", 0);
 
 			// never persisted or deleted
@@ -3276,7 +3304,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectChange("id", "", 1)
+			that.expectChange("count", "5")
+				.expectChange("id", "", 1)
 				.expectChange("note", "New 1", 1);
 
 			return Promise.all([
@@ -3308,7 +3337,9 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=2&$top=2", {
+			that.expectRequest("SalesOrderList?$count=true&$select=Note,SalesOrderID"
+					+ "&$skip=2&$top=1", {
+					"@odata.count" : "3",
 					"value" : [{
 						"Note" : "Third SalesOrder",
 						"SalesOrderID" : "44"
@@ -3501,14 +3532,7 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			//TODO: CPOUI5UISERVICESV3-1798: avoid reading duplicates
-			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=1&$top=1", {
-					"value" : [{
-						"Note" : "New 1a",
-						"SalesOrderID" : "43a"
-					}]
-				})
-				.expectChange("id", ["", ""])
+			that.expectChange("id", ["", ""])
 				.expectChange("note", ["New 3", "New 2"]);
 
 			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
@@ -3519,6 +3543,7 @@ sap.ui.define([
 			var aRows = oTable.getRows();
 
 			// check row here because table calls getContexts for event ChangeReason.Add async.
+			assert.strictEqual(aRows.length, 2);
 			assert.strictEqual(aRows[0].getBindingContext(), oCreatedContext2);
 			assert.strictEqual(aRows[1].getBindingContext(), oCreatedContext1);
 
@@ -3533,12 +3558,10 @@ sap.ui.define([
 				that.waitForChanges(assert, true)
 			]);
 		}).then(function () {
-			that.expectChange("id", "42", 2)
-				.expectChange("note", "First SalesOrder", 2)
-				.expectChange("id", "43a", 3)
-				.expectChange("note", "New 1a", 3);
+			that.expectChange("id", [, "43", "42"])
+				.expectChange("note", [, "New 1", "First SalesOrder"]);
 
-			oTable.setFirstVisibleRow(2);
+			oTable.setFirstVisibleRow(1);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -3552,6 +3575,7 @@ sap.ui.define([
 			var aRows = oTable.getRows();
 
 			// table calls getContexts after setFirstVisibleRow asynchronously
+			assert.strictEqual(aRows.length, 2);
 			assert.strictEqual(aRows[0].getBindingContext(), oCreatedContext2, "1");
 			assert.strictEqual(oCreatedContext2.isTransient(), true);
 			assert.strictEqual(aRows[1].getBindingContext(), oCreatedContext0, "2");
@@ -3576,7 +3600,13 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
+			var aRows = oTable.getRows();
+
+			assert.strictEqual(aRows.length, 2);
+			assert.strictEqual(aRows[0].getBindingContext(), oCreatedContext2, "1");
 			assert.strictEqual(oCreatedContext2.isTransient(), false);
+			assert.strictEqual(aRows[1].getBindingContext(), oCreatedContext0, "2");
+			assert.strictEqual(oCreatedContext0.isTransient(), false);
 		});
 	});
 
@@ -3691,35 +3721,24 @@ sap.ui.define([
 		}).then(function () {
 			var aRows = oTable.getRows();
 
+			assert.strictEqual(aRows.length, 2);
 			assert.strictEqual(aRows[0].getBindingContext(), oCreatedContext2);
 			assert.strictEqual(oCreatedContext2.isTransient(), false);
 			assert.strictEqual(aRows[1].getBindingContext(), oCreatedContext0);
 			assert.strictEqual(oCreatedContext0.isTransient(), false);
 
-			//TODO: CPOUI5UISERVICESV3-1798: avoid reading duplicates
-			that.expectRequest("BusinessPartnerList('4711')/BP_2_SO?$select=Note,SalesOrderID"
-					+ "&$skip=1&$top=1", {
-					"value" : [{
-						"Note" : "New 1a",
-						"SalesOrderID" : "43a"
-					}]
-				})
-				// "id" and "note" for row with sales order "42" temporarily lose their binding
-				// context and thus fire a change event
-				.expectChange("id", null, null)
-				.expectChange("note", null, null)
-				.expectChange("id", "42", 2)
-				.expectChange("id", "43a", 3)
-				.expectChange("note", "First SalesOrder", 2)
-				.expectChange("note", "New 1a", 3);
+			that.expectChange("id", [, "43", "42"])
+				.expectChange("note", [, "New 1", "First SalesOrder"]);
 
-			oTable.setFirstVisibleRow(2);
+			oTable.setFirstVisibleRow(1);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
 			var aRows = oTable.getRows();
 
-			assert.strictEqual(aRows[0].getBindingContext().isTransient(), undefined);
+			assert.strictEqual(aRows.length, 2);
+			assert.strictEqual(aRows[0].getBindingContext(), oCreatedContext0);
+			assert.strictEqual(oCreatedContext0.isTransient(), false);
 			assert.strictEqual(aRows[1].getBindingContext().isTransient(), undefined);
 		}).then(function () {
 			that.expectChange("id", ["45", "43"])
@@ -3731,8 +3750,11 @@ sap.ui.define([
 		}).then(function () {
 			var aRows = oTable.getRows();
 
+			assert.strictEqual(aRows.length, 2);
 			assert.strictEqual(aRows[0].getBindingContext(), oCreatedContext2);
+			assert.strictEqual(oCreatedContext2.isTransient(), false);
 			assert.strictEqual(aRows[1].getBindingContext(), oCreatedContext0);
+			assert.strictEqual(oCreatedContext0.isTransient(), false);
 		});
 	});
 
@@ -3813,20 +3835,9 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			//TODO: CPOUI5UISERVICESV3-1798: avoid reading duplicates
-			that.expectRequest("BusinessPartnerList('4711')/BP_2_SO?$select=Note,SalesOrderID"
-					+ "&$skip=1&$top=2", {
-					"value" : [{
-						"Note" : "New 1a",
-						"SalesOrderID" : "43a"
-					}, {
-						"Note" : "New 3a",
-						"SalesOrderID" : "45a"
-					}]
-				})
-				//TODO: Unexpected change events for unchanged rows 1,2 -> CPOUI5UISERVICESV3-1810
-				.expectChange("id", ["", "44", "43",, "43a", "45a"])
-				.expectChange("note", ["New 3", "New 2", "New 1",, "New 1a", "New 3a"]);
+			//TODO: Unexpected change events for unchanged rows 1,2 -> CPOUI5UISERVICESV3-1810
+			that.expectChange("id", ["", "44", "43"])
+				.expectChange("note", ["New 3", "New 2", "New 1"]);
 
 			// never persisted or deleted
 			oCreatedContext2 = oBinding.create({Note : "New 3"}, true);
@@ -3847,12 +3858,12 @@ sap.ui.define([
 		}).then(function () {
 			var aItems = oTable.getItems();
 
+			assert.strictEqual(aItems.length, 3);
 			assert.strictEqual(aItems[0].getBindingContext(), oCreatedContext2);
 			assert.strictEqual(oCreatedContext2.isTransient(), true);
 			assert.strictEqual(aItems[1].getBindingContext(), oCreatedContext0);
 			assert.strictEqual(oCreatedContext0.isTransient(), false);
 			assert.strictEqual(aItems[2].getBindingContext().isTransient(), undefined);
-			assert.strictEqual(aItems[3].getBindingContext().isTransient(), undefined);
 		});
 	});
 
@@ -3874,7 +3885,9 @@ sap.ui.define([
 			}),
 			oTable,
 			sView = '\
-<Table id="table" growing="true" items="{/SalesOrderList}">\
+<Table id="table" growing="true" growingThreshold="2"\
+	items="{parameters : {$filter : \'contains(Note,\\\'SalesOrder\\\')\'},\
+		path : \'/SalesOrderList\'}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="id" text="{SalesOrderID}" />\
@@ -3883,14 +3896,18 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=20", {
+		this.expectRequest("SalesOrderList?$filter=contains(Note,'SalesOrder')"
+					+ "&$select=Note,SalesOrderID&$skip=0&$top=2", {
 				"value" : [{
 					"Note" : "First SalesOrder",
 					"SalesOrderID" : "42"
+				}, {
+					"Note" : "Second SalesOrder",
+					"SalesOrderID" : "43"
 				}]
 			})
-			.expectChange("id", ["42"])
-			.expectChange("note", ["First SalesOrder"]);
+			.expectChange("id", ["42", "43"])
+			.expectChange("note", ["First SalesOrder", "Second SalesOrder"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oBinding;
@@ -3898,8 +3915,8 @@ sap.ui.define([
 			oTable = that.oView.byId("table");
 			oBinding = oTable.getBinding("items");
 
-			that.expectChange("id", ["", "", ""])
-				.expectChange("note", ["New 3", "New 2", "New 1"]);
+			that.expectChange("id", ["", ""])
+				.expectChange("note", ["New 3", "New 2"]);
 
 			oCreatedContext0 = oBinding.create({Note : "New 1"}, true);
 			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
@@ -3914,7 +3931,7 @@ sap.ui.define([
 					payload : {"Note" : "New 1"}
 				}, {
 					"Note" : "New 1",
-					"SalesOrderID" : "43"
+					"SalesOrderID" : "44"
 				})
 				.expectRequest({
 					batchNo : 1,
@@ -3923,7 +3940,7 @@ sap.ui.define([
 					payload : {"Note" : "New 2"}
 				}, {
 					"Note" : "New 2",
-					"SalesOrderID" : "44"
+					"SalesOrderID" : "45"
 				})
 				.expectRequest({
 					batchNo : 1,
@@ -3932,9 +3949,9 @@ sap.ui.define([
 					payload : {"Note" : "New 3"}
 				}, {
 					"Note" : "New 3",
-					"SalesOrderID" : "45"
+					"SalesOrderID" : "46"
 				})
-				.expectChange("id", ["45", "44", "43"]);
+				.expectChange("id", ["46", "45"]);
 
 			return Promise.all([
 				oCreatedContext0.created(),
@@ -3946,25 +3963,15 @@ sap.ui.define([
 		}).then(function () {
 			that.expectRequest({
 					method : "DELETE",
-					url : "SalesOrderList('44')"
-				})
-				//TODO: CPOUI5UISERVICESV3-1798: avoid reading duplicates
-				.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=1&$top=2", {
-					"value" : [{
-						"Note" : "New 1a",
-						"SalesOrderID" : "43a"
-					}, {
-						"Note" : "New 3a",
-						"SalesOrderID" : "45a"
-					}]
+					url : "SalesOrderList('45')"
 				})
 				// change event for children of the destroyed context; parent context is already
 				// destroyed when formatter is called
 				.expectChange("id", null)
 				.expectChange("note", null)
 				//TODO: Unexpected change events for unchanged rows 0,1 -> CPOUI5UISERVICESV3-1810
-				.expectChange("id", ["45", "43",, "43a", "45a"])
-				.expectChange("note", ["New 3", "New 1",, "New 1a", "New 3a"]);
+				.expectChange("id", ["46", "44"])
+				.expectChange("note", ["New 3", "New 1"]);
 
 			return Promise.all([
 				oCreatedContext1.delete("$auto"),
@@ -3973,11 +3980,11 @@ sap.ui.define([
 		}).then(function () {
 			that.expectRequest({
 					method : "PATCH",
-					url : "SalesOrderList('45')",
+					url : "SalesOrderList('46')",
 					payload : {"Note" : "New 3 - Changed"}
 				}, {
 					"Note" : "New 3 - Changed",
-					"SalesOrderID" : "45"
+					"SalesOrderID" : "46"
 				})
 				.expectChange("note", "New 3 - Changed", 0);
 
@@ -3990,14 +3997,38 @@ sap.ui.define([
 		}).then(function () {
 			var aItems = oTable.getItems();
 
+			assert.strictEqual(aItems.length, 2, "growingThreshold=2");
 			assert.strictEqual(aItems[0].getBindingContext(), oCreatedContext2);
 			assert.strictEqual(oCreatedContext2.isTransient(), false);
 			assert.strictEqual(aItems[1].getBindingContext(), oCreatedContext0);
 			assert.strictEqual(oCreatedContext0.isTransient(), false);
-			// following entries are read from server -> isTransient() returns undefined
+		}).then(function () {
+			that.expectChange("id", [,, "42", "43"])
+				.expectChange("note", [,, "First SalesOrder", "Second SalesOrder"]);
+
+			that.oView.byId("table-trigger").firePress();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList?$filter=(contains(Note,'SalesOrder'))"
+					+ "and not(SalesOrderID eq '46' or SalesOrderID eq '44')"
+					+ "&$select=Note,SalesOrderID&$skip=2&$top=2", {
+					"value" : []
+				});
+
+			that.oView.byId("table-trigger").firePress();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var aItems = oTable.getItems();
+
+			assert.strictEqual(aItems.length, 4);
+			assert.strictEqual(aItems[0].getBindingContext(), oCreatedContext2);
+			assert.strictEqual(oCreatedContext2.isTransient(), false);
+			assert.strictEqual(aItems[1].getBindingContext(), oCreatedContext0);
+			assert.strictEqual(oCreatedContext0.isTransient(), false);
 			assert.strictEqual(aItems[2].getBindingContext().isTransient(), undefined);
 			assert.strictEqual(aItems[3].getBindingContext().isTransient(), undefined);
-			assert.strictEqual(aItems[4].getBindingContext().isTransient(), undefined);
 		});
 	});
 
@@ -4081,17 +4112,7 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			//TODO: CPOUI5UISERVICESV3-1798: avoid reading duplicates
-			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=1&$top=2", {
-					"value" : [{
-						"Note" : "New 1a",
-						"SalesOrderID" : "43a"
-					}, {
-						"Note" : "New 2a",
-						"SalesOrderID" : "44a"
-					}]
-				})
-				.expectChange("id", ["", "44"])
+			that.expectChange("id", ["", "44"])
 				.expectChange("note", ["New 3", "New 2"]);
 
 			// never persisted or deleted
@@ -4115,12 +4136,10 @@ sap.ui.define([
 				that.waitForChanges(assert, true)
 			]);
 		}).then(function () {
-			that.expectChange("id", "42", 2)
-				.expectChange("note", "First SalesOrder", 2)
-				.expectChange("id", "43a", 3)
-				.expectChange("note", "New 1a", 3);
+			that.expectChange("id", [, "43", "42"])
+				.expectChange("note", [, "New 1", "First SalesOrder"]);
 
-			oTable.setFirstVisibleRow(2);
+			oTable.setFirstVisibleRow(1);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -4133,6 +4152,7 @@ sap.ui.define([
 		}).then(function () {
 			var aRows = oTable.getRows();
 
+			assert.strictEqual(aRows.length, 2);
 			assert.strictEqual(aRows[0].getBindingContext(), oCreatedContext2);
 			assert.strictEqual(oCreatedContext2.isTransient(), true);
 			assert.strictEqual(aRows[1].getBindingContext(), oCreatedContext0);
@@ -4290,17 +4310,9 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			//TODO: CPOUI5UISERVICESV3-1798: avoid reading duplicates
-			that.expectRequest("BusinessPartnerList('4711')/BP_2_SO?$select=Note,SalesOrderID"
-					+ "&$skip=1&$top=1", {
-					"value" : [{
-						"Note" : "New 1a",
-						"SalesOrderID" : "43a"
-					}]
-				})
-				//TODO: Unexpected change events for unchanged row 2 -> CPOUI5UISERVICESV3-1810
-				.expectChange("id", ["", "", "43",, "43a"])
-				.expectChange("note", ["New 3", "New 2", "New 1",, "New 1a"]);
+			//TODO: Unexpected change events for unchanged row 2 -> CPOUI5UISERVICESV3-1810
+			that.expectChange("id", ["", "", "43"])
+				.expectChange("note", ["New 3", "New 2", "New 1"]);
 
 			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
 			oCreatedContext2 = oBinding.create({Note : "New 3"}, true);
@@ -4309,7 +4321,7 @@ sap.ui.define([
 		}).then(function () {
 			var aItems = oTable.getItems();
 
-			assert.strictEqual(aItems.length, 5);
+			assert.strictEqual(aItems.length, 4);
 			assert.strictEqual(aItems[0].getBindingContext(), oCreatedContext2);
 			assert.strictEqual(oCreatedContext2.isTransient(), true);
 			assert.strictEqual(aItems[1].getBindingContext(), oCreatedContext1);
@@ -4317,7 +4329,6 @@ sap.ui.define([
 			assert.strictEqual(aItems[2].getBindingContext(), oCreatedContext0);
 			assert.strictEqual(oCreatedContext0.isTransient(), false);
 			assert.strictEqual(aItems[3].getBindingContext().isTransient(), undefined);
-			assert.strictEqual(aItems[4].getBindingContext().isTransient(), undefined);
 
 			// no change event: getContexts with E.C.D. returns a diff containing one delete only
 
@@ -4330,10 +4341,10 @@ sap.ui.define([
 		}).then(function () {
 			var aItems = oTable.getItems();
 
-			assert.strictEqual(aItems.length, 3);
+			assert.strictEqual(aItems.length, 2);
 			assert.strictEqual(aItems[0].getBindingContext(), oCreatedContext0);
+			assert.strictEqual(oCreatedContext0.isTransient(), false);
 			assert.strictEqual(aItems[1].getBindingContext().isTransient(), undefined);
-			assert.strictEqual(aItems[2].getBindingContext().isTransient(), undefined);
 		});
 	});
 
@@ -4482,11 +4493,14 @@ sap.ui.define([
 				oCreatedContext2.created().catch(function () {/* avoid uncaught (in promise) */}),
 				that.waitForChanges(assert, true)
 			]);
-		// scrolling not possible, as table has only one row
-		// setFirstVisibleRow(2) leads to console warning "The index of the first visible row ..."
 		}).then(function () {
-			assert.strictEqual(oTable.getRows()[0].getBindingContext().isTransient(), undefined);
+			var aRows = oTable.getRows();
+
+			assert.strictEqual(aRows.length, 2);
+			assert.strictEqual(aRows[0].getBindingContext().isTransient(), undefined);
+			assert.strictEqual(aRows[1].getBindingContext().isTransient(), undefined);
 		});
+		// scrolling not possible: only one entry
 	});
 
 	//*********************************************************************************************
@@ -4728,14 +4742,7 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			//TODO: CPOUI5UISERVICESV3-1798: avoid reading duplicates
-			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=1&$top=1", {
-					"value" : [{
-						"Note" : "New 1a",
-						"SalesOrderID" : "43a"
-					}]
-				})
-				.expectChange("id", ["", ""])
+			that.expectChange("id", ["", ""])
 				.expectChange("note", ["New 3", "New 2"]);
 
 			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
@@ -4760,26 +4767,12 @@ sap.ui.define([
 		}).then(function () {
 			var aRows = oTable.getRows();
 
+			assert.strictEqual(aRows.length, 2);
 			assert.strictEqual(aRows[0].getBindingContext(), oCreatedContext0);
 			assert.strictEqual(oCreatedContext0.isTransient(), false);
 			assert.strictEqual(aRows[1].getBindingContext().isTransient(), undefined);
-
-			that.expectChange("id", "42", 1)
-				.expectChange("note", "First SalesOrder", 1)
-				.expectChange("id", "43a", 2)
-				.expectChange("note", "New 1a", 2);
-
-			oTable.setFirstVisibleRow(1);
-
-			return that.waitForChanges(assert);
-		}).then(function () {
-			that.expectChange("note", ["New 1", "First SalesOrder"])
-				.expectChange("id", ["43", "42"]);
-
-			oTable.setFirstVisibleRow(0);
-
-			return that.waitForChanges(assert);
 		});
+		// scrolling not possible: only two entries
 	});
 
 	//*********************************************************************************************
@@ -4888,6 +4881,7 @@ sap.ui.define([
 		}).then(function () {
 			var aRows = oTable.getRows();
 
+			assert.strictEqual(aRows.length, 2);
 			assert.strictEqual(aRows[0].getBindingContext(), oCreatedContext2);
 			assert.strictEqual(oCreatedContext2.isTransient(), true);
 			assert.strictEqual(aRows[1].getBindingContext(), oCreatedContext0);
@@ -4902,7 +4896,9 @@ sap.ui.define([
 		}).then(function () {
 			var aRows = oTable.getRows();
 
+			assert.strictEqual(aRows.length, 2);
 			assert.strictEqual(aRows[0].getBindingContext(), oCreatedContext0);
+			assert.strictEqual(oCreatedContext0.isTransient(), false);
 			assert.strictEqual(aRows[1].getBindingContext().isTransient(), undefined);
 		}).then(function () {
 			that.expectChange("id", ["", "43"])
@@ -4914,8 +4910,11 @@ sap.ui.define([
 		}).then(function () {
 			var aRows = oTable.getRows();
 
+			assert.strictEqual(aRows.length, 2);
 			assert.strictEqual(aRows[0].getBindingContext(), oCreatedContext2);
+			assert.strictEqual(oCreatedContext2.isTransient(), true);
 			assert.strictEqual(aRows[1].getBindingContext(), oCreatedContext0);
+			assert.strictEqual(oCreatedContext0.isTransient(), false);
 		});
 	});
 
@@ -5010,21 +5009,9 @@ sap.ui.define([
 					+ "$filter=SalesOrderID%20eq%20'44'", {
 					"value" : []
 				})
-				//TODO: CPOUI5UISERVICESV3-1798: avoid reading duplicates
-				.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=1&$top=2", {
-					"value" : [{
-						"Note" : "New 1a",
-						"SalesOrderID" : "43a"
-					}, {
-						"Note" : "New 3a",
-						"SalesOrderID" : "45a"
-					}]
-				})
-				.expectChange("id", null)
-				.expectChange("note", null)
 				//TODO: Unexpected change events for unchanged rows 0,1 -> CPOUI5UISERVICESV3-1810
-				.expectChange("id", ["45", "43",, "43a", "45a"])
-				.expectChange("note", ["New 3", "New 1",,"New 1a", "New 3a"]);
+				.expectChange("id", ["45", "43"])
+				.expectChange("note", ["New 3", "New 1"]);
 
 			return Promise.all([
 				oCreatedContext1.refresh("$auto", true/*bAllowRemoval*/),
@@ -5033,15 +5020,12 @@ sap.ui.define([
 		}).then(function () {
 			var aItems = oTable.getItems();
 
-			assert.strictEqual(aItems.length, 5);
+			assert.strictEqual(aItems.length, 3);
 			assert.strictEqual(aItems[0].getBindingContext(), oCreatedContext2);
 			assert.strictEqual(oCreatedContext2.isTransient(), false);
 			assert.strictEqual(aItems[1].getBindingContext(), oCreatedContext0);
 			assert.strictEqual(oCreatedContext0.isTransient(), false);
-			// following entries are read from server -> isTransient() returns undefined
 			assert.strictEqual(aItems[2].getBindingContext().isTransient(), undefined);
-			assert.strictEqual(aItems[3].getBindingContext().isTransient(), undefined);
-			assert.strictEqual(aItems[4].getBindingContext().isTransient(), undefined);
 		});
 	});
 

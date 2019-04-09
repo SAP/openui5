@@ -1042,7 +1042,7 @@ sap.ui.define([
 				// code under test
 				assert.strictEqual(oBinding.getLength(),
 					//TODO if length is not final expected length is increased by 1, is that OK?
-					iExpectedLength + ($count ? 2 : 1),
+					iExpectedLength + 1,
 					"after successful POST");
 				assert.strictEqual(oBinding.isLengthFinal(), bExpectedLengthFinal);
 
@@ -2835,6 +2835,7 @@ sap.ui.define([
 				i;
 
 			function result(iLength, iCount) {
+				iCount = iCount && iCount + (bCreated ? 1 : 0);
 				return createData(iLength, 0, true, iCount);
 			}
 
@@ -3155,7 +3156,7 @@ sap.ui.define([
 
 		// code under test
 		return oBinding._delete("myGroup", "EMPLOYEES('1')", oContext0).then(function () {
-			assert.strictEqual(oBinding.iMaxLength, 41, "iMaxLength has been reduced");
+			assert.strictEqual(oBinding.iMaxLength, 42, "iMaxLength has not been reduced");
 		});
 	});
 
@@ -3369,7 +3370,7 @@ sap.ui.define([
 				assert.strictEqual(aContexts[1].isTransient(), false);
 				assert.ok(aRefreshSingleFinished[1]);
 				assert.strictEqual(oBinding.iCreatedContexts, 2);
-				assert.strictEqual(oBinding.iMaxLength, 44, "persisted contexts are counted");
+				assert.strictEqual(oBinding.iMaxLength, 42, "persisted contexts are not counted");
 			});
 		});
 	});
@@ -5180,7 +5181,6 @@ sap.ui.define([
 					Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-23)", -1,
 						Promise.resolve()));
 				oBinding.iCreatedContexts = 2;
-				oBinding.iMaxLength += 2;
 
 				oContext = oBinding.aContexts[iIndex];
 				oContextMock = this.mock(oContext);
@@ -5216,6 +5216,7 @@ sap.ui.define([
 							assert.strictEqual(oBinding.aContexts[5].iIndex, 4);
 							assert.strictEqual(oBinding.aContexts[6].iIndex, 5);
 							assert.strictEqual(oBinding.iCreatedContexts, 1);
+							assert.strictEqual(oBinding.iMaxLength, 6);
 						} else {
 							assert.strictEqual(oBinding.aContexts[0].iIndex, -2);
 							assert.strictEqual(oBinding.aContexts[1].iIndex, -1);
@@ -5224,8 +5225,8 @@ sap.ui.define([
 							assert.strictEqual(oBinding.aContexts[5].iIndex, 3);
 							assert.strictEqual(oBinding.aContexts[6].iIndex, 4);
 							assert.strictEqual(oBinding.iCreatedContexts, 2);
+							assert.strictEqual(oBinding.iMaxLength, 5);
 						}
-						assert.strictEqual(oBinding.iMaxLength, 7);
 					} else {
 						that.mock(oGroupLock).expects("getGroupId").returns("resultingGroupId");
 						oBindingMock.expects("refreshDependentBindings")

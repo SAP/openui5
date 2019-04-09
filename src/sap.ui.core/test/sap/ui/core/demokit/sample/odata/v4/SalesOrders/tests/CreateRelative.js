@@ -40,7 +40,7 @@ sap.ui.define([
 			// Create a new sales order line item; no refresh allowed; cancel created item
 			When.onTheMainPage.pressCreateSalesOrderItemButton();
 			Then.onTheMainPage.checkTableLength(1, "SO_2_SOITEM");
-			Then.onTheMainPage.checkSalesOrderItemsCount(0); // server side count is still 0
+			Then.onTheMainPage.checkSalesOrderItemsCount(1);
 			When.onTheMainPage.pressRefreshSalesOrdersButton();
 			When.onTheRefreshConfirmation.cancel();
 			// canceling different group does not remove created sales order item
@@ -48,6 +48,7 @@ sap.ui.define([
 			Then.onTheMainPage.checkTableLength(1, "SO_2_SOITEM");
 			When.onTheMainPage.pressCancelSalesOrderChangesButton();
 			Then.onTheMainPage.checkTableLength(0, "SO_2_SOITEM");
+			Then.onTheMainPage.checkSalesOrderItemsCount(0);
 
 			// Delete transient sales order line item
 			When.onTheMainPage.pressCreateSalesOrderItemButton();
@@ -62,6 +63,9 @@ sap.ui.define([
 			When.onTheMainPage.selectSalesOrderItemWithPosition("");
 			When.onTheMainPage.pressSaveSalesOrderButton();
 			When.onTheSuccessInfo.confirm();
+			// saving the sales order causing a refresh of the entity; mock server cannot
+			// differentiate between fist call with empty content and second call with the created
+			// line item.
 			Then.onTheMainPage.checkSalesOrderItemsCount(bRealOData ? 1 : 0);
 
 			if (bRealOData) {

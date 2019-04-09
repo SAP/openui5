@@ -212,8 +212,8 @@ sap.ui.define([
 							that.aContexts[i] = oContext;
 						}
 					}
+					that.iMaxLength -= 1; // this doesn't change Infinity
 				}
-				that.iMaxLength -= 1; // this doesn't change Infinity
 				bFireChange = true;
 			}
 		).then(function () {
@@ -461,7 +461,6 @@ sap.ui.define([
 		).then(function (oCreatedEntity) {
 			var sGroupId, sPredicate;
 
-			that.iMaxLength += 1;
 			if (!(oInitialData && oInitialData["@$ui5.keepTransientPath"])) {
 				// refreshSingle requires the new key predicate in oContext.getPath()
 				sPredicate = _Helper.getPrivateAnnotation(oCreatedEntity, "predicate");
@@ -572,7 +571,7 @@ sap.ui.define([
 		}
 		if (iCount !== undefined) {
 			this.bLengthFinal = true;
-			this.iMaxLength = iCount;
+			this.iMaxLength = iCount - this.iCreatedContexts;
 			shrinkContexts();
 		} else {
 			if (aResults.length < iLength) { // "short read"
@@ -1293,12 +1292,14 @@ sap.ui.define([
 
 	/**
 	 * Returns the header context which allows binding to <code>$count</code>. If known, the value
-	 * of such a binding is the element count of the collection on the server. Otherwise it is
-	 * <code>undefined</code>. The value is a number and its type is <code>Edm.Int64</code>.
+	 * of such a binding is the sum of the element count of the collection on the server and the
+	 * number of transient entities created on the client. Otherwise it is <code>undefined</code>.
+	 * The value is a number and its type is <code>Edm.Int64</code>.
 	 *
 	 * The count is known to the binding in the following situations:
 	 * <ul>
-	 *   <li>It has been requested from the server via the system query option <code>$count</code>.
+	 *   <li>The server-side count has been requested via the system query option
+	 *     <code>$count</code>.
 	 *   <li>A "short read" in a paged collection (the server delivered less elements than
 	 *     requested) indicated that the server has no more unread elements.
 	 *   <li>It has been read completely in one request, for example an embedded collection via
@@ -1509,8 +1510,8 @@ sap.ui.define([
 						}
 					}
 					oContext.destroy();
+					that.iMaxLength -= 1; // this doesn't change Infinity
 				}
-				that.iMaxLength -= 1; // this doesn't change Infinity
 				that._fireChange({reason : ChangeReason.Remove});
 			}
 
@@ -1632,8 +1633,7 @@ sap.ui.define([
 		// the range of array indices for getCurrentContexts
 		this.iCurrentBegin = this.iCurrentEnd = 0;
 		// upper boundary for server-side list length (based on observations so far)
-		// Note: Non-transient created entities are included and exist twice: with index 0 and
-		// with some unknown (server-side) index i > 0!
+		// Note: Created entities are excluded
 		// Compare only this.aContexts.length and this.iMaxLength + this.iCreatedContexts!
 		// Note: the binding's length can be greater than this.iMaxLength due to iCreatedContexts!
 		this.iMaxLength = Infinity;

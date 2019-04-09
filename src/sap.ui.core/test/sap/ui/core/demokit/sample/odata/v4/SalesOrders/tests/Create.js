@@ -54,7 +54,7 @@ sap.ui.define([
 			Then.onTheMainPage.checkNote(0, sModifiedNote);
 			When.onTheCreateNewSalesOrderDialog.confirmDialog();
 			if (!bRealOData) {
-				Then.onTheMainPage.checkSalesOrdersCount(10);
+				Then.onTheMainPage.checkSalesOrdersCount(11);
 			}
 			Then.onTheMainPage.checkID(0, "");
 			Then.onTheMainPage.checkSalesOrderSelected(0);
