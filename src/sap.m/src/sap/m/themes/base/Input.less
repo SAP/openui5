@@ -91,8 +91,7 @@ html[data-sap-ui-browser='ie9'] .sapMInputValHelp { /* IE9 ignores padding-right
 }
 
 html.sap-desktop .sapMInputVH:not(.sapMInputBaseReadonly) .sapMInputValHelp > .sapMInputValHelpInner:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: -1px;
+	outline: none;
 }
 
 .sapMInputVH:not(.sapMInputBaseReadonly) .sapMInputValHelp > .sapMInputValHelpInner:active {
@@ -160,7 +159,7 @@ html.sap-desktop .sapMInputVH:not(.sapMInputBaseReadonly) .sapMInputValHelp > .s
 		top: 0;
 		height: 1.375rem; /* + 2*1px padding = 1.5rem */
 	}
-	
+
 	.sapMInputValHelp > .sapMInputValHelpInner {
 		height: 1.375rem;
 		line-height: 1.375rem;

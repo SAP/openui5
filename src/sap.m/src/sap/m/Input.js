@@ -5,10 +5,10 @@
 // Provides control sap.m.Input.
 sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List', './Popover',
 		'sap/ui/core/Item', './ColumnListItem', './StandardListItem', './DisplayListItem', 'sap/ui/core/ListItem',
-		'./Table', './Toolbar', './ToolbarSpacer', './library', 'sap/ui/core/IconPool', 'sap/ui/core/Control', 'jquery.sap.strings'],
+		'./Table', './Toolbar', './ToolbarSpacer', './library', 'sap/ui/core/IconPool', 'sap/ui/core/Control', 'sap/ui/Device',  'jquery.sap.strings'],
 	function(jQuery, Bar, Dialog, InputBase, List, Popover,
 			Item, ColumnListItem, StandardListItem, DisplayListItem, ListItem,
-			Table, Toolbar, ToolbarSpacer, library, IconPool, Control/* , jQuerySap */) {
+			Table, Toolbar, ToolbarSpacer, library, IconPool, Control, Device/* , jQuerySap */) {
 	"use strict";
 
 
@@ -207,7 +207,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			 * Note: If this aggregation is filled, the aggregation suggestionItems will be ignored.
 			 * @since 1.21.1
 			 */
-			suggestionRows : {type : "sap.m.ColumnListItem", multiple : true, singularName : "suggestionRow", bindable : "bindable"}
+			suggestionRows : {type : "sap.m.ColumnListItem", multiple : true, singularName : "suggestionRow", bindable : "bindable"},
+
+			/**
+			 * The icon on the right side of the Input
+			 */
+			_valueHelpIcon : {type : "sap.ui.core.Icon", multiple: false, visibility: "hidden"}
 		},
 		associations: {
 
@@ -410,11 +415,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		if (this._oList) {
 			this._oList.destroy();
 			this._oList = null;
-		}
-
-		if (this._oValueHelpIcon) {
-			this._oValueHelpIcon.destroy();
-			this._oValueHelpIcon = null;
 		}
 
 		if (this._oSuggestionTable) {
@@ -819,27 +819,45 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 * @private
 	 */
 	Input.prototype._getValueHelpIcon = function () {
-		var that = this;
+		var that = this,
+			valueHelpIcon = this.getAggregation("_valueHelpIcon"),
+			sURI;
 
-		if (!this._oValueHelpIcon) {
-			var sURI = IconPool.getIconURI("value-help");
-			this._oValueHelpIcon = IconPool.createControlByURI({
-				id: this.getId() + "-vhi",
-				src: sURI,
-				useIconTooltip: false,
-				noTabStop: true
-			});
-
-			this._oValueHelpIcon.addStyleClass("sapMInputValHelpInner");
-			this._oValueHelpIcon.attachPress(function (evt) {
-				// if the property valueHelpOnly is set to true, the event is triggered in the ontap function
-				if (!that.getValueHelpOnly()) {
-					that.fireValueHelpRequest({fromSuggestions: false});
-				}
-			});
+		if (valueHelpIcon) {
+			return valueHelpIcon;
 		}
 
-		return this._oValueHelpIcon;
+		sURI = IconPool.getIconURI("value-help");
+		valueHelpIcon = IconPool.createControlByURI({
+			id: this.getId() + "-vhi",
+			src: sURI,
+			useIconTooltip: false,
+			noTabStop: true
+		});
+
+		valueHelpIcon.addStyleClass("sapMInputValHelpInner");
+		valueHelpIcon.attachPress(function (evt) {
+			// if the property valueHelpOnly is set to true, the event is triggered in the ontap function
+			if (!that.getValueHelpOnly()) {
+				var oParent = this.getParent(),
+					$input;
+
+					if (!Device.system.desktop) {
+						// prevent opening the soft keyboard
+						$input = oParent.$('inner');
+						$input.attr('readonly', 'readonly');
+						oParent.focus();
+						$input.removeAttr('readonly');
+					} else {
+						oParent.focus();
+					}
+				that.fireValueHelpRequest({fromSuggestions: false});
+			}
+		});
+
+		this.setAggregation("_valueHelpIcon", valueHelpIcon);
+
+		return valueHelpIcon;
 	};
 
 	/**
