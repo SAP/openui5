@@ -49,8 +49,8 @@
 			<li>Click on the <code>Create</code> button in the <code>Sales Order Line Items</code>
 				table.</li>
 			<li><b>Check:</b> The <code>Sales Order Line Items</code> table contains 1 entry.
-			<li><b>Check:</b> The <code>Sales Order Line Items</code> table header still shows
-				<code>0 Sales Order Line Items</code>.
+			<li><b>Check:</b> The <code>Sales Order Line Items</code> table header shows
+				<code>1 Sales Order Line Items</code>.
 			<li>Click on <code>Refresh</code> button in the <code>Sales Orders</code> table.</li>
 			<li><b>Check:</b> You get a warning about pending changes.</li>
 			<li>Click on the <code>Cancel</code> button.</li>
@@ -61,6 +61,8 @@
 			<li>Click on <code>Cancel sales order changes</code> button in the
 				<code>Sales Order Details</code> section.</li>
 			<li><b>Check:</b> The <code>Sales Order Line Items</code> table contains 0 entries.
+			<li><b>Check:</b> The <code>Sales Order Line Items</code> table header shows
+				<code>0 Sales Order Line Items</code>.
 		</ol>
 		<h3>Delete transient sales order item</h3>
 		<ol>
@@ -83,8 +85,10 @@
 			<li>Click on the <code>Save</code> button in the <code>Sales Order Details</code>
 				section.</li>
 			<li>Click on <code>OK</code> in the <code>Success</code> dialog.</li>
-			<li><b>Check:</b> The <code>Sales Order Line Items</code> table header shows 1 (0 w/o
-				realOData) <code>Sales Order Line Items</code>.</li>
+			<li><b>Check:</b> The <code>Sales Order Line Items</code> table header shows 1
+				<code>Sales Order Line Items</code> in realOData mode and 0 in mock data mode.<br>
+				<i>Remark:</i> With mock data the table gets empty because of a restriction in
+				the mock server implementation.</li>
 			<li>Within realOData Mode:
 			<ol>
 				<li>Update the Note of the newly created sales order line item.</li>

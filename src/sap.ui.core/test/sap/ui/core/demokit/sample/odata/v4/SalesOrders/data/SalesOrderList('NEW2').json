@@ -5,8 +5,8 @@
 	"CreatedAt" : "2016-06-26T22:00:00.000000Z",
 	"LifecycleStatus" : "N",
 	"LifecycleStatusDesc" : "New",
-	"Note" : "mock data",
-	"SalesOrderID" : "",
+	"Note" : "new 2",
+	"SalesOrderID" : "NEW2",
 	"SO_2_BP" : {
 		"@odata.etag" : "W/\"20160613143341.1548870\"",
 		"BusinessPartnerID" : "0100000000",

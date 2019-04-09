@@ -1189,7 +1189,7 @@ sap.ui.define([
 					sCurrentName = sPreviousName;
 					oWithControl.$mFragmentContexts[sFragmentName] = false;
 					debugFinished(oElement);
-					iNestingLevel--;
+					iNestingLevel -= 1;
 				});
 			}
 
@@ -1514,7 +1514,7 @@ sap.ui.define([
 					).then(function () {
 						oIfElement.parentNode.removeChild(oIfElement);
 						debugFinished(oIfElement);
-						iNestingLevel--;
+						iNestingLevel -= 1;
 					});
 				});
 			}
@@ -1602,7 +1602,7 @@ sap.ui.define([
 						return liftChildNodes(oSourceNode, oNewWithControl, oElement);
 					}).then(function () {
 						debugFinished(oElement);
-						iNestingLevel--;
+						iNestingLevel -= 1;
 						oElement.parentNode.removeChild(oElement);
 					});
 				});
@@ -1706,7 +1706,7 @@ sap.ui.define([
 					return liftChildNodes(oElement, oNewWithControl).then(function () {
 						oElement.parentNode.removeChild(oElement);
 						debugFinished(oElement);
-						iNestingLevel--;
+						iNestingLevel -= 1;
 					});
 				});
 			}
@@ -1864,7 +1864,7 @@ sap.ui.define([
 									error("Unexpected return value from visitor for ", oNode);
 								}
 								debugFinished(oNode);
-								iNestingLevel--;
+								iNestingLevel -= 1;
 							});
 					}
 				}

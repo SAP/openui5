@@ -136,10 +136,7 @@ sap.ui.define([
 					"LifecycleStatus" : "N"
 				}),
 				oCreateSalesOrderDialog = this.byId("createSalesOrderDialog"),
-				oUiModel = this.getView().getModel("ui"),
 				that = this;
-
-			oUiModel.setProperty("/bCreateSalesOrderPending", true);
 
 			// select the newly created one
 			this.byId("SalesOrderList").setSelectedItem(
@@ -155,15 +152,17 @@ sap.ui.define([
 			oCreateSalesOrderDialog.setBindingContext(oContext);
 			oCreateSalesOrderDialog.open();
 
+			this.oCurrentCreateContext = oContext;
 			// Note: this promise fails only if the transient entity is deleted
 			oContext.created().then(function () {
-				that._setSalesOrderBindingContext(oContext);
-				oUiModel.setProperty("/bCreateSalesOrderPending", false);
+				// in case of multiple create, select current
+				if (oContext === that.oCurrentCreateContext) {
+					that._setSalesOrderBindingContext(oContext);
+				}
 				MessageBox.success("SalesOrder created: " + oContext.getProperty("SalesOrderID")
 					+ ", " + oContext.getProperty("SO_2_BP/CompanyName"));
 			}, function (oError) {
 				// delete of transient entity
-				oUiModel.setProperty("/bCreateSalesOrderPending", false);
 			});
 		},
 

@@ -54,7 +54,7 @@ sap.ui.define([
 			Then.onTheMainPage.checkNote(0, sModifiedNote);
 			When.onTheCreateNewSalesOrderDialog.confirmDialog();
 			if (!bRealOData) {
-				Then.onTheMainPage.checkSalesOrdersCount(10);
+				Then.onTheMainPage.checkSalesOrdersCount(11);
 			}
 			Then.onTheMainPage.checkID(0, "");
 			Then.onTheMainPage.checkSalesOrderSelected(0);
@@ -98,12 +98,11 @@ sap.ui.define([
 			When.onTheCreateNewSalesOrderDialog.confirmDialog();
 			Then.onTheMainPage.checkID(0, "");
 			When.onTheMainPage.pressSaveSalesOrdersButton();
-			Then.onTheSuccessInfo.checkMessage(/SalesOrder created: \d*, SAP/);
+			Then.onTheSuccessInfo.checkMessage(/SalesOrder created: \w+, SAP/);
 			When.onTheSuccessInfo.confirm();
 			if (!bRealOData) {
 				Then.onTheMainPage.checkSalesOrdersCount(11);
 			}
-			When.onTheMainPage.rememberCreatedSalesOrder();
 			When.onTheMainPage.pressRefreshSalesOrdersButton();
 			Then.onTheMainPage.checkID(0);
 
@@ -258,7 +257,7 @@ sap.ui.define([
 				Then.onTheMainPage.checkSalesOrdersCount(0);
 			}
 
-			// delete the last created SalesOrder again
+			// delete created sales orders
 			When.onAnyPage.cleanUp("SalesOrderList");
 			Then.onAnyPage.checkLog(bRealOData
 				? [oExpectedLog, oExpectedLog, oExpectedLog]

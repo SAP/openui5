@@ -792,7 +792,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		 */
 		checkSingle : function checkSingle(assert, sBinding, sExpectedText) {
 			var oControl = this.oControl,
-				vParts = [sBinding];
+				aParts = [sBinding];
 
 			[undefined, this.formatter].forEach(function (fnRootFormatter) {
 				if (fnRootFormatter) {
@@ -800,11 +800,11 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				}
 
 				oControl.applySettings({
-					"text" : AnnotationHelper.createPropertySetting(vParts, fnRootFormatter)
+					"text" : AnnotationHelper.createPropertySetting(aParts, fnRootFormatter)
 				});
 
 				assert.strictEqual(oControl.getText(), sExpectedText, "sBinding: " + sBinding);
-				assert.strictEqual(vParts[0], sBinding, "array argument unchanged");
+				assert.strictEqual(aParts[0], sBinding, "array argument unchanged");
 			});
 		}
 	});
@@ -2107,12 +2107,12 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				var vExpectedValue = fnRootFormatter
 					? JSON.stringify([vConstant])
 					: vConstant,
-					vParts = [vConstant];
+					aParts = [vConstant];
 
 				vPropertySetting
-					= AnnotationHelper.createPropertySetting(vParts, fnRootFormatter);
+					= AnnotationHelper.createPropertySetting(aParts, fnRootFormatter);
 
-				assert.deepEqual(vParts, [vConstant], "array argument unchanged");
+				assert.deepEqual(aParts, [vConstant], "array argument unchanged");
 				strictEqualOrNaN(vPropertySetting, vExpectedValue);
 
 				// Note: sap.ui.base.ManagedObject#validateProperty maps null to undefined

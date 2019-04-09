@@ -105,13 +105,14 @@ sap.ui.define([
 						autoWait : false,
 						id : sControlId,
 						success : function (oSalesOrderTable) {
-							var aPromises = [],
-								oModel = oSalesOrderTable.getModel(),
+							var oModel = oSalesOrderTable.getModel(),
+								mOrderIDs = sap.ui.test.Opa.getContext().mOrderIDs || {},
+								aPromises = [],
 								// use private requestor to prevent additional read requests(ETag)
 								// which need additional mockdata
 								oRequestor = oModel.oRequestor;
 
-							sap.ui.test.Opa.getContext().aOrderIds.forEach(function (sOrderId) {
+							Object.keys(mOrderIDs).forEach(function (sOrderId) {
 								aPromises.push(
 									oRequestor.request("DELETE",
 										"SalesOrderList('" + sOrderId + "')",
@@ -125,7 +126,7 @@ sap.ui.define([
 									})
 								);
 							});
-							sap.ui.test.Opa.getContext().aOrderIds = [];
+							sap.ui.test.Opa.getContext().mOrderIDs = undefined;
 							aPromises.push(oRequestor.submitBatch("cleanUp"));
 
 							// Note: $batch fails only for technical reasons, we should also check
