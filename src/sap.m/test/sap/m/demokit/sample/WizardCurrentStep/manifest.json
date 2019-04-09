@@ -22,6 +22,7 @@
 				"files": [
 					"V.view.xml",
 					"Linear.view.xml",
+					"Linear.controller.js",
 					"Branching.view.xml",
 					"Branching.controller.js",
 					"C.controller.js",

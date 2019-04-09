@@ -12,7 +12,8 @@ sap.ui.define([
 			this.linearWizard = this.byId("wizardViewLinear").byId("CreateProductWizard");
 			this.branchingWizard = this.byId("wizardViewBranching").byId("BranchingWizard");
 			this.model = new JSONModel({
-				selectedShowCase: "linear"
+				selectedShowCase: "linear",
+				linearWizardSelectedStep: "PricingStep"
 			});
 			this.getView().setModel(this.model);
 		},

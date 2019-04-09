@@ -1,10 +1,7 @@
 <mvc:View
 		height="100%"
 		controllerName="sap.m.sample.WizardCurrentStep.C"
-		xmlns:l="sap.ui.layout"
-		xmlns:form="sap.ui.layout.form"
 		xmlns:core="sap.ui.core"
-		xmlns:u="sap.ui.unified"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m">
 		<NavContainer id="wizardNavContainer">
@@ -24,7 +21,7 @@
 							</contentLeft>
 							<contentRight>
 								<Label text="Set current step: " />
-								<Select change="onCurrentStepChangeLinear" selectedKey="PricingStep" visible="{= ${/selectedShowCase} === 'linear'}">
+								<Select change="onCurrentStepChangeLinear" selectedKey="{/linearWizardSelectedStep}" visible="{= ${/selectedShowCase} === 'linear'}">
 									<core:Item text="ProductTypeStep" key="ProductTypeStep" />
 									<core:Item text="ProductInfoStep" key="ProductInfoStep" />
 									<core:Item text="OptionalInfoStep" key="OptionalInfoStep" />
@@ -48,11 +45,11 @@
 						<mvc:XMLView
 							id="wizardViewLinear"
 							visible="{= ${/selectedShowCase} === 'linear' }"
-							viewName="sap.m.sample.WizardCurrentStep.Linear"></mvc:XMLView>
+							viewName="sap.m.sample.WizardCurrentStep.Linear" />
 						<mvc:XMLView
 							id="wizardViewBranching"
 							visible="{= ${/selectedShowCase} === 'branching' }"
-							viewName="sap.m.sample.WizardCurrentStep.Branching"></mvc:XMLView>
+							viewName="sap.m.sample.WizardCurrentStep.Branching" />
 					</content>
 				</Page>
 			</pages>

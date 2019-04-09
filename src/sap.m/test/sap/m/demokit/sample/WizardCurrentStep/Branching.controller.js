@@ -1,10 +1,7 @@
 sap.ui.define([
 	'jquery.sap.global',
-	'sap/ui/core/mvc/Controller',
-	'sap/ui/model/json/JSONModel',
-	"sap/m/MessageToast",
-	"sap/m/MessageBox"
-], function(jQuery, Controller, JSONModel, MessageToast, MessageBox) {
+	'sap/ui/core/mvc/Controller'
+], function(jQuery, Controller) {
 	"use strict";
 
 	var WizardController = Controller.extend("sap.m.sample.WizardCurrentStep.Branching", {
