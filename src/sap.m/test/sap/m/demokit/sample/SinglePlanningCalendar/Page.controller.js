@@ -244,7 +244,7 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Messag
 			this.getView().setModel(oModel, "allDay");
 
 			oModel = new JSONModel();
-			oModel.setData({ stickyMode: "None", enableAppointmentsDragAndDrop: true });
+			oModel.setData({ stickyMode: "None", enableAppointmentsDragAndDrop: true, enableAppointmentsResize: true, enableAppointmentsCreate: true });
 			this.getView().setModel(oModel, "settings");
 		},
 
@@ -281,6 +281,40 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Messag
 			MessageToast.show("Appointment with title \n'"
 				+ sAppointmentTitle
 				+ "'\n has been moved"
+			);
+		},
+
+		handleAppointmentResize: function (oEvent) {
+			var oAppointment = oEvent.getParameter("appointment"),
+				oStartDate = oEvent.getParameter("startDate"),
+				oEndDate = oEvent.getParameter("endDate"),
+				sAppointmentTitle = oAppointment.getTitle();
+
+			oAppointment.setStartDate(oStartDate);
+			oAppointment.setEndDate(oEndDate);
+
+			MessageToast.show("Appointment with title \n'"
+				+ sAppointmentTitle
+				+ "'\n has been resized"
+			);
+		},
+
+		handleAppointmentCreateDnD: function(oEvent) {
+			var oStartDate = oEvent.getParameter("startDate"),
+				oEndDate = oEvent.getParameter("endDate"),
+				sAppointmentTitle = "New Appointment";
+
+			var oAppointment = new sap.ui.unified.CalendarAppointment({
+				title: sAppointmentTitle,
+				startDate: oStartDate,
+				endDate: oEndDate
+			});
+
+			this.getView().byId("SPC1").addAppointment(oAppointment);
+
+			sap.m.MessageToast.show("Appointment with title \n'"
+				+ sAppointmentTitle
+				+ "'\n has been created"
 			);
 		},
 

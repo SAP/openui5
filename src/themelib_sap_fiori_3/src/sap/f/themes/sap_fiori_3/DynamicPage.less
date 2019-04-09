@@ -83,12 +83,18 @@ html[data-sap-ui-browser^="cr"] .sapFDynamicPageHeaderPinButton {
 // because the contrast container would not work, as the theme generates css like ".sapContrast.sapFDynamicPageFooter"
 // and will never match ".sapFDynamicPage .sapFDynamicPageFooter"
 .sapFDynamicPageFooter .sapFDynamicPageActualFooterControl {
-	background: fade(@sapUiPageFooterBackground, 90);
+	background: @sapUiPageFooterBackground;
 	color: @sapUiPageFooterTextColor;
 	box-shadow: @sapUiShadowLevel1;
-	border-bottom: 0 none;
+	border: none;
 }
 
 .title-hover(@backgroundColor) {
 	background-color: darken(@backgroundColor, 2);
+}
+
+/* Vertically align items in the table-like view with the items in the sap.m.Carousel control.
+To be used in Comparison pattern scenario. */
+.sapUiComparisonContainer .sapFDynamicPageTitleSnapped + .sapFDynamicPageContentWrapper .sapUiComparisonContent  {
+	margin-right: 0;
 }

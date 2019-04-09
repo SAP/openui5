@@ -1,7 +1,7 @@
-/*global QUnit, sinon*/
+/*global QUnit */
 
 sap.ui.define([
-	"sap/ui/rta/enablement/controlTest",
+	"sap/ui/rta/enablement/elementActionTest",
 	'sap/uxap/ObjectPageLayout',
 	'sap/uxap/ObjectPageSection',
 	'sap/uxap/ObjectPageSubSection',
@@ -13,10 +13,9 @@ sap.ui.define([
 	'sap/ui/rta/plugin/CutPaste',
 	"sap/ui/rta/plugin/RTAElementMover",
 	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/thirdparty/sinon',
-	'sap/ui/thirdparty/sinon-qunit'
+	'sap/ui/thirdparty/sinon-4'
 ], function (
-	rtaControlEnablingCheck,
+	elementActionTest,
 	ObjectPageLayout,
 	ObjectPageSection,
 	ObjectPageSubSection,
@@ -27,7 +26,8 @@ sap.ui.define([
 	DragDropPlugin,
 	CutPastePlugin,
 	RTAElementMover,
-	OverlayRegistry
+	OverlayRegistry,
+	sinon
 ) {
 	"use strict";
 
@@ -42,8 +42,8 @@ sap.ui.define([
 			"then the control has been moved to the previous position");
 	};
 
-	// Use rtaControlEnablingCheck to check if a control is ready for the move action of UI adaptation
-	rtaControlEnablingCheck("Checking the move action for a sap.uxap.ObjectPage control in headerContent", {
+	// Use elementActionTest to check if a control is ready for the move action of UI adaptation
+	elementActionTest("Checking the move action for a sap.uxap.ObjectPage control in headerContent", {
 		xmlView :
 		'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
 		'xmlns:m="sap.m" xmlns:uxap="sap.uxap" >' +
@@ -106,7 +106,7 @@ sap.ui.define([
 	};
 
 	// Check moving sections
-	rtaControlEnablingCheck("Checking the move action for a sap.uxap.ObjectPageSection control", {
+	elementActionTest("Checking the move action for a sap.uxap.ObjectPageSection control", {
 		xmlView :
 		'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
 		'xmlns:m="sap.m" xmlns:uxap="sap.uxap" >' +

@@ -77,7 +77,7 @@ sap.ui.define([
 						}
 					]
 				}
-			}, { _oChangePersistence: { _oVariantController: {} } });
+			}, { _oChangePersistence: { _oVariantController: { assignResetMapListener: function () {} } } });
 
 			sinon.stub(oModel, "updateCurrentVariant").returns(Promise.resolve());
 			// to suppress "manage" event listener in VariantModel

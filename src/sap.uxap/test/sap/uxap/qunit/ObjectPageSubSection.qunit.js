@@ -4,12 +4,13 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/uxap/library",
 	"sap/uxap/ObjectPageSection",
+	"sap/uxap/ObjectPageSectionBase",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/uxap/BlockBase",
 	"sap/uxap/ObjectPageLayout",
 	"sap/m/Label",
 	"sap/m/Button"],
-function($, Core, Lib, ObjectPageSection, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, Label, Button) {
+function($, Core, Lib, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, Label, Button) {
 	"use strict";
 
 	var aStandardModeConfig = [{
@@ -1069,6 +1070,34 @@ function($, Core, Lib, ObjectPageSection, ObjectPageSubSectionClass, BlockBase, 
 		afterEach: function () {
 			this.oObjectPageLayout.destroy();
 		}
+	});
+
+	QUnit.test(".sapUxAPSubSectionSeeMoreContainer class is toggled correctly", function(assert) {
+		// Arrange
+		var oSubSection = this.oObjectPageLayout.getSections()[1].getSubSections()[0],
+			oChildrenSpy = sinon.spy($.fn, "children"),
+			oSectionBaseSpy = sinon.spy(ObjectPageSectionBase.prototype, "_updateShowHideState");
+
+		// Act
+		oSubSection._updateShowHideState(true);
+
+		// Assert
+		assert.ok(oChildrenSpy.calledWith(".sapUxAPSubSectionSeeMoreContainer"),
+			"Visibility of children with .sapUxAPSubSectionSeeMoreContainer is toggled");
+		assert.ok(oSectionBaseSpy.calledWith(true), "_updateShowHideState method of ObjectPageSectionBase is called");
+	});
+
+	QUnit.test(".sapUxAPObjectPageSubSectionWithSeeMore is applied to SubSections correctly", function(assert) {
+		// Arrange
+		var oSubSection = this.oObjectPageLayout.getSections()[1].getSubSections()[0];
+
+		// Act
+		oSubSection.addMoreBlock(oHelpers.getBlock());
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(oSubSection.$().hasClass("sapUxAPObjectPageSubSectionWithSeeMore"),
+			".sapUxAPObjectPageSubSectionWithSeeMore class is added to SubSection with more blocks");
 	});
 
 	QUnit.test("Content scrollTop is preserved on section rerendering", function(assert) {

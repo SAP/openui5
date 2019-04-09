@@ -2,16 +2,22 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/Device",
 	"sap/ui/core/Core",
 	"sap/ui/model/json/JSONModel",
 	"sap/uxap/AnchorBar",
 	"sap/m/Button"
-], function ($, Core, JSONModel, AnchorBar, Button) {
+], function ($, Device, Core, JSONModel, AnchorBar, Button) {
 	"use strict";
 
-	var iRenderingDelay = 2000;
-	var ANCHORBAR_CLASS_SELECTOR = ".sapUxAPAnchorBar";
-	var HIERARCHICAL_CLASS_SELECTOR = ".sapUxAPHierarchicalSelect";
+	var iRenderingDelay = 2000,
+		ANCHORBAR_CLASS_SELECTOR = ".sapUxAPAnchorBar",
+		HIERARCHICAL_CLASS_SELECTOR = ".sapUxAPHierarchicalSelect",
+		BREAK_POINTS = {
+			Phone: 600,
+			Tablet: 1024,
+			Desktop: 2000
+		};
 
 	function checkButtonAriaAttribute(assert, oButton, sAttribute, sExpected, sMessage) {
 		if (oButton.isA("sap.m.MenuButton")) {
@@ -170,6 +176,49 @@ sap.ui.define([
 		this.clock.tick(iRenderingDelay);
 
 		assert.ok(jQuery(ANCHORBAR_CLASS_SELECTOR).length > 0 && jQuery(HIERARCHICAL_CLASS_SELECTOR).is(":visible") == true, "display hierarchical select");
+	});
+
+	QUnit.test("AnchorBar is correctly resized after resize of its parent ObjectPageLayout", function (assert) {
+		// Arrange
+		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
+			oMediaRange,
+			sRangeSet = Device.media.RANGESETS.SAP_STANDARD;
+
+		// Act
+		// Resizing ObjectPage to Phone breakpoint
+		this.oObjectPage.getDomRef().style.width = Object.values(BREAK_POINTS)[0] + "px";
+
+		// allow for re-render
+		this.clock.tick(iRenderingDelay);
+		oMediaRange = Device.media.getCurrentRange(sRangeSet, oAnchorBar._getWidth(oAnchorBar));
+
+		// Assert
+		assert.strictEqual(oMediaRange.name, Object.keys(BREAK_POINTS)[0],
+				"AnchorBar is with the same media range as its parent ObjectPage on " + Object.keys(BREAK_POINTS)[0]);
+
+		// Act
+		// Resizing ObjectPage to Tablet breakpoint
+		this.oObjectPage.getDomRef().style.width = Object.values(BREAK_POINTS)[1] + "px";
+
+		// allow for re-render
+		this.clock.tick(iRenderingDelay);
+		oMediaRange = Device.media.getCurrentRange(sRangeSet, oAnchorBar._getWidth(oAnchorBar));
+
+		// Assert
+		assert.strictEqual(oMediaRange.name, Object.keys(BREAK_POINTS)[1],
+				"AnchorBar is with the same media range as its parent ObjectPage on " + Object.keys(BREAK_POINTS)[1]);
+
+		// Act
+		// Resizing ObjectPage to Desktop breakpoint
+		this.oObjectPage.getDomRef().style.width = Object.values(BREAK_POINTS)[2] + "px";
+
+		// allow for re-render
+		this.clock.tick(iRenderingDelay);
+		oMediaRange = Device.media.getCurrentRange(sRangeSet, oAnchorBar._getWidth(oAnchorBar));
+
+		// Assert
+		assert.strictEqual(oMediaRange.name, Object.keys(BREAK_POINTS)[2],
+				"AnchorBar is with the same media range as its parent ObjectPage on " + Object.keys(BREAK_POINTS)[2]);
 	});
 
 	QUnit.test("Anchors for sections with multiple subsection must have arrow-down icon", function (assert) {
@@ -484,6 +533,22 @@ sap.ui.define([
 				"aria-setsize of the button indicates anchorBar's length correctly");
 			checkButtonAriaAttribute(assert, oCurrentButton, "aria-posinset", (iIndex + 1).toString(),
 				"aria-posinset indicates the correct position of the button");
+		}
+	});
+
+	QUnit.test("ARIA role and role descrption of buttons", function (assert) {
+		var aAnchorBarContent = this.oObjectPage.getAggregation("_anchorBar").getContent(),
+			iAnchorBarContentLength = aAnchorBarContent.length,
+			sAriaRoleDescription = Core.getLibraryResourceBundle("sap.uxap").getText("ANCHOR_BAR_MENUITEM"),
+			oCurrentButton,
+			iIndex;
+
+		for (iIndex = 0; iIndex < iAnchorBarContentLength; iIndex++) {
+			oCurrentButton = aAnchorBarContent[iIndex];
+			checkButtonAriaAttribute(assert, oCurrentButton, "role", "menuitemradio",
+				"aria role of the button is set correctly");
+			checkButtonAriaAttribute(assert, oCurrentButton, "aria-roledescription", sAriaRoleDescription,
+				"aria role description of the button is set correctly");
 		}
 	});
 

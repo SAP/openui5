@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.uxap.sample.AnchorBarNoPopover.AnchorBarNoPopover",
+			"viewName": "sap.uxap.sample.AnchorBarNoPopover.view.AnchorBarNoPopover",
 			"type": "XML",
 			"async": true
 		},
@@ -20,7 +20,7 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"AnchorBarNoPopover.view.xml",
+					"view/AnchorBarNoPopover.view.xml",
 					"../SharedBlocks/BlockBlue.js",
 					"../SharedBlocks/BlockBlue.view.xml",
 					"manifest.json"

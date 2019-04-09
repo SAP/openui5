@@ -347,6 +347,9 @@ function(Device, UIArea, jQuery) {
 					sRelativePosition = "On";
 				}
 			}
+			if (sRelativePosition != "On" && sap.ui.getCore().getConfiguration().getRTL()) {
+				sRelativePosition = (sRelativePosition == "After") ? "Before" : "After";
+			}
 		} else {
 			var iCursorY = oEvent.pageY - mDropRect.top;
 			mStyle.width = mDropRect.width;

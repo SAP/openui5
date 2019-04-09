@@ -33,7 +33,7 @@ a.sapMOHTitle.sapMOHTitleActive:hover > h1 .sapMText {
 }
 
 .sapMOHTitle.sapMOHTitleActive:focus > h1 span,
-.sapMOHTitleIcon > .sapMOHIcon:focus,
+.sapMOHIcon.sapMPointer .sapUiIcon.sapUiIconPointer:focus,
 .sapMOHTitleArrow .sapUiIcon:focus {
 	outline: 1px dotted @sapUiContentFocusColor;
 	outline-offset: -1px;
@@ -85,9 +85,10 @@ html[data-sap-ui-browser ^= "ie"] {
 	outline-offset: -1px;
 }
 
-.sapMOHRIcon.sapMPointer:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: -1px;
+.sapMOHRIcon.sapMPointer .sapUiIcon.sapUiIconPointer:focus {
+	&:before {
+		outline: 1px dotted @sapUiContentFocusColor;
+	}
 }
 
 .sapMOHRTitleActive .sapMOHRTitleText:focus {
@@ -117,9 +118,10 @@ html[data-sap-ui-browser ^= "ie"] {
 			border: 1px solid transparent;
 		}
 
-		.sapMOHRIcon.sapMPointer:focus {
-			outline: none;
-			border: 1px dotted @sapUiContentFocusColor;
+		.sapMOHRIcon.sapMPointer .sapUiIcon.sapUiIconPointer:focus {
+			&:before {
+				outline: none;
+			}
 		}
 
 		.sapMOHRIntro, .sapMOHRIntroActive {

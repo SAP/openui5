@@ -739,6 +739,7 @@ sap.ui.define([
 			var sItemId = (!vItem || (typeof (vItem) == "string")) ? vItem : vItem.getId();
 			this._updateSelection(sItemId); // animate selection
 		}
+		return this;
 	};
 
 

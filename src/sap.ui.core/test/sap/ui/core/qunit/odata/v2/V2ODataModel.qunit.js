@@ -1884,7 +1884,8 @@ sap.ui.define([
 				oModel.setProperty("/ProductSet('AD-1000')/Name", "NewName");
 				oModel.metadataLoaded().then(function(){
 					assert.ok(oModel.hasPendingChanges(), "model has pending changes");
-					assert.equal(oModel.mChangedEntities["ProductSet('AD-1000')"].Name, "NewName", "check internal map");
+					assert.ok(oModel.getPendingChanges()["ProductSet('AD-1000')"], "check entity in internal map");
+					assert.equal(oModel.getPendingChanges()["ProductSet('AD-1000')"].Name, "NewName", "check internal map");
 					assert.equal(oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"].request.method, "MERGE", "check internal map");
 					oModel.resetChanges();
 					oModel.metadataLoaded().then(function(){

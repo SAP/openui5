@@ -216,7 +216,7 @@ sap.ui.define([
 									// promise gets resolved in error case since Promise.all will not wait for all fails
 									aFails.push(oContent.errorMessage);
 								} else {
-									// exclude relative paths outside of the app root (e.g. commong helpers, images, ...)
+									// exclude relative paths outside of the app root (e.g. common helpers, images, ...)
 									if (!sFilePath.startsWith("../")) {
 										oZipFile.file(sFilePath, oContent, { base64: false, binary: true });
 									}
@@ -224,6 +224,18 @@ sap.ui.define([
 							});
 							aPromises.push(oPromise);
 						});
+
+						// add generic license and notice file
+						var oLicensePromise = sourceFileDownloader(sap.ui.require.toUrl("sap/ui/documentation/sdk/tmpl/LICENSE.txt"));
+						oLicensePromise.then(function (oContent) {
+							oZipFile.file("LICENSE.txt", oContent, { base64: false, binary: true });
+						});
+						aPromises.push(oLicensePromise);
+						var oNoticePromise = sourceFileDownloader(sap.ui.require.toUrl("sap/ui/documentation/sdk/tmpl/NOTICE.txt"));
+						oNoticePromise.then(function (oContent) {
+							oZipFile.file("NOTICE.txt", oContent, { base64: false, binary: true });
+						});
+						aPromises.push(oNoticePromise);
 
 						Promise.all(aPromises).then(function () {
 							// collect errors and show them

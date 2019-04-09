@@ -510,8 +510,8 @@ function(
 				this.addAggregation('buttons', oButton);
 				this._syncSelect();
 				this._fireChangeEvent();
-				return this;
 			}
+			return this;
 		};
 
 		SegmentedButton.prototype.insertButton = function (oButton, iIndex) {
@@ -520,8 +520,8 @@ function(
 				this.insertAggregation('buttons', oButton, iIndex);
 				this._syncSelect();
 				this._fireChangeEvent();
-				return this;
 			}
+			return this;
 		};
 
 		function processButton(oButton, oParent){

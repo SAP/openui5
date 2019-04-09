@@ -1,13 +1,12 @@
 sap.ui.define([
-	"sap/ui/dt/test/report/QUnit",
-	"sap/ui/dt/test/ElementEnablementTest",
 	"sap/m/Table",
 	"sap/m/Column",
 	"sap/m/Text",
 	"sap/m/ColumnListItem",
 	"sap/m/Toolbar",
 	"sap/m/changeHandler/MoveTableColumns",
-	"sap/ui/rta/enablement/controlTest",
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/mvc/XMLView",
@@ -15,66 +14,52 @@ sap.ui.define([
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/qunit/utils/createAndAppendDiv",
 	// We have to ensure to load fl, so that change handler gets registered
 	"sap/ui/fl/library"
-], function(
-	QUnitReport,
-	ElementEnablementTest,
+], function (
 	Table,
 	Column,
 	Text,
 	ColumnListItem,
 	Toolbar,
 	MoveTableColumns,
-	rtaControlEnablingCheck,
+	elementDesigntimeTest,
+	elementActionTest,
 	UIComponent,
 	ComponentContainer,
 	XMLView,
 	CommandFactory,
 	ElementUtil,
 	ElementDesignTimeMetadata,
-	JSONModel,
-	createAndAppendDiv
+	JSONModel
 ) {
 	"use strict";
-	createAndAppendDiv("content");
 
-
-	var oElementEnablementTest = new ElementEnablementTest({
-		type: "sap.m.Table",
-		create: function () {
-			return new Table({
-				columns: [
-					new Column({
-						header: new Text({text: "Header 1"})
-					})
-				],
-				items: [
-					new ColumnListItem({
-						cells: [
-							new Text({text: "text"})
-						]
-					})
-				],
-				headerToolbar: new Toolbar(),
-				swipeContent: new Text(),
-				infoToolbar: new Toolbar()
-			});
-		}
-	});
-	return oElementEnablementTest.run()
-
-	.then(function (oData) {
-		new QUnitReport({
-			data: oData
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
+			type: "sap.m.Table",
+			create: function () {
+				return new Table({
+					columns: [
+						new Column({
+							header: new Text({text: "Header 1"})
+						})
+					],
+					items: [
+						new ColumnListItem({
+							cells: [
+								new Text({text: "text"})
+							]
+						})
+					],
+					headerToolbar: new Toolbar(),
+					swipeContent: new Text(),
+					infoToolbar: new Toolbar()
+				});
+			}
 		});
 	})
-
-	.then(function () {
-		oElementEnablementTest.exit();
-	})
-
 	.then(function() {
 		// Move columns
 		var fnConfirmColumn1IsOn3rdPosition = function (oUiComponent, oViewAfterAction, assert) {
@@ -94,7 +79,7 @@ sap.ui.define([
 				"then the column in items has been moved to the previous position");
 		};
 
-		rtaControlEnablingCheck("Checking the move action for Table control with correct initial order", {
+		elementActionTest("Checking the move action for Table control with correct initial order", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 				'<Table id="myTable">' +
 					'<columns>' +
@@ -145,7 +130,7 @@ sap.ui.define([
 		});
 
 		// Test move when the sourceIndex is not the actual one. We have this use case when a column has already been moved and the view is already modified.
-		rtaControlEnablingCheck("Checking the move action for Table control with reordered columns", {
+		elementActionTest("Checking the move action for Table control with reordered columns", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 				'<Table id="myTable">' +
 					'<columns>' +
@@ -223,7 +208,7 @@ sap.ui.define([
 			};
 		};
 
-		rtaControlEnablingCheck("Checking the move action for Table control with template", {
+		elementActionTest("Checking the move action for Table control with template", {
 			xmlView: '\
 				<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">\
 					<Table id="myTable" items="{path: \'/records\'}">\

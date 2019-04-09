@@ -423,6 +423,21 @@ sap.ui.define([
 				});
 		});
 
+		QUnit.test("when setVariantManagementSection() is called with a variant controller file content", function(assert) {
+			var sComponentName = "testComponent",
+				sAppVersion = Utils.DEFAULT_APP_VERSION,
+				oVariantSectionContent = {
+					"variantManagement": {
+						variants: ["variant1"]
+					}
+				};
+
+			var oCacheEntry = Cache.getEntry(sComponentName, sAppVersion); // creates entry
+			assert.ok(jQuery.isEmptyObject(oCacheEntry.file.changes.variantSection), "then initially variantSection is empty in the cache entry");
+			Cache.setVariantManagementSection({name: sComponentName, appVersion: sAppVersion}, oVariantSectionContent);
+			assert.deepEqual(oCacheEntry.file.changes.variantSection, oVariantSectionContent, "then the passed variant controller file content was set in the cache entry");
+		});
+
 	});
 
 	QUnit.module("getChangesFillingCache and level0-changes", function (hooks) {

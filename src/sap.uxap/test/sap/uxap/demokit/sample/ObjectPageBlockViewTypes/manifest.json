@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.uxap.sample.ObjectPageBlockViewTypes.ObjectPageOnJSON",
+			"viewName": "sap.uxap.sample.ObjectPageBlockViewTypes.view.ObjectPageOnJSON",
 			"type": "XML",
 			"async": true
 		},
@@ -20,7 +20,7 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"ObjectPageOnJSON.view.xml",
+					"view/ObjectPageOnJSON.view.xml",
 					"../SharedBlocks/goals/GoalsBlock.js",
 					"../SharedBlocks/goals/GoalsBlockJS.js",
 					"../SharedBlocks/goals/GoalsBlockJSON.js",

@@ -49,8 +49,7 @@ sap.ui.define([
 			BLOCKER_ROW_HEIGHT_COMPACT = 25,
 			HALF_HOUR_MS = 3600000 / 2,
 			ONE_MIN_MS = 60 * 1000,
-			MILLISECONDS_IN_A_DAY = 86400000,
-			RESIZE_CONFIG_NAME = "ResizeConfig";
+			MILLISECONDS_IN_A_DAY = 86400000;
 
 		/**
 		 * Constructor for a new SinglePlanningCalendarGrid.
@@ -128,7 +127,16 @@ sap.ui.define([
 					 *
 					 * @since 1.65
 					 */
-					enableAppointmentsResize: { type: "boolean", group: "Misc", defaultValue: false }
+					enableAppointmentsResize: { type: "boolean", group: "Misc", defaultValue: false },
+
+					/**
+					 * Determines whether the appointments can be created by dragging on empty cells.
+					 *
+					 * See {@link #property:enableAppointmentsResize enableAppointmentsResize} for the specific points for events snapping
+					 *
+					 * @since 1.65
+					 */
+					enableAppointmentsCreate: { type: "boolean", group: "Misc", defaultValue: false }
 				},
 				aggregations: {
 
@@ -152,6 +160,7 @@ sap.ui.define([
 					_blockersPlaceholders : {type : "sap.m.SinglePlanningCalendarGrid._internal.IntervalPlaceholder", multiple : true, visibility : "hidden", dnd : {droppable: true}}
 
 				},
+				dnd: true,
 				associations: {
 
 					/**
@@ -206,14 +215,14 @@ sap.ui.define([
 						}
 					},
 
-				/**
-				 * Fired if an appointment is resized.
-				 * @since 1.65
-				 */
+					/**
+					 * Fired if an appointment is resized.
+					 * @since 1.65
+					 */
 					appointmentResize: {
 						parameters: {
 							/**
-							 * The dropped appointment.
+							 * The resized appointment.
 							 */
 							appointment: { type: "sap.ui.unified.CalendarAppointment" },
 
@@ -226,6 +235,24 @@ sap.ui.define([
 							 * Dropped appointment end date as a JavaScript date object.
 							 */
 							endDate: { type: "object" }
+						}
+					},
+
+					/**
+					 * Fired if an appointment is created.
+					 * @since 1.65
+					 */
+					appointmentCreate: {
+						parameters: {
+							/**
+							 * Start date of the created appointment, as a JavaScript date object.
+							 */
+							startDate: {type: "object"},
+
+							/**
+							 * End date of the created appointment, as a JavaScript date object.
+							 */
+							endDate: {type: "object"}
 						}
 					}
 				}
@@ -247,11 +274,15 @@ sap.ui.define([
 			this._configureBlockersDragAndDrop();
 			this._configureAppointmentsDragAndDrop();
 			this._configureAppointmentsResize();
+			this._configureAppointmentsCreate();
 
 			this._oUnifiedRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
 			this._oFormatAria = DateFormat.getDateTimeInstance({
 				pattern: "EEEE dd/MM/YYYY 'at' HH:mm:ss a"
 			});
+
+			//the id of the SPC's legend if any
+			this._sLegendId = undefined;
 
 			setTimeout(this._updateRowHeaderAndNowMarker.bind(this), iDelay);
 		};
@@ -594,9 +625,102 @@ sap.ui.define([
 				}.bind(this)
 			});
 
-			oResizeConfig.setProperty("groupName", RESIZE_CONFIG_NAME);
-
 			this.addDragDropConfig(oResizeConfig);
+		};
+
+		SinglePlanningCalendarGrid.prototype._configureAppointmentsCreate = function () {
+			this.addDragDropConfig(new DragDropInfo({
+				targetAggregation: "_intervalPlaceholders",
+
+				dragStart: function (oEvent) {
+					if (!this.getEnableAppointmentsCreate()) {
+						oEvent.preventDefault();
+						return;
+					}
+
+					var $SPCGridOverlay = this.$().find(".sapMSinglePCOverlay");
+
+					setTimeout(function () {
+						$SPCGridOverlay.addClass("sapMSinglePCOverlayDragging");
+					});
+
+					jQuery(document).one("dragend", function () {
+						$SPCGridOverlay.removeClass("sapMSinglePCOverlayDragging");
+						jQuery(".sapUiAppCreate").remove();
+						jQuery(".sapUiDnDDragging").removeClass("sapUiDnDDragging");
+					});
+
+					if (!Device.browser.msie && !Device.browser.edge) {
+						oEvent.getParameter("browserEvent").dataTransfer.setDragImage(getResizeGhost(), 0, 0);
+					}
+				}.bind(this),
+
+				dragEnter: function (oEvent) {
+					var oDragSession = oEvent.getParameter("dragSession"),
+						oDropControl = oDragSession.getDropControl(),
+						oDropDom = oDropControl.getDomRef(),
+						iDropHeight = oDropDom.offsetHeight,
+						iDropY = oDropDom.offsetTop,
+						iStartingDropY = iDropY,
+						iDropX = oDropDom.getBoundingClientRect().left,
+						iStartingDropX = iDropX,
+						oColumn = oDropControl.$().parents(".sapMSinglePCColumn").get(0),
+						$createPlaceHolder = jQuery(".sapUiAppCreate");
+
+					if (!$createPlaceHolder.get(0)) {
+						$createPlaceHolder = jQuery("<div></div>")
+							.addClass("sapUiCalendarApp sapUiCalendarAppType01 sapUiAppCreate");
+						$createPlaceHolder.appendTo(oColumn);
+					}
+
+					jQuery(".sapUiDnDDragging").removeClass("sapUiDnDDragging");
+
+					if (!oDragSession.getComplexData("startingRectsDropArea")) {
+						oDragSession.setComplexData("startingRectsDropArea", { top: iDropY, left: iDropX });
+						oDragSession.setComplexData("startingDropDate", oDropControl.getDate());
+					} else {
+						iStartingDropY = oDragSession.getComplexData("startingRectsDropArea").top;
+						iStartingDropX = oDragSession.getComplexData("startingRectsDropArea").left;
+					}
+
+					if (iDropX !== iStartingDropX) {
+						oEvent.preventDefault();
+						return false;
+					}
+
+					// Dim the column
+					oDropControl.$().closest(".sapMSinglePCColumn").find(".sapMSinglePCAppointments").addClass("sapUiDnDDragging");
+
+					$createPlaceHolder.css({
+						top: Math.min(iStartingDropY, iDropY) + 2,
+						height: Math.abs(iStartingDropY - iDropY) + iDropHeight - 4,
+						left: 3,
+						right: 3,
+						"z-index": 2
+					});
+					oDragSession.setIndicatorConfig({
+						display: "none"
+					});
+				},
+
+				drop: function (oEvent) {
+					var oDragSession = oEvent.getParameter("dragSession"),
+						oDropControl = oDragSession.getDropControl(),
+						THIRTY_MINUTES = 30 * 60 * 1000,
+						oStartDate = oDragSession.getComplexData("startingDropDate").getTime(),
+						oEndDate = oDropControl.getDate().getJSDate().getTime(),
+						iStartTime = Math.min(oStartDate, oEndDate),
+						iEndTime = Math.max(oStartDate, oEndDate) + THIRTY_MINUTES;
+
+					this.fireAppointmentCreate({
+						startDate: new Date(iStartTime),
+						endDate: new Date(iEndTime)
+					});
+
+					jQuery(".sapUiAppCreate").remove();
+					jQuery(".sapUiDnDDragging").removeClass("sapUiDnDDragging");
+				}.bind(this)
+			}));
 		};
 
 		SinglePlanningCalendarGrid.prototype._calcResizeNewHoursAppPos = function(oAppStartDate, oAppEndDate, iIndex, bBottomHandle) {
@@ -641,7 +765,7 @@ sap.ui.define([
 					$appointment.css("top", iAppTop);
 					$appointment.css("bottom", iAppBottom);
 					$appointment.find(".sapUiCalendarApp")
-								.css("min-height", iRowHeight / 2 - 1);
+								.css("min-height", iRowHeight / 2 - 3);
 				});
 			}
 		};
@@ -908,7 +1032,7 @@ sap.ui.define([
 				iMinutes = oDate.getMinutes(),
 				iRowHeight = this._getRowHeight();
 
-			return (iRowHeight * iHour) + (iRowHeight / 60) * iMinutes;
+			return Math.floor((iRowHeight * iHour) + (iRowHeight / 60) * iMinutes);
 		};
 
 		/**
@@ -923,7 +1047,7 @@ sap.ui.define([
 				iMinutes = oDate.getMinutes(),
 				iRowHeight = this._getRowHeight();
 
-			return (iRowHeight * iHour) - (iRowHeight / 60) * iMinutes;
+			return Math.floor((iRowHeight * iHour) - (iRowHeight / 60) * iMinutes);
 		};
 
 		/**
@@ -1500,7 +1624,7 @@ sap.ui.define([
 				sFormattedStartDate = this._oFormatAria.format(oAppointment.getStartDate()),
 				sFormattedEndDate = this._oFormatAria.format(oAppointment.getEndDate());
 
-			return sStartTime + ": " + sFormattedStartDate + "; " + sEndTime + ": " + sFormattedEndDate;
+			return sStartTime + ": " + sFormattedStartDate + "; " + sEndTime + ": " + sFormattedEndDate + "; ";
 		};
 
 		/**
@@ -1625,6 +1749,38 @@ sap.ui.define([
 				oRm.write("></div>");
 			}
 		});
+
+		/*
+		 * Finds the corresponding legend item to a given appointment.
+		 * @param {oControl}
+		 * @param {sap.ui.unified.CalendarAppointment}
+		 * @returns {string} The matching legend item's default text.
+		 * @private
+		 */
+		SinglePlanningCalendarGrid.prototype._findCorrespondingLegendItem = function(oControl, oAppointment) {
+			var sLegendId = oControl._sLegendId,
+				oLegend = sap.ui.getCore().byId(sLegendId),
+				aLegendItems = oLegend ? oLegend.getAppointmentItems() : null,
+				oItem,
+				sLegendItemText;
+
+			if (aLegendItems && aLegendItems.length) {
+				for (var i = 0; i < aLegendItems.length; i++) {
+					oItem = aLegendItems[i];
+					if (oItem.getType() === oAppointment.getType()) {
+						sLegendItemText = oItem.getText();
+						break;
+					}
+				}
+			}
+
+			//if the appointment's type is not present in the legend's items,
+			// the screen reader has to read it's type
+			if (!sLegendItemText) {
+				sLegendItemText = oAppointment.getType();
+			}
+			return sLegendItemText;
+		};
 
 		return SinglePlanningCalendarGrid;
 	});

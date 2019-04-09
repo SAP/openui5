@@ -1,26 +1,23 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/dt/test/report/QUnit",
-	"sap/ui/dt/test/ElementEnablementTest",
 	"sap/m/MenuButton",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
-	"sap/ui/rta/enablement/controlTest",
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest",
 	"sap/m/changeHandler/SplitMenuButton",
 	"sap/f/DynamicPageTitle",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/Change",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer"
-], function(createAndAppendDiv,
-	QUnitReport,
-	ElementEnablementTest,
+], function (
 	MenuButton,
 	Menu,
 	MenuItem,
-	rtaControlEnablingCheck,
+	elementDesigntimeTest,
+	elementActionTest,
 	SplitMenuButton,
 	DynamicPageTitle,
 	JsControlTreeModifier,
@@ -28,30 +25,24 @@ sap.ui.define([
 	UIComponent,
 	ComponentContainer
 ) {
-	'use strict';
-	createAndAppendDiv("content");
+	"use strict";
 
-
-	var oElementEnablementTest = new ElementEnablementTest({
-		type: "sap.m.MenuButton",
-		create: function () {
-			return new MenuButton({
-				menu: new Menu({
-					items: [
-						new MenuItem(),
-						new MenuItem()
-					]
-				})
-			});
-		}
-	});
-
-	return oElementEnablementTest.run().then(function (oData) {
-		new QUnitReport({
-			data: oData
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
+			type: "sap.m.MenuButton",
+			create: function () {
+				return new MenuButton({
+					menu: new Menu({
+						items: [
+							new MenuItem(),
+							new MenuItem()
+						]
+					})
+				});
+			}
 		});
 	})
-
 	.then(function() {
 		// Rename action
 		var fnConfirmMenuButtonIsRenamedWithNewValue = function (oMenuButton, oViewAfterAction, assert) {
@@ -66,7 +57,7 @@ sap.ui.define([
 				"then the control has been renamed to the old value (Menu Button)");
 		};
 
-		rtaControlEnablingCheck("Checking the rename action for a MenuButton", {
+		elementActionTest("Checking the rename action for a MenuButton", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">"' +
 			'<MenuButton id="menubtn" text="Menu Button">' +
 			'<menu>' +
@@ -109,7 +100,7 @@ sap.ui.define([
 
 		};
 
-		rtaControlEnablingCheck("Checking the split action for sap.m.MenuButton", {
+		elementActionTest("Checking the split action for sap.m.MenuButton", {
 			jsOnly : true,
 			xmlView :
 			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
@@ -178,7 +169,7 @@ sap.ui.define([
 				"then the second menu item's first dependent has the correct text");
 		};
 
-		rtaControlEnablingCheck("Checking the split action for sap.m.MenuButton with button in dependents aggregation", {
+		elementActionTest("Checking the split action for sap.m.MenuButton with button in dependents aggregation", {
 			jsOnly : true,
 			xmlView :
 			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:core="sap.ui.core">' +
@@ -283,7 +274,7 @@ sap.ui.define([
 					component : this.oUiComponent
 				});
 
-				this.oUiComponentContainer.placeAt("content");
+				this.oUiComponentContainer.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
 
@@ -315,5 +306,4 @@ sap.ui.define([
 			assert.strictEqual(oToolbar.getContent().length, 1, "The change was successfully reverted.");
 		});
 	});
-
 });

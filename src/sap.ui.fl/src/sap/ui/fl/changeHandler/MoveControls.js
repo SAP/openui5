@@ -180,7 +180,7 @@ function(Base, FlexUtils) {
 				aRevertData.unshift({
 					index: iIndex,
 					aggregation: sSourceAggregation,
-					sourceParentId: oModifier.getId(oSourceParent)
+					sourceParent: oModifier.getSelector(oSourceParent, oAppComponent)
 				});
 			}
 
@@ -236,8 +236,7 @@ function(Base, FlexUtils) {
 				var mRevertData = aRevertData[iElementIndex];
 				sSourceAggregation = mRevertData.aggregation;
 				iInsertIndex = mRevertData.index;
-				//TODO: If revert needs to be done on XML, this has to be adjusted
-				oSourceParent = oModifier.byId(mRevertData.sourceParentId, oView);
+				oSourceParent = oModifier.bySelector(mRevertData.sourceParent, oAppComponent, oView);
 			}
 
 			oModifier.removeAggregation(oTargetParent, sTargetAggregation, oMovedElement);

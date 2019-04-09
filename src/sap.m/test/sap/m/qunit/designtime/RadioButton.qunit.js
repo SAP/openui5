@@ -1,8 +1,12 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/rta/enablement/controlTest"
-], function(QUnitUtils, createAndAppendDiv, rtaControlEnablingCheck) {
+	"sap/ui/rta/enablement/elementActionTest"
+], function(
+	QUnitUtils,
+	createAndAppendDiv,
+	elementActionTest
+) {
 	'use strict';
 	createAndAppendDiv("content");
 
@@ -20,7 +24,7 @@ sap.ui.define([
 			"then the control has been renamed to the old value (Option 1)");
 	};
 
-	rtaControlEnablingCheck("Checking the rename action for a RadioButton", {
+	elementActionTest("Checking the rename action for a RadioButton", {
 		xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">"' +
 			'<m:RadioButton text="Option 1" id="radioButton" />' +
 		'</mvc:View>'
@@ -49,7 +53,7 @@ sap.ui.define([
 		assert.strictEqual(oViewAfterAction.byId("radioButton").getVisible(), true, "then the RadioButton element is visible");
 	};
 
-	rtaControlEnablingCheck("Checking the remove action for RadioButton", {
+	elementActionTest("Checking the remove action for RadioButton", {
 		xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">"' +
 			'<m:RadioButton text="Option 1" id="radioButton" />' +
 		'</mvc:View>'
@@ -68,7 +72,7 @@ sap.ui.define([
 		afterRedo: fnConfirmRadioButtonIsInvisible
 	});
 
-	rtaControlEnablingCheck("Checking the reveal action for a RadioButton", {
+	elementActionTest("Checking the reveal action for a RadioButton", {
 		xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">"' +
 			'<m:RadioButton text="Option 1" id="radioButton" visible="false"/>' +
 		'</mvc:View>'

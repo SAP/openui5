@@ -63,9 +63,15 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		oRm.writeAccessibilityState(oDynamicPage, oDynamicPage._formatLandmarkInfo(oLandmarkInfo, "Header"));
 		oRm.write(">");
 		oRm.renderControl(oDynamicPageTitle);
+
+		// Sticky area
+		oRm.write("<div");
+		oRm.writeAttribute("id", oDynamicPage.getId() + "-stickyPlaceholder");
+		oRm.write(">");
 		if (bPreserveHeaderStateOnScroll) {
 			oRm.renderControl(oDynamicPageHeader);
 		}
+		oRm.write("</div>");
 		oRm.write("</" + sHeaderTag + ">");
 
 

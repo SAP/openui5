@@ -24,7 +24,8 @@ sap.ui.define(['sap/ui/core/InvisibleText'],
 			aCustomItems = oLeg.getItems(),
 			i,
 			iIdLength,
-			sColumnWidth;
+			sColumnWidth,
+			bRenderStandardItems;
 
 		oRm.write("<div");
 		oRm.writeControlData(oLeg);
@@ -43,7 +44,10 @@ sap.ui.define(['sap/ui/core/InvisibleText'],
 			oRm.writeStyles();
 			oRm.write(">");
 
-			if (aStandardItems) {
+			//todo this is temporary & will be removed when SPC has a specialDates aggregation also
+			//for now in the SPC standartItems will not be rendered
+			bRenderStandardItems = oLeg._bShouldRenderStandardItems;
+			if (aStandardItems && bRenderStandardItems) {
 				// rendering standard days and colors
 				iIdLength = oLeg.getId().length + 1; //+1, because of the dash in "CalLeg1-Today"?
 				for (i = 0; i < aStandardItems.length; ++i) {

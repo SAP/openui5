@@ -83,12 +83,14 @@ sap.ui.define(['sap/ui/core/Control', './library', "./HexagonButtonRenderer"],
 	HexagonButton.prototype.attachPress = function() {
 		this._attachPress.apply(this, arguments);
 		this.invalidate();
+		return this;
 	};
 
 	HexagonButton.prototype._detachPress = HexagonButton.prototype.detachPress;
 	HexagonButton.prototype.detachPress = function() {
 		this._detachPress.apply(this, arguments);
 		this.invalidate();
+		return this;
 	};
 
 	return HexagonButton;

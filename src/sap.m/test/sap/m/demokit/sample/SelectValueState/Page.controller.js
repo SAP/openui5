@@ -75,9 +75,13 @@ var PageController = Controller.extend("sap.m.sample.SelectValueState.Page", {
         ];
         var oData = {
             "ErrorProductCollection": aProducts,
+			"SelectedProductErrorCollection": "HT-998",
             "WarningProductCollection": aProducts,
+			"SelectedProductWarningCollection": "HT-999",
             "SuccessProductCollection": aProducts,
-            "InformationProductCollection": aProducts
+			"SelectedProductSuccessCollection": "HT-1000",
+            "InformationProductCollection": aProducts,
+			"SelectedProductInformationCollection": "HT-1007"
         };
 
         // set explored app's demo model on this sample

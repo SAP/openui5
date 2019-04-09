@@ -264,6 +264,11 @@ sap.ui.define([
 				 * List of actions that will be displayed in the header.
 				 * You can use ObjectPageHeaderActionButton controls to achieve a different visual representation of the action buttons in the action bar and the action sheet (overflow menu).
 				 * You can use ObjectPageHeaderLayoutData to display a visual separator.
+				 *
+				 * <b>Note:</b> If an action is placed inside the overflow area, an additional
+				 * <code>bInOverflow</code> parameter is passed along with the <code>press</code>
+				 * event to indicate that a popup shouldn't be opened from that action and a dialog
+				 * should be used instead.
 				 */
 				actions: {type: "sap.ui.core.Control", multiple: true, singularName: "action"},
 
@@ -768,7 +773,8 @@ sap.ui.define([
 		if (oOriginalControl.firePress) {
 			//provide parameters in case the handlers wants to know where was the event fired from
 			oOriginalControl.firePress({
-				overflowButtonId: this._oOverflowButton.getId()
+				overflowButtonId: this._oOverflowButton.getId(),
+				bInOverflow: true
 			});
 		}
 		this._oOverflowActionSheet.close();

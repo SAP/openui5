@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.uxap.sample.KPIObjectPageHeader.KPIObjectPageHeader",
+			"viewName": "sap.uxap.sample.KPIObjectPageHeader.view.KPIObjectPageHeader",
 			"type": "XML",
 			"async": true
 		},
@@ -20,8 +20,8 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"KPIObjectPageHeader.view.xml",
-					"KPIObjectPageHeader.controller.js",
+					"view/KPIObjectPageHeader.view.xml",
+					"controller/KPIObjectPageHeader.controller.js",
 					"../SharedBlocks/goals/GoalsBlock.js",
 					"../SharedBlocks/goals/GoalsBlock.view.xml",
 					"../SharedBlocks/personal/BlockAdresses.js",
@@ -36,7 +36,7 @@
 					"../SharedBlocks/personal/PersonalBlockPart1.view.xml",
 					"../SharedBlocks/personal/PersonalBlockPart2.js",
 					"../SharedBlocks/personal/PersonalBlockPart2.view.xml",
-					"employee.json",
+					"../SharedJSONData/employee.json",
 					"manifest.json"
 				]
 			}

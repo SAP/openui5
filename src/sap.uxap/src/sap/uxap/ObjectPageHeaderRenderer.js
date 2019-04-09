@@ -127,7 +127,8 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 		var sOHTitle = oControl.getObjectTitle(),
 			bMarkers = (oControl.getShowMarkers() && (oControl.getMarkFavorite() || oControl.getMarkFlagged())),
 			oBreadCrumbsAggregation = oControl._getBreadcrumbsAggregation(),
-			sTooltip = oControl.getTooltip_Text();
+			sTooltip = oControl.getTooltip_Text(),
+			sIdSuffix = bTitleInContent ? "-content" : "";
 
 		if (!bTitleInContent && oBreadCrumbsAggregation) {
 			oRm.renderControl(oBreadCrumbsAggregation);
@@ -146,12 +147,12 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 		}
 
 		oRm.writeClasses();
-		oRm.writeAttributeEscaped("id", oControl.getId() + "-title");
+		oRm.writeAttributeEscaped("id", oControl.getId() + "-title" + sIdSuffix);
 		oRm.write(">");
 		oRm.write("<span");
 		oRm.addClass("sapUxAPObjectPageHeaderTitleTextWrappable");
 		oRm.writeClasses();
-		oRm.writeAttributeEscaped("id", oControl.getId() + "-innerTitle");
+		oRm.writeAttributeEscaped("id", oControl.getId() + "-innerTitle" + sIdSuffix);
 
 		if (sTooltip) {
 			oRm.writeAttributeEscaped("title", sTooltip);
@@ -207,7 +208,7 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 			oRm.addClass('sapUxAPObjectPageHeaderIdentifierSubTitleInContent');
 		}
 		oRm.writeClasses();
-		oRm.writeAttributeEscaped("id", oControl.getId() + "-subtitle");
+		oRm.writeAttributeEscaped("id", oControl.getId() + "-subtitle" + sIdSuffix);
 		oRm.write(">");
 		oRm.writeEscaped(oControl.getObjectSubtitle());
 		oRm.write("</span>");

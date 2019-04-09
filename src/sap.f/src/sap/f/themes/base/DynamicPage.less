@@ -186,6 +186,18 @@ html[data-sap-ui-browser^="ie"] {
 	}
 }
 
+// Overstyle for Comparison Pattern
+.sapFDynamicPage.sapFDynamicPageTitleClickEnabled.sapUiComparisonContainer {
+	.sapFDynamicPageTitleMainInner:hover {
+		cursor: pointer;
+	}
+
+	.sapFDynamicPageTitle:hover,
+	&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitle {
+		cursor: default;
+	}
+}
+
 .sapFDynamicPageTitleMainHeading,
 .sapFDynamicPageTitleMainContent,
 .sapFDynamicPageTitleMainActions {
@@ -313,4 +325,21 @@ html[data-sap-ui-animation='on'] .sapFDynamicPage {
 			opacity: 0;
 		}
 	}
+}
+
+
+/* Vertically align items in the table-like view with the items in the sap.m.Carousel control,
+part of DynamicPageTitle snapped content and DynamicPageHeader content.
+To be used in Comparison pattern scenario. */
+.sapUiComparisonContent .sapUiComparisonItem  {
+	padding-left: 2.25rem;
+	padding-right: 1rem;
+}
+
+.sapUiComparisonContent :first-child.sapUiComparisonItem {
+	padding-left: 1rem;
+}
+
+.sapUiComparisonContainer .sapFDynamicPageTitleSnapped + .sapFDynamicPageContentWrapper .sapUiComparisonContent  {
+	margin-right: -1rem;
 }

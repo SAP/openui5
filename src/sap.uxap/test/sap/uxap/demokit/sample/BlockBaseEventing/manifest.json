@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.uxap.sample.BlockBaseEventing.Eventing",
+			"viewName": "sap.uxap.sample.BlockBaseEventing.view.BlockBaseEventing",
 			"type": "XML",
 			"async": true
 		},
@@ -20,11 +20,11 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"Eventing.view.xml",
-					"Eventing.controller.js",
-					"EventingBlock.js",
-					"EventingBlock.view.xml",
-					"EventingBlockController.controller.js",
+                    "view/EventingBlock.view.xml",
+                    "view/BlockBaseEventing.view.xml",
+					"controller/BlockBaseEventing.controller.js",
+					"controller/EventingBlock.controller.js",
+					"controller/blocks/EventingBlock.js",
 					"manifest.json"
 				]
 			}

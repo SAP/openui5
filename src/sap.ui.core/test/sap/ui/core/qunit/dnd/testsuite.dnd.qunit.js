@@ -13,6 +13,9 @@ sap.ui.define(function() {
 		},
 		tests: {
 			DragAndDrop: {
+				sinon: {
+					version: 4
+				},
 				title: "QUnit tests 'DragAndDrop' of suite 'dnd'"
 			},
 			DragDropInfo: {

@@ -1,0 +1,13 @@
+{
+  "1.65.0": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "0f6aaeb528c9a758fe23ef12c17aae725eb4f120",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Table Card implemented",
+        "references": []
+      }
+    ]
+  }
+}

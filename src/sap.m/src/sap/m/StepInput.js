@@ -570,6 +570,7 @@ function(
 		StepInput.prototype.setTooltip = function (sTooltip) {
 			//We need to call the special logic implemented in InputBase.prototype.setTooltip
 			this._getInput().setTooltip(sTooltip);
+			return this;
 		};
 
 		/**

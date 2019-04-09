@@ -1,0 +1,13 @@
+{
+	"version": "2.0",
+	"name": "testlibs.scenario13.lib2.library-preload",
+	"dependencies": [
+		"testlibs.scenario13.lib4.library-preload",
+		"testlibs.scenario13.lib1.library-preload",
+		"testlibs.scenario13.lib7.library-preload"
+	],
+	"modules": {
+		"testlibs/scenario13/lib2/library.js": "sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/library'], function(Core, coreLib) {\n\t\"use strict\";\n\tsap.ui.getCore().initLibrary({\n\t\tname: 'testlibs.scenario13.lib2',\n\t\tdependencies: [\n\t\t\t'testlibs.scenario13.lib4',\n\t\t\t'testlibs.scenario13.lib1',\n\t\t\t'testlibs.scenario13.lib7'\n\t\t],\n\t\tnoLibraryCSS: true\n\t});\n\treturn testlibs.scenario13.lib2; // eslint-disable-line no-undef\n});",
+		"testlibs/scenario13/lib2/manifest.json": "{\n\t\"sap.ui5\": {\n\t\t\"dependencies\": {\n\t\t\t\"libs\": {\n\t\t\t\t\"testlibs.scenario13.lib4\": {\n\t\t\t\t\t\"minVersion\": \"1.0.0\"\n\t\t\t\t},\n\t\t\t\t\"testlibs.scenario13.lib1\": {\n\t\t\t\t\t\"minVersion\": \"1.0.0\"\n\t\t\t\t},\n\t\t\t\t\"testlibs.scenario13.lib6\": {\n\t\t\t\t\t\"minVersion\": \"1.0.0\",\n\t\t\t\t\t\"lazy\": true\n\t\t\t\t},\n\t\t\t\t\"testlibs.scenario13.lib7\": {\n\t\t\t\t\t\"minVersion\": \"1.0.0\"\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n}"
+	}
+}

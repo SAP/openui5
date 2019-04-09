@@ -40,6 +40,10 @@
 	}
 }
 
+.sapMSinglePCGrid.sapUiDnDDragging {
+	opacity: 1;
+}
+
 
 /*****************
 	GRID CONTENT
@@ -48,6 +52,10 @@
 .sapMSinglePCGridContent {
 	display: flex;
 	position: relative;
+}
+
+.sapMSinglePCGrid {
+	cursor: default;
 }
 
 .sapMSinglePCRowHeaders {
@@ -160,6 +168,7 @@
 	right: 0.125rem;
 	left: 0.125rem;
 	bottom: 0;
+	pointer-events: none;
 }
 
 .sapMSinglePCAppointmentWrap.sapUiCalendarRowApps {
@@ -167,6 +176,7 @@
 	box-sizing: border-box;
 	padding: 0.0625rem;
 	position: absolute;
+	pointer-events: all;
 
 	&:focus {
 		outline: none;
@@ -184,10 +194,9 @@
 	}
 
 	.sapUiCalendarApp {
-		border-radius: 0.125rem;
+		border-left: 0;
 		position: relative;
 		min-width: auto;
-		width: 100%;
 		height: calc(~"100% - 0.0625rem");
 		-webkit-user-select: none;
 		-moz-user-select: none;
@@ -197,7 +206,6 @@
 		& > .sapUiCalendarAppCont,
 		&:active > .sapUiCalendarAppCont,
 		&.sapUiCalendarAppSel > .sapUiCalendarAppCont {
-			border-left: none;
 			pointer-events: none;
 		}
 
@@ -210,6 +218,12 @@
 .sapUiSizeCompact {
 	.sapMSinglePCBlockersColumns .sapMSinglePCAppointmentWrap.sapUiCalendarRowApps .sapUiCalendarApp {
 		height: 1.438rem;
+	}
+	.sapMSinglePCAppointmentWrap.sapUiCalendarRowApps .sapUiCalendarApp .sapUiCalendarAppTitle {
+		padding-top: 0.1rem;
+	}
+	.sapMSinglePCGrid .sapUiCalendarAppIcon {
+		top: 0.1rem;
 	}
 }
 
@@ -253,15 +267,22 @@
 	overflow: visible;
 }
 
-.sapUiCalendarRowVisFilled .sapMSinglePCAppointmentWrap {
-	// TODO: this styles will be removed when Appointments refactoring occured
-	.sapUiCalendarApp,
-	.sapUiCalendarApp:hover:not(:active) {
-		background-color: transparent;
-	}
+.sapMSinglePCGrid .sapUiAppCreate {
+	border-top: 2px solid @sapUiContentForegroundBorderColor;
+	border-bottom: 2px solid @sapUiContentForegroundBorderColor;
+	border-right: 2px solid @sapUiContentForegroundBorderColor;
+}
+
+.sapMSinglePCColumnHeader.sapUiCalRow .sapUiCalItems,
+.sapMSinglePCColumnHeader.sapUiCalRow .sapUiCalItems > .sapUiCalItem {
+	height: @_sap_m_SinglePlanningCalendarGrid_CompactRowHeight;
 }
 
 .sapUiSizeCompact {
+	.sapMSinglePCColumnHeader.sapUiCalRow .sapUiCalItems,
+	.sapMSinglePCColumnHeader.sapUiCalRow .sapUiCalItems > .sapUiCalItem {
+		height:2rem;
+	}
 	// TODO: Consider refactoring of the CSS of PlanningCalendar DatesRow CSS and fix the styles in one place
 	// for sapUiCalItems
 	.sapMSinglePCColumnHeader .sapUiCalItems {
@@ -323,6 +344,26 @@
 .sapMSinglePCBlockersColumns .sapMSinglePCPlaceholder {
 	flex: 1;
 	height: auto;
+}
+
+.sapMSinglePCAppointmentWrap::before {
+	content: '';
+	height: calc(~"100% - 0.1875rem");
+	position: absolute;
+	border-radius: 0.125rem 0 0 0.125rem;
+	border-left: 0.3125rem solid;
+	border-left-color: inherit;
+	box-sizing: border-box;
+	z-index: 1;
+}
+
+.sapMSinglePCAppointments .sapMSinglePCAppointmentWrap::before {
+	height: calc(~"100% - 0.1875rem");
+	min-height: 0.125rem;
+}
+
+.sapMSinglePCBlockers .sapMSinglePCAppointmentWrap::before {
+	height: calc(~"100% - 0.3875rem");
 }
 
 .sapMSinglePCAppResizeHandleBottom,

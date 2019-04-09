@@ -3,7 +3,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/m/TreeItemBase"
+	"sap/m/TreeItemBase",
+	"./DemokitTreeItemRenderer"
 ], function (TreeItemBase) {
 	"use strict";
 

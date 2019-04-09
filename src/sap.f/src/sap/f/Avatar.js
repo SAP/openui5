@@ -149,6 +149,7 @@ sap.ui.define([
 				 */
 				press: {}
 			},
+			dnd: { draggable: true, droppable: false },
 			designtime: "sap/f/designtime/Avatar.designtime"
 		}
 	});
@@ -421,17 +422,6 @@ sap.ui.define([
 		}
 
 		return this._icon;
-	};
-
-	// Escape single quotes. BCP: 1780430119
-	Avatar.prototype._getEscapedSrc = function () {
-		var sSrc = this.getSrc();
-
-		if (!sSrc) {
-			return '';
-		}
-
-		return sSrc.replace(/'/g, "\\'");
 	};
 
 	Avatar.prototype._getDefaultTooltip = function() {

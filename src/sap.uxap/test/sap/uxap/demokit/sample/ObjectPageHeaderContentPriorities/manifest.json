@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.uxap.sample.ObjectPageHeaderContentPriorities.ObjectPageHeaderContentPriorities",
+			"viewName": "sap.uxap.sample.ObjectPageHeaderContentPriorities.view.ObjectPageHeaderContentPriorities",
 			"type": "XML",
 			"async": true
 		},
@@ -20,7 +20,7 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"ObjectPageHeaderContentPriorities.view.xml",
+					"view/ObjectPageHeaderContentPriorities.view.xml",
 					"../SharedBlocks/goals/GoalsBlock.js",
 					"../SharedBlocks/goals/GoalsBlock.view.xml",
 					"manifest.json"

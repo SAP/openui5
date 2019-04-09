@@ -753,6 +753,11 @@ sap.ui.define([
 
 				case TableAccExtension.ELEMENTTYPES.CREATIONROW_TBL: // Table of the creation row
 					mAttributes["role"] = "presentation";
+					break;
+
+				case TableAccExtension.ELEMENTTYPES.CREATIONROW: // Root of the creation row
+					mAttributes["role"] = "form";
+					mAttributes["aria-labelledby"] = mParams.creationRow.getId() + "-label";
 					addAriaForOverlayOrNoData(oTable, mAttributes, true, false);
 					break;
 
@@ -999,6 +1004,7 @@ sap.ui.define([
 		COLUMNHEADER_TBL: "COLUMNHEADER_TABLE", // The table with the column headers
 		COLUMNHEADER_ROW: "COLUMNHEADER_ROW", 	// The table row with the column headers
 		CREATIONROW_TBL: "CREATIONROW_TABLE",	// The table with the creation row
+		CREATIONROW: "CREATIONROW",				// The root of the creation row
 		ROWHEADER_COL: "ROWHEADER_COL", 		// The area which contains the row headers
 		TH: "TH", 								// The "technical" column headers
 		ROWHEADER_TD: "ROWHEADER_TD", 			// The "technical" row headers

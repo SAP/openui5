@@ -5,5 +5,6 @@ module.exports = [
 	"CardsVisualTests.spec.js",
 	"DynamicPage.spec.js",
 	"GridListVisualTests.spec.js",
-	"FlexibleColumnLayout.spec.js"
+	"FlexibleColumnLayout.spec.js",
+	"ShellBarVT.spec.js"
 ];

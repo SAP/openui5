@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.uxap.sample.ObjectPageLazyLoadingWithoutBlocks.ObjectPageLazyLoadingWithoutBlocks",
+			"viewName": "sap.uxap.sample.ObjectPageLazyLoadingWithoutBlocks.view.ObjectPageLazyLoadingWithoutBlocks",
 			"type": "XML",
 			"async": true
 		},
@@ -20,8 +20,8 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"ObjectPageLazyLoadingWithoutBlocks.view.xml",
-					"ObjectPageLazyLoadingWithoutBlocks.controller.js",
+					"view/ObjectPageLazyLoadingWithoutBlocks.view.xml",
+					"controller/ObjectPageLazyLoadingWithoutBlocks.controller.js",
 					"manifest.json"
 				]
 			}

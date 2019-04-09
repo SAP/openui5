@@ -339,6 +339,20 @@ function (
 			this.oVBox2.destroy();
 			assert.ok(isStretched(this.oVBoxOverlay1), "the style class was not removed");
 		});
+
+		QUnit.test("When element gets modified while a plugin is busy", function(assert) {
+			var done = assert.async();
+			this.oStretchPlugin.isBusy = function() {
+				return true;
+			};
+			this.oStretchPlugin.removeStretchCandidate(this.oVBoxOverlay1);
+			assert.notOk(isStretched(this.oVBoxOverlay1), "the style class removed before element gets modified");
+			this.oVBoxOverlay1.fireEvent("elementModified", {type: "afterRendering"});
+			setTimeout(function() {
+				assert.notOk(isStretched(this.oVBoxOverlay1), "the style class is not placed again");
+				done();
+			}.bind(this), 50);
+		});
 	});
 
 	QUnit.module("Given a designTime and stretch plugin are instantiated with nested editable containers (one invisible) of different sizes", {

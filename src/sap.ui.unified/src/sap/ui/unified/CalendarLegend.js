@@ -80,6 +80,9 @@ sap.ui.define([
 			if (!mSettings || (mSettings && !mSettings.standardItems)) {
 				this._addStandardItems(this.getStandardItems()); // Default items should be used if nothing is given
 			}
+
+			//don't render standardItems unless it's a PC legend
+			this._bShouldRenderStandardItems = true;
 		}
 	});
 

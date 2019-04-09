@@ -509,7 +509,8 @@ sap.ui.define([
 				// When all required libraries
 				return Promise.all(aPromises).then(function (aResult) {
 					// Combine in one array
-					var aAllLibraryElements = [];
+					var aAllLibraryElements = [],
+						baseClassCache;
 					aResult.forEach(function (aSingleLibraryElements) {
 						aAllLibraryElements = aAllLibraryElements.concat(aSingleLibraryElements);
 					});
@@ -547,7 +548,7 @@ sap.ui.define([
 						};
 
 						if (oBaseClass) {
-
+							baseClassCache = oBaseClass["ui5-metadata"] || [];
 							aBaseClassMethods = (oBaseClass.methods || []).filter(fnVisibilityFilter)
 								.filter(fnOverrideMethodFilter).map(fnMethodsMapper);
 
@@ -566,19 +567,19 @@ sap.ui.define([
 								});
 							}
 
-							aBaseClassProperties = (oBaseClass["ui5-metadata"].properties || []).filter(fnVisibilityFilter)
+							aBaseClassProperties = (baseClassCache.properties || []).filter(fnVisibilityFilter)
 								.filter(fnOverridePropertyFilter).map(fnPropAggrAssocMapper);
 							if (aBaseClassProperties.length) {
 								aBorrowChain.properties = aBorrowChain.properties.concat(aBaseClassProperties);
 							}
 
-							aBaseClassAggregations = (oBaseClass["ui5-metadata"].aggregations || []).filter(fnVisibilityFilter)
+							aBaseClassAggregations = (baseClassCache.aggregations || []).filter(fnVisibilityFilter)
 								.filter(fnOverrideAggregationFilter).map(fnPropAggrAssocMapper);
 							if (aBaseClassAggregations.length) {
 								aBorrowChain.aggregations = aBorrowChain.aggregations.concat(aBaseClassAggregations);
 							}
 
-							aBaseClassAssociations = (oBaseClass["ui5-metadata"].associations || []).filter(fnVisibilityFilter)
+							aBaseClassAssociations = (baseClassCache.associations || []).filter(fnVisibilityFilter)
 								.filter(fnOverrideAssociationFilter).map(fnPropAggrAssocMapper);
 							if (aBaseClassAssociations.length) {
 								aBorrowChain.associations = aBorrowChain.associations.concat(aBaseClassAssociations);

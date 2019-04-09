@@ -1,28 +1,22 @@
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	'sap/ui/dt/test/report/QUnit',
-	'sap/ui/dt/test/ElementEnablementTest',
 	'dt/Toolbar',
-	'sap/ui/rta/enablement/controlTest'
-], function(createAndAppendDiv, QUnitReport, ElementEnablementTest, Toolbar, rtaControlEnablingCheck) {
-	createAndAppendDiv("content");
+	'sap/ui/dt/enablement/elementDesigntimeTest',
+	'sap/ui/rta/enablement/elementActionTest'
+], function (
+	Toolbar,
+	elementDesigntimeTest,
+	elementActionTest
+) {
+	"use strict";
 
-
-	var oElementEnablementTest = new ElementEnablementTest({
-		type: "sap.m.Toolbar",
-		create: Toolbar.create,
-		timeout: Toolbar.timeout
-	});
-
-	return oElementEnablementTest.run()
-
-	.then(function (oData) {
-		var oReport = new QUnitReport({
-			data: oData
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
+			type: "sap.m.Toolbar",
+			create: Toolbar.create,
+			timeout: Toolbar.timeout
 		});
 	})
-
 	.then(function() {
 		// Move action
 		var fnConfirmElement1IsOn3rdPosition = function (oUiComponent, oViewAfterAction, assert) {
@@ -36,7 +30,7 @@ sap.ui.define([
 					"then the control has been moved to the previous position");
 		};
 
-		rtaControlEnablingCheck("Checking the move action for a Toolbar control", {
+		elementActionTest("Checking the move action for a Toolbar control", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 			'<Toolbar id="toolbar">' +
 			'<Button text="Button 1" id="button1" />' +
@@ -75,5 +69,4 @@ sap.ui.define([
 			afterRedo: fnConfirmElement1IsOn3rdPosition
 		});
 	});
-
 });

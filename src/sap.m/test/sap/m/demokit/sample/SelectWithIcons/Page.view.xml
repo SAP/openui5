@@ -10,7 +10,7 @@
 		<content>
 				<Select
 					forceSelection="false"
-					selectedKey="{/ProductCollection/0/ProductId}"
+					selectedKey="{/SelectedProduct}"
 					items="{
 						path: '/ProductCollection',
 						sorter: { path: 'Name' }

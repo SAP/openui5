@@ -40,6 +40,7 @@ sap.ui.define([
 	'sap/base/util/LoaderExtensions',
 	'sap/base/util/isEmptyObject',
 	'sap/base/util/each',
+	'sap/ui/VersionInfo',
 	'sap/ui/events/jquery/EventSimulation'
 ],
 	function(
@@ -78,7 +79,8 @@ sap.ui.define([
 		initTraces,
 		LoaderExtensions,
 		isEmptyObject,
-		each
+		each,
+		VersionInfo
 		/* ,EventSimulation */
 	) {
 
@@ -1648,6 +1650,7 @@ sap.ui.define([
 				oManifest = getManifest(lib);
 
 			if ( dependencies && dependencies.length ) {
+				dependencies = VersionInfo._getTransitiveDependencyForLibraries(dependencies);
 				aPromises = dependencies.map(preloadLibraryAsync.bind(that));
 			}
 
@@ -2034,6 +2037,8 @@ sap.ui.define([
 		}
 
 		if ( bAsync ) {
+
+			aLibraries = VersionInfo._getTransitiveDependencyForLibraries(aLibraries);
 
 			var preloaded = bPreload ? Promise.all(aLibraries.map(preloadLibraryAsync.bind(this))) : Promise.resolve(true);
 			return bRequire ? preloaded.then(requireLibsAsync) : preloaded;

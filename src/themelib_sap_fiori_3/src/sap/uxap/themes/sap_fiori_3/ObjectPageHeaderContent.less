@@ -15,18 +15,13 @@
 	color: @sapUiGroupTitleTextColor;
 }
 
-.sapUxAPObjectPageHeaderContent .sapUxAPObjectPageHeaderObjectImage-Circle .sapUxAPObjectPageHeaderObjectImage {
-	border: 0.188rem solid @sapUiObjectHeaderBorderColor;
-}
 .sapUxAPObjectPageHeaderIdentifier .sapUxAPObjectPageHeaderObjectImageForce .sapUxAPObjectPageHeaderObjectImage,
 .sapUxAPObjectPageHeaderStickied .sapUxAPObjectPageHeaderIdentifier .sapUxAPObjectPageHeaderObjectImage {
-	border: 1px solid @sapUiObjectHeaderBorderColor;
 	padding: 0;
 }
 
-html.sapUiMedia-Std-Desktop, html.sapUiMedia-Std-Tablet {
+html .sapUxAPObjectPageLayout-Std-Desktop, html .sapUxAPObjectPageLayout-Std-Tablet {
 	.sapUxAPObjectPageHeaderContent .sapUxAPObjectPageHeaderObjectImage-Circle .sapUxAPObjectPageHeaderObjectImage {
-		border-width: 0.188rem;
 		margin-right: 2rem;
 		margin-bottom: 1rem;
 		width: 5rem;
@@ -38,23 +33,37 @@ html.sapUiMedia-Std-Desktop, html.sapUiMedia-Std-Tablet {
 	}
 }
 
-.sapUxAPObjectPageHeaderContent .sapUxAPObjectPageHeaderContentImageContainer .sapUiIcon,
-.sapUxAPObjectPageHeaderContent .sapUxAPObjectPageHeaderContentImageContainer .sapUxAPObjectPageHeaderPlaceholder.sapUxAPObjectPageHeaderObjectImage .sapUiIcon {
-	font-size: 3rem;
+.sapUxAPObjectPageHeaderContentImageContainer.sapUxAPObjectPageHeaderObjectImage-Square .sapUxAPObjectPageHeaderObjectImage,
+.sapUxAPObjectPageHeaderObjectImageContainer.sapUxAPObjectPageHeaderObjectImage-Square .sapUxAPObjectPageHeaderObjectImage {
+	border-radius: 0.25rem;
 }
 
-.sapUiMedia-Std-Tablet .sapUxAPObjectPageHeaderContent .sapUxAPObjectPageHeaderContentImageContainer .sapUiIcon,
-.sapUiMedia-Std-Tablet .sapUxAPObjectPageHeaderContent .sapUxAPObjectPageHeaderContentImageContainer .sapUxAPObjectPageHeaderPlaceholder.sapUxAPObjectPageHeaderObjectImage .sapUiIcon {
-	font-size: 3rem;
+.sapUxAPObjectPageLayout-Std-Desktop {
+	.sapUxAPObjectPageHeaderContentCellRight {
+		padding-right: 3rem;
+	}
+	.sapUxAPObjectPageHeaderContent:only-child {
+		padding: 1rem 3rem;
+	}
 }
 
-.sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderContent .sapUxAPObjectPageHeaderContentImageContainer .sapUiIcon,
-.sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderContent .sapUxAPObjectPageHeaderContentImageContainer .sapUxAPObjectPageHeaderPlaceholder.sapUxAPObjectPageHeaderObjectImage .sapUiIcon {
-	font-size: 1.5rem;
+.sapUxAPObjectPageLayout-Std-Tablet {
+	.sapUxAPObjectPageHeaderContentCellRight {
+		padding-right: 2rem;
+	}
+	.sapUxAPObjectPageHeaderContent:only-child {
+		padding: 1rem 2rem;
+	}
+}
+
+.sapUxAPObjectPageLayout-Std-Phone  {
+	.sapUxAPObjectPageHeaderContent:only-child {
+		padding: 1rem;
+	}
 }
 
 .sapUxAPObjectPageHeaderContent .sapUxAPObjectPageHeaderPlaceholder > .sapUiIcon {
-	color: @sapUiContentIconColor;
+	color: @sapUiContentContrastTextColor;
 }
 
 .sapUxAPObjectPageHeaderIdentifierSubTitleInContent {

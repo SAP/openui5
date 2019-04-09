@@ -32,6 +32,11 @@ sap.ui.define(function () {
 		if (oControl._getHeight()) {
 		    oRm.writeAttribute("style", "height:" + oControl._getHeight() + ";");
 		}
+
+		if (oControl._bBlockHasMore) {
+			oRm.addClass("sapUxAPObjectPageSubSectionWithSeeMore");
+		}
+
 		oRm.addClass("sapUxAPObjectPageSubSection");
 		oRm.addClass("ui-helper-clearfix");
 		oRm.writeClasses();
@@ -105,13 +110,20 @@ sap.ui.define(function () {
 
 		oRm.renderControl(oControl._getGrid());
 
+		oRm.write("</div>");
+
 		oRm.write("<div");
 		oRm.addClass("sapUxAPSubSectionSeeMoreContainer");
 		oRm.writeClasses();
+		if (oControl._isHidden){
+			oRm.addStyle("display", "none");
+		}
+		oRm.writeStyles();
 		oRm.write(">");
+
 		oRm.renderControl(oControl._getSeeMoreButton());
 		oRm.write("</div>");
-		oRm.write("</div>");
+
 		oRm.write("</div>");
 	};
 

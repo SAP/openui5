@@ -499,6 +499,7 @@ sap.ui.define([
 			if (oldSelectedFacet != newSelectedFacet) {
 				this._oNavBar.setSelectedItem(newSelectedFacet);
 			}
+			return this;
 		};
 		//Implementation of API method
 		ThingViewer.prototype.setTitle = function(sTitle) {

@@ -840,7 +840,7 @@ function(
 		 */
 		TabStrip.prototype.setSelectedItem = function(oSelectedItem) {
 			if (!oSelectedItem) {
-				return;
+				return this;
 			}
 
 			if (oSelectedItem.$().length > 0) {

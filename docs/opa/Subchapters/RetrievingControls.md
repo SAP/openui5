@@ -150,7 +150,12 @@ return new Opa5().waitFor({
 });
 ```
 
-`sap.ui.test.matchers.LabelFor`: This matcher checks if a given control is associated with the `sap.m.Label` control with property `labelFor`. It can be used when searching by the text property or by the `i18n` key of the `sap.m.Label` control.
+`sap.ui.test.matchers.LabelFor`: This matcher checks if a given control is associated with an
+`sap.m.Label` control. This means that there should be a label on the page with a `labelFor`
+association to the control. The label can be filtered by text value or by the `i18n` key of a given
+property value. Note that some controls, such as `sap.ui.comp.navpopover.SmartLink`, `sap.m.Link`,
+`sap.m.Label`, and `sap.m.Text` cannot be matched by `sap.ui.test.matchers.LabelFor` as they
+cannot have an associated label.
 
 Using `i18n` key:
 

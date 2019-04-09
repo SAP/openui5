@@ -1,11 +1,11 @@
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/base/Log',
+	'sap/base/strings/hyphenate',
 	'sap/ui/core/UIComponent',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/ComponentSupport',
-	'sap/ui/core/library',
-	'jquery.sap.strings'
-], function(jQuery, UIComponent, ComponentContainer, ComponentSupport, library /*, jQuerySapStrings */) {
+	'sap/ui/core/library'
+], function(Log, hyphenate, UIComponent, ComponentContainer, ComponentSupport, library) {
 
 	"use strict";
 	/*global QUnit, sinon, Promise*/
@@ -74,7 +74,7 @@ sap.ui.define([
 			"data-sap-ui-component": ""
 		};
 		Object.keys(mSettings[sId]).forEach(function(sKey) {
-			mContainer["data-" + jQuery.sap.hyphen(sKey)] = sKey === "settings" ? JSON.stringify(mSettings[sId][sKey]) : mSettings[sId][sKey];
+			mContainer["data-" + hyphenate(sKey)] = sKey === "settings" ? JSON.stringify(mSettings[sId][sKey]) : mSettings[sId][sKey];
 		});
 		// create the div element for the component container
 		oContentElement.appendChild(createComponentDIV(sId, mContainer));
@@ -111,7 +111,7 @@ sap.ui.define([
 
 		for (var i = 0, l = aElements.length; i < l; i++) {
 			var oElement = aElements[i];
-			var mExpectedSettings = jQuery.extend(true, {}, mSettings[oElement.id]);
+			var mExpectedSettings = mSettings[oElement.id];
 
 			// check the parser
 			window.componentCreated = function() {};
@@ -132,11 +132,13 @@ sap.ui.define([
 
 	QUnit.test("Parser with unknown property/event", function(assert) {
 
+		this.spy(Log, "warning");
 		var oElement = document.createElement("div");
 		oElement.setAttribute("data-unkown", "foo");
-		assert.throws(function() {
-			ComponentSupport._parse(oElement);
-		}, new Error("Property or event \"unkown\" does not exist in sap.ui.core.ComponentContainer"));
+		ComponentSupport._parse(oElement);
+		assert.ok(
+			Log.warning.calledWithMatch("Property or event \"unkown\" will be ignored as it does not exist in sap.ui.core.ComponentContainer"),
+			"should log a warning with the expected message");
 
 	});
 

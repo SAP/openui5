@@ -1,4 +1,5 @@
 @_sap_m_SinglePlanningCalendarGrid_HoursBackground: @sapUiListBackground;
+@_sap_m_SinglePlanningCalendarStickyShadow: 0 0.2rem 0.3rem -0.1rem rgba(0, 0, 0, 0.15);
 
 .sapMSinglePCColumnHeader.sapUiCalRow {
 	background-color: @_sap_m_SinglePlanningCalendarGrid_HoursBackground;
@@ -13,9 +14,19 @@
 		}
 	}
 
+	.sapUiCalItems {
+		box-shadow: @_sap_m_SinglePlanningCalendarStickyShadow;
+	}
+
 	.sapUiCalItemNow {
 		border-color: @sapUiCalendarColorToday;
 	}
+}
+
+.sapMSinglePCHiddenColHeaders .sapMPCHeadNavToolbar {
+	// Column headers will be hidden in Day view, so the shadow
+	// should be applied on the navigation toolbar in such case.
+	box-shadow: @_sap_m_SinglePlanningCalendarStickyShadow;
 }
 
 .sapMSinglePCRowHeaders {
@@ -57,6 +68,8 @@
 .sapMSinglePCBlockers,
 .sapMSinglePCAppointments {
 	.sapUiCalendarApp {
+		padding-left: 0.25rem;
+
 		&:active::after,
 		&.sapUiCalendarAppSel::after {
 			content: "";
@@ -69,6 +82,8 @@
 			z-index: 0;
 			color: @sapUiListActiveTextColor;
 			background-color: fade(@sapUiListActiveBackground, 90%);
+			margin-left: 0.25rem;
+			border-radius: 0 0.125rem 0.125rem 0.125rem;
 		}
 		&.sapUiCalendarAppSel:hover::after {
 			background-color: darken(@sapUiListActiveBackground, 10);
@@ -89,14 +104,19 @@
 // TODO: Consider refactoring the coloring logic of Appointments
 /* colors for types */
 .calendarRowTypeColorMixIn(@class, @iclass, @color, @bcolor){
-	.sapMSinglePCAppointments {
-		.@{class}.sapUiCalendarApp,
-		.@{class}.sapUiCalendarApp:active{
+	.sapMSinglePCAppointments, .sapMSinglePCBlockers {
+		.@{class}.sapMSinglePCAppointmentWrap {
 			border-left-color: @color;
 		}
+	}
+	.sapMSinglePCAppointments {
 
-		&.sapUiCalendarRowVisFilled > .sapUiCalendarRowApps > .@{class}.sapUiCalendarApp:not(.sapUiCalendarAppSel) > .sapUiCalendarAppCont{
+		&.sapUiCalendarRowVisFilled > .@{class}.sapUiCalendarRowApps > .sapUiCalendarApp:not(.sapUiCalendarAppSel) > .sapUiCalendarAppCont{
 			background-color: @bcolor;
+		}
+
+		.@{class}.sapMSinglePCAppointmentWrap::before{
+			background: @color;
 		}
 
 		//.@{iclass}.sapUiCalendarRowAppsIntHead{
@@ -107,13 +127,15 @@
 		//	border-left-color: @color;
 		//}
 	}
+	.sapMSinglePCBlockers {
+
+		&.sapUiCalendarRowVisFilled > .@{class}.sapUiCalendarRowApps > .sapUiCalendarApp:not(.sapUiCalendarAppSel) > .sapUiCalendarAppCont{
+			background-color: @bcolor;
+		}
+	}
 }
 
 /* Calendar overstyling */
-
-html.sap-desktop .sapMSinglePC .sapUiCalItem:not(.sapUiCalItemSel):hover {
-	background-color: darken(@sapUiContentForegroundColor,5);
-}
 
 html.sap-desktop .sapMSinglePC .sapUiCalItemWeekEnd:not(.sapUiCalItemSel):hover {
 	background-color: darken(@sapUiContentForegroundColor, 10);
@@ -137,7 +159,10 @@ html {
 	}
 }
 
-html.sap-desktop .sapMSinglePC .sapUiCalItem:not(.sapUiCalItemSel) :not(.sapUiCalWeekNum):hover {
+
+
+html .sapMSinglePC .sapMSinglePCAppointmentWrap .sapUiCalendarApp.sapUiCalendarAppSel:hover:active,
+html .sapMSinglePC .sapMSinglePCAppointmentWrap .sapUiCalendarApp.sapUiCalendarAppSel:hover:not(:active) {
 	background-color: transparent;
 }
 
@@ -203,3 +228,15 @@ html.sap-desktop .sapMSinglePC .sapUiCalItem:not(.sapUiCalItemSel) :not(.sapUiCa
 .calendarRowTypeColorMixIn(sapUiCalendarAppType18, sapUiCalendarRowAppsIntHeadType18 , @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType18, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType18, 90%));
 .calendarRowTypeColorMixIn(sapUiCalendarAppType19, sapUiCalendarRowAppsIntHeadType19 , @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType19, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType19, 90%));
 .calendarRowTypeColorMixIn(sapUiCalendarAppType20, sapUiCalendarRowAppsIntHeadType20 , @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType20, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType20, 90%));
+
+.sapUiCalendarRowVisFilled .sapMSinglePCAppointmentWrap {
+	.sapUiCalendarApp,
+	.sapUiCalendarApp:hover:not(:active) {
+		background-color: transparent;
+	}
+}
+
+.sapMSinglePC .sapUiCalendarAppCont{
+	border-left: 0.0625rem solid darken(@sapUiListBorderColor, 15);
+	border-radius: 0 0.125rem 0.125rem 0.125rem;
+}

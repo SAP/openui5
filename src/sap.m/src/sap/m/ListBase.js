@@ -2165,11 +2165,13 @@ function(
 	// invalidation of the table list is not required for setting the context menu
 	ListBase.prototype.setContextMenu = function(oContextMenu) {
 		this.setAggregation("contextMenu", oContextMenu, true);
+		return this;
 	};
 
 	// invalidation of the table list is not required for destroying the context menu
 	ListBase.prototype.destroyContextMenu = function() {
 		this.destroyAggregation("contextMenu", true);
+		return this;
 	};
 
 	// check if browser supports css sticky

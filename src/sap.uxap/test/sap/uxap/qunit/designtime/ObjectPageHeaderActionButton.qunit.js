@@ -1,24 +1,19 @@
 sap.ui.define([
-		"sap/ui/rta/enablement/controlTest",
-		"sap/ui/dt/test/report/QUnit",
-		"sap/ui/dt/test/ElementEnablementTest"],
-function (rtaControlEnablingCheck, QUnitReport, ElementEnablementTest) {
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest"
+], function (
+	elementDesigntimeTest,
+	elementActionTest
+) {
+	"use strict";
 
-	'use strict';
-
-	var oElementEnablementTest = new ElementEnablementTest({
-		type: "sap.uxap.ObjectPageHeaderActionButton"
-	});
-
-	return oElementEnablementTest.run()
-
-	.then(function(oData) {
-		new QUnitReport({
-			data: oData
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
+			type: "sap.uxap.ObjectPageHeaderActionButton"
 		});
 	})
-
-	.then(function() {
+	.then(function () {
 		// Rename action
 		var fnConfirmObjectPageHeaderActionButtonRenamedWithNewValue = function (oObjectPageHeaderActionButton, oViewAfterAction, assert) {
 			assert.strictEqual(oViewAfterAction.byId("ObjectPageHeaderActionButton").getText(),
@@ -32,7 +27,7 @@ function (rtaControlEnablingCheck, QUnitReport, ElementEnablementTest) {
 				"then the control has been renamed to the old value (Option 1)");
 		};
 
-		rtaControlEnablingCheck("Checking the rename action for a ObjectPageHeaderActionButton", {
+		elementActionTest("Checking the rename action for a ObjectPageHeaderActionButton", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.uxap">"' +
 				'<ObjectPageLayout>' +
 					'<headerTitle>' +
@@ -71,7 +66,7 @@ function (rtaControlEnablingCheck, QUnitReport, ElementEnablementTest) {
 				true, "then the ObjectPageHeaderActionButton element is visible");
 		};
 
-		rtaControlEnablingCheck("Checking the remove action for ObjectPageHeaderActionButton", {
+		elementActionTest("Checking the remove action for ObjectPageHeaderActionButton", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.uxap">"' +
 				'<ObjectPageLayout>' +
 					'<headerTitle>' +
@@ -98,7 +93,7 @@ function (rtaControlEnablingCheck, QUnitReport, ElementEnablementTest) {
 			afterRedo: fnConfirmObjectPageHeaderActionButtonIsInvisible
 		});
 
-		rtaControlEnablingCheck("Checking the reveal action for a ObjectPageHeaderActionButton", {
+		elementActionTest("Checking the reveal action for a ObjectPageHeaderActionButton", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.uxap">"' +
 				'<ObjectPageLayout>' +
 					'<headerTitle>' +
@@ -114,7 +109,7 @@ function (rtaControlEnablingCheck, QUnitReport, ElementEnablementTest) {
 			action: {
 				name: "reveal",
 				controlId: "ObjectPageHeaderActionButton",
-				parameter: function(oView){
+				parameter: function () {
 					return {};
 				}
 			},

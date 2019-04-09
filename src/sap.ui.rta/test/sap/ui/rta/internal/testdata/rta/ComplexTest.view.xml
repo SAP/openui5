@@ -162,11 +162,6 @@
 							<smartField:SmartField value="{ReversalReasonName}" />
 						</smartForm:GroupElement>
 					</smartForm:Group>
-					<smartForm:Group label="Group without stable Id">
-						<smartForm:GroupElement id="FieldInGroupWithoutStableId">
-							<smartField:SmartField value="{FiscalYear}" />
-						</smartForm:GroupElement>
-					</smartForm:Group>
 				</smartForm:SmartForm>
 			</sap.ui.layout:VerticalLayout>
 

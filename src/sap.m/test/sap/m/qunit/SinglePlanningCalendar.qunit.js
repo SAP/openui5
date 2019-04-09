@@ -7,7 +7,9 @@ sap.ui.define([
 	"sap/m/SinglePlanningCalendarGrid",
 	"sap/m/SinglePlanningCalendarDayView",
 	"sap/m/SinglePlanningCalendarWeekView",
+	"sap/m/PlanningCalendarLegend",
 	"sap/ui/unified/CalendarAppointment",
+	"sap/ui/unified/CalendarLegendItem",
 	"sap/ui/core/InvisibleText",
 	"sap/base/Log",
 	"sap/ui/core/library"
@@ -19,7 +21,9 @@ sap.ui.define([
 	SinglePlanningCalendarGrid,
 	SinglePlanningCalendarDayView,
 	SinglePlanningCalendarWeekView,
+	PlanningCalendarLegend,
 	CalendarAppointment,
+	CalendarLegendItem,
 	InvisibleText,
 	Log,
 	coreLibrary
@@ -133,6 +137,69 @@ sap.ui.define([
 		assert.ok(oSPC.getSelectedAppointments().length, 1, "one appointment selected");
 
 		//clean up
+		oSPC.destroy();
+	});
+
+	QUnit.test("setLegend", function (assert){
+		// prepare
+		var oSPC = new SinglePlanningCalendar(),
+			oLegend = new PlanningCalendarLegend();
+
+		// act
+		oSPC.setLegend(oLegend);
+
+		//assert
+		assert.equal(oSPC.getAssociation("legend"), oLegend.getId(), "the legend is successfully set");
+
+		//cleanup
+		oSPC.destroy();
+	});
+
+	QUnit.test("setEnableAppointmentsDragAndDrop propagates to the internal grid", function (assert) {
+		// arrange
+		var oSPC = new SinglePlanningCalendar(),
+			oGridSetEnableAppointmentsDragAndDropSpy = this.spy(oSPC._getGrid(), "setEnableAppointmentsDragAndDrop");
+
+		// act
+		oSPC.setEnableAppointmentsDragAndDrop(true);
+
+		// assert
+		assert.ok(oGridSetEnableAppointmentsDragAndDropSpy.calledWith(true), "setEnableAppointmentsDragAndDrop of the grid is called with right params");
+
+		// cleanup
+		oGridSetEnableAppointmentsDragAndDropSpy.restore();
+		oSPC.destroy();
+	});
+
+	QUnit.test("setEnableAppointmentsResize propagates to the internal grid", function (assert) {
+		// arrange
+		var oSPC = new SinglePlanningCalendar(),
+			oGridSetEnableAppointmentsResizeSpy = this.spy(oSPC._getGrid(), "setEnableAppointmentsResize");
+
+		// act
+		oSPC.setEnableAppointmentsResize(true);
+
+		// assert
+		assert.ok(oGridSetEnableAppointmentsResizeSpy.calledWith(true), "setEnableAppointmentsResize of the grid is called with right params");
+
+		// cleanup
+		oGridSetEnableAppointmentsResizeSpy.restore();
+		oSPC.destroy();
+	});
+
+	QUnit.test("setEnableAppointmentsCreate propagates to the internal grid", function (assert) {
+		// arrange
+		var oSPC = new SinglePlanningCalendar(),
+			oGridSetEnableAppointmentsCreateSpy = this.spy(oSPC._getGrid(), "setEnableAppointmentsCreate");
+
+		// act
+		oSPC.setEnableAppointmentsCreate(true);
+
+		// assert
+		assert.ok(oGridSetEnableAppointmentsCreateSpy.calledWith(true), "setEnableAppointmentsCreate of the grid is called with right params");
+
+		// cleanup
+		oGridSetEnableAppointmentsCreateSpy.restore();
 		oSPC.destroy();
 	});
 
@@ -265,6 +332,57 @@ sap.ui.define([
 		}), "Event was fired with the correct parameters");
 
 		//clean up
+		oSPC.destroy();
+	});
+
+	QUnit.test("appointmentDrop is fired when internal grid event appointmentDrop is fired", function (assert) {
+		// arrange
+		var oSPC = new SinglePlanningCalendar(),
+			oGrid = oSPC._getGrid(),
+			oFireAppointmentDropSpy = this.spy(oSPC, "fireAppointmentDrop");
+
+		// act
+		oGrid.fireEvent("appointmentDrop", {});
+
+		// assert
+		assert.equal(oFireAppointmentDropSpy.callCount, 1, "fireAppointmentDrop of the SinglePlanningCalendar is called once");
+
+		// cleanup
+		oFireAppointmentDropSpy.restore();
+		oSPC.destroy();
+	});
+
+	QUnit.test("appointmentResize is fired when internal grid event appointmentResize is fired", function (assert) {
+		// arrange
+		var oSPC = new SinglePlanningCalendar(),
+			oGrid = oSPC._getGrid(),
+			oFireAppointmentResizeSpy = this.spy(oSPC, "fireAppointmentResize");
+
+		// act
+		oGrid.fireEvent("appointmentResize", {});
+
+		// assert
+		assert.equal(oFireAppointmentResizeSpy.callCount, 1, "fireAppointmentResize of the SinglePlanningCalendar is called once");
+
+		// cleanup
+		oFireAppointmentResizeSpy.restore();
+		oSPC.destroy();
+	});
+
+	QUnit.test("appointmentCreate is fired when internal grid event appointmentCreate is fired", function (assert) {
+		// arrange
+		var oSPC = new SinglePlanningCalendar(),
+			oGrid = oSPC._getGrid(),
+			oFireAppointmentCreateSpy = this.spy(oSPC, "fireAppointmentCreate");
+
+		// act
+		oGrid.fireEvent("appointmentCreate", {});
+
+		// assert
+		assert.equal(oFireAppointmentCreateSpy.callCount, 1, "fireAppointmentCreate of the SinglePlanningCalendar is called once");
+
+		// cleanup
+		oFireAppointmentCreateSpy.restore();
 		oSPC.destroy();
 	});
 
@@ -564,7 +682,7 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("start/end date information", function (assert) {
+	QUnit.test("start/end date + legend information", function (assert) {
 		// Prepare
 		var oCalendarStartDate = new Date(2018, 11, 24),
 			oStartDate = new Date(2018, 11, 24, 15, 30, 0),
@@ -572,28 +690,56 @@ sap.ui.define([
 			oAppointment = new CalendarAppointment("test-appointment", {
 				title: "Appointment",
 				startDate: oStartDate,
-				endDate: oEndDate
+				endDate: oEndDate,
+				type: "Type01"
+			}),
+			oAppointmentWithNoCorresspondingLegendItem = new CalendarAppointment("test-appointment2", {
+				title: "Appointment",
+				startDate: oStartDate,
+				endDate: oEndDate,
+				type: "Type02"
+			}),
+			oLegendItem = new CalendarLegendItem({
+				type: "Type01",
+				text: "Type Private Appointment"
+			}),
+			oLegend = new PlanningCalendarLegend({
+				appointmentItems: [
+					oLegendItem
+				]
 			}),
 			oSPC = new SinglePlanningCalendar({
 				startDate: oCalendarStartDate,
 				appointments: [
-					oAppointment
-				]
+					oAppointment,
+					oAppointmentWithNoCorresspondingLegendItem
+				],
+				legend: oLegend
 			}),
 			oSPCGrid = oSPC._getGrid(),
 			// Expecting start/end information to look like this: "Start Time: *date here*; End Time: *date here*"
 			sExpectedInfo = oSPCGrid._oUnifiedRB.getText("CALENDAR_START_TIME") + ": " +
 							oSPCGrid._oFormatAria.format(oStartDate) + "; " +
 							oSPCGrid._oUnifiedRB.getText("CALENDAR_END_TIME") + ": " +
-							oSPCGrid._oFormatAria.format(oEndDate);
+							oSPCGrid._oFormatAria.format(oEndDate) + "; ";
 
 		oSPC.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(jQuery("#test-appointment-Descr").html(), sExpectedInfo,
-			"Information for appointment's start/end date is present in the DOM");
+		assert.strictEqual(jQuery("#test-appointment-Descr").html(), sExpectedInfo + oLegendItem.getText(),
+			"Information for appointment's start/end date + legend is present in the DOM");
+		assert.strictEqual(jQuery("#test-appointment2-Descr").html(), sExpectedInfo + oAppointmentWithNoCorresspondingLegendItem.getType(),
+			"When the appointment has no corresponding legend item, its own type goes to the aria");
 		assert.ok(oAppointment.$().attr("aria-labelledby") !== -1, "The appointment has reference to that information");
+
+		// Act
+		oLegend.destroy();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(jQuery("#test-appointment-Descr").html(), sExpectedInfo + oAppointment.getType(),
+			"when the legend is destroyed, the aria contains the correct info");
 
 		// Clean up
 		oSPC.destroy();
@@ -824,15 +970,6 @@ sap.ui.define([
 			this.oSPCGrid.destroy();
 			this.oSPCGrid = null;
 		}
-	});
-
-	QUnit.test("resize config is always added", function(assert) {
-		var oDragConfig = this.oSPCGrid.getDragDropConfig();
-
-		//assert
-		assert.equal(oDragConfig[2].getSourceAggregation(), "appointments", "Source aggregation is correct");
-		assert.equal(oDragConfig[2].getTargetAggregation(), "_intervalPlaceholders", "Source aggregation is correct");
-		assert.equal(oDragConfig[2].getGroupName(), "ResizeConfig", "Group name is correct");
 	});
 
 	QUnit.test("_calcResizeNewHoursAppPos: Calculate new size of the appointment", function(assert) {

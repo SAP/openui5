@@ -1,34 +1,31 @@
 sap.ui.define([
-	"sap/ui/dt/test/report/QUnit",
-	"sap/ui/dt/test/ElementEnablementTest",
 	"sap/ui/layout/Splitter",
 	"sap/m/Button",
-	"sap/ui/rta/enablement/controlTest"
-], function (QUnitReport,
-			 ElementEnablementTest,
-			 Splitter,
-			 Text,
-			 rtaControlEnablingCheck) {
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest"
+], function (
+	Splitter,
+	Button,
+	elementDesigntimeTest,
+	elementActionTest
+) {
 	"use strict";
 
-	var oElementEnablementTest = new ElementEnablementTest({
-		type: "sap.ui.layout.Splitter",
-		create: function () {
-			return new Splitter({
-				contentAreas: [new sap.m.Button(), new sap.m.Button()],
-				orientation: "Vertical"
-			});
-		}
-	});
-
-	return oElementEnablementTest.run()
-
-	.then(function (oData) {
-		new QUnitReport({
-			data: oData
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
+			type: "sap.ui.layout.Splitter",
+			create: function () {
+				return new Splitter({
+					contentAreas: [
+						new Button(),
+						new Button()
+					],
+					orientation: "Vertical"
+				});
+			}
 		});
 	})
-
 	.then(function() {
 		// Move action
 		var fnConfirmElement1IsOn2ndPosition = function (oUiComponent, oViewAfterAction, assert) {
@@ -42,8 +39,8 @@ sap.ui.define([
 				"then the control has been moved to the previous position");
 		};
 
-		rtaControlEnablingCheck("Checking the move action for Splitter control", {
-			xmlView: '<mvc:View xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
+		elementActionTest("Checking the move action for Splitter control", {
+			xmlView: '<mvc:View xmlns:l="sap.ui.layout" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 				'<l:Splitter id="splitter" height="500px">' +
 					'<l:contentAreas>' +
 						'<Button id="btn1" text="Content 1">' +
@@ -91,8 +88,8 @@ sap.ui.define([
 			assert.strictEqual(oViewAfterAction.byId("splitter").getVisible(), true, "then the Splitter element is visible");
 		};
 
-		rtaControlEnablingCheck("Checking the remove action for sap.ui.layout.Splitter", {
-			xmlView: '<mvc:View xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
+		elementActionTest("Checking the remove action for sap.ui.layout.Splitter", {
+			xmlView: '<mvc:View xmlns:l="sap.ui.layout" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 				'<l:Splitter id="splitter" height="500px">' +
 					'<l:contentAreas>' +
 						'<Button id="btn1" text="Content 1">' +
@@ -114,8 +111,8 @@ sap.ui.define([
 			afterRedo: fnConfirmSplitterIsInvisible
 		});
 
-		rtaControlEnablingCheck("Checking the reveal action for a sap.ui.layoutSplitter", {
-			xmlView: '<mvc:View xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
+		elementActionTest("Checking the reveal action for a sap.ui.layoutSplitter", {
+			xmlView: '<mvc:View xmlns:l="sap.ui.layout" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 				'<l:Splitter id="splitter" height="500px" visible="false">' +
 					'<l:contentAreas>' +
 						'<Button id="btn1" text="Content 1">' +

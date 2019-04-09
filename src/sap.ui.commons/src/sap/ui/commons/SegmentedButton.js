@@ -259,6 +259,8 @@ sap.ui.define([
 			}
 			oButton.addStyleClass("sapUiSegButtonSelected");
 		}
+
+		return this;
 	};
 
 	SegmentedButton.prototype.setEnabled = function(bEnabled) {

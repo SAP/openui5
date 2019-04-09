@@ -173,6 +173,7 @@ sap.ui.define([
 		//dom reference
 		this._$spacer = [];
 		this._sContainerSelector = ".sapUxAPBlockContainer";
+		this._sMoreContainerSelector = ".sapUxAPSubSectionSeeMoreContainer";
 
 		this._oObserver = new ManagedObjectObserver(ObjectPageSubSection.prototype._observeChanges.bind(this));
 		this._oObserver.observe(this, {
@@ -510,13 +511,13 @@ sap.ui.define([
 	};
 
 	ObjectPageSubSection.prototype.refreshSeeMoreVisibility = function () {
-		var bBlockHasMore = !!this.getMoreBlocks().length,
-			oSeeMoreControl = this._getSeeMoreButton(),
+		var oSeeMoreControl = this._getSeeMoreButton(),
 			$seeMoreControl = oSeeMoreControl.$(),
 			$this = this.$();
 
-		if (!bBlockHasMore) {
-			bBlockHasMore = this.getBlocks().some(function (oBlock) {
+		this._bBlockHasMore = !!this.getMoreBlocks().length;
+		if (!this._bBlockHasMore) {
+			this._bBlockHasMore = this.getBlocks().some(function (oBlock) {
 				//check if the block ask for the global see more the rule is
 				//by default we don't display the see more
 				//if one control is visible and ask for it then we display it
@@ -528,18 +529,18 @@ sap.ui.define([
 
 		//if the subsection is already rendered, don't rerender it all for showing a more button
 		if ($this.length) {
-			$this.toggleClass("sapUxAPObjectPageSubSectionWithSeeMore", bBlockHasMore);
+			$this.toggleClass("sapUxAPObjectPageSubSectionWithSeeMore", this._bBlockHasMore);
 		}
 
-		this.toggleStyleClass("sapUxAPObjectPageSubSectionWithSeeMore", bBlockHasMore);
+		this.toggleStyleClass("sapUxAPObjectPageSubSectionWithSeeMore", this._bBlockHasMore);
 
 		if ($seeMoreControl.length) {
-			$seeMoreControl.toggleClass("sapUxAPSubSectionSeeMoreButtonVisible", bBlockHasMore);
+			$seeMoreControl.toggleClass("sapUxAPSubSectionSeeMoreButtonVisible", this._bBlockHasMore);
 		}
 
-		oSeeMoreControl.toggleStyleClass("sapUxAPSubSectionSeeMoreButtonVisible", bBlockHasMore);
+		oSeeMoreControl.toggleStyleClass("sapUxAPSubSectionSeeMoreButtonVisible", this._bBlockHasMore);
 
-		return bBlockHasMore;
+		return this._bBlockHasMore;
 	};
 
 	ObjectPageSubSection.prototype.setMode = function (sMode) {
@@ -995,6 +996,12 @@ sap.ui.define([
 				oBlock.destroyLayoutData();
 			}
 		}, this);
+	};
+
+	ObjectPageSubSection.prototype._updateShowHideState = function (bHide) {
+		this.$().children(this._sMoreContainerSelector).toggle(!bHide);
+
+		return ObjectPageSectionBase.prototype._updateShowHideState.call(this, bHide);
 	};
 
 	ObjectPageSubSection.prototype.getVisibleBlocksCount = function () {

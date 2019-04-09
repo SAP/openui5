@@ -6,7 +6,7 @@
 		}
 	},
 	"sap.ui5": {
-		"rootView": "sap.uxap.sample.ObjectPageHeaderActionButtons.ObjectPageHeaderActionButtons",
+		"rootView": "sap.uxap.sample.ObjectPageHeaderActionButtons.view.ObjectPageHeaderActionButtons",
 		"dependencies": {
 			"libs": {
 				"sap.m": {}
@@ -16,9 +16,9 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"ObjectPageHeaderActionButtons.view.xml",
-					"../AnchorBar/mySimpleBlock.js",
-					"../AnchorBar/mySimpleBlock.view.xml",
+					"view/ObjectPageHeaderActionButtons.view.xml",
+					"../AnchorBar/controller/blocks/mySimpleBlock.js",
+					"../AnchorBar/view/blocks/mySimpleBlock.view.xml",
 					"manifest.json"
 				]
 			}

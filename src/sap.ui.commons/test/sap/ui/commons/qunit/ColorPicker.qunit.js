@@ -472,8 +472,8 @@ sap.ui.define([
 
 		// Assert
 		oAssert.strictEqual(oCounts["sap.ui.commons.Slider"], 2, "There should be 2 Sliders created");
-		oAssert.strictEqual(oCounts["sap.ui.commons.Label"], 12, "There should be 12 labels created");
-		oAssert.strictEqual(oCounts["sap.ui.commons.TextField"], 9, "There should be 9 inputs created");
+		oAssert.strictEqual(oCounts["sap.ui.commons.Label"], 13, "There should be 13 labels created");
+		oAssert.strictEqual(oCounts["sap.ui.commons.TextField"], 10, "There should be 10 inputs created");
 		oAssert.strictEqual(oCounts["sap.ui.commons.RadioButtonGroup"], 1, "There should be 1 RadioButton group created");
 		oAssert.strictEqual(oCounts["sap.ui.core.Item"], 2, "There should be 2 Items created");
 	});

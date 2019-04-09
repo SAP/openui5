@@ -82,7 +82,8 @@ sap.ui.define(['./library', 'sap/ui/core/Element', './AssociativeSplitter', 'sap
 	 * @returns {sap.ui.layout.PaneContainer} this to allow method chaining.
 	 */
 	PaneContainer.prototype.setLayoutData = function(oLayoutData) {
-		return this._oSplitter.setLayoutData(oLayoutData);
+		this._oSplitter.setLayoutData(oLayoutData);
+		return this;
 	};
 
 	/**

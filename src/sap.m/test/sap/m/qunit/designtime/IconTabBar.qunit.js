@@ -1,41 +1,36 @@
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/dt/test/report/QUnit",
-	"sap/ui/dt/test/ElementEnablementTest",
 	"sap/m/IconTabBar",
 	"sap/m/IconTabFilter",
 	"sap/m/Button",
-	"sap/ui/rta/enablement/controlTest"
-], function(QUnitUtils, createAndAppendDiv, QUnitReport, ElementEnablementTest, IconTabBar, IconTabFilter, Button, rtaControlEnablingCheck) {
+	"sap/ui/dt/enablement/elementDesigntimeTest",
+	"sap/ui/rta/enablement/elementActionTest"
+], function (
+	IconTabBar,
+	IconTabFilter,
+	Button,
+	elementDesigntimeTest,
+	elementActionTest
+) {
 	"use strict";
-	createAndAppendDiv("content");
 
-
-	var oElementEnablementTest = new ElementEnablementTest({
-		type: "sap.m.IconTabBar",
-		create: function () {
-			return new IconTabBar("tabbar", {
-				items: [
-					new IconTabFilter("first", {
-						text: "First Tab"
-					})
-				],
-				content: [
-					new Button("first-content", { text: "first content" })
-				]
-			});
-		}
-	});
-
-	return oElementEnablementTest.run()
-
-	.then(function (oData) {
-		new QUnitReport({
-			data: oData
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
+			type: "sap.m.IconTabBar",
+			create: function () {
+				return new IconTabBar("tabbar", {
+					items: [
+						new IconTabFilter("first", {
+							text: "First Tab"
+						})
+					],
+					content: [
+						new Button("first-content", { text: "first content" })
+					]
+				});
+			}
 		});
 	})
-
 	.then(function() {
 		var fnGetTabBarView = function (sId) {
 			return 	'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
@@ -91,7 +86,7 @@ sap.ui.define([
 		};
 
 		// Move action for items
-		rtaControlEnablingCheck("Checking the move action for IconTabBar control items", {
+		elementActionTest("Checking the move action for IconTabBar control items", {
 			xmlView: fnGetTabBarView("tabbar"),
 			action: fnGetMoveActionObject("tabbar", "first", "items"),
 			afterAction: fnGetConfirmElementPositionAssert("tabbar", 2, "first", "Items"),
@@ -100,7 +95,7 @@ sap.ui.define([
 		});
 
 		// Move action for content
-		rtaControlEnablingCheck("Checking the move action for IconTabBar control content", {
+		elementActionTest("Checking the move action for IconTabBar control content", {
 			xmlView: fnGetTabBarView("tabbar2"),
 			action: fnGetMoveActionObject("tabbar2", "first-content", "content"),
 			afterAction: fnGetConfirmElementPositionAssert("tabbar2", 2, "first-content", "Content"),

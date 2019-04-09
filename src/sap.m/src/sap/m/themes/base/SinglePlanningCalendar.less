@@ -1,11 +1,9 @@
 @_sap_m_PlanningCalendarHeader_ActionsToolbarHeight: 3rem;
 
-.sapMSinglePCStickyAll, .sapMSinglePCStickyNavBarAndColHeaders {
-	.sapMPCHead, .sapMSinglePCColumnHeader{
-		position: -webkit-sticky;
-		position: sticky;
-		z-index: 3;
-	}
+.sapMPCHead, .sapMSinglePCColumnHeader{
+	position: -webkit-sticky;
+	position: sticky;
+	z-index: 3;
 }
 
 .sapMSinglePCStickyAll {
@@ -26,4 +24,12 @@
 			top: 0;
 		}
 	}
+}
+
+html.sap-desktop .sapMSinglePC .sapUiCalItem:not(.sapUiCalItemSel):hover {
+  background-color: darken(@sapUiContentForegroundColor,5);
+}
+
+html.sap-desktop .sapMSinglePC .sapUiCalItem:not(.sapUiCalItemSel) :not(.sapUiCalWeekNum):hover {
+  background-color: transparent;
 }

@@ -1,0 +1,27 @@
+{
+	"sap.app": {
+		"id": "sap.ui.integration.sample.TableCard",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.integration.sample.TableCard.TableCard",
+			"type": "XML",
+			"async": true
+		},
+		"libs": {
+			"sap.ui.integration": {}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"TableCard.view.xml",
+					"model/cardManifest.json",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

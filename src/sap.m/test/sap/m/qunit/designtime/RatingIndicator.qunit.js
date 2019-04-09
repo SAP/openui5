@@ -1,8 +1,8 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/rta/enablement/controlTest"
-], function(QUnitUtils, createAndAppendDiv, rtaControlEnablingCheck) {
+	"sap/ui/rta/enablement/elementActionTest"
+], function(QUnitUtils, createAndAppendDiv, elementActionTest) {
 	'use strict';
 	createAndAppendDiv("content");
 
@@ -16,7 +16,7 @@ sap.ui.define([
 		assert.strictEqual(oViewAfterAction.byId("ratingIndicator").getVisible(), true, "then the ratingIndicator element is visible");
 	};
 
-	rtaControlEnablingCheck("Checking the remove action for RatingIndicator", {
+	elementActionTest("Checking the remove action for RatingIndicator", {
 		xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">"' +
 			'<m:RatingIndicator maxValue="5" value="4" id="ratingIndicator" />' +
 		'</mvc:View>'
@@ -35,7 +35,7 @@ sap.ui.define([
 		afterRedo: fnConfirmRatingIndicatorIsInvisible
 	});
 
-	rtaControlEnablingCheck("Checking the reveal action for a RatingIndicator", {
+	elementActionTest("Checking the reveal action for a RatingIndicator", {
 		xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">"' +
 			'<m:RatingIndicator maxValue="5" value="4" id="ratingIndicator" visible="false"/>' +
 		'</mvc:View>'

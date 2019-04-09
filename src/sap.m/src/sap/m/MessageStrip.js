@@ -145,7 +145,8 @@ sap.ui.define([
 				 * This event will be fired after the container is closed.
 				 */
 				close: {}
-			}
+			},
+			dnd: { draggable: true, droppable: false }
 		}
 	});
 

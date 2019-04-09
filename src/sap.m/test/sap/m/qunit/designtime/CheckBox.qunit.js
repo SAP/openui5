@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/rta/enablement/controlTest'], function (rtaControlEnablingCheck) {
+sap.ui.define(['sap/ui/rta/enablement/elementActionTest'], function (elementActionTest) {
 	'use strict';
 
 	// Rename action
@@ -14,7 +14,7 @@ sap.ui.define(['sap/ui/rta/enablement/controlTest'], function (rtaControlEnablin
 			"then the control has been renamed to the old value (Option 1)");
 	};
 
-	rtaControlEnablingCheck("Checking the rename action for a CheckBox", {
+	elementActionTest("Checking the rename action for a CheckBox", {
 		xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">"' +
 			'<m:CheckBox text="Option 1" id="checkBox" />' +
 		'</mvc:View>'
@@ -43,7 +43,7 @@ sap.ui.define(['sap/ui/rta/enablement/controlTest'], function (rtaControlEnablin
 		assert.strictEqual(oViewAfterAction.byId("checkBox").getVisible(), true, "then the CheckBox element is visible");
 	};
 
-	rtaControlEnablingCheck("Checking the remove action for CheckBox", {
+	elementActionTest("Checking the remove action for CheckBox", {
 		xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">"' +
 			'<m:CheckBox text="Option 1" id="checkBox" />' +
 		'</mvc:View>'
@@ -62,7 +62,7 @@ sap.ui.define(['sap/ui/rta/enablement/controlTest'], function (rtaControlEnablin
 		afterRedo: fnConfirmCheckBoxIsInvisible
 	});
 
-	rtaControlEnablingCheck("Checking the reveal action for a CheckBox", {
+	elementActionTest("Checking the reveal action for a CheckBox", {
 		xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">"' +
 			'<m:CheckBox text="Option 1" id="checkBox" visible="false"/>' +
 		'</mvc:View>'

@@ -457,15 +457,24 @@ sap.ui.define([
 		dnd: { draggable: false, droppable: true }
 	}});
 
-	ObjectHeader.prototype.init = function() {
-		var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // get resource translation bundle;
 
+	/**
+	 * Retrieves the resource bundle for the <code>sap.m</code> library.
+	 * @static
+	 * @private
+	 * @returns {Object} the resource bundle object
+	 */
+	ObjectHeader._getResourceBundle = function () {
+		return sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	};
+
+	ObjectHeader.prototype.init = function() {
 		this._oTitleArrowIcon = IconPool.createControlByURI({
 			id : this.getId() + "-titleArrow",
 			src: IconPool.getIconURI("arrow-down"),
 			decorative: false,
 			visible : false,
-			tooltip: oLibraryResourceBundle.getText("OH_SELECT_ARROW_TOOLTIP"),
+			tooltip: ObjectHeader._getResourceBundle().getText("OH_SELECT_ARROW_TOOLTIP"),
 			size: "1.375rem",
 			press : function(oEvent) {
 				// empty function here because icon needs an event handler in order to show pointer cursor
@@ -803,10 +812,6 @@ sap.ui.define([
 					domRef : window.document.getElementById(sSourceId)
 				});
 			}
-		} else if (this.getIconActive() && (sSourceId === this.getId() + "-img" || sSourceId === this.getId() + "-icon")) {
-			this.fireIconPress({
-				domRef : window.document.getElementById(sSourceId)
-			});
 		} else if (sSourceId === this.getId() + "-titleArrow") {
 			this.fireTitleSelectorPress({
 				domRef : window.document.getElementById(sSourceId)
@@ -865,16 +870,6 @@ sap.ui.define([
 					domRef : (sSourceId ? window.document.getElementById(sSourceId) : null)
 				});
 			}
-		} else if (this.getIconActive() && jQuery(oEvent.target).is('.sapMOHIcon,.sapMOHRIcon')){
-
-			var iconOrImg = (this.getId() + "-icon" ? window.document.getElementById(this.getId() + "-icon") : null);
-			if (!iconOrImg) {
-				iconOrImg = (this.getId() + "-img" ? window.document.getElementById(this.getId() + "-img") : null);
-			}
-
-			this.fireIconPress({
-				domRef : iconOrImg
-			});
 		} else if (sSourceId === this.getId() + "-titleArrow") {
 			this.fireTitleSelectorPress({
 				domRef : (sSourceId ? window.document.getElementById(sSourceId) : null)
@@ -1041,12 +1036,25 @@ sap.ui.define([
 			{
 				src : this.getIcon(),
 				tooltip: this.getIconTooltip(),
-				alt: this.getIconAlt(),
+				// If there isn't an alt, then just add a default 'Icon' just in case
+				alt: this.getIconAlt() || ObjectHeader._getResourceBundle().getText("OH_ARIA_ICON"),
 				useIconTooltip : false,
 				densityAware : this.getIconDensityAware()
 			},
 				IconPool.isIconURI(this.getIcon()) ? { size : sSize } : {}
 		);
+
+		if (this.getIconActive()) {
+			// Add a press event to the icon, so that its image/icon has tabindex=0 when active
+			// In addition to this, make the control non-decorative, since it will be accessed by screen readers
+			mProperties.press = function (oEvent) {
+				this.fireIconPress({
+					domRef : oEvent.getSource().getDomRef()
+				});
+			}.bind(this);
+			mProperties.decorative = false;
+		}
+
 
 		this._oImageControl = ImageHelper.getImageControl(sImgId, this._oImageControl, this, mProperties);
 

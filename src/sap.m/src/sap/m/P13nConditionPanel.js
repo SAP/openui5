@@ -1729,7 +1729,7 @@ sap.ui.define([
 				];
 				aValues.forEach(function(oValue, index) {
 					aItems.push(new Item({
-						key: (index === aValues.length - 1).toString(),
+						key: index.toString(),
 						text: oValue.toString()
 					}));
 				});

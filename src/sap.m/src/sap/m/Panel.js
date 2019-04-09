@@ -177,6 +177,7 @@ sap.ui.define([
 				}
 			}
 		},
+		dnd: { draggable: true, droppable: true },
 		designtime: "sap/m/designtime/Panel.designtime"
 	}});
 

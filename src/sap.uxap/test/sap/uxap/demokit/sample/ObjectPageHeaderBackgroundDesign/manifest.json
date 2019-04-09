@@ -6,7 +6,7 @@
 		}
 	},
 	"sap.ui5": {
-		"rootView": "sap.uxap.sample.ObjectPageHeaderBackgroundDesign.ObjectPageHeaderBackgroundDesign",
+		"rootView": "sap.uxap.sample.ObjectPageHeaderBackgroundDesign.view.ObjectPageHeaderBackgroundDesign",
 		"dependencies": {
 			"libs": {
 				"sap.m": {}
@@ -16,9 +16,9 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"ObjectPageHeaderBackgroundDesign.view.xml",
-					"../AnchorBar/mySimpleBlock.js",
-					"../AnchorBar/mySimpleBlock.view.xml",
+					"view/ObjectPageHeaderBackgroundDesign.view.xml",
+                    "../AnchorBar/controller/blocks/mySimpleBlock.js",
+                    "../AnchorBar/view/blocks/mySimpleBlock.view.xml",
 					"manifest.json"
 				]
 			}

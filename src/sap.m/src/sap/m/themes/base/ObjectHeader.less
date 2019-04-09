@@ -498,6 +498,13 @@ html.sap-desktop .sapMOHRStatesOneOrThree .sapMOHRTitleNumberDiv {
 	display: block;
 }
 
+.sapMOHRIcon.sapMPointer .sapUiIcon.sapUiIconPointer {
+	&:active,
+	&:focus {
+		outline: none;
+	}
+}
+
 .sapMOHRIconCircle .sapMImg {
 	border-radius: 100%;
 }
@@ -516,6 +523,7 @@ html.sap-desktop .sapMOHRStatesOneOrThree .sapMOHRTitleNumberDiv {
 .sapMOHRTitleIcon > .sapMOHRTitle {
 	margin-left: 4rem;
 	min-height: 3.375rem;
+	overflow: hidden;
 }
 
 html[data-sap-ui-browser ^= "ie"] {
@@ -528,7 +536,6 @@ html[data-sap-ui-browser ^= "ie"] {
 .sapMOHRTitleDiv {
 	display: inline-block;
 	box-sizing: border-box;
-	overflow: hidden;
 	vertical-align: top;
 	position: relative;
 	width: 100%;

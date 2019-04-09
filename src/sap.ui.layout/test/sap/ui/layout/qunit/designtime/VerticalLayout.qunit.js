@@ -1,29 +1,29 @@
 sap.ui.define([
 	'sap/ui/layout/VerticalLayout',
 	'sap/m/Button',
-	'sap/ui/dt/test/report/QUnit',
-	'sap/ui/dt/test/ElementEnablementTest',
-	'sap/ui/rta/enablement/controlTest'
-], function(VerticalLayout, Button, QUnitReport, ElementEnablementTest, rtaControlEnablingCheck) {
+	'sap/ui/dt/enablement/elementDesigntimeTest',
+	'sap/ui/rta/enablement/elementActionTest'
+], function(
+	VerticalLayout,
+	Button,
+	elementDesigntimeTest,
+	elementActionTest
+) {
 	"use strict";
 
-	var oElementEnablementTest = new ElementEnablementTest({
-		type : "sap.ui.layout.VerticalLayout",
-		create : function () {
-			return new VerticalLayout({
-				content : [new Button({text:"test"})]
-			});
-		}
-	});
-
-	return oElementEnablementTest.run()
-
-	.then(function(oData) {
-		new QUnitReport({
-			data: oData
+	return Promise.resolve()
+	.then(function () {
+		return elementDesigntimeTest({
+			type : "sap.ui.layout.VerticalLayout",
+			create : function () {
+				return new VerticalLayout({
+					content: [
+						new Button({ text:"test" })
+					]
+				});
+			}
 		});
 	})
-
 	.then(function() {
 		// Move action
 		var fnConfirmElement1IsOn3rdPosition = function (oUiComponent, oViewAfterAction, assert) {
@@ -37,7 +37,7 @@ sap.ui.define([
 					"then the control has been moved to the previous position");
 		};
 
-		rtaControlEnablingCheck("Checking the move action for a VerticalLayout control", {
+		elementActionTest("Checking the move action for a VerticalLayout control", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">' +
 				'<l:VerticalLayout id="layout">' +
 					'<m:Button text="Button 1" id="button1" />' +
@@ -81,7 +81,7 @@ sap.ui.define([
 			assert.strictEqual(oViewAfterAction.byId("layout").getVisible(), true, "then the Layout is visible");
 		};
 
-		rtaControlEnablingCheck("Checking the remove and reveal actions for VerticalLayout control", {
+		elementActionTest("Checking the remove and reveal actions for VerticalLayout control", {
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">' +
 				'<l:VerticalLayout id="layout">' +
 					'<m:Text text="Text" id="text1" />' +

@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.uxap.sample.ObjectPageSubSectionSized.ObjectPageSubSectionSized",
+			"viewName": "sap.uxap.sample.ObjectPageSubSectionSized.view.ObjectPageSubSectionSized",
 			"type": "XML",
 			"async": true
 		},
@@ -20,11 +20,11 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"ObjectPageSubSectionSized.view.xml",
-					"ObjectPageSubSectionSize.controller.js",
-					"blocks/InfoButton.js",
-					"blocks/InfoButton.view.xml",
-					"blocks/InfoButtonController.controller.js",
+					"view/ObjectPageSubSectionSized.view.xml",
+					"controller/ObjectPageSubSectionSize.controller.js",
+					"controller/blocks/InfoButton.js",
+					"view/blocks/InfoButton.view.xml",
+					"controller/blocks/InfoButtonController.controller.js",
 					"manifest.json"
 				]
 			}

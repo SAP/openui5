@@ -20,7 +20,10 @@
 	</script>
 
 	<script>
-		var oSPC;
+		var oSPC,
+			oDialog,
+			oLegend;
+
 		sap.ui.getCore().attachInit(function () {
 			sap.ui.require([
 					'sap/ui/model/json/JSONModel',
@@ -28,13 +31,18 @@
 					'sap/m/SinglePlanningCalendarDayView',
 					'sap/m/SinglePlanningCalendarWorkWeekView',
 					'sap/m/SinglePlanningCalendarWeekView',
+					'sap/m/PlanningCalendarLegend',
+					'sap/m/Dialog',
 					'sap/m/Button',
 					'sap/ui/unified/CalendarAppointment',
+					'sap/ui/unified/CalendarLegendItem',
 					'sap/m/MessageToast',
 					'sap/m/App',
 					'sap/m/Page'
 				],
-				function (JSONModel, SinglePlanningCalendar, SinglePlanningCalendarDayView, SinglePlanningCalendarWorkWeekView, SinglePlanningCalendarWeekView, Button, CalendarAppointment, MessageToast, App, Page) {
+				function (JSONModel, SinglePlanningCalendar, SinglePlanningCalendarDayView,
+							SinglePlanningCalendarWorkWeekView, SinglePlanningCalendarWeekView, PlanningCalendarLegend,
+							Dialog, Button, CalendarAppointment, CalendarLegendItem, MessageToast, App, Page) {
 					var aAppointments = [
 						{
 							title: "1 hour app. 0 without type and color",
@@ -227,38 +235,45 @@
 							startDate: new Date(2018, 6, 11, 10, 0, 0),
 							endDate: new Date(2018, 6, 11, 10, 30, 0)
 						},
+                        {
+                            title: "30 min. second half hour appointment 30 with icon",
+                            type: "Type04",
+                            icon: "sap-icon://work-history",
+                            startDate: new Date(2018, 6, 11, 10, 30, 0),
+                            endDate: new Date(2018, 6, 11, 11, 0, 0)
+                        },
 						{
-							title: "1 hour and 30 min. appointment  30",
+							title: "1 hour and 30 min. appointment  31",
 							type: "Type02",
 							startDate: new Date(2018, 6, 11, 11, 0, 0),
 							endDate: new Date(2018, 6, 11, 12, 30, 0)
 						},
 						{
-							title: "Long appointment 31",
+							title: "Long appointment 32",
 							type: "Type03",
 							startDate: new Date(2018, 6, 11, 11, 30, 0),
 							endDate: new Date(2018, 6, 11, 15, 0, 0)
 						},
 						{
-							title: "Long appointment 32",
+							title: "Long appointment 33",
 							type: "Type04",
 							startDate: new Date(2018, 6, 12, 7, 0, 0),
 							endDate: new Date(2018, 6, 12, 15, 30, 0)
 						},
 						{
-							title: "Long appointment 33",
+							title: "Long appointment 34",
 							type: "Type05",
 							startDate: new Date(2018, 6, 12, 18, 0, 0),
 							endDate: new Date(2018, 6, 12, 22, 30, 0)
 						},
 						{
-							title: "Appointment in two days 34",
+							title: "Appointment in two days 35",
 							type: "Type06",
 							startDate: new Date(2018, 6, 12, 23, 0, 0),
 							endDate: new Date(2018, 6, 13, 0, 30, 0)
 						},
 						{
-							title: "Appointment in 3 days 35",
+							title: "Appointment in 3 days 36",
 							type: "Type07",
 							text: "Additional info 2",
 							startDate: new Date(2018, 6, 11, 15, 0, 0),
@@ -312,6 +327,10 @@
 					oModel.setData({modelData: aAppointments});
 					sap.ui.getCore().setModel(oModel);
 
+					var oStateModel = new JSONModel();
+					oStateModel.setData({legendShown: false});
+					sap.ui.getCore().setModel(oStateModel, "stateModel");
+
 					var oDayView = new SinglePlanningCalendarDayView({
 								key: "DayView",
 								title: "Day View"
@@ -324,10 +343,55 @@
 								key: "WeekView",
 								title: "Week View"
 							});
+
+					oLegend = new PlanningCalendarLegend({
+						appointmentItems: [
+							new CalendarLegendItem({
+								type: sap.ui.unified.CalendarDayType.Type01,
+								text: "Type Private Appointment"
+							}),
+							new CalendarLegendItem({
+								type: sap.ui.unified.CalendarDayType.Type02,
+								text: "Type Face2Face Appointment"
+							}),
+							new CalendarLegendItem({
+								type: sap.ui.unified.CalendarDayType.Type03,
+								text: "Type Public Appointment"
+							}),
+							new CalendarLegendItem({
+								type: sap.ui.unified.CalendarDayType.Type04,
+								text: "Client Meeting"
+							}),
+							new CalendarLegendItem({
+								type: sap.ui.unified.CalendarDayType.Type05,
+								text: "Team Meeting"
+							}),
+							new CalendarLegendItem({
+								type: sap.ui.unified.CalendarDayType.Type06,
+								text: "Planning"
+							}),
+							new CalendarLegendItem({
+								type: sap.ui.unified.CalendarDayType.Type07,
+								text: "Out Of Office"
+							})
+						]
+					});
+
+					oDialog = new Dialog("D1", {
+						title: "Legend",
+						content: [oLegend],
+						endButton: new Button({
+							text: "Close",
+							press: function () {
+								oDialog.close();
+							}
+						})
+					});
+
 					oSPC = new SinglePlanningCalendar("SinglePlanningCalendar", {
 						title: "SinglePlanningCalendar",
 						startDate: new Date(2018, 6, 9),
-						views: [oDayView, oWorkWeekView, oWeekView],
+						views: [oDayView, oWorkWeekView,oWeekView],
 						actions: [
 							new Button("overrideTime", {
 								text: "Override current time",
@@ -341,6 +405,13 @@
 										this._updateRowHeaders(oCurrentDate);
 									};
 									oGrid._updateRowHeaderAndNowMarker();
+								}
+							}),
+							new Button({
+								icon: "sap-icon://legend",
+								tooltip: "Open PlanningCalendar legend",
+								press: function () {
+									oDialog.open();
 								}
 							})
 						],
@@ -365,6 +436,8 @@
 						},
 						enableAppointmentsDragAndDrop: true,
 						enableAppointmentsResize: true,
+						legend: oLegend,
+						enableAppointmentsCreate: true,
 						appointmentDrop: function (oEvent) {
 							var oAppointment = oEvent.getParameter("appointment"),
 									oStartDate = oEvent.getParameter("startDate"),
@@ -393,6 +466,24 @@
 								+ "'\n has been resized"
 							);
 						},
+						appointmentCreate: function(oEvent) {
+							var oStartDate = oEvent.getParameter("startDate"),
+								oEndDate = oEvent.getParameter("endDate"),
+								sAppointmentTitle = "New Appointment";
+
+							var oAppointment = new sap.ui.unified.CalendarAppointment({
+								title: sAppointmentTitle,
+								startDate: oStartDate,
+								endDate: oEndDate
+							});
+
+							oSPC.addAppointment(oAppointment);
+
+							sap.m.MessageToast.show("Appointment with title \n'"
+									+ sAppointmentTitle
+									+ "'\n has been created"
+							);
+						},
 						headerDateSelect: function (oEvent) {
 							var oDate = oEvent.getParameter("date");
 
@@ -403,7 +494,7 @@
 
 							MessageToast.show("Start date changed to '" + oDate + "'.");
 						}
-					});
+					}).addStyleClass("sapUiSizeCompact");
 					new App({
 						pages: new Page({
 							title: "SinglePlanningCalendar test page",

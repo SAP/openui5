@@ -104,6 +104,23 @@ function (jQuery, Core, JSONModel, ObjectPageLayout, XMLView) {
 		}, iLoadingDelay);
 	});
 
+	QUnit.test("load first visible sections is relative to selectedSection", function (assert) {
+
+		var oComponentContainer = this.oView
+			.byId("objectPageContainer");
+		var oObjectPageLayout = oComponentContainer
+			.getObjectPageLayoutInstance(),
+			secondSection;
+
+		secondSection = oObjectPageLayout.getSections()[1];
+		oObjectPageLayout.setSelectedSection(secondSection);
+
+		var aSectionBases = oObjectPageLayout._getSectionsToPreloadOnBeforeFirstRendering();
+		assert.strictEqual(aSectionBases[0].getParent(), secondSection, "first visible subSection is within the currently selectedSection");
+
+		this.oView.destroy();
+	});
+
 	QUnit.test("load scrolled sections", function (assert) {
 
 		var oComponentContainer = this.oView

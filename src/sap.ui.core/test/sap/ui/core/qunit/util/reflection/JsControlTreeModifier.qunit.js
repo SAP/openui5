@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	'sap/m/Button',
+	'sap/m/Label',
 	'sap/m/Page',
 	'sap/m/QuickViewPage',
 	'sap/ui/core/util/reflection/JsControlTreeModifier',
@@ -9,11 +10,13 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/CustomData",
+	"sap/ui/base/Event",
 	"sap/ui/thirdparty/sinon-4",
-	'sap/f/DynamicPageTitle' //used implicitly
+	"sap/f/DynamicPageTitle" //used implicitly
 ],
 function(
 	Button,
+	Label,
 	Page,
 	QuickViewPage,
 	JsControlTreeModifier,
@@ -21,6 +24,7 @@ function(
 	UIComponent,
 	JSONModel,
 	CustomData,
+	Event,
 	sinon
 ) {
 	"use strict";
@@ -135,89 +139,6 @@ function(
 			assert.deepEqual(this.oControl.data(), {}, "all custom data is removed");
 
 			assert.strictEqual(fnInvalidateSpy.callCount, 0, "then the control is not invalidated (no rerendering needed)");
-		});
-
-		QUnit.test("attachEvent() — basic case", function (assert) {
-			this.oControl = new Button();
-
-			var oSpy = sandbox.spy();
-			window.$sap__qunit_presshandler = oSpy;
-
-			JsControlTreeModifier.attachEvent(this.oControl, "press", "$sap__qunit_presshandler", ["param0", "param1", { foo: "bar" }]);
-			this.oControl.firePress();
-			assert.strictEqual(oSpy.callCount, 1);
-			assert.strictEqual(oSpy.withArgs(sinon.match.any, ["param0", "param1", { foo: "bar" }]).callCount, 1);
-			delete window.$sap__qunit_presshandler;
-		});
-
-		QUnit.test("attachEvent() — several events of the same type with different event handlers and different set of parameters", function (assert) {
-			this.oControl = new Button();
-
-			var oSpy1 = sandbox.spy();
-			window.$sap__qunit_presshandler1 = oSpy1;
-			var oSpy2 = sandbox.spy();
-			window.$sap__qunit_presshandler2 = oSpy2;
-
-			JsControlTreeModifier.attachEvent(this.oControl, "press", "$sap__qunit_presshandler1", ["param0", "param1"]);
-			JsControlTreeModifier.attachEvent(this.oControl, "press", "$sap__qunit_presshandler2", ["param2", "param3"]);
-
-			this.oControl.firePress();
-
-			assert.strictEqual(oSpy1.callCount, 1);
-			assert.strictEqual(oSpy1.withArgs(sinon.match.any, ["param0", "param1"]).callCount, 1);
-			assert.strictEqual(oSpy2.callCount, 1);
-			assert.strictEqual(oSpy2.withArgs(sinon.match.any, ["param2", "param3"]).callCount, 1);
-
-			delete window.$sap__qunit_presshandler1;
-			delete window.$sap__qunit_presshandler2;
-		});
-
-		QUnit.test("attachEvent() — attempt to attach non-existent function", function (assert) {
-			this.oControl = new Button();
-
-			assert.throws(function () {
-				JsControlTreeModifier.attachEvent(this.oControl, "press", "$sap__qunit_presshandler");
-			});
-		});
-		QUnit.test("attachEvent() — attempt to attach 2 equal event handler functions with a different set of parameters", function (assert) {
-			this.oControl = new Button();
-
-			var oSpy = sandbox.spy();
-			window.$sap__qunit_presshandler = oSpy;
-
-			JsControlTreeModifier.attachEvent(this.oControl, "press", "$sap__qunit_presshandler", ["param0", "param1"]);
-			JsControlTreeModifier.attachEvent(this.oControl, "press", "$sap__qunit_presshandler", ["param2", "param3"]);
-
-			this.oControl.firePress();
-
-			assert.strictEqual(oSpy.callCount, 2);
-			assert.strictEqual(oSpy.withArgs(sinon.match.any, ["param0", "param1"]).callCount, 1);
-			assert.strictEqual(oSpy.withArgs(sinon.match.any, ["param2", "param3"]).callCount, 1);
-
-			delete window.$sap__qunit_presshandler;
-		});
-
-		QUnit.test("detachEvent() — basic case", function (assert) {
-			this.oControl = new Button();
-
-			var oSpy = sandbox.spy();
-			window.$sap__qunit_presshandler = oSpy;
-
-			JsControlTreeModifier.attachEvent(this.oControl, "press", "$sap__qunit_presshandler");
-			JsControlTreeModifier.detachEvent(this.oControl, "press", "$sap__qunit_presshandler");
-
-			this.oControl.firePress();
-
-			assert.strictEqual(oSpy.callCount, 0);
-			delete window.$sap__qunit_presshandler;
-		});
-
-		QUnit.test("detachEvent() — attempt to detach non-existent function", function (assert) {
-			this.oControl = new Button();
-
-			assert.throws(function () {
-				JsControlTreeModifier.detachEvent(this.oControl, "press", "$sap__qunit_presshandler");
-			});
 		});
 
 		QUnit.test("bindAggregation - basic functionality", function (assert) {
@@ -429,6 +350,109 @@ function(
 			"then passing non JSON data will throw a message");
 
 		});
+
+		QUnit.test("when modifying association", function(assert) {
+			var sID = "SOME_ID";
+			this.oControl = new Label();
+			var oSomeObject = new Button(sID);
+			this.oControl.addDependent(oSomeObject); //for later cleanup
+
+			JsControlTreeModifier.setAssociation(this.oControl, "labelFor", oSomeObject);
+			assert.strictEqual(JsControlTreeModifier.getAssociation(this.oControl, "labelFor"), sID, "then association got set");
+
+		});
 	});
 
+	QUnit.module("Events", {
+		beforeEach: function () {
+			this.oComponent = sap.ui.getCore().createComponent({
+				name: "sap.ui.test.other",
+				id: "testComponent"
+			});
+			this.oButton = new Button();
+
+			this.oSpy1 = sandbox.spy();
+			window.$sap__qunit_presshandler1 = this.oSpy1;
+
+			this.oSpy2 = sandbox.spy();
+			window.$sap__qunit_presshandler2 = this.oSpy2;
+		},
+		afterEach: function () {
+			this.oComponent.destroy();
+			this.oButton.destroy();
+			delete window.$sap__qunit_presshandler1;
+			delete window.$sap__qunit_presshandler2;
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("attachEvent() — basic case", function (assert) {
+			JsControlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1", { foo: "bar" }]);
+			this.oButton.firePress();
+			assert.strictEqual(this.oSpy1.callCount, 1);
+			assert.strictEqual(this.oSpy1.withArgs(sinon.match.instanceOf(Event), ["param0", "param1", { foo: "bar" }]).callCount, 1);
+		});
+
+		QUnit.test("attachEvent() — two different event handlers with different set of parameters for the same event name", function (assert) {
+			JsControlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1"]);
+			JsControlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler2", ["param2", "param3"]);
+
+			this.oButton.firePress();
+
+			assert.strictEqual(this.oSpy1.callCount, 1);
+			assert.strictEqual(this.oSpy1.withArgs(sinon.match.instanceOf(Event), ["param0", "param1"]).callCount, 1);
+			assert.strictEqual(this.oSpy2.callCount, 1);
+			assert.strictEqual(this.oSpy2.withArgs(sinon.match.instanceOf(Event), ["param2", "param3"]).callCount, 1);
+		});
+
+		QUnit.test("attachEvent() — attempt to attach non-existent function", function (assert) {
+			assert.throws(
+				function () {
+					JsControlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_non_existent_handler");
+				}.bind(this),
+				/function is not found/
+			);
+		});
+
+		QUnit.test("attachEvent() — two equal event handler functions with a different set of parameters", function (assert) {
+			JsControlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1"]);
+			JsControlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param2", "param3"]);
+
+			this.oButton.firePress();
+
+			assert.strictEqual(this.oSpy1.callCount, 2);
+			assert.strictEqual(this.oSpy1.withArgs(sinon.match.instanceOf(Event), ["param0", "param1"]).callCount, 1);
+			assert.strictEqual(this.oSpy1.withArgs(sinon.match.instanceOf(Event), ["param2", "param3"]).callCount, 1);
+		});
+
+		QUnit.test("detachEvent() — basic case", function (assert) {
+			JsControlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1");
+			JsControlTreeModifier.detachEvent(this.oButton, "press", "$sap__qunit_presshandler1");
+
+			this.oButton.firePress();
+
+			assert.strictEqual(this.oSpy1.callCount, 0);
+		});
+
+		QUnit.test("detachEvent() — three event handlers, two of them are with a different set of parameters", function (assert) {
+			JsControlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1");
+			JsControlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler2", ["param0", "param1"]);
+			JsControlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler2", ["param2", "param3"]);
+			JsControlTreeModifier.detachEvent(this.oButton, "press", "$sap__qunit_presshandler2");
+
+			this.oButton.firePress();
+
+			assert.strictEqual(this.oSpy1.callCount, 1);
+			assert.strictEqual(this.oSpy2.callCount, 1);
+			assert.strictEqual(this.oSpy2.withArgs(sinon.match.instanceOf(Event), ["param2", "param3"]).callCount, 1);
+		});
+
+		QUnit.test("detachEvent() — attempt to detach non-existent function", function (assert) {
+			assert.throws(
+				function () {
+					JsControlTreeModifier.detachEvent(this.oButton, "press", "$sap__qunit_non_existent_handler");
+				}.bind(this),
+				/function is not found/
+			);
+		});
+	});
 });

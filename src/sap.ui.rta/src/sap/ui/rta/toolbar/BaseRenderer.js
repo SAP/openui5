@@ -16,7 +16,6 @@ function(
 
 	BaseRenderer.render = function (oRM, oControl) {
 		oRM.addClass('sapUiRtaToolbar');
-		oRM.addClass('sapContrastPlus'); // for 'sap_belize_plus' theme
 		oRM.addClass("color_" + oControl.getColor());
 
 		// setting type if exists

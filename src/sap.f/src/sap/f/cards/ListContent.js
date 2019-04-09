@@ -133,16 +133,10 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/m/List", "sap/m/StandardListItem"
 
 			this._attachActions(mItem, this._oItemTemplate);
 
-			var sPath = "/";
-			var oConfiguration = this.getConfiguration();
-			if (oConfiguration.data && oConfiguration.data.path) {
-				sPath = oConfiguration.data.path;
-			}
-
-			this._getList().bindItems({
-				path: sPath,
+			var oBindingInfo = {
 				template: this._oItemTemplate
-			});
+			};
+			this._bindAggregation("items", this._getList(), oBindingInfo);
 		};
 
 		/**
