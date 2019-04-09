@@ -7,7 +7,8 @@
     <VBox
         class="sapUiSmallMargin"
         justifyContent="SpaceBetween">
-        <HBox justifyContent="SpaceBetween">
+        <HBox justifyContent="SpaceBetween"
+              renderType="Bare">
             <ComboBox
                 class="sapUiSmallMarginEnd"
                 placeholder="From City"
@@ -15,6 +16,9 @@
 					path: '/cities',
 					sorter: { path: 'text' }
 				}">
+                <layoutData>
+                    <FlexItemData growFactor="1" shrinkFactor="1" baseSize="0" />
+                </layoutData>
 				<core:Item key="{key}" text="{text}" />
 			</ComboBox>
             <ComboBox
@@ -23,6 +27,9 @@
 					path: '/cities',
 					sorter: { path: 'text' }
 				}">
+                <layoutData>
+                    <FlexItemData growFactor="1" shrinkFactor="1" baseSize="0"/>
+                </layoutData>
 				<core:Item key="{key}" text="{text}" />
 			</ComboBox>
         </HBox>
