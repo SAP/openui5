@@ -437,7 +437,7 @@ html[data-sap-ui-browser^=ie] .sapMOH .sapMObjectAttributeActive {
 .sapMOHR {
 	width: 100%;
 	height: 100%;
-	padding: 1.1rem 3rem 0 3rem;
+	padding: 1.1rem 3rem 1.5rem 3rem;
 	box-sizing: border-box;
 }
 
@@ -450,27 +450,21 @@ html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideM
 	padding-right: 2rem;
 }
 
-html.sap-desktop.sapUiMedia-Std-Tablet .sapMOHR,
-html.sap-tablet.sapUiMedia-Std-Tablet .sapMOHR,
-html .sapUiContainer-Medium .sapMOHR,
-html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) :not(div[class*='sapMOHRBg']:only-child) .sapMOHR {
-	padding-bottom: 0;
-}
-
-div[class*='sapMOHRBg']:last-of-type {
-	padding-bottom: 1.5rem;
-}
-
 html.sap-desktop.sapUiMedia-Std-Phone .sapMOHR,
 html.sap-phone .sapMOHR,
 html .sapUiContainer-Narrow .sapMOHR {
-	padding: 0.625rem 1rem 0 1rem;
+	padding: 0.625rem 1rem 1rem 1rem;
 }
 
-html.sap-desktop.sapUiMedia-Std-Phone div[class*='sapMOHRBg']:last-of-type,
-html.sap-phone div[class*='sapMOHRBg']:last-of-type,
-html .sapUiContainer-Narrow div[class*='sapMOHRBg']:last-of-type {
-	padding-bottom: 1rem;
+/* sapMOHRNoBorder this class is set when the ObjectHeader has headerContainer in that case the bottom padding should be 0 */
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRNoBorder.sapMOHR,
+html.sap-phone .sapMOHRNoBorder.sapMOHR,
+html .sapUiContainer-Narrow .sapMOHRNoBorder.sapMOHR,
+html.sap-desktop.sapUiMedia-Std-Tablet .sapMOHRNoBorder.sapMOHR,
+html.sap-tablet.sapUiMedia-Std-Tablet .sapMOHRNoBorder.sapMOHR,
+html .sapUiContainer-Medium .sapMOHRNoBorder.sapMOHR,
+html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMOHRNoBorder.sapMOHR {
+	padding-bottom: 0;
 }
 
 /* Group1 (title, flags and number) */
