@@ -241,10 +241,13 @@ sap.ui.define(["jquery.sap.global",
 					}
 
 					oContext = getWindow();
-					oContext._$files.push({
+
+					// Avoid method calls on _$files as IE11/Edge throws "Can't execute code from a freed script"
+					// BCP: 1980144925
+					oContext._$files[oContext._$files.length] = {
 						name: sFile,
 						content: JSON.stringify(oHistory)
-					});
+					};
 
 					ruleDeferred.resolve({
 						result: true,
