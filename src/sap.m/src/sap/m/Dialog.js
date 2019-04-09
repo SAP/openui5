@@ -502,8 +502,6 @@ function(
 				});
 			}
 
-			this._createToolbarButtons();
-
 			if (sap.ui.getCore().getConfiguration().getAccessibility() && this.getState() != ValueState.None) {
 				var oValueState = new InvisibleText({text: this.getValueStateString(this.getState())});
 
@@ -1398,7 +1396,7 @@ function(
 		};
 
 		Dialog.prototype._createToolbarButtons = function () {
-			var toolbar = this._getToolbar();
+			var toolbar = this._getAnyFooter();
 			var buttons = this.getButtons();
 			var beginButton = this.getBeginButton();
 			var endButton = this.getEndButton(),
@@ -1414,9 +1412,11 @@ function(
 			});
 
 			toolbar.removeAllContent();
-			if (!("_toolbarSpacer" in this)) {
+
+			if (!this._toolbarSpacer) {
 				this._toolbarSpacer = new ToolbarSpacer();
 			}
+			 
 			toolbar.addContent(this._toolbarSpacer);
 			// attach handler which sets origin parameter only for begin and End buttons
 			aButtons.forEach(function(oBtn) {
@@ -1439,18 +1439,28 @@ function(
 		};
 
 		/*
-		 *
-		 * @returns {*|sap.m.IBar|null}
-		 * @private
-		 */
-		Dialog.prototype._getToolbar = function () {
-			if (!this._oToolbar) {
-				this._oToolbar = new AssociativeOverflowToolbar(this.getId() + "-footer");
+		* Returns dialog footer if exists. 
+		* @returns {sap.m.IBar} The footer of the dialog
+		* @private
+		*/
+		Dialog.prototype._getAnyFooter = function() {
 
-				this.setAggregation("_toolbar", this._oToolbar);
+			if(!this._footer) {
+				var customFooter = this.getCustomFooter(),
+					beginButton = this.getBeginButton(),
+					endButton = this.getEndButton(),
+					buttons = this.getButtons();
+
+				if(customFooter) {
+					this._footer = customFooter;                                                      
+				} else if(beginButton || endButton || buttons.length) {
+					this._footer = new AssociativeOverflowToolbar(this.getId() + "-footer");
+					this.setAggregation("_toolbar", this._oToolbar);
+					this._createToolbarButtons();
+				}
 			}
 
-			return this._oToolbar;
+			return this._footer;
 		};
 
 		/**

@@ -41,8 +41,6 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/library"],
 				oHeader = oControl._getAnyHeader(),
 				oSubHeader = oControl.getSubHeader(),
 				bMessage = (sType === DialogType.Message),
-				oLeftButton = oControl.getBeginButton(),
-				oRightButton = oControl.getEndButton(),
 				bHorizontalScrolling = oControl.getHorizontalScrolling(),
 				bVerticalScrolling = oControl.getVerticalScrolling(),
 				sState = oControl.getState(),
@@ -51,7 +49,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/library"],
 				bResizable = oControl.getResizable(),
 				bDraggable = oControl.getDraggable(),
 				oValueStateText = oControl.getAggregation("_valueState"),
-				oCustomFooter = oControl.getCustomFooter();
+				oFooter = oControl._getAnyFooter();
 
 			// write the HTML into the render manager
 			// the initial size of the dialog have to be 0, because if there is a large dialog content the initial size can be larger than the html's height (scroller)
@@ -85,9 +83,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/library"],
 			oRm.addClass(DialogRenderer._mStateClasses[sState]);
 
 			// No Footer
-			var noToolbarAndNobuttons = !oControl._oToolbar && !oLeftButton && !oRightButton;
-			var emptyToolbarAndNoButtons = oControl._oToolbar && oControl._isToolbarEmpty() && !oLeftButton && !oRightButton;
-			if ((noToolbarAndNobuttons || emptyToolbarAndNoButtons) && !oCustomFooter) {
+			if (!oFooter) {
 				oRm.addClass("sapMDialog-NoFooter");
 			}
 
@@ -210,14 +206,13 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/library"],
 			oRm.write("</div>");
 			oRm.write("</section>");
 
-			if (!(noToolbarAndNobuttons || emptyToolbarAndNoButtons) || oCustomFooter) {
-				var footer = oCustomFooter || oControl._oToolbar;
+			if (oFooter) {
 				oRm.write("<footer");
 				oRm.addClass("sapMDialogFooter");
 				oRm.writeClasses();
 				oRm.write(">");
-				footer._applyContextClassFor("footer");
-				oRm.renderControl(footer);
+				oFooter._applyContextClassFor("footer");
+				oRm.renderControl(oFooter);
 				oRm.write("</footer>");
 			}
 
