@@ -1500,8 +1500,8 @@ sap.ui.define([
 		}
 
 		if (this.getShowFavorites() && !oItem.favorite && oRadioButton) {
-			oItem.favorite = !oItem.favorite;
 			this._setFavoriteIcon(oRadioButton.getParent().getCells()[VariantManagement.COLUMN_FAV_IDX], oItem.favorite);
+			oItem.favorite = !oItem.favorite;
 		}
 
 		this.setDefaultVariantKey(sKey);
