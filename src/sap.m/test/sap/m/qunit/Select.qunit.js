@@ -506,6 +506,7 @@ sap.ui.define([
 			assert.strictEqual(oSelect.getName(), "", 'Default name is ""');
 			assert.strictEqual(oSelect.getVisible(), true, "By default the Select control is visible");
 			assert.strictEqual(oSelect.getEnabled(), true, "By default the Select control is enabled");
+			assert.strictEqual(oSelect.getEditable(), true, "By default the Select control is editable");
 			assert.strictEqual(oSelect.getWidth(), "auto", 'By default the "width" of the Select control is "auto"');
 			assert.strictEqual(oSelect.getMaxWidth(), "100%", 'By default the "max-width" of the Select control is "100%"');
 			assert.ok(oSelect.getSelectedItem() === oSelect.getFirstItem(), "By default the selected items of the Select control is the first item");
@@ -585,6 +586,24 @@ sap.ui.define([
 			property: "enabled",
 			output: false,
 			description: "Is disabled"
+		});
+
+		QUnit.module("getEditable()");
+
+		fnTestControlProperty({
+			control: new Select(),
+			property: "editable",
+			output: true,
+			description: "Is editable"
+		});
+
+		fnTestControlProperty({
+			control: new Select({
+				editable: false
+			}),
+			property: "editable",
+			output: false,
+			description: "Isn't editable"
 		});
 
 		QUnit.module("getWidth()");
@@ -2692,6 +2711,48 @@ sap.ui.define([
 
 			// cleanup
 			oSelect.destroy();
+		});
+
+		QUnit.module("Editable property", {
+			beforeEach: function () {
+				this.oSelect = new Select({
+					items: [
+						new Item({
+							key: "0",
+							text: "item 0"
+						})
+					]
+				});
+
+				this.oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.oSelect.destroy();
+				this.oSelect = null;
+			}
+		});
+
+		QUnit.test("Setting Editable property to false", function (assert) {
+
+			// act
+			this.oSelect.setEditable(false);
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.ok(this.oSelect.$().hasClass(SelectRenderer.CSS_CLASS + "Readonly"), 'If the select control is not editable, it should have the CSS class "' + SelectRenderer.CSS_CLASS + 'Readonly".');
+		});
+
+		QUnit.test("Enabled should have precedence over Editable", function (assert) {
+
+			// act
+			this.oSelect.setEditable(false);
+			this.oSelect.setEnabled(false);
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.notOk(this.oSelect.$().hasClass(SelectRenderer.CSS_CLASS + "Readonly"), 'If the select control is not editable and it is disabled, it should not have the CSS class "' + SelectRenderer.CSS_CLASS + 'Readonly".');
+			assert.ok(this.oSelect.$().hasClass(SelectRenderer.CSS_CLASS + "Disabled"), 'If the select control is disabled, it should have the CSS class "' + SelectRenderer.CSS_CLASS + 'Disabled".');
 		});
 
 		QUnit.module("two column layout");
@@ -9211,7 +9272,7 @@ sap.ui.define([
 			assert.strictEqual(oInfo.description, "Tooltip", "Description");
 			assert.strictEqual(oInfo.focusable, true, "Focusable");
 			assert.strictEqual(oInfo.enabled, true, "Enabled");
-			assert.strictEqual(oInfo.editable, undefined, "Editable");
+			assert.strictEqual(oInfo.readonly, false, "Editable");
 
 			oSelect.setTooltip("");
 			var oIconInfo = IconPool.getIconInfo(oSelect.getIcon());
@@ -9231,6 +9292,10 @@ sap.ui.define([
 			assert.strictEqual(oInfo.role, "combobox", "AriaRole");
 			assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_COMBO"), "Type");
 			assert.strictEqual(oInfo.description, "Item2", "Description");
+
+			oSelect.setEditable(false);
+			oInfo = oSelect.getAccessibilityInfo();
+			assert.strictEqual(oInfo.readonly, true, "Read-only");
 
 			oSelect.destroy();
 		});

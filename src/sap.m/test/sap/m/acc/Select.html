@@ -453,6 +453,14 @@
 			}
 		});
 
+		var oSelectReadOnly = new sap.m.Select({
+			editable: false,
+			items: {
+				path: "/items",
+				template: oItemTemplate
+			}
+		});
+
 		var oSelectSuccess = new sap.m.Select({
 			width: "15rem",
 			valueState: sap.ui.core.ValueState.Success,
@@ -527,6 +535,10 @@
 
 				new sap.ui.core.HTML({ content: "<h3>Disabled</h3>" }),
 				oSelectDisabled,
+				new sap.ui.core.HTML({ content: "<hr>" }),
+
+				new sap.ui.core.HTML({ content: "<h3>Read-only</h3>" }),
+				oSelectReadOnly,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
 				new sap.ui.core.HTML({ content: "<h3>Warning state with label</h3>" }),

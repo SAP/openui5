@@ -38,6 +38,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 			var	sTooltip = oSelect.getTooltip_AsString(),
 				sType = oSelect.getType(),
 				bAutoAdjustWidth = oSelect.getAutoAdjustWidth(),
+				bEditable = oSelect.getEditable(),
 				bEnabled = oSelect.getEnabled(),
 				sCSSWidth = oSelect.getWidth(),
 				bWidthPercentage = sCSSWidth.indexOf("%") > -1,
@@ -51,6 +52,8 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 
 			if (!bEnabled) {
 				oRm.addClass(CSS_CLASS + "Disabled");
+			} else if (!bEditable) {
+				oRm.addClass(CSS_CLASS + "Readonly");
 			}
 
 			if (bSelectWithFlexibleWidth && (sType === SelectType.Default)) {
@@ -67,7 +70,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				oRm.addClass(CSS_CLASS + "WithIcon");
 			}
 
-			if (bEnabled && Device.system.desktop) {
+			if (bEnabled && bEditable && Device.system.desktop) {
 				oRm.addClass(CSS_CLASS + "Hoverable");
 			}
 
@@ -377,6 +380,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 			oRm.writeAccessibilityState(oSelect, {
 				role: this.getAriaRole(oSelect),
 				disabled: !oSelect.getEnabled(),
+				readonly: oSelect.getEnabled() && !oSelect.getEditable(),
 				expanded: oSelect.isOpen(),
 				invalid: (oSelect.getValueState() === ValueState.Error) ? true : undefined,
 				labelledby: {

@@ -112,9 +112,30 @@ function(
 					},
 
 					/**
-					 * Indicates whether the user can change the selection.
+					 * Determines whether the user can modify the selected item. When the property is set
+					 * to <code>false</code>, the control appears as disabled and CANNOT be focused.
+					 *
+					 * <b>Note:</b> When both <code>enabled</code> and <code>editable</code> properties
+					 * are set to <code>false<code>, <code>enabled</code> has priority over
+					 * <code>editable</code>.
 					 */
 					enabled: {
+						type: "boolean",
+						group: "Behavior",
+						defaultValue: true
+					},
+
+					/**
+					 * Determines whether the user can modify the selected item. When the property is set
+					 * to <code>false</code>, the control appears as disabled but CAN still be focused.
+					 *
+					 * <b>Note:</b> When both <code>enabled</code> and <code>editable</code> properties
+					 * are set to <code>false<code>, <code>enabled</code> has priority over
+					 * <code>editable</code>.
+					 *
+					 * @since 1.66.0
+					 */
+					editable: {
 						type: "boolean",
 						group: "Behavior",
 						defaultValue: true
@@ -1223,7 +1244,7 @@ function(
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
-			if (this.getEnabled() && this.isOpenArea(oEvent.target)) {
+			if (this.getEnabled() && this.getEditable() && this.isOpenArea(oEvent.target)) {
 
 				// add the active state to the Select's field
 				this.addStyleClass(this.getRenderer().CSS_CLASS + "Pressed");
@@ -1241,7 +1262,7 @@ function(
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
-			if (this.getEnabled() && !this.isOpen() && this.isOpenArea(oEvent.target)) {
+			if (this.getEnabled() && this.getEditable() && !this.isOpen() && this.isOpenArea(oEvent.target)) {
 
 				// remove the active state of the Select HTMLDIVElement container
 				this.removeStyleClass(this.getRenderer().CSS_CLASS + "Pressed");
@@ -1260,7 +1281,7 @@ function(
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
-			if (!this.getEnabled()) {
+			if (!this.getEnabled() || !this.getEditable()) {
 				return;
 			}
 
@@ -1313,9 +1334,9 @@ function(
 		 */
 		Select.prototype.onkeypress = function(oEvent) {
 
-			// prevents actions from occurring when the control is disabled,
+			// prevents actions from occurring when the control is non-editable or disabled,
 			// IE11 browser focus non-focusable elements
-			if (!this.getEnabled()) {
+			if (!this.getEnabled() || !this.getEditable()) {
 				return;
 			}
 
@@ -1362,9 +1383,9 @@ function(
 		 */
 		Select.prototype.onsapshow = function(oEvent) {
 
-			// prevents actions from occurring when the control is disabled,
+			// prevents actions from occurring when the control is non-editable or disabled,
 			// IE11 browser focus non-focusable elements
-			if (!this.getEnabled()) {
+			if (!this.getEnabled() || !this.getEditable()) {
 				return;
 			}
 
@@ -1396,9 +1417,9 @@ function(
 		 */
 		Select.prototype.onsapescape = function(oEvent) {
 
-			// prevents actions from occurring when the control is disabled,
+			// prevents actions from occurring when the control is non-editable or disabled,
 			// IE11 browser focus non-focusable elements
-			if (!this.getEnabled()) {
+			if (!this.getEnabled() || !this.getEditable()) {
 				return;
 			}
 
@@ -1420,9 +1441,9 @@ function(
 		 */
 		Select.prototype.onsapenter = function(oEvent) {
 
-			// prevents actions from occurring when the control is disabled,
+			// prevents actions from occurring when the control is non-editable or disabled,
 			// IE11 browser focus non-focusable elements
-			if (!this.getEnabled()) {
+			if (!this.getEnabled() || !this.getEditable()) {
 				return;
 			}
 
@@ -1451,9 +1472,9 @@ function(
 		 */
 		Select.prototype.onkeyup = function(oEvent) {
 
-			// prevents actions from occurring when the control is disabled,
+			// prevents actions from occurring when the control is non-editable or disabled,
 			// IE11 browser focus non-focusable elements
-			if (!this.getEnabled()) {
+			if (!this.getEnabled() || !this.getEditable()) {
 				return;
 			}
 
@@ -1480,9 +1501,9 @@ function(
 		 */
 		Select.prototype.onsapdown = function(oEvent) {
 
-			// prevents actions from occurring when the control is disabled,
+			// prevents actions from occurring when the control is non-editable or disabled,
 			// IE11 browser focus non-focusable elements
-			if (!this.getEnabled()) {
+			if (!this.getEnabled() || !this.getEditable()) {
 				return;
 			}
 
@@ -1507,9 +1528,9 @@ function(
 		 */
 		Select.prototype.onsapup = function(oEvent) {
 
-			// prevents actions from occurring when the control is disabled,
+			// prevents actions from occurring when the control is non-editable or disabled,
 			// IE11 browser focus non-focusable elements
-			if (!this.getEnabled()) {
+			if (!this.getEnabled() || !this.getEditable()) {
 				return;
 			}
 
@@ -1535,9 +1556,9 @@ function(
 		 */
 		Select.prototype.onsaphome = function(oEvent) {
 
-			// prevents actions from occurring when the control is disabled,
+			// prevents actions from occurring when the control is non-editable or disabled,
 			// IE11 browser focus non-focusable elements
-			if (!this.getEnabled()) {
+			if (!this.getEnabled() || !this.getEditable()) {
 				return;
 			}
 
@@ -1560,9 +1581,9 @@ function(
 		 */
 		Select.prototype.onsapend = function(oEvent) {
 
-			// prevents actions from occurring when the control is disabled,
+			// prevents actions from occurring when the control is non-editable or disabled,
 			// IE11 browser focus non-focusable elements
-			if (!this.getEnabled()) {
+			if (!this.getEnabled() || !this.getEditable()) {
 				return;
 			}
 
@@ -1584,9 +1605,9 @@ function(
 		 */
 		Select.prototype.onsappagedown = function(oEvent) {
 
-			// prevents actions from occurring when the control is disabled,
+			// prevents actions from occurring when the control is non-editable or disabled,
 			// IE11 browser focus non-focusable elements
-			if (!this.getEnabled()) {
+			if (!this.getEnabled() || !this.getEditable()) {
 				return;
 			}
 
@@ -1617,9 +1638,9 @@ function(
 		 */
 		Select.prototype.onsappageup = function(oEvent) {
 
-			// prevents actions from occurring when the control is disabled,
+			// prevents actions from occurring when the control is non-editable or disabled,
 			// IE11 browser focus non-focusable elements
-			if (!this.getEnabled()) {
+			if (!this.getEnabled() || !this.getEditable()) {
 				return;
 			}
 
@@ -1649,7 +1670,7 @@ function(
 		 * @private
 		 */
 		Select.prototype.onsaptabnext = function (oEvent) {
-			// prevents actions from occurring when the control is disabled,
+			// prevents actions from occurring when the control is non-editable or disabled,
 			// IE11 browser focus non-focusable elements
 			if (!this.getEnabled()) {
 				return;
@@ -2322,12 +2343,12 @@ function(
 		/**
 		 * Whether or not the value state message should be opened.
 		 *
-		 * @returns {boolean} <code>false</true> if the field is disabled or the default value state is set,
+		 * @returns {boolean} <code>false</true> if the field is disabled, read-only or the default value state is set,
 		 * otherwise it returns <code>true</code>.
 		 * @since 1.40.5
 		 */
 		Select.prototype.shouldValueStateMessageBeOpened = function() {
-			return (this.getValueState() !== ValueState.None) && this.getEnabled();
+			return (this.getValueState() !== ValueState.None) && this.getEnabled() && this.getEditable();
 		};
 
 		/* ----------------------------------------------------------- */
@@ -2761,7 +2782,8 @@ function(
 			var oInfo = {
 				role: this.getRenderer().getAriaRole(this),
 				focusable: this.getEnabled(),
-				enabled: this.getEnabled()
+				enabled: this.getEnabled(),
+				readonly: this.getEnabled() && !this.getEditable()
 			};
 
 			if (this.getType() === "IconOnly") {
