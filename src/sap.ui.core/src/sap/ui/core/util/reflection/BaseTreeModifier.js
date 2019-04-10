@@ -339,6 +339,36 @@ sap.ui.define([
 		},
 
 		/**
+		 * Checks if there is a property binding and returns it if available, otherwise returns the value of the property.
+		 *
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
+		 * @param {string} sPropertyName - Property name
+		 * @returns {any} Binding info object or value of the property
+		 * @public
+		 */
+		getPropertyBindingOrProperty: function(vControl, sPropertyName) {
+			return this.getPropertyBinding(vControl, sPropertyName) || this.getProperty(vControl, sPropertyName);
+		},
+
+		/**
+		 * Calls {@link sap.ui.core.util.reflection.BaseTreeModifier#setPropertyBinding} if the passed value is a
+		 * binding info object or binding string,
+		 * otherwise calls {@link sap.ui.core.util.reflection.BaseTreeModifier#setProperty}.
+		 *
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
+		 * @param {string} sPropertyName - Property name
+		 * @param {any} vBindingOrValue - Property binding or property value
+		 * @public
+		 */
+		setPropertyBindingOrProperty: function(vControl, sPropertyName, vBindingOrValue) {
+			var bIsBindingObject = vBindingOrValue && (vBindingOrValue.path || vBindingOrValue.parts);
+			var bIsBindingString = vBindingOrValue && typeof vBindingOrValue === "string" && vBindingOrValue.substring(0, 1) === "{" && vBindingOrValue.slice(-1) === "}";
+
+			var sOperation = bIsBindingObject || bIsBindingString ? "setPropertyBinding" : "setProperty";
+			this[sOperation](vControl, sPropertyName, vBindingOrValue);
+		},
+
+		/**
 		 * See {@link sap.ui.core.Control#setVisible} method.
 		 *
 		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
@@ -461,7 +491,6 @@ sap.ui.define([
 		 * @public
 		 */
 		getPropertyBinding: function (vControl, sPropertyName) {},
-
 
 		/**
 		 * Creates the control in the corresponding representation.

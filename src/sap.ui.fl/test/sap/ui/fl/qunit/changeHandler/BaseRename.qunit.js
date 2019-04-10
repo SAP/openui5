@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ],
@@ -19,6 +20,7 @@ function (
 	XmlTreeModifier,
 	Button,
 	VerticalLayout,
+	JSONModel,
 	jQuery,
 	sinon
 ) {
@@ -26,9 +28,9 @@ function (
 
 	var sandbox = sinon.sandbox.create();
 	var oComponent = sap.ui.getCore().createComponent({
-						name : "testComponent",
-						id : "testComponent"
-					});
+		name : "testComponent",
+		id : "testComponent"
+	});
 
 	var mPropertyBag = {modifier: JsControlTreeModifier, appComponent: oComponent};
 
@@ -60,7 +62,6 @@ function (
 			this.mSpecificChangeInfo = {
 				value : "Button New Text"
 			};
-
 		},
 		afterEach: function(){
 			this.oButton.destroy();
@@ -111,7 +112,6 @@ function (
 		});
 
 		QUnit.test('when completeChangeContent & applyChange with XmlTreeModifier are called, and reverted later', function (assert) {
-
 			this.myLayoutId = "myLayout";
 			this.oLayout = new VerticalLayout(oComponent.createId(this.myLayoutId) ,{
 				content : [this.oButton]
@@ -139,8 +139,52 @@ function (
 
 			this.oDefaultRenameChangeHandler.revertChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier});
 			assert.equal(this.oXmlButton.getAttribute("text"), "Initial Text", "then the button text doesn't change");
+
+			this.oLayout.destroy();
 		});
 
+		QUnit.test('when completeChangeContent & applyChange with XmlTreeModifier are called, and reverted later in XML and JS (on button with binding)', function (assert) {
+			this.myLayoutId = "myLayout";
+			this.oLayout = new VerticalLayout(oComponent.createId(this.myLayoutId) ,{
+				content : [this.oButton]
+			});
+			var oModel = new JSONModel({
+				text: "Initial Text"
+			});
+			this.oLayout.setModel(oModel);
+
+			var oDOMParser = new DOMParser();
+			var oXmlString =
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:layout="sap.ui.layout" xmlns="sap.m">' +
+					'<layout:VerticalLayout id="' + this.oLayout.getId() + '">' +
+						'<layout:content>' +
+							'<Button id="' + this.oButton.getId() + '"' + ' text="{/text}"' + '>' +
+							'</Button>' +
+						'</layout:content>' +
+					'</layout:VerticalLayout>' +
+				'</mvc:View>';
+
+			var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
+			this.oXmlView = oXmlDocument.documentElement;
+			this.oXmlLayout = this.oXmlView.childNodes[0];
+			this.oXmlButton = this.oXmlLayout.childNodes[0].childNodes[0];
+
+			this.oDefaultRenameChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, mPropertyBag);
+			this.oDefaultRenameChangeHandler.applyChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier});
+			assert.equal(this.oXmlButton.getAttribute("text"), this.mSpecificChangeInfo.value, "then the button text changes");
+
+			assert.throws(function() {
+				this.oDefaultRenameChangeHandler.revertChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier});
+			}, Error, "revert on XML throws an error");
+
+			// the revert data are saved on the change; set button text also on button control
+			this.oButton.setText(this.mSpecificChangeInfo.value);
+			this.oDefaultRenameChangeHandler.revertChange(this.oChange, this.oButton, {modifier: JsControlTreeModifier});
+			assert.equal(this.oButton.getText(), "Initial Text", "the text binding got reset and the value is correct");
+
+			this.oLayout.destroy();
+			oModel.destroy();
+		});
 
 		QUnit.test('when completeChangeContent is called without a value', function (assert) {
 			this.mSpecificChangeInfo.value = null;

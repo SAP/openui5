@@ -244,8 +244,9 @@ sap.ui.define([
 			this.oChangeHandler.applyChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier});
 			assert.equal(this.oXmlButton.getAttribute("text"), this.NEW_VALUE, "property value has original value");
 
-			this.oChangeHandler.revertChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier});
-			assert.equal(this.oXmlButton.getAttribute("text"), this.OLD_VALUE, "property value has original value");
+			assert.throws(function() {
+				this.oChangeHandler.revertChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier});
+			}, Error, "Revert change throws an error, because this is not supported yet.");
 		});
 	});
 

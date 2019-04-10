@@ -65,7 +65,7 @@ sap.ui.define([
 		// }
 
 		oChange.setRevertData({
-			originalValue: oModifier.getPropertyBinding(oControl, sPropertyName) || oModifier.getProperty(oControl, sPropertyName)
+			originalValue: oModifier.getPropertyBindingOrProperty(oControl, sPropertyName)
 		});
 
 		changeProperty(oControl, sPropertyName, vPropertyValue, oModifier);

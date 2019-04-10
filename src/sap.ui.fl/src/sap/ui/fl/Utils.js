@@ -307,15 +307,15 @@ function(
 		/**
 		 * Indicates if the property value represents a binding
 		 *
-		 * @param {object} oPropertyValue - property value
+		 * @param {object} sPropertyValue - Property value
 		 * @returns {boolean} true if value represents a binding
 		 * @public
 		 * @function
 		 * @name sap.ui.fl.Utils.isBinding
 		 */
-		isBinding: function (oPropertyValue) {
+		isBinding: function (sPropertyValue) {
 			var bIsBinding = false;
-			if (oPropertyValue && typeof oPropertyValue === "string" && oPropertyValue.substring(0, 1) === "{" && oPropertyValue.slice(-1) === "}") {
+			if (sPropertyValue && typeof sPropertyValue === "string" && sPropertyValue.substring(0, 1) === "{" && sPropertyValue.slice(-1) === "}") {
 				bIsBinding = true;
 			}
 			return bIsBinding;

@@ -20,6 +20,7 @@ function(
 			this.HBOX_ID = "hboxId";
 			this.TEXT_ID = "textId";
 			this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT = "controlWithPropertyTypeObject";
+			this.ID_OF_CONTROL_WITH_PROP_BINDING = "controlWithPropertyBinding";
 			this.CHANGE_HANDLER_PATH = "path/to/changehandler/definition";
 
 			this.oComponent = sap.ui.getCore().createComponent({
@@ -83,6 +84,7 @@ function(
 						'<Label text="stashedInvisibleLabel" visible="false" stashed="true"></Label>' +
 					'</VBox>' +
 					'<QuickViewPage id="' + this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT + '" crossAppNavCallback="\\{&quot;key&quot;:&quot;value&quot;\\}" />' +
+					'<QuickViewPage id="' + this.ID_OF_CONTROL_WITH_PROP_BINDING + '" crossAppNavCallback="{/foo}" />' +
 				'</mvc:View>';
 			this.oXmlView = XMLHelper.parse(this.oXmlString, "application/xml").documentElement;
 		},
@@ -317,12 +319,60 @@ function(
 			assert.deepEqual(mData, { key : "value"}, "returns json value");
 		});
 
+		QUnit.test("getProperty for properties controlled by a binding", function(assert) {
+			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_BINDING, this.oXmlView);
+			var mData = XmlTreeModifier.getProperty(oControl, "crossAppNavCallback");
+			assert.equal(mData, undefined, "nothing is returned");
+		});
+
 		QUnit.test("setProperty for properties of type object", function (assert) {
 			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
 			XmlTreeModifier.setProperty(oControl, "crossAppNavCallback", { key2 : 2});
 
 			var sStringifiedData = oControl.getAttribute("crossAppNavCallback");
 			assert.strictEqual(sStringifiedData, '\\{"key2":2\\}', "returns json value stringified and escaped");
+		});
+
+		QUnit.test("getPropertyBinding for bound properties", function(assert) {
+			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_BINDING, this.oXmlView);
+			var mData = XmlTreeModifier.getPropertyBinding(oControl, "crossAppNavCallback");
+			var oBindingInfo = {
+				path: "/foo"
+			};
+			assert.deepEqual(mData, oBindingInfo , "the binding info object is returned");
+		});
+
+		QUnit.test("getPropertyBinding for unbound properties of type object", function(assert) {
+			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
+			var mData = XmlTreeModifier.getPropertyBinding(oControl, "crossAppNavCallback");
+			assert.equal(mData, undefined, "nothing is returned");
+		});
+
+		QUnit.test("getPropertyBinding for unbound properties of type string", function(assert) {
+			var oControl = XmlTreeModifier._byId("button1", this.oXmlView);
+			var mData = XmlTreeModifier.getPropertyBinding(oControl, "text");
+			assert.equal(mData, undefined, "nothing is returned");
+		});
+
+		QUnit.test("getPropertyBinding for empty properties", function(assert) {
+			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_BINDING, this.oXmlView);
+			var mData = XmlTreeModifier.getPropertyBinding(oControl, "crossAppNavCallback2");
+			assert.equal(mData, undefined, "nothing is returned");
+		});
+
+		QUnit.test("setPropertyBinding with a binding string", function(assert) {
+			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
+			XmlTreeModifier.setPropertyBinding(oControl, "crossAppNavCallback", "{/foo}");
+			assert.equal(oControl.getAttribute("crossAppNavCallback"), "{/foo}", "the string was set");
+		});
+
+		QUnit.test("setPropertyBinding with a binding info object", function(assert) {
+			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
+			var oValueBefore = oControl.getAttribute("crossAppNavCallback");
+			assert.throws(function() {
+				XmlTreeModifier.setPropertyBinding(oControl, "crossAppNavCallback", {path: "foo"});
+			}, Error, "the function throws an error");
+			assert.deepEqual(oValueBefore, oControl.getAttribute("crossAppNavCallback"), "the property was not changed");
 		});
 
 		function getVisibleLabel(oXmlView){

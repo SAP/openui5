@@ -48,7 +48,7 @@ sap.ui.define([
 		// 	throw new Error(sNoBindingError);
 		// }
 
-		var vOriginalValue = oModifier.getPropertyBinding(oControl, sPropertyName) || oModifier.getProperty(oControl, sPropertyName);
+		var vOriginalValue = oModifier.getPropertyBindingOrProperty(oControl, sPropertyName);
 		oChange.setRevertData({
 			originalValue: vOriginalValue
 		});
@@ -73,7 +73,7 @@ sap.ui.define([
 			var vPropertyValue = mRevertData.originalValue;
 			var oModifier = mPropertyBag.modifier;
 
-			oModifier.setPropertyBinding(oControl, sPropertyName, vPropertyValue);
+			oModifier.setPropertyBindingOrProperty(oControl, sPropertyName, vPropertyValue);
 			oChange.resetRevertData();
 		} else {
 			Log.error("Attempt to revert an unapplied change.");
