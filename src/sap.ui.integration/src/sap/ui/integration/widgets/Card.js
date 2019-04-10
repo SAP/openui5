@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/m/Text",
 	'sap/ui/model/json/JSONModel',
 	"sap/f/CardRenderer",
-	"sap/f/library"
+	"sap/f/library",
+	"sap/ui/integration/library"
 ], function (
 	jQuery,
 	Control,
@@ -34,6 +35,7 @@ sap.ui.define([
 	Text,
 	JSONModel,
 	CardRenderer,
+	fLibrary,
 	library
 ) {
 	"use strict";
@@ -49,7 +51,9 @@ sap.ui.define([
 		PARAMS: "/sap.card/configuration/parameters"
 	};
 
-	var HeaderPosition = library.cards.HeaderPosition;
+	var HeaderPosition = fLibrary.cards.HeaderPosition;
+
+	var CardDataMode = library.CardDataMode;
 
 	/**
 	 * Constructor for a new <code>Card</code>.
@@ -723,6 +727,17 @@ sap.ui.define([
 					type: "sap.ui.core.CSSSize",
 					group: "Appearance",
 					defaultValue: "auto"
+				},
+
+				/**
+				 * Defines the state of the <code>Card</code>. When set to <code>Inactive</code>, the <code>Card</code> doesn't make requests.
+				 * @experimental Since 1.65
+				 * @since 1.65
+				 */
+				dataMode: {
+					type: "sap.ui.integration.CardDataMode",
+					group: "Behavior",
+					defaultValue: CardDataMode.Active
 				}
 			},
 			aggregations: {
@@ -836,6 +851,10 @@ sap.ui.define([
 		var sConfig = this.getHostConfigurationId(),
 			oParameters = this.getParameters();
 
+		if (this.getDataMode() !== CardDataMode.Active) {
+			return;
+		}
+
 		if (sConfig) {
 			this.addStyleClass(sConfig.replace(/-/g, "_"));
 		}
@@ -877,7 +896,7 @@ sap.ui.define([
 	 * @experimental Since 1.65. The API might change.
 	 */
 	Card.prototype.refresh = function () {
-		if (this._oCardManifest && this.isReady()) {
+		if (this._oCardManifest && this.getDataMode() === CardDataMode.Active) {
 			this._clearReadyState();
 			this._initReadyState();
 			this._bApplyManifest = true;
@@ -898,9 +917,17 @@ sap.ui.define([
 			this._oServiceManager.destroy();
 			this._oServiceManager = null;
 		}
-		if (this._oDataProvider) {
-			this._oDataProvider.destroy();
+
+		// destroying the factory would also destroy the data provider
+		if (this._oDataProviderFactory) {
+			this._oDataProviderFactory.destroy();
+			this._oDataProviderFactory = null;
 			this._oDataProvider = null;
+		}
+
+		if (this._oTemporaryContent) {
+			this._oTemporaryContent.destroy();
+			this._oTemporaryContent = null;
 		}
 		this._aReadyPromises = null;
 	};
@@ -985,6 +1012,12 @@ sap.ui.define([
 			Log.error("sap.app/type entry in manifest is not 'card'");
 		}
 
+		if (this._oDataProviderFactory) {
+			this._oDataProviderFactory.destroy();
+		}
+
+		this._oDataProviderFactory = new DataProviderFactory();
+
 		this._applyServiceManifestSettings();
 		this._applyDataManifestSettings();
 		this._applyHeaderManifestSettings();
@@ -1002,7 +1035,7 @@ sap.ui.define([
 			this._oDataProvider.destroy();
 		}
 
-		this._oDataProvider = DataProviderFactory.create(oDataSettings, this._oServiceManager);
+		this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
 
 		if (this._oDataProvider) {
 			this.setModel(new JSONModel());
@@ -1010,6 +1043,7 @@ sap.ui.define([
 			this._oDataProvider.attachDataChanged(function (oEvent) {
 				this.getModel().setData(oEvent.getParameter("data"));
 			}.bind(this));
+
 			this._oDataProvider.attachError(function (oEvent) {
 				this._handleError("Data service unavailable. " + oEvent.getParameter("message"));
 			}.bind(this));
@@ -1121,7 +1155,7 @@ sap.ui.define([
 		this._setTemporaryContent();
 
 		BaseContent
-			.create(sCardType, oManifestContent, this._oServiceManager)
+			.create(sCardType, oManifestContent, this._oServiceManager, this._oDataProviderFactory)
 			.then(function (oContent) {
 				this._setCardContent(oContent);
 			}.bind(this))
@@ -1141,7 +1175,7 @@ sap.ui.define([
 	 */
 	Card.prototype._setCardHeader = function (CardHeader) {
 		var oSettings = this._oCardManifest.get(MANIFEST_PATHS.HEADER),
-			oHeader = CardHeader.create(oSettings, this._oServiceManager);
+			oHeader = CardHeader.create(oSettings, this._oServiceManager, this._oDataProviderFactory);
 
 		oHeader.attachEvent("action", function (oEvent) {
 			this.fireEvent("action", {
@@ -1154,6 +1188,12 @@ sap.ui.define([
 		if (Array.isArray(oSettings.actions) && oSettings.actions.length > 0) {
 			//this._setCardHeaderActions(oHeader, oSettings.actions);
 			oHeader._attachActions(oSettings);
+		}
+
+		var oPreviousHeader = this.getAggregation("_header");
+
+		if (oPreviousHeader) {
+			oPreviousHeader.destroy();
 		}
 
 		this.setAggregation("_header", oHeader);
@@ -1214,6 +1254,13 @@ sap.ui.define([
 
 		oContent.setBusyIndicatorDelay(0);
 
+		var oPreviousContent = this.getAggregation("_content");
+
+		// only destroy previous content of type BaseContent
+		if (oPreviousContent && oPreviousContent !== this._oTemporaryContent) {
+			oPreviousContent.destroy();
+		}
+
 		// TO DO: decide if we want to set the content only on _updated event.
 		// This will help to avoid appearance of empty table before its data comes,
 		// but prevent ObjectContent to render its template, which might be useful
@@ -1226,25 +1273,15 @@ sap.ui.define([
 	 */
 	Card.prototype._setTemporaryContent = function () {
 
-		var oHBox = new HBox({ busy: true, busyIndicatorDelay: 0, height: "100%" });
+		var oTemporaryContent = this._getTemporaryContent(),
+			oPreviousContent = this.getAggregation("_content");
 
-		oHBox.addEventDelegate({
-			onAfterRendering: function () {
-				if (!this._oCardManifest) {
-					return;
-				}
+		// only destroy previous content of type BaseContent
+		if (oPreviousContent && oPreviousContent !== oTemporaryContent) {
+			oPreviousContent.destroy();
+		}
 
-				var sType = this._oCardManifest.get(MANIFEST_PATHS.TYPE) + "Content",
-					oContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
-					sHeight = BaseContent.getMinHeight(sType, oContent);
-
-				if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
-					oHBox.$().css({ "min-height": sHeight });
-				}
-			}
-		}, this);
-
-		this.setAggregation("_content", oHBox);
+		this.setAggregation("_content", oTemporaryContent);
 	};
 
 	/**
@@ -1261,40 +1298,88 @@ sap.ui.define([
 		this.fireEvent("_error");
 
 		var sDefaultDisplayMessage = "Unable to load the data.",
-			sErrorMessage = sDisplayMessage || sDefaultDisplayMessage;
+			sErrorMessage = sDisplayMessage || sDefaultDisplayMessage,
+			oTemporaryContent = this._getTemporaryContent(),
+			oPreviousContent = this.getAggregation("_content");
 
-		var oError = new HBox({
-			height: "100%",
+		var oError = new VBox({
 			justifyContent: "Center",
+			alignItems: "Center",
 			items: [
-				new VBox({
-					justifyContent: "Center",
-					alignItems: "Center",
-					items: [
-						new Icon({ src: "sap-icon://message-error", size: "1rem" }).addStyleClass("sapUiTinyMargin"),
-						new Text({ text: sErrorMessage })
-					]
-				})
+				new Icon({ src: "sap-icon://message-error", size: "1rem" }).addStyleClass("sapUiTinyMargin"),
+				new Text({ text: sErrorMessage })
 			]
 		});
 
-		oError.addEventDelegate({
-			onAfterRendering: function () {
-				if (!this._oCardManifest) {
-					return;
+		// only destroy previous content of type BaseContent
+		if (oPreviousContent && oPreviousContent !== oTemporaryContent) {
+			oPreviousContent.destroy();
+			this.fireEvent("_contentReady"); // content won't show up so mark it as ready
+		}
+
+		oTemporaryContent.setBusy(false);
+		oTemporaryContent.addItem(oError);
+
+		this.setAggregation("_content", oTemporaryContent);
+	};
+
+	Card.prototype._getTemporaryContent = function () {
+
+		if (!this._oTemporaryContent) {
+			this._oTemporaryContent = new HBox({
+				height: "100%",
+				justifyContent: "Center",
+				busyIndicatorDelay: 0,
+				busy: true
+			});
+
+			this._oTemporaryContent.addEventDelegate({
+				onAfterRendering: function () {
+					if (!this._oCardManifest) {
+						return;
+					}
+
+					var sType = this._oCardManifest.get(MANIFEST_PATHS.TYPE) + "Content",
+						oContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
+						sHeight = BaseContent.getMinHeight(sType, oContent);
+
+					if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
+						this._oTemporaryContent.$().css({ "min-height": sHeight });
+					}
 				}
+			}, this);
+		}
 
-				var sType = this._oCardManifest.get(MANIFEST_PATHS.TYPE) + "Content",
-					oContent = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
-					sHeight = BaseContent.getMinHeight(sType, oContent);
+		this._oTemporaryContent.destroyItems();
 
-				if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
-					oError.$().css({ "min-height": sHeight });
-				}
-			}
-		}, this);
+		return this._oTemporaryContent;
+	};
 
-		this.setAggregation("_content", oError);
+	/**
+	 * Sets a new value for the <code>dataMode</code> property.
+	 *
+	 * @experimental Since 1.65. API might change.
+	 * @param {sap.ui.integration.CardDataMode} sMode The mode to set to the Card.
+	 * @returns {sap.ui.integration.widgets.Card} Pointer to the control instance to allow method chaining.
+	 * @public
+	 * @since 1.65
+	 */
+	Card.prototype.setDataMode = function (sMode) {
+
+		if (this._oDataProviderFactory && sMode === CardDataMode.Inactive) {
+
+			this._oDataProviderFactory.destroy();
+			this._oDataProviderFactory = null;
+		}
+
+		// refresh will trigger re-rendering
+		this.setProperty("dataMode", sMode, true);
+
+		if (this.getProperty("dataMode") === CardDataMode.Active) {
+			this.refresh();
+		}
+
+		return this;
 	};
 
 	return Card;

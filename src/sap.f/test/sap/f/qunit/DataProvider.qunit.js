@@ -34,16 +34,19 @@ function (DataProviderFactory, ServiceDataProvider, DataProvider, RequestDataPro
 
 	QUnit.module("DataProviderFactory", {
 		beforeEach: function () {
+			this.oDataProviderFactory = new DataProviderFactory();
 			sinon.stub(DataProvider.prototype, "setSettings");
 		},
 		afterEach: function () {
 			DataProvider.prototype.setSettings.restore();
+			this.oDataProviderFactory.destroy();
+			this.oDataProviderFactory = null;
 		}
 	});
 
 	QUnit.test("create with null or undefined", function (assert) {
-		assert.notOk(DataProviderFactory.create(null), "Should have NOT created a DataProvider instance.");
-		assert.notOk(DataProviderFactory.create(), "Should have NOT created a DataProvider instance.");
+		assert.notOk(this.oDataProviderFactory.create(null), "Should have NOT created a DataProvider instance.");
+		assert.notOk(this.oDataProviderFactory.create(), "Should have NOT created a DataProvider instance.");
 		assert.notOk(DataProvider.prototype.setSettings.calledOnce, "Should have NOT called setSettings.");
 	});
 
@@ -56,7 +59,7 @@ function (DataProviderFactory, ServiceDataProvider, DataProvider, RequestDataPro
 		};
 
 		// Act
-		var oDataProvider = DataProviderFactory.create(oDataSettings);
+		var oDataProvider = this.oDataProviderFactory.create(oDataSettings);
 
 		// Assert
 		assert.notOk(oDataProvider, "Should have NOT created a DataProvider instance.");
@@ -72,7 +75,7 @@ function (DataProviderFactory, ServiceDataProvider, DataProvider, RequestDataPro
 		};
 
 		// Act
-		var oDataProvider = DataProviderFactory.create(oDataSettings);
+		var oDataProvider = this.oDataProviderFactory.create(oDataSettings);
 
 		// Assert
 		assert.ok(oDataProvider, "Should have created a DataProvider instance.");
@@ -92,7 +95,7 @@ function (DataProviderFactory, ServiceDataProvider, DataProvider, RequestDataPro
 		sinon.stub(ServiceDataProvider.prototype, "createServiceInstances");
 
 		// Act
-		var oDataProvider = DataProviderFactory.create(oDataSettings, oServiceManager);
+		var oDataProvider = this.oDataProviderFactory.create(oDataSettings, oServiceManager);
 
 		// Assert
 		assert.ok(oDataProvider, "Should have created a DataProvider instance.");
@@ -117,7 +120,7 @@ function (DataProviderFactory, ServiceDataProvider, DataProvider, RequestDataPro
 		var fnSpy = sinon.spy(DataProvider.prototype, "setUpdateInterval");
 
 		// Act
-		var oDataProvider = DataProviderFactory.create(oDataSettings);
+		var oDataProvider = this.oDataProviderFactory.create(oDataSettings);
 
 		// Assert
 		assert.ok(DataProvider.prototype.setSettings.calledOnce, "Should have called setSettings.");
@@ -128,6 +131,24 @@ function (DataProviderFactory, ServiceDataProvider, DataProvider, RequestDataPro
 
 		// Cleanup
 		fnSpy.restore();
+	});
+
+	QUnit.test("destroy", function (assert) {
+		// Arrange
+		var oSettings = {
+			json: {
+				key: "value"
+			}
+		};
+
+		var oDataProvider = this.oDataProviderFactory.create(oSettings),
+			oDestroySpy = sinon.spy(oDataProvider, "destroy");
+
+		// Act
+		this.oDataProviderFactory.destroy();
+
+		// Assert
+		assert.ok(oDestroySpy.calledOnce, "Should destroy all created instances when destroying the factory.");
 	});
 
 	QUnit.module("DataProvider", {

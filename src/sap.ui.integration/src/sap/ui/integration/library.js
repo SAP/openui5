@@ -20,7 +20,8 @@ sap.ui.define(["sap/ui/base/DataType",
 			version: "${version}",
 			dependencies: ["sap.ui.core", "sap.f"],
 			types: [
-				"sap.ui.integration.CardActionType"
+				"sap.ui.integration.CardActionType",
+				"sap.ui.integration.CardDataMode"
 			],
 			controls: [
 				"sap.ui.integration.widgets.Card",
@@ -62,6 +63,29 @@ sap.ui.define(["sap/ui/base/DataType",
 			 * @public
 			 */
 			Navigation : "Navigation"
+		};
+
+		/**
+		 * Possible data modes for <code>{@link sap.ui.integration.widgets.Card}</code>.
+		 *
+		 * @enum {string}
+		 * @experimental since 1.65
+		 * @public
+		 * @since 1.65
+		 */
+		thisLib.CardDataMode = {
+
+			/**
+			 * When in this mode, the card can make requests.
+			 * @public
+			 */
+			Active: "Active",
+
+			/**
+			 * When in this mode, the card cannot make requests.
+			 * @public
+			 */
+			Inactive: "Inactive"
 		};
 
 		return thisLib;

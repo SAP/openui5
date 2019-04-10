@@ -101,6 +101,8 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/m/HBox", "sap/m/VBox", "sap/m/Tex
 		};
 
 		ObjectContent.prototype.exit = function() {
+			BaseContent.prototype.exit.apply(this, arguments);
+
 			if (this._sResizeListenerId) {
 				ResizeHandler.deregister(this._sResizeListenerId);
 				this._sResizeListenerId = "";

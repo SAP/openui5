@@ -82,6 +82,8 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/m/List", "sap/m/StandardListItem"
 		 * Called when control is destroyed.
 		 */
 		ListContent.prototype.exit = function () {
+			BaseContent.prototype.exit.apply(this, arguments);
+
 			if (this._oItemTemplate) {
 				this._oItemTemplate.destroy();
 				this._oItemTemplate = null;

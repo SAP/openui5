@@ -136,6 +136,16 @@ sap.ui.define([
 		this.setBusyIndicatorDelay(0);
 	};
 
+	Header.prototype.exit = function () {
+		this._oServiceManager = null;
+		this._oDataProviderFactory = null;
+
+		if (this._oDataProvider) {
+			this._oDataProvider.destroy();
+			this._oDataProvider = null;
+		}
+	};
+
 	/**
 	 * Await for an event which controls the overall "ready" state of the header.
 	 *
@@ -261,7 +271,7 @@ sap.ui.define([
 	 * @param {Object} oServiceManager A service manager instance to handle services
 	 * @return {sap.f.cards.Header} The created Header
 	 */
-	Header.create = function(mConfiguration, oServiceManager) {
+	Header.create = function(mConfiguration, oServiceManager, oDataProviderFactory) {
 		var mSettings = {
 			title: mConfiguration.title,
 			subtitle: mConfiguration.subTitle
@@ -279,6 +289,7 @@ sap.ui.define([
 
 		var oHeader = new Header(mSettings);
 		oHeader.setServiceManager(oServiceManager);
+		oHeader.setDataProviderFactory(oDataProviderFactory);
 		oHeader._setData(mConfiguration.data);
 
 		return oHeader;
@@ -286,6 +297,11 @@ sap.ui.define([
 
 	Header.prototype.setServiceManager = function (oServiceManager) {
 		this._oServiceManager = oServiceManager;
+		return this;
+	};
+
+	Header.prototype.setDataProviderFactory = function (oDataProviderFactory) {
+		this._oDataProviderFactory = oDataProviderFactory;
 		return this;
 	};
 
@@ -307,7 +323,7 @@ sap.ui.define([
 			this._oDataProvider.destroy();
 		}
 
-		this._oDataProvider = DataProviderFactory.create(oDataSettings, this._oServiceManager);
+		this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
 
 		if (this._oDataProvider) {
 			this.setBusy(true);
@@ -319,6 +335,7 @@ sap.ui.define([
 				this._updateModel(oEvent.getParameter("data"));
 				this.setBusy(false);
 			}.bind(this));
+
 			this._oDataProvider.attachError(function (oEvent) {
 				this._handleError(oEvent.getParameter("message"));
 				this.setBusy(false);

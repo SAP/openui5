@@ -1746,5 +1746,68 @@ sap.ui.define([
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			this.oCard.setManifest(this.oManifest);
 		});
+
+		QUnit.module("Data mode", {
+			beforeEach: function () {
+				this.oCard = new Card();
+				this.oManifest = {
+					"sap.card": {
+						"type": "List",
+						"content": {
+							"data": {
+								"json": [
+									{ "Name": "Product 1" },
+									{ "Name": "Product 2" },
+									{ "Name": "Product 3" }
+								]
+							},
+							"item": {
+								"title": "{Name}"
+							}
+						}
+					}
+				};
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+				this.oManifest = null;
+			}
+		});
+
+		QUnit.test("Set data mode", function (assert) {
+
+			// Arrange
+			var done = assert.async(),
+				oApplyManifestSpy = sinon.spy(Card.prototype, "_applyManifestSettings"),
+				oRefreshSpy = sinon.spy(Card.prototype, "refresh");
+
+			this.oCard.attachEventOnce("_ready", function () {
+
+				// Assert
+				assert.ok(oApplyManifestSpy.calledOnce, "Card with default 'Active' state should try to apply the manifest settings.");
+
+				// Act
+				oApplyManifestSpy.reset();
+				this.oCard.setDataMode("Inactive");
+
+				// Assert
+				assert.ok(oApplyManifestSpy.notCalled, "Card with 'Inactive' state should NOT try to apply the manifest settings.");
+
+				// Act
+				this.oCard.setDataMode("Active");
+
+				// Assert
+				assert.ok(oRefreshSpy.calledOnce, "Should call refresh when turning to 'Active' mode.");
+
+				// Clean up
+				oApplyManifestSpy.restore();
+				done();
+
+			}.bind(this));
+
+			this.oCard.setManifest(this.oManifest);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		});
 	}
 );
