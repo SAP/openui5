@@ -773,6 +773,9 @@ sap.ui.define([
 			var oChangeContent1 = {"fileName":"change1", "fileType":"change", "variantReference":"variantManagementId", "selector":{"id":"controlId1", "idIsLocal":false}, "changeType": "changeType1", "layer": "USER"};
 			var oChangeContent2 = {"fileName":"change2", "fileType":"change", "variantReference":"variantManagementId", "selector":{"id":"controlId1", "idIsLocal":false}, "changeType": "changeType2", "layer": "USER"};
 			var oChangeContent3 = {"fileName":"change3", "fileType":"change", "variantReference":"variant1", "selector":{"id":"controlId1", "idIsLocal":false}, "changeType": "changeType2", "layer": "USER"};
+			var oVariantChangeContent0 = {"fileName": "variantChange0", "fileType": "ctrl_variant_change", "layer": "USER", "selector": {"id": "variantManagementId"}, "changeType": "changeType1"};
+			var oVariantManagementChangeContent0 = {"fileName": "variantManagementChange0", "fileType": "ctrl_variant_management_change", "layer": "USER", "changeType": "changeType1", "selector": {"id": "variantManagementId"}, "content": {"defaultVariant": "defaultVariant0"}};
+
 
 			var oMockedWrappedContent = {
 				"changes" : {
@@ -788,7 +791,9 @@ sap.ui.define([
 									}
 								},
 								"controlChanges" : [oChangeContent1, oChangeContent2],
-								"variantChanges" : {}
+								"variantChanges" : {
+									"setTitle": [oVariantChangeContent0]
+								}
 							},
 							{
 								"content" : {
@@ -802,7 +807,9 @@ sap.ui.define([
 								"controlChanges" : [oChangeContent3],
 								"variantChanges" : {}
 							}],
-							"variantManagementChanges": {}
+							"variantManagementChanges": {
+								"setDefault": [oVariantManagementChangeContent0]
+							}
 						}
 					}
 				}
@@ -828,6 +835,34 @@ sap.ui.define([
 				ControlPersonalizationAPI.isPersonalized(aControlIds, []),
 				"a rejection takes place"
 			);
+		});
+
+		QUnit.test("When isPersonalized() is called with undefined change types", function(assert) {
+			var oChangeContent0 = {"fileName":"change0", "fileType":"change", "variantReference":"", "selector":{"id":"controlId1", "idIsLocal":false}, "changeType": "changeType1", "layer": "USER"};
+			var aControls = [{id: "controlId1", appComponent: this.oAppComponent}];
+			var oMockedWrappedContent = {
+				"changes": {
+					"changes": [oChangeContent0]
+				}
+			};
+			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
+			return ControlPersonalizationAPI.isPersonalized(aControls).then(function(bIsPersonalized){
+				assert.equal(!!bIsPersonalized, true, "Personalization changes were found on control.");
+			});
+		});
+
+		QUnit.test("When isPersonalized() is called with an empty array of change types", function(assert) {
+			var oChangeContent0 = {"fileName":"change0", "fileType":"change", "variantReference":"", "selector":{"id":"controlId1", "idIsLocal":false}, "changeType": "changeType1", "layer": "USER"};
+			var aControls = [{id: "controlId1", appComponent: this.oAppComponent}];
+			var oMockedWrappedContent = {
+				"changes": {
+					"changes": [oChangeContent0]
+				}
+			};
+			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
+			return ControlPersonalizationAPI.isPersonalized(aControls, []).then(function(bIsPersonalized){
+				assert.equal(!!bIsPersonalized, true, "Personalization changes were found on control.");
+			});
 		});
 
 		QUnit.test("When isPersonalized() is called with variant control changes", function(assert) {

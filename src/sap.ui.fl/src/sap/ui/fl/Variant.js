@@ -566,7 +566,7 @@ sap.ui.define([
 	 * @param {Object}  [oPropertyBag] property bag
 	 * @param {Object}  [oPropertyBag.content] content of the new change
 	 * @param {String}  [oPropertyBag.content.fileName] name/id of the file. if not set implicitly created
-	 * @param {String}  [oPropertyBag.content.title] title of the variant
+	 * @param {String}  [oPropertyBag.content.content.title] title of the variant
 	 * @param {String}  [oPropertyBag.content.fileType] file type of a variant
 	 * @param {String}  [oPropertyBag.content.variantManagementReference] Reference to the variant management control
 	 * @param {String}  [oPropertyBag.content.variantReference] Reference to another variant

@@ -24,7 +24,7 @@ sap.ui.define([
 	BusyIndicator,
 	VariantUtil,
 	fnBaseMerge,
-	fnIncludes,
+	includes,
 	ObjectPath
 ) {
 	"use strict";
@@ -962,7 +962,7 @@ sap.ui.define([
 		});
 
 		return this.oChangePersistence.getDirtyChanges().filter(function(oChange) {
-			return fnIncludes(aChangeFileNames, oChange.getId());
+			return includes(aChangeFileNames, oChange.getId());
 		});
 	};
 

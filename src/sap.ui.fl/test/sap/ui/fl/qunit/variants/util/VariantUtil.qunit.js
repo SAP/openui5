@@ -34,7 +34,6 @@ function(
 				hashParams : [],
 				variantControlIds : []
 			};
-			this.fnConstructorObserverSpy = sandbox.spy(sap.ui.base, "ManagedObjectObserver");
 			this.fnDestroyObserverSpy = sandbox.spy(ManagedObjectObserver.prototype, "observe");
 			this.fnDestroyUnobserverSpy = sandbox.spy(ManagedObjectObserver.prototype, "unobserve");
 		},
