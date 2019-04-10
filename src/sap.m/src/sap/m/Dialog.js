@@ -1444,7 +1444,7 @@ function(
 					buttons = this.getButtons();
 
 				if (customFooter) {
-					this._footer = customFooter;                                                      
+					this._footer = customFooter;
 				} else if (beginButton || endButton || buttons.length) {
 					this._footer = new AssociativeOverflowToolbar(this.getId() + "-footer");
 					this.setAggregation("_toolbar", this._oToolbar);
