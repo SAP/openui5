@@ -903,7 +903,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 			var oNextSpy = sinon.spy(this.oContextMenuControl, "_setFocusOnNextButton");
 			var oPrevSpy = sinon.spy(this.oContextMenuControl, "_setFocusOnPreviousButton");
-			this.oContextMenuControl.show(oTestBtn, false);
+			this.oContextMenuControl.show(oTestBtn, false, {});
 			var sId = this.oContextMenuControl.getButtons()[0].getId();
 			this.oContextMenuControl._changeFocusOnButtons(sId);
 			assert.ok(oNextSpy.calledOnce);
@@ -932,30 +932,6 @@ sap.ui.define([
 			assert.strictEqual(typeof oOverlay.bottom, "number", "bottom should be a number");
 			assert.ok(!isNaN(oOverlay.bottom), "bottom shouldn't be NaN");
 			assert.strictEqual(oOverlay.bottom, oOverlay.top + oOverlay.height, "bottom should be equal to top + height");
-			assert.strictEqual(typeof oOverlay.isOverlappedAtTop, "boolean", "then isOverlappedAtTop parameter should be a boolean");
-			assert.notOk(oOverlay.isOverlappedAtTop, "then isOverlappedAtTop should be false (not overlapped)");
-			assert.strictEqual(typeof oOverlay.isOverlappedAtBottom, "boolean", "then isOverlappedAtBottom parameter should be a boolean");
-			assert.notOk(oOverlay.isOverlappedAtBottom, "then isOverlappedAtBottom should be false (not overlapped)");
-		});
-
-		QUnit.test("calling _getOverlayDimensions when overlay is overlapped with child overlay", function (assert) {
-			jQuery("#qunit-fixture").append("<div id=\"fakeOverlay\" style=\"width:200px; height:200px; position: fixed; top:3px; left:5px;\" />");
-			jQuery("#fakeOverlay").append("<div id=\"fakeChildOverlay\" style=\"width:200px; height:20px; position: fixed; top:3px; left:5px;\" />");
-			var oOverlay = this.oContextMenuControl._getOverlayDimensions("fakeOverlay");
-			assert.strictEqual(typeof oOverlay.isOverlappedAtTop, "boolean", "then isOverlappedAtTop parameter should be a boolean");
-			assert.notOk(oOverlay.isOverlappedAtTop, "then isOverlappedAtTop should be false (only overlapped with child overlay)");
-			assert.strictEqual(typeof oOverlay.isOverlappedAtBottom, "boolean", "then isOverlappedAtBottom parameter should be a boolean");
-			assert.notOk(oOverlay.isOverlappedAtBottom, "then isOverlappedAtBottom should be false (not overlapped)");
-		});
-
-		QUnit.test("calling _getOverlayDimensions when overlay is overlapped", function (assert) {
-			jQuery("#qunit-fixture").append("<div id=\"fakeOverlay\" style=\"width:200px; height:200px; position: fixed; top:3px; left:5px;\" />");
-			jQuery("#qunit-fixture").append("<div id=\"fakeChildOverlay\" style=\"width:200px; height:20px; position: fixed; top:3px; left:5px;\" />");
-			var oOverlay = this.oContextMenuControl._getOverlayDimensions("fakeOverlay");
-			assert.strictEqual(typeof oOverlay.isOverlappedAtTop, "boolean", "then isOverlappedAtTop parameter should be a boolean");
-			assert.ok(oOverlay.isOverlappedAtTop, "then isOverlappedAtTop should be true (overlapped)");
-			assert.strictEqual(typeof oOverlay.isOverlappedAtBottom, "boolean", "then isOverlappedAtBottom parameter should be a boolean");
-			assert.notOk(oOverlay.isOverlappedAtBottom, "then isOverlappedAtBottom should be false (not overlapped)");
 		});
 
 		QUnit.test("calling _getViewportDimensions", function (assert) {
@@ -971,237 +947,11 @@ sap.ui.define([
 			assert.ok(!isNaN(oViewport.height), "height shouldn't be NaN");
 		});
 
-		QUnit.test("calling _getMiddleOfOverlayAndViewportEdges", function (assert) {
-			var oOverlay = {
-				top: 10,
-				bottom: 20
-			};
-			var oViewport = {
-				top: 0,
-				bottom: 30
-			};
-			var iTop = this.oContextMenuControl._getMiddleOfOverlayAndViewportEdges(oOverlay, oViewport);
-			assert.strictEqual(iTop, 15, "entire overlay inside of viewport");
-			oOverlay = {
-				top: 0,
-				bottom: 20
-			};
-			oViewport = {
-				top: 10,
-				bottom: 30
-			};
-			iTop = this.oContextMenuControl._getMiddleOfOverlayAndViewportEdges(oOverlay, oViewport);
-			assert.strictEqual(iTop, 15, "top of overlay outside of viewport");
-			oOverlay = {
-				top: 10,
-				bottom: 30
-			};
-			oViewport = {
-				top: 0,
-				bottom: 20
-			};
-			iTop = this.oContextMenuControl._getMiddleOfOverlayAndViewportEdges(oOverlay, oViewport);
-			assert.strictEqual(iTop, 15, "bottom of overlay outside of viewport");
-			oOverlay = {
-				top: 0,
-				bottom: 30
-			};
-			oViewport = {
-				top: 10,
-				bottom: 20
-			};
-			iTop = this.oContextMenuControl._getMiddleOfOverlayAndViewportEdges(oOverlay, oViewport);
-			assert.strictEqual(iTop, 15, "top and bottom of overlay outside of viewport");
-			oOverlay = null;
-			oViewport = null;
-			iTop = null;
-		});
-
-		QUnit.test("calling _getContextMenuSidewaysPlacement", function (assert) {
-			var oOverlay = {
-				right: 60
-			};
-			var oPopover = {
-				width: 20
-			};
-			var oViewport = {
-				width: 100
-			};
-			var iLeft = this.oContextMenuControl._getContextMenuSidewaysPlacement(oOverlay, oPopover, oViewport);
-			assert.strictEqual(iLeft, 60, "There is enough space on the right");
-			assert.strictEqual(this.oContextMenuControl.getPopover().getPlacement(), "Right", "Placment should be Right");
-			oOverlay = {
-				left: 40
-			};
-			oPopover = {
-				width: 20
-			};
-			oViewport = {};
-			iLeft = this.oContextMenuControl._getContextMenuSidewaysPlacement(oOverlay, oPopover, oViewport);
-			assert.strictEqual(iLeft, 40, "There is enough space on the left");
-			assert.strictEqual(this.oContextMenuControl.getPopover().getPlacement(), "Left", "Placment should be Right");
-			oOverlay = {
-				left: 22,
-				width: 40
-			};
-			oPopover = {
-				width: 30
-			};
-			oViewport = {
-				width: 80
-			};
-			iLeft = this.oContextMenuControl._getContextMenuSidewaysPlacement(oOverlay, oPopover, oViewport);
-			assert.strictEqual(iLeft, 42, "The ContextMenu can be opened to the right from the center of the overlay");
-			assert.strictEqual(this.oContextMenuControl.getPopover().getPlacement(), "Right", "Placment should be Right");
-			oOverlay = {
-				left: 22,
-				width: 40
-			};
-			oPopover = {
-				width: 50
-			};
-			oViewport = {
-				width: 80
-			};
-			iLeft = this.oContextMenuControl._getContextMenuSidewaysPlacement(oOverlay, oPopover, oViewport);
-			assert.strictEqual(iLeft, 30, "The ContextMenu can be opened to the right from some place left of the center of the overlay");
-			assert.strictEqual(this.oContextMenuControl.getPopover().getPlacement(), "Right", "Placment should be Right");
-			oOverlay = null;
-			oPopover = null;
-			oViewport = null;
-			iLeft = null;
-		});
-
-		QUnit.test("calling _placeContextMenuSideways", function (assert) {
-			var oOverlay = {
-				right: 60,
-				top: 10,
-				bottom: 20
-			};
-			var oPopover = {
-				width: 20
-			};
-			var oViewport = {
-				top: 0,
-				bottom: 30,
-				width: 100
-			};
-			var oSpy1 = sinon.spy(this.oContextMenuControl, "_getMiddleOfOverlayAndViewportEdges");
-			var oSpy2 = sinon.spy(this.oContextMenuControl, "_getContextMenuSidewaysPlacement");
-			this.oContextMenuControl._placeContextMenuSideways(oOverlay, oPopover, oViewport);
-			assert.ok(oSpy1.calledOnce);
-			assert.ok(oSpy2.calledOnce);
-		});
-
-		QUnit.test("calling _placeContextMenuAtTheBottom with overlay height < 60", function (assert) {
-			var oOverlay = {
-				left: 20,
-				width: 30,
-				height: 30,
-				bottom: 90,
-				top: 60
-			};
-			var oPopover = {
-				height: 60
-			};
-			var oViewport = {
-				height: 200
-			};
-			var oPos = this.oContextMenuControl._placeContextMenuAtTheBottom(oOverlay, oPopover, oViewport);
-			assert.strictEqual(oPos.top, 90, "Should be at the bottom of the overlay");
-			assert.strictEqual(oPos.left, 35, "Should be the middle of the overlay");
-		});
-
-		QUnit.test("calling _placeContextMenuAtTheBottom when menu popover does not have enough space above and bellow the overlay", function (assert) {
-			var oOverlay = {
-				top: 60,
-				height: 30
-			};
-			var oPopover = {};
-			var oViewport = {
-				top: 0
-			};
-			var oPos = this.oContextMenuControl._placeContextMenuAtTheBottom(oOverlay, oPopover, oViewport);
-			assert.strictEqual(oPos.top, 65, "Should be 5 bellow the top of the overlay");
-		});
-
-		QUnit.test("calling _placeContextMenuAtTheBottom when menu popover does not have enoughspace above the overlay", function (assert) {
-			var oOverlay = {
-				top: 60
-			};
-			var oPopover = {};
-			var oViewport = {
-				top: 0
-			};
-			var oPos = this.oContextMenuControl._placeContextMenuAtTheBottom(oOverlay, oPopover, oViewport);
-			assert.strictEqual(oPos.top, 65, "Should be 5 bellow the top of the overlay");
-		});
-
-		QUnit.test("calling _placeContextMenuAtTheBottom when menu popover does not have enough space around the overlay", function (assert) {
-			var oOverlay = {
-				top: 60
-			};
-			var oPopover = {
-				height: 60
-			};
-			var oViewport = {
-				top: 80
-			};
-			var oPos = this.oContextMenuControl._placeContextMenuAtTheBottom(oOverlay, oPopover, oViewport);
-			assert.strictEqual(oPos.top, 85, "Should be 5 bellow the top of the viewport");
-		});
-
-		QUnit.test("calling _placeContextMenuAtTheBottom when overlay is overlapped with another overlay at the top", function (assert) {
-			var oOverlay = {
-				top: 80,
-				height: 80,
-				bottom: 160,
-				isOverlappedAtTop: true
-			};
-			var oPopover = {
-				height: 60
-			};
-			var oViewport = {
-				top: 80,
-				height: 250
-			};
-			var oPos = this.oContextMenuControl._placeContextMenuAtTheBottom(oOverlay, oPopover, oViewport);
-			assert.strictEqual(oPos.top, 160, "Should be at the bottom of the overlay");
-		});
-
-		QUnit.test("calling _placeContextMenuAtTheBottom when menu popover does not have enough space above and bellow the overlay and RTA toolbar exist", function (assert) {
-			jQuery("#qunit-fixture").append("<div id=\"rtaToolbar\" class=\"sapUiRtaToolbar\" style=\"width:100%; height:40px; position: fixed; top:0px; left:0px;\" />");
-			var oOverlay = {
-				top: 10,
-				height: 150,
-				isOverlappedAtTop: true
-			};
-			var oPopover = {
-				height: 60
-			};
-			var oViewport = {
-				top: 0,
-				height: 150
-			};
-			var oPos = this.oContextMenuControl._placeContextMenuAtTheBottom(oOverlay, oPopover, oViewport);
-			assert.strictEqual(oPos.top, 45, "Should be at the bottom of the RTA Toolbar");
-		});
-
-		QUnit.test("calling _placeContextMenuOnTop", function (assert) {
-			var oOverlay = {
-				top: 100,
-				left: 20,
-				width: 30
-			};
-			var oPos = this.oContextMenuControl._placeContextMenuOnTop(oOverlay);
-			assert.strictEqual(oPos.top, 100, "Should be the top of the overlay");
-			assert.strictEqual(oPos.left, 35, "Should be the middle of the overlay");
-		});
-
 		QUnit.test("calling _placeAsCompactContextMenu", function (assert) {
 			// menu place at top
-			var oOverlay = {
-				top: 100
+			var oContPos = {
+				x: 10,
+				y: 10
 			};
 			var oPopover = {
 				height: 50,
@@ -1210,50 +960,8 @@ sap.ui.define([
 			var oViewport = {
 				width: 100
 			};
-			var oSpyTop = sinon.spy(this.oContextMenuControl, "_placeContextMenuOnTop");
-			var oSpyBottom = sinon.spy(this.oContextMenuControl, "_placeContextMenuAtTheBottom");
-			var oSpySideways = sinon.spy(this.oContextMenuControl, "_placeContextMenuSideways");
-			this.oContextMenuControl._placeAsCompactContextMenu(oOverlay, oPopover, oViewport);
-			assert.ok(oSpyTop.calledOnce);
-			assert.ok(oSpyBottom.notCalled);
-			assert.ok(oSpySideways.notCalled);
+			this.oContextMenuControl._placeAsCompactContextMenu(oContPos, oPopover, oViewport);
 			assert.strictEqual(this.oContextMenuControl.getPopover().getShowArrow(), true, "Arrow should be visible");
-			// menu placed at the bottom
-			oOverlay = {
-				top: 100
-			};
-			oPopover = {
-				height: 60,
-				width: 40
-			};
-			oViewport = {
-				height: 200,
-				width: 200
-			};
-			oSpyTop.reset();
-			oSpyBottom.reset();
-			oSpySideways.reset();
-			this.oContextMenuControl._placeAsCompactContextMenu(oOverlay, oPopover, oViewport);
-			assert.ok(oSpyTop.notCalled);
-			assert.ok(oSpyBottom.calledOnce);
-			assert.ok(oSpySideways.notCalled);
-			// menu placed sideways
-			oOverlay = {};
-			oPopover = {
-				height: 50,
-				width: 40
-			};
-			oViewport = {
-				height: 100,
-				width: 100
-			};
-			oSpyTop.reset();
-			oSpyBottom.reset();
-			oSpySideways.reset();
-			this.oContextMenuControl._placeAsCompactContextMenu(oOverlay, oPopover, oViewport);
-			assert.ok(oSpyTop.notCalled);
-			assert.ok(oSpyBottom.notCalled);
-			assert.ok(oSpySideways.calledOnce);
 		});
 
 		QUnit.test("calling _placeAsExpandedContextMenu", function (assert) {
