@@ -65,7 +65,19 @@ sap.ui.define([
 
 		handleDetailsPress : function(oEvent) {
 			MessageToast.show("Details for product with id " + this.getView().getModel().getProperty("ProductId", oEvent.getSource().getBindingContext()));
-		}
+		},
+		onGenericTagPress: function (oEvent) {
+			if (!this._oPopover) {
+				this._oPopover = sap.ui.xmlfragment("sap.f.sample.DynamicPageAnalyticalTable.view.Card", this);
+				this.getView().addDependent(this._oPopover);
+			}
 
+			this._oPopover.openBy(oEvent.getSource());
+		},
+		onExit: function () {
+			if (this._oPopover) {
+				this._oPopover.destroy();
+			}
+		}
 	});
 });

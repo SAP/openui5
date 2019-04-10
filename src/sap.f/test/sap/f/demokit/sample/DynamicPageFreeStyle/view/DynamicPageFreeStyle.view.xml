@@ -32,8 +32,14 @@
 						<Title text="Header Title On Phone"/>
 					</f:snappedTitleOnMobile>
 					<f:content>
-						<GenericTag text="Shortage expected" status="Warning">
-							<ObjectNumber number="100" unit="EUR" emphasized="false" state="Warning"/>
+						<GenericTag text="SR"
+							status="Error"
+							press="onGenericTagPress"
+							design="StatusIconHidden">
+							<ObjectNumber number="2"
+								unit="M"
+								emphasized="false"
+								state="Error"/>
 						</GenericTag>
 					</f:content>
 					<f:actions>

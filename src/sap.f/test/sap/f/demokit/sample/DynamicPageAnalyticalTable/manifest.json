@@ -21,6 +21,7 @@
 				"stretch": true,
 				"files": [
 					"view/DynamicPageAnalyticalTable.view.xml",
+					"view/Card.fragment.xml",
 					"controller/DynamicPageAnalyticalTable.controller.js",
 					"manifest.json"
 				]

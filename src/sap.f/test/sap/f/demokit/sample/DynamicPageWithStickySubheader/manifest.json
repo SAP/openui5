@@ -20,6 +20,7 @@
 				"files": [
 					"controller/DynamicPageWithStickySubheader.controller.js",
 					"view/DynamicPageWithStickySubheader.view.xml",
+					"view/Card.fragment.xml",
 					"manifest.json"
 				]
 			}

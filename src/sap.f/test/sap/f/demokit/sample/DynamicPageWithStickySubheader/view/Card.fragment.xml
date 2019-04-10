@@ -1,0 +1,25 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.f"
+	xmlns:card="sap.f.cards">
+	<Popover placement="Right" showHeader="false" contentWidth="300px">
+			<f:Card width="300px">
+				<f:header>
+					<card:NumericHeader
+						title="Sales Revenue"
+						subtitle="Sales revenue in the current quarter"
+						unitOfMeasurement="EUR"
+						number="2.16"
+						scale="M"
+						trend="Down"
+						state="Error">
+						<card:sideIndicators>
+							<card:NumericSideIndicator number="4.74" unit="M" title="Target" />
+							<card:NumericSideIndicator number="-54.49" unit="%" title="Deviation" />
+						</card:sideIndicators>
+					</card:NumericHeader>
+				</f:header>
+			</f:Card>
+	</Popover>
+</core:FragmentDefinition>
