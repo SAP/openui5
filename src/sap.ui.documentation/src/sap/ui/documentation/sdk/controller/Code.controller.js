@@ -195,7 +195,6 @@ sap.ui.define([
 					if (!oData.iframe) {
 						oZipFile.file("Component.js", this.fetchSourceFile(sRef, "Component.js"));
 						oZipFile.file("index.html", this._changeIframeBootstrapToCloud(this._createIndexHtmlFile(oData)));
-						oZipFile.file("index.js", this._changeIframeBootstrapToCloud(this._createIndexJsFile(oData)));
 					}
 
 					// add extra download files
@@ -215,27 +214,11 @@ sap.ui.define([
 			},
 
 			_createIndexHtmlFile : function(oData) {
-				var sRef = sap.ui.require.toUrl("sap/ui/documentation/sdk/") + "tmpl";
-				var sFile = this.fetchSourceFile(sRef, "index.html.tmpl");
+				var sRef = sap.ui.require.toUrl("sap/ui/documentation/sdk/") + "tmpl",
+					sFile = this.fetchSourceFile(sRef, "index.html.tmpl");
 
 				sFile = sFile.replace(/{{TITLE}}/g, oData.name);
 				sFile = sFile.replace(/{{SAMPLE_ID}}/g, oData.id);
-
-				return sFile;
-			},
-
-			_createIndexJsFile : function(oData) {
-				var sRef = sap.ui.require.toUrl("sap/ui/documentation/sdk/") + "tmpl";
-				var sFile = this.fetchSourceFile(sRef, "index.js.tmpl");
-
-				sFile = sFile.replace(/{{TITLE}}/g, oData.name);
-				sFile = sFile.replace(/{{SAMPLE_ID}}/g, oData.id);
-
-				var sHeight = oData.stretch ? 'height : "100%", ' : "";
-				sFile = sFile.replace(/{{HEIGHT}}/g, sHeight);
-
-				var bScrolling = !oData.stretch;
-				sFile = sFile.replace(/{{SCROLLING}}/g, bScrolling);
 
 				return sFile;
 			},
