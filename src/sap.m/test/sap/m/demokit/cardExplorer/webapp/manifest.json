@@ -1,0 +1,167 @@
+{
+  "_version": "1.12.0",
+  "sap.app": {
+	"id": "sap.ui.demo.cardExplorer",
+	"type": "application",
+	"i18n": "i18n/i18n.properties",
+	"title": "{{appTitle}}",
+	"description": "{{appDescription}}",
+	"applicationVersion": {
+	  "version": "1.0.0"
+	}
+  },
+  "sap.ui": {
+	"technology": "UI5",
+	"icons": {
+	  "icon": "sap-icon://image-viewer",
+	  "favIcon": "",
+	  "phone": "",
+	  "phone@2": "",
+	  "tablet": "",
+	  "tablet@2": ""
+	},
+	"deviceTypes": {
+	  "desktop": true,
+	  "tablet": true,
+	  "phone": true
+	}
+  },
+  "sap.ui5": {
+	"rootView": {
+	  "viewName": "sap.ui.demo.cardExplorer.view.App",
+	  "type": "XML",
+	  "async": true,
+	  "id": "app"
+	},
+	"dependencies": {
+	  "minUI5Version": "1.60.0",
+	  "libs": {
+		"sap.ui.core": {
+		},
+		"sap.m": {
+		},
+		"sap.f": {
+		},
+		"sap.ui.layout": {
+		},
+		"sap.tnt": {
+		}
+	  }
+	},
+	"resources": {
+	  "css": [
+		{
+		  "uri": "css/style.css"
+		}
+	  ]
+	},
+	"contentDensities": {
+	  "compact": true,
+	  "cozy": true
+	},
+	"models": {
+	  "i18n": {
+		"type": "sap.ui.model.resource.ResourceModel",
+		"settings": {
+		  "bundleName": "sap.ui.demo.cardExplorer.i18n.i18n"
+		}
+	  }
+	},
+	"routing": {
+	  "config": {
+		"routerClass": "sap.m.routing.Router",
+		"viewType": "XML",
+		"viewPath": "sap.ui.demo.cardExplorer.view",
+		"controlId": "navContainer",
+		 "controlAggregation": "pages",
+		"bypassed": {
+		  "target": "learnGettingStarted"
+		},
+		"async": true
+	  },
+	  "routes": [
+		{
+		  "pattern": "",
+		  "name": "learnGettingStarted",
+		  "target": "learnGettingStarted"
+		},
+		{
+		  "pattern": "learn/authoringcards",
+		  "name": "learnAuthoringCards",
+		  "target": "learnAuthoringCards"
+		},
+		{
+		  "pattern": "learn/cardschemas",
+		  "name": "learnCardSchemas",
+		  "target": "learnCardSchemas"
+		},
+		{
+		  "pattern": "learn/cardtypes",
+		  "name": "learnCardTypes",
+		  "target": "learnCardTypes"
+		},
+		{
+		  "pattern": "learn/cardfeatures",
+		  "name": "learnCardFeatures",
+		  "target": "learnCardFeatures"
+		},
+		{
+		  "pattern": "learn/cardfeatures",
+		  "name": "learnCardFeatures",
+		  "target": "learnCardFeatures"
+		},
+		{
+		  "pattern": "explore",
+		  "name": "exploreCardTypes",
+		  "target": "exploreCardTypes"
+		},
+		{
+		  "pattern": "explore/tablecard",
+		  "name": "exploreTableCard",
+		  "target": "exploreTableCard"
+		}
+	  ],
+	  "targets": {
+		"learnGettingStarted": {
+		  "viewName": "LearnGettingStarted",
+		  "viewId": "learnGettingStarted",
+		  "viewLevel": 2
+		},
+		"learnAuthoringCards": {
+		  "viewName": "LearnAuthoringCards",
+		  "viewId": "learnAuthoringCards",
+		  "viewLevel": 2
+		},
+		"learnCardSchemas": {
+		  "viewName": "LearnCardSchemas",
+		  "viewId": "learnCardSchemas",
+		  "viewLevel": 2
+		},
+		"learnCardTypes": {
+		  "viewName": "LearnCardTypes",
+		  "viewId": "learnCardTypes",
+		  "viewLevel": 2
+		},
+		"learnCardFeatures": {
+		  "viewName": "LearnCardFeatures",
+		  "viewId": "learnCardFeatures",
+		  "viewLevel": 2
+		},
+		"exploreCardTypes": {
+		  "viewName": "ExploreCardTypes",
+		  "viewId": "exploreCardTypes",
+		  "viewLevel": 2
+		},
+		"exploreTableCard": {
+		  "viewName": "ExploreTableCard",
+		  "viewId": "exploreTableCard",
+		  "viewLevel": 2
+		},
+		"notFound": {
+		  "viewName": "NotFound",
+		  "viewId": "notFound"
+		}
+	  }
+	}
+  }
+}

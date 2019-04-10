@@ -1,0 +1,7 @@
+<mvc:View
+	controllerName="sap.ui.demo.cardExplorer.controller.ExploreTableCard"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Page title="Explore Table Card">
+	</Page>
+</mvc:View>
