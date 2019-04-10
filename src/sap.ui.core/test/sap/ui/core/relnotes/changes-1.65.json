@@ -151,6 +151,18 @@
         "type": "FIX",
         "text": " sap.ui.core.Hyphenation: Update Hyphenopoly bundle",
         "references": []
+      },
+      {
+        "id": "429f584d86e83e20ea67aa0940e079e0d780d3ba",
+        "type": "FEATURE",
+        "text": " sap/base/Log: log details Error#stack in console",
+        "references": []
+      },
+      {
+        "id": "74be4d6ad22d77e3643a2c253af3d81e9865638c",
+        "type": "FIX",
+        "text": " core.Popup: check dangling DOM before calling rect()",
+        "references": []
       }
     ]
   }

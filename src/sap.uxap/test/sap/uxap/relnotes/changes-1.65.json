@@ -97,6 +97,12 @@
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: Prevent unwanted content resize",
         "references": []
+      },
+      {
+        "id": "073b8217817ce3864b80aa8801df48f7a1e01603",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Updated resize behavior",
+        "references": []
       }
     ]
   }

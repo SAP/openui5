@@ -307,6 +307,60 @@
         "type": "FIX",
         "text": " sap.m.TimePicker: setDateValue initialises mask",
         "references": []
+      },
+      {
+        "id": "00a1bd63f3f97145bf0c7a462b4d450a167e357d",
+        "type": "FEATURE",
+        "text": " sap.f.ShellBar: Control productisation",
+        "references": []
+      },
+      {
+        "id": "21deb7e591183b535a6ddbfc7db78fe41d8b3a8a",
+        "type": "FEATURE",
+        "text": " sap.m.SearchField: Implements sap.f.IShellBar",
+        "references": []
+      },
+      {
+        "id": "e3c10daacb99bf5d8f178c16dd8c4531491773b2",
+        "type": "FEATURE",
+        "text": " sap.m.Select: Display multiline value state text",
+        "references": []
+      },
+      {
+        "id": "47c7429e300f98003ebd62fe7f65c8bb6320faa8",
+        "type": "FEATURE",
+        "text": " sap.m.ToolbarSeparator: Control can now go in overflow area",
+        "references": []
+      },
+      {
+        "id": "1447086eb88bdd0f6b9c257506bd08f50dec70cc",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: selected range includes all hours from the second date",
+        "references": []
+      },
+      {
+        "id": "47a2c9fd43bfa86d685f404bad32b905e0b0195b",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Height is now calculated correctly",
+        "references": []
+      },
+      {
+        "id": "edde4c83249e6a18a6e43dd8823fa7e778ad57a5",
+        "type": "FIX",
+        "text": " sap.m.GenericTile : In LineMode the Tile header not updated.",
+        "references": []
+      },
+      {
+        "id": "5697500f119b377dbebd169f8c1cb271789d9cb4",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: picker closes always on focus out",
+        "references": []
+      },
+      {
+        "id": "c4a2de2a8ad53b001c6ac8e920e21a262a2b4172",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: visibility of actions toolbar fiexed",
+        "references": []
       }
     ]
   }

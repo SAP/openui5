@@ -31,6 +31,18 @@
         "type": "FIX",
         "text": " sap.ui.rta: fix cut\u0026paste in SimpleForm",
         "references": []
+      },
+      {
+        "id": "e3c10daacb99bf5d8f178c16dd8c4531491773b2",
+        "type": "FEATURE",
+        "text": " sap.m.Select: Display multiline value state text",
+        "references": []
+      },
+      {
+        "id": "5c420ca5c3b505df969bcba6d45a4b4759e35669",
+        "type": "FIX",
+        "text": " sap.ui.layout.BlockLayoutCell: Improve aria-labelledby",
+        "references": []
       }
     ]
   }

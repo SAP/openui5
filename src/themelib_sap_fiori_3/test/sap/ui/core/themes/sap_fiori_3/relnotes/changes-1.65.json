@@ -61,6 +61,18 @@
         "type": "FIX",
         "text": " uxap.ObjectPage/f.DynamicPage: Floating footer Fiori 3 aligned",
         "references": []
+      },
+      {
+        "id": "00a1bd63f3f97145bf0c7a462b4d450a167e357d",
+        "type": "FEATURE",
+        "text": " sap.f.ShellBar: Control productisation",
+        "references": []
+      },
+      {
+        "id": "e3c10daacb99bf5d8f178c16dd8c4531491773b2",
+        "type": "FEATURE",
+        "text": " sap.m.Select: Display multiline value state text",
+        "references": []
       }
     ]
   }

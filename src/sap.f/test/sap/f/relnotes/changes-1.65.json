@@ -49,6 +49,36 @@
         "type": "FIX",
         "text": " sap.f.DynamicPage: Allowed non-animated footer toggle",
         "references": []
+      },
+      {
+        "id": "5b3debb5235240a568ea215037ad1b54567bfb92",
+        "type": "FEATURE",
+        "text": " sap.f.GridContainer: Added control sample",
+        "references": []
+      },
+      {
+        "id": "00a1bd63f3f97145bf0c7a462b4d450a167e357d",
+        "type": "FEATURE",
+        "text": " sap.f.ShellBar: Control productisation",
+        "references": []
+      },
+      {
+        "id": "1e5da3dedaf2b37deb74c1cddbe62ef26e999aca",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Component Card implemented - experimental",
+        "references": []
+      },
+      {
+        "id": "0c8d142da63dc1185e31cbd7c0e1c5e139bb49e6",
+        "type": "FIX",
+        "text": " sap.f.Avatar: Link image source with quotes fixed",
+        "references": []
+      },
+      {
+        "id": "98098031b5cb9110e7d5fc8649914ca375cf4b4c",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Removed unnecessary event firings",
+        "references": []
       }
     ]
   }
