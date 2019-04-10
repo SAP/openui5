@@ -30,13 +30,6 @@ sap.ui.define([
 	var mRegistry = Object.create(null);
 
 	/**
-	 * Ordered overrides array for storing by original XHR function name.
-	 *
-	 * @private
-	 */
-	var mOverrides = Object.create(null);
-
-	/**
 	 * Original XHR functions
 	 * @private
 	 */
@@ -49,9 +42,9 @@ sap.ui.define([
 	 * @param {function} fnCallback The registered callback function
 	 * @private
 	 */
-	function createOverride(sXHRMethod, fnCallback) {
+	function createOverride(sXHRMethod) {
 
-		mOverrides[sXHRMethod] = [];
+		mRegistry[sXHRMethod] = Object.create(null);
 
 		//  backup the original function
 		mXHRFunctions[sXHRMethod] = window.XMLHttpRequest.prototype[sXHRMethod];
@@ -63,35 +56,12 @@ sap.ui.define([
 			mXHRFunctions[sXHRMethod].apply(this, oArgs);
 
 			// call the registered callbacks in order of their registration
-			mOverrides[sXHRMethod].forEach(function(fnCallback) {
-				fnCallback.apply(this, oArgs);
-			}.bind(this));
+			for (var sName in mRegistry[sXHRMethod]) {
+				mRegistry[sXHRMethod][sName].apply(this, oArgs);
+			}
 
 		};
 
-	}
-
-	/**
-	 * Stores a function callback in registry and according overrides array.
-	 *
-	 * @param {string} sName Name under which the function is registered
-	 * @param {string} sXHRMethod Name of the actual XHR method
-	 * @param {function} fnCallback The registered callback function
-	 * @private
-	 */
-	function storeFunction(sName, sXHRMethod, fnCallback) {
-		mRegistry[sName] = mRegistry[sName] || {};
-		var fnOldFunction = mRegistry[sName][sXHRMethod];
-
-		if (fnOldFunction) {
-			// overwrite the old function
-			var iIndex = mOverrides[sXHRMethod].indexOf(fnOldFunction);
-			mOverrides[sXHRMethod][iIndex] = fnCallback;
-		} else {
-			// handle the newly registered function
-			mRegistry[sName][sXHRMethod] = fnCallback;
-			mOverrides[sXHRMethod].push(fnCallback);
-		}
 	}
 
 	/**
@@ -114,10 +84,10 @@ sap.ui.define([
 			Log.debug("Register '" + sName + "' for XHR function '" + sXHRMethod + "'", XHRINTERCEPTOR);
 
 			// initially the override needs to be placed per XHR method
-			if (!mOverrides[sXHRMethod]) {
-				createOverride(sXHRMethod, fnCallback);
+			if (!mRegistry[sXHRMethod]) {
+				createOverride(sXHRMethod);
 			}
-			storeFunction(sName, sXHRMethod, fnCallback);
+			mRegistry[sXHRMethod][sName] = fnCallback;
 		},
 
 		/**
@@ -129,21 +99,7 @@ sap.ui.define([
 		 * @public
 		 */
 		unregister: function(sName, sXHRMethod) {
-			var bRemove = this.isRegistered(sName, sXHRMethod);
-			if (bRemove) {
-
-				// remove the function from the override array
-				mOverrides[sXHRMethod] = mOverrides[sXHRMethod].filter(function(fnCallback) {
-					return fnCallback !== mRegistry[sName][sXHRMethod];
-				});
-
-				// remove the registry entry
-				delete mRegistry[sName][sXHRMethod];
-				// if there are no other registered functions we remove the entire registry entry
-				if (Object.keys(mRegistry[sName]).length === 0) {
-					delete mRegistry[sName];
-				}
-			}
+			var bRemove = delete mRegistry[sXHRMethod][sName];
 			Log.debug("Unregister '" + sName + "' for XHR function '" + sXHRMethod + (bRemove ? "'" : "' failed"), XHRINTERCEPTOR);
 			return bRemove;
 		},
@@ -155,7 +111,7 @@ sap.ui.define([
 		 * @public
 		 */
 		isRegistered: function(sName, sXHRMethod) {
-			return mRegistry[sName] && mRegistry[sName][sXHRMethod];
+			return mRegistry[sXHRMethod] && mRegistry[sXHRMethod][sName];
 		}
 
 	};
