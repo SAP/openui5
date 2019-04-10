@@ -857,6 +857,7 @@ sap.ui.define([
 	};
 
 	GenericTile.prototype.setHeader = function (title) {
+		this.setProperty("header", title);
 		this._oTitle.setText(title);
 		return this;
 	};
