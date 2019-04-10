@@ -47,9 +47,11 @@ function(
 ) {
 		"use strict";
 
-		// shortcut for sap.m.PlacementType
+		// shortcut for sap.m.PlacementType, sap.m.TimePickerMaskMode, sap.m.ButtonType and default step for minutes
+		// and seconds
 		var PlacementType = library.PlacementType,
 			TimePickerMaskMode = library.TimePickerMaskMode,
+			ButtonType = library.ButtonType,
 			DEFAULT_STEP = 1;
 
 		/**
@@ -1044,7 +1046,7 @@ function(
 				horizontalScrolling: false,
 				verticalScrolling: false,
 				placement: PlacementType.VerticalPreferedBottom,
-				beginButton: new Button({ text: sOKButtonText, press: jQuery.proxy(this._handleOkPress, this) }),
+				beginButton: new Button({ text: sOKButtonText, type: ButtonType.Emphasized, press: jQuery.proxy(this._handleOkPress, this) }),
 				endButton: new Button({ text: sCancelButtonText, press: jQuery.proxy(this._handleCancelPress, this) }),
 				content: [
 					new TimePickerSliders(this.getId() + "-sliders", {
