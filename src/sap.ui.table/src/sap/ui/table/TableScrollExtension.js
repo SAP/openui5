@@ -389,7 +389,7 @@ sap.ui.define([
 					oEvent.preventDefault();
 					oEvent.stopPropagation();
 
-					var iRowsPerStep = iScrollDelta / this._getDefaultRowHeight();
+					var iRowsPerStep = iScrollDelta / (oEvent.deltaMode === 0 ? this._getDefaultRowHeight() : oScrollExtension.getVerticalScrollRangeRowFraction());
 
 					// If at least one row is scrolled, floor to full rows.
 					// Below one row, we scroll pixels.
