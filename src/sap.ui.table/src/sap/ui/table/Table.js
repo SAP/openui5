@@ -2870,6 +2870,15 @@ sap.ui.define([
 		if (Device.browser.chrome && window.devicePixelRatio !== this._nDevicePixelRatio) {
 			this._nDevicePixelRatio = window.devicePixelRatio;
 			this._updateTableSizes(TableUtils.RowsUpdateReason.Zoom);
+			this._adjustOutlineOffset();
+		}
+	};
+
+	Table.prototype._adjustOutlineOffset = function(){
+		if (window.devicePixelRatio < 1) {
+			this.addStyleClass("sapUiTableZoomout");
+		} else {
+			this.removeStyleClass("sapUiTableZoomout");
 		}
 	};
 

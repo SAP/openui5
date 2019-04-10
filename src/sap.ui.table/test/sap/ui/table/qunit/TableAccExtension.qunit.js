@@ -141,7 +141,6 @@ sap.ui.define([
 		var aLabels = [];
 		if (bFirstTime) {
 			aLabels.push("ARIALABELLEDBY");
-			aLabels.push(oTable.getId() + "-ariadesc");
 			aLabels.push(oTable.getId() + "-ariacount");
 			aLabels.push(oTable.getId() + "-ariaselection");
 		}
@@ -569,7 +568,6 @@ sap.ui.define([
 		var aLabels = [];
 		if (bFirstTime && bFocus) {
 			aLabels.push("ARIALABELLEDBY");
-			aLabels.push(oTable.getId() + "-ariadesc");
 			aLabels.push(oTable.getId() + "-ariacount");
 			aLabels.push(oTable.getId() + "-ariaselection");
 		}
@@ -595,7 +593,7 @@ sap.ui.define([
 			aLabels.push(oTable.getId() + "-cellacc"); // Column 2 has tooltip see TableQUnitUtils.js
 		}
 
-		if (bFocus && iCol == 1) {
+		if (Device.browser.msie && bFocus && iCol == 1) {
 			aLabels.push(oTable.getId() + "-ariacolmenu");
 		}
 
@@ -696,12 +694,13 @@ sap.ui.define([
 		var aLabels = [];
 		if (bFirstTime && bFocus) {
 			aLabels.push("ARIALABELLEDBY");
-			aLabels.push(oTable.getId() + "-ariadesc");
 			aLabels.push(oTable.getId() + "-ariacount");
 			aLabels.push(oTable.getId() + "-ariaselection");
 		}
 
-		aLabels.push(oTable.getId() + "-ariarowheaderlabel");
+		if (Device.browser.msie) {
+			aLabels.push(oTable.getId() + "-ariarowheaderlabel");
+		}
 
 		if (bFocus) {
 			aLabels.push(oTable.getId() + "-rownumberofrows");
@@ -861,7 +860,6 @@ sap.ui.define([
 		var aLabels = [];
 		if (bFirstTime && bFocus) {
 			aLabels.push("ARIALABELLEDBY");
-			aLabels.push(oTable.getId() + "-ariadesc");
 			aLabels.push(oTable.getId() + "-ariacount");
 			aLabels.push(oTable.getId() + "-ariaselection");
 		}
@@ -1005,7 +1003,7 @@ sap.ui.define([
 		var sId = oTable.getId();
 		var $Cell = getSelectAll(true, assert);
 		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
-			"ARIALABELLEDBY " + sId + "-ariadesc " + sId + "-ariacount " + sId + "-ariaselection " + sId + "-ariacolrowheaderlabel"
+			"ARIALABELLEDBY " + sId + "-ariacount " + sId + "-ariaselection " + sId + "-ariacolrowheaderlabel"
 			+ this._sAdditionalLabeling, "aria-labelledby of select all");
 		getRowHeader(0, true, assert); //set row header somewhere else on the table
 		$Cell = getSelectAll(true, assert);
@@ -1024,7 +1022,7 @@ sap.ui.define([
 		var sId = oTable.getId();
 		var $Cell = getSelectAll(true, assert);
 		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
-			"ARIALABELLEDBY " + sId + "-ariadesc " + sId + "-ariacount " + sId + "-ariaselection " + sId + "-ariacolrowheaderlabel",
+			"ARIALABELLEDBY " + sId + "-ariacount " + sId + "-ariaselection " + sId + "-ariacolrowheaderlabel",
 			"aria-labelledby of select all");
 		getRowHeader(0, true, assert); //set focus somewhere else on the table
 		$Cell = getSelectAll(true, assert);
@@ -1170,7 +1168,6 @@ sap.ui.define([
 		var $Elem = oTable.$().find("[headers='" + oTable.getId() + "-colsel']");
 		$Elem.each(function() {
 			var $TD = jQuery(this);
-			assert.strictEqual($TD.attr("role"), "rowheader", "role");
 			var sOwns = $TD.attr("aria-owns");
 			assert.ok(jQuery.sap.startsWith(sOwns || "", oTable.getId() + "-rowsel"), "aria-owns: " + sOwns);
 			checkAriaSelected($TD.attr("aria-selected"), sOwns == oTable.getId() + "-rowsel0", assert);
@@ -1235,7 +1232,7 @@ sap.ui.define([
 
 	QUnit.test("HiddenTexts", function(assert) {
 		var aHiddenTexts = [
-			"ariadesc", "ariacount", "toggleedit", "ariaselectall", "ariarowheaderlabel", "ariarowgrouplabel", "ariagrandtotallabel",
+			"ariacount", "toggleedit", "ariaselectall", "ariarowheaderlabel", "ariarowgrouplabel", "ariagrandtotallabel",
 			"ariagrouptotallabel",
 			"ariacolrowheaderlabel", "rownumberofrows", "colnumberofcols", "cellacc", "ariarowselected", "ariacolmenu", "ariacolspan",
 			"ariacolfiltered", "ariacolsortedasc", "ariacolsorteddes",
@@ -1356,12 +1353,14 @@ sap.ui.define([
 		oTable.setFirstVisibleRow(1); // Simulate scrolling by one row
 		assert.ok(!bFocusTriggered, "No sync refocus of cell done");
 
-		setTimeout(function() {
-			assert.ok(!!$Cell.attr("aria-busy"), "Cell is temporarily set in busy mode");
-			if (Device.browser.chrome) {
-				assert.ok(!!$Cell.attr("aria-hidden"), "Cell is temporarily hidden");
-			}
-		}, 60);
+		if (Device.browser.msie) {
+			setTimeout(function() {
+				assert.ok(!!$Cell.attr("aria-busy"), "Cell is temporarily set in busy mode");
+				if (Device.browser.chrome) {
+					assert.ok(!!$Cell.attr("aria-hidden"), "Cell is temporarily hidden");
+				}
+			}, 60);
+		}
 
 		setTimeout(function() {
 			oTable.removeEventDelegate(oDelegate);

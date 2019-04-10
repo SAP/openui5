@@ -39,6 +39,11 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "ROOT");
 		rm.writeControlData(oTable);
 		rm.addClass("sapUiTable");
+
+		if (Device.browser.chrome && window.devicePixelRatio < 1) {
+			rm.addClass("sapUiTableZoomout");
+		}
+
 		if ('ontouchstart' in document) {
 			rm.addClass("sapUiTableTouch");
 		}
