@@ -51,12 +51,13 @@ sap.ui.define([
 		 *         name: "firstRoute"
 		 *         pattern : "usefulPattern"
 		 *     },
-		 *     //Will create a route called 'anotherRoute'
+		 *     //Will create a route called 'anotherRoute' for displaying the target 'targetView' which is defined in 'oTargets'
 		 *     {
 		 *         name: "anotherRoute"
-		 *         pattern : "anotherPattern"
+		 *         pattern : "anotherPattern",
+		 *         target: "targetView"
 		 *     },
-		 *     //Will create a route for a nested component with the prefix 'componentPrefix'
+		 *     //Will create a route for displaying a nested component which is defined in 'oTargets' with the prefix 'componentPrefix'
 		 *     {
 		 *         pattern: "componentPattern",
 		 *         name: "componentRoute",
@@ -78,11 +79,12 @@ sap.ui.define([
 		 *     firstRoute : {
 		 *         pattern : "usefulPattern"
 		 *     },
-		 *     //Will create a route called 'anotherRoute'
+		 *     //Will create a route called 'anotherRoute' for displaying the target 'targetView' which is defined in 'oTargets'
 		 *     anotherRoute : {
-		 *         pattern : "anotherPattern"
+		 *         pattern : "anotherPattern",
+		 *         target: "targetView"
 		 *     },
-		 *     //Will create a route for a nested component with the prefix 'componentPrefix'
+		 *     //Will create a route for displaying a nested component which is defined in 'oTargets' with the prefix 'componentPrefix'
 		 *     componentRoute{
 		 *         pattern: "componentPattern",
 		 *         target: [
@@ -98,7 +100,13 @@ sap.ui.define([
 		 *
 		 * @param {object} [oConfig] Default values for route configuration - also takes the same parameters as {@link sap.ui.core.routing.Target#constructor}.<br/>
 		 * This config will be used for routes and for targets, used in the router<br/>
-		 * Eg: if the config object specifies :
+		 * Eg: if the config object specifies:
+		 * <pre>
+		 * {
+		 *     viewType: "XML"
+		 * }
+		 * </pre>
+		 * The targets look like this:
 		 * <pre>
 		 * {
 		 *     xmlTarget : {
@@ -107,26 +115,6 @@ sap.ui.define([
 		 *     jsTarget : {
 		 *         viewType : "JS"
 		 *         ...
-		 *     },
-		 *     componentTarget: {
-		 *         type: "Component",
-		 *         name: "subComponent",
-		 *         id: "mySubComponent",
-		 *         options: {
-		 *             // the Component configuration:
-		 *             manifest: true
-		 *             ...
-		 *         },
-		 *         containerOptions: {
-		 *             // the ComponentContainer configuration defaults
-		 *             //(other settings need to be provided):
-		 *             height: "100%",
-		 *             width: "100%",
-		 *             lifecycle: sap.ui.core.ComponentLifecycle.Application
-		 *             ...
-		 *         }
-		 *         controlId: "myRootView",
-		 *         controlAggregation: "content"
 		 *     }
 		 * }
 		 * </pre>
@@ -140,31 +128,12 @@ sap.ui.define([
 		 *     jsTarget : {
 		 *         viewType : "JS"
 		 *         ...
-		 *     },
-		 * 	   componentTarget: {
-		 *         type: "Component",
-		 *         name: "subComponent",
-		 *         id: "mySubComponent",
-		 *         options: {
-		 *             // the Component configuration:
-		 *             manifest: true
-		 *             ...
-		 *         },
-		 *         containerOptions: {
-		 *             // the ComponentContainer configuration defaults
-		 *             //(other settings need to be provided):
-		 *             height: "100%",
-		 *             width: "100%",
-		 *             lifecycle: sap.ui.core.ComponentLifecycle.Application
-		 *             ...
-		 *         }
-		 *         controlId: "myRootView",
-		 *         controlAggregation: "content"
 		 *     }
 		 * }
 		 * </pre>
 		 *
 		 * Since the xmlTarget does not specify its viewType, XML is taken from the config object. The jsTarget is specifying it, so the viewType will be JS.
+		 * @param {object} [oConfig.bypassed] @since 1.28. Settings which are used when no route of the router is matched after a hash change.
 		 * @param {string|string[]} [oConfig.bypassed.target] @since 1.28. One or multiple names of targets that will be displayed, if no route of the router is matched.<br/>
 		 * A typical use case is a not found page.<br/>
 		 * The current hash will be passed to the display event of the target.<br/>
@@ -219,7 +188,7 @@ sap.ui.define([
 		 *     ],
 		 *     // Default values shared by routes and Targets
 		 *     {
-		 *         viewNamespace: "my.application.namespace",
+		 *         path: "my.application.namespace",
 		 *         viewType: "XML"
 		 *     },
 		 *     // You should only use this constructor when you are not using a router with a component.
@@ -231,7 +200,8 @@ sap.ui.define([
 		 *          //same name as in the route called 'startRoute'
 		 *          welcome: {
 		 *              // All properties for creating and placing a view go here or in the config
-		 *              viewName: "Welcome",
+		 *              type: "View",
+		 *              name: "Welcome",
 		 *              controlId: "app",
 		 *              controlAggregation: "pages"
 		 *          }

@@ -26,6 +26,7 @@ sap.ui.define([
 				vPromiseOrObject,
 				sName,
 				oInstanceCache,
+				oOwnerComponent = this._oComponent,
 				aWrittenIds = [];
 
 			oInfo = oInfo || {};
@@ -52,7 +53,12 @@ sap.ui.define([
 							oOptions.settings._routerHashChanger = oRouterHashChanger;
 						}
 
-						return Component.create(oOptions);
+						if (oOptions.usage) {
+							return oOwnerComponent.createComponent(oOptions);
+						} else {
+							return Component.create(oOptions);
+						}
+						break;
 					default:
 						// do nothing
 				}
@@ -82,7 +88,7 @@ sap.ui.define([
 				oOptions.async = true;
 			}
 
-			sName = oOptions.name;
+			sName = oOptions.usage || oOptions.name;
 			this._checkName(sName, sType);
 
 			oInstanceCache = this._oCache[sType.toLowerCase()][sName];
@@ -92,8 +98,8 @@ sap.ui.define([
 				return vPromiseOrObject;
 			}
 
-			if (this._oComponent) {
-				vPromiseOrObject = this._oComponent.runAsOwner(fnCreateObjectAsync);
+			if (oOwnerComponent) {
+				vPromiseOrObject = oOwnerComponent.runAsOwner(fnCreateObjectAsync);
 			} else {
 				vPromiseOrObject = fnCreateObjectAsync();
 			}
