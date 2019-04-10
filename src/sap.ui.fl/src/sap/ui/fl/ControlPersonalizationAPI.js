@@ -350,9 +350,9 @@ sap.ui.define([
 		},
 
 		_filterByChangeType: function (aChangeTypes, oChange) {
-			return Array.isArray(aChangeTypes)
-				&& aChangeTypes.length > 0
-				&& includes(aChangeTypes, oChange.getChangeType());
+			return (Array.isArray(aChangeTypes) && aChangeTypes.length > 0)
+				? includes(aChangeTypes, oChange.getChangeType())
+				: true;
 		},
 
 		_ifValidFileType: function (oChange) {
