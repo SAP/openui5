@@ -691,18 +691,15 @@ function(
 		 * @name sap.ui.fl.Utils.getCurrentLayer
 		 */
 		getCurrentLayer: function (bIsEndUser) {
-			var oUriParams, layer;
+			var oUriParams, sLayer;
 			if (bIsEndUser) {
 				return "USER";
 			}
 
 			oUriParams = this._getUriParameters();
-			layer = oUriParams.mParams["sap-ui-layer"];
-			if (layer && layer.length > 0) {
-				return layer[0];
-			}
-			return "CUSTOMER";
-
+			sLayer = oUriParams.get("sap-ui-layer") || "";
+			sLayer = sLayer.toUpperCase();
+			return sLayer || "CUSTOMER";
 		},
 
 		/**
@@ -716,8 +713,7 @@ function(
 		 * @name sap.ui.fl.Utils.doesSharedVariantRequirePackage
 		 */
 		doesSharedVariantRequirePackage: function () {
-			var sCurrentLayer;
-			sCurrentLayer = Utils.getCurrentLayer(false);
+			var sCurrentLayer = Utils.getCurrentLayer(false);
 			if ((sCurrentLayer === "VENDOR") || (sCurrentLayer === "PARTNER") || (sCurrentLayer === "CUSTOMER_BASE")) {
 				return true;
 			}
@@ -734,13 +730,10 @@ function(
 		 * @name sap.ui.fl.Utils.getClient
 		 */
 		getClient: function () {
-			var oUriParams, client;
+			var oUriParams, sClient;
 			oUriParams = this._getUriParameters();
-			client = oUriParams.mParams["sap-client"];
-			if (client && client.length > 0) {
-				return client[0];
-			}
-			return undefined;
+			sClient = oUriParams.get("sap-client");
+			return sClient || undefined;
 		},
 
 		_getUriParameters: function () {
@@ -753,12 +746,9 @@ function(
 		 * @returns {boolean} is hotfix mode active, or not
 		 */
 		isHotfixMode: function () {
-			var oUriParams, aIsHotfixMode, sIsHotfixMode;
+			var oUriParams, sIsHotfixMode;
 			oUriParams = this._getUriParameters();
-			aIsHotfixMode = oUriParams.mParams["hotfix"];
-			if (aIsHotfixMode && aIsHotfixMode.length > 0) {
-				sIsHotfixMode = aIsHotfixMode[0];
-			}
+			sIsHotfixMode = oUriParams.get("hotfix");
 			return (sIsHotfixMode === "true");
 		},
 
