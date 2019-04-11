@@ -1681,7 +1681,9 @@ sap.ui.define([
 				oCreatePromise = SyncPromise.resolve(
 					bCancel ? Promise.reject(oCreateError) : oCreateResult),
 				fnCancel = function () {},
+				fnError = function () {},
 				oInitialData = {},
+				fnSubmit = function () {},
 				sTransientPredicate = "($uid=id-1-23)";
 
 			oBinding.mCacheByResourcePath[sCanonicalPath] = oCache;
@@ -1689,12 +1691,12 @@ sap.ui.define([
 			this.mock(oCache).expects("create")
 				.withExactArgs("updateGroupId", "EMPLOYEES", "", sTransientPredicate,
 					sinon.match.same(oInitialData), sinon.match.same(fnCancel),
-					/*fnErrorCallback*/sinon.match.func)
+					sinon.match.same(fnError), sinon.match.same(fnSubmit))
 				.returns(oCreatePromise);
 
 			// code under test
 			return oBinding.createInCache("updateGroupId", "EMPLOYEES", "", sTransientPredicate,
-				oInitialData, fnCancel)
+				oInitialData, fnCancel, fnError, fnSubmit)
 				.then(function (oResult) {
 					assert.strictEqual(bCancel, false);
 					assert.strictEqual(oResult, oCreateResult);
@@ -1720,18 +1722,21 @@ sap.ui.define([
 			oCreatePromise = SyncPromise.resolve(oCreateResult),
 			oGroupLock = new _GroupLock("updateGroupId"),
 			fnCancel = function () {},
+			fnError = function () {},
 			oInitialData = {},
+			fnSubmit = function () {},
 			sTransientPredicate = "($uid=id-1-23)";
 
 		this.mock(oCache).expects("create")
 			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES", "", sTransientPredicate,
 				sinon.match.same(oInitialData), sinon.match.same(fnCancel),
-				/*fnErrorCallback*/sinon.match.func)
+				sinon.match.same(fnError), sinon.match.same(fnSubmit))
 			.returns(oCreatePromise);
 
 		// code under test
 		return oBinding.createInCache(
-				oGroupLock, "EMPLOYEES", "", sTransientPredicate, oInitialData, fnCancel
+				oGroupLock, "EMPLOYEES", "", sTransientPredicate, oInitialData, fnCancel, fnError,
+				fnSubmit
 			).then(function (oResult) {
 				assert.strictEqual(oResult, oCreateResult);
 			});
@@ -1755,10 +1760,11 @@ sap.ui.define([
 				sPath : "SO_2_SCHEDULE"
 			}),
 			fnCancel = {},
+			fnError = {},
 			oGroupLock = new _GroupLock("updateGroupId"),
-			oResult = {},
-			oCreatePromise = SyncPromise.resolve(oResult),
 			oInitialData = {},
+			oResult = {},
+			fnSubmit = {},
 			sTransientPredicate = "($uid=id-1-23)";
 
 		this.mock(_Helper).expects("buildPath")
@@ -1766,55 +1772,14 @@ sap.ui.define([
 			.returns("~");
 		this.mock(oParentBinding).expects("createInCache")
 			.withExactArgs(sinon.match.same(oGroupLock), "SalesOrderList('4711')/SO_2_SCHEDULE",
-				"~", sTransientPredicate, oInitialData, sinon.match.same(fnCancel))
-			.returns(oCreatePromise);
+				"~", sTransientPredicate, oInitialData, sinon.match.same(fnCancel),
+				sinon.match.same(fnError), sinon.match.same(fnSubmit))
+			.returns(SyncPromise.resolve(oResult));
 
 		assert.strictEqual(
 			oBinding.createInCache(oGroupLock, "SalesOrderList('4711')/SO_2_SCHEDULE", "",
-				sTransientPredicate, oInitialData, fnCancel).getResult(),
+				sTransientPredicate, oInitialData, fnCancel, fnError, fnSubmit).getResult(),
 			oResult);
-	});
-
-	//*********************************************************************************************
-	[
-		"EMPLOYEES",
-		SyncPromise.resolve(Promise.resolve("EMPLOYEES"))
-	].forEach(function (vPostPath, i) {
-		QUnit.test("createInCache: error callback: " + i, function (assert) {
-			var oCache = {
-					create : function () {}
-				},
-				oBinding = new ODataParentBinding({
-					oCachePromise : SyncPromise.resolve(oCache),
-					oModel : {
-						reportError : function () {}
-					}
-				}),
-				fnCancel = function () {},
-				oError = new Error(),
-				oExpectation,
-				oGroupLock = new _GroupLock("updateGroupId"),
-				oInitialData = {},
-				sTransientPredicate = "($uid=id-1-23)";
-
-			oExpectation = this.mock(oCache).expects("create")
-				.withExactArgs(sinon.match.same(oGroupLock), vPostPath, "", sTransientPredicate,
-					sinon.match.same(oInitialData), sinon.match.same(fnCancel),
-					/*fnErrorCallback*/sinon.match.func)
-				// we only want to observe fnErrorCallback, hence we neither resolve, nor reject
-				.returns(new SyncPromise(function () {}));
-
-			// code under test
-			oBinding.createInCache(oGroupLock, vPostPath, "", sTransientPredicate, oInitialData,
-				fnCancel);
-
-			this.mock(oBinding.oModel).expects("reportError")
-				.withExactArgs("POST on 'EMPLOYEES' failed; will be repeated automatically",
-					sClassName, sinon.match.same(oError));
-
-			// code under test
-			oExpectation.args[0][6](oError); // call fnErrorCallback to simulate error
-		});
 	});
 
 	//*********************************************************************************************
