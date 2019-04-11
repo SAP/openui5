@@ -120,11 +120,11 @@ sap.ui.define([
 		var oParent = oSplitElement.getParent();
 		var oDesignTimeMetadata = oElementOverlay.getDesignTimeMetadata();
 
-		var iFieldsLength = this.getAction(oElementOverlay).getControlsCount(oSplitElement);
+		var iElementsCount = this.getAction(oElementOverlay).getControlsCount(oSplitElement);
 		var oView = FlexUtils.getViewForControl(oSplitElement);
 		var aNewElementIds = [];
-		// Split needs iFieldsLength controls, only one is available so far
-		for (var i = 0; i < iFieldsLength - 1; i++){
+
+		for (var i = 0; i < iElementsCount; i++){
 			aNewElementIds.push(oView.createId(uid()));
 		}
 
