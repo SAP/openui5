@@ -3,18 +3,15 @@
 describe("sap.m.TimePicker", function() {
 	"use strict";
 
-	var sSutId = "TP1",
+	var sSutId = "TP7",
 		sSutIconId = sSutId + "-icon",
-		sSutPickerId,
 		sSutPickerSliderId = sSutId + "-sliders-listSecs";
 
 	it("Prepare environment", function () {
 		var _fnPrepareTestEnvironment4Desktop = function () {
-			sSutPickerId = sSutId + "-RP-popover";
 			sSutPickerSliderId = sSutId + "-sliders-listSecs";
 		};
 		var _fnPrepareTestEnvironment4Mobile = function () {
-			sSutPickerId = sSutId + "-RP-dialog";
 			sSutPickerSliderId = sSutId + "-sliders-listSecs";
 		};
 
@@ -34,22 +31,20 @@ describe("sap.m.TimePicker", function() {
 
 	it("correct margins", function () {
 		var oTPValueHelp = element(by.id(sSutIconId)),
-			oPicker,
 			oSecondsSlider;
 
 		//Open picker
 		oTPValueHelp.click();
 
-		oPicker = element(by.id(sSutPickerId));
 		oSecondsSlider = element(by.id(sSutPickerSliderId));
 
 		//Assert
-		expect(takeScreenshot(oPicker)).toLookAs("minutes_slider");
+		expect(takeScreenshot()).toLookAs("minutes_slider");
 
 		//Expand seconds slider
 		oSecondsSlider.click();
 
 		//Assert
-		expect(takeScreenshot(oPicker)).toLookAs("seconds_slider");
+		expect(takeScreenshot()).toLookAs("seconds_slider");
 	});
 });

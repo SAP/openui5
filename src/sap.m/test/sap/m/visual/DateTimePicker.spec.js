@@ -25,7 +25,7 @@ describe("sap.m.DateTimePicker", function() {
 
 	function _takeScreenshot(img) {
 		if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
-			var oCalendar = element(by.css("#DTP1_v0-cal"));
+			var oCalendar = element(by.css("#DTP1_v0-RP-popover"));
 			expect(takeScreenshot(oCalendar)).toLookAs(img);
 		} else {
 			expect(takeScreenshot()).toLookAs(img);

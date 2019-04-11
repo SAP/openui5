@@ -44,10 +44,11 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	// shortcut for sap.m.PlacementType
-	var PlacementType = library.PlacementType;
-	// From sap.ui.Device.media.RANGESETS.SAP_STANDARD - "Phone": For screens smaller than 600 pixels.
-	var STANDART_PHONE_RANGESET = "Phone";
+	// shortcut for sap.m.PlacementType and sap.m.ButtonType
+	var PlacementType = library.PlacementType,
+		ButtonType = library.ButtonType,
+		// From sap.ui.Device.media.RANGESETS.SAP_STANDARD - "Phone": For screens smaller than 600 pixels.
+		STANDART_PHONE_RANGESET = "Phone";
 
 	/**
 	 * Constructor for a new <code>DateTimePicker</code>.
@@ -498,7 +499,7 @@ sap.ui.define([
 				showCloseButton: false,
 				showHeader: false,
 				placement: PlacementType.VerticalPreferedBottom,
-				beginButton: new Button(this.getId() + "-OK", { text: sOKButtonText, press: jQuery.proxy(_handleOkPress, this) }),
+				beginButton: new Button(this.getId() + "-OK", { text: sOKButtonText,type: ButtonType.Emphasized, press: jQuery.proxy(_handleOkPress, this) }),
 				endButton: new Button(this.getId() + "-Cancel", { text: sCancelButtonText, press: jQuery.proxy(_handleCancelPress, this) }),
 				content: this._oPopupContent
 			});
