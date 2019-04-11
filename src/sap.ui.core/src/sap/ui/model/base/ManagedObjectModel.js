@@ -158,6 +158,48 @@ sap.ui.define([
 			return JSONListBinding.prototype.getEntryData.apply(this, arguments);
 		},
 		/**
+		 * In order to be able to page from an outer control an inner aggregation binding
+		 * must be forced to page also
+		 *
+		 * @override
+		 */
+		_getContexts: function(iStartIndex, iLength) {
+			var iSizeLimit;
+			if (this._oAggregation) {
+				var oInnerListBinding = this._oOriginMO.getBinding(this._sMember);
+
+				//check if the binding is a list binding
+				if (oInnerListBinding) {
+					var oModel = oInnerListBinding.getModel();
+					iSizeLimit = oModel.iSizeLimit;
+				}
+
+				var oBindingInfo = this._oOriginMO.getBindingInfo(this._sMember);
+
+				//sanity check for paging exceeds model size limit
+				if (oBindingInfo && iStartIndex >= 0 && iLength &&
+					iSizeLimit && iLength > iSizeLimit) {
+					var bUpdate = false;
+
+					if (iStartIndex != oBindingInfo.startIndex) {
+						oBindingInfo.startIndex = iStartIndex;
+						bUpdate = true;
+					}
+
+					if (iLength != oBindingInfo.length) {
+						oBindingInfo.length = iLength;
+						bUpdate = true;
+					}
+
+					if (bUpdate) {
+						this._oAggregation.update(this._oOriginMO);
+					}
+				}
+			}
+
+			return JSONListBinding.prototype._getContexts.apply(this, arguments);
+		},
+		/**
 		 * Determines the managed object that is responsible resp. triggering the list binding.
 		 * There are two different cases: A binding of the form
 		 * <ul>
@@ -180,6 +222,7 @@ sap.ui.define([
 				this._oOriginMO = aValueAndMO[0];
 				this._aPartsInJSON = aValueAndMO[2];
 				this._sMember = aValueAndMO[3];
+				this._oAggregation = this._oOriginMO.getMetadata().getAggregation(this._sMember);
 			}
 		},
 		getLength: function() {

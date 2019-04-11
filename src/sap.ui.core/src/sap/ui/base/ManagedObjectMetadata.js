@@ -378,6 +378,14 @@ function(
 		return instance[this._sDestructor]();
 	};
 
+	Aggregation.prototype.update = function(instance) {
+		if (instance[this._sUpdater]) {
+			instance[this._sUpdater]();
+		} else {
+			instance.updateAggregation(this.name);
+		}
+	};
+
 	function AggregationForwarder(oAggregation) {
 		var oForwardTo = oAggregation.forwarding;
 		this.aggregation = oAggregation; // source aggregation info

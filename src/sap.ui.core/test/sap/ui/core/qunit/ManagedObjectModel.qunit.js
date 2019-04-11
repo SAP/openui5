@@ -143,9 +143,24 @@ sap.ui.define([
 			},
 			aggregations: {
 				selects: {type: "sap.ui.test.TestSelect", multiple: true},
-				paging: {type: "sap.ui.test.TestItem", multiple: true}
+				paging: {type: "sap.ui.test.TestItem", multiple: true},
+				assetPages: {type: "sap.ui.test.TestItem", multiple: true}
+			}
+		},
+		/**
+		 * Each wrapped page has an asset attachment within
+		 */
+		updateAssetPages: function() {
+			this.updateAggregation.apply(this, ["assetPages"]);
+			var aPages = this.getAssetPages();
+
+			for (var i = 0; i < aPages.length; i++) {
+				if (!aPages[i].asset) {
+					aPages[i].asset = "Asset " + i;
+				}
 			}
 		}
+
 	});
 
 	sap.ui.core.Element.extend("sap.ui.test.TestSelect", {
@@ -1117,6 +1132,13 @@ sap.ui.define([
 						key: "{key}",
 						text: "{text}"
 					})
+				},
+				assetPages: {
+					path: "/pager",
+					template: new sap.ui.test.TestItem({
+						key: "{key}",
+						text: "{text}"
+					})
 				}
 			});
 			this.oMOModel = new sap.ui.model.base.ManagedObjectModel(this._oModelList);
@@ -1189,11 +1211,11 @@ sap.ui.define([
 		oBoundList.destroy();
 	});
 
-	QUnit.test("Paging in an aggregation", function(assert) {
+	QUnit.test("Paging in an aggregation (no own update Method)", function(assert) {
 		var oAggregationPageList = new List({
 			models: this.oMOModel,
 			growing: true,
-			growingThreshold: 10,
+			growingThreshold: 50,
 			items: {
 				path: "/paging",
 				template: new sap.m.CustomListItem({
@@ -1207,17 +1229,50 @@ sap.ui.define([
 		var iMaxItemCount = oAggregationPageList.getMaxItemsCount();
 
 		assert.equal(iMaxItemCount, 4711, "There are 4711 items");
-		assert.equal(10, oAggregationPageList.getItems(true).length, "Initially there are 20 items");
+		assert.equal(50, oAggregationPageList.getItems(true).length, "Initially there are 50 items");
 
 		var oGrowingDelegate = oAggregationPageList._oGrowingDelegate;
 		assert.ok(oGrowingDelegate, 'There is a growing delegate');
 
 		// now grow
 		oGrowingDelegate.requestNewPage();
-		assert.equal(20, oAggregationPageList.getItems(true).length, "Initially there are 20 items");
+		assert.equal(100, oAggregationPageList.getItems(true).length, "After paging there are 100 items");
 
 		oGrowingDelegate.requestNewPage();
-		assert.equal(30, oAggregationPageList.getItems(true).length, "Initially there are 20 items");
+		assert.equal(150, oAggregationPageList.getItems(true).length, "After paging there are 150 items");
+
+		oAggregationPageList.destroy();
+	});
+
+	QUnit.test("Paging in an aggregation (own update Method)", function(assert) {
+		var oAggregationPageList = new List({
+			models: this.oMOModel,
+			growing: true,
+			growingThreshold: 50,
+			items: {
+				path: "/assetPages",
+				template: new sap.m.CustomListItem({
+					content: [
+						new Text( {text: "{text}" })
+					]
+				})
+			}
+		});
+
+		var iMaxItemCount = oAggregationPageList.getMaxItemsCount();
+
+		assert.equal(iMaxItemCount, 4711, "There are 4711 items");
+		assert.equal(50, oAggregationPageList.getItems(true).length, "Initially there are 50 items");
+
+		var oGrowingDelegate = oAggregationPageList._oGrowingDelegate;
+		assert.ok(oGrowingDelegate, 'There is a growing delegate');
+
+		// now grow
+		oGrowingDelegate.requestNewPage();
+		assert.equal(100, oAggregationPageList.getItems(true).length, "After paging there are 100 items");
+
+		oGrowingDelegate.requestNewPage();
+		assert.equal(150, oAggregationPageList.getItems(true).length, "After paging there are 150 items");
 
 		oAggregationPageList.destroy();
 	});
@@ -1226,7 +1281,7 @@ sap.ui.define([
 		var oAggregationPropertyPageList = new List({
 			models: this.oMOModel,
 			growing: true,
-			growingThreshold: 10,
+			growingThreshold: 50,
 			items: {
 				path: "/selects/2/pages",
 				template: new sap.m.CustomListItem({
@@ -1240,17 +1295,17 @@ sap.ui.define([
 		var iMaxItemCount = oAggregationPropertyPageList.getMaxItemsCount();
 
 		assert.equal(iMaxItemCount, 4711, "There are 4711 items");
-		assert.equal(10, oAggregationPropertyPageList.getItems(true).length, "Initially there are 20 items");
+		assert.equal(50, oAggregationPropertyPageList.getItems(true).length, "Initially there are 50 items");
 
 		var oGrowingDelegate = oAggregationPropertyPageList._oGrowingDelegate;
 		assert.ok(oGrowingDelegate, 'There is a growing delegate');
 
 		// now grow
 		oGrowingDelegate.requestNewPage();
-		assert.equal(20, oAggregationPropertyPageList.getItems(true).length, "Initially there are 20 items");
+		assert.equal(100, oAggregationPropertyPageList.getItems(true).length, "After paging there are 100 items");
 
 		oGrowingDelegate.requestNewPage();
-		assert.equal(30, oAggregationPropertyPageList.getItems(true).length, "Initially there are 20 items");
+		assert.equal(150, oAggregationPropertyPageList.getItems(true).length, "After paging there are 150 items");
 
 		oAggregationPropertyPageList.destroy();
 	});
@@ -1259,7 +1314,7 @@ sap.ui.define([
 		var oPropertyPageList = new List({
 			models: this.oMOModel,
 			growing: true,
-			growingThreshold: 10,
+			growingThreshold: 50,
 			items: {
 				path: "/pageProp/pages/0/page",
 				template: new sap.m.CustomListItem({
@@ -1273,17 +1328,17 @@ sap.ui.define([
 		var iMaxItemCount = oPropertyPageList.getMaxItemsCount();
 
 		assert.equal(iMaxItemCount, 4711, "There are 4711 items");
-		assert.equal(10, oPropertyPageList.getItems(true).length, "Initially there are 20 items");
+		assert.equal(50, oPropertyPageList.getItems(true).length, "Initially there are 50 items");
 
 		var oGrowingDelegate = oPropertyPageList._oGrowingDelegate;
 		assert.ok(oGrowingDelegate, 'There is a growing delegate');
 
 		// now grow
 		oGrowingDelegate.requestNewPage();
-		assert.equal(20, oPropertyPageList.getItems(true).length, "Initially there are 20 items");
+		assert.equal(100, oPropertyPageList.getItems(true).length, "After paging there are 100 items");
 
 		oGrowingDelegate.requestNewPage();
-		assert.equal(30, oPropertyPageList.getItems(true).length, "Initially there are 20 items");
+		assert.equal(150, oPropertyPageList.getItems(true).length, "After paging there are 150 items");
 
 		oPropertyPageList.destroy();
 	});
