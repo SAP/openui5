@@ -47,6 +47,7 @@ function(
 
 	var PlanningCalendarStickyMode = library.PlanningCalendarStickyMode;
 	var HEADER_RESIZE_HANDLER_ID = "_sHeaderResizeHandlerId";
+	var MAX_NUMBER_OF_VIEWS_IN_SEGMENTED_BUTTON = 4;
 
 	/**
 	 * Constructor for a new <code>SinglePlanningCalendar</code>.
@@ -77,8 +78,23 @@ function(
 	 *     <li>A <code>PlanningCalendarHeader</code> at the top. It contains the <code>title</code> set from the
 	 *     corresponding property, the <code>SegmentedButton</code>, which facilitates navigation through the views,
 	 *     controls, passed to the <code>actions</code> aggregation and the navigation, assisting the user in
-	 *     choosing the desired time period. The views can be configured and passed through the <code>views</code>
-	 *     aggregation.</li>
+	 *     choosing the desired time period. The views, either custom or not, can be configured and passed through the
+	 *     <code>views</code> aggregation.
+	 *
+	 *     To create custom views, extend the <code>SinglePlanningCalendarView</code> basic view class. It defines three
+	 *     methods that should be overwritten: <code>getEntityCount</code>, <code>getScrollEntityCount</code> and
+	 *     <code>calculateStartDate</code>
+	 *     <ul>
+	 *         <li><code>getEntityCount</code> - returns number of columns to be displayed</li>
+	 *         <li><code>getScrollEntityCount</code> - used when next and previous arrows in the calendar are used.
+	 *         For example, in work week view, the <code>getEntityCount</code> returns 5 (5 columns from Monday to
+	 *         Friday), but when next arrow is selected, the control navigates 7 days ahead and
+	 *         <code>getScrollEntityCount</code> returns 7.</li>
+	 *         <li><code>calculateStartDate</code> - calculates the first day displayed in the calendar based on the
+	 *         <code>startDate</code> property of the <code>SinglePlanningCalendar</code>. For example, it returns the
+	 *         first date of a month or a week to display the first 10 days of the month.</li>
+	 *     </ul>
+	 *
 	 *     <li>A <code>SinglePlanningCalendarGrid</code>, which displays the appointments, set to the visual time range.
 	 *     An all-day appointment is an appointment which starts at 00:00 and ends in 00:00 on any day in the future.
 	 * </ul>
@@ -547,7 +563,8 @@ function(
 	};
 
 	SinglePlanningCalendar.prototype.addView = function (oView) {
-		var oViewsButton;
+		var oViewsButton,
+			oHeader = this._getHeader();
 
 		if (!oView) {
 			return this;
@@ -560,7 +577,7 @@ function(
 
 		this.addAggregation("views", oView);
 
-		oViewsButton = this._getHeader()._getOrCreateViewSwitch();
+		oViewsButton = oHeader._getOrCreateViewSwitch();
 		oViewsButton.addItem(new SegmentedButtonItem({
 			key: oView.getKey(),
 			text: oView.getTitle()
@@ -569,12 +586,16 @@ function(
 			this.setAssociation("selectedView", oView);
 		}
 		this._alignView();
+		if (this.getViews().length > MAX_NUMBER_OF_VIEWS_IN_SEGMENTED_BUTTON) {
+			oHeader._convertViewSwitchToSelect();
+		}
 
 		return this;
 	};
 
 	SinglePlanningCalendar.prototype.insertView = function (oView, iPos) {
-		var oViewsButton;
+		var oViewsButton,
+			oHeader = this._getHeader();
 
 		if (!oView) {
 			return this;
@@ -587,7 +608,7 @@ function(
 
 		this.insertAggregation("views", oView, iPos);
 
-		oViewsButton = this._getHeader()._getOrCreateViewSwitch();
+		oViewsButton = oHeader._getOrCreateViewSwitch();
 		oViewsButton.insertItem(new SegmentedButtonItem({
 			key: oView.getKey(),
 			text: oView.getTitle()
@@ -596,6 +617,9 @@ function(
 			this.setAssociation("selectedView", oView);
 		}
 		this._alignView();
+		if (this.getViews().length > MAX_NUMBER_OF_VIEWS_IN_SEGMENTED_BUTTON) {
+			oHeader._convertViewSwitchToSelect();
+		}
 
 		return this;
 	};
@@ -606,7 +630,8 @@ function(
 			return this;
 		}
 
-		var oViewsButton = this._getHeader()._getOrCreateViewSwitch(),
+		var oHeader = this._getHeader(),
+			oViewsButton = oHeader._getOrCreateViewSwitch(),
 			oViewsButtonItems = oViewsButton.getItems(),
 			oCurrentlySelectedView = this._getSelectedView(),
 			oViewToRemoveKey = oView.getKey(),
@@ -630,6 +655,9 @@ function(
 		}
 
 		this._alignView();
+		if (this.getViews().length <= MAX_NUMBER_OF_VIEWS_IN_SEGMENTED_BUTTON) {
+			oHeader._convertViewSwitchToSegmentedButton();
+		}
 
 		return this;
 	};

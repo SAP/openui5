@@ -335,17 +335,36 @@
 					sap.ui.getCore().setModel(oStateModel, "stateModel");
 
 					var oDayView = new SinglePlanningCalendarDayView({
-								key: "DayView",
-								title: "Day View"
-							}),
-							oWorkWeekView = new SinglePlanningCalendarWorkWeekView({
-								key: "WorkWeekView",
-								title: "Work Week View"
-							}),
-							oWeekView = new SinglePlanningCalendarWeekView({
-								key: "WeekView",
-								title: "Week View"
-							});
+							key: "DayView",
+							title: "Day"
+						}),
+						oWorkWeekView = new SinglePlanningCalendarWorkWeekView({
+							key: "WorkWeekView",
+							title: "Work Week"
+						}),
+						oWeekView = new SinglePlanningCalendarWeekView({
+							key: "WeekView",
+							title: "Week"
+						});
+
+					sap.m.SinglePlanningCalendarView.extend("sap.custom.CustomView", {});
+
+					sap.custom.CustomView.prototype.getEntityCount = function () {
+						return 10;
+					};
+
+					sap.custom.CustomView.prototype.getScrollEntityCount = function () {
+						return 10;
+					};
+
+					sap.custom.CustomView.prototype.calculateStartDate = function (oStartDate) {
+						return oStartDate;
+					};
+
+					var oCustomView = new sap.custom.CustomView({
+						title: "10 days",
+						key: "10Days"
+					});
 
 					oLegend = new PlanningCalendarLegend({
 						appointmentItems: [
@@ -394,7 +413,7 @@
 					oSPC = new SinglePlanningCalendar("SinglePlanningCalendar", {
 						title: "SinglePlanningCalendar",
 						startDate: new Date(2018, 6, 9),
-						views: [oDayView, oWorkWeekView,oWeekView],
+						views: [oDayView, oWorkWeekView,oWeekView, oCustomView],
 						actions: [
 							new Button("overrideTime", {
 								text: "Override current time",

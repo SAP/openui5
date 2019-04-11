@@ -844,6 +844,49 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
+	QUnit.test("SegmentedButton becomes Select if there are more than 4 views and vice versa", function (assert) {
+		var oDayView1 = new SinglePlanningCalendarDayView({
+				key: "DayView1",
+				title: "Day View 1"
+			}),
+			oDayView2 = new SinglePlanningCalendarDayView({
+				key: "DayView2",
+				title: "Day View 2"
+			}),
+			oDayView3 = new SinglePlanningCalendarDayView({
+				key: "DayView3",
+				title: "Day View 3"
+			}),
+			oDayView4 = new SinglePlanningCalendarDayView({
+				key: "DayView4",
+				title: "Day View 4"
+			}),
+			oDayView5 = new SinglePlanningCalendarDayView({
+				key: "DayView5",
+				title: "Day View 5"
+			}),
+			oSPC = new SinglePlanningCalendar({}),
+			oToSelectModeSpy = this.spy(oSPC._getHeader()._getOrCreateViewSwitch(),  "_toSelectMode"),
+			oToNormalModeSpy = this.spy(oSPC._getHeader()._getOrCreateViewSwitch(),  "_toNormalMode");
+
+		// act
+		oSPC.addView(oDayView1);
+		oSPC.addView(oDayView2);
+		oSPC.addView(oDayView3);
+		oSPC.addView(oDayView4);
+		oSPC.addView(oDayView5);
+
+		//assert
+		assert.strictEqual(oToSelectModeSpy.calledOnce, true, "_toSelectMode of the SegmentedButton called once");
+
+		// act
+		oSPC.removeView(oDayView1);
+		assert.strictEqual(oToNormalModeSpy.calledOnce, true, "_toNormalMode of the SegmentedButton called once");
+
+		//clean up
+		oSPC.destroy();
+	});
+
 	QUnit.module("Accessibility");
 
 	QUnit.test("tabindex", function (assert) {
