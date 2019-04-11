@@ -1160,6 +1160,12 @@ function(
 		}
 	};
 
+	/**
+	 * Gets the filter selected toggle button for the control's picker.
+	 *
+	 * @returns {sap.m.ToggleButton} The button's instance
+	 * @private
+	 */
 	MultiComboBox.prototype.getFilterSelectedButton = function () {
 		if (this._oToggleButton) {
 			return this._oToggleButton;
@@ -1168,6 +1174,12 @@ function(
 		return this._oToggleButton;
 	};
 
+	/**
+	 * Gets the custom header for the control's picker.
+	 *
+	 * @returns {sap.m.Bar} Picker's custom header instance
+	 * @private
+	 */
 	MultiComboBox.prototype.getPickerCustomHeader = function () {
 		if (this._oPickerCustomHeader) {
 			return this._oPickerCustomHeader;
@@ -1176,6 +1188,12 @@ function(
 		return this._oPickerCustomHeader;
 	};
 
+	/**
+	 * Gets the custom header toolbar for the control's picker.
+	 *
+	 * @returns {sap.m.Toolbar} The Toolbar's instance
+	 * @private
+	 */
 	MultiComboBox.prototype.getCustomHeaderToolbar = function () {
 		if (this._oCustomHeaderToolbar) {
 			return this._oCustomHeaderToolbar;
@@ -1184,6 +1202,12 @@ function(
 		return this._oCustomHeaderToolbar;
 	};
 
+	/**
+	 * Gets the control's picker close button.
+	 *
+	 * @returns {sap.m.Button} Picker`s close button instance
+	 * @private
+	 */
 	MultiComboBox.prototype.getPickerCloseButton = function () {
 		if (this._oPickerCloseButton) {
 			return this._oPickerCloseButton;
@@ -1249,6 +1273,13 @@ function(
 		return this._oToggleButton;
 	};
 
+	// TODO: Remove this method and reuse the getFilterSelectedButton
+	/**
+	 * Gets the filter selected toggle button for the control's picker.
+	 *
+	 * @returns {sap.m.ToggleButton} The button's instance
+	 * @private
+	 */
 	MultiComboBox.prototype._getFilterSelectedButton = function () {
 			return this.getPicker().getSubHeader().getContent()[1];
 	};
@@ -1256,6 +1287,7 @@ function(
 	/**
 	 * Filters visible selected items
 	 * @param {jQuery.Event} oEvent The event object
+	 * @param {boolean} bForceShowSelected Should the selected items be shown
 	 * @returns {void}
 	 * @private
 	 */
@@ -1293,6 +1325,11 @@ function(
 		}
 	};
 
+	/**
+	 * Reverts the selection as before opening the picker.
+	 *
+	 * @private
+	 */
 	MultiComboBox.prototype.revertSelection = function () {
 		this.setSelectedItems(this._aInitiallySelectedItems);
 	};
@@ -1487,7 +1524,13 @@ function(
 		return oItem ? oItem.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Token") : null;
 	};
 
-
+	/**
+	 * Called whenever the binding of the aggregation named <code>items</code> is changed.
+	 *
+	 * @param {string} sReason The cause for items update
+	 * @returns {undefined}
+	 * @private
+	 */
 	MultiComboBox.prototype.updateItems = function (sReason) {
 		var bKeyItemSync, aItems,
 			// Get selected keys should be requested at that point as it
@@ -1533,7 +1576,8 @@ function(
 
 	/**
 	 * Get the last selected item
-	 * @returns {sap.ui.core.Item} The selected item
+	 *
+	 * @returns {sap.ui.core.Item | null} The selected item
 	 * @private
 	 */
 	MultiComboBox.prototype._getLastSelectedItem = function() {
@@ -1564,7 +1608,8 @@ function(
 
 	/**
 	 * Get the focused item from list
-	 * @returns {sap.ui.core.Item} The focused item in the list
+	 *
+	 * @returns {sap.ui.core.Item | null} The focused item in the list
 	 * @private
 	 */
 	MultiComboBox.prototype._getFocusedListItem = function() {
@@ -1888,8 +1933,9 @@ function(
 	};
 
 	/**
-	 * Handler for the press event on the N-more label
+	 * Handler for the press event on the N-more label.
 	 *
+	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
 	MultiComboBox.prototype._handleIndicatorPress = function(oEvent) {
@@ -1943,12 +1989,20 @@ function(
 	};
 
 	/**
+	 * This hook method is called after the MultiComboBox's Tokenizer is rendered.
+	 *
 	 * @private
 	 */
 	MultiComboBox.prototype._onAfterRenderingTokenizer = function() {
 		setTimeout(this._oTokenizer["scrollToEnd"].bind(this._oTokenizer), 0);
 	};
 
+	/**
+	 * Handler for the <code>tokenChange</code> event of the token.
+	 *
+	 * @param {jQuery.Event} oEvent The event object
+	 * @private
+	 */
 	MultiComboBox.prototype._handleTokenChange = function(oEvent) {
 		var sType = oEvent.getParameter("type");
 		var oToken = oEvent.getParameter("token");
@@ -2006,6 +2060,11 @@ function(
 		}
 	};
 
+	/**
+	 * This hook method is called after the MultiComboBox control is rendered.
+	 *
+	 * @private
+	 */
 	MultiComboBox.prototype.onAfterRendering = function() {
 		ComboBoxBase.prototype.onAfterRendering.apply(this, arguments);
 		this._oTokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
@@ -2076,8 +2135,8 @@ function(
 	/**
 	 * Function is called on keyboard backspace, if cursor is in front of a token, token gets selected and deleted
 	 *
-	 * @private
 	 * @param {jQuery.Event} oEvent The event object
+	 * @private
 	 */
 	MultiComboBox.prototype.onsapbackspace = function(oEvent) {
 
@@ -2105,8 +2164,8 @@ function(
 	/**
 	 * Function is called on delete keyboard input, deletes selected tokens
 	 *
-	 * @private
 	 * @param {jQuery.Event} oEvent The event object
+	 * @private
 	 */
 	MultiComboBox.prototype.onsapdelete = function(oEvent) {
 
@@ -2126,8 +2185,10 @@ function(
 	};
 
 	/**
-	 * @private
+	 * Handles the <code>sapnext</code> event when the 'Arrow down' or 'Arrow right' key is pressed.
+	 *
 	 * @param {jQuery.Event} oEvent The event object
+	 * @private
 	 */
 	MultiComboBox.prototype.onsapnext = function(oEvent) {
 
@@ -2155,8 +2216,10 @@ function(
 	};
 
 	/**
-	 * @private
+	 * Handles the <code>sapprevious</code> event when the 'Arrow up' or 'Arrow left' key is pressed.
+	 *
 	 * @param {jQuery.Event} oEvent The event object
+	 * @private
 	 */
 	MultiComboBox.prototype.onsapprevious = function(oEvent) {
 
@@ -2172,6 +2235,7 @@ function(
 	 * Handles the tap event on the control.
 	 *
 	 * @param {jQuery.Event} oEvent The event object.
+	 * @private
 	 */
 	MultiComboBox.prototype.ontap = function(oEvent) {
 		ComboBoxBase.prototype.ontap.apply(this, arguments);
@@ -2192,6 +2256,12 @@ function(
 		}
 	};
 
+	/**
+	 * Gets the trigger element of the control's picker popup.
+	 *
+	 * @returns {HTMLElement | null} The element that is used as trigger to open the control's picker popup.
+	 * @private
+	 */
 	MultiComboBox.prototype.getOpenArea = function() {
 		if (this.isPickerDialog()) {
 			return this.getDomRef();
@@ -2529,6 +2599,14 @@ function(
 		return this;
 	};
 
+	/**
+	 * Removes an selectedItem from the association named <code>selectedItems</code>.
+	 *
+	 * @param {sap.ui.core.Item | sap.ui.core.ID | string} oItem The item to be removed
+	 * @returns {sap.ui.core.ID | null} The removed selectedItem or null
+	 * @override
+	 * @public
+	 */
 	MultiComboBox.prototype.removeSelectedItem = function(oItem) {
 
 		if (!oItem) {
@@ -2553,6 +2631,13 @@ function(
 		return oItem;
 	};
 
+	/**
+	 * Removes all the controls in the association named selectedItems.
+	 *
+	 * @returns {sap.ui.core.ID[]} An array of the removed elements (might be empty)
+	 * @override
+	 * @public
+	 */
 	MultiComboBox.prototype.removeAllSelectedItems = function() {
 		var aIds = [];
 		var aItems = this.getAssociation("selectedItems", []);
@@ -2602,6 +2687,16 @@ function(
 		return aItems;
 	};
 
+	/**
+	 * Sets a new value for property <code>selectedKeys</code>.
+	 * Keys of the selected items. If the key has no corresponding item, no changes will apply. If duplicate keys exists the first item matching the key is used.
+	 * When called with a value of null or undefined, the default value of the property will be restored.
+	 * Default value is [].
+	 *
+	 * @param {string[]} aKeys Keys of items to be set as selected
+	 * @returns {sap.m.MultiComboBox} <code>this</code> to allow method chaining.
+	 * @override
+	 */
 	MultiComboBox.prototype.setSelectedKeys = function(aKeys) {
 		this.removeAllSelectedItems();
 		this._aCustomerKeys = [];
@@ -2635,6 +2730,14 @@ function(
 		return this;
 	};
 
+	/**
+	 * Gets current value of property <code>selectedKeys</code>.
+	 * Keys of the selected items. If the key has no corresponding item, no changes will apply. If duplicate keys exists the first item matching the key is used.
+	 * Default value is [].
+	 *
+	 * @returns {string[]} Array containing the keys of the selected items (might be empty)
+	 * @override
+	 */
 	MultiComboBox.prototype.getSelectedKeys = function() {
 		var aItems = this.getSelectedItems() || [], aKeys = [];
 		aItems.forEach(function(oItem) {
@@ -2688,12 +2791,22 @@ function(
 		return aItems;
 	};
 
+	/**
+	 * Gets current value of property width.
+	 *
+	 * @returns {string} The value of property width or "100%"
+	 * @public
+	 * @override
+	 */
 	MultiComboBox.prototype.getWidth = function() {
 		return this.getProperty("width") || "100%";
 	};
 
 	// ----------------------- Inheritance ---------------------
 
+	/**
+	 * @override
+	 */
 	MultiComboBox.prototype.setEditable = function(bEditable) {
 		var oList = this._getList();
 		ComboBoxBase.prototype.setEditable.apply(this, arguments);
@@ -2900,9 +3013,10 @@ function(
 	};
 
 	/**
-	 * Determines if a given value matches an item
+	 * Determines if a given value matches an item.
 	 *
 	 * @param {string} sValue The string value to be checked
+	 * @returns {int} The number of items starting with the given value
 	 * @private
 	 */
 	MultiComboBox.prototype.isValueValid = function (sValue) {
@@ -3057,6 +3171,13 @@ function(
 		return oItem;
 	};
 
+	/**
+	 * Checks whether an item is selected.
+	 *
+	 * @param {sap.ui.core.Item} oItem The item to check.
+	 * @returns {boolean} True if the item is selected.
+	 * @public
+	 */
 	MultiComboBox.prototype.isItemSelected = function(oItem) {
 		return this.getSelectedItems().indexOf(oItem) > -1;
 	};
@@ -3137,7 +3258,10 @@ function(
 	};
 
 	/**
+	 * Gets the accessibility info for the control
+	 *
 	 * @see sap.ui.core.Control#getAccessibilityInfo
+	 * @returns {string} The accessibility text
 	 * @protected
 	 */
 	MultiComboBox.prototype.getAccessibilityInfo = function() {
