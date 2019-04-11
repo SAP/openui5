@@ -1111,7 +1111,7 @@ function (
 		// Act
 		oUtil.renderObject(this.oDynamicPage);
 
-		oEventOnMouseOut.target = oTitle.getHeading().getDomRef();
+		oEventOnMouseOut.relatedTarget = oTitle.getHeading().getDomRef();
 		oTitle.onmouseover();
 
 		// Assert
@@ -1130,7 +1130,7 @@ function (
 		assert.ok(oTitleMouseOverSpy.calledOnce, "mouseover event was not fired because event source is child of title");
 
 		// Act
-		oEventOnMouseOut.target = this.oDynamicPage.getContent().getDomRef();
+		oEventOnMouseOut.relatedTarget = this.oDynamicPage.getContent().getDomRef();
 		oTitle.onmouseout(oEventOnMouseOut);
 
 		// Assert

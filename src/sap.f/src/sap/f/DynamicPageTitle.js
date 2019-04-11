@@ -544,7 +544,7 @@ sap.ui.define([
 	};
 
 	DynamicPageTitle.prototype.onmouseout = function (oEvent) {
-		if (oEvent && this.getDomRef().contains(oEvent.target)) {
+		if (oEvent && this.getDomRef().contains(oEvent.relatedTarget)) {
 			return;
 		}
 
