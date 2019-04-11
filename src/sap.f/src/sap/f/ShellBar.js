@@ -279,15 +279,20 @@ function(
 
 	ShellBar.prototype.setTitle = function (sTitle) {
 		this._sTitle = sTitle;
-		if (sTitle) {
+		if (!sTitle) {
+			this._oPrimaryTitle = null;
+			this._oMegaMenu = null;
+		} else {
 			if (!this._oMegaMenu) {
-				this._oMegaMenu = this._oMegaMenu = this._oFactory.getMegaMenu();
+				this._oMegaMenu = this._oFactory.getMegaMenu();
 			}
 			this._oMegaMenu.setText(sTitle);
-		} else {
-			this._oMegaMenu = null;
-		}
+			if (!this._oPrimaryTitle) {
+				this._oPrimaryTitle = this._oFactory.getPrimaryTitle();
+			}
+			this._oPrimaryTitle.setText(sTitle);
 
+		}
 		this._bOTBUpdateNeeded = true;
 		return this.setProperty("title", sTitle);
 	};
@@ -421,9 +426,20 @@ function(
 		if (this._oHomeIcon) {
 			this._oOverflowToolbar.addContent(this._oHomeIcon);
 		}
-		if (this._oMegaMenu) {
+
+
+		// we need to create and assign null to the title control reference,
+		// which we will later read in ResponsiveHandler
+		this._oTitleControl = null;
+		//depends on the given configuration we either show MenuButton with MegaMenu, or Title
+		if (this.getShowMenuButton() && this._oPrimaryTitle){
+			this._oOverflowToolbar.addContent(this._oPrimaryTitle);
+			this._oTitleControl = this._oPrimaryTitle;
+		} else if (this._oMegaMenu) {
 			this._oOverflowToolbar.addContent(this._oMegaMenu);
+			this._oTitleControl = this._oMegaMenu;
 		}
+
 		if (this._oSecondTitle) {
 			this._oOverflowToolbar.addContent(this._oSecondTitle);
 		}
@@ -479,6 +495,7 @@ function(
 		if (!this._oMegaMenu) {
 			this._oMegaMenu = this._oFactory.getMegaMenu();
 		}
+
 		return this._oMegaMenu;
 	};
 

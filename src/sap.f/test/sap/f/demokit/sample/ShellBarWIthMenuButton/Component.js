@@ -2,10 +2,10 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	function (UIComponent) {
 		"use strict";
 
-		return UIComponent.extend("sap.f.sample.ShellBarIconMenu.Component", {
+		return UIComponent.extend("sap.f.sample.ShellBarWIthMenuButton.Component", {
 			metadata: {
 				rootView: {
-					"viewName": "sap.f.sample.ShellBarIconMenu.ShellBarIconMenu",
+					"viewName": "sap.f.sample.ShellBarWIthMenuButton.ShellBarWIthMenuButton",
 					"type": "XML",
 					"async": true
 				},
@@ -18,8 +18,8 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 					sample : {
 						stretch : true,
 						files : [
-							"ShellBarIconMenu.view.xml",
-							"ShellBarIconMenu.controller.js"
+							"ShellBarWIthMenuButton.view.xml",
+							"ShellBarWIthMenuButton.controller.js"
 						]
 					}
 				}
