@@ -1,0 +1,67 @@
+/* ================================ */
+/* CSS for control sap.m/SuggestionsPopover  */
+/* Base theme                       */
+/* ================================ */
+
+.sapMSuggestionsPopover .sapMListUl,
+.sapMSuggestionsPopover .sapMListTbl {
+	.sapMLIBFocusable.sapMLIB-CTX.sapMLIBShowSeparator.sapMInputFocusedHeaderGroup {
+		background-color: @sapUiListSelectionBackgroundColor;
+	}
+}
+
+.sapMDialog.sapMSuggestionsPopover .sapMDialogScrollCont {
+	padding: 0;
+}
+
+.sapMInputSuggestionTableHidden {
+	display: none;
+}
+
+.sapMSuggestionsPopover .sapMDLIValue {
+	font-size: @sapMFontMediumSize;
+	color: @sapUiListTextColor;
+	padding-right: 1rem;
+}
+
+.sapMSuggestionsPopover .sapMLIBActive .sapMDLIValue {
+	color: @sapUiListActiveTextColor;
+}
+
+.sapMSuggestionsPopover .sapMDLILabel {
+	font-size: @sapMFontMediumSize;
+}
+
+.sapMSuggestionsPopover .sapMSLITitleOnly {
+	font-size: @sapMFontMediumSize;
+}
+
+div.sapMSuggestionsPopover .sapMSuggestionsPopoverValueState {
+	font-size: @sapMFontSmallSize;
+	height: 2rem;
+	line-height: 2rem;
+	padding-left: 1rem;
+
+	&.sapMSuggestionsPopoverErrorState {
+		background: @sapUiErrorBG;
+		color: @sapUiBaseText;
+	}
+
+	&.sapMSuggestionsPopoverSuccessState {
+		background: @sapUiSuccessBG;
+		color: @sapUiBaseText;
+	}
+
+	&.sapMSuggestionsPopoverWarningState {
+		background: @sapUiWarningBG;
+		color: @sapUiBaseText;
+	}
+
+	.sapMSuggestionsPopoverTitle.sapMTitle {
+		padding-left: 0.75rem;
+	}
+}
+
+.sapMSuggestionsPopoverNoneState {
+	display: none;
+}

@@ -8,7 +8,9 @@ sap.ui.define([
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/ListItem',
 	'sap/ui/core/ResizeHandler',
+	'sap/ui/core/ValueStateSupport',
 	'sap/m/library',
+	'sap/ui/core/library',
 	'sap/m/Bar',
 	'sap/m/Button',
 	'sap/m/ColumnListItem',
@@ -20,6 +22,8 @@ sap.ui.define([
 	'sap/m/Popover',
 	'sap/m/StandardListItem',
 	'sap/m/Table',
+	'sap/m/Title',
+	'sap/m/Text',
 	"sap/base/security/encodeXML",
 	"sap/ui/events/KeyCodes"
 ], function (
@@ -28,7 +32,9 @@ sap.ui.define([
 	InvisibleText,
 	ListItem,
 	ResizeHandler,
+	ValueStateSupport,
 	library,
+	coreLibrary,
 	Bar,
 	Button,
 	ColumnListItem,
@@ -40,6 +46,8 @@ sap.ui.define([
 	Popover,
 	StandardListItem,
 	Table,
+	Title,
+	Text,
 	encodeXML,
 	KeyCodes
 ) {
@@ -56,6 +64,11 @@ sap.ui.define([
 
 	// shortcut for sap.m.ListSeparators
 	var ListSeparators = library.ListSeparators;
+
+	var CSS_CLASS_SUGGESTIONS_POPOVER = "sapMSuggestionsPopover";
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 	/**
 	 * Provides a popover that should be used with an input control which requires suggestions.
@@ -98,6 +111,8 @@ sap.ui.define([
 
 			// stores currently typed value
 			this._sTypedInValue = '';
+
+			this._sOldValueState = ValueState.None;
 
 			// adds event delegate for the arrow keys
 			this._oInput.addEventDelegate({
@@ -258,7 +273,7 @@ sap.ui.define([
 		this._oPopover = !this._bUseDialog ?
 			(new Popover(oInput.getId() + "-popup", {
 				showArrow: false,
-				showHeader: false,
+				showHeader: true,
 				placement: PlacementType.Vertical,
 				initialFocus: oInput,
 				horizontalScrolling: true
@@ -279,7 +294,7 @@ sap.ui.define([
 			}));
 
 		this._registerAutocomplete();
-		this._oPopover.addStyleClass("sapMInputSuggestionPopup");
+		this._oPopover.addStyleClass(CSS_CLASS_SUGGESTIONS_POPOVER);
 		this._oPopover.addAriaLabelledBy(InvisibleText.getStaticId("sap.m", "INPUT_AVALIABLE_VALUES"));
 
 		if (!this._bUseDialog) {
@@ -972,6 +987,137 @@ sap.ui.define([
 				newValue: sValue
 			});
 		}
+	};
+
+	/*
+	* Updates the value state displayed in the popover.
+	*
+	* @internal
+	*/
+	SuggestionsPopover.prototype.updateValueState = function(sValueState, sValueStateText, bShowValueStateMessage) {
+
+		var bShow = bShowValueStateMessage && sValueState !== ValueState.None;
+		this._showValueStateText(bShow);
+
+		sValueStateText = sValueStateText || ValueStateSupport.getAdditionalText(sValueState);
+
+		this._setValueStateText(sValueStateText);
+
+		this._alignValueStateStyles(sValueState);
+		return this;
+	};
+
+	/*
+	 * Gets the picker value state message object.
+	 *
+	 * @returns {sap.m.Text}
+	 * @private
+	 * @since 1.46
+	 */
+	SuggestionsPopover.prototype._getPickerValueStateText = function() {
+		var oPicker = this._oPopover;
+
+		if (!this._oPickerValueStateText) {
+			this._oPickerValueStateText = new Text({ width: "100%" });
+			oPicker.insertContent(this._oPickerValueStateText, 0);
+		}
+
+		return this._oPickerValueStateText;
+	};
+
+	/**
+	 * Shows/hides the value state text
+	 *
+	 * @private
+	 */
+	SuggestionsPopover.prototype._showValueStateText = function(bShow) {
+		var oCustomHeader;
+
+		if (this._bUseDialog) {
+			if (this._oPickerValueStateText) {
+				this._oPickerValueStateText.setVisible(bShow);
+			}
+		} else {
+			oCustomHeader = this._getPickerCustomHeader();
+
+			if (oCustomHeader) {
+				oCustomHeader.setVisible(bShow);
+			}
+		}
+	};
+
+	/**
+	 * Sets the value state text
+	 *
+	 * @private
+	 */
+	SuggestionsPopover.prototype._setValueStateText = function(sText) {
+		var oHeader;
+
+		if (this._bUseDialog) {
+			this._oPickerValueStateText = this._getPickerValueStateText();
+			this._oPickerValueStateText.setText(sText);
+		} else {
+			oHeader = this._getPickerCustomHeader();
+			if (oHeader) {
+				oHeader.getContentLeft()[0].setText(sText);
+			}
+		}
+	};
+
+	/**
+	 * Gets the picker custom header
+	 *
+	 * @private
+	 */
+	SuggestionsPopover.prototype._getPickerCustomHeader = function() {
+		var oInternalTitle,
+			oInternalHeader,
+			oPicker = this._oPopover,
+			sPickerTitleClass = CSS_CLASS_SUGGESTIONS_POPOVER + "Title";
+
+		if (!oPicker) {
+			return null;
+		}
+
+		if (oPicker.getCustomHeader()) {
+			return oPicker.getCustomHeader();
+		}
+
+		oInternalTitle = new Title({ textAlign: "Left" }).addStyleClass(sPickerTitleClass);
+		oInternalHeader = new Bar({ visible: false, contentLeft: oInternalTitle });
+		oPicker.setCustomHeader(oInternalHeader);
+
+		return oInternalHeader;
+	};
+
+	/**
+	 * Aligns the value state styles
+	 *
+	 * @private
+	 */
+	SuggestionsPopover.prototype._alignValueStateStyles = function(sValueState) {
+		var sPickerWithState = CSS_CLASS_SUGGESTIONS_POPOVER + "ValueState",
+			sOldCssClass = CSS_CLASS_SUGGESTIONS_POPOVER + this._sOldValueState + "State",
+			sCssClass = CSS_CLASS_SUGGESTIONS_POPOVER + sValueState + "State",
+			oCustomHeader;
+
+		if (this._bUseDialog && this._oPickerValueStateText) {
+			this._oPickerValueStateText.addStyleClass(sPickerWithState);
+			this._oPickerValueStateText.removeStyleClass(sOldCssClass);
+			this._oPickerValueStateText.addStyleClass(sCssClass);
+		} else {
+
+			oCustomHeader = this._getPickerCustomHeader();
+
+			if (oCustomHeader) {
+				oCustomHeader.addStyleClass(sPickerWithState);
+				oCustomHeader.removeStyleClass(sOldCssClass);
+				oCustomHeader.addStyleClass(sCssClass);
+			}
+		}
+
+		this._sOldValueState = sValueState;
 	};
 
 	return SuggestionsPopover;

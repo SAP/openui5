@@ -534,7 +534,7 @@ function(
 				}
 
 				if (this.getShowSuggestion() && this._oSuggPopover && oEvent.target.id != this.getId() + "-vhi") {
-					this._oSuggPopover._oPopover.open();
+					this._openSuggestionsPopover();
 				}
 			}, this));
 		}
@@ -1593,7 +1593,7 @@ function(
 				if (!oPopup.isOpen() && !this._sOpenTimer && bOpenCondition !== false) {
 					this._sOpenTimer = setTimeout(function () {
 						this._sOpenTimer = null;
-						oPopup.open();
+						this._openSuggestionsPopover();
 					}.bind(this), 0);
 				}
 			}
@@ -2338,6 +2338,8 @@ function(
 		var oPopupInput = new Input(this.getId() + "-popup-input", {
 			width: "100%",
 			valueLiveUpdate: true,
+			showValueStateMessage: false,
+			valueState: this.getValueState(),
 			showValueHelp: this.getShowValueHelp(),
 			valueHelpRequest: function (oEvent) {
 				// it is the same behavior as by ShowMoreButton:
@@ -2386,17 +2388,21 @@ function(
 	 */
 	Input.prototype._getSuggestionsPopover = function () {
 		if (!this._oSuggPopover) {
-			this._oSuggPopover = new SuggestionsPopover(this);
+			var  oSuggPopover = this._oSuggPopover = new SuggestionsPopover(this);
 
 			if (this._bUseDialog) {
-				this._oSuggPopover._oPopupInput = this._createPopupInput();
+				oSuggPopover._oPopupInput = this._createPopupInput();
 			}
 
-			this._oSuggPopover._createSuggestionPopup(); // TODO move this call to SuggestionsPopover constructor
+			oSuggPopover._createSuggestionPopup(); // TODO move this call to SuggestionsPopover constructor
 
-			this._oSuggPopover._bAutocompleteEnabled = this.getAutocomplete();
+			var oPopover = oSuggPopover._oPopover;
 
-			this._oSuggPopover.attachEvent(SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, function (oEvent) {
+			this._updateSuggestionsPopoverValueState();
+
+			oSuggPopover._bAutocompleteEnabled = this.getAutocomplete();
+
+			oSuggPopover.attachEvent(SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, function (oEvent) {
 				var sNewValue = oEvent.getParameter("newValue");
 
 				// setValue isn't used because here is too early to modify the lastValue of input
@@ -2413,11 +2419,11 @@ function(
 			}
 
 			if (this._bUseDialog) {
-				this._oSuggPopover._oPopover
+				oPopover
 					.attachBeforeClose(function () {
 						// call _getInputValue to apply the maxLength to the typed value
 						this.setDOMValue(this
-							._getInputValue(this._oSuggPopover._oPopupInput
+							._getInputValue(oSuggPopover._oPopupInput
 								.getValue()));
 						this.onChange();
 
@@ -2427,36 +2433,36 @@ function(
 
 					}, this)
 					.attachAfterClose(function() {
-						var oList = this._oSuggPopover._oList;
+						var oList = oSuggPopover._oList;
 
 						if (Table && !(oList instanceof Table)) {
 							oList.destroyItems();
 						} else {
 							oList.removeSelections(true);
 						}
-					}.bind(this))
+					})
 					.attachAfterOpen(function () {
 						var sValue = this.getValue();
 
-						this._oSuggPopover._oPopupInput.setValue(sValue);
+						oSuggPopover._oPopupInput.setValue(sValue);
 						this._triggerSuggest(sValue);
 						this._refreshListItems();
 					}, this)
 					.attachBeforeOpen(function() {
 						// set the same placeholder and maxLength as the original input
-						this._oSuggPopover._oPopupInput.setPlaceholder(this.getPlaceholder());
-						this._oSuggPopover._oPopupInput.setMaxLength(this.getMaxLength());
+						oSuggPopover._oPopupInput.setPlaceholder(this.getPlaceholder());
+						oSuggPopover._oPopupInput.setMaxLength(this.getMaxLength());
 					}, this);
 
-				this._oSuggPopover._oPopover.getBeginButton()
+				oPopover.getBeginButton()
 					.attachPress(function() {
 						this._closeSuggestionPopup();
 					}, this);
 			} else {
-				this._oSuggPopover._oPopover
+				oPopover
 					.attachBeforeClose(this._updateSelectionFromList, this)
 					.attachAfterClose(function() {
-						var oList = this._oSuggPopover._oList;
+						var oList = oSuggPopover._oList;
 
 						// only destroy items in simple suggestion mode
 						if (oList instanceof Table) {
@@ -2464,25 +2470,26 @@ function(
 						} else {
 							oList.destroyItems();
 						}
-					}.bind(this))
+					})
 					.attachBeforeOpen(function () {
-						this._oSuggPopover._sPopoverContentWidth = this.getMaxSuggestionWidth();
-						this._oSuggPopover._bEnableHighlighting = this.getEnableSuggestionsHighlighting();
-						this._oSuggPopover._bAutocompleteEnabled = this.getAutocomplete();
-						this._oSuggPopover._bIsInputIncrementalType = this._isIncrementalType();
+						oSuggPopover._sPopoverContentWidth = this.getMaxSuggestionWidth();
+						oSuggPopover._bEnableHighlighting = this.getEnableSuggestionsHighlighting();
+						oSuggPopover._bAutocompleteEnabled = this.getAutocomplete();
+						oSuggPopover._bIsInputIncrementalType = this._isIncrementalType();
+
 						this._sBeforeSuggest = this.getValue();
-						this._oSuggPopover._resizePopup();
-						this._oSuggPopover._registerResize();
+						oSuggPopover._resizePopup();
+						oSuggPopover._registerResize();
 					}, this)
 					.attachAfterClose(function() {
-						this._oSuggPopover._deregisterResize();
+						oSuggPopover._deregisterResize();
 					}, this);
 			}
 
 			// add popup to a hidden aggregation to also propagate the model and bindings to the content of the popover
-			this.setAggregation("_suggestionPopup", this._oSuggPopover._oPopover);
+			this.setAggregation("_suggestionPopup", oPopover);
 
-			this._oSuggestionPopup = this._oSuggPopover._oPopover; // for backward compatibility (used in some other controls)
+			this._oSuggestionPopup = oPopover; // for backward compatibility (used in some other controls)
 		}
 
 		return this._oSuggPopover;
@@ -2528,6 +2535,88 @@ function(
 		this.setFilterFunction(fnFilterStore); // Restore filtering function
 	};
 
+	Input.prototype.shouldValueStateMessageBeOpened = function() {
+		var bShouldValueStateMessageBeOpened = InputBase.prototype.shouldValueStateMessageBeOpened.apply(this, arguments);
+
+		if (!bShouldValueStateMessageBeOpened || (this._oSuggPopover && this._oSuggPopover._oPopover.isOpen())) {
+			return false;
+		}
+
+		return true;
+	};
+
+	/**
+	 * Opens the suggestions popover
+	 *
+	 * @private
+	 */
+	Input.prototype._openSuggestionsPopover = function() {
+		this.closeValueStateMessage();
+		this._updateSuggestionsPopoverValueState();
+		this._oSuggPopover._oPopover.open();
+	};
+
+	/**
+	 * Updates the suggestions popover value state
+	 *
+	 * @private
+	 */
+	Input.prototype._updateSuggestionsPopoverValueState = function() {
+		var oSuggPopover = this._oSuggPopover,
+			sValueState = this.getValueState();
+
+		if (oSuggPopover) {
+			oSuggPopover.updateValueState(sValueState, this.getValueStateText(), this.getShowValueStateMessage());
+
+			if (this._bUseDialog) {
+				oSuggPopover._oPopupInput.setValueState(sValueState);
+			}
+		}
+	};
+
+	/**
+	 * Sets the visualization of the validation state of the control,
+	 * e.g. <code>Error</code>, <code>Warning</code>, <code>Success</code>.
+	 *
+	 * @param {sap.m.ValueState} [sValueState] The new value state
+	 * @returns {sap.m.InputBase} this for chaining
+	 *
+	 * @public
+	 */
+	Input.prototype.setValueState = function(sValueState) {
+		InputBase.prototype.setValueState.apply(this, arguments);
+		this._updateSuggestionsPopoverValueState();
+
+		return this;
+	};
+
+	/**
+	 * Sets the value state text
+	 *
+	 * @param {string} [sValueStateText] The new value state text
+	 * @returns {sap.m.InputBase} this for chaining
+	 *
+	 * @public
+	 */
+	Input.prototype.setValueStateText = function(sValueStateText) {
+		InputBase.prototype.setValueStateText.apply(this, arguments);
+		this._updateSuggestionsPopoverValueState();
+		return this;
+	};
+
+	/**
+	 * Sets whether the value state message should be shown or not
+	 *
+	 * @param {boolean} [bShow] The new value state text
+	 * @returns {sap.m.InputBase} this for chaining
+	 *
+	 * @public
+	 */
+	Input.prototype.setShowValueStateMessage = function(bShow) {
+		InputBase.prototype.setShowValueStateMessage.apply(this, arguments);
+		this._updateSuggestionsPopoverValueState();
+		return this;
+	};
 
 	return Input;
 

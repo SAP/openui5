@@ -74,6 +74,8 @@ sap.ui.define([
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
+	var CSS_CLASS_SUGGESTIONS_POPOVER = "sapMSuggestionsPopover";
+
 	document.body.insertBefore(createAndAppendDiv("content"), document.body.firstChild);
 
 
@@ -3663,7 +3665,7 @@ sap.ui.define([
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		var fnShowValueStateTextSpy = this.spy(oComboBox, "_showValueStateText");
+		var fnShowValueStateTextSpy = this.spy(oComboBox._oSuggestionPopover, "_showValueStateText");
 		oComboBox.setValueState("None");
 		assert.ok(fnShowValueStateTextSpy.calledWith(false));
 
@@ -3719,8 +3721,8 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(oErrorComboBox.getPicker().getShowHeader(), "Header should be shown");
-		assert.ok(oErrorComboBox._getPickerCustomHeader().hasStyleClass(oErrorComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "PickerValueState"), "Header has value state class");
-		assert.ok(oErrorComboBox._getPickerCustomHeader().hasStyleClass(oErrorComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "PickerErrorState"), "Header has error value state class");
+		assert.ok(oErrorComboBox._oSuggestionPopover._getPickerCustomHeader().hasStyleClass(CSS_CLASS_SUGGESTIONS_POPOVER + "ValueState"), "Header has value state class");
+		assert.ok(oErrorComboBox._oSuggestionPopover._getPickerCustomHeader().hasStyleClass(CSS_CLASS_SUGGESTIONS_POPOVER + "ErrorState"), "Header has error value state class");
 
 		// Cleanup
 		oErrorComboBox.destroy();

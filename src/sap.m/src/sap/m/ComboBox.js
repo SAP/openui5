@@ -404,17 +404,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * Configures the picker of type <code>sap.m.Popover</code>.
-		 *
-		 * @param {sap.m.Popover} oDropdown The popover instance
-		 * @private
-		 */
-		ComboBox.prototype.configureDropdown = function(oDropdown) {
-			oDropdown.setShowHeader(true);
-			oDropdown.setInitialFocus(this);
-		};
-
-		/**
 		 * Configures the picker of type <code>sap.m.Dialog</code>.
 		 *
 		 * @param {sap.m.Dialog} oDialog The dialog to be configured

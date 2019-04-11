@@ -43,6 +43,7 @@
 		var oSuggestInput5 = new sap.m.Input("suginput5", {
 			placeholder: "Two-value Suggest",
 			showSuggestion: true,
+			valueState: "Error",
 			suggestionItemSelected: function(oEvent){
 				var oItem = oEvent.getParameter("selectedItem");
 				jQuery.sap.log.info("sap.m.Input id " + this.getId() + " with suggestion: selected item text is " + oItem.getText());
