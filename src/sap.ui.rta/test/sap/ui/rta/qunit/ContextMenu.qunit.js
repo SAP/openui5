@@ -46,11 +46,13 @@ function(
 		QUnitUtils.triggerEvent("keydown", oTargetDomRef, oParams);
 	}
 	function fnTriggerContextMenuClick(oTarget) {
+		var clock = sinon.useFakeTimers();
 		QUnitUtils.triggerMouseEvent(oTarget.getDomRef(), "contextmenu");
+		clock.tick(50);
+		clock.restore();
 	}
 
 	QUnit.module("Given RTA is started...", {
-
 		beforeEach: function() {
 			this.oPage = sap.ui.getCore().byId("Comp1---idMain1--mainPage");
 			this.oSmartForm = sap.ui.getCore().byId("Comp1---idMain1--MainForm");
