@@ -41,6 +41,7 @@ sap.ui.define([
 			target: "123",
 			persistent: true,
 			technical: true,
+			technicalDetails: {foo: 'bar'},
 			descriptionUrl: "http://description.de",
 			references: {
 				"test": 123
@@ -64,5 +65,24 @@ sap.ui.define([
 		assert.ok(oMessage, "Object successfully created.");
 		assert.ok(oMessage instanceof Message, "Object has expected Data Type.");
 		assert.deepEqual(oMessageValues, mParameters, "Properties set correctly.");
+	});
+
+	QUnit.test("Create message:  getTechnicalDetails", function(assert) {
+		var oMessage,
+			oTechnicalDetails = {foo: 'bar'};
+
+		oMessage = new Message({technicalDetails: oTechnicalDetails});
+
+		assert.strictEqual(oMessage.getTechnicalDetails(), oTechnicalDetails);
+	});
+
+	QUnit.test("Create message: setTechnicalDetails", function(assert) {
+		var oTechnicalDetails = {foo: 'bar'},
+			oTechnicalDetails2 = {bar: 'foo'},
+			oMessage = new Message({technicalDetails: oTechnicalDetails});
+
+		oMessage.setTechnicalDetails(oTechnicalDetails2);
+
+		assert.strictEqual(oMessage.getTechnicalDetails(), oTechnicalDetails2);
 	});
 });

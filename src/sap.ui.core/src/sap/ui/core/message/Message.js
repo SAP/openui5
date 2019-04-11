@@ -36,6 +36,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.MessageType} [mParameters.type=sap.ui.core.MessageType.None] The message type
 	 * @param {string} [mParameters.code] The message code
 	 * @param {boolean} [mParameters.technical=false] If the message is set as technical message
+	 * @param {object} [mParameters.technicalDetails] An object containg technical details for a message
 	 * @param {sap.ui.core.message.MessageProcessor} [mParameters.processor]
 	 * @param {string} [mParameters.target] The message target: The syntax is MessageProcessor dependent. Read the documentation of the respective MessageProcessor.
 	 * @param {boolean} [mParameters.persistent=false] Sets message persistent: If persistent is set <code>true</code> the message lifecycle is controlled by the application
@@ -63,6 +64,7 @@ sap.ui.define([
 			this.processor = mParameters.processor;
 			this.persistent = mParameters.persistent || false;
 			this.technical = mParameters.technical || false;
+			this.technicalDetails = mParameters.technicalDetails;
 			this.references = mParameters.references || {};
 			this.validation = !!mParameters.validation;
 			this.date = mParameters.date || Date.now();
@@ -347,6 +349,26 @@ sap.ui.define([
 	 */
 	Message.prototype.getTechnical = function() {
 		return this.technical;
+	};
+
+	/**
+	 * Set the technical details for the message
+	 *
+	 * @param {object} oTechnicalDetails The technical details of the message
+	 * @public
+	 */
+	Message.prototype.setTechnicalDetails = function(oTechnicalDetails) {
+		this.technicalDetails = oTechnicalDetails;
+	};
+
+	/**
+	 * Returns the technical details of the message
+	 *
+	 * @returns {object} The technical details
+	 * @public
+	 */
+	Message.prototype.getTechnicalDetails = function() {
+		return this.technicalDetails;
 	};
 
 	Message.prototype.addReference = function(sId, sProperty) {
