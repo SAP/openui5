@@ -4067,6 +4067,22 @@ sap.ui.define([
 		assert.equal(fnFireChangeSpy.callCount , 1 , "Change event should be fired only once");
 	});
 
+	QUnit.test("Change event should be fired when autocomplete is false and input is focused out", function(assert) {
+
+		var fnFireChangeSpy = this.spy(this.oInput, "fireChange");
+		this.oInput.setAutocomplete(false);
+		this.oInput._$input.focus().val("u").trigger("input");
+		this.clock.tick(300);
+
+		this.oInput._oSuggPopover._bDoTypeAhead = true;
+		this.oInput._oSuggPopover._handleTypeAhead();
+
+		document.getElementById('i2-inner').focus();
+
+		this.clock.tick(300);
+		assert.equal(fnFireChangeSpy.callCount , 1 , "Change event should be fired only once");
+	});
+
 	QUnit.module("Suggestions grouping", {
 		beforeEach : function() {
 			var oModel,

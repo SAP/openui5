@@ -1168,6 +1168,7 @@ function(
 			oPopup = oSuggPopover && oSuggPopover._oPopover,
 			oFocusedControl = oEvent.relatedControlId && sap.ui.getCore().byId(oEvent.relatedControlId),
 			oFocusDomRef = oFocusedControl && oFocusedControl.getFocusDomRef(),
+			bHasAutocompleteProposedText = oSuggPopover && oSuggPopover._sProposedItemText && this.getAutocomplete(),
 			bFocusInPopup = oPopup
 				&& oFocusDomRef
 				&& containsOrEquals(oPopup.getDomRef(), oFocusDomRef);
@@ -1191,7 +1192,7 @@ function(
 		}
 
 		// Inform InputBase to fire the change event on Input only when focus doesn't go into the suggestion popup
-		if (!bFocusInPopup && (!oSuggPopover || !oSuggPopover._sProposedItemText)) {
+		if (!bFocusInPopup && !bHasAutocompleteProposedText) {
 			InputBase.prototype.onsapfocusleave.apply(this, arguments);
 		}
 
