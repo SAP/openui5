@@ -186,7 +186,7 @@ sap.ui.define([
 
 		// Act
 		// Resizing ObjectPage to Phone breakpoint
-		this.oObjectPage.getDomRef().style.width = Object.values(BREAK_POINTS)[0] + "px";
+		this.oObjectPage.getDomRef().style.width = BREAK_POINTS.Phone + "px";
 
 		// allow for re-render
 		this.clock.tick(iRenderingDelay);
@@ -198,7 +198,7 @@ sap.ui.define([
 
 		// Act
 		// Resizing ObjectPage to Tablet breakpoint
-		this.oObjectPage.getDomRef().style.width = Object.values(BREAK_POINTS)[1] + "px";
+		this.oObjectPage.getDomRef().style.width = BREAK_POINTS.Tablet + "px";
 
 		// allow for re-render
 		this.clock.tick(iRenderingDelay);
@@ -210,7 +210,7 @@ sap.ui.define([
 
 		// Act
 		// Resizing ObjectPage to Desktop breakpoint
-		this.oObjectPage.getDomRef().style.width = Object.values(BREAK_POINTS)[2] + "px";
+		this.oObjectPage.getDomRef().style.width = BREAK_POINTS.Desktop + "px";
 
 		// allow for re-render
 		this.clock.tick(iRenderingDelay);
