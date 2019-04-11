@@ -595,7 +595,6 @@ ODataMessageParser.prototype._parseHeader = function(/* ref: */ aMessages, oResp
 				aMessages.push(this._createMessage(oServerMessage.details[i], mRequestInfo));
 			}
 		}
-		filterDuplicates(aMessages);
 	} catch (ex) {
 		Log.error("The message string returned by the back-end could not be parsed");
 		return;
