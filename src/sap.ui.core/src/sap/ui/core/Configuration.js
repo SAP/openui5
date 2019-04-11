@@ -1934,13 +1934,31 @@ sap.ui.define([
 
 		/**
 		 * Sets custom currencies and replaces existing entries.
-		 * E.g.
+		 *
+		 * There is a special currency code named "DEFAULT" that is optional.
+		 * In case it is set it will be used for all currencies not contained
+		 * in the list, otherwise currency digits as defined by the CLDR will
+		 * be used as a fallback.
+		 *
+		 * Example:
+		 * To use CLDR, but override single currencies
 		 * <code>
 		 * {
 		 *  "KWD": {"digits": 3},
 		 *  "TND" : {"digits": 3}
 		 * }
 		 * </code>
+		 *
+		 * To replace the CLDR currency digits completely
+		 * <code>
+		 * {
+		 *   "DEFAULT": {"digits": 2},
+		 *   "ADP": {"digits": 0},
+		 *   ...
+		 *   "XPF": {"digits": 0}
+		 * }
+		 * </code>
+		 *
 		 * Note: To unset the custom currencies: call with <code>undefined</code>
 		 * @public
 		 * @param {object} mCurrencies currency map which is set
