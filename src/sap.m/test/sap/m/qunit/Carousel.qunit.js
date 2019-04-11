@@ -47,7 +47,7 @@ sap.ui.define([
 
 	// use the sinon faketimers for this test
 
-	var sinonClockTickValue = 600;
+	var sinonClockTickValue = 1000;
 
 	function checkSizeWithTolerance(iActualSize, iExpectedSize) {
 		return iActualSize === iExpectedSize
