@@ -192,7 +192,7 @@ sap.ui.define([
 					}
 
 					if (bUpdate) {
-						this._oAggregation.update(this._oOriginMO);
+						this._oAggregation.update(this._oOriginMO, "change");
 					}
 				}
 			}
