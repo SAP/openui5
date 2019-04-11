@@ -271,7 +271,10 @@ sap.ui.define([
 	 * @param {function} fnCancelCallback
 	 *   A function which is called after a transient entity has been canceled from the cache
 	 * @param {function} fnErrorCallback
-	 *   A function which is called with an Error object each time a POST request fails
+	 *   A function which is called with an error object each time a POST request for the create
+	 *   fails
+	 * @param {function} fnSubmitCallback
+	 *   A function which is called just before a POST request for the create is sent
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved with the created entity when the POST request has been
 	 *   successfully sent and the entity has been marked as non-transient
@@ -279,7 +282,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Cache.prototype.create = function (oGroupLock, oPostPathPromise, sPath, sTransientPredicate,
-			oEntityData, fnCancelCallback, fnErrorCallback) {
+			oEntityData, fnCancelCallback, fnErrorCallback, fnSubmitCallback) {
 		var aCollection,
 			bKeepTransientPath = oEntityData && oEntityData["@$ui5.keepTransientPath"],
 			that = this;
@@ -301,6 +304,7 @@ sap.ui.define([
 		// Sets a marker that the create request is pending, so that update and delete fail.
 		function setCreatePending() {
 			_Helper.setPrivateAnnotation(oEntityData, "transient", true);
+			fnSubmitCallback();
 		}
 
 		function request(sPostPath, oPostGroupLock) {

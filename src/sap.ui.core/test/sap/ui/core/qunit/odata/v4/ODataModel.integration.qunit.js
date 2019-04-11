@@ -2932,6 +2932,168 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Test events createSent and createCompleted for success and error cases
+	// (CPOUI5UISERVICESV3-1761)
+	QUnit.test("createSent and createCompleted", function (assert) {
+		var oBinding,
+			oCreatedContext,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true
+			}),
+			fnRejectPost,
+			fnResolvePost,
+			fnResolveCreateCompleted,
+			fnResolveCreateSent,
+			oTable,
+			sView = '\
+<Table id="table" items="{/SalesOrderList}">\
+	<columns><Column/><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="salesOrderID" text="{SalesOrderID}" />\
+		<Input id="note" value="{Note}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		/*
+		 * Event handler for createCompleted event. Checks that "context" and "success" parameters
+		 * are as expected and resolves the promise for the createCompleted event.
+		 */
+		function onCreateCompleted(oEvent) {
+			assert.ok(fnResolveCreateCompleted, "expect createCompleted");
+			assert.strictEqual(oEvent.getParameter("context"), oCreatedContext);
+			assert.strictEqual(oEvent.getParameter("success"), fnResolveCreateCompleted.bSuccess);
+			fnResolveCreateCompleted();
+			fnResolveCreateCompleted = undefined;
+		}
+
+		/*
+		 * Event handler for createSent event. Checks that the "context" parameter is as expected
+		 * and resolves the promise for the createSent event.
+		 */
+		function onCreateSent(oEvent) {
+			assert.ok(fnResolveCreateSent, "expect createSent");
+			assert.strictEqual(oEvent.getParameter("context"), oCreatedContext);
+			fnResolveCreateSent();
+			fnResolveCreateSent = undefined;
+		}
+
+		/*
+		 * Creates a pending promise for the createCompleted event. It is resolved when the event
+		 * handler for createCompleted is called.
+		 * @param {boolean} bSuccess The expected success flag in the createCompleted event payload
+		 */
+		function expectCreateCompleted(bSuccess) {
+			return new Promise(function (resolve) {
+				fnResolveCreateCompleted = resolve;
+				fnResolveCreateCompleted.bSuccess = bSuccess;
+			});
+		}
+
+		/*
+		 * Creates a pending promise for the createSent event. It is resolved when the event handler
+		 * for createSent is called.
+		 */
+		function expectCreateSent() {
+			return new Promise(function (resolve) {
+				fnResolveCreateSent = resolve;
+			});
+		}
+
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
+				"value" : [{
+					"Note" : "foo",
+					"SalesOrderID" : "42"
+				}]
+			})
+			.expectChange("note", ["foo"])
+			.expectChange("salesOrderID", ["42"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oCreateSentPromise = expectCreateSent();
+
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("items");
+
+			oBinding.attachCreateCompleted(onCreateCompleted);
+			oBinding.attachCreateSent(onCreateSent);
+
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {"Note" : "bar"}
+				}, new Promise(function (resolve, reject) {
+					fnRejectPost = reject;
+				}))
+				.expectChange("note", ["bar", "foo"])
+				.expectChange("salesOrderID", ["", "42"]);
+
+			oCreatedContext = oBinding.create({Note : "bar"}, /*bSkipRefresh*/ true);
+
+			return Promise.all([
+				oCreateSentPromise,
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			var oCreateCompletedPromise = expectCreateCompleted(false),
+				oError = new Error("Failure");
+
+			that.expectMessages([{
+					"code" : undefined,
+					"descriptionUrl" : undefined,
+					"message" : "Failure",
+					"persistent" : true,
+					"target" : "",
+					"technical" : true,
+					"type" : "Error"
+				}]);
+			that.oLogMock.expects("error")
+				.withExactArgs("POST on 'SalesOrderList' failed; will be repeated automatically",
+					sinon.match("Failure"), "sap.ui.model.odata.v4.ODataListBinding");
+
+			fnRejectPost(oError);
+
+			return Promise.all([
+				oCreateCompletedPromise,
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			var oCreateSentPromise = expectCreateSent();
+
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {"Note" : "baz"}
+				}, new Promise(function (resolve, reject) {
+					fnResolvePost = resolve;
+				}))
+				.expectChange("note", "baz", 0);
+
+			oTable.getItems()[0].getCells()[1].getBinding("value").setValue("baz");
+
+			return Promise.all([
+				oCreateSentPromise,
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			var oCreateCompletedPromise = expectCreateCompleted(true);
+
+			that.expectChange("salesOrderID", "43", 0);
+
+			fnResolvePost({
+				"Note" : "baz",
+				"SalesOrderID" : "43"
+			});
+
+			return Promise.all([
+				oCreateCompletedPromise,
+				oCreatedContext.created(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Create a sales order w/o key properties, enter a note, then submit the batch
 	[false, true].forEach(function (bSkipRefresh) {
 		QUnit.test("Create with user input - bSkipRefresh: " + bSkipRefresh, function (assert) {
@@ -5197,8 +5359,8 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectChange("id", [, "43", "", ""])
-				.expectChange("note", [, "New 1", "New 2", "New 3"]);
+			that.expectChange("id", [,, "", ""])
+				.expectChange("note", [,, "New 2", "New 3"]);
 
 			oCreatedContext1 = oBinding.create({Note : "New 2"}, true, true);
 			oCreatedContext2 = oBinding.create({Note : "New 3"}, true, true);
@@ -5318,10 +5480,7 @@ sap.ui.define([
 			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&"
 				+ "$filter=SalesOrderID eq '44'", {
 					"value" : []
-				})
-				//TODO: Unexpected change events for unchanged row 1 -> CPOUI5UISERVICESV3-1810
-				.expectChange("id", [, "43", "45"])
-				.expectChange("note", [, "New 1", "New 3"]);
+				});
 
 			return Promise.all([
 				oCreatedContext1.refresh("$auto", true/*bAllowRemoval*/),
@@ -5407,8 +5566,8 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectChange("id", [, "43", "", ""])
-				.expectChange("note", [, "New 1", "New 2", "New 3"]);
+			that.expectChange("id", [,, "", ""])
+				.expectChange("note", [,, "New 2", "New 3"]);
 
 			oCreatedContext1 = oBinding.create({Note : "New 2"}, true, true);
 			oCreatedContext2 = oBinding.create({Note : "New 3"}, true, true);
@@ -5755,7 +5914,7 @@ sap.ui.define([
 			that.oLogMock.expects("error")
 				.withExactArgs("POST on 'SalesOrderList('42')/SO_2_SOITEM' failed; "
 					+ "will be repeated automatically", sinon.match("Failure"),
-					"sap.ui.model.odata.v4.ODataParentBinding");
+					"sap.ui.model.odata.v4.ODataListBinding");
 			oError.error = {
 				code : "CODE",
 				message : "Enter a product ID",

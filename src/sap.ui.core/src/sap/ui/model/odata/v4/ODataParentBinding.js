@@ -375,6 +375,11 @@ sap.ui.define([
 	 *   The initial data for the created entity
 	 * @param {function} fnCancelCallback
 	 *   A function which is called after a transient entity has been canceled from the cache
+	 * @param {function} fnErrorCallback
+	 *   A function which is called with an error object each time a POST request for the create
+	 *   fails
+	 * @param {function} fnSubmitCallback
+	 *   A function which is called just before a POST request for the create is sent
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved with the created entity when the POST request has been
 	 *   successfully sent and the entity has been marked as non-transient
@@ -382,18 +387,16 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataParentBinding.prototype.createInCache = function (oUpdateGroupLock, vCreatePath,
-			sPathInCache, sTransientPredicate, oInitialData, fnCancelCallback) {
+			sPathInCache, sTransientPredicate, oInitialData, fnCancelCallback, fnErrorCallback,
+			fnSubmitCallback) {
 		var that = this;
 
 		return this.oCachePromise.then(function (oCache) {
 			if (oCache) {
 				return oCache.create(oUpdateGroupLock, vCreatePath, sPathInCache,
-					sTransientPredicate, oInitialData, fnCancelCallback,
-					function (oError) {
-						// error callback
-						that.oModel.reportError("POST on '" + vCreatePath
-							+ "' failed; will be repeated automatically", sClassName, oError);
-				}).then(function (oCreatedEntity) {
+					sTransientPredicate, oInitialData, fnCancelCallback, fnErrorCallback,
+					fnSubmitCallback
+				).then(function (oCreatedEntity) {
 					if (oCache.$resourcePath) {
 						// Ensure that cache containing non-transient created entity is recreated
 						// when the parent binding changes to another row and back again.
@@ -404,7 +407,8 @@ sap.ui.define([
 			}
 			return that.oContext.getBinding().createInCache(oUpdateGroupLock, vCreatePath,
 				_Helper.buildPath(that.oContext.iIndex, that.sPath, sPathInCache),
-				sTransientPredicate, oInitialData, fnCancelCallback);
+				sTransientPredicate, oInitialData, fnCancelCallback, fnErrorCallback,
+				fnSubmitCallback);
 		});
 	};
 

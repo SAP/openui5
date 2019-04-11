@@ -22,6 +22,10 @@
 		<template:with path="meta>/ProductList/@com.sap.vocabularies.UI.v1.LineItem#short"
 			var="lineItem">
 			<Table id="ProductList" growing="true" growingThreshold="5" items="{
+					events : {
+						createCompleted : '.onCreateCompleted',
+						createSent : '.onCreateSent'
+					},
 					path : '/ProductList',
 					parameters : {$count : true}}"
 				mode="SingleSelectMaster">

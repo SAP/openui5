@@ -4342,10 +4342,14 @@ sap.ui.define([
 	QUnit.test("CollectionCache: pending create forces update/_delete to fail", function (assert) {
 		var mQueryOptions = {},
 			oCache = this.createCache("Employees", mQueryOptions),
+			oCallbacks = {
+				fnError : function () {},
+				fnSubmit : function () {}
+			},
+			oCallbacksMock = this.mock(oCallbacks),
 			oCreateGroupLock = new _GroupLock("updateGroup"),
 			oCreatePromise,
 			oError = new Error(),
-			fnErrorCallback = this.spy(),
 			oFailedPostPromise,
 			oFetchTypesPromise = SyncPromise.resolve(Promise.resolve({
 				"/Employees" : {
@@ -4395,6 +4399,8 @@ sap.ui.define([
 				});
 		}
 
+		oCallbacksMock.expects("fnError").never();
+		oCallbacksMock.expects("fnSubmit").never();
 		this.mock(this.oRequestor).expects("buildQueryString").twice()
 			.withExactArgs("/Employees", sinon.match.same(mQueryOptions), true)
 			.returns("?sap-client=111");
@@ -4411,7 +4417,7 @@ sap.ui.define([
 			.returns(oFetchTypesPromise);
 
 		oCreatePromise = oCache.create(oCreateGroupLock, SyncPromise.resolve("Employees"), "",
-			sTransientPredicate, {}, undefined, fnErrorCallback);
+			sTransientPredicate, {}, undefined, oCallbacks.fnError, oCallbacks.fnSubmit);
 
 		checkUpdateSuccess("before submitBatch").then(function () {
 			oRequestExpectation2 = that.oRequestorMock.expects("request");
@@ -4423,18 +4429,21 @@ sap.ui.define([
 						fnResolvePost = resolve;
 					}));
 
-			// simulate a submitBatch leading to a failed POST
+			oCallbacksMock.expects("fnSubmit").withExactArgs();
+			// simulate a submitBatch...
 			oRequestExpectation1.args[0][5]();
 
 			checkUpdateAndDeleteFailure();
 
+			oCallbacksMock.expects("fnError").withExactArgs(sinon.match.same(oError));
+			// ... leading to a failed POST
 			fnRejectPost(oError);
 			SyncPromise.all([
 				oFailedPostPromise,
 				oFetchTypesPromise
 			]).then(undefined, function () {
-				assert.ok(fnErrorCallback.calledWithExactly(oError));
 				checkUpdateSuccess("with restarted POST").then(function () {
+					oCallbacksMock.expects("fnSubmit").withExactArgs();
 					// simulate a submitBatch leading to a successful POST
 					oRequestExpectation2.args[0][5]();
 
@@ -4457,7 +4466,8 @@ sap.ui.define([
 				.resolves({});
 
 			// code under test
-			return oCache.update(oGroupLock, "foo", "baz2", that.spy(),"Employees('42')", "('42')");
+			return oCache.update(oGroupLock, "foo", "baz2", that.spy(), "Employees('42')",
+				"('42')");
 		});
 	});
 
