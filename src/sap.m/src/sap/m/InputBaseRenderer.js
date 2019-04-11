@@ -58,6 +58,28 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/Device'],
 			oRm.addClass("sapMInputBaseReadonly");
 		}
 
+		if (sValueState !== ValueState.None) {
+			oRm.addClass("sapMInputBaseState");
+		}
+
+		if (aBeginIcons.length) {
+
+			aVisibleBeginIcons = aBeginIcons.filter(function (oIcon) {
+				return oIcon.getVisible();
+			});
+
+			aVisibleBeginIcons.length && oRm.addClass("sapMInputBaseHasBeginIcons");
+		}
+
+		if (aEndIcons.length) {
+
+			aVisibleEndIcons = aEndIcons.filter(function (oIcon) {
+				return oIcon.getVisible();
+			});
+
+			aVisibleEndIcons.length && oRm.addClass("sapMInputBaseHasEndIcons");
+		}
+
 		oRm.writeClasses();
 
 		// outer attributes
@@ -86,26 +108,9 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/Device'],
 			this.addValueStateClasses(oRm, oControl);
 		}
 
-		if (aBeginIcons.length) {
-
-			aVisibleBeginIcons = aBeginIcons.filter(function (oIcon) {
-				return oIcon.getVisible();
-			});
-
-			aVisibleBeginIcons.length && oRm.addClass("sapMInputBaseHasBeginIcons");
-		}
-
-		if (aEndIcons.length) {
-
-			aVisibleEndIcons = aEndIcons.filter(function (oIcon) {
-				return oIcon.getVisible();
-			});
-
-			aVisibleEndIcons.length && oRm.addClass("sapMInputBaseHasEndIcons");
-		}
-
 		oRm.writeClasses();
-
+		// some controls need to have accessibility attributes applied one level up than the input
+		this.writeAccAttributes(oRm, oControl);
 		this.addWrapperStyles(oRm, oControl);
 
 		oRm.writeStyles();
@@ -114,14 +119,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/Device'],
 		if (aBeginIcons.length) {
 			this.writeIcons(oRm, aBeginIcons);
 		}
-
-		// wraps elements with a dynamic size e.g. input and tokenizer
-		oRm.write("<div");
-		oRm.addClass("sapMInputBaseDynamicContent");
-		oRm.writeClasses();
-		// some controls need to have accessibility attributes applied one level up than the input
-		this.writeAccAttributes(oRm, oControl);
-		oRm.write(">");
 
 		this.prependInnerContent(oRm, oControl);
 
@@ -196,8 +193,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/Device'],
 		this.writeInnerContent(oRm, oControl);
 		this.closeInputTag(oRm, oControl);
 
-		// close dynamic content div
-		oRm.write("</div>");
 
 
 		// write the end icons after the inner part
@@ -425,12 +420,15 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/Device'],
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 	 */
 	InputBaseRenderer.addControlWidth = function(oRm, oControl) {
-		if (oControl.getWidth()) {
-			oRm.addStyle("width", oControl.getWidth());
-		} else {
+		if (!oControl.getProperty('width')) {
 			oRm.addClass("sapMInputBaseNoWidth");
 		}
+
+		if (oControl.getWidth()) {
+			oRm.addStyle("width", oControl.getWidth());
+		}
 	};
+
 	/**
 	 * This method is reserved for derived classes to add extra classes for input container.
 	 *

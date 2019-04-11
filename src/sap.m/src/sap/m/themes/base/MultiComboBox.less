@@ -3,8 +3,42 @@
 /* Base theme                           */
 /* ==================================== */
 
+@_sap_m_InputWithTokens_TokenizerMinWidth: 3.25rem;
+
+/*MIN-WIDTH variables*/
+/* rounding values to 2 symbols, because of IE and Edge */
+@_InputBase_Control_Tokens_MinWidth: round((@_InputBase_Control_OneIcon_MinWidth + @_sap_m_InputWithTokens_TokenizerMinWidth), 2);
+@_InputBase_Control_Tokens_ReadOnly_MinWidth: round((@_InputBase_Control_MinWidth + @_sap_m_InputWithTokens_TokenizerMinWidth), 2);
+@_InputBase_Control_Tokens_State_MinWidth: round((@_InputBase_Control_Tokens_MinWidth + @_sap_m_InputBaseWrapper_Sum_Border), 2);
+
+@_InputBase_Control_Tokens_MinWidth_Compact: round((@_InputBase_Control_OneIcon_MinWidth_Compact + @_sap_m_InputWithTokens_TokenizerMinWidth), 2);
+@_InputBase_Control_Tokens_ReadOnly_MinWidth_Compact: round((@_InputBase_Control_MinWidth_Compact + @_sap_m_InputWithTokens_TokenizerMinWidth), 2);
+@_InputBase_Control_Tokens_State_MinWidth_Compact: round((@_InputBase_Control_Tokens_MinWidth_Compact + @_sap_m_InputBaseWrapper_Sum_Border), 2);
+
+/* hande min-width calculation */
+.sapMMultiComboBox.sapMMultiComboBoxHasToken {
+	.sapMTokenizer {
+		min-width: @_sap_m_InputWithTokens_TokenizerMinWidth;
+	}
+
+	.sapMInputBaseContentWrapper {
+		min-width: @_InputBase_Control_Tokens_MinWidth;
+		&.sapMInputBaseContentWrapperState {
+			min-width: @_InputBase_Control_Tokens_State_MinWidth;
+		}
+	}
+
+	&.sapMInputBaseReadonly .sapMInputBaseContentWrapper {
+		min-width: @_InputBase_Control_Tokens_ReadOnly_MinWidth;
+	}
+}
+
 .sapMMultiComboBox:not(.sapMMultiComboBoxHasToken) .sapMTokenizer {
 	padding-left: 0;
+}
+
+.sapMMultiComboBox .sapMTokenizer {
+	max-height: 100%;
 }
 
 .sapMMultiComboBoxHasToken .sapMInputBaseInner {
@@ -22,8 +56,8 @@
 	}
 }
 
-.sapMMultiComboBox .sapMTokenizer {
-	flex: none;
+.sapMMultiComboBox.sapMInputBaseNoWidth {
+	width: 100%;
 }
 
 li.sapMMultiComboBoxItem .sapMCbBg {
@@ -82,7 +116,17 @@ html.sap-desktop li.sapMMultiComboBoxItemRangeSelection {
 		line-height: 2rem;
 	}
 
-	.sapMMultiComboBox .sapMTokenizer {
-		padding-left: 0.25rem;
+	/* handle min-width calculation */
+	.sapMMultiComboBox.sapMMultiComboBoxHasToken {
+		.sapMInputBaseContentWrapper {
+			min-width: @_InputBase_Control_Tokens_MinWidth_Compact;
+			&.sapMInputBaseContentWrapperState {
+				min-width: @_InputBase_Control_Tokens_State_MinWidth_Compact;
+			}
+		}
+
+		&.sapMInputBaseReadonly .sapMInputBaseContentWrapper {
+			min-width: @_InputBase_Control_Tokens_ReadOnly_MinWidth_Compact;
+		}
 	}
 }

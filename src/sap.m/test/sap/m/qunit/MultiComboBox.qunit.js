@@ -6321,6 +6321,43 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.module("Width calculations");
+
+	QUnit.test("_syncInputWidth", function(assert) {
+		var oMultiComboBox = new MultiComboBox({
+			items: [
+				new Item({
+					key : "0",
+					text : "item 0"
+				}),
+				new Item({
+					key : "1",
+					text : "item 1"
+				})
+			]
+		}),
+		oSyncInput = this.spy(oMultiComboBox, "_syncInputWidth");
+
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(1000);
+
+		assert.strictEqual(oSyncInput.callCount, 1);
+
+		oMultiComboBox.setSelectedKeys(["0"]);
+		this.clock.tick(1000);
+
+		assert.strictEqual(oSyncInput.callCount, 2);
+
+		oMultiComboBox.setSelectedKeys([]);
+		this.clock.tick(1000);
+
+		assert.strictEqual(oSyncInput.callCount, 3);
+
+		oSyncInput.restore();
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.module("Grouping", {
 		beforeEach : function() {
 			this.oMultiComboBox = new MultiComboBox({

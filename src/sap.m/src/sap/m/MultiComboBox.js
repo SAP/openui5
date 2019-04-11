@@ -809,6 +809,8 @@ function(
 			this.setValueStateText(sInvalidEntry);
 			setTimeout(this["setValueState"].bind(this, sOldValueState), 1000);
 		}
+
+		this._syncInputWidth(this._oTokenizer);
 	};
 
 	/**
@@ -1015,6 +1017,7 @@ function(
 	 */
 	MultiComboBox.prototype._onResize = function () {
 		this._oTokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
+		this._syncInputWidth(this._oTokenizer);
 	};
 
 	/**
@@ -1994,6 +1997,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._onAfterRenderingTokenizer = function() {
+		setTimeout(this._syncInputWidth.bind(this, this._oTokenizer), 0);
 		setTimeout(this._oTokenizer["scrollToEnd"].bind(this._oTokenizer), 0);
 	};
 
@@ -3273,6 +3277,49 @@ function(
 		oInfo.type = core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_MULTICOMBO");
 		oInfo.description = ((oInfo.description || "") + " " + sText).trim();
 		return oInfo;
+	};
+
+	/**
+	 * Function calculates the available space for the tokenizer
+	 *
+	 * @private
+	 * @return {String | null} CSSSize in px
+	 */
+	MultiComboBox.prototype._calculateSpaceForTokenizer = function () {
+		if (this.getDomRef()) {
+			var iControlWidth = this.getDomRef().offsetWidth,
+				iSummedIconsWidth = this._calculateIconsSpace(),
+				oInputRef = this.$().find(".sapMInputBaseInner"),
+				aInputRelevantCss = ["min-width", "padding-right", "padding-left"],
+				// calculate width of the input html element based on its min-width
+				iInputWidth = aInputRelevantCss.reduce(function(iAcc, sProperty) {
+					return iAcc + (parseInt(oInputRef.css(sProperty)) || 0);
+				}, 0);
+
+			return iControlWidth - (iSummedIconsWidth + iInputWidth) + "px";
+		} else {
+			return null;
+		}
+	};
+
+	/**
+	 * Calculates and sets the available width of the html input element
+	 * when there is a tokenizer.
+	 *
+	 * @param {sap.m.Tokenizer} oTokenizer The tokenizer of the control
+	 * @private
+	 */
+	MultiComboBox.prototype._syncInputWidth = function (oTokenizer) {
+		var oFocusDomRef = this.getDomRef('inner'),
+			iSummedIconsWidth, iTokenizerWidth;
+
+		if (!oFocusDomRef || (oTokenizer && !oTokenizer.getDomRef())) {
+			return;
+		}
+
+		iSummedIconsWidth = this._calculateIconsSpace();
+		iTokenizerWidth = Math.ceil(oTokenizer.getDomRef().getBoundingClientRect().width);
+		oFocusDomRef.style.width = 'calc(100% - ' + Math.floor(iSummedIconsWidth + iTokenizerWidth) + "px";
 	};
 
 	/**
