@@ -2450,6 +2450,30 @@ function (
 		oObjectPage.destroy();
 	});
 
+	QUnit.test("snapping of the title should not introduce scrollbar in " +
+		"_obtainSnappedTitleHeight with dynamic title", function (assert) {
+
+		// Arrange
+		var oObjectPage = oFactory.getObjectPageLayoutWithIconTabBar(),
+			oCSSSpy;
+
+		oObjectPage.placeAt("qunit-fixture");
+		Core.applyChanges();
+		oCSSSpy = sinon.spy(oObjectPage._$opWrapper, "css");
+
+		// Act - render OP and call method
+		oObjectPage._obtainSnappedTitleHeight(false/* snap directly */);
+
+		// Assert
+		assert.strictEqual(oCSSSpy.callCount, 2, "jQuery object css method is called twice");
+		assert.ok(oCSSSpy.firstCall.calledWith("overflow-y", "hidden"), "OverflowY of the wrapper set to hidden");
+		assert.ok(oCSSSpy.secondCall.calledWith("overflow-y", "auto"), "OverflowY of the wrapper set to auto");
+
+		// Cleanup
+		oCSSSpy.restore();
+		oObjectPage.destroy();
+	});
+
 	QUnit.test("BCP:1870298358 - _getScrollableViewportHeight method should acquire the exact height", function (assert) {
 
 		// Arrange
