@@ -4,9 +4,12 @@
 sap.ui.define([
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/Component",
-	"sap/ui/core/routing/HashChanger"
-], function(View, Component, HashChanger) {
+	"sap/ui/core/routing/HashChanger",
+	"sap/ui/core/library"
+], function(View, Component, HashChanger, library) {
 	"use strict";
+
+	var ViewType = library.mvc.ViewType;
 
 	/**
 	 * Provide methods for sap.ui.core.routing.TargetCache in async mode
@@ -18,7 +21,7 @@ sap.ui.define([
 		/**
 		 * @private
 		 */
-		_getObjectWithGlobalId : function (oOptions, sType, bNoPromise, oInfo) {
+		_getObjectWithGlobalId : function (oOptions, sType, oInfo) {
 			var that = this,
 				vPromiseOrObject,
 				sName,
@@ -32,13 +35,14 @@ sap.ui.define([
 					case "View":
 						oOptions.viewName = oOptions.name;
 						delete oOptions.name;
-						if (bNoPromise) {
-							// deprecated legacy branch via Router#getView - keep!
-							return sap.ui.view(oOptions);
-						} else {
-							return View.create(oOptions);
+
+						if (oOptions.type === ViewType.XML && !oOptions.processingMode) {
+							// when async is set to false, the processingMode will be ignored
+							// therefore it's not checked whether async is set to true
+							oOptions.processingMode = "sequential";
 						}
-						break;
+
+						return View._legacyCreate(oOptions);
 					case "Component":
 						// create the RouterHashChanger for the component which is going to be created
 						var oRouterHashChanger = that._createRouterHashChanger(oInfo.prefix);
@@ -119,11 +123,11 @@ sap.ui.define([
 			if (oOptions && !oOptions.name) {
 				oOptions.name = oOptions.viewName;
 			}
-			return this._getObjectWithGlobalId(oOptions, "View", true /* no promise */);
+			return this._getObjectWithGlobalId(oOptions, "View");
 		},
 
 		_getComponentWithGlobalId : function(oOptions, oInfo) {
-			return this._getObjectWithGlobalId(oOptions, "Component", false /* use promise */, oInfo);
+			return this._getObjectWithGlobalId(oOptions, "Component", oInfo);
 		},
 
 		_createRouterHashChanger: function(sPrefix) {

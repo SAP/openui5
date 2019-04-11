@@ -446,7 +446,7 @@ sap.ui.define([
 			}
 		});
 
-		var oViewCreateStub = sinon.stub(sap.ui, "view").callsFake(function() {
+		var oViewCreateStub = sinon.stub(View, "_legacyCreate").callsFake(function() {
 			var oView = {
 				loaded: function() {
 					return Promise.resolve(oView);
@@ -1016,7 +1016,7 @@ sap.ui.define([
 			}
 		]);
 
-		var oSpy = sinon.spy(sap.ui, "view");
+		var oSpy = sinon.spy(View, "_legacyCreate");
 		var oRouteMatchedSpy = sinon.spy(router.getRoute("name"), "_routeMatched");
 
 		router.initialize();
@@ -1398,7 +1398,7 @@ sap.ui.define([
 
 	QUnit.test("Should create a view", function (assert) {
 		var that = this,
-			fnStub = this.stub(sap.ui, "view").callsFake(function (oViewOptions) {
+			fnStub = this.stub(View, "_legacyCreate").callsFake(function (oViewOptions) {
 				assert.strictEqual(oViewOptions.viewName, "foo", "DId pass the viewname");
 				assert.strictEqual(oViewOptions.type, "bar", "DId pass the type");
 				assert.strictEqual(oViewOptions.id, "baz", "DId pass the id");
@@ -1417,7 +1417,7 @@ sap.ui.define([
 
 	QUnit.test("Should set a view to the cache", function (assert) {
 		var oReturnValue,
-			fnStub = this.stub(sap.ui, "view").callsFake(function () {
+			fnStub = this.stub(View, "_legacyCreate").callsFake(function () {
 				return this.oView;
 			});
 
@@ -1478,7 +1478,7 @@ sap.ui.define([
 				oParameters = oEvent.getParameters();
 			});
 
-		this.stub(sap.ui, "view").callsFake(function () {
+		this.stub(View, "_legacyCreate").callsFake(function () {
 			return oView;
 		});
 
@@ -1502,7 +1502,7 @@ sap.ui.define([
 			this.sTitle = "myTitle";
 
 			var oView = createXmlView();
-			this.fnStub = sinon.stub(sap.ui, "view").callsFake(function () {
+			this.fnStub = sinon.stub(View, "_legacyCreate").callsFake(function () {
 				return oView;
 			});
 
@@ -1719,7 +1719,7 @@ sap.ui.define([
 			this.oApp = new App();
 
 			var oView = createXmlView();
-			this.fnStub = sinon.stub(sap.ui, "view").callsFake(function () {
+			this.fnStub = sinon.stub(View, "_legacyCreate").callsFake(function () {
 				return oView;
 			});
 
@@ -2463,8 +2463,8 @@ sap.ui.define([
 			fnOwnerSpy = this.spy(oUIComponent, "runAsOwner"),
 			oView = createXmlView(),
 			oRouter = fnCreateRouter({}, {}, oUIComponent),
-				fnViewStub = this.stub(sap.ui, "view").callsFake(function () {
-					return oView;
+			fnViewStub = this.stub(View, "_legacyCreate").callsFake(function () {
+				return oView;
 			});
 
 		// Act
