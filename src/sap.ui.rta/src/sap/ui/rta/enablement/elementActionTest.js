@@ -10,17 +10,14 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/dt/ElementDesignTimeMetadata",
-	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/model/Model",
-	'sap/ui/fl/FlexControllerFactory',
-	'sap/ui/fl/registry/Settings',
-	'sap/ui/rta/ControlTreeModifier',
+	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/rta/ControlTreeModifier",
 	"sap/ui/thirdparty/jquery",
-	//we have to ensure to load fl, so that change handler gets registered,
-	"sap/ui/fl/library",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/fl/library" //we have to ensure to load fl, so that change handler gets registered
 ],
 function (
 	UIComponent,
@@ -29,15 +26,12 @@ function (
 	CommandFactory,
 	DesignTime,
 	OverlayRegistry,
-	ElementDesignTimeMetadata,
-	ChangePersistenceFactory,
 	ChangePersistence,
 	Model,
 	FlexControllerFactory,
 	Settings,
 	ControlTreeModifier,
 	jQuery,
-	library,
 	sinon
 ) {
 
@@ -59,7 +53,7 @@ function (
 	 *
 	 * @static
 	 * @since 1.42
-	 * @alias sap.ui.rta.enablement.controlValidator
+	 * @alias sap.ui.rta.enablement.elementActionTest
 	 *
 	 * @param {string}   sMsg - name of QUnit test - e.g. Checking the move action for a VerticalLayout control
 	 * @param {object}   mOptions - configuration for this controlEnablingCheck
@@ -76,8 +70,7 @@ function (
 	 * @param {function} mOptions.afterUndo - function(oUiComponent, oView, assert) which checks the execution of the action and an immediate undo
 	 * @param {function} mOptions.afterRedo - function(oUiComponent, oView, assert) which checks the outcome of action with immediate undo and redo
 	 */
-	var controlEnablingCheck = function(sMsg, mOptions){
-
+	var controlEnablingCheck = function(sMsg, mOptions) {
 		// Return if controlEnablingCheck.only() has been used to exclude this call
 		if (controlEnablingCheck._only && (sMsg.indexOf(controlEnablingCheck._only) < 0)) { return; }
 
@@ -89,7 +82,7 @@ function (
 		var sandbox = sinon.sandbox.create();
 
 		// Do QUnit tests
-		QUnit.module(sMsg, {});
+		QUnit.module(sMsg);
 
 		QUnit.test("When using the 'controlEnablingCheck' function to test if your control is ready for UI adaptation at runtime", function(assert){
 			assert.ok(mOptions.afterAction, "then you implement a function to check if your action has been successful: See the afterAction parameter.");
@@ -98,7 +91,7 @@ function (
 			assert.ok(mOptions.xmlView, "then you provide an XML view to test on: See the.xmlView parameter.");
 
 			var oXmlView = new DOMParser().parseFromString(mOptions.xmlView.viewContent, "application/xml").documentElement;
-			assert.ok(oXmlView.tagName.match( "View$"),"then you use the sap.ui.core.mvc View tag as the first tag in your view");
+			assert.ok(oXmlView.tagName.match("View$"),"then you use the sap.ui.core.mvc View tag as the first tag in your view");
 
 			assert.ok(mOptions.action, "then you provide an action: See the action parameter.");
 			assert.ok(mOptions.action.name, "then you provide an action name: See the action.name parameter.");
@@ -130,14 +123,13 @@ function (
 					// async = true will trigger the xml preprocessors on the xml view, but if defined preprocessors need async, we will always trigger async
 					mViewSettings.async = this.getComponentData().async;
 				}
-				var oView = sap.ui.xmlview(mViewSettings);
+				var oView = new XMLView(mViewSettings);
 				return oView;
 			}
-
 		});
 
 		// Create UI component containing the view to adapt
-		function createViewInComponent(bAsync){
+		function createViewInComponent(bAsync) {
 			this.oUiComponent = new Comp({
 				id: "comp",
 				componentData : {
@@ -161,7 +153,7 @@ function (
 			return Promise.all([this.oView.loaded(), mOptions.model && mOptions.model.getMetaModel() && mOptions.model.getMetaModel().loaded()]);
 		}
 
-		function buildCommand(assert){
+		function buildCommand(assert) {
 			this.oControl = this.oView.byId(mOptions.action.controlId);
 			return this.oControl.getMetadata().loadDesignTime(this.oControl).then(function(oDesignTimeMetadata) {
 				var mParameter;
@@ -216,6 +208,24 @@ function (
 			}.bind(this));
 		}
 
+		/**
+		 * Since we don't use the CommandStack here, we have to take care of the applied Changes,
+		 * which are stored in the custom data of the control, ourselves;
+		 * The original Change doesn't get deleted there, and therefore can't be applied again without this
+		 *
+		 * @param {sap.ui.rta.command.BaseCommand} oCommand Command whose change should be cleaned up
+		 * @returns {sap.ui.fl.Utils.FakePromise} Returns a FakePromise
+		 */
+		function cleanUpAfterUndo(oCommand) {
+			var oChange = oCommand.getPreparedChange();
+			if (oCommand.getAppComponent) {
+				var oAppComponent = oCommand.getAppComponent();
+				var oControl = ControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
+				var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
+				return oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oControl);
+			}
+		}
+
 		//XML View checks
 		if (!mOptions.jsOnly) {
 			QUnit.module(sMsg + " on async views", {
@@ -245,17 +255,84 @@ function (
 					//destroy and recreate component and view to get the changes applied
 					this.oUiComponentContainer.destroy();
 					return createViewInComponent.call(this, ASYNC);
-				}.bind(this)).then(function(args){
+				}.bind(this))
+				.then(function(args){
 					var oView = args[0];
 					// Verify that UI change has been applied on XML view
 					mOptions.afterAction(this.oUiComponent, oView, assert);
 				}.bind(this));
+			});
 
+			QUnit.test("When executing on XML and reverting the change in JS (e.g. variant switch)", function(assert){
+				// Stub LREP access to have the command as UI change (needs the view to build the correct ids)
+				var aChanges = [];
+				sandbox.stub(ChangePersistence.prototype, "getChangesForComponent").returns(Promise.resolve(aChanges));
+				sandbox.stub(ChangePersistence.prototype, "getCacheKey").returns(Promise.resolve("etag-123"));
+
+				return createViewInComponent.call(this, SYNC).then(function(){
+					return buildCommand.call(this, assert);
+				}.bind(this)).then(function(){
+					var oChange = this.oCommand.getPreparedChange();
+					aChanges.push(oChange);
+
+					//destroy and recreate component and view to get the changes applied
+					this.oUiComponentContainer.destroy();
+					return createViewInComponent.call(this, ASYNC);
+				}.bind(this))
+
+				.then(function() {
+					// undo is used to trigger revert, like with variant switch
+					return this.oCommand.undo();
+				}.bind(this))
+
+				.then(function() {
+					return cleanUpAfterUndo(this.oCommand);
+				}.bind(this))
+
+				.then(function() {
+					sap.ui.getCore().applyChanges();
+					mOptions.afterUndo(this.oUiComponent, this.oView, assert);
+				}.bind(this));
+			});
+
+			QUnit.test("When executing on XML, reverting the change in JS (e.g. variant switch) and applying again", function(assert){
+				// Stub LREP access to have the command as UI change (needs the view to build the correct ids)
+				var aChanges = [];
+				sandbox.stub(ChangePersistence.prototype, "getChangesForComponent").returns(Promise.resolve(aChanges));
+				sandbox.stub(ChangePersistence.prototype, "getCacheKey").returns(Promise.resolve("etag-123"));
+
+				return createViewInComponent.call(this, SYNC).then(function(){
+					return buildCommand.call(this, assert);
+				}.bind(this)).then(function(){
+					var oChange = this.oCommand.getPreparedChange();
+					aChanges.push(oChange);
+
+					//destroy and recreate component and view to get the changes applied
+					this.oUiComponentContainer.destroy();
+					return createViewInComponent.call(this, ASYNC);
+				}.bind(this))
+
+				.then(function() {
+					// undo is used to trigger revert, like with variant switch
+					return this.oCommand.undo();
+				}.bind(this))
+
+				.then(function() {
+					return cleanUpAfterUndo(this.oCommand);
+				}.bind(this))
+
+				.then(function() {
+					return this.oCommand.execute();
+				}.bind(this))
+
+				.then(function() {
+					sap.ui.getCore().applyChanges();
+					mOptions.afterRedo(this.oUiComponent, this.oView, assert);
+				}.bind(this));
 			});
 		}
 
 		QUnit.module(sMsg, {
-
 			beforeEach : function(assert){
 				//no LREP response needed
 				sandbox.stub(ChangePersistence.prototype, "getChangesForComponent").returns(Promise.resolve([]));
@@ -266,7 +343,6 @@ function (
 					return buildCommand.call(this, assert);
 				}.bind(this));
 			},
-
 			afterEach : function(){
 				sandbox.restore();
 				this.oUiComponentContainer.destroy();
@@ -275,17 +351,14 @@ function (
 			}
 		});
 
-
 		QUnit.test("When executing the underlying command on the control at runtime", function(assert){
 			var done = assert.async();
 
-			// Execute the command
 			this.oCommand.execute()
 
 			.then(function() {
 				sap.ui.getCore().applyChanges();
 
-				// Verify result
 				mOptions.afterAction(this.oUiComponent, this.oView, assert);
 				done();
 			}.bind(this));
@@ -298,17 +371,8 @@ function (
 
 			.then(this.oCommand.undo.bind(this.oCommand))
 
-			// Since we don't use the CommandStack here, we have to take care of the applied Changes,
-			// which are stored in the custom data of the control, ourselves.
-			// (The original Change doesn't get deleted there, and therefore can't be applied again without this)
 			.then(function() {
-				var oChange = this.oCommand.getPreparedChange();
-				if (this.oCommand.getAppComponent) {
-					var oAppComponent = this.oCommand.getAppComponent();
-					var oControl = ControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
-					var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
-					oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oControl);
-				}
+				return cleanUpAfterUndo(this.oCommand);
 			}.bind(this))
 
 			.then(function() {
@@ -324,17 +388,8 @@ function (
 
 			.then(this.oCommand.undo.bind(this.oCommand))
 
-			// Since we don't use the CommandStack here, we have to take care of the applied Changes,
-			// which are stored in the custom data of the control, ourselves.
-			// (The original Change doesn't get deleted there, and therefore can't be applied again without this)
 			.then(function() {
-				var oChange = this.oCommand.getPreparedChange();
-				if (this.oCommand.getAppComponent) {
-					var oAppComponent = this.oCommand.getAppComponent();
-					var oControl = ControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
-					var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
-					return oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oControl);
-				}
+				return cleanUpAfterUndo(this.oCommand);
 			}.bind(this))
 
 			.then(this.oCommand.execute.bind(this.oCommand))
@@ -345,12 +400,10 @@ function (
 				done();
 			}.bind(this));
 		});
-
 	};
 
 	controlEnablingCheck.skip = function() {};
 	controlEnablingCheck.only = function(sMsgSubstring) { controlEnablingCheck._only = sMsgSubstring; };
 
 	return controlEnablingCheck;
-
 });
