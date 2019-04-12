@@ -1,16 +1,17 @@
 /*global QUnit*/
 
 sap.ui.define([
-	'sap/ui/fl/Utils',
-	'sap/ui/fl/Change',
-	'sap/ui/fl/Variant',
-	'sap/ui/layout/VerticalLayout',
-	'sap/ui/layout/HorizontalLayout',
-	'sap/m/Button',
-	'sap/ui/core/Component',
-	'sap/ui/thirdparty/hasher',
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/Change",
+	"sap/ui/fl/Variant",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/layout/HorizontalLayout",
+	"sap/m/Button",
+	"sap/ui/core/Component",
+	"sap/ui/thirdparty/hasher",
 	"sap/base/Log",
-	'sap/ui/thirdparty/sinon-4',
+	"sap/base/util/UriParameters",
+	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery"
 ],
 function(
@@ -23,6 +24,7 @@ function(
 	Component,
 	hasher,
 	Log,
+	UriParameters,
 	sinon,
 	jQuery
 ){
@@ -171,51 +173,31 @@ function(
 		});
 
 		QUnit.test("getCurrentLayer shall return sap-ui-layer parameter", function (assert) {
-			var oUriParams = {
-				mParams: {
-					"sap-ui-layer": [
-						"VENDOR"
-					]
-				}
-			};
-			sandbox.stub(Utils, "_getUriParameters").returns(oUriParams);
+			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns("VENDOR");
+			var sLayer = Utils.getCurrentLayer();
+			assert.equal(sLayer, "VENDOR");
+		});
+
+		QUnit.test("getCurrentLayer shall return sap-ui-layer parameter and turn it to upper case", function (assert) {
+			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns("vendor");
 			var sLayer = Utils.getCurrentLayer();
 			assert.equal(sLayer, "VENDOR");
 		});
 
 		QUnit.test("getCurrentLayer shall return USER layer if endUser flag is set ", function (assert) {
-			var oUriParams = {
-				mParams: {
-					"sap-ui-layer": [
-						"VENDOR"
-					]
-				}
-			};
-			sandbox.stub(Utils, "_getUriParameters").returns(oUriParams);
+			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns("VENDOR");
 			var sLayer = Utils.getCurrentLayer(true);
 			assert.equal(sLayer, "USER");
-			assert.ok(true);
 		});
 
 		QUnit.test("getCurrentLayer shall return default CUSTOMER layer ", function (assert) {
-			var oUriParams = {
-				mParams: {}
-			};
-			sandbox.stub(Utils, "_getUriParameters").returns(oUriParams);
+			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns(null);
 			var sLayer = Utils.getCurrentLayer(false);
 			assert.equal(sLayer, "CUSTOMER");
-			assert.ok(true);
 		});
 
 		QUnit.test("compareAgainstCurrentLayer shall return a layer comparision between current (CUSTOMER) and passed layers", function (assert) {
-			var oUriParams = {
-				mParams: {
-					"sap-ui-layer": [
-						"CUSTOMER"
-					]
-				}
-			};
-			sandbox.stub(Utils, "_getUriParameters").returns(oUriParams);
+			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns("CUSTOMER");
 			assert.equal(Utils.compareAgainstCurrentLayer(""), -1, "then with VENDOR layer -1 is returned");
 			assert.equal(Utils.compareAgainstCurrentLayer("VENDOR"), -1, "then with VENDOR layer -1 is returned");
 			assert.equal(Utils.compareAgainstCurrentLayer("CUSTOMER"), 0, "then with CUSTOMER layer 0 is returned");
@@ -247,17 +229,9 @@ function(
 		});
 
 		QUnit.test("getClient", function (assert) {
-			var oUriParams = {
-				mParams: {
-					"sap-client": [
-						"123"
-					]
-				}
-			};
-			sandbox.stub(Utils, "_getUriParameters").returns(oUriParams);
+			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-client").returns("123");
 			var sClient = Utils.getClient();
 			assert.equal(sClient, "123");
-			assert.ok(true);
 		});
 
 		QUnit.test("convertBrowserLanguageToISO639_1 shall return the ISO 639-1 language of a RFC4646 language", function (assert) {
@@ -431,23 +405,13 @@ function(
 		});
 
 		QUnit.test("Utils.isHotfixMode shall return the hotfix url parameter", function (assert) {
-			var oUriParams = {
-				mParams: {
-					"hotfix": [
-						"true"
-					]
-				}
-			};
-			sandbox.stub(Utils, "_getUriParameters").returns(oUriParams);
+			sandbox.stub(UriParameters.prototype, "get").withArgs("hotfix").returns("true");
 			var bIsHotfix = Utils.isHotfixMode();
 			assert.strictEqual(bIsHotfix, true);
 		});
 
 		QUnit.test("isHotfixMode shall return false if there is no hotfix url parameter", function (assert) {
-			var oUriParams = {
-				mParams: {}
-			};
-			sandbox.stub(Utils, "_getUriParameters").returns(oUriParams);
+			sandbox.stub(UriParameters.prototype, "get").withArgs("hotfix").returns("null");
 			var bIsHotfix = Utils.isHotfixMode();
 			assert.strictEqual(bIsHotfix, false);
 		});

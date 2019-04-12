@@ -475,11 +475,11 @@ function(
 	RuntimeAuthoring.prototype.setFlexSettings = function(mFlexSettings) {
 		// Check URI-parameters for sap-ui-layer
 		var oUriParams = new UriParameters(window.location.href);
-		var oUriLayer = oUriParams.get("sap-ui-layer");
+		var sUriLayer = oUriParams.get("sap-ui-layer");
 
 		mFlexSettings = jQuery.extend({}, this.getFlexSettings(), mFlexSettings);
-		if (oUriLayer) {
-			mFlexSettings.layer = oUriLayer;
+		if (sUriLayer) {
+			mFlexSettings.layer = sUriLayer.toUpperCase();
 		}
 
 		// TODO: this will lead to incorrect information if this function is first called with scenario or baseId and then called again without.

@@ -1139,15 +1139,22 @@ function(
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when the uri-parameter sap-ui-layer is set,", function(assert) {
+		QUnit.test("when the uri-parameter sap-ui-layer is set to 'VENDOR',", function(assert) {
 			assert.equal(this.oRta.getLayer(), "CUSTOMER", "then the layer is the default 'CUSTOMER'");
 
-			var oStub = sandbox.stub(UriParameters.prototype, "get");
-			oStub.withArgs("sap-ui-layer").returns("VENDOR");
+			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns("VENDOR");
 
 			this.oRta.setFlexSettings(this.oRta.getFlexSettings());
-			assert.equal(this.oRta.getLayer("CUSTOMER"), "VENDOR", "then the function reacts to the URL parameter and sets the layer to VENDOR");
-			oStub.restore();
+			assert.equal(this.oRta.getLayer(), "VENDOR", "then the function reacts to the URL parameter and sets the layer to VENDOR");
+		});
+
+		QUnit.test("when the uri-parameter sap-ui-layer is set to 'vendor',", function(assert) {
+			assert.equal(this.oRta.getLayer(), "CUSTOMER", "then the layer is the default 'CUSTOMER'");
+
+			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns("vendor");
+
+			this.oRta.setFlexSettings(this.oRta.getFlexSettings());
+			assert.equal(this.oRta.getLayer(), "VENDOR", "then the function reacts to the URL parameter and sets the layer to VENDOR");
 		});
 
 		QUnit.test("when setFlexSettings is called", function(assert) {
