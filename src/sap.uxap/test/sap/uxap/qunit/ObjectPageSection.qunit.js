@@ -382,4 +382,51 @@ function($, Core, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSec
 			oFirstSection._getTitle() + " " + sSectionText, "aria-labelledby is updated properly");
 	});
 
+	QUnit.module("Invalidation", {
+		beforeEach: function() {
+			this.oObjectPageLayout = new ObjectPageLayout("page", {
+				sections: new ObjectPageSection({
+					subSections: [
+						new ObjectPageSubSection({
+							title: "Title",
+							blocks: [new Text({text: "test"})]
+						})
+					]
+				})
+			});
+
+			this.oObjectPageLayout.placeAt('qunit-fixture');
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oObjectPageLayout.destroy();
+		}
+	});
+
+	QUnit.test("Visibility change", function (assert) {
+
+		// Setup
+		var oSection = this.oObjectPageLayout.getSections()[0],
+		oInvalidateSpy = sinon.spy(oSection, "invalidate");
+
+		// Act
+		oSection.setVisible(false);
+
+		// Check
+		assert.equal(oInvalidateSpy.callCount, 1, "section is invalidated");
+	});
+
+	QUnit.test("Visibility not changed", function (assert) {
+
+		// Setup
+		var oSection = this.oObjectPageLayout.getSections()[0],
+			oInvalidateSpy = sinon.spy(oSection, "invalidate");
+
+		// Act: called setter with same value as current
+		oSection.setVisible(true);
+
+		// Check
+		assert.equal(oInvalidateSpy.callCount, 0, "section is not invalidated");
+	});
+
 });
