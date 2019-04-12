@@ -90,6 +90,40 @@ sap.ui.define([
 		oCell.destroy();
 	});
 
+	QUnit.test("BlockLayoutCell setLayoutData", function (assert) {
+
+		// Arrange
+		var oCell = new BlockLayoutCell({
+			width: 5,
+			layoutData: new BlockLayoutCellData()
+		});
+
+		// Act
+		oCell.setLayoutData(null);
+
+		// Assert
+		assert.equal(oCell.getLayoutData(), null, "Should have correctly set layoutData to null.");
+
+		// Cleanup
+		oCell.destroy();
+	});
+
+	QUnit.test("BlockLayoutCell cloning", function (assert) {
+
+		// Arrange
+		var oCell = new BlockLayoutCell({ width: 5 });
+
+		// Act
+		var oClone = oCell.clone();
+
+		// Assert
+		assert.ok(oClone, "Should have successfully cloned the BlockLayoutCell.");
+
+		// Cleanup
+		oCell.destroy();
+		oClone.destroy();
+	});
+
 	QUnit.test("S Breakpoint case", function (assert) {
 		jQuery("#qunit-fixture").width(500);
 		this.BlockLayout._onParentResize();
