@@ -235,13 +235,14 @@
 	function _elementToAdditionalElementInfo (mData){
 		var oElement = mData.element;
 		var mAction = mData.action;
+		var mBindingPathCollection = mData.bindingPathCollection;
 		return {
 			selected : false,
 			label : oElement.fieldLabel || ElementUtil.getLabelForElement(oElement, mAction.getLabel),
 			tooltip : oElement.quickInfo || oElement.name || ElementUtil.getLabelForElement(oElement, mAction.getLabel),
 			referencedComplexPropertyName: oElement.referencedComplexPropertyName ? oElement.referencedComplexPropertyName : "",
 			duplicateComplexName: oElement.duplicateComplexName ? oElement.duplicateComplexName : false,
-			bindingPaths: oElement.bindingPaths,
+			bindingPaths: mBindingPathCollection.bindingPaths,
 			originalLabel: oElement.renamedLabel && oElement.fieldLabel !== oElement.originalLabel ? oElement.originalLabel : "",
 			//command relevant data
 			type : "invisible",
@@ -301,55 +302,6 @@
 		return aODataProperties.some(function(oDataProperty) {
 			return oDataProperty.fieldLabel === oInvisibleElement.fieldLabel;
 		});
-	}
-
-	// Get all relevant bindings for the element (from all properties)
-	function _collectBindingPaths(oInvisibleElement, oModel){
-		oInvisibleElement.bindingPaths = [];
-		oInvisibleElement.bindingContextPaths = [];
-		var sAggregationName = oInvisibleElement.sParentAggregationName;
-		var oParent = oInvisibleElement.getParent();
-		var aBindings = BindingsExtractor.getBindings(oInvisibleElement, oModel);
-
-		if (oParent) {
-			var oDefaultAggregation = oParent.getMetadata().getAggregation();
-
-			if (oDefaultAggregation) {
-				var iPositionOfInvisibleElement = ElementUtil.getAggregation(oParent, sAggregationName).indexOf(oInvisibleElement);
-				var sParentDefaultAggregationName = oDefaultAggregation.name;
-				var oBinding = oParent.getBindingInfo(sParentDefaultAggregationName);
-				var oTemplate = oBinding && oBinding.template;
-
-				if (oTemplate) {
-					var oTemplateDefaultAggregation = oTemplate.getMetadata().getAggregation();
-
-					if (oTemplateDefaultAggregation) {
-						var sTemplateDefaultAggregationName = oTemplateDefaultAggregation.name;
-						var oTemplateElement = ElementUtil.getAggregation(oTemplate, sTemplateDefaultAggregationName)[iPositionOfInvisibleElement];
-						aBindings = aBindings.concat(BindingsExtractor.getBindings(oTemplateElement, null, true));
-					}
-				}
-			}
-		}
-
-		for (var i = 0, l = aBindings.length; i < l; i++) {
-			if (aBindings[i].getPath && aBindings[i].getPath()){
-				if (oInvisibleElement.bindingPaths.indexOf(aBindings[i].getPath()) === -1){
-					oInvisibleElement.bindingPaths.push(aBindings[i].getPath());
-				}
-			}
-			if (aBindings[i].getContext && aBindings[i].getContext()){
-				if (oInvisibleElement.bindingContextPaths.indexOf(aBindings[i].getContext().getPath()) === -1){
-					oInvisibleElement.bindingContextPaths.push(aBindings[i].getContext().getPath());
-				}
-			}
-			if (jQuery.isPlainObject(aBindings[i])){
-				if (oInvisibleElement.bindingPaths.indexOf(aBindings[i].parts[0].path) === -1){
-					oInvisibleElement.bindingPaths.push(aBindings[i].parts[0].path);
-				}
-			}
-		}
-		return oInvisibleElement;
 	}
 
 	/**
@@ -442,14 +394,15 @@
 	 * @param {Array.<Object>} aODataProperties - Array of Fields
 	 * @param {Array.<Object>} aNavigationProperties - Array of Navigation Properties
 	 * @param {Array.<Object>} aNavigationEntityNames - Array of Navigation Entity names
+	 * @param {Object} mBindingPaths - Map of all binding paths and binding context paths of the passed invisible element
 	 *
 	 * @return {Boolean} - whether this field is
 	 *
 	 * @private
 	 */
-	function _checkAndEnhanceODataProperty(oInvisibleElement, aODataProperties, aNavigationProperties, aNavigationEntityNames) {
-		var aBindingPaths = oInvisibleElement.bindingPaths,
-			aBindingContextPaths = oInvisibleElement.bindingContextPaths,
+	function _checkAndEnhanceODataProperty(oInvisibleElement, aODataProperties, aNavigationProperties, aNavigationEntityNames, mBindingPaths) {
+		var aBindingPaths = mBindingPaths.bindingPaths,
+			aBindingContextPaths = mBindingPaths.bindingContextPaths,
 			mODataProperty;
 
 		return (
@@ -504,13 +457,14 @@
 						var oInvisibleElement = mInvisibleElement.element;
 						var mAction = mInvisibleElement.action;
 						var bIncludeElement = true;
+						var mBindingPathCollection = {};
 						oInvisibleElement.fieldLabel = ElementUtil.getLabelForElement(oInvisibleElement, mAction.getLabel);
 
 						// BCP: 1880498671
 						if (mAddODataProperty) {
 							if (_getBindingPath(oElement, sAggregationName) === _getBindingPath(oInvisibleElement, sAggregationName)) {
 								//TODO fix with stashed type support
-								oInvisibleElement = _collectBindingPaths(oInvisibleElement, oModel);
+								mBindingPathCollection = BindingsExtractor.collectBindingPaths(oInvisibleElement, oModel);
 								oInvisibleElement.duplicateComplexName = _checkForDuplicateLabels(oInvisibleElement, aODataProperties);
 
 								//Add information from the oDataProperty to the InvisibleProperty if available;
@@ -518,7 +472,12 @@
 								//Example use case: custom field which was hidden and then removed from system
 								//should not be available for adding after the removal
 								if (aODataProperties.length > 0){
-									bIncludeElement = _checkAndEnhanceODataProperty(oInvisibleElement, aODataProperties, aODataNavigationProperties, aODataNavigationEntityNames);
+									bIncludeElement = _checkAndEnhanceODataProperty(
+										oInvisibleElement,
+										aODataProperties,
+										aODataNavigationProperties,
+										aODataNavigationEntityNames,
+										mBindingPathCollection);
 								}
 							} else if (BindingsExtractor.getBindings(oInvisibleElement, oModel).length > 0) {
 								bIncludeElement = false;
@@ -537,7 +496,8 @@
 						if (bIncludeElement) {
 							aAllElementData.push({
 								element : oInvisibleElement,
-								action : mAction
+								action : mAction,
+								bindingPathCollection: mBindingPathCollection
 							});
 						}
 					});

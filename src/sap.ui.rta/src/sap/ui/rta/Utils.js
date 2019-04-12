@@ -10,7 +10,9 @@ sap.ui.define([
 	"sap/ui/dt/DOMUtil",
 	"sap/ui/dt/Util",
 	"sap/m/MessageBox",
-	"sap/base/Log"
+	"sap/ui/rta/util/BindingsExtractor",
+	"sap/base/Log",
+	"sap/base/util/array/uniqueSort"
 ],
 function(
 	jQuery,
@@ -20,7 +22,9 @@ function(
 	DOMUtil,
 	DtUtil,
 	MessageBox,
-	Log
+	BindingsExtractor,
+	Log,
+	uniqueSort
 ) {
 	"use strict";
 
@@ -637,6 +641,32 @@ function(
 			delete oNewObject[sProperty];
 		});
 		return oNewObject;
+	};
+
+	/**
+	 * Checks the binding compatibility of source and target control. Absolute binding will not be considered
+	 *
+	 * @param {sap.ui.core.Element|sap.ui.core.Component} oSource - Source control to be checked for binding compatibility with target control
+	 * @param {sap.ui.core.Element|sap.ui.core.Component} oTarget - Target control to be checked for binding compatibility with source control
+	 * @param {sap.ui.model.Model} [oModel] - Model for filtering irrelevant binding paths. If empty the the default model from first element is used
+	 * @return {boolean} <code>true</code> when the controls have compatible bindings.
+	 */
+	Utils.checkSourceTargetBindingCompatibility = function(oSource, oTarget, oModel) {
+		oModel = oModel || oSource.getModel();
+		var mSourceBindings = BindingsExtractor.collectBindingPaths(oSource, oModel),
+			sSourceContextBindingPath,
+			sTargetContextBindingPath;
+		// check source control for property binding
+		if (mSourceBindings.bindingPaths.length === 0) {
+			return true;
+		}
+		sSourceContextBindingPath = BindingsExtractor.getBindingContextPath(oSource);
+		sTargetContextBindingPath = BindingsExtractor.getBindingContextPath(oTarget);
+		// check source and target bindingContext has to be equal
+		if (sSourceContextBindingPath === sTargetContextBindingPath) {
+			return true;
+		}
+		return false;
 	};
 
 	return Utils;

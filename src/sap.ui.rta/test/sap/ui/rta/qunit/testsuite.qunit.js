@@ -565,7 +565,8 @@ sap.ui.define([
 						libs: 'sap.ui.rta, sap.uxap',
 						resourceroots: {
 							"qunit": "test-resources/sap/ui/rta/qunit/",
-							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
+							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/",
+							"sap.ui.rta.test.additionalElements": "test-resources/sap/ui/rta/internal/testdata/additionalElements/"
 						}
 					}
 				}

@@ -1,10 +1,12 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/rta/util/BindingsExtractor"
+	"sap/ui/rta/util/BindingsExtractor",
+	"sap/m/Button"
 ],
 function (
-	BindingsExtractor
+	BindingsExtractor,
+	Button
 ) {
 	"use strict";
 
@@ -103,6 +105,38 @@ function (
 			var aBindings = BindingsExtractor.getBindings(oGroupElement, oMainModel);
 			assert.strictEqual(aBindings.length, 0, "then no binding is found");
 		});
+
+		QUnit.test("when collecting the BindingPaths for the Smart Form Group bound to EntityType02 and main data model", function(assert) {
+			var oMainModel = this.oView.getModel();
+			var oGroup = this.oView.byId("GroupEntityType02");
+			var oGroupElement = this.oView.byId("EntityType02.CompProp1");
+			var oForm = this.oView.byId("MainForm");
+			var mBindings = BindingsExtractor.collectBindingPaths(oGroup, oMainModel);
+
+			assert.ok(
+				mBindings.bindingPaths.indexOf(oGroupElement.getFields()[0].getBindingPath("value")) !== -1,
+				"the bound property inside the group element field is found"
+			);
+			assert.ok(
+				mBindings.bindingContextPaths.indexOf(oForm.getBindingContext().getPath()) !== -1,
+				"the bound property inside the form is found"
+			);
+		});
+
+		QUnit.test("when getBindingContextPath is called for element without bindingContext", function(assert) {
+			var oElementWithoutContext = new Button("my-new-button");
+			assert.strictEqual(BindingsExtractor.getBindingContextPath(oElementWithoutContext),
+				undefined,
+				"then 'undefined' is returned");
+		});
+
+		QUnit.test("when getBindingContextPath is called for element with bindingContext", function(assert) {
+			var oElementWithContext = this.oView.byId("EntityType02.CompProp1"),
+				sBindingContextPath = BindingsExtractor.getBindingContextPath(oElementWithContext);
+			assert.strictEqual(typeof sBindingContextPath, 'string',
+				"then the return value is a string");
+		});
+
 	});
 
 	QUnit.done(function () {

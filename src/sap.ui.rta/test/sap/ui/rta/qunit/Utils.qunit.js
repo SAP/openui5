@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/rta/Utils",
+	"sap/ui/rta/util/BindingsExtractor",
 	"qunit/RtaQunitUtils",
 	"sap/ui/fl/fieldExt/Access",
 	"sap/m/Label",
@@ -22,6 +23,7 @@ function(
 	OverlayRegistry,
 	OverlayUtil,
 	Utils,
+	BindingsExtractor,
 	RtaQunitUtils,
 	Access,
 	Label,
@@ -44,6 +46,7 @@ function(
 			this.oCompCont = RtaQunitUtils.renderRuntimeAuthoringAppAt("qunit-fixture");
 			this.oView = sap.ui.getCore().byId("Comp1---idMain1");
 			this.oView.getModel().refresh(true);
+			sap.ui.getCore().applyChanges();
 		},
 		after: function() {
 			this.oCompCont.destroy();
@@ -611,6 +614,76 @@ function(
 			oSourceObject.b.d = 0;
 			assert.deepEqual(oNewObject.b, { 'd': 0, 'e': 5 }, "then modifying the old object effects change the new object");
 		});
+	});
+
+	// One model with EntityType01 and EntityType02 (default) + one i18n model ("i18n")
+	QUnit.module("Given a complex test view with oData Model...", {
+		beforeEach : function(assert) {
+			this.oSource = new Label({text: "Label1" });
+			this.oTarget = new Label({text: "Label2" });
+		},
+
+		afterEach : function () {
+			this.oSource.destroy();
+			this.oTarget.destroy();
+			sandbox.restore();
+		}
+	}, function () {
+
+		QUnit.test("Given checkSourceTargetBindingCompatibility is called with source control without bindings", function(assert) {
+			var sBindingContextPath = "/fakeBindingContext",
+				mBindingsCollection = {
+				bindingPaths: [],
+				bindingContextPaths: [sBindingContextPath]
+			};
+			sandbox.stub(BindingsExtractor, "collectBindingPaths")
+				.callThrough()
+				.withArgs(this.oSource, undefined)
+				.returns(mBindingsCollection);
+			sandbox.stub(BindingsExtractor, "getBindingContextPath")
+				.withArgs(this.oSource).returns(sBindingContextPath)
+				.withArgs(this.oTarget).returns(sBindingContextPath);
+			assert.strictEqual(
+				Utils.checkSourceTargetBindingCompatibility(this.oSource, this.oTarget), true,
+				"then bindings are compatible");
+		});
+
+		QUnit.test("Given checkSourceTargetBindingCompatibility is called with compatible controls", function(assert) {
+			var sBindingContextPath = "/fakeBindingContext",
+				mBindingsCollection = {
+				bindingPaths: ["fakeBindingProperty"],
+				bindingContextPaths: [sBindingContextPath]
+			};
+			sandbox.stub(BindingsExtractor, "collectBindingPaths")
+				.callThrough()
+				.withArgs(this.oSource, undefined)
+				.returns(mBindingsCollection);
+			sandbox.stub(BindingsExtractor, "getBindingContextPath")
+				.withArgs(this.oSource).returns(sBindingContextPath)
+				.withArgs(this.oTarget).returns(sBindingContextPath);
+			assert.strictEqual(
+				Utils.checkSourceTargetBindingCompatibility(this.oSource, this.oTarget), true,
+				"then bindings are compatible");
+		});
+
+		QUnit.test("Given checkSourceTargetBindingCompatibility is called with incompatible controls", function(assert) {
+			var	sBindingContextPath = "/fakeBindingContext",
+				mBindingsCollection = {
+				bindingPaths: ["fakeBindingProperty"],
+				bindingContextPaths: [sBindingContextPath]
+			};
+			sandbox.stub(BindingsExtractor, "collectBindingPaths")
+				.callThrough()
+				.withArgs(this.oSource, undefined)
+				.returns(mBindingsCollection);
+			sandbox.stub(BindingsExtractor, "getBindingContextPath")
+				.withArgs(this.oSource).returns(sBindingContextPath)
+				.withArgs(this.oTarget).returns(undefined);
+			assert.strictEqual(
+				Utils.checkSourceTargetBindingCompatibility(this.oSource, this.oTarget), false,
+				"then bindings are not compatible");
+		});
+
 	});
 
 	QUnit.done(function () {
