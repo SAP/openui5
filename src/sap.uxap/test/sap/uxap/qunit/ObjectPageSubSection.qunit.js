@@ -1322,4 +1322,41 @@ function($, Core, Lib, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSe
 		}, this);
 	});
 
+	QUnit.module("Invalidation", {
+		beforeEach: function(assert) {
+			var done = assert.async();
+			this.oObjectPageLayout = new ObjectPageLayout("page", {
+				sections: new ObjectPageSection({
+					subSections: [
+						new ObjectPageSubSectionClass({
+							title: "Title",
+							blocks: [new Text({text: "test"})]
+						})
+					]
+				})
+			});
+
+			this.oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", done);
+
+			this.oObjectPageLayout.placeAt('qunit-fixture');
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oObjectPageLayout.destroy();
+		}
+	});
+
+	QUnit.test("applyUxRules", function (assert) {
+
+		// Setup
+		var oSubSection = this.oObjectPageLayout.getSections()[0].getSubSections()[0],
+			oInvalidateSpy = sinon.spy(oSubSection, "invalidate");
+
+		// Act
+		this.oObjectPageLayout._applyUxRules(true);
+
+		// Check
+		assert.equal(oInvalidateSpy.callCount, 0, "subSection is not invalidated");
+	});
+
 });
