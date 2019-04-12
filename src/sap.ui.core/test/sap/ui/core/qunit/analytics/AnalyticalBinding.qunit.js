@@ -2875,4 +2875,134 @@ sap.ui.define([
 		});
 	});
 
+	//*********************************************************************************************
+	QUnit.test("_calculateRequiredGroupSection: no data", function (assert) {
+		var that = this;
+
+		return setupAnalyticalBinding().then(function (oBinding) {
+
+			that.mock(oBinding).expects("_getKeys").atLeast(0).withExactArgs("/")
+				.returns();
+
+			// code under test
+			assert.deepEqual(
+				oBinding._calculateRequiredGroupSection("/", 0, 101, 0),
+				{startIndex : 0, length : 101});
+
+			// code under test
+			assert.deepEqual(
+				oBinding._calculateRequiredGroupSection("/", 50, 101, 50),
+				{startIndex : 0, length : 50 + 101 + 50});
+
+			// code under test
+			assert.deepEqual(
+				oBinding._calculateRequiredGroupSection("/", 42, 101, 50),
+				{startIndex : 0, length : 42 + 101 + 50});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_calculateRequiredGroupSection: gap ]118, 148[", function (assert) {
+		var that = this;
+
+		return setupAnalyticalBinding().then(function (oBinding) {
+
+			that.mock(oBinding).expects("_getKeys").atLeast(0).withExactArgs("/")
+				.returns(function (iIndex) {
+					return iIndex <= 118 || iIndex >= 148 && iIndex < 264;
+				});
+			oBinding.mFinalLength["/"] = true;
+			oBinding.mLength["/"] = 264;
+
+			// code under test
+			assert.strictEqual(
+				oBinding._calculateRequiredGroupSection("/", 0, 101, 0).length,
+				0); // length === 0, don't care about startIndex
+
+			// code under test
+			assert.strictEqual(
+				oBinding._calculateRequiredGroupSection("/", 10, 101, 0).length,
+				0); // length === 0, don't care about startIndex
+
+			// code under test
+			assert.deepEqual(
+				oBinding._calculateRequiredGroupSection("/", 119, 29, 0),
+				{startIndex : 119, length : 29});
+
+			// code under test
+			assert.deepEqual(
+				oBinding._calculateRequiredGroupSection("/", 100, 29, 0),
+				{startIndex : 119, length : 10});
+
+			// code under test
+			assert.deepEqual(
+				oBinding._calculateRequiredGroupSection("/", 0, 264, 0),
+				{startIndex : 119, length : 148 - 119});
+
+			// code under test
+			assert.deepEqual(
+				oBinding._calculateRequiredGroupSection("/", 0, 101, 100),
+				{startIndex : 119, length : 148 - 119});
+
+			// code under test
+			assert.deepEqual(
+				oBinding._calculateRequiredGroupSection("/", 150, 1, 50),
+				{startIndex : 119, length : 148 - 119});
+
+			// code under test
+			assert.deepEqual(
+				oBinding._calculateRequiredGroupSection("/", 150, 100, 100),
+				{startIndex : 119, length : 148 - 119});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_calculateRequiredGroupSection: gap ]118, 264[", function (assert) {
+		var that = this;
+
+		return setupAnalyticalBinding().then(function (oBinding) {
+
+			that.mock(oBinding).expects("_getKeys").atLeast(0).withExactArgs("/")
+				.returns(function (iIndex) {
+					return iIndex <= 118;
+				});
+			oBinding.mFinalLength["/"] = true;
+			oBinding.mLength["/"] = 264;
+
+			// code under test
+			assert.deepEqual(
+				oBinding._calculateRequiredGroupSection("/", 245, 19, 100),
+				{startIndex : 145, length : 264 - 145});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_calculateRequiredGroupSection: gaps [30, 40] and [60, 70]", function (assert) {
+		var that = this;
+
+		return setupAnalyticalBinding().then(function (oBinding) {
+
+			that.mock(oBinding).expects("_getKeys").atLeast(0).withExactArgs("/")
+				.returns(function (iIndex) {
+					return iIndex < 30 || iIndex > 40 && iIndex < 60 || iIndex > 70 && iIndex < 100;
+				});
+			oBinding.mFinalLength["/"] = true;
+			oBinding.mLength["/"] = 100;
+
+			// code under test
+			assert.deepEqual(
+				oBinding._calculateRequiredGroupSection("/", 20, 70, 0),
+				{startIndex : 30, length : 71 - 30});
+
+			// code under test
+			assert.deepEqual(
+				oBinding._calculateRequiredGroupSection("/", 42, 15, 10),
+				{startIndex : 32, length : 42 + 15 + 10 - 32});
+
+			// code under test
+			assert.deepEqual(
+				oBinding._calculateRequiredGroupSection("/", 34, 2, 3),
+				{startIndex : 34 - 3, length : 3 + 2 + 3});
+		});
+	});
 });

@@ -1601,7 +1601,7 @@ sap.ui.define([
 			aContext = this._getLoadedContextsForGroup(sParentGroupId, iStartIndex, iLength, bSupressRequest);
 			bLoadContexts = false;
 			if (!bSupressRequest) {
-				oGroupSection = this._calculateRequiredGroupSection(sParentGroupId, iStartIndex, iLength, iThreshold, aContext);
+				oGroupSection = this._calculateRequiredGroupSection(sParentGroupId, iStartIndex, iLength, iThreshold);
 				var bPreloadContexts = oGroupSection.length > 0 && iLength < oGroupSection.length;
 				bLoadContexts = (aContext.length != iLength
 								 && !(this.mFinalLength[sParentGroupId] && aContext.length >= this.mLength[sParentGroupId] - iStartIndex))
@@ -3570,90 +3570,42 @@ sap.ui.define([
 	/**
 	 * @private
 	 */
-	AnalyticalBinding.prototype._calculateRequiredGroupSection = function(sGroupId, iStartIndex, iLength, iThreshold, aContext) {
-		// implementation copied from ODataListBinding; name changed here, because analytical binding comprises more calculations
-		var iSectionLength, iSectionStartIndex, iPreloadedSubsequentIndex, iPreloadedPreviousIndex, iRemainingEntries, oSection = {}, fKey = this._getKeys(sGroupId), sKey;
+	AnalyticalBinding.prototype._calculateRequiredGroupSection = function (sGroupId, iStartIndex,
+			iLength, iThreshold) {
+		var fnGetKey = this._getKeys(sGroupId);
 
-		iSectionStartIndex = iStartIndex;
-		iSectionLength = 0;
-
-		// check which data exists before startindex; If all necessary data is loaded iPreloadedPreviousIndex stays undefined
-		if (!fKey) {
-			iPreloadedPreviousIndex = iStartIndex;
-			iPreloadedSubsequentIndex = iStartIndex + iLength;
+		// prefetch before start
+		if (iStartIndex >= iThreshold) {
+			iStartIndex -= iThreshold;
+			iLength += iThreshold;
 		} else {
-			for (var i = iStartIndex - 1; i >= Math.max(iStartIndex - iThreshold, 0); i--) {
-				sKey = fKey(i);
-				if (!sKey) {
-					iPreloadedPreviousIndex = i + 1;
-					break;
-				}
-			}
-			// check which data is already loaded after startindex; If all necessary data is loaded iPreloadedSubsequentIndex stays undefined
-			for (var j = iStartIndex + iLength; j < iStartIndex + iLength + iThreshold; j++) {
-				sKey = fKey(j);
-				if (!sKey) {
-					iPreloadedSubsequentIndex = j;
-					break;
-				}
-			}
+			iLength += iStartIndex;
+			iStartIndex = 0;
 		}
-		// calculate previous remaining entries
-		iRemainingEntries = iStartIndex - iPreloadedPreviousIndex;
-		if (iPreloadedPreviousIndex && iStartIndex > iThreshold && iRemainingEntries < iThreshold) {
-			if (aContext.length !== iLength) {
-				iSectionStartIndex = iStartIndex - iThreshold;
-			} else {
-				iSectionStartIndex = iPreloadedPreviousIndex - iThreshold;
+
+		// prefetch after end
+		iLength += iThreshold;
+		if (this.mFinalLength[sGroupId] && iStartIndex + iLength > this.mLength[sGroupId]) {
+			iLength = this.mLength[sGroupId] - iStartIndex;
+		}
+
+		if (fnGetKey) {
+			// search start of first gap
+			while (iLength && fnGetKey(iStartIndex)) {
+				iStartIndex += 1;
+				iLength -= 1;
 			}
 
-			iSectionLength = iThreshold;
-		}
-
-		// prevent startIndex from getting out of bounds
-		// FIX for BCP(1570041982)
-		// If the startIndex is negative, the $skip value will also be negative, and the length might also be bigger than necessary
-		iSectionStartIndex = Math.max(iSectionStartIndex, 0);
-
-		// No negative preload needed; move startindex if we already have some data
-		if (iSectionStartIndex === iStartIndex) {
-			iSectionStartIndex += aContext.length;
-		}
-
-		//read the rest of the requested data
-		if (aContext.length !== iLength) {
-			iSectionLength += iLength - aContext.length;
-		}
-
-		//calculate subsequent remaining entries
-		iRemainingEntries = iPreloadedSubsequentIndex - iStartIndex - iLength;
-
-		if (iRemainingEntries == 0) {
-			iSectionLength += iThreshold;
-		}
-
-		if (iPreloadedSubsequentIndex && iRemainingEntries < iThreshold && iRemainingEntries > 0) {
-			//check if we need to load previous entries; If not we can move the startindex
-			// changed the ">=" to ">", because a fix was not migrated, see commit #455622
-			// FIX for BCP(1570041982)
-			if (iSectionStartIndex > iStartIndex) {
-				iSectionStartIndex = iPreloadedSubsequentIndex;
-				iSectionLength += iThreshold;
+			// search end of last gap
+			while (iLength && fnGetKey(iStartIndex + iLength - 1)) {
+				iLength -= 1;
 			}
-
 		}
 
-		//check final length and adapt sectionLength if needed.
-		if (this.mFinalLength[sGroupId] && this.mLength[sGroupId] < (iSectionLength + iSectionStartIndex)) {
-			iSectionLength = this.mLength[sGroupId] - iSectionStartIndex;
-		}
-
-		oSection.startIndex = iSectionStartIndex;
-		oSection.length = iSectionLength;
-
-		// this._trace(sGroupId, "calculateSection:\tstart = " + iSectionStartIndex + "\tlength = " + iSectionLength); // DISABLED FOR PRODUCTION
-
-		return oSection;
+		return {
+			startIndex : iStartIndex,
+			length : iLength
+		};
 	};
 
 	/**
