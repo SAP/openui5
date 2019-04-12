@@ -2221,6 +2221,12 @@ sap.ui.define([
 	};
 
 	Table.prototype._computeRequestLength = function(iLength) {
+		if (this.getVisibleRowCountMode() === VisibleRowCountMode.Fixed) {
+			var oBindingInfo = this.getBindingInfo("rows");
+			if (oBindingInfo && oBindingInfo.length) {
+				return Math.min(iLength, oBindingInfo.length);
+			}
+		}
 		if (this.getVisibleRowCountMode() === VisibleRowCountMode.Auto && !this._bContextsRequested) {
 			var iEstimatedRowCount = Math.ceil(Device.resize.height / TableUtils.DefaultRowHeight.sapUiSizeCondensed);
 			return Math.max(iLength, iEstimatedRowCount);
@@ -2737,6 +2743,12 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._getTotalRowCount = function() {
+		if (this.getVisibleRowCountMode() === VisibleRowCountMode.Fixed) {
+			var oBindingInfo = this.getBindingInfo("rows");
+			if (oBindingInfo && oBindingInfo.length) {
+				return oBindingInfo.length;
+			}
+		}
 		var oBinding = this.getBinding("rows");
 		return oBinding ? oBinding.getLength() : 0;
 	};
