@@ -401,4 +401,41 @@ sap.ui.define([
 		assert.strictEqual(fnLiveChange.callCount, 1, "LiveChange event is fired once");
 		assert.strictEqual(this.oSearchField.getValue(), "abc", "Value is correct");
 	});
+
+	QUnit.module("Events", {
+		beforeEach: function () {
+			this.oSearchField = new SearchField();
+			this.oSearchField.placeAt("content");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oSearchField.destroy();
+		}
+	});
+
+	QUnit.test("Touch start on input and touch end on reset button", function (assert) {
+
+		// Arrange
+		var fnClearSpy = this.spy(SearchField.prototype, "clear");
+		var oTouchStartMockEvent = {
+			target: this.oSearchField.getInputElement()
+		};
+		var oTouchEndMockEvent = {
+			target: this.oSearchField.getDomRef("reset"),
+			originalEvent: {},
+			id: this.oSearchField.getId() + "-reset"
+		};
+
+		// Act
+		// Simulate touch start on the SearchField's input.
+		this.oSearchField.ontouchstart(oTouchStartMockEvent);
+		// Simulate touch end on the SearchField's reset button.
+		this.oSearchField.ontouchend(oTouchEndMockEvent);
+
+		// Assert
+		assert.ok(fnClearSpy.notCalled, "Should NOT clear input when touch started on a different target then the reset button.");
+
+		// Cleanup
+		fnClearSpy.restore();
+	});
 });
