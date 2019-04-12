@@ -1103,7 +1103,7 @@ function(
 	Input.prototype.onsapescape = function(oEvent) {
 		var lastValue;
 
-		if (this._oSuggPopover && this._oSuggPopover._oPopover.isOpen()) {
+		if (this._isSuggestionsPopoverOpen()) {
 			// mark the event as already handled
 			oEvent.originalEvent._sapui_handledByControl = true;
 			this._oSuggPopover._iPopupListSelectedIndex = -1;
@@ -1142,7 +1142,7 @@ function(
 		// when enter is pressed before the timeout of suggestion delay, suggest event is cancelled
 		this.cancelPendingSuggest();
 
-		if (this._oSuggPopover && this._oSuggPopover._oPopover.isOpen()) {
+		if (this._isSuggestionsPopoverOpen()) {
 			if (!this._updateSelectionFromList()) {
 				this._closeSuggestionPopup();
 			}
@@ -1307,7 +1307,7 @@ function(
 			} else if (this._oSuggPopover._oList && this._oSuggPopover._oList.destroyItems) {
 				this._oSuggPopover._oList.destroyItems();
 			}
-		} else if (this._oSuggPopover && this._oSuggPopover._oPopover.isOpen()) {
+		} else if (this._isSuggestionsPopoverOpen()) {
 
 			// when compose a non ASCII character, in Chrome the value is updated in the next browser tick cycle
 			setTimeout(function () {
@@ -1933,7 +1933,7 @@ function(
 			this._bShouldRefreshListItems = true;
 			this._refreshItemsDelayed();
 
-			if (!this.getDomRef() || (this._oSuggestionPopup && this._oSuggestionPopup.isOpen())) {
+			if (!this.getDomRef() || this._isSuggestionsPopoverOpen()) {
 				return;
 			}
 
@@ -1970,8 +1970,7 @@ function(
 
 		// Close the ValueStateMessage when the suggestion popup is being opened.
 		// Only do this in case a popup is used.
-		if (!this._bUseDialog && this._oSuggPopover
-			&& this._oSuggPopover._oPopover && this._oSuggPopover._oPopover.isOpen()) {
+		if (!this._bUseDialog && this._isSuggestionsPopoverOpen()) {
 			this.closeValueStateMessage();
 		}
 
@@ -2118,7 +2117,7 @@ function(
 	 * @protected
 	 */
 	Input.prototype.updateInputField = function(sNewValue) {
-		if (this._oSuggPopover && this._oSuggPopover._oPopover.isOpen() && this._bUseDialog) {
+		if (this._isSuggestionsPopoverOpen() && this._bUseDialog) {
 			this._oSuggPopover._oPopupInput.setValue(sNewValue);
 			this._oSuggPopover._oPopupInput._doSelect();
 		} else {
@@ -2539,11 +2538,21 @@ function(
 	Input.prototype.shouldValueStateMessageBeOpened = function() {
 		var bShouldValueStateMessageBeOpened = InputBase.prototype.shouldValueStateMessageBeOpened.apply(this, arguments);
 
-		if (!bShouldValueStateMessageBeOpened || (this._oSuggPopover && this._oSuggPopover._oPopover.isOpen())) {
+		if (!bShouldValueStateMessageBeOpened || this._isSuggestionsPopoverOpen()) {
 			return false;
 		}
 
 		return true;
+	};
+
+	/**
+	 * Checks if the suggestion popover is currently opened.
+	 *
+	 * @return {boolean} whether the suggestions popover is currently opened
+	 * @private
+	 */
+	Input.prototype._isSuggestionsPopoverOpen = function() {
+		return this._oSuggPopover && this._oSuggPopover.isOpen();
 	};
 
 	/**
