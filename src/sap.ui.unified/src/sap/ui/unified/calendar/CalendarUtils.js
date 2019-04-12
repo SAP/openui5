@@ -600,6 +600,20 @@ sap.ui.define([
 		};
 
 		/**
+		 * Evaluates minutes between two dates.
+		 * @param {Date} oFirstDate JavaScript date
+		 * @param {Date} oSecondDate JavaScript date
+		 * @return {int} iMinutes
+		 * @private
+		 */
+		CalendarUtils._minutesBetween = function(oFirstDate, oSecondDate) {
+			var iMinutes = (oSecondDate.getTime() - oFirstDate.getTime()) / 1000;
+				iMinutes = iMinutes / 60;
+
+			return Math.abs(Math.round(iMinutes));
+		};
+
+		/**
 		 * Evaluates whether the given date is part of the weekend.
 		 * @param {sap.ui.unified.calendar.CalendarDate} oCalDate The date to be checked
 		 * @param {object} oLocaleData locale date for the used locale

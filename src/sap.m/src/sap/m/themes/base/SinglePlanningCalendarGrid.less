@@ -334,6 +334,55 @@ html.sap-desktop {
 		.sapUiCalendarAppTitle {
 			padding-top: 0.2rem;
 		}
+
+		.sapUiCalendarAppTitleWrapper.sapUiSPCAppLineClamp1,
+		.sapUiCalendarAppTitleWrapper.sapUiSPCAppLineClamp2,
+		.sapUiCalendarAppTitleWrapper.sapUiSPCAppLineClamp3,
+		.sapUiCalendarAppTitleWrapper.sapUiSPCAppLineClamp4,
+		.sapUiCalendarAppTitleWrapper.sapUiSPCAppLineClamp5,
+		.sapUiCalendarAppTitleWrapper.sapUiSPCAppLineClamp6,
+		.sapUiCalendarAppTitleWrapper.sapUiSPCAppLineClamp7,
+		.sapUiCalendarAppTitleWrapper.sapUiSPCAppLineClamp8,
+		.sapUiCalendarAppTitleWrapper.sapUiSPCAppLineClamp9 {
+			> .sapUiCalendarAppText,
+			> .sapUiCalendarAppTitle {
+				white-space: normal;
+				word-break: break-all;
+				overflow: hidden;
+				line-height: 1rem;
+			}
+		}
+
+		.sapUiCalendarAppTitleWrapper.sapUiSPCAppLineClamp3 {
+			max-height: 3.25rem;
+		}
+		.sapUiCalendarAppTitleWrapper.sapUiSPCAppLineClamp2{
+			max-height: 2.3rem;
+		}
+		.sapUiCalendarAppTitleWrapper.sapUiSPCAppLineClamp1 {
+			max-height: 1.2rem;
+		}
+		.sapUiCalendarAppTitleWrapper.sapUiSPCAppLineClamp4 {
+			max-height: 4.25rem;
+		}
+		.sapUiCalendarAppTitleWrapper.sapUiSPCAppLineClamp5 {
+			max-height: 5.2rem;
+		}
+		.sapUiCalendarAppTitleWrapper.sapUiSPCAppLineClamp6 {
+			max-height: 6.25rem;
+		}
+		.sapUiCalendarAppTitleWrapper.sapUiSPCAppLineClamp7 {
+			max-height: 7.5rem;
+		}
+		.sapUiCalendarAppTitleWrapper.sapUiSPCAppLineClamp8 {
+			max-height: 8.3rem;
+		}
+	}
+}
+
+html[data-sap-ui-browser^=ie] .sapMSinglePCAppointmentWrap.sapUiCalendarRowApps {
+	.sapUiCalendarApp .sapUiCalendarAppTitleWrapper.sapUiSPCAppLineClamp2 {
+		max-height: 2.1rem;
 	}
 }
 
