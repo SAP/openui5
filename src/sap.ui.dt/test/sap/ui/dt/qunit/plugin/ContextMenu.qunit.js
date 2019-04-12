@@ -196,6 +196,8 @@ sap.ui.define([
 			oContextMenuControl.attachEventOnce("Opened", function() {
 				assert.ok(oContextMenuControl.getPopover().isOpen(), "ContextMenu should be open");
 				openContextMenu.call(this, this.oButton2Overlay);
+				// the popup uses another setTimeout (50ms on firefox), without this the opened event won't be fired
+				this.clock.tick(52);
 			}.bind(this));
 			oContextMenuControl.attachEventOnce("Closed", function() {
 				assert.ok(!oContextMenuControl.getPopover().isOpen(), "ContextMenu should be closed");
@@ -207,7 +209,7 @@ sap.ui.define([
 			});
 			openContextMenu.call(this, this.oButton1Overlay);
 			// the popup uses another setTimeout (50ms on firefox), without this the opened event won't be fired
-			this.clock.tick(51);
+			this.clock.tick(52);
 		});
 
 		QUnit.test("Calling the _popupClosed function", function (assert) {
