@@ -3807,6 +3807,20 @@ sap.ui.define([
 		assert.notOk(this.inputWithSuggestions._oValueStateMessage._oPopup, "Value state message is not shown");
 	});
 
+	QUnit.test('show/hide suggestions', function (assert) {
+
+		this.inputWithSuggestions.setValueState("Error");
+		this.inputWithSuggestions.setShowValueStateMessage(true);
+
+		assert.ok(this.inputWithSuggestions._oSuggPopover._oPopover, 'suggestions popover is initialized');
+		this.inputWithSuggestions.setShowSuggestion(false);
+		assert.notOk(this.inputWithSuggestions._oSuggPopover._oPopover, 'suggestions popover is not initialized');
+
+		this.inputWithSuggestions.openValueStateMessage();
+
+		assert.ok(true, 'exception is not thrown');
+	});
+
 	QUnit.test('valueStateMsg z-index', function (assert) {
 
 		this.inputWithSuggestions.setShowValueStateMessage(true);
