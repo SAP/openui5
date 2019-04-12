@@ -935,6 +935,25 @@ sap.ui.define([
 		assert.deepEqual(aTrueBindings[0], oBinding1, "And this is exactly the first binding");
 	});
 
+	QUnit.test("ManagedObject Model - handle object properties", function() {
+		var oData = {value: "A string", text: "A text"};
+		var oModel = new JSONModel({
+			data: oData
+		});
+
+		this.obj.setModel(oModel);
+		this.obj.bindProperty("objectValue", "/data");
+
+		var oInput = new Input({
+			value: "{$obj>/objectValue/value}"
+		});
+		oInput.setModel(this.oManagedObjectModel, "$obj");
+
+		assert.equal("A string", oInput.getValue(), "The value from the JSON model is obtained");
+		oInput.setValue("A new string");
+		assert.equal("A new string", oInput.getValue(), "The value from the JSON model is updated");
+	});
+
 	QUnit.test("ManagedObject Model  - handle array properties", function (assert) {
 		var aData = [{operator: "EQ", values: [1, 2]}];
 		var oModel = new JSONModel({

@@ -2,8 +2,8 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	'../json/JSONModel', '../json/JSONPropertyBinding', '../json/JSONListBinding', 'sap/ui/base/ManagedObject', 'sap/ui/base/ManagedObjectObserver', '../Context', '../ChangeReason', "sap/base/util/uid", "sap/base/Log", "sap/base/util/isPlainObject"
-], function (JSONModel, JSONPropertyBinding, JSONListBinding, ManagedObject, ManagedObjectObserver, Context, ChangeReason, uid, Log, isPlainObject) {
+	'../json/JSONModel', '../json/JSONPropertyBinding', '../json/JSONListBinding', 'sap/ui/base/ManagedObject', 'sap/ui/base/ManagedObjectObserver', '../Context', '../ChangeReason', "sap/base/util/uid", "sap/base/Log", "sap/base/util/isPlainObject", "sap/base/util/deepClone"
+], function (JSONModel, JSONPropertyBinding, JSONListBinding, ManagedObject, ManagedObjectObserver, Context, ChangeReason, uid, Log, isPlainObject, deepClone) {
 	"use strict";
 
 	var CUSTOMDATAKEY = "@custom", ID_DELIMITER = "--";/**
@@ -407,20 +407,28 @@ sap.ui.define([
 				var aValueAndMO = _traverseToLastManagedObject(aNodeStack);
 
 				//change the value of the property with structure
-				var oMOMValue = aValueAndMO[1].node, aParts = aValueAndMO[2];
+				//to obtain a change we need to clone the property value
+				//as we will retrigger a setting of the complete property via API
+				var oMOMValue = deepClone(aValueAndMO[1].node), aParts = aValueAndMO[2];
 				var oPointer = oMOMValue;
 				for (var i = 0; i < aParts.length; i++) {
 					oPointer = oPointer[aParts[i]];
 				}
 				oPointer[sProperty] = oValue;
 
-				//do not change the inner property structure part
-				// but ideally the surrounding managed objects property
-				var sSuffix = "/" + aParts.join("/") + "/" + sProperty;
-				var iDelimiter = sResolvedPath.lastIndexOf(sSuffix);
-				var sUpdatePath = sResolvedPath.substr(0, iDelimiter);
-				//re-call no instead of /objectArray/0/value/0 directly to /objectArray
-				return this.setProperty(sUpdatePath, oMOMValue, oContext);
+				//determine the path of the property that is now to be changed
+				//aParts.join("/") + "/" + sProperty is the complete update path inside the propety
+				var sPathInsideProperty = "/" + sProperty;
+				if (aParts.length > 0) {
+					sPathInsideProperty = "/" + aParts.join("/") + sPathInsideProperty;
+				}
+				var iDelimiter = sResolvedPath.lastIndexOf(sPathInsideProperty);
+				var sPathUpToProperty = sResolvedPath.substr(0, iDelimiter);
+
+				//re-invoke now instead of:
+				// -> array case /objectArray/0/value/0 directly to /objectArray
+				// -> object case /objectValue/value directly to /objectValue
+				return this.setProperty(sPathUpToProperty, oMOMValue, oContext);
 			}
 		}
 		return false;
