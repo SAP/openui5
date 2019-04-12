@@ -9,7 +9,7 @@
 		items="{path: '/'}"
 		mode="MultiSelect">
 		<headerToolbar>
-			<Toolbar>
+			<OverflowToolbar>
 				<content>
 					<Title text="Tree Nodes"/>
 					<ToolbarSpacer/>
@@ -36,14 +36,14 @@
 						text="Hide/Show InfoToolbar"
 						press="onToggleInfoToolbar" />
 				</content>
-			</Toolbar>
+			</OverflowToolbar>
 		</headerToolbar>
 		<infoToolbar>
-			<Toolbar>
+			<OverflowToolbar>
 				<content>
 					<Title text="Tree's info toolbar"/>
 				</content>
-			</Toolbar>
+			</OverflowToolbar>
 		</infoToolbar>
 		<StandardTreeItem title="{text}"/>
 	</Tree>

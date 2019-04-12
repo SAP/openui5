@@ -19,7 +19,7 @@
 					setEnableGrouping="true"
 					ariaLabelledBy="title">
 				<toolbar>
-					<m:Toolbar>
+					<m:OverflowToolbar>
 						<m:Title id="title" text="Products" height="100%"/>
 						<m:ToolbarSpacer/>
 						<m:Label text="SelectionMode:"/>
@@ -32,7 +32,7 @@
 						</m:Select>
 						<m:ToggleButton text="Toggle Highlights" pressed="true" press="onHighlightToggle"/>
 						<m:ToggleButton text="Toggle Alternate Row Colors" press="onAlternateToggle"/>
-					</m:Toolbar>
+					</m:OverflowToolbar>
 				</toolbar>
 				<rowSettingsTemplate>
 					<RowSettings highlight="{Status}" highlightText="{StatusText}"/>

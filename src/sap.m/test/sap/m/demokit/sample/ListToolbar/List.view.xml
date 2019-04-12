@@ -14,7 +14,7 @@
 				iconInset="false" />
 		</items>
 		<headerToolbar>
-			<Toolbar>
+			<OverflowToolbar>
 				<Title text="Products" level="H2" />
 				<ToolbarSpacer />
 				<MultiComboBox id="idSticky"
@@ -40,14 +40,14 @@
 				<Button
 					icon="sap-icon://drop-down-list"
 					press="handleButtonPress" />
-			</Toolbar>
+			</OverflowToolbar>
 		</headerToolbar>
 		<infoToolbar>
-			<Toolbar
+			<OverflowToolbar
 				active="true"
 				press="handleInfobarPress" >
 				<Label text="This is the info bar" />
-			</Toolbar>
+			</OverflowToolbar>
 		</infoToolbar>
 	</List>
 </mvc:View>

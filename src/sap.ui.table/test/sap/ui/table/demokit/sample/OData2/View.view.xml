@@ -25,9 +25,9 @@
 				}"
 				ariaLabelledBy="title">
 				<toolbar>
-					<m:Toolbar>
+					<m:OverflowToolbar>
 						<m:Title id="title" text="Products"></m:Title>
-					</m:Toolbar>
+					</m:OverflowToolbar>
 				</toolbar>
 				<noData>
 					<m:BusyIndicator class="sapUiMediumMargin"/>

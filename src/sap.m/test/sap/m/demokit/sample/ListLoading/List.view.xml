@@ -11,13 +11,13 @@
 		noDataText="No products available"
 		items="{/ProductCollection}">
 		<headerToolbar>
-			<Toolbar>
+			<OverflowToolbar>
 				<Title text="Products" level="H2" />
 				<ToolbarSpacer />
 				<Button
 					icon="sap-icon://refresh"
 					press="refreshDataFromBackend" />
-			</Toolbar>
+			</OverflowToolbar>
 		</headerToolbar>
 		<StandardListItem
 			title="{Name}"

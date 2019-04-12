@@ -21,9 +21,9 @@
 			</Menu>
 		</contextMenu>
 		<headerToolbar>
-			<Toolbar>
+			<OverflowToolbar>
 				<Title text="Available Products" />
-			</Toolbar>
+			</OverflowToolbar>
 		</headerToolbar>
 		<columns>
 			<Column

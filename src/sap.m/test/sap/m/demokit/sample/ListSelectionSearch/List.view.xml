@@ -8,11 +8,11 @@
 	<Page
 		showHeader="false" >
 		<subHeader>
-			<Toolbar>
+			<OverflowToolbar>
 				<SearchField
 					liveChange="onSearch"
 					width="100%" />
-			</Toolbar>
+			</OverflowToolbar>
 		</subHeader>
 		<content>
 			<List
@@ -22,11 +22,11 @@
 				mode="MultiSelect"
 				includeItemInSelection="true" >
 				<infoToolbar>
-					<Toolbar
+					<OverflowToolbar
 						visible="false"
 						id="idInfoToolbar" >
 						<Label id="idFilterLabel" />
-					</Toolbar>
+					</OverflowToolbar>
 				</infoToolbar>
 				<items>
 					<StandardListItem

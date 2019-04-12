@@ -12,7 +12,7 @@
 			}
 		}">
 		<headerToolbar>
-			<Toolbar>
+			<OverflowToolbar>
 				<content>
 					<Title text="Products" level="H2"/>
 					<ToolbarSpacer />
@@ -48,7 +48,7 @@
 						text="Hide/Show InfoToolbar"
 						press="onToggleInfoToolbar" />
 				</content>
-			</Toolbar>
+			</OverflowToolbar>
 		</headerToolbar>
 		<infoToolbar>
 			<Toolbar active="ture">

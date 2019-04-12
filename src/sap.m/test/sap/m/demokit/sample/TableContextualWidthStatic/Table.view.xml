@@ -8,11 +8,11 @@
 		type="Success"
 		class="sapUiSmallMargin"
 		showIcon="true"/>
-			<Toolbar>
+			<OverflowToolbar>
 				<Button
 					text="change contexualWidth to 100px"
 					press="onPress"/>
-			</Toolbar>
+			</OverflowToolbar>
 		<Table id="table"
 			contextualWidth="500px"
 			popinLayout="GridSmall"

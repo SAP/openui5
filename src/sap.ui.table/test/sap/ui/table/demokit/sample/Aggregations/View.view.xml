@@ -26,7 +26,7 @@
 					</m:HBox>
 				</title>
 				<toolbar>
-					<m:Toolbar>
+					<m:OverflowToolbar>
 						<m:Title id="title" text="Products"/>
 						<m:ToolbarSpacer/>
 						<m:SearchField
@@ -34,7 +34,7 @@
 							value="{ui>/filterValue}"
 							search="handleTxtFilter"
 							width="15rem"/>
-					</m:Toolbar>
+					</m:OverflowToolbar>
 				</toolbar>
 				<extension>
 					<m:FacetFilter
@@ -102,13 +102,13 @@
 					</Column>
 				</columns>
 				<footer>
-					<m:Toolbar>
+					<m:OverflowToolbar>
 						<m:ToolbarSpacer/>
 						<m:Button
 							icon="sap-icon://hint"
 							tooltip="Show information"
 							press="showInfo"/>
-					</m:Toolbar>
+					</m:OverflowToolbar>
 				</footer>
 			</Table>
 		</m:content>

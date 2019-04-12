@@ -19,7 +19,7 @@
 				sort="sortDeliveryDate"
 				ariaLabelledBy="title">
 				<toolbar>
-					<m:Toolbar>
+					<m:OverflowToolbar>
 						<m:Title id="title" text="Products"></m:Title>
 						<m:ToolbarSpacer/>
 						<m:Button
@@ -34,7 +34,7 @@
 							icon="sap-icon://decline"
 							tooltip="Clear all sortings"
 							press="clearAllSortings"/>
-					</m:Toolbar>
+					</m:OverflowToolbar>
 				</toolbar>
 				<columns>
 					<Column
@@ -90,13 +90,13 @@
 					</Column>
 				</columns>
 				<footer>
-					<m:Toolbar>
+					<m:OverflowToolbar>
 						<m:ToolbarSpacer/>
 						<m:Button
 							icon="sap-icon://hint"
 							tooltip="Show information"
 							press="showInfo"/>
-					</m:Toolbar>
+					</m:OverflowToolbar>
 				</footer>
 			</Table>
 		</m:content>

@@ -27,14 +27,14 @@
 					<m:BusyIndicator class="sapUiMediumMargin"/>
 				</noData>
 				<toolbar>
-					<m:Toolbar>
+					<m:OverflowToolbar>
 						<m:Title id="title" text="Products"></m:Title>
 						<m:ToolbarSpacer/>
 						<m:Button
 							icon="sap-icon://refresh"
 							tooltip="Reinitialize Model"
 							press="onModelRefresh"/>
-					</m:Toolbar>
+					</m:OverflowToolbar>
 				</toolbar>
 				<columns>
 					<Column
@@ -99,7 +99,7 @@
 					</Column>
 				</columns>
 				<footer>
-					<m:Toolbar>
+					<m:OverflowToolbar>
 						<m:Label text="OData Model Operation Mode:" labelFor="operationMode"/>
 						<m:SegmentedButton
 							id="operationMode"
@@ -115,7 +115,7 @@
 							icon="sap-icon://hint"
 							tooltip="Show information"
 							press="showInfo"/>
-					</m:Toolbar>
+					</m:OverflowToolbar>
 				</footer>
 			</Table>
 		</m:content>

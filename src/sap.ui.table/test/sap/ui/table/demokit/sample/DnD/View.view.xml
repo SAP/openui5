@@ -21,14 +21,14 @@
 					}"
 					visibleRowCount="10">
 					<extension>
-						<m:Toolbar>
+						<m:OverflowToolbar>
 							<m:Title text="Available Products" />
 							<m:ToolbarSpacer/>
 							<m:Button
 								icon="sap-icon://hint"
 								tooltip="Show information"
 								press="showInfo"/>
-						</m:Toolbar>
+						</m:OverflowToolbar>
 					</extension>
 					<columns>
 						<Column
@@ -92,7 +92,7 @@
 					visibleRowCount="10"
 					noData="Please drag-and-drop products here.">
 					<extension>
-						<m:Toolbar>
+						<m:OverflowToolbar>
 							<m:Title text="Selected Products" />
 							<m:ToolbarSpacer/>
 							<m:Button
@@ -103,7 +103,7 @@
 								icon="sap-icon://navigation-down-arrow"
 								tooltip="Move down"
 								press="moveDown"/>
-						</m:Toolbar>
+						</m:OverflowToolbar>
 					</extension>
 					<columns>
 						<Column>
@@ -131,7 +131,7 @@
 						</Column>
 					</columns>
 					<dragDropConfig>
-						<dnd:DragInfo 
+						<dnd:DragInfo
 							groupName="moveToTable1"
 							sourceAggregation="rows"
 							dragStart="onDragStart" />

@@ -27,7 +27,7 @@
 				visibleRowCount="7"
 				ariaLabelledBy="title">
 				<toolbar>
-					<m:Toolbar>
+					<m:OverflowToolbar>
 						<m:content>
 							<m:Title id="title" text="Products" />
 							<m:ToolbarSpacer/>
@@ -50,7 +50,7 @@
 								tooltip="enable select all items"
 								change="onSwitchChange"/>
 						</m:content>
-					</m:Toolbar>
+					</m:OverflowToolbar>
 				</toolbar>
 
 				<columns>

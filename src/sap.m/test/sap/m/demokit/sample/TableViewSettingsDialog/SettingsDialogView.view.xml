@@ -9,7 +9,7 @@
 			<Table id="idProductsTable"
 				items="{/ProductCollection}">
 				<headerToolbar>
-					<Toolbar>
+					<OverflowToolbar>
 						<Title text="Products" level="H2"/>
 						<ToolbarSpacer/>
 						<Button
@@ -25,12 +25,12 @@
 							icon="sap-icon://group-2"
 							press="handleGroupButtonPressed" />
 						<ToggleButton icon="sap-icon://menu" tooltip="Enable / Disable Custom Context Menu" press="onToggleContextMenu" />
-					</Toolbar>
+					</OverflowToolbar>
 				</headerToolbar>
 				<infoToolbar>
-					<Toolbar id="vsdFilterBar" visible="false">
+					<OverflowToolbar id="vsdFilterBar" visible="false">
 						<Text id="vsdFilterLabel" />
-					</Toolbar>
+					</OverflowToolbar>
 				</infoToolbar>
 				<columns>
 					<Column width="12em"><Text text="Product" /></Column>
