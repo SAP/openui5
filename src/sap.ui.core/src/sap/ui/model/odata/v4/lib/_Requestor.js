@@ -1315,6 +1315,7 @@ sap.ui.define([
 					oError = new Error(
 						"HTTP request was not processed because the previous request failed");
 					oError.cause = oCause;
+					oError.$reported = true; // do not create a message for this error
 					vRequest.$reject(oError);
 				} else if (vResponse.status >= 400) {
 					vResponse.getResponseHeader = getResponseHeader;
