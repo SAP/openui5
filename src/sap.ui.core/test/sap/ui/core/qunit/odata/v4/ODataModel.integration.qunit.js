@@ -14351,15 +14351,6 @@ sap.ui.define([
 					"target" : "",
 					"technical" : true,
 					"type" : "Error"
-				}, {
-					"code" : undefined,
-					"descriptionUrl" : undefined,
-					"message"
-						: "HTTP request was not processed because the previous request failed",
-					"persistent" : true,
-					"target" : "",
-					"technical" : true,
-					"type" : "Error"
 				}]);
 
 			that.oView.byId("netAmount").getBinding("value").setValue("-1");
