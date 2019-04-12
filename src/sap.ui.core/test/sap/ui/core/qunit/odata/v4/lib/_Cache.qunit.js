@@ -4054,7 +4054,7 @@ sap.ui.define([
 					}
 					oEntityDataCleaned.ID = oPostResult.ID;
 				});
-			// count is already updated when creating the tranisent entity
+			// count is already updated when creating the transient entity
 			oCache.registerChange(sPathInCache + "/$count", oCountChangeListener);
 
 			// code under test
