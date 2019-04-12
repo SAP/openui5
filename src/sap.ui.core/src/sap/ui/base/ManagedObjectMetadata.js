@@ -378,11 +378,25 @@ function(
 		return instance[this._sDestructor]();
 	};
 
-	Aggregation.prototype.update = function(instance) {
+	Aggregation.prototype.update = function(instance, sChangeReason) {
 		if (instance[this._sUpdater]) {
-			instance[this._sUpdater]();
+			instance[this._sUpdater](sChangeReason);
 		} else {
+			//no change reason
 			instance.updateAggregation(this.name);
+		}
+	};
+
+	Aggregation.prototype.refresh = function(instance, sChangeReason) {
+		if (instance[this._sRefresher]) {
+			instance[this._sRefresher](sChangeReason);
+		} else {
+			//fallback there was no refresher before
+			if (instance[this._sUpdater]) {
+				instance[this._sUpdater](sChangeReason);
+			} else {
+				instance.refreshAggregation(this.name);
+			}
 		}
 	};
 

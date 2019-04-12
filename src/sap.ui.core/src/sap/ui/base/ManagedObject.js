@@ -3812,26 +3812,12 @@ sap.ui.define([
 	ManagedObject.prototype._bindAggregation = function(sName, oBindingInfo) {
 		var that = this,
 			oBinding,
+			oAggregationInfo = this.getMetadata().getAggregation(sName),
 			fnModelChangeHandler = function(oEvent){
-				var sUpdater = "update" + sName.substr(0,1).toUpperCase() + sName.substr(1);
-				if (that[sUpdater]) {
-					var sChangeReason = oEvent && oEvent.getParameter("reason");
-					if (sChangeReason) {
-						that[sUpdater](sChangeReason);
-					} else {
-						that[sUpdater]();
-					}
-				} else {
-					that.updateAggregation(sName);
-				}
+				oAggregationInfo.update(that, oEvent.getParameter("reason"));
 			},
 			fnModelRefreshHandler = function(oEvent){
-				var sRefresher = "refresh" + sName.substr(0,1).toUpperCase() + sName.substr(1);
-				if (that[sRefresher]) {
-					that[sRefresher](oEvent.getParameter("reason"));
-				} else {
-					fnModelChangeHandler(oEvent);
-				}
+				oAggregationInfo.refresh(that, oEvent.getParameter("reason"));
 			},
 			fnDataStateChangeHandler = function(oEvent) {
 				var oDataState = oBinding.getDataState();
@@ -4098,6 +4084,7 @@ sap.ui.define([
 	 * is called and the method implementation might rely on those conditions.
 	 *
 	 * @param {string} sName name of the aggregation to refresh
+	 * @param {sap.ui.model.ChangeReason} sChangeReason the change reason
 	 * @protected
 	 */
 	ManagedObject.prototype.refreshAggregation = function(sName) {
