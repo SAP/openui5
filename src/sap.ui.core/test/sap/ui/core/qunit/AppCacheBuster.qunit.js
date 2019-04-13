@@ -197,7 +197,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("check basic URL handling", function(assert) {
-			assert.expect(20);
+			assert.expect(21);
 
 			// check normal URLs
 			assert.ok(AppCacheBuster.convertURL("my/view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
@@ -230,6 +230,9 @@ sap.ui.define([
 			// keep query parameters
 			assert.equal(AppCacheBuster.convertURL("./manifest.json?sap-language=EN"), AppCacheBuster.convertURL("./manifest.json") + "?sap-language=EN", "Query parameters kept!");
 			assert.equal(AppCacheBuster.convertURL("./manifest.json#anyhash"), AppCacheBuster.convertURL("./manifest.json") + "#anyhash", "Hash kept!");
+
+			// ignore URLs starting with a hash
+			assert.equal(AppCacheBuster.convertURL("#Shell-Home"), "#Shell-Home", "Hash is ignored!");
 
 		});
 
