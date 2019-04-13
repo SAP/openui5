@@ -493,7 +493,8 @@ sap.ui.define([
 				var mIndex = oSession.index;
 
 				// modify the incoming url if found in the appCacheBuster file
-				if (mIndex && sUrl) {
+				// AND: ignore URLs starting with a hash from being normalized and converted
+				if (mIndex && sUrl && !/^#/.test(sUrl)) {
 
 					// normalize the URL
 					// local resources are registered with "./" => we remove the leading "./"!
