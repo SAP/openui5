@@ -4,7 +4,6 @@
 		xmlns:f="sap.f"
 		xmlns:card="sap.f.cards"
 		xmlns:core="sap.ui.core"
-		xmlns:tnt="sap.tnt"
 		displayBlock="true"
 		height="100%"
 		controllerName="sap.f.sample.GridContainer.C">
@@ -128,10 +127,10 @@
 											<Title level="H3" text="{title}" />
 											<Text text="{subtitle}"/>
 										</VBox>
-										<tnt:InfoLabel
+										<ObjectStatus
 											class="sapUiTinyMargin"
 											text="{revenue}"
-											colorScheme= "{statusSchema}"/>
+											state= "{statusSchema}"/>
 									</HBox>
 								</CustomListItem>
 							</List>
