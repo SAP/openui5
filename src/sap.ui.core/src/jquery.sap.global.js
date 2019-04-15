@@ -1695,7 +1695,7 @@ sap.ui.define([
 			sModuleName = sModuleName.replace(/\./g, "/");
 			// URL must not be empty
 			vUrlPrefix = vUrlPrefix || '.';
-			jQuery.sap.registerResourcePath(sModuleName, vUrlPrefix);
+			LoaderExtensions.registerResourcePath(sModuleName, vUrlPrefix);
 		};
 
 		/**
@@ -1733,41 +1733,7 @@ sap.ui.define([
 		 * @deprecated since 1.58 set path mappings via {@link sap.ui.loader.config} instead.
 		 * @SecSink {1|PATH} Parameter is used for future HTTP requests
 		 */
-		jQuery.sap.registerResourcePath = function(sResourceNamePrefix, vUrlPrefix) {
-			if (!vUrlPrefix) {
-				vUrlPrefix = { url: null };
-			}
-
-			if (!mFinalPrefixes[sResourceNamePrefix]) {
-				var sUrlPrefix;
-
-				if (typeof vUrlPrefix === "string" || vUrlPrefix instanceof String) {
-					sUrlPrefix = vUrlPrefix;
-				} else {
-					sUrlPrefix = vUrlPrefix.url;
-					if (vUrlPrefix.final) {
-						mFinalPrefixes[sResourceNamePrefix] = vUrlPrefix.final;
-					}
-				}
-
-				var sOldUrlPrefix = _ui5loader.toUrl(sResourceNamePrefix);
-				var oConfig;
-
-				if (sUrlPrefix !== sOldUrlPrefix || vUrlPrefix.final) {
-					oConfig = {
-						paths: {}
-					};
-					oConfig.paths[sResourceNamePrefix] = sUrlPrefix;
-					ui5loader.config(oConfig);
-
-					oLog.info("jQuery.sap.registerResourcePath ('" + sResourceNamePrefix + "', '" + sUrlPrefix + "')" + (vUrlPrefix['final'] ? " (final)" : ""));
-				}
-			} else {
-				oLog.warning( "jQuery.sap.registerResourcePath with prefix " + sResourceNamePrefix + " already set as final. This call is ignored." );
-			}
-		};
-
-		var mFinalPrefixes = Object.create(null);
+		jQuery.sap.registerResourcePath = LoaderExtensions.registerResourcePath;
 
 		/**
 		 * Register information about third party modules that are not UI5 modules.
@@ -1862,7 +1828,7 @@ sap.ui.define([
 		// dump the URL prefixes
 		oLog.info("URL prefixes set to:");
 		for (var n in mUrlPrefixes) {
-			oLog.info("  " + (n ? "'" + n + "'" : "(default)") + " : " + mUrlPrefixes[n] + (mFinalPrefixes[n] ? " (final)" : ""));
+			oLog.info("  " + (n ? "'" + n + "'" : "(default)") + " : " + mUrlPrefixes[n]);
 		}
 
 		/**

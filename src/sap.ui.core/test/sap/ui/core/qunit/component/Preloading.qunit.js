@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/UIComponentMetadata",
-	"sap/ui/core/Manifest"
-], function(jQuery, Log, Component, UIComponent, UIComponentMetadata, Manifest) {
+	"sap/ui/core/Manifest",
+	"sap/base/util/LoaderExtensions"
+], function(jQuery, Log, Component, UIComponent, UIComponentMetadata, Manifest, LoaderExtensions) {
 
 	"use strict";
 	/*global sinon, QUnit*/
@@ -61,10 +62,10 @@ sap.ui.define([
 
 	QUnit.module("Async (Pre-)Loading", {
 		beforeEach: function() {
-			this.oRegisterModulePathSpy = sinon.spy(jQuery.sap, "registerModulePath");
+			this.oRegisterResourcePathSpy = sinon.spy(LoaderExtensions, "registerResourcePath");
 		},
 		afterEach: function() {
-			this.oRegisterModulePathSpy.restore();
+			this.oRegisterResourcePathSpy.restore();
 			unloadResources();
 		}
 	});
@@ -232,13 +233,27 @@ sap.ui.define([
 		assert.ok(oResult instanceof Promise, "load should return a promise");
 		oResult.then(function() {
 
-			// Only the "final" URLs should use the legacy jQuery.sap API
-			sinon.assert.calledTwice(this.oRegisterModulePathSpy);
-			sinon.assert.calledWithMatch(this.oRegisterModulePathSpy, "sap.test.lib7", {
+			// All "url"s should be registered via LoaderExtensions.registerResourcePath
+			sinon.assert.callCount(this.oRegisterResourcePathSpy, 6);
+
+			sinon.assert.calledWithMatch(this.oRegisterResourcePathSpy, "sap/test/lib2",
+				"test-resources/sap/ui/core/qunit/component/testdata/async/lib2");
+
+			sinon.assert.calledWithMatch(this.oRegisterResourcePathSpy, "sap/test/lib5",
+				"test-resources/sap/ui/core/qunit/component/testdata/async/lib5");
+
+			sinon.assert.calledWithMatch(this.oRegisterResourcePathSpy, "sap/test/lib7", {
 				url: "test-resources/sap/ui/core/qunit/component/testdata/async/lib7",
 				"final": true
 			});
-			sinon.assert.calledWithMatch(this.oRegisterModulePathSpy, "sap.test.my4thsubcomp", {
+
+			sinon.assert.calledWithMatch(this.oRegisterResourcePathSpy, "sap/test/mysubcomp",
+				"test-resources/sap/ui/core/qunit/component/testdata/async/mysubcomp");
+
+			sinon.assert.calledWithMatch(this.oRegisterResourcePathSpy, "sap/test/my2ndsubcomp",
+				"test-resources/sap/ui/core/qunit/component/testdata/async/my2ndsubcomp");
+
+			sinon.assert.calledWithMatch(this.oRegisterResourcePathSpy, "sap/test/my4thsubcomp", {
 				url: "test-resources/sap/ui/core/qunit/component/testdata/async/my4thsubcomp",
 				"final": true
 			});

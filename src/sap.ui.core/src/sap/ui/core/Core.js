@@ -1823,17 +1823,11 @@ sap.ui.define([
 		return sap.ui.require.toUrl(sModuleName.replace(/\./g, "/") + sSuffix);
 	}
 
-	/**
-	 * Registers the given module path.
-	 * @param {string} sModuleName module name.
-	 * @param {string} sPath module path.
+	/*
+	 * Registers a URL prefix for a module name prefix
 	 */
-	function registerModulePath(sModuleName, sPath) {
-		var mPaths = {};
-		mPaths[sModuleName.replace(/\./g, "/")] = sPath;
-		sap.ui.loader.config({
-			paths: mPaths
-		});
+	function registerModulePath(sModuleNamePrefix, sUrlPrefix) {
+		LoaderExtensions.registerResourcePath(sModuleNamePrefix.replace(/\./g, "/"), sUrlPrefix);
 	}
 
 	/**
