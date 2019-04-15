@@ -1635,4 +1635,140 @@ sap.ui.define([
 			oComponent.destroy();
 		});
 	});
+
+	QUnit.module("Register Module Paths");
+
+	QUnit.test("Component.load with URL should not override final resource paths", function(assert) {
+
+		// Prepare
+		sap.ui.require.preload({
+			"test/resourceRoots/component1/manifest.json": JSON.stringify({
+				"sap.app": {
+					"id": "test.resourceRoots.component1"
+				}
+			})
+		});
+		sap.ui.define("test/resourceRoots/component1/Component", ["sap/ui/core/Component"], function(Component) {
+			return Component.extend("test.resourceRoots.component1.Component", {
+				metadata: {
+					manifest: "json"
+				}
+			});
+		});
+
+		// Register final resourceRoot
+		jQuery.sap.registerModulePath("test.resourceRoots.component1", {
+			"url": "/final/test/resourceRoots/component1",
+			"final": true
+		});
+
+		// load the component and pass new URL
+		return Component.load({
+			name: "test.resourceRoots.component1",
+			url: "/new/test/resourceRoots/component1"
+		}).then(function() {
+
+			assert.equal(sap.ui.require.toUrl("test/resourceRoots/component1"), "/final/test/resourceRoots/component1",
+				"Passing an URL should not override final resourceRoots");
+
+		});
+	});
+
+	QUnit.test("Component.create with URL should not override final resource paths", function(assert) {
+
+		// Prepare
+		sap.ui.require.preload({
+			"test/resourceRoots/component2/manifest.json": JSON.stringify({
+				"sap.app": {
+					"id": "test.resourceRoots.component2"
+				}
+			})
+		});
+		sap.ui.define("test/resourceRoots/component2/Component", ["sap/ui/core/Component"], function(Component) {
+			return Component.extend("test.resourceRoots.component2.Component", {
+				metadata: {
+					manifest: "json"
+				}
+			});
+		});
+
+		// Register final resourceRoot
+		jQuery.sap.registerModulePath("test.resourceRoots.component2", {
+			"url": "/final/test/resourceRoots/component2",
+			"final": true
+		});
+
+		// load the component and pass new URL
+		return Component.create({
+			name: "test.resourceRoots.component2",
+			url: "/new/test/resourceRoots/component2"
+		}).then(function() {
+
+			assert.equal(sap.ui.require.toUrl("test/resourceRoots/component2"), "/final/test/resourceRoots/component2",
+				"Passing an URL should not override final resourceRoots");
+
+		});
+	});
+
+	QUnit.test("Component.create with asyncHints.components should respect final URL flag (legacy scenario)", function(assert) {
+
+		// Prepare
+		sap.ui.require.preload({
+			"test/resourceRoots/component3/manifest.json": JSON.stringify({
+				"sap.app": {
+					"id": "test.resourceRoots.component3"
+				}
+			}),
+			"test/resourceRoots/component3/Component.js": function() {
+				sap.ui.component.load({
+					name: "test.resourceRoots.parentcomponent1",
+					url: "/new/test/resourceRoots/parentcomponent1"
+				});
+				test.resourceRoots.parentcomponent1.Component.extend("test.resourceRoots.component3.Component", { // eslint-disable-line no-undef
+					metadata: {
+						manifest: "json"
+					}
+				});
+			}
+		});
+
+		sap.ui.require.preload({
+			"test/resourceRoots/parentcomponent1/manifest.json": JSON.stringify({
+				"sap.app": {
+					"id": "test.resourceRoots.parentcomponent1"
+				}
+			})
+		});
+		// Using predefine to make module available synchronously
+		sap.ui.predefine("test/resourceRoots/parentcomponent1/Component", ["sap/ui/core/Component"], function(Component) {
+			return Component.extend("test.resourceRoots.parentcomponent1.Component", {
+				metadata: {
+					manifest: "json"
+				}
+			});
+		});
+
+		return sap.ui.component({
+			name: "test.resourceRoots.component3",
+			asyncHints: {
+				components: [
+					{
+						"name": "test.resourceRoots.parentcomponent1",
+						"lazy": false,
+						"url": {
+							"url": "/final/test/resourceRoots/parentcomponent1",
+							"final": true
+						}
+					}
+				]
+			},
+			async: true
+		}).then(function() {
+
+			assert.equal(sap.ui.require.toUrl("test/resourceRoots/parentcomponent1"), "/final/test/resourceRoots/parentcomponent1",
+				"Passing asyncHints with final URL should register final resourceRoot");
+
+		});
+	});
+
 });

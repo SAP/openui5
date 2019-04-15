@@ -1797,17 +1797,11 @@ sap.ui.define([
 		return sap.ui.require.toUrl(sComponentName.replace(/\./g, "/") + "/manifest.json");
 	}
 
-	/**
-	 * Registers the given library or component path.
-	 * @param {string} sName component or library name.
-	 * @param {string} sUrl component or library path.
+	/*
+	 * Registers a URL prefix for a module name prefix
 	 */
-	function registerModulePath(sName, sUrl) {
-		var mPaths = {};
-		mPaths[sName.replace(/\./g, "/")] = sUrl;
-		sap.ui.loader.config({
-			paths: mPaths
-		});
+	function registerModulePath(sModuleNamePrefix, vUrlPrefix) {
+		LoaderExtensions.registerResourcePath(sModuleNamePrefix.replace(/\./g, "/"), vUrlPrefix);
 	}
 
 
@@ -2400,9 +2394,12 @@ sap.ui.define([
 			return oConfig.async ? Promise.resolve(oManifest) : oManifest;
 		}
 
+		// url must be a string, although registerModulePath would also accept an object
+		assert(!sUrl || typeof sUrl === 'string', "sUrl must be a string or undefined");
+
 		// if a component name and a URL is given, we register this URL for the name of the component:
 		// the name is the package in which the component is located (dot separated)
-		if (sName && sUrl) {
+		if (sName && typeof sUrl === 'string') {
 			registerModulePath(sName, sUrl);
 		}
 
@@ -2443,7 +2440,7 @@ sap.ui.define([
 
 			// if a component name and a URL is given, we register this URL for the name of the component:
 			// the name is the package in which the component is located (dot separated)
-			if (sName && sUrl) {
+			if (sName && typeof sUrl === 'string') {
 				registerModulePath(sName, sUrl);
 			}
 		}
@@ -2549,16 +2546,7 @@ sap.ui.define([
 
 			if ( typeof vObj === 'object' ) {
 				if ( vObj.url ) {
-					if (typeof vObj.url === "object") {
-						if (vObj.url.final) {
-							// "final" module path can only be handled by legacy layer
-							jQuery.sap.registerModulePath(vObj.name, vObj.url);
-						} else {
-							registerModulePath(vObj.name, vObj.url.url);
-						}
-					} else {
-						registerModulePath(vObj.name, vObj.url);
-					}
+					registerModulePath(vObj.name, vObj.url);
 				}
 				return (vObj.lazy && bIgnoreLazy !== true) ? undefined : vObj.name; // expl. check for true to allow usage in Array.prototype.map below
 			}
@@ -2763,7 +2751,7 @@ sap.ui.define([
 
 					// if a URL is given we register this URL for the name of the component:
 					// the name is the package in which the component is located (dot separated)
-					if (sUrl) {
+					if (typeof sUrl === 'string') {
 						registerModulePath(sComponentName, sUrl);
 					}
 
