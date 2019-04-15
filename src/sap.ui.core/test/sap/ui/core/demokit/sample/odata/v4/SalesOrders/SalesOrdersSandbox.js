@@ -177,6 +177,15 @@ sap.ui.define([
 			"SalesOrderList('NEW3')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$select=DeliveryDate,GrossAmount,ItemPosition,Messages,Note,ProductID,Quantity,QuantityUnit,SalesOrderID&$filter=ItemPosition%20gt%20'0000000000'&$skip=0&$top=100" : {
 				source : "SalesOrderItemsList_empty.json"
 			},
+			"POST SalesOrderList('NEW3')/SO_2_SOITEM?custom-option=value" : [{
+					code: 200,
+					ifMatch : /,"Note":"new 10"/g,
+					source : "POST-SalesOrderList('NEW3')-SO_2_SOITEM_10.json"
+				}, {
+					code: 200,
+					ifMatch : /,"Note":"new 20"/g,
+					source : "POST-SalesOrderList('NEW3')-SO_2_SOITEM_20.json"
+			}],
 			"SalesOrderList('NEW4')?custom-option=value&$select=ChangedAt,CreatedAt,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=Address/City,Address/PostalCode,BusinessPartnerID,CompanyName,PhoneNumber),SO_2_SCHDL($select=DeliveryDate,ScheduleKey)" : {
 				source : "SalesOrderList('NEW4').json"
 			},
