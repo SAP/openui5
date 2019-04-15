@@ -1162,7 +1162,7 @@ sap.ui.define([
 	AnalyticalTable.prototype.isExpanded = TreeTable.prototype.isExpanded;
 
 	/**
-	 * Returns the current analytical information of the given row or <code>null</code> if no infomation is available
+	 * Returns the current analytical information of the given row or <code>null</code> if no information is available
 	 * (for example, if the table is not bound or the given row has no binding context).
 	 *
 	 * The returned object provides the following information:
@@ -1177,12 +1177,12 @@ sap.ui.define([
 	 * </ul>
 	 *
 	 * @param {sap.ui.table.Row} oRow The row for which the analytical information is returned
-	 *
-	 * @returns {object} The analytical information of the given row
+	 * @returns {object | null} The analytical information of the given row
 	 * @private
+	 * @ui5-restricted sap.ui.comp
 	 */
-	AnalyticalTable.prototype.getAnalyticalInfoOfRow = function(oRow) { //TBD: Make it public if needed
-		if (!this._validateRow(oRow)) {
+	AnalyticalTable.prototype.getAnalyticalInfoOfRow = function(oRow) {
+		if (!TableUtils.isA(oRow, "sap.ui.table.Row") || oRow.getParent() !== this) {
 			return null;
 		}
 
