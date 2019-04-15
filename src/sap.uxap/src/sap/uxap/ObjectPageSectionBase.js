@@ -285,6 +285,10 @@ sap.ui.define([
 	});
 
 	ObjectPageSectionBase.prototype.setVisible = function (bValue, bSuppressInvalidate) {
+		if (this.getVisible() === bValue) {
+			return this;
+		}
+
 		if (!this._getObjectPageLayout()) {
 			return this.setProperty("visible", bValue, bSuppressInvalidate);
 		}
