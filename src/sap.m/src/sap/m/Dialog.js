@@ -519,10 +519,6 @@ function(
 				//restore the focus after rendering when dialog is already open
 				this._setInitialFocus();
 			}
-
-			if (this.getType() === DialogType.Message) {
-				this.$("footer").removeClass("sapContrast sapContrastPlus");
-			}
 		};
 
 		Dialog.prototype.exit = function () {
@@ -1443,6 +1439,13 @@ function(
 		Dialog.prototype._getToolbar = function () {
 			if (!this._oToolbar) {
 				this._oToolbar = new AssociativeOverflowToolbar(this.getId() + "-footer").addStyleClass("sapMTBNoBorders");
+				this._oToolbar.addDelegate({
+					onAfterRendering: function () {
+						if (this.getType() === DialogType.Message) {
+							this.$("footer").removeClass("sapContrast sapContrastPlus");
+						}
+					}
+				}, false, this);
 
 				this.setAggregation("_toolbar", this._oToolbar);
 			}
