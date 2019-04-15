@@ -8,7 +8,7 @@ sap.ui.define([
 	'./FlexItemData',
 	'./library',
 	'sap/ui/core/Control',
-	'sap/ui/core/RenderManager',
+	'sap/ui/core/InvisibleRenderer',
 	'./FlexBoxRenderer',
 	'sap/ui/thirdparty/jquery'
 ],
@@ -17,7 +17,7 @@ function(
 	FlexItemData,
 	library,
 	Control,
-	RenderManager,
+	InvisibleRenderer,
 	FlexBoxRenderer,
 	jQuery
 ) {
@@ -294,7 +294,7 @@ function(
 		if (oItem.getLayoutData()) {
 			oWrapper = jQuery(document.getElementById(oItem.getLayoutData().getId()));
 		} else {
-			oWrapper = jQuery(document.getElementById(RenderManager.createInvisiblePlaceholderId(oItem))).parent();
+			oWrapper = jQuery(document.getElementById(InvisibleRenderer.createInvisiblePlaceholderId(oItem))).parent();
 		}
 
 		if (oControlEvent.getParameter("newValue")) {

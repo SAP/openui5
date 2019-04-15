@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/library"],
-	function(coreLibrary) {
+sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer"],
+	function(coreLibrary, InvisibleRenderer) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -70,10 +70,6 @@ sap.ui.define(["sap/ui/core/library"],
 		for (var i = 0; i < aButtons.length; i++) {
 			oButton = aButtons[i];
 
-			// instead of the button API we render a li element but with the id of the button
-			// only the button properties enabled, width, icon, text, and tooltip are evaluated here
-			oRM.write("<li");
-
 			if (oButton.getVisible()) {
 				var sButtonText = oButton.getText(),
 					oButtonIcon = oButton.getIcon(),
@@ -96,6 +92,9 @@ sap.ui.define(["sap/ui/core/library"],
 					}
 				}
 
+				// instead of the button API we render a li element but with the id of the button
+				// only the button properties enabled, width, icon, text, and tooltip are evaluated here
+				oRM.write("<li");
 				oRM.writeControlData(oButton);
 				oRM.writeAttribute("aria-posinset", i + 1);
 				oRM.writeAttribute("aria-setsize", aButtons.length);
@@ -162,11 +161,10 @@ sap.ui.define(["sap/ui/core/library"],
 				if (sButtonText !== '') {
 					oRM.writeEscaped(sButtonText, false);
 				}
+				oRM.write("</li>");
 			} else {
-				oRM.writeInvisiblePlaceholderData(oButton);
-				oRM.write('>');
+				InvisibleRenderer.render(oRM, oButton, "li");
 			}
-			oRM.write("</li>");
 		}
 		oRM.write("</ul>");
 	};

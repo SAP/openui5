@@ -885,7 +885,7 @@ sap.ui.define([
 		assert.equal(this.oPanel.$().find("tr")[0].style.display, ""); // header
 		assert.equal(this.oPanel.$().find("tr")[1].style.display, "");
 		assert.equal(this.oPanel.$().find("tr")[2].style.display, "");
-		assert.equal(this.oPanel.$().find("tr")[3].style.display, "none");
+		assert.equal(this.oPanel.$().find("tr").eq(3).css("display"), "none");
 
 		assert.equal(this.oPanel.$().find("tr").find("input:CheckBox").length, 3); // visible checkboxes - header + 2 items
 		assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[0].checked, false); // header
@@ -906,7 +906,7 @@ sap.ui.define([
 		assert.equal(this.oPanel.$().find("tr")[0].style.display, ""); // header
 		assert.equal(this.oPanel.$().find("tr")[1].style.display, "");
 		assert.equal(this.oPanel.$().find("tr")[2].style.display, "");
-		assert.equal(this.oPanel.$().find("tr")[3].style.display, "none");
+		assert.equal(this.oPanel.$().find("tr").eq(3).css("display"), "none");
 
 		assert.equal(this.oPanel.$().find("tr").find("input:CheckBox").length, 3); // visible checkboxes - header + 2 items
 		assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[0].checked, false); // header
@@ -937,8 +937,8 @@ sap.ui.define([
 		assert.equal(this.oPanel.$().find("tr").length, 4); //header + 3 (visible and invisible) items
 		assert.equal(this.oPanel.$().find("tr")[0].style.display, ""); // header
 		assert.equal(this.oPanel.$().find("tr")[1].style.display, "");
-		assert.equal(this.oPanel.$().find("tr")[2].style.display, "none");
-		assert.equal(this.oPanel.$().find("tr")[3].style.display, "none");
+		assert.equal(this.oPanel.$().find("tr").eq(2).css("display"), "none");
+		assert.equal(this.oPanel.$().find("tr").eq(3).css("display"), "none");
 
 		assert.equal(this.oPanel.$().find("tr").find("input:CheckBox").length, 2); // visible checkboxes - header + 1 items
 		assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[0].checked, false); // header
@@ -957,7 +957,7 @@ sap.ui.define([
 		assert.equal(this.oPanel.$().find("tr")[0].style.display, ""); // header
 		assert.equal(this.oPanel.$().find("tr")[1].style.display, "");
 		assert.equal(this.oPanel.$().find("tr")[2].style.display, "");
-		assert.equal(this.oPanel.$().find("tr")[3].style.display, "none");
+		assert.equal(this.oPanel.$().find("tr").eq(3).css("display"), "none");
 
 		assert.equal(this.oPanel.$().find("tr").find("input:CheckBox").length, 3); // visible checkboxes - header + 2 items
 		assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[0].checked, false); // header

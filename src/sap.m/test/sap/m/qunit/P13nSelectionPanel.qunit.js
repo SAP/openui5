@@ -853,7 +853,7 @@ sap.ui.define([
 		assert.equal(this.oSelectionPanel.$().find("tr")[0].style.display, ""); // header
 		assert.equal(this.oSelectionPanel.$().find("tr")[1].style.display, "");
 		assert.equal(this.oSelectionPanel.$().find("tr")[2].style.display, "");
-		assert.equal(this.oSelectionPanel.$().find("tr")[3].style.display, "none");
+		assert.equal(this.oSelectionPanel.$().find("tr").eq(3).css("display"), "none");
 
 		assert.equal(this.oSelectionPanel.$().find("tr").find("input:CheckBox").length, 3); // visible checkboxes - header + 2 items
 		assert.equal(this.oSelectionPanel.$().find("tr").find("input:CheckBox")[0].checked, false); // header
