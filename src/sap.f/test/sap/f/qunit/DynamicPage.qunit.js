@@ -408,36 +408,55 @@ function (
 
 	QUnit.module("DynamicPage - Rendering - Footer Visibility", {
 		beforeEach: function () {
-			sinon.config.useFakeTimers = true;
 			this.oDynamicPage = oFactory.getDynamicPage();
 			oUtil.renderObject(this.oDynamicPage);
 		},
 		afterEach: function () {
-			sinon.config.useFakeTimers = false;
 			this.oDynamicPage.destroy();
 			this.oDynamicPage = null;
 		}
 	});
 
 	QUnit.test("DynamicPage Footer visibility", function (assert) {
-		var $footerWrapper = this.oDynamicPage.$("footerWrapper"),
+		// Arrange
+		var $footerWrapper = this.oDynamicPage.$footerWrapper,
 			oFooter = this.oDynamicPage.getFooter(),
 			$footer = oFooter.$();
 
-		assert.equal($footerWrapper.hasClass("sapUiHidden"), false, "Footer is visible initially");
+		// Assert
+		assert.notOk($footerWrapper.hasClass("sapUiHidden"), "Footer is visible initially");
 
-		this.oDynamicPage.setShowFooter(false);
-		this.clock.tick(1000);
-
-		assert.equal(this.oDynamicPage._iFooterAnimationTimeout > 0, true, "Footer animation timeout has been set");
-		assert.equal($footerWrapper.hasClass("sapUiHidden"), true, "Footer is not visible");
-		assert.equal($footer.hasClass("sapFDynamicPageActualFooterControlHide"), true, "Footer is not visible");
-
+		// Act - Trigger show animation
 		this.oDynamicPage.setShowFooter(true);
-		this.clock.tick(1000);
 
-		assert.equal($footerWrapper.hasClass("sapUiHidden"), false, "Footer is visible again");
-		assert.equal(this.oDynamicPage._iFooterAnimationTimeout, null, "Footer animation timeout has been cleared");
+		// Assert
+		assert.notOk($footerWrapper.hasClass("sapUiHidden"), "Footer is visible at the beginning of the show animation.");
+		assert.ok($footer.hasClass(DynamicPage.SHOW_FOOTER_CLASS_NAME),
+		"Footer has the " + DynamicPage.SHOW_FOOTER_CLASS_NAME + " CSS class at the beginning of the show animation");
+
+		// Act - Simulate end of animation
+		this.oDynamicPage._onToggleFooterAnimationEnd(oFooter);
+
+		// Assert
+		assert.notOk($footerWrapper.hasClass("sapUiHidden"), "Footer is visible at the end of the show animation.");
+		assert.notOk($footer.hasClass(DynamicPage.SHOW_FOOTER_CLASS_NAME),
+		"Footer hasn't applied " + DynamicPage.SHOW_FOOTER_CLASS_NAME + " CSS class at end of the show animation");
+
+		// Act - Trigger hide animation
+		this.oDynamicPage.setShowFooter(false);
+
+		// Assert
+		assert.notOk($footerWrapper.hasClass("sapUiHidden"), "Footer is visible at the beginning of the hide animation.");
+		assert.ok($footer.hasClass(DynamicPage.HIDE_FOOTER_CLASS_NAME),
+		"Footer has the " + DynamicPage.HIDE_FOOTER_CLASS_NAME + " CSS class at the beginning of the hide animation");
+
+		// Act - Simulate end of animation
+		this.oDynamicPage._onToggleFooterAnimationEnd(oFooter);
+
+		// Assert
+		assert.ok($footerWrapper.hasClass("sapUiHidden"), "Footer is not visible at the end of the hide animation.");
+		assert.notOk($footer.hasClass(DynamicPage.HIDE_FOOTER_CLASS_NAME),
+		"Footer hasn't applied " + DynamicPage.HIDE_FOOTER_CLASS_NAME + " CSS class at end of the hide animation");
 	});
 
 	QUnit.test("DynamicPage Footer visibility when animations disabled", function (assert) {
