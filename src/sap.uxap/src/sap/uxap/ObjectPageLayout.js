@@ -1386,7 +1386,7 @@ sap.ui.define([
 	ObjectPageLayout.prototype._applyUxRules = function (bInvalidate) {
 		var aSections, aSubSections, iVisibleSubSections, iVisibleSection, iVisibleBlocks,
 			bVisibleAnchorBar, bVisibleIconTabBar, oFirstVisibleSection, oFirstVisibleSubSection,
-			bFirstSectionTitleHidden, aContent, iFirstVisibleSectionVisibleSubSections;
+			bFirstSectionTitleHidden, aContent, iFirstVisibleSectionVisibleSubSections, oTitleVisibilityInfo = {};
 
 		aSections = this.getSections() || [];
 		iVisibleSection = 0;
@@ -1426,7 +1426,7 @@ sap.ui.define([
 				} else {
 					oSubSection._setInternalVisible(true, bInvalidate);
 					//if TitleOnTop.sectionGetSingleSubSectionTitle is matched, this will be hidden back
-					oSubSection._setInternalTitleVisible(true, bInvalidate);
+					oTitleVisibilityInfo[oSubSection.getId()] = true;
 					iVisibleSubSections++;
 					if (!oFirstVisibleSubSection) {
 						oFirstVisibleSubSection = oSubSection;
@@ -1445,7 +1445,7 @@ sap.ui.define([
 				Log.info("ObjectPageLayout :: noVisibleSubSection UX rule matched", "section " + oSection.getTitle() + " forced to hidden");
 			} else {
 				oSection._setInternalVisible(true, bInvalidate);
-				oSection._setInternalTitleVisible(true, bInvalidate);
+				oTitleVisibilityInfo[oSection.getId()] = true;
 				if (!oFirstVisibleSection) {
 					oFirstVisibleSection = oSection;
 					iFirstVisibleSectionVisibleSubSections = iVisibleSubSections;
@@ -1456,7 +1456,7 @@ sap.ui.define([
 					iVisibleSubSections === 1 && oFirstVisibleSubSection.getTitle().trim() !== "") {
 					Log.info("ObjectPageLayout :: TitleOnTop.sectionGetSingleSubSectionTitle UX rule matched", "section " + oSection.getTitle() + " is taking its single subsection title " + oFirstVisibleSubSection.getTitle());
 					oSection._setInternalTitle(oFirstVisibleSubSection.getTitle(), bInvalidate);
-					oFirstVisibleSubSection._setInternalTitleVisible(false, bInvalidate);
+					oTitleVisibilityInfo[oFirstVisibleSubSection.getId()] = false;
 
 					// Title propagation support - set the borrowed Dom ID to the section title
 					oFirstVisibleSubSection._setBorrowedTitleDomId(oSection.getId() + "-title");
@@ -1476,7 +1476,7 @@ sap.ui.define([
 			}
 
 			if (bVisibleIconTabBar) {
-				oSection._setInternalTitleVisible(false, bInvalidate);
+				oTitleVisibilityInfo[oSection.getId()] = false;
 			}
 
 		}, this);
@@ -1488,9 +1488,13 @@ sap.ui.define([
 			//rule firstSectionTitleHidden: the first section title is never visible if there is an anchorBar
 		} else if (oFirstVisibleSection && bVisibleAnchorBar) {
 			bFirstSectionTitleHidden = true;
-			oFirstVisibleSection._setInternalTitleVisible(false, bInvalidate);
+			oTitleVisibilityInfo[oFirstVisibleSection.getId()] = false;
 			Log.info("ObjectPageLayout :: firstSectionTitleHidden UX rule matched", "section " + oFirstVisibleSection.getTitle() + " title forced to hidden");
 		}
+
+		Object.keys(oTitleVisibilityInfo).forEach(function(sId) {
+			this.oCore.byId(sId)._setInternalTitleVisible(oTitleVisibilityInfo[sId], bInvalidate);
+		}.bind(this));
 
 		// the AnchorBar needs to reflect the dom state
 		if (bVisibleAnchorBar) {
