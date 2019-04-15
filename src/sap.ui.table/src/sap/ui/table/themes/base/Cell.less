@@ -148,8 +148,6 @@
 }
 
 .sapUiTableHeaderDataCell {
-	position: relative;
-	vertical-align: middle;
 	padding-top: 7px;
 	padding-bottom: 7px;
 
@@ -172,12 +170,18 @@
 
 	> .sapUiTableCellInner {
 		display: flex;
-		justify-content: space-between;
+		flex: 1 1 auto;
 		align-items: center;
 		text-overflow: ellipsis;
 		overflow: hidden;
 		white-space: normal;
 		padding: @_sap_ui_table_Cell_Padding;
+
+		& > div:first-child {
+			display: flex;
+			flex: 1 1 auto;
+			overflow: hidden;
+		}
 
 		&::after {
 			.sapUiTableColSorted&,
@@ -186,9 +190,8 @@
 				font-family: "SAP-Icons";
 				font-size: @_sap_ui_table_Cell_ColumnIconSize;
 				color: @sapUiContentNonInteractiveIconColor;
-				position: sticky;
-				right: 0;
 				margin-left: 0.5rem;
+				flex: none;
 			}
 
 			.sapUiTableColSorted& {
