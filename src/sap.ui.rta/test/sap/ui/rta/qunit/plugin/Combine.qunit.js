@@ -281,6 +281,7 @@ function(
 		QUnit.test("when an overlay has a combine action in designTime metadata", function(assert) {
 			fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, DEFAULT_DTM);
 			fnSetOverlayDesigntimeMetadata(this.oButton2Overlay, oDesignTimeMetadata2);
+			sandbox.stub(Utils, "checkSourceTargetBindingCompatibility").returns(true);
 
 			assert.strictEqual(
 				this.oCombinePlugin.isAvailable([this.oButton1Overlay, this.oButton2Overlay]),
@@ -300,15 +301,7 @@ function(
 		});
 
 		QUnit.test("when two elements have different binding context", function(assert) {
-			fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, DEFAULT_DTM);
-			fnSetOverlayDesigntimeMetadata(this.oButton2Overlay, DEFAULT_DTM);
-
-			sandbox.stub(Utils, "getEntityTypeByPath")
-				.onFirstCall().returns("bindingContext0")
-				.onSecondCall().returns("bindingContext1");
-			sandbox.stub(BindingsExtractor, "getBindings").returns([5]);
-			sandbox.stub(this.oButton1, "getBindingContext").returns({getPath: function() {}});
-			sandbox.stub(this.oButton2, "getBindingContext").returns({getPath: function() {}});
+			sandbox.stub(Utils, "checkSourceTargetBindingCompatibility").returns(false);
 
 			assert.strictEqual(
 				this.oCombinePlugin.isAvailable([this.oButton1Overlay, this.oButton2Overlay]),
@@ -411,6 +404,7 @@ function(
 			assert.expect(9);
 			fnSetOverlayDesigntimeMetadata(this.oOverflowToolbarButton1Overlay, DEFAULT_DTM);
 			fnSetOverlayDesigntimeMetadata(this.oButton6Overlay, DEFAULT_DTM);
+			sandbox.stub(Utils, "checkSourceTargetBindingCompatibility").returns(true);
 
 			assert.strictEqual(
 				this.oCombinePlugin.isAvailable([this.oOverflowToolbarButton1Overlay, this.oButton6Overlay]),
