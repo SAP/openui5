@@ -40,37 +40,37 @@ sap.ui.define([
 
 			/**
 			 * Sets the value for the CSS display:grid item property grid-column-start
-			 * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-column-start}
+			 * {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-column-start MDN web docs: grid-column-start}
 			 */
 			gridColumnStart: { type: "sap.ui.layout.cssgrid.CSSGridLine", defaultValue: "" },
 
 			/**
 			 * Sets the value for the CSS display:grid item property grid-column-end
-			 * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-column-end}
+			 * {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-column-end MDN web docs: grid-column-end}
 			 */
 			gridColumnEnd: { type: "sap.ui.layout.cssgrid.CSSGridLine", defaultValue: "" },
 
 			/**
 			 * Sets the value for the CSS display:grid item property grid-row-start
-			 * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-row-start}
+			 * {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-row-start MDN web docs: grid-row-start}
 			 */
 			gridRowStart: { type: "sap.ui.layout.cssgrid.CSSGridLine", defaultValue: "" },
 
 			/**
 			 * Sets the value for the CSS display:grid item property grid-row-end
-			 * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-row-end}
+			 * {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-row-end MDN web docs: grid-row-end}
 			 */
 			gridRowEnd: { type: "sap.ui.layout.cssgrid.CSSGridLine", defaultValue: "" },
 
 			/**
 			 * Sets the value for the CSS display:grid item property grid-column
-			 * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-column}
+			 * {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-column MDN web docs: grid-column}
 			 */
 			gridColumn: { type: "sap.ui.layout.cssgrid.CSSGridLine", defaultValue: "" },
 
 			/**
 			 * Sets the value for the CSS display:grid item property grid-row
-			 * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-row}
+			 * {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-row MDN web docs: grid-row}
 			 */
 			gridRow: { type: "sap.ui.layout.cssgrid.CSSGridLine", defaultValue: ""}
 		}
