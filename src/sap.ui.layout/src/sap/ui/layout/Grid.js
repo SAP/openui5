@@ -42,8 +42,15 @@ sap.ui.define([
 	 * The <code>Grid</code> control's width can be percentage- or pixel-based and the spacing between
 	 * its columns can be set to various predefined values.
 	 *
-	 * <b>Note:</b> The visibility of the child control does not affect the horizontal space it occupies.
-	 * This means that even if the control is not visible, its horizontal space will still exist, even if it is empty.
+	 * <b>Notes:</b>
+	 * <ul>
+	 * <li>The visibility of the child control does not affect the horizontal space it
+	 * occupies, meaning that even if the control is not visible, its horizontal space
+	 * still exists, even if it is empty.</li>
+	 * <li> If it gets wider, the content of the columns is designed to overflow outside
+	 * of its dimensions. An additional <code>sapUiRespGridOverflowHidden</code> CSS class
+	 * should be added to the control in order to hide the overflowing part of it.</li>
+	 * </ul>
 	 *
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/grid-layout/#responsive-grid Grid}
 	 *
