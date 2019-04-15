@@ -26,12 +26,12 @@
 
 // [Description "The default background color of this theme"]
 // [Tags "Base", "Content", "Color", "Protected"]
-@sapBackgroundColorDefault: darken(@sapPrimary3, 2); // @sapPrimary5;
+@sapBackgroundColorDefault: darken(@sapPrimary3, 3); // @sapPrimary5;
 
 // [Label "Background Color"]
 // [Description "The main background color of the screen"]
 // [Tags "Quick", "Base", "Color"]
-@sapBackgroundColor: darken(@sapPrimary3, 2); // @sapPrimary5;
+@sapBackgroundColor: darken(@sapPrimary3, 3); // @sapPrimary5;
 
 // [Label "Font Family"]
 // [Description "The preferred font family"]
@@ -146,7 +146,7 @@
 @sapLegendColor6: #478fd6;
 @sapLegendColor7: #1193a2;
 @sapLegendColor8: #8b9668;
-@sapLegendColor9: #6C8B99;
+@sapLegendColor9: #6c8b99;
 @sapLegendColor10: #892971;
 @sapLegendColor11: #725a3a;
 @sapLegendColor12: #bb2f2f;
@@ -434,7 +434,7 @@
 // [Label "Shell Background Image/Gradient"]
 // [Description "The background image or gradient of the shell."]
 // [Tags "Base", "Shell", "URI", "Image"]
-@sapShell_BackgroundImage: none; // linear-gradient(to bottom, darken(saturate(@sapShell_Background, 6), 7.8), lighten(desaturate(@sapShell_Background, 16), 7.8));
+@sapShell_BackgroundImage: linear-gradient(to bottom, darken(@sapShell_Background, 5), lighten(@sapShell_Background, 2)); // linear-gradient(to bottom, darken(saturate(@sapShell_Background, 6), 7.8), lighten(desaturate(@sapShell_Background, 16), 7.8));
 
 // [Label "Background Opacity"]
 // [Description "A value between 0.0 and 1.0 to control the opacity of the shell background image"]
@@ -454,7 +454,7 @@
 // [Label "Shell Background Gradient"]
 // [Description "The background gradient of the shell."]
 // [Tags "Base", "Shell", "Protected"]
-@sapShell_BackgroundGradient: none; // linear-gradient(to bottom, darken(saturate(@sapShell_Background, 6), 7.8), lighten(desaturate(@sapShell_Background, 16), 7.8));
+@sapShell_BackgroundGradient: linear-gradient(to bottom, darken(@sapShell_Background, 5), lighten(@sapShell_Background, 2)); // linear-gradient(to bottom, darken(saturate(@sapShell_Background, 6), 7.8), lighten(desaturate(@sapShell_Background, 16), 7.8));
 
 // [Label "Shell Border Color"]
 // [Description "The color of the borders of the shell."]
@@ -608,7 +608,7 @@
 
 @sapButton_Lite_Hover_Background: @sapButton_Hover_Background;
 
-@sapButton_Lite_Hover_BorderColor: @sapButton_Lite_Hover_Background;
+@sapButton_Lite_Hover_BorderColor: @sapButton_Hover_BorderColor;
 
 @sapButton_Lite_Active_Background: @sapButton_Active_Background;
 
@@ -807,7 +807,7 @@
 // [Label "List Column Header Background Color"]
 // [Description "The background color of the column header area of lists."]
 // [Tags "Base", "List", "Color"]
-@sapList_HeaderBackground: darken(@sapList_Background, 3); // darken(@sapPrimary4, 3);
+@sapList_HeaderBackground: darken(@sapList_Background, 5); // darken(@sapPrimary4, 3);
 
 // [Label "List Column Header Border Color"]
 // [Description "The color of the borders of the list column header area."]
@@ -868,7 +868,7 @@
 
 @sapList_FooterTextColor: @sapList_TextColor;
 
-@sapList_TableGroupHeaderBackground: darken(@sapList_Background, 5);
+@sapList_TableGroupHeaderBackground: darken(@sapList_Background, 6.1);
 
 @sapList_TableGroupHeaderBorderColor: darken(@sapList_BorderColor, 8);
 
@@ -983,7 +983,7 @@
 // [Label "Tile Icon Color"]
 // [Description "The color of icons on tiles."]
 // [Tags "Base", "Content", "Color"]
-@sapTile_IconColor: contrast(@sapTile_Background, @sapContent_NonInteractiveIconColor, @sapContent_ContrastIconColor, @sapContent_ContrastTextThreshold); // contrast(@sapTile_Background, lighten(@sapContent_IconColor, 34), @sapContent_ContrastIconColor, @sapContent_ContrastTextThreshold);
+@sapTile_IconColor: contrast(@sapTile_Background, lighten(@sapShellColor ,20), @sapContent_ContrastIconColor, @sapContent_ContrastTextThreshold); // contrast(@sapTile_Background, lighten(@sapContent_IconColor, 34), @sapContent_ContrastIconColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Chart Ordered Color 1"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]
