@@ -91,6 +91,14 @@
 
 		var oEventLabel = new sap.m.Label({text: "Events log"});
 
+		var oModel = new sap.ui.model.json.JSONModel();
+
+		oModel.setData({
+			name : "Edward",
+			text: "headerContent aggregation with binding"
+		});
+		sap.ui.getCore().setModel(oModel);
+
 		function createFooter() {
 			return new sap.m.Bar({
 				contentLeft: new sap.m.Input("inputFocusHelper", {value: "VisualTest focus helper, Don't remove."}),
@@ -646,7 +654,7 @@
 			})
 		});
 
-		var oPC1 = sap.m.PlanningCalendar("PC1", {
+		var oPC1 = new sap.m.PlanningCalendar("PC1", {
 			startDate: new Date("2015", "0", "1", "08", "00"),
 			rows: [
 				new sap.m.PlanningCalendarRow("Row1", {
@@ -711,10 +719,11 @@
 					]
 				}),
 				new sap.m.PlanningCalendarRow("Row2", {
-					icon: "../ui/unified/images/m_01.png",
-					title: "Edward",
-					text: "the great",
-					tooltip: "Header tooltip",
+					title: "This must not be shown",
+					headerContent: new sap.m.ObjectListItem({
+						title: {path: "/name"},
+						intro: {path: "/text"}
+					}).setModel(oModel),
 					intervalHeaders: [
 						new sap.ui.unified.CalendarAppointment("R2H1", {
 							startDate: new Date("2015", "0", "2", "00", "00"),

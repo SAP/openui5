@@ -968,6 +968,33 @@ sap.ui.define([
 		_checkColor(oBorderColor, {R: 255, G:0, B: 0}, "Row2: IntervalHeader1 has the right custom border color");
 	});
 
+	QUnit.test("headerContent rendering", function(assert) {
+		//prepare
+		var oPC = new PlanningCalendar(),
+			oRow = new PlanningCalendarRow(oPC.getId() + "-Row", {
+				icon: "sap-icon://employee",
+				title: "Angela Merker",
+				text: "Angela",
+				tooltip: "Header tooltip",
+				headerContent: new sap.m.ObjectListItem({
+					title: "Alfonso",
+					intro: "headerContent aggregation"
+				})
+			}),
+			oRowHead = sap.ui.getCore().byId(oRow.getId() + "-Head"),
+			oRowCustomHead = sap.ui.getCore().byId(oRow.getId() + "-CustomHead");
+
+		//act
+		oPC.addRow(oRow);
+
+		//assert
+		assert.equal(oRowHead, undefined, "when there's headerContent, it creates only '-CustomHead' instance");
+		assert.equal(oRowCustomHead.getContent()[0].getTitle(), "Alfonso", "when there's headerContent, the content is set accordingly");
+
+		//destroy
+		oPC.destroy();
+	});
+
 	QUnit.module("rendering - Hours View", {
 		beforeEach: function () {
 			this.oPC = createPlanningCalendar("PC3", new SearchField(), new Button());
