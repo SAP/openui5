@@ -1,0 +1,19 @@
+{
+  "1.66.0": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "b3d36b04ec1162cac66e2c98f4afd7413a5ea601",
+        "type": "FEATURE",
+        "text": " sap.m.TimePicker/DateTimePicker: OK button is now emphasized",
+        "references": []
+      },
+      {
+        "id": "b1ef834b54988b3a89735539409eab41f93c3b89",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: bottom padding is correct now for Safari",
+        "references": []
+      }
+    ]
+  }
+}

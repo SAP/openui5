@@ -1,0 +1,13 @@
+{
+  "1.66.0": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "d3d9e8c0d956926534f0d6657fc809448b9d87b6",
+        "type": "FIX",
+        "text": " sap.m.DynamicPageTitle: Fixed incorrect display of aggregation",
+        "references": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "1.66.0": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "d0a66ce88f28d062ef1b1bebf1570c4111440286",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Fixed misalignment of sections",
+        "references": []
+      }
+    ]
+  }
+}

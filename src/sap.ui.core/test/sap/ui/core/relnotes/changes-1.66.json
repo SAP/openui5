@@ -1,0 +1,13 @@
+{
+  "1.66.0": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "bb9b2c58f20913fa9f392c99ebc95b08f38c5266",
+        "type": "FIX",
+        "text": " ODataMessageParser: Duplicate filtering",
+        "references": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "1.66.0": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "7d03d2ccfe29b8e9c59f5525bd2c353a61cd4db1",
+        "type": "FIX",
+        "text": " sap.ui.rta - revised binding related utils functions",
+        "references": []
+      }
+    ]
+  }
+}
