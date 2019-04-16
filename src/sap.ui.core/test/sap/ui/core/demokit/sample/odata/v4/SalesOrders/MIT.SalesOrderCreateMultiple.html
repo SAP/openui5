@@ -82,5 +82,31 @@
 			<li><b>Check:</b> The content of the two new sales order is updated (for example
 				<code>Sales Order ID</code>).</li>
 		</ol>
+		<h3>Multiple create, relative</h3>
+		<ol start="31">
+			<li>Create a new sales order: Repeat steps 1 - 9 for example with the <code>Note
+			  </code>: "new 3".</li>
+			<li>Click on the <code>Create</code> button in the <code>Sales Order Line Items</code>
+				table.</li>
+			<li><b>Check:</b> You can't select a different sales order in the <code>Sales Orders
+				</code> table.</li>
+			<li>Update the <code>Note</code> of the newly created sales order line item to "new 10".
+				</li>
+			<li>Create a second sales order line item by clicking on the <code>Create</code> button
+				in the <code>Sales Order Line Items</code> table.</li>
+			<li><b>Check:</b> The secondly created sales order is inserted before the formerly
+				created one.</li>
+			<li>Update the <code>Note</code> of the last created sales order line item to "new 20".
+				</li>
+			<li>Click on the <code>Save</code> button in the <code>Sales Order Details</code>
+				section.</li>
+			<li>Click on <code>OK</code> in the <code>Success</code> dialog two times.</li>
+			<li><b>Check:</b> The <code>Sales Order Line Items</code> table header shows 2
+				<code>Sales Order Line Items</code> in realOData mode and 0 in mock data mode.<br>
+				<i>Remark:</i> With mock data the table gets empty because of a restriction in
+				the mock server implementation.</li>
+			<li><b>Check:</b> You now can select a different sales order in the <code>Sales Orders
+				</code> table.</li>
+		</ol>
 	</body>
 </html>
