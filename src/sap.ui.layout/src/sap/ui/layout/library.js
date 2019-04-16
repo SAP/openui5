@@ -825,6 +825,7 @@ sap.ui.define([
 	/**
 	 * @classdesc A string type that represents a short hand CSS grid gap.
 	 *
+	 * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/gap}
 	 * @since 1.60.0
 	 * @public
 	 * @namespace
@@ -855,17 +856,19 @@ sap.ui.define([
 	 * @classdesc A string type that represents one or two grid lines. Used to define the position and size of a single grid item.
 	 *
 	 * Valid values:
-	 * auto
-	 * inherit
-	 * 1
-	 * span 2
-	 * span 2 / 5
-	 * span 2 / -5
-	 * 5 / 7
-	 * 7 / span 5
-	 * span 7 / span 5
+	 * <ul>
+	 * <li>auto</li>
+	 * <li>inherit</li>
+	 * <li>1</li>
+	 * <li>span 2</li>
+	 * <li>span 2 / 5</li>
+	 * <li>span 2 / -5</li>
+	 * <li>5 / 7</li>
+	 * <li>7 / span 5</li>
+	 * <li>span 7 / span 5</li>
+	 * </ul>
 	 *
-	 * @see {@link https://developer.mozilla.org/en-US/docs/Glossary/Grid_lines}
+	 * @see {@link https://developer.mozilla.org/en-US/docs/Glossary/Grid_lines MDN web docs: grid lines}
 	 * @since 1.60.0
 	 * @public
 	 * @namespace
