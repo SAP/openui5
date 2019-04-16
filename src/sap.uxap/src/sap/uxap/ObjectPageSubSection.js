@@ -134,7 +134,15 @@ sap.ui.define([
 				moreBlocks: {type: "sap.ui.core.Control", multiple: true, singularName: "moreBlock"},
 
 				/**
-				 * Actions available for this Subsection
+				 * Actions available for this subsection.
+				 *
+				 * Although this aggregation accepts type <code>sap.ui.core.Control</code>,
+				 * it is strongly recommended to use only simple controls, such as buttons, so that
+				 * the layout of the app is preserved.
+				 *
+				 * <b>Note:</b> Keep in mind that the controls set in the <code>actions</code> aggregation
+				 * of <code>ObjectPageSubSection</code> do NOT have overflow behavior. If the
+				 * available space is not enough, the controls will be displayed on more lines.
 				 */
 				actions: {type: "sap.ui.core.Control", multiple: true, singularName: "action"}
 			},
