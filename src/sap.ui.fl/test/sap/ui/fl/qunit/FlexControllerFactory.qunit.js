@@ -1,16 +1,20 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/ui/core/Component",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
+	Component,
 	FlexControllerFactory,
 	ChangePersistenceFactory,
 	Utils,
+	VariantModel,
 	jQuery,
 	sinon
 ) {
@@ -47,68 +51,77 @@ function (
 			assert.strictEqual(oFlexController1, oFlexController2);
 		});
 
-		 QUnit.test("does not propagate if there are no changes for the component", function (assert) {
-			sandbox.stub(ChangePersistenceFactory, "_getChangesForComponentAfterInstantiation").returns(Promise.resolve({}));
-			sandbox.stub(Utils, "isApplication").returns(true);
+		QUnit.test("propagates even if there are no changes for the component", function (assert) {
+			sandbox.stub(ChangePersistenceFactory, "_getChangesForComponentAfterInstantiation").resolves({});
+			sandbox.stub(Utils, "isApplicationComponent").returns(true);
 
 			var oComponent = {
 				getManifestObject: function () {
 					return {};
 				},
-				addPropagationListener: function () {}
+				addPropagationListener: function () {
+				},
+				setModel: function () {
+				}
 			};
 
 			var oAddPropagationListenerStub = sandbox.stub(oComponent, "addPropagationListener");
+			sandbox.stub(Utils, "getComponentClassName")
+			.callThrough()
+			.withArgs(oComponent)
+			.returns("mockName");
 
-			FlexControllerFactory.getChangesAndPropagate(oComponent, {});
-
-			assert.equal(oAddPropagationListenerStub.callCount, 0, "no propagation was triggered");
-		 });
+			return FlexControllerFactory.getChangesAndPropagate(oComponent, {})
+			.then(function () {
+				assert.equal(oAddPropagationListenerStub.callCount, 1, "propagation was triggered");
+			});
+		});
 
 		 QUnit.test("does propagate if there are changes for the component", function (assert) {
+			assert.expect(0); // assert only the addPropagationListener to be called
 
-			 var done = assert.async();
-			 assert.expect(0); // assert only the addPropagationListener to be called
-
-			 var mDeterminedChanges = {
-			 "someId": [{}]
-			 };
+			var mDeterminedChanges = {
+				"someId": [{}]
+			};
 
 			 var oComponent = {
-				 getManifestObject: function () {
-					 return {};
-				 },
-				 addPropagationListener: function () {
-					 done();
-				 },
-				 getManifest: function () {},
-				 setModel: function () {}
+				getManifestObject: function () {
+					return {};
+				},
+				addPropagationListener: function () {
+				},
+				getManifest: function () {},
+				setModel: function () {}
 			 };
 
-			 sandbox.stub(ChangePersistenceFactory, "_getChangesForComponentAfterInstantiation").returns(Promise.resolve(function() {return mDeterminedChanges;}));
-			 sandbox.stub(Utils, "isApplication").returns(true);
+			sandbox.stub(ChangePersistenceFactory, "_getChangesForComponentAfterInstantiation").returns(Promise.resolve(function() {return mDeterminedChanges;}));
+			sandbox.stub(Utils, "isApplicationComponent").returns(true);
+			sandbox.stub(Utils, "getComponentClassName")
+			.callThrough()
+			.withArgs(oComponent)
+			.returns("mockName");
 
-			 FlexControllerFactory.getChangesAndPropagate(oComponent, {});
+			return FlexControllerFactory.getChangesAndPropagate(oComponent, {});
 		 });
 
-		QUnit.test("when getChangesForPropagate() is called for an embedded component", function (assert) {
+		QUnit.test("when getChangesForPropagate() is called for an embedded component with a preexisting VariantModel on it's application component", function (assert) {
 			assert.expect(3);
-			var oModel = {id: "mockVariantModel"};
+			var oExistingModel = {id: "existingVariantModel"};
 			var sVariantModelName = "$FlexVariants";
 			var oAppComponent = {
 				getModel: function (sModelName) {
 					assert.strictEqual(sModelName, sVariantModelName, "then variant model called on the app component");
-					return oModel;
+					return oExistingModel;
 				},
 				addPropagationListener: function () {
-					assert.notOk(true, "addPropagationListener shouldn't be called for an embedded component");
+					assert.notOk(true, "addPropagationListener shouldn't be called again for an app component");
 				}
 			};
 
 			var oComponent = {
 				setModel: function (oModelSet, sModelName) {
-					assert.strictEqual(sModelName, sVariantModelName, "then variant model set on the app component");
-					assert.deepEqual(oModelSet, oModel, "then the correct model was set");
+					assert.strictEqual(sModelName, sVariantModelName, "then VariantModel was set on the embedded component with the correct name");
+					assert.deepEqual(oModelSet, oExistingModel, "then the correct model was set");
 				},
 				getManifestObject: function () {},
 				addPropagationListener: function () {
@@ -119,7 +132,41 @@ function (
 			sandbox.stub(Utils, "isEmbeddedComponent").returns(true);
 			sandbox.stub(Utils, "getAppComponentForControl").withArgs(oComponent).returns(oAppComponent);
 
-			FlexControllerFactory.getChangesAndPropagate(oComponent, {});
+			return FlexControllerFactory.getChangesAndPropagate(oComponent, {});
+		});
+
+		QUnit.test("when getChangesForPropagate() is called for an embedded component with no preexisting VariantModel on it's application component", function (assert) {
+			assert.expect(4);
+			var sVariantModelName = "$FlexVariants";
+			var oAppComponent = new Component();
+			sandbox.stub(Utils, "isApplication").returns(true);
+			sandbox.stub(Utils, "getComponentClassName")
+			.callThrough()
+			.withArgs(oAppComponent)
+			.returns("mockName");
+			sandbox.spy(oAppComponent, "setModel");
+			sandbox.spy(oAppComponent, "addPropagationListener");
+			sandbox.stub(Utils, "isEmbeddedComponent").returns(true);
+
+			var oComponent = {
+				setModel: function (oModelSet, sModelName) {
+					assert.ok(oAppComponent.setModel.calledWith(sinon.match.instanceOf(VariantModel), sVariantModelName), "then app component's VariantModel was set");
+					assert.ok(oAppComponent.addPropagationListener.calledOnce, "then addPropagationListener was called for the app component");
+					assert.strictEqual(sModelName, sVariantModelName, "then VariantModel was set on the embedded component with the correct name");
+				},
+				getManifestObject: function () {},
+				addPropagationListener: function () {
+					assert.notOk(true, "addPropagationListener shouldn't be called for an embedded component");
+				}
+			};
+			sandbox.stub(Utils, "getAppComponentForControl").withArgs(oComponent).returns(oAppComponent);
+
+			assert.notOk(oAppComponent.getModel(sVariantModelName), "then initially no variant model exists for the app component");
+
+			return FlexControllerFactory.getChangesAndPropagate(oComponent, {})
+			.then(function () {
+				oAppComponent.destroy();
+			});
 		});
 
 		QUnit.test("when createForControl() is called for a non application type component", function (assert) {
@@ -139,12 +186,12 @@ function (
 
 			sandbox.stub(Utils, "getAppComponentForControl").withArgs(oMockControl).returns(oAppComponent);
 			sandbox.stub(Utils, "getComponentClassName")
-				.withArgs(oAppComponent)
-				.returns(sMockComponentName);
+			.withArgs(oAppComponent)
+			.returns(sMockComponentName);
 
 			sandbox.stub(Utils, "getAppVersionFromManifest")
-				.withArgs(oMockManifest)
-				.returns(sMockComponentAppVersion);
+			.withArgs(oMockManifest)
+			.returns(sMockComponentAppVersion);
 
 			sandbox.stub(FlexControllerFactory, "create");
 
