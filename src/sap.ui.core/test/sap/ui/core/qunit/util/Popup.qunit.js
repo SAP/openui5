@@ -106,6 +106,36 @@ sap.ui.define([
 		this.oPopup.open();
 	});
 
+	QUnit.test("Open Popup with of element set to window", function(assert) {
+		// window and window.document are handled separately in checkDocking because both of them
+		// aren't contained in the document.documentElement
+		// This test is needed to make sure that the Popup still works properly when the of element
+		// is set to window
+		assert.expect(8);
+
+		var done = assert.async();
+		var fnOpened = function() {
+			this.oPopup.detachOpened(fnOpened, this);
+
+			assert.equal(this.oPopup.isOpen(), true, "Popup should be open after opening");
+			assert.equal(this.$Ref.css("display"), "block", "Popup should be 'display:block' after opening");
+			assert.equal(this.$Ref.css("visibility"), "visible", "Popup should be 'visibility:visible' after opening");
+			assert.equal(this.$Ref.css("opacity"), "1", "Popup should be 'opacity:1' after opening");
+
+			window.setTimeout(function() {
+				assert.ok(this.oPopup.isOpen(), "The Popup is still open");
+				done();
+			}.bind(this), 300);
+		};
+
+		this.oPopup.attachOpened(fnOpened, this);
+		assert.equal(this.oPopup.isOpen(), false, "Popup should not be open initially");
+		assert.equal(this.$Ref.css("display"), "none", "Popup should be 'display:none' initially");
+		assert.equal(this.$Ref.css("visibility"), "hidden", "Popup should be 'visibility:hidden' initially");
+		this.oPopup.setFollowOf(true);
+		this.oPopup.open(0, undefined, undefined, window);
+	});
+
 	QUnit.test("Close Popup", function(assert) {
 		assert.expect(3);
 
