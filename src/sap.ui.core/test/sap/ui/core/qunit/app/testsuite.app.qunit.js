@@ -62,28 +62,40 @@ sap.ui.define(function () {
 			"ThemeClassParameters(base)": {
 				title: "Tests for sap/ui/core/theming/Parameters (base): Theme-Dependent CSS Classes",
 				ui5: {
-					theme: "base"
+					theme: "base",
+					"xx-waitForTheme": "init"
 				},
 				module: "./ThemeClassParameters.qunit"
 			},
 			"ThemeClassParameters(sap_hcb)": {
 				title: "Tests for sap/ui/core/theming/Parameters (sap_hcb): Theme-Dependent CSS Classes",
 				ui5: {
-					theme: "sap_hcb"
+					theme: "sap_hcb",
+					"xx-waitForTheme": "init"
 				},
 				module: "./ThemeClassParameters.qunit"
 			},
 			"ThemeClassParameters(sap_bluecrystal)": {
 				title: "Tests for sap/ui/core/theming/Parameters (sap_bluecrystal): Theme-Dependent CSS Classes",
 				ui5: {
-					theme: "sap_bluecrystal"
+					theme: "sap_bluecrystal",
+					"xx-waitForTheme": "init"
 				},
 				module: "./ThemeClassParameters.qunit"
 			},
 			"ThemeClassParameters(sap_belize)": {
 				title: "Tests for sap/ui/core/theming/Parameters (sap_belize): Theme-Dependent CSS Classes",
 				ui5: {
-					theme: "sap_belize"
+					theme: "sap_belize",
+					"xx-waitForTheme": "init"
+				},
+				module: "./ThemeClassParameters.qunit"
+			},
+			"ThemeClassParameters(sap_fiori_3)": {
+				title: "Tests for sap/ui/core/theming/Parameters (sap_fiori_3): Theme-Dependent CSS Classes",
+				ui5: {
+					theme: "sap_fiori_3",
+					"xx-waitForTheme": "init"
 				},
 				module: "./ThemeClassParameters.qunit"
 			}
