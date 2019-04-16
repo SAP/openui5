@@ -63,7 +63,7 @@ sap.ui.define([
 			When.onTheMainPage.selectSalesOrderItemWithPosition("");
 			When.onTheMainPage.pressSaveSalesOrderButton();
 			When.onTheSuccessInfo.confirm();
-			// saving the sales order causing a refresh of the entity; mock server cannot
+			// Saving the sales order causes a refresh of the entity; mock server cannot
 			// differentiate between fist call with empty content and second call with the created
 			// line item.
 			Then.onTheMainPage.checkSalesOrderItemsCount(bRealOData ? 1 : 0);

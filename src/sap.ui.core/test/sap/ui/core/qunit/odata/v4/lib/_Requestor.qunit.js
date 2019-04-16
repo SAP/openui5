@@ -1674,6 +1674,7 @@ sap.ui.define([
 				assert.ok(oResultError instanceof Error);
 				assert.strictEqual(oResultError.message,
 					"HTTP request was not processed because the previous request failed");
+				assert.strictEqual(oResultError.$reported, true);
 				assertError(oResultError.cause);
 			}));
 
@@ -1725,6 +1726,7 @@ sap.ui.define([
 				assert.ok(oResultError instanceof Error);
 				assert.strictEqual(oResultError.message,
 					"HTTP request was not processed because the previous request failed");
+				assert.strictEqual(oResultError.$reported, true);
 				assertError(oResultError.cause);
 			}));
 
@@ -2873,6 +2875,7 @@ sap.ui.define([
 					.then(undefined, function (oError) {
 						assert.strictEqual(oError.message,
 							"HTTP request was not processed because the previous request failed");
+						assert.strictEqual(oError.$reported, true);
 					}),
 				oRequestor.submitBatch("group")
 			]);

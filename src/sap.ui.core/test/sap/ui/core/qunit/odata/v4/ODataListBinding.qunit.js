@@ -5691,6 +5691,28 @@ sap.ui.define([
 				assert.strictEqual(oError0, oError);
 			});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getQueryOptions: with system query options", function (assert) {
+		var oBinding = this.bindList("/Set");
+
+		assert.throws(function () {
+			// code under test
+			oBinding.getQueryOptions(/*bWithSystemQueryOptions*/true);
+		}, new Error("Unsupported parameter value: bWithSystemQueryOptions: true"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getQueryOptions: without system query options", function (assert) {
+		var oBinding = this.bindList("/Set", undefined, undefined, undefined, {
+				$select : "a,b,c",
+				custom : "query option"
+			});
+
+		// code under test
+		assert.deepEqual(oBinding.getQueryOptions(/*bWithSystemQueryOptions*/),
+				{custom : "query option"});
+	});
 });
 
 //TODO integration: 2 entity sets with same $expand, but different $select
