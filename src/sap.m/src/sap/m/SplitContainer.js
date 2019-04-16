@@ -2080,21 +2080,6 @@ function(
 		});
 	};
 
-	/**
-	 * Returns the <code>backgroundColor</code> value that passed validation for type <code>sap.ui.core.CSSColor</code>
-	 * (required as the public property itself is of the more generic <code>string</code> type)
-	 *
-	 * @private
-	 * @returns {string} sValue the value that passed the check, or empty string
-	 */
-	SplitContainer.prototype._getValidatedBackgroundColor = function () {
-		var sBackgroundColor = this.getBackgroundColor();
-		if (!DataType.getType("sap.ui.core.CSSColor").isValid(sBackgroundColor)) {
-			sBackgroundColor = "";
-		}
-		return sBackgroundColor;
-	};
-
 	/**************************************************************
 	* END - Private methods
 	**************************************************************/

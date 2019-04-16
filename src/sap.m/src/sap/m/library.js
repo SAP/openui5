@@ -18,7 +18,6 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/base/Log",
 	"sap/base/util/defineLazyProperty",
-	"sap/base/security/encodeXML",
 	"sap/base/security/encodeCSS",
 	// referenced here to enable the Support feature
 	'./Support'
@@ -35,7 +34,6 @@ sap.ui.define([
 	assert,
 	Log,
 	defineLazyProperty,
-	encodeXML,
 	encodeCSS
 ) {
 
@@ -4173,7 +4171,7 @@ sap.ui.define([
 		 * To be called by control renderers supporting the global themable background image within their root tag, before they call writeClasses() and writeStyles().
 		 *
 		 * @param {sap.ui.core.RenderManager} rm The RenderManager
-		 * @param {string} [sBgColor] A configured custom background color for the control, if any
+		 * @param {sap.ui.core.CSSColor} [sBgColor] A configured custom background color for the control, if any
 		 * @param {sap.ui.core.URI} [sBgImgUrl] The configured custom background image for the control, if any
 		 *
 		 * @protected
@@ -4181,12 +4179,16 @@ sap.ui.define([
 		addBackgroundColorStyles: function(rm, sBgColor, sBgImgUrl, sCustomBGClass) {
 			rm.addClass(sCustomBGClass || "sapUiGlobalBackgroundColor");
 
+			if (sBgColor && !DataType.getType("sap.ui.core.CSSColor").isValid(sBgColor)) {
+				Log.warning(sBgColor + " is not a valid sap.ui.core.CSSColor type");
+				sBgColor = "";
+			}
 			if (sBgColor || sBgImgUrl) { // when an image or color is configured, the gradient needs to be removed, so the color can be seen behind the image
 				rm.addStyle("background-image", "none");
 				rm.addStyle("filter", "none");
 			}
 			if (sBgColor) {
-				rm.addStyle("background-color", encodeXML(sBgColor));
+				rm.addStyle("background-color", sBgColor);
 			}
 		},
 

@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['./IconPool', './library', "sap/base/security/encodeXML"], function(IconPool, library, encodeXML) {
+sap.ui.define(['./IconPool', './library', "sap/base/security/encodeCSS"], function(IconPool, library, encodeCSS) {
 	"use strict";
 
 	// shortcut for enum(s)
@@ -67,7 +67,7 @@ sap.ui.define(['./IconPool', './library', "sap/base/security/encodeXML"], functi
 
 		if (bIconInfo) {
 			oRm.writeAttributeEscaped("data-sap-ui-icon-content", vIconInfo.content);
-			oRm.addStyle("font-family", "'" + encodeXML(vIconInfo.fontFamily) + "'");
+			oRm.addStyle("font-family", "'" + encodeCSS(vIconInfo.fontFamily) + "'");
 		}
 
 		if (sWidth) {

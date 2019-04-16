@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/util/ActivityDetection",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/security/encodeXML",
+	"sap/base/security/encodeCSS",
 	"sap/base/assert",
 	"sap/ui/performance/Measurement",
 	"sap/base/Log",
@@ -25,6 +26,7 @@ sap.ui.define([
 	ActivityDetection,
 	jQuery,
 	encodeXML,
+	encodeCSS,
 	assert,
 	Measurement,
 	Log,
@@ -1419,7 +1421,7 @@ sap.ui.define([
 				"title": oIconInfo.text || null
 			};
 
-			this.style("font-family", "'" + encodeXML(oIconInfo.fontFamily) + "'");
+			this.style("font-family", "'" + encodeCSS(oIconInfo.fontFamily) + "'");
 		} else {
 			mDefaultAttributes = {
 				role: "presentation",
