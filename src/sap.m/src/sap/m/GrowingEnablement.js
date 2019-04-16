@@ -262,7 +262,6 @@ sap.ui.define([
 
 		// returns the growing information to be shown at the growing button
 		_getListItemInfo : function() {
-			this._iLastItemsCount = this._oControl.getItems(true).length;
 			return ("[ " + this._iRenderedDataItems + " / " + NumberFormat.getFloatInstance().format(this._oControl.getMaxItemsCount()) + " ]");
 		},
 
@@ -656,6 +655,9 @@ sap.ui.define([
 					oTrigger.$().removeClass("sapMGrowingListBusyIndicatorVisible");
 					oControl.$("triggerList").css("display", "");
 				}
+
+				// store the last item count to be able to focus to the newly added item when the growing button is pressed
+				this._iLastItemsCount = this._oControl.getItems(true).length;
 
 				// at the beginning we should scroll to last item
 				if (bHasScrollToLoad && this._oScrollPosition === undefined && oControl.getGrowingDirection() == ListGrowingDirection.Upwards) {
