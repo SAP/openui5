@@ -774,9 +774,11 @@ sap.ui.define([
 	*/
 	["getContent", "setContent", "destroyContent"]
 		.forEach(function (sMethod) {
+			var bChainable = /^(set|destroy)/.test(sMethod);
 			SemanticPage.prototype[sMethod] = function (oControl) {
 				var oDynamicPage = this._getPage();
-				return oDynamicPage[sMethod].apply(oDynamicPage, arguments);
+				var vResult = oDynamicPage[sMethod].apply(oDynamicPage, arguments);
+				return bChainable ? this : vResult;
 			};
 		}, this);
 
@@ -796,11 +798,14 @@ sap.ui.define([
 		"destroyTitleCustomTextActions",
 		"getTitleCustomTextActions"
 	].forEach(function (sMethod) {
+		var bChainable = /^(add|insert|destroy)/.test(sMethod);
 		SemanticPage.prototype[sMethod] = function () {
 			var oSemanticTitle = this._getSemanticTitle(),
-				sSemanticTitleMethod = sMethod.replace(/TitleCustomTextAction?/, "CustomTextAction");
+				sSemanticTitleMethod = sMethod.replace(/TitleCustomTextAction?/, "CustomTextAction"),
+				vResult;
 
-			return oSemanticTitle[sSemanticTitleMethod].apply(oSemanticTitle, arguments);
+			vResult = oSemanticTitle[sSemanticTitleMethod].apply(oSemanticTitle, arguments);
+			return bChainable ? this : vResult;
 		};
 	}, this);
 
@@ -820,11 +825,14 @@ sap.ui.define([
 		"destroyTitleCustomIconActions",
 		"getTitleCustomIconActions"
 	].forEach(function (sMethod) {
+		var bChainable = /^(add|insert|destroy)/.test(sMethod);
 		SemanticPage.prototype[sMethod] = function () {
 			var oSemanticTitle = this._getSemanticTitle(),
-				sSemanticTitleMethod = sMethod.replace(/TitleCustomIconAction?/, "CustomIconAction");
+				sSemanticTitleMethod = sMethod.replace(/TitleCustomIconAction?/, "CustomIconAction"),
+				vResult;
 
-			return oSemanticTitle[sSemanticTitleMethod].apply(oSemanticTitle, arguments);
+			vResult = oSemanticTitle[sSemanticTitleMethod].apply(oSemanticTitle, arguments);
+			return bChainable ? this : vResult;
 		};
 	}, this);
 
@@ -844,11 +852,14 @@ sap.ui.define([
 		"destroyFooterCustomActions",
 		"getFooterCustomActions"
 	].forEach(function (sMethod) {
+		var bChainable = /^(add|insert|destroy)/.test(sMethod);
 		SemanticPage.prototype[sMethod] = function () {
 			var oSemanticFooter = this._getSemanticFooter(),
-				sSemanticFooterMethod = sMethod.replace(/FooterCustomAction?/, "CustomAction");
+				sSemanticFooterMethod = sMethod.replace(/FooterCustomAction?/, "CustomAction"),
+				vResult;
 
-			return oSemanticFooter[sSemanticFooterMethod].apply(oSemanticFooter, arguments);
+			vResult = oSemanticFooter[sSemanticFooterMethod].apply(oSemanticFooter, arguments);
+			return bChainable ? this : vResult;
 		};
 	}, this);
 
@@ -867,16 +878,19 @@ sap.ui.define([
 		"destroyCustomShareActions",
 		"getCustomShareActions"
 	].forEach(function (sMethod) {
+		var bChainable = /^(add|insert|destroy)/.test(sMethod);
 		SemanticPage.prototype[sMethod] = function () {
 			var oSemanticShareMenu = this._getShareMenu(),
 				sSemanticShareMenuMethod = sMethod.replace(/CustomShareAction?/, "CustomAction"),
-				aCustomActionMethods = ["addCustomAction", "insertCustomAction"];
+				aCustomActionMethods = ["addCustomAction", "insertCustomAction"],
+				vResult;
 
 				if (aCustomActionMethods.indexOf(sSemanticShareMenuMethod) > -1) {
 					this.addDependent(arguments[0]);
 				}
 
-			return oSemanticShareMenu[sSemanticShareMenuMethod].apply(oSemanticShareMenu, arguments);
+			vResult = oSemanticShareMenu[sSemanticShareMenuMethod].apply(oSemanticShareMenu, arguments);
+			return bChainable ? this : vResult;
 		};
 	}, this);
 

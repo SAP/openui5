@@ -740,8 +740,10 @@ sap.ui.define([
 			}),
 			oErrorLogSpy = sinon.spy(Log, "error");
 
+		//act
+		oSPC.addView(oDayViewDuplicate);
+
 		//assert
-		assert.ok(!oSPC.addView(oDayViewDuplicate), "the view with same key was not added");
 		assert.strictEqual(oErrorLogSpy.callCount, 1, "Error: 'There is an existing view with the same key.' was logged");
 
 		//clean up

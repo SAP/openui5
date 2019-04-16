@@ -856,7 +856,7 @@ function(
 				this.getAggregation('_select').setSelectedItem(oSelectItem);
 			}
 
-			return TabStrip.prototype.setAssociation.call(this, "selectedItem", oSelectedItem, true); //render manually;
+			return this.setAssociation("selectedItem", oSelectedItem, true); //render manually;
 		};
 
 		/**

@@ -555,7 +555,7 @@ function(
 
 		if (this._isViewKeyExisting(oView.getKey())) {
 			Log.error("There is an existing view with the same key.", this);
-			return;
+			return this;
 		}
 
 		this.addAggregation("views", oView);
@@ -582,7 +582,7 @@ function(
 
 		if (this._isViewKeyExisting(oView.getKey())) {
 			Log.error("There is an existing view with the same key.", this);
-			return;
+			return this;
 		}
 
 		this.insertAggregation("views", oView, iPos);
