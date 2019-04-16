@@ -2123,6 +2123,16 @@ sap.ui.define([
 	 */
 	function componentFactory(vConfig) {
 
+		// Inherit cacheTokens from owner component if not defined in asyncHints
+		if (!vConfig.asyncHints || !vConfig.asyncHints.cacheTokens) {
+			var oOwnerComponent = Component.get(ManagedObject._sOwnerId);
+			var mCacheTokens = oOwnerComponent && oOwnerComponent._mCacheTokens;
+			if (typeof mCacheTokens === "object") {
+				vConfig.asyncHints = vConfig.asyncHints || {};
+				vConfig.asyncHints.cacheTokens = mCacheTokens;
+			}
+		}
+
 		function createInstance(oClass) {
 
 			// retrieve the required properties

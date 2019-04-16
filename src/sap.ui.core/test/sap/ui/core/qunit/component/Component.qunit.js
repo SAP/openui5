@@ -1068,12 +1068,37 @@ sap.ui.define([
 						"id" : "my.used"
 					},
 					"sap.ui5" : {
+						"componentUsages": {
+							"mySubSubUsage": {
+								"manifest": false,
+								"name": "my.used"
+							}
+						}
 					}
 				}
 			},
 			constructor: function(mSettings) {
 				UIComponent.apply(this, arguments);
 				this._mSettings = mSettings;
+			}
+		});
+	});
+
+	sap.ui.define("my/changed/constructor/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+		return UIComponent.extend("my.used.Component", {
+			metadata: {
+				manifest: {
+					"sap.app" : {
+						"id" : "my.changed.constructor"
+					},
+					"sap.ui5" : {
+
+					}
+				}
+			},
+			constructor: function(mSettings) {
+				mSettings._cacheTokens.manipulatedTokens = {};
+				UIComponent.apply(this, arguments);
 			}
 		});
 	});
@@ -1088,12 +1113,21 @@ sap.ui.define([
 					"sap.ui5" : {
 						"dependencies": {
 							"components": {
-								"my.used": {}
+								"my.used": {},
+								"my.changed.constructor": {}
 							}
 						},
 						"componentUsages": {
 							"myUsage": {
 								"name": "my.used"
+							},
+							"mySubUsage": {
+								"manifest": false,
+								"name": "my.used"
+							},
+							"myConstructorUsage": {
+								"manifest": false,
+								"name": "my.changed.constructor"
 							}
 						}
 					}
@@ -1162,6 +1196,193 @@ sap.ui.define([
 
 		});
 
+	});
+
+	QUnit.test("Propagate cacheTokens: Sync creation of sub component via createComponent()", function(assert) {
+		var oComponent = sap.ui.component({
+			name : "my.usage",
+			asyncHints: {
+				cacheTokens: {
+					someToken: {}
+				}
+			}
+		});
+
+		assert.ok(oComponent instanceof Component, "Component should be created");
+		assert.ok(oComponent._mCacheTokens, "_mCacheTokens should be available");
+		assert.deepEqual(oComponent._mCacheTokens.someToken, {}, "_mCacheTokens.someToken should be available");
+
+		var oSubComponent = oComponent.createComponent({
+			usage: "mySubUsage",
+			async: false,
+			anything: "else"
+		});
+
+		assert.ok(oSubComponent instanceof Component, "SubComponent should be created");
+		assert.deepEqual(oSubComponent._mCacheTokens, oComponent._mCacheTokens, "_mCacheTokens of the SubComponent should be equal to the parent component (content-wise)");
+		oComponent.destroy();
+		oSubComponent.destroy();
+	});
+
+	QUnit.test("Propagate cacheTokens: Async creation of sub component via createComponent()", function(assert) {
+		return Component.create({
+			name : "my.usage",
+			manifest: false,
+			asyncHints: {
+				cacheTokens: {
+					someToken: {}
+				}
+			}
+		}).then(function(oComponent) {
+			assert.ok(oComponent instanceof Component, "Component should be created");
+			assert.ok(oComponent._mCacheTokens, "_mCacheTokens should be available");
+			assert.deepEqual(oComponent._mCacheTokens.someToken, {}, "_mCacheTokens.someToken should be available");
+
+			return oComponent.createComponent({
+				usage: "mySubUsage",
+				async: true,
+				anything: "else"
+			}).then(function(oSubComponent) {
+				assert.ok(oSubComponent instanceof Component, "SubComponent should be created");
+				assert.deepEqual(oSubComponent._mCacheTokens, {someToken: {}}, "_mCacheTokens of the SubComponent should be equal to the parent component (content-wise)");
+
+				return oSubComponent.createComponent({
+					usage: "mySubSubUsage",
+					async: true,
+					anything: "else"
+				}).then(function(oSubSubComponent) {
+					assert.ok(oSubSubComponent instanceof Component, "oSubSubComponent should be created");
+					assert.deepEqual(oSubSubComponent._mCacheTokens, {someToken: {}}, "_mCacheTokens of the oSubSubComponent should be equal to the parent component (content-wise)");
+
+					oComponent.destroy();
+					oSubComponent.destroy();
+					oSubSubComponent.destroy();
+				});
+			});
+		});
+	});
+
+	QUnit.test("Propagate cacheTokens: Sync creation of sub component via sap.ui.component()", function(assert) {
+		var oRootComponent = sap.ui.component({
+			name : "my.usage",
+			asyncHints: {
+				cacheTokens: {
+					someToken: {}
+				}
+			}
+		});
+
+		assert.ok(oRootComponent instanceof Component, "Component should be created");
+		assert.ok(oRootComponent._mCacheTokens, "_mCacheTokens should be available");
+		assert.deepEqual(oRootComponent._mCacheTokens.someToken, {}, "_mCacheTokens.someToken should be available");
+
+		var oSubComponent1,
+			oSubComponent2,
+			oSubComponent1_1;
+
+		oRootComponent.runAsOwner(function() {
+			oSubComponent1 = sap.ui.component({
+				name: "my.used",
+				asyncHints: {
+					cacheTokens: {
+						myOwnTokens: {}
+					}
+				}
+			});
+
+			oSubComponent1.runAsOwner(function() {
+				oSubComponent1_1 = sap.ui.component({
+					name: "my.used"
+				});
+			});
+
+			oSubComponent2 = sap.ui.component({
+				name: "my.used"
+			});
+		});
+
+		assert.ok(oSubComponent1 instanceof Component, "oSubComponent1 should be created");
+		assert.ok(oSubComponent2 instanceof Component, "oSubComponent2 should be created");
+		assert.ok(oSubComponent1_1 instanceof Component, "oSubComponent1_1 should be created");
+
+		assert.deepEqual(oSubComponent1_1._mCacheTokens, {myOwnTokens: {}}, "_mCacheTokens of the oSubComponent1 shouldn't be propagated from parent component oRootComponent");
+		assert.deepEqual(oSubComponent2._mCacheTokens, {someToken: {}}, "_mCacheTokens of the oSubComponent2 should be equal to the parent component oRootComponent (content-wise)");
+		assert.deepEqual(oSubComponent1_1._mCacheTokens, {myOwnTokens: {}}, "_mCacheTokens of the oSubComponent1_1 should be equal to the parent component oSubComponent1 (content-wise)");
+
+		// cleanup
+		oRootComponent.destroy();
+		oSubComponent1.destroy();
+		oSubComponent2.destroy();
+		oSubComponent1_1.destroy();
+	});
+
+	QUnit.test("Propagate cacheTokens: Async creation of sub component via Component.create()", function(assert) {
+		return Component.create({
+			name : "my.usage",
+			asyncHints: {
+				cacheTokens: {
+					someToken: {}
+				}
+			}
+		}).then(function(oRootComponent) {
+			assert.ok(oRootComponent instanceof Component, "oRootComponent should be created");
+			assert.ok(oRootComponent._mCacheTokens, "_mCacheTokens should be available");
+			assert.deepEqual(oRootComponent._mCacheTokens.someToken, {}, "_mCacheTokens.someToken should be available");
+
+			return oRootComponent.runAsOwner(function() {
+				return Component.create({
+					name: "my.used",
+					asyncHints: {
+						cacheTokens: {
+							myOwnTokens: {}
+						}
+					}
+				}).then(function(oSubComponent1) {
+					assert.ok(oSubComponent1 instanceof Component, "oSubComponent1 should be created");
+					assert.deepEqual(oSubComponent1._mCacheTokens, {myOwnTokens: {}}, "_mCacheTokens of the oSubComponent1 shouldn't be propagated from parent component oRootComponent");
+
+					return oSubComponent1.runAsOwner(function() {
+						return Component.create({
+							name: "my.used"
+						}).then(function(oSubComponent1_1) {
+							assert.ok(oSubComponent1_1 instanceof Component, "oSubComponent1_1 should be created");
+							assert.deepEqual(oSubComponent1_1._mCacheTokens, {myOwnTokens: {}}, "_mCacheTokens of the oSubComponent1_1 should be equal to parent component oSubComponent1");
+
+							oRootComponent.destroy();
+							oSubComponent1.destroy();
+							oSubComponent1_1.destroy();
+						});
+					});
+				});
+			});
+		});
+	});
+
+	QUnit.test("Propagate cacheTokens: Async creation of sub component via runAsOwner()", function(assert) {
+		return Component.create({
+			name : "my.usage",
+			manifest: false,
+			asyncHints: {
+				cacheTokens: {
+					someToken: {}
+				}
+			}
+		}).then(function(oComponent) {
+			assert.ok(oComponent instanceof Component, "Component should be created");
+			assert.ok(oComponent._mCacheTokens, "_mCacheTokens should be available");
+			assert.deepEqual(oComponent._mCacheTokens.someToken, {}, "_mCacheTokens.someToken should be available");
+
+			return oComponent.runAsOwner(function() {
+				return Component.create({
+					name: "my.used"
+				}).then(function(oSubComponent) {
+					assert.ok(oSubComponent instanceof Component, "SubComponent should be created");
+					assert.deepEqual(oSubComponent._mCacheTokens, {someToken: {}}, "_mCacheTokens of the SubComponent should be equal to the parent component (content-wise)");
+					oComponent.destroy();
+					oSubComponent.destroy();
+				});
+			});
+		});
 	});
 
 	QUnit.test("Component.create - Async creation of component usage", function(assert) {
