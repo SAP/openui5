@@ -6,6 +6,10 @@
 	position: relative;
 	display: grid;
 
+	&.sapFGridContainerDenseFill {
+		grid-auto-flow: row dense;
+	}
+
 	&.sapFGridContainerSnapToRow .sapFGridContainerItemWrapper > * {
 		min-height: 100%;
 	}

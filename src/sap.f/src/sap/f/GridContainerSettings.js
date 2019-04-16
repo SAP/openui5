@@ -43,6 +43,7 @@ sap.ui.define([
 			properties: {
 				/**
 				 * How many columns to have on a row.
+				 *
 				 * If not defined, <code>sap.f.GridContainer</code> will position as many columns as they can fit in the container.
 				 */
 				columns: { type: "Number" },

@@ -142,21 +142,50 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Defines the width of the control
+				 * Defines the width of the control.
 				 *
 				 */
 				width: {type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: ""},
 
 				/**
-				 * Defines the height of the control
+				 * Defines the height of the control.
 				 */
 				height: {type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: ""},
 
 				/**
-				 * Should the items stretch to fill the rows which they occupy, or not.
-				 * If set to true the items will stretch.
+				 * If set to <code>true</code> the current range (large, medium or small) is defined by the size of the
+				 * container surrounding the <code>CSSGrid</code>, instead of the device screen size (media Query).
 				 */
-				snapToRow: {type: "boolean", group: "Appearance", defaultValue: false}
+				containerQuery: { type: "boolean", group: "Behavior", defaultValue: false },
+
+				/**
+				 * Should the items stretch to fill the rows that they occupy, or not.
+				 *
+				 * If set to <code>true</code> the items will stretch.
+				 */
+				snapToRow: {type: "boolean", group: "Appearance", defaultValue: false},
+
+				/**
+				 * Increases the density when arranging the items. Smaller items will take up all of the available space, ignoring their order.
+				 *
+				 * <b>Note:</b> The order of the items is ignored. An item which is normally at the bottom, can appear on top.
+				 *
+				 * <b>Note:</b> Not supported in Internet Explorer 11 and Microsoft Edge 15 browsers.
+				 *
+				 * @experimental As of version 1.66
+				 */
+				allowDenseFill: {type: "boolean", group: "Appearance", defaultValue: false},
+
+				/**
+				 * Makes the grid items act like an inline-block elements. They will be arranged in rows with height equal to the highest item in the row.
+				 *
+				 * <b>Note:</b> If set to <code>true</code> the properties <code>rowSize</code> for grid layout, and <code>minRows</code> and <code>rows</code> per item will be ignored.
+				 *
+				 * <b>Note:</b> Not supported in IE11, Edge 15.
+				 *
+				 * @experimental As of version 1.66
+				 */
+				inlineBlockLayout: {type: "boolean", group: "Appearance", defaultValue: false}
 			},
 			defaultAggregation: "items",
 			aggregations: {
@@ -166,7 +195,8 @@ sap.ui.define([
 				items: {type: "sap.ui.core.Control", multiple: true, singularName: "item", dnd: true },
 
 				/**
-				 * The sap.f.GridContainerSettings applied if no settings are provided for a specific size
+				 * The sap.f.GridContainerSettings applied if no settings are provided for a specific size.
+				 *
 				 * If no layout is given, a default layout will be used. See the default values for <code>sap.f.GridContainerSettings</code>.
 				 */
 				layout: { type: "sap.f.GridContainerSettings", multiple: false },
@@ -260,15 +290,18 @@ sap.ui.define([
 	};
 
 	GridContainer.prototype._detectActiveLayout = function () {
-		var iWidth = window.innerWidth, // TODO can use containerQuery approach which is used in CSSGrid
+		var iWidth = (this.getContainerQuery() && this.getDomRef()) ? this.$().outerWidth() : window.innerWidth,
 			oRange = Device.media.getCurrentRange("StdExt", iWidth),
-			sLayout = GridContainer.mSizeLayouts[oRange.name];
+			sLayout = GridContainer.mSizeLayouts[oRange.name],
+			oOldSettings = this.getActiveLayoutSettings(),
+			bSettingsAreChanged = false;
 
-		if (this._sActiveLayout === sLayout) {
-			return;
+		if (this._sActiveLayout !== sLayout) {
+			this._sActiveLayout = sLayout;
+			bSettingsAreChanged = oOldSettings !== this.getActiveLayoutSettings();
 		}
 
-		this._sActiveLayout = sLayout;
+		return bSettingsAreChanged;
 
 		// TODO fire event
 	};
@@ -279,9 +312,25 @@ sap.ui.define([
 			|| this.getAggregation("_defaultLayout");
 	};
 
+	GridContainer.prototype._getActiveGridStyles = function () {
+		var oSettings = this.getActiveLayoutSettings(),
+			sColumns = oSettings.getColumns() || "auto-fill",
+			mStyles = {
+				"grid-template-columns": "repeat(" + sColumns + ", " + oSettings.getColumnSize() + ")",
+				"grid-gap": oSettings.getGap()
+			};
+
+		if (this.getInlineBlockLayout()) {
+			mStyles["grid-auto-rows"] = "min-content";
+		} else {
+			mStyles["grid-auto-rows"] = oSettings.getRowSize();
+		}
+
+		return mStyles;
+	};
+
 	GridContainer.prototype.init = function () {
 		this.setAggregation("_defaultLayout", new GridContainerSettings());
-		this._detectActiveLayout();
 
 		this._resizeListeners = {};
 
@@ -304,6 +353,8 @@ sap.ui.define([
 	};
 
 	GridContainer.prototype.onBeforeRendering = function () {
+		this._detectActiveLayout();
+
 		var resizeListenerId = this._resizeListeners[this.getId()];
 		if (resizeListenerId) {
 			ResizeHandler.deregister(resizeListenerId);
@@ -337,16 +388,6 @@ sap.ui.define([
 	};
 
 	GridContainer.prototype._resize = function () {
-		var oOldSettings = this.getActiveLayoutSettings();
-		this._detectActiveLayout();
-
-		if (oOldSettings !== this.getActiveLayoutSettings()) {
-			// layout was changed - invalidate
-			// TODO optimize, no need to invalidate
-			this.invalidate();
-			return;
-		}
-
 		this._applyLayout();
 	};
 
@@ -355,25 +396,34 @@ sap.ui.define([
 			return;
 		}
 
-		if (isGridSupportedByBrowser()) {
-			var oContainer = this;
-			this.getItems().forEach(function (oItem) {
-				if (hasItemAutoHeight(oItem)) {
-					var $item = oItem.$(),
-						height = $item.height(),
-						$container = oContainer.$(),
-						rowHeight = parseInt($container.css("grid-auto-rows")),
-						gapSize = parseInt($container.css("grid-row-gap")),
-						rows = Math.ceil((height + gapSize) / (rowHeight + gapSize));
-
-					$item.parent().css({
-						'grid-row': 'span ' + Math.max(rows, getItemRowCount(oItem))
-					});
-				}
-			});
-		} else {
-			this._applyIEPolyfillLayout();
+		var bLayoutSettingsAreChanged = this._detectActiveLayout();
+		if (bLayoutSettingsAreChanged) {
+			this.$().css(this._getActiveGridStyles());
 		}
+
+		if (!isGridSupportedByBrowser()) {
+			this._applyIEPolyfillLayout();
+			return;
+		}
+
+		if (this.getInlineBlockLayout()) {
+			return;
+		}
+
+		this.getItems().forEach(function (oItem) {
+			if (hasItemAutoHeight(oItem)) {
+				var $item = oItem.$(),
+					height = $item.height(),
+					$container = this.$(),
+					rowHeight = parseInt($container.css("grid-auto-rows")),
+					gapSize = parseInt($container.css("grid-row-gap")),
+					rows = Math.ceil((height + gapSize) / (rowHeight + gapSize));
+
+				$item.parent().css({
+					'grid-row': 'span ' + Math.max(rows, getItemRowCount(oItem))
+				});
+			}
+		}.bind(this));
 	};
 
 	/**
