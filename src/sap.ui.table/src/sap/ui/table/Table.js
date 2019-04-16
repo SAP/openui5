@@ -4222,59 +4222,21 @@ sap.ui.define([
 		return oResult;
 	};
 
-	Table.prototype._validateRow = function(oRow) {
-		return oRow && oRow instanceof Row && oRow.getParent() === this;
-	};
-
-	/**
-	 * Returns the row to which the given cell belongs or <code>null</code>
-	 * if the given control is no direct child of a row of the table.
-	 *
-	 * @param {sap.ui.core.Control} oCell The cell control
-	 * @returns {sap.ui.table.Row} The row to which the given cell belongs
-	 * @private
-	 */
-	Table.prototype.getRowForCell = function(oCell) { //TBD: Make it public if needed
-		if (oCell) {
-			var oRow = oCell.getParent();
-			if (this._validateRow(oRow)) {
-				return oRow;
-			}
-		}
-		return null;
-	};
-
-	/**
-	 * Returns the column to which the given cell belongs or <code>null</code>
-	 * if the given control is not connected with a visible column of the table.
-	 *
-	 * @param {sap.ui.core.Control} oCell The cell control
-	 * @returns {sap.ui.table.Column} The column to which the given cell belongs
-	 * @private
-	 */
-	Table.prototype.getColumnForCell = function(oCell) { //TBD: Make it public if needed
-		if (this.getRowForCell(oCell)) { // Ensures cell is part of some row of this table
-			var iIndex = oCell.data("sap-ui-colindex");
-			var aColumns = this.getColumns();
-			if (iIndex >= 0 && iIndex < aColumns.length) {
-				return aColumns[iIndex];
-			}
-		}
-		return null;
-	};
-
 	/**
 	 * Returns the control inside the cell with the given row index (in the <code>rows</code> aggregation)
 	 * and column index (in the <code>columns</code> aggregation or in the list of visible columns only, depending on
 	 * parameter <code>bVisibleColumnIndex</code>).
 	 *
+	 * The use of this method outside the sap.ui.table library is only allowed for test purposes!
+	 *
 	 * @param {int} iRowIndex Index of row in the table's <code>rows</code> aggregation
 	 * @param {int} iColumnIndex Index of column in the list of visible columns or in the <code>columns</code> aggregation, as indicated with
-	 *     <code>bVisibleColumnIndex</code>
+	 *                           <code>bVisibleColumnIndex</code>
 	 * @param {boolean} bVisibleColumnIndex If set to <code>true</code>, the given column index is interpreted as index in the list of visible
-	 *     columns, otherwise as index in the <code>columns</code> aggregation
+	 *                                      columns, otherwise as index in the <code>columns</code> aggregation
 	 * @returns {sap.ui.core.Control} Control inside the cell with the given row and column index or <code>null</code> if no such control exists
-	 * @protected
+	 * @private
+	 * @sap-restricted
 	 */
 	Table.prototype.getCellControl = function(iRowIndex, iColumnIndex, bVisibleColumnIndex) {
 		var oInfo = TableUtils.getRowColCell(this, iRowIndex, iColumnIndex, !bVisibleColumnIndex);
