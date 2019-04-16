@@ -108,6 +108,7 @@ sap.ui.define(function () {
 				coverage: {
 					only: [
 						"sap/f/GridContainer",
+						"sap/f/GridContainerRenderer",
 						"sap/f/GridContainerSettings",
 						"sap/f/GridContainerItemLayoutData"
 					]

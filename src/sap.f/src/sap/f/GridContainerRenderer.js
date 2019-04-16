@@ -29,8 +29,6 @@ sap.ui.define([],
 				rm.addClass("sapFGridContainerSnapToRow");
 			}
 
-			this.addGridStyles(rm, control);
-
 			rm.writeClasses();
 
 			// Add inline styles
@@ -40,6 +38,7 @@ sap.ui.define([],
 			if (control.getWidth()) {
 				rm.addStyle("width", control.getWidth());
 			}
+			this.addGridStyles(rm, control);
 			rm.writeStyles();
 
 			// Add tooltip
