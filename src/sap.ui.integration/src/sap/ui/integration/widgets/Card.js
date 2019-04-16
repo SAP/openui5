@@ -1333,6 +1333,8 @@ sap.ui.define([
 				busy: true
 			});
 
+			this._oTemporaryContent.addStyleClass("sapFCardContentBusy");
+
 			this._oTemporaryContent.addEventDelegate({
 				onAfterRendering: function () {
 					if (!this._oCardManifest) {
