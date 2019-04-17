@@ -960,10 +960,13 @@ function(
 			if (Device.system.desktop && !oBrowser.chrome) {
 
 				var bHasVerticalScrollbar = $dialogContent[0].clientHeight < $dialogContent[0].scrollHeight,
-					iCurrentWidthAndHeight = $dialogContent.width() + "x" + $dialogContent.height();
+					iCurrentWidthAndHeight = $dialogContent.width() + "x" + $dialogContent.height(),
+					bMinWidth = $dialog.css("min-width") !== $dialog.css("width");
 
-				if (iCurrentWidthAndHeight !== this._iLastWidthAndHeightWithScroll) { // apply the fix only if width or height did actually change
-					if (bHasVerticalScrollbar &&					// - there is a vertical scroll
+				// Apply the fix only if width or height did actually change.
+				// And when the width is not equal to the min-width.
+				if (iCurrentWidthAndHeight !== this._iLastWidthAndHeightWithScroll && bMinWidth) {
+					if (bHasVerticalScrollbar &&						// - there is a vertical scroll
 						(!sContentWidth || sContentWidth == 'auto') &&	// - when the developer hasn't set it explicitly
 						!this.getStretch() && 							// - when the dialog is not stretched
 						$dialogContent.width() < maxDialogWidth) {		// - if the dialog can't grow anymore

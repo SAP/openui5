@@ -1614,7 +1614,7 @@ sap.ui.define([
 		oControl.destroy();
 	});
 
-	QUnit.module("Dialog with vertical scroll and list items",{
+	QUnit.module("Dialog with vertical scroll and list items", {
 		beforeEach: function() {
 			this.oDialog = new Dialog({
 				title: 'Will have vertical scroll',
@@ -1646,6 +1646,24 @@ sap.ui.define([
 		afterEach: function() {
 			this.oDialog.destroy();
 		}
+	});
+
+	QUnit.test("Content width is smaller than the min-width of the dialog", function (assert) {
+
+		// Arrange
+		// Set the long title to something shorter.
+		this.oDialog.getContent()[0].getItems()[3].setTitle("Item 3.5");
+		var iScrollWidth = 18;
+
+		// Act
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		var bContentGrowsToFitContainer = this.oDialog.$("scroll").width() + iScrollWidth >= this.oDialog.$().width();
+
+		// Assert
+		assert.equal(this.oDialog.$().css("width"), this.oDialog.$().css("min-width"), "Should have minimum width when content width is smaller.");
+		assert.ok(bContentGrowsToFitContainer, "Content should grow to fit the container when its width is smaller than the minimum width of the dialog.");
 	});
 
 	QUnit.test("Item texts are not truncated when width is auto", function(assert) {
