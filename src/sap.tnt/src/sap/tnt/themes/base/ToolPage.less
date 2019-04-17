@@ -127,11 +127,11 @@ html:not([data-sap-ui-animation='off']) .sapTntToolPageAside {
 .sap-desktop,
 .sap-tablet {
   .sapTntToolPageAsideCollapsed {
-    .sapTntToolPageAside {
+    & > .sapTntToolPageAside {
       width: @_sap_tnt_ToolPage_AsideWidthOnTablet;
     }
 
-    .sapTntToolPageAside + .sapTntToolPageMain {
+    & > .sapTntToolPageAside + .sapTntToolPageMain {
       padding-left: @_sap_tnt_ToolPage_AsideWidthOnTablet;
     }
   }
