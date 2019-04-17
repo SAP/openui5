@@ -827,30 +827,15 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("_getValidatedBackgroundColor filters-out invalid color", function(assert) {
+	QUnit.test("only valid color is set to DOM element", function(assert) {
 		var oApp = this.oSplitApp;
 
-		// Act
 		oApp.setBackgroundColor("blue;5px solid red;");
-
-		//Check
-		assert.strictEqual(oApp._getValidatedBackgroundColor(), "", "invalid value is not returned");
-	});
-
-	QUnit.test("only valid color is set to DOM element", function(assert) {
-		var oApp = this.oSplitApp,
-			oValidateSpy = sinon.spy(oApp, "_getValidatedBackgroundColor");
-
-		oApp.setBackgroundColor("blue;5px solid red;");
-		oValidateSpy.reset();
 
 		// Act
 		oApp.rerender();
 
 		// Check
-		assert.ok(oValidateSpy.called,
-			"_getValidatedBackgroundColor is called upon rendering");
-
 		assert.strictEqual(getBgDomElement(oApp).style.backgroundColor, '', "correct property value");
 	});
 

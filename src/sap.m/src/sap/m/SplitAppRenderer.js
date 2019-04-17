@@ -19,7 +19,7 @@ sap.ui.define(['./SplitContainerRenderer', 'sap/ui/core/Renderer', 'sap/m/librar
 	var SplitAppRenderer = Renderer.extend(SplitContainerRenderer);
 
 	SplitAppRenderer.renderAttributes = function(oRm, oControl){
-		BackgroundHelper.addBackgroundColorStyles(oRm, oControl._getValidatedBackgroundColor(),  oControl.getBackgroundImage());
+		BackgroundHelper.addBackgroundColorStyles(oRm, oControl.getBackgroundColor(),  oControl.getBackgroundImage());
 	};
 
 	SplitAppRenderer.renderBeforeContent = function(oRm, oControl){
