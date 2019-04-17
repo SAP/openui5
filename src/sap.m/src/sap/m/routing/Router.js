@@ -6,10 +6,15 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		"use strict";
 
 		/**
-		 * Instantiates a SAPUI5 mobile Router see {@link sap.ui.core.routing.Router} for the constructor arguments
-		 * The difference to the {@link sap.ui.core.routing.Router} are the properties viewLevel, transition and transitionParameters you can specify in every Route or Target created by this router.
+		 * Constructor for a new <code>sap.m.routing.Router</code>. See <code>{@link sap.ui.core.routing.Router}</code>
+		 * for the constructor arguments.
 		 *
 		 * @class
+		 * SAPUI5 mobile <code>Router</code>.
+		 * The difference to the {@link sap.ui.core.routing.Router} are the <code>viewLevel</code>,
+		 * <code>transition</code>, and <code>transitionParameters</code> properties that you can
+		 * specify in every Route or Target created by this router.
+		 *
 		 * @extends sap.ui.core.routing.Router
 		 * @param {object|object[]} [oRoutes] may contain many Route configurations as {@link sap.ui.core.routing.Route#constructor}.<br/>
 		 * Each of the routes contained in the array/object will be added to the router.<br/>
