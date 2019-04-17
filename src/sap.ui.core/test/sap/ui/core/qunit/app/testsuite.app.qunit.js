@@ -91,6 +91,30 @@ sap.ui.define(function () {
 				},
 				module: "./ThemeClassParameters.qunit"
 			},
+			"ThemeClassParameters(sap_belize_plus)": {
+				title: "Tests for sap/ui/core/theming/Parameters (sap_belize_plus): Theme-Dependent CSS Classes",
+				ui5: {
+					theme: "sap_belize_plus",
+					"xx-waitForTheme": "init"
+				},
+				module: "./ThemeClassParameters.qunit"
+			},
+			"ThemeClassParameters(sap_belize_hcb)": {
+				title: "Tests for sap/ui/core/theming/Parameters (sap_belize_hcb): Theme-Dependent CSS Classes",
+				ui5: {
+					theme: "sap_belize_hcb",
+					"xx-waitForTheme": "init"
+				},
+				module: "./ThemeClassParameters.qunit"
+			},
+			"ThemeClassParameters(sap_belize_hcw)": {
+				title: "Tests for sap/ui/core/theming/Parameters (sap_belize_hcw): Theme-Dependent CSS Classes",
+				ui5: {
+					theme: "sap_belize_hcw",
+					"xx-waitForTheme": "init"
+				},
+				module: "./ThemeClassParameters.qunit"
+			},
 			"ThemeClassParameters(sap_fiori_3)": {
 				title: "Tests for sap/ui/core/theming/Parameters (sap_fiori_3): Theme-Dependent CSS Classes",
 				ui5: {
