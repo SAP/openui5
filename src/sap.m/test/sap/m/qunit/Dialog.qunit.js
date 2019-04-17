@@ -419,6 +419,31 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
+	QUnit.module("Message dialog");
+
+	QUnit.test("Footer rendering", function (assert) {
+
+		var oDialog = new Dialog({
+			type: DialogType.Message,
+			buttons: [
+				new Button({ text: "Cancel"})
+			]
+		});
+
+		oDialog.open();
+		this.clock.tick(500);
+
+		oDialog._oToolbar.rerender();
+		this.clock.tick(500);
+
+		var $toolbar = oDialog._oToolbar.$();
+		var bContrastApplied = $toolbar.hasClass("sapContrast") || $toolbar.hasClass("sapContrastPlus");
+
+		assert.notOk(bContrastApplied, "Should NOT have contrast classes applied on footer for message dialog.");
+
+		oDialog.destroy();
+	});
+
 	QUnit.module("set properties");
 
 	QUnit.test("Set vertical/horizontal scrolling to false", function (assert) {
