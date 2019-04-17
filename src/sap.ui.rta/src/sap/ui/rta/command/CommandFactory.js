@@ -21,7 +21,7 @@ function(
 ) {
 	"use strict";
 
-	function evaluateTemplateBinding(oElementOverlay, vElement){
+	function evaluateTemplateBinding(oElementOverlay){
 		var mBoundControl = OverlayUtil.getAggregationInformation(oElementOverlay);
 		if (mBoundControl.elementId) {
 			//check for additional binding
@@ -350,10 +350,11 @@ function(
 					element : oElementOverlay.getRelevantContainer()
 				});
 				vElement = mSettings.element;
+				oElementOverlay = OverlayRegistry.getOverlay(vElement);
 			}
 
 			if (oElementOverlay && vElement.sParentAggregationName) {
-				mTemplateSettings = evaluateTemplateBinding(oElementOverlay, vElement);
+				mTemplateSettings = evaluateTemplateBinding(oElementOverlay);
 			}
 
 			if (mTemplateSettings) {
