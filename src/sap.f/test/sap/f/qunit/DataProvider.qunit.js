@@ -265,7 +265,7 @@ function (DataProviderFactory, ServiceDataProvider, DataProvider, RequestDataPro
 		beforeEach: function () {
 			this.oDataProvider = new RequestDataProvider();
 			this.deferred = new jQuery.Deferred();
-			sinon.stub(jQuery, "ajax", function () {
+			sinon.stub(jQuery, "ajax").callsFake(function () {
 				return this.deferred.promise();
 			}.bind(this));
 		},
