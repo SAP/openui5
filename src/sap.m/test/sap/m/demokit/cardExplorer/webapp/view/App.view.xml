@@ -1,0 +1,58 @@
+<mvc:View
+		controllerName="sap.ui.demo.cardExplorer.controller.App"
+		displayBlock="true"
+		height="100%"
+		xmlns="sap.m"
+		xmlns:tnt="sap.tnt"
+		xmlns:mvc="sap.ui.core.mvc">
+	<tnt:ToolPage id="toolPage">
+		<tnt:header>
+			<tnt:ToolHeader>
+				<Button id="sideNavigationToggleButton"
+						icon="sap-icon://menu2"
+						type="Transparent"
+						press="onSideNavButtonPress">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow" />
+					</layoutData>
+				</Button>
+				<Image width="2rem" height="2rem" src="images/theme.png" />
+				<Title text="UI Integration Cards" />
+				<IconTabHeader backgroundDesign="Transparent" id="iconTabHeader" select="onTabSelect">
+					<items>
+						<IconTabFilter key="learnGettingStarted" text="Learn" />
+						<IconTabFilter key="exploreCardTypes" text="Explore" />
+					</items>
+				</IconTabHeader>
+			</tnt:ToolHeader>
+		</tnt:header>
+		<tnt:sideContent>
+			<tnt:SideNavigation id="sideNavigation"
+								itemSelect="onSideNavigationItemSelect">
+				<tnt:NavigationList items="{path: '/navigation'}">
+					<tnt:NavigationListItem text="{title}"
+											icon="{icon}"
+											enabled="{enabled}"
+											expanded="{expanded}"
+											items="{items}"
+											key="{key}">
+						<tnt:NavigationListItem text="{title}"
+												key="{key}"
+												enabled="{enabled}">
+						</tnt:NavigationListItem>
+					</tnt:NavigationListItem>
+				</tnt:NavigationList>
+				<tnt:fixedItem>
+					<tnt:NavigationList items="{path: '/fixedNavigation'}">
+						<tnt:NavigationListItem text="{title}"
+												icon="{icon}">
+						</tnt:NavigationListItem>
+					</tnt:NavigationList>
+				</tnt:fixedItem>
+			</tnt:SideNavigation>
+		</tnt:sideContent>
+		<tnt:mainContents>
+			<NavContainer id="navContainer"></NavContainer>
+		</tnt:mainContents>
+	</tnt:ToolPage>
+</mvc:View>

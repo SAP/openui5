@@ -1,0 +1,272 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>UI Integration with Cards - Home</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="./css/index.css">
+	<link rel="stylesheet" href="./css/prettify-light.css" />
+	<link type="image/x-icon" href="images/favicon.ico" rel="shortcut icon">
+	<link type="image/x-icon" href="images/favicon.ico" rel="icon">
+	<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js">
+	</script>
+</head>
+
+<body>
+<header class="header dark-background image-background large-padding">
+	<div class="large-box-center">
+		<h2 class="h2-header light">UI Integration with Cards</h2>
+		<div class="sub-header light">The new way for developers, key-users and end-users to create and share business
+			content
+			in an
+			easy, declarative and consistent
+			way.</div>
+		<div class="buttons-wrapper">
+			<a href="./webapp/index.html" target="_blank" class="button emphasized">Get Started</a>
+		</div>
+	</div>
+	</div>
+</header>
+
+<section class="flex-center medium-padding">
+	<div class="flex-center  max-width flex-wrap space-between">
+		<div class="icon-box">
+			<img class="icon" src="./images/declarative.png" alt="Declarative">
+			<h2>Declarative</h2>
+			<p>Based on JSON schema. Design-time and runtime tooling support. Portable to any device and host environment.
+				Rich feature set.</p>
+		</div>
+		<div class="icon-box">
+			<img class="icon " src="./images/approval.png" alt="Consistent">
+			<h2>Consistent</h2>
+			<p>SAP Fiori design language and customer theming. Accessible. All enterprise product
+				standards included.</p>
+		</div>
+		<div class="icon-box">
+			<img class="icon" src="./images/consume.png" alt="Easy To Consume">
+			<h2>Easy To Consume</h2>
+			<p>UI5, Custom Element and Web Component support. Included JSON based data consumption. Configurable styling.
+				Speech and bot support.</p>
+		</div>
+	</div>
+</section>
+
+<section class="example-section default">
+	<div class="large-box-center">
+		<h3 class="h3-header dark">Fiori 3 Design as Default Style</h3>
+		<div class="cards grayshadow flex-start">
+			<ui-card manifest="./manifests/listcard.manifest.json" width="400px" height="400px"></ui-card>
+			<ui-card manifest="./manifests/objectcard.manifest.json" width="400px" height="400px"></ui-card>
+			<ui-card manifest="./manifests/tablecard.manifest.json" width="400px" height="400px"></ui-card>
+		</div>
+
+	</div>
+</section>
+<section class="example-section bluegradient">
+	<div class="large-box-center">
+		<h3 class="h3-header light">Host Configuration to Modify Style</h3>
+		<div class="cards blueshadow flex-start">
+			<ui-host-configuration id="blue" config="./css/blue.json"></ui-host-configuration>
+			<ui-card manifest="./manifests/listcard.manifest.json" width="400px" height="400px" hostConfigurationId="blue"></ui-card>
+			<ui-card manifest="./manifests/objectcard.manifest.json" width="400px" height="400px" hostConfigurationId="blue"></ui-card>
+			<ui-card manifest="./manifests/tablecard.manifest.json" width="400px" height="400px" hostConfigurationId="blue"></ui-card>
+		</div>
+
+	</div>
+</section>
+<section class="example-section">
+	<div>
+		<div class="coderows">
+			<div class="center">
+				<h2 class="h2-header blue">Easy Card Integration in just two steps...</h2>
+				<h3 class="h3-header blue">1. Declare a Cards manifest.json file</h3>
+				<div class="description small">
+					<div>With the manifest.json you declare the cards header and content.
+						You can use static data to be displayed or declare a request object
+						for your data endpoint. Translations for static texts on the card, like the title and subtitle,
+						can be provided in separate files.
+					</div>
+				</div>
+				<pre src="./manifests/listcard.manifest.json" class="prettyprint small">
+<xmp class="language-json">
+{
+  "sap.app": {
+    "type": "card"
+  },
+  "sap.card": {
+    "type": "List",
+    "header": {
+       "title": "Project Cloud Transformation",
+       "subTitle": "Revenue"
+    },
+    "content": {
+      "data": {
+        "json": [{
+          "Name": "Comfort Easy",
+          "Description": "32 GB Digital Assistant",
+          "Highlight": "Error"
+        }]
+      },
+      "item": {
+        "title": {
+        "label": "{{title_label}}",
+          "value": "{Name}"
+        },
+        "description": {
+          "label": "{{description_label}}",
+          "value": "{Description}"
+        },
+        "highlight": "{Highlight}"
+      }
+    }
+  }
+}
+								</xmp></pre>
+			</div>
+			<div class="center">
+				<h3 class="h3-header blue">2. Consume the Card in your site</h3>
+				<div class="description small">
+					<div>
+						Insert a script tag refering the sap-ui-integration.js bundle
+						to your site. This will initialize your page for Card usage.<br>
+						Add a &lt;ui-card&gt; tag where the Card should appear.<br><br>
+
+
+					</div>
+				</div>
+				<pre class="prettyprint small" style="height:180px;">
+<xmp class="language-html">
+  <script
+		  src="https://ui5.sap.com/resources/sap-ui-integration.js"
+		  id="sap-ui-bootstrap"
+		  data-sap-ui-theme="sap_fiori_3"></script>
+  <body>
+    <ui-card
+			manifest="./cards/listsample.manifest.json">
+    </ui-card>
+  </body>
+</xmp></pre>
+
+			</div>
+			<div class="center">
+				<h3 class="h3-header blue">Done</h3>
+
+				<div class="description small" style="height:150px">
+					<div>
+						Launch your page and see the result.
+
+					</div>
+				</div>
+				<div class="description small">
+					<ui-card manifest="./manifests/listsample.manifest.json" width="450px" height="142px" style="box-shadow: 0rem 0rem 2rem rgb(136, 136, 136);
+								display: inline-block;
+								margin-top: -2rem;
+								position: absolute;
+								margin-left: -0.7rem;"></ui-card>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<section class="flex-center medium-padding dark-background ">
+	<div class="center">
+		<div class="description small sub-header light" style="height:50px; color:#f0f0f0">
+			<div>
+				<strong>Get the insights</strong><br> Learn. Explore. Design. Integrate.
+			</div>
+		</div>
+		<div class="description small" style="height:50px">
+			<a href="./webapp/index.html" target="_blank" class="button emphasized" style="width:200px;margin-top:1rem">Card
+				Explorer</a>
+		</div><br>
+		<div class="description small sub-header" style="height:50px; color:#f0f0f0">
+			<div>
+				<strong>Get involved</strong><br>Explore the source code and samples. Contribute. Report issues.
+			</div>
+		</div>
+		<div class="description small" style="height:50px">
+			<a href="https://github.com/SAP/openui5/tree/master/src/sap.ui.integration" target="_blank" class="button" style="width:200px;margin-top:1rem">OpenUI5
+				Project</a>
+		</div>
+	</div>
+</section>
+<section class="compatibility medium-padding">
+	<div class="wrapper compatibility-flex-wrapper flex-wrap space-around-responsive">
+		<div class="compatibility-wrapper">
+			<span class="compatibility-header">Framework Compatibility</span>
+			<p>UI Integration Cards are framework-agnostic and can run with arbitary HTML framework or page</p>
+			<div class="image-wrapper">
+				<img class="icon-small" src="./images/html5.svg" alt="Vue Logo">
+				<img class="icon-small" src="./images/ui5.png" alt="UI5 Logo">
+				<img class="icon-small" src="./images/angular.svg" alt="Angular Logo">
+				<img class="icon-small" src="./images/react.svg" alt="React Logo">
+				<img class="icon-small" src="./images/vue.svg" alt="Vue Logo">
+			</div>
+		</div>
+		<div class="compatibility-wrapper">
+			<span class="compatibility-header">Browser Compatibility</span>
+			<p>UI Integration Cards are supported on all modern browsers and even on Internet Explorer 11 out of the box</p>
+			<div class="image-wrapper">
+				<img class="icon-small" src="./images/chrome.svg" alt="Chrome Logo">
+				<img class="icon-small" src="./images/firefox.svg" alt="Firefox Logo">
+				<img class="icon-small" src="./images/edge.svg" alt="Edge Logo">
+				<img class="icon-small" src="./images/ie.svg" alt="Internet Explorer 11 Logo">
+				<img class="icon-small" src="./images/safari.svg" alt="Safari Logo">
+				<img class="icon-small" src="./images/opera.png" alt="Opera Logo">
+			</div>
+		</div>
+		<!-- div class="compatibility-wrapper">
+			<span class="compatibility-header">Native Rendering</span>
+			<p>UI Integration Cards are declarative and can be implemented in any rendering technology of choice</p>
+			<div class="image-wrapper">
+				<img class="icon-small" src="./images/ios.png" alt="IOS Logo">
+				<img class="icon-small" src="./images/android.png" alt="Android Logo">
+				<img class="icon-small" src="./images/windows.png" alt="Windows Logo">
+				<img class="icon-small" src="./images/mac.png" alt="Mac Logo">
+			</div>
+		</div -->
+	</div>
+</section>
+
+<footer class="large-padding footer">
+	<div class="flex-center max-width flex-wrap space-between center-margin">
+		<img class="logo-small margin-bottom" src="./images/sap-logo.svg" alt="SAP Logo">
+		<div class="footer-content">
+			<h2>Community</h2>
+			<div class="links">
+				<a href="https://twitter.com/openui5" target="_blank">Twitter</a>
+				<a href="https://www.youtube.com/watch?v=9P5Jk4S3438&list=PLHUs_FUbq4dXkQpUt6b4eCXAAjiOg0IC-" target="_blank">YouTube</a>
+				<a href="https://openui5.slack.com/" target="_blank">Slack Channel</a>
+				<a href="#" target="_blank">GitHub</a>
+			</div>
+		</div>
+		<div class="footer-content">
+			<h2>Docs</h2>
+			<div class="links">
+				<a href="./webapp/index.html">explorer</a>
+				<a href="./webapp/index.html">Documentation</a>
+				<a href="./webapp/index.html">FAQ</a>
+			</div>
+		</div>
+		<div class="footer-content">
+			<h2>Legal &amp; Privacy</h2>
+			<div class="links">
+				<a href="https://www.sap.com/about/legal/impressum.html" target="_blank">Legal Disclosure</a>
+				<a href="https://www.sap.com/about/legal/privacy.html" target="_blank">Privacy</a>
+			</div>
+		</div>
+		<div class="footer-content">
+			<h2>Contact Us</h2>
+			<div class="links">
+				<a href="#" target="_blank">Report Issue</a>
+				<a href="mailto:openui5@sap.com">Contact Us</a>
+			</div>
+		</div>
+	</div>
+</footer>
+
+
+</body>
+
+</html>

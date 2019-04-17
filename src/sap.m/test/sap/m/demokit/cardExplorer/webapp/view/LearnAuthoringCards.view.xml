@@ -1,0 +1,7 @@
+<mvc:View
+	controllerName="sap.ui.demo.cardExplorer.controller.LearnAuthoringCards"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Page title="Learn Authoring Cards">
+	</Page>
+</mvc:View>
