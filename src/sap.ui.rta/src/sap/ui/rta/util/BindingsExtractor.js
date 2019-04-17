@@ -4,13 +4,11 @@
 
 sap.ui.define([
 	'sap/ui/dt/ElementUtil',
-	'sap/ui/rta/Utils',
 	'sap/base/util/isPlainObject',
 	'sap/ui/thirdparty/jquery'
 ],
 function(
 	ElementUtil,
-	RtaUtils,
 	isPlainObject,
 	jQuery
 ) {
