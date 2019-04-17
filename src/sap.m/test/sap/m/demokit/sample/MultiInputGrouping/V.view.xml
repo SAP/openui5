@@ -14,7 +14,7 @@
 					type="Text"
 					placeholder="Enter Product ..."
 					showSuggestion="true"
-					showValueHelp="true"
+					showValueHelp="false"
 					suggestionItems="{
 					path: '/ProductCollection',
 					sorter: {
@@ -33,6 +33,7 @@
 					type="Text"
 					placeholder="Enter Product ..."
 					showSuggestion="true"
+					showValueHelp="false"
 					showTableSuggestionValueHelp="false"
 					suggestionRows="{
 					path: '/ProductCollection',

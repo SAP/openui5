@@ -10,6 +10,7 @@
 	<Label text="Token data binding" labelFor="multiinput1"/>
 	<MultiInput
 		id="multiinput1"
+		showValueHelp="false"
 		tokens="{
 			path: '/ProductCollection',
 			sorter: { path: 'Name' }

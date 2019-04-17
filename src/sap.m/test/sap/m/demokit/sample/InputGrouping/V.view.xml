@@ -14,7 +14,6 @@
 					type="Text"
 					placeholder="Enter Product ..."
 					showSuggestion="true"
-					showValueHelp="true"
 					suggestionItems="{
 						path: '/ProductCollection',
 						sorter: {
