@@ -358,11 +358,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Clears the session context and its keep-alive timer.
+	 * Clears the session context and its keep-alive timer and fires a 'sessionTimeout' event if
+	 * required.
+	 *
+	 * @param {boolean} [bTimeout] - Whether the reason is a session timeout
 	 *
 	 * @private
 	 */
-	Requestor.prototype.clearSessionContext = function () {
+	Requestor.prototype.clearSessionContext = function (bTimeout) {
+		if (bTimeout) {
+			this.oModelInterface.fireSessionTimeout();
+		}
 		delete this.mHeaders["SAP-ContextId"];
 		if (this.iSessionTimer) {
 			clearInterval(this.iSessionTimer);
@@ -1215,7 +1221,7 @@ sap.ui.define([
 							// The server could not find the context ID ("ICM Error NO SESSION")
 							sMessage = "Session not found on server";
 							Log.error(sMessage, undefined, sClassName);
-							that.clearSessionContext();
+							that.clearSessionContext(/*bTimeout*/true);
 						} // else keep the session untouched
 						fnReject(_Helper.createError(jqXHR, sMessage, sRequestUrl,
 							sOriginalResourcePath));
@@ -1255,7 +1261,7 @@ sap.ui.define([
 			if (iTimeoutSeconds >= 60) {
 				this.iSessionTimer = setInterval(function () {
 					if (Date.now() >= iSessionTimeout) { // 15 min have passed
-						that.clearSessionContext(); // give up
+						that.clearSessionContext(/*bTimeout*/true); // give up
 					} else {
 						jQuery.ajax(that.sServiceUrl + that.sQueryParams, {
 							method : "HEAD",
@@ -1266,7 +1272,7 @@ sap.ui.define([
 							if (jqXHR.getResponseHeader("SAP-Err-Id") === "ICMENOSESSION") {
 								// The server could not find the context ID ("ICM Error NO SESSION")
 								Log.error("Session not found on server", undefined, sClassName);
-								that.clearSessionContext();
+								that.clearSessionContext(/*bTimeout*/true);
 							} // else keep the timer running
 						});
 					}
