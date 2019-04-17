@@ -397,7 +397,10 @@ sap.ui.define([
 					.attr("title", oTable._getShowStandardTooltips() && sGroupHeaderText ? sGroupHeaderText : null)
 					.text(sGroupHeaderText || "");
 
-				TableGrouping._setIndent(oTable, $Row, $RowHdr, TableGrouping._calcGroupIndent(oTable, iLevel, bChildren, bSum));
+				var iIndent = TableGrouping._calcGroupIndent(oTable, iLevel, bChildren, bSum);
+
+				TableGrouping._setIndent(oTable, $Row, $RowHdr, iIndent);
+				$Row.toggleClass("sapUiTableRowIndented", iIndent > 0);
 			}
 
 			var $TreeIcon = null;

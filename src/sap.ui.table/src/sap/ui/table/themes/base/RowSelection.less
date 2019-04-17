@@ -10,7 +10,7 @@
 
 .sapUiTableSelectAllCheckBox,
 .sapUiTableRowSelectionCell {
-	&::before {
+	&::after {
 		content: '';
 		position: absolute;
 		border: 0.125rem solid @sapUiFieldBorderColor;
@@ -43,7 +43,7 @@
 		display: block;
 	}
 
-	&::before {
+	&::after {
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -69,12 +69,12 @@
 			left: @_sap_ui_table_RowHighlightWidth;
 		}
 	}
-	&:hover::before {
+	&:hover::after {
 		border-color: @sapUiFieldHoverBorderColor;
 	}
 }
 
-.sapUiTableRowSelectionCell::before {
+.sapUiTableRowSelectionCell::after {
 	display: none;
 
 	.sapUiTableSelModeMultiToggle.sapUiTableRowSelectors & {
@@ -117,7 +117,7 @@
     width: 100%;
     height: 100%;
 
-    &::before {
+    &::after {
         display: block;
 		position: absolute;
 		width: 100%;

@@ -40,6 +40,19 @@
 	border-right: @_sap_ui_table_BaseBorderWidth solid @sapUiListVerticalBorderColor;
 	border-bottom: @_sap_ui_table_BaseBorderWidth solid @sapUiListBorderColor;
 
+	&.sapUiTableRowIndented.sapUiTableRowSelectionCell {
+		border-left: @_sap_ui_table_BaseBorderWidth solid @sapUiListVerticalBorderColor;
+	}
+
+	.sapUiTableGroupMode &.sapUiTableRowSelectionCell::before {
+		content: "";
+		position: absolute;
+		top: -@_sap_ui_table_BaseBorderWidth;
+		left: 0;
+		right: 0;
+		border-bottom: @_sap_ui_table_BaseBorderWidth solid @sapUiListBorderColor;
+	}
+
 	// Last data column border
 	&.sapUiTableCellLast {
 		// The table and row action column have a border, so the last data column doesn't need one.
