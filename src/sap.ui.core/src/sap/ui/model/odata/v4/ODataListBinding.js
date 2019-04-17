@@ -477,13 +477,18 @@ sap.ui.define([
 				});
 			}
 		).then(function (oCreatedEntity) {
-			var sGroupId, sPredicate;
+			var sGroupId, iIndex, sPredicate;
 
 			if (!(oInitialData && oInitialData["@$ui5.keepTransientPath"])) {
 				// refreshSingle requires the new key predicate in oContext.getPath()
 				sPredicate = _Helper.getPrivateAnnotation(oCreatedEntity, "predicate");
 				if (sPredicate) {
 					oContext.sPath = sResolvedPath + sPredicate;
+					iIndex = that.aPreviousData.indexOf(sTransientPath);
+					if (iIndex >= 0) {
+						// replace $uid also in previous data to avoid useless diff
+						that.aPreviousData[iIndex] = oContext.sPath;
+					}
 					that.oModel.checkMessages();
 				}
 			}
