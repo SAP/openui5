@@ -170,7 +170,7 @@ sap.ui.define([
 		// end to end will be negative due to mocked request timings, hence -1
 		assert.strictEqual(parseInt(aFESR[4]), -1, "end_to_end_time");
 		assert.strictEqual(parseInt(aFESR[5]), 3, "network_round_trips");
-		assert.strictEqual(aFESR[6].length, 40, "client_id - length");
+		assert.ok(aFESR[6].length <= 40, "epp-action");
 		assert.strictEqual(parseInt(aFESR[7]), 0, "network_time");
 		assert.strictEqual(parseInt(aFESR[8]), 6, "request_time");
 		assert.strictEqual(aFESR[9], Device.os.name + "_" + Device.os.version, "client_os");

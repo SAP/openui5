@@ -14,7 +14,6 @@ sap.ui.define([
 	// activation by meta tag or url parameter as fallback
 	var bFesrActive = false,
 		ROOT_ID = Passport.getRootId(), // static per session
-		CLIENT_ID = Passport.createGUID().substr(-8, 8) + ROOT_ID, // static per session
 		HOST = window.location.host, // static per session
 		CLIENT_OS = Device.os.name + "_" + Device.os.version,
 		CLIENT_MODEL = Device.browser.name + "_" + Device.browser.version,
@@ -23,6 +22,8 @@ sap.ui.define([
 		sAppVersionFull = "", // full app version e.g. 1.7.1-SNAPSHOT
 		sFESRTransactionId, // first transaction id of an interaction step, serves as identifier for the fesr-header
 		iStepCounter = 0, // counts FESR interaction steps
+		sPassportComponentInfo = "undetermined",
+		sPassportAction = "undetermined_startup_0",
 		sFESR, // current header string
 		sFESRopt; // current header string
 
@@ -57,23 +58,14 @@ sap.ui.define([
 
 			// only use Passport for non CORS requests
 			if (!isCORSRequest(arguments[1])) {
-				var oPendingInteraction = Interaction.getPending();
-
-				if (oPendingInteraction) {
-					// check for updated version and update formatted versions
-					if (sAppVersionFull != oPendingInteraction.appVersion) {
-						sAppVersionFull = oPendingInteraction.appVersion;
-						sAppVersion = sAppVersionFull ? formatVersion(sAppVersionFull) : "";
-					}
-				}
 
 				// set passport with Root Context ID, Transaction ID, Component Info, Action
 				this.setRequestHeader("SAP-PASSPORT", Passport.header(
 					Passport.traceFlags(),
 					ROOT_ID,
 					Passport.getTransactionId(),
-					oPendingInteraction ? oPendingInteraction.component + sAppVersion : undefined,
-					oPendingInteraction ? oPendingInteraction.trigger + "_" + oPendingInteraction.event + "_" + iStepCounter : undefined
+					sPassportComponentInfo,
+					sPassportAction
 				));
 			}
 		});
@@ -108,7 +100,7 @@ sap.ui.define([
 			format(oInteraction.roundtrip, 16), // client_round_trip_time
 			format(oFESRHandle.timeToInteractive, 16), // end_to_end_time
 			format(oInteraction.completeRoundtrips, 8), // completed network_round_trips
-			format(CLIENT_ID, 40), // client_id
+			format(sPassportAction, 40), // passport_action
 			format(oInteraction.networkTime, 16), // network_time
 			format(oInteraction.requestTime, 16), // request_time
 			format(CLIENT_OS, 20), // client_os
@@ -171,6 +163,37 @@ sap.ui.define([
 		sFESRopt = createFESRopt(oFinishedInteraction, oFESRHandle);
 	}
 
+	function onInteractionFinished(oFinishedInteraction, bForced) {
+		var oFESRHandle = FESR.onBeforeCreated({
+			stepName: oFinishedInteraction.trigger + "_" + oFinishedInteraction.event,
+			appNameLong: oFinishedInteraction.stepComponent || oFinishedInteraction.component,
+			appNameShort: oFinishedInteraction.stepComponent || oFinishedInteraction.component,
+			timeToInteractive: oFinishedInteraction.duration
+		}, oFinishedInteraction);
+
+		// only send FESR when requests have occured
+		if (oFinishedInteraction.requests.length > 0 || bForced) {
+			createHeader(oFinishedInteraction, oFESRHandle);
+		}
+
+		var oPendingInteraction = Interaction.getPending();
+
+		if (oPendingInteraction) {
+			// check for updated version and update formatted versions
+			if (sAppVersionFull != oPendingInteraction.appVersion) {
+				sAppVersionFull = oPendingInteraction.appVersion;
+				sAppVersion = sAppVersionFull ? formatVersion(sAppVersionFull) : "";
+			}
+		}
+
+		// update Passport relevant fields
+		sPassportComponentInfo = oPendingInteraction ? oPendingInteraction.component + sAppVersion : undefined;
+		sPassportAction = oPendingInteraction ? oPendingInteraction.trigger + "_" + oPendingInteraction.event + "_" + iStepCounter : undefined;
+
+		// increase the step count for Passport and FESR
+		iStepCounter++;
+	}
+
 	/**
 	 * FESR API, consumed by E2eTraceLib instead of former EppLib.js.
 
@@ -208,22 +231,7 @@ sap.ui.define([
 			Passport.setActive(true);
 			Interaction.setActive(true);
 			registerXHROverride();
-			Interaction.onInteractionFinished = function(oFinishedInteraction, bForced) {
-				var oFESRHandle = FESR.onBeforeCreated({
-					stepName: oFinishedInteraction.trigger + "_" + oFinishedInteraction.event,
-					appNameLong: oFinishedInteraction.stepComponent || oFinishedInteraction.component,
-					appNameShort: oFinishedInteraction.stepComponent || oFinishedInteraction.component,
-					timeToInteractive: oFinishedInteraction.duration
-				}, oFinishedInteraction);
-
-				// only send FESR when requests have occured
-				if (oFinishedInteraction.requests.length > 0 || bForced) {
-					createHeader(oFinishedInteraction, oFESRHandle);
-				}
-
-				// increase the step count for Passport and FESR
-				iStepCounter++;
-			};
+			Interaction.onInteractionFinished = onInteractionFinished;
 		} else if (!bActive && bFesrActive) {
 			bFesrActive = false;
 			Interaction.setActive(false);
