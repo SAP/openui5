@@ -1,10 +1,16 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/f/cards/BaseContent", "sap/viz/ui5/controls/VizFrame", "sap/viz/ui5/controls/common/feeds/FeedItem",
-		"sap/viz/ui5/data/FlattenedDataset", "sap/base/Log"
+sap.ui.define([
+		"sap/f/cards/BaseContent",
+		"sap/viz/ui5/controls/VizFrame",
+		"sap/viz/ui5/controls/common/feeds/FeedItem",
+		"sap/viz/ui5/data/FlattenedDataset",
+		"sap/base/Log",
+		"sap/ui/core/Core",
+		"jquery.sap.global"
 	],
-	function (BaseContent, VizFrame, FeedItem, FlattenedDataset, Log) {
+	function (BaseContent, VizFrame, FeedItem, FlattenedDataset, Log, Core, jQuery) {
 		"use strict";
 
 		/**
@@ -235,6 +241,21 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/viz/ui5/controls/VizFrame", "sap/
 			if (this._handleHostConfiguration) {
 				//implementation is added with sap.ui.integration.host.HostConfiguration
 				this._handleHostConfiguration();
+			}
+		};
+
+		//add host configuration handler for analytical content
+		AnalyticalContent.prototype._handleHostConfiguration = function () {
+			var oParent = this.getParent(),
+				oContent = this.getAggregation("_content");
+			if (oParent && oParent.getHostConfigurationId && oContent) {
+				var oHostConfiguration = Core.byId(oParent.getHostConfigurationId());
+				if (oHostConfiguration) {
+					var oSettings = oHostConfiguration.generateJSONSettings("vizProperties"),
+						oVizProperties = oContent.getVizProperties();
+					oVizProperties = jQuery.extend(true, oVizProperties, oSettings);
+					oContent.setVizProperties(oVizProperties);
+				}
 			}
 		};
 
