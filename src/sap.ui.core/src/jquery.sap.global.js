@@ -1132,7 +1132,7 @@ sap.ui.define([
 	 * @public
 	 * @static
 	 * @deprecated since 1.58 use {@link module:sap/base/util/ObjectPath.get} or
-	 *  {@link module:sap/base/util/ObjectPath.get} instead
+	 *  {@link module:sap/base/util/ObjectPath.set} instead
 	 */
 	jQuery.sap.getObject = function(sName, iNoCreates, oContext) {
 		var oObject = oContext || window,
