@@ -170,8 +170,6 @@ sap.ui.define([
 				 *
 				 * <b>Note:</b> The order of the items is ignored. An item which is normally at the bottom, can appear on top.
 				 *
-				 * <b>Note:</b> Not supported in Internet Explorer 11 and Microsoft Edge 15 browsers.
-				 *
 				 * @experimental As of version 1.66
 				 */
 				allowDenseFill: {type: "boolean", group: "Appearance", defaultValue: false},
@@ -495,7 +493,8 @@ sap.ui.define([
 			unitOfMeasure: "px",
 			gapSize: gapSize,
 			topOffset: topOffset ? topOffset : 0,
-			leftOffset: leftOffset ? leftOffset : 0
+			leftOffset: leftOffset ? leftOffset : 0,
+			allowDenseFill: this.getAllowDenseFill()
 		});
 
 		var i,

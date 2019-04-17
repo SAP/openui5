@@ -47,6 +47,7 @@ sap.ui.define([
 		this.cellHeight = settings.cellHeight ? settings.cellHeight : 5;
 		this.unitOfMeasure = settings.unitOfMeasure ? settings.unitOfMeasure : "rem";
 		this.iGapSize = settings.gapSize ? settings.gapSize : 1;
+		this.bAllowDenseFill = settings.allowDenseFill ? settings.allowDenseFill : false;
 		this.items = {};
 
 		//This can be taken from parent element padding or configured
@@ -61,6 +62,8 @@ sap.ui.define([
 				this.virtualGridMatrix[row][col] = 0;
 			}
 		}
+
+		this.lastItemPosition = {top: -1, left: -1};
 	};
 
 	/**
@@ -131,10 +134,14 @@ sap.ui.define([
 	 * @param width
 	 * @param height
 	 * @param growVertically
+	 * @param secondTry Flag to prevent infinite recursion
 	 */
-	VirtualGrid.prototype.fitElement = function (id, width, height, growVertically) {
-		var palaceFound;
-		var that = this;
+	VirtualGrid.prototype.fitElement = function (id, width, height, growVertically, secondTry) {
+		var placeFound,
+			that = this,
+			widthToFit = Math.min(width, this.numberOfCols), // handles the case if item columns > total columns
+			lastTop = that.lastItemPosition.top,
+			lastLeft = that.lastItemPosition.left;
 
 		this.items[id] = {
 			rows: height,
@@ -155,34 +162,19 @@ sap.ui.define([
 			// here we have access to the rows 1, 2, 3
 			element.forEach(function (element2d, col, array2d) {
 				// now we have access to each individual box
-				if (that.virtualGridMatrix[row][col] === 0 && !palaceFound) {
+				var isOrderGood = that.bAllowDenseFill || row > lastTop || (row == lastTop && col > lastLeft);
+				if (isOrderGood && that.virtualGridMatrix[row][col] === 0 && !placeFound) {
 					//Optimize  this because its not efficient
-					if (that.shouldElementFit(row, col, width, height)) {
-						that.fillElement(row, col, width, height, id);
-						palaceFound = true;
+					if (that.shouldElementFit(row, col, widthToFit, height)) {
+						that.fillElement(row, col, widthToFit, height, id);
+						placeFound = true;
 					}
 				}
 			});
 		});
 
-		if (!palaceFound && growVertically) {
-			this.virtualGridMatrix.forEach(function (element, row) {
-				// here we have access to the rows 1, 2, 3
-				element.forEach(function (element2d, col) {
-					// now we have access to each individual box
-					if (that.virtualGridMatrix[row][col] === 0 && !palaceFound) {
-						//Optimize  this because its not efficient
-						if (that.shouldElementFit(row, col, that.numberOfCols, height)) {
-							that.fillElement(row, col, that.numberOfCols, height, id);
-							palaceFound = true;
-						}
-					}
-				});
-			});
-		}
-
-		if (!palaceFound) {
-			this.fitElement(id, width, height, true);
+		if (!placeFound && !secondTry) {
+			this.fitElement(id, width, height, true, true);
 		}
 	};
 
@@ -223,6 +215,8 @@ sap.ui.define([
 				this.virtualGridMatrix[i][j] = id;
 			}
 		}
+
+		this.lastItemPosition = {top: row, left: col};
 	};
 
 	return VirtualGrid;
