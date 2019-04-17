@@ -130,9 +130,20 @@ sap.ui.define([
 		undefined: mBaseSize.undefined + iRowHorizontalFrameSize
 	};
 
+	/**
+	 * The theme-based parameters. If no theme is applied, default values are used.
+	 *
+	 * @type {sap.ui.table.TableUtils.ThemeParameters}
+	 * @static
+	 * @typedef {Object} sap.ui.table.TableUtils.ThemeParameters
+	 * @property {string} navigationIcon - Name of the navigation icon.
+	 * @property {string} deleteIcon - Name of the delete icon.
+	 * @property {string} resetIcon - Name of the reset icon.
+	 */
 	var mThemeParameters = {
-		sapUiTableActionNavigationIcon: 'navigation-right-arrow',
-		sapUiTableActionDeleteIcon: 'sys-cancel'
+		navigationIcon: "navigation-right-arrow",
+		deleteIcon: "sys-cancel",
+		resetIcon: "undo"
 	};
 
 	/**
@@ -1527,9 +1538,9 @@ sap.ui.define([
 			mDefaultRowHeight.sapUiSizeCompact = mBaseSize.sapUiSizeCompact + iRowHorizontalFrameSize;
 			mDefaultRowHeight.sapUiSizeCondensed = mBaseSize.sapUiSizeCondensed + iRowHorizontalFrameSize;
 
-			mThemeParameters.sapUiTableActionNavigationIcon = ThemeParameters.get("_sap_ui_table_RowActionNavigationIcon");
-			mThemeParameters.sapUiTableActionDeleteIcon = ThemeParameters.get("_sap_ui_table_DeleteIcon");
-			mThemeParameters.sapUiTableActionResetIcon = ThemeParameters.get("_sap_ui_table_ResetIcon");
+			mThemeParameters.navigationIcon = ThemeParameters.get("_sap_ui_table_NavigationIcon");
+			mThemeParameters.deleteIcon = ThemeParameters.get("_sap_ui_table_DeleteIcon");
+			mThemeParameters.resetIcon = ThemeParameters.get("_sap_ui_table_ResetIcon");
 		},
 
 		selectElementText: function(oElement) {
