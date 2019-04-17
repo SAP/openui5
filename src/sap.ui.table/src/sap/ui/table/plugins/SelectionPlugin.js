@@ -2,10 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/base/ManagedObject',
+	'sap/ui/core/Element',
 	'../library'
 ], function(
-	ManagedObject,
+	Element,
 	library
 ) {
 
@@ -23,7 +23,7 @@ sap.ui.define([
 	 *
 	 * @abstract
 	 * @class Implements the selection methods for a table.
-	 * @extends sap.ui.base.ManagedObject
+	 * @extends sap.ui.core.Element
 	 * @author SAP SE
 	 * @version ${version}
 	 * @public
@@ -32,7 +32,7 @@ sap.ui.define([
 	 * @alias sap.ui.table.plugins.SelectionPlugin
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var SelectionPlugin = ManagedObject.extend("sap.ui.table.plugins.SelectionPlugin", {metadata: {
+	var SelectionPlugin = Element.extend("sap.ui.table.plugins.SelectionPlugin", {metadata: {
 		"abstract": true,
 		library: "sap.ui.table",
 		properties: {

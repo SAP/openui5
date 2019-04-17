@@ -50,6 +50,7 @@ sap.ui.define([
 		var oMultiSelectionPlugin = new MultiSelectionPlugin();
 		assert.strictEqual(oMultiSelectionPlugin.oSelectionPlugin, null, "The MultiSelectionPlugin has no internal default selection plugin");
 		assert.notEqual(oMultiSelectionPlugin.oDeselectAllIcon, null, "The MultiSelectionPlugin has an delete icon");
+		assert.ok(oMultiSelectionPlugin.isA("sap.ui.core.Element"));
 	});
 
 	QUnit.test("Add to and remove from table", function(assert) {
