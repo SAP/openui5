@@ -173,11 +173,14 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
-				changeNoteInFirstLineItem : function (sValue) {
+				changeNoteInLineItem : function (iRow, sValue) {
 					return this.waitFor({
 						actions : new EnterText({clearTextFirst : true, text : sValue}),
 						controlType : "sap.m.Input",
-						id : /.*SO_2_SOITEM:Note.*-0/,
+						id : /SO_2_SOITEM:Note/,
+						matchers : function (oControl) {
+							return oControl.getBindingContext().getIndex() === iRow;
+						},
 						success : function () {
 							Opa5.assert.ok(true, "SO Item Note of first row set to " + sValue);
 						},
@@ -200,11 +203,14 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
-				changeQuantityInFirstLineItem : function (sValue) {
+				changeQuantityInLineItem : function (iRow, sValue) {
 					return this.waitFor({
 						actions : new EnterText({clearTextFirst : true, text : sValue}),
 						controlType : "sap.m.Input",
-						id : /.*SO_2_SOITEM:Quantity.*-0/,
+						id : /SO_2_SOITEM:Quantity/,
+						matchers : function (oControl) {
+							return oControl.getBindingContext().getIndex() === iRow;
+						},
 						success : function () {
 							Opa5.assert.ok(true, "SO Item Quantity of first row set to " + sValue);
 						},

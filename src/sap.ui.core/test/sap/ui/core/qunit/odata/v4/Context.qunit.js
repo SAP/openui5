@@ -50,7 +50,7 @@ sap.ui.define([
 		assert.strictEqual(oContext.getModel(), oModel);
 		assert.strictEqual(oContext.getBinding(), oBinding);
 		assert.strictEqual(oContext.getPath(), sPath);
-		assert.strictEqual(oContext.getIndex(), 42);
+		assert.strictEqual(oContext.getModelIndex(), 42);
 		assert.strictEqual(oContext.created(), undefined);
 		assert.strictEqual(oContext.getReturnValueContextId(), undefined);
 
@@ -145,18 +145,40 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getIndex() adds number of created contexts", function (assert) {
+	QUnit.test("getModelIndex() adds number of created contexts", function (assert) {
 		var oBinding = {},
 			oContext;
 
 		oContext = Context.create(null/*oModel*/, oBinding, "/foo", 42);
 
-		assert.strictEqual(oContext.getIndex(), 42);
+		assert.strictEqual(oContext.getModelIndex(), 42);
 
 		// simulate ODataListBinding#create (7x)
 		oBinding.iCreatedContexts = 7;
 
-		assert.strictEqual(oContext.getIndex(), 49);
+		assert.strictEqual(oContext.getModelIndex(), 49);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getIndex()", function (assert) {
+		var oBinding = {},
+			oContext = Context.create(null/*oModel*/, oBinding, "/foo", 42),
+			iResult = {/*a number*/};
+
+		this.mock(oContext).expects("getModelIndex").returns(iResult);
+
+		// code under test
+		assert.strictEqual(oContext.getIndex(), iResult);
+
+		// simulate ODataListBinding#create (4x at the end)
+		oBinding.bCreatedAtEnd = true;
+		oBinding.iMaxLength = 6;
+
+		// code under test
+		assert.strictEqual(Context.create(null/*oModel*/, oBinding, "/foo", 0).getIndex(), 0);
+		assert.strictEqual(Context.create(null/*oModel*/, oBinding, "/foo", 5).getIndex(), 5);
+		assert.strictEqual(Context.create(null/*oModel*/, oBinding, "/foo", -1).getIndex(), 6);
+		assert.strictEqual(Context.create(null/*oModel*/, oBinding, "/foo", -4).getIndex(), 9);
 	});
 
 	//*********************************************************************************************
@@ -954,7 +976,7 @@ sap.ui.define([
 		}, function (oError0) {
 			assert.strictEqual(oError0, oError);
 			assert.strictEqual(oContext.getBinding(), oBinding);
-			assert.strictEqual(oContext.getIndex(), 42);
+			assert.strictEqual(oContext.getModelIndex(), 42);
 			assert.strictEqual(oContext.getModel(), oModel);
 			assert.strictEqual(oContext.getPath(), "/EMPLOYEES/42");
 		});

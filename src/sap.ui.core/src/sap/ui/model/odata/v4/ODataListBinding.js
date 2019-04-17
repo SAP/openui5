@@ -387,7 +387,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a new entity and inserts it at the beginning of the list.
+	 * Creates a new entity and inserts it at the start or the end of the list.
 	 *
 	 * For creating the new entity, the binding's update group ID is used, see binding parameter
 	 * $$updateGroupId of {@link sap.ui.model.odata.v4.ODataModel#bindList}.
@@ -418,21 +418,30 @@ sap.ui.define([
 	 * this list binding's $expand is available; to skip this refresh, set <code>bSkipRefresh</code>
 	 * to <code>true</code>.
 	 *
+	 * Note: The binding must have the parameter <code>$count : true</code> when creating an entity
+	 * at the end. Otherwise the collection length may be unknown and there is no clear position to
+	 * place this entity at.
+	 *
 	 * @param {object} [oInitialData={}]
 	 *   The initial data for the created entity
 	 * @param {boolean} [bSkipRefresh=false]
 	 *   Whether an automatic refresh of the created entity will be skipped
+	 * @param {boolean} [bAtEnd=false]
+	 *   Whether the entity is inserted at the end of the list. When creating multiple entities,
+	 *   this parameter must have the same value for each entity. Supported since 1.66.0
 	 * @returns {sap.ui.model.odata.v4.Context}
 	 *   The context object for the created entity; its method
 	 *   {@link sap.ui.model.odata.v4.Context#created} returns a promise that is resolved when the
 	 *   creation is finished
 	 * @throws {Error}
-	 *   If the binding's root binding is suspended or a relative binding is not yet resolved
+	 *   If the binding's root binding is suspended, if a relative binding is not yet resolved, if
+	 *   entities are created both at the start and at the end, or if <code>bAtEnd</code> is
+	 *   <code>true</code> and the binding does not use the parameter <code>$count=true</code>
 	 *
 	 * @public
 	 * @since 1.43.0
 	 */
-	ODataListBinding.prototype.create = function (oInitialData, bSkipRefresh) {
+	ODataListBinding.prototype.create = function (oInitialData, bSkipRefresh, bAtEnd) {
 		var oContext,
 			oCreatePromise,
 			oGroupLock,
@@ -444,6 +453,15 @@ sap.ui.define([
 		if (!sResolvedPath) {
 			throw new Error("Binding is not yet resolved: " + this);
 		}
+
+		bAtEnd = !!bAtEnd; // normalize to simplify comparisons
+		if (bAtEnd && !this.mQueryOptions.$count) {
+			throw new Error("Must set $count to create at the end");
+		}
+		if (this.bCreatedAtEnd !== undefined && this.bCreatedAtEnd !== bAtEnd) {
+			throw new Error("Creating entities at the start and at the end is not supported.");
+		}
+		this.bCreatedAtEnd = bAtEnd;
 
 		this.checkSuspended();
 
@@ -642,11 +660,14 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.destroyCreated = function (oContext) {
 		var i,
-			iIndex = oContext.getIndex();
+			iIndex = oContext.getModelIndex();
 
 		this.iCreatedContexts -= 1;
 		for (i = 0; i < iIndex; i += 1) {
 			this.aContexts[i].iIndex += 1;
+		}
+		if (!this.iCreatedContexts) {
+			this.bCreatedAtEnd = undefined;
 		}
 		this.aContexts.splice(iIndex, 1);
 		// No need to use mPreviousContextsByPath like in #_delete. Contexts for created elements
@@ -1006,6 +1027,7 @@ sap.ui.define([
 			bFireChange = false,
 			oGroupLock,
 			oPromise,
+			iReadStart,
 			bRefreshEvent = !!this.sChangeReason,
 			oVirtualContext,
 			that = this;
@@ -1062,11 +1084,18 @@ sap.ui.define([
 		oGroupLock = this.oReadGroupLock;
 		this.oReadGroupLock = undefined;
 		if (!this.bUseExtendedChangeDetection || !this.oDiff) {
+			iReadStart = iStart;
+			if (this.bCreatedAtEnd) {
+				// Note: We still have to read iLength rows in this case to get all entities from
+				// the server. The created entities then are placed behind using the calculated or
+				// estimated length.
+				iReadStart += this.iCreatedContexts;
+			}
 			oPromise = this.oCachePromise.then(function (oCache) {
 				if (oCache) {
 					// getContexts needs no lock, only the group ID (or re-use the refresh lock)
 					oGroupLock = that.lockGroup(that.getGroupId(), oGroupLock);
-					return oCache.read(iStart, iLength, iMaximumPrefetchSize, oGroupLock,
+					return oCache.read(iReadStart, iLength, iMaximumPrefetchSize, oGroupLock,
 						function () {
 							bDataRequested = true;
 							that.fireDataRequested();
@@ -1082,7 +1111,7 @@ sap.ui.define([
 						// parent binding
 						aResult = aResult || [];
 						iCount = aResult.$count;
-						aResult = aResult.slice(iStart, iStart + iLength);
+						aResult = aResult.slice(iReadStart, iReadStart + iLength);
 						aResult.$count = iCount;
 						return {
 							value : aResult
@@ -1099,11 +1128,10 @@ sap.ui.define([
 
 				// ensure that the result is still relevant
 				if (!that.bRelative || that.oContext === oContext) {
-					bChanged = that.createContexts(iStart, iLength, oResult.value);
+					bChanged = that.createContexts(iReadStart, iLength, oResult.value);
 					if (that.bUseExtendedChangeDetection) {
 						that.oDiff = {
-							// oResult.value[0] corresponds to iStart for E.C.D.
-							aDiff : that.getDiff(oResult.value, iStart),
+							aDiff : that.getDiff(iLength),
 							iLength : iLength
 						};
 					}
@@ -1139,7 +1167,7 @@ sap.ui.define([
 		}
 		this.iCurrentBegin = iStart;
 		this.iCurrentEnd = iStart + iLength;
-		aContexts = this.aContexts.slice(iStart, iStart + iLength);
+		aContexts = this.getContextsInViewOrder(iStart, iLength);
 		if (this.bUseExtendedChangeDetection) {
 			if (this.oDiff && iLength !== this.oDiff.iLength) {
 				throw new Error("Extended change detection protocol violation: Expected "
@@ -1150,6 +1178,35 @@ sap.ui.define([
 			aContexts.diff = this.oDiff ? this.oDiff.aDiff : [];
 		}
 		this.oDiff = undefined;
+		return aContexts;
+	};
+
+	/**
+	 * Returns the requested range of contexts in view order.
+	 *
+	 * @param {number} iStart
+	 *   The index where to start the retrieval of contexts
+	 * @param {number} iLength
+	 *   The number of contexts to retrieve beginning from the start index
+	 * @returns {sap.ui.model.odata.v4.Context[]}
+	 *   The array of already created contexts with the first entry containing the context for
+	 *   <code>iStart</code>
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.getContextsInViewOrder = function (iStart, iLength) {
+		var aContexts, i, iCount;
+
+		if (this.bCreatedAtEnd) {
+			aContexts = [];
+			iCount = Math.min(iLength, this.getLength() - iStart);
+			for (i = 0; i < iCount; i += 1) {
+				aContexts[i] = this.aContexts[this.getModelIndex(iStart + i)];
+			}
+		} else {
+			aContexts = this.aContexts.slice(iStart, iStart + iLength);
+		}
+
 		return aContexts;
 	};
 
@@ -1168,9 +1225,11 @@ sap.ui.define([
 	 */
 	// @override
 	ODataListBinding.prototype.getCurrentContexts = function () {
-		var iLength = Math.min(this.iCurrentEnd, this.iMaxLength + this.iCreatedContexts)
-				- this.iCurrentBegin,
-			aContexts = this.aContexts.slice(this.iCurrentBegin, this.iCurrentBegin + iLength);
+		var aContexts,
+			iLength = Math.min(this.iCurrentEnd, this.iMaxLength + this.iCreatedContexts)
+				- this.iCurrentBegin;
+
+		aContexts = this.getContextsInViewOrder(this.iCurrentBegin, iLength);
 
 		while (aContexts.length < iLength) {
 			aContexts.push(undefined);
@@ -1194,10 +1253,8 @@ sap.ui.define([
 	/**
 	 * Computes the "diff" needed for extended change detection.
 	 *
-	 * @param {object[]} aResult
-	 *   The array of OData entities read in the last request
-	 * @param {number} iStart
-	 *   The start index of the range for which the OData entities have been read
+	 * @param {number} iLength
+	 *   The length of the range requested in getContexts
 	 * @returns {object}
 	 *   The array of differences which is
 	 *   <ul>
@@ -1209,18 +1266,20 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.getDiff = function (aResult, iStart) {
+	ODataListBinding.prototype.getDiff = function (iLength) {
 		var aDiff,
 			aNewData,
 			that = this;
 
-		aNewData = aResult.map(function (oEntity, i) {
+		aNewData = this.getContextsInViewOrder(0, iLength).map(function (oContext) {
 			return that.bDetectUpdates
-				? JSON.stringify(oEntity)
-				: that.aContexts[iStart + i].getPath();
+				? JSON.stringify(oContext.getValue())
+				: oContext.getPath();
 		});
+
 		aDiff = jQuery.sap.arraySymbolDiff(this.aPreviousData, aNewData);
 		this.aPreviousData = aNewData;
+
 		return aDiff;
 	};
 
@@ -1317,6 +1376,24 @@ sap.ui.define([
 	ODataListBinding.prototype.getHeaderContext = function () {
 		// Since we never throw the header context away, we may deliver it only when valid
 		return (this.bRelative && !this.oContext) ? null : this.oHeaderContext;
+	};
+
+	/**
+	 * Converts the view index of a context to the model index in case there are contexts created at
+	 * the end.
+	 *
+	 * @param {number} iViewIndex The view index
+	 * @returns {number} The model index
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.getModelIndex = function (iViewIndex) {
+		if (!this.bCreatedAtEnd) {
+			return iViewIndex;
+		}
+		return iViewIndex < this.getLength() - this.iCreatedContexts
+			? iViewIndex + this.iCreatedContexts
+			: this.getLength() - iViewIndex - 1;
 	};
 
 	/**
@@ -1502,7 +1579,7 @@ sap.ui.define([
 				if (oContext.created()) {
 					that.destroyCreated(oContext);
 				} else {
-					iIndex = oContext.getIndex();
+					iIndex = oContext.getModelIndex();
 					that.aContexts.splice(iIndex, 1);
 					for (i = iIndex; i < that.aContexts.length; i += 1) {
 						if (that.aContexts[i]) {
@@ -1518,9 +1595,9 @@ sap.ui.define([
 			oGroupLock.setGroupId(that.getGroupId());
 			aPromises.push(
 				(bAllowRemoval
-					? oCache.refreshSingleWithRemove(oGroupLock, oContext.getIndex(),
+					? oCache.refreshSingleWithRemove(oGroupLock, oContext.getModelIndex(),
 						fireDataRequested, onRemove)
-					: oCache.refreshSingle(oGroupLock, oContext.getIndex(), fireDataRequested))
+					: oCache.refreshSingle(oGroupLock, oContext.getModelIndex(), fireDataRequested))
 				.then(function (oEntity) {
 					var aUpdatePromises = [];
 
@@ -1622,14 +1699,17 @@ sap.ui.define([
 		if (this.aContexts) {
 			this.aContexts.forEach(function (oContext) {
 				if (oContext.created()) {
-					oContext.destroy();
-				} else {
-					that.mPreviousContextsByPath[oContext.getPath()] = oContext;
+					oContext.oCreatePromise = undefined;
+					oContext.oSyncCreatePromise = undefined;
 				}
+				that.mPreviousContextsByPath[oContext.getPath()] = oContext;
 			});
 		}
 		this.aContexts = [];
 		this.iCreatedContexts = 0; // number of (client-side) created contexts in aContexts
+		// true if contexts have been created at the end, false if contexts have been created at the
+		// start, undefined if there are no created contexts
+		this.bCreatedAtEnd = undefined;
 		// the range of array indices for getCurrentContexts
 		this.iCurrentBegin = this.iCurrentEnd = 0;
 		// upper boundary for server-side list length (based on observations so far)

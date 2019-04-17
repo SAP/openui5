@@ -318,6 +318,7 @@
 									}
 								}
 							},
+							$orderby : 'ItemPosition',
 							$select : 'Messages',
 							$$updateGroupId : 'SalesOrderUpdateGroup'
 						},

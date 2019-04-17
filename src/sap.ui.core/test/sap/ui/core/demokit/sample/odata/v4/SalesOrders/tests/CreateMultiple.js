@@ -98,10 +98,10 @@ sap.ui.define([
 			When.onTheMainPage.pressCreateSalesOrderItemButton();
 			Then.onTheMainPage.checkSalesOrdersSelectionMode("None");
 			Then.onTheMainPage.checkSalesOrderLineItemNote(0, "");
-			When.onTheMainPage.changeNoteInFirstLineItem("new 10");
+			When.onTheMainPage.changeNoteInLineItem(0, "new 10");
 			When.onTheMainPage.pressCreateSalesOrderItemButton();
-			Then.onTheMainPage.checkSalesOrderLineItemNote(1, "new 10");
-			When.onTheMainPage.changeNoteInFirstLineItem("new 20");
+			Then.onTheMainPage.checkSalesOrderLineItemNote(0, "new 10");
+			When.onTheMainPage.changeNoteInLineItem(1, "new 20");
 			When.onTheMainPage.pressSaveSalesOrderButton();
 			When.onTheSuccessInfo.confirm();
 			When.onTheSuccessInfo.confirm();

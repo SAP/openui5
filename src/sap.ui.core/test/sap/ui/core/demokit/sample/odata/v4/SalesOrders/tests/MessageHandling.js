@@ -144,9 +144,9 @@ sap.ui.define([
 
 			// POST scenario
 			When.onTheMainPage.pressCreateSalesOrderItemButton();
-			When.onTheMainPage.changeQuantityInFirstLineItem("0");
+			When.onTheMainPage.changeQuantityInLineItem(6, "0");
 			When.onTheMainPage.pressSaveSalesOrderButton();
-			Then.onTheMainPage.checkSalesOrderLineItemQuantityValueState(0, "Error",
+			Then.onTheMainPage.checkSalesOrderLineItemQuantityValueState(6, "Error",
 				sQuantityError);
 			Then.onTheMainPage.checkMessages([{
 					message : sTransientMessage,
@@ -156,7 +156,7 @@ sap.ui.define([
 					type : MessageType.Error
 			}]);
 			When.onTheMainPage.pressMessagePopoverCloseButton();
-			When.onTheMainPage.changeQuantityInFirstLineItem("2.0");
+			When.onTheMainPage.changeQuantityInLineItem(6, "2.0");
 			When.onTheMainPage.pressSaveSalesOrderButton();
 			When.onTheSuccessInfo.confirm();
 			Then.onTheMainPage.checkMessageCount(1);
