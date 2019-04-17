@@ -2,41 +2,43 @@
  * ${copyright}
  */
 sap.ui.define([
-	'./library',
-	'sap/ui/core/Control',
-	'sap/ui/Device',
-	'sap/ui/core/delegate/ItemNavigation',
-	'sap/ui/core/library',
-	'sap/ui/core/IntervalTrigger',
-	'sap/ui/base/ManagedObject',
-	'sap/ui/core/Icon',
-	'./HeaderContainerRenderer',
-	"sap/base/Log",
-	"sap/ui/events/PseudoEvents",
-	"sap/ui/thirdparty/jquery",
-	// jQuery Plugin "control"
-	"sap/ui/dom/jquery/control",
-	// jQuery Plugin "scrollLeftRTL"
-	"sap/ui/dom/jquery/scrollLeftRTL",
-	// jQuery Plugin "scrollRightRTL"
-	"sap/ui/dom/jquery/scrollRightRTL",
-	// jQuery custom selectors ":sapTabbable"
-	"sap/ui/dom/jquery/Selectors"
-],
-function(
-	library,
-	Control,
-	Device,
-	ItemNavigation,
-	coreLibrary,
-	IntervalTrigger,
-	ManagedObject,
-	Icon,
-	HeaderContainerRenderer,
-	Log,
-	PseudoEvents,
-	jQuery
-) {
+		'./library',
+		'sap/ui/core/Core',
+		'sap/ui/core/Control',
+		'sap/ui/Device',
+		'sap/ui/core/delegate/ItemNavigation',
+		'sap/ui/core/library',
+		'sap/ui/core/IntervalTrigger',
+		'sap/ui/base/ManagedObject',
+		'sap/ui/core/Icon',
+		'./HeaderContainerRenderer',
+		"sap/base/Log",
+		"sap/ui/events/PseudoEvents",
+		"sap/ui/thirdparty/jquery",
+		// jQuery Plugin "control"
+		"sap/ui/dom/jquery/control",
+		// jQuery Plugin "scrollLeftRTL"
+		"sap/ui/dom/jquery/scrollLeftRTL",
+		// jQuery Plugin "scrollRightRTL"
+		"sap/ui/dom/jquery/scrollRightRTL",
+		// jQuery custom selectors ":sapTabbable"
+		"sap/ui/dom/jquery/Selectors"
+	],
+	function (
+		library,
+		Core,
+		Control,
+		Device,
+		ItemNavigation,
+		coreLibrary,
+		IntervalTrigger,
+		ManagedObject,
+		Icon,
+		HeaderContainerRenderer,
+		Log,
+		PseudoEvents,
+		jQuery
+	) {
 		"use strict";
 
 		// shortcut for sap.ui.core.Orientation
@@ -316,6 +318,8 @@ function(
 						this._oItemNavigation.setItemDomRefs(aDomRefs);
 						this._oItemNavigation.setTabIndex0();
 						this._oItemNavigation.setCycling(false);
+
+						this._handleMobileScrolling();
 					}
 				}.bind(this)
 			});
@@ -362,7 +366,7 @@ function(
 				oToCell = this._getParentCell(oNext);
 			}
 
-          if ( ( oFromCell && oToCell && oFromCell.id !== oToCell.id ) || ( oNext && oNext.id === this.getId() + "-after" ) || ( oNext && oNext.id === this.getId() + "-scrl-prev-button" ) || ( oNext && oNext.id === this.getId() + "-scrl-next-button" ) ) { // attempt to jump out of HeaderContainer
+			if ((oFromCell && oToCell && oFromCell.id !== oToCell.id) || (oNext && oNext.id === this.getId() + "-after") || (oNext && oNext.id === this.getId() + "-scrl-prev-button") || (oNext && oNext.id === this.getId() + "-scrl-next-button")) { // attempt to jump out of HeaderContainer
 				var oLastInnerTab = oFocusables.last().get(0);
 				if (oLastInnerTab) {
 					this._bIgnoreFocusIn = true;
@@ -654,8 +658,8 @@ function(
 			}
 		};
 
-		HeaderContainer.prototype._filterVisibleItems = function() {
-			return this.getContent().filter(function(oItem) {
+		HeaderContainer.prototype._filterVisibleItems = function () {
+			return this.getContent().filter(function (oItem) {
 				return oItem.getVisible();
 			});
 		};
@@ -718,6 +722,38 @@ function(
 					$ButtonContainer.show();
 					this.$().addClass("sapMHrdrBottomPadding");
 				}
+			}
+		};
+
+
+		HeaderContainer.prototype._handleMobileScrolling = function () {
+			if (Core.isMobile()) {
+				var $scroll = this.$("scrl-cntnr-scroll"),
+					bIsHorizontal = this.getOrientation() === Orientation.Horizontal,
+					sProperty = bIsHorizontal ? "clientX" : "clientY",
+					iPos = 0,
+					that = this,
+					bScrolling = false;
+
+				$scroll.on("touchstart", function (oEvent) {
+					bScrolling = true;
+					iPos = oEvent.targetTouches[0][sProperty];
+				});
+
+				$scroll.on("touchmove", function (oEvent) {
+					if (bScrolling) {
+						var fCurrent = oEvent.targetTouches[0][sProperty],
+							iDelta = iPos - fCurrent,
+							oScroller = that._oScrollCntr.getDomRef();
+
+						bIsHorizontal ? oScroller.scrollLeft += iDelta : oScroller.scrollTop += iDelta;
+						iPos = fCurrent;
+					}
+				});
+
+				$scroll.on("touchend", function () {
+					bScrolling = false;
+				});
 			}
 		};
 
