@@ -149,4 +149,68 @@
 		assert.deepEqual(this.oElementDesignTimeMetadata.getAggregations(), {}, "then an empty object is returned");
 	});
 
+	QUnit.test("when 'getScrollContainers' is called without scrollContainers defined in the metadata", function(assert) {
+		assert.ok(Array.isArray(this.oElementDesignTimeMetadata.getScrollContainers()), "an array is returned");
+		assert.equal(this.oElementDesignTimeMetadata.getScrollContainers().length, 0, "the array is empty");
+	});
+
+	QUnit.module("Given that an ElementDesignTimeMetadata with scrollContainers with an array for aggregations is created for a control", {
+		beforeEach : function() {
+			this.oScrollContainer = {
+				domRef: "foo",
+				aggregations: ["a", "b"]
+			};
+			this.oElementDesignTimeMetadata = new sap.ui.dt.ElementDesignTimeMetadata({
+				data : {
+					scrollContainers: [
+						this.oScrollContainer
+					]
+				}
+			});
+		},
+		afterEach : function() {
+			this.oElementDesignTimeMetadata.destroy();
+		}
+	});
+
+	QUnit.test("when 'getScrollContainers' is called", function(assert) {
+		var aScrollContainers = this.oElementDesignTimeMetadata.getScrollContainers();
+		assert.equal(aScrollContainers.length, 1, "there is one scrollContainer");
+		assert.deepEqual(this.oScrollContainer, aScrollContainers[0], "the scrollContainer is correctly returned");
+	});
+
+	QUnit.module("Given that an ElementDesignTimeMetadata with scrollContainers with a function for aggregations is created for a control", {
+		beforeEach : function() {
+			this.oElementDesignTimeMetadata = new sap.ui.dt.ElementDesignTimeMetadata({
+				data : {
+					scrollContainers: [
+						{
+							domRef: "foo",
+							aggregations: function(oElement) {
+								return oElement.getScroll();
+							}
+						}
+					]
+				}
+			});
+		},
+		afterEach : function() {
+			this.oElementDesignTimeMetadata.destroy();
+		}
+	});
+
+	QUnit.test("when 'getScrollContainers' is called", function(assert) {
+		var oElement = {
+			getScroll: function() {
+				return ["a"];
+			}
+		};
+		var oExpectedScrollContainer = {
+			domRef: "foo",
+			aggregations: ["a"]
+		};
+		var aScrollContainers = this.oElementDesignTimeMetadata.getScrollContainers(oElement);
+		assert.equal(aScrollContainers.length, 1, "there is one scrollContainer");
+		assert.deepEqual(oExpectedScrollContainer, aScrollContainers[0], "the scrollContainer is correctly returned");
+	});
 })();

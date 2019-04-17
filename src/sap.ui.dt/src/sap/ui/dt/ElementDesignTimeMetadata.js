@@ -214,8 +214,16 @@ function(jQuery, DesignTimeMetadata, AggregationDesignTimeMetadata) {
 	 * @return {array} scrollContainers or empty array
 	 * @public
 	 */
-	ElementDesignTimeMetadata.prototype.getScrollContainers = function() {
-		return this.getData().scrollContainers || [];
+	ElementDesignTimeMetadata.prototype.getScrollContainers = function(oElement) {
+		var aScrollContainers = this.getData().scrollContainers || [];
+
+		aScrollContainers.forEach(function(oScrollContainer) {
+			if (typeof oScrollContainer.aggregations === "function") {
+				oScrollContainer.aggregations = oScrollContainer.aggregations.call(null, oElement);
+			}
+		});
+
+		return aScrollContainers;
 	};
 
 	return ElementDesignTimeMetadata;
