@@ -1,0 +1,28 @@
+{
+	"sap.app": {
+		"id": "routing.scenario1.nested"
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "routing.scenario1.nested.RootView",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"routing": {
+			"config": {
+				"async": true
+			},
+			"routes": [
+				{
+					"pattern": "product/{id}",
+					"name": "product"
+				},
+				{
+					"pattern": "",
+					"name": "nestedHome"
+				}
+			]
+		}
+	}
+}

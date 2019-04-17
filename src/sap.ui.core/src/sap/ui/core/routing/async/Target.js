@@ -69,7 +69,7 @@ sap.ui.define([
 				that = this,
 				oObject, sName, oCreateOptions, sErrorMessage, pLoaded;
 
-			if (oOptions.name && oOptions.type) {
+			if ((oOptions.name || oOptions.usage) && oOptions.type) {
 				// when view information is given
 				sName = this._getEffectiveObjectName(oOptions.name);
 				switch (oOptions.type) {
@@ -82,10 +82,15 @@ sap.ui.define([
 						};
 						break;
 					case "Component":
-						oCreateOptions = Object.assign({}, oOptions.options || {}, {
-							name: sName,
-							id: oOptions.id
-						});
+						oCreateOptions = { id: oOptions.id };
+
+						if (oOptions.usage) {
+							oCreateOptions.usage = oOptions.usage;
+						} else {
+							oCreateOptions.name = sName;
+						}
+
+						oCreateOptions = Object.assign({}, oOptions.options || {}, oCreateOptions);
 						break;
 					default:
 						throw new Error("The given type " + oOptions.type + " isn't support by sap.ui.core.routing.Target");

@@ -16,8 +16,10 @@ sap.ui.define([
 	"sap/m/SplitContainer",
 	"./AsyncViewModuleHook",
 	"sap/ui/base/EventProvider",
-	"sap/ui/Device"
-], function(Log, UIComponent, Controller, JSView, View, HashChanger, Router, Views, JSONModel, App, Button, NavContainer, Panel, SplitContainer, ModuleHook, EventProvider, Device) {
+	"sap/ui/Device",
+	"sap/ui/core/Component",
+	"sap/ui/core/ComponentContainer"
+], function(Log, UIComponent, Controller, JSView, View, HashChanger, Router, Views, JSONModel, App, Button, NavContainer, Panel, SplitContainer, ModuleHook, EventProvider, Device, Component, ComponentContainer) {
 	"use strict";
 
 	// This global namespace is used for creating custom component classes.
@@ -3259,5 +3261,71 @@ sap.ui.define([
 			oRouter.navTo("home");
 			return oPromise;
 		});
+	});
+
+
+	QUnit.module("Loading nested components through routing's targets with componentUsage settings", {
+		beforeEach: function() {
+			sap.ui.loader.config({
+				paths: {
+					"routing": "../testdata/routing"
+				}
+			});
+		},
+		afterEach: function() {
+			sap.ui.loader.config({
+				paths: {
+					"routing": null
+				}
+			});
+		}
+	});
+
+	// scenario1
+	QUnit.test("Nested component is loaded when the corresponding route is matched", function(assert) {
+		var pCreated = Component.create({
+			name: "routing.scenario1"
+		});
+
+
+		return pCreated.then(function(oComponent) {
+			assert.ok(oComponent, "Component instance is successfully created");
+
+			var oRouter = oComponent.getRouter();
+
+			assert.ok(oRouter, "Router in component is available");
+
+			var oHomeRoute = oRouter.getRoute("home");
+			var oRouteMatchedSpy = this.spy(oHomeRoute, "_routeMatched");
+			var oCreateComponentSpy = this.spy(oComponent, "createComponent");
+
+			oRouter.initialize();
+			assert.equal(oRouteMatchedSpy.callCount, 1, "Home route should be matched");
+
+			var oCall = oRouteMatchedSpy.getCall(0);
+			return oCall.returnValue.then(function() {
+				assert.equal(oCreateComponentSpy.callCount, 1, "createComponent is called once");
+
+				var oArg = oCreateComponentSpy.getCall(0).args[0];
+				assert.equal(oArg.usage, "child", "usage is given");
+				assert.equal(oArg.id, oComponent.createId("childComponent"), "id option is given");
+				assert.ok(oArg.settings._manifestModels, "settings is given");
+				assert.ok(oArg.settings._routerHashChanger, "RouterHashChanger is given");
+				assert.deepEqual(oArg.componentData, { foo: "bar" }, "componentData is given");
+
+				var oRootView = oComponent.getRootControl();
+				var aContent = oRootView.byId("page").getContent();
+				assert.equal(aContent.length, 1, "The target is created and added to the aggregation");
+				assert.ok(aContent[0] instanceof ComponentContainer, "The nested component is added to the aggregation");
+
+				var oNestedComponent = aContent[0].getComponentInstance();
+				var oNestedRouter = oNestedComponent.getRouter();
+				assert.ok(oNestedRouter, "Router is created in nested component");
+				assert.equal(oNestedRouter.isInitialized(), false, "The nested router isn't initialized yet");
+
+				assert.equal(oNestedRouter.getHashChanger().parent, oRouter.getHashChanger(), "The hash changer is chained with the parent router's");
+			});
+
+		}.bind(this));
 	});
 });

@@ -1,0 +1,61 @@
+{
+	"sap.app": {
+		"id": "routing.scenario1"
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "routing.scenario1.RootView",
+			"type": "XML",
+			"async": true
+		},
+		"componentUsages": {
+			"child": {
+				"name": "routing.scenario1.nested",
+				"settings": {
+				},
+				"componentData": {
+				},
+				"lazy": true
+			}
+		},
+		"routing": {
+			"config": {
+				"async": true
+			},
+			"routes": [
+				{
+					"pattern": "",
+					"name": "home",
+					"target": {
+						"name": "home",
+						"prefix": "child"
+					}
+				},
+				{
+					"pattern": "category",
+					"name": "category"
+				}
+			],
+			"targets": {
+				"home": {
+					"id": "childComponent",
+					"type": "Component",
+					"usage": "child",
+					"controlId": "page",
+					"controlAggregation": "content",
+					"options": {
+						"settings": {
+							"_manifestModels": {
+								"model1": {
+								}
+							}
+						},
+						"componentData": {
+							"foo": "bar"
+						}
+					}
+				}
+			}
+		}
+	}
+}
