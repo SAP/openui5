@@ -1,6 +1,6 @@
 <mvc:View
 	height="100%"
-	xmlns:l="sap.ui.layout"
+	controllerName="sap.m.sample.WizardCurrentStep.Linear"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:core="sap.ui.core"
 	xmlns:u="sap.ui.unified"
@@ -12,7 +12,7 @@
 		currentStep="PricingStep">
 		<WizardStep id="ProductTypeStep"
 					title="Product Type"
-					validated="false">
+					activate="onActivate">
 			<MessageStrip class="sapUiSmallMarginBottom"
 					text="The Wizard control is supposed to break down large tasks, into smaller steps, easier for the user to work with."
 					showIcon="true"/>
@@ -31,8 +31,8 @@
 			</HBox>
 		</WizardStep>
 		<WizardStep id="ProductInfoStep"
-					validated="false"
-					title="Product Information">
+					title="Product Information"
+					activate="onActivate">
 			<MessageStrip class="sapUiSmallMarginBottom"
 					text="Validation in the wizard is controlled by calling the validateStep(Step) and invalidateStep(Step) methods "
 					showIcon="true"/>
@@ -41,10 +41,12 @@
 				<Label text="Name" required="true"/>
 				<Input valueStateText="Enter 6 symbols or more"
 						valueState="{/productNameState}" id="ProductName"
+						change="validateProdInfoStep"
 						placeholder="Enter name with length greater than 6" value="{/productName}"/>
 				<Label text="Weight" required="true"/>
 				<Input valueStateText="Enter digits"
 						valueState="{/productWeightState}" id="ProductWeight"
+						change="validateProdInfoStep"
 						type="Number" placeholder="Enter digits"
 						value="{/productWeight}"/>
 				<Label text="Manufacturer"/>
@@ -61,9 +63,9 @@
 			</form:SimpleForm>
 		</WizardStep>
 		<WizardStep id="OptionalInfoStep"
-					validated="false"
 					optional="true"
-					title="Additional Information">
+					title="Additional Information"
+					activate="onActivate">
 			<MessageStrip class="sapUiSmallMarginBottom"
 					text="You can validate steps by default with the validated='true' property of the step. The next button is always enabled."
 					showIcon="true"/>
@@ -97,8 +99,8 @@
 			</form:SimpleForm>
 		</WizardStep>
 		<WizardStep id="PricingStep"
-					validated="false"
-					title="Pricing">
+					title="Pricing"
+					activate="onActivate">
 			<MessageStrip class="sapUiSmallMarginBottom"
 					text="You can use the wizard previousStep() and nextStep() methods to navigate from step to step without validation. Also you can use the GoToStep(step) method to scroll programmatically to previously visited steps."
 					showIcon="true"/>

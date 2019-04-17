@@ -1,10 +1,6 @@
 <mvc:View
 	height="100%"
 	controllerName="sap.m.sample.WizardCurrentStep.Branching"
-	xmlns:l="sap.ui.layout"
-	xmlns:form="sap.ui.layout.form"
-	xmlns:core="sap.ui.core"
-	xmlns:u="sap.ui.unified"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<Wizard
@@ -21,13 +17,13 @@
 			</RadioButtonGroup>
 
 		</WizardStep>
-		<WizardStep validated="false" id="B1" title="B1" nextStep="C"></WizardStep>
-		<WizardStep validated="false" id="B2" title="B2" nextStep="C"></WizardStep>
-		<WizardStep validated="false" id="C" title="C" nextStep="D"></WizardStep>
-		<WizardStep validated="false" id="D" title="D" nextStep="E"></WizardStep>
-		<WizardStep validated="false" id="E" title="E" subsequentSteps="F1, F2"></WizardStep>
-		<WizardStep validated="false" id="F1" title="F1" nextStep="G"></WizardStep>
-		<WizardStep validated="false" id="F2" title="F2" nextStep="G"></WizardStep>
-		<WizardStep validated="false" id="G" title="G"></WizardStep>
+		<WizardStep validated="false" id="B1" title="B1" nextStep="C" />
+		<WizardStep validated="false" id="B2" title="B2" nextStep="C" />
+		<WizardStep validated="false" id="C" title="C" nextStep="D" />
+		<WizardStep validated="false" id="D" title="D" nextStep="E" />
+		<WizardStep validated="false" id="E" title="E" subsequentSteps="F1, F2" />
+		<WizardStep validated="false" id="F1" title="F1" nextStep="G" />
+		<WizardStep validated="false" id="F2" title="F2" nextStep="G" />
+		<WizardStep validated="false" id="G" title="G" />
 	</Wizard>
 </mvc:View>
