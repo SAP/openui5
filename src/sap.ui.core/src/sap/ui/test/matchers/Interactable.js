@@ -5,10 +5,15 @@
 sap.ui.define([
 	'sap/ui/test/matchers/Matcher',
 	'sap/ui/test/matchers/Visible',
+	'sap/ui/test/matchers/_Busy',
+	'sap/ui/test/matchers/_Visitor',
 	"sap/ui/thirdparty/jquery"
-], function(Matcher, Visible, jQueryDOM) {
+], function(Matcher, Visible, _Busy, _Visitor, jQueryDOM) {
 	"use strict";
+
 	var oVisibleMatcher = new Visible();
+	var oBusyMatcher = new _Busy();
+	var oVisitor = new _Visitor();
 
 	/**
 	 * @class
@@ -48,37 +53,18 @@ sap.ui.define([
 				return false;
 			}
 
-			// control and its ancestors (including indirect ones) must be enabled and not busy
-			if (oControl.getBusy && oControl.getBusy()) {
-				this._oLogger.debug("Control '" + oControl + "' is busy");
+			// control and ancestors should not be busy
+			if (oBusyMatcher.isMatching(oControl)) {
 				return false;
 			}
 
-			if (oControl.getEnabled && !oControl.getEnabled()) {
-				this._oLogger.debug("Control '" + oControl + "' is not enabled");
+			var bInAreaForRerendering = oVisitor.isMatching(oControl, function (oControl) {
+				return oControl.getMetadata().getName() === "sap.ui.core.UIArea"  && oControl.bNeedsRerendering;
+			});
+
+			if (bInAreaForRerendering) {
+				this._oLogger.debug("Control '" + oControl + "' is currently in a UIArea that needs a new rendering");
 				return false;
-			}
-
-			var oParent = oControl.getParent();
-
-			while (oParent) {
-				if (oParent.getBusy && oParent.getBusy()) {
-					this._oLogger.debug("Control '" + oControl + "' has a parent '" + oParent + "' that is busy");
-					return false;
-				}
-
-				if (oParent.getEnabled && !oParent.getEnabled()) {
-					this._oLogger.debug("Control '" + oControl + "' has a parent '" + oParent + "' that is not enabled");
-					return false;
-				}
-
-				var bParentIsUIArea = oParent.getMetadata().getName() === "sap.ui.core.UIArea";
-				if (bParentIsUIArea  && oParent.bNeedsRerendering) {
-					this._oLogger.debug("Control '" + oControl + "' is currently in a UIArea that needs a new rendering");
-					return false;
-				}
-
-				oParent = oParent.getParent();
 			}
 
 			var bControlIsInStaticArea = oControl.$().closest("#sap-ui-static").length;
@@ -88,6 +74,7 @@ sap.ui.define([
 				return false;
 			}
 
+			// control is interactable
 			return true;
 		}
 	});

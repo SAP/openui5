@@ -104,6 +104,27 @@ sap.ui.require([
 		Then.iTeardownMyAppFrame();
 	});
 
+	opaTest("Should find a disabled Button", function (Given, When, Then) {
+		Given.iStartMyAppInAFrame("applicationUnderTest/index.html");
+
+		When.waitFor({
+			controlType: "sap.m.Button",
+			// Search for both enabled and disabled controls.
+			// Note that `autoWait` is still `true`, and by default `autoWait` limits the search to enabled controls.
+			// "enabled: false" has priority over "autoWait: true"
+			enabled: false,
+			matchers: new Properties({
+				text: "You can't click me"
+			}),
+			success: function (aButtons) {
+				Opa5.assert.ok(true, "Found the disabled button: " + aButtons[0]);
+			},
+			errorMessage: "Did not find the disabled button"
+		});
+
+		Then.iTeardownMyAppFrame();
+	});
+
 	QUnit.start();
 });
 

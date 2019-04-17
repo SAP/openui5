@@ -1,4 +1,5 @@
 <mvc:View controllerName="appUnderTest.controller.Main"
+	xmlns:l="sap.ui.layout"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
 	<Page id="myPage">
@@ -6,7 +7,21 @@
 			<Button id="changingButton" text="My text will change after 5 seconds" class="mySuperButton"/>
 		</headerContent>
 		<content>
-			<Button text="Button in a Page" id="buttonInAPage"></Button>
+			<l:HorizontalLayout
+				class="sapUiContentPadding"
+				width="100%">
+				<l:content>
+					<Button
+						text="Button in a Page"
+						id="buttonInAPage">
+					</Button>
+					<Button
+						text="You can't click me"
+						id="disabledButton"
+						enabled="false">
+					</Button>
+				</l:content>
+			</l:HorizontalLayout>
 		</content>
 		<footer>
 			<Toolbar>

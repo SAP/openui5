@@ -266,6 +266,26 @@ sap.ui.define([
 			},
 			module: "./matchers/Visible.qunit"
 		},
+		"matchers/_Visitor": {
+			title: "QUnit Page for sap.ui.test.matchers._Visitor",
+			module: "./matchers/_Visitor.qunit"
+		},
+		"matchers/_Busy": {
+			title: "QUnit Page for sap.ui.test.matchers._Busy",
+			sinon: {
+				version: 1,
+				qunitBridge: true
+			},
+			module: "./matchers/_Busy.qunit"
+		},
+		"matchers/_Enabled": {
+			title: "QUnit Page for sap.ui.test.matchers._Enabled",
+			sinon: {
+				version: 1,
+				qunitBridge: true
+			},
+			module: "./matchers/_Enabled.qunit"
+		},
 		"Opa": {
 			title: "QUnit Page for sap.ui.test.Opa",
 			qunit: {
