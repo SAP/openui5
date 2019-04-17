@@ -39,7 +39,9 @@ sap.ui.define([
 	QUnit.test("OverlayContainer exists", function (assert) {
 		var oDomRef = oOverlayContainer.getDomRef();
 		assert.ok(oDomRef, "Rendered OverlayContainer should exist in the page");
-		assert.equal(oDomRef.className, "sapUiUx3OC sapUiUx3Overlay", "Rendered OverlayContainer should have the classes 'sapUiUx3OC' and 'sapUiUx3Overlay'");
+		assert.ok(oDomRef.classList.contains("sapUiUx3OC"), "Rendered OverlayContainer should have the class 'sapUiUx3OC'");
+		assert.ok(oDomRef.classList.contains("sapUiUx3Overlay"), "Rendered OverlayContainer should have the class 'sapUiUx3Overlay'");
+
 	});
 
 	QUnit.module("Behaviour");

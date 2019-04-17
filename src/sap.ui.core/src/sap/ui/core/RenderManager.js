@@ -197,20 +197,20 @@ sap.ui.define([
 		 * The style collection is flushed if it is written to the buffer using {@link #writeStyle}
 		 *
 		 * @param {string} sName Name of the CSS property to write
-		 * @param {string|float|int} value Value to write
+		 * @param {string|float|int} vValue Value to write
 		 * @return {sap.ui.core.RenderManager} This render manager instance to allow chaining
 		 * @public
 		 * @SecSink {0 1|XSS} Styles are written to HTML without validation
 		 */
-		this.addStyle = function(sName, value) {
+		this.addStyle = function(sName, vValue) {
 			assert(typeof sName === "string", "sName must be a string");
-			if (value !=  null) {
-				assert((typeof value === "string" || typeof value === "number"), "value must be a string or number");
+			if (vValue != null && vValue != "") {
+				assert((typeof vValue === "string" || typeof vValue === "number"), "value must be a string or number");
 				var oStyle = aStyleStack[aStyleStack.length - 1];
 				if (!oStyle.aStyle) {
 					oStyle.aStyle = [];
 				}
-				oStyle.aStyle.push(sName + ":" + value);
+				oStyle.aStyle.push(sName + ": " + vValue + ";");
 			}
 			return this;
 		};
@@ -222,8 +222,8 @@ sap.ui.define([
 		 */
 		this.writeStyles = function() {
 			var oStyle = aStyleStack[aStyleStack.length - 1];
-			if (oStyle.aStyle) {
-				this.write(" style=\"" + oStyle.aStyle.join(";") + "\" ");
+			if (oStyle.aStyle && oStyle.aStyle.length) {
+				this.writeAttribute("style", oStyle.aStyle.join(" "));
 			}
 			oStyle.aStyle = null;
 			return this;
@@ -277,11 +277,9 @@ sap.ui.define([
 
 			if (oStyle.aClasses || aCustomClasses) {
 				var aClasses = [].concat(oStyle.aClasses || [], aCustomClasses || []);
-				aClasses.sort();
-				aClasses = aClasses.filter(function(n, i) {
-					return i == 0 || n !== aClasses[i - 1];
-				});
-				this.write(" class=\"", aClasses.join(" "), "\" ");
+				if (aClasses.length) {
+					this.writeAttribute("class", aClasses.join(" "));
+				}
 			}
 
 			if (!oElement) {
@@ -310,7 +308,7 @@ sap.ui.define([
 		this.openStart = function(sTagName) {
 			assert(!tagOpen, "New must not be opened when last opened tag not yet closed with 'openEnd'");
 			tagOpen = true;
-			this.write("<" + sTagName + " ");
+			this.write("<" + sTagName);
 
 			return this;
 		};
@@ -371,7 +369,6 @@ sap.ui.define([
 		this.voidEnd = function () {
 			assert(voidOpen, "Closing a self-closing tag via 'voidEnd' must be preceded by a 'voidStart'");
 			voidOpen = false;
-			this.write("/");
 			this.openEnd();
 
 			return this;
@@ -469,10 +466,7 @@ sap.ui.define([
 		 */
 		this.class = function(sClass) {
 			assert(typeof sClass === "string" && !/\s/.test(sClass) && arguments.length === 1, "method class must be called with exactly one class name");
-			// TODO should be a single class only
-			for ( var i = 0; i < arguments.length; i++) {
-				this.addClass(arguments[i]);
-			}
+			this.addClass(sClass);
 
 			return this;
 		};
@@ -482,14 +476,14 @@ sap.ui.define([
 		 * Must only be called between elementOpenStart and elementOpenEnd.
 		 *
 		 * @param {string} sStyle Name of style property
-		 * @param {string} value Value of style property
+		 * @param {string} vValue Value of style property
 		 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
 		 * @private
 		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
 		 */
-		this.style = function(sStyle, value) {
+		this.style = function(sStyle, vValue) {
 			assert(typeof sStyle === "string" && sStyle && !/\s/.test(sStyle), "method style must be called with a non-empty string name");
-			this.addStyle(sStyle, value);
+			this.addStyle(sStyle, vValue);
 			return this;
 		};
 
@@ -689,13 +683,6 @@ sap.ui.define([
 			//Remember the current buffer size to check later whether the control produced output
 			var iBufferLength = aBuffer.length;
 
-			var oControlStyles = {};
-			if (oControl.aCustomStyleClasses && oControl.aCustomStyleClasses.length > 0) {
-				oControlStyles.aCustomStyleClasses = oControl.aCustomStyleClasses; //cleared again in the writeClasses function
-			}
-
-			aStyleStack.push(oControlStyles);
-
 			Measurement.pause(oControl.getId() + "---renderControl");
 			// don't measure getRenderer because if Load needed its measured in Ajax call
 			// but start measurement before is to see general rendering time including loading time
@@ -745,13 +732,17 @@ sap.ui.define([
 
 			//Render the control using the RenderManager interface
 			if (oRenderer && typeof oRenderer.render === "function") {
-				var oRendererInterface = /*oRenderer.apiVersion === 2 ? */ oDomRendererInterface /* : oStringRendererInterface */;
-				oRenderer.render(oRendererInterface, oControl);
+				var oControlStyles = {};
+				if (oControl.aCustomStyleClasses && oControl.aCustomStyleClasses.length > 0) {
+					oControlStyles.aCustomStyleClasses = oControl.aCustomStyleClasses; //cleared again in the writeClasses function
+				}
+
+				aStyleStack.push(oControlStyles);
+				oRenderer.render(oDomRendererInterface, oControl);
+				aStyleStack.pop();
 			} else {
 				Log.error("The renderer for class " + oMetadata.getName() + " is not defined or does not define a render function! Rendering of " + oControl.getId() + " will be skipped!");
 			}
-
-			aStyleStack.pop();
 
 			//Remember the rendered control
 			aRenderedControls.push(oControl);
@@ -1379,11 +1370,8 @@ sap.ui.define([
 	RenderManager.prototype.writeIcon = function(sURI, aClasses, mAttributes){
 		var IconPool = sap.ui.requireSync("sap/ui/core/IconPool"),
 			bIconURI = IconPool.isIconURI(sURI),
-			sStartTag = bIconURI ? "span" : "img",
 			bAriaLabelledBy = false,
 			sProp, oIconInfo, mDefaultAttributes, sLabel, sInvTextId;
-
-		var that = this;
 
 		if (typeof aClasses === "string") {
 			aClasses = [aClasses];
@@ -1406,12 +1394,16 @@ sap.ui.define([
 			}
 		}
 
-		this.openStart(sStartTag);
+		if (bIconURI) {
+			this.openStart("span");
+		} else {
+			this.voidStart("img");
+		}
 
-		if (Array.isArray(aClasses) && aClasses.length) {
+		if (Array.isArray(aClasses)) {
 			aClasses.forEach(function (sClass) {
-				that.class(sClass);
-			});
+				this.class(sClass);
+			}, this);
 		}
 
 		if (bIconURI) {
@@ -1460,7 +1452,7 @@ sap.ui.define([
 		}
 
 		if (bIconURI) {
-			this.openEnd(sStartTag);
+			this.openEnd();
 
 			if (bAriaLabelledBy) {
 				// output the invisible text for aria-labelledby
@@ -1474,7 +1466,7 @@ sap.ui.define([
 
 			this.close("span");
 		} else {
-			this.openEnd();
+			this.voidEnd();
 		}
 
 		return this;
@@ -1598,15 +1590,15 @@ sap.ui.define([
 		ATTR_PRESERVE_MARKER = "data-sap-ui-preserve",
 		ATTR_UI_AREA_MARKER = "data-sap-ui-area";
 
-		function getPreserveArea() {
-			var $preserve = jQuery(document.getElementById(ID_PRESERVE_AREA));
-			if ($preserve.length === 0) {
-				$preserve = jQuery("<DIV/>",{"aria-hidden":"true",id:ID_PRESERVE_AREA}).
-					addClass("sapUiHidden").addClass("sapUiForcedHidden").css("width", "0").css("height", "0").css("overflow", "hidden").
-					appendTo(document.body);
-			}
-			return $preserve;
+	function getPreserveArea() {
+		var $preserve = jQuery(document.getElementById(ID_PRESERVE_AREA));
+		if ($preserve.length === 0) {
+			$preserve = jQuery("<DIV/>",{"aria-hidden":"true",id:ID_PRESERVE_AREA}).
+				addClass("sapUiHidden").addClass("sapUiForcedHidden").css("width", "0").css("height", "0").css("overflow", "hidden").
+				appendTo(document.body);
 		}
+		return $preserve;
+	}
 
 	/**
 	 * @param {Element} node dom node

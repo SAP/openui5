@@ -1,3 +1,4 @@
+
 /* global QUnit, sinon, TestControlRenderer */
 sap.ui.define([
 	"sap/ui/Device",
@@ -328,7 +329,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("RenderManager.writeStyles", function(assert) {
-		checkRMWriter(assert, " style=\"att1:val1;att2:val2\" ", true, 0, function(rm) {
+		checkRMWriter(assert, " style=\"att1: val1; att2: val2;\"", true, 0, function(rm) {
 			rm.addStyle("att1", "val1");
 			rm.addStyle("att2", "val2");
 			return rm.writeStyles();
@@ -349,7 +350,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("RenderManager.writeClasses", function(assert) {
-		checkRMWriter(assert, " class=\"Class1 Class2\" ", true, 0, function(rm) {
+		checkRMWriter(assert, " class=\"Class1 Class2\"", true, 0, function(rm) {
 			rm.addClass("Class1");
 			rm.addClass("Class2");
 			return rm.writeClasses();
@@ -362,7 +363,7 @@ sap.ui.define([
 		oControl3.addStyleClass("Class3", true);
 		oControl3.addStyleClass("Class2", true); //For duplicate check
 
-		checkRMWriter(assert, getTestControlHtml("TestContr3", " class=\"Class1 Class2 Class3\" "), true, 1, function(rm) {
+		checkRMWriter(assert, getTestControlHtml("TestContr3", " class=\"Class1 Class2 Class3 Class2\""), true, 1, function(rm) {
 			TestControlRenderer.doAdditionalThings = function(oRM, oControl) {
 				rm.addClass("Class1");
 				rm.addClass("Class2");
@@ -488,7 +489,7 @@ sap.ui.define([
 	QUnit.module("Writer API: Semantic Syntax (DOM) Rendering Methods");
 
 	QUnit.test("RenderManager.openStart", function (assert) {
-		checkRMWriter(assert, "<span ", true, 0, function(rm) {
+		checkRMWriter(assert, "<span", true, 0, function(rm) {
 			return rm.openStart("span");
 		});
 	});
@@ -506,13 +507,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("RenderManager.voidStart", function (assert) {
-		checkRMWriter(assert, "<img ", true, 0, function(rm) {
+		checkRMWriter(assert, "<img", true, 0, function(rm) {
 			return rm.voidStart("img");
 		});
 	});
 
 	QUnit.test("RenderManager.voidEnd", function (assert) {
-		checkRMWriter(assert, "/>", true, 0, function(rm) {
+		checkRMWriter(assert, ">", true, 0, function(rm) {
 			return rm.voidEnd();
 		});
 	});
@@ -540,14 +541,14 @@ sap.ui.define([
 	QUnit.test("RenderManager.style", function(assert) {
 		checkRMWriter(assert, "", true, 0, function(rm) {
 			rm.style("att1", "val1");
-			assert.equal(rm.aStyleStack[rm.aStyleStack.length - 1].aStyle[rm.aStyleStack[rm.aStyleStack.length - 1].aStyle.length - 1], "att1:val1", "Style added to list of styles");
+			assert.equal(rm.aStyleStack[rm.aStyleStack.length - 1].aStyle[rm.aStyleStack[rm.aStyleStack.length - 1].aStyle.length - 1], "att1: val1;", "Style added to list of styles");
 			return rm.addStyle("att2", "val2");
 		});
 	});
 
 	QUnit.test("Semantic Syntax Combined", function(assert) {
 		checkRMWriter(assert, "" +
-		"<span  id=\"sampleId\" class=\"sampleClassName\" >some&#x20;text<img  src=\"..&#x2f;img.jpg\"/>some&#x20;more&#x20;text</span>" +
+		"<span id=\"sampleId\" class=\"sampleClassName\">some&#x20;text<img src=\"..&#x2f;img.jpg\">some&#x20;more&#x20;text</span>" +
 		"", true, 0, function(rm) {
 
 			rm.openStart("span");

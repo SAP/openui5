@@ -32,12 +32,12 @@ function($, Core, XMLView) {
 		// Arrange
 		var oFormBlock = this.oObjectPageFormView.byId("personalFormBlock"),
 			aGridCells = oFormBlock.$().find(".sapUiForm .sapUiFormCLContent>section"),
-			sGridCellsOuterClasses = oFormBlock.$().find(".sapUiForm .sapUiFormCL>div")[0].className,
-			sExpectedClasses = "sapUiFormCLColumnsL3 sapUiFormCLColumnsM2 sapUiFormCLColumnsXL4 sapUiFormCLContent";
+			$GridCellsOuter = oFormBlock.$().find(".sapUiForm .sapUiFormCL>div").first(),
+			sExpectedClasses = ".sapUiFormCLColumnsL3.sapUiFormCLColumnsM2.sapUiFormCLColumnsXL4.sapUiFormCLContent";
 
 		// Assert
 		assert.strictEqual(aGridCells.length, 4, "Form grid has 4 cells");
-		assert.strictEqual(sGridCellsOuterClasses, sExpectedClasses,
+		assert.ok($GridCellsOuter.is(sExpectedClasses),
 				"The correct classes are applied to to the outer div of the cells: " + sExpectedClasses);
 	});
 
@@ -45,17 +45,17 @@ function($, Core, XMLView) {
 
 		// Arrange
 		var oObjectPage = this.oObjectPageFormView.byId("ObjectPageLayout"),
-			sExpectedClasses = "sapUiFormCLColumnsL2 sapUiFormCLColumnsM2 sapUiFormCLColumnsXL3 sapUiFormCLContent",
-			oFormBlock, sGridCellsOuterClasses;
+			sExpectedClasses = ".sapUiFormCLColumnsL2.sapUiFormCLColumnsM2.sapUiFormCLColumnsXL3.sapUiFormCLContent",
+			oFormBlock, $GridCellsOuter;
 
 		// Act
 		oObjectPage.setSubSectionLayout("TitleOnLeft");
 		this.clock.tick(iRenderingDelay);
 		oFormBlock = this.oObjectPageFormView.byId("personalFormBlock");
-		sGridCellsOuterClasses = oFormBlock.$().find(".sapUiForm .sapUiFormCL>div")[0].className;
+		$GridCellsOuter = oFormBlock.$().find(".sapUiForm .sapUiFormCL>div").first();
 
 		// Assert
-		assert.strictEqual(sGridCellsOuterClasses, sExpectedClasses,
+		assert.ok($GridCellsOuter.is(sExpectedClasses),
 				"The correct classes are applied to to the outer div of the cells: " + sExpectedClasses);
 	});
 
@@ -86,12 +86,12 @@ function($, Core, XMLView) {
 			aGridCells = oFormBlock.$().find(".sapUiForm .sapUiFormCLContent>section"),
 			oTestInput = Core.byId("__input0"),
 			iTestInputTop = parseInt(oTestInput.$().offset().top),
-			sGridCellsOuterClasses = oFormBlock.$().find(".sapUiForm .sapUiFormCL>div")[0].className,
-			sExpectedClasses = "sapUiFormCLColumnsL3 sapUiFormCLColumnsM2 sapUiFormCLColumnsXL4 sapUiFormCLContent";
+			$GridCellsOuter = oFormBlock.$().find(".sapUiForm .sapUiFormCL>div").first(),
+			sExpectedClasses = ".sapUiFormCLColumnsL3.sapUiFormCLColumnsM2.sapUiFormCLColumnsXL4.sapUiFormCLContent";
 
 		// Assert
 		assert.strictEqual(aGridCells.length, 4, "Form grid has 4 cells");
-		assert.strictEqual(sGridCellsOuterClasses, sExpectedClasses,
+		assert.ok($GridCellsOuter.is(sExpectedClasses),
 				"The correct classes are applied to to the outer div of the cells: " + sExpectedClasses);
 
 		// Act
@@ -118,17 +118,17 @@ function($, Core, XMLView) {
 
 		// Arrange
 		var oObjectPage = this.oObjectPageFormView.byId("ObjectPageLayout"),
-			sExpectedClasses = "sapUiFormCLColumnsL2 sapUiFormCLColumnsM2 sapUiFormCLColumnsXL3 sapUiFormCLContent",
-			oFormBlock, sGridCellsOuterClasses;
+			sExpectedClasses = ".sapUiFormCLColumnsL2.sapUiFormCLColumnsM2.sapUiFormCLColumnsXL3.sapUiFormCLContent",
+			oFormBlock, $GridCellsOuter;
 
 		// Act
 		oObjectPage.setSubSectionLayout("TitleOnLeft");
 		this.clock.tick(iRenderingDelay);
 		oFormBlock = this.oObjectPageFormView.byId("personalSimpleFormBlock");
-		sGridCellsOuterClasses = oFormBlock.$().find(".sapUiForm .sapUiFormCL>div")[0].className;
+		$GridCellsOuter = oFormBlock.$().find(".sapUiForm .sapUiFormCL>div").first();
 
 		// Assert
-		assert.strictEqual(sGridCellsOuterClasses, sExpectedClasses,
+		assert.ok($GridCellsOuter.is(sExpectedClasses),
 				"The correct classes are applied to to the outer div of the cells: " + sExpectedClasses);
 	});
 
