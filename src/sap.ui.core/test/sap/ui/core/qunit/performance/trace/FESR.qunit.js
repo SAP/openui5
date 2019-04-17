@@ -1,6 +1,6 @@
 /*global QUnit, sinon*/
-sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Interaction', 'sap/ui/performance/XHRInterceptor', 'sap/ui/performance/trace/Passport'],
-	function(FESR, Interaction, XHRInterceptor, Passport) {
+sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Interaction', 'sap/ui/performance/XHRInterceptor', 'sap/ui/performance/BeaconRequest','sap/ui/performance/trace/Passport'],
+	function (FESR, Interaction, XHRInterceptor, BeaconRequest, Passport) {
 	"use strict";
 
 	QUnit.module("FESR");
@@ -29,6 +29,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		var fnOnBeforeCreated = FESR.onBeforeCreated;
 
 		// implement hook
+		var fnOnBeforeCreated = FESR.onBeforeCreated;
 		FESR.onBeforeCreated = function(oFESRHandle, oInteraction) {
 			assert.deepEqual(oFESRHandle, oHandle, "Passed FESRHandle should be correct.");
 			assert.throws(function() { oInteraction.component = "badComponent"; }, "Should throw an error after trying to overwrite the interaction object.");
@@ -70,9 +71,10 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 
 		Interaction.end(true);
 		Interaction.clear();
+		FESR.onBeforeCreated =  fnOnBeforeCreated;
 		FESR.setActive(false);
 		FESR.onBeforeCreated = fnOnBeforeCreated;
-		oHeaderSpy.restore();
+		XMLHttpRequest.prototype.setRequestHeader.restore();
 	});
 
 	QUnit.test("Client ID", function(assert) {
@@ -83,11 +85,12 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 
 		FESR.setActive(true);
 
+		oHeaderSpy.reset();
 		// trigger Passport header creation (which gets called with the actual "action")
 		var xhr = new XMLHttpRequest();
 		xhr.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now());
 		xhr.send();
-		var sPassportAction = oPassportHeaderSpy.args[oPassportHeaderSpy.args.length - 1][4];
+		var sPassportAction = oPassportHeaderSpy.args[0][4];
 
 
 		Interaction.start();
@@ -109,8 +112,48 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		Interaction.end(true);
 		Interaction.clear();
 		FESR.setActive(false);
-		oHeaderSpy.restore();
-		oPassportHeaderSpy.restore();
+		XMLHttpRequest.prototype.setRequestHeader.restore();
+	});
+
+	QUnit.test("Beacon URL", function(assert) {
+		FESR.setActive(true, "example.url");
+		assert.equal(FESR.getBeaconURL(), "example.url", "Returns beacon url");
+
+		FESR.setActive(false);
+		assert.equal(FESR.getBeaconURL(), undefined, "Beacon URL was reset");
+	});
+
+	QUnit.test("Beacon strategy", function(assert) {
+		var sendBeaconStub = sinon.stub(window.navigator, "sendBeacon").returns(true);
+		var fileReader = new FileReader();
+		var done = assert.async();
+
+		FESR.setActive(true, "example.url");
+		for (var index = 0; index < 5; index++) {
+			Interaction.start();
+			Interaction.notifyStepStart(null, true);
+		}
+
+		assert.equal(sendBeaconStub.callCount, 1, "Beacon send triggered");
+
+		var urlSendTo = sendBeaconStub.getCall(0).args[0],
+			blobToSend = sendBeaconStub.getCall(0).args[1];
+
+		assert.equal(urlSendTo, "example.url", "Buffer send to example.url");
+		assert.ok(blobToSend instanceof Blob, "Send data is of type blob");
+		assert.ok(sendBeaconStub.getCall(0).args[1].size > 0, "Blob contains FESR data");
+
+		fileReader.onloadend = function(e) {
+			var data = e.target.result;
+			var nSAPPerfFESRec = data.match(/SAP-Perf-FESRec=/g).length;
+			var nSAPPerfFESRecOpt = data.match(/SAP-Perf-FESRec-opt=/g).length;
+			assert.equal(nSAPPerfFESRec, 5, "Send blob contains SAP-Perf-FESRec entries");
+			assert.equal(nSAPPerfFESRecOpt, 5, "SSend blob contains SAP-Perf-FESRec entries");
+			done();
+		};
+
+		fileReader.readAsText(blobToSend);
+		sendBeaconStub.restore();
 	});
 
 });

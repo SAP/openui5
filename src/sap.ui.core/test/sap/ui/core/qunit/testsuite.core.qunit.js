@@ -253,6 +253,11 @@ sap.ui.define(function() {
 				sinon: {
 					qunitBridge: false // deactivate bridge as it can't handle QUnit.modules with callback functions
 				},
+				loader: {
+					paths: {
+						performance: "test-resources/sap/ui/core/qunit/performance"
+					}
+				},
 				module: [
 					// sap/base/*
 					"testdata/core/base/assert.qunit",
@@ -322,6 +327,7 @@ sap.ui.define(function() {
 					"testdata/core/performance/trace/Interaction.qunit",
 
 					// sap/ui/performance/*
+					"testdata/core/performance/BeaconRequest.qunit",
 					"testdata/core/performance/XHRInterceptor.qunit",
 
 					// sap/ui/security/*
@@ -481,6 +487,10 @@ sap.ui.define(function() {
 			"performance/trace/InitFESR_metatag": {
 				page: "test-resources/sap/ui/core/qunit/performance/trace/InitFESR_metatag.qunit.html",
 				title: "sap.ui.performance.trace.FESR: Activation of FESR via meta-tag"
+			},
+			"performance/trace/InitFESR_metatag_beaconurl": {
+				page: "test-resources/sap/ui/core/qunit/performance/trace/InitFESR_metatag_beaconurl.qunit.html",
+				title: "sap.ui.performance.trace.FESR: Activation of FESR via meta-tag with beacon URL"
 			},
 			"performance/trace/InitFESR_notactive": {
 				title: "sap.ui.performance.trace.FESR: Inactivity of FESR"

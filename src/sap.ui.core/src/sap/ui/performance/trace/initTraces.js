@@ -19,14 +19,20 @@ sap.ui.define(["sap/ui/performance/trace/FESR", "sap/base/Log"], function(FESR, 
 	 * @ui5-restricted sap.ui.core
 	 */
 	return function() {
-		var bActive = !!document.querySelector("meta[name=sap-ui-fesr][content=true]"),
-			aParamMatches = window.location.search.match(/[\?|&]sap-ui-(?:xx-)?fesr=(true|x|X|false)&?/);
+		var oFESRMeta = document.querySelector("meta[name=sap-ui-fesr]"),
+			sFESRMetaContent = oFESRMeta ? oFESRMeta.getAttribute("content") : undefined,
+			bActive = !!sFESRMetaContent,
+			aParamMatches = window.location.search.match(/[\?|&]sap-ui-(?:xx-)?fesr=(true|x|X|false|.+)&?/),
+			sUrl = sFESRMetaContent && sFESRMetaContent !== "true" ? sFESRMetaContent : undefined;
+
 		if (aParamMatches) {
 			bActive = aParamMatches[1] && aParamMatches[1] != "false";
+			// FESR Definition via URL wins over meta
+			sUrl = ["true", "false", "x", "X", undefined].indexOf(aParamMatches[1]) === -1 ? aParamMatches[1] : sUrl;
 		}
 
 		if (typeof window.performance.getEntriesByType === "function") {
-			FESR.setActive(bActive);
+			FESR.setActive(bActive, sUrl);
 		} else {
 			Log.debug("FESR is not supported in clients without support of window.Performance extensions.");
 		}
