@@ -1059,6 +1059,20 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("reportError: no message for $reported", function (assert) {
+		var sClassName = "class",
+			oError = {$reported : true, message : "Reported"},
+			sLogMessage = "Failure",
+			oModel = createModel();
+
+		this.oLogMock.expects("error").withExactArgs(sLogMessage, oError.message, sClassName);
+		this.mock(oModel).expects("fireMessageChange").never();
+
+		// code under test
+		oModel.reportError(sLogMessage, sClassName, oError);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("destroy", function (assert) {
 		var oModel = createModel(),
 			oModelPrototypeMock = this.mock(Model.prototype);
