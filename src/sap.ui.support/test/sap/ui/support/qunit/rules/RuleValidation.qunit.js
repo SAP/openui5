@@ -95,11 +95,15 @@ sap.ui.define(
 		RuleSetLoader._fetchSupportRuleSets(null, mLibrariesToLoad).then(function() {
 			QUnit.start();
 
+			/* eslint-disable max-nested-callbacks */
 			Object.keys(RuleSetLoader._mRuleSets).map(function(sKey) {
 				var oLibrary = RuleSetLoader._mRuleSets[sKey];
 
-				oLibraries[oLibrary.lib.name] = Object.values(oLibrary.ruleset._mRules);
+				oLibraries[oLibrary.lib.name] = Object.keys(oLibrary.ruleset._mRules).map(function (vValue) {
+					return oLibrary.ruleset._mRules[vValue];
+				});
 			});
+			/* eslint-enable max-nested-callbacks */
 
 			for (var sLibraryName in oLibraries) {
 				if (!oLibraries[sLibraryName].length) {
