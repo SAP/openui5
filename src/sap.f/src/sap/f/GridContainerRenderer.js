@@ -29,6 +29,10 @@ sap.ui.define([],
 				rm.addClass("sapFGridContainerSnapToRow");
 			}
 
+			if (control.getAllowDenseFill()) {
+				rm.addClass("sapFGridContainerDenseFill");
+			}
+
 			rm.writeClasses();
 
 			// Add inline styles
@@ -51,7 +55,7 @@ sap.ui.define([],
 			rm.write(">");
 
 			control.getItems().forEach(function (oItem) {
-				this.renderItem(rm, oItem);
+				this.renderItem(rm, oItem, control);
 			}.bind(this));
 
 			rm.write("</div>");
@@ -64,17 +68,13 @@ sap.ui.define([],
 		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 		 */
 		GridContainerRenderer.addGridStyles = function(rm, oControl) {
-			var oSettings = oControl.getActiveLayoutSettings(),
-				columns = oSettings.getColumns() || "auto-fill";
-
-			rm.addStyle("grid-template-columns", "repeat(" + columns + ", " + oSettings.getColumnSize() + ")");
-			rm.addStyle("grid-auto-rows", oSettings.getRowSize());
-			rm.addStyle("grid-gap", oSettings.getGap());
-
-			rm.writeStyles();
+			var mStyles = oControl._getActiveGridStyles();
+			for (var sName in mStyles) {
+				rm.addStyle(sName, mStyles[sName]);
+			}
 		};
 
-		GridContainerRenderer.renderItem = function(rm, oItem) {
+		GridContainerRenderer.renderItem = function(rm, oItem, oControl) {
 			rm.write("<div");
 			rm.addClass("sapFGridContainerItemWrapper");
 
@@ -84,7 +84,9 @@ sap.ui.define([],
 					rm.addStyle("grid-column", "span " + oLayoutData.getColumns());
 				}
 
-				if (oLayoutData.getRows() || oLayoutData.getMinRows()) {
+				if (oControl.getInlineBlockLayout()) {
+					rm.addStyle("grid-row", "span 1");
+				} else if (oLayoutData.getRows() || oLayoutData.getMinRows()) {
 					rm.addStyle("grid-row", "span " + oLayoutData.getActualRows());
 				}
 

@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/f/GridContainer",
 	"sap/ui/core/Core",
+	"sap/m/Panel",
 	"sap/m/GenericTile",
 	"sap/f/Card",
 	"sap/f/GridContainerItemLayoutData",
@@ -12,6 +13,7 @@ sap.ui.define([
 function (
 	GridContainer,
 	Core,
+	Panel,
 	GenericTile,
 	Card,
 	GridContainerItemLayoutData,
@@ -93,7 +95,10 @@ function (
 
 		// Assert
 		assert.ok(oGrid.isA("sap.f.GridContainer"), "GridContainer is initialized");
+		assert.strictEqual(oGrid.getContainerQuery(), false, "GridContainer containerQuery property is false");
 		assert.strictEqual(oGrid.getSnapToRow(), false, "GridContainer snapToRow property is false");
+		assert.strictEqual(oGrid.getAllowDenseFill(), false, "GridContainer allowDenseFill property is false");
+		assert.strictEqual(oGrid.getInlineBlockLayout(), false, "GridContainer inlineBlockLayout property is false");
 
 		assert.ok(oGrid.getActiveLayoutSettings().isA("sap.f.GridContainerSettings"), true, "GridContainer has default layout settings");
 	});
@@ -142,6 +147,41 @@ function (
 
 		// Assert
 		assert.strictEqual(this.oGrid.$().attr("title"), sExample, "The grid has the expected tooltip");
+	});
+
+	QUnit.test("Allow dense fill", function (assert) {
+		// Arrange
+		this.oGrid.setAllowDenseFill(true);
+
+		// Act
+		Core.applyChanges();
+
+		// Assert
+		if (bIsGridSupported) {
+			assert.strictEqual(this.oGrid.$().css("grid-auto-flow"), "row dense", "The grid has 'grid-auto-flow:row dense', when allowDenseFill is true");
+		} else {
+			assert.expect(0);
+		}
+	});
+
+	QUnit.test("Inline block layout", function (assert) {
+		// Arrange
+		var oTile = new GenericTile({
+			layoutData: new GridContainerItemLayoutData({ minRows: 2, columns: 2 })
+		});
+		this.oGrid.addItem(oTile);
+		this.oGrid.setInlineBlockLayout(true);
+
+		// Act
+		Core.applyChanges();
+
+		// Assert
+		if (bIsGridSupported) {
+			assert.strictEqual(this.oGrid.$().css("grid-auto-rows"), "min-content", "The grid has 'grid-auto-rows:min-content', when inlineBlockLayout is true");
+			assert.strictEqual(oTile.$().parent().css("grid-row-start"), "span 1", "The grid items have row span 1");
+		} else {
+			assert.expect(0);
+		}
 	});
 
 	QUnit.module("Items", {
@@ -280,19 +320,30 @@ function (
 		assertGridSettings(this.oGrid, oSettings, "layout", assert);
 	});
 
-	QUnit.test("Breakpoints", function (assert) {
-		// Arrange
-		var mTestSettings = {
+	QUnit.module("Layout breakpoints", {
+		beforeEach: function () {
+			this.oGrid = new GridContainer();
+
+			this.mTestSettings = {
 				"layoutXL": new GridContainerSettings({rowSize: "90px", columnSize: "90px", gap: "20px"}),
 				"layoutL": new GridContainerSettings({rowSize: "80px", columnSize: "80px", gap: "16px"}),
 				"layoutM": new GridContainerSettings({rowSize: "60px", columnSize: "60px", gap: "8px"}),
 				"layoutS": new GridContainerSettings({rowSize: "40px", columnSize: "40px", gap: "4px"})
-			},
-			oGetCurrentRangeStub = sinon.stub(Device.media, 'getCurrentRange');
+			};
 
-		for (var sLayout in mTestSettings) {
-			this.oGrid.setAggregation(sLayout, mTestSettings[sLayout]);
+			for (var sLayout in this.mTestSettings) {
+				this.oGrid.setAggregation(sLayout, this.mTestSettings[sLayout]);
+			}
+		},
+		afterEach: function () {
+			this.oGrid.destroy();
 		}
+	});
+
+	QUnit.test("Breakpoints", function (assert) {
+		// Arrange
+		var oGetCurrentRangeStub = sinon.stub(Device.media, 'getCurrentRange');
+		this.oGrid.placeAt(DOM_RENDER_LOCATION);
 
 		// Act & Assert
 		["Phone", "Tablet", "Desktop", "LargeDesktop"].forEach(function (sRangeName) {
@@ -304,10 +355,40 @@ function (
 
 			// Assert
 			var sLayoutName = GridContainer.mSizeLayouts[sRangeName];
-			assertGridSettings(this.oGrid, mTestSettings[sLayoutName], sLayoutName, assert);
+			assertGridSettings(this.oGrid, this.mTestSettings[sLayoutName], sLayoutName, assert);
 
 		}.bind(this));
 
 		oGetCurrentRangeStub.restore();
+	});
+
+	QUnit.test("Breakpoints when containerQuery is true", function (assert) {
+		// Arrange
+		this.oGrid.setContainerQuery(true);
+		var oContainer = new Panel({content: this.oGrid});
+		oContainer.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Act & Assert
+		var mLayouts = {
+				"500px": "layoutS",
+				"700px": "layoutM",
+				"1200px": "layoutL",
+				"1600px": "layoutXL"
+			},
+			sLayoutName;
+
+		for (var sWidth in mLayouts) {
+
+			// Act
+			oContainer.$().width(sWidth);
+			this.oGrid._resize(); // TODO fire resize or fire Device.media sizeChanged
+
+			// Assert
+			sLayoutName = mLayouts[sWidth];
+			assertGridSettings(this.oGrid, this.mTestSettings[sLayoutName], sLayoutName, assert);
+		}
+
+		oContainer.destroy();
 	});
 });

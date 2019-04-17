@@ -21,12 +21,12 @@
 						<Switch change="onSnapToRowChange" state="false" />
 					</HBox>
 					<HBox alignItems="Center">
-						<Label class="sapUiSmallMargin" text="Dense auto fill:"/>
-						<Switch id="denseSwitch" change="applyDensity" state="false" />
+						<Label class="sapUiSmallMargin" text="Allow dense fill:"/>
+						<Switch change="onDensityChange" state="false" />
 					</HBox>
 					<HBox alignItems="Center">
-						<Label class="sapUiSmallMargin" text="Pseudo grid:"/>
-						<Switch id="pseudoGridSwitch" change="applyPseudoGrid" state="false" />
+						<Label class="sapUiSmallMargin" text="Inline block layout:"/>
+						<Switch change="onInlineBlockChange" state="false" />
 					</HBox>
 				</HBox>
 			</Panel>

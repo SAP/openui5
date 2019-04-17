@@ -15,14 +15,6 @@ sap.ui.define([
 			];
 
 			this._aGrids.forEach(function (oGrid) {
-				// Handle experimental switches
-				oGrid.addEventDelegate({
-					onAfterRendering: function () {
-						this.applyDensity();
-						this.applyPseudoGrid();
-					}.bind(this)
-				});
-
 				// Drag and Drop
 				oGrid.addDragDropConfig(new DragInfo({
 					sourceAggregation: "items"
@@ -58,7 +50,7 @@ sap.ui.define([
 						// But then for IE special logic should take care of it. Or grid can be rerendered for IE only.
 					}
 				}));
-			}.bind(this));
+			});
 		},
 
 		onSnapToRowChange: function (oEvent) {
@@ -67,31 +59,15 @@ sap.ui.define([
 			});
 		},
 
-		applyDensity: function () {
-			if (this.getView().byId("denseSwitch").getState()) {
-				jQuery(".sapFGridContainer").css({gridAutoFlow: "row dense"});
-			} else {
-				jQuery(".sapFGridContainer").css({gridAutoFlow: "row"});
-			}
+		onDensityChange: function (oEvent) {
+			this._aGrids.forEach(function (oGrid) {
+				oGrid.setAllowDenseFill(oEvent.getParameter("state"));
+			});
 		},
 
-		applyPseudoGrid: function () {
-			var bIsPseudoGrid = this.getView().byId("pseudoGridSwitch").getState();
-			if (bIsPseudoGrid) {
-				jQuery(".sapFGridContainer").css({gridAutoRows: "min-content"});
-			} else {
-				jQuery(".sapFGridContainer").css({gridAutoRows: "80px"});
-			}
-
-			jQuery(".sapFGridContainer").children().each(function (iIndex, oElement) {
-				var $element = jQuery(oElement);
-
-				if (bIsPseudoGrid) {
-					$element.data("original-row-start", $element.css("grid-row-start"));
-					$element.css("grid-row-start", "span 1");
-				} else {
-					$element.css("grid-row-start", $element.data("original-row-start"));
-				}
+		onInlineBlockChange: function (oEvent) {
+			this._aGrids.forEach(function (oGrid) {
+				oGrid.setInlineBlockLayout(oEvent.getParameter("state"));
 			});
 		}
 	});
