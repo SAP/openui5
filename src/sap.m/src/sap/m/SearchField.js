@@ -407,6 +407,10 @@ sap.ui.define([
 		}
 	};
 
+	SearchField.prototype.ontouchstart = function(oEvent) {
+		this._oTouchStartTarget = oEvent.target;
+	};
+
 	SearchField.prototype.ontouchend = function(oEvent) {
 
 		if (oEvent.originalEvent.button === 2) {
@@ -414,9 +418,16 @@ sap.ui.define([
 		}
 
 		var oSrc = oEvent.target,
+			bValidTouchStartTarget = true,
 			oInputElement = this.getInputElement();
 
-		if (oSrc.id == this.getId() + "-reset") {
+		// If touch started on SearchField, check the start target.
+		if (this._oTouchStartTarget) {
+			bValidTouchStartTarget = this._oTouchStartTarget === oSrc;
+			this._oTouchStartTarget = null;
+		}
+
+		if (oSrc.id == this.getId() + "-reset" && bValidTouchStartTarget) {
 
 			closeSuggestions(this);
 			this._bSuggestionSuppressed = true; // never open suggestions after reset
@@ -436,7 +447,7 @@ sap.ui.define([
 				) && (active !== oInputElement)) {
 				oInputElement.focus();
 			}
-		} else 	if (oSrc.id == this.getId() + "-search") {
+		} else if (oSrc.id == this.getId() + "-search" && bValidTouchStartTarget) {
 
 			closeSuggestions(this);
 
