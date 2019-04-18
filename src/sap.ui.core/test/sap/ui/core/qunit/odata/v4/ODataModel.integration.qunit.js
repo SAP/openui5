@@ -5197,8 +5197,8 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectChange("id", [, "43", "", ""])
-				.expectChange("note", [, "New 1", "New 2", "New 3"]);
+			that.expectChange("id", [,, "", ""])
+				.expectChange("note", [,, "New 2", "New 3"]);
 
 			oCreatedContext1 = oBinding.create({Note : "New 2"}, true, true);
 			oCreatedContext2 = oBinding.create({Note : "New 3"}, true, true);
@@ -5318,10 +5318,7 @@ sap.ui.define([
 			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&"
 				+ "$filter=SalesOrderID eq '44'", {
 					"value" : []
-				})
-				//TODO: Unexpected change events for unchanged row 1 -> CPOUI5UISERVICESV3-1810
-				.expectChange("id", [, "43", "45"])
-				.expectChange("note", [, "New 1", "New 3"]);
+				});
 
 			return Promise.all([
 				oCreatedContext1.refresh("$auto", true/*bAllowRemoval*/),
@@ -5407,8 +5404,8 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectChange("id", [, "43", "", ""])
-				.expectChange("note", [, "New 1", "New 2", "New 3"]);
+			that.expectChange("id", [,, "", ""])
+				.expectChange("note", [,, "New 2", "New 3"]);
 
 			oCreatedContext1 = oBinding.create({Note : "New 2"}, true, true);
 			oCreatedContext2 = oBinding.create({Note : "New 3"}, true, true);
