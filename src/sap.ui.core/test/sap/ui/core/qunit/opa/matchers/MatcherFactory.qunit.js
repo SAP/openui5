@@ -22,11 +22,11 @@ sap.ui.define([
 		var aEnabledMatchers =  oMatcherFactory.getStateMatchers({enabled: true});
 		assert.ok(aEnabledMatchers[0] instanceof _Enabled, "The Enabled matcher should be added");
 
-		var aVisibleMatchers =  oMatcherFactory.getStateMatchers({visible: true});
+		var aVisibleMatchers =  oMatcherFactory.getStateMatchers({visible: true, interactable: false, enabled: false});
 		assert.strictEqual(aVisibleMatchers.length, 1, "Only one matcher should be created");
 		assert.ok(aVisibleMatchers[0] instanceof Visible, "The Visible matcher should be added");
 
-		var aNoMatchers =  oMatcherFactory.getStateMatchers({visible: false});
+		var aNoMatchers =  oMatcherFactory.getStateMatchers({visible: false, interactable: true, enabled: true});
 		assert.ok(!aNoMatchers.length, "No matchers should be created");
 
 		var aDefaultMatchers = oMatcherFactory.getStateMatchers();

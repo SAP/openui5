@@ -356,7 +356,7 @@ sap.ui.define([
 				var oStateMatchers = oMatcherFactory.getStateMatchers({
 					visible: oOptions.visible, // true by default
 					interactable: oOptions.interactable, // false by default
-					enabled: typeof oOptions.enabled === "undefined" ? oOptions.interactable : oOptions.enabled // false by default
+					enabled: typeof oOptions.enabled === "undefined" ? oOptions.interactable : oOptions.enabled // by default, true when interactable, false elsewise
 				});
 				var vPipelineResult = oMatcherPipeline.process({
 					control: vResult,

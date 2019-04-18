@@ -958,7 +958,7 @@ sap.ui.define([
 				actions : new Opa5(),
 				assertions : new Opa5(),
 				visible : true,
-				enabled: false,
+				enabled: undefined,
 				autoWait : false,
 				_stackDropCount : 1
 			});
