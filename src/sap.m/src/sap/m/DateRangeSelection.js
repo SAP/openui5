@@ -9,6 +9,7 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/format/DateFormat',
+	'sap/ui/core/date/UniversalDate',
 	'./DateRangeSelectionRenderer',
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
@@ -21,6 +22,7 @@ sap.ui.define([
 		library,
 		LocaleData,
 		DateFormat,
+		UniversalDate,
 		DateRangeSelectionRenderer,
 		deepEqual,
 		Log,
@@ -762,13 +764,46 @@ sap.ui.define([
 		return this;
 	};
 
-	//Do nothing in case of PageUp
-	DateRangeSelection.prototype.onsappageup = function(){}; //EXC_JSLINT_021
-	DateRangeSelection.prototype.onsappageupmodifiers = function(){}; //EXC_JSLINT_021
+	DateRangeSelection.prototype.onsappageup = function(oEvent){
+		// increase by one day
+		this._increaseDateRange(1, "day");
 
-	//Do nothing in case of PageDown
-	DateRangeSelection.prototype.onsappagedown = function(){}; //EXC_JSLINT_021
-	DateRangeSelection.prototype.onsappagedownmodifiers = function(){}; //EXC_JSLINT_021
+		// prevent scrolling
+		oEvent.preventDefault();
+	};
+
+	DateRangeSelection.prototype.onsappageupmodifiers = function(oEvent){
+
+		if (oEvent.shiftKey && !oEvent.ctrlKey) {
+			// increase by one month
+			this._increaseDateRange(1, "month");
+		} else if (oEvent.shiftKey && oEvent.ctrlKey) {
+			// increase by one year
+			this._increaseDateRange(1, "year");
+		}
+		// prevent scrolling
+		oEvent.preventDefault();
+	};
+
+	DateRangeSelection.prototype.onsappagedown = function(oEvent){
+		//decrease by one day
+		this._increaseDateRange(-1, "day");
+
+		// prevent scrolling
+		oEvent.preventDefault();
+	};
+	DateRangeSelection.prototype.onsappagedownmodifiers = function(oEvent){
+
+		if (oEvent.shiftKey && !oEvent.ctrlKey) {
+			// increase by one month
+			this._increaseDateRange(-1, "month");
+		} else if (oEvent.shiftKey && oEvent.ctrlKey) {
+			// increase by one year
+			this._increaseDateRange(-1, "year");
+		}
+		// prevent scrolling
+		oEvent.preventDefault();
+	};
 
 	//Support of two date range version of Calendar added into original DatePicker's version
 	DateRangeSelection.prototype._fillDateRange = function(){
@@ -923,6 +958,123 @@ sap.ui.define([
 			return [oDate, oSecondDate];
 		}
 
+	}
+
+	DateRangeSelection.prototype._increaseDateRange = function (iNumber, sUnit) {
+		var sValue = this._$input.val(),
+			aDates = this._parseValue(sValue),
+			oFirstOldDate = aDates[0],
+			oSecondOldDate = aDates[1],
+			oFormat = _getFormatter.call(this),
+			sDelimiter = _getDelimiter.call(this),
+			iCurPos,
+			iFirstDateValueLen,
+			iSecondDateValueLen,
+			iValueLen,
+			bFirstDate,
+			bSecondDate,
+			oDate;
+
+		if (!this.getEditable() || !this.getEnabled()) {
+			return;
+		}
+
+		//aDates can be undefined if they don't fit to the min/max range
+		if (!_dateRangeValidityCheck.call(this, oFirstOldDate, oSecondOldDate)[0]) {
+			Log.warning("Value can not be converted to a valid dates or dates are outside of the min/max range", this);
+			this._bValid = false;
+			_fireChange.call(this, this._bValid);
+			return;
+		}
+
+		// Clear all spaces and delimiter characters at the beggining and at the end of the value string
+		// as they don't make the input to be considered invalid, but make the cursor position calculations wrong
+		sValue = _trim(sValue, [sDelimiter, " "]);
+		iCurPos = this._$input.cursorPos();
+		iFirstDateValueLen = oFormat.format(oFirstOldDate).length;
+		iSecondDateValueLen = oFormat.format(oSecondOldDate).length;
+
+		iValueLen = sValue.length;
+		bFirstDate = iCurPos <= iFirstDateValueLen + 1;
+		bSecondDate = iCurPos >= iValueLen - iSecondDateValueLen - 1 && iCurPos <= iValueLen;
+
+		if (bFirstDate && oFirstOldDate) {
+			oDate = _getIncrementedDate.call(this, oFirstOldDate, iNumber, sUnit);
+
+			if (!deepEqual(this.getDateValue(), oDate.getJSDate())) {
+				this.setDateValue(new Date(oDate.getTime()));
+				this._curpos = iCurPos;
+				this._$input.cursorPos(this._curpos);
+
+				this.fireChangeEvent(this.getValue(), {valid: this._bValid});
+			}
+		} else if (bSecondDate && oSecondOldDate) {
+			oDate = _getIncrementedDate.call(this, oSecondOldDate, iNumber, sUnit);
+
+			if (!deepEqual(this.getSecondDateValue(), oDate.getJSDate())) {
+				this.setSecondDateValue(new Date(oDate.getTime()));
+				this._curpos = iCurPos;
+				this._$input.cursorPos(this._curpos);
+
+				this.fireChangeEvent(this.getValue(), {valid: this._bValid});
+			}
+		}
+	};
+
+	function _getIncrementedDate(oOldDate, iNumber, sUnit) {
+		// use UniversalDate to calculate new date based on used calendar
+		var oBinding = this.getBinding("value"),
+			sCalendarType,
+			iMonth,
+			oUTCDate,
+			iOldDateMonth;
+
+		if (oBinding && oBinding.oType && oBinding.oType.oOutputFormat) {
+			sCalendarType = oBinding.oType.oOutputFormat.oFormatOptions.calendarType;
+		} else if (oBinding && oBinding.oType && oBinding.oType.oFormat) {
+			sCalendarType = oBinding.oType.oFormat.oFormatOptions.calendarType;
+		}
+
+		if (!sCalendarType) {
+			sCalendarType = this.getDisplayFormatType();
+		}
+
+		oUTCDate = UniversalDate.getInstance(new Date(oOldDate.getTime()), sCalendarType);
+		iOldDateMonth = oUTCDate.getMonth();
+
+		switch (sUnit) {
+			case "day":
+				oUTCDate.setDate(oUTCDate.getDate() + iNumber);
+				break;
+			case "month":
+				oUTCDate.setMonth(oUTCDate.getMonth() + iNumber);
+				iMonth = (iOldDateMonth + iNumber) % 12;
+				if (iMonth < 0) {
+					iMonth = 12 + iMonth;
+				}
+				while (oUTCDate.getMonth() != iMonth) {
+					// day don't exist in this month (e.g. 31th in February)
+					oUTCDate.setDate(oUTCDate.getDate() - 1);
+				}
+				break;
+			case "year":
+			oUTCDate.setFullYear(oUTCDate.getFullYear() + iNumber);
+				while (oUTCDate.getMonth() != iOldDateMonth) {
+					// In case the the old date was in leep year February 29th don't exist in incremented year
+					oUTCDate.setDate(oUTCDate.getDate() - 1);
+				}
+				break;
+			default:
+				break;
+		}
+
+		if (oUTCDate.getTime() < this._oMinDate.getTime()) {
+			oUTCDate = new UniversalDate(this._oMinDate.getTime());
+		} else if (oUTCDate.getTime() > this._oMaxDate.getTime()) {
+			oUTCDate = new UniversalDate(this._oMaxDate.getTime());
+		}
+
+		return oUTCDate;
 	}
 
 	function _getDelimiter() {

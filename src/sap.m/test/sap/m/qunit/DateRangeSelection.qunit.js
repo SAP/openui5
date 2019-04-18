@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/core/LocaleData",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/events/jquery/EventExtension",
+	"sap/ui/dom/jquery/cursorPos",
 	"jquery.sap.global"
 ], function(
 	qutils,
@@ -387,6 +388,344 @@ sap.ui.define([
 
 		//clean
 		oDateRangeSelection.destroy();
+	});
+
+	QUnit.module("Keyboard Interaction", {
+		beforeEach: function() {
+			this.oDRS = new DateRangeSelection("DRS4", {
+				delimiter : "@",
+				displayFormat: "yyyy/MM/dd",
+				dateValue: new Date(2014, 2, 16),
+				secondDateValue: new Date(2014, 2, 27)
+			});
+			this.oFakeEvent = {
+				target: {
+					id: this.oDRS.getId() + "-inner",
+					which: jQuery.sap.KeyCodes.PAGE_UP
+				},
+				preventDefault: function() {}
+			};
+			this.fnIncreaseDateRangeSpy = sinon.spy(this.oDRS, "_increaseDateRange");
+			this.fnFireChangeEventSpy = sinon.spy(this.oDRS, "fireChangeEvent");
+
+			this.oDRS.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oDRS.destroy();
+		}
+	});
+
+	QUnit.test("Change date day with page up key", function(assert) {
+		// prepare
+		this.oDRS._$input.cursorPos(11);
+
+		// act
+		this.oDRS.onsappageup(this.oFakeEvent);
+
+		// assert
+		assert.ok(this.fnIncreaseDateRangeSpy.calledOnce, "_increaseDateRange was called once");
+		assert.ok(this.fnIncreaseDateRangeSpy.calledWithExactly(1, "day"), "_increaseDateRange called with correct parameters");
+
+		assert.ok(this.fnFireChangeEventSpy.calledOnce, "fireChangeEvent was called once");
+		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/03/17 @ 2014/03/27", {valid: true}), "fireChangeEvent called with correct parameters");
+
+		assert.equal(this.oDRS.getValue(), "2014/03/17 @ 2014/03/27", "PageUp: Value in internal format set");
+		assert.equal(this.oDRS.getDateValue().getTime(), new Date(2014, 2, 17).getTime(), "PageUp: dateValue set");
+		assert.equal(this.oDRS._$input.val(), "2014/03/17 @ 2014/03/27", "PageUp: Value in external format displayed");
+
+		//cleanup
+	});
+
+	QUnit.test("Change first date day with page down key", function(assert) {
+		// prepare
+		this.oDRS._$input.cursorPos(11);
+
+		// act
+		this.oDRS.onsappagedown(this.oFakeEvent);
+
+		// assert
+		assert.ok(this.fnIncreaseDateRangeSpy.calledOnce, "_increaseDateRange was called once");
+		assert.ok(this.fnIncreaseDateRangeSpy.calledWithExactly(-1, "day"), "_increaseDateRange called with correct parameters");
+
+		assert.ok(this.fnFireChangeEventSpy.calledOnce, "fireChangeEvent was called once");
+		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/03/15 @ 2014/03/27", {valid: true}), "fireChangeEvent called with correct parameters");
+
+		assert.equal(this.oDRS.getValue(), "2014/03/15 @ 2014/03/27", "PageDown: Value in internal format set");
+		assert.equal(this.oDRS.getDateValue().getTime(), new Date(2014, 2, 15).getTime(), "PageDown: dateValue set");
+		assert.equal(this.oDRS._$input.val(), "2014/03/15 @ 2014/03/27", "PageDown: Value in external format displayed");
+
+		//cleanup
+	});
+
+	QUnit.test("Change first date month with page up + shift keys", function(assert) {
+		// prepare
+		this.oFakeEvent.shiftKey = true;
+		this.oDRS._$input.cursorPos(11);
+
+		// act
+		this.oDRS.onsappageupmodifiers(this.oFakeEvent);
+
+		// assert
+		assert.ok(this.fnIncreaseDateRangeSpy.calledOnce, "_increaseDateRange was called once");
+		assert.ok(this.fnIncreaseDateRangeSpy.calledWithExactly(1, "month"), "_increaseDateRange called with correct parameters");
+
+		assert.ok(this.fnFireChangeEventSpy.calledOnce, "fireChangeEvent was called once");
+		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/04/16 @ 2014/03/27", {valid: true}), "fireChangeEvent called with correct parameters");
+
+		assert.equal(this.oDRS.getValue(), "2014/04/16 @ 2014/03/27", "PageUp: Value in internal format set");
+		assert.equal(this.oDRS.getDateValue().getTime(), new Date(2014, 3, 16).getTime(), "PageUp: dateValue set");
+		assert.equal(this.oDRS._$input.val(), "2014/04/16 @ 2014/03/27", "PageUp: Value in external format displayed");
+
+		//cleanup
+	});
+
+	QUnit.test("Change first date month with page down + shift keys", function(assert) {
+		// prepare
+		this.oFakeEvent.shiftKey = true;
+		this.oDRS._$input.cursorPos(11);
+
+		// act
+		this.oDRS.onsappagedownmodifiers(this.oFakeEvent);
+
+		// assert
+		assert.ok(this.fnIncreaseDateRangeSpy.calledOnce, "_increaseDateRange was called once");
+		assert.ok(this.fnIncreaseDateRangeSpy.calledWithExactly(-1, "month"), "_increaseDateRange called with correct parameters");
+
+		assert.ok(this.fnFireChangeEventSpy.calledOnce, "fireChangeEvent was called once");
+		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/02/16 @ 2014/03/27", {valid: true}), "fireChangeEvent called with correct parameters");
+
+		assert.equal(this.oDRS.getValue(), "2014/02/16 @ 2014/03/27", "PageDown: Value in internal format set");
+		assert.equal(this.oDRS.getDateValue().getTime(), new Date(2014, 1, 16).getTime(), "PageDown: dateValue set");
+		assert.equal(this.oDRS._$input.val(), "2014/02/16 @ 2014/03/27", "PageDown: Value in external format displayed");
+
+		//cleanup
+	});
+
+	QUnit.test("Change first date year with page up + shift + ctrl keys", function(assert) {
+		// prepare
+		this.oFakeEvent.shiftKey = true;
+		this.oFakeEvent.ctrlKey = true;
+		this.oDRS._$input.cursorPos(11);
+
+		// act
+		this.oDRS.onsappageupmodifiers(this.oFakeEvent);
+
+		// assert
+		assert.ok(this.fnIncreaseDateRangeSpy.calledOnce, "_increaseDateRange was called once");
+		assert.ok(this.fnIncreaseDateRangeSpy.calledWithExactly(1, "year"), "_increaseDateRange called with correct parameters");
+
+		assert.ok(this.fnFireChangeEventSpy.calledOnce, "fireChangeEvent was called once");
+		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2015/03/16 @ 2014/03/27", {valid: true}), "fireChangeEvent called with correct parameters");
+
+		assert.equal(this.oDRS.getValue(), "2015/03/16 @ 2014/03/27", "PageUp: Value in internal format set");
+		assert.equal(this.oDRS.getDateValue().getTime(), new Date(2015, 2, 16).getTime(), "PageUp: dateValue set");
+		assert.equal(this.oDRS._$input.val(), "2015/03/16 @ 2014/03/27", "PageUp: Value in external format displayed");
+
+		//cleanup
+	});
+
+	QUnit.test("Change first date year with page down + shift + ctrl keys", function(assert) {
+		// prepare
+		this.oFakeEvent.shiftKey = true;
+		this.oFakeEvent.ctrlKey = true;
+		this.oDRS._$input.cursorPos(11);
+
+		// act
+		this.oDRS.onsappagedownmodifiers(this.oFakeEvent);
+
+		// assert
+		assert.ok(this.fnIncreaseDateRangeSpy.calledOnce, "_increaseDateRange was called once");
+		assert.ok(this.fnIncreaseDateRangeSpy.calledWithExactly(-1, "year"), "_increaseDateRange called with correct parameters");
+
+		assert.ok(this.fnFireChangeEventSpy.calledOnce, "fireChangeEvent was called once");
+		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2013/03/16 @ 2014/03/27", {valid: true}), "fireChangeEvent called with correct parameters");
+
+		assert.equal(this.oDRS.getValue(), "2013/03/16 @ 2014/03/27", "PageDown: Value in internal format set");
+		assert.equal(this.oDRS.getDateValue().getTime(), new Date(2013, 2, 16).getTime(), "PageDown: dateValue set");
+		assert.equal(this.oDRS._$input.val(), "2013/03/16 @ 2014/03/27", "PageDown: Value in external format displayed");
+
+		//cleanup
+	});
+
+	QUnit.test("Change second date day with page up key", function(assert) {
+		// prepare
+		this.oDRS._$input.cursorPos(12);
+
+		// act
+		this.oDRS.onsappageup(this.oFakeEvent);
+
+		// assert
+		assert.ok(this.fnIncreaseDateRangeSpy.calledOnce, "_increaseDateRange was called once");
+		assert.ok(this.fnIncreaseDateRangeSpy.calledWithExactly(1, "day"), "_increaseDateRange called with correct parameters");
+
+		assert.ok(this.fnFireChangeEventSpy.calledOnce, "fireChangeEvent was called once");
+		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/03/16 @ 2014/03/28", {valid: true}), "fireChangeEvent called with correct parameters");
+
+		assert.equal(this.oDRS.getValue(), "2014/03/16 @ 2014/03/28", "PageUp: Value in internal format set");
+		assert.equal(this.oDRS.getSecondDateValue().getTime(), new Date(2014, 2, 28).getTime(), "PageUp: secondDateValue set");
+		assert.equal(this.oDRS._$input.val(), "2014/03/16 @ 2014/03/28", "PageUp: Value in external format displayed");
+
+		//cleanup
+	});
+
+	QUnit.test("Change second date day with page down key", function(assert) {
+		// prepare
+		this.oDRS._$input.cursorPos(12);
+
+		// act
+		this.oDRS.onsappagedown(this.oFakeEvent);
+
+		// assert
+		assert.ok(this.fnIncreaseDateRangeSpy.calledOnce, "_increaseDateRange was called once");
+		assert.ok(this.fnIncreaseDateRangeSpy.calledWithExactly(-1, "day"), "_increaseDateRange called with correct parameters");
+
+		assert.ok(this.fnFireChangeEventSpy.calledOnce, "fireChangeEvent was called once");
+		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/03/16 @ 2014/03/26", {valid: true}), "fireChangeEvent called with correct parameters");
+
+		assert.equal(this.oDRS.getValue(), "2014/03/16 @ 2014/03/26", "PageDown: Value in internal format set");
+		assert.equal(this.oDRS.getSecondDateValue().getTime(), new Date(2014, 2, 26).getTime(), "PageDown: secondDateValue set");
+		assert.equal(this.oDRS._$input.val(), "2014/03/16 @ 2014/03/26", "PageDown: Value in external format displayed");
+
+		//cleanup
+	});
+
+	QUnit.test("Change second date month with page up + shift keys", function(assert) {
+		// prepare
+		this.oDRS._$input.cursorPos(12);
+		this.oFakeEvent.shiftKey = true;
+
+		// act
+		this.oDRS.onsappageupmodifiers(this.oFakeEvent);
+
+		// assert
+		assert.ok(this.fnIncreaseDateRangeSpy.calledOnce, "_increaseDateRange was called once");
+		assert.ok(this.fnIncreaseDateRangeSpy.calledWithExactly(1, "month"), "_increaseDateRange called with correct parameters");
+
+		assert.ok(this.fnFireChangeEventSpy.calledOnce, "fireChangeEvent was called once");
+		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/03/16 @ 2014/04/27", {valid: true}), "fireChangeEvent called with correct parameters");
+
+		assert.equal(this.oDRS.getValue(), "2014/03/16 @ 2014/04/27", "PageUp: Value in internal format set");
+		assert.equal(this.oDRS.getSecondDateValue().getTime(), new Date(2014, 3, 27).getTime(), "PageUp: secondDateValue set");
+		assert.equal(this.oDRS._$input.val(), "2014/03/16 @ 2014/04/27", "PageUp: Value in external format displayed");
+
+		//cleanup
+	});
+
+	QUnit.test("Change second date month with page down + shift keys", function(assert) {
+		// prepare
+		this.oDRS._$input.cursorPos(12);
+		this.oFakeEvent.shiftKey = true;
+
+		// act
+		this.oDRS.onsappagedownmodifiers(this.oFakeEvent);
+
+		// assert
+		assert.ok(this.fnIncreaseDateRangeSpy.calledOnce, "_increaseDateRange was called once");
+		assert.ok(this.fnIncreaseDateRangeSpy.calledWithExactly(-1, "month"), "_increaseDateRange called with correct parameters");
+
+		assert.ok(this.fnFireChangeEventSpy.calledOnce, "fireChangeEvent was called once");
+		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/03/16 @ 2014/02/27", {valid: true}), "fireChangeEvent called with correct parameters");
+
+		assert.equal(this.oDRS.getValue(), "2014/03/16 @ 2014/02/27", "PageDown: Value in internal format set");
+		assert.equal(this.oDRS.getSecondDateValue().getTime(), new Date(2014, 1, 27).getTime(), "PageDown: secondDateValue set");
+		assert.equal(this.oDRS._$input.val(), "2014/03/16 @ 2014/02/27", "PageDown: Value in external format displayed");
+
+		//cleanup
+	});
+
+	QUnit.test("Change second date year with page up + shift + ctrl keys", function(assert) {
+		// prepare
+		this.oDRS._$input.cursorPos(12);
+		this.oFakeEvent.shiftKey = true;
+		this.oFakeEvent.ctrlKey = true;
+
+		// act
+		this.oDRS.onsappageupmodifiers(this.oFakeEvent);
+
+		// assert
+		assert.ok(this.fnIncreaseDateRangeSpy.calledOnce, "_increaseDateRange was called once");
+		assert.ok(this.fnIncreaseDateRangeSpy.calledWithExactly(1, "year"), "_increaseDateRange called with correct parameters");
+
+		assert.ok(this.fnFireChangeEventSpy.calledOnce, "fireChangeEvent was called once");
+		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/03/16 @ 2015/03/27", {valid: true}), "fireChangeEvent called with correct parameters");
+
+		assert.equal(this.oDRS.getValue(), "2014/03/16 @ 2015/03/27", "PageUp: Value in internal format set");
+		assert.equal(this.oDRS.getSecondDateValue().getTime(), new Date(2015, 2, 27).getTime(), "PageUp: secondDateValue set");
+		assert.equal(this.oDRS._$input.val(), "2014/03/16 @ 2015/03/27", "PageUp: Value in external format displayed");
+
+		//cleanup
+	});
+
+	QUnit.test("Change second date year with page down + shift + ctrl keys", function(assert) {
+		// prepare
+		this.oDRS._$input.cursorPos(12);
+		this.oFakeEvent.shiftKey = true;
+		this.oFakeEvent.ctrlKey = true;
+
+		// act
+		this.oDRS.onsappagedownmodifiers(this.oFakeEvent);
+
+		// assert
+		assert.ok(this.fnIncreaseDateRangeSpy.calledOnce, "_increaseDateRange was called once");
+		assert.ok(this.fnIncreaseDateRangeSpy.calledWithExactly(-1, "year"), "_increaseDateRange called with correct parameters");
+
+		assert.ok(this.fnFireChangeEventSpy.calledOnce, "fireChangeEvent was called once");
+		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/03/16 @ 2013/03/27", {valid: true}), "fireChangeEvent called with correct parameters");
+
+		assert.equal(this.oDRS.getValue(), "2014/03/16 @ 2013/03/27", "PageDown: Value in internal format set");
+		assert.equal(this.oDRS.getSecondDateValue().getTime(), new Date(2013, 2, 27).getTime(), "PageDown: secondDateValue set");
+		assert.equal(this.oDRS._$input.val(), "2014/03/16 @ 2013/03/27", "PageDown: Value in external format displayed");
+
+		//cleanup
+	});
+
+	QUnit.test("Change first date month with page up + shift key when current day dosen't exist in the next month", function(assert) {
+		// prepare
+		this.oDRS.setDateValue(new Date(2014, 0, 31));
+		this.oDRS._$input.cursorPos(11);
+		this.oFakeEvent.shiftKey = true;
+
+		// act
+		this.oDRS.onsappageupmodifiers(this.oFakeEvent);
+
+		// assert
+		assert.ok(this.fnIncreaseDateRangeSpy.calledOnce, "_increaseDateRange was called once");
+		assert.ok(this.fnIncreaseDateRangeSpy.calledWithExactly(1, "month"), "_increaseDateRange called with correct parameters");
+
+		assert.ok(this.fnFireChangeEventSpy.calledOnce, "fireChangeEvent was called once");
+		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2014/02/28 @ 2014/03/27", {valid: true}), "fireChangeEvent called with correct parameters");
+
+		assert.equal(this.oDRS.getValue(), "2014/02/28 @ 2014/03/27", "PageUp: Value in internal format set");
+		assert.equal(this.oDRS.getDateValue().getTime(), new Date(2014, 1, 28).getTime(), "PageUp: DateValue set");
+		assert.equal(this.oDRS._$input.val(), "2014/02/28 @ 2014/03/27", "PageUp: Value in external format displayed");
+
+		//cleanup
+	});
+
+	QUnit.test("Change first date year with page down + shift key when current day dosen't exist in the next year (leep year)", function(assert) {
+		// prepare
+		this.oDRS.setDateValue(new Date(2020, 1, 29));
+		this.oDRS.setSecondDateValue(new Date(2020, 2, 27));
+		this.oDRS._$input.cursorPos(11);
+		this.oFakeEvent.shiftKey = true;
+		this.oFakeEvent.ctrlKey = true;
+
+		// act
+		this.oDRS.onsappagedownmodifiers(this.oFakeEvent);
+
+		// assert
+		assert.ok(this.fnIncreaseDateRangeSpy.calledOnce, "_increaseDateRange was called once");
+		assert.ok(this.fnIncreaseDateRangeSpy.calledWithExactly(-1, "year"), "_increaseDateRange called with correct parameters");
+
+		assert.ok(this.fnFireChangeEventSpy.calledOnce, "fireChangeEvent was called once");
+		assert.ok(this.fnFireChangeEventSpy.calledWithExactly("2019/02/28 @ 2020/03/27", {valid: true}), "fireChangeEvent called with correct parameters");
+
+		assert.equal(this.oDRS.getValue(), "2019/02/28 @ 2020/03/27", "PageDown: Value in internal format set");
+		assert.equal(this.oDRS.getDateValue().getTime(), new Date(2019, 1, 28).getTime(), "PageDown: DateValue set");
+		assert.equal(this.oDRS._$input.val(), "2019/02/28 @ 2020/03/27", "PageDown: Value in external format displayed");
+
+		//cleanup
 	});
 
 	QUnit.module("Accessibility");
