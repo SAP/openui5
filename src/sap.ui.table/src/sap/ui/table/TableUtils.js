@@ -270,7 +270,7 @@ sap.ui.define([
 		 * @private
 		 */
 		getRowActionCount : function(oTable) {
-			var oTemplate = oTable.getRowActionTemplate();
+			var oTemplate = oTable ? oTable.getRowActionTemplate() : null;
 			return oTemplate ? oTemplate._getCount() : 0;
 		},
 
@@ -281,7 +281,7 @@ sap.ui.define([
 		 * @private
 		 */
 		hasRowActions : function(oTable) {
-			var oRowActionTemplate = oTable.getRowActionTemplate();
+			var oRowActionTemplate = oTable ? oTable.getRowActionTemplate() : null;
 
 			return oRowActionTemplate != null
 				   && (oRowActionTemplate.isBound("visible") || oRowActionTemplate.getVisible())
@@ -772,7 +772,7 @@ sap.ui.define([
 				oCellInfo.columnSpan = 1;
 
 			} else if ($Cell.hasClass("sapUiTablePseudoCell")) {
-				sColumnId = $Cell.data("sap-ui-colid");
+				sColumnId = $Cell.attr("data-sap-ui-colid");
 				oColumn = sap.ui.getCore().byId(sColumnId);
 
 				oCellInfo.type = TableUtils.CELLTYPE.PSEUDO;
@@ -840,17 +840,6 @@ sap.ui.define([
 					}
 				} else {
 					oCell = oRow.getCells()[iColIdx];
-				}
-
-				//TBD: Clarify why this is needed!
-				if (oCell && oCell.data("sap-ui-colid") != oColumn.getId()) {
-					var aCells = oRow.getCells();
-					for (var i = 0; i < aCells.length; i++) {
-						if (aCells[i].data("sap-ui-colid") === oColumn.getId()) {
-							oCell = aCells[i];
-							break;
-						}
-					}
 				}
 			}
 

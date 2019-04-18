@@ -1422,14 +1422,6 @@ sap.ui.define([
 		// update their domrefs after the rendering is done. This is required to allow performant access to row domrefs
 		this._initRowDomRefs();
 
-		// restore the column icons
-		var aCols = this.getColumns();
-		for (var i = 0, l = aCols.length; i < l; i++) {
-			if (aCols[i].getVisible()) {
-				aCols[i]._restoreIcons();
-			}
-		}
-
 		// enable/disable text selection for column headers
 		if (!this._bAllowColumnHeaderTextSelection && !bRenderedRows) {
 			this._disableTextSelection($this.find(".sapUiTableColHdrCnt"));
@@ -1452,10 +1444,14 @@ sap.ui.define([
 		if (this._bFirstRendering && sVisibleRowCountMode === VisibleRowCountMode.Auto) {
 			// Wait until everything is rendered (parent height!) before reading/updating sizes. Use a promise to make sure
 			// to be executed before timeouts may be executed.
-			Promise.resolve().then(this._updateTableSizes.bind(this, TableUtils.RowsUpdateReason.Render, {forceUpdate: true}));
+			Promise.resolve().then(this._updateTableSizes.bind(this, TableUtils.RowsUpdateReason.Render, {
+				forceUpdate: true,
+				skipResetRowHeights: true
+			}));
 		} else {
 			var mOptions = {
-				skipHandleRowCountMode: bRenderedRows
+				skipHandleRowCountMode: bRenderedRows,
+				skipResetRowHeights: true
 			};
 			var fireRowsUpdated = function() {
 				if (bRenderedRows || this.getBinding("rows") == null) {
@@ -1525,6 +1521,7 @@ sap.ui.define([
 		mOptions = Object.assign({
 			forceUpdate: false,
 			skipHandleRowCountMode: false,
+			skipResetRowHeights: false,
 			rowContentHeight: undefined // "restore", "reset"
 		}, mOptions);
 
@@ -1535,8 +1532,11 @@ sap.ui.define([
 			return;
 		}
 
-		this._resetRowHeights();
-		this._resetColumnHeaderHeights();
+		if (!mOptions.skipResetRowHeights) {
+			this._resetRowHeights();
+			this._resetColumnHeaderHeights();
+		}
+
 		this._aRowHeights = this._collectRowHeights(false);
 		var aColumnHeaderRowHeights = this._collectRowHeights(true);
 
@@ -1608,7 +1608,7 @@ sap.ui.define([
 			function adaptColWidth(oColInfo) {
 				if (oColInfo) {
 					Array.prototype.forEach.call(oColInfo.headers, function(header) {
-							header.style.width = oColInfo.newWidth;
+						header.style.width = oColInfo.newWidth;
 					});
 				}
 			}
@@ -1630,6 +1630,8 @@ sap.ui.define([
 			}
 		}
 		setMinColWidths(this);
+
+		var oTableSizes = this._collectTableSizes();
 
 		// Manipulation of UI Sizes
 		this._updateRowHeights(this._aRowHeights, false);
@@ -1661,7 +1663,6 @@ sap.ui.define([
 			});
 		}, this);
 
-		var oTableSizes = this._collectTableSizes();
 		var oScrollExtension = this._getScrollExtension();
 		oScrollExtension.updateHorizontalScrollbar(oTableSizes);
 		oScrollExtension.updateVerticalScrollbarPosition();
@@ -2922,11 +2923,11 @@ sap.ui.define([
 	 */
 	Table.prototype._clearTextSelection = function() {
 		if (window.getSelection) {
-		  if (window.getSelection().empty) {  // Chrome
-			window.getSelection().empty();
-		  } else if (window.getSelection().removeAllRanges) {  // Firefox
-			window.getSelection().removeAllRanges();
-		  }
+			if (window.getSelection().empty) {  // Chrome
+				window.getSelection().empty();
+			} else if (window.getSelection().removeAllRanges) {  // Firefox
+				window.getSelection().removeAllRanges();
+			}
 		} else if (document.selection && document.selection.empty) {  // IE?
 			try {
 				document.selection.empty();
@@ -2964,7 +2965,7 @@ sap.ui.define([
 			var oRow = this.getRows()[iRow];
 			var oCell = oRow && oRow.getCells()[iCol];
 			var iRealRowIndex = oRow && oRow.getIndex();
-			var sColId = oCell.data("sap-ui-colid");
+			var sColId = Column.ofCell(oCell).getId();
 
 			var oRowBindingContext;
 			if (this.getBindingInfo("rows")) {

@@ -5,13 +5,14 @@
 // Provides control sap.ui.table.CreationRow.
 sap.ui.define([
 	"./CreationRowRenderer",
+	"./Column",
 	"./TableUtils",
 	"sap/ui/core/Control",
 	"sap/m/library",
 	"sap/m/OverflowToolbar",
 	"sap/m/ToolbarSpacer",
 	"sap/m/Button"
-], function(Renderer, TableUtils, Control, MLibrary, OverflowToolbar, ToolbarSpacer, Button) {
+], function(Renderer, Column, TableUtils, Control, MLibrary, OverflowToolbar, ToolbarSpacer, Button) {
 	"use strict";
 
 	/**
@@ -263,7 +264,7 @@ sap.ui.define([
 	CreationRow.prototype._getCell = function(iColumnIndex) {
 		var aCells = this.getCells();
 		var oCell = aCells.filter(function(oCell) {
-			return oCell.data("sap-ui-colindex") === iColumnIndex;
+			return Column.ofCell(oCell).getIndex() === iColumnIndex;
 		})[0];
 
 		if (!oCell) {

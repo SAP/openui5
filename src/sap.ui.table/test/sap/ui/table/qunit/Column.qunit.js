@@ -584,10 +584,8 @@ sap.ui.define([
 			assert.strictEqual(this.getTemplateCloneCount(), i + 1, (i + 1) + " template clone(s) exist(s)");
 			assert.strictEqual(this.oColumn._mTemplateClones[sTemplateType].length, 1, sTemplateType + " type: 1 template clone exists");
 
-			assert.strictEqual(oTemplateClone.data("sap-ui-colindex"), 5,
-				sTemplateType + " type: The template has the correct \"colindex\" data");
-			assert.strictEqual(oTemplateClone.data("sap-ui-colid"), this.oColumn.getId(),
-				sTemplateType + " type: The template has the correct \"colid\" data");
+			assert.strictEqual(this.oColumn, Column.ofCell(oTemplateClone),
+				sTemplateType + " type: Column of the template clone can be obtained with Column.ofCell");
 
 			assert.ok(oGetFreeTemplateCloneSpy.calledOnce, sTemplateType + " type: Column#_getFreeTemplateClone was called once");
 			assert.ok(oGetFreeTemplateCloneSpy.calledWithExactly(sTemplateType),
@@ -628,10 +626,8 @@ sap.ui.define([
 				this.aTemplateTypes.length + i + 1 + " template clones exist");
 			assert.strictEqual(this.oColumn._mTemplateClones[sTemplateType].length, 2, sTemplateType + " type: 2 template clones exist");
 
-			assert.strictEqual(oTemplateClone.data("sap-ui-colindex"), 5,
-				sTemplateType + " type: The template has the correct \"colindex\" data");
-			assert.strictEqual(oTemplateClone.data("sap-ui-colid"), this.oColumn.getId(),
-				sTemplateType + " type: The template has the correct \"colid\" data");
+			assert.strictEqual(this.oColumn, Column.ofCell(oTemplateClone),
+				sTemplateType + " type: Column of the template clone can be obtained with Column.ofCell");
 
 			assert.ok(oGetFreeTemplateCloneSpy.calledOnce, sTemplateType + " type: Column#_getFreeTemplateClone was called once");
 			assert.ok(oGetFreeTemplateCloneSpy.calledWithExactly(sTemplateType),
@@ -676,10 +672,8 @@ sap.ui.define([
 				(this.aTemplateTypes.length * 3) + " template clones exist");
 			assert.strictEqual(this.oColumn._mTemplateClones[sTemplateType].length, 3, sTemplateType + " type: 3 template clones exist");
 
-			assert.strictEqual(oTemplateClone.data("sap-ui-colindex"), 5,
-				sTemplateType + " type: The template has the correct \"colindex\" data");
-			assert.strictEqual(oTemplateClone.data("sap-ui-colid"), this.oColumn.getId(),
-				sTemplateType + " type: The template has the correct \"colid\" data");
+			assert.strictEqual(this.oColumn, Column.ofCell(oTemplateClone),
+				sTemplateType + " type: Column of the template clone can be obtained with Column.ofCell");
 
 			assert.ok(oGetFreeTemplateCloneSpy.calledOnce, sTemplateType + " type: Column#_getFreeTemplateClone was called once");
 			assert.ok(oGetFreeTemplateCloneSpy.calledWithExactly(sTemplateType),
