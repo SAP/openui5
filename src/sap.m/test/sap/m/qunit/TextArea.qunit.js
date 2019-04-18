@@ -401,9 +401,11 @@ sap.ui.define([
 		}).placeAt("content");
 		sap.ui.getCore().applyChanges();
 
+		var iInitialHeight = oTA.getFocusDomRef().clientHeight;
+
 		oTA.setValue(sLongText);
 		sap.ui.getCore().applyChanges();
-		assert.ok(oTA.getFocusDomRef().clientHeight >= 250, "TextArea height is adjusted");
+		assert.ok(oTA.getFocusDomRef().clientHeight >= iInitialHeight, "TextArea height is adjusted");
 		oTA.destroy();
 	});
 
@@ -430,6 +432,23 @@ sap.ui.define([
 		oTA.destroy();
 	});
 
+	QUnit.test("line height", function(assert) {
+		var sLongText = new Array(10).join("text "),
+			oTA = new TextArea({
+				value: sLongText,
+				growing: true
+			});
+
+		assert.notOk(oTA._getLineHeight(), "_getLineHeight should return null, when there is no dom ref");
+
+		oTA.placeAt('content');
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(!isNaN(oTA._getLineHeight()), "_getLineHeight should be a number");
+
+		oTA.destroy();
+	});
+
 	QUnit.test("maxHeight should be defined if maxLines is set", function(assert) {
 		var sLongText = new Array(1000).join("text ");
 		var oTA = new TextArea({
@@ -442,7 +461,7 @@ sap.ui.define([
 
 		oTA.focus();
 		assert.ok(oTA.getFocusDomRef().scrollHeight > oTA.getFocusDomRef().offsetHeight, "There is scroll bar. Whole content is not visible");
-		assert.ok(jQuery(oTA.getFocusDomRef()).css("max-height"), "There is a max-height defined");
+		assert.ok(jQuery(oTA.getDomRef('inner')).css("max-height"), "There is a max-height defined");
 		oTA.destroy();
 	});
 
@@ -459,6 +478,7 @@ sap.ui.define([
 
 		var oDOMRef = oTA.getDomRef();
 		var oTextAreaDOMRef = oTA.getDomRef('inner');
+		var oMirrorDiv = oTA.getDomRef('hidden');
 		var initialHeight = oDOMRef.clientHeight;
 
 		//Act
@@ -466,6 +486,9 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//Assert
+		assert.ok(oMirrorDiv, "A mirror div container should be created");
+		assert.strictEqual(oMirrorDiv.innerHTML.replace('&nbsp;', ''), shortText, "The mirror div should have the same text as an inner html");
+		assert.strictEqual(oMirrorDiv.clientHeight, oTextAreaDOMRef.clientHeight, "The mirror div should have the same height as the textarea");
 		assert.ok(initialHeight > oDOMRef.clientHeight, "TextArea height should have been shrinked properly.");
 		assert.ok(oTextAreaDOMRef.clientHeight >= oTextAreaDOMRef.scrollHeight, "Textarea should not have a scroll");
 
@@ -474,6 +497,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//Assert
+		assert.strictEqual(oMirrorDiv.innerHTML.replace('&nbsp;', ''), sLongText, "The mirror div should have the same text as an inner html");
+		assert.strictEqual(oMirrorDiv.scrollHeight, oTextAreaDOMRef.scrollHeight, "The mirror div should have the same height as the textarea");
 		assert.ok(initialHeight === oDOMRef.clientHeight, "TextArea height should have been extended properly.");
 		assert.ok(oTextAreaDOMRef.clientHeight < oTextAreaDOMRef.scrollHeight, "TextArea should have a scroll.");
 

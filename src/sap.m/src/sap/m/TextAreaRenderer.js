@@ -66,6 +66,16 @@ sap.ui.define([
 		oRm.write("</textarea>");
 	};
 
+	TextAreaRenderer.prependInnerContent = function(oRm, oControl) {
+		if (oControl.getGrowing()) {
+			oRm.write("<div");
+			oRm.addClass("sapMTextAreaMirror");
+			oRm.writeClasses();
+			oRm.writeAttribute("id", oControl.getId() + '-hidden');
+			oRm.write("></div>");
+		}
+	};
+
 	// TextArea does not have value property as HTML element, so overwrite base method
 	TextAreaRenderer.writeInnerValue = function() {
 	};
