@@ -17046,4 +17046,32 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: List binding is destroyed while request is in flight. Gracefully ignore response.
+	// BCP: 1980173241
+	QUnit.test("BCP: 1980173241", function (assert) {
+		var fnRespond,
+			sView = '\
+<Table id="table" items="{/EMPLOYEES}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text text="{ID}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES?$skip=0&$top=100", new Promise(function (resolve, reject) {
+				fnRespond = resolve.bind(null, {
+					"value" : []
+				});
+			}));
+
+		return this.createView(assert, sView).then(function () {
+			that.oView.destroy();
+			delete that.oView;
+
+			fnRespond();
+		});
+	});
 });
