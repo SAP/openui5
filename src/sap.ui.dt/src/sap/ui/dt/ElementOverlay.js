@@ -436,7 +436,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 		var oReturn = this.setAggregation("designTimeMetadata", oDesignTimeMetadata);
 
 		if (this.getElementInstance()) {
-			this._aScrollContainers = this.getDesignTimeMetadata().getScrollContainers();
+			this._aScrollContainers = this.getDesignTimeMetadata().getScrollContainers(this.getElementInstance());
 			this._renderAndCreateAggregation();
 		}
 
