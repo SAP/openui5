@@ -2,9 +2,10 @@
         xmlns="sap.m"
         xmlns:mvc="sap.ui.core.mvc"
         class="sapUiContentPadding"
-        xmlns:w="sap.ui.integration.widgets">
+        xmlns:w="sap.ui.integration.widgets"
+        controllerName="sap.ui.integration.sample.ListCard.ListCard">
     <Panel>
-        <w:Card width="auto" manifest="./test-resources/sap/ui/integration/demokit/sample/ListCard/model/cardManifest.json">
+        <w:Card id="listCardSample" width="auto">
         </w:Card>
     </Panel>
 </mvc:View>
