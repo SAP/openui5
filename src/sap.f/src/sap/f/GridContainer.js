@@ -247,11 +247,12 @@ sap.ui.define([
 
 		if (!isGridSupportedByBrowser()) {
 			container._applyIEPolyfillForItem(this);
+			container._applyIEPolyfillLayout();
 		}
 
-		container._resizeListeners[this.getId()] = ResizeHandler.register(this.getDomRef(), container._resizeHandler);
+		container._resizeListeners[this.getId()] = ResizeHandler.register(this, container._resizeItemHandler);
 		container._setItemNavigationItems();
-		container._applyLayout();
+		container._applyItemAutoRows(this);
 	};
 
 	GridContainer.prototype._onItemChange = function (changes) {
@@ -343,6 +344,7 @@ sap.ui.define([
 		this._itemsObserver.observe(this, {aggregations: ["items"]});
 
 		this._resizeHandler = this._resize.bind(this);
+		this._resizeItemHandler = this._resizeItem.bind(this);
 
 		this._itemNavigation = new ItemNavigation().setCycling(false);
 		this._itemNavigation.setDisabledModifiers({
@@ -391,39 +393,52 @@ sap.ui.define([
 		this._applyLayout();
 	};
 
+	GridContainer.prototype._resizeItem = function (oEvent) {
+		if (!isGridSupportedByBrowser()) {
+			this._applyIEPolyfillLayout();
+			return;
+		}
+
+		this._applyItemAutoRows(oEvent.control);
+	};
+
 	GridContainer.prototype._applyLayout = function () {
 		if (!this._isRenderingFinished) {
 			return;
 		}
 
 		var bLayoutSettingsAreChanged = this._detectActiveLayout();
-		if (bLayoutSettingsAreChanged) {
-			this.$().css(this._getActiveGridStyles());
-		}
 
 		if (!isGridSupportedByBrowser()) {
+			this.getItems().forEach(this._applyIEPolyfillForItem.bind(this));
 			this._applyIEPolyfillLayout();
 			return;
 		}
 
+		if (bLayoutSettingsAreChanged) {
+			this.$().css(this._getActiveGridStyles());
+
+			this.getItems().forEach(this._applyItemAutoRows.bind(this));
+		}
+	};
+
+	GridContainer.prototype._applyItemAutoRows = function (oItem) {
 		if (this.getInlineBlockLayout()) {
 			return;
 		}
 
-		this.getItems().forEach(function (oItem) {
-			if (hasItemAutoHeight(oItem)) {
-				var $item = oItem.$(),
-					height = $item.height(),
-					$container = this.$(),
-					rowHeight = parseInt($container.css("grid-auto-rows")),
-					gapSize = parseInt($container.css("grid-row-gap")),
-					rows = Math.ceil((height + gapSize) / (rowHeight + gapSize));
+		if (hasItemAutoHeight(oItem)) {
+			var $item = oItem.$(),
+				height = $item.height(),
+				$container = this.$(),
+				rowHeight = parseInt($container.css("grid-auto-rows")),
+				gapSize = parseInt($container.css("grid-row-gap")),
+				rows = Math.ceil((height + gapSize) / (rowHeight + gapSize));
 
-				$item.parent().css({
-					'grid-row': 'span ' + Math.max(rows, getItemRowCount(oItem))
-				});
-			}
-		}.bind(this));
+			$item.parent().css({
+				'grid-row': 'span ' + Math.max(rows, getItemRowCount(oItem))
+			});
+		}
 	};
 
 	/**
@@ -470,6 +485,9 @@ sap.ui.define([
 	};
 
 	GridContainer.prototype._applyIEPolyfillLayout = function () {
+		if (!this._isRenderingFinished) {
+			return;
+		}
 
 		var $that = this.$(),
 			width = $that.innerWidth(),
