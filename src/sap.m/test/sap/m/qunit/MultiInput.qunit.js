@@ -192,6 +192,20 @@ sap.ui.define([
 		multiInput.destroy();
 	});
 
+	QUnit.test("_calculateSpaceForTokenizer for MultiInput with description", function(assert) {
+		var multiInput = new MultiInput({
+			width: "500px",
+			description: "Unit"
+		});
+
+		multiInput.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(multiInput._calculateSpaceForTokenizer(), "148px", "_calculateSpaceForTokenizer returns a correct px value");
+
+		multiInput.destroy();
+	});
+
 	QUnit.test("_calculateSpaceForTokenizer with null DOM element reference", function(assert) {
 		var multiInput = new MultiInput(),
 			output;
