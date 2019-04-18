@@ -2312,6 +2312,76 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
+	function isTextTruncated($element) {
+		var iTolerance = 0;
+
+		return $element[0].scrollWidth > ($element.innerWidth() + iTolerance);
+	}
+
+	QUnit.module("Popover scroll width",{
+		beforeEach: function() {
+			this.oButton = new Button().placeAt("content");
+			this.oPopover = new Popover({
+				title: 'Will have vertical scroll',
+				horizontalScrolling: false,
+				contentHeight: "10rem", // ensure that we have a vertical scroll
+				content: [
+					new List({
+						items: [
+							new StandardListItem({
+								title: "Item 1"
+							}),
+							new StandardListItem({
+								title: "Item 2"
+							}),
+							new StandardListItem({
+								title: "Item 3"
+							}),
+							new StandardListItem({
+								id: "longTextItem", // this item has to be visible without truncation by default
+								title: "Item with some long text. Item with some long text."
+							}),
+							new StandardListItem({
+								title: "Item 4"
+							})
+						]
+					})
+				]
+			});
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oPopover.destroy();
+			this.oButton.destroy();
+		}
+	});
+
+	QUnit.test("Item texts are not truncated when width is auto", function(assert) {
+		this.oPopover.openBy(this.oButton);
+		this.clock.tick(500);
+
+		sap.ui.getCore().applyChanges();
+
+		var $longTextItem = this.oPopover.$().find("#longTextItem .sapMSLITitleOnly");
+
+		// assert
+		assert.strictEqual(isTextTruncated($longTextItem), false, "Long text is not truncated when width is auto");
+	});
+
+	QUnit.test("Text is truncated when width is too small", function(assert) {
+		this.oPopover.setContentWidth("20rem");
+		sap.ui.getCore().applyChanges();
+
+		this.oPopover.openBy(this.oButton);
+		this.clock.tick(500);
+
+		var $longTextItem = this.oPopover.$().find("#longTextItem .sapMSLITitleOnly");
+
+		// assert
+		assert.strictEqual(isTextTruncated($longTextItem), true, "Text is truncated when width is small");
+	});
+
 	// include stylesheet and let test starter wait for it
 	return includeStylesheet({
 		url: sap.ui.require.toUrl("test-resources/sap/m/qunit/Popover.css")
