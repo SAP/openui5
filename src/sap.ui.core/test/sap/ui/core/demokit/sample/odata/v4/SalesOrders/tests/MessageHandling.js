@@ -167,7 +167,7 @@ sap.ui.define([
 					message: "Failed to update path /SalesOrderList('0500000004')/Note",
 					details : "Property `Note` value `RAISE_ERROR` not allowed!"
 				}, {
-					component : "sap.ui.model.odata.v4.ODataParentBinding",
+					component : "sap.ui.model.odata.v4.ODataListBinding",
 					level : Log.Level.ERROR,
 					message: "POST on 'SalesOrderList('0500000004')/SO_2_SOITEM' failed"
 						+ "; will be repeated automatically",

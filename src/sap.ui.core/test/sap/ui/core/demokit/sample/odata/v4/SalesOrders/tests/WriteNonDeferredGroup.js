@@ -11,7 +11,7 @@ sap.ui.define([
 	return {
 		writeNonDeferredGroup : function (sGroupId, sUIComponent, Given, When, Then) {
 			var aExpectedLogs = [{
-					component : "sap.ui.model.odata.v4.ODataParentBinding",
+					component : "sap.ui.model.odata.v4.ODataListBinding",
 					level : Log.Level.ERROR,
 					message : "POST on 'SalesOrderList' failed; will be repeated automatically"
 				}],

@@ -10,7 +10,7 @@ sap.ui.define([
 		createMultiple : function (Given, When, Then, sUIComponent) {
 			var iCreated = 0,
 				oExpectedLog = {
-					component : "sap.ui.model.odata.v4.ODataParentBinding",
+					component : "sap.ui.model.odata.v4.ODataListBinding",
 					level : Log.Level.ERROR,
 					message: "POST on 'SalesOrderList' failed; will be repeated automatically",
 					details : "Property `Note` value `RAISE_ERROR` not allowed!"

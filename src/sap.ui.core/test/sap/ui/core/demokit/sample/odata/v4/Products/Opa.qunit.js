@@ -147,7 +147,7 @@ sap.ui.getCore().attachInit(function () {
 				Then.onTheMainPage.checkProductIDIsEditable(false);
 
 				Then.onAnyPage.checkLog([{
-					component : "sap.ui.model.odata.v4.ODataParentBinding",
+					component : "sap.ui.model.odata.v4.ODataListBinding",
 					level : Log.Level.ERROR,
 					message: "POST on 'ProductList' failed; will be repeated automatically",
 					details : "Error occurred while processing the request"

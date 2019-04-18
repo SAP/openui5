@@ -41,11 +41,11 @@ sap.ui.define([
 					source : "UnitsOfMeasure.json"
 				},
 				"POST ProductList?custom-option=value" : [{
-					code: 400,
+					code : 400,
 					ifMatch : /,"ProductID":"H-100",/g,
 					source : "POST-ProductList('H-100').Error.json"
 				}, {
-					code: 200,
+					code : 200,
 					source : "POST-ProductList('H-1001').json"
 				}]
 			}, "sap/ui/core/sample/odata/v4/Products/data",

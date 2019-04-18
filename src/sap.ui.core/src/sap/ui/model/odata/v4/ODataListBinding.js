@@ -32,6 +32,8 @@ sap.ui.define([
 		mSupportedEvents = {
 			AggregatedDataStateChange : true,
 			change : true,
+			createCompleted : true,
+			createSent : true,
 			dataReceived : true,
 			dataRequested : true,
 			DataStateChange : true,
@@ -125,6 +127,60 @@ sap.ui.define([
 		});
 
 	asODataParentBinding(ODataListBinding.prototype);
+
+	/**
+	 * Attach event handler <code>fnFunction</code> to the 'createCompleted' event of this binding.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 *
+	 * @public
+	 * @since 1.66.0
+	 */
+	ODataListBinding.prototype.attachCreateCompleted = function (fnFunction, oListener) {
+		this.attachEvent("createCompleted", fnFunction, oListener);
+	};
+
+	/**
+	 * Detach event handler <code>fnFunction</code> from the 'createCompleted' event of this
+	 * binding.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 *
+	 * @public
+	 * @since 1.66.0
+	 */
+	ODataListBinding.prototype.detachCreateCompleted = function (fnFunction, oListener) {
+		this.detachEvent("createCompleted", fnFunction, oListener);
+	};
+
+	/**
+	 * Attach event handler <code>fnFunction</code> to the 'createSent' event of this binding.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 *
+	 * @public
+	 * @since 1.66.0
+	 */
+	ODataListBinding.prototype.attachCreateSent = function (fnFunction, oListener) {
+		this.attachEvent("createSent", fnFunction, oListener);
+	};
+
+	/**
+	 * Detach event handler <code>fnFunction</code> from the 'createSent' event of this
+	 * binding.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 *
+	 * @public
+	 * @since 1.66.0
+	 */
+	ODataListBinding.prototype.detachCreateSent = function (fnFunction, oListener) {
+		this.detachEvent("createSent", fnFunction, oListener);
+	};
 
 	/**
 	 * Check whether all given <code>sap.ui.model.Filter</code> and their embedded filters are case
@@ -298,6 +354,42 @@ sap.ui.define([
 	 */
 
 	/**
+	 * The 'createCompleted' event is fired when the backend has responded to a POST request
+	 * triggered for a {@link #create} on this binding. For each 'createSent' event, a
+	 * 'createCompleted' event is fired.
+	 *
+	 * @param {sap.ui.base.Event} oEvent The event object
+	 * @param {sap.ui.model.odata.v4.ODataListBinding} oEvent.getSource() This binding
+	 * @param {object} oEvent.getParameters() Object containing all event parameters
+	 * @param {sap.ui.model.odata.v4.Context} oEvent.getParameters().context
+	 *   The context for the created entity
+	 * @param {boolean} oEvent.getParameters().success
+	 *   Whether the POST was successfully processed; in case of an error, the error is already
+	 *   reported to the {@link sap.ui.core.message.MessageManager}
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataListBinding#createCompleted
+	 * @public
+	 * @since 1.66.0
+	 */
+
+	/**
+	 * The 'createSent' event is fired when a POST request triggered for a {@link #create} on this
+	 * binding is sent to the backend. For each 'createSent' event, a 'createCompleted' event is
+	 * fired.
+	 *
+	 * @param {sap.ui.base.Event} oEvent The event object
+	 * @param {sap.ui.model.odata.v4.ODataListBinding} oEvent.getSource() This binding
+	 * @param {sap.ui.model.odata.v4.Context} oEvent.getParameters().context
+	 *   The context for the created entity
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataListBinding#createSent
+	 * @public
+	 * @since 1.66.0
+	 */
+
+	/**
 	 * The 'dataReceived' event is fired after the back-end data has been processed and the
 	 * registered 'change' event listeners have been notified. It is only fired for GET requests.
 	 * The 'dataReceived' event is to be used by applications for example to switch off a busy
@@ -352,6 +444,7 @@ sap.ui.define([
 	 * @param {object} oEvent.getParameters() Object containing all event parameters
 	 * @param {boolean} oEvent.getParameters().success
 	 *   Whether all PATCHes are successfully processed
+	 *
 	 * @event
 	 * @name sap.ui.model.odata.v4.ODataListBinding#patchCompleted
 	 * @public
@@ -402,7 +495,10 @@ sap.ui.define([
 	 * automatically. If the binding's update group ID has
 	 * {@link sap.ui.model.odata.v4.SubmitMode.API}, it is repeated with the next call of
 	 * {@link sap.ui.model.odata.v4.ODataModel#submitBatch}. Otherwise it is repeated with the next
-	 * update for the entity.
+	 * update for the entity. Each time the data for the created entity is sent to the server, a
+	 * {@link #event:createSent} event is fired and each time the client receives a response for the
+	 * creation, a {@link #event:createCompleted} event is fired, independent of whether the
+	 * creation was successful or not.
 	 *
 	 * The initial data for the created entity can be supplied via the parameter
 	 * <code>oInitialData</code> and modified via property bindings. Properties that are not part of
@@ -443,6 +539,7 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.create = function (oInitialData, bSkipRefresh, bAtEnd) {
 		var oContext,
+			oCreatePathPromise = this.fetchResourcePath(),
 			oCreatePromise,
 			oGroupLock,
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
@@ -466,15 +563,23 @@ sap.ui.define([
 		this.checkSuspended();
 
 		oGroupLock = this.lockGroup(this.getUpdateGroupId(), true); // only for createInCache
-		oCreatePromise = this.createInCache(oGroupLock, this.fetchResourcePath(), "",
-			sTransientPredicate, oInitialData,
-			function () {
-				// cancel callback
+		oCreatePromise = this.createInCache(oGroupLock, oCreatePathPromise, "", sTransientPredicate,
+			oInitialData,
+			function () { // cancel callback
 				that.destroyCreated(oContext);
 				return Promise.resolve().then(function () {
 					// fire asynchronously so that _delete is finished before
 					that._fireChange({reason : ChangeReason.Remove});
 				});
+			},
+			function (oError) { // error callback
+				that.oModel.reportError("POST on '" + oCreatePathPromise
+					+ "' failed; will be repeated automatically", sClassName, oError);
+
+				that.fireEvent("createCompleted", {context : oContext, success : false});
+			},
+			function () { // submit callback
+				that.fireEvent("createSent", {context : oContext});
 			}
 		).then(function (oCreatedEntity) {
 			var sGroupId, iIndex, sPredicate;
@@ -492,6 +597,7 @@ sap.ui.define([
 					that.oModel.checkMessages();
 				}
 			}
+			that.fireEvent("createCompleted", {context : oContext, success : true});
 			if (!bSkipRefresh && that.isRoot()) {
 				sGroupId = that.getGroupId();
 				if (!that.oModel.isDirectGroup(sGroupId) && !that.oModel.isAutoGroup(sGroupId)) {
