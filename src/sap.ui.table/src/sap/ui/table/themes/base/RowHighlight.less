@@ -3,6 +3,16 @@
 /* Base theme                         */
 /* ================================== */
 
+@_sap_ui_table_RowHighlight_SuccessColor: @sapUiSuccessBorder;
+@_sap_ui_table_RowHighlight_ErrorColor: @sapUiErrorBorder;
+@_sap_ui_table_RowHighlight_WarningColor: @sapUiWarningBorder;
+@_sap_ui_table_RowHighlight_InformationColor: @sapUiInformationBorder;
+@_sap_ui_table_RowHighlight_Indication01Color: @sapUiIndication1;
+@_sap_ui_table_RowHighlight_Indication02Color: @sapUiIndication2;
+@_sap_ui_table_RowHighlight_Indication03Color: @sapUiIndication3;
+@_sap_ui_table_RowHighlight_Indication04Color: @sapUiIndication4;
+@_sap_ui_table_RowHighlight_Indication05Color: @sapUiIndication5;
+
 .sapUiTableRowHighlight {
 	height: 100%;
 	width: @_sap_ui_table_RowHighlightWidth;
@@ -20,42 +30,38 @@
 	}
 
 	&.sapUiTableRowHighlightSuccess {
-		background-color: @sapUiSuccessBorder;
+		background-color: @_sap_ui_table_RowHighlight_SuccessColor;
 	}
 
 	&.sapUiTableRowHighlightError {
-		background-color: @sapUiErrorBorder;
+		background-color: @_sap_ui_table_RowHighlight_ErrorColor;
 	}
 
 	&.sapUiTableRowHighlightWarning {
-		background-color: @sapUiWarningBorder;
+		background-color: @_sap_ui_table_RowHighlight_WarningColor;
 	}
 
 	&.sapUiTableRowHighlightInformation {
-		background-color: @sapUiInformationBorder;
-	}
-
-	&.sapUiTableRowHighlightNone {
-		background-color: transparent;
+		background-color: @_sap_ui_table_RowHighlight_InformationColor;
 	}
 
 	&.sapUiTableRowHighlightIndication01 {
-		background-color: @sapUiIndication1;
+		background-color: @_sap_ui_table_RowHighlight_Indication01Color;
 	}
 
 	&.sapUiTableRowHighlightIndication02 {
-		background-color: @sapUiIndication2;
+		background-color: @_sap_ui_table_RowHighlight_Indication02Color;
 	}
 
 	&.sapUiTableRowHighlightIndication03 {
-		background-color: @sapUiIndication3;
+		background-color: @_sap_ui_table_RowHighlight_Indication03Color;
 	}
 
 	&.sapUiTableRowHighlightIndication04 {
-		background-color: @sapUiIndication4;
+		background-color: @_sap_ui_table_RowHighlight_Indication04Color;
 	}
 
 	&.sapUiTableRowHighlightIndication05 {
-		background-color: @sapUiIndication5;
+		background-color: @_sap_ui_table_RowHighlight_Indication05Color;
 	}
 }

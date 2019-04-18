@@ -7,6 +7,7 @@
 @_sap_ui_table_Cell_Padding: 0 0.5rem;
 @_sap_ui_table_Cell_TouchMenuIconSize: 1.375rem;
 @_sap_ui_table_Cell_ColumnIconSize: 0.75rem;
+@_sap_ui_table_Cell_HeaderBackgroundColorHovered: contrast(@sapUiListHeaderBackground, darken(@sapUiListHeaderBackground, 6), lighten(@sapUiListHeaderBackground, 6));
 
 /*
  * Focus visualization
@@ -30,7 +31,7 @@
 .sapUiTableHeaderCell {
 	&:not(.sapUiTableRowActionHeaderCell) {
 		&:hover {
-			background-color: contrast(@sapUiListHeaderBackground, darken(@sapUiListHeaderBackground, 6), lighten(@sapUiListHeaderBackground, 6));
+			background-color: @_sap_ui_table_Cell_HeaderBackgroundColorHovered;
 		}
 	}
 }
