@@ -2480,10 +2480,15 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("destroy", function (assert) {
-		var oBinding = this.bindList("relative"),
+		var oBinding = this.bindList("relative"), // no own cache
 			oBindingContext = {destroy : function () {}},
 			oBindingContextMock = this.mock(oBindingContext),
 			oBindingMock = this.mock(ListBinding.prototype),
+			oCache = {
+				setActive : function () {}
+			},
+			oCachePromise1 = SyncPromise.resolve(Promise.resolve(oCache)),
+			oCachePromise2,
 			oContext = Context.create(this.oModel, {}, "/foo"),
 			oModelMock = this.mock(this.oModel),
 			oParentBindingPrototypeMock = this.mock(asODataParentBinding.prototype),
@@ -2499,11 +2504,6 @@ sap.ui.define([
 		// code under test
 		oBinding.destroy();
 
-		assert.throws(function () {
-			// code under test
-			oBinding.destroy();
-		});
-
 		assert.strictEqual(oBinding.oAggregation, undefined);
 		assert.strictEqual(oBinding.aApplicationFilters, undefined);
 		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
@@ -2518,8 +2518,14 @@ sap.ui.define([
 		assert.strictEqual(oBinding.oReadGroupLock, undefined);
 		assert.strictEqual(oBinding.aSorters, undefined);
 
+		assert.throws(function () {
+			// code under test
+			oBinding.destroy();
+		});
+
 		oBinding = this.bindList("relative");
-		oBinding.setContext(oContext);
+		oBinding.setContext(oContext); // this one now has its own cache, but we overwrite that
+		oBinding.oCachePromise = oCachePromise1; // pending (e.g. due to autoExpandSelect)
 		oBinding.aContexts = [oBindingContext];
 		oBinding.aContexts.unshift(oTransientBindingContext);
 		oBindingContextMock.expects("destroy").withExactArgs();
@@ -2528,18 +2534,20 @@ sap.ui.define([
 		oBindingMock.expects("destroy").on(oBinding).withExactArgs();
 		oParentBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
 		this.mock(oBinding.getHeaderContext()).expects("destroy").withExactArgs();
-
 		this.mock(oBinding).expects("removeReadGroupLock").withExactArgs();
+		this.mock(oCache).expects("setActive").withExactArgs(false);
 
 		// code under test
 		oBinding.destroy();
 
+		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
 		assert.strictEqual(oBinding.oContext, undefined,
 			"context removed as in ODPropertyBinding#destroy");
 		assert.strictEqual(oBinding.oDiff, undefined);
 		assert.strictEqual(oBinding.oHeaderContext, undefined);
 
-		oBinding = this.bindList("/absolute", oContext);
+		oBinding = this.bindList("/absolute", oContext); // this one has its own cache
+		oCachePromise2 = oBinding.oCachePromise;
 		oBinding.aContexts = [oBindingContext];
 		oBinding.aContexts.unshift(oTransientBindingContext);
 		oBindingContextMock.expects("destroy").withExactArgs();
@@ -2551,6 +2559,17 @@ sap.ui.define([
 
 		// code under test
 		oBinding.destroy();
+
+		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
+
+		return Promise.all([
+			oCachePromise1,
+			oCachePromise2.then(function (oOldCache) {
+				assert.throws(function () {
+					oOldCache.checkActive();
+				}, new Error("Response discarded: cache is inactive"));
+			})
+		]);
 	});
 
 	//*********************************************************************************************
