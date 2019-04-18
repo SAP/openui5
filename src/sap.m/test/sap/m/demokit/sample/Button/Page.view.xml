@@ -14,7 +14,7 @@
 				<ToolbarSpacer/>
 				<Title text="Title" level="H2"/>
 				<ToolbarSpacer/>
-				<Button icon="sap-icon://edit" press="onPress" ariaLabelledBy="editButtonLabel"/>
+				<Button icon="sap-icon://edit" type="Transparent" press="onPress" ariaLabelledBy="editButtonLabel"/>
 			</Toolbar>
 
 		</customHeader>
@@ -23,7 +23,7 @@
 				<ToolbarSpacer/>
 				<Button text="Default" press="onPress" />
 				<Button type="Reject" text="Reject" press="onPress" />
-				<Button icon="sap-icon://action" press="onPress" ariaLabelledBy="actionButtonLabel"/>
+				<Button icon="sap-icon://action" type="Transparent" press="onPress" ariaLabelledBy="actionButtonLabel"/>
 				<ToolbarSpacer/>
 			</Toolbar>
 
@@ -81,7 +81,7 @@
 				<ToolbarSpacer/>
 				<Button type="Emphasized" text="Emphasized" press="onPress" />
 				<Button text="Default" press="onPress" />
-				<Button icon="sap-icon://action" press="onPress" />
+				<Button icon="sap-icon://action" type="Transparent" press="onPress" />
 			</Toolbar>
 		</footer>
 	</Page>

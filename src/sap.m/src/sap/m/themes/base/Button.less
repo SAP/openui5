@@ -396,6 +396,7 @@ span.sapMBtnInner.sapMBtnEmphasized {
 /* The following rules are overridden in a bar below:                   */
 /* ---------------------------------------------------------------------*/
 
+.sapMBtnBack,
 .sapMBtnTransparent,
 .sapMBtnGhost {
 	background-image: none;
@@ -412,11 +413,13 @@ span.sapMBtnInner.sapMBtnEmphasized {
 	text-shadow: @sapUiShadowText;
 }
 
+:not(.sapMBtnDisabled) .sapMBtnBack > .sapMBtnIcon,
 :not(.sapMBtnDisabled) .sapMBtnTransparent > .sapMBtnIcon,
 :not(.sapMBtnDisabled) .sapMBtnGhost > .sapMBtnIcon {
 	color:            @sapUiButtonIconColor;
 }
 
+.sapMBtn:hover > .sapMBtnBack.sapMBtnHoverable,
 .sapMBtn:hover > .sapMBtnTransparent.sapMBtnHoverable {
 	background-color: @sapUiButtonLiteHoverBackground;
 	border-color:     @sapUiButtonLiteHoverBorderColor;
@@ -426,6 +429,8 @@ span.sapMBtnInner.sapMBtnEmphasized {
 	background-color: fade(@sapUiButtonLiteTextColor, 20);
 }
 
+:not(.sapMBtnDisabled) > .sapMBtnBack.sapMBtnActive,
+:not(.sapMBtnDisabled):hover > .sapMBtnBack.sapMBtnActive,
 :not(.sapMBtnDisabled) > .sapMBtnTransparent.sapMBtnActive,
 :not(.sapMBtnDisabled):hover > .sapMBtnTransparent.sapMBtnActive,
 :not(.sapMBtnDisabled) > .sapMBtnGhost.sapMBtnActive,
