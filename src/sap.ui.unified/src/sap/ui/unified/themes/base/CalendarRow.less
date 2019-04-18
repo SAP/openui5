@@ -191,12 +191,6 @@ html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus:not(:active) > .sap
 	border-left: none;
 }
 
-.sapUiCalendarRow .sapUiCalendarAppCont,
-.sapUiCalendarRow .sapUiCalendarIntervalHeaderCont{
-	height: 100%;
-	display: flex;
-}
-
 .sapUiCalendarAppIcon{
 	width: 1rem;
 	height: 1rem;
@@ -209,31 +203,46 @@ html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus:not(:active) > .sap
 	color: @sapUiContentIconColor;
 }
 
-.sapUiCaledarAppArrowIcon {
+.sapUiCalendarAppArrowIcon {
 	top: ~'calc(50% - 0.5rem)';
 	color: @sapUiContentLabelColor;
 	height: 0.75rem;
 }
 
-.sapUiCalendarAppArrowIconLeft {
-	&:extend(.sapUiCaledarAppArrowIcon);
-	left: 0.375rem;
-	margin-right: 0.375rem;
-}
+.sapUiCalendarRow{
+	.sapUiCalendarAppCont,
+	.sapUiCalendarIntervalHeaderCont{
+		height: 100%;
+		display: flex;
+	}
 
-.sapUiCalendarAppArrowIconRight {
-	&:extend(.sapUiCaledarAppArrowIcon);
-	right: 0.375rem;
-	margin-left: 0.375rem;
-}
+	.sapUiCalendarAppArrowIconLeft {
+		&:extend(.sapUiCalendarAppArrowIcon);
+		left: 0.375rem;
+		margin-right: 0.375rem;
+	}
 
-.sapUiCalendarAppArrowIconLeft + .sapUiCalendarAppTitleWrapper > .sapUiCalendarAppIcon {
-	left: 1.5rem;
-}
+	.sapUiCalendarAppArrowIconRight {
+		&:extend(.sapUiCalendarAppArrowIcon);
+		right: 0.375rem;
+		margin-left: 0.375rem;
+	}
 
-.sapUiCalendarIntervalHeaderCont > .sapUiCalendarAppArrowIconLeft,
-.sapUiCalendarIntervalHeaderCont > .sapUiCalendarAppArrowIconRight {
-	top: 0.3rem;
+	.sapUiCalendarAppCont .sapUiCalendarAppArrowIconLeft,
+	.sapUiCalendarAppCont .sapUiCalendarAppArrowIconRight {
+		padding-top: 0.125rem;
+		padding-bottom: 0.125rem;
+	}
+
+	.sapUiCalendarIntervalHeaderCont > .sapUiCalendarAppArrowIconLeft,
+	.sapUiCalendarIntervalHeaderCont > .sapUiCalendarAppArrowIconRight {
+		top: 0.3rem;
+	}
+
+	.sapUiCalendarAppTitleOnly > .sapUiCalendarAppCont .sapUiCalendarAppIcon,
+	.sapUiCalendarRowAppsIntHead .sapUiCalendarRowAppsIntHeadIcon {
+		top: ~'calc(50% - 0.5rem)';
+	}
 }
 
 .sapUiCalendarIntervalHeaderCont > .sapUiCalendarAppArrowIconLeft.sapUiIcon:not(.sapMLIBImgNav):not(.sapMBtnIcon):not(.sapUiCalendarAppIcon),
@@ -241,11 +250,6 @@ html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus:not(:active) > .sap
 .sapUiCalendarAppCont .sapUiCalendarAppArrowIconLeft.sapUiIcon:not(.sapMLIBImgNav):not(.sapMBtnIcon):not(.sapUiCalendarAppIcon),
 .sapUiCalendarAppCont .sapUiCalendarAppArrowIconRight.sapUiIcon:not(.sapMLIBImgNav):not(.sapMBtnIcon):not(.sapUiCalendarAppIcon) {
 	font-size: 0.75rem;
-}
-
-.sapUiCalendarAppTitleOnly > .sapUiCalendarAppCont .sapUiCalendarAppIcon,
-.sapUiCalendarRowAppsIntHead .sapUiCalendarRowAppsIntHeadIcon {
-	top: ~'calc(50% - 0.5rem)';
 }
 
 .sapUiCalendarApp.sapUiCalendarAppTitleOnly{
@@ -286,9 +290,7 @@ html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus:not(:active) > .sap
 	padding-bottom: 0.375rem;
 }
 
-.sapUiCalendarRowAppsRedHeight > .sapUiCalendarRowApps > .sapUiCalendarApp.sapUiCalendarAppTitleOnly > .sapUiCalendarAppCont .sapUiCalendarAppTitle,
-.sapUiCalendarAppCont .sapUiCalendarAppArrowIconLeft,
-.sapUiCalendarAppCont .sapUiCalendarAppArrowIconRight {
+.sapUiCalendarRowAppsRedHeight > .sapUiCalendarRowApps > .sapUiCalendarApp.sapUiCalendarAppTitleOnly > .sapUiCalendarAppCont .sapUiCalendarAppTitle {
 	padding-top: 0.125rem;
 	padding-bottom: 0.125rem;
 }

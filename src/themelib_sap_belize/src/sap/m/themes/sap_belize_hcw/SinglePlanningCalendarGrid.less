@@ -1,3 +1,22 @@
+.sapMSinglePCBlockers,
+.sapMSinglePCAppointments {
+	.sapUiCalendarApp {
+		&.sapUiCalendarAppSel::after {
+			top: 1px;
+			bottom: 1px;
+			right: 1px;
+			left: 1px;
+		}
+	}
+}
+
+html.sap-desktop {
+	.sapMSinglePCBlockersRow > .sapMSinglePCBlockersColumns > .sapMSinglePCBlockersColumn:focus::after,
+	.sapMSinglePCGridContent .sapMSinglePCColumns .sapMSinglePCRow:focus::after {
+		border: 0.125rem dotted @sapUiContentFocusColor;
+	}
+}
+
 .sapMSinglePCAppointmentWrap.sapUiCalendarRowApps {
 	&:focus {
 		.sapUiCalendarAppCont:after {
@@ -8,10 +27,6 @@
 			border: 0.125rem dotted @sapUiContentFocusColor;
 		}
 	}
-}
-
-.sapMSinglePCAppointmentWrap .sapUiCalendarApp {
-	margin-left: 0.25rem;
 }
 
 .sapMSinglePCAppointmentWrap.sapUiCalendarRowApps.sapUiCalendarApp {
