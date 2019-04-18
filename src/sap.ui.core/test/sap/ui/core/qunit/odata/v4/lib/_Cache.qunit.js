@@ -307,6 +307,9 @@ sap.ui.define([
 			this.mock(oCache).expects("fetchValue")
 				.withExactArgs(sinon.match.same(_GroupLock.$cached), "EMPLOYEE_2_EQUIPMENTS")
 				.returns(SyncPromise.resolve(aCacheData));
+			this.mock(oCache).expects("getOriginalResourcePath")
+				.withExactArgs(sinon.match.same(aCacheData[1]))
+				.returns("~");
 			this.mock(_Cache).expects("from$skip")
 				.withExactArgs("1", sinon.match.same(aCacheData))
 				.returns(1);
@@ -319,7 +322,7 @@ sap.ui.define([
 					sinon.match.same(oGroupLock),
 					{"If-Match" : sinon.match.same(aCacheData[1])},
 					undefined, undefined, undefined, undefined,
-					"EMPLOYEES('42')/EMPLOYEE_2_EQUIPMENTS('1')")
+					"~/EMPLOYEE_2_EQUIPMENTS('1')")
 				.returns(iStatus === 200 ? Promise.resolve().then(function () {
 					that.oModelInterfaceMock.expects("reportBoundMessages")
 						.withExactArgs(oCache.sResourcePath, [],
@@ -1050,6 +1053,9 @@ sap.ui.define([
 			this.oRequestorMock.expects("buildQueryString")
 				.withExactArgs("/BusinessPartnerList", sinon.match.same(mQueryOptions), true)
 				.returns("?foo=bar");
+			oCacheMock.expects("getOriginalResourcePath")
+				.withExactArgs(sinon.match.same(oEntity))
+				.returns("~original~");
 			oStaticCacheMock.expects("makeUpdateData")
 				.withExactArgs(["Address", "City"], "Walldorf")
 				.returns(oUpdateData);
@@ -1059,7 +1065,7 @@ sap.ui.define([
 			this.oRequestorMock.expects("relocateAll")
 				.withExactArgs("$parked.group", sinon.match.same(oEntity), "group");
 			oHelperMock.expects("buildPath")
-				.withExactArgs(oCache.sResourcePath, oFixture.sEntityPath)
+				.withExactArgs("~original~", oFixture.sEntityPath)
 				.returns("~");
 			oRequestCall = this.oRequestorMock.expects("request")
 				.withExactArgs("PATCH", "/~/BusinessPartnerList('0')?foo=bar",
@@ -6562,6 +6568,27 @@ sap.ui.define([
 		assert.deepEqual(_Cache.makeUpdateData(["Age"], 42), {"Age" : 42});
 		assert.deepEqual(_Cache.makeUpdateData(["Address", "City"], "Walldorf"),
 			{"Address" : {"City" : "Walldorf"}});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getOriginalResourcePath", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "MANAGERS('42')"),
+			oCallback = {
+				fnGetOriginalResourcePath : function () {}
+			},
+			oEntity = {};
+
+		// code under test
+		assert.strictEqual(oCache.getOriginalResourcePath(oEntity), "MANAGERS('42')");
+
+		this.mock(oCallback).expects("fnGetOriginalResourcePath")
+			.withExactArgs(sinon.match.same(oEntity))
+			.returns("TEAMS('77')/TEAM_2_MANAGER");
+		oCache = new _Cache(this.oRequestor, "MANAGERS('42')", undefined, undefined,
+			oCallback.fnGetOriginalResourcePath);
+
+		// code under test
+		assert.strictEqual(oCache.getOriginalResourcePath(oEntity), "TEAMS('77')/TEAM_2_MANAGER");
 	});
 
 	//*********************************************************************************************

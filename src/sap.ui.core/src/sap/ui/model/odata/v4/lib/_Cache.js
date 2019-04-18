@@ -89,7 +89,7 @@ sap.ui.define([
 	 * @param {function} [fnGetOriginalResourcePath]
 	 *   A function that returns the cache's original resource path to be used to build the target
 	 *   path for bound messages; if it is not given or returns nothing, <code>sResourcePath</code>
-	 *   is used instead
+	 *   is used instead. See {@link #getOriginalResourcePath}.
 	 *
 	 * @private
 	 */
@@ -170,7 +170,7 @@ sap.ui.define([
 			sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
 			return that.oRequestor.request("DELETE", sEditUrl, oGroupLock, mHeaders, undefined,
 					undefined, undefined, undefined,
-					_Helper.buildPath(that.sResourcePath, sEntityPath))
+					_Helper.buildPath(that.getOriginalResourcePath(oEntity), sEntityPath))
 				.catch(function (oError) {
 					if (oError.status !== 404) {
 						delete oEntity["$ui5.deleting"];
@@ -617,6 +617,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Gets the cache's original resource path to be used to build the target path for bound
+	 * messages.
+	 *
+	 * @param {object} oEntity
+	 *   The entity to compute the original resource path for
+	 * @returns {string}
+	 *   The original resource path
+	 *
+	 * @private
+	 */
+	Cache.prototype.getOriginalResourcePath = function (oEntity) {
+		return this.fnGetOriginalResourcePath && this.fnGetOriginalResourcePath(oEntity)
+			|| this.sResourcePath;
+	};
+
+	/**
 	 * Returns <code>true</code> if there are pending changes below the given path.
 	 *
 	 * @param {string} sPath
@@ -866,7 +882,8 @@ sap.ui.define([
 
 				oPatchPromise = that.oRequestor.request("PATCH", sEditUrl, oPatchGroupLock,
 					{"If-Match" : oEntity}, oUpdateData, onSubmit, onCancel, /*sMetaPath*/undefined,
-					_Helper.buildPath(that.sResourcePath, sEntityPath), bAtFront);
+					_Helper.buildPath(that.getOriginalResourcePath(oEntity), sEntityPath),
+					bAtFront);
 				_Helper.addByPath(that.mPatchRequests, sFullPath, oPatchPromise);
 				return SyncPromise.all([
 					oPatchPromise,
@@ -1153,9 +1170,7 @@ sap.ui.define([
 		}
 		if (bHasMessages) {
 			this.oRequestor.getModelInterface().reportBoundMessages(
-				this.fnGetOriginalResourcePath && this.fnGetOriginalResourcePath(oRoot)
-					|| this.sResourcePath,
-				mPathToODataMessages, aCachePaths);
+				this.getOriginalResourcePath(oRoot), mPathToODataMessages, aCachePaths);
 		}
 	};
 
