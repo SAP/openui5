@@ -259,6 +259,29 @@ this.waitFor({
 });
 ```
 
+## Searching for Disabled Controls
+
+As of version 1.66, you can search for controls by their enabled state using the `enabled` property.
+When `enabled` is set to `true`, only enabled controls will match.
+When `enabled` is set to `false`, both enabled and disabled controls will match.
+
+By default, only enabled controls are matched when:
+* `autoWait` is `true`, or
+* there are actions defined in the `waitFor`
+
+If `autoWait` is disabled and there are no actions, the search matches disabled controls as well.
+
+The next example shows that the `enabled` property has priority over `autoWait`:
+
+```javascript
+this.waitFor({
+    controlType: "sap.m.Button",
+    enabled: false,
+    autoWait: true,
+    success: function () {...}
+})
+```
+
 ## Writing Nested Arrangements and Actions
 
 UI elements may be recursive, for example in a tree. Instead of triggering the action for each known element, you can also define it recursively (see the code snippet below). OPA ensures that the `waitFor` statements triggered in a `success` handler are executed before the next arrangement, action, or assertion. That also allows you to work with an unknown number of entries, for example in a list. First, you wait for the list, and then trigger actions on each list item.
