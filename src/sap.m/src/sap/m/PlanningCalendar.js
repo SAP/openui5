@@ -2065,7 +2065,8 @@ sap.ui.define([
 	PlanningCalendar.prototype._handleStartDateChange = function(oEvent){
 		var oStartDate = oEvent.oSource.getStartDate();
 
-		if (this.getViewKey() !== CalendarIntervalType.Hour) {
+		// Checking if the current view (custom or not) is different than type Hour
+		if (this._getView(this.getViewKey()).getIntervalType() !== CalendarIntervalType.Hour) {
 			var oCurrentStartDate = this.getStartDate();
 
 			oStartDate.setHours(oCurrentStartDate.getHours());

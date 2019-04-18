@@ -3491,6 +3491,65 @@ sap.ui.define([
 		assert.strictEqual(this.oPC2.getStartDate().getHours(), 1, "The Hours are not changed to 00, but instead the original hours are preserved in OneMonth view");
 	});
 
+	QUnit.test("setStartDate should not preserve the hours when navigation occurs in custom views of type hour", function (assert) {
+		// Prepare
+		var oEvent = {
+			oSource: {
+				getStartDate: function () {
+					return new Date(2015, 1, 12);
+				}
+			}
+		};
+		this.oPC2.addView(
+			new PlanningCalendarView({
+				key: "hour",
+				intervalType: CalendarIntervalType.Hour,
+				description: "hour",
+				intervalsS: 7,
+				intervalsM: 7,
+				intervalsL: 7
+			})
+		);
+		this.oPC2.setViewKey("hour");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		this.oPC2._handleStartDateChange(oEvent);
+
+		// Assert
+		assert.strictEqual(this.oPC2.getStartDate().getHours(), 0, "The Hours are changed to 00");
+	});
+
+
+	QUnit.test("setStartDate should preserve the hours when navigation occurs in custom views of type hour", function (assert) {
+		// Prepare
+		var oEvent = {
+			oSource: {
+				getStartDate: function () {
+					return new Date(2015, 1, 12);
+				}
+			}
+		};
+		this.oPC2.addView(
+			new PlanningCalendarView({
+				key: "day",
+				intervalType: CalendarIntervalType.Day,
+				description: "day",
+				intervalsS: 7,
+				intervalsM: 7,
+				intervalsL: 7
+			})
+		);
+		this.oPC2.setViewKey("day");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		this.oPC2._handleStartDateChange(oEvent);
+
+		// Assert
+		assert.strictEqual(this.oPC2.getStartDate().getHours(), 1, "The Hours are not changed to 00, but instead the original hours are preserved in Day view");
+	});
+
 	QUnit.module("OneMonth view", {
 		beforeEach: function() {
 			var oSearchField = new SearchField(),
