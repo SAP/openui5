@@ -419,11 +419,11 @@ sap.ui.define([
 		assert.ok(iFullyTestedControls >= 200 /* magic number... just make sure we have tested lots of controls */, "Should have tested lots of controls, at least 200");
 
 		var fPropertyPercentage = Math.round(iSuccessfullyFilledProperties / (iSuccessfullyFilledProperties + aFailuresWhenFillingProperties.length) * 100);
-		assert.ok(iSuccessfullyFilledProperties > 2000, "There should be more than 2000 successfully filled properties. There are " + iSuccessfullyFilledProperties + " (" + fPropertyPercentage + "%)");
+		assert.ok(iSuccessfullyFilledProperties > 2000, "There should be more than 2000 successfully filled properties. There are " + iSuccessfullyFilledProperties + " (" + fPropertyPercentage + "% success)");
 		// too many.... 6000...  assert.ok(aFailuresWhenFillingProperties.length < 20000, "Three should be less than 20000 failures when a property is filled. There are " + aFailuresWhenFillingProperties.length + ". Failing properties: " + aFailuresWhenFillingProperties.join(",\n"));
 
 		var fAggregationPercentage = Math.round(iSuccessfullyFilledAggregations / (iSuccessfullyFilledAggregations + aFailuresWhenFillingAggregations.length) * 100);
-		assert.ok(iSuccessfullyFilledAggregations > 1000, "There should be more than 1000 successfully filled aggregations. There are " + iSuccessfullyFilledAggregations + " (" + fAggregationPercentage + "%)");
+		assert.ok(iSuccessfullyFilledAggregations > 700, "There should be more than 700 successfully filled aggregations. There are " + iSuccessfullyFilledAggregations + " (" + fAggregationPercentage + "% success)");
 		assert.ok(aFailuresWhenFillingAggregations.length < 500, "There should be less than 500 failures when an aggregation is filled. There are " + aFailuresWhenFillingAggregations.length + ". Failing aggregation types: " + aFailuresWhenFillingAggregations.join(",\n"));
 	});
 
