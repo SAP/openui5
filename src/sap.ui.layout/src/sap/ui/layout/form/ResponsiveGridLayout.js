@@ -1313,17 +1313,21 @@ sap.ui.define([
 			if ( this._mainGrid ) {
 				this._mainGrid.__bIsUsed = false;
 			}
-			// set container as parent for panels and Grid to have them in control tree
+			// set Layout as parent for panels and Grids to have them in control tree
 			for (i = 0; i < iLength; i++) {
 				oContainer = aVisibleContainers[i];
 				sContainerId = oContainer.getId();
 				if (this.mContainers[sContainerId]) {
 					if (this.mContainers[sContainerId][0]) {
 						// panel used
-						oContainer.addDependent(this.mContainers[sContainerId][0]);
+						if (this.mContainers[sContainerId][0].getParent() !== this) {
+							this.addDependent(this.mContainers[sContainerId][0]);
+						}
 					} else if (this.mContainers[sContainerId][1]) {
 						// no panel - used Grid directly
-						oContainer.addDependent(this.mContainers[sContainerId][1]);
+						if (this.mContainers[sContainerId][1].getParent() !== this) {
+							this.addDependent(this.mContainers[sContainerId][1]);
+						}
 					}
 				}
 			}
