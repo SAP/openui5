@@ -240,7 +240,7 @@ sap.ui.define([
 					var sDesiredState = bEnabled ? "enabled" : "disabled";
 
 					return this.waitFor({
-						id : /searchField$|addUserButton$|deleteUserButton$|refreshUsersButton$|sortUsersButton$/,
+						id : /searchField$|refreshUsersButton$|sortUsersButton$/,
 						viewName : sViewName,
 						autoWait : false,	// Needed because we want to find disabled controls, too
 						matchers : new PropertyStrictEquals({
@@ -249,7 +249,7 @@ sap.ui.define([
 						}),
 						check : function (aControls) {
 							// Validate that ALL controls have the right state
-							return aControls.length === 5;
+							return aControls.length === 3;
 						},
 						success : function () {
 							Opa5.assert.ok(true, "All controls in the table toolbar are " + sDesiredState);
