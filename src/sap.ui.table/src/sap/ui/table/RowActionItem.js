@@ -167,10 +167,10 @@ sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/MenuItem', "s
 			return oIcon;
 		}
 		if (this.getType() == RowActionType.Navigation) {
-			return IconPool.getIconURI(TableUtils.ThemeParameters.sapUiTableActionNavigationIcon);
+			return IconPool.getIconURI(TableUtils.ThemeParameters.navigationIcon);
 		}
 		if (this.getType() == RowActionType.Delete) {
-			return IconPool.getIconURI(TableUtils.ThemeParameters.sapUiTableActionDeleteIcon);
+			return IconPool.getIconURI(TableUtils.ThemeParameters.deleteIcon);
 		}
 		return null;
 	};

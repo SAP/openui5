@@ -2,21 +2,21 @@
  * ${copyright}
  */
 sap.ui.define([
-	'./SelectionPlugin',
-	'./SelectionModelPlugin',
-	'./BindingSelectionPlugin',
-	'../library',
-	'sap/ui/core/Icon',
-	'sap/ui/core/IconPool',
-	'sap/ui/core/theming/Parameters'
+	"./SelectionPlugin",
+	"./SelectionModelPlugin",
+	"./BindingSelectionPlugin",
+	"../library",
+	"../TableUtils",
+	"sap/ui/core/Icon",
+	"sap/ui/core/IconPool"
 ], function(
 	SelectionPlugin,
 	SelectionModelPlugin,
 	BindingSelectionPlugin,
 	library,
+	TableUtils,
 	Icon,
-	IconPool,
-	ThemeParameters
+	IconPool
 ) {
 
 	"use strict";
@@ -80,8 +80,7 @@ sap.ui.define([
 	MultiSelectionPlugin.prototype.init = function() {
 		SelectionPlugin.prototype.init.call(this);
 
-		var sapUiTableActionResetIcon = ThemeParameters.get("_sap_ui_table_ResetIcon");
-		var oIcon = new Icon({src: IconPool.getIconURI(sapUiTableActionResetIcon), useIconTooltip: false});
+		var oIcon = new Icon({src: IconPool.getIconURI(TableUtils.ThemeParameters.resetIcon), useIconTooltip: false});
 		oIcon.addStyleClass("sapUiTableSelectClear");
 
 		this._bLimitReached = false;
@@ -439,7 +438,7 @@ sap.ui.define([
 	};
 
 	MultiSelectionPlugin.prototype.onThemeChanged = function() {
-		this.oDeselectAllIcon.setSrc(ThemeParameters.get("_sap_ui_table_ResetIcon"));
+		this.oDeselectAllIcon.setSrc(IconPool.getIconURI(TableUtils.ThemeParameters.resetIcon));
 	};
 
 	return MultiSelectionPlugin;
