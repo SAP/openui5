@@ -757,7 +757,6 @@ sap.ui.define([
 		 */
 		ComboBox.prototype.onBeforeRendering = function() {
 			ComboBoxBase.prototype.onBeforeRendering.apply(this, arguments);
-			this._fillList();
 			this.synchronizeSelection();
 		};
 
@@ -926,6 +925,8 @@ sap.ui.define([
 		 */
 		ComboBox.prototype.oninput = function(oEvent) {
 			ComboBoxBase.prototype.oninput.apply(this, arguments);
+
+			this.syncPickerContent();
 
 			// notice that the input event can be buggy in some web browsers,
 			// @see sap.m.InputBase#oninput
@@ -1375,6 +1376,8 @@ sap.ui.define([
 				return;
 			}
 
+			this.syncPickerContent();
+
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
@@ -1399,6 +1402,8 @@ sap.ui.define([
 			if (!oControl.getEnabled() || !oControl.getEditable()) {
 				return;
 			}
+
+			this.syncPickerContent();
 
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
@@ -1426,6 +1431,8 @@ sap.ui.define([
 			if (!oControl.getEnabled() || !oControl.getEditable()) {
 				return;
 			}
+
+			this.syncPickerContent();
 
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
@@ -1455,6 +1462,8 @@ sap.ui.define([
 				return;
 			}
 
+			this.syncPickerContent();
+
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
@@ -1480,6 +1489,8 @@ sap.ui.define([
 			if (!oControl.getEnabled() || !oControl.getEditable()) {
 				return;
 			}
+
+			this.syncPickerContent();
 
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
@@ -1513,6 +1524,8 @@ sap.ui.define([
 				return;
 			}
 
+			this.syncPickerContent();
+
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
@@ -1540,6 +1553,8 @@ sap.ui.define([
 		ComboBox.prototype.onsapshow = function(oEvent) {
 			var aSelectableItems, oItem;
 			ComboBoxBase.prototype.onsapshow.apply(this, arguments);
+
+			this.syncPickerContent();
 
 			if (!this.getValue()) {
 				aSelectableItems = this.getSelectableItems();
@@ -1653,7 +1668,7 @@ sap.ui.define([
 				return;
 			}
 
-			oPicker = this.getAggregation("picker");
+			oPicker = this.getPicker();
 
 			if (!oEvent.relatedControlId || !oPicker) {
 				return;
@@ -2018,8 +2033,9 @@ sap.ui.define([
 		 * @protected
 		 */
 		ComboBox.prototype.open = function() {
-			var oList = this._getList();
+			this.syncPickerContent();
 
+			var oList = this._getList();
 			ComboBoxBase.prototype.open.call(this);
 
 			if (this.getSelectedItem()) {
@@ -2028,6 +2044,43 @@ sap.ui.define([
 			}
 
 			return this;
+		};
+
+		/**
+		 * Creates picker if doesn't exist yet and sync with Control items
+		 *
+		 * @protected
+		 * @returns {Dialog|Popover}
+		 */
+		ComboBox.prototype.syncPickerContent = function () {
+			var oPickerTextField,
+				oPicker = this.getPicker(),
+				aProperties = this.getInputForwardableProperties();
+
+			if (!oPicker) {
+				var sSetMutator, sGetMutator;
+
+				oPicker = this.createPicker(this.getPickerType());
+				oPickerTextField = this.getPickerTextField();
+				this._updateSuggestionsPopoverValueState();
+
+				this._fillList();
+				if (oPickerTextField) {
+					aProperties.forEach(function (sProp) {
+						sProp = sProp.charAt(0).toUpperCase() + sProp.slice(1);
+
+						sSetMutator = "set" + sProp;
+						sGetMutator = "get" + sProp;
+
+						if (oPickerTextField[sSetMutator]) {
+							oPickerTextField[sSetMutator](this[sGetMutator]());
+						}
+					}, this);
+				}
+			}
+			this.synchronizeSelection();
+
+			return oPicker;
 		};
 
 		/**
@@ -2277,13 +2330,17 @@ sap.ui.define([
 		 * @sap-restricted
 		 */
 		ComboBox.prototype.applyShowItemsFilters = function () {
-			var oPicker = this.getPicker(),
-				fnPickerOpenListener = function () {
-					oPicker.detachBeforeOpen(fnPickerOpenListener, this);
-					oPicker = null;
+			var oPicker, fnPickerOpenListener;
 
-					this.filterItems({value: this.getValue() || "_", properties: this._getFilters()});
-				};
+			this.syncPickerContent();
+
+			oPicker = this.getPicker();
+			fnPickerOpenListener = function () {
+				oPicker.detachBeforeOpen(fnPickerOpenListener, this);
+				oPicker = null;
+
+				this.filterItems({value: this.getValue() || "_", properties: this._getFilters()});
+			};
 
 			// Combobox uses onBeforeOpen of the picker in order to sync the items
 			// with the SuggestionsPopover. This leads to flickering of the Popover if filtering

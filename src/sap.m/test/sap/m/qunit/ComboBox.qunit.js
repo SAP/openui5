@@ -24,6 +24,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/Device",
 	"sap/m/InputBase",
+	'sap/ui/core/ValueStateSupport',
 	"sap/ui/core/library",
 	"sap/ui/events/jquery/EventExtension",
 	"sap/ui/qunit/qunit-css",
@@ -57,6 +58,7 @@ sap.ui.define([
 	createAndAppendDiv,
 	Device,
 	InputBase,
+	ValueStateSupport,
 	coreLibrary,
 	EventExtension
 ) {
@@ -135,6 +137,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
@@ -1415,6 +1418,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 		oComboBox.setSelectedItem(oItem1);
@@ -1511,10 +1515,15 @@ sap.ui.define([
 
 		// assert
 		assert.ok(oComboBox.getFirstItem() === oItem);
-		assert.strictEqual(oComboBox._getList().getItems().length, 1, "List should have 1 item");
 		assert.ok(fnInsertItem.returned(oComboBox), 'oComboBox.insertAggregation() method return the "this" reference');
 		assert.ok(oItem.hasListeners("_change"));
 		assert.ok(oComboBox.isItemVisible(oItem));
+
+		// act
+		oComboBox.syncPickerContent();
+
+		// assert
+		assert.strictEqual(oComboBox._getList().getItems().length, 1, "List should have 1 item");
 
 		// cleanup
 		oComboBox.destroy();
@@ -1768,6 +1777,7 @@ sap.ui.define([
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
+		oComboBox.syncPickerContent();
 		oComboBox.open();
 		this.clock.tick(1000);
 
@@ -1948,6 +1958,7 @@ sap.ui.define([
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
+		oComboBox.syncPickerContent();
 		oComboBox.open();
 		this.clock.tick(500);
 
@@ -2194,6 +2205,7 @@ sap.ui.define([
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
+		oComboBox.syncPickerContent();
 		oComboBox.open();
 		this.clock.tick(500);
 
@@ -2231,6 +2243,7 @@ sap.ui.define([
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
+		oComboBox.syncPickerContent();
 		oComboBox.open();
 		this.clock.tick(1000); // wait 1s after the open animation is completed
 		var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
@@ -2369,6 +2382,7 @@ sap.ui.define([
 		var oComboBox = new ComboBox();
 
 		// arrange
+		oComboBox.syncPickerContent();
 		var fnRemoveAggregationSpy = this.spy(oComboBox._getList(), "removeAggregation");
 		var fnRemoveItemSpy = this.spy(oComboBox, "removeItem");
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
@@ -2405,6 +2419,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oComboBox.syncPickerContent();
 		var oModel = new JSONModel();
 		var fnRemoveAggregationSpy = this.spy(oComboBox._getList(), "removeAggregation");
 		var mData = {
@@ -2673,6 +2688,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
+		oComboBox.syncPickerContent();
 		oComboBox.open();
 		this.clock.tick(1000); // wait 1s after the open animation is completed
 		var fnDestroyItemsSpy = this.spy(oComboBox, "destroyItems");
@@ -2724,6 +2740,7 @@ sap.ui.define([
 		document.documentElement.style.overflow = "hidden"; // hide scrollbar during test
 
 		// act
+		oComboBox.syncPickerContent();
 		oComboBox.open();
 		this.clock.tick(1000);
 
@@ -2774,6 +2791,7 @@ sap.ui.define([
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
+		oComboBox.syncPickerContent();
 		oComboBox.open();
 		this.clock.tick(500);
 
@@ -2811,6 +2829,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// act
+		oComboBox.syncPickerContent();
 		oComboBox.open();
 		this.clock.tick(500);
 
@@ -2838,7 +2857,7 @@ sap.ui.define([
 		oComboBox.focus();
 		var sExpectedValue = "lorem ipsum";
 		var oTarget = oComboBox.getFocusDomRef();
-		var oPicker = oComboBox.getPicker();
+		var oPicker = oComboBox.syncPickerContent();
 
 		// act
 		oTarget.value = sExpectedValue;
@@ -2869,7 +2888,7 @@ sap.ui.define([
 			text: sExpectedTitle,
 			labelFor: oComboBox
 		});
-		var oPicker = oComboBox.getPicker();
+		var oPicker = oComboBox.syncPickerContent();
 
 		// arrange
 		oComboBox.placeAt("content");
@@ -2904,7 +2923,7 @@ sap.ui.define([
 			text: sExpectedTitle,
 			labelFor: oComboBox
 		});
-		var oPicker = oComboBox.getPicker();
+		var oPicker = oComboBox.syncPickerContent();
 
 		// arrange
 		oComboBox.placeAt("content");
@@ -3654,6 +3673,35 @@ sap.ui.define([
 		oErrorComboBox.destroy();
 	});
 
+	QUnit.test("valueStateText forwarding", function (assert) {
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		var sText = "Error Message",
+			oComboBox = new ComboBox("comboBoxVS", {
+			valueStateText: sText
+		});
+		// arrange
+		oComboBox.placeAt("content");
+		oComboBox.syncPickerContent();
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oComboBox._oSuggestionPopover._getPickerValueStateText().getText(), sText,
+			"The text is forwarded correctly.");
+
+		oComboBox.setValueStateText("");
+		oComboBox.setValueState("Error");
+
+		assert.strictEqual(oComboBox._oSuggestionPopover._getPickerValueStateText().getText(), ValueStateSupport.getAdditionalText(oComboBox),
+			"The text is set correctly when the state is Error and not specific valueStateText is set.");
+
+		oComboBox.destroy();
+
+	});
+
 	QUnit.test("in 'None' valueState don't showValueState message ", function (assert) {
 		var oComboBox = new ComboBox("errorcombobox", {
 			valueState: "Error",
@@ -3663,6 +3711,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
+		oComboBox.syncPickerContent();
 		sap.ui.getCore().applyChanges();
 
 		var fnShowValueStateTextSpy = this.spy(oComboBox._oSuggestionPopover, "_showValueStateText");
@@ -3716,6 +3765,7 @@ sap.ui.define([
 		});
 
 		// Arrange
+		oErrorComboBox.syncPickerContent();
 		oErrorComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
@@ -3742,6 +3792,7 @@ sap.ui.define([
 		});
 
 		// Arrange
+		oErrorComboBox.syncPickerContent();
 		oErrorComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
@@ -3766,6 +3817,7 @@ sap.ui.define([
 		});
 
 		// Arrange
+		oErrorComboBox.syncPickerContent();
 		oErrorComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
@@ -3791,6 +3843,7 @@ sap.ui.define([
 		});
 
 		// Arrange
+		oErrorComboBox.syncPickerContent();
 		oErrorComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
@@ -3868,6 +3921,7 @@ sap.ui.define([
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
+		oComboBox.syncPickerContent();
 		oComboBox.open();
 		this.clock.tick(1000);
 
@@ -4692,6 +4746,7 @@ sap.ui.define([
 		var fnLoadItemsSpy = this.spy(oComboBox, "fireLoadItems");
 
 		// act
+		oComboBox.syncPickerContent();
 		oComboBox.open();
 
 		// assert
@@ -4715,6 +4770,7 @@ sap.ui.define([
 		var fnLoadItemsSpy = this.spy(oComboBox, "fireLoadItems");
 
 		// act
+		oComboBox.syncPickerContent();
 		oComboBox.open();
 
 		// assert
@@ -5094,6 +5150,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
@@ -5400,6 +5457,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 		oComboBox.focus();
@@ -5565,6 +5623,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 		oComboBox.focus();
@@ -5860,6 +5919,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 		oComboBox.focus();
@@ -6713,6 +6773,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 		oComboBox.focus();
@@ -6978,6 +7039,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 		oComboBox.focus();
@@ -7959,6 +8021,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 		oComboBox.focus();
@@ -8881,6 +8944,7 @@ sap.ui.define([
 		oComboBox.focus();
 
 		// act
+		oComboBox.syncPickerContent();
 		oComboBox.open();
 		this.clock.tick(1000);
 		var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
@@ -10177,6 +10241,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oComboBox.syncPickerContent();
 		var oComboBoxPickerTextField = oComboBox.getPickerTextField();
 
 		// assert
@@ -10212,6 +10277,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oComboBox.syncPickerContent();
 		var oComboBoxPickerTextField = oComboBox.getPickerTextField();
 
 		// act
@@ -10422,6 +10488,7 @@ sap.ui.define([
 				oForm.rerender();
 			}
 		});
+		oComboBox.syncPickerContent();
 
 
 		var oForm = new SimpleForm({
@@ -10655,6 +10722,7 @@ sap.ui.define([
 		});
 
 		var oComboBox = new ComboBox();
+		oComboBox.syncPickerContent();
 
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
@@ -10674,6 +10742,7 @@ sap.ui.define([
 		var oComboBox = new ComboBox(),
 			oFakeEvent;
 
+		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
@@ -10701,6 +10770,7 @@ sap.ui.define([
 				]
 			});
 
+		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
@@ -10739,6 +10809,7 @@ sap.ui.define([
 				]
 			});
 
+		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
 		oList = oComboBox._getList();
 
@@ -10784,6 +10855,7 @@ sap.ui.define([
 			});
 
 		// arrange
+		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
 		oList = oComboBox._getList();
 
@@ -10867,8 +10939,10 @@ sap.ui.define([
 
 	QUnit.test("_highlightList should call _boldItemRef on items", function (assert) {
 		// arrange
-		var oComboBox = new ComboBox(),
-			oFakeDom = document.createElement("li"),
+		var oComboBox = new ComboBox();
+		oComboBox.syncPickerContent();
+
+		var oFakeDom = document.createElement("li"),
 			oItem = new StandardListItem({
 				title: "test"
 			}),
@@ -10936,6 +11010,7 @@ sap.ui.define([
 				})
 			]
 		});
+		oComboBox.syncPickerContent();
 
 		// arrange
 		oComboBox.placeAt("content");
@@ -10972,6 +11047,7 @@ sap.ui.define([
 				]
 			});
 
+			this.oComboBox.syncPickerContent();
 			this.oComboBox.placeAt("content");
 			sap.ui.getCore().applyChanges();
 		},
@@ -11199,6 +11275,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Filtering", function (assert) {
+		this.comboBox.syncPickerContent();
 
 		// act
 		var bMatched = ComboBoxBase.DEFAULT_TEXT_FILTER("서", this.comboBox.getItems()[0], "getText");
@@ -11589,6 +11666,7 @@ sap.ui.define([
 					new Item({text: "item22", key:"key22"})
 				]
 			});
+			this.oComboBox.syncPickerContent();
 
 			// Checkes if the header and the two items which text starts with "item1" are present after filtering
 			this.fnCheckFilterWithGrouping = function (assert, aItems) {
@@ -12029,6 +12107,7 @@ sap.ui.define([
 				new Item({text: "item2", key:"key2"})
 			]
 		});
+		oComboBox.syncPickerContent();
 		var oItem = oComboBox.getItems()[1],
 			oListItem = oComboBox.getListItem(oItem);
 

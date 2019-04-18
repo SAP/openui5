@@ -316,6 +316,7 @@ sap.ui.define([
 			oMultiComboBox.setModel(oModel);
 
 			// arrange
+			oMultiComboBox.syncPickerContent();
 			oMultiComboBox.placeAt("MultiComboBox-content");
 			sap.ui.getCore().applyChanges();
 
@@ -804,6 +805,7 @@ sap.ui.define([
 		var oMultiComboBox = new MultiComboBox();
 
 		// arrange
+		oMultiComboBox.syncPickerContent();
 		var fnAddAggregationSpy = this.spy(oMultiComboBox, "addAggregation");
 		var fnListAddAggregationSpy = this.spy(oMultiComboBox._getList(), "addAggregation");
 		var fnAddItemSpy = this.spy(oMultiComboBox, "addItem");
@@ -838,6 +840,7 @@ sap.ui.define([
 		var oMultiComboBox = new MultiComboBox();
 
 		// arrange
+		oMultiComboBox.syncPickerContent();
 		var fnAddAggregationSpy = this.spy(oMultiComboBox, "addAggregation");
 		var fnListAddAggregationSpy = this.spy(oMultiComboBox._getList(), "addAggregation");
 		var fnAddItemSpy = this.spy(oMultiComboBox, "addItem");
@@ -871,6 +874,7 @@ sap.ui.define([
 		var oMultiComboBox = new MultiComboBox();
 
 		// arrange
+		oMultiComboBox.syncPickerContent();
 		var fnAddAggregationSpy = this.spy(oMultiComboBox, "addAggregation");
 		var fnListAddAggregationSpy = this.spy(oMultiComboBox._getList(), "addAggregation");
 		var fnAddItemSpy = this.spy(oMultiComboBox, "addItem");
@@ -902,6 +906,7 @@ sap.ui.define([
 		var oMultiComboBox = new MultiComboBox();
 
 		// arrange
+		oMultiComboBox.syncPickerContent();
 		var fnAddAggregationSpy = this.spy(oMultiComboBox, "addAggregation");
 		var fnListAddAggregationSpy = this.spy(oMultiComboBox._getList(), "addAggregation");
 		var fnAddItemSpy = this.spy(oMultiComboBox, "addItem");
@@ -935,6 +940,7 @@ sap.ui.define([
 		var oMultiComboBox = new MultiComboBox();
 
 		// arrange
+		oMultiComboBox.syncPickerContent();
 		var fnAddAggregationSpy = this.spy(oMultiComboBox, "addAggregation");
 		var fnListAddAggregationSpy = this.spy(oMultiComboBox._getList(), "addAggregation");
 		var fnAddItemSpy = this.spy(oMultiComboBox, "addItem");
@@ -948,7 +954,7 @@ sap.ui.define([
 		assert.ok(fnListAddAggregationSpy.calledWith("items", null),
 				"sap.m.List.addAggregation() method was called with the expected arguments");
 		assert.ok(fnAddItemSpy.returned(oMultiComboBox));
-		assert.deepEqual(oMultiComboBox.getAggregation("items"), null);
+		assert.deepEqual(oMultiComboBox.getAggregation("items"), []);
 		assert.deepEqual(oMultiComboBox.getItems(), []);
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
@@ -1272,6 +1278,7 @@ sap.ui.define([
 		var oMultiComboBox = new MultiComboBox();
 
 		// arrange
+		oMultiComboBox.syncPickerContent();
 		var fnInsertAggregation = this.spy(oMultiComboBox, "insertAggregation");
 		var fnListInsertAggregation = this.spy(oMultiComboBox._getList(), "insertAggregation");
 		var fnInsertItem = this.spy(oMultiComboBox, "insertItem");
@@ -1374,6 +1381,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -1406,6 +1414,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -1824,6 +1833,7 @@ sap.ui.define([
 			key : "02",
 			text : "item"
 		}));
+		oMultiComboBox.syncPickerContent();
 		sap.ui.getCore().applyChanges();
 
 		// assertions
@@ -1855,6 +1865,7 @@ sap.ui.define([
 			key : "02",
 			text : "selected item"
 		}));
+		oMultiComboBox.syncPickerContent();
 		sap.ui.getCore().applyChanges();
 
 		// assertions
@@ -1912,6 +1923,7 @@ sap.ui.define([
 		oMultiComboBox.setModel(oModel);
 
 		// arrange
+		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -2000,6 +2012,7 @@ sap.ui.define([
 			oMultiComboBox.setModel(oModel);
 
 			// arrange
+			oMultiComboBox.syncPickerContent();
 			oMultiComboBox.placeAt("MultiComboBox-content");
 			sap.ui.getCore().applyChanges();
 
@@ -2044,6 +2057,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -2079,6 +2093,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -2241,6 +2256,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -2429,6 +2445,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -2504,6 +2521,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -2527,7 +2545,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("clearFilter - disabled item after invisible", function(assert) {
-
 		// system under test
 		var oItem1, oItem2, oItem3;
 		var oMultiComboBox = new MultiComboBox({
@@ -2548,6 +2565,7 @@ sap.ui.define([
 		// act
 		oItem1.setEnabled(true);
 		this.clock.tick(500);
+		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.getListItem(oMultiComboBox.getFirstItem()).setVisible(false);
 		oMultiComboBox.clearFilter();
 		oMultiComboBox.open();
@@ -2713,6 +2731,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -2771,6 +2790,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -2883,6 +2903,7 @@ sap.ui.define([
 			});
 
 			// arrange
+			oMultiComboBox.syncPickerContent();
 			oMultiComboBox.placeAt("MultiComboBox-content");
 			sap.ui.getCore().applyChanges();
 
@@ -2932,6 +2953,7 @@ sap.ui.define([
 			});
 
 			// arrange
+			oMultiComboBox.syncPickerContent();
 			oMultiComboBox.placeAt("MultiComboBox-content");
 			sap.ui.getCore().applyChanges();
 
@@ -3254,6 +3276,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 		oMultiComboBox.focus();
@@ -3438,6 +3461,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 		var fnTapSpy = this.spy(oMultiComboBox, "ontap");
@@ -3555,6 +3579,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -3600,6 +3625,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -3644,6 +3670,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -3688,6 +3715,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 		var fnClickSpy = this.spy(oMultiComboBox.getDomRef("arrow"), "click");
@@ -3737,6 +3765,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 		var fnOpenSpy = this.spy(oMultiComboBox.getPicker(), "open");
@@ -3782,6 +3811,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 		qutils.triggerEvent("input", oMultiComboBox.getFocusDomRef());
@@ -3865,6 +3895,7 @@ sap.ui.define([
 				});
 
 				// arrange
+				oMultiComboBox.syncPickerContent();
 				oMultiComboBox.placeAt("MultiComboBox-content");
 				sap.ui.getCore().applyChanges();
 				var fnOpenSpy = this.spy(oMultiComboBox.getPicker(), "open");
@@ -3917,6 +3948,7 @@ sap.ui.define([
 				});
 
 				// arrange
+				oMultiComboBox.syncPickerContent();
 				oMultiComboBox.placeAt("MultiComboBox-content");
 				sap.ui.getCore().applyChanges();
 				oMultiComboBox.focus();
@@ -4358,6 +4390,7 @@ sap.ui.define([
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		oMultiComboBoxNext.placeAt("MultiComboBox-content");
 
+		oMultiComboBox.syncPickerContent();
 		sap.ui.getCore().applyChanges();
 
 		// act
@@ -4489,6 +4522,7 @@ sap.ui.define([
 		var oMCB = new MultiComboBox({
 			items: [oItem]
 		}).placeAt("MultiComboBox-content");
+		oMCB.syncPickerContent();
 
 		var oSpyFireSelectionFinish = this.spy(oMCB, "fireSelectionFinish");
 		var oSpySetSelection = this.spy(oMCB, "setSelection");
@@ -4504,7 +4538,7 @@ sap.ui.define([
 			id: oList.getId(),
 			listItem: oList.getItems()[0],
 			getParameter: function (sParam) {
-				if (sParam == "listItem") {
+				if (sParam === "listItem") {
 					return oList.getItems()[0];
 				}
 				return true;
@@ -4936,6 +4970,7 @@ sap.ui.define([
 				setMarked: function () {},
 				keyCode: 111 // dommy code
 			};
+		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -4965,6 +5000,7 @@ sap.ui.define([
 			}), oTokenizer = oMultiComboBox._oTokenizer,
 				oSpy;
 
+		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -5120,6 +5156,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("_getNextTraversalItem should return the right traversal item", function (assert) {
+		this.oMultiComboBox.syncPickerContent();
+
 		var oNextItem = this.oMultiComboBox._getNextTraversalItem(),
 				oPreviousItem = this.oMultiComboBox._getPreviousTraversalItem(),
 				aItems = this.oMultiComboBox.getItems();
@@ -5145,6 +5183,7 @@ sap.ui.define([
 			oNextItem, oPreviousItem, aItems;
 
 		this.oMultiComboBox.insertItem(oGroupHeaderItem, 0);
+		this.oMultiComboBox.syncPickerContent();
 		sap.ui.getCore().applyChanges();
 
 		oNextItem = this.oMultiComboBox._getNextTraversalItem();
@@ -5265,6 +5304,7 @@ sap.ui.define([
 			oFakeEvent = new Event(),
 			fnTapSpy = sinon.spy(oMultiComboBox, "onfocusin");
 
+		oMultiComboBox.syncPickerContent();
 		oFakeEvent.relatedControlId = oMultiComboBox.getPicker().getId();
 		sap.ui.getCore().applyChanges();
 
@@ -5327,6 +5367,7 @@ sap.ui.define([
 			]
 		});
 
+		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -5351,7 +5392,11 @@ sap.ui.define([
 				new Item({key: "Item2", text: "Item2"}),
 				new Item({key: "Item3", text: "Item3"})
 			]
-		}), oSelectedButton = oMultiComboBox._getFilterSelectedButton();
+		});
+
+		oMultiComboBox.syncPickerContent();
+
+		var oSelectedButton = oMultiComboBox._getFilterSelectedButton();
 
 		var oFakeEvent = {
 			target: {
@@ -5407,7 +5452,11 @@ sap.ui.define([
 				new SeparatorItem({ text: "Third Group" }),
 				new Item({key: "XXX", text: "XXX"})
 			]
-		}), oSelectedButton = oMultiComboBox._getFilterSelectedButton();
+		});
+
+		oMultiComboBox.syncPickerContent();
+
+		var oSelectedButton = oMultiComboBox._getFilterSelectedButton();
 
 		var oFakeEvent = {
 			target: {
@@ -5725,6 +5774,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 		oMultiComboBox._highlightList("(T");
@@ -5758,6 +5808,8 @@ sap.ui.define([
 					})
 				]
 			});
+
+			this.oMultiComboBox.syncPickerContent();
 		},
 		afterEach: function () {
 			this.oMultiComboBox.destroy();
@@ -5849,6 +5901,8 @@ sap.ui.define([
 				})
 			]
 		});
+		this.oMultiComboBox.syncPickerContent();
+
 		var aFilteredItems = this.oMultiComboBox.filterItems({ value: "B", items: this.oMultiComboBox.getItems() });
 		assert.strictEqual(aFilteredItems.length, 2, "Two items should be filtered");
 		assert.strictEqual(this.oMultiComboBox.getVisibleItems().length, 4, "There are two visible items with their group names");
@@ -6023,6 +6077,9 @@ sap.ui.define([
 			phone: false,
 			tablet: false
 		});
+
+		this.oMCB1.syncPickerContent();
+
 		this.oMCB1.$().find(".sapMTokenizerIndicator")[0].click();
 		this.clock.tick(200);
 
@@ -6031,18 +6088,41 @@ sap.ui.define([
 		assert.strictEqual(this.oMCB1.getVisibleItems().length, 4, "The selected items are shown grouped");
 	});
 
-	QUnit.test("Phone: Selected items are grouped when picker is opened", function(assert) {
+	QUnit.test("Phone: Selected items are grouped when picker is opened", function (assert) {
 		this.stub(Device, "system", {
 			desktop: false,
 			phone: true,
 			tablet: false
 		});
-		this.oMCB1.$().find(".sapMTokenizerIndicator")[0].click();
+
+		var oMultiComboBox = new MultiComboBox({
+			items: [
+				new SeparatorItem({text: "First Group"}),
+				new Item('iitem1', {text: "XXXX"}),
+				new Item('iitem2', {text: "XXXX"}),
+				new SeparatorItem({text: "Second Group"}),
+				new Item('iitem3', {text: "XXXX"}),
+				new SeparatorItem({text: "Third Group"}),
+				new Item('iitem4', {text: "XXXX"})],
+			selectedItems: ['iitem1', 'iitem3'],
+			width: "200px"
+		});
+		oMultiComboBox.syncPickerContent();
+		oMultiComboBox.placeAt("MultiComboBox-content");
 		this.clock.tick(200);
 
+		oMultiComboBox.$().find(".sapMTokenizerIndicator").click();
+
 		//assert
-		assert.strictEqual(this.oMCB1.getSelectedItems().length, 2, "There are two selected items");
-		assert.strictEqual(this.oMCB1.getVisibleItems().length, 4, "The selected items are shown grouped");
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 2, "There are two selected items");
+		assert.strictEqual(oMultiComboBox.getVisibleItems().length, 4, "The selected items are shown grouped");
+
+
+
+		oMultiComboBox.close();
+		this.clock.tick(500);
+		oMultiComboBox.destroy();
+		this.clock.restore();
 	});
 
 	QUnit.module("Type-ahead");
@@ -6120,8 +6200,7 @@ sap.ui.define([
 				key : "AU",
 				text : "Australia"
 			})]
-		}), oInputDomRef, aListItems,
-			oList = oMultiComboBox._getList(),
+		}), oInputDomRef, aListItems, oList,
 			oInputEvent = {
 				target: {
 					value: "A"
@@ -6134,6 +6213,8 @@ sap.ui.define([
 		this.stub(jQuery.device, "is", oSystem);
 
 		// arrange
+		oMultiComboBox.syncPickerContent();
+		oList = oMultiComboBox._getList();
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -6194,8 +6275,11 @@ sap.ui.define([
 					key : "AU",
 					text : "Australia"
 				})]
-			}),
-			oList = oMultiComboBox._getList(), aListItems,
+			});
+
+		oMultiComboBox.syncPickerContent();
+
+		var	oList = oMultiComboBox._getList(), aListItems,
 			oInputEvent = {
 				target: {
 					value: "A"
@@ -6393,11 +6477,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("The groups names are not filtered", function(assert) {
+		this.oMultiComboBox.syncPickerContent();
 		var aFilteredItems = this.oMultiComboBox.filterItems({ value: "A", items: this.oMultiComboBox.getItems() });
 		assert.strictEqual(aFilteredItems.length, 0, "There is no filtered items");
 	});
 
 	QUnit.test("_mapItemToList()", function(assert) {
+		this.oMultiComboBox.syncPickerContent();
 		var groupHeader = this.oMultiComboBox._getList().getItems()[0];
 		assert.ok(groupHeader instanceof sap.m.GroupHeaderListItem, "The control used for the group name is instance of sap.m.GroupHeaderListItem");
 	});
@@ -6550,7 +6636,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Filtering", function (assert) {
-
+		this.multiComboBox.syncPickerContent();
 		// act
 		var bMatched = ComboBoxBase.DEFAULT_TEXT_FILTER("서", this.multiComboBox.getItems()[0], "getText");
 		var aFilteredItems = this.multiComboBox.filterItems({ value: "서", items: this.multiComboBox.getItems() });

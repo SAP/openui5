@@ -213,8 +213,9 @@ function(
 	 * @returns {sap.m.MultiComboBox} <code>this</code> to allow method chaining.
 	 * @protected
 	 */
-	MultiComboBox.prototype.open = function() {
+	MultiComboBox.prototype.open = function () {
 		this._bPickerIsOpening = true;
+		this.syncPickerContent();
 
 		return ComboBoxBase.prototype.open.apply(this, arguments);
 	};
@@ -262,6 +263,8 @@ function(
 
 		// note: prevent document scrolling when arrow keys are pressed
 		oEvent.preventDefault();
+
+		this.syncPickerContent();
 
 		// If list is open then go to the first visible list item. Set this item
 		// into the visual viewport.
@@ -325,12 +328,17 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onsapshow = function(oEvent) {
-		var oList = this._getList(),
-			oPicker = this.getPicker(),
-			aSelectableItems = this.getSelectableItems(),
-			aSelectedItems = this.getSelectedItems(),
-			oItemToFocus, oItemNavigation = oList.getItemNavigation(),
-			iItemToFocus, oCurrentFocusedControl;
+		var oItemToFocus, iItemToFocus, oCurrentFocusedControl,
+			oPicker, oList, aSelectableItems,
+			aSelectedItems, oItemNavigation;
+
+		this.syncPickerContent();
+
+		oPicker = this.getPicker();
+		oList = this._getList();
+		aSelectableItems = this.getSelectableItems();
+		aSelectedItems = this.getSelectedItems();
+		oItemNavigation = oList.getItemNavigation();
 
 		oCurrentFocusedControl = jQuery(document.activeElement).control()[0];
 
@@ -473,11 +481,14 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onsapfocusleave = function(oEvent) {
-		var oPicker = this.getAggregation("picker"),
-			bTablet = this.isPlatformTablet(),
+		var bTablet = this.isPlatformTablet(),
 			oControl = core.byId(oEvent.relatedControlId),
 			oFocusDomRef = oControl && oControl.getFocusDomRef(),
-			sOldValue = this.getValue();
+			sOldValue = this.getValue(),
+			oPicker;
+
+		this.syncPickerContent();
+		oPicker = this.getPicker();
 
 		// If focus target is outside of picker and the picker is fully opened
 		if (!this._bPickerIsOpening && (!oPicker || !oPicker.getFocusDomRef() || !oFocusDomRef || !jQuery.contains(oPicker.getFocusDomRef(), oFocusDomRef))) {
@@ -518,8 +529,8 @@ function(
 	MultiComboBox.prototype.onfocusin = function(oEvent) {
 		var oPicker = this.getPicker();
 		var bPreviousFocusInDropdown = false;
-		var oPickerDomRef  = oPicker.getFocusDomRef();
-		var sCurrentState = oPicker.oPopup.getOpenState();
+		var oPickerDomRef  = oPicker && oPicker.getFocusDomRef();
+		var sCurrentState = (oPicker && oPicker.oPopup.getOpenState()) || OpenState.CLOSED;
 		var bPickerClosedOrClosing = sCurrentState === OpenState.CLOSING || sCurrentState === OpenState.CLOSED;
 		var bDropdownPickerType = this.getPickerType() === "Dropdown";
 
@@ -700,6 +711,8 @@ function(
 		if (!this.getEnabled() || !this.getEditable()) {
 			return;
 		}
+
+		this.syncPickerContent();
 
 		if (this._bIsPasteEvent) {
 			oInput.updateDomValue(this._sOldValue || "");
@@ -965,10 +978,32 @@ function(
 	 */
 	MultiComboBox.prototype.onBeforeRendering = function() {
 		ComboBoxBase.prototype.onBeforeRendering.apply(this, arguments);
-		var aItems = this.getItems(),
+
+		this.setEditable(this.getEditable());
+
+		this._deregisterResizeHandler();
+	};
+
+	/**
+	 * Creates picker if doesn't exist yet and sync with Control items
+	 *
+	 * @param {boolean} bForceListSync Force MultiComboBox to SuggestionPopover sync
+	 * @protected
+	 * @returns {Dialog|Popover}
+	 */
+	MultiComboBox.prototype.syncPickerContent = function (bForceListSync) {
+		var aItems, oList,
+			oPicker = this.getPicker();
+
+		if (!oPicker) {
+			oPicker = this.createPicker(this.getPickerType());
+			bForceListSync = true;
+		}
+
+		if (bForceListSync) {
+			aItems = this.getItems();
 			oList = this._getList();
 
-		if (oList) {
 			this._synchronizeSelectedItemAndKey(aItems);
 
 			// prevent closing of popup on re-rendering
@@ -985,7 +1020,7 @@ function(
 			this.setEditable(this.getEditable());
 		}
 
-		this._deregisterResizeHandler();
+		return oPicker;
 	};
 
 	/**
@@ -1942,11 +1977,14 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._handleIndicatorPress = function(oEvent) {
+		var oPicker;
 		this._filterSelectedItems(oEvent, true);
 		this.focus();
 
 		if (this.getEditable()) {
-			this.getPicker().open();
+			this.syncPickerContent();
+			oPicker = this.getPicker();
+			oPicker.open();
 		} else {
 			this._getReadOnlyPopover().openBy(this._oTokenizer._oIndicator);
 		}
@@ -2811,18 +2849,19 @@ function(
 	/**
 	 * @override
 	 */
-	MultiComboBox.prototype.setEditable = function(bEditable) {
-		var oList = this._getList();
+	MultiComboBox.prototype.setEditable = function (bEditable) {
+		var oList = this._getList(),
+			oPopup = bEditable ? this.getPicker() : this._getReadOnlyPopover(),
+			sListMode = bEditable ? ListMode.MultiSelect : ListMode.None;
+
 		ComboBoxBase.prototype.setEditable.apply(this, arguments);
 		this._oTokenizer.setEditable(bEditable);
 
-		if (bEditable) {
-			oList.setMode(ListMode.MultiSelect);
-			this.getPicker().addContent(oList);
-		} else {
-			oList.setMode(ListMode.None);
-			this._getReadOnlyPopover().addContent(oList);
+		if (oList) {
+			oList.setMode(sListMode);
+			oPopup.addContent(oList);
 		}
+
 		return this;
 	};
 
@@ -3332,6 +3371,7 @@ function(
 	 * @sap-restricted
 	 */
 	MultiComboBox.prototype.applyShowItemsFilters = function () {
+		this.syncPickerContent();
 		this.filterItems({value: this.getValue() || "_", items: this.getItems()});
 	};
 
