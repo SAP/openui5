@@ -11,7 +11,7 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 
 	var CalendarDayType = unifiedLibrary.CalendarDayType;
 
-	var PageController = Controller.extend("sap.m.sample.SinglePlanningCalendar.Page", {
+	var PageController = Controller.extend("sap.m.sample.SinglePlanningCalendarCreateApp.Page", {
 
 		onInit: function() {
 
@@ -58,48 +58,31 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 						startDate: new Date("2018", "6", "8", "9", "9"),
 						endDate: new Date("2018", "6", "8", "10", "0")
 					}, {
-						title: "Discussion with clients regarding our new purpose",
-						text: "room 234 and Online meeting",
+						title: "Discussion with clients",
+						text: "Online meeting",
 						type: CalendarDayType.Type08,
 						icon: "sap-icon://home",
 						startDate: new Date("2018", "6", "8", "10", "0"),
-						endDate: new Date("2018", "6", "8", "11", "30")
+						endDate: new Date("2018", "6", "8", "11", "0")
 					}, {
 						title: "Discussion of the plan",
-						text: "Online meeting with partners and colleagues",
+						text: "Online meeting",
 						type: CalendarDayType.Type01,
 						icon: "sap-icon://home",
 						tentative: true,
-						startDate: new Date("2018", "6", "8", "11", "30"),
-						endDate: new Date("2018", "6", "8", "13", "00")
+						startDate: new Date("2018", "6", "8", "11", "0"),
+						endDate: new Date("2018", "6", "8", "12", "0")
 					}, {
 						title: "Discussion with clients",
 						type: CalendarDayType.Type08,
 						icon: "sap-icon://home",
-						startDate: new Date("2018", "6", "8", "12", "30"),
-						endDate: new Date("2018", "6", "8", "13", "15")
+						startDate: new Date("2018", "6", "8", "12", "0"),
+						endDate: new Date("2018", "6", "8", "13", "9")
 					}, {
 						title: "Meeting with the manager",
 						type: CalendarDayType.Type03,
 						startDate: new Date("2018", "6", "8", "13", "9"),
 						endDate: new Date("2018", "6", "8", "13", "9")
-					}, {
-						title: "Meeting with the HR",
-						type: CalendarDayType.Type03,
-						startDate: new Date("2018", "6", "8", "14", "0"),
-						endDate: new Date("2018", "6", "8", "14", "15")
-					}, {
-						title: "Call with customer",
-						type: CalendarDayType.Type08,
-						startDate: new Date("2018", "6", "8", "14", "15"),
-						endDate: new Date("2018", "6", "8", "14", "30")
-					}, {
-						title: "Prepare documentation",
-						text: "At my desk",
-						icon: "sap-icon://meeting-room",
-						type: CalendarDayType.Type03,
-						startDate: new Date("2018", "6", "8", "14", "10"),
-						endDate: new Date("2018", "6", "8", "15", "30")
 					}, {
 						title: "Meeting with the manager",
 						type: CalendarDayType.Type03,
@@ -117,8 +100,7 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 						startDate: new Date("2018", "6", "9", "8", "0"),
 						endDate: new Date("2018", "6", "9", "9", "0")
 					}, {
-						title: "Discussion with clients for the new release dates",
-						text: "Online meeting",
+						title: "Discussion with clients",
 						type: CalendarDayType.Type08,
 						startDate: new Date("2018", "6", "9", "9", "0"),
 						endDate: new Date("2018", "6", "9", "10", "0")
@@ -180,12 +162,6 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 						type: CalendarDayType.Type05,
 						startDate: new Date("2018", "6", "12", "20", "0"),
 						endDate: new Date("2018", "6", "12", "21", "30")
-					}, {
-						title: "Vacation",
-						type: CalendarDayType.Type09,
-						text: "out of office",
-						startDate: new Date("2018", "6", "11", "12", "0"),
-						endDate: new Date("2018", "6", "13", "14", "0")
 					}, {
 						title: "Reminder",
 						type: CalendarDayType.Type09,
@@ -252,28 +228,6 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 						startDate: new Date("2018", "6", "17", "15", "30"),
 						endDate: new Date("2018", "6", "17", "16", "30")
 					}
-				],
-				legendAppointmentItems: [
-					{
-						text: "Team Meeting",
-						type: CalendarDayType.Type01
-					},
-					{
-						text: "Personal",
-						type: CalendarDayType.Type05
-					},
-					{
-						text: "Discussions",
-						type: CalendarDayType.Type08
-					},
-					{
-						text: "Out of office",
-						type: CalendarDayType.Type09
-					},
-					{
-						text: "Private meeting",
-						type: CalendarDayType.Type03
-					}
 				]
 			});
 			this.getView().setModel(oModel);
@@ -281,76 +235,6 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 			oModel = new JSONModel();
 			oModel.setData({allDay: false});
 			this.getView().setModel(oModel, "allDay");
-
-			oModel = new JSONModel();
-			oModel.setData({ stickyMode: "None", enableAppointmentsDragAndDrop: true, enableAppointmentsResize: true, enableAppointmentsCreate: true });
-			this.getView().setModel(oModel, "settings");
-		},
-
-		handleAppointmentDrop: function (oEvent) {
-			var oAppointment = oEvent.getParameter("appointment"),
-				oStartDate = oEvent.getParameter("startDate"),
-				oEndDate = oEvent.getParameter("endDate"),
-				bCopy = oEvent.getParameter("copy"),
-				sAppointmentTitle = oAppointment.getTitle(),
-				oModel = this.getView().getModel(),
-				oNewAppointment;
-
-			if (bCopy) {
-				oNewAppointment = {
-					title: sAppointmentTitle,
-					icon: oAppointment.getIcon(),
-					text: oAppointment.getText(),
-					type: oAppointment.getType(),
-					startDate: oStartDate,
-					endDate: oEndDate
-				};
-				oModel.getData().appointments.push(oNewAppointment);
-				oModel.updateBindings();
-			} else {
-				oAppointment.setStartDate(oStartDate);
-				oAppointment.setEndDate(oEndDate);
-			}
-
-			MessageToast.show("Appointment with title \n'"
-				+ sAppointmentTitle
-				+ "'\n has been " + (bCopy ? "create" : "moved")
-			);
-		},
-
-		handleAppointmentResize: function (oEvent) {
-			var oAppointment = oEvent.getParameter("appointment"),
-				oStartDate = oEvent.getParameter("startDate"),
-				oEndDate = oEvent.getParameter("endDate"),
-				sAppointmentTitle = oAppointment.getTitle();
-
-			oAppointment.setStartDate(oStartDate);
-			oAppointment.setEndDate(oEndDate);
-
-			MessageToast.show("Appointment with title \n'"
-				+ sAppointmentTitle
-				+ "'\n has been resized"
-			);
-		},
-
-		handleAppointmentCreateDnD: function(oEvent) {
-			var oStartDate = oEvent.getParameter("startDate"),
-				oEndDate = oEvent.getParameter("endDate"),
-				sAppointmentTitle = "New Appointment",
-				oModel = this.getView().getModel(),
-				oNewAppointment = {
-					title: sAppointmentTitle,
-					startDate: oStartDate,
-					endDate: oEndDate
-				};
-
-			oModel.getData().appointments.push(oNewAppointment);
-			oModel.updateBindings();
-
-			sap.m.MessageToast.show("Appointment with title \n'"
-				+ sAppointmentTitle
-				+ "'\n has been created"
-			);
 		},
 
 		onExit: function () {
@@ -393,12 +277,12 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 					name: "sap.m.sample.SinglePlanningCalendarCreateApp.Details",
 					controller: this
 				})
-					.then(function(oPopoverContent){
-						this._oDetailsPopover = oPopoverContent;
-						this._oDetailsPopover.setBindingContext(oAppointment.getBindingContext());
-						this.getView().addDependent(this._oDetailsPopover);
-						this._oDetailsPopover.openBy(oAppointment);
-					}.bind(this));
+				.then(function(oPopoverContent){
+					this._oDetailsPopover = oPopoverContent;
+					this._oDetailsPopover.setBindingContext(oAppointment.getBindingContext());
+					this.getView().addDependent(this._oDetailsPopover);
+					this._oDetailsPopover.openBy(oAppointment);
+				}.bind(this));
 			} else {
 				this._oDetailsPopover.setBindingContext(oAppointment.getBindingContext());
 				this._oDetailsPopover.openBy(oAppointment);
@@ -428,11 +312,11 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 					name: "sap.m.sample.SinglePlanningCalendarCreateApp.Modify",
 					controller: this
 				})
-					.then(function(oDialog){
-						this._oNewAppointmentDialog = oDialog;
-						this.getView().addDependent(this._oNewAppointmentDialog);
-						this._arrangeDialog(sTitle);
-					}.bind(this));
+				.then(function(oDialog){
+					this._oNewAppointmentDialog = oDialog;
+					this.getView().addDependent(this._oNewAppointmentDialog);
+					this._arrangeDialog(sTitle);
+				}.bind(this));
 			} else {
 				this._arrangeDialog(sTitle);
 			}
@@ -647,27 +531,8 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 			} else {
 				oPicker.setValueState("None");
 			}
-		},
-
-		handleOpenLegend: function (oEvent) {
-			var oSource = oEvent.getSource();
-
-			if (!this._oLegendPopover) {
-				Fragment.load({
-					id: "LegendFrag",
-					name: "sap.m.sample.SinglePlanningCalendar.Legend",
-					controller: this
-				}).then(function(oPopoverContent){
-					this._oLegendPopover = oPopoverContent;
-					this.getView().addDependent(this._oLegendPopover);
-					this._oLegendPopover.openBy(oSource);
-				}.bind(this));
-			} else if (this._oLegendPopover.isOpen()) {
-				this._oLegendPopover.close();
-			} else {
-				this._oLegendPopover.openBy(oSource);
-			}
 		}
+
 	});
 
 	return PageController;

@@ -5,14 +5,14 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/unified/library",
-	"sap/m/SinglePlanningCalendarView"
+	"sap/m/MessageToast"
 ],
-function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, SinglePlanningCalendarView) {
+function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, MessageToast) {
 	"use strict";
 
 	var CalendarDayType = unifiedLibrary.CalendarDayType;
 
-	var PageController = Controller.extend("sap.m.sample.SinglePlanningCalendarWithCustomViews.Page", {
+	var PageController = Controller.extend("sap.m.sample.SinglePlanningCalendarDND.Page", {
 
 		onInit: function() {
 
@@ -26,7 +26,7 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Single
 						endDate: new Date("2018", "6", "8", "6", "0")
 					}, {
 						title: "Discussion of the plan",
-						type: CalendarDayType.Type08,
+						type: CalendarDayType.Type01,
 						startDate: new Date("2018", "6", "8", "6", "0"),
 						endDate: new Date("2018", "6", "8", "7", "9")
 					}, {
@@ -59,7 +59,7 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Single
 					}, {
 						title: "Discussion of the plan",
 						text: "Online meeting",
-						type: CalendarDayType.Type08,
+						type: CalendarDayType.Type01,
 						icon: "sap-icon://home",
 						tentative: true,
 						startDate: new Date("2018", "6", "8", "11", "0"),
@@ -136,7 +136,7 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Single
 						endDate: new Date("2018", "6", "11", "9", "30")
 					}, {
 						title: "Workshop",
-						type: CalendarDayType.Type01,
+						type: CalendarDayType.Type05,
 						startDate: new Date("2018", "6", "11", "8", "30"),
 						endDate: new Date("2018", "6", "11", "12", "0")
 					}, {
@@ -151,7 +151,7 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Single
 						endDate: new Date("2018", "6", "12", "19", "30")
 					}, {
 						title: "Working out of the building",
-						type: CalendarDayType.Type07,
+						type: CalendarDayType.Type05,
 						startDate: new Date("2018", "6", "12", "20", "0"),
 						endDate: new Date("2018", "6", "12", "21", "30")
 					}, {
@@ -195,14 +195,8 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Single
 						startDate: new Date("2018", "6", "6", "12", "0"),
 						endDate: new Date("2018", "6", "6", "13", "0")
 					}, {
-						title: "Team meeting",
-						text: "online",
-						type: CalendarDayType.Type01,
-						startDate: new Date("2018", "6", "16", "8", "0"),
-						endDate: new Date("2018", "6", "16", "9", "0")
-					}, {
 						title:"Discussion of the plan",
-						type: CalendarDayType.Type08,
+						type: CalendarDayType.Type01,
 						startDate: new Date("2018", "6", "16", "11", "0"),
 						endDate: new Date("2018", "6", "16", "12", "0")
 					}, {
@@ -219,17 +213,6 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Single
 						startDate:  new Date("2018", "6", "16", "16", "0"),
 						endDate: new Date("2018", "6", "16", "17", "0")
 					}, {
-						title: "Working out of the building",
-						type: CalendarDayType.Type07,
-						startDate: new Date("2018", "6", "17", "6", "0"),
-						endDate: new Date("2018", "6", "17", "9", "30")
-					}, {
-						title: "Team meeting",
-						text: "room 5",
-						type: CalendarDayType.Type01,
-						startDate: new Date("2018", "6", "18", "11", "0"),
-						endDate: new Date("2018", "6", "18", "14", "0")
-					},{
 						title:"Discussion with clients",
 						text: "Online meeting",
 						type: CalendarDayType.Type08,
@@ -237,97 +220,85 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Single
 						startDate: new Date("2018", "6", "17", "15", "30"),
 						endDate: new Date("2018", "6", "17", "16", "30")
 					}
-				],
-				legendAppointmentItems: [
-					{
-						text: "Team Meeting",
-						type: CalendarDayType.Type01
-					},
-					{
-						text: "Personal",
-						type: CalendarDayType.Type05
-					},
-					{
-						text: "Discussions",
-						type: CalendarDayType.Type08
-					},
-					{
-						text: "Out of office",
-						type: CalendarDayType.Type09
-					},
-					{
-						text: "Private meeting",
-						type: CalendarDayType.Type03
-					}
 				]
 			});
 			this.getView().setModel(oModel);
 
-			this._createThreeDaysCustomViewClass();
-			this._createTenDaysCustomViewClass();
-
-			var oSPC = this.getView().byId("SPC1"),
-				oDayView = new sap.m.SinglePlanningCalendarDayView({
-					title: "Day",
-					key: "Day"
-				}),
-				oMyCustomThreeDaysView = new sap.custom.CustomThreeDaysView({
-					title: "3 Days",
-					key: "3Days"
-				}),
-				oWorkWeekView = new sap.m.SinglePlanningCalendarWorkWeekView({
-					key: "WorkWeek",
-					title: "Work Week"
-				}),
-				oWeekView = new sap.m.SinglePlanningCalendarWeekView({
-					key: "Week",
-					title: "Week"
-				}),
-				oMyCustomTenDaysView = new sap.custom.CustomTenDaysView({
-					key: "10Days",
-					title: "10 Days"
-				});
-
-			oSPC.addView(oDayView);
-			oSPC.addView(oMyCustomThreeDaysView);
-			oSPC.addView(oWorkWeekView);
-			oSPC.addView(oWeekView);
-			oSPC.addView(oMyCustomTenDaysView);
-
+			oModel = new JSONModel();
+			oModel.setData({
+				stickyMode: "None",
+				enableAppointmentsDragAndDrop: true,
+				enableAppointmentsResize: true,
+				enableAppointmentsCreate: true
+			});
+			this.getView().setModel(oModel, "settings");
 		},
 
-		_createThreeDaysCustomViewClass: function () {
-			SinglePlanningCalendarView.extend("sap.custom.CustomThreeDaysView");
+		handleAppointmentDrop: function (oEvent) {
+			var oAppointment = oEvent.getParameter("appointment"),
+				oStartDate = oEvent.getParameter("startDate"),
+				oEndDate = oEvent.getParameter("endDate"),
+				bCopy = oEvent.getParameter("copy"),
+				sAppointmentTitle = oAppointment.getTitle(),
+				oModel = this.getView().getModel(),
+				oNewAppointment;
 
-			sap.custom.CustomThreeDaysView.prototype.getEntityCount = function () {
-				return 3;
-			};
+			if (bCopy) {
+				oNewAppointment = {
+					title: sAppointmentTitle,
+					icon: oAppointment.getIcon(),
+					text: oAppointment.getText(),
+					type: oAppointment.getType(),
+					startDate: oStartDate,
+					endDate: oEndDate
+				};
+				oModel.getData().appointments.push(oNewAppointment);
+				oModel.updateBindings();
+			} else {
+				oAppointment.setStartDate(oStartDate);
+				oAppointment.setEndDate(oEndDate);
+			}
 
-			sap.custom.CustomThreeDaysView.prototype.getScrollEntityCount = function () {
-				return 3;
-			};
-
-			sap.custom.CustomThreeDaysView.prototype.calculateStartDate = function (oStartDate) {
-				return oStartDate;
-			};
+			MessageToast.show("Appointment with title \n'"
+				+ sAppointmentTitle
+				+ "'\n has been " + (bCopy ? "create" : "moved")
+			);
 		},
 
-		_createTenDaysCustomViewClass: function () {
-			SinglePlanningCalendarView.extend("sap.custom.CustomTenDaysView");
+		handleAppointmentResize: function (oEvent) {
+			var oAppointment = oEvent.getParameter("appointment"),
+				oStartDate = oEvent.getParameter("startDate"),
+				oEndDate = oEvent.getParameter("endDate"),
+				sAppointmentTitle = oAppointment.getTitle();
 
-			sap.custom.CustomTenDaysView.prototype.getEntityCount = function () {
-				return 10;
-			};
+			oAppointment.setStartDate(oStartDate);
+			oAppointment.setEndDate(oEndDate);
 
-			sap.custom.CustomTenDaysView.prototype.getScrollEntityCount = function () {
-				return 10;
-			};
+			MessageToast.show("Appointment with title \n'"
+				+ sAppointmentTitle
+				+ "'\n has been resized"
+			);
+		},
 
-			sap.custom.CustomTenDaysView.prototype.calculateStartDate = function (oStartDate) {
-				return oStartDate;
-			};
+		handleAppointmentCreateDnD: function(oEvent) {
+			var oStartDate = oEvent.getParameter("startDate"),
+				oEndDate = oEvent.getParameter("endDate"),
+				sAppointmentTitle = "New Appointment",
+				oModel = this.getView().getModel(),
+				oNewAppointment = {
+					title: sAppointmentTitle,
+					startDate: oStartDate,
+					endDate: oEndDate
+				};
+
+			oModel.getData().appointments.push(oNewAppointment);
+			oModel.updateBindings();
+
+			sap.m.MessageToast.show("Appointment with title \n'"
+				+ sAppointmentTitle
+				+ "'\n has been created"
+			);
 		}
-
 	});
 
 	return PageController;

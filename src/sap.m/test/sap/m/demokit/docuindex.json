@@ -952,8 +952,11 @@
 			"since": "1.61",
 			"formFactors": "L",
 			"samples": ["sap.m.sample.SinglePlanningCalendar",
-			  "sap.m.sample.SinglePlanningCalendarWithCustomViews",
-			  "sap.m.sample.SinglePlanningCalendarWithLegend"]
+				"sap.m.sample.SinglePlanningCalendarWithCustomViews",
+				"sap.m.sample.SinglePlanningCalendarWithLegend",
+				"sap.m.sample.SinglePlanningCalendarDND",
+				"sap.m.sample.SinglePlanningCalendarSnappingHeader",
+				"sap.m.sample.SinglePlanningCalendarCreateApp"]
 		},
 		{
 		  "id": "sap.m.Popover",
@@ -3140,17 +3143,32 @@
 		{
 		  "id": "sap.m.sample.SinglePlanningCalendar",
 		  "name": "Single Planning Calendar",
-		  "description": "SinglePlanningCalendar, contains sap.m.Dialog for creating a new appointment and sap.m.ResponsivePopover for editing an already created appointment. Note: Illustrates how the SinglePlanningCalendar can be used in combination with the sap.m.Dialog control for creating new appoitments and sap.m.ResponsivePopover for editing alredy created appointments. This feature is NOT part of the control."
+		  "description": "This sample demonstrates most of the features available for the SinglePlanningCalendar control."
 		},
 		{
 		  "id": "sap.m.sample.SinglePlanningCalendarWithCustomViews",
-		  "name": "Single Planning Calendar - with custom views",
-		  "description": "SinglePlanningCalendar using custom views."
+		  "name": "Single Planning Calendar with Custom Views",
+		  "description": "SinglePlanningCalendar showing the provided predefined views and custom views."
 		},
 		{
 		  "id": "sap.m.sample.SinglePlanningCalendarWithLegend",
-		  "name": "Single Planning Calendar - with legend",
-		  "description": "SinglePlanningCalendar inside the main part of a sap.ui.layout.DynamicSideContent and a sap.m.PlanningCalendarLegend inside the side part."
+		  "name": "Single Planning Calendar with Legend",
+		  "description": "SinglePlanningCalendar and PlanningCalendarLegend controls used as main and side parts of an sap.ui.layout.DynamicSideContent control."
+		},
+		{
+		  "id": "sap.m.sample.SinglePlanningCalendarDND",
+		  "name": "Single Planning Calendar with Drag and Drop",
+		  "description": "SinglePlanningCalendar with enabled drag and drop functionality, allowing to create appointments with dragging and dropping, to change the start and end date of appointments by selecting and dragging their top or bottom end, and to copy and paste appointments."
+		},
+		{
+		  "id": "sap.m.sample.SinglePlanningCalendarSnappingHeader",
+		  "name": "Single Planning Calendar with Snapping Header",
+		  "description": "SinglePlanningCalendar showing the modes for snapping the header part of the calendar."
+		},
+		{
+		  "id": "sap.m.sample.SinglePlanningCalendarCreateApp",
+		  "name": "Single Planning Calendar - Create and Modify Appointments",
+		  "description": "This sample demonstrates how the SinglePlanningCalendar control can be used in combination with sap.m.Dialog to create new appointments and sap.m.ResponsivePopover to edit already existing appointments. It also showcases how appointments can be deleted. Please note that these features are not part of the control."
 		},
 		{
 		  "id": "sap.m.sample.ImageContent",
