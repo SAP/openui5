@@ -639,6 +639,11 @@ sap.ui.define([
 		this.removeReadGroupLock();
 		this.oAggregation = undefined;
 		this.aApplicationFilters = undefined;
+		this.oCachePromise.then(function (oOldCache) {
+			if (oOldCache) {
+				oOldCache.setActive(false);
+			}
+		});
 		this.oCachePromise = SyncPromise.resolve(); // be nice to #withCache;
 		this.oContext = undefined;
 		this.aContexts = undefined;
