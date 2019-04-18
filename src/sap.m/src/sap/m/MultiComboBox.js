@@ -6,14 +6,11 @@ sap.ui.define([
 	'./InputBase',
 	'./ComboBoxTextField',
 	'./ComboBoxBase',
-	'./Input',
 	'./Tokenizer',
 	'./Token',
-	'./ToggleButton',
 	'./List',
 	'./StandardListItem',
 	'./Popover',
-	'./Toolbar',
 	'./GroupHeaderListItem',
 	'./library',
 	'sap/ui/core/EnabledPropagator',
@@ -40,14 +37,11 @@ function(
 	InputBase,
 	ComboBoxTextField,
 	ComboBoxBase,
-	Input,
 	Tokenizer,
 	Token,
-	ToggleButton,
 	List,
 	StandardListItem,
 	Popover,
-	Toolbar,
 	GroupHeaderListItem,
 	library,
 	EnabledPropagator,
@@ -878,6 +872,15 @@ function(
 		}
 	};
 
+	MultiComboBox.prototype._hasShowSelectedButton = function () {
+		return true;
+	};
+
+	MultiComboBox.prototype.forwardEventHandlersToSuggPopover = function (oSuggPopover) {
+		ComboBoxBase.prototype.forwardEventHandlersToSuggPopover.apply(this, arguments);
+		oSuggPopover.setShowSelectedPressHandler(this._filterSelectedItems.bind(this));
+	};
+
 	/**
 	 * Returns a modified instance type of <code>sap.m.Popover</code> used in read-only mode.
 	 *
@@ -939,19 +942,13 @@ function(
 	 * @function
 	 */
 	MultiComboBox.prototype._configureList = function (oList) {
-		var oRenderer = this.getRenderer();
-
 		if (!oList) {
 			return;
 		}
 
 		// configure the list
-		oList
-			.setMode(ListMode.MultiSelect)
-			.setIncludeItemInSelection(true)
-			.setRememberSelections(false)
-			.addStyleClass(oRenderer.CSS_CLASS_COMBOBOXBASE + "List")
-			.addStyleClass(oRenderer.CSS_CLASS_MULTICOMBOBOX + "List");
+		oList.setMode(ListMode.MultiSelect);
+		oList.setIncludeItemInSelection(true);
 
 		// attach event handlers
 		oList
@@ -967,30 +964,31 @@ function(
 	};
 
 	/**
-	 * Creates a new sap.m.Input control for the SuggestionsPopover dialog.
-
-	 * @returns {sap.m.Input} The newly created input control
+	 * Modifies the suggestions dialog input
+	 * @param {sap.m.Input} oInput The input
+	 *
+	 * @returns {sap.m.Input} The modified input control
 	 * @private
-	 * @function
 	 */
-	MultiComboBox.prototype.createPickerTextField = function () {
-		var that = this;
+	MultiComboBox.prototype._modifyPopupInput = function(oInput) {
+		ComboBoxBase.prototype._modifyPopupInput.apply(this, arguments);
 
-		return new Input({
-			// select a list item, when enter is triggered in picker text field
-			submit: function (oEvent) {
-				var sValue = this.getValue();
-				if (sValue) {
-					that.setValue(sValue);
-					that._selectItemByKey();
-					this.setValue(that._sOldInput);
-					that.close();
-				}
+		oInput.attachSubmit(function (oEvent) {
+			var sValue = oInput.getValue();
+			if (sValue) {
+				this.setValue(sValue);
+				this._selectItemByKey();
+				this.setValue(this._sOldInput);
+				this.close();
 			}
-		}).addEventDelegate({
+		}.bind(this));
+
+		oInput.addEventDelegate({
 			// remove the type ahead when focus is not in the input
 			onfocusout: this._handleInputFocusOut
 		}, this);
+
+		return oInput;
 	};
 
 	/**
@@ -1179,7 +1177,7 @@ function(
 			// reset the value state after the dialog is closed
 			this._showAlreadySelectedVisualEffect();
 			this.getPickerTextField().setValue("");
-			this._getFilterSelectedButton() && this._getFilterSelectedButton().setPressed(false);
+			this.getFilterSelectedButton() && this.getFilterSelectedButton().setPressed(false);
 		}
 
 		this.fireSelectionFinish({
@@ -1225,121 +1223,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.getFilterSelectedButton = function () {
-		if (this._oToggleButton) {
-			return this._oToggleButton;
-		}
-		this._oToggleButton = this._createFilterSelectedButton();
-		return this._oToggleButton;
-	};
-
-	/**
-	 * Gets the custom header for the control's picker.
-	 *
-	 * @returns {sap.m.Bar} Picker's custom header instance
-	 * @private
-	 */
-	MultiComboBox.prototype.getPickerCustomHeader = function () {
-		if (this._oPickerCustomHeader) {
-			return this._oPickerCustomHeader;
-		}
-		this._oPickerCustomHeader = this.createPickerHeader();
-		return this._oPickerCustomHeader;
-	};
-
-	/**
-	 * Gets the custom header toolbar for the control's picker.
-	 *
-	 * @returns {sap.m.Toolbar} The Toolbar's instance
-	 * @private
-	 */
-	MultiComboBox.prototype.getCustomHeaderToolbar = function () {
-		if (this._oCustomHeaderToolbar) {
-			return this._oCustomHeaderToolbar;
-		}
-		this._oCustomHeaderToolbar = new Toolbar();
-		return this._oCustomHeaderToolbar;
-	};
-
-	/**
-	 * Gets the control's picker close button.
-	 *
-	 * @returns {sap.m.Button} Picker`s close button instance
-	 * @private
-	 */
-	MultiComboBox.prototype.getPickerCloseButton = function () {
-		if (this._oPickerCloseButton) {
-			return this._oPickerCloseButton;
-		}
-		this._oPickerCloseButton = this.createPickerCloseButton();
-		return this._oPickerCloseButton;
-	};
-
-	/**
-	 * Configures the dropdown of type <code>sap.m.Dialog</code>.
-	 *
-	 * @param {sap.m.Popover} oDropdown The dialog control to be configured
-	 * @private
-	 */
-	MultiComboBox.prototype.configureDialog = function (oDialog) {
-		var that = this,
-			oSelectAllButton = this.getFilterSelectedButton(),
-			oTextField = this._oSuggestionPopover._oPopupInput,
-			oCustomHeaderToolbar = this.getCustomHeaderToolbar(),
-			oPickerInvisibleText = this.getPickerInvisibleTextId();
-
-		oCustomHeaderToolbar.addContent(oTextField);
-
-		this.setTextFieldHandler(oTextField);
-
-		oDialog.setStretch(true);
-		oDialog.setCustomHeader(this.getPickerCustomHeader());
-		oDialog.setSubHeader(oCustomHeaderToolbar);
-		oDialog.addButton(this.createPickerCloseButton());
-		oDialog.getSubHeader().addContent(oSelectAllButton);
-		oDialog.attachBeforeOpen(function () {
-			that.updatePickerHeaderTitle();
-		});
-		oDialog.attachAfterClose(function () {
-			that.focus();
-			library.closeKeyboard();
-		});
-		if (oPickerInvisibleText) {
-			oDialog.addAriaLabelledBy(oPickerInvisibleText);
-		}
-	};
-
-	/**
-	 * Creates an instance of <code>sap.m.ToggleButton</code>.
-	 *
-	 * @returns {sap.m.ToggleButton} The Button instance
-	 * @private
-	 */
-	MultiComboBox.prototype._createFilterSelectedButton = function () {
-		if (this._oToggleButton) {
-			return this._oToggleButton;
-		}
-
-		var sIconURI = IconPool.getIconURI("multiselect-all"),
-			oRenderer = this.getRenderer(),
-			that = this;
-
-		this._oToggleButton = new ToggleButton({
-			icon: sIconURI,
-			press: that._filterSelectedItems.bind(this)
-		}).addStyleClass(oRenderer.CSS_CLASS_MULTICOMBOBOX + "ToggleButton");
-
-		return this._oToggleButton;
-	};
-
-	// TODO: Remove this method and reuse the getFilterSelectedButton
-	/**
-	 * Gets the filter selected toggle button for the control's picker.
-	 *
-	 * @returns {sap.m.ToggleButton} The button's instance
-	 * @private
-	 */
-	MultiComboBox.prototype._getFilterSelectedButton = function () {
-			return this.getPicker().getSubHeader().getContent()[1];
+		return this._getSuggestionsPopover().getFilterSelectedButton();
 	};
 
 	/**
@@ -2012,7 +1896,7 @@ function(
 		}
 
 		if (this.isPickerDialog()) {
-			this._getFilterSelectedButton().setPressed(true);
+			this.getFilterSelectedButton().setPressed(true);
 			this.bOpenedByKeyboardOrButton = true;
 		} else {
 			setTimeout(this._oTokenizer["scrollToEnd"].bind(this._oTokenizer), 0);
@@ -2961,24 +2845,6 @@ function(
 	};
 
 	/**
-	 * Given an item type of sap.m.StandardListItem, find the corresponding item type of sap.ui.core.Item.
-	 *
-	 * @param {sap.m.StandardListItem} oListItem The item to search for
-	 * @param {array} [aItems] The item array
-	 * @returns {sap.ui.core.Item | null} The matching item
-	 * @private
-	 */
-	MultiComboBox.prototype._findMappedItem = function(oListItem, aItems) {
-		for (var i = 0, aItems = aItems || this.getItems(), aItemsLength = aItems.length; i < aItemsLength; i++) {
-			if (this.getListItem(aItems[i]) === oListItem) {
-				return aItems[i];
-			}
-		}
-
-		return null;
-	};
-
-	/**
 	 * Set selectable property of sap.ui.core.Item
 	 *
 	 * @param {sap.ui.core.Item} oItem The item to set the property
@@ -3071,7 +2937,7 @@ function(
 		aItemsToCheck = this.getEnabledItems();
 
 		if (this.isPickerDialog()) {
-			oSelectedButton = this._getFilterSelectedButton();
+			oSelectedButton = this.getFilterSelectedButton();
 			if (oSelectedButton != null && oSelectedButton.getPressed()) {
 				oSelectedButton.setPressed(false);
 			}

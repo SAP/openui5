@@ -152,8 +152,6 @@ sap.ui.define([
 		assert.strictEqual(oComboBox.getSelectedKey(), "", 'By default the selected key of the ComboBox control is ""');
 		assert.strictEqual(oComboBox._getList().getBusyIndicatorDelay(), 0);
 		assert.strictEqual(oComboBox._getList().getWidth(), "100%");
-		assert.ok(oComboBox._getList().hasStyleClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "List"));
-		assert.ok(oComboBox._getList().hasStyleClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOX + "List"));
 		assert.strictEqual(oComboBox.getShowSecondaryValues(), false, 'By default the showSecondaryValues property of the ComboBox control is "false"');
 		assert.strictEqual(oComboBox.getFilterSecondaryValues(), false, 'By default the filterSecondaryValues property of the ComboBox control is "false"');
 		assert.ok(jQuery(oComboBox.getOpenArea()).hasClass("sapMInputBaseIconContainer"), "The correct dom is returned for the open area");
@@ -2988,7 +2986,7 @@ sap.ui.define([
 		// act
 		oComboBox.focus();
 		oComboBox.open();
-		// tick the clock ahead 1 milisecond, after the open animation is completed
+		// tick the clock ahead 1000 miliseconds, after the open animation is completed
 		this.clock.tick(1000);
 
 		oPickerTextField = oComboBox.getPickerTextField();

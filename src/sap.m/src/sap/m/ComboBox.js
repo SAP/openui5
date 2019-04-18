@@ -404,69 +404,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * Configures the picker of type <code>sap.m.Dialog</code>.
-		 *
-		 * @param {sap.m.Dialog} oDialog The dialog to be configured
-		 * @private
-		 */
-		ComboBox.prototype.configureDialog = function (oDialog) {
-			var that = this,
-				oTextField = this.createPickerTextField(),
-				sPickerInvisibleTextId = this.getPickerInvisibleTextId();
-
-			this._oPickerCustomHeader = this.createPickerHeader();
-			this.setTextFieldHandler(oTextField);
-
-			oDialog._oPopupInput = oTextField;
-			oDialog.setStretch(true)
-				.setCustomHeader(this._oPickerCustomHeader)
-				.setSubHeader(new Toolbar({
-					content: oTextField
-				}))
-				.addButton(this.createPickerCloseButton())
-				.attachBeforeOpen(function () {
-					that.updatePickerHeaderTitle();
-				})
-				.attachAfterClose(function () {
-					that.focus();
-					library.closeKeyboard();
-				});
-
-			if (sPickerInvisibleTextId) {
-				oDialog.addAriaLabelledBy(sPickerInvisibleTextId);
-			}
-		};
-
-		/**
-		 * Creates an instance of <code>sap.m.ComboBoxTextField</code>.
-		 *
-		 * @returns {sap.m.ComboBoxTextField} The TextField instance
-		 * @private
-		 */
-		ComboBox.prototype.createPickerTextField = function() {
-			var that = this,
-				sTextFieldValue,
-				oTextField = new ComboBoxTextField({
-					width: "100%",
-					showValueStateMessage: false,
-					showButton: false
-				}).addEventDelegate({
-					onsapenter: function() {
-						sTextFieldValue = oTextField.getValue();
-						this.updateDomValue(sTextFieldValue);
-						this.onChange();
-						if (sTextFieldValue) {
-							that.updateDomValue(sTextFieldValue);
-							that.onChange();
-							that.close();
-						}
-					}
-				}, this);
-
-			return oTextField;
-		};
-
-		/**
 		 * Reverts the selection of the ComboBox to the previously selected item before the picker was opened.
 		 *
 		 * @private
@@ -1837,20 +1774,12 @@ sap.ui.define([
 		 * @protected
 		 */
 		ComboBox.prototype._configureList = function (oList) {
-			var oRenderer = this.getRenderer();
-
 			if (!oList) {
 				return;
 			}
 
 			// configure the list
-			oList.setMode(ListMode.SingleSelectMaster)
-				.setIncludeItemInSelection(true)
-				.setWidth("100%")
-				.setRememberSelections(false)
-				.setBusyIndicatorDelay(0)
-				.addStyleClass(oRenderer.CSS_CLASS_COMBOBOXBASE + "List")
-				.addStyleClass(oRenderer.CSS_CLASS_COMBOBOX + "List");
+			oList.setMode(ListMode.SingleSelectMaster);
 
 			// attach event handlers
 			oList
@@ -2332,6 +2261,32 @@ sap.ui.define([
 			}
 
 			return vItem;
+		};
+
+		/**
+		 * Modifies the suggestions dialog input
+		 * @param {sap.m.Input} oInput The input
+		 *
+		 * @returns {sap.m.Input} The modified input control
+		 * @private
+		 * @function
+		 */
+		ComboBox.prototype._modifyPopupInput = function (oInput) {
+			ComboBoxBase.prototype._modifyPopupInput.apply(this, arguments);
+
+			oInput.addEventDelegate({
+				onsapenter: function() {
+					var sTextFieldValue = oInput.getValue();
+					this.updateDomValue(sTextFieldValue);
+					this.onChange();
+					if (sTextFieldValue) {
+						this.updateDomValue(sTextFieldValue);
+						this.onChange();
+						this.close();
+					}
+				}
+			}, this);
+			return oInput;
 		};
 
 		/**

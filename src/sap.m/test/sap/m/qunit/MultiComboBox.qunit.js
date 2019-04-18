@@ -5381,33 +5381,6 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("_getFilterSelectedButton()", function(assert) {
-		this.stub(Device, "system", {
-			desktop: false,
-			tablet: false,
-			phone: true
-		});
-
-		var oFirstItem = new Item({key: "Item1", text: "Item1"});
-		var oMultiComboBox = new MultiComboBox({
-			items: [
-				oFirstItem,
-				new Item({key: "Item2", text: "Item2"}),
-				new Item({key: "Item3", text: "Item3"})
-			]
-		});
-
-		oMultiComboBox.syncPickerContent();
-		oMultiComboBox.placeAt("MultiComboBox-content");
-		sap.ui.getCore().applyChanges();
-
-		var oHeaderButton = oMultiComboBox.getPicker().getSubHeader().getContent()[1];
-
-		assert.equal(oHeaderButton, oMultiComboBox._getFilterSelectedButton(), "Header button should be the second element in subheader's content of the Dialog");
-
-		oMultiComboBox.destroy();
-	});
-
 	QUnit.test("_filterSelectedItems()", function(assert) {
 		this.stub(Device, "system", {
 			desktop: false,
@@ -5426,7 +5399,7 @@ sap.ui.define([
 
 		oMultiComboBox.syncPickerContent();
 
-		var oSelectedButton = oMultiComboBox._getFilterSelectedButton();
+		var oSelectedButton = oMultiComboBox._getSuggestionsPopover().getFilterSelectedButton();
 
 		var oFakeEvent = {
 			target: {
@@ -5486,7 +5459,7 @@ sap.ui.define([
 
 		oMultiComboBox.syncPickerContent();
 
-		var oSelectedButton = oMultiComboBox._getFilterSelectedButton();
+		var oSelectedButton = oMultiComboBox._getSuggestionsPopover().getFilterSelectedButton();
 
 		var oFakeEvent = {
 			target: {

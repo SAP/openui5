@@ -12,7 +12,9 @@ sap.ui.define([
 	'sap/m/library',
 	'sap/ui/core/library',
 	'sap/m/Bar',
+	'sap/m/Toolbar',
 	'sap/m/Button',
+	'sap/m/ToggleButton',
 	'sap/m/ColumnListItem',
 	'sap/m/GroupHeaderListItem',
 	'sap/ui/core/SeparatorItem',
@@ -24,6 +26,7 @@ sap.ui.define([
 	'sap/m/Table',
 	'sap/m/Title',
 	'sap/m/Text',
+	'sap/ui/core/IconPool',
 	"sap/base/security/encodeXML",
 	"sap/ui/events/KeyCodes"
 ], function (
@@ -36,7 +39,9 @@ sap.ui.define([
 	library,
 	coreLibrary,
 	Bar,
+	Toolbar,
 	Button,
+	ToggleButton,
 	ColumnListItem,
 	GroupHeaderListItem,
 	SeparatorItem,
@@ -48,6 +53,7 @@ sap.ui.define([
 	Table,
 	Title,
 	Text,
+	IconPool,
 	encodeXML,
 	KeyCodes
 ) {
@@ -274,10 +280,126 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets a function, which return the labels associated with the parent input
+	 *
+	 * @public
+	 */
+	SuggestionsPopover.prototype.setInputLabels = function (fnGetLabels) {
+		this._fnInputLabels = fnGetLabels;
+	};
+
+	/**
+	 * Gets the labels associated with the parent input
+	 *
+	 * @return {Array} Array of labels
+	 * @private
+	 */
+	SuggestionsPopover.prototype._getInputLabels = function () {
+		return this._fnInputLabels();
+	};
+
+	/**
+	 * Updated the dialog title based on the labels of the parent input
+	 *
+	 * @return {sap.m.Title} The title control
+	 * @private
+	 */
+	SuggestionsPopover.prototype.updatePickerHeaderTitle = function() {
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			oPickerTitle = this.getPickerTitle(),
+			oLabel, aLabels;
+
+		if (!oPickerTitle) {
+			return;
+		}
+
+		aLabels = this._getInputLabels();
+
+		if (aLabels.length) {
+			oLabel = aLabels[0];
+
+			if (oLabel && (typeof oLabel.getText === "function")) {
+				oPickerTitle.setText(oLabel.getText());
+			}
+		} else {
+			oPickerTitle.setText(oResourceBundle.getText("COMBOBOX_PICKER_TITLE"));
+		}
+
+		return oPickerTitle;
+	};
+
+	/**
+	 * Returns a reference to the title inside the dialog
+	 *
+	 * @return {sap.m.Title} The title
+	 * @public
+	 */
+	SuggestionsPopover.prototype.getPickerTitle = function () {
+		return this._oPopover.getCustomHeader().getContentMiddle()[0];
+	};
+
+	/**
+	 * Returns a reference to the OK button inside the dialog
+	 *
+	 * @return {sap.m.Button|null} The OK button
+	 * @public
+	 */
+	SuggestionsPopover.prototype.getOkButton = function() {
+		var oButton = this._oPopover
+			&& this._oPopover.getBeginButton();
+
+		return oButton || null;
+	};
+
+	/**
+	 * Returns a reference to the cancel button inside the dialog
+	 *
+	 * @return {sap.m.Button|null} The cancel button
+	 * @public
+	 */
+	SuggestionsPopover.prototype.getCancelButton = function() {
+		var oButton = this._oPopover
+			&& this._oPopover.getCustomHeader()
+			&& this._oPopover.getCustomHeader().getContentRight()[0];
+
+		return oButton || null;
+	};
+
+	/**
+	 * Returns a reference a button inside the dialog, associated with filtering actions in multi selection scenarios
+	 *
+	 * @return {sap.m.Button|null} The button
+	 * @public
+	 */
+	SuggestionsPopover.prototype.getFilterSelectedButton = function() {
+		var oButton = this._oPopover
+			&& this._oPopover.getSubHeader()
+			&& this._oPopover.getSubHeader().getContent()[1];
+
+		return oButton || null;
+	};
+
+	/**
+	 * Returns a reference a button inside the dialog, associated with filtering actions in multi selection scenarios
+	 *
+	 * @return {sap.m.Button} The button
+	 * @private
+	 */
+	SuggestionsPopover.prototype._createFilterSelectedButton = function () {
+		var sIconURI = IconPool.getIconURI("multiselect-all");
+
+		return new ToggleButton({
+			icon: sIconURI
+		});
+	};
+
+	/**
 	 * Helper function that creates suggestion popup.
 	 */
-	SuggestionsPopover.prototype._createSuggestionPopup = function () {
+	SuggestionsPopover.prototype._createSuggestionPopup = function (mOptions) {
+		mOptions = mOptions || [];
 		var oInput = this._oInput,
+			that = this,
 			oMessageBundle = oInput._oRb; // TODO create own message bundle
 
 		this._oPopover = !this._bUseDialog ?
@@ -297,10 +419,21 @@ sap.ui.define([
 				stretch : true,
 				customHeader : new Bar(oInput.getId()
 					+ "-popup-header", {
-					contentMiddle : this._oPopupInput
+					contentMiddle : new Title(),
+					contentRight: new Button({
+						icon: IconPool.getIconURI("decline")
+					})
 				}),
+				subHeader: this.createSubHeaderContent(mOptions),
 				horizontalScrolling : false,
-				initialFocus : this._oPopupInput
+				initialFocus : this._oPopupInput,
+				beforeOpen: function() {
+					that.updatePickerHeaderTitle();
+				},
+				afterClose: function() {
+					oInput.focus();
+					library.closeKeyboard();
+				}
 			}));
 
 		this._registerAutocomplete();
@@ -314,6 +447,17 @@ sap.ui.define([
 		if (this._oList) {
 			this._oPopover.addContent(this._oList);
 		}
+	};
+
+	SuggestionsPopover.prototype.createSubHeaderContent = function (mOptions) {
+		var aContent = [this._oPopupInput];
+
+		if (mOptions.showSelectedButton) {
+			aContent.push(this._createFilterSelectedButton());
+		}
+		return new Toolbar({
+			content: aContent
+		});
 	};
 
 	/**
@@ -330,7 +474,9 @@ sap.ui.define([
 				showNoData : false,
 				mode : ListMode.SingleSelectMaster,
 				rememberSelections : false,
-				showSeparators: ListSeparators.None
+				width: "100%",
+				showSeparators: ListSeparators.None,
+				busyIndicatorDelay: 0
 			});
 
 			this._oList.addEventDelegate({
@@ -639,6 +785,25 @@ sap.ui.define([
 		}
 
 		return !!(this._oSuggestionTable.getColumns() && this._oSuggestionTable.getColumns().length);
+	};
+
+	SuggestionsPopover.prototype.setOkPressHandler = function(fnHandler){
+		var oOkButton = this.getOkButton();
+		oOkButton && oOkButton.attachPress(fnHandler);
+
+		return oOkButton;
+	};
+
+	SuggestionsPopover.prototype.setCancelPressHandler = function(fnHandler){
+		var oCancelButton = this.getCancelButton();
+		oCancelButton && oCancelButton.attachPress(fnHandler);
+	};
+
+	SuggestionsPopover.prototype.setShowSelectedPressHandler = function(fnHandler){
+		var oFilterSelectedButton = this.getFilterSelectedButton();
+		oFilterSelectedButton && oFilterSelectedButton.attachPress(fnHandler);
+
+		return oFilterSelectedButton;
 	};
 
 	/**

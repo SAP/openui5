@@ -18,7 +18,6 @@ sap.ui.define([
 	'sap/ui/core/IconPool',
 	'sap/ui/Device',
 	'sap/ui/core/Control',
-	'./Dialog',
 	'./SuggestionsPopover',
 	'./Toolbar',
 	'./ToolbarSpacer',
@@ -46,7 +45,6 @@ function(
 	IconPool,
 	Device,
 	Control,
-	Dialog,
 	SuggestionsPopover,
 	Toolbar,
 	ToolbarSpacer,
@@ -2251,7 +2249,7 @@ function(
 			return;
 		}
 
-		if (oPopup instanceof Dialog) {
+		if (oPopup.isA("sap.m.Dialog")) {
 			// phone variant, use endButton (beginButton is close)
 			var oShowMoreButton = this._getShowMoreButton();
 			oPopup.setEndButton(oShowMoreButton);
@@ -2274,7 +2272,7 @@ function(
 			return;
 		}
 
-		if (oPopup instanceof Dialog) {
+		if (oPopup.isA("sap.m.Dialog")) {
 			oPopup.setEndButton(null);
 		} else {
 			oPopup.setFooter(null);
@@ -2297,6 +2295,8 @@ function(
 			]
 		}));
 	};
+
+	Input.prototype._hasShowSelectedButton = function () {return false;};
 
 	/**
 	 * Helper function that creates content for the suggestion popup.
@@ -2378,20 +2378,27 @@ function(
 					newValue: sValue
 				});
 			}.bind(this)
-		}).addStyleClass("sapMInputSuggInDialog");
+		});
 
+		return oPopupInput;
+	};
+
+	Input.prototype._modifyPopupInput = function (oPopupInput) {
 		oPopupInput.addEventDelegate({
 			onsapenter: function () {
-				if (!(sap.m.MultiInput && this instanceof sap.m.MultiInput)) {
-					if (this.getAutocomplete()) {
-						this._oSuggPopover._finalizeAutocomplete();
-					}
-					this._closeSuggestionPopup();
+				if (this.getAutocomplete()) {
+					this._oSuggPopover._finalizeAutocomplete();
 				}
+				this._closeSuggestionPopup();
 			}
 		}, this);
 
 		return oPopupInput;
+	};
+
+	Input.prototype.forwardEventHandlersToSuggPopover = function (oSuggPopover) {
+		oSuggPopover.setOkPressHandler(this._closeSuggestionPopup.bind(this));
+		oSuggPopover.setCancelPressHandler(this._closeSuggestionPopup.bind(this));
 	};
 
 	/**
@@ -2405,11 +2412,14 @@ function(
 			var  oSuggPopover = this._oSuggPopover = new SuggestionsPopover(this);
 
 			if (this._bUseDialog) {
-				oSuggPopover._oPopupInput = this._createPopupInput();
+				var oInput = this._createPopupInput();
+				oSuggPopover._oPopupInput = this._modifyPopupInput(oInput);
 			}
 
-			oSuggPopover._createSuggestionPopup(); // TODO move this call to SuggestionsPopover constructor
+			this._oSuggPopover.setInputLabels(this.getLabels.bind(this));
+			oSuggPopover._createSuggestionPopup({showSelectedButton: this._hasShowSelectedButton()}); // TODO move this call to SuggestionsPopover constructor
 
+			this.forwardEventHandlersToSuggPopover(oSuggPopover);
 			var oPopover = oSuggPopover._oPopover;
 
 			this._updateSuggestionsPopoverValueState();
@@ -2469,11 +2479,6 @@ function(
 						oSuggPopover._oPopupInput.setMaxLength(this.getMaxLength());
 
 						oSuggPopover._oPopupInput.setValue(this.getValue());
-					}, this);
-
-				oPopover.getBeginButton()
-					.attachPress(function() {
-						this._closeSuggestionPopup();
 					}, this);
 			} else {
 				oPopover
@@ -2599,6 +2604,15 @@ function(
 				oSuggPopover._oPopupInput.setValueState(sValueState);
 			}
 		}
+	};
+
+	Input.prototype.setShowValueHelp = function(bShowValueHelp) {
+		this.setProperty("showValueHelp", bShowValueHelp);
+		if (this._oSuggPopover && this._oSuggPopover._oPopupInput) {
+			this._oSuggPopover._oPopupInput.setShowValueHelp(bShowValueHelp);
+		}
+
+		return this;
 	};
 
 	/**

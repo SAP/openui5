@@ -897,7 +897,7 @@ sap.ui.define([
 	QUnit.test("oninput on mobile device", function (assert) {
 
 		// Setup
-		var oMI, oSpy, oSpy1;
+		var oMI, oSpy;
 
 		this.stub(Device, "system", {
 			desktop: false,
@@ -935,17 +935,15 @@ sap.ui.define([
 		assert.ok(oSpy.called, "_openSelectedItemsPicker is called when N-more is pressed");
 
 		// Act
-		oSpy1 = sinon.spy(oMI, "_manageListsVisibility");
 		sap.ui.test.qunit.triggerCharacterInput(oMI._oSuggPopover._oPopupInput.getFocusDomRef(), "d");
 		qutils.triggerEvent("input", oMI._oSuggPopover._oPopupInput.getFocusDomRef());
+		this.clock.tick(100);
 
 		// Assert
-		assert.ok(oSpy1.called, "Suggestions list is shown on input");
-		assert.ok(oSpy1.calledWith(false));
+		assert.ok(oMI._getSuggestionsList(), "Suggestions list is shown on input");
 
 		// Cleanup
 		oSpy.restore();
-		oSpy1.restore();
 		oMI.destroy();
 	});
 
@@ -1047,6 +1045,7 @@ sap.ui.define([
 		assert.ok(oSpy1.calledWith(false), "Suggestions list is visible.");
 
 		// Cleanup
+		oSpy.restore();
 		oSpy1.restore();
 		oMI.destroy();
 		oMultiInput1.destroy();
@@ -1714,7 +1713,7 @@ sap.ui.define([
 		this.clock.tick(1000);
 
 		assert.ok(oStub.called, "The suggestion dialog is opened on click on N-more");
-		assert.ok(this.multiInput1._bShowSelectedButton.getPressed(), "The filtering button is pressed on initial opening");
+		assert.ok(this.multiInput1._oSuggPopover.getFilterSelectedButton(), "The filtering button is pressed on initial opening");
 		assert.ok(this.multiInput1._getTokensList().getVisible(), "The list with tokens is visible");
 
 		// clean up
