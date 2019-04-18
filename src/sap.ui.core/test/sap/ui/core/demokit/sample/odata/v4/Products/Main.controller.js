@@ -9,6 +9,9 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.Products.Main", {
+		/* The number of POST requests which are not yet completed */
+		iCreates : 0,
+
 		/*
 		 * Enable add button if and only if creation row has no invalid user input (and it was not
 		 * yet used).
@@ -71,6 +74,35 @@ sap.ui.define([
 			this.setNewEntryContext();
 
 			this.enableAddButton(); // check again
+		},
+
+		/*
+		 * Event handler for POST requests for created entities. Used to unlock the "Products"
+		 * table.
+		 *
+		 * @param {sap.ui.base.Event} oEvent
+		 *   The event object containing parameters:
+		 *   <ul>
+		 *     <li> {sap.ui.model.odata.v4.Context} context
+		 *     <li> {boolean} success
+		 *   </ul>
+		 */
+		onCreateCompleted : function (oEvent) {
+			this.iCreates -= 1;
+			if (this.iCreates === 0) {
+				this.byId("ProductList").setBusy(false);
+			}
+		},
+
+		/*
+		 * Event handler is called when a POST request for a created entity is sent to the server.
+		 * Used to lock the "Products" table to avoid modifications while POST request is running.
+		 */
+		onCreateSent : function () {
+			if (this.iCreates === 0) {
+				this.byId("ProductList").setBusy(true);
+			}
+			this.iCreates += 1;
 		},
 
 		/*

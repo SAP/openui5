@@ -10,7 +10,7 @@ sap.ui.define([
 	return {
 		create : function (Given, When, Then, sUIComponent) {
 			var oExpectedLog = {
-					component : "sap.ui.model.odata.v4.ODataParentBinding",
+					component : "sap.ui.model.odata.v4.ODataListBinding",
 					level : Log.Level.ERROR,
 					message : "POST on 'SalesOrderList' failed; will be repeated automatically"
 				},

@@ -101,6 +101,8 @@
 						$select : ['BuyerID', 'Messages']
 					},
 					events : {
+						createCompleted : '.onCreateCompleted',
+						createSent : '.onCreateSent',
 						dataReceived : '.onDataEvents',
 						dataRequested : '.onDataEvents'
 					},
@@ -295,6 +297,8 @@
 			<Table id="SO_2_SOITEM"
 				items="{
 						events : {
+							createCompleted : '.onCreateItemCompleted',
+							createSent : '.onCreateItemSent',
 							dataReceived : '.onDataEvents',
 							dataRequested : '.onDataEvents'
 						},
