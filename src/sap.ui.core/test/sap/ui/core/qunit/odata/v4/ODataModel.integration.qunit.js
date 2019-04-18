@@ -2596,6 +2596,55 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Delete in a growing table and at the same time refresh a row with higher index.
+	// JIRA: CPOUI5UISERVICESV3-1829
+	QUnit.test("refreshing row while deleting", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$auto"}),
+			oTable,
+			sView = '\
+<Table id="table" items="{/SalesOrderList}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="id" text="{SalesOrderID}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
+				"value" : [
+					{"SalesOrderID" : "0500000001"},
+					{"SalesOrderID" : "0500000002"},
+					{"SalesOrderID" : "0500000003"}
+				]
+			})
+			.expectChange("id", ["0500000001", "0500000002", "0500000003"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oDeletePromise;
+
+			that.expectRequest({
+					method : "DELETE",
+					url : "SalesOrderList('0500000002')"
+				})
+				.expectRequest("SalesOrderList('0500000003')?$select=SalesOrderID", {
+					"SalesOrderID" : "0500000003"
+				})
+				.expectChange("id", "0500000003", 1);
+
+			oTable = that.oView.byId("table");
+
+			// code under test
+			oDeletePromise = oTable.getItems()[1].getBindingContext().delete();
+			oTable.getItems()[2].getBindingContext().refresh();
+
+			return Promise.all([
+				oDeletePromise,
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Delete an entity in a growing table via refresh and let the table grow at the same
 	// time.
 	// JIRA: CPOUI5UISERVICESV3-1795
