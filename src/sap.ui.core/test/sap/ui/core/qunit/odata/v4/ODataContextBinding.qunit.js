@@ -85,15 +85,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("constructor: no lock for relative bindings", function (assert) {
-		var oBinding,
-			oContext = Context.create(this.oModel, {}, "/EMPLOYEES('42')");
-
 		this.mock(ODataContextBinding.prototype).expects("createReadGroupLock").never();
 
-		oBinding = this.bindContext("EMPLOYEE_2_MANAGER", oContext);
-
-		assert.ok(oBinding.hasOwnProperty("oReadGroupLock"), "be V8-friendly");
-		assert.strictEqual(oBinding.oReadGroupLock, undefined);
+		this.bindContext("EMPLOYEE_2_MANAGER", Context.create(this.oModel, {}, "/EMPLOYEES('42')"));
 	});
 
 	//*********************************************************************************************
@@ -113,14 +107,11 @@ sap.ui.define([
 		var oParentBindingSpy = this.spy(asODataParentBinding, "call"),
 			oBinding = this.bindContext("/EMPLOYEES('42')");
 
-		assert.ok(oBinding.hasOwnProperty("oCachePromise"));
 		assert.ok(oBinding.hasOwnProperty("mCacheByResourcePath"));
-		assert.ok(oBinding.hasOwnProperty("mCacheQueryOptions"));
 		assert.ok(oBinding.hasOwnProperty("sGroupId"));
 		assert.ok(oBinding.hasOwnProperty("bInheritExpandSelect"));
 		assert.ok(oBinding.hasOwnProperty("oOperation"));
 		assert.ok(oBinding.hasOwnProperty("mQueryOptions"));
-		assert.ok(oBinding.hasOwnProperty("oReadGroupLock"));
 		assert.ok(oBinding.hasOwnProperty("sUpdateGroupId"));
 
 		assert.strictEqual(oBinding.bInheritExpandSelect, undefined);
@@ -130,7 +121,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("c'tor initializes oCachePromise and calls applyParameters", function (assert) {
+	QUnit.test("c'tor calls applyParameters", function (assert) {
 		var oBinding,
 			mParameters = {},
 			mParametersClone = {};
@@ -143,7 +134,6 @@ sap.ui.define([
 		oBinding = new ODataContextBinding(this.oModel, "/EMPLOYEES", undefined, mParameters);
 
 		assert.strictEqual(oBinding.mParameters, undefined, "c'tor does not set mParameters");
-		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
 	});
 
 	//*********************************************************************************************
@@ -2006,13 +1996,13 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("destroy", function (assert) {
-		var oBinding = this.bindContext("relative"),
+		var oBinding,
 			oBindingPrototypeMock = this.mock(ContextBinding.prototype),
-			oContext = Context.create(this.oModel, {}, "/foo"),
 			oModelMock = this.mock(this.oModel),
 			oParentBindingPrototypeMock = this.mock(asODataParentBinding.prototype),
 			oReturnValueContext = Context.create(this.oModel, {}, "/bar");
 
+		oBinding = this.bindContext("relative"); // unresolved: no element context
 		oBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
 		oParentBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
 		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
@@ -2020,55 +2010,24 @@ sap.ui.define([
 		// code under test
 		oBinding.destroy();
 
-		oBinding = this.bindContext("relative");
-		oBinding.setContext(oContext);
-		this.mock(oBinding.oElementContext).expects("destroy").withExactArgs();
-		oBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
-		oParentBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
-		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
-
+		oBinding = this.bindContext("relative", Context.create(this.oModel, {}, "/foo"));
 		oBinding.mCacheByResourcePath = {/*mCacheByResourcePath*/};
-		oBinding.mCacheQueryOptions = {/*mCacheQueryOptions*/};
-		this.oOperation = {bAction : undefined};
-		this.mock(oBinding).expects("removeReadGroupLock").withExactArgs();
-
-		// code under test
-		oBinding.destroy();
-
-		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
-		assert.strictEqual(oBinding.oCachePromise.isFulfilled(), true);
-		assert.strictEqual(oBinding.mCacheQueryOptions, undefined);
-		assert.strictEqual(oBinding.mCacheByResourcePath, undefined);
-		assert.strictEqual(oBinding.oContext, undefined,
-			"context removed as in ODPropertyBinding#destroy");
-		assert.strictEqual(oBinding.oElementContext, undefined);
-		assert.strictEqual(oBinding.oOperation, undefined);
-		assert.strictEqual(oBinding.mParameters, undefined);
-		assert.strictEqual(oBinding.mQueryOptions, undefined);
-
-		oBinding = this.bindContext("/absolute", oContext);
-		this.mock(oBinding.oElementContext).expects("destroy").withExactArgs();
-		oBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
-		oParentBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
-		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
-		this.mock(oBinding).expects("removeReadGroupLock").withExactArgs();
-
-		// code under test
-		oBinding.destroy();
-
-		oBinding = this.bindContext("relative");
-		oBinding.setContext(oContext);
+		oBinding.oOperation = {bAction : undefined};
 		oBinding.oReturnValueContext = oReturnValueContext;
 		this.mock(oBinding.oElementContext).expects("destroy").withExactArgs();
 		this.mock(oReturnValueContext).expects("destroy").withExactArgs();
 		oBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
 		oParentBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
 		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
-		this.mock(oBinding).expects("removeReadGroupLock").withExactArgs();
 
 		// code under test
 		oBinding.destroy();
 
+		assert.strictEqual(oBinding.mCacheByResourcePath, undefined);
+		assert.strictEqual(oBinding.oElementContext, undefined);
+		assert.strictEqual(oBinding.oOperation, undefined);
+		assert.strictEqual(oBinding.mParameters, undefined);
+		assert.strictEqual(oBinding.mQueryOptions, undefined);
 		assert.strictEqual(oBinding.oReturnValueContext, undefined);
 	});
 

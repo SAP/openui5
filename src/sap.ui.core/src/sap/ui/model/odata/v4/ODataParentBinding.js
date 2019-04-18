@@ -36,8 +36,8 @@ sap.ui.define([
 		this.iPatchCounter = 0;
 		// whether all sent PATCHes have been successfully processed
 		this.bPatchSuccess = true;
-		// see #getResumePromise
-		this.oResumePromise = undefined;
+		this.oReadGroupLock = undefined; // see #createReadGroupLock
+		this.oResumePromise = undefined; // see #getResumePromise
 	}
 
 	asODataBinding(ODataParentBinding.prototype);
@@ -440,8 +440,7 @@ sap.ui.define([
 				} else if (that.oReadGroupLock === oGroupLock) {
 					// It is still the same, unused lock
 					Log.debug("Timeout: unlocked " + oGroupLock, null, sClassName);
-					oGroupLock.unlock(true);
-					that.oReadGroupLock = undefined;
+					that.removeReadGroupLock();
 				}
 			});
 		}
@@ -507,6 +506,10 @@ sap.ui.define([
 	ODataParentBinding.prototype.destroy = function () {
 //		this.mAggregatedQueryOptions = undefined;
 		this.aChildCanUseCachePromises = [];
+		this.removeReadGroupLock();
+		this.oResumePromise = undefined;
+
+		asODataBinding.prototype.destroy.apply(this);
 	};
 
 	/**
@@ -908,9 +911,11 @@ sap.ui.define([
 		// => must only resume in prerendering task
 		sap.ui.getCore().addPrerenderingTask(function () {
 			that.bSuspended = false;
-			that.resumeInternal(true);
-			that.oResumePromise.$resolve();
-			that.oResumePromise = undefined;
+			if (that.oResumePromise) {
+				that.resumeInternal(true);
+				that.oResumePromise.$resolve();
+				that.oResumePromise = undefined;
+			}
 		});
 	};
 
@@ -967,10 +972,7 @@ sap.ui.define([
 			fnResolve = resolve;
 		});
 		this.oResumePromise.$resolve = fnResolve;
-		if (this.oReadGroupLock) {
-			this.oReadGroupLock.unlock(true);
-			this.oReadGroupLock = undefined;
-		}
+		this.removeReadGroupLock();
 	};
 
 	/**

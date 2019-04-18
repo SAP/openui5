@@ -16796,12 +16796,12 @@ sap.ui.define([
 		filters : {path : \'IsActiveEntity\', operator : \'EQ\', value1 : \'true\'}}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
-		<Text id="id" text="{ID}"/>\
+		<Text id="id" text="{path : \'ID\', type : \'sap.ui.model.odata.type.String\'}"/>\
 	</ColumnListItem>\
 </Table>';
 
-		this.oLogMock.restore(); // the exact errors do not interest
-		this.stub(Log, "error");
+		this.oLogMock.restore();
+		this.stub(Log, "error"); // the exact errors do not interest
 		this.expectMessages([{
 			"code" : undefined,
 			"descriptionUrl" : undefined,
@@ -17157,11 +17157,12 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: List binding is destroyed while request is in flight. Gracefully ignore response.
+	// Note: No such problem for context or property binding.
 	// BCP: 1980173241
 	QUnit.test("BCP: 1980173241", function (assert) {
 		var fnRespond,
 			sView = '\
-<Table id="table" items="{/EMPLOYEES}">\
+<Table items="{/EMPLOYEES}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text text="{ID}" />\

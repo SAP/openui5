@@ -135,12 +135,9 @@ sap.ui.define([
 					throw new Error("Invalid path: " + sPath);
 				}
 
-				this.oCachePromise = SyncPromise.resolve();
 				this.sGroupId = undefined;
 				this.bInheritExpandSelect = false;
 				this.oOperation = undefined;
-				// a lock to ensure that submitBatch waits for an expected read
-				this.oReadGroupLock = undefined;
 				this.oReturnValueContext = null;
 				this.sUpdateGroupId = undefined;
 
@@ -606,11 +603,7 @@ sap.ui.define([
 			this.oReturnValueContext = undefined;
 		}
 		this.oModel.bindingDestroyed(this);
-		this.removeReadGroupLock();
 		this.mCacheByResourcePath = undefined;
-		this.oCachePromise = SyncPromise.resolve(); // be nice to #withCache
-		this.mCacheQueryOptions = undefined;
-		this.oContext = undefined;
 		this.oOperation = undefined;
 		this.mParameters = undefined;
 		this.mQueryOptions = undefined;
