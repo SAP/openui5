@@ -3836,8 +3836,6 @@ sap.ui.define([
 	QUnit.module("Input with Suggestions and Value State and Value State Message - Desktop", {
 		beforeEach: function () {
 
-			sinon.config.useFakeTimers = false;
-
 			this.inputWithSuggestions = new Input({
 				showSuggestion: true,
 				valueStateText: 'Some Error',
@@ -3862,40 +3860,31 @@ sap.ui.define([
 
 			this.inputWithSuggestions.destroy();
 			this.inputWithSuggestions = null;
-
-			sinon.config.useFakeTimers = true;
 		}
 	});
 
-	QUnit.test('value state', function (assert) {
-
-		var done = assert.async();
+	QUnit.test("Value state", function (assert) {
 
 		this.inputWithSuggestions.setShowValueStateMessage(true);
 		this.inputWithSuggestions.setValueState("Error");
 		this.inputWithSuggestions.onfocusin();
+		this.clock.tick(300);
 
-		assert.ok(this.inputWithSuggestions._oValueStateMessage._oPopup.getContent().classList.contains('sapMValueStateMessage'), "Value state message is displayed");
+		assert.ok(this.inputWithSuggestions._oValueStateMessage._oPopup.getContent().classList.contains("sapMValueStateMessage"), "Value state message is displayed");
 
 		this.inputWithSuggestions._$input.focus().val("on").trigger("input");
+		this.clock.tick(300);
 
-		setTimeout(function () {
+		assert.strictEqual(this.inputWithSuggestions._getSuggestionsPopover()._oPopover.$().find("header .sapMTitle").text(), "Some Error", "value state message is displayed in the suggestion popover");
 
-			assert.strictEqual(this.inputWithSuggestions._getSuggestionsPopover()._oPopover.$().find('header .sapMTitle').text(), "Some Error", "value state message is displayed in the suggestion popover");
+		var oPopup = this.inputWithSuggestions._oValueStateMessage._oPopup;
 
-			var oPopup = this.inputWithSuggestions._oValueStateMessage._oPopup;
+		assert.ok(!oPopup || oPopup.getContent().style.display === "none", "Value state message is not displayed");
 
-			assert.ok(!oPopup || oPopup.getContent().style.display === "none", "Value state message is not displayed");
+		this.inputWithSuggestions._closeSuggestionPopup();
+		this.clock.tick(300);
 
-			this.inputWithSuggestions._closeSuggestionPopup();
-
-			setTimeout(function () {
-				assert.ok(this.inputWithSuggestions._oValueStateMessage._oPopup.getContent().classList.contains('sapMValueStateMessage'), "Value state message is displayed");
-
-				done();
-			}.bind(this), 300);
-
-		}.bind(this), 300);
+		assert.ok(this.inputWithSuggestions._oValueStateMessage._oPopup.getContent().classList.contains("sapMValueStateMessage"), "Value state message is displayed");
 	});
 
 	QUnit.module("Input with Suggestions and Value State and Value State Message -  Mobile", {
@@ -3903,8 +3892,6 @@ sap.ui.define([
 
 			this.isPhone = Device.system.phone;
 			Device.system.phone = true;
-
-			sinon.config.useFakeTimers = false;
 
 			this.inputWithSuggestions = new Input({
 				showSuggestion: true,
@@ -3932,39 +3919,31 @@ sap.ui.define([
 			this.inputWithSuggestions = null;
 
 			Device.system.phone = this.isPhone;
-			sinon.config.useFakeTimers = true;
 		}
 	});
 
-	QUnit.test('value state', function (assert) {
-
-		var done = assert.async();
+	QUnit.test("Value state", function (assert) {
 
 		this.inputWithSuggestions.setShowValueStateMessage(true);
 		this.inputWithSuggestions.setValueState("Error");
 		this.inputWithSuggestions.onfocusin();
+		this.clock.tick(300);
 
-		assert.ok(this.inputWithSuggestions._oValueStateMessage._oPopup.getContent().classList.contains('sapMValueStateMessage'), "Value state message is displayed");
+		assert.ok(this.inputWithSuggestions._oValueStateMessage._oPopup.getContent().classList.contains("sapMValueStateMessage"), "Value state message is displayed");
 
 		this.inputWithSuggestions._openSuggestionsPopover();
+		this.clock.tick(300);
 
-		setTimeout(function () {
+		assert.strictEqual(this.inputWithSuggestions._getSuggestionsPopover()._oPopover.getContent()[0].getText(), "Some Error", "value state message is displayed in the suggestion popover");
 
-			assert.strictEqual(this.inputWithSuggestions._getSuggestionsPopover()._oPopover.getContent()[0].getText(), "Some Error", "value state message is displayed in the suggestion popover");
+		var oPopup = this.inputWithSuggestions._oValueStateMessage._oPopup;
 
-			var oPopup = this.inputWithSuggestions._oValueStateMessage._oPopup;
+		assert.ok(!oPopup || oPopup.getContent().style.display === "none", "Value state message is not displayed");
 
-			assert.ok(!oPopup || oPopup.getContent().style.display === "none", "Value state message is not displayed");
+		this.inputWithSuggestions._closeSuggestionPopup();
+		this.clock.tick(300);
 
-			this.inputWithSuggestions._closeSuggestionPopup();
-
-			setTimeout(function () {
-				assert.ok(this.inputWithSuggestions._oValueStateMessage._oPopup.getContent().classList.contains('sapMValueStateMessage'), "Value state message is displayed");
-
-				done();
-			}.bind(this), 300);
-
-		}.bind(this), 300);
+		assert.ok(this.inputWithSuggestions._oValueStateMessage._oPopup.getContent().classList.contains("sapMValueStateMessage"), "Value state message is displayed");
 	});
 
 	QUnit.module("Input inside a Dialog and Value State Message", {
