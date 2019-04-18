@@ -16,9 +16,9 @@
 @_sap_ui_table_Grouping_TreeIconFontSizeCozy: 1rem;
 
 // Internet Explorer does not support nested calc().
-@_sap_ui_table_Grouping_GroupIconHeight_ForIECalc: @_sap_ui_table_RowHeight_ForIECalc;
-@_sap_ui_table_Grouping_GroupIconHeightCozy_ForIECalc: @_sap_ui_table_RowHeightCozy_ForIECalc;
-@_sap_ui_table_Grouping_GroupIconHeightCondensed_ForIECalc: @_sap_ui_table_RowHeightCondensed_ForIECalc;
+@_sap_ui_table_Grouping_GroupIconHeightForIECalc: @_sap_ui_table_RowHeightForIECalc;
+@_sap_ui_table_Grouping_GroupIconHeightCozyForIECalc: @_sap_ui_table_RowHeightCozyForIECalc;
+@_sap_ui_table_Grouping_GroupIconHeightCondensedForIECalc: @_sap_ui_table_RowHeightCondensedForIECalc;
 
 .sapUiTableTreeIcon {
 	display: flex;
@@ -75,7 +75,7 @@ html[data-sap-ui-browser^="ie"] .sapUiTableTreeIcon:focus::before {
 	background-clip: content-box;
 
 	html[data-sap-ui-browser^="ie"] & {
-		line-height: calc(@_sap_ui_table_Grouping_GroupIconHeight_ForIECalc ~"- 2 *" @_sap_ui_table_Grouping_GroupIconBorderWidth ~"-" @_sap_ui_table_Grouping_GroupOutlineWidth);
+		line-height: calc(@_sap_ui_table_Grouping_GroupIconHeightForIECalc ~"- 2 *" @_sap_ui_table_Grouping_GroupIconBorderWidth ~"-" @_sap_ui_table_Grouping_GroupOutlineWidth);
 	}
 }
 
@@ -83,7 +83,7 @@ html[data-sap-ui-browser^="ie"] .sapUiTableTreeIcon:focus::before {
 	line-height: calc(@_sap_ui_table_Grouping_GroupIconHeightCondensed ~"- 2 *" @_sap_ui_table_Grouping_GroupIconBorderWidth ~"-" @_sap_ui_table_Grouping_GroupOutlineWidth);
 
 	html[data-sap-ui-browser^="ie"] & {
-		line-height: calc(@_sap_ui_table_Grouping_GroupIconHeightCondensed_ForIECalc ~"- 2 *" @_sap_ui_table_Grouping_GroupIconBorderWidth ~"-" @_sap_ui_table_Grouping_GroupOutlineWidth);
+		line-height: calc(@_sap_ui_table_Grouping_GroupIconHeightCondensedForIECalc ~"- 2 *" @_sap_ui_table_Grouping_GroupIconBorderWidth ~"-" @_sap_ui_table_Grouping_GroupOutlineWidth);
 	}
 }
 
@@ -91,7 +91,7 @@ html[data-sap-ui-browser^="ie"] .sapUiTableTreeIcon:focus::before {
 	line-height: calc(@_sap_ui_table_Grouping_GroupIconHeightCozy ~"- 2 *" @_sap_ui_table_Grouping_GroupIconBorderWidth ~"-" @_sap_ui_table_Grouping_GroupOutlineWidth);
 
 	html[data-sap-ui-browser^="ie"] & {
-		line-height: calc(@_sap_ui_table_Grouping_GroupIconHeightCozy_ForIECalc ~"- 2 *" @_sap_ui_table_Grouping_GroupIconBorderWidth ~"-" @_sap_ui_table_Grouping_GroupOutlineWidth);
+		line-height: calc(@_sap_ui_table_Grouping_GroupIconHeightCozyForIECalc ~"- 2 *" @_sap_ui_table_Grouping_GroupIconBorderWidth ~"-" @_sap_ui_table_Grouping_GroupOutlineWidth);
 	}
 }
 
