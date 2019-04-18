@@ -1121,66 +1121,6 @@ function(
 			assert.ok(Utils.isApplicationVariant(this.oComponentOfVariant));
 		});
 
-		QUnit.test("isApplication returns false if there is no manifest", function (assert) {
-			assert.notOk(Utils.isApplication());
-		});
-
-		QUnit.test("isApplication returns false if the manifest has no getEntry method", function (assert) {
-			assert.notOk(Utils.isApplication({}));
-		});
-
-		QUnit.test("isApplication returns false if there is no manifest['sap.app']", function (assert) {
-
-			var oManifest = {
-				getEntry: function (key) {
-					return this[key];
-				}
-			};
-
-			assert.notOk(Utils.isApplication(oManifest));
-		});
-
-		QUnit.test("isApplication returns false if there is no manifest['sap.app'].type", function (assert) {
-
-			var oManifest = {
-				"sap.app": {
-				},
-				getEntry: function (key) {
-					return this[key];
-				}
-			};
-
-			assert.notOk(Utils.isApplication(oManifest));
-		});
-
-		QUnit.test("isApplication returns false if the manifest type is not 'application'", function (assert) {
-
-			var oManifest = {
-				"sap.app": {
-					"type": "component"
-				},
-				getEntry: function (key) {
-					return this[key];
-				}
-			};
-
-			assert.notOk(Utils.isApplication(oManifest));
-		});
-
-		QUnit.test("isApplication returns true if the manifest type is 'application'", function (assert) {
-
-			var oManifest = {
-				"sap.app": {
-					"type": "application"
-				},
-				getEntry: function (key) {
-					return this[key];
-				}
-			};
-
-			assert.ok(Utils.isApplication(oManifest));
-		});
-
 		QUnit.test("getFlexReference returns the variantId if it exists", function (assert) {
 
 			var sAppVariantId = "appVariantId";
@@ -1201,6 +1141,70 @@ function(
 			};
 
 			assert.equal(Utils.getFlexReference(oManifest), sAppVariantId);
+		});
+	});
+
+	QUnit.module("Utils.isApplicationComponent and Utils.isEmbeddedComponent", {
+		before: function () {
+			this.oComponent = new Component();
+			this.oManifest = this.oComponent.getManifestObject();
+		},
+		afterEach: function () {
+			sandbox.restore();
+		},
+		after: function () {
+			this.oComponent.destroy();
+		}
+	}, function () {
+		[
+			{name:"isApplicationComponent", type: "application"},
+			{name:"isEmbeddedComponent", type: "component"}
+		].forEach(function (oFunction) {
+			QUnit.test("when Utils." + oFunction.name + " is called and there is no manifest", function (assert) {
+				assert.notOk(Utils[oFunction.name](), "then false is returned");
+			});
+
+			QUnit.test("when Utils." + oFunction.name + " is called and the manifest has no getEntry method", function (assert) {
+				assert.notOk(Utils[oFunction.name]({}), "then false is returned");
+			});
+
+			QUnit.test("when Utils." + oFunction.name + " is called and there is no manifest['sap.app']", function (assert) {
+				sandbox.stub(this.oManifest, "getEntry")
+					.returns({});
+
+				assert.notOk(Utils[oFunction.name](this.oComponent), "then false is returned");
+			});
+
+			QUnit.test("when Utils." + oFunction.name + " is called and there is no manifest['sap.app'].type", function (assert) {
+				sandbox.stub(this.oManifest, "getEntry")
+					.callThrough()
+					.withArgs("sap.app")
+					.returns({});
+
+				assert.notOk(Utils[oFunction.name](this.oComponent), "then false is returned");
+			});
+
+			QUnit.test("when Utils." + oFunction.name + " is called and manifest type is not '" + oFunction.type + "'", function (assert) {
+				sandbox.stub(this.oManifest, "getEntry")
+					.callThrough()
+					.withArgs("sap.app")
+					.returns({
+						"type": "random"
+					});
+
+				assert.notOk(Utils[oFunction.name](this.oComponent), "then false is returned");
+			});
+
+			QUnit.test("when Utils." + oFunction.name + " is called and manifest type is '" + oFunction.type + "'", function (assert) {
+				sandbox.stub(this.oManifest, "getEntry")
+					.callThrough()
+					.withArgs("sap.app")
+					.returns({
+						"type": oFunction.type
+					});
+
+				assert.ok(Utils[oFunction.name](this.oComponent), "then true is returned");
+			});
 		});
 	});
 

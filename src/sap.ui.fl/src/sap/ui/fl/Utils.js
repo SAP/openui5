@@ -1069,12 +1069,40 @@ function(
 				&& sScenario !== sap.ui.fl.Scenario.AppVariant;
 		},
 
-		isApplication: function (oManifest) {
-			return (oManifest && oManifest.getEntry && oManifest.getEntry("sap.app") && oManifest.getEntry("sap.app").type === "application");
+		/** Returns the type of "sap.app" from the manifest object passed.
+		 * @param {sap.ui.core.Manifest} oManifest - Manifest object
+		 * @returns {string | undefined} Manifest object's "type" property for "sap.app" entry
+		 * @private
+		 */
+		_getComponentTypeFromManifest: function(oManifest) {
+			return oManifest && oManifest.getEntry && oManifest.getEntry("sap.app") && oManifest.getEntry("sap.app").type;
 		},
 
+		/** Returns <code>true</code> if the passed manifest object is of type "application".
+		 * @param {sap.ui.core.Manifest} oManifest - Manifest object
+		 * @returns {boolean} <code>true</code> if the passed manifest object is of type "application"
+		 * @public
+		 */
+		isApplication: function (oManifest) {
+			return Utils._getComponentTypeFromManifest(oManifest) === "application";
+		},
+
+		/** Returns <code>true</code> if the passed component is an application component.
+		 * @param {sap.ui.core.Component} oComponent - Component instance
+		 * @returns {boolean} <code>true</code> if the passed component is of type "application"
+		 * @public
+		 */
+		isApplicationComponent: function (oComponent) {
+			return oComponent instanceof Component && Utils.isApplication(oComponent.getManifestObject());
+		},
+
+		/** Returns <code>true</code> if the passed component is an embedded component.
+		 * @param {sap.ui.core.Component} oComponent - Component instance
+		 * @returns {boolean} <code>true</code> if the passed component is of type "component"
+		 * @public
+		 */
 		isEmbeddedComponent: function (oComponent) {
-			return oComponent instanceof Component && !!oComponent.getManifestEntry("sap.app") && oComponent.getManifestEntry("sap.app").type === "component";
+			return oComponent instanceof Component && Utils._getComponentTypeFromManifest(oComponent.getManifestObject()) === "component";
 		},
 
 		/**

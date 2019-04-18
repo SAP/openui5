@@ -18,6 +18,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 */
+	var sVariantModelName = "$FlexVariants";
 	var FlexControllerFactory = {};
 
 	FlexControllerFactory._instanceCache = {};
@@ -72,37 +73,64 @@ sap.ui.define([
 	/**
 	 * Gets the changes and in case of existing changes, prepare the applyChanges function already with the changes.
 	 *
-	 * @param {object} oComponent Component instance that is currently loading
-	 * @param {object} vConfig configuration of loaded component
+	 * @param {object} oComponent - Component instance that is currently loading
+	 * @param {object} vConfig - Configuration of loaded component
+	 * @return {Promise} Promise which resolves when all relevant tasks for changes propagation have been processed
 	 * @public
 	 */
 	FlexControllerFactory.getChangesAndPropagate = function (oComponent, vConfig) {
-		// only manifest with type = "application" will fetch changes
-		var oManifest = oComponent.getManifestObject();
-		var sVariantModelName = "$FlexVariants";
-		var oFlexController;
-
 		// if component's manifest is of type 'application' then only a flex controller and change persistence instances are created.
 		// if component's manifest is of type 'component' then no flex controller and change persistence instances are created. The variant model is fetched from the outer app component and applied on this component type.
-		if (Utils.isApplication(oManifest)) {
-			oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
-			ChangePersistenceFactory._getChangesForComponentAfterInstantiation(vConfig, oManifest, oComponent)
-			.then(function (fnGetChangesMap) {
-				oComponent.addPropagationListener(oFlexController.getBoundApplyChangesOnControl(fnGetChangesMap, oComponent));
-				var oData = oFlexController.getVariantModelData() || {};
-				oComponent.setModel(new VariantModel(oData, oFlexController, oComponent), sVariantModelName);
-			});
+		if (Utils.isApplicationComponent(oComponent)) {
+			return _propagateChangesForAppComponent(oComponent, vConfig);
 		} else if (Utils.isEmbeddedComponent(oComponent)) {
 			var oAppComponent = Utils.getAppComponentForControl(oComponent);
 			// Some embedded components might not have an app component, e.g. sap.ushell.plugins.rta, sap.ushell.plugins.rta-personalize
 			if (oAppComponent) {
-				var oVariantModel = oAppComponent.getModel(sVariantModelName);
-				if (oVariantModel) {
+				return Promise.resolve().then( function() {
+					var oExistingVariantModel = oAppComponent.getModel(sVariantModelName);
+					if (!oExistingVariantModel) {
+						// If variant model is not present on the app component
+						// then a new variant model should be set on it.
+						// Setting a variant model will ensure that at least a standard variant will exist
+						// for all variant management controls.
+						return _propagateChangesForAppComponent(oAppComponent, vConfig);
+					} else {
+						return oExistingVariantModel;
+					}
+				}).then(function (oVariantModel) {
+					// set app component's variant model on the embedded component
 					oComponent.setModel(oVariantModel, sVariantModelName);
-				}
+				});
 			}
 		}
 	};
+
+	/**
+	 * Sets propagation changes and listeners on the passed app component.
+	 * Also creates a variant model on this app component.
+	 * @see sap.ui.fl.variant.VariantModel
+	 *
+	 * @param {sap.ui.core.Component} oAppComponent - App component instance
+	 * @param {object} vConfig - Configuration of app component
+	 * @return {Promise} Promise which resolves to the created variant model,
+	 * after all propagation changes and listeners have been set.
+	 * @private
+	 */
+	function _propagateChangesForAppComponent (oAppComponent, vConfig) {
+		// only manifest with type = "application" will fetch changes
+		var oManifest = oAppComponent.getManifestObject();
+		var oFlexController;
+		oFlexController = FlexControllerFactory.createForControl(oAppComponent, oManifest);
+		return ChangePersistenceFactory._getChangesForComponentAfterInstantiation(vConfig, oManifest, oAppComponent)
+		.then(function (fnGetChangesMap) {
+			oAppComponent.addPropagationListener(oFlexController.getBoundApplyChangesOnControl(fnGetChangesMap, oAppComponent));
+			var oData = oFlexController.getVariantModelData() || {};
+			var oVariantModel = new VariantModel(oData, oFlexController, oAppComponent);
+			oAppComponent.setModel(oVariantModel, sVariantModelName);
+			return oVariantModel;
+		});
+	}
 
 	return FlexControllerFactory;
 }, true);

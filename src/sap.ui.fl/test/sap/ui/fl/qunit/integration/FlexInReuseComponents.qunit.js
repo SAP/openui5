@@ -16,7 +16,9 @@ function (
 ) {
 	"use strict";
 
-	sinon.stub(LrepConnector.prototype, "loadChanges").resolves({
+	sinon.stub(LrepConnector.prototype, "loadChanges")
+	.resolves({
+		"changes": {
 			"changes": [],
 			"contexts": [],
 			"variantSection": {},
@@ -26,6 +28,7 @@ function (
 				"isAtoEnabled": false,
 				"isProductiveSystem": false
 			}
+		}
 		}
 	);
 
