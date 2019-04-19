@@ -213,6 +213,21 @@ function(
 			views : {type : "sap.m.SinglePlanningCalendarView", multiple : true, singularName : "view"},
 
 			/**
+			 * Special days in the header visualized as a date range with type.
+			 *
+			 * <b>Note:</b> If one day is assigned to more than one type, only the first type is used.
+			 * @since 1.66
+			 */
+			specialDates : {type : "sap.ui.unified.DateTypeRange",
+							multiple : true,
+							singularName : "specialDate",
+							forwarding: {
+								getter: "_getGrid",
+								aggregation: "specialDates"
+							}
+			},
+
+			/**
 			 * Hidden, for internal use only.
 			 * The header part of the <code>SinglePlanningCalendar</code>.
 			 *
@@ -240,7 +255,7 @@ function(
 			/**
 			 * Association to the <code>PlanningCalendarLegend</code> explaining the colors of the <code>Appointments</code>.
 			 *
-			 * <b>Note:</b> The legend does not have to be rendered but must exist, and all required types must be assigned.
+			 * <b>Note:</b> The legend does not have to be rendered but must exist and all required types must be assigned.
 			 * @since 1.65.0
 			 */
 			legend: { type: "sap.m.PlanningCalendarLegend", multiple: false}
@@ -405,17 +420,8 @@ function(
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype.onBeforeRendering = function () {
-		var oLegend = sap.ui.getCore().byId(this.getLegend());
-
 		// We can apply/remove sticky classes even before the control is rendered.
 		this._toggleStickyClasses();
-
-		//this is temporary & will be removed when SPC has a specialDates aggregation also
-		//for now in the SPC standartItems will not be rendered
-		if (oLegend) {
-			oLegend._bShouldRenderStandardItems = false;
-		}
-
 	};
 
 	/**
@@ -698,6 +704,7 @@ function(
 			oLegend;
 
 		this.setAssociation("legend", vLegend);
+		this._getGrid().setAssociation("legend", vLegend);
 
 		if (this.getLegend()) {
 			this._getGrid()._sLegendId = this.getLegend();

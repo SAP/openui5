@@ -28,6 +28,28 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Messag
 						}
 						return aTypes;
 					})(),
+						specialDates: [
+						{
+							start: new Date("2018", "6", "6"),
+							end: new Date("2018", "6", "9"),
+							type: "Type14"
+						},
+						{
+							start: new Date("2018", "6", "2"),
+							end: new Date("2018", "6", "2", "23", "59"),
+							type: "Type08"
+						},
+						{
+							start: new Date("2018", "6", "13"),
+							end: new Date("2018", "6", "13", "23", "59"),
+							type: "Type09"
+						},
+						{
+							start: new Date("2018", "6", "17"),
+							end: new Date("2018", "6", "18", "23", "59"),
+							type: "Type07"
+						}
+					],
 					appointments: [{
 						title: "Meet John Miller",
 						type: CalendarDayType.Type05,
@@ -234,6 +256,24 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Messag
 						icon: "sap-icon://home",
 						startDate: new Date("2018", "6", "17", "15", "30"),
 						endDate: new Date("2018", "6", "17", "16", "30")
+					}
+				],
+				legendItems: [
+					{
+						text: "Public holiday",
+						type: "Type07"
+					},
+					{
+						text: "Team building",
+						type: "Type08"
+					},
+					{
+						text: "Work from office 1",
+						type: "Type09"
+					},
+					{
+						text: "Work from office 2",
+						type: "Type14"
 					}
 				],
 				legendAppointmentItems: [

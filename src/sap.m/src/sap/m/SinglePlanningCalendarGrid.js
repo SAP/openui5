@@ -15,6 +15,7 @@ sap.ui.define([
 		'sap/ui/core/dnd/DropInfo',
 		'sap/ui/core/dnd/DragDropInfo',
 		'sap/ui/unified/library',
+		'sap/ui/unified/CalendarAppointment',
 		'sap/ui/unified/calendar/DatesRow',
 		'sap/ui/unified/calendar/CalendarDate',
 		'sap/ui/unified/calendar/CalendarUtils',
@@ -35,6 +36,7 @@ sap.ui.define([
 		DropInfo,
 		DragDropInfo,
 		unifiedLibrary,
+		CalendarAppointment,
 		DatesRow,
 		CalendarDate,
 		CalendarUtils,
@@ -51,7 +53,10 @@ sap.ui.define([
 			BLOCKER_ROW_HEIGHT_COMPACT = 25,
 			HALF_HOUR_MS = 3600000 / 2,
 			ONE_MIN_MS = 60 * 1000,
-			MILLISECONDS_IN_A_DAY = 86400000;
+			MILLISECONDS_IN_A_DAY = 86400000,
+			// Day view only - indicates the special dates
+			// 3px height the marker itself + 2x2px on its top and bottom both on cozy & compact
+			DAY_MARKER_HEIGHT_PX = 7;
 
 		/**
 		 * Constructor for a new SinglePlanningCalendarGrid.
@@ -151,6 +156,14 @@ sap.ui.define([
 					appointments: {type: "sap.ui.unified.CalendarAppointment", multiple: true, singularName: "appointment", dnd : {draggable: true}},
 
 					/**
+					 * Special days in the header visualized as a date range with type.
+					 *
+					 * <b>Note:</b> If one day is assigned to more than one type, only the first type is used.
+					 * @since 1.66
+					 */
+					specialDates : {type : "sap.ui.unified.DateTypeRange", multiple : true, singularName : "specialDate"},
+
+					/**
 					 * Hidden, for internal use only.
 					 * The date row which shows the header of the columns in the <code>SinglePlanningCalendarGrid</code>.
 					 *
@@ -170,7 +183,15 @@ sap.ui.define([
 					 *
 					 * <b>Note</b> These labels are also assigned to the appointments.
 					 */
-					ariaLabelledBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
+					ariaLabelledBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"},
+
+					/**
+					 * Association to the <code>PlanningCalendarLegend</code> explaining the colors of the <code>Appointments</code>.
+					 *
+					 * <b>Note:</b> The legend does not have to be rendered but must exist and all required types must be assigned.
+					 * @since 1.66.0
+					 */
+					legend: { type: "sap.m.PlanningCalendarLegend", multiple: false}
 
 				},
 				events: {
@@ -335,6 +356,7 @@ sap.ui.define([
 				this._createBlockersDndPlaceholders(oStartDate, iColumns);
 				this._createAppointmentsDndPlaceholders(oStartDate, iColumns);
 			}
+
 		};
 
 		SinglePlanningCalendarGrid.prototype.onmousedown = function(oEvent) {
@@ -806,16 +828,31 @@ sap.ui.define([
 		SinglePlanningCalendarGrid.prototype._adjustBlockersHeightforCompact = function () {
 			var iMaxLevel = this._getBlockersToRender().iMaxlevel,
 				iContainerHeight = (iMaxLevel + 1) * this._getBlockerRowHeight(),
+				// Day view has bigger height because of the day marker for special days
+				iRecalculatedContHeight = this._getColumns() === 1 ? iContainerHeight + DAY_MARKER_HEIGHT_PX : iContainerHeight,
 				iBlockerRowHeight = this._getBlockerRowHeight();
 
 			if (iMaxLevel > 0) { // hackie thing to calculate the container witdth. When we have more than 1 line of blockers - we must add 3 px in order to render the blockers visually in the container.
-				iContainerHeight = iContainerHeight + 3;
+				iRecalculatedContHeight = iRecalculatedContHeight + 3;
 			}
-			this.$().find(".sapMSinglePCBlockersColumns").css("height", iContainerHeight);
+			this.$().find(".sapMSinglePCBlockersColumns").css("height", iRecalculatedContHeight);
 
 			this._oBlockersToRender.oBlockersList.getIterator().forEach(function(oBlokcerNode) {
 				oBlokcerNode.getData().$().css("top", iBlockerRowHeight * oBlokcerNode.level + 1);
 			});
+		};
+
+		/*
+		 * Calculates the blocker column's height in the day view because of the special dates.
+		 */
+		SinglePlanningCalendarGrid.prototype._adjustBlockersHeightforCozy = function () {
+			var iMaxLevel = this._getBlockersToRender() && this._getBlockersToRender().iMaxlevel,
+				iContainerHeight;
+
+			if (this._getColumns() === 1) {
+				iContainerHeight = (iMaxLevel + 1) * this._getBlockerRowHeight();
+				this.$().find(".sapMSinglePCBlockersColumns").css("height", iContainerHeight + DAY_MARKER_HEIGHT_PX);
+			}
 		};
 
 		SinglePlanningCalendarGrid.prototype.onAfterRendering = function () {
@@ -832,6 +869,8 @@ sap.ui.define([
 					this._adjustAppointmentsHeightforCompact(sDate, oColumnStartDateAndHour, oColumnEndDateAndHour);
 				}
 				this._adjustBlockersHeightforCompact();
+			} else {
+				this._adjustBlockersHeightforCozy();
 			}
 
 			this._updateRowHeaderAndNowMarker();
@@ -1977,31 +2016,35 @@ sap.ui.define([
 		/*
 		 * Finds the corresponding legend item to a given appointment.
 		 * @param {oControl}
-		 * @param {sap.ui.unified.CalendarAppointment}
+		 * @param {oSpecialItem} An appointment or a legend type
 		 * @returns {string} The matching legend item's default text.
 		 * @private
 		 */
-		SinglePlanningCalendarGrid.prototype._findCorrespondingLegendItem = function(oControl, oAppointment) {
+		SinglePlanningCalendarGrid.prototype._findCorrespondingLegendItem = function(oControl, oSpecialItem) {
 			var sLegendId = oControl._sLegendId,
 				oLegend = sap.ui.getCore().byId(sLegendId),
-				aLegendItems = oLegend ? oLegend.getAppointmentItems() : null,
+				aLegendAppointments = oLegend ? oLegend.getAppointmentItems() : null,
+				aLegendItems = oLegend ? oLegend.getItems() : null,
+				bAppointmentItem = oSpecialItem instanceof CalendarAppointment,
+				aItems = bAppointmentItem ? aLegendAppointments : aLegendItems,
+				oItemType = bAppointmentItem ? oSpecialItem.getType() : oSpecialItem.type,
 				oItem,
 				sLegendItemText;
 
-			if (aLegendItems && aLegendItems.length) {
-				for (var i = 0; i < aLegendItems.length; i++) {
-					oItem = aLegendItems[i];
-					if (oItem.getType() === oAppointment.getType()) {
+			if (aItems && aItems.length) {
+				for (var i = 0; i < aItems.length; i++) {
+					oItem = aItems[i];
+					if (oItem.getType() === oItemType) {
 						sLegendItemText = oItem.getText();
 						break;
 					}
 				}
 			}
 
-			//if the appointment's type is not present in the legend's items,
+			//if the special item's type is not present in the legend's items,
 			// the screen reader has to read it's type
 			if (!sLegendItemText) {
-				sLegendItemText = oAppointment.getType();
+				sLegendItemText = oItemType;
 			}
 			return sLegendItemText;
 		};

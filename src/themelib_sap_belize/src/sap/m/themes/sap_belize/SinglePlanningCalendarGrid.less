@@ -67,7 +67,7 @@
 
 // TODO: Consider refactoring the coloring logic of Appointments
 /* colors for types */
-.calendarRowTypeColorMixIn(@class, @iclass, @color, @bcolor){
+.calendarRowTypeColorMixIn(@class, @iclass, @iitemtypeclass, @color, @bcolor){
 	.sapMSinglePCAppointments, .sapMSinglePCBlockers {
 		.@{class}.sapMSinglePCAppointmentWrap {
 			border-left-color: @color;
@@ -97,6 +97,28 @@
 			background-color: @bcolor;
 		}
 	}
+
+	//Special Dates
+	.sapMSinglePCGrid .@{iitemtypeclass} {
+		//week views
+		&.sapUiCalItem .sapUiCalItemText {
+			box-shadow: none;
+		}
+		&.sapUiCalItem:not(.sapUiCalItemSel) {
+			box-shadow: inset 0 -0.25rem 0 @color;
+		}
+		//week views selected
+		&.sapUiCalItem.sapUiCalItemSel {
+			box-shadow: inset 0 -0.25rem 0 @color, inset 0 -0.33rem white;
+			.sapUiCalItemText {
+				box-shadow: none;
+			}
+		}
+		//day view
+		.sapMSinglePCBlockersColumn {
+		 	box-shadow: inset 0 0.25rem 0 @color;
+		}
+	  }
 }
 
 /* Calendar overstyling */
@@ -156,26 +178,26 @@ html .sapMSinglePC .sapMSinglePCAppointmentWrap .sapUiCalendarApp.sapUiCalendarA
 @_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType19: lighten(desaturate(@sapUiAccent6, 30), 48);
 @_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType20: lighten(desaturate(@sapUiAccent5, 50), 55);
 
-.calendarRowTypeColorMixIn(sapUiCalendarAppType01, sapUiCalendarRowAppsIntHeadType01 , @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType01, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType01, 90%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType02, sapUiCalendarRowAppsIntHeadType02 , @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType02, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType02, 90%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType03, sapUiCalendarRowAppsIntHeadType03 , @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType03, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType03, 90%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType04, sapUiCalendarRowAppsIntHeadType04 , @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType04, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType04, 90%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType05, sapUiCalendarRowAppsIntHeadType05 , @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType05, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType05, 90%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType06, sapUiCalendarRowAppsIntHeadType06 , @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType06, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType06, 90%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType07, sapUiCalendarRowAppsIntHeadType07 , @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType07, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType07, 90%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType08, sapUiCalendarRowAppsIntHeadType08 , @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType08, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType08, 90%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType09, sapUiCalendarRowAppsIntHeadType09 , @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType09, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType09, 90%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType10, sapUiCalendarRowAppsIntHeadType10 , @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType10, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType10, 90%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType11, sapUiCalendarRowAppsIntHeadType11 , @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType11, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType11, 90%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType12, sapUiCalendarRowAppsIntHeadType12 , @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType12, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType12, 90%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType13, sapUiCalendarRowAppsIntHeadType13 , @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType13, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType13, 90%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType14, sapUiCalendarRowAppsIntHeadType14 , @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType14, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType14, 90%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType15, sapUiCalendarRowAppsIntHeadType15 , @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType15, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType15, 90%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType16, sapUiCalendarRowAppsIntHeadType16 , @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType16, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType16, 90%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType17, sapUiCalendarRowAppsIntHeadType17 , @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType17, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType17, 90%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType18, sapUiCalendarRowAppsIntHeadType18 , @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType18, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType18, 90%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType19, sapUiCalendarRowAppsIntHeadType19 , @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType19, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType19, 90%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType20, sapUiCalendarRowAppsIntHeadType20 , @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType20, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType20, 90%));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType01, sapUiCalendarRowAppsIntHeadType01, sapUiCalItemType01, @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType01, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType01, 90%));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType02, sapUiCalendarRowAppsIntHeadType02, sapUiCalItemType02, @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType02, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType02, 90%));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType03, sapUiCalendarRowAppsIntHeadType03, sapUiCalItemType03, @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType03, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType03, 90%));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType04, sapUiCalendarRowAppsIntHeadType04, sapUiCalItemType04, @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType04, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType04, 90%));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType05, sapUiCalendarRowAppsIntHeadType05, sapUiCalItemType05, @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType05, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType05, 90%));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType06, sapUiCalendarRowAppsIntHeadType06, sapUiCalItemType06, @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType06, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType06, 90%));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType07, sapUiCalendarRowAppsIntHeadType07, sapUiCalItemType07, @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType07, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType07, 90%));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType08, sapUiCalendarRowAppsIntHeadType08, sapUiCalItemType08, @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType08, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType08, 90%));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType09, sapUiCalendarRowAppsIntHeadType09, sapUiCalItemType09, @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType09, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType09, 90%));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType10, sapUiCalendarRowAppsIntHeadType10, sapUiCalItemType10, @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType10, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType10, 90%));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType11, sapUiCalendarRowAppsIntHeadType11, sapUiCalItemType11, @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType11, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType11, 90%));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType12, sapUiCalendarRowAppsIntHeadType12, sapUiCalItemType12, @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType12, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType12, 90%));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType13, sapUiCalendarRowAppsIntHeadType13, sapUiCalItemType13, @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType13, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType13, 90%));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType14, sapUiCalendarRowAppsIntHeadType14, sapUiCalItemType14, @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType14, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType14, 90%));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType15, sapUiCalendarRowAppsIntHeadType15, sapUiCalItemType15, @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType15, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType15, 90%));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType16, sapUiCalendarRowAppsIntHeadType16, sapUiCalItemType16, @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType16, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType16, 90%));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType17, sapUiCalendarRowAppsIntHeadType17, sapUiCalItemType17, @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType17, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType17, 90%));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType18, sapUiCalendarRowAppsIntHeadType18, sapUiCalItemType18, @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType18, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType18, 90%));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType19, sapUiCalendarRowAppsIntHeadType19, sapUiCalItemType19, @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType19, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType19, 90%));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType20, sapUiCalendarRowAppsIntHeadType20, sapUiCalItemType20, @_sap_m_SinglePlanningCalendar_sapUiCalendarAppType20, fade(@_sap_m_SinglePlanningCalendar_sapUiCalendarRowAppsIntHeadType20, 90%));
 
 .sapUiCalendarRowVisFilled .sapMSinglePCAppointmentWrap {
 	.sapUiCalendarApp,
