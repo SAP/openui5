@@ -77,8 +77,16 @@ sap.ui.define([],
 
 			var oLayoutData = oItem.getLayoutData();
 			if (oLayoutData) {
-				if (oLayoutData.getColumns()) {
-					rm.addStyle("grid-column", "span " + oLayoutData.getColumns());
+				var iItemColumns = oLayoutData.getColumns(),
+					iTotalColumns = oControl.getActiveLayoutSettings().getColumns();
+
+				if (iItemColumns && iTotalColumns) {
+					// do not allow items to have more columns than total columns, else the layout brakes
+					iItemColumns = Math.min(iItemColumns, iTotalColumns);
+				}
+
+				if (iItemColumns) {
+					rm.addStyle("grid-column", "span " + iItemColumns);
 				}
 
 				if (oControl.getInlineBlockLayout()) {

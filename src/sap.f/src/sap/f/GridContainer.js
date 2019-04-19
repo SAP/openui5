@@ -221,6 +221,21 @@ sap.ui.define([
 				 */
 				_defaultLayout: { type: "sap.f.GridContainerSettings", multiple: false, visibility: "hidden" }
 			},
+			events: {
+
+				/**
+				 * Fired when the currently active GridSettings change.
+				 */
+				layoutChange: {
+					parameters: {
+
+						/**
+						 * The name of the newly active layout.
+						 */
+						layout: { type: "string" }
+					}
+				}
+			},
 			dnd: { draggable: false, droppable: true }
 		}
 	});
@@ -288,7 +303,7 @@ sap.ui.define([
 	GridContainer.prototype._detectActiveLayout = function () {
 		var iWidth = (this.getContainerQuery() && this.getDomRef()) ? this.$().outerWidth() : window.innerWidth,
 			oRange = Device.media.getCurrentRange("StdExt", iWidth),
-			sLayout = GridContainer.mSizeLayouts[oRange.name],
+			sLayout = oRange ? GridContainer.mSizeLayouts[oRange.name] : "layout",
 			oOldSettings = this.getActiveLayoutSettings(),
 			bSettingsAreChanged = false;
 
@@ -298,8 +313,6 @@ sap.ui.define([
 		}
 
 		return bSettingsAreChanged;
-
-		// TODO fire event
 	};
 
 	GridContainer.prototype.getActiveLayoutSettings = function () {
@@ -366,7 +379,7 @@ sap.ui.define([
 		this._isRenderingFinished = true;
 
 		this._setItemNavigationItems();
-		this._applyLayout();
+		this._applyLayout(true);
 	};
 
 	GridContainer.prototype.exit = function () {
@@ -385,7 +398,15 @@ sap.ui.define([
 	};
 
 	GridContainer.prototype._resize = function () {
-		this._applyLayout();
+		var bSettingsAreChanged = this._detectActiveLayout();
+
+		this._applyLayout(bSettingsAreChanged);
+
+		if (bSettingsAreChanged) {
+			this.fireLayoutChange({
+				layout: this._sActiveLayout
+			});
+		}
 	};
 
 	GridContainer.prototype._resizeItem = function (oEvent) {
@@ -397,12 +418,10 @@ sap.ui.define([
 		this._applyItemAutoRows(oEvent.control);
 	};
 
-	GridContainer.prototype._applyLayout = function () {
+	GridContainer.prototype._applyLayout = function (bSettingsAreChanged) {
 		if (!this._isRenderingFinished) {
 			return;
 		}
-
-		var bLayoutSettingsAreChanged = this._detectActiveLayout();
 
 		if (!isGridSupportedByBrowser()) {
 			this.getItems().forEach(this._applyIEPolyfillForItem.bind(this));
@@ -410,14 +429,19 @@ sap.ui.define([
 			return;
 		}
 
-		if (bLayoutSettingsAreChanged) {
+		if (bSettingsAreChanged) {
 			this.$().css(this._getActiveGridStyles());
-
 			this.getItems().forEach(this._applyItemAutoRows.bind(this));
 		}
+
+		this._enforceMaxColumns();
 	};
 
 	GridContainer.prototype._applyItemAutoRows = function (oItem) {
+		if (!this._isRenderingFinished) {
+			return;
+		}
+
 		if (this.getInlineBlockLayout()) {
 			return;
 		}
@@ -434,6 +458,23 @@ sap.ui.define([
 				'grid-row': 'span ' + Math.max(rows, getItemRowCount(oItem))
 			});
 		}
+	};
+
+	/**
+	 * If one item has more columns than the total columns in the grid, it brakes the whole layout.
+	 * Prevent this by reducing this item's column span.
+	 */
+	GridContainer.prototype._enforceMaxColumns = function () {
+		var $grid = this.$(),
+			oSettings = this.getActiveLayoutSettings(),
+			iColumnSize = parseInt($grid.css("grid-template-columns").split()[0]), // get computed size of first column
+			iGapSize = parseInt($grid.css("column-gap")),
+			iMaxColumns = oSettings.getColumns() || Math.floor(($grid.innerWidth() + iGapSize) / (iColumnSize + iGapSize));
+
+		this.getItems().forEach(function(oItem) {
+			// if item has more columns than total columns, it brakes the whole layout
+			oItem.$().parent().css("grid-column-start", "span " + Math.min(getItemColumnCount(oItem), iMaxColumns));
+		});
 	};
 
 	/**

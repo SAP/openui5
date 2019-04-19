@@ -37,6 +37,10 @@ sap.ui.define(['sap/ui/core/LayoutData'],
 				properties: {
 					/**
 					 * Specifies the number of columns, which the item should take
+					 *
+					 * <b>Note:</b> Make sure that the item does not have more columns than the total columns in the grid.
+					 * Use {@link sap.f.GridContainer#attachLayoutChange} or a resize listener to handle when columns count is changed for the grid.
+					 * If item has more columns at some point, they will be automatically reduced to the total grid columns. This is done to prevent broken layout (grid blowout) that affects all items.
 					 */
 					columns: {type: "int", group: "Misc", defaultValue: 1},
 					/**
