@@ -189,6 +189,22 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("When invalid date is set as value the control detects it and doesn't throw error", function(assert) {
+		//Prepare
+		var oDRS = new sap.m.DateRangeSelection("DRS", {
+			value: "Invalid Date"
+		});
+
+		// Act
+		oDRS.onChange();
+
+		// Assert
+		assert.ok(true, "Test does not throw");
+
+		// Clean
+		oDRS.destroy();
+	});
+
 	QUnit.test("opening picker when current values are outside min/max range", function(assert) {
 		//Prepare
 		var oMinDate = new Date(2014,0,1),
