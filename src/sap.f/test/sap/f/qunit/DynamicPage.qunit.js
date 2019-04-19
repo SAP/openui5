@@ -615,6 +615,23 @@ function (
 		assert.strictEqual(oTitlePressListenerSpy.callCount, 0, "Event was not fired when ENTER key is pressed");
 	});
 
+	QUnit.test("preventDefault is not called when event target is not the title of the DynamicPage", function (assert) {
+		// Arrange
+		var oTitle = this.oDynamicPage.getTitle(),
+			oInput = new sap.m.Input(),
+			oEventMock = {
+				srcControl: oInput,
+				preventDefault: function () {}
+			},
+			oEventSpy = sinon.spy(oEventMock, "preventDefault");
+
+		// Act
+		oTitle.onsapspace(oEventMock);
+
+		// Assert
+		assert.ok(oEventSpy.notCalled, "preventDefault is not called");
+	});
+
 	QUnit.test("DynamicPage On Title Press: stateChange event is fired", function (assert) {
 		var oStateChangeListenerSpy = sinon.spy(),
 			oTitle = this.oDynamicPage.getTitle();
