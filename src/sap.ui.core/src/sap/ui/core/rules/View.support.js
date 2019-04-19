@@ -183,7 +183,7 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/core/Element"],
 							var sContent = new XMLSerializer().serializeToString(oContent);
 
 							// check if there is a reference of this namespace inside the view
-							if (!sContent.match("<" + sLocalName + ":")) {
+							if (!sContent.match("<" + sLocalName + ":") && !sContent.match(" " + sLocalName + ":")) {
 								var sViewName = oXMLView.getViewName().split("\.").pop();
 								oIssueManager.addIssue({
 									severity: Severity.Medium,
