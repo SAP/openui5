@@ -858,7 +858,7 @@ sap.ui.define([
 		assert.strictEqual(oResult.getId() ,this.oButton.getId());
 	});
 
-	QUnit.test("Should invoke the enabled matcher if interactable is false", function(assert) {
+	QUnit.test("Should use enabled matcher depending on interactablity", function(assert) {
 		var fnEnabledSpy = this.spy(_Enabled.prototype, "isMatching");
 
 		this.oPlugin.getMatchingControls({
@@ -867,6 +867,21 @@ sap.ui.define([
 		});
 
 		sinon.assert.notCalled(fnEnabledSpy);
+
+		this.oPlugin.getMatchingControls({
+			id: "foo",
+			enabled: false,
+			interactable: true
+		});
+
+		sinon.assert.notCalled(fnEnabledSpy);
+
+		this.oPlugin.getMatchingControls({
+			id: "foo",
+			interactable: true
+		});
+
+		sinon.assert.calledOnce(fnEnabledSpy);
 	});
 
 	QUnit.module("OpaPlugin - Should know if it is looking for a Control", {

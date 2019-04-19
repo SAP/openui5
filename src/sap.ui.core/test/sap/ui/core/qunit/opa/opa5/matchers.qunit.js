@@ -386,4 +386,69 @@ sap.ui.define([
 		assert.strictEqual(aCheckText, aText, "Check got same value as success");
 	});
 
+	QUnit.module("state matchers", {
+		beforeEach : function () {
+			this.oButton = new Button("enabledButton", {text : "foo"});
+			this.oButton2 = new Button("disabledButton", {text : "bar", enabled: false});
+			this.oButton.placeAt("qunit-fixture");
+			this.oButton2.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function () {
+			this.oButton.destroy();
+			this.oButton2.destroy();
+		}
+	});
+
+	QUnit.test("Should filter by enabled state when autoWait is true", function (assert) {
+		var done = assert.async();
+		var oOpa5 = new Opa5();
+
+		Opa5.extendConfig({
+			autoWait: true
+		});
+
+		oOpa5.waitFor({
+			controlType: "sap.m.Button",
+			success: function (aButtons) {
+				assert.strictEqual(aButtons.length, 1, "Should include only enabled controls by default (enabled: undefined)");
+			}
+		});
+
+		oOpa5.waitFor({
+			controlType: "sap.m.Button",
+			enabled: false,
+			success: function (aButtons) {
+				assert.strictEqual(aButtons.length, 2, "Should include both enabled and disabled controls when enabled: false");
+			}
+		});
+
+		Opa5.emptyQueue().done(function () {
+			Opa5.resetConfig();
+			done();
+		});
+	});
+
+	QUnit.test("Should filter by enabled state when autoWait is false", function (assert) {
+		var done = assert.async();
+		var oOpa5 = new Opa5();
+
+		oOpa5.waitFor({
+			controlType: "sap.m.Button",
+			success: function (aButtons) {
+				assert.strictEqual(aButtons.length, 2, "Should include both enabled and disabled controls by default (enabled: undefined)");
+			}
+		});
+
+		oOpa5.waitFor({
+			controlType: "sap.m.Button",
+			enabled: true,
+			success: function (aButtons) {
+				assert.strictEqual(aButtons.length, 1, "Should include only enabled controls when enabled: true");
+			}
+		});
+
+		Opa5.emptyQueue().done(done);
+	});
+
 });

@@ -20,11 +20,13 @@ sap.ui.define([
 			oOptions = oOptions || {};
 			var aMatchers = [];
 
-			// visible and enabled have priority over interactable
-			if (oOptions.enabled) {
-				aMatchers.push(new _Enabled());
-			}
-			if (oOptions.visible !== false) { // any other value is the same as visible: true
+			// visible has priority over all other options
+			if (oOptions.visible !== false) {
+				// enabled has priority over interactable
+				if (oOptions.enabled) {
+					aMatchers.push(new _Enabled());
+				}
+
 				// Interactable uses Visible
 				if (oOptions.interactable) {
 					aMatchers.push(new Interactable());
