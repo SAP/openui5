@@ -2435,6 +2435,10 @@ function(
 					.attachAfterClose(function() {
 						var oList = oSuggPopover._oList;
 
+						if (!oList) {
+							return;
+						}
+
 						if (Table && !(oList instanceof Table)) {
 							oList.destroyItems();
 						} else {
