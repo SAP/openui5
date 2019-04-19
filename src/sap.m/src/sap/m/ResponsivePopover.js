@@ -278,7 +278,7 @@ sap.ui.define([
 	 *
 	 * @name sap.m.ResponsivePopover#close
 	 * @function
-	 * @type sap.ui.core.Control
+	 * @return {sap.m.ResponsivePopover} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -289,7 +289,7 @@ sap.ui.define([
 	 *
 	 * @name sap.m.ResponsivePopover#isOpen
 	 * @function
-	 * @type sap.ui.core.Control
+	 * @return {boolean} whether the ResponsivePopover is currently opened
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
