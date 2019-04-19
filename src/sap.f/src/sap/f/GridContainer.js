@@ -148,11 +148,6 @@ sap.ui.define([
 				width: {type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: ""},
 
 				/**
-				 * Defines the height of the control.
-				 */
-				height: {type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: ""},
-
-				/**
 				 * If set to <code>true</code> the current range (large, medium or small) is defined by the size of the
 				 * container surrounding the <code>CSSGrid</code>, instead of the device screen size (media Query).
 				 */

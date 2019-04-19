@@ -124,17 +124,15 @@ function (
 		assert.ok(this.oGrid.$().hasClass("sapFGridContainerSnapToRow"), "Has class sapFGridContainerSnapToRow when snapToRow is true");
 	});
 
-	QUnit.test("Height and width", function (assert) {
+	QUnit.test("Width", function (assert) {
 		// Arrange
 		this.oGrid.setWidth("100px");
-		this.oGrid.setHeight("100px");
 
 		// Act
 		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oGrid.$().width(), 100, "Width is as expected");
-		assert.strictEqual(this.oGrid.$().height(), 100, "Heioght is as expected");
 	});
 
 	QUnit.test("Tooltip", function (assert) {

@@ -36,9 +36,6 @@ sap.ui.define([],
 			rm.writeClasses();
 
 			// Add inline styles
-			if (control.getHeight()) {
-				rm.addStyle("height", control.getHeight());
-			}
 			if (control.getWidth()) {
 				rm.addStyle("width", control.getWidth());
 			}
