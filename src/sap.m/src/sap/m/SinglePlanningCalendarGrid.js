@@ -2033,6 +2033,14 @@ sap.ui.define([
 			// Turn of the cycling
 			this._oItemNavigation.setCycling(false);
 
+			//this way we do not hijack the browser back/forward navigation
+			this._oItemNavigation.setDisabledModifiers({
+				sapnext: ["alt", "meta"],
+				sapprevious: ["alt", "meta"],
+				saphome : ["alt", "meta"],
+				sapend : ["meta"]
+			});
+
 			// explicitly setting table mode
 			this._oItemNavigation.setTableMode(true, true).setColumns(this._getColumns());
 
