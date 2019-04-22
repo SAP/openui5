@@ -396,6 +396,22 @@ function(
 	};
 
 	/**
+	 * Converts the view switch from sap.m.SegmentedButton to sap.m.Select.
+	 * @private
+	 */
+	PlanningCalendarHeader.prototype._convertViewSwitchToSelect = function () {
+		this._oViewSwitch._toSelectMode();
+	};
+
+	/**
+	 * Converts the view switch from sap.m.Select to sap.m.SegmentedButton
+	 * @private
+	 */
+	PlanningCalendarHeader.prototype._convertViewSwitchToSegmentedButton = function () {
+		this._oViewSwitch._toNormalMode();
+	};
+
+	/**
 	 * Returns the today button control.
 	 *
 	 * @returns {sap.m.Button} The today button
