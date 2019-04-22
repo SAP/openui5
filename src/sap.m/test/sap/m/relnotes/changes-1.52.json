@@ -4442,5 +4442,40 @@
         "references": []
       }
     ]
+  },
+  "1.52.28": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "2d9965b27c13b9b58546806eac71187b52777c44",
+        "type": "FIX",
+        "text": " sap.m.NotificationListItem: DomRef is aways peresent now",
+        "references": []
+      },
+      {
+        "id": "85bdb88098e44fe463ae6ad54cc0182f1f1958ea",
+        "type": "FIX",
+        "text": " sap.m.NotificationListItem: Show more button was improved",
+        "references": []
+      },
+      {
+        "id": "01feccd179a1e9accf1e07bb09ad8819a3b8d537",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: customContent aggregation with sap.m.Link is read correctly",
+        "references": []
+      },
+      {
+        "id": "da3d75faaf251f6306824bddaed16b44c1e2abe1",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: Hide master page in \"HideMode\" on mobile",
+        "references": []
+      },
+      {
+        "id": "0b6f1ba6380823e189531e7c725fbae08e6160e5",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: setDateValue initialises mask",
+        "references": []
+      }
+    ]
   }
 }
