@@ -20,11 +20,6 @@
 						id="disabledButton"
 						enabled="false">
 					</Button>
-					<Button
-						text="Open the popover"
-						id="togglePopoverButton"
-						press="togglePopover">
-					</Button>
 				</l:content>
 			</l:HorizontalLayout>
 		</content>
