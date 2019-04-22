@@ -5,185 +5,318 @@
       {
         "id": "51f6234400ef60ce6bd64dbcfbe360a0d710389e",
         "type": "FEATURE",
-        "text": "sap.m.PlanningCalendar: 1 month view for S and M sizes",
+        "text": " sap.m.PlanningCalendar: 1 month view for S and M sizes",
         "references": []
       },
       {
         "id": "7a72b83f1d3059a34a54313f0153830abe4c2652",
         "type": "FEATURE",
-        "text": "sap.ui.unified.Calendar: Specific dates or date ranges can now be displayed as non-working",
+        "text": " sap.ui.unified.Calendar: Specific dates or date ranges can now be displayed as non-working",
         "references": []
       },
       {
         "id": "332cf978fa4b18970f6a35d856ae8a81f635c01f",
         "type": "FEATURE",
-        "text": "sap.ui.unified.Calendar: showWeekNumbers property introduced",
+        "text": " sap.ui.unified.Calendar: showWeekNumbers property introduced",
         "references": []
       },
       {
         "id": "2984a94ad722bab5414f11490bb4dba62e8bae0e",
         "type": "FIX",
-        "text": "Link in Form: focus outline too large",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780131982"
-          }
-        ]
+        "text": " Link in Form: focus outline too large",
+        "references": []
       },
       {
         "id": "aa01deca84a710b4d7a98cf242ea21bf49c73b6d",
         "type": "FIX",
-        "text": "sap.m.Month - Adding special dates to the month does not move the focus from other elements on the page",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780081680"
-          }
-        ]
+        "text": " sap.m.Month - Adding special dates to the month does not move the focus from other elements on the page",
+        "references": []
       },
       {
         "id": "9911b68d1c0411be817bb1ff526c4b2921ab0e4c",
         "type": "FIX",
-        "text": "sap.m.Month - Fixes a regression in restoring focus introduced with another change",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780121409"
-          }
-        ]
+        "text": " sap.m.Month - Fixes a regression in restoring focus introduced with another change",
+        "references": []
       },
       {
         "id": "aafe17470c778496a85193e3e46f9666e7ea0a0d",
         "type": "FIX",
-        "text": "sap.m.Planning Calendar: Selected state of appointment is read",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1680343802"
-          }
-        ]
+        "text": " sap.m.Planning Calendar: Selected state of appointment is read",
+        "references": []
       },
       {
         "id": "9dd3681db067b949bc0b6b8522ca38c37200e173",
         "type": "FIX",
-        "text": "sap.m.PlanningCalendar-tap on appointment on mobile should not fire rowSelectionChange.",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "002075129500004765332016"
-          }
-        ]
+        "text": " sap.m.PlanningCalendar-tap on appointment on mobile should not fire rowSelectionChange.",
+        "references": []
       },
       {
         "id": "fc1f30603ffe9acb558e912aaa1292fe07eaa7c8",
         "type": "FIX",
-        "text": "sap.m.PlanningCalendar: corrected checks for detecting Japanese and Chinese",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1680365626"
-          }
-        ]
+        "text": " sap.m.PlanningCalendar: corrected checks for detecting Japanese and Chinese",
+        "references": []
       },
       {
         "id": "8d4792fba78ee4a34674d204c5758cb1f6aee857",
         "type": "FIX",
-        "text": "sap.m.PlanningCalendar: displayed correctly in Japanese and Chinese",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1680365626"
-          }
-        ]
+        "text": " sap.m.PlanningCalendar: displayed correctly in Japanese and Chinese",
+        "references": []
       },
       {
         "id": "fa66a66649287b1333f9154fddac7c9dbfc28026",
         "type": "FIX",
-        "text": "sap.ui.unified.Calendar - Adding special dates to the calendar does not move the focus from other elements on the page",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780081680"
-          }
-        ]
+        "text": " sap.ui.unified.Calendar - Adding special dates to the calendar does not move the focus from other elements on the page",
+        "references": []
       },
       {
         "id": "899308bf8b0ff13d614e26f7642baa099457a3ba",
         "type": "FIX",
-        "text": "sap.ui.unified.Calendar.MonthPicker - onThemeChanged before control is rendered was throwing an error",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780032487"
-          }
-        ]
+        "text": " sap.ui.unified.Calendar.MonthPicker - onThemeChanged before control is rendered was throwing an error",
+        "references": []
       },
       {
         "id": "79d52eb4e74a4fe2fef4e3c774fae151cf663ad1",
         "type": "FIX",
-        "text": "sap.ui.unified.Calendar: Invalidate Months only if they exist",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1680314380"
-          }
-        ]
+        "text": " sap.ui.unified.Calendar: Invalidate Months only if they exist",
+        "references": []
       },
       {
         "id": "eda8d45febc26ac5ce4f07060dbc8654eca7963c",
         "type": "FIX",
-        "text": "sap.ui.unified.Calendar: Special dates have aria labels as texts in the associated legend",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770066920"
-          }
-        ]
+        "text": " sap.ui.unified.Calendar: Special dates have aria labels as texts in the associated legend",
+        "references": []
       },
       {
         "id": "cbcae2552d692923b79dd46083feb11bff172e4b",
         "type": "FIX",
-        "text": "sap.ui.unified.Menu: Popup now follows correctly when resizing the window",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1680356118"
-          }
-        ]
+        "text": " sap.ui.unified.Menu: Popup now follows correctly when resizing the window",
+        "references": []
       },
       {
         "id": "20e7cb1a386b74ac9bfadd889f941652019ccd61",
         "type": "FIX",
-        "text": "sap.ui.unified.Shell: Focus Outline style of toolbar buttons in Internet Explorer",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1680344097"
-          }
-        ]
+        "text": " sap.ui.unified.Shell: Focus Outline style of toolbar buttons in Internet Explorer",
+        "references": []
       },
       {
         "id": "397668dbbea63c83047858d0e3981617b4132a7b",
         "type": "FIX",
         "text": ": sap.ui.unified.calendar controls. - focused item is preserved after rerendering.",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770147677"
-          }
-        ]
+        "references": []
       },
       {
         "id": "247b392c9f6a2072710e93136c25047012c564b3",
         "type": "FEATURE",
-        "text": "sap.m.PlanningCalendar - non working dates added.",
+        "text": " sap.m.PlanningCalendar - non working dates added.",
         "references": []
       },
       {
         "id": "87c34a2b02206f91c9c761fe4b1824fa773882f2",
         "type": "FEATURE",
-        "text": "sap.m.PlanningCalendar: The grouping of overlapping appointments can now be disabled.",
+        "text": " sap.m.PlanningCalendar: The grouping of overlapping appointments can now be disabled.",
+        "references": []
+      }
+    ]
+  },
+  "1.48.1": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "14c4dd876b42b7ae53ba11d41a038ff3505a25c8",
+        "type": "FIX",
+        "text": " sap.m.Menu: Item separator position and height corrected",
+        "references": []
+      },
+      {
+        "id": "89775391e749ffb83ba7b917fb6c8f19a034d6d2",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Header: Previous and next buttons have aria info",
+        "references": []
+      },
+      {
+        "id": "e937b8999683756030037041d28a8b1220a925a1",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month off by one day.",
+        "references": []
+      }
+    ]
+  },
+  "1.48.2": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "c6d8d32a688b688b7a295f9a483ac2d45f544bed",
+        "type": "FIX",
+        "text": " m.Menu: Header border and menu padding are fixed for phone",
+        "references": []
+      },
+      {
+        "id": "b5016dc4da1550ed500c2f48888b1c47fe77f1d1",
+        "type": "FIX",
+        "text": " m.PlanningCalendar: Appointments are aggregated equally across time zones",
+        "references": []
+      }
+    ]
+  },
+  "1.48.3": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "a22474d031a0c2140c6283afee865b5cb4031d15",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: FileUploader and Label issue",
+        "references": []
+      },
+      {
+        "id": "952eceddfc805962b21d73d5e904b6a721522ab7",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: opening as a context menu improved for RTL",
+        "references": []
+      }
+    ]
+  },
+  "1.48.6": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "f1c5fd290e7efc22122ff0168d3806399c6973e7",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Submit empty input value while picker open now works correctly",
+        "references": []
+      }
+    ]
+  },
+  "1.48.7": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "4cfba742526bb7f60af981f96350b7d9d24e781a",
+        "type": "FIX",
+        "text": " (Potentially) missing documentation for managed property is fixed.",
+        "references": []
+      },
+      {
+        "id": "6547cce06df8cd30531a560961748be7914c06d3",
+        "type": "FIX",
+        "text": " (Potentially) missing documentation for managed property is fixed.",
+        "references": []
+      },
+      {
+        "id": "ba878bb257ff4ab289787fbdb98c2c8d4e6e1964",
+        "type": "FIX",
+        "text": " ShellHeader Layout fixed",
+        "references": []
+      },
+      {
+        "id": "7753f98dfab1dc5771a629a9c152733158d9697c",
+        "type": "FIX",
+        "text": " ShellHeader Layout fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.48.8": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "9cd697e1f21dac37d873ed1754092a478b7abb2d",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Select event now has correct event source",
+        "references": []
+      }
+    ]
+  },
+  "1.48.9": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "1b802e3ea7a0b15f6adbf37e1a233f3c393b7ebc",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: selecting appointments fires event in OneMonth view on small screen size",
+        "references": []
+      }
+    ]
+  },
+  "1.48.10": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "3bdf4fde21c1b575f61450000875e7b1056e1d63",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month: single interval selection highlights the right dates",
+        "references": []
+      }
+    ]
+  },
+  "1.48.11": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "3ea9209b09c00ae75d62f7947caa5fb29311cc6f",
+        "type": "FIX",
+        "text": " unified.FileUploader: drag and drop behavior fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.48.14": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "b10d6ec743bf8d86e7e56db848e5330b670156ad",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: select date on mouseup when used on touch device",
+        "references": []
+      },
+      {
+        "id": "be133b2503416a7a3da1e060fe8dec94091318b7",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: qunit tests fixed on combi devices",
+        "references": []
+      }
+    ]
+  },
+  "1.48.15": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "474a44c1f0fa36c63f9bfe0a5321ced4f2881b2f",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Focus handling corrected",
+        "references": []
+      },
+      {
+        "id": "32753ac598fd5dc11721e4a8ca3aede6a41b2c3e",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Select month and year corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.48.16": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "35ba136293ae2b5805b2ce352faeb15d39160a83",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: days aligned correctly in RTL",
+        "references": []
+      }
+    ]
+  },
+  "1.48.19": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "f0e209f44375e1c6fc3bc93456fb3cbee2aeb455",
+        "type": "FIX",
+        "text": " Control: refactor fnHandleInteraction",
+        "references": []
+      },
+      {
+        "id": "139ad5712f9067271da6a70fe620e5083c5ccd28",
+        "type": "FIX",
+        "text": " sap.m: instanceof Date in public methods corrected",
         "references": []
       }
     ]

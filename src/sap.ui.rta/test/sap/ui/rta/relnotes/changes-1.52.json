@@ -215,5 +215,256 @@
         "references": []
       }
     ]
+  },
+  "1.52.1": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "602f025599963f10b3ae19bd91df985955de9d9e",
+        "type": "FIX",
+        "text": "Combine on the wrong element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770492991"
+          }
+        ]
+      },
+      {
+        "id": "df1f55f69514fe370b51bb2937c83594f75cf840",
+        "type": "FIX",
+        "text": "Revision of Multiple Settings Action handling",
+        "references": []
+      },
+      {
+        "id": "69db4774e0223c589661ba06e8942355bb813aa3",
+        "type": "FIX",
+        "text": "sap.ui.rta - Settings dialog don’t open",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770516043"
+          }
+        ]
+      },
+      {
+        "id": "1391f70e775391feff8bff3818fab6c73a4ee3f4",
+        "type": "FIX",
+        "text": "sap.ui.rta - fix enhanced logic for detecting relevant overlays",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770493102"
+          }
+        ]
+      },
+      {
+        "id": "0d3918ca2f59fe9ef1ee96bbe1732133d30245f3",
+        "type": "FIX",
+        "text": "sap.ui.rta: RTA StyleClass for mandatory field popup",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770492829"
+          }
+        ]
+      },
+      {
+        "id": "47f01d81e11b9ee655a83ae4cf5b82538db5dbed",
+        "type": "FIX",
+        "text": "sap.ui.rta: Rename plugin correction",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770513373"
+          }
+        ]
+      },
+      {
+        "id": "d95e6c70a57534334539af295dd58b278275c58e",
+        "type": "FIX",
+        "text": "sap.ui.rta: added missing detachElementModified in plugin",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770511413"
+          }
+        ]
+      },
+      {
+        "id": "5f0c050aecdbf3848615ff8ac47cae4062daedc3",
+        "type": "FIX",
+        "text": "sap.ui.rta: enhanced logic for detecting relevant overlays",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770493102"
+          }
+        ]
+      },
+      {
+        "id": "bcff93627bb86ba8fbddd57bec0e8e56b913006e",
+        "type": "FIX",
+        "text": "sap.ui.rta: error handling for command-creation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770493188"
+          }
+        ]
+      },
+      {
+        "id": "cfd3b2c31f602705566796cff058bb9cfa8379ac",
+        "type": "FIX",
+        "text": "sap.ui.rta: no stableID check without DTMetadata",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770492680"
+          }
+        ]
+      },
+      {
+        "id": "34b0ed24dd9633b8b6db6b81aabd841c50962105",
+        "type": "FIX",
+        "text": "sap.ui.rta: Prevent removal of last visible element in aggregation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770455702"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.2": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "23f0d1b6a009d5f2e2e38f3723779c82b1a15559",
+        "type": "FIX",
+        "text": "sap.ui.rta: fixed movable check when child is destroyed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770538607"
+          }
+        ]
+      },
+      {
+        "id": "82ad94f31850742eee49b380baf99db1d6784279",
+        "type": "FIX",
+        "text": "sap.ui.rta: skip start when reloading with pers. changes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770566040"
+          }
+        ]
+      },
+      {
+        "id": "ac84e39dbf24322741299d68bee7770e156ab962",
+        "type": "FIX",
+        "text": "sap.ui.rta QUnit test fix - focus check on wrong element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770584305"
+          }
+        ]
+      },
+      {
+        "id": "b1083e28568d775eacfa535666f98c4452c739f4",
+        "type": "FIX",
+        "text": "sap.ui.rta: Dump moving an object page section in personalization",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770573428"
+          }
+        ]
+      },
+      {
+        "id": "e59cf88ecb260e7fc97a9212ff705648eca735d1",
+        "type": "FIX",
+        "text": "sap.ui.rta: Exiting RTA removes application content from Popup",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770446137"
+          }
+        ]
+      },
+      {
+        "id": "323f5ce485f15b592ba39c9da7848ba2ac0194aa",
+        "type": "FIX",
+        "text": "sap.ui.rta: Missing binding context causes exception starting RTA",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770482529"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.3": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "c7fb0e8df06e63ab9fa17b97dcaf7fff0467b2c3",
+        "type": "FIX",
+        "text": "sap.ui.rta - Easy Add plugin missing i18n entry for button text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780424066"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.4": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "ff6a31ee6ccdf22c550eadd3c4b07ede12fa419e",
+        "type": "FIX",
+        "text": "sap.ui.rta: Local changes used when setting transports on reset",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780513387"
+          }
+        ]
+      },
+      {
+        "id": "0d0e33de5002352c9c10dc081f5f619fb7997f3b",
+        "type": "FIX",
+        "text": "sap.ui.rta: Show BusyIndicator to block app during reset of changes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780513374"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.6": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "5ae2115b14d68abdfb727d3e16e2636140658e63",
+        "type": "FIX",
+        "text": "sap.ui.rta Respect UI.Hidden annotation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880080232"
+          }
+        ]
+      }
+    ]
   }
 }

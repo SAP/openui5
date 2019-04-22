@@ -5,43 +5,38 @@
       {
         "id": "d017482f59e8454de0a5e4445ef53d068c39dace",
         "type": "FEATURE",
-        "text": "VariantManagement control",
+        "text": " VariantManagement control",
         "references": []
       },
       {
         "id": "2a296ecfa2c3f6b09e9f386ff739196bef9cc9c3",
         "type": "FIX",
-        "text": "App Descriptor changes are not removed from local storage",
+        "text": " App Descriptor changes are not removed from local storage",
         "references": []
       },
       {
         "id": "407b94ad3547b5fc7b7469262624220c2ae96d44",
         "type": "FIX",
-        "text": "FlexController",
+        "text": " FlexController",
         "references": []
       },
       {
         "id": "0d59187786d33e86a9dd8b1c5420104f83e68002",
         "type": "FIX",
-        "text": "Selector not set for FlexCommand & destroyed element change save problem",
+        "text": " Selector not set for FlexCommand \u0026 destroyed element change save problem",
         "references": []
       },
       {
         "id": "c8660e4d76f02d867a753a95b5a0bed48f14adf8",
         "type": "FIX",
-        "text": "VariantManagement: typpo in method name",
+        "text": " VariantManagement: typpo in method name",
         "references": []
       },
       {
         "id": "433f2a1bcb675f3bbe02ff06eb72259c7ae9e172",
         "type": "FIX",
-        "text": "sap.ui.fl changeHandler needs to store dependencies",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "002075129400002419772017"
-          }
-        ]
+        "text": " sap.ui.fl changeHandler needs to store dependencies",
+        "references": []
       },
       {
         "id": "2d1e61fb3b0dc683bdc008a6b5838f239a1f8b99",
@@ -52,7 +47,35 @@
       {
         "id": "d5b7d8532e33d8b6910200326e7a1046730c5b5f",
         "type": "FIX",
-        "text": "sap.ui.fl: fixed Promised when applying a change",
+        "text": " sap.ui.fl: fixed Promised when applying a change",
+        "references": []
+      }
+    ]
+  },
+  "1.50.1": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "2bf07df48cc3c67a6f3566e789af714e7ef7b840",
+        "type": "FIX",
+        "text": "Remove test dependencies to sap.ui.comp",
+        "references": []
+      },
+      {
+        "id": "7036e108a222e193a6fdce52857a41fedf29a8a3",
+        "type": "FIX",
+        "text": " changes are applied on recreation in initial app startup",
+        "references": []
+      }
+    ]
+  },
+  "1.50.5": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "e50d7be395529a3de6f879e09bf8c47bb9b75b51",
+        "type": "FIX",
+        "text": " sap.ui.fl Correctly apply changes on xml views",
         "references": []
       }
     ]

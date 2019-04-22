@@ -43,6 +43,60 @@
         "type": "FIX",
         "text": " sap.ui.layout.BlockLayoutCell: Improve aria-labelledby",
         "references": []
+      },
+      {
+        "id": "e3c10daacb99bf5d8f178c16dd8c4531491773b2",
+        "type": "FEATURE",
+        "text": " sap.m.Select: Display multiline value state text",
+        "references": []
+      },
+      {
+        "id": "295137b3501ad1b4482bc9b5eef74d9ee91d29be",
+        "type": "FIX",
+        "text": " AlignedFlowLayout: Overlapping issue of items fixed",
+        "references": []
+      },
+      {
+        "id": "31d7e3687d50de1f97e2d780e6e3ea3af38ffb1c",
+        "type": "FIX",
+        "text": " ResponsiveGridLayout: internal Grid has no parent",
+        "references": []
+      },
+      {
+        "id": "2ef4f62ee7996a96b6fbbdd8830472334b8a9188",
+        "type": "FIX",
+        "text": " ResponsiveGridLayout: use Layout as parent for panels and grids",
+        "references": []
+      },
+      {
+        "id": "0d40c02fdaf10ae3bdb2aacec3a7119431ffe074",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed picker height in IE11",
+        "references": []
+      },
+      {
+        "id": "9203a0f018cb7cf2e732f7c5b153e0789968af11",
+        "type": "FIX",
+        "text": " sap.m.Splitter: Endless resizing is now prevented",
+        "references": []
+      },
+      {
+        "id": "5c420ca5c3b505df969bcba6d45a4b4759e35669",
+        "type": "FIX",
+        "text": " sap.ui.layout.BlockLayoutCell: Improve aria-labelledby",
+        "references": []
+      },
+      {
+        "id": "46f842385abeb16bcf4a301768941cf8e669e395",
+        "type": "FIX",
+        "text": " sap.ui.layout.Grid: Wrapping of Grid children in IE is fixed",
+        "references": []
+      },
+      {
+        "id": "2f063a6179c881a749fb58a0caa346fe462e55fd",
+        "type": "FIX",
+        "text": " sap.ui.rta: fix cut\u0026paste in SimpleForm",
+        "references": []
       }
     ]
   }

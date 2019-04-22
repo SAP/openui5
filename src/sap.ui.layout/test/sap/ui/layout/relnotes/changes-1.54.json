@@ -5,81 +5,61 @@
       {
         "id": "b2a0f67e56bee1409f70b41ac139d8773d68202c",
         "type": "FEATURE",
-        "text": "sap.ui.layout.BlockLayout - new property keepFontSize",
+        "text": " sap.ui.layout.BlockLayout - new property keepFontSize",
         "references": []
       },
       {
         "id": "653a13d20d9e59262e403382cf0836fbcd835663",
         "type": "FIX",
-        "text": "Form: Toolbar wrong aligned",
+        "text": " Form: Toolbar wrong aligned",
         "references": []
       },
       {
         "id": "f3042223230a125b3ebc18d5d639b210e426be3b",
         "type": "FIX",
-        "text": "Form: icons inside of content controls not shown",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770491576"
-          }
-        ]
+        "text": " Form: icons inside of content controls not shown",
+        "references": []
       },
       {
         "id": "f555dcb8331a5ea6d9fd2f8633b6f5e5c8c6a2f7",
         "type": "FIX",
-        "text": "sap.ui.layout - preload sap.ui.core.theming.Parameter",
+        "text": " sap.ui.layout - preload sap.ui.core.theming.Parameter",
         "references": []
       },
       {
         "id": "df49d919902cd253484f3d99e3e4f79f8ce3cf3d",
         "type": "FIX",
-        "text": "sap.ui.layout.Grid: Margin for hidden elements removed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770443884"
-          }
-        ]
+        "text": " sap.ui.layout.Grid: Margin for hidden elements removed",
+        "references": []
       },
       {
         "id": "65858d853d7c0673ba4af4d3abf7097ba5d8afbf",
         "type": "FIX",
-        "text": "sap.ui.layoyut.Grid: Added min-height for wrappers",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770523047"
-          }
-        ]
+        "text": " sap.ui.layoyut.Grid: Added min-height for wrappers",
+        "references": []
       },
       {
         "id": "d5aad968217824668d92a96fc29081cfc434aabb",
         "type": "FIX",
-        "text": "Form* tests: fix race condition in integration tests",
+        "text": " Form* tests: fix race condition in integration tests",
         "references": []
       },
       {
         "id": "e0b6ecf78a6b7190d89cd339d6648f30d3cbc94d",
         "type": "FIX",
-        "text": "sap.ui.dt:added isVisible function to designtime and visible check",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770492781"
-          }
-        ]
+        "text": " sap.ui.dt:added isVisible function to designtime and visible check",
+        "references": []
       },
       {
         "id": "26b49541287511ac7e14bb5b7705eeec1fb38f06",
         "type": "FIX",
-        "text": "SimpleForm: resize handler active after changing layout",
+        "text": " SimpleForm: resize handler active after changing layout",
         "references": []
       },
       {
         "id": "f7c3df91f1f941db317ccf207314db1cd05b8abe",
         "type": "FIX",
-        "text": "Form: using ResponsiveLayout text too much padding",
+        "text": " Form: using ResponsiveLayout text too much padding",
         "references": []
       },
       {
@@ -91,7 +71,57 @@
       {
         "id": "75b6b7b99024549f601219d3474f051c77d6f128",
         "type": "FEATURE",
-        "text": "Form: activate wrapping of Labels as default",
+        "text": " Form: activate wrapping of Labels as default",
+        "references": []
+      }
+    ]
+  },
+  "1.54.1": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "c7e11b718c7e385daa17d5553d32e1b0203ab1e9",
+        "type": "FIX",
+        "text": " QUnit Designtime Library tests in Firefox",
+        "references": []
+      },
+      {
+        "id": "7b927180556b8e37dea9a5496b4b6634d5d56b71",
+        "type": "FIX",
+        "text": " sap.ui.layout: MoveSimpleForm and AddSimpleFormGroup ChangeHandler",
+        "references": []
+      }
+    ]
+  },
+  "1.54.3": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "6b721f06ccee431d36884cfa3e4888ac966a4bf9",
+        "type": "FIX",
+        "text": " ui.layout.Grid: Control visibility properties behavior fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.54.5": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "205eb8b175c7e350ae8fba1ac935918db0df6236",
+        "type": "FIX",
+        "text": " SimpleForm: Error if layout is set after content",
+        "references": []
+      }
+    ]
+  },
+  "1.54.6": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "13bae91908a4ae91c85f9d2c5ee7d394a7d178c5",
+        "type": "FIX",
+        "text": "sap.ui.layout - Update of labels after undo of rename on SimpleForm",
         "references": []
       }
     ]

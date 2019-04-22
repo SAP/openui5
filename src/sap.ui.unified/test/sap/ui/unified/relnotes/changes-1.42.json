@@ -1,131 +1,175 @@
 {
-	"1.42.0": {
-		"date": "August 2016",
-		"notes": [
-			{
-				"id": "514a419b2089cce31bd7942445fa05e8b2d00ad6",
-				"type": "FEATURE",
-				"text": "sap.m.DatePicker: add specialDates for display in Calendar",
-				"references": []
-			},
-			{
-				"id": "d2ddc1bac034a839cfaae5ee867060befdf1a10f",
-				"type": "FIX",
-				"text": "sap.m.DatePicker: don't open for 0001.01.01 in IE",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680044674"
-					},
-					{
-						"type": "BCP",
-						"reference": "1680045357"
-					}
-				]
-			},
-			{
-				"id": "196b606fbe679ba15ab262ab1598d6b4b3f8a801",
-				"type": "FIX",
-				"text": "sap.m.DateTimePicker: Secondary calendar type is read",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680191140"
-					}
-				]
-			},
-			{
-				"id": "89dc5870d936fcc0e04bf90a40aa34a1bed3aee9",
-				"type": "FIX",
-				"text": "sap.ui.unified.Calendar: Month names wrong if more than one month",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "002075129500002034702016"
-					}
-				]
-			},
-			{
-				"id": "27397308163a8f71c9e055ff166327982dfec933",
-				"type": "FIX",
-				"text": "sap.ui.unified.Calendar: prevent default on sapspace added",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "012005040900000230682016"
-					}
-				]
-			},
-			{
-				"id": "dab11696549eb4a1bc9ee702d6ea870a70e0f6f5",
-				"type": "FIX",
-				"text": "sap.ui.unified.Currency - Now handles correct live update of the currency",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680101757"
-					}
-				]
-			},
-			{
-				"id": "dbb1fcc899fedc2730742efb1f85e2f4bf73cd32",
-				"type": "FIX",
-				"text": "sap.ui.unified.FileUploader disabled state cursor fixed",
-				"references": [
-					{
-						"type": "GitHub",
-						"reference": "1050"
-					},
-					{
-						"type": "BCP",
-						"reference": "1680148595"
-					}
-				]
-			},
-			{
-				"id": "641cbb34282ee0c65b32f4a45a7825f706fd5b36",
-				"type": "FIX",
-				"text": "sap.ui.unified.FileUploader: setting content-type for edge browser fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670345855"
-					}
-				]
-			},
-			{
-				"id": "bcb5c9f2a2cf8e6355bb27cc7d317718327c3b8b",
-				"type": "FIX",
-				"text": "sap.ui.unified.Menu: current item of type MenuTextFieldItem does not lost focus in IE and Edge anymore.",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "002075129400001795982016"
-					}
-				]
-			},
-			{
-				"id": "b80f0572f497e2d7f176d4f6a84dda9b0c9cad2f",
-				"type": "FIX",
-				"text": "sap.ui.unified.Shell: Fix search area line-height",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580042649"
-					}
-				]
-			},
-			{
-				"id": "e34ab224a95f3e486dde935aeab6b06cb8ddc8ca",
-				"type": "FIX",
-				"text": "unified.FileUploader: Removed 'src'-Attribute for BlindLayer",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "002075129500001336622016"
-					}
-				]
-			}
-		]
-	}
+  "1.42.0": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "514a419b2089cce31bd7942445fa05e8b2d00ad6",
+        "type": "FEATURE",
+        "text": "sap.m.DatePicker: add specialDates for display in Calendar",
+        "references": []
+      },
+      {
+        "id": "d2ddc1bac034a839cfaae5ee867060befdf1a10f",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: don\u0027t open for 0001.01.01 in IE",
+        "references": []
+      },
+      {
+        "id": "196b606fbe679ba15ab262ab1598d6b4b3f8a801",
+        "type": "FIX",
+        "text": "sap.m.DateTimePicker: Secondary calendar type is read",
+        "references": []
+      },
+      {
+        "id": "89dc5870d936fcc0e04bf90a40aa34a1bed3aee9",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Month names wrong if more than one month",
+        "references": []
+      },
+      {
+        "id": "27397308163a8f71c9e055ff166327982dfec933",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: prevent default on sapspace added",
+        "references": []
+      },
+      {
+        "id": "dab11696549eb4a1bc9ee702d6ea870a70e0f6f5",
+        "type": "FIX",
+        "text": "sap.ui.unified.Currency - Now handles correct live update of the currency",
+        "references": []
+      },
+      {
+        "id": "dbb1fcc899fedc2730742efb1f85e2f4bf73cd32",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader disabled state cursor fixed",
+        "references": []
+      },
+      {
+        "id": "641cbb34282ee0c65b32f4a45a7825f706fd5b36",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: setting content-type for edge browser fixed",
+        "references": []
+      },
+      {
+        "id": "bcb5c9f2a2cf8e6355bb27cc7d317718327c3b8b",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: current item of type MenuTextFieldItem does not lost focus in IE and Edge anymore.",
+        "references": []
+      },
+      {
+        "id": "b80f0572f497e2d7f176d4f6a84dda9b0c9cad2f",
+        "type": "FIX",
+        "text": "sap.ui.unified.Shell: Fix search area line-height",
+        "references": []
+      },
+      {
+        "id": "e34ab224a95f3e486dde935aeab6b06cb8ddc8ca",
+        "type": "FIX",
+        "text": "unified.FileUploader: Removed \u0027src\u0027-Attribute for BlindLayer",
+        "references": []
+      }
+    ]
+  },
+  "1.42.1": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "d9ff523d21f4b07c533cd96db2ef3f92fe1d6891",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: Days are read",
+        "references": []
+      },
+      {
+        "id": "badd2e04d804cf99823703b13e59e6d4dc80aebd",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: Interval header has default cursor",
+        "references": []
+      }
+    ]
+  },
+  "1.42.2": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "def196e7efb09dc5045137a9a7872f3355a2a7c0",
+        "type": "FIX",
+        "text": "changes-1.42.json: remove duplicates",
+        "references": []
+      }
+    ]
+  },
+  "1.42.4": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "f4ce78b6fbeaaf11f4a63b6f3cf20549e36ab37c",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarRow shows group appointment with 0",
+        "references": []
+      },
+      {
+        "id": "9146ed01d2999f6798ee3294541c06035f6dfcb0",
+        "type": "FIX",
+        "text": "sap.ui.unified.Currency: Correct alignment in RTL",
+        "references": []
+      }
+    ]
+  },
+  "1.42.5": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "a5fa020f4f3cc57db896c76a8ed9e70aed1c0587",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Used short format for the week names when there is not enough space",
+        "references": []
+      },
+      {
+        "id": "e3aeec59c3f96cec20eab6d87971f2fe7145f460",
+        "type": "FIX",
+        "text": "sap.ui.unified.Currency: Correct aligned in table",
+        "references": []
+      }
+    ]
+  },
+  "1.42.7": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "b4ead1478116999e7b31f223e08bb476ce58832d",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Displayed correctly in RTL",
+        "references": []
+      },
+      {
+        "id": "c894a1f63871b1e1c7d2c26217f235e35ca1489a",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarUtils: Week number calculated correctly for all \"en-US\" locales",
+        "references": []
+      }
+    ]
+  },
+  "1.42.8": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "79fc1b2a13bc602f57a97345264b7669a3f10cd2",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Day selection drag threshold added",
+        "references": []
+      },
+      {
+        "id": "6628672c3ac5c581b4a1cabc534863ac07ca1a45",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Day selection drag threshold reverted",
+        "references": []
+      },
+      {
+        "id": "795cc2760d15d491f91f1c6eb58fb58e304885e9",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: multiple selection when multiple months is now consistent with the single selection",
+        "references": []
+      }
+    ]
+  }
 }
