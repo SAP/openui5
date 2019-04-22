@@ -17,7 +17,8 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'./LightBoxRenderer',
 	'sap/m/BusyIndicator',
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	'sap/ui/core/Core'
 ],
 	function(
 		library,
@@ -34,7 +35,8 @@ sap.ui.define([
 		coreLibrary,
 		LightBoxRenderer,
 		BusyIndicator,
-		jQuery
+		jQuery,
+		Core
 	) {
 
 		'use strict';
@@ -571,17 +573,26 @@ sap.ui.define([
 		 * @returns {int} The height of the footer.
 		 */
 		LightBox.prototype._calculateFooterHeightInPx = function () {
+			var sTheme = Core.getConfiguration().getTheme();
 			var compact = this.$().parents().hasClass('sapUiSizeCompact');
 			var subtitle = this._getImageContent().getSubtitle();
 
 			var footerHeightRem = 2.5; // base height of the footer in rem
 
 			if (!compact) {
-				footerHeightRem += 0.5;
+				if (sTheme.startsWith("sap_fiori_")) {
+					footerHeightRem += 0.375;
+				} else {
+					footerHeightRem += 0.5;
+				}
 			}
 
 			if (subtitle) {
-				footerHeightRem += 1.5;
+				if (sTheme.startsWith("sap_fiori_")) {
+					footerHeightRem += 1.375;
+				} else {
+					footerHeightRem += 1.5;
+				}
 			}
 
 			return footerHeightRem * 16; // 1rem == 16px
