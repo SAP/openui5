@@ -978,6 +978,10 @@ sap.ui.define([
 				iMaxWidth =  Math.floor(window.innerWidth * 0.9), //90% of the max screen size
 				$popoverContent = this.$('cont');
 
+			if (!$popoverContent[0]) {
+				return;
+			}
+
 			// Browsers except chrome do not increase the width of the container to include scrollbar
 			if (Device.system.desktop && !Device.browser.chrome) {
 
