@@ -17,6 +17,19 @@
 	}
 }
 
+.sapUxAPObjectPageHeaderActionButtonHideText,
+.sapUxAPObjectPageHeaderActionButtonHideIcon {
+
+	&.sapMBtn:hover > .sapMBtnDefault.sapMBtnHoverable:not(.sapMBtnActive) {
+		background-color: @sapUiButtonLiteHoverBackground;
+		border-color:     @sapUiButtonLiteHoverBorderColor;
+	}
+	& > .sapMBtnDefault {
+		border-color: transparent;
+		background-color: transparent;
+	}
+}
+
 .sapUxAPObjectPageHeaderIdentifier {
 	.sapUxAPObjectPageHeaderIdentifierTitle {
 		color: @sapUiGroupTitleTextColor;

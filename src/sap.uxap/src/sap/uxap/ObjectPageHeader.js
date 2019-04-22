@@ -641,11 +641,6 @@ sap.ui.define([
 					};
 				}
 
-				// Force the design of the button to transparent
-				if (oAction instanceof Button && (oAction.getType() === "Default" || oAction.getType() === "Unstyled")) {
-					oAction.setProperty("type", ButtonType.Transparent, false);
-				}
-
 				if (oAction instanceof Button && oAction.getVisible()) {
 					var oActionSheetButton = this._createActionSheetButton(oAction);
 

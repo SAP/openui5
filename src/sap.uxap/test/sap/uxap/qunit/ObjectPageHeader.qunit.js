@@ -570,7 +570,7 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 		}
 	});
 
-	QUnit.test("Adding action buttons as invisible doesn't prevent them from becoming transparent", function (assert) {
+	QUnit.test("Adding action buttons as invisible doesn't prevent them from becoming default", function (assert) {
 
 		var oActionButton = new ObjectPageHeaderActionButton({
 			text:"Invisible Button",
@@ -585,8 +585,8 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 
 		Core.applyChanges();
 
-		assert.strictEqual(oActionButton.getType(), "Transparent",
-			"The button is transparent");
+		assert.strictEqual(oActionButton.getType(), "Default",
+			"The button is default");
 	});
 
 	QUnit.test("Setting visibility to action buttons", function (assert) {
