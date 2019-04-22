@@ -258,6 +258,39 @@ this.waitFor({
     errorMessage : "Did not find the Hello button"
 });
 ```
+## Searching for missing controls
+In OPA5 you can look for controls that are invisibile, disabled or non-interactable by using the
+respective `waitFor` boolean properties: `visible`, `enabled` and `interactable`.
+
+You need a more creative approach to verify that no controls on the page match a certain criteria.
+One idea is to verify that a parent doesn't have a given child. Locate the parent using OPA5
+standard matchers and then use a custom `check` function to iterate over the parent's children.
+The result of `check` should be truthy if no children match a given condition.
+
+The following example shows a custom `check` function that returns true if a popover doesn't
+contain a button with a certain text.
+
+```javascript
+this.waitFor({
+   controlType: "sap.m.Popover",
+    success: function (aPopovers) {
+        return this.waitFor({
+            check: function () {
+                var aPopoverContent = aPopovers[0].getContent();
+                var aButtons = aPopoverContent.forEach(function (oChild) {
+                    return oChild.getMetadata().getName() === "sap.m.Button" &&
+                        oChild.getText() === "Another text";
+                });
+                return !aButtons || !aButtons.length;
+            },
+            success: function () {
+                Opa5.assert.ok(true, "The popover button is missing");
+            },
+            errorMessage: "The popover button is present"
+        });
+    }
+});
+```
 
 ## Searching for Disabled Controls
 

@@ -7,8 +7,9 @@ sap.ui.require([
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/matchers/Properties",
-	"sap/ui/test/matchers/Ancestor"
-], function (Opa5, opaTest, PropertyStrictEquals, Properties, Ancestor) {
+	"sap/ui/test/matchers/Ancestor",
+	"sap/ui/test/actions/Press"
+], function (Opa5, opaTest, PropertyStrictEquals, Properties, Ancestor, Press) {
 	"use strict";
 
 	QUnit.module("Matchers");
@@ -125,6 +126,55 @@ sap.ui.require([
 		Then.iTeardownMyAppFrame();
 	});
 
+	opaTest("Should check that a popover is closed", function (Given, When, Then) {
+		Given.iStartMyAppInAFrame("applicationUnderTest/index.html");
+
+		When.waitFor({
+			viewName: "Main",
+			id: "togglePopoverButton",
+			actions: new Press(),
+			errorMessage: "Did not find the button which opens the popover"
+		});
+
+		Then.waitFor({
+			controlType: "sap.m.Popover",
+			matchers: new Properties({
+				title: "My Popover"
+			}),
+			success: function () {
+				Opa5.assert.ok(true, "The popover is open");
+			},
+			errorMessage: "Did not find the popover"
+		});
+
+		Then.waitFor({
+			controlType: "sap.m.Popover",
+			success: function (aPopovers) {
+				return this.waitFor({
+					check: function () {
+						var aPopoverContent = aPopovers[0].getContent();
+						var aButtons = aPopoverContent.forEach(function (oChild) {
+							return oChild.getMetadata().getName() === "sap.m.Button" && oChild.getText() === "Another text";
+						});
+						return !aButtons || !aButtons.length;
+					},
+					success: function () {
+						Opa5.assert.ok(true, "The popover button is missing");
+					},
+					errorMessage: "The popover button is present"
+				});
+			}
+		});
+
+		When.waitFor({
+			viewName: "Main",
+			id: "togglePopoverButton",
+			actions: new Press(),
+			errorMessage: "Did not find the button which closes the popover"
+		});
+
+		Then.iTeardownMyAppFrame();
+	});
+
 	QUnit.start();
 });
-
