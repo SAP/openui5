@@ -163,6 +163,19 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 
 		assert.strictEqual(this.oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage").length, 1, "image is in DOM");
 	});
+
+	QUnit.test("Image is in Background mode", function (assert) {
+		assert.strictEqual(this._oPage.getHeaderTitle().getAggregation("_objectImage").getMode(), "Background", "image is in Background mode");
+	});
+
+	QUnit.test("Size of image is 'contain'", function (assert) {
+		assert.strictEqual(this._oPage.getHeaderTitle().getAggregation("_objectImage").getBackgroundSize(), "contain", "size of image is 'contain'");
+	});
+
+	QUnit.test("Position of image is 'center'", function (assert) {
+		assert.strictEqual(this._oPage.getHeaderTitle().getAggregation("_objectImage").getBackgroundPosition(), "center", "position of image is 'center'");
+	});
+
 	QUnit.test("Placeholder is hidden if image URI", function (assert) {
 
 		assert.strictEqual(this.oHeaderView.$().find(".sapUxAPHidePlaceholder.sapUxAPObjectPageHeaderObjectImage").length, 1, "hidden placeholder is in DOM");
