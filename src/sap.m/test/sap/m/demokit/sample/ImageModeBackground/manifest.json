@@ -1,0 +1,29 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.ImageModeBackground",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.ImageModeBackground.view.Image",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"view/Image.view.xml",
+					"controller/Image.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}
