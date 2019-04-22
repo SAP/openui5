@@ -23,7 +23,7 @@ describe("sap.m.SinglePlanningCalendar", function() {
 				element.all(by.cssContainingText(".sapMSelectListItem", "Work Week View")).click();
 				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
 			} else {
-				element(by.id("__item1-button")).click();
+				element.all(by.cssContainingText(".sapMSegB", "Work Week View")).click();
 			}
 		});
 
@@ -41,7 +41,7 @@ describe("sap.m.SinglePlanningCalendar", function() {
 				element.all(by.css('.sapMSelectList li')).last().click();
 				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
 			} else {
-				element(by.id("__item2-button")).click();
+				element.all(by.css('ul li')).last().click();
 			}
 		});
 
@@ -77,6 +77,7 @@ describe("sap.m.SinglePlanningCalendar", function() {
 
 		//there is no keyboard on mobile
 		if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
+			element(by.id("SinglePlanningCalendar-Header-NavToolbar-NextBtn")).click();
 			element(by.id("__appointment0-SinglePlanningCalendar-0")).click();
 			browser.actions().mouseMove(element(by.id("__appointment0-SinglePlanningCalendar-13"))).sendKeys(CTRL_KEY).click().sendKeys(CTRL_KEY).perform();
 
@@ -120,9 +121,11 @@ describe("sap.m.SinglePlanningCalendar", function() {
 
 	it("should focus a grid cell with Click", function() {
 		var oSPC = element(by.id("SinglePlanningCalendar"));
-
-		element(by.css("[data-sap-start-date='20180711-0200']")).click();
-		expect(takeScreenshot(oSPC)).toLookAs("focused_cell_with_mouse");
+		//there is no focus on mobile
+		if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
+			element(by.css("[data-sap-start-date='20180711-0200']")).click();
+			expect(takeScreenshot(oSPC)).toLookAs("focused_cell_with_mouse");
+		}
 	});
 
 	it("should focus another cell in the right with ARROW RIGHT keyboard key", function () {
@@ -162,7 +165,7 @@ describe("sap.m.SinglePlanningCalendar", function() {
 
 		//there is no keyboard on mobile
 		if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
-			element(by.css(sSelector)).sendKeys(protractor.Key[iControl]);
+			element(by.css(sSelector)).sendKeys(iControl);
 			expect(takeScreenshot(oSPC)).toLookAs(sRefImage);
 		}
 	}
@@ -172,7 +175,7 @@ describe("sap.m.SinglePlanningCalendar", function() {
 
 		//there is no keyboard on mobile
 		if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
-			element(by.id(sSelector)).sendKeys(protractor.Key[iControl]);
+			element(by.id(sSelector)).sendKeys(iControl);
 			expect(takeScreenshot(oSPC)).toLookAs(sRefImage);
 		}
 	}
