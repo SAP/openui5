@@ -498,7 +498,7 @@ sap.ui.define([
 
 		//Assert
 		assert.strictEqual(oMirrorDiv.innerHTML.replace('&nbsp;', ''), sLongText, "The mirror div should have the same text as an inner html");
-		assert.strictEqual(oMirrorDiv.scrollHeight, oTextAreaDOMRef.scrollHeight, "The mirror div should have the same height as the textarea");
+		assert.strictEqual(oMirrorDiv.clientHeight, oTextAreaDOMRef.clientHeight, "The mirror div should have the same height as the textarea");
 		assert.ok(initialHeight === oDOMRef.clientHeight, "TextArea height should have been extended properly.");
 		assert.ok(oTextAreaDOMRef.clientHeight < oTextAreaDOMRef.scrollHeight, "TextArea should have a scroll.");
 
