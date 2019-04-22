@@ -90,6 +90,29 @@ return new Opa5().waitFor({
 });
 ```
 
+`sap.ui.test.matchers.Descendant`: This matcher checks if the control has the specified descendant.
+In this example, we search for a table row which has a text control with a certain value.
+
+```javascript
+this.waitFor({
+    controlType: "sap.m.Text",
+    matchers: new Properties({
+        text: "special text"
+    }),
+    success: function (aText) {
+        return this.waitFor({
+            controlType: "sap.m.ColumnListItem",
+            matchers: new Descendant(aText[0]),
+            success: function (aRows) {
+                Opa5.assert.strictEqual(aRows.length, 1, "Found row with special text");
+            },
+            errorMessage: "Did not find row or special text is not inside table row"
+        });
+    },
+    errorMessage: "Did not find special text"
+});
+```
+
 `sap.ui.test.matchers.BindingPath`: This matcher checks if the controls have specified data binding paths. The `path` property matches
 controls by their binding context. Controls with a binding context are usually inside an aggregation or have a parent control with data binding.
 The `propertyPath` property matches controls by the data binding paths of their own properties. Binding property paths can be

@@ -162,6 +162,7 @@
 					"sap.ui.core.sample.matcher.BindingPath",
 					"sap.ui.core.sample.matcher.I18NText",
 					"sap.ui.core.sample.matcher.LabelFor",
+					"sap.ui.core.sample.matcher.Descendant",
 					"sap.ui.core.sample.OpaMatchers"
 				]
 			},
@@ -679,6 +680,11 @@
 				"id": "sap.ui.core.sample.matcher.LabelFor",
 				"name": "Label For Matcher",
 				"description": "The LabelFor matcher searches for given control associated with labelFor property in OPA tests."
+			},
+			{
+				"id": "sap.ui.core.sample.matcher.Descendant",
+				"name": "Descendant Matcher",
+				"description": "The descendant matcher checks if a control has a given descendant."
 			},
 			{
 				"id": "sap.ui.core.sample.MessageManager.BasicMessages",
