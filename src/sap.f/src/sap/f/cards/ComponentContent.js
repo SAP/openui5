@@ -46,9 +46,11 @@ sap.ui.define([
 			async: true,
 			componentCreated: function () {
 				// TODO _updated event is always needed, so that the busy indicator knows when to stop. We should review this for contents which do not have data.
+				this.fireEvent("_actionContentReady");
 				this.fireEvent("_updated");
 			}.bind(this),
 			componentFailed: function () {
+				this.fireEvent("_actionContentReady");
 				this._handleError("Card content failed to create component");
 			}.bind(this)
 		});

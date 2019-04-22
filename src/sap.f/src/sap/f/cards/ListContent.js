@@ -170,9 +170,11 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/m/List", "sap/m/StandardListItem"
 						});
 					}
 				}
-
 				oList.addItem(oListItem);
 			});
+
+			//workaround until actions refactor
+			this.fireEvent("_actionContentReady");
 		};
 
 		/**

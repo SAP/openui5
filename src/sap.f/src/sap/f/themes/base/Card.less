@@ -84,14 +84,6 @@
 		border: none;
 	}
 
-	&.sapFCardHeaderClickable {
-		cursor: pointer;
-
-		.sapMText {
-			cursor: pointer;
-		}
-	}
-
 	.sapFCardIcon.sapFAvatar {
 		flex-shrink: 0;
 		margin-right: 0.75rem;
@@ -301,6 +293,17 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 
 .sapFCard.sapFCardNoContent .sapFCardHeader {
 	border-bottom: none;
+}
+
+.sapFCard {
+  .sapFCardClickable,
+  .sapFCardClickable svg {
+	cursor: pointer !important;
+
+	.sapMText {
+	  cursor: pointer;
+	}
+  }
 }
 
 .sapFCardHeader:focus::before,

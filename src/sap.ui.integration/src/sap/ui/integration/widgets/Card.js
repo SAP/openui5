@@ -1185,8 +1185,6 @@ sap.ui.define([
 			});
 		}.bind(this));
 
-		oHeader._attachActions(oSettings);
-
 		var oPreviousHeader = this.getAggregation("_header");
 
 		if (oPreviousHeader) {
@@ -1268,7 +1266,14 @@ sap.ui.define([
 		// This will help to avoid appearance of empty table before its data comes,
 		// but prevent ObjectContent to render its template, which might be useful
 		this.setAggregation("_content", oContent);
-		this._fireReady(oContent, "_contentReady");
+
+		if (oContent.isReady()) {
+			this.fireEvent("_contentReady");
+		} else {
+			oContent.attachEvent("_ready", function () {
+				this.fireEvent("_contentReady");
+			}.bind(this));
+		}
 	};
 
 	/**

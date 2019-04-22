@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/f/cards/BaseContent", "sap/m/HBox", "sap/m/VBox", "sap/m/Text", "sap/m/Title", "sap/f/Avatar", "sap/m/Link","sap/m/Label", "sap/ui/core/ResizeHandler", "sap/ui/layout/AlignedFlowLayout", "sap/ui/dom/units/Rem"],
-	function (BaseContent, HBox, VBox, Text, Title, Avatar, Link , Label, ResizeHandler, AlignedFlowLayout, Rem) {
+sap.ui.define(["sap/f/cards/BaseContent", "sap/m/HBox", "sap/m/VBox", "sap/m/Text", "sap/m/Title", "sap/f/Avatar", "sap/m/Link","sap/m/Label", "sap/ui/core/ResizeHandler", "sap/ui/layout/AlignedFlowLayout", "sap/ui/dom/units/Rem", "sap/f/cards/ActionEnablement"],
+	function (BaseContent, HBox, VBox, Text, Title, Avatar, Link , Label, ResizeHandler, AlignedFlowLayout, Rem, ActionEnablement) {
 		"use strict";
 
 		/**
@@ -198,10 +198,13 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/m/HBox", "sap/m/VBox", "sap/m/Tex
 						oGroupContainer.addItem(oItemValue);
 					}
 				});
-
 				oContainer.addContent(oGroupContainer);
 			});
+
+			this._attachActions(oContainer, this);
 		};
+
+		ActionEnablement.enrich(ObjectContent);
 
 		return ObjectContent;
 	});

@@ -39,6 +39,13 @@ sap.ui.define([
 					multiple: false,
 					visibility: "hidden"
 				}
+			},
+			events: {
+
+				/**
+				 * Fires when the user presses the control.
+				 */
+				press: {}
 			}
 		},
 		renderer: function (oRm, oCardContent) {
@@ -81,6 +88,7 @@ sap.ui.define([
 
 		// So far the ready event will be fired when the data is ready. But this can change in the future.
 		this._awaitEvent("_dataReady");
+		this._awaitEvent("_actionContentReady");
 
 		Promise.all(this._aReadyPromises).then(function () {
 			this._bReady = true;
@@ -88,6 +96,10 @@ sap.ui.define([
 		}.bind(this));
 
 		this.setBusyIndicatorDelay(0);
+	};
+
+	BaseContent.prototype.ontap = function () {
+		this.firePress({/* no parameters */});
 	};
 
 	BaseContent.prototype.exit = function () {

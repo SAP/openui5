@@ -8,9 +8,10 @@ sap.ui.define([
 		"sap/viz/ui5/data/FlattenedDataset",
 		"sap/base/Log",
 		"sap/ui/core/Core",
-		"jquery.sap.global"
+		"jquery.sap.global",
+		"sap/f/cards/ActionEnablement"
 	],
-	function (BaseContent, VizFrame, FeedItem, FlattenedDataset, Log, Core, jQuery) {
+	function (BaseContent, VizFrame, FeedItem, FlattenedDataset, Log, Core, jQuery, ActionEnablement) {
 		"use strict";
 
 		/**
@@ -234,6 +235,9 @@ sap.ui.define([
 			});
 			var oVizProperties = this._getVizPropertiesObject(oChartObject);
 			oChart.setVizProperties(oVizProperties);
+
+			this._attachActions(oChartObject, this);
+
 			this.setAggregation("_content", oChart);
 		};
 
@@ -258,6 +262,8 @@ sap.ui.define([
 				}
 			}
 		};
+
+		ActionEnablement.enrich(AnalyticalContent);
 
 		return AnalyticalContent;
 	});

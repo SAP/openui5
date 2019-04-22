@@ -212,6 +212,11 @@ function (
 			"content": {
 				"data": {
 					"service": "UserRecent"
+				},
+				"item": {
+					"title": {
+						"value": "Gery"
+					}
 				}
 			}
 		}
@@ -237,6 +242,12 @@ function (
 					"json": {
 						"key": "value"
 					}
+				},
+				"item": {
+					"title": {
+						"label": "Title",
+						"value": "{Name}"
+					}
 				}
 			}
 		}
@@ -249,14 +260,27 @@ function (
 					"request": {
 						"url": "some/relative/url"
 					}
-				}
+				},
+				"item": {
+						"title": {
+							"label": "Title",
+							"value": "{Name}"
+						}
+					}
 			}
 		}
 	};
 	var oManifest_ContentCase5 = {
 		"sap.card": {
 			"type": "List",
-			"content": {}
+			"content": {
+				"item": {
+					"title": {
+						"label": "Title",
+						"value": "{Name}"
+					}
+				}
+			}
 		}
 	};
 

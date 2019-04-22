@@ -5,12 +5,14 @@ sap.ui.define(["sap/f/cards/BaseContent",
 		"sap/suite/ui/commons/Timeline",
 		"sap/suite/ui/commons/library",
 		"sap/suite/ui/commons/TimelineItem",
-		'sap/ui/base/ManagedObject'],
+		'sap/ui/base/ManagedObject',
+		"sap/f/cards/ActionEnablement"],
 	function (BaseContent,
 			  Timeline,
 			  suiteLibrary,
 			  TimelineItem,
-			  ManagedObject) {
+			  ManagedObject,
+			  ActionEnablement) {
 		"use strict";
 
 		/**
@@ -123,6 +125,8 @@ sap.ui.define(["sap/f/cards/BaseContent",
 			mItem.icon && this._bindItemProperty("icon", mItem.icon.src);
 			/* eslint-enable no-unused-expressions */
 
+
+			this._attachActions(mItem, this._oTimeLineItemTemplate);
 			var oBindingInfo = {
 				template: this._oTimeLineItemTemplate
 			};
@@ -176,7 +180,11 @@ sap.ui.define(["sap/f/cards/BaseContent",
 
 				oTimeline.addContent(oTimelineItem);
 			});
+
+			//workaround until actions refactor
+			this.fireEvent("_actionContentReady");
 		};
+		ActionEnablement.enrich(TimelineContent);
 
 		/**
 		 * @overwrite

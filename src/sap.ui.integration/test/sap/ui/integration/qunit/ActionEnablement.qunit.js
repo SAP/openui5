@@ -427,6 +427,261 @@ sap.ui.define([
 				}
 			};
 
+		var oManifest_Analytical_Service = {
+			"_version": "1.8.0",
+			"sap.app": {
+				"type": "card"
+			},
+			"sap.ui5": {
+				"services": {
+					"Navigation4": {
+						"factoryName": "test.service.SampleNavigationFactory"
+					}
+				}
+			},
+			"sap.card": {
+				"type": "Analytical",
+				"header": {
+					"type": "Numeric",
+					"title": "Content with Navigation Service",
+					"data": {
+						"json": {
+							"n": 6547394.45496,
+							"u": "М $",
+							"trend": "Down",
+							"valueColor": "Critical"
+						}
+					},
+					"subTitle": "Success Rate",
+					"mainIndicator": {
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"sideIndicators": [
+						{
+							"title": "Decrease",
+							"number": "24",
+							"unit": "weeks"
+						}
+					]
+				},
+				"content": {
+					"chartType": "Donut",
+					"legend": {
+						"visible": true,
+						"position": "Top",
+						"alignment": "Center"
+					},
+					"plotArea": {
+						"dataLabel": {
+							"visible": true,
+							"showTotal": true
+						}
+					},
+					"title": {
+						"text": "Donut chart",
+						"visible": true,
+						"alignment": "Bottom"
+					},
+					"measureAxis": "size",
+					"dimensionAxis": "color",
+					"data": {
+						"request": {
+							"url": "test-resources/sap/ui/integration/qunit/manifests/cost.json"
+						},
+						"path": "/milk"
+					},
+					"dimensions": [
+						{
+							"label": "Store Name",
+							"value": "{Store Name}"
+						}
+					],
+					"measures": [
+						{
+							"label": "Revenue",
+							"value": "{Revenue}"
+						}
+					],
+					"actions": [
+						{
+							"type": "Navigation",
+							"service": {
+								"name": "Navigation4"
+							},
+							"parameters": {
+								"url": "https://www.sap.com"
+							}
+						}
+					]
+				}
+			}
+		};
+
+		var oManifest_Analytical_Url = {
+			"_version": "1.8.0",
+			"sap.app": {
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Analytical",
+				"header": {
+					"type": "Numeric",
+					"title": "Content with Navigation Service",
+					"data": {
+						"json": {
+							"n": 6547394.45496,
+							"u": "М $",
+							"trend": "Down",
+							"valueColor": "Critical"
+						}
+					},
+					"subTitle": "Success Rate",
+					"mainIndicator": {
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"sideIndicators": [
+						{
+							"title": "Decrease",
+							"number": "24",
+							"unit": "weeks"
+						}
+					],
+					"actions": [
+						{
+							"type": "Navigation",
+							"url": "https://www.sap.com"
+						}
+					]
+				},
+				"content": {
+					"chartType": "Donut",
+					"legend": {
+						"visible": true,
+						"position": "Top",
+						"alignment": "Center"
+					},
+					"plotArea": {
+						"dataLabel": {
+							"visible": true,
+							"showTotal": true
+						}
+					},
+					"title": {
+						"text": "Donut chart",
+						"visible": true,
+						"alignment": "Bottom"
+					},
+					"measureAxis": "size",
+					"dimensionAxis": "color",
+					"data": {
+						"request": {
+							"url": "test-resources/sap/ui/integration/qunit/manifests/cost.json"
+						},
+						"path": "/milk"
+					},
+					"dimensions": [
+						{
+							"label": "Store Name",
+							"value": "{Store Name}"
+						}
+					],
+					"measures": [
+						{
+							"label": "Revenue",
+							"value": "{Revenue}"
+						}
+					],
+					"actions": [
+						{
+							"type": "Navigation",
+							"url": "https://www.sap.com"
+						}
+					]
+				}
+			}
+		};
+
+		var oManifest_Analytical_No_Actions = {
+			"_version": "1.8.0",
+			"sap.app": {
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Analytical",
+				"header": {
+					"type": "Numeric",
+					"title": "Content with Navigation Service",
+					"data": {
+						"json": {
+							"n": 6547394.45496,
+							"u": "М $",
+							"trend": "Down",
+							"valueColor": "Critical"
+						}
+					},
+					"subTitle": "Success Rate",
+					"mainIndicator": {
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"sideIndicators": [
+						{
+							"title": "Decrease",
+							"number": "24",
+							"unit": "weeks"
+						}
+					]
+				},
+				"content": {
+					"chartType": "Donut",
+					"legend": {
+						"visible": true,
+						"position": "Top",
+						"alignment": "Center"
+					},
+					"plotArea": {
+						"dataLabel": {
+							"visible": true,
+							"showTotal": true
+						}
+					},
+					"title": {
+						"text": "Donut chart",
+						"visible": true,
+						"alignment": "Bottom"
+					},
+					"measureAxis": "size",
+					"dimensionAxis": "color",
+					"data": {
+						"request": {
+							"url": "test-resources/sap/ui/integration/qunit/manifests/cost.json"
+						},
+						"path": "/milk"
+					},
+					"dimensions": [
+						{
+							"label": "Store Name",
+							"value": "{Store Name}"
+						}
+					],
+					"measures": [
+						{
+							"label": "Revenue",
+							"value": "{Revenue}"
+						}
+					]
+				}
+			}
+		};
+
 		function testNavigationServiceListContent(oManifest, assert) {
 			// Arrange
 			var done = assert.async(),
@@ -495,7 +750,7 @@ sap.ui.define([
 			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
 				var oCardHeader = this.oCard.getCardHeader();
-				assert.ok(oCardHeader.hasStyleClass("sapFCardHeaderClickable"), "Card Header has a clickable style is added");
+				assert.ok(oCardHeader.hasStyleClass("sapFCardClickable"), "Card Header has a clickable style is added");
 
 				this.oCard.attachAction(function () {
 					// Assert
@@ -530,7 +785,7 @@ sap.ui.define([
 				Core.applyChanges();
 
 				var oCardHeader = this.oCard.getCardHeader();
-				assert.ok(oCardHeader.hasStyleClass("sapFCardHeaderClickable"), "Card Header has a  clickable style is added");
+				assert.ok(oCardHeader.hasStyleClass("sapFCardClickable"), "Card Header has a  clickable style is added");
 				//Act
 				oCardHeader.firePress();
 				Core.applyChanges();
@@ -560,7 +815,7 @@ sap.ui.define([
 				var oCardHeader = this.oCard.getCardHeader();
 
 				// Assert
-				assert.notOk(oCardHeader.hasStyleClass("sapFCardHeaderClickable"), "Card Header has a  clickable style is added");
+				assert.notOk(oCardHeader.hasStyleClass("sapFCardClickable"), "Card Header has a  clickable style is added");
 
 				//Act
 				oCardHeader.firePress();
@@ -590,7 +845,7 @@ sap.ui.define([
 				var oCardHeader = this.oCard.getCardHeader();
 
 				// Assert
-				assert.notOk(oCardHeader.hasStyleClass("sapFCardHeaderClickable"), "Card Header has not a clickable style is added");
+				assert.notOk(oCardHeader.hasStyleClass("sapFCardClickable"), "Card Header has not a clickable style is added");
 				assert.ok(oAttachNavigationSpy.callCount === 0, "_attachNavigationAction should not be called");
 
 				//Clean up
@@ -838,6 +1093,122 @@ sap.ui.define([
 				assert.ok(oActionSpy.callCount === 1, "Card List Item is clicked");
 
 				// Cleanup
+				oActionSpy.restore();
+				done();
+			}.bind(this));
+		});
+
+		QUnit.module("Navigation Action - Analytical Content", {
+			beforeEach: function () {
+				this.oCard = new Card({
+					width: "400px",
+					height: "600px"
+				});
+
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("Analytical content should be actionable - service ", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oActionSpy = sinon.spy(ActionEnablement, "_fireAction"),
+				oStubOpenUrl = sinon.stub(ActionEnablement, "openUrl").callsFake( function () {});
+
+			this.oCard.setManifest(oManifest_Analytical_Service);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+
+			this.oCard.attachEvent("_ready", function () {
+
+				Core.applyChanges();
+				var oCardLContent = this.oCard.getCardContent();
+
+				this.oCard.attachAction(function () {
+
+					// Assert
+					assert.ok(oCardLContent.hasStyleClass("sapFCardClickable"), "Card Content is clickable");
+					assert.ok(oActionSpy.callCount === 1, "Card Content is clicked and action event is fired");
+
+					// Cleanup
+					oStubOpenUrl.restore();
+					oActionSpy.restore();
+					done();
+				});
+
+				//Act
+				oCardLContent.firePress();
+				Core.applyChanges();
+			}.bind(this));
+		});
+
+
+		QUnit.test("Analytical Card should be actionable - url", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oActionSpy = sinon.spy(ActionEnablement, "_fireAction"),
+				oStubOpenUrl = sinon.stub(ActionEnablement, "openUrl").callsFake( function () {});
+
+			this.oCard.setManifest(oManifest_Analytical_Url);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+				var oCardLContent = this.oCard.getCardContent(),
+					oCardHeader =  this.oCard.getCardHeader();
+
+				// Assert
+				assert.ok(oCardLContent.hasStyleClass("sapFCardClickable"), "Card Content is clickable");
+				assert.ok(oCardHeader.hasStyleClass("sapFCardClickable"), "Card Content is clickable");
+
+				//Act
+				oCardLContent.firePress();
+				oCardHeader.firePress();
+				Core.applyChanges();
+
+				//Assert
+				assert.strictEqual(oActionSpy.callCount, 2, "Card Content and header are clicked and action event is fired twice");
+
+				// Cleanup
+				oStubOpenUrl.restore();
+				oActionSpy.restore();
+				done();
+			}.bind(this));
+		});
+
+		QUnit.test("Analytical Card should be not actionable", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oActionSpy = sinon.spy(ActionEnablement, "_fireAction"),
+				oStubOpenUrl = sinon.stub(ActionEnablement, "openUrl").callsFake( function () {});
+
+			this.oCard.setManifest(oManifest_Analytical_No_Actions);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+				var oCardLContent = this.oCard.getCardContent(),
+					oCardHeader =  this.oCard.getCardHeader();
+
+				// Assert
+				assert.notOk(oCardLContent.hasStyleClass("sapFCardClickable"), "Card Content is clickable");
+				assert.notOk(oCardHeader.hasStyleClass("sapFCardClickable"), "Card Content is clickable");
+
+				//Act
+				oCardLContent.firePress();
+				oCardHeader.firePress();
+				Core.applyChanges();
+
+				//Assert
+				assert.strictEqual(oActionSpy.callCount, 0, "Card Content and header are clicked and action event is fired twice");
+
+				// Cleanup
+				oStubOpenUrl.restore();
 				oActionSpy.restore();
 				done();
 			}.bind(this));

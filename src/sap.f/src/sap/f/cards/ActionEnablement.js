@@ -16,8 +16,9 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 
 		function _attachActions(mItem, oControl) {
 			if (!mItem.actions) {
-				//For now firing the event here, after refactor nee to think of a way to sync async navigation setters
-				this.fireEvent("_actionHeaderReady");
+				//For now firing the event here, after refactor need to think of a way to sync async navigation setters
+				this._fireActionReady(oControl);
+
 				return;
 			}
 
@@ -26,8 +27,8 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 			if (oAction && oAction.type === "Navigation") {
 				this._attachNavigationAction(mItem, oControl || this);
 			} else {
-				//For now firing the event here, after refactor nee to think of a way to sync async navigation setters
-				this.fireEvent("_actionHeaderReady");
+				//For now firing the event here, after refactor need to think of a way to sync async navigation setters
+				this._fireActionReady(oControl);
 			}
 		}
 
@@ -148,7 +149,7 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 
 		// Header specific but could be generic
 		function _addHeaderClasses() {
-			this.addStyleClass("sapFCardHeaderClickable");
+			this.addStyleClass("sapFCardClickable");
 		}
 
 		ActionEnablement._fireAction = function (oSource, oActionParams, oModel, sPath) {
@@ -247,12 +248,12 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 				}
 			}
 
-			if (oControl.isA("sap.f.cards.IHeader") && oAction.service) {
+			if ((oControl.isA("sap.f.cards.IHeader") || oControl.isA("sap.f.cards.AnalyticalContent")) && oAction.service) {
 				this._setHeaderActionEnabledState(mItem).then(function (bEnabled) {
 					if (bEnabled) {
 						attachPress();
 					}
-					this.fireEvent("_actionHeaderReady");
+					this._fireActionReady(oControl);
 				}.bind(this));
 				return;
 			} else {
@@ -264,21 +265,31 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 				} else {
 					attachPress();
 				}
-				this.fireEvent("_actionHeaderReady");
+				this._fireActionReady(oControl);
 			}
 		};
+
+		function _fireActionReady (oControl) {
+			if (oControl && oControl.isA("sap.f.cards.IHeader")) {
+				this.fireEvent("_actionHeaderReady");
+			} else {
+				this.fireEvent("_actionContentReady");
+			}
+		}
 
 		ActionEnablement.enrich = function (Control) {
 			Control.prototype._attachActions = _attachActions;
 			Control.prototype._attachNavigationAction = this._attachNavigationAction;
+			Control.prototype._fireActionReady = _fireActionReady;
 
 			// For simplicity do type checking for now.
 			if (Control.prototype.isA("sap.f.cards.ListContent") || Control.prototype.isA("sap.f.cards.TableContent")) {
 				Control.prototype._setItemTypeFormatter = _setItemTypeFormatter;
 				Control.prototype._setActionEnabledState = _setActionEnabledState;
 			}
-			if (Control.prototype.isA("sap.f.cards.IHeader")) {
+			if (Control.prototype.isA("sap.f.cards.IHeader") || Control.prototype.isA("sap.f.cards.AnalyticalContent")) {
 				Control.prototype._addHeaderClasses = _addHeaderClasses;
+				//After refactor -> new name of function
 				Control.prototype._setHeaderActionEnabledState = _setHeaderActionEnabledState;
 			}
 		};
