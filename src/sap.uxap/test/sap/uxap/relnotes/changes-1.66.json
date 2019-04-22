@@ -7,6 +7,18 @@
         "type": "FIX",
         "text": " sap.uxap.ObjectPageSubSection: Fixed misalignment of sections",
         "references": []
+      },
+      {
+        "id": "ac412af86ca3fe60597c68ecff47517da27e6ba0",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Removed redundant invalidation",
+        "references": []
+      },
+      {
+        "id": "46a64e542c5b907fb09a441176eaaabc714b87ce",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageSectionBase: No more redundant invalidation",
+        "references": []
       }
     ]
   }

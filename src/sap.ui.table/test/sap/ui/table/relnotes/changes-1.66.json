@@ -1,0 +1,13 @@
+{
+  "1.66.0": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "202c7729ea50fc88c9d200c0b3fe1e49c8b6efdc",
+        "type": "FIX",
+        "text": " Table: Align cell content according to column configuration",
+        "references": []
+      }
+    ]
+  }
+}

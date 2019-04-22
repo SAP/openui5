@@ -13,6 +13,96 @@
         "type": "FIX",
         "text": " sap.m.ObjectHeader: bottom padding is correct now for Safari",
         "references": []
+      },
+      {
+        "id": "aa7af7b34d904a7b6e45efd949124dd0bfd884aa",
+        "type": "FEATURE",
+        "text": " HeaderContainer - mobile swipe support",
+        "references": []
+      },
+      {
+        "id": "06391995448dc65ea9badf743202b8ea9e76bfb6",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: Arrow icons for appointments are added",
+        "references": []
+      },
+      {
+        "id": "cc0d811051d27f39f590a723ce6bf907250c53d2",
+        "type": "FIX",
+        "text": " JSDoc: incorporate feedback from SDK feedback channel (2019/3)",
+        "references": []
+      },
+      {
+        "id": "d1c6fc746aab94b6845a842dbc077f2cb5411d83",
+        "type": "FIX",
+        "text": " P13nDialog: navigation displaying improvements",
+        "references": []
+      },
+      {
+        "id": "fd9e70d802f5643388a76aa840a18b85e77a4a2d",
+        "type": "FIX",
+        "text": " sap.m.Button: Back type is displayed correctly",
+        "references": []
+      },
+      {
+        "id": "306a4b840345e31660d8bc2e89683c0f10bfd04d",
+        "type": "FIX",
+        "text": " sap.m.Button: remove overstyling inside Bar for Fiori 3 theme",
+        "references": []
+      },
+      {
+        "id": "4b41e0c991850f4bd799273a6926462863b6e684",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: including invalid value doesn\u0027t make the control throw an error",
+        "references": []
+      },
+      {
+        "id": "874a0fbb93feae6f58a7c312e16d1f0e9804bc68",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: range now covers all hours from last day",
+        "references": []
+      },
+      {
+        "id": "4c1ab7ca7e0bf9a7a32b5e0092211fc6a3cbe872",
+        "type": "FIX",
+        "text": " sap.m.GrowingEnablement: CountMode\u003dNone should not jump to the first item after more button is pressed",
+        "references": []
+      },
+      {
+        "id": "27c80120af431d4c65cb32f3521fd063b0044a1d",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Tokenizer`s width calculation fixed",
+        "references": []
+      },
+      {
+        "id": "a96fb63873a4354a0b1a96e67c000a4bb84dd4b1",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Preserving hours on navigating in custom views",
+        "references": []
+      },
+      {
+        "id": "2e2efa0bb460e56cf52a00b94f94e1d64c6dca45",
+        "type": "FIX",
+        "text": " sap.m.Popover: Adjust content width when scrollbar is added",
+        "references": []
+      },
+      {
+        "id": "09678e91c589ef73070b64967fec5589fbbce362",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: Correct CSS selector",
+        "references": []
+      },
+      {
+        "id": "b0251665854be08289795f929445bc35cb0f2b1e",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: Remove unnecessary padding",
+        "references": []
+      },
+      {
+        "id": "2e815dfd4bfbb0e36eea6160cc008c67550da582",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Growing property is now corrected",
+        "references": []
       }
     ]
   }

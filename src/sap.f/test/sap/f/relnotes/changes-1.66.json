@@ -7,6 +7,24 @@
         "type": "FIX",
         "text": " sap.m.DynamicPageTitle: Fixed incorrect display of aggregation",
         "references": []
+      },
+      {
+        "id": "de8b9f8190e719158e257d665adbe143f9e35c96",
+        "type": "FEATURE",
+        "text": " sap.f.GridContainer: New properties added",
+        "references": []
+      },
+      {
+        "id": "cc0d811051d27f39f590a723ce6bf907250c53d2",
+        "type": "FIX",
+        "text": " JSDoc: incorporate feedback from SDK feedback channel (2019/3)",
+        "references": []
+      },
+      {
+        "id": "7e460fedb44e18aaaa91621c74f78205a287b1b1",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Space key is now allowed in Input in the title",
+        "references": []
       }
     ]
   }

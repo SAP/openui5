@@ -7,6 +7,12 @@
         "type": "FIX",
         "text": " sap.m.Select: Fixed picker height in IE11",
         "references": []
+      },
+      {
+        "id": "ac37916f742463215275ad3d4b4df869e7b6e4cd",
+        "type": "FIX",
+        "text": " ResponsiveGridLayout: use Layout as parent for panels and grids",
+        "references": []
       }
     ]
   }

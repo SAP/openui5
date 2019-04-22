@@ -7,6 +7,60 @@
         "type": "FIX",
         "text": " ODataMessageParser: Duplicate filtering",
         "references": []
+      },
+      {
+        "id": "155f09ca22a6312f4b1382ef76547b67aa03daca",
+        "type": "FEATURE",
+        "text": " Opa: add enabled option",
+        "references": []
+      },
+      {
+        "id": "81e564abab9c3fc901cacef0489f94cbd262d48e",
+        "type": "FEATURE",
+        "text": " Send FESR via Beacon API",
+        "references": []
+      },
+      {
+        "id": "4e1b86a8c1a479e11467389251dc419427253533",
+        "type": "FEATURE",
+        "text": " core.routing: use \u0027componentUsages\u0027 in component target",
+        "references": []
+      },
+      {
+        "id": "940b7439159fd7ac24db271e6ece467832789687",
+        "type": "FEATURE",
+        "text": " message.Message: add property technicalDetails",
+        "references": []
+      },
+      {
+        "id": "25c008dc816b245f8ea60f96f631bee70e658af3",
+        "type": "FEATURE",
+        "text": " sap.ui.core.Component: Propagate Cache Tokens to nested components",
+        "references": []
+      },
+      {
+        "id": "8c427982435ebab6017d5ff79d80b943a289172f",
+        "type": "FIX",
+        "text": " AppCacheBuster: ignore hash-only URLs for rewriting",
+        "references": []
+      },
+      {
+        "id": "cc0d811051d27f39f590a723ce6bf907250c53d2",
+        "type": "FIX",
+        "text": " JSDoc: incorporate feedback from SDK feedback channel (2019/3)",
+        "references": []
+      },
+      {
+        "id": "361748c685b977fcb79d6c2652a2283b74ee18cc",
+        "type": "FIX",
+        "text": " ManagedObjectModel: Inform when parts of a property change",
+        "references": []
+      },
+      {
+        "id": "45e077f96589b8856b0005c38981f4febd26e082",
+        "type": "FIX",
+        "text": " core.Popup: fix the immediate closed popup when of set to window",
+        "references": []
       }
     ]
   }
