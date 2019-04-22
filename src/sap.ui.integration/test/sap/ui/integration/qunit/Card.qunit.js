@@ -1809,5 +1809,37 @@ sap.ui.define([
 			this.oCard.setManifest(this.oManifest);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
+
+		QUnit.module("Card manifest  - URL", {
+			beforeEach: function () {
+				this.oCardUrl = new Card({
+					width: "400px",
+					height: "600px"
+				});
+			},
+			afterEach: function () {
+				this.oCardUrl.destroy();
+				this.oCardUrl = null;
+			}
+		});
+
+		QUnit.test("Card manifest set trough url", function (assert) {
+
+			// Arrange
+			var done = assert.async();
+			this.oCardUrl.attachEventOnce("_ready", function () {
+
+				Core.applyChanges();
+
+					// Assert
+					assert.ok(true, "Should have fired _ready event.");
+
+					//clean up
+					done();
+			});
+
+			this.oCardUrl.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+			this.oCardUrl.placeAt(DOM_RENDER_LOCATION);
+		});
 	}
 );

@@ -1185,10 +1185,7 @@ sap.ui.define([
 			});
 		}.bind(this));
 
-		if (Array.isArray(oSettings.actions) && oSettings.actions.length > 0) {
-			//this._setCardHeaderActions(oHeader, oSettings.actions);
-			oHeader._attachActions(oSettings);
-		}
+		oHeader._attachActions(oSettings);
 
 		var oPreviousHeader = this.getAggregation("_header");
 
@@ -1197,7 +1194,13 @@ sap.ui.define([
 		}
 
 		this.setAggregation("_header", oHeader);
-		this._fireReady(oHeader, "_headerReady");
+		if (oHeader.isReady()) {
+			this.fireEvent("_headerReady");
+		} else {
+			oHeader.attachEvent("_ready", function () {
+				this.fireEvent("_headerReady");
+			}.bind(this));
+		}
 	};
 
 	/**
