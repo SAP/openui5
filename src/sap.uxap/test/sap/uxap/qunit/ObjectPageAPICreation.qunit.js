@@ -900,11 +900,15 @@ function (
 				//check
 				setTimeout(function() {
 
+					var iExpectedScrollTop = sap.ui.Device.system.phone ?
+						oPage._oSectionInfo[oSubSectionToScrollTo.getId()].positionTopMobile :
+						oPage._oSectionInfo[oSubSectionToScrollTo.getId()].positionTop;
+
 					var oExpected = {
 						oSelectedSection: oSecondSection,
 						sSelectedTitle: oSecondSection.getTitle(),
 						bSnapped: true,
-						iScrollTop: jQuery('#' + oSubSectionToScrollTo.getId()).position().top
+						iScrollTop: iExpectedScrollTop
 					};
 
 					sectionIsSelected(oPage, assert, oExpected);

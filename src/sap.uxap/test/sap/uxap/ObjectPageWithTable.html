@@ -25,7 +25,7 @@
 				xmlns:m="sap.m"
 				xmlns:f="sap.ui.layout.form"
 				height="100%">
-			<ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="true" showFooter="true" useIconTabBar="true">
+			<ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="false" showFooter="true" useIconTabBar="true" showHeaderContent="true" alwaysShowContentHeader="false">
 				<headerTitle>
 					<ObjectPageHeader id="headerForTest"
 									  headerDesign="Light"
@@ -42,10 +42,8 @@
 									  objectImageURI="./images/imageID_275314.png">
 						<actions>
 						    <ObjectPageHeaderActionButton text="Toggle Footer" hideIcon="true" hideText="false" type="Emphasized" id="btnToggleFooter"/>
+						    <ObjectPageHeaderActionButton text="Toggle UseIconTabBar" hideIcon="true" hideText="false" type="Emphasized" id="btnToggleUseIconTabBar"/>
 							<ObjectPageHeaderActionButton icon="sap-icon://action" text="action" importance="Low"/>
-							<ObjectPageHeaderActionButton icon="sap-icon://action-settings" text="settings" importance="Low"/>
-							<ObjectPageHeaderActionButton icon="sap-icon://edit" text="edit" importance="Medium"/>
-							<ObjectPageHeaderActionButton icon="sap-icon://save" text="save" visible="false"/>
 						</actions>
 						<breadCrumbsLinks>
 							<m:Link text="Page 1 a very long link" press="handleLink1Press"/>
@@ -156,6 +154,8 @@
             var oApp = new App(),
                 myView = sap.ui.xmlview({viewContent:jQuery('#view1').html()}),
                 btnToggleFooter = myView.byId("btnToggleFooter"),
+                btnToggleUseIconTabBar = myView.byId("btnToggleUseIconTabBar"),
+                oObjectPage = myView.byId("ObjectPageLayout"),
                 aData = [],
                 o,
                 oModel;
@@ -201,14 +201,17 @@
                 })
             }));
 
-            var oText = new sap.m.Text({text: "test"});
-
             myView.byId("section1_SS1").addBlock(oTable1);
 
 
+            btnToggleFooter.setEnabled(oObjectPage.getUseIconTabBar());
             btnToggleFooter.attachPress(function() {
-                var oObjectPageLayout = myView.byId("ObjectPageLayout");
-                oObjectPageLayout.setShowFooter(!oObjectPageLayout.getShowFooter());
+                oObjectPage.setShowFooter(!oObjectPage.getShowFooter());
+            });
+
+
+            btnToggleUseIconTabBar.attachPress(function() {
+                oObjectPage.setUseIconTabBar(!oObjectPage.getUseIconTabBar());
             });
 
             oApp.addPage(new Page({
