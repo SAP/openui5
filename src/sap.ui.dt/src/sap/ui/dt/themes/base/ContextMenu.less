@@ -29,6 +29,7 @@
 
 	&.sapMPopoverArr, .sapMPopoverArr {
 		bottom: -9px;
+		left: 13px!important;
 
 		&:after {
 			box-shadow: none;
@@ -40,8 +41,26 @@
 			top: -9px;
 		}
 	}
+	&.sapUiDtContextMenuRightArrow{
+		&.sapMPopoverArr, .sapMPopoverArr {
+			left: unset!important;
+			right: 13px!important;
+		}
+	}
 }
 
+.sapUiSizeCozy .sapUiDtContextMenu.sapUiDtContextMenuRightArrow{
+	&.sapMPopoverArr, .sapMPopoverArr {
+		left: unset!important;
+		right: 16px!important;
+	}
+}
+
+.sapUiSizeCozy .sapUiDtContextMenu{
+	&.sapMPopoverArr, .sapMPopoverArr {
+		left: 16px !important;
+	}
+}
 
 html.sap-desktop .sapUiDtContextMenu .sapMBtn:focus > .sapMFocusable,
 html.sap-desktop .sapUiDtContextMenu.sapMBtn:focus > .sapMFocusable {
