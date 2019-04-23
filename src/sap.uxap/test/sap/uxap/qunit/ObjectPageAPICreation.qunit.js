@@ -2608,18 +2608,18 @@ function (
 		oObjectPage._obtainSnappedTitleHeight(true/* via clone */);
 
 		// Assert
-		assert.strictEqual(oCSSSpy.callCount, 2, "jQuery object css method is called twice");
-		assert.ok(oCSSSpy.firstCall.calledWith("overflow-y", "hidden"), "OverflowY of the wrapper set to hidden");
-		assert.ok(oCSSSpy.secondCall.calledWith("overflow-y", "auto"), "OverflowY of the wrapper set to auto");
+		assert.strictEqual(oCSSSpy.callCount, 3, "jQuery object css method is called three times");
+		assert.ok(oCSSSpy.secondCall.calledWith("overflow-y", "hidden"), "OverflowY of the wrapper set to hidden");
+		assert.ok(oCSSSpy.thirdCall.calledWith("overflow-y", "auto"), "OverflowY of the wrapper returned to auto");
 
 		// ACT - Reset spy and call method
 		oCSSSpy.reset();
 		oObjectPage._obtainExpandedTitleHeight(true/* via clone */);
 
 		// Assert
-		assert.strictEqual(oCSSSpy.callCount, 2, "jQuery object css method is called twice");
-		assert.ok(oCSSSpy.firstCall.calledWith("overflow-y", "hidden"), "OverflowY of the wrapper set to hidden");
-		assert.ok(oCSSSpy.secondCall.calledWith("overflow-y", "auto"), "OverflowY of the wrapper set to auto");
+		assert.strictEqual(oCSSSpy.callCount, 3, "jQuery object css method is called three times");
+		assert.ok(oCSSSpy.secondCall.calledWith("overflow-y", "hidden"), "OverflowY of the wrapper set to hidden");
+		assert.ok(oCSSSpy.thirdCall.calledWith("overflow-y", "auto"), "OverflowY of the wrapper returned to auto");
 
 		// Cleanup
 		oCSSSpy.restore();
@@ -2641,9 +2641,9 @@ function (
 		oObjectPage._obtainSnappedTitleHeight(false/* snap directly */);
 
 		// Assert
-		assert.strictEqual(oCSSSpy.callCount, 2, "jQuery object css method is called twice");
-		assert.ok(oCSSSpy.firstCall.calledWith("overflow-y", "hidden"), "OverflowY of the wrapper set to hidden");
-		assert.ok(oCSSSpy.secondCall.calledWith("overflow-y", "auto"), "OverflowY of the wrapper set to auto");
+		assert.strictEqual(oCSSSpy.callCount, 3, "jQuery object css method is called three times");
+		assert.ok(oCSSSpy.secondCall.calledWith("overflow-y", "hidden"), "OverflowY of the wrapper set to hidden");
+		assert.ok(oCSSSpy.thirdCall.calledWith("overflow-y", "auto"), "OverflowY of the wrapper returned to auto");
 
 		// Cleanup
 		oCSSSpy.restore();

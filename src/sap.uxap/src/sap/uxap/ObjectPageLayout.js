@@ -513,7 +513,7 @@ sap.ui.define([
 		this._bDelayDOMBasedCalculations = true;    //delay before obtaining DOM metrics to ensure that the final metrics are obtained
 		this._iStoredScrollTop = 0; // used by RTA to restore state upon drag'n'drop operation
 		this._oStoredScrolledSubSectionInfo = {}; // used to (re)store the position within the currently scrolled section upon rerender
-		this._bHasSingleVisibleSubSection = false; // indicates if the page has only one visible subSection in total
+		this._bAllContentFitsContainer = false; // indicates if the page has only one visible subSection in total (and it is marked to fit its container)
 
 		// anchorbar management
 		this._bInternalAnchorBarVisible = true;
@@ -783,7 +783,9 @@ sap.ui.define([
 				this._scrollTo(0, 0);
 			}
 		} else {
-			bAppendHeaderToContent = !this._shouldPreserveHeaderInTitleArea();
+			bAppendHeaderToContent = !this._shouldPreserveHeaderInTitleArea() &&
+			(!this._bAllContentFitsContainer || this._headerBiggerThanAllowedToBeExpandedInTitleArea());
+			// the <code>bAppendHeaderToContent</code> parameter determines if the header should snap *with* or *without* scroll
 			this._snapHeader(bAppendHeaderToContent);
 		}
 
@@ -1039,6 +1041,9 @@ sap.ui.define([
 				this.scrollToSection(sSectionToSelectID, 0);
 			}
 		}
+		// enable scrolling in non-fullscreen-mode only
+		// (to avoid any scrollbar appearing even for an instance while we snap/unsnap header)
+		this._toggleScrolling(!this._bAllContentFitsContainer);
 
 		if (Device.system.desktop) {
 			this._$opWrapper.on("scroll.OPL", this.onWrapperScroll.bind(this));
@@ -1056,7 +1061,8 @@ sap.ui.define([
 		}
 
 		if (!this._bHeaderExpanded) {
-			bAppendHeaderToContent = !this._shouldPreserveHeaderInTitleArea();
+			bAppendHeaderToContent = !this._shouldPreserveHeaderInTitleArea() && !this._bAllContentFitsContainer;
+			// the <code>bAppendHeaderToContent</code> parameter determines if the header should snap *with* or *without* scroll
 			this._snapHeader(bAppendHeaderToContent);
 		}
 
@@ -1074,6 +1080,20 @@ sap.ui.define([
 		this._updateTitleVisualState();
 
 		this.fireEvent("onAfterRenderingDOMReady");
+	};
+
+	/**
+	 * Suppresses or enables scrolling
+	 * used to supress scrolling in fullscreen-mode
+	 * (to avoid a problem with scrollbar appearing for a small instance
+	 * while we snap/unsnap header)
+	 * @private
+	 * @param {Boolean} bEnable used to supress scrolling
+	 */
+	ObjectPageLayout.prototype._toggleScrolling = function (bEnable) {
+		if (this._$opWrapper.length) {
+			this._$opWrapper.get(0).style.overflow = bEnable ? "hidden auto" : "hidden";
+		}
 	};
 
 	/**
@@ -1509,7 +1529,9 @@ sap.ui.define([
 		this._setInternalAnchorBarVisible(bVisibleAnchorBar, bInvalidate);
 		this._oFirstVisibleSection = oFirstVisibleSection;
 		this._oFirstVisibleSubSection = this._getFirstVisibleSubSection(oFirstVisibleSection);
-		this._bHasSingleVisibleSubSection = (iVisibleSection === 1) && (iVisibleSubSections === 1);
+		this._bAllContentFitsContainer = (iVisibleSection === 1)
+			&& (iVisibleSubSections === 1)
+			&& this._oFirstVisibleSubSection.hasStyleClass(ObjectPageSubSection.FIT_CONTAINER_CLASS);
 
 		if (bFirstSectionTitleHidden && (iFirstVisibleSectionVisibleSubSections === 1)) {
 			// Title propagation support - set the borrowed title Dom ID to the first AnchorBar button
@@ -2241,6 +2263,12 @@ sap.ui.define([
 			|| (iSubSectionIndex > 0) /* bringing any section (other than the first) bellow the anchorBar requires snap */
 			|| this._checkContentBottomRequiresSnap(oLastVisibleSubSection); /* check snap is needed in order to display the full section content in the viewport */
 
+			if (this._bAllContentFitsContainer) {
+				// no need for extra bottom space [to ensure scroll to top] in fullscreen mode
+				// because we have no scrolling in fullscreen mode
+				bAllowScrollSectionToTop = false;
+			}
+
 			if (bAllowScrollSectionToTop && !this._shouldPreserveHeaderInTitleArea()) {
 				bStickyTitleMode = true; // by the time the bottom of the page is reached, the header will be snapped on scroll => obtain the *sticky* title height
 			}
@@ -2260,32 +2288,33 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._computeSubSectionHeight = function(bFirstVisibleSubSection, bFullscreenSection, iSubSectionOffsetTop) {
 
-		var bIsTheOnlyVisibleSubSection = bFullscreenSection && this._bHasSingleVisibleSubSection,
-			iSectionsContainerHeight,
+		var iSectionsContainerHeight,
 			iRemainingSectionContentHeight;
 
 		if (!bFullscreenSection) {
 			return ""; // default height
 		}
 
+		// if the page is scrollable, then the value of <code>bIsHeaderExpanded</code>
+		// depends on the position of the section in the sections list
+		// 1) first visible is initially displayed in container with *expanded* header
+		// => obtain container height when *expanded* header
+		// 2) non-first visible is displayed in container with *snapped* header
+		// (because by the time we scroll to show the section, the header is already snapped)
+		// => obtain container height when *snapped* header
+		var bIsHeaderExpanded = (this._bAllContentFitsContainer) ? this._bHeaderExpanded : bFirstVisibleSubSection;
+
+
 		// size the section to have the full height of its container
-		if (bFirstVisibleSubSection) {
-			// first visible is initially displayed in container with *expanded* header
-			// => obtain container height when *expanded* header
-			iSectionsContainerHeight = this._getSectionsContainerHeight(false /* expanded header */);
-		} else {
-			// non-first visible is displayed in container with *snapped* header
-			// => obtain container height when *snapped* header
-			iSectionsContainerHeight = this._getSectionsContainerHeight(true /*snapped header */);
-		}
+		iSectionsContainerHeight = this._getSectionsContainerHeight(!bIsHeaderExpanded);
 
 
-		if (bIsTheOnlyVisibleSubSection) {
+		if (this._bAllContentFitsContainer) {
 			// if we have a single fullscreen subsection [that takes the entire height of the sections container]
 			// => then the only *other* content in the sections container [besides the subSection]
 			// is the title of its parent section and the footer space
 			// => subtract the above heights from the subSection height to *avoid having a scrollbar*
-			iRemainingSectionContentHeight = (iSubSectionOffsetTop - this.iHeaderContentHeight - this.iAnchorBarHeight) + this.iFooterHeight;
+			iRemainingSectionContentHeight = (iSubSectionOffsetTop - this.iHeaderContentHeight /*- this.iAnchorBarHeight*/) + this.iFooterHeight;
 			iSectionsContainerHeight -= iRemainingSectionContentHeight;
 		}
 
@@ -3321,6 +3350,7 @@ sap.ui.define([
 
 		// BCP: 1870298358 - setting overflow-y to hidden of the wrapper element to eliminate unwanted
 		// scrollbar appearing during measurement of the snapped title height
+		var sOrigOverflow = this._$opWrapper.css("overflow-y");
 		this._$opWrapper.css("overflow-y", "hidden");
 
 		if (bViaClone) {
@@ -3334,7 +3364,7 @@ sap.ui.define([
 		}
 
 		// restore scrolling
-		this._$opWrapper.css("overflow-y", "auto");
+		this._$opWrapper.css("overflow-y", sOrigOverflow);
 
 		return iHeight;
 	};
@@ -3349,11 +3379,12 @@ sap.ui.define([
 		if (bViaClone) {
 			// BCP: 1870298358 - setting overflow-y to hidden of the wrapper element during clone to eliminate unwanted
 			// scrollbar appearing during measurement of cloned header
+			var sOrigOverflow = this._$opWrapper.css("overflow-y");
 			this._$opWrapper.css("overflow-y", "hidden");
 			$Clone = this._appendTitleCloneToDOM(false /* disable snapped mode */);
 			iHeight = $Clone.is(":visible") ? $Clone.height() - this.iAnchorBarHeight : 0;
 			$Clone.remove(); //clean dom
-			this._$opWrapper.css("overflow-y", "auto");
+			this._$opWrapper.css("overflow-y", sOrigOverflow);
 		} else if (oTitle && oTitle.unSnap) {
 			iSectionsContainerHeight = this._$sectionsContainer.height();
 
