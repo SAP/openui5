@@ -920,6 +920,8 @@ sap.ui.define([
 	SemanticPage.prototype._getShareMenu = function() {
 		if (!this._oShareMenu) {
 			this._oShareMenu = new SemanticShareMenu(this._getActionSheet(), this);
+			// Ensure bindings on top level control propagate properly
+			this.addDependent(this._oShareMenu._oContainer);
 		}
 		return this._oShareMenu;
 	};
