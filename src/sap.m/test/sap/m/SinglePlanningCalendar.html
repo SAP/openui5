@@ -34,6 +34,7 @@
 					'sap/m/PlanningCalendarLegend',
 					'sap/m/Dialog',
 					'sap/m/Button',
+					'sap/ui/core/Item',
 					'sap/ui/unified/CalendarAppointment',
 					'sap/ui/unified/CalendarLegendItem',
 					'sap/m/MessageToast',
@@ -42,7 +43,7 @@
 				],
 				function (JSONModel, SinglePlanningCalendar, SinglePlanningCalendarDayView,
 							SinglePlanningCalendarWorkWeekView, SinglePlanningCalendarWeekView, PlanningCalendarLegend,
-							Dialog, Button, CalendarAppointment, CalendarLegendItem, MessageToast, App, Page) {
+							Dialog, Button, Item, CalendarAppointment, CalendarLegendItem, MessageToast, App, Page) {
 					var aAppointments = [
 						{
 							title: "1 hour app. 0 without type and color",
@@ -235,13 +236,13 @@
 							startDate: new Date(2018, 6, 11, 10, 0, 0),
 							endDate: new Date(2018, 6, 11, 10, 30, 0)
 						},
-                        {
-                            title: "30 min. second half hour appointment 30 with icon",
-                            type: "Type04",
-                            icon: "sap-icon://work-history",
-                            startDate: new Date(2018, 6, 11, 10, 30, 0),
-                            endDate: new Date(2018, 6, 11, 11, 0, 0)
-                        },
+						{
+							title: "30 min. second half hour appointment 30 with icon",
+							type: "Type04",
+							icon: "sap-icon://work-history",
+							startDate: new Date(2018, 6, 11, 10, 30, 0),
+							endDate: new Date(2018, 6, 11, 11, 0, 0)
+						},
 						{
 							title: "1 hour and 30 min. appointment  31",
 							type: "Type02",
@@ -435,6 +436,18 @@
 								press: function () {
 									oDialog.open();
 								}
+							}),
+							new sap.m.Select({
+								items: [
+									new Item({text: "Cozy"}),
+									new Item({text: "Compact"})
+								],
+								change: function (oEvent) {
+									var bCompactMode = oEvent.getParameter("selectedItem").getText() === "Compact";
+
+									oSPC.toggleStyleClass("sapUiSizeCompact", bCompactMode);
+									oSPC.rerender();
+								}
 							})
 						],
 						appointments: {
@@ -535,7 +548,7 @@
 
 							this.getAppointments()[aAppointments.length - 1].focus();
 						}
-					}).addStyleClass("sapUiSizeCompact");
+					});
 					new App({
 						pages: new Page({
 							title: "SinglePlanningCalendar test page",
