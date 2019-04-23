@@ -1101,8 +1101,20 @@ sap.ui.define([
 	});
 
 	QUnit.test("ARIA Attributes of Tree Table Expand Icon", function(assert) {
-		var $Elem = oTreeTable.$("rows-row0-col0").find(".sapUiTableTreeIcon");
-		assert.strictEqual($Elem.attr("role"), "button", "role");
+		var done = assert.async();
+
+		oTreeTable.attachEventOnce("_rowsUpdated", function() {
+			var $Elem = oTreeTable.$("rows-row0-col0").find(".sapUiTableTreeIcon");
+			assert.strictEqual($Elem.attr("role"), "button", "Tree icon role of expandable row");
+
+			$Elem = oTreeTable.$("rows-row1-col0").find(".sapUiTableTreeIcon");
+			assert.strictEqual($Elem.attr("role"), "", "Tree icon role of leaf row");
+
+			done();
+		});
+
+		oTreeTable.expand(0);
+		sap.ui.getCore().applyChanges();
 	});
 
 	QUnit.test("ARIA Attributes of Table Header", function(assert) {

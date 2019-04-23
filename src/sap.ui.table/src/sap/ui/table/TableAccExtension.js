@@ -817,7 +817,6 @@ sap.ui.define([
 							"role": ""
 						};
 						if (oTable.getBinding("rows")) {
-							mAttributes["role"] = "button";
 							if (mParams && mParams.row) {
 								if (mParams.row._bHasChildren) {
 									var sText = TableUtils.getResourceText(mParams.row._bIsExpanded ? "TBL_COLLAPSE" : "TBL_EXPAND");
@@ -828,6 +827,7 @@ sap.ui.define([
 									}
 									mAttributes["aria-expanded"] = "" + (!!mParams.row._bIsExpanded);
 									mAttributes["aria-hidden"] = "false";
+									mAttributes["role"] = "button";
 								} else {
 									mAttributes["aria-label"] = TableUtils.getResourceText("TBL_LEAF");
 									mAttributes["aria-hidden"] = "true";
