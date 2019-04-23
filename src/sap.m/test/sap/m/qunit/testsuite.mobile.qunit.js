@@ -1480,11 +1480,7 @@ sap.ui.define([
 						dt: "test-resources/sap/m/qunit/designtime/"
 					}
 				},
-				group: "Designtime",
-				module: [
-					"./designtime/Button.qunit",
-					"./designtime/ButtonCombine.qunit"
-				]
+				group: "Designtime"
 			},
 			"designtime/CheckBox": {
 				title: "QUnit Page for sap.m.CheckBox design time and rta enabling",

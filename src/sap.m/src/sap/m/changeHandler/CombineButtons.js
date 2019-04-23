@@ -6,11 +6,13 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/base/util/uid",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/Component",
 	"sap/ui/fl/util/ManagedObjectModel" // used implicitly by oModifier.createControl() function
 ], function (
 	FlexUtils,
 	uid,
-	JsControlTreeModifier
+	JsControlTreeModifier,
+	Component
 ) {
 	"use strict";
 
@@ -42,10 +44,10 @@ sap.ui.define([
 
 		var oChangeDefinition = oChange.getDefinition();
 		var oModifier = mPropertyBag.modifier;
-		var oView = FlexUtils.getViewForControl(oControl);
+		var oView = mPropertyBag.view;
 		var oAppComponent = mPropertyBag.appComponent;
-		var oSourceControl = oModifier.bySelector(oChangeDefinition.content.combineButtonSelectors[0], oAppComponent);
-		var oParent = oModifier.getParent(oSourceControl);
+		var oSourceControl = oModifier.bySelector(oChangeDefinition.content.combineButtonSelectors[0], oAppComponent, oView);
+		var oParent = oModifier.getParent(oSourceControl); // === oControl
 		var iAggregationIndex;
 		var sParentAggregation;
 		var aButtons;
@@ -59,10 +61,10 @@ sap.ui.define([
 		};
 
 		aButtons = oChangeDefinition.content.combineButtonSelectors.map(function (oCombineButtonSelector) {
-			return oModifier.bySelector(oCombineButtonSelector, oAppComponent);
+			return oModifier.bySelector(oCombineButtonSelector, oAppComponent, oView);
 		});
 
-		sParentAggregation = aButtons[0].sParentAggregationName;
+		sParentAggregation = oModifier.getParentAggregationName(aButtons[0], oParent);
 		oRevertData.parentAggregation = sParentAggregation;
 
 		iAggregationIndex = oModifier.findIndexInParentAggregation(oSourceControl);
@@ -75,13 +77,20 @@ sap.ui.define([
 			var oSelector = oChangeDefinition.content.buttonsIdForSave[iIndex];
 			var sButtonText = oModifier.getProperty(oButton, "text");
 
+			oMenuItem = oModifier.createControl("sap.m.MenuItem", oAppComponent, oView, oSelector);
 
 			// Save the original position of the button
 			oRevertData.insertIndexes[iIndex] = oModifier.findIndexInParentAggregation(oButton);
 
-			oMenuItem = oModifier.createControl("sap.m.MenuItem", oAppComponent, oView, oSelector);
-
-			oModifier.attachEvent(oMenuItem, "press", "sap.m.changeHandler.CombineButtons.pressHandler", oModifier.getSelector(oButton, oAppComponent));
+			oModifier.attachEvent(
+				oMenuItem,
+				"press",
+				"sap.m.changeHandler.CombineButtons.pressHandler",
+				{
+					selector: oModifier.getSelector(oButton, oAppComponent),
+					appComponentId: oAppComponent.getId()
+				}
+			);
 
 			var sModelName = "$sap.m.flexibility.CombineButtonsModel";
 			var oManagedObjectModel = oModifier.createControl(
@@ -97,7 +106,7 @@ sap.ui.define([
 				}
 			);
 			// ManagedObjectModel should be placed in `dependents` aggregation of MenuItem
-			oModifier.insertAggregation(oMenuItem, "dependents", oManagedObjectModel);
+			oModifier.insertAggregation(oMenuItem, "dependents", oManagedObjectModel, 0, oView);
 
 			oModifier.bindProperty(oMenuItem, "text", sModelName + ">/text");
 			oModifier.bindProperty(oMenuItem, "icon", sModelName + ">/icon");
@@ -113,15 +122,11 @@ sap.ui.define([
 						id: oSelector.id + '-customData'
 					}),
 					{
-						key: {
-							path: sModelName + ">key"
-						},
-						value: {
-							path: sModelName + ">value"
-						}
+						key: "{ path: '" + sModelName + ">key' }",
+						value: "{ path: '" + sModelName + ">value' }"
 					}
 				)
-			});
+			}, oView);
 
 			// FIXME: will not work in XML in case original button has a binding on `text` property
 			if (sButtonText) {
@@ -141,16 +146,20 @@ sap.ui.define([
 			oModifier.removeAggregation(oParent, sParentAggregation, oButton);
 
 			// Adding each button control to the container's dependents aggregation
-			oModifier.insertAggregation(oParent, "dependents", oButton);
-			oModifier.insertAggregation(oMenuItem, "customData", oIdToSave, 0);
-			oModifier.insertAggregation(oMenu, "items", oMenuItem, iIndex);
+			oModifier.insertAggregation(oParent, "dependents", oButton, 0, oView);
+
+			// Saving original ID to original button to avoid conflict with aggregation binding for customData aggregation.
+			// The new MenuItem will receive this data via ManagedObjectModel synchronisation.
+			oModifier.insertAggregation(oButton, "customData", oIdToSave, 0, oView);
+
+			oModifier.insertAggregation(oMenu, "items", oMenuItem, iIndex, oView);
 		});
 
 		oMenuButton = oModifier.createControl("sap.m.MenuButton", oAppComponent, oView, oChangeDefinition.content.menuButtonIdSelector);
 
 		oModifier.setProperty(oMenuButton, "text", aMenuButtonName.join("/"));
-		oModifier.insertAggregation(oMenuButton, "menu", oMenu, 0);
-		oModifier.insertAggregation(oParent, sParentAggregation, oMenuButton, iAggregationIndex);
+		oModifier.insertAggregation(oMenuButton, "menu", oMenu, 0, oView);
+		oModifier.insertAggregation(oParent, sParentAggregation, oMenuButton, iAggregationIndex, oView);
 		oChange.setRevertData(oRevertData);
 
 		return true;
@@ -169,41 +178,31 @@ sap.ui.define([
 	 */
 	CombineButtons.revertChange = function(oChange, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
-		var oView = FlexUtils.getViewForControl(oControl);
+		var oView = mPropertyBag.view;
 		var oRevertData = oChange.getRevertData();
 		var oChangeDefinition = oChange.getDefinition();
 		var sParentAggregation = oRevertData.parentAggregation;
 		var oMenuButton = oModifier.bySelector(oChangeDefinition.content.menuButtonIdSelector, mPropertyBag.appComponent, oView);
 		var oParent = oModifier.getParent(oMenuButton);
-		var aButtonsIds = oChangeDefinition.content.combineButtonSelectors;
+		var aButtonsIdsReversed = oChangeDefinition.content.combineButtonSelectors.slice().reverse();
 		var oButton;
-
-		for (var i = 0; i < aButtonsIds.length; i++) {
-			oButton = oModifier.bySelector(aButtonsIds[i], mPropertyBag.appComponent);
-			oModifier.insertAggregation(oParent, sParentAggregation, oButton, oRevertData.insertIndexes[i]);
-		}
 
 		// FIXME: fix implementation of ObjectPageDynamicHeaderTitle and remove next line
 		oModifier.removeAggregation(oParent, sParentAggregation, oMenuButton);
 		oModifier.destroy(oMenuButton);
 
+		for (var i = 0, l = aButtonsIdsReversed.length; i < l; i++) {
+			oButton = oModifier.bySelector(aButtonsIdsReversed[i], mPropertyBag.appComponent, oView);
 
-		// we need to sort positions where the buttons were before in order first to insert on correct places
-		// those with lower value so not to mess up the one with higher
-		// make list with indices and values so after sorting the values we need indices for getting correct Button id
-		var sortInsertIndexes = oRevertData.insertIndexes.map(function(e,i) {
-			return {ind: i, val: e};
-		});
-		// sort index/value couples, based on values
-		sortInsertIndexes.sort(function(x, y) {
-			return x.val - y.val;
-		});
+			// Custom data clean up
+			oModifier.getAggregation(oButton, "customData").some(function (oCustomData) { // eslint-disable-line no-loop-func
+				if (oModifier.getProperty(oCustomData, "key") === "originalButtonId") {
+					oModifier.destroy(oCustomData);
+					return true;
+				}
+			});
 
-		for (var i = 0; i < aButtonsIds.length; i++) {
-			var iIndex = sortInsertIndexes[i].ind;
-			var iPosition = sortInsertIndexes[i].val;
-			oButton = oModifier.bySelector(aButtonsIds[iIndex], mPropertyBag.appComponent);
-			oModifier.insertAggregation(oParent, sParentAggregation, oButton, iPosition);
+			oModifier.insertAggregation(oParent, sParentAggregation, oButton, oRevertData.insertIndexes[l - i - 1], oView);
 		}
 
 		oChange.resetRevertData();
@@ -256,8 +255,8 @@ sap.ui.define([
 	 * @param {boolean} mSelector.idIsLocal - Flag if the selector.id has to be concatenated with the application component ID
 	 * while applying the change.
 	 */
-	CombineButtons.pressHandler = function (oEvent, mSelector) {
-		var oButton = JsControlTreeModifier.bySelector(mSelector);
+	CombineButtons.pressHandler = function (oEvent, mParameters) {
+		var oButton = JsControlTreeModifier.bySelector(mParameters.selector, Component.get(mParameters.appComponentId));
 		oButton.firePress();
 	};
 
