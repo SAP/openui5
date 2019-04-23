@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Control",
 	"sap/ui/core/CustomData",
+	"sap/ui/core/mvc/View",
 	"./BlockBaseMetadata",
 	"sap/ui/model/Context",
 	"sap/ui/Device",
@@ -19,6 +20,7 @@ sap.ui.define([
 	jQuery,
 	Control,
 	CustomData,
+	CoreView,
 	BlockBaseMetadata,
 	Context,
 	Device,
@@ -58,6 +60,7 @@ sap.ui.define([
 		 *
 		 * As any UI5 view, the XML view can have a controller which automatically comes with a
 		 * <code>this.oParentBlock</code> attribute (so that the controller can interact with the block).
+		 * The <code>oParentBlock</code> is firstly available in <code>onParentBlockModeChange</code> method.
 		 * If the controller implements the <code>onParentBlockModeChange</code> method, this method will
 		 * be called with the <code>sMode</code> parameter when the view is used or reused by the block.
 		 *
@@ -434,7 +437,7 @@ sap.ui.define([
 		/***
 		 * Create view
 		 * @param {*} mParameter parameter
-		 * @returns {sap.ui.core.mvc.View} view
+		 * @returns {*} Promise
 		 * @protected
 		 */
 		BlockBase.prototype.createView = function (mParameter, sMode) {
@@ -442,7 +445,8 @@ sap.ui.define([
 				fnCreateView;
 
 			fnCreateView = function () {
-				return sap.ui.view(this.getId() + "-" + sMode, mParameter);
+				mParameter.id = this.getId() + "-" + sMode;
+				return CoreView.create(mParameter);
 			}.bind(this);
 
 			oOwnerComponent = Component.getOwnerComponentFor(this);
@@ -454,44 +458,82 @@ sap.ui.define([
 		};
 
 		/**
+		 * Sets the currently selected View as Association, adds it in _views aggregation
+		 * and assigns oParentBlock to the Controller of the view
+		 * @param {*} oViewInner the selected View
+		 * @param {*} sMode the valid mode corresponding to the View to initialize
+		 * @private
+		 */
+		BlockBase.prototype._afterViewInstantiated = function (oViewInner, sMode) {
+			var oController = oViewInner.getController();
+
+			//link to the controller defined in the Block
+			if (oViewInner) {
+				//inject a reference to this
+				if (oController) {
+					oController.oParentBlock = this;
+				}
+
+				oViewInner.addCustomData(new CustomData({
+					"key": "layoutMode",
+					"value": sMode
+				}));
+
+				this.addAggregation("_views", oViewInner);
+				this.setAssociation("selectedView", oViewInner);
+
+				this._notifyForLoadingInMode(oController, oViewInner, sMode);
+			} else {
+				throw new Error("BlockBase :: no view defined in metadata.views for mode " + sMode);
+			}
+		};
+
+		/**
+		 * Notifies Controller for loading in specific mode
+		 * @param {*} oController the Controller of the selected View
+		 * @param {*} oViewInner the selected View
+		 * @param {*} sMode the valid mode corresponding to the View to initialize
+		 * @private
+		 */
+		BlockBase.prototype._notifyForLoadingInMode = function (oController, oViewInner, sMode) {
+			if (oController && typeof oController.onParentBlockModeChange === "function") {
+				oController.onParentBlockModeChange(sMode);
+			} else {
+				Log.info("BlockBase ::: could not notify " + oViewInner.sViewName + " of loading in mode "
+					+ sMode + ": missing controller onParentBlockModeChange method");
+			}
+		};
+
+		/**
 		 * Initialize a view and returns it if it has not been defined already.
 		 * @param {*} sMode the valid mode corresponding to the view to initialize
-		 * @returns {sap.ui.view} view
 		 * @private
 		 */
 		BlockBase.prototype._initView = function (sMode) {
 			var oView,
-				aViews = this.getAggregation("_views") || [],
-				mParameter = this.getMetadata().getView(sMode);
+				aViews = this.getAggregation("_views") || [];
 
-			//look for the views if it was already instantiated
-			aViews.forEach(function (oCurrentView, iIndex) {
+			// look for the views if it was already instantiated
+			aViews.forEach(function (oCurrentView) {
 				if (oCurrentView.data("layoutMode") === sMode) {
 					oView = oCurrentView;
 				}
 			});
 
+			if (oView) {
+				this.setAssociation("selectedView", oView);
+				this._notifyForLoadingInMode(oView.getController(), oView, sMode);
+
+				return;
+			}
+
 			//the view is not instantiated yet, handle a new view scenario
-			if (!oView) {
-				oView = this._initNewView(sMode);
-			}
-
-			this.setAssociation("selectedView", oView, true);
-
-			//try to notify the associated controller that the view is being used for this mode
-			if (oView.getController() && oView.getController().onParentBlockModeChange) {
-				oView.getController().onParentBlockModeChange(sMode);
-			} else {
-				Log.info("BlockBase ::: could not notify " + mParameter.viewName + " of loading in mode " + sMode + ": missing controller onParentBlockModeChange method");
-			}
-
-			return oView;
+			this._initNewView(sMode);
 		};
 
 		/**
 		 * Initialize new BlockBase view
 		 * @param {*} sMode the valid mode corresponding to the view to initialize
-		 * @returns {sap.ui.view} view
 		 * @private
 		 */
 		BlockBase.prototype._initNewView = function (sMode) {
@@ -500,28 +542,10 @@ sap.ui.define([
 
 			//check if the new view is not the current one (we may want to have the same view for several modes)
 			if (!oView || mParameter.viewName != oView.getViewName()) {
-				oView = this.createView(mParameter, sMode);
-
-				//link to the controller defined in the Block
-				if (oView) {
-
-					//inject a reference to this
-					if (oView.getController()) {
-						oView.getController().oParentBlock = this;
-					}
-
-					oView.addCustomData(new CustomData({
-						"key": "layoutMode",
-						"value": sMode
-					}));
-
-					this.addAggregation("_views", oView, true);
-				} else {
-					throw new Error("BlockBase :: no view defined in metadata.views for mode " + sMode);
-				}
+				oView = this.createView(mParameter, sMode).then(function (oViewInner) {
+					this._afterViewInstantiated(oViewInner, sMode);
+				}.bind(this));
 			}
-
-			return oView;
 		};
 
 		// This offset is needed so the breakpoints of the ColumnLayout match those of the GridLayout (offset = Grid container width - ColumnLayout container width)
