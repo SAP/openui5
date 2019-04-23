@@ -731,12 +731,7 @@ sap.ui.define([
 	].forEach(function (sMethod) {
 		SemanticPage.prototype[sMethod] = function () {
 			var oSemanticShareMenu = this._getShareMenu(),
-				sSemanticShareMenuMethod = sMethod.replace(/CustomShareAction?/, "CustomAction"),
-				aCustomActionMethods = ["addCustomAction", "insertCustomAction"];
-
-				if (aCustomActionMethods.indexOf(sSemanticShareMenuMethod) > -1) {
-					this.addDependent(arguments[0]);
-				}
+				sSemanticShareMenuMethod = sMethod.replace(/CustomShareAction?/, "CustomAction");
 
 			return oSemanticShareMenu[sSemanticShareMenuMethod].apply(oSemanticShareMenu, arguments);
 		};
@@ -934,6 +929,8 @@ sap.ui.define([
 	SemanticPage.prototype._getShareMenu = function() {
 		if (!this._oShareMenu) {
 			this._oShareMenu = new SemanticShareMenu(this._getActionSheet(), this);
+			// Ensure bindings on top level control propagate properly
+			this.addDependent(this._oShareMenu._oContainer);
 		}
 		return this._oShareMenu;
 	};
