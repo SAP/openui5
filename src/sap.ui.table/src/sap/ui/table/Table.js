@@ -1427,9 +1427,6 @@ sap.ui.define([
 			this._disableTextSelection($this.find(".sapUiTableColHdrCnt"));
 		}
 
-		// invalidate item navigation
-		this._getKeyboardExtension().invalidateItemNavigation();
-
 		this._updateTableContent();
 
 		// If only the rows are rendered, the css flag is not removed while the positioning of the actions is reset. Therefore, the flag must be
@@ -1796,8 +1793,7 @@ sap.ui.define([
 		if (mFocusInfo && mFocusInfo.customId) {
 			jQuery(document.getElementById(mFocusInfo.customId)).focus();
 		} else {
-			//TBD: should be applyFocusInfo but changing it breaks the unit tests
-			Element.prototype.getFocusInfo.apply(this, arguments);
+			Element.prototype.applyFocusInfo.apply(this, arguments);
 		}
 		return this;
 	};

@@ -93,14 +93,45 @@ sap.ui.define([
 	 * "this" in the function context is the table instance.
 	 */
 	var ExtensionDelegate = {
+		onBeforeRendering: function(oEvent) {
+			/*
+			 * In a normal rendering, the process is as follows:
+			 * 2. The onAfterRendering delegates of rendered controls are called by the sap.ui.core.RenderManager after writing to DOM.
+			 * 3. The KeyboardExtension invalidates the ItemNavigation in its onAfterRendering delegate.
+			 * 4. The RenderManager calls sap.ui.core.FocusHandler#restoreFocus.
+			 *
+			 * If only the rows are rendered:
+			 * 2. The table calls sap.ui.core.RenderManager#flush to write to DOM.
+			 * 3. The RenderManager calls sap.ui.core.FocusHandler#restoreFocus.
+			 * 4. The table calls the "onAfterRendering" delegate.
+			 * 5. The KeyboardExtension invalidates the ItemNavigation in its onAfterRendering delegate.
+			 *
+			 * As a consequence, the focus is restored with the information from an ItemNavigation that is in a state where it should be marked as
+			 * invalid. To correctly restore the focus, first the ItemNavigation must be invalidated and then the focus must be set (or trigger
+			 * the jQuery focus event, if the focus is already on the correct element).
+			 */
+			var bRenderedRows = oEvent && oEvent.isMarked("renderRows");
+
+			if (bRenderedRows) {
+				this._oStoredFocusInfo = this.getFocusInfo();
+			}
+		},
+		onAfterRendering: function(oEvent) {
+			var bRenderedRows = oEvent && oEvent.isMarked("renderRows");
+
+			if (bRenderedRows) {
+				this._getKeyboardExtension().invalidateItemNavigation();
+				this.applyFocusInfo(this._oStoredFocusInfo);
+				delete this._oStoredFocusInfo;
+			} else {
+				this._getKeyboardExtension().invalidateItemNavigation();
+			}
+		},
 		onfocusin: function(oEvent) {
 			var oExtension = this._getKeyboardExtension();
 
 			if (!oExtension._bIgnoreFocusIn) {
 				oExtension.initItemNavigation();
-				if (ExtensionHelper.isItemNavigationInvalid(this)) {
-					oEvent.setMarked("sapUiTableInitItemNavigation");
-				}
 			} else {
 				oEvent.setMarked("sapUiTableIgnoreFocusIn");
 			}
@@ -519,7 +550,7 @@ sap.ui.define([
 	};
 
 	return TableKeyboardExtension;
-	});
+});
 
 /**
  * Gets the keyboard extension.
