@@ -43,8 +43,8 @@ function (
 			assert.strictEqual(oGridStyle.getPropertyValue("grid-auto-rows"), oSettings.getRowSize(), "Grid has expected row size for '" + sLayout + "'");
 
 			// test row-gap and column-gap, because grid-gap can not be tested directly
-			assert.strictEqual(oGridStyle.getPropertyValue("row-gap"), oSettings.getGap(), "Grid has expected row gap for '" + sLayout + "'");
-			assert.strictEqual(oGridStyle.getPropertyValue("column-gap"), oSettings.getGap(), "Grid has expected column gap for '" + sLayout + "'");
+			assert.strictEqual(oGridStyle.getPropertyValue("row-gap") || oGridStyle.getPropertyValue("grid-gap"), oSettings.getGap(), "Grid has expected row gap for '" + sLayout + "'");
+			assert.strictEqual(oGridStyle.getPropertyValue("column-gap") || oGridStyle.getPropertyValue("grid-gap"), oSettings.getGap(), "Grid has expected column gap for '" + sLayout + "'");
 		} else {
 			assert.strictEqual(oGrid.getActiveLayoutSettings(), oSettings, "Grid has expected settings for '" + sLayout + "'");
 		}
