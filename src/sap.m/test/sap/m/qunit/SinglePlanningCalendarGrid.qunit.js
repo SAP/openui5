@@ -178,6 +178,81 @@ sap.ui.define([
 
 	QUnit.module("Events");
 
+	QUnit.test("appointmentSelect: select single appointment", function (assert) {
+		var oAppointment = new CalendarAppointment(),
+			oGrid = new SinglePlanningCalendarGrid({
+				appointments: [
+					oAppointment
+				]
+			}),
+			oFakeEvent = {
+				target: {
+					classList: {
+						contains: function() {
+							return false;
+						}
+					}
+				},
+				srcControl: oAppointment
+			},
+			fnFireAppointmentSelectSpy = this.spy(oGrid, "fireAppointmentSelect");
+
+		//act
+		oGrid.ontap(oFakeEvent);
+
+		//assert
+		assert.ok(fnFireAppointmentSelectSpy.calledOnce, "Event was fired");
+		assert.ok(fnFireAppointmentSelectSpy.calledWithExactly({
+			appointment: oAppointment,
+			appointments: [oAppointment],
+			id: oGrid.getId()
+		}), "Event was fired with the correct parameters");
+
+		//clean up
+		oGrid.destroy();
+	});
+
+	QUnit.test("appointmentSelect: deselect all appointments", function (assert) {
+		var oGrid = new SinglePlanningCalendarGrid({
+				appointments: [
+					new CalendarAppointment({
+						startDate: new Date(2018, 6, 8, 5),
+						endDate: new Date(2018, 6, 8, 6),
+						selected: true
+					}),
+					new CalendarAppointment({
+						startDate: new Date(2018, 6, 9, 4),
+						endDate: new Date(2018, 6, 10, 4),
+						selected: true
+					})
+				]
+			}),
+			oFakeEvent = {
+				target: {
+					classList: {
+						contains: function() {
+							return true;
+						}
+					}
+				}
+			},
+			fnFireAppointmentSelectSpy = this.spy(oGrid, "fireAppointmentSelect");
+
+		//act
+		oGrid.ontap(oFakeEvent);
+
+		//assert
+		assert.ok(fnFireAppointmentSelectSpy.calledOnce, "Event was fired");
+		assert.ok(fnFireAppointmentSelectSpy.calledWith({
+			appointment: undefined,
+			appointments: oGrid.getAggregation("appointments"),
+			id: oGrid.getId()
+		}), "Event was fired with the correct parameters");
+
+		//clean up
+		oGrid.destroy();
+	});
+
 	QUnit.test("cellPress", function(assert) {
 		// prepare
 		var oGrid = new SinglePlanningCalendarGrid({
@@ -233,7 +308,7 @@ sap.ui.define([
 				preventDefault: function() {}
 			},
 			fnFireBorderReachedSpy = this.spy(oGrid, "fireEvent"),
-			fnRemoveAppSelectionSpy = this.spy(oGrid, "_removeAppointmentSelection");
+			fnFireAppointmentSelectSpy = this.spy(oGrid, "fireAppointmentSelect");
 
 		// act
 		oGrid.onsapleft(oFakeEvent);
@@ -247,7 +322,7 @@ sap.ui.define([
 			id: oGrid.getId()
 		}), "Event was fired with the correct parameters");
 
-		assert.ok(fnRemoveAppSelectionSpy.calledOnce, "_removeAppointmentSelection is called once");
+		assert.ok(fnFireAppointmentSelectSpy.calledOnce, "FireAppointmentSelect is called once");
 		assert.notOk(oAppointment.getSelected(), "Appointment is deselected");
 
 		// cleanup
@@ -278,7 +353,7 @@ sap.ui.define([
 				preventDefault: function() {}
 			},
 			fnFireBorderReachedSpy = this.spy(oGrid, "fireEvent"),
-			fnRemoveAppSelectionSpy = this.spy(oGrid, "_removeAppointmentSelection");
+			fnFireAppointmentSelectSpy = this.spy(oGrid, "fireAppointmentSelect");
 
 		// act
 		oGrid.onsapright(oFakeEvent);
@@ -292,7 +367,7 @@ sap.ui.define([
 			id: oGrid.getId()
 		}), "Event was fired with the correct parameters");
 
-		assert.ok(fnRemoveAppSelectionSpy.calledOnce, "_removeAppointmentSelection is called");
+		assert.ok(fnFireAppointmentSelectSpy.calledOnce, "fireAppointmentSelect is called");
 		assert.notOk(oAppointment.getSelected(), "Appointment is deselected");
 
 		// cleanup

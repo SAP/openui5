@@ -230,7 +230,7 @@ sap.ui.define([
 
 	QUnit.module("Events");
 
-	QUnit.test("appointmentSelect", function (assert) {
+	QUnit.test("appointmentSelect: select a single appointment", function (assert) {
 		var oAppointment = new CalendarAppointment(),
 			oSPC = new SinglePlanningCalendar({
 				appointments: [
@@ -239,12 +239,51 @@ sap.ui.define([
 			}),
 			oFakeEvent = {
 				target: {
-					parentElement: {
-						id: oAppointment.getId()
-					},
 					classList: {
 						contains: function() {
 							return false;
+						}
+					}
+				},
+				srcControl: oAppointment
+			},
+			fnFireAppointmentSelectSpy = this.spy(oSPC, "fireAppointmentSelect");
+
+		//act
+		oSPC._getGrid().ontap(oFakeEvent);
+
+		//assert
+		assert.ok(fnFireAppointmentSelectSpy.calledOnce, "Event was fired");
+		assert.ok(fnFireAppointmentSelectSpy.calledWithExactly({
+			appointment: oAppointment,
+			appointments: [oAppointment],
+			id: oSPC.getId()
+		}), "Event was fired with the correct parameters");
+
+		//clean up
+		oSPC.destroy();
+	});
+
+	QUnit.test("appointmentSelect: deselect all appointments", function (assert) {
+		var oSPC = new SinglePlanningCalendar({
+				appointments: [
+					new CalendarAppointment({
+						startDate: new Date(2018, 6, 8, 5),
+						endDate: new Date(2018, 6, 8, 6),
+						selected: true
+					}),
+					new CalendarAppointment({
+						startDate: new Date(2018, 6, 9, 4),
+						endDate: new Date(2018, 6, 10, 4),
+						selected: true
+					})
+				]
+			}),
+			oFakeEvent = {
+				target: {
+					classList: {
+						contains: function() {
+							return true;
 						}
 					}
 				}
@@ -257,7 +296,8 @@ sap.ui.define([
 		//assert
 		assert.ok(fnFireAppointmentSelectSpy.calledOnce, "Event was fired");
 		assert.ok(fnFireAppointmentSelectSpy.calledWithExactly({
-			appointment: oAppointment,
+			appointment: undefined,
+			appointments: oSPC.getAggregation("appointments"),
 			id: oSPC.getId()
 		}), "Event was fired with the correct parameters");
 
@@ -535,7 +575,7 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("borderReached: when focus is on grid cell and we are navigation in backward direction on week view", function(assert) {
+	QUnit.test("borderReached: when focus is on a grid cell and we are navigating in backward direction on week view", function(assert) {
 		// prepare
 		var oSPC = new SinglePlanningCalendar({
 				startDate: new Date(2018, 6, 8)
@@ -569,7 +609,7 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("borderReached: when focus is on grid cell and we are navigation in forward direction on week view", function(assert) {
+	QUnit.test("borderReached: when focus is on grid cell and we are navigating in forward direction on week view", function(assert) {
 		// prepare
 		var oSPC = new SinglePlanningCalendar({
 				startDate: new Date(2018, 6, 8)
