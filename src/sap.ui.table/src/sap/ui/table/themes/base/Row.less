@@ -3,9 +3,12 @@
 /* Base theme                        */
 /* ================================= */
 
+@_sap_ui_table_Row_Color: @sapUiListTextColor;
+@_sap_ui_table_Row_ColorHovered: @_sap_ui_table_Row_Color;
+
 .sapUiTableTr,
 .sapUiTableColHdrTr {
-	color: @sapUiListTextColor;
+	color: @_sap_ui_table_Row_Color;
 	height: @_sap_ui_table_RowHeight;
 
 	.sapUiSizeCozy & {
@@ -43,6 +46,7 @@
 
 	&.sapUiTableRowHvr {
 		background-color: @sapUiListHoverBackground;
+		color: @_sap_ui_table_Row_ColorHovered;
 	}
 
 	&.sapUiTableRowSel.sapUiTableRowHvr {

@@ -3,33 +3,40 @@
 /* Base theme                         */
 /* ================================== */
 
-@_sap_ui_table_RowSelector_CheckBoxSize: 1rem;
-@_sap_ui_table_RowSelector_CheckBoxSizeCozy: 1.375rem;
-@_sap_ui_table_RowSelector_CheckBoxIconSize: 0.625rem;
-@_sap_ui_table_RowSelector_CheckBoxIconSizeCozy: 1rem;
+@_sap_ui_table_RowSelection_CheckBoxSize: 1rem;
+@_sap_ui_table_RowSelection_CheckBoxSizeCozy: 1.375rem;
+@_sap_ui_table_RowSelection_CheckBoxBorderWidth: 0.125rem;
+@_sap_ui_table_RowSelection_CheckBoxBorderRadius: 0;
+@_sap_ui_table_RowSelection_CheckBoxBorderRadiusCozy: 0.125rem;
+@_sap_ui_table_RowSelection_CheckBoxBorderColor: @sapUiFieldBorderColor;
+@_sap_ui_table_RowSelection_CheckBoxBorderColorHovered: @sapUiFieldHoverBorderColor;
+@_sap_ui_table_RowSelection_CheckBoxIconSize: 0.625rem;
+@_sap_ui_table_RowSelection_CheckBoxIconSizeCozy: 1rem;
+@_sap_ui_table_RowSelection_CheckBoxIconColor: @sapUiSelected;
 
 .sapUiTableSelectAllCheckBox,
 .sapUiTableRowSelectionCell {
 	&::after {
 		content: '';
 		position: absolute;
-		border: 0.125rem solid @sapUiFieldBorderColor;
+		border: @_sap_ui_table_RowSelection_CheckBoxBorderWidth solid @_sap_ui_table_RowSelection_CheckBoxBorderColor;
 		background-color: @sapUiFieldBackground;
 		font-family: "SAP-icons";
 		text-align: center;
-		color: @sapUiSelected;
+		color: @_sap_ui_table_RowSelection_CheckBoxIconColor;
 		box-sizing: border-box;
 		margin: auto;
 		top: 0;
 		left: 0;
 		bottom: 0;
 		right: 0;
-		width: @_sap_ui_table_RowSelector_CheckBoxSize;
-		height: @_sap_ui_table_RowSelector_CheckBoxSize;
-		font-size: @_sap_ui_table_RowSelector_CheckBoxIconSize;
+		width: @_sap_ui_table_RowSelection_CheckBoxSize;
+		height: @_sap_ui_table_RowSelection_CheckBoxSize;
+		font-size: @_sap_ui_table_RowSelection_CheckBoxIconSize;
+		border-radius: @_sap_ui_table_RowSelection_CheckBoxBorderRadius;
 
 		.sapUiSizeCozy & {
-			border-radius: 0.125rem;
+			border-radius: @_sap_ui_table_RowSelection_CheckBoxBorderRadiusCozy;
 		}
 	}
 }
@@ -50,15 +57,15 @@
 
 		/* Select All Checkbox should always be at the bottom */
 		top: auto;
-		bottom: calc(~"(" @_sap_ui_table_ColumnHeaderHeight ~"-" @_sap_ui_table_RowSelector_CheckBoxSize ~") / 2");
+		bottom: calc(~"(" @_sap_ui_table_ColumnHeaderHeight ~"-" @_sap_ui_table_RowSelection_CheckBoxSize ~") / 2");
 
 		.sapUiSizeCozy & {
-			width: @_sap_ui_table_RowSelector_CheckBoxSizeCozy;
-			height: @_sap_ui_table_RowSelector_CheckBoxSizeCozy;
-			font-size: @_sap_ui_table_RowSelector_CheckBoxIconSizeCozy;
+			width: @_sap_ui_table_RowSelection_CheckBoxSizeCozy;
+			height: @_sap_ui_table_RowSelection_CheckBoxSizeCozy;
+			font-size: @_sap_ui_table_RowSelection_CheckBoxIconSizeCozy;
 
 			/* Select All Checkbox should always be at the bottom */
-			bottom: calc(~"(" @_sap_ui_table_ColumnHeaderHeightCozy ~"-" @_sap_ui_table_RowSelector_CheckBoxSizeCozy ~") / 2");
+			bottom: calc(~"(" @_sap_ui_table_ColumnHeaderHeightCozy ~"-" @_sap_ui_table_RowSelection_CheckBoxSizeCozy ~") / 2");
 		}
 
 		.sapUiTableRowSelectionHeaderCell:not(.sapUiTableSelAll) & {
@@ -70,7 +77,7 @@
 		}
 	}
 	&:hover::after {
-		border-color: @sapUiFieldHoverBorderColor;
+		border-color: @_sap_ui_table_RowSelection_CheckBoxBorderColorHovered;
 	}
 }
 
@@ -93,9 +100,9 @@
 	}
 
 	.sapUiSizeCozy & {
-		width: @_sap_ui_table_RowSelector_CheckBoxSizeCozy;
-		height: @_sap_ui_table_RowSelector_CheckBoxSizeCozy;
-		font-size: @_sap_ui_table_RowSelector_CheckBoxIconSizeCozy;
+		width: @_sap_ui_table_RowSelection_CheckBoxSizeCozy;
+		height: @_sap_ui_table_RowSelection_CheckBoxSizeCozy;
+		font-size: @_sap_ui_table_RowSelection_CheckBoxIconSizeCozy;
 	}
 
 	.sapUiTableRowHighlights & {
@@ -109,7 +116,7 @@
 	}
 
 	.sapUiTableRowHvr& {
-		border-color: @sapUiFieldHoverBorderColor;
+		border-color: @_sap_ui_table_RowSelection_CheckBoxBorderColorHovered;
 	}
 }
 
@@ -122,12 +129,12 @@
 		position: absolute;
 		width: 100%;
 		vertical-align: baseline;
-		font-size: @_sap_ui_table_RowSelector_CheckBoxIconSizeCozy;
-		line-height: @_sap_ui_table_RowSelector_CheckBoxSizeCozy;
-        bottom: calc(~"(" @_sap_ui_table_ColumnHeaderHeight ~"-" @_sap_ui_table_RowSelector_CheckBoxSizeCozy ~") / 2");
+		font-size: @_sap_ui_table_RowSelection_CheckBoxIconSizeCozy;
+		line-height: @_sap_ui_table_RowSelection_CheckBoxSizeCozy;
+        bottom: calc(~"(" @_sap_ui_table_ColumnHeaderHeight ~"-" @_sap_ui_table_RowSelection_CheckBoxSizeCozy ~") / 2");
 
         .sapUiSizeCozy & {
-            bottom: calc(~"(" @_sap_ui_table_ColumnHeaderHeightCozy ~"-" @_sap_ui_table_RowSelector_CheckBoxSizeCozy ~") / 2");
+            bottom: calc(~"(" @_sap_ui_table_ColumnHeaderHeightCozy ~"-" @_sap_ui_table_RowSelection_CheckBoxSizeCozy ~") / 2");
         }
     }
 

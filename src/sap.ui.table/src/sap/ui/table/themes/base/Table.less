@@ -3,6 +3,16 @@
 /* Base theme                          */
 /* =================================== */
 
+@_sap_ui_table_Table_HeaderPaddingLeft: 1rem;
+@_sap_ui_table_Table_HeaderPaddingRight: 1rem;
+@_sap_ui_table_Table_TableHeaderBorderWidth: @_sap_ui_table_BaseBorderWidth;
+@_sap_ui_table_Table_TableHeaderBorderColor: @sapUiListVerticalBorderColor;
+
+// Can be used in other themes to add styles for which there are no style definitions in the base theme and therefore no theme parameters.
+._sap_ui_table_Table_Header() {}
+._sap_ui_table_Table_Extension() {}
+._sap_ui_table_Table_Table() {}
+
 /*******************************************************************************
  * MAIN TABLE SECTIONS (First Level Elements)
  ******************************************************************************/
@@ -13,6 +23,40 @@
 	position: relative;
 	box-sizing: border-box;
 	z-index: 0; // Define stacking context to avoid conflicts with other controls
+}
+
+.sapUiTableHdr {
+	padding-left: @_sap_ui_table_Table_HeaderPaddingLeft;
+	padding-right: @_sap_ui_table_Table_HeaderPaddingRight;
+	background-color: @sapUiGroupTitleBackground;
+	min-height: 1.5rem;
+	margin-bottom: 0.125rem;
+	height: auto;
+	._sap_ui_table_Table_Header();
+}
+
+.sapUiTableHdrTitle {
+	font-family: @sapUiFontHeaderFamily;
+	font-size: @sapMFontHeader4Size;
+	font-weight: @sapUiFontHeaderWeight;
+	color: @sapUiGroupTitleTextColor;
+	height: 100%;
+}
+
+.sapUiTableTbr,
+.sapUiTableExt {
+	._sap_ui_table_Table_Extension();
+}
+
+.sapUiTableCnt {
+	box-sizing: border-box;
+	position: relative;
+	overflow: hidden; /* avoid scrollbar for column resize handlers */
+	border-left: @_sap_ui_table_BaseBorderWidth solid @sapUiListVerticalBorderColor;
+	border-right: @_sap_ui_table_BaseBorderWidth solid @sapUiListVerticalBorderColor;
+	border-top: @_sap_ui_table_BaseBorderWidth solid @sapUiListBorderColor;
+	background-color: @sapUiListBackground;
+	._sap_ui_table_Table_Table();
 }
 
 .sapUiTableFtr {
@@ -30,42 +74,15 @@
 	html[data-sap-ui-browser^="ie"] & {
 		padding-top: 0.25rem;
 	}
-}
 
-.sapUiSizeCozy .sapUiTableFtr {
-	min-height: @_sap_ui_table_BaseSizeCozy;
+	.sapUiSizeCozy & {
+		min-height: @_sap_ui_table_BaseSizeCozy;
 
-	html[data-sap-ui-browser^="ie"] & {
-		height: @_sap_ui_table_BaseSizeCozy;
-		padding-top: 0;
+		html[data-sap-ui-browser^="ie"] & {
+			height: @_sap_ui_table_BaseSizeCozy;
+			padding-top: 0;
+		}
 	}
-}
-
-.sapUiTableHdr {
-	padding-left: 1rem;
-	padding-right: 1rem;
-	background-color: @sapUiGroupTitleBackground;
-	min-height: 1.5rem;
-	margin-bottom: 0.125rem;
-	height: auto;
-}
-
-.sapUiTableHdrTitle {
-	font-family: @sapUiFontHeaderFamily;
-	font-size: @sapMFontHeader4Size;
-	font-weight: @sapUiFontHeaderWeight;
-	color: @sapUiGroupTitleTextColor;
-	height: 100%;
-}
-
-.sapUiTableCnt {
-	box-sizing: border-box;
-	position: relative;
-	overflow: hidden; /* avoid scrollbar for column resize handlers */
-	border-left: @_sap_ui_table_BaseBorderWidth solid @sapUiListVerticalBorderColor;
-	border-right: @_sap_ui_table_BaseBorderWidth solid @sapUiListVerticalBorderColor;
-	border-top: @_sap_ui_table_BaseBorderWidth solid @sapUiListBorderColor;
-	background-color: @sapUiListBackground;
 }
 
 .sapUiTableOuterAfter,
@@ -248,7 +265,7 @@ html[data-sap-ui-browser^="ie"], html[data-sap-ui-browser^="ed"] {
 	overflow: hidden;
 	white-space: nowrap;
 	min-height: @_sap_ui_table_ColumnHeaderHeight;
-	border-bottom: @_sap_ui_table_BaseBorderWidth solid @sapUiListVerticalBorderColor;
+	border-bottom: @_sap_ui_table_Table_TableHeaderBorderWidth solid @_sap_ui_table_Table_TableHeaderBorderColor;
 	color: @sapUiListTextColor;
 }
 

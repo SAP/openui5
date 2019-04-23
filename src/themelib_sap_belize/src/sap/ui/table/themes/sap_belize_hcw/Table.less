@@ -4,22 +4,17 @@
 /* =================================== */
 
 @_sap_ui_table_Table_FocusOutlineOffset: -3px;
+@_sap_ui_table_Table_TableHeaderBorderWidth: 3px;
 
-.sapUiTableHdr {
+._sap_ui_table_Table_Header() {
 	border-bottom: 3px solid @sapUiListHeaderBorderColor;
 }
 
-.sapUiTableTbr,
-.sapUiTableExt {
-	border-bottom: 1px solid @sapUiListHeaderBorderColor;
+._sap_ui_table_Table_Extension() {
+	border-bottom: @_sap_ui_table_BaseBorderWidth solid @sapUiListHeaderBorderColor;
 	padding: 0.125rem;
-	box-sizing: content-box;
 }
 
-.sapUiTableCnt {
-	border: 1px solid @sapUiListBorderColor;
-}
-
-.sapUiTableColHdrCnt {
-	border-bottom-width: 3px;
+._sap_ui_table_Table_Table() {
+	border: @_sap_ui_table_BaseBorderWidth solid @sapUiListBorderColor;
 }

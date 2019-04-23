@@ -16,6 +16,11 @@
 @_sap_ui_table_Scrolling_ScrollbarSizeMobile: 8px;
 @_sap_ui_table_Scrolling_ScrollbarBackground: @sapUiListHeaderBackground;
 
+// Can be used in other themes to add styles for which there are no style definitions in the base theme and therefore no theme parameters.
+._sap_ui_table_Scrolling_NativeScrollbarCommon() {}
+._sap_ui_table_Scrolling_NativeScrollbarDesktop() {}
+._sap_ui_table_Scrolling_NativeScrollbarMobile() {}
+
 .sapUiTableVSb,
 .sapUiTableVSbBg {
 	display: none;
@@ -314,72 +319,88 @@ html[data-sap-ui-browser^="ed"] .sapUiTableHScr {
 	}
 }
 
-html.sap-desktop:not(.sap-tablet),
-html.sap-desktop.sap-tablet {
+.sapUiTableVSb,
+.sapUiTableHSb,
+.sapUiTableVSbExternal,
+.sapUiTableHSbExternal {
+	&::-webkit-scrollbar-thumb {
+		background-color: @sapUiScrollBarFaceColor !important;
+	}
+
+	&::-webkit-scrollbar {
+		background-color: @sapUiScrollBarTrackColor !important;
+	}
+
+	._sap_ui_table_Scrolling_NativeScrollbarCommon();
+}
+
+html.sap-desktop {
+	.sapUiTableVSb,
+	.sapUiTableHSb,
+	.sapUiTableVSbExternal,
+	.sapUiTableHSbExternal {
+		._sap_ui_table_Scrolling_NativeScrollbarDesktop();
+	}
 
 	.sapUiTableVSb,
 	.sapUiTableVSbExternal {
-		&::-webkit-scrollbar-thumb:vertical {
-			border-left: 0.125rem solid @sapUiScrollBarTrackColor;
-			border-right: 0.125rem solid @sapUiScrollBarTrackColor;
-		}
-
 		&::-webkit-scrollbar:vertical {
-			width: @_sap_ui_table_Scrolling_ScrollbarSize;
+			width: @_sap_ui_table_Scrolling_ScrollbarSize !important;
+		}
+
+		&::-webkit-scrollbar-thumb:vertical {
+			border-left: 0.125rem solid @sapUiScrollBarTrackColor !important;
+			border-right: 0.125rem solid @sapUiScrollBarTrackColor !important;
 		}
 	}
 
 	.sapUiTableHSb,
 	.sapUiTableHSbExternal {
-		&::-webkit-scrollbar-thumb:horizontal {
-			border-top: 0.125rem solid @sapUiScrollBarTrackColor;
-			border-bottom: 0.125rem solid @sapUiScrollBarTrackColor;
-		}
-
 		&::-webkit-scrollbar:horizontal {
-			height: @_sap_ui_table_Scrolling_ScrollbarSize;
+			height: @_sap_ui_table_Scrolling_ScrollbarSize !important;
+		}
+
+		&::-webkit-scrollbar-thumb:horizontal {
+			border-top: 0.125rem solid @sapUiScrollBarTrackColor !important;
+			border-bottom: 0.125rem solid @sapUiScrollBarTrackColor !important;
 		}
 	}
-
-	.sapUiTableVSb,
-	.sapUiTableHSb,
-	.sapUiTableVSbExternal,
-	.sapUiTableHSbExternal {
-		&::-webkit-scrollbar-thumb {
-			background-color: @sapUiScrollBarFaceColor;
-		}
-
-		&::-webkit-scrollbar {
-			background-color: @sapUiScrollBarTrackColor;
-		}
-	}
-
 }
 
-html.sap-tablet:not(.sap-desktop), html.sap-phone {
-
+html.sap-tablet:not(.sap-desktop),
+html.sap-phone {
 	.sapUiTableVSb,
 	.sapUiTableHSb,
 	.sapUiTableVSbExternal,
 	.sapUiTableHSbExternal {
+		-webkit-appearance: none;
+		._sap_ui_table_Scrolling_NativeScrollbarMobile();
+	}
 
-		&::-webkit-scrollbar {
-			-webkit-appearance: none;
-			width: @_sap_ui_table_Scrolling_ScrollbarSizeMobile;
-			height: @_sap_ui_table_Scrolling_ScrollbarSizeMobile;
-			background-color: @sapUiScrollBarTrackColor;
+	.sapUiTableVSb,
+	.sapUiTableVSbExternal {
+		&::-webkit-scrollbar:vertical {
+			width: @_sap_ui_table_Scrolling_ScrollbarSizeMobile !important;
 		}
 
-		&::-webkit-scrollbar-thumb {
-			background-color: @sapUiScrollBarFaceColor;
-			border-top: 0.125rem solid @sapUiScrollBarBorderColor;
-			border-left: 0.125rem solid @sapUiScrollBarBorderColor;
-			border-right: 0.125rem solid @sapUiScrollBarBorderColor;
-			border-bottom: 0.125rem solid @sapUiScrollBarBorderColor;
-			width: 0.25rem;
-			height: 0.25rem;
+		&::-webkit-scrollbar-thumb:vertical {
+			width: 0.25rem !important;
+			border-left: 0.125rem solid @sapUiScrollBarBorderColor !important;
+			border-right: 0.125rem solid @sapUiScrollBarBorderColor !important;
+		}
+	}
+
+	.sapUiTableHSb,
+	.sapUiTableHSbExternal {
+		&::-webkit-scrollbar:horizontal {
+			height: @_sap_ui_table_Scrolling_ScrollbarSizeMobile !important;
 		}
 
+		&::-webkit-scrollbar-thumb:horizontal {
+			height: 0.25rem !important;
+			border-top: 0.125rem solid @sapUiScrollBarBorderColor !important;
+			border-bottom: 0.125rem solid @sapUiScrollBarBorderColor !important;
+		}
 	}
 
 	.sapUiTableVSb,
