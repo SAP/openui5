@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/Settings",
-	'sap/ui/thirdparty/sinon'
+	"sap/ui/thirdparty/sinon"
 ], function(
 	RuntimeAuthoring,
 	Plugin,
@@ -12,7 +12,7 @@ sap.ui.define([
 	FlexUtils,
 	FlexSettings,
 	sinon
-){
+) {
 	"use strict";
 
 	var oManifest = {

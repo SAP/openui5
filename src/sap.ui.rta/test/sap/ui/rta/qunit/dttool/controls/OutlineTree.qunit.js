@@ -17,33 +17,33 @@ sap.ui.define([
 	var ListMode = mobileLibrary.ListMode;
 
 	QUnit.module("OutlineTree API", function () {
-		QUnit.test("Selection by Path", function(assert){
+		QUnit.test("Selection by Path", function(assert) {
 			var oData = [{
-					text: "Node1",
-					ref: "../images/action.png",
-					nodes: [{
-							text: "Node1-1",
-							ref: "../images/action.png"
-						},
-						{
-							text: "Node1-2",
+				text: "Node1",
+				ref: "../images/action.png",
+				nodes: [{
+					text: "Node1-1",
+					ref: "../images/action.png"
+				},
+					{
+						text: "Node1-2",
+						ref: "../images/action.png",
+						nodes: [{
+							text: "Node1-2-1",
 							ref: "../images/action.png",
 							nodes: [{
-									text: "Node1-2-1",
-									ref: "../images/action.png",
-									nodes: [{
-										text: "Node1-2-1-1",
-										ref: "../images/action.png"
-									}]
-								},
-								{
-									text: "Node1-2-2",
-									ref: "../images/action.png"
-								}
+								text: "Node1-2-1-1",
+								ref: "../images/action.png"
+							}]
+						},
+							{
+								text: "Node1-2-2",
+								ref: "../images/action.png"
+							}
 							]
-						}
+					}
 					]
-				},
+			},
 				{
 					text: "Node2",
 					ref: "../images/action.png",
@@ -99,12 +99,12 @@ sap.ui.define([
 			oTree.setMode(ListMode.SingleSelect);
 
 			oTree.setSelectedItemByPath(sPath);
-			assert.ok(oTree.getItems()[5].getSelected(),"tree item is selected.");
+			assert.ok(oTree.getItems()[5].getSelected(), "tree item is selected.");
 			assert.ok(oTree.getItems()[5].getItemNodeContext().nodeState.selected, "item context is selected");
 			assert.strictEqual(oTree.getItems()[5].getTitle(), sText, "correct item is selected");
 
 			oTree.setSelectedItemByPath(sPath, false);
-			assert.ok(oTree.getItems()[5].getSelected() === false,"tree item is not selected.");
+			assert.ok(oTree.getItems()[5].getSelected() === false, "tree item is not selected.");
 
 			oTree.collapseAll();
 		});
@@ -113,5 +113,4 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

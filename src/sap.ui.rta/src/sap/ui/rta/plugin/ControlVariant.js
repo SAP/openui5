@@ -3,19 +3,18 @@
  */
 
 sap.ui.define([
-	'sap/ui/rta/plugin/Plugin',
-	'sap/ui/rta/plugin/RenameHandler',
-	'sap/ui/rta/Utils',
-	'sap/ui/dt/ElementOverlay',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/dt/OverlayUtil',
-	'sap/ui/dt/Util',
-	'sap/ui/core/util/reflection/JsControlTreeModifier',
-	'sap/ui/fl/Utils',
-	'sap/ui/fl/variants/VariantManagement',
-	'sap/ui/base/ManagedObject',
-	'sap/m/delegate/ValueStateMessage',
-	'sap/ui/rta/command/CompositeCommand',
+	"sap/ui/rta/plugin/Plugin",
+	"sap/ui/rta/plugin/RenameHandler",
+	"sap/ui/rta/Utils",
+	"sap/ui/dt/ElementOverlay",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/OverlayUtil",
+	"sap/ui/dt/Util",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/variants/VariantManagement",
+	"sap/ui/base/ManagedObject",
+	"sap/m/delegate/ValueStateMessage",
+	"sap/ui/rta/command/CompositeCommand",
 	"sap/base/Log"
 ], function(
 	Plugin,
@@ -25,7 +24,6 @@ sap.ui.define([
 	OverlayRegistry,
 	OverlayUtil,
 	DtUtil,
-	JsControlTreeModifier,
 	flUtils,
 	VariantManagement,
 	ManagedObject,
@@ -55,10 +53,9 @@ sap.ui.define([
 	ElementOverlay.prototype._variantManagement = undefined;
 	ElementOverlay.prototype.getVariantManagement = function() { return this._variantManagement;};
 	ElementOverlay.prototype.setVariantManagement = function(sKey) { this._variantManagement = sKey; };
-	ElementOverlay.prototype.hasVariantManagement = function() { return this._variantManagement ? true : false; };
+	ElementOverlay.prototype.hasVariantManagement = function() { return !!this._variantManagement; };
 
-	var ControlVariant = Plugin.extend("sap.ui.rta.plugin.ControlVariant", /** @lends sap.ui.rta.plugin.ControlVariant.prototype */
-	{
+	var ControlVariant = Plugin.extend("sap.ui.rta.plugin.ControlVariant", /** @lends sap.ui.rta.plugin.ControlVariant.prototype */ {
 		metadata: {
 			library: "sap.ui.rta",
 			properties : {
@@ -94,7 +91,7 @@ sap.ui.define([
 			// If "for" association is not valid
 			if (
 				!vAssociationElement
-				|| ( Array.isArray(vAssociationElement) && vAssociationElement.length === 0 )
+				|| (Array.isArray(vAssociationElement) && vAssociationElement.length === 0)
 			) {
 				oOverlay.setVariantManagement(sVariantManagementReference);
 				return;
@@ -103,10 +100,10 @@ sap.ui.define([
 			aVariantManagementTargetElements = !Array.isArray(vAssociationElement) ? [vAssociationElement] : vAssociationElement;
 
 			// Propagate variant management reference to all children overlays starting from the "for" association element as the root
-			aVariantManagementTargetElements.forEach( function(sVariantManagementTargetElement) {
+			aVariantManagementTargetElements.forEach(function(sVariantManagementTargetElement) {
 				var oVariantManagementTargetElement = sVariantManagementTargetElement instanceof ManagedObject ? sVariantManagementTargetElement : sap.ui.getCore().byId(sVariantManagementTargetElement),
 					oVariantManagementTargetOverlay = OverlayRegistry.getOverlay(oVariantManagementTargetElement);
-				this._propagateVariantManagement(oVariantManagementTargetOverlay , sVariantManagementReference);
+				this._propagateVariantManagement(oVariantManagementTargetOverlay, sVariantManagementReference);
 			}.bind(this));
 			oOverlay.attachEvent("editableChange", RenameHandler._manageClickEvent, this);
 		} else if (!oOverlay.getVariantManagement()) {
@@ -136,7 +133,7 @@ sap.ui.define([
 		oParentElementOverlay.setVariantManagement(sVariantManagementReference);
 		aElementOverlaysRendered = OverlayUtil.getAllChildOverlays(oParentElementOverlay);
 
-		aElementOverlaysRendered.forEach( function(oElementOverlay) {
+		aElementOverlaysRendered.forEach(function(oElementOverlay) {
 			aElementOverlaysRendered = aElementOverlaysRendered.concat(this._propagateVariantManagement(oElementOverlay, sVariantManagementReference));
 		}.bind(this));
 
@@ -224,16 +221,14 @@ sap.ui.define([
 				aVariants = oModel.getData()[sVariantManagementReference].variants.reduce(function(aReducedVariants, oVariant) {
 					if (oVariant.visible) {
 						return aReducedVariants.concat(oVariant);
-					} else {
-						return aReducedVariants;
 					}
+					return aReducedVariants;
 				}, []);
 			}
 			var bEnabled = aVariants.length > 1;
 			return bEnabled;
-		} else {
-			return false;
 		}
+		return false;
 	};
 
 	/**
@@ -328,7 +323,7 @@ sap.ui.define([
 
 		.then(function(oSwitchCommand) {
 			this.fireElementModified({
-				"command" : oSwitchCommand
+				command : oSwitchCommand
 			});
 		}.bind(this))
 
@@ -353,7 +348,7 @@ sap.ui.define([
 			vDomRef = oVariantManagementOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
 		var oVariantTitleElement = oVariantManagementControl.getTitle();
 		var sPreviousText = oVariantTitleElement.getText();
-		var fnHandleStartEdit = RenameHandler.startEdit.bind( this, {
+		var fnHandleStartEdit = RenameHandler.startEdit.bind(this, {
 			overlay: oVariantManagementOverlay,
 			domRef: vDomRef,
 			pluginMethodName: "plugin.ControlVariant.startEdit"
@@ -433,7 +428,6 @@ sap.ui.define([
 		} else if (iDuplicateCount > 0) {
 			sErrorText = "DUPLICATE_ERROR_TEXT";
 		} else if (bNewEntry) {
-
 			return this._createSetTitleCommand({
 				text: sText,
 				element: oRenamedElement,
@@ -459,14 +453,13 @@ sap.ui.define([
 					.then(function(oCompositeCommand) {
 						return bTextChanged ? oCompositeCommand.addCommand(oSetTitleCommand) : oCompositeCommand;
 					});
-				} else {
-					return oSetTitleCommand;
 				}
+				return oSetTitleCommand;
 			}.bind(this))
 
 			.then(function(oCommand) {
 				this.fireElementModified({
-					"command": oCommand
+					command: oCommand
 				});
 			}.bind(this))
 
@@ -558,7 +551,7 @@ sap.ui.define([
 		}
 
 		var aRegexExecOnVariantTitle = [];
-		oData[sVariantManagementReference].variants.forEach( function(oVariant) {
+		oData[sVariantManagementReference].variants.forEach(function(oVariant) {
 			if (oVariant.visible) {
 				aRegexExecOnVariantTitle =
 					regexForIncrement.test(oVariant.title)
@@ -579,7 +572,6 @@ sap.ui.define([
 						aRegexExecOnVariantTitle[iIndexForCounter]
 							? (parseInt(aRegexExecOnVariantTitle[iIndexForCounter]) + 1)
 							: iTitleCounter;
-
 				} else if (aRegexExecOnVariantTitle.length === 2
 					&& sTitleTrimmed === aRegexExecOnVariantTitle[1]) {
 					iTitleCounter = iTitleCounter === 0 ? 1 : iTitleCounter;
@@ -660,7 +652,7 @@ sap.ui.define([
 
 		.then(function(oConfigureCommand) {
 			this.fireElementModified({
-				"command": oConfigureCommand
+				command: oConfigureCommand
 			});
 		}.bind(this))
 
@@ -689,7 +681,7 @@ sap.ui.define([
 			});
 		}
 
-		if (this.isVariantDuplicateAvailable(oElementOverlay)){
+		if (this.isVariantDuplicateAvailable(oElementOverlay)) {
 			aMenuItems.push({
 				id: "CTX_VARIANT_DUPLICATE",
 				text: sap.ui.getCore().getLibraryResourceBundle('sap.ui.rta').getText('CTX_VARIANT_DUPLICATE'),
@@ -703,7 +695,7 @@ sap.ui.define([
 			});
 		}
 
-		if (this.isVariantConfigureAvailable(oElementOverlay)){
+		if (this.isVariantConfigureAvailable(oElementOverlay)) {
 			aMenuItems.push({
 				id: "CTX_VARIANT_MANAGE",
 				text: sap.ui.getCore().getLibraryResourceBundle('sap.ui.rta').getText('CTX_VARIANT_MANAGE'),
@@ -715,7 +707,7 @@ sap.ui.define([
 			});
 		}
 
-		if (this.isVariantSwitchAvailable(oElementOverlay)){
+		if (this.isVariantSwitchAvailable(oElementOverlay)) {
 			var oModel = this._getVariantModel(oElementOverlay.getElement());
 			var sManagementReferenceId = oElementOverlay.getVariantManagement();
 
@@ -729,9 +721,8 @@ sap.ui.define([
 						enabled: !bCurrentItem
 					};
 					return aReducedVariants.concat(oItem);
-				} else {
-					return aReducedVariants;
 				}
+				return aReducedVariants;
 			}, []);
 
 			aMenuItems.push({

@@ -46,7 +46,6 @@ function (
 			};
 
 			this.oGetAppComponentForControlStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(this.oMockedAppComponent);
-
 		},
 		after: function () {
 			this.oGetAppComponentForControlStub.restore();
@@ -58,13 +57,12 @@ function (
 
 			this.mLibraries = {
 				"sap.uxap": {
-					"minVersion": "1.44",
-					"lazy": "false"
+					minVersion: "1.44",
+					lazy: "false"
 				}
 			};
 
 			this.oButton = new Button("myButton");
-
 		},
 		afterEach: function () {
 			this.oButton.destroy();
@@ -86,17 +84,17 @@ function (
 			};
 
 			var oMockAddLibraryInlineChange = {
-				"mockName" : "mocked"
+				mockName : "mocked"
 			};
 
-			this.createDescriptorInlineChangeStub = sinon.stub(DescriptorInlineChangeFactory, "createDescriptorInlineChange").callsFake(function(sChangeType, mParameters){
+			this.createDescriptorInlineChangeStub = sinon.stub(DescriptorInlineChangeFactory, "createDescriptorInlineChange").callsFake(function(sChangeType, mParameters) {
 				assert.equal(sChangeType, this.sChangeType, "change type is properly passed to the 'createDescriptorInlineChange' method");
 				assert.equal(mParameters.libraries, this.mLibraries, "libraries are properly passed to the 'create_ui5_addLibraries' method");
 				this.createDescriptorInlineChangeStub.restore();
 				return Promise.resolve(oMockAddLibraryInlineChange);
 			}.bind(this));
 
-			this.createNewChangeStub = sinon.stub(DescriptorChangeFactory.prototype, "createNew").callsFake(function(sReference, oAddLibraryInlineChange, sLayer, oAppComponent){
+			this.createNewChangeStub = sinon.stub(DescriptorChangeFactory.prototype, "createNew").callsFake(function(sReference, oAddLibraryInlineChange, sLayer, oAppComponent) {
 				assert.equal(sReference, this.sReference, "reference is properly passed to createNew method");
 				assert.equal(oAddLibraryInlineChange.mockName, oMockAddLibraryInlineChange.mockName, "oAddLibraryInlineChange is properly passed to createNew method");
 				assert.equal(sLayer, this.sLayer, "layer is properly passed to createNew method");
@@ -111,7 +109,7 @@ function (
 				reference : this.sReference,
 				parameters : { libraries : this.mLibraries },
 				appComponent : this.oMockedAppComponent
-			}, {}, {"layer" : this.sLayer})
+			}, {}, {layer : this.sLayer})
 
 			.then(function(oCommand) {
 				oAddLibraryCommand = oCommand;
@@ -127,19 +125,19 @@ function (
 		QUnit.test("when calling execute for AddLibrary ...", function (assert) {
 			this.mLibraries = {
 				"sap.uxap": {
-					"minVersion": "1.44",
-					"lazy": "false"
+					minVersion: "1.44",
+					lazy: "false"
 				},
 				"i.dont.exist": {
-					"minVersion": "1.44",
-					"lazy": "true"
+					minVersion: "1.44",
+					lazy: "true"
 				}
 			};
 
 			return CommandFactory.getCommandFor(this.oButton, "addLibrary", {
 				reference : this.sReference,
 				parameters : { libraries : this.mLibraries }
-			}, {}, {"layer" : this.sLayer})
+			}, {}, {layer : this.sLayer})
 			.then(function (oAddLibraryCommand) {
 				assert.ok(oAddLibraryCommand, "addLibrary command exists for element");
 				return oAddLibraryCommand.execute();
@@ -153,5 +151,4 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

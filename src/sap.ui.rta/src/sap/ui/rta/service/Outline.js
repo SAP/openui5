@@ -8,10 +8,7 @@ sap.ui.define([
 	"sap/ui/dt/AggregationOverlay",
 	"sap/ui/rta/Utils",
 	"sap/ui/dt/Util",
-	"sap/ui/dt/Overlay",
-	"sap/ui/dt/ElementUtil",
 	"sap/base/util/deepEqual",
-	"sap/base/Log",
 	"sap/base/util/merge",
 	"sap/ui/thirdparty/jquery"
 ], function(
@@ -20,10 +17,7 @@ sap.ui.define([
 	AggregationOverlay,
 	RtaUtils,
 	DtUtil,
-	Overlay,
-	ElementUtil,
 	deepEqual,
-	Log,
 	merge,
 	jQuery
 ) {
@@ -62,7 +56,6 @@ sap.ui.define([
 	 */
 
 	return function(oRta, fnPublish) {
-
 		var oOutline = {};
 
 		/**
@@ -193,7 +186,7 @@ sap.ui.define([
 			var oData = Object.assign(
 				{
 					id: sId,
-					technicalName: sAggregationName ? sAggregationName : sElementClass, //aggregation name / class name
+					technicalName: sAggregationName || sElementClass,
 					editable: bIsEditable,
 					type: sType //either "element" or "aggregation"
 				},
@@ -214,7 +207,7 @@ sap.ui.define([
 		 * @return {array} Filtered array of updates
 		 */
 		oOutline._removeDuplicate = function(aResponseUpdates, oResponse) {
-			return aResponseUpdates.filter(function(oUpdate){
+			return aResponseUpdates.filter(function(oUpdate) {
 				return !deepEqual(oResponse, oUpdate, Infinity);
 			});
 		};
@@ -266,7 +259,7 @@ sap.ui.define([
 					if ( // Proceed only if (either):
 					// Aggregation overlay exists for current element overlay & is not being destroyed
 					// Aggregation overlay doesn't exist and element overlay belongs to the root element
-					( oParentAggregationOverlay instanceof AggregationOverlay
+					(oParentAggregationOverlay instanceof AggregationOverlay
 						&& !oParentAggregationOverlay._bIsBeingDestroyed
 					)
 					|| oResponse.elementOverlay.isRoot()

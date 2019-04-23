@@ -11,11 +11,11 @@ sap.ui.define([
 	return UIComponent.extend("sap.ui.rta.appVariant.manageApps.webapp.Component", {
 
 		metadata: {
-			"manifest": "json",
-			"library": "sap.ui.rta",
-			"version": "0.9",
-			"properties": {
-				"idRunningApp" : "string",
+			manifest: "json",
+			library: "sap.ui.rta",
+			version: "0.9",
+			properties: {
+				idRunningApp : "string",
 				isOverviewForKeyUser: {
 					type: "boolean"
 				}

@@ -8,13 +8,12 @@ sap.ui.define([
 	MockServer,
 	ODataModel,
 	JSONModel
-){
+) {
 	"use strict";
 
 	return Controller.extend("sap.ui.rta.test.ComplexTest", {
 
 		onInit : function () {
-
 			this._sResourcePath = jQuery.sap.getResourcePath("sap/ui/rta/test/");
 			var sManifestUrl = this._sResourcePath + "/manifest.json",
 				oManifest = jQuery.sap.syncGetJSON(sManifestUrl).data,
@@ -42,7 +41,7 @@ sap.ui.define([
 							sMetadataUrl = this._sResourcePath + dataSource.settings.localUri;
 							sMockServerPath = sMetadataUrl.slice(0, sMetadataUrl.lastIndexOf("/") + 1);
 							aEntities = dataSource.settings.aEntitySetsNames ? dataSource.settings.aEntitySetsNames : [];
-							oMockServer.simulate(sMetadataUrl , {
+							oMockServer.simulate(sMetadataUrl, {
 								sMockdataBaseUrl: sMockServerPath,
 								bGenerateMissingMockData: true,
 								aEntitySetsNames : aEntities
@@ -78,7 +77,6 @@ sap.ui.define([
 							oStateModel.setData(data);
 							oView.setModel(oStateModel, "state");
 							oView.bindElement("/Headers(AccountingDocument='100015012',CompanyCode='0001',FiscalYear='2015')");
-
 						} else if (property === "smartFilterService") {
 							//smartfilterbar bind
 							var oSmartFilterModel = new ODataModel("/foo", true);
@@ -94,7 +92,6 @@ sap.ui.define([
 					}
 				}
 			}
-
 		},
 
 		toggleUpdateMode: function() {
@@ -116,7 +113,6 @@ sap.ui.define([
 		},
 
 		_setButtonText: function() {
-
 			var oSmartFilterbar = this.byId("smartFilterBar");
 			var oButton = this.byId("toggleUpdateMode");
 
@@ -130,55 +126,51 @@ sap.ui.define([
 			} else {
 				oButton.setText("Change to 'ManualMode'");
 			}
-
 		},
 
-		_getUrlParameter : function(sParam){
+		_getUrlParameter : function(sParam) {
 			var sReturn = "";
 			var sPageURL = window.location.search.substring(1);
 			var sURLVariables = sPageURL.split('&');
 			for (var i = 0; i < sURLVariables.length; i++) {
 				var sParameterName = sURLVariables[i].split('=');
-				if (sParameterName[0] == sParam) {
+				if (sParameterName[0] === sParam) {
 					sReturn = sParameterName[1];
 				}
 			}
 			return sReturn;
 		},
 
-		_undoRedoStack : function(oStack){
-			function undo(oStack){
-				if (oStack.canUndo()){
-					return oStack.undo().then(function(){
+		_undoRedoStack : function(oStack) {
+			function undo(oStack) {
+				if (oStack.canUndo()) {
+					return oStack.undo().then(function() {
 						return undo(oStack);
 					});
-				} else {
-					return Promise.resolve();
 				}
+				return Promise.resolve();
 			}
-			function redo(oStack){
-				if (oStack.canRedo()){
-					return oStack.redo().then(function(){
+			function redo(oStack) {
+				if (oStack.canRedo()) {
+					return oStack.redo().then(function() {
 						return redo(oStack);
 					});
-				}else {
-					return Promise.resolve();
 				}
+				return Promise.resolve();
 			}
 
 			undo(oStack)
-				.then(function(){
+				.then(function() {
 					sap.m.MessageToast.show("All changes undone", {duration : 1000});
 
 					return redo(oStack);
 				})
-				.then(function(){
+				.then(function() {
 					sap.m.MessageToast.show("All changes redone", {duration : 1000});
 				});
 		},
 
 		switchToAdaptionMode : function() {
-
 			sap.ui.require([
 				"sap/ui/rta/RuntimeAuthoring",
 				"sap/ui/rta/command/Stack",

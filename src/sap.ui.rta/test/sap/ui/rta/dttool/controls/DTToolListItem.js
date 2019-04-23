@@ -5,10 +5,15 @@
 /* globals sap */
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	'sap/m/InputListItem',
-	'sap/m/InputListItemRenderer',
+	"sap/m/InputListItem",
+	"sap/m/InputListItemRenderer",
 	"sap/base/util/ObjectPath"
-], function(jQuery, InputListItem, InputListItemRenderer, ObjectPath) {
+], function(
+	jQuery,
+	InputListItem,
+	InputListItemRenderer,
+	ObjectPath
+) {
 	"use strict";
 
 	/**
@@ -55,7 +60,6 @@ sap.ui.define([
 		},
 
 		onSelectChange : function (oEvent) {
-
 			var vNewValue = oEvent.getParameter("selectedItem").getKey();
 
 			if (this.getType() === "boolean") {
@@ -68,7 +72,6 @@ sap.ui.define([
 		},
 
 		onInputChange : function (oEvent) {
-
 			var vNewValue = oEvent.getParameter("value");
 
 			if (this.getType() === "int") {
@@ -85,7 +88,6 @@ sap.ui.define([
 		},
 
 		onBeforeRendering : function () {
-
 			this.removeAllContent();
 
 			this.setLabel(this.getPropertyName());
@@ -97,7 +99,6 @@ sap.ui.define([
 			var sValue = this.getValue();
 			var sDefaultValue = this.getDefaultValue();
 			if (sType === "boolean") {
-
 				this.addContent(new sap.m.Select({
 					width : "12.5rem",
 					selectedKey : "" + sValue,
@@ -116,9 +117,7 @@ sap.ui.define([
 						})
 					]
 				}));
-
-			} else if (jQuery.isPlainObject( ObjectPath.get(sType || ""))) {
-
+			} else if (jQuery.isPlainObject(ObjectPath.get(sType || ""))) {
 				var oEnum = ObjectPath.get(sType || "");
 
 				Object.keys(oEnum).forEach(function (sKey) {
@@ -136,9 +135,7 @@ sap.ui.define([
 					change : this.onSelectChange.bind(this),
 					items : aItems
 				}));
-
 			} else {
-
 				this.addContent(new sap.m.Input({
 					width : "8rem",
 					value : sValue,
@@ -154,7 +151,7 @@ sap.ui.define([
 			}
 		},
 
-		defaultButtonPress : function (oEvent) {
+		defaultButtonPress : function () {
 			this.getContent()[0].setValue(this.getDefaultValue());
 			this.getContent()[1].setEnabled(false);
 
@@ -164,14 +161,13 @@ sap.ui.define([
 		},
 
 		setType : function (sType) {
-			this.setProperty("type", sType ? sType : "string");
+			this.setProperty("type", sType || "string");
 		},
 
-		renderer : function (oRm, oLi) {
+		renderer : function () {
 			InputListItemRenderer.render.apply(this, arguments);
 		}
 	});
 
 	return DTToolListItem;
-
 }, /* bExport= */ true);

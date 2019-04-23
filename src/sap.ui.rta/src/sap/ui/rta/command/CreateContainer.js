@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/rta/command/FlexCommand'], function(FlexCommand) {
+sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 	"use strict";
 
 	/**
@@ -40,8 +40,7 @@ sap.ui.define(['sap/ui/rta/command/FlexCommand'], function(FlexCommand) {
 		}
 	});
 
-	CreateContainer.prototype._getChangeSpecificData = function(bForward) {
-
+	CreateContainer.prototype._getChangeSpecificData = function() {
 		var mSpecificInfo = {
 			changeType : this.getChangeType(),
 			index : this.getIndex(),
@@ -54,5 +53,4 @@ sap.ui.define(['sap/ui/rta/command/FlexCommand'], function(FlexCommand) {
 	};
 
 	return CreateContainer;
-
 }, /* bExport= */true);

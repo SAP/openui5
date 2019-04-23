@@ -2,7 +2,7 @@
 
 sap.ui.require([
 	"sap/ui/test/opaQunit",
-	'sap/ui/test/Opa5'
+	"sap/ui/test/Opa5"
 ], function (
 	opaTest,
 	Opa5
@@ -11,7 +11,7 @@ sap.ui.require([
 
 	QUnit.module("EndJourney");
 
-	opaTest("Tearing the app down", function (Given, When, Then) {
+	opaTest("Tearing the app down", function (Given) {
 		Given.iTeardownMyUIComponent();
 		Opa5.assert.expect(0);
 	});

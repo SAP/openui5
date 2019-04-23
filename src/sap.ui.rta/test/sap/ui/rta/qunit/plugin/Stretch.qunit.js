@@ -691,7 +691,7 @@ function (
 			this.oLayout1 = new VerticalLayout("layout1", {
 				width: "300px",
 				content: [
-					this.oLayout2 = new VerticalLayout("layout2" ,{
+					this.oLayout2 = new VerticalLayout("layout2", {
 						width: "300px",
 						visible: false,
 						content: [
@@ -808,5 +808,4 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

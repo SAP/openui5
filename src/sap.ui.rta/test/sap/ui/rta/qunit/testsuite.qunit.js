@@ -28,8 +28,8 @@ sap.ui.define([
 			autostart: true
 		},
 		tests: {
-			"AggregationBinding": {},
-			"ControlTreeModifier": {
+			AggregationBinding: {},
+			ControlTreeModifier: {
 				coverage: {
 					only: ["sap/ui/rta/ControlTreeModifier"]
 				},
@@ -70,7 +70,7 @@ sap.ui.define([
 				},
 				ui5: {
 					resourceroots: {
-						"testdata": "test-resources/sap/ui/rta/testdata/"
+						testdata: "test-resources/sap/ui/rta/testdata/"
 					}
 				}
 			},
@@ -286,7 +286,7 @@ sap.ui.define([
 				},
 				ui5: {
 					resourceroots: {
-						"qunit": "test-resources/sap/ui/rta/qunit/",
+						qunit: "test-resources/sap/ui/rta/qunit/",
 						"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
 						"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
 					}
@@ -414,7 +414,7 @@ sap.ui.define([
 	var bCompAvailable = false;
 	var oXhr = new XMLHttpRequest();
 	oXhr.onreadystatechange = function() {
-		if (this.readyState == 4) {
+		if (this.readyState === 4) {
 			switch (this.status) {
 				case 200:
 				case 304:
@@ -479,10 +479,10 @@ sap.ui.define([
 						}
 					}
 				},
-				"ContextMenu": { // Integration
+				ContextMenu: { // Integration
 					ui5: {
 						resourceroots: {
-							"qunit": "test-resources/sap/ui/rta/qunit/",
+							qunit: "test-resources/sap/ui/rta/qunit/",
 							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
 							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
 						}
@@ -492,7 +492,7 @@ sap.ui.define([
 					group: "Integration",
 					ui5: {
 						resourceroots: {
-							"qunit": "test-resources/sap/ui/rta/qunit/",
+							qunit: "test-resources/sap/ui/rta/qunit/",
 							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
 							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
 						}
@@ -506,19 +506,19 @@ sap.ui.define([
 					group: "Integration",
 					ui5: {
 						resourceroots: {
-							"qunit": "test-resources/sap/ui/rta/qunit/",
+							qunit: "test-resources/sap/ui/rta/qunit/",
 							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
 							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
 						}
 					}
 				},
-				"RuntimeAuthoring": {
+				RuntimeAuthoring: {
 					coverage: {
 						only: ["sap/ui/rta/RuntimeAuthoring"]
 					},
 					ui5: {
 						resourceroots: {
-							"qunit": "test-resources/sap/ui/rta/qunit/",
+							qunit: "test-resources/sap/ui/rta/qunit/",
 							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
 							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
 						}
@@ -530,7 +530,7 @@ sap.ui.define([
 					},
 					ui5: {
 						resourceroots: {
-							"qunit": "test-resources/sap/ui/rta/qunit/",
+							qunit: "test-resources/sap/ui/rta/qunit/",
 							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
 							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
 						}
@@ -542,7 +542,7 @@ sap.ui.define([
 					},
 					ui5: {
 						resourceroots: {
-							"qunit": "test-resources/sap/ui/rta/qunit/",
+							qunit: "test-resources/sap/ui/rta/qunit/",
 							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
 							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
 						}
@@ -557,14 +557,14 @@ sap.ui.define([
 						}
 					}
 				},
-				"Utils": {
+				Utils: {
 					coverage: {
 						only: ["sap/ui/rta/Utils"]
 					},
 					ui5: {
 						libs: 'sap.ui.rta, sap.uxap',
 						resourceroots: {
-							"qunit": "test-resources/sap/ui/rta/qunit/",
+							qunit: "test-resources/sap/ui/rta/qunit/",
 							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/",
 							"sap.ui.rta.test.additionalElements": "test-resources/sap/ui/rta/internal/testdata/additionalElements/"
 						}

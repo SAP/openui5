@@ -33,7 +33,7 @@ sap.ui.define([
 	var oCompCont = RtaQunitUtils.renderTestAppAt("qunit-fixture");
 	var oComp = oCompCont.getComponentInstance();
 
-	function givenAnFLP(fnFLPToExternalStub, mShellParams){
+	function givenAnFLP(fnFLPToExternalStub, mShellParams) {
 		sandbox.stub(Utils, "getUshellContainer").returns({
 			getService : function() {
 				return {
@@ -47,7 +47,7 @@ sap.ui.define([
 							action : "somestring"
 						};
 
-						if (mShellParams){
+						if (mShellParams) {
 							mHash.params = mShellParams;
 						}
 						return mHash;
@@ -64,57 +64,57 @@ sap.ui.define([
 		});
 	}
 
-	function givenMaxLayerParameterIsSetTo(sMaxLayer, fnFLPToExternalStub){
+	function givenMaxLayerParameterIsSetTo(sMaxLayer, fnFLPToExternalStub) {
 		givenAnFLP.call(this, fnFLPToExternalStub, {
 			"sap-ui-fl-max-layer" : [sMaxLayer]
 		});
 	}
 
-	function appDescriptorChanges(oRta, bExist){
+	function appDescriptorChanges(oRta, bExist) {
 		//we don't want to start RTA for these tests, so just setting the otherwise not set property,
 		//that sinon cannot stub until it was set.
 		oRta._oSerializer = {
-			needsReload : function(){
+			needsReload : function() {
 				return Promise.resolve(bExist);
 			}
 		};
 	}
-	function whenStartedWithLayer(oRta, sLayer){
+	function whenStartedWithLayer(oRta, sLayer) {
 		var mFlexSettings = Object.assign({}, oRta.getFlexSettings());
 		mFlexSettings.layer = sLayer;
 		oRta.setFlexSettings(mFlexSettings);
 	}
-	function whenAppDescriptorChangesExist(oRta){
+	function whenAppDescriptorChangesExist(oRta) {
 		appDescriptorChanges(oRta, true);
 	}
-	function whenNoAppDescriptorChangesExist(oRta){
+	function whenNoAppDescriptorChangesExist(oRta) {
 		appDescriptorChanges(oRta, false);
 	}
-	function personalizationChanges(oRta, bExist){
+	function personalizationChanges(oRta, bExist) {
 		var stubFlexController = {
-			hasHigherLayerChanges : function(){
+			hasHigherLayerChanges : function() {
 				return Promise.resolve(bExist);
 			}
 		};
 		sandbox.stub(oRta, "_getFlexController").returns(stubFlexController);
 	}
-	function whenHigherLayerChangesExist(oRta){
+	function whenHigherLayerChangesExist(oRta) {
 		personalizationChanges(oRta, true);
 	}
-	function whenNoHigherLayerChangesExist(oRta){
+	function whenNoHigherLayerChangesExist(oRta) {
 		personalizationChanges(oRta, false);
 	}
 
-	function isReloadedWithMaxLayerParameter(fnFLPToExternalStub){
-		if (!fnFLPToExternalStub.lastCall){
+	function isReloadedWithMaxLayerParameter(fnFLPToExternalStub) {
+		if (!fnFLPToExternalStub.lastCall) {
 			return false;
 		}
 		var mFLPArgs = fnFLPToExternalStub.lastCall.args[0];
 		return !!mFLPArgs.params["sap-ui-fl-max-layer"];
 	}
-	function whenUserConfirmsMessage(sExpectedMessageKey, assert){
-		sandbox.stub(RtaUtils,"_showMessageBox").callsFake(
-			function(oMessageType, sTitleKey, sMessageKey, oError, sAction){
+	function whenUserConfirmsMessage(sExpectedMessageKey, assert) {
+		sandbox.stub(RtaUtils, "_showMessageBox").callsFake(
+			function(oMessageType, sTitleKey, sMessageKey) {
 				assert.equal(sMessageKey, sExpectedMessageKey, "then expected message is shown");
 				return Promise.resolve();
 			}
@@ -126,7 +126,6 @@ sap.ui.define([
 			this.oRta = new RuntimeAuthoring({
 				rootControl : undefined
 			});
-
 		},
 		afterEach : function() {
 			this.oRta.destroy();
@@ -137,7 +136,7 @@ sap.ui.define([
 			this.oUtilsLogStub = sandbox.stub(Utils.log, "error");
 			var done = assert.async();
 
-			this.oRta.start().catch(function(vError){
+			this.oRta.start().catch(function(vError) {
 				assert.ok(vError, "then the promise is rejected");
 				assert.strictEqual(this.oUtilsLogStub.callCount, 1, "and an error is logged");
 				done();
@@ -251,7 +250,6 @@ sap.ui.define([
 			this.fnFLPToExternalStub = sandbox.spy();
 
 			givenAnFLP.call(this, this.fnFLPToExternalStub);
-
 		},
 		afterEach : function() {
 			this.oRta.destroy();
@@ -266,7 +264,7 @@ sap.ui.define([
 
 			whenUserConfirmsMessage.call(this, "MSG_PERSONALIZATION_EXISTS", assert);
 
-			return this.oRta._handleHigherLayerChangesOnStart().then(function(){
+			return this.oRta._handleHigherLayerChangesOnStart().then(function() {
 				assert.strictEqual(this.fnEnableRestartSpy.calledOnce,
 					true,
 					"then enableRestart() is called only once");
@@ -283,7 +281,7 @@ sap.ui.define([
 			whenHigherLayerChangesExist(this.oRta);
 			whenUserConfirmsMessage.call(this, "MSG_HIGHER_LAYER_CHANGES_EXIST", assert);
 
-			return this.oRta._handleHigherLayerChangesOnStart().then(function(){
+			return this.oRta._handleHigherLayerChangesOnStart().then(function() {
 				assert.strictEqual(this.fnEnableRestartSpy.calledOnce,
 					true,
 					"then enableRestart() is called only once");
@@ -299,7 +297,7 @@ sap.ui.define([
 		QUnit.test("when no personalized changes and _handleHigherLayerChangesOnStart() is called", function(assert) {
 			whenNoHigherLayerChangesExist(this.oRta);
 
-			return this.oRta._handleHigherLayerChangesOnStart().then(function(){
+			return this.oRta._handleHigherLayerChangesOnStart().then(function() {
 				assert.strictEqual(this.fnEnableRestartSpy.callCount,
 					0,
 					"then RTA restart will not be enabled");
@@ -324,7 +322,7 @@ sap.ui.define([
 		QUnit.test("when RTA toolbar gets closed (exit without appClosed)", function(assert) {
 			var done = assert.async();
 
-			sandbox.stub(this.oRta, "_handleReloadOnExit").callsFake(function(){
+			sandbox.stub(this.oRta, "_handleReloadOnExit").callsFake(function() {
 				//The test will timeout if the reload handling is not called
 				assert.ok("then the check for reload was executed");
 				done();
@@ -332,7 +330,7 @@ sap.ui.define([
 			}.bind(this));
 
 			var stubFlexController = {
-				hasHigherLayerChanges : function(){
+				hasHigherLayerChanges : function() {
 					return Promise.resolve(false);
 				},
 				getComponentChanges : function() {
@@ -341,7 +339,7 @@ sap.ui.define([
 			};
 
 			sandbox.stub(this.oRta, "_getFlexController").returns(stubFlexController);
-			sandbox.stub(this.oRta, "_checkChangesExist").callsFake(function(){
+			sandbox.stub(this.oRta, "_checkChangesExist").callsFake(function() {
 				return Promise.resolve(true);
 			});
 			this.oRta.setShowToolbars(true);
@@ -413,7 +411,7 @@ sap.ui.define([
 
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
 
-			return this.oRta._handleReloadOnExit().then(function(sShouldReload){
+			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
 				assert.strictEqual(this.fnEnableRestartSpy.callCount,
 					0,
 					"then RTA restart will not be enabled");
@@ -428,7 +426,7 @@ sap.ui.define([
 			whenHigherLayerChangesExist(this.oRta);
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_ALL_CHANGES", assert);
 
-			return this.oRta._handleReloadOnExit().then(function(sShouldReload){
+			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
 				assert.strictEqual(this.fnEnableRestartSpy.callCount,
 					0,
 					"then RTA restart will not be enabled");
@@ -444,7 +442,7 @@ sap.ui.define([
 
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
 
-			return this.oRta._handleReloadOnExit().then(function(sShouldReload){
+			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
 				assert.strictEqual(this.fnEnableRestartSpy.callCount,
 					0,
 					"then RTA restart will not be enabled");
@@ -457,7 +455,7 @@ sap.ui.define([
 			givenMaxLayerParameterIsSetTo.call(this, "CUSTOMER", this.fnFLPToExternalStub);
 			whenNoHigherLayerChangesExist(this.oRta);
 
-			return this.oRta._handleReloadOnExit().then(function(sShouldReload){
+			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
 				assert.strictEqual(this.fnEnableRestartSpy.callCount,
 					0,
 					"then RTA restart will not be enabled");
@@ -473,7 +471,7 @@ sap.ui.define([
 
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_NEEDED", assert);
 
-			return this.oRta._handleReloadOnExit().then(function(sShouldReload){
+			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
 				assert.strictEqual(this.fnEnableRestartSpy.callCount,
 					0,
 					"then RTA restart will not be enabled");
@@ -487,7 +485,7 @@ sap.ui.define([
 			sandbox.stub(this.oRta, "_handleReloadOnExit").resolves(this.oRta._RESTART.RELOAD_PAGE);
 			sandbox.stub(this.oRta, "_serializeToLrep").resolves();
 
-			return this.oRta.stop().then(function(){
+			return this.oRta.stop().then(function() {
 				assert.strictEqual(this.fnReloadPageStub.callCount,
 					1,
 					"then page reload is triggered");
@@ -520,7 +518,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when the _handleHigherLayerChangesOnStart() method is called", function(assert) {
-			return this.oRta._handleHigherLayerChangesOnStart().then(function(){
+			return this.oRta._handleHigherLayerChangesOnStart().then(function() {
 				assert.strictEqual(this.fnEnableRestartSpy.callCount, 0, "then RTA restart will not be enabled");
 				assert.strictEqual(this.fnReloadWithHigherLayerChangesSpy.callCount,
 					0,
@@ -529,7 +527,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the _handleReloadOnExit() method is called", function(assert) {
-			return this.oRta._handleReloadOnExit().then(function(){
+			return this.oRta._handleReloadOnExit().then(function() {
 				assert.strictEqual(this.fnEnableRestartSpy.callCount, 0, "then RTA restart will not be enabled");
 				assert.strictEqual(this.fnReloadWithoutHigherLayerChangesSpy.callCount,
 					0,
@@ -541,7 +539,7 @@ sap.ui.define([
 			whenHigherLayerChangesExist(this.oRta);
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
 
-			return this.oRta._handleReloadOnExit().then(function(sShouldReload){
+			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
 				assert.strictEqual(this.fnEnableRestartSpy.callCount, 0,
 					"then RTA restart will not be enabled");
 				assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
@@ -723,5 +721,4 @@ sap.ui.define([
 		oComp.destroy();
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/m/Page",
 	"sap/m/Button",
-	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -17,7 +16,6 @@ function (
 	ComponentContainer,
 	Page,
 	Button,
-	OverlayRegistry,
 	sinon
 ) {
 	"use strict";
@@ -31,7 +29,7 @@ function (
 				metadata: {
 					manifest: {
 						"sap.app": {
-							"id": "fixture.application"
+							id: "fixture.application"
 						}
 					}
 				},
@@ -232,5 +230,4 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

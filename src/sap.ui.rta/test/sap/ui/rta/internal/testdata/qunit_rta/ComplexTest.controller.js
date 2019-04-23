@@ -1,10 +1,8 @@
-(function(){
+(function() {
 	"use strict";
 
 	sap.ui.controller("sap.ui.rta.qunitrta.ComplexTest", {
-
 		onInit : function () {
-
 			jQuery.sap.require("sap.ui.core.util.MockServer");
 			this._sResourcePath = jQuery.sap.getResourcePath("sap/ui/rta/qunitrta/");
 			var sManifestUrl = this._sResourcePath + "/manifest.json",
@@ -21,8 +19,8 @@
 				autoRespondAfter: iAutoRespond
 			});
 
-			var fnGetDataPromise = function(oView){
-				return new Promise(function (resolve, reject) {
+			var fnGetDataPromise = function(oView) {
+				return new Promise(function (resolve) {
 					oView.bindElement({
 						path: "/Headers(AccountingDocument='100015012',CompanyCode='0001',FiscalYear='2015')",
 						events: {
@@ -45,7 +43,7 @@
 							sMetadataUrl = this._sResourcePath + dataSource.settings.localUri;
 							sMockServerPath = sMetadataUrl.slice(0, sMetadataUrl.lastIndexOf("/") + 1);
 							aEntities = dataSource.settings.aEntitySetsNames ? dataSource.settings.aEntitySetsNames : [];
-							oMockServer.simulate(sMetadataUrl , {
+							oMockServer.simulate(sMetadataUrl, {
 								sMockdataBaseUrl: sMockServerPath,
 								bGenerateMissingMockData: true,
 								aEntitySetsNames : aEntities
@@ -88,16 +86,15 @@
 					}
 				}
 			}
-
 		},
 
-		_getUrlParameter : function(sParam){
+		_getUrlParameter : function(sParam) {
 			var sReturn = "";
 			var sPageURL = window.location.search.substring(1);
 			var sURLVariables = sPageURL.split('&');
 			for (var i = 0; i < sURLVariables.length; i++) {
 				var sParameterName = sURLVariables[i].split('=');
-				if (sParameterName[0] == sParam) {
+				if (sParameterName[0] === sParam) {
 					sReturn = sParameterName[1];
 				}
 			}
@@ -105,12 +102,11 @@
 		},
 
 		switchToAdaptionMode : function() {
-
 			jQuery.sap.require("sap.ui.rta.RuntimeAuthoring");
 			var oRta = new sap.ui.rta.RuntimeAuthoring({
 				rootControl : sap.ui.getCore().byId("Comp1---idMain1"),
 				customFieldUrl : this._sResourcePath + "/testdata/rta/CustomField.html",
-				showCreateCustomField : (this._getUrlParameter("sap-ui-xx-ccf") == "true"),
+				showCreateCustomField : (this._getUrlParameter("sap-ui-xx-ccf") === "true"),
 				flexSettings: {
 					developerMode: false
 				}

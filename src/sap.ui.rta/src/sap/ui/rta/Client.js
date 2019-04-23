@@ -59,20 +59,19 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted
 	 */
-	var Client = ManagedObject.extend("sap.ui.rta.Client",
-	{
+	var Client = ManagedObject.extend("sap.ui.rta.Client", {
 		metadata : {
 			library : "sap.ui.rta",
 			properties : {
 				/**
 				 * Receiving window object; has to be a different window than the window in which this client is used
 				 */
-				"window": "object",
+				window: "object",
 
 				/**
 				 * Receiving window origin; a valid origin has to be specified, see {@link https://html.spec.whatwg.org/multipage/origin.html#origin}
 				 */
-				"origin": "string"
+				origin: "string"
 			}
 		},
 

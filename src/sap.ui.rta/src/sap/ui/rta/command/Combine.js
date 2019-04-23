@@ -2,7 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/rta/command/FlexCommand'
+	"sap/ui/rta/command/FlexCommand"
 ], function(
 	FlexCommand
 ) {
@@ -47,13 +47,12 @@ sap.ui.define([
 			aFieldIds.push(oField.getId());
 		});
 		var mSpecificInfo = {
-				changeType : this.getChangeType(),
-				sourceControlId : this.getSource().getId(),
-				combineElementIds : aFieldIds
+			changeType : this.getChangeType(),
+			sourceControlId : this.getSource().getId(),
+			combineElementIds : aFieldIds
 		};
 		return mSpecificInfo;
 	};
 
 	return Combine;
-
 }, /* bExport= */true);

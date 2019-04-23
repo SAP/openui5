@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/Combine",
 	"sap/ui/rta/Utils",
-	"sap/ui/rta/util/BindingsExtractor",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/Utils",
@@ -21,7 +20,6 @@ function(
 	CommandFactory,
 	CombinePlugin,
 	Utils,
-	BindingsExtractor,
 	OverlayRegistry,
 	ChangeRegistry,
 	FlUtils,
@@ -152,11 +150,11 @@ function(
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Panel": {
-					"combineStuff" : { completeChangeContent: function() {} }
+					combineStuff : { completeChangeContent: function() {} }
 				},
 				"sap.m.OverflowToolbar": {
-					"combineStuff" : { completeChangeContent: function() {} },
-					"combineOtherStuff" : { completeChangeContent: function() {} }
+					combineStuff : { completeChangeContent: function() {} },
+					combineOtherStuff : { completeChangeContent: function() {} }
 				}
 			})
 			.then(function() {
@@ -188,7 +186,7 @@ function(
 				this.oOverflowToolbarButton1 = new OverflowToolbarButton("owerflowbutton1");
 				this.oButton6 = new Button("button6");
 				this.oCheckBox1 = new CheckBox("checkbox1");
-				this.OverflowToolbar = new OverflowToolbar("OWFlToolbar",{
+				this.OverflowToolbar = new OverflowToolbar("OWFlToolbar", {
 					content : [
 						this.oOverflowToolbarButton1,
 						this.oButton6,
@@ -392,7 +390,6 @@ function(
 			.catch(function (oError) {
 				assert.ok(false, 'catch must never be called - Error: ' + oError);
 			});
-
 		});
 
 		QUnit.test("when an overlay has a combine action designTime metadata which has no changeOnRelevantContainer", function(assert) {
@@ -428,19 +425,19 @@ function(
 				assert.equal(oCombineElement.getId(), this.oButton6.getId(), "the 'handler' method is called with the right combine element");
 			}.bind(this));
 
-				var aMenuItems = this.oCombinePlugin.getMenuItems([this.oButton6Overlay]);
-				assert.equal(aMenuItems[0].id, "CTX_GROUP_FIELDS", "'getMenuItems' returns the context menu item for the plugin");
+			var aMenuItems = this.oCombinePlugin.getMenuItems([this.oButton6Overlay]);
+			assert.equal(aMenuItems[0].id, "CTX_GROUP_FIELDS", "'getMenuItems' returns the context menu item for the plugin");
 
-				aMenuItems[0].handler([this.oButton6Overlay], { contextElement: this.oButton6 });
-				aMenuItems[0].enabled([this.oButton6Overlay]);
+			aMenuItems[0].handler([this.oButton6Overlay], { contextElement: this.oButton6 });
+			aMenuItems[0].enabled([this.oButton6Overlay]);
 
-				bIsAvailable = false;
-				assert.equal(this.oCombinePlugin.getMenuItems([this.oButton6Overlay]).length, 0, "and if plugin is not available for the overlay, no menu items are returned");
-			});
+			bIsAvailable = false;
+			assert.equal(this.oCombinePlugin.getMenuItems([this.oButton6Overlay]).length, 0, "and if plugin is not available for the overlay, no menu items are returned");
+		});
 
 		QUnit.test("when Controls of different type with different change type are specified", function(assert) {
 			fnSetOverlayDesigntimeMetadata(this.oOverflowToolbarButton1Overlay, DEFAULT_DTM);
-			fnSetOverlayDesigntimeMetadata(this.oCheckBox1Overlay,oDesignTimeMetadata5);
+			fnSetOverlayDesigntimeMetadata(this.oCheckBox1Overlay, oDesignTimeMetadata5);
 			assert.strictEqual(
 				this.oCombinePlugin.isAvailable([this.oOverflowToolbarButton1Overlay, this.oCheckBox1Overlay]),
 				false,
@@ -456,12 +453,11 @@ function(
 		QUnit.test("when the relevant container does not have a stable id", function(assert) {
 			fnSetOverlayDesigntimeMetadata(this.oOverflowToolbarButton1Overlay, DEFAULT_DTM);
 
-			sandbox.stub(this.oCombinePlugin, "hasStableId").callsFake(function(oOverlay){
-				if (oOverlay === this.OverflowToolbarOverlay){
+			sandbox.stub(this.oCombinePlugin, "hasStableId").callsFake(function(oOverlay) {
+				if (oOverlay === this.OverflowToolbarOverlay) {
 					return false;
-				} else {
-					return true;
 				}
+				return true;
 			}.bind(this));
 
 			assert.strictEqual(
@@ -469,13 +465,10 @@ function(
 				false,
 				"_isEditable returns false"
 			);
-
 		});
-
 	});
 
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

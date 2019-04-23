@@ -79,42 +79,42 @@ sap.ui.define([
 	FakeLrepConnectorSessionStorage.enableFakeConnector();
 
 	var oData = {
-		"variantMgmtId1": {
-			"defaultVariant": "variant0",
-			"variants": [
+		variantMgmtId1: {
+			defaultVariant: "variant0",
+			variants: [
 				{
-					"author": "SAP",
-					"key": "variantMgmtId1",
-					"layer": "VENDOR",
-					"visible": true,
-					"title": "Standard"
+					author: "SAP",
+					key: "variantMgmtId1",
+					layer: "VENDOR",
+					visible: true,
+					title: "Standard"
 				}, {
-					"author": "Me",
-					"key": "variant0",
-					"layer": "CUSTOMER",
-					"visible": true,
-					"title": "variant A"
+					author: "Me",
+					key: "variant0",
+					layer: "CUSTOMER",
+					visible: true,
+					title: "variant A"
 				}
 			]
 		}
 	};
 
 	var oVariant = {
-			"content": {
-				"fileName":"variant0",
-				"fileType":"ctrl_variant",
-				"variantManagementReference":"variantMgmtId1",
-				"variantReference":"variantMgmtId1",
-				"content":{
-					"title":"variant A"
-				},
-				"selector":{},
-				"layer":"CUSTOMER",
-				"namespace":"Dummy.Component"
+		content: {
+			fileName:"variant0",
+			fileType:"ctrl_variant",
+			variantManagementReference:"variantMgmtId1",
+			variantReference:"variantMgmtId1",
+			content:{
+				title:"variant A"
 			},
-			"controlChanges": [],
-			"variantChanges": {}
-		};
+			selector:{},
+			layer:"CUSTOMER",
+			namespace:"Dummy.Component"
+		},
+		controlChanges: [],
+		variantChanges: {}
+	};
 
 	var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent);
 	var oAppDescriptorFlexController = FlexControllerFactory.create(COMPONENT_NAME, "1.2.3");
@@ -130,10 +130,10 @@ sap.ui.define([
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Input": {
-					"hideControl" : {
+					hideControl : {
 						completeChangeContent: function() {},
 						applyChange: function() {return Promise.resolve();},
-						revertChange: function(){}
+						revertChange: function() {}
 					}
 				}
 			})
@@ -163,8 +163,8 @@ sap.ui.define([
 				});
 			}.bind(this));
 		},
-		afterEach : function(assert) {
-			return this.oSerializer.saveCommands().then(function(){
+		afterEach : function() {
+			return this.oSerializer.saveCommands().then(function() {
 				this.oCommandStack.destroy();
 				this.oSerializer.destroy();
 				this.oPanel.destroy();
@@ -200,13 +200,13 @@ sap.ui.define([
 			}, this.oInputDesignTimeMetadata);
 		}.bind(this))
 
-		.then(function(oSettingsCommand){
+		.then(function(oSettingsCommand) {
 			oSettingsCommand2 = oSettingsCommand;
 			assert.equal(oAddPreparedChangeSpy.callCount, 1, "1. change got added");
 			return this.oCommandStack.pushAndExecute(oSettingsCommand2);
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			// simulate command having no app component
 			sandbox.stub(oSettingsCommand2, "getAppComponent");
 			sandbox.stub(FlexController.prototype, "checkForOpenDependenciesForControl").returns(false);
@@ -264,7 +264,7 @@ sap.ui.define([
 		}.bind(this))
 
 		// simulate the change as persisted change in stack
-		.then(function(){
+		.then(function() {
 			assert.equal(oAddPreparedChangeSpy.callCount, 0, "no change got added");
 
 			return this.oSerializer.saveCommands();
@@ -302,12 +302,12 @@ sap.ui.define([
 			return this.oCommandStack.pushAndExecute(oRemoveCommand1);
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			assert.equal(oAddPreparedChangeSpy.callCount, 1, "now 1. change got added directly after execute");
 			return this.oCommandStack.pushAndExecute(oRemoveCommand2);
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			assert.equal(oAddPreparedChangeSpy.callCount, 2, "now 2. change got added directly after execute");
 			return this.oSerializer.saveCommands();
 		}.bind(this))
@@ -344,11 +344,11 @@ sap.ui.define([
 			}, this.oInputDesignTimeMetadata);
 		}.bind(this))
 
-		.then(function(oRemoveCommand){
+		.then(function(oRemoveCommand) {
 			return this.oCommandStack.pushAndExecute(oRemoveCommand);
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			return this.oSerializer.saveCommands();
 		}.bind(this))
 
@@ -386,8 +386,8 @@ sap.ui.define([
 		}.bind(this))
 
 		.then(function() {
-			assert.ok( true, "then the promise for LREPSerializer.saveCommands() gets resolved");
-			assert.equal( this.oCommandStack.getCommands().length, 0, "and the command stack has been cleared");
+			assert.ok(true, "then the promise for LREPSerializer.saveCommands() gets resolved");
+			assert.equal(this.oCommandStack.getCommands().length, 0, "and the command stack has been cleared");
 		}.bind(this));
 	});
 
@@ -406,7 +406,7 @@ sap.ui.define([
 			return CommandFactory.getCommandFor(this.oInput1, "addLibrary", {
 				reference : COMPONENT_NAME,
 				parameters: {
-						libraries : {
+					libraries : {
 						"sap.ui.rta" : {
 							lazy:false,
 							minVersion:"1.48"
@@ -414,7 +414,7 @@ sap.ui.define([
 					}
 				},
 				appComponent : oMockedAppComponent
-			}, {}, {"layer" : "CUSTOMER"});
+			}, {}, {layer : "CUSTOMER"});
 		}.bind(this))
 
 		.then(function(oCommand) {
@@ -422,7 +422,7 @@ sap.ui.define([
 			return CommandFactory.getCommandFor(this.oInput1, "addLibrary", {
 				reference : COMPONENT_NAME,
 				parameters: {
-						libraries : {
+					libraries : {
 						"sap.ui.rta" : {
 							lazy:false,
 							minVersion:"1.48"
@@ -430,7 +430,7 @@ sap.ui.define([
 					}
 				},
 				appComponent : oMockedAppComponent
-			}, {}, {"layer" : "CUSTOMER"});
+			}, {}, {layer : "CUSTOMER"});
 		}.bind(this))
 
 		.then(function(oCommand) {
@@ -438,15 +438,15 @@ sap.ui.define([
 			return this.oCommandStack.pushAndExecute(oRemoveCommand1);
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			return this.oCommandStack.pushAndExecute(oAddLibraryCommand);
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			return this.oCommandStack.pushAndExecute(oAddLibraryCommand2);
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			return this.oSerializer.saveCommands();
 		}.bind(this))
 
@@ -482,9 +482,9 @@ sap.ui.define([
 		.then(function(oCommand) {
 			oRemoveCommand2 = oCommand;
 			return CommandFactory.getCommandFor(this.oInput1, "addLibrary", {
-			reference : COMPONENT_NAME,
+				reference : COMPONENT_NAME,
 				parameters: {
-						libraries : {
+					libraries : {
 						"sap.ui.rta" : {
 							lazy:false,
 							minVersion:"1.48"
@@ -492,7 +492,7 @@ sap.ui.define([
 					}
 				},
 				appComponent : oMockedAppComponent
-			}, {}, {"layer" : "CUSTOMER"});
+			}, {}, {layer : "CUSTOMER"});
 		}.bind(this))
 
 		.then(function(oCommand) {
@@ -508,15 +508,15 @@ sap.ui.define([
 			return this.oCommandStack.pushAndExecute(oRemoveCommand2);
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			return this.oCommandStack.pushAndExecute(oCompositeCommand);
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			return this.oCommandStack.undo();
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			return this.oSerializer.saveCommands();
 		}.bind(this))
 
@@ -547,7 +547,7 @@ sap.ui.define([
 			return CommandFactory.getCommandFor(this.oInput1, "addLibrary", {
 				reference : COMPONENT_NAME,
 				parameters: {
-						libraries : {
+					libraries : {
 						"sap.ui.rta" : {
 							lazy:false,
 							minVersion:"1.48"
@@ -555,7 +555,7 @@ sap.ui.define([
 					}
 				},
 				appComponent : oMockedAppComponent
-			}, {}, {"layer" : "CUSTOMER"});
+			}, {}, {layer : "CUSTOMER"});
 		}.bind(this))
 
 		.then(function(oCommand) {
@@ -563,15 +563,15 @@ sap.ui.define([
 			return this.oCommandStack.pushAndExecute(oRemoveCommand);
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			return this.oCommandStack.pushAndExecute(oAddLibraryCommand);
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			return this.oCommandStack.undo();
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			return this.oSerializer.saveCommands();
 		}.bind(this))
 
@@ -598,7 +598,7 @@ sap.ui.define([
 		return CommandFactory.getCommandFor(this.oInput1, "addLibrary", {
 			reference : COMPONENT_NAME,
 			parameters: {
-					libraries : {
+				libraries : {
 					"sap.ui.rta" : {
 						lazy:false,
 						minVersion:"1.48"
@@ -606,26 +606,26 @@ sap.ui.define([
 				}
 			},
 			appComponent : oMockedAppComponent
-		}, {}, {"layer" : "CUSTOMER"})
+		}, {}, {layer : "CUSTOMER"})
 
 		.then(function(oAddLibraryCommand) {
-				oCreateAndStoreChangeSpy = sandbox.spy(oAddLibraryCommand, "createAndStoreChange");
-				oDeleteChangeSpy = sandbox.spy(oAppDescriptorFlexController, "deleteChange");
-				return this.oCommandStack.pushAndExecute(oAddLibraryCommand);
+			oCreateAndStoreChangeSpy = sandbox.spy(oAddLibraryCommand, "createAndStoreChange");
+			oDeleteChangeSpy = sandbox.spy(oAppDescriptorFlexController, "deleteChange");
+			return this.oCommandStack.pushAndExecute(oAddLibraryCommand);
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			assert.equal(oCreateAndStoreChangeSpy.callCount, 1, "now app descriptor change got created directly after execute");
 			return this.oCommandStack.undo();
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			assert.equal(oDeleteChangeSpy.callCount, 1, "now app descriptor change got removed directly after undo");
 			return this.oCommandStack.redo();
 		}.bind(this))
 
-		.then(function(){
-			assert.equal(oCreateAndStoreChangeSpy.callCount, 2,"now app descriptor change got created directly after redo");
+		.then(function() {
+			assert.equal(oCreateAndStoreChangeSpy.callCount, 2, "now app descriptor change got created directly after redo");
 			return this.oSerializer.saveCommands();
 		}.bind(this))
 
@@ -642,7 +642,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test(	"Execute 1 'remove' command and 1 App Descriptor 'add library' command," +
+	QUnit.test("Execute 1 'remove' command and 1 App Descriptor 'add library' command," +
 				"undo the 'add library' command and call saveCommands which rejects", function(assert) {
 		var oSaveAllStub = sandbox.stub(oFlexController, "saveAll").returns(Promise.reject()),
 			oRemoveCommand, oAddLibraryCommand;
@@ -657,7 +657,7 @@ sap.ui.define([
 			return CommandFactory.getCommandFor(this.oInput1, "addLibrary", {
 				reference : COMPONENT_NAME,
 				parameters: {
-						libraries : {
+					libraries : {
 						"sap.ui.rta" : {
 							lazy:false,
 							minVersion:"1.48"
@@ -665,7 +665,7 @@ sap.ui.define([
 					}
 				},
 				appComponent : oMockedAppComponent
-			}, {}, {"layer" : "CUSTOMER"});
+			}, {}, {layer : "CUSTOMER"});
 		}.bind(this))
 
 		.then(function(oCommand) {
@@ -673,15 +673,15 @@ sap.ui.define([
 			return this.oCommandStack.pushAndExecute(oRemoveCommand);
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			return this.oCommandStack.pushAndExecute(oAddLibraryCommand);
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			return this.oCommandStack.undo();
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			return this.oSerializer.saveCommands();
 		}.bind(this))
 
@@ -701,7 +701,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test(	"when needs restart is asked for normal commands", function(assert) {
+	QUnit.test("when needs restart is asked for normal commands", function(assert) {
 		// Create commands
 		return CommandFactory.getCommandFor(this.oInput1, "Remove", {
 			removedElement : this.oInput1
@@ -711,17 +711,17 @@ sap.ui.define([
 			return this.oCommandStack.pushAndExecute(oAnyFlexCommand);
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			//trigger function
 			return this.oSerializer.needsReload();
 		}.bind(this))
 
-		.then(function(bNeedsRestart){
+		.then(function(bNeedsRestart) {
 			assert.notOk(bNeedsRestart, "then restart is not necessary");
 		});
 	});
 
-	QUnit.test(	"when needs restart is asked for app descriptor commands and a normal commands", function(assert) {
+	QUnit.test("when needs restart is asked for app descriptor commands and a normal commands", function(assert) {
 		var oAnyFlexCommand, oAnyAppDescriptorCommand;
 
 		// Create commands
@@ -734,7 +734,7 @@ sap.ui.define([
 			return CommandFactory.getCommandFor(this.oInput1, "addLibrary", {
 				reference : COMPONENT_NAME,
 				parameters: {
-						libraries : {
+					libraries : {
 						"sap.ui.rta" : {
 							lazy:false,
 							minVersion:"1.48"
@@ -742,7 +742,7 @@ sap.ui.define([
 					}
 				},
 				appComponent : oMockedAppComponent
-				}, {}, {"layer" : "CUSTOMER"}
+			}, {}, {layer : "CUSTOMER"}
 			);
 		}.bind(this))
 
@@ -751,21 +751,21 @@ sap.ui.define([
 			return this.oCommandStack.pushAndExecute(oAnyFlexCommand);
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			return this.oCommandStack.pushAndExecute(oAnyAppDescriptorCommand);
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			//trigger function
 			return this.oSerializer.needsReload();
 		}.bind(this))
 
-		.then(function(bNeedsRestart){
+		.then(function(bNeedsRestart) {
 			assert.ok(bNeedsRestart, "then restart is necessary");
 		});
 	});
 
-	QUnit.test(	"when needs restart is asked for undone app descriptor commands and a normal commands", function(assert) {
+	QUnit.test("when needs restart is asked for undone app descriptor commands and a normal commands", function(assert) {
 		var oAnyFlexCommand, oAnyAppDescriptorCommand;
 
 		// Create commands
@@ -778,7 +778,7 @@ sap.ui.define([
 			return CommandFactory.getCommandFor(this.oInput1, "addLibrary", {
 				reference : COMPONENT_NAME,
 				parameters: {
-						libraries : {
+					libraries : {
 						"sap.ui.rta" : {
 							lazy:false,
 							minVersion:"1.48"
@@ -786,7 +786,7 @@ sap.ui.define([
 					}
 				},
 				appComponent : oMockedAppComponent
-				}, {}, {"layer" : "CUSTOMER"}
+			}, {}, {layer : "CUSTOMER"}
 			);
 		}.bind(this))
 
@@ -795,20 +795,20 @@ sap.ui.define([
 			return this.oCommandStack.pushAndExecute(oAnyFlexCommand);
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			return this.oCommandStack.pushAndExecute(oAnyAppDescriptorCommand);
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			return this.oCommandStack.undo();
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			//trigger function
 			return this.oSerializer.needsReload();
 		}.bind(this))
 
-		.then(function(bNeedsRestart){
+		.then(function(bNeedsRestart) {
 			assert.notOk(bNeedsRestart, "then restart is not necessary");
 		});
 	});
@@ -837,11 +837,11 @@ sap.ui.define([
 			return this.oCommandStack.pushAndExecute(oRemoveCommand);
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			return this.oCommandStack.pushAndExecute(oControlVariantSwitchCommand);
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			return this.oSerializer.saveCommands();
 		}.bind(this))
 
@@ -882,15 +882,15 @@ sap.ui.define([
 			return this.oCommandStack.pushAndExecute(oRemoveCommand);
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			return this.oCommandStack.pushAndExecute(oControlVariantSwitchCommand);
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			return this.oCommandStack.undo();
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			return this.oSerializer.saveCommands();
 		}.bind(this))
 
@@ -928,9 +928,9 @@ sap.ui.define([
 			sandbox.stub(oRemoveCommand1.getPreparedChange(), "getVariantReference").returns("test-variant");
 			sandbox.stub(oRemoveCommand2.getPreparedChange(), "getVariantReference").returns("test-variant");
 			sandbox.stub(oMockedAppComponent, "getModel").returns({
-				removeChange: function(){},
-				addChange: function(){},
-				getVariant: function(){
+				removeChange: function() {},
+				addChange: function() {},
+				getVariant: function() {
 					return {
 						content : {
 							fileName: "idOfVariantManagementReference",
@@ -948,17 +948,17 @@ sap.ui.define([
 			return this.oCommandStack.pushAndExecute(oRemoveCommand1);
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			assert.equal(oAddChangeSpy.callCount, 1, "then variant model's addChange is called for both changes as VariantManagement Change is detected");
 			return this.oCommandStack.pushAndExecute(oRemoveCommand2);
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			assert.equal(oAddChangeSpy.callCount, 2, "then variant model's addChange is called for both changes as VariantManagement Change is detected");
 			return this.oCommandStack.undo();
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			assert.equal(oRemoveChangeSpy.callCount, 1, "then variant model's removeChange is called as VariantManagement Change is detected");
 			return this.oSerializer.saveCommands();
 		}.bind(this))
@@ -1003,11 +1003,11 @@ sap.ui.define([
 			return this.oCommandStack.pushAndExecute(oRemoveCommand1);
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			return this.oCommandStack.pushAndExecute(oRemoveCommand2);
 		}.bind(this))
 
-		.then(function(){
+		.then(function() {
 			return this.oSerializer.saveAsCommands("customer.sap.test");
 		}.bind(this))
 
@@ -1045,16 +1045,16 @@ sap.ui.define([
 
 			// Stub Variant Model and Variant Controller functions
 			var oVariant = {
-				"content": {
-					"fileName":"variant0",
-					"content": {
-						"title":"variant A"
+				content: {
+					fileName:"variant0",
+					content: {
+						title:"variant A"
 					},
-					"layer":"CUSTOMER",
-					"variantReference":"variant00",
-					"reference": "Dummy.Component"
+					layer:"CUSTOMER",
+					variantReference:"variant00",
+					reference: "Dummy.Component"
 				},
-				"controlChanges" : []
+				controlChanges : []
 			};
 			sandbox.stub(oModel, "getVariant").returns(oVariant);
 			sandbox.stub(oModel.oVariantController, "_setVariantData").returns(1);
@@ -1062,7 +1062,7 @@ sap.ui.define([
 			sandbox.stub(oModel.oVariantController, "addVariantToVariantManagement");
 			sandbox.stub(oModel.oVariantController, "removeVariantFromVariantManagement");
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			this.oCommandStack.destroy();
 			this.oSerializer.destroy();
 			this.oVariantManagement.destroy();
@@ -1173,5 +1173,4 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

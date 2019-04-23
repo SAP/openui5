@@ -56,7 +56,7 @@ function(
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Button" : {
-					"changeSettings" : "sap/ui/fl/changeHandler/PropertyChange"
+					changeSettings : "sap/ui/fl/changeHandler/PropertyChange"
 				}
 			})
 			.then(function() {
@@ -93,5 +93,4 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

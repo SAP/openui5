@@ -31,7 +31,7 @@ function (
 				metadata: {
 					manifest: {
 						"sap.app": {
-							"id": "fixture.application"
+							id: "fixture.application"
 						}
 					}
 				},
@@ -133,5 +133,4 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

@@ -13,237 +13,236 @@ function(
 	Settings,
 	ResourceBundle
 ) {
-		"use strict";
+	"use strict";
 
-		var Utils = {};
+	var Utils = {};
 
-		var sModulePath = sap.ui.require.toUrl("sap/ui/rta/appVariant/manageApps/") + "webapp";
-		var oI18n = ResourceBundle.create({
-			url : sModulePath + "/i18n/i18n.properties"
-		});
+	var sModulePath = sap.ui.require.toUrl("sap/ui/rta/appVariant/manageApps/") + "webapp";
+	var oI18n = ResourceBundle.create({
+		url : sModulePath + "/i18n/i18n.properties"
+	});
 
-		Utils.sendRequest = function(sRoute, sOperation) {
-			var oLREPConnector = LrepConnector.createConnector();
-			return oLREPConnector.send(sRoute, sOperation);
-		};
+	Utils.sendRequest = function(sRoute, sOperation) {
+		var oLREPConnector = LrepConnector.createConnector();
+		return oLREPConnector.send(sRoute, sOperation);
+	};
 
-		Utils._checkNavigationSupported = function(oNavigationParams) {
-			var oNavigationService = sap.ushell.Container.getService( "CrossApplicationNavigation" );
-			return oNavigationService.getLinks(oNavigationParams);
-		};
+	Utils._checkNavigationSupported = function(oNavigationParams) {
+		var oNavigationService = sap.ushell.Container.getService("CrossApplicationNavigation");
+		return oNavigationService.getLinks(oNavigationParams);
+	};
 
-		Utils._checkAppType = function(bOriginalApp, bAppVariant) {
-			if (bOriginalApp && bAppVariant) {
-				return oI18n.getText("MAA_ORIGINAL_TYPE");
-			} else if (bAppVariant) {
-				return oI18n.getText("MAA_APP_VARIANT_TYPE");
-			} else if (bOriginalApp) {
-				return oI18n.getText("MAA_ORIGINAL_TYPE");
-			}
+	Utils._checkAppType = function(bOriginalApp, bAppVariant) {
+		if (bOriginalApp && bAppVariant) {
+			return oI18n.getText("MAA_ORIGINAL_TYPE");
+		} else if (bAppVariant) {
+			return oI18n.getText("MAA_APP_VARIANT_TYPE");
+		} else if (bOriginalApp) {
+			return oI18n.getText("MAA_ORIGINAL_TYPE");
+		}
 
-			return undefined;
-		};
+		return undefined;
+	};
 
-		Utils._calculateCurrentStatus = function(sAppVariantInfoId, sAppVarStatus) {
-			// Get the id of a new created app variant
-			var sNewAppVariantId = AppVariantUtils.getNewAppVariantId();
+	Utils._calculateCurrentStatus = function(sAppVariantInfoId, sAppVarStatus) {
+		// Get the id of a new created app variant
+		var sNewAppVariantId = AppVariantUtils.getNewAppVariantId();
 
-			if (sNewAppVariantId === sAppVariantInfoId) {
-				return  oI18n.getText("MAA_NEW_APP_VARIANT");
-			} else if (sAppVarStatus === 'R') {
-				return oI18n.getText("MAA_OPERATION_IN_PROGRESS");
-			}
+		if (sNewAppVariantId === sAppVariantInfoId) {
+			return oI18n.getText("MAA_NEW_APP_VARIANT");
+		} else if (sAppVarStatus === 'R') {
+			return oI18n.getText("MAA_OPERATION_IN_PROGRESS");
+		}
 
-			return undefined;
-		};
+		return undefined;
+	};
 
-		Utils._checkMenuItemOptions = function(oPreparedObject, bAdaptUIButtonEnabled) {
-			var oAppVarObject = {};
+	Utils._checkMenuItemOptions = function(oPreparedObject, bAdaptUIButtonEnabled) {
+		var oAppVarObject = {};
 
-			if (oPreparedObject.isKeyUser) {
-				if (oPreparedObject.isOriginal) {
-					oAppVarObject.delAppVarButtonEnabled = false;
-					oAppVarObject.delAppVarButtonVisibility = false;
-					return oAppVarObject;
-				}
-				// If the catalogs bound to the app variants are hanging in one of the following states, then the Save As button is disabled => Should be applicable only for S4/Cloud
-				// Unpublished state ('U')
-				// Error state ('E')
-				// Running state ('R')
-				if (oPreparedObject.appVarStatus === 'U' || oPreparedObject.appVarStatus === 'E' || oPreparedObject.appVarStatus === 'R') {
-					oAppVarObject.saveAsButtonEnabled = false;
-				}
-
-				if (bAdaptUIButtonEnabled) {
-					if (oPreparedObject.isS4HanaCloud) {
-						// S4 Hana Cloud and target mappings => deleteable
-						oAppVarObject.delAppVarButtonEnabled = true;
-						oAppVarObject.delAppVarButtonVisibility = true;
-					} else {
-						// S4 Hana on premise and target mappings => not deleteable
-						oAppVarObject.delAppVarButtonEnabled = false;
-						oAppVarObject.delAppVarButtonVisibility = true;
-					}
-				} else {
-					oAppVarObject.delAppVarButtonVisibility = true;
-					if (oPreparedObject.appVarStatus === 'R') {
-						// catalog unpublishing or publishing is currently in progress => not deleteable
-						oAppVarObject.delAppVarButtonEnabled = false;
-					} else {
-						// S/4HANA on Premise or Cloud and no target mappings => deleteable
-						oAppVarObject.delAppVarButtonEnabled = true;
-					}
-				}
-			} else {
-				// Not a key user => not deleteable
+		if (oPreparedObject.isKeyUser) {
+			if (oPreparedObject.isOriginal) {
 				oAppVarObject.delAppVarButtonEnabled = false;
 				oAppVarObject.delAppVarButtonVisibility = false;
+				return oAppVarObject;
+			}
+			// If the catalogs bound to the app variants are hanging in one of the following states, then the Save As button is disabled => Should be applicable only for S4/Cloud
+			// Unpublished state ('U')
+			// Error state ('E')
+			// Running state ('R')
+			if (oPreparedObject.appVarStatus === 'U' || oPreparedObject.appVarStatus === 'E' || oPreparedObject.appVarStatus === 'R') {
+				oAppVarObject.saveAsButtonEnabled = false;
 			}
 
-			return oAppVarObject;
+			if (bAdaptUIButtonEnabled) {
+				if (oPreparedObject.isS4HanaCloud) {
+					// S4 Hana Cloud and target mappings => deleteable
+					oAppVarObject.delAppVarButtonEnabled = true;
+					oAppVarObject.delAppVarButtonVisibility = true;
+				} else {
+					// S4 Hana on premise and target mappings => not deleteable
+					oAppVarObject.delAppVarButtonEnabled = false;
+					oAppVarObject.delAppVarButtonVisibility = true;
+				}
+			} else {
+				oAppVarObject.delAppVarButtonVisibility = true;
+				if (oPreparedObject.appVarStatus === 'R') {
+					// catalog unpublishing or publishing is currently in progress => not deleteable
+					oAppVarObject.delAppVarButtonEnabled = false;
+				} else {
+					// S/4HANA on Premise or Cloud and no target mappings => deleteable
+					oAppVarObject.delAppVarButtonEnabled = true;
+				}
+			}
+		} else {
+			// Not a key user => not deleteable
+			oAppVarObject.delAppVarButtonEnabled = false;
+			oAppVarObject.delAppVarButtonVisibility = false;
+		}
+
+		return oAppVarObject;
+	};
+
+	Utils._getNavigationInfo = function(oPreparedObject) {
+		var oNavigationObject = {};
+
+		var sSemanticObject = oPreparedObject.startWith.semanticObject;
+		var sAction = oPreparedObject.startWith.action;
+		var oParams = oPreparedObject.startWith.parameters;
+
+		var oNavigationParams = {
+			semanticObject : sSemanticObject,
+			action : sAction,
+			params: oParams
 		};
 
-		Utils._getNavigationInfo = function(oPreparedObject) {
-			var oNavigationObject = {};
+		return this._checkNavigationSupported(oNavigationParams).then(function(aResult) {
+			var oDeleteButtonProperties;
 
-			var sSemanticObject = oPreparedObject.startWith.semanticObject;
-			var sAction = oPreparedObject.startWith.action;
-			var oParams = oPreparedObject.startWith.parameters;
+			if (aResult.length && oPreparedObject.isKeyUser) {
+				oNavigationObject.adaptUIButtonEnabled = true;
 
-			var oNavigationParams = {
-				semanticObject : sSemanticObject,
-				action : sAction,
-				params: oParams
-			};
-
-			return this._checkNavigationSupported(oNavigationParams).then(function(aResult) {
-				var oDeleteButtonProperties;
-
-				if (aResult.length && oPreparedObject.isKeyUser) {
-					oNavigationObject.adaptUIButtonEnabled = true;
-
-					if (oPreparedObject.appVarStatus === 'R' || oPreparedObject.appVarStatus === 'U' || oPreparedObject.appVarStatus === 'E' ) {
-						oNavigationObject.adaptUIButtonEnabled = false;
-					}
-				} else {
+				if (oPreparedObject.appVarStatus === 'R' || oPreparedObject.appVarStatus === 'U' || oPreparedObject.appVarStatus === 'E') {
 					oNavigationObject.adaptUIButtonEnabled = false;
 				}
-
-				oDeleteButtonProperties = this._checkMenuItemOptions(oPreparedObject, oNavigationObject.adaptUIButtonEnabled);
-
-				oNavigationObject.semanticObject = sSemanticObject;
-				oNavigationObject.action = sAction;
-
-				if (oParams) {
-					Object.keys(oParams).forEach(function(sParamValue) {
-						if (oParams[sParamValue].value) {
-							oParams[sParamValue] = oParams[sParamValue].value;
-						}
-					});
-
-					oNavigationObject.params = oParams;
-				}
-
-				oNavigationObject = Object.assign({}, oNavigationObject, oDeleteButtonProperties);
-				return oNavigationObject;
-			}.bind(this));
-		};
-
-		Utils._prepareAppVariantAttributes = function(oAppVariantInfo) {
-			return {
-				appId : oAppVariantInfo.appId,
-				title : oAppVariantInfo.title || '',
-				subTitle : oAppVariantInfo.subTitle || '',
-				description : oAppVariantInfo.description || '',
-				icon : oAppVariantInfo.iconUrl || '',
-				iconText : oAppVariantInfo.iconText,
-				isOriginal : oAppVariantInfo.isOriginal,
-				isAppVariant : oAppVariantInfo.isAppVariant,
-				descriptorUrl : oAppVariantInfo.descriptorUrl,
-				appVarStatus : oAppVariantInfo.appVarStatus
-			};
-		};
-
-		Utils.getAppVariantOverviewAttributes = function(oAppVariantInfo, bKeyUser) {
-			var oAppVariantAttributes;
-			// Adding the tooltip to every icon which is shown on the App Variant Overview Dialog
-			var sIconUrl = oAppVariantInfo.iconUrl;
-			if (sIconUrl && sap.ui.core.IconPool.isIconURI(sIconUrl)) {
-				oAppVariantInfo.iconText = sIconUrl.split('//')[1];
+			} else {
+				oNavigationObject.adaptUIButtonEnabled = false;
 			}
 
-			oAppVariantAttributes = this._prepareAppVariantAttributes(oAppVariantInfo);
+			oDeleteButtonProperties = this._checkMenuItemOptions(oPreparedObject, oNavigationObject.adaptUIButtonEnabled);
 
-			// A key user
-			oAppVariantAttributes.isKeyUser = bKeyUser;
+			oNavigationObject.semanticObject = sSemanticObject;
+			oNavigationObject.action = sAction;
 
-			// Type of application required for Overview dialog
-			oAppVariantAttributes.typeOfApp = this._checkAppType(oAppVariantInfo.isOriginal, oAppVariantInfo.isAppVariant);
-
-			// Calculate current status of application required for Overview Dialog
-			oAppVariantAttributes.currentStatus = this._calculateCurrentStatus(oAppVariantInfo.appId, oAppVariantInfo.appVarStatus);
-
-
-			var bIsS4HanaCloud;
-			return Settings.getInstance().then(function(oSettings) {
-				bIsS4HanaCloud = AppVariantUtils.isS4HanaCloud(oSettings);
-				// Populate the app variant attributes with the cloud system information
-				oAppVariantAttributes.isS4HanaCloud = bIsS4HanaCloud;
-
-				var oPreparedObject = {
-					isKeyUser: bKeyUser,
-					isOriginal: oAppVariantInfo.isOriginal,
-					isS4HanaCloud: bIsS4HanaCloud,
-					appVarStatus : oAppVariantInfo.appVarStatus
-				};
-
-				if (oAppVariantInfo.hasStartableIntent) {
-					oPreparedObject.startWith = oAppVariantInfo.startWith;
-					return this._getNavigationInfo(oPreparedObject).then(function(oNavigationObject) {
-						oAppVariantAttributes = Object.assign({}, oAppVariantAttributes, oNavigationObject);
-						return oAppVariantAttributes;
-					});
-				} else {
-					oAppVariantAttributes.adaptUIButtonEnabled = false;
-					var oDeleteButtonProperties = this._checkMenuItemOptions(oPreparedObject, false);
-					oAppVariantAttributes = Object.assign({}, oAppVariantAttributes, oDeleteButtonProperties);
-					return Promise.resolve(oAppVariantAttributes);
-				}
-			}.bind(this));
-		};
-
-		Utils.getAppVariantOverview = function(sReferenceAppId, bKeyUser) {
-			// Customer* means the layer can be either CUSTOMER or CUSTOMER_BASE. This layer calculation will be done backendside
-			var sLayer = bKeyUser ? 'CUSTOMER*' : 'VENDOR';
-			var sRoute = '/sap/bc/lrep/app_variant_overview/?sap.app/id=' + sReferenceAppId + '&layer=' + sLayer;
-
-			return this.sendRequest(sRoute, 'GET').then(function(oResult) {
-				var aAppVariantOverviewInfo = [];
-				var aAppVariantInfo;
-				if (oResult.response && oResult.response.items) {
-					aAppVariantInfo = oResult.response.items;
-				} else {
-					return Promise.resolve([]);
-				}
-
-				aAppVariantInfo.forEach(function(oAppVariantInfo) {
-					if (!oAppVariantInfo.isDescriptorVariant) {
-						aAppVariantOverviewInfo.push(this.getAppVariantOverviewAttributes(oAppVariantInfo, bKeyUser));
+			if (oParams) {
+				Object.keys(oParams).forEach(function(sParamValue) {
+					if (oParams[sParamValue].value) {
+						oParams[sParamValue] = oParams[sParamValue].value;
 					}
-				}, this);
-
-				return Promise.all(aAppVariantOverviewInfo).then(function(aResponses) {
-					return aResponses;
 				});
 
-			}.bind(this));
-		};
+				oNavigationObject.params = oParams;
+			}
 
-		Utils.getDescriptor = function(sDescriptorUrl) {
-			return this.sendRequest(sDescriptorUrl, 'GET').then(function(oResult) {
-				return oResult.response;
-			});
+			oNavigationObject = Object.assign({}, oNavigationObject, oDeleteButtonProperties);
+			return oNavigationObject;
+		}.bind(this));
+	};
+
+	Utils._prepareAppVariantAttributes = function(oAppVariantInfo) {
+		return {
+			appId : oAppVariantInfo.appId,
+			title : oAppVariantInfo.title || '',
+			subTitle : oAppVariantInfo.subTitle || '',
+			description : oAppVariantInfo.description || '',
+			icon : oAppVariantInfo.iconUrl || '',
+			iconText : oAppVariantInfo.iconText,
+			isOriginal : oAppVariantInfo.isOriginal,
+			isAppVariant : oAppVariantInfo.isAppVariant,
+			descriptorUrl : oAppVariantInfo.descriptorUrl,
+			appVarStatus : oAppVariantInfo.appVarStatus
 		};
+	};
+
+	Utils.getAppVariantOverviewAttributes = function(oAppVariantInfo, bKeyUser) {
+		var oAppVariantAttributes;
+		// Adding the tooltip to every icon which is shown on the App Variant Overview Dialog
+		var sIconUrl = oAppVariantInfo.iconUrl;
+		if (sIconUrl && sap.ui.core.IconPool.isIconURI(sIconUrl)) {
+			oAppVariantInfo.iconText = sIconUrl.split('//')[1];
+		}
+
+		oAppVariantAttributes = this._prepareAppVariantAttributes(oAppVariantInfo);
+
+		// A key user
+		oAppVariantAttributes.isKeyUser = bKeyUser;
+
+		// Type of application required for Overview dialog
+		oAppVariantAttributes.typeOfApp = this._checkAppType(oAppVariantInfo.isOriginal, oAppVariantInfo.isAppVariant);
+
+		// Calculate current status of application required for Overview Dialog
+		oAppVariantAttributes.currentStatus = this._calculateCurrentStatus(oAppVariantInfo.appId, oAppVariantInfo.appVarStatus);
+
+
+		var bIsS4HanaCloud;
+		return Settings.getInstance().then(function(oSettings) {
+			bIsS4HanaCloud = AppVariantUtils.isS4HanaCloud(oSettings);
+				// Populate the app variant attributes with the cloud system information
+			oAppVariantAttributes.isS4HanaCloud = bIsS4HanaCloud;
+
+			var oPreparedObject = {
+				isKeyUser: bKeyUser,
+				isOriginal: oAppVariantInfo.isOriginal,
+				isS4HanaCloud: bIsS4HanaCloud,
+				appVarStatus : oAppVariantInfo.appVarStatus
+			};
+
+			if (oAppVariantInfo.hasStartableIntent) {
+				oPreparedObject.startWith = oAppVariantInfo.startWith;
+				return this._getNavigationInfo(oPreparedObject).then(function(oNavigationObject) {
+					oAppVariantAttributes = Object.assign({}, oAppVariantAttributes, oNavigationObject);
+					return oAppVariantAttributes;
+				});
+			}
+
+			oAppVariantAttributes.adaptUIButtonEnabled = false;
+			var oDeleteButtonProperties = this._checkMenuItemOptions(oPreparedObject, false);
+			oAppVariantAttributes = Object.assign({}, oAppVariantAttributes, oDeleteButtonProperties);
+			return Promise.resolve(oAppVariantAttributes);
+		}.bind(this));
+	};
+
+	Utils.getAppVariantOverview = function(sReferenceAppId, bKeyUser) {
+		// Customer* means the layer can be either CUSTOMER or CUSTOMER_BASE. This layer calculation will be done backendside
+		var sLayer = bKeyUser ? 'CUSTOMER*' : 'VENDOR';
+		var sRoute = '/sap/bc/lrep/app_variant_overview/?sap.app/id=' + sReferenceAppId + '&layer=' + sLayer;
+
+		return this.sendRequest(sRoute, 'GET').then(function(oResult) {
+			var aAppVariantOverviewInfo = [];
+			var aAppVariantInfo;
+			if (oResult.response && oResult.response.items) {
+				aAppVariantInfo = oResult.response.items;
+			} else {
+				return Promise.resolve([]);
+			}
+
+			aAppVariantInfo.forEach(function(oAppVariantInfo) {
+				if (!oAppVariantInfo.isDescriptorVariant) {
+					aAppVariantOverviewInfo.push(this.getAppVariantOverviewAttributes(oAppVariantInfo, bKeyUser));
+				}
+			}, this);
+
+			return Promise.all(aAppVariantOverviewInfo).then(function(aResponses) {
+				return aResponses;
+			});
+		}.bind(this));
+	};
+
+	Utils.getDescriptor = function(sDescriptorUrl) {
+		return this.sendRequest(sDescriptorUrl, 'GET').then(function(oResult) {
+			return oResult.response;
+		});
+	};
 
 	return Utils;
 }, /* bExport= */true);

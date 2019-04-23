@@ -88,7 +88,7 @@ function(
 			});
 
 			this.fnDestroy = sinon.spy(this.oRta, "_destroyDefaultPlugins");
-			return this.oRta.start().then(function(){
+			return this.oRta.start().then(function() {
 				this.oRootControlOverlay = OverlayRegistry.getOverlay(oComp);
 			}.bind(this));
 		},
@@ -189,23 +189,23 @@ function(
 	});
 
 	QUnit.module("Given a USER layer change", {
-		beforeEach : function(assert) {
+		beforeEach : function() {
 			FakeLrepSessionStorage.deleteChanges();
 
 			this.oUserChange = new Change({
-				"fileType": "change",
-				"layer": "USER",
-				"fileName": "a",
-				"namespace": "b",
-				"packageName": "c",
-				"changeType": "labelChange",
-				"creation": "",
-				"reference": "",
-				"selector": {
-					"id": "abc123"
+				fileType: "change",
+				layer: "USER",
+				fileName: "a",
+				namespace: "b",
+				packageName: "c",
+				changeType: "labelChange",
+				creation: "",
+				reference: "",
+				selector: {
+					id: "abc123"
 				},
-				"content": {
-					"something": "createNewVariant"
+				content: {
+					something: "createNewVariant"
 				}
 			});
 
@@ -213,7 +213,7 @@ function(
 				rootControl : oComp
 			});
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			this.oRta.destroy();
 			FakeLrepSessionStorage.deleteChanges();
 			sandbox.restore();
@@ -417,7 +417,7 @@ function(
 		QUnit.test("during rename", function(assert) {
 			jQuery('<div/>', {
 				"class": "sapUiRtaEditableField",
-				"tabIndex": 1
+				tabIndex: 1
 			}).appendTo("#qunit-fixture").get(0).focus();
 
 			RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oUndoEvent);
@@ -466,7 +466,7 @@ function(
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.ui.comp.smartform.GroupElement" : {
-					"hideControl" : "default"
+					hideControl : "default"
 				}
 			})
 			.then(function() {
@@ -493,10 +493,8 @@ function(
 			}.bind(this))
 
 			.then(function() {
-
 				//After command has been pushed
 				var fnStackModifiedSpy = sinon.spy(function() {
-
 					// Start RTA with command stack
 					var oRootControl = oComp.getAggregation("rootControl");
 					this.oRta = new RuntimeAuthoring({
@@ -532,7 +530,7 @@ function(
 			});
 		},
 
-		afterEach : function(assert) {
+		afterEach : function() {
 			sandbox.restore();
 			this.oRemoveCommand.destroy();
 			this.oCommandStack.destroy();
@@ -590,7 +588,7 @@ function(
 			fnTriggerKeydown(this.oElement2Overlay.getDomRef(), jQuery.sap.KeyCodes.Y, false, false, true, false);
 		});
 
-		QUnit.test("when _handleElementModified is called if a create container command was executed on a simple form", function(assert){
+		QUnit.test("when _handleElementModified is called if a create container command was executed on a simple form", function(assert) {
 			var done = assert.async();
 
 			var fnFireElementModifiedSpy = sandbox.spy(this.oRta._mDefaultPlugins["createContainer"], "fireElementModified");
@@ -613,7 +611,7 @@ function(
 			sap.ui.getCore().applyChanges();
 		});
 
-		QUnit.test("when _handleElementModified is called if a create container command was executed on a smart form", function(assert){
+		QUnit.test("when _handleElementModified is called if a create container command was executed on a smart form", function(assert) {
 			var done = assert.async();
 
 			var fnFireElementModifiedSpy = sinon.spy(this.oRta._mDefaultPlugins["createContainer"], "fireElementModified");
@@ -635,7 +633,7 @@ function(
 			sap.ui.getCore().applyChanges();
 		});
 
-		QUnit.test("when _handleElementModified is called if a create container command was executed on an empty form", function(assert){
+		QUnit.test("when _handleElementModified is called if a create container command was executed on an empty form", function(assert) {
 			var done = assert.async();
 
 			// An existing empty Form is used for the test
@@ -724,7 +722,7 @@ function(
 				assert.ok(false, 'catch must never be called - Error: ' + oError);
 			});
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			this.oSmartForm.destroy();
 			this.oRemoveCommand1.destroy();
 			this.oRemoveCommand2.destroy();
@@ -768,7 +766,7 @@ function(
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is started with different plugin sets...", {
-		beforeEach : function(assert) {
+		beforeEach : function() {
 			FakeLrepSessionStorage.deleteChanges();
 			var oCommandFactory = new CommandFactory();
 
@@ -791,7 +789,7 @@ function(
 
 			return this.oRta.start();
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			this.oContextMenuPlugin.destroy();
 			FakeLrepSessionStorage.deleteChanges();
 			this.oRemovePlugin.destroy();
@@ -813,7 +811,7 @@ function(
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is started with a scope set...", {
-		beforeEach : function(assert) {
+		beforeEach : function() {
 			FakeLrepSessionStorage.deleteChanges();
 
 			this.oRta = new RuntimeAuthoring({
@@ -823,7 +821,7 @@ function(
 
 			return this.oRta.start();
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -852,7 +850,7 @@ function(
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is created but not started", {
-		beforeEach : function(assert) {
+		beforeEach : function() {
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
 				rootControl : this.oRootControl,
@@ -880,7 +878,7 @@ function(
 			this.oEnableRestartSpy = sandbox.spy(RuntimeAuthoring, "enableRestart");
 			this.oReloadPageStub = sandbox.stub(this.oRta, "_reloadPage");
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -913,7 +911,7 @@ function(
 			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
 			var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(true);
 			var oDummyObject = {
-				"foo": "hugo"
+				foo: "hugo"
 			};
 			var aAppVariantDescriptors = [oDummyObject];
 			sandbox.stub(RtaAppVariantFeature, "getAppVariantDescriptor").resolves(oDummyObject);
@@ -941,16 +939,16 @@ function(
 		});
 
 		QUnit.test("When transport function is called and transportAllUIChanges returns Promise.reject() with an array of error messages", function(assert) {
-			var oError = {messages :
-				[
-				 {
-					 severity : "Error",
-					 text : "Error text 1"
-				 },
-				 {
-					 severity : "Error",
-					 text : "Error text 2"
-				 }
+			var oError = {
+				messages : [
+					{
+						severity : "Error",
+						text : "Error text 1"
+					},
+					{
+						severity : "Error",
+						text : "Error text 2"
+					}
 				]
 			};
 			var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
@@ -1076,14 +1074,14 @@ function(
 			}.bind(this));
 		});
 
-		QUnit.test("when calling '_deleteChanges and there is an error', ", function(assert){
+		QUnit.test("when calling '_deleteChanges and there is an error', ", function(assert) {
 			this.oDeleteChangesStub.restore();
 
 			sandbox.stub(this.oFlexController, "resetChanges").callsFake(function() {
 				return Promise.reject("Error");
 			});
 
-			sandbox.stub(RtaUtils, "_showMessageBox").callsFake(function(sIconType, sHeader, sMessage, sError){
+			sandbox.stub(RtaUtils, "_showMessageBox").callsFake(function(sIconType, sHeader, sMessage, sError) {
 				assert.equal(sError, "Error", "and a message box shows the error to the user");
 			});
 
@@ -1229,5 +1227,4 @@ function(
 		oComp.destroy();
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

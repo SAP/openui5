@@ -113,7 +113,7 @@ function (
 
 			var oOpenDialogStub = sandbox.stub(this.oAppVariantManager, "_openDialog").callsFake(fnSimulateDialogSelectionAndSave);
 
-			return this.oAppVariantManager.processSaveAsDialog(oDescriptor).then(function(oAppVariantData){
+			return this.oAppVariantManager.processSaveAsDialog(oDescriptor).then(function(oAppVariantData) {
 				assert.ok(oOpenDialogStub.calledOnce, "the _openDialog is called only once");
 				assert.strictEqual(oAppVariantData.title, "App Variant Title", "then the title is correct");
 				assert.strictEqual(oAppVariantData.subTitle, "App Variant Subtitle", "then the subtitle is correct");
@@ -162,14 +162,13 @@ function (
 			oServer.restore();
 		}
 	}, function() {
-
 		QUnit.test("When createDescriptor() method is called on S4/Hana on premise", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":false,
-					"isAtoEnabled":false,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:false,
+					isAtoEnabled:false,
+					isProductiveSystem:false
 				})
 			);
 
@@ -197,10 +196,10 @@ function (
 		QUnit.test("When createDescriptor() method is called on S4/Hana Cloud", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":true,
-					"isAtoEnabled":true,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:true,
+					isAtoEnabled:true,
+					isProductiveSystem:false
 				})
 			);
 
@@ -223,23 +222,23 @@ function (
 		});
 
 		QUnit.test("When notifyKeyUserWhenTileIsReady() method is called on S4/Hana Cloud", function (assert) {
-			var fnNotifyFlpCustomizingIsReadyStub =  sandbox.stub(S4HanaCloudBackend.prototype, "notifyFlpCustomizingIsReady").resolves(true);
+			var fnNotifyFlpCustomizingIsReadyStub = sandbox.stub(S4HanaCloudBackend.prototype, "notifyFlpCustomizingIsReady").resolves(true);
 			var fnShowMessageBoxStub = sandbox.stub(RtaUtils, "_showMessageBox").resolves(true);
-			return this.oAppVariantManager.notifyKeyUserWhenTileIsReady("IamID", "AppvarID").then(function(oResult) {
+			return this.oAppVariantManager.notifyKeyUserWhenTileIsReady("IamID", "AppvarID").then(function() {
 				assert.ok(fnNotifyFlpCustomizingIsReadyStub.calledOnceWith("IamID", true), "then the function notifyFlpCustomizingIsReady() is called once and with right parameters");
 				assert.ok(fnShowMessageBoxStub.calledOnce, "then the function _showMessageBox() is called once");
 			});
 		});
 
 		QUnit.test("When notifyWhenUnpublishingIsReady() method is called on S4/Hana Cloud", function (assert) {
-			var fnNotifyFlpCustomizingIsReadyStub =  sandbox.stub(S4HanaCloudBackend.prototype, "notifyFlpCustomizingIsReady").resolves(true);
+			var fnNotifyFlpCustomizingIsReadyStub = sandbox.stub(S4HanaCloudBackend.prototype, "notifyFlpCustomizingIsReady").resolves(true);
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":false,
-					"isAtoEnabled":false,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:false,
+					isAtoEnabled:false,
+					isProductiveSystem:false
 				})
 			);
 
@@ -247,7 +246,7 @@ function (
 				id: "customer.TestId",
 				reference: "TestIdBaseApp"
 			}).then(function(oDescriptor) {
-				return this.oAppVariantManager.notifyWhenUnpublishingIsReady("IamID", oDescriptor.getId()).then(function(oResult) {
+				return this.oAppVariantManager.notifyWhenUnpublishingIsReady("IamID", oDescriptor.getId()).then(function() {
 					assert.ok(fnNotifyFlpCustomizingIsReadyStub.calledOnceWith("IamID", false), "then the function notifyFlpCustomizingIsReady() is called once and with right parameters");
 				});
 			}.bind(this));
@@ -260,12 +259,12 @@ function (
 				});
 			});
 
-			sandbox.stub(Log,"error").callThrough().withArgs("App variant error: ", "IAM App Id: IamID").returns();
+			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "IAM App Id: IamID").returns();
 
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.reject(false));
 			return this.oAppVariantManager.notifyKeyUserWhenTileIsReady("IamID", "AppvarID").catch(
 				function(bSuccess) {
-					assert.equal(bSuccess, false, "Error: An unexpected exception occured" );
+					assert.equal(bSuccess, false, "Error: An unexpected exception occured");
 					assert.ok(checkFlpCustomizingIsReadyStub.calledOnceWith("IamID"), "then the method notifyFlpCustomizingIsReady is called once with correct parameters");
 				}
 			);
@@ -278,16 +277,16 @@ function (
 				});
 			});
 
-			sandbox.stub(Log,"error").callThrough().withArgs("App variant error: ", "IAM App Id: IamID").returns();
+			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "IAM App Id: IamID").returns();
 
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.reject(false));
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":false,
-					"isAtoEnabled":false,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:false,
+					isAtoEnabled:false,
+					isProductiveSystem:false
 				})
 			);
 
@@ -297,7 +296,7 @@ function (
 			}).then(function(oDescriptor) {
 				return this.oAppVariantManager.notifyWhenUnpublishingIsReady("IamID", oDescriptor.getId()).catch(
 					function(bSuccess) {
-						assert.equal(bSuccess, false, "Error: An unexpected exception occured" );
+						assert.equal(bSuccess, false, "Error: An unexpected exception occured");
 						assert.ok(checkFlpCustomizingIsReadyStub.calledOnceWith("IamID"), "then the method notifyFlpCustomizingIsReady is called once with correct parameters");
 					}
 				);
@@ -307,21 +306,21 @@ function (
 		QUnit.test("When createDescriptor() method is failed on S4/Hana cloud", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":true,
-					"isAtoEnabled":true,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:true,
+					isAtoEnabled:true,
+					isProductiveSystem:false
 				})
 			);
 
-			sandbox.stub(Log,"error").callThrough().withArgs("App variant error: ", "Whatever!").returns();
+			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "Whatever!").returns();
 
 			sandbox.stub(AppVariantUtils, "openTransportSelection").returns(Promise.reject("Whatever!"));
 
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.reject(false));
 			return this.oAppVariantManager.createDescriptor(this.oAppVariantData).catch(
 				function(bSuccess) {
-					assert.equal(bSuccess, false, "Error: An unexpected exception occured" );
+					assert.equal(bSuccess, false, "Error: An unexpected exception occured");
 				}
 			);
 		});
@@ -342,14 +341,13 @@ function (
 			oServer.restore();
 		}
 	}, function() {
-
 		QUnit.test("When saveAppVariantToLREP() method is called and response is successful", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":false,
-					"isAtoEnabled":false,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:false,
+					isAtoEnabled:false,
+					isProductiveSystem:false
 				})
 			);
 
@@ -362,9 +360,9 @@ function (
 			]);
 
 			var oResponse = {
-				"id": "AppVariantId",
-				"reference":"ReferenceAppId",
-				"content": []
+				id: "AppVariantId",
+				reference:"ReferenceAppId",
+				content: []
 			};
 
 			oServer.respondWith("POST", /\/sap\/bc\/lrep\/appdescr_variants/, [
@@ -392,10 +390,10 @@ function (
 		QUnit.test("When saveAppVariantToLREP() method is called and response is failed", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":false,
-					"isAtoEnabled":false,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:false,
+					isAtoEnabled:false,
+					isProductiveSystem:false
 				})
 			);
 
@@ -414,7 +412,7 @@ function (
 				mParameters.onClose("Close");
 			});
 
-			sandbox.stub(Log,"error").callThrough().withArgs("App variant error: ", "error").returns();
+			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "error").returns();
 
 			var fnShowRelevantDialog = sandbox.spy(AppVariantUtils, "showRelevantDialog");
 
@@ -434,10 +432,10 @@ function (
 		QUnit.test("When copyUnsavedChangesToLREP() method is called without any unsaved changes", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":false,
-					"isAtoEnabled":false,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:false,
+					isAtoEnabled:false,
+					isProductiveSystem:false
 				})
 			);
 
@@ -472,7 +470,7 @@ function (
 			var fnDeleteAppVariant = sandbox.stub(this.oAppVariantManager, "_deleteAppVariantFromLREP").resolves();
 			var fnShowRelevantDialog = sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.reject());
 
-			sandbox.stub(Log,"error").callThrough().withArgs("App variant error: ", "Saving error").returns();
+			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "Saving error").returns();
 
 			return new Promise(function(resolve, reject) {
 				return this.oAppVariantManager.copyUnsavedChangesToLREP("AppVariantId", true).then(reject, function () {
@@ -490,7 +488,7 @@ function (
 			var fnDeleteAppVariant = sandbox.stub(this.oAppVariantManager, "_deleteAppVariantFromLREP").returns(Promise.reject("Delete Error"));
 			var fnShowRelevantDialog = sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.reject());
 
-			sandbox.stub(Log,"error").callThrough().withArgs("App variant error: ", "Delete Error").returns();
+			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "Delete Error").returns();
 
 			return new Promise(function(resolve, reject) {
 				return this.oAppVariantManager.copyUnsavedChangesToLREP("AppVariantId", true).then(reject, function () {
@@ -506,17 +504,17 @@ function (
 		QUnit.test("When triggerCatalogAssignment() method is called on S4/Hana Cloud", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":true,
-					"isAtoEnabled":true,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:true,
+					isAtoEnabled:true,
+					isProductiveSystem:false
 				})
 			);
 
 			var oResponse = {
-				"VariantId" : "customer.TestId",
-				"IAMId" : "IAMId",
-				"CatalogIds" : ["TEST_CATALOG"]
+				VariantId : "customer.TestId",
+				IAMId : "IAMId",
+				CatalogIds : ["TEST_CATALOG"]
 			};
 
 			var oDescriptorUtilsStub = sandbox.stub(DescriptorUtils, "sendRequest").resolves(oResponse);
@@ -537,16 +535,16 @@ function (
 		QUnit.test("When triggerCatalogUnAssignment() method is called on S4/Hana Cloud", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":true,
-					"isAtoEnabled":true,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:true,
+					isAtoEnabled:true,
+					isProductiveSystem:false
 				})
 			);
 
 			var oResponse = {
-				"IAMId" : "IAMId",
-				"inProgress": true
+				IAMId : "IAMId",
+				inProgress: true
 			};
 
 			var oDescriptorUtilsStub = sandbox.stub(DescriptorUtils, "sendRequest").resolves(oResponse);
@@ -566,10 +564,10 @@ function (
 		QUnit.test("When triggerCatalogUnAssignment() method is called and response is failed", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":true,
-					"isAtoEnabled":true,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:true,
+					isAtoEnabled:true,
+					isProductiveSystem:false
 				})
 			);
 
@@ -579,7 +577,7 @@ function (
 				mParameters.onClose("Close");
 			});
 
-			sandbox.stub(Log,"error").callThrough().withArgs("App variant error: ", "error").returns();
+			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "error").returns();
 
 			var fnShowRelevantDialog = sandbox.spy(AppVariantUtils, "showRelevantDialog");
 			var oErrorInfo = {appVariantId:  "customer.TestId"};
@@ -603,10 +601,10 @@ function (
 		QUnit.test("When triggerCatalogAssignment() method is called on S4/Hana on premise", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":false,
-					"isAtoEnabled":false,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:false,
+					isAtoEnabled:false,
+					isProductiveSystem:false
 				})
 			);
 
@@ -616,7 +614,7 @@ function (
 				id: "customer.TestId",
 				reference: "TestIdBaseApp"
 			}).then(function(oDescriptor) {
-				return this.oAppVariantManager.triggerCatalogAssignment(oDescriptor).then(function(oResult) {
+				return this.oAppVariantManager.triggerCatalogAssignment(oDescriptor).then(function() {
 					assert.ok(true, "then the promise is resolved");
 					assert.ok(fnTriggerCatalogAssignmentSpy.notCalled, "then the method triggerCatalogAssignment() is not called");
 				});
@@ -626,10 +624,10 @@ function (
 		QUnit.test("When triggerCatalogUnAssignment() method is called on S4/Hana on premise", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":false,
-					"isAtoEnabled":false,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:false,
+					isAtoEnabled:false,
+					isProductiveSystem:false
 				})
 			);
 
@@ -639,7 +637,7 @@ function (
 				id: "customer.TestId",
 				reference: "TestIdBaseApp"
 			}).then(function(oDescriptor) {
-				return this.oAppVariantManager.triggerCatalogUnAssignment(oDescriptor).then(function(oResult) {
+				return this.oAppVariantManager.triggerCatalogUnAssignment(oDescriptor).then(function() {
 					assert.ok(true, "then the promise is resolved");
 					assert.ok(fnTriggerCatalogUnAssignmentSpy.notCalled, "then the method triggerCatalogUnAssignment() is not called");
 				});
@@ -649,10 +647,10 @@ function (
 		QUnit.test("When triggerCatalogAssignment() method is called and response is failed", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":true,
-					"isAtoEnabled":true,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:true,
+					isAtoEnabled:true,
+					isProductiveSystem:false
 				})
 			);
 
@@ -662,7 +660,7 @@ function (
 				mParameters.onClose("Close");
 			});
 
-			sandbox.stub(Log,"error").callThrough().withArgs("App variant error: ", "error").returns();
+			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "error").returns();
 
 			var fnShowRelevantDialog = sandbox.spy(AppVariantUtils, "showRelevantDialog");
 			var oErrorInfo = {appVariantId:  "customer.TestId"};
@@ -715,10 +713,10 @@ function (
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":true,
-					"isAtoEnabled":true,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:true,
+					isAtoEnabled:true,
+					isProductiveSystem:false
 				})
 			);
 
@@ -767,10 +765,10 @@ function (
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":false,
-					"isAtoEnabled":false,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:false,
+					isAtoEnabled:false,
+					isProductiveSystem:false
 				})
 			);
 
@@ -791,10 +789,10 @@ function (
 		QUnit.test("When showSuccessMessageAndTriggerActionFlow() method is called on S4/Hana Cloud ('Save As' is triggered from app variant overview list)", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":true,
-					"isAtoEnabled":true,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:true,
+					isAtoEnabled:true,
+					isProductiveSystem:false
 				})
 			);
 
@@ -816,10 +814,10 @@ function (
 		QUnit.test("When showSuccessMessageAndTriggerActionFlow() method is called on S4/Hana on premise ('Save As' is triggered from app variant overview list)", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":false,
-					"isAtoEnabled":false,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:false,
+					isAtoEnabled:false,
+					isProductiveSystem:false
 				})
 			);
 
@@ -842,5 +840,4 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

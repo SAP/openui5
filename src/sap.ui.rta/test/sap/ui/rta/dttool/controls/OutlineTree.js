@@ -4,8 +4,8 @@
 // Provides control sap.ui.rta.dttool.controls.OutlineTree.
 /* globals sap */
 sap.ui.define([
-	'sap/m/Tree',
-	'sap/m/TreeRenderer'
+	"sap/m/Tree",
+	"sap/m/TreeRenderer"
 ], function(
 	Tree,
 	TreeRenderer
@@ -30,7 +30,7 @@ sap.ui.define([
 		metadata: {
 		},
 
-		renderer : function (oRm, oTree) {
+		renderer : function () {
 			TreeRenderer.render.apply(this, arguments);
 		}
 	});
@@ -42,16 +42,14 @@ sap.ui.define([
 	 * @private
 	 */
 	Tree.prototype.setSelectedItemByPath = function (sPath, bSelect) {
-
 		var aItems;
 
 		if (bSelect === undefined || bSelect) {
-
 			var aPathSegments = sPath.split("/");
 
 			var iStartIndex = 0;
 
-			var fnExpandItems = function (sPath, bSelect, oItem, iIndex, aArr) {
+			var fnExpandItems = function (sPath, bSelect, oItem, iIndex) {
 				if (oItem.getBindingContextPath() === sPath) {
 					if (bSelect) {
 						this.setSelectedItem(oItem);
@@ -69,12 +67,10 @@ sap.ui.define([
 			};
 
 			for (var i = 2; i <= aPathSegments.length; i += 2) {
-
-				var sSegmentsPath = aPathSegments.slice(0,i).join("/");
+				var sSegmentsPath = aPathSegments.slice(0, i).join("/");
 				aItems = this.getItems();
 				aItems.slice(iStartIndex).some(fnExpandItems.bind(this, sSegmentsPath, i === aPathSegments.length));
 			}
-
 		} else {
 			aItems = this.getItems();
 			aItems.some(function (oItem) {
@@ -87,5 +83,4 @@ sap.ui.define([
 	};
 
 	return OutlineTree;
-
 }, /* bExport= */ true);

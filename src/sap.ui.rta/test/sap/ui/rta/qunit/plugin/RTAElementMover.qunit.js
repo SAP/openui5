@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/DragDrop",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/dt/DOMUtil",
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/ElementDesignTimeMetadata",
@@ -21,7 +20,6 @@ sap.ui.define([
 	CommandFactory,
 	DragDropPlugin,
 	OverlayRegistry,
-	DOMUtil,
 	OverlayUtil,
 	DesignTime,
 	ElementDesignTimeMetadata,
@@ -87,8 +85,8 @@ sap.ui.define([
 				id : "Comp1",
 				settings : {
 					componentData : {
-						"showAdaptButton" : true,
-						"useSessionStorage": true
+						showAdaptButton : true,
+						useSessionStorage: true
 					}
 				}
 			});
@@ -168,14 +166,13 @@ sap.ui.define([
 
 	QUnit.module("Given a group element, overlays, RTAElementMover", {
 		beforeEach : function(assert) {
-
 			this.oSmartGroupElement = new GroupElement("stableField", {
 				elements: [new Button("button1")]
 			});
 
 			this.oSmartForm1 = new SmartForm("form1", {
 				groups : [
-					new Group("group1",{
+					new Group("group1", {
 						groupElements : [
 							this.oSmartGroupElement
 						]
@@ -187,7 +184,7 @@ sap.ui.define([
 			});
 			this.oSmartForm2 = new SmartForm("form2", {
 				groups : [
-					new Group("group2",{
+					new Group("group2", {
 						groupElements : []
 					})
 				]
@@ -231,7 +228,6 @@ sap.ui.define([
 
 				done();
 			}.bind(this));
-
 		},
 		afterEach: function () {
 			this.oDesignTime.destroy();
@@ -254,7 +250,6 @@ sap.ui.define([
 
 	QUnit.module("Given verticalLayout with Buttons (first scenario) without relevantContainer propagation", {
 		beforeEach : function(assert) {
-
 			// first scenario
 			// VerticalLayout
 			//    MovedButton1
@@ -294,7 +289,6 @@ sap.ui.define([
 
 			var done = assert.async();
 			this.oDesignTime.attachEventOnce("synced", function() {
-
 				this.oMovedButton1Overlay = OverlayRegistry.getOverlay(this.oMovedButton1);
 				this.oLayoutAggregationOverlay = OverlayRegistry.getOverlay(this.oLayout).getAggregationOverlay("content");
 				this.oElementMover = this.oDragDropPlugin.getElementMover();
@@ -302,7 +296,6 @@ sap.ui.define([
 
 				done();
 			}.bind(this));
-
 		},
 		afterEach : function () {
 			this.oMovedButton1Overlay.destroy();
@@ -325,12 +318,12 @@ sap.ui.define([
 			assert.notOk(this.oElementMover.checkTargetZone(this.oLayoutAggregationOverlay), "then the layout is not a possible target zone");
 		});
 
-		QUnit.test("when Button2 is removed, leaving movedButton as the only element left in the Layout...", function(assert){
+		QUnit.test("when Button2 is removed, leaving movedButton as the only element left in the Layout...", function(assert) {
 			this.oLayout.removeContent(this.oButton2);
 			assert.notOk(this.oElementMover.checkMovable(this.oMovedButton1Overlay), "then the movedButton is no longer movable");
 		});
 
-		QUnit.test("when Button2 is destroyed, leaving movedButton as the only element left in the Layout...", function(assert){
+		QUnit.test("when Button2 is destroyed, leaving movedButton as the only element left in the Layout...", function(assert) {
 			this.oButton2.destroy();
 			assert.notOk(this.oElementMover.checkMovable(this.oMovedButton1Overlay), "then the movedButton is no longer movable");
 		});
@@ -338,7 +331,6 @@ sap.ui.define([
 
 	QUnit.module("Given verticalLayout with Button and another verticalLayout inside (second scenario) without relevantContainer propagation", {
 		beforeEach : function(assert) {
-
 			// second scenario
 			// VerticalLayout (outerLayout)
 			//    MovedButton1
@@ -383,7 +375,6 @@ sap.ui.define([
 
 			var done = assert.async();
 			this.oDesignTime.attachEventOnce("synced", function() {
-
 				this.oInnerLayoutAggregationOverlay = OverlayRegistry.getOverlay(this.oInnerLayout).getAggregationOverlay("content");
 				this.oMovedButton1Overlay = OverlayRegistry.getOverlay(this.oMovedButton1);
 				this.oElementMover = this.oDragDropPlugin.getElementMover();
@@ -391,7 +382,6 @@ sap.ui.define([
 
 				done();
 			}.bind(this));
-
 		},
 		afterEach : function () {
 			this.oMovedButton1Overlay.destroy();
@@ -409,7 +399,6 @@ sap.ui.define([
 
 	QUnit.module("Given smartForm, Groups and GroupElements (third scenario) with relevantContainer propagation", {
 		beforeEach : function(assert) {
-
 			// third scenario
 			// SmartForm
 			//    Group1
@@ -433,7 +422,7 @@ sap.ui.define([
 				groupElements : [this.oGroupElement2]
 			});
 			this.oSmartForm1 = new SmartForm("smartForm1", {
-				groups : [ this.oGroup1, this.oGroup2]
+				groups : [this.oGroup1, this.oGroup2]
 			});
 
 			var oCommandFactory = new CommandFactory();
@@ -476,7 +465,6 @@ sap.ui.define([
 
 			var done = assert.async();
 			this.oDesignTime.attachEventOnce("synced", function() {
-
 				this.oMovedGroupElement1Overlay = OverlayRegistry.getOverlay(this.oMovedGroupElement1);
 				this.oGroupAggregationOverlay = OverlayRegistry.getOverlay(this.oGroup2).getAggregationOverlay("formElements");
 				this.oElementMover = this.oDragDropPlugin.getElementMover();
@@ -484,7 +472,6 @@ sap.ui.define([
 
 				done();
 			}.bind(this));
-
 		},
 		afterEach : function () {
 			this.oMovedGroupElement1Overlay.destroy();
@@ -551,7 +538,6 @@ sap.ui.define([
 
 	QUnit.module("Given Bar with Buttons (fourth scenario) without relevantContainer propagation", {
 		beforeEach : function(assert) {
-
 			// fourth scenario
 			// Bar
 			//    Aggregation1 (contentLeft)
@@ -608,7 +594,6 @@ sap.ui.define([
 
 			var done = assert.async();
 			this.oDesignTime.attachEventOnce("synced", function() {
-
 				this.oMovedButton1Overlay = OverlayRegistry.getOverlay(this.oMovedButton1);
 				this.oBarOverlay = OverlayRegistry.getOverlay(this.oBar);
 				this.oBarRightAggregationOverlay = OverlayRegistry.getOverlay(this.oBar).getAggregationOverlay("contentRight");
@@ -618,7 +603,6 @@ sap.ui.define([
 
 				done();
 			}.bind(this));
-
 		},
 		afterEach : function () {
 			this.oMovedButton1Overlay.destroy();
@@ -640,12 +624,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the bar has no stable id...", function(assert) {
-			sandbox.stub(this.oElementMover.oBasePlugin, "hasStableId").callsFake(function(oOverlay){
-				if (oOverlay === this.oBarOverlay){
+			sandbox.stub(this.oElementMover.oBasePlugin, "hasStableId").callsFake(function(oOverlay) {
+				if (oOverlay === this.oBarOverlay) {
 					return false;
-				} else {
-					return true;
 				}
+				return true;
 			}.bind(this));
 
 			assert.equal(this.oElementMover.isMoveAvailableOnRelevantContainer(this.oMovedButton1Overlay), false, "then the move is not available");
@@ -726,7 +709,6 @@ sap.ui.define([
 			this.oBar.destroy();
 		}
 	}, function() {
-
 		QUnit.test("when isMoveAvailableForChildren is called with bar", function(assert) {
 			// should also work when AggregationOverlays are not defined
 			sandbox.stub(this.oBarOverlay, "getAggregationOverlay")
@@ -740,11 +722,9 @@ sap.ui.define([
 			assert.notOk(this.oElementMover.isMoveAvailableForChildren(this.oButton1Overlay),
 			"then the result is 'false'");
 		});
-
 	});
 
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

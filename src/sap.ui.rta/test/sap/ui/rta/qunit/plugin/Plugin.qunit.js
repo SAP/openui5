@@ -60,8 +60,8 @@ function (
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			oChangeRegistry.registerControlsForChanges({
-				"VerticalLayout" : {
-					"moveControls": "default"
+				VerticalLayout : {
+					moveControls: "default"
 				}
 			})
 			.then(function() {
@@ -164,7 +164,7 @@ function (
 		QUnit.test("when the control has no stable id but is bound and binding template has stable id", function(assert) {
 			//stub list binding
 			var oBindingTemplateControl = new Button("stable");
-			sandbox.stub(OverlayUtil,"getAggregationInformation").returns({
+			sandbox.stub(OverlayUtil, "getAggregationInformation").returns({
 				templateId : oBindingTemplateControl.getId()
 			});
 			assert.strictEqual(this.oPlugin.hasStableId(this.oButtonOverlay), true, "then ID of the binding template is considered stable");
@@ -174,7 +174,7 @@ function (
 		QUnit.test("when the control has no stable id but is bound and binding template has no stable id", function(assert) {
 			//stub list binding
 			var oBindingTemplateControl = new Button();
-			sandbox.stub(OverlayUtil,"getAggregationInformation").returns({
+			sandbox.stub(OverlayUtil, "getAggregationInformation").returns({
 				templateId : oBindingTemplateControl.getId()
 			});
 			assert.strictEqual(this.oPlugin.hasStableId(this.oButtonOverlay), false, "then ID of the binding template is considered unstable");
@@ -245,7 +245,7 @@ function (
 
 			sap.ui.getCore().applyChanges();
 
-			this.oCheckControlIdSpy = sandbox.spy(FlexUtils,"checkControlId");
+			this.oCheckControlIdSpy = sandbox.spy(FlexUtils, "checkControlId");
 
 			var oCommandFactory = new CommandFactory();
 			this.oRenamePlugin = new Rename({
@@ -403,7 +403,7 @@ function (
 			sandbox.restore();
 			var oModifyPluginListSpy = sandbox.spy(this.oRenamePlugin, "_modifyPluginList");
 			sandbox.stub(OverlayUtil, "findAllOverlaysInContainer").returns([this.oLayoutOverlay]);
-			this.oRenamePlugin.isBusy = function(){
+			this.oRenamePlugin.isBusy = function() {
 				return true;
 			};
 			this.oLayoutOverlay.fireElementModified({
@@ -436,7 +436,7 @@ function (
 				formContainers : [this.oGroup]
 			}).placeAt("qunit-fixture");
 
-			this.oCheckControlIdSpy = sandbox.spy(FlexUtils,"checkControlId");
+			this.oCheckControlIdSpy = sandbox.spy(FlexUtils, "checkControlId");
 
 			sap.ui.getCore().applyChanges();
 
@@ -457,7 +457,7 @@ function (
 				done();
 			}.bind(this));
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			this.oDesignTime.destroy();
 			this.oForm.destroy();
 			sandbox.restore();
@@ -520,7 +520,7 @@ function (
 			this.oForm = this.oSimpleForm.getAggregation("form");
 			this.oFormContainer = this.oSimpleForm.getAggregation("form").getAggregation("formContainers")[0];
 
-			this.oCheckControlIdSpy = sandbox.spy(FlexUtils,"checkControlId");
+			this.oCheckControlIdSpy = sandbox.spy(FlexUtils, "checkControlId");
 
 			this.oPlugin = new Plugin({
 				commandFactory : new CommandFactory()
@@ -645,7 +645,7 @@ function (
 
 			this.oFormContainer = this.oSimpleForm.getAggregation("form").getAggregation("formContainers")[0];
 
-			this.oCheckControlIdSpy = sandbox.spy(FlexUtils,"checkControlId");
+			this.oCheckControlIdSpy = sandbox.spy(FlexUtils, "checkControlId");
 
 			this.oPlugin = new Plugin();
 			this.oDesignTime = new DesignTime({
@@ -727,14 +727,14 @@ function (
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			oChangeRegistry.registerControlsForChanges({
-				"ObjectPageSection" : {
-					"rename": "sap/ui/fl/changeHandler/BaseRename"
+				ObjectPageSection : {
+					rename: "sap/ui/fl/changeHandler/BaseRename"
 				},
 				"sap.m.Button" : {
-					"removeButton": "sap/ui/fl/changeHandler/Base"
+					removeButton: "sap/ui/fl/changeHandler/Base"
 				},
 				"sap.ui.core._StashedControl" : {
-					"unstashControl": "sap/ui/fl/changeHandler/UnstashControl"
+					unstashControl: "sap/ui/fl/changeHandler/UnstashControl"
 				}
 			})
 			.then(function() {
@@ -801,7 +801,7 @@ function (
 		QUnit.test("when calling 'getVariantManagementReference' with a stashed control", function(assert) {
 			var mSettings = {};
 			mSettings.sParentId = this.oObjectPageSection.getId();
-			var oStashedControl = new sap.ui.core._StashedControl("stashedControl",mSettings);
+			var oStashedControl = new sap.ui.core._StashedControl("stashedControl", mSettings);
 
 			var oDesignTimeMetadata = new ElementDesignTimeMetadata(
 				{
@@ -835,8 +835,8 @@ function (
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			oChangeRegistry.registerControlsForChanges({
-				"VerticalLayout" : {
-					"moveControls": "default"
+				VerticalLayout : {
+					moveControls: "default"
 				}
 			})
 			.then(function() {
@@ -881,5 +881,4 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

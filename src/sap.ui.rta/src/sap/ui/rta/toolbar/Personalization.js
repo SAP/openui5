@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	'./Base',
-	'sap/m/Button'
+	"./Base",
+	"sap/m/Button"
 ],
 function(
 	Base,
@@ -36,8 +36,8 @@ function(
 				/**
 				 * Events are fired when the Toolbar - Buttons are pressed
 				 */
-				"exit": {},
-				"restore": {}
+				exit: {},
+				restore: {}
 			}
 		},
 		constructor: function() {

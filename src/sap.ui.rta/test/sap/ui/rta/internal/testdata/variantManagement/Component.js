@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/rta/util/UrlParser",
 	"sap/ui/fl/FakeLrepConnector",
 	"sap/ui/core/util/MockServer",
-	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/Utils"
@@ -14,16 +13,13 @@ sap.ui.define([
 	UrlParser,
 	FakeLrepConnector,
 	MockServer,
-	ResourceModel,
 	ODataModel,
 	JSONModel,
 	Utils
 ) {
-
 	"use strict";
 
 	return UIComponent.extend("sap.ui.rta.test.variantManagement.Component", {
-
 		metadata: {
 			manifest: "json"
 		},
@@ -78,7 +74,7 @@ sap.ui.define([
 			this.setModel(oStateModel, "state");
 		},
 
-		_adaptButtonConfiguration: function(){
+		_adaptButtonConfiguration: function() {
 			this.setModel(new JSONModel({
 				showAdaptButton: !Utils.getUshellContainer()
 			}), "app");

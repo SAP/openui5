@@ -3,13 +3,11 @@
  */
 
 sap.ui.define([
-	'sap/ui/rta/plugin/Remove',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/m/Button',
+	"sap/ui/rta/plugin/Remove",
+	"sap/m/Button",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	Remove,
-	OverlayRegistry,
 	Button,
 	jQuery
 ) {
@@ -30,8 +28,7 @@ sap.ui.define([
 	 * @alias sap.ui.rta.plugin.EasyRemove
 	 * @experimental Since 1.48. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
-	var EasyRemove = Remove.extend("sap.ui.rta.plugin.EasyRemove", /** @lends sap.ui.rta.plugin.EasyRemove.prototype */
-	{
+	var EasyRemove = Remove.extend("sap.ui.rta.plugin.EasyRemove", /** @lends sap.ui.rta.plugin.EasyRemove.prototype */ {
 		metadata: {
 			library: "sap.ui.rta",
 			properties: {},
@@ -73,7 +70,6 @@ sap.ui.define([
 			oDeleteButton
 				.attachBrowserEvent("click", fnOnClick)
 				.attachBrowserEvent("tap", fnOnClick);
-
 		}
 
 		Remove.prototype.registerElementOverlay.apply(this, arguments);

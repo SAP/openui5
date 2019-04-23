@@ -2,9 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/rta/command/BaseCommand',
-	'sap/ui/core/util/reflection/JsControlTreeModifier',
-	'sap/ui/fl/Utils'
+	"sap/ui/rta/command/BaseCommand",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/fl/Utils"
 ], function(
 	BaseCommand,
 	JsControlTreeModifier,
@@ -43,7 +43,7 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	ControlVariantConfigure.prototype.prepare = function(mFlexSettings, sVariantManagementReference) {
+	ControlVariantConfigure.prototype.prepare = function(mFlexSettings) {
 		this.sLayer = mFlexSettings.layer;
 		return true;
 	};
@@ -72,7 +72,7 @@ sap.ui.define([
 			this._aPreparedChanges.push(this.oModel.setVariantProperties(this.sVariantManagementReference, mChangeProperties, true));
 		}.bind(this));
 
-		return Promise.resolve().then(function(){
+		return Promise.resolve().then(function() {
 			this.oModel.checkUpdate(true);
 		}.bind(this));
 	};
@@ -87,7 +87,7 @@ sap.ui.define([
 		this.getChanges().forEach(function(mChangeProperties, index) {
 			mPropertyBag = {};
 			Object.keys(mChangeProperties).forEach(function(sProperty) {
-				var sOriginalProperty = "original" + sProperty.charAt(0).toUpperCase() +  sProperty.substr(1);
+				var sOriginalProperty = "original" + sProperty.charAt(0).toUpperCase() + sProperty.substr(1);
 				if (sProperty === "visible") {
 					mPropertyBag[sProperty] = true; /*visibility of the variant always set back to true on undo*/
 				} else if (mChangeProperties[sOriginalProperty]) {
@@ -101,12 +101,11 @@ sap.ui.define([
 			this.oModel.setVariantProperties(this.sVariantManagementReference, mPropertyBag, false);
 		}.bind(this));
 
-		return Promise.resolve().then(function(){
+		return Promise.resolve().then(function() {
 			this.oModel.checkUpdate(true);
 			this._aPreparedChanges = null;
 		}.bind(this));
 	};
 
 	return ControlVariantConfigure;
-
 }, /* bExport= */true);

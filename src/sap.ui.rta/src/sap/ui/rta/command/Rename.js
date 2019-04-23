@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/rta/command/FlexCommand'], function(FlexCommand) {
+sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 	"use strict";
 
 	/**
@@ -36,21 +36,19 @@ sap.ui.define(['sap/ui/rta/command/FlexCommand'], function(FlexCommand) {
 	});
 
 	Rename.prototype._getChangeSpecificData = function() {
-
 		var mSpecificInfo = {
-				changeType : this.getChangeType(),
-				selector : {
-					id : this.getElement().getId()
-				},
-				renamedElement : {
-					id : this.getRenamedElement().getId()
-				},
-				value : this.getNewValue()
+			changeType : this.getChangeType(),
+			selector : {
+				id : this.getElement().getId()
+			},
+			renamedElement : {
+				id : this.getRenamedElement().getId()
+			},
+			value : this.getNewValue()
 		};
 
 		return mSpecificInfo;
 	};
 
 	return Rename;
-
 }, /* bExport= */true);

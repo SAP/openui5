@@ -4,9 +4,8 @@
 
 // Provides a customized router class for the 'DT Tool' app.
 sap.ui.define([
-	'sap/m/routing/Router',
-	'sap/ui/core/routing/History'
-], function(Router, History) {
+	'sap/m/routing/Router'
+], function(Router) {
 	"use strict";
 
 	var DTToolRouter = Router.extend("sap.ui.rta.dttool.util.DTToolRouter", {
@@ -27,5 +26,4 @@ sap.ui.define([
 	});
 
 	return DTToolRouter;
-
 });

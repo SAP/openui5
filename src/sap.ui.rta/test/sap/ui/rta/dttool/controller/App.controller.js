@@ -2,7 +2,7 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/rta/dttool/util/DTMetadata",
-	'sap/ui/rta/Client',
+	"sap/ui/rta/Client",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
@@ -219,7 +219,7 @@ sap.ui.define([
 		 * Workaround because Splitter takes up more space than it should and doesn't fire resize events in all cases
 		 * @param {sap.ui.base.Event} oEvent the event
 		 */
-		onSplitterResize : function (oEvent) {
+		onSplitterResize : function () {
 			jQuery(".sapUiDtToolSplitter").css("height", window.innerHeight - parseInt(jQuery(".sapMPageHeader").css("height")) + "px");
 		},
 
@@ -271,7 +271,7 @@ sap.ui.define([
 						var oLibData = oPaletteData.groups.find(function(oGroup) {
 							return oGroup.groupName === sGroupName;
 						});
-						oLibData = oLibData ? oLibData : oPaletteData.groups[oPaletteData.groups.push({
+						oLibData = oLibData || oPaletteData.groups[oPaletteData.groups.push({
 							number: 0,
 							groupName: sGroupName,
 							controls: []
@@ -291,7 +291,7 @@ sap.ui.define([
 				new Promise(function(fnResolve) {
 					var oPaletteControl = this.getView().byId("palette");
 					var oEventDelegate = {
-						"onAfterRendering": function () {
+						onAfterRendering: function () {
 							oPaletteControl.removeEventDelegate(oEventDelegate);
 							fnResolve(oPaletteControl);
 						}
@@ -333,7 +333,6 @@ sap.ui.define([
 		 */
 		getPaletteDomRefs : function () {
 			return this.byId("palette").getItems().reduce(function (aRefs, oItem) {
-
 				var aSpliceParams = oItem.getContent()[0].getContent()[0].getItems().map(function (oGroupItem) {
 					return oGroupItem.getDomRef();
 				});
@@ -404,7 +403,7 @@ sap.ui.define([
 		/**
 		* Called when RTA has started in the iframe
 		*/
-		onRTAstarted : function  () {
+		onRTAstarted : function () {
 			this.oRTAClient.getService("outline").then(function (oOutlineProvider) {
 				oOutlineProvider.get().then(function (oOutline) {
 					var oModel = this._getOutlineModel();
@@ -556,9 +555,7 @@ sap.ui.define([
 		 * @param {object} oEvent.data.properties the properties of the selected element
 		 */
 		onUpdatePropertyPanel : function (oEvent) {
-
 			if (oEvent && oEvent.data && oEvent.data.properties) {
-
 				var mElmntProps = oEvent.data.properties;
 
 				var oDTData = this._getPropertyModel().getData();
@@ -587,7 +584,6 @@ sap.ui.define([
 		 * @param {object} oEvent.data.dtData the dt data
 		 */
 		onDTData : function (oEvent) {
-
 			var oDTData = oEvent.data.dtData;
 
 			var oPropPanModel = this._getPropertyModel();
@@ -621,7 +617,7 @@ sap.ui.define([
 		 * Opens a dialog which allows importing a control via module path
 		 * @param {sap.ui.base.Event} oEvent the add button press event
 		 */
-		onAddControlToPalette : function (oEvent) {
+		onAddControlToPalette : function () {
 			var oDialog = new Dialog({
 				id: "addControlDialog",
 				title: "Add Custom Control",
@@ -629,7 +625,6 @@ sap.ui.define([
 					new Input({
 						id: "addDialogInput",
 						liveChange: function(oEvent) {
-
 							var sText = oEvent.getParameter("value");
 
 							var oInput = oEvent.getSource();
@@ -669,7 +664,6 @@ sap.ui.define([
 			});
 
 			sap.ui.getCore().byId("addDialogInput").onsapenter = function (oEvent) {
-
 				var sText = oEvent.srcControl.getValue();
 
 				if (/^(?:\w+\/)+\w+$/.test(sText)) {
@@ -688,7 +682,6 @@ sap.ui.define([
 			var sText = sap.ui.getCore().byId("addDialogInput").getValue();
 
 			DTMetadata.loadElement(sText.replace(/\//g, ".")).then(function (oData) {
-
 				if (!oData) {
 					MessageToast.show("Failed to load Module " + sText);
 				}
@@ -713,7 +706,6 @@ sap.ui.define([
 						return true;
 					}
 				});
-
 			}.bind(this), function () {
 				MessageToast.show("Failed to load Module " + sText);
 			});
@@ -725,10 +717,9 @@ sap.ui.define([
 		 * @returns {object} the mapped control data
 		 */
 		_mapDataForPalette : function (oControlData) {
-
-		    if (!oControlData){
-		        return true;
-		    }
+			if (!oControlData) {
+				return true;
+			}
 
 			var oControlPaletteData = {
 				className : oControlData.className,
@@ -748,7 +739,6 @@ sap.ui.define([
 		 * @param {boolean} bIgnore the ignore property of the palette entry. If true the entry will not be added.
 		 */
 		_updatePalette : function (sGroup, oControlPaletteData, bIgnore) {
-
 			var oPaletteModel = this._getPaletteModel();
 			var oPaletteData = oPaletteModel.getData();
 
@@ -757,11 +747,8 @@ sap.ui.define([
 			var bDontAddListeners = false;
 
 			if (!oPaletteData.groups.some(function (oGroup, iGroupIndex) {
-
 				if (!bRemoved || oGroup.groupName === sGroup.toLowerCase()) {
-
 					if (!oGroup.controls.some(function (oControlData, iControlIndex) {
-
 						if (oControlData.className === oControlPaletteData.className) {
 							if (!bAdded && oGroup.groupName === sGroup.toLowerCase()) {
 								oPaletteData.groups[iGroupIndex].controls[iControlIndex] = oControlPaletteData;
@@ -780,7 +767,6 @@ sap.ui.define([
 						}
 
 						return bRemoved && bAdded;
-
 					}) && oGroup.groupName === sGroup.toLowerCase()) {
 						oPaletteData.groups[iGroupIndex].controls.push(oControlPaletteData);
 						oPaletteData.groups[iGroupIndex].number++;
@@ -801,7 +787,7 @@ sap.ui.define([
 			oPaletteModel.setProperty("/", oPaletteData);
 			this.getView().byId("palette").getItems().map(function (oPaletteCategory) {
 				oPaletteCategory.getContent()[0].getContent()[0].addEventDelegate({
-					"onAfterRendering": function () {
+					onAfterRendering: function () {
 						if (!bDontAddListeners) {
 							this.setDraggable();
 						}
@@ -818,7 +804,6 @@ sap.ui.define([
 		 * @returns {string} the path of the overlay
 		 */
 		findOverlayInOutline : function (sId, aData, sPath) {
-
 			if (!sPath) {
 				sPath = "/";
 			}
@@ -843,7 +828,6 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent the change event
 		 */
 		onPropertyChange : function (oEvent) {
-
 			var sPropertyName = oEvent.getSource().getPropertyName();
 			var vNewValue = oEvent.getParameter("newValue");
 
@@ -864,7 +848,6 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent the liveSearch event
 		 */
 		onPaletteSearch : function (oEvent) {
-
 			var aFilter = [];
 			var sQuery = oEvent.getParameter("newValue");
 			if (sQuery) {
@@ -898,7 +881,6 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent the expand event
 		 */
 		onPanelExpand : function (oEvent) {
-
 			if (oEvent.getParameter("expand") === false) {
 				this.sLastExpandedId = "";
 			} else {

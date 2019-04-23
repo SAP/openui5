@@ -2,12 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/base/ManagedObject',
-	'sap/ui/fl/ChangePersistenceFactory',
-	'sap/ui/fl/Utils',
-	'sap/ui/rta/command/Settings',
-	'sap/ui/rta/command/CompositeCommand',
-	'sap/ui/rta/ControlTreeModifier'
+	"sap/ui/base/ManagedObject",
+	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/Utils",
+	"sap/ui/rta/command/Settings",
+	"sap/ui/rta/command/CompositeCommand",
+	"sap/ui/rta/ControlTreeModifier"
 ], function(
 	ManagedObject,
 	ChangePersistenceFactory,
@@ -106,9 +106,8 @@ sap.ui.define([
 				});
 				return oStack;
 			});
-		} else {
-			return Promise.resolve(oStack);
 		}
+		return Promise.resolve(oStack);
 	};
 
 	/**
@@ -125,14 +124,14 @@ sap.ui.define([
 			this._aCommandExecutionHandler.splice(i, 1);
 		}
 	};
-	Stack.prototype.init = function(){
+	Stack.prototype.init = function() {
 		this._aCommandExecutionHandler = [];
 		this._toBeExecuted = -1;
 		this._oLastCommand = Promise.resolve();
 	};
 
-	Stack.prototype._waitForCommandExecutionHandler = function(mParam){
-		return Promise.all(this._aCommandExecutionHandler.map(function(fnHandler){
+	Stack.prototype._waitForCommandExecutionHandler = function(mParam) {
+		return Promise.all(this._aCommandExecutionHandler.map(function(fnHandler) {
 			return fnHandler(mParam);
 		}));
 	};
@@ -195,14 +194,14 @@ sap.ui.define([
 	};
 
 	Stack.prototype.execute = function() {
-		this._oLastCommand = this._oLastCommand.catch(function(){
+		this._oLastCommand = this._oLastCommand.catch(function() {
 			//continue also if previous command failed
-		}).then(function(){
+		}).then(function() {
 			var oCommand = this._getCommandToBeExecuted();
 			if (oCommand) {
 				return oCommand.execute()
 
-				.then(function(){
+				.then(function() {
 					this._toBeExecuted--;
 					var mParam = {
 						command: oCommand,
@@ -232,7 +231,6 @@ sap.ui.define([
 			var oCommand = this._getCommandToBeExecuted();
 			if (oCommand) {
 				return oCommand.undo()
-
 				.then(function() {
 					var mParam = {
 						command: oCommand,
@@ -242,12 +240,10 @@ sap.ui.define([
 					this.fireModified();
 					return this._waitForCommandExecutionHandler(mParam);
 				}.bind(this));
-			} else {
-				return Promise.resolve();
 			}
-		} else {
 			return Promise.resolve();
 		}
+		return Promise.resolve();
 	};
 
 	Stack.prototype.canUndo = function() {
@@ -309,5 +305,4 @@ sap.ui.define([
 	};
 
 	return Stack;
-
 }, /* bExport= */true);

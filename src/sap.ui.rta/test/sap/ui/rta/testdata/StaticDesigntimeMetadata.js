@@ -1,6 +1,4 @@
-sap.ui.define([
-], function(
-) {
+sap.ui.define([], function() {
 	"use strict";
 
 	var StaticDesigntimeMatadata = {};
@@ -10,8 +8,7 @@ sap.ui.define([
 	 *	sandbox.stub(DesignTime.prototype, "getDesignTimeMetadataFor").withArgs(this.oLayout)
 	 *	.returns(StaticDesigntimeMetadata.getVerticalLayoutDesigntimeMetadata());
 	 */
-
-	 StaticDesigntimeMatadata.getPageDesigntimeMetadata = function() {
+	StaticDesigntimeMatadata.getPageDesigntimeMetadata = function() {
 		return {
 			palette: {
 				group: "CONTAINER",
@@ -23,7 +20,7 @@ sap.ui.define([
 				rename: function (oPage) {
 					// When a custom header is added the title is not visualized and we do not need a rename action.
 					if (oPage.getCustomHeader()) {
-						return;
+						return undefined;
 					}
 
 					return {
@@ -70,7 +67,7 @@ sap.ui.define([
 		};
 	};
 
-	 StaticDesigntimeMatadata.getButtonDesigntimeMetadata = function() {
+	StaticDesigntimeMatadata.getButtonDesigntimeMetadata = function() {
 		return {
 			palette: {
 				group: "ACTION",
@@ -103,7 +100,7 @@ sap.ui.define([
 		};
 	};
 
-	 StaticDesigntimeMatadata.getVerticalLayoutDesigntimeMetadata = function() {
+	StaticDesigntimeMatadata.getVerticalLayoutDesigntimeMetadata = function() {
 		return {
 			name: {
 				singular: "VERTICAL_LAYOUT_CONTROL_NAME",
@@ -134,7 +131,7 @@ sap.ui.define([
 		};
 	};
 
-	 StaticDesigntimeMatadata.getObjectPageSubSectionDesigntimeMetadata = function() {
+	StaticDesigntimeMatadata.getObjectPageSubSectionDesigntimeMetadata = function() {
 		return {
 			palette: {
 				group: "CONTAINER",
@@ -154,7 +151,7 @@ sap.ui.define([
 						changeType: "rename",
 						domRef: ".sapUxAPObjectPageSubSectionHeaderTitle",
 						isEnabled : function (oElement) {
-							return oElement.$("headerTitle").get(0) != undefined;
+							return oElement.$("headerTitle").get(0) !== undefined;
 						}
 					};
 				}
@@ -172,13 +169,13 @@ sap.ui.define([
 		};
 	};
 
-	 StaticDesigntimeMatadata.getObjectPageSectionDesigntimeMetadata = function() {
+	StaticDesigntimeMatadata.getObjectPageSectionDesigntimeMetadata = function() {
 		return {
 			name : {
-				singular : function(){
+				singular : function() {
 					return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME");
 				},
-				plural : function(){
+				plural : function() {
 					return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME_PLURAL");
 				}
 			},
@@ -200,7 +197,7 @@ sap.ui.define([
 						changeType: "rename",
 						domRef: ".sapUxAPObjectPageSectionTitle",
 						isEnabled: function (oElement) {
-							return oElement.$("title").get(0) != undefined;
+							return oElement.$("title").get(0) !== undefined;
 						}
 					};
 				}
@@ -218,13 +215,13 @@ sap.ui.define([
 		};
 	};
 
-	 StaticDesigntimeMatadata.getObjectPageLayoutDesigntimeMetadata = function() {
+	StaticDesigntimeMatadata.getObjectPageLayoutDesigntimeMetadata = function() {
 		return {
 			name : {
-				singular : function(){
+				singular : function() {
 					return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("LAYOUT_CONTROL_NAME");
 				},
-				plural : function(){
+				plural : function() {
 					return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("LAYOUT_CONTROL__PLURAL");
 				}
 			},
@@ -234,10 +231,10 @@ sap.ui.define([
 						return oElement.$("sectionsContainer").get(0);
 					},
 					childNames : {
-						singular : function(){
+						singular : function() {
 							return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME");
 						},
-						plural : function(){
+						plural : function() {
 							return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME_PLURAL");
 						}
 					},
@@ -245,12 +242,12 @@ sap.ui.define([
 						move : "moveControls"
 					},
 					beforeMove : function (ObjectPageLayout) {
-						if (ObjectPageLayout){
+						if (ObjectPageLayout) {
 							ObjectPageLayout._suppressScroll();
 						}
 					},
 					afterMove : function (ObjectPageLayout) {
-						if (ObjectPageLayout){
+						if (ObjectPageLayout) {
 							ObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
 								ObjectPageLayout._resumeScroll(false);
 							});
@@ -262,8 +259,8 @@ sap.ui.define([
 						return oElement.$("headerContent").get(0);
 					},
 					actions : {
-						move : function(oElement){
-							if (!oElement || oElement.getMetadata().getName() !== 'sap.uxap.ObjectPageSection'){
+						move : function(oElement) {
+							if (!oElement || oElement.getMetadata().getName() !== 'sap.uxap.ObjectPageSection') {
 								return "moveControls";
 							}
 						}

@@ -12,8 +12,7 @@ sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/m/MessageBox",
 	"sap/ui/rta/util/BindingsExtractor",
-	"sap/base/Log",
-	"sap/base/util/array/uniqueSort"
+	"sap/base/Log"
 ],
 function(
 	jQuery,
@@ -25,8 +24,7 @@ function(
 	DtUtil,
 	MessageBox,
 	BindingsExtractor,
-	Log,
-	uniqueSort
+	Log
 ) {
 	"use strict";
 
@@ -84,7 +82,7 @@ function(
 	 */
 	Utils.isExtensibilityEnabledInSystem = function(oControl) {
 		var sComponentName = FlexUtils.getComponentClassName(oControl);
-		if (!sComponentName || sComponentName == "") {
+		if (!sComponentName || sComponentName === "") {
 			return Promise.resolve(false);
 		}
 		return Settings.getInstance(sComponentName).then(function(oSettings) {
@@ -116,7 +114,7 @@ function(
 							if (bServiceOutdated) {
 								Access.setServiceValid(oModel.sServiceUrl);
 								//needs FLP to trigger UI restart popup
-								sap.ui.getCore().getEventBus().publish("sap.ui.core.UnrecoverableClientStateCorruption","RequestReload",{});
+								sap.ui.getCore().getEventBus().publish("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", {});
 								return fnReject();
 							}
 						}
@@ -137,46 +135,44 @@ function(
 		return this.isExtensibilityEnabledInSystem(oControl)
 
 		.then(function(bShowCreateExtFieldButton) {
-			if (!bShowCreateExtFieldButton) {
+			if (!bShowCreateExtFieldButton || !oControl.getModel()) {
 				return false;
-			} else if (!oControl.getModel()) {
-				return false;
-			} else {
-				return new Promise(function(fnResolve, fnReject) {
-					sap.ui.require([
-						"sap/ui/fl/fieldExt/Access"
-					], function(Access) {
-						var sServiceUrl = oControl.getModel().sServiceUrl;
-						var sEntityType = this.getBoundEntityType(oControl).name;
-						var $Deferred;
-						try {
-							$Deferred = Access.getBusinessContexts(sServiceUrl, sEntityType);
-						} catch (oError) {
-							Log.error("exception occured in sap.ui.fl.fieldExt.Access.getBusinessContexts", oError);
-							fnResolve(false);
-						}
+			}
 
-						return Promise.resolve($Deferred)
-						.then(function(oResult) {
-							if (oResult && Array.isArray(oResult.BusinessContexts) && oResult.BusinessContexts.length > 0) {
-								oResult.EntityType = sEntityType;
-								return fnResolve(oResult);
-							}
-							return fnResolve(false);
-						})
-						.catch(function(oError){
-							if (oError) {
-								if (Array.isArray(oError.errorMessages)) {
-									for (var i = 0; i < oError.errorMessages.length; i++) {
-										Log.error(oError.errorMessages[i].text);
-									}
+			return new Promise(function(fnResolve, fnReject) {
+				sap.ui.require([
+					"sap/ui/fl/fieldExt/Access"
+				], function(Access) {
+					var sServiceUrl = oControl.getModel().sServiceUrl;
+					var sEntityType = this.getBoundEntityType(oControl).name;
+					var $Deferred;
+					try {
+						$Deferred = Access.getBusinessContexts(sServiceUrl, sEntityType);
+					} catch (oError) {
+						Log.error("exception occured in sap.ui.fl.fieldExt.Access.getBusinessContexts", oError);
+						fnResolve(false);
+					}
+
+					return Promise.resolve($Deferred)
+					.then(function(oResult) {
+						if (oResult && Array.isArray(oResult.BusinessContexts) && oResult.BusinessContexts.length > 0) {
+							oResult.EntityType = sEntityType;
+							return fnResolve(oResult);
+						}
+						return fnResolve(false);
+					})
+					.catch(function(oError) {
+						if (oError) {
+							if (Array.isArray(oError.errorMessages)) {
+								for (var i = 0; i < oError.errorMessages.length; i++) {
+									Log.error(oError.errorMessages[i].text);
 								}
 							}
-							return fnResolve(false);
-						});
-					}.bind(this), fnReject);
-				}.bind(this));
-			}
+						}
+						return fnResolve(false);
+					});
+				}.bind(this), fnReject);
+			}.bind(this));
 		}.bind(this));
 	};
 
@@ -191,8 +187,7 @@ function(
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		var sTitle;
 		return new Promise(
-			function(resolve, reject) {
-
+			function(resolve) {
 				sTitle = oTextResources.getText("CTX_REMOVE_TITLE");
 
 				// create some dummy JSON data and create a Model from it
@@ -377,7 +372,7 @@ function(
 
 	/**
 	 * Returns an element overlay which is sibling to the given element overlay
-	 * @param  {sap.ui.dt.ElementOverlay} oElementOverlay The overlay to get the information from
+	 * @param  {sap.ui.dt.ElementOverlay} oOverlay The overlay to get the information from
 	 * @param  {boolean} bNext true for next sibling, false for previous sibling
 	 * @return {sap.ui.dt.ElementOverlay} the element overlay which is sibling to the given overlay
 	 * @private
@@ -386,17 +381,19 @@ function(
 		var oParentOverlay = oOverlay.getParentElementOverlay();
 		if (oParentOverlay) {
 			var oSiblingOverlay = bNext ?
-				OverlayUtil.getNextSiblingOverlay(oParentOverlay) : OverlayUtil.getPreviousSiblingOverlay(oParentOverlay);
+				OverlayUtil.getNextSiblingOverlay(oParentOverlay) :
+				OverlayUtil.getPreviousSiblingOverlay(oParentOverlay);
 			if (!oSiblingOverlay) {
 				return this._findSiblingOverlay(oParentOverlay, bNext);
-			} else {
-				var oDescendantOverlay = bNext ?
-					this.getFirstFocusableDescendantOverlay(oSiblingOverlay) : this.getLastFocusableDescendantOverlay(oSiblingOverlay);
-				return oDescendantOverlay;
 			}
-		} else {
-			return undefined;
+
+			var oDescendantOverlay = bNext ?
+				this.getFirstFocusableDescendantOverlay(oSiblingOverlay) :
+				this.getLastFocusableDescendantOverlay(oSiblingOverlay);
+			return oDescendantOverlay;
 		}
+
+		return undefined;
 	};
 
 	/**
@@ -478,13 +475,13 @@ function(
 	Utils.getElementBindingPaths = function(oElement) {
 		var aPaths = {};
 		if (oElement.mBindingInfos) {
-			for ( var oInfo in oElement.mBindingInfos) {
+			for (var oInfo in oElement.mBindingInfos) {
 				var sPath = oElement.mBindingInfos[oInfo].parts[0].path
 						? oElement.mBindingInfos[oInfo].parts[0].path
 						: "";
 				sPath = sPath.split("/")[sPath.split("/").length - 1];
 				aPaths[sPath] = {
-						valueProperty : oInfo
+					valueProperty : oInfo
 				};
 			}
 		}
@@ -581,7 +578,7 @@ function(
 						sSourceProperty,
 						mDestination,
 						mSource)
-				){
+				) {
 					mDestination[sSourceProperty] = mSource[sSourceProperty];
 				}
 			}

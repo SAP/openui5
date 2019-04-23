@@ -1,13 +1,11 @@
 sap.ui.define([
-	'sap/ui/rta/plugin/RTAElementMover',
-	'sap/ui/dt/OverlayUtil',
-	'sap/ui/rta/command/CommandFactory',
-	'sap/ui/fl/FlexControllerFactory',
-	'sap/ui/fl/registry/ChangeRegistry',
-	'sap/base/util/LoaderExtensions',
-	'sap/ui/fl/Utils',
-	'sap/ui/util/XMLHelper',
-	'sap/base/util/uid'
+	"sap/ui/rta/plugin/RTAElementMover",
+	"sap/ui/dt/OverlayUtil",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/base/util/LoaderExtensions",
+	"sap/ui/util/XMLHelper"
 ],
 function(
 	RTAElementMover,
@@ -16,9 +14,7 @@ function(
 	FlexControllerFactory,
 	ChangeRegistry,
 	LoaderExtensions,
-	FlexUtils,
-	XMLHelper,
-	uid
+	XMLHelper
 ) {
 	"use strict";
 
@@ -48,7 +44,7 @@ function(
 		RTAElementMover.prototype.setMovedOverlay.apply(this, arguments);
 	};
 
-	OutsideElementMover.prototype.isMovingFromOutside = function(oMovedOverlay) {
+	OutsideElementMover.prototype.isMovingFromOutside = function() {
 		return !!this._fromOutside;
 	};
 
@@ -56,7 +52,7 @@ function(
 		delete this._fromOutside;
 	};
 
-	OutsideElementMover.prototype.checkTargetZone = function(oAggregationOverlay, oOverlay, bOverlayNotInDom){
+	OutsideElementMover.prototype.checkTargetZone = function() {
 		if (this.isMovingFromOutside()) {
 			return true;
 		}
@@ -73,7 +69,7 @@ function(
 		if (!ChangeRegistry.getInstance().hasChangeHandlerForControlAndChange(sTargetElementType, "addXML")) {
 			var mRegistryItems = {};
 			mRegistryItems[sTargetElementType] = {
-				"AddXML": "default"
+				AddXML: "default"
 			};
 			oPromise = ChangeRegistry.getInstance().registerControlsForChanges(mRegistryItems);
 		}
@@ -84,7 +80,7 @@ function(
 		.then(function() {
 			return LoaderExtensions.loadResource(sFragmentPath, {async: true});
 		})
-		.then( function(oDocument) {
+		.then(function(oDocument) {
 			if (oDocument) {
 				var oChangeContent = {
 					fragment: XMLHelper.serialize(oDocument),
@@ -111,7 +107,7 @@ function(
 		if (!ChangeRegistry.getInstance().hasChangeHandlerForControlAndChange(sTargetElementType, "addXML")) {
 			var mRegistryItems = {};
 			mRegistryItems[sTargetElementType] = {
-				"AddXML": "default"
+				AddXML: "default"
 			};
 			oPromise = ChangeRegistry.getInstance().registerControlsForChanges(mRegistryItems);
 		}
@@ -136,4 +132,4 @@ function(
 	};
 
 	return OutsideElementMover;
-  }, /* bExport= */ true);
+}, /* bExport= */ true);

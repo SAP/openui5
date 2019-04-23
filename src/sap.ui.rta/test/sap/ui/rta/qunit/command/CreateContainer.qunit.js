@@ -59,12 +59,11 @@ function(
 			this.NEW_CONTROL_LABEL = "New Label";
 
 			this.oPopupDesignTimeMetadata = new ElementDesignTimeMetadata();
-
 		},
 		afterEach: function () {
 			this.oPopup.destroy();
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when getting a createContainer command for popup ...", function(assert) {
 			return CommandFactory.getCommandFor(this.oPopup, "CreateContainer", {
 				index : 0,
@@ -100,7 +99,7 @@ function(
 
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.ui.layout.form.Form": {
-					"addGroup" : {
+					addGroup : {
 						applyChange: this.fnApplyChangeSpy,
 						completeChangeContent: this.fnCompleteChangeContentSpy
 					}
@@ -153,7 +152,7 @@ function(
 			assert.ok(this.oCreateContainerCommand, "createContainer command for form exists");
 			assert.equal(this.oCreateContainerCommand.getChangeType(), sChangeType, "correct change type is assigned to a command");
 
-			this.oCreateContainerCommand.execute().then( function() {
+			this.oCreateContainerCommand.execute().then(function() {
 				assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
 				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
 				done();
@@ -164,5 +163,4 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

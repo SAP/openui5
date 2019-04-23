@@ -17,7 +17,6 @@ sap.ui.define([
 	JSONModel,
 	FlexUtils
 ) {
-
 	"use strict";
 
 	return UIComponent.extend("sap.ui.rta.test.embeddedComponent.Component", {
@@ -77,7 +76,7 @@ sap.ui.define([
 			this.setModel(oStateModel, "state");
 		},
 
-		_adaptButtonConfiguration: function(){
+		_adaptButtonConfiguration: function() {
 			this.setModel(new JSONModel({
 				showOuterAdaptButton: !FlexUtils.getUshellContainer(),
 				showAdaptButton: false // for embedded app

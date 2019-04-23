@@ -1,6 +1,5 @@
 {
 	"_version": "1.8.0",
-
 	"sap.app": {
 		"id": "sap.ui.rta.dttool.sample",
 		"type": "application",
@@ -8,7 +7,6 @@
 			"version": "1.0.0"
 		}
 	},
-
 	"sap.ui": {
 		"technology": "UI5",
 		"deviceTypes": {
@@ -17,7 +15,6 @@
 			"phone": false
 		}
 	},
-
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.rta.dttool.sample.Main",

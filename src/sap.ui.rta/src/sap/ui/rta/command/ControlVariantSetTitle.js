@@ -2,9 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/rta/command/BaseCommand',
-	'sap/ui/core/util/reflection/JsControlTreeModifier',
-	'sap/ui/fl/Utils'
+	"sap/ui/rta/command/BaseCommand",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/fl/Utils"
 ], function(BaseCommand, JsControlTreeModifier, flUtils) {
 	"use strict";
 
@@ -39,7 +39,7 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	ControlVariantSetTitle.prototype.prepare = function(mFlexSettings, sVariantManagementReference) {
+	ControlVariantSetTitle.prototype.prepare = function(mFlexSettings) {
 		this.sLayer = mFlexSettings.layer;
 		return true;
 	};
@@ -79,8 +79,8 @@ sap.ui.define([
 
 		return Promise.resolve(this.oModel.setVariantProperties(this.sVariantManagementReference, mPropertyBag, true))
 						.then(function(oChange) {
-								this._oVariantChange = oChange;
-								oVariantManagementControlBinding.checkUpdate(true); /*Force Update as binding key stays same*/
+							this._oVariantChange = oChange;
+							oVariantManagementControlBinding.checkUpdate(true); /*Force Update as binding key stays same*/
 						}.bind(this));
 	};
 
@@ -92,19 +92,18 @@ sap.ui.define([
 	ControlVariantSetTitle.prototype.undo = function() {
 		var oVariantManagementControlBinding = this.getElement().getTitle().getBinding("text"),
 			mPropertyBag = {
-			variantReference : this.sCurrentVariant,
-			changeType : "setTitle",
-			title : this.getOldText(),
-			change: this._oVariantChange
-		};
+				variantReference : this.sCurrentVariant,
+				changeType : "setTitle",
+				title : this.getOldText(),
+				change: this._oVariantChange
+			};
 
 		return Promise.resolve(this.oModel.setVariantProperties(this.sVariantManagementReference, mPropertyBag, false))
 						.then(function(oChange) {
-								this._oVariantChange = oChange;
-								oVariantManagementControlBinding.checkUpdate(true); /*Force Update as binding key stays same*/
+							this._oVariantChange = oChange;
+							oVariantManagementControlBinding.checkUpdate(true); /*Force Update as binding key stays same*/
 						}.bind(this));
 	};
 
 	return ControlVariantSetTitle;
-
 }, /* bExport= */true);

@@ -30,7 +30,7 @@ function(
 			metadata: {
 				manifest: {
 					"sap.app": {
-						"id": "fixture.application"
+						id: "fixture.application"
 					}
 				}
 			},
@@ -165,8 +165,8 @@ function(
 			server.respondImmediately = true;
 
 			this.oRta = new RuntimeAuthoring({
-			showToolbars: false,
-			rootControl: this.oComponentContainer
+				showToolbars: false,
+				rootControl: this.oComponentContainer
 			});
 			return this.oRta.start().then(function () {
 				return this.oRta.getService("controllerExtension").then(function(oService) {
@@ -229,5 +229,4 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

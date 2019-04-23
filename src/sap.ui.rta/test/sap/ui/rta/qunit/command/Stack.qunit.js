@@ -28,7 +28,7 @@ sap.ui.define([
 	Panel,
 	UIComponent,
 	sinon
-){
+) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
@@ -41,10 +41,10 @@ sap.ui.define([
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Input": {
-					"hideControl" : {
+					hideControl : {
 						completeChangeContent: function() {},
 						applyChange: function() {return Promise.resolve();},
-						revertChange: function(){}
+						revertChange: function() {}
 					}
 				}
 			})
@@ -111,7 +111,6 @@ sap.ui.define([
 			.catch(function (oError) {
 				assert.ok(false, 'catch must never be called - Error: ' + oError);
 			});
-
 		});
 	});
 
@@ -119,65 +118,65 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oComponent = new UIComponent("MyComponent");
 			var mComponentProperties = {
-					name: "MyComponent",
-					appVersion: "1.2.3"
-				};
+				name: "MyComponent",
+				appVersion: "1.2.3"
+			};
 			this.oChangePersistence = new ChangePersistence(mComponentProperties);
 
 			this.oChangeDefinition1 = {
-				"fileName": "fileName1",
-				"selector": {
-					"id": "field1",
-					"idIsLocal": true
+				fileName: "fileName1",
+				selector: {
+					id: "field1",
+					idIsLocal: true
 				},
 				support: {}
 			};
 			this.oChangeDefinition2 = {
-				"fileName": "fileName2",
-				"selector": {
-					"id": "field2",
-					"idIsLocal": true
+				fileName: "fileName2",
+				selector: {
+					id: "field2",
+					idIsLocal: true
 				},
 				support: {}
 			};
 			this.oChangeDefinitionForComposite11 = {
-				"fileName": "fileName11",
-				"selector": {
-					"id": "field1",
-					"idIsLocal": true
+				fileName: "fileName11",
+				selector: {
+					id: "field1",
+					idIsLocal: true
 				},
 				support: {
-					"compositeCommand": "unique_1"
+					compositeCommand: "unique_1"
 				}
 			};
 			this.oChangeDefinitionForComposite12 = {
-				"fileName": "fileName12",
-				"selector": {
-					"id": "field2",
-					"idIsLocal": true
+				fileName: "fileName12",
+				selector: {
+					id: "field2",
+					idIsLocal: true
 				},
 				support: {
-					"compositeCommand": "unique_1"
+					compositeCommand: "unique_1"
 				}
 			};
 			this.oChangeDefinitionForComposite21 = {
-				"fileName": "fileName21",
-				"selector": {
-					"id": "field1",
-					"idIsLocal": true
+				fileName: "fileName21",
+				selector: {
+					id: "field1",
+					idIsLocal: true
 				},
 				support: {
-					"compositeCommand": "unique_2"
+					compositeCommand: "unique_2"
 				}
 			};
 			this.oChangeDefinitionForComposite22 = {
-				"fileName": "fileName22",
-				"selector": {
-					"id": "field2",
-					"idIsLocal": true
+				fileName: "fileName22",
+				selector: {
+					id: "field2",
+					idIsLocal: true
 				},
 				support: {
-					"compositeCommand": "unique_2"
+					compositeCommand: "unique_2"
 				}
 			};
 
@@ -196,7 +195,7 @@ sap.ui.define([
 			aChanges[1].setUndoOperations(["undoStack"]);
 			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve(aChanges));
 
-			return CommandStack.initializeWithChanges(this.oControl, ["fileName1", "fileName2"]).then(function(oStack){
+			return CommandStack.initializeWithChanges(this.oControl, ["fileName1", "fileName2"]).then(function(oStack) {
 				var aCommands = oStack.getCommands();
 				assert.ok(oStack, "an instance of the CommandStack has been created");
 				assert.equal(aCommands.length, 2, "the CommandStack contains two commands");
@@ -208,11 +207,13 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling function 'initializeWithChanges' with the array containing changes from a composite command...", function(assert) {
-			var aCompositeChanges = [new Change(this.oChangeDefinitionForComposite11), new Change(this.oChangeDefinitionForComposite12),
-			                         new Change(this.oChangeDefinitionForComposite21), new Change(this.oChangeDefinitionForComposite22)];
+			var aCompositeChanges = [
+				new Change(this.oChangeDefinitionForComposite11), new Change(this.oChangeDefinitionForComposite12),
+				new Change(this.oChangeDefinitionForComposite21), new Change(this.oChangeDefinitionForComposite22)
+			];
 			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve(aCompositeChanges));
 
-			return CommandStack.initializeWithChanges(this.oControl, ["fileName11", "fileName12", "fileName21", "fileName22"]).then(function(oStack){
+			return CommandStack.initializeWithChanges(this.oControl, ["fileName11", "fileName12", "fileName21", "fileName22"]).then(function(oStack) {
 				var aCommands = oStack.getCommands();
 				var aSubCommands1 = oStack.getSubCommands(aCommands[0]);
 				var aSubCommands2 = oStack.getSubCommands(aCommands[1]);
@@ -231,5 +232,4 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

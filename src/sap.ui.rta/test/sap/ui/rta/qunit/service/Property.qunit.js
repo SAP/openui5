@@ -3,7 +3,6 @@ QUnit.dump.maxDepth = 50;
 
 sap.ui.define([
 	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/dt/Util",
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/layout/VerticalLayout",
@@ -16,9 +15,8 @@ sap.ui.define([
 	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ],
-	function(
+function(
 	RuntimeAuthoring,
-	DtUtil,
 	ElementDesignTimeMetadata,
 	DesignTime,
 	VerticalLayout,
@@ -36,7 +34,7 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 	FakeLrepConnectorSessionStorage.enableFakeConnector();
 
-	// TODO: split big monolithic test into simple parts - 1 feature = 1 test case, not all at once!
+// TODO: split big monolithic test into simple parts - 1 feature = 1 test case, not all at once!
 	QUnit.module("Given that RuntimeAuthoring and Property service are created", {
 		before: function () {
 			var MockComponent = UIComponent.extend("MockController", {
@@ -58,18 +56,18 @@ sap.ui.define([
 
 			var oPage = this.oComp.getRootControl();
 
-			// --Root control 1
-			//	page
-			//		verticalLayout
-			//		button
+		// --Root control 1
+		//	page
+		//		verticalLayout
+		//		button
 			oPage.addContent(
-				this.oLayout = new VerticalLayout("layout1", {
-					content: [
-						// FIXME: don't create an instance of an abstract class!
-						this.oControl = new Control("mockControl")
-					]
-				})
-			);
+			this.oLayout = new VerticalLayout("layout1", {
+				content: [
+					// FIXME: don't create an instance of an abstract class!
+					this.oControl = new Control("mockControl")
+				]
+			})
+		);
 
 			this.oComponentContainer = new ComponentContainer("CompCont", {
 				component: this.oComp
@@ -116,21 +114,21 @@ sap.ui.define([
 					]
 				},
 				properties: {
-					"dtMetadataProperty1": {
-						// dt-metadata property ignored
+					dtMetadataProperty1: {
+					// dt-metadata property ignored
 						mockKey1: "dtMetadataProperty1",
 						ignore: true
 					},
-					"dtMetadataProperty2": {
-						// dt-metadata property not ignored
+					dtMetadataProperty2: {
+					// dt-metadata property not ignored
 						mockKey2: "dtMetadataProperty2"
 					},
-					"metadataProperty2": {
-						// metadata property ignored
+					metadataProperty2: {
+					// metadata property ignored
 						ignore: true
 					},
-					"virtualProperty1": {
-						// virtual property not ignored
+					virtualProperty1: {
+					// virtual property not ignored
 						virtual: true,
 						name: "Virtual Property Name 1",
 						group: "Virtual Property Group 1",
@@ -143,20 +141,20 @@ sap.ui.define([
 						},
 						possibleValues: [
 							{
-								"possibleKey1": {
-									"displayName": "Possible Value 1"
+								possibleKey1: {
+									displayName: "Possible Value 1"
 								}
 							},
 							{
-								"possibleKey2": {
-									"displayName": "Possible Value 2"
+								possibleKey2: {
+									displayName: "Possible Value 2"
 								}
 							}
 						],
 						type: "Virtual property type"
 					},
-					"virtualProperty2": {
-						// virtual property ignored
+					virtualProperty2: {
+					// virtual property ignored
 						virtual: true,
 						name: "Virtual Property Name 2",
 						group: "Virtual Property Group 2",
@@ -173,37 +171,37 @@ sap.ui.define([
 						}],
 						type: "Virtual property type"
 					},
-					"virtualProperty3": {
-						// virtual property not ignored
+					virtualProperty3: {
+					// virtual property not ignored
 						virtual: true,
 						name: "Virtual Property Name 3",
 						group: "Virtual Property Group 3",
 						nullable: false,
-						get: function (oControl) {
+						get: function () {
 							return null;
 						},
 						possibleValues: function (oControl) {
 							return oControl.getId() === "mockControl"
-								? [
-									{
-										"possibleKey4": {
-											"displayName": "Possible Value 4"
-										}
-									},
-									{
-										"possibleKey5": {
-											"displayName": "Possible Value 5"
-										}
+							? [
+								{
+									possibleKey4: {
+										displayName: "Possible Value 4"
 									}
-								]
-								: "";
+								},
+								{
+									possibleKey5: {
+										displayName: "Possible Value 5"
+									}
+								}
+							]
+							: "";
 						},
 						type: "Virtual property type"
 					}
 				},
 				annotations: {
-					"annotation1": {
-						// annotation not ignored
+					annotation1: {
+					// annotation not ignored
 						namespace: "com.sap.mock.vocabularies",
 						annotation: "annotation1",
 						whiteList: {
@@ -230,8 +228,8 @@ sap.ui.define([
 							]
 						}
 					},
-					"annotation2": {
-						// annotation ignored
+					annotation2: {
+					// annotation ignored
 						namespace: "com.sap.mock.vocabularies",
 						annotation: "annotation2",
 						whiteList: {
@@ -257,15 +255,15 @@ sap.ui.define([
 
 			var mControlMetadata = this.oControl.getMetadata();
 
-			// control metadata property values
+		// control metadata property values
 			sandbox.stub(this.oControl, "getProperty")
-				.withArgs("metadataProperty1").returns("metadataPropertyValue1")
-				.withArgs("metadataProperty2").returns("metadataPropertyValue2")
-				.withArgs("metadataProperty3").returns("metadataPropertyValue3");
+			.withArgs("metadataProperty1").returns("metadataPropertyValue1")
+			.withArgs("metadataProperty2").returns("metadataPropertyValue2")
+			.withArgs("metadataProperty3").returns("metadataPropertyValue3");
 
-			// control metadata properties
+		// control metadata properties
 			sandbox.stub(mControlMetadata, "getAllProperties").returns({
-				"metadataProperty1" : {
+				metadataProperty1 : {
 					type: "metadataPropertyType1",
 					name: "metadataPropertyName1",
 					defaultValue: "metadataPropertyDefaultValue1",
@@ -273,7 +271,7 @@ sap.ui.define([
 					group: "metadataPropertyGroup1",
 					visibility: "public"
 				},
-				"metadataProperty2" : {
+				metadataProperty2 : {
 					type: "metadataPropertyType2",
 					name: "metadataPropertyName2",
 					defaultValue: "metadataPropertyDefaultValue2",
@@ -281,7 +279,7 @@ sap.ui.define([
 					group: "metadataPropertyGroup2",
 					visibility: "public"
 				},
-				"metadataProperty3" : {
+				metadataProperty3 : {
 					type: "metadataPropertyType3",
 					name: "metadataPropertyName3",
 					defaultValue: "metadataPropertyDefaultValue2",
@@ -291,52 +289,52 @@ sap.ui.define([
 				}
 			});
 
-			// mock designtime metadata
+		// mock designtime metadata
 			sandbox.stub(DesignTime.prototype, "getDesignTimeMetadataFor")
-				.callThrough()
-				.withArgs(this.oControl).returns(this.oMockDesignTime);
+			.callThrough()
+			.withArgs(this.oControl).returns(this.oMockDesignTime);
 
-			// control binding info
+		// control binding info
 			sandbox.stub(this.oControl, "getBindingInfo")
-				.callThrough()
-				.withArgs("metadataProperty1").returns(
-					{
-						parts: [
-							{
-								path: "path1",
-								model: "model1"
-							},
-							{
-								path: "path2",
-								model: "model2"
-							}
-						],
-						bindingString: "bindingString",
-						binding: {
-							getOriginalValue: function () {
-								return "Original Binding Value";
-							},
-							getValue: function () {
-								return "Binding Value";
-							}
+			.callThrough()
+			.withArgs("metadataProperty1").returns(
+				{
+					parts: [
+						{
+							path: "path1",
+							model: "model1"
+						},
+						{
+							path: "path2",
+							model: "model2"
+						}
+					],
+					bindingString: "bindingString",
+					binding: {
+						getOriginalValue: function () {
+							return "Original Binding Value";
+						},
+						getValue: function () {
+							return "Binding Value";
 						}
 					}
-				)
-				.withArgs("metadataProperty3").returns(
-					{
-						parts: [
-							{
-								path: "path3",
-								model: "model3"
-							}
-						],
-						binding: {
-							getValue: function () {
-								return "Binding Value";
-							}
+				}
+			)
+			.withArgs("metadataProperty3").returns(
+				{
+					parts: [
+						{
+							path: "path3",
+							model: "model3"
+						}
+					],
+					binding: {
+						getValue: function () {
+							return "Binding Value";
 						}
 					}
-				);
+				}
+			);
 
 			this.oRta.start();
 
@@ -346,7 +344,6 @@ sap.ui.define([
 					this.oExpectedPropertyData = oExpectedPropertyData;
 				}.bind(this));
 			}.bind(this));
-
 		},
 		after: function() {
 			sandbox.restore();
@@ -363,7 +360,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when property service get() is called for a control with designTime properties wrapped in a function", function (assert) {
-			// wrap properties in a function
+		// wrap properties in a function
 			var oDtObjProperties = Object.assign({}, this.oMockDesignTime);
 			oDtObjProperties.properties = sandbox.stub().returns(this.oMockDesignTime.properties);
 
@@ -377,14 +374,14 @@ sap.ui.define([
 		});
 
 		QUnit.test("when property service get() is called for a control with designTime properties wrapped in a function returning an undefined value", function (assert) {
-			// wrap properties in a function
+		// wrap properties in a function
 			var oDtObjProperties = Object.assign({}, this.oMockDesignTime);
 			oDtObjProperties.properties = sandbox.stub();
 
 			var fnElementDesignTimeMetadataStub = sandbox.stub(ElementDesignTimeMetadata.prototype, "getData").returns(oDtObjProperties);
-			// removing DT Properties from response
+		// removing DT Properties from response
 			var oExpectedResultWithoutDtProperties = RtaUtils.omit(this.oExpectedPropertyData.properties, ["dtMetadataProperty1", "dtMetadataProperty2", "virtualProperty1", "virtualProperty2", "virtualProperty3"]);
-			// this property was changed within DT properties; restoring to default
+		// this property was changed within DT properties; restoring to default
 			oExpectedResultWithoutDtProperties["metadataProperty2"].ignore = false;
 
 			return this.oProperty.get(this.oControl.getId()).then(function(oPropertyData) {
@@ -431,5 +428,4 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

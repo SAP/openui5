@@ -10,8 +10,8 @@ function (
 ) {
 	"use strict";
 
-	function hasBindingPath(aBindings, sPath){
-		return aBindings.some(function(oBinding){
+	function hasBindingPath(aBindings, sPath) {
+		return aBindings.some(function(oBinding) {
 			return oBinding.getPath && oBinding.getPath() === sPath;
 		});
 	}
@@ -28,7 +28,6 @@ function (
 			this.oView.destroy();
 		}
 	}, function () {
-
 		QUnit.test("when getting the Bindings for the Smart Form Group bound to EntityType01 and main data model", function(assert) {
 			var oMainModel = this.oView.getModel();
 			var oGroup = this.oView.byId("GroupEntityType01");
@@ -136,11 +135,9 @@ function (
 			assert.strictEqual(typeof sBindingContextPath, 'string',
 				"then the return value is a string");
 		});
-
 	});
 
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

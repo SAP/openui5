@@ -2,10 +2,14 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/rta/command/BaseCommand',
-	'sap/ui/core/util/reflection/JsControlTreeModifier',
-	'sap/ui/fl/Utils'
-], function(BaseCommand, JsControlTreeModifier, flUtils) {
+	"sap/ui/rta/command/BaseCommand",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/fl/Utils"
+], function(
+	BaseCommand,
+	JsControlTreeModifier,
+	flUtils
+) {
 	"use strict";
 
 	/**
@@ -81,5 +85,4 @@ sap.ui.define([
 	};
 
 	return ControlVariantSwitch;
-
 }, /* bExport= */true);

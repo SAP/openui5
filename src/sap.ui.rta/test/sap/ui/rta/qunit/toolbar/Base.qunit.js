@@ -19,7 +19,7 @@ function(
 	 ********************************************************************************************************/
 
 	QUnit.module('Basic functionality', {
-		beforeEach: function(assert) {
+		beforeEach: function() {
 			this.oToolbar = new BaseToolbar();
 		},
 
@@ -123,12 +123,12 @@ function(
 	 ********************************************************************************************************/
 
 	QUnit.module('Inheritance functionality', {
-		beforeEach: function(assert) {
+		beforeEach: function() {
 			var CustomToolbar = BaseToolbar.extend('CustomToolbar', {
 				renderer: 'sap.ui.rta.toolbar.BaseRenderer',
 				metadata: {
 					events: {
-						'action': {}
+						action: {}
 					}
 				}
 			});
@@ -181,7 +181,7 @@ function(
 	};
 
 	QUnit.module('Animation functionality', {
-		beforeEach: function(assert) {
+		beforeEach: function() {
 			var CustomToolbar = BaseToolbar.extend('CustomToolbar', {
 				renderer: 'sap.ui.rta.toolbar.BaseRenderer',
 				animation: true,
@@ -229,5 +229,4 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });
