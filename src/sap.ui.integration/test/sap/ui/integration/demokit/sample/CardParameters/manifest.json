@@ -1,0 +1,30 @@
+{
+	"sap.app": {
+		"id": "sap.ui.integration.sample.CardParameters",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.integration.sample.CardParameters.CardParameters",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.integration": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"CardParameters.view.xml",
+					"CardParameters.controller.js",
+					"model/cardManifest.json",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

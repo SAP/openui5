@@ -6,7 +6,7 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.ui.integration.sample.ListCard.ListCard", {
-		onAfterRendering: function () {
+		onInit: function () {
 			var sManifestPath = sap.ui.require.toUrl("sap/ui/integration/sample/ListCard") + "/model/cardManifest.json";
 			this.getView().byId("listCardSample").setManifest(sManifestPath);
 		}

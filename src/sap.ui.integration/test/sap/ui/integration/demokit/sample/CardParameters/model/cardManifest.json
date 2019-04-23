@@ -1,0 +1,35 @@
+{
+	"sap.card": {
+	  "configuration": {
+		"parameters": {
+		  "city": {
+			"value": ""
+		  }
+		}
+	  },
+	  "type": "List",
+	  "header": {
+		"title": "Request parameters using weather app",
+		"subTitle": "{{parameters.TODAY_ISO}}"
+	  },
+	  "content": {
+		"data": {
+		  "request": {
+			"url": "http://api.apixu.com/v1/forecast.json?key=4fbdcdb5a8c24190bc3145021191302&q={{parameters.city}}&days=7"
+		  },
+		  "path": "/forecast/forecastday"
+		},
+		"item": {
+		  "icon": {
+			"src": "{day/condition/icon}"
+		  },
+		  "title": {
+			"value": "{date}"
+		  },
+		  "description": {
+			"value": "{day/avgtemp_c}°C, {day/condition/text}"
+		  }
+		}
+	  }
+	}
+}
