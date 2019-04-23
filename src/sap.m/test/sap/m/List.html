@@ -1714,10 +1714,14 @@ html[dir=rtl] .SmallPaddingBegin {
 	{
 		if(!message)
 			message = "List item was tapped!";
+
+		var oMessageContent = new sap.ui.core.HTML({content:"<p>" + message + "<p>"});
+
 		var oMessageDialog1 = new sap.m.Dialog({
 			title: "Important Message",
+			ariaDescribedBy: oMessageContent,
 			content: [
-				new sap.ui.core.HTML({content:"<p>" + message + "<p>"}),
+				oMessageContent
 			],
 			leftButton:
 				new sap.m.Button({
