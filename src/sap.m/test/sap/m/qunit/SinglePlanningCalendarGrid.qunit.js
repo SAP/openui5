@@ -4,13 +4,15 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/m/SinglePlanningCalendarGrid",
 	"sap/ui/unified/CalendarAppointment",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	'sap/ui/unified/calendar/CalendarDate'
 ], function(
 	qutils,
 	jQuery,
 	SinglePlanningCalendarGrid,
 	CalendarAppointment,
-	KeyCodes
+	KeyCodes,
+	CalendarDate
 ) {
 	"use strict";
 
@@ -30,6 +32,53 @@ sap.ui.define([
 		// Cleanup
 		oUpdateRowHeaderAndNowMarkerSpy.restore();
 		oSPCGrid.destroy();
+	});
+
+	QUnit.test("_calculateVisibleBlockers", function(assert) {
+		// prepare
+		var aFullDayApps = [
+				new CalendarAppointment({
+					startDate: new Date(2018, 6, 7),
+					endDate: new Date(2018, 6, 8)
+				}),
+				new CalendarAppointment({
+					startDate: new Date(2018, 6, 8),
+					endDate: new Date(2018, 6, 9)
+				}),
+				new CalendarAppointment({
+					startDate: new Date(2018, 6, 6),
+					endDate: new Date(2018, 6, 9)
+				}),
+				new CalendarAppointment({
+					startDate: new Date(2018, 6, 7),
+					endDate: new Date(2018, 6, 7)
+				}),
+				new CalendarAppointment({
+					startDate: new Date(2018, 6, 8),
+					endDate: new Date(2018, 6, 8)
+				}),
+				new CalendarAppointment({
+					startDate: new Date(2018, 6, 9),
+					endDate: new Date(2018, 6, 9)
+				})
+			],
+			oStartDate = new Date(2018, 6, 8),
+			oGrid = new SinglePlanningCalendarGrid({
+				startDate: oStartDate,
+				appointments: aFullDayApps
+			}),
+			oAppointmentsMap = oGrid._createAppointmentsMap(oGrid.getAppointments()),
+			aVisibleBlockers;
+
+		// act
+		oGrid._setColumns(1);
+		aVisibleBlockers = oGrid._calculateVisibleBlockers(oAppointmentsMap.blockers, CalendarDate.fromLocalJSDate(oStartDate), oGrid._getColumns());
+
+		// assert
+		assert.equal(aVisibleBlockers.length, 4, "Visible full day appointments are correct count");
+
+		// cleanup
+		oGrid.destroy();
 	});
 
 	QUnit.module("Events");

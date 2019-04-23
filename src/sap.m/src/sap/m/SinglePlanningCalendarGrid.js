@@ -1534,7 +1534,7 @@ sap.ui.define([
 		 * @private
 		 */
 		SinglePlanningCalendarGrid.prototype._calculateVisibleBlockers = function (aBlockers, oCalStartDate, iColumns) {
-			var oCalEndDate = new CalendarDate(oCalStartDate.getYear(), oCalStartDate.getMonth(), oCalStartDate.getDate() + iColumns),
+			var oCalEndDate = new CalendarDate(oCalStartDate.getYear(), oCalStartDate.getMonth(), oCalStartDate.getDate() + iColumns - 1),
 				fnIsVisiblePredicate = this._isBlockerVisible(oCalStartDate, oCalEndDate);
 
 			return aBlockers.filter(fnIsVisiblePredicate)
@@ -1555,7 +1555,7 @@ sap.ui.define([
 					oAppEnd = CalendarDate.fromLocalJSDate(oAppointment.getEndDate());
 
 				var bIsBiggerThanView = oAppStart.isBefore(oViewStart) && oAppEnd.isAfter(oViewEnd),
-					bStartDateBetweenViewStartAndEnd = oAppStart.isSameOrAfter(oViewStart) && oAppStart.isBefore(oViewEnd),
+					bStartDateBetweenViewStartAndEnd = CalendarUtils._isBetween(oAppStart, oViewStart, oViewEnd, true),
 					bEndDateBetweenViewStartAndEnd = CalendarUtils._isBetween(oAppEnd, oViewStart, oViewEnd, true);
 
 				return bIsBiggerThanView || bStartDateBetweenViewStartAndEnd || bEndDateBetweenViewStartAndEnd;
