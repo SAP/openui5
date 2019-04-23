@@ -416,6 +416,27 @@ sap.ui.define([
 		}
 	});
 
+	createRule({
+		id: "BindingLengthParameter",
+		categories: [Categories.Usage],
+		title: "Binding length parameter",
+		description: "The binding length parameter can only be applied to the table when the visibleRowCountMode is Fixed.",
+		resolution: "Set the visibleRowCountMode of the table to Fixed (oTable.setVisibleRowCountMode(\"Fixed\"))",
+		check: function(oIssueManager, oCoreFacade, oScope) {
+			var aTables = SupportHelper.find(oScope, true, "sap.ui.table.Table");
+
+			for (var i = 0; i < aTables.length; i++) {
+				var oTable = aTables[i];
+				var oBindingInfo = oTable.getBindingInfo("rows");
+				if (oBindingInfo && oBindingInfo.length && oTable.getVisibleRowCountMode() !== VisibleRowCountMode.Fixed) {
+					SupportHelper.reportIssue(oIssueManager,
+						"The binding length parameter only works when visibleRowCountMode is Fixed.",
+						Severity.Medium, oTable.getId());
+				}
+			}
+		}
+	});
+
 	return {lib: oLib, ruleset: oRuleset};
 
 }, true);

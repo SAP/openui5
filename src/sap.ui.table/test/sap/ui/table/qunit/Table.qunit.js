@@ -4069,6 +4069,43 @@ sap.ui.define([
 		oBody.classList.add("sapUiSizeCozy");
 	});
 
+	QUnit.test("Compute request length", function(assert){
+		oTable.setVisibleRowCountMode(VisibleRowCountMode.Fixed);
+		oTable.bindRows({path: "/modelData"});
+		assert.equal(oTable._computeRequestLength(10), 10, "Default behavior: request length is equal to the visible row count");
+
+		oTable.bindRows({path: "/modelData", length: 5});
+		assert.equal(oTable._computeRequestLength(10), 5, "Request length is equal to the binding length");
+
+		oTable.setVisibleRowCountMode(VisibleRowCountMode.Auto);
+		var iHeight = Device.resize.height;
+		Device.resize.height = 500;
+		assert.equal(oTable._computeRequestLength(10), 20, "When visibleRowCountMode is Auto, the request length is calculated based on the height");
+		Device.resize.height = 100;
+		assert.equal(oTable._computeRequestLength(10), 10, "Request length is calculated correctly");
+		Device.resize.height = iHeight;
+
+		oTable.setVisibleRowCountMode(VisibleRowCountMode.Interactive);
+		assert.equal(oTable._computeRequestLength(10), 10, "Request length is equal to the visible row count");
+	});
+
+	QUnit.test("Get total row count", function(assert){
+		oTable.setVisibleRowCountMode(VisibleRowCountMode.Fixed);
+		oTable.bindRows({path: "/modelData"});
+		assert.equal(oTable._getTotalRowCount(), 200, "Default behavior: binding length parameter is not set");
+
+		oTable.bindRows({path: "/modelData", length: 5});
+		assert.equal(oTable._getTotalRowCount(), 5, "The binding length parameter sets the total row count in the table");
+
+		oTable.setVisibleRowCountMode(VisibleRowCountMode.Auto);
+		oTable.bindRows({path: "/modelData", length: 5});
+		assert.equal(oTable._getTotalRowCount(), 200, "The binding length parameter works only when visibleRowCountMode is Fixed");
+
+		oTable.setVisibleRowCountMode(VisibleRowCountMode.Interactive);
+		oTable.bindRows({path: "/modelData", length: 5});
+		assert.equal(oTable._getTotalRowCount(), 200, "The binding length parameter works only when visibleRowCountMode is Fixed");
+	});
+
 	QUnit.module("Performance", {
 		beforeEach: function() {
 			createTable();
