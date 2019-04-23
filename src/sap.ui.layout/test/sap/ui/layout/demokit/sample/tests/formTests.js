@@ -15,7 +15,8 @@ sap.ui.define([
 			iStartTheFormSample : function () {
 				return this.iStartMyUIComponent({
 					componentConfig: {
-						name: sSampleName
+						name: sSampleName,
+						manifest: true
 					},
 					autoWait: true
 				});
