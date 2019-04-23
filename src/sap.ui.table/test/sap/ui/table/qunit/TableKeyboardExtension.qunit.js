@@ -1,4 +1,4 @@
-/*global QUnit, oTable */
+/*global QUnit, sinon, oTable */
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
@@ -20,6 +20,10 @@ sap.ui.define([
 	var destroyTables = window.destroyTables;
 	var getCell = window.getCell;
 	var getColumnHeader = window.getColumnHeader;
+	var getRowHeader = window.getRowHeader;
+	var getRowAction = window.getRowAction;
+	var getSelectAll = window.getSelectAll;
+	var initRowActions = window.initRowActions;
 	var setFocusOutsideOfTable = window.setFocusOutsideOfTable;
 
 	var TestControl = TableQUnitUtils.getTestControl();
@@ -355,6 +359,40 @@ sap.ui.define([
 		assert.ok(jQuery("head").text().indexOf(".sapUiTableStatic[data-sap-ui-table-focus]") >= 0, "Style set");
 
 		Device.browser.msie = bOriginalMSIE;
+	});
+
+	QUnit.test("Focus restoration and item navigation reinitialization", function(assert) {
+		initRowActions(oTable, 1, 1);
+		sap.ui.getCore().applyChanges();
+
+		var oKeyboardExtension = oTable._getKeyboardExtension();
+		var aTestElementIds = [
+			getCell(0, 0)[0].id,
+			getColumnHeader(0)[0].id,
+			getRowHeader(0)[0].id,
+			getRowAction(0)[0].id,
+			getSelectAll()[0].id
+		];
+		var oInitItemNavigationSpy;
+
+		oKeyboardExtension._debug();
+		oInitItemNavigationSpy = sinon.spy(oKeyboardExtension._ExtensionHelper, "_initItemNavigation");
+
+		aTestElementIds.forEach(function(sId) {
+			document.getElementById(sId).focus();
+
+			oInitItemNavigationSpy.reset();
+			oTable.rerender();
+
+			assert.ok(oInitItemNavigationSpy.calledOnce, "Re-rendered when focus was on " + sId + ": The item navigation was reinitialized");
+			assert.strictEqual(document.activeElement.id, sId, "Re-rendered when focus was on " + sId + ": The correct element is focused");
+
+			oInitItemNavigationSpy.reset();
+			oTable._renderRows();
+
+			assert.ok(oInitItemNavigationSpy.calledOnce, "Re-rendered rows when focus was on " + sId + ": The item navigation was reinitialized");
+			assert.strictEqual(document.activeElement.id, sId, "Re-rendered rows when focus was on " + sId + ": The correct element is focused");
+		});
 	});
 
 	QUnit.module("Destruction", {
