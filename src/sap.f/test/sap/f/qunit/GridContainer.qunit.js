@@ -296,6 +296,52 @@ function (
 		}.bind(this));
 	});
 
+	if (bIsGridSupported) {
+		QUnit.test("Item with more columns than the grid with columns auto-fill", function (assert) {
+			// Arrange
+			var oItem = new Card({
+				layoutData: new GridContainerItemLayoutData({ columns: 6 })
+			});
+			this.oGrid.addItem(oItem);
+
+			// Act
+			this.oGrid.setWidth("370px"); // place for 4 columns
+			Core.applyChanges();
+
+			// Assert
+			assert.strictEqual(oItem.$().parent().css("grid-column-start"), "span 4", "Item has 4 columns as expected");
+		});
+
+		QUnit.test("Item with more columns than the grid with defined columns count", function (assert) {
+			// Arrange
+			var oItem = new Card({
+				layoutData: new GridContainerItemLayoutData({ columns: 6 })
+			});
+			this.oGrid.addItem(oItem);
+
+			// Act
+			this.oGrid.setLayout(new GridContainerSettings({ columns: 4 })); // explicitly set 4 columns
+			Core.applyChanges();
+
+			// Assert
+			assert.strictEqual(oItem.$().parent().css("grid-column-start"), "span 4", "Item has 4 columns as expected");
+		});
+
+		QUnit.test("Item resize", function (assert) {
+			// Arrange
+			var oItem = new Card();
+			this.oGrid.addItem(oItem);
+			Core.applyChanges();
+
+			// Act
+			oItem.setHeight("400px");
+			Core.applyChanges();
+
+			// Assert
+			assert.strictEqual(oItem.$().parent().css("grid-row-start"), "span 5", "Item has 5 rows after resize");
+		});
+	}
+
 	QUnit.module("Layout settings", {
 		beforeEach: function () {
 			this.oGrid = new GridContainer();
@@ -322,16 +368,22 @@ function (
 		beforeEach: function () {
 			this.oGrid = new GridContainer();
 
+			// prepare settings for each layout
 			this.mTestSettings = {
 				"layoutXL": new GridContainerSettings({rowSize: "90px", columnSize: "90px", gap: "20px"}),
 				"layoutL": new GridContainerSettings({rowSize: "80px", columnSize: "80px", gap: "16px"}),
 				"layoutM": new GridContainerSettings({rowSize: "60px", columnSize: "60px", gap: "8px"}),
 				"layoutS": new GridContainerSettings({rowSize: "40px", columnSize: "40px", gap: "4px"})
 			};
-
 			for (var sLayout in this.mTestSettings) {
 				this.oGrid.setAggregation(sLayout, this.mTestSettings[sLayout]);
 			}
+
+			// listen for layout change event
+			this.oLayoutChangeStub = sinon.stub();
+			this.oGrid.attachLayoutChange(function (oEvent) {
+				this.oLayoutChangeStub(oEvent.getParameter("layout"));
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oGrid.destroy();
@@ -342,6 +394,7 @@ function (
 		// Arrange
 		var oGetCurrentRangeStub = sinon.stub(Device.media, 'getCurrentRange');
 		this.oGrid.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
 
 		// Act & Assert
 		["Phone", "Tablet", "Desktop", "LargeDesktop"].forEach(function (sRangeName) {
@@ -354,7 +407,8 @@ function (
 			// Assert
 			var sLayoutName = GridContainer.mSizeLayouts[sRangeName];
 			assertGridSettings(this.oGrid, this.mTestSettings[sLayoutName], sLayoutName, assert);
-
+			assert.ok(this.oLayoutChangeStub.calledWith(sLayoutName), "Layout change event was called for layout " + sLayoutName);
+			this.oLayoutChangeStub.reset();
 		}.bind(this));
 
 		oGetCurrentRangeStub.restore();
@@ -385,6 +439,8 @@ function (
 			// Assert
 			sLayoutName = mLayouts[sWidth];
 			assertGridSettings(this.oGrid, this.mTestSettings[sLayoutName], sLayoutName, assert);
+			assert.ok(this.oLayoutChangeStub.calledWith(sLayoutName), "Layout change event was called for layout " + sLayoutName);
+			this.oLayoutChangeStub.reset();
 		}
 
 		oContainer.destroy();
