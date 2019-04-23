@@ -19,26 +19,28 @@
 
 <script>
 QUnit.config.autostart = false;
-sap.ui.require([
-	'sap/ui/dt/test/report/QUnit',
-	'sap/ui/dt/test/ElementEnablementTest',
-	'dt/Page'
-], function (QUnitReport, ElementEnablementTest, Page) {
+sap.ui.getCore().attachInit(function() {
+	sap.ui.require([
+		'sap/ui/dt/test/report/QUnit',
+		'sap/ui/dt/test/ElementEnablementTest',
+		'dt/Page'
+	], function (QUnitReport, ElementEnablementTest, Page) {
 
-	var oElementEnablementTest = new ElementEnablementTest({
-		type: "sap.m.Page",
-		create : Page.create
-	});
-	oElementEnablementTest.run().then(function(oData) {
-		var oReport = new QUnitReport({
-			data: oData
+		var oElementEnablementTest = new ElementEnablementTest({
+			type: "sap.m.Page",
+			create : Page.create
 		});
-		oReport.destroy();
-		oElementEnablementTest.destroy();
-	}).then(function () {
-		QUnit.start();
-	});
+		oElementEnablementTest.run().then(function(oData) {
+			var oReport = new QUnitReport({
+				data: oData
+			});
+			oReport.destroy();
+			oElementEnablementTest.destroy();
+		}).then(function () {
+			QUnit.start();
+		});
 
+	});
 });
 
 </script>
