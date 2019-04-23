@@ -4209,6 +4209,35 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("FocusBorder - pressed on read-only control", function(assert) {
+
+		// system under test
+		var oMultiComboBox = new MultiComboBox({
+			items : [new Item({
+				key : "DZ",
+				text : "Algeria"
+			})],
+			editable: false
+		});
+
+		// arrange
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+		oMultiComboBox.focus();
+
+		// act
+		var oDomRef = oMultiComboBox.getFocusDomRef();
+		sap.ui.test.qunit.triggerTouchEvent("touchstart", oDomRef, {
+			target : oDomRef
+		});
+
+		// assertions
+		assert.ok(oMultiComboBox.$().hasClass("sapMFocus"), 'The MultiComboBox has the CSS class "sapMFocus"');
+
+		// cleanup
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.test("FocusBorder - pressed on arrow", function(assert) {
 
 		// system under test

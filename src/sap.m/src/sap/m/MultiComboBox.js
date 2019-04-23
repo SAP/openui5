@@ -544,7 +544,7 @@ function(
 		}
 
 		if (oEvent.target === this.getFocusDomRef()) {
-			this.getEditable() && this.addStyleClass("sapMFocus");
+			this.getEnabled() && this.addStyleClass("sapMFocus");
 			// enable type ahead when switching focus from the dropdown to the input field
 			// we need to check whether the focus has been triggered by the popover's closing or just a manual focusin
 			// isOpen is still true as the closing has not finished yet.
