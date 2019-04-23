@@ -8,6 +8,7 @@
 @_sap_m_LightBox_FooterTwoLinesHeightDesktop: 4rem;
 @_sap_m_LightBox_FooterOneLineHeightMobile: 3rem;
 @_sap_m_LightBox_FooterTwoLinesHeightMobile: 4.5rem;
+@_sap_m_LightBox_TitleSectionPadding: 1rem;
 @_sap_m_LightBox_BusyIndicatorHeight: 1rem;
 @_sap_m_LightBox_OverlayBackground: @sapUiBlockLayerBackground;
 @_sap_m_LightBox_ContainerBackground: @sapUiGlobalBackgroundColor;
@@ -90,7 +91,7 @@ html[data-sap-ui-browser^='sf'] .sapMLightBox {
 	border-radius: 0 0 0.25rem 0.25rem;
 
 	&.sapMLightBoxFooterTwoLines {
-		height: 4.5rem;
+		height: @_sap_m_LightBox_FooterTwoLinesHeightMobile;
 	}
 }
 
@@ -100,7 +101,7 @@ html[data-sap-ui-browser^='sf'] .sapMLightBox {
 
 .sapMLightBoxTitleSection {
 	margin: 0 1rem;
-	padding: 1rem 0;
+	padding: @_sap_m_LightBox_TitleSectionPadding 0;
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
