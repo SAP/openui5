@@ -702,6 +702,7 @@ sap.ui.define([
 		var oGetVisibleRowCountStub = sinon.stub(oTable, "getVisibleRowCount");
 		var oGetInnerVerticalScrollRangeStub = sinon.stub(this.oScrollExtension._VerticalScrollingHelper, "getInnerScrollRange");
 		var that = this;
+		oTable._bVariableRowHeightEnabled = true;
 
 		function test(iTotalRowCount, iVisibleRowCount, iInnerScrollRange, bVSbShouldBeRequired) {
 			oGetTotalRowCountStub.returns(iTotalRowCount);
@@ -715,6 +716,13 @@ sap.ui.define([
 		test(10, 10, 0, false); // Total row count <= Visible row count
 		test(10, 1, 0, true); // Total row count > Visible row count
 		test(1, 10, 1, true); // Total row count <= Visible row count, but inner scroll range > 0 (increased row heights)
+		test(10, 1, 1, true); // Total row count > Visible row count
+
+		oTable._bVariableRowHeightEnabled = false;
+
+		test(10, 10, 0, false); // Total row count <= Visible row count
+		test(10, 1, 0, true); // Total row count > Visible row count
+		test(1, 10, 1, false); // Total row count <= Visible row count, but inner scroll range > 0 (increased row heights)
 		test(10, 1, 1, true); // Total row count > Visible row count
 
 		oGetTotalRowCountStub.restore();

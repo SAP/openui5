@@ -1864,7 +1864,8 @@ sap.ui.define([
 			return false;
 		}
 
-		return VerticalScrollingHelper.getInnerScrollRange(oTable) > 0 || (oTable._getTotalRowCount() > oTable.getVisibleRowCount());
+		return TableUtils.isVariableRowHeightEnabled(oTable) && VerticalScrollingHelper.getInnerScrollRange(oTable) > 0
+				|| (oTable._getTotalRowCount() > oTable.getVisibleRowCount());
 	};
 
 	/**
