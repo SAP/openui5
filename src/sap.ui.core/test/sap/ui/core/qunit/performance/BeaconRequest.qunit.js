@@ -82,8 +82,8 @@ sap.ui.define(["sap/ui/performance/BeaconRequest", "sap/ui/Device"], function (B
 		QUnit.test("Send beacon on window close", function(assert) {
 			var done = assert.async();
 			var oIframe = document.createElement("iframe");
+			// Load iFrame which will send a postmessage on close
 			oIframe.setAttribute("src", sap.ui.require.toUrl("performance/static/sendBeaconRequest.html"));
-			// oIframe.setAttribute("src", "sendBeaconRequest.html");
 			document.getElementById('qunit-fixture').appendChild(oIframe);
 
 			oIframe.addEventListener("load", function() {
