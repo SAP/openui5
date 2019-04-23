@@ -19,6 +19,7 @@ sap.ui.define([
 			fetchMetadata : function () {
 				throw new Error("Do not call me!");
 			},
+			fireSessionTimeout : function () {},
 			getGroupProperty : defaultGetGroupProperty,
 			onCreateGroup : function () {},
 			reportBoundMessages : function () {},
@@ -548,7 +549,7 @@ sap.ui.define([
 				that.oLogMock.expects("error").exactly(bErrorId ? 1 : 0)
 					.withExactArgs("Session not found on server", undefined, sClassName);
 				that.mock(oRequestor).expects("clearSessionContext").exactly(bErrorId ? 1 : 0)
-					.withExactArgs();
+					.withExactArgs(true);
 				that.mock(_Helper).expects("createError")
 					.withExactArgs(sinon.match.object,
 						bErrorId ? "Session not found on server" : "Communication error",
@@ -3209,16 +3210,19 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
-	QUnit.test("clearSessionContext", function (assert) {
+[false, true].forEach(function (bTimeout) {
+	QUnit.test("clearSessionContext: bTimeout=" + bTimeout, function (assert) {
 		var oRequestor = _Requestor.create(sServiceUrl, oModelInterface),
 			iSessionTimer = {/*a number*/};
 
 		oRequestor.mHeaders["SAP-ContextId"] = "context";
 		oRequestor.iSessionTimer = iSessionTimer;
 		this.mock(window).expects("clearInterval").withExactArgs(sinon.match.same(iSessionTimer));
+		this.mock(oRequestor.oModelInterface).expects("fireSessionTimeout")
+			.exactly(bTimeout ? 1 : 0).withExactArgs();
 
 		// code under test
-		oRequestor.clearSessionContext();
+		oRequestor.clearSessionContext(bTimeout);
 
 		assert.strictEqual(oRequestor.iSessionTimer, 0);
 		assert.notOk("SAP-ContextId" in oRequestor.mHeaders);
@@ -3226,6 +3230,7 @@ sap.ui.define([
 		// code under test
 		oRequestor.clearSessionContext();
 	});
+});
 
 	//*****************************************************************************************
 	QUnit.test("setSessionContext: SAP-Http-Session-Timeout=null", function (assert) {
@@ -3348,7 +3353,7 @@ sap.ui.define([
 				that.oLogMock.expects("error").exactly(bErrorId ? 1 : 0)
 					.withExactArgs("Session not found on server", undefined, sClassName);
 				that.mock(oRequestor).expects("clearSessionContext").exactly(bErrorId ? 1 : 0)
-					.withExactArgs();
+					.withExactArgs(true);
 
 				// code under test
 				oExpectation.callArg(0); //callback
@@ -3371,7 +3376,7 @@ sap.ui.define([
 
 			oClock.tick(15 * 60 * 1000); // 15 min
 			this.mock(jQuery).expects("ajax").never();
-			this.mock(oRequestor).expects("clearSessionContext").withExactArgs();
+			this.mock(oRequestor).expects("clearSessionContext").withExactArgs(true);
 
 			// code under test
 			oExpectation.callArg(0); //callback
