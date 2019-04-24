@@ -68,7 +68,6 @@ sap.ui.define([
 			"sap.ui.layout.form.ColumnLayout",
 			"sap.ui.layout.form.ResponsiveGridLayout",
 			"sap.ui.layout.form.ResponsiveLayout",
-			"sap.ui.layout.SimpleFixFlex",
 			"sap.ui.layout.form.SimpleForm",
 			"sap.ui.layout.cssgrid.CSSGrid"
 		],
