@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/merge",
-	"sap/base/util/isEmptyObject"
+	"sap/base/util/isEmptyObject",
+	"sap/base/util/includes"
 ], function(
 	Change,
 	Variant,
@@ -35,7 +36,8 @@ sap.ui.define([
 	JSONModel,
 	jQuery,
 	merge,
-	isEmptyObject
+	isEmptyObject,
+	includes
 ) {
 	"use strict";
 
@@ -746,7 +748,6 @@ sap.ui.define([
 	 * @public
 	 */
 	ChangePersistence.prototype.loadChangesMapForComponent = function (oAppComponent, mPropertyBag) {
-
 		mPropertyBag.component = !isEmptyObject(oAppComponent) && oAppComponent;
 		return this.getChangesForComponent(mPropertyBag).then(createChangeMap.bind(this));
 
@@ -801,9 +802,7 @@ sap.ui.define([
 			var aNewValidDependencies = [];
 			oInitialDependency.dependencies.forEach(function(sChangeId) {
 				if (fnDependencyValidation(sChangeId)) {
-					if (!this._mChanges.mDependentChangesOnMe[sChangeId]) {
-						this._mChanges.mDependentChangesOnMe[sChangeId] = [];
-					}
+					this._mChanges.mDependentChangesOnMe[sChangeId] = this._mChanges.mDependentChangesOnMe[sChangeId] || [];
 					this._mChanges.mDependentChangesOnMe[sChangeId].push(oChange.getId());
 					aNewValidDependencies.push(sChangeId);
 				}
@@ -815,6 +814,9 @@ sap.ui.define([
 	};
 
 	ChangePersistence.prototype._addChangeAndUpdateDependencies = function(oAppComponent, oChange) {
+		// the change status should always be initial when it gets added to the map / dependencies
+		// if the component gets recreated the status of the change might not be initial
+		oChange.setInitialApplyState();
 		this._addChangeIntoMap(oAppComponent, oChange);
 		this._updateDependencies(oChange, false);
 	};
