@@ -1,4 +1,4 @@
-/*global QUnit, sinon, oTable */
+/*global QUnit, sinon, oTable, oTreeTable */
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
@@ -374,6 +374,7 @@ sap.ui.define([
 			getSelectAll()[0].id
 		];
 		var oInitItemNavigationSpy;
+		var oInvalidateItemNavigationSpy;
 
 		oKeyboardExtension._debug();
 		oInitItemNavigationSpy = sinon.spy(oKeyboardExtension._ExtensionHelper, "_initItemNavigation");
@@ -393,6 +394,31 @@ sap.ui.define([
 			assert.ok(oInitItemNavigationSpy.calledOnce, "Re-rendered rows when focus was on " + sId + ": The item navigation was reinitialized");
 			assert.strictEqual(document.activeElement.id, sId, "Re-rendered rows when focus was on " + sId + ": The correct element is focused");
 		});
+
+		// Focus a cell in the TreeTable to check if the Table steals the focus.
+		var oFocusedElement = getCell(0, 0, true, null, oTreeTable)[0];
+
+		oInitItemNavigationSpy.reset();
+		oInvalidateItemNavigationSpy = sinon.spy(oKeyboardExtension, "invalidateItemNavigation");
+		oTable.rerender();
+
+		assert.ok(oInitItemNavigationSpy.notCalled,
+			"Re-rendered when focus was on an element outside the table: The item navigation was not reinitialized");
+		assert.ok(oInvalidateItemNavigationSpy.calledOnce,
+			"Re-rendered when focus was on an element outside the table: The item navigation was invalidated");
+		assert.strictEqual(document.activeElement.id, oFocusedElement.id,
+			"Re-rendered when focus was on an element outside the table: The correct element is focused");
+
+		oInitItemNavigationSpy.reset();
+		oInvalidateItemNavigationSpy.reset();
+		oTable._renderRows();
+
+		assert.ok(oInitItemNavigationSpy.notCalled,
+			"Re-rendered rows when focus was on an element outside the table: The item navigation was not reinitialized");
+		assert.ok(oInvalidateItemNavigationSpy.calledOnce,
+			"Re-rendered rows when focus was on an element outside the table: The item navigation was invalidated");
+		assert.strictEqual(document.activeElement.id, oFocusedElement.id,
+			"Re-rendered rows when focus was on an element outside the table: The correct element is focused");
 	});
 
 	QUnit.module("Destruction", {
