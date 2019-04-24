@@ -2382,6 +2382,12 @@ sap.ui.define([
 		assert.strictEqual(isTextTruncated($longTextItem), true, "Text is truncated when width is small");
 	});
 
+	QUnit.test("Calling _includeScrollWidth with no dom ref", function(assert) {
+		this.oPopover._includeScrollWidth();
+		// assert
+		assert.ok(true, "Should not throw an error when there is no dom ref");
+	});
+
 	// include stylesheet and let test starter wait for it
 	return includeStylesheet({
 		url: sap.ui.require.toUrl("test-resources/sap/m/qunit/Popover.css")
