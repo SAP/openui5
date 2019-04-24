@@ -392,11 +392,7 @@ function(
 			instance[this._sRefresher](sChangeReason);
 		} else {
 			//fallback there was no refresher before
-			if (instance[this._sUpdater]) {
-				instance[this._sUpdater](sChangeReason);
-			} else {
-				instance.refreshAggregation(this.name);
-			}
+			this.update(instance, sChangeReason);
 		}
 	};
 
