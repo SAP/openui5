@@ -1845,6 +1845,7 @@ function (
 					}
 				})
 			);
+			oChange1.markFinished({});
 			var oChange2 = new Change(
 				Change.createInitialFileContent({
 					id: "fileNameChange2",
@@ -1869,6 +1870,7 @@ function (
 					}
 				})
 			);
+			oChange2.markFinished({});
 			var oChange3 = new Change(
 				Change.createInitialFileContent({
 					id: "fileNameChange3",
@@ -1920,14 +1922,16 @@ function (
 				aChanges: [oChange1, oChange2, oChange3, oChange4]
 			};
 
+			var oSetInitialStub = sandbox.stub(Change.prototype, "setInitialApplyState");
 			sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves([oChange1, oChange2, oChange3, oChange4]);
 			sandbox.stub(Utils, "getComponentName").callThrough().withArgs(oAppComponent).returns("appComponentReference");
 			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {})
-				.then(function (fnGetChangesMap) {
-					assert.ok(typeof fnGetChangesMap === "function", "then a function for changes map returned");
-					var mChanges = fnGetChangesMap();
-					assert.deepEqual(mChanges, mExpectedChanges, "then the changes map is returned as expected");
-				});
+			.then(function (fnGetChangesMap) {
+				assert.ok(typeof fnGetChangesMap === "function", "then a function for changes map returned");
+				var mChanges = fnGetChangesMap();
+				assert.deepEqual(mChanges, mExpectedChanges, "then the changes map is returned as expected");
+				assert.equal(oSetInitialStub.callCount, 4, "the apply state of all four changes got reset");
+			});
 		});
 
 		QUnit.test("loadChangesMapForComponent returns a map with dependencies - test2", function (assert) {
@@ -2187,7 +2191,7 @@ function (
 				});
 		});
 
-		QUnit.test("loadChangesMapForComponent adds legacy change only once in case the component prefix matches the app component ID", function(assert) {
+		QUnit.test("_addChangeIntoMap adds legacy change only once in case the component prefix matches the app component ID", function(assert) {
 			var sAppComponentId = "appComponentId";
 
 			var oComponent = {
@@ -2214,7 +2218,7 @@ function (
 				"the change was written for the selector ID");
 		});
 
-		QUnit.test("loadChangesMapForComponent adds legacy change twice in case the component prefix does not match the app component ID", function(assert) {
+		QUnit.test("_addChangeIntoMap adds legacy change twice in case the component prefix does not match the app component ID", function(assert) {
 			var sAppComponentId = "appComponentId";
 
 			var oComponent = {
@@ -2247,7 +2251,7 @@ function (
 				"the change was written for the app selector ID");
 		});
 
-		QUnit.test("loadChangesMapForComponent adds non legacy change only once in case the component prefix does not match the app component ID", function(assert) {
+		QUnit.test("_addChangeIntoMap adds non legacy change only once in case the component prefix does not match the app component ID", function(assert) {
 			var sAppComponentId = "appComponentId";
 
 			var oComponent = {
