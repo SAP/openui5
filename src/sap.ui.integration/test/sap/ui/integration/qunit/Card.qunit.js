@@ -981,8 +981,6 @@ sap.ui.define([
 			}
 		};
 
-
-
 		var oManifest_AvatarHeader = {
 			"sap.card": {
 				"type": "List",
@@ -2309,7 +2307,7 @@ sap.ui.define([
 				// Assert
 				assert.ok(oRefreshSpy.calledOnce, "Should call refresh when turning to 'Active' mode.");
 
-				// Clean up
+				// Cleanup
 				oApplyManifestSpy.restore();
 				done();
 
@@ -2319,7 +2317,7 @@ sap.ui.define([
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
-		QUnit.module("Card manifest  - URL", {
+		QUnit.module("Card manifest - URL", {
 			beforeEach: function () {
 				this.oCardUrl = new Card({
 					width: "400px",
@@ -2340,15 +2338,70 @@ sap.ui.define([
 
 				Core.applyChanges();
 
-					// Assert
-					assert.ok(true, "Should have fired _ready event.");
+				// Assert
+				assert.ok(true, "Should have fired _ready event.");
 
-					//clean up
-					done();
+				// Cleanup
+				done();
 			});
 
 			this.oCardUrl.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
 			this.oCardUrl.placeAt(DOM_RENDER_LOCATION);
+		});
+
+		QUnit.module("Header counter", {
+			beforeEach: function () {
+				this.oCard = new Card({
+					width: "400px",
+					height: "600px"
+				});
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("Formatting with self translation", function (assert) {
+
+			// Arrange
+			var done = assert.async();
+			this.oCard.attachEventOnce("_ready", function () {
+
+				Core.applyChanges();
+
+				var oHeader = this.oCard.getCardHeader();
+
+				// Assert
+				assert.equal(oHeader.getStatusText(), "2 of 115", "Should have correctly formatted and translated counter.");
+
+				// Cleanup
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/translation/manifest.json");
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
+		QUnit.test("Formatting with custom translation", function (assert) {
+
+			// Arrange
+			var done = assert.async();
+			this.oCard.attachEventOnce("_ready", function () {
+
+				Core.applyChanges();
+
+				var oHeader = this.oCard.getCardHeader();
+
+				// Assert
+				assert.equal(oHeader.getStatusText(), "2 of custom 115", "Should have correctly formatted and translated counter.");
+
+				// Cleanup
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/translation/manifest2.json");
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 	}
 );

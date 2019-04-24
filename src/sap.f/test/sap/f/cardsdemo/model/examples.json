@@ -156,5 +156,11 @@
 		"description": "Example with 'enabled' property of the Card",
 		"route": "dataMode",
 		"group": "Other Card Examples"
+	},
+	{
+		"title": "Translations & Header Count",
+		"description": "Example with card translations and count binding",
+		"route": "translation",
+		"group": "Other Card Examples"
 	}
 ]

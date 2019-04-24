@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/Log",
+	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/Core"
-], function (Control, JSONModel, Log, Core) {
+], function (Control, JSONModel, Log, ManagedObjectObserver, Core) {
 	"use strict";
 
 	/**
@@ -85,6 +86,7 @@ sap.ui.define([
 	BaseContent.prototype.init = function () {
 		this._aReadyPromises = [];
 		this._bReady = false;
+		this._mObservers = {};
 
 		// So far the ready event will be fired when the data is ready. But this can change in the future.
 		this._awaitEvent("_dataReady");
@@ -130,6 +132,12 @@ sap.ui.define([
 		this.setAggregation("_content", null);
 		this.setModel(null);
 		this._aReadyPromises = null;
+		if (this._mObservers) {
+			Object.keys(this._mObservers).forEach(function (sKey) {
+				this._mObservers[sKey].disconnect();
+				delete this._mObservers[sKey];
+			}, this);
+		}
 		return Control.prototype.destroy.apply(this, arguments);
 	};
 
@@ -220,10 +228,30 @@ sap.ui.define([
 	 * @param {Object} oBindingInfo The binding info.
 	 */
 	function _bind(sAggregation, oControl, oBindingInfo) {
-		var oBindingContext = this.getBindingContext();
+		var oBindingContext = this.getBindingContext(),
+			oModel = this.getModel("parameters"),
+			oAggregation = oControl.getAggregation(sAggregation);
+
 		if (oBindingContext) {
 			oBindingInfo.path = oBindingContext.getPath();
 			oControl.bindAggregation(sAggregation, oBindingInfo);
+
+			if (oModel && oAggregation) {
+				oModel.setProperty("/visibleItems", oAggregation.length);
+			}
+
+			if (!this._mObservers[sAggregation]) {
+				this._mObservers[sAggregation] = new ManagedObjectObserver(function (oChanges) {
+					if (oChanges.name === sAggregation && (oChanges.mutation === "insert" || oChanges.mutation === "remove")) {
+						var oAggregation = oControl.getAggregation(sAggregation);
+						var iLength = oAggregation ? oAggregation.length : 0;
+						if (oModel) {
+							oModel.setProperty("/visibleItems", iLength);
+						}
+					}
+				});
+				this._mObservers[sAggregation].observe(oControl, { aggregations: [sAggregation] });
+			}
 		}
 	}
 
