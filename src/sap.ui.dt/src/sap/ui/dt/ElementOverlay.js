@@ -893,12 +893,12 @@ function (
 
 		if (this.getDesignTimeMetadata().isIgnored(oElement)) {
 			bVisible = false;
+		} else if (typeof this.getDesignTimeMetadata().getData().isVisible === "function") {
+			bVisible = this.getDesignTimeMetadata().getData().isVisible(oElement);
 		} else {
 			var oGeometry = this.getGeometry(true);
 			if (oGeometry) {
 				bVisible = oGeometry.visible;
-			} else if (jQuery.isFunction(this.getDesignTimeMetadata().getData().isVisible)) {
-				bVisible = this.getDesignTimeMetadata().getData().isVisible(oElement);
 			} else if (oElement instanceof Control) {
 				bVisible = !!oElement.getDomRef() && oElement.getVisible();
 			}
