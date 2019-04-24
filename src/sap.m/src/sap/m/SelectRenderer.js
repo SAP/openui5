@@ -131,7 +131,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 
 			// Attributes
 			oRm.writeAttribute("id", oSelect.getId() + "-hiddenInput");
-			oRm.writeAttribute("aria-multiline", "false");
 			oRm.writeAttribute("aria-readonly", "true");
 			oRm.writeAttribute("tabindex", "-1");
 
