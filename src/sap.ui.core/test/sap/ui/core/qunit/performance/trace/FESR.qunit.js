@@ -1,6 +1,6 @@
 /*global QUnit, sinon*/
-sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Interaction', 'sap/ui/performance/XHRInterceptor', 'sap/ui/performance/BeaconRequest','sap/ui/performance/trace/Passport'],
-	function (FESR, Interaction, XHRInterceptor, BeaconRequest, Passport) {
+sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Interaction', 'sap/ui/performance/XHRInterceptor', 'sap/ui/performance/trace/Passport', 'sap/ui/Device'],
+	function (FESR, Interaction, XHRInterceptor, Passport, Device) {
 	"use strict";
 
 	QUnit.module("FESR");
@@ -115,45 +115,48 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		XMLHttpRequest.prototype.setRequestHeader.restore();
 	});
 
-	QUnit.test("Beacon URL", function(assert) {
-		FESR.setActive(true, "example.url");
-		assert.equal(FESR.getBeaconURL(), "example.url", "Returns beacon url");
+	if (!Device.browser.msie) {
 
-		FESR.setActive(false);
-		assert.equal(FESR.getBeaconURL(), undefined, "Beacon URL was reset");
-	});
+		QUnit.test("Beacon URL", function(assert) {
+			FESR.setActive(true, "example.url");
+			assert.equal(FESR.getBeaconURL(), "example.url", "Returns beacon url");
 
-	QUnit.test("Beacon strategy", function(assert) {
-		var sendBeaconStub = sinon.stub(window.navigator, "sendBeacon").returns(true);
-		var fileReader = new FileReader();
-		var done = assert.async();
+			FESR.setActive(false);
+			assert.equal(FESR.getBeaconURL(), undefined, "Beacon URL was reset");
+		});
 
-		FESR.setActive(true, "example.url");
-		for (var index = 0; index < 5; index++) {
-			Interaction.start();
-			Interaction.notifyStepStart(null, true);
-		}
+		QUnit.test("Beacon strategy", function(assert) {
+			var sendBeaconStub = sinon.stub(window.navigator, "sendBeacon").returns(true);
+			var fileReader = new FileReader();
+			var done = assert.async();
 
-		assert.equal(sendBeaconStub.callCount, 1, "Beacon send triggered");
+			FESR.setActive(true, "example.url");
+			for (var index = 0; index < 5; index++) {
+				Interaction.start();
+				Interaction.notifyStepStart(null, true);
+			}
 
-		var urlSendTo = sendBeaconStub.getCall(0).args[0],
-			blobToSend = sendBeaconStub.getCall(0).args[1];
+			assert.equal(sendBeaconStub.callCount, 1, "Beacon send triggered");
 
-		assert.equal(urlSendTo, "example.url", "Buffer send to example.url");
-		assert.ok(blobToSend instanceof Blob, "Send data is of type blob");
-		assert.ok(sendBeaconStub.getCall(0).args[1].size > 0, "Blob contains FESR data");
+			var urlSendTo = sendBeaconStub.getCall(0).args[0],
+				blobToSend = sendBeaconStub.getCall(0).args[1];
 
-		fileReader.onloadend = function(e) {
-			var data = e.target.result;
-			var nSAPPerfFESRec = data.match(/SAP-Perf-FESRec=/g).length;
-			var nSAPPerfFESRecOpt = data.match(/SAP-Perf-FESRec-opt=/g).length;
-			assert.equal(nSAPPerfFESRec, 5, "Send blob contains SAP-Perf-FESRec entries");
-			assert.equal(nSAPPerfFESRecOpt, 5, "SSend blob contains SAP-Perf-FESRec entries");
-			done();
-		};
+			assert.equal(urlSendTo, "example.url", "Buffer send to example.url");
+			assert.ok(blobToSend instanceof Blob, "Send data is of type blob");
+			assert.ok(sendBeaconStub.getCall(0).args[1].size > 0, "Blob contains FESR data");
 
-		fileReader.readAsText(blobToSend);
-		sendBeaconStub.restore();
-	});
+			fileReader.onloadend = function(e) {
+				var data = e.target.result;
+				var nSAPPerfFESRec = data.match(/SAP-Perf-FESRec=/g).length;
+				var nSAPPerfFESRecOpt = data.match(/SAP-Perf-FESRec-opt=/g).length;
+				assert.equal(nSAPPerfFESRec, 5, "Send blob contains SAP-Perf-FESRec entries");
+				assert.equal(nSAPPerfFESRecOpt, 5, "SSend blob contains SAP-Perf-FESRec entries");
+				done();
+			};
+
+			fileReader.readAsText(blobToSend);
+			sendBeaconStub.restore();
+		});
+	}
 
 });

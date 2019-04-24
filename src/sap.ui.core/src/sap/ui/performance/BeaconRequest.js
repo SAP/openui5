@@ -81,7 +81,7 @@ sap.ui.define(["sap/base/Log"], function (Log) {
 	 * Send data if the browser has been closed
 	 */
 	BeaconRequest.prototype.attachSendOnUnload = function() {
-		window.addEventListener("unload", function(e) {
+		window.addEventListener("unload", function (e) {
 			this.send();
 		}.bind(this));
 	};
