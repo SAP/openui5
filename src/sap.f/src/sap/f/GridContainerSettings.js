@@ -4,9 +4,41 @@
 
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
-	"sap/ui/layout/library"
-], function (ManagedObject) {
+	"sap/ui/dom/units/Rem",
+	"sap/base/Log"
+], function (
+	ManagedObject,
+	Rem,
+	Log
+) {
 	"use strict";
+
+	/**
+	 * Converts the given css size to its corresponding 'px' value.
+	 * @private
+	 * @param {string} sCssSize The css size to parse. For example '5rem'.
+	 * @returns {int} The size in 'px'. The result is rounded up with Math.ceil(). Returns NaN if the size can not be parsed.
+	 */
+	function cssSizeToPx(sCssSize) {
+		if (sCssSize === 0 || sCssSize === "0") {
+			return 0;
+		}
+
+		var aMatch = sCssSize.match(/^(\d+(\.\d+)?)(px|rem)$/),
+			iValue;
+		if (aMatch) {
+			if (aMatch[3] === "px") {
+				iValue = parseFloat(aMatch[1]);
+			} else {
+				iValue = Rem.toPx(parseFloat(aMatch[1]));
+			}
+		} else {
+			Log.error("Css size '" + sCssSize + "' is not supported for GridContainer. Only 'px' and 'rem' are supported.");
+			iValue = NaN;
+		}
+
+		return Math.ceil(iValue);
+	}
 
 	/**
 	 * Constructor for a new <code>sap.f.GridContainerSettings</code>.
@@ -37,7 +69,6 @@ sap.ui.define([
 	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	var GridContainerSettings = ManagedObject.extend("sap.f.GridContainerSettings", {
-		// TODO Allow only rem and px, because of IE
 		metadata: {
 			library: "sap.f",
 			properties: {
@@ -46,25 +77,86 @@ sap.ui.define([
 				 *
 				 * If not defined, <code>sap.f.GridContainer</code> will position as many columns as they can fit in the container.
 				 */
-				columns: { type: "Number" },
+				columns: { type: "int" },
 
 				/**
 				 * The width of the columns.
+				 *
+				 * <b>Note:</b> Use only 'px' or 'rem'. Some features may not work as expected otherwise.
 				 */
 				columnSize: { type: "sap.ui.core.CSSSize", defaultValue: "80px" },
 
 				/**
 				 * The height of the rows.
+				 *
+				 * <b>Note:</b> Use only 'px' or 'rem'. Some features may not work as expected otherwise.
 				 */
 				rowSize: { type: "sap.ui.core.CSSSize", defaultValue: "80px" },
 
 				/**
 				 * The size of the gap between columns and rows.
+				 *
+				 * <b>Note:</b> Use only 'px' or 'rem'. Some features may not work as expected otherwise.
 				 */
 				gap: { type: "sap.ui.core.CSSSize", defaultValue: "16px" }
 			}
 		}
 	});
+
+	/**
+	 * Gets the column size, converted to its 'px' value.
+	 * @returns {int} The 'px' value. NaN if 'px' value can not be calculated.
+	 */
+	GridContainerSettings.prototype.getColumnSizeInPx = function () {
+		return cssSizeToPx(this.getColumnSize());
+	};
+
+	/**
+	 * Gets the row size, converted to its 'px' value.
+	 * @returns {int} The 'px' value. NaN if 'px' value can not be calculated.
+	 */
+	GridContainerSettings.prototype.getRowSizeInPx = function () {
+		return cssSizeToPx(this.getRowSize());
+	};
+
+	/**
+	 * Gets the gap size, converted to its 'px' value.
+	 * @returns {int} The 'px' value. NaN if 'px' value can not be calculated.
+	 */
+	GridContainerSettings.prototype.getGapInPx = function () {
+		return cssSizeToPx(this.getGap());
+	};
+
+	/**
+	 * Calculates how many columns the grid should have, based on gap size and column size.
+	 *
+	 * If "columns" property is specified, then this is returned directly. No calculations are made.
+	 *
+	 * @param {int} iGridInnerWidth The inner width of the grid in 'px'.
+	 * @returns {int} The number of columns which are defined by "columns" property or which will fit in the given width. NaN if it can not be calculated.
+	 */
+	GridContainerSettings.prototype.getComputedColumnsCount = function (iGridInnerWidth) {
+		if (this.getColumns()) {
+			return this.getColumns();
+		}
+
+		var iGapSize = this.getGapInPx(),
+			iColumnSize = this.getColumnSizeInPx();
+
+		return Math.floor((iGridInnerWidth + iGapSize) / (iColumnSize + iGapSize));
+	};
+
+	/**
+	 * Calculates how many rows would an item need to fit, based on its height.
+	 * @param {int} iItemHeight The height of the item.
+	 * @returns {int} The calculated rows for the given height. NaN if it can not be calculated.
+	 */
+	GridContainerSettings.prototype.calculateRowsForItem = function (iItemHeight) {
+		var iGapSize = this.getGapInPx(),
+			iRowSize = this.getRowSizeInPx();
+
+		return Math.ceil((iItemHeight + iGapSize) / (iRowSize + iGapSize));
+	};
 
 	return GridContainerSettings;
 });
