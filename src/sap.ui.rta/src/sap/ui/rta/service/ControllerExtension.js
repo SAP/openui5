@@ -17,7 +17,7 @@ function (
 	"use strict";
 
 	/**
-	 * Provides functionality to create ControllerExtensions
+	 * Provides functionality to create <code>ControllerExtensions</code>.
 	 *
 	 * @namespace
 	 * @name sap.ui.rta.service.ControllerExtension
@@ -60,10 +60,10 @@ function (
 				 * and adding it to the backend.
 				 *
 				 * @method sap.ui.rta.service.ControllerExtension.add
-				 * @param {object} sCodeRef Name of the file, without path, with the extension '.js'. Must comply to UI5 module naming convention.
+				 * @param {string} sCodeRef - Name of the file, without path, with the extension <code>.js</code>. Must comply to UI5 module naming convention.
 				 * 							Has to be unique and must not conflict with other already defined modules.
-				 * @param {string} sViewId ID of the view whose controller should be extended
-				 * @return {object} Returns the definition of the newly created change
+				 * @param {string} sViewId - ID of the view whose controller should be extended
+				 * @return {object} Definition of the newly created change
 				 * @public
 				 */
 				add: function(sCodeRef, sViewId) {
@@ -104,12 +104,12 @@ function (
 				},
 
 				/**
-				 * Gets the Controller Extension template from the DesignTimeMetadata of the given view and returns it as a string wrapped in a promise.
+				 * Gets the controller extension template from the <code>DesignTimeMetadata</code> of the given view and returns it as a string wrapped in a promise.
 				 * If there is no template specified, a default template will be returned.
 				 *
 				 * @method sap.ui.rta.service.ControllerExtension.getTemplate
-				 * @param {string} sViewId ID of the view whose template should be retrieved
-				 * @return {Promise} Returns a promise that resolves with the template as string or rejects when the file was not found
+				 * @param {string} sViewId - ID of the view whose template should be retrieved
+				 * @return {Promise} Promise that resolves with the template as string or rejects when the file was not found
 				 * @public
 				 */
 				getTemplate: function(sViewId) {

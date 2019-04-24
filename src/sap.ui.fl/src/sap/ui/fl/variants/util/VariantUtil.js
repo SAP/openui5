@@ -24,8 +24,8 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Provides utility functions for sap.ui.fl.variants.VariantModel
-	 * The functions should be called with an instance of sap.ui.fl.variants.VariantModel
+	 * Provides utility functions for <code>sap.ui.fl.variants.VariantModel</code>.
+	 * The functions should be called with an instance of <code>sap.ui.fl.variants.VariantModel</code>.
 	 *
 	 * @namespace
 	 * @alias sap.ui.fl.variants.util.VariantUtil
