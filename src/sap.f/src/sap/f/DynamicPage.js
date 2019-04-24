@@ -411,7 +411,7 @@ sap.ui.define([
 				oDynamicPageTitle._setShowSnapContent(true);
 			}
 
-			if (bAppendHeaderToContent) {
+			if (bAppendHeaderToContent && this._bHeaderInTitleArea) {
 				this._moveHeaderToContentArea();
 			}
 		}
