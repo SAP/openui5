@@ -20,7 +20,8 @@ sap.ui.define([
 	"sap/m/InputBase",
 	"sap/ui/core/ListItem",
 	"sap/m/StandardListItem",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/ui/base/Event"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -41,7 +42,8 @@ sap.ui.define([
 	InputBase,
 	ListItem,
 	StandardListItem,
-	coreLibrary
+	coreLibrary,
+	Event
 ) {
 	createAndAppendDiv("content");
 
@@ -1488,10 +1490,10 @@ sap.ui.define([
 		oPicker = this.multiInput._getSelectedItemsPicker();
 		this.clock.tick(100);
 
-		// deselect the first item
-		jQuery(oPicker.getContent()[0].getItems()[0]).tap();
+		// delete the first item
+		oPicker.getContent()[0].getItems()[0]._oDeleteControl.firePress();
 		// assert
-		assert.strictEqual(this.multiInput.getTokens().length, 3, "A token was deleted after deselecting an item from the popover");
+		assert.strictEqual(this.multiInput.getTokens().length, 3, "A token was deleted after deleting an item from the popover");
 
 		//close and open the picker
 		oPicker.close();
@@ -1549,40 +1551,15 @@ sap.ui.define([
 		assert.strictEqual(oListItem.data("text"), "text123", "The listItem's customData text is correct.");
 	});
 
-	QUnit.test("_syncTokensWithSelection - selection", function(assert) {
-		var oListItem = new StandardListItem(), aTokens,
-			oSpy = this.spy(this.multiInput, "addToken"),
-			oTokenUpdateSpy = this.spy(this.multiInput, "fireTokenUpdate");
-
-		oListItem.data("key", "key123");
-		oListItem.data("text", "text123");
-		oListItem.data("tokenId", "token");
-
-		// assert
-		aTokens = this.multiInput.getTokens();
-		assert.strictEqual(aTokens.length, 0, "Initially the multiinput is empty.");
-
-		// act
-		this.multiInput._syncTokensWithSelection(oListItem, true);
-		aTokens = this.multiInput.getTokens();
-
-		// assert
-		assert.ok(oSpy.called, "addToken is called.");
-		assert.ok(oTokenUpdateSpy.called, "tokenUpdate is fired.");
-		assert.strictEqual(aTokens.length, 1, "One token was added");
-		assert.strictEqual(aTokens[0].getText(), "text123", "The token's text is correct.");
-		assert.strictEqual(aTokens[0].getKey(), "key123", "The token's key is correct.");
-		assert.strictEqual(oListItem.data("tokenId"), aTokens[0].getId(), "The new token id is correctly recorder in the item");
-
-		// clean up
-		oSpy.restore();
-	});
-
-	QUnit.test("_syncTokensWithSelection - deselection", function(assert) {
+	QUnit.test("_handleNMoreItemDelete", function(assert) {
 		var oListItem = new StandardListItem(), aTokens,
 			oToken = new Token("token", {text: "text123", key: "key123"}),
 			oSpy = this.spy(this.multiInput._tokenizer, "removeToken"),
-			oTokenDestroySpy = this.spy(Token.prototype, "destroy");
+			oTokenDestroySpy = this.spy(Token.prototype, "destroy"),
+			oFakeEvent = new Event(),
+			oSetSelectionStub = sinon.stub(Event.prototype, "getParameter");
+
+		oSetSelectionStub.withArgs("listItem").returns(oListItem);
 
 		this.multiInput.addToken(oToken);
 		oListItem.data("key", "key123");
@@ -1594,16 +1571,17 @@ sap.ui.define([
 		assert.strictEqual(aTokens.length, 1, "Initially the multiinput has one token.");
 
 		// act
-		this.multiInput._syncTokensWithSelection(oListItem, false);
+		this.multiInput._handleNMoreItemDelete(oFakeEvent);
 		assert.ok(oTokenDestroySpy.called, "The token is destroyed on deselection.");
 		aTokens = this.multiInput.getTokens();
 
 		// assert
-		assert.ok(oSpy.called, "addToken is called.");
+		assert.ok(oSpy.called, "removeToken is called.");
 		assert.strictEqual(aTokens.length, 0, "The multiinput is empty after deselection.");
 
 		// clean up
 		oSpy.restore();
+		oSetSelectionStub.restore();
 	});
 
 	QUnit.test("Token's list", function(assert) {
@@ -1678,6 +1656,48 @@ sap.ui.define([
 		// clean up
 		oStub.restore();
 		this.multiInput1.destroy();
+	});
+
+	QUnit.test('Selected items list update on mobile', function(assert) {
+		// system under test
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		var oList,
+			oFakeEvent = new Event(),
+			oDeleteStub = sinon.stub(Event.prototype, "getParameter"),
+			oMI = new MultiInput().placeAt("qunit-fixture");
+
+		oMI.setTokens([
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"}),
+			new Token({text: "XXXX"})
+		]);
+		oMI.setWidth("200px");
+
+		// act
+		oMI._openSelectedItemsPicker();
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		oList = oMI._getTokensList();
+		assert.strictEqual(oList.getItems().length, 4, "The dialog has the correct number of list items.");
+
+		// act
+		oDeleteStub.withArgs("listItem").returns(oList.getItems()[0]);
+		oMI._handleNMoreItemDelete(oFakeEvent);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(oList.getItems().length, 3, "A list item is removed from the dialog.");
+
+		// clean up
+		oDeleteStub.restore();
+		oMI.destroy();
 	});
 
 	QUnit.test("Read-only popover ", function(assert) {
@@ -1759,37 +1779,6 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		assert.ok(oMultiInput._oReadOnlyPopover.isOpen(), "Readonly Popover should remain open");
-
-		// delete
-		oMultiInput.destroy();
-	});
-
-	QUnit.test("Read-only popover should be closed on after selection of an item from its list", function (assert) {
-		// arrange
-		var oMultiInput = new MultiInput({
-			editable: false,
-			width: "200px",
-			tokens: [
-				new Token({ text: "XXXX" }),
-				new Token({ text: "XXXX" }),
-				new Token({ text: "XXXX" }),
-				new Token({ text: "XXXX" })
-			]
-		}), oListItemRef;
-
-		// act
-		oMultiInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		// act
-		oMultiInput._handleIndicatorPress();
-		this.clock.tick(300);
-
-		sap.ui.test.qunit.triggerEvent("tap", oMultiInput._oReadOnlyPopover.getContent()[0].getItems()[0].getDomRef());
-		this.clock.tick(300);
-
-		// assert
-		assert.notOk(oMultiInput._oReadOnlyPopover.isOpen(), "Read-only Popover should be closed");
 
 		// delete
 		oMultiInput.destroy();

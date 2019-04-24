@@ -680,7 +680,7 @@ function(
 
 		this._oSuggPopover._iPopupListSelectedIndex = -1;
 
-		if (!(this._bUseDialog && this instanceof sap.m.MultiInput && this._isMultiLineMode)) {
+		if (!(this._bUseDialog && this instanceof sap.m.MultiInput)) {
 			this._closeSuggestionPopup();
 		}
 
