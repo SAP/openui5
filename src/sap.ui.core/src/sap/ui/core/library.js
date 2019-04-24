@@ -1630,6 +1630,7 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 	 * @param {string} oEvent oncontextmenu event
 	 * @param {sap.ui.core.Element|DOMRef} oOpenerRef The element which will get the focus back again after the menu was closed.
 	 *
+	 * @public
 	 * @function
 	 * @name sap.ui.core.IContextMenu.openAsContextMenu
 	 */
