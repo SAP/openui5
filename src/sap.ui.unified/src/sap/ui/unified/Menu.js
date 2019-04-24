@@ -431,6 +431,7 @@ sap.ui.define([
 	 * @param {jQuery.Event | object} oEvent The event object or an object containing offsetX, offsetY
 	 * values and left, top values of the element's position
 	 * @param {sap.ui.core.Element|HTMLElement} oOpenerRef - Might be UI5 Element or DOM Element
+	 * @public
 	 */
 	Menu.prototype.openAsContextMenu = function(oEvent, oOpenerRef) {
 			var iOffsetX, iOffsetY, bRTL, eDock, oOpenerRefOffset;
