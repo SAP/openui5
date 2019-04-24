@@ -56,11 +56,11 @@ sap.ui.define([
 			// do not track long runners and call the original directly
 			// any deeper nested timeouts are non-blocking and will not be wrapped
 			if (iDelay >= config.maxDelay) {
-				iID = fnOriginal.apply(this, arguments);
+				iID = fnOriginal(fnCallback, iDelay);
 				oLogger.trace("Timeout delay " + iDelay + " reached the limit of " + config.maxDelay +
 					". Long-running timeout is ignored:" + createLogForTimeout(iID, mPendingTimeout));
 			} else {
-				iID = fnOriginal.call(this, fnWrappedCallback, iDelay);
+				iID = fnOriginal(fnWrappedCallback, iDelay);
 				oLogger.trace("Timeout with ID " + iID + " scheduled. Delay: " + iDelay + " Depth: " + iCurrentDepth);
 				mTimeouts[iID] = mPendingTimeout;
 
@@ -80,7 +80,7 @@ sap.ui.define([
 		window[sClearName] = function (iID) {
 			delete mTimeouts[iID];
 			oLogger.trace("Timeout with ID " + iID + " cleared");
-			return fnOriginalClear.apply(this, arguments);
+			return fnOriginalClear(iID);
 		};
 	}
 
