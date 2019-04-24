@@ -119,12 +119,15 @@ sap.ui.define([
 		onAfterRendering: function(oEvent) {
 			var bRenderedRows = oEvent && oEvent.isMarked("renderRows");
 
+			this._getKeyboardExtension().invalidateItemNavigation();
+
 			if (bRenderedRows) {
-				this._getKeyboardExtension().invalidateItemNavigation();
-				this.applyFocusInfo(this._oStoredFocusInfo);
+				// The presence of the "customId" property in the focus info indicates that the table had the focus before rendering.
+				// Reapply the focus info to the table only in this case.
+				if (this._oStoredFocusInfo && this._oStoredFocusInfo.customId) {
+					this.applyFocusInfo(this._oStoredFocusInfo);
+				}
 				delete this._oStoredFocusInfo;
-			} else {
-				this._getKeyboardExtension().invalidateItemNavigation();
 			}
 		},
 		onfocusin: function(oEvent) {
