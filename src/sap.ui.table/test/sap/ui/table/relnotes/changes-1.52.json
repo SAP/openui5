@@ -748,5 +748,22 @@
         "references": []
       }
     ]
+  },
+  "1.52.28": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "41d551614df2e4e78afd22643c29e0f7e58a5230",
+        "type": "FIX",
+        "text": " Table: Mouse wheel scrolling for delta modes \"Line\" and \"Page\"",
+        "references": []
+      },
+      {
+        "id": "32fc074dcb066f2edaad25c1a24698c5dc1bd9c6",
+        "type": "FIX",
+        "text": " Table: Update column menu visibility to match actual state",
+        "references": []
+      }
+    ]
   }
 }

@@ -1857,5 +1857,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.28": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "3dace4119c615e5915740f028e58ff98032840a6",
+        "type": "FIX",
+        "text": " sap/ui/util/Mobile: Update favicon properly in IE",
+        "references": []
+      }
+    ]
   }
 }
