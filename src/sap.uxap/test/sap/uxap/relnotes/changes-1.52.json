@@ -320,5 +320,16 @@
         ]
       }
     ]
+  },
+  "1.52.28": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "b440012e3bb9f5c2e78cbfeb84d85c506471cfe3",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: RTA Header editing is now possible",
+        "references": []
+      }
+    ]
   }
 }

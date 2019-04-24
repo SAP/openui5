@@ -153,5 +153,22 @@
         "references": []
       }
     ]
+  },
+  "1.65.1": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "7834c36ef74dc2fcad45b6e4aa978ee73032d1f6",
+        "type": "FIX",
+        "text": " sap.m.Page: Add shadows for header and subheader in Fiori 3",
+        "references": []
+      },
+      {
+        "id": "a061ffedf4a2b4fc38755a02d2e4141c4d86e592",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Shadow in Bar adjusted for Quartz theme",
+        "references": []
+      }
+    ]
   }
 }
