@@ -85,8 +85,14 @@ sap.ui.define([
 					var oCalPicker = this._getCalendarPicker(),
 						oCalPickerFocusedDate = oCalPicker._getFocusedDate(),
 						oNewStartDate = CalendarUtils._getFirstDateOfMonth(oCalPickerFocusedDate);
+					var oOneMonthDateRow = this.getAggregation("month")[0];
 
 					this._setStartDate(oNewStartDate);
+
+					if (oOneMonthDateRow.getMode() < 2) {
+						oNewStartDate = this._getStartDate();
+					}
+
 					this._adjustSelectedDate(oNewStartDate, false);
 					this._oFocusDateOneMonth = oNewStartDate;
 					this._closeCalendarPicker(true);// true means do not focus, as we set the this._oFocusDateOneMonth and focus will happen in .focusDateExtend
@@ -217,7 +223,9 @@ sap.ui.define([
 		 */
 		CalendarOneMonthInterval.prototype._shiftStartFocusDates = function (oStartDate, oFocusedDate, iDays) {
 			var iShiftAmount = iDays,
-				oOneMonthDateRow = this.getAggregation("month")[0];
+				oOneMonthDateRow = this.getAggregation("month")[0],
+				oLocalStartDate,
+				oSelectedDate;
 
 			if (iShiftAmount !== 0){
 				iShiftAmount = iShiftAmount > 0 ? 1 : -1;
@@ -232,7 +240,23 @@ sap.ui.define([
 
 			this._setFocusedDate(oFocusedDate);
 			this._setStartDate(oStartDate, true);
-			oOneMonthDateRow.selectDate(oStartDate.toLocalJSDate());//TODO old behavior worked with UTC date set on public api
+
+			//it's already different from oStartDate above
+			oLocalStartDate = this.getStartDate();
+			oSelectedDate = CalendarDate.fromLocalJSDate(oLocalStartDate, this.getPrimaryCalendarType());
+
+			if (this.getMinDate() && this.getMinDate().getTime() > oLocalStartDate.getTime()) {
+				oSelectedDate = CalendarDate.fromLocalJSDate(this.getMinDate(), this.getPrimaryCalendarType());
+			}
+
+			if (this.getMaxDate() && this.getMaxDate().getTime() < oLocalStartDate.getTime()) {
+				oSelectedDate = CalendarDate.fromLocalJSDate(this.getMaxDate(), this.getPrimaryCalendarType());
+			}
+
+			oOneMonthDateRow.selectDate(oSelectedDate.toLocalJSDate());//TODO old behavior worked with UTC date set on public api
+			if (oOneMonthDateRow.getMode() < 2) {
+				this.fireSelect();
+			}
 		};
 
 		/**
@@ -276,6 +300,42 @@ sap.ui.define([
 		CalendarOneMonthInterval.prototype._dateMatchesVisibleRange = function (oDateTime) {
 			return CalendarUtils._isSameMonthAndYear(CalendarDate.fromLocalJSDate(this.getStartDate()),
 				CalendarDate.fromLocalJSDate(oDateTime));
+		};
+
+		CalendarOneMonthInterval.prototype._togglePrevNext = function(oDate, bCheckMonth) {
+			var oHeader = this.getAggregation("header");
+			var iYearMax = this._oMaxDate.getYear();
+			var iYearMin = this._oMinDate.getYear();
+			var iMonthMax = this._oMaxDate.getMonth();
+			var iMonthMin = this._oMinDate.getMonth();
+			var oFirstOfMonth = CalendarUtils._getFirstDateOfMonth(oDate);
+			var oFirstOfNextMonth = new CalendarDate(oFirstOfMonth),
+				iYear, iMonth;
+			oFirstOfNextMonth.setMonth(oFirstOfNextMonth.getMonth() + 1);
+
+			iYear = oFirstOfMonth.getYear();
+			iMonth = oFirstOfMonth.getMonth();
+
+			if (iYear < iYearMin
+				|| (iYear == iYearMin && (!bCheckMonth || iMonth <= iMonthMin))) {
+				oHeader.setEnabledPrevious(false);
+			} else {
+				oHeader.setEnabledPrevious(true);
+			}
+
+			iYear = oFirstOfNextMonth.getYear();
+			iMonth = oFirstOfNextMonth.getMonth();
+
+			if (iYear > iYearMax
+				|| (iYear == iYearMax && (!bCheckMonth || iMonth > iMonthMax))) {
+				oHeader.setEnabledNext(false);
+			} else {
+				oHeader.setEnabledNext(true);
+			}
+		};
+
+		CalendarOneMonthInterval.prototype._setMinMaxDateExtend = function(oDate) {
+			return Calendar.prototype._setMinMaxDateExtend.apply(this, arguments);
 		};
 
 		/****************************************** CUSTOM MONTH PICKER CONTROL ****************************************/

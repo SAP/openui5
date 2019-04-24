@@ -458,6 +458,42 @@ sap.ui.define([
 		oCalP.destroy();
 	});
 
+	QUnit.test("Picker's navigation right is disabled when max date has been reached", function(assert) {
+		var oCalInterval = new CalendarOneMonthInterval("CalP", {
+				startDate: new Date(2019, 3, 30),
+				minDate: new Date(2019, 3, 29),
+				maxDate: new Date(2019, 4, 28)
+		}).placeAt("qunit-fixture"),
+			oHeader,
+			bEnabledPrevious,
+			bEnabledNext;
+
+		// act
+		sap.ui.getCore().applyChanges();
+
+		oHeader = oCalInterval.getAggregation("header");
+
+		bEnabledPrevious = oHeader.getEnabledPrevious();
+		bEnabledNext = oHeader.getEnabledNext();
+
+		// assert
+		assert.equal(bEnabledPrevious, false, "left navigation arrow is disabled");
+		assert.equal(bEnabledNext, true, "right navigation arrow is enabled");
+
+		// act
+		oHeader.firePressNext();
+
+		bEnabledPrevious = oHeader.getEnabledPrevious();
+		bEnabledNext = oHeader.getEnabledNext();
+
+		// assert
+		assert.equal(bEnabledPrevious, true, "left navigation arrow is enabled");
+		assert.equal(bEnabledNext, false, "right navigation arrow is disabled");
+
+		// clean
+		oCalInterval.destroy();
+	});
+
 	QUnit.test("Triggering button receives the focus on picker ESC", function(assert) {
 		// arrange
 			var oCalP = new CalendarOneMonthInterval("CalP",{

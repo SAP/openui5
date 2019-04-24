@@ -3911,14 +3911,12 @@ sap.ui.define([
 		assert.strictEqual(oSetDisplayModeSpy.getCall(0).args[0], iPhoneSize, "The correct mode value is set");
 	});
 
-	QUnit.test("'setViewKeys()' setter calls 'setStartDate()' setter with an auto switched to 1st day of the month date", function (assert) {
+	QUnit.test("planning calendar start date is auto switched to 1st day of the month", function (assert) {
 		//arrange
-		var oStartDateSetterSpy = this.spy(PlanningCalendar.prototype, "setStartDate");
-		this._createCalendar();
+		this._createCalendar(this.o14Sep2016MidOfMonth);
+
 		//assert
-		assert.strictEqual(oStartDateSetterSpy.callCount, 3, "'setStartDate()' setter is called correct number of times"); //init + startDate setter + OneMonth adjustment.
-		assert.strictEqual(oStartDateSetterSpy.getCall(1).args[0].getTime(), this.o14Sep2016MidOfMonth.getTime(), "The correct date is auto adjusted for the first day of month");
-		assert.strictEqual(oStartDateSetterSpy.getCall(2).args[0].getTime(), new Date(2016, 8, 1).getTime(), "The correct date is auto adjusted for the first day of month");
+		assert.strictEqual(this._oPC.getStartDate().getTime(), new Date(2016, 8, 1).getTime(), "The correct date is auto adjusted for the first day of month");
 	});
 
 	QUnit.test("'setStartDate()' setter calls '_setRowsStartDate()' with correct date parameter", function (assert) {
