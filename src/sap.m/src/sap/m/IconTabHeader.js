@@ -1655,9 +1655,14 @@ function(
 	 * @private
 	 */
 	IconTabHeader.prototype.onkeydown = function(oEvent) {
-		if (oEvent.which === KeyCodes.ENTER) {
-			this._handleActivation(oEvent);
-			oEvent.preventDefault();
+		switch (oEvent.which) {
+			case KeyCodes.ENTER:
+				this._handleActivation(oEvent);
+				oEvent.preventDefault();
+				break;
+			case KeyCodes.SPACE:
+				oEvent.preventDefault(); // prevent scrolling when focused on the tab
+				break;
 		}
 	};
 
