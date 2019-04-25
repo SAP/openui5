@@ -460,6 +460,10 @@
 			text: "Select which items have icons"
 		});
 
+		var oTextReadOnly = new sap.m.Text({
+			text: "Read-only"
+		});
+
 		var oSelect1 = new sap.m.Select({
 			name: "select-name0",
 			items: [
@@ -503,6 +507,22 @@
 				})
 			],
 			enabled: false
+		});
+
+		var oSelectReadOnly = new sap.m.Select({
+			id: "select_readOnly",
+			items: [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "item 0"
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1"
+				})
+			],
+			editable: false
 		});
 
 		var oSelect3 = new sap.m.Select({
@@ -998,7 +1018,10 @@
 				oSelect2,
 
 				oText5,
-				oSelect9
+				oSelect9,
+
+				oTextReadOnly,
+				oSelectReadOnly
 			]
 		}).addStyleClass("vBoxSelectTestPage");
 
