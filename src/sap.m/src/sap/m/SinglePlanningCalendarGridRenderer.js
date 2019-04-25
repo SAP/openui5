@@ -444,6 +444,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 				sText = oAppointment.getText(),
 				sIcon = oAppointment.getIcon(),
 				sId = oAppointment.getId(),
+				sLineClamp = this._getLineClamp(oAppStartDate, oAppEndDate),
 				mAccProps = {
 					role: "gridcell",
 					labelledby: {
@@ -594,6 +595,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 
 			oRm.write("<div");
 			oRm.addClass("sapUiCalendarAppTitleWrapper");
+			oRm.addClass("sapUiSPCAppLineClamp" + sLineClamp);
 			oRm.writeClasses();
 			oRm.write(">");
 
@@ -701,6 +703,39 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 			oRm.writeClasses();
 			oRm.write(">");
 			oRm.write("</span>");
+		};
+
+		/**
+		 * Calculates number of text lines that can be placed inside an appointment
+		 * depending of its length in minutes.
+		 *
+		 * @param {Date} oAppStartDate start date of the appointment
+		 * @param {Date} oAppEndDate end date of the appointment
+		 * @return {String} Returns maximum allowed rows for the appointment as string
+		 * @private
+		 */
+		SinglePlanningCalendarGridRenderer._getLineClamp = function (oAppStartDate, oAppEndDate) {
+			var iMinutes = CalendarUtils._minutesBetween(oAppStartDate, oAppEndDate);
+
+			if (iMinutes >= 51 && iMinutes < 69) {
+				return "2";
+			} else if (iMinutes >= 69 && iMinutes < 90) {
+				return "3"; // maximum 3 lines of text will fit
+			} else if (iMinutes >= 90 && iMinutes < 110) {
+				return "4"; // maximum 4 lines of text will fit
+			} else if (iMinutes >= 110 && iMinutes < 130) {
+				return "5"; // maximum 5 lines of text will fit
+			} else if (iMinutes >= 130 && iMinutes < 150) {
+				return "6"; // 6 lines of text will fit
+			} else if (iMinutes >= 150 && iMinutes < 170) {
+				return "7"; // 7 lines of text will fit
+			} else if (iMinutes >= 170 && iMinutes < 190) {
+				return "8"; // 8 lines of text will fit
+			} else if (iMinutes >= 190) {
+				return "9"; // 9 lines of text will fit
+			} else {
+				return "1"; // maximum 1 lines of text will fit
+			}
 		};
 
 		return SinglePlanningCalendarGridRenderer;

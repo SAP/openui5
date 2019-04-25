@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"jquery.sap.global",
 	"sap/m/SinglePlanningCalendarGrid",
+	"sap/m/SinglePlanningCalendarGridRenderer",
 	"sap/ui/unified/CalendarAppointment",
 	"sap/ui/events/KeyCodes",
 	'sap/ui/unified/calendar/CalendarDate'
@@ -10,6 +11,7 @@ sap.ui.define([
 	qutils,
 	jQuery,
 	SinglePlanningCalendarGrid,
+	SinglePlanningCalendarGridRenderer,
 	CalendarAppointment,
 	KeyCodes,
 	CalendarDate
@@ -80,6 +82,99 @@ sap.ui.define([
 		// cleanup
 		oGrid.destroy();
 	});
+
+	QUnit.test("_getLineClamp", function (assert) {
+		// Arrange
+		var SPCRenderer = SinglePlanningCalendarGridRenderer,
+			oAppStartDate = new Date("2018", "6", "9", "9", "0"),
+			oAppEndDate = new Date("2018", "6", "9", "9", "20"),
+			sLineClamp;
+
+		// Act
+		sLineClamp = SPCRenderer._getLineClamp(oAppStartDate, oAppEndDate);
+
+		// Assert
+		assert.equal(sLineClamp, "1", "One line of appointment text will be shown");
+
+		//Arrange
+		// Set appointment duration to 1 hour
+		oAppStartDate = new Date("2018", "6", "9", "9", "0");
+		oAppEndDate = new Date("2018", "6", "9", "10", "0");
+
+		// Act
+		sLineClamp = SPCRenderer._getLineClamp(oAppStartDate, oAppEndDate);
+
+		// Assert
+		assert.equal(sLineClamp, "2", "Two lines of appointment text will be shown");
+
+		//Arrange
+		// Set appointment duration to 1 hour and 20 minutes
+		oAppStartDate = new Date("2018", "6", "9", "9", "0");
+		oAppEndDate = new Date("2018", "6", "9", "10", "20");
+
+		// Act
+		sLineClamp = SPCRenderer._getLineClamp(oAppStartDate, oAppEndDate);
+
+		// Assert
+		assert.equal(sLineClamp, "3", "Three lines of appointment text will be shown");
+
+
+		//Arrange
+		// Set appointment duration to 1 hour 40 minutes
+		oAppStartDate = new Date("2018", "6", "9", "9", "0");
+		oAppEndDate = new Date("2018", "6", "9", "10", "40");
+
+		// Act
+		sLineClamp = SPCRenderer._getLineClamp(oAppStartDate, oAppEndDate);
+
+		// Assert
+		assert.equal(sLineClamp, "4", "Four lines of appointment text will be shown");
+
+		//Arrange
+		// Set appointment duration to 2 hours
+		oAppStartDate = new Date("2018", "6", "9", "9", "0");
+		oAppEndDate = new Date("2018", "6", "9", "11", "00");
+
+		// Act
+		sLineClamp = SPCRenderer._getLineClamp(oAppStartDate, oAppEndDate);
+
+		// Assert
+		assert.equal(sLineClamp, "5", "Five lines of appointment text will be shown");
+
+		//Arrange
+		// Set appointment duration to 2.15 hours
+		oAppStartDate = new Date("2018", "6", "9", "9", "0");
+		oAppEndDate = new Date("2018", "6", "9", "11", "15");
+
+		// Act
+		sLineClamp = SPCRenderer._getLineClamp(oAppStartDate, oAppEndDate);
+
+		// Assert
+		assert.equal(sLineClamp, "6", "Six lines of appointment text will be shown");
+
+		//Arrange
+		// Set appointment duration to 2.30 hours
+		oAppStartDate = new Date("2018", "6", "9", "9", "0");
+		oAppEndDate = new Date("2018", "6", "9", "11", "30");
+
+		// Act
+		sLineClamp = SPCRenderer._getLineClamp(oAppStartDate, oAppEndDate);
+
+		// Assert
+		assert.equal(sLineClamp, "7", "Seven lines of appointment text will be shown");
+
+		//Arrange
+		// Set appointment duration to 3 hours
+		oAppStartDate = new Date("2018", "6", "9", "9", "0");
+		oAppEndDate = new Date("2018", "6", "9", "12", "00");
+
+		// Act
+		sLineClamp = SPCRenderer._getLineClamp(oAppStartDate, oAppEndDate);
+
+		// Assert
+		assert.equal(sLineClamp, "8", "Eight lines of appointment text will be shown");
+	});
+
 
 	QUnit.module("Events");
 

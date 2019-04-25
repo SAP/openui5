@@ -59,31 +59,48 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Messag
 						startDate: new Date("2018", "6", "8", "9", "9"),
 						endDate: new Date("2018", "6", "8", "10", "0")
 					}, {
-						title: "Discussion with clients",
-						text: "Online meeting",
+						title: "Discussion with clients regarding our new purpose",
+						text: "room 234 and Online meeting",
 						type: CalendarDayType.Type08,
 						icon: "sap-icon://home",
 						startDate: new Date("2018", "6", "8", "10", "0"),
-						endDate: new Date("2018", "6", "8", "11", "0")
+						endDate: new Date("2018", "6", "8", "11", "30")
 					}, {
 						title: "Discussion of the plan",
-						text: "Online meeting",
+						text: "Online meeting with partners and colleagues",
 						type: CalendarDayType.Type01,
 						icon: "sap-icon://home",
 						tentative: true,
-						startDate: new Date("2018", "6", "8", "11", "0"),
-						endDate: new Date("2018", "6", "8", "12", "0")
+						startDate: new Date("2018", "6", "8", "11", "30"),
+						endDate: new Date("2018", "6", "8", "13", "00")
 					}, {
 						title: "Discussion with clients",
 						type: CalendarDayType.Type08,
 						icon: "sap-icon://home",
-						startDate: new Date("2018", "6", "8", "12", "0"),
-						endDate: new Date("2018", "6", "8", "13", "9")
+						startDate: new Date("2018", "6", "8", "12", "30"),
+						endDate: new Date("2018", "6", "8", "13", "15")
 					}, {
 						title: "Meeting with the manager",
 						type: CalendarDayType.Type03,
 						startDate: new Date("2018", "6", "8", "13", "9"),
 						endDate: new Date("2018", "6", "8", "13", "9")
+					}, {
+						title: "Meeting with the HR",
+						type: CalendarDayType.Type03,
+						startDate: new Date("2018", "6", "8", "14", "0"),
+						endDate: new Date("2018", "6", "8", "14", "15")
+					}, {
+						title: "Call with customer",
+						type: CalendarDayType.Type08,
+						startDate: new Date("2018", "6", "8", "14", "15"),
+						endDate: new Date("2018", "6", "8", "14", "30")
+					}, {
+						title: "Prepare documentation",
+						text: "At my desk",
+						icon: "sap-icon://meeting-room",
+						type: CalendarDayType.Type03,
+						startDate: new Date("2018", "6", "8", "14", "10"),
+						endDate: new Date("2018", "6", "8", "15", "30")
 					}, {
 						title: "Meeting with the manager",
 						type: CalendarDayType.Type03,
@@ -101,7 +118,8 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Messag
 						startDate: new Date("2018", "6", "9", "8", "0"),
 						endDate: new Date("2018", "6", "9", "9", "0")
 					}, {
-						title: "Discussion with clients",
+						title: "Discussion with clients for the new release dates",
+						text: "Online meeting",
 						type: CalendarDayType.Type08,
 						startDate: new Date("2018", "6", "9", "9", "0"),
 						endDate: new Date("2018", "6", "9", "10", "0")

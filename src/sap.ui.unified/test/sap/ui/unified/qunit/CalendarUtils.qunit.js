@@ -626,4 +626,28 @@ sap.ui.define([
 			CalendarUtils._checkJSDateObject(null);
 		}, "Date is null");
 	});
+
+
+	QUnit.module("Misc");
+
+	QUnit.test("_minutesBetween", function (assert) {
+		// Arrange
+		var iMinutes,
+			oAppStartDate,
+			oAppEndDate;
+
+		oAppStartDate = new Date("2018", "6", "9", "9", "0");
+		oAppEndDate = new Date("2018", "6", "9", "11", "00");
+
+		iMinutes = CalendarUtils._minutesBetween(oAppStartDate, oAppEndDate);
+		assert.equal(iMinutes, 120, "minutes between given dates should be 120");
+
+		oAppStartDate = new Date("2018", "6", "9", "9", "0", "10");
+		oAppEndDate = new Date("2018", "6", "9", "11", "00", "23");
+
+		iMinutes = CalendarUtils._minutesBetween(oAppStartDate, oAppEndDate);
+		assert.equal(iMinutes, 120, "minutes between given dates should be 120, the seconds will be rounded");
+
+	});
+
 });
