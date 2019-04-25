@@ -155,4 +155,12 @@ sap.ui.define(['sap/base/util/deepClone', 'sap/ui/core/Control'], function(deepC
 
 		assert.throws(function() { deepClone(oDummy); }, "Error only plain objects are cloned");
 	});
+
+	QUnit.test("deepClone Object.prototype pollution", function(assert) {
+		var src = JSON.parse('{"__proto__": {"x":42}}');
+		var clone = deepClone(src);
+
+		assert.ok(!("x" in clone.__proto__), "__proto__ not cloned"); // eslint-disable-line no-proto
+		assert.ok(!("x" in {}), "Object.prototype not polluted");
+	});
 });
