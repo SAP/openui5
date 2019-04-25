@@ -102,7 +102,7 @@ sap.ui.define([
 	 * @param {boolean} [mParameters.tokenHandling=true] Enable/disable XCSRF-Token handling
 	 * @param {boolean} [mParameters.withCredentials]
 	 *            Experimental - <code>true</code> when user credentials are to be included in a
-	 *            cross-origin reques; please note that this only works if all requests are asynchronous
+	 *            cross-origin request; please note that this only works if all requests are asynchronous
 	 * @param {string}[mParameters.maxDataServiceVersion='2.0']
 	 *            Please use the following string format e.g. '2.0' or '3.0'.
 	 *            OData version supported by the ODataModel: '2.0'
@@ -162,6 +162,13 @@ sap.ui.define([
 	 * @class
 	 * Model implementation based on the OData protocol.
 	 *
+	 *
+	 * @example authentication
+	 * oModel = new ODataModel(sURL, {
+	 *      user : "myuser",
+	 *      password : "mypass"
+	 * });
+	 * // will use the respective authentication token
 	 *
 	 * @author SAP SE
 	 * @version ${version}
