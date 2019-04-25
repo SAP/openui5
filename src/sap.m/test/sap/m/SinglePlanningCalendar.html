@@ -397,6 +397,20 @@
 					});
 
 					oLegend = new PlanningCalendarLegend({
+						items: [
+							new sap.ui.unified.CalendarLegendItem("T1", {
+								type: sap.ui.unified.CalendarDayType.Type02,
+								text: "Working in office 1"
+							}),
+							new sap.ui.unified.CalendarLegendItem("T2", {
+								type: sap.ui.unified.CalendarDayType.Type05,
+								text: "Working in office 2"
+							}),
+							new sap.ui.unified.CalendarLegendItem("T3", {
+								type: sap.ui.unified.CalendarDayType.Type08,
+								text: "Working in office 3"
+							})
+						],
 						appointmentItems: [
 							new CalendarLegendItem({
 								type: sap.ui.unified.CalendarDayType.Type01,
@@ -491,6 +505,24 @@
 								endDate: "{endDate}"
 							})
 						},
+						specialDates: [
+							new sap.ui.unified.DateTypeRange({
+								startDate: new Date(2018, 6, 8),
+								endDate: new Date(2018, 6, 9),
+								type: sap.ui.unified.CalendarDayType.Type02,
+								tooltip: "Special date Type02"
+							}),
+							new sap.ui.unified.DateTypeRange({
+								startDate: new Date(2018, 6, 10),
+								endDate: new Date(2018, 6, 10),
+								type: sap.ui.unified.CalendarDayType.Type05
+							}),
+							new sap.ui.unified.DateTypeRange({
+								startDate: new Date(2018, 6, 12),
+								endDate: new Date(2018, 6, 13),
+								type: sap.ui.unified.CalendarDayType.Type08
+							})
+						],
 						appointmentSelect: function (oEvent) {
 							var oAppointment = oEvent.getParameter("appointment"),
 								sAppointmentTitle = oAppointment.getTitle(),

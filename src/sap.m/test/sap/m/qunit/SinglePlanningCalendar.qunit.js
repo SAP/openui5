@@ -105,6 +105,29 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
+	QUnit.test("special dates aggregation", function (assert) {
+		var oDate = new Date(2018, 11, 24),
+			oSpecialDate = new sap.ui.unified.DateTypeRange({
+				startDate: new Date(2018, 6, 8),
+				endDate: new Date(2018, 6, 9),
+				type: sap.ui.unified.CalendarDayType.Type02
+			}),
+			oSPC = new SinglePlanningCalendar({
+				startDate: oDate,
+				specialDates : [
+					oSpecialDate
+				]
+			});
+
+		//assert
+		assert.strictEqual(oSPC.getSpecialDates().length, 1, "One special date is set");
+		assert.strictEqual(oSPC._getGrid().getSpecialDates().length, 1, "One special date is set to the grid");
+		assert.strictEqual(oSPC._getGrid().getSpecialDates()[0], oSpecialDate, "Special date set to the calendar is the same that is set to the grid");
+
+		//clean up
+		oSPC.destroy();
+	});
+
 	QUnit.test("selectedView", function (assert) {
 		var oSPC = new SinglePlanningCalendar();
 

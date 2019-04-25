@@ -3,7 +3,7 @@
 	border-radius: 0 0.125rem 0.125rem 0.125rem;
 }
 
-.calendarRowTypeColorMixIn(@class, @color, @bcolor){
+.calendarRowTypeColorMixIn(@class, @iitemtypeclass, @color, @bcolor){
 	.sapMSinglePCAppointments, .sapMSinglePCBlockers {
 		.@{class}.sapMSinglePCAppointmentWrap {
 			border-left-color: @color;
@@ -13,6 +13,33 @@
 
 		&.sapUiCalendarRowVisFilled > .@{class}.sapUiCalendarRowApps > .sapUiCalendarApp:not(.sapUiCalendarAppSel) > .sapUiCalendarAppCont{
 			background-color: @bcolor;
+		}
+	}
+	//Special Dates
+	.sapMSinglePCGrid .@{iitemtypeclass} {
+		&.sapUiCalItem {
+			border-radius: initial;
+		}
+		&.sapUiCalItem:hover {
+			border-radius: 0.25rem;
+		}
+		//week views
+		&.sapUiCalItem .sapUiCalItemText {
+			box-shadow: none;
+		}
+		&.sapUiCalItem:not(.sapUiCalItemSel) {
+			box-shadow: inset 0 -0.25rem 0 @color;
+		}
+		//week views selected
+		&.sapUiCalItem.sapUiCalItemSel {
+			box-shadow: inset 0 -0.25rem 0 @color, inset 0 -0.33rem white;
+			.sapUiCalItemText {
+				box-shadow: none;
+			}
+		}
+		//day view
+		.sapMSinglePCBlockersColumn {
+			box-shadow: inset 0 0.25rem 0 @color;
 		}
 	}
 }
@@ -47,23 +74,23 @@
 	}
 }
 
-.calendarRowTypeColorMixIn(sapUiCalendarAppType01, @sapUiAccent1, fade(@sapUiAccent1, 10%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType02, @sapUiAccent2, fade(@sapUiAccent2, 10%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType03, @sapUiAccent3, fade(@sapUiAccent3, 10%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType04, darken(saturate(@sapUiAccent2, 70), 5), fade(@sapUiAccent2, 10%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType05, @sapUiAccent4, fade(@sapUiAccent4, 10%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType06, @sapUiAccent6, fade(@sapUiAccent6, 10%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType07, @sapUiAccent7, fade(@sapUiAccent7, 10%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType08, @sapUiAccent8, fade(@sapUiAccent8, 10%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType09, darken(@sapUiAccent6, 15), fade(@sapUiAccent6, 10%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType10, darken(desaturate(@sapUiAccent4, 40), 2), fade(@sapUiAccent4, 10%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType11, darken(desaturate(@sapUiAccent1,50),4), fade(@sapUiAccent1, 10%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType12, lighten(saturate(@sapUiAccent2,40),4), fade(@sapUiAccent2, 10%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType13, darken(desaturate(@sapUiAccent3,20),5), fade(@sapUiAccent3, 10%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType14, lighten(desaturate(@sapUiAccent2,80),13), fade(@sapUiAccent2, 10%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType15, desaturate(@sapUiAccent4,60), fade(@sapUiAccent4, 10%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType16, darken(desaturate(@sapUiAccent5,20),2), fade(@sapUiAccent5, 10%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType17, lighten(desaturate(@sapUiAccent7,55),10), fade(@sapUiAccent7, 10%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType18, lighten(desaturate(@sapUiAccent8,40),16), fade(@sapUiAccent8, 10%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType19, darken(desaturate(@sapUiAccent6,85),5), fade(@sapUiAccent6, 10%));
-.calendarRowTypeColorMixIn(sapUiCalendarAppType20, darken(saturate(@sapUiAccent5,70),25), fade(@sapUiAccent5, 10%));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType01, sapUiCalItemType01, @sapLegendColor1, lighten(@sapLegendColor1,49));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType02, sapUiCalItemType02, @sapLegendColor2, lighten(@sapLegendColor2, 34));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType03, sapUiCalItemType03, @sapLegendColor3, lighten(@sapLegendColor3,46));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType04, sapUiCalItemType04, @sapLegendColor4, lighten(@sapLegendColor4,53));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType05, sapUiCalItemType05, @sapLegendColor5, lighten(@sapLegendColor5,36));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType06, sapUiCalItemType06, @sapLegendColor6, lighten(@sapLegendColor6,39));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType07, sapUiCalItemType07, @sapLegendColor7, lighten(@sapLegendColor7,60));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType08, sapUiCalItemType08, @sapLegendColor8, lighten(@sapLegendColor8,45));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType09, sapUiCalItemType09, @sapLegendColor9, lighten(@sapLegendColor9,44));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType10, sapUiCalItemType10, @sapLegendColor10, lighten(@sapLegendColor10,60));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType11, sapUiCalItemType11, @sapLegendColor11, lighten(@sapLegendColor11,61));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType12, sapUiCalItemType12, @sapLegendColor12, lighten(@sapLegendColor12,49));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType13, sapUiCalItemType13, @sapLegendColor13, lighten(@sapLegendColor13, 53));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType14, sapUiCalItemType14, @sapLegendColor14, lighten(@sapLegendColor14,52));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType15, sapUiCalItemType15, @sapLegendColor15, lighten(@sapLegendColor15,48));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType16, sapUiCalItemType16, @sapLegendColor16, lighten(@sapLegendColor16,46));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType17, sapUiCalItemType17, @sapLegendColor17, lighten(@sapLegendColor17,56));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType18, sapUiCalItemType18, @sapLegendColor18, lighten(@sapLegendColor18,61));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType19, sapUiCalItemType19, @sapLegendColor19, lighten(@sapLegendColor19,60));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType20, sapUiCalItemType20, @sapLegendColor20, lighten(@sapLegendColor20,42));

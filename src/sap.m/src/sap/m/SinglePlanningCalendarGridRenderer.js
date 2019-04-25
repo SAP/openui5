@@ -50,7 +50,12 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 				oStartDate = oControl.getStartDate(),
 				// hackie thing to calculate the container witdth. When we have more than 1 line of blockers - we must add 3 px in order to render the blockers visually in the container.
 				iContainerHeight = (iMaxLevel + 1) * oControl._getBlockerRowHeight() + 3,
-				oFormat = oControl._getDateFormatter();
+				oFormat = oControl._getDateFormatter(),
+				aSpecialDates = oControl.getSpecialDates(),
+				oCalendarDate = CalendarDate.fromLocalJSDate(oStartDate),
+				aDayTypes = oControl._getColumnHeaders()._getDateTypes(oCalendarDate),
+				oType,
+				sLegendItemType;
 
 
 			oRm.write("<div");
@@ -60,6 +65,17 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 
 			oRm.write("<div");
 			oRm.addClass("sapMSinglePCBlockersColumns");
+
+			//day view
+			if (aSpecialDates && oControl._getColumns() === 1) {
+				if (aDayTypes && aDayTypes[0]) {
+					oType = aDayTypes[0];
+					oRm.addClass("sapUiCalItem" + oType.type);
+					sLegendItemType = oControl._findCorrespondingLegendItem(oControl, oType);
+				}
+
+				oRm.addClass("sapMSpecialDaysInDayView");
+			}
 
 			oRm.addStyle("height", iContainerHeight + "px");
 			oRm.writeClasses();
@@ -97,6 +113,10 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 				oRm.writeClasses();
 				oRm.write(">");
 				oRm.write(oControl._getCellStartEndInfo(oColumnCalDate.toLocalJSDate()));
+				//acc for day view + special dates + legend
+				if (oControl._sLegendId && sLegendItemType) {
+					oRm.writeEscaped(sLegendItemType);
+				}
 				oRm.write("</span>");
 
 				oRm.write("</div>"); // END .sapMSinglePCColumn

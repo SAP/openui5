@@ -23,6 +23,7 @@
 			startDateChange="handleStartDateChange"
 			startDate="{path: '/startDate'}"
 			appointments="{path: '/appointments'}"
+			specialDates="{path: '/specialDates'}"
 			legend="SinglePlanningCalendarLegend">
 			<actions>
 				<ToggleButton pressed="{path: 'stateModel>/legendShown'}" icon="sap-icon://legend"/>
@@ -32,6 +33,12 @@
 				<SinglePlanningCalendarWorkWeekView key="WorkWeekView" title="Work Week" />
 				<SinglePlanningCalendarDayView key="DayView" title="Day" />
 			</views>
+			<specialDates>
+				<unified:DateTypeRange
+						startDate="{start}"
+						endDate="{end}"
+						type="{type}"/>
+			</specialDates>
 			<appointments>
 				<unified:CalendarAppointment
 					title= "{title}"
@@ -46,8 +53,11 @@
 	</VBox>
 	</l:mainContent>
 		<l:sideContent width="200px">
-			<PlanningCalendarLegend id="SinglePlanningCalendarLegend" appointmentItems="{path : '/legendAppointmentItems',
+			<PlanningCalendarLegend id="SinglePlanningCalendarLegend" items="{path : '/legendItems', templateShareable: 'true'}" appointmentItems="{path : '/legendAppointmentItems',
 									templateShareable: 'true'}" class="sapUiSmallMarginTop">
+				<items>
+					<unified:CalendarLegendItem text="{text}" type="{type}" tooltip="{text}" />
+				</items>
 				<appointmentItems>
 					<unified:CalendarLegendItem text="{text}" type="{type}" tooltip="{text}" />
 				</appointmentItems>
