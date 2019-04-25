@@ -435,6 +435,10 @@ sap.ui.define([
 		this._enforceMaxColumns();
 	};
 
+	/**
+	 * Increase rows span for item if it needs more space, based on it's height.
+	 * @param {sap.ui.core.Control} oItem The item for which to calculate
+	 */
 	GridContainer.prototype._applyItemAutoRows = function (oItem) {
 		if (!this._isRenderingFinished) {
 			return;
@@ -446,14 +450,16 @@ sap.ui.define([
 
 		if (hasItemAutoHeight(oItem)) {
 			var $item = oItem.$(),
-				height = $item.height(),
-				$container = this.$(),
-				rowHeight = parseInt($container.css("grid-auto-rows")),
-				gapSize = parseInt($container.css("grid-row-gap")),
-				rows = Math.ceil((height + gapSize) / (rowHeight + gapSize));
+				oSettings = this.getActiveLayoutSettings(),
+				iRows = oSettings.calculateRowsForItem($item.height());
+
+			if (!iRows) {
+				// if the rows can not be calculated correctly, don't do anything
+				return;
+			}
 
 			$item.parent().css({
-				'grid-row': 'span ' + Math.max(rows, getItemRowCount(oItem))
+				'grid-row': 'span ' + Math.max(iRows, getItemRowCount(oItem))
 			});
 		}
 	};
@@ -463,15 +469,17 @@ sap.ui.define([
 	 * Prevent this by reducing this item's column span.
 	 */
 	GridContainer.prototype._enforceMaxColumns = function () {
-		var $grid = this.$(),
-			oSettings = this.getActiveLayoutSettings(),
-			iColumnSize = parseInt($grid.css("grid-template-columns").split()[0]), // get computed size of first column
-			iGapSize = parseInt($grid.css("column-gap")),
-			iMaxColumns = oSettings.getColumns() || Math.floor(($grid.innerWidth() + iGapSize) / (iColumnSize + iGapSize));
+		var oSettings = this.getActiveLayoutSettings(),
+			iMaxColumns = oSettings.getComputedColumnsCount(this.$().innerWidth());
+
+		if (!iMaxColumns) {
+			// if the max columns can not be calculated correctly, don't do anything
+			return;
+		}
 
 		this.getItems().forEach(function(oItem) {
 			// if item has more columns than total columns, it brakes the whole layout
-			oItem.$().parent().css("grid-column-start", "span " + Math.min(getItemColumnCount(oItem), iMaxColumns));
+			oItem.$().parent().css("grid-column", "span " + Math.min(getItemColumnCount(oItem), iMaxColumns));
 		});
 	};
 
@@ -479,28 +487,11 @@ sap.ui.define([
 	 * ===================== IE11 Polyfill =====================
 	 */
 
-	function cssSizeToPx(sCssSize) {
-		if (sCssSize === 0 || sCssSize === "0") {
-			return 0;
-		}
-
-		var aMatch = sCssSize.match(/^(\d+(\.\d+)?)(px|rem)$/);
-		if (aMatch) {
-			if (aMatch[3] === "px") {
-				return parseFloat(aMatch[1]);
-			} else {
-				return Rem.toPx(parseFloat(aMatch[1]));
-			}
-		} else {
-			Log.error("Css size '" + sCssSize + "' is not supported for GridContainer. Only 'px' and 'rem' are supported.");
-		}
-	}
-
 	GridContainer.prototype._applyIEPolyfillForItem = function (oItem) {
 		var oSettings = this.getActiveLayoutSettings(),
-			itemWidth = cssSizeToPx(oSettings.getColumnSize()),
-			itemHeight = cssSizeToPx(oSettings.getRowSize()),
-			gapSize = cssSizeToPx(oSettings.getGap()),
+			itemWidth = oSettings.getColumnSizeInPx(),
+			itemHeight = oSettings.getRowSizeInPx(),
+			gapSize = oSettings.getGapInPx(),
 			itemColumnCount = getItemColumnCount(oItem),
 			width = itemColumnCount * itemWidth + (itemColumnCount - 1) * gapSize,
 			css = {
@@ -524,12 +515,11 @@ sap.ui.define([
 		}
 
 		var $that = this.$(),
-			width = $that.innerWidth(),
 			oSettings = this.getActiveLayoutSettings(),
-			itemWidth = cssSizeToPx(oSettings.getColumnSize()),
-			itemHeight = cssSizeToPx(oSettings.getRowSize()),
-			gapSize = cssSizeToPx(oSettings.getGap()),
-			columnsCount = oSettings.getColumns() || Math.floor((width + gapSize) / (itemWidth + gapSize)),
+			itemWidth = oSettings.getColumnSizeInPx(),
+			itemHeight = oSettings.getRowSizeInPx(),
+			gapSize = oSettings.getGapInPx(),
+			columnsCount = oSettings.getComputedColumnsCount($that.innerWidth()),
 			topOffset = parseInt($that.css("padding-top").replace("px", "")),
 			leftOffset = parseInt($that.css("padding-left").replace("px", "")),
 			items = this.getItems(),
@@ -577,7 +567,7 @@ sap.ui.define([
 					height = calcChildrenHeight($child);
 				}
 
-				rows = Math.ceil((height + gapSize) / (itemHeight + gapSize));
+				rows = oSettings.calculateRowsForItem(height);
 			} else {
 				rows = getItemRowCount(item);
 			}
