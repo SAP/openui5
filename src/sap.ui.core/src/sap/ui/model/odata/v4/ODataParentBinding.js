@@ -838,7 +838,8 @@ sap.ui.define([
 	 *   "14.5.13 Expression edm:PropertyPath" strings describing which properties need to be loaded
 	 *   because they may have changed due to side effects of a previous update
 	 * @param {sap.ui.model.odata.v4.Context} [oContext]
-	 *   The context for which to request side effects; if missing, the whole binding is affected
+	 *   The context for which to request side effects; if this parameter is missing or if it is the
+	 *   header context of a list binding, the whole binding is affected
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving without a defined result, or rejected with an error if loading of side
 	 *   effects fails
