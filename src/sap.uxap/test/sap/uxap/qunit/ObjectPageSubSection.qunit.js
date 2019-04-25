@@ -1282,6 +1282,48 @@ function($, Core, Lib, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSe
 		}, this);
 	});
 
+	QUnit.test("sapUxAPObjectPageSubSectionFitContainer expands the subSection with padding to fit the container", function (assert) {
+		var oPage = this.oObjectPage,
+			oSection = this.oObjectPage.getSections()[0],
+			oSubSection = oSection.getSubSections()[0],
+			sOrigTheme = Core.getConfiguration().getTheme(),
+			sTargetTheme = "sap_fiori_3",
+			done = assert.async();
+
+		//act
+		oSubSection.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS);
+
+
+		oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			//check
+			var iViewportHeight = oPage._getScrollableViewportHeight(false),
+				iOffsetTop = oSubSection.$().position().top,
+				iExpectedSubSectionHeight = Math.round(iViewportHeight - iOffsetTop);
+
+			function checkHeight() {
+				assert.ok(oSubSection.$().height(), iExpectedSubSectionHeight, "correct height");
+			}
+
+			function onTargetThemeApplied() {
+				checkHeight();
+				// cleanup
+				Core.detachEvent("ThemeChanged", onTargetThemeApplied);
+				Core.applyTheme(sOrigTheme); // restore original theme
+				done();
+			}
+
+			if (sOrigTheme === sTargetTheme) {
+				checkHeight();
+				done();
+			} else {
+				// ensure target theme is applied
+				Core.attachEvent("ThemeChanged", onTargetThemeApplied);
+				Core.applyTheme(sTargetTheme);
+			}
+
+		}, this);
+	});
+
 	QUnit.test("single subSection with sapUxAPObjectPageSubSectionFitContainer no scrolling", function (assert) {
 		var oPage = this.oObjectPage,
 			oSection = this.oObjectPage.getSections()[0],
