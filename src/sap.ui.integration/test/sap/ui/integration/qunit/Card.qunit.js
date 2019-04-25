@@ -729,6 +729,114 @@ sap.ui.define([
 			}
 		};
 
+		var oManifest_TableCard_MaxItems = {
+			"sap.card": {
+				"type": "Table",
+				"data": {
+					"json": [
+						{
+							"salesOrder": "5000010050",
+							"customer": "Robert Brown Entertainment",
+							"status": "Delivered",
+							"statusState": "Success",
+							"orderUrl": "http://www.sap.com",
+							"percent": 30,
+							"percentValue": "30%",
+							"progressState": "Error",
+							"iconSrc": "sap-icon://help"
+						},
+						{
+							"salesOrder": "5000010051",
+							"customer": "Entertainment Argentinia",
+							"status": "Canceled",
+							"statusState": "Error",
+							"orderUrl": "http://www.sap.com",
+							"percent": 70,
+							"percentValue": "70 of 100",
+							"progressState": "Success",
+							"iconSrc": "sap-icon://help"
+						},
+						{
+							"salesOrder": "5000010052",
+							"customer": "Brazil Technologies",
+							"status": "In Progress",
+							"statusState": "Warning",
+							"orderUrl": "http://www.sap.com",
+							"percent": 55,
+							"percentValue": "55GB of 100",
+							"progressState": "Warning",
+							"iconSrc": "sap-icon://help"
+						},
+						{
+							"salesOrder": "5000010053",
+							"customer": "Quimica Madrilenos",
+							"status": "Delivered",
+							"statusState": "Success",
+							"orderUrl": "http://www.sap.com",
+							"percent": 10,
+							"percentValue": "10GB",
+							"progressState": "Error",
+							"iconSrc": "sap-icon://help"
+						},
+						{
+							"salesOrder": "5000010054",
+							"customer": "Development Para O Governo",
+							"status": "Delivered",
+							"statusState": "Success",
+							"orderUrl": "http://www.sap.com",
+							"percent": 100,
+							"percentValue": "100%",
+							"progressState": "Success",
+							"iconSrc": "sap-icon://help"
+						}
+					]
+				},
+				"header": {
+					"title": "Sales Orders for Key Accounts"
+				},
+				"content": {
+					"maxItems": 3,
+					"row": {
+						"columns": [
+							{
+								"label": "Sales Order",
+								"value": "{salesOrder}",
+								"identifier": true
+							},
+							{
+								"label": "Customer",
+								"value": "{customer}"
+							},
+							{
+								"label": "Status",
+								"value": "{status}",
+								"state": "{statusState}"
+							},
+							{
+								"label": "Order ID",
+								"value": "{orderUrl}",
+								"url": "{orderUrl}"
+							},
+							{
+								"label": "Progress",
+								"progressIndicator": {
+									"percent": "{percent}",
+									"text": "{percentValue}",
+									"state": "{progressState}"
+								}
+							},
+							{
+								"label": "Avatar",
+								"icon": {
+									"src": "{iconSrc}"
+								}
+							}
+						]
+					}
+				}
+			}
+		};
+
 		var oManifest_AvatarHeader = {
 			"sap.card": {
 				"type": "List",
@@ -833,6 +941,128 @@ sap.ui.define([
 			}
 		};
 
+		var oManifest_ListCard_MaxItems = {
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "L3 Request list content Card",
+					"subTitle": "Card subtitle",
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"status": {
+						"text": "100 of 200"
+					}
+				},
+				"content": {
+					"data": {
+						"json": [
+							{
+								"Name": "Notebook Basic 15",
+								"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1000",
+								"SubCategoryId": "Notebooks",
+								"icon": "../images/Woman_avatar_01.png",
+								"state": "Information",
+								"info": "27.45 EUR",
+								"infoState": "Success"
+							},
+							{
+								"Name": "Notebook Basic 17",
+								"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1001",
+								"SubCategoryId": "Notebooks",
+								"icon": "../images/Woman_avatar_01.png",
+								"state": "Success",
+								"info": "27.45 EUR",
+								"infoState": "Success"
+
+							},
+							{
+								"Name": "Notebook Basic 18",
+								"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1002",
+								"SubCategoryId": "Notebooks",
+								"icon": "../images/Woman_avatar_01.png",
+								"state": "Warning",
+								"info": "9.45 EUR",
+								"infoState": "Error"
+							},
+							{
+								"Name": "Notebook Basic 19",
+								"Description": "Notebook Basic 19 with 2,80 GHz quad core, 19\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1003",
+								"SubCategoryId": "Notebooks",
+								"icon": "../images/Woman_avatar_01.png",
+								"state": "Error",
+								"info": "9.45 EUR",
+								"infoState": "Error"
+							},
+							{
+								"Name": "ITelO Vault",
+								"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
+								"Id": "HT-1007",
+								"SubCategoryId": "PDAs & Organizers",
+								"icon": "../images/Woman_avatar_01.png",
+								"state": "Success",
+								"info": "29.45 EUR",
+								"infoState": "Success"
+							},
+							{
+								"Name": "Notebook Professional 15",
+								"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+								"Id": "HT-1010",
+								"SubCategoryId": "Notebooks",
+								"icon": "../images/Woman_avatar_01.png",
+								"state": "Success",
+								"info": "29.45 EUR",
+								"infoState": "Success"
+							},
+							{
+								"Name": "Notebook Professional 26",
+								"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+								"Id": "HT-1022",
+								"SubCategoryId": "Notebooks",
+								"icon": "../images/Woman_avatar_01.png",
+								"state": "Success",
+								"info": "29.45 EUR",
+								"infoState": "Success"
+							},
+							{
+								"Name": "Notebook Professional 27",
+								"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+								"Id": "HT-1024",
+								"SubCategoryId": "Notebooks",
+								"icon": "../images/Woman_avatar_01.png",
+								"state": "Success",
+								"info": "29.45 EUR",
+								"infoState": "Success"
+							}
+						]
+					},
+					"maxItems": 3,
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Name}"
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}"
+						},
+						"highlight": "{state}",
+						"info": {
+							"value": "{info}",
+							"state": "{infoState}"
+						}
+					}
+				}
+			}
+		};
+
 		function testContentInitialization(oManifest, assert) {
 
 			// Arrange
@@ -923,7 +1153,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Card - Default Header initialization", function (assert) {
+		QUnit.test("Default Header initialization", function (assert) {
 
 			// Arrange
 			var done = assert.async();
@@ -957,7 +1187,7 @@ sap.ui.define([
 			assert.notOk(this.oCard.getAggregation("_content"), "Card content should be empty.");
 		});
 
-		QUnit.test("Card - Default Header Avatar", function (assert) {
+		QUnit.test("Default Header Avatar", function (assert) {
 
 			// Arrange
 			var done = assert.async();
@@ -980,7 +1210,7 @@ sap.ui.define([
 			Core.applyChanges();
 		});
 
-		QUnit.test("Card - Numeric Header generic", function (assert) {
+		QUnit.test("Numeric Header generic", function (assert) {
 
 			// Arrange
 			var done = assert.async();
@@ -1007,7 +1237,7 @@ sap.ui.define([
 			Core.applyChanges();
 		});
 
-		QUnit.test("Card - Numeric Header main indicator with json data", function (assert) {
+		QUnit.test("Numeric Header main indicator with json data", function (assert) {
 
 			// Arrange
 			var done = assert.async();
@@ -1032,7 +1262,7 @@ sap.ui.define([
 			Core.applyChanges();
 		});
 
-		QUnit.test("Card - Numeric Header main indicator without 'data'", function (assert) {
+		QUnit.test("Numeric Header main indicator without 'data'", function (assert) {
 
 			// Arrange
 			var done = assert.async();
@@ -1057,7 +1287,7 @@ sap.ui.define([
 			Core.applyChanges();
 		});
 
-		QUnit.test("Card - Numeric Header side indicators", function (assert) {
+		QUnit.test("Numeric Header side indicators", function (assert) {
 
 			// Arrange
 			var done = assert.async();
@@ -1103,7 +1333,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Analytical Card - using manifest", function (assert) {
+		QUnit.test("Using manifest", function (assert) {
 
 			// Arrange
 			var done = assert.async(),
@@ -1164,7 +1394,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Object Card - using manifest", function (assert) {
+		QUnit.test("Using manifest", function (assert) {
 
 			// Arrange
 			var done = assert.async();
@@ -1225,7 +1455,7 @@ sap.ui.define([
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
-		QUnit.test("Object Card - Spacing between groups are correctly calculated", function (assert) {
+		QUnit.test("Spacing between groups are correctly calculated", function (assert) {
 			// Arrange
 			var done = assert.async();
 
@@ -1263,6 +1493,42 @@ sap.ui.define([
 			this.oCard.setManifest(oManifest_ObjectCard);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
+
+		QUnit.module("List Card", {
+			beforeEach: function () {
+				this.oCard = new Card({
+					width: "800px"
+				});
+
+				this.oCard.placeAt(DOM_RENDER_LOCATION);
+				Core.applyChanges();
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("Using maxItems manifest property", function (assert) {
+
+			// Arrange
+			var done = assert.async();
+			var iMaxItems = oManifest_ListCard_MaxItems["sap.card"]["content"]["maxItems"];
+
+			this.oCard.attachEvent("_ready", function () {
+
+				Core.applyChanges();
+
+				var iNumberOfItems = this.oCard.getCardContent().getAggregation("_content").getItems().length;
+				assert.ok(iNumberOfItems <= iMaxItems, "Should have less items than the maximum.");
+
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest_ListCard_MaxItems);
+		});
+
 		QUnit.module("Table Card", {
 			beforeEach: function () {
 				this.oCard = new Card({
@@ -1278,7 +1544,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Table Card - using manifest", function (assert) {
+		QUnit.test("Using manifest", function (assert) {
 
 			// Arrange
 			var done = assert.async();
@@ -1333,10 +1599,9 @@ sap.ui.define([
 
 			// Act
 			this.oCard.setManifest(oManifest_TableCard);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
-		QUnit.test("Table Card - using manifest with card level data section", function (assert) {
+		QUnit.test("Using manifest with card level data section", function (assert) {
 
 			// Arrange
 			var done = assert.async();
@@ -1360,7 +1625,26 @@ sap.ui.define([
 
 			// Act
 			this.oCard.setManifest(oManifest_TableCard_WithCardLevelData);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
+		QUnit.test("Using maxItems manifest property", function (assert) {
+
+			// Arrange
+			var done = assert.async();
+			var iMaxItems = oManifest_TableCard_MaxItems["sap.card"]["content"]["maxItems"];
+
+			this.oCard.attachEvent("_ready", function () {
+
+				Core.applyChanges();
+
+				var iNumberOfItems = this.oCard.getCardContent().getAggregation("_content").getItems().length;
+				assert.ok(iNumberOfItems <= iMaxItems, "Should have less items than the maximum.");
+
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest_TableCard_MaxItems);
 		});
 
 		QUnit.module("Card Accessibility", {
@@ -1388,7 +1672,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Card", function (assert) {
+		QUnit.test("Generic", function (assert) {
 
 			// Arrange
 			var done = assert.async();
@@ -1426,7 +1710,7 @@ sap.ui.define([
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
-		QUnit.test("Card - Numeric Header", function (assert) {
+		QUnit.test("Numeric Header", function (assert) {
 
 			// Arrange
 			var done = assert.async();

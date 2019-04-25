@@ -129,17 +129,31 @@ sap.ui.define([
 			return this;
 		}
 
-		this._setData(oConfiguration.data);
-
-		if (oConfiguration.maxItems) {
-			this.getModel().setSizeLimit(oConfiguration.maxItems);
+		var oList = this.getInnerList();
+		if (oList && oConfiguration.maxItems) {
+			oList.setGrowing(true);
+			oList.setGrowingThreshold(oConfiguration.maxItems);
+			oList.addStyleClass("sapFCardMaxItems");
 		}
+
+		this._setData(oConfiguration.data);
 
 		return this;
 	};
 
 	BaseContent.prototype.getConfiguration = function () {
 		return this._oConfiguration;
+	};
+
+	/**
+	 * The function should be overwritten for content types which support the maxItems property.
+	 *
+	 * @protected
+	 * @virtual
+	 * @returns {sap.ui.core.Control|null} An instance of ListBase or null.
+	 */
+	BaseContent.prototype.getInnerList = function () {
+		return null;
 	};
 
 	/**

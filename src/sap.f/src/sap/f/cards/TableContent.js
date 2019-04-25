@@ -289,6 +289,14 @@ sap.ui.define([
 			}
 		};
 
+		/**
+		 * @overwrite
+		 * @returns {sap.m.Table} The inner table.
+		 */
+		TableContent.prototype.getInnerList = function () {
+			return this._getTable();
+		};
+
 		ActionEnablement.enrich(TableContent);
 
 		return TableContent;

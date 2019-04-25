@@ -178,5 +178,13 @@ sap.ui.define(["sap/f/cards/BaseContent",
 			});
 		};
 
+		/**
+		 * @overwrite
+		 * @returns {sap.suite.ui.commons.Timeline} The inner timeline.
+		 */
+		TimelineContent.prototype.getInnerList = function () {
+			return this._getTimeline();
+		};
+
 		return TimelineContent;
 	});

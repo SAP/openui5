@@ -197,6 +197,14 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/m/List", "sap/m/StandardListItem"
 			}
 		};
 
+		/**
+		 * @overwrite
+		 * @returns {sap.m.List} The inner list.
+		 */
+		ListContent.prototype.getInnerList = function () {
+			return this._getList();
+		};
+
 		ActionEnablement.enrich(ListContent);
 
 		return ListContent;
