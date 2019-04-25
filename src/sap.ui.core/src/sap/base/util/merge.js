@@ -53,7 +53,9 @@ sap.ui.define(["./isPlainObject"], function(isPlainObject) {
 				copy = options[name];
 
 				// Prevent never-ending loop
-				if (target === copy) {
+				// Prevent Object.prototype pollution for $.extend( true, ... )
+				// For further information, please visit https://github.com/jquery/jquery/pull/4333
+				if (name === "__proto__" || target === copy) {
 					continue;
 				}
 
