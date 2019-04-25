@@ -738,8 +738,6 @@ sap.ui.define([
 		GridData = GridData || sap.ui.requireSync("sap/ui/layout/GridData");
 		HorizontalLayout = HorizontalLayout || sap.ui.requireSync("sap/ui/layout/HorizontalLayout");
 
-		this.addStyleClass("sapMConditionPanel");
-
 		// init some resources
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._sFromLabelText = this._oRb.getText("CONDITIONPANEL_LABELFROM");

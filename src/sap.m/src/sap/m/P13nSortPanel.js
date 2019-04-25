@@ -220,7 +220,6 @@ sap.ui.define([
 		sap.ui.getCore().loadLibrary("sap.ui.layout");
 
 		this._aKeyFields = [];
-		this.addStyleClass("sapMSortPanel");
 
 		if (!this._aOperations) {
 			this.setOperations([

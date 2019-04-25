@@ -402,7 +402,6 @@ sap.ui.define([
 		sap.ui.getCore().loadLibrary("sap.ui.layout");
 
 		this._aKeyFields = [];
-		this.addStyleClass("sapMFilterPanel");
 
 		// init some resources
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
