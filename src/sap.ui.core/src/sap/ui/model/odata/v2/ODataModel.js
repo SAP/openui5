@@ -4841,6 +4841,17 @@ sap.ui.define([
 	 * If <code>refreshMetadata</code> function is called after this promise is already resolved you should rely on the promise returned by
 	 * <code>refreshMetadata</code> to get information about the refreshed metadata loaded state.
 	 *
+	 * The Metadata needs to be loaded prior to performing OData calls.
+	 * Chaining to the returned promise ensures that all required parameters have been loaded, e.g. authentication token.
+	 *
+	 * @example
+	 * var oModel  = this.oModel; // v2.ODataModel
+	 * oModel.metadataLoaded().then(function() {
+	 *      // model is ready now
+	 *      oModel.createKey("PERSON", {"ID" : 4711, "TASK_GUID": "myguid"});
+	 * });
+	 *
+	 *
 	 * @public
 	 * @returns {Promise} A promise on metadata loaded state
 	 *
