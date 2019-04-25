@@ -958,6 +958,66 @@ sap.ui.define([
 				vResult = mScope; // current object
 
 			/*
+			 * Handles annotation at action/function parameter, taking care of individual versus all
+			 * overloads.
+			 *
+			 * @param {string} sSegment
+			 *   The current <code>sSegment</code> of <code>step</code>
+			 * @param {string} sWholeSegment
+			 *   The current <code>aSegments[i]</code> of <code>step</code>
+			 * @returns {boolean}
+			 *   <code>undefined</code> if no annotation at action/function parameter was
+			 *   recognized, <code>true</code> if further steps are needed, else <code>false</code>.
+			 */
+			function annotationAtParameter(sSegment, sWholeSegment) {
+				var mAnnotationsXAllOverloads,
+					sIndividualOverloadTarget,
+					aOverloads,
+					sSignature = "",
+					sTerm = sWholeSegment.slice(sSegment.length);
+
+				if (sTerm && maybeParameter(sSegment, vResult)) {
+					// not looking for parameter itself, but for an annotation
+					sName = sSegment;
+					if (vBindingParameterType) {
+						aOverloads = vResult.filter(isRightOverload);
+						if (aOverloads.length !== 1) {
+							return log(WARNING, "Expected a single overload, but found "
+								+ aOverloads.length);
+						}
+						if (vBindingParameterType !== UNBOUND) {
+							sSignature = aOverloads[0].$Parameter[0].$isCollection
+								? "Collection(" + vBindingParameterType + ")"
+								: vBindingParameterType;
+						}
+						sIndividualOverloadTarget = sTarget + "(" + sSignature + ")/" + sSegment;
+						if (mScope.$Annotations[sIndividualOverloadTarget]) {
+							if (sTerm === "@") {
+								vResult = mScope.$Annotations[sIndividualOverloadTarget];
+								mAnnotationsXAllOverloads
+									= mScope.$Annotations[sTarget + "/" + sSegment];
+								if (mAnnotationsXAllOverloads) {
+									vResult = Object.assign({}, mAnnotationsXAllOverloads, vResult);
+								}
+								// sTarget does not matter because no further steps follow
+								return false; // no further steps must happen
+							}
+							if (mScope.$Annotations[sIndividualOverloadTarget][sTerm]) {
+								// "external targeting of individual action/function overload"
+								sTarget = sIndividualOverloadTarget;
+								return true;
+							}
+						}
+					}
+
+					// "the annotation applies to [...] all parameters of that name across all
+					// overloads"
+					sTarget += "/" + sSegment;
+					return true;
+				}
+			}
+
+			/*
 			 * Calls a computed annotation according to the given segment which was found at the
 			 * given path; changes <code>vResult</code> accordingly.
 			 *
@@ -1022,7 +1082,7 @@ sap.ui.define([
 					});
 					if (aMatches.length) { // there can be at most one match
 						// Note: annotations at parameter are handled before this method is called
-						// sName = sSegment; sTarget = sTarget + "/" + sSegment;
+						// @see annotationAtParameter
 						vResult = aMatches[0];
 
 						return true;
@@ -1149,8 +1209,7 @@ sap.ui.define([
 			 *   Whether to continue after this step
 			 */
 			function step(sSegment, i, aSegments) {
-				var iIndexOfAt,
-					bSplitSegment;
+				var bContinue, iIndexOfAt, bSplitSegment;
 
 				if (sSegment === "$Annotations") {
 					return log(WARNING, "Invalid segment: $Annotations");
@@ -1227,21 +1286,19 @@ sap.ui.define([
 								}
 							}
 							if (Array.isArray(vResult)) { // overloads of Action or Function
-								if (sSegment !== aSegments[i]
-									&& maybeParameter(sSegment, vResult)) {
-									// not looking for parameter itself, but for an annotation:
-									// "the annotation applies to [...] all parameters of that
-									// name across all overloads"
-									sName = sSegment;
-									sTarget = sTarget + "/" + sSegment;
-									return true;
+								bContinue = annotationAtParameter(sSegment, aSegments[i]);
+								if (bContinue !== undefined) {
+									return bContinue;
 								}
-								vResult = vResult.filter(isRightOverload);
+								if (vBindingParameterType) {
+									vResult = vResult.filter(isRightOverload);
+								}
 								if (sSegment === "@$ui5.overload") {
 									return true;
 								}
 								if (vResult.length !== 1) {
-									return log(WARNING, "Unsupported overloads");
+									return log(WARNING, "Expected a single overload, but found "
+										+ vResult.length);
 								}
 								if (isParameter(sSegment, vResult[0])) {
 									return true;
@@ -1299,7 +1356,7 @@ sap.ui.define([
 						// annotation(s) via external targeting
 						// Note: inline annotations can only be reached via pure "JSON" drill-down,
 						//       e.g. ".../$ReturnType/@..."
-						vResult = (mScope.$Annotations || {})[sTarget] || {};
+						vResult = mScope.$Annotations[sTarget] || {};
 						bInsideAnnotation = true;
 						bODataMode = false; // switch to pure "JSON" drill-down
 					} else if (sSegment === "$" && i + 1 < aSegments.length) {
@@ -2464,11 +2521,11 @@ sap.ui.define([
 	 *    This way, "/EMPLOYEES" addresses the same object as "/$EntityContainer/EMPLOYEES", namely
 	 *    the "EMPLOYEES" child of the entity container.
 	 * <li> Afterwards, if the current object is an array, it represents overloads for an action or
-	 *    function. Annotations of a parameter can be immediately addressed because they apply
-	 *    across all overloads, for example "/TEAMS/acme.NewAction/Team_ID@". Action overloads are
-	 *    then filtered by binding parameter; multiple overloads after filtering are invalid except
-	 *    if addressing all overloads via the segment "@$ui5.overload", for example
-	 *    "/acme.NewAction/@$ui5.overload".
+	 *    function. Annotations of a parameter can be immediately addressed, no matter if they apply
+	 *    across all overloads or to a specific overload only, for example
+	 *    "/TEAMS/acme.NewAction/Team_ID@". Action overloads are then filtered by binding parameter;
+	 *    multiple overloads after filtering are invalid except if addressing all overloads via the
+	 *    segment "@$ui5.overload", for example "/acme.NewAction/@$ui5.overload".
 	 *
 	 *    Once a single overload has been determined, its parameters can be immediately addressed,
 	 *    for example "/TEAMS/acme.NewAction/Team_ID". For all other names, the overload's

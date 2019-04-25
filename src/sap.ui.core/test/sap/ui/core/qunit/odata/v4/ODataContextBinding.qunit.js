@@ -1002,12 +1002,14 @@ sap.ui.define([
 		path : "/EntitySet(ID='1')/schema.EmptyOverloads(...)",
 		request : "/EntitySet/schema.EmptyOverloads/@$ui5.overload",
 		metadata : [],
-		error : "Unsupported overloads for /EntitySet(ID='1')/schema.EmptyOverloads(...)"
+		error : "Expected a single overload, but found 0 for"
+			+ " /EntitySet(ID='1')/schema.EmptyOverloads(...)"
 	}, {
 		path : "/EntitySet(ID='1')/schema.OverloadedFunction(...)",
 		request : "/EntitySet/schema.OverloadedFunction/@$ui5.overload",
 		metadata : [{$kind : "Function"}, {$kind : "Function"}],
-		error : "Unsupported overloads for /EntitySet(ID='1')/schema.OverloadedFunction(...)"
+		error : "Expected a single overload, but found 2 for"
+			+ " /EntitySet(ID='1')/schema.OverloadedFunction(...)"
 	}].forEach(function (oFixture) {
 		QUnit.test("_execute: " + oFixture.error, function (assert) {
 			var oGroupLock = new _GroupLock();

@@ -40,6 +40,7 @@ sap.ui.define([
 	// tea_busi_supplier.v0001 := com.sap.gateway.default.iwbep.tea_busi_supplier.v0001
 	// UI := com.sap.vocabularies.UI.v1
 	var mMostlyEmptyScope = {
+			"$Annotations" : {}, // simulate ODataMetaModel#_mergeAnnotations
 			"$EntityContainer" : "empty.DefaultContainer",
 			"$Version" : "4.0",
 			"empty." : {
@@ -104,6 +105,12 @@ sap.ui.define([
 				"name.space.OverloadedAction/_it" : {
 					"@Common.Label" : "_it's own label"
 				},
+				"name.space.OverloadedAction()/parameter0" : {
+					"@Common.Label" : "Zero"
+				},
+				"name.space.OverloadedAction(tea_busi.TEAM)/parameter1" : {
+					"@Common.Label" : "My 1st label"
+				},
 				"name.space.OverloadedFunction/A" : {
 					"@Common.Label" : "A's own label"
 				},
@@ -116,6 +123,9 @@ sap.ui.define([
 						"$EnumMember" : "UI.TextArrangementType/TextLast"
 					}
 				},
+				"tea_busi.AcChangeManagerOfTeam()/ManagerID" : {
+					"@Common.Label" : "New Manager ID"
+				},
 				"tea_busi.DefaultContainer" : {
 					"@DefaultContainer" : {}
 				},
@@ -123,7 +133,17 @@ sap.ui.define([
 					"@T€AMS" : {}
 				},
 				"tea_busi.NewAction/Team_Id" : {
-					"@Common.Label" : "New Team ID"
+					"@Common.Label" : "n/a",
+					"@Common.Text" : {
+						"$Path" : "Name"
+					},
+					"@Common.ValueListWithFixedValues" : true
+				},
+				"tea_busi.NewAction(Collection(tea_busi.TEAM))/Team_Id" : {
+					"@Common.Label" : "New Team ID",
+					"@Common.Text" : {
+						"$AnnotationPath" : "Name@Common.Label"
+					}
 				},
 				"tea_busi.TEAM" : {
 					"@Common.Text" : {
@@ -305,6 +325,11 @@ sap.ui.define([
 				}
 			}, { // "An unbound action MAY have the same name as a bound action."
 				"$kind" : "Action",
+				"$Parameter" : [{
+					"$isCollection" : true,
+					"$Name" : "parameter0",
+					"$Type" : "Edm.String"
+				}],
 				"$ReturnType" : {
 					"$Type" : "tea_busi.ComplexType_Salary"
 				}
@@ -343,6 +368,13 @@ sap.ui.define([
 			}],
 			"tea_busi.AcChangeManagerOfTeam" : [{
 				"$kind" : "Action",
+				"$Parameter" : [{
+					"$Name" : "TEAM",
+					"$Type" : "tea_busi.TEAM"
+				}, {
+					"$Name" : "ManagerID",
+					"$Type" : "Edm.String"
+				}],
 				"$ReturnType" : {
 					"$Type" : "tea_busi.TEAM",
 					"@Common.Label" : "Hail to the Chief"
@@ -495,6 +527,17 @@ sap.ui.define([
 				}],
 				"$ReturnType" : {
 					"$Type" : "tea_busi.TEAM"
+				}
+			}, {
+				"$kind" : "Action",
+				"$IsBound" : true,
+				"$Parameter" : [{
+					//"$isCollection" : false,
+					"$Name" : "_it",
+					"$Type" : "tea_busi.Worker"
+				}],
+				"$ReturnType" : {
+					"$Type" : "tea_busi.Worker"
 				}
 			}, {
 				"$kind" : "Action",
@@ -1166,7 +1209,7 @@ sap.ui.define([
 		"/EMPLOYEES/EMPLOYEE_2_TEAM/name.space.OverloadedAction/Team_Id" : oTeamData.Team_Id,
 		"/T€AMS/name.space.OverloadedAction/@$ui5.overload"
 			: sinon.match.array.deepEquals([aOverloadedAction[1]]),
-		"/name.space.OverloadedAction/@$ui5.overload" : sinon.match.array.deepEquals([]),
+		"/name.space.OverloadedAction/@$ui5.overload" : aOverloadedAction,
 		// only "Action" and "Function" is expected as $kind, but others are not filtered out!
 		"/name.space.BrokenOverloads"
 			: sinon.match.array.deepEquals(mScope["name.space.BrokenOverloads"]),
@@ -1219,7 +1262,29 @@ sap.ui.define([
 		"/name.space.OverloadedFunction/B@Common.Text@UI.TextArrangement"
 			: mScope.$Annotations["name.space.OverloadedFunction/B"]
 				["@Common.Text@UI.TextArrangement"],
-		"/T€AMS/tea_busi.NewAction/Team_Id@" : mScope.$Annotations["tea_busi.NewAction/Team_Id"],
+		"/tea_busi.NewAction/Team_Id@" : mScope.$Annotations["tea_busi.NewAction/Team_Id"],
+		"/T€AMS/tea_busi.NewAction/Team_Id@Common.ValueListWithFixedValues" : true,
+		// annotations at parameters of specific overload
+		"/ChangeManagerOfTeam/ManagerID@Common.Label" : "New Manager ID",
+		"/OverloadedAction/parameter0@Common.Label" : "Zero",
+		"/T€AMS/name.space.OverloadedAction/parameter1@Common.Label" : "My 1st label",
+		"/T€AMS/name.space.OverloadedAction/parameter1@" // Note: strictEqual!
+			: mScope.$Annotations["name.space.OverloadedAction(tea_busi.TEAM)/parameter1"],
+		"/T€AMS/tea_busi.NewAction/Team_Id@Common.Label" : "New Team ID",
+		"/T€AMS/tea_busi.NewAction/Team_Id@" : sinon.match(function (oActual) {
+			QUnit.assert.deepEqual(oActual, {
+				// merged result from mScope.$Annotations["..."]:
+				// - "tea_busi.NewAction/Team_Id"
+				// - "tea_busi.NewAction(Collection(tea_busi.TEAM))/Team_Id"
+				"@Common.Label" : "New Team ID",
+				"@Common.Text" : {
+					"$AnnotationPath" : "Name@Common.Label"
+					// Note: "$Path" : "Name" must not appear here! PUT semantics, not PATCH
+				},
+				"@Common.ValueListWithFixedValues" : true
+			});
+			return true; // caller's assert.ok() should not fail
+		}),
 		// annotations at properties of return type
 		"/T€AMS/tea_busi.NewAction/Name@" : mScope.$Annotations["tea_busi.TEAM/Name"],
 		"/T€AMS/tea_busi.NewAction//Team_Id@" : mScope.$Annotations["tea_busi.TEAM/Team_Id"],
@@ -1300,7 +1365,7 @@ sap.ui.define([
 			assert.strictEqual(oSyncPromise.isFulfilled(), true);
 			if (vResult && typeof vResult === "object" && "test" in vResult) {
 				// Sinon.JS matcher
-				assert.ok(vResult.test(oSyncPromise.getResult()), vResult);
+				assert.ok(vResult.test(oSyncPromise.getResult()));
 			} else {
 				assert.strictEqual(oSyncPromise.getResult(), vResult);
 			}
@@ -1398,7 +1463,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchObject without $Annotations", function (assert) {
+	QUnit.test("fetchObject with empty $Annotations", function (assert) {
 		var oSyncPromise;
 
 		this.oMetaModelMock.expects("fetchEntityContainer")
@@ -1408,7 +1473,7 @@ sap.ui.define([
 		oSyncPromise = this.oMetaModel.fetchObject("/@DefaultContainer");
 
 		assert.strictEqual(oSyncPromise.isFulfilled(), true);
-		assert.deepEqual(oSyncPromise.getResult(), undefined); // strictEqual would not work!
+		assert.strictEqual(oSyncPromise.getResult(), undefined);
 	});
 	//TODO if no annotations exist for an external target, avoid {} internally unless "@" is used?
 
@@ -1476,10 +1541,16 @@ sap.ui.define([
 			"/@@.requestUnitsOfMeasure" // "." looks in given scope only!
 				: ".requestUnitsOfMeasure is not a function but: undefined",
 			// Unsupported overloads --------------------------------------------------------------
-			"/name.space.EmptyOverloads/" : "Unsupported overloads",
-			"/name.space.OverloadedAction/" : "Unsupported overloads",
-			"/name.space.OverloadedAction/_it" : "Unsupported overloads",
-			"/name.space.OverloadedFunction/" : "Unsupported overloads",
+			"/name.space.EmptyOverloads/" : "Expected a single overload, but found 0",
+			"/name.space.OverloadedAction/" : "Expected a single overload, but found 4",
+			"/name.space.OverloadedAction/_it" : "Expected a single overload, but found 4",
+			"/name.space.OverloadedFunction/" : "Expected a single overload, but found 2",
+			"/ServiceGroups/name.space.OverloadedAction/parameter1@Common.Label"
+				: "Expected a single overload, but found 0", // wrong binding parameter
+			"/ServiceGroups/name.space.OverloadedFunction/"
+				: "Expected a single overload, but found 2", // no filtering for functions!
+			"/EMPLOYEES/tea_busi.NewAction/_it@Common.Label"
+				: "Expected a single overload, but found 2", // Collection(Worker) vs. Worker
 			// Unsupported path after $ -----------------------------------------------------------
 			"/T€AMS/@UI.LineItem/0/$/Value" : "Unsupported path after $", // in "JSON" mode
 			"/T€AMS/$/$Type" : "Unsupported path after $", // in OData mode
@@ -1499,7 +1570,7 @@ sap.ui.define([
 				oSyncPromise = this.oMetaModel.fetchObject(sPath, null, {scope : {}});
 
 				assert.strictEqual(oSyncPromise.isFulfilled(), true);
-				assert.deepEqual(oSyncPromise.getResult(), undefined);
+				assert.strictEqual(oSyncPromise.getResult(), undefined);
 			});
 		});
 	});
@@ -1530,7 +1601,7 @@ sap.ui.define([
 				oSyncPromise = this.oMetaModel.fetchObject(sPath);
 
 				assert.strictEqual(oSyncPromise.isFulfilled(), true);
-				assert.deepEqual(oSyncPromise.getResult(), undefined);
+				assert.strictEqual(oSyncPromise.getResult(), undefined);
 			});
 		});
 	});
@@ -1835,7 +1906,7 @@ sap.ui.define([
 			oSyncPromise = this.oMetaModel.fetchObject(sPath);
 
 			assert.strictEqual(oSyncPromise.isFulfilled(), true);
-			assert.deepEqual(oSyncPromise.getResult(), undefined);
+			assert.strictEqual(oSyncPromise.getResult(), undefined);
 		});
 	});
 
@@ -1862,7 +1933,7 @@ sap.ui.define([
 
 			// code under test
 			return this.oMetaModel.fetchObject(sPath).then(function (vResult) {
-				assert.deepEqual(vResult, undefined);
+				assert.strictEqual(vResult, undefined);
 			});
 		});
 	});

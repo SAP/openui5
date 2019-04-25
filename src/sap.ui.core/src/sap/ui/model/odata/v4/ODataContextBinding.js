@@ -247,7 +247,8 @@ sap.ui.define([
 					throw new Error("Unknown operation: " + sResolvedPath);
 				}
 				if (aOperationMetadata.length !== 1) {
-					throw new Error("Unsupported overloads for " + sResolvedPath);
+					throw new Error("Expected a single overload, but found "
+						+ aOperationMetadata.length + " for " + sResolvedPath);
 				}
 				if (that.bRelative && that.oContext.getBinding) {
 					iIndex = that.sPath.lastIndexOf("/");

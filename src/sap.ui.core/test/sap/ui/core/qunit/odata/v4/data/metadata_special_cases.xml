@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
 	<edmx:DataServices>
-		<Schema Namespace="special.cases">
+		<Schema Namespace="special.cases" Alias="MySchema">
 			<EntityType Name="ArtistsType">
 				<Key>
 					<PropertyRef Name="ArtistID"/>
@@ -100,13 +100,16 @@
 				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Artist" />
 			</Annotations>
 			<Annotations Target="special.cases.Create/Countryoforigin">
-				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Country of Origin"/>
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="n/a"/>
 				<Annotation Term="com.sap.vocabularies.Common.v1.ValueListWithFixedValues"/>
 				<Annotation Term="com.sap.vocabularies.Common.v1.ValueListReferences">
 					<Collection>
 						<String>../countryoforigin/$metadata</String>
 					</Collection>
 				</Annotation>
+			</Annotations>
+			<Annotations Target="MySchema.Create(Collection(MySchema.ArtistsType))/Countryoforigin">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Country of Origin"/>
 			</Annotations>
 		</Schema>
 	</edmx:DataServices>

@@ -17537,4 +17537,30 @@ sap.ui.define([
 			fnRespond();
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Annotation target with parentheses to specify action overload
+	// JIRA: CPOUI5UISERVICESV3-1844
+	QUnit.test("Annotation target with parentheses to specify action overload", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true});
+
+		return this.createView(assert, '', oModel).then(function () {
+			return oModel.getMetaModel().requestData();
+		}).then(function (oMetaData) {
+			assert.deepEqual(
+				oMetaData.$Annotations
+					["special.cases.Create(Collection(special.cases.ArtistsType))/Countryoforigin"],
+				{"@com.sap.vocabularies.Common.v1.Label" : "Country of Origin"});
+
+			assert.strictEqual(oModel.getMetaModel().getObject("/Artists/special.cases.Create"
+					+ "/Countryoforigin@com.sap.vocabularies.Common.v1.Label"),
+				"Country of Origin", "specific overload wins");
+			assert.strictEqual(oModel.getMetaModel().getObject("/Artists/special.cases.Create"
+					+ "/Countryoforigin@com.sap.vocabularies.Common.v1.ValueListWithFixedValues"),
+				true, "fallback to annotation for all overloads");
+			assert.deepEqual(oModel.getMetaModel().getObject("/Artists/special.cases.Create"
+					+ "/Countryoforigin@com.sap.vocabularies.Common.v1.ValueListReferences"),
+				["../countryoforigin/$metadata"]);
+		});
+	});
 });
