@@ -27,7 +27,7 @@
 						createSent : '.onCreateSent'
 					},
 					path : '/ProductList',
-					parameters : {$count : true}}"
+					parameters : {$count : true, $select : ['Messages']}}"
 				mode="SingleSelectMaster">
 				<headerToolbar>
 					<Toolbar>

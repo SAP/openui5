@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0" xmlns="http://docs.oasis-open.org/odata/ns/edm">
 	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_XJG',Version='0001',SAP__Origin='LOCAL')/$value">
 		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="Z__UI" />
 		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Z__COMMON" />
@@ -15,7 +15,7 @@
 		<edmx:Include Namespace="Org.OData.Core.V1" Alias="SAP__core" />
 	</edmx:Reference>
 	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value">
-		<edmx:Include Namespace="com.sap.vocabularies.Capabilities.v1" Alias="SAP__capabilities" />
+		<edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="SAP__capabilities" />
 	</edmx:Reference>
 	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_AGGREGATION',Version='0001',SAP__Origin='LOCAL')/$value">
 		<edmx:Include Namespace="Org.OData.Aggregation.V1" Alias="SAP__aggregation" />
@@ -107,6 +107,7 @@
 				<Property Name="DimUnit" Type="Edm.String" Nullable="false" MaxLength="3" />
 				<Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false" Precision="7" />
 				<Property Name="ChangedAt" Type="Edm.DateTimeOffset" Nullable="false" Precision="7" />
+				<Property Name="Messages" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.Message)" />
 				<NavigationProperty Name="PRODUCT_2_BP" Type="com.sap.gateway.default.zui5_epm_sample.v0002.BusinessPartner" Nullable="false" />
 			</EntityType>
 			<EntityType Name="SalesOrder">
@@ -434,6 +435,7 @@
 						</Record>
 					</Collection>
 				</Annotation>
+				<Annotation Term="com.sap.vocabularies.Common.v1.Messages" Path="Messages" />
 			</Annotations>
 			<Annotations Target="SAP__self.SalesOrder">
 				<Annotation Term="com.sap.vocabularies.UI.v1.HeaderInfo">
@@ -1003,8 +1005,6 @@
 						<PropertyValue Property="CollectionPath" String="Currencies" />
 					</Record>
 				</Annotation>
-			</Annotations>
-			<Annotations Target="SAP__self.Container">
 				<Annotation Term="SAP__CodeList.UnitsOfMeasure">
 					<Record>
 						<PropertyValue Property="Url" String="../../../../default/iwbep/common/0001/$metadata" />
@@ -1019,6 +1019,12 @@
 				<Annotation Term="SAP__common.Label" String="Bus. Part. Role" />
 				<Annotation Term="SAP__common.Heading" String="Business Partner Role" />
 				<Annotation Term="SAP__common.QuickInfo" String="EPM: Business Partner Role" />
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/d_bp_role-fv/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-BUSINESSPARTNER.BP_ROLE'/$metadata</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__common.ValueListWithFixedValues" />
 			</Annotations>
 			<Annotations Target="SAP__self.BusinessPartner/CompanyName">
 				<Annotation Term="SAP__common.Label" String="Company" />
@@ -1045,6 +1051,11 @@
 				<Annotation Term="SAP__common.Label" String="Currency Code" />
 				<Annotation Term="SAP__common.Heading" String="ISO Currency Code" />
 				<Annotation Term="SAP__common.QuickInfo" String="EPM: Currency Code" />
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/h_tcurc-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-BUSINESSPARTNER.CURRENCY_CODE'/$metadata</String>
+					</Collection>
+				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.BusinessPartner/CreatedAt">
 				<Annotation Term="SAP__common.Label" String="Time Stamp" />
@@ -1089,7 +1100,11 @@
 				<Annotation Term="SAP__common.QuickInfo" String="EPM: Latitude" />
 			</Annotations>
 			<Annotations Target="SAP__self.Container/BusinessPartnerList">
-				<Annotation Term="SAP__core.OptimisticConcurrency" PropertyPath="ChangedAt" />
+				<Annotation Term="SAP__core.OptimisticConcurrency">
+					<Collection>
+						<PropertyPath>ChangedAt</PropertyPath>
+					</Collection>
+				</Annotation>
 				<Annotation Term="SAP__capabilities.UpdateRestrictions">
 					<Record>
 						<PropertyValue Property="QueryOptions">
@@ -1137,16 +1152,32 @@
 			<Annotations Target="SAP__self.Product/ProductID">
 				<Annotation Term="SAP__common.Label" String="Product ID" />
 				<Annotation Term="SAP__common.QuickInfo" String="EPM: Product ID" />
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/h_epm_pr-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.PRODUCT_ID'/$metadata</String>
+					</Collection>
+				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/TypeCode">
 				<Annotation Term="SAP__common.Label" String="Type Code" />
 				<Annotation Term="SAP__common.Heading" String="Product Type Code" />
 				<Annotation Term="SAP__common.QuickInfo" String="EPM: Product Type Code" />
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/d_pr_type-fv/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.TYPE_CODE'/$metadata</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__common.ValueListWithFixedValues" />
 			</Annotations>
 			<Annotations Target="SAP__self.Product/Category">
 				<Annotation Term="SAP__common.Label" String="Category" />
 				<Annotation Term="SAP__common.Heading" String="Product Category" />
 				<Annotation Term="SAP__common.QuickInfo" String="EPM: Product Category" />
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/h_epm_pd_cats-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.CATEGORY'/$metadata</String>
+					</Collection>
+				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/Name">
 				<Annotation Term="SAP__common.Label" String="Description" />
@@ -1155,6 +1186,11 @@
 			<Annotations Target="SAP__self.Product/NameLanguage">
 				<Annotation Term="SAP__common.Label" String="Language Key" />
 				<Annotation Term="SAP__common.Heading" String="Language" />
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/h_t002-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.NAME_LANGUAGE'/$metadata</String>
+					</Collection>
+				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/Description">
 				<Annotation Term="SAP__common.Label" String="Description" />
@@ -1163,6 +1199,11 @@
 			<Annotations Target="SAP__self.Product/DescriptionLanguage">
 				<Annotation Term="SAP__common.Label" String="Language Key" />
 				<Annotation Term="SAP__common.Heading" String="Language" />
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/h_t002-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.DESCRIPTION_LANGUAGE'/$metadata</String>
+					</Collection>
+				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/SupplierID">
 				<Annotation Term="SAP__common.Label" String="Character Field with Length 10" />
@@ -1176,10 +1217,21 @@
 				<Annotation Term="SAP__common.Label" String="Tax Tariff Code" />
 				<Annotation Term="SAP__common.Heading" String="Product Tax Tariff Code" />
 				<Annotation Term="SAP__common.QuickInfo" String="EPM: Product Tax Tariff Code" />
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/d_pr_tax-fv/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.TAX_TARIF_CODE'/$metadata</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__common.ValueListWithFixedValues" />
 			</Annotations>
 			<Annotations Target="SAP__self.Product/MeasureUnit">
 				<Annotation Term="SAP__common.Label" String="Unit of Measure" />
 				<Annotation Term="SAP__common.QuickInfo" String="EPM: Quantity Unit" />
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/h_epm_t006-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.MEASURE_UNIT'/$metadata</String>
+					</Collection>
+				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/WeightMeasure">
 				<Annotation Term="SAP__common.Label" String="Weight" />
@@ -1189,11 +1241,21 @@
 			<Annotations Target="SAP__self.Product/WeightUnit">
 				<Annotation Term="SAP__common.Label" String="Unit of Measure" />
 				<Annotation Term="SAP__common.QuickInfo" String="EPM: Weight Unit" />
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/h_epm_t006_qu-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.WEIGHT_UNIT'/$metadata</String>
+					</Collection>
+				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/CurrencyCode">
 				<Annotation Term="SAP__common.Label" String="Currency Code" />
 				<Annotation Term="SAP__common.Heading" String="ISO Currency Code" />
 				<Annotation Term="SAP__common.QuickInfo" String="EPM: Currency Code" />
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/h_tcurc-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.CURRENCY_CODE'/$metadata</String>
+					</Collection>
+				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/Price">
 				<Annotation Term="SAP__common.Label" String="Price" />
@@ -1223,6 +1285,11 @@
 				<Annotation Term="SAP__common.Label" String="Dimension Unit" />
 				<Annotation Term="SAP__common.Heading" String="Product Dimension Unit" />
 				<Annotation Term="SAP__common.QuickInfo" String="EPM: Dimension Unit" />
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/h_epm_t006_le-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.DIM_UNIT'/$metadata</String>
+					</Collection>
+				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/CreatedAt">
 				<Annotation Term="SAP__common.Label" String="Time Stamp" />
@@ -1232,8 +1299,71 @@
 				<Annotation Term="SAP__common.Label" String="Time Stamp" />
 				<Annotation Term="SAP__common.QuickInfo" String="UTC Time Stamp in Long Form (YYYYMMDDhhmmssmmmuuun)" />
 			</Annotations>
+			<Annotations Target="SAP__self.Product/Messages/numericSeverity">
+				<Annotation Term="SAP__common.Label" String="Byte" />
+			</Annotations>
 			<Annotations Target="SAP__self.Container/ProductList">
-				<Annotation Term="SAP__core.OptimisticConcurrency" PropertyPath="ChangedAt" />
+				<Annotation Term="SAP__core.OptimisticConcurrency">
+					<Collection>
+						<PropertyPath>ChangedAt</PropertyPath>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.FilterRestrictions">
+					<Record>
+						<PropertyValue Property="FilterExpressionRestrictions">
+							<Collection>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="TypeCode" />
+									<PropertyValue Property="AllowedExpressions" String="MultiValue" />
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="NameLanguage" />
+									<PropertyValue Property="AllowedExpressions" String="MultiValue" />
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="DescriptionLanguage" />
+									<PropertyValue Property="AllowedExpressions" String="MultiValue" />
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="SupplierID" />
+									<PropertyValue Property="AllowedExpressions" String="MultiValue" />
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="MeasureUnit" />
+									<PropertyValue Property="AllowedExpressions" String="MultiValue" />
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="WeightMeasure" />
+									<PropertyValue Property="AllowedExpressions" String="MultiValue" />
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="WeightUnit" />
+									<PropertyValue Property="AllowedExpressions" String="MultiValue" />
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="Price" />
+									<PropertyValue Property="AllowedExpressions" String="MultiValue" />
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="Width" />
+									<PropertyValue Property="AllowedExpressions" String="MultiValue" />
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="Depth" />
+									<PropertyValue Property="AllowedExpressions" String="MultiValue" />
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="Height" />
+									<PropertyValue Property="AllowedExpressions" String="MultiValue" />
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="DimUnit" />
+									<PropertyValue Property="AllowedExpressions" String="MultiValue" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
 				<Annotation Term="SAP__capabilities.UpdateRestrictions">
 					<Record>
 						<PropertyValue Property="QueryOptions">
@@ -1248,7 +1378,11 @@
 				<Annotation Term="SAP__common.Label" String="Byte" />
 			</Annotations>
 			<Annotations Target="SAP__self.Container/SalesOrderList">
-				<Annotation Term="SAP__core.OptimisticConcurrency" PropertyPath="ChangedAt" />
+				<Annotation Term="SAP__core.OptimisticConcurrency">
+					<Collection>
+						<PropertyPath>ChangedAt</PropertyPath>
+					</Collection>
+				</Annotation>
 				<Annotation Term="SAP__capabilities.UpdateRestrictions">
 					<Record>
 						<PropertyValue Property="QueryOptions">
@@ -1337,10 +1471,21 @@
 			<Annotations Target="SAP__self.Address/Country">
 				<Annotation Term="SAP__common.Label" String="Country" />
 				<Annotation Term="SAP__common.QuickInfo" String="EPM: Country Code" />
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/f4_intca-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.CT-CT_ADDRESS.COUNTRY'/$metadata</String>
+					</Collection>
+				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Address/AddressType">
 				<Annotation Term="SAP__common.Label" String="Address Type" />
 				<Annotation Term="SAP__common.QuickInfo" String="EPM: Address Type" />
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/d_ad_type-fv/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.CT-CT_ADDRESS.ADDRESS_TYPE'/$metadata</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__common.ValueListWithFixedValues" />
 			</Annotations>
 			<Annotations Target="SAP__self.Address/GeoLocation/Longitude">
 				<Annotation Term="SAP__common.Label" String="Longitude" />
@@ -1365,21 +1510,6 @@
 			<Annotations Target="SAP__self.Message/numericSeverity">
 				<Annotation Term="SAP__common.Label" String="Byte" />
 			</Annotations>
-			<Annotations Target="SAP__self.BusinessPartner/BusinessPartnerRole">
-				<Annotation Term="SAP__common.ValueListReferences">
-					<Collection>
-						<String>../../../../f4/sap/d_bp_role-fv/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-BUSINESSPARTNER.BP_ROLE'/$metadata</String>
-					</Collection>
-				</Annotation>
-				<Annotation Term="SAP__common.ValueListWithFixedValues" />
-			</Annotations>
-			<Annotations Target="SAP__self.BusinessPartner/CurrencyCode">
-				<Annotation Term="SAP__common.ValueListReferences">
-					<Collection>
-						<String>../../../../f4/sap/h_tcurc-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-BUSINESSPARTNER.CURRENCY_CODE'/$metadata</String>
-					</Collection>
-				</Annotation>
-			</Annotations>
 			<Annotations Target="SAP__self.Contact/Sex">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
@@ -1387,78 +1517,6 @@
 					</Collection>
 				</Annotation>
 				<Annotation Term="SAP__common.ValueListWithFixedValues" />
-			</Annotations>
-			<Annotations Target="SAP__self.Product/ProductID">
-				<Annotation Term="SAP__common.ValueListReferences">
-					<Collection>
-						<String>../../../../f4/sap/h_epm_pr-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.PRODUCT_ID'/$metadata</String>
-					</Collection>
-				</Annotation>
-			</Annotations>
-			<Annotations Target="SAP__self.Product/TypeCode">
-				<Annotation Term="SAP__common.ValueListReferences">
-					<Collection>
-						<String>../../../../f4/sap/d_pr_type-fv/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.TYPE_CODE'/$metadata</String>
-					</Collection>
-				</Annotation>
-				<Annotation Term="SAP__common.ValueListWithFixedValues" />
-			</Annotations>
-			<Annotations Target="SAP__self.Product/Category">
-				<Annotation Term="SAP__common.ValueListReferences">
-					<Collection>
-						<String>../../../../f4/sap/h_epm_pd_cats-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.CATEGORY'/$metadata</String>
-					</Collection>
-				</Annotation>
-			</Annotations>
-			<Annotations Target="SAP__self.Product/NameLanguage">
-				<Annotation Term="SAP__common.ValueListReferences">
-					<Collection>
-						<String>../../../../f4/sap/h_t002-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.NAME_LANGUAGE'/$metadata</String>
-					</Collection>
-				</Annotation>
-			</Annotations>
-			<Annotations Target="SAP__self.Product/DescriptionLanguage">
-				<Annotation Term="SAP__common.ValueListReferences">
-					<Collection>
-						<String>../../../../f4/sap/h_t002-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.DESCRIPTION_LANGUAGE'/$metadata</String>
-					</Collection>
-				</Annotation>
-			</Annotations>
-			<Annotations Target="SAP__self.Product/TaxTarifCode">
-				<Annotation Term="SAP__common.ValueListReferences">
-					<Collection>
-						<String>../../../../f4/sap/d_pr_tax-fv/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.TAX_TARIF_CODE'/$metadata</String>
-					</Collection>
-				</Annotation>
-				<Annotation Term="SAP__common.ValueListWithFixedValues" />
-			</Annotations>
-			<Annotations Target="SAP__self.Product/MeasureUnit">
-				<Annotation Term="SAP__common.ValueListReferences">
-					<Collection>
-						<String>../../../../f4/sap/h_epm_t006-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.MEASURE_UNIT'/$metadata</String>
-					</Collection>
-				</Annotation>
-			</Annotations>
-			<Annotations Target="SAP__self.Product/WeightUnit">
-				<Annotation Term="SAP__common.ValueListReferences">
-					<Collection>
-						<String>../../../../f4/sap/h_epm_t006_qu-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.WEIGHT_UNIT'/$metadata</String>
-					</Collection>
-				</Annotation>
-			</Annotations>
-			<Annotations Target="SAP__self.Product/CurrencyCode">
-				<Annotation Term="SAP__common.ValueListReferences">
-					<Collection>
-						<String>../../../../f4/sap/h_tcurc-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.CURRENCY_CODE'/$metadata</String>
-					</Collection>
-				</Annotation>
-			</Annotations>
-			<Annotations Target="SAP__self.Product/DimUnit">
-				<Annotation Term="SAP__common.ValueListReferences">
-					<Collection>
-						<String>../../../../f4/sap/h_epm_t006_le-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.DIM_UNIT'/$metadata</String>
-					</Collection>
-				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.SalesOrder/BuyerID">
 				<Annotation Term="SAP__common.ValueListReferences">
@@ -1473,21 +1531,6 @@
 						<String>../../../../f4/sap/h_tcurc-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-SALESORDER.CURRENCY_CODE'/$metadata</String>
 					</Collection>
 				</Annotation>
-			</Annotations>
-			<Annotations Target="SAP__self.Address/Country">
-				<Annotation Term="SAP__common.ValueListReferences">
-					<Collection>
-						<String>../../../../f4/sap/f4_intca-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.CT-CT_ADDRESS.COUNTRY'/$metadata</String>
-					</Collection>
-				</Annotation>
-			</Annotations>
-			<Annotations Target="SAP__self.Address/AddressType">
-				<Annotation Term="SAP__common.ValueListReferences">
-					<Collection>
-						<String>../../../../f4/sap/d_ad_type-fv/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.CT-CT_ADDRESS.ADDRESS_TYPE'/$metadata</String>
-					</Collection>
-				</Annotation>
-				<Annotation Term="SAP__common.ValueListWithFixedValues" />
 			</Annotations>
 			<Annotations Target="SAP__self.Container/ContactList">
 				<Annotation Term="SAP__capabilities.UpdateRestrictions">

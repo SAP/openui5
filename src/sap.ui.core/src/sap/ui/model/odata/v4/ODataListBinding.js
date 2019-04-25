@@ -582,13 +582,18 @@ sap.ui.define([
 				that.fireEvent("createSent", {context : oContext});
 			}
 		).then(function (oCreatedEntity) {
-			var sGroupId, sPredicate;
+			var sGroupId, iIndex, sPredicate;
 
 			if (!(oInitialData && oInitialData["@$ui5.keepTransientPath"])) {
 				// refreshSingle requires the new key predicate in oContext.getPath()
 				sPredicate = _Helper.getPrivateAnnotation(oCreatedEntity, "predicate");
 				if (sPredicate) {
 					oContext.sPath = sResolvedPath + sPredicate;
+					iIndex = that.aPreviousData.indexOf(sTransientPath);
+					if (iIndex >= 0) {
+						// replace $uid also in previous data to avoid useless diff
+						that.aPreviousData[iIndex] = oContext.sPath;
+					}
 					that.oModel.checkMessages();
 				}
 			}
@@ -1556,6 +1561,44 @@ sap.ui.define([
 			aOrderbyOptions.push(sOrderbyQueryOption);
 		}
 		return aOrderbyOptions.join(',');
+	};
+
+	/**
+	 * Returns the query options of the binding.
+	 *
+	 * @param {boolean} [bWithSystemQueryOptions=false]
+	 *   Whether system query options should be returned as well. The parameter value
+	 *   <code>true</code> is not supported.
+	 * @returns {object} mQueryOptions
+	 *   The object with the query options. Query options can be provided with
+	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList},
+	 *   {@link sap.ui.model.odata.v4.ODataModel#bindContext},
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding#changeParameters}, and
+	 *   {@link sap.ui.model.odata.v4.ODataContextBinding#changeParameters}. System query options
+	 *   can also be calculated, e.g. <code>$filter</code> can be calculated based on provided
+	 *   filter objects.
+	 * @throws {Error}
+	 *   If <code>bWithSystemQueryOptions</code> is <code>true</code>
+	 *
+	 * @public
+	 * @since 1.66.0
+	 */
+	ODataListBinding.prototype.getQueryOptions = function (bWithSystemQueryOptions) {
+		var oResult = {},
+			that = this;
+
+		if (bWithSystemQueryOptions) {
+			throw new Error("Unsupported parameter value: bWithSystemQueryOptions: "
+				+ bWithSystemQueryOptions);
+		}
+
+		Object.keys(this.mQueryOptions).forEach(function (sKey) {
+			if (sKey[0] !== "$") {
+				oResult[sKey] = _Helper.clone(that.mQueryOptions[sKey]);
+			}
+		});
+
+		return oResult;
 	};
 
 	/**

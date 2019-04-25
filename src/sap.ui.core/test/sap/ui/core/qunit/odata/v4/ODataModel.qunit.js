@@ -418,6 +418,7 @@ sap.ui.define([
 			.withExactArgs(getServiceUrl(), {
 					fetchEntityContainer : sinon.match.same(fnFetchEntityContainer),
 					fetchMetadata : sinon.match.same(fnFetchMetadata),
+					fireSessionTimeout : sinon.match.func,
 					getGroupProperty : sinon.match.same(fnGetGroupProperty),
 					lockGroup : sinon.match.same(fnLockGroup),
 					onCreateGroup : sinon.match.func,
@@ -462,6 +463,12 @@ sap.ui.define([
 		oModelInterface = oExpectedCreate.firstCall.args[1];
 		oModelInterface.onCreateGroup("$auto");
 		oModelInterface.onCreateGroup("foo");
+
+		this.mock(oModel).expects("fireEvent")
+			.withExactArgs("sessionTimeout");
+
+		// code under test - call fireSessionTimeout
+		oModelInterface.fireSessionTimeout();
 	});
 
 	//*********************************************************************************************
@@ -778,6 +785,30 @@ sap.ui.define([
 		assert.throws(function () {
 			oModel.attachRequestSent();
 		}, new Error("Unsupported event 'requestSent': v4.ODataModel#attachEvent"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("event: sessionTimeout", function (assert) {
+		var oModel = createModel(),
+			oModelMock = this.mock(oModel),
+			fnFunction = {},
+			oListener = {};
+
+		oModelMock.expects("attachEvent")
+			.withExactArgs("sessionTimeout", sinon.match.same(fnFunction),
+				sinon.match.same(oListener))
+			.returns(oModel);
+
+		// code under test
+		assert.strictEqual(oModel.attachSessionTimeout(fnFunction, oListener), oModel);
+
+		oModelMock.expects("detachEvent")
+			.withExactArgs("sessionTimeout", sinon.match.same(fnFunction),
+				sinon.match.same(oListener))
+			.returns(oModel);
+
+		// code under test
+		assert.strictEqual(oModel.detachSessionTimeout(fnFunction, oListener), oModel);
 	});
 
 	//*********************************************************************************************

@@ -3529,11 +3529,11 @@ sap.ui.define([
 				oGroupLock = {},
 				that = this;
 
+			oBinding.enableExtendedChangeDetection();
 			this.mock(oBinding).expects("fetchResourcePath")
 				.withExactArgs()
 				.returns(oCreatePathPromise);
-			this.mock(oBinding).expects("checkSuspended").withExactArgs()
-				.thrice(); // from create and twice getContexts
+			this.mock(oBinding).expects("checkSuspended").withExactArgs().twice();
 			this.mock(oBinding).expects("getUpdateGroupId").returns("updateGroup");
 			this.mock(oBinding).expects("lockGroup").withExactArgs("updateGroup", true)
 				.returns(oGroupLock);
@@ -3549,27 +3549,30 @@ sap.ui.define([
 			});
 			this.mock(this.oModel).expects("checkMessages").exactly(oFixture.sPredicate ? 1 : 0)
 				.withExactArgs();
+			this.mock(oBinding).expects("refreshSingle").never();
 
 			// code under test
 			oContext = oBinding.create(oFixture.oInitialData);
 
 			aCacheResult.unshift({/*transient element*/});
-			this.mock(oBinding.oContext).expects("fetchValue").twice()
+			this.mock(oBinding.oContext).expects("fetchValue")
 				.withExactArgs("TEAM_2_EMPLOYEES").returns(SyncPromise.resolve(aCacheResult));
 
 			// code under test - ensure that getContexts delivers the created context correctly
-			aContexts = oBinding.getContexts(0, 3);
+			aContexts = oBinding.getContexts(0, 4);
 
-			this.mock(oBinding).expects("refreshSingle").never();
-
-			assert.strictEqual(aContexts.length, 3);
+			assert.strictEqual(aContexts.length, 4);
 			assert.strictEqual(aContexts[0], oContext);
-
-			// code under test - ensure that getContexts creates the contexts correctly
-			aContexts = oBinding.getContexts(1, 3);
-
-			assert.strictEqual(aContexts.length, 3);
-			assert.strictEqual(aContexts[2].getPath(), "/TEAMS/1/TEAM_2_EMPLOYEES('foo')");
+			assert.strictEqual(aContexts[1].getPath(), "/TEAMS/1/TEAM_2_EMPLOYEES/0");
+			assert.strictEqual(aContexts[2].getPath(), "/TEAMS/1/TEAM_2_EMPLOYEES/1");
+			assert.strictEqual(aContexts[3].getPath(), "/TEAMS/1/TEAM_2_EMPLOYEES('foo')");
+			assert.strictEqual(oBinding.aPreviousData.length, 4);
+			assert.ok(
+				/\/TEAMS\/1\/TEAM_2_EMPLOYEES\(\$uid=id-[-0-9]+\)/.test(oBinding.aPreviousData[0]),
+				oBinding.aPreviousData[0]);
+			assert.strictEqual(oBinding.aPreviousData[1], "/TEAMS/1/TEAM_2_EMPLOYEES/0");
+			assert.strictEqual(oBinding.aPreviousData[2], "/TEAMS/1/TEAM_2_EMPLOYEES/1");
+			assert.strictEqual(oBinding.aPreviousData[3], "/TEAMS/1/TEAM_2_EMPLOYEES('foo')");
 
 			assert.throws(function () {
 				// code under test
@@ -3579,6 +3582,7 @@ sap.ui.define([
 
 			return oContext.created().then(function () {
 				assert.ok(oFixture.rExpectedPath.test(oContext.getPath()));
+				assert.strictEqual(oBinding.aPreviousData[0], oContext.getPath());
 
 				that.mock(oBinding).expects("reset").withExactArgs();
 				that.mock(oBinding).expects("fetchCache")
@@ -6057,6 +6061,28 @@ sap.ui.define([
 			}, function (oError0) {
 				assert.strictEqual(oError0, oError);
 			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getQueryOptions: with system query options", function (assert) {
+		var oBinding = this.bindList("/Set");
+
+		assert.throws(function () {
+			// code under test
+			oBinding.getQueryOptions(/*bWithSystemQueryOptions*/true);
+		}, new Error("Unsupported parameter value: bWithSystemQueryOptions: true"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getQueryOptions: without system query options", function (assert) {
+		var oBinding = this.bindList("/Set", undefined, undefined, undefined, {
+				$select : "a,b,c",
+				custom : "query option"
+			});
+
+		// code under test
+		assert.deepEqual(oBinding.getQueryOptions(/*bWithSystemQueryOptions*/),
+				{custom : "query option"});
 	});
 
 	//*********************************************************************************************

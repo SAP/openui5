@@ -28,10 +28,10 @@ sap.ui.define([
 				"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/$metadata" : {
 					source : "common_metadata.xml"
 				},
-				"ProductList('H-1001')?custom-option=value&$select=CurrencyCode,Name,Price,ProductID,WeightMeasure,WeightUnit" : {
+				"ProductList('H-1001')?custom-option=value&$select=CurrencyCode,Messages,Name,Price,ProductID,WeightMeasure,WeightUnit" : {
 					source : "ProductList(H-1001).json"
 				},
-				"ProductList?custom-option=value&$count=true&$select=CurrencyCode,Name,Price,ProductID,WeightMeasure,WeightUnit&$skip=0&$top=5" : {
+				"ProductList?custom-option=value&$count=true&$select=CurrencyCode,Messages,Name,Price,ProductID,WeightMeasure,WeightUnit&$skip=0&$top=5" : {
 					source : "ProductList.json"
 				},
 				"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/Currencies?$select=CurrencyCode,DecimalPlaces,Text,ISOCode" : {

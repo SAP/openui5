@@ -33,7 +33,6 @@
 											id="addUserButton"
 											icon="sap-icon://add"
 											tooltip="{i18n>createButtonText}"
-											enabled="{= !${appView>/hasUIChanges}}"
 											press=".onCreate">
 											<layoutData>
 												<OverflowToolbarLayoutData priority="NeverOverflow"/>
