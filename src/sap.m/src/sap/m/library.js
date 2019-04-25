@@ -298,6 +298,7 @@ sap.ui.define([
 			"sap.m.ColumnPopoverActionItem",
 			"sap.m.ColumnPopoverCustomItem",
 			"sap.m.ColumnPopoverItem",
+			"sap.m.ColumnPopoverSortItem",
 			"sap.m.FlexItemData",
 			"sap.m.FeedListItemAction",
 			"sap.m.IconTabFilter",
