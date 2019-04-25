@@ -82,7 +82,6 @@ sap.ui.define([
 				// Note: no system query options supported at property binding
 				this.mQueryOptions = this.oModel.buildQueryOptions(mParameters,
 					/*bSystemQueryOptionsAllowed*/false);
-				this.oCachePromise = SyncPromise.resolve();
 				this.fetchCache(oContext);
 				this.oContext = oContext;
 				this.bHasDeclaredType = undefined; // whether the binding info declares a type
@@ -333,12 +332,11 @@ sap.ui.define([
 	ODataPropertyBinding.prototype.destroy = function () {
 		this.deregisterChange();
 		this.oModel.bindingDestroyed(this);
-		this.oCachePromise = undefined;
-		// resolving functions e.g. for oReadPromise in #checkUpdate may run after destroy of this
-		// binding and must not access the context
-		this.oContext = undefined;
+		this.oCheckUpdateCallToken = undefined;
 		this.mQueryOptions = undefined;
 		this.vValue = undefined;
+
+		asODataBinding.prototype.destroy.apply(this);
 		PropertyBinding.prototype.destroy.apply(this, arguments);
 	};
 

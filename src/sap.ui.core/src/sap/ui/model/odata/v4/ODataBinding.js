@@ -28,6 +28,8 @@ sap.ui.define([
 		// maps a canonical path of a quasi-absolute or relative binding to a cache object that may
 		// be reused
 		this.mCacheByResourcePath = undefined;
+		this.oCachePromise = SyncPromise.resolve();
+		this.mCacheQueryOptions = undefined;
 		// used to create cache only for the latest call to #fetchCache
 		this.oFetchCacheCallToken = undefined;
 		// change reason to be used when the binding is resumed
@@ -131,6 +133,28 @@ sap.ui.define([
 				+ this);
 		}
 	};
+
+	/**
+	 * Destroys the object. The object must not be used anymore after this function was called.
+	 *
+	 * @public
+	 * @since 1.66
+	 */
+	ODataBinding.prototype.destroy = function () {
+		this.mCacheByResourcePath = undefined;
+		this.oCachePromise.then(function (oOldCache) {
+			if (oOldCache) {
+				oOldCache.setActive(false);
+			}
+		}, function () {});
+		this.oCachePromise = SyncPromise.resolve(); // be nice to #withCache
+		this.mCacheQueryOptions = undefined;
+		// resolving functions e.g. for oReadPromise in #checkUpdate may run after destroy of this
+		// binding and must not access the context
+		this.oContext = undefined;
+		this.oFetchCacheCallToken = undefined;
+	};
+
 
 	/**
 	 * Hook method for {@link sap.ui.model.odata.v4.ODataBinding#fetchCache} to create a cache for
@@ -900,12 +924,15 @@ sap.ui.define([
 		});
 	};
 
-	return function (oPrototype) {
+	function asODataBinding(oPrototype) {
 		if (this) {
 			ODataBinding.apply(this, arguments);
 		} else {
 			jQuery.extend(oPrototype, ODataBinding.prototype);
 		}
-	};
+	}
 
+	asODataBinding.prototype.destroy = ODataBinding.prototype.destroy;
+
+	return asODataBinding;
 }, /* bExport= */ false);
