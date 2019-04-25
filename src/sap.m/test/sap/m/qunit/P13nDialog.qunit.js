@@ -379,6 +379,62 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("Add two 'P13nColumnsPanel' to the same P13nDialog (both visible)", function (assert) {
+		this.oP13nDialog = new P13nDialog({
+			panels: [new P13nColumnsPanel(), new P13nColumnsPanel()]
+		});
+
+		// arrange
+		this.oP13nDialog.placeAt("content");
+		this.oP13nDialog.open();
+		sap.ui.getCore().applyChanges();
+
+		//assertions
+		var done = assert.async();
+		this.oP13nDialog._oNavigationControlsPromise.then(function () {
+			assert.equal(this.oP13nDialog.getPanels().length, 2);
+			assert.strictEqual(this.oP13nDialog.getInitialVisiblePanelType(), "");
+
+			//we expect both panels to be visible, therefore the navigation is required and the dialog needs to display 'View Settings'
+			assert.equal(this.oP13nDialog._isNavigationControlExpected(), true);
+			assert.equal(this.oP13nDialog.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
+			assert.equal(this.oP13nDialog.getVisiblePanel().getType(), P13nPanelType.columns);
+
+			assert.equal(Device.system.phone, false);
+			assert.strictEqual(this.oP13nDialog._getNavigationControl().getSelectedItem(), this.oP13nDialog._getNavigationItemByPanel(this.oP13nDialog.getVisiblePanel()).getId());
+
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("Add two 'P13nColumnsPanel' to the same P13nDialog (only one visible)", function (assert) {
+		this.oP13nDialog = new P13nDialog({
+			panels: [new P13nColumnsPanel(), new P13nColumnsPanel({visible:false})]
+		});
+
+		// arrange
+		this.oP13nDialog.placeAt("content");
+		this.oP13nDialog.open();
+		sap.ui.getCore().applyChanges();
+
+		//assertions
+		var done = assert.async();
+		this.oP13nDialog._oNavigationControlsPromise.then(function () {
+			assert.equal(this.oP13nDialog.getPanels().length, 2);
+			assert.strictEqual(this.oP13nDialog.getInitialVisiblePanelType(), "");
+			assert.equal(this.oP13nDialog._isNavigationControlExpected(), false);
+
+			//same behavior expected as if there were two different panels
+			assert.equal(this.oP13nDialog.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_TITLE_COLUMNS"));
+			assert.equal(this.oP13nDialog.getVisiblePanel().getType(), P13nPanelType.columns);
+
+			assert.equal(Device.system.phone, false);
+			assert.strictEqual(this.oP13nDialog._getNavigationControl().getSelectedItem(), this.oP13nDialog._getNavigationItemByPanel(this.oP13nDialog.getVisiblePanel()).getId());
+
+			done();
+		}.bind(this));
+	});
+
 	QUnit.module("Switch Panel", {
 		beforeEach: function () {
 			sap.ui.Device.system.phone = false;
