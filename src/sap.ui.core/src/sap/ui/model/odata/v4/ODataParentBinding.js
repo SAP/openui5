@@ -37,6 +37,7 @@ sap.ui.define([
 		// whether all sent PATCHes have been successfully processed
 		this.bPatchSuccess = true;
 		this.oReadGroupLock = undefined; // see #createReadGroupLock
+		this.oRefreshPromise = null; // see #createRefreshPromise and #resolveRefreshPromise
 		this.oResumePromise = undefined; // see #getResumePromise
 	}
 
@@ -458,6 +459,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * Creates a promise for the refresh to be resolved by the binding's GET request.
+	 *
+	 * @returns {Promise} the created promise
+	 *
+	 * @see #resolveRefreshPromise
+	 * @private
+	 */
+	ODataParentBinding.prototype.createRefreshPromise = function () {
+		var oPromise, fnResolve;
+
+		oPromise = new Promise(function (resolve) {
+			fnResolve = resolve;
+		});
+		oPromise.$resolve = fnResolve;
+		this.oRefreshPromise = oPromise;
+		return oPromise;
+	};
+
+	/**
 	 * Deletes the entity in the cache. If the binding doesn't have a cache, it forwards to the
 	 * parent binding adjusting the path.
 	 *
@@ -784,6 +804,8 @@ sap.ui.define([
 	 *   The group ID to be used for refresh
 	 * @param {boolean} [bCheckUpdate]
 	 *   If <code>true</code>, a property binding is expected to check for updates
+	 * @param {boolean} [bKeepCacheOnError]
+	 *   If <code>true</code>, the binding data remains unchanged if the refresh fails
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving when all dependent bindings are refreshed; it is rejected if the
 	 *   binding's root binding is suspended and a group ID different from the binding's group ID is
@@ -792,9 +814,10 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataParentBinding.prototype.refreshDependentBindings = function (sResourcePathPrefix, sGroupId,
-			bCheckUpdate) {
+			bCheckUpdate, bKeepCacheOnError) {
 		return SyncPromise.all(this.getDependentBindings().map(function (oDependentBinding) {
-			return oDependentBinding.refreshInternal(sResourcePathPrefix, sGroupId, bCheckUpdate);
+			return oDependentBinding.refreshInternal(sResourcePathPrefix, sGroupId, bCheckUpdate,
+				bKeepCacheOnError);
 		}));
 	};
 
@@ -880,6 +903,23 @@ sap.ui.define([
 			// mCacheByResourcePath
 			oDependent.resetChangesInDependents();
 		});
+	};
+
+	/**
+	 * Resolves and clears the refresh promise created by {@link #createRefreshPromise} with the
+	 * given result if there is one.
+	 *
+	 * @param {any} vResult - The result to resolve with
+	 * @returns {any} vResult for chaining
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.resolveRefreshPromise = function (vResult) {
+		if (this.oRefreshPromise) {
+			this.oRefreshPromise.$resolve(vResult);
+			this.oRefreshPromise = null;
+		}
+		return vResult;
 	};
 
 	/**

@@ -1225,6 +1225,7 @@ sap.ui.define([
 					});
 				}
 			});
+			this.resolveRefreshPromise(oPromise);
 			if (oPromise.isFulfilled() && bRefreshEvent) {
 				// make sure "refresh" is followed by async "change"
 				oPromise = Promise.resolve(oPromise);
@@ -1647,34 +1648,45 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */
 	ODataListBinding.prototype.refreshInternal = function (sResourcePathPrefix, sGroupId,
-			bCheckUpdate) {
+			bCheckUpdate, bKeepCacheOnError) {
 		var that = this;
 
+		// calls refreshInternal on all dependent bindings and returns an array of promises
 		function refreshDependentBindings() {
-			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
+			return that.oModel.getDependentBindings(that).map(function (oDependentBinding) {
 				// Call refreshInternal with bCheckUpdate = false because property bindings
 				// should not check for updates yet, otherwise they will cause a "Failed to
 				// drill down..." when the row is no longer part of the collection. They get
 				// another update request in createContexts, when the context for the row is
 				// reused.
-				oDependentBinding.refreshInternal(sResourcePathPrefix, sGroupId, false);
+				return oDependentBinding.refreshInternal(sResourcePathPrefix, sGroupId, false,
+					bKeepCacheOnError);
 			});
 		}
 
 		if (this.isRootBindingSuspended()) {
 			this.refreshSuspended(sGroupId);
-			refreshDependentBindings();
-			return SyncPromise.resolve();
+			return SyncPromise.all(refreshDependentBindings());
 		}
 
 		this.createReadGroupLock(sGroupId, this.isRoot());
 		return this.oCachePromise.then(function (oCache) {
-			if (oCache) {
+			var oPromise = that.oRefreshPromise;
+
+			if (oCache && !oPromise) { // do not refresh twice
 				that.removeCachesAndMessages(sResourcePathPrefix);
 				that.fetchCache(that.oContext);
+				oPromise = that.createRefreshPromise();
+				if (bKeepCacheOnError) {
+					oPromise.catch(function (oError) {
+						that.oCachePromise = SyncPromise.resolve(oCache);
+						oCache.setActive(true);
+						that._fireChange({reason : ChangeReason.Change});
+					});
+				}
 			}
-			that.reset(ChangeReason.Refresh);
-			refreshDependentBindings();
+			that.reset(ChangeReason.Refresh); // this may reset that.oRefreshPromise
+			return SyncPromise.all(refreshDependentBindings().concat(oPromise));
 		});
 	};
 
@@ -1827,7 +1839,7 @@ sap.ui.define([
 			if (bSingle && that.isRoot()) {
 				return that.refreshSingle(oContext, oModel.lockGroup(sGroupId), false);
 			}
-			return that.refreshInternal("", sGroupId);
+			return that.refreshInternal("", sGroupId, false, true);
 		});
 	};
 

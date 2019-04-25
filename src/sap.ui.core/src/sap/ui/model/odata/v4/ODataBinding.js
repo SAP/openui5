@@ -703,7 +703,10 @@ sap.ui.define([
 		this.oModel.checkGroupId(sGroupId);
 
 		// The actual refresh is specific to the binding and is implemented in each binding class.
-		this.refreshInternal("", sGroupId, true);
+		this.refreshInternal("", sGroupId, true).catch(function () {
+			// Nothing to do here, the error is already logged. The catch however is necessary,
+			// because we drop the promise here, so there is no other code to catch it.
+		});
 	};
 
 	/**
@@ -718,8 +721,11 @@ sap.ui.define([
 	 *   The group ID to be used for refresh
 	 * @param {boolean} [bCheckUpdate]
 	 *   If <code>true</code>, a property binding is expected to check for updates
+	 * @param {boolean} [bKeepCacheOnError]
+	 *   If <code>true</code>, the binding data remains unchanged if the refresh fails
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving without a defined result when the refresh is finished
+	 *   A promise resolving without a defined result when the refresh is finished; it is rejected
+	 *   when the refresh fails; the promise is resolved immediately on a suspended binding
 	 * @throws {Error}
 	 *   If the binding's root binding is suspended and a group ID different from the binding's
 	 *   group ID is given

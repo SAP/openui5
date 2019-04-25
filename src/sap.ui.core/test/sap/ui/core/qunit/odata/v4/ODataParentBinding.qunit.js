@@ -83,6 +83,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.bPatchSuccess, true);
 		assert.ok("oReadGroupLock" in oBinding);
 		assert.strictEqual(oBinding.oReadGroupLock, undefined);
+		assert.strictEqual(oBinding.oRefreshPromise, null);
 		assert.ok("oResumePromise" in oBinding);
 		assert.strictEqual(oBinding.oResumePromise, undefined);
 		assert.ok(oBindingSpy.calledOnceWithExactly(sinon.match.same(oBinding)));
@@ -2416,6 +2417,7 @@ sap.ui.define([
 					resolve();
 				});
 			}),
+			bKeepCacheOnError = {},
 			sResourcePathPrefix = {/*Path needed to avoid deleting all Caches*/},
 			oPromise;
 
@@ -2423,22 +2425,50 @@ sap.ui.define([
 			.returns(aDependentBindings);
 		this.mock(aDependentBindings[0]).expects("refreshInternal")
 			.withExactArgs(sinon.match.same(sResourcePathPrefix), "group",
-					sinon.match.same(bCheckUpdate)
+					sinon.match.same(bCheckUpdate), sinon.match.same(bKeepCacheOnError)
 				)
 			.returns(oDependent0Promise);
 		this.mock(aDependentBindings[1]).expects("refreshInternal")
 			.withExactArgs(sinon.match.same(sResourcePathPrefix), "group",
-					sinon.match.same(bCheckUpdate)
+					sinon.match.same(bCheckUpdate), sinon.match.same(bKeepCacheOnError)
 				)
 			.returns(oDependent1Promise);
 
 		// code under test
-		oPromise = oBinding.refreshDependentBindings(sResourcePathPrefix, "group", bCheckUpdate);
+		oPromise = oBinding.refreshDependentBindings(sResourcePathPrefix, "group", bCheckUpdate,
+			bKeepCacheOnError);
 
 		assert.ok(oPromise.isPending(), "a SyncPromise");
 		return oPromise.then(function () {
 			assert.strictEqual(bDependent0Refreshed, true);
 			assert.strictEqual(bDependent1Refreshed, true);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createRefreshPromise/resolveRefreshPromise", function (assert) {
+		var oBinding = new ODataParentBinding(),
+			oError = new Error(),
+			oErrorPromise = Promise.reject(oError),
+			oRefreshPromise;
+
+		// code under test
+		oRefreshPromise = oBinding.createRefreshPromise();
+
+		assert.strictEqual(oRefreshPromise, oBinding.oRefreshPromise);
+
+		// code under test
+		assert.strictEqual(oBinding.resolveRefreshPromise(oErrorPromise), oErrorPromise);
+
+		assert.strictEqual(oBinding.oRefreshPromise, null);
+
+		// code under test
+		oBinding.resolveRefreshPromise(Promise.resolve({}));
+
+		return oRefreshPromise.then(function () {
+			assert.ok(false);
+		}, function (oResult) {
+			assert.strictEqual(oResult, oError);
 		});
 	});
 

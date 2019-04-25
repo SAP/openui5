@@ -363,7 +363,6 @@ sap.ui.define([
 				return;
 			}
 			if (this.resolve) {
-				this.checkMessages(assert);
 				this.resolve();
 				this.resolve = null;
 			}
@@ -730,6 +729,12 @@ sap.ui.define([
 									headers : mHeaders,
 									status : 200,
 									responseText : JSON.stringify(oResponse.body)
+								};
+							}, function (oError) {
+								return {
+									status : 500,
+									statusText : "Internal Server Error",
+									responseText : oError.message
 								};
 							});
 					}));
@@ -6709,7 +6714,7 @@ sap.ui.define([
 			var fnAfterPatchCompleted,
 				oBatchPromise0,
 				oBatchPromise1,
-				oError = new Error("500 Service not available"),
+				oError = new Error(),
 				oModel = createSalesOrdersModel({
 					autoExpandSelect : true,
 					updateGroupId : sUpdateGroupId
@@ -6769,11 +6774,7 @@ sap.ui.define([
 
 				that.oView.byId("note").getBinding("value").setValue("Changed Note");
 				if (sUpdateGroupId === "update") {
-					oBatchPromise0 = that.oModel.submitBatch(sUpdateGroupId).then(function () {
-						assert.ok(false, "unexpected success");
-					}, function () {
-						assert.ok(true, "first batch failed as expected");
-					});
+					oBatchPromise0 = that.oModel.submitBatch(sUpdateGroupId);
 				}
 
 				return that.waitForChanges(assert);
@@ -6784,7 +6785,6 @@ sap.ui.define([
 				assert.strictEqual(iPatchCompleted, 0, "patchCompleted 0");
 
 				// don't care about other parameters
-				that.oLogMock.expects("error").withArgs("$batch failed");
 				that.oLogMock.expects("error")
 					.withArgs("Failed to update path /SalesOrderList('42')/Note");
 
@@ -6797,14 +6797,7 @@ sap.ui.define([
 
 				that.expectMessages([{
 						"code" : undefined,
-						"message" : "500 Service not available",
-						"persistent" : true,
-						"target" : "",
-						"technical" : true,
-						"type" : "Error"
-					}, {
-						"code" : undefined,
-						"message" : "HTTP request was not processed because $batch failed",
+						"message" : "Communication error: 500 Internal Server Error",
 						"persistent" : true,
 						"target" : "",
 						"technical" : true,
@@ -16271,6 +16264,265 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Check that the failure to refresh a complete table using requestSideEffects leads
+	// to a rejected promise, but no changes in data.
+	// JIRA: CPOUI5UISERVICESV3-1828
+	QUnit.test("ODLB: refresh within requestSideEffects fails", function (assert) {
+		var oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			oTable,
+			sView = '\
+<Table id="master" items="{/SalesOrderList}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="salesOrderID" text="{SalesOrderID}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
+				"value" : [{"SalesOrderID" : "42"}]
+			})
+			.expectChange("salesOrderID", ["42"])
+			.expectChange("note", false);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.oLogMock.expects("error"); // don't care about console here
+			that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", new Error())
+				.expectMessages([{
+					"code": undefined,
+					"descriptionUrl": undefined,
+					"message": "Communication error: 500 Internal Server Error",
+					"persistent": true,
+					"target": "",
+					"technical": true,
+					"type": "Error"
+				}]);
+
+			oTable = that.oView.byId("master");
+			return Promise.all([
+				oTable.getBinding("items").getHeaderContext()
+					.requestSideEffects([{$NavigationPropertyPath : ""}]).then(
+						function () {
+							assert.ok(false, "unexpected success");
+						}, function () {
+							assert.ok(true, "requestSideEffects failed as expected");
+						}),
+				oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.strictEqual(oTable.getBinding("items").getCurrentContexts()[0].getPath(),
+				"/SalesOrderList('42')");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Check that the failure to refresh a complete table using requestSideEffects leads
+	// to a rejected promise, but no changes in data.
+	// JIRA: CPOUI5UISERVICESV3-1828
+	QUnit.test("ODLB+ODCB: refresh within requestSideEffects fails", function (assert) {
+		var oContext,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			oTable,
+			sView = '\
+<Table id="master" items="{/SalesOrderList}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="salesOrderID" text="{SalesOrderID}" />\
+	</ColumnListItem>\
+</Table>\
+<FlexBox id="detail" binding="{path : \'\', parameters : {$$ownRequest : true}}">\
+	<Text id="note" text="{Note}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
+				"value" : [{"SalesOrderID" : "42"}]
+			})
+			.expectChange("salesOrderID", ["42"])
+			.expectChange("note", false);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID", {
+					"SalesOrderID" : "42",
+					"Note" : "Note 42"
+				})
+				.expectChange("note", "Note 42");
+
+			oTable = that.oView.byId("master");
+			oContext = oTable.getItems()[0].getBindingContext();
+
+			that.oView.byId("detail").setBindingContext(oContext);
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.oLogMock.expects("error").twice(); // don't care about console here
+			that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", new Error())
+				.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID", new Error())
+				.expectMessages([{
+					"code": undefined,
+					"descriptionUrl": undefined,
+					"message": "Communication error: 500 Internal Server Error",
+					"persistent": true,
+					"target": "",
+					"technical": true,
+					"type": "Error"
+				}, {
+					"code": undefined,
+					"descriptionUrl": undefined,
+					"message": "Communication error: 500 Internal Server Error",
+					"persistent": true,
+					"target": "",
+					"technical": true,
+					"type": "Error"
+				}]);
+
+			return Promise.all([
+				oTable.getBinding("items").getHeaderContext()
+					.requestSideEffects([{$NavigationPropertyPath : ""}]).then(
+						function () {
+							assert.ok(false, "unexpected success");
+						}, function () {
+							assert.ok(true, "requestSideEffects failed as expected");
+						}),
+				oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			var oDetailContext = that.oView.byId("detail").getElementBinding().getBoundContext();
+
+			assert.strictEqual(oTable.getBinding("items").getCurrentContexts()[0].getPath(),
+				"/SalesOrderList('42')");
+			assert.strictEqual(oDetailContext.getPath(), "/SalesOrderList('42')");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Check that the failure to refresh a complete form using requestSideEffects leads
+	// to a rejected promise, but no changes in data.
+	// JIRA: CPOUI5UISERVICESV3-1828
+	QUnit.test("ODCB+ODLB: refresh within requestSideEffects fails", function (assert) {
+		var oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			sView = '\
+<FlexBox id="form" binding="{/SalesOrderList(\'42\')}">\
+	<Text id="salesOrderID" text="{SalesOrderID}" />\
+	<Table id="table" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}, \
+			templateShareable : false}">\
+		<columns><Column/></columns>\
+		<ColumnListItem>\
+			<Text id="position" text="{ItemPosition}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('42')?$select=SalesOrderID", {"SalesOrderID" : "42"})
+			.expectRequest("SalesOrderList('42')/SO_2_SOITEM?$select=ItemPosition,SalesOrderID"
+				+ "&$skip=0&$top=100", {
+				"value" : [{
+					"SalesOrderID" : "42",
+					"ItemPosition" : "0010"
+				}]
+			})
+			.expectChange("salesOrderID", "42")
+			.expectChange("position", ["0010"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.oLogMock.expects("error").thrice(); // don't care about console here
+			that.expectRequest("SalesOrderList('42')?$select=SalesOrderID", new Error())
+				.expectRequest("SalesOrderList('42')/SO_2_SOITEM?$select=ItemPosition,SalesOrderID"
+					+ "&$skip=0&$top=100", new Error())
+				.expectMessages([{
+					"code": undefined,
+					"descriptionUrl": undefined,
+					"message": "Communication error: 500 Internal Server Error",
+					"persistent": true,
+					"target": "",
+					"technical": true,
+					"type": "Error"
+				}, {
+					"code": undefined,
+					"descriptionUrl": undefined,
+					"message": "Communication error: 500 Internal Server Error",
+					"persistent": true,
+					"target": "",
+					"technical": true,
+					"type": "Error"
+				}]);
+
+			return Promise.all([
+				that.oView.byId("form").getElementBinding().getBoundContext()
+					.requestSideEffects([{$NavigationPropertyPath : ""}]).then(
+					function () {
+						assert.ok(false, "unexpected success");
+					}, function () {
+						assert.ok(true, "requestSideEffects failed as expected");
+					}),
+				oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			var oFormContext = that.oView.byId("form").getElementBinding().getBoundContext(),
+				oRowContext = that.oView.byId("table").getBinding("items").getCurrentContexts()[0];
+
+			assert.strictEqual(oFormContext.getPath(), "/SalesOrderList('42')");
+			assert.strictEqual(oRowContext.getPath(),
+				"/SalesOrderList('42')/SO_2_SOITEM(SalesOrderID='42',ItemPosition='0010')");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Check that the failure to refresh a complete form using requestSideEffects leads
+	// to a rejected promise.
+	// JIRA: CPOUI5UISERVICESV3-1828
+	QUnit.test("ODCB: failed requestSideEffects & changeParameters", function (assert) {
+		var oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			sView = '\
+<FlexBox id="form" binding="{/SalesOrderList(\'42\')}">\
+	<Text id="note" text="{Note}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID", {
+				"SalesOrderID" : "42",
+				"Note" : "Note"
+			})
+			.expectChange("note", "Note");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oBinding = that.oView.byId("form").getElementBinding(),
+				oPromise;
+
+			that.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID&foo=bar", {
+					"SalesOrderID" : "42",
+					"Note" : "Note updated"
+				})
+				.expectChange("note", "Note updated");
+
+			oPromise = oBinding.getBoundContext()
+				.requestSideEffects([{$NavigationPropertyPath : ""}]);
+			oBinding.changeParameters({"foo" : "bar"});
+
+			return Promise.all([
+				oPromise,
+				oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Automatic retry of failed PATCHes, along the lines of
 	// MIT.SalesOrderCreateRelative.html, but with $auto group
 	[function () {
@@ -16376,23 +16628,16 @@ sap.ui.define([
 						payload : {
 							"ROOM_ID" : "42"
 						}
-					}, new Error("500 Internal Server Error"))
+					}, new Error())
 					.expectMessages([{
 						"code" : undefined,
-						"message" : "500 Internal Server Error",
-						"persistent" : true,
-						"target" : "",
-						"technical" : true,
-						"type" : "Error"
-					}, {
-						"code" : undefined,
-						"message" : "HTTP request was not processed because $batch failed",
+						"message" : "Communication error: 500 Internal Server Error",
 						"persistent" : true,
 						"target" : "",
 						"technical" : true,
 						"type" : "Error"
 					}]);
-				that.oLogMock.expects("error").twice(); // don't care about console here
+				that.oLogMock.expects("error"); // don't care about console here
 
 				oRoomIdBinding.setValue("42");
 
@@ -16458,7 +16703,7 @@ sap.ui.define([
 
 				return that.waitForChanges(assert);
 			}).then(function () {
-				var oError = new Error("500 Internal Server Error");
+				var oError = new Error();
 
 				that.expectChange("roomId", "23")
 					.expectRequest({
@@ -16475,20 +16720,13 @@ sap.ui.define([
 						"ROOM_ID" : "23"
 					}).expectMessages([{
 						"code" : undefined,
-						"message" : "500 Internal Server Error",
-						"persistent" : true,
-						"target" : "",
-						"technical" : true,
-						"type" : "Error"
-					}, {
-						"code" : undefined,
-						"message" : "HTTP request was not processed because $batch failed",
+						"message" : "Communication error: 500 Internal Server Error",
 						"persistent" : true,
 						"target" : "",
 						"technical" : true,
 						"type" : "Error"
 					}]);
-				that.oLogMock.expects("error").thrice(); // don't care about console here
+				that.oLogMock.expects("error").twice(); // don't care about console here
 
 				oRoomIdBinding.setValue("23");
 				fnReject(oError);
@@ -16572,20 +16810,15 @@ sap.ui.define([
 				oPromise;
 
 			function reject() {
-				that.expectMessages([
-					"500 Internal Server Error",
-					"HTTP request was not processed because $batch failed"
-				].map(function (sMessage) {
-					return {
-						"code" : undefined,
-						"message" : sMessage,
-						"persistent" : true,
-						"target" : "",
-						"technical" : true,
-						"type" : "Error"
-					};
-				}));
-				that.oLogMock.expects("error").thrice(); // don't care about console here
+				that.expectMessages([{
+					"code" : undefined,
+					"message" : "Communication error: 500 Internal Server Error",
+					"persistent" : true,
+					"target" : "",
+					"technical" : true,
+					"type" : "Error"
+				}]);
+				that.oLogMock.expects("error").twice(); // don't care about console here
 
 				fnReject(new Error("500 Internal Server Error"));
 			}

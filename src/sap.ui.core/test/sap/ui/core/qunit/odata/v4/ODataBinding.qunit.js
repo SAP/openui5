@@ -238,8 +238,28 @@ sap.ui.define([
 		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
 		this.mock(oBinding).expects("hasPendingChanges").returns(false);
 		this.mock(oBinding.oModel).expects("checkGroupId");
-		this.mock(oBinding).expects("refreshInternal").withExactArgs("", "groupId", true);
+		this.mock(oBinding).expects("refreshInternal").withExactArgs("", "groupId", true)
+			.resolves();
 
+		oBinding.refresh("groupId");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refresh: reject", function (assert) {
+		var oBinding = new ODataBinding({
+				oModel : {
+					checkGroupId : function () {}
+				},
+				refreshInternal : function () {}
+			});
+
+		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
+		this.mock(oBinding).expects("hasPendingChanges").returns(false);
+		this.mock(oBinding.oModel).expects("checkGroupId");
+		this.mock(oBinding).expects("refreshInternal").withExactArgs("", "groupId", true)
+			.rejects(new Error());
+
+		// code under test - must not cause "Uncaught (in promise)"
 		oBinding.refresh("groupId");
 	});
 
