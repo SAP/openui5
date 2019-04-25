@@ -4823,6 +4823,8 @@ sap.ui.define([
 	 * <li>The boolean value <code>cloneChildren</code> specifies whether associations/aggregations will be cloned</li>
 	 * <li>The boolean value <code>cloneBindings</code> specifies if bindings will be cloned</li>
 	 * </ul>
+	 * When <code>oOptions</code> is undefined both options default to <code>true</code>.
+	 * But be aware that setting the optject and not specifying eigher <code>cloneChildren</code> or <code>cloneBindings</code> will result in them beeing undefined and therefor set to <code>false</code>
 	 *
 	 * For each cloned object the following settings are cloned based on the metadata of the object and the defined options:
 	 * <ul>
