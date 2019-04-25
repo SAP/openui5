@@ -89,7 +89,7 @@ sap.ui.define([
 	 * @param {function} [fnGetOriginalResourcePath]
 	 *   A function that returns the cache's original resource path to be used to build the target
 	 *   path for bound messages; if it is not given or returns nothing, <code>sResourcePath</code>
-	 *   is used instead
+	 *   is used instead. See {@link #getOriginalResourcePath}.
 	 *
 	 * @private
 	 */
@@ -170,7 +170,7 @@ sap.ui.define([
 			sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
 			return that.oRequestor.request("DELETE", sEditUrl, oGroupLock, mHeaders, undefined,
 					undefined, undefined, undefined,
-					_Helper.buildPath(that.sResourcePath, sEntityPath))
+					_Helper.buildPath(that.getOriginalResourcePath(oEntity), sEntityPath))
 				.catch(function (oError) {
 					if (oError.status !== 404) {
 						delete oEntity["$ui5.deleting"];
@@ -178,13 +178,11 @@ sap.ui.define([
 					} // else: map 404 to 200
 				})
 				.then(function () {
-					var iIndex;
-
 					if (Array.isArray(vCacheData)) {
-						// oEntity might have moved due to parallel insert/delete
-						iIndex = vCacheData.indexOf(oEntity);
-						that.removeElement(vCacheData, iIndex, sKeyPredicate, sParentPath);
-						fnCallback(iIndex, vCacheData);
+						fnCallback(
+							that.removeElement(vCacheData, Number(vDeleteProperty), sKeyPredicate,
+								sParentPath),
+							vCacheData);
 					} else {
 						if (vDeleteProperty) {
 							// set to null and notify listeners
@@ -619,6 +617,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Gets the cache's original resource path to be used to build the target path for bound
+	 * messages.
+	 *
+	 * @param {object} oEntity
+	 *   The entity to compute the original resource path for
+	 * @returns {string}
+	 *   The original resource path
+	 *
+	 * @private
+	 */
+	Cache.prototype.getOriginalResourcePath = function (oEntity) {
+		return this.fnGetOriginalResourcePath && this.fnGetOriginalResourcePath(oEntity)
+			|| this.sResourcePath;
+	};
+
+	/**
 	 * Returns <code>true</code> if there are pending changes below the given path.
 	 *
 	 * @param {string} sPath
@@ -681,15 +695,17 @@ sap.ui.define([
 	 *   The key predicate of the old element to be removed
 	 * @param {string} sParentPath
 	 *   The array's path within the cache (as used by change listeners)
+	 * @returns {number} The index at which the element actually was (it might have moved due to
+	 *   parallel insert/delete)
 	 */
 	Cache.prototype.removeElement = function (aElements, iIndex, sPredicate, sParentPath) {
-		var oElement = aElements[iIndex],
-			sTransientPredicate;
+		var oElement, sTransientPredicate;
 
+		// the element might have moved due to parallel insert/delete
+		iIndex = Cache.getElementIndex(aElements, sPredicate, iIndex);
+		oElement = aElements[iIndex];
 		aElements.splice(iIndex, 1);
-		if (sPredicate) {
-			delete aElements.$byPredicate[sPredicate];
-		}
+		delete aElements.$byPredicate[sPredicate];
 		sTransientPredicate = _Helper.getPrivateAnnotation(oElement, "transientPredicate");
 		if (sTransientPredicate) {
 			aElements.$created -= 1;
@@ -701,6 +717,7 @@ sap.ui.define([
 			this.adjustReadRequests(iIndex, -1);
 		}
 		addToCount(this.mChangeListeners, sParentPath, aElements, -1);
+		return iIndex;
 	};
 
 	/**
@@ -865,7 +882,8 @@ sap.ui.define([
 
 				oPatchPromise = that.oRequestor.request("PATCH", sEditUrl, oPatchGroupLock,
 					{"If-Match" : oEntity}, oUpdateData, onSubmit, onCancel, /*sMetaPath*/undefined,
-					_Helper.buildPath(that.sResourcePath, sEntityPath), bAtFront);
+					_Helper.buildPath(that.getOriginalResourcePath(oEntity), sEntityPath),
+					bAtFront);
 				_Helper.addByPath(that.mPatchRequests, sFullPath, oPatchPromise);
 				return SyncPromise.all([
 					oPatchPromise,
@@ -1152,9 +1170,7 @@ sap.ui.define([
 		}
 		if (bHasMessages) {
 			this.oRequestor.getModelInterface().reportBoundMessages(
-				this.fnGetOriginalResourcePath && this.fnGetOriginalResourcePath(oRoot)
-					|| this.sResourcePath,
-				mPathToODataMessages, aCachePaths);
+				this.getOriginalResourcePath(oRoot), mPathToODataMessages, aCachePaths);
 		}
 	};
 
@@ -1732,10 +1748,6 @@ sap.ui.define([
 			return that.oRequestor
 				.request("GET", sReadUrl, oGroupLock, undefined, undefined, fnDataRequested)
 				.then(function (oResult) {
-					if (that.aElements[iIndex] !== oEntity) {
-						// oEntity might have moved due to parallel insert/delete
-						iIndex = that.aElements.indexOf(oEntity);
-					}
 					if (oResult.value.length > 1) {
 						throw new Error(
 							"Unexpected server response, more than one entity returned.");
@@ -1767,16 +1779,17 @@ sap.ui.define([
 	 */
 	CollectionCache.prototype.replaceElement = function (iIndex, sPredicate, oElement,
 			mTypeForMetaPath) {
-		var oOldElement = this.aElements[iIndex],
-			sTransientPredicate,
-			that = this;
+		var oOldElement, sTransientPredicate;
 
+		// the element might have moved due to parallel insert/delete
+		iIndex = Cache.getElementIndex(this.aElements, sPredicate, iIndex);
+		oOldElement = this.aElements[iIndex];
 		// _Helper.updateExisting cannot be used because navigation properties cannot be handled
 		this.aElements[iIndex] = this.aElements.$byPredicate[sPredicate] = oElement;
 		sTransientPredicate = _Helper.getPrivateAnnotation(oOldElement, "transientPredicate");
 		if (sTransientPredicate) {
 			oElement["@$ui5.context.isTransient"] = false;
-			that.aElements.$byPredicate[sTransientPredicate] = oElement;
+			this.aElements.$byPredicate[sTransientPredicate] = oElement;
 			_Helper.setPrivateAnnotation(oElement, "transientPredicate", sTransientPredicate);
 		}
 		this.visitResponse(oElement, mTypeForMetaPath, undefined, sPredicate);
@@ -2331,6 +2344,25 @@ sap.ui.define([
 		return rNumber.test(sSegment)
 			? aCollection.$created + Number(sSegment)
 			: sSegment;
+	};
+
+	/**
+	 * Determines the index of the element with the given key predicate.
+	 *
+	 * @param {object[]} aElements - The elements collection
+	 * @param {string} sKeyPredicate - The key predicate
+	 * @param {number} iIndex - The previous index (to speed it up)
+	 * @returns {number} The index or -1 if the element is not in the collection anymore
+	 *
+	 * @private
+	 */
+	Cache.getElementIndex = function (aElements, sKeyPredicate, iIndex) {
+		var oElement = aElements[iIndex];
+
+		if (!oElement || _Helper.getPrivateAnnotation(oElement, "predicate") !== sKeyPredicate) {
+			iIndex = aElements.indexOf(aElements.$byPredicate[sKeyPredicate]);
+		}
+		return iIndex;
 	};
 
 	/**

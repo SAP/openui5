@@ -3,27 +3,40 @@
  */
 
 sap.ui.define([
+	"sap/m/MessageBox",
+	"sap/m/MessageToast",
 	"sap/ui/core/sample/common/Controller"
-], function (Controller) {
+], function (MessageBox, MessageToast, Controller) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.Sticky.Main", {
+		discard : function () {
+			this.setStickyContext(null);
+			this.selectedContext.refresh();
+			delete this.selectedContext;
+		},
+
 		onDiscard : function (oEvent) {
 			var oOperation = this.getView().getModel().bindContext("/DiscardChanges(...)"),
 				that = this;
 
 			oOperation.execute().then(function () {
-				sap.m.MessageToast.show("Sticky session dicarded");
-				that.toggleSticky();
-				that.selectedContext.refresh();
-				delete that.selectedContext;
+				that.discard();
+				MessageToast.show("Sticky session discarded");
 			}, function (oError) {
-				sap.m.MessageToast.show("Failed to discard sticky session " + oError);
+				MessageToast.show("Failed to discard sticky session " + oError);
 			});
 		},
 
 		onInit : function () {
+			var that = this;
+
 			this.initMessagePopover("messagesButton");
+			this.getView().getModel().attachEvent("sessionTimeout", function (oEvent) {
+				// The changes on the server are lost. Discard and allow for a new session.
+				that.discard();
+				MessageBox.error("Session timeout");
+			});
 		},
 
 		onPrepare : function (oEvent) {
@@ -32,7 +45,7 @@ sap.ui.define([
 				that = this;
 
 			if (!oItem) {
-				sap.m.MessageToast.show("No item selected");
+				MessageToast.show("No item selected");
 				return;
 			}
 
@@ -41,11 +54,11 @@ sap.ui.define([
 				oItem.getBindingContext());
 
 			oOperation.execute().then(function (oStickyContext) {
-				sap.m.MessageToast.show("Sticky session opened");
-				that.toggleSticky(oStickyContext);
+				MessageToast.show("Sticky session opened");
+				that.setStickyContext(oStickyContext);
 				that.selectedContext = oItem.getBindingContext();
 			}, function (oError) {
-				sap.m.MessageToast.show("Failed to open sticky session: " + oError);
+				MessageToast.show("Failed to open sticky session: " + oError);
 			});
 		},
 
@@ -58,16 +71,16 @@ sap.ui.define([
 				this.byId("Sticky::details").getBindingContext());
 
 			oOperation.execute().then(function () {
-				sap.m.MessageToast.show("Changes saved, sticky session closed");
-				that.toggleSticky();
+				MessageToast.show("Changes saved, sticky session closed");
+				that.setStickyContext(null);
 				that.selectedContext.refresh();
 				delete that.selectedContext;
 			}, function (oError) {
-				sap.m.MessageToast.show("Failed to close sticky session: " + oError);
+				MessageToast.show("Failed to close sticky session: " + oError);
 			});
 		},
 
-		toggleSticky : function (oStickyContext) {
+		setStickyContext : function (oStickyContext) {
 			this.getView().getModel("ui").setProperty("/bSticky", !!oStickyContext);
 			this.byId("Sticky::details").setBindingContext(oStickyContext);
 		}

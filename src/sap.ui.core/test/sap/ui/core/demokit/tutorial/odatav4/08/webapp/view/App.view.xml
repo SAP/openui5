@@ -43,7 +43,6 @@
 											id="addUserButton"
 											icon="sap-icon://add"
 											tooltip="{i18n>createButtonText}"
-											enabled="{= !${appView>/hasUIChanges}}"
 											press=".onCreate">
 											<layoutData>
 												<OverflowToolbarLayoutData priority="NeverOverflow"/>
@@ -53,7 +52,6 @@
 											id="deleteUserButton"
 											icon="sap-icon://delete"
 											tooltip="{i18n>deleteButtonText}"
-											enabled="{= !${appView>/hasUIChanges}}"
 											press=".onDelete">
 											<layoutData>
 												<OverflowToolbarLayoutData priority="NeverOverflow"/>

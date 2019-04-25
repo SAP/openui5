@@ -55,7 +55,8 @@ sap.ui.define([
 			MessageType.Error
 		],
 		mSupportedEvents = {
-			messageChange : true
+			messageChange : true,
+			sessionTimeout : true
 		},
 		mSupportedParameters = {
 			annotationURI : true,
@@ -274,6 +275,9 @@ sap.ui.define([
 							fetchEntityContainer :
 								this.oMetaModel.fetchEntityContainer.bind(this.oMetaModel),
 							fetchMetadata : this.oMetaModel.fetchObject.bind(this.oMetaModel),
+							fireSessionTimeout : function () {
+								that.fireEvent("sessionTimeout");
+							},
 							getGroupProperty : this.getGroupProperty.bind(this),
 							lockGroup : this.lockGroup.bind(this),
 							onCreateGroup : function (sGroupId) {
@@ -390,6 +394,16 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 
+	/**
+	 * The 'sessionTimeout' event is fired when the server has created a session for the model and
+	 * this session ran into a timeout due to inactivity.
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataModel#sessionTimeout
+	 * @public
+	 * @since 1.66.0
+	 */
+
 	// See class documentation
 	// @override
 	// @public
@@ -401,6 +415,20 @@ sap.ui.define([
 				+ "': v4.ODataModel#attachEvent");
 		}
 		return Model.prototype.attachEvent.apply(this, arguments);
+	};
+
+	/**
+	 * Attach event handler <code>fnFunction</code> to the 'sessionTimeout' event of this model.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {sap.ui.model.odata.v4.ODataModel} <code>this</code> to allow method chaining
+	 *
+	 * @public
+	 * @since 1.66.0
+	 */
+	ODataModel.prototype.attachSessionTimeout = function (fnFunction, oListener) {
+		return this.attachEvent("sessionTimeout", fnFunction, oListener);
 	};
 
 	/**
@@ -930,6 +958,20 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.destroyBindingContext = function () {
 		throw new Error("Unsupported operation: v4.ODataModel#destroyBindingContext");
+	};
+
+	/**
+	 * Detach event handler <code>fnFunction</code> from the 'sessionTimeout' event of this model.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {sap.ui.model.odata.v4.ODataModel} <code>this</code> to allow method chaining
+	 *
+	 * @public
+	 * @since 1.66.0
+	 */
+	ODataModel.prototype.detachSessionTimeout = function (fnFunction, oListener) {
+		return this.detachEvent("sessionTimeout", fnFunction, oListener);
 	};
 
 	/**

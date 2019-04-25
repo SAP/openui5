@@ -1380,47 +1380,14 @@ sap.ui.define([
 	);
 
 	//*********************************************************************************************
-	// Scenario: Failure to read from an ODataListBinding returning a bound message
-	QUnit.test("ODLB: read failure & message", function (assert) {
-		var oError = new Error("Failure"),
-			sView = '\
-<Table items="{/EMPLOYEES}">\
-	<columns><Column/></columns>\
-	<ColumnListItem>\
-		<Text id="text" text="{Name}" />\
-	</ColumnListItem>\
-</Table>';
-
-		oError.error = {
-			"code" : "CODE",
-			"message" : "Could not read",
-			"target" : "('42')/Name"
-		};
-		this.oLogMock.expects("error")
-			.withExactArgs("Failed to get contexts for " + sTeaBusi
-				+ "EMPLOYEES with start index 0 and length 100", sinon.match(oError.message),
-				"sap.ui.model.odata.v4.ODataListBinding");
-		this.expectRequest("EMPLOYEES?$skip=0&$top=100", oError)
-			.expectMessages([{
-				"code" : "CODE",
-				"message" : "Could not read",
-				"persistent" : true,
-				"target" : "/EMPLOYEES('42')/Name",
-				"technical" : true,
-				"type" : "Error"
-			}]);
-
-		return this.createView(assert, sView);
-	});
-
-	//*********************************************************************************************
 	// Scenario: Failure to read from an ODataContextBinding returning a bound message
 	QUnit.test("ODCB: read failure & message", function (assert) {
 		var oError = new Error("Failure"),
 			sView = '\
 <FlexBox binding="{/EMPLOYEES(\'42\')}">\
-	<Text id="text" text="{Name}" />\
-</FlexBox>';
+	<Input id="text" value="{Name}" />\
+</FlexBox>',
+			that = this;
 
 		oError.error = {
 			"code" : "CODE",
@@ -1443,14 +1410,17 @@ sap.ui.define([
 				"type" : "Error"
 			}]);
 
-		return this.createView(assert, sView);
+		return this.createView(assert, sView).then(function () {
+			return that.checkValueState(assert, "text", "Error", "Could not read");
+		});
 	});
 
 	//*********************************************************************************************
 	// Scenario: Failure to read from an ODataPropertyBinding returning a bound message
 	QUnit.test("ODPB: read failure & message", function (assert) {
 		var oError = new Error("Failure"),
-			sView = '<Text id="text" text="{/EMPLOYEES(\'42\')/Name}" />';
+			sView = '<Input id="text" value="{/EMPLOYEES(\'42\')/Name}" />',
+			that = this;
 
 		oError.error = {
 			"code" : "CODE",
@@ -1470,7 +1440,9 @@ sap.ui.define([
 				"type" : "Error"
 			}]);
 
-		return this.createView(assert, sView);
+		return this.createView(assert, sView).then(function () {
+			return that.checkValueState(assert, "text", "Error", "Could not read");
+		});
 	});
 
 	//*********************************************************************************************
@@ -1616,7 +1588,7 @@ sap.ui.define([
 		}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
-		<Text text="{ID}" />\
+		<Input id="id" value="{ID}" />\
 	</ColumnListItem>\
 </Table>',
 			oMessage1 = {
@@ -1647,6 +1619,7 @@ sap.ui.define([
 				"target" : "ID",
 				"transition" : false
 			},
+			oTable,
 			that = this;
 
 		this.expectRequest("EMPLOYEES?$select=ID,__CT__FAKE__Message/__FAKE__Messages"
@@ -1663,6 +1636,7 @@ sap.ui.define([
 					}
 				}]
 			})
+			.expectChange("id", ["0", "1"])
 			.expectMessages([{
 				"code" : "1",
 				"message" : "Text",
@@ -1673,7 +1647,16 @@ sap.ui.define([
 
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
 			.then(function () {
-				var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
+				oTable = that.oView.byId("table");
+
+				return Promise.all([
+					that.checkValueState(assert, oTable.getItems()[0].getCells()[0],
+						"Warning", "Text"),
+					that.checkValueState(assert, oTable.getItems()[1].getCells()[0],
+						"Warning", "Another Text")
+				]);
+			}).then(function () {
+				var oContext = oTable.getItems()[0].getBindingContext();
 
 				that.expectRequest("EMPLOYEES('0')"
 							+ "?$select=ID,__CT__FAKE__Message/__FAKE__Messages", {
@@ -1694,6 +1677,12 @@ sap.ui.define([
 				oContext.refresh();
 
 				return that.waitForChanges(assert);
+			}).then(function () {
+				return that.checkValueState(assert, oTable.getItems()[0].getCells()[0],
+					"Warning", "Text after refresh");
+			}).then(function () {
+				return that.checkValueState(assert, oTable.getItems()[1].getCells()[0],
+					"Warning", "Another Text");
 			});
 	});
 
@@ -1740,9 +1729,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-
 			return that.checkValueState(assert,
-				that.oView.byId("table").getItems("items")[0].getCells()[0], "Error", "Not found");
+				that.oView.byId("table").getItems()[0].getCells()[0], "Error", "Not found");
 		});
 	});
 
@@ -1912,7 +1900,7 @@ sap.ui.define([
 		parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
-		<Text id="name" text="{Name}" />\
+		<Input id="name" value="{Name}" />\
 	</ColumnListItem>\
 </Table>',
 			that = this;
@@ -1947,6 +1935,10 @@ sap.ui.define([
 			}]);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			return that.checkValueState(assert,
+				that.oView.byId("table").getItems()[0].getCells()[0],
+				"Warning", "Text");
+		}).then(function () {
 			that.expectRequest(
 				"EMPLOYEES?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages&$skip=0&$top=100", {
 					"value" : [{
@@ -1964,6 +1956,10 @@ sap.ui.define([
 			that.oView.byId("table").getBinding("items").refresh();
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			return that.checkValueState(assert,
+				that.oView.byId("table").getItems()[0].getCells()[0],
+				"None", "");
 		});
 	});
 
@@ -1984,6 +1980,7 @@ sap.ui.define([
 				"target" : "/EMPLOYEES/2/Name",
 				"type" : "Warning"
 			},
+			oTable,
 			sView = '\
 <t:Table id="table" rows="{\
 			path : \'/EMPLOYEES\',\
@@ -1991,7 +1988,7 @@ sap.ui.define([
 		}"\ threshold="0" visibleRowCount="2">\
 	<t:Column>\
 		<t:template>\
-			<Text id="name" text="{Name}" />\
+			<Input id="name" value="{Name}" />\
 		</t:template>\
 	</t:Column>\
 </t:Table>',
@@ -2019,8 +2016,11 @@ sap.ui.define([
 			.expectMessages([oMessage1]);
 
 		return this.createView(assert, sView, createTeaBusiModel()).then(function () {
-			var oTable = that.oView.byId("table");
+			oTable = that.oView.byId("table");
 
+			return that.checkValueState(assert, oTable.getRows()[1].getCells()[0],
+				"Warning", "Text");
+		}).then(function () {
 			that.expectRequest(
 				"EMPLOYEES?$select=Name,__CT__FAKE__Message/__FAKE__Messages&$skip=2&$top=1", {
 					"value" : [{
@@ -2042,7 +2042,14 @@ sap.ui.define([
 				.expectMessages([oMessage1, oMessage2]);
 
 			oTable.setFirstVisibleRow(1);
+
 			return that.waitForChanges(assert);
+		}).then(function () {
+			return that.checkValueState(assert, oTable.getRows()[0].getCells()[0],
+				"Warning", "Text");
+		}).then(function () {
+			return that.checkValueState(assert, oTable.getRows()[1].getCells()[0],
+				"Warning", "Text2");
 		});
 		//TODO: using an index for a bound message leads to a wrong target if for example
 		//      an entity with a lower index gets deleted, see CPOUI5UISERVICESV3-413
@@ -2055,7 +2062,7 @@ sap.ui.define([
 			sView = '\
 <FlexBox id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\', \
 	parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
-	<Text id="text" text="{Name}" />\
+	<Input id="text" value="{Name}" />\
 </FlexBox>',
 			that = this;
 
@@ -2082,6 +2089,8 @@ sap.ui.define([
 			}]);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			return that.checkValueState(assert, "text", "Warning", "Text");
+		}).then(function () {
 			var oError = new Error("Employee does not exist");
 
 			that.oLogMock.expects("error").withExactArgs("Failed to read path /EMPLOYEES('2')",
@@ -2583,6 +2592,55 @@ sap.ui.define([
 					"/SalesOrderList('0500000004')"
 				]
 			);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Delete in a growing table and at the same time refresh a row with higher index.
+	// JIRA: CPOUI5UISERVICESV3-1829
+	QUnit.test("refreshing row while deleting", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$auto"}),
+			oTable,
+			sView = '\
+<Table id="table" items="{/SalesOrderList}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="id" text="{SalesOrderID}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
+				"value" : [
+					{"SalesOrderID" : "0500000001"},
+					{"SalesOrderID" : "0500000002"},
+					{"SalesOrderID" : "0500000003"}
+				]
+			})
+			.expectChange("id", ["0500000001", "0500000002", "0500000003"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oDeletePromise;
+
+			that.expectRequest({
+					method : "DELETE",
+					url : "SalesOrderList('0500000002')"
+				})
+				.expectRequest("SalesOrderList('0500000003')?$select=SalesOrderID", {
+					"SalesOrderID" : "0500000003"
+				})
+				.expectChange("id", "0500000003", 1);
+
+			oTable = that.oView.byId("table");
+
+			// code under test
+			oDeletePromise = oTable.getItems()[1].getBindingContext().delete();
+			oTable.getItems()[2].getBindingContext().refresh();
+
+			return Promise.all([
+				oDeletePromise,
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -3614,10 +3672,7 @@ sap.ui.define([
 					url : "SalesOrderList('44')"
 				})
 				.expectChange("id", null) // events for unresolved ODPB after deletion
-				.expectChange("note", null)
-				//TODO: Unexpected change events for unchanged rows 0,1 -> CPOUI5UISERVICESV3-1810
-				.expectChange("id", ["45", "43"])
-				.expectChange("note", ["New 3", "New 1"]);
+				.expectChange("note", null);
 
 			return Promise.all([
 				oTable.getItems()[1].getBindingContext().delete("$auto"),
@@ -4003,9 +4058,8 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			//TODO: Unexpected change events for unchanged rows 1,2 -> CPOUI5UISERVICESV3-1810
-			that.expectChange("id", ["", "44", "43"])
-				.expectChange("note", ["New 3", "New 2", "New 1"]);
+			that.expectChange("id", [""])
+				.expectChange("note", ["New 3"]);
 
 			// never persisted or deleted
 			oCreatedContext2 = oBinding.create({Note : "New 3"}, true);
@@ -4138,9 +4192,9 @@ sap.ui.define([
 				// destroyed when formatter is called
 				.expectChange("id", null)
 				.expectChange("note", null)
-				//TODO: Unexpected change events for unchanged rows 0,1 -> CPOUI5UISERVICESV3-1810
-				.expectChange("id", ["46", "44"])
-				.expectChange("note", ["New 3", "New 1"]);
+				// next row "scrolls into view"
+				.expectChange("id", [, "44"])
+				.expectChange("note", [, "New 1"]);
 
 			return Promise.all([
 				oCreatedContext1.delete("$auto"),
@@ -4483,9 +4537,8 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			//TODO: Unexpected change events for unchanged row 2 -> CPOUI5UISERVICESV3-1810
-			that.expectChange("id", ["", "", "43"])
-				.expectChange("note", ["New 3", "New 2", "New 1"]);
+			that.expectChange("id", ["", ""])
+				.expectChange("note", ["New 3", "New 2"]);
 
 			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
 			oCreatedContext2 = oBinding.create({Note : "New 3"}, true);
@@ -4746,9 +4799,8 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			//TODO: Unexpected change events for unchanged row 2 -> CPOUI5UISERVICESV3-1810
-			that.expectChange("id", ["", "", "43"])
-				.expectChange("note", ["New 3", "New 2", "New 1"]);
+			that.expectChange("id", ["", ""])
+				.expectChange("note", ["New 3", "New 2"]);
 
 			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
 			oCreatedContext2 = oBinding.create({Note : "New 3"}, true);
@@ -5189,10 +5241,7 @@ sap.ui.define([
 			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&"
 					+ "$filter=SalesOrderID%20eq%20'44'", {
 					"value" : []
-				})
-				//TODO: Unexpected change events for unchanged rows 0,1 -> CPOUI5UISERVICESV3-1810
-				.expectChange("id", ["45", "43"])
-				.expectChange("note", ["New 3", "New 1"]);
+				});
 
 			return Promise.all([
 				oCreatedContext1.refresh("$auto", true/*bAllowRemoval*/),
@@ -5359,8 +5408,8 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectChange("id", [, "43", "", ""])
-				.expectChange("note", [, "New 1", "New 2", "New 3"]);
+			that.expectChange("id", [,, "", ""])
+				.expectChange("note", [,, "New 2", "New 3"]);
 
 			oCreatedContext1 = oBinding.create({Note : "New 2"}, true, true);
 			oCreatedContext2 = oBinding.create({Note : "New 3"}, true, true);
@@ -5480,10 +5529,7 @@ sap.ui.define([
 			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&"
 				+ "$filter=SalesOrderID eq '44'", {
 					"value" : []
-				})
-				//TODO: Unexpected change events for unchanged row 1 -> CPOUI5UISERVICESV3-1810
-				.expectChange("id", [, "43", "45"])
-				.expectChange("note", [, "New 1", "New 3"]);
+				});
 
 			return Promise.all([
 				oCreatedContext1.refresh("$auto", true/*bAllowRemoval*/),
@@ -5569,8 +5615,8 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectChange("id", [, "43", "", ""])
-				.expectChange("note", [, "New 1", "New 2", "New 3"]);
+			that.expectChange("id", [,, "", ""])
+				.expectChange("note", [,, "New 2", "New 3"]);
 
 			oCreatedContext1 = oBinding.create({Note : "New 2"}, true, true);
 			oCreatedContext2 = oBinding.create({Note : "New 3"}, true, true);
@@ -5943,7 +5989,7 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			return that.checkValueState(assert,
-				that.oView.byId("table").getItems("items")[0].getCells()[1] , "Error",
+				that.oView.byId("table").getItems()[0].getCells()[1] , "Error",
 				"Enter a product ID");
 		});
 	});
@@ -6009,7 +6055,9 @@ sap.ui.define([
 			.expectMessages([oExpectedMessage]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-
+			return that.checkValueState(assert, "quantity", "Warning",
+				"Enter a minimum quantity of 2");
+		}).then(function () {
 			that.oLogMock.expects("error").twice() // TODO twice?
 				.withExactArgs("Failed to update path /BusinessPartnerList('1')/BP_2_SO('42')"
 					+ "/SO_2_SOITEM('0010')/Quantity",
@@ -6051,6 +6099,9 @@ sap.ui.define([
 			that.oView.byId("quantity").getBinding("value").setValue("0.000");
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			return that.checkValueState(assert, "quantity", "Error",
+				"Value must be greater than 0");
 		});
 	});
 
@@ -7301,6 +7352,8 @@ sap.ui.define([
 					"code" : undefined,
 					"message" : "Target resolved to ''",
 					"persistent" : true,
+					// Note: checkValueState not possible for whole entity, but it is nice to know
+					// how this target : "EMPLOYEE" is meant to be handled
 					"target" : "/EMPLOYEES('1')",
 					"type" : "Error"
 				}])
@@ -7335,7 +7388,7 @@ sap.ui.define([
 		<Text id="name" text="{Name}" />\
 	</ColumnListItem>\
 </Table>\
-<Text id="nameCreated" text="{Name}" />',
+<Input id="nameCreated" value="{Name}" />',
 			that = this;
 
 		this.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Messages,Name&$skip=0&$top=100",
@@ -7396,6 +7449,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			return that.checkValueState(assert, "nameCreated", "Success", "Just A Message");
+		}).then(function () {
 			that.expectRequest("Artists(ArtistID='ABC',IsActiveEntity=false)?"
 					+ "$select=ArtistID,IsActiveEntity,Messages,Name", {
 					"@odata.etag" : "ETagAfterRefresh",
@@ -7422,6 +7477,8 @@ sap.ui.define([
 			oReturnValueContext.refresh();
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			return that.checkValueState(assert, "nameCreated", "Success", "Just Another Message");
 		});
 	});
 
@@ -9395,7 +9452,7 @@ sap.ui.define([
 
 		this.expectRequest("EMPLOYEES('2')", {
 				"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {
-					"title": "First Title"
+					"title" : "First Title"
 				},
 				"ID" : "2",
 				"Name" : "Frederic Fall"
@@ -9408,7 +9465,7 @@ sap.ui.define([
 
 			that.expectRequest("EMPLOYEES('2')", {
 					"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {
-						"title": "Second Title"
+						"title" : "Second Title"
 					},
 					"ID" : "2",
 					"Name" : "Frederic Fall"
@@ -9422,14 +9479,14 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest({
-					"method": "PATCH",
-					"payload": {
-						"Name": "Frederic Spring"
+					"method" : "PATCH",
+					"payload" : {
+						"Name" : "Frederic Spring"
 					},
-					"url": "EMPLOYEES('2')"
+					"url" : "EMPLOYEES('2')"
 				}, {
 					"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {
-						"title": "Third Title"
+						"title" : "Third Title"
 					}
 //					"ID" : "2",
 //					"Name" : "Frederic Spring"
@@ -9447,14 +9504,14 @@ sap.ui.define([
 				oActionBinding = oModel.bindContext(sActionName + "(...)", oContext);
 
 			that.expectRequest({
-					"method": "POST",
-					"payload": {
-						"TeamID": "TEAM_02"
+					"method" : "POST",
+					"payload" : {
+						"TeamID" : "TEAM_02"
 					},
-					"url": "EMPLOYEES('2')/" + sActionName
+					"url" : "EMPLOYEES('2')/" + sActionName
 				}, {
 					"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {
-						"title": "Fourth Title"
+						"title" : "Fourth Title"
 					},
 					"ID" : "2",
 					"Name" : "Frederic Winter"
@@ -9509,11 +9566,11 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest({
-					"method": "PATCH",
-					"payload": {
-						"Name": "Frederic Spring"
+					"method" : "PATCH",
+					"payload" : {
+						"Name" : "Frederic Spring"
 					},
-					"url": "EMPLOYEES('2')"
+					"url" : "EMPLOYEES('2')"
 				}, {
 					"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {}
 //					"ID" : "2",
@@ -9532,11 +9589,11 @@ sap.ui.define([
 				oActionBinding = oModel.bindContext(sActionName + "(...)", oContext);
 
 			that.expectRequest({
-					"method": "POST",
-					"payload": {
-						"TeamID": "TEAM_02"
+					"method" : "POST",
+					"payload" : {
+						"TeamID" : "TEAM_02"
 					},
-					"url": "EMPLOYEES('2')/" + sActionName
+					"url" : "EMPLOYEES('2')/" + sActionName
 				}, {
 					"ID" : "2",
 					"Name" : "Frederic Winter"
@@ -9571,7 +9628,7 @@ sap.ui.define([
 
 		this.expectRequest("EMPLOYEES('2')", {
 				"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {
-					"title": "First Title"
+					"title" : "First Title"
 				},
 				"ID" : "2"
 			})
@@ -9583,9 +9640,9 @@ sap.ui.define([
 
 			oActionBinding = oModel.bindContext(sActionName + "(...)", oContext);
 			that.expectRequest({
-					"method": "POST",
-					"payload": {},
-					"url": "EMPLOYEES('2')/" + sActionName
+					"method" : "POST",
+					"payload" : {},
+					"url" : "EMPLOYEES('2')/" + sActionName
 				}, {
 					"ID" : "2"
 				})
@@ -9598,12 +9655,12 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest({
-					"method": "POST",
-					"payload": {},
-					"url": "EMPLOYEES('2')/" + sActionName
+					"method" : "POST",
+					"payload" : {},
+					"url" : "EMPLOYEES('2')/" + sActionName
 				}, {
 					"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {
-						"title": "Second Title"
+						"title" : "Second Title"
 					},
 					"ID" : "2"
 				})
@@ -10918,9 +10975,9 @@ sap.ui.define([
 				+ "and (BusinessPartnerID gt '0100000001')&$orderby=CompanyName"
 				+ "&$select=BusinessPartnerID&$skip=0&$top=100", {
 					value : [{
-						"BusinessPartnerID": "0100000002"
+						"BusinessPartnerID" : "0100000002"
 					}, {
-						"BusinessPartnerID": "0100000003"
+						"BusinessPartnerID" : "0100000003"
 					}]
 				})
 				.expectChange("id", [
@@ -10993,11 +11050,11 @@ sap.ui.define([
 				+ "&$select=BusinessPartnerID,BusinessPartnerRole&$count=true"
 				+ "&$skip=0&$top=100", {
 					value : [{
-						"BusinessPartnerID": "0100000000",
-						"BusinessPartnerRole": "01"
+						"BusinessPartnerID" : "0100000000",
+						"BusinessPartnerRole" : "01"
 					}, {
-						"BusinessPartnerID": "0100000001",
-						"BusinessPartnerRole": "02"
+						"BusinessPartnerID" : "0100000001",
+						"BusinessPartnerRole" : "02"
 					}]
 				})
 				.expectChange("id", [
@@ -11046,8 +11103,8 @@ sap.ui.define([
 			var oBinding = that.oView.byId("form").getElementBinding();
 
 			oBinding.suspend();
-			oBinding.changeParameters({"custom": "invalid"}); // just to call it twice
-			oBinding.changeParameters({"custom": "option"});
+			oBinding.changeParameters({"custom" : "invalid"}); // just to call it twice
+			oBinding.changeParameters({"custom" : "option"});
 
 			that.expectRequest("SalesOrderList('42')?custom=option&$select=SalesOrderID"
 				+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)", {
@@ -12750,6 +12807,8 @@ sap.ui.define([
 
 				return that.waitForChanges(assert);
 			}).then(function () {
+				return that.checkValueState(assert, "name", "Success", "Just A Message");
+			}).then(function () {
 				that.expectRequest({
 						method : "PATCH",
 						url : "Artists(ArtistID='42',IsActiveEntity=false)",
@@ -13920,7 +13979,7 @@ sap.ui.define([
 		parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
-		<Text id="Name" text="{Name}" />\
+		<Input id="Name" value="{Name}" />\
 	</ColumnListItem>\
 </Table>',
 			that = this;
@@ -13964,6 +14023,10 @@ sap.ui.define([
 				that.oView.byId("table").getItems()[0].getBindingContext());
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			return that.checkValueState(assert,
+				that.oView.byId("detailTable").getItems()[0].getCells()[0],
+				"Warning", "Text");
 		}).then(function () {
 			that.expectRequest("TEAMS('Team_02')/TEAM_2_EMPLOYEES"
 					+ "?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages&$skip=0&$top=100", {
@@ -14015,7 +14078,7 @@ sap.ui.define([
 			}}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
-		<Text id="note" text="{Note}" />\
+		<Input id="note" value="{Note}" />\
 	</ColumnListItem>\
 </Table>\
 <!-- same paths in different control hierarchies -->\
@@ -14030,7 +14093,7 @@ sap.ui.define([
 		items="{path : \'SO_2_SOITEM\', parameters : {}}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
-		<Text id="note2" text="{Note}" />\
+		<Input id="note2" value="{Note}" />\
 	</ColumnListItem>\
 </Table>',
 			oExpectedMessage0 = {
@@ -14101,6 +14164,15 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			// Note: the message target addresses both fields!
+			return that.checkValueState(assert,
+				that.oView.byId("tableSOItems").getItems()[0].getCells()[0],
+				"Warning", "Message0");
+		}).then(function () {
+			return that.checkValueState(assert,
+				that.oView.byId("tableSOItems2").getItems()[0].getCells()[0],
+				"Warning", "Message0");
+		}).then(function () {
 			// Select the second sales order to get its items and messages
 			that.expectRequest("SalesOrderList('0500000348')/SO_2_SOITEM"
 					+ "?$select=ItemPosition,Messages,Note,SalesOrderID&$skip=0&$top=100", {
@@ -14138,6 +14210,14 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			return that.checkValueState(assert,
+				that.oView.byId("tableSOItems").getItems()[1].getCells()[0],
+				"Warning", "Message1");
+		}).then(function () {
+			return that.checkValueState(assert,
+				that.oView.byId("tableSOItems2").getItems()[0].getCells()[0],
+				"Warning", "Message0");
+		}).then(function () {
 			// refresh the second sales order; the message for the first sales order is kept
 			that.expectRequest("SalesOrderList('0500000348')?$select=SalesOrderID", {
 					"SalesOrderID" : "0500000348"})
@@ -14163,6 +14243,14 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			return that.checkValueState(assert,
+				that.oView.byId("tableSOItems").getItems()[1].getCells()[0],
+				"None", "");
+		}).then(function () {
+			return that.checkValueState(assert,
+				that.oView.byId("tableSOItems2").getItems()[0].getCells()[0],
+				"Warning", "Message0");
+		}).then(function () {
 			// select the first sales order again; no requests, the cache for the items is still
 			// alive
 			that.expectChange("note", ["Test1", "Test2"]);
@@ -14173,6 +14261,14 @@ sap.ui.define([
 				that.oView.byId("tableSalesOrder").getItems()[0].getBindingContext());
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			return that.checkValueState(assert,
+				that.oView.byId("tableSOItems").getItems()[0].getCells()[0],
+				"Warning", "Message0");
+		}).then(function () {
+			return that.checkValueState(assert,
+				that.oView.byId("tableSOItems2").getItems()[0].getCells()[0],
+				"Warning", "Message0");
 		}).then(function () {
 			// remove the binding context for the sales order items to get an unresolved binding
 			// with caches
@@ -14192,6 +14288,11 @@ sap.ui.define([
 			that.oView.byId("tableSalesOrder").getItems()[0].getBindingContext().refresh();
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			// Note: "tableSOItems" currently unresolved
+			return that.checkValueState(assert,
+				that.oView.byId("tableSOItems2").getItems()[0].getCells()[0],
+				"None", "");
 		}).then(function () {
 			// select the first sales order to get its items and messages, request is
 			// triggered because the cache for the sales order line items is discarded
@@ -14224,6 +14325,10 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			return that.checkValueState(assert,
+				that.oView.byId("tableSOItems").getItems()[0].getCells()[0],
+				"Warning", "Message0");
+		}).then(function () {
 			// select the second sales order again; no requests, cache is still alive
 			that.expectChange("note", ["Test3a", "Test4a"]);
 				// no change in messages
@@ -14233,6 +14338,10 @@ sap.ui.define([
 				that.oView.byId("tableSalesOrder").getItems()[1].getBindingContext());
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			return that.checkValueState(assert,
+				that.oView.byId("tableSOItems").getItems()[0].getCells()[0],
+				"None", "");
 		}).then(function () {
 			// remove the binding context for the items of the second binding hierarchy
 			that.expectChange("note2", []);
@@ -14252,6 +14361,10 @@ sap.ui.define([
 				that.oView.byId("tableSalesOrder2").getItems()[0].getBindingContext());
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			return that.checkValueState(assert,
+				that.oView.byId("tableSOItems2").getItems()[0].getCells()[0],
+				"Warning", "Message0");
 		}).then(function () {
 			// remove the binding context for the items of the binding hierarchy
 			that.expectChange("note", []);
@@ -14273,6 +14386,10 @@ sap.ui.define([
 			that.oView.byId("tableSalesOrder").getBinding("items").refresh();
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			return that.checkValueState(assert,
+				that.oView.byId("tableSOItems2").getItems()[0].getCells()[0],
+				"None", "");
 		}).then(function () {
 			// select the same sales order again in the binding hierarchy, new request is sent;
 			//TODO if Binding.refresh considers unbound bindings this request is expected.
@@ -14409,10 +14526,10 @@ sap.ui.define([
 	// Scenario: Delete an entity with messages from an ODataListBinding
 	QUnit.test("Delete an entity with messages from an ODataListBinding", function (assert) {
 		var oDeleteMessage = {
-				code : "top",
-				message : "Error occurred while processing the request",
+				code : "occupied",
+				message : "Cannot delete occupied worker",
 				persistent : true,
-				target : "/EMPLOYEES('1')",
+				target : "/EMPLOYEES('1')/STATUS",
 				technical : true,
 				type : "Error"
 			},
@@ -14429,16 +14546,18 @@ sap.ui.define([
 		parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
-		<Text id="name" text="{Name}" />\
+		<Input id="name" value="{Name}" />\
+		<Input id="status" value="{STATUS}" />\
 	</ColumnListItem>\
 </Table>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages"
+		this.expectRequest("EMPLOYEES?$select=ID,Name,STATUS,__CT__FAKE__Message/__FAKE__Messages"
 				+ "&$skip=0&$top=100", {
 				"value" : [{
 					"ID" : "1",
 					"Name" : "Jonathan Smith",
+					"STATUS" : "Occupied",
 					"__CT__FAKE__Message" : {
 						"__FAKE__Messages" : [{
 							"code" : "1",
@@ -14451,20 +14570,26 @@ sap.ui.define([
 				}, {
 					"ID" : "2",
 					"Name" : "Frederic Fall",
+					"STATUS" : "Available",
 					"__CT__FAKE__Message" : {"__FAKE__Messages" : []}
 				}]
 			})
 			.expectChange("name", ["Jonathan Smith", "Frederic Fall"])
+			.expectChange("status", ["Occupied", "Available"])
 			.expectMessages([oReadMessage]);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			return that.checkValueState(assert,
+				that.oView.byId("table").getItems()[0].getCells()[0],
+				"Warning", "Text");
+		}).then(function () {
 			var oContext = that.oView.byId("table").getItems()[0].getBindingContext(),
 				oError = new Error("Deletion failed");
 
 			oError.error = {
-				"code" : "top",
-				"message" : "Error occurred while processing the request",
-				"target" : ""
+				"code" : "occupied",
+				"message" : "Cannot delete occupied worker",
+				"target" : "STATUS"
 			};
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to delete /EMPLOYEES('1')[0]", sinon.match(oError.message),
@@ -14478,6 +14603,10 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
+			return that.checkValueState(assert,
+				that.oView.byId("table").getItems()[0].getCells()[1],
+				"Error", "Cannot delete occupied worker");
+		}).then(function () {
 			var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
 
 			that.expectRequest({
@@ -14485,6 +14614,7 @@ sap.ui.define([
 					url : "EMPLOYEES('1')"
 				})
 				.expectChange("name", ["Frederic Fall"])
+				.expectChange("status", ["Available"])
 				.expectMessages([oDeleteMessage]);
 
 			return Promise.all([
@@ -14502,7 +14632,7 @@ sap.ui.define([
 			sView = '\
 <FlexBox id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\', \
 	parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
-	<Text id="text" text="{Name}" />\
+	<Input id="text" value="{Name}" />\
 </FlexBox>',
 			that = this;
 
@@ -14529,6 +14659,8 @@ sap.ui.define([
 			}]);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			return that.checkValueState(assert, "text", "Warning", "Text");
+		}).then(function () {
 			var oContext = that.oView.byId("form").getBindingContext();
 
 			that.expectRequest({
@@ -14557,7 +14689,7 @@ sap.ui.define([
 			parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
 		<columns><Column/></columns>\
 		<ColumnListItem>\
-			<Text id="name" text="{Name}" />\
+			<Input id="name" value="{Name}" />\
 		</ColumnListItem>\
 	</Table>\
 </FlexBox>',
@@ -14596,6 +14728,10 @@ sap.ui.define([
 			}]);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			return that.checkValueState(assert,
+				that.oView.byId("table").getItems()[0].getCells()[0],
+				"Warning", "Text");
+		}).then(function () {
 			var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
 
 			that.expectRequest({
@@ -14674,7 +14810,7 @@ sap.ui.define([
 	<FlexBox id="form" binding="{path : \'EQUIPMENT_2_EMPLOYEE\', \
 		parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
 		<layoutData><FlexItemData/></layoutData>\
-		<Text id="text" text="{Name}" />\
+		<Input id="text" value="{Name}" />\
 	</FlexBox>\
 </FlexBox>',
 			that = this;
@@ -14708,6 +14844,8 @@ sap.ui.define([
 			}]);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			return that.checkValueState(assert, "text", "Warning", "Text");
+		}).then(function () {
 			var oContext = that.oView.byId("form").getBindingContext();
 
 			that.expectRequest({
@@ -14790,6 +14928,8 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
+			return that.checkValueState(assert, "name", "Warning", "Enter a name");
+		}).then(function () {
 			that.expectRequest({
 					method : "PATCH",
 					url : "EMPLOYEES('1')",
@@ -14809,6 +14949,8 @@ sap.ui.define([
 				oModel.submitBatch("foo"),
 				that.waitForChanges(assert)
 			]);
+		}).then(function () {
+			return that.checkValueState(assert, "name", "None", "");
 		});
 	});
 
@@ -14902,6 +15044,10 @@ sap.ui.define([
 				assert.strictEqual(oContext.getObject(sPathToMessages).length, 1);
 				assert.strictEqual(oContext.getObject(sPathToMessages)[0].message, "Enter a name");
 				assert.strictEqual(oContext.getObject(sPathToMessages + "/$count"), 1);
+
+				return that.checkValueState(assert,
+					that.oView.byId("table").getItems()[0].getCells()[0],
+					"Warning", "Enter a name");
 			});
 		});
 	});
@@ -14974,6 +15120,10 @@ sap.ui.define([
 				oModel.submitBatch("foo"),
 				that.waitForChanges(assert)
 			]);
+		}).then(function () {
+			return that.checkValueState(assert,
+				that.oView.byId("table").getItems()[0].getCells()[0],
+				"Warning", "Enter a name");
 		});
 	});
 
@@ -15164,6 +15314,9 @@ sap.ui.define([
 				}]), // no GET request, no issue with locks!
 				that.waitForChanges(assert)
 			]);
+		}).then(function () {
+			return that.checkValueState(assert, "netAmount",
+				"Warning", "Enter a minimum amount of 1");
 		});
 	});
 
@@ -15616,7 +15769,7 @@ sap.ui.define([
 			threshold="0" visibleRowCount="2">\
 			<t:Column>\
 				<t:template>\
-					<Text id="price" text="{Price}" />\
+					<Input id="price" value="{Price}" />\
 				</t:template>\
 			</t:Column>\
 			<t:Column>\
@@ -15732,6 +15885,10 @@ sap.ui.define([
 				}]),
 				that.waitForChanges(assert)
 			]);
+		}).then(function () {
+			return that.checkValueState(assert,
+				that.oView.byId("table").getRows()[1].getCells()[0],
+				"Information", "This looks pretty cheap now");
 		}).then(function () {
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/BestFriend/_Publication"
 					+ "?sap-client=123&$count=true&$filter=CurrencyCode eq 'EUR'"
@@ -16455,7 +16612,7 @@ sap.ui.define([
 				]);
 			}).then(function () {
 				// the new one is at the top
-				var oInput = that.oView.byId("table").getItems("items")[0].getCells()[0];
+				var oInput = that.oView.byId("table").getItems()[0].getCells()[0];
 
 				assert.strictEqual(oEmployeeCreatedContext.getPath(),
 					bKeepTransientPath
@@ -16473,6 +16630,9 @@ sap.ui.define([
 	// Scenario: if a 1 to n navigation occurs we use the deep path for this case instead of the
 	// canonical path; the app can opt-out of this behavior with a binding specific parameter
 	// CPOUI5UISERVICESV3-1567
+	// Delete and Patch still use the canonical path. Messages have to be reported with the deep
+	// path.
+	// CPOUI5UISERVICESV3-1813
 	[false, true].forEach(function (bUseCanonicalPath) {
 		QUnit.test("read with deep path, $$canonicalPath: " + bUseCanonicalPath, function (assert) {
 			var sEntityPath = bUseCanonicalPath
@@ -16491,15 +16651,17 @@ sap.ui.define([
 		<layoutData><FlexItemData/></layoutData>\
 		<Text id="street" text="{Address/Street}" />\
 	</FlexBox>\
-	<Table items="{path : \'BP_2_PRODUCT\',\
+	<Table id="table" items="{path : \'BP_2_PRODUCT\',\
 		' + sParameters + '\
 		}">\
 		<columns><Column/></columns>\
 		<ColumnListItem>\
 			<Text text="{ProductID}" />\
+			<Input value="{Name}" />\
 		</ColumnListItem>\
 	</Table>\
-</FlexBox>';
+</FlexBox>',
+				that = this;
 
 			this.expectRequest("SalesOrderList('0500000000')/SO_2_BP?$select=BusinessPartnerID", {
 					"BusinessPartnerID" : "23"
@@ -16510,13 +16672,152 @@ sap.ui.define([
 					},
 					"BusinessPartnerID" : "23"
 				})
-				.expectRequest(sEntityPath + "/BP_2_PRODUCT?$select=ProductID&$skip=0&$top=100", {
+				.expectRequest(sEntityPath + "/BP_2_PRODUCT?$select=Name,ProductID&$skip=0&"
+						+ "$top=100", {
 					value : [{
-						"ProductID" : "1"
+						"@odata.etag" : "ETag",
+						"ProductID" : "1",
+						"Name" : "NoName"
 					}]
 				});
 
-			return this.createView(assert, sView, oModel);
+			return this.createView(assert, sView, oModel).then(function () {
+				var oError = new Error("Failure");
+
+				oError.error = {
+					"code" : "top_patch",
+					"message" : "Error occurred while processing the request",
+					"details" : [{
+						"code" : "bound_patch",
+						"message" : "Must not change mock data",
+						"@Common.longtextUrl" : "Messages(1)/LongText",
+						"@Common.numericSeverity" : 4,
+						"target" : "Name"
+					}]
+				};
+				that.oLogMock.expects("error")
+					.withExactArgs("Failed to update path /SalesOrderList('0500000000')/SO_2_BP/"
+							+ "BP_2_PRODUCT('1')/Name", sinon.match(oError.message),
+						"sap.ui.model.odata.v4.ODataPropertyBinding").twice();
+				that.expectRequest({
+						method : "PATCH",
+						url : "ProductList('1')",
+						headers : {"If-Match" : "ETag"},
+						payload : {"Name" : "A product with no name"}
+					}, oError)
+					.expectMessages([{
+						"code" : "top_patch",
+						"descriptionUrl" : undefined,
+						"message" : "Error occurred while processing the request",
+						"persistent" : true,
+						"target" : "",
+						"technical" : true,
+						"type" : "Error"
+					}, {
+						"code" : "bound_patch",
+						"descriptionUrl" : sSalesOrderService + "Messages(1)/LongText",
+						"message" : "Must not change mock data",
+						"persistent" : true,
+						"target" : "/SalesOrderList('0500000000')/SO_2_BP/BP_2_PRODUCT('1')/Name",
+						"technical" : false,
+						"type" : "Error"
+					}]);
+
+				// code under test
+				that.oView.byId("table").getItems("items")[0].getCells()[1].getBinding("value")
+					.setValue("A product with no name");
+
+				return that.waitForChanges(assert);
+			}).then(function () {
+				var oInput = that.oView.byId("table").getItems("items")[0].getCells()[1];
+
+				return that.checkValueState(assert, oInput, "Error", "Must not change mock data");
+			}).then(function () {
+				var oError = new Error("Failure");
+
+				oError.error = {
+					"code" : "top_delete",
+					"message" : "Error occurred while processing the request",
+					"details" : [{
+						"code" : "bound_delete",
+						"message" : "Must not delete mock data",
+						"@Common.longtextUrl" : "./Messages(1)/LongText",
+						"@Common.numericSeverity" : 4,
+						"target" : ""
+					}]
+				};
+
+				that.oLogMock.expects("error")
+					.withExactArgs("Failed to delete /SalesOrderList('0500000000')/SO_2_BP/"
+							+ "BP_2_PRODUCT('1')[0]", sinon.match(oError.message),
+						"sap.ui.model.odata.v4.Context");
+				that.expectRequest({
+						method : "DELETE",
+						url : "ProductList('1')",
+						headers : {"If-Match" : "ETag"}
+					}, oError)
+					.expectMessages([{
+						"code" : "top_delete",
+						"descriptionUrl" : undefined,
+						"message" : "Error occurred while processing the request",
+						"persistent" : true,
+						"target" : "",
+						"technical" : true,
+						"type" : "Error"
+					}, {
+						"code" : "bound_delete",
+						"descriptionUrl" : sSalesOrderService + "Messages(1)/LongText",
+						"message" : "Must not delete mock data",
+						"persistent" : true,
+						"target" : "/SalesOrderList('0500000000')/SO_2_BP/BP_2_PRODUCT('1')",
+						"technical" : false,
+						"type" : "Error"
+					}]);
+
+				sap.ui.getCore().getMessageManager().removeAllMessages();
+
+				return Promise.all([
+					// code under test
+					that.oView.byId("table").getBinding("items").getCurrentContexts()[0].delete()
+						.catch(function (oError0) {
+							assert.strictEqual(oError0, oError);
+						}),
+					that.waitForChanges(assert)
+				]);
+			}).then(function () {
+				that.expectRequest({
+						method : "PATCH",
+						url : "ProductList('1')",
+						headers : {"If-Match" : "ETag"},
+						payload : {"Name" : "A product name leads to PATCH success with a message"}
+					}, {
+						// "@odata.etag" : "ETag2",
+						"Name" : "A product name (from server)",
+						"Messages" : [{
+							"code" : "23",
+							"message" : "Enter a product name",
+							"numericSeverity" : 3,
+							"target" : "Name"
+						}]
+					})
+					.expectMessages([{
+						"code" : "23",
+						"descriptionUrl" : undefined,
+						"message" : "Enter a product name",
+						"persistent" : false,
+						"target" : "/SalesOrderList('0500000000')/SO_2_BP/BP_2_PRODUCT('1')/Name",
+						"technical" : false,
+						"type" : "Warning"
+					}]);
+
+				sap.ui.getCore().getMessageManager().removeAllMessages();
+
+				// code under test
+				that.oView.byId("table").getItems("items")[0].getCells()[1].getBinding("value")
+					.setValue("A product name leads to PATCH success with a message");
+
+				return that.waitForChanges(assert);
+			});
 		});
 	});
 
@@ -16652,7 +16953,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			var oInput = that.oView.byId("table").getItems("items")[1].getCells()[1];
+			var oInput = that.oView.byId("table").getItems()[1].getCells()[1];
 
 			return that.checkValueState(assert, oInput, "Warning", "Just a test");
 		}).then(function () {
@@ -16857,13 +17158,13 @@ sap.ui.define([
 		this.oLogMock.restore(); // the exact errors do not interest
 		this.stub(Log, "error");
 		this.expectMessages([{
-			"code": undefined,
-			"descriptionUrl": undefined,
-			"message": "Could not load metadata: 500 Internal Server Error",
-			"persistent": true,
-			"target": "",
-			"technical": true,
-			"type": "Error"
+			"code" : undefined,
+			"descriptionUrl" : undefined,
+			"message" : "Could not load metadata: 500 Internal Server Error",
+			"persistent" : true,
+			"target" : "",
+			"technical" : true,
+			"type" : "Error"
 		}]);
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -16927,13 +17228,13 @@ sap.ui.define([
 			var oControl = that.oView.byId("weight");
 
 			that.expectMessages([{
-				"code": undefined,
-				"descriptionUrl": undefined,
-				"message": "Enter a number with a maximum of 5 decimal places",
-				"persistent": false,
-				"target": oControl.getId() + "/value",
-				"technical": false,
-				"type": "Error"
+				"code" : undefined,
+				"descriptionUrl" : undefined,
+				"message" : "Enter a number with a maximum of 5 decimal places",
+				"persistent" : false,
+				"target" : oControl.getId() + "/value",
+				"technical" : false,
+				"type" : "Error"
 			}]);
 
 			// remove the formatter so that we can call setValue at the control
@@ -17011,13 +17312,13 @@ sap.ui.define([
 			var oControl = that.oView.byId("price");
 
 			that.expectMessages([{
-				"code": undefined,
-				"descriptionUrl": undefined,
-				"message": "Enter a number with no decimal places",
-				"persistent": false,
-				"target": oControl.getId() + "/value",
-				"technical": false,
-				"type": "Error"
+				"code" : undefined,
+				"descriptionUrl" : undefined,
+				"message" : "Enter a number with no decimal places",
+				"persistent" : false,
+				"target" : oControl.getId() + "/value",
+				"technical" : false,
+				"type" : "Error"
 			}]);
 
 			// remove the formatter so that we can call setValue at the control
