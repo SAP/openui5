@@ -475,6 +475,29 @@ sap.ui.define([
 		assert.equal(oTable.$().find(".sapUiTableColHdrCnt").is(":visible"), true, "ColumnHeaderVisible ok");
 	});
 
+	QUnit.test("Column headers active state styling", function(assert) {
+		var aColumns = oTable.getColumns();
+		oTable.setEnableColumnReordering(false);
+		sap.ui.getCore().applyChanges();
+		assert.ok(aColumns[3].$().hasClass("sapUiTableHeaderCellActive"),
+			"Column has active state styling because of the column header popup");
+		assert.ok(!aColumns[4].$().hasClass("sapUiTableHeaderCellActive"),
+			"Column has no active state styling because the reordering is disabled and the column doesn't have a column header popup");
+
+		oTable.setEnableColumnReordering(true);
+		sap.ui.getCore().applyChanges();
+		assert.ok(aColumns[3].$().hasClass("sapUiTableHeaderCellActive"), "Column has active state styling");
+		assert.ok(aColumns[4].$().hasClass("sapUiTableHeaderCellActive"), "Column has active state styling");
+
+		oTable.attachColumnSelect(function(oEvent) {
+			oEvent.preventDefault();
+		});
+		oTable.setEnableColumnReordering(false);
+		sap.ui.getCore().applyChanges();
+		assert.ok(aColumns[3].$().hasClass("sapUiTableHeaderCellActive"), "Column has active state styling");
+		assert.ok(aColumns[4].$().hasClass("sapUiTableHeaderCellActive"), "Column has active state styling");
+	});
+
 	QUnit.test("Row Height", function(assert) {
 		var oBody = document.body;
 		var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];

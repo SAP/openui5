@@ -514,6 +514,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.addClass("sapUiTableCell");
 		rm.addClass("sapUiTableHeaderCell");
 		rm.addClass("sapUiTableHeaderDataCell");
+		if (oTable.getEnableColumnReordering() || oTable.hasListeners("columnSelect") || oColumn._menuHasItems()) {
+			rm.addClass("sapUiTableHeaderCellActive");
+		}
 		if (bIsFirstColumn) {
 			rm.addClass("sapUiTableCellFirst");
 		}
