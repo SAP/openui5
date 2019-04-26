@@ -141,7 +141,7 @@ sap.ui.define([
 	QUnit.module("Yearpicker");
 
 	QUnit.test("20150701 Yearpicker", function(assert) {
-		checkYearPicker("20150701", "17 Heisei", "36 Heisei", "27 Heisei", assert);
+		checkYearPicker("20150701", "17 Heisei", "6 Reiwa", "27 Heisei", assert);
 	});
 
 	QUnit.test("19900101 Yearpicker", function(assert) {
