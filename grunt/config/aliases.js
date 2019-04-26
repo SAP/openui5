@@ -325,7 +325,7 @@ module.exports = function(grunt, config) {
 					'cldr-cal-persian-modern',
 					'cldr-cal-buddhist-modern'
 				],
-				sVersion = "34.0.0",
+				sVersion = "35.1.0",
 				aArgs;
 			aArgs = aPakets.map(function(sName) {
 				return sName + "@" + sVersion;

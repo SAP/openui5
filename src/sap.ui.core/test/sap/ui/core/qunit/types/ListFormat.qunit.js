@@ -133,7 +133,7 @@ sap.ui.define(['sap/ui/core/format/ListFormat', 'sap/ui/core/Locale', "sap/base/
 
 		sResult = oListFormat.format(aInput);
 		assert.ok(sResult, "A formatted string should be returned");
-		assert.equal(sResult, "1, 2, 3, 4, 5, 6, 7, 8, 9, and 10", "Values are correctly formatted.");
+		assert.equal(sResult, "1, 2, 3, 4, 5, 6, 7, 8, 9, & 10", "Values are correctly formatted.");
 
 		aExpectedResult = oListFormat.parse(sResult);
 		assert.deepEqual(aExpectedResult, aInput, "Values are correctly parsed.");
