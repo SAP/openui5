@@ -853,7 +853,7 @@ sap.ui.define([
 
 	/*
 	 * Handled keys:
-	 * Shift, Space, F2, F4, Shift+F10, Ctrl+A, Ctrl+Shift+A
+	 * Shift, Space, F2, F4, Ctrl+A, Ctrl+Shift+A
 	 */
 	TableKeyboardDelegate.prototype.onkeydown = function(oEvent) {
 		var oKeyboardExtension = this._getKeyboardExtension();
@@ -947,11 +947,6 @@ sap.ui.define([
 			if (oCellInfo.isOfType(CellType.DATACELL)) {
 				oKeyboardExtension.setActionMode(true);
 			}
-
-		// Shift+F10: Open the context menu.
-		} else if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.F10, ModKey.SHIFT)) {
-			oEvent.preventDefault(); // Prevent opening the default browser context menu.
-			TableUtils.Menu.openContextMenu(this, oEvent.target, true, null, oEvent);
 		}
 	};
 
@@ -997,12 +992,10 @@ sap.ui.define([
 			return;
 		}
 
-		oEvent.preventDefault(); // Prevent opening the default browser context menu.
+		var oCellInfo = TableUtils.getCellInfo(document.activeElement);
 
-		var $Cell = TableUtils.getCell(this, oEvent.target);
-		var oCellInfo = TableUtils.getCellInfo($Cell);
-
-		if (oCellInfo.isOfType(CellType.COLUMNHEADER | CellType.ANYCONTENTCELL)) {
+		if (oCellInfo.isOfType(CellType.ANY)) {
+			oEvent.preventDefault(); // Prevent opening the default browser context menu.
 			TableUtils.Menu.openContextMenu(this, oEvent.target, true, null, oEvent);
 		}
 	};
