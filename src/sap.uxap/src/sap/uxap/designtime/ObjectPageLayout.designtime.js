@@ -56,6 +56,18 @@ sap.ui.define(["sap/uxap/library"],
 						}
 					}
 				}
+			},
+			footer: {
+				propagateMetadata: function (oElement) {
+					if (oElement.isA("sap.m.IBar")) {
+						return {
+							isVisible: function(oElement) {
+								return oElement.getParent().isA("sap.uxap.ObjectPageLayout")
+									&& oElement.getParent().getShowFooter();
+							}
+						};
+					}
+				}
 			}
 		},
 		scrollContainers : [{
