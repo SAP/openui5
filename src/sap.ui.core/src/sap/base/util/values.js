@@ -14,7 +14,7 @@ sap.ui.define(function() {
 	 * @returns {Array.<*>} - array of object values, if object does not contain values, an empty array will be returned
 	 * @public
 	 */
-	return function values(mObject) {
+	var fnValues = function values(mObject) {
 		// Default is always an empty array
 		if (
 			typeof mObject === "undefined"
@@ -41,4 +41,6 @@ sap.ui.define(function() {
 			return mObject[vValue];
 		});
 	};
+
+	return fnValues;
 });
