@@ -3394,7 +3394,7 @@ sap.ui.define([
 			var oGroupEntry = oRequestGroup.map[sRequestKey];
 			var oStoredRequest = oGroupEntry.request;
 			oRequest.deepPath = oStoredRequest.deepPath;
-			if (this.bIsMessageScopeSupported && this.sMessageScope === MessageScope.BusinessObject) {
+			if (this.sMessageScope === MessageScope.BusinessObject) {
 				oRequest.headers["sap-message-scope"] = oStoredRequest.headers["sap-message-scope"];
 			}
 
@@ -4217,9 +4217,10 @@ sap.ui.define([
 		}
 
 		// deep path handling
-		if (sDeepPath && this.bIsMessageScopeSupported && this.sMessageScope === MessageScope.BusinessObject) {
+		if (sDeepPath && this.sMessageScope === MessageScope.BusinessObject) {
+			assert(this.bIsMessageScopeSupported, "MessageScope 'BusinessObject' is not supported by the service");
 			var aParts = sDeepPath.split("/");
-			mHeaders["sap-message-scope"] = "/" + aParts[0] + aParts[1]; // "/" + RootEntity(123)
+			mHeaders["sap-message-scope"] = "/" + aParts[1]; // "/" + RootEntity(123)
 		}
 
 		var oRequest = {
@@ -6552,11 +6553,46 @@ sap.ui.define([
 	 *
 	 * @param {oRequest} Request, which was completed.
 	 */
-
 	ODataModel.prototype._decreaseDeferredRequestCount = function(oRequest){
 		if (oRequest.deferred){
 			this.iPendingDeferredRequests--;
 		}
+	};
+
+	/**
+	 * Enable/Disable canonical requests calculation. When enabled, a given
+	 * resource path will be shortened as much as possible.
+	 *
+	 * @param {boolean} bCanonicalRequests Enable/disable canonical request calculation
+	 * @sap-restricted sap.suite.ui.generic
+	 * @private
+	 */
+	ODataModel.prototype.enableCanonicalRequests = function(bCanonicalRequests) {
+		this.bCanonicalRequests = !!bCanonicalRequests;
+	};
+
+	/**
+	 * Sets the MessageScope
+	 * @param {sap.ui.model.odata.MessageScope} sMessageScope The MessageScope
+	 * @sap-restricted sap.suite.ui.generic
+	 * @private
+	 */
+	ODataModel.prototype.setMessageScope = function(sMessageScope) {
+		this.sMessageScope = sMessageScope;
+	};
+
+	/**
+	 * Check whether the MessageScope is supported.
+	 * @sap-restricted sap.suite.ui.generic
+	 * @returns {Promise}
+	 * @private
+	 */
+	ODataModel.prototype.messageScopeSupported = function() {
+		var that = this;
+		return this.metadataLoaded()
+			.then(function() {
+				return that.bIsMessageScopeSupported;
+			});
 	};
 
 	return ODataModel;
