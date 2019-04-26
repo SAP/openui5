@@ -600,7 +600,11 @@ sap.ui.define([
                 var mHeaders = oEvent.getParameter("headers");
                 assert.ok(mHeaders["sap-message-scope"], "Message scope set to 'RequestedObjects': scope header set");
                 assert.equal(mHeaders["sap-message-scope"], "/SalesOrderSet('0500000000')", "Message scope set to 'BusinessObject': scope header set");
-                done();
+                that.oModel.messageScopeSupported()
+                    .then(function(bSupported) {
+                        assert.ok(bSupported);
+                        done();
+                    });
             };
 
             that.oModel.attachRequestCompleted(fnRequestCompleted);
@@ -627,7 +631,7 @@ sap.ui.define([
         }
     });
 
-    QUnit.test("Message Scope supported by service - scope: BusinessObject", function(assert){
+    QUnit.test("scope: BusinessObject", function(assert){
         var that = this;
         var done = assert.async();
 
@@ -638,15 +642,19 @@ sap.ui.define([
             var fnRequestCompleted = function(oEvent){
                 that.oModel.detachRequestCompleted(fnRequestCompleted);
                 var mHeaders = oEvent.getParameter("headers");
-                assert.ok(!mHeaders["sap-message-scope"], "Message scope set to 'BusinessObject': no scope header set");
-                done();
+                assert.ok(mHeaders["sap-message-scope"], "Message scope set to 'BusinessObject': scope header set");
+                that.oModel.messageScopeSupported()
+                    .then(function(bSupported) {
+                        assert.ok(!bSupported);
+                        done();
+                    });
             };
 
             that.oModel.attachRequestCompleted(fnRequestCompleted);
         });
     });
 
-    QUnit.test("Message Scope supported by service - scope: RequestedObjects", function(assert){
+    QUnit.test("scope: RequestedObjects", function(assert){
         var that = this;
         var done = assert.async();
 
