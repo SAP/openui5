@@ -23,8 +23,8 @@ sap.ui.define([], function() {
 		/**
 		 * Returns a promise for the loaded state of the metadata. If there is no rows binding or model, the promise will reject.
 		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @return {Promise} Returns a promise on the metadata loaded state.
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {Promise} A promise on the metadata loaded state.
 		 */
 		metadataLoaded: function(oTable) {
 			var oBinding = oTable.getBinding("rows");
