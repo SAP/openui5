@@ -3,8 +3,12 @@
 /* Base theme                          */
 /* =================================== */
 
+@_sap_ui_table_Table_HeaderHeight: @_sap_ui_table_BaseSizeCozy;
 @_sap_ui_table_Table_HeaderPaddingLeft: 1rem;
 @_sap_ui_table_Table_HeaderPaddingRight: 1rem;
+@_sap_ui_table_Table_FooterHeight: @_sap_ui_table_BaseSizeCozy;
+@_sap_ui_table_Table_FooterPaddingLeft: 1rem;
+@_sap_ui_table_Table_FooterPaddingRight: 1rem;
 @_sap_ui_table_Table_TableHeaderBorderWidth: @_sap_ui_table_BaseBorderWidth;
 @_sap_ui_table_Table_TableHeaderBorderColor: @sapUiListVerticalBorderColor;
 
@@ -29,9 +33,8 @@
 	padding-left: @_sap_ui_table_Table_HeaderPaddingLeft;
 	padding-right: @_sap_ui_table_Table_HeaderPaddingRight;
 	background-color: @sapUiGroupTitleBackground;
-	min-height: 1.5rem;
+	min-height: @_sap_ui_table_Table_HeaderHeight;
 	margin-bottom: 0.125rem;
-	height: auto;
 	._sap_ui_table_Table_Header();
 }
 
@@ -66,22 +69,18 @@
 	border-left: @_sap_ui_table_BaseBorderWidth solid @sapUiListHeaderBorderColor;
 	border-right: @_sap_ui_table_BaseBorderWidth solid @sapUiListHeaderBorderColor;
 	box-sizing: border-box;
-	min-height: 1.5rem;
+	min-height: @_sap_ui_table_Table_FooterHeight;
 	background-color: @sapUiListBackground;
-	padding: 0 0.625rem;
+	padding-left: @_sap_ui_table_Table_FooterPaddingLeft;
+	padding-right: @_sap_ui_table_Table_FooterPaddingLeft;
 	font-weight: bold;
 
-	html[data-sap-ui-browser^="ie"] & {
-		padding-top: 0.25rem;
+	> * {
+		flex: 1 1 auto;
 	}
 
-	.sapUiSizeCozy & {
-		min-height: @_sap_ui_table_BaseSizeCozy;
-
-		html[data-sap-ui-browser^="ie"] & {
-			height: @_sap_ui_table_BaseSizeCozy;
-			padding-top: 0;
-		}
+	html[data-sap-ui-browser^="ie"] & {
+		height: @_sap_ui_table_Table_FooterHeight;
 	}
 }
 
