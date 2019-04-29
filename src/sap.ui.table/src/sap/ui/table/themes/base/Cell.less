@@ -164,23 +164,6 @@
 	padding-top: 7px;
 	padding-bottom: 7px;
 
-	&:active {
-		// The active state background color and text color should not be applied if column reordering is in progress.
-		.sapUiTable:not(.sapUiTableDragDrop) & {
-			background-color: @sapUiListActiveBackground;
-			color: @sapUiListActiveTextColor;
-		}
-
-		& > .sapUiTableCellInner {
-			span,
-			label,
-			&.sapUiTableColSorted::after,
-			&.sapUiTableColFiltered::after {
-				color: @sapUiListActiveTextColor;
-			}
-		}
-	}
-
 	> .sapUiTableCellInner {
 		display: flex;
 		flex: 1 1 auto;
@@ -243,6 +226,25 @@
 
 			&:active {
 				color: @sapUiContentContrastTextColor;
+			}
+		}
+	}
+}
+
+.sapUiTableHeaderCellActive {
+	&:active {
+		// The active state background color and text color should not be applied if column reordering is in progress.
+		.sapUiTable:not(.sapUiTableDragDrop) & {
+			background-color: @sapUiListActiveBackground;
+			color: @sapUiListActiveTextColor;
+		}
+
+		& > .sapUiTableCellInner {
+			span,
+			label,
+			&.sapUiTableColSorted::after,
+			&.sapUiTableColFiltered::after {
+				color: @sapUiListActiveTextColor;
 			}
 		}
 	}
