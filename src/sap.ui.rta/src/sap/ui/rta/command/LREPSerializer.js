@@ -2,24 +2,26 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/base/ManagedObject',
-	'sap/ui/rta/command/FlexCommand',
-	'sap/ui/rta/command/AppDescriptorCommand',
-	'sap/ui/fl/FlexControllerFactory',
-	'sap/ui/fl/Utils',
-	'sap/ui/fl/Change',
-	'sap/ui/rta/ControlTreeModifier',
-	'sap/ui/fl/registry/Settings',
-	'sap/ui/dt/ElementUtil',
+	"sap/ui/base/ManagedObject",
+	"sap/ui/rta/command/FlexCommand",
+	"sap/ui/rta/command/AppDescriptorCommand",
+	"sap/ui/rta/ControlTreeModifier",
+	"sap/ui/rta/Utils",
+	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/Change",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/dt/ElementUtil",
 	"sap/base/Log"
 ], function(
 	ManagedObject,
 	FlexCommand,
 	AppDescriptorCommand,
+	RtaControlTreeModifier,
+	RtaUtils,
 	FlexControllerFactory,
 	FlexUtils,
 	Change,
-	RtaControlTreeModifier,
 	Settings,
 	ElementUtil,
 	Log
@@ -107,11 +109,11 @@ sap.ui.define([
 								oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oControl);
 							} else if (oCommand instanceof AppDescriptorCommand) {
 								//other flex controller!
-								oFlexController = this._getAppDescriptorFlexController(oAppComponent);
+								oFlexController = RtaUtils.getAppDescriptorFlexController(oAppComponent);
 							}
 							oFlexController.deleteChange(oChange, oAppComponent);
 						}
-					}.bind(this));
+					});
 				} else {
 					var aDescriptorCreateAndAdd = [];
 					aCommands.forEach(function(oCommand) {
@@ -162,6 +164,8 @@ sap.ui.define([
 	};
 	/**
 	 * Serializes and saves all changes to LREP
+	 * In case of Base Applications (no App Variants) the App Descriptor Changes and UI Changes are saved in different Change Persistences,
+	 * so we have to call save twice. For App Variants all the changes are saved in one place.
 	 *
 	 * @returns {Promise} return empty promise
 	 * @public
@@ -178,12 +182,13 @@ sap.ui.define([
 			return oFlexController.saveAll();
 		}.bind(this))
 
-		// needed because the AppDescriptorChanges are stored with a different ComponentName (without ".Component" at the end)
-		// -> two different ChangePersistence
 		.then(function() {
 			var oRootControl = getRootControlInstance(this.getRootControl());
-			var oFlexController = this._getAppDescriptorFlexController(oRootControl);
-			return oFlexController.saveAll();
+			var bAppVariantRunning = FlexUtils.isApplicationVariant(oRootControl) || FlexUtils.isVariantByStartupParameter(oRootControl);
+			if (!bAppVariantRunning) {
+				var oFlexController = RtaUtils.getAppDescriptorFlexController(oRootControl);
+				return oFlexController.saveAll();
+			}
 		}.bind(this))
 
 		.then(function() {
@@ -192,19 +197,6 @@ sap.ui.define([
 		}.bind(this));
 
 		return this._lastPromise;
-	};
-
-	/**
-	 * needed because the AppDescriptorChanges are stored with a different ComponentName (without ".Component" at the end)
-	 * -> two different ChangePersistence
-	 * @param {sap.ui.base.ManagedObject} oControl control or app component for which the flex controller should be instantiated
-	 * @returns {Promise} Returns AppDescriptorFlexController for given controls
-	 */
-	LREPSerializer.prototype._getAppDescriptorFlexController = function(oControl) {
-		var oAppComponent = FlexUtils.getAppComponentForControl(oControl);
-		var sComponentName = FlexUtils.getComponentClassName(oAppComponent).replace(".Component", "");
-		var sAppVersion = FlexUtils.getAppVersionFromManifest(oAppComponent.getManifest());
-		return FlexControllerFactory.create(sComponentName, sAppVersion);
 	};
 
 	LREPSerializer.prototype._moveChangeToAppVariant = function(sReferenceAppIdForChanges, oFlexController) {

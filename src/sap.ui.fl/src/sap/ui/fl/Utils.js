@@ -548,6 +548,20 @@ function(
 		},
 
 		/**
+		 * Returns an object with 'name' and 'version' of the App Component where the App Descriptor changes are saved
+		 *
+		 * @param {sap.ui.base.ManagedObject} oControl control or app component for which the flex controller should be instantiated
+		 * @returns {Promise} Returns Object with name and version of Component for App Descriptor changes
+		 */
+		getAppDescriptorComponentObjectForControl: function(oControl) {
+			var oAppComponent = this.getAppComponentForControl(oControl);
+			return {
+				name: this.getComponentClassName(oAppComponent).replace(".Component", ""),
+				version: this.getAppVersionFromManifest(oAppComponent.getManifest())
+			};
+		},
+
+		/**
 		 * Returns the Component that belongs to given control. If the control has no component, it walks up the control tree in order to find a
 		 * control having one.
 		 *

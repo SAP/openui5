@@ -511,8 +511,7 @@ function(
 	};
 
 	RuntimeAuthoring.prototype._getFlexController = function() {
-		var oRootControl = this.getRootControlInstance();
-		return FlexControllerFactory.createForControl(oRootControl);
+		return FlexControllerFactory.createForControl(this.getRootControlInstance());
 	};
 
 	RuntimeAuthoring.prototype._getTextResources = function() {
@@ -1103,17 +1102,31 @@ function(
 	};
 
 	/**
-	 * Delete all changes for current layer and root control's component
+	 * Delete all changes for current layer and root control's component.
+	 * In case of Base Applications (no App Variants) the App Descriptor Changes and UI Changes are saved in different Change Persistences,
+	 * so we have to call reset twice. For App Variants all the changes are saved in one place.
 	 *
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._deleteChanges = function() {
-		return this._getFlexController().resetChanges(this.getLayer(), "Change.createInitialFileContent", FlexUtils.getAppComponentForControl(this.getRootControlInstance()))
-			.then(function() {
-				this._reloadPage();
-			}.bind(this))["catch"](function(oError) {
-				return Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_RESTORE_FAILED", "MSG_RESTORE_FAILED", oError);
-			});
+		var oRootControl = this.getRootControlInstance();
+		var bAppVariantRunning = FlexUtils.isApplicationVariant(oRootControl) || FlexUtils.isVariantByStartupParameter(oRootControl);
+		var oAppComponent = FlexUtils.getAppComponentForControl(oRootControl);
+		var oUIChangesFlexController = this._getFlexController();
+
+		return oUIChangesFlexController.resetChanges(this.getLayer(), "Change.createInitialFileContent", oAppComponent)
+		.then(function() {
+			if (!bAppVariantRunning) {
+				var oDescriptorChangesFlexController = Utils.getAppDescriptorFlexController(oRootControl);
+				return oDescriptorChangesFlexController.resetChanges(this.getLayer(), "Change.createInitialFileContent", oAppComponent);
+			}
+		}.bind(this))
+		.then(function() {
+			this._reloadPage();
+		}.bind(this))
+		.catch(function(oError) {
+			return Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_RESTORE_FAILED", "MSG_RESTORE_FAILED", oError);
+		});
 	};
 
 	/**
