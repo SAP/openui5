@@ -89,40 +89,16 @@ sap.ui.define(function() {
 				title: "CustomizingConfiguration and Customizing in general - sap.ui.core"
 			},
 			Manifest: {
-				title: "QUnit tests: Component Manifest",
-				loader: {
-					paths: {
-						// TODO check whether a common namespace could be used for the fixture
-						// internally, the fixtures use "sap.ui.test"
-						// ComponentSupport checks for the internal name, therefore it must use the right namespace
-						// Other tests only need successful loading, so the name doesn't matter
-						"sap/ui/test": "test-resources/sap/ui/core/qunit/component/testdata/"
-					}
-				}
+				title: "QUnit tests: Component Manifest"
 			},
 			Metadata: {
-				title: "QUnit tests: Component Metadata",
-				loader: {
-					paths: {
-						// TODO check whether a common namespace could be used for the fixture
-						// internally, the fixtures use "sap.ui.test"
-						// ComponentSupport checks for the internal name, therefore it must use the right namespace
-						// Other tests only need successful loading, so the name doesn't matter
-						"sap/ui/test": "test-resources/sap/ui/core/qunit/component/testdata/"
-					}
-				}
+				title: "QUnit tests: Component Metadata"
+			},
+			Metadata_unavoidablySync: {
+				title: "QUnit tests: Component Metadata (sync tests)"
 			},
 			Models: {
 				title: "QUnit tests: Component Models",
-				loader: {
-					paths: {
-						// TODO check whether a common namespace could be used for the fixture
-						// internally, the fixtures use "sap.ui.test"
-						// ComponentSupport checks for the internal name, therefore it must use the right namespace
-						// Other tests only need successful loading, so the name doesn't matter
-						"sap/ui/test": "test-resources/sap/ui/core/qunit/component/testdata/"
-					}
-				},
 				ui5: {
 					language: "en-US"
 				}
