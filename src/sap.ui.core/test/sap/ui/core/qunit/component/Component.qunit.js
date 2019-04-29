@@ -133,12 +133,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("Components Includes", function(assert){
-		assert.ok((typeof foo == 'function'), "function foo from included js exists");
-		var sFontSize = "4px";
-		foo("comparea2", sFontSize);
-		var sSize = jQuery("#comparea2").css('font-size');
-		assert.equal(sSize, sFontSize, "function from JS include invoked");
-		assert.equal(jQuery.sap.byId("vLayout---myTF").css("padding-left"), "321px", "CSS from include applied");
+		assert.ok(typeof foo == 'function', "function foo from included js exists");
+		assert.equal(foo(), "bar", "function from JS include invoked");
+		var oLink = document.querySelector(
+			"link[data-sap-ui-manifest-uid='" + this.oComp.getManifestObject()._uid + "']"
+		);
+		assert.ok(oLink, "Stylsheet from include has been inserted");
+		assert.equal(oLink.getAttribute("href"),
+			"test-resources/sap/ui/core/samples/components/verticalLayout/css/vlayout.css",
+			"Stylesheet with correct href has been inserted"
+		);
 	});
 
 	QUnit.test("Factory Function", function(assert){
@@ -418,10 +422,10 @@ sap.ui.define([
 			oServer.xhr.filters = [];
 			oServer.xhr.addFilter(function(method, url) {
 				return (
-					url !== "/anylocation/manifest.json?sap-language=EN"
-					&& url !== "/anyotherlocation1/manifest.json?sap-language=EN"
-					&& url !== "/anyotherlocation2/manifest.json?sap-language=EN"
-					& url !== "/anyappvariantlocation/manifest.json?sap-language=EN"
+					url !== "anylocation/manifest.json?sap-language=EN"
+					&& url !== "anyotherlocation1/manifest.json?sap-language=EN"
+					&& url !== "anyotherlocation2/manifest.json?sap-language=EN"
+					& url !== "anyappvariantlocation/manifest.json?sap-language=EN"
 
 					&& !/anylocation\/i18n\/i18n_en\.properties$/.test(url)
 					&& !/anyotherlocation2\/someFolder\/messagebundle_en\.properties$/.test(url)
@@ -429,28 +433,28 @@ sap.ui.define([
 			});
 
 			oServer.autoRespond = true;
-			oServer.respondWith("GET", "/anylocation/manifest.json?sap-language=EN", [
+			oServer.respondWith("GET", "anylocation/manifest.json?sap-language=EN", [
 				200,
 				{
 					"Content-Type": "application/json"
 				},
 				JSON.stringify(oManifest)
 			]);
-			oServer.respondWith("GET", "/anyotherlocation1/manifest.json?sap-language=EN", [
+			oServer.respondWith("GET", "anyotherlocation1/manifest.json?sap-language=EN", [
 				200,
 				{
 					"Content-Type": "application/json"
 				},
 				JSON.stringify(oAltManifest1)
 			]);
-			oServer.respondWith("GET", "/anyotherlocation2/manifest.json?sap-language=EN", [
+			oServer.respondWith("GET", "anyotherlocation2/manifest.json?sap-language=EN", [
 				200,
 				{
 					"Content-Type": "application/json"
 				},
 				JSON.stringify(oAltManifest2)
 			]);
-			oServer.respondWith("GET", "/anyappvariantlocation/manifest.json?sap-language=EN", [
+			oServer.respondWith("GET", "anyappvariantlocation/manifest.json?sap-language=EN", [
 				200,
 				{
 					"Content-Type": "application/json"
@@ -489,7 +493,7 @@ sap.ui.define([
 	QUnit.test("Component.create - manifest with URL", function(assert) {
 
 		return Component.create({
-			manifest: "/anylocation/manifest.json"
+			manifest: "anylocation/manifest.json"
 		}).then(function(oComponent) {
 			assert.ok(true, "Component is loaded properly!");
 		}, function(oError) {
@@ -502,7 +506,7 @@ sap.ui.define([
 		var sComponentUrl = "test-resources/sap/ui/core/samples/components/button/";
 
 		return Component.create({
-			manifest: "/anyappvariantlocation/manifest.json",
+			manifest: "anyappvariantlocation/manifest.json",
 			url: sComponentUrl
 		}).then(function(oComponent) {
 			assert.equal(2, configSpy.callCount, "sap.ui.loader.config was called twice");
@@ -523,7 +527,7 @@ sap.ui.define([
 			var sAppVariantModulePath = sAppVariantId.replace(/\./g, "/");
 			var sPathKeyOfSecondCall = aKeysOfSecondCall[0];
 			assert.equal(sPathKeyOfSecondCall, sAppVariantModulePath, "the app variant module path was registered");
-			assert.equal(mPathsOfSecondCall[sPathKeyOfSecondCall], "../anyappvariantlocation/", "the component module uri is correct");
+			assert.equal(mPathsOfSecondCall[sPathKeyOfSecondCall], "anyappvariantlocation/", "the component module uri is correct");
 		});
 	});
 
@@ -531,7 +535,7 @@ sap.ui.define([
 
 		return Component.create({
 			id: "myTestComp",
-			manifest: "/anylocation/manifest.json"
+			manifest: "anylocation/manifest.json"
 		}).then(function(oComponent) {
 			assert.ok(true, "Component is loaded properly!");
 			assert.equal(oComponent, Component.get("myTestComp"), "Component.get returns right component");
@@ -545,7 +549,7 @@ sap.ui.define([
 	QUnit.test("Component.load - manifest with URL", function(assert) {
 
 		return Component.load({
-			manifest: "/anylocation/manifest.json"
+			manifest: "anylocation/manifest.json"
 		}).then(function(ComponentClass) {
 			assert.ok(true, "Component is loaded properly!");
 			assert.ok(ComponentClass.constructor && !(ComponentClass instanceof Component), "Component class loaded");
@@ -577,7 +581,7 @@ sap.ui.define([
 
 		//start test
 		var oComponent = sap.ui.component({
-			manifestUrl : "/anylocation/manifest.json"
+			manifestUrl : "anylocation/manifest.json"
 		});
 
 		assert.ok(oComponent.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
@@ -595,7 +599,7 @@ sap.ui.define([
 
 		//start test
 		var fnComponentClass = sap.ui.component.load({
-			manifestUrl : "/anylocation/manifest.json"
+			manifestUrl : "anylocation/manifest.json"
 		});
 
 		assert.ok(fnComponentClass.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
@@ -631,7 +635,7 @@ sap.ui.define([
 		//start test
 		var done = assert.async();
 		sap.ui.component({
-			manifestUrl : "/anylocation/manifest.json",
+			manifestUrl : "anylocation/manifest.json",
 			async : true
 		}).then(function(oComponent) {
 
@@ -663,7 +667,7 @@ sap.ui.define([
 		//start test
 		var done = assert.async();
 		sap.ui.component.load({
-			manifestUrl : "/anylocation/manifest.json",
+			manifestUrl : "anylocation/manifest.json",
 			async : true
 		}).then(function(fnComponentClass) {
 
@@ -698,7 +702,7 @@ sap.ui.define([
 
 		//start test
 		var fnComponentClass = sap.ui.component.load({
-			manifestUrl : "/anyotherlocation1/manifest.json",
+			manifestUrl : "anyotherlocation1/manifest.json",
 			url : "test-resources/sap/ui/core/samples/components/config/"
 		});
 
@@ -739,7 +743,7 @@ sap.ui.define([
 		//start test
 		var done = assert.async();
 		sap.ui.component.load({
-			manifestUrl : "/anyotherlocation2/manifest.json",
+			manifestUrl : "anyotherlocation2/manifest.json",
 			url : "test-resources/sap/ui/core/samples/components/oneview/",
 			async : true
 		}).then(function(fnComponentClass) {
@@ -787,7 +791,7 @@ sap.ui.define([
 		};
 
 		var oConfig = {
-			manifestUrl: "/anylocation/manifest.json"
+			manifestUrl: "anylocation/manifest.json"
 		};
 
 		var oComponent = sap.ui.component(oConfig);
@@ -806,7 +810,7 @@ sap.ui.define([
 		assert.throws(
 			function() {
 				sap.ui.component({
-					manifestUrl: "/anylocation/manifest.json"
+					manifestUrl: "anylocation/manifest.json"
 				});
 			},
 			/Error from _fnOnInstanceCreated/,
@@ -832,7 +836,7 @@ sap.ui.define([
 		};
 
 		var oConfig = {
-			manifestUrl: "/anylocation/manifest.json",
+			manifestUrl: "anylocation/manifest.json",
 			async: true
 		};
 
@@ -849,7 +853,7 @@ sap.ui.define([
 		};
 
 		return sap.ui.component({
-			manifestUrl: "/anylocation/manifest.json",
+			manifestUrl: "anylocation/manifest.json",
 			async: true
 		}).then(function(oComponent) {
 			assert.ok(false, "Promise should not resolve");
@@ -879,7 +883,7 @@ sap.ui.define([
 		};
 
 		var oConfig = {
-			manifestUrl: "/anylocation/manifest.json",
+			manifestUrl: "anylocation/manifest.json",
 			async: true
 		};
 
@@ -900,7 +904,7 @@ sap.ui.define([
 		};
 
 		return sap.ui.component({
-			manifestUrl: "/anylocation/manifest.json",
+			manifestUrl: "anylocation/manifest.json",
 			async: true
 		}).then(function(oComponent) {
 			assert.ok(false, "Promise should not resolve");
@@ -914,7 +918,7 @@ sap.ui.define([
 	QUnit.test("Usage of manifest property in component configuration for URL", function(assert) {
 
 		return sap.ui.component({
-			manifest: "/anylocation/manifest.json"
+			manifest: "anylocation/manifest.json"
 		}).then(function(oComponent) {
 			assert.ok(true, "Component is loaded properly!");
 		}, function(oError) {
@@ -973,7 +977,7 @@ sap.ui.define([
 	QUnit.test("Usage of manifest property in component configuration for URL (sync)", function(assert) {
 
 		var oComponent = sap.ui.component({
-			manifest: "/anylocation/manifest.json",
+			manifest: "anylocation/manifest.json",
 			async: false
 		});
 
@@ -1044,11 +1048,11 @@ sap.ui.define([
 			oServer.xhr.useFilters = true;
 			oServer.xhr.filters = [];
 			oServer.xhr.addFilter(function(method, url) {
-				return url !== "/anylocation/manifest.json?sap-language=EN";
+				return url !== "anylocation/manifest.json?sap-language=EN";
 			});
 
 			oServer.autoRespond = true;
-			oServer.respondWith("GET", "/anylocation/manifest.json?sap-language=EN", [
+			oServer.respondWith("GET", "anylocation/manifest.json?sap-language=EN", [
 				200,
 				{
 					"Content-Type": "application/json"
@@ -1505,7 +1509,7 @@ sap.ui.define([
 
 		sap.ui.component({
 			name : "my.preloadusage",
-			manifest: "/anylocation/manifest.json"
+			manifest: "anylocation/manifest.json"
 		}).then(function(oPreloadComponent) {
 
 			oComponent = oPreloadComponent;
@@ -1572,13 +1576,13 @@ sap.ui.define([
 			oServer.xhr.filters = [];
 			oServer.xhr.addFilter(function(method, url) {
 				return (
-					url !== "/anylocation/manifest.json?sap-language=EN" &&
+					url !== "anylocation/manifest.json?sap-language=EN" &&
 					!/\.properties(\?.*)?$/.test(url)
 				);
 			});
 
 			oServer.autoRespond = true;
-			oServer.respondWith("GET", "/anylocation/manifest.json?sap-language=EN", [
+			oServer.respondWith("GET", "anylocation/manifest.json?sap-language=EN", [
 				200,
 				{
 					"Content-Type": "application/json"
@@ -1604,17 +1608,17 @@ sap.ui.define([
 
 		// load the test component
 		return Component.create({
-			manifest : "/anylocation/manifest.json"
+			manifest : "anylocation/manifest.json"
 		}).then(function(oComponent) {
 
 			var aI18NCmpEnhanceWith = oModelConfigSpy.returnValues[0]["i18n-component"].settings[0].enhanceWith;
 			assert.strictEqual(aI18NCmpEnhanceWith[0].bundleUrl, "test-resources/sap/ui/core/samples/components/button/custom/i18n.properties", "Bundle URL of enhancing model must not be modified!");
 			assert.strictEqual(aI18NCmpEnhanceWith[1].bundleUrlRelativeTo, "manifest", "Bundle URL should be relative to manifest!");
-			assert.strictEqual(aI18NCmpEnhanceWith[1].bundleUrl, "../anylocation/other/i18n.properties", "Bundle URL of enhancing model must not be modified!");
+			assert.strictEqual(aI18NCmpEnhanceWith[1].bundleUrl, "anylocation/other/i18n.properties", "Bundle URL of enhancing model must not be modified!");
 
 			var aI18NMFEnhanceWith = oModelConfigSpy.returnValues[0]["i18n-manifest"].settings[0].enhanceWith;
 			assert.strictEqual(aI18NMFEnhanceWith[0].bundleUrlRelativeTo, "manifest", "Bundle URL should be relative to manifest!");
-			assert.strictEqual(aI18NMFEnhanceWith[0].bundleUrl, "../anylocation/custom/i18n.properties", "Bundle URL of enhancing model must be adopted relative to manifest!");
+			assert.strictEqual(aI18NMFEnhanceWith[0].bundleUrl, "anylocation/custom/i18n.properties", "Bundle URL of enhancing model must be adopted relative to manifest!");
 			assert.strictEqual(aI18NMFEnhanceWith[1].bundleUrl, "test-resources/sap/ui/core/samples/components/button/other/i18n.properties", "Bundle URL of enhancing model must not be modified!");
 
 			oComponent.destroy();
