@@ -103,6 +103,66 @@
         "type": "FIX",
         "text": " sap.m.TextArea: Growing property is now corrected",
         "references": []
+      },
+      {
+        "id": "b462a89d01bb640336620ff5db6ee571ecb7b9bd",
+        "type": "FEATURE",
+        "text": " sap.m.Select: Control can now be both disabled and focusable",
+        "references": []
+      },
+      {
+        "id": "ac00a514dd4bab12bbd0f88ca02c2c5da2a1bdcd",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: Custom views introduced",
+        "references": []
+      },
+      {
+        "id": "99125a90a1670c5133f269feb9a32a93f6f19c38",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: Implemented special dates",
+        "references": []
+      },
+      {
+        "id": "63aa7717b7c416fada1034942c3f38e63d4e4355",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: Longer appointments text supported",
+        "references": []
+      },
+      {
+        "id": "879ec97774a8032a954b76af58dbedf8b9fc82ed",
+        "type": "FIX",
+        "text": " sap.m.GenericTag: Accessibility label optimized",
+        "references": []
+      },
+      {
+        "id": "fbc9f46c44375b46a21ddb2b662420b00d1fe8b9",
+        "type": "FIX",
+        "text": " sap.m.Input: Additional check for existing list in attachAfterClose",
+        "references": []
+      },
+      {
+        "id": "69d2bca637300aa45a05e6ad8604cd107153cd36",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Read-only control should have focus",
+        "references": []
+      },
+      {
+        "id": "6b02996847a5108893583c786a438ade35a4b171",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Use list in delete mode for N-more popover",
+        "references": []
+      },
+      {
+        "id": "bc7967eee54803d3213bfe6fe33a0f9cd19e8223",
+        "type": "FIX",
+        "text": " sap.m.Popover: _includeScrollWidth adjusted",
+        "references": []
+      },
+      {
+        "id": "ddc6b8852ec6a039023b52196c043da40e79c764",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Failing test in FF corrected",
+        "references": []
       }
     ]
   }

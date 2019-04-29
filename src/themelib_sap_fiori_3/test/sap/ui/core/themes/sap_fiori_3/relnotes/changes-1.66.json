@@ -31,6 +31,30 @@
         "type": "FIX",
         "text": " sap.m.TextArea: Growing property is now corrected",
         "references": []
+      },
+      {
+        "id": "99125a90a1670c5133f269feb9a32a93f6f19c38",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: Implemented special dates",
+        "references": []
+      },
+      {
+        "id": "597d05bff8e28ff12e97cc08503dfb218e468f12",
+        "type": "FIX",
+        "text": " sap.m.Page: Add shadows for header and subheader in Fiori 3",
+        "references": []
+      },
+      {
+        "id": "81d7d964864c3868106328fae31b4ca630aa801d",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Shadow in Bar adjusted for Quartz theme",
+        "references": []
+      },
+      {
+        "id": "81e312e67bd052a328041e2dd66e0ac9554e73c4",
+        "type": "FIX",
+        "text": ": RTA ACC Color fixes",
+        "references": []
       }
     ]
   }

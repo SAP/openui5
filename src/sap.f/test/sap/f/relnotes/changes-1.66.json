@@ -25,6 +25,12 @@
         "type": "FIX",
         "text": " sap.f.DynamicPage: Space key is now allowed in Input in the title",
         "references": []
+      },
+      {
+        "id": "8f83ae6bff26f94d73b5168b0909a90651c4b5d8",
+        "type": "FEATURE",
+        "text": " sap.f.GridContainer: Implement allowDenseFill parameter for IE",
+        "references": []
       }
     ]
   }

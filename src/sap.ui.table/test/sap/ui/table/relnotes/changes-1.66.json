@@ -7,6 +7,12 @@
         "type": "FIX",
         "text": " Table: Align cell content according to column configuration",
         "references": []
+      },
+      {
+        "id": "a6d7a098ce17d2e2f5723ee848e4848044d37ed8",
+        "type": "FIX",
+        "text": " Table: Avoid announcement \"contains controls\" for leaf nodes",
+        "references": []
       }
     ]
   }
