@@ -61,6 +61,36 @@
         "type": "FIX",
         "text": " core.Popup: fix the immediate closed popup when of set to window",
         "references": []
+      },
+      {
+        "id": "5a6da02c9a04869bc7a1bf094f426f0171147558",
+        "type": "FEATURE",
+        "text": " CLDR: Upgrade to 35.1, support new Japanese era",
+        "references": []
+      },
+      {
+        "id": "07916ca5aa1a9fd4b17a825cc7f5cc47c77226a2",
+        "type": "FEATURE",
+        "text": " Opa: Descendant matcher implemented",
+        "references": []
+      },
+      {
+        "id": "ddf75d338a6d7bb9edff437c93ae0c33de316e9d",
+        "type": "FIX",
+        "text": " Core/Component: Respect \"final\" resourceRoot configuration",
+        "references": []
+      },
+      {
+        "id": "d08609c48bcd4570d84b6f5000ef2986d9cd19ea",
+        "type": "FIX",
+        "text": " ManagedObject: Fix regression in aggregation refresh",
+        "references": []
+      },
+      {
+        "id": "422ff1826e9af6305d1ee5b925123534c58089bf",
+        "type": "FIX",
+        "text": " trace/FESR.qunit: Skip Beacon API test in IE11",
+        "references": []
       }
     ]
   }

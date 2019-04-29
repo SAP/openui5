@@ -25,6 +25,12 @@
         "type": "FIX",
         "text": " sap.ui.rta - rta utils removed circular dependency",
         "references": []
+      },
+      {
+        "id": "81e312e67bd052a328041e2dd66e0ac9554e73c4",
+        "type": "FIX",
+        "text": ": RTA ACC Color fixes",
+        "references": []
       }
     ]
   }

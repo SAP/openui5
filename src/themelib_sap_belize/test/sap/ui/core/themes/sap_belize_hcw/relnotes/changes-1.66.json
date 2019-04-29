@@ -13,6 +13,30 @@
         "type": "FIX",
         "text": " sap.m.Button: remove overstyling inside Bar for Fiori 3 theme",
         "references": []
+      },
+      {
+        "id": "99125a90a1670c5133f269feb9a32a93f6f19c38",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: Implemented special dates",
+        "references": []
+      },
+      {
+        "id": "5b6d8e0268984cd51f03b3f98265c56b2b227d15",
+        "type": "FIX",
+        "text": " FeedListItem: Increase focus border size of FeedListItem image in HCB/HCB theme",
+        "references": []
+      },
+      {
+        "id": "dd24500c971563434e498c88132763dcbfd20592",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Fixed focus width",
+        "references": []
+      },
+      {
+        "id": "81e312e67bd052a328041e2dd66e0ac9554e73c4",
+        "type": "FIX",
+        "text": ": RTA ACC Color fixes",
+        "references": []
       }
     ]
   }
