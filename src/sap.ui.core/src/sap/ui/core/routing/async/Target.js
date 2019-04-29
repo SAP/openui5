@@ -20,21 +20,13 @@ sap.ui.define([
 		 * Creates a view and puts it in an aggregation of a control that has been defined in the {@link #constructor}.
 		 *
 		 * @param {*} [vData] an object that will be passed to the display event in the data property. If the target has parents, the data will also be passed to them.
-		 * @return {Promise} resolves with {name: *, view: *, control: *} if the target can be successfully displayed otherwise it resolves with {name: *, error: *}
+		 * @return {Promise} resolves with {name: *, view: *, control: *} if the target can be successfully displayed otherwise it rejects with error information
 		 * @private
 		 */
 		display : function (vData) {
 			// Create an immediately resolving promise for parentless Target
 			var oSequencePromise = Promise.resolve();
-			return this._display(vData, oSequencePromise).catch(function(oViewInfo) {
-				if (oViewInfo instanceof Error) {
-					// forward the rejection with error object if this is a program error
-					return Promise.reject(oViewInfo);
-				} else {
-					// otherwise make the promise resolve with {name: *, error: *}
-					return oViewInfo;
-				}
-			});
+			return this._display(vData, oSequencePromise);
 		},
 
 		/**
@@ -126,11 +118,6 @@ sap.ui.define([
 									object: oObject,
 									parentInfo: oParentInfo || {}
 								};
-							}, function(sErrorMessage) {
-								return Promise.reject({
-									name: oOptions._name,
-									error: sErrorMessage
-								});
 							});
 					})
 					.then(function(oViewInfo) {
@@ -191,9 +178,6 @@ sap.ui.define([
 								} else {
 									return oContainerControl;
 								}
-							}).catch(function() {
-								sErrorMessage = "Something went wrong during loading the root view with id " + oOptions.rootView;
-								return that._refuseInvalidTarget(oOptions._name, sErrorMessage);
 							});
 						}
 
@@ -318,14 +302,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_refuseInvalidTarget : function(sName, sMessage) {
-			if (sMessage) {
-				Log.error(sMessage, this);
-			}
-
-			return {
-				name: sName,
-				error: sMessage
-			};
+			return Promise.reject(new Error(sMessage + " - Target: " + sName));
 		}
 	};
 });

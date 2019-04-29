@@ -180,7 +180,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Should log an error if the target view can't be loaded", function (assert) {
+	QUnit.test("Should return a rejected promise if the target view can't be loaded", function (assert) {
 		// Arrange
 		this.stub(this.oViews, "_getView").callsFake(function () {
 			return {
@@ -195,13 +195,14 @@ sap.ui.define([
 
 		//Act
 		var oDisplayed = this.oTarget.display();
-		return oDisplayed.then(function(oViewInfo) {
-			assert.strictEqual(oViewInfo.name, "myTarget", "oViewInfo.name is correct");
-			assert.equal(oViewInfo.error, "View with name bar.foo could not be loaded", "oViewInfo.error error message is provided");
-		});
+		return oDisplayed.then(function() {
+				assert.ok(false, "Promise shouldn't be resolved");
+			}, function(sError) {
+				assert.equal(sError, "View with name bar.foo could not be loaded", "Error message is correct");
+			});
 	});
 
-	QUnit.test("Should log an error if the target parent is not found", function (assert) {
+	QUnit.test("Should return a rejected promise if the target parent is not found", function (assert) {
 		// Arrange
 		var oView = this.oView;
 		this.oTarget._oParent = new Target(
@@ -235,18 +236,16 @@ sap.ui.define([
 
 		//Act
 		var oDisplayed = this.oTarget.display();
-		return oDisplayed.then(function(oViewInfo) {
-			// Assert
-			assert.strictEqual(oViewInfo.name, "myParent", "oViewInfo.name is correct");
-			assert.equal(oViewInfo.error, "View with name parent.foo could not be loaded", "oViewInfo.error error message is provided");
-		});
+		return oDisplayed.then(function() {
+				assert.ok(false, "The promise shouldn't resolve");
+			}, function(sError) {
+				// Assert
+				assert.equal(sError, "View with name parent.foo could not be loaded", "oViewInfo.error error message is provided");
+			});
 	});
 
-	QUnit.test("Should log an error if the root view is not found", function (assert) {
+	QUnit.test("Should return a rejected promise if the root view is not found", function (assert) {
 		// Arrange
-
-		// sinon.spy instead of this.spy has to be used because the stubbed version is used async and this.spy is restored syncly.
-		var oSpy = sinon.spy(Log, "error");
 		var oView = this.oView;
 		this.stub(this.oViews, "_getView").callsFake(function () {
 			return oView;
@@ -256,20 +255,17 @@ sap.ui.define([
 
 		//Act
 		var oDisplayed = this.oTarget.display();
-		return oDisplayed.then(function(oViewInfo) {
-			// Assert
-			assert.strictEqual(oViewInfo.name, "myTarget", "oViewInfo.name is correct");
-			assert.ok(oViewInfo.error.indexOf("root view") !== -1, "oViewInfo.error error message is provided");
-			sinon.assert.calledWith(oSpy, sinon.match(/root view/), sinon.match(this.oTarget));
-			oSpy.restore();
-		}.bind(this));
+		return oDisplayed.then(function() {
+				assert.ok(false, "The promise shouldn't resolve");
+			}, function(oError) {
+				// Assert
+				assert.ok(oError instanceof Error, "The promise is rejected with error information");
+				assert.equal(oError.message, "Did not find the root view with the id foo - Target: myTarget", "The error message is correct");
+			});
 	});
 
-	QUnit.test("Should log an error if the target control does not have an existing aggregation specified", function (assert) {
+	QUnit.test("Should return a rejected promise if the target control does not have an existing aggregation specified", function (assert) {
 		// Arrange
-
-		// sinon.spy instead of this.spy has to be used because the stubbed version is used async and this.spy is restored syncly.
-		var oSpy = sinon.spy(Log, "error");
 		var oView = this.oView;
 
 		this.stub(this.oViews, "_getView").callsFake(function () {
@@ -281,20 +277,17 @@ sap.ui.define([
 		//Act
 		var oDisplayed = this.oTarget.display();
 
-		return oDisplayed.then(function(oViewInfo) {
-			// Assert
-			assert.strictEqual(oViewInfo.name, "myTarget", "oViewInfo.name is correct");
-			assert.ok(oViewInfo.error.indexOf("aggregation") !== -1, "oViewInfo.error error message is provided");
-			sinon.assert.calledWith(oSpy, sinon.match(/aggregation/), sinon.match(this.oTarget));
-			oSpy.restore();
-		}.bind(this));
+		return oDisplayed.then(function() {
+				assert.ok(false, "The promise shouldn't resolve");
+			}, function(oError) {
+				// Assert
+				assert.ok(oError instanceof Error, "The promise is rejected with an error object");
+				assert.ok(/Control __panel\d+ does not have an aggregation called foo - Target: myTarget/.test(oError.message), "The error message is correct");
+			});
 	});
 
-	QUnit.test("Should log an error if the target control does not have an aggregation specified", function (assert) {
+	QUnit.test("Should return a rejected promise if the target control does not have an aggregation specified", function (assert) {
 		// Arrange
-
-		// sinon.spy instead of this.spy has to be used because the stubbed version is used async and this.spy is restored syncly.
-		var oSpy = sinon.spy(Log, "error");
 		var oView = this.oView;
 
 		this.stub(this.oViews, "_getView").callsFake(function () {
@@ -305,20 +298,17 @@ sap.ui.define([
 		//Act
 		var oDisplayed = this.oTarget.display();
 
-		return oDisplayed.then(function(oViewInfo) {
-			// Assert
-			assert.strictEqual(oViewInfo.name, "myTarget", "oViewInfo.name is correct");
-			assert.ok(oViewInfo.error.indexOf("no 'controlAggregation' was set") !== -1, "oViewInfo.error error message is provided");
-			sinon.assert.calledWith(oSpy, sinon.match(/no 'controlAggregation' was set/), sinon.match(this.oTarget));
-			oSpy.restore();
-		}.bind(this));
+		return oDisplayed.then(function() {
+				assert.ok(false, "The promise shouldn't resolve");
+			}, function(oError) {
+				// Assert
+				assert.ok(oError instanceof Error, "The promise is rejected with an error object");
+				assert.equal(oError.message, "The target myTarget has a control id or a parent but no 'controlAggregation' was set, so the target could not be displayed. - Target: myTarget", "The error message is correct");
+			});
 	});
 
-	QUnit.test("Should log an error if the target control could not be found", function (assert) {
+	QUnit.test("Should return a rejected promise if the target control could not be found", function (assert) {
 		// Arrange
-
-		// sinon.spy instead of this.spy has to be used because the stubbed version is used async and this.spy is restored syncly.
-		var oSpy = sinon.spy(Log, "error");
 		var oView = this.oView;
 
 		this.stub(this.oViews, "_getView").callsFake(function () {
@@ -329,13 +319,13 @@ sap.ui.define([
 		//Act
 		var oDisplayed = this.oTarget.display();
 
-		return oDisplayed.then(function(oViewInfo) {
-			// Assert
-			assert.strictEqual(oViewInfo.name, "myTarget", "oViewInfo.name is correct");
-			assert.ok(oViewInfo.error.indexOf("Control with ID") !== -1, "oViewInfo.error error message is provided");
-			sinon.assert.calledWith(oSpy, sinon.match(/Control with ID/), sinon.match(this.oTarget));
-			oSpy.restore();
-		}.bind(this));
+		return oDisplayed.then(function() {
+				assert.ok(false, "The promise shouldn't resolve");
+			}, function(oError) {
+				// Assert
+				assert.ok(oError instanceof Error, "The promise is rejected with an error object");
+				assert.equal(oError.message, "Control with ID foo could not be found - Target: myTarget", "The error message is correct");
+			});
 	});
 
 	QUnit.module("component - creation", {
@@ -593,9 +583,9 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("Show return object which contains the correct error message when the root view loading fails", function (assert) {
+	QUnit.test("should return a rejected promise when the root view loading fails", function (assert) {
 		// Arrange
-		var pRefusedLoading = Promise.reject();
+		var pRefusedLoading = Promise.reject(new Error("The view can't be found"));
 
 		this.oParentView.loaded = function() {
 			return pRefusedLoading;
@@ -606,10 +596,13 @@ sap.ui.define([
 		// Act
 		var oDisplayed = this.oTarget.display();
 
-		return oDisplayed.then(function(oRes) {
-			// Assert
-			assert.equal(oRes.error, "Something went wrong during loading the root view with id parent", "error message exists");
-		});
+		return oDisplayed.then(function() {
+				assert.ok(false, "The promise shouldn't resolve");
+			}, function(oError) {
+				// Assert
+				assert.ok(oError instanceof Error);
+				assert.equal(oError.message, "The view can't be found", "The error message is correct");
+			});
 	});
 
 	QUnit.test("Should display a child target", function (assert) {

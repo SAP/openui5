@@ -433,10 +433,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Handle setting invalid option 'viewName' in route", function(assert) {
-		var oLogSpy = sinon.spy(Log, "error");
+		var oLogSpy = this.spy(Log, "error");
 
 		//Arrange System under Test
-		var router = fnCreateRouter({
+		fnCreateRouter({
 			name: {
 				// This is a wrong usage, the option "view" should be set
 				// instead of "viewName"
@@ -448,31 +448,8 @@ sap.ui.define([
 			}
 		});
 
-		var oViewCreateStub = sinon.stub(View, "_legacyCreate").callsFake(function() {
-			var oView = {
-				loaded: function() {
-					return Promise.resolve(oView);
-				},
-				isA: function(sClassName) {
-					return sClassName === "sap.ui.core.mvc.View";
-				}
-			};
 
-			return oView;
-		});
-
-		var oRoute = router.getRoute("name");
-		var oRouteMatchedSpy = sinon.spy(oRoute, "_routeMatched");
-
-		router.parse("view1");
-		assert.strictEqual(oRouteMatchedSpy.callCount, 1);
-
-		return oRouteMatchedSpy.getCall(0).returnValue.then(function() {
-			assert.strictEqual(oRoute._oConfig.name, "name", "Route has correct name");
-			assert.ok(oLogSpy.withArgs("The 'viewName' option shouldn't be used in Route. please use 'view' instead").calledOnce, "The error log is done and the log message is correct");
-			oViewCreateStub.restore();
-			oLogSpy.restore();
-		});
+		assert.ok(oLogSpy.withArgs("The 'viewName' option shouldn't be used in Route. please use 'view' instead").calledOnce, "The error log is done and the log message is correct");
 	});
 
 	QUnit.test("subroute handling", function(assert) {
