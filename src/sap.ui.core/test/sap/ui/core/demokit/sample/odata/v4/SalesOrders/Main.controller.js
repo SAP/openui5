@@ -19,10 +19,6 @@ sap.ui.define([
 		sServiceNamespace = "com.sap.gateway.default.zui5_epm_sample.v0002.";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.SalesOrders.Main", {
-		/* The number of POST requests for sales orders which are not yet completed */
-		iCreates : 0,
-		/* The number of POST requests for sales order line items which are not yet completed */
-		iItemCreates : 0,
 		iTransientItems : 0,
 
 		_setSalesOrderBindingContext : function (oSalesOrderContext) {
@@ -135,27 +131,6 @@ sap.ui.define([
 			this.byId("SalesOrderList").getItems()[0].focus();
 		},
 
-		onCreateCompleted : function (oEvent) {
-			this.iCreates -= 1;
-			if (this.iCreates === 0) {
-				this.byId("SalesOrderList").setBusy(false);
-			}
-		},
-
-		onCreateItemCompleted : function (oEvent) {
-			this.iItemCreates -= 1;
-			if (this.iItemCreates === 0) {
-				this.byId("SO_2_SOITEM").setBusy(false);
-			}
-		},
-
-		onCreateItemSent : function () {
-			if (this.iItemCreates === 0) {
-				this.byId("SO_2_SOITEM").setBusy(true);
-			}
-			this.iItemCreates += 1;
-		},
-
 		onCreateSalesOrder : function (oEvent) {
 			var oBPListBinding = this.byId("BuyerID::new").getBinding("suggestionItems"),
 				oContext = this.byId("SalesOrderList").getBinding("items").create({
@@ -222,13 +197,6 @@ sap.ui.define([
 			}).finally(function () {
 				that.setSelectionMode(oContext);
 			});
-		},
-
-		onCreateSent : function () {
-			if (this.iCreates === 0) {
-				this.byId("SalesOrderList").setBusy(true);
-			}
-			this.iCreates += 1;
 		},
 
 		onDataEvents : function (oEvent) {
@@ -418,7 +386,7 @@ sap.ui.define([
 		onSaveSalesOrder : function () {
 			var that = this;
 
-			this.getView().getModel().submitBatch("SalesOrderUpdateGroup").then(function () {
+			this.submitBatch("SalesOrderUpdateGroup").then(function () {
 				// wait until created handler (if any) is processed
 				return that.oSalesOrderLineItemCreated;
 			}).then(function () {
@@ -427,8 +395,7 @@ sap.ui.define([
 		},
 
 		onSaveSalesOrderList : function () {
-			var oModel = this.getView().getModel();
-			oModel.submitBatch(oModel.getUpdateGroupId());
+			this.submitBatch(this.getView().getModel().getUpdateGroupId());
 		},
 
 		onSetBindingContext : function () {
@@ -586,6 +553,24 @@ sap.ui.define([
 				oTable.setSelectedItem(oTable.getItems()[this.iSelectedSalesOrder]);
 				this.iSelectedSalesOrder = undefined;
 			}
+		},
+
+		/**
+		 * Submits the given batch group while the view is locked.
+		 *
+		 * @param {string} sGroupId
+		 *   the group ID
+		 * @returns {Promise}
+		 *   A Promise which is resolved after the Promise returned by
+		 *   {@link sap.ui.model.odata.v4.ODataModel#submitBatch} is either resolved or rejected
+		 */
+		submitBatch : function (sGroupId) {
+			var oView = this.getView();
+
+			oView.setBusy(true);
+			return oView.getModel().submitBatch(sGroupId).finally(function () {
+				oView.setBusy(false);
+			});
 		}
 	});
 });

@@ -377,6 +377,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.base.Event} oEvent The event object
 	 * @param {sap.ui.model.odata.v4.ODataListBinding} oEvent.getSource() This binding
+	 * @param {object} oEvent.getParameters() Object containing all event parameters
 	 * @param {sap.ui.model.odata.v4.Context} oEvent.getParameters().context
 	 *   The context for the created entity
 	 *
