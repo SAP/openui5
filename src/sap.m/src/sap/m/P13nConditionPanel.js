@@ -1818,12 +1818,31 @@ sap.ui.define([
 							var sPastedValue = aSeparatedText[i].trim();
 
 							if (sPastedValue) {
+								var oPastedValue;
+
+								if (oKeyField.typeInstance) {
+									// If a typeInstance exist, we have to parse and validate the pastedValue before we can add it a value into the condition.
+									// or we do not handle the paste for all types except String!
+									try {
+										oPastedValue = oKeyField.typeInstance.parseValue(sPastedValue, "string");
+										oKeyField.typeInstance.validateValue(oPastedValue);
+									} catch (err) {
+										Log.error("sap.m.P13nConditionPanel.onPaste", "not able to parse value " + sPastedValue + " with type " + oKeyField.typeInstance.getName());
+										sPastedValue = "";
+										oPastedValue = null;
+									}
+
+									if (!oPastedValue) {
+										continue;
+									}
+								}
+
 								var oCondition = {
 									"key": that._createConditionKey(),
 									"exclude": that.getExclude(),
 									"operation": oOperation.getSelectedKey(),
 									"keyField": oKeyField.key,
-									"value1": sPastedValue,
+									"value1":  oPastedValue,
 									"value2": null
 								};
 								that._addCondition2Map(oCondition);
