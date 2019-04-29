@@ -508,7 +508,13 @@ sap.ui.define([
 					.then(function() {
 						// async processing ends by resolving with the view
 						return that;
-					});
+					})
+					.catch(function(e) {
+						// deregister an erroneous instance from the Core's Elements registry
+						// in sync Views this is done automatically by the ManagedObject constructor
+						this.deregister();
+						throw e;
+					}.bind(this));
 			} else {
 				this.initViewSettings(mSettings);
 				createAndConnectController(this, mSettings);

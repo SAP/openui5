@@ -61,8 +61,10 @@ sap.ui.define([
 				'</core:View>'
 			].join(''),
 			sError = "Cannot add direct child without default aggregation defined for control sap.m.Button";
+		var sId = "erroneous_view_1";
 
-		return sap.ui.xmlview("erroneous_view_1", {async:true, viewContent:sXml}).loaded().catch(function(error) {
+		return sap.ui.xmlview(sId, {async:true, viewContent:sXml}).loaded().catch(function(error) {
+			assert.notOk(sap.ui.getCore().byId(sId), "Must deregister an erroneous instance");
 			assert.equal(error.message, sError, "Must reject with an error");
 		});
 	});
@@ -76,8 +78,10 @@ sap.ui.define([
 			'</core:View>'
 			].join(''),
 			sError = "Cannot add text nodes as direct child of an aggregation. For adding text to an aggregation, a surrounding html tag is needed: Error";
+		var sId = "erroneous_view_2";
 
-		return sap.ui.xmlview("erroneous_view_2", {async:true, viewContent:sXml}).loaded().catch(function(error) {
+		return sap.ui.xmlview(sId, {async:true, viewContent:sXml}).loaded().catch(function(error) {
+			assert.notOk(sap.ui.getCore().byId(sId), "Must deregister an erroneous instance");
 			assert.equal(error.message, sError, "Must reject with an error");
 		});
 	});
@@ -87,13 +91,16 @@ sap.ui.define([
 				'<core:View controllerName="example.mvc.test.error" xmlns:core="sap.ui.core">',
 				'</core:View>'
 			].join('');
+		var sId = "erroneous_view_3";
+
 		// define erroneous controller
 		sap.ui.controller("example.mvc.test.error", {
 			onInit: function() {
 				throw new Error("Controller error");
 			}
 		});
-		return sap.ui.xmlview("erroneous_view_3", {async:true, viewContent:sXml}).loaded().catch(function(error) {
+		return sap.ui.xmlview(sId, {async:true, viewContent:sXml}).loaded().catch(function(error) {
+			assert.notOk(sap.ui.getCore().byId(sId), "Must deregister an erroneous instance");
 			assert.equal(error.message, "Controller error", "Must reject with an error");
 		});
 	});
