@@ -688,7 +688,6 @@ function (
 	QUnit.module("Given a designTime and stretch plugin are instantiated", {
 		beforeEach : function(assert) {
 			var done = assert.async();
-			this.clock = sinon.useFakeTimers();
 			this.oLayout1 = new VerticalLayout("layout1", {
 				width: "300px",
 				content: [
@@ -712,6 +711,7 @@ function (
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
+				this.clock = sinon.useFakeTimers();
 				this.oOuterLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout1);
 				this.oInnerLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout2);
 				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);

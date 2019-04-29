@@ -149,39 +149,64 @@ function(
 	 * @param {object} mPropertyBag Map of additional information to be passed to isEditable
 	 */
 	BasePlugin.prototype.evaluateEditable = function(aOverlays, mPropertyBag) {
-		var aPlugins = this.getDesignTime() ? this.getDesignTime().getPlugins() : [];
-		var bSkipEvaluation = aPlugins.some(function (oPlugin) {
-			// If a plugin is busy, do not evaluate
-			// When the action is finished, if the affected controls are modified, the evaluation will be done anyway
-			return oPlugin.isBusy();
-		});
-		if (bSkipEvaluation){
+		var aPromises = [];
+		// If there are busy plugins, do not evaluate
+		// When the action is finished, if the affected controls are modified, the evaluation will be done anyway
+		if (!mPropertyBag.onRegistration &&
+			this.getDesignTime() &&
+			this.getDesignTime().getBusyPlugins().length){
 			return;
 		}
-		var vEditable;
+		this.setBusy(true);
+
 		aOverlays.forEach(function(oOverlay) {
 			// when a control gets destroyed it gets deregistered before it gets removed from the parent aggregation.
 			// this means that getElementInstance is undefined when we get here via removeAggregation mutation
 			// when an overlay is not registered yet, we should not evaluate editable. In this case getDesignTimeMetadata returns null.
 			// in case a control is marked as not adaptable by designTimeMetadata, it should not be possible to evaluate editable
 			// for this control due to parent aggregation action definitions
-			vEditable =
+			var vEditable =
 				oOverlay.getElement() &&
 				oOverlay.getDesignTimeMetadata() &&
 				!oOverlay.getDesignTimeMetadata().markedAsNotAdaptable() &&
 				this._isEditable(oOverlay, mPropertyBag);
 
-			// for the createContainer and additionalElements plugin the isEditable function returns an object with 2 properties, asChild and asSibling.
-			// for every other plugin isEditable should be a boolean.
-			if (vEditable !== undefined && vEditable !== null) {
-				if (typeof vEditable === "boolean") {
-					this._modifyPluginList(oOverlay, vEditable);
-				} else {
-					this._modifyPluginList(oOverlay, vEditable.asChild, false);
-					this._modifyPluginList(oOverlay, vEditable.asSibling, true);
-				}
+			// handle promise return value by _isEditable function
+			if (vEditable instanceof Promise) {
+				// intentional interruption of the promise chain
+				vEditable.then(function(vEditablePromiseValue) {
+					this._handleModifyPluginList(oOverlay, vEditablePromiseValue);
+				}.bind(this));
+				aPromises.push(vEditable);
+			} else {
+				this._handleModifyPluginList(oOverlay, vEditable);
 			}
 		}.bind(this));
+
+		if (aPromises.length) {
+			Promise.all(aPromises)
+			.then(function() {
+				this.setBusy(false);
+			}.bind(this))
+			.catch(function() {
+				this.setBusy(false);
+			});
+		} else {
+			this.setBusy(false);
+		}
+	};
+
+	BasePlugin.prototype._handleModifyPluginList = function (oOverlay, vEditable) {
+		// for the createContainer and additionalElements plugin the isEditable function returns an object with 2 properties, asChild and asSibling.
+		// for every other plugin isEditable should be a boolean.
+		if (vEditable !== undefined && vEditable !== null) {
+			if (typeof vEditable === "boolean") {
+				this._modifyPluginList(oOverlay, vEditable);
+			} else {
+				this._modifyPluginList(oOverlay, vEditable.asChild, false);
+				this._modifyPluginList(oOverlay, vEditable.asSibling, true);
+			}
+		}
 	};
 
 	BasePlugin.prototype._modifyPluginList = function(oOverlay, bIsEditable, bOverlayIsSibling) {
