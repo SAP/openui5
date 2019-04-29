@@ -7122,4 +7122,34 @@ sap.ui.define([
 		});
 
 	});
+
+	QUnit.test("test ODataModel createEntry and persist the transient entry", function(assert) {
+		var done = assert.async();
+		var oContext;
+		var oBinding;
+		var bRefresh = false;
+		assert.expect(6);
+
+		oModel.metadataLoaded().then(function() {
+			oContext = oModel.createEntry("/BusinessPartnerSet", {properties: {}});
+			oBinding = oModel.bindList("ToSalesOrders", oContext);
+			oBinding.attachRefresh(function(oEvent) {
+				assert.ok(oBinding.getContext().isUpdated());
+				oBinding.getContexts();
+				bRefresh = true;
+			});
+
+			oBinding.attachChange(function() {
+				assert.ok(Array.isArray(oBinding.getCurrentContexts()));
+				assert.equal(oBinding.getCurrentContexts().length, 0);
+				assert.ok(bRefresh);
+				done();
+			});
+
+			assert.ok(oBinding.bInitial);
+			oBinding.initialize();
+			assert.ok(oBinding.bInitial);
+			oModel.submitChanges();
+		});
+	});
 });

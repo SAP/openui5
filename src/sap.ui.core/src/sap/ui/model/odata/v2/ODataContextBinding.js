@@ -135,6 +135,11 @@ sap.ui.define([
 			return;
 		}
 
+		if (this.oContext && this.oContext.isUpdated()) {
+			this.setContext(this.oContext);
+			return;
+		}
+
 		// If context is preliminary and usePreliminary is not set, exit here
 		if (bPreliminary && !this.bUsePreliminaryContext) {
 			return;

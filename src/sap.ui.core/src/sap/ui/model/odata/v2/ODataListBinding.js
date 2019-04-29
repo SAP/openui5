@@ -979,11 +979,9 @@ sap.ui.define([
 		var bCreatedRelative = this.isRelative() && this.oContext && this.oContext.bCreated;
 		if (this.oModel.oMetadata && this.oModel.oMetadata.isLoaded() && this.bInitial && !bCreatedRelative) {
 
-
 			if (!this._checkPathType()) {
 				Log.error("List Binding is not bound against a list for " + this.oModel.resolve(this.sPath, this.oContext));
 			}
-
 
 			this.bInitial = false;
 			this._initSortersFilters();
@@ -1004,7 +1002,6 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bForceUpdate Force control update
 	 * @param {object} mChangedEntities Map of changed entities
-	 * @returns {boolean} bSuccess Success
 	 * @private
 	 */
 	ODataListBinding.prototype.checkUpdate = function(bForceUpdate, mChangedEntities) {
@@ -1015,8 +1012,16 @@ sap.ui.define([
 				aOldRefs;
 
 		if ((this.bSuspended && !this.bIgnoreSuspend && !bForceUpdate) || this.bPendingRequest) {
-			return false;
+			return;
 		}
+
+		if (this.bInitial) {
+			if (this.oContext && this.oContext.isUpdated()) {
+				this.initialize(); // If context changed from created to persisted we need to initialize the binding...
+			}
+			return;
+		}
+
 		this.bIgnoreSuspend = false;
 
 		if (!bForceUpdate && !this.bNeedsUpdate) {

@@ -329,7 +329,9 @@ sap.ui.define([], function() {
         "Suppliers(7)?$select=%2a%2cProducts%2f%2a%2cProducts%2fSupplier%2f%2a%2cProducts%2fCategory%2fCategoryID%2cProducts%2fCategory%2fCategoryName&$expand=Products%2cProducts%2fSupplier%2cProducts%2fCategory":
           [200, oJSONHeaders, sSupplierWithMultipleExpandSelectsJSON],
         "Suppliers(7)?$expand=Products%2cProducts%2fSupplier%2cProducts%2fCategory":
-            [200, oJSONHeaders, sSupplierWithMultipleExpandJSON],
+          [200, oJSONHeaders, sSupplierWithMultipleExpandJSON],
+        "Products(1000)/Supplier":
+          [200, oJSONHeaders, sSupplier1],
         "Employees":
           [200, oXMLHeaders, sEmployeesXML],
         "Employees(2)":
@@ -5973,25 +5975,25 @@ sap.ui.define([], function() {
 		"			\"uri\": \"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Products(1000)\"," +
 		"			\"type\": \"NorthwindModel.Product\"" +
 		"		}," +
-        "		\"ID\": 1000," +
-        "		\"Name\": \"test\"," +
-        "		\"Description\": null," +
-        "		\"ReleaseDate\": null," +
-        "		\"DiscontinuedDate\": null," +
-        "		\"Rating\": null," +
-        "		\"Price\": null," +
-        "		\"Category\": {" +
-        "			\"__deferred\": {" +
-        "				\"uri\": \"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Products(1000)/Category\"" +
-        "			}" +
-        "		}," +
-        "		\"Supplier\": {" +
-        "			\"__deferred\": {" +
-        "				\"uri\": \"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Products(1000)/Supplier\"" +
-        "			}" +
-        "		}" +
-        "	}" +
-        "}";
+    "		\"ID\": 1000," +
+    "		\"Name\": \"test\"," +
+    "		\"Description\": null," +
+    "		\"ReleaseDate\": null," +
+    "		\"DiscontinuedDate\": null," +
+    "		\"Rating\": null," +
+    "		\"Price\": null," +
+    "		\"Category\": {" +
+    "			\"__deferred\": {" +
+    "				\"uri\": \"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Products(1000)/Category\"" +
+    "			}" +
+    "		}," +
+    "		\"Supplier\": {" +
+    "			\"__deferred\": {" +
+    "				\"uri\": \"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Products(1000)/Supplier\"" +
+    "			}" +
+    "		}" +
+    "	}" +
+    "}";
 
 	var sProduct1000FunctionCallJSON = "{" +
 		"	\"d\": {" +
@@ -9418,6 +9420,27 @@ sap.ui.define([], function() {
 		"\"__count\": 0" +
 	"}" +
  "}";
+
+  var sSupplier1 = "{\n" +
+  "	\"d\" : {\n" +
+  "		\"__metadata\" : {\n" +
+  "			\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Suppliers(1)\",\n" +
+  "			\"type\" : \"NorthwindModel.Supplier\"\n" +
+  "		},\n" +
+  "		\"SupplierID\" : 1,\n" +
+  "		\"CompanyName\" : \"Pavlova, Ltd.\",\n" +
+  "		\"ContactName\" : \"Ian Devling\",\n" +
+  "		\"ContactTitle\" : \"Marketing Manager\",\n" +
+  "		\"Address\" : \"74 Rose St. Moonie Ponds\",\n" +
+  "		\"City\" : \"Melbourne\",\n" +
+  "		\"Region\" : \"Victoria\",\n" +
+  "		\"PostalCode\" : \"3058\",\n" +
+  "		\"Country\" : \"Australia\",\n" +
+  "		\"Phone\" : \"(03) 444-2343\",\n" +
+  "		\"Fax\" : \"(03) 444-6588\",\n" +
+  "		\"HomePage\" : null\n" +
+  "	}\n" +
+  "}";
 
   return ofakeService;
 });

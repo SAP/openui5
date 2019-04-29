@@ -6953,4 +6953,86 @@ sap.ui.define([
 		this.oModel.attachRequestCompleted(fnFirstRead);
 		this.oModel.read("/Categories");
 	});
+
+	QUnit.module("Persist transient Entities", {
+		beforeEach: function() {
+			this.oModel = initModel(sURI);
+		},
+		afterEach: function() {
+			this.oModel.destroy();
+			delete this.oModel;
+		}
+	});
+
+	QUnit.test("test ODataModel contextBinding - initialize", function(assert) {
+		var done = assert.async();
+		assert.expect();
+		this.oModel.metadataLoaded().then(function() {
+			var oCreatedContext = this.oModel.createEntry("/Products");
+			var oContextBinding = this.oModel.bindContext("Supplier", oCreatedContext);
+			assert.ok(oContextBinding.bInitial, "Should be initial.");
+			oContextBinding.initialize();
+			assert.notOk(oContextBinding.bInitial, "Should NOT be initial anymore.");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("test ODataModel contextBinding - createEntry and persist the new entry", function(assert) {
+		var done = assert.async();
+		assert.expect(5);
+		this.oModel.metadataLoaded().then(function() {
+			var oCreatedContext = this.oModel.createEntry("/Products", {
+				urlParameters: {"create": "id_1000"}
+			});
+			var oContextBinding = this.oModel.bindContext("Supplier", oCreatedContext);
+			var fnAttachChangeHandler = function(oEvent) {
+				assert.equal(oEvent.oSource.oElementContext, null, "ElementContext should be null.");
+				oContextBinding.detachChange(fnAttachChangeHandler);
+			};
+			oContextBinding.attachChange(fnAttachChangeHandler);
+			oContextBinding.initialize();
+
+			oContextBinding.attachChange(this, function(oEvent) {
+				assert.notOk(oContextBinding.getContext().isUpdated());
+				assert.strictEqual(oEvent.oSource, oContextBinding, "ContextBinding should be available.");
+				assert.notEqual(oEvent.oSource.oElementContext, null, "ElementContext should be available.");
+				assert.equal(oEvent.oSource.oElementContext.getPath(), "/Suppliers(1)", "Check path.");
+				done();
+			});
+
+			this.oModel.submitChanges();
+		}.bind(this));
+	});
+
+	QUnit.test("test ODataModel contextBinding - createEntry and persist the new entry with error", function(assert) {
+		var done = assert.async();
+		assert.expect(1);
+		this.oModel.metadataLoaded().then(function() {
+			var oCreatedContext = this.oModel.createEntry("/Products", {
+				urlParameters: {"create": "id_error"}
+			});
+			var oContextBinding = this.oModel.bindContext("Supplier", oCreatedContext);
+			var fnAttachChangeHandler = function(oEvent) {
+				assert.strictEqual(oEvent.oSource.oElementContext, null, "ElementContext should be null.");
+				oContextBinding.detachChange(fnAttachChangeHandler);
+
+				// Attach another handler for a possible unwanted change event
+				oContextBinding.attachChange(function() {
+					assert.ok(false, "Another change event should not be fired.");
+				});
+			};
+
+			oContextBinding.attachChange(fnAttachChangeHandler);
+			oContextBinding.initialize();
+
+			this.oModel.attachRequestFailed(function() {
+				// Waiting for possible change events (checkUpdate)
+				setTimeout(function() {
+					done();
+				}, 0);
+			});
+
+			this.oModel.submitChanges();
+		}.bind(this));
+	});
 });
