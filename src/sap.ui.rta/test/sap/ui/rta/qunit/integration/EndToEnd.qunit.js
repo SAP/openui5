@@ -29,6 +29,8 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
+	var oCompCont = RtaQunitUtils.renderTestAppAt("qunit-fixture");
+	var oView = oCompCont.getComponentInstance().oView;
 
 	QUnit.module("Given RTA is started...", {
 		before: function () {
@@ -491,8 +493,6 @@ sap.ui.define([
 		});
 	});
 
-	var oCompCont = RtaQunitUtils.renderTestAppAt("qunit-fixture");
-	var oView = oCompCont.getComponentInstance().oView;
 	oView.getController().isDataReady().then(function () {
 		QUnit.start();
 	});

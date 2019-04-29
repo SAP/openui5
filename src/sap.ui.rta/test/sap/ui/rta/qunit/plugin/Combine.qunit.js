@@ -269,17 +269,22 @@ function(
 				false,
 				"isEnabled is called and returns false"
 			);
-			assert.strictEqual(
-				this.oCombinePlugin._isEditable(this.oButton1Overlay),
-				false,
-				"then the overlay is not editable"
-			);
+			return Promise.resolve()
+				.then(this.oCombinePlugin._isEditable.bind(this.oCombinePlugin, this.oButton1Overlay))
+				.then(function(bEditable) {
+					assert.strictEqual(
+						bEditable,
+						false,
+						"then the overlay is not editable"
+					);
+				});
 		});
 
 		QUnit.test("when an overlay has a combine action in designTime metadata", function(assert) {
 			fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, DEFAULT_DTM);
 			fnSetOverlayDesigntimeMetadata(this.oButton2Overlay, oDesignTimeMetadata2);
 			sandbox.stub(Utils, "checkSourceTargetBindingCompatibility").returns(true);
+			sandbox.stub(this.oCombinePlugin, "hasChangeHandler").resolves(true);
 
 			assert.strictEqual(
 				this.oCombinePlugin.isAvailable([this.oButton1Overlay, this.oButton2Overlay]),
@@ -291,11 +296,14 @@ function(
 				true,
 				"isEnabled is called and returns true"
 			);
-			assert.strictEqual(
-				this.oCombinePlugin._isEditable(this.oButton1Overlay),
-				true,
-				"then the overlay is editable"
-			);
+			return this.oCombinePlugin._isEditable(this.oButton1Overlay)
+			.then(function(bEditable) {
+				assert.strictEqual(
+					bEditable,
+					true,
+					"then the overlay is editable"
+				);
+			});
 		});
 
 		QUnit.test("when two elements have different binding context", function(assert) {
@@ -394,7 +402,11 @@ function(
 
 		QUnit.test("when an overlay has a combine action designTime metadata which has no changeOnRelevantContainer", function(assert) {
 			fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, oDesigntimeMetadata4);
-			assert.strictEqual(this.oCombinePlugin._isEditable(this.oButton1Overlay), false, "then the overlay is not editable");
+			return Promise.resolve()
+				.then(this.oCombinePlugin._isEditable.bind(this.oCombinePlugin, this.oButton1Overlay))
+				.then(function(bEditable) {
+					assert.strictEqual(bEditable, false, "then the overlay is not editable");
+				});
 		});
 
 		QUnit.test("when Controls of different type with same change type are specified", function (assert) {
@@ -460,11 +472,14 @@ function(
 				return true;
 			}.bind(this));
 
-			assert.strictEqual(
-				this.oCombinePlugin._isEditable(this.oOverflowToolbarButton1Overlay),
-				false,
-				"_isEditable returns false"
-			);
+			return this.oCombinePlugin._isEditable(this.oOverflowToolbarButton1Overlay)
+				.then(function(bEditable) {
+					assert.strictEqual(
+						bEditable,
+						false,
+						"_isEditable returns false"
+					);
+				});
 		});
 	});
 

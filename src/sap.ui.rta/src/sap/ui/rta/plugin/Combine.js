@@ -36,18 +36,21 @@ sap.ui.define([
 	});
 
 	/**
-	 * check if the given overlay is editable
-	 * @param {sap.ui.dt.ElementOverlay} oOverlay - overlay to be checked for editable
-	 * @returns {boolean} whether it is editable or not
+	 * Check if the given overlay is editable.
+	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Overlay to be checked for editable
+	 * @returns {promise.<boolean>|boolean} <code>true</code> when editable wrapped in a promise.
 	 * @private
 	 */
 	Combine.prototype._isEditable = function (oOverlay) {
 		var oCombineAction = this.getAction(oOverlay);
 		if (!oOverlay.isRoot() && oCombineAction && oCombineAction.changeType && oCombineAction.changeOnRelevantContainer) {
 			var oRelevantContainer = oOverlay.getRelevantContainer();
-			return this.hasChangeHandler(oCombineAction.changeType, oRelevantContainer) &&
-				this.hasStableId(oOverlay) &&
-				this._checkRelevantContainerStableID(oCombineAction, oOverlay);
+			return this.hasChangeHandler(oCombineAction.changeType, oRelevantContainer, true)
+				.then(function(bHasChangeHandler) {
+					return bHasChangeHandler &&
+						this.hasStableId(oOverlay) &&
+						this._checkRelevantContainerStableID(oCombineAction, oOverlay);
+				}.bind(this));
 		}
 		return false;
 	};
@@ -150,6 +153,7 @@ sap.ui.define([
 	/**
 	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - specified overlays
 	 * @param {sap.ui.core.Element} oCombineElement - element where the combine was triggered
+	 * @returns {promise} Promise
 	 */
 	Combine.prototype.handleCombine = function(aElementOverlays, oCombineElement) {
 		var oCombineElementOverlay;
@@ -212,7 +216,8 @@ sap.ui.define([
 	/**
 	 * Trigger the plugin execution.
 	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
-	 * @param {sap.ui.core.Element} mPropertyBag.contextElement - The element where combine was triggered
+	 * @param {object} mPropertyBag - Property bag
+	 * @param {sap.ui.core.Element} mPropertyBag.contextElement - Element where combine was triggered
 	 */
 	Combine.prototype.handler = function (aElementOverlays, mPropertyBag) {
 		this.handleCombine(aElementOverlays, mPropertyBag.contextElement);
