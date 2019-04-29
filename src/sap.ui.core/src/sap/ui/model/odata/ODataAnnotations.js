@@ -29,6 +29,7 @@ sap.ui.define([
 	 * ${version}
 	 *
 	 * @public
+	 * @deprecated As of version 1.66, please use {@link sap.ui.model.odata.v2.ODataAnnotations} instead.
 	 * @alias sap.ui.model.odata.ODataAnnotations
 	 * @extends sap.ui.base.EventProvider
 	 */
