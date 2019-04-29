@@ -2177,11 +2177,13 @@
 					"M": "M月d日E至M月d日E"
 				},
 				"y": {
-					"y": "Gy–y年"
+					"y": "Gy–y年",
+					"G": "Gy–Gy年"
 				},
 				"yM": {
 					"M": "y年M月至y年M月",
-					"y": "Gy年M月至y年M月"
+					"y": "Gy年M月至y年M月",
+					"G": "Gy年M月至Gy年M月"
 				},
 				"yMd": {
 					"d": "d/M/y至d/M/y",
@@ -2195,21 +2197,25 @@
 				},
 				"yMMM": {
 					"M": "Gy年M月至M月",
-					"y": "Gy年M月至y年M月"
+					"y": "Gy年M月至y年M月",
+					"G": "Gy年M月至Gy年M月"
 				},
 				"yMMMd": {
 					"d": "Gy年M月d日至d日",
 					"M": "Gy年M月d日至M月d日",
-					"y": "Gy年M月d日至y年M月d日"
+					"y": "Gy年M月d日至y年M月d日",
+					"G": "Gy年M月d日至Gy年M月d日"
 				},
 				"yMMMEd": {
 					"d": "y年M月d日E至M月d日E",
 					"M": "Gy年M月d日E至M月d日E",
-					"y": "Gy年M月d日E至y年M月d日E"
+					"y": "Gy年M月d日E至y年M月d日E",
+					"G": "Gy年M月d日E至Gy年M月d日E"
 				},
 				"yMMMM": {
 					"M": "Gy年M月至M月",
-					"y": "Gy年M月至y年M月"
+					"y": "Gy年M月至y年M月",
+					"G": "Gy年M月至Gy年M月"
 				}
 			}
 		},

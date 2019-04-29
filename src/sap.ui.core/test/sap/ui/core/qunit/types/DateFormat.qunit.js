@@ -1553,6 +1553,88 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate, oDate1]);
 		});
 
+		QUnit.test("Interval format with Date instance, Japanese calendar, different eras, en-US", function (assert) {
+			var oLocale = new Locale("en-US");
+
+			var oIntervalFormat = DateFormat.getDateInstance({
+				interval: true,
+				format: "yMMMd",
+				calendarType: "Japanese"
+			}, oLocale);
+
+			var oDate1, oDate2, sResult;
+
+			// Same era
+			oDate1 = new Date(2019, 2, 1);
+			oDate2 = new Date(2019, 3, 1);
+			sResult = oIntervalFormat.format([oDate1, oDate2]);
+			assert.equal(sResult, "Mar 1 – Apr 1, 31 Heisei");
+			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate1, oDate2]);
+
+			// Same era, different year
+			oDate1 = new Date(2018, 3, 1);
+			oDate2 = new Date(2019, 3, 1);
+			sResult = oIntervalFormat.format([oDate1, oDate2]);
+			assert.equal(sResult, "Apr 1, 30 – Apr 1, 31 Heisei");
+			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate1, oDate2]);
+
+			// Different era
+			oDate1 = new Date(2019, 3, 1);
+			oDate2 = new Date(2019, 4, 1);
+			sResult = oIntervalFormat.format([oDate1, oDate2]);
+			assert.equal(sResult, "Apr 1, 31 Heisei – May 1, 1 Reiwa");
+			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate1, oDate2]);
+
+			// Different era, same year
+			oDate1 = new Date(1989, 4, 1);
+			oDate2 = new Date(2019, 4, 1);
+			sResult = oIntervalFormat.format([oDate1, oDate2]);
+			assert.equal(sResult, "May 1, 1 Heisei – May 1, 1 Reiwa");
+			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate1, oDate2]);
+
+		});
+
+		QUnit.test("Interval format with Date instance, Japanese calendar, different eras, ja-JA", function (assert) {
+			var oLocale = new Locale("ja-JA");
+
+			var oIntervalFormat = DateFormat.getDateInstance({
+				interval: true,
+				format: "yMMMd",
+				calendarType: "Japanese"
+			}, oLocale);
+
+			var oDate1, oDate2, sResult;
+
+			// Same era
+			oDate1 = new Date(2019, 2, 1);
+			oDate2 = new Date(2019, 3, 1);
+			sResult = oIntervalFormat.format([oDate1, oDate2]);
+			assert.equal(sResult, "平成31年3月1日～4月1日");
+			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate1, oDate2]);
+
+			// Same era, different year
+			oDate1 = new Date(2018, 3, 1);
+			oDate2 = new Date(2019, 3, 1);
+			sResult = oIntervalFormat.format([oDate1, oDate2]);
+			assert.equal(sResult, "平成30年4月1日～31年4月1日");
+			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate1, oDate2]);
+
+			// Different era
+			oDate1 = new Date(2019, 3, 1);
+			oDate2 = new Date(2019, 4, 1);
+			sResult = oIntervalFormat.format([oDate1, oDate2]);
+			assert.equal(sResult, "平成31年4月1日～令和1年5月1日");
+			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate1, oDate2]);
+
+			// Different era, same year
+			oDate1 = new Date(1989, 4, 1);
+			oDate2 = new Date(2019, 4, 1);
+			sResult = oIntervalFormat.format([oDate1, oDate2]);
+			assert.equal(sResult, "平成1年5月1日～令和1年5月1日");
+			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate1, oDate2]);
+
+		});
+
 		QUnit.test("Interval format with Date instance regarding calendar week and quarter", function (assert) {
 			var oIntervalFormat = DateFormat.getDateInstance({
 				interval: true,

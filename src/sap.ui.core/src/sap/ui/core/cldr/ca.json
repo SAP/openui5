@@ -2246,49 +2246,59 @@
 					"M": "E, d MMM – E, d MMM"
 				},
 				"y": {
-					"y": "y–y G"
+					"y": "y–y G",
+					"G": "y G–y G"
 				},
 				"yM": {
 					"M": "M/y – M/y GGGGG",
-					"y": "M/y – M/y GGGGG"
+					"y": "M/y – M/y GGGGG",
+					"G": "M/y GGGGG – M/y GGGGG"
 				},
 				"yMd": {
 					"d": "d/M/y – d/M/y GGGGG",
 					"M": "d/M/y – d/M/y GGGGG",
-					"y": "d/M/y – d/M/y GGGGG"
+					"y": "d/M/y – d/M/y GGGGG",
+					"G": "d/M/y GGGGG – d/M/y GGGGG"
 				},
 				"yMEd": {
 					"d": "E, d/M/y – E, d/M/y GGGGG",
 					"M": "E, d/M/y – E, d/M/y GGGGG",
-					"y": "E, d/M/y – E, d/M/y GGGGG"
+					"y": "E, d/M/y – E, d/M/y GGGGG",
+					"G": "E, d/M/y GGGGG – E, d/M/y GGGGG"
 				},
 				"yMMM": {
 					"M": "MMM–MMM y G",
-					"y": "MMM 'de' y – MMM 'de' y G"
+					"y": "MMM 'de' y – MMM 'de' y G",
+					"G": "MMM 'de' y G – MMM 'de' y G"
 				},
 				"yMMMd": {
 					"d": "d–d MMM 'de' y G",
 					"M": "d MMM – d MMM 'de' y G",
-					"y": "d MMM 'de' y – d MMM 'de' y G"
+					"y": "d MMM 'de' y – d MMM 'de' y G",
+					"G": "d MMM 'de' y G – d MMM 'de' y G"
 				},
 				"yMMMEd": {
 					"d": "E, d MMM – E, d MMM 'de' y G",
 					"M": "E, d MMM – E, d MMM 'de' y G",
-					"y": "E, d MMM 'de' y – E, d MMM 'de' y G"
+					"y": "E, d MMM 'de' y – E, d MMM 'de' y G",
+					"G": "E, d MMM 'de' y G – E, d MMM 'de' y G"
 				},
 				"yMMMM": {
 					"M": "MMMM–MMMM 'de' y G",
-					"y": "MMMM 'de' y – MMMM 'de' y G"
+					"y": "MMMM 'de' y – MMMM 'de' y G",
+					"G": "MMMM 'de' y G – MMMM 'de' y G"
 				},
 				"yMMMMd": {
 					"d": "d–d MMMM 'de' y G",
 					"M": "d MMMM – d MMMM 'de' y G",
-					"y": "d MMMM 'de' y – d MMMM 'de' y G"
+					"y": "d MMMM 'de' y – d MMMM 'de' y G",
+					"G": "d MMMM 'de' y G – d MMMM 'de' y G"
 				},
 				"yMMMMEd": {
 					"d": "E, d MMMM – E, d MMMM 'de' y G",
 					"M": "E, d MMMM – E, d MMMM 'de' y G",
-					"y": "E, d MMMM 'de' y – E, d MMMM 'de' y G"
+					"y": "E, d MMMM 'de' y – E, d MMMM 'de' y G",
+					"G": "E, d MMMM 'de' y G – E, d MMMM 'de' y G"
 				}
 			}
 		},

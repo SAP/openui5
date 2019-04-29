@@ -2304,44 +2304,53 @@
 					"M": "EEEEที่ d MMM – EEEEที่ d MMM"
 				},
 				"y": {
-					"y": "G y–y"
+					"y": "G y–y",
+					"G": "G y–G y"
 				},
 				"yM": {
 					"M": "M/y – M/y G",
-					"y": "M/y – M/y G"
+					"y": "M/y – M/y G",
+					"G": "M/y G – M/y G"
 				},
 				"yMd": {
 					"d": "d/M/y – d/M/y G",
 					"M": "d/M/y – d/M/y G",
-					"y": "d/M/y – d/M/y G"
+					"y": "d/M/y – d/M/y G",
+					"G": "d/M/y G – d/M/y G"
 				},
 				"yMEd": {
 					"d": "E d/M/y – E d/M/y G",
 					"M": "E d/M/y – E d/M/y G",
-					"y": "E d/M/y – E d/M/y G"
+					"y": "E d/M/y – E d/M/y G",
+					"G": "E d/M/y G – E d/M/y G"
 				},
 				"yMMM": {
 					"M": "MMM–MMM G y",
-					"y": "MMM G y – MMM y"
+					"y": "MMM G y – MMM y",
+					"G": "MMM G y – MMM G y"
 				},
 				"yMMMd": {
 					"d": "d–d MMM G y",
 					"M": "d MMM – d MMM G y",
-					"y": "d MMM G y – d MMM y"
+					"y": "d MMM G y – d MMM y",
+					"G": "d MMM G y – d MMM G y"
 				},
 				"yMMMEd": {
 					"d": "E d MMM – E d MMM G y",
 					"M": "E d MMM – E d MMM G y",
-					"y": "E d MMM G y – E d MMM y"
+					"y": "E d MMM G y – E d MMM y",
+					"G": "E d MMM G y – E d MMM G y"
 				},
 				"yMMMEEEEd": {
 					"d": "EEEEที่ d – EEEEที่ d MMM G y",
 					"M": "EEEEที่ d MMM – EEEEที่ d MMM G y",
-					"y": "EEEEที่ d MMM G y – EEEEที่ d MMM y"
+					"y": "EEEEที่ d MMM G y – EEEEที่ d MMM y",
+					"G": "EEEEที่ d MMM G y – EEEEที่ d MMM G y"
 				},
 				"yMMMM": {
 					"M": "MMMM – MMMM G y",
-					"y": "MMMM G y – MMMM y"
+					"y": "MMMM G y – MMMM y",
+					"G": "MMMM G y – MMMM G y"
 				}
 			}
 		},

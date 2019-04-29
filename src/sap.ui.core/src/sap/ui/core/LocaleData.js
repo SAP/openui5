@@ -386,7 +386,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/base/Object', './CalendarType
 		_createFormatPattern: function(sSkeleton, oAvailableFormats, sCalendarType, vDiff) {
 			var aTokens = this._parseSkeletonFormat(sSkeleton), aPatterns,
 				oBestMatch = this._findBestMatch(aTokens, sSkeleton, oAvailableFormats),
-				oToken, oAvailableDateTimeFormats,
+				oToken, oAvailableDateTimeFormats, oSymbol, oGroup,
 				sPattern, sSinglePattern, sDiffSymbol, sDiffGroup,
 				rMixedSkeleton = /^([GyYqQMLwWEecdD]+)([hHkKjJmszZvVOXx]+)$/,
 				bSingleDate,
@@ -406,6 +406,20 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/base/Object', './CalendarType
 					sDiffSymbol = vDiff;
 				} else {
 					bSingleDate = true;
+					// Special handling of "y" (Year) in case patterns contains also "G" (Era)
+					if (aTokens[0].symbol === "y" && oBestMatch && oBestMatch.pattern.G) {
+						oSymbol = mCLDRSymbols["G"];
+						oGroup = mCLDRSymbolGroups[oSymbol.group];
+						aTokens.splice(0, 0, {
+							symbol: "G",
+							group: oSymbol.group,
+							match: oSymbol.match,
+							index: oGroup.index,
+							field: oGroup.field,
+							length: 1
+						});
+					}
+
 					// Check if at least one token's group appears in the interval diff
 					// If not, a single date pattern is returned
 					for (i = aTokens.length - 1; i >= 0; i--){

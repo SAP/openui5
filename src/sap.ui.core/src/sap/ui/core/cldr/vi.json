@@ -2207,39 +2207,47 @@
 					"M": "EEEE, 'ngày' dd 'tháng' M – EEEE, 'ngày' dd 'tháng' M"
 				},
 				"y": {
-					"y": "y–y G"
+					"y": "y–y G",
+					"G": "y G–y G"
 				},
 				"yM": {
 					"M": "MM/y – MM/y G",
-					"y": "MM/y – MM/y G"
+					"y": "MM/y – MM/y G",
+					"G": "MM/y G – MM/y G"
 				},
 				"yMd": {
 					"d": "dd/MM/y – dd/MM/y G",
 					"M": "dd/MM/y – dd/MM/y G",
-					"y": "dd/MM/y – dd/MM/y G"
+					"y": "dd/MM/y – dd/MM/y G",
+					"G": "dd/MM/y G – dd/MM/y G"
 				},
 				"yMEd": {
 					"d": "EEEE, dd/MM/y – EEEE, dd/MM/y G",
 					"M": "EEEE, dd/MM/y – EEEE, dd/MM/y G",
-					"y": "EEEE, dd/MM/y – EEEE, dd/MM/y G"
+					"y": "EEEE, dd/MM/y – EEEE, dd/MM/y G",
+					"G": "EEEE, dd/MM/y G – EEEE, dd/MM/y G"
 				},
 				"yMMM": {
 					"M": "'Tháng' M - 'Tháng' M 'năm' y G",
-					"y": "'Tháng' M 'năm' y - 'Tháng' M 'năm' y G"
+					"y": "'Tháng' M 'năm' y - 'Tháng' M 'năm' y G",
+					"G": "'Tháng' M 'năm' y G - 'Tháng' M 'năm' y G"
 				},
 				"yMMMd": {
 					"d": "'Ngày' dd 'tháng' M - 'Ngày' dd 'tháng' M 'năm' y G",
 					"M": "'Ngày' dd 'tháng' M - 'Ngày' dd 'tháng' M 'năm' y G",
-					"y": "'Ngày' dd 'tháng' M 'năm' y - 'Ngày' dd 'tháng' M 'năm' y G"
+					"y": "'Ngày' dd 'tháng' M 'năm' y - 'Ngày' dd 'tháng' M 'năm' y G",
+					"G": "'Ngày G' dd 'tháng' M 'năm' y G - 'Ngày G' dd 'tháng' M 'năm' y G"
 				},
 				"yMMMEd": {
 					"d": "EEEE, 'ngày' dd MMM – EEEE, 'ngày' dd MMM 'năm' y G",
 					"M": "E, dd 'tháng' M – E, dd 'tháng' M, y G",
-					"y": "E, dd 'tháng' M, y – E, dd 'tháng' M, y G"
+					"y": "E, dd 'tháng' M, y – E, dd 'tháng' M, y G",
+					"G": "E, dd 'tháng' M, y G – E, dd 'tháng' M, y G"
 				},
 				"yMMMM": {
 					"M": "MMMM–MMMM y G",
-					"y": "MMMM y – MMMM y G"
+					"y": "MMMM y – MMMM y G",
+					"G": "MMMM y G – MMMM y G"
 				}
 			}
 		},

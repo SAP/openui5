@@ -2233,44 +2233,53 @@
 					"M": "LLLL ~ LLLL"
 				},
 				"y": {
-					"y": "G y년 ~ y년"
+					"y": "G y년 ~ y년",
+					"G": "G y년 ~ G y년"
 				},
 				"yM": {
 					"M": "G y. M ~ y. M",
-					"y": "G y. M ~ y. M"
+					"y": "G y. M ~ y. M",
+					"G": "G y. M ~ G y. M"
 				},
 				"yMd": {
 					"d": "G y. M. d. ~ y. M. d.",
 					"M": "G y. M. d. ~ y. M. d.",
-					"y": "G y. M. d. ~ y. M. d."
+					"y": "G y. M. d. ~ y. M. d.",
+					"G": "G y. M. d. ~ G y. M. d."
 				},
 				"yMEd": {
 					"d": "G y. M. d. (E) ~ y. M. d. (E)",
 					"M": "G y. M. d. (E) ~ y. M. d. (E)",
-					"y": "G y. M. d. (E) ~ y. M. d. (E)"
+					"y": "G y. M. d. (E) ~ y. M. d. (E)",
+					"G": "G y. M. d. (E) ~ G y. M. d. (E)"
 				},
 				"yMMM": {
 					"M": "G y년 M월~M월",
-					"y": "G y년 M월 ~ y년 M월"
+					"y": "G y년 M월 ~ y년 M월",
+					"G": "G y년 M월 ~ G y년 M월"
 				},
 				"yMMMd": {
 					"d": "G y년 M월 d일~d일",
 					"M": "G y년 M월 d일 ~ M월 d일",
-					"y": "G y년 M월 d일 ~ y년 M월 d일"
+					"y": "G y년 M월 d일 ~ y년 M월 d일",
+					"G": "G y년 M월 d일 ~ G y년 M월 d일"
 				},
 				"yMMMEd": {
 					"d": "G y년 M월 d일 (E) ~ d일 (E)",
 					"M": "G y년 M월 d일 (E) ~ M월 d일 (E)",
-					"y": "G y년 M월 d일 (E) ~ y년 M월 d일 (E)"
+					"y": "G y년 M월 d일 (E) ~ y년 M월 d일 (E)",
+					"G": "G y년 M월 d일 (E) ~ G y년 M월 d일 (E)"
 				},
 				"yMMMEEEEd": {
 					"d": "G y년 M월 d일 EEEE ~ d일 EEEE",
 					"M": "G y년 M월 d일 EEEE ~ M월 d일 EEEE",
-					"y": "G y년 M월 d일 EEEE ~ y년 M월 d일 EEEE"
+					"y": "G y년 M월 d일 EEEE ~ y년 M월 d일 EEEE",
+					"G": "G y년 M월 d일 EEEE ~ G y년 M월 d일 EEEE"
 				},
 				"yMMMM": {
 					"M": "G y년 MM월 ~ MM월",
-					"y": "G y년 MM월 ~ y년 MM월"
+					"y": "G y년 MM월 ~ y년 MM월",
+					"G": "G y년 MM월 ~ G y년 MM월"
 				}
 			}
 		},

@@ -71,7 +71,7 @@ sap.ui.define([
 		},
 		aRelativeScales: ["year", "month", "week", "day"],
 		aRelativeParseScales: ["year", "quarter", "month", "week", "day", "hour", "minute", "second"],
-		aIntervalCompareFields: ["FullYear", "Quarter", "Month", "Week" ,"Date"]
+		aIntervalCompareFields: ["Era", "FullYear", "Quarter", "Month", "Week" ,"Date"]
 	};
 
 	DateFormat.oDateTimeInfo = {
@@ -101,7 +101,7 @@ sap.ui.define([
 		},
 		aRelativeScales: ["year", "month", "week", "day", "hour", "minute", "second"],
 		aRelativeParseScales: ["year", "quarter", "month", "week", "day", "hour", "minute", "second"],
-		aIntervalCompareFields: ["FullYear", "Quarter", "Month", "Week", "Date", "DayPeriod", "Hours", "Minutes", "Seconds"]
+		aIntervalCompareFields: ["Era", "FullYear", "Quarter", "Month", "Week", "Date", "DayPeriod", "Hours", "Minutes", "Seconds"]
 	};
 
 	DateFormat.oTimeInfo = {
@@ -1547,6 +1547,7 @@ sap.ui.define([
 	};
 
 	var mFieldToGroup = {
+		Era: "Era",
 		FullYear: "Year",
 		Quarter: "Quarter",
 		Month: "Month",

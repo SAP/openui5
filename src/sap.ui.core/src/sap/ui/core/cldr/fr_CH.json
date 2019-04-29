@@ -2256,39 +2256,47 @@
 					"M": "E, d MMM 'au' E, d MMM"
 				},
 				"y": {
-					"y": "y – y G"
+					"y": "y – y G",
+					"G": "y G – y G"
 				},
 				"yM": {
 					"M": "MM.y – MM.y GGGGG",
-					"y": "MM.y – MM.y GGGGG"
+					"y": "MM.y – MM.y GGGGG",
+					"G": "MM.y GGGGG – MM.y GGGGG"
 				},
 				"yMd": {
 					"d": "dd.MM.y – dd.MM.y GGGGG",
 					"M": "dd.MM.y – dd.MM.y GGGGG",
-					"y": "dd.MM.y – dd.MM.y GGGGG"
+					"y": "dd.MM.y – dd.MM.y GGGGG",
+					"G": "dd.MM.y GGGGG – dd.MM.y GGGGG"
 				},
 				"yMEd": {
 					"d": "E, dd.MM.y – E, dd.MM.y GGGGG",
 					"M": "E, dd.MM.y – E, dd.MM.y GGGGG",
-					"y": "E, dd.MM.y – E, dd.MM.y GGGGG"
+					"y": "E, dd.MM.y – E, dd.MM.y GGGGG",
+					"G": "E, dd.MM.y GGGGG – E, dd.MM.y GGGGG"
 				},
 				"yMMM": {
 					"M": "MMM–MMM y G",
-					"y": "MMM y 'a'` MMM y G"
+					"y": "MMM y 'a'` MMM y G",
+					"G": "MMM y G 'a'` MMM y G"
 				},
 				"yMMMd": {
 					"d": "d–d MMM y G",
 					"M": "d MMM 'au' d MMM y G",
-					"y": "d MMM y 'au' d MMM y G"
+					"y": "d MMM y 'au' d MMM y G",
+					"G": "d MMM y G 'au' d MMM y G"
 				},
 				"yMMMEd": {
 					"d": "E, d 'au' E, d MMM y G",
 					"M": "E, d MMM 'au' E, d MMM y G",
-					"y": "E, d MMM y 'au' E, d MMM y G"
+					"y": "E, d MMM y 'au' E, d MMM y G",
+					"G": "E, d MMM y G 'au' E, d MMM y G"
 				},
 				"yMMMM": {
 					"M": "MMMM – MMMM y G",
-					"y": "MMMM y – MMMM y G"
+					"y": "MMMM y – MMMM y G",
+					"G": "MMMM y G – MMMM y G"
 				}
 			}
 		},
