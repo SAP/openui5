@@ -209,11 +209,8 @@ sap.ui.define([
 		 * All other POST requests with no matching response in the fixture are responded with code
 		 * 200, the body is simply echoed.
 		 *
-		 * DELETE requests with no matching response in the fixture are responded with code 204 ("No
-		 * Content").
-		 *
-		 * PATCH requests with no matching response in the fixture are responded with code 200, the
-		 * body is simply echoed.
+		 * DELETE and PATCH requests with no matching response in the fixture are responded with
+		 * code 204 ("No Content").
 		 *
 		 * Direct HEAD requests with no matching response in the fixture are responded with code 200
 		 * and no content.
@@ -239,7 +236,9 @@ sap.ui.define([
 		 *     matched against the request body. A function is called with a request object having
 		 *     properties method, url, requestHeaders and requestBody; it must return truthy to
 		 *     indicate a match.
-		 *   <li>{string} <code>message</code>: The response message
+		 *   <li>{object|string} <code>message</code>: The response message, either as a string or
+		 *     as an object which is serialized via <code>JSON.stringify</code> (the header
+		 *     <code>Content-Type</code> will be set appropriately in this case)
 		 *   <li>{string} <code>source</code>: The path of a file relative to <code>sBase</code> to
 		 *     be used for the response message. It will be read synchronously in advance. In this
 		 *     case the header <code>Content-Type</code> is determined from the source name's
@@ -285,6 +284,9 @@ sap.ui.define([
 					oResponse.message = readMessage(sBase + oFixtureResponse.source);
 					oResponse.headers["Content-Type"] = oResponse.headers["Content-Type"]
 						|| contentType(oFixtureResponse.source);
+				} else if (typeof oFixtureResponse.message === "object") {
+					oResponse.headers["Content-Type"] = sJson;
+					oResponse.message = JSON.stringify(oFixtureResponse.message);
 				} else {
 					oResponse.message = oFixtureResponse.message;
 				}
@@ -424,12 +426,12 @@ sap.ui.define([
 							oResponse = {code : 200};
 							break;
 						case "DELETE":
+						case "PATCH":
 							oResponse = {
 								code : 204,
 								headers : {"Content-Type" : "text/plain;charset=utf-8"}
 							};
 							break;
-						case "PATCH":
 						case "POST":
 							oResponse = {
 								code : 200,
@@ -441,7 +443,10 @@ sap.ui.define([
 					}
 				}
 				if (oResponse) {
-					Log.info(oRequest.method + " " + oRequest.url, null, "sap.ui.test.TestUtils");
+					Log.info(oRequest.method + " " + oRequest.url,
+						// Note: JSON.stringify(oRequest.requestHeaders) outputs too much for now
+						'{"If-Match":' + JSON.stringify(oRequest.requestHeaders["If-Match"]) + '}',
+						"sap.ui.test.TestUtils");
 				} else {
 					oResponse = error(404, oRequest, "No mock data found");
 				}

@@ -19,7 +19,10 @@ sap.ui.define([
 ], function (jQuery, ODataModel, TestUtils, sinon) {
 	"use strict";
 
-	var oSandbox = sinon.sandbox.create();
+	var oSandbox = sinon.sandbox.create(),
+		sUpdateGroupId = jQuery.sap.getUriParameters().get("updateGroupId")
+			|| TestUtils.retrieveData("sap.ui.core.sample.odata.v4.SalesOrders.updateGroupId")
+			|| undefined;
 
 	function setupMockServer() {
 		// TODO: Add Mockdata for single sales orders *with expand*
@@ -178,11 +181,9 @@ sap.ui.define([
 				source : "SalesOrderItemsList_empty.json"
 			},
 			"POST SalesOrderList('NEW3')/SO_2_SOITEM?custom-option=value" : [{
-				code: 200,
 				ifMatch : /,"Note":"new 10"/g,
 				source : "POST-SalesOrderList('NEW3')-SO_2_SOITEM_10.json"
 			}, {
-				code: 200,
 				ifMatch : /,"Note":"new 20"/g,
 				source : "POST-SalesOrderList('NEW3')-SO_2_SOITEM_20.json"
 			}],
@@ -245,19 +246,15 @@ sap.ui.define([
 				ifMatch : /,"Note":"RAISE_ERROR"/g,
 				source : "POST-SalesOrderList.Error.json"
 			}, {
-				code: 200,
 				ifMatch : /,"Note":"new 2"/g,
 				source : "POST-SalesOrderList_NEW2.json"
 			}, {
-				code: 200,
 				ifMatch : /,"Note":"new 3"/g,
 				source : "POST-SalesOrderList_NEW3.json"
 			}, {
-				code: 200,
 				ifMatch : /,"Note":"new 4"/g,
 				source : "POST-SalesOrderList_NEW4.json"
 			}, {
-				code: 200,
 				source : "POST-SalesOrderList_NEW1.json"
 			}],
 			"POST SalesOrderList('0500000004')/SO_2_SOITEM?custom-option=value" : [{
@@ -265,13 +262,26 @@ sap.ui.define([
 				ifMatch : /,"Quantity":"0",/g,
 				source : "POST-SalesOrderList('0500000004')-SO_2_SOITEM.Error.json"
 			}, {
-				code: 200,
 				source : "POST-SalesOrderList('0500000004')-SO_2_SOITEM.json"
 			}],
 			"PATCH SalesOrderList('0500000004')?custom-option=value" : [{
 				code: 400,
 				ifMatch : /{"Note":"RAISE_ERROR"}/g,
 				source : "PATCH-SalesOrderList('0500000004').Error.json"
+			}],
+			"PATCH SalesOrderList('0500000001')?custom-option=value" : [{
+				code: 204,
+				headers : {"ETag" : "New ETag"},
+				ifMatch : /{"Note":"204"}/g
+			}, {
+				headers : {"ETag" : "New ETag"},
+				ifMatch : /{"Note":"ETag"}/g,
+				message : {"Note" : "Sending ETag header..."}
+			}, {
+				ifMatch : function (oRequest) {
+					return oRequest.requestHeaders["If-Match"] === "New ETag";
+				},
+				message : {"Note" : "You have used the new ETag!"}
 			}]
 		}, "sap/ui/core/sample/odata/v4/SalesOrders/data",
 		"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/");
@@ -281,11 +291,6 @@ sap.ui.define([
 		var Constructor = sap.ui.model.odata.v4.ODataModel;
 
 		oSandbox.stub(sap.ui.model.odata.v4, "ODataModel", function (mParameters) {
-			var sUpdateGroupId = jQuery.sap.getUriParameters().get("updateGroupId")
-					|| TestUtils.retrieveData(
-						"sap.ui.core.sample.odata.v4.SalesOrders.updateGroupId")
-					|| undefined;
-
 			// clone: do not modify constructor call parameter
 			mParameters = jQuery.extend({}, mParameters, {
 				earlyRequests : jQuery.sap.getUriParameters().get("earlyRequests") !== "false",
@@ -308,9 +313,10 @@ sap.ui.define([
 		});
 	}
 
-	if (TestUtils.isRealOData()) {
+	if (TestUtils.isRealOData() || sUpdateGroupId) {
 		adaptModelConstructor();
-	} else {
+	}
+	if (!TestUtils.isRealOData()) {
 		setupMockServer();
 	}
 

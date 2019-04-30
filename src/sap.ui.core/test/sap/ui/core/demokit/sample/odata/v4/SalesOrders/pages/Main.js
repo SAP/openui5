@@ -757,10 +757,10 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
-				checkNote : function (iRow, sExpectedNote) {
+				checkNote : function (iRow, sExpectedNote, bAutoWait) {
 					return this.waitFor({
 						controlType : "sap.m.Table",
-						autoWait : false,
+						autoWait : !!bAutoWait, // default: false
 						id : "SalesOrderList",
 						success : function (oSalesOrderTable) {
 							var oRow = oSalesOrderTable.getItems()[iRow];
