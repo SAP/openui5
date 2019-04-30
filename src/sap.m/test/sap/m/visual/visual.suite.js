@@ -9,6 +9,7 @@ module.exports = [
 	"ButtonToggleButtonInBarsVisual.spec.js",
 	"ButtonStandaloneVisual.spec.js",
 	"Carousel.spec.js",
+	"CarouselNoPages.spec.js",
 	"CheckBox.spec.js",
 	"ComboBox.spec.js",
 	"ContextMenuSupportIntegration.spec.js",
