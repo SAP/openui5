@@ -2939,6 +2939,9 @@ sap.ui.define([
 			// discard (sub)sections that are not part of the current current tab
 			if (this.getUseIconTabBar() && sSelectedSectionId) {
 				oSelectedSection = this.oCore.byId(sSelectedSectionId);
+				if (!oSelectedSection) {
+					return;
+				}
 				if (oInfo.isSection && oInfo.sectionReference != oSelectedSection) {
 					return true;
 				}
