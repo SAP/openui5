@@ -485,7 +485,7 @@ sap.ui.define([
 	 * @param {Element} oElement The element
 	 */
 	MetadataConverter.prototype.processAnnotations = function (oElement) {
-		this.annotatable(this.resolveAliasInPath(oElement.getAttribute("Target")),
+		this.annotatable(this.resolveAliasInPath(oElement.getAttribute("Target"), true),
 			undefined, // no prefix
 			oElement.getAttribute("Qualifier"));
 	};
@@ -588,7 +588,7 @@ sap.ui.define([
 		var iDot = sName.indexOf("."),
 			sNamespace;
 
-		if (iDot >= 0 && sName.indexOf(".", iDot + 1) < 0) { // if there is exactly one dot
+		if (iDot >= 0 && !sName.includes(".", iDot + 1)) { // if there is exactly one dot
 			sNamespace = this.aliases[sName.slice(0, iDot)];
 			if (sNamespace) {
 				return sNamespace + sName.slice(iDot + 1);
@@ -598,15 +598,43 @@ sap.ui.define([
 	};
 
 	/**
+	 * Resolves an alias in the given path segment.
+	 *
+	 * @param {boolean} bHandleParentheses
+	 *   Whether parentheses in the path segment should be handled specially for alias replacement,
+	 *   for example to address a bound action's specific overload
+	 * @param {string} sSegment The path segment
+	 * @returns {string} The path segment with aliases resolved (if there were any)
+	 */
+	MetadataConverter.prototype.resolveAliasInParentheses = function (bHandleParentheses,
+			sSegment) {
+		var iParentheses = bHandleParentheses ? sSegment.indexOf("(") : -1;
+
+		if (iParentheses >= 0) {
+			return this.resolveAlias(sSegment.slice(0, iParentheses))
+				+ "("
+				+ sSegment.slice(iParentheses + 1, -1)
+					.split(",")
+					.map(this.resolveAliasInParentheses.bind(this, bHandleParentheses))
+					.join(",")
+				+ ")";
+		}
+		return this.resolveAlias(sSegment);
+	};
+
+	/**
 	 * Resolves all aliases in the given path.
 	 *
 	 * @param {string} sPath The path
-	 * @returns {string} The path with the alias resolved (if there was one)
+	 * @param {boolean} [bHandleParentheses=false]
+	 *   Whether parentheses in a path segment should be handled specially for alias replacement,
+	 *   for example to address a bound action's specific overload
+	 * @returns {string} The path with aliases resolved (if there were any)
 	 */
-	MetadataConverter.prototype.resolveAliasInPath = function (sPath) {
-		var iAt, i, aSegments, sTerm = "";
+	MetadataConverter.prototype.resolveAliasInPath = function (sPath, bHandleParentheses) {
+		var iAt, sTerm = "";
 
-		if (sPath.indexOf(".") < 0) {
+		if (!sPath.includes(".")) {
 			return sPath; // no dot -> nothing to do
 		}
 		iAt = sPath.indexOf("@");
@@ -614,11 +642,8 @@ sap.ui.define([
 			sTerm = "@" + this.resolveAlias(sPath.slice(iAt + 1));
 			sPath = sPath.slice(0, iAt);
 		}
-		aSegments = sPath.split("/");
-		for (i = 0; i < aSegments.length; i += 1) {
-			aSegments[i] = this.resolveAlias(aSegments[i]);
-		}
-		return aSegments.join("/") + sTerm;
+		return sPath.split("/").map(this.resolveAliasInParentheses.bind(this, bHandleParentheses))
+			.join("/") + sTerm;
 	};
 
 	/**
