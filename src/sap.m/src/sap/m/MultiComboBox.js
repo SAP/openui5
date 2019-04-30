@@ -997,6 +997,7 @@ function(
 
 		if (!oPicker) {
 			oPicker = this.createPicker(this.getPickerType());
+			this._updateSuggestionsPopoverValueState();
 			bForceListSync = true;
 		}
 
@@ -1015,9 +1016,6 @@ function(
 			if (oList.getItemNavigation()) {
 				this._iFocusedIndex = oList.getItemNavigation().getFocusedIndex();
 			}
-
-			// Re-apply editable state to make sure tokens are rendered in right state.
-			this.setEditable(this.getEditable());
 		}
 
 		return oPicker;
@@ -1978,15 +1976,17 @@ function(
 	 */
 	MultiComboBox.prototype._handleIndicatorPress = function(oEvent) {
 		var oPicker;
+
+		this.syncPickerContent();
 		this._filterSelectedItems(oEvent, true);
 		this.focus();
 
 		if (this.getEditable()) {
-			this.syncPickerContent();
 			oPicker = this.getPicker();
 			oPicker.open();
 		} else {
-			this._getReadOnlyPopover().openBy(this._oTokenizer._oIndicator);
+			this._updatePopoverBasedOnEditMode(false);
+			this._getReadOnlyPopover().openBy(this._oTokenizer);
 		}
 
 		if (this.isPickerDialog()) {
@@ -2850,19 +2850,35 @@ function(
 	 * @override
 	 */
 	MultiComboBox.prototype.setEditable = function (bEditable) {
-		var oList = this._getList(),
-			oPopup = bEditable ? this.getPicker() : this._getReadOnlyPopover(),
-			sListMode = bEditable ? ListMode.MultiSelect : ListMode.None;
+		var oList = this._getList();
 
 		ComboBoxBase.prototype.setEditable.apply(this, arguments);
 		this._oTokenizer.setEditable(bEditable);
 
 		if (oList) {
-			oList.setMode(sListMode);
-			oPopup.addContent(oList);
+			this.syncPickerContent(true);
+			this._updatePopoverBasedOnEditMode(bEditable);
 		}
 
 		return this;
+	};
+
+	/**
+	 * Adds correct content and sets the correct list mode for the popover.
+	 * The method is used to switch between read-only mode and edit mode.
+	 *
+	 * @param {boolean} bEditable The mode of the popover
+	 * @private
+	 */
+	MultiComboBox.prototype._updatePopoverBasedOnEditMode = function (bEditable) {
+		var oList = this._getList(),
+			oPopup = bEditable ? this.getPicker() : this._getReadOnlyPopover(),
+			sListMode = bEditable ? ListMode.MultiSelect : ListMode.None;
+
+		if (oList && !oPopup.getContent().length) {
+			oList.setMode(sListMode);
+			oPopup.addContent(oList);
+		}
 	};
 
 	/**
@@ -3231,7 +3247,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._clearTokenizer = function() {
-		this._oTokenizer.destroyAggregation("tokens", true);
+		this._oTokenizer.destroyAggregation("tokens");
 	};
 
 	MultiComboBox.prototype.exit = function() {
