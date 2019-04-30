@@ -1171,7 +1171,7 @@ sap.ui.define([
 	QUnit.test("Inside Header (Range Selection, Column Resizing)", function(assert) {
 		var oElem;
 
-		function testLocal() {
+		function test() {
 			qutils.triggerKeydown(oElem, Key.Arrow.DOWN, true, false, false);
 			checkFocus(oElem, assert);
 			qutils.triggerKeydown(oElem, Key.Arrow.UP, true, false, false);
@@ -1185,20 +1185,20 @@ sap.ui.define([
 		// Range Selection
 		oElem = checkFocus(getSelectAll(true), assert);
 		qutils.triggerKeydown(oElem, Key.SHIFT, false, false, false); // Start selection mode.
-		testLocal();
+		test();
 		qutils.triggerKeyup(oElem, Key.SHIFT, false, false, false); // End selection mode.
 
 		oElem = checkFocus(getColumnHeader(0, true), assert);
 		qutils.triggerKeydown(oElem, Key.SHIFT, false, false, false); // Start selection mode.
-		testLocal();
+		test();
 		qutils.triggerKeyup(oElem, Key.SHIFT, false, false, false); // End selection mode.
 
 		// Column Resizing
 		oElem = checkFocus(getSelectAll(true), assert);
-		testLocal();
+		test();
 
 		oElem = checkFocus(getColumnHeader(0, true), assert);
-		testLocal();
+		test();
 	});
 
 	QUnit.test("Inside Row Header, Fixed Rows (Range Selection)", function(assert) {
@@ -3833,13 +3833,10 @@ sap.ui.define([
 
 		assert.expect(aEventTargetGetters.length + aEventTargetGetters.length * aKeystrokes.length);
 
-		function assertDefaultPrevented(oEvent) {
-			assert.ok(oEvent.isDefaultPrevented(), oEvent.target._oKeystroke.keyName + ": Default action was prevented (Page scrolling)");
-		}
-
 		oTable.addEventDelegate({
-			onkeydown: assertDefaultPrevented,
-			onkeyup: assertDefaultPrevented
+			onkeydown: function(oEvent) {
+				assert.ok(oEvent.isDefaultPrevented(), oEvent.target._oKeystroke.keyName + ": Default action was prevented (Page scrolling)");
+			}
 		});
 
 		for (var i = 0; i < aEventTargetGetters.length; i++) {
@@ -3895,7 +3892,7 @@ sap.ui.define([
 			var iIndex;
 			var i;
 
-			function testLocal(bSelect, bRowHeader) {
+			function test(bSelect, bRowHeader) {
 				// Prepare selection states. Set the selection states of the first and last row equal to the selection state of the starting row
 				// to see if already correctly set selection states are preserved.
 				oTable.clearSelection();
@@ -4063,10 +4060,10 @@ sap.ui.define([
 				}
 			}
 
-			testLocal.call(this, true, true);
-			testLocal.call(this, true, false);
-			testLocal.call(this, false, true);
-			testLocal.call(this, false, false);
+			test.call(this, true, true);
+			test.call(this, true, false);
+			test.call(this, false, true);
+			test.call(this, false, false);
 		}
 	});
 
@@ -4222,7 +4219,7 @@ sap.ui.define([
 		var iColumnResizeStep = TableUtils.convertCSSSizeToPixel("1rem");
 		var oElem;
 
-		function testLocal(aResizingColumns, aNotResizingColumns) {
+		function test(aResizingColumns, aNotResizingColumns) {
 			var iSharedColumnResizeStep = Math.round(iColumnResizeStep / aResizingColumns.length);
 			var iMaxColumnSize = 0;
 			var iNewColumnWidth;
@@ -4304,17 +4301,17 @@ sap.ui.define([
 
 		// Top row - Span over all 3 columns (3rd. column is not resizable)
 		oElem = getColumnHeader(0, true);
-		testLocal.call(this, [aVisibleColumns[0], aVisibleColumns[1]], [aVisibleColumns[2]]);
+		test.call(this, [aVisibleColumns[0], aVisibleColumns[1]], [aVisibleColumns[2]]);
 
 		// Second row - First span over 2 columns
 		oElem = jQuery.sap.domById(getColumnHeader(0).attr("id") + "_1");
 		oElem.focus();
-		testLocal.call(this, [aVisibleColumns[0], aVisibleColumns[1]], aVisibleColumns[2]);
+		test.call(this, [aVisibleColumns[0], aVisibleColumns[1]], aVisibleColumns[2]);
 
 		// Last row - Second column
 		oElem = jQuery.sap.domById(getColumnHeader(1).attr("id") + "_2");
 		oElem.focus();
-		testLocal.call(this, [aVisibleColumns[1]], [aVisibleColumns[0], aVisibleColumns[2]]);
+		test.call(this, [aVisibleColumns[1]], [aVisibleColumns[0], aVisibleColumns[2]]);
 	});
 
 	QUnit.test("Default Test Table - Resize not resizable column", function(assert) {
@@ -4875,7 +4872,7 @@ sap.ui.define([
 		oTable.attachCellClick(cellClickEventHandler);
 		sap.ui.getCore().applyChanges();
 
-		function testLocal(assert) {
+		function test(assert) {
 			var oRowBinding = oTable.getBinding("rows");
 
 			this.assertSelection(assert, 0, false);
@@ -4909,11 +4906,11 @@ sap.ui.define([
 
 		/* Row Header */
 		oElem = checkFocus(getRowHeader(0, true), assert);
-		testLocal.call(this, assert);
+		test.call(this, assert);
 
 		/* Data Cell */
 		oElem = checkFocus(getCell(0, 1, true), assert);
-		testLocal.call(this, assert);
+		test.call(this, assert);
 	});
 
 	QUnit.test("TreeTable - Expand/Collapse Group", function(assert) {
@@ -4985,6 +4982,14 @@ sap.ui.define([
 		oTable.setSelectionMode(tableLibrary.SelectionMode.MultiToggle);
 		sap.ui.getCore().applyChanges();
 
+		oTable.addEventDelegate({
+			onkeydown: function(oEvent) {
+				assert.ok(oEvent.isDefaultPrevented(), "Default action was prevented");
+			}
+		});
+
+		assert.expect(20);
+
 		var oElem = checkFocus(getSelectAll(true), assert);
 		qutils.triggerKeydown(oElem, Key.A, false, false, true);
 		assert.ok(TableUtils.areAllRowsSelected(oTable), "On SelectAll: All rows selected");
@@ -5012,7 +5017,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("(De)Select All not possible", function(assert) {
-		function testLocal(bSelected) {
+		function test(bSelected) {
 			// Mass (De)Selection on column header is never allowed, regardless of the selection mode.
 			oTable.setSelectionMode(tableLibrary.SelectionMode.MultiToggle);
 			if (bSelected) {
@@ -5070,8 +5075,48 @@ sap.ui.define([
 				"On Column Header: All rows still " + (bSelected ? "selected" : "deselected"));
 		}
 
-		testLocal(false);
-		testLocal(true);
+		oTable.addEventDelegate({
+			onkeydown: function(oEvent) {
+				assert.ok(oEvent.isDefaultPrevented(), "Default action was prevented");
+			}
+		});
+
+		assert.expect(20);
+
+		test(false);
+		test(true);
+	});
+
+	QUnit.test("On element that is not a cell", function(assert) {
+		oTable.addExtension(new TestInputControl());
+		oTable.setFooter(new TestInputControl());
+		oTable.setTitle(new TestInputControl());
+		oTable.addEventDelegate({
+			onkeydown: function (oEvent) {
+				assert.ok(!oEvent.isDefaultPrevented(), "Default action was not prevented");
+			}
+		});
+		sap.ui.getCore().applyChanges();
+
+		var oCell = getCell(0, 0)[0];
+		oCell.classList.remove("sapUiTableDataCell");
+		oCell.classList.add("sapUiTablePseudoCell");
+
+		var aTestElements = [
+			oTable.getExtension()[0].getDomRef(),
+			oTable.getFooter().getDomRef(),
+			oTable.getTitle().getDomRef(),
+			oCell,
+			oTable.getRows()[0].getCells()[0].getDomRef(),
+			oTable.getRows()[0].getCells()[1].getDomRef()
+		];
+
+		assert.expect(aTestElements.length);
+
+		aTestElements.forEach(function(oElement) {
+			oElement.focus();
+			qutils.triggerKeydown(oElement, Key.A, false, false, true);
+		});
 	});
 
 	QUnit.module("TableKeyboardDelegate2 - Interaction > Ctrl+Shift+A (Deselect All)", {
@@ -5088,7 +5133,7 @@ sap.ui.define([
 
 		var done = assert.async();
 
-		function testLocal(sSelectionMode, aSelectedIndices, bFinalTest) {
+		function test(sSelectionMode, aSelectedIndices, bFinalTest) {
 			oTable.setSelectionMode(sSelectionMode);
 			sap.ui.getCore().applyChanges();
 
@@ -5134,13 +5179,13 @@ sap.ui.define([
 			});
 		}
 
-		testLocal(tableLibrary.SelectionMode.None, []);
-		testLocal(tableLibrary.SelectionMode.Single, [1]);
-		testLocal(tableLibrary.SelectionMode.MultiToggle, [0, 1, 4], true);
+		test(tableLibrary.SelectionMode.None, []);
+		test(tableLibrary.SelectionMode.Single, [1]);
+		test(tableLibrary.SelectionMode.MultiToggle, [0, 1, 4], true);
 	});
 
 	QUnit.test("Deselect All not possible", function(assert) {
-		function testLocal(sSelectionMode, aSelectedIndices) {
+		function test(sSelectionMode, aSelectedIndices) {
 			oTable.setSelectionMode(sSelectionMode);
 			sap.ui.getCore().applyChanges();
 
@@ -5162,9 +5207,9 @@ sap.ui.define([
 				"DeselectAll on cell \"" + oElem.attr("id") + "\": All rows are still selected");
 		}
 
-		testLocal(tableLibrary.SelectionMode.None, []);
-		testLocal(tableLibrary.SelectionMode.Single, [1]);
-		testLocal(tableLibrary.SelectionMode.MultiToggle, [0, 1, 4]);
+		test(tableLibrary.SelectionMode.None, []);
+		test(tableLibrary.SelectionMode.Single, [1]);
+		test(tableLibrary.SelectionMode.MultiToggle, [0, 1, 4]);
 	});
 
 	QUnit.module("TableKeyboardDelegate2 - Interaction > ContextMenu", {
