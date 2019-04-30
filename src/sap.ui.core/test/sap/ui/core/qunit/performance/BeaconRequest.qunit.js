@@ -81,23 +81,31 @@ sap.ui.define(["sap/ui/performance/BeaconRequest", "sap/ui/Device"], function (B
 
 		QUnit.test("Send beacon on window close", function(assert) {
 			var done = assert.async();
+			assert.expect(2);
+
+			// setup iframe which will apply a stub on BeaconRequest#send to check
+			// if it is called on the iframe's window unload event - defined in
+			// static/sendBeaconRequest.js
 			var oIframe = document.createElement("iframe");
-			// Load iFrame which will send a postmessage on close
 			oIframe.setAttribute("src", sap.ui.require.toUrl("performance/static/sendBeaconRequest.html"));
 			document.getElementById('qunit-fixture').appendChild(oIframe);
 
-			oIframe.addEventListener("load", function() {
+			// checks if the arrangements in the iframe have been completed
+			function arranged(msg) {
+				assert.equal(msg.data.token, "arranged", "BeaconRequest#send has been replaced");
+				window.removeEventListener("message", arranged);
+				window.addEventListener("message", assertions);
 				oIframe.remove();
-			});
+			}
 
-			function assertions(e) {
-				assert.equal(e.data.sendTo, window.location.href, "Verified sender");
-				assert.equal(e.data.numberOfEntries, 3, "Received data via beacon after window close");
+			// checks the if the stub has been called
+			function assertions(msg) {
+				assert.equal(msg.data.token, "called", "BeaconRequest#send has been called");
 				window.removeEventListener("message", assertions);
 				done();
 			}
 
-			window.addEventListener("message", assertions);
+			window.addEventListener("message", arranged);
 		});
 
 		QUnit.module("BeaconRequest API (sad path)");
