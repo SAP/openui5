@@ -1431,6 +1431,12 @@ sap.ui.define([
 		}
 
 		sResult = aBuffer.join("");
+
+		// Support Japanese Gannen instead of Ichinen for first year of the era
+		if (sCalendarType == CalendarType.Japanese && this.oLocale.getLanguage() === "ja") {
+			sResult = sResult.replace(/(^|[^\d])1年/g, "$1元年");
+		}
+
 		if (sap.ui.getCore().getConfiguration().getOriginInfo()) {
 			sResult = new String(sResult);
 			sResult.originInfo = {
@@ -1595,6 +1601,13 @@ sap.ui.define([
 			dateValue: oDateValue,
 			strict: bStrict
 		};
+
+		var sCalendarType = this.oFormatOptions.calendarType;
+
+		// Support Japanese Gannen instead of Ichinen for first year of the era
+		if (sCalendarType == CalendarType.Japanese && this.oLocale.getLanguage() === "ja") {
+			sValue = sValue.replace(/元年/g, "1年");
+		}
 
 		for (var i = 0; i < aFormatArray.length; i++) {
 			sSubValue = sValue.substr(iIndex);
