@@ -5251,33 +5251,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("On cell content", function(assert) {
-		var oContextMenuEventHandlerSpy = this.spy(oTable._getKeyboardExtension()._delegate, "oncontextmenu");
-		var oOpenContextMenuSpy = this.spy(TableUtils.Menu, "openContextMenu");
-
-		oTable.getColumns()[0].setLabel(new TestInputControl());
-		initRowActions(oTable, 1, 1);
-
-		var aTestElements = [
-			oTable.getRows()[0].getCells()[0].getDomRef(),
-			oTable.getRows()[0].getRowAction().getAggregation("_icons")[0].getDomRef(),
-			oTable.getColumns()[0].getLabel().getDomRef()
-		];
-
-		aTestElements.forEach(function(oElem) {
-			oElem.focus();
-			jQuery(oElem).trigger("contextmenu");
-			assert.ok(oOpenContextMenuSpy.notCalled, "TableUtils.Menu.openContextMenu was not called");
-			checkFocus(oElem, assert);
-
-			var oContextMenuEventArgument = oContextMenuEventHandlerSpy.args[0][0];
-			assert.ok(!oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was not prevented");
-
-			oOpenContextMenuSpy.reset();
-			oContextMenuEventHandlerSpy.reset();
-		});
-	});
-
 	QUnit.test("On a pseudo cell", function(assert) {
 		var oContextMenuEventHandlerSpy = this.spy(oTable._getKeyboardExtension()._delegate, "oncontextmenu");
 		var oContextMenuEventArgument;
@@ -5305,6 +5278,33 @@ sap.ui.define([
 
 		oContextMenuEventArgument = oContextMenuEventHandlerSpy.args[0][0];
 		assert.ok(!oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was not prevented");
+	});
+
+	QUnit.test("On cell content", function(assert) {
+		var oContextMenuEventHandlerSpy = this.spy(oTable._getKeyboardExtension()._delegate, "oncontextmenu");
+		var oOpenContextMenuSpy = this.spy(TableUtils.Menu, "openContextMenu");
+
+		oTable.getColumns()[0].setLabel(new TestInputControl());
+		initRowActions(oTable, 1, 1);
+
+		var aTestElements = [
+			oTable.getRows()[0].getCells()[0].getDomRef(),
+			oTable.getRows()[0].getRowAction().getAggregation("_icons")[0].getDomRef(),
+			oTable.getColumns()[0].getLabel().getDomRef()
+		];
+
+		aTestElements.forEach(function(oElem) {
+			oElem.focus();
+			jQuery(oElem).trigger("contextmenu");
+			assert.ok(oOpenContextMenuSpy.notCalled, "TableUtils.Menu.openContextMenu was not called");
+			checkFocus(oElem, assert);
+
+			var oContextMenuEventArgument = oContextMenuEventHandlerSpy.args[0][0];
+			assert.ok(!oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was not prevented");
+
+			oOpenContextMenuSpy.reset();
+			oContextMenuEventHandlerSpy.reset();
+		});
 	});
 
 	QUnit.module("TableKeyboardDelegate2 - Interaction > Alt+ArrowUp & Alt+ArrowDown (Expand/Collapse Group)", {
