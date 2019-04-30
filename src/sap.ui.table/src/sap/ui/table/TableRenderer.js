@@ -583,6 +583,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	TableRenderer.renderRowHdr = function(rm, oTable) {
 		rm.write("<div");
 		rm.writeAttribute("id", oTable.getId() + "-sapUiTableRowHdrScr");
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "PRESENTATION");
 		rm.addClass("sapUiTableRowHdrScr");
 		rm.addClass("sapUiTableNoOpacity");
 		rm.writeClasses();
@@ -603,6 +604,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		}
 		rm.write("<div");
 		rm.writeAttribute("id", oTable.getId() + "-sapUiTableRowActionScr");
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "PRESENTATION");
 		rm.addClass("sapUiTableRowActionScr");
 		rm.addClass("sapUiTableNoOpacity");
 		rm.writeClasses();
@@ -640,6 +642,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	};
 
 	TableRenderer.renderRowAddon = function(rm, oTable, oRow, iRowIndex, bHeader) {
+		rm.write("<div");
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TR", {index: iRowIndex});
+		rm.write(">");
+
 		rm.write("<div");
 		rm.writeAttribute("id", oTable.getId() + (bHeader ? "-rowsel" : "-rowact") + iRowIndex);
 		rm.writeAttribute("data-sap-ui-related", oRow.getId());
@@ -683,6 +689,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 				rm.renderControl(oAction);
 			}
 		}
+		rm.write("</div>");
+
 		rm.write("</div>");
 	};
 
@@ -811,8 +819,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		var aColParams = new Array(iEndColumn);
 		var iCol;
 		var oColumn;
-		var bHasPercentageWidths = false;
-
 		var bRenderDummyColumn = !bFixedTable && iEndColumn > iStartColumn;
 
 		for (iCol = iStartColumn; iCol < iEndColumn; iCol++) {
@@ -830,8 +836,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 					if (bFixedTable) {
 						oColumn._iFixWidth = oColumn._iFixWidth || 160;
 						sWidth = oColumn._iFixWidth + "px";
-					} else if (sWidth && sWidth.indexOf("%") > 0) {
-						bHasPercentageWidths = true;
 					}
 				} else if (bFixedTable) {
 					delete oColumn._iFixWidth;
@@ -841,34 +845,12 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			aColParams[iCol] = oColParam;
 		}
 
-
-		if (TableUtils.hasRowHeader(oTable) && !bHeader) { // not needed for column headers
-			rm.write("<th");
-			if (bHasPercentageWidths) {
-				// Edge and IE - 0px width is not respected if some other columns have width in %
-				rm.addStyle("width", "0%");
-			} else {
-				rm.addStyle("width", "0px");
-			}
-			rm.writeStyles();
-			if (iStartRow == 0) {
-				oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TH");
-				if (!bHeader) {
-					rm.writeAttribute("id", oTable.getId() + "-colsel");
-				}
-				rm.addClass("sapUiTableColSel");
-				rm.writeClasses();
-			}
-			rm.write("></th>");
-		} else {
-			if (aCols.length === 0) {
-				// no cols => render th => avoids rendering issue in firefox
-				rm.write("<th></th>");
-			}
+		if (aCols.length === 0) {
+			// no cols => render th => avoids rendering issue in firefox
+			rm.write("<th></th>");
 		}
 
 		for (iCol = iStartColumn; iCol < iEndColumn; iCol++) {
-
 			suffix = bHeader ? "_hdr" : "_col";
 			oColumn = aCols[iCol];
 			oColParam = aColParams[iCol];
@@ -1098,17 +1080,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.write(">");
 
 		var bSelected = !oRow._bHidden && oTable.isIndexSelected(oRow.getIndex()); //see TableRenderer.renderRowAddon
-
 		var aCells = oRow.getCells();
-		// render the row headers
-		if (TableUtils.hasRowHeader(oTable) || aCells.length === 0) {
-			rm.write("<td");
-			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "ROWHEADER_TD", {
-				rowSelected: bSelected,
-				index: iRowIndex
-			});
-			rm.write("></td>");
-		}
 
 		for (var cell = 0, count = aCells.length; cell < count; cell++) {
 			this.renderTableCell(rm, oTable, oRow, aCells[cell], cell, bFixedTable, iStartColumn, iEndColumn, aVisibleColumns, bSelected);
@@ -1143,7 +1115,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 				column: oColumn,
 				row: oRow,
 				fixed: bFixedTable,
-				firstCol: bIsFirstColumn,
 				rowSelected: bSelected
 			});
 

@@ -467,8 +467,8 @@ sap.ui.define([
 		assert.strictEqual(oRefs.row.attr("aria-level"), "2", "aria-level set on group row");
 		assert.strictEqual(oRefs.fixed.attr("aria-expanded"), "true", "aria-expanded set on group row (fixed)");
 		assert.strictEqual(oRefs.fixed.attr("aria-level"), "2", "aria-level set on group row (fixed)");
-		assert.strictEqual(oRefs.act.attr("aria-expanded"), "true", "aria-expanded set on row action");
-		assert.strictEqual(oRefs.act.attr("aria-level"), "2", "aria-level set on row action");
+		assert.strictEqual(oRefs.act.parent().attr("aria-expanded"), "true", "aria-expanded set on row action");
+		assert.strictEqual(oRefs.act.parent().attr("aria-level"), "2", "aria-level set on row action");
 
 		var $Cell;
 		var i;
@@ -500,7 +500,7 @@ sap.ui.define([
 
 		assert.strictEqual(oRefs.row.attr("aria-level"), "2", "aria-level set on group row");
 		assert.strictEqual(oRefs.fixed.attr("aria-level"), "2", "aria-level set on group row (fixed)");
-		assert.strictEqual(oRefs.act.attr("aria-level"), "2", "aria-level set on row action");
+		assert.strictEqual(oRefs.act.parent().attr("aria-level"), "2", "aria-level set on row action");
 
 		var $Cell;
 		var i;
@@ -536,12 +536,12 @@ sap.ui.define([
 		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
 		$Elem = oTreeTable.$("rows-row0-col0");
 		assert.strictEqual($Elem.attr("role"), "gridcell", "role");
-		assert.strictEqual($Elem.attr("aria-level"), "1", "aria-level");
-		assert.strictEqual($Elem.attr("aria-expanded"), "false", "aria-expanded");
+		assert.strictEqual($Elem.parent().attr("aria-level"), "1", "aria-level");
+		assert.strictEqual($Elem.parent().attr("aria-expanded"), "false", "aria-expanded");
 		$Elem = oTreeTable.$("rows-row0-col1");
 		assert.strictEqual($Elem.attr("role"), "gridcell", "role");
-		assert.strictEqual($Elem.attr("aria-level"), "1", "aria-level");
-		assert.strictEqual($Elem.attr("aria-expanded"), "false", "aria-expanded");
+		assert.strictEqual($Elem.parent().attr("aria-level"), "1", "aria-level");
+		assert.strictEqual($Elem.parent().attr("aria-expanded"), "false", "aria-expanded");
 		oTable.rerender();
 		$Elem = oTable.$("rows-row0-col0");
 		checkAriaSelected($Elem.attr("aria-selected"), true, assert);
@@ -782,8 +782,8 @@ sap.ui.define([
 		var done = assert.async();
 		var oRefs = fakeGroupRow(1);
 
-		assert.strictEqual(oRefs.hdr.attr("aria-expanded"), "true", "aria-expanded set on group row header");
-		assert.strictEqual(oRefs.hdr.attr("aria-level"), "2", "aria-level set on group row header");
+		assert.strictEqual(oRefs.hdr.parent().attr("aria-expanded"), "true", "aria-expanded set on group row header");
+		assert.strictEqual(oRefs.hdr.parent().attr("aria-level"), "2", "aria-level set on group row header");
 		assert.strictEqual(oRefs.hdr.attr("aria-haspopup"), "true", "aria-haspopup set on group row header");
 
 		var $Cell = getRowHeader(1, false, assert);
@@ -796,7 +796,6 @@ sap.ui.define([
 		setFocusOutsideOfTable(assert);
 		setTimeout(function() {
 			testAriaLabelsForRowHeader($Cell, 1, assert);
-			oTable.rerender();
 			done();
 		}, 100);
 	});
@@ -805,7 +804,7 @@ sap.ui.define([
 		var done = assert.async();
 		var oRefs = fakeSumRow(1);
 
-		assert.strictEqual(oRefs.hdr.attr("aria-level"), "2", "aria-level set on sum row header");
+		assert.strictEqual(oRefs.hdr.parent().attr("aria-level"), "2", "aria-level set on sum row header");
 
 		var $Cell = getRowHeader(1, false, assert);
 		testAriaLabelsForRowHeader($Cell, 1, assert, {sum: true});
@@ -1176,16 +1175,6 @@ sap.ui.define([
 		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
 	});
 
-	QUnit.test("ARIA Attributes of Row Header TD Elements", function(assert) {
-		var $Elem = oTable.$().find("[headers='" + oTable.getId() + "-colsel']");
-		$Elem.each(function() {
-			var $TD = jQuery(this);
-			var sOwns = $TD.attr("aria-owns");
-			assert.ok(jQuery.sap.startsWith(sOwns || "", oTable.getId() + "-rowsel"), "aria-owns: " + sOwns);
-			checkAriaSelected($TD.attr("aria-selected"), sOwns == oTable.getId() + "-rowsel0", assert);
-		});
-	});
-
 	QUnit.test("ARIA for Overlay", function(assert) {
 		var $OverlayCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='overlay']");
 		//Heading + Extension + Footer + 2xTable + Row Selector + 2xColumn Headers + NoData Container = 8
@@ -1487,27 +1476,33 @@ sap.ui.define([
 		for (var i = 0; i < aColumns.length; i++) {
 			aColumns[i].setTooltip(null);
 		}
+		initRowActions(oTable, 1, 1);
+		sap.ui.getCore().applyChanges();
+
 		var iRows = oTable.getRows().length;
+		var iRowElements = iRows * 4; // Row areas: header, fixed, scrollable, action
+		var iRowSelectors = iRows;
+		var iActionItems = iRows; // The icons have tooltips.
 
-		checkTooltips(true, "Row", "MultiToggle", 1 /*SelAll*/ + iRows + iRows /*Fixed/Non-Fixed Rows*/ + iRows /*Row Selectors*/);
-		checkTooltips(true, "Row", "Single", iRows + iRows /*Fixed/Non-Fixed Rows*/ + iRows /*Row Selectors*/);
-		checkTooltips(true, "Row", "None", 0);
-		checkTooltips(true, "RowOnly", "MultiToggle", 1 /*SelAll*/ + iRows + iRows /*Fixed/Non-Fixed Rows*/ + iRows /*Row Selectors (not visible)*/);
-		checkTooltips(true, "RowOnly", "Single", iRows + iRows /*Fixed/Non-Fixed Rows*/ + iRows /*Row Selectors (not visible)*/);
-		checkTooltips(true, "RowOnly", "None", 0);
-		checkTooltips(true, "RowSelector", "MultiToggle", 1 /*SelAll*/ + iRows /*Row Selectors*/);
-		checkTooltips(true, "RowSelector", "Single", iRows /*Row Selectors*/);
-		checkTooltips(true, "RowSelector", "None", 0);
+		checkTooltips(true, "Row", "MultiToggle", 1 /*SelAll*/ + iRowElements + iRowSelectors + iActionItems);
+		checkTooltips(true, "Row", "Single", iRowElements + iRowSelectors + iActionItems);
+		checkTooltips(true, "Row", "None", iActionItems);
+		checkTooltips(true, "RowOnly", "MultiToggle", 1 /*SelAll*/ + iRowElements + iRowSelectors + iActionItems);
+		checkTooltips(true, "RowOnly", "Single", iRowElements + iRowSelectors + iActionItems);
+		checkTooltips(true, "RowOnly", "None", iActionItems);
+		checkTooltips(true, "RowSelector", "MultiToggle", 1 /*SelAll*/ + iRowSelectors + iActionItems);
+		checkTooltips(true, "RowSelector", "Single", iRowSelectors + iActionItems);
+		checkTooltips(true, "RowSelector", "None", iActionItems);
 
-		checkTooltips(false, "Row", "MultiToggle", 0);
-		checkTooltips(false, "Row", "Single", 0);
-		checkTooltips(false, "Row", "None", 0);
-		checkTooltips(false, "RowOnly", "MultiToggle", 0);
-		checkTooltips(false, "RowOnly", "Single", 0);
-		checkTooltips(false, "RowOnly", "None", 0);
-		checkTooltips(false, "RowSelector", "MultiToggle", 0);
-		checkTooltips(false, "RowSelector", "Single", 0);
-		checkTooltips(false, "RowSelector", "None", 0);
+		checkTooltips(false, "Row", "MultiToggle", iActionItems);
+		checkTooltips(false, "Row", "Single", iActionItems);
+		checkTooltips(false, "Row", "None", iActionItems);
+		checkTooltips(false, "RowOnly", "MultiToggle", iActionItems);
+		checkTooltips(false, "RowOnly", "Single", iActionItems);
+		checkTooltips(false, "RowOnly", "None", iActionItems);
+		checkTooltips(false, "RowSelector", "MultiToggle", iActionItems);
+		checkTooltips(false, "RowSelector", "Single", iActionItems);
+		checkTooltips(false, "RowSelector", "None", iActionItems);
 	});
 
 	QUnit.module("No Acc Mode", {

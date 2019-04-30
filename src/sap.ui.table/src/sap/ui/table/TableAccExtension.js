@@ -634,11 +634,9 @@ sap.ui.define([
 					break;
 
 				case TableAccExtension.ELEMENTTYPES.ROWHEADER:
+					mAttributes["role"] = "rowheader";
 					if (Device.browser.msie) {
 						mAttributes["aria-labelledby"] = [sTableId + "-ariarowheaderlabel"];
-					}
-					if (!TableUtils.Grouping.isTreeMode(oTable)) { // Otherwise there are strange announcements of the whole content in AnalyticalTable
-						mAttributes["role"] = ["rowheader"];
 					}
 					if (oTable.getSelectionMode() !== SelectionMode.None && (!mParams || !mParams.rowHidden)) {
 						var bSelected = mParams && mParams.rowSelected;
@@ -649,7 +647,7 @@ sap.ui.define([
 					break;
 
 				case TableAccExtension.ELEMENTTYPES.ROWACTION:
-					mAttributes["role"] = ["gridcell"];
+					mAttributes["role"] = "gridcell";
 					mAttributes["aria-labelledby"] = [sTableId + "-rowacthdr"];
 					if (oTable.getSelectionMode() !== SelectionMode.None && (!mParams || !mParams.rowHidden)) {
 						var bSelected = mParams && mParams.rowSelected;
@@ -712,13 +710,6 @@ sap.ui.define([
 						mAttributes["aria-selected"] = "true";
 					}
 
-					// Handle expand state for first Column in TreeTable
-					if (TableUtils.Grouping.isTreeMode(oTable) && mParams && mParams.firstCol && mParams.row) {
-						var oBindingInfo = oTable.mBindingInfos["rows"];
-						if (mParams.row.getBindingContext(oBindingInfo && oBindingInfo.model)) {
-							mAttributes["aria-expanded"] = "" + mParams.row._bIsExpanded;
-						}
-					}
 					break;
 
 				case TableAccExtension.ELEMENTTYPES.ROOT: //The tables root dom element
@@ -731,13 +722,45 @@ sap.ui.define([
 
 				case TableAccExtension.ELEMENTTYPES.CONTENT: //The content area of the table which contains all the table elements, rowheaders, columnheaders, etc
 					mAttributes["role"] = TableUtils.Grouping.isGroupMode(oTable) || TableUtils.Grouping.isTreeMode(oTable) ? "treegrid" : "grid";
+
 					mAttributes["aria-labelledby"] = [].concat(oTable.getAriaLabelledBy());
 					if (oTable.getTitle()) {
 						mAttributes["aria-labelledby"].push(oTable.getTitle().getId());
 					}
+
 					if (oTable.getSelectionMode() === SelectionMode.MultiToggle) {
 						mAttributes["aria-multiselectable"] = "true";
 					}
+
+					var bHasFixedColumns = TableUtils.hasFixedColumns(oTable);
+					var bHasFixedTopRows = oTable.getFixedRowCount() > 0;
+					var bHasFixedBottomRows = oTable.getFixedBottomRowCount() > 0;
+					var bHasRowHeader = TableUtils.hasRowHeader(oTable);
+					var bHasRowActions = TableUtils.hasRowActions(oTable);
+
+					mAttributes["aria-owns"] = [sTableId + "-table"];
+					if (bHasFixedColumns) {
+						mAttributes["aria-owns"].push(sTableId + "-table-fixed");
+					}
+					if (bHasFixedTopRows) {
+						mAttributes["aria-owns"].push(sTableId + "-table-fixrow");
+						if (bHasFixedColumns) {
+							mAttributes["aria-owns"].push(sTableId + "-table-fixed-fixrow");
+						}
+					}
+					if (bHasFixedBottomRows) {
+						mAttributes["aria-owns"].push(sTableId + "-table-fixrow-bottom");
+						if (bHasFixedColumns) {
+							mAttributes["aria-owns"].push(sTableId + "-table-fixed-fixrow-bottom");
+						}
+					}
+					if (bHasRowHeader) {
+						mAttributes["aria-owns"].push(sTableId + "-sapUiTableRowHdrScr");
+					}
+					if (bHasRowActions) {
+						mAttributes["aria-owns"].push(sTableId + "-sapUiTableRowActionScr");
+					}
+
 					break;
 
 				case TableAccExtension.ELEMENTTYPES.TABLEHEADER: //The table header area
@@ -781,17 +804,6 @@ sap.ui.define([
 						}
 					} else {
 						mAttributes["aria-hidden"] = "true";
-					}
-					break;
-
-				case TableAccExtension.ELEMENTTYPES.ROWHEADER_TD: //The "technical" row headers
-					mAttributes["headers"] = sTableId + "-colsel";
-					if (mParams && typeof mParams.index === "number") {
-						mAttributes["aria-owns"] = sTableId + "-rowsel" + mParams.index;
-					}
-					if (oTable.getSelectionMode() !== SelectionMode.None) {
-						var bSelected = mParams && mParams.rowSelected;
-						mAttributes["aria-selected"] = "" + bSelected;
 					}
 					break;
 
@@ -985,7 +997,7 @@ sap.ui.define([
 	 *
 	 * @type {{DATACELL: string, COLUMNHEADER: string, ROWHEADER: string, ROWACTION: string, COLUMNROWHEADER: string, ROOT: string, CONTENT: string,
 	 *     TABLE: string, TABLEHEADER: string, TABLEFOOTER: string, TABLESUBHEADER: string, COLUMNHEADER_TBL: string, COLUMNHEADER_ROW: string,
-	 *     CREATIONROW_TBL: string, ROWHEADER_COL: string, TH: string, ROWHEADER_TD: string, TR: string, TREEICON: string, ROWACTIONHEADER: string,
+	 *     CREATIONROW_TBL: string, ROWHEADER_COL: string, TH: string: string, TR: string, TREEICON: string, ROWACTIONHEADER: string,
 	 *     NODATA: string, OVERLAY: string}|*}
 	 * @see TableAccRenderExtension.writeAriaAttributesFor
 	 * @public
@@ -1008,7 +1020,6 @@ sap.ui.define([
 		CREATIONROW: "CREATIONROW",				// The root of the creation row
 		ROWHEADER_COL: "ROWHEADER_COL", 		// The area which contains the row headers
 		TH: "TH", 								// The "technical" column headers
-		ROWHEADER_TD: "ROWHEADER_TD", 			// The "technical" row headers
 		TR: "TR", 								// The rows
 		TREEICON: "TREEICON", 					// The expand/collapse icon in the TreeTable
 		ROWACTIONHEADER: "ROWACTIONHEADER", 	// The header of the row action column
@@ -1176,7 +1187,12 @@ sap.ui.define([
 
 		var sTitle = null,
 			oTable = this.getTable(),
-			aRefs = [$ScrollRow, $ScrollRow.children(), $RowHdr, $FixedRow, $FixedRow ? $FixedRow.children() : null, $RowAct],
+			$RowElements = [
+				$RowHdr ? $RowHdr.parent() : null,
+				$FixedRow,
+				$ScrollRow,
+				$RowAct ? $RowAct.parent() : null
+			],
 			bTreeMode = !!$TreeIcon,
 			oBinding = oTable.getBinding("rows");
 
@@ -1199,9 +1215,9 @@ sap.ui.define([
 			iLevel = iLevel - 1;
 		}
 
-		for (var i = 0; i < aRefs.length; i++) {
-			if (aRefs[i]) {
-				aRefs[i].attr({
+		for (var i = 0; i < $RowElements.length; i++) {
+			if ($RowElements[i]) {
+				$RowElements[i].attr({
 					"aria-expanded": bGroup ? bExpanded + "" : null,
 					"aria-level": iLevel < 0 ? null : (iLevel + 1)
 				});
