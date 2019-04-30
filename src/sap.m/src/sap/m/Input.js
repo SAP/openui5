@@ -2446,16 +2446,15 @@ function(
 						}
 					})
 					.attachAfterOpen(function () {
-						var sValue = this.getValue();
-
-						oSuggPopover._oPopupInput.setValue(sValue);
-						this._triggerSuggest(sValue);
+						this._triggerSuggest(this.getValue());
 						this._refreshListItems();
 					}, this)
 					.attachBeforeOpen(function() {
 						// set the same placeholder and maxLength as the original input
 						oSuggPopover._oPopupInput.setPlaceholder(this.getPlaceholder());
 						oSuggPopover._oPopupInput.setMaxLength(this.getMaxLength());
+
+						oSuggPopover._oPopupInput.setValue(this.getValue());
 					}, this);
 
 				oPopover.getBeginButton()

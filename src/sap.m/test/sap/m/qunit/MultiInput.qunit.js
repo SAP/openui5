@@ -921,6 +921,42 @@ sap.ui.define([
 		oMI.destroy();
 	});
 
+	QUnit.test("mobile - clear input value after selection a suggestion", function (assert) {
+
+		// Setup
+		var oMI;
+
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		oMI = new MultiInput({
+			suggestionItems : [
+				new sap.ui.core.Item({
+					text : 'Diamond',
+					key : 'diamond'
+				}),
+				new sap.ui.core.Item({
+					text : 'Graphite',
+					key : 'graphite'
+				})
+			]
+		}).placeAt( "qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oMI._oSuggPopover._oPopover.open();
+		oMI.setSelectionItem(oMI.getSuggestionItems()[0]);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(oMI._oSuggPopover._oPopupInput.getValue(), "", "The dialog's input is cleared.");
+
+		// clean up
+		oMI.destroy();
+	});
+
 	QUnit.test("onBeforeOpen should call _manageListsVisibility with the correct parameter", function (assert) {
 
 		// Setup
