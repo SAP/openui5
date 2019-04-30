@@ -44,7 +44,10 @@ sap.ui.define([
 		// Special treatment if FlexBox is itself an item of a parent FlexBox
 		var oParent = oControl.getParent();
 		if (oParent && oParent.isA("sap.m.FlexBox")) {
-			oRm.addClass("sapMFlexItem");
+
+			if (!oControl.hasStyleClass("sapMFlexItem")) {
+				oRm.addClass("sapMFlexItem");
+			}
 
 			// Set layout properties for flex item
 			var oLayoutData = oControl.getLayoutData();
@@ -80,7 +83,12 @@ sap.ui.define([
 		oRm.addClass("sapMFlexBoxAlignItems" + oControl.getAlignItems());
 		oRm.addClass("sapMFlexBoxWrap" + oControl.getWrap());
 		oRm.addClass("sapMFlexBoxAlignContent" + oControl.getAlignContent());
-		oRm.addClass("sapMFlexBoxBG" + oControl.getBackgroundDesign());
+
+		var sBGClass = "sapMFlexBoxBG" + oControl.getBackgroundDesign();
+			if (!oControl.hasStyleClass(sBGClass)) {
+				oRm.addClass(sBGClass);
+			}
+
 		oRm.writeClasses();
 
 		// Add inline styles
