@@ -895,12 +895,11 @@ sap.ui.define([
 			return;
 		}
 
-		if (this._getKeyboardExtension().isInActionMode()) {
+		if (this._getKeyboardExtension().isInActionMode() || !oCellInfo.isOfType(CellType.ANY)) {
 			return;
 		}
 
-		if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SPACE) &&
-			TableUtils.getCellInfo(oEvent.target).type) {
+		if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SPACE)) {
 			oEvent.preventDefault(); // Prevent scrolling the page.
 		}
 
