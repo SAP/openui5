@@ -73,7 +73,8 @@ sap.ui.define([
 			});
             this.oMockServer.simulate(sDataRootPath + "metadata.xml", sDataRootPath);
             this.oMockServer.start();
-            this.oModel = new ODataModel(this.sServiceUri, { canonicalRequests: true, messageScope: MessageScope.BusinessObject});
+            this.oModel = new ODataModel(this.sServiceUri, { canonicalRequests: true});
+            this.oModel.setMessageScope(MessageScope.BusinessObject);
             this.oStubGetEntitySetByPath = sinon.spy(this.oModel.oMetadata, "_getEntitySetByPath");
 
             this.fnOriginalInvalidate = this.oModel._invalidatePathCache;
@@ -146,10 +147,10 @@ sap.ui.define([
                 var fnRequestCompleted = function(oEvent){
                     test.oModel.detachRequestCompleted(fnRequestCompleted);
                     var oRelevantRequest = getLastRequest(test);
-                    //var sMessageScopeHeader = oRelevantRequest["headers"]["sap-message-scope"];
+                    var sMessageScopeHeader = oRelevantRequest["headers"]["sap-message-scope"];
 
-                    //var aParts = oRelevantRequest.deepPath.split("/");
-                    //assert.equal(sMessageScopeHeader, "/" + aParts[1]);
+                    var aParts = oRelevantRequest.deepPath.split("/");
+                    assert.equal(sMessageScopeHeader, "/" + aParts[1]);
                     assert.equal(oRelevantRequest.deepPath, path, "Deep path set correctly.");
                     assert.equal(oEvent.getParameters().url.split("?")[0], expectedURL, "ODatamodel." +  testedAPI + " - requestedPath:" + path);
 
@@ -317,10 +318,10 @@ sap.ui.define([
                         var sLastRequest = that.oRequestStub.args[that.oRequestStub.args.length - 1][0];
 
                         var sDeepPath = sLastRequest["data"]["__batchRequests"][0].__changeRequests[0].deepPath;
-                        //var sMessageScopeHeader = sLastRequest["data"]["__batchRequests"][0].__changeRequests[0].headers["sap-message-scope"];
+                        var sMessageScopeHeader = sLastRequest["data"]["__batchRequests"][0].__changeRequests[0].headers["sap-message-scope"];
 
-                        //var aParts = sDeepPath.split("/");
-                        //assert.equal(sMessageScopeHeader, "/" + aParts[1]);
+                        var aParts = sDeepPath.split("/");
+                        assert.equal(sMessageScopeHeader, "/" + aParts[1]);
                         assert.equal(sDeepPath, "/SalesOrderSet('0500000005')/ToLineItems(SalesOrderID='0500000005',ItemPosition='0000000010')/Note", "Deep path set correctly.");
                         return checkIfCacheEntriesAreValid(that.oModel, assert).then(done);
                   }
@@ -547,7 +548,7 @@ sap.ui.define([
         });
     });
 
-    /*
+
     QUnit.module("Message Scope supported", {
         beforeEach: function () {
             this.sServiceUri = "/SalesOrderSrv/";
@@ -572,7 +573,8 @@ sap.ui.define([
         var that = this;
         var done = assert.async();
 
-        this.oModel = new ODataModel(this.sServiceUri, { canonicalRequests: true, messageScope: MessageScope.RequestedObjects});
+        this.oModel = new ODataModel(this.sServiceUri, { canonicalRequests: true});
+        this.oModel.setMessageScope(MessageScope.RequestedObjects);
         this.oModel.metadataLoaded().then(function(){
             that.oModel.read("/SalesOrderSet('0500000000')");
 
@@ -591,7 +593,8 @@ sap.ui.define([
         var that = this;
         var done = assert.async();
 
-        this.oModel = new ODataModel(this.sServiceUri, { canonicalRequests: true, messageScope: MessageScope.BusinessObject});
+        this.oModel = new ODataModel(this.sServiceUri, { canonicalRequests: true});
+        this.oModel.setMessageScope(MessageScope.BusinessObject);
         this.oModel.metadataLoaded().then(function(){
             that.oModel.read("/SalesOrderSet('0500000000')");
 
@@ -635,7 +638,8 @@ sap.ui.define([
         var that = this;
         var done = assert.async();
 
-        this.oModel = new ODataModel(this.sServiceUri, { canonicalRequests: true, messageScope: MessageScope.BusinessObject});
+        this.oModel = new ODataModel(this.sServiceUri, { canonicalRequests: true});
+        this.oModel.setMessageScope(MessageScope.BusinessObject);
         this.oModel.metadataLoaded().then(function(){
             that.oModel.read("/SalesOrderSet('0500000000')");
 
@@ -658,7 +662,8 @@ sap.ui.define([
         var that = this;
         var done = assert.async();
 
-        this.oModel = new ODataModel(this.sServiceUri, { canonicalRequests: true, messageScope: MessageScope.RequestedObjects});
+        this.oModel = new ODataModel(this.sServiceUri, { canonicalRequests: true});
+        this.oModel.setMessageScope(MessageScope.RequestedObjects);
         this.oModel.metadataLoaded().then(function(){
             that.oModel.read("/SalesOrderSet('0500000000')");
 
@@ -671,6 +676,6 @@ sap.ui.define([
 
             that.oModel.attachRequestCompleted(fnRequestCompleted);
         });
-    });*/
+    });
 
 });
