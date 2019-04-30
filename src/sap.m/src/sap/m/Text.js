@@ -252,9 +252,29 @@ function(library, Control, coreLibrary, Device, HyphenationSupport, TextRenderer
 			this.hasMaxLines() &&
 			!this.canUseNativeLineClamp()) {
 
-			// set max-height for maxLines support
-			this.clampHeight();
+				var oCore = sap.ui.getCore();
+
+				if (oCore.isThemeApplied()) {
+					// set max-height for maxLines support
+					this.clampHeight();
+				} else {
+					oCore.attachThemeChanged(this._handleThemeLoad, this);
+				}
 		}
+	};
+
+	/**
+	 * Fired when the theme is loaded
+	 *
+	 * @private
+	 */
+	Text.prototype._handleThemeLoad = function() {
+
+		// set max-height for maxLines support
+		this.clampHeight();
+
+		var oCore = sap.ui.getCore();
+		oCore.detachThemeChanged(this._handleThemeLoad, this);
 	};
 
 	/**
