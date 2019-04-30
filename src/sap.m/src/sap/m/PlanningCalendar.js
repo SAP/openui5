@@ -1578,10 +1578,12 @@ sap.ui.define([
 
 	PlanningCalendar.prototype.destroyRows = function() {
 
-		var destroyed = this.destroyAggregation("rows", true);
+		var destroyed;
 
 		var oTable = this.getAggregation("table");
 		oTable.destroyItems(true);
+
+		destroyed = this.destroyAggregation("rows");
 
 		updateSelectAllCheckBox.call(this);
 

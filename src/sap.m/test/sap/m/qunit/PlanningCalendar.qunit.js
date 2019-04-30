@@ -1478,6 +1478,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("rows", function(assert) {
+		var oSpyRerender;
 		var oTable = sap.ui.getCore().byId("PC1-Table");
 		assert.equal(oPC1.getRows().length, 2, "PlanningCalendarRows assigned");
 		var iIntervals = 12;
@@ -1529,10 +1530,13 @@ sap.ui.define([
 		oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
 		oTable = sap.ui.getCore().byId("PC1-Table");
 
+		oSpyRerender = sinon.spy(oPC1, "invalidate");
 		oPC1.destroyRows();
 		sap.ui.getCore().applyChanges();
 		assert.equal(oTable.getItems().length, 0, "Table rows destroyed");
 		assert.ok(!sap.ui.getCore().byId("PC1-Row1"), "Row1 destroyed");
+		assert.ok(oSpyRerender.callCount > 0, "Calendar was rerendered");
+		oSpyRerender.restore();
 
 		oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
 	});
