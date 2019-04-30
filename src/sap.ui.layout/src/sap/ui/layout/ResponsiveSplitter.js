@@ -365,7 +365,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * The WidthIntervals is a sorted array in ascdending order, containing all breakpoints for the splitter
+	 * The WidthIntervals is a sorted array in ascending order, containing all breakpoints for the splitter
 	 * The interval is defined as 2 sequent array elements.
 	 * This array includes Number.MIN_VALUE and Number.MAX_VALUE as -Infinity and +Infinity,
 	 * and covers the whole numeric axis
