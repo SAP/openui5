@@ -109,8 +109,14 @@ sap.ui.define([
 									});
 								}
 								bCreateRequestFailure = !bCreateRequestFailure;
-							}
-							if (oMessages) {
+							} else if (oXhr.url.indexOf("ProductSet('HT-1000')/ToSupplier") >= 0) {
+								oMessages = {
+									code: "MESSAGE/CODE",
+									message: "Operation failed",
+									severity: "error",
+									target: "/BusinessPartnerSet('0100000000')/City"
+								};
+							} if (oMessages) {
 								headers["sap-message"] = JSON.stringify(oMessages);
 							}
 							oXhr._fnOrignalXHRRespond.apply(this, [status, headers, content]);
@@ -268,6 +274,23 @@ sap.ui.define([
 				}});
 			}});
         });
+	});
+
+	QUnit.test("Affected Targets - ODataMessageParser._createTarget - Absolute message targets", function(assert){
+		var done = assert.async();
+		var oModel = new ODataModel(this.sServiceUri);
+
+        oModel.metadataLoaded().then(function(){
+
+			var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+
+			oModel.read("/ProductSet('HT-1000')/ToSupplier", {
+				success: function(){
+					assert.equal(oMessageModel.oData[0].target, "/BusinessPartnerSet('0100000000')/City", "Target was set correctly.");
+					assert.equal(oMessageModel.oData[0].fullTarget, "/BusinessPartnerSet('0100000000')/City", "The canonical target is used as fall-back when an absolute path is used in the message target.");
+					done();
+			}});
+		});
     });
 
 });
