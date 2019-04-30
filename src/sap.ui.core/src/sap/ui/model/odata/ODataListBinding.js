@@ -53,6 +53,7 @@ sap.ui.define([
 	 *           if not specified, the default count mode of the <code>oModel</code> is applied
 	 *
 	 * @public
+	 * @deprecated As of version 1.66, please use {@link sap.ui.model.odata.v2.ODataListBinding} instead.
 	 * @alias sap.ui.model.odata.ODataListBinding
 	 * @extends sap.ui.model.ListBinding
 	 */
