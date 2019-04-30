@@ -227,23 +227,21 @@ sap.ui.define([
 		ThemeParameters: mThemeParameters,
 
 		/**
-		 * Returns whether the table has a row header or not
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @returns {boolean}
-		 * @private
+		 * Returns whether the table has row header cells.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {boolean} Whether the table has row header cells.
 		 */
-		hasRowHeader : function(oTable) {
-			return (oTable.getSelectionMode() !== SelectionMode.None
-					&& oTable.getSelectionBehavior() !== SelectionBehavior.RowOnly)
-					|| TableGrouping.isGroupMode(oTable);
+		hasRowHeader: function(oTable) {
+			return (oTable.getSelectionMode() !== SelectionMode.None && oTable.getSelectionBehavior() !== SelectionBehavior.RowOnly)
+				   || TableGrouping.isGroupMode(oTable);
 		},
 
 		/**
 		 * Returns whether the table has a SelectAll checkbox.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @returns {boolean} Returns <code>true</code>, if the table has a SelectAll checkbox.
-		 * @private
+		 * @returns {boolean} Whether the table has a SelectAll checkbox.
 		 */
 		hasSelectAll: function(oTable) {
 			var sSelectionMode = oTable ? oTable.getSelectionMode() : SelectionMode.None;
@@ -253,9 +251,8 @@ sap.ui.define([
 		/**
 		 * Returns whether the table has row highlights.
 		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @returns {boolean} Returns <code>true</code>, if the table has row highlights
-		 * @private
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {boolean} Whether the table has row highlights.
 		 */
 		hasRowHighlights: function(oTable) {
 			if (!oTable) {
@@ -275,23 +272,23 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the number of row actions in case the tahe has a row action column, <code>0</code> otherwise
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @returns {int}
-		 * @private
+		 * Returns the number of row actions in case the table has a row action column, <code>0</code> otherwise.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {int} The number of row actions.
 		 */
-		getRowActionCount : function(oTable) {
+		getRowActionCount: function(oTable) {
 			var oTemplate = oTable ? oTable.getRowActionTemplate() : null;
 			return oTemplate ? oTemplate._getCount() : 0;
 		},
 
 		/**
-		 * Returns whether the table has a row action column or not
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @returns {boolean}
-		 * @private
+		 * Returns whether the table has a row action column.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {boolean} Whether the table has row actions.
 		 */
-		hasRowActions : function(oTable) {
+		hasRowActions: function(oTable) {
 			var oRowActionTemplate = oTable ? oTable.getRowActionTemplate() : null;
 
 			return oRowActionTemplate != null
@@ -301,22 +298,22 @@ sap.ui.define([
 
 		/**
 		 * Returns whether selection is allowed on the cells of a row (not row selector).
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @returns {boolean}
-		 * @private
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {boolean} Whether selection is also possible on cells that are no selection cells.
 		 */
-		isRowSelectionAllowed : function(oTable) {
+		isRowSelectionAllowed: function(oTable) {
 			return oTable.getSelectionMode() !== SelectionMode.None &&
-				(oTable.getSelectionBehavior() === SelectionBehavior.Row || oTable.getSelectionBehavior() === SelectionBehavior.RowOnly);
+				   (oTable.getSelectionBehavior() === SelectionBehavior.Row || oTable.getSelectionBehavior() === SelectionBehavior.RowOnly);
 		},
 
 		/**
 		 * Returns whether selection is allowed via the row selector.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @returns {boolean}
-		 * @private
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {boolean} Whether selection is possible on selection cells.
 		 */
-		isRowSelectorSelectionAllowed : function(oTable) {
+		isRowSelectorSelectionAllowed: function(oTable) {
 			// Incl. that RowOnly works like Row
 			return oTable.getSelectionMode() !== SelectionMode.None && TableUtils.hasRowHeader(oTable);
 		},
@@ -339,11 +336,11 @@ sap.ui.define([
 		/**
 		 * Returns whether the no data text is currently shown or not
 		 * If true, also CSS class sapUiTableEmpty is set on the table root element.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @returns {boolean}
-		 * @private
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {boolean} Whether the no data text is shown.
 		 */
-		isNoDataVisible : function(oTable) {
+		isNoDataVisible: function(oTable) {
 			if (!oTable.getShowNoData()) {
 				return false;
 			}
@@ -353,11 +350,11 @@ sap.ui.define([
 
 		/**
 		 * Returns whether the table currently has data.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @returns {boolean}
-		 * @private
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {boolean} Whether the table has data.
 		 */
-		hasData : function(oTable) {
+		hasData: function(oTable) {
 			var oBinding = oTable.getBinding("rows");
 			var iTotalRowCount = oTable._getTotalRowCount();
 			var bHasData = iTotalRowCount > 0;
@@ -374,9 +371,8 @@ sap.ui.define([
 		 * Returns whether the busy indicator is visible. It is considered as visible when the busy indicator element exists in the DOM as
 		 * a child of the table element. It is not checked whether the indicator is actually visible on the screen.
 		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @returns {boolean} Returns <code>true</code>, if the busy indicator is visible.
-		 * @private
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {boolean} Whether the busy indicator is visible.
 		 */
 		isBusyIndicatorVisible: function(oTable) {
 			if (!oTable || !oTable.getDomRef()) {
@@ -390,8 +386,7 @@ sap.ui.define([
 		 * Returns whether one or more requests are currently in process by the binding.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @returns {boolean} Returns <code>true</code>, if the binding of the table is currently requesting data.
-		 * @private
+		 * @returns {boolean} Whether the binding of the table is currently requesting data.
 		 */
 		hasPendingRequests: function(oTable) {
 			if (!oTable) {
@@ -438,13 +433,12 @@ sap.ui.define([
 
 		/**
 		 * Checks whether an object is of the given type(s).
-		 * Wrapper for {@link sap.ui.base.Object.isA}
+		 * Wrapper for {@link sap.ui.base.Object.isA}.
 		 *
-		 * @param {object} oObject Object which will be checked whether it is an instance of the given type
-		 * @param {string|string[]} vTypeName Type or types to check for
+		 * @param {Object} oObject Object which will be checked whether it is an instance of the given type.
+		 * @param {string | string[]} vTypeName Type or types to check for.
 		 * @see sap.ui.base.Object.isA
-		 * @returns {boolean} Whether this object is an instance of the given type or of any of the given types
-		 * @private
+		 * @returns {boolean} Whether this object is an instance of the given type or of any of the given types.
 		 */
 		isA: function(oObject, vTypeName) {
 			return BaseObject.isA(oObject, vTypeName);
@@ -453,13 +447,12 @@ sap.ui.define([
 		/**
 		 * Toggles the selection state of the row which contains the given cell DOM element.
 		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @param {jQuery|HTMLElement|int} vRowIndicator The data cell in the row, or the data row index of the row,
-		 * 												 where the selection state should be toggled.
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @param {jQuery | HTMLElement | int} vRowIndicator The data cell in the row, or the data row index of the row,
+		 *                                                   where the selection state should be toggled.
 		 * @param {boolean} [bSelect] If defined, then instead of toggling the desired state is set.
-		 * @param {function} [fnDoSelect] If defined, then instead of the default selection code, this custom callback is used.
+		 * @param {Function} [fnDoSelect] If defined, then instead of the default selection code, this custom callback is used.
 		 * @returns {boolean} Returns <code>true</code> if the selection state of the row has been changed.
-		 * @private
 		 */
 		toggleRowSelection: function(oTable, vRowIndicator, bSelect, fnDoSelect) {
 			if (!oTable ||
@@ -502,7 +495,7 @@ sap.ui.define([
 				}
 				return setSelectionState(vRowIndicator);
 
-			// Variable vRowIndicator is a jQuery object or DOM element.
+				// Variable vRowIndicator is a jQuery object or DOM element.
 			} else {
 				var $Cell = jQuery(vRowIndicator);
 				var oCellInfo = TableUtils.getCellInfo($Cell[0]);
@@ -510,11 +503,13 @@ sap.ui.define([
 
 				if (!TableUtils.Grouping.isInGroupingRow($Cell[0])
 					&& ((oCellInfo.isOfType(TableUtils.CELLTYPE.DATACELL | TableUtils.CELLTYPE.ROWACTION) && bIsRowSelectionAllowed)
-					|| (oCellInfo.isOfType(TableUtils.CELLTYPE.ROWHEADER) && TableUtils.isRowSelectorSelectionAllowed(oTable)))) {
+						|| (oCellInfo.isOfType(TableUtils.CELLTYPE.ROWHEADER) && TableUtils.isRowSelectorSelectionAllowed(oTable)))) {
 
 					var iAbsoluteRowIndex;
 					if (oCellInfo.isOfType(TableUtils.CELLTYPE.DATACELL)) {
-						iAbsoluteRowIndex = oTable.getRows()[parseInt($Cell.closest("tr", oTable.getDomRef()).attr("data-sap-ui-rowindex"))].getIndex();
+						iAbsoluteRowIndex = oTable
+							.getRows()[parseInt($Cell.closest("tr", oTable.getDomRef()).attr("data-sap-ui-rowindex"))]
+							.getIndex();
 					} else { // CELLTYPES.ROWHEADER, CELLTYPES.ROWACTION
 						iAbsoluteRowIndex = oTable.getRows()[parseInt($Cell.attr("data-sap-ui-rowindex"))].getIndex();
 					}
@@ -529,11 +524,11 @@ sap.ui.define([
 		/**
 		 * Returns the text to be displayed as no data message.
 		 * If a custom noData control is set null is returned.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @returns {String|string|null}
-		 * @private
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {String | string | null} The no data text.
 		 */
-		getNoDataText : function(oTable) {
+		getNoDataText: function(oTable) {
 			var oNoData = oTable.getNoData();
 			if (oNoData instanceof Control) {
 				return null;
@@ -545,22 +540,22 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the number of currently visible columns
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @returns {int}
-		 * @private
+		 * Returns the number of currently rendered columns.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {int} The number of currently rendered columns.
 		 */
-		getVisibleColumnCount : function(oTable) {
+		getVisibleColumnCount: function(oTable) {
 			return oTable._getVisibleColumns().length;
 		},
 
 		/**
-		 * Returns the number of header rows
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @returns {int}
-		 * @private
+		 * Returns the number of header rows.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {int} The number of rows in the table header.
 		 */
-		getHeaderRowCount : function(oTable) {
+		getHeaderRowCount: function(oTable) {
 
 			if (oTable._iHeaderRowCount === undefined) {
 				if (!oTable.getColumnHeaderVisible()) {
@@ -583,24 +578,23 @@ sap.ui.define([
 
 		/**
 		 * Checks whether all conditions for pixel-based scrolling (Variable Row Height) are fulfilled.
-		 * @param {Object} oTable current table object
-		 * @returns {Boolean} true/false if fulfilled
-		 * @private
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {boolean} Whether variable row height support is enabled.
 		 */
-		isVariableRowHeightEnabled : function(oTable) {
+		isVariableRowHeightEnabled: function(oTable) {
 			return oTable && oTable._bVariableRowHeightEnabled && oTable.getFixedRowCount() <= 0 && oTable.getFixedBottomRowCount() <= 0;
 		},
 
 		/**
-		 * Returns the logical number of rows
-		 * Optionally empty visible rows are added (in case that the number of data
-		 * rows is smaller than the number of visible rows)
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @param {boolean} bIncludeEmptyRows
-		 * @returns {int}
-		 * @private
+		 * Returns the logical number of rows.
+		 * Optionally empty visible rows are added (in case that the number of data rows is smaller than the number of visible rows).
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @param {boolean} bIncludeEmptyRows Whether empty rows should also be counted.
+		 * @returns {int} The logical number of rows.
 		 */
-		getTotalRowCount : function(oTable, bIncludeEmptyRows) {
+		getTotalRowCount: function(oTable, bIncludeEmptyRows) {
 			var iRowCount = oTable._getTotalRowCount();
 			if (bIncludeEmptyRows) {
 				iRowCount = Math.max(iRowCount, oTable.getVisibleRowCount());
@@ -610,31 +604,31 @@ sap.ui.define([
 
 		/**
 		 * Returns the number of visible rows that are not empty.
-		 * If the number of visible rows is smaller than the number of data rows,
-		 * the number of visible rows is returned, otherwise the number of data rows.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @returns {int}
-		 * @private
+		 * If the number of visible rows is smaller than the number of data rows, the number of visible rows is returned, otherwise the number of
+		 * data rows.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {int} The number of rendered rows that are not empty.
 		 */
-		getNonEmptyVisibleRowCount : function(oTable) {
+		getNonEmptyVisibleRowCount: function(oTable) {
 			return Math.min(oTable.getVisibleRowCount(), oTable._getTotalRowCount());
 		},
 
 		/**
-		 * Returns a combined info about the currently focused item (based on the item navigation)
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @returns {sap.ui.table.TableUtils.FocusedItemInfo|null} Returns the information about the focused item, or <code>null</code>, if the
-		 *                                                         item navigation is not yet initialized.
+		 * Returns a combined info about the currently focused item (based on the item navigation).
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {sap.ui.table.TableUtils.FocusedItemInfo | null} Returns the information about the focused item, or <code>null</code>, if the
+		 *                                                           item navigation is not yet initialized.
 		 * @typedef {Object} sap.ui.table.TableUtils.FocusedItemInfo
 		 * @property {int} cell Index of focused cell in the ItemNavigation.
 		 * @property {int} columnCount Number of columns in the ItemNavigation.
 		 * @property {int} cellInRow Index of the cell in the row.
 		 * @property {int} row Index of row in the ItemNavigation.
 		 * @property {int} cellCount Number of cells in the ItemNavigation.
-		 * @property {Object|undefined} domRef Reference to the focused DOM element.
-		 * @private
+		 * @property {Object | undefined} domRef Reference to the focused DOM element.
 		 */
-		getFocusedItemInfo : function(oTable) {
+		getFocusedItemInfo: function(oTable) {
 			var oIN = oTable._getItemNavigation();
 			if (!oIN) {
 				return null;
@@ -650,13 +644,13 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the index of the row (in the rows aggregation) of the current focused cell
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @returns {int}
-		 * @private
+		 * Returns the index of the row (in the rows aggregation) of the current focused cell.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {int} The row index.
 		 *
 		 */
-		getRowIndexOfFocusedCell : function(oTable) {
+		getRowIndexOfFocusedCell: function(oTable) {
 			var oInfo = TableUtils.getFocusedItemInfo(oTable);
 			return oInfo.row - TableUtils.getHeaderRowCount(oTable);
 		},
@@ -664,33 +658,33 @@ sap.ui.define([
 		/**
 		 * Returns whether column with the given index (in the array of visible columns (see Table._getVisibleColumns()))
 		 * is a fixed column.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @param {int} iColIdx Index of column in the tables column aggregation
-		 * @returns {boolean}
-		 * @private
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @param {int} iColumnIndex Index of column in the tables columns aggregation.
+		 * @returns {boolean} Whether the column is fixed.
 		 */
-		isFixedColumn : function(oTable, iColIdx) {
-			return iColIdx < oTable.getComputedFixedColumnCount();
+		isFixedColumn: function(oTable, iColumnIndex) {
+			return iColumnIndex < oTable.getComputedFixedColumnCount();
 		},
 
 		/**
 		 * Returns whether the table has fixed columns.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @returns {boolean}
-		 * @private
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {boolean} Whether the table has fixed column.
 		 */
-		hasFixedColumns : function(oTable) {
+		hasFixedColumns: function(oTable) {
 			return oTable.getComputedFixedColumnCount() > 0;
 		},
 
 		/**
-		 * Focus the item with the given index in the item navigation
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @param {int} iIndex Index of item in ItemNavigation which shall get the focus
-		 * @param {Object} oEvent
-		 * @private
+		 * Focus the item with the given index in the item navigation.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @param {int} iIndex Index of item in ItemNavigation which shall get the focus.
+		 * @param {Object} oEvent The event object.
 		 */
-		focusItem : function(oTable, iIndex, oEvent) {
+		focusItem: function(oTable, iIndex, oEvent) {
 			var oIN = oTable._getItemNavigation();
 			if (oIN) {
 				oIN.focusItem(iIndex, oEvent);
@@ -712,20 +706,19 @@ sap.ui.define([
 		 *
 		 * @typedef {Object} sap.ui.table.TableUtils.CellInfo
 		 * @property {sap.ui.table.TableUtils.CellType} [type] The type of the cell.
-		 * @property {int|null} [rowIndex] The index of the row the cell is inside.
-		 * @property {int|null} columnIndex The index of the column, in the <code>columns</code> aggregation, the cell is inside.
-		 * @property {int|null} columnSpan The amount of columns the cell spans over.
-		 * @property {jQuery|null} cell The jQuery reference to the table cell.
+		 * @property {int | null} [rowIndex] The index of the row the cell is inside.
+		 * @property {int | null} columnIndex The index of the column, in the <code>columns</code> aggregation, the cell is inside.
+		 * @property {int | null} columnSpan The amount of columns the cell spans over.
+		 * @property {jQuery | null} cell The jQuery reference to the table cell.
 		 * @property {sap.ui.table.TableUtils.CellInfo#isOfType} isOfType Function to check for the type of the cell.
 		 */
 
 		/**
 		 * Collects all available information of a table cell by reading the DOM and returns them in a single object.
 		 *
-		 * @param {jQuery|HTMLElement} oCellRef DOM reference of a table cell.
+		 * @param {jQuery | HTMLElement} oCellRef DOM reference of a table cell.
 		 * @returns {sap.ui.table.TableUtils.CellInfo} An object containing information about the cell.
 		 * @see sap.ui.table.TableUtils.CellInfo
-		 * @private
 		 */
 		getCellInfo: function(oCellRef) {
 			var oCellInfo;
@@ -758,7 +751,7 @@ sap.ui.define([
 				rRowIndex = /_([\d]+)/;
 				sColumnId = $Cell.attr("id");
 				aRowIndexMatch = rRowIndex.exec(sColumnId);
-				iRowIndex =  aRowIndexMatch && aRowIndexMatch[1] != null ? parseInt(aRowIndexMatch[1]) : 0;
+				iRowIndex = aRowIndexMatch && aRowIndexMatch[1] != null ? parseInt(aRowIndexMatch[1]) : 0;
 
 				oCellInfo.type = TableUtils.CELLTYPE.COLUMNHEADER;
 				oCellInfo.rowIndex = iRowIndex;
@@ -820,19 +813,19 @@ sap.ui.define([
 		/**
 		 * Returns the Row, Column and Cell instances for the given row index (in the rows aggregation)
 		 * and column index (in the array of visible columns (see Table._getVisibleColumns()).
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @param {int} iRowIdx Index of row in the tables rows aggregation
-		 * @param {int} iColIdx Index of column in the list of visible columns
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @param {int} iRowIdx Index of row in the tables rows aggregation.
+		 * @param {int} iColIdx Index of column in the list of visible columns.
 		 * @param {boolean} bIdxInColumnAgg Whether the given column index is the index in the columns (<code>true</code>)
-		 * 									aggregation or in the list of visble columns (<code>false</code>).
-		 * @returns {Object}
+		 *                                  aggregation or in the list of visible columns (<code>false</code>).
+		 * @returns {Object} An object containing references to the row, column and cell.
 		 * @type {Object}
-		 * @property {sap.ui.table.Row} row Row of the table
-		 * @property {sap.ui.table.Column} column Column of the table
-		 * @property {sap.ui.core.Control} cell Cell control of row/column
-		 * @private
+		 * @property {sap.ui.table.Row} row Row of the table.
+		 * @property {sap.ui.table.Column} column Column of the table.
+		 * @property {sap.ui.core.Control} cell Cell control of row/column.
 		 */
-		getRowColCell : function(oTable, iRowIdx, iColIdx, bIdxInColumnAgg) {
+		getRowColCell: function(oTable, iRowIdx, iColIdx, bIdxInColumnAgg) {
 			var oRow = iRowIdx >= 0 && iRowIdx < oTable.getRows().length ? oTable.getRows()[iRowIdx] : null;
 			var aColumns = bIdxInColumnAgg ? oTable.getColumns() : oTable._getVisibleColumns();
 			var oColumn = iColIdx >= 0 && iColIdx < aColumns.length ? aColumns[iColIdx] : null;
@@ -861,10 +854,9 @@ sap.ui.define([
 		 * Returns the table cell which is either the parent of an element, or returns the element if it is a table cell itself.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table used as the context within which to search for the cell.
-		 * @param {jQuery|HTMLElement} oElement A table cell or an element inside a table cell.
-		 * @param {jQuery|HTMLElement} [bIncludePseudoCells=false] Whether to include pseudo cells.
-		 * @returns {jQuery|null} Returns <code>null</code>, if the element is neither a table cell nor inside a table cell.
-		 * @private
+		 * @param {jQuery | HTMLElement} oElement A table cell or an element inside a table cell.
+		 * @param {jQuery | HTMLElement} [bIncludePseudoCells=false] Whether to include pseudo cells.
+		 * @returns {jQuery | null} Returns <code>null</code>, if the element is neither a table cell nor inside a table cell.
 		 */
 		getCell: function(oTable, oElement, bIncludePseudoCells) {
 			bIncludePseudoCells = bIncludePseudoCells === true;
@@ -894,10 +886,9 @@ sap.ui.define([
 		 * Returns the table cell which is the parent of an element.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table used as the context within which to search for the parent cell.
-		 * @param {jQuery|HTMLElement} oElement An element inside a table cell.
-		 * @param {jQuery|HTMLElement} [bIncludePseudoCells=false] Whether to include pseudo cells.
-		 * @returns {jQuery|null} Returns <code>null</code>, if the element is not inside a table cell.
-		 * @private
+		 * @param {jQuery | HTMLElement} oElement An element inside a table cell.
+		 * @param {jQuery | HTMLElement} [bIncludePseudoCells=false] Whether to include pseudo cells.
+		 * @returns {jQuery | null} Returns <code>null</code>, if the element is not inside a table cell.
 		 */
 		getParentCell: function(oTable, oElement, bIncludePseudoCells) {
 			bIncludePseudoCells = bIncludePseudoCells === true;
@@ -917,26 +908,24 @@ sap.ui.define([
 		 * in _mResizeHandlerIds of the table instance. The sIdSuffix is used as key.
 		 * Existing ResizeHandlers will be de-registered before the new one is registered.
 		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @param {string} sIdSuffix ID suffix to identify the DOM element for which to register the ResizeHandler
-		 * @param {Function} fnHandler Function to handle the resize event
-		 * @param {boolean}[bRegisterParent] Flag to register the ResizeHandler for the parent DOM element of the one identified by sIdSuffix
-		 *
-		 * @returns {int|undefined} ResizeHandler ID or undefined if the DOM element could not be found
-		 * @private
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @param {string} sIdSuffix ID suffix to identify the DOM element for which to register the ResizeHandler.
+		 * @param {Function} fnHandler Function to handle the resize event.
+		 * @param {boolean}[bRegisterParent] Flag to register the ResizeHandler for the parent DOM element of the one identified by sIdSuffix.
+		 * @returns {int | undefined} ResizeHandler ID or undefined if the DOM element could not be found.
 		 */
-		registerResizeHandler : function(oTable, sIdSuffix, fnHandler, bRegisterParent) {
+		registerResizeHandler: function(oTable, sIdSuffix, fnHandler, bRegisterParent) {
 			var oDomRef;
 			if (typeof sIdSuffix == "string") {
 				oDomRef = oTable.getDomRef(sIdSuffix);
 			} else {
 				Log.error("sIdSuffix must be a string", oTable);
-				return;
+				return undefined;
 			}
 
 			if (typeof fnHandler !== "function") {
 				Log.error("fnHandler must be a function", oTable);
-				return;
+				return undefined;
 			}
 
 			// make sure that each DOM element of the table can only have one resize handler in order to avoid memory leaks
@@ -958,12 +947,13 @@ sap.ui.define([
 		},
 
 		/**
-		 * De-register ResizeHandler identified by sIdSuffix. If sIdSuffix is undefined, all know ResizeHandlers will be de-registered
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @param {string|Array.<string>} [vIdSuffix] ID suffix to identify the ResizeHandler to de-register. If undefined, all will be de-registered
-		 * @private
+		 * De-register ResizeHandler identified by sIdSuffix. If sIdSuffix is undefined, all know ResizeHandlers will be de-registered.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @param {string | Array.<string>} [vIdSuffix] ID suffix to identify the ResizeHandler to de-register. If undefined, all will be
+		 *                                              de-registered.
 		 */
-		deregisterResizeHandler : function(oTable, vIdSuffix) {
+		deregisterResizeHandler: function(oTable, vIdSuffix) {
 			var aIdSuffix;
 			if (!oTable._mResizeHandlerIds) {
 				// no resize handler registered so far
@@ -995,11 +985,12 @@ sap.ui.define([
 
 		/**
 		 * Checks whether the cell of the given DOM reference is in the first row (from DOM point of view) of the scrollable area.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @param {Object|int} row Cell DOM reference or row index
-		 * @private
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @param {jQuery | HTMLElement | int} row Cell DOM reference or row index.
+		 * @returns {boolean} Whether the row is the first scrollable row of the table based on the data.
 		 */
-		isFirstScrollableRow : function(oTable, row) {
+		isFirstScrollableRow: function(oTable, row) {
 			if (isNaN(row)) {
 				var $Ref = jQuery(row);
 				row = parseInt($Ref.add($Ref.parent()).filter("[data-sap-ui-rowindex]").attr("data-sap-ui-rowindex"));
@@ -1012,11 +1003,10 @@ sap.ui.define([
 		 * Checks whether the cell of the given DOM reference is in the last row (from DOM point of view) of the scrollable area.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {jQuery|HTMLElement|int} row The row element or row index.
-		 * @returns {boolean} Returns <code>true</code>, if the row is the last scrollable row of the table based on the data.
-		 * @private
+		 * @param {jQuery | HTMLElement | int} row The row element or row index.
+		 * @returns {boolean} Whether the row is the last scrollable row of the table based on the data.
 		 */
-		isLastScrollableRow : function(oTable, row) {
+		isLastScrollableRow: function(oTable, row) {
 			if (isNaN(row)) {
 				var $Ref = jQuery(row);
 				row = parseInt($Ref.add($Ref.parent()).filter("[data-sap-ui-rowindex]").attr("data-sap-ui-rowindex"));
@@ -1034,11 +1024,10 @@ sap.ui.define([
 		 * If at the same level, several style classes are defined, this is the priority:
 		 * sapUiSizeCompact, sapUiSizeCondensed, sapUiSizeCozy
 		 *
-		 * @param {sap.ui.table.Table} oControl Instance of the table
-		 * @returns {String|undefined} name of the content density stlye class or undefined if none was found
-		 * @private
+		 * @param {sap.ui.table.Table} oControl Instance of the table.
+		 * @returns {String | undefined} name of the content density style class or undefined if none was found.
 		 */
-		getContentDensity : function(oControl) {
+		getContentDensity: function(oControl) {
 			var sContentDensity;
 			var aContentDensityStyleClasses = ["sapUiSizeCondensed", "sapUiSizeCompact", "sapUiSizeCozy"];
 
@@ -1112,10 +1101,10 @@ sap.ui.define([
 		},
 
 		/**
-		 * Checks if the given CSS width is not fix.
-		 * @param {string} sWidth
-		 * @returns {boolean} true if the width is flexible
-		 * @private
+		 * Checks if the given CSS width is variable.
+		 *
+		 * @param {string} sWidth The CSS width.
+		 * @returns {boolean} Whether the width is variable/flexible.
 		 */
 		isVariableWidth: function(sWidth) {
 			return !sWidth || sWidth == "auto" || sWidth.toString().match(/%$/);
@@ -1124,9 +1113,8 @@ sap.ui.define([
 		/**
 		 * Returns the index of the first fixed bottom row in the <code>rows</code> aggregation.
 		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 * @returns {int} The index of the first fixed bottom row in the <code>rows</code> aggregation, or <code>-1</code>.
-		 * @private
 		 */
 		getFirstFixedBottomRowIndex: function(oTable) {
 			var iFixedBottomRowCount = oTable.getFixedBottomRowCount();
@@ -1155,7 +1143,7 @@ sap.ui.define([
 		 * Gets the resource bundle of the sap.ui.table library. The bundle will be loaded if it is not already loaded or if it should be reloaded.
 		 * After the bundle is loaded, {@link sap.ui.table.TableUtils.getResourceText} can be used to get texts.
 		 *
-		 * @param {object} [mOptions] Configuration options
+		 * @param {Object} [mOptions] Configuration options
 		 * @param {boolean} [mOptions.async=false] Whether to load the bundle asynchronously.
 		 * @param {boolean} [mOptions.reload=false] Whether to reload the bundle, if it already was loaded.
 		 * @returns {jQuery.sap.util.ResourceBundle | Promise} The resource bundle, or a Promise if the bundle is loaded asynchronously.
@@ -1268,8 +1256,8 @@ sap.ui.define([
 		 * @param {Object} [mOptions] The options that influence when the debounced method will be invoked.
 		 * @param {int} [mOptions.wait=0] The amount of milliseconds since the last call to wait before actually invoking the method. Has no
 		 *                                effect, if <code>mOptions.requestAnimationFrame</code> is set to <code>true</code>.
-		 * @param {int|null} [mOptions.maxWait=null] The maximum amount of milliseconds to wait for an invocation. Has no effect, if
-		 *                                           <code>mOptions.requestAnimationFrame</code> is set to <code>true</code>.
+		 * @param {int | null} [mOptions.maxWait=null] The maximum amount of milliseconds to wait for an invocation. Has no effect, if
+		 *                                             <code>mOptions.requestAnimationFrame</code> is set to <code>true</code>.
 		 * @param {boolean} [mOptions.leading=false] Whether the method should be invoked on the first call.
 		 * @param {boolean} [mOptions.asyncLeading=false] Whether the leading invocation should be asynchronous.
 		 * @param {boolean} [mOptions.trailing=true] Whether the method should be invoked after a certain time has passed. If
@@ -1436,8 +1424,8 @@ sap.ui.define([
 		/**
 		 * Returns all interactive elements in a cell.
 		 *
-		 * @param {jQuery|HTMLElement} oCell The cell from which to get the interactive elements.
-		 * @returns {jQuery|null} Returns <code>null</code>, if the passed cell is not a cell or does not contain any interactive elements.
+		 * @param {jQuery | HTMLElement} oCell The cell from which to get the interactive elements.
+		 * @returns {jQuery | null} Returns <code>null</code>, if the passed cell is not a cell or does not contain any interactive elements.
 		 */
 		getInteractiveElements: function(oCell) {
 			if (!oCell) {
@@ -1462,8 +1450,8 @@ sap.ui.define([
 		 *
 		 * @param {string} sCSSSize The CSSSize to convert.
 		 * @param {boolean} [bWithUnit=false] Whether the value should be returned as a string with the unit.
-		 * @returns {string|int|null} The pixel value as an integer, or string if <code>bWithUnit</code> is <code>true</code>. Returns
-		 *                            <code>null</code> if the CSS size could not be converted.
+		 * @returns {string | int | null} The pixel value as an integer, or string if <code>bWithUnit</code> is <code>true</code>. Returns
+		 *                                <code>null</code> if the CSS size could not be converted.
 		 */
 		convertCSSSizeToPixel: function(sCSSSize, bWithUnit) {
 			var iPixelValue;
@@ -1532,12 +1520,22 @@ sap.ui.define([
 			mThemeParameters.resetIcon = ThemeParameters.get("_sap_ui_table_ResetIcon");
 		},
 
+		/**
+		 * Selects the text of an HTMLElement that supports text selection.
+		 *
+		 * @param {HTMLElement} oElement The element whose text to select.
+		 */
 		selectElementText: function(oElement) {
 			if (hasSelectableText(oElement)) {
 				oElement.select();
 			}
 		},
 
+		/**
+		 * Deselects the text of an HTMLElement that supports text selection.
+		 *
+		 * @param {HTMLElement} oElement The element whose text to deselect.
+		 */
 		deselectElementText: function(oElement) {
 			if (hasSelectableText(oElement)) {
 				oElement.setSelectionRange(0, 0);

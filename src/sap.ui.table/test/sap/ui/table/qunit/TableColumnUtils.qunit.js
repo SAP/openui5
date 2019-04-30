@@ -92,7 +92,7 @@ sap.ui.define([
 		this.oTable.addColumn(new Column("c3", {headerSpan: 1, template: new Control()}));
 
 		// strip returned data to minimum for better analysis
-		var oColumnMap = this.fnColumnMapToMinimum(ColumnUtils._getColumnMap(this.oTable));
+		var oColumnMap = this.fnColumnMapToMinimum(ColumnUtils.getColumnMap(this.oTable));
 
 		var oExpectedColumnMap = {
 			c1: {id: "c1", levelInfo: [{spannedColumns: []}], parents: []},
@@ -123,7 +123,7 @@ sap.ui.define([
 		this.oTable.addColumn(new Column("c6", {headerSpan: 1, template: new Control()}));
 
 		// strip returned data to minimum for better analysis
-		var oColumnMap = this.fnColumnMapToMinimum(ColumnUtils._getColumnMap(this.oTable));
+		var oColumnMap = this.fnColumnMapToMinimum(ColumnUtils.getColumnMap(this.oTable));
 
 		var oExpectedColumnMap = {
 			c1: {id: "c1", levelInfo: [{spannedColumns: ["c2"]}], parents: []},
@@ -239,7 +239,7 @@ sap.ui.define([
 		}));
 
 		// strip returned data to minimum for better analysis
-		var oColumnMap = this.fnColumnMapToMinimum(ColumnUtils._getColumnMap(this.oTable));
+		var oColumnMap = this.fnColumnMapToMinimum(ColumnUtils.getColumnMap(this.oTable));
 
 		var oExpectedColumnMap = {
 			c1: {id: "c1", levelInfo: [{spannedColumns: ["c2"]}, {spannedColumns: []}], parents: []},
@@ -287,7 +287,7 @@ sap.ui.define([
 		}));
 
 		// strip returned data to minimum for better analysis
-		var oColumnMap = this.fnColumnMapToMinimum(ColumnUtils._getColumnMap(this.oTable));
+		var oColumnMap = this.fnColumnMapToMinimum(ColumnUtils.getColumnMap(this.oTable));
 
 		var oExpectedColumnMap = {
 			c1: {

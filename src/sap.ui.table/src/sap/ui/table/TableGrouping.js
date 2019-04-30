@@ -4,13 +4,12 @@
 
 // Provides helper sap.ui.table.TableUtils.
 sap.ui.define([
-	'sap/ui/core/Element',
-	'sap/ui/model/Sorter',
-	'sap/ui/Device',
-	'./library',
+	"sap/ui/core/Element",
+	"sap/ui/model/Sorter",
+	"sap/ui/Device",
+	"./library",
 	"sap/ui/thirdparty/jquery"
-],
-	function(Element, Sorter, Device, library, jQuery) {
+], function(Element, Sorter, Device, library, jQuery) {
 	"use strict";
 
 	/**
@@ -26,64 +25,63 @@ sap.ui.define([
 	 */
 	var TableGrouping = {
 
-		TableUtils : null, // Avoid cyclic dependency. Will be filled by TableUtils
-
-
-		/*
-		 * Handling of Modes
-		 */
+		TableUtils: null, // Avoid cyclic dependency. Will be filled by TableUtils
 
 		/**
-		 * Resets the tree/group mode of the given Table.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * Resets the tree/group mode of the given table.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 * @private
 		 */
-		clearMode : function(oTable) {
+		clearMode: function(oTable) {
 			oTable._mode = null;
 		},
 
 		/**
-		 * Sets the given Table into group mode.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @private
+		 * Sets the given table into group mode.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 */
-		setGroupMode : function(oTable) {
+		setGroupMode: function(oTable) {
 			oTable._mode = "Group";
 		},
 
 		/**
 		 * Checks whether the given table is in group mode.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @private
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {boolean} Whether the table is in group mode.
 		 */
-		isGroupMode : function(oTable) {
-			return oTable._mode == "Group";
+		isGroupMode: function(oTable) {
+			return oTable._mode === "Group";
 		},
 
 		/**
-		 * Sets the given Table into tree mode.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @private
+		 * Sets the given table into tree mode.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 */
-		setTreeMode : function(oTable) {
+		setTreeMode: function(oTable) {
 			oTable._mode = "Tree";
 		},
 
 		/**
 		 * Checks whether the given table is in tree mode.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @private
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {boolean} Whether the table is in tree mode.
 		 */
-		isTreeMode : function(oTable) {
+		isTreeMode: function(oTable) {
 			return oTable._mode == "Tree";
 		},
 
 		/**
 		 * Returns the CSS class which belongs to the mode of the given table or <code>null</code> if no CSS class is relevant.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @private
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {string | null} The mode specific CSS class.
 		 */
-		getModeCssClass : function(oTable) {
+		getModeCssClass: function(oTable) {
 			switch (oTable._mode) {
 				case "Group":
 					return "sapUiTableGroupMode";
@@ -94,43 +92,25 @@ sap.ui.define([
 			}
 		},
 
-		/*
-		 * GroupMenuButton
-		 */
-
 		/**
 		 * Checks whether group menu button should be shown for the given table.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @private
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {boolean} Whether the group menu button should be shown.
 		 */
-		showGroupMenuButton : function(oTable) {
-			if (oTable._bShowGroupMenuButton === true || oTable._bShowGroupMenuButton === false) {
-				return oTable._bShowGroupMenuButton;
-			}
-
-			if (!Device.system.desktop && oTable.isA("sap.ui.table.AnalyticalTable")) {
-				oTable._bShowGroupMenuButton = true;
-			} else {
-				oTable._bShowGroupMenuButton = false;
-			}
-
-			return oTable._bShowGroupMenuButton;
+		showGroupMenuButton: function(oTable) {
+			return !Device.system.desktop && TableGrouping.TableUtils.isA(oTable, "sap.ui.table.AnalyticalTable");
 		},
-
-		/*
-		 * Collapse / Expand
-		 */
 
 		/**
 		 * Toggles or sets the expanded state of a single or multiple rows. Toggling only works for a single row.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {int|int[]} vRowIndex A single index, or an array of indices of the rows to expand or collapse.
+		 * @param {int | int[]} vRowIndex A single index, or an array of indices of the rows to expand or collapse.
 		 * @param {boolean} [bExpand] If defined, instead of toggling the desired state is set.
-		 * @returns {boolean|null} The new expanded state in case an action was performed, otherwise <code>null</code>.
-		 * @private
+		 * @returns {boolean | null} The new expanded state in case an action was performed, otherwise <code>null</code>.
 		 */
-		toggleGroupHeader : function(oTable, vRowIndex, bExpand) {
+		toggleGroupHeader: function(oTable, vRowIndex, bExpand) {
 			var aIndices = [];
 			var oBinding = oTable ? oTable.getBinding("rows") : null;
 
@@ -204,14 +184,14 @@ sap.ui.define([
 		},
 
 		/**
-		 * Toggles the expand / collapse state of the group which contains the given Dom element.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * Toggles the expand / collapse state of the group which contains the given DOM element.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 * @param {Object} oRef DOM reference of an element within the table group header
 		 * @param {boolean} [bExpand] If defined instead of toggling the desired state is set.
-		 * @returns {boolean} <code>true</code> when the operation was performed, <code>false</code> otherwise.
-		 * @private
+		 * @returns {boolean} Whether the operation was performed.
 		 */
-		toggleGroupHeaderByRef : function(oTable, oRef, bExpand) {
+		toggleGroupHeaderByRef: function(oTable, oRef, bExpand) {
 			var $Ref = jQuery(oRef);
 			var $GroupRef;
 
@@ -244,11 +224,11 @@ sap.ui.define([
 
 		/**
 		 * Returns whether the given cell is located in a group header.
-		 * @param {Object} oCellRef DOM reference of table cell
-		 * @returns {boolean}
-		 * @private
+		 *
+		 * @param {jQuery | HTMLElement} oCellRef DOM reference of table cell.
+		 * @returns {boolean} Whether the element is in a group header row.
 		 */
-		isInGroupingRow : function(oCellRef) {
+		isInGroupingRow: function(oCellRef) {
 			var oInfo = TableGrouping.TableUtils.getCellInfo(oCellRef);
 
 			if (oInfo.isOfType(TableGrouping.TableUtils.CELLTYPE.DATACELL)) {
@@ -263,8 +243,8 @@ sap.ui.define([
 		/**
 		 * Returns whether the passed row is a group header row.
 		 *
-		 * @param {jQuery|HTMLElement} oRow The row to check.
-		 * @returns {boolean} Returns <code>true</code>, if <code>oRow</code> is a group header row.
+		 * @param {jQuery | HTMLElement} oRow The row to check.
+		 * @returns {boolean} Whether the row is a group header row.
 		 */
 		isGroupingRow: function(oRow) {
 			if (!oRow) {
@@ -275,11 +255,11 @@ sap.ui.define([
 
 		/**
 		 * Returns whether the given cell is located in an analytical summary row.
-		 * @param {Object} oCellRef DOM reference of table cell
-		 * @returns {boolean}
-		 * @private
+		 *
+		 * @param {jQuery | HTMLElement} oCellRef DOM reference of table cell.
+		 * @returns {boolean} Whether the element is in a summary row.
 		 */
-		isInSumRow : function(oCellRef) {
+		isInSumRow: function(oCellRef) {
 			var oInfo = TableGrouping.TableUtils.getCellInfo(oCellRef);
 
 			if (oInfo.isOfType(TableGrouping.TableUtils.CELLTYPE.DATACELL)) {
@@ -291,57 +271,55 @@ sap.ui.define([
 			return false;
 		},
 
-		/*
-		 * Update / Cleanup of Rows
-		 */
-
 		/**
 		 * Computes the indents of the rows.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @param {number} iLevel the hierarchy level
-		 * @param {boolean} bChildren whether the row is a group (has children) or not
-		 * @param {boolean} bSum whether the row is a summary row
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @param {number} iLevel The hierarchy level.
+		 * @param {boolean} bChildren Whether the row is a group (has children).
+		 * @param {boolean} bSum Whether the row is a summary row.
+		 * @returns {int} The indentation level.
 		 * @private
 		 */
-		_calcGroupIndent : function(oTable, iLevel, bChildren, bSum) {
+		calcGroupIndent: function(oTable, iLevel, bChildren, bSum) {
+			var iIndent = 0;
+			var i;
+
 			if (oTable.isA("sap.ui.table.TreeTable")) {
-				var iIndent = 0;
-				for (var i = 0; i < iLevel; i++) {
+				for (i = 0; i < iLevel; i++) {
 					iIndent = iIndent + (i < 2 ? 12 : 8);
 				}
-				return iIndent;
 			} else if (oTable.isA("sap.ui.table.AnalyticalTable")) {
-				var iIndent = 0;
 				iLevel = iLevel - 1;
 				iLevel = !bChildren && !bSum ? iLevel - 1 : iLevel;
 				iLevel = Math.max(iLevel, 0);
-				for (var i = 0; i < iLevel; i++) {
+				for (i = 0; i < iLevel; i++) {
 					if (iIndent == 0) {
 						iIndent = 12;
 					}
 					iIndent = iIndent + (i < 2 ? 12 : 8);
 				}
-				return iIndent;
 			} else {
-				var iIndent = 0;
 				iLevel = !bChildren ? iLevel - 1 : iLevel;
 				iLevel = Math.max(iLevel, 0);
-				for (var i = 0; i < iLevel; i++) {
+				for (i = 0; i < iLevel; i++) {
 					iIndent = iIndent + (i < 2 ? 12 : 8);
 				}
-				return iIndent;
 			}
+
+			return iIndent;
 		},
 
 		/**
 		 * Applies or removes the given indents on the given row elements.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @param {object} $Row jQuery representation of the row elements
-		 * @param {object} $RowHdr jQuery representation of the row header elements
-		 * @param {int} iIndent the indent (in px) which should be applied. If the indent is smaller than 1 existing indents are removed.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @param {jQuery} $Row jQuery representation of the row elements.
+		 * @param {jQuery} $RowHdr jQuery representation of the row header elements.
+		 * @param {int} iIndent The indent (in px) which should be applied. If the indent is smaller than 1 existing indents are removed.
 		 * @private
 		 */
-		_setIndent : function(oTable, $Row, $RowHdr, iIndent) {
+		setIndent: function(oTable, $Row, $RowHdr, iIndent) {
 			var bRTL = oTable._bRtlMode,
 				$FirstCellContentInRow = $Row.find("td.sapUiTableCellFirst > .sapUiTableCellInner"),
 				$Shield = $RowHdr.find(".sapUiTableGroupShield");
@@ -355,23 +333,24 @@ sap.ui.define([
 				// Apply indent on table row
 				$RowHdr.css(bRTL ? "right" : "left", iIndent + "px");
 				$Shield.css("width", iIndent + "px").css(bRTL ? "margin-right" : "margin-left", ((-1) * iIndent) + "px");
-				$FirstCellContentInRow.css(bRTL ? "padding-right" : "padding-left", (iIndent + 8/* +8px standard padding .sapUiTableCellInner */) + "px");
+				$FirstCellContentInRow.css(bRTL ? "padding-right" : "padding-left",
+					(iIndent + 8/* +8px standard padding .sapUiTableCellInner */) + "px");
 			}
 		},
 
 		/**
 		 * Updates the dom of the given row depending on the given parameters.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @param {sap.ui.table.Row} oRow Instance of the row
-		 * @param {boolean} bChildren whether the row is a group (has children) or not
-		 * @param {boolean} bExpanded whether the row should be expanded
-		 * @param {boolean} bExpanded whether the row content should be hidden
-		 * @param {boolean} bSum whether the row should be a summary row
-		 * @param {number} iLevel the hierarchy level
-		 * @param {string} sGroupHeaderText the title of the group header
-		 * @private
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @param {sap.ui.table.Row} oRow Instance of the row.
+		 * @param {boolean} bChildren Whether the row is a group (has children).
+		 * @param {boolean} bExpanded Whether the row should be expanded.
+		 * @param {boolean} bHidden Whether the row content should be hidden.
+		 * @param {boolean} bSum Whether the row should be a summary row.
+		 * @param {number} iLevel The hierarchy level.
+		 * @param {string} sGroupHeaderText The title of the group header.
 		 */
-		updateTableRowForGrouping : function(oTable, oRow, bChildren, bExpanded, bHidden, bSum, iLevel, sGroupHeaderText) {
+		updateTableRowForGrouping: function(oTable, oRow, bChildren, bExpanded, bHidden, bSum, iLevel, sGroupHeaderText) {
 			var oDomRefs = oRow.getDomRefs(true),
 				$Row = oDomRefs.row,
 				$ScrollRow = oDomRefs.rowScrollPart,
@@ -380,7 +359,7 @@ sap.ui.define([
 				$RowAct = oDomRefs.rowAction;
 
 			$Row.attr({
-				"data-sap-ui-level" : iLevel
+				"data-sap-ui-level": iLevel
 			});
 
 			$Row.data("sap-ui-level", iLevel);
@@ -397,9 +376,9 @@ sap.ui.define([
 					.attr("title", oTable._getShowStandardTooltips() && sGroupHeaderText ? sGroupHeaderText : null)
 					.text(sGroupHeaderText || "");
 
-				var iIndent = TableGrouping._calcGroupIndent(oTable, iLevel, bChildren, bSum);
+				var iIndent = TableGrouping.calcGroupIndent(oTable, iLevel, bChildren, bSum);
 
-				TableGrouping._setIndent(oTable, $Row, $RowHdr, iIndent);
+				TableGrouping.setIndent(oTable, $Row, $RowHdr, iIndent);
 				$Row.toggleClass("sapUiTableRowIndented", iIndent > 0);
 			}
 
@@ -407,9 +386,9 @@ sap.ui.define([
 			if (TableGrouping.isTreeMode(oTable)) {
 				$TreeIcon = $Row.find(".sapUiTableTreeIcon");
 				$TreeIcon.css(oTable._bRtlMode ? "margin-right" : "margin-left", (iLevel * 17) + "px")
-					.toggleClass("sapUiTableTreeIconLeaf", !bChildren)
-					.toggleClass("sapUiTableTreeIconNodeOpen", bChildren && bExpanded)
-					.toggleClass("sapUiTableTreeIconNodeClosed", bChildren && !bExpanded);
+						 .toggleClass("sapUiTableTreeIconLeaf", !bChildren)
+						 .toggleClass("sapUiTableTreeIconNodeOpen", bChildren && bExpanded)
+						 .toggleClass("sapUiTableTreeIconNodeClosed", bChildren && !bExpanded);
 			}
 
 			if (TableGrouping.showGroupMenuButton(oTable)) {
@@ -417,27 +396,30 @@ sap.ui.define([
 				var iScrollbarOffset = 0;
 				var $Table = oTable.$();
 				if ($Table.hasClass("sapUiTableVScr")) {
-					iScrollbarOffset += $Table.find('.sapUiTableVSb').width();
+					iScrollbarOffset += $Table.find(".sapUiTableVSb").width();
 				}
 				var $GroupHeaderMenuButton = $RowHdr.find(".sapUiTableGroupMenuButton");
 
 				if (oTable._bRtlMode) {
-					$GroupHeaderMenuButton.css("right", ($Table.width() - $GroupHeaderMenuButton.width() + $RowHdr.position().left - iScrollbarOffset - 5) + "px");
+					$GroupHeaderMenuButton.css("right",
+						($Table.width() - $GroupHeaderMenuButton.width() + $RowHdr.position().left - iScrollbarOffset - 5) + "px");
 				} else {
-					$GroupHeaderMenuButton.css("left", ($Table.width() - $GroupHeaderMenuButton.width() - $RowHdr.position().left - iScrollbarOffset - 5) + "px");
+					$GroupHeaderMenuButton.css("left",
+						($Table.width() - $GroupHeaderMenuButton.width() - $RowHdr.position().left - iScrollbarOffset - 5) + "px");
 				}
 			}
 
-			oTable._getAccExtension().updateAriaExpandAndLevelState(oRow, $ScrollRow, $RowHdr, $FixedRow, $RowAct, bChildren, bExpanded, iLevel, $TreeIcon);
+			oTable._getAccExtension()
+				  .updateAriaExpandAndLevelState(oRow, $ScrollRow, $RowHdr, $FixedRow, $RowAct, bChildren, bExpanded, iLevel, $TreeIcon);
 		},
 
 		/**
 		 * Cleanup the dom changes previously done by <code>updateTableRowForGrouping</code>.
+		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table
 		 * @param {sap.ui.table.Row} oRow Instance of the row
-		 * @private
 		 */
-		cleanupTableRowForGrouping : function(oTable, oRow) {
+		cleanupTableRowForGrouping: function(oTable, oRow) {
 			var oDomRefs = oRow.getDomRefs(true);
 
 			oDomRefs.row.removeAttr("data-sap-ui-level");
@@ -445,46 +427,46 @@ sap.ui.define([
 
 			if (TableGrouping.isGroupMode(oTable)) {
 				oDomRefs.row.removeClass("sapUiTableGroupHeader sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
-				TableGrouping._setIndent(oTable, oDomRefs.row, oDomRefs.rowSelector, 0);
+				TableGrouping.setIndent(oTable, oDomRefs.row, oDomRefs.rowSelector, 0);
 			}
 
 			var $TreeIcon = null;
 			if (TableGrouping.isTreeMode(oTable)) {
 				$TreeIcon = oDomRefs.row.find(".sapUiTableTreeIcon");
 				$TreeIcon.removeClass("sapUiTableTreeIconLeaf")
-					.removeClass("sapUiTableTreeIconNodeOpen")
-					.removeClass("sapUiTableTreeIconNodeClosed")
-					.css(this._bRtlMode ? "margin-right" : "margin-left", "");
+						 .removeClass("sapUiTableTreeIconNodeOpen")
+						 .removeClass("sapUiTableTreeIconNodeClosed")
+						 .css(this._bRtlMode ? "margin-right" : "margin-left", "");
 			}
 
-			oTable._getAccExtension().updateAriaExpandAndLevelState(oRow, oDomRefs.rowScrollPart, oDomRefs.rowSelector, oDomRefs.rowFixedPart, oDomRefs.rowAction, false, false, -1, $TreeIcon);
+			oTable._getAccExtension()
+				  .updateAriaExpandAndLevelState(oRow, oDomRefs.rowScrollPart, oDomRefs.rowSelector, oDomRefs.rowFixedPart, oDomRefs.rowAction, false,
+					  false, -1, $TreeIcon);
 		},
 
 		/**
 		 * Updates the dom of the rows of the given table.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 * @see TableGrouping.updateTableRowForGrouping
 		 * @see TableGrouping.cleanupTableRowForGrouping
-		 * @private
 		 */
 		updateGroups: function(oTable) {
 			if (TableGrouping.isGroupMode(oTable) || TableGrouping.isTreeMode(oTable)) {
-				var oBinding = oTable.getBinding("rows"),
-					oRowBindingInfo = oTable.getBindingInfo("rows"),
-					aRows = oTable.getRows(),
-					iCount = aRows.length;
+				var oBinding = oTable.getBinding("rows");
+				var oRowBindingInfo = oTable.getBindingInfo("rows");
+				var aRows = oTable.getRows();
+				var iCount = aRows.length;
+				var iRow;
 
 				if (oBinding) {
-					var oRowGroupInfo;
-
-					for (var iRow = 0; iRow < iCount; iRow++) {
-						oRowGroupInfo = TableGrouping._getRowGroupInfo(oTable, aRows[iRow], oBinding, oRowBindingInfo);
+					for (iRow = 0; iRow < iCount; iRow++) {
+						var oRowGroupInfo = TableGrouping.getRowGroupInfo(oTable, aRows[iRow], oBinding, oRowBindingInfo);
 						TableGrouping.updateTableRowForGrouping(oTable, aRows[iRow], oRowGroupInfo.isHeader, oRowGroupInfo.expanded,
 							oRowGroupInfo.hidden, false, oRowGroupInfo.level, oRowGroupInfo.title);
 					}
-
 				} else {
-					for (var iRow = 0; iRow < iCount; iRow++) {
+					for (iRow = 0; iRow < iCount; iRow++) {
 						TableGrouping.cleanupTableRowForGrouping(oTable, aRows[iRow]);
 					}
 				}
@@ -493,14 +475,15 @@ sap.ui.define([
 
 		/**
 		 * Updates the dom of the rows of the given table.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @param {sap.ui.table.Row} oRow Instance of the row
-		 * @param {object} oRowBinding the binding object of the rows aggregation
-		 * @param {object} oRowBindingInfo the binding info object of the rows aggregation
-		 * @returns {object} the group information for the given row
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @param {sap.ui.table.Row} oRow Instance of the row.
+		 * @param {Object} oRowBinding the Binding object of the rows aggregation.
+		 * @param {Object} oRowBindingInfo The binding info object of the rows aggregation.
+		 * @returns {Object} The group information for the given row.
 		 * @private
 		 */
-		_getRowGroupInfo: function(oTable, oRow, oRowBinding, oRowBindingInfo) {
+		getRowGroupInfo: function(oTable, oRow, oRowBinding, oRowBindingInfo) {
 			var oRowGroupInfo = {
 				isHeader: false,
 				expanded: false,
@@ -556,10 +539,10 @@ sap.ui.define([
 
 		/**
 		 * Initializes the experimental grouping for sap.ui.table.Table.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @private
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 */
-		setupExperimentalGrouping : function(oTable) {
+		setupExperimentalGrouping: function(oTable) {
 			if (!oTable.getEnableGrouping()) {
 				return;
 			}
@@ -617,7 +600,7 @@ sap.ui.define([
 				iCounter++;
 			}
 			var oGroupContext = aContexts[0].getModel().getContext("/sap.ui.table.GroupInfo");
-			oGroupContext.__groupInfo =	{
+			oGroupContext.__groupInfo = {
 				oContext: aContexts[0],
 				name: sKey,
 				count: iCounter,
@@ -686,15 +669,16 @@ sap.ui.define([
 			});
 
 			// the table need to fetch the updated/changed contexts again, therefore requires the binding to fire a change event
-			oTable._mTimeouts.groupingFireBindingChange = oTable._mTimeouts.groupingFireBindingChange || window.setTimeout(function() {oBinding._fireChange();}, 0);
+			oTable._mTimeouts.groupingFireBindingChange = oTable._mTimeouts.groupingFireBindingChange || window.setTimeout(
+				function() {oBinding._fireChange();}, 0);
 		},
 
 		/**
 		 * Cleans up the experimental grouping for sap.ui.table.Table.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @private
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 */
-		resetExperimentalGrouping : function(oTable) {
+		resetExperimentalGrouping: function(oTable) {
 			var oBinding = oTable.getBinding("rows");
 			if (oBinding && oBinding._modified) {
 				TableGrouping.clearMode(oTable);
