@@ -219,7 +219,14 @@
 				{"name" : "raise-fault"},
 				{"name" : "start-event"},
 				{"name" : "end-event"},
-				{"name" : "terminate-end-event"}
+				{"name" : "terminate-end-event"},
+				{"name" : "status-activating"},
+				{"name" : "status-suspended"},
+				{"name" : "status-suspending"},
+				{"name" : "status-terminated"},
+				{"name" : "status-terminating"},
+				{"name" : "solution-not-licensed"}
+
 			]
 		},
 		{

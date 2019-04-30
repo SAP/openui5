@@ -1149,5 +1149,54 @@
 			"square",
 			"node"
 		]
+	},
+	"status-activating": {
+		"tags": [
+			"activate",
+			"clock",
+			"square"
+		]
+	},
+
+	"status-suspended": {
+		"tags": [
+			"suspend",
+			"pause",
+			"square"
+		]
+	},
+
+	"status-suspending": {
+		"tags": [
+			"suspend",
+			"pause",
+			"square",
+			"clock"
+		]
+	},
+
+	"status-terminated": {
+		"tags": [
+			"terminate",
+			"triangle"
+		]
+	},
+
+	"status-terminating": {
+		"tags": [
+			"terminate",
+			"triangle",
+			"clock"
+		]
+	},
+
+	"solution-not-licensed": {
+		"tags": [
+			"circle",
+			"half",
+			"fill",
+			"empty",
+			"license"
+		]
 	}
 }
