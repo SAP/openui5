@@ -226,14 +226,14 @@ sap.ui.define([
 
 	QUnit.module("Interfaces");
 
-	var aCommonMethods = ["renderControl", "translate", "getConfiguration", "getHTML", "cleanupControlWithoutRendering"];
+	var aCommonMethods = ["renderControl", "cleanupControlWithoutRendering"];
 
 	var aStringRendererMethods = ["write", "writeEscaped", "writeAcceleratorKey", "writeControlData", "writeElementData",
 		"writeAttribute", "writeAttributeEscaped", "addClass", "writeClasses", "addStyle", "writeStyles",
-		"writeAccessibilityState", "writeIcon"];
+		"writeAccessibilityState", "writeIcon", "translate", "getConfiguration", "getHTML"];
 
 	var aDomRendererMethods = ["openStart", "openEnd", "close", "voidStart", "voidEnd", "text", "attr", "class", "style",
-		"controlData", "elementData", "accessibilityState", "icon", "unsafeHtml"];
+		"accessibilityState", "icon", "unsafeHtml"];
 
 	var aInterfaceMethods = aCommonMethods.concat(aStringRendererMethods, aDomRendererMethods);
 
@@ -495,8 +495,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("RenderManager.openEnd", function (assert) {
-		checkRMWriter(assert, ">", true, 0, function(rm) {
-			return rm.openEnd();
+		checkRMWriter(assert, "<span>", true, 0, function(rm) {
+			return rm.openStart("span").openEnd();
 		});
 	});
 
@@ -513,8 +513,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("RenderManager.voidEnd", function (assert) {
-		checkRMWriter(assert, ">", true, 0, function(rm) {
-			return rm.voidEnd();
+		checkRMWriter(assert, "<img>", true, 0, function(rm) {
+			return rm.voidStart("img").voidEnd();
 		});
 	});
 
@@ -565,15 +565,15 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("RenderManager.controlData", function(assert) {
-		checkRMWriter(assert, " id=\"TestElem123\" data-sap-ui=\"TestElem123\"", true, 0, function(rm) {
-			return rm.controlData(new Control("TestElem123"));
+	QUnit.test("RenderManager.openStart with controlData", function(assert) {
+		checkRMWriter(assert, "<div id=\"TestElem123\" data-sap-ui=\"TestElem123\"", true, 0, function(rm) {
+			return rm.openStart("div", new Control("TestElem123"));
 		});
 	});
 
-	QUnit.test("RenderManager.elementData", function(assert) {
-		checkRMWriter(assert, " id=\"TestElem1234\" data-sap-ui=\"TestElem1234\"", true, 0, function(rm) {
-			return rm.elementData(new Element("TestElem1234"));
+	QUnit.test("RenderManager.openStart with elementData", function(assert) {
+		checkRMWriter(assert, "<div id=\"TestElem1234\" data-sap-ui=\"TestElem1234\"", true, 0, function(rm) {
+			return rm.openStart("div", new Element("TestElem1234"));
 		});
 	});
 
@@ -681,6 +681,141 @@ sap.ui.define([
 		checkACCOutput(sOutput, "aria-describedby=\"" + sText + "\"");
 		sText = jQuery.sap.escapeHTML("TestACCContr123 test234 hello2");
 		checkACCOutput(sOutput, "aria-labelledby=\"" + sText + "\"");
+	});
+
+	QUnit.module("Writer API: Semantic Syntax (DOM) Assertions", {
+		beforeEach: function() {
+			this.oRM = sap.ui.getCore().createRenderManager();
+			this.oAssertionSpy = sinon.spy(console, "assert");
+		},
+		afterEach: function() {
+			this.oAssertionSpy.restore();
+			this.oRM.destroy();
+		}
+	});
+
+	QUnit.test("RenderManager.openStart - empty tag", function (assert) {
+		this.oRM.openStart();
+		assert.equal(this.oAssertionSpy.callCount, 1);
+	});
+
+	QUnit.test("RenderManager.openStart - invalid tag", function (assert) {
+		this.oRM.openStart("1");
+		assert.equal(this.oAssertionSpy.callCount, 1);
+	});
+
+	QUnit.test("RenderManager.openStart - nested", function (assert) {
+		this.oRM.openStart("div").openStart("div");
+		assert.equal(this.oAssertionSpy.callCount, 1);
+	});
+
+	QUnit.test("RenderManager.openStart - invalid tag upper case", function (assert) {
+		this.oRM.openStart("H1");
+		assert.equal(this.oAssertionSpy.callCount, 1);
+	});
+
+	QUnit.test("RenderManager.openStart - voidStart", function (assert) {
+		this.oRM.openStart("div").voidStart("img");
+		assert.equal(this.oAssertionSpy.callCount, 1);
+	});
+
+	QUnit.test("RenderManager.voidStart - empty tag", function (assert) {
+		this.oRM.voidStart();
+		assert.equal(this.oAssertionSpy.callCount, 1);
+	});
+
+	QUnit.test("RenderManager.voidStart - invalid tag", function (assert) {
+		this.oRM.voidStart("?");
+		assert.equal(this.oAssertionSpy.callCount, 1);
+	});
+
+	QUnit.test("RenderManager.voidStart - nested", function (assert) {
+		this.oRM.voidStart("img").voidStart("input");
+		assert.equal(this.oAssertionSpy.callCount, 1);
+	});
+
+	QUnit.test("RenderManager.voidStart - invalid tag upper case", function (assert) {
+		this.oRM.voidStart("INPUT");
+		assert.equal(this.oAssertionSpy.callCount, 1);
+	});
+
+	QUnit.test("RenderManager.voidStart - openStart", function (assert) {
+		this.oRM.voidStart("img").openStart("div");
+		assert.equal(this.oAssertionSpy.callCount, 1);
+	});
+
+	QUnit.test("RenderManager.openEnd - without openStart", function (assert) {
+		this.oRM.openEnd();
+		assert.equal(this.oAssertionSpy.callCount, 1);
+	});
+
+	QUnit.test("RenderManager.openEnd - voidStart", function (assert) {
+		this.oRM.voidStart("div").openEnd();
+		assert.equal(this.oAssertionSpy.callCount, 1);
+	});
+
+	QUnit.test("RenderManager.openEnd - valid", function (assert) {
+		this.oRM.openStart("div").openEnd();
+		assert.equal(this.oAssertionSpy.callCount, 0);
+	});
+
+	QUnit.test("RenderManager.voidEnd - without voidStart", function (assert) {
+		this.oRM.voidEnd();
+		assert.equal(this.oAssertionSpy.callCount, 1);
+	});
+
+	QUnit.test("RenderManager.voidEnd - openStart", function (assert) {
+		this.oRM.openStart("div").voidEnd();
+		assert.equal(this.oAssertionSpy.callCount, 1);
+	});
+
+	QUnit.test("RenderManager.voidEnd - valid", function (assert) {
+		this.oRM.voidStart("br").voidEnd();
+		assert.equal(this.oAssertionSpy.callCount, 0);
+	});
+
+	QUnit.test("RenderManager.close - no tag name", function (assert) {
+		this.oRM.openStart("div").openEnd().close();
+		assert.equal(this.oAssertionSpy.callCount, 1);
+	});
+
+	QUnit.test("RenderManager.close - open tag", function (assert) {
+		this.oRM.openStart("div").close("div");
+		assert.equal(this.oAssertionSpy.callCount, 1);
+	});
+
+	QUnit.test("RenderManager.close - open void tag", function (assert) {
+		this.oRM.voidStart("img").close("img");
+		assert.equal(this.oAssertionSpy.callCount, 1);
+	});
+
+	QUnit.test("RenderManager.unsafeHTML", function (assert) {
+		this.oRM.voidStart("img").unsafeHtml(" tabindex='0'");
+		assert.equal(this.oAssertionSpy.callCount, 1);
+	});
+
+	QUnit.test("RenderManager.text", function (assert) {
+		this.oRM.openStart("div").text("text");
+		assert.equal(this.oAssertionSpy.callCount, 1);
+	});
+
+	QUnit.test("RenderManager.class", function (assert) {
+		this.oRM.openStart("div").attr("class");
+		assert.equal(this.oAssertionSpy.callCount, 1);
+	});
+
+	QUnit.test("RenderManager.style", function (assert) {
+		this.oRM.openStart("div").attr("style", "width: 100%");
+		assert.equal(this.oAssertionSpy.callCount, 1);
+	});
+
+	QUnit.test("Valid syntax No API assertion", function (assert) {
+		this.oRM.
+		openStart("div").attr("id", "x").style("width", "100%").class("x").openEnd().
+			voidStart("img").attr("id", "y").style("width", "100px").class("y").voidEnd().
+		close("div");
+
+		assert.equal(this.oAssertionSpy.callCount, 0);
 	});
 
 	QUnit.module("Non Renderer Functions");

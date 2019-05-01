@@ -40,17 +40,17 @@ sap.ui.define([], function() {
 	};
 
 	/**
-	 * Renders a pseudo placeholder to identify the location of the invisible control within the DOM tree.
+	 * Renders an invisible placeholder to identify the location of the invisible control within the DOM tree.
 	 *
 	 * The standard implementation renders an invisible &lt;span&gt; element for controls with <code>visible:false</code> to improve
 	 * re-rendering performance. Due to the fault tolerance of the HTML5 standard, such &lt;span&gt; elements are accepted in many
 	 * scenarios and won't appear in the render tree of the browser. However, in some cases, controls might need to write a different
-	 * element if the &lt;span&gt; is not an allowed element (for example within the &lt;tr&gt; or &lt;li&gt; group). In this case,
-	 * the caller can require this module and can use the third parameter to define the HTML tag.
+	 * element if &lt;span&gt; is not an allowed element (for example, within the &lt;tr&gt; or &lt;li&gt; group). In this case,
+	 * the caller can require this module and use the third parameter to define the HTML tag.
 	 *
-	 * @param {sap.ui.core.RenderManager} [oRm] The RenderManager instance
+	 * @param {sap.ui.core.RenderManager} [oRm] The <code>RenderManager</code> instance
 	 * @param {sap.ui.core.Element} [oElement] The instance of the invisible element
-	 * @param {string} [sTagName="span"] HTML tag of the invisible placeholder. Void tags are not allowed.
+	 * @param {string} [sTagName="span"] HTML tag of the invisible placeholder; void tags are not allowed.
 	 * @static
 	 * @protected
 	 */
@@ -58,8 +58,7 @@ sap.ui.define([], function() {
 		var sPlaceholderId = this.createInvisiblePlaceholderId(oElement);
 		sTagName = sTagName || "span";
 
-		oRm.openStart(sTagName);
-		oRm.attr("id", sPlaceholderId);
+		oRm.openStart(sTagName, sPlaceholderId);
 		oRm.attr("data-sap-ui", sPlaceholderId);
 		oRm.attr("aria-hidden", "true");
 		oRm.class("sapUiHiddenPlaceholder");

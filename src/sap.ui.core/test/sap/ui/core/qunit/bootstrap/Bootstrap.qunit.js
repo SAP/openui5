@@ -31,14 +31,14 @@ sap.ui.define([
 	QUnit.test("GetRenderManager", function(assert) {
 		var oCore = sap.ui.getCore();
 
-		var aCommonMethods = ["renderControl", "translate", "getConfiguration", "getHTML", "cleanupControlWithoutRendering"];
+		var aCommonMethods = ["renderControl", "cleanupControlWithoutRendering"];
 
-		var aStringRendererMethods = ["write", "writeEscaped", "writeAcceleratorKey", "writeControlData",
-			"writeElementData", "writeAttribute", "writeAttributeEscaped", "addClass", "writeClasses", "addStyle", "writeStyles",
-			"writeAccessibilityState", "writeIcon"];
+		var aStringRendererMethods = ["write", "writeEscaped", "writeAcceleratorKey", "writeControlData", "writeElementData",
+			"writeAttribute", "writeAttributeEscaped", "addClass", "writeClasses", "addStyle", "writeStyles",
+			"writeAccessibilityState", "writeIcon", "translate", "getConfiguration", "getHTML"];
 
 		var aDomRendererMethods = ["openStart", "openEnd", "close", "voidStart", "voidEnd", "text", "attr", "class", "style",
-			"controlData", "elementData", "accessibilityState", "icon", "unsafeHtml"];
+			"accessibilityState", "icon", "unsafeHtml"];
 
 		var aNonRendererFunctions = ["render", "flush", "destroy"];
 

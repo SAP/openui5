@@ -33,8 +33,7 @@ sap.ui.define(["sap/ui/core/library", "sap/m/HyphenationSupport"],
 			sTag = bAutoLevel ? "div" : sLevel,
 			sText = HyphenationSupport.getTextForRender(oTitle, "main");
 
-		oRm.openStart(sTag);
-		oRm.controlData(oTitle);
+		oRm.openStart(sTag, oTitle);
 		oRm.class("sapMTitle");
 		oRm.class("sapMTitleStyle" + (oTitle.getTitleStyle() || TitleLevel.Auto));
 		oRm.class(oTitle.getWrapping() ? "sapMTitleWrap" : "sapMTitleNoWrap");

@@ -35,14 +35,14 @@ sap.ui.define([
 
 	"use strict";
 
-	var aCommonMethods = ["renderControl", "translate", "getConfiguration", "getHTML", "cleanupControlWithoutRendering"];
+	var aCommonMethods = ["renderControl", "cleanupControlWithoutRendering"];
 
 	var aStringRendererMethods = ["write", "writeEscaped", "writeAcceleratorKey", "writeControlData", "writeElementData",
 		"writeAttribute", "writeAttributeEscaped", "addClass", "writeClasses", "addStyle", "writeStyles",
-		"writeAccessibilityState", "writeIcon"];
+		"writeAccessibilityState", "writeIcon", "translate", "getConfiguration", "getHTML"];
 
-	var aDomRendererMethods = ["openStart", "openEnd", "close", "voidStart", "voidEnd", "text", "attr", "class", "style", "controlData",
-		"elementData", "accessibilityState", "icon", "unsafeHtml"];
+	var aDomRendererMethods = ["openStart", "openEnd", "close", "voidStart", "voidEnd", "text", "attr", "class", "style",
+		"accessibilityState", "icon", "unsafeHtml"];
 
 	var aNonRendererMethods = ["render", "flush", "destroy"];
 
@@ -126,7 +126,7 @@ sap.ui.define([
 		/**
 		 * Write the given texts to the buffer
 		 * @param {...string|number} sText (can be a number too)
-		 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
+		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @SecSink {*|XSS}
 		 */
@@ -143,7 +143,7 @@ sap.ui.define([
 		 *
 		 * @param {any} sText the text to escape
 		 * @param {boolean} bLineBreaks Whether to convert line breaks into <br> tags
-		 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
+		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 */
 		this.writeEscaped = function(sText, bLineBreaks) {
@@ -164,7 +164,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sName Name of the attribute
 		 * @param {string | number | boolean} vValue Value of the attribute
-		 * @return {sap.ui.core.RenderManager} This render manager instance to allow chaining
+		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @SecSink {0 1|XSS} Attributes are written to HTML without validation
 		 */
@@ -182,7 +182,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sName Name of the attribute
 		 * @param {any} vValue Value of the attribute
-		 * @return {sap.ui.core.RenderManager} This render manager instance to allow chaining
+		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @SecSink {0|XSS}
 		 */
@@ -198,7 +198,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sName Name of the CSS property to write
 		 * @param {string|float|int} vValue Value to write
-		 * @return {sap.ui.core.RenderManager} This render manager instance to allow chaining
+		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @SecSink {0 1|XSS} Styles are written to HTML without validation
 		 */
@@ -217,7 +217,7 @@ sap.ui.define([
 
 		/**
 		 * Writes and flushes the style collection
-		 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
+		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 */
 		this.writeStyles = function() {
@@ -234,7 +234,7 @@ sap.ui.define([
 		 * The class collection is flushed if it is written to the buffer using {@link #writeClasses}
 		 *
 		 * @param {string} sName name of the class to be added; null values are ignored
-		 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
+		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @SecSink {0|XSS} Classes are written to HTML without validation
 		 */
@@ -257,7 +257,7 @@ sap.ui.define([
 		 * classes are added instead. If oElement === false, no custom style classes are added.
 		 *
 		 * @param {sap.ui.core.Element | boolean} [oElement] an Element from which to add custom style classes (instead of adding from the control itself)
-		 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
+		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 */
 		this.writeClasses = function(oElement) {
@@ -293,99 +293,132 @@ sap.ui.define([
 		// Methods for new DOM renderer API
 		//#################################################################################################
 
-		var tagOpen = false;
-		var voidOpen = false;
+		var sOpenTag = "";
+		var bVoidOpen = false;
+
+		function assertOpenTags(bAssertion) {
+			assert(bAssertion, "There is an open tag; '" + sOpenTag + "' tag not yet closed with '" + (bVoidOpen ? "voidEnd" : "openEnd") + "'");
+		}
 
 		/**
-		 * Opens a start tag of an element.
-		 * Must be followed by openEnd.
+		 * Opens the start tag of an HTML element.
 		 *
-		 * @param {string} sTagName Name of tag
-		 * @return {sap.ui.core.RenderManager} This render manager instance to allow chaining
+		 * This must be followed by <code>openEnd</code> and concluded with <code>close</code>.
+		 *
+		 * @param {string} sTagName The tag name of the HTML element; all lowercase
+	 	 * @param {sap.ui.core.Element|sap.ui.core.ID} [vControlOrId] The control instance or ID to identify the element
+		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
+		 *
 		 * @private
 		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
 		 */
-		this.openStart = function(sTagName) {
-			assert(!tagOpen, "New must not be opened when last opened tag not yet closed with 'openEnd'");
-			tagOpen = true;
+		this.openStart = function(sTagName, vControlOrId) {
+			assert(typeof sTagName == "string" && /^[a-z_][a-z0-9_\-]*$/.test(sTagName), "The tag name provided ('" + sTagName + "') is not a valid name to open tag");
+			assertOpenTags(!sOpenTag);
+			sOpenTag = sTagName;
+
 			this.write("<" + sTagName);
+			if (vControlOrId) {
+				if (typeof vControlOrId == "string") {
+					this.attr("id", vControlOrId);
+				} else {
+					this.writeElementData(vControlOrId);
+				}
+			}
 
 			return this;
 		};
 
 		/**
-		 * Closes an opened tag.
+		 * Ends an open tag started with <code>openStart</code>.
 		 *
-		 * @return {sap.ui.core.RenderManager} This render manager instance to allow chaining
+		 * This indicates that there are no more attributes to set to the open tag.
+		 *
+		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 		 * @private
 		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
 		 */
 		this.openEnd = function() {
-			tagOpen = false;
+			assert(sOpenTag, "Ending a tag via 'openEnd' must be preceded by 'openStart'");
+			assertOpenTags(!bVoidOpen);
+			sOpenTag = "";
+
 			this.writeClasses();
 			this.writeStyles();
 			this.write(">");
-
 			return this;
 		};
 
 		/**
-		 * Closes a tag.
+		 * Closes an open tag started with <code>openStart</code> and ended with <code>openEnd</code>.
 		 *
-		 * @param {string} sTagName Name of tag
-		 * @return {sap.ui.core.RenderManager} This render manager instance to allow chaining
+		 * This indicates that there are no more children to append to the open tag.
+		 *
+		 * @param {string} sTagName The tag name of the HTML element
+		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 		 * @private
 		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
 		 */
 		this.close = function(sTagName) {
-			this.write("</" + sTagName + ">");
+			assert(typeof sTagName == "string" && /^[a-z][a-z0-9_\-]*$/.test(sTagName), "The tag name provided ('" + sTagName + "') is not a valid name to close tag");
+			assertOpenTags(!sOpenTag);
 
+			this.write("</" + sTagName + ">");
 			return this;
 		};
 
 		/**
-		 * Starts a self-closing tag like 'img' or 'input'.
-		 * Same as openStart.
+		 * Starts a self-closing tag, such as <code>img</code> or <code>input</code>.
+		 *
+		 * This must be followed by <code>voidEnd</code>.
 		 *
 		 * @param {string} sTagName Name of tag
-		 * @return {sap.ui.core.RenderManager} This render manager instance to allow chaining
+		 * @param {sap.ui.core.Element|sap.ui.core.ID} [vControlOrId] The control instance or ID to identify the element
+		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 		 * @private
 		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
 		 */
-		this.voidStart = function (sTagName) {
-			voidOpen = true;
-			this.openStart(sTagName);
-
+		this.voidStart = function (sTagName, vControlOrId) {
+			this.openStart(sTagName, vControlOrId);
+			bVoidOpen = true;
 			return this;
 		};
 
 		/**
-		 * Ends a self-closing tag like 'img' or 'input'.
+		 * Ends an open self-closing tag started with <code>voidStart</code>.
 		 *
-		 * @return {sap.ui.core.RenderManager} This render manager instance to allow chaining
+		 * This indicates that there are no more attributes to set to the open tag.
+		 * For self-closing tags <code>close</code> must not be called.
+		 *
+		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 		 * @private
 		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
 		 */
 		this.voidEnd = function () {
-			assert(voidOpen, "Closing a self-closing tag via 'voidEnd' must be preceded by a 'voidStart'");
-			voidOpen = false;
-			this.openEnd();
+			assert(sOpenTag, "Ending a tag via 'voidEnd' must be preceded by 'voidStart'");
+			assertOpenTags(bVoidOpen || !sOpenTag);
+			bVoidOpen = false;
+			sOpenTag = "";
 
+			this.writeClasses();
+			this.writeStyles();
+			this.write(">");
 			return this;
 		};
 
 		/**
-		 * Writes the given HTML.
+		 * Writes the given HTML without any encoding or sanitizing.
 		 *
 		 * @param {string} sHtml HTML markup
-		 * @return {sap.ui.core.RenderManager} This render manager instance to allow chaining
+		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 		 * @private
 		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
+		 * @SecSink {*|XSS}
 		 */
 		this.unsafeHtml = function(sHtml) {
-			assert(!tagOpen, "HTML can only be written when there's no tag open");
-			this.write(sHtml);
+			assertOpenTags(!sOpenTag);
 
+			this.write(sHtml);
 			return this;
 		};
 
@@ -393,97 +426,73 @@ sap.ui.define([
 		 * Writes the given text.
 		 *
 		 * @param {string} sText The text to be written
-		 * @return {sap.ui.core.RenderManager} This render manager instance to allow chaining
+		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 		 * @private
 		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
 		 */
 		this.text = function(sText) {
-			assert(!tagOpen, "text can only be written when there's no tag open");
+			assertOpenTags(!sOpenTag);
+
 			this.writeEscaped(sText);
-
 			return this;
 		};
 
 		/**
-		 * Writes the controls data into the HTML.
-		 * Control Data consists at least of the id of a control
-		 * @param {sap.ui.core.Control} oControl the control whose identifying information should be written to the buffer
-		 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
-		 * @private
-		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
-		 */
-		this.controlData = function(oControl) {
-			assert(tagOpen, "controlData can only be written when an opening tag has been started");
-			this.writeControlData(oControl);
-
-			return this;
-		};
-
-		/**
-		 * Writes the elements data into the HTML.
-		 * Element Data consists at least of the id of an element
-		 * @param {sap.ui.core.Element} oElement the element whose identifying information should be written to the buffer
-		 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
-		 * @private
-		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
-		 */
-		this.elementData = function(oElement) {
-			assert(tagOpen, "elementData can only be written when an opening tag has been started");
-			this.writeElementData(oElement);
-
-			return this;
-		};
-
-		/**
-		 * Writes an attribute at this point of the DOM. This is only valid
-		 * when called between openStart and openEnd.
-		 * Attribute name must not be equal 'style' or 'class'. Styles and classes
-		 * can be written separately via 'class()' and 'style()' methods.
+		 * Writes an attribute name-value pair to the last open HTML element.
 		 *
-		 * @param {string} vAttr Name of attribute
+		 * This is only valid when called between <code>openStart/voidStart</code> and <code>openEnd/voidEnd</code>.
+		 * The attribute name must not be equal to <code>style</code> or <code>class</code>.
+		 * Styles and classes must be set via dedicated <code>class</code> or <code>style</code> methods.
+		 * Case-insensitive attribute names must all be set in lowercase.
+		 *
+		 * @param {string} vAttr Name of the attribute
 		 * @param {*} vValue Value of the attribute
-		 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
+		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 		 * @private
 		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
 		 */
 		this.attr = function(vAttr, vValue) {
-			// the following line affects CalendarTimeInterval unit test execution
-			// assert(tagOpen, "an attribute can only be written when an opening tag has been started");
-			assert(vAttr !== 'class' && vAttr !== 'style', "attributes 'class' and 'style' must not be written, use methods 'class' and 'style' instead");
-			this.writeAttributeEscaped(vAttr, vValue);
+			assert(vAttr !== "class" && vAttr !== "style", "Attributes 'class' and 'style' must not be written, instead use dedicated 'class' or 'style' methods");
 
+			this.writeAttributeEscaped(vAttr, vValue);
 			return this;
 		};
 
 		/**
-		 * Adds a className to the class collection of an opened element. Must only
-		 * be called between elementOpenStart and elementOpenEnd
+		 * Adds a class name to the class collection of the last open HTML element.
+		 *
+		 * This is only valid when called between <code>openStart/voidStart</code> and <code>openEnd/voidEnd</code>.
+		 * Class name must not contain any whitespace.
 		 *
 		 * @param {string} sClass Class name to be written
-		 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
+		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 		 * @private
 		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
 		 */
 		this.class = function(sClass) {
-			assert(typeof sClass === "string" && !/\s/.test(sClass) && arguments.length === 1, "method class must be called with exactly one class name");
-			this.addClass(sClass);
+			if (sClass) {
+				assert(typeof sClass === "string" && !/\s/.test(sClass) && arguments.length === 1, "Method 'class' must be called with exactly one class name");
+				this.addClass(sClass);
+			}
 
 			return this;
 		};
 
 		/**
-		 * Adds a style name-value pair to the style collection of an opened element.
-		 * Must only be called between elementOpenStart and elementOpenEnd.
+		 * Adds a style name-value pair to the style collection of the last open HTML element.
 		 *
-		 * @param {string} sStyle Name of style property
-		 * @param {string} vValue Value of style property
-		 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
+		 * This is only valid when called between <code>openStart/voidStart</code> and <code>openEnd/voidEnd</code>.
+		 *
+		 * @param {string} sStyle Name of the style property
+		 * @param {string} sValue Value of the style property
+		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 		 * @private
 		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
 		 */
-		this.style = function(sStyle, vValue) {
-			assert(typeof sStyle === "string" && sStyle && !/\s/.test(sStyle), "method style must be called with a non-empty string name");
-			this.addStyle(sStyle, vValue);
+		this.style = function(sStyle, sValue) {
+			assert(typeof sStyle === "string" && sStyle && !/\s/.test(sStyle), "Method 'style' must be called with a non-empty string name");
+
+			this.addStyle(sStyle, sValue);
 			return this;
 		};
 
@@ -536,7 +545,7 @@ sap.ui.define([
 		 *            [oElement] the element whose accessibility state should be rendered
 		 * @param {Object}
 		 *            [mProps] a map of properties that should be added additionally or changed.
-		 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
+		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 		 * @private
 		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
 		 */
@@ -558,7 +567,7 @@ sap.ui.define([
 		 * @param {sap.ui.core.URI} sURI URI of an image or of an icon registered in {@link sap.ui.core.IconPool}
 		 * @param {array|string} [aClasses] Additional classes that are added to the rendered tag
 		 * @param {object} [mAttributes] Additional attributes that will be added to the rendered tag
-		 * @returns {sap.ui.core.RenderManager} this render manager instance to allow chaining
+		 * @returns {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 		 * @private
 		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
 		 */
@@ -656,7 +665,7 @@ sap.ui.define([
 		 * If the given control is undefined or null, then nothing is rendered.
 		 *
 		 * @param {sap.ui.core.Control} oControl the control that should be rendered
-		 * @returns {sap.ui.core.RenderManager} this render manager instance to allow chaining
+		 * @returns {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 */
 		this.renderControl = function(oControl) {
@@ -982,7 +991,7 @@ sap.ui.define([
 					var oldDomNode = oControl.getDomRef();
 					if ( !oldDomNode || RenderManager.isPreservedContent(oldDomNode) ) {
 						// In case no old DOM node was found or only preserved DOM, search for a placeholder (invisible or preserved DOM placeholder)
-						oldDomNode = document.getElementById(RenderManager.createInvisiblePlaceholderId(oControl)) || document.getElementById(RenderPrefixes.Dummy + oControl.getId());
+						oldDomNode = document.getElementById(InvisibleRenderer.createInvisiblePlaceholderId(oControl)) || document.getElementById(RenderPrefixes.Dummy + oControl.getId());
 					}
 
 					var bNewTarget = oldDomNode && oldDomNode.parentNode != oTargetDomNode;
@@ -1123,7 +1132,7 @@ sap.ui.define([
 
 	/**
 	 * @deprecated As of version 1.1, never has been implemented - DO NOT USE
-	 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
+	 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	RenderManager.prototype.writeAcceleratorKey = function() {
@@ -1142,7 +1151,7 @@ sap.ui.define([
 	 * Writes the controls data into the HTML.
 	 * Control Data consists at least of the id of a control
 	 * @param {sap.ui.core.Control} oControl the control whose identifying information should be written to the buffer
-	 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
+	 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	RenderManager.prototype.writeControlData = function(oControl) {
@@ -1155,7 +1164,7 @@ sap.ui.define([
 	 * Writes the elements data into the HTML.
 	 * Element Data consists at least of the id of an element
 	 * @param {sap.ui.core.Element} oElement the element whose identifying information should be written to the buffer
-	 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
+	 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	RenderManager.prototype.writeElementData = function(oElement) {
@@ -1246,7 +1255,7 @@ sap.ui.define([
 	 *            [oElement] the element whose accessibility state should be rendered
 	 * @param {Object}
 	 *            [mProps] a map of properties that should be added additionally or changed.
-	 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
+	 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	RenderManager.prototype.writeAccessibilityState = function(oElement, mProps) {
@@ -1364,7 +1373,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.URI} sURI URI of an image or of an icon registered in {@link sap.ui.core.IconPool}
 	 * @param {array|string} [aClasses] Additional classes that are added to the rendered tag
 	 * @param {object} [mAttributes] Additional attributes that will be added to the rendered tag
-	 * @returns {sap.ui.core.RenderManager} this render manager instance to allow chaining
+	 * @returns {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	RenderManager.prototype.writeIcon = function(sURI, aClasses, mAttributes){

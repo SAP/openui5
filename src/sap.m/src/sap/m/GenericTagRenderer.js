@@ -29,11 +29,9 @@ sap.ui.define([
 		var aLabelledBy = this._getAriaLabelledBy(oControl),
 			oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
 
-		oRm.openStart("div");
+		oRm.openStart("div", oControl);
 		oRm.class("sapMGenericTag");
-		oRm.attr("id", oControl.getId());
 		oRm.attr("tabindex", 0);
-		oRm.controlData(oControl);
 
 		oRm.class("sapMGenericTag" + oControl.getStatus());
 

@@ -36,8 +36,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/m/Hyphenation
 				bRenderWhitespace = oText.getRenderWhitespace();
 
 			// start writing html
-			oRm.openStart("span");
-			oRm.controlData(oText);
+			oRm.openStart("span", oText);
 			oRm.class("sapMText");
 			oRm.class("sapUiSelectable");
 
