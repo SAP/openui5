@@ -91,6 +91,34 @@ sap.ui.define([
 		assert.strictEqual(parse, BindingParser.complexParser, "configuration should have set the right binding parser");
 	});
 
+	QUnit.test("Simple Binding", function(assert) {
+		var o = parse("{model>path}");
+		assert.strictEqual(typeof o, "object", "parse should return an object");
+		assert.strictEqual(o.model, "model", "binding info should contain the expected model name");
+		assert.strictEqual(o.path, "path", "binding info should contain the expected pathg");
+	});
+
+	QUnit.test("Complex Binding (no quotes)", function(assert) {
+		var o = parse("{model: \"some\", path: \"path\"}");
+		assert.strictEqual(typeof o, "object", "parse should return an object");
+		assert.strictEqual(o.model, "some", "binding info should contain the expected model name");
+		assert.strictEqual(o.path, "path", "binding info should contain the expected pathg");
+	});
+
+	QUnit.test("Complex Binding (double quotes)", function(assert) {
+		var o = parse("{\"model\": \"some\", path: \"path\"}");
+		assert.strictEqual(typeof o, "object", "parse should return an object");
+		assert.strictEqual(o.model, "some", "binding info should contain the expected model name");
+		assert.strictEqual(o.path, "path", "binding info should contain the expected pathg");
+	});
+
+	QUnit.test("Complex Binding (single quotes)", function(assert) {
+		var o = parse("{'model': \"some\", path: \"path\"}");
+		assert.strictEqual(typeof o, "object", "parse should return an object");
+		assert.strictEqual(o.model, "some", "binding info should contain the expected model name");
+		assert.strictEqual(o.path, "path", "binding info should contain the expected pathg");
+	});
+
 	QUnit.test("Single Binding with global formatter", function (assert) {
 		var o = parse("{path:'something', formatter: 'Global.formatter'}");
 		assert.strictEqual(typeof o, "object", "parse should return an object");
