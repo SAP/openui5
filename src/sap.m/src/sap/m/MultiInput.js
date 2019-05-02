@@ -547,11 +547,6 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype.onBeforeRendering = function () {
-		var oTokenizer = this.getAggregation("tokenizer");
-
-		if (oTokenizer) {
-			oTokenizer.toggleStyleClass("sapMTokenizerEmpty", oTokenizer.getTokens().length === 0);
-		}
 
 		Input.prototype.onBeforeRendering.apply(this, arguments);
 
