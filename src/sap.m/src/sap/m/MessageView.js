@@ -321,6 +321,7 @@ sap.ui.define([
 	 */
 	MessageView.prototype._afterNavigate = function () {
 		setTimeout(this["_restoreFocus"].bind(this), 0);
+		setTimeout(this["_restoreItemsType"].bind(this), 0);
 	};
 
 	/**
@@ -333,6 +334,38 @@ sap.ui.define([
 			this._oLists[this._sCurrentList || 'all'].focus();
 		} else if (this._oBackButton){
 			this._oBackButton.focus();
+		}
+	};
+
+	/**
+	 * Restores the items type after navigation
+	 *
+	 * @private
+	 */
+	MessageView.prototype._restoreItemsType = function () {
+		if (this._isListPage() && this.getItems().length) {
+			var that = this;
+			this._oLists[this._sCurrentList || 'all'].getItems().forEach(function (oListItem) {
+				that._setItemType(oListItem);
+			});
+		}
+	};
+
+	/**
+	 * Sets the item type to navigation if the text is too long
+	 *
+	 * @param {sap.m.MessageListItem} oListItem The list item
+	 * @private
+	 */
+	MessageView.prototype._setItemType = function (oListItem) {
+		var sSelector = oListItem.getActiveTitle() ? ".sapMSLITitleDiv a" : ".sapMSLITitleDiv > div",
+			oItemDomRef = oListItem.getDomRef().querySelector(sSelector);
+
+		if (oItemDomRef.offsetWidth < oItemDomRef.scrollWidth) {
+			oListItem.setType(ListType.Navigation);
+			if (this.getItems().length === 1) {
+				this._fnHandleForwardNavigation(oListItem, "show");
+			}
 		}
 	};
 
@@ -747,15 +780,7 @@ sap.ui.define([
 		if (listItemType !== ListType.Navigation) {
 			oListItem.addEventDelegate({
 				onAfterRendering: function () {
-					var sSelector = oListItem.getActiveTitle() ? ".sapMSLITitleDiv a" : ".sapMSLITitleDiv > div",
-						oItemDomRef = oListItem.getDomRef().querySelector(sSelector);
-
-					if (oItemDomRef.offsetWidth < oItemDomRef.scrollWidth) {
-						oListItem.setType(ListType.Navigation);
-						if (this.getItems().length === 1) {
-							this._fnHandleForwardNavigation(oListItem, "show");
-						}
-					}
+					that._setItemType(oListItem);
 				}
 			}, this);
 		}

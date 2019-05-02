@@ -333,21 +333,43 @@ sap.ui.define([
 		assert.strictEqual(aItems[4].getInfoState(), ValueState.None, "The value state should be None in case of information message.");
 	});
 
-	QUnit.test("MessageView should restore the focus on back navigation", function (assert) {
+	QUnit.test("MessageView should restore the focus and items type on back navigation", function (assert) {
 		// arrange
-		var focusSpy = sinon.spy(this.oMessageView, "_restoreFocus");
+		var oItems, focusSpy, restoreItemTypeSpy, setItemTypeSpy,
+			sLongTitle = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod" +
+					"tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam," +
+					"quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo" +
+					"consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse" +
+					"cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non" +
+					"proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+
+		this.oMessageView.addItem(new MessageItem({
+			title: sLongTitle
+		}));
 
 		// act
 		this.oDialog.open();
 		this.oMessageView._fnHandleForwardNavigation(this.oMessageView._oLists.all.getItems()[0], "show");
+
+		focusSpy = sinon.spy(this.oMessageView, "_restoreFocus");
+		restoreItemTypeSpy = sinon.spy(this.oMessageView, "_restoreItemsType");
+		setItemTypeSpy = sinon.spy(this.oMessageView, "_setItemType");
+
 		this.oMessageView.navigateBack();
 		this.clock.tick(500);
 
+		oItems = this.oMessageView._oLists.all.getItems();
+
 		// assert
+		assert.strictEqual(oItems[5].getType(), "Navigation", "The first item should be navigation type");
 		assert.ok(focusSpy.called, "_restoreFocus should be called");
+		assert.ok(restoreItemTypeSpy.called, "_restoreItemsType should be called");
+		assert.ok(setItemTypeSpy.called, "_setItemType should be called");
 
 		// cleanup
 		focusSpy.restore();
+		restoreItemTypeSpy.restore();
+		setItemTypeSpy.restore();
 	});
 
 	QUnit.test("MessageItems type Navigation when there is Description, else Inactive", function (assert) {
