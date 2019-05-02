@@ -76,7 +76,8 @@ sap.ui.define(["sap/ui/base/DataType",
 			"sap.f.semantic.SendEmailAction",
 			"sap.f.semantic.SendMessageAction",
 			"sap.f.semantic.ShareInJamAction",
-			"sap.f.semantic.TitleMainAction"
+			"sap.f.semantic.TitleMainAction",
+			"sap.f.SearchManager"
 		],
 		extensions: {
 			flChangeHandlers: {
