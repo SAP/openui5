@@ -40,7 +40,9 @@
 			{Gregorian: {year: 1979, month: 0, day: 24}, Japanese: {era: 234, year: 54, month:0, day: 24}},
 			{Gregorian: {year: 1997, month: 8, day: 15}, Japanese: {era: 235, year: 9, month:8, day: 15}},
 			{Gregorian: {year: 2009, month: 6, day: 11}, Japanese: {era: 235, year: 21, month:6, day: 11}},
-			{Gregorian: {year: 2018, month: 9, day: 19}, Japanese: {era: 235, year: 30, month:9, day: 19}}
+			{Gregorian: {year: 2018, month: 9, day: 19}, Japanese: {era: 235, year: 30, month:9, day: 19}},
+			{Gregorian: {year: 2019, month: 4, day: 1}, Japanese: {era: 236, year: 1, month:4, day: 1}},
+			{Gregorian: {year: 2032, month: 9, day: 1}, Japanese: {era: 236, year: 14, month:9, day: 1}}
 		];
 
 
@@ -159,7 +161,7 @@
 		test("with year without era, when year is in current era and less than 100", function () {
 			var oJapaneseDate = null, oJapanese;
 			aTestData.forEach(function(oTestDate) {
-				if (oTestDate.Japanese.era == 235) {
+				if (oTestDate.Japanese.era == 236) {
 					oJapanese = oTestDate.Japanese;
 					oTestDate = {
 						Gregorian: oJapanese,
