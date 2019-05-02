@@ -136,7 +136,13 @@
   "router": "0xe086",
   "switch": "0xe087",
   "satellite": "0xe088",
-  "system-2": "0xe089"
+  "system-2": "0xe089",
+  "status-activating": "0xe08A",
+  "status-suspended": "0xe08B",
+  "status-suspending":"0xe08C",
+  "status-terminated": "0xe08D",
+  "status-terminating": "0xe08E",
+  "solution-not-licensed":"0xe08F"
 }
 
 
