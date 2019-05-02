@@ -234,38 +234,46 @@ sap.ui.define(["sap/ui/integration/util/CardManifest", "sap/ui/core/Manifest", "
 	});
 
 	QUnit.test("_syncParameters return correct object with overwritten parameters parameters", function (assert) {
+
 		// Act
 		var oSyncParametersResult = this.oManifest._syncParameters(this.oParameter, this.oManifestParameter);
 
 		//Assert
 		assert.strictEqual(oSyncParametersResult.city.value, "Vratza", "Should return the correct city value.");
 		assert.strictEqual(oSyncParametersResult.country.value, "Bulgaria", "Should return the correct country value.");
-
 	});
 
 	QUnit.test("processParameters - parameters in the property, but not in the manifest", function (assert) {
 
+		// Arrange
 		var oLogSpy = sinon.spy(Log, "error");
+
 		// Act
 		this.oManifestWhitoutParams.processParameters(this.oManifestParameter);
 
-		//Assert
+		// Assert
 		assert.ok(oLogSpy.calledOnce, "An error should be logged");
+
+		// Cleanup
+		oLogSpy.restore();
 	});
 
 
 	QUnit.test("processParameters - parameters in the property, but not in the manifest", function (assert) {
 
+		// Arrange
 		var oSyncParametersSpy = sinon.spy(this.oManifest, "_syncParameters"),
-		oProcessManifestSpy = sinon.spy(this.oManifest, "processManifest");
+			oProcessManifestSpy = sinon.spy(this.oManifest, "processManifest");
 
 		// Act
 		this.oManifest.processParameters(this.oParameter);
 
-
-		//Assert
+		// Assert
 		assert.ok(oSyncParametersSpy.calledOnce, "_syncParameters should be called");
 		assert.ok(oProcessManifestSpy.calledOnce, "processManifest should be called");
 
+		// Cleanup
+		oSyncParametersSpy.restore();
+		oProcessManifestSpy.restore();
 	});
 });
