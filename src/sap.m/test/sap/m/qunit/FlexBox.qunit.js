@@ -790,8 +790,16 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Nested FlexBox rendered without wrapper", function(assert) {
+	QUnit.test("Rendered without wrapper", function(assert) {
 		assert.ok(this.oItem1.getDomRef().classList.contains("sapMVBox"), "Inner VBox should be rendered without a wrapper");
+	});
+
+	QUnit.test("Class names duplication check", function(assert) {
+		var aClassesList = this.oItem1.getDomRef().className.split(" ");
+		var iClassesLength = aClassesList.length;
+		var iClassesLengthWithoutDuplicate = Array.from(new Set(aClassesList)).toString().split(",").length;
+
+		assert.equal(iClassesLength, iClassesLengthWithoutDuplicate, "There are no duplicated class names" );
 	});
 
 	QUnit.module("Accessibility", {
