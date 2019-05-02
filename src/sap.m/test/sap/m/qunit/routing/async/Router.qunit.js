@@ -549,6 +549,7 @@ sap.ui.define([
 	QUnit.module("Order of navigation methods and events");
 
 	QUnit.test("TargetHandler's addNavigation, navigate and routeMatched event should be called in the correct order", function(assert) {
+		var oApp = new NavContainer("container");
 		var oRouter = fnCreateRouter(
 			{
 				"route": {
@@ -559,7 +560,7 @@ sap.ui.define([
 			{
 				viewType: "JS",
 				controlAggregation:"pages",
-				controlId: "someControlId"
+				controlId: "container"
 			},
 			null,
 			{
@@ -596,6 +597,7 @@ sap.ui.define([
 		var oPromise = oRouteMatchedSpy.getCall(0).returnValue;
 		return oPromise.then(function() {
 			assert.deepEqual(aCalledOrder, ["addNavigation", "addNavigation", "navigate", "routeMatched"]);
+			oApp.destroy();
 		});
 	});
 });
