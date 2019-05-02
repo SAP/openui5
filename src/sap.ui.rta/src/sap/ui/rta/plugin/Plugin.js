@@ -142,13 +142,6 @@ function(
 		return aAlreadyDefinedRelevantOverlays;
 	};
 
-	function _isInAggregationBinding(aElements) {
-		return aElements.some(function(oStableElement) {
-			var oStableElementOverlay = OverlayRegistry.getOverlay(oStableElement);
-			return oStableElementOverlay && OverlayUtil.isInAggregationBinding(oStableElementOverlay, oStableElement.sParentAggregationName);
-		});
-	}
-
 	/**
 	 * Checks if the overlay has an associated element and calls the _isEditable function.
 	 * If there is an associated element it also modifies the plugin list.
@@ -167,28 +160,17 @@ function(
 		}
 		var vEditable;
 		aOverlays.forEach(function(oOverlay) {
-			var bIsInAggregationBinding = false;
-			var aStableElements = oOverlay.getDesignTimeMetadata().getStableElements(oOverlay);
+			// when a control gets destroyed it gets deregistered before it gets removed from the parent aggregation.
+			// this means that getElementInstance is undefined when we get here via removeAggregation mutation
+			// when an overlay is not registered yet, we should not evaluate editable. In this case getDesignTimeMetadata returns null.
+			// in case a control is marked as not adaptable by designTimeMetadata, it should not be possible to evaluate editable
+			// for this control due to parent aggregation action definitions
+			vEditable =
+				oOverlay.getElement() &&
+				oOverlay.getDesignTimeMetadata() &&
+				!oOverlay.getDesignTimeMetadata().markedAsNotAdaptable() &&
+				this._isEditable(oOverlay, mPropertyBag);
 
-			// for controls that don't return a ManagedObject, like for example the SmartLink, we skip this check
-			if (aStableElements[0] instanceof ManagedObject) {
-				bIsInAggregationBinding = _isInAggregationBinding(aStableElements);
-			}
-
-			if (bIsInAggregationBinding) {
-				vEditable = false;
-			} else {
-				// when a control gets destroyed it gets deregistered before it gets removed from the parent aggregation.
-				// this means that getElementInstance is undefined when we get here via removeAggregation mutation
-				// when an overlay is not registered yet, we should not evaluate editable. In this case getDesignTimeMetadata returns null.
-				// in case a control is marked as not adaptable by designTimeMetadata, it should not be possible to evaluate editable
-				// for this control due to parent aggregation action definitions
-				vEditable =
-					oOverlay.getElement() &&
-					oOverlay.getDesignTimeMetadata() &&
-					!oOverlay.getDesignTimeMetadata().markedAsNotAdaptable() &&
-					this._isEditable(oOverlay, mPropertyBag);
-			}
 			// for the createContainer and additionalElements plugin the isEditable function returns an object with 2 properties, asChild and asSibling.
 			// for every other plugin isEditable should be a boolean.
 			if (vEditable !== undefined && vEditable !== null) {

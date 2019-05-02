@@ -67,7 +67,6 @@ sap.ui.define([
 		if (
 			this.getElementMover().isMovableType(oElement)
 			&& this.getElementMover().checkMovable(oOverlay)
-			&& !OverlayUtil.isInAggregationBinding(oOverlay, oElement.sParentAggregationName)
 		) {
 			oOverlay.setMovable(true);
 		}

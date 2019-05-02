@@ -1375,8 +1375,11 @@ function (
 				assert.strictEqual(oMoveCommand.getPreparedChange().getContent().source.selector.id, oMoveCommand.getPreparedChange().getDefinition().dependentSelector.source.id, "and the content of the change is also adjusted");
 				assert.strictEqual(oMoveCommand.getPreparedChange().getContent().target.selector.id, oMoveCommand.getPreparedChange().getDefinition().dependentSelector.target.id, "and the content of the change is also adjusted");
 				assert.strictEqual(oMoveCommand.getPreparedChange().getContent().movedElements[0].selector.id, oMoveCommand.getPreparedChange().getDefinition().dependentSelector.movedElements[0].id, "and the content of the change is also adjusted");
+				assert.notEqual(oMoveCommand.getMovedElements()[0].element.getId(), this.oText1.getId(), "and the moved element is not the UI control anymore");
+				var oTextItem = this.oItemTemplate.getContent()[0].getItems()[0].getItems()[0].getItems()[0];
+				assert.strictEqual(oMoveCommand.getMovedElements()[0].element, oTextItem, "the moved element is the corresponding control in the template");
 				return oMoveCommand.execute();
-			})
+			}.bind(this))
 
 			.then(function() {
 				assert.equal(oCompleteChangeContentSpy.callCount, 2, "then completeChangeContent is called twice (once for prepare change and once for undo change)");
@@ -1460,7 +1463,7 @@ function (
 			this.oDesignTime.destroy();
 		}
 	}, function() {
-		QUnit.test("when getting a move change command for a bound control deep inside a bound list control,", function(assert) {
+		QUnit.test("when getting a rename change command for a bound control deep inside a bound list control,", function(assert) {
 			var oCommandFactory = new CommandFactory({
 				flexSettings: {
 					layer: "CUSTOMER",

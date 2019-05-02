@@ -179,18 +179,15 @@ function (
 			assert.strictEqual(this.oPlugin.hasStableId(), false, "then it returns false");
 		});
 
-		QUnit.test("when evaluateEditable is called for elements in an aggregation binding", function(assert) {
-			sandbox.stub(OverlayUtil, "isInAggregationBinding").returns(true);
+		QUnit.test("when evaluateEditable is called for elements", function(assert) {
 			var oModifyPluginListSpy = sandbox.spy(this.oPlugin, "_modifyPluginList");
 
 			this.oPlugin.evaluateEditable([this.oLayoutOverlay]);
 			assert.equal(oModifyPluginListSpy.callCount, 1, "_modifyPluginList was called once");
 			assert.equal(oModifyPluginListSpy.lastCall.args[0], this.oLayoutOverlay, "first parameter is the overlay");
-			assert.equal(oModifyPluginListSpy.lastCall.args[1], false, "inside aggregation binding editable is always false");
 		});
 
-		QUnit.test("when evaluateEditable is called for elements not in an aggregation binding that is editable but not adaptable", function(assert) {
-			sandbox.stub(OverlayUtil, "isInAggregationBinding").returns(false);
+		QUnit.test("when evaluateEditable is called for elements that is editable but not adaptable", function(assert) {
 			sandbox.stub(this.oLayoutOverlay.getDesignTimeMetadata(), "markedAsNotAdaptable").returns(true);
 			var oModifyPluginListSpy = sandbox.spy(this.oPlugin, "_modifyPluginList");
 
@@ -201,22 +198,11 @@ function (
 		});
 
 		QUnit.test("when evaluateEditable is called with getStableElements in DTMD returning a selector", function(assert) {
-			var oAggrBindingCheck = sandbox.spy(OverlayUtil, "isInAggregationBinding");
 			var oModifyPluginListSpy = sandbox.spy(this.oPlugin, "_modifyPluginList");
 			sandbox.stub(this.oLayoutOverlay.getDesignTimeMetadata(), "getStableElements").returns([{id: "id"}]);
 
 			this.oPlugin.evaluateEditable([this.oLayoutOverlay]);
-			assert.equal(oAggrBindingCheck.callCount, 0, "the aggregation binding check is skipped");
 			assert.equal(oModifyPluginListSpy.lastCall.args[1], true, "the function returns the result of _isEditable");
-		});
-
-		QUnit.test("when evaluateEditable is called for an element whose stable element has no overlay", function(assert) {
-			var oAggrBindingCheck = sandbox.spy(OverlayUtil, "isInAggregationBinding");
-			var oButton = new Button("IHaveNoOverlay");
-			sandbox.stub(this.oLayoutOverlay.getDesignTimeMetadata(), "getStableElements").returns([oButton]);
-
-			this.oPlugin.evaluateEditable([this.oLayoutOverlay]);
-			assert.equal(oAggrBindingCheck.callCount, 0, "the aggregation binding check is skipped");
 		});
 	});
 

@@ -1064,7 +1064,9 @@ sap.ui.define([
 		};
 		aChangesForControl.forEach(function (oChange) {
 
-			var bIsCurrentlyAppliedOnControl = this._isChangeCurrentlyApplied(oControl, oChange, mPropertyBag.modifier);
+			var sControlType = JsControlTreeModifier.getControlType(oControl);
+			var mControl = this._getControlIfTemplateAffected(oChange, oControl, sControlType, mPropertyBag);
+			var bIsCurrentlyAppliedOnControl = this._isChangeCurrentlyApplied(mControl.control, oChange, mPropertyBag.modifier);
 			var bChangeStatusAppliedFinished = oChange.isApplyProcessFinished();
 			if (bChangeStatusAppliedFinished && !bIsCurrentlyAppliedOnControl) {
 				// if a change was already processed and is not applied anymore,
