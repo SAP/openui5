@@ -24,14 +24,12 @@ sap.ui.define(function () {
 			"Card": {
 				coverage: {
 					only: [
-						"sap/ui/integration/widgets/Card",
-						"sap/f/cards/ActionEnablement"
+						"sap/ui/integration/widgets/Card"
 					]
 				},
 				module: [
 					'./Card.qunit',
-					'./CardDataHandling.qunit',
-					'./ActionEnablement.qunit'
+					'./CardDataHandling.qunit'
 				]
 			},
 			"util/CardManifest": {
@@ -54,6 +52,43 @@ sap.ui.define(function () {
 						"sap/ui/integration/util/CustomElements"
 					]
 				}
+			},
+			"AllCards": {
+				coverage: {
+					only: [
+						"sap/ui/integration/widgets/Card",
+						"sap/ui/integration/util/CardManifest",
+						"sap/ui/integration/util/ServiceManager",
+						"sap/ui/integration/util/CustomElements",
+						"sap/f/cards/ActionEnablement",
+						"sap/f/cards/AnalyticalContent",
+						"sap/f/cards/BindingResolver",
+						"sap/f/cards/ComponentContent",
+						"sap/f/cards/DataProvider",
+						"sap/f/cards/DataProviderFactory",
+						"sap/f/cards/Header",
+						"sap/f/cards/HeaderRenderer",
+						"sap/f/cards/ListContent",
+						"sap/f/cards/NumericHeader",
+						"sap/f/cards/NumericHeaderRenderer",
+						"sap/f/cards/NumericSideIndicator",
+						"sap/f/cards/NumericSideIndicatorRenderer",
+						"sap/f/cards/ObjectContent",
+						"sap/f/cards/RequestDataProvider",
+						"sap/f/cards/ServiceDataProvider",
+						"sap/f/cards/TableContent"
+					]
+				},
+				module: [
+					'./Card.qunit',
+					'./CardDataHandling.qunit',
+					'./util/CardManifest.qunit',
+					'./util/ServiceManager.qunit',
+					'./util/CustomElements.qunit',
+					'test-resources/sap/f/qunit/BindingResolver.qunit',
+					'test-resources/sap/f/qunit/DataProvider.qunit',
+					'./ActionEnablement.qunit'
+				]
 			}
 		}
 	};

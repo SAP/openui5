@@ -163,6 +163,70 @@ sap.ui.define([
 			}
 		};
 
+		var oManifest_ListCard_StaticContent = {
+			"sap.card": {
+				"type": "List",
+				"header": {
+				  "title": "List Card",
+				  "subTitle": "With static list items",
+				  "icon": {
+					"src": "sap-icon://business-objects-experience"
+				  },
+				  "status": {
+					"text": "5 of 17"
+				  }
+				},
+				"content": {
+				  "items":[
+					{
+					  "title":"Laurent Dubois",
+					  "icon":"../images/Elena_Petrova.png",
+					  "description":"I am Laurent. I put great attention to detail.",
+					  "infoState":"Error",
+					  "info":"Manager",
+					  "highlight":"Success",
+					  "action":{
+						"url":"https://www.w3schools.com"
+					  }
+					},
+					{
+					  "title":"Alain Chevalier",
+					  "icon":"../images/Alain_Chevalier.png",
+					  "description":"I am Alain. I put great attention to detail.",
+					  "infoState":"Success",
+					  "info":"Credit Analyst",
+					  "highlight":"Error"
+					},
+					{
+					  "title":"Alain Chevalier",
+					  "icon":"../images/Monique_Legrand.png",
+					  "description":"I am Alain. I put great attention to detail.",
+					  "infoState":"Information",
+					  "info":"Configuration Expert",
+					  "highlight":"Information"
+					},
+					{
+					  "title":"Alain Chevalier",
+					  "icon":"../images/Alain_Chevalier.png",
+					  "description":"I am Alain. I put great attention to detail.",
+					  "highlight":"Warning"
+					},
+					{
+					  "title":"Laurent Dubois",
+					  "icon":"../images/Elena_Petrova.png",
+					  "description":"I am Laurent. I put great attention to detail.",
+					  "infoState":"Error",
+					  "info":"Manager",
+					  "highlight":"Success",
+					  "action":{
+						"url":"https://www.w3schools.com"
+					  }
+					}
+				  ]
+				}
+			  }
+		};
+
 		var oManifest_DefaultParameters = {
 			"sap.card": {
 				"configuration": {
@@ -837,6 +901,88 @@ sap.ui.define([
 			}
 		};
 
+		var oManifest_TableCard_StaticContent = {
+			"sap.card": {
+				"type": "Table",
+				"header": {
+					"title": "Table Card with Static content",
+					"subTitle": "Table Card subtitle"
+				},
+				"content": {
+					"columns": [
+						{
+							"title": "Avatar",
+							"width": "15%"
+						},
+						{
+							"title": "First Name"
+						},
+						{
+							"title": "Last Name"
+						},
+						{
+							"title": "Progress"
+						}
+					],
+					"rows": [
+						{
+							"cells": [
+								{
+									"icon": {
+										"src": "../images/Woman_avatar_01.png"
+									}
+								},
+								{
+									"value": "Petra"
+								},
+								{
+									"value": "Maier"
+								},
+								{
+									"progressIndicator": {
+										"percent": 70,
+										"text": "70 of 100",
+										"state": "Success"
+									}
+								}
+							]
+						},
+						{
+							"cells": [
+								{
+									"width": "12%",
+									"icon": {
+										"src": "../images/Woman_avatar_02.png"
+									}
+								},
+								{
+									"value": "Anna"
+								},
+								{
+									"value": "Smith"
+								},
+								{
+									"progressIndicator": {
+										"percent": 30,
+										"text": "40 of 100",
+										"state": "Warning"
+									}
+								}
+							],
+							"actions": [
+								{
+									"type": "Navigation",
+									"url": "https://www.sap.com"
+								}
+							]
+						}
+					]
+				}
+			}
+		};
+
+
+
 		var oManifest_AvatarHeader = {
 			"sap.card": {
 				"type": "List",
@@ -1112,6 +1258,8 @@ sap.ui.define([
 					"A ComponentContainer is created with expected settings"
 				);
 
+				mSettings.componentCreated();
+
 				oStub.restore();
 				oCard.destroy();
 				done();
@@ -1378,6 +1526,62 @@ sap.ui.define([
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
+		QUnit.module("List Card", {
+			beforeEach: function () {
+				this.oCard = new Card({
+					width: "400px",
+					height: "600px"
+				});
+
+				this.oCard.placeAt(DOM_RENDER_LOCATION);
+				Core.applyChanges();
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("List Card - using manifest", function (assert) {
+
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				var oContent = this.oCard.getAggregation("_content");
+
+				Core.applyChanges();
+
+				// Assert
+				assert.ok(oContent, "List Card content form manifest should be set");
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest_ListCard);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
+		QUnit.test("List Card - static items", function (assert) {
+
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				var oContent = this.oCard.getAggregation("_content");
+
+				Core.applyChanges();
+
+				// Assert
+				assert.ok(oContent, "List Card static content should be set");
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest_ListCard_StaticContent);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
 		QUnit.module("Object Card", {
 			beforeEach: function () {
 				this.oCard = new Card({
@@ -1599,6 +1803,27 @@ sap.ui.define([
 
 			// Act
 			this.oCard.setManifest(oManifest_TableCard);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
+		QUnit.test("Table Card - static content", function (assert) {
+
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				var oContent = this.oCard.getAggregation("_content");
+
+				Core.applyChanges();
+
+				// Assert
+				assert.ok(oContent, "Table Card static content should be set");
+
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest_TableCard_StaticContent);
 		});
 
 		QUnit.test("Using manifest with card level data section", function (assert) {

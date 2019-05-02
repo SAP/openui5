@@ -52,6 +52,9 @@ sap.ui.define(function () {
 						"sap/f/cards/RequestDataProvider",
 						"sap/f/cards/ServiceDataProvider"
 					]
+				},
+				sinon: {
+					version: "edge"
 				}
 			},
 			"DynamicPage": {
