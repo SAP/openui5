@@ -1551,12 +1551,13 @@ sap.ui.define([
 		 * @private
 		 */
 		ComboBox.prototype.onsapshow = function(oEvent) {
-			var aSelectableItems, oItem;
+			var aSelectableItems, oItem,
+				bEditable = this.getEditable();
 			ComboBoxBase.prototype.onsapshow.apply(this, arguments);
 
 			this.syncPickerContent();
 
-			if (!this.getValue()) {
+			if (!this.getValue() && bEditable) {
 				aSelectableItems = this.getSelectableItems();
 				oItem = this.getNonSeparatorSelectableItems(aSelectableItems)[0];
 

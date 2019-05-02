@@ -5243,6 +5243,7 @@ sap.ui.define([
 		this.clock.tick(1000);
 		assert.strictEqual(oComboBox.getPicker().oPopup.getOpenState(), OpenState.CLOSED, "Control's picker pop-up is closed");
 		assert.strictEqual(oComboBox.isOpen(), false, "Control picker pop-up is closed");
+		assert.strictEqual(oComboBox.getValue(), "", "There is no selected value when the field is not editable");
 
 		// cleanup
 		oComboBox.destroy();
