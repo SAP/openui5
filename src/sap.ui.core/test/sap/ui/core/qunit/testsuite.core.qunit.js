@@ -153,20 +153,20 @@ sap.ui.define(function() {
 					noDuplicateIds: false
 				}
 			},
-			"Element": {
+			Element: {
 				title: "sap.ui.core: Element",
 				module: [
 					'testdata/core/Element_contextualSettings.qunit',
 					'testdata/core/Element_data.qunit',
 					'testdata/core/Element_delegates.qunit',
 					'testdata/core/Element_dependents.qunit',
+					'testdata/core/Element_destroy.qunit',
 					'testdata/core/Element_focus.qunit',
 					'testdata/core/Element_layoutData.qunit',
-					'testdata/core/Element_metadata_selector.qunit',
 					'testdata/core/Element_metadata_dnd.qunit',
-					'testdata/core/Element_sourceInfo.qunit',
-					'testdata/core/ElementMetadata.qunit',
-					'testdata/core/Element_destroy.qunit'
+					'testdata/core/Element_metadata_renderer.qunit',
+					'testdata/core/Element_metadata_selector.qunit',
+					'testdata/core/Element_sourceInfo.qunit'
 				]
 			},
 			Fragment: {

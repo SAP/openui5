@@ -155,13 +155,7 @@ sap.ui.define([
 			if ( oParent instanceof ElementMetadata ) {
 				oBaseRenderer = oParent.getRenderer();
 			}
-			if (!oBaseRenderer) {
-				oBaseRenderer = Renderer;
-			}
-			var oRenderer = Object.create(oBaseRenderer);
-			jQuery.extend(oRenderer, vRenderer);
-			this._oRenderer = oRenderer;
-			ObjectPath.set(this.getRendererName(), oRenderer);
+			this._oRenderer = Renderer.extend.call(oBaseRenderer || Renderer, this.getRendererName(), vRenderer);
 		}
 	};
 
