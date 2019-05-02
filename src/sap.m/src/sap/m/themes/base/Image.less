@@ -26,6 +26,19 @@ span.sapMImg {
 	outline: none;
 }
 
+.sapMImgFocusable:focus {
+	outline: 0.0625rem dotted @sapUiContentFocusColor;
+}
+
+html[data-sap-ui-browser^="ie"] .sapMImgFocusable:focus,
+html[data-sap-ui-browser^="ed"] .sapMImgFocusable:focus {
+	outline-style: dashed;
+}
+
+html:not(.sap-desktop) .sapMImgFocusable:focus {
+	outline: none;
+}
+
 
 /* ==========================================================================
    Image opening a LightBox
