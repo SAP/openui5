@@ -2574,16 +2574,15 @@ function(
 		};
 
 		Select.prototype.setValueStateText = function(sValueStateText) {
-			var oDomRef = this.getDomRefForValueState();
 
 			this.setProperty("valueStateText", sValueStateText, true);
 
-			if (!oDomRef) {
-				return this;
+			if (this.getDomRefForValueState()) {
+				this._updatePickerValueStateContentText();
+				this._updatePickerValueStateContentStyles();
 			}
 
-			this._updatePickerValueStateContentText();
-			this._updatePickerValueStateContentStyles();
+			return this;
 		};
 
 		/**
