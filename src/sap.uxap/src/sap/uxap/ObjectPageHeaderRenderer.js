@@ -150,6 +150,7 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 		oRm.writeAttributeEscaped("id", oControl.getId() + "-title" + sIdSuffix);
 		oRm.write(">");
 		oRm.write("<span");
+		oRm.addClass("sapUxAPObjectPageHeaderTitleText");
 		oRm.addClass("sapUxAPObjectPageHeaderTitleTextWrappable");
 		oRm.writeClasses();
 		oRm.writeAttributeEscaped("id", oControl.getId() + "-innerTitle" + sIdSuffix);
@@ -170,7 +171,6 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 				sOHTitleEnd = sOHTitle;
 				sOHTitleStart = '';
 			}
-
 			oRm.writeEscaped(sOHTitleStart);
 			oRm.write("</span>");
 			oRm.write("<span");
@@ -180,7 +180,12 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 			}
 			oRm.writeClasses();
 			oRm.write(">");
+			oRm.write("<span");
+			oRm.addClass("sapUxAPObjectPageHeaderTitleText");
+			oRm.writeClasses();
+			oRm.write(">");
 			oRm.writeEscaped(sOHTitleEnd);
+			oRm.write("</span>");
 
 			this._renderMarkers(oRm, oControl);
 

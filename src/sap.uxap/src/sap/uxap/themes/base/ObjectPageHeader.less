@@ -219,8 +219,6 @@ html .sapUiContainer-Narrow .sapUxAPObjectPageHeaderIdentifier {
 	display: none;
 	vertical-align: middle;
 	line-height: normal;
-	overflow: hidden;
-	text-overflow: ellipsis;
 	max-width: 100%;
 	.sapUxAPObjectPageHeaderStickied & {
 		display: inline-block;
@@ -245,6 +243,13 @@ html[data-sap-ui-browser^=ie] .sapUxAPObjectPageHeaderObjectImageContainerSub > 
 	vertical-align: top;
 	white-space: nowrap;
 	margin-left: 0;
+}
+
+.sapUxAPObjectPageHeaderTitleTextRestrictedWidth {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display:inline-block;
+	max-width: 100%;
 }
 
 .sapUxAPObjectPageHeaderTitleTextWrappable {
