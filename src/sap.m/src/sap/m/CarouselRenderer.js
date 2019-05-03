@@ -185,7 +185,6 @@ sap.ui.define(["sap/m/library", "sap/ui/Device"],
 			sPageIndicatorDisplayStyle = bShowPageIndicator ? '' : 'opacity: 0',
 			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m'),
 			sOffsetCSSClass = "",
-			sTextBetweenNumbers = oResourceBundle.getText("CAROUSEL_PAGE_INDICATOR_TEXT", [iIndex + 1, iPageCount]),
 			iNumberOfItemsToShow = oCarousel._getNumberOfItemsToShow(),
 			sTextBetweenNumbers = oResourceBundle.getText("CAROUSEL_PAGE_INDICATOR_TEXT", [iIndex + 1, iPageCount - iNumberOfItemsToShow + 1]),
 			iPageNumber = 1;
