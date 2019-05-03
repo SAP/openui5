@@ -19,7 +19,7 @@ sap.ui.define([], function() {
 	 * @param {Object} obj the object which is checked
 	 * @returns {boolean} whether or not the given object is empty
 	 */
-	return function(obj) {
+	var fnIsEmptyObject = function isEmptyObject(obj) {
 		/*eslint-disable no-unused-vars */
 		for (var sName in obj) {
 			return false;
@@ -27,4 +27,6 @@ sap.ui.define([], function() {
 		/*eslint-enable no-unused-vars */
 		return true;
 	};
+
+	return fnIsEmptyObject;
 });
