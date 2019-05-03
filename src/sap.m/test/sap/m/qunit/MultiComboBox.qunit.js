@@ -3114,6 +3114,7 @@ sap.ui.define([
 		});
 
 		// arrange
+		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
