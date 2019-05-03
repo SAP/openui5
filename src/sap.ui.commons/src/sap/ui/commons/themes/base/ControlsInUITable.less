@@ -2,7 +2,7 @@
  * STYLE ADAPTATIONS OF COMMONS CONTROLS FOR SAP.UI.TABLE.TABLE
  ******************************************************************************/
 
-.sapUiTableDataCell {
+.sapUiTableDataCell > .sapUiTableCellInner {
 
 	> .sapUiTv,
 	> .sapUiLbl,
@@ -65,8 +65,8 @@
 
 }
 
-html[data-sap-ui-browser^="ie"] .sapUiTableDataCell,
-html[data-sap-ui-browser^="ed"] .sapUiTableDataCell {
+html[data-sap-ui-browser^="ie"] .sapUiTableDataCell > .sapUiTableCellInner,
+html[data-sap-ui-browser^="ed"] .sapUiTableDataCell > .sapUiTableCellInner {
 
 	> .sapUiLnk:focus {
 		outline: none;
