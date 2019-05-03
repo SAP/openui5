@@ -363,7 +363,7 @@
 		},
 		{
 			"control": "sap.m.ResponsivePopover",
-			"url": "../ResponsivePopover.html",
+			"url": "ResponsivePopover.html",
 			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
