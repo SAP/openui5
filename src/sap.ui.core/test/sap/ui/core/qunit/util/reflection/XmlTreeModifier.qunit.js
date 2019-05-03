@@ -3,12 +3,16 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/util/XMLHelper",
 	"sap/ui/base/Event",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/CustomData",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
 	XmlTreeModifier,
 	XMLHelper,
 	Event,
+	JSONModel,
+	CustomData,
 	sinon
 ) {
 	"use strict";
@@ -730,6 +734,112 @@ function(
 				}.bind(this),
 				/function is not found/
 			);
+		});
+	});
+
+	QUnit.module("Aggregation binding", {
+		before: function () {
+			this.createView = function (oXmlView) {
+				return sap.ui.xmlview({
+					viewContent: XMLHelper.serialize(oXmlView)
+				});
+			};
+		},
+		beforeEach: function () {
+			this.oComponent = sap.ui.getCore().createComponent({
+				name: "sap.ui.test.other",
+				id: "testComponent"
+			});
+
+			this.oXmlString = (
+				'<mvc:View ' +
+					'id="testComponent---myView" ' +
+					'xmlns:mvc="sap.ui.core.mvc" ' +
+					'xmlns="sap.m"' +
+				'>' +
+						'<Button text="Button1" id="button1"></Button>' +
+				'</mvc:View>'
+			);
+			this.oXmlView = XMLHelper.parse(this.oXmlString, "application/xml").documentElement;
+
+			this.oButton = XmlTreeModifier._byId('button1', this.oXmlView);
+
+			this.oModel = new JSONModel();
+			this.oModel.setData({
+				customData: [{
+					key: "foo",
+					value: "bar"
+				}]
+			});
+
+			this.sModelName = "someModel";
+		},
+		afterEach: function () {
+			if (this.oView) {
+				this.oView.destroy();
+			}
+			this.oComponent.destroy();
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("bindAggregation", function (assert) {
+			XmlTreeModifier.bindAggregation(
+				this.oButton,
+				"customData",
+				{
+					path: this.sModelName + ">/customData",
+					template: XmlTreeModifier.createControl(
+						"sap.ui.core.CustomData",
+						this.oComponent,
+						this.oXmlView,
+						{
+							id: XmlTreeModifier.getId(this.oButton) + '-customData'
+						},
+						{
+							key: "{path: '" + this.sModelName + ">key'}",
+							value: "{path: '" + this.sModelName + ">value'}"
+						}
+					)
+				},
+				this.oXmlView
+			);
+
+			this.oView = this.createView(this.oXmlView);
+			this.oView.setModel(this.oModel, this.sModelName);
+			this.oButtonInstance = this.oView.byId("button1");
+
+			assert.strictEqual(this.oButtonInstance.getCustomData()[0].getKey(), "foo");
+			assert.strictEqual(this.oButtonInstance.getCustomData()[0].getValue(), "bar");
+		});
+		QUnit.test("unbindAggregation", function (assert) {
+			XmlTreeModifier.bindAggregation(
+				this.oButton,
+				"customData",
+				{
+					path: this.sModelName + ">/customData",
+					template: XmlTreeModifier.createControl(
+						"sap.ui.core.CustomData",
+						this.oComponent,
+						this.oXmlView,
+						{
+							id: XmlTreeModifier.getId(this.oButton) + '-customData'
+						},
+						{
+							key: "{path: '" + this.sModelName + ">key'}",
+							value: "{path: '" + this.sModelName + ">value'}"
+						}
+					)
+				},
+				this.oXmlView
+			);
+
+			XmlTreeModifier.unbindAggregation(this.oButton, "customData");
+
+			this.oView = this.createView(this.oXmlView);
+			this.oView.setModel(this.oModel, this.sModelName);
+			this.oButtonInstance = this.oView.byId("button1");
+
+			assert.strictEqual(this.oButtonInstance.getCustomData().length, 0);
 		});
 	});
 });

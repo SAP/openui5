@@ -190,12 +190,8 @@ function(
 			JsControlTreeModifier.bindAggregation(this.oControl, "customData", {
 				path: sModelName + ">/customData",
 				template: new CustomData({
-					key: {
-						path: sModelName + ">key"
-					},
-					value: {
-						path: sModelName + ">value"
-					}
+					key: "{path: '" + sModelName + ">key'}",
+					value: "{path: '" + sModelName + ">value'}"
 				})
 			});
 

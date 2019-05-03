@@ -652,6 +652,24 @@ sap.ui.define([
 			} else {
 				oNode.removeAttribute(sEventName);
 			}
+		},
+
+		/**
+		 * @inheritDoc
+		 */
+		bindAggregation: function (oNode, sAggregationName, vBindingInfos, oView) {
+			this.bindProperty(oNode, sAggregationName, vBindingInfos.path);
+			this.insertAggregation(oNode, sAggregationName, vBindingInfos.template, 0, oView);
+		},
+
+		/**
+		 * @inheritDoc
+		 */
+		unbindAggregation: function (oNode, sAggregationName) {
+			if (oNode.hasAttribute(sAggregationName)) {
+				oNode.removeAttribute(sAggregationName);
+				this.removeAllAggregation(oNode, sAggregationName);
+			}
 		}
 	};
 
