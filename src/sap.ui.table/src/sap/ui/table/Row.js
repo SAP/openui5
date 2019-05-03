@@ -321,15 +321,10 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/Context', './TableUtils', "s
 		this._iLevel = 0;
 		this._bIsExpanded = false;
 		this._bHasChildren = false;
-		this._sTreeIconClass = "";
 
 		if (oNode) {
 			this._oNodeState = oNode.nodeState;
 			this._iLevel = oNode.level;
-			this._bIsExpanded = false;
-			this._bHasChildren = false;
-			this._sTreeIconClass = "sapUiTableTreeIconLeaf";
-			this._sGroupIconClass = "";
 
 			if (oBinding) {
 				if (oBinding.getLevel) {
@@ -345,11 +340,6 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/Context', './TableUtils', "s
 					}
 				} else if (oBinding.hasChildren) {
 					this._bHasChildren = oBinding.hasChildren(oContext);
-				}
-
-				if (this._bHasChildren) {
-					this._sTreeIconClass = this._bIsExpanded ? "sapUiTableTreeIconNodeOpen" : "sapUiTableTreeIconNodeClosed";
-					this._sGroupIconClass = this._bIsExpanded ? "sapUiTableGroupIconOpen" : "sapUiTableGroupIconClosed";
 				}
 			}
 		}

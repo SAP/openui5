@@ -1762,8 +1762,8 @@ sap.ui.define([
 	QUnit.test("After initialization", function(assert) {
 		var $table = oTable.$();
 		assert.equal(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
-		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlFixed .sapUiTableCtrlCol th").length, 3, "Fixed table has 3 Columns");
-		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScroll .sapUiTableCtrlCol th").length, 7, "Scroll table has 7 Columns");
+		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlFixed .sapUiTableCtrlCol th").length, 2, "Fixed table has 3 Columns");
+		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScroll .sapUiTableCtrlCol th").length, 6, "Scroll table has 7 Columns");
 		assert.equal(jQuery(oTable._getScrollExtension().getHorizontalScrollbar()).css("margin-left"), getExpectedHScrollLeftMargin(3),
 			"Horizontal scrollbar has correct left margin");
 	});
@@ -1780,8 +1780,8 @@ sap.ui.define([
 		var $table = oTable.$();
 		assert.equal(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
 		assert.equal(oTable.getComputedFixedColumnCount(), 2, "Computed Fixed column count correct");
-		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlFixed .sapUiTableCtrlCol th").length, 2, "Fixed table has 2 Columns");
-		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScroll .sapUiTableCtrlCol th").length, 7, "Scroll table has 7 Columns");
+		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlFixed .sapUiTableCtrlCol th").length, 1, "Fixed table has 2 Columns");
+		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScroll .sapUiTableCtrlCol th").length, 6, "Scroll table has 7 Columns");
 		assert.equal(jQuery(oTable._getScrollExtension().getHorizontalScrollbar()).css("margin-left"), getExpectedHScrollLeftMargin(2),
 			"Horizontal scrollbar has correct left margin");
 	});
@@ -1792,8 +1792,8 @@ sap.ui.define([
 		var $table = oTable.$();
 		assert.equal(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
 		assert.equal(oTable.getComputedFixedColumnCount(), 2, "Computed Fixed column count correct");
-		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlFixed .sapUiTableCtrlCol th").length, 3, "Fixed table has 6 Columns");
-		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScroll .sapUiTableCtrlCol th").length, 6, "Scroll table has 3 Columns");
+		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlFixed .sapUiTableCtrlCol th").length, 2, "Fixed table has 6 Columns");
+		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScroll .sapUiTableCtrlCol th").length, 5, "Scroll table has 3 Columns");
 		assert.equal(jQuery(oTable._getScrollExtension().getHorizontalScrollbar()).css("margin-left"), getExpectedHScrollLeftMargin(3),
 			"Horizontal scrollbar has correct left margin");
 	});
@@ -1863,13 +1863,13 @@ sap.ui.define([
 	QUnit.test("After initialization", function(assert) {
 		var $table = oTable.$();
 		assert.equal(oTable.getFixedRowCount(), 2, "Fixed row count correct");
-		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlFixed.sapUiTableCtrlRowFixed .sapUiTableCtrlCol th").length, 3,
+		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlFixed.sapUiTableCtrlRowFixed .sapUiTableCtrlCol th").length, 2,
 			"Top left table has 3 Columns");
-		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlFixed.sapUiTableCtrlRowScroll .sapUiTableCtrlCol th").length, 3,
+		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlFixed.sapUiTableCtrlRowScroll .sapUiTableCtrlCol th").length, 2,
 			"Bottom left table has 3 Columns");
-		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScroll.sapUiTableCtrlRowFixed .sapUiTableCtrlCol th").length, 7,
+		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScroll.sapUiTableCtrlRowFixed .sapUiTableCtrlCol th").length, 6,
 			"Top right table has 7 Columns");
-		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScroll.sapUiTableCtrlRowScroll .sapUiTableCtrlCol th").length, 7,
+		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScroll.sapUiTableCtrlRowScroll .sapUiTableCtrlCol th").length, 6,
 			"Bottom right table has 7 Columns");
 		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlFixed.sapUiTableCtrlRowFixed tbody tr").length, 2,
 			"Top left table has 2 rows");
@@ -1909,18 +1909,18 @@ sap.ui.define([
 		assert.equal(oTable.getFixedRowCount(), 2, "Fixed row count correct");
 		assert.equal(oTable.getFixedBottomRowCount(), 2, "Fixed bottom row count correct");
 		assert.equal(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
-		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScrFixed .sapUiTableCtrlRowFixed .sapUiTableCtrlCol th").length, 3,
-			"Left fixed table has 2 columns + dummy rowsel");
-		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScrFixed .sapUiTableCtrlRowScroll .sapUiTableCtrlCol th").length, 3,
-			"Left scroll table has 2 columns + dummy rowsel");
-		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScrFixed .sapUiTableCtrlRowFixedBottom .sapUiTableCtrlCol th").length, 3,
-			"Left fixed bottom table has 2 columns + dummy rowsel");
-		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScr .sapUiTableCtrlRowFixed .sapUiTableCtrlCol th").length, 7,
-			"Right table has 6 columns + dummy rowsel");
-		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScr .sapUiTableCtrlRowScroll .sapUiTableCtrlCol th").length, 7,
-			"Right scroll table has 6 columns + dummy rowsel");
-		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScr .sapUiTableCtrlRowFixedBottom .sapUiTableCtrlCol th").length, 7,
-			"Right fixed bottom table has 6 columns + dummy rowsel");
+		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScrFixed .sapUiTableCtrlRowFixed .sapUiTableCtrlCol th").length, 2,
+			"Left fixed table has 2 columns");
+		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScrFixed .sapUiTableCtrlRowScroll .sapUiTableCtrlCol th").length, 2,
+			"Left scroll table has 2 columns");
+		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScrFixed .sapUiTableCtrlRowFixedBottom .sapUiTableCtrlCol th").length, 2,
+			"Left fixed bottom table has 2 columns");
+		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScr .sapUiTableCtrlRowFixed .sapUiTableCtrlCol th").length, 6,
+			"Right table has 6 columns");
+		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScr .sapUiTableCtrlRowScroll .sapUiTableCtrlCol th").length, 6,
+			"Right scroll table has 6 columns");
+		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScr .sapUiTableCtrlRowFixedBottom .sapUiTableCtrlCol th").length, 6,
+			"Right fixed bottom table has 6 columns");
 		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScrFixed .sapUiTableCtrlRowFixed tbody tr").length, 2,
 			"Left fixed table has 2 rows");
 		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScr .sapUiTableCtrlRowFixed tbody tr").length, 2,
