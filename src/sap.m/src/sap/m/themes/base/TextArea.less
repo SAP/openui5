@@ -3,6 +3,9 @@
 /* Base theme                      */
 /* =============================== */
 
+@_sapMTextAreaPadding: 0.625rem 0.75rem;
+@_sapMTextAreaPadding_Compact: 0.1875rem 0.5rem;
+
 /* uses sapMInputBase styles */
 
 .sapMTextAreaInner {
@@ -27,12 +30,6 @@
 	width: 100%;
 }
 
-.sapMTextAreaGrow {
-	/* should not grow more than screen size */
-	max-height: calc(~"100vh - 6rem");
-	overflow: hidden;
-}
-
 .sapMTextAreaWithCounter {
 	& .sapMTextAreaCounter {
 		float:right;
@@ -50,6 +47,27 @@
 
 }
 
+.sapMTextAreaGrow {
+	overflow: hidden;
+	position: absolute;
+	height: 100%;
+	top: 0;
+}
+
+/* ensure that the mirror div has the same styles like the inner text area */
+.sapMTextAreaMirror {
+	/* should not grow more than screen size */
+	max-height: calc(100vh - 6rem);
+	white-space: pre-wrap;
+	border: none;
+	overflow: hidden;
+	line-height: 1.4;
+	visibility: hidden;
+	word-break: break-all;
+	font-size: 14px;
+	padding: @_sapMTextAreaPadding;
+}
+
 .sapMInputBase.sapMTextArea {
 	height: auto;
 	min-width: 6rem;
@@ -57,13 +75,15 @@
 
 	.sapMTextAreaInner {
 		line-height: 1.4;
-		padding: 0.625rem 0.75rem;
+		padding: @_sapMTextAreaPadding;
 		-webkit-overflow-scrolling: touch; /* IOS only */
 	}
 }
 
-.sapMInputBase.sapMTextArea.sapMInputBaseState .sapMTextAreaInner {
-	padding: 0.5625rem 0.6875rem;
+.sapMInputBase.sapMTextArea .sapMInputBaseContentWrapperState {
+	.sapMTextAreaInner, .sapMTextAreaMirror {
+		padding: 0.5625rem 0.6875rem;
+	}
 }
 
 /**** Compact Size ****/
@@ -72,9 +92,15 @@
 		min-height: 1.625rem;
 		margin: 0.1875rem 0;
 
-		.sapMTextAreaInner {
-			line-height: 1.4rem;
-			padding: 0.1875rem 0.5rem;
+		.sapMTextAreaInner, .sapMTextAreaMirror {
+			line-height: 1.4;
+			padding: @_sapMTextAreaPadding_Compact;
+		}
+	}
+
+	.sapMTextAreaWithCounter {
+		& .sapMTextAreaCounter {
+			padding-top: 0.3125rem;
 		}
 	}
 }

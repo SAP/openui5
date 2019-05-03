@@ -108,6 +108,8 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/Device'],
 		oRm.writeStyles();
 		oRm.write('>');
 
+		this.prependWrapperContent(oRm, oControl);
+
 		// start inner
 		this.openInputTag(oRm, oControl);
 
@@ -462,6 +464,14 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/Device'],
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 	 */
 	InputBaseRenderer.prependInnerContent = function(oRm, oControl) {};
+
+	/**
+	 * This method is reserved for derived classes to prepend inner content inside the wrapper.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+	 */
+	InputBaseRenderer.prependWrapperContent = function(oRm, oControl) {};
 
 	/**
 	 * Write the value of the input.

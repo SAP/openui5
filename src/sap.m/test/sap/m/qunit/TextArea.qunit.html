@@ -406,33 +406,22 @@
 
 
 	QUnit.module("Growing");
-	QUnit.test("after rendering whole content should be visible", function(assert) {
+
+	QUnit.test("after setValue the height is adjusted", function(assert) {
 		var sLongText = new Array(1000).join("text ");
 		var oTA = new sap.m.TextArea({
-			value: sLongText,
 			growing: true,
 			width: "100%"
 		}).placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		oTA.focus();
-		assert.ok(oTA.getFocusDomRef().scrollHeight <= oTA.getFocusDomRef().offsetHeight, "No scrollbar. Whole content is visible");
+		var iInitialHeight = oTA.getFocusDomRef().clientHeight;
+
+		oTA.setValue(sLongText);
+		sap.ui.getCore().applyChanges();
+		assert.ok(oTA.getFocusDomRef().clientHeight >= iInitialHeight, "TextArea height is adjusted");
 		oTA.destroy();
 	});
-
-    QUnit.test("after setValue the height is adjusted", function(assert) {
-        var sLongText = new Array(1000).join("text ");
-        var oTA = new sap.m.TextArea({
-            growing: true,
-            width: "100%"
-        }).placeAt("content");
-        sap.ui.getCore().applyChanges();
-
-        oTA.setValue(sLongText);
-        sap.ui.getCore().applyChanges();
-        assert.ok(oTA.getFocusDomRef().clientHeight >= 250, "TextArea height is adjusted");
-        oTA.destroy();
-    });
 
 	QUnit.test("height is adjust on resize event", function(assert) {
 		var fnOnResizeSpy,
@@ -457,6 +446,23 @@
 		oTA.destroy();
 	});
 
+	QUnit.test("line height", function(assert) {
+		var sLongText = new Array(10).join("text "),
+			oTA = new sap.m.TextArea({
+				value: sLongText,
+				growing: true
+			});
+
+		assert.notOk(oTA._getLineHeight(), "_getLineHeight should return null, when there is no dom ref");
+
+		oTA.placeAt('content');
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(!isNaN(oTA._getLineHeight()), "_getLineHeight should be a number");
+
+		oTA.destroy();
+	});
+
 	QUnit.test("maxHeight should be defined if maxLines is set", function(assert) {
 		var sLongText = new Array(1000).join("text ");
 		var oTA = new sap.m.TextArea({
@@ -469,7 +475,7 @@
 
 		oTA.focus();
 		assert.ok(oTA.getFocusDomRef().scrollHeight > oTA.getFocusDomRef().offsetHeight, "There is scroll bar. Whole content is not visible");
-		assert.ok(jQuery(oTA.getFocusDomRef()).css("max-height"), "There is a max-height defined");
+		assert.ok(jQuery(oTA.getDomRef('inner')).css("max-height"), "There is a max-height defined");
 		oTA.destroy();
 	});
 
@@ -486,6 +492,7 @@
 
 		var oDOMRef = oTA.getDomRef();
 		var oTextAreaDOMRef = oTA.getDomRef('inner');
+		var oMirrorDiv = oTA.getDomRef('hidden');
 		var initialHeight = oDOMRef.clientHeight;
 
 		//Act
@@ -493,6 +500,9 @@
 		sap.ui.getCore().applyChanges();
 
 		//Assert
+		assert.ok(oMirrorDiv, "A mirror div container should be created");
+		assert.strictEqual(oMirrorDiv.innerHTML.replace('&nbsp;', ''), shortText, "The mirror div should have the same text as an inner html");
+		assert.strictEqual(oMirrorDiv.offsetHeight, oTextAreaDOMRef.offsetHeight, "The mirror div should have the same height as the textarea");
 		assert.ok(initialHeight > oDOMRef.clientHeight, "TextArea height should have been shrinked properly.");
 		assert.ok(oTextAreaDOMRef.clientHeight >= oTextAreaDOMRef.scrollHeight, "Textarea should not have a scroll");
 
@@ -501,11 +511,14 @@
 		sap.ui.getCore().applyChanges();
 
 		//Assert
+		assert.strictEqual(oMirrorDiv.innerHTML.replace('&nbsp;', ''), sLongText, "The mirror div should have the same text as an inner html");
+		assert.strictEqual(oMirrorDiv.offsetHeight, oTextAreaDOMRef.offsetHeight, "The mirror div should have the same height as the textarea");
 		assert.ok(initialHeight === oDOMRef.clientHeight, "TextArea height should have been extended properly.");
 		assert.ok(oTextAreaDOMRef.clientHeight < oTextAreaDOMRef.scrollHeight, "TextArea should have a scroll.");
 
 		oTA.destroy();
 	});
+
 
 	QUnit.module("Input and Live change events in IE10+ when textarea html element is used");
 	QUnit.test("iE10+ Input event should not be fired on focus for textarea html element with a native placeholder", function(assert) {
