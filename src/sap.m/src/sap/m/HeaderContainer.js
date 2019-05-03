@@ -748,6 +748,9 @@ sap.ui.define([
 
 						bIsHorizontal ? oScroller.scrollLeft += iDelta : oScroller.scrollTop += iDelta;
 						iPos = fCurrent;
+
+						// prevent navigation
+						oEvent.preventDefault();
 					}
 				});
 
