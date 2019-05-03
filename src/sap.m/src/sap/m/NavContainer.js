@@ -927,6 +927,10 @@ sap.ui.define([
 			if (this._pageStack.length === 1 && !this._pageStack[0].isInitial) {
 				throw new Error("Initial page not found on the stack. How did this happen?");
 			}
+
+			//clear the navigation queue as there are no other pages
+			this._aQueue = [];
+
 			return this;
 
 		} else { // normal back navigation
