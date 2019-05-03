@@ -1553,6 +1553,7 @@ sap.ui.define([
 	 */
 	TableScrollExtension.prototype.getVerticalScrollbar = function() {
 		var oTable = this.getTable();
+		var bIsExternal = this.isVerticalScrollbarExternal();
 
 		if (oTable && !oTable._bInvalid && !internal(oTable).oVerticalScrollbar) {
 			// If the table is invalid and about to be (re-)rendered, the scrollbar element will be removed from DOM. The reference to the new
@@ -1560,12 +1561,22 @@ sap.ui.define([
 			// Table#getDomRef (document#getElementById) returns null if the element does not exist in the DOM.
 			internal(oTable).oVerticalScrollbar = oTable.getDomRef(SharedDomRef.VerticalScrollBar);
 
-			if (!internal(oTable).oVerticalScrollbar && this.isVerticalScrollbarExternal()) {
+			if (!internal(oTable).oVerticalScrollbar && bIsExternal) {
 				internal(oTable).oVerticalScrollbar = internal(oTable).oExternalVerticalScrollbar;
 			}
 		}
 
-		return internal(oTable).oVerticalScrollbar || null;
+		var oScrollbar = internal(oTable).oVerticalScrollbar;
+
+		if (oScrollbar && !bIsExternal
+			&& (typeof oScrollbar.isConnected === "boolean" && !oScrollbar.isConnected
+				|| !document.body.contains(oScrollbar) /* IE */)) {
+			// The internal scrollbar was removed from DOM without notifying the table.
+			// This can be the case, for example, if the parent of the table was made invisible.
+			return null;
+		}
+
+		return oScrollbar || null;
 	};
 
 	/**

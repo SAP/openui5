@@ -483,6 +483,20 @@ sap.ui.define([
 		assert.strictEqual(this.oScrollExtension.getVerticalScrollbar(), oTable.getDomRef(tableLibrary.SharedDomRef.VerticalScrollBar),
 			"Returned: Vertical scrollbar element");
 
+		var oScrollbar = this.oScrollExtension.getVerticalScrollbar();
+		var oScrollbarParent = oScrollbar.parentNode;
+
+		oScrollbarParent.removeChild(oScrollbar);
+		assert.strictEqual(this.oScrollExtension.getVerticalScrollbar(), null,
+			"Returned null: The Scrollbar was removed from DOM");
+
+		oScrollbarParent.appendChild(oScrollbar);
+		assert.strictEqual(this.oScrollExtension.getVerticalScrollbar(), oScrollbar,
+			"Returned: Vertical scrollbar element");
+
+		destroyTables();
+		createTables();
+
 		this.oScrollExtension.destroy();
 		assert.strictEqual(this.oScrollExtension.getVerticalScrollbar(), null,
 			"Returned null: The ScrollExtension is destroyed and has no reference to the table");
