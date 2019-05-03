@@ -325,23 +325,23 @@ sap.ui.define([
 	 * parent context changed.
 	 *
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving without a defined result when the update is finished
+	 *   A promise resolving without a defined result when the check is finished; never rejecting
 	 * @throws {Error} If called with parameters
 	 */
 	// @override
-	ODataParentBinding.prototype.checkUpdate = function () {
+	ODataParentBinding.prototype.checkUpdateInternal = function (bForceUpdate) {
 		var that = this;
 
 		function updateDependents() {
 			// Do not fire a change event in ListBinding, there is no change in the list of contexts
 			return SyncPromise.all(that.getDependentBindings().map(function (oDependentBinding) {
-				return oDependentBinding.checkUpdate();
+				return oDependentBinding.checkUpdateInternal();
 			}));
 		}
 
-		if (arguments.length > 0) {
-			throw new Error("Unsupported operation: " + sClassName + "#checkUpdate must not be"
-				+ " called with parameters");
+		if (bForceUpdate !== undefined) {
+			throw new Error("Unsupported operation: " + sClassName + "#checkUpdateInternal must not"
+				+ " be called with parameters");
 		}
 
 		return this.oCachePromise.then(function (oCache) {
@@ -841,7 +841,7 @@ sap.ui.define([
 	 *   The context for which to request side effects; if this parameter is missing or if it is the
 	 *   header context of a list binding, the whole binding is affected
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving without a defined result, or rejected with an error if loading of side
+	 *   A promise resolving without a defined result, or rejecting with an error if loading of side
 	 *   effects fails
 	 * @throws {Error}
 	 *   If this binding does not use own service data requests or if the binding's root binding is

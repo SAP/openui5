@@ -201,7 +201,7 @@ sap.ui.define([
 				oModelMock.expects("buildQueryOptions")
 					.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
 				oBindingMock.expects("isRootBindingSuspended").withExactArgs().returns(bSuspended);
-				oBindingMock.expects("checkUpdate").never();
+				oBindingMock.expects("checkUpdateInternal").never();
 				oBindingMock.expects("execute").exactly(bSuspended || bAction !== false ? 0 : 1)
 					.withExactArgs();
 				oBindingMock.expects("fetchCache").never();
@@ -239,7 +239,7 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
 			oBindingMock.expects("checkBindingParameters")
 				.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters);
-			oBindingMock.expects("checkUpdate").never();
+			oBindingMock.expects("checkUpdateInternal").never();
 			oBindingMock.expects("execute").never();
 			oBindingMock.expects("fetchCache").never();
 			oBindingMock.expects("refreshInternal").never();
@@ -276,7 +276,7 @@ sap.ui.define([
 			oModelMock.expects("buildQueryOptions")
 				.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
 			oBindingMock.expects("isRootBindingSuspended").withExactArgs().returns(bSuspended);
-			oBindingMock.expects("checkUpdate").never();
+			oBindingMock.expects("checkUpdateInternal").never();
 			oBindingMock.expects("execute").never();
 			oBindingMock.expects("fetchCache").exactly(bSuspended ? 0 : 1)
 				.withExactArgs(sinon.match.same(oContext));

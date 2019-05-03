@@ -1012,7 +1012,7 @@ sap.ui.define([
 	 * Resumes this binding and all dependent bindings and fires a change event afterwards.
 	 *
 	 * @param {boolean} bCheckUpdate
-	 *   Whether dependent property bindings shall call <code>checkUpdate</code>
+	 *   Whether dependent property bindings shall call <code>checkUpdateInternal</code>
 	 *
 	 * @private
 	 */

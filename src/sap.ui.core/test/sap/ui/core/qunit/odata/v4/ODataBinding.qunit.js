@@ -113,6 +113,25 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("checkUpdate", function (assert) {
+		var oBinding = new ODataBinding({
+				checkUpdateInternal : function () {}
+			}),
+			oBindingMock = this.mock(oBinding),
+			bForceUpdate = {/*false or true*/};
+
+		oBindingMock.expects("checkUpdateInternal")
+			.withExactArgs(sinon.match.same(bForceUpdate));
+
+		// code under test
+		oBinding.checkUpdate(bForceUpdate);
+
+		assert.throws(function () {
+			oBinding.checkUpdate(bForceUpdate, {/*additional argument*/});
+		}, new Error("Only the parameter bForceUpdate is supported"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("destroy binding w/ rejected cache promise", function (assert) {
 		var oBinding = new ODataBinding();
 
