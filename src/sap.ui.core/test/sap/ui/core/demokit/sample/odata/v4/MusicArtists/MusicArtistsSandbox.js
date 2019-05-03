@@ -25,9 +25,7 @@ sap.ui.define([
 		var Constructor = sap.ui.model.odata.v4.ODataModel;
 
 		oSandbox.stub(sap.ui.model.odata.v4, "ODataModel", function (mParameters) {
-			var iQueryPos = mParameters.serviceUrl.indexOf("?"),
-				sQuery = iQueryPos >= 0 ? mParameters.serviceUrl.slice(iQueryPos) : "",
-				sUpdateGroupId = jQuery.sap.getUriParameters().get("updateGroupId")
+			var sUpdateGroupId = jQuery.sap.getUriParameters().get("updateGroupId")
 					|| TestUtils.retrieveData(
 						"sap.ui.core.sample.odata.v4.MusicArtists.updateGroupId")
 					|| undefined;
@@ -36,7 +34,7 @@ sap.ui.define([
 			mParameters = jQuery.extend({}, mParameters, {
 				earlyRequests : jQuery.sap.getUriParameters().get("earlyRequests") !== "false",
 				groupId : jQuery.sap.getUriParameters().get("$direct") ? "$direct" : undefined,
-				serviceUrl : TestUtils.proxy(mParameters.serviceUrl) + sQuery,
+				serviceUrl : TestUtils.proxy(mParameters.serviceUrl),
 				updateGroupId : sUpdateGroupId
 			});
 			return new Constructor(mParameters);
