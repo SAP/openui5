@@ -469,7 +469,7 @@ sap.ui.define([
 		}
 		this.fetchCache(this.oContext);
 		return bCheckUpdate
-			? this.checkUpdate(true, ChangeReason.Refresh, sGroupId)
+			? this.checkUpdate(false, ChangeReason.Refresh, sGroupId)
 			: SyncPromise.resolve();
 	};
 

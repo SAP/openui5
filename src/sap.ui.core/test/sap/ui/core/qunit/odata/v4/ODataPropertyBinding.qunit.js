@@ -1773,7 +1773,7 @@ sap.ui.define([
 		oBindingMock.expects("checkUpdate").withExactArgs(false, ChangeReason.Context);
 		oBinding.setContext(oContext);
 
-		oBindingMock.expects("checkUpdate").withExactArgs(true, ChangeReason.Refresh, "myGroup")
+		oBindingMock.expects("checkUpdate").withExactArgs(false, ChangeReason.Refresh, "myGroup")
 			.returns(oCheckUpdatePromise);
 
 		// code under test

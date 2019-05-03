@@ -2133,8 +2133,7 @@ sap.ui.define([
 			return this.createView(assert, sView).then(function () {
 				var oBinding = that.oView.byId("form").getObjectBinding();
 
-				that.expectRequest("EMPLOYEES('2')", {"Name" : "Jonathan Smith"})
-					.expectChange("text", "Jonathan Smith");
+				that.expectRequest("EMPLOYEES('2')", {"Name" : "Jonathan Smith"});
 
 				// code under test
 				if (bViaContext) {
@@ -9464,7 +9463,6 @@ sap.ui.define([
 					"ID" : "2",
 					"Name" : "Frederic Fall"
 				})
-				.expectChange("name", "Frederic Fall")
 				.expectChange("title", "Second Title");
 
 			// code under test
@@ -9551,8 +9549,7 @@ sap.ui.define([
 					"Name" : "Frederic Fall"
 				})
 				// Note: "<code>false</code> to enforce listening to a template control" --> use 0!
-				.expectChange("enabled", 0)
-				.expectChange("name", "Frederic Fall");
+				.expectChange("enabled", 0);
 
 			// code under test
 			oContextBinding.refresh();
@@ -13473,9 +13470,6 @@ sap.ui.define([
 					"Name" : "Changed"
 				})
 				.expectChange("name", "Changed")
-				//TODO unexpected change events -> CPOUI5UISERVICESV3-1572
-				.expectChange("id", "42")
-				.expectChange("isActive", "No")
 				.expectChange("inProcessByUser", "JOHNDOE");
 				// no change in messages
 
@@ -15500,7 +15494,6 @@ sap.ui.define([
 //					"DraftID" : "23",
 					"InProcessByUser" : "bar"
 				})
-				.expectChange("id", "42") //TODO @see CPOUI5UISERVICESV3-1572
 				.expectChange("inProcessByUser", "bar");
 
 			return Promise.all([
