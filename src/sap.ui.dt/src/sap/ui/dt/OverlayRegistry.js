@@ -40,7 +40,7 @@ function(
 
 	/**
 	 * Returns a registered Overlay by element instance or id
-	 * @param {string|sap.ui.core.Element} vElementOrId element instance or id
+	 * @param {string|sap.ui.core.Element|sap.ui.core.Component} vElementOrId - Element instance or id
 	 * @return {sap.ui.dt.Overlay|undefined} found overlay or undefined
 	 * @public
 	 */

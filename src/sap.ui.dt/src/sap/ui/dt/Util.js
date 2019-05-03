@@ -5,12 +5,14 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	'sap/ui/Device',
+	'sap/ui/base/ManagedObject',
 	'sap/base/util/includes',
 	'sap/base/util/isPlainObject',
 	'sap/ui/dt/DesignTimeStatus'
 ], function(
 	jQuery,
 	Device,
+	ManagedObject,
 	includes,
 	isPlainObject,
 	DesignTimeStatus
@@ -136,6 +138,26 @@ sap.ui.define([
 		}
 
 		return oError;
+	};
+
+	/**
+	 * Gets object type which is useful for error reporting
+	 *
+	 * Usage examples:
+	 * Util.getObjectType("foo") -> 'string'
+	 * Util.getObjectType(new sap.ui.base.ManagedObject()) -> 'sap.ui.base.ManagedObject (id = "__object1")'
+	 *
+	 * @param {*} vObject - Object to get type of
+	 * @returns {string}
+	 */
+	Util.getObjectType = function (vObject) {
+		return (
+			(
+				vObject instanceof ManagedObject
+				&& Util.printf('{0} (id = "{1}")', vObject.getMetadata().getName(), vObject.getId())
+			) // e.g. -> 'sap.ui.base.ManagedObject (id = "__object1")'
+			|| typeof vObject // e.g. -> 'string'
+		);
 	};
 
 	/**

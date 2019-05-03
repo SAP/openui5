@@ -4,11 +4,13 @@ sap.ui.define([
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/ElementOverlay',
 	'sap/ui/dt/AggregationOverlay',
+	'sap/ui/core/UIComponent',
 	'sap/m/Button'
 ], function (
 	OverlayRegistry,
 	ElementOverlay,
 	AggregationOverlay,
+	UIComponent,
 	Button
 ) {
 	'use strict';
@@ -21,6 +23,7 @@ sap.ui.define([
 			});
 		},
 		afterEach : function() {
+			this.oOverlay.destroy();
 			this.oButton.destroy();
 		}
 	}, function () {
@@ -76,6 +79,37 @@ sap.ui.define([
 				/.*/,
 				"then it's not possible to deregister anything but sap.ui.dt.Overlay descendant"
 			);
+		});
+	});
+
+	QUnit.module("getOverlay() for Component", {
+		beforeEach: function () {
+			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
+				createContent: function() {}
+			});
+
+			this.oComponent = new CustomComponent();
+
+			this.oElementOverlay = new ElementOverlay({
+				element: this.oComponent
+			});
+		},
+		afterEach: function () {
+			this.oElementOverlay.destroy();
+			this.oComponent.destroy();
+			OverlayRegistry.deregister(this.oElementOverlay);
+		}
+	}, function () {
+		QUnit.test("getOverlay() by object instance", function (assert) {
+			OverlayRegistry.register(this.oElementOverlay);
+			assert.strictEqual(OverlayRegistry.getOverlays().length, 1);
+			assert.strictEqual(OverlayRegistry.getOverlay(this.oComponent), this.oElementOverlay);
+		});
+
+		QUnit.test("getOverlay() by id", function (assert) {
+			OverlayRegistry.register(this.oElementOverlay);
+			assert.strictEqual(OverlayRegistry.getOverlays().length, 1);
+			assert.strictEqual(OverlayRegistry.getOverlay(this.oComponent.getId()), this.oElementOverlay);
 		});
 	});
 

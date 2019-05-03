@@ -54,7 +54,7 @@ function(
 	Form,
 	FormContainer,
 	FormElement,
-	Component,
+	UIComponent,
 	ComponentContainer,
 	Element,
 	JSONModel,
@@ -138,7 +138,7 @@ function(
 	};
 
 	var fnCreateComponent = function(){
-		var CustomComponent = Component.extend("sap.ui.dt.test.Component", {
+		var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
 			createContent: function() {
 				return new VerticalLayout("Root",{
 					content: [
@@ -698,20 +698,37 @@ function(
 	});
 
 	QUnit.module("isElementValid()", {
-		beforeEach : function() {
-			fnCreateMinimumControls.call(this);
-		},
-		afterEach : function() {
-			fnDestroyMinimumControls.call(this);
+		afterEach: function() {
+			if (this.oObject) {
+				this.oObject.destroy();
+			}
 		}
 	}, function(){
 		QUnit.test("when isElementValid() is called for a Control", function(assert) {
-			assert.equal(ElementUtil.isElementValid(this.oButton), true, 'then it returns true');
+			this.oObject = new Button({
+				text: "Button"
+			});
+			assert.equal(ElementUtil.isElementValid(this.oObject), true);
 		});
 
 		QUnit.test("when isElementValid() is called for a destroyed Control", function(assert) {
-			this.oButton.destroy();
-			assert.equal(ElementUtil.isElementValid(this.oButton), false, 'then it returns false');
+			this.oObject = new Button({
+				text: "Button"
+			});
+			this.oObject.destroy();
+			assert.equal(ElementUtil.isElementValid(this.oObject), false);
+		});
+
+		QUnit.test("when isElementValid() is called with Component instance", function(assert) {
+			fnCreateComponent.call(this);
+			assert.equal(ElementUtil.isElementValid(this.oComponent), true);
+			fnDestroyComponent.call(this);
+		});
+
+		QUnit.test("when isElementValid() is called with invalid ManagedObject (non-Element and non-Component descendant)", function(assert) {
+			var CustomObject = ManagedObject.extend('customObject');
+			this.oObject = new CustomObject();
+			assert.equal(ElementUtil.isElementValid(this.oObject), false);
 		});
 	});
 
@@ -764,9 +781,13 @@ function(
 			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "Object attribute title", "then it returns the label (getTitle())");
 		});
 
-		QUnit.test("when getLabelForElement is called with a ManagedObject", function (assert) {
-			this.oLabelControl = new ManagedObject("managedObjectId");
-			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "managedObjectId", "then it returns the Id for a managed object");
+		QUnit.test("when getLabelForElement is called with a Component", function (assert) {
+			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
+				createContent: function() {}
+			});
+
+			this.oLabelControl = new CustomComponent("componentObjectId");
+			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "componentObjectId", "then it returns the Id for a component object");
 		});
 
 		QUnit.test("when getLabelForElement is called with a Label without text property set", function (assert) {
@@ -883,7 +904,7 @@ function(
 				done();
 			}.bind(this));
 		},
-		afterEach : function(assert) {
+		afterEach : function () {
 			this.oList.destroy();
 			this.oItemTemplate.destroy();
 			this.oDesignTime.destroy();
