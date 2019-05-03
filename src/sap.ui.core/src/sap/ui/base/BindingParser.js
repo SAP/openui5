@@ -32,9 +32,9 @@ sap.ui.define([
 		};
 
 	/**
-	 * Regular expression to check for a (new) object literal
+	 * Regular expression to check for a (new) object literal.
 	 */
-	var rObject = /^\{\s*[a-zA-Z$_][a-zA-Z0-9$_]*\s*:/;
+	var rObject = /^\{\s*('|"|)[a-zA-Z$_][a-zA-Z0-9$_]*\1\s*:/;
 
 	/**
 	 * Regular expression to split the binding string into hard coded string fragments and embedded bindings.
