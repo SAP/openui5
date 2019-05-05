@@ -4,9 +4,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Dialog",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/HTML",
 	"sap/m/Input"
-], function(BusyIndicator, Button, Dialog, createAndAppendDiv, HTML, Input) {
+], function(BusyIndicator, Button, Dialog, createAndAppendDiv, Input) {
 	"use strict";
 
 	QUnit.module("Focus Issue");
@@ -43,41 +42,36 @@ sap.ui.define([
 	QUnit.module("Focus with preventScroll");
 
 	QUnit.test("Focus an element with preventScroll should NOT cause scrolling", function(assert) {
-		createAndAppendDiv("content");
-		var done = assert.async();
-		var oHTMLControl = new HTML({
-			content: "<div id='scroll_container' style='overflow:scroll; height: 400px'>\
-						<div id='input_uiarea'></div>\
-						<div style='height: 3000px'></div>\
-						<input id='input_at_end'>\
-					</div>"
-		});
-
-		oHTMLControl.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		var oContainerElement = createAndAppendDiv("scroll_container");
+		oContainerElement.style.overflow = "scroll";
+		oContainerElement.style.height = "400px";
+		createAndAppendDiv("input_uiarea", oContainerElement);
+		createAndAppendDiv("large_content", oContainerElement).style.height = "3000px";
+		var oInputAtEnd = document.createElement("input");
+		oContainerElement.appendChild(oInputAtEnd);
 
 		var oInput = new Input();
 		oInput.placeAt("input_uiarea");
 		sap.ui.getCore().applyChanges();
 
-		var oDomElement = document.getElementById("scroll_container"),
-			oInputAtEnd = document.getElementById("input_at_end");
-
 		oInputAtEnd.scrollIntoView();
 
-		var iScrollY = oDomElement.scrollTop;
-
-		assert.ok(iScrollY > 0, "The focus to last input should already caused scrolling in the container");
+		var iScrollY = oContainerElement.scrollTop;
+		assert.ok(iScrollY > 0,
+			"Setting the focus to the last input element should already have caused scrolling in the container");
 
 		// act
 		oInput.focus({
 			preventScroll: true
 		});
 
+		var done = assert.async();
 		setTimeout(function() {
-			assert.equal(oDomElement.scrollTop, iScrollY, "The vertical scroll position of the container isn't changed");
+			assert.equal(oContainerElement.scrollTop, iScrollY, "The vertical scroll position of the container isn't changed");
+
+			// cleanup
 			oInput.destroy();
-			oHTMLControl.destroy();
+			oContainerElement.remove();
 			done();
 		}, 0);
 	});

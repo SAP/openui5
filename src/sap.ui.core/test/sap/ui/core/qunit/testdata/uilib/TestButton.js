@@ -1,85 +1,63 @@
-/*eslint strict: 0 */
-// Provides control sap.ui.testlib.TestButton.
-jQuery.sap.declare("sap.ui.testlib.TestButton");
-jQuery.sap.require("sap.ui.testlib.library");
-jQuery.sap.require("sap.ui.core.Control");
-
-/**
- * Constructor for a new TestButton.
- *
- * It accepts one JSON-like object (object literal) as parameter <code>mSettings</code> that can define values for any property,
- * aggregation, association or event.
- *
- * If for a control a specific name is ambiguous (a property has the same name as an event),
- * then the framework assumes property, aggregation, association, event in that order.
- *
- * To resolve ambiguities, add an "aggregation:", "association:" or "event:" prefix to the key in the JSON object.
- *
- * Allowed values are:
- * <ul>
- * <li>Properties
- * <ul>
- * <li>text : string</li>
- * <li>enabled : boolean</li>
- * <li>visible : boolean</li>
- * </ul>
- * </li>
- * <li>Events
- * <ul>
- * <li>press : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
- * </li>
- * </ul>
-
- *
- * @param {string}
- *        [sId] optional id for the new control; generated automatically if no id is given.
- *        Note: this can be omitted, no matter whether <code>mSettings</code> is given or not!
- * @param {object}
- *        [mSettings] optional map/JSON-object with initial values for the new control.<br/>
- *
- * @class
- *
- * <p>
- * Using the button control you enable end users to trigger actions such as Save or Print. For the button UI, you can define some text or an icon, or both.
- * </p>
- *
- * @extends sap.ui.core.Control
- *
- * @author SAP SE
- * @version 0.0.1-SNAPSHOT
- *
- * @constructor
- * @public
+/*!
+ * ${copyright}
  */
-sap.ui.core.Control.extend("sap.ui.testlib.TestButton", {
 
-	metadata : {
-		library : "sap.ui.testlib",
-		properties : {
-			"text" : {name : "text", type : "string", group : "Appearance", defaultValue : ''},
-			"enabled" : {name : "enabled", type : "boolean", group : "Behavior", defaultValue : true},
-			"visible" : {name : "visible", type : "boolean", group : "", defaultValue : true},
-			"width" : {name : "width", type : "int", group : "", defaultValue : 200}
+// Provides control sap.ui.testlib.TestButton.
+sap.ui.define([
+	"./library",
+	"sap/ui/core/Control",
+	"sap/ui/core/EnabledPropagator",
+	"./TestButtonRenderer"
+], function(library, Control, EnabledPropagator) {
+	"use strict";
+
+	/**
+	 * Constructor for a new TestButton.
+	 *
+	 * @param {string} [sId] ID for the new button, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new button
+	 *
+	 * @class
+	 *
+	 * Using the button control, you enable end users to trigger actions such as Save or Print.
+	 * For the button UI, you can define some text or an icon, or both.
+	 *
+	 * @extends sap.ui.core.Control
+	 *
+	 * @author SAP SE
+	 * @version 1.2.3
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.core
+	 * @alias sap.ui.testlib.TestButton
+	 */
+	var TestButton = Control.extend("sap.ui.testlib.TestButton", {
+
+		metadata : {
+			library : "sap.ui.testlib",
+			properties : {
+				"text" : {type : "string", group : "Appearance", defaultValue : ''},
+				"enabled" : {type : "boolean", group : "Behavior", defaultValue : true},
+				"visible" : {type : "boolean", group : "", defaultValue : true},
+				"width" : {type : "int", group : "", defaultValue : 200}
+			},
+			events : {
+				"press" : "press"
+			}
 		},
-		events : {
-			"press" : "press"
+
+		onclick : function(oEvent) {
+			if (this.getEnabled()){
+				this.firePress({/* no parameters */});
+			}
+
+			oEvent.preventDefault();
+			oEvent.stopPropagation();
 		}
-	},
 
-	onclick : function(oEvent) {
-		if (this.getEnabled()){
-			this.firePress({/* no parameters */});
-		}
+	});
 
-		oEvent.preventDefault();
-		oEvent.stopPropagation();
-	},
+	EnabledPropagator.call(TestButton.prototype);
 
-	focus : function() { }
-
+	return TestButton;
 });
-
-jQuery.sap.require("sap.ui.core.EnabledPropagator");
-
-sap.ui.core.EnabledPropagator.call(sap.ui.testlib.TestButton.prototype);
-

@@ -6,8 +6,14 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"jquery.sap.dom",
 	"jquery.sap.strings"
-], function(F6Navigation, KeyCodes, Control, qutils) {
+], function(F6Navigation, KeyCodes, Control, qutils, jQuery) {
 	"use strict";
+
+	jQuery("<div id=\"scope\"></div>").append(
+		"<input value=\"0\" id=\"before\">",
+		jQuery("<div id=\"content\"></div>").css("padding", "5px"),
+		"<input value=\"4\" id=\"after\">"
+	).appendTo("body");
 
 	// Enhance the Navigation Handler to use the test scope only (not the QUnit related DOM) and the target of the event instead of the activeElement
 	// to be more focus independent (-> More test stability)
@@ -39,20 +45,31 @@ sap.ui.define([
 			render: function(rm, oCtrl) {
 				var id = oCtrl.getId();
 
-				rm.openStart("div", oCtrl);
-				rm.attr("data-sap-ui-customfastnavgroup", "true");
-				rm.class("TestControl");
+				rm.openStart("div", oCtrl)
+					.attr("data-sap-ui-customfastnavgroup", "true")
+					.style("border", "1px solid black")
+					.style("padding", "5px");
+
 				rm.openEnd();
 
-					rm.openStart("div").openEnd();
+					rm.openStart("div")
+						.style("border", "1px solid green")
+						.style("padding", "5px")
+						.openEnd();
 						rm.voidStart("input", id + "-input-2").attr("value", "2").voidEnd();
 						rm.voidStart("input", id + "-input-2a").voidEnd();
 					rm.close("div");
-					rm.openStart("div").openEnd();
+					rm.openStart("div")
+						.style("border", "1px solid green")
+						.style("padding", "5px")
+						.openEnd();
 						rm.voidStart("input", id + "-input-1").attr("value", "1").voidEnd();
 						rm.voidStart("input", id + "-input-1a").voidEnd();
 					rm.close("div");
-					rm.openStart("div").openEnd();
+					rm.openStart("div")
+						.style("border", "1px solid green")
+						.style("padding", "5px")
+						.openEnd();
 						rm.voidStart("input", id + "-input-3").attr("value", "3").voidEnd();
 						rm.voidStart("input", id + "-input-3a").voidEnd();
 					rm.close("div");

@@ -22,8 +22,6 @@ sap.ui.define(function() {
 				}
 			},
 			CustomFastNavigation: {
-				/* own page kept because of custom styles and DOM (but uses runTest.js) */
-				page: "test-resources/sap/ui/core/qunit/CustomFastNavigation.qunit.html",
 				autostart: false
 			},
 			EventBus: {

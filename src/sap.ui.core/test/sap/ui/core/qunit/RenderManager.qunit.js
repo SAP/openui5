@@ -16,15 +16,6 @@ sap.ui.define([
 	"use strict";
 
 	// prepare DOM
-	var styleElement = document.createElement("style");
-	styleElement.textContent =
-		"#testArea div {" +
-		"    display: inline-block;" +
-		"}" +
-		"#testArea > div {" +
-		"    border: 1px solid black;" +
-		"}";
-	document.head.appendChild(styleElement);
 	createAndAppendDiv(["area1", "area2", "area3", "area4", "area5", "area6", "area7", "area8"], createAndAppendDiv("testArea"));
 	createAndAppendDiv("area9");
 
