@@ -24,6 +24,8 @@ function(
 			this.HBOX_ID = "hboxId";
 			this.TEXT_ID = "textId";
 			this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT = "controlWithPropertyTypeObject";
+			this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_2 = "controlWithPropertyTypeObject2";
+			this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_3 = "controlWithPropertyTypeObject3";
 			this.ID_OF_CONTROL_WITH_PROP_BINDING = "controlWithPropertyBinding";
 			this.CHANGE_HANDLER_PATH = "path/to/changehandler/definition";
 
@@ -88,6 +90,8 @@ function(
 						'<Label text="stashedInvisibleLabel" visible="false" stashed="true"></Label>' +
 					'</VBox>' +
 					'<QuickViewPage id="' + this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT + '" crossAppNavCallback="\\{&quot;key&quot;:&quot;value&quot;\\}" />' +
+					'<QuickViewPage id="' + this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_2 + '" crossAppNavCallback="\{&quot;key&quot;:&quot;value&quot;\}" />' +
+					'<QuickViewPage id="' + this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_3 + '" crossAppNavCallback="{\'key\': \'value\'}" />' +
 					'<QuickViewPage id="' + this.ID_OF_CONTROL_WITH_PROP_BINDING + '" crossAppNavCallback="{/foo}" />' +
 				'</mvc:View>';
 			this.oXmlView = XMLHelper.parse(this.oXmlString, "application/xml").documentElement;
@@ -317,8 +321,20 @@ function(
 			assert.strictEqual(XmlTreeModifier.getProperty(oInvisibleLabel, "design"), "Bold", "property from xml");
 		});
 
-		QUnit.test("getProperty for properties of type object", function (assert) {
+		QUnit.test("getProperty for properties of type object (double escaped case)", function (assert) {
 			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
+			var mData = XmlTreeModifier.getProperty(oControl, "crossAppNavCallback");
+			assert.deepEqual(mData, { key : "value"}, "returns json value");
+		});
+
+		QUnit.test("getProperty for properties of type object (single escaped case)", function (assert) {
+			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_2, this.oXmlView);
+			var mData = XmlTreeModifier.getProperty(oControl, "crossAppNavCallback");
+			assert.deepEqual(mData, { key : "value"}, "returns json value");
+		});
+
+		QUnit.test("getProperty for properties of type object (single quote case)", function (assert) {
+			var oControl = XmlTreeModifier._byId(this.ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_3, this.oXmlView);
 			var mData = XmlTreeModifier.getProperty(oControl, "crossAppNavCallback");
 			assert.deepEqual(mData, { key : "value"}, "returns json value");
 		});
@@ -334,7 +350,7 @@ function(
 			XmlTreeModifier.setProperty(oControl, "crossAppNavCallback", { key2 : 2});
 
 			var sStringifiedData = oControl.getAttribute("crossAppNavCallback");
-			assert.strictEqual(sStringifiedData, '\\{"key2":2\\}', "returns json value stringified and escaped");
+			assert.strictEqual(sStringifiedData, '{"key2":2}', "returns json value stringified and escaped");
 		});
 
 		QUnit.test("getPropertyBinding for bound properties", function(assert) {
@@ -782,7 +798,7 @@ function(
 			sandbox.restore();
 		}
 	}, function () {
-		QUnit.test("bindAggregation", function (assert) {
+		QUnit.test("bindAggregation - complex binding via binding string", function (assert) {
 			XmlTreeModifier.bindAggregation(
 				this.oButton,
 				"customData",
@@ -811,6 +827,41 @@ function(
 			assert.strictEqual(this.oButtonInstance.getCustomData()[0].getKey(), "foo");
 			assert.strictEqual(this.oButtonInstance.getCustomData()[0].getValue(), "bar");
 		});
+
+		QUnit.test("bindAggregation - complex binding via plain object", function (assert) {
+			XmlTreeModifier.bindAggregation(
+				this.oButton,
+				"customData",
+				{
+					path: this.sModelName + ">/customData",
+					template: XmlTreeModifier.createControl(
+						"sap.ui.core.CustomData",
+						this.oComponent,
+						this.oXmlView,
+						{
+							id: XmlTreeModifier.getId(this.oButton) + '-customData'
+						},
+						{
+							key: {
+								path: this.sModelName + ">key"
+							},
+							value: {
+								path: this.sModelName + ">value"
+							}
+						}
+					)
+				},
+				this.oXmlView
+			);
+
+			this.oView = this.createView(this.oXmlView);
+			this.oView.setModel(this.oModel, this.sModelName);
+			this.oButtonInstance = this.oView.byId("button1");
+
+			assert.strictEqual(this.oButtonInstance.getCustomData()[0].getKey(), "foo");
+			assert.strictEqual(this.oButtonInstance.getCustomData()[0].getValue(), "bar");
+		});
+
 		QUnit.test("unbindAggregation", function (assert) {
 			XmlTreeModifier.bindAggregation(
 				this.oButton,

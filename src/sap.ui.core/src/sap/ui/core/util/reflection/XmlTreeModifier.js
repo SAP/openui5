@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/EventHandlerResolver",
 	"sap/base/util/includes",
 	"sap/base/util/ObjectPath",
+	"sap/base/util/isPlainObject",
 	// needed to have sap.ui.xmlfragment
 	"sap/ui/core/Fragment"
 ], function(
@@ -19,7 +20,8 @@ sap.ui.define([
 	XMLHelper,
 	EventHandlerResolver,
 	includes,
-	ObjectPath
+	ObjectPath,
+	isPlainObject
 ) {
 
 	"use strict";
@@ -94,11 +96,10 @@ sap.ui.define([
 		 */
 		setProperty: function (oControl, sPropertyName, vPropertyValue) {
 			var sValue = vPropertyValue;
-			var oPropertyInfo = this._getControlMetadata(oControl).getProperty(sPropertyName);
-			if (oPropertyInfo && oPropertyInfo.type === "object") {
+			if (isPlainObject(vPropertyValue)) {
 				//not a property like aggregation
 				//type object can be json objects
-				sValue = ManagedObject.bindingParser.escape(JSON.stringify(vPropertyValue));
+				sValue = JSON.stringify(vPropertyValue);
 			}
 			oControl.setAttribute(sPropertyName, sValue);
 		},
@@ -118,11 +119,15 @@ sap.ui.define([
 					// unescape binding like XMLTemplateProcessor
 					var vUnescaped = ManagedObject.bindingParser(vPropertyValue, undefined, true);
 					// if it is a binding, return undefined as it has to be handled differently
-					if (vUnescaped && (vUnescaped.path || vUnescaped.parts)) {
-						return undefined;
+					if (isPlainObject(vUnescaped)) {
+						if (vUnescaped.path || vUnescaped.parts) {
+							vPropertyValue = undefined;
+						} else {
+							vPropertyValue = vUnescaped;
+						}
+					} else {
+						vPropertyValue = oType.parseValue(vUnescaped || vPropertyValue);
 					}
-					vPropertyValue = vUnescaped || vPropertyValue;
-					vPropertyValue = oType.parseValue(vPropertyValue);
 				}
 			}
 			return vPropertyValue;
