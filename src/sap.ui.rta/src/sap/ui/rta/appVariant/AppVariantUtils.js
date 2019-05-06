@@ -6,28 +6,24 @@ sap.ui.define([
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/fl/Utils",
 	"sap/m/MessageBox",
-	"sap/m/MessageToast",
 	"sap/ui/rta/Utils",
 	"sap/ui/fl/descriptorRelated/internal/Utils",
 	"sap/ui/fl/transport/TransportSelection",
 	"sap/ui/fl/transport/Transports",
 	"sap/base/util/uid",
-	"sap/base/Log",
-	"sap/ui/thirdparty/hasher"
+	"sap/base/Log"
 ],
 	function(
 		DescriptorVariantFactory,
 		DescriptorInlineChangeFactory,
 		FlexUtils,
 		MessageBox,
-		MessageToast,
 		RtaUtils,
 		DescriptorUtils,
 		TransportSelection,
 		Transports,
 		uid,
-		Log,
-		hasher
+		Log
 	) {
 
 		"use strict";
@@ -302,6 +298,11 @@ sap.ui.define([
 			return DescriptorUtils.sendRequest(sRoute, 'POST');
 		};
 
+		AppVariantUtils.triggerCatalogUnAssignment = function(sAppVariantId) {
+			var sRoute = '/sap/bc/lrep/appdescr_variants/' + sAppVariantId + '?action=unassignCatalogs';
+			return DescriptorUtils.sendRequest(sRoute, 'POST');
+		};
+
 		AppVariantUtils.isS4HanaCloud = function(oSettings) {
 			return oSettings.isAtoEnabled() && oSettings.isAtoAvailable();
 		};
@@ -418,7 +419,7 @@ sap.ui.define([
 			});
 		};
 
-		AppVariantUtils.publishEventBus = function() {
+		AppVariantUtils.closeOverviewDialog = function() {
 			sap.ui.getCore().getEventBus().publish("sap.ui.rta.appVariant.manageApps.controller.ManageApps", "navigate");
 		};
 
@@ -451,7 +452,7 @@ sap.ui.define([
 				}
 				return Promise.resolve(oAppVariantDescriptor);
 			}
-			return Promise.resolve(false);
+			return Promise.reject();
 		};
 
 		AppVariantUtils.openTransportSelection = function(oTransportInput) {
@@ -459,49 +460,67 @@ sap.ui.define([
 			return oTransportSelection.openTransportSelection(oTransportInput, this, RtaUtils.getRtaStyleClassName());
 		};
 
-		AppVariantUtils.triggerDeleteAppVariantFromLREP = function(sAppVariantId) {
-			return DescriptorVariantFactory.createDeletion(sAppVariantId).then(function(oAppVariantDescriptor) {
-				var sNamespace = oAppVariantDescriptor.getNamespace();
-				var oTransportInput = this.getTransportInput("", sNamespace, "manifest", "appdescr_variant");
+		AppVariantUtils._deleteAppVariantWithTransport = function (oAppVariantDescriptor, oTransportResult) {
 
-				var mTransportObject = {};
-				if (oTransportInput) {
-					mTransportObject.package = oTransportInput.getPackage();
-					mTransportObject.namespace = oTransportInput.getNamespace();
-					mTransportObject.name = oTransportInput.getId();
-					mTransportObject.type = oTransportInput.getDefinition().fileType;
-				}
+			var oTransportInput = this.getTransportInput("", oAppVariantDescriptor.getNamespace(), "manifest", "appdescr_variant");
+			// In case: app variant is not local + not in a transport + S/4HANA on Premise => not deletable
+			if (!oTransportResult.localonly && oTransportResult.transports.length === 0 && !this.isS4HanaCloud(oAppVariantDescriptor.getSettings())) {
+				return RtaUtils._showMessageBox(
+					MessageBox.Icon.INFORMATION,
+					"DELETE_APP_VARIANT_NO_TRANSPORT",
+					"MSG_DELETE_APP_VARIANT_NOT_POSSIBLE");
+			} else {
+				return this.openTransportSelection(oTransportInput)
+					.then(function (oTransportInfo) {
+						return this.onTransportInDialogSelected(oAppVariantDescriptor, oTransportInfo);
+					}.bind(this))
+					.then(function () {
+						return oAppVariantDescriptor.submit();
+					})
+					.then(function () {
+						this.closeOverviewDialog();
 
-				var oTransports = new Transports();
-
-				return oTransports.getTransports(mTransportObject).then(function(oGetTransportsResult) {
-					if (!oGetTransportsResult.localonly && oGetTransportsResult.transports.length === 0 && !this.isS4HanaCloud(oAppVariantDescriptor.getSettings())) {
 						return RtaUtils._showMessageBox(
 							MessageBox.Icon.INFORMATION,
 							"DELETE_APP_VARIANT_NO_TRANSPORT",
-							"MSG_DELETE_APP_VARIANT_NOT_POSSIBLE");
-					} else {
-						return this.openTransportSelection(oTransportInput)
-						.then(function(oTransportInfo) {
-							return this.onTransportInDialogSelected(oAppVariantDescriptor, oTransportInfo);
-						}.bind(this))
-						.then(function() {
-							return oAppVariantDescriptor.submit();
-						})
-						.then(function() {
-							var sMessage = this.getText("DELETE_APP_VARIANT_SUCCESS_MESSAGE");
-							MessageToast.show(sMessage);
-							return true;
-						}.bind(this));
-					}
-				}.bind(this)).catch(function(oError) {
-					this.publishEventBus();
-					var oErrorInfo = this.buildErrorInfo("MSG_DELETE_APP_VARIANT_FAILED", oError, sAppVariantId);
-					return this.showRelevantDialog(oErrorInfo, false);
-				}.bind(this));
+							"DELETE_APP_VARIANT_SUCCESS_MESSAGE");
 
-			}.bind(this));
+					}.bind(this));
+				}
 		};
+
+		AppVariantUtils.createDeletion = function(sAppVariantId) {
+			return DescriptorVariantFactory.createDeletion(sAppVariantId);
+		};
+
+		AppVariantUtils._getTransportInformation = function(oTransportInput) {
+			var mTransportObject = {};
+			if (oTransportInput) {
+				mTransportObject.package = oTransportInput.getPackage();
+				mTransportObject.namespace = oTransportInput.getNamespace();
+				mTransportObject.name = oTransportInput.getId();
+				mTransportObject.type = oTransportInput.getDefinition().fileType;
+			}
+
+			var oTransports = new Transports();
+			return oTransports.getTransports(mTransportObject);
+		};
+
+		AppVariantUtils.triggerDeleteAppVariantFromLREP = function(oAppVariantDescriptor) {
+			var oTransportInput = this.getTransportInput("",  oAppVariantDescriptor.getNamespace(), "manifest", "appdescr_variant");
+
+			return this._getTransportInformation(oTransportInput)
+				.then(function(oTransportsResult) {
+					return this._deleteAppVariantWithTransport(oAppVariantDescriptor, oTransportsResult);
+				}.bind(this))
+				.catch(function(oError) {
+					if (oError) {
+						var oErrorInfo = this.buildErrorInfo("MSG_DELETE_APP_VARIANT_FAILED", oError, oAppVariantDescriptor.getId());
+						return this.showRelevantDialog(oErrorInfo, false);
+					}
+				}.bind(this));
+		};
+
 
 		AppVariantUtils.getDescriptorFromLREP = function(sAppVariantId) {
 			return DescriptorVariantFactory.createForExisting(sAppVariantId);

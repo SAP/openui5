@@ -6,9 +6,12 @@ sap.ui.define([
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/transport/Transports",
+	"sap/ui/fl/transport/TransportSelection",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/Utils",
+	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/descriptorRelated/internal/Utils",
+	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
 	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
@@ -17,9 +20,12 @@ sap.ui.define([
 	FakeLrepConnectorSessionStorage,
 	Settings,
 	Transports,
+	TransportSelection,
 	FlUtils,
 	RtaUtils,
+	LrepConnector,
 	DescriptorUtils,
+	DescriptorVariantFactory,
 	Log,
 	sinon
 ) {
@@ -27,7 +33,7 @@ sap.ui.define([
 
 	var sandbox = sinon.sandbox.create();
 
-	QUnit.module("Given an AppVariantUtils is instantiated", {
+	QUnit.module("Given an AppVariantUtils is instantiated and FakeLrepConnector used", {
 		before: function () {
 			FakeLrepConnectorSessionStorage.enableFakeConnector();
 		},
@@ -451,6 +457,22 @@ sap.ui.define([
 			assert.strictEqual(oTransportInput.getDefinition().fileType, "appdescr_variant", "then the file type is correct");
 		});
 
+		QUnit.test("When onTransportInDialogSelected() method is called and rejected", function (assert) {
+			var oTransportInfo;
+
+			return DescriptorVariantFactory.createNew({
+				id: "customer.TestId",
+				reference: "TestIdBaseApp"
+			})
+			.then(function(oDescriptorVariant) {
+				return AppVariantUtils.onTransportInDialogSelected(oDescriptorVariant, oTransportInfo);
+			})
+			.catch(function() {
+				assert.ok("Operation cancelled successfully");
+			});
+
+		});
+
 		QUnit.test("When isS4HanaCloud() method is called", function (assert) {
 			return AppVariantUtils.createDescriptorVariant({id: "testId", version: "1.0.0", reference: "testReference"}).then(function(oDescriptorVariant) {
 				assert.equal(AppVariantUtils.isS4HanaCloud(oDescriptorVariant._oSettings), false, "then the platform is not S4 Hana Cloud");
@@ -502,14 +524,92 @@ sap.ui.define([
 			assert.notEqual(oResult.text, undefined, "then the text is correct");
 		});
 
+		QUnit.test("When triggerDeleteAppVariantFromLREP() is called in on Premise system when transport dialog is cancelled", function (assert) {
+			var fnShowMessageBoxStub = sandbox.stub(RtaUtils, "_showMessageBox").resolves(true);
+
+			var oTransport = {
+				"transports": ["TRANSPORT123"],
+				"localonly": false,
+				"errorCode": ""
+			};
+
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":false,
+					"isAtoEnabled":false,
+					"isProductiveSystem":false
+				})
+			);
+
+			var fnDescriptorVariantSubmitSpy;
+			var fnGetTransportInformationStub = sandbox.stub(AppVariantUtils, "_getTransportInformation").resolves(oTransport);
+
+			var fnOpenTransportSelectionStub = sandbox.stub(AppVariantUtils, "openTransportSelection").resolves();
+			var fnOnTransportInDialogSelectedSpy = sandbox.spy(AppVariantUtils, "onTransportInDialogSelected");
+
+			var fnShowRelevantDialogStub = sandbox.spy(AppVariantUtils, "showRelevantDialog");
+
+			var fnSendRequestStub = sandbox.stub(DescriptorUtils, "sendRequest").resolves();
+			return DescriptorVariantFactory.createNew({
+				id: "customer.TestId",
+				reference: "TestIdBaseApp"
+			})
+			.then(function(oDescriptorVariant) {
+				fnDescriptorVariantSubmitSpy = sandbox.spy(oDescriptorVariant, "submit");
+				return AppVariantUtils.triggerDeleteAppVariantFromLREP.call(AppVariantUtils, oDescriptorVariant);
+			})
+			.then(function() {
+				assert.ok(fnGetTransportInformationStub.calledOnce, "then the _getTransportInformation is called once");
+				assert.ok(fnSendRequestStub.notCalled, "then sendRequest is not called");
+				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then the openTransportSelection is called once");
+				assert.ok(fnOnTransportInDialogSelectedSpy.calledOnce, "then the onTransportInDialogSelected is called once");
+				assert.ok(fnDescriptorVariantSubmitSpy.notCalled, "then the submit is not called");
+				assert.ok(fnShowMessageBoxStub.notCalled, "then the _showMessageBox is not called");
+				assert.ok(fnShowRelevantDialogStub.notCalled, "then the showRelevantDialog is not called");
+			});
+		});
+
 		QUnit.test("When triggerDeleteAppVariantFromLREP() is called in on Premise system when transport is given and locked", function (assert) {
-			var fnShowMessageBoxSpy = sandbox.spy(RtaUtils, "_showMessageBox");
+			var fnShowMessageBoxStub = sandbox.stub(RtaUtils, "_showMessageBox").resolves(true);
 
-			var fnGetTransportsSpy = sandbox.spy(Transports.prototype, "getTransports");
+			var oTransport = {
+				"transports": ["TRANSPORT123"],
+				"localonly": false,
+				"errorCode": ""
+			};
 
-			return AppVariantUtils.triggerDeleteAppVariantFromLREP("customer.test.app.variant").then(function() {
-				assert.ok(fnShowMessageBoxSpy.notCalled, "then the _showMessageBox is never called");
-				assert.ok(fnGetTransportsSpy.calledTwice, "then the getTransports is called twice");
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":false,
+					"isAtoEnabled":false,
+					"isProductiveSystem":false
+				})
+			);
+
+			var fnDescriptorVariantSubmitSpy;
+			var fnGetTransportInformationStub = sandbox.stub(AppVariantUtils, "_getTransportInformation").resolves(oTransport);
+
+			var fnOpenTransportSelectionSpy = sandbox.spy(AppVariantUtils, "openTransportSelection");
+			var fnOnTransportInDialogSelectedSpy = sandbox.spy(AppVariantUtils, "onTransportInDialogSelected");
+
+			var fnSendRequestStub = sandbox.stub(DescriptorUtils, "sendRequest").resolves();
+			return DescriptorVariantFactory.createNew({
+				id: "customer.TestId",
+				reference: "TestIdBaseApp"
+			})
+			.then(function(oDescriptorVariant) {
+				fnDescriptorVariantSubmitSpy = sandbox.spy(oDescriptorVariant, "submit");
+				return AppVariantUtils.triggerDeleteAppVariantFromLREP.call(AppVariantUtils, oDescriptorVariant);
+			})
+			.then(function() {
+				assert.ok(fnGetTransportInformationStub.calledOnce, "then the _getTransportInformation is called once");
+				assert.ok(fnSendRequestStub.calledOnceWith("/sap/bc/lrep/appdescr_variants/?changelist=U31K008488"), "then sendRequest is called once and with correct parameters");
+				assert.ok(fnOpenTransportSelectionSpy.calledOnce, "then the openTransportSelection is called once");
+				assert.ok(fnOnTransportInDialogSelectedSpy.calledOnce, "then the onTransportInDialogSelected is called once");
+				assert.ok(fnDescriptorVariantSubmitSpy.calledOnce, "then the submit is called once");
+				assert.ok(fnShowMessageBoxStub.calledOnce, "then the _showMessageBox is called once");
 			});
 		});
 
@@ -522,32 +622,25 @@ sap.ui.define([
 				"errorCode": ""
 			};
 
-			var fnGetTransportsSpy = sandbox.stub(Transports.prototype, "getTransports").resolves(oTransport);
+			var fnGetTransportInformationStub = sandbox.stub(AppVariantUtils, "_getTransportInformation").resolves(oTransport);
+			var fnOpenTransportSelectionSpy = sandbox.spy(AppVariantUtils, "openTransportSelection");
 
-			return AppVariantUtils.triggerDeleteAppVariantFromLREP("customer.test.app.variant").then(function() {
+			return DescriptorVariantFactory.createNew({
+				id: "customer.TestId",
+				reference: "TestIdBaseApp"
+			})
+			.then(function(oDescriptorVariant) {
+				return AppVariantUtils.triggerDeleteAppVariantFromLREP.call(AppVariantUtils, oDescriptorVariant);
+			}).then(function() {
 				assert.ok(fnShowMessageBoxSpy.calledOnce, "then the _showMessageBox is called once");
-				assert.ok(fnGetTransportsSpy.calledOnce, "then the getTransports is called once");
+				assert.ok(fnGetTransportInformationStub.calledOnce, "then the _getTransportInformation is called once");
+				assert.ok(fnOpenTransportSelectionSpy.notCalled, "then the openTransportSelection is not called");
 			});
-		});
 
-		QUnit.test("When triggerDeleteAppVariantFromLREP() is called in on Premise system when it is a local object", function (assert) {
-			var fnShowMessageBoxSpy = sandbox.stub(RtaUtils, "_showMessageBox").resolves();
-
-			var oTransport = {
-				"transports": [],
-				"localonly": true,
-				"errorCode": ""
-			};
-
-			var fnGetTransportsSpy = sandbox.stub(Transports.prototype, "getTransports").resolves(oTransport);
-
-			return AppVariantUtils.triggerDeleteAppVariantFromLREP("customer.test.app.variant").then(function() {
-				assert.ok(fnShowMessageBoxSpy.notCalled, "then the _showMessageBox is never called");
-				assert.ok(fnGetTransportsSpy.calledTwice, "then the getTransports is called twice");
-			});
 		});
 
 		QUnit.test("When triggerDeleteAppVariantFromLREP() is called in S/4 cloud system", function (assert) {
+			var fnShowMessageBoxStub = sandbox.stub(RtaUtils, "_showMessageBox").resolves();
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					"isKeyUser":true,
@@ -557,19 +650,34 @@ sap.ui.define([
 				})
 			);
 
-			var fnShowMessageBoxSpy = sandbox.spy(RtaUtils, "_showMessageBox");
-
 			var oTransport = {
 				"transports": "NO_TRANSPORTS",
 				"localonly": false,
 				"errorCode": ""
 			};
 
-			var fnGetTransportsSpy = sandbox.stub(Transports.prototype, "getTransports").resolves(oTransport);
+			var fnDescriptorVariantSubmitSpy;
+			var fnGetTransportInformationStub = sandbox.stub(AppVariantUtils, "_getTransportInformation").resolves(oTransport);
 
-			return AppVariantUtils.triggerDeleteAppVariantFromLREP("customer.test.app.variant").then(function() {
-				assert.ok(fnShowMessageBoxSpy.notCalled, "then the _showMessageBox is never called");
-				assert.ok(fnGetTransportsSpy.calledOnce, "then the getTransports is called once");
+			var fnOpenTransportSelectionSpy = sandbox.spy(AppVariantUtils, "openTransportSelection");
+			var fnOnTransportInDialogSelectedSpy = sandbox.spy(AppVariantUtils, "onTransportInDialogSelected");
+
+			var fnSendRequestStub = sandbox.stub(DescriptorUtils, "sendRequest").resolves();
+			return DescriptorVariantFactory.createNew({
+				id: "customer.TestId",
+				reference: "TestIdBaseApp"
+			})
+			.then(function(oDescriptorVariant) {
+				fnDescriptorVariantSubmitSpy = sandbox.spy(oDescriptorVariant, "submit");
+				return AppVariantUtils.triggerDeleteAppVariantFromLREP.call(AppVariantUtils, oDescriptorVariant);
+			})
+			.then(function() {
+				assert.ok(fnGetTransportInformationStub.calledOnce, "then the _getTransportInformation is called once");
+				assert.ok(fnSendRequestStub.calledOnceWith("/sap/bc/lrep/appdescr_variants/?changelist=ATO_NOTIFICATION"), "then sendRequest is called once and with correct parameters");
+				assert.ok(fnOpenTransportSelectionSpy.calledOnce, "then the openTransportSelection is called once");
+				assert.ok(fnOnTransportInDialogSelectedSpy.calledOnce, "then the onTransportInDialogSelected is called once");
+				assert.ok(fnDescriptorVariantSubmitSpy.calledOnce, "then the submit is called once");
+				assert.ok(fnShowMessageBoxStub.calledOnce, "then the _showMessageBox is called once");
 			});
 		});
 
@@ -774,7 +882,14 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When triggerDeleteAppVariantFromLREP() is called in S/4 cloud system and faield", function (assert) {
+		QUnit.test("When triggerCatalogUnAssignment() method is called on S4 Cloud system", function (assert) {
+			var fnSendRequest = sandbox.stub(DescriptorUtils, "sendRequest").resolves();
+			return AppVariantUtils.triggerCatalogUnAssignment("AppVarId").then(function() {
+				assert.ok(fnSendRequest.calledWith("/sap/bc/lrep/appdescr_variants/AppVarId?action=unassignCatalogs", "POST"));
+			});
+		});
+
+		QUnit.test("When triggerDeleteAppVariantFromLREP() is called in S/4 cloud system and failed", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					"isKeyUser":true,
@@ -784,19 +899,102 @@ sap.ui.define([
 				})
 			);
 
-			var fnShowMessageBoxSpy = sandbox.spy(RtaUtils, "_showMessageBox");
-
-			var fnGetTransportsSpy = sandbox.stub(Transports.prototype, "getTransports").returns(Promise.reject("Transport error"));
+			var fnGetTransportInformationStub = sandbox.stub(AppVariantUtils, "_getTransportInformation").returns(Promise.reject("Transport error"));
 			sandbox.stub(Log,"error").callThrough().withArgs("App variant error: ", "Transport error").returns();
-			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.reject(false));
+			var fnShowRelevantDialog =  sandbox.stub(AppVariantUtils, "showRelevantDialog");
 
-			return AppVariantUtils.triggerDeleteAppVariantFromLREP("customer.test.app.variant").catch(function(bSuccess) {
-				assert.equal(bSuccess, false, "Error: An unexpected exception occured");
-				assert.ok(fnShowMessageBoxSpy.notCalled, "then the _showMessageBox is never called");
-				assert.ok(fnGetTransportsSpy.calledOnce, "then the getTransports is called once");
+			return DescriptorVariantFactory.createNew({
+				id: "customer.TestId",
+				reference: "TestIdBaseApp"
+			})
+			.then(function(oDescriptorVariant) {
+				return AppVariantUtils.triggerDeleteAppVariantFromLREP.call(AppVariantUtils, oDescriptorVariant);
+			})
+			.then(function() {
+				assert.ok(fnGetTransportInformationStub.calledOnce, "then the _getTransportInformation is called once");
+				assert.ok(fnShowRelevantDialog.calledOnce, "then the showRelevantDialog is called once");
 			});
 		});
 
+	});
+
+	QUnit.module("Given an AppVariantUtils is instantiated and FakeLrepConnector not used", {
+		beforeEach: function () {
+			var oUshellContainerStub = {
+				getService : function () {
+					return {
+						getHash : function() {
+							return "testSemanticObject-testAction";
+						},
+						parseShellHash : function() {
+							return {
+								semanticObject : "testSemanticObject",
+								action : "testAction"
+							};
+						}
+					};
+				},
+				getLogonSystem: function() {
+					return {
+						isTrial: function() {
+							return false;
+						}
+					};
+				}
+			};
+			sandbox.stub(FlUtils, "getUshellContainer").returns(oUshellContainerStub);
+		},
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("When triggerDeleteAppVariantFromLREP() is called in on Premise system when it is a local object", function (assert) {
+			var fnShowMessageBoxStub = sandbox.stub(RtaUtils, "_showMessageBox").resolves();
+
+			var oTransport = {
+				"transports": [],
+				"localonly": true,
+				"errorCode": "NO_TRANSPORTS"
+			};
+
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					"isKeyUser":true,
+					"isAtoAvailable":false,
+					"isAtoEnabled":false,
+					"isProductiveSystem":false
+				})
+			);
+
+			var fnDescriptorVariantSubmitSpy;
+			var fnGetTransportsStub = sandbox.stub(Transports.prototype, "getTransports").resolves(oTransport);
+
+			var oTransportInfo = {
+				"transport": "",
+				"packageName": "",
+				"fromDialog": false
+			};
+			var fnOpenTransportSelectionStub = sandbox.stub(AppVariantUtils, "openTransportSelection").resolves(oTransportInfo);
+			var fnOnTransportInDialogSelectedSpy = sandbox.spy(AppVariantUtils, "onTransportInDialogSelected");
+
+			var fnSendRequestStub = sandbox.stub(DescriptorUtils, "sendRequest").resolves();
+			return DescriptorVariantFactory.createNew({
+				id: "customer.TestId",
+				reference: "TestIdBaseApp"
+			})
+			.then(function(oDescriptorVariant) {
+				fnDescriptorVariantSubmitSpy = sandbox.spy(oDescriptorVariant, "submit");
+				return AppVariantUtils.triggerDeleteAppVariantFromLREP.call(AppVariantUtils, oDescriptorVariant);
+			})
+			.then(function() {
+				assert.ok(fnGetTransportsStub.calledOnce, "then the getTransports is called once");
+				assert.ok(fnSendRequestStub.calledOnce, "then sendRequest is called once");
+				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then the openTransportSelection is called once");
+				assert.ok(fnOnTransportInDialogSelectedSpy.calledOnce, "then the onTransportInDialogSelected is called once");
+				assert.ok(fnDescriptorVariantSubmitSpy.calledOnce, "then the submit is called once");
+				assert.ok(fnShowMessageBoxStub.calledOnce, "then the _showMessageBox is called once");
+			});
+		});
 	});
 
 	QUnit.done(function () {

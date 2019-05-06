@@ -230,7 +230,7 @@ sap.ui.define([
 			assert.ok(modelPropertySpy.calledOnce, "the modelProperty method is called once");
 		});
 
-		QUnit.test("when deleteAppVariant is called for app variant which is not being adapted", function(assert) {
+		QUnit.test("when deleteAppVariant is called for app variant", function(assert) {
 			var oManageAppsController = new ManageAppsController();
 
 			var modelPropertySpy = sandbox.stub(oManageAppsController, "getModelProperty");
@@ -251,46 +251,13 @@ sap.ui.define([
 			});
 
 
-			var fnTriggerDeleteAppVariantFromLREP = sandbox.stub(AppVariantUtils, "triggerDeleteAppVariantFromLREP").resolves();
-			var fnOnGetOverview = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
+			var fnOnDeleteFromOverviewDialogStub = sandbox.stub(RtaAppVariantFeature, "onDeleteFromOverviewDialog").resolves();
 
-			sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
-
-			return oManageAppsController.deleteAppVariant(oEmptyEvent).then(function() {
-				assert.ok(fnTriggerDeleteAppVariantFromLREP.calledOnce, "then fnTriggerDeleteAppVariantFromLREP is called once");
-				assert.ok(fnOnGetOverview.calledOnceWith(true), "the onGetOverview method is called once with correct parameters");
-			});
-		});
-
-		QUnit.test("when deleteAppVariant is called for app variant which is being currently adapted", function(assert) {
-			var oManageAppsController = new ManageAppsController();
-
-			var modelPropertySpy = sandbox.stub(oManageAppsController, "getModelProperty");
-			modelPropertySpy.onFirstCall().returns("appVarID");
-			modelPropertySpy.onSecondCall().returns(true);
-			modelPropertySpy.onThirdCall().returns("Currently Adapting");
-
-			var oButton = {
-				getBindingContext : function() {
-					return {
-						sPath : "/appVariants/0"
-					};
-				}
-			};
-
-			var oEmptyEvent = new Event("emptyEventId", oButton, {
-				button : oButton
-			});
-
-
-			var fnTriggerDeleteAppVariantFromLREP = sandbox.stub(AppVariantUtils, "triggerDeleteAppVariantFromLREP").resolves();
-			var fnNavigateToFLPHomepage = sandbox.stub(AppVariantUtils, "navigateToFLPHomepage").resolves();
-
-			sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
+			var fnShowRelevantDialogStub = sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
 
 			return oManageAppsController.deleteAppVariant(oEmptyEvent).then(function() {
-				assert.ok(fnTriggerDeleteAppVariantFromLREP.calledOnce, "then fnTriggerDeleteAppVariantFromLREP is called once");
-				assert.ok(fnNavigateToFLPHomepage.calledOnce, "the navigateToFLPHomepage method is called once");
+				assert.ok(fnOnDeleteFromOverviewDialogStub.calledOnce, "then onDeleteFromOverviewDialogStub is called once");
+				assert.ok(fnShowRelevantDialogStub.calledOnce, "the showRelevantDialog method is called once");
 			});
 		});
 
