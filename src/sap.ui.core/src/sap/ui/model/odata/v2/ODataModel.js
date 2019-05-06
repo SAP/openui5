@@ -3345,7 +3345,7 @@ sap.ui.define([
 						abortRequest(oRequest);
 					}
 				});
-			} else if (sGroupId){
+			} else if (sGroupId && !mParameters){
 				each(oRequestGroup.map, function(sKey, oRequest){
 					abortRequest(oRequest);
 				});

@@ -208,4 +208,36 @@ sap.ui.define([
             });
         });
     });
+
+    QUnit.test("Abort requests with same key only", function(assert) {
+        var done = assert.async();
+        var that = this;
+        var bAborted = false;
+
+        that.oModel.metadataLoaded().then(function () {
+
+            that.oModel.read("/ProductSet('AD-1000')", {
+                success: function(){
+                    that.oModel.setProperty("/ProductSet('AD-1000')/Name", "newName");
+
+                    that.oModel.submitChanges({success: function(){
+                        assert.ok(!bAborted, "Not related change was not aborted.");
+                        done();
+                    }});
+
+                    //Trigger other request with same change group, which shouldn't be aborted
+                    that.oModel.update("/ProductSet('HT-1000')", {"Name": "Should not be aborted"}, {
+                        groupId: "changes",
+                        error: function(){
+                            bAborted = true;
+                        }
+                    });
+                }
+            });
+
+        });
+
+
+    });
+
 });
