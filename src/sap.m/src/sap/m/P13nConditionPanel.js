@@ -1744,6 +1744,11 @@ sap.ui.define([
 					params.displayFormat = oType.oFormatOptions.style;
 				}
 				oControl = new DatePicker(params);
+
+				if (oType && oType.isA("sap.ui.comp.odata.type.StringDate")) {
+					oControl.setValueFormat("yyyyMMdd");
+					oControl.setDisplayFormat(oType.oFormatOptions.style || oType.oFormatOptions.pattern);
+				}
 			} else {
 				oControl = new Input(params);
 
@@ -2361,7 +2366,7 @@ sap.ui.define([
 		var getValuesFromField = function(oControl, oType) {
 			var sValue;
 			var oValue;
-			if (oControl.getDateValue && !(oControl.isA("sap.m.TimePicker"))) {
+			if (oControl.getDateValue && !(oControl.isA("sap.m.TimePicker")) && !oType.isA("sap.ui.comp.odata.type.StringDate")) {
 				oValue = oControl.getDateValue();
 				if (oType && oValue) {
 					// TODO when we have a DateTime type and isDateOnly==true, the type is using UTC=true
@@ -2378,6 +2383,9 @@ sap.ui.define([
 			} else {
 				sValue = this._getValueTextFromField(oControl);
 				oValue = sValue;
+				if (oType && oType.isA("sap.ui.comp.odata.type.StringDate")) {
+					sValue = oType.formatValue(oValue, "string");
+				} else
 				if (oType && sValue) {
 					try {
 						oValue = oType.parseValue(sValue, "string");
