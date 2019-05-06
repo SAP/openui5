@@ -3029,6 +3029,9 @@ sap.ui.define([
 						$filter : "(" + sFilter + ")and " + sExclusiveFilter
 					}, false, "bSortExpandSelect")
 				.returns("?foo=bar&$filter=...");
+		} else {
+			this.mock(_Helper).expects("encode").withExactArgs(sExclusiveFilter, false)
+				.returns("~");
 		}
 		oCache.sQueryString = sQueryString;
 		oCache.aElements.$created = bMultiple ? 4 : 1;
@@ -3055,7 +3058,7 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(oCache.getQueryString(),
-			sFilter ? "?foo=bar&$filter=..." : "?foo=bar&$filter=" + sExclusiveFilter);
+			sFilter ? "?foo=bar&$filter=..." : "?foo=bar&$filter=~");
 
 		assert.strictEqual(oCache.sQueryString, sQueryString);
 	});
@@ -3077,9 +3080,11 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oElement0), oCache.sMetaPath,
 				sinon.match.same(mTypeForMetaPath))
 			.returns("EmployeeId eq '42'");
+		this.mock(_Helper).expects("encode").withExactArgs("not(EmployeeId eq '42')", false)
+			.returns("~");
 
 		// code under test
-		assert.strictEqual(oCache.getQueryString(), "?$filter=not(EmployeeId eq '42')");
+		assert.strictEqual(oCache.getQueryString(), "?$filter=~");
 
 		assert.strictEqual(oCache.sQueryString, "");
 	});

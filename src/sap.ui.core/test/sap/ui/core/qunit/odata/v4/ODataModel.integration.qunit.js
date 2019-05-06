@@ -2133,8 +2133,7 @@ sap.ui.define([
 			return this.createView(assert, sView).then(function () {
 				var oBinding = that.oView.byId("form").getObjectBinding();
 
-				that.expectRequest("EMPLOYEES('2')", {"Name" : "Jonathan Smith"})
-					.expectChange("text", "Jonathan Smith");
+				that.expectRequest("EMPLOYEES('2')", {"Name" : "Jonathan Smith"});
 
 				// code under test
 				if (bViaContext) {
@@ -3690,8 +3689,7 @@ sap.ui.define([
 	//  Additional tests: update last, transient: update of POST payload expected
 	//  Create at: start
 	// CPOUI5UISERVICESV3-1792
-	//TODO Unstable, probably due to grid table with setFirstVisibleRow -> CPOUI5UISERVICESV3-1823
-	QUnit.skip("All pairs test for multi create (2)", function (assert) {
+	QUnit.test("All pairs test for multi create (2)", function (assert) {
 		var oBinding,
 			oCreatedContext0,
 			oCreatedContext1,
@@ -3838,8 +3836,7 @@ sap.ui.define([
 	//  Table control: sap.ui.table.Table
 	//  Create at: start
 	// CPOUI5UISERVICESV3-1792
-	//TODO Unstable, probably due to grid table with setFirstVisibleRow -> CPOUI5UISERVICESV3-1823
-	QUnit.skip("All pairs test for multi create (3)", function (assert) {
+	QUnit.test("All pairs test for multi create (3)", function (assert) {
 		var oCreatedContext0,
 			oCreatedContext1,
 			oCreatedContext2,
@@ -4263,8 +4260,7 @@ sap.ui.define([
 	//  Table control: sap.ui.table.Table
 	//  Create at: start
 	// CPOUI5UISERVICESV3-1792
-	//TODO Unstable, probably due to grid table with setFirstVisibleRow -> CPOUI5UISERVICESV3-1823
-	QUnit.skip("All pairs test for multi create (6)", function (assert) {
+	QUnit.test("All pairs test for multi create (6)", function (assert) {
 		var oBinding,
 			oCreatedContext0,
 			oCreatedContext1,
@@ -4348,7 +4344,7 @@ sap.ui.define([
 			assert.strictEqual(oTable.getRows()[1].getBindingContext(), oCreatedContext1);
 
 			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&"
-						+ "$filter=SalesOrderID%20eq%20'44'", {
+						+ "$filter=SalesOrderID eq '44'", {
 					"value" : []
 				})
 				.expectChange("id", null) // for the deleted row
@@ -5013,8 +5009,7 @@ sap.ui.define([
 	//  Table control: sap.ui.table.Table
 	//  Create at: start
 	// CPOUI5UISERVICESV3-1792
-	//TODO Unstable, probably due to grid table with setFirstVisibleRow -> CPOUI5UISERVICESV3-1823
-	QUnit.skip("All pairs test for multi create (14)", function (assert) {
+	QUnit.test("All pairs test for multi create (14)", function (assert) {
 		var oBinding,
 			oCreatedContext0,
 			oCreatedContext1,
@@ -5239,7 +5234,7 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&"
-					+ "$filter=SalesOrderID%20eq%20'44'", {
+					+ "$filter=SalesOrderID eq '44'", {
 					"value" : []
 				});
 
@@ -5267,8 +5262,7 @@ sap.ui.define([
 	//  Table control: sap.ui.table.Table
 	//  Create at: end
 	// CPOUI5UISERVICESV3-1818
-	//TODO Unstable, probably due to grid table with setFirstVisibleRow -> CPOUI5UISERVICESV3-1823
-	QUnit.skip("All pairs test for multi create (16)", function (assert) {
+	QUnit.test("All pairs test for multi create (16)", function (assert) {
 		var oBinding,
 			oCreatedContext0,
 			oCreatedContext1,
@@ -5658,8 +5652,7 @@ sap.ui.define([
 	//  Table control: sap.ui.table.Table
 	//  Create at: end
 	// CPOUI5UISERVICESV3-1818
-	//TODO Unstable, probably due to grid table with setFirstVisibleRow -> CPOUI5UISERVICESV3-1823
-	QUnit.skip("All pairs test for multi create (20)", function (assert) {
+	QUnit.test("All pairs test for multi create (20)", function (assert) {
 		var oBinding,
 			oCreatedContext0,
 			oCreatedContext1,
@@ -9470,7 +9463,6 @@ sap.ui.define([
 					"ID" : "2",
 					"Name" : "Frederic Fall"
 				})
-				.expectChange("name", "Frederic Fall")
 				.expectChange("title", "Second Title");
 
 			// code under test
@@ -9557,8 +9549,7 @@ sap.ui.define([
 					"Name" : "Frederic Fall"
 				})
 				// Note: "<code>false</code> to enforce listening to a template control" --> use 0!
-				.expectChange("enabled", 0)
-				.expectChange("name", "Frederic Fall");
+				.expectChange("enabled", 0);
 
 			// code under test
 			oContextBinding.refresh();
@@ -13479,9 +13470,6 @@ sap.ui.define([
 					"Name" : "Changed"
 				})
 				.expectChange("name", "Changed")
-				//TODO unexpected change events -> CPOUI5UISERVICESV3-1572
-				.expectChange("id", "42")
-				.expectChange("isActive", "No")
 				.expectChange("inProcessByUser", "JOHNDOE");
 				// no change in messages
 
@@ -15506,7 +15494,6 @@ sap.ui.define([
 //					"DraftID" : "23",
 					"InProcessByUser" : "bar"
 				})
-				.expectChange("id", "42") //TODO @see CPOUI5UISERVICESV3-1572
 				.expectChange("inProcessByUser", "bar");
 
 			return Promise.all([
@@ -17151,12 +17138,12 @@ sap.ui.define([
 		filters : {path : \'IsActiveEntity\', operator : \'EQ\', value1 : \'true\'}}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
-		<Text id="id" text="{ID}"/>\
+		<Text id="id" text="{path : \'ID\', type : \'sap.ui.model.odata.type.String\'}"/>\
 	</ColumnListItem>\
 </Table>';
 
-		this.oLogMock.restore(); // the exact errors do not interest
-		this.stub(Log, "error");
+		this.oLogMock.restore();
+		this.stub(Log, "error"); // the exact errors do not interest
 		this.expectMessages([{
 			"code" : undefined,
 			"descriptionUrl" : undefined,
@@ -17512,11 +17499,12 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: List binding is destroyed while request is in flight. Gracefully ignore response.
+	// Note: No such problem for context or property binding.
 	// BCP: 1980173241
 	QUnit.test("BCP: 1980173241", function (assert) {
 		var fnRespond,
 			sView = '\
-<Table id="table" items="{/EMPLOYEES}">\
+<Table items="{/EMPLOYEES}">\
 	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text text="{ID}" />\
@@ -17535,6 +17523,150 @@ sap.ui.define([
 			delete that.oView;
 
 			fnRespond();
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: POST is "in flight", GET request should wait for the POST's response because
+	// exclusive $filter needs to be adjusted.
+	// JIRA: CPOUI5UISERVICESV3-1825
+	QUnit.skip("JIRA: CPOUI5UISERVICESV3-1825 - POST still pending", function (assert) {
+		var oContext,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			fnRespond,
+			oSubmitBatchPromise,
+			sView = '\
+<Table growing="true" growingThreshold="2" id="table" items="{/BusinessPartnerList}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="id" text="{BusinessPartnerID}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("BusinessPartnerList?$select=BusinessPartnerID&$skip=0&$top=2", {
+				value : [{
+					"BusinessPartnerID" : "4711"
+				}, {
+					"BusinessPartnerID" : "4712"
+				}]
+			})
+			.expectChange("id", ["4711", "4712"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					method : "POST",
+					payload : {},
+					url : "BusinessPartnerList"
+				}, new Promise(function (resolve, reject) {
+					fnRespond = resolve.bind(null, {
+						"BusinessPartnerID" : "4710"
+					});
+				}))
+				.expectChange("id", [""]);
+			oContext = that.oView.byId("table").getBinding("items").create({}, true);
+			oSubmitBatchPromise = that.oModel.submitBatch("update");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("BusinessPartnerList?$select=BusinessPartnerID"
+					+ "&$filter=not(BusinessPartnerID eq '4710')" //TODO this is missing!
+					+ "&$skip=2&$top=1", {
+					value : [{
+						"BusinessPartnerID" : "4713"
+					}]
+				})
+				.expectChange("id", [,, "4712", "4713"]);
+			// show more items while POST is still pending
+			that.oView.byId("table-trigger").firePress();
+
+			that.expectChange("id", ["4710"]);
+			fnRespond();
+
+			return Promise.all([
+				oSubmitBatchPromise,
+				oContext.created(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: GET request is triggered before POST, but ends up inside same $batch and thus
+	// could return the newly created entity.
+	// JIRA: CPOUI5UISERVICESV3-1825
+	QUnit.skip("JIRA: CPOUI5UISERVICESV3-1825 - GET & POST in same $batch", function (assert) {
+		var oBinding,
+			oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$auto"}),
+			sView = '\
+<Text id="count" text="{$count}"/>\
+<Table growing="true" growingThreshold="2" id="table"\
+		items="{path : \'/BusinessPartnerList\', parameters : {$count : true}}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="id" text="{BusinessPartnerID}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("BusinessPartnerList?$count=true&$select=BusinessPartnerID"
+				+ "&$skip=0&$top=2", {
+				"@odata.count" : "3",
+				value : [{
+					"BusinessPartnerID" : "4711"
+				}, {
+					"BusinessPartnerID" : "4712"
+				}]
+			})
+			.expectChange("count")
+			.expectChange("id", ["4711", "4712"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("table").getBinding("items");
+
+			that.expectChange("count", "3");
+			that.oView.byId("count").setBindingContext(oBinding.getHeaderContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oContext;
+
+			that.expectRequest({
+					batchNo : 2,
+					changeSetNo : 2,
+					method : "GET",
+					url : "BusinessPartnerList?$count=true&$select=BusinessPartnerID"
+						+ "&$filter=not(BusinessPartnerID eq '4710')" //TODO this is missing!
+						+ "&$skip=2&$top=1"
+				}, {
+					"@odata.count" : "3",
+					value : [{
+						"BusinessPartnerID" : "4713"
+					}]
+				});
+			// show more items before POST is even triggered
+			that.oView.byId("table-trigger").firePress();
+
+			that.expectChange("count", "4")
+				.expectRequest({
+					batchNo : 2,
+					changeSetNo : 1, //TODO maybe this "reordering" is wrong (here)?
+					method : "POST",
+					payload : {},
+					url : "BusinessPartnerList"
+				}, {
+					"BusinessPartnerID" : "4710"
+				})
+				.expectChange("id", ["4710",,, "4713"]);
+			oContext = oBinding.create({}, true);
+
+			return Promise.all([
+				oContext.created(),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 

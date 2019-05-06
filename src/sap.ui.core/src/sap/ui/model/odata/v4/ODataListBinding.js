@@ -103,15 +103,12 @@ sap.ui.define([
 				this.aApplicationFilters = _Helper.toArray(vFilters);
 				ODataListBinding.checkCaseSensitiveFilters(this.aApplicationFilters);
 
-				this.oCachePromise = SyncPromise.resolve();
 				this.sChangeReason = oModel.bAutoExpandSelect ? "AddVirtualContext" : undefined;
 				this.oDiff = undefined;
 				this.aFilters = [];
 				this.bHasAnalyticalInfo = false;
 				this.mPreviousContextsByPath = {};
 				this.aPreviousData = [];
-				// a lock to ensure that submitBatch waits for an expected read
-				this.oReadGroupLock = undefined;
 				this.aSorters = _Helper.toArray(vSorters);
 
 				this.applyParameters(jQuery.extend(true, {}, mParameters)); // calls #reset
@@ -380,6 +377,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.base.Event} oEvent The event object
 	 * @param {sap.ui.model.odata.v4.ODataListBinding} oEvent.getSource() This binding
+	 * @param {object} oEvent.getParameters() Object containing all event parameters
 	 * @param {sap.ui.model.odata.v4.Context} oEvent.getParameters().context
 	 *   The context for the created entity
 	 *
@@ -742,16 +740,8 @@ sap.ui.define([
 			this.oHeaderContext.destroy();
 		}
 		this.oModel.bindingDestroyed(this);
-		this.removeReadGroupLock();
 		this.oAggregation = undefined;
 		this.aApplicationFilters = undefined;
-		this.oCachePromise.then(function (oOldCache) {
-			if (oOldCache) {
-				oOldCache.setActive(false);
-			}
-		});
-		this.oCachePromise = SyncPromise.resolve(); // be nice to #withCache;
-		this.oContext = undefined;
 		this.aContexts = undefined;
 		this.oDiff = undefined;
 		this.aFilters = undefined;

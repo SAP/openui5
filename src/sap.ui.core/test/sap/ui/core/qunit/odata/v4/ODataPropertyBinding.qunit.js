@@ -138,32 +138,16 @@ sap.ui.define([
 			oMixin = {};
 
 		asODataBinding(oMixin);
-		asODataBinding.call(oMixin); // initialize members
-		delete oMixin.resetInvalidDataState; // because it is overridden
 
+		assert.notStrictEqual(oBinding["destroy"], oMixin["destroy"],
+			"override destroy");
+		assert.notStrictEqual(oBinding["resetInvalidDataState"], oMixin["resetInvalidDataState"],
+			"override resetInvalidDataState");
 		Object.keys(oMixin).forEach(function (sKey) {
-			if (sKey === "oFetchCacheCallToken") {
-				assert.strictEqual(typeof oBinding[sKey], "object", "fetchCache already called");
-			} else {
+			if (sKey !== "destroy" && sKey !== "resetInvalidDataState") {
 				assert.strictEqual(oBinding[sKey], oMixin[sKey], sKey);
 			}
 		});
-
-		// Check that the mixin members are initialized
-		assert.ok(oMixin.hasOwnProperty("mCacheByResourcePath"));
-		assert.ok(oBinding.hasOwnProperty("mCacheByResourcePath"));
-	});
-
-	//*********************************************************************************************
-	QUnit.test("c'tor initializes oCachePromise", function (assert) {
-		var oBinding,
-			oContext = {};
-		this.mock(ODataPropertyBinding.prototype).expects("fetchCache")
-			.withExactArgs(sinon.match.same(oContext));
-
-		oBinding = new ODataPropertyBinding(this.oModel, "Name", oContext);
-
-		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
 	});
 
 	//*********************************************************************************************
@@ -171,6 +155,7 @@ sap.ui.define([
 		QUnit.test("bindProperty, sPath = '" + sPath + "'", function (assert) {
 			var bAbsolute = sPath[0] === "/",
 				oBinding,
+				oBindingSpy = this.spy(asODataBinding, "call"),
 				oCache = {},
 				oContext = Context.create(this.oModel, null, "/EMPLOYEES(ID='42')"),
 				oExpectation = this.mock(this.oModel).expects("bindingCreated");
@@ -183,7 +168,11 @@ sap.ui.define([
 			} else {
 				this.mock(_Cache).expects("createProperty").never();
 			}
+			this.mock(ODataPropertyBinding.prototype).expects("fetchCache")
+				.withExactArgs(sinon.match.same(oContext))
+				.callThrough();
 
+			// code under test
 			oBinding = this.oModel.bindProperty(sPath, oContext);
 
 			assert.ok(oBinding instanceof ODataPropertyBinding);
@@ -199,22 +188,19 @@ sap.ui.define([
 			assert.strictEqual(oBinding.oCheckUpdateCallToken, undefined);
 			assert.strictEqual(oBinding.hasOwnProperty("sPathWithFetchTypeError"), true);
 			assert.strictEqual(oBinding.sPathWithFetchTypeError, undefined);
+			assert.ok(oBindingSpy.calledOnceWithExactly(sinon.match.same(oBinding)));
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("bindProperty with relative path and !v4.Context", function (assert) {
 		var oBinding,
-			oCachePromise = SyncPromise.resolve(),
 			oContext = {getPath : function () {return "/EMPLOYEES(ID='1')";}},
 			oExpectation = this.mock(this.oModel).expects("bindingCreated"),
 			sPath = "Name";
 
 		this.mock(ODataPropertyBinding.prototype).expects("fetchCache")
-			.withExactArgs(sinon.match.same(oContext))
-			.callsFake(function () {
-				this.oCachePromise = oCachePromise;
-			});
+			.withExactArgs(sinon.match.same(oContext));
 
 		//code under test
 		oBinding = this.oModel.bindProperty(sPath, oContext);
@@ -223,10 +209,8 @@ sap.ui.define([
 		assert.strictEqual(oBinding.getModel(), this.oModel);
 		assert.strictEqual(oBinding.getContext(), oContext);
 		assert.strictEqual(oBinding.getPath(), sPath);
-		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
 		assert.strictEqual(oBinding.hasOwnProperty("sGroupId"), true);
 		assert.strictEqual(oBinding.sGroupId, undefined);
-		assert.strictEqual(oBinding.oCachePromise, oCachePromise);
 	});
 
 	//*********************************************************************************************
@@ -239,10 +223,7 @@ sap.ui.define([
 
 		oModelMock.expects("buildQueryOptions")
 			.withExactArgs(sinon.match.same(mParameters), false).returns(mQueryOptions);
-		this.mock(ODataPropertyBinding.prototype).expects("fetchCache").withExactArgs(null)
-			.callsFake(function () {
-				this.oCachePromise = SyncPromise.resolve();
-			});
+		this.mock(ODataPropertyBinding.prototype).expects("fetchCache").withExactArgs(null);
 
 		// code under test
 		oBinding = this.oModel.bindProperty("/EMPLOYEES(ID='1')/Name", null, mParameters);
@@ -1788,14 +1769,11 @@ sap.ui.define([
 
 		oBindingMock.expects("isRootBindingSuspended").twice().withExactArgs().returns(false);
 		this.mock(ODataPropertyBinding.prototype).expects("fetchCache").thrice()
-			.withExactArgs(oContext)
-			.callsFake(function () {
-				this.oCachePromise = SyncPromise.resolve();
-			});
+			.withExactArgs(oContext);
 		oBindingMock.expects("checkUpdate").withExactArgs(false, ChangeReason.Context);
 		oBinding.setContext(oContext);
 
-		oBindingMock.expects("checkUpdate").withExactArgs(true, ChangeReason.Refresh, "myGroup")
+		oBindingMock.expects("checkUpdate").withExactArgs(false, ChangeReason.Refresh, "myGroup")
 			.returns(oCheckUpdatePromise);
 
 		// code under test
@@ -1822,33 +1800,22 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("destroy", function (assert) {
-		var oContext = {
-				getPath : function () { return "/EMPLOYEES('42')"; }
-			},
-			oPromise = Promise.resolve(),
-			oPropertyBinding;
+		var oPropertyBinding = this.oModel.bindProperty("Name");
 
-		this.mock(ODataPropertyBinding.prototype).expects("fetchCache")
-			.withExactArgs(sinon.match.same(oContext)).callsFake(function (oContext0) {
-				// we might become asynchronous due to auto $expand/$select reading $metadata
-				this.oCachePromise = SyncPromise.resolve(oPromise);
-			});
-		oPropertyBinding = this.oModel.bindProperty("Name", oContext);
+		oPropertyBinding.oCheckUpdateCallToken = {};
 		oPropertyBinding.vValue = "foo";
 		this.mock(oPropertyBinding).expects("deregisterChange").withExactArgs();
-		this.mock(PropertyBinding.prototype).expects("destroy").on(oPropertyBinding);
 		this.mock(this.oModel).expects("bindingDestroyed")
 			.withExactArgs(sinon.match.same(oPropertyBinding));
+		this.mock(asODataBinding.prototype).expects("destroy").on(oPropertyBinding).withExactArgs();
+		this.mock(PropertyBinding.prototype).expects("destroy").on(oPropertyBinding);
 
 		// code under test
 		oPropertyBinding.destroy();
 
-		assert.strictEqual(oPropertyBinding.oCachePromise, undefined);
-		assert.strictEqual(oPropertyBinding.oContext, undefined);
+		assert.strictEqual(oPropertyBinding.oCheckUpdateCallToken, undefined);
 		assert.strictEqual(oPropertyBinding.vValue, undefined);
 		assert.strictEqual(oPropertyBinding.mQueryOptions, undefined);
-
-		return oPromise;
 	});
 
 	//*********************************************************************************************

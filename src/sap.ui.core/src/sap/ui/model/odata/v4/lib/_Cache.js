@@ -1353,7 +1353,8 @@ sap.ui.define([
 				sQueryString = this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions,
 					false, this.bSortExpandSelect);
 			} else {
-				sQueryString += (sQueryString ? "&" : "?") + "$filter=" + sExclusiveFilter;
+				sQueryString += (sQueryString ? "&" : "?") + "$filter="
+					+ _Helper.encode(sExclusiveFilter, false);
 			}
 		}
 
