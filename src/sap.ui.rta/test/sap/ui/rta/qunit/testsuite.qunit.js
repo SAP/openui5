@@ -44,7 +44,7 @@ sap.ui.define([
 					only: ["sap/ui/rta/util/PopupManager"]
 				}
 			},
-			"enablement/ControlValidator": {
+			"enablement/elementActionTest": {
 				coverage: {
 					only: ["sap/ui/rta/enablement/elementActionTest"]
 				}
