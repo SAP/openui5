@@ -3243,6 +3243,20 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/bas
 		assert.equal(oCurrencySymbolFormatter.format(-123456.789, "UAK"), "-123" + "\xa0" + "456,79" + "\xa0\u043a\u0440\u0431\u002e", "-123456.789 UAK");
 	});
 
+
+	QUnit.test("Parse special characters (RTL) in currency string", function (assert) {
+		var oLocale = new Locale("he");
+		var oFormatter = NumberFormat.getCurrencyInstance({
+			showMeasure: false,
+			parseAsString: true
+
+		}, oLocale);
+
+		assert.deepEqual(oFormatter.parse("702.00"), ["702.00", undefined], "can be parsed properly");
+		// from hebrew
+		assert.deepEqual(oFormatter.parse("\u200f702.00\u200e"), ["702.00", undefined], "rtl character wrapped number can be parsed properly");
+	});
+
 	QUnit.test("Percent format with default rounding mode", function (assert) {
 		var oFormat = NumberFormat.getPercentInstance({
 			maxFractionDigits: 3
