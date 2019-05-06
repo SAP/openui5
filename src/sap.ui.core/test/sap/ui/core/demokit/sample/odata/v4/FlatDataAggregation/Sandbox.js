@@ -53,12 +53,9 @@ sap.ui.define([
 
 	function adaptModelConstructor() {
 		oSandbox.stub(sap.ui.model.odata.v4, "ODataModel", function (mParameters) {
-			var iQueryPos = mParameters.serviceUrl.indexOf("?"),
-				sQuery = iQueryPos >= 0 ? mParameters.serviceUrl.slice(iQueryPos) : "";
-
 			// clone: do not modify constructor call parameter
 			mParameters = jQuery.extend({}, mParameters, {
-				serviceUrl : TestUtils.proxy(mParameters.serviceUrl) + sQuery
+				serviceUrl : TestUtils.proxy(mParameters.serviceUrl)
 			});
 			return new ODataModel(mParameters);
 		});

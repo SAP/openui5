@@ -722,16 +722,19 @@ sap.ui.define([
 		 * @param {string} sAbsolutePath
 		 *   some absolute path
 		 * @returns {string}
-		 *   the absolute path transformed in a way that invokes a proxy, but still absolute
+		 *   the absolute path transformed in a way that invokes a proxy, but still absolute,
+		 *   with query parameters preserved
 		 */
 		proxy : function (sAbsolutePath) {
-			var sProxyUrl;
+			var sProxyUrl, iQueryPos;
 
 			if (!bProxy) {
 				return sAbsolutePath;
 			}
+			iQueryPos = sAbsolutePath.indexOf("?");
 			sProxyUrl = sap.ui.require.toUrl("sap/ui").replace("resources/sap/ui", "proxy");
-			return new URI(sProxyUrl + sAbsolutePath, TestUtils.getBaseUri()).pathname().toString();
+			return new URI(sProxyUrl + sAbsolutePath, TestUtils.getBaseUri()).pathname().toString()
+				+ (iQueryPos >= 0 ? sAbsolutePath.slice(iQueryPos) : "");
 		},
 
 		/**
