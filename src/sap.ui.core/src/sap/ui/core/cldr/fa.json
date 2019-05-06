@@ -73,7 +73,7 @@
 		"ca": "کاتالان",
 		"cad": "کادویی",
 		"car": "کاریبی",
-		"ccp": "چاکما",
+		"ccp": "ccp",
 		"ce": "چچنی",
 		"ceb": "سبویی",
 		"cgg": "چیگا",
@@ -163,6 +163,7 @@
 		"ga": "ایرلندی",
 		"gaa": "گایی",
 		"gag": "گاگائوزیایی",
+		"gan": "gan",
 		"gay": "گایویی",
 		"gba": "گبایایی",
 		"gbz": "دری زرتشتی",
@@ -186,6 +187,7 @@
 		"gwi": "گویچ این",
 		"ha": "هوسیایی",
 		"hai": "هایدایی",
+		"hak": "hak",
 		"haw": "هاوائیایی",
 		"he": "عبری",
 		"hi": "هندی",
@@ -196,6 +198,7 @@
 		"ho": "موتویی هیری",
 		"hr": "کروات",
 		"hsb": "صُربی علیا",
+		"hsn": "hsn",
 		"ht": "هائیتیایی",
 		"hu": "مجاری",
 		"hup": "هوپا",
@@ -331,6 +334,7 @@
 		"myv": "ارزیایی",
 		"mzn": "مازندرانی",
 		"na": "نائورویی",
+		"nan": "nan",
 		"nap": "ناپلی",
 		"naq": "نامایی",
 		"nb": "نروژی بوک‌مُل",
@@ -514,6 +518,7 @@
 		"was": "واشویی",
 		"wbp": "وارلپیری",
 		"wo": "ولوفی",
+		"wuu": "wuu",
 		"xal": "قلموقی",
 		"xh": "خوسایی",
 		"xog": "سوگایی",
@@ -573,7 +578,6 @@
 		"Egyh": "کاهنی مصری",
 		"Egyp": "هیروگلیف مصری",
 		"Elba": "Elba",
-		"Elym": "Elym",
 		"Ethi": "اتیوپیایی",
 		"Geok": "گرجی خوتسوری",
 		"Geor": "گرجی",
@@ -598,7 +602,6 @@
 		"Hira": "هیراگانا",
 		"Hluw": "هیروگلیف آناتولی",
 		"Hmng": "Hmng",
-		"Hmnp": "Hmnp",
 		"Hrkt": "سیلابی‌های ژاپنی",
 		"Hung": "مجاری باستان",
 		"Inds": "ایندوس",
@@ -644,7 +647,6 @@
 		"Mtei": "مایک میتی",
 		"Mult": "Mult",
 		"Mymr": "میانمار",
-		"Nand": "Nand",
 		"Narb": "عربی شمالی باستان",
 		"Nbat": "نبطی",
 		"Newa": "Newa",
@@ -709,7 +711,6 @@
 		"Vaii": "ویایی",
 		"Visp": "گفتار قابل مشاهده",
 		"Wara": "Wara",
-		"Wcho": "Wcho",
 		"Xpeo": "فارسی باستان",
 		"Xsux": "میخی سومری‐اکدی",
 		"Yiii": "یی",
@@ -911,8 +912,8 @@
 		"MF": "سنت مارتین",
 		"MG": "ماداگاسکار",
 		"MH": "جزایر مارشال",
-		"MK": "مقدونیهٔ شمالی",
-		"MK-alt-variant": "MK",
+		"MK": "مقدونیه",
+		"MK-alt-variant": "مقدونیه (جمهوری سابقاً یوگسلاو)",
 		"ML": "مالی",
 		"MM": "میانمار (برمه)",
 		"MN": "مغولستان",
@@ -985,8 +986,7 @@
 		"SV": "السالوادور",
 		"SX": "سنت مارتن",
 		"SY": "سوریه",
-		"SZ": "اسواتینی",
-		"SZ-alt-variant": "سوازیلند",
+		"SZ": "سوازیلند",
 		"TA": "تریستان دا کونا",
 		"TC": "جزایر تورکس و کایکوس",
 		"TD": "چاد",
@@ -1101,7 +1101,7 @@
 				"yMMMMEEEEd": "EEEE d MMMM y",
 				"yQQQ": "QQQQ y",
 				"yQQQQ": "QQQQ y",
-				"MMMMW": "هفتۀ W از LLLL",
+				"MMMMW": "هفته W از MMM",
 				"yw": "هفته w از Y"
 			},
 			"appendItems": {
@@ -1119,15 +1119,6 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} تا {1}",
-				"Bh": {
-					"B": "h B تا h B",
-					"h": "h تا h B"
-				},
-				"Bhm": {
-					"B": "h:mm B تا h:mm B",
-					"h": "h:mm تا h:mm B",
-					"m": "h:mm تا h:mm B"
-				},
 				"d": {
 					"d": "d تا d"
 				},
@@ -1491,8 +1482,8 @@
 					"ب.ظ."
 				],
 				"narrow": [
-					"ق",
-					"ب"
+					"ق.ظ.",
+					"ب.ظ."
 				],
 				"wide": [
 					"قبل‌ازظهر",
@@ -1566,13 +1557,13 @@
 				"MMMMEd": "E d LLLL",
 				"ms": "mm:ss",
 				"y": "y G",
-				"yM": "y/M G",
-				"yMEd": "E y/M/d G",
+				"yM": "y/M",
+				"yMEd": "E y/M/d",
 				"yMMM": "MMM y",
 				"yMMMEd": "E d MMM y",
 				"yMMMM": "MMMM y",
-				"yQQQ": "QQQ y G",
-				"yQQQQ": "QQQQ y G",
+				"yQQQ": "QQQ y",
+				"yQQQQ": "QQQQ y",
 				"yyyy": "y G",
 				"yyyyM": "y/M G",
 				"yyyyMd": "y/M/d G",
@@ -1580,7 +1571,7 @@
 				"yyyyMMM": "MMM y G",
 				"yyyyMMMd": "d MMM y G",
 				"yyyyMMMEd": "E d MMM y G",
-				"yyyyMMMM": "y MMMM G",
+				"yyyyMMMM": "G y MMMM",
 				"yyyyQQQ": "QQQ y G",
 				"yyyyQQQQ": "QQQQ y G"
 			},
@@ -1599,15 +1590,6 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} تا {1}",
-				"Bh": {
-					"B": "h B تا h B",
-					"h": "h تا h B"
-				},
-				"Bhm": {
-					"B": "h:mm B تا h:mm B",
-					"h": "h:mm تا h:mm B",
-					"m": "h:mm تا h:mm B"
-				},
 				"d": {
 					"d": "d تا d"
 				},
@@ -1971,8 +1953,8 @@
 					"ب.ظ."
 				],
 				"narrow": [
-					"ق",
-					"ب"
+					"ق.ظ.",
+					"ب.ظ."
 				],
 				"wide": [
 					"قبل‌ازظهر",
@@ -1992,10 +1974,10 @@
 	},
 	"ca-japanese": {
 		"dateFormats": {
-			"full": "EEEE d MMMM y G",
-			"long": "d MMMM y G",
-			"medium": "d MMM y G",
-			"short": "y/M/d G"
+			"full": "G EEEE d MMMM y",
+			"long": "G d MMMM y",
+			"medium": "G d MMM y",
+			"short": "G d/M/y"
 		},
 		"timeFormats": {
 			"full": "H:mm:ss (zzzz)",
@@ -2049,7 +2031,7 @@
 				"yyyyMMM": "MMM y G",
 				"yyyyMMMd": "d MMM y G",
 				"yyyyMMMEd": "E d MMM y G",
-				"yyyyMMMM": "y MMMM G",
+				"yyyyMMMM": "G y MMMM",
 				"yyyyQQQ": "QQQQ y G",
 				"yyyyQQQQ": "QQQQ y G"
 			},
@@ -2068,15 +2050,6 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} تا {1}",
-				"Bh": {
-					"B": "h B تا h B",
-					"h": "h تا h B"
-				},
-				"Bhm": {
-					"B": "h:mm B تا h:mm B",
-					"h": "h:mm تا h:mm B",
-					"m": "h:mm تا h:mm B"
-				},
 				"d": {
 					"d": "d تا d"
 				},
@@ -2448,8 +2421,8 @@
 					"ب.ظ."
 				],
 				"narrow": [
-					"ق",
-					"ب"
+					"ق.ظ.",
+					"ب.ظ."
 				],
 				"wide": [
 					"قبل‌ازظهر",
@@ -2557,15 +2530,6 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} تا {1}",
-				"Bh": {
-					"B": "h B تا h B",
-					"h": "h تا h B"
-				},
-				"Bhm": {
-					"B": "h:mm B تا h:mm B",
-					"h": "h:mm تا h:mm B",
-					"m": "h:mm تا h:mm B"
-				},
 				"d": {
 					"d": "d تا d"
 				},
@@ -2929,8 +2893,8 @@
 					"ب.ظ."
 				],
 				"narrow": [
-					"ق",
-					"ب"
+					"ق.ظ.",
+					"ب.ظ."
 				],
 				"wide": [
 					"قبل‌ازظهر",
@@ -2950,10 +2914,10 @@
 	},
 	"ca-buddhist": {
 		"dateFormats": {
-			"full": "EEEE d MMMM y G",
-			"long": "d MMMM y G",
-			"medium": "d MMM y G",
-			"short": "y/M/d G"
+			"full": "G EEEE d MMMM y",
+			"long": "G d MMMM y",
+			"medium": "G d MMM y",
+			"short": "G d/M/y"
 		},
 		"timeFormats": {
 			"full": "H:mm:ss (zzzz)",
@@ -3007,7 +2971,7 @@
 				"yyyyMMM": "MMM y G",
 				"yyyyMMMd": "d MMM y G",
 				"yyyyMMMEd": "E d MMM y G",
-				"yyyyMMMM": "y MMMM G",
+				"yyyyMMMM": "G y MMMM",
 				"yyyyQQQ": "QQQQ y G",
 				"yyyyQQQQ": "QQQQ y G"
 			},
@@ -3026,15 +2990,6 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} تا {1}",
-				"Bh": {
-					"B": "h B تا h B",
-					"h": "h تا h B"
-				},
-				"Bhm": {
-					"B": "h:mm B تا h:mm B",
-					"h": "h:mm تا h:mm B",
-					"m": "h:mm تا h:mm B"
-				},
 				"d": {
 					"d": "d تا d"
 				},
@@ -3398,8 +3353,8 @@
 					"ب.ظ."
 				],
 				"narrow": [
-					"ق",
-					"ب"
+					"ق.ظ.",
+					"ب.ظ."
 				],
 				"wide": [
 					"قبل‌ازظهر",
@@ -4017,11 +3972,6 @@
 				"unitPattern-count-other": "{0} اینچ مربع",
 				"perUnitPattern": "{0} در اینچ مربع"
 			},
-			"area-dunam": {
-				"displayName": "دونوم",
-				"unitPattern-count-one": "{0} دونوم",
-				"unitPattern-count-other": "{0} دونوم"
-			},
 			"concentr-karat": {
 				"displayName": "عیار",
 				"unitPattern-count-one": "{0} عیار",
@@ -4029,14 +3979,17 @@
 			},
 			"concentr-milligram-per-deciliter": {
 				"displayName": "میلی‌گرم در دسی‌لیتر",
+				"unitPattern-count-one": "{0} mg/dL",
 				"unitPattern-count-other": "{0} mg/dL"
 			},
 			"concentr-millimole-per-liter": {
 				"displayName": "میلی‌مول/لیتر",
+				"unitPattern-count-one": "{0} mmol/L",
 				"unitPattern-count-other": "{0} mmol/L"
 			},
 			"concentr-part-per-million": {
 				"displayName": "بخش/میلیون",
+				"unitPattern-count-one": "{0} ppm",
 				"unitPattern-count-other": "{0} ppm"
 			},
 			"concentr-percent": {
@@ -4046,17 +3999,8 @@
 			},
 			"concentr-permille": {
 				"displayName": "هزارم",
+				"unitPattern-count-one": "{0}‰",
 				"unitPattern-count-other": "{0}‰"
-			},
-			"concentr-permyriad": {
-				"displayName": "ده‌هزارم",
-				"unitPattern-count-one": "{0}‱",
-				"unitPattern-count-other": "{0}‱"
-			},
-			"concentr-mole": {
-				"displayName": "مول",
-				"unitPattern-count-one": "{0} مول",
-				"unitPattern-count-other": "{0} مول"
 			},
 			"consumption-liter-per-kilometer": {
 				"displayName": "لیتر/کیلومتر",
@@ -4075,6 +4019,7 @@
 			},
 			"consumption-mile-per-gallon-imperial": {
 				"displayName": "مایل/امپریال گالن",
+				"unitPattern-count-one": "{0} mpg Imp.",
 				"unitPattern-count-other": "{0} mpg Imp."
 			},
 			"digital-petabyte": {
@@ -4244,26 +4189,6 @@
 				"unitPattern-count-one": "{0} ک.وات‌ساعت",
 				"unitPattern-count-other": "{0} ک.وات‌ساعت"
 			},
-			"energy-electronvolt": {
-				"displayName": "الکترون‌ولت",
-				"unitPattern-count-one": "{0} eV",
-				"unitPattern-count-other": "{0} eV"
-			},
-			"energy-british-thermal-unit": {
-				"displayName": "بی‌تی‌یو",
-				"unitPattern-count-one": "{0} بی‌تی‌یو",
-				"unitPattern-count-other": "{0} بی‌تی‌یو"
-			},
-			"force-pound-force": {
-				"displayName": "پوند-نیرو",
-				"unitPattern-count-one": "{0} پوند-نیرو",
-				"unitPattern-count-other": "{0} پوند-نیرو"
-			},
-			"force-newton": {
-				"displayName": "نیوتن",
-				"unitPattern-count-one": "{0} نیوتن",
-				"unitPattern-count-other": "{0} نیوتن"
-			},
 			"frequency-gigahertz": {
 				"displayName": "گیگاهرتز",
 				"unitPattern-count-one": "{0} گیگاهرتز",
@@ -4387,20 +4312,10 @@
 				"unitPattern-count-one": "{0} امتیاز",
 				"unitPattern-count-other": "{0} امتیاز"
 			},
-			"length-solar-radius": {
-				"displayName": "شعاع خورشید",
-				"unitPattern-count-one": "{0} ☉R",
-				"unitPattern-count-other": "{0} ☉R"
-			},
 			"light-lux": {
 				"displayName": "لوکس",
 				"unitPattern-count-one": "{0} لوکس",
 				"unitPattern-count-other": "{0} لوکس"
-			},
-			"light-solar-luminosity": {
-				"displayName": "تابندگی خورشید",
-				"unitPattern-count-one": "{0} ☉L",
-				"unitPattern-count-other": "{0} ☉L"
 			},
 			"mass-metric-ton": {
 				"displayName": "تن متریک",
@@ -4460,21 +4375,6 @@
 				"unitPattern-count-one": "{0} قیراط",
 				"unitPattern-count-other": "{0} قیراط"
 			},
-			"mass-dalton": {
-				"displayName": "دالتون",
-				"unitPattern-count-one": "{0} دالتون",
-				"unitPattern-count-other": "{0} دالتون"
-			},
-			"mass-earth-mass": {
-				"displayName": "جرم زمین",
-				"unitPattern-count-one": "{0} M⊕",
-				"unitPattern-count-other": "{0} ⊕M"
-			},
-			"mass-solar-mass": {
-				"displayName": "جرم خورشید",
-				"unitPattern-count-one": "{0} ☉M",
-				"unitPattern-count-other": "{0} ☉M"
-			},
 			"power-gigawatt": {
 				"displayName": "گیگاوات",
 				"unitPattern-count-one": "{0} گیگاوات",
@@ -4532,17 +4432,8 @@
 			},
 			"pressure-atmosphere": {
 				"displayName": "اتمسفر",
+				"unitPattern-count-one": "{0} atm",
 				"unitPattern-count-other": "{0} atm"
-			},
-			"pressure-kilopascal": {
-				"displayName": "ک.پاسکال",
-				"unitPattern-count-one": "{0} ک.پاسکال",
-				"unitPattern-count-other": "{0} ک.پاسکال"
-			},
-			"pressure-megapascal": {
-				"displayName": "مگاپاسکال",
-				"unitPattern-count-one": "{0} مگاپاسکال",
-				"unitPattern-count-other": "{0} مگاپاسکال"
 			},
 			"speed-kilometer-per-hour": {
 				"displayName": "کیلومتر در ساعت",
@@ -4566,30 +4457,23 @@
 			},
 			"temperature-generic": {
 				"displayName": "°",
+				"unitPattern-count-one": "{0}°",
 				"unitPattern-count-other": "{0}°"
 			},
 			"temperature-celsius": {
 				"displayName": "درجهٔ سلسیوس",
+				"unitPattern-count-one": "{0}°C",
 				"unitPattern-count-other": "{0}°C"
 			},
 			"temperature-fahrenheit": {
 				"displayName": "درجهٔ فارنهایت",
+				"unitPattern-count-one": "{0}°F",
 				"unitPattern-count-other": "{0}°F"
 			},
 			"temperature-kelvin": {
 				"displayName": "درجهٔ کلوین",
 				"unitPattern-count-one": "‎{0} K",
 				"unitPattern-count-other": "‎{0} K"
-			},
-			"torque-pound-foot": {
-				"displayName": "پوند-فوت",
-				"unitPattern-count-one": "{0} پوند-فوت",
-				"unitPattern-count-other": "{0} پوند-فوت"
-			},
-			"torque-newton-meter": {
-				"displayName": "نیوتن‌متر",
-				"unitPattern-count-one": "{0} نیوتن‌متر",
-				"unitPattern-count-other": "{0} نیوتن‌متر"
 			},
 			"volume-cubic-kilometer": {
 				"displayName": "کیلومتر مکعب",
@@ -4710,11 +4594,6 @@
 				"unitPattern-count-one": "{0}‎ fl oz",
 				"unitPattern-count-other": "{0}‎ fl oz"
 			},
-			"volume-fluid-ounce-imperial": {
-				"displayName": "اونس سیال انگلیسی",
-				"unitPattern-count-one": "{0} fl oz Imp",
-				"unitPattern-count-other": "{0} fl oz Imp"
-			},
 			"volume-tablespoon": {
 				"displayName": "قاشق غ.",
 				"unitPattern-count-one": "{0} قاشق غ.",
@@ -4724,11 +4603,6 @@
 				"displayName": "قاشق چ.",
 				"unitPattern-count-one": "{0} قاشق چ.",
 				"unitPattern-count-other": "{0} قاشق چ."
-			},
-			"volume-barrel": {
-				"displayName": "بشکه",
-				"unitPattern-count-one": "{0} بشکه",
-				"unitPattern-count-other": "{0} بشکه"
 			},
 			"coordinateUnit": {
 				"displayName": "جهت",
@@ -4803,7 +4677,7 @@
 	"weekData-weekendStart": 5,
 	"weekData-weekendEnd": 5,
 	"timeData": {
-		"_allowed": "hB H",
+		"_allowed": "H hb hB h",
 		"_preferred": "H"
 	},
 	"eras-gregorian": {
