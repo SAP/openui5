@@ -91,6 +91,30 @@
         "type": "FIX",
         "text": " trace/FESR.qunit: Skip Beacon API test in IE11",
         "references": []
+      },
+      {
+        "id": "7e94864d1cbebce52781e063e73b9d2ce5bde2ba",
+        "type": "FIX",
+        "text": " BindingParser: detect complex binding that uses quoted properties",
+        "references": []
+      },
+      {
+        "id": "d6d8b63fe0d39e8ca485478db6ea69bf26af097e",
+        "type": "FIX",
+        "text": " date.Japanese: adapt unit test to era change",
+        "references": []
+      },
+      {
+        "id": "dea071281daedac278542bb8fb6a1bb42046cac4",
+        "type": "FIX",
+        "text": " sap/base/util/values: JSDoc visibility",
+        "references": []
+      },
+      {
+        "id": "b19bb8adc6491801add877c715cf874f6d72db33",
+        "type": "FIX",
+        "text": " trace/BeaconRequest.qunit: Improved test robustness",
+        "references": []
       }
     ]
   }

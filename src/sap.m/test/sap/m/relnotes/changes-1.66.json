@@ -163,6 +163,24 @@
         "type": "FIX",
         "text": " sap.m.TextArea: Failing test in FF corrected",
         "references": []
+      },
+      {
+        "id": "e2159e723e3fc087c76e4edc2878d624fda5f5a2",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Keyboard handling (Alt+Down, F4) improved",
+        "references": []
+      },
+      {
+        "id": "428743d089afc926a7cde31867ffbc0e019e3224",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Restore items type after navigation",
+        "references": []
+      },
+      {
+        "id": "d575eb97fc3fa51683c44c0f049cd844d0dc6bc3",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Remove duplicate class",
+        "references": []
       }
     ]
   }

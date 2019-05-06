@@ -25,6 +25,18 @@
         "type": "FIX",
         "text": " sap.uxap.ObjectPageSubSection: Fixed misalignment of sections",
         "references": []
+      },
+      {
+        "id": "0342414441bee03e1fc843ea941258d9577ab162",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fixed error on section destroy",
+        "references": []
+      },
+      {
+        "id": "c5a66000a7feb59703affd87e95b16be74fc0e65",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Corrected sizing in Fiori3",
+        "references": []
       }
     ]
   }

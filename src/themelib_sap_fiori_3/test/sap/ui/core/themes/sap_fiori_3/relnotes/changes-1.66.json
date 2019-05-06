@@ -55,6 +55,12 @@
         "type": "FIX",
         "text": ": RTA ACC Color fixes",
         "references": []
+      },
+      {
+        "id": "c5a66000a7feb59703affd87e95b16be74fc0e65",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Corrected sizing in Fiori3",
+        "references": []
       }
     ]
   }

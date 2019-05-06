@@ -13,6 +13,12 @@
         "type": "FIX",
         "text": " Table: Avoid announcement \"contains controls\" for leaf nodes",
         "references": []
+      },
+      {
+        "id": "7c63372c45134bb9baa8b2404673aa5027dc20ee",
+        "type": "FIX",
+        "text": " Table: Allow CTRL+A text selection on elements outside table rows",
+        "references": []
       }
     ]
   }
