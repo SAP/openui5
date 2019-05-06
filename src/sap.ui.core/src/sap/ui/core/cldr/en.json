@@ -2262,39 +2262,47 @@
 					"M": "E, MMM d – E, MMM d"
 				},
 				"y": {
-					"y": "y – y G"
+					"y": "y – y G",
+					"G": "y G – y G"
 				},
 				"yM": {
 					"M": "M/y – M/y GGGGG",
-					"y": "M/y – M/y GGGGG"
+					"y": "M/y – M/y GGGGG",
+					"G": "M/y GGGGG – M/y GGGGG"
 				},
 				"yMd": {
 					"d": "M/d/y – M/d/y GGGGG",
 					"M": "M/d/y – M/d/y GGGGG",
-					"y": "M/d/y – M/d/y GGGGG"
+					"y": "M/d/y – M/d/y GGGGG",
+					"G": "M/d/y GGGGG – M/d/y GGGGG"
 				},
 				"yMEd": {
 					"d": "E, M/d/y – E, M/d/y GGGGG",
 					"M": "E, M/d/y – E, M/d/y GGGGG",
-					"y": "E, M/d/y – E, M/d/y GGGGG"
+					"y": "E, M/d/y – E, M/d/y GGGGG",
+					"G": "E, M/d/y GGGGG – E, M/d/y GGGGG"
 				},
 				"yMMM": {
 					"M": "MMM – MMM y G",
-					"y": "MMM y – MMM y G"
+					"y": "MMM y – MMM y G",
+					"G": "MMM y G – MMM y G"
 				},
 				"yMMMd": {
 					"d": "MMM d – d, y G",
 					"M": "MMM d – MMM d, y G",
-					"y": "MMM d, y – MMM d, y G"
+					"y": "MMM d, y – MMM d, y G",
+					"G": "MMM d, y G – MMM d, y G"
 				},
 				"yMMMEd": {
 					"d": "E, MMM d – E, MMM d, y G",
 					"M": "E, MMM d – E, MMM d, y G",
-					"y": "E, MMM d, y – E, MMM d, y G"
+					"y": "E, MMM d, y – E, MMM d, y G",
+					"G": "E, MMM d, y G – E, MMM d, y G"
 				},
 				"yMMMM": {
 					"M": "MMMM – MMMM y G",
-					"y": "MMMM y – MMMM y G"
+					"y": "MMMM y – MMMM y G",
+					"G": "MMMM y G – MMMM y G"
 				}
 			}
 		},

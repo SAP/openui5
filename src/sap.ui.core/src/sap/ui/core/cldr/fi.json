@@ -2298,39 +2298,47 @@
 					"M": "LLL–LLLL"
 				},
 				"y": {
-					"y": "y–y G"
+					"y": "y–y G",
+					"G": "y G–y G"
 				},
 				"yM": {
 					"M": "LLL–LLLL y G",
-					"y": "LLLL y – LLLL y G"
+					"y": "LLLL y – LLLL y G",
+					"G": "LLLL y G – LLLL y G"
 				},
 				"yMd": {
 					"d": "d.–d.M.y G",
 					"M": "d.M.–d.M.y G",
-					"y": "d.M.y–d.M.y G"
+					"y": "d.M.y–d.M.y G",
+					"G": "d.M.y G–d.M.y G"
 				},
 				"yMEd": {
 					"d": "E d.M.y – E d.M.y G",
 					"M": "E d.M.y – E d.M.y G",
-					"y": "E d.M.y – E d.M.y G"
+					"y": "E d.M.y – E d.M.y G",
+					"G": "E d.M.y G – E d.M.y G"
 				},
 				"yMMM": {
 					"M": "LLL–LLLL y G",
-					"y": "LLLL y – LLLL y G"
+					"y": "LLLL y – LLLL y G",
+					"G": "LLLL y G – LLLL y G"
 				},
 				"yMMMd": {
 					"d": "d.–d. MMMM y G",
 					"M": "d. MMMM – d. MMMM y G",
-					"y": "d. MMMM y – d. MMMM y G"
+					"y": "d. MMMM y – d. MMMM y G",
+					"G": "d. MMMM y G – d. MMMM y G"
 				},
 				"yMMMEd": {
 					"d": "E d. – E d. MMMM y G",
 					"M": "E d. MMMM – E d. MMMM y G",
-					"y": "E d. MMMM y – E d. MMMM y G"
+					"y": "E d. MMMM y – E d. MMMM y G",
+					"G": "E d. MMMM y G – E d. MMMM y G"
 				},
 				"yMMMM": {
 					"M": "LLL–LLLL y G",
-					"y": "LLLL y – LLLL y G"
+					"y": "LLLL y – LLLL y G",
+					"G": "LLLL y G – LLLL y G"
 				}
 			}
 		},

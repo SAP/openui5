@@ -2179,39 +2179,47 @@
 					"M": "LLLL – LLLL"
 				},
 				"y": {
-					"y": "y–y 'гг'. G"
+					"y": "y–y 'гг'. G",
+					"G": "y 'гг'. G–y 'гг'. G"
 				},
 				"yM": {
 					"M": "MM.y – MM.y G",
-					"y": "MM.y – MM.y G"
+					"y": "MM.y – MM.y G",
+					"G": "MM.y G – MM.y G"
 				},
 				"yMd": {
 					"d": "dd.MM.y – dd.MM.y G",
 					"M": "dd.MM.y – dd.MM.y G",
-					"y": "dd.MM.y – dd.MM.y G"
+					"y": "dd.MM.y – dd.MM.y G",
+					"G": "dd.MM.y G – dd.MM.y G"
 				},
 				"yMEd": {
 					"d": "ccc, dd.MM.y – ccc, dd.MM.y G",
 					"M": "ccc, dd.MM.y – ccc, dd.MM.y G",
-					"y": "ccc, dd.MM.y – ccc, dd.MM.y G"
+					"y": "ccc, dd.MM.y – ccc, dd.MM.y G",
+					"G": "ccc, dd.MM.y G – ccc, dd.MM.y G"
 				},
 				"yMMM": {
 					"M": "LLL – LLL y 'г'. G",
-					"y": "LLL y 'г'. – LLL y 'г'. G"
+					"y": "LLL y 'г'. – LLL y 'г'. G",
+					"G": "LLL y 'г'. G – LLL y 'г'. G"
 				},
 				"yMMMd": {
 					"d": "d–d MMM y 'г'. G",
 					"M": "d MMM – d MMM y 'г'. G",
-					"y": "d MMM y 'г'. – d MMM y 'г'. G"
+					"y": "d MMM y 'г'. – d MMM y 'г'. G",
+					"G": "d MMM y 'г'. G – d MMM y 'г'. G"
 				},
 				"yMMMEd": {
 					"d": "ccc, d MMM – ccc, d MMM y 'г'. G",
 					"M": "ccc, d MMM – ccc, d MMM y 'г'. G",
-					"y": "ccc, d MMM y 'г'. – ccc, d MMM y 'г'. G"
+					"y": "ccc, d MMM y 'г'. – ccc, d MMM y 'г'. G",
+					"G": "ccc, d MMM y 'г'. G – ccc, d MMM y 'г'. G"
 				},
 				"yMMMM": {
 					"M": "LLLL – LLLL y 'г'. G",
-					"y": "LLLL y 'г'. – LLLL y 'г'. G"
+					"y": "LLLL y 'г'. – LLLL y 'г'. G",
+					"G": "LLLL y 'г'. G – LLLL y 'г'. G"
 				}
 			}
 		},

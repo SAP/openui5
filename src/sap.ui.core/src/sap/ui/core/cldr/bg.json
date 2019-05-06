@@ -2214,49 +2214,59 @@
 					"M": "E, d MMMM – E, d MMMM"
 				},
 				"y": {
-					"y": "y – y 'г'.G"
+					"y": "y – y 'г'.G",
+					"G": "y 'г'.G – y 'г'.G"
 				},
 				"yM": {
 					"M": "MM – MM.y 'г'. G",
-					"y": "MM.y 'г'. – MM.y 'г'. G"
+					"y": "MM.y 'г'. – MM.y 'г'. G",
+					"G": "MM.y 'г'. G – MM.y 'г'. G"
 				},
 				"yMd": {
 					"d": "d.MM – d.MM.y 'г'. G",
 					"M": "d.MM – d.MM.y 'г'. G",
-					"y": "d.MM.y 'г'. – d.MM.y 'г'. G"
+					"y": "d.MM.y 'г'. – d.MM.y 'г'. G",
+					"G": "d.MM.y 'г'. G – d.MM.y 'г'. G"
 				},
 				"yMEd": {
 					"d": "E, d.MM – E, d.MM.y 'г'. G",
 					"M": "E, d.MM – E, d.MM.y 'г'. G",
-					"y": "E, d.MM.y 'г'. – E, d.MM.y 'г'. G"
+					"y": "E, d.MM.y 'г'. – E, d.MM.y 'г'. G",
+					"G": "E, d.MM.y 'г'. G – E, d.MM.y 'г'. G"
 				},
 				"yMMM": {
 					"M": "MM – MM.y 'г'. G",
-					"y": "MM.y 'г'. – MM.y 'г'. G"
+					"y": "MM.y 'г'. – MM.y 'г'. G",
+					"G": "MM.y 'г'. G – MM.y 'г'. G"
 				},
 				"yMMMd": {
 					"d": "d.MM – d.MM.y 'г'. G",
 					"M": "d.MM – d.MM.y 'г'. G",
-					"y": "d.MM.y 'г'. – d.MM.y 'г'. G"
+					"y": "d.MM.y 'г'. – d.MM.y 'г'. G",
+					"G": "d.MM.y 'г'. G – d.MM.y 'г'. G"
 				},
 				"yMMMEd": {
 					"d": "E, d.MM – E, d.MM.y 'г'. G",
 					"M": "E, d.MM – E, d.MM.y 'г'. G",
-					"y": "E, d.MM.y 'г'. – E, d.MM.y 'г'. G"
+					"y": "E, d.MM.y 'г'. – E, d.MM.y 'г'. G",
+					"G": "E, d.MM.y 'г'. G – E, d.MM.y 'г'. G"
 				},
 				"yMMMM": {
 					"M": "MMMM – MMMM y 'г'. G",
-					"y": "MMMM y 'г'. – MMMM y 'г'. G"
+					"y": "MMMM y 'г'. – MMMM y 'г'. G",
+					"G": "MMMM y 'г'. G – MMMM y 'г'. G"
 				},
 				"yMMMMd": {
 					"d": "d – d MMMM y 'г'. G",
 					"M": "d MMMM – d MMMM y 'г'. G",
-					"y": "d MMMM y 'г'. – d MMMM y 'г'. G"
+					"y": "d MMMM y 'г'. – d MMMM y 'г'. G",
+					"G": "d MMMM y 'г'. G – d MMMM y 'г'. G"
 				},
 				"yMMMMEd": {
 					"d": "E, d MMMM – E, d MMMM y 'г'. G",
 					"M": "E, d MMMM – E, d MMMM y 'г'. G",
-					"y": "E, d MMMM y 'г'. – E, d MMMM y 'г'. G"
+					"y": "E, d MMMM y 'г'. – E, d MMMM y 'г'. G",
+					"G": "E, d MMMM y 'г'. G – E, d MMMM y 'г'. G"
 				}
 			}
 		},

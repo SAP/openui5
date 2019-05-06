@@ -2205,21 +2205,25 @@
 					"M": "E d 'de' MMM 'al' E d 'de' MMM"
 				},
 				"y": {
-					"y": "y 'a' y G"
+					"y": "y 'a' y G",
+					"G": "y G 'a' y G"
 				},
 				"yM": {
 					"M": "M/y 'a' M/y GGGGG",
-					"y": "M/y 'al' M/y GGGGG"
+					"y": "M/y 'al' M/y GGGGG",
+					"G": "M/y GGGGG 'al' M/y GGGGG"
 				},
 				"yMd": {
 					"d": "d/M/y 'a' d/M/y GGGGG",
 					"M": "d/M/y 'al' d/M/y GGGGG",
-					"y": "d/M/y 'al' d/M/y GGGGG"
+					"y": "d/M/y 'al' d/M/y GGGGG",
+					"G": "d/M/y GGGGG 'al' d/M/y GGGGG"
 				},
 				"yMEd": {
 					"d": "E, d/M/y 'a' E, d/M/y GGGGG",
 					"M": "E, d/M/y 'al' E, d/M/y GGGGG",
-					"y": "E, d/M/y 'al' E, d/M/y GGGGG"
+					"y": "E, d/M/y 'al' E, d/M/y GGGGG",
+					"G": "E, d/M/y GGGGG 'al' E, d/M/y GGGGG"
 				},
 				"yMMM": {
 					"M": "MMM 'a' MMM 'de' y G",
@@ -2228,16 +2232,19 @@
 				"yMMMd": {
 					"d": "d 'a' d 'de' MMM 'de' y G",
 					"M": "d 'de' MMM 'al' d 'de' MMM y G",
-					"y": "d 'de' MMM 'de' y 'al' d 'de' MMM 'de' y G"
+					"y": "d 'de' MMM 'de' y 'al' d 'de' MMM 'de' y G",
+					"G": "d 'de' MMM 'de' y G 'al' d 'de' MMM 'de' y G"
 				},
 				"yMMMEd": {
 					"d": "E d 'de' MMM 'al' E d 'de' MMM 'de' y G",
 					"M": "E d 'de' MMM 'al' E d 'de' MMM 'de' y G",
-					"y": "E d 'de' MMM 'de' y 'al' E d 'de' MMM 'de' y G"
+					"y": "E d 'de' MMM 'de' y 'al' E d 'de' MMM 'de' y G",
+					"G": "E d 'de' MMM 'de' y G 'al' E d 'de' MMM 'de' y G"
 				},
 				"yMMMM": {
 					"M": "MMMM 'a' MMMM 'de' y G",
-					"y": "MMMM 'de' y 'a' MMMM 'de' y G"
+					"y": "MMMM 'de' y 'a' MMMM 'de' y G",
+					"G": "MMMM 'de' y G 'a' MMMM 'de' y G"
 				}
 			}
 		},
