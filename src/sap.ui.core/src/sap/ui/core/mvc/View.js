@@ -1194,7 +1194,7 @@ sap.ui.define([
 	 * <strong>Note:</strong> Caching is only available for XMLViews! Some parts of the feature are still experimental,
 	 * For further information see {@link sap.ui.xmlview}
 	 *
-	 * @name sap.ui.core.View.Preprocessor.getCacheKey
+	 * @name sap.ui.core.mvc.View.Preprocessor.getCacheKey
 	 * @function
 	 * @public
 	 * @static
