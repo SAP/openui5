@@ -264,7 +264,8 @@
 			"sap.m.sample.ComboBoxDefaultFiltering",
 			"sap.m.sample.ComboBoxFilteringContains",
 			"sap.m.sample.ComboBoxFilteringStartsWith",
-			"sap.m.sample.ComboBoxGrouping"
+			"sap.m.sample.ComboBoxGrouping",
+			"sap.m.sample.ComboBoxValidation"
 		  ]
 		},
 		{
@@ -1575,6 +1576,11 @@
 			"id": "sap.m.sample.ComboBoxGrouping",
 			"name": "ComboBox - Grouping of items",
 			"description": "Items in the ComboBox could be grouped by a property"
+		},
+		{
+			"id": "sap.m.sample.ComboBoxValidation",
+			"name": "ComboBox - Validation",
+			"description": "The combo box control could be restricted to allow selection only from the items in the list."
 		},
 		{
 		  "id": "sap.m.sample.DateRangeSelection",
