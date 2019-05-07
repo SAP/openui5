@@ -10,13 +10,13 @@ sap.ui.define([
 function (Control, ResizeHandler /**, SimpleFixFlexRenderer */) {
 	"use strict";
 	/**
-	 * Constructor for a new <code>sap.ui.layout.SimpleFixFlex</code>.
+	 * Constructor for a new <code>sap.m.SimpleFixFlex</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The <code>sap.ui.layout.SimpleFixFlex</code> builds the container for a layout with a fixed and a flexible part.
+	 * The <code>sap.m.SimpleFixFlex</code> builds the container for a layout with a fixed and a flexible part.
 	 * The flexible container adapts its size to the fix container.
 	 * <h3>Structure</h3>
 	 * The control consists of two different parts:
@@ -36,10 +36,10 @@ function (Control, ResizeHandler /**, SimpleFixFlexRenderer */) {
 	 * @alias sap.m.SimpleFixFlex
 	 * @ui5-metamodel This control will also be described in the UI5 (legacy) design time meta model.
 	 */
-	var SimpleFixFlex = Control.extend("sap.ui.layout.SimpleFixFlex", /** @lends sap.m.SimpleFixFlex */ {
+	var SimpleFixFlex = Control.extend("sap.m.SimpleFixFlex", /** @lends sap.m.SimpleFixFlex */ {
 
 		metadata: {
-			library: "sap.ui.layout",
+			library: "sap.m",
 			aggregations: {
 				/**
 				* Control in the fixed part of the layout.
@@ -58,7 +58,7 @@ function (Control, ResizeHandler /**, SimpleFixFlexRenderer */) {
 			},
 			properties: {
 				/**
-				* Determines if the content of the <code>sap.ui.layout.SimpleFixFlex</code> should strech
+				* Determines if the content of the <code>sap.m.SimpleFixFlex</code> should strech
 				* the parent container or wrap in order to fit.
 				*/
 				fitParent: {

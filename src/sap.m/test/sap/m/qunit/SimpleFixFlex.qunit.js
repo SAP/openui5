@@ -1,7 +1,7 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/layout/SimpleFixFlex",
-	"sap/ui/layout/SimpleFixFlexRenderer",
+	"sap/m/SimpleFixFlex",
+	"sap/m/SimpleFixFlexRenderer",
 	"sap/m/Text"
 ], function(SimpleFixFlex, SimpleFixFlexRenderer, Text) {
 	"use strict";
