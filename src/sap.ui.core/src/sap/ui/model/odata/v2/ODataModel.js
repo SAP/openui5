@@ -2519,6 +2519,11 @@ sap.ui.define([
 	 * only the ProductName property of the Products navigation property. If Products/ProductName has not been loaded before, so is not
 	 * available on the client, it will return <code>undefined</code>.
 	 *
+	 * Note:<br>
+	 * If <code>mParameters.select<code> is not specified, the returned object could contain model-internal attributes. This may lead to
+	 * problems when submitting this data to the service for an update/create operation.
+	 * To get a copy of the entity without containing such internal attributes, use <code>{select: "*"}</code> instead.
+	 *
 	 * @param {string} sPath Path referencing the object
 	 * @param {object} [oContext] Context the path should be resolved with, in case it is relative
 	 * @param {map} [mParameters] Map of parameters
