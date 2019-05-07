@@ -1127,6 +1127,39 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			assert.equal(oDateFormat.format(this.oDate), "平成13年7月4日", "Date is formatted in Japanese calendar");
 		});
 
+		QUnit.test("format/parse date with Gannen instead of Ichinen", function (assert) {
+			var oDate = new Date("May 1 2019"),
+				sDate = "令和元年5月1日",
+				oDateFormat = DateFormat.getDateInstance({
+					calendarType: CalendarType.Japanese
+				}, new Locale("ja_JP")),
+				sFormatted = oDateFormat.format(oDate),
+				sParsed = oDateFormat.parse(sDate);
+
+			assert.equal(sFormatted, sDate, "Date is formatted correctly with Gannen year");
+			assert.deepEqual(sParsed, oDate, "Date with Gannen year is parsed correclty");
+
+			oDate = new Date("Apr 1 2019");
+			sDate = "平成31年4月1日";
+			sFormatted = oDateFormat.format(oDate);
+			sParsed = oDateFormat.parse(sDate);
+
+			assert.equal(sFormatted, sDate, "Year ending with 1 is formatted as a number");
+			assert.deepEqual(sParsed, oDate, "Date with numberic year is parsed correclty");
+
+			oDate = new Date("May 1 2019");
+			sDate = "R1/5/1";
+			oDateFormat = DateFormat.getDateInstance({
+				calendarType: CalendarType.Japanese,
+				style: "short"
+			}, new Locale("ja_JP"));
+			sFormatted = oDateFormat.format(oDate);
+			sParsed = oDateFormat.parse(sDate);
+
+			assert.equal(sFormatted, sDate, "Date is formatted correctly with numeric year");
+			assert.deepEqual(sParsed, oDate, "Date with numeric year is parsed correclty");
+		});
+
 		QUnit.test("format date to Japanese type with relative", function (assert) {
 			doTestRelative(assert, true, { pattern: "yyyy-MM-dd", calendarType: CalendarType.Japanese }, "ja_JP", "yyyy-MM-dd, default range, en with calendar type Japanese");
 			doTestRelative(assert, true, { relativeRange: [-9, 0], calendarType: CalendarType.Japanese }, "ja_JP", "default style, range [-9, 0], en with calendar type Japanese");
