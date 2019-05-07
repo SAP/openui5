@@ -116,7 +116,8 @@ sap.ui.define([
 			events: {
 
 				/**
-				 * The event is fired when navigation between two pages has been triggered. The transition (if any) to the new page has not started yet.
+				 * The event is fired when navigation between two pages has been triggered (before any events to the child controls are fired).
+				 * The transition (if any) to the new page has not started yet.
 				 * This event can be aborted by the application with preventDefault(), which means that there will be no navigation.
 				 * @since 1.7.1
 				 */
@@ -178,7 +179,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * The event is fired when navigation between two pages has completed. In case of animated transitions this event is fired with some delay after the "navigate" event.
+				 * The event is fired when navigation between two pages has completed (once all events to the child controls have been fired).
+				 * In case of animated transitions this event is fired with some delay after the "navigate" event.
 				 * @since 1.7.1
 				 */
 				afterNavigate: {
