@@ -17168,7 +17168,8 @@ sap.ui.define([
 	// container.
 	// CPOUI5UISERVICESV3-1711
 	QUnit.test("OData Unit type considering unit customizing", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oControl,
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/ProductList(\'HT-1000\')}">\
 	<Input id="weight" value="{parts: [\'WeightMeasure\', \'WeightUnit\',\
@@ -17212,7 +17213,25 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			var oControl = that.oView.byId("weight");
+			that.expectChange("weightMeasure", "0.000")
+				.expectRequest({
+					method : "PATCH",
+					url : "ProductList('HT-1000')",
+					headers : {"If-Match" : "ETag"},
+					payload : {"WeightMeasure" : "0", "WeightUnit" : "KG"}
+				});
+
+			oControl = that.oView.byId("weight");
+			// remove the formatter so that we can call setValue at the control
+			oControl.getBinding("value").setFormatter(null);
+
+			// code under test
+			oControl.setValue("");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// Check that the previous setValue led to the correct result
+			assert.strictEqual(oControl.getValue(), "0.00000 KG");
 
 			that.expectMessages([{
 				"code" : undefined,
@@ -17224,16 +17243,13 @@ sap.ui.define([
 				"type" : "Error"
 			}]);
 
-			// remove the formatter so that we can call setValue at the control
-			oControl.getBinding("value").setFormatter(null);
-
 			// code under test
 			oControl.setValue("12.123456 KG");
 
-			return that.waitForChanges(assert).then(function () {
-				return that.checkValueState(assert, oControl, "Error",
-					"Enter a number with a maximum of 5 decimal places");
-			});
+			return that.waitForChanges(assert);
+		}).then(function () {
+			return that.checkValueState(assert, oControl, "Error",
+				"Enter a number with a maximum of 5 decimal places");
 		});
 	});
 
@@ -17243,7 +17259,8 @@ sap.ui.define([
 	// container.
 	// CPOUI5UISERVICESV3-1733
 	QUnit.test("OData Currency type considering currency customizing", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true, updateGroupId : "$auto"}),
+		var oControl,
+			oModel = createSalesOrdersModel({autoExpandSelect : true, updateGroupId : "$auto"}),
 			sView = '\
 <FlexBox binding="{/ProductList(\'HT-1000\')}">\
 	<Input id="price" value="{parts: [\'Price\', \'CurrencyCode\',\
@@ -17296,7 +17313,25 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			var oControl = that.oView.byId("price");
+			that.expectChange("amount", "0")
+				.expectRequest({
+					method : "PATCH",
+					url : "ProductList('HT-1000')",
+					headers : {"If-Match" : "ETag"},
+					payload : {"Price" : "0", "CurrencyCode" : "JPY"}
+				});
+
+			oControl = that.oView.byId("price");
+			// remove the formatter so that we can call setValue at the control
+			oControl.getBinding("value").setFormatter(null);
+
+			// code under test
+			oControl.setValue("");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// Check that the previous setValue led to the correct result
+			assert.strictEqual(oControl.getValue(), "JPY\u00a00");
 
 			that.expectMessages([{
 				"code" : undefined,
@@ -17308,16 +17343,13 @@ sap.ui.define([
 				"type" : "Error"
 			}]);
 
-			// remove the formatter so that we can call setValue at the control
-			oControl.getBinding("value").setFormatter(null);
-
 			// code under test
 			oControl.setValue("12.1");
 
-			return that.waitForChanges(assert).then(function () {
-				return that.checkValueState(assert, oControl, "Error",
-					"Enter a number with no decimal places");
-			});
+			return that.waitForChanges(assert);
+		}).then(function () {
+			return that.checkValueState(assert, oControl, "Error",
+				"Enter a number with no decimal places");
 		});
 	});
 	//TODO With updateGroupId $direct, changing *both* parts of a composite binding (amount and

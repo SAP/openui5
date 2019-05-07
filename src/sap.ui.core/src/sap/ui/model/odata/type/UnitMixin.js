@@ -216,13 +216,20 @@ sap.ui.define([
 		 *
 		 * @param {object} [oFormatOptions]
 		 *   See parameter <code>oFormatOptions</code> of <code>fnBaseType</code>. Format options
-		 *   are immutable, that is, they can only be set once on construction.
+		 *   are immutable, that is, they can only be set once on construction. Format options
+		 *   that are not supported or have a different default are listed below.
 		 * @param {object} [oFormatOptions.<sFormatOptionName>]
 		 *   Not supported; the type derives this from its customizing part.
 		 * @param {boolean} [oFormatOptions.parseAsString=true]
 		 *   Whether the amount or measure is parsed to a string; set to <code>false</code> if the
 		 *   underlying type is represented as a <code>number</code>, for example
 		 *   {@link sap.ui.model.odata.type.Int32}
+		 * @param {boolean} [oFormatOptions.unitOptional=true]
+		 *   Whether the amount or measure is parsed if no currency or unit is entered.
+		 * @param {any} [oFormatOptions.emptyString=0]
+		 *   Defines how an empty string is parsed into the amount/measure. With the default value
+		 *   <code>0</code> the amount/measure becomes <code>0</code> when an empty string is
+		 *   parsed.
 		 * @param {object} [oConstraints] Not supported
 		 * @throws {Error} If called with more parameters than <code>oFormatOptions</code> or if the
 		 *   format option <code>sFormatOptionName</code> is set
@@ -245,7 +252,7 @@ sap.ui.define([
 			// always parses to a string and we can check the result.
 			this.bParseAsString = !oFormatOptions || !("parseAsString" in oFormatOptions)
 				|| oFormatOptions.parseAsString;
-			oFormatOptions = Object.assign({unitOptional : true}, oFormatOptions,
+			oFormatOptions = Object.assign({unitOptional : true, emptyString: 0}, oFormatOptions,
 				{parseAsString : true});
 
 			fnBaseType.call(this, oFormatOptions, oConstraints);
