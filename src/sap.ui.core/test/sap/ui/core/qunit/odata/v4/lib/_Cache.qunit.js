@@ -4753,7 +4753,6 @@ sap.ui.define([
 		sExpectedKeys : "@",
 		iExpectedLength : 1,
 		sFilter : "key eq 'a-1'",
-		bKeepCreatedElement : true,
 		iLength : 0,
 		iStart : 4,
 		bTransientElement : false,
@@ -4761,7 +4760,6 @@ sap.ui.define([
 	}, { // no visible rows: discard everything except transient created element
 		sExpectedKeys : "@",
 		iExpectedLength : 1,
-		bKeepCreatedElement : true,
 		iLength : 0,
 		iStart : 4,
 		bTransientElement : true,
@@ -4769,7 +4767,6 @@ sap.ui.define([
 	}, { // only transient created element is visible: no GET
 		sExpectedKeys : "@",
 		iExpectedLength : 1,
-		bKeepCreatedElement : true,
 		iLength : 1,
 		iStart : 0,
 		bTransientElement : true,
@@ -4786,7 +4783,6 @@ sap.ui.define([
 		sExpectedKeys : "@a",
 		iExpectedLength : 2,
 		sFilter : "key eq 'a0'",
-		bKeepCreatedElement : true,
 		iLength : 1,
 		iStart : 1,
 		bTransientElement : true,
@@ -4802,7 +4798,6 @@ sap.ui.define([
 		sExpectedKeys : "@a",
 		iExpectedLength : 2,
 		sFilter : "key eq 'a-1' or key eq 'a0'",
-		bKeepCreatedElement : true,
 		iLength : 2,
 		iStart : 0,
 		bTransientElement : false,
@@ -4811,7 +4806,6 @@ sap.ui.define([
 		sExpectedKeys : "@a",
 		iExpectedLength : 2,
 		sFilter : "key eq 'a0'",
-		bKeepCreatedElement : true,
 		iLength : 2,
 		iStart : 0,
 		bTransientElement : true,
@@ -4837,12 +4831,36 @@ sap.ui.define([
 		iLength : Infinity,
 		iStart : 24,
 		aValues : [{key : "y"}, {key : "z"}] // short read
+	}, { // single row, requestSideEffects on element from server
+		sExpectedKeys : "abcdefghij",
+		iExpectedLength : 10,
+		sFilter : "key eq 'a1'",
+		iLength : undefined,
+		iStart : 1,
+		aValues : [{key : "b"}]
+	}, { // single row, requestSideEffects on non-transient created element
+		sExpectedKeys : "@abcdefghij",
+		iExpectedLength : 11,
+		sFilter : "key eq 'a-1'",
+		iLength : undefined,
+		iStart : 0,
+		bTransientElement : false,
+		aValues : [{key : "@"}]
+	}, { // single row, requestSideEffects on element from server, non-transient element untouched
+		sExpectedKeys : "@abcdefghij",
+		iExpectedLength : 11,
+		sFilter : "key eq 'a1'",
+		iLength : undefined,
+		iStart : 2,
+		bTransientElement : false,
+		aValues : [{key : "b"}]
 	}].forEach(function (oFixture, iFixtureIndex) {
 		QUnit.test("CollectionCache#requestSideEffects, " + iFixtureIndex, function (assert) {
 			var oCreatedElement, // undefined, transient or persistent
 				iLength = oFixture.iLength,
 				iStart = oFixture.iStart,
-				iFillLength = Math.min(Math.max(iLength, 10), 26), // read at least 10, at most 26
+				// read at least 10, at most 26
+				iFillLength = Math.min(Math.max(iLength || 0, 10), 26),
 				iFillStart = iStart < 10 ? 0 : iStart, // some old values due to previous paging
 				mQueryOptions = {},
 				iReceivedLength = oFixture.aValues.length,
@@ -4857,7 +4875,8 @@ sap.ui.define([
 			// case we do not wait for read() to finish here!
 			return oCache.read(iFillStart, iFillLength, 0, new _GroupLock("group"))
 				.then(function () {
-					var oGroupLock = {},
+					var iExpectedByPredicateLength,
+						oGroupLock = {},
 						oHelperMock = that.mock(_Helper),
 						mMergedQueryOptions = {
 							$apply : "A.P.P.L.E.", // must be kept
@@ -4910,6 +4929,9 @@ sap.ui.define([
 					} else {
 						oCache.aElements.$created = 0;
 					}
+					iExpectedByPredicateLength = iLength === undefined
+						? Object.keys(oCache.aElements.$byPredicate).length
+						: iReceivedLength + (oCreatedElement ? 1 : 0);
 					that.mock(_Helper).expects("intersectQueryOptions")
 						.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
 							sinon.match.same(that.oRequestor.getModelInterface().fetchMetadata),
@@ -4986,8 +5008,7 @@ sap.ui.define([
 								"length");
 							assert.strictEqual(oCache.aElements.$count, 26, "$count is preserved");
 							assert.strictEqual(Object.keys(oCache.aElements.$byPredicate).length,
-								iReceivedLength + (oCreatedElement ? 1 : 0),
-								"$byPredicate up-to-date");
+								iExpectedByPredicateLength, "$byPredicate up-to-date");
 							for (i = 0; i < oCache.aElements.length; i += 1) {
 								oElement = oCache.aElements[i];
 								if (oElement && oElement !== oTransient) {
@@ -5065,32 +5086,35 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[1, undefined].forEach(function (iLength) {
 	[0, 3].forEach(function (iStart) {
-		var sTitle = "CollectionCache#requestSideEffects: Missing key property @" + iStart;
+	var sTitle = "CollectionCache#requestSideEffects: Missing key property @" + iStart
+		+ ", iLength=" + iLength;
 
-		QUnit.test(sTitle, function (assert) {
-			var oCache = this.createCache("TEAMS('42')/Foo"),
-				oInstance = {},
-				mTypeForMetaPath = {};
+	QUnit.test(sTitle, function (assert) {
+		var oCache = this.createCache("TEAMS('42')/Foo"),
+			oInstance = {},
+			mTypeForMetaPath = {};
 
-			// cache preparation
-			oCache.aElements[iStart] = oInstance;
+		// cache preparation
+		oCache.aElements[iStart] = oInstance;
 
-			this.mock(oCache).expects("fetchTypes").withExactArgs()
-				.returns(SyncPromise.resolve(mTypeForMetaPath));
-			this.mock(_Helper).expects("intersectQueryOptions").returns({/*don't care*/});
-			this.mock(_Helper).expects("getKeyFilter")
-				.withExactArgs(sinon.match.same(oInstance), "/TEAMS/Foo",
-					sinon.match.same(mTypeForMetaPath))
-				.returns(undefined); // at least one key property is undefined
-			this.mock(_Helper).expects("selectKeyProperties").never();
-			this.oRequestorMock.expects("buildQueryString").never();
-			this.oRequestorMock.expects("request").never();
+		this.mock(oCache).expects("fetchTypes").withExactArgs()
+			.returns(SyncPromise.resolve(mTypeForMetaPath));
+		this.mock(_Helper).expects("intersectQueryOptions").returns({/*don't care*/});
+		this.mock(_Helper).expects("getKeyFilter")
+			.withExactArgs(sinon.match.same(oInstance), "/TEAMS/Foo",
+				sinon.match.same(mTypeForMetaPath))
+			.returns(undefined); // at least one key property is undefined
+		this.mock(_Helper).expects("selectKeyProperties").never();
+		this.oRequestorMock.expects("buildQueryString").never();
+		this.oRequestorMock.expects("request").never();
 
-			// code under test
-			assert.strictEqual(oCache.requestSideEffects(null, null, {}, iStart, 1), null);
-		});
+		// code under test
+		assert.strictEqual(oCache.requestSideEffects(null, null, {}, iStart, iLength), null);
 	});
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("CollectionCache#requestSideEffects: no data to update", function (assert) {

@@ -16130,6 +16130,147 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Read side effects on a single row of a table with a row context. We expect that
+	// this
+	//  (a) only loads side effects for the corresponding single context, not all current contexts
+	//  (b) does not invalidate the other contexts, esp. the contexts belonging to currently not
+	//     visible rows
+	//  (c) can be called on both a non-transient, created entity and an entity loaded from the
+	//     server
+	// Load side effects for the complete table using the header context.
+	// CPOUI5UISERVICESV3-1765
+	QUnit.test("requestSideEffects on context of a list binding", function (assert) {
+		var oBinding,
+			oCreatedContext0,
+			oModel = createSpecialCasesModel({autoExpandSelect : true, updateGroupId : "update"}),
+			oTable,
+			sView = '\
+<t:Table id="table" rows="{/Artists(\'42\')/_Publication}" threshold="0" visibleRowCount="2">\
+	<t:Column>\
+		<t:template>\
+			<Text id="id" text="{PublicationID}" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="price" text="{Price}" />\
+		</t:template>\
+	</t:Column>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("Artists('42')/_Publication?$select=Price,PublicationID"
+				+ "&$skip=0&$top=2", {
+				value : [{
+					"Price" : "1.11",
+					"PublicationID" : "42-1"
+				}, {
+					"Price" : "2.22",
+					"PublicationID" : "42-2"
+				}]
+			})
+			.expectChange("id", ["42-1", "42-2"])
+			.expectChange("price", ["1.11", "2.22"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("rows");
+
+			that.expectChange("id", ["New 1", "42-1"])
+				.expectChange("price", [null, "1.11"]);
+
+			oCreatedContext0 = oBinding.create({PublicationID : "New 1"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "Artists('42')/_Publication",
+					payload : {"PublicationID" : "New 1"}
+				}, {
+					"Price" : "3.33",
+					"PublicationID" : "New 1"
+				})
+				.expectChange("price", ["3.33"]);
+
+			return Promise.all([
+				oCreatedContext0.created(),
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("Artists('42')/_Publication"
+					+ "?$select=Price,PublicationID"
+					+ "&$filter=PublicationID eq '42-1'", {
+					value : [{
+						"Price" : "1.12",
+						"PublicationID" : "42-1"
+					}]
+				})
+				.expectChange("price", [,"1.12"]);
+
+			return Promise.all([
+				// code under test: request side effects on "not-created" entity from server
+				oTable.getRows()[1].getBindingContext().requestSideEffects([{
+					$PropertyPath : "Price"
+				}]),
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("Artists('42')/_Publication('New 1')"
+					+ "?$select=Price,PublicationID", {
+					"Price" : "3.34",
+					"PublicationID" : "New 1"
+					})
+				.expectChange("price", ["3.34"]);
+
+			return Promise.all([
+				// code under test: request side effects on non-transient created entity
+				oTable.getRows()[0].getBindingContext().requestSideEffects([{
+					$NavigationPropertyPath : ""
+				}]),
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			// Note: no data invalidation by requestSideEffects => no request expected
+			that.expectChange("id", [, "42-1", "42-2"])
+				.expectChange("price", [, "1.12", "2.22"]);
+
+			oTable.setFirstVisibleRow(1);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("Artists('42')/_Publication"
+					+ "?$select=Price,PublicationID"
+					+ "&$filter=PublicationID eq 'New 1' or "
+					+ "PublicationID eq '42-1' or PublicationID eq '42-2'", {
+						value : [{
+							"Price" : "3.35",
+							"PublicationID" : "New 1"
+						}, {
+							"Price" : "1.13",
+							"PublicationID" : "42-1"
+						}, {
+							"Price" : "2.23",
+							"PublicationID" : "42-2"
+						}]
+				})
+				.expectChange("price", [, "1.13", "2.23"]);
+
+			return Promise.all([
+				// code under test: call on header context loads side effects for the whole binding
+				oTable.getBinding("rows").getHeaderContext().requestSideEffects([{
+					$PropertyPath : "Price"
+				}]),
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Automatic retry of failed PATCHes, along the lines of
 	// MIT.SalesOrderCreateRelative.html, but with $auto group
 	[function () {

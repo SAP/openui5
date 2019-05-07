@@ -722,8 +722,15 @@ sap.ui.define([
 	 * "14.5.11 Expression edm:NavigationPropertyPath" or "14.5.13 Expression edm:PropertyPath"
 	 * objects. Use this method to explicitly load side effects in case implicit loading is switched
 	 * off via the binding-specific parameter <code>$$patchWithoutSideEffects</code>. The method
-	 * must only be called on the bound context of a context binding or on the return value context
-	 * of an operation binding. Key predicates must be available in this context's path. Avoid
+	 * can be called on
+	 * <ul>
+	 * <li> the bound context of a context binding,
+	 * <li> the return value context of an operation binding,
+	 * <li> a context of a list binding representing a single entity,
+	 * <li> the header context of a list binding; side effects are loaded for the whole binding in
+	 *   this case.
+	 * </ul>
+	 * Key predicates must be available in this context's path. Avoid
 	 * navigation properties as part of a binding's $select system query option as they may trigger
 	 * pointless requests.
 	 *
@@ -757,11 +764,13 @@ sap.ui.define([
 	 *   "14.5.11 Expression edm:NavigationPropertyPath" or "14.5.13 Expression edm:PropertyPath",
 	 *   or if this context is neither the bound context of a context binding which uses own service
 	 *   data requests nor the return value context of an operation binding, or if the root binding
-	 *   of this context's binding is suspended
+	 *   of this context's binding is suspended, or if the context is transient, or if the binding
+	 *   of this context is unresolved
 	 *
 	 * @public
 	 * @see sap.ui.model.odata.v4.ODataContextBinding#execute
 	 * @see sap.ui.model.odata.v4.ODataContextBinding#getBoundContext
+	 * @see sap.ui.model.odata.v4.ODataListBinding#getHeaderContext
 	 * @see sap.ui.model.odata.v4.ODataModel#bindContext
 	 * @since 1.61.0
 	 */
@@ -770,11 +779,15 @@ sap.ui.define([
 			aPaths;
 
 		this.oBinding.checkSuspended();
-		if (!oCache || !oCache.requestSideEffects) {
+		if (!oCache || this.isTransient()) {
 			throw new Error("Unsupported context: " + this);
 		}
 		if (!aPathExpressions || !aPathExpressions.length) {
 			throw new Error("Missing edm:(Navigation)PropertyPath expressions");
+		}
+		// Fail fast with a specific error for unresolved bindings
+		if (this.oBinding.bRelative && !this.oBinding.oContext) {
+			throw new Error("Cannot request side effects of unresolved binding's context: " + this);
 		}
 
 		aPaths = aPathExpressions.map(function (oPath) {

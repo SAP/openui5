@@ -1808,19 +1808,25 @@ sap.ui.define([
 		}
 
 		return this.oCachePromise.then(function (oCache) {
+			var bSingle = oContext && oContext !== that.oHeaderContext,
+				iLength = bSingle ? undefined : that.iCurrentEnd - that.iCurrentBegin,
+				iStart;
+
 			if (aPaths.indexOf("") < 0) {
+				iStart = bSingle ? oContext.getModelIndex() : that.iCurrentBegin;
 				oPromise = oCache.requestSideEffects(oModel.lockGroup(sGroupId),
-					aPaths, mNavigationPropertyPaths, that.iCurrentBegin,
-					that.iCurrentEnd - that.iCurrentBegin);
+					aPaths, mNavigationPropertyPaths, iStart, iLength);
 				if (oPromise) {
 					aPromises = [oPromise];
-					that.visitSideEffects(sGroupId, aPaths, oContext, mNavigationPropertyPaths,
-						aPromises);
+					that.visitSideEffects(sGroupId, aPaths, bSingle ? oContext : undefined,
+						mNavigationPropertyPaths, aPromises);
 
 					return SyncPromise.all(aPromises.map(reportError));
 				}
 			}
-
+			if (bSingle && that.isRoot()) {
+				return that.refreshSingle(oContext, oModel.lockGroup(sGroupId), false);
+			}
 			return that.refreshInternal("", sGroupId);
 		});
 	};

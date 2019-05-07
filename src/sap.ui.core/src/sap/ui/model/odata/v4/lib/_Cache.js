@@ -1812,8 +1812,10 @@ sap.ui.define([
 	 *   root) which need to be refreshed, maps string to <code>true</code>; is modified
 	 * @param {number} iStart
 	 *   The array index of the first element to request side effects for
-	 * @param {number} iLength
-	 *   The number of elements to request side effects for; <code>Infinity</code> is supported
+	 * @param {number} [iLength]
+	 *   The number of elements to request side effects for; <code>Infinity</code> is supported.
+	 *   If <code>undefined</code>, only the side effects for the element at <code>iStart</code> are
+	 *   requested; the other elements are not discarded in this case.
 	 * @returns {Promise}
 	 *   A promise resolving without a defined result, or <code>null</code> if a key property is
 	 *   missing
@@ -1823,7 +1825,6 @@ sap.ui.define([
 	CollectionCache.prototype.requestSideEffects = function (oGroupLock, aPaths,
 			mNavigationPropertyPaths, iStart, iLength) {
 		var oElement,
-			sFilter,
 			aFilters = [],
 			mQueryOptions = _Helper.intersectQueryOptions(this.mQueryOptions, aPaths,
 				this.oRequestor.getModelInterface().fetchMetadata, this.sMetaPath,
@@ -1833,34 +1834,52 @@ sap.ui.define([
 			that = this,
 			i;
 
+		/**
+		 * Adds the filter for the given element to the array of filters.
+		 *
+		 * @param {object} oFilterElement The element for which a filter is computed
+		 * @returns {string} The filter for the given element; <code>undefined</code> if a key
+		 *   property for the element is missing.
+		 */
+		function addFilter(oFilterElement) {
+			var sFilter = _Helper.getKeyFilter(oFilterElement, that.sMetaPath, mTypeForMetaPath);
+
+			aFilters.push(sFilter);
+			return sFilter;
+		}
+
 		if (!mQueryOptions) {
 			return SyncPromise.resolve(); // micro optimization: use *sync.* promise which is cached
 		}
 
-		// collect key filters and discard elements outside of range
-		for (i = 0; i < this.aElements.length; i += 1) {
-			oElement = this.aElements[i];
-			if (!oElement || _Helper.hasPrivateAnnotation(oElement, "transient")) {
-				continue;
-			}
-			if ((i < iStart || i >= iStart + iLength)
-				&& !_Helper.hasPrivateAnnotation(oElement, "transientPredicate"))  {
-				delete this.aElements.$byPredicate[
-					_Helper.getPrivateAnnotation(oElement, "predicate")];
-				delete this.aElements[i];
-				continue;
-			}
-			sFilter = _Helper.getKeyFilter(oElement, this.sMetaPath, mTypeForMetaPath);
-			if (!sFilter) {
+		if (iLength === undefined) {
+			if (!addFilter(this.aElements[iStart])) {
 				return null; // missing key property
 			}
-			aFilters.push(sFilter);
-		}
-		this.aElements.length = iLength
-			? Math.min(iStart + iLength, this.aElements.length) // do not increase length
-			: this.aElements.$created;
-		if (!aFilters.length) {
-			return SyncPromise.resolve(); // micro optimization: use *sync.* promise which is cached
+		} else {
+			// collect key filters and discard elements outside of range
+			for (i = 0; i < this.aElements.length; i += 1) {
+				oElement = this.aElements[i];
+				if (!oElement || _Helper.hasPrivateAnnotation(oElement, "transient")) {
+					continue;
+				}
+				if ((i < iStart || i >= iStart + iLength)
+					&& !_Helper.hasPrivateAnnotation(oElement, "transientPredicate"))  {
+					delete this.aElements.$byPredicate[
+						_Helper.getPrivateAnnotation(oElement, "predicate")];
+					delete this.aElements[i];
+					continue;
+				}
+				if (!addFilter(oElement)) {
+					return null; // missing key property
+				}
+			}
+			this.aElements.length = iLength
+				? Math.min(iStart + iLength, this.aElements.length) // do not increase length
+				: this.aElements.$created;
+			if (!aFilters.length) {
+				return SyncPromise.resolve(); // micro optimization: use cached *sync.* promise
+			}
 		}
 
 		mQueryOptions.$filter = aFilters.join(" or ");

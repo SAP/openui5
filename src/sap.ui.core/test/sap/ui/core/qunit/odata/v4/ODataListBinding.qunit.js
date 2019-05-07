@@ -5932,9 +5932,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestSideEffects: refresh needed", function (assert) {
+[false, true].forEach(function (bHeader) {
+	QUnit.test("requestSideEffects: refresh needed, refresh fails, " + bHeader, function (assert) {
 		var oCacheMock = this.getCacheMock(),
 			oBinding = this.bindList("/Set"),
+			oContext = bHeader ? oBinding.getHeaderContext() : undefined,
 			oError = new Error(),
 			sGroupId = "group";
 
@@ -5943,18 +5945,67 @@ sap.ui.define([
 		this.mock(oBinding).expects("refreshInternal").withExactArgs("", sGroupId).rejects(oError);
 
 		// code under test
-		return oBinding.requestSideEffects(sGroupId, ["n/a", ""]).then(function () {
-				assert.ok(false);
-			}, function (oError0) {
-				assert.strictEqual(oError0, oError);
-			});
+		return oBinding.requestSideEffects(sGroupId, ["n/a", ""], oContext).then(function () {
+			assert.ok(false);
+		}, function (oError0) {
+			assert.strictEqual(oError0, oError);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects: refreshSingle needed, refreshSingle fails", function (assert) {
+		var oCacheMock = this.getCacheMock(),
+			oContext = {},
+			oBinding = this.bindList("/Set"),
+			oError = new Error(),
+			sGroupId = "group",
+			oGroupLock = {};
+
+		this.mock(this.oModel).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
+		oCacheMock.expects("requestSideEffects").never();
+		this.mock(oBinding).expects("refreshSingle")
+			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oGroupLock), false)
+			.rejects(oError);
+
+		// code under test
+		return oBinding.requestSideEffects(sGroupId, ["n/a", ""], oContext).then(function () {
+			assert.ok(false);
+		}, function (oError0) {
+			assert.strictEqual(oError0, oError);
+		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestSideEffects: efficient request possible", function (assert) {
+	//TODO With CPOUI5UISERVICESV3-1814, call refreshSingle also for relative bindings
+[true, false].forEach(function (bHeaderContext) {
+	QUnit.test("requestSideEffects: call refreshInternal for relative binding, " + bHeaderContext,
+		function (assert) {
+			var oBinding = this.bindList("relative"),
+				oContext = bHeaderContext
+					? oBinding.getHeaderContext()
+					: Context.create(this.oModel, {}, "/EMPLOYEES('42')"),
+				oResult = {};
+
+			this.mock(oBinding).expects("refreshSingle").never();
+			this.mock(oBinding).expects("refreshInternal").withExactArgs("", "group")
+				.resolves(oResult);
+
+			// code under test
+			return oBinding.requestSideEffects("group", [""], oContext).then(function (oResult0) {
+				assert.strictEqual(oResult0, oResult);
+		});
+	});
+});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bHeader) {
+	QUnit.test("requestSideEffects: efficient request possible, " + bHeader, function (assert) {
 		var oCacheMock = this.getCacheMock(),
 			oBinding = this.bindList("/Set"),
-			oContext = {},
+			oContext = bHeader
+				? oBinding.getHeaderContext()
+				: { getModelIndex : function () { return 42; } },
 			oError = new Error(),
 			sGroupId = "group",
 			oGroupLock = {},
@@ -5968,10 +6019,12 @@ sap.ui.define([
 
 		this.mock(this.oModel).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
 		oCacheMock.expects("requestSideEffects")
-			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), {}, 3, 7)
+			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), {},
+				bHeader ? 3 : 42,
+				bHeader ? 7 : undefined)
 			.callsFake(function (oGroupLock, aPaths, mNavigationPropertyPaths) {
 				that.mock(oBinding).expects("visitSideEffects").withExactArgs(sGroupId,
-						sinon.match.same(aPaths), sinon.match.same(oContext),
+						sinon.match.same(aPaths), bHeader ? undefined : sinon.match.same(oContext),
 						sinon.match.same(mNavigationPropertyPaths), [oPromise])
 					.callsFake(function (sGroupId, aPaths, oContext, mNavigationPropertyPaths,
 							aPromises) {
@@ -5989,11 +6042,12 @@ sap.ui.define([
 		assert.ok(oResult.isPending(), "instanceof SyncPromise");
 
 		return oResult.then(function () {
-				assert.ok(false);
-			}, function (oError0) {
-				assert.strictEqual(oError0, oError);
-			});
+			assert.ok(false);
+		}, function (oError0) {
+			assert.strictEqual(oError0, oError);
+		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("requestSideEffects: fallback to refresh", function (assert) {
