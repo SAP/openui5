@@ -9,8 +9,10 @@ sap.ui.define([
 	"sap/m/DatePicker",
 	"sap/m/InstanceManager",
 	"sap/ui/model/type/Date",
+	"sap/ui/model/odata/type/DateTime",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/library",
+	"sap/ui/core/CalendarType",
 	"jquery.sap.keycodes",
 	"sap/ui/Device",
 	"sap/ui/unified/library",
@@ -29,8 +31,10 @@ sap.ui.define([
 	DatePicker,
 	InstanceManager,
 	TypeDate,
+	DateTime,
 	ODataModel,
 	coreLibrary,
+	CalendarType,
 	jQuery,
 	Device,
 	unifiedLibrary,
@@ -301,6 +305,125 @@ sap.ui.define([
 			assert.equal(view.byId("picker4").isValidValue(), true, "picker4 has valid value!");
 			done();
 		});
+	});
+
+	QUnit.test("data binding with sap.ui.model.odata.type.DateTime", function(assert) {
+		var oConfiguration = sap.ui.getCore().getConfiguration();
+		var oFormatSettings = oConfiguration.getFormatSettings();
+		var oDate = new Date(2017, 0, 1, 0, 0, 0);
+		var oModel = new JSONModel({
+			myDate: undefined
+		});
+		var oDateTimeType = new DateTime({
+			//Format Options
+		},{
+			//Constraints
+			displayFormat: "Date"
+		});
+		var oDatePicker = new DatePicker({
+			value: {
+				path: "/myDate",
+				type: oDateTimeType
+			}
+		}).setModel(oModel);
+
+		oFormatSettings.setLegacyDateFormat("1");
+
+		assert.equal(oDatePicker._parseValue("01.01.2017").getTime(), oDate.getTime(), "Value successfully parsed using legacy date format '1'");
+		assert.equal(oDatePicker._formatValue(oDate), "01.01.2017", "Date successfully formatted using legacy date format '1'");
+
+		oFormatSettings.setLegacyDateFormat("2");
+
+		assert.equal(oDatePicker._formatValue(oDate), "01/01/2017", "Date successfully formatted using legacy date format '2'");
+		assert.equal(oDatePicker._parseValue("01/01/2017").getTime(), oDate.getTime(), "Value successfully parsed using legacy date format '2'");
+
+		oFormatSettings.setLegacyDateFormat("3");
+
+		assert.equal(oDatePicker._parseValue("01-01-2017").getTime(), oDate.getTime(), "Value successfully parsed using legacy date format '3'");
+		assert.equal(oDatePicker._formatValue(oDate), "01-01-2017", "Date successfully formatted using legacy date format '3'");
+
+		oFormatSettings.setLegacyDateFormat("4");
+
+		assert.equal(oDatePicker._parseValue("2017.01.01").getTime(), oDate.getTime(), "Value successfully parsed using legacy date format '4'");
+		assert.equal(oDatePicker._formatValue(oDate), "2017.01.01", "Date successfully formatted using legacy date format '4'");
+
+		oFormatSettings.setLegacyDateFormat("5");
+
+		assert.equal(oDatePicker._parseValue("2017/01/01").getTime(), oDate.getTime(), "Value successfully parsed using legacy date format '5'");
+		assert.equal(oDatePicker._formatValue(oDate), "2017/01/01", "Date successfully formatted using legacy date format '5'");
+
+		oFormatSettings.setLegacyDateFormat("6");
+
+		assert.equal(oDatePicker._parseValue("2017-01-01").getTime(), oDate.getTime(), "Value successfully parsed using legacy date format '6'");
+		assert.equal(oDatePicker._formatValue(oDate), "2017-01-01", "Date successfully formatted using legacy date format '6'");
+
+		oFormatSettings.setLegacyDateFormat("7");
+
+		assert.equal(oDatePicker._parseValue("Heisei29.01.01").getTime(), oDate.getTime(), "Value successfully parsed using legacy date format '7'");
+		assert.equal(oDatePicker._formatValue(oDate), "Heisei29.01.01", "Date successfully formatted using legacy date format '7'");
+
+		oFormatSettings.setLegacyDateFormat("8");
+
+		assert.equal(oDatePicker._parseValue("Heisei29/01/01").getTime(), oDate.getTime(), "Value successfully parsed using legacy date format '8'");
+		assert.equal(oDatePicker._formatValue(oDate), "Heisei29/01/01", "Date successfully formatted using legacy date format '8'");
+
+		oFormatSettings.setLegacyDateFormat("9");
+
+		assert.equal(oDatePicker._parseValue("Heisei29-01-01").getTime(), oDate.getTime(), "Value successfully parsed using legacy date format '9'");
+		assert.equal(oDatePicker._formatValue(oDate), "Heisei29-01-01", "Date successfully formatted using legacy date format '9'");
+
+		oFormatSettings.setLegacyDateFormat("A");
+
+		assert.equal(oDatePicker._parseValue("1438/04/02").getTime(), oDate.getTime(), "Value successfully parsed using legacy date format 'A'");
+		assert.equal(oDatePicker._formatValue(oDate), "1438/04/02", "Date successfully formatted using legacy date format 'A'");
+
+		oFormatSettings.setLegacyDateFormat("B");
+
+		assert.equal(oDatePicker._parseValue("1438/04/02").getTime(), oDate.getTime(), "Value successfully parsed using legacy date format 'B'");
+		assert.equal(oDatePicker._formatValue(oDate), "1438/04/02", "Date successfully formatted using legacy date format 'B'");
+
+		oFormatSettings.setLegacyDateFormat("C");
+
+		assert.equal(oDatePicker._parseValue("1395/10/12").getTime(), oDate.getTime(), "Value successfully parsed using legacy date format 'C'");
+		assert.equal(oDatePicker._formatValue(oDate), "1395/10/12", "Date successfully formatted using legacy date format 'C'");
+
+		oFormatSettings.setLegacyDateFormat();
+
+		assert.equal(oDatePicker._parseValue("Jan 1, 2017").getTime(), oDate.getTime(), "Value successfully parsed using default legacy date format");
+		assert.equal(oDatePicker._formatValue(oDate), "Jan 1, 2017", "Date successfully formatted using default legacy date format");
+
+		oConfiguration.setLanguage("ar_SA");
+
+		assert.equal(oDatePicker._parseValue("2 ربيع الآخر 1438 هـ").getTime(), oDate.getTime(), "Value successfully parsed using language 'ar_SA'");
+		assert.equal(oDatePicker._formatValue(oDate), "2 ربيع الآخر 1438 هـ", "Date successfully formatted using language 'ar_SA'");
+
+		oConfiguration.setLanguage("en_US");
+
+		assert.equal(oDatePicker._parseValue("Jan 1, 2017").getTime(), oDate.getTime(), "Value successfully parsed using language 'en_US'");
+		assert.equal(oDatePicker._formatValue(oDate), "Jan 1, 2017", "Date successfully formatted using language 'en_US'");
+
+		oConfiguration.setCalendarType(CalendarType.Islamic);
+
+		assert.equal(oDatePicker._parseValue("Rab. II 2, 1438 AH").getTime(), oDate.getTime(), "Value successfully parsed using Islamic calendar");
+		assert.equal(oDatePicker._formatValue(oDate), "Rab. II 2, 1438 AH", "Date successfully formatted using Islamic calendar");
+
+		oConfiguration.setCalendarType(CalendarType.Japanese);
+
+		assert.equal(oDatePicker._parseValue("Jan 1, 29 Heisei").getTime(), oDate.getTime(), "Value successfully parsed using Japanese calendar");
+		assert.equal(oDatePicker._formatValue(oDate), "Jan 1, 29 Heisei", "Date successfully formatted using Japanese calendar");
+
+		oConfiguration.setCalendarType(CalendarType.Persian);
+
+		assert.equal(oDatePicker._parseValue("Dey 12, 1395 AP").getTime(), oDate.getTime(), "Value successfully parsed using Persian calendar");
+		assert.equal(oDatePicker._formatValue(oDate), "Dey 12, 1395 AP", "Date successfully formatted using Persian calendar");
+
+		oConfiguration.setCalendarType(CalendarType.Buddhist);
+
+		assert.equal(oDatePicker._parseValue("Jan 1, 2560 BE").getTime(), oDate.getTime(), "Value successfully parsed using Buddhist calendar");
+		assert.equal(oDatePicker._formatValue(oDate), "Jan 1, 2560 BE", "Date successfully formatted using Buddhist calendar");
+
+		// clean up
+		oConfiguration.setCalendarType(CalendarType.Gregorian);
 	});
 
 	QUnit.module("API");
