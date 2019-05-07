@@ -103,32 +103,6 @@ sap.ui.define([
 		oRBGroup.destroy();
 	});
 
-	QUnit.test("aria-posinset and aria-setsize when there is an invisible RB in the group", function(assert) {
-		// arrange
-		var oRadioButton1 = new RadioButton(),
-			oRadioButton2 = new RadioButton({ visible: false }),
-			oRadioButton3 = new RadioButton(),
-			oRBGroup = new RadioButtonGroup({
-				buttons: [
-					oRadioButton1,
-					oRadioButton2,
-					oRadioButton3
-				]
-			});
-
-		oRBGroup.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		// assert
-		assert.equal(oRadioButton1.$().attr("aria-posinset"), 1, "aria-posinset should be 1 on the first button");
-		assert.equal(oRadioButton1.$().attr("aria-setsize"), 2, "aria-setsize should be 2 on the first button because there are 2 visible buttons on the screen");
-		assert.equal(oRadioButton3.$().attr("aria-posinset"), 2, "aria-posinset should be 2 on the third button because the second is invisible");
-
-		// cleanup
-		oRBGroup.destroyButtons();
-		oRBGroup.destroy();
-	});
-
 	/* ----------------------------------------------- */
 	/* Test: 'enabled=false'                            */
 	/* ----------------------------------------------- */
