@@ -9,13 +9,13 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/DesignTimeStatus",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/model/Model",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/rta/ControlTreeModifier",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/library" //we have to ensure to load fl, so that change handler gets registered
 ],
@@ -25,13 +25,13 @@ function (
 	XMLView,
 	CommandFactory,
 	DesignTime,
+	DesignTimeStatus,
 	OverlayRegistry,
 	ChangePersistence,
 	Model,
 	FlexControllerFactory,
 	Settings,
 	ControlTreeModifier,
-	jQuery,
 	sinon
 ) {
 
@@ -66,6 +66,8 @@ function (
 	 * @param {string}   mOptions.action.name - name of the action - e.g. 'remove', 'move', 'rename'
 	 * @param {string}   mOptions.action.controlId - id of the control the action is executed with - may be the parent of the control beeing 'touched'
 	 * @param {function} mOptions.action.parameter - (optional) function(oView) returning the parameter object of the action to be executed
+	 * @param {function} [mOptions.before] - function(assert) hook before test execution is started
+	 * @param {function} [mOptions.after] - function(assert) hook after test execution is finished
 	 * @param {function} mOptions.afterAction - function(oUiComponent, oView, assert) which checks the outcome of the action
 	 * @param {function} mOptions.afterUndo - function(oUiComponent, oView, assert) which checks the execution of the action and an immediate undo
 	 * @param {function} mOptions.afterRedo - function(oUiComponent, oView, assert) which checks the outcome of action with immediate undo and redo
@@ -81,22 +83,26 @@ function (
 		}
 		var sandbox = sinon.sandbox.create();
 
+		mOptions.before = mOptions.before || function () {};
+		mOptions.after = mOptions.after || function () {};
+
 		// Do QUnit tests
-		QUnit.module(sMsg);
+		QUnit.module(sMsg, function () {
+			QUnit.test("When using the 'controlEnablingCheck' function to test if your control is ready for UI adaptation at runtime", function (assert) {
+				assert.ok(mOptions.afterAction, "then you implement a function to check if your action has been successful: See the afterAction parameter.");
+				assert.ok(mOptions.afterUndo, "then you implement a function to check if the undo has been successful: See the afterUndo parameter.");
+				assert.ok(mOptions.afterRedo, "then you implement a function to check if the redo has been successful: See the afterRedo parameter.");
+				assert.ok(mOptions.xmlView, "then you provide an XML view to test on: See the.xmlView parameter.");
 
-		QUnit.test("When using the 'controlEnablingCheck' function to test if your control is ready for UI adaptation at runtime", function(assert){
-			assert.ok(mOptions.afterAction, "then you implement a function to check if your action has been successful: See the afterAction parameter.");
-			assert.ok(mOptions.afterUndo, "then you implement a function to check if the undo has been successful: See the afterUndo parameter.");
-			assert.ok(mOptions.afterRedo, "then you implement a function to check if the redo has been successful: See the afterRedo parameter.");
-			assert.ok(mOptions.xmlView, "then you provide an XML view to test on: See the.xmlView parameter.");
+				var oXmlView = new DOMParser().parseFromString(mOptions.xmlView.viewContent, "application/xml").documentElement;
+				assert.ok(oXmlView.tagName.match("View$"),"then you use the sap.ui.core.mvc View tag as the first tag in your view");
 
-			var oXmlView = new DOMParser().parseFromString(mOptions.xmlView.viewContent, "application/xml").documentElement;
-			assert.ok(oXmlView.tagName.match("View$"),"then you use the sap.ui.core.mvc View tag as the first tag in your view");
-
-			assert.ok(mOptions.action, "then you provide an action: See the action parameter.");
-			assert.ok(mOptions.action.name, "then you provide an action name: See the action.name parameter.");
-			assert.ok(mOptions.action.controlId, "then you provide the id of the control to operate the action on: See the action.controlId.");
+				assert.ok(mOptions.action, "then you provide an action: See the action parameter.");
+				assert.ok(mOptions.action.name, "then you provide an action name: See the action.name parameter.");
+				assert.ok(mOptions.action.controlId, "then you provide the id of the control to operate the action on: See the action.controlId.");
+			});
 		});
+
 
 		var UI_COMPONENT_NAME = "sap.ui.rta.control.enabling.comp";
 		var SYNC = false;
@@ -116,7 +122,7 @@ function (
 				}
 			},
 			createContent : function() {
-				var mViewSettings = jQuery.extend({}, mOptions.xmlView);
+				var mViewSettings = Object.assign({}, mOptions.xmlView);
 				mViewSettings.id = this.createId("view");
 
 				if (mViewSettings.async === undefined){
@@ -132,14 +138,14 @@ function (
 		function createViewInComponent(bAsync) {
 			this.oUiComponent = new Comp({
 				id: "comp",
-				componentData : {
-					async : bAsync
+				componentData: {
+					async: bAsync
 				}
 			});
 
 			// Place component in container and display
 			this.oUiComponentContainer = new ComponentContainer({
-				component : this.oUiComponent
+				component: this.oUiComponent
 			});
 			this.oUiComponentContainer.placeAt(mOptions.placeAt || "qunit-fixture");
 
@@ -150,7 +156,11 @@ function (
 			}
 
 			sap.ui.getCore().applyChanges();
-			return Promise.all([this.oView.loaded(), mOptions.model && mOptions.model.getMetaModel() && mOptions.model.getMetaModel().loaded()]);
+
+			return Promise.all([
+				this.oView.loaded(),
+				mOptions.model && mOptions.model.getMetaModel() && mOptions.model.getMetaModel().loaded()
+			]);
 		}
 
 		function buildCommand(assert) {
@@ -169,11 +179,13 @@ function (
 
 				sap.ui.getCore().applyChanges();
 
-				this.oDesignTime = new DesignTime({
-					rootElements : [this.oView]
-				});
+				return new Promise(function(resolve) {
+					this.oDesignTime = new DesignTime({
+						rootElements: [
+							this.oView
+						]
+					});
 
-				return new Promise(function(resolve){
 					this.oDesignTime.attachEventOnce("synced", function() {
 						this.oControlOverlay = OverlayRegistry.getOverlay(this.oControl);
 						var oCommandFactory = new CommandFactory({
@@ -226,114 +238,138 @@ function (
 			}
 		}
 
-		//XML View checks
+		// XML View checks
 		if (!mOptions.jsOnly) {
 			QUnit.module(sMsg + " on async views", {
-				beforeEach: function() {
-					sandbox.stub(Settings, "getInstance").returns(Promise.resolve({_oSettings: {recordUndo: false}}));
+				before: function (assert) {
+					this.hookContext = {};
+					return mOptions.before.call(this.hookContext, assert);
 				},
-				afterEach : function(){
+				after: function (assert) {
+					return mOptions.after.call(this.hookContext, assert);
+				},
+				beforeEach: function () {
+					sandbox.stub(Settings, "getInstance").resolves({_oSettings: {recordUndo: false}});
+				},
+				afterEach: function () {
 					this.oUiComponentContainer.destroy();
 					this.oDesignTime.destroy();
 					this.oCommand.destroy();
 					sandbox.restore();
 				}
-			});
+			}, function () {
+				QUnit.test("When applying the change directly on the XMLView", function (assert) {
+					// Stub LREP access to have the command as UI change (needs the view to build the correct ids)
+					var aChanges = [];
+					sandbox.stub(ChangePersistence.prototype, "getChangesForComponent").resolves(aChanges);
+					sandbox.stub(ChangePersistence.prototype, "getCacheKey").resolves("etag-123");
 
-			QUnit.test("When applying the change directly on the XMLView", function(assert){
-				// Stub LREP access to have the command as UI change (needs the view to build the correct ids)
-				var aChanges = [];
-				sandbox.stub(ChangePersistence.prototype, "getChangesForComponent").returns(Promise.resolve(aChanges));
-				sandbox.stub(ChangePersistence.prototype, "getCacheKey").returns(Promise.resolve("etag-123"));
+					return createViewInComponent.call(this, SYNC)
+						.then(function () {
+							return buildCommand.call(this, assert);
+						}.bind(this))
 
-				return createViewInComponent.call(this, SYNC).then(function(){
-					return buildCommand.call(this, assert);
-				}.bind(this)).then(function(){
-					var oChange = this.oCommand.getPreparedChange();
-					aChanges.push(oChange);
+						.then(function () {
+							var oChange = this.oCommand.getPreparedChange();
+							aChanges.push(oChange);
 
-					//destroy and recreate component and view to get the changes applied
-					this.oUiComponentContainer.destroy();
-					return createViewInComponent.call(this, ASYNC);
-				}.bind(this))
-				.then(function(args){
-					var oView = args[0];
-					// Verify that UI change has been applied on XML view
-					mOptions.afterAction(this.oUiComponent, oView, assert);
-				}.bind(this));
-			});
+							//destroy and recreate component and view to get the changes applied
+							this.oUiComponentContainer.destroy();
+							return createViewInComponent.call(this, ASYNC);
+						}.bind(this))
 
-			QUnit.test("When executing on XML and reverting the change in JS (e.g. variant switch)", function(assert){
-				// Stub LREP access to have the command as UI change (needs the view to build the correct ids)
-				var aChanges = [];
-				sandbox.stub(ChangePersistence.prototype, "getChangesForComponent").returns(Promise.resolve(aChanges));
-				sandbox.stub(ChangePersistence.prototype, "getCacheKey").returns(Promise.resolve("etag-123"));
+						.then(function (args) {
+							var oView = args[0];
+							// Verify that UI change has been applied on XML view
+							return mOptions.afterAction(this.oUiComponent, oView, assert);
+						}.bind(this));
+				});
 
-				return createViewInComponent.call(this, SYNC).then(function(){
-					return buildCommand.call(this, assert);
-				}.bind(this)).then(function(){
-					var oChange = this.oCommand.getPreparedChange();
-					aChanges.push(oChange);
+				QUnit.test("When executing on XML and reverting the change in JS (e.g. variant switch)", function(assert){
+					// Stub LREP access to have the command as UI change (needs the view to build the correct ids)
+					var aChanges = [];
+					sandbox.stub(ChangePersistence.prototype, "getChangesForComponent").resolves(aChanges);
+					sandbox.stub(ChangePersistence.prototype, "getCacheKey").resolves("etag-123");
 
-					//destroy and recreate component and view to get the changes applied
-					this.oUiComponentContainer.destroy();
-					return createViewInComponent.call(this, ASYNC);
-				}.bind(this))
+					return createViewInComponent.call(this, SYNC)
+						.then(function (){
+							return buildCommand.call(this, assert);
+						}.bind(this))
 
-				.then(function() {
-					// undo is used to trigger revert, like with variant switch
-					return this.oCommand.undo();
-				}.bind(this))
+						.then(function (){
+							var oChange = this.oCommand.getPreparedChange();
+							aChanges.push(oChange);
 
-				.then(function() {
-					return cleanUpAfterUndo(this.oCommand);
-				}.bind(this))
+							//destroy and recreate component and view to get the changes applied
+							this.oUiComponentContainer.destroy();
+							return createViewInComponent.call(this, ASYNC);
+						}.bind(this))
 
-				.then(function() {
-					sap.ui.getCore().applyChanges();
-					mOptions.afterUndo(this.oUiComponent, this.oView, assert);
-				}.bind(this));
-			});
+						.then(function () {
+							// undo is used to trigger revert, like with variant switch
+							return this.oCommand.undo();
+						}.bind(this))
 
-			QUnit.test("When executing on XML, reverting the change in JS (e.g. variant switch) and applying again", function(assert){
-				// Stub LREP access to have the command as UI change (needs the view to build the correct ids)
-				var aChanges = [];
-				sandbox.stub(ChangePersistence.prototype, "getChangesForComponent").returns(Promise.resolve(aChanges));
-				sandbox.stub(ChangePersistence.prototype, "getCacheKey").returns(Promise.resolve("etag-123"));
+						.then(function () {
+							return cleanUpAfterUndo(this.oCommand);
+						}.bind(this))
 
-				return createViewInComponent.call(this, SYNC).then(function(){
-					return buildCommand.call(this, assert);
-				}.bind(this)).then(function(){
-					var oChange = this.oCommand.getPreparedChange();
-					aChanges.push(oChange);
+						.then(function () {
+							sap.ui.getCore().applyChanges();
+							mOptions.afterUndo(this.oUiComponent, this.oView, assert);
+						}.bind(this));
+				});
 
-					//destroy and recreate component and view to get the changes applied
-					this.oUiComponentContainer.destroy();
-					return createViewInComponent.call(this, ASYNC);
-				}.bind(this))
+				QUnit.test("When executing on XML, reverting the change in JS (e.g. variant switch) and applying again", function(assert){
+					// Stub LREP access to have the command as UI change (needs the view to build the correct ids)
+					var aChanges = [];
+					sandbox.stub(ChangePersistence.prototype, "getChangesForComponent").resolves(aChanges);
+					sandbox.stub(ChangePersistence.prototype, "getCacheKey").resolves("etag-123");
 
-				.then(function() {
-					// undo is used to trigger revert, like with variant switch
-					return this.oCommand.undo();
-				}.bind(this))
+					return createViewInComponent.call(this, SYNC)
+						.then(function (){
+							return buildCommand.call(this, assert);
+						}.bind(this))
 
-				.then(function() {
-					return cleanUpAfterUndo(this.oCommand);
-				}.bind(this))
+						.then(function (){
+							var oChange = this.oCommand.getPreparedChange();
+							aChanges.push(oChange);
 
-				.then(function() {
-					return this.oCommand.execute();
-				}.bind(this))
+							//destroy and recreate component and view to get the changes applied
+							this.oUiComponentContainer.destroy();
+							return createViewInComponent.call(this, ASYNC);
+						}.bind(this))
 
-				.then(function() {
-					sap.ui.getCore().applyChanges();
-					mOptions.afterRedo(this.oUiComponent, this.oView, assert);
-				}.bind(this));
+						.then(function () {
+							// undo is used to trigger revert, like with variant switch
+							return this.oCommand.undo();
+						}.bind(this))
+
+						.then(function () {
+							return cleanUpAfterUndo(this.oCommand);
+						}.bind(this))
+
+						.then(function () {
+							return this.oCommand.execute();
+						}.bind(this))
+
+						.then(function () {
+							sap.ui.getCore().applyChanges();
+							mOptions.afterRedo(this.oUiComponent, this.oView, assert);
+						}.bind(this));
+				});
 			});
 		}
 
 		QUnit.module(sMsg, {
-			beforeEach : function(assert){
+			before: function (assert) {
+				this.hookContext = {};
+				return mOptions.before.call(this.hookContext, assert);
+			},
+			after: function (assert) {
+				return mOptions.after.call(this.hookContext, assert);
+			},
+			beforeEach: function (assert) {
 				//no LREP response needed
 				sandbox.stub(ChangePersistence.prototype, "getChangesForComponent").returns(Promise.resolve([]));
 				sandbox.stub(ChangePersistence.prototype, "getCacheKey").returns(ChangePersistence.NOTAG); //no cache key => no xml view processing
@@ -343,67 +379,84 @@ function (
 					return buildCommand.call(this, assert);
 				}.bind(this));
 			},
-			afterEach : function(){
-				sandbox.restore();
-				this.oUiComponentContainer.destroy();
+			afterEach: function () {
 				this.oDesignTime.destroy();
+				this.oUiComponentContainer.destroy();
 				this.oCommand.destroy();
+				sandbox.restore();
 			}
-		});
+		}, function () {
+			QUnit.test("When executing the underlying command on the control at runtime", function (assert) {
+				return this.oCommand.execute()
+					.then(function () {
+						return this.oDesignTime.getStatus() !== DesignTimeStatus.SYNCED
+							? (
+								new Promise(function (fnResolve) {
+									this.oDesignTime.attachEventOnce("synced", fnResolve);
+								}.bind(this))
+							)
+							: Promise.resolve();
+					}.bind(this))
+					.then(function () {
+						sap.ui.getCore().applyChanges();
+						return mOptions.afterAction(this.oUiComponent, this.oView, assert);
+					}.bind(this));
+			});
 
-		QUnit.test("When executing the underlying command on the control at runtime", function(assert){
-			var done = assert.async();
+			QUnit.test("When executing and undoing the command", function(assert){
+				return this.oCommand.execute()
+					.then(function () {
+						return this.oDesignTime.getStatus() !== DesignTimeStatus.SYNCED
+							? (
+								new Promise(function (fnResolve) {
+									this.oDesignTime.attachEventOnce("synced", fnResolve);
+								}.bind(this))
+							)
+							: Promise.resolve();
+					}.bind(this))
 
-			this.oCommand.execute()
+					.then(this.oCommand.undo.bind(this.oCommand))
 
-			.then(function() {
-				sap.ui.getCore().applyChanges();
+					.then(function () {
+						return cleanUpAfterUndo(this.oCommand);
+					}.bind(this))
 
-				mOptions.afterAction(this.oUiComponent, this.oView, assert);
-				done();
-			}.bind(this));
+					.then(function () {
+						sap.ui.getCore().applyChanges();
+						return mOptions.afterUndo(this.oUiComponent, this.oView, assert);
+					}.bind(this));
+			});
 
-		});
+			QUnit.test("When executing, undoing and redoing the command", function(assert){
+				return this.oCommand.execute()
+					.then(function () {
+						return this.oDesignTime.getStatus() !== DesignTimeStatus.SYNCED
+							? (
+								new Promise(function (fnResolve) {
+									this.oDesignTime.attachEventOnce("synced", fnResolve);
+								}.bind(this))
+							)
+							: Promise.resolve();
+					}.bind(this))
 
-		QUnit.test("When executing and undoing the command", function(assert){
-			var done = assert.async();
-			this.oCommand.execute()
+					.then(this.oCommand.undo.bind(this.oCommand))
 
-			.then(this.oCommand.undo.bind(this.oCommand))
+					.then(function () {
+						return cleanUpAfterUndo(this.oCommand);
+					}.bind(this))
 
-			.then(function() {
-				return cleanUpAfterUndo(this.oCommand);
-			}.bind(this))
+					.then(this.oCommand.execute.bind(this.oCommand))
 
-			.then(function() {
-				sap.ui.getCore().applyChanges();
-				mOptions.afterUndo(this.oUiComponent, this.oView, assert);
-				done();
-			}.bind(this));
-		});
-
-		QUnit.test("When executing, undoing and redoing the command", function(assert){
-			var done = assert.async();
-			this.oCommand.execute()
-
-			.then(this.oCommand.undo.bind(this.oCommand))
-
-			.then(function() {
-				return cleanUpAfterUndo(this.oCommand);
-			}.bind(this))
-
-			.then(this.oCommand.execute.bind(this.oCommand))
-
-			.then(function() {
-				sap.ui.getCore().applyChanges();
-				mOptions.afterRedo(this.oUiComponent, this.oView, assert);
-				done();
-			}.bind(this));
+					.then(function () {
+						sap.ui.getCore().applyChanges();
+						return mOptions.afterRedo(this.oUiComponent, this.oView, assert);
+					}.bind(this));
+			});
 		});
 	};
 
-	controlEnablingCheck.skip = function() {};
-	controlEnablingCheck.only = function(sMsgSubstring) { controlEnablingCheck._only = sMsgSubstring; };
+	controlEnablingCheck.skip = function () {};
+	controlEnablingCheck.only = function (sMsgSubstring) { controlEnablingCheck._only = sMsgSubstring; };
 
 	return controlEnablingCheck;
 });
