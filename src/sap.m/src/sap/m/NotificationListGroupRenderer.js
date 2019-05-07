@@ -66,7 +66,8 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer"], function
 			oRm.writeControlData(oControl);
 			oRm.writeAttribute('tabindex', '0');
 			oRm.writeAccessibilityState(oControl, {
-				labelledby : oControl._ariaLabbeledByIds
+				labelledby : oControl._ariaLabbeledByIds,
+				role: "option"
 			});
 			oRm.write('>');
 
@@ -295,9 +296,6 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer"], function
 	NotificationListGroupRenderer.renderBody = function (oRm, oControl) {
 		oRm.write('<ul');
 		oRm.addClass(classNameBody);
-
-		//Needed so show more button will be read by JAWS
-		oRm.writeAttribute("aria-hidden", "true");
 		oRm.writeClasses();
 		oRm.write('>');
 

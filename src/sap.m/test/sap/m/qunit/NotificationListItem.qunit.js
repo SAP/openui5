@@ -898,7 +898,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
-			this.NotificationListItem.destroy();
+			this.list.destroy();
 		}
 	});
 
@@ -956,5 +956,26 @@ sap.ui.define([
 		// assert
 		assert.strictEqual(this.NotificationListItem._ariaDetailsText.getText(), infoText,
 			'The info text should be set correctly with unread status, author, due date and priority');
+	});
+
+	QUnit.test("Focus on 'Show More' button", function (assert) {
+		// arrange
+		var oShowMoreButton = this.NotificationListItem.getAggregation("_collapseButton");
+		var oShowMoreButtonDelegate = oShowMoreButton.aDelegates[0].oDelegate;
+
+		// assert
+		assert.notOk(!!this.NotificationListItem.$().attr("aria-hidden"), "The notification list item should NOT have 'aria-hidden' set.");
+
+		// act
+		oShowMoreButtonDelegate.onfocusin.call(this.NotificationListItem);
+
+		// assert
+		assert.strictEqual(this.NotificationListItem.$().attr("aria-hidden"), "true", "When 'Show More' button is focused, the notificatio list item should have 'aria-hidden' set to true.");
+
+		// act
+		oShowMoreButtonDelegate.onfocusout.call(this.NotificationListItem);
+
+		// assert
+		assert.strictEqual(this.NotificationListItem.$().attr("aria-hidden"), "false", "The notification list item should have 'aria-hidden' unset when the button is no longer focused.");
 	});
 });

@@ -981,6 +981,21 @@ sap.ui.define([
 		assert.strictEqual(ariaSetsize, "2", 'Should update aria-setsize to the group\'s count of visible items only');
 	});
 
+	QUnit.test("Checking the aria-hidden of the list group", function (assert) {
+		// arrange
+		this.NotificationListGroup.addItem(new NotificationListItem());
+		sap.ui.getCore().applyChanges();
+		var vAriaHidden = this.NotificationListGroup.$().find("ul.sapMNLG-Body").attr("aria-hidden");
+
+		// assert
+		assert.notOk(vAriaHidden, "The body should NOT have 'aria-hidden' set to 'true'");
+	});
+
+	QUnit.test("Checking the role of the list group", function (assert) {
+		// assert
+		assert.strictEqual(this.NotificationListGroup.$().attr("role"), "option", "The role of the NotificationListGroup should be set to 'option'.");
+	});
+
 	//================================================================================
 	// Notification List Group ARIA support
 	//================================================================================

@@ -140,6 +140,15 @@ function(
 			}.bind(this)
 		});
 
+		_collapseButton.addEventDelegate({
+			onfocusin: function () {
+				this.getDomRef().setAttribute("aria-hidden", true);
+			},
+			onfocusout: function () {
+				this.getDomRef().setAttribute("aria-hidden", false);
+			}
+		}, this);
+
 		this.setAggregation("_collapseButton", _collapseButton, true);
 
 		/**
@@ -264,6 +273,7 @@ function(
 	 * @param {jQuery.Event} event The event object.
 	 */
 	NotificationListItem.prototype.onfocusin = function (event) {
+		NotificationListBase.prototype.onfocusin.apply(this, arguments);
 
 		if (!Device.browser.msie) {
 			return;
