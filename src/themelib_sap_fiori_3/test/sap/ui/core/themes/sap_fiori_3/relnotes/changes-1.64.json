@@ -50,14 +50,19 @@
       {
         "id": "3588421dec14c9d97eec0cea4931e6df8ca43912",
         "type": "FEATURE",
-        "text": " sap.f.ShellBar: Accessibility enablement",
+        "text": "sap.f.ShellBar: Accessibility enablement",
         "references": []
       },
       {
         "id": "dc9c9b26da98fdd0897aa9dbbf6a7683e656de4c",
         "type": "FIX",
-        "text": " sap.m.Switch: hover color fixed for Fiori 3 theme",
-        "references": []
+        "text": "sap.m.Switch: hover color fixed for Fiori 3 theme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980055094"
+          }
+        ]
       }
     ]
   }

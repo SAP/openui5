@@ -5,20 +5,35 @@
       {
         "id": "202c7729ea50fc88c9d200c0b3fe1e49c8b6efdc",
         "type": "FIX",
-        "text": " Table: Align cell content according to column configuration",
-        "references": []
+        "text": "Table: Align cell content according to column configuration",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980152171"
+          }
+        ]
       },
       {
         "id": "a6d7a098ce17d2e2f5723ee848e4848044d37ed8",
         "type": "FIX",
-        "text": " Table: Avoid announcement \"contains controls\" for leaf nodes",
-        "references": []
+        "text": "Table: Avoid announcement \"contains controls\" for leaf nodes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980192862"
+          }
+        ]
       },
       {
         "id": "7c63372c45134bb9baa8b2404673aa5027dc20ee",
         "type": "FIX",
-        "text": " Table: Allow CTRL+A text selection on elements outside table rows",
-        "references": []
+        "text": "Table: Allow CTRL+A text selection on elements outside table rows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980216667"
+          }
+        ]
       }
     ]
   }

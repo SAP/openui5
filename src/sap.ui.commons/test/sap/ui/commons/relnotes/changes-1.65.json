@@ -5,8 +5,13 @@
       {
         "id": "e576ab105d6bc4bb7650d049d91378cfd3ad429b",
         "type": "FIX",
-        "text": " sap.ui.unified.ColorPicker: Alpha field is properly updated now",
-        "references": []
+        "text": "sap.ui.unified.ColorPicker: Alpha field is properly updated now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980045701"
+          }
+        ]
       }
     ]
   }

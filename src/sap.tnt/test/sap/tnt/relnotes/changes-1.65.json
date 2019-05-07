@@ -5,13 +5,13 @@
       {
         "id": "37b06b7d543c675c5cb64ebc1445d29295b76ef4",
         "type": "FIX",
-        "text": " sap.tnt.SideNavigation: When menu is collapsed items are now read correclty",
+        "text": "sap.tnt.SideNavigation: When menu is collapsed items are now read correclty",
         "references": []
       },
       {
         "id": "0cce70ca3fd228c36cc282aee38e85bd65bca211",
         "type": "FEATURE",
-        "text": " sap.tnt.ToolHeader: Now supports sap.m.ObjectStatus for \"Fiori 3 Default\" theme",
+        "text": "sap.tnt.ToolHeader: Now supports sap.m.ObjectStatus for \"Fiori 3 Default\" theme",
         "references": []
       }
     ]
