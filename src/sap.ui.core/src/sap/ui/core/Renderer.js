@@ -3,8 +3,12 @@
  */
 
 // Provides (optional) base class for all renderers
-sap.ui.define(['sap/base/util/ObjectPath', "sap/base/assert"],
-	function(ObjectPath, assert) {
+sap.ui.define([
+	"sap/base/util/isPlainObject",
+	"sap/base/util/ObjectPath",
+	"sap/base/assert",
+	"sap/ui/thirdparty/jquery"
+], function(isPlainObject, ObjectPath, assert, jQuery) {
 	"use strict";
 
 	/**
@@ -35,12 +39,15 @@ sap.ui.define(['sap/base/util/ObjectPath', "sap/base/assert"],
 
 		assert(this != null, 'BaseRenderer must be a non-null object');
 		assert(typeof sName === 'string' && sName, 'Renderer.extend must be called with a non-empty name for the new renderer');
-		assert(oRendererInfo == null || typeof oRendererInfo === 'object', 'oRendererInfo must be an object or can be omitted');
+		assert(oRendererInfo == null ||
+			(isPlainObject(oRendererInfo)
+			 && Object.keys(oRendererInfo).every(function(key) { return oRendererInfo[key] !== undefined; })),
+			'oRendererInfo can be omitted or must be a plain object without any undefined property values');
 
 		var oChildRenderer = Object.create(this);
 		// subclasses should expose the modern signature variant only
 		oChildRenderer.extend = createExtendedRenderer;
-		Object.assign(oChildRenderer, oRendererInfo);
+		jQuery.extend(oChildRenderer, oRendererInfo);
 
 		// expose the renderer globally
 		ObjectPath.set(sName, oChildRenderer);
