@@ -5,6 +5,7 @@
 // Provides control sap.m.Carousel.
 sap.ui.define([
 	'./library',
+	'sap/ui/core/Core',
 	'sap/ui/core/Control',
 	'sap/ui/Device',
 	'sap/ui/core/ResizeHandler',
@@ -24,6 +25,7 @@ sap.ui.define([
 ],
 function(
 	library,
+	Core,
 	Control,
 	Device,
 	ResizeHandler,
@@ -294,6 +296,8 @@ function(
 		this._onAfterPageChangedRef = this._onAfterPageChanged.bind(this);
 
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
+
+		this._oRb = Core.getLibraryResourceBundle("sap.m");
 	};
 
 	/**
@@ -450,7 +454,7 @@ function(
 		});
 		this._oMobifyCarousel = this.getDomRef()._carousel;
 		this._oMobifyCarousel.setLoop(this.getLoop());
-		this._oMobifyCarousel.setRTL(sap.ui.getCore().getConfiguration().getRTL());
+		this._oMobifyCarousel.setRTL(Core.getConfiguration().getRTL());
 
 		if (iNumberOfItemsToShow > 1) {
 			this._setWidthOfPages(iNumberOfItemsToShow);
@@ -471,14 +475,11 @@ function(
 					this._adjustHUDVisibility(1);
 				}
 			} else {
-
-				var oCore = sap.ui.getCore();
-
-				if (oCore.isThemeApplied()) {
+				if (Core.isThemeApplied()) {
 					// mobify carousel is 1-based
 					this._moveToPage(iIndex + 1);
 				} else {
-					oCore.attachThemeChanged(this._handleThemeLoad, this);
+					Core.attachThemeChanged(this._handleThemeLoad, this);
 				}
 
 				// BCP: 1580078315
@@ -616,8 +617,7 @@ function(
 	 */
 	Carousel.prototype._handleThemeLoad = function() {
 
-		var oCore,
-			sActivePage = this.getActivePage();
+		var sActivePage = this.getActivePage();
 
 		if (sActivePage) {
 			var iIndex = this._getPageNumber(sActivePage);
@@ -627,8 +627,7 @@ function(
 			}
 		}
 
-		oCore = sap.ui.getCore();
-		oCore.detachThemeChanged(this._handleThemeLoad, this);
+		Core.detachThemeChanged(this._handleThemeLoad, this);
 	};
 
 	/**
@@ -683,8 +682,7 @@ function(
 	 * @private
 	 */
 	Carousel.prototype._getPageIndicatorText = function (iNewPageIndex) {
-		return sap.ui.getCore().getLibraryResourceBundle("sap.m")
-				.getText("CAROUSEL_PAGE_INDICATOR_TEXT", [iNewPageIndex, this.getPages().length  - this._getNumberOfItemsToShow() + 1]);
+		return this._oRb.getText("CAROUSEL_PAGE_INDICATOR_TEXT", [iNewPageIndex, this.getPages().length  - this._getNumberOfItemsToShow() + 1]);
 	};
 
 	/**
@@ -866,7 +864,7 @@ function(
 							"<div class='" + cellClasses + "'></div>" +
 						"</div>",
 			afterRendering : function(e) {
-				var rm = sap.ui.getCore().createRenderManager();
+				var rm = Core.createRenderManager();
 				oPage.addStyleClass("sapMCrsPage");
 				rm.render(oPage, this.getDomRef().firstChild);
 				rm.destroy();

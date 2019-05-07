@@ -286,6 +286,8 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(this.oCarousel.$().find('.sapMCrslHud').length, 1, "Arrows should be rendered next to the image");
+		assert.ok(this.oCarousel.$().find('.sapMCrslPrev').attr('title'), "Prev Arrow has a tooltip");
+		assert.ok(this.oCarousel.$().find('.sapMCrslNext').attr('title'), "Next Arrow has a tooltip");
 	});
 
 	QUnit.test("#setArrowsPlacement() to 'PageIndicator' position", function (assert) {

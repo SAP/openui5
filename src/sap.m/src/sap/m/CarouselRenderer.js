@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/m/library", "sap/ui/Device"],
-	function(library, Device) {
+sap.ui.define(["sap/m/library", "sap/ui/core/Core", "sap/ui/Device"],
+	function(library, Core, Device) {
 	"use strict";
 
 
@@ -13,6 +13,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device"],
 	// shortcut for sap.m.PlacementType
 	var PlacementType = library.PlacementType;
 
+	var oResourceBundle = Core.getLibraryResourceBundle('sap.m');
 
 	/**
 	 * Carousel renderer.
@@ -183,7 +184,6 @@ sap.ui.define(["sap/m/library", "sap/ui/Device"],
 			iBulletsToNumbersThreshold = settings.iBulletsToNumbersThreshold,
 			bShowPageIndicator = settings.bShowPageIndicator,
 			sPageIndicatorDisplayStyle = bShowPageIndicator ? '' : 'opacity: 0',
-			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m'),
 			sOffsetCSSClass = "",
 			iNumberOfItemsToShow = oCarousel._getNumberOfItemsToShow(),
 			sTextBetweenNumbers = oResourceBundle.getText("CAROUSEL_PAGE_INDICATOR_TEXT", [iIndex + 1, iPageCount - iNumberOfItemsToShow + 1]),
@@ -272,13 +272,17 @@ sap.ui.define(["sap/m/library", "sap/ui/Device"],
 	};
 
 	CarouselRenderer._renderPrevArrow = function(rm, oCarousel) {
-		rm.write("<a class='sapMCrslPrev' href='#' data-slide='prev' tabindex='-1'><div class='sapMCrslArrowInner'>");
+		var oTooltip = oResourceBundle.getText("PAGINGBUTTON_PREVIOUS");
+
+		rm.write("<a class='sapMCrslPrev' title='" + oTooltip + "' href='#' data-slide='prev' tabindex='-1'><div class='sapMCrslArrowInner'>");
 		rm.renderControl(oCarousel._getNavigationArrow('left'));
 		rm.write("</div></a>");
 	};
 
 	CarouselRenderer._renderNextArrow = function(rm, oCarousel) {
-		rm.write("<a class='sapMCrslNext' href='#' data-slide='next' tabindex='-1'><div class='sapMCrslArrowInner'>");
+		var oTooltip = oResourceBundle.getText("PAGINGBUTTON_NEXT");
+
+		rm.write("<a class='sapMCrslNext' title='" + oTooltip + "' href='#' data-slide='next' tabindex='-1'><div class='sapMCrslArrowInner'>");
 		rm.renderControl(oCarousel._getNavigationArrow('right'));
 		rm.write("</div></a>");
 	};
