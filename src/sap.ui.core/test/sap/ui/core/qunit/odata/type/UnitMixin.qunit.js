@@ -59,7 +59,8 @@ sap.ui.define([
 			"format options are immutable: clone");
 		assert.ok(oType.hasOwnProperty("mCustomUnits"));
 		assert.strictEqual(oType.mCustomUnits, undefined);
-		assert.deepEqual(oType.oFormatOptions, {parseAsString : true, unitOptional : true});
+		assert.deepEqual(oType.oFormatOptions, {emptyString : 0, parseAsString : true,
+			unitOptional : true});
 
 		assert.throws(function () {
 			// code under test
@@ -74,8 +75,8 @@ sap.ui.define([
 		// code under test
 		oType = new UnitMixin(oFormatOptions);
 
-		assert.deepEqual(oType.oFormatOptions, {groupingEnabled : false, parseAsString : true,
-			unitOptional : true});
+		assert.deepEqual(oType.oFormatOptions, {emptyString : 0, groupingEnabled : false,
+			parseAsString : true, unitOptional : true});
 
 		[false, undefined, ""].forEach(function (bParseAsString) {
 			oFormatOptions.parseAsString = bParseAsString;
@@ -83,8 +84,8 @@ sap.ui.define([
 			// code under test
 			oType = new UnitMixin(oFormatOptions);
 
-			assert.deepEqual(oType.oFormatOptions, {groupingEnabled : false, parseAsString : true,
-				unitOptional : true});
+			assert.deepEqual(oType.oFormatOptions, {emptyString : 0, groupingEnabled : false,
+				parseAsString : true, unitOptional : true});
 			assert.notStrictEqual(oType.oFormatOptions, oFormatOptions,
 				"format options are immutable: clone");
 		});
@@ -95,16 +96,16 @@ sap.ui.define([
 		// code under test
 		oType = new UnitMixin(oFormatOptions);
 
-		assert.deepEqual(oType.oFormatOptions, {groupingEnabled : false, parseAsString : true,
-			unitOptional : false});
+		assert.deepEqual(oType.oFormatOptions, {emptyString : 0, groupingEnabled : false,
+			parseAsString : true, unitOptional : false});
 
 		oFormatOptions.unitOptional = undefined;
 
 		// code under test
 		oType = new UnitMixin(oFormatOptions);
 
-		assert.deepEqual(oType.oFormatOptions, {groupingEnabled : false, parseAsString : true,
-			unitOptional : undefined});
+		assert.deepEqual(oType.oFormatOptions, {emptyString : 0, groupingEnabled : false,
+			parseAsString : true, unitOptional : undefined});
 
 		assert.throws(function () {
 			oType = new UnitMixin({}, {"minimum" : 42});
@@ -236,6 +237,7 @@ sap.ui.define([
 		oSetFormatOptionsCall = oBaseUnitMock.expects("setFormatOptions").on(oType)
 			.withExactArgs({
 				customUnitsOrCurrencies : mCustomUnits,
+				emptyString : 0,
 				parseAsString : true,
 				unitOptional : true
 			});
@@ -317,6 +319,7 @@ sap.ui.define([
 		oBaseUnitMock.expects("setFormatOptions").on(oType2)
 			.withExactArgs({
 				customUnitsOrCurrencies : sinon.match.same(oType.mCustomUnits),
+				emptyString : 0,
 				parseAsString : true,
 				unitOptional : true
 			});
@@ -333,6 +336,7 @@ sap.ui.define([
 		oBaseUnitMock.expects("setFormatOptions").on(oType3)
 			.withExactArgs({
 				customUnitsOrCurrencies : sinon.match.same(oType.mCustomUnits),
+				emptyString : 0,
 				parseAsString : true,
 				unitOptional : true
 			});

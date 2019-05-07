@@ -40,9 +40,9 @@ sap.ui.define([
 	 *   the XHR's status as text
 	 * @param {object} mResponseHeaders
 	 *   the header attributes of the response; supported header attributes are "Content-Type",
-	 *   "DataServiceVersion", "OData-Version", "SAP-ContextId", "sap-messages" and "X-CSRF-Token"
-	 *   all with default value <code>null</code>; if no response headers are given at all the
-	 *   default value for "OData-Version" is "4.0";
+	 *   "DataServiceVersion", "ETag", "OData-Version", "SAP-ContextId", "sap-messages" and
+	 *   "X-CSRF-Token" all with default value <code>null</code>; if no response headers are given
+	 *   at all the default value for "OData-Version" is "4.0";
 	 * @returns {object}
 	 *   a mock for jQuery's XHR wrapper
 	 */
@@ -61,6 +61,8 @@ sap.ui.define([
 						return mResponseHeaders["Content-Type"] || null;
 					case "DataServiceVersion":
 						return mResponseHeaders["DataServiceVersion"] || null;
+					case "ETag":
+						return mResponseHeaders["ETag"] || null;
 					case "OData-Version":
 						return mResponseHeaders["OData-Version"] || null;
 					case "SAP-ContextId":
@@ -368,6 +370,7 @@ sap.ui.define([
 						&& oSettings.headers["X-CSRF-Token"] === "abc123") {
 						jqXHR = createMock(assert, oResponsePayload, "OK", {
 							"Content-Type" : "application/json",
+							"ETag" : "Bill",
 							"OData-Version" : "4.0",
 							"sap-messages" : "[{code : 42}]"
 						});
@@ -402,11 +405,13 @@ sap.ui.define([
 				});
 			}
 
+			// code under test
 			return oRequestor.sendRequest("FOO", "foo", mHeaders, "payload", "original/path")
 				.then(function (oPayload) {
 					assert.ok(bSuccess, "success possible");
 					assert.strictEqual(oPayload.contentType, "application/json");
 					assert.strictEqual(oPayload.body, oResponsePayload);
+					assert.deepEqual(oPayload.body, {"@odata.etag" : "Bill"});
 					assert.strictEqual(oPayload.messages, "[{code : 42}]");
 					assert.strictEqual(oPayload.resourcePath, "foo");
 				}, function (oError0) {
@@ -922,7 +927,7 @@ sap.ui.define([
 		// code under test
 		return oRequestor.request("DELETE", "SalesOrderList('0500000676')")
 			.then(function (oResult) {
-				assert.strictEqual(oResult, undefined);
+				assert.deepEqual(oResult, {}, "null object pattern");
 			});
 	});
 
@@ -1097,6 +1102,7 @@ sap.ui.define([
 			};
 
 		oRequestorMock.expects("doConvertResponse").never();
+		oRequestorMock.expects("reportUnboundMessagesAsJSON").never();
 		oGetProductsPromise = oRequestor.request("GET", "Products", new _GroupLock("group1"))
 			.then(function () {
 				assert.notOk("Unexpected success");
@@ -1257,7 +1263,7 @@ sap.ui.define([
 				$submit : undefined
 			}], {
 				method : "GET",
-				url : "~Products",
+				url : "~Products('23')",
 				headers : {
 					"Accept" : "application/json;odata.metadata=full",
 					"Accept-Language" : "ab-CD",
@@ -1270,26 +1276,29 @@ sap.ui.define([
 				$promise : sinon.match.defined,
 				$reject : sinon.match.func,
 				$resolve : sinon.match.func,
-				$resourcePath : "~Products",
+				$resourcePath : "~Products('23')",
 				$submit : undefined
 			}],
 			aPromises = [],
-			aResults = [{"foo1" : "bar1"}, {"foo2" : "bar2"}, undefined],
+			aResults = [{"foo1" : "bar1"}, {"foo2" : "bar2"}, {}],
 			aBatchResults = [
 				[createResponse(aResults[1]), createResponse()],
-				createResponse(aResults[0])
+				createResponse(aResults[0], {"etAG" : "ETag value"})
 			],
 			oRequestor = _Requestor.create("/Service/", oModelInterface,
 				{"Accept-Language" : "ab-CD"}),
 			oRequestorMock = this.mock(oRequestor);
 
-		oRequestorMock.expects("convertResourcePath").withExactArgs("Products")
-			.returns("~Products");
-		aPromises.push(oRequestor.request("GET", "Products", new _GroupLock("group1"), {
+		oRequestorMock.expects("convertResourcePath").withExactArgs("Products('23')")
+			.returns("~Products('23')");
+		aPromises.push(oRequestor.request("GET", "Products('23')", new _GroupLock("group1"), {
 			Foo : "bar",
 			Accept : "application/json;odata.metadata=full"
 		}).then(function (oResult) {
-			assert.deepEqual(oResult, aResults[0]);
+			assert.deepEqual(oResult, {
+				"@odata.etag" : "ETag value",
+				"foo1" : "bar1"
+			});
 			aResults[0] = null;
 		}));
 		oRequestorMock.expects("convertResourcePath").withExactArgs("Customers")
@@ -1571,25 +1580,57 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[{
-		response : {id : 42}, method : "GET"
-	}, {
-		response : undefined, method : "DELETE"
-	}].forEach(function (oFixture, i) {
-		QUnit.test("submitBatch: report unbound messages, " + i, function (assert) {
-			var mHeaders = {"SAP-Messages" : {}},
-				oRequestor = _Requestor.create("/Service/", oModelInterface),
-				oRequestorMock = this.mock(oRequestor),
-				oRequestPromise = oRequestor.request(oFixture.method, "Products(42)",
-					new _GroupLock("group1"));
+	QUnit.test("submitBatch: report unbound messages", function (assert) {
+		var mHeaders = {"SAP-Messages" : {}},
+			oRequestor = _Requestor.create("/Service/", oModelInterface),
+			oRequestorMock = this.mock(oRequestor),
+			oRequestPromise = oRequestor.request("GET", "Products(42)",
+				new _GroupLock("group1"));
 
-			oRequestorMock.expects("reportUnboundMessagesAsJSON")
-				.withExactArgs("Products(42)", sinon.match.same(mHeaders["SAP-Messages"]));
-			oRequestorMock.expects("sendBatch") // arguments don't matter
-				.resolves([createResponse(oFixture.response, mHeaders)]);
+		oRequestorMock.expects("sendBatch") // arguments don't matter
+			.resolves([createResponse({id : 42}, mHeaders)]);
+		oRequestorMock.expects("reportUnboundMessagesAsJSON")
+			.withExactArgs("Products(42)", sinon.match.same(mHeaders["SAP-Messages"]));
 
-			return Promise.all([oRequestPromise, oRequestor.submitBatch("group1")]);
-		});
+		return Promise.all([oRequestPromise, oRequestor.submitBatch("group1")]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("submitBatch: support ETag header", function (assert) {
+		var mHeaders = {"SAP-Messages" : {}, ETag : "ETag"},
+			oRequestor = _Requestor.create("/Service/", oModelInterface),
+			oRequestorMock = this.mock(oRequestor),
+			oRequestPromise = oRequestor.request("PATCH", "Products(42)",
+				new _GroupLock("group1"));
+
+		oRequestorMock.expects("sendBatch") // arguments don't matter
+			.resolves([createResponse(undefined, mHeaders)]);
+		oRequestorMock.expects("reportUnboundMessagesAsJSON")
+			.withExactArgs("Products(42)", sinon.match.same(mHeaders["SAP-Messages"]));
+
+		return Promise.all([oRequestPromise, oRequestor.submitBatch("group1")])
+			.then(function (aResults) {
+				assert.deepEqual(aResults[0], {"@odata.etag" : "ETag"});
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("submitBatch: missing ETag header", function (assert) {
+		var mHeaders = {"SAP-Messages" : {}},
+			oRequestor = _Requestor.create("/Service/", oModelInterface),
+			oRequestorMock = this.mock(oRequestor),
+			oRequestPromise = oRequestor.request("DELETE", "Products(42)",
+				new _GroupLock("group1"));
+
+		oRequestorMock.expects("sendBatch") // arguments don't matter
+			.resolves([createResponse(undefined, mHeaders)]);
+		oRequestorMock.expects("reportUnboundMessagesAsJSON")
+			.withExactArgs("Products(42)", sinon.match.same(mHeaders["SAP-Messages"]));
+
+		return Promise.all([oRequestPromise, oRequestor.submitBatch("group1")])
+			.then(function (aResults) {
+				assert.deepEqual(aResults[0], {});
+			});
 	});
 
 	//*********************************************************************************************

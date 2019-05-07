@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/model/Context",
 	"sap/ui/model/ContextBinding",
 	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
 	"sap/ui/model/MetaModel",
 	"sap/ui/model/PropertyBinding",
 	"sap/ui/model/Sorter",
@@ -27,9 +28,9 @@ sap.ui.define([
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/URI"
 ], function (jQuery, Log, uid, SyncPromise, BindingMode, ChangeReason, ClientListBinding,
-		BaseContext, ContextBinding, Filter, MetaModel, PropertyBinding, Sorter, OperationMode,
-		Int64, Raw, AnnotationHelper, Context, ODataMetaModel, ODataModel, ValueListType, _Helper,
-		TestUtils, URI) {
+		BaseContext, ContextBinding, Filter, FilterOperator, MetaModel, PropertyBinding, Sorter,
+		OperationMode, Int64, Raw, AnnotationHelper, Context, ODataMetaModel, ODataModel,
+		 ValueListType, _Helper, TestUtils, URI) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-loop-func: 0, no-warning-comments: 0 */
 	"use strict";
@@ -924,6 +925,38 @@ sap.ui.define([
 		// code under test
 		oMetaModel.setDefaultBindingMode(BindingMode.OneWay);
 		assert.strictEqual(oMetaModel.getDefaultBindingMode(), BindingMode.OneWay);
+
+		// code under test - supported filters
+		[
+			FilterOperator.Contains, FilterOperator.EndsWith, FilterOperator.EQ, FilterOperator.GE,
+			FilterOperator.GT, FilterOperator.LE, FilterOperator.LT, FilterOperator.NE,
+			FilterOperator.NotContains, FilterOperator.NotEndsWith, FilterOperator.NotStartsWith,
+			FilterOperator.StartsWith
+		].forEach(function (sFilterOperator) {
+			oMetaModel.checkFilterOperation(new Filter("path", sFilterOperator, "bar"));
+		});
+		oMetaModel.checkFilterOperation(new Filter("path", FilterOperator.BT, "bar", "foo"));
+		oMetaModel.checkFilterOperation(new Filter("path", FilterOperator.NB, "bar", "foo"));
+
+		// code under test - unsupported filters
+		assert.throws(function () {
+			oMetaModel.checkFilterOperation(new Filter({
+				path : "path",
+				operator: FilterOperator.Any
+			}));
+		}, /unsupported FilterOperator/, "ClientModel/ClientListBinding doesn't support \"Any\"");
+		assert.throws(function () {
+			oMetaModel.checkFilterOperation(new Filter({
+				path : "path",
+				operator: FilterOperator.All,
+				variable: 'foo',
+				condition: new Filter({
+					path: 'foo/bar',
+					operator: FilterOperator.GT,
+					value1: 0
+				})
+			}));
+		}, /unsupported FilterOperator/, "ClientModel/ClientListBinding doesn't support \"All\"");
 
 		// code under test
 		oMetaModel = new ODataMetaModel(oMetadataRequestor, sUrl, aAnnotationUris);

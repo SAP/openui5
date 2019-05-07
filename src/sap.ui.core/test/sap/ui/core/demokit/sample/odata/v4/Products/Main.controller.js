@@ -57,9 +57,6 @@ sap.ui.define([
 		onClearRow : function () {
 			var aContents = this.byId("newEntry").getContent();
 
-			// destroy old "creation row"
-			this.byId("newEntry").getBindingContext().delete("$direct");
-
 			// remove invalid user input, including the corresponding messages
 			aContents.forEach(function (oContent) {
 				if (oContent.getValueState) {
@@ -69,6 +66,9 @@ sap.ui.define([
 						oContent.getBinding("value").getDataState().getMessages());
 				}
 			});
+
+			// destroy old "creation row"
+			this.byId("newEntry").getBindingContext().delete("$direct");
 
 			// create new "creation row"
 			this.setNewEntryContext();

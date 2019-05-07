@@ -78,6 +78,10 @@ sap.ui.getCore().attachInit(function () {
 				Then.onTheMainPage.checkPrice("USD\u00a021.00");
 				Then.onTheMainPage.checkPriceValueState("None");
 
+				When.onTheMainPage.changePrice("");
+				Then.onTheMainPage.checkPrice("USD\u00a00.00");
+				Then.onTheMainPage.checkPriceValueState("None");
+
 				When.onTheMainPage.changePrice("12.345 USD");
 				Then.onTheMainPage.checkPriceValueState("Error");
 

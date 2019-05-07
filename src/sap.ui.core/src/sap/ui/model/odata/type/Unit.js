@@ -16,13 +16,19 @@ sap.ui.define([
 	 *
 	 * @param {object} [oFormatOptions]
 	 *   See parameter <code>oFormatOptions</code> of {@link sap.ui.model.type.Unit#constructor}.
-	 *   Format options are immutable, that is, they can only be set once on construction.
+	 *   Format options are immutable, that is, they can only be set once on construction. Format
+	 *   options that are not supported or have a different default are listed below.
 	 * @param {object} [oFormatOptions.customUnits]
 	 *   Not supported; the type derives this from its unit customizing part.
 	 * @param {boolean} [oFormatOptions.parseAsString=true]
 	 *   Whether the measure is parsed to a string; set to <code>false</code> if the measure's
 	 *   underlying type is represented as a <code>number</code>, for example
 	 *   {@link sap.ui.model.odata.type.Int32}
+	 * @param {boolean} [oFormatOptions.unitOptional=true]
+	 *   Whether the quantity is parsed if no unit is entered.
+	 * @param {any} [oFormatOptions.emptyString=0]
+	 *   Defines how an empty string is parsed into the measure. With the default value
+	 *   <code>0</code> the measure becomes <code>0</code> when an empty string is parsed.
 	 * @param {object} [oConstraints] Not supported
 	 * @param {string[]} [aDynamicFormatOptionNames] Not supported
 	 * @throws {Error} If called with more parameters than <code>oFormatOptions</code> or if the

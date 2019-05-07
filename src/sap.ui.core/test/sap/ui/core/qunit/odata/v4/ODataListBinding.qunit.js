@@ -262,7 +262,6 @@ sap.ui.define([
 
 		assert.ok(oBinding.hasOwnProperty("oAggregation"));
 		assert.ok(oBinding.hasOwnProperty("aApplicationFilters"));
-		assert.ok(oBinding.hasOwnProperty("oCachePromise"));
 		assert.ok(oBinding.hasOwnProperty("bCreatedAtEnd"));
 		assert.ok(oBinding.hasOwnProperty("sChangeReason"));
 		assert.ok(oBinding.hasOwnProperty("aContexts"));
@@ -281,7 +280,6 @@ sap.ui.define([
 		assert.ok(oBinding.hasOwnProperty("mParameters"));
 		assert.ok(oBinding.hasOwnProperty("mPreviousContextsByPath"));
 		assert.ok(oBinding.hasOwnProperty("aPreviousData"));
-		assert.ok(oBinding.hasOwnProperty("oReadGroupLock"));
 		assert.ok(oBinding.hasOwnProperty("aSorters"));
 		assert.ok(oBinding.hasOwnProperty("sUpdateGroupId"));
 
@@ -319,7 +317,6 @@ sap.ui.define([
 			mParameters);
 
 		assert.strictEqual(oBinding.aApplicationFilters, aFilters);
-		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
 		assert.strictEqual(oBinding.sChangeReason, undefined);
 		assert.strictEqual(oBinding.oDiff, undefined);
 		assert.deepEqual(oBinding.aFilters, []);
@@ -636,7 +633,6 @@ sap.ui.define([
 		oBinding.reset(ChangeReason.Change);
 
 		assert.strictEqual(oBinding.sChangeReason, ChangeReason.Change);
-		assert.strictEqual(oBinding.oReadGroupLock, undefined);
 	});
 
 	//*********************************************************************************************
@@ -2480,33 +2476,26 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("destroy", function (assert) {
-		var oBinding = this.bindList("relative"), // no own cache
+		var oBinding,
 			oBindingContext = {destroy : function () {}},
 			oBindingContextMock = this.mock(oBindingContext),
 			oBindingMock = this.mock(ListBinding.prototype),
-			oCache = {
-				setActive : function () {}
-			},
-			oCachePromise1 = SyncPromise.resolve(Promise.resolve(oCache)),
-			oCachePromise2,
-			oContext = Context.create(this.oModel, {}, "/foo"),
 			oModelMock = this.mock(this.oModel),
 			oParentBindingPrototypeMock = this.mock(asODataParentBinding.prototype),
 			oTransientBindingContext = {destroy : function () {}},
 			oTransientBindingContextMock = this.mock(oTransientBindingContext);
 
+		oBinding = this.bindList("relative"); // unresolved
 		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
 		oBindingMock.expects("destroy").on(oBinding).withExactArgs();
 		oParentBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
 		oBinding.oDiff = [/*some diff*/];
-		oBinding.oReadGroupLock = new _GroupLock();
 
 		// code under test
 		oBinding.destroy();
 
 		assert.strictEqual(oBinding.oAggregation, undefined);
 		assert.strictEqual(oBinding.aApplicationFilters, undefined);
-		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
 		assert.strictEqual(oBinding.aContexts, undefined);
 		assert.strictEqual(oBinding.oDiff, undefined);
 		assert.strictEqual(oBinding.aFilters, undefined);
@@ -2515,17 +2504,14 @@ sap.ui.define([
 		assert.strictEqual(oBinding.mPreviousContextsByPath, undefined);
 		assert.strictEqual(oBinding.aPreviousData, undefined);
 		assert.strictEqual(oBinding.mQueryOptions, undefined);
-		assert.strictEqual(oBinding.oReadGroupLock, undefined);
 		assert.strictEqual(oBinding.aSorters, undefined);
 
 		assert.throws(function () {
-			// code under test
+			// code under test: must not destroy twice (fails somehow)
 			oBinding.destroy();
 		});
 
-		oBinding = this.bindList("relative");
-		oBinding.setContext(oContext); // this one now has its own cache, but we overwrite that
-		oBinding.oCachePromise = oCachePromise1; // pending (e.g. due to autoExpandSelect)
+		oBinding = this.bindList("relative", Context.create(this.oModel, {}, "/foo"));
 		oBinding.aContexts = [oBindingContext];
 		oBinding.aContexts.unshift(oTransientBindingContext);
 		oBindingContextMock.expects("destroy").withExactArgs();
@@ -2534,42 +2520,12 @@ sap.ui.define([
 		oBindingMock.expects("destroy").on(oBinding).withExactArgs();
 		oParentBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
 		this.mock(oBinding.getHeaderContext()).expects("destroy").withExactArgs();
-		this.mock(oBinding).expects("removeReadGroupLock").withExactArgs();
-		this.mock(oCache).expects("setActive").withExactArgs(false);
 
 		// code under test
 		oBinding.destroy();
 
-		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
-		assert.strictEqual(oBinding.oContext, undefined,
-			"context removed as in ODPropertyBinding#destroy");
 		assert.strictEqual(oBinding.oDiff, undefined);
 		assert.strictEqual(oBinding.oHeaderContext, undefined);
-
-		oBinding = this.bindList("/absolute", oContext); // this one has its own cache
-		oCachePromise2 = oBinding.oCachePromise;
-		oBinding.aContexts = [oBindingContext];
-		oBinding.aContexts.unshift(oTransientBindingContext);
-		oBindingContextMock.expects("destroy").withExactArgs();
-		oTransientBindingContextMock.expects("destroy").withExactArgs();
-		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
-		oBindingMock.expects("destroy").on(oBinding).withExactArgs();
-		oParentBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
-		this.mock(oBinding.getHeaderContext()).expects("destroy").withExactArgs();
-
-		// code under test
-		oBinding.destroy();
-
-		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
-
-		return Promise.all([
-			oCachePromise1,
-			oCachePromise2.then(function (oOldCache) {
-				assert.throws(function () {
-					oOldCache.checkActive();
-				}, new Error("Response discarded: cache is inactive"));
-			})
-		]);
 	});
 
 	//*********************************************************************************************
@@ -5976,9 +5932,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestSideEffects: refresh needed", function (assert) {
+[false, true].forEach(function (bHeader) {
+	QUnit.test("requestSideEffects: refresh needed, refresh fails, " + bHeader, function (assert) {
 		var oCacheMock = this.getCacheMock(),
 			oBinding = this.bindList("/Set"),
+			oContext = bHeader ? oBinding.getHeaderContext() : undefined,
 			oError = new Error(),
 			sGroupId = "group";
 
@@ -5987,18 +5945,67 @@ sap.ui.define([
 		this.mock(oBinding).expects("refreshInternal").withExactArgs("", sGroupId).rejects(oError);
 
 		// code under test
-		return oBinding.requestSideEffects(sGroupId, ["n/a", ""]).then(function () {
-				assert.ok(false);
-			}, function (oError0) {
-				assert.strictEqual(oError0, oError);
-			});
+		return oBinding.requestSideEffects(sGroupId, ["n/a", ""], oContext).then(function () {
+			assert.ok(false);
+		}, function (oError0) {
+			assert.strictEqual(oError0, oError);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects: refreshSingle needed, refreshSingle fails", function (assert) {
+		var oCacheMock = this.getCacheMock(),
+			oContext = {},
+			oBinding = this.bindList("/Set"),
+			oError = new Error(),
+			sGroupId = "group",
+			oGroupLock = {};
+
+		this.mock(this.oModel).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
+		oCacheMock.expects("requestSideEffects").never();
+		this.mock(oBinding).expects("refreshSingle")
+			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oGroupLock), false)
+			.rejects(oError);
+
+		// code under test
+		return oBinding.requestSideEffects(sGroupId, ["n/a", ""], oContext).then(function () {
+			assert.ok(false);
+		}, function (oError0) {
+			assert.strictEqual(oError0, oError);
+		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestSideEffects: efficient request possible", function (assert) {
+	//TODO With CPOUI5UISERVICESV3-1814, call refreshSingle also for relative bindings
+[true, false].forEach(function (bHeaderContext) {
+	QUnit.test("requestSideEffects: call refreshInternal for relative binding, " + bHeaderContext,
+		function (assert) {
+			var oBinding = this.bindList("relative"),
+				oContext = bHeaderContext
+					? oBinding.getHeaderContext()
+					: Context.create(this.oModel, {}, "/EMPLOYEES('42')"),
+				oResult = {};
+
+			this.mock(oBinding).expects("refreshSingle").never();
+			this.mock(oBinding).expects("refreshInternal").withExactArgs("", "group")
+				.resolves(oResult);
+
+			// code under test
+			return oBinding.requestSideEffects("group", [""], oContext).then(function (oResult0) {
+				assert.strictEqual(oResult0, oResult);
+		});
+	});
+});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bHeader) {
+	QUnit.test("requestSideEffects: efficient request possible, " + bHeader, function (assert) {
 		var oCacheMock = this.getCacheMock(),
 			oBinding = this.bindList("/Set"),
-			oContext = {},
+			oContext = bHeader
+				? oBinding.getHeaderContext()
+				: { getModelIndex : function () { return 42; } },
 			oError = new Error(),
 			sGroupId = "group",
 			oGroupLock = {},
@@ -6012,10 +6019,12 @@ sap.ui.define([
 
 		this.mock(this.oModel).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
 		oCacheMock.expects("requestSideEffects")
-			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), {}, 3, 7)
+			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), {},
+				bHeader ? 3 : 42,
+				bHeader ? 7 : undefined)
 			.callsFake(function (oGroupLock, aPaths, mNavigationPropertyPaths) {
 				that.mock(oBinding).expects("visitSideEffects").withExactArgs(sGroupId,
-						sinon.match.same(aPaths), sinon.match.same(oContext),
+						sinon.match.same(aPaths), bHeader ? undefined : sinon.match.same(oContext),
 						sinon.match.same(mNavigationPropertyPaths), [oPromise])
 					.callsFake(function (sGroupId, aPaths, oContext, mNavigationPropertyPaths,
 							aPromises) {
@@ -6033,11 +6042,12 @@ sap.ui.define([
 		assert.ok(oResult.isPending(), "instanceof SyncPromise");
 
 		return oResult.then(function () {
-				assert.ok(false);
-			}, function (oError0) {
-				assert.strictEqual(oError0, oError);
-			});
+			assert.ok(false);
+		}, function (oError0) {
+			assert.strictEqual(oError0, oError);
+		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("requestSideEffects: fallback to refresh", function (assert) {

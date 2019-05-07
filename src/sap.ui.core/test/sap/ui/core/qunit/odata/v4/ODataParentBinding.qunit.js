@@ -8,11 +8,12 @@ sap.ui.define([
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/odata/v4/Context",
+	"sap/ui/model/odata/v4/ODataBinding",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataParentBinding",
 	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper"
-], function (jQuery, Log, SyncPromise, Binding, ChangeReason, Context, ODataModel,
+], function (jQuery, Log, SyncPromise, Binding, ChangeReason, Context, asODataBinding, ODataModel,
 		asODataParentBinding, _GroupLock, _Helper) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0, max-nested-callbacks: 0*/
@@ -42,7 +43,6 @@ sap.ui.define([
 		asODataParentBinding.call(this);
 
 		jQuery.extend(this, {
-			oCachePromise : SyncPromise.resolve(), // mimic c'tor
 			getDependentBindings : function () {}, // implemented by all sub-classes
 			//Returns the metadata for the class that this object belongs to.
 			getMetadata : function () {
@@ -71,21 +71,21 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("initialize members for mixin", function (assert) {
-		var oBinding = {};
+		var oBinding = {},
+			oBindingSpy = this.spy(asODataBinding, "call");
 
-		ODataParentBinding.call(oBinding);
+		asODataParentBinding.call(oBinding);
 
 		assert.deepEqual(oBinding.mAggregatedQueryOptions, {});
 		assert.strictEqual(oBinding.bAggregatedQueryOptionsInitial, true);
 		assert.deepEqual(oBinding.aChildCanUseCachePromises, []);
 		assert.strictEqual(oBinding.iPatchCounter, 0);
 		assert.strictEqual(oBinding.bPatchSuccess, true);
+		assert.ok("oReadGroupLock" in oBinding);
+		assert.strictEqual(oBinding.oReadGroupLock, undefined);
 		assert.ok("oResumePromise" in oBinding);
 		assert.strictEqual(oBinding.oResumePromise, undefined);
-
-		// members introduced by ODataBinding; check inheritance
-		assert.ok(oBinding.hasOwnProperty("mCacheByResourcePath"));
-		assert.strictEqual(oBinding.mCacheByResourcePath, undefined);
+		assert.ok(oBindingSpy.calledOnceWithExactly(sinon.match.same(oBinding)));
 	});
 
 	//*********************************************************************************************
@@ -1845,19 +1845,17 @@ sap.ui.define([
 	QUnit.test("suspend: absolute binding", function (assert) {
 		var oBinding = new ODataParentBinding({
 				sPath : "/Employees",
-				oReadGroupLock : new _GroupLock(),
 				toString : function () { return "~"; }
 			}),
 			oResult = {};
 
 		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(false);
-		this.mock(oBinding.oReadGroupLock).expects("unlock").withExactArgs(true);
+		this.mock(oBinding).expects("removeReadGroupLock").withExactArgs();
 
 		// code under test
 		oBinding.suspend();
 
 		assert.strictEqual(oBinding.bSuspended, true);
-		assert.strictEqual(oBinding.oReadGroupLock, undefined);
 		assert.strictEqual(oBinding.oResumePromise.isPending(), true);
 		oBinding.oResumePromise.$resolve(oResult);
 		assert.strictEqual(oBinding.oResumePromise.isPending(), false);
@@ -2018,6 +2016,35 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("resume: destroyed in the meantime", function (assert) {
+		var oBinding = new ODataParentBinding({
+				toString : function () { return "~"; }
+			}),
+			oPromise;
+
+		oBinding.bSuspended = true;
+		this.mock(oBinding).expects("getGroupId").withExactArgs().returns("groupId");
+		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("groupId", true, 1);
+		this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
+			.withExactArgs(sinon.match.func)
+			.callsFake(function (fnCallback) {
+				// simulate async nature of prerendering task
+				oPromise = Promise.resolve().then(function () {
+					// code under test
+					fnCallback();
+
+					assert.strictEqual(oBinding.bSuspended, false);
+					assert.strictEqual(oBinding.getResumePromise(), undefined, "cleaned up");
+				});
+			});
+
+		oBinding.resume();
+		oBinding.destroy();
+
+		return oPromise;
+	});
+
+	//*********************************************************************************************
 	[
 		undefined, // unresolved
 		{/* sap.ui.model.odata.v4.Context */fetchValue : function () {}} // resolved
@@ -2118,13 +2145,11 @@ sap.ui.define([
 						+ "locked,group=groupId,"
 						+ "owner=sap.ui.model.odata.v4.ODataParentBinding: /SalesOrderList('42'))",
 						null, sClassName);
-				this.mock(oGroupLock).expects("unlock").withExactArgs(true);
+				this.mock(oBinding).expects("removeReadGroupLock").withExactArgs();
 			}
 
 			// code under test
 			oExpectation.callArg(0);
-
-			assert.strictEqual(oBinding.oReadGroupLock, undefined);
 		});
 	});
 
@@ -2355,6 +2380,9 @@ sap.ui.define([
 		var oBinding = new ODataParentBinding();
 
 		oBinding.aChildCanUseCachePromises = [{}, {}];
+		oBinding.oResumePromise = {};
+		this.mock(oBinding).expects("removeReadGroupLock").withExactArgs();
+		this.mock(asODataBinding.prototype).expects("destroy").on(oBinding).withExactArgs();
 
 		// code under test
 		oBinding.destroy();
@@ -2362,6 +2390,7 @@ sap.ui.define([
 		//TODO does not work with SalesOrdersRTATest
 //		assert.deepEqual(oBinding.mAggregatedQueryOptions, undefined);
 		assert.deepEqual(oBinding.aChildCanUseCachePromises, []);
+		assert.strictEqual(oBinding.oResumePromise, undefined);
 	});
 
 	//*********************************************************************************************
