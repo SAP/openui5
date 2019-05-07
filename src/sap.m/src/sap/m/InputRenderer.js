@@ -110,7 +110,7 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 		var ariaLabels = InputBaseRenderer.getAriaLabelledBy.call(this, oControl) || "";
 
 		if (oControl.getDescription()) {
-			ariaLabels = ariaLabels + " " + oControl.getId() + "-Descr";
+			ariaLabels = ariaLabels + " " + oControl.getId() + "-descr";
 		}
 		return ariaLabels;
 	};
