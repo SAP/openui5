@@ -5,116 +5,156 @@
       {
         "id": "bb9b2c58f20913fa9f392c99ebc95b08f38c5266",
         "type": "FIX",
-        "text": " ODataMessageParser: Duplicate filtering",
-        "references": []
+        "text": "ODataMessageParser: Duplicate filtering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980158171"
+          }
+        ]
       },
       {
         "id": "155f09ca22a6312f4b1382ef76547b67aa03daca",
         "type": "FEATURE",
-        "text": " Opa: add enabled option",
+        "text": "Opa: add enabled option",
         "references": []
       },
       {
         "id": "81e564abab9c3fc901cacef0489f94cbd262d48e",
         "type": "FEATURE",
-        "text": " Send FESR via Beacon API",
+        "text": "Send FESR via Beacon API",
         "references": []
       },
       {
         "id": "4e1b86a8c1a479e11467389251dc419427253533",
         "type": "FEATURE",
-        "text": " core.routing: use \u0027componentUsages\u0027 in component target",
+        "text": "core.routing: use 'componentUsages' in component target",
         "references": []
       },
       {
         "id": "940b7439159fd7ac24db271e6ece467832789687",
         "type": "FEATURE",
-        "text": " message.Message: add property technicalDetails",
+        "text": "message.Message: add property technicalDetails",
         "references": []
       },
       {
         "id": "25c008dc816b245f8ea60f96f631bee70e658af3",
         "type": "FEATURE",
-        "text": " sap.ui.core.Component: Propagate Cache Tokens to nested components",
+        "text": "sap.ui.core.Component: Propagate Cache Tokens to nested components",
         "references": []
       },
       {
         "id": "8c427982435ebab6017d5ff79d80b943a289172f",
         "type": "FIX",
-        "text": " AppCacheBuster: ignore hash-only URLs for rewriting",
-        "references": []
+        "text": "AppCacheBuster: ignore hash-only URLs for rewriting",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880532861"
+          }
+        ]
       },
       {
         "id": "cc0d811051d27f39f590a723ce6bf907250c53d2",
         "type": "FIX",
-        "text": " JSDoc: incorporate feedback from SDK feedback channel (2019/3)",
+        "text": "JSDoc: incorporate feedback from SDK feedback channel (2019/3)",
         "references": []
       },
       {
         "id": "361748c685b977fcb79d6c2652a2283b74ee18cc",
         "type": "FIX",
-        "text": " ManagedObjectModel: Inform when parts of a property change",
-        "references": []
+        "text": "ManagedObjectModel: Inform when parts of a property change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980169334"
+          }
+        ]
       },
       {
         "id": "45e077f96589b8856b0005c38981f4febd26e082",
         "type": "FIX",
-        "text": " core.Popup: fix the immediate closed popup when of set to window",
-        "references": []
+        "text": "core.Popup: fix the immediate closed popup when of set to window",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980174195"
+          }
+        ]
       },
       {
         "id": "5a6da02c9a04869bc7a1bf094f426f0171147558",
         "type": "FEATURE",
-        "text": " CLDR: Upgrade to 35.1, support new Japanese era",
+        "text": "CLDR: Upgrade to 35.1, support new Japanese era",
         "references": []
       },
       {
         "id": "07916ca5aa1a9fd4b17a825cc7f5cc47c77226a2",
         "type": "FEATURE",
-        "text": " Opa: Descendant matcher implemented",
+        "text": "Opa: Descendant matcher implemented",
         "references": []
       },
       {
         "id": "ddf75d338a6d7bb9edff437c93ae0c33de316e9d",
         "type": "FIX",
-        "text": " Core/Component: Respect \"final\" resourceRoot configuration",
-        "references": []
+        "text": "Core/Component: Respect \"final\" resourceRoot configuration",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376600000830292019"
+          }
+        ]
       },
       {
         "id": "d08609c48bcd4570d84b6f5000ef2986d9cd19ea",
         "type": "FIX",
-        "text": " ManagedObject: Fix regression in aggregation refresh",
-        "references": []
+        "text": "ManagedObject: Fix regression in aggregation refresh",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980199077"
+          }
+        ]
       },
       {
         "id": "422ff1826e9af6305d1ee5b925123534c58089bf",
         "type": "FIX",
-        "text": " trace/FESR.qunit: Skip Beacon API test in IE11",
-        "references": []
+        "text": "trace/FESR.qunit: Skip Beacon API test in IE11",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980197031"
+          }
+        ]
       },
       {
         "id": "7e94864d1cbebce52781e063e73b9d2ce5bde2ba",
         "type": "FIX",
-        "text": " BindingParser: detect complex binding that uses quoted properties",
+        "text": "BindingParser: detect complex binding that uses quoted properties",
         "references": []
       },
       {
         "id": "d6d8b63fe0d39e8ca485478db6ea69bf26af097e",
         "type": "FIX",
-        "text": " date.Japanese: adapt unit test to era change",
+        "text": "date.Japanese: adapt unit test to era change",
         "references": []
       },
       {
         "id": "dea071281daedac278542bb8fb6a1bb42046cac4",
         "type": "FIX",
-        "text": " sap/base/util/values: JSDoc visibility",
+        "text": "sap/base/util/values: JSDoc visibility",
         "references": []
       },
       {
         "id": "b19bb8adc6491801add877c715cf874f6d72db33",
         "type": "FIX",
-        "text": " trace/BeaconRequest.qunit: Improved test robustness",
-        "references": []
+        "text": "trace/BeaconRequest.qunit: Improved test robustness",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980212852"
+          }
+        ]
       }
     ]
   }
