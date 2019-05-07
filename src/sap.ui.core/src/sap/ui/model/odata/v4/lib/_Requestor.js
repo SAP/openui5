@@ -1180,10 +1180,12 @@ sap.ui.define([
 						that.mHeaders,
 						_Helper.resolveIfMatchHeader(mHeaders)),
 					method : sMethod
-				}).then(function (oResponse, sTextStatus, jqXHR) {
+				}).then(function (/*{object|string}*/vResponse, sTextStatus, jqXHR) {
+					var sETag = jqXHR.getResponseHeader("ETag");
+
 					try {
 						that.doCheckVersionHeader(jqXHR.getResponseHeader, sResourcePath,
-							!oResponse);
+							!vResponse);
 					} catch (oError) {
 						fnReject(oError);
 						return;
@@ -1193,8 +1195,15 @@ sap.ui.define([
 					that.setSessionContext(jqXHR.getResponseHeader("SAP-ContextId"),
 						jqXHR.getResponseHeader("SAP-Http-Session-Timeout"));
 
+					// Note: string response appears only for $batch and thus cannot be empty;
+					// for 204 "No Content", vResponse === undefined
+					vResponse = vResponse || {/*null object pattern*/};
+					if (sETag) {
+						vResponse["@odata.etag"] = sETag;
+					}
+
 					fnResolve({
-						body : oResponse,
+						body : vResponse,
 						contentType : jqXHR.getResponseHeader("Content-Type"),
 						messages : jqXHR.getResponseHeader("sap-messages"),
 						resourcePath : sResourcePath
@@ -1312,6 +1321,7 @@ sap.ui.define([
 
 			aRequests.forEach(function (vRequest, index) {
 				var oError,
+					sETag,
 					oResponse,
 					vResponse = aResponses[index];
 
@@ -1328,21 +1338,27 @@ sap.ui.define([
 					oCause = _Helper.createError(vResponse, "Communication error", vRequest.url,
 						vRequest.$resourcePath);
 					reject(oCause, vRequest);
-				} else if (vResponse.responseText) {
-					oResponse = JSON.parse(vResponse.responseText);
-					try {
-						that.doCheckVersionHeader(getResponseHeader.bind(vResponse), vRequest.url,
-							true);
-						that.reportUnboundMessagesAsJSON(vRequest.url,
-							getResponseHeader.call(vResponse, "sap-messages"));
-						vRequest.$resolve(that.doConvertResponse(oResponse, vRequest.$metaPath));
-					} catch (oErr) {
-						vRequest.$reject(oErr);
-					}
 				} else {
+					if (vResponse.responseText) {
+						try {
+							that.doCheckVersionHeader(getResponseHeader.bind(vResponse),
+								vRequest.url, true);
+							oResponse = that.doConvertResponse(JSON.parse(vResponse.responseText),
+								vRequest.$metaPath);
+						} catch (oErr) {
+							vRequest.$reject(oErr);
+							return;
+						}
+					} else { // e.g. 204 No Content
+						oResponse = {/*null object pattern*/};
+					}
 					that.reportUnboundMessagesAsJSON(vRequest.url,
 						getResponseHeader.call(vResponse, "sap-messages"));
-					vRequest.$resolve();
+					sETag = getResponseHeader.call(vResponse, "ETag");
+					if (sETag) {
+						oResponse["@odata.etag"] = sETag;
+					}
+					vRequest.$resolve(oResponse);
 				}
 			});
 		}

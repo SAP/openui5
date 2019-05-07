@@ -14,14 +14,20 @@ sap.ui.define([
 	 *
 	 * @param {object} [oFormatOptions]
 	 *   See parameter <code>oFormatOptions</code> of
-	 *   {@link sap.ui.model.type.Currency#constructor}. Format options are immutable, that is, they
-	 *   can only be set once on construction.
+	 *   {@link sap.ui.model.type.Currency#constructor}. Format options are immutable, that is,
+	 *   they can only be set once on construction. Format options that are not supported or have a
+	 *   different default are listed below.
 	 * @param {object} [oFormatOptions.customCurrencies]
 	 *   Not supported; the type derives this from its currency customizing part.
 	 * @param {boolean} [oFormatOptions.parseAsString=true]
 	 *   Whether the amount is parsed to a string; set to <code>false</code> if the amount's
 	 *   underlying type is represented as a <code>number</code>, for example
 	 *   {@link sap.ui.model.odata.type.Int32}
+	 * @param {boolean} [oFormatOptions.unitOptional=true]
+	 *   Whether the amount is parsed if no currency is entered.
+	 * @param {any} [oFormatOptions.emptyString=0]
+	 *   Defines how an empty string is parsed into the amount. With the default value
+	 *   <code>0</code> the amount becomes <code>0</code> when an empty string is parsed.
 	 * @param {object} [oConstraints] Not supported
 	 * @throws {Error} If called with more parameters than <code>oFormatOptions</code> or if the
 	 *   format option <code>customCurrencies</code> is set

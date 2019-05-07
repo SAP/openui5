@@ -1295,7 +1295,9 @@ sap.ui.define([
 			},
 			oBinding = {
 				oCachePromise : SyncPromise.resolve(oCache),
+				oContext : {},
 				checkSuspended : function () {},
+				bRelative : true,
 				requestSideEffects : function () {}
 			},
 			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')"),
@@ -1414,16 +1416,35 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestSideEffects: not a context binding's context", function (assert) {
+	QUnit.test("requestSideEffects: error on transient context", function (assert) {
 		var oBinding = {
 				oCachePromise : SyncPromise.resolve({/*no requestSideEffects*/}),
 				checkSuspended : function () {}
 			},
 			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')");
 
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(true);
+
 		assert.throws(function () {
 			// code under test
 			oContext.requestSideEffects();
 		}, new Error("Unsupported context: " + oContext));
+	});
+
+	//*********************************************************************************************
+	// Test error when requestSideEffects is called on a (header) context which was stored before
+	// the binding becomes unresolved.
+	QUnit.test("requestSideEffects: error on unresolved binding", function (assert) {
+		var oBinding = {
+				oCachePromise : SyncPromise.resolve({/*no requestSideEffects*/}),
+				checkSuspended : function () {},
+				bRelative : true
+			},
+			oHeaderContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES");
+
+		assert.throws(function () {
+			// code under test
+			oHeaderContext.requestSideEffects([{$PropertyPath : "TEAM_ID"}]);
+		}, new Error("Cannot request side effects of unresolved binding's context: /EMPLOYEES"));
 	});
 });

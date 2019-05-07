@@ -62,14 +62,68 @@ sap.ui.define([
 	QUnit.test("initialize members for mixin", function (assert) {
 		var oBinding = new ODataBinding();
 
-		//TODO add missing properties introduced by ODataBinding
-		assert.ok(oBinding.hasOwnProperty("oFetchCacheCallToken"));
-		assert.strictEqual(oBinding.oFetchCacheCallToken, undefined);
 		assert.ok(oBinding.hasOwnProperty("mCacheByResourcePath"));
 		assert.strictEqual(oBinding.mCacheByResourcePath, undefined);
+		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
+		assert.ok(oBinding.hasOwnProperty("mCacheQueryOptions"));
+		assert.strictEqual(oBinding.mCacheQueryOptions, undefined);
+		assert.ok(oBinding.hasOwnProperty("oFetchCacheCallToken"));
+		assert.strictEqual(oBinding.oFetchCacheCallToken, undefined);
 		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
 	});
-	//TODO #destroy
+
+	//*********************************************************************************************
+	QUnit.test("destroy", function (assert) {
+		var oBinding = new ODataBinding(),
+			oCache = {
+				setActive : function () {}
+			},
+			// we might become asynchronous due to auto $expand/$select reading $metadata
+			oPromise = Promise.resolve(oCache);
+
+		oBinding.mCacheByResourcePath = {};
+		oBinding.oCachePromise = SyncPromise.resolve(oPromise);
+		oBinding.mCacheQueryOptions = {};
+		oBinding.oContext = {}; // @see sap.ui.model.Binding's c'tor
+		oBinding.oFetchCacheCallToken = {};
+		this.mock(oCache).expects("setActive").withExactArgs(false);
+
+		// code under test
+		oBinding.destroy();
+
+		assert.strictEqual(oBinding.mCacheByResourcePath, undefined);
+		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
+		assert.strictEqual(oBinding.oCachePromise.isFulfilled(), true);
+		assert.strictEqual(oBinding.mCacheQueryOptions, undefined);
+		assert.strictEqual(oBinding.oContext, undefined);
+		assert.strictEqual(oBinding.oFetchCacheCallToken, undefined);
+
+		return oPromise;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("destroy binding w/o cache", function (assert) {
+		var oBinding = new ODataBinding();
+
+		// code under test
+		oBinding.destroy();
+
+		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
+		assert.strictEqual(oBinding.oCachePromise.isFulfilled(), true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("destroy binding w/ rejected cache promise", function (assert) {
+		var oBinding = new ODataBinding();
+
+		oBinding.oCachePromise = SyncPromise.reject(new Error());
+
+		// code under test
+		oBinding.destroy();
+
+		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
+		assert.strictEqual(oBinding.oCachePromise.isFulfilled(), true);
+	});
 
 	//*********************************************************************************************
 	QUnit.test("getGroupId: own group", function (assert) {

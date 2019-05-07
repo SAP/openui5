@@ -37,49 +37,61 @@ sap.ui.define([
 			TestUtils.setData("sap.ui.core.sample.odata.v4.SalesOrders.updateGroupId", sGroupId);
 
 			When.onTheMainPage.firstSalesOrderIsVisible();
-
-			// Test: create a new SalesOrder with erroneous Note property,
-			// POST restarted automatically after note corrected
-			When.onTheMainPage.createInvalidSalesOrderViaAPI();
-			When.onTheMessagePopover.close();
-			When.onTheMainPage.changeNoteInSalesOrders(0, "My Note");
-			When.onTheSuccessInfo.confirm();
-			Then.onTheMainPage.checkNote(0, "My Note");
-
-			// Test: update of SalesOrder note -> error, restart after note corrected
-			When.onTheMainPage.changeNoteInSalesOrders(0, "RAISE_ERROR");
-			When.onTheMessagePopover.close();
-			When.onTheMainPage.changeNoteInSalesOrders(0, "My patched Note");
-			Then.onTheMainPage.checkNote(0, "My patched Note");
-			aExpectedLogs.push(oExpectedPatchLog0);
-			if (sGroupId.includes("irect")) { // Note: better check group submit mode, but how?
-				//TODO avoid duplicate reporting in case PATCH is not retried
-				aExpectedLogs.push(oExpectedPatchLog0);
-			}
-
-			When.onTheMainPage.selectFirstSalesOrder();
-			if (sGroupId.includes("auto")) {
-				When.onTheMainPage.pressCreateSalesOrderItemButton();
+			if (TestUtils.isRealOData()) {
+				// Test: create a new SalesOrder with erroneous Note property,
+				// POST restarted automatically after note corrected
+				When.onTheMainPage.createInvalidSalesOrderViaAPI();
+				When.onTheMessagePopover.close();
+				When.onTheMainPage.changeNoteInSalesOrders(0, "My Note");
 				When.onTheSuccessInfo.confirm();
-				When.onTheMainPage.changeQuantityInLineItem(0, 0);
-				When.onTheMessagePopover.close(); // error because invalid quantity
-				When.onTheMainPage.changeNoteInLineItem(0, "patched line item Note");
-				When.onTheMessagePopover.close(); // still got error because invalid quantity
-				When.onTheMainPage.changeQuantityInLineItem(0, 1);
-				Then.onTheMainPage.checkSalesOrderLineItemNote(0, "patched line item Note");
-				aExpectedLogs.push(oExpectedPatchLog1);
-				aExpectedLogs.push(oExpectedPatchLog1);
-				aExpectedLogs.push(oExpectedPatchLog1);
-				// get ETag before deletion
-				When.onTheMainPage.pressRefreshSelectedSalesOrdersButton();
-				Then.onTheMainPage.checkSalesOrderLineItemNote(0, "patched line item Note");
+				Then.onTheMainPage.checkNote(0, "My Note");
+
+				// Test: update of SalesOrder note -> error, restart after note corrected
+				When.onTheMainPage.changeNoteInSalesOrders(0, "RAISE_ERROR");
+				When.onTheMessagePopover.close();
+				When.onTheMainPage.changeNoteInSalesOrders(0, "My patched Note");
+				Then.onTheMainPage.checkNote(0, "My patched Note");
+				aExpectedLogs.push(oExpectedPatchLog0);
+				if (sGroupId.includes("irect")) { // Note: better check group submit mode, but how?
+					//TODO avoid duplicate reporting in case PATCH is not retried
+					aExpectedLogs.push(oExpectedPatchLog0);
+				}
+
+				When.onTheMainPage.selectFirstSalesOrder();
+				if (sGroupId.includes("auto")) {
+					When.onTheMainPage.pressCreateSalesOrderItemButton();
+					When.onTheSuccessInfo.confirm();
+					When.onTheMainPage.changeQuantityInLineItem(0, 0);
+					When.onTheMessagePopover.close(); // error because invalid quantity
+					When.onTheMainPage.changeNoteInLineItem(0, "patched line item Note");
+					When.onTheMessagePopover.close(); // still got error because invalid quantity
+					When.onTheMainPage.changeQuantityInLineItem(0, 1);
+					Then.onTheMainPage.checkSalesOrderLineItemNote(0, "patched line item Note");
+					aExpectedLogs.push(oExpectedPatchLog1);
+					aExpectedLogs.push(oExpectedPatchLog1);
+					aExpectedLogs.push(oExpectedPatchLog1);
+					// get ETag before deletion
+					When.onTheMainPage.pressRefreshSelectedSalesOrdersButton();
+					Then.onTheMainPage.checkSalesOrderLineItemNote(0, "patched line item Note");
+				}
+
+				// CleanUp: delete created SalesOrder again via given group ID
+				When.onTheMainPage.deleteSelectedSalesOrderViaGroupId(sGroupId);
+				Then.onTheMainPage.checkID(0);
+
+				Then.onAnyPage.checkLog(aExpectedLogs);
+			} else {
+				// $auto or $direct, but no save button needed
+				When.onTheMainPage.changeNoteInSalesOrders(1, "204");
+				When.onTheMainPage.changeNoteInSalesOrders(1, "*");
+				Then.onTheMainPage.checkNote(1, "You have used the new ETag!", true);
+				// reset @odata.etag
+				When.onTheMainPage.pressRefreshSalesOrdersButton();
+				When.onTheMainPage.changeNoteInSalesOrders(1, "ETag");
+				Then.onTheMainPage.checkNote(1, "Sending ETag header...", true);
+				When.onTheMainPage.changeNoteInSalesOrders(1, "*");
+				Then.onTheMainPage.checkNote(1, "You have used the new ETag!", true);
 			}
-
-			// CleanUp: delete created SalesOrder again via given group ID
-			When.onTheMainPage.deleteSelectedSalesOrderViaGroupId(sGroupId);
-			Then.onTheMainPage.checkID(0);
-
-			Then.onAnyPage.checkLog(aExpectedLogs);
 
 			Then.iTeardownMyUIComponent();
 		}
