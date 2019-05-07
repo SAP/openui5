@@ -386,7 +386,6 @@
 		  "name": "Display List Item",
 		  "category": "List",
 		  "since": "1.10",
-		  "formFactors": "L",
 		  "samples": ["sap.m.sample.DisplayListItem"]
 		},
 		{
