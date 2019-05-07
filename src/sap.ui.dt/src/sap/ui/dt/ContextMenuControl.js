@@ -6,21 +6,27 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/ManagedObject",
+	"sap/base/util/deepEqual",
 	"sap/m/library",
 	"sap/m/Popover",
 	"sap/m/VBox",
 	"sap/m/HBox",
 	"sap/m/Button",
-	"sap/m/FlexItemData"
+	"sap/m/FlexItemData",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/DOMUtil"
 ], function (
 	jQuery,
 	ManagedObject,
+	DeepEqual,
 	mobileLibrary,
 	Popover,
 	VBox,
 	HBox,
 	Button,
-	FlexItemData
+	FlexItemData,
+	OverlayRegistry,
+	DOMUtil
 ) {
 	"use strict";
 
@@ -138,6 +144,7 @@ sap.ui.define([
 			oPopover.attachBrowserEvent("contextmenu", this._onContextMenu, this);
 			oPopoverExpanded.attachBrowserEvent("contextmenu", this._onContextMenu, this);
 			this.bOnInit = true;
+			this._oLastSourceOverlay = this._oLastSourceClientRects = this._oLastPosition = null;
 		},
 
 		exit: function () {
@@ -198,6 +205,7 @@ sap.ui.define([
 			this.getPopover().attachAfterOpen(this._handleAfterOpen, this);
 
 			this.getPopover().attachBeforeClose(this._handleBeforeClose, this);
+			this.getPopover().attachAfterClose(this._handleAfterClose, this);
 
 			//place the Popover and get the target DIV
 			this._oTarget = this._placeContextMenu(this._oTarget, this._bOpenAsContextMenu);
@@ -319,17 +327,12 @@ sap.ui.define([
 		 * @private
 		 */
 		_placeContextMenu: function (oSource, bContextMenu) {
-			this.getPopover().setShowArrow(true);
 			var sOverlayId = (oSource.getId && oSource.getId()) || oSource.getAttribute("overlay");
 			var sFakeDivId = "contextMenuFakeDiv";
 
 			// get Dimensions of Overlay and Viewport
 			var oOverlayDimensions = this._getOverlayDimensions(sOverlayId);
 			var oViewportDimensions = this._getViewportDimensions();
-
-			this._oContextMenuPosition.x = this._oContextMenuPosition.x || parseInt(oOverlayDimensions.left + 20);
-			this._oContextMenuPosition.y = this._oContextMenuPosition.y || parseInt(oOverlayDimensions.top + 20);
-
 
 			// if the Overlay is near the top position of the Viewport, the Popover makes wrong calculation for positioning it.
 			// The MiniMenu has been placed above the Overlay even if there has not been enough place.
@@ -339,6 +342,7 @@ sap.ui.define([
 			// place a Target DIV (for the moment at wrong position)
 			jQuery("#" + sFakeDivId).remove();
 			jQuery("#" + sOverlayId).append("<div id=\"" + sFakeDivId + "\" overlay=\"" + sOverlayId + "\" style = \"position: absolute; top: " + iFakeDivTop + "px; left: 0px;\" />");
+			sOverlayId = null;
 			var oFakeDiv = document.getElementById(sFakeDivId);
 
 			// place the Popover invisible
@@ -367,7 +371,22 @@ sap.ui.define([
 				this.getPopover().setContentWidth(undefined);
 			}
 
-			// calculate exact position
+			// If the Menu has been closed by ESC-key and reopened again on the same Overlay, the Position of Menu should not change
+			var bIsSameOverlay = (this._oLastSourceOverlay ? this._oLastSourceOverlay === oSource : false);
+			var bIsSameRect = (this._oLastSourceClientRects ? DeepEqual(JSON.parse(JSON.stringify(this._oLastSourceClientRects)), JSON.parse(JSON.stringify(oSource.getDomRef().getClientRects()))) : false);
+			if (this._oContextMenuPosition.x === "not set" && this._oContextMenuPosition.y === "not set" && bIsSameOverlay && bIsSameRect){
+
+				// Get the last x/y Positions of the current Target
+				this._oContextMenuPosition.x = this._oLastPosition.x;
+				this._oContextMenuPosition.y = this._oLastPosition.y;
+
+			} else {
+
+				// get the given x/y Positions; if no Position is given, take the upper left corner of the Overlay + 20px (looks better)
+				this._oContextMenuPosition.x = this._oContextMenuPosition.x || parseInt(oOverlayDimensions.left + 20);
+				this._oContextMenuPosition.y = this._oContextMenuPosition.y || parseInt(oOverlayDimensions.top + 20);
+			}
+
 			var oPosition = {};
 
 			if (bContextMenu) {
@@ -384,8 +403,6 @@ sap.ui.define([
 			// set the correct position to the target DIV
 			oFakeDiv.style.top = oPosition.top.toFixed(0) + "px";
 			oFakeDiv.style.left = oPosition.left.toFixed(0) + "px";
-
-			sOverlayId = null;
 
 			return oFakeDiv;
 		},
@@ -425,7 +442,7 @@ sap.ui.define([
 
 		/**
 		 * Works out how the ContextMenu shall be placed
-		 * @param {object} oOverlay the dimensions of the overlay
+		 * @param {object} oContPos the context menu position
 		 * @param {object} oPopover the dimensions of the popover
 		 * @param {object} oViewport the dimensions of the viewport
 		 * @return {object} the position of the "fakeDiv"
@@ -438,7 +455,10 @@ sap.ui.define([
 			this.getPopover().setPlacement(PlacementType.PreferredTopOrFlip);
 
 			var iBtnWidth = oPopover.width / this._iButtonsVisible;
-			oPos.left = oContPos.x + ((this._iButtonsVisible - 1) * iBtnWidth ) / 2 +  (this._getBaseFontSize() * 1 / 2);
+
+			// calculate the horizontal position according to RTL /LTR setting (add/substract)
+			var iFactor = sap.ui.getCore().getConfiguration().getRTL() ? -1 : 1;
+			oPos.left = oContPos.x + (iFactor * ((this._iButtonsVisible - 1) * iBtnWidth) / 2 + (this._getBaseFontSize() * 1 / 2));
 			oPos.top = oContPos.y - (this._getBaseFontSize() * 1 / 2);
 
 			// adjust positioning if necessary
@@ -894,6 +914,31 @@ sap.ui.define([
 		_handleBeforeClose: function () {
 			this.getPopover().detachBeforeClose(this._handleBeforeClose, this);
 			this.getPopover().removeStyleClass("sapUiDtContextMenuVisible");
+			// remove Focus from PopOver
+			document.activeElement.blur();
+		},
+
+		/**
+		 * Handle After Close
+		 * Set the focus back to the Overlay without scrolling
+		 * Remember the last Position of the Contextmenu, the last Source and its Dimensions
+		 * @private
+		 */
+		_handleAfterClose: function () {
+			// The Focus is set back to the original Overlay ONLY if it has not changed during closing
+			if (document.activeElement.localName != "body"){
+				return;
+			}
+			this.getPopover().detachAfterClose(this._handleAfterClose, this);
+			DOMUtil.focusWithoutScrolling(document.getElementById(this._oTarget.getAttribute("overlay")));
+
+			// Remember the last Source & Position for Opening in same place
+			this._oLastSourceOverlay = OverlayRegistry.getOverlay(this._oTarget.getAttribute("overlay"));
+			this._oLastSourceClientRects = this._oLastSourceOverlay.getDomRef().getClientRects();
+			this._oLastPosition = {
+				x: this._oContextMenuPosition.x,
+				y: this._oContextMenuPosition.y
+			};
 		},
 
 		setStyleClass: function (sStyleClass) {

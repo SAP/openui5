@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/dt/Plugin",
 	"sap/ui/dt/ContextMenuControl",
 	"sap/ui/dt/Util",
+	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/Device",
 	"sap/base/assert",
 	"sap/ui/events/KeyCodes"
@@ -14,6 +15,7 @@ sap.ui.define([
 	Plugin,
 	ContextMenuControl,
 	Utils,
+	OverlayRegistry,
 	Device,
 	assert,
 	KeyCodes
@@ -125,6 +127,7 @@ sap.ui.define([
 		// oOverlay.attachBrowserEvent("mouseover", this._onHover, this); FIXME: wait for hover PoC from UX colleagues
 		// oOverlay.attachBrowserEvent("mouseout", this._clearHoverTimeout, this);
 		oOverlay.attachBrowserEvent("keydown", this._onKeyDown, this);
+		oOverlay.attachBrowserEvent("keyup", this._onKeyUp, this);
 	};
 
 
@@ -141,6 +144,7 @@ sap.ui.define([
 		// oOverlay.detachBrowserEvent("mouseover", this._onHover, this); FIXME: wait for hover PoC from UX colleagues
 		// oOverlay.detachBrowserEvent("mouseout", this._clearHoverTimeout, this);
 		oOverlay.detachBrowserEvent("keydown", this._onKeyDown, this);
+		oOverlay.detachBrowserEvent("keyup", this._onKeyUp, this);
 	};
 
 	/**
@@ -161,6 +165,11 @@ sap.ui.define([
 			return oElementOverlay !== oOverlay;
 		});
 		aSelectedOverlays.unshift(oOverlay);
+
+		//IE sometimes returns null for document.activeElement
+		if (document.activeElement) {
+			document.activeElement.blur();
+		}
 
 		//Remove all previous entries retrieved by plugins (the list should always be rebuilt)
 		this._aMenuItems = this._aMenuItems.filter(function (mMenuItemEntry) {
@@ -241,7 +250,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ContextMenu.prototype._onContextMenu = function (oEvent) {
-		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
+		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		var mPosition = {
 			clientX: oEvent.clientX,
 			clientY: oEvent.clientY
@@ -292,7 +301,7 @@ sap.ui.define([
 			}.bind(this), 50);
 		}
 
-		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
+		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		if (oOverlay && oOverlay.isSelectable() && oOverlay.getSelected()) {
 			this._oCurrentEvent = oEvent;
 			oEvent.stopPropagation();
@@ -329,7 +338,7 @@ sap.ui.define([
 
 		this._oTempTarget = oEvent.currentTarget.id;
 
-		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
+		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		var sTargetClasses = oEvent.target.className;
 
 		if (oOverlay && oOverlay.isSelectable() && sTargetClasses.indexOf("sapUiDtOverlay") > -1 && (!this.isMenuOpeningLocked())) {
@@ -362,7 +371,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ContextMenu.prototype._onHover = function (oEvent) {
-		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
+		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		if (oOverlay && oOverlay.isSelectable() && !oEvent.ctrlKey && this.getOpenOnHover()) {
 			oEvent.stopPropagation();
 			if (this._shouldContextMenuOpen(oEvent, true)) {
@@ -379,7 +388,7 @@ sap.ui.define([
 				}
 
 				this.hoverTimeout = setTimeout(function () {
-					sap.ui.getCore().byId(oEvent.currentTarget.id).focus();
+					OverlayRegistry.getOverlay(oEvent.currentTarget.id).focus();
 					this._startOpening(oEvent);
 					this._bOpenedByHover = true;
 				}.bind(this), this.iMenuHoverOpeningDelay);
@@ -403,11 +412,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Called when user presses key on keyboard. Opens the ContextMenu for Keyboard Controls
-	 @param {sap.ui.base.Event} oEvent the event which was fired
+	 * Called when user presses key on keyboard. Opens the Compact ContextMenu on ENTER or SPACE
+	 * Opens the Context Menu when user presses SHIFT-F10
+	 * @param {sap.ui.base.Event} oEvent the event which was fired
 	 */
-	ContextMenu.prototype._onKeyDown = function (oEvent) {
-		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
+	ContextMenu.prototype._onKeyUp = function (oEvent) {
+		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		if ((oEvent.keyCode === KeyCodes.SPACE || oEvent.keyCode === KeyCodes.ENTER) &&
 			(oEvent.shiftKey === false) &&
 			(oEvent.altKey === false) &&
@@ -416,6 +426,7 @@ sap.ui.define([
 			if (oOverlay && oOverlay.isSelectable()) {
 				this._startOpening(oEvent, true);
 				oEvent.stopPropagation();
+				oEvent.preventDefault();
 			}
 		}
 		if ((oEvent.keyCode === KeyCodes.F10) &&
@@ -427,11 +438,28 @@ sap.ui.define([
 				oEvent.preventDefault();
 
 				var mPosition = {
-					clientX: oOverlay.$().offset().left + oOverlay.$().width() / 2,
-					clientY: oOverlay.$().offset().top + oOverlay.$().height() / 2
+					clientX: "not set",
+					clientY: "not set"
 				};
 
 				this._openContextMenu(oEvent, oOverlay, mPosition);
+			}
+		}
+	};
+
+	/**
+	 * Called when user presses key on keyboard. Needed for supressing the scrolling on pressing SPACE
+	 * @param {sap.ui.base.Event} oEvent the event which was fired
+	 */
+	ContextMenu.prototype._onKeyDown = function (oEvent) {
+		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
+		if ((oEvent.keyCode === KeyCodes.SPACE) &&
+			(oEvent.shiftKey === false) &&
+			(oEvent.altKey === false) &&
+			(oEvent.ctrlKey === false)) {
+			if (oOverlay && oOverlay.isSelectable()) {
+				oEvent.stopPropagation();
+				oEvent.preventDefault();
 			}
 		}
 	};
@@ -446,7 +474,7 @@ sap.ui.define([
 	ContextMenu.prototype._shouldContextMenuOpen = function (oEvent, onHover) {
 		if ((!this._checkForPluginLock() && !this.isMenuOpeningLocked())) {
 			if (!onHover) {
-				this._oCurrentOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
+				this._oCurrentOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 			}
 			return true;
 		} else {
@@ -459,7 +487,7 @@ sap.ui.define([
 	 */
 	ContextMenu.prototype._pressedOverflowButton = function (oEvent) {
 		this.lockMenuOpening();
-		var oOverlay = sap.ui.getCore().byId(oEvent.oSource._oTarget.getAttribute("overlay"));
+		var oOverlay = OverlayRegistry.getOverlay(oEvent.oSource._oTarget.getAttribute("overlay"));
 		var mPosition = {
 			clientX: oEvent.mParameters.oButton.$().offset().left,
 			clientY: oEvent.mParameters.oButton.$().offset().top
@@ -470,16 +498,11 @@ sap.ui.define([
 	};
 
 	ContextMenu.prototype._openContextMenu = function(oEvent, oOverlay, mPosition){
-		if (oOverlay && oOverlay.isSelectable() && oOverlay.getSelected()) {
+		if (oOverlay && oOverlay.isSelectable()) {
 			oEvent.preventDefault();
 			this._oCurrentOverlay = oOverlay;
 			this.oContextMenuControl.close(true);
 			this._bOpenedByHover = false;
-
-			//IE sometimes returns null for document.activeElement
-			if (document.activeElement) {
-				document.activeElement.blur();
-			}
 
 			clearTimeout(this.hoverTimeout);
 

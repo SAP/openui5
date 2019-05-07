@@ -35,7 +35,7 @@ function(
 
 	var sandbox = sinon.sandbox.create();
 
-	function fnTriggerKeydown(oTargetDomRef, iKeyCode, bShiftKey, bAltKey, bCtrlKey, bMetaKey) {
+	function fnTriggerKeyup(oTargetDomRef, iKeyCode, bShiftKey, bAltKey, bCtrlKey, bMetaKey) {
 		var oParams = {};
 		oParams.keyCode = iKeyCode;
 		oParams.which = oParams.keyCode;
@@ -43,7 +43,7 @@ function(
 		oParams.altKey = bAltKey;
 		oParams.metaKey = bMetaKey;
 		oParams.ctrlKey = bCtrlKey;
-		QUnitUtils.triggerEvent("keydown", oTargetDomRef, oParams);
+		QUnitUtils.triggerEvent("keyup", oTargetDomRef, oParams);
 	}
 	function fnTriggerContextMenuClick(oTarget) {
 		var clock = sinon.useFakeTimers();
@@ -100,7 +100,7 @@ function(
 			var oGroupElementOverlay = OverlayRegistry.getOverlay(this.oBoundGroupElement);
 			oGroupElementOverlay.focus();
 			oGroupElementOverlay.setSelected(true);
-			fnTriggerKeydown(oGroupElementOverlay.getDomRef(), KeyCodes.F10, true, false, false);
+			fnTriggerKeyup(oGroupElementOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 
 			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 			assert.ok(oContextMenuControl.bOpen, "when context menu is opened (via keyboard) for a sap.ui.comp.smartform.GroupElement");
@@ -131,7 +131,7 @@ function(
 			var oFormOverlay = OverlayRegistry.getOverlay(this.oSmartForm);
 			oFormOverlay.focus();
 			oFormOverlay.setSelected(true);
-			fnTriggerKeydown(oFormOverlay.getDomRef(), KeyCodes.F10, true, false, false);
+			fnTriggerKeyup(oFormOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 
 			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 			assert.ok(oContextMenuControl.bOpen, "when context menu (context menu) is opened (via keyboard) for a sap.ui.comp.smartform.SmartForm");
@@ -253,7 +253,7 @@ function(
 
 				oGroupOverlay.focus();
 				oGroupOverlay.setSelected(true);
-				fnTriggerKeydown(oGroupOverlay.getDomRef(), KeyCodes.F10, true, false, false);
+				fnTriggerKeyup(oGroupOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 
 				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 				assert.ok(oContextMenuControl.bOpen, "when context menu (context menu) is opened on a Control with a defined settings action");
@@ -267,7 +267,7 @@ function(
 			var oPageOverlay = OverlayRegistry.getOverlay(this.oPage);
 			oPageOverlay.focus();
 			oPageOverlay.setSelected(true);
-			fnTriggerKeydown(oPageOverlay.getDomRef(), KeyCodes.F10, true, false, false);
+			fnTriggerKeyup(oPageOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 
 			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 			assert.ok(oContextMenuControl.bOpen, "when context menu (context menu) is opened (via keyboard) for a sap.m.Page without title");
@@ -282,7 +282,7 @@ function(
 			var oFormElementOverlay = OverlayRegistry.getOverlay(oFormElement);
 			oFormElementOverlay.focus();
 			oFormElementOverlay.setSelected(true);
-			fnTriggerKeydown(oFormElementOverlay.getDomRef(), KeyCodes.F10, true, false, false);
+			fnTriggerKeyup(oFormElementOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 
 			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 			assert.ok(oContextMenuControl.bOpen, "when context menu (context menu) is opened (via keyboard) for a SimpleForm FormElement");
@@ -299,7 +299,7 @@ function(
 			var oFormOverlay = OverlayRegistry.getOverlay(oForm);
 			oFormOverlay.focus();
 			oFormOverlay.setSelected(true);
-			fnTriggerKeydown(oFormOverlay.getDomRef(), KeyCodes.F10, true, false, false);
+			fnTriggerKeyup(oFormOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 
 			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 			assert.ok(oContextMenuControl.bOpen, "when context menu (context menu) is opened (via keyboard) for a SimpleForm with Title");
@@ -313,7 +313,7 @@ function(
 			var oFormContainerOverlay = OverlayRegistry.getOverlay(oFormContainer);
 			oFormContainerOverlay.focus();
 			oFormContainerOverlay.setSelected(true);
-			fnTriggerKeydown(oFormContainerOverlay.getDomRef(), KeyCodes.F10, true, false, false);
+			fnTriggerKeyup(oFormContainerOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 
 			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 			assert.ok(oContextMenuControl.bOpen, "when context menu (context menu) is opened (via keyboard) for a SimpleForm Group with Title");

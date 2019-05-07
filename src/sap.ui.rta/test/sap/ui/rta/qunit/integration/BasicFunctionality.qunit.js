@@ -217,7 +217,7 @@ sap.ui.define([
 
 			this.oElementOverlay.focus();
 			this.oElementOverlay.setSelected(true);
-			QUnitUtils.triggerKeydown(this.oElementOverlay.getDomRef(), KeyCodes.F10, true, false, false);
+			QUnitUtils.triggerKeyup(this.oElementOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 			var oContextMenuButton = this.oRta.getPlugins()["contextMenu"].oContextMenuControl.getButtons()[1];
 			oContextMenuButton.firePress();
 			sap.ui.getCore().applyChanges();
@@ -249,7 +249,7 @@ sap.ui.define([
 
 			this.oElementOverlay.focus();
 			this.oElementOverlay.setSelected(true);
-			QUnitUtils.triggerKeydown(this.oElementOverlay.getDomRef(), KeyCodes.F10, true, false, false);
+			QUnitUtils.triggerKeyup(this.oElementOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 			var oContextMenuButton = this.oRta.getPlugins()["contextMenu"].oContextMenuControl.getButtons()[0];
 			oContextMenuButton.firePress();
 		});

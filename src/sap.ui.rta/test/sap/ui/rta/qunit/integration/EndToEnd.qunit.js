@@ -140,7 +140,7 @@ sap.ui.define([
 
 					// open context menu dialog
 					this.oCompanyCodeFieldOverlay.setSelected(true);
-					QUnitUtils.triggerKeydown(this.oCompanyCodeFieldOverlay.getDomRef(), KeyCodes.F10, true, false, false);
+					QUnitUtils.triggerKeyup(this.oCompanyCodeFieldOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 					var oContextMenuButton = this.oRta.getPlugins()["contextMenu"].oContextMenuControl.getButtons()[1];
 					oContextMenuButton.firePress();
 					sap.ui.getCore().applyChanges();
@@ -195,7 +195,7 @@ sap.ui.define([
 			this.oCompanyCodeFieldOverlay.setSelected(true);
 
 			// open context menu (context menu) and select add field
-			QUnitUtils.triggerKeydown(this.oCompanyCodeFieldOverlay.getDomRef(), KeyCodes.F10, true, false, false);
+			QUnitUtils.triggerKeyup(this.oCompanyCodeFieldOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 			oContextMenuControl.attachEventOnce("Opened", function() {
 				var oContextMenuButton = oContextMenuControl.getButtons()[1];
@@ -362,7 +362,7 @@ sap.ui.define([
 					oFieldOverlay.setSelected(true);
 
 					// open context menu (compact context menu)
-					QUnitUtils.triggerKeydown(oFieldOverlay.getDomRef(), KeyCodes.F10, true, false, false);
+					QUnitUtils.triggerKeyup(oFieldOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 					var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 					oContextMenuControl.attachOpened(function() {
 						var oContextMenuButton = oContextMenuControl.getButtons()[1];
@@ -399,7 +399,7 @@ sap.ui.define([
 			// to reveal we have to remove the field first (otherwise it would be addODataProperty)
 			oFieldToHideOverlay.focus();
 			oFieldToHideOverlay.setSelected(true);
-			QUnitUtils.triggerKeydown(oFieldToHideOverlay.getDomRef(), KeyCodes.F10, true, false, false);
+			QUnitUtils.triggerKeyup(oFieldToHideOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 			oContextMenuControl.attachEventOnce("Opened", function() {
 				var oContextMenuButton = oContextMenuControl.getButtons()[2];
@@ -418,7 +418,7 @@ sap.ui.define([
 			this.oCompanyCodeFieldOverlay.setSelected(true);
 
 			// open context menu (expanded menu) and press rename button
-			QUnitUtils.triggerKeydown(this.oCompanyCodeFieldOverlay.getDomRef(), KeyCodes.F10, true, false, false);
+			QUnitUtils.triggerKeyup(this.oCompanyCodeFieldOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 			var oContextMenuButton = this.oRta.getPlugins()["contextMenu"].oContextMenuControl.getButtons()[0];
 
 			return fnPressRenameAndEnsureFunctionality.call(this, assert, oChangePersistence, oContextMenuButton, 'TestExpandedMenu');
@@ -479,7 +479,7 @@ sap.ui.define([
 				oContextMenuButton.firePress();
 				sap.ui.getCore().applyChanges();
 			});
-			QUnitUtils.triggerKeydown(oCombinedElementOverlay.getDomRef(), KeyCodes.F10, true, false, false);
+			QUnitUtils.triggerKeyup(oCombinedElementOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 		});
 	});
 

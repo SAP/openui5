@@ -552,35 +552,35 @@ sap.ui.define([
 			assert.strictEqual(oContextMenuControl.getFlexbox().getDirection(), "Row", "Flexbox should be set to Row");
 		});
 
-		QUnit.test("Testing onKeyDown function opening the expanded contextMenu", function (assert) {
+		QUnit.test("Testing onKeyUp function opening the expanded contextMenu", function (assert) {
 			var _tempListener = function (oEvent) {
 				oEvent.keyCode = KeyCodes.F10;
 				oEvent.shiftKey = true;
 				oEvent.altKey = false;
 				oEvent.ctrlKey = false;
 				var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
-				this.oContextMenuPlugin._onKeyDown(oEvent);
+				this.oContextMenuPlugin._onKeyUp(oEvent);
 				assert.ok(oContextMenuControl.bOpen, "ContextMenu should be open");
 				assert.strictEqual(oContextMenuControl.getFlexbox().getDirection(), "Column", "Flexbox should be set to Column");
 			}.bind(this);
 			this.oButton2Overlay.setSelected(true);
-			this.oButton2Overlay.attachBrowserEvent("keydown", _tempListener, this);
-			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "keydown");
+			this.oButton2Overlay.attachBrowserEvent("keyup", _tempListener, this);
+			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "keyup");
 		});
 
-		QUnit.test("Testing onKeyDown function opening the compact contextMenu", function (assert) {
+		QUnit.test("Testing onKeyUp function opening the compact contextMenu", function (assert) {
 			var _tempListener = function (oEvent) {
 				oEvent.keyCode = KeyCodes.ENTER;
 				oEvent.shiftKey = false;
 				oEvent.altKey = false;
 				oEvent.ctrlKey = false;
 				var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
-				this.oContextMenuPlugin._onKeyDown(oEvent);
+				this.oContextMenuPlugin._onKeyUp(oEvent);
 				assert.ok(oContextMenuControl.bOpen, "ContextMenu should be open");
 				assert.strictEqual(oContextMenuControl.getFlexbox().getDirection(), "Row", "Flexbox should be set to Row");
 			}.bind(this);
-			this.oButton2Overlay.attachBrowserEvent("keydown", _tempListener, this);
-			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "keydown");
+			this.oButton2Overlay.attachBrowserEvent("keyup", _tempListener, this);
+			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "keyup");
 		});
 
 		QUnit.test("Clicking on a button in the ContextMenu", function (assert) {
@@ -654,7 +654,7 @@ sap.ui.define([
 
 			var oEvent = { currentTarget: { id: "button1" } };
 			assert.ok(this.oContextMenuPlugin._shouldContextMenuOpen(oEvent), "then return true when no plugin is busy");
-			assert.equal(this.oContextMenuPlugin._oCurrentOverlay.getId(), oEvent.currentTarget.id, "and current overlay is set when not on hover");
+			assert.equal(this.oContextMenuPlugin._oCurrentOverlay.getElement().getId(), oEvent.currentTarget.id, "and current overlay is set when not on hover");
 		});
 
 		QUnit.test("calling _clearHoverTimeout", function(assert) {

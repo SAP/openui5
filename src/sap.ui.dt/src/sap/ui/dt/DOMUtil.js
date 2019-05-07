@@ -454,5 +454,41 @@ function(
 		oChildNode.scrollLeft = iScrollLeft;
 	};
 
+	/**
+	 * Set the Focus to the DOM Element without scrolling
+	 * @param {HTMLElement} oTargetNode - Target node to whom focus should be set
+	 */
+	DOMUtil.focusWithoutScrolling = function (oTargetNode) {
+
+		// Only for Newer Devices
+		if (Device.browser.name != "ie"){
+			oTargetNode.focus({preventScroll: true});
+			return;
+		}
+
+		var aScrollHierarchy = [];
+		var oParentNode = oTargetNode.parentNode;
+
+		while (oParentNode) {
+			aScrollHierarchy.push([oParentNode, oParentNode.scrollLeft, oParentNode.scrollTop]);
+			oParentNode = oParentNode.parentNode;
+		}
+
+		oTargetNode.focus();
+
+		aScrollHierarchy.forEach(function (oItem) {
+			var oElementNode = oItem[0];
+
+			// Check first to avoid triggering unnecessary `scroll` events
+			if (oElementNode.scrollLeft != oItem[1]) {
+				oElementNode.scrollLeft = oItem[1];
+			}
+
+			if (oElementNode.scrollTop != oItem[2]) {
+				oElementNode.scrollTop = oItem[2];
+			}
+		});
+	};
+
 	return DOMUtil;
 }, /* bExport= */ true);

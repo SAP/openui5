@@ -9,6 +9,14 @@
 
 .sapUiRtaMode {
 
+	&.sapUiSizeCompact{
+		.sapUiDtContextMenu{
+			.sapMBtnInner.sapMBtnText .sapMBtnIcon{
+				padding-left: 0px;
+			}
+		}
+	}
+
 	.sapUiDtContextMenu{
 
 		&.sapMPopover, .sapMPopover {
@@ -42,10 +50,6 @@
 		&.sapUiSizeCompact .sapMBtnIcon{
 			margin-left: 0.4375rem;
 			margin-right: 0.4375rem;
-		}
-
-		.sapMBtnInner.sapMBtnText .sapMBtnIcon{
-			padding-left: 0px;
 		}
 	}
 }
