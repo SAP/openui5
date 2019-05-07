@@ -5212,101 +5212,6 @@ sap.ui.define([
 		test(tableLibrary.SelectionMode.MultiToggle, [0, 1, 4]);
 	});
 
-	QUnit.module("TableKeyboardDelegate2 - Interaction > ContextMenu", {
-		beforeEach: function() {
-			setupTest();
-		},
-		afterEach: function() {
-			teardownTest();
-		}
-	});
-
-	QUnit.test("On a cell", function(assert) {
-		var oContextMenuEventHandlerSpy = this.spy(oTable._getKeyboardExtension()._delegate, "oncontextmenu");
-		var oOpenContextMenuSpy = this.spy(TableUtils.Menu, "openContextMenu");
-
-		initRowActions(oTable, 1, 1);
-
-		var aTestElements = [
-			getCell(0, 0),
-			getRowHeader(0),
-			getRowAction(0),
-			getColumnHeader(0),
-			getSelectAll()
-		];
-
-		aTestElements.forEach(function(oElem) {
-			oElem.focus();
-			jQuery(oElem).trigger("contextmenu");
-			assert.ok(oOpenContextMenuSpy.calledOnce, "TableUtils.Menu.openContextMenu was called once");
-			assert.ok(oOpenContextMenuSpy.calledWith(oTable, oElem[0], true, null),
-				"TableUtils.Menu.openContextMenu was called with the correct arguments");
-			checkFocus(oElem, assert);
-
-			var oContextMenuEventArgument = oContextMenuEventHandlerSpy.args[0][0];
-			assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
-
-			oOpenContextMenuSpy.reset();
-			oContextMenuEventHandlerSpy.reset();
-		});
-	});
-
-	QUnit.test("On a pseudo cell", function(assert) {
-		var oContextMenuEventHandlerSpy = this.spy(oTable._getKeyboardExtension()._delegate, "oncontextmenu");
-		var oContextMenuEventArgument;
-		var oOpenContextMenuSpy = this.spy(TableUtils.Menu, "openContextMenu");
-		var oElem = getCell(0, 0)[0];
-
-		oElem.classList.remove("sapUiTableDataCell");
-		oElem.classList.add("sapUiTablePseudoCell");
-		oElem.focus();
-		jQuery(oElem).trigger("contextmenu");
-		assert.ok(oOpenContextMenuSpy.notCalled, "TableUtils.Menu.openContextMenu was not called");
-		checkFocus(oElem, assert);
-
-		oContextMenuEventArgument = oContextMenuEventHandlerSpy.args[0][0];
-		assert.ok(!oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was not prevented");
-
-		oOpenContextMenuSpy.reset();
-		oContextMenuEventHandlerSpy.reset();
-
-		oElem = oTable.getRows()[0].getCells()[0].getDomRef();
-		oElem.focus();
-		jQuery(oElem).trigger("contextmenu");
-		assert.ok(oOpenContextMenuSpy.notCalled, "TableUtils.Menu.openContextMenu was not called");
-		checkFocus(oElem, assert);
-
-		oContextMenuEventArgument = oContextMenuEventHandlerSpy.args[0][0];
-		assert.ok(!oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was not prevented");
-	});
-
-	QUnit.test("On cell content", function(assert) {
-		var oContextMenuEventHandlerSpy = this.spy(oTable._getKeyboardExtension()._delegate, "oncontextmenu");
-		var oOpenContextMenuSpy = this.spy(TableUtils.Menu, "openContextMenu");
-
-		oTable.getColumns()[0].setLabel(new TestInputControl());
-		initRowActions(oTable, 1, 1);
-
-		var aTestElements = [
-			oTable.getRows()[0].getCells()[0].getDomRef(),
-			oTable.getRows()[0].getRowAction().getAggregation("_icons")[0].getDomRef(),
-			oTable.getColumns()[0].getLabel().getDomRef()
-		];
-
-		aTestElements.forEach(function(oElem) {
-			oElem.focus();
-			jQuery(oElem).trigger("contextmenu");
-			assert.ok(oOpenContextMenuSpy.notCalled, "TableUtils.Menu.openContextMenu was not called");
-			checkFocus(oElem, assert);
-
-			var oContextMenuEventArgument = oContextMenuEventHandlerSpy.args[0][0];
-			assert.ok(!oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was not prevented");
-
-			oOpenContextMenuSpy.reset();
-			oContextMenuEventHandlerSpy.reset();
-		});
-	});
-
 	QUnit.module("TableKeyboardDelegate2 - Interaction > Alt+ArrowUp & Alt+ArrowDown (Expand/Collapse Group)", {
 		beforeEach: function() {
 			setupTest();
@@ -5611,6 +5516,101 @@ sap.ui.define([
 		this.testCollapseExpandAndFocus(assert, oTreeTable, getCell(0, 0, null, null, oTreeTable).find(".sapUiTableTreeIcon"));
 		this.testNoCollapseExpand(assert, oTreeTable, getCell(0, 1, null, null, oTreeTable));
 		this.testNoCollapseExpand(assert, oTreeTable, getRowHeader(0, null, null, oTreeTable));
+	});
+
+	QUnit.module("TableKeyboardDelegate2 - Interaction > ContextMenu", {
+		beforeEach: function() {
+			setupTest();
+		},
+		afterEach: function() {
+			teardownTest();
+		}
+	});
+
+	QUnit.test("On a cell", function(assert) {
+		var oContextMenuEventHandlerSpy = this.spy(oTable._getKeyboardExtension()._delegate, "oncontextmenu");
+		var oOpenContextMenuSpy = this.spy(TableUtils.Menu, "openContextMenu");
+
+		initRowActions(oTable, 1, 1);
+
+		var aTestElements = [
+			getCell(0, 0),
+			getRowHeader(0),
+			getRowAction(0),
+			getColumnHeader(0),
+			getSelectAll()
+		];
+
+		aTestElements.forEach(function(oElem) {
+			oElem.focus();
+			jQuery(oElem).trigger("contextmenu");
+			assert.ok(oOpenContextMenuSpy.calledOnce, "TableUtils.Menu.openContextMenu was called once");
+			assert.ok(oOpenContextMenuSpy.calledWith(oTable, oElem[0], true, null),
+				"TableUtils.Menu.openContextMenu was called with the correct arguments");
+			checkFocus(oElem, assert);
+
+			var oContextMenuEventArgument = oContextMenuEventHandlerSpy.args[0][0];
+			assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
+
+			oOpenContextMenuSpy.reset();
+			oContextMenuEventHandlerSpy.reset();
+		});
+	});
+
+	QUnit.test("On a pseudo cell", function(assert) {
+		var oContextMenuEventHandlerSpy = this.spy(oTable._getKeyboardExtension()._delegate, "oncontextmenu");
+		var oContextMenuEventArgument;
+		var oOpenContextMenuSpy = this.spy(TableUtils.Menu, "openContextMenu");
+		var oElem = getCell(0, 0)[0];
+
+		oElem.classList.remove("sapUiTableDataCell");
+		oElem.classList.add("sapUiTablePseudoCell");
+		oElem.focus();
+		jQuery(oElem).trigger("contextmenu");
+		assert.ok(oOpenContextMenuSpy.notCalled, "TableUtils.Menu.openContextMenu was not called");
+		checkFocus(oElem, assert);
+
+		oContextMenuEventArgument = oContextMenuEventHandlerSpy.args[0][0];
+		assert.ok(!oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was not prevented");
+
+		oOpenContextMenuSpy.reset();
+		oContextMenuEventHandlerSpy.reset();
+
+		oElem = oTable.getRows()[0].getCells()[0].getDomRef();
+		oElem.focus();
+		jQuery(oElem).trigger("contextmenu");
+		assert.ok(oOpenContextMenuSpy.notCalled, "TableUtils.Menu.openContextMenu was not called");
+		checkFocus(oElem, assert);
+
+		oContextMenuEventArgument = oContextMenuEventHandlerSpy.args[0][0];
+		assert.ok(!oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was not prevented");
+	});
+
+	QUnit.test("On cell content", function(assert) {
+		var oContextMenuEventHandlerSpy = this.spy(oTable._getKeyboardExtension()._delegate, "oncontextmenu");
+		var oOpenContextMenuSpy = this.spy(TableUtils.Menu, "openContextMenu");
+
+		oTable.getColumns()[0].setLabel(new TestInputControl());
+		initRowActions(oTable, 1, 1);
+
+		var aTestElements = [
+			oTable.getRows()[0].getCells()[0].getDomRef(),
+			oTable.getRows()[0].getRowAction().getAggregation("_icons")[0].getDomRef(),
+			oTable.getColumns()[0].getLabel().getDomRef()
+		];
+
+		aTestElements.forEach(function(oElem) {
+			oElem.focus();
+			jQuery(oElem).trigger("contextmenu");
+			assert.ok(oOpenContextMenuSpy.notCalled, "TableUtils.Menu.openContextMenu was not called");
+			checkFocus(oElem, assert);
+
+			var oContextMenuEventArgument = oContextMenuEventHandlerSpy.args[0][0];
+			assert.ok(!oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was not prevented");
+
+			oOpenContextMenuSpy.reset();
+			oContextMenuEventHandlerSpy.reset();
+		});
 	});
 
 	QUnit.module("TableKeyboardDelegate2 - Action Mode > Enter and Leave", {
