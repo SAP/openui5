@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/f/Card",
 	"sap/f/GridContainerItemLayoutData",
 	"sap/f/GridContainerSettings",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/base/Log"
 ],
 function (
 	GridContainer,
@@ -18,7 +19,8 @@ function (
 	Card,
 	GridContainerItemLayoutData,
 	GridContainerSettings,
-	Device
+	Device,
+	Log
 ) {
 	"use strict";
 
@@ -343,6 +345,53 @@ function (
 	}
 
 	QUnit.module("Layout settings", {
+		beforeEach: function () {
+			this.oGrid = new GridContainer();
+			this.oGrid.placeAt(DOM_RENDER_LOCATION);
+		},
+		afterEach: function () {
+			this.oGrid.destroy();
+		}
+	});
+
+	QUnit.module("Layout settings basics");
+
+	QUnit.test("Initialization and default settings", function (assert) {
+		// Arrange
+		var oSettings = new GridContainerSettings();
+
+		// Assert
+		assert.ok(oSettings.isA("sap.f.GridContainerSettings"), "GridContainerSettings is initialized");
+		assert.strictEqual(oSettings.getColumns(), undefined, "No default columns count");
+		assert.strictEqual(oSettings.getColumnSize(), "80px", "Default column size is '80px'");
+		assert.strictEqual(oSettings.getRowSize(), "80px", "Default row size is '80px'");
+		assert.strictEqual(oSettings.getGap(), "16px", "Default gap size is '16px'");
+	});
+
+	QUnit.test("Parse 'rem' settings to 'px'", function (assert) {
+		// Arrange
+		var oSettings = new GridContainerSettings({columnSize: "10rem", rowSize: "5.5rem", gap: "0.5rem"});
+
+		// Assert
+		assert.strictEqual(oSettings.getColumnSizeInPx(), 160, "Column size in 'px' is 160");
+		assert.strictEqual(oSettings.getRowSizeInPx(), 88, "Row size in 'px' is 88");
+		assert.strictEqual(oSettings.getGapInPx(), 8, "Gap size in 'px' is 8");
+	});
+
+	QUnit.test("Parse edge cases for settings", function (assert) {
+		// Arrange
+		var oSettings = new GridContainerSettings({rowSize: "5in", gap: "0"}),
+			fnLogErrorSpy = sinon.spy(Log, "error");
+
+		// Assert
+		assert.ok(isNaN(oSettings.getRowSizeInPx()), "Row size of '5in' can not be parsed and results in NaN");
+		assert.ok(fnLogErrorSpy.calledOnce, "An error was logged about that row size '5in' can not be converted to 'px'");
+		assert.strictEqual(oSettings.getGapInPx(), 0, "Gap size of 0 is 0 in 'px'");
+
+		fnLogErrorSpy.restore();
+	});
+
+	QUnit.module("Layout settings & breakpoints", {
 		beforeEach: function () {
 			this.oGrid = new GridContainer();
 			this.oGrid.placeAt(DOM_RENDER_LOCATION);

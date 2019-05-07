@@ -21,29 +21,52 @@ sap.ui.define([
 			 GridContainerSettings) {
 	"use strict";
 
+	/**
+	 * Indicates the version of Microsoft Edge browser that has support for the display grid.
+	 * @type {number}
+	 */
 	var EDGE_VERSION_WITH_GRID_SUPPORT = 16;
 
+	/**
+	 * Indicates whether the grid is supported by the browser.
+	 * @private
+	 * @returns {boolean} If native grid is supported by the browser
+	 */
+	function isGridSupportedByBrowser() {
+		return !Device.browser.msie && !(Device.browser.edge && Device.browser.version < EDGE_VERSION_WITH_GRID_SUPPORT);
+	}
+
+	/**
+	 * Gets the column-span property from the item's layout data.
+	 * @private
+	 * @param {sap.ui.core.Control} item The item
+	 * @returns {number} The number of columns
+	 */
 	function getItemColumnCount(item) {
 		var layoutData = item.getLayoutData();
 		return layoutData ? layoutData.getColumns() : 1;
 	}
 
+	/**
+	 * Gets the rowspan attribute from the item's layout data.
+	 * @private
+	 * @param {sap.ui.core.Control} item The item
+	 * @returns {number} The number of rows
+	 */
 	function getItemRowCount(item) {
 		var layoutData = item.getLayoutData();
 		return layoutData ? layoutData.getActualRows() : 1;
 	}
 
+	/**
+	 * Defines whether the rows span of the item should be calculated automatically, based on its layout data.
+	 * @private
+	 * @param {sap.ui.core.Control} item The item
+	 * @returns {boolean} True if the item rows span should be auto calculated
+	 */
 	function hasItemAutoHeight(item) {
 		var layoutData = item.getLayoutData();
 		return layoutData ? layoutData.hasAutoHeight() : true;
-	}
-
-	/**
-	 * @public
-	 * @returns {boolean} If native grid is supported by the browser
-	 */
-	function isGridSupportedByBrowser() {
-		return !Device.browser.msie && !(Device.browser.edge && Device.browser.version < EDGE_VERSION_WITH_GRID_SUPPORT);
 	}
 
 	/**
@@ -224,6 +247,21 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * Gets the <code>GridContainerSettings</code> for the current layout breakpoint.
+	 * @public
+	 * @returns {sap.f.GridContainerSettings} The settings for the current layout
+	 */
+	GridContainer.prototype.getActiveLayoutSettings = function () {
+		return this.getAggregation(this._sActiveLayout)
+			|| this.getAggregation("layout")
+			|| this.getAggregation("_defaultLayout");
+	};
+
+	/**
+	 * Handler for onBeforeRendering for each item.
+	 * @protected
+	 */
 	GridContainer.prototype._onBeforeItemRendering = function () {
 		var container = this.getParent(),
 			resizeListenerId = container._resizeListeners[this.getId()];
@@ -235,6 +273,10 @@ sap.ui.define([
 		delete container._resizeListeners[this.getId()];
 	};
 
+	/**
+	 * Handler for onAfterRendering for each item.
+	 * @protected
+	 */
 	GridContainer.prototype._onAfterItemRendering = function () {
 		var container = this.getParent();
 
@@ -250,6 +292,11 @@ sap.ui.define([
 		container._applyItemAutoRows(this);
 	};
 
+	/**
+	 * Handler for any change in the items aggregation.
+	 * @protected
+	 * @param {object} changes What was changed
+	 */
 	GridContainer.prototype._onItemChange = function (changes) {
 		if (changes.name !== "items" || !changes.child) {
 			return;
@@ -262,6 +309,10 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Removes any resize listeners. Both for the grid and for all items.
+	 * @protected
+	 */
 	GridContainer.prototype._deregisterResizeListeners = function () {
 		var key,
 			id;
@@ -274,6 +325,10 @@ sap.ui.define([
 		delete this._resizeListeners;
 	};
 
+	/**
+	 * Sets the DOM references for the items navigation.
+	 * @protected
+	 */
 	GridContainer.prototype._setItemNavigationItems = function () {
 		if (!this._isRenderingFinished) {
 			return;
@@ -285,6 +340,11 @@ sap.ui.define([
 		// }));
 	};
 
+	/**
+	 * Detects what is the current layout breakpoint.
+	 * @protected
+	 * @returns {boolean} True if the layout settings were changed.
+	 */
 	GridContainer.prototype._detectActiveLayout = function () {
 		var iWidth = (this.getContainerQuery() && this.getDomRef()) ? this.$().outerWidth() : window.innerWidth,
 			oRange = Device.media.getCurrentRange("StdExt", iWidth),
@@ -300,12 +360,11 @@ sap.ui.define([
 		return bSettingsAreChanged;
 	};
 
-	GridContainer.prototype.getActiveLayoutSettings = function () {
-		return this.getAggregation(this._sActiveLayout)
-			|| this.getAggregation("layout")
-			|| this.getAggregation("_defaultLayout");
-	};
-
+	/**
+	 * Gets a map of the CSS styles that should be applied to the grid, based on the current layout.
+	 * @protected
+	 * @returns {map} The current css styles
+	 */
 	GridContainer.prototype._getActiveGridStyles = function () {
 		var oSettings = this.getActiveLayoutSettings(),
 			sColumns = oSettings.getColumns() || "auto-fill",
@@ -323,6 +382,10 @@ sap.ui.define([
 		return mStyles;
 	};
 
+	/**
+	 * Initialization hook.
+	 * @protected
+	 */
 	GridContainer.prototype.init = function () {
 		this.setAggregation("_defaultLayout", new GridContainerSettings());
 
@@ -347,6 +410,10 @@ sap.ui.define([
 		this.addDelegate(this._itemNavigation);
 	};
 
+	/**
+	 * Before rendering hook.
+	 * @protected
+	 */
 	GridContainer.prototype.onBeforeRendering = function () {
 		this._detectActiveLayout();
 
@@ -358,6 +425,10 @@ sap.ui.define([
 		this._isRenderingFinished = false;
 	};
 
+	/**
+	 * After rendering hook.
+	 * @protected
+	 */
 	GridContainer.prototype.onAfterRendering = function () {
 		this._resizeListeners[this.getId()] = ResizeHandler.register(this.getDomRef(), this._resizeHandler);
 
@@ -367,6 +438,10 @@ sap.ui.define([
 		this._applyLayout(true);
 	};
 
+	/**
+	 * Destroy hook.
+	 * @protected
+	 */
 	GridContainer.prototype.exit = function () {
 		this._deregisterResizeListeners();
 
@@ -382,6 +457,10 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Handler for resize of the grid.
+	 * @protected
+	 */
 	GridContainer.prototype._resize = function () {
 		var bSettingsAreChanged = this._detectActiveLayout();
 
@@ -394,6 +473,11 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Handler for resize of a grid's item.
+	 * @protected
+	 * @param {Object} oEvent ResizeHandler resize event
+	 */
 	GridContainer.prototype._resizeItem = function (oEvent) {
 		if (!isGridSupportedByBrowser()) {
 			this._scheduleIEPolyfill();
@@ -403,6 +487,11 @@ sap.ui.define([
 		this._applyItemAutoRows(oEvent.control);
 	};
 
+	/**
+	 * Applies the current layout to the grid DOM element.
+	 * @protected
+	 * @param {boolean} bSettingsAreChanged Are the grid settings changed after passing a breakpoint.
+	 */
 	GridContainer.prototype._applyLayout = function (bSettingsAreChanged) {
 		if (!this._isRenderingFinished) {
 			return;
@@ -423,6 +512,7 @@ sap.ui.define([
 
 	/**
 	 * Increase rows span for item if it needs more space, based on it's height.
+	 * @protected
 	 * @param {sap.ui.core.Control} oItem The item for which to calculate
 	 */
 	GridContainer.prototype._applyItemAutoRows = function (oItem) {
@@ -453,6 +543,7 @@ sap.ui.define([
 	/**
 	 * If one item has more columns than the total columns in the grid, it brakes the whole layout.
 	 * Prevent this by reducing this item's column span.
+	 * @protected
 	 */
 	GridContainer.prototype._enforceMaxColumns = function () {
 		var oSettings = this.getActiveLayoutSettings(),
@@ -474,7 +565,8 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Schedule the application of the IE polyfill for the next tick.
+	 * Schedules the application of the IE polyfill for the next tick.
+	 * @protected
 	 * @param {boolean} bImmediately If set to true - apply the polyfill immediately.
 	 */
 	GridContainer.prototype._scheduleIEPolyfill = function (bImmediately) {
@@ -492,6 +584,7 @@ sap.ui.define([
 
 	/**
 	 * Calculates absolute positions for items, so it mimics a css grid.
+	 * @protected
 	 */
 	GridContainer.prototype._applyIEPolyfillLayout = function () {
 		if (!this._isRenderingFinished) {
