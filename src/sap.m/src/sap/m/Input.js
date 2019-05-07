@@ -525,6 +525,10 @@ function(
 
 		InputBase.prototype.onAfterRendering.call(this);
 
+		if (this._oSuggPopover) {
+			this._oSuggPopover._resetTypeAhead();
+		}
+
 		if (this._bUseDialog && this.getEditable() && this.getEnabled()) {
 			// click event has to be used in order to focus on the input in dialog
 			// do not open suggestion dialog by click over the value help icon

@@ -826,6 +826,34 @@ sap.ui.define([
 		oSpy.restore();
 	});
 
+	QUnit.test("onsapright", function(assert) {
+		// Arrange
+		this.multiInput1.setTokens([
+			new Token({text:"A"}),
+			new Token({text:"B"}),
+			new Token({text:"C"})
+		]);
+		this.multiInput1.addValidator(function (args) {
+			return new Token({text: args.text, key: args.text});
+		});
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		// create new token by user input
+		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.D });
+		this.multiInput1._$input.focus().trigger(oFakeKeydown).val("D").trigger("input");
+		qutils.triggerKeydown(this.multiInput1.getFocusDomRef(), KeyCodes.ENTER);
+		sap.ui.getCore().applyChanges();
+
+		// move to previous token and than back to the newly added
+		this.multiInput1.getTokens()[3].focus();
+		qutils.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.ARROW_LEFT);
+		qutils.triggerKeydown(this.multiInput1.getDomRef(), KeyCodes.ARROW_RIGHT);
+
+		// Assert
+		assert.strictEqual(this.multiInput1.getTokens().length, 4, "4 tokens");
+	});
+
 	QUnit.test("onsapenter on mobile device", function (assert) {
 		// Setup
 		var oMI, sValue, oPickerTextFieldDomRef, sOpenState;
