@@ -13,14 +13,10 @@ sap.ui.define([
 		"Write via application groups with SubmitMode.Auto/.Direct");
 
 	//*****************************************************************************
-	if (TestUtils.isRealOData()) {
-		[
-			"myAutoGroup", "$auto", "$auto.foo", "myDirectGroup", "$direct"
-		].forEach(function (sGroupId) {
-			opaTest("POST/PATCH SalesOrder via group: " + sGroupId,
-				WriteNonDeferredGroupTest.writeNonDeferredGroup.bind(null, sGroupId, ""));
-		});
-	} else {
-		QUnit.skip("Tests run only with realOData=true");
-	}
+	[
+		"myAutoGroup", "$auto", "$auto.foo", "myDirectGroup", "$direct"
+	].forEach(function (sGroupId) {
+		opaTest("POST/PATCH SalesOrder via group: " + sGroupId,
+			WriteNonDeferredGroupTest.writeNonDeferredGroup.bind(null, sGroupId, ""));
+	});
 });

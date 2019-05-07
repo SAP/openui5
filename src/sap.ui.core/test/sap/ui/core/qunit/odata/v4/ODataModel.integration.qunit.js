@@ -689,7 +689,7 @@ sap.ui.define([
 		 * @param {string} sViewXML The view content as XML
 		 * @param {sap.ui.model.odata.v4.ODataModel} [oModel] The model; it is attached to the view
 		 *   and to the test instance.
-		 *   If no model is given, the <code>TEA_BUSI</code> model is created and used.
+		 *   If no model is given, <code>createTeaBusiModel</code> is used.
 		 * @param {object} [oController]
 		 *   An object defining the methods and properties of the controller
 		 * @returns {Promise} A promise that is resolved when the view is created and all expected
@@ -812,10 +812,10 @@ sap.ui.define([
 					mResponseHeaders = oExpectedRequest.responseHeaders;
 					delete oExpectedRequest.response;
 					delete oExpectedRequest.responseHeaders;
-					if (oExpectedRequest.batchNo) {
+					if ("batchNo" in oExpectedRequest) {
 						oActualRequest.batchNo = that.iBatchNo;
 					}
-					if (oExpectedRequest.changeSetNo) {
+					if ("changeSetNo" in oExpectedRequest) {
 						oActualRequest.changeSetNo = iChangeSetNo;
 					}
 					assert.deepEqual(oActualRequest, oExpectedRequest, sMethod + " " + sUrl);
@@ -1048,7 +1048,7 @@ sap.ui.define([
 			vRequest.headers = vRequest.headers || {};
 			vRequest.payload = vRequest.payload || undefined;
 			vRequest.responseHeaders = mResponseHeaders || {};
-			vRequest.response = oResponse;
+			vRequest.response = oResponse || {/*null object pattern*/};
 			vRequest.url = vRequest.url.replace(/ /g, "%20");
 			this.aRequests.push(vRequest);
 
@@ -1533,9 +1533,7 @@ sap.ui.define([
 						url : "EMPLOYEES('0')?foo=bar",
 						headers : {"If-Match" : "ETag0"},
 						payload : {"AGE" : 10}
-					}, {
-						"AGE" : 10
-					})
+					}) // 204 No Content
 					.expectChange("age", "10", 0); // caused by setValue
 
 				that.oView.byId("table").getItems()[0].getCells()[1].getBinding("value")
@@ -2015,7 +2013,7 @@ sap.ui.define([
 			.expectChange("name", ["Jonathan Smith", "Frederic Fall"])
 			.expectMessages([oMessage1]);
 
-		return this.createView(assert, sView, createTeaBusiModel()).then(function () {
+		return this.createView(assert, sView).then(function () {
 			oTable = that.oView.byId("table");
 
 			return that.checkValueState(assert, oTable.getRows()[1].getCells()[0],
@@ -2926,7 +2924,7 @@ sap.ui.define([
 					method : "PATCH",
 					url : "EMPLOYEES('2')",
 					payload : {"Name" : "Jonathan Schmidt"}
-				}, /*empty 204 response*/ undefined)
+				}) // 204 No Content
 				.expectChange("text", "Jonathan Schmidt");
 
 			// code under test
@@ -12486,7 +12484,7 @@ sap.ui.define([
 			.expectChange("text", ["Jonathan Smith", "Frederic Fall", "Peter Burke"], 1)
 			.expectChange("age", ["50", "70", "77"], 1);
 
-		return this.createView(assert, sView, createTeaBusiModel()).then(function () {
+		return this.createView(assert, sView).then(function () {
 			that.expectChange("count", "4");
 
 			that.oView.byId("count").setBindingContext(
@@ -12550,7 +12548,7 @@ sap.ui.define([
 		this.expectChange("text", false)
 			.expectChange("age", false);
 
-		return this.createView(assert, sView, createTeaBusiModel()).then(function () {
+		return this.createView(assert, sView).then(function () {
 			var oListBinding = that.oView.byId("table").getBinding("items"),
 				oMeasureRangePromise;
 
@@ -13026,7 +13024,7 @@ sap.ui.define([
 					method : "PATCH",
 					url : "Artists(ArtistID='42',IsActiveEntity=false)",
 					payload : {"Name" : "The Beatles (modified)"}
-				}, {})
+				}) // 204 No Content
 				.expectChange("name", "The Beatles (modified)");
 
 			that.oView.byId("name").getBinding("value").setValue("The Beatles (modified)");
