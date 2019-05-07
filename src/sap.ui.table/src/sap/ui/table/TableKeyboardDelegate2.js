@@ -330,7 +330,7 @@ sap.ui.define([
 	 * @private
 	 * @static
 	 */
-	TableKeyboardDelegate._focusCell = function(oTable, iCellType, iRowIndex, iColumnIndex, bFirstInteractiveElement) {
+	TableKeyboardDelegate._focusCell = function(oTable, iCellType, iRowIndex, iColumnIndex, bFirstInteractiveElement, bAllowActionMode) {
 		if (!oTable
 			|| iCellType == null
 			|| iRowIndex == null || iRowIndex < 0 || iRowIndex >= oTable.getRows().length) {
@@ -367,6 +367,9 @@ sap.ui.define([
 			}
 		}
 
+		if (bAllowActionMode) {
+			oTable._getKeyboardExtension()._bStayInActionMode = true;
+		}
 		oCell.focus();
 	};
 
@@ -835,6 +838,7 @@ sap.ui.define([
 		var bIsRowSelectorCell = oCellInfo.isOfType(CellType.ROWHEADER)
 								 && !bIsRowHeaderCellInGroupHeaderRow
 								 && TableUtils.isRowSelectorSelectionAllowed(this);
+		var bCellAllowsActionMode = oCellInfo.isOfType(CellType.DATACELL) && this._getKeyboardExtension()._bStayInActionMode;
 		var bParentIsAContentCell = TableUtils.getCellInfo(TableUtils.getParentCell(this, oEvent.target)).isOfType(CellType.ANYCONTENTCELL);
 		var bIsInteractiveElement = TableKeyboardDelegate._isElementInteractive(oEvent.target);
 		var bIsInActionMode = this._getKeyboardExtension().isInActionMode();
@@ -844,8 +848,12 @@ sap.ui.define([
 		// - Group row header cell; If the table is in action mode.
 		// - Row selector cell; If the table is in action mode and row selection with row headers is possible.
 		// - Interactive element inside a content cell.
-		var bShouldBeInActionMode = (bIsInActionMode && (bIsRowHeaderCellInGroupHeaderRow || bIsRowSelectorCell)
+		var bShouldBeInActionMode = (bIsInActionMode && (bIsRowHeaderCellInGroupHeaderRow || bIsRowSelectorCell || bCellAllowsActionMode)
 									 || (bIsInteractiveElement && bParentIsAContentCell));
+
+		if (bCellAllowsActionMode) {
+			this._getKeyboardExtension()._bStayInActionMode = false;
+		}
 
 		// Enter or leave the action mode silently (onfocusin will be skipped).
 		this._getKeyboardExtension().setActionMode(bShouldBeInActionMode, false);
@@ -1031,6 +1039,7 @@ sap.ui.define([
 
 		if (oKeyboardExtension.isInActionMode()) {
 			var $InteractiveElement;
+
 			$Cell = TableUtils.getCell(this, oEvent.target);
 			oCellInfo = TableUtils.getCellInfo($Cell);
 
@@ -1047,55 +1056,40 @@ sap.ui.define([
 				var bIsLastScrollableRow = TableUtils.isLastScrollableRow(this, $Cell);
 				var bIsAbsoluteLastRow = this._getTotalRowCount() - 1 === iAbsoluteRowIndex;
 				var bTableHasRowSelectors = TableUtils.isRowSelectorSelectionAllowed(this);
-				var bScrolled = false;
 
-				if (!bIsAbsoluteLastRow && bIsLastScrollableRow) {
-					// The FocusHandler triggers the "sapfocusleave" event in a timeout of 0ms after a blur event. To give the control in the cell
-					// enough time to react to the "sapfocusleave" event (e.g. sap.m.Input - changes its value), scrolling is performed
-					// asynchronously.
-					var bAllowSapFocusLeave = oCellInfo.isOfType(CellType.DATACELL);
-					bScrolled = this._getScrollExtension().scrollVertically(true, false, true, bAllowSapFocusLeave, function() {
-						if (bAllowSapFocusLeave) {
-							document.activeElement.blur();
-						}
-					});
-				}
-
+				oEvent.preventDefault();
 				if (bIsAbsoluteLastRow) {
-					oEvent.preventDefault();
 					oKeyboardExtension.setActionMode(false);
+				} else if (bIsLastScrollableRow) {
+					scrollDownAndFocus(this, oCellInfo, bTableHasRowSelectors, oCellInfo.rowIndex, oRow);
+				} else {
+					var iRowIndex = oCellInfo.rowIndex;
 
-				} else if (bScrolled) {
-					oEvent.preventDefault();
-
-					this.attachEventOnce("_rowsUpdated", function() {
-						setTimeout(function() {
-							var bScrolledRowIsGroupHeaderRow = TableUtils.Grouping.isGroupingRow(oRow.getDomRef());
-
-							if (bTableHasRowSelectors || bScrolledRowIsGroupHeaderRow) {
-								TableKeyboardDelegate._focusCell(this, CellType.ROWHEADER, oCellInfo.rowIndex);
-							} else {
-								$InteractiveElement = TableKeyboardDelegate._getFirstInteractiveElement(oRow);
-								TableKeyboardDelegate._focusElement(this, $InteractiveElement[0]);
-							}
-						}.bind(this), 0);
-					}.bind(this));
-
-				} else { // Not absolute last row and not scrolled.
-					oEvent.preventDefault();
-
-					var iNextRowIndex = oCellInfo.rowIndex + 1;
-					var oNextRow = this.getRows()[iNextRowIndex];
-					var bNextRowIsGroupHeaderRow = TableUtils.Grouping.isGroupingRow(oNextRow.getDomRef());
-
-					if (bTableHasRowSelectors || bNextRowIsGroupHeaderRow) {
-						TableKeyboardDelegate._focusCell(this, CellType.ROWHEADER, iNextRowIndex);
+					if (bTableHasRowSelectors) {
+						TableKeyboardDelegate._focusCell(this, CellType.ROWHEADER, iRowIndex + 1);
 					} else {
-						$InteractiveElement = TableKeyboardDelegate._getFirstInteractiveElement(oNextRow);
-						TableKeyboardDelegate._focusElement(this, $InteractiveElement[0]);
+						var iVisibleRowCount = this.getVisibleRowCount();
+						var bRowIsGroupHeaderRow = false;
+
+						for (var i = oCellInfo.rowIndex + 1; i < iVisibleRowCount; i++) {
+							iRowIndex = i;
+							oRow = this.getRows()[iRowIndex];
+							$InteractiveElement = TableKeyboardDelegate._getFirstInteractiveElement(oRow);
+							bRowIsGroupHeaderRow = TableUtils.Grouping.isGroupingRow(oRow.getDomRef());
+							if ($InteractiveElement || bRowIsGroupHeaderRow) {
+								break;
+							}
+						}
+
+						if ($InteractiveElement) {
+							TableKeyboardDelegate._focusElement(this, $InteractiveElement[0]);
+						} else if (bRowIsGroupHeaderRow) {
+							TableKeyboardDelegate._focusCell(this, CellType.ROWHEADER, iRowIndex);
+						} else {
+							scrollDownAndFocus(this, oCellInfo, bTableHasRowSelectors, iRowIndex, oRow);
+						}
 					}
 				}
-
 			} else if (oCellInfo.isOfType(CellType.ROWHEADER)) {
 				oEvent.preventDefault();
 				$InteractiveElement = TableKeyboardDelegate._getFirstInteractiveElement(oRow);
@@ -1133,6 +1127,58 @@ sap.ui.define([
 		}
 	};
 
+	function scrollDownAndFocus(oTable, oCellInfo, bTableHasRowSelectors, iRowIndex, oRow) {
+		// The FocusHandler triggers the "sapfocusleave" event in a timeout of 0ms after a blur event. To give the control in the cell
+		// enough time to react to the "sapfocusleave" event (e.g. sap.m.Input - changes its value), scrolling is performed
+		// asynchronously.
+		var bAllowSapFocusLeave = oCellInfo.isOfType(CellType.DATACELL);
+		var oKeyboardExtension = oTable._getKeyboardExtension();
+		var bScrolled = oTable._getScrollExtension().scrollVertically(true, false, true, bAllowSapFocusLeave, function() {
+			if (bAllowSapFocusLeave) {
+				document.activeElement.blur();
+			}
+		});
+
+		if (bScrolled) {
+			oTable.attachEventOnce("_rowsUpdated", function () {
+				setTimeout(function () {
+					var bIsGroupHeaderRow = TableUtils.Grouping.isGroupingRow(oRow.getDomRef());
+
+					setFocusNext(oTable, oRow, iRowIndex, bTableHasRowSelectors, bIsGroupHeaderRow);
+				}, 0);
+			});
+		} else if (oRow.getIndex() !== oTable._getTotalRowCount() - 1) {
+			// in case there are fixed bottom rows and the table cannot be scrolled anymore set the focus on the first fixed bottom row
+			var iNextRowIndex = oCellInfo.rowIndex + 1;
+			var oNextRow = oTable.getRows()[iNextRowIndex];
+			var bNextRowIsGroupHeaderRow = TableUtils.Grouping.isGroupingRow(oNextRow.getDomRef());
+
+			setFocusNext(oTable, oNextRow, iNextRowIndex, bTableHasRowSelectors, bNextRowIsGroupHeaderRow);
+		} else {
+			// if the absolute last index is reached and no interactive elements are found -> leave action mode
+			oKeyboardExtension.setActionMode(false);
+		}
+	}
+
+	function setFocusNext(oTable, oRow, iRowIndex, bTableHasRowSelectors, bIsGroupHeaderRow) {
+		var oKeyboardExtension = oTable._getKeyboardExtension();
+
+		if (bTableHasRowSelectors || bIsGroupHeaderRow) {
+			TableKeyboardDelegate._focusCell(oTable, CellType.ROWHEADER, iRowIndex);
+		} else {
+			var $InteractiveElement = TableKeyboardDelegate._getFirstInteractiveElement(oRow);
+
+			if ($InteractiveElement) {
+				TableKeyboardDelegate._focusElement(oTable, $InteractiveElement[0]);
+			} else {
+				TableKeyboardDelegate._focusCell(oTable, CellType.DATACELL, iRowIndex, 0, false, true);
+				if (oRow.getIndex() === oTable._getTotalRowCount() - 1) {
+					oKeyboardExtension.setActionMode(false);
+				}
+			}
+		}
+	}
+
 	TableKeyboardDelegate.prototype.onsaptabprevious = function(oEvent) {
 		var oKeyboardExtension = this._getKeyboardExtension();
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
@@ -1140,6 +1186,7 @@ sap.ui.define([
 
 		if (oKeyboardExtension.isInActionMode()) {
 			var $InteractiveElement;
+
 			$Cell = TableUtils.getCell(this, oEvent.target);
 			oCellInfo = TableUtils.getCellInfo($Cell);
 
@@ -1159,55 +1206,36 @@ sap.ui.define([
 				oEvent.preventDefault();
 				TableKeyboardDelegate._focusCell(this, CellType.ROWHEADER, oCellInfo.rowIndex);
 
-			} else if ((bIsFirstInteractiveElementInRow && !bRowHasInteractiveRowHeader) || oCellInfo.isOfType(CellType.ROWHEADER)) {
+			} else if ((bIsFirstInteractiveElementInRow && !bRowHasInteractiveRowHeader) || oCellInfo.isOfType(CellType.ROWHEADER) || $FirstInteractiveElement === null) {
 				var bIsFirstScrollableRow = TableUtils.isFirstScrollableRow(this, $Cell);
 				var bIsAbsoluteFirstRow = iAbsoluteRowIndex === 0;
-				var bScrolled = false;
 
-				if (!bIsAbsoluteFirstRow && bIsFirstScrollableRow) {
-					// The FocusHandler triggers the "sapfocusleave" event in a timeout of 0ms after a blur event. To give the control in the cell
-					// enough time to react to the "sapfocusleave" event (e.g. sap.m.Input - changes its value), scrolling is performed
-					// asynchronously.
-					var bAllowSapFocusLeave = oCellInfo.isOfType(CellType.DATACELL);
-					bScrolled = this._getScrollExtension().scrollVertically(false, false, true, bAllowSapFocusLeave, function() {
-						if (bAllowSapFocusLeave) {
-							document.activeElement.blur();
-						}
-					});
-				}
-
+				oEvent.preventDefault();
 				if (bIsAbsoluteFirstRow) {
-					oEvent.preventDefault();
 					oKeyboardExtension.setActionMode(false);
 
-				} else if (bScrolled) {
-					oEvent.preventDefault();
+				} else if (bIsFirstScrollableRow) {
+					scrollUpAndFocus(this, oCellInfo, bRowHasInteractiveRowHeader, oCellInfo.rowIndex, oRow);
+				} else {
+					var iRowIndex = oCellInfo.rowIndex;
+					var bRowIsGroupHeaderRow = false;
 
-					this.attachEventOnce("_rowsUpdated", function() {
-						setTimeout(function() {
-							var bScrolledRowIsGroupHeaderRow = TableUtils.Grouping.isGroupingRow(oRow.getDomRef());
+					for (var i = oCellInfo.rowIndex - 1; i >= 0; i--) {
+						iRowIndex = i;
+						oRow = this.getRows()[iRowIndex];
+						$InteractiveElement = TableKeyboardDelegate._getLastInteractiveElement(oRow);
+						bRowIsGroupHeaderRow = TableUtils.Grouping.isGroupingRow(oRow.getDomRef());
+						if ($InteractiveElement || bRowHasInteractiveRowHeader || bRowIsGroupHeaderRow) {
+							break;
+						}
+					}
 
-							if (bScrolledRowIsGroupHeaderRow) {
-								TableKeyboardDelegate._focusCell(this, CellType.ROWHEADER, oCellInfo.rowIndex);
-							} else {
-								$InteractiveElement = TableKeyboardDelegate._getLastInteractiveElement(oRow);
-								TableKeyboardDelegate._focusElement(this, $InteractiveElement[0]);
-							}
-						}.bind(this), 0);
-					}.bind(this));
-
-				} else { // Not absolute first row and not scrolled.
-					oEvent.preventDefault();
-
-					var iPreviousRowIndex = oCellInfo.rowIndex - 1;
-					var oPreviousRow = this.getRows()[iPreviousRowIndex];
-					var bPreviousRowIsGroupHeaderRow = TableUtils.Grouping.isGroupingRow(oPreviousRow.getDomRef());
-
-					if (bPreviousRowIsGroupHeaderRow) {
-						TableKeyboardDelegate._focusCell(this, CellType.ROWHEADER, iPreviousRowIndex);
-					} else {
-						$InteractiveElement = TableKeyboardDelegate._getLastInteractiveElement(oPreviousRow);
+					if ($InteractiveElement) {
 						TableKeyboardDelegate._focusElement(this, $InteractiveElement[0]);
+					} else if (bRowIsGroupHeaderRow || bRowHasInteractiveRowHeader) {
+						TableKeyboardDelegate._focusCell(this, CellType.ROWHEADER, iRowIndex);
+					} else {
+						scrollUpAndFocus(this, oCellInfo, bRowHasInteractiveRowHeader, iRowIndex, oRow);
 					}
 				}
 
@@ -1238,6 +1266,55 @@ sap.ui.define([
 			}
 		}
 	};
+
+	function scrollUpAndFocus (oTable, oCellInfo, bRowHasInteractiveRowHeader, iRowIndex, oRow) {
+		// The FocusHandler triggers the "sapfocusleave" event in a timeout of 0ms after a blur event. To give the control in the cell
+		// enough time to react to the "sapfocusleave" event (e.g. sap.m.Input - changes its value), scrolling is performed
+		// asynchronously.
+		var bAllowSapFocusLeave = oCellInfo.isOfType(CellType.DATACELL);
+		var oKeyboardExtension = oTable._getKeyboardExtension();
+		var bScrolled = oTable._getScrollExtension().scrollVertically(false, false, true, bAllowSapFocusLeave, function() {
+			if (bAllowSapFocusLeave) {
+				document.activeElement.blur();
+			}
+		});
+
+		if (bScrolled) {
+			oTable.attachEventOnce("_rowsUpdated", function() {
+				setTimeout(function() {
+					var bIsGroupHeaderRow = TableUtils.Grouping.isGroupingRow(oRow.getDomRef());
+
+					setFocusPrevious(oTable, oRow, iRowIndex, bRowHasInteractiveRowHeader, bIsGroupHeaderRow);
+				}, 0);
+			});
+		} else if (oRow.getIndex() !== 0) {
+			// in case there are fixed top rows and the table cannot be scrolled anymore set the focus on the last fixed top row
+			var iPreviousRowIndex = oCellInfo.rowIndex - 1;
+			var oPreviousRow = oTable.getRows()[iPreviousRowIndex];
+			var bPreviousRowIsGroupHeaderRow = TableUtils.Grouping.isGroupingRow(oPreviousRow.getDomRef());
+
+			setFocusPrevious(oTable, oPreviousRow, iPreviousRowIndex, bRowHasInteractiveRowHeader, bPreviousRowIsGroupHeaderRow);
+		} else {
+			// if the absolute first index is reached and no interactive elements are found -> leave action mode
+			oKeyboardExtension.setActionMode(false);
+		}
+	}
+
+	function setFocusPrevious(oTable, oRow, iRowIndex, bRowHasInteractiveRowHeader, bIsGroupHeaderRow) {
+		var oKeyboardExtension = oTable._getKeyboardExtension();
+		var $InteractiveElement = TableKeyboardDelegate._getLastInteractiveElement(oRow);
+
+		if ($InteractiveElement) {
+			TableKeyboardDelegate._focusElement(oTable, $InteractiveElement[0]);
+		} else if (bRowHasInteractiveRowHeader || bIsGroupHeaderRow){
+			TableKeyboardDelegate._focusCell(oTable, CellType.ROWHEADER, iRowIndex);
+		} else {
+			TableKeyboardDelegate._focusCell(oTable, CellType.DATACELL, iRowIndex, 0, false, true);
+			if (oRow.getIndex() === 0) {
+				oKeyboardExtension.setActionMode(false);
+			}
+		}
+	}
 
 	TableKeyboardDelegate.prototype.onsapdown = function(oEvent) {
 		TableKeyboardDelegate._navigate(this, oEvent, NavigationDirection.DOWN);
