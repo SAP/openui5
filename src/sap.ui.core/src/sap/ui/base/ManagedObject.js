@@ -4823,6 +4823,10 @@ sap.ui.define([
 	 * <li>The boolean value <code>cloneChildren</code> specifies whether associations/aggregations will be cloned</li>
 	 * <li>The boolean value <code>cloneBindings</code> specifies if bindings will be cloned</li>
 	 * </ul>
+	 * Note:
+	 * In case the configuration <code>oOptions</code> is specified, the default values <code>true</code> no longer apply,
+	 * which means in case <code>cloneChildren</code> or <code>cloneBindings</code> is not specified, then this ia
+	 * assumed to be <code>false</code> and associations/aggregations or bindings are not cloned.
 	 *
 	 * For each cloned object the following settings are cloned based on the metadata of the object and the defined options:
 	 * <ul>
@@ -4859,9 +4863,11 @@ sap.ui.define([
 	 *
 	 * @param {string} [sIdSuffix] a suffix to be appended to the cloned object ID
 	 * @param {string[]} [aLocalIds] an array of local IDs within the cloned hierarchy (internally used)
-	 * @param {Object} [oOptions] configuration object
-	 * @param {boolean} [cloneChildren=true] Whether associations and aggregations will be cloned
-	 * @param {boolean} [cloneBindings=true] Whether bindings will be cloned
+	 * @param {Object} [oOptions='\{cloneChildren:true, cloneBindings:true\}'] Configuration object; when
+	 *                      omitted, both properties default to <code>true</code>; when specified,
+	 *                      undefined properties default to <code>false</code>
+	 * @param {boolean} [oOptions.cloneChildren=false] Whether associations and aggregations will be cloned
+	 * @param {boolean} [oOptions.cloneBindings=false] Whether bindings will be cloned
 	 * @returns {sap.ui.base.ManagedObject} Reference to the newly created clone
 	 * @protected
 	 */
