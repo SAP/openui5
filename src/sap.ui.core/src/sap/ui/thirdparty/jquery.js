@@ -209,10 +209,15 @@ jQuery.extend = jQuery.fn.extend = function() {
 				src = target[ name ];
 				copy = options[ name ];
 
+				// ##### BEGIN: MODIFIED BY SAP
+				// Prevent Object.prototype pollution for $.extend( true, ... )
+				// For further information, please visit https://github.com/jquery/jquery/pull/4333
+				// Code taken from jQuery v3.4.0
 				// Prevent never-ending loop
-				if ( target === copy ) {
+				if ( name === "__proto__" || target === copy ) {
 					continue;
 				}
+				// ##### END: MODIFIED BY SAP
 
 				// Recurse if we're merging plain objects or arrays
 				if ( deep && copy && ( jQuery.isPlainObject( copy ) ||
