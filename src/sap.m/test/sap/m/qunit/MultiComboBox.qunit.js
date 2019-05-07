@@ -5820,6 +5820,32 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("The tokens are rendered after opening the picker", function (assert) {
+		//arrange
+		var aTokens,
+			aItems = [
+				new Item("mcb-it1", {text: "text 1"}),
+				new Item("mcb-it2", {text: "text 2"})
+			], oMCB = new MultiComboBox({
+				width: "20rem",
+				items: aItems,
+				selectedItems: ["mcb-it1", "mcb-it2"]
+			});
+
+		oMCB.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		oMCB.open();
+		this.clock.tick();
+
+		aTokens = oMCB._oTokenizer.getTokens();
+		assert.ok(aTokens[0].getDomRef(), "The first token is rendered");
+		assert.ok(aTokens[1].getDomRef(), "The second token is rendered");
+
+		// clean up
+		oMCB.destroy();
+	});
+
 	QUnit.module("setFilter", {
 		beforeEach: function () {
 			this.oMultiComboBox = new MultiComboBox({
@@ -6057,6 +6083,53 @@ sap.ui.define([
 		assert.strictEqual(isNaN(parseInt(output)), false, "_calculateSpaceForTokenizer returns a valid value");
 
 		oMultiComboBox.destroy();
+	});
+
+	QUnit.test("N-more popover transition from read-only to edit mode", function (assert) {
+		//arrange
+		var oReadOnlyPopover,
+			aReadOnlyContent,
+			aEditModeContent,
+			aItems = [
+				new Item("it1", {text: "this is a long text"}),
+				new Item("it2", {text: "this is another long text"})
+			], oMCB = new MultiComboBox({
+				width: "8rem",
+				editable: false,
+				items: aItems,
+				selectedItems: ["it1", "it2"]
+			});
+
+		oMCB.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		oMCB._oTokenizer._oIndicator.click();
+		this.clock.tick(200);
+
+		oReadOnlyPopover = oMCB._getReadOnlyPopover();
+		aReadOnlyContent = oReadOnlyPopover.getContent();
+		assert.strictEqual(aReadOnlyContent.length, 1, "The read-only popover has content.");
+		assert.ok(aReadOnlyContent[0].isA("sap.m.List"), "The read-only popover aggregated a list.");
+		assert.strictEqual(aReadOnlyContent[0].getMode(), "None", "The list is in mode 'None'.");
+		assert.strictEqual(aReadOnlyContent[0].getItems().length, 2, "The list has 2 items.");
+
+		oReadOnlyPopover.close();
+		oMCB.setEditable(true);
+		sap.ui.getCore().applyChanges();
+
+		oMCB._oTokenizer._oIndicator.click();
+		this.clock.tick(200);
+
+		aEditModeContent = oMCB.getPicker().getContent();
+		assert.strictEqual(aEditModeContent.length, 1, "The popover has content.");
+		assert.ok(aEditModeContent[0].isA("sap.m.List"), "The popover aggregated a list.");
+		assert.strictEqual(aEditModeContent[0].getMode(), "MultiSelect", "The list is in mode 'MultiSelect'.");
+		assert.strictEqual(aEditModeContent[0].getItems().length, 2, "The list has 2 items.");
+		assert.ok(aEditModeContent[0].getItems()[0].getSelected(), "The first item is selected.");
+		assert.ok(aEditModeContent[0].getItems()[1].getSelected(), "The second item is selected.");
+
+		// clean up
+		oMCB.destroy();
 	});
 
 	QUnit.test("tokenizer's adjustTokensVisibility is called on initial rendering", function (assert) {
