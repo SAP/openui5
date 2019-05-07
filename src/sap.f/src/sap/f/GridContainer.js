@@ -9,9 +9,7 @@ sap.ui.define([
 	"sap/f/GridContainerRenderer",
 	"sap/ui/Device",
 	"sap/ui/layout/cssgrid/VirtualGrid",
-	"sap/f/GridContainerSettings",
-	"sap/ui/dom/units/Rem",
-	"sap/base/Log"
+	"sap/f/GridContainerSettings"
 
 ], function (Control,
              ManagedObjectObserver,
@@ -20,9 +18,7 @@ sap.ui.define([
              GridContainerRenderer,
              Device,
 			 VirtualGrid,
-			 GridContainerSettings,
-			 Rem,
-			 Log) {
+			 GridContainerSettings) {
 	"use strict";
 
 	var EDGE_VERSION_WITH_GRID_SUPPORT = 16;
@@ -40,16 +36,6 @@ sap.ui.define([
 	function hasItemAutoHeight(item) {
 		var layoutData = item.getLayoutData();
 		return layoutData ? layoutData.hasAutoHeight() : true;
-	}
-
-	function calcChildrenHeight($item) {
-		var height = 0;
-
-		$item.children().each(function () {
-			height += jQuery(this).height();
-		});
-
-		return height;
 	}
 
 	/**
@@ -250,16 +236,17 @@ sap.ui.define([
 	};
 
 	GridContainer.prototype._onAfterItemRendering = function () {
-
 		var container = this.getParent();
 
+		container._resizeListeners[this.getId()] = ResizeHandler.register(this, container._resizeItemHandler);
+
+		container._setItemNavigationItems();
+
 		if (!isGridSupportedByBrowser()) {
-			container._applyIEPolyfillForItem(this);
-			container._applyIEPolyfillLayout();
+			container._scheduleIEPolyfill();
+			return;
 		}
 
-		container._resizeListeners[this.getId()] = ResizeHandler.register(this, container._resizeItemHandler);
-		container._setItemNavigationItems();
 		container._applyItemAutoRows(this);
 	};
 
@@ -409,7 +396,7 @@ sap.ui.define([
 
 	GridContainer.prototype._resizeItem = function (oEvent) {
 		if (!isGridSupportedByBrowser()) {
-			this._applyIEPolyfillLayout();
+			this._scheduleIEPolyfill();
 			return;
 		}
 
@@ -422,8 +409,7 @@ sap.ui.define([
 		}
 
 		if (!isGridSupportedByBrowser()) {
-			this.getItems().forEach(this._applyIEPolyfillForItem.bind(this));
-			this._applyIEPolyfillLayout();
+			this._scheduleIEPolyfill(bSettingsAreChanged);
 			return;
 		}
 
@@ -487,28 +473,26 @@ sap.ui.define([
 	 * ===================== IE11 Polyfill =====================
 	 */
 
-	GridContainer.prototype._applyIEPolyfillForItem = function (oItem) {
-		var oSettings = this.getActiveLayoutSettings(),
-			itemWidth = oSettings.getColumnSizeInPx(),
-			itemHeight = oSettings.getRowSizeInPx(),
-			gapSize = oSettings.getGapInPx(),
-			itemColumnCount = getItemColumnCount(oItem),
-			width = itemColumnCount * itemWidth + (itemColumnCount - 1) * gapSize,
-			css = {
-				top: 0,
-				left: 0,
-				width: width,
-				position: 'absolute'
-			};
-
-		if (!hasItemAutoHeight(oItem)) {
-			var itemRowCount = getItemRowCount(oItem);
-			css.height = itemRowCount * itemHeight + (itemRowCount - 1) * gapSize;
+	/**
+	 * Schedule the application of the IE polyfill for the next tick.
+	 * @param {boolean} bImmediately If set to true - apply the polyfill immediately.
+	 */
+	GridContainer.prototype._scheduleIEPolyfill = function (bImmediately) {
+		if (this._iPolyfillCallId) {
+			clearTimeout(this._iPolyfillCallId);
 		}
 
-		oItem.$().parent().css(css);
+		if (bImmediately) {
+			this._applyIEPolyfillLayout();
+			return;
+		}
+
+		this._iPolyfillCallId = setTimeout(this._applyIEPolyfillLayout.bind(this), 0);
 	};
 
+	/**
+	 * Calculates absolute positions for items, so it mimics a css grid.
+	 */
 	GridContainer.prototype._applyIEPolyfillLayout = function () {
 		if (!this._isRenderingFinished) {
 			return;
@@ -516,14 +500,13 @@ sap.ui.define([
 
 		var $that = this.$(),
 			oSettings = this.getActiveLayoutSettings(),
-			itemWidth = oSettings.getColumnSizeInPx(),
-			itemHeight = oSettings.getRowSizeInPx(),
+			columnSize = oSettings.getColumnSizeInPx(),
+			rowSize = oSettings.getRowSizeInPx(),
 			gapSize = oSettings.getGapInPx(),
 			columnsCount = oSettings.getComputedColumnsCount($that.innerWidth()),
 			topOffset = parseInt($that.css("padding-top").replace("px", "")),
 			leftOffset = parseInt($that.css("padding-left").replace("px", "")),
-			items = this.getItems(),
-			$children = this.$().children();
+			items = this.getItems();
 
 		if (!items.length) {
 			return;
@@ -532,8 +515,8 @@ sap.ui.define([
 		var virtualGrid = new VirtualGrid();
 		virtualGrid.init({
 			numberOfCols: Math.max(1, columnsCount),
-			cellWidth: itemWidth,
-			cellHeight: itemHeight,
+			cellWidth: columnSize,
+			cellHeight: rowSize,
 			unitOfMeasure: "px",
 			gapSize: gapSize,
 			topOffset: topOffset ? topOffset : 0,
@@ -545,34 +528,17 @@ sap.ui.define([
 			item,
 			virtualGridItem,
 			columns,
-			$child,
-			$card,
-			rows,
-			height,
-			itemsRows = [];
+			rows;
 
 		for (i = 0; i < items.length; i++) {
 			item = items[i];
 			columns = getItemColumnCount(item);
-			$child = jQuery($children.get(i));
 
 			if (hasItemAutoHeight(item)) {
-
-				$card = $child.find('.sapFCard');
-
-				// todo - check this
-				if ($card.length) {
-					height = $card.height();
-				} else {
-					height = calcChildrenHeight($child);
-				}
-
-				rows = oSettings.calculateRowsForItem(height);
+				rows = oSettings.calculateRowsForItem(item.$().height());
 			} else {
 				rows = getItemRowCount(item);
 			}
-
-			itemsRows[i] = rows;
 
 			virtualGrid.fitElement(i + '', columns, rows);
 		}
@@ -582,14 +548,13 @@ sap.ui.define([
 		for (i = 0; i < items.length; i++) {
 			item = items[i];
 			virtualGridItem = virtualGrid.getItems()[i];
-			$child = jQuery($children.get(i));
-			rows = itemsRows[i];
 
-			$child.css({
+			item.$().parent().css({
 				position: 'absolute',
 				top: virtualGridItem.top,
 				left: virtualGridItem.left,
-				height: rows * itemHeight + (rows - 1) * gapSize
+				width: virtualGridItem.width,
+				height: virtualGridItem.height
 			});
 		}
 
