@@ -1,7 +1,9 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/core/date/Japanese"
-], function(Japanese) {
+	"sap/ui/core/date/Japanese",
+	"sap/ui/core/date/UniversalDate",
+	"sap/ui/core/CalendarType"
+], function(Japanese, UniversalDate, CalendarType) {
 	"use strict";
 
 	// Test data
@@ -136,9 +138,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("with year without era, when year is in current era and less than 100", function (assert) {
-		var oJapaneseDate = null, oJapanese;
+		var oJapaneseDate = null,
+			iCurrentEra = UniversalDate.getCurrentEra(CalendarType.Japanese),
+			oJapanese;
 		aTestData.forEach(function(oTestDate) {
-			if (oTestDate.Japanese.era == 236) {
+			if (oTestDate.Japanese.era == iCurrentEra) {
 				oJapanese = oTestDate.Japanese;
 				oTestDate = {
 					Gregorian: oJapanese,
