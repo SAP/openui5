@@ -40,6 +40,10 @@ sap.ui.define(["sap/ui/core/UIComponent"],
 						icon: "sap-icon://sap-logo-shape"
 					},
 					{
+						name: "VENDOR_LOAD",
+						icon: "sap-icon://share-2"
+					},
+					{
 						name: "PARTNER",
 						icon: "sap-icon://supplier"
 					},
