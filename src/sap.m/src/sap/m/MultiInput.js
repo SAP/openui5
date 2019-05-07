@@ -382,9 +382,9 @@ function(
 			this.focus();
 		}
 
+		this._fillList();
 		// on mobile the list with the tokens should be updated and shown
 		if (this._bUseDialog) {
-			this._fillList();
 			this._manageListsVisibility(true/*show list with tokens*/);
 		}
 	};

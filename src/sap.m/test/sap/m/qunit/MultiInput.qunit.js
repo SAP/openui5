@@ -1700,6 +1700,21 @@ sap.ui.define([
 		oMI.destroy();
 	});
 
+	QUnit.test("Token's list + token deletion", function(assert) {
+		var aListItems,
+			oToken = new Token({text: "XXXX"});
+		this.multiInput.addToken(oToken);
+
+		// act
+		this.multiInput._fillList();
+		this.multiInput.removeToken(oToken);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		aListItems = this.multiInput._getTokensList().getItems();
+		assert.strictEqual(aListItems.length, 0, "The list item should be deleted on token deletion");
+	});
+
 	QUnit.test("Read-only popover ", function(assert) {
 		//arrange
 		var multiInput = new MultiInput({editable: true});
