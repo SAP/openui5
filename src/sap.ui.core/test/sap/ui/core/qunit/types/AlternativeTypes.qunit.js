@@ -1,6 +1,13 @@
 /*global QUnit */
-sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/testlib/TestButton"], function (JSONModel, TestButton) {
+sap.ui.define([
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/testlib/TestButton"
+], function (createAndAppendDiv, JSONModel, TestButton) {
 	"use strict";
+
+	// prepare DOM
+	createAndAppendDiv("target");
 
 	var oModel = new JSONModel({
 		teamMembers: [

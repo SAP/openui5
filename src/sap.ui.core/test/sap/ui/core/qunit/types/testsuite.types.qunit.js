@@ -19,11 +19,13 @@ sap.ui.define(function () {
 		tests: {
 			AlternativeTypes: {
 				title: "QUnit Page for AlternativeTypes",
-				beforeBootstrap: "./beforeBootstrap",
 				loader: {
 					paths: {
 						"sap/ui/testlib": "test-resources/sap/ui/core/qunit/testdata/uilib/"
 					}
+				},
+				ui5: {
+					libs: "sap.ui.testlib"
 				}
 			},
 			DataType: {
@@ -64,7 +66,6 @@ sap.ui.define(function () {
 			},
 			ValidationHooks: {
 				title: "QUnit Page for ValidationHooks",
-				beforeBootstrap: "./beforeBootstrap",
 				ui5: {
 					libs: "sap.ui.commons"
 				}

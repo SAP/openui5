@@ -1,11 +1,10 @@
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/core/mvc/View',
 	'sap/ui/qunit/QUnitUtils'
-], function(jQuery, Component, ComponentContainer, Controller, View, qutils) {
+], function(Component, ComponentContainer, Controller, View, qutils) {
 
 	"use strict";
 	/*global QUnit, sinon */
@@ -101,29 +100,32 @@ sap.ui.define([
 	// View Replacement
 
 	QUnit.test("View Replacement", function(assert) {
-		assert.ok(jQuery.sap.domById("theComponent---mainView--sub1View--customTextInCustomSub1"), "Replacement XMLView should be rendered");
-		assert.ok(!jQuery.sap.domById("theComponent---mainView--sub1View--originalSapTextInSub1"), "Original XMLView should not be rendered");
+		return oComp.getRootControl().loaded().then(function() {
+			sap.ui.getCore().applyChanges();
+			assert.ok(document.getElementById("theComponent---mainView--sub1View--customTextInCustomSub1"), "Replacement XMLView should be rendered");
+			assert.ok(!document.getElementById("theComponent---mainView--sub1View--originalSapTextInSub1"), "Original XMLView should not be rendered");
+		});
 	});
 
 
 	// View Extension
 	QUnit.test("View Extension", function(assert) {
-		assert.ok(jQuery.sap.domById("theComponent---mainView--sub2View--customFrag1BtnWithCustAction"), "XMLView Extension should be rendered");
-		assert.ok(jQuery.sap.domById("buttonWithCustomerAction"), "JSView Extension should be rendered");
+		assert.ok(document.getElementById("theComponent---mainView--sub2View--customFrag1BtnWithCustAction"), "XMLView Extension should be rendered");
+		assert.ok(document.getElementById("buttonWithCustomerAction"), "JSView Extension should be rendered");
 
 		// extension within extension
-		assert.ok(jQuery.sap.domById("__jsview1--customerButton1"), "Extension within Extension Point should be rendered");
+		assert.ok(document.getElementById("__jsview1--customerButton1"), "Extension within Extension Point should be rendered");
 
 		// extension withing fragment
-		assert.ok(jQuery.sap.domById("theComponent---mainView--customFrag1Btn"), "Extension within Fragment without id should be rendered");
-		assert.ok(jQuery.sap.domById("theComponent---mainView--frag1--customFrag1Btn"), "Extension within Fragment should be rendered");
+		assert.ok(document.getElementById("theComponent---mainView--customFrag1Btn"), "Extension within Fragment without id should be rendered");
+		assert.ok(document.getElementById("theComponent---mainView--frag1--customFrag1Btn"), "Extension within Fragment should be rendered");
 
 		// check ID prefixing of views in extensions by checking their existence
-		assert.ok(jQuery.sap.domById("theComponent---mainView--sub2View--customSubSubView1"), "XMLView Extension should be rendered");
-		assert.ok(jQuery.sap.domById("theComponent---mainView--sub2View--customSubSubView1--customFrag1Btn"), "Button of XMLView Extension should be rendered");
+		assert.ok(document.getElementById("theComponent---mainView--sub2View--customSubSubView1"), "XMLView Extension should be rendered");
+		assert.ok(document.getElementById("theComponent---mainView--sub2View--customSubSubView1--customFrag1Btn"), "Button of XMLView Extension should be rendered");
 
 		// extension within html Control
-		assert.ok(jQuery.sap.domById("theComponent---mainView--sub2View--customFrag21Btn"), "Button of XMLView Extension inside html Control should be rendered");
+		assert.ok(document.getElementById("theComponent---mainView--sub2View--customFrag21Btn"), "Button of XMLView Extension inside html Control should be rendered");
 	});
 
 
@@ -308,7 +310,7 @@ sap.ui.define([
 
 		// Extension Provider module - used for sap.ui.mvc.Controller ExtensionProvider Tests
 		var that = this;
-		sap.ui.predefine("sap/my/sync/ExtensionProvider", ['jquery.sap.global'], function(jQuery) {
+		sap.ui.predefine("sap/my/sync/ExtensionProvider", [], function() {
 			var ExtensionProvider = function() {};
 			ExtensionProvider.prototype.getControllerExtensions = that.getControllerExtensions;
 			return ExtensionProvider;
@@ -339,7 +341,7 @@ sap.ui.define([
 
 		// Extension Provider module - used for sap.ui.mvc.Controller ExtensionProvider Tests
 		var that = this;
-		sap.ui.predefine("sap/my/async/ExtensionProvider", ['jquery.sap.global'], function(jQuery) {
+		sap.ui.predefine("sap/my/async/ExtensionProvider", [], function() {
 			var ExtensionProvider = function() {};
 			ExtensionProvider.prototype.getControllerExtensions = function(sControllerName, sComponentId) {
 				if ( !(sControllerName == "testdata.customizing.sap.Sub2") ){

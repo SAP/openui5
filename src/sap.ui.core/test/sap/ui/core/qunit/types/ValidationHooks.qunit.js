@@ -1,5 +1,7 @@
 /*global QUnit */
-sap.ui.define(["sap/ui/model/json/JSONModel",
+sap.ui.define([
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/String",
 	"sap/ui/model/type/Integer",
 	"sap/ui/commons/RatingIndicator",
@@ -7,8 +9,11 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
 	"sap/ui/commons/TextField",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/ParseException"],
-	function (JSONModel, SAPString, Integer, RatingIndicator, FormatException, TextField, ValidateException, ParseException) {
+	function (createAndAppendDiv, JSONModel, SAPString, Integer, RatingIndicator, FormatException, TextField, ValidateException, ParseException) {
 	"use strict";
+
+		// prepare DOM
+		createAndAppendDiv(["target1", "target2"]);
 
 		var oModel;
 		var oTxt;
