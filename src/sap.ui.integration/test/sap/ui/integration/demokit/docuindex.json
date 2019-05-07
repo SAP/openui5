@@ -23,7 +23,8 @@
 					"sap.ui.integration.sample.TableCard",
 					"sap.ui.integration.sample.Actions",
 					"sap.ui.integration.sample.ComponentCard",
-					"sap.ui.integration.sample.CardsLayout"
+					"sap.ui.integration.sample.CardsLayout",
+					"sap.ui.integration.sample.CardParameters"
 				]
 			}
 		],
@@ -71,7 +72,12 @@
 			{
 				"id": "sap.ui.integration.sample.CardsLayout",
 				"name": "Cards in GridContainer",
-				"description": "Cards can be arranged using sap.f.GridContainer"
+				"description": "Cards can be arranged using sap.f.GridContainer."
+			},
+			{
+				"id": "sap.ui.integration.sample.CardParameters",
+				"name": "Card Parameters",
+				"description": "This example demonstrates how to use standard parameters, or define and use additional card parameters."
 			}
 		]
 	}
