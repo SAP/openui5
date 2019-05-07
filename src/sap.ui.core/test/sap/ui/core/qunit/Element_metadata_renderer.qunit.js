@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/Renderer',
@@ -229,6 +229,34 @@ sap.ui.define([
 				});
 			});
 		}
+	});
+
+	QUnit.test("Renderer.extend complains about undefined values", function(assert) {
+
+		var fnAssertSpy = this.spy(console, "assert"); // eslint-disable-line no-console
+
+		Control.extend("test.ControlWithUndefinedRenderFunction", {
+			renderer: {
+				render: undefined
+			}
+		});
+
+		assert.ok(fnAssertSpy.calledWithMatch(sinon.match.falsy, /oRendererInfo can be omitted or must be a plain object without any undefined property values/));
+
+	});
+
+	QUnit.test("Renderer.extend complains about non-plain renderer objects", function(assert) {
+
+		var fnAssertSpy = this.spy(console, "assert"); // eslint-disable-line no-console
+
+		Control.extend("test.ControlWithNonPlainRendererObject", {
+			renderer: Object.create({
+				render: function() {}
+			})
+		});
+
+		assert.ok(fnAssertSpy.calledWithMatch(sinon.match.falsy, /oRendererInfo can be omitted or must be a plain object without any undefined property values/));
+
 	});
 
 	QUnit.test("Renderer.extend is a generic function", function(assert) {
