@@ -1368,6 +1368,10 @@ function(
 	MultiInput.prototype.updateInputField = function(sNewValue) {
 		Input.prototype.updateInputField.call(this, sNewValue);
 		this.setDOMValue('');
+
+		if (this._oSuggPopover._oPopupInput) {
+			this._oSuggPopover._oPopupInput.setDOMValue('');
+		}
 	};
 
 	/**
