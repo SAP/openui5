@@ -65,6 +65,12 @@ sap.ui.define([
 		},
 		onSnapToRowChange: function (oEvent) {
 			this.getView().byId("demoGrid").setSnapToRow(oEvent.getParameter("state"));
+		},
+		onAllowDenseFillChange: function (oEvent) {
+			this.getView().byId("demoGrid").setAllowDenseFill(oEvent.getParameter("state"));
+		},
+		onInlineBlockLayoutChange: function (oEvent) {
+			this.getView().byId("demoGrid").setInlineBlockLayout(oEvent.getParameter("state"));
 		}
 	});
 });

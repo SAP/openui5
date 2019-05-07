@@ -158,7 +158,7 @@ sap.ui.define([
 
 				/**
 				 * If set to <code>true</code> the current range (large, medium or small) is defined by the size of the
-				 * container surrounding the <code>CSSGrid</code>, instead of the device screen size (media Query).
+				 * container surrounding the <code>GridContainer</code>, instead of the device screen size (media Query).
 				 */
 				containerQuery: { type: "boolean", group: "Behavior", defaultValue: false },
 
