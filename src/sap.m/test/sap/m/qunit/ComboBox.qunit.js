@@ -9122,6 +9122,44 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("onAfterOpen should select the value text in the input field", function (assert) {
+
+		// system under test
+		var oComboBox = new ComboBox({
+			items: [
+				new Item({
+					key: "GER",
+					text: "Germany"
+				})
+			],
+			selectedKey: "GER"
+		});
+		var oSpy = this.spy(oComboBox, "selectText");
+		var oStub = this.stub(oComboBox, "_getSelectionRange").returns({
+			start: 7,
+			end: 7
+		});
+
+		// arrange
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		oComboBox.focus();
+
+		// act
+		oComboBox.syncPickerContent();
+		oComboBox.open();
+		this.clock.tick(1000);
+
+		// assert
+		assert.strictEqual(oSpy.firstCall.args[0], 0, "Selection was called with first argument 0");
+		assert.strictEqual(oSpy.firstCall.args[1], 7, "Selection was called with second argument 7");
+
+		// cleanup
+		oSpy.restore();
+		oStub.restore();
+		oComboBox.destroy();
+	});
+
 	QUnit.module("onAfterClose");
 
 	QUnit.test("onAfterClose", function (assert) {
