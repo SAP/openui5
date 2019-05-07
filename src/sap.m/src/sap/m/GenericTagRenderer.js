@@ -27,7 +27,8 @@ sap.ui.define([
 
 	GenericTagRenderer.render = function(oRm, oControl) {
 		var aLabelledBy = this._getAriaLabelledBy(oControl),
-			oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
+			oResourceBundle = oCore.getLibraryResourceBundle("sap.m"),
+			sTooltip = oControl.getTooltip_AsString();
 
 		oRm.openStart("div", oControl);
 		oRm.class("sapMGenericTag");
@@ -40,6 +41,10 @@ sap.ui.define([
 			roledescription: oResourceBundle.getText("GENERICTAG_ROLEDESCRIPTION"),
 			labelledBy: aLabelledBy.join(" ")
 		});
+
+		if (sTooltip) {
+			oRm.writeAttributeEscaped("title", sTooltip);
+		}
 
 		oRm.openEnd();
 

@@ -280,6 +280,38 @@ sap.ui.define([
 		oGenericTag.destroy();
 	});
 
+	QUnit.module("GenericTag - setTooltip", {
+		beforeEach: function() {
+			this.oGenericTag = new GenericTag().placeAt(TESTS_DOM_CONTAINER);
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.oGenericTag.destroy();
+			this.oGenericTag = null;
+		}
+	});
+
+	QUnit.test("There should be no tooltip by default", function(assert) {
+		var oGenericTagDomRef = this.oGenericTag.getDomRef();
+		assert.ok(oGenericTagDomRef, "The Generic Tag is rendered.");
+		assert.equal(oGenericTagDomRef.getAttribute('title'), undefined, "There should be no tooltip by default");
+	});
+
+	QUnit.test("setTooltip should set the correct tooltip", function(assert) {
+		//arrange
+		var sTooltip = "This is the tooltip",
+			oGenericTagDomRef;
+
+		//act
+		this.oGenericTag.setTooltip(sTooltip);
+		oCore.applyChanges();
+		oGenericTagDomRef = this.oGenericTag.getDomRef();
+
+		//assert
+		assert.ok(oGenericTagDomRef, "The Generic Tag is rendered.");
+		assert.equal(oGenericTagDomRef.getAttribute('title'), sTooltip, "setTooltip should set the correct tooltip");
+	});
+
 	/* --------------------------- GenericTag Rendering ---------------------------------- */
 	QUnit.module("GenericTag - Rendering", {
 		beforeEach: function() {
