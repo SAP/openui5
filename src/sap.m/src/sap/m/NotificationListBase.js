@@ -221,8 +221,9 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './ListItemBase', './Text',
         NotificationListBase.prototype.close = function () {
             var parent = this.getParent();
             this.fireClose();
+            var bHasParentAfterClose = !!this.getParent(); // no parent after close means the notification is removed or destroyed - in such case move the focus
 
-            if (parent && parent instanceof Element) {
+            if (!bHasParentAfterClose && parent && parent instanceof Element) {
                 var delegate = {
                     onAfterRendering: function() {
                         parent.focus();
