@@ -39,65 +39,68 @@ sap.ui.define([
 		oRm.writeClasses();
 		oRm.write(">");
 
-		this.renderRowForm(oRm, oCreationRow, oTable);
-		this.renderToolbar(oRm, oCreationRow);
+		this.renderBeginSection(oRm, oTable);
+		this.renderMiddleSection(oRm, oCreationRow, oTable);
+		this.renderEndSection(oRm, oTable);
 
 		oTable._getAccRenderExtension().writeAccCreationRowText(oRm, oTable, oCreationRow);
 
 		oRm.write("</div>");
 	};
 
-	CreationRowRenderer.renderRowForm = function(oRm, oCreationRow, oTable) {
-		if (oCreationRow.getCells().length === 0) {
-			return;
-		}
-
-		var iFixedColumnCount = oTable.getComputedFixedColumnCount();
-
-		oRm.write("<div>");
-
-		// Needed for the left-side border of the scrollable columns, if there are no fixed columns.
+	CreationRowRenderer.renderBeginSection = function(oRm, oTable) {
 		oRm.write("<div");
+		oRm.addClass("sapUiTableCreationRowBeginSection");
 		oRm.addClass("sapUiTableRowHdrScr");
 		oRm.writeClasses();
 		oRm.write(">");
 		oRm.write("</div>");
+	};
 
-		// Fixed columns
-		if (iFixedColumnCount > 0) {
-			oRm.write("<div");
-			oRm.addClass("sapUiTableCtrlScrFixed");
-			oRm.writeClasses();
-			oRm.write(">");
-			this.renderRowFormTable(oRm, oTable, true);
-			oRm.write("</div>");
+	CreationRowRenderer.renderMiddleSection = function(oRm, oCreationRow, oTable) {
+		oRm.write("<div");
+		oRm.addClass("sapUiTableCreationRowMiddleSection");
+		oRm.writeClasses();
+		oRm.write(">");
+		this.renderForm(oRm, oCreationRow, oTable);
+		this.renderToolbar(oRm, oCreationRow);
+		oRm.write("</div>");
+	};
+
+	CreationRowRenderer.renderEndSection = function(oRm, oTable) {
+		oRm.write("<div");
+		oRm.addClass("sapUiTableCreationRowEndSection");
+		if (TableUtils.hasRowActions(oTable)) {
+			oRm.addClass("sapUiTableCell");
+			oRm.addClass("sapUiTableRowActionHeaderCell");
+		} else {
+			oRm.addClass("sapUiTableVSbBg");
+		}
+		oRm.writeClasses();
+		oRm.write(">");
+		oRm.write("</div>");
+	};
+
+	CreationRowRenderer.renderForm = function(oRm, oCreationRow, oTable) {
+		if (oCreationRow.getCells().length === 0) {
+			return;
 		}
 
-		// Scrollable columns
+		oRm.write("<div");
+		oRm.addClass("sapUiTableCreationRowForm");
+		oRm.writeClasses();
+		oRm.write(">");
+
+		if (oTable.getComputedFixedColumnCount() > 0) {
+			this.renderRowFormTable(oRm, oTable, true);
+		}
+
 		oRm.write("<div");
 		oRm.addClass("sapUiTableCtrlScr");
 		oRm.writeClasses();
-		if (iFixedColumnCount > 0) {
-			if (oTable._bRtlMode) {
-				oRm.addStyle("margin-right", "0");
-			} else {
-				oRm.addStyle("margin-left", "0");
-			}
-			oRm.writeStyles();
-		}
 		oRm.write(">");
 		this.renderRowFormTable(oRm, oTable, false);
 		oRm.write("</div>");
-
-		// Needed for the left-side border of the fixed row action column.
-		if (TableUtils.hasRowActions(oTable)) {
-			oRm.write("<div");
-			oRm.addClass("sapUiTableCell");
-			oRm.addClass("sapUiTableRowActionHeaderCell");
-			oRm.writeClasses();
-			oRm.write(">");
-			oRm.write("</div>");
-		}
 
 		oRm.write("</div>");
 	};
