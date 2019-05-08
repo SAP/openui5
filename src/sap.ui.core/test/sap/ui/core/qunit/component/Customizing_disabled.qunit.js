@@ -32,16 +32,33 @@ sap.ui.define([
 
 	// UI Construction
 
-	// load and start the customized application
-	var oComp = sap.ui.component({
-		name: "testdata.customizing.customer",
-		id: "theComponent"
-	});
-	var oCompCont = new ComponentContainer({
-		component: oComp
-	});
-	oCompCont.placeAt("content");
+	var oComp, oCompCont;
 
+	QUnit.module("", {
+		before: function() {
+			// load and start the customized application
+			return Component.create({
+				name: "testdata.customizing.customer",
+				id: "theComponent",
+				manifest: false
+			}).then(function(_oComp) {
+				oComp = _oComp;
+				oCompCont = new ComponentContainer({
+					component: oComp
+				});
+				oCompCont.placeAt("content");
+
+				// now wait for the root view to load
+				return oComp.getRootControl().loaded();
+			}).then(function() {
+				sap.ui.getCore().applyChanges();
+			});
+		},
+		after: function() {
+			oCompCont.destroy();
+			oComp.destroy();
+		}
+	});
 
 
 	// TESTS
