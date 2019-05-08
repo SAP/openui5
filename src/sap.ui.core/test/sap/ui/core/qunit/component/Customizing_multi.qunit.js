@@ -50,19 +50,41 @@ sap.ui.define([
 		}
 	});
 
-	// load and start the customized application
-	var oAnotherCompSub = sap.ui.component({
-		name: "testdata.customizing.anothersub",
-		id: "anotherComponent"
+	var oAnotherCompSub, oCompSub, oCompCont;
+
+	QUnit.module("", {
+		before: function() {
+			// load and start the customized application
+			return Promise.all([
+				Component.create({
+					name: "testdata.customizing.anothersub",
+					id: "anotherComponent",
+					manifest: false
+				}).then(function(_oComp) {
+					oAnotherCompSub = _oComp;
+				}),
+				Component.create({
+					name: "testdata.customizing.customersub",
+					id: "customerComponent",
+					manifest: false
+				}).then(function(_oComp) {
+					oCompSub = _oComp;
+					oCompCont = new ComponentContainer({
+						component: oCompSub
+					});
+					oCompCont.placeAt("content");
+					return oCompSub.getRootControl().loaded();
+				}).then(function() {
+					sap.ui.getCore().applyChanges();
+				})
+			]);
+		},
+		after: function() {
+			oCompCont.destroy();
+			oCompSub.destroy();
+			oAnotherCompSub.destroy();
+		}
 	});
-	var oCompSub = sap.ui.component({
-		name: "testdata.customizing.customersub",
-		id: "customerComponent"
-	});
-	var oCompCont = new ComponentContainer({
-		component: oCompSub
-	});
-	oCompCont.placeAt("content");
 
 
 
