@@ -785,6 +785,41 @@
 							}
 						}
 					}
+				},
+				CREATIONROW: {
+					text: "Creation Row",
+					value: function(oTable) {
+						return oTable.getCreationRow() != null;
+					},
+					input: "boolean",
+					action: function(oTable, bValue) {
+						if (bValue) {
+							sap.ui.require(["sap/ui/table/CreationRow"], function(CreationRow) {
+								var oBinding = oTable.getBinding("rows");
+								var oModel = oBinding ? oBinding.getModel() : null;
+								var oCreationContext = oModel ? oModel.createBindingContext("/new") : null;
+
+								if (oModel) {
+									oModel.setProperty("", {}, oCreationContext);
+								}
+
+								oTable.setCreationRow(new CreationRow({
+									bindingContexts: {
+										undefined: oCreationContext
+									},
+									apply: function(oEvent) {
+										var oData = oModel.getObject(oBinding.getPath());
+
+										oData.push(oCreationContext.getObject());
+										oModel.setProperty("", {}, oCreationContext);
+										oTable.setFirstVisibleRow(oTable._getMaxFirstVisibleRowIndex());
+									}
+								}));
+							});
+						} else {
+							oTable.destroyCreationRow();
+						}
+					}
 				}
 			}
 		},

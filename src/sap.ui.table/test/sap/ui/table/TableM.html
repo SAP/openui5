@@ -74,11 +74,13 @@ var oControl, oColumn;
 // sap.m.Text
 oControl = new sap.m.Text({text: "{lastName}", wrapping: false});
 oColumn = new sap.ui.table.Column({label: new sap.m.Text({text: "m.Text"}), template: oControl, sortProperty: "lastName", filterProperty: "lastName", width: "120px"});
+oColumn.setCreationTemplate(new sap.m.Input({value: "{lastName}"}));
 oTable.addColumn(oColumn);
 
 // sap.m.Label
 oControl = new sap.m.Label({text: "{name}"});
 oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.Label"}), template: oControl, sortProperty: "name", filterProperty: "name", width: "6em"});
+oColumn.setCreationTemplate(new sap.m.Input({value: "{name}"}));
 oTable.addColumn(oColumn);
 
 // sap.m.ObjectStatus
@@ -99,11 +101,13 @@ oTable.addColumn(oColumn);
 // sap.m.Input
 oControl = new sap.m.Input({value: "{name}"});
 oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.Input"}), template: oControl, width: "200px"});
+oColumn.setCreationTemplate(new sap.m.Text({value: "{name}"}));
 oTable.addColumn(oColumn);
 
 // sap.m.DatePicker
 oControl = new sap.m.DatePicker({dateValue: "{birthdayDate}"});
 oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.DatePicker"}), template: oControl, width: "200px"});
+oColumn.setCreationTemplate(new sap.m.DatePicker({dateValue: "{birthdayDate}"}));
 oTable.addColumn(oColumn);
 
 // sap.m.Select
@@ -115,6 +119,7 @@ oControl = new sap.m.Select({items: [
 ]
 });
 oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.Select"}), template: oControl, width: "150px"});
+oColumn.setCreationTemplate((new sap.m.Select({items: oControl.getItems().map(function(oItem){return oItem.clone()})})));
 oTable.addColumn(oColumn);
 
 // sap.m.ComboBox
@@ -142,6 +147,7 @@ oTable.addColumn(oColumn);
 // sap.m.Checkbox
 oControl = new sap.m.CheckBox({selected: "{checked}", text: "{lastName}"});
 oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.Checkbox"}), template: oControl, width: "50px"});
+oColumn.setCreationTemplate(new sap.m.HBox({items: [new sap.m.CheckBox({selected: "{checked}"}), new sap.m.Input({value: "{lastName}"})]}));
 oTable.addColumn(oColumn);
 
 //sap.m.RadioButton
