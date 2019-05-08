@@ -27,7 +27,7 @@
       {
         "id": "9b23babc9e99562d8edb6cc6c411a153a6189f47",
         "type": "FIX",
-        "text": "AnchorBar: Overlapping MenuButton's text is fixed",
+        "text": "AnchorBar: Overlapping MenuButton\u0027s text is fixed",
         "references": [
           {
             "type": "BCP",
@@ -320,6 +320,17 @@
             "reference": "012005041000000126732019"
           }
         ]
+      }
+    ]
+  },
+  "1.60.13": {
+    "date": "May 2019",
+    "notes": [
+      {
+        "id": "cf595d9997d736a81351c96e1203fa1aa97c1aaf",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Prevent unwanted content resize",
+        "references": []
       }
     ]
   }

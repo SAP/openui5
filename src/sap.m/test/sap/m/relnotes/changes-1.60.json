@@ -2768,5 +2768,22 @@
         "references": []
       }
     ]
+  },
+  "1.60.13": {
+    "date": "May 2019",
+    "notes": [
+      {
+        "id": "4d2e80002a46e1587c21e6761c467b6ad172d566",
+        "type": "FIX",
+        "text": " P13nDialog: navigation displaying improvements",
+        "references": []
+      },
+      {
+        "id": "5ba22763af253f73c901e688befba8f51dfd7016",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Growing property is now corrected",
+        "references": []
+      }
+    ]
   }
 }
