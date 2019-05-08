@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/core/qunit/odata/data/ODataAnnotationsFakeService",
 	"sap/ui/model/odata/ODataMetadata",
@@ -913,6 +913,7 @@ sap.ui.define([
 		return function(assert){
 			var done = assert.async();
 			var mService = aServices[0];
+			var oSpy = sinon.spy(XMLHttpRequest.prototype, "setRequestHeader");
 
 			var oModel = new ODataModel(mService.service, {
 				headers: {"sap-cancel-on-close": bCancelOnClose},
@@ -921,13 +922,14 @@ sap.ui.define([
 			});
 
 			assert.ok(oModel.getMetadata().isA("sap.ui.model.odata.v2.ODataModel"), "Model created");
-
-			var check = function(event, jqXHR, ajaxOptions){
-				jQuery(document).unbind("ajaxSuccess", check);
-				assert.strictEqual(ajaxOptions.headers["sap-cancel-on-close"], bExpectedValue, "Header was set correctly.");
+			function check() {
+				assert.strictEqual(oSpy.args[0][0], 'sap-cancel-on-close', "Header was set correctly.");
+				assert.strictEqual(oSpy.args[0][1], bExpectedValue, "Header was set correctly.");
+				oSpy.restore();
 				done();
-			};
-			jQuery(document).bind("ajaxSuccess", check);
+			}
+			oModel.annotationsLoaded()
+				.then(check);
 		};
 	};
 
