@@ -45,6 +45,9 @@ sap.ui.define([
 				component: oComp
 			});
 			oCompCont.placeAt("content");
+			return oComp.getRootControl().loaded();
+		}).then(function() {
+			sap.ui.getCore().applyChanges();
 		});
 	}
 
@@ -100,11 +103,8 @@ sap.ui.define([
 	// View Replacement
 
 	QUnit.test("View Replacement", function(assert) {
-		return oComp.getRootControl().loaded().then(function() {
-			sap.ui.getCore().applyChanges();
-			assert.ok(document.getElementById("theComponent---mainView--sub1View--customTextInCustomSub1"), "Replacement XMLView should be rendered");
-			assert.ok(!document.getElementById("theComponent---mainView--sub1View--originalSapTextInSub1"), "Original XMLView should not be rendered");
-		});
+		assert.ok(document.getElementById("theComponent---mainView--sub1View--customTextInCustomSub1"), "Replacement XMLView should be rendered");
+		assert.ok(!document.getElementById("theComponent---mainView--sub1View--originalSapTextInSub1"), "Original XMLView should not be rendered");
 	});
 
 
