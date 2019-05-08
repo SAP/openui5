@@ -3766,6 +3766,11 @@ sap.ui.define([
 						var oContext = this.getContext("/" + oRequest.key);
 						oContext.bCreated = false;
 						this._updateContext(oContext, '/' + sKey);
+						oContext.setUpdated(true);
+						// register function to reset updated flag call as callAfterUpdate
+						this.callAfterUpdate(function() {
+							oContext.setUpdated(false);
+						});
 						//delete created flag after successful creation
 						oEntity = this._getEntity(sKey);
 						if (oEntity) {
@@ -3878,11 +3883,10 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._processAfterUpdate = function() {
-		var aCallAfterUpdate = this.aCallAfterUpdate;
-		this.aCallAfterUpdate = [];
-		for (var i = 0; i < aCallAfterUpdate.length; i++) {
-			aCallAfterUpdate[i]();
+		for (var i = 0; i < this.aCallAfterUpdate.length; i++) {
+			this.aCallAfterUpdate[i]();
 		}
+		this.aCallAfterUpdate = [];
 	};
 
 	/**
