@@ -423,7 +423,6 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.HEADER_CALC_DELAY = 350;			// ms.
 	ObjectPageLayout.DOM_CALC_DELAY = 200;				// ms.
-	ObjectPageLayout.FOOTER_ANIMATION_DURATION = 350;	// ms.
 	ObjectPageLayout.MAX_SNAP_POSITION_OFFSET = 20;		// px
 	ObjectPageLayout.HEADER_MAX_ALLOWED_NON_SROLLABLE_PERCENTAGE = 0.6; // pct.
 	ObjectPageLayout.TITLE_LEVEL_AS_ARRAY = Object.keys(TitleLevel);
@@ -459,6 +458,9 @@ sap.ui.define([
 	ObjectPageLayout.DIV = "div";
 	ObjectPageLayout.HEADER = "header";
 	ObjectPageLayout.FOOTER = "section";
+
+	ObjectPageLayout.SHOW_FOOTER_CLASS_NAME = "sapUxAPObjectPageFloatingFooterShow";
+	ObjectPageLayout.HIDE_FOOTER_CLASS_NAME = "sapUxAPObjectPageFloatingFooterHide";
 
 	/**
 	 * Retrieves thе next entry starting from the given one within the <code>sap.ui.core.TitleLevel</code> enumeration.
@@ -516,6 +518,7 @@ sap.ui.define([
 		// anchorbar management
 		this._bInternalAnchorBarVisible = true;
 
+		this._$footerWrapper = [];                  //dom reference to the floating footer wrapper
 		this._$opWrapper = [];                      //dom reference to the header for Dark mode background image scrolling scenario
 		this._$anchorBar = [];                      //dom reference to the anchorBar
 		this._$headerTitle = [];                    //dom reference to the header title
@@ -1296,6 +1299,7 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._cacheDomElements = function () {
+		this._$footerWrapper = jQuery(document.getElementById(this.getId() + "-footerWrapper"));
 		this._$headerTitle = jQuery(document.getElementById(this.getId() + "-headerTitle"));
 		this._$anchorBar = jQuery(document.getElementById(this.getId() + "-anchorBar"));
 		this._$stickyAnchorBar = jQuery(document.getElementById(this.getId() + "-stickyAnchorBar"));
@@ -3696,42 +3700,58 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._toggleFooter = function (bShow) {
-		var bUseAnimations = (this.oCore.getConfiguration().getAnimationMode() !== Configuration.AnimationMode.none),
+		var bUseAnimations,
 			oFooter = this.getFooter();
 
-		if (!exists(oFooter)) {
+		if (!exists(oFooter) || !exists(this._$footerWrapper)) {
 			return;
 		}
 
-		oFooter.toggleStyleClass("sapUxAPObjectPageFloatingFooterShow", bShow);
-		oFooter.toggleStyleClass("sapUxAPObjectPageFloatingFooterHide", !bShow);
-
-		if (this._iFooterWrapperHideTimeout) {
-			clearTimeout(this._iFooterWrapperHideTimeout);
-		}
+		bUseAnimations = this.oCore.getConfiguration().getAnimationMode() !== Configuration.AnimationMode.none;
 
 		if (bUseAnimations) {
-
-			if (!bShow) {
-				this._iFooterWrapperHideTimeout = setTimeout(
-					function() {
-						toggleFooterVisibility.call(this, bShow);
-					}.bind(this), ObjectPageLayout.FOOTER_ANIMATION_DURATION);
-			} else {
-				toggleFooterVisibility.call(this, bShow);
-				this._iFooterWrapperHideTimeout = null;
-			}
-
-			setTimeout(function () {
-				oFooter.removeStyleClass("sapUxAPObjectPageFloatingFooterShow");
-			}, ObjectPageLayout.FOOTER_ANIMATION_DURATION);
-		}
-
-		if (!bUseAnimations) {
-			toggleFooterVisibility.call(this, bShow);
+			this._toggleFooterAnimation(bShow, oFooter);
+		} else {
+			this._$footerWrapper.toggleClass("sapUiHidden", !bShow);
 		}
 
 		this._requestAdjustLayout();
+	};
+
+	/**
+	 * Animates the footer.
+	 * @param {boolean} bShow
+	 * @param {object} oFooter
+	 * @private
+	 */
+	ObjectPageLayout.prototype._toggleFooterAnimation = function(bShow, oFooter) {
+
+		this._$footerWrapper.bind("webkitAnimationEnd animationend",
+		this._onToggleFooterAnimationEnd.bind(this, oFooter));
+
+		if (bShow) {
+			this._$footerWrapper.removeClass("sapUiHidden");
+		}
+
+		oFooter.toggleStyleClass(ObjectPageLayout.SHOW_FOOTER_CLASS_NAME, bShow);
+		oFooter.toggleStyleClass(ObjectPageLayout.HIDE_FOOTER_CLASS_NAME, !bShow);
+	};
+
+	/**
+	 * Footer animation end handler.
+	 * @param {object} oFooter
+	 * @private
+	 */
+	ObjectPageLayout.prototype._onToggleFooterAnimationEnd = function(oFooter) {
+
+		this._$footerWrapper.unbind("webkitAnimationEnd animationend");
+
+		if (oFooter.hasStyleClass(ObjectPageLayout.HIDE_FOOTER_CLASS_NAME)) {
+			this._$footerWrapper.addClass("sapUiHidden");
+			oFooter.removeStyleClass(ObjectPageLayout.HIDE_FOOTER_CLASS_NAME);
+		} else {
+			oFooter.removeStyleClass(ObjectPageLayout.SHOW_FOOTER_CLASS_NAME);
+		}
 	};
 
 	/**
@@ -4321,10 +4341,6 @@ sap.ui.define([
 		return Array.prototype.slice.call(arguments).every(function (oObject) {
 			return exists(oObject);
 		});
-	}
-
-	function toggleFooterVisibility (bShow) {
-		this.$("footerWrapper").toggleClass("sapUiHidden", !bShow);
 	}
 
 	return ObjectPageLayout;
