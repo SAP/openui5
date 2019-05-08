@@ -711,6 +711,72 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
+	QUnit.test("Space event should not fire press if escape is pressed and released after the Space is released", function(assert) {
+		// System under Test
+		var pressSpy = this.spy(),
+			oButton = new Button({
+				press: pressSpy
+			}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// Action
+		// first keydown on SPACE, keydown on ESCAPE, release SPACE then release ESCAPE
+		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeyup(oButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeyup(oButton.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+
+		// Assert
+		assert.equal(pressSpy.callCount, 0, "Press event should not be fired");
+
+		// Cleanup
+		oButton.destroy();
+	});
+
+	QUnit.test("Space event should not fire press if escape is pressed then Space is released and then Escape is released", function(assert) {
+		// System under Test
+		var pressSpy = this.spy(),
+			oButton = new Button({
+				press: pressSpy
+			}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// Action
+		// first keydown on SPACE, keydown on ESCAPE, release ESCAPE then release SPACE
+		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeyup(oButton.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeyup(oButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+
+		// Assert
+		assert.equal(pressSpy.callCount, 0, "Press event should not be fired");
+
+		// Cleanup
+		oButton.destroy();
+	});
+
+	QUnit.test("All keys should be ignored when Space is pressed", function(assert) {
+		// System under Test
+		var oEvent = new jQuery.Event(),
+			oSpyEvtPreventDefault = this.spy(oEvent, "preventDefault"),
+			oButton = new Button().placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// Action
+		// first keydown on SPACE, keydown on ESCAPE, release ESCAPE then release SPACE
+		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+		oButton.onkeydown(oEvent);
+
+		// Assert
+		assert.equal(oSpyEvtPreventDefault.callCount, 1, "PreventDefault is called");
+
+		// Cleanup
+		oButton.destroy();
+	});
+
 	//BCP: 1880541323
 	QUnit.test("no exception is thrown when domRef is null", function(assert) {
 		this.stub(Device, "browser", {"firefox": true});
