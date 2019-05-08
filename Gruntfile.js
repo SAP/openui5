@@ -210,7 +210,10 @@ module.exports = function(grunt) {
 			},
 			{
 					name: 'sap.ui.documentation',
-					path: 'src/sap.ui.documentation'
+					path: 'src/sap.ui.documentation',
+					jsdoc: {
+						exclude: [ 'sap/ui/documentation/sdk/thirdparty' ]
+					}
 			},
 			{
 					name: 'sap.ui.dt',

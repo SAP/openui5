@@ -1038,7 +1038,7 @@ function(
 		 * @param {string} mPropertyBag.appVersion Version to be filled into the validAppVersions object fields
 		 * @param {boolean} mPropertyBag.developerMode Flag if the creation of the object takes place in the developer mode
 		 * @param {sap.ui.fl.Scenario} mPropertyBag.scenario Depending on the scenario a 'to' field must be filled
-		 * @returns {{creation: {string}, from: {string} [,to: {string}]}}
+		 * @returns {{creation: string, from: string, to: (string|undefined)}}
 		 */
 		getValidAppVersions: function (mPropertyBag) {
 			var sAppVersion = mPropertyBag.appVersion;
