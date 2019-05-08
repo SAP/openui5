@@ -112,12 +112,18 @@ html .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar.sapMTB
 		}
 
 		&::after {
+			@sapUiFiori3ABSBTextPaddingLeft: 1rem;
+
 			content: "";
 			position: absolute;
-			width: 80%;
+			// Formula for the width is as it follows:
+			// 100% (whole width of the split button)
+			// - 0.8125rem (space between split button right edge and the right edge of the arrow icon)
+			// - 1rem (split button text padding left)
+			width: calc(~"100% - 0.8125rem - " @sapUiFiori3ABSBTextPaddingLeft);
 			top: 2.55rem;
-			left: 10%;
-			padding: (@sapUiFiori3ABUnderlineOffsetAndHeight / 2) 0;
+			left: calc(@sapUiFiori3ABSBTextPaddingLeft - @sapUiFiori3ABUnderlineOffsetAndHeight);
+			padding: (@sapUiFiori3ABUnderlineOffsetAndHeight / 2) @sapUiFiori3ABUnderlineOffsetAndHeight;
 			border-top-left-radius: @sapUiFiori3ABUnderlineTopRadius;
 			border-top-right-radius: @sapUiFiori3ABUnderlineTopRadius;
 			background-color: @sapUiActive;
