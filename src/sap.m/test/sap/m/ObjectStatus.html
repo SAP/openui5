@@ -303,9 +303,11 @@
 
 // Object Attribute inside Table
 	var data = aNotificationTypesSettings = [{
-		NotificationTypeId: "type1"
+		inverted: false,
+		text: "not inverted status - John Doe Ñagçyfox"
 		}, {
-		NotificationTypeId: "type2"
+		inverted: true,
+		text: "inverted status - John Doe Ñagçyfox"
 	}];
 	var oModel = new sap.ui.model.json.JSONModel();
 	oModel.setProperty("/rows", data);
@@ -368,34 +370,41 @@
 					state: "Error",
 					press : function() {
 						new sap.m.MessageToast.show("you click me");
-					}
+					},
+					inverted: "{inverted}"
 				}), new sap.m.ObjectStatus({
-					text : "John Doe Ñagçyfox",
+					text : "{text}",
 					state: "Success",
 					active : true,
 					press : function() {
 						new sap.m.MessageToast.show("you click me");
-					}
+					},
+					inverted: "{inverted}"
 				}), new sap.m.ObjectStatus({
 					text : "John Doe Ñagçyfox",
 					state: "Warning",
-					icon: "sap-icon://pharmacy"
+					icon: "sap-icon://pharmacy",
+					inverted: "{inverted}"
 				}), new sap.m.ObjectStatus({
 					title: "Created by",
 					text : "John Doe Ñagçyfox",
-					state: "Information"
+					state: "Information",
+					inverted: "{inverted}"
 				}), new sap.m.ObjectStatus({
 					title : "Some title",
 					state: "Success",
-					icon: "sap-icon://pharmacy"
+					icon: "sap-icon://pharmacy",
+					inverted: "{inverted}"
 				}), new sap.m.ObjectStatus({
 					active : true,
 					state: "Error",
-					icon: "sap-icon://alert"
+					icon: "sap-icon://alert",
+					inverted: "{inverted}"
 				}), new sap.m.ObjectStatus({
 					state: "Error",
 					icon: "sap-icon://alert",
-					tooltip: "Alert"
+					tooltip: "Alert",
+					inverted: "{inverted}"
 				})
 			]
 		});
@@ -457,6 +466,19 @@
 	addToPage(new sap.m.ObjectStatus({
 		text : "Ñagçyfox Contract #D1234567890",
 		active: true
+	}), oPage);
+
+	addToPage(new sap.m.ObjectStatus({
+		title: "Status with Indication color",
+		text : "Indication1",
+		state: "Indication01"
+	}), oPage);
+
+	addToPage(new sap.m.ObjectStatus({
+		title: "Inverted Status with Indication color 3",
+		text : "Indication3",
+		state: "Indication03",
+		inverted: true
 	}), oPage);
 
 	addToPage(new sap.m.ObjectStatus({

@@ -455,6 +455,44 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
+	QUnit.test("setState", function(assert) {
+		// Arrange
+		var oObjectStatus = new ObjectStatus({text: "test", state: "Warning"});
+
+
+		oObjectStatus.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oObjectStatus.getState(), "Warning", "correct state is set");
+
+		// Act
+		oObjectStatus.setState("Indication02");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oObjectStatus.getState(), "Indication02", "correct state is set");
+
+		// Act
+		oObjectStatus.setState(null);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oObjectStatus.getState(), "None", "state 'None' is set by default if null is given");
+
+		try {
+			// Act
+			oObjectStatus.setState("noSuchState");
+			sap.ui.getCore().applyChanges();
+		} catch (err) {
+			// Assert
+			assert.ok(true, "Error is thrown:" + err);
+		}
+
+		//Cleanup
+		oObjectStatus.destroy();
+	});
+
 	QUnit.module("Screen reader ARIA support");
 
 	QUnit.test("Has the appropriate ARIA attributes", function (assert) {

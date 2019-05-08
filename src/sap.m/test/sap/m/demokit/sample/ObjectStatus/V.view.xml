@@ -3,54 +3,91 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
+	<l:HorizontalLayout class="sapUiContentPadding" >
+		<l:VerticalLayout
+			class="sapUiContentPadding"
+			width="100%">
+			<l:content>
+				<Label text="ObjectStatus with different value states" class="sapUiSmallMarginTop"/>
+				<ObjectStatus
+					class="sapUiSmallMarginBottom"
+					text="Unknown"
+					icon="sap-icon://status-inactive"
+					state="None" />
+				<ObjectStatus
+					class="sapUiSmallMarginBottom"
+					text="Currently closed"
+					icon="sap-icon://hint"
+					state="Information" />
+				<ObjectStatus
+					class="sapUiSmallMarginBottom"
+					text="Product Shipped"
+					icon="sap-icon://status-positive"
+					state="Success" />
+				<ObjectStatus
+					class="sapUiSmallMarginBottom"
+					text="Product Missing"
+					icon="sap-icon://status-critical"
+					state="Warning" />
+				<ObjectStatus
+					class="sapUiSmallMarginBottom"
+					text="Product Damaged"
+					icon="sap-icon://status-negative"
+					state="Error" />
+				<ObjectStatus
+					class="sapUiSmallMarginBottom"
+					text="Product Damaged"
+					state="Error" />
+				<ObjectStatus
+					class="sapUiSmallMarginBottom"
+					title="Product status"
+					text="Damaged"
+					active="true"
+					state="Error"
+					press="handleStatusPressed"
+					icon="sap-icon://alert" />
+				<ObjectStatus
+					class="sapUiSmallMarginBottom"
+					title="Test"
+					active="true"
+					state="Error"
+					icon="sap-icon://alert" />
+
+			</l:content>
+		</l:VerticalLayout>
+				<l:VerticalLayout
+			class="sapUiContentPadding"
+			width="100%">
+			<l:content>
+				<Label text="ObjectStatus with different indication states" class="sapUiSmallMarginTop"/>
+				<ObjectStatus
+					class="sapUiSmallMarginBottom"
+					text="Indication 1"
+					state="Indication01" />
+				<ObjectStatus
+					class="sapUiSmallMarginBottom"
+					text="Indication 2"
+					state="Indication02" />
+				<ObjectStatus
+					class="sapUiSmallMarginBottom"
+					text="Indication 3"
+					state="Indication03" />
+				<ObjectStatus
+					class="sapUiSmallMarginBottom"
+					text="Indication 4"
+					state="Indication04" />
+				<ObjectStatus
+					class="sapUiSmallMarginBottom"
+					text="Indication 5"
+					state="Indication05" />
+
+			</l:content>
+		</l:VerticalLayout>
+	</l:HorizontalLayout>
 	<l:VerticalLayout
 		class="sapUiContentPadding"
 		width="100%">
 		<l:content>
-			<ObjectStatus
-				class="sapUiSmallMarginBottom"
-				text="Unknown"
-				icon="sap-icon://status-inactive"
-				state="None" />
-			<ObjectStatus
-				class="sapUiSmallMarginBottom"
-				text="Currently closed"
-				icon="sap-icon://hint"
-				state="Information" />
-			<ObjectStatus
-				class="sapUiSmallMarginBottom"
-				text="Product Shipped"
-				icon="sap-icon://status-positive"
-				state="Success" />
-			<ObjectStatus
-				class="sapUiSmallMarginBottom"
-				text="Product Missing"
-				icon="sap-icon://status-critical"
-				state="Warning" />
-			<ObjectStatus
-				class="sapUiSmallMarginBottom"
-				text="Product Damaged"
-				icon="sap-icon://status-negative"
-				state="Error" />
-			<ObjectStatus
-				class="sapUiSmallMarginBottom"
-				text="Product Damaged"
-				state="Error" />
-			<ObjectStatus
-				class="sapUiSmallMarginBottom"
-				title="Product status"
-				text="Damaged"
-				active="true"
-				state="Error"
-				press="handleStatusPressed"
-				icon="sap-icon://alert" />
-			<ObjectStatus
-				class="sapUiSmallMarginBottom"
-				title="Test"
-				active="true"
-				state="Error"
-				icon="sap-icon://alert" />
-
 			<Label text="ObjectStatus with style sapMObjectStatusLarge applied" class="sapUiSmallMarginTop"/>
 			<ObjectStatus
 				class="sapMObjectStatusLarge"
