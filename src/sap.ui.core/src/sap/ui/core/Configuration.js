@@ -141,7 +141,6 @@ sap.ui.define([
 					"xx-viewCache"          : { type : "boolean",  defaultValue : true },
 					"xx-test-mobile"        : { type : "boolean",  defaultValue : false },
 					"xx-depCache"           : { type : "boolean",  defaultValue : false },
-					"xx-domPatching"        : { type : "boolean",  defaultValue : false },
 					"xx-libraryPreloadFiles": { type : "string[]", defaultValue : [] },
 					"xx-componentPreload"   : { type : "string",   defaultValue : "" },
 					"xx-designMode"         : { type : "boolean",  defaultValue : false },
@@ -1252,17 +1251,6 @@ sap.ui.define([
 		 */
 		getViewCache : function() {
 			return this["xx-viewCache"];
-		},
-
-		/**
-		 * Determines whether DOM patching is enabled or not.
-		 *
-		 * @see {jQuery.sap#replaceDOM}
-		 * @returns {boolean}
-		 * @private
-		 */
-		getDomPatching : function() {
-			return this["xx-domPatching"];
 		},
 
 		/**

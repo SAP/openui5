@@ -16,7 +16,9 @@ sap.ui.define([
 		//shortcut for sap.ui.core.ValueState
 		ValueState = coreLibrary.ValueState,
 		oCore = sap.ui.getCore(),
-		GenericTagRenderer = {};
+		GenericTagRenderer = {
+			apiVersion: 2
+		};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -43,7 +45,7 @@ sap.ui.define([
 		});
 
 		if (sTooltip) {
-			oRm.writeAttributeEscaped("title", sTooltip);
+			oRm.attr("title", sTooltip);
 		}
 
 		oRm.openEnd();
@@ -99,7 +101,7 @@ sap.ui.define([
 		oRm.attr("aria-hidden", "true");
 		oRm.openEnd();
 
-		oRm.write(this._getGenericTagStatusText(oControl));
+		oRm.text(this._getGenericTagStatusText(oControl));
 
 		oRm.close("span");
 	};

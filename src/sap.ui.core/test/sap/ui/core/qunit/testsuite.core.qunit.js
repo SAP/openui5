@@ -321,7 +321,6 @@ sap.ui.define(function() {
 					"testdata/core/dom/getComputedStyleFix.qunit",
 					"testdata/core/dom/includeScript.qunit",
 					"testdata/core/dom/includeStylesheet.qunit",
-					"testdata/core/dom/patch.qunit",
 
 					// sap/ui/performance/trace/*
 					// the Passport tests need to be executed first, as the Passport's module state
@@ -365,6 +364,12 @@ sap.ui.define(function() {
 			},
 			RenderManager: {
 				title: "Test Page for RenderManager"
+			},
+			Patcher: {
+				title: "Test Page for Patcher"
+			},
+			ControlRenderer: {
+				title: "Test Page for ControlRenderer"
 			},
 			SinonJS: {
 				title: "sap.ui.thirdparty.sinon: Support",

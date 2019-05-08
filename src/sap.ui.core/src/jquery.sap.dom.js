@@ -5,14 +5,14 @@
 // Provides functionality related to DOM analysis and manipulation which is not provided by jQuery itself.
 sap.ui.define([
 	'jquery.sap.global', 'sap/ui/dom/containsOrEquals',
-	'sap/ui/dom/patch', 'sap/ui/core/syncStyleClass', 'sap/ui/dom/getOwnerWindow', 'sap/ui/dom/getScrollbarSize',
+	'sap/ui/core/syncStyleClass', 'sap/ui/dom/getOwnerWindow', 'sap/ui/dom/getScrollbarSize',
 	'sap/ui/dom/denormalizeScrollLeftRTL', 'sap/ui/dom/denormalizeScrollBeginRTL',
 	'sap/ui/dom/units/Rem', 'sap/ui/dom/jquery/Aria',
 	'sap/ui/dom/jquery/Selection', 'sap/ui/dom/jquery/zIndex', 'sap/ui/dom/jquery/parentByAttribute',
 	'sap/ui/dom/jquery/cursorPos', 'sap/ui/dom/jquery/selectText', 'sap/ui/dom/jquery/getSelectedText',
 	'sap/ui/dom/jquery/rect', 'sap/ui/dom/jquery/rectContains', 'sap/ui/dom/jquery/Focusable',
 	'sap/ui/dom/jquery/hasTabIndex', 'sap/ui/dom/jquery/scrollLeftRTL', 'sap/ui/dom/jquery/scrollRightRTL', 'sap/ui/dom/jquery/Selectors'
-], function(jQuery, domContainsOrEquals, domPatch, fnSyncStyleClass, domGetOwnerWindow,
+], function(jQuery, domContainsOrEquals, fnSyncStyleClass, domGetOwnerWindow,
 	domGetScrollbarSize, domDenormalizeScrollLeftRTL, domDenormalizeScrollBeginRTL, domUnitsRem
 	/*
 	jqueryAria,
@@ -271,35 +271,6 @@ sap.ui.define([
 	 * @deprecated since 1.58 use {@link module:sap/ui/core/syncStyleClass} instead
 	 */
 	jQuery.sap.syncStyleClass = fnSyncStyleClass;
-
-	/**
-	 * This method try to replace two HTML elements according to changed attributes.
-	 * As a fallback it replaces DOM nodes.
-	 *
-	 * @param {HTMLElement} oOldDom existing element to be patched
-	 * @param {HTMLElement|String} vNewDom is the new node to patch old dom
-	 * @param {boolean} bCleanData wheter jQuery data should be removed or not
-	 * @return {boolean} true when patch is applied correctly or false when nodes are replaced.
-	 * @author SAP SE
-	 * @since 1.30.0
-	 * @private
-	 * @deprecated since 1.58 use {@link module:sap/ui/dom/patch} instead
-	 */
-	jQuery.sap.replaceDOM = function(oOldDom, vNewDom, bCleanData) {
-		var oNewDom;
-		if (typeof vNewDom === "string") {
-			oNewDom = jQuery.parseHTML(vNewDom)[0];
-		} else {
-			oNewDom = vNewDom;
-		}
-
-		if (bCleanData) {
-			jQuery.cleanData([oOldDom]);
-			jQuery.cleanData(oOldDom.getElementsByTagName("*"));
-		}
-
-		return domPatch(oOldDom, oNewDom);
-	};
 
 	return jQuery;
 
