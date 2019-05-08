@@ -13,6 +13,10 @@
       <libraryName>sap.ui.core</libraryName>
     </dependency>
     <dependency>
+      <libraryName>sap.ui.layout</libraryName>
+      <lazy>true</lazy>
+    </dependency>
+    <dependency>
       <libraryName>sap.ui.unified</libraryName>
       <lazy>true</lazy>
     </dependency>
