@@ -30,7 +30,7 @@ sap.ui.define(["sap/ui/core/library", "sap/m/HyphenationSupport"],
 		var oAssoTitle = oTitle._getTitle(),
 			sLevel = (oAssoTitle ? oAssoTitle.getLevel() : oTitle.getLevel()) || TitleLevel.Auto,
 			bAutoLevel = sLevel == TitleLevel.Auto,
-			sTag = bAutoLevel ? "div" : sLevel,
+			sTag = bAutoLevel ? "div" : sLevel.toLowerCase(),
 			sText = HyphenationSupport.getTextForRender(oTitle, "main");
 
 		oRm.openStart(sTag, oTitle);
