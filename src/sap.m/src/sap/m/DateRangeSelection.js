@@ -511,8 +511,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library'
 		//If we have version of control with delimiter, then sValue should consist of two dates delimited with delimiter,
 		//hence we have to split the value to these dates
 		var sDelimiter = _getDelimiter.call(this);
-		sValue = sValue.trim();
 		if (sDelimiter && sValue) {
+			sValue = sValue.trim();
 			sValue = _trim(sValue, [sDelimiter, " "]);
 
 			aDates = sValue.split(sDelimiter);
@@ -620,7 +620,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library'
 		if (sValue != "") {
 			aDates = this._parseValue(sValue);
 			// the selected range includes all of the hours from the second date
-			aDates[1].setHours(23, 59, 59, 999);
+			aDates[1] && aDates[1].setHours(23, 59, 59, 999);
 			aDates = _dateRangeValidityCheck.call(this, aDates[0], aDates[1]);//aDates can be undefined if don't fit to the min/max range
 			if (aDates[0]) {
 				sValue = this._formatValue( aDates[0], aDates[1] ); // to have the right output format if entered different
