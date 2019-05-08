@@ -174,11 +174,16 @@ function(
 
 	Label.prototype.setText = function(sText) {
 
-		var sValue = this.getText();
+		var sValue = this.getText(),
+			oDomRef = this.getDomRef();
 
 		if (sValue !== sText) {
 
 			this.setProperty("text", sText, true);
+
+			if (oDomRef) {
+				oDomRef.setAttribute("aria-label", sText);
+			}
 
 			this.$("bdi").html(encodeXML(HyphenationSupport.getTextForRender(this, "main")));
 

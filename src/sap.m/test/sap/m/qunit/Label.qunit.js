@@ -332,8 +332,15 @@ sap.ui.define([
 			this.label = new Label({text: "Label"});
 			this.label.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
+
+			this.oLabel = new Label('label2', {
+				text: 'Selected: 1'
+			}).placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
+			this.oLabel.destroy();
+			this.oLabel = null;
 			this.label.destroy();
 			this.label = null;
 		}
@@ -355,8 +362,18 @@ sap.ui.define([
 		assert.strictEqual(this.label.getDomRef() instanceof HTMLSpanElement, true, "Should be rendered as a span element");
 	});
 
-	QUnit.test("aria-label is set", function (assert) {
-		assert.strictEqual(this.label.$().attr('aria-label'), this.label.getText(), "aria-label is correct");
+	QUnit.test("aria-label should be updated on setText", function (assert) {
+		var sAriaLabel = this.oLabel.$().attr('aria-label');
+
+		assert.strictEqual(sAriaLabel, "Selected: 1", "aria-label should be 'Selected: 1'");
+
+		this.oLabel.setText("Selected: 2");
+
+		sap.ui.getCore().applyChanges();
+
+		sAriaLabel = this.oLabel.$().attr('aria-label');
+
+		assert.strictEqual(sAriaLabel, "Selected: 2", "aria-label should be 'Selected: 2'");
 	});
 
 	QUnit.test("Label rendering when labelFor association is set", function (assert) {
