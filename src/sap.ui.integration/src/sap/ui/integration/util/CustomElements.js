@@ -55,6 +55,7 @@ sap.ui.define([
 	function fireCustomEvent(node, eventType, data) {
 		var event = new window.CustomEvent(eventType),
 			attrValue = node.getAttribute("on" + eventType);
+		event.data = data;
 		if (attrValue) {
 			eventHelper.setAttribute("onclick", attrValue);
 			eventHelper.onclick(event);
