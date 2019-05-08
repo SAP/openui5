@@ -86,6 +86,12 @@
             "reference": "1980202708"
           }
         ]
+      },
+      {
+        "id": "fc35e8f6fde59de2acc1559beecde9bd16b1191b",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Unnecessary padding removed",
+        "references": []
       }
     ]
   }
