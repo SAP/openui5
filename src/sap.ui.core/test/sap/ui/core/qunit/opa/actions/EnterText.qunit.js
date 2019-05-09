@@ -5,6 +5,9 @@ sap.ui.define([
 	"sap/m/SearchField",
 	"sap/m/DatePicker",
 	"sap/m/TextArea",
+	"sap/ui/core/ListItem",
+	"sap/ui/test/Opa5",
+	"sap/ui/test/opaQunit",
 	"sap/m/library",
 	"sap/ui/thirdparty/jquery"
 ], function(
@@ -13,6 +16,9 @@ sap.ui.define([
 		SearchField,
 		DatePicker,
 		TextArea,
+		ListItem,
+		Opa5,
+		opaTest,
 		mobileLibrary,
 		$) {
 	"use strict";
@@ -159,6 +165,37 @@ sap.ui.define([
 		new EnterText({ text: "foo" }).executeOn(this.oControl);
 
 		sinon.assert.notCalled(fnEnterSpy);
+	});
+
+	opaTest("Should show suggestions", function (oOpa) {
+		var fnSuggestTriggered = Opa5.assert.async();
+		this.oControl = new Input({
+			showSuggestion: true,
+			suggestionItems: [
+				new ListItem({text: "One"}),
+				new ListItem({text: "Two"}),
+				new ListItem({text: "Test"})
+			]
+		});
+		this.oControl.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var sTextInControl = "T";
+		oOpa.waitFor({
+			controlType: "sap.m.Input",
+			actions: new EnterText({
+				text: sTextInControl,
+				keepFocus: true
+			})
+		});
+		oOpa.waitFor({
+			controlType: "sap.m.DisplayListItem",
+			success: function (aItems) {
+				Opa5.assert.strictEqual(aItems.length, 2, "Should show suggestions");
+				Opa5.assert.strictEqual(this.oControl.getValue(), sTextInControl, "Should change input value");
+				fnSuggestTriggered();
+			}.bind(this)
+		});
 	});
 
 	QUnit.module("Logging", {
