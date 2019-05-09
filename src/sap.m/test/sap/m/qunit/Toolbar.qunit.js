@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/m/Label",
 	"sap/ui/core/Control",
+	"sap/ui/events/KeyCodes",
 	"sap/m/SearchField",
 	"sap/m/ToolbarLayoutData",
 	"sap/m/ToolbarRenderer",
@@ -27,6 +28,7 @@ sap.ui.define([
 	Title,
 	Label,
 	Control,
+	KeyCodes,
 	SearchField,
 	ToolbarLayoutData,
 	ToolbarRenderer,
@@ -467,12 +469,54 @@ sap.ui.define([
 		QUtils.triggerEvent("tap", oLabel.getDomRef());
 		assert.strictEqual(fnPressSpy.callCount, 1, "Tap event from Label is triggered the press event of the active Toolbar");
 
-		QUtils.triggerKeydown(oTB.getDomRef(), "SPACE");
-		assert.strictEqual(fnPressSpy.callCount, 2, "Space hotkey of the active Toolbar triggered press event.");
-
 		QUtils.triggerKeydown(oTB.getDomRef(), "ENTER");
-		assert.strictEqual(fnPressSpy.callCount, 3, "Enter hotkey of the active Toolbar triggered press event");
+		assert.strictEqual(fnPressSpy.callCount, 2, "Enter hotkey of the active Toolbar triggered press event");
 
+		//Cleanup
+		oLabel.destroy();
+		oTB.destroy();
+	});
+
+	QUnit.test("active toolbar should fire press event on onkeyup on SPACE key", function(assert) {
+		var oLabel = new Label({text : "text"}),
+			fnPressSpy = this.spy(),
+			oTB = createToolbar({
+				Toolbar : {
+					active : true,
+					content : [oLabel],
+					press: fnPressSpy
+				}
+			});
+
+		//act
+		QUtils.triggerKeydown(oTB.getDomRef(), KeyCodes.SPACE);
+		//assert
+		assert.ok(fnPressSpy.notCalled, "Event is not fired onkeydown with SPACE key");
+		//act
+		QUtils.triggerKeyup(oTB.getDomRef(), KeyCodes.SPACE);
+		//assert
+		assert.ok(fnPressSpy.calledOnce, "Event is fired onkeyup with SPACE key");
+
+		//Cleanup
+		oLabel.destroy();
+		oTB.destroy();
+	});
+
+	QUnit.test("inactive toolbar should not fire press on SPACE key", function(assert) {
+		var oLabel = new Label({text : "text"});
+		var fnPressSpy = this.spy();
+		var oTB = createToolbar({
+			Toolbar : {
+				active : false,
+				content : [oLabel],
+				press: fnPressSpy
+			}
+		});
+
+		QUtils.triggerKeydown(oTB.getDomRef(), KeyCodes.SPACE);
+		assert.strictEqual(fnPressSpy.callCount, 0, "Event is not fired onkeydown with SPACE key");
+		QUtils.triggerKeyup(oTB.getDomRef(), KeyCodes.SPACE);
+		assert.strictEqual(fnPressSpy.callCount, 0, "Event is not fired onkeyup with SPACE key");
 		//Cleanup
 		oLabel.destroy();
 		oTB.destroy();
@@ -491,9 +535,6 @@ sap.ui.define([
 
 		QUtils.triggerEvent("tap", oLabel.getDomRef());
 		assert.strictEqual(fnPressSpy.callCount, 0, "Tap event from Label is not triggered the press event of the inactive Toolbar");
-
-		QUtils.triggerKeydown(oTB.getDomRef(), "SPACE");
-		assert.strictEqual(fnPressSpy.callCount, 0, "Space hotkey is not triggered the press event of the inactive Toolbar");
 
 		QUtils.triggerKeydown(oTB.getDomRef(), "ENTER");
 		assert.strictEqual(fnPressSpy.callCount, 0, "Enter hotkey is not triggered the press event of the inactive Toolbar");

@@ -10,6 +10,7 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
+	"sap/ui/events/KeyCodes",
 	'./ToolbarRenderer',
 	"sap/ui/thirdparty/jquery"
 ],
@@ -20,6 +21,7 @@ function(
 	library,
 	Control,
 	EnabledPropagator,
+	KeyCodes,
 	ToolbarRenderer,
 	jQuery
 ) {
@@ -307,8 +309,18 @@ function(
 		}
 	};
 
-	// keyboard space handling mimic the enter event
-	Toolbar.prototype.onsapspace = Toolbar.prototype.onsapenter;
+	Toolbar.prototype.onsapspace = function(oEvent) {
+		// Prevent browser scrolling in case of SPACE key
+		if (oEvent.srcControl === this) {
+			oEvent.preventDefault();
+		}
+	};
+
+	Toolbar.prototype.onkeyup = function(oEvent){
+		if (oEvent.which === KeyCodes.SPACE) {
+			this.onsapenter(oEvent);
+		}
+	};
 
 	// mark to inform active handling is done by toolbar
 	Toolbar.prototype.ontouchstart = function(oEvent) {
