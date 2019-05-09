@@ -13,11 +13,12 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/util/PasteHelper",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	// jQuery custom selectors ":sapTabbable"
 	"sap/ui/dom/jquery/Selectors"
 ],
-	function(Device, library, ListBase, ListItemBase, CheckBox, TableRenderer, Log, ResizeHandler, PasteHelper, jQuery) {
+	function(Device, library, ListBase, ListItemBase, CheckBox, TableRenderer, Log, ResizeHandler, PasteHelper, KeyCodes, jQuery) {
 	"use strict";
 
 
@@ -831,7 +832,7 @@ sap.ui.define([
 	/**
 	 * Handles paste event and fires Paste event of the Table, so that it can be used in the application
 	 * @private
-	 * @param oEvent -browser paste event that occurs when a user pastes the data from the clipboard into the table
+	 * @param oEvent - browser paste event that occurs when a user pastes the data from the clipboard into the table
 	 */
 	Table.prototype.onpaste = function(oEvent) {
 
@@ -848,6 +849,19 @@ sap.ui.define([
 
 		//var oRow = sap.ui.getCore().byId(jQuery(oEvent.target).closest(".sapMLIB").attr("id"));
 		this.firePaste({data: aData});
+	};
+
+	/**
+	 * Handles key down CTRL+v event and calls onpaste event that fires Paste event of the Table.
+	 * It is a workaround for IE browser as it allows browser paste event on input controls only
+	 * @private
+	 * @param oEvent - browser key down event
+	 */
+	Table.prototype.onkeydown = function(oEvent) {
+		ListBase.prototype.onkeydown.apply(this, arguments);
+		if (Device.browser.msie && oEvent.ctrlKey && oEvent.which === KeyCodes.V) {
+			this.onpaste(oEvent);
+		}
 	};
 
 	Table.prototype.ondragenter = function(oEvent) {
