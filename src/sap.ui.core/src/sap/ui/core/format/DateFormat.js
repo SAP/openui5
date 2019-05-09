@@ -1432,11 +1432,6 @@ sap.ui.define([
 
 		sResult = aBuffer.join("");
 
-		// Support Japanese Gannen instead of Ichinen for first year of the era
-		if (sCalendarType == CalendarType.Japanese && this.oLocale.getLanguage() === "ja") {
-			sResult = sResult.replace(/(^|[^\d])1年/g, "$1元年");
-		}
-
 		if (sap.ui.getCore().getConfiguration().getOriginInfo()) {
 			sResult = new String(sResult);
 			sResult.originInfo = {
@@ -1459,6 +1454,9 @@ sap.ui.define([
 	 * @public
 	 */
 	DateFormat.prototype.format = function(vJSDate, bUTC) {
+		var sCalendarType = this.oFormatOptions.calendarType,
+			sResult;
+
 		if (bUTC === undefined) {
 			bUTC = this.oFormatOptions.UTC;
 		}
@@ -1481,20 +1479,22 @@ sap.ui.define([
 				}
 
 				if (vJSDate[1] === null) {
-					return this._format(vJSDate[0], bUTC);
+					sResult = this._format(vJSDate[0], bUTC);
 				}
 			}
 
-			var bValid = vJSDate.every(function(oJSDate) {
-				return oJSDate && !isNaN(oJSDate.getTime());
-			});
+			if (sResult === undefined) {
+				var bValid = vJSDate.every(function(oJSDate) {
+					return oJSDate && !isNaN(oJSDate.getTime());
+				});
 
-			if (!bValid) {
-				Log.error("At least one date instance which is passed to the interval DateFormat isn't valid.");
-				return "";
+				if (!bValid) {
+					Log.error("At least one date instance which is passed to the interval DateFormat isn't valid.");
+					return "";
+				}
+
+				sResult = this._formatInterval(vJSDate, bUTC);
 			}
-
-			return this._formatInterval(vJSDate, bUTC);
 		} else {
 			if (!vJSDate || isNaN(vJSDate.getTime())) {
 				Log.error("The given date instance isn't valid.");
@@ -1506,8 +1506,15 @@ sap.ui.define([
 				return "";
 			}
 
-			return this._format(vJSDate, bUTC);
+			sResult = this._format(vJSDate, bUTC);
 		}
+
+		// Support Japanese Gannen instead of Ichinen for first year of the era
+		if (sCalendarType == CalendarType.Japanese && this.oLocale.getLanguage() === "ja") {
+			sResult = sResult.replace(/(^|[^\d])1年/g, "$1元年");
+		}
+
+		return sResult;
 	};
 
 	DateFormat.prototype._formatInterval = function(aJSDates, bUTC) {
@@ -1602,13 +1609,6 @@ sap.ui.define([
 			dateValue: oDateValue,
 			strict: bStrict
 		};
-
-		var sCalendarType = this.oFormatOptions.calendarType;
-
-		// Support Japanese Gannen instead of Ichinen for first year of the era
-		if (sCalendarType == CalendarType.Japanese && this.oLocale.getLanguage() === "ja") {
-			sValue = sValue.replace(/元年/g, "1年");
-		}
 
 		for (var i = 0; i < aFormatArray.length; i++) {
 			sSubValue = sValue.substr(iIndex);
@@ -1843,6 +1843,11 @@ sap.ui.define([
 
 		if (bStrict === undefined) {
 			bStrict = this.oFormatOptions.strictParsing;
+		}
+
+		// Support Japanese Gannen instead of Ichinen for first year of the era
+		if (sCalendarType == CalendarType.Japanese && this.oLocale.getLanguage() === "ja") {
+			sValue = sValue.replace(/元年/g, "1年");
 		}
 
 		if (!this.oFormatOptions.interval) {

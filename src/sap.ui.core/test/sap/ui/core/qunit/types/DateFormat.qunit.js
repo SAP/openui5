@@ -1134,18 +1134,18 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 					calendarType: CalendarType.Japanese
 				}, new Locale("ja_JP")),
 				sFormatted = oDateFormat.format(oDate),
-				sParsed = oDateFormat.parse(sDate);
+				oParsed = oDateFormat.parse(sDate);
 
 			assert.equal(sFormatted, sDate, "Date is formatted correctly with Gannen year");
-			assert.deepEqual(sParsed, oDate, "Date with Gannen year is parsed correclty");
+			assert.deepEqual(oParsed, oDate, "Date with Gannen year is parsed correclty");
 
 			oDate = new Date("Apr 1 2019");
 			sDate = "平成31年4月1日";
 			sFormatted = oDateFormat.format(oDate);
-			sParsed = oDateFormat.parse(sDate);
+			oParsed = oDateFormat.parse(sDate);
 
 			assert.equal(sFormatted, sDate, "Year ending with 1 is formatted as a number");
-			assert.deepEqual(sParsed, oDate, "Date with numberic year is parsed correclty");
+			assert.deepEqual(oParsed, oDate, "Date with numberic year is parsed correclty");
 
 			oDate = new Date("May 1 2019");
 			sDate = "R1/5/1";
@@ -1154,10 +1154,32 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 				style: "short"
 			}, new Locale("ja_JP"));
 			sFormatted = oDateFormat.format(oDate);
-			sParsed = oDateFormat.parse(sDate);
+			oParsed = oDateFormat.parse(sDate);
 
 			assert.equal(sFormatted, sDate, "Date is formatted correctly with numeric year");
-			assert.deepEqual(sParsed, oDate, "Date with numeric year is parsed correclty");
+			assert.deepEqual(oParsed, oDate, "Date with numeric year is parsed correclty");
+
+			oDate = [new Date("May 1 2019"), new Date("May 10 2019")];
+			sDate = "令和元年5月1日～10日";
+			oDateFormat = DateFormat.getDateInstance({
+				calendarType: CalendarType.Japanese,
+				interval: true,
+				format: "yMMMd"
+			}, new Locale("ja_JP"));
+			sFormatted = oDateFormat.format(oDate);
+			oParsed = oDateFormat.parse(sDate);
+
+			assert.equal(sFormatted, sDate, "Date interval is formatted correctly with Gannen year");
+			assert.deepEqual(oParsed, oDate, "Date interval with Gannen year is parsed correclty");
+
+			oDate = [new Date("Apr 1 2019"), new Date("May 1 2019")];
+			sDate = "平成31年4月1日～令和元年5月1日";
+			sFormatted = oDateFormat.format(oDate);
+			oParsed = oDateFormat.parse(sDate);
+
+			assert.equal(sFormatted, sDate, "Date interval is formatted correctly with Gannen year");
+			assert.deepEqual(oParsed, oDate, "Date interval with Gannen year is parsed correclty");
+
 		});
 
 		QUnit.test("format date to Japanese type with relative", function (assert) {
@@ -1656,14 +1678,14 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			oDate1 = new Date(2019, 3, 1);
 			oDate2 = new Date(2019, 4, 1);
 			sResult = oIntervalFormat.format([oDate1, oDate2]);
-			assert.equal(sResult, "平成31年4月1日～令和1年5月1日");
+			assert.equal(sResult, "平成31年4月1日～令和元年5月1日");
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate1, oDate2]);
 
 			// Different era, same year
 			oDate1 = new Date(1989, 4, 1);
 			oDate2 = new Date(2019, 4, 1);
 			sResult = oIntervalFormat.format([oDate1, oDate2]);
-			assert.equal(sResult, "平成1年5月1日～令和1年5月1日");
+			assert.equal(sResult, "平成元年5月1日～令和元年5月1日");
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate1, oDate2]);
 
 		});
