@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['./DataState', "sap/base/util/deepEqual", "sap/ui/thirdparty/jquery"], function(DataState, deepEqual, jQuery) {
+sap.ui.define(['./DataState', "sap/base/util/deepEqual", "sap/base/util/each"], function(DataState, deepEqual, each) {
 	"use strict";
 
 	/**
@@ -343,7 +343,7 @@ sap.ui.define(['./DataState', "sap/base/util/deepEqual", "sap/ui/thirdparty/jque
 			}
 		}
 
-		jQuery.each(this.mChangedProperties,function(sProperty, vValue) {
+		each(this.mChangedProperties,function(sProperty, vValue) {
 			if (this.mChangedProperties[sProperty] &&
 					!deepEqual(this.mChangedProperties[sProperty],this.mProperties[sProperty])) {
 				mAllChanges[sProperty] = {};

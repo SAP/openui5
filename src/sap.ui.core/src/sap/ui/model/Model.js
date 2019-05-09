@@ -9,9 +9,9 @@ sap.ui.define([
 	'./Context',
 	'./Filter',
 	"sap/base/util/deepEqual",
-	"sap/ui/thirdparty/jquery"
+	"sap/base/util/each"
 ],
-	function(MessageProcessor, BindingMode, Context, Filter, deepEqual, jQuery) {
+	function(MessageProcessor, BindingMode, Context, Filter, deepEqual, each) {
 	"use strict";
 
 
@@ -890,7 +890,7 @@ sap.ui.define([
 			this.sUpdateTimer = null;
 		}
 		var aBindings = this.getBindings();
-		jQuery.each(aBindings, function(iIndex, oBinding) {
+		each(aBindings, function(iIndex, oBinding) {
 			oBinding.checkUpdate(bForceUpdate);
 		});
 	};
@@ -927,7 +927,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Model.prototype.checkMessages = function() {
-		jQuery.each(this.getBindings(), function(iIndex, oBinding) {
+		each(this.getBindings(), function(iIndex, oBinding) {
 			if (oBinding.checkDataState) {
 				oBinding.checkDataState();
 			}

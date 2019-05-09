@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/thirdparty/jquery", '../base/Object', "sap/base/util/deepEqual"], function(jQuery, BaseObject, deepEqual) {
+sap.ui.define(["sap/base/util/each", '../base/Object', "sap/base/util/deepEqual"], function(each, BaseObject, deepEqual) {
 	"use strict";
 
 	/**
@@ -364,7 +364,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", '../base/Object', "sap/base/util/deep
 	 */
 	DataState.prototype.getChanges = function() {
 		var mChanges = {};
-		jQuery.each(this.mChangedProperties,function(sProperty, vValue) {
+		each(this.mChangedProperties,function(sProperty, vValue) {
 			if (!deepEqual(this.mChangedProperties[sProperty],this.mProperties[sProperty])) {
 				mChanges[sProperty] = {};
 				mChanges[sProperty].value = this.mChangedProperties[sProperty];
