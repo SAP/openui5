@@ -644,6 +644,7 @@ function(
 
 		if (!oItem) {
 			this.setAssociation("selectedItem", null, true);
+			this.setValue('');
 			return;
 		}
 
@@ -2067,6 +2068,10 @@ function(
 		}
 
 		oInputClone.setRowResultFunction(this._fnRowResultFilter);
+
+		// because of the "selectedKey", the input value can be reset,
+		// make sure it is the same as the original
+		oInputClone.setValue(this.getValue());
 
 		return oInputClone;
 	};
