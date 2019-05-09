@@ -327,10 +327,13 @@ function(
 		return sCacheKey.replace(/(^W\/|")/g, '');
 	};
 
-	Cache._concatControlVariantIdWithCacheKey = function (sCacheKey, sControlVariantId) {
+	Cache._concatControlVariantIdWithCacheKey = function (sCacheKey, sControlVariantIds) {
+		if (!sControlVariantIds) {
+			return sCacheKey;
+		}
 		return sCacheKey === Cache.NOTAG ?
-			sCacheKey.replace(/>$/, ''.concat('-', sControlVariantId, '>')) :
-			sCacheKey.concat('-', sControlVariantId);
+			sCacheKey.replace(/>$/, ''.concat('-', sControlVariantIds, '>')) :
+			sCacheKey.concat('-', sControlVariantIds);
 	};
 
 	/**
@@ -360,10 +363,10 @@ function(
 				}
 			})
 			.then(function(sCacheKey) {
-				// concat current control variant id to cachekey if available
-				var sCurrentControlVariantId = VariantUtil.getCurrentControlVariantId(oAppComponent);
-				return sCurrentControlVariantId ?
-					Cache._concatControlVariantIdWithCacheKey(sCacheKey, sCurrentControlVariantId) : sCacheKey;
+				// concat current control variant ids to cachekey if available
+				var oVariantModel = oAppComponent.getModel("$FlexVariants");
+				var aCurrentControlVariantIds = oVariantModel ? oVariantModel.getCurrentControlVariantIds() : [];
+				return Cache._concatControlVariantIdWithCacheKey(sCacheKey, aCurrentControlVariantIds.join("-"));
 			});
 	};
 
