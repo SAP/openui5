@@ -953,6 +953,15 @@ sap.ui.define([
 			this._oInput.selectText(iLength, iLength);
 		}
 
+		this._resetTypeAhead();
+	};
+
+	/**
+	 * Resets properties, that are related to autocomplete, to their initial state.
+	 *
+	 * @private
+	 */
+	SuggestionsPopover.prototype._resetTypeAhead = function () {
 		this._oProposedItem = null;
 		this._sProposedItemText = null;
 		this._sTypedInValue = '';
