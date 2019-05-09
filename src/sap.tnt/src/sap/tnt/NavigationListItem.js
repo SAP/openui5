@@ -1,8 +1,8 @@
 // Provides control sap.tnt.NavigationListItem.
-sap.ui.define(["./library", "sap/ui/core/Item", 'sap/ui/core/Icon',
-		'./NavigationList', 'sap/ui/core/Renderer', 'sap/ui/core/IconPool', "sap/ui/events/KeyCodes"],
-	function(library, Item, Icon,
-	         NavigationList, Renderer, IconPool, KeyCodes) {
+sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core/Icon',
+		'./NavigationList', 'sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', 'sap/ui/core/IconPool', "sap/ui/events/KeyCodes"],
+	function(library, Core, Item, Icon,
+	         NavigationList, InvisibleText, Renderer, IconPool, KeyCodes) {
 		"use strict";
 
 		/**
@@ -79,6 +79,21 @@ sap.ui.define(["./library", "sap/ui/core/Item", 'sap/ui/core/Icon',
 		NavigationListItem.expandIcon = 'sap-icon://navigation-right-arrow';
 		NavigationListItem.collapseIcon = 'sap-icon://navigation-down-arrow';
 
+
+		NavigationListItem._getInvisibleText = function() {
+			return this._invisibleText || (this._invisibleText = new InvisibleText().toStatic());
+		};
+
+		/**
+		 * Initializes the control.
+		 * @private
+		 * @override
+		 */
+		NavigationListItem.prototype.init = function () {
+			this._resourceBundle = Core.getLibraryResourceBundle("sap.ui.core");
+			this._resourceBundleMLib = Core.getLibraryResourceBundle("sap.m");
+		};
+
 		/**
 		 * If the item doesn't have a key, the function returns the ID of the NavigationListItem,
 		 * so the NavigationList can remember the selected item.
@@ -132,7 +147,7 @@ sap.ui.define(["./library", "sap/ui/core/Item", 'sap/ui/core/Icon',
 
 			var text = expand ? 'Icon.expand' : 'Icon.collapse';
 
-			return this.getNavigationList()._resourceBundle.getText(text);
+			return this._resourceBundle.getText(text);
 		};
 
 		/**
@@ -423,9 +438,7 @@ sap.ui.define(["./library", "sap/ui/core/Item", 'sap/ui/core/Icon',
 				text = this.getText(),
 				tooltip,
 				ariaProps = {
-					level: '1',
-					posinset: index + 1,
-					setsize: this._getVisibleItems(control).length
+					level: '1'
 				};
 
 			//checking if there are items level 2 in the NavigationListItem
@@ -451,7 +464,6 @@ sap.ui.define(["./library", "sap/ui/core/Item", 'sap/ui/core/Icon',
 					rm.writeAttributeEscaped("title", tooltip);
 				}
 
-				ariaProps.label = text;
 				ariaProps.role = 'menuitem';
 				if (!control.hasStyleClass("sapTntNavLIPopup")) {
 					ariaProps.haspopup = true;
@@ -467,8 +479,6 @@ sap.ui.define(["./library", "sap/ui/core/Item", 'sap/ui/core/Icon',
 				if (tooltip) {
 					rm.writeAttributeEscaped("title", tooltip);
 				}
-
-				rm.writeAttributeEscaped("aria-label", text);
 			}
 
 			rm.writeClasses();
@@ -502,7 +512,7 @@ sap.ui.define(["./library", "sap/ui/core/Item", 'sap/ui/core/Icon',
 				expanded = this.getExpanded(),
 				isListExpanded = control.getExpanded();
 
-			rm.write('<li aria-hidden="true" ');
+			rm.write('<li ');
 			rm.writeElementData(this);
 
 			if (this.getEnabled() && !isListExpanded) {
@@ -569,9 +579,7 @@ sap.ui.define(["./library", "sap/ui/core/Item", 'sap/ui/core/Icon',
 			// ARIA
 			rm.writeAccessibilityState({
 				role: control.hasStyleClass("sapTntNavLIPopup") ? 'menuitem' : 'treeitem',
-				level: '2',
-				posinset: index + 1,
-				setsize: length
+				level: '2'
 			});
 
 			rm.writeClasses();
@@ -666,7 +674,7 @@ sap.ui.define(["./library", "sap/ui/core/Item", 'sap/ui/core/Icon',
 
 			if (navList.getExpanded()) {
 
-				if (this.getLevel() == 0) {
+				if (this.getLevel() === 0) {
 					$this = $this.find('.sapTntNavLIGroup');
 				}
 
@@ -693,7 +701,7 @@ sap.ui.define(["./library", "sap/ui/core/Item", 'sap/ui/core/Icon',
 
 			if (navList.getExpanded()) {
 
-				if (this.getLevel() == 0) {
+				if (this.getLevel() === 0) {
 					$this = $this.find('.sapTntNavLIGroup');
 				}
 
@@ -750,6 +758,66 @@ sap.ui.define(["./library", "sap/ui/core/Item", 'sap/ui/core/Icon',
 			}
 
 			return visibleItems;
+		};
+
+
+		NavigationListItem.prototype.onfocusin = function(event) {
+
+			if (event.srcControl !== this) {
+				return;
+			}
+
+			this._updateAccessibilityText();
+		};
+
+
+		NavigationListItem.prototype._updateAccessibilityText = function() {
+			var invisibleText = NavigationListItem._getInvisibleText(),
+				navList = this.getNavigationList(),
+				bundle = this._resourceBundleMLib,
+				accType = navList.getExpanded() ? bundle.getText("ACC_CTR_TYPE_TREEITEM") : '',
+				$focusedItem = this._getAccessibilityItem(),
+				mPosition = this._getAccessibilityPosition(),
+				itemPosition = bundle.getText("LIST_ITEM_POSITION", [mPosition.index, mPosition.size]),
+				selected = navList._selectedItem === this ? bundle.getText("LIST_ITEM_SELECTED") : '',
+				itemText = navList.getExpanded() ? this.getText() : "",
+				text = accType + " " + itemPosition + " " + selected + " " + itemText;
+
+			invisibleText.setText(text);
+			$focusedItem.addAriaLabelledBy(invisibleText.getId());
+		};
+
+		/**
+		 * Returns the acc index and size
+		 * @return {Object} The index and the size
+		 * @private
+		 */
+		NavigationListItem.prototype._getAccessibilityPosition = function() {
+			var parent = this.getParent(),
+				visibleItems = this._getVisibleItems(parent),
+				size = visibleItems.length,
+				index = visibleItems.indexOf(this) + 1;
+
+			return {
+				index: index,
+				size: size
+			};
+		};
+
+		/**
+		 * Returns the actual item, which holds the acc information
+		 * @return {Object} The item, which holds the acc information
+		 * @private
+		 */
+		NavigationListItem.prototype._getAccessibilityItem = function() {
+
+			var $accItem = this.$();
+
+			if (this.getLevel() === 0) {
+				$accItem = $accItem.find('.sapTntNavLIGroup');
+			}
+
+			return $accItem;
 		};
 
 		return NavigationListItem;

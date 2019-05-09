@@ -124,8 +124,6 @@ sap.ui.define([
 				sapprevious: ["alt", "meta"]
 			});
 
-			this._resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
-
 			if (sap.ui.getCore().getConfiguration().getAccessibility() && !NavigationList._sAriaPopupLabelId) {
 				NavigationList._sAriaPopupLabelId = new InvisibleText({
 					text: '' // add empty string in order to prevent the redundant speech output

@@ -328,6 +328,29 @@ sap.ui.define([
 		assert.notOk(currentItemCollapsed.getAttribute('aria-expanded'), 'Root 2 has no ARIA attribute expanded when NavigationList is collapsed.');
 	});
 
+	QUnit.test('ARIA - Accessibility Text', function (assert) {
+		var invisibleText = NavigationListItem._getInvisibleText();
+		assert.equal(invisibleText.getText(), '', "accessibility text is initially empty");
+
+		var groupItem = this.navigationList.getItems()[0];
+
+		groupItem.onfocusin({
+			srcControl: groupItem
+		});
+
+		assert.equal(invisibleText.getText(), 'Tree Item 1 of 5  Root 1', "accessibility text is correct");
+
+		var secondLevelItem = groupItem.getItems()[2];
+
+		this.navigationList.setSelectedItem(secondLevelItem);
+
+		secondLevelItem.onfocusin({
+			srcControl: secondLevelItem
+		});
+
+		assert.equal(invisibleText.getText(), 'Tree Item 3 of 3 Selected Child 3', "accessibility text is correct");
+	});
+
 	QUnit.module('SelectedItem association', {
 		beforeEach: function () {
 			this.navigationList = getNavigationList();
