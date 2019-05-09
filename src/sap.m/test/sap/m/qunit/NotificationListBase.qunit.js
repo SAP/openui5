@@ -204,11 +204,15 @@ sap.ui.define([
 		notification.destroy();
 	});
 
-	QUnit.test('Closing a notification', function(assert) {
+	QUnit.test("Closing a notification and destroying it", function(assert) {
 		// arrange
 		var parent;
 		var list = new List();
-		var notification = new NotificationListItem();
+		var notification = new NotificationListItem({
+			close: function () {
+				notification.destroy();
+			}
+		});
 		var fnSpy = sinon.spy(notification, 'fireClose');
 
 		// act
@@ -228,6 +232,59 @@ sap.ui.define([
 		// cleanup
 		list.destroy();
 		notification.destroy();
+	});
+
+	QUnit.test("Closing a notification without destroying it, but removing it from parent", function(assert) {
+		// arrange
+		var oParent;
+		var oList = new List();
+		var oNotification = new NotificationListItem({
+			close: function () {
+				oList.removeItem(oNotification);
+			}
+		});
+
+		// act
+		oList.addItem(oNotification);
+		oList.placeAt(RENDER_LOCATION);
+
+		oParent = oNotification.getParent();
+		oNotification.close();
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oParent.getFocusDomRef().contains(document.activeElement), "Removing notification from parent should set the focus to the parent container.");
+
+		// cleanup
+		oList.destroy();
+		oNotification.destroy();
+	});
+
+	QUnit.test("Closing a notification without destroying it or removing it from parent", function(assert) {
+		// arrange
+		var oParent;
+		var oList = new List();
+		var oNotification = new NotificationListItem({
+			close: function () {
+				// nothing happens on close
+			}
+		});
+
+		// act
+		oList.addItem(oNotification);
+		oList.placeAt(RENDER_LOCATION);
+
+		oParent = oNotification.getParent();
+		oNotification.close();
+
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.notOk(oParent.getFocusDomRef().contains(document.activeElement), "Closing notification should NOT change focus.");
+
+		// cleanup
+		oList.destroy();
+		oNotification.destroy();
 	});
 
 	//================================================================================
