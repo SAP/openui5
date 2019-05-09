@@ -20,10 +20,10 @@ describe("sap.m.SinglePlanningCalendar", function() {
 			if (presented) {
 				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
 				element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
-				element.all(by.cssContainingText(".sapMSelectListItem", "Work Week View")).click();
+				element.all(by.cssContainingText(".sapMSelectListItem", "Work Week")).click();
 				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
 			} else {
-				element.all(by.cssContainingText(".sapMSegB", "Work Week View")).click();
+				element.all(by.cssContainingText(".sapMSegB", "Work Week")).click();
 			}
 		});
 
@@ -38,10 +38,10 @@ describe("sap.m.SinglePlanningCalendar", function() {
 			if (presented) {
 				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
 				element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
-				element.all(by.css('.sapMSelectList li')).last().click();
+				element.all(by.cssContainingText(".sapMSelectListItem", "Full Week")).click();
 				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
 			} else {
-				element.all(by.css('ul li')).last().click();
+				element.all(by.cssContainingText(".sapMSegBBtn", "Full Week")).click();
 			}
 		});
 
