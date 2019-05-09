@@ -126,13 +126,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 				var bIsExpanded = oBinding.isExpanded(iRowIndex);
 				var bIsLeaf = true; // If the node state can not be determined, we assume it is a leaf.
 
-				if (oBinding.nodeHasChildren != null) {
-					if (oBinding.getNodeByIndex != null) {
+				if (oBinding.nodeHasChildren) {
+					if (oBinding.getNodeByIndex) {
 						bIsLeaf = !oBinding.nodeHasChildren(oBinding.getNodeByIndex(iRowIndex));
 					} else {
 						// The sap.ui.model.TreeBindingCompatibilityAdapter has no #getNodeByIndex function and #nodeHasChildren always returns true.
 						bIsLeaf = false;
 					}
+				} else if (oBinding.hasChildren) {
+					// The ODataTreeBindingFlat adapter does not implement #nodeHasChildren. Fall back to #hasChildren.
+					bIsLeaf = !oBinding.hasChildren(oBinding.getContextByIndex(iRowIndex));
 				}
 
 				if (bIsLeaf) {
