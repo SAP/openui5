@@ -149,88 +149,21 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[{ // $select=Bar
-		options : {
-			$select : "Bar"
-		},
-		path : "FooSet/WithoutExpand",
-		result : {}
-	}, { // $expand(FooSet=$expand(BarSet=$select(Baz)))
-		options : {
-			$expand : {
-				FooSet : {
-					$expand : {
-						BarSet : {
-							$select : "Baz"
-						}
-					}
-				}
-			}
-		},
-		path : "15/FooSet('0815')/12/BarSet",
-		result : {
-			$select : "Baz"
-		}
-	}, { // $expand(ExpandWithoutOptions)
-		options : {
-			$expand : {
-				ExpandWithoutOptions : true
-			}
-		},
-		path : "ExpandWithoutOptions",
-		result : {}
-	}, { // $expand(FooSet=$select(Bar,Baz))
-		options : {
-			$expand : {
-				FooSet : {
-					$select : ["Bar", "Baz"]
-				}
-			}
-		},
-		path : "FooSet('0815')",
-		result : {
-			$select : ["Bar", "Baz"]
-		}
-	}, {// $expand(FooSet=$expand(BarSet=$select(Baz)))
-		options : {
-			$expand : {
-				FooSet : {
-					$expand : {
-						BarSet : {
-							$select : "Baz"
-						}
-					}
-				}
-			}
-		},
-		path : "FooSet('0815')/12/BarSet",
-		result : {
-			$select : "Baz"
-		}
-	}].forEach(function (oFixture) {
-		QUnit.test("getQueryOptionsForPath: binding with mParameters, " + oFixture.path,
-				function (assert) {
-			var oModel = new ODataModel({
-					serviceUrl : "/service/?sap-client=111",
-					synchronizationMode : "None"
-				}),
-				oBinding = new ODataParentBinding({
-					oModel : oModel,
-					mParameters : {$$groupId : "group"},
-					mQueryOptions : oFixture.options,
-					bRelative : true
-				}),
-				mClonedQueryOptions = {},
-				oContext = {};
+	QUnit.test("getQueryOptionsForPath: binding with mParameters", function (assert) {
+		var mQueryOptions = {},
+			oBinding = new ODataParentBinding({
+				mParameters : {$$groupId : "group"},
+				mQueryOptions : mQueryOptions,
+				bRelative : true
+			}),
+			mResult = {};
 
-			this.mock(jQuery).expects("extend")
-				.withExactArgs(true, {}, oFixture.result)
-				.returns(mClonedQueryOptions);
+		this.mock(_Helper).expects("getQueryOptionsForPath")
+			.withExactArgs(sinon.match.same(mQueryOptions), "foo")
+			.returns(mResult);
 
-			// code under test
-			assert.strictEqual(oBinding.getQueryOptionsForPath(oFixture.path, oContext),
-				mClonedQueryOptions);
-		});
+		// code under test
+		assert.strictEqual(oBinding.getQueryOptionsForPath("foo"), mResult);
 	});
 
 	//*********************************************************************************************
@@ -240,7 +173,7 @@ sap.ui.define([
 				bRelative : false
 			});
 
-		this.mock(jQuery).expects("extend").never();
+		this.mock(_Helper).expects("getQueryOptionsForPath").never();
 
 		// code under test
 		assert.deepEqual(oBinding.getQueryOptionsForPath("foo"), {});
@@ -254,7 +187,7 @@ sap.ui.define([
 			}),
 			oContext = {}; // no V4 context
 
-		this.mock(jQuery).expects("extend").never();
+		this.mock(_Helper).expects("getQueryOptionsForPath").never();
 
 		// code under test
 		assert.deepEqual(oBinding.getQueryOptionsForPath("foo", oContext), {});
@@ -269,7 +202,7 @@ sap.ui.define([
 				bRelative : true
 			});
 
-		this.mock(jQuery).expects("extend").never();
+		this.mock(_Helper).expects("getQueryOptionsForPath").never();
 
 		// code under test
 		assert.deepEqual(oBinding.getQueryOptionsForPath("foo"), {});
@@ -289,6 +222,7 @@ sap.ui.define([
 			sResultingPath = "foo/bar",
 			mResultingQueryOptions = {};
 
+		this.mock(_Helper).expects("getQueryOptionsForPath").never();
 		this.mock(_Helper).expects("buildPath")
 			.withExactArgs(oBinding.sPath, sPath)
 			.returns(sResultingPath);

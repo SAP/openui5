@@ -481,7 +481,7 @@ sap.ui.define([
 	 * @param {string} sPath
 	 *   The relative path for which the query options are requested
 	 * @returns {object}
-	 *   The query options from the associated binding
+	 *   The query options from the associated binding (live reference, no clone!)
 	 *
 	 * @private
 	 */
