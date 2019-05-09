@@ -98,20 +98,6 @@ sap.ui.define([
 			}
 		},
 
-		/**
-		 * Returns control variant technical parameter for the passed component.
-		 *
-		 * @param  {object} oComponent - Component instance used to get the technical parameters
-		 * @returns {string|undefined} Returns the control variant technical parameter
-		 */
-		getCurrentControlVariantId: function(oComponent) {
-			var aTechnicalParameters = flUtils.getTechnicalParametersForComponent(oComponent);
-			return aTechnicalParameters
-				&& aTechnicalParameters[VariantUtil.variantTechnicalParameterName]
-				&& Array.isArray(aTechnicalParameters[VariantUtil.variantTechnicalParameterName])
-				&& aTechnicalParameters[VariantUtil.variantTechnicalParameterName][0];
-		},
-
 		_handleHashReplaced: function (oEvent) {
 			this._sReplacedHash = oEvent.getParameter("sHash");
 		},

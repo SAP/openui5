@@ -889,5 +889,17 @@ sap.ui.define([
 		this._oEmbeddedComponents.push(oComponent);
 	};
 
+	/**
+	 * Returns the current variant references for the model passed as context
+	 *
+	 * @returns {array} An array of current variant references
+	 */
+	VariantModel.prototype.getCurrentControlVariantIds = function() {
+		return Object.keys(this.oData || {})
+		.reduce(function(aCurrentVariants, sVariantManagementReference) {
+			return aCurrentVariants.concat([this.oData[sVariantManagementReference].currentVariant]);
+		}.bind(this), []);
+	};
+
 	return VariantModel;
 }, true);

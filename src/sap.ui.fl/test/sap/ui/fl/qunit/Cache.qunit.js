@@ -316,11 +316,12 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test('getCacheKey is called and cache entry and current variant management-id are available', function(assert) {
+		QUnit.test('getCacheKey is called and cache entry and current variant ids are available', function(assert) {
 			var sTestComponentName = "testComponent";
 			var sAppVersion = "oldVersion";
-			var sControlVariantId = "id_1541412437845_176_Copy";
-			var sCacheKeyResult = "<NoTag-id_1541412437845_176_Copy>";
+			var sControlVariantId1 = "id_1541412437845_176_Copy";
+			var sControlVariantId2 = "id_1541412437845_186_Copy";
+			var sCacheKeyResult = "<NoTag-" + sControlVariantId1 + "-" + sControlVariantId2 + ">";
 			Cache._entries = {
 				"testComponent" : {
 					"oldVersion" : {
@@ -333,10 +334,10 @@ sap.ui.define([
 				appVersion : sAppVersion
 			};
 			var oAppComponentMock = {
-				getComponentData: function(){
+				getModel: function () {
 					return {
-						technicalParameters: {
-							"sap-ui-fl-control-variant-id" : [sControlVariantId]
+						getCurrentControlVariantIds: function () {
+							return [sControlVariantId1, sControlVariantId2];
 						}
 					};
 				}
@@ -360,10 +361,10 @@ sap.ui.define([
 				appVersion : "oldVersion"
 			};
 			var oAppComponentMock = {
-				getComponentData: function(){
+				getModel: function () {
 					return {
-						technicalParameters: {
-							"sap-ui-fl-control-variant-id" : [sControlVariantId]
+						getCurrentControlVariantIds: function () {
+							return [sControlVariantId];
 						}
 					};
 				}
