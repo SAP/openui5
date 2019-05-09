@@ -5,6 +5,7 @@ QUnit.config.autostart = false;
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
+	"sap/ui/core/Component",
 	"sap/ui/fl/XmlPreprocessorImpl",
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/layout/changeHandler/AddSimpleFormGroup",
@@ -15,6 +16,7 @@ sap.ui.define([
 function(
 	jQuery,
 	XmlTreeModifier,
+	Component,
 	XmlPreprocessorImpl,
 	CacheManager,
 	AddSimpleFormGroup,
@@ -283,14 +285,9 @@ function(
 
 			QUnit.test("the cache is still valid in case the default control variant is overruled by a url parameter and stays the same in a further request", function(assert) {
 				CacheManager.reset();
-				var oXmlPrepossessSpy = sinon.spy(XmlPreprocessorImpl, "process");
+				var oXmlPrepossessSpy = sandbox.spy(XmlPreprocessorImpl, "process");
 
-				var aTechnicalParameters = [];
-				aTechnicalParameters[VariantUtil.variantTechnicalParameterName] = ["abc"];
-				sandbox.stub(Utils, "getTechnicalParametersForComponent").returns(aTechnicalParameters);
-
-				// first create the application
-				return sap.ui.component({
+				var mSettings = {
 					name: "sap.ui.fl.qunit.integration.async.testComponentWithView",
 					id: "sap.ui.fl.qunit.integration.async.testComponentWithView",
 					async: true,
@@ -302,7 +299,18 @@ function(
 						async: true,
 						cacheKey: "X"
 					}
-				}).then(function(oComponent) {
+				};
+
+				sandbox.stub(Component.prototype, "getModel")
+				.returns({
+					getCurrentControlVariantIds: function () {
+						return ["currentVariantReferenceInitial"];
+					}
+				});
+
+				// first component instance
+				return Component.create(mSettings)
+				.then(function(oComponent) {
 					this.oComponent = oComponent;
 					return oComponent.getRootControl().loaded();
 				}.bind(this))
@@ -310,41 +318,21 @@ function(
 					assert.equal(oXmlPrepossessSpy.callCount, 1, "the xml view was processed once");
 					this.oComponent.destroy();
 				}.bind(this))
-				.then(function() {
-					// recreate the application from scratch (reload scenario)
-					return sap.ui.component({
-						name: "sap.ui.fl.qunit.integration.async.testComponentWithView",
-						id: "sap.ui.fl.qunit.integration.async.testComponentWithView",
-						async: true,
-						manifestFirst: true,
-						metadata: {
-							manifest: "json"
-						},
-						componentData: {
-							async: true,
-							cacheKey: "X" // same cache key
-						}
-					});
-				}).then(function(oComponent) {
+				.then(Component.create.bind(Component, mSettings)) // second component instance
+				.then(function(oComponent) {
 					this.oComponent = oComponent;
 					return this.oComponent.getRootControl().loaded();
-				}.bind(this)).then(function(oComponent) {
-					assert.equal(oXmlPrepossessSpy.callCount, 1, "the view was processed only once");
-					oXmlPrepossessSpy.restore();
+				}.bind(this))
+				.then(function() {
+					assert.equal(oXmlPrepossessSpy.callCount, 1, "the view was not processed again");
 				});
 			});
 
 			QUnit.test("the cache is invalidated in case the default control variant is overruled by a url parameter differing from the last one", function(assert) {
 				CacheManager.reset();
-				var oXmlPrepossessSpy = sinon.spy(XmlPreprocessorImpl, "process");
+				var oXmlPrepossessSpy = sandbox.spy(XmlPreprocessorImpl, "process");
 
-				var aTechnicalParameters = [];
-				aTechnicalParameters[VariantUtil.variantTechnicalParameterName] = ["abc"];
-
-				var oUtilsStub = sandbox.stub(Utils, "getTechnicalParametersForComponent").returns(aTechnicalParameters);
-
-				// first create the application
-				return sap.ui.component({
+				var mSettings = {
 					name: "sap.ui.fl.qunit.integration.async.testComponentWithView",
 					id: "sap.ui.fl.qunit.integration.async.testComponentWithView",
 					async: true,
@@ -356,52 +344,44 @@ function(
 						async: true,
 						cacheKey: "X"
 					}
-				}).then(function(oComponent) {
+				};
+
+				sandbox.stub(Component.prototype, "getModel")
+				.onFirstCall().returns({
+					getCurrentControlVariantIds: function () {
+						return ["currentVariantReferenceInitial"];
+					}
+				})
+				.onSecondCall().returns({
+					getCurrentControlVariantIds: function () {
+						return ["currentVariantReferenceChanged"];
+					}
+				});
+
+				// first component instance
+				return Component.create(mSettings)
+				.then(function(oComponent) {
 					this.oComponent = oComponent;
 					return oComponent.getRootControl().loaded();
 				}.bind(this))
 				.then(function() {
 					assert.equal(oXmlPrepossessSpy.callCount, 1, "the xml view was processed once");
-					oUtilsStub.restore();
-					aTechnicalParameters[VariantUtil.variantTechnicalParameterName] = ["def"];
-					oUtilsStub = sandbox.stub(Utils, "getTechnicalParametersForComponent").returns(aTechnicalParameters);
 					this.oComponent.destroy();
 				}.bind(this))
-				.then(function() {
-					// recreate the application from scratch (reload scenario)
-					return sap.ui.component({
-						name: "sap.ui.fl.qunit.integration.async.testComponentWithView",
-						id: "sap.ui.fl.qunit.integration.async.testComponentWithView",
-						async: true,
-						manifestFirst: true,
-						metadata: {
-							manifest: "json"
-						},
-						componentData: {
-							async: true,
-							cacheKey: "X" // same cache key
-						}
-					});
-				}).then(function(oComponent) {
+				.then(Component.create.bind(Component, mSettings)) // second component instance
+				.then(function(oComponent) {
 					this.oComponent = oComponent;
 					return this.oComponent.getRootControl().loaded();
 				}.bind(this)).then(function(oComponent) {
 					assert.equal(oXmlPrepossessSpy.callCount, 2, "the view was processed once more");
-					oXmlPrepossessSpy.restore();
 				});
 			});
 
 			QUnit.test("the cache is invalidated in case the default control variant is no longer overruled by a url parameter", function(assert) {
 				CacheManager.reset();
-				var oXmlPrepossessSpy = sinon.spy(XmlPreprocessorImpl, "process");
+				var oXmlPrepossessSpy = sandbox.spy(XmlPreprocessorImpl, "process");
 
-				var aTechnicalParameters = [];
-				aTechnicalParameters[VariantUtil.variantTechnicalParameterName] = ["abc"];
-
-				var oUtilsStub = sandbox.stub(Utils, "getTechnicalParametersForComponent").returns(aTechnicalParameters);
-
-				// first create the application
-				return sap.ui.component({
+				var mSettings = {
 					name: "sap.ui.fl.qunit.integration.async.testComponentWithView",
 					id: "sap.ui.fl.qunit.integration.async.testComponentWithView",
 					async: true,
@@ -413,88 +393,33 @@ function(
 						async: true,
 						cacheKey: "X"
 					}
-				}).then(function(oComponent) {
-					this.oComponent = oComponent;
-					return oComponent.getRootControl().loaded();
-				}.bind(this))
-				.then(function() {
-					assert.equal(oXmlPrepossessSpy.callCount, 1, "the xml view was processed once");
-					oUtilsStub.restore();
-					this.oComponent.destroy();
-				}.bind(this))
-				.then(function() {
-					// recreate the application from scratch (reload scenario)
-					return sap.ui.component({
-						name: "sap.ui.fl.qunit.integration.async.testComponentWithView",
-						id: "sap.ui.fl.qunit.integration.async.testComponentWithView",
-						async: true,
-						manifestFirst: true,
-						metadata: {
-							manifest: "json"
-						},
-						componentData: {
-							async: true,
-							cacheKey: "X" // same cache key
-						}
-					});
-				}).then(function(oComponent) {
-					this.oComponent = oComponent;
-					return this.oComponent.getRootControl().loaded();
-				}.bind(this)).then(function(oComponent) {
-					assert.equal(oXmlPrepossessSpy.callCount, 2, "the view was processed once more");
-					oXmlPrepossessSpy.restore();
+				};
+
+				sandbox.stub(Component.prototype, "getModel")
+				.returns({
+					getCurrentControlVariantIds: function () {
+						return ["currentVariantReferenceInitial"];
+					}
 				});
-			});
 
-			QUnit.test("the cache is invalidated in case the default control variant is overruled by a url parameter", function(assert) {
-				CacheManager.reset();
-				var oXmlPrepossessSpy = sinon.spy(XmlPreprocessorImpl, "process");
-
-				// first create the application
-				return sap.ui.component({
-					name: "sap.ui.fl.qunit.integration.async.testComponentWithView",
-					id: "sap.ui.fl.qunit.integration.async.testComponentWithView",
-					async: true,
-					manifestFirst: true,
-					metadata: {
-						manifest: "json"
-					},
-					componentData: {
-						async: true,
-						cacheKey: "X"
-					}
-				}).then(function(oComponent) {
+				// first component instance
+				return Component.create(mSettings)
+				.then(function(oComponent) {
 					this.oComponent = oComponent;
 					return oComponent.getRootControl().loaded();
 				}.bind(this))
 				.then(function() {
 					assert.equal(oXmlPrepossessSpy.callCount, 1, "the xml view was processed once");
-					var aTechnicalParameters = [];
-					aTechnicalParameters[VariantUtil.variantTechnicalParameterName] = ["abc"];
-					sandbox.stub(Utils, "getTechnicalParametersForComponent").returns(aTechnicalParameters);
+					Component.prototype.getModel.restore();
 					this.oComponent.destroy();
 				}.bind(this))
-				.then(function() {
-					// recreate the application from scratch (reload scenario)
-					return sap.ui.component({
-						name: "sap.ui.fl.qunit.integration.async.testComponentWithView",
-						id: "sap.ui.fl.qunit.integration.async.testComponentWithView",
-						async: true,
-						manifestFirst: true,
-						metadata: {
-							manifest: "json"
-						},
-						componentData: {
-							async: true,
-							cacheKey: "X" // same cache key
-						}
-					});
-				}).then(function(oComponent) {
+				.then(Component.create.bind(Component, mSettings)) // second component instance
+				.then(function(oComponent) {
 					this.oComponent = oComponent;
 					return this.oComponent.getRootControl().loaded();
-				}.bind(this)).then(function(oComponent) {
+				}.bind(this))
+				.then(function(oComponent) {
 					assert.equal(oXmlPrepossessSpy.callCount, 2, "the view was processed once more");
-					oXmlPrepossessSpy.restore();
 				});
 			});
 		}

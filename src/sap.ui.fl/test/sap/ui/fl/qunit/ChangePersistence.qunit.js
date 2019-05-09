@@ -72,6 +72,9 @@ function (
 			var oMockedAppComponent = {
 				getComponentData: function() {
 					return {};
+				},
+				getModel: function() {
+					return { getCurrentControlVariantIds: function () { return []; } };
 				}
 			};
 
