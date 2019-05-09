@@ -342,7 +342,8 @@
 		QUnit.test("setIcon with image URI", function(assert) {
 			// Arrange
 			var oMessagePage = createMessagePage(),
-				sNewImage = "test.png";
+				sNewImage = "test.png",
+				oVBox;
 
 			oMessagePage.placeAt("content");
 			sap.ui.getCore().applyChanges();
@@ -353,6 +354,10 @@
 			oMessagePage.setIcon(sNewImage);
 
 			assert.equal(oMessagePage.getIcon(), sNewImage, "New Image is set.");
+
+			oVBox = oMessagePage._getMessagePageContent();
+
+			assert.equal(oVBox.getItems()[0].getSrc(), sNewImage, "Image is inside the VBox.");
 
 			// Clean up
 			oMessagePage.destroy();
