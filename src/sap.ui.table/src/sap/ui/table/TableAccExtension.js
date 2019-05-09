@@ -997,7 +997,7 @@ sap.ui.define([
 	 *
 	 * @type {{DATACELL: string, COLUMNHEADER: string, ROWHEADER: string, ROWACTION: string, COLUMNROWHEADER: string, ROOT: string, CONTENT: string,
 	 *     TABLE: string, TABLEHEADER: string, TABLEFOOTER: string, TABLESUBHEADER: string, COLUMNHEADER_TBL: string, COLUMNHEADER_ROW: string,
-	 *     CREATIONROW_TBL: string, ROWHEADER_COL: string, TH: string: string, TR: string, TREEICON: string, ROWACTIONHEADER: string,
+	 *     CREATIONROW_TBL: string, ROWHEADER_COL: string, TH: string, TR: string, TREEICON: string, ROWACTIONHEADER: string,
 	 *     NODATA: string, OVERLAY: string}|*}
 	 * @see TableAccRenderExtension.writeAriaAttributesFor
 	 * @public
