@@ -493,10 +493,14 @@ sap.ui.define([
 	 * automatically. If the binding's update group ID has
 	 * {@link sap.ui.model.odata.v4.SubmitMode.API}, it is repeated with the next call of
 	 * {@link sap.ui.model.odata.v4.ODataModel#submitBatch}. Otherwise it is repeated with the next
-	 * update for the entity. Each time the data for the created entity is sent to the server, a
-	 * {@link #event:createSent} event is fired and each time the client receives a response for the
-	 * creation, a {@link #event:createCompleted} event is fired, independent of whether the
-	 * creation was successful or not.
+	 * update for the entity. Since 1.67.0, {@link sap.ui.model.odata.v4.ODataModel#submitBatch} can
+	 * also be used for group IDs with {@link sap.ui.model.odata.v4.SubmitMode.Auto} in order to
+	 * repeat the creation even if there is no update for the entity.
+	 *
+	 * Each time the data for the created entity is sent to the server, a {@link #event:createSent}
+	 * event is fired and each time the client receives a response for the creation, a
+	 * {@link #event:createCompleted} event is fired, independent of whether the creation was
+	 * successful or not.
 	 *
 	 * The initial data for the created entity can be supplied via the parameter
 	 * <code>oInitialData</code> and modified via property bindings. Properties that are not part of

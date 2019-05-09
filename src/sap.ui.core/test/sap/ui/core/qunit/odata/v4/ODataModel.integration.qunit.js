@@ -16346,11 +16346,38 @@ sap.ui.define([
 //			});
 //
 //		return oRoomIdBinding.getContext().delete(); // DELETE also triggers retry
+	}, function (assert) {
+		this.expectRequest({
+			method : "PATCH",
+			url : "EMPLOYEES('3')",
+			headers : {"If-Match" : "ETag0"},
+			payload : {
+				"ROOM_ID" : "42" // <-- retry
+			}
+		}, {/* don't care */});
+
+		assert.strictEqual(this.oModel.hasPendingChanges(), true);
+		assert.strictEqual(this.oView.byId("form").getObjectBinding().hasPendingChanges(), true);
+
+		return this.oModel.submitBatch("$auto");
+	}, function (assert) {
+		assert.strictEqual(this.oModel.hasPendingChanges(), true);
+		assert.strictEqual(this.oView.byId("form").getObjectBinding().hasPendingChanges(), true);
+
+		this.expectChange("roomId", "2");
+
+		// code under test
+		this.oModel.resetChanges("$auto");
+
+		assert.strictEqual(this.oModel.hasPendingChanges(), false);
+		assert.strictEqual(this.oView.byId("form").getObjectBinding().hasPendingChanges(), false);
+
+		return this.oModel.submitBatch("$auto");
 	}].forEach(function (fnCodeUnderTest, i) {
 		QUnit.test("Later retry failed PATCHes for $auto, " + i, function (assert) {
 			var oModel = createTeaBusiModel({updateGroupId : "$auto"}),
 				sView = '\
-<FlexBox binding="{/EMPLOYEES(\'3\')}">\
+<FlexBox binding="{/EMPLOYEES(\'3\')}" id="form">\
 	<Input id="roomId" value="{ROOM_ID}" />\
 	<Input id="status" value="{STATUS}" />\
 </FlexBox>',
@@ -16399,7 +16426,7 @@ sap.ui.define([
 				return that.waitForChanges(assert);
 			}).then(function () {
 				return Promise.all([
-					fnCodeUnderTest.call(that),
+					fnCodeUnderTest.call(that, assert),
 					that.waitForChanges(assert)
 				]);
 			});
