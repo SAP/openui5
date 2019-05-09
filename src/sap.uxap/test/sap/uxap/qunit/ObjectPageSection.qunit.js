@@ -57,6 +57,64 @@ function($, Core, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSec
 		ObjectPageSectionView.destroy();
 	});
 
+	QUnit.module("Section title visiblity");
+
+	QUnit.test("Title visibility with one section", function (assert) {
+		var oObjectPageLayout = new ObjectPageLayout("page02", {
+				useIconTabBar: true,
+				sections: new ObjectPageSection({
+					subSections: [
+						new ObjectPageSubSection({
+							title: "Title",
+							blocks: [new Text({text: "test"})]
+						})
+					]
+				})
+			});
+
+		oObjectPageLayout.placeAt('qunit-fixture');
+		Core.applyChanges();
+
+		assert.strictEqual(oObjectPageLayout.getSections()[0]._getInternalTitleVisible(), true, "title is displayed when there is only 1 section");
+
+		oObjectPageLayout.destroy();
+	});
+
+	QUnit.test("Title visibility with more than one section", function (assert) {
+		var	aSections,
+			oObjectPageLayout = new ObjectPageLayout("page02", {
+				useIconTabBar: true,
+				sections: [
+					new ObjectPageSection({
+						subSections: [
+							new ObjectPageSubSection({
+								title: "Title",
+								blocks: [new Text({text: "test"})]
+							})
+						]
+					}),
+					new ObjectPageSection({
+						subSections: [
+							new ObjectPageSubSection({
+								title: "Title",
+								blocks: [new Text({text: "test"})]
+							})
+						]
+					})
+				]
+			});
+
+		oObjectPageLayout.placeAt('qunit-fixture');
+		Core.applyChanges();
+
+		aSections = oObjectPageLayout.getSections();
+
+		assert.strictEqual(aSections[0]._getInternalTitleVisible(), false, "title is hidden when there is more than 1 section");
+		assert.strictEqual(aSections[1]._getInternalTitleVisible(), false, "title is hidden when there is more than 1 section");
+
+		oObjectPageLayout.destroy();
+	});
+
 	var SectionBasePrototype = ObjectPageSectionBase.prototype,
 		SectionPrototype = ObjectPageSection.prototype;
 

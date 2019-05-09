@@ -1389,13 +1389,15 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._applyUxRules = function (bInvalidate) {
 		var aSections, aSubSections, iVisibleSubSections, iVisibleSection, iVisibleBlocks,
-			bVisibleAnchorBar, bVisibleIconTabBar, oFirstVisibleSection, oFirstVisibleSubSection,
-			bFirstSectionTitleHidden, aContent, iFirstVisibleSectionVisibleSubSections, oTitleVisibilityInfo = {};
+			bVisibleAnchorBar, bUseIconTabBar, oFirstVisibleSection, oFirstVisibleSubSection,
+			bFirstSectionTitleHidden, aContent, iFirstVisibleSectionVisibleSubSections, oTitleVisibilityInfo = {},
+			bShouldShowFirstSectionTitle;
 
 		aSections = this.getSections() || [];
 		iVisibleSection = 0;
 		bVisibleAnchorBar = this.getShowAnchorBar();
-		bVisibleIconTabBar = this.getUseIconTabBar();
+		bUseIconTabBar = this.getUseIconTabBar();
+		bShouldShowFirstSectionTitle = aSections.length <= 1;
 
 		oFirstVisibleSection = null;
 
@@ -1479,10 +1481,9 @@ sap.ui.define([
 				iVisibleSection++;
 			}
 
-			if (bVisibleIconTabBar) {
-				oTitleVisibilityInfo[oSection.getId()] = false;
+			if (bUseIconTabBar) {
+				oTitleVisibilityInfo[oSection.getId()] = bShouldShowFirstSectionTitle;
 			}
-
 		}, this);
 
 		//rule notEnoughVisibleSection: If there is only 1 section overall, the navigation control shall be hidden.
