@@ -81,6 +81,17 @@
 		var oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(aData);
 
+		var oLongValueStateInput = new sap.m.Input("sugInp-longvaluestate", {
+			placeholder: "Long value state text",
+			showSuggestion: true,
+			width: "25%",
+			valueStateText: "The state of this Input is not correct. Please check the entered value. You cannot submit the current form.",
+			valueState: "Error",
+		});
+
+		oLongValueStateInput.setModel(oModel);
+		oLongValueStateInput.bindAggregation("suggestionItems", "/", new sap.ui.core.Item({text: "{name}"}));
+
 		var oSuggestInput2 = new sap.m.Input("suginput2", {
 			placeholder: "Suggest JSONModel, filter:false, start:3",
 			showSuggestion: true,
@@ -834,6 +845,7 @@
 					oValueStateInput2,
 					oValueStateInput3,
 					oValueStateInput4,
+					oLongValueStateInput,
 					new sap.m.Input({
 						value: "10",
 						description: "PC",

@@ -669,6 +669,16 @@
 			}
 		});
 
+		var oComboBoxWithLongValueStateText  = new sap.m.ComboBox("box_longValueState",{
+			placeholder: "Choose your country",
+			valueState: "Warning",
+			valueStateText: "Warning message. Extra long text used as a warning message. Extra long text used as a warning message - 2 Extra long text used as a warning message - 3..",
+			items: {
+				path: "/items",
+				template: oItemTemplate
+			}
+		});
+
 		var oComboBoxDisabled  = new sap.m.ComboBox("box_disabled",{
 			enabled: false,
 			placeholder: "Choose your country",
@@ -867,7 +877,11 @@
 				oComboBoxSuccess,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
-				new sap.ui.core.HTML("title_error",{ content: "<h3>Error state</h3>" }),
+				new sap.ui.core.HTML({ content: "<h3>Long value state message</h3>" }),
+				oComboBoxWithLongValueStateText,
+				new sap.ui.core.HTML({ content: "<hr>" }),
+
+				new sap.ui.core.HTML({ content: "<h3>Error state</h3>" }),
 				oComboBoxError,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 

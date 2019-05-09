@@ -3689,23 +3689,9 @@ sap.ui.define([
 		oErrorComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		//act
-		oErrorComboBox.focus();
-
-		//arrange
-		var oValueStateMessage = document.getElementById("errorcombobox-message"),
-			oPopup = oErrorComboBox._oValueStateMessage._oPopup;
-
-		//assert
-		assert.ok(oValueStateMessage, "error message popup is opened when list is opened");
-
-		//act
 		oErrorComboBox.open();
 		this.clock.tick(1000);
-
-		//assert
-		assert.strictEqual(oErrorComboBox._getSuggestionsPopover()._oPopover.$().find("header .sapMTitle").text(), "Error Message", "value state message is displayed in the suggestion popover");
-		assert.ok(!oPopup || oPopup.getContent().style.display === "none", "Value state message is not displayed when the list is opened");
+		assert.ok(!document.getElementById("errorcombobox-message"), "error message popup is not open when list is open");
 
 		oErrorComboBox.close();
 		this.clock.tick(1000);
@@ -3743,7 +3729,8 @@ sap.ui.define([
 			oComboBox = new ComboBox("comboBoxVS", {
 				valueStateText: sText
 			});
-		// arrange
+		// Arrange
+		var sValueStateText = "Error message. Extra long text used as an error message. Extra long text used as an error message - 2. Extra long text used as an error message - 3.";
 		oComboBox.placeAt("content");
 		oComboBox.syncPickerContent();
 		sap.ui.getCore().applyChanges();
@@ -3751,14 +3738,22 @@ sap.ui.define([
 		assert.strictEqual(oComboBox._oSuggestionPopover._getPickerValueStateText().getText(), sText,
 			"The text is forwarded correctly.");
 
+		// Act
 		oComboBox.setValueStateText("");
 		oComboBox.setValueState("Error");
 
+		// Assert
 		assert.strictEqual(oComboBox._oSuggestionPopover._getPickerValueStateText().getText(), ValueStateSupport.getAdditionalText(oComboBox),
 			"The text is set correctly when the state is Error and not specific valueStateText is set.");
 
-		oComboBox.destroy();
+		// Act
+		oComboBox.setValueStateText(sValueStateText);
 
+		// Assert
+		assert.strictEqual(oComboBox._oSuggestionPopover._getPickerValueStateText().getText(), sValueStateText, "The text is set correctly when is set from the user.");
+
+		// cleanup
+		oComboBox.destroy();
 	});
 
 	QUnit.test("in 'None' valueState don't showValueState message ", function (assert) {
@@ -3768,7 +3763,7 @@ sap.ui.define([
 			valueStateText: "Error Message"
 		});
 
-		// arrange
+		// Arrange
 		oComboBox.placeAt("content");
 		oComboBox.syncPickerContent();
 		sap.ui.getCore().applyChanges();
@@ -3829,59 +3824,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.ok(oErrorComboBox.getPicker().getShowHeader(), "Header should be shown");
-		assert.ok(oErrorComboBox._oSuggestionPopover._getPickerCustomHeader().hasStyleClass(CSS_CLASS_SUGGESTIONS_POPOVER + "ValueState"), "Header has value state class");
-		assert.ok(oErrorComboBox._oSuggestionPopover._getPickerCustomHeader().hasStyleClass(CSS_CLASS_SUGGESTIONS_POPOVER + "ErrorState"), "Header has error value state class");
-
-		// Cleanup
-		oErrorComboBox.destroy();
-	});
-
-	QUnit.test("it should not render the dropdown list header if the valuestate property is set to none", function (assert) {
-
-		// System under test
-		var oErrorComboBox = new ComboBox({
-			valueState: "None",
-			items: [
-				new Item({
-					key: "DZ",
-					text: "Algeria"
-				})
-			]
-		});
-
-		// Arrange
-		oErrorComboBox.syncPickerContent();
-		oErrorComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		// Assert
-		assert.notOk(oErrorComboBox.getPicker().getCustomHeader().getVisible(), "Header should not be visible");
-
-		// Cleanup
-		oErrorComboBox.destroy();
-	});
-
-	QUnit.test("it should not render the dropdown list header if the property showValueStateMessage is set to false", function (assert) {
-
-		// System under test
-		var oErrorComboBox = new ComboBox({
-			showValueStateMessage: false,
-			items: [
-				new Item({
-					key: "DZ",
-					text: "Algeria"
-				})
-			]
-		});
-
-		// Arrange
-		oErrorComboBox.syncPickerContent();
-		oErrorComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		// Assert
-		assert.notOk(oErrorComboBox.getPicker().getCustomHeader().getVisible(), "Header should not be visible");
+		assert.ok(oErrorComboBox._oSuggestionPopover._oSimpleFixFlex.getFixContent().hasStyleClass(CSS_CLASS_SUGGESTIONS_POPOVER + "ValueState"), "Header has value state class");
+		assert.ok(oErrorComboBox._oSuggestionPopover._oSimpleFixFlex.getFixContent().hasStyleClass(CSS_CLASS_SUGGESTIONS_POPOVER + "ErrorState"), "Header has error value state class");
 
 		// Cleanup
 		oErrorComboBox.destroy();
@@ -3907,7 +3851,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(oErrorComboBox.getPicker().getCustomHeader().getContentLeft()[0].getText(), "custom", "text should be custom");
+		assert.strictEqual(oErrorComboBox._getSuggestionsPopover()._oSimpleFixFlex.getFixContent().getText(), "custom", "text should be custom");
 
 		// Cleanup
 		oErrorComboBox.destroy();

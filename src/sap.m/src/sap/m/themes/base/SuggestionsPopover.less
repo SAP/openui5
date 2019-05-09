@@ -38,13 +38,16 @@
 
 div.sapMSuggestionsPopover .sapMSuggestionsPopoverValueState {
 	font-size: @sapMFontSmallSize;
-	height: 2rem;
-	line-height: 2rem;
-	padding-left: 1rem;
+	line-height: normal;
+	padding: 0.5625rem 1rem;
 
 	&.sapMSuggestionsPopoverErrorState {
 		background: @sapUiErrorBG;
 		color: @sapUiBaseText;
+	}
+
+	&.sapMSuggestionsPopoverInformationState {
+		background: @sapUiInformationBG;
 	}
 
 	&.sapMSuggestionsPopoverSuccessState {
@@ -62,6 +65,11 @@ div.sapMSuggestionsPopover .sapMSuggestionsPopoverValueState {
 	}
 }
 
-.sapMSuggestionsPopoverNoneState {
+.sapMSuggestionsPopover .sapMSuggestionsPopoverNoneState {
 	display: none;
+}
+
+.sapMSuggestionsPopover .sapUiSimpleFixFlex {
+	max-height: inherit;
+	height: auto;
 }
