@@ -2713,8 +2713,16 @@ sap.ui.define([
 		oInput.setModel(oModelData);
 		assert.equal(oInput.getValue(), "a1", "After a json model is set and one of the items has key that item has to be selected");
 
+
 		oInput.setSelectedKey("a3");
-		assert.equal(oInput.getValue(), "a1", "After setting new selected key which is not in the list items the value shouldn't change");
+		assert.equal(oInput.getValue(), "", "After setting new selected key which is not in the list items the value should be empyt");
+
+		oInput.setValue("New value");
+
+		oInput.setSelectedKey("");
+		assert.equal(oInput.getValue(), "", "After the selected key to empty string, the value should be cleared");
+
+		oInput.setSelectedKey("a3");
 
 		oInput.setValue('');
 		oInput.addSuggestionItem(new Item({text: "a3", key: "a3"}));
@@ -2722,20 +2730,20 @@ sap.ui.define([
 		assert.equal(oInput.getValue(), "a3", "The value must be set to the selected key");
 
 		oInput.removeAllSuggestionItems();
-		assert.equal(oInput.getValue(), "a3", "The value must be cleared after removing all items");
+		assert.equal(oInput.getValue(), "", "The value must be cleared after removing all items");
 
 		oInput.addSuggestionItem(new Item({text: "a3", key: "a3"}));
 		assert.equal(oInput.getValue(), "a3", "The value must be set to the selected key");
 
 		oInput.destroySuggestionItems();
-		assert.equal(oInput.getValue(), "a3", "The value must be cleared after destroying all items");
+		assert.equal(oInput.getValue(), "", "The value must be cleared after destroying all items");
 
 		var oItem = new Item({text: "a3", key: "a3"});
 		oInput.addSuggestionItem(oItem);
 		assert.equal(oInput.getValue(), "a3", "The value must be set to the selected key");
 
 		oInput.removeSuggestionItem(oItem);
-		assert.equal(oInput.getValue(), "a3", "The value must be cleared after removing item");
+		assert.equal(oInput.getValue(), "", "The value must be cleared after removing item");
 
 		oItem.destroy();
 		oInput.destroy();
