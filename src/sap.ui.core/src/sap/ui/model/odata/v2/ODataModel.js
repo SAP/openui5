@@ -4221,10 +4221,9 @@ sap.ui.define([
 		}
 
 		// deep path handling
-		if (sDeepPath && this.sMessageScope === MessageScope.BusinessObject) {
+		if (this.sMessageScope === MessageScope.BusinessObject) {
 			assert(this.bIsMessageScopeSupported, "MessageScope 'BusinessObject' is not supported by the service");
-			var aParts = sDeepPath.split("/");
-			mHeaders["sap-message-scope"] = "/" + aParts[1]; // "/" + RootEntity(123)
+			mHeaders["sap-message-scope"] = this.sMessageScope;
 		}
 
 		var oRequest = {

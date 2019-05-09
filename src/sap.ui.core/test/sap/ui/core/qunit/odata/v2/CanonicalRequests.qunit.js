@@ -149,8 +149,7 @@ sap.ui.define([
                     var oRelevantRequest = getLastRequest(test);
                     var sMessageScopeHeader = oRelevantRequest["headers"]["sap-message-scope"];
 
-                    var aParts = oRelevantRequest.deepPath.split("/");
-                    assert.equal(sMessageScopeHeader, "/" + aParts[1]);
+                    assert.equal(sMessageScopeHeader, MessageScope.BusinessObject);
                     assert.equal(oRelevantRequest.deepPath, path, "Deep path set correctly.");
                     assert.equal(oEvent.getParameters().url.split("?")[0], expectedURL, "ODatamodel." +  testedAPI + " - requestedPath:" + path);
 
@@ -320,8 +319,7 @@ sap.ui.define([
                         var sDeepPath = sLastRequest["data"]["__batchRequests"][0].__changeRequests[0].deepPath;
                         var sMessageScopeHeader = sLastRequest["data"]["__batchRequests"][0].__changeRequests[0].headers["sap-message-scope"];
 
-                        var aParts = sDeepPath.split("/");
-                        assert.equal(sMessageScopeHeader, "/" + aParts[1]);
+                        assert.equal(sMessageScopeHeader, MessageScope.BusinessObject);
                         assert.equal(sDeepPath, "/SalesOrderSet('0500000005')/ToLineItems(SalesOrderID='0500000005',ItemPosition='0000000010')/Note", "Deep path set correctly.");
                         return checkIfCacheEntriesAreValid(that.oModel, assert).then(done);
                   }
@@ -602,7 +600,7 @@ sap.ui.define([
                 that.oModel.detachRequestCompleted(fnRequestCompleted);
                 var mHeaders = oEvent.getParameter("headers");
                 assert.ok(mHeaders["sap-message-scope"], "Message scope set to 'RequestedObjects': scope header set");
-                assert.equal(mHeaders["sap-message-scope"], "/SalesOrderSet('0500000000')", "Message scope set to 'BusinessObject': scope header set");
+                assert.equal(mHeaders["sap-message-scope"], MessageScope.BusinessObject, "Message scope set to 'BusinessObject': scope header set");
                 that.oModel.messageScopeSupported()
                     .then(function(bSupported) {
                         assert.ok(bSupported);
