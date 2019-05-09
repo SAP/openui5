@@ -890,11 +890,13 @@ function (
 	ElementOverlay.prototype.isElementVisible = function() {
 		var oElement = this.getElement();
 		var bVisible = false;
+		var oDesignTimeMetadata = this.getDesignTimeMetadata();
+		var oDTData = oDesignTimeMetadata.getData();
 
-		if (this.getDesignTimeMetadata().isIgnored(oElement)) {
+		if (oDesignTimeMetadata.isIgnored(oElement)) {
 			bVisible = false;
-		} else if (typeof this.getDesignTimeMetadata().getData().isVisible === "function") {
-			bVisible = this.getDesignTimeMetadata().getData().isVisible(oElement);
+		} else if (typeof oDTData.isVisible === "function") {
+			bVisible = oDTData.isVisible(oElement);
 		} else {
 			var oGeometry = this.getGeometry(true);
 			if (oGeometry) {
