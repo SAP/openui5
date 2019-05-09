@@ -12,7 +12,7 @@ function(
 ) {
 	"use strict";
 
-	var AdaptationRenderer = Renderer.extend('sap.ui.rta.toolbar.AdaptationRenderer', BaseRenderer);
+	var AdaptationRenderer = BaseRenderer.extend('sap.ui.rta.toolbar.AdaptationRenderer');
 
 	AdaptationRenderer.render = function (oRM, oControl) {
 		oRM.addClass('sapUiRtaToolbarAdaptation');

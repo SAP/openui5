@@ -12,7 +12,7 @@ function(
 ) {
 	"use strict";
 
-	var BaseRenderer = Renderer.extend('sap.ui.rta.toolbar.BaseRenderer', HBoxRenderer);
+	var BaseRenderer = Renderer.extend.call(HBoxRenderer, 'sap.ui.rta.toolbar.BaseRenderer');
 
 	BaseRenderer.render = function (oRM, oControl) {
 		oRM.addClass('sapUiRtaToolbar');
