@@ -3883,10 +3883,11 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._processAfterUpdate = function() {
-		for (var i = 0; i < this.aCallAfterUpdate.length; i++) {
-			this.aCallAfterUpdate[i]();
-		}
+		var aCallAfterUpdate = this.aCallAfterUpdate;
 		this.aCallAfterUpdate = [];
+		for (var i = 0; i < aCallAfterUpdate.length; i++) {
+			aCallAfterUpdate[i]();
+		}
 	};
 
 	/**
