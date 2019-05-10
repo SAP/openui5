@@ -45,6 +45,8 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 		}
 		oRm.writeClasses();
 
+		this.addWrapperAdditionalStyles(oRm, oMonth);
+
 		if (sTooltip) {
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
@@ -79,6 +81,8 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 		oRm.write("</div>");
 
 	};
+
+	MonthRenderer.addWrapperAdditionalStyles = function() {};
 
 	/**
 	 * @param {sap.ui.unified.calendar.Month} oMonth The month which start date will be returned
