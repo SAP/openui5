@@ -39,7 +39,7 @@ sap.ui.define([
 		oRm.writeClasses();
 		oRm.write(">");
 
-		this.renderBeginSection(oRm, oTable);
+		this.renderBeginSection(oRm);
 		this.renderMiddleSection(oRm, oCreationRow, oTable);
 		this.renderEndSection(oRm, oTable);
 
@@ -48,7 +48,7 @@ sap.ui.define([
 		oRm.write("</div>");
 	};
 
-	CreationRowRenderer.renderBeginSection = function(oRm, oTable) {
+	CreationRowRenderer.renderBeginSection = function(oRm) {
 		oRm.write("<div");
 		oRm.addClass("sapUiTableCreationRowBeginSection");
 		oRm.addClass("sapUiTableRowHdrScr");
@@ -168,20 +168,15 @@ sap.ui.define([
 					oRm.addStyle("width", oColParam.width);
 					oRm.writeStyles();
 				}
-				// TODO: writeAriaAttributesFor "CREATIONROW_TH" (maybe not needed, because table has role=presentation ?)
-				//oTable._getAccRenderExtension().writeAriaAttributesFor(oRm, oTable, "CREATIONROW_TH", {column: oColumn});
 				oRm.writeAttribute("data-sap-ui-headcolindex", iColumnIndex);
 				oRm.writeAttribute("data-sap-ui-colid", oColumn.getId());
-				oRm.write(">");
-				oRm.write("</th>");
+				oRm.write("></th>");
 			}
 		}
 
 		// dummy column to fill the table width
 		if (bRenderDummyColumn) {
 			oRm.write("<th");
-			// TODO: maybe not needed, because table has role=presentation ?
-			//oTable._getAccRenderExtension().writeAriaAttributesFor(oRm, oTable, "PRESENTATION");
 			oRm.write("></th>");
 		}
 
@@ -192,12 +187,7 @@ sap.ui.define([
 
 		oRm.write("<tr");
 		oRm.addClass("sapUiTableTr");
-
 		oRm.writeClasses();
-
-		// TODO: writeAriaAttributesFor "CREATIONROW_TR" (maybe not needed, because table has role=presentation ?)
-		//oTable._getAccRenderExtension().writeAriaAttributesFor(oRm, oTable, "CREATIONROW_TR");
-
 		oRm.write(">");
 
 		var aCells = oCreationRow.getCells();
@@ -217,17 +207,8 @@ sap.ui.define([
 				var bIsLastColumn = nColumns > 0 && aVisibleColumns[nColumns - 1] === oColumn;
 				var oLastFixedColumn = aColumns[oTable.getFixedColumnCount() - 1];
 				var bIsLastFixedColumn = bFixedTable & oLastFixedColumn === oColumn;
-
-				// TODO: writeAriaAttributesFor "CREATIONROW_DATACELL" (maybe not needed, because table has role=presentation ?)
-				/*oTable._getAccRenderExtension().writeAriaAttributesFor(oRm, oTable, "CREATIONROW_DATACELL", {
-					index: iColumnIndex,
-					column: oColumn,
-					row: oCreationRow,
-					fixed: bFixedTable,
-					firstCol: bIsFirstColumn
-				});*/
-
 				var sHAlign = Renderer.getTextAlign(oColumn.getHAlign(), oCell && oCell.getTextDirection && oCell.getTextDirection());
+
 				if (sHAlign) {
 					oRm.addStyle("text-align", sHAlign);
 				}
@@ -269,10 +250,7 @@ sap.ui.define([
 		}
 
 		if (!bFixedTable && bRenderDummyColumn && aCells.length > 0) {
-			oRm.write("<td class=\"sapUiTableCellDummy\"");
-			// TODO: maybe not needed, because table has role=presentation ?
-			//oTable._getAccRenderExtension().writeAriaAttributesFor(oRm, oTable, "PRESENTATION");
-			oRm.write("></td>");
+			oRm.write("<td class=\"sapUiTableCellDummy\"></td>");
 		}
 		oRm.write("</tr>");
 
