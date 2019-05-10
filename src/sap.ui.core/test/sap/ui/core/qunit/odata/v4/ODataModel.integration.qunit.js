@@ -11119,28 +11119,24 @@ sap.ui.define([
 		<columns><Column/></columns>\
 		<items>\
 			<ColumnListItem>\
-				<Text id="id" text="{ContactGUID}" />\
+				<Text id="nickname" text="{Nickname}" />\
 			</ColumnListItem>\
 		</items>\
 	</Table>\
 </FlexBox>',
 			that = this;
 
-		this.expectChange("id", false);
+		this.expectChange("nickname", false);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("GetSOContactList(SalesOrderID='0500000001')", {
 					value : [
-						{"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591d177"},
-						{"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591f177"},
-						{"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c5921177"}
+						{"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591d177", "Nickname" : "a"},
+						{"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591f177", "Nickname" : "b"},
+						{"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c5921177", "Nickname" : "c"}
 					]
 				})
-				.expectChange("id", [
-					"fa163e7a-d4f1-1ee8-84ac-11f9c591d177",
-					"fa163e7a-d4f1-1ee8-84ac-11f9c591f177",
-					"fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
-				]);
+				.expectChange("nickname", ["a", "b", "c"]);
 
 			return Promise.all([
 				// code under test
@@ -11162,24 +11158,20 @@ sap.ui.define([
 	<columns><Column/></columns>\
 	<items>\
 		<ColumnListItem>\
-			<Text id="id" text="{ContactGUID}" />\
+			<Text id="nickname" text="{Nickname}" />\
 		</ColumnListItem>\
 	</items>\
 </Table>';
 
-		this.expectRequest("GetSOContactList(SalesOrderID='0500000001')?$select=ContactGUID"
-				+ "&$skip=0&$top=100", {
+		this.expectRequest("GetSOContactList(SalesOrderID='0500000001')"
+				+ "?$select=ContactGUID,Nickname&$skip=0&$top=100", {
 				value : [
-					{"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591d177"},
-					{"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591f177"},
-					{"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c5921177"}
+					{"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591d177", "Nickname" : "a"},
+					{"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591f177", "Nickname" : "b"},
+					{"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c5921177", "Nickname" : "c"}
 				]
 			})
-			.expectChange("id", [
-				"fa163e7a-d4f1-1ee8-84ac-11f9c591d177",
-				"fa163e7a-d4f1-1ee8-84ac-11f9c591f177",
-				"fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
-			]);
+			.expectChange("nickname", ["a", "b", "c"]);
 
 		return this.createView(assert, sView, oModel);
 	});
@@ -11196,26 +11188,21 @@ sap.ui.define([
 		<columns><Column/></columns>\
 		<items>\
 			<ColumnListItem>\
-				<Text id="id" text="{ContactGUID}" />\
+				<Text id="nickname" text="{Nickname}" />\
 			</ColumnListItem>\
 		</items>\
 	</Table>\
 </FlexBox>';
 
-		this.expectChange("id", false);
-
-		this.expectRequest("GetSOContactList(SalesOrderID='0500000001')?$select=ContactGUID", {
+		this.expectRequest("GetSOContactList(SalesOrderID='0500000001')"
+			+ "?$select=ContactGUID,Nickname", {
 				value : [
-					{"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591d177"},
-					{"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591f177"},
-					{"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c5921177"}
+					{"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591d177", "Nickname" : "a"},
+					{"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c591f177", "Nickname" : "b"},
+					{"ContactGUID" : "fa163e7a-d4f1-1ee8-84ac-11f9c5921177", "Nickname" : "c"}
 				]
 			})
-			.expectChange("id", [
-				"fa163e7a-d4f1-1ee8-84ac-11f9c591d177",
-				"fa163e7a-d4f1-1ee8-84ac-11f9c591f177",
-				"fa163e7a-d4f1-1ee8-84ac-11f9c5921177"
-			]);
+			.expectChange("nickname", ["a", "b", "c"]);
 
 		return this.createView(assert, sView, oModel);
 	});

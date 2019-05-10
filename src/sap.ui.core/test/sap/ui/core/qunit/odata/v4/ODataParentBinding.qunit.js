@@ -837,8 +837,10 @@ sap.ui.define([
 									getModelInterface : function () {
 										return oModelInterface;
 									}
-								}
-							}
+								},
+								resolve : function () {}
+							},
+							sPath : "path"
 						}),
 						oBindingMock = this.mock(oBinding),
 						mChildLocalQueryOptions = {},
@@ -849,6 +851,9 @@ sap.ui.define([
 						oMetaModelMock = this.mock(oMetaModel),
 						oPromise;
 
+					this.mock(oBinding.oModel).expects("resolve")
+						.withExactArgs("path", sinon.match.same(oBinding.oContext))
+						.returns("/NotAnOperation");
 					oMetaModelMock.expects("getMetaPath")
 						.withExactArgs("/EMPLOYEES('2')")
 						.returns("/EMPLOYEES");
@@ -935,7 +940,8 @@ sap.ui.define([
 							getModelInterface : function () {
 								return {/*fetchMetadata*/};
 							}
-						}
+						},
+						resolve : function () { return "/NotAnOperation"; }
 					}
 				}),
 				oBindingMock = this.mock(oBinding),
@@ -1009,6 +1015,7 @@ sap.ui.define([
 							return {/*fetchMetadata*/};
 						}
 					},
+					resolve : function () { return "/NotAnOperation"; },
 					mUriParameters : {}
 				}
 			}),
@@ -1075,7 +1082,8 @@ sap.ui.define([
 						getModelInterface : function () {
 							return oModelInterface;
 						}
-					}
+					},
+					resolve : function () { return "/NotAnOperation"; }
 				}
 			}),
 			oBindingMock = this.mock(oBinding),
@@ -1135,7 +1143,10 @@ sap.ui.define([
 					doFetchQueryOptions : function () {
 						return SyncPromise.resolve({});
 					},
-					oModel : {getMetaModel : function () {return oMetaModel;}},
+					oModel : {
+						getMetaModel : function () { return oMetaModel; },
+						resolve : function () { return "/NotAnOperation"; }
+					},
 					bRelative : false
 				}),
 				oContext = Context.create(this.oModel, oBinding, "/EMPLOYEES('2')"),
@@ -1175,7 +1186,8 @@ sap.ui.define([
 				getMetaPath : function () {}
 			},
 			oModel = {
-				getMetaModel : function () {return oMetaModel;}
+				getMetaModel : function () { return oMetaModel; },
+				resolve : function () { return "/NotAnOperation"; }
 			},
 			oBinding = new ODataParentBinding({
 				mAggregatedQueryOptions : {$expand : { "foo" : {$select : ["bar"]}}},
@@ -1218,7 +1230,8 @@ sap.ui.define([
 			function (assert) {
 		var oBinding = new ODataParentBinding({
 			oModel : {
-				getMetaModel : function () { return {}; }
+				getMetaModel : function () { return {}; },
+				resolve : function () { return "/NotAnOperation"; }
 			}
 		});
 
@@ -1233,13 +1246,19 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchIfChildCanUseCache: operation binding", function (assert) {
+	QUnit.test("fetchIfChildCanUseCache: operation binding or dependent", function (assert) {
 		var oBinding = new ODataParentBinding({
-			oModel : {
-				getMetaModel : function () { return {}; }
-			},
-			oOperation : {}
-		});
+				oContext : {},
+				oModel : {
+					getMetaModel : function () { return {}; },
+					resolve : function () {}
+				},
+				sPath : "path"
+			});
+
+		this.mock(oBinding.oModel).expects("resolve")
+			.withExactArgs("path", sinon.match.same(oBinding.oContext))
+			.returns("/Foo/operation(...)/Bar/path");
 
 		// code under test
 		assert.strictEqual(
@@ -1259,7 +1278,10 @@ sap.ui.define([
 				// cache will be created, waiting for child bindings
 				oCachePromise : SyncPromise.resolve(Promise.resolve()),
 				doFetchQueryOptions : function () {},
-				oModel : {getMetaModel : function () {return oMetaModel;}},
+				oModel : {
+					getMetaModel : function () { return oMetaModel; },
+					resolve : function () { return "/NotAnOperation"; }
+				},
 				bRelative : false
 			}),
 			oBindingMock = this.mock(oBinding),
@@ -1293,7 +1315,8 @@ sap.ui.define([
 	QUnit.test("fetchIfChildCanUseCache, suspended parent binding", function (assert) {
 		var oBinding = new ODataParentBinding({
 				oModel : {
-					getMetaModel : function () { return {}; }
+					getMetaModel : function () { return {}; },
+					resolve : function () { return "/NotAnOperation"; }
 				}
 			}),
 			oRootBinding = {
