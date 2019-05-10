@@ -519,7 +519,7 @@ function(
 		var sStickyMode = this.getStickyMode(),
 			oGrid = this._getGrid(),
 			oColumnHeaders = oGrid && oGrid._getColumnHeaders(),
-			sTop;
+			iTop;
 
 		// Make sure that the columnHeaders are rendered
 		if (!oColumnHeaders || !oColumnHeaders.getDomRef()) {
@@ -529,19 +529,20 @@ function(
 		switch (sStickyMode) {
 			case PlanningCalendarStickyMode.All:
 				// Since the whole header will be visible, columnHeaders should be offset by its whole height.
-				sTop = this._getHeader().$().outerHeight();
+				iTop = this._getHeader().$().outerHeight();
 				break;
 			case PlanningCalendarStickyMode.NavBarAndColHeaders:
 				// Since the action toolbar will be hidden, columnHeaders should be
-				sTop = this._getHeader()._getNavigationToolbar().$().outerHeight();
+				iTop = this._getHeader()._getNavigationToolbar().$().outerHeight();
 				break;
 			default:
 				// Reset to default, if not in sticky mode
-				sTop = "auto";
+				iTop = "auto";
 				break;
 		}
 
-		oColumnHeaders.$().css("top", sTop);
+		oColumnHeaders.$().css("top", iTop);
+		oColumnHeaders._setTopPosition(iTop);
 
 		return this;
 	};
@@ -890,6 +891,7 @@ function(
 	 */
 	SinglePlanningCalendar.prototype._handlePressArrow = function (oEvent) {
 		this._applyArrowsLogic(oEvent.getId() === "pressPrevious");
+		this._adjustColumnHeadersTopOffset();
 	};
 
 	/**
@@ -903,6 +905,7 @@ function(
 		this.fireStartDateChange({
 			date: oStartDate
 		});
+		this._adjustColumnHeadersTopOffset();
 	};
 
 	/**
@@ -913,6 +916,7 @@ function(
 	SinglePlanningCalendar.prototype._handleViewSwitchChange = function (oEvent) {
 		this.setAssociation("selectedView", oEvent.getParameter("item"));
 		this._alignColumns();
+		this._adjustColumnHeadersTopOffset();
 	};
 
 	/**
@@ -927,6 +931,7 @@ function(
 		this.fireStartDateChange({
 			date: oStartDate
 		});
+		this._adjustColumnHeadersTopOffset();
 	};
 
 	/**

@@ -180,6 +180,12 @@ sap.ui.define([
 
 	};
 
+	DatesRow.prototype._setTopPosition = function(iTop){
+
+		this._iTopPosition = iTop;
+
+	};
+
 	DatesRow.prototype.setPrimaryCalendarType = function(sCalendarType){
 
 		Month.prototype.setPrimaryCalendarType.apply(this, arguments);
