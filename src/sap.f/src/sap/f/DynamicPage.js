@@ -442,6 +442,8 @@ sap.ui.define([
 		}
 
 		this.setAggregation("header", oHeader);
+
+		return this;
 	};
 
 	DynamicPage.prototype.setStickySubheaderProvider = function (sStickySubheaderProviderId) {
@@ -449,7 +451,7 @@ sap.ui.define([
 			sOldStickySubheaderProviderId = this.getStickySubheaderProvider();
 
 		if (sStickySubheaderProviderId === sOldStickySubheaderProviderId) {
-			return;
+			return this;
 		}
 
 		oOldStickySubheaderProvider = sap.ui.getCore().byId(sOldStickySubheaderProviderId);
