@@ -253,18 +253,19 @@ sap.ui.define([
 		assert.expect(5);
 
 		var test = function() { // function to be executed after navigating forward and back
-			assert.equal(getScrollPos(), -50, "Page should be scrolled to position 50");
-			assert.equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
+			window.setTimeout(function() {
+				assert.equal(getScrollPos(), -50, "Page should be scrolled to position 50");
+				assert.equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
 
-			app.detachAfterNavigate(test);
-			done();
+				app.detachAfterNavigate(test);
+				done();
+			}, 300);
 		};
 
 		var goBack = function() {
 			app.detachAfterNavigate(goBack);
 			app.attachAfterNavigate(test);
 
-			window.setTimeout(function(){ // just to make sure the browser has settled down. Theoretically not required.
 				page1.rerender();
 
 				assert.equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
@@ -273,7 +274,6 @@ sap.ui.define([
 					assert.equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
 					app.back();
 				}, 100);
-			}, 100);
 		};
 
 		app.attachAfterNavigate(goBack);
@@ -296,24 +296,24 @@ sap.ui.define([
 			assert.expect(2);
 
 			var test = function() { // function to be executed after navigating forward and back
-				assert.equal(getScrollPos(), -50, "Page should be scrolled to position 50");
-				assert.equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
+				window.setTimeout(function(){
+					assert.equal(getScrollPos(), -50, "Page should be scrolled to position 50");
+					assert.equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
 
-				app.detachAfterNavigate(test);
-				done();
+					app.detachAfterNavigate(test);
+					done();
+				}, 300);
 			};
 
 			var goBack = function() {
 				app.detachAfterNavigate(goBack);
 				app.attachAfterNavigate(test);
 
-				window.setTimeout(function(){ // just to make sure the browser has settled down. Theoretically not required.
 					app.rerender();
 
 					window.setTimeout(function(){ // just to make sure the browser has settled down. Theoretically not required.
 						app.back();
 					}, 100);
-				}, 100);
 			};
 
 			app.attachAfterNavigate(goBack);
@@ -326,27 +326,27 @@ sap.ui.define([
 			assert.expect(4);
 
 			var test = function() { // function to be executed after navigating forward and back
-				assert.equal(getScrollPos(), -50, "Page should be scrolled to position 50");
-				assert.equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
+				window.setTimeout(function() {
+					assert.equal(getScrollPos(), -50, "Page should be scrolled to position 50");
+					assert.equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
 
-				app.detachAfterNavigate(test);
-				done();
+					app.detachAfterNavigate(test);
+					done();
+				}, 300);
 			};
 
 			var goBack = function() {
 				app.detachAfterNavigate(goBack);
 				app.attachAfterNavigate(test);
 
-				window.setTimeout(function(){ // Make sure there is one resize listener cycle with no page1 rendered in the html
-					page1.$().remove();
+				page1.$().remove();
 
+				assert.equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
+
+				window.setTimeout(function(){ // just to make sure the browser has settled down. Theoretically not required.
+					app.back();
 					assert.equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
-
-					window.setTimeout(function(){ // just to make sure the browser has settled down. Theoretically not required.
-						app.back();
-						assert.equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
-					}, 100);
-				}, 310);
+				}, 100);
 			};
 
 			app.attachAfterNavigate(goBack);

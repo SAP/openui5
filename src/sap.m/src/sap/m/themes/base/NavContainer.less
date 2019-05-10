@@ -47,43 +47,36 @@ html[data-sap-ui-animation='on'] {
 		transform: translate3d(0px, 0px, 0px);
 	}
 
-	.sapMNavItem.sapMNavItemRight {
-		-webkit-transition-property: -webkit-transform;
-		-webkit-transform: translate3d(100%, 0px, 0px);
-
-		transform: translate3d(100%, 0px, 0px);
-		transition-property: transform;
+	.sapMNavItem.sapMNavItemSlideLeft {
+		-webkit-transform: translate3d(1rem, 0px, 0px);
+		transform: translate3d(1rem, 0px, 0px);
 	}
 
-	.sapMNavItem.sapMNavItemLeft {
-		-webkit-transition-property: -webkit-transform;
-		-webkit-transform: translate3d(-100%, 0px, 0px);
-		transition-property: transform;
-		transform: translate3d(-100%, 0px, 0px);
+	.sapMNavItem.sapMNavItemSlideRight {
+		-webkit-transform: translate3d(-1rem, 0px, 0px);
+		transform: translate3d(-1rem, 0px, 0px);
 	}
 
-	.sapMNavItem.sapMNavItemSliding {
-		-webkit-transition-duration: 0.3s;
-		transition-duration: 0.3s;
-	}
 
 	/* for fade animation */
 
 	.sapMNavItem.sapMNavItemTransparent {
-		-webkit-transition-property: opacity;
-		transition-property: opacity;
+		-webkit-transition-property: opacity, transform;
+		transition-property: opacity, transform;
 		opacity: 0;
 	}
 
 	.sapMNavItem.sapMNavItemOpaque {
-		-webkit-transition-property: opacity;
-		transition-property: opacity;
+		-webkit-transition-property: opacity, transform;
+		transition-property: opacity, transform;
 		opacity: 1;
+		-webkit-transform: translate3d(0px, 0px, 0px);
+		transform: translate3d(0px, 0px, 0px);
 	}
 
 	.sapMNavItem.sapMNavItemFading {
-		-webkit-transition-duration: 0.5s;
-		transition-duration: 0.5s;
+		-webkit-transition-duration: .15s;
+		transition-duration: .15s;
 	}
 
 	/* for flip animation */
