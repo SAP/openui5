@@ -286,8 +286,6 @@ sap.ui.define([
 
 	DynamicPage.HEADER_MAX_ALLOWED_NON_SROLLABLE_ON_MOBILE = 0.3;
 
-	DynamicPage.FOOTER_ANIMATION_DURATION = 350; // ms.
-
 	DynamicPage.BREAK_POINTS = {
 		TABLET: 1024,
 		PHONE: 600
@@ -320,6 +318,9 @@ sap.ui.define([
 	DynamicPage.DIV = "div";
 	DynamicPage.HEADER = "header";
 	DynamicPage.FOOTER = "footer";
+
+	DynamicPage.SHOW_FOOTER_CLASS_NAME = "sapFDynamicPageActualFooterControlShow";
+	DynamicPage.HIDE_FOOTER_CLASS_NAME = "sapFDynamicPageActualFooterControlHide";
 
 	/**
 	 * LIFECYCLE METHODS
@@ -558,47 +559,58 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._toggleFooter = function (bShow) {
 		var oFooter = this.getFooter(),
-			bUseAnimations = sap.ui.getCore().getConfiguration().getAnimationMode() !== Configuration.AnimationMode.none;
+			bUseAnimations;
 
-		if (!exists(this.$())) {
+		if (!exists(this.$()) || !exists(oFooter) || !exists(this.$footerWrapper)) {
 			return;
 		}
 
-		if (!exists(oFooter)) {
-			return;
-		}
-
-		oFooter.toggleStyleClass("sapFDynamicPageActualFooterControlShow", bShow);
-		oFooter.toggleStyleClass("sapFDynamicPageActualFooterControlHide", !bShow);
-
+		bUseAnimations = sap.ui.getCore().getConfiguration().getAnimationMode() !== Configuration.AnimationMode.none;
 		this._toggleFooterSpacer(bShow);
 
 		if (bUseAnimations) {
-
-			if (!bShow) {
-				this._iFooterAnimationTimeout = setTimeout(function () {
-					this.$footerWrapper.toggleClass("sapUiHidden", !bShow);
-				}.bind(this), DynamicPage.FOOTER_ANIMATION_DURATION);
-			} else {
-
-				if (this._iFooterAnimationTimeout) {
-					clearTimeout(this._iFooterAnimationTimeout);
-					this._iFooterAnimationTimeout = null;
-				}
-
-				this.$footerWrapper.toggleClass("sapUiHidden", !bShow);
-			}
-
-			setTimeout(function () {
-				oFooter.removeStyleClass("sapFDynamicPageActualFooterControlShow");
-			}, DynamicPage.FOOTER_ANIMATION_DURATION);
-		}
-
-		if (!bUseAnimations) {
+			this._toggleFooterAnimation(bShow, oFooter);
+		} else {
 			this.$footerWrapper.toggleClass("sapUiHidden", !bShow);
 		}
 
 		this._updateScrollBar();
+	};
+
+	/**
+	 * Animates the footer.
+	 * @param {boolean} bShow
+	 * @param {object} oFooter
+	 * @private
+	 */
+	DynamicPage.prototype._toggleFooterAnimation = function(bShow, oFooter) {
+
+		this.$footerWrapper.bind("webkitAnimationEnd animationend",
+		this._onToggleFooterAnimationEnd.bind(this, oFooter));
+
+		if (bShow) {
+			this.$footerWrapper.removeClass("sapUiHidden");
+		}
+
+		oFooter.toggleStyleClass(DynamicPage.SHOW_FOOTER_CLASS_NAME, bShow);
+		oFooter.toggleStyleClass(DynamicPage.HIDE_FOOTER_CLASS_NAME, !bShow);
+	};
+
+	/**
+	 * Footer animation end handler.
+	 * @param {object} oFooter
+	 * @private
+	 */
+	DynamicPage.prototype._onToggleFooterAnimationEnd = function(oFooter) {
+
+		this.$footerWrapper.unbind("webkitAnimationEnd animationend");
+
+		if (oFooter.hasStyleClass(DynamicPage.HIDE_FOOTER_CLASS_NAME)) {
+			this.$footerWrapper.addClass("sapUiHidden");
+			oFooter.removeStyleClass(DynamicPage.HIDE_FOOTER_CLASS_NAME);
+		} else {
+			oFooter.removeStyleClass(DynamicPage.SHOW_FOOTER_CLASS_NAME);
+		}
 	};
 
 	/**
