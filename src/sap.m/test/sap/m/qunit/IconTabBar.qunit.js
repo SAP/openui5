@@ -2510,6 +2510,23 @@ sap.ui.define([
 		assert.strictEqual(this.oIconTabBar.getSelectedKey(), '10', 'Correct tab filter is selected');
 	});
 
+	QUnit.test("Filters cloning", function (assert) {
+		// Arrange
+		var oIconTabHeader = this.oIconTabBar.getAggregation("_header"),
+			oOverflowButton = this.oIconTabBar.$().find('.sapMBtn'),
+			aItems = oIconTabHeader.getItems(),
+			aClonedItems;
+
+		// Act
+		oOverflowButton.trigger('tap');
+		aClonedItems = oIconTabHeader._getSelectList().getItems();
+
+		// Assert
+		assert.strictEqual(aItems.length, aClonedItems.length, "Items of the original and cloned filters should be equal");
+		assert.strictEqual(aItems[0].getContent().length, 1, "Original filter should have 1 item");
+		assert.strictEqual(aClonedItems[0].getContent().length, 0, "Cloned filter should NOT have items");
+	});
+
 	QUnit.module("ARIA",{
 		beforeEach: function () {
 			this.oIconTabBar = getIconTabBarWithOverflowList();
