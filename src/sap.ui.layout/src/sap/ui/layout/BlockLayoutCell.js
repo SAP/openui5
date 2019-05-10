@@ -138,15 +138,15 @@ sap.ui.define([
 			// fixes the issue in IE when the block layout size is auto
 			// like BlockLayout in a Dialog
 			if (Device.browser.internet_explorer) {
-				var bHasParentsThatHaveAutoHeight = false;
-				this.$().parents().toArray().forEach(function (element) {
-					if (element.style.height === "auto" || (element.className.indexOf("sapMDialogScroll") != -1)) {
-						bHasParentsThatHaveAutoHeight = true;
+
+				 var bHasParentDialog = this.$().parents().toArray().some(function (element) {
+					if (element.className.indexOf("sapMDialogScroll") !== -1) {
+						return true;
 					}
 				});
 
-				if (bHasParentsThatHaveAutoHeight){
-					this.$()[0].style.flex = this._flexWidth + ' 1 auto';
+				if (bHasParentDialog) {
+					this.$()[0].style.flex = this._flexWidth + " 1 auto";
 				}
 			}
 		};
