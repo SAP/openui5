@@ -9712,6 +9712,46 @@ sap.ui.define([
 		});
 
 		QUnit.test(
+			"setValueStateText should allow method chaining",
+			function (assert) {
+				//Arrange
+				var oTestSelect = new Select("testSelect", {
+					valueStateText: "lorem ipsum",
+					valueState: ValueState.Warning,
+					items: [
+						new Item({
+							key: "0",
+							text: "item 0"
+						}),
+
+						new Item({
+							key: "1",
+							text: "item 1"
+						}),
+
+						new Item({
+							key: "2",
+							text: "item 2"
+						})
+					]
+				}),
+
+				//Act
+				oTestValueStateStatic = oTestSelect.setValueStateText("new Text"),
+				oTestValueStateInsideDom = this.oSelect.setValueStateText("new Text");
+
+			//Assert
+			assert.equal(oTestValueStateStatic, oTestSelect, "setValueStateText returns instance of sap.m.Select," +
+				" when no DOM element is rendered, to allow method chaining");
+
+			assert.equal(oTestValueStateInsideDom, this.oSelect, "setValueStateText returns instance of sap.m.Select," +
+				" when DOM element is rendered, to allow method chaining");
+
+			//Cleanup
+				oTestSelect.destroy();
+
+		});
+		QUnit.test(
 			"it should show the value state text in the value state content when the dropdown list is opened",
 			function (assert) {
 
