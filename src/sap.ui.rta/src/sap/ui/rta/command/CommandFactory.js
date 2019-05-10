@@ -28,7 +28,7 @@ function(
 			var oBoundControlOverlay = OverlayRegistry.getOverlay(mBoundControl.elementId);
 			var oParentElementOverlay = oBoundControlOverlay.getParentElementOverlay();
 			var bAdditionalBinding = oParentElementOverlay ?
-				OverlayUtil.isInAggregationBinding(oParentElementOverlay, oParentElementOverlay.sParentAggregationName) : false;
+				!!OverlayUtil.getAggregationInformation(oParentElementOverlay).templateId : false;
 
 			if (bAdditionalBinding) {
 				throw DtUtil.createError("CommandFactory#evaluateTemplateBinding", "Multiple template bindings are not supported", "sap.ui.rta");
@@ -48,11 +48,16 @@ function(
 		return undefined;
 	}
 
-	function getTemplateElementId(vElementOrId) {
+	// For the Move Action the UI control is already moved while the corresponding object in the binding template is in the source position.
+	// Therefore we have to overwrite the index of the control in the stack with the source index (iIndex) to determine the needed template object.
+	function getTemplateElementId(vElementOrId, iIndex) {
 		var oElement = (typeof vElementOrId === "string") ? sap.ui.getCore().byId(vElementOrId) : vElementOrId;
 		var oElementOverlay = OverlayRegistry.getOverlay(oElement);
 		if (oElementOverlay) {
 			var mBoundControl = OverlayUtil.getAggregationInformation(oElementOverlay);
+			if (typeof iIndex === "number") {
+				mBoundControl.stack[0].index = iIndex;
+			}
 			return ElementUtil.extractTemplateId(mBoundControl);
 		} else {
 			return oElement.getId();
@@ -125,16 +130,20 @@ function(
 	}
 
 	function adjustMoveCommand(mSettings){
+		var aTemplateMovedElements = mSettings.movedElements.map(function(oMovedElement){
+			var oMovedElementInTemplate = sap.ui.getCore().byId(getTemplateElementId(oMovedElement.element, oMovedElement.sourceIndex));
+			evaluateResult(oMovedElementInTemplate);
+			return oMovedElementInTemplate;
+		});
+		mSettings.movedElements.forEach(function(oMovedElement, index) {
+			oMovedElement.element = aTemplateMovedElements[index];
+		});
 		mSettings.element = sap.ui.getCore().byId(getTemplateElementId(mSettings.element));
 		evaluateResult(mSettings.element);
 		mSettings.source.parent = sap.ui.getCore().byId(getTemplateElementId(mSettings.source.parent));
 		evaluateResult(mSettings.source.parent);
 		mSettings.target.parent = sap.ui.getCore().byId(getTemplateElementId(mSettings.target.parent));
 		evaluateResult(mSettings.target.parent);
-		mSettings.movedElements.forEach(function(oMovedElement){
-			oMovedElement.element = sap.ui.getCore().byId(getTemplateElementId(oMovedElement.element));
-			evaluateResult(oMovedElement.element);
-		});
 	}
 
 	function configureRenameCommand(oElement, mSettings, oDesignTimeMetadata){
@@ -179,10 +188,12 @@ function(
 		evaluateResult(mSettings.element);
 		mSettings.source = sap.ui.getCore().byId(getTemplateElementId(mSettings.source));
 		evaluateResult(mSettings.source);
-		mSettings.combineElements.forEach(function(oCombineField){
+		var aTemplateCombineElements = mSettings.combineElements.map(function(oCombineField){
 			oCombineField = sap.ui.getCore().byId(getTemplateElementId(oCombineField));
 			evaluateResult(oCombineField);
+			return oCombineField;
 		});
+		mSettings.combineElements = aTemplateCombineElements;
 	}
 
 	function configureSplitCommand(oElement, mSettings, oDesignTimeMetadata){

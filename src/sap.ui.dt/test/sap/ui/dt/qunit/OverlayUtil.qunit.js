@@ -567,25 +567,6 @@ function(
 			sandbox.restore();
 		}
 	}, function(){
-		QUnit.test("when 'isInAggregationBinding' is called", function(assert) {
-			assert.strictEqual(
-				OverlayUtil.isInAggregationBinding(this.oBoundOverlay, this.oBoundOverlay.getElement().sParentAggregationName),
-				true,
-				"... then for the bound Item it returns true");
-			assert.strictEqual(
-				OverlayUtil.isInAggregationBinding(this.oBoundChildOverlay, this.oBoundChildOverlay.getElement().sParentAggregationName),
-				true,
-				"... then for the bound Item content it returns true");
-			assert.strictEqual(
-				OverlayUtil.isInAggregationBinding(this.oUnboundOverlay, this.oUnboundOverlay.getElement().sParentAggregationName),
-				false,
-				"... then for the unbound Item it returns false");
-			assert.strictEqual(
-				OverlayUtil.isInAggregationBinding(this.oUnboundChildOverlay, this.oUnboundChildOverlay.getElement().sParentAggregationName),
-				false,
-				"... then for the unbound Item content it returns false");
-		});
-
 		QUnit.test("when 'getAggregationInformation' is called", function(assert) {
 			var mAggregationInfo = OverlayUtil.getAggregationInformation(this.oBoundOverlay);
 			assert.equal(mAggregationInfo.elementId, "boundlist", "... then for the bound Item it returns the id of the bound control");

@@ -123,8 +123,8 @@ function (
 			commandFactory : new CommandFactory()
 		});
 		this.oDesignTime.insertPlugin(this.oRemovePlugin);
-		assert.strictEqual(this.oBoundedOverlay.isEditable(), false, "... then the bound Item is not editable");
-		assert.strictEqual(this.oBoundedChildOverlay.isEditable(), false, "... then the bound Item Content is not editable");
+		assert.strictEqual(this.oBoundedOverlay.isEditable(), true, "... then the bound Item is editable");
+		assert.strictEqual(this.oBoundedChildOverlay.isEditable(), true, "... then the bound Item Content is editable");
 		assert.strictEqual(this.oUnBoundedOverlay.isEditable(), true, "... then the unbound Item is editable");
 		assert.strictEqual(this.oUnBoundedChildOverlay.isEditable(), true, "... then the unbound Item Content is editable");
 	});

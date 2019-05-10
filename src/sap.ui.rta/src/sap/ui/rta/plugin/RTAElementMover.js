@@ -91,7 +91,6 @@ function(
 		if (
 			this.isMovableType(oElement)
 			&& this.checkMovable(oOverlay, bOnRegistration)
-			&& !OverlayUtil.isInAggregationBinding(oOverlay, oElement.sParentAggregationName)
 		) {
 			bMovable = true;
 		}
