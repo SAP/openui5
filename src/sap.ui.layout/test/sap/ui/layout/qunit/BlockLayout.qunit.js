@@ -631,4 +631,33 @@ sap.ui.define([
 
 		assert.ok(this.oBlockLayout.$().width() > 0, 'auto width is correct');
 	});
+
+	QUnit.module("Sizing");
+
+	QUnit.test("Cells width with different content but same size", function (assert) {
+
+		// Arrange
+		var oCell1 = new BlockLayoutCell({ width: 2, content: new Text({ text: "Text with length" }) });
+		var oCell2 = new BlockLayoutCell({ width: 2, content: new Text({ text: "Text with length different length" }) });
+		var oBlockLayout = new BlockLayout({
+			content: [
+				new BlockLayoutRow({
+					content: [ oCell1, new BlockLayoutCell({ width: 6}) ]
+				}),
+				new BlockLayoutRow({
+					content: [ oCell2, new BlockLayoutCell({ width: 6}) ]
+				})
+			]
+		});
+
+		// Act
+		oBlockLayout.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oCell1.$().width(), oCell2.$().width(), "Cells with same width should be sized the same.");
+
+		// Clean up
+		oBlockLayout.destroy();
+	});
 });
