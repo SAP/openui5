@@ -896,6 +896,7 @@ sap.ui.define([
 	ObjectPageHeader.prototype._adaptObjectPageHeaderIndentifierLine = function ($domRef) {
 
 		var $identifierLine = this._findById($domRef, "identifierLine"),
+			$title = $identifierLine.find(".sapUxAPObjectPageHeaderIdentifierTitle"),
 			iIdentifierContWidth = $identifierLine.width(),
 			$subtitle = this._findById($domRef, "subtitle"),
 			$innerTitle = this._findById($domRef, "innerTitle"),
@@ -907,6 +908,8 @@ sap.ui.define([
 			$imageContainer = $domRef ? $domRef.find(".sapUxAPObjectPageHeaderObjectImageContainer") : this.$().find(".sapUxAPObjectPageHeaderObjectImageContainer"),
 			iActionsAndImageWidth = $actions.width() + $imageContainer.width(),
 			iPixelTolerance = this.$().parents().hasClass('sapUiSizeCompact') ? 7 : 3;  // the tolerance of pixels from which we can tell that the title and subtitle are on the same row
+
+		this._adaptObjectPageHeaderTitle($title);
 
 		if ($subtitle.length) {
 			if ($subtitle.hasClass("sapOPHSubtitleBlock")) {
@@ -934,6 +937,28 @@ sap.ui.define([
 		}
 
 		$identifierLineContainer.width((0.95 - (iActionsAndImageWidth / iIdentifierContWidth)) * 100 + "%");
+	};
+
+	/**
+	 * Adapt title text parts
+	 * @private
+	 */
+	ObjectPageHeader.prototype._adaptObjectPageHeaderTitle = function ($titleDom) {
+
+		var iTitleWidth = $titleDom.width(),
+			aTitleTextParts = $titleDom.find(".sapUxAPObjectPageHeaderTitleText"),
+			iTitleTextParts = aTitleTextParts.length,
+			$nextPart;
+
+		for (var i = 0; i < iTitleTextParts; i++) {
+			$nextPart = jQuery(aTitleTextParts.get(i));
+			$nextPart.toggleClass("sapUxAPObjectPageHeaderTitleTextRestrictedWidth", false); // restore default
+			if ($nextPart.width() > iTitleWidth) {
+				// we constrain only if needed (not by default)
+				// because of implications that come from change of "display" property
+				$nextPart.toggleClass("sapUxAPObjectPageHeaderTitleTextRestrictedWidth", true);
+			}
+		}
 	};
 
 	/**

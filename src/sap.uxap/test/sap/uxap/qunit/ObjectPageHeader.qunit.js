@@ -20,6 +20,14 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 					text: sText || "Page 1 long link",
 					href: sHref || "http://go.sap.com/index.html"
 				});
+			},
+			getStringOfLength: function(iLength) {
+				var sResult = "";
+				while (iLength > 0) {
+					sResult += "s";
+					iLength--;
+				}
+				return sResult;
 			}
 		};
 
@@ -135,6 +143,33 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 		assert.strictEqual(oHeader.getTitleSelectorTooltip(), null, "titleSelectorTooltip aggregation is destroyed");
 		assert.strictEqual(oTitleArrowIconAggr.getTooltip(), oLibraryResourceBundleOP.getText("OP_SELECT_ARROW_TOOLTIP"), "_titleArrowIcon aggregation tooltip is set to default");
 		assert.strictEqual(oTitleArrowIconContAggr.getTooltip(), oLibraryResourceBundleOP.getText("OP_SELECT_ARROW_TOOLTIP"), "_titleArrowIconCont aggregation tooltip is set to default");
+	});
+
+	QUnit.test("Title text has constrained width", function (assert) {
+		var oHeader = Core.byId("UxAP-ObjectPageHeader--header"),
+			aTitleTextParts,
+			iTitleTextParts,
+			$titleWrapper,
+			$titlePart,
+			sLongTitle = oFactory.getStringOfLength(300) + " " + oFactory.getStringOfLength(400),
+			done = assert.async();
+
+		assert.expect(2);
+
+		oHeader.setObjectTitle(sLongTitle);
+
+		oHeader.addEventDelegate({
+			onAfterRendering: function() {
+				$titleWrapper = oHeader.$().find(".sapUxAPObjectPageHeaderIdentifierTitle");
+				aTitleTextParts = oHeader.$().find(".sapUxAPObjectPageHeaderTitleText");
+				iTitleTextParts = aTitleTextParts.length;
+				for (var i = 0; i < iTitleTextParts; i++) {
+					$titlePart = jQuery(aTitleTextParts.get(i));
+					assert.ok($titlePart.width() <= $titleWrapper.width(), "width is within container");
+				}
+				done();
+			}
+		}, this);
 	});
 
 	QUnit.module("image rendering", {
