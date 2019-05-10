@@ -170,7 +170,7 @@ sap.ui.define([
 		assert.ok(bChange, "DRS2: change event fired by typing valid date");
 		assert.ok(bValid, "DRS2: valid typed date is valid");
 		assert.ok(jQuery.sap.equal(oDRS2.getDateValue(), new Date(2014,3,2)), "DRS2: dateValue changed by valid typing");
-		assert.ok(jQuery.sap.equal(oDRS2.getSecondDateValue(), new Date(2014,3,11)), "DRS2: secondDateValue changed by valid typing");
+		assert.ok(jQuery.sap.equal(oDRS2.getSecondDateValue(), new Date(2014,3,11,23,59,59,999)), "DRS2: secondDateValue changed by valid typing");
 
 		bChange = false;
 		bValid = true;
@@ -181,12 +181,28 @@ sap.ui.define([
 		assert.ok(bChange, "DRS2: change event fired by typing invalid date");
 		assert.ok(!bValid, "DRS2: invalid typed date is not valid");
 		assert.ok(jQuery.sap.equal(oDRS2.getDateValue(), new Date(2014,3,2)), "DRS2: dateValue not changed by invalid typing");
-		assert.ok(jQuery.sap.equal(oDRS2.getSecondDateValue(), new Date(2014,3,11)), "DRS2: secondDateValue not changed by invalid typing");
+		assert.ok(jQuery.sap.equal(oDRS2.getSecondDateValue(), new Date(2014,3,11,23,59,59,999)), "DRS2: secondDateValue not changed by invalid typing");
 
 		oDRS2.setMinDate();
 		oDRS2.setMaxDate();
 		sap.ui.getCore().applyChanges();
 
+	});
+
+	QUnit.test("When invalid date is set as value the control detects it and doesn't throw error", function(assert) {
+		//Prepare
+		var oDRS = new sap.m.DateRangeSelection("DRS", {
+			value: "Invalid Date"
+		});
+
+		// Act
+		oDRS.onChange();
+
+		// Assert
+		assert.ok(true, "Test does not throw");
+
+		// Clean
+		oDRS.destroy();
 	});
 
 	QUnit.test("opening picker when current values are outside min/max range", function(assert) {
