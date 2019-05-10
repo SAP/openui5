@@ -90,7 +90,7 @@ sap.ui.define([],
 
 
 
-				rm.writeAttribute("tabIndex", 0);
+				rm.writeAttribute("tabindex", 0);
 				rm.write(">");
 			} // end of for
 

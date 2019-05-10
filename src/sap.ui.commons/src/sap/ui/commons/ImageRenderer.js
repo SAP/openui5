@@ -52,7 +52,7 @@ sap.ui.define([],
 			if (!(sUseMap.startsWith("#"))) {
 				sUseMap = "#" + sUseMap;
 			}
-			rm.writeAttributeEscaped("useMap", sUseMap);
+			rm.writeAttributeEscaped("usemap", sUseMap);
 		}
 
 		// determine tab index and write alt attribute - both depending on "decorative" state (which is overridden by the "useMap" property
@@ -68,7 +68,7 @@ sap.ui.define([],
 				rm.writeAttributeEscaped("alt", tooltip);
 			}
 		}
-		rm.writeAttribute("tabIndex", myTabIndex);
+		rm.writeAttribute("tabindex", myTabIndex);
 
 		// Dimensions
 		var myStyle = "";

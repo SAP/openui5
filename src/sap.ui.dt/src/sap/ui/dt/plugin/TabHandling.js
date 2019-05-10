@@ -90,7 +90,7 @@ sap.ui.define([
 			if ($RootElement){
 				$RootElement.find(":focusable:not([tabIndex=-1], #overlay-container *)").each(function(iIndex, oNode) {
 					oNode.setAttribute("data-sap-ui-dt-tabindex", oNode.tabIndex);
-					oNode.setAttribute("tabIndex", -1);
+					oNode.setAttribute("tabindex", -1);
 				});
 			}
 		});
@@ -101,7 +101,7 @@ sap.ui.define([
 	 */
 	TabHandling.prototype.restoreTabIndex = function() {
 		jQuery("[data-sap-ui-dt-tabindex]").each(function(iIndex, oNode) {
-			oNode.setAttribute("tabIndex", oNode.getAttribute("data-sap-ui-dt-tabindex"));
+			oNode.setAttribute("tabindex", oNode.getAttribute("data-sap-ui-dt-tabindex"));
 			oNode.removeAttribute("data-sap-ui-dt-tabindex");
 		});
 	};

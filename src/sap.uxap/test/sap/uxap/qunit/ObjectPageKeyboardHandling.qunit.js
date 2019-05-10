@@ -29,7 +29,7 @@ function($, Core, KeyCodes, QUtils, Device, XMLView) {
 					.removeClass("sapUiMedia-Std-Phone sapUiMedia-Std-Desktop sapUiMedia-Std-Tablet")
 					.addClass("sapUiMedia-Std-Desktop");
 				var sFocusable = "0",
-					sTabIndex = "tabIndex";
+					sTabIndex = "tabindex";
 				this.oObjectPage = this.anchorBarView.byId("ObjectPageLayout");
 				this.oObjectPage._setAsCurrentSection(this.oObjectPage.getSections()[0].sId);
 				this.assertCorrectTabIndex = function ($elment, sMessage, assert) {
@@ -191,7 +191,7 @@ function($, Core, KeyCodes, QUtils, Device, XMLView) {
 			}).then(function (oView) {
 				this.anchorBarView = oView;
 				var sFocusable = "0",
-					sTabIndex = "tabIndex";
+					sTabIndex = "tabindex";
 				this.oObjectPage = this.anchorBarView.byId("ObjectPageLayout");
 				this.assertCorrectTabIndex = function ($elment, sMessage, assert) {
 					assert.strictEqual($elment.attr(sTabIndex), sFocusable, sMessage);

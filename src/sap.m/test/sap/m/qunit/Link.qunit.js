@@ -213,7 +213,7 @@ sap.ui.define([
 
 		var $oLink = oLink1.$();
 
-		assert.strictEqual($oLink.attr("tabIndex"), "-1", "Property 'tabIndex' should be '-1'");
+		assert.strictEqual($oLink.attr("tabindex"), "-1", "Attribute 'tabindex' should be '-1'");
 
 		oLink1.destroy();
 	});
@@ -250,7 +250,7 @@ sap.ui.define([
 
 		var $oLink = oLink1.$();
 
-		assert.strictEqual($oLink.attr("tabIndex"), "0", "Property 'tabIndex' should be '0'");
+		assert.strictEqual($oLink.attr("tabindex"), "0", "Attribute 'tabindex' should be '0'");
 
 		oLink1.destroy();
 	});

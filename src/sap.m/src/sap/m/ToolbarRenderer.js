@@ -39,7 +39,7 @@ sap.ui.define(['./BarInPageEnabler'],
 
 		oRm.writeAccessibilityState(oToolbar, {
 			role: oToolbar._getAccessibilityRole(),
-			labelledBy: sAriaLabelledBy
+			labelledby: sAriaLabelledBy
 		});
 
 		oRm.addClass("sapMTBNewFlex");

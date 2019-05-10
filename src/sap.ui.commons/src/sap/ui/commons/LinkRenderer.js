@@ -51,9 +51,9 @@ sap.ui.define([],
 		}
 
 		if (!oLink.getEnabled()) {
-			rm.writeAttribute("tabIndex", "-1");
+			rm.writeAttribute("tabindex", "-1");
 		} else {
-			rm.writeAttribute("tabIndex", "0");
+			rm.writeAttribute("tabindex", "0");
 		}
 
 		if (oLink.getWidth()) {

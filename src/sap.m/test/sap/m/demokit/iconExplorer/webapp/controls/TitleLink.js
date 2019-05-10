@@ -185,9 +185,9 @@ sap.ui.define([
 			oRm.write("<a");
 			oRm.addClass("sapMLnk");
 			if (oTitle.getText()) {
-				oRm.writeAttribute("tabIndex", "0");
+				oRm.writeAttribute("tabindex", "0");
 			} else {
-				oRm.writeAttribute("tabIndex", "-1");
+				oRm.writeAttribute("tabindex", "-1");
 			}
 			oRm.writeAttributeEscaped("href", oTitle.getHref());
 			if (oTitle.getTarget()) {

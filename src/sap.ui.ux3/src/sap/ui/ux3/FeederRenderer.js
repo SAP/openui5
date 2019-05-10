@@ -32,7 +32,7 @@ sap.ui.define([
 	 */
 	FeederRenderer.render = function(rm, oFeeder){
 		// write the HTML into the render manager
-	    rm.write('<DIV');
+	    rm.write('<div');
 	    rm.writeControlData(oFeeder);
 		rm.addClass('sapUiFeeder');
 
@@ -63,7 +63,7 @@ sap.ui.define([
 		rm.write('>');
 
 		// input area as editable DIV because of dynamic content
-	    rm.write('<DIV id=' + oFeeder.getId() + '-input contenteditable="true" class="sapUiFeederInput" >');
+	    rm.write('<div id=' + oFeeder.getId() + '-input contenteditable="true" class="sapUiFeederInput" >');
 
 	    // text
 	    if (oFeeder.getText() == '') {
@@ -72,13 +72,13 @@ sap.ui.define([
 			rm.writeEscaped(oFeeder.getText(), true);
 	    }
 
-	    rm.write('</DIV>');
+	    rm.write('</div>');
 
 	    //send button
 	    oFeeder.initSendButton();
 	    rm.renderControl(oFeeder.oSendButton);
 
-	    rm.write('</DIV>');
+	    rm.write('</div>');
 	};
 
 	FeederRenderer.getEmptyTextInfo = function( oFeeder ){

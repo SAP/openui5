@@ -23,7 +23,7 @@ sap.ui.define([],
 	 */
 	SliderRenderer.render = function(rm, oSlider){
 		// Write the HTML into the render manager
-		rm.write('<DIV');
+		rm.write('<div');
 		rm.writeControlData(oSlider);
 		rm.addClass('sapUiSli');
 		this.controlAdditionalCode(rm,oSlider);
@@ -57,13 +57,13 @@ sap.ui.define([],
 
 		// invisible span with tooltip as text for aria on grip
 		if (oSlider.getTooltip_AsString()) {
-			rm.write('><SPAN id="' + oSlider.getId() + '-Descr" style="visibility: hidden; display: none;">');
+			rm.write('><span id="' + oSlider.getId() + '-Descr" style="visibility: hidden; display: none;">');
 			rm.writeEscaped(oSlider.getTooltip_AsString());
-			rm.write('</SPAN');
+			rm.write('</span');
 		}
 
 		// Write slide bar
-		rm.write('><DIV');
+		rm.write('><div');
 		rm.writeAttribute('id', oSlider.getId() + '-right');
 		rm.write('class="sapUiSliR" > <DIV');
 
@@ -89,14 +89,14 @@ sap.ui.define([],
 
 			// Add ticks
 			for (var i = 0; i <= iTotalUnits; i++) {
-				rm.write('<DIV');
+				rm.write('<div');
 				rm.writeAttribute('id', oSlider.getId() + '-tick' + i);
 				rm.write('class="sapUiSliTick" ');
-				rm.write('></DIV>'); // tick
+				rm.write('></div>'); // tick
 
 				if ( oSlider.getStepLabels() ) {
 					// Texts
-					rm.write('<DIV');
+					rm.write('<div');
 					rm.writeAttribute('id', oSlider.getId() + '-text' + i);
 					switch (i) {
 					case ( 0 ):
@@ -114,19 +114,19 @@ sap.ui.define([],
 					} else {
 						rm.write(oSlider.getMin() + i * fStepSize);
 					}
-					rm.write('</DIV>'); // Text
+					rm.write('</div>'); // Text
 				}
 			}
 		}
 
 		// Highlight bar
-		rm.write('<DIV');
+		rm.write('<div');
 		rm.writeAttribute('id', oSlider.getId() + '-hili');
 		rm.write('class="sapUiSliHiLi"></DIV>');
 
 		this.renderGrip(rm, oSlider);
 
-		rm.write('</DIV></DIV></DIV></DIV>');
+		rm.write('</div></div></div></div>');
 	};
 
 	/**
@@ -137,14 +137,14 @@ sap.ui.define([],
 	 */
 	SliderRenderer.renderGrip = function(rm, oSlider){
 
-		rm.write('<DIV');
+		rm.write('<div');
 
 		// Icon for grip
 		rm.writeAttribute('id', oSlider.getId() + '-grip');
 		if (oSlider.getEnabled()) {
-			rm.writeAttribute('tabIndex', '0');
+			rm.writeAttribute('tabindex', '0');
 		} else {
-			rm.writeAttribute('tabIndex', '-1');
+			rm.writeAttribute('tabindex', '-1');
 		}
 		rm.writeAttribute('class', 'sapUiSliGrip');
 		rm.writeAttribute('title', oSlider.getValue());
@@ -165,9 +165,9 @@ sap.ui.define([],
 		});
 
 		if (oSlider.getVertical()) {
-			rm.write('>&#9668;</DIV>'); // Symbol for HCB Theme (Must be hidden in other themes)
+			rm.write('>&#9668;</div>'); // Symbol for HCB Theme (Must be hidden in other themes)
 		} else {
-			rm.write('>&#9650;</DIV>'); // Symbol for HCB Theme (Must be hidden in other themes)
+			rm.write('>&#9650;</div>'); // Symbol for HCB Theme (Must be hidden in other themes)
 		}
 	};
 

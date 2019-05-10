@@ -63,10 +63,10 @@ sap.ui.define([
 		});
 
 		if (!oButton.getEnabled()) {
-			rm.write(" tabIndex=\"-1\"");
+			rm.write(" tabindex=\"-1\"");
 			rm.addClass("sapUiBtnDsbl");
 		} else {
-			rm.write(" tabIndex=\"0\"");
+			rm.write(" tabindex=\"0\"");
 			rm.addClass("sapUiBtnStd");
 		}
 

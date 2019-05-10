@@ -44,7 +44,7 @@ sap.ui.define(['sap/ui/unified/library', "sap/ui/thirdparty/jquery"],
 		oRm.write('>');
 
 		// form
-		oRm.write('<form style="display:inline-block" encType="multipart/form-data" method="post"');
+		oRm.write('<form style="display:inline-block" enctype="multipart/form-data" method="post"');
 		oRm.writeAttribute('id', oFileUploader.getId() + '-fu_form');
 		oRm.writeAttributeEscaped('action', oFileUploader.getUploadUrl());
 		oRm.writeAttribute('target', oFileUploader.getId() + '-frame');

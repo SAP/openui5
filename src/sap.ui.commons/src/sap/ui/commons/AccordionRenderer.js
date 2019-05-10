@@ -35,7 +35,7 @@ sap.ui.define(['./AccordionSection', 'sap/ui/Device'],
 		rm.writeStyles();
 		rm.write(">"); // SPAN element
 
-		rm.write("<div id='" + oAccordion.getId() + "-dropTarget" + "' style='width:" + oAccordion.getWidth() + "' tabIndex='-1' class='sapUiAcd-droptarget'></div>");
+		rm.write("<div id='" + oAccordion.getId() + "-dropTarget" + "' style='width:" + oAccordion.getWidth() + "' tabindex='-1' class='sapUiAcd-droptarget'></div>");
 
 		var aSections = oAccordion.getSections();
 		var aDefaultSections = oAccordion.getOpenedSectionsId().split(",");
@@ -57,9 +57,9 @@ sap.ui.define(['./AccordionSection', 'sap/ui/Device'],
 
 		}
 
-		rm.write('<SPAN id="' + oAccordion.getId() + '-Descr" style="visibility: hidden; display: none;">');
+		rm.write('<span id="' + oAccordion.getId() + '-Descr" style="visibility: hidden; display: none;">');
 		rm.write(oAccordion.rb.getText("ACCORDION_DSC"));
-		rm.write('</SPAN>');
+		rm.write('</span>');
 
 		rm.write("</div>");
 

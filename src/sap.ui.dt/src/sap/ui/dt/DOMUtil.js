@@ -402,7 +402,7 @@ function(
 		jQuery(oDest).attr("data-sap-ui", "");
 		jQuery(oDest).attr("for", "");
 
-		jQuery(oDest).attr("tabIndex", -1);
+		jQuery(oDest).attr("tabindex", -1);
 		this.copyComputedStyle(oSrc, oDest);
 	};
 

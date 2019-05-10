@@ -57,7 +57,7 @@ sap.ui.define([
 			var oTitle = oHeader._getTitle();
 			if (oTitle) {
 				oRm.writeAccessibilityState(oCard, {
-					labelledBy: {value: oTitle.getId(), append: true}
+					labelledby: {value: oTitle.getId(), append: true}
 				});
 			}
 

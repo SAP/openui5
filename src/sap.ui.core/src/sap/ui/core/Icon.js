@@ -564,7 +564,7 @@ sap.ui.define([
 	 * is refered in the aria-labelledby attributes.
 	 *
 	 * Screen reader reads out the value which is set to the 'title' attribute. Thus the
-	 * aria-label or aria-labelledBy is used only when the label string is different than
+	 * aria-label or aria-labelledby is used only when the label string is different than
 	 * the string used as 'title' attribute. When the label string is the same as the one
 	 * which is set to the 'title' attribute of the DOM, this method returns undefined in
 	 * order not to set the aria-label or aria-labelledby attribute.

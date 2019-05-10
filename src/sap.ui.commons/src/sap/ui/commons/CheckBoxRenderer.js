@@ -91,7 +91,7 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library'],
 			rm.writeAttribute("style", "width:" + oCheckBox.getWidth() + ";");
 		}
 
-		rm.writeAttribute("tabIndex", myTabIndex);
+		rm.writeAttribute("tabindex", myTabIndex);
 
 		rm.write(">"); // close the containing <span> tag
 

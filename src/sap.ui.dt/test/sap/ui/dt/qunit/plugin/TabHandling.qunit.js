@@ -51,12 +51,12 @@ function(
 		}
 	}, function () {
 		QUnit.test("when the TabHandling plugin is loaded", function (assert) {
-			assert.strictEqual(this.oLayout.$().find(":focusable:not([tabIndex=-1])").length, 0, "then no UI5 controls are tabable");
+			assert.strictEqual(this.oLayout.$().find(":focusable:not([tabindex=-1])").length, 0, "then no UI5 controls are tabable");
 		});
 
 		QUnit.test("when the TabHandling plugin is loaded and destroyed afterwards", function (assert) {
 			this.oTabHandling.destroy();
-			assert.strictEqual(this.oLayout.$().find(":focusable:not([tabIndex=-1])").length, 2, "then the UI5 controls are tabable");
+			assert.strictEqual(this.oLayout.$().find(":focusable:not([tabindex=-1])").length, 2, "then the UI5 controls are tabable");
 		});
 	});
 

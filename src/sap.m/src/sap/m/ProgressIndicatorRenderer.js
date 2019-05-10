@@ -45,7 +45,7 @@ sap.ui.define(["sap/ui/core/library"],
 		}
 
 		if (oControl.getEnabled()) {
-			oRm.writeAttribute('tabIndex', '-1');
+			oRm.writeAttribute('tabindex', '-1');
 		} else {
 			oRm.addClass("sapMPIBarDisabled");
 		}

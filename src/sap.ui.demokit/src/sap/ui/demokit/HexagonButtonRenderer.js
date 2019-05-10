@@ -42,7 +42,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.encoder'],
 		}
 		rm.write(">");
 		if ( oControl.getIcon() ) {
-			rm.write("<IMG ");
+			rm.write("<img ");
 			rm.writeAttributeEscaped("src", oControl.getIcon());
 			var sImagePosition = oControl.getImagePosition();
 			if (sImagePosition) {

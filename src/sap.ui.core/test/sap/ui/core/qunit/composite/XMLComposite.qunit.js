@@ -931,6 +931,6 @@ sap.ui.define([
 		var oField = this.content.getItems()[1];
 		assert.equal(oField.getFocusDomRef().id, "accessible--focus", "FocusDomRef");
 		assert.equal(jQuery("#label").attr("for"), "accessible--focus", "Label points to focusable DomRef");
-		assert.equal(jQuery("#accessible").attr("aria-labelledBy"), "label additional", "The focusable dom ref is also labelled by the additional label");
+		assert.equal(jQuery("#accessible").attr("aria-labelledby"), "label additional", "The focusable dom ref is also labelled by the additional label");
 	});
 });

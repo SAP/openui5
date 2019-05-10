@@ -22,7 +22,7 @@ sap.ui.define([], function () {
 		//Accessibility state
 		oRm.writeAccessibilityState(oControl, {
 			role: "group",
-			labelledBy: {value: oControl._getHeaderAccessibility(), append: true},
+			labelledby: {value: oControl._getHeaderAccessibility(), append: true},
 			roledescription: {value: oRb.getText("ARIA_ROLEDESCRIPTION_CARD_HEADER"), append: true}
 		});
 		oRm.writeClasses();

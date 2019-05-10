@@ -37,9 +37,9 @@ sap.ui.define([],
 			widthBorder = '100%';
 		}
 
-		oRm.write('<DIV');
+		oRm.write('<div');
 		oRm.writeControlData(oProgressIndicator);
-		oRm.writeAttribute('tabIndex', '0');
+		oRm.writeAttribute('tabindex', '0');
 
 		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
 			oRm.writeAccessibilityState(oProgressIndicator, {
@@ -67,7 +67,7 @@ sap.ui.define([],
 
 		oRm.write('>');
 
-		oRm.write('<DIV');
+		oRm.write('<div');
 		oRm.writeAttribute('id', oProgressIndicator.getId() + '-box');
 
 		if (oProgressIndicator.getWidth() && oProgressIndicator.getWidth() !== '') {
@@ -79,7 +79,7 @@ sap.ui.define([],
 
 		oRm.write('>');
 
-		oRm.write('<DIV');
+		oRm.write('<div');
 		oRm.writeAttribute('id', oProgressIndicator.getId() + '-bar');
 		oRm.writeAttribute('style', 'height: 14px; width:' + oProgressIndicator.getPercentValue() + '%;');
 
@@ -106,7 +106,7 @@ sap.ui.define([],
 
 		oRm.write('>');
 
-		oRm.write('<DIV');
+		oRm.write('<div');
 		oRm.writeAttribute('id', oProgressIndicator.getId() + '-end');
 
 		if (widthBar > 100) {
@@ -123,9 +123,9 @@ sap.ui.define([],
 		}
 
 		oRm.write('>');
-		oRm.write('</DIV>');
+		oRm.write('</div>');
 
-		oRm.write('<SPAN');
+		oRm.write('<span');
 
 		oRm.addClass('sapUiProgIndFont');
 		oRm.writeClasses();
@@ -138,10 +138,10 @@ sap.ui.define([],
 			}
 		}
 
-		oRm.write('</SPAN>');
-		oRm.write('</DIV>');
-		oRm.write('</DIV>');
-		oRm.write('</DIV>');
+		oRm.write('</span>');
+		oRm.write('</div>');
+		oRm.write('</div>');
+		oRm.write('</div>');
 	};
 
 	return ProgressIndicatorRenderer;

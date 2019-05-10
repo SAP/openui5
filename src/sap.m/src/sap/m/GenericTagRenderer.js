@@ -39,7 +39,7 @@ sap.ui.define([
 		oRm.accessibilityState(oControl, {
 			role: "button",
 			roledescription: oResourceBundle.getText("GENERICTAG_ROLEDESCRIPTION"),
-			labelledBy: aLabelledBy.join(" ")
+			labelledby: aLabelledBy.join(" ")
 		});
 
 		if (sTooltip) {

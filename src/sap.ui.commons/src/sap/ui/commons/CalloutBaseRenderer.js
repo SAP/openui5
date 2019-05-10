@@ -53,7 +53,7 @@ sap.ui.define([],
 		rm.write(">");
 
 		//first focusable control to provide tab loop
-		rm.write("<span id=\"" + sId + "-fhfe\" tabIndex=\"0\"></span>");
+		rm.write("<span id=\"" + sId + "-fhfe\" tabindex=\"0\"></span>");
 
 		// content container
 		rm.write("<div");
@@ -89,7 +89,7 @@ sap.ui.define([],
 		rm.write("></div>");
 
 		//last focusable control to provide tab loop
-		rm.write("<span id=\"" + sId + "-fhee\" tabIndex=\"0\"></span>");
+		rm.write("<span id=\"" + sId + "-fhee\" tabindex=\"0\"></span>");
 
 		rm.write("</div>");// container
 

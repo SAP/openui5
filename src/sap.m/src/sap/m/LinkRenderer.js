@@ -68,7 +68,7 @@
 			oRm.addClass("sapMLnkDsbl");
 			oRm.writeAttribute("disabled", "true");
 		} else {
-			oRm.writeAttribute("tabIndex", oControl._getTabindex());
+			oRm.writeAttribute("tabindex", oControl._getTabindex());
 		}
 
 		if (oControl.getWrapping()) {

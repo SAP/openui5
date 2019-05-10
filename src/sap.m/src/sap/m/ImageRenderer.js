@@ -93,7 +93,7 @@ sap.ui.define(['sap/m/library', "sap/base/security/encodeCSS"],
 			if (!(sUseMap.startsWith("#"))) {
 				sUseMap = "#" + sUseMap;
 			}
-			oRm.writeAttributeEscaped("useMap", sUseMap);
+			oRm.writeAttributeEscaped("usemap", sUseMap);
 		}
 
 		if (oImage.getDecorative() && !sUseMap && !bHasPressHandlers) {
@@ -116,7 +116,7 @@ sap.ui.define(['sap/m/library', "sap/base/security/encodeCSS"],
 
 		if (bHasPressHandlers) {
 			oRm.writeAttribute("role", "button");
-			oRm.writeAttribute("tabIndex", 0);
+			oRm.writeAttribute("tabindex", 0);
 		}
 
 		// Dimensions

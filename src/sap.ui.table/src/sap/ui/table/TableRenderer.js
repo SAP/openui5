@@ -309,7 +309,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	};
 
 	TableRenderer.renderVariableHeight = function(rm, oTable) {
-		rm.write('<div id="' + oTable.getId() + '-sb" tabIndex="-1"');
+		rm.write('<div id="' + oTable.getId() + '-sb" tabindex="-1"');
 		rm.addClass("sapUiTableHeightResizer");
 		rm.addStyle("height", "5px");
 		rm.writeClasses();

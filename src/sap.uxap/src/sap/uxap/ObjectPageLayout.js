@@ -3420,7 +3420,7 @@ sap.ui.define([
 			$section,
 			sFocusable = '0',
 			sNotFocusable = '-1',
-			sTabIndex = "tabIndex",
+			sTabIndex = "tabindex",
 			oSelectedElement,
 			oFirstSection = aSections[0];
 

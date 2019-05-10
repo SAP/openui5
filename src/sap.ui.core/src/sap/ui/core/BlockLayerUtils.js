@@ -120,7 +120,7 @@ sap.ui.define([
 		oDOM.setAttribute("aria-valuemin", "0");
 		oDOM.setAttribute("aria-valuemax", "100");
 		oDOM.setAttribute("alt", "");
-		oDOM.setAttribute("tabIndex", "0");
+		oDOM.setAttribute("tabindex", "0");
 	};
 
 	/**

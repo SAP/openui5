@@ -47,7 +47,7 @@ sap.ui.define(["sap/ui/core/library"],
 			}
 		}
 
-		rm.write("<DIV");
+		rm.write("<div");
 		rm.writeControlData(oRBGroup);
 		rm.addClass("sapUiRbG");
 		if (iColumns > 1) {
@@ -92,7 +92,7 @@ sap.ui.define(["sap/ui/core/library"],
 		for (var c = 0; c < iColumns; c++) {
 			if (iColumns > 1 && iColumns != oRBGroup.aRBs.length) {
 				// if only 1 column -> no DIV necessary
-				rm.write("<DIV");
+				rm.write("<div");
 				rm.addClass("sapUiRbGCol");
 				rm.writeClasses();
 				rm.write(">"); // DIV element
@@ -104,16 +104,16 @@ sap.ui.define(["sap/ui/core/library"],
 			}
 
 			if (iColumns > 1 && iColumns != oRBGroup.aRBs.length) {
-				rm.write("</DIV>");
+				rm.write("</div>");
 			}
 		}
 
 		if (iColumns > 1 && iColumns != oRBGroup.aRBs.length) {
 			// dummy Column to avoid big spaces between RadioButtons in Safari
-			rm.write('<DIV class="sapUiRbGDummy"> </DIV>');
+			rm.write('<div class="sapUiRbGDummy"> </DIV>');
 		}
 
-		rm.write("</DIV>");
+		rm.write("</div>");
 	};
 
 	return RadioButtonGroupRenderer;

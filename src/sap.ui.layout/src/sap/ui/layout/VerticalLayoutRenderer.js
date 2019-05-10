@@ -26,7 +26,7 @@ sap.ui.define([],
 		var rm = oRenderManager;
 
 		// write the HTML into the render manager
-		rm.write("<DIV");
+		rm.write("<div");
 		rm.writeControlData(oVerticalLayout);
 		rm.addClass("sapUiVlt");
 		rm.addClass("sapuiVlt"); // for compatibility keep the old, wrong class name
@@ -42,12 +42,12 @@ sap.ui.define([],
 		var aContent = oVerticalLayout.getContent();
 
 		for ( var i = 0; i < aContent.length; i++) {
-			rm.write("<DIV class=\"sapUiVltCell sapuiVltCell\">"); // for compatibility keep the old, wrong class name
+			rm.write("<div class=\"sapUiVltCell sapuiVltCell\">"); // for compatibility keep the old, wrong class name
 			rm.renderControl(aContent[i]);
-			rm.write("</DIV>");
+			rm.write("</div>");
 		}
 
-		rm.write("</DIV>");
+		rm.write("</div>");
 	};
 
 

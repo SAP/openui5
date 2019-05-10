@@ -430,12 +430,12 @@ sap.ui.define([
 
 		// _setHeaderAnnouncement() test
 		var $tblHeader = sut.$("tblHeader").focus();
-		var oInvisibleText = document.getElementById($tblHeader.attr("aria-labelledBy"));
+		var oInvisibleText = document.getElementById($tblHeader.attr("aria-labelledby"));
 		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_HEADER_ROW") + " Name Color Number", "Text correctly assigned for screen reader announcement");
 
 		// _setFooterAnnouncment() test
 		var $tblFooter = sut.$("tblFooter").focus();
-		oInvisibleText = document.getElementById($tblFooter.attr("aria-labelledBy"));
+		oInvisibleText = document.getElementById($tblFooter.attr("aria-labelledby"));
 		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_FOOTER_ROW") + " Name Greetings", "Text correctly assigned for screen reader announcement");
 
 		// noDataText test

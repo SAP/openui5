@@ -450,7 +450,7 @@ sap.ui.define([
 			aNavigationDomRefs = [];
 
 		aItemsToNavigate.forEach(function (oItem) {
-			oItem.$().attr("tabIndex", "-1");
+			oItem.$().attr("tabindex", "-1");
 			aNavigationDomRefs.push(oItem.getDomRef());
 		});
 

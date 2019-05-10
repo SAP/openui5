@@ -32,7 +32,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/Device', 'sap/base/security/e
 		rm.writeControlData(oRoadMap);
 		rm.addClass("sapUiRoadMap");
 		rm.writeClasses();
-		rm.writeAttribute("tabIndex", "0");
+		rm.writeAttribute("tabindex", "0");
 
 		var sTooltip = oRoadMap.getTooltip_AsString();
 		if (sTooltip) {

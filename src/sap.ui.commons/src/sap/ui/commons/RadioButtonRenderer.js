@@ -95,7 +95,7 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library'],
 			rm.writeAttribute("style", "width:" + oRadioButton.getWidth() + ";");
 		}
 
-		rm.writeAttribute("tabIndex", myTabIndex);
+		rm.writeAttribute("tabindex", myTabIndex);
 
 		var tooltipToUse = ValueStateSupport.enrichTooltip(oRadioButton, tooltip ? tooltip : oRadioButton.getText());
 		if (tooltipToUse) {

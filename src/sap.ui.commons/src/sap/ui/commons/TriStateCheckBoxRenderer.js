@@ -71,7 +71,7 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library'],
 		if (!enabled) {
 			myTabIndex = -1;
 		}
-		oRm.writeAttribute("tabIndex", myTabIndex);
+		oRm.writeAttribute("tabindex", myTabIndex);
 		oRm.write(">");
 
 		// inner span carrying metadata and style according to the current state

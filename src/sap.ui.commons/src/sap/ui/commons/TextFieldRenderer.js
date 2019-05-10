@@ -149,7 +149,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/
 		}
 
 		if (oTextField.getMaxLength()) {
-			rm.writeAttribute("maxLength", oTextField.getMaxLength());
+			rm.writeAttribute("maxlength", oTextField.getMaxLength());
 		}
 
 		// Add additional attributes, styles and so on (TextArea)

@@ -74,9 +74,9 @@ sap.ui.define(['./TextFieldRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/Value
 			// add tooltip to description because it is not read by JAWS from title-attribute if a label is assigned
 			sText = sText + ". " + sTooltip;
 		}
-		rm.write('<SPAN id="' + oControl.getId() + '-Descr" style="visibility: hidden; display: none;">');
+		rm.write('<span id="' + oControl.getId() + '-Descr" style="visibility: hidden; display: none;">');
 		rm.writeEscaped(sText);
-		rm.write('</SPAN>');
+		rm.write('</span>');
 
 	};
 

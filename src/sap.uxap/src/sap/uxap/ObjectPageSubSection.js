@@ -975,7 +975,7 @@ sap.ui.define([
 	ObjectPageSubSection.prototype._setToFocusable = function (bFocusable) {
 		var sFocusable = '0',
 			sNotFocusable = '-1',
-			sTabIndex = "tabIndex";
+			sTabIndex = "tabindex";
 
 		if (bFocusable) {
 			this.$().attr(sTabIndex, sFocusable);

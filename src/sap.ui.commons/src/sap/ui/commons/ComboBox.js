@@ -903,7 +903,7 @@ sap.ui.define([
 		var eDock = Popup.Dock;
 		oPopup.open(iDuration, eDock.BeginTop, eDock.BeginBottom, this/*.getDomRef()*/,
 			/*offset*/null, /*collision*/ null, /*followOf*/ Popup.CLOSE_ON_SCROLL);
-		jQuery(oListBox.getFocusDomRef()).attr("tabIndex", "-1");
+		jQuery(oListBox.getFocusDomRef()).attr("tabindex", "-1");
 		//attachSelect moved to _handleOpened
 
 		jQuery(this.getDomRef()).attr("aria-expanded", true);

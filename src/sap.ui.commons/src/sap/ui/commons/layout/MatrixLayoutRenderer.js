@@ -56,7 +56,7 @@ sap.ui.define(['sap/base/assert', 'sap/ui/Device', 'sap/ui/commons/library'],
 		var bBrowserIEorEdge;
 
 		//ARIA
-		rm.write("<TABLE role=\"presentation\"");
+		rm.write("<table role=\"presentation\"");
 		rm.writeControlData(oMatrixLayout);
 		rm.write(" cellpadding=\"0\" cellspacing=\"0\"");
 		rm.addStyle("border-collapse", "collapse");
@@ -126,7 +126,7 @@ sap.ui.define(['sap/base/assert', 'sap/ui/Device', 'sap/ui/commons/library'],
 		var bDummyRow = true;
 		var bColspanInRow = false;
 
-		rm.write('<TBODY style="width: 100%; height: 100%">');
+		rm.write('<tbody style="width: 100%; height: 100%">');
 
 		// for each row
 		for (i = 0; i < aRows.length; i++) {
@@ -432,7 +432,7 @@ sap.ui.define(['sap/base/assert', 'sap/ui/Device', 'sap/ui/commons/library'],
 		}
 
 		// close tbody, close table
-		rm.write("</TBODY></TABLE>");
+		rm.write("</tbody></table>");
 
 	};
 

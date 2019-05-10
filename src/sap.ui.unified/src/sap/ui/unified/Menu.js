@@ -408,7 +408,7 @@ sap.ui.define([
 
 		// Set the tab index of the menu and focus
 		var oDomRef = this.getDomRef();
-		jQuery(oDomRef).attr("tabIndex", 0).focus();
+		jQuery(oDomRef).attr("tabindex", 0).focus();
 
 		// Mark the first item when using the keyboard
 		if (bWithKeyboard) {
@@ -541,7 +541,7 @@ sap.ui.define([
 		this.setHoveredItem();
 
 		// Reset the tab index of the menu and focus the opener (if there is any)
-		jQuery(this.getDomRef()).attr("tabIndex", -1);
+		jQuery(this.getDomRef()).attr("tabindex", -1);
 
 		// Close the sap.ui.core.Popup
 		this.getPopup().close(0);
@@ -691,7 +691,7 @@ sap.ui.define([
 		// focus menuItems
 		if (this.oHoveredItem && (jQuery(oEvent.target).prop("tagName") != "INPUT")) {
 			var oDomRef = this.oHoveredItem.getDomRef();
-			jQuery(oDomRef).attr("tabIndex", 0).focus();
+			jQuery(oDomRef).attr("tabindex", 0).focus();
 		}
 
 		//like sapselect but on keyup:

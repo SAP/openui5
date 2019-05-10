@@ -87,7 +87,7 @@ sap.ui.define(['sap/ui/core/Core', './library'],
 		// write the HTML into the render manager
 	    rm.write("<div");
 	    rm.writeControlData(oControl);
-	    rm.writeAttribute('tabIndex', '0');
+	    rm.writeAttribute('tabindex', '0');
 
 		if (oControl.getTooltip_AsString()) {
 			rm.writeAttributeEscaped("title", oControl.getTooltip_AsString());

@@ -40,9 +40,9 @@ sap.ui.define([],
 			disabled: !oControl.getEnabled()
 		});
 		if (oControl.getEnabled()) {
-			rm.writeAttribute("tabIndex", "0");
+			rm.writeAttribute("tabindex", "0");
 		} else {
-			rm.writeAttribute("tabIndex", "-1");
+			rm.writeAttribute("tabindex", "-1");
 		}
 		rm.write(">"); // SPAN element
 		this.renderButtons(rm, oControl);

@@ -266,15 +266,15 @@ sap.ui.define([
 		core.applyChanges();
 
 		// Assert
-		assert.equal(sut.$().attr('aria-describedby'), null, 'When tile is not editable, aria-describedBy should not exist');
+		assert.equal(sut.$().attr('aria-describedby'), null, 'When tile is not editable, aria-describedby should not exist');
 
 		// Act
 		sut.isEditable(true);
 		//Assert
-		assert.equal(sut.$().attr('aria-describedby'), InvisibleText.getStaticId("sap.m", "TILE_REMOVE_BY_DEL_KEY"), 'When tile is editable, aria-describedBy should exist');
+		assert.equal(sut.$().attr('aria-describedby'), InvisibleText.getStaticId("sap.m", "TILE_REMOVE_BY_DEL_KEY"), 'When tile is editable, aria-describedby should exist');
 		assert.equal(sap.ui.getCore().byId(InvisibleText.getStaticId("sap.m", "TILE_REMOVE_BY_DEL_KEY")).getText(),
 				sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("TILE_REMOVE_BY_DEL_KEY"),
-				'When tile is editable, aria-describedBy should point to a label with certain text');
+				'When tile is editable, aria-describedby should point to a label with certain text');
 
 		cnt.destroy();
 	});

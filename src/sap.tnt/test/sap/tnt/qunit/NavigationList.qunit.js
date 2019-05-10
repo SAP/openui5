@@ -274,23 +274,23 @@ sap.ui.define([
 	QUnit.test('Tab navigation', function (assert) {
 
 		this.navigationList.$().find('li:not(.sapTntNavLIGroupItem)').each(function (index, item) {
-			assert.ok(item.getAttribute('tabIndex') === null, 'first level "li" element does not have a tab index.');
+			assert.ok(item.getAttribute('tabindex') === null, 'first level "li" element does not have a tab index.');
 		});
 
 		this.navigationList.$().find('div.sapTntNavLIGroup:not(.sapTntNavLIItemDisabled)').each(function (index, item) {
-			assert.equal(item.getAttribute('tabIndex'), '-1', jQuery(item).text() + ' has a tab index.');
+			assert.equal(item.getAttribute('tabindex'), '-1', jQuery(item).text() + ' has a tab index.');
 		});
 
 		this.navigationList.$().find('div.sapTntNavLIGroup.sapTntNavLIItemDisabled').each(function (index, item) {
-			assert.notOk(item.getAttribute('tabIndex'), jQuery(item).text() + ' does not have a tab index');
+			assert.notOk(item.getAttribute('tabindex'), jQuery(item).text() + ' does not have a tab index');
 		});
 
 		this.navigationList.$().find('li.sapTntNavLIGroupItem:not(.sapTntNavLIItemDisabled)').each(function (index, item) {
-			assert.equal(item.getAttribute('tabIndex'), '-1', jQuery(item).text() + ' has a tab index.');
+			assert.equal(item.getAttribute('tabindex'), '-1', jQuery(item).text() + ' has a tab index.');
 		});
 
 		this.navigationList.$().find('li.sapTntNavLIGroupItem.sapTntNavLIItemDisabled').each(function (index, item) {
-			assert.ok(item.getAttribute('tabIndex') === null, 'Disabled ' + jQuery(item).text() + ' does not have a tab index.');
+			assert.ok(item.getAttribute('tabindex') === null, 'Disabled ' + jQuery(item).text() + ' does not have a tab index.');
 		});
 	});
 

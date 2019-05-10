@@ -54,7 +54,7 @@ sap.ui.define(["sap/f/library", "sap/base/security/encodeCSS"],
 				oRm.addClass("sapMPointer");
 				oRm.addClass("sapFAvatarFocusable");
 				oRm.writeAttribute("role", "button");
-				oRm.writeAttribute("tabIndex", 0);
+				oRm.writeAttribute("tabindex", 0);
 			} else {
 				oRm.writeAttribute("role", "img");
 			}

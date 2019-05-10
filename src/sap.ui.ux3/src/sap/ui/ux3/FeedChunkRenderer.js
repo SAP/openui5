@@ -34,7 +34,7 @@ sap.ui.define([
 		}
 		var sMyId = oChunk.getId();
 
-		rm.write('<ARTICLE');
+		rm.write('<article');
 		rm.writeControlData(oChunk);
 		rm.addClass('sapUiFeedChunk');
 		if (oChunk.bComment) {
@@ -56,7 +56,7 @@ sap.ui.define([
 		rm.write('>');
 
 		// text (starting with sender)
-		rm.write('<DIV class= "sapUiFeedChunkText" >');
+		rm.write('<div class= "sapUiFeedChunkText" >');
 		rm.write('<a id=' + sMyId + '-sender ');
 		rm.writeAttribute('href', '#');
 		rm.write('>');
@@ -69,27 +69,27 @@ sap.ui.define([
 		}
 
 		this.renderText(rm, oChunk);
-		rm.write('</DIV>');
+		rm.write('</div>');
 
 		// status icons
 		if (!oChunk.bComment) {
-			rm.write('<UL class= "sapUiFeedChunkStatusIcons" >');
+			rm.write('<ul class= "sapUiFeedChunkStatusIcons" >');
 			if (oChunk.getFlagged()) {
-				rm.write('<LI class= "sapUiFeedChunkFlagged" title="' + oChunk.rb.getText('FEED_FLAGGED') + '" >&#9873</LI>');
+				rm.write('<li class= "sapUiFeedChunkFlagged" title="' + oChunk.rb.getText('FEED_FLAGGED') + '" >&#9873</li>');
 			}
 			if (oChunk.getFavorite()) {
-				rm.write('<LI class= "sapUiFeedChunkFavorite" title="' + oChunk.rb.getText('FEED_FAVORITE') + '" >&#9733</LI>');
+				rm.write('<li class= "sapUiFeedChunkFavorite" title="' + oChunk.rb.getText('FEED_FAVORITE') + '" >&#9733</li>');
 			}
 			if (oChunk.getShared()) {
-				rm.write('<LI class= "sapUiFeedChunkShared" title="' + oChunk.rb.getText('FEED_SHARED') + '" >&#8635</LI>');
+				rm.write('<li class= "sapUiFeedChunkShared" title="' + oChunk.rb.getText('FEED_SHARED') + '" >&#8635</li>');
 			}
-			rm.write('</UL>');
+			rm.write('</ul>');
 		}
 
 		// date
-		rm.write('<SPAN class= "sapUiFeedChunkByline" >');
+		rm.write('<span class= "sapUiFeedChunkByline" >');
 		rm.writeEscaped(oChunk.getTimestamp());
-		rm.write('</SPAN>');
+		rm.write('</span>');
 
 		if (!oChunk.bComment) {
 			// action buttons (only if exists)
@@ -97,35 +97,35 @@ sap.ui.define([
 				rm.renderControl(oChunk.oToolsButton);
 			}
 			if (oChunk.getEnableShare()) {
-				rm.write('<BUTTON type = "button" id=' + sMyId + '-ActShare class= "sapUiFeedChunkAct sapUiFeedChunkActShare" title="' + oChunk.rb.getText('FEED_ACT_SHARE') + '" >&#8635</BUTTON>');
+				rm.write('<button type = "button" id=' + sMyId + '-ActShare class= "sapUiFeedChunkAct sapUiFeedChunkActShare" title="' + oChunk.rb.getText('FEED_ACT_SHARE') + '" >&#8635</BUTTON>');
 			}
 			if (oChunk.getEnableInspect()) {
-				rm.write('<BUTTON type = "button" id=' + sMyId + '-ActInspect class= "sapUiFeedChunkAct sapUiFeedChunkActInspect" title="' + oChunk.rb.getText('FEED_ACT_INSPECT') + '" >i</BUTTON>');
+				rm.write('<button type = "button" id=' + sMyId + '-ActInspect class= "sapUiFeedChunkAct sapUiFeedChunkActInspect" title="' + oChunk.rb.getText('FEED_ACT_INSPECT') + '" >i</BUTTON>');
 			}
 			if (oChunk.getEnableFavorite()) {
-				rm.write('<BUTTON type = "button" id=' + sMyId + '-ActFavorite class= "sapUiFeedChunkAct sapUiFeedChunkActFavorite" title="' + oChunk.rb.getText('FEED_ACT_FAVORITE') + '" >&#9733</BUTTON>');
+				rm.write('<button type = "button" id=' + sMyId + '-ActFavorite class= "sapUiFeedChunkAct sapUiFeedChunkActFavorite" title="' + oChunk.rb.getText('FEED_ACT_FAVORITE') + '" >&#9733</BUTTON>');
 			}
 			if (oChunk.getEnableFlag()) {
-				rm.write('<BUTTON type = "button" id=' + sMyId + '-ActFlag class= "sapUiFeedChunkAct sapUiFeedChunkActFlag" title="' + oChunk.rb.getText('FEED_ACT_FLAG') + '" >&#9873</BUTTON>');
+				rm.write('<button type = "button" id=' + sMyId + '-ActFlag class= "sapUiFeedChunkAct sapUiFeedChunkActFlag" title="' + oChunk.rb.getText('FEED_ACT_FLAG') + '" >&#9873</BUTTON>');
 			}
 			if (oChunk.getEnableComment()) {
-				rm.write('<BUTTON type = "button" id=' + sMyId + '-ActComment class= "sapUiFeedChunkAct sapUiFeedChunkActComment" title="' + oChunk.rb.getText('FEED_ACT_COMMENT') + '" >C</BUTTON>');
+				rm.write('<button type = "button" id=' + sMyId + '-ActComment class= "sapUiFeedChunkAct sapUiFeedChunkActComment" title="' + oChunk.rb.getText('FEED_ACT_COMMENT') + '" >C</BUTTON>');
 			}
 		}
 
 		// delete button
 		if (oChunk.getDeletionAllowed() && oChunk.bComment) {
-			rm.write('<BUTTON type = "button" id=' + sMyId + '-delete class= "sapUiFeedChunkDel" title="' + oChunk.rb.getText('FEED_DELETE') + '" >X</BUTTON>');
+			rm.write('<button type = "button" id=' + sMyId + '-delete class= "sapUiFeedChunkDel" title="' + oChunk.rb.getText('FEED_DELETE') + '" >X</BUTTON>');
 		}
 
 		// comments
 		if (oChunk.getComments().length > 0 || oChunk.showCommentFeeder) {
-			rm.write("<SECTION>");
+			rm.write("<section>");
 			this.renderComments(rm, oChunk);
-			rm.write("</SECTION>");
+			rm.write("</section>");
 		}
 
-		rm.write('</ARTICLE>');
+		rm.write('</article>');
 	};
 
 	/*
@@ -198,7 +198,7 @@ sap.ui.define([
 		var iLength = oComments.length;
 
 		// number of comments
-		rm.write('<HEADER class= "sapUiFeedChunkComments" >');
+		rm.write('<header class= "sapUiFeedChunkComments" >');
 		if (oChunk.rb) {
 			rm.write(oChunk.rb.getText('FEED_NO_COMMENTS', [iLength]));
 
@@ -214,7 +214,7 @@ sap.ui.define([
 				rm.write('</a>');
 			}
 		}
-		rm.write("</HEADER>");
+		rm.write("</header>");
 
 		// comments are sorted from old to new. Newest comment is on the bottom
 		var iNumberChunks = iLength;

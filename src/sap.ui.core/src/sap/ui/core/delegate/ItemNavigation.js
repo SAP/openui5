@@ -266,9 +266,9 @@ sap.ui.define([
 		// in nested ItemNavigation the tabindex must only be set at the root DOM from the parent ItemNavigation
 		if (!jQuery(this.oDomRef).data("sap.INItem")) {
 			if (this.iFocusedIndex >= 0) {
-				jQuery(this.oDomRef).attr("tabIndex", this.iTabIndex);
+				jQuery(this.oDomRef).attr("tabindex", this.iTabIndex);
 			} else {
-				jQuery(this.oDomRef).attr("tabIndex", this.iActiveTabIndex);
+				jQuery(this.oDomRef).attr("tabindex", this.iActiveTabIndex);
 			}
 		}
 
@@ -322,9 +322,9 @@ sap.ui.define([
 				// the tabindex is set to 0. For all items with tabindex 0 the tabindex is set to -1
 				// Items without tabindex are checked for focusable on the first focusin on the root.
 				if (i == this.iFocusedIndex && !$Item.data("sap.INRoot")) {
-					$Item.attr("tabIndex", this.iActiveTabIndex);
+					$Item.attr("tabindex", this.iActiveTabIndex);
 				} else if ($Item.attr("tabindex") == "0") { // set tabindex to -1 only if already set to 0
-					$Item.attr("tabIndex", -1);
+					$Item.attr("tabindex", -1);
 				}
 
 				$Item.data("sap.INItem", true);
@@ -360,9 +360,9 @@ sap.ui.define([
 
 					// not focusable items (like labels) must not get a tabindex attribute
 					if (i == this.iFocusedIndex && !$Item.data("sap.INRoot")) {
-						$Item.attr("tabIndex", this.iActiveTabIndex);
+						$Item.attr("tabindex", this.iActiveTabIndex);
 					} else {
-						$Item.attr("tabIndex", -1);
+						$Item.attr("tabindex", -1);
 					}
 				}
 			}
@@ -384,7 +384,7 @@ sap.ui.define([
 		if (jQuery(this.oDomRef).data("sap.INItem")) {
 			for (var i = 0; i < this.aItemDomRefs.length; i++) {
 				if (this.aItemDomRefs[i] && jQuery(this.aItemDomRefs[i]).attr("tabindex") == "0") { // separators return null here
-					jQuery(this.aItemDomRefs[i]).attr("tabIndex", -1);
+					jQuery(this.aItemDomRefs[i]).attr("tabindex", -1);
 				}
 			}
 		}
@@ -607,15 +607,15 @@ sap.ui.define([
 			iIndex = this.aItemDomRefs.length - 1;
 		}
 
-		jQuery(this.oDomRef).attr("tabIndex", this.iTabIndex);
+		jQuery(this.oDomRef).attr("tabindex", this.iTabIndex);
 
 		if (this.iFocusedIndex !== -1 && this.aItemDomRefs.length > this.iFocusedIndex) {
-			jQuery(this.aItemDomRefs[this.iFocusedIndex]).attr("tabIndex", -1);
+			jQuery(this.aItemDomRefs[this.iFocusedIndex]).attr("tabindex", -1);
 
 			// if focus is in nested ItemNavigation but is moved to an other item, remove tabindex from nested item
 			$Item = jQuery(this.aItemDomRefs[this.iFocusedIndex]);
 			if ($Item.data("sap.INRoot") && iIndex != this.iFocusedIndex) {
-				jQuery($Item.data("sap.INRoot").aItemDomRefs[$Item.data("sap.INRoot").iFocusedIndex]).attr("tabIndex", -1);
+				jQuery($Item.data("sap.INRoot").aItemDomRefs[$Item.data("sap.INRoot").iFocusedIndex]).attr("tabindex", -1);
 			}
 		}
 
@@ -626,7 +626,7 @@ sap.ui.define([
 		if (!$Item.data("sap.INRoot")) {
 
 			// in nested ItemNavigation the nested item gets the tabindex
-			jQuery(oFocusItem).attr("tabIndex", this.iActiveTabIndex);
+			jQuery(oFocusItem).attr("tabindex", this.iActiveTabIndex);
 		}
 
 		return this;
@@ -798,7 +798,7 @@ sap.ui.define([
 				}
 
 				if (!oEvent.relatedControlId || containsOrEquals(oParentDomRef, sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
-					jQuery(this.aItemDomRefs[this.iFocusedIndex]).attr("tabIndex", -1);
+					jQuery(this.aItemDomRefs[this.iFocusedIndex]).attr("tabindex", -1);
 				}
 			}
 
