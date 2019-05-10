@@ -8,7 +8,7 @@
         class="sapUiContentPadding"
 	xmlns:widgets="sap.ui.integration.widgets"
 	xmlns:host="sap.ui.integration.host" height="100%">
-	<host:HostConfiguration 
+	<host:HostConfiguration
 						id="hostColor"
 						></host:HostConfiguration>
 	<l:Splitter id="outersplitter" orientation="Vertical">
@@ -31,7 +31,7 @@
 				<layoutData>
 					<l:SplitterLayoutData size="auto" />
 				</layoutData>
-				<widgets:Card 
+				<widgets:Card
 					id="cardSample"
 						width="400px" height="500px" hostConfigurationId="hostColor"></widgets:Card>
 			</ScrollContainer>

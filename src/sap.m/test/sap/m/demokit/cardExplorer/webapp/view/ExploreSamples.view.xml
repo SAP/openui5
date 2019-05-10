@@ -1,0 +1,20 @@
+<mvc:View
+	controllerName="sap.ui.demo.cardExplorer.controller.ExploreSamples"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:editor="sap.ui.codeeditor"
+	xmlns:widgets="sap.ui.integration.widgets">
+	<Page title="{sample>/title}">
+		<l:ResponsiveSplitter defaultPane="default">
+			<l:PaneContainer orientation="Horizontal">
+				<l:SplitPane>
+					<widgets:Card class="sapUiLargeMargin" id="cardSample" width="400px"></widgets:Card>
+				</l:SplitPane>
+				<l:SplitPane>
+					<editor:CodeEditor class="sapUiSmallMarginBegin" id="editor" height="100%" editable="true" liveChange="onManifestEdited"></editor:CodeEditor>
+				</l:SplitPane>
+			</l:PaneContainer>
+		</l:ResponsiveSplitter>
+	</Page>
+</mvc:View>

@@ -28,8 +28,19 @@ sap.ui.define([
 			},
 
 			onSideNavigationItemSelect: function (oEvent) {
-				var item = oEvent.getParameter('item');
-				this.getRouter().navTo(item.getKey());
+				var item = oEvent.getParameter('item'),
+					itemConfig = this.getView().getModel().getProperty(item.getBindingContext().getPath());
+
+				if (itemConfig.target) {
+					this.getRouter().navTo(
+						itemConfig.target,
+						{
+							key: itemConfig.key
+						}
+					);
+				} else {
+					this.getRouter().navTo(itemConfig.key);
+				}
 			},
 
 			onSideNavButtonPress : function() {
@@ -43,6 +54,7 @@ sap.ui.define([
 
 			onRouteChange: function (oEvent) {
 				var routeConfig = oEvent.getParameter('config');
+				var routeArgs = oEvent.getParameter("arguments");
 				var routeName = routeConfig.name;
 				var sideNavigation = this.getView().byId('sideNavigation');
 				var iconTabHeader = this.getView().byId('iconTabHeader');
@@ -50,12 +62,16 @@ sap.ui.define([
 
 				if (routeName.indexOf('explore') === 0) {
 					model = exploreNavigationModel;
-					iconTabHeader.setSelectedKey("exploreCardTypes");
+					iconTabHeader.setSelectedKey("exploreSamples");
 				}
 
 				this.getView().setModel(model);
 
-				sideNavigation.setSelectedKey(routeConfig.name);
+				if (routeArgs["key"]) {
+					sideNavigation.setSelectedKey(routeArgs["key"]);
+				} else {
+					sideNavigation.setSelectedKey(routeConfig.name);
+				}
 			},
 
 			_setToggleButtonTooltip : function(bLarge) {
