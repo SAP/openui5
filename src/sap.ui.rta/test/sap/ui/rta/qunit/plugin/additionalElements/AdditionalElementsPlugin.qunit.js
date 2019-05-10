@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/m/Bar",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/Util",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/registry/SimpleChanges",
@@ -33,6 +34,7 @@ sap.ui.define([
 	Bar,
 	DesignTime,
 	OverlayRegistry,
+	DtUtil,
 	FlexUtils,
 	ChangeRegistry,
 	SimpleChanges,
@@ -118,9 +120,9 @@ sap.ui.define([
 	};
 	var sandbox = sinon.sandbox.create();
 
-	var ON_SIBLING = "SIBLING",
-		ON_CHILD = "CHILD",
-		ON_IRRELEVANT = "IRRELEVANT";
+	var ON_SIBLING = "SIBLING";
+	var ON_CHILD = "CHILD";
+	var ON_IRRELEVANT = "IRRELEVANT";
 
 	QUnit.module("Context Menu Operations: Given a plugin whose dialog always close with OK", {
 		before: function() {
@@ -139,7 +141,7 @@ sap.ui.define([
 				}
 				return fnOriginalGetLibraryResourceBundle.apply(this, arguments);
 			});
-			sandbox.stub(RTAPlugin.prototype, "hasChangeHandler").callsFake(function() {return true;});
+			sandbox.stub(RTAPlugin.prototype, "hasChangeHandler").callsFake(function (sChangeType, oElement, bAsync) {return bAsync ? Promise.resolve(true) : true;});
 			givenSomeBoundControls.call(this, assert);
 
 			givenThePluginWithOKClosingDialog.call(this);
@@ -223,15 +225,20 @@ sap.ui.define([
 			var sOverlayType = test.sibling ? ON_SIBLING : ON_CHILD;
 			QUnit.test(sPrefix + test.msg, function(assert) {
 				return createOverlayWithAggregationActions.call(this, test.dtMetadata, sOverlayType)
-				.then(function(oOverlay) {
-					this.oPlugin.setDesignTime(this.oDesignTime);
-					this.oPlugin.registerElementOverlay(oOverlay);
-					var sExpectedText = this.oRTATexts.getText("CTX_ADD_ELEMENTS", "I18N_KEY_USER_FRIENDLY_CONTROL_NAME");
-					assert.equal(this.oPlugin.getContextMenuTitle(test.sibling, oOverlay), sExpectedText, "then the translated context menu entry is properly set");
-					assert.ok(this.oPlugin.isAvailable(test.sibling, [oOverlay]), "then the action is available");
-					assert.ok(this.oPlugin.isEnabled(test.sibling, [oOverlay]), "then the action is enabled");
-					assert.ok(this.oPlugin._isEditableCheck(oOverlay, test.sibling), "then the overlay is editable");
-				}.bind(this));
+					.then(function(oOverlay) {
+						this.oDesignTime.addPlugin(this.oPlugin);
+						this.oPlugin.registerElementOverlay(oOverlay);
+						return DtUtil.waitForSynced(this.oDesignTime, function() {
+							return oOverlay;
+						})();
+					}.bind(this))
+					.then(function(oOverlay) {
+						var sExpectedText = this.oRTATexts.getText("CTX_ADD_ELEMENTS", "I18N_KEY_USER_FRIENDLY_CONTROL_NAME");
+						assert.equal(this.oPlugin.getContextMenuTitle(test.sibling, oOverlay), sExpectedText, "then the translated context menu entry is properly set");
+						assert.ok(this.oPlugin.isAvailable(test.sibling, [oOverlay]), "then the action is available");
+						assert.ok(this.oPlugin.isEnabled(test.sibling, [oOverlay]), "then the action is enabled");
+						assert.ok(this.oPlugin._isEditableCheck(oOverlay, test.sibling), "then the overlay is editable");
+					}.bind(this));
 			});
 		});
 
@@ -242,16 +249,21 @@ sap.ui.define([
 				},
 				noName : true
 			}, ON_SIBLING)
-			.then(function(oOverlay) {
-				this.oPlugin.setDesignTime(this.oDesignTime);
-				this.oPlugin.registerElementOverlay(oOverlay);
-				var sExpectedControlTypeText = this.oRTATexts.getText("MULTIPLE_CONTROL_NAME");
-				var sExpectedText = this.oRTATexts.getText("CTX_ADD_ELEMENTS", [sExpectedControlTypeText]);
-				assert.equal(this.oPlugin.getContextMenuTitle(true, oOverlay), sExpectedText, "then the translated context menu entry is properly set");
-				assert.ok(this.oPlugin.isAvailable(true, [oOverlay]), "then the action is available");
-				assert.ok(this.oPlugin.isEnabled(true, [oOverlay]), "then the action is enabled");
-				assert.ok(this.oPlugin._isEditableCheck(oOverlay, true), "then the overlay is editable");
-			}.bind(this));
+				.then(function(oOverlay) {
+					this.oDesignTime.addPlugin(this.oPlugin);
+					this.oPlugin.registerElementOverlay(oOverlay);
+					return DtUtil.waitForSynced(this.oDesignTime, function() {
+						return oOverlay;
+					})();
+				}.bind(this))
+				.then(function(oOverlay) {
+					var sExpectedControlTypeText = this.oRTATexts.getText("MULTIPLE_CONTROL_NAME");
+					var sExpectedText = this.oRTATexts.getText("CTX_ADD_ELEMENTS", [sExpectedControlTypeText]);
+					assert.equal(this.oPlugin.getContextMenuTitle(true, oOverlay), sExpectedText, "then the translated context menu entry is properly set");
+					assert.ok(this.oPlugin.isAvailable(true, [oOverlay]), "then the action is available");
+					assert.ok(this.oPlugin.isEnabled(true, [oOverlay]), "then the action is enabled");
+					assert.ok(this.oPlugin._isEditableCheck(oOverlay, true), "then the overlay is editable");
+				}.bind(this));
 		});
 
 		QUnit.test(" when the control's dt metadata has a reveal action with function allowing reveal only for some instances", function(assert) {
@@ -266,8 +278,13 @@ sap.ui.define([
 			}, ON_SIBLING)
 
 			.then(function(oOverlay) {
-				this.oPlugin.setDesignTime(this.oDesignTime);
+				this.oDesignTime.addPlugin(this.oPlugin);
 				this.oPlugin.registerElementOverlay(oOverlay);
+				return DtUtil.waitForSynced(this.oDesignTime, function() {
+					return oOverlay;
+				})();
+			}.bind(this))
+			.then(function(oOverlay) {
 				assert.ok(this.oPlugin.isAvailable(ON_SIBLING, [oOverlay]), "then the action is available");
 				assert.ok(this.oPlugin.isEnabled(ON_SIBLING, [oOverlay]), "then the action is enabled");
 				assert.ok(this.oPlugin._isEditableCheck(oOverlay, ON_SIBLING), "then the overlay is editable");
@@ -303,8 +320,11 @@ sap.ui.define([
 					sandbox.stub(oOverlay, "isVisible").returns(true);
 					sandbox.stub(oOverlay.getParentElementOverlay(), "isVisible").returns(true);
 					assert.notOk(this.oPlugin.isAvailable(test.sibling, [oOverlay]), "then the action is not available");
-					assert.notOk(this.oPlugin._isEditableCheck(oOverlay, test.sibling), "then the overlay is not editable");
-				}.bind(this));
+					return this.oPlugin._isEditableCheck(oOverlay, test.sibling);
+				}.bind(this))
+				.then(function(bEditable) {
+					assert.notOk(bEditable, "then the overlay is not editable");
+				});
 			});
 		});
 	});
@@ -414,7 +434,7 @@ sap.ui.define([
 		},
 		beforeEach : function(assert) {
 			givenSomeBoundControls.call(this, assert);
-			sandbox.stub(RTAPlugin.prototype, "hasChangeHandler").callsFake(function () {return true;});
+			sandbox.stub(RTAPlugin.prototype, "hasChangeHandler").callsFake(function (sChangeType, oElement, bAsync) {return bAsync ? Promise.resolve(true) : true;});
 
 			givenThePluginWithOKClosingDialog.call(this);
 		},
@@ -524,7 +544,6 @@ sap.ui.define([
 				aCustomItems[1].selected = true; // tem selected
 				aCustomItems[1].changeSpecificData.changeOnRelevantContainer = true; // to mock change on relevant container
 
-
 				return test.overlay.call(this,
 					{
 						add : {
@@ -554,7 +573,7 @@ sap.ui.define([
 				var fnElementModifiedStub = sandbox.stub();
 				this.oPlugin.attachEventOnce("elementModified", fnElementModifiedStub);
 
-				return test.overlay.call(this, { }, test.sibling ? ON_SIBLING : ON_CHILD)
+				return test.overlay.call(this, {}, test.sibling ? ON_SIBLING : ON_CHILD)
 
 				.then(function(oOverlay) {
 					return this.oPlugin.showAvailableElements(test.sibling, [oOverlay]);
@@ -739,9 +758,11 @@ sap.ui.define([
 			)
 			.then(function(oOverlay) {
 				whenOverlayHasNoStableId.call(this, this.oPseudoPublicParentOverlay);
-
-				assert.equal(this.oPlugin._isEditableCheck(oOverlay, true), false, "then the overlay is not editable");
-			}.bind(this));
+				return this.oPlugin._isEditableCheck(oOverlay, true);
+			}.bind(this))
+			.then(function(bEditable) {
+				assert.equal(bEditable, false, "then the overlay is not editable");
+			});
 		});
 
 		QUnit.test("when the control's dt metadata has a reveal action with changeOnRelevantContainer true but the parent does not have stable ID", function(assert) {
@@ -755,10 +776,13 @@ sap.ui.define([
 			)
 			.then(function(oOverlay) {
 				whenOverlayHasNoStableId.call(this, this.oParentOverlay);
-
-				assert.equal(this.oPlugin._isEditableCheck(oOverlay, true), false, "then the overlay is not editable");
-			}.bind(this));
+				return this.oPlugin._isEditableCheck(oOverlay, true);
+			}.bind(this))
+			.then(function(bEditable) {
+				assert.equal(bEditable, false, "then the overlay is not editable");
+			});
 		});
+
 		QUnit.test("when the control's dt metadata has a reveal action but the parent does not have stable ID", function(assert) {
 			return createOverlayWithAggregationActions.call(this, {
 				reveal : {
@@ -769,9 +793,11 @@ sap.ui.define([
 			)
 			.then(function(oOverlay) {
 				whenOverlayHasNoStableId.call(this, this.oParentOverlay);
-
-				assert.equal(this.oPlugin._isEditableCheck(oOverlay, false), false, "then the parent overlay is not editable");
-			}.bind(this));
+				return this.oPlugin._isEditableCheck(oOverlay, false);
+			}.bind(this))
+			.then(function(bEditable) {
+				assert.equal(bEditable, false, "then the parent overlay is not editable");
+			});
 		});
 
 		QUnit.test("when the control has sibling actions but the parent does not have stable ID", function(assert) {
@@ -786,9 +812,11 @@ sap.ui.define([
 				// E.g. FormContainer has no stable ID, but another FormContainer has stable ID and has a hidden FormElement that could be revealed,
 				// then the move to the FormContainer without stable ID would fail, so no reveal action should be available.
 				whenOverlayHasNoStableId.call(this, this.oParentOverlay);
-
-				assert.equal(this.oPlugin._isEditableCheck(oOverlay, true), false, "then the sibling overlay is not editable");
-			}.bind(this));
+				return this.oPlugin._isEditableCheck(oOverlay, true);
+			}.bind(this))
+			.then(function(bEditable) {
+				assert.equal(bEditable, false, "then the sibling overlay is not editable");
+			});
 		});
 
 		QUnit.test("when the control has sibling actions but the sibling does not have stable ID", function(assert) {
@@ -803,9 +831,11 @@ sap.ui.define([
 				// E.g. FormContainer has no stable ID, but another FormContainer has stable ID and has a hidden FormElement that could be revealed,
 				// then the move to the FormContainer without stable ID would fail, so no reveal action should be available.
 				whenOverlayHasNoStableId.call(this, oOverlay);
-
-				assert.equal(this.oPlugin._isEditableCheck(oOverlay, true), false, "then the sibling overlay is not editable");
-			}.bind(this));
+				return this.oPlugin._isEditableCheck(oOverlay, true);
+			}.bind(this))
+			.then(function(bEditable) {
+				assert.equal(bEditable, false, "then the sibling overlay is not editable");
+			});
 		});
 
 		QUnit.test("when the control has addODataProperty and Reveal in different aggregations from DesignTimeMetadata", function(assert) {
@@ -822,9 +852,10 @@ sap.ui.define([
 			});
 			sandbox.stub(this.oPlugin, "_getCustomAddActions");
 
-			this.oPlugin._getActions();
-
-			assert.equal(fnLogErrorSpy.args[0][0].indexOf("action defined for more than 1 aggregation") > -1, true, "then the correct error is thrown");
+			return this.oPlugin._getActions(true, {})
+			.then(function() {
+				assert.equal(fnLogErrorSpy.args[0][0].indexOf("action defined for more than 1 aggregation") > -1, true, "then the correct error is thrown");
+			});
 		});
 
 		QUnit.test("when the Child-controls have no designtime Metadata", function(assert) {
@@ -979,6 +1010,76 @@ sap.ui.define([
 			});
 
 			this.oPlugin.registerElementOverlay(oSiblingOverlay);
+		});
+
+		QUnit.test("when '_getActions' is called multiple times without invalidate", function(assert) {
+			var oGetRevealActionsSpy = sandbox.spy(this.oPlugin, "_getRevealActions");
+			var oGetAddActionsSpy = sandbox.spy(this.oPlugin, "_getAddODataPropertyActions");
+			var oGetAddCustomActionsSpy = sandbox.spy(this.oPlugin, "_getCustomAddActions");
+
+			return createOverlayWithAggregationActions.call(this,
+				{
+					addODataProperty : {
+						changeType : "addFields"
+					},
+					reveal : {
+						changeType : "unhideControl"
+					},
+					move : "moveControls"
+				},
+				ON_SIBLING
+			)
+			.then(function(oOverlay) {
+				return this.oPlugin._getActions(true, oOverlay, false)
+				.then(function() {
+					assert.equal(oGetRevealActionsSpy.callCount, 1, "the reveal action was calculated once");
+					assert.equal(oGetAddActionsSpy.callCount, 1, "the add action was calculated once");
+					assert.equal(oGetAddCustomActionsSpy.callCount, 1, "the add custom action was calculated once");
+				})
+				.then(function() {
+					return this.oPlugin._getActions(true, oOverlay, false);
+				}.bind(this))
+				.then(function() {
+					assert.equal(oGetRevealActionsSpy.callCount, 1, "the reveal action was not calculated again");
+					assert.equal(oGetAddActionsSpy.callCount, 1, "the add action was not calculated again");
+					assert.equal(oGetAddCustomActionsSpy.callCount, 1, "the add custom action was not calculated again");
+				});
+			}.bind(this));
+		});
+
+		QUnit.test("when '_getActions' is called multiple times with invalidate", function(assert) {
+			var oGetRevealActionsSpy = sandbox.spy(this.oPlugin, "_getRevealActions");
+			var oGetAddActionsSpy = sandbox.spy(this.oPlugin, "_getAddODataPropertyActions");
+			var oGetAddCustomActionsSpy = sandbox.spy(this.oPlugin, "_getCustomAddActions");
+
+			return createOverlayWithAggregationActions.call(this,
+				{
+					addODataProperty : {
+						changeType : "addFields"
+					},
+					reveal : {
+						changeType : "unhideControl"
+					},
+					move : "moveControls"
+				},
+				ON_SIBLING
+			)
+			.then(function(oOverlay) {
+				return this.oPlugin._getActions(true, oOverlay, true)
+				.then(function() {
+					assert.equal(oGetRevealActionsSpy.callCount, 1, "the reveal action was calculated once");
+					assert.equal(oGetAddActionsSpy.callCount, 1, "the add action was calculated once");
+					assert.equal(oGetAddCustomActionsSpy.callCount, 1, "the add custom action was calculated once");
+				})
+				.then(function() {
+					return this.oPlugin._getActions(true, oOverlay, true);
+				}.bind(this))
+				.then(function() {
+					assert.equal(oGetRevealActionsSpy.callCount, 2, "the reveal action was calculated again");
+					assert.equal(oGetAddActionsSpy.callCount, 2, "the add action was calculated again");
+					assert.equal(oGetAddCustomActionsSpy.callCount, 2, "the add custom action was calculated again");
+				});
+			}.bind(this));
 		});
 	});
 
