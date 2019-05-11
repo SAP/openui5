@@ -1,6 +1,12 @@
 /* global QUnit */
 
-sap.ui.define(["jquery.sap.global", "sap/ui/commons/Button", "sap/ui/qunit/utils/createAndAppendDiv"], function(jQuery, CommonsButton, createAndAppendDiv) {
+sap.ui.define([
+	"jquery.sap.global",
+	"sap/ui/Device",
+	"sap/ui/core/UIComponent",
+	"sap/ui/commons/Button",
+	"sap/ui/qunit/utils/createAndAppendDiv"
+], function(jQuery, Device, UIComponent, CommonsButton, createAndAppendDiv) {
 	"use strict";
 
 	createAndAppendDiv("target1");
@@ -359,7 +365,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/commons/Button", "sap/ui/qunit/utils
 	});
 
 	// skip Interaction tests for phantomjs, which does not support window.performance.getEntriesByType
-	var sMethod = sap.ui.Device.browser.phantomJS ? "skip" : "test";
+	var sMethod = Device.browser.phantomJS ? "skip" : "test";
 
 	QUnit.module("Interaction", {
 		beforeEach: function() {
@@ -456,7 +462,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/commons/Button", "sap/ui/qunit/utils
 	});
 
 	// do not test safari as it does not seem to work in testing environments
-	var bStablePerformanceAPI = window.performance && window.performance.getEntries && !sap.ui.Device.browser.safari;
+	var bStablePerformanceAPI = window.performance && window.performance.getEntries && !Device.browser.safari;
 
 	QUnit[sMethod]("Performance API depending measures", function(assert) {
 		jQuery.sap.measure.startInteraction("click", this.oButton);
@@ -514,7 +520,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/commons/Button", "sap/ui/qunit/utils
 		// setup
 		var oButton = this.oButton;
 		var sComponentName = "MyComponent";
-		var Comp = sap.ui.core.UIComponent.extend("my.Component", {
+		var Comp = UIComponent.extend("my.Component", {
 			metadata : {
 				manifest: {
 					"sap.app" : {

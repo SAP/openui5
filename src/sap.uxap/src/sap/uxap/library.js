@@ -30,6 +30,8 @@ sap.ui.define([
 		designtime: "sap/uxap/designtime/library.designtime",
 		types: [
 			"sap.uxap.BlockBaseColumnLayout",
+			"sap.uxap.BlockBaseFormAdjustment",
+			"sap.uxap.Importance",
 			"sap.uxap.ObjectPageConfigurationMode",
 			"sap.uxap.ObjectPageHeaderDesign",
 			"sap.uxap.ObjectPageHeaderPictureShape",
@@ -57,7 +59,9 @@ sap.ui.define([
 		],
 		elements: [
 			"sap.uxap.ModelMapping",
-			"sap.uxap.ObjectPageHeaderLayoutData"
+			"sap.uxap.ObjectPageAccessibleLandmarkInfo",
+			"sap.uxap.ObjectPageHeaderLayoutData",
+			"sap.uxap.ObjectPageLazyLoader"
 		],
 		version: "${version}",
 		extensions: {

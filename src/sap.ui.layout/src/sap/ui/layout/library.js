@@ -30,17 +30,25 @@ sap.ui.define([
 		designtime: "sap/ui/layout/designtime/library.designtime",
 		types: [
 			"sap.ui.layout.BackgroundDesign",
+			"sap.ui.layout.BlockBackgroundType",
+			"sap.ui.layout.BlockLayoutCellColorSet",
+			"sap.ui.layout.BlockLayoutCellColorShade",
+			"sap.ui.layout.BlockRowColorSets",
+			"sap.ui.layout.BoxesPerRowConfig",
 			"sap.ui.layout.GridIndent",
 			"sap.ui.layout.GridPosition",
 			"sap.ui.layout.GridSpan",
-			"sap.ui.layout.BlockBackgroundType",
-			"sap.ui.layout.form.GridElementCells",
-			"sap.ui.layout.form.SimpleFormLayout",
+			"sap.ui.layout.SideContentFallDown",
+			"sap.ui.layout.SideContentPosition",
+			"sap.ui.layout.SideContentVisibility",
 			"sap.ui.layout.form.ColumnsXL",
 			"sap.ui.layout.form.ColumnsL",
 			"sap.ui.layout.form.ColumnsM",
 			"sap.ui.layout.form.ColumnCells",
 			"sap.ui.layout.form.EmptyCells",
+			"sap.ui.layout.form.GridElementCells",
+			"sap.ui.layout.form.SimpleFormLayout",
+			"sap.ui.layout.cssgrid.CSSGridAutoFlow",
 			"sap.ui.layout.cssgrid.CSSGridTrack",
 			"sap.ui.layout.cssgrid.CSSGridLine",
 			"sap.ui.layout.cssgrid.CSSGridGapShortHand"
@@ -72,6 +80,7 @@ sap.ui.define([
 			"sap.ui.layout.cssgrid.CSSGrid"
 		],
 		elements: [
+			"sap.ui.layout.BlockLayoutCellData",
 			"sap.ui.layout.GridData",
 			"sap.ui.layout.ResponsiveFlowLayoutData",
 			"sap.ui.layout.SplitterLayoutData",
@@ -83,11 +92,7 @@ sap.ui.define([
 			"sap.ui.layout.form.GridElementData",
 			"sap.ui.layout.form.ColumnElementData",
 			"sap.ui.layout.form.ColumnContainerData",
-			"sap.ui.layout.cssgrid.GridItemLayoutData",
-			"sap.ui.layout.cssgrid.GridLayoutBase",
-			"sap.ui.layout.cssgrid.GridBasicLayout",
-			"sap.ui.layout.cssgrid.GridBoxLayout",
-			"sap.ui.layout.cssgrid.GridResponsiveLayout"
+			"sap.ui.layout.cssgrid.GridItemLayoutData"
 		],
 		extensions: {
 			flChangeHandlers: {

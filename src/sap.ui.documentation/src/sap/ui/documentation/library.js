@@ -24,12 +24,18 @@ sap.ui.define([
 		types: [],
 		interfaces: [],
 		controls: [
-			"sap.ui.documentation.sdk.controls.Search",
-			"sap.ui.documentation.sdk.controls.ObjectPageSubSection",
+			"sap.ui.documentation.sdk.controls.BorrowedList",
+			"sap.ui.documentation.sdk.controls.DemokitTreeItem",
+			"sap.ui.documentation.sdk.controls.JSDocText",
 			"sap.ui.documentation.sdk.controls.LightTable",
+			"sap.ui.documentation.sdk.controls.ObjectPageSubSection",
+			"sap.ui.documentation.sdk.controls.ParamText",
+			"sap.ui.documentation.sdk.controls.Search",
+			"sap.ui.documentation.sdk.controls.TitleLink"
+		],
+		elements: [
 			"sap.ui.documentation.sdk.controls.Row"
 		],
-		elements: [],
 		noLibraryCSS: true
 	});
 

@@ -85,7 +85,6 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 			"sap.ui.core.LocalBusyIndicator",
 			"sap.ui.core.ScrollBar",
 			"sap.ui.core.TooltipBase",
-			"sap.ui.core.UIComponent",
 			"sap.ui.core.XMLComposite",
 			"sap.ui.core.mvc.HTMLView",
 			"sap.ui.core.mvc.JSONView",
@@ -94,8 +93,8 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 			"sap.ui.core.mvc.View",
 			"sap.ui.core.mvc.XMLView",
 			"sap.ui.core.tmpl.DOMElement",
-			"sap.ui.core.tmpl.Template",
-			"sap.ui.core.tmpl.TemplateControl"
+			"sap.ui.core.tmpl.TemplateControl",
+			"sap.ui.core.util.Export"
 		],
 		elements: [
 			"sap.ui.core.CustomData",
@@ -113,7 +112,8 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 			"sap.ui.core.dnd.DragDropInfo",
 			"sap.ui.core.search.OpenSearchProvider",
 			"sap.ui.core.search.SearchProvider",
-			"sap.ui.core.tmpl.DOMAttribute"
+			"sap.ui.core.tmpl.DOMAttribute",
+			"sap.ui.core.util.ExportCell"
 		],
 		extensions: {
 			"sap.ui.support" : {
@@ -2049,7 +2049,7 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 	each("sap.ui.model.", ["Filter","Sorter","json.JSONModel","resource.ResourceModel","odata.ODataModel","odata.v2.ODataModel","odata.v4.ODataModel","xml.XMLModel"]);
 	each("sap.ui.model.type.", ["Boolean","Integer","Float","String","Date","Time","DateTime","FileSize","Currency","Unit","DateInterval", "DateTimeInterval", "TimeInterval"]);
 	each("sap.ui.model.odata.type.", ["Boolean","Byte","Currency","Date","DateTime","DateTimeOffset","Double","Decimal","Guid","Int16","Int32","Int64","Raw","SByte","Single","Stream","String","Time","TimeOfDay","Unit"]);
-	each("sap.ui.core.", ["Locale","LocaleData","mvc.Controller"]);
+	each("sap.ui.core.", ["Locale","LocaleData","mvc.Controller", "UIComponent"]);
 	each("sap.ui.core.mvc.", ["Controller", "View", "JSView", "JSONView", "XMLView", "HTMLView", "TemplateView"], "sap.ui");
 	each("sap.ui.core.", ["Component"], "sap.ui");
 	each("sap.ui.core.tmpl.", ["Template"], "sap.ui");

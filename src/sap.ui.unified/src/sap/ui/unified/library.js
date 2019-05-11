@@ -16,11 +16,14 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/base/Object', 'sap/ui/core/library'],
 		dependencies : ["sap.ui.core"],
 		designtime: "sap/ui/unified/designtime/library.designtime",
 		types: [
+			"sap.ui.unified.CalendarAppointmentVisualization",
 			"sap.ui.unified.CalendarDayType",
-			"sap.ui.unified.GroupAppointmentsMode",
-			"sap.ui.unified.ContentSwitcherAnimation",
+			"sap.ui.unified.CalendarIntervalType",
+			"sap.ui.unified.ColorPickerDisplayMode",
 			"sap.ui.unified.ColorPickerMode",
-			"sap.ui.unified.ColorPickerDisplayMode"
+			"sap.ui.unified.ContentSwitcherAnimation",
+			"sap.ui.unified.GroupAppointmentsMode",
+			"sap.ui.unified.StandardCalendarLegendItem"
 		],
 		interfaces: [
 			"sap.ui.unified.IProcessableBlobs"

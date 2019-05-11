@@ -25,7 +25,6 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 			"sap.ui.table.SelectionMode",
 			"sap.ui.table.SortOrder",
 			"sap.ui.table.VisibleRowCountMode",
-			"sap.ui.table.SharedDomRef",
 			"sap.ui.table.TreeAutoExpandMode" /*Note: Only added here to ensure that a corresponding module is created automatically. Cannot be used as type for properties!*/
 		],
 		interfaces: [],
@@ -33,6 +32,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 			"sap.ui.table.AnalyticalColumnMenu",
 			"sap.ui.table.AnalyticalTable",
 			"sap.ui.table.ColumnMenu",
+			"sap.ui.table.CreationRow",
 			"sap.ui.table.Table",
 			"sap.ui.table.TreeTable",
 			"sap.ui.table.RowAction"
@@ -43,6 +43,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 			"sap.ui.table.Row",
 			"sap.ui.table.RowActionItem",
 			"sap.ui.table.RowSettings",
+			"sap.ui.table.plugins.MultiSelectionPlugin",
 			"sap.ui.table.plugins.SelectionPlugin"
 		],
 		extensions: {
