@@ -908,37 +908,7 @@ sap.ui
                                 oPushedObject[sComplexOrNav] = {};
                             }
                             // call recursively to get the properties of each complex type or navigation property
-                            try {
-                                if (oData[sComplexOrNav].results) {
-                                    // Navigation property - filter the results for each navigation property based on the properties defined by $select
-                                    var oComplexNavFilteredResults = {
-                                        results : []
-                                    };
-
-                                    jQuery.each(oData[sComplexOrNav].results, function (i, oResult) {
-                                        var oComplexNavFilteredResult = {};
-                                        jQuery.each(oComplexOrNav[sComplexOrNav], function (j, sPropertyName) {
-                                            if (sPropertyName.indexOf("/") !== -1) {
-                                                var sComplexOrNavChild = sPropertyName.substring(0, sPropertyName.indexOf("/"));
-                                                var aComplexOrNavChild = [];
-                                                aComplexOrNavChild.push(sPropertyName);
-                                                fnCreatePushedEntry(aComplexOrNavChild, oResult, oComplexNavFilteredResult, sComplexOrNavChild);
-                                            } else {
-                                                oComplexNavFilteredResult[sPropertyName] = oResult[sPropertyName];
-                                            }
-                                        });
-
-                                        oComplexNavFilteredResults.results.push(oComplexNavFilteredResult);
-                                    });
-
-                                    oPushedObject[sComplexOrNav] = oComplexNavFilteredResults;
-
-                                } else {
-                                    oPushedObject[sComplexOrNav] = fnCreatePushedEntry(oComplexOrNav[sComplexOrNav], oData[sComplexOrNav], oPushedObject[sComplexOrNav], sComplexOrNav);
-                                }
-                            } catch (e) {
-                                throw "Unexpected oData structure.";
-                            }
+                            oPushedObject[sComplexOrNav] = fnCreatePushedEntry(oComplexOrNav[sComplexOrNav], oData[sComplexOrNav], oPushedObject[sComplexOrNav], sComplexOrNav);
                         });
 
                         if (oData.results) {
