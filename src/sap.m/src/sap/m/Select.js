@@ -1844,6 +1844,7 @@ function(
 			oPicker.setHorizontalScrolling(false)
 					.addStyleClass(CSS_CLASS + "Picker")
 					.addStyleClass(CSS_CLASS + "Picker-CTX")
+					.addStyleClass("sapUiNoContentPadding")
 					.attachBeforeOpen(this.onBeforeOpen, this)
 					.attachAfterOpen(this.onAfterOpen, this)
 					.attachBeforeClose(this.onBeforeClose, this)
