@@ -33,6 +33,7 @@ sap.ui.define([
 	 */
 	var ManagedObjectModelFantomas = Element.extend("sap.ui.fl.util.ManagedObjectModel", {
 		metadata: {
+			library: "sap.ui.fl",
 			properties: {
 				/**
 				 * Proxy object for oData parameter of ManagedObjectModel

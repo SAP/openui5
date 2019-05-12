@@ -83,13 +83,7 @@ sap.ui.define(function() {
 				}
 			},
 			SettersContextReturn: {
-				title: "All control and element setter should return correct context (Reason: https://github.com/SAP/openui5/blob/master/docs/guidelines.md#creating-classes)",
-				ui5: {
-					libs: "sap.m,sap.ui.layout,sap.ui.unified,sap.ui.ux3,sap.ui.table,sap.ui.suite,sap.ui.dt,sap.uxap,sap.tnt,sap.ui.demokit,sap.ui.commons"
-				},
-				qunit: {
-					reorder: true
-				}
+				title: "All setters should return correct context (Reason: https://github.com/SAP/openui5/blob/master/docs/guidelines.md#creating-classes)"
 			}
 		}
 	};

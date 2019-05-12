@@ -3,7 +3,7 @@
  */
 
 sap.ui.define(['sap/ui/core/Core', "sap/base/util/ObjectPath", "sap/base/Log", "sap/ui/VersionInfo"],
-		function(Core, ObjectPath, Log, VersionInfo) {
+		function(oCore, ObjectPath, Log, VersionInfo) {
 	"use strict";
 
 	/**
@@ -59,25 +59,15 @@ sap.ui.define(['sap/ui/core/Core', "sap/base/util/ObjectPath", "sap/base/Log", "
 	 */
 	var ControlIterator = {};
 
-	ControlIterator._aControlsThatCannotBeRenderedGenerically = [  // exposed, so it can be tested
-		"sap.ui.comp.smartform.Group",
-		"sap.ui.comp.smartform.GroupElement",
-		"sap.ui.core.UIComponent",
-		"sap.ui.core.mvc.HTMLView",
-		"sap.ui.core.mvc.JSONView",
-		"sap.ui.core.mvc.JSView",
-		"sap.ui.core.mvc.XMLView",
-		"sap.ui.core.mvc.TemplateView",
-		"sap.ui.core.mvc.View",
-		"sap.ui.core.tmpl.Template",
-		"sap.ui.core.util.Export",
+	var aControlsThatCannotBeRenderedGenerically = [
+		"sap.chart.Chart",
 		"sap.m.ColumnHeaderPopover",
 		"sap.m.FacetFilterItem",
+		"sap.m.internal.NumericInput",
 		"sap.m.LightBox",
 		"sap.m.Menu",
-		"sap.m.NotificationListItem",
 		"sap.m.NotificationListBase",
-		"sap.m.internal.NumericInput",
+		"sap.m.NotificationListItem",
 		"sap.m.QuickViewBase",
 		"sap.m.QuickViewGroup",
 		"sap.m.QuickViewGroupElement",
@@ -86,245 +76,242 @@ sap.ui.define(['sap/ui/core/Core', "sap/base/util/ObjectPath", "sap/base/Log", "
 		"sap.m.TimePickerSliders",
 		"sap.m.UploadCollectionToolbarPlaceholder",
 		"sap.m.Wizard",
+		"sap.makit.Chart",
+		"sap.me.TabContainer",
+		"sap.suite.ui.microchart.InteractiveBarChart",
+		"sap.suite.ui.microchart.InteractiveDonutChart",
 		"sap.tnt.NavigationList",
+		"sap.ui.comp.smartform.Group",
+		"sap.ui.comp.smartform.GroupElement",
+		"sap.ui.comp.valuehelpdialog.ValueHelpDialog",
+		"sap.ui.core.mvc.HTMLView",
+		"sap.ui.core.mvc.JSONView",
+		"sap.ui.core.mvc.JSView",
+		"sap.ui.core.mvc.TemplateView",
+		"sap.ui.core.mvc.View",
+		"sap.ui.core.mvc.XMLView",
+		"sap.ui.core.tmpl.Template",
+		"sap.ui.core.UIComponent",
+		"sap.ui.core.util.Export",
 		"sap.ui.demokit.IndexLayout._Tile",
+		"sap.ui.documentation.sdk.controls.BorrowedList",
+		"sap.ui.documentation.sdk.controls.LightTable",
 		"sap.ui.layout.BlockLayoutRow",
 		"sap.ui.richtexteditor.RichTextEditor",
 		"sap.ui.richtexteditor.ToolbarWrapper",
+		"sap.ui.rta.AddElementsDialog",
+		"sap.ui.rta.ContextMenu",
 		"sap.ui.suite.TaskCircle",
 		"sap.ui.table.ColumnMenu",
 		"sap.ui.unified.Menu",
 		"sap.ui.ux3.ActionBar",
 		"sap.ui.ux3.ExactList.LB",
 		"sap.ui.ux3.NotificationBar",
-		"sap.ui.rta.ContextMenu",
-		"sap.ui.rta.AddElementsDialog",
-		"sap.ui.comp.valuehelpdialog.ValueHelpDialog",
-		"sap.chart.Chart",
-		"sap.makit.Chart",
-		"sap.me.TabContainer",
-		"sap.suite.ui.microchart.InteractiveBarChart",
-		"sap.suite.ui.microchart.InteractiveDonutChart",
+		"sap.uiext.inbox.composite.InboxTaskTitleControl",
+		"sap.uiext.inbox.InboxFormattedTextView",
+		"sap.uiext.inbox.InboxTaskDetails",
+		"sap.uiext.inbox.InboxToggleTextView",
+		"sap.uiext.inbox.SubstitutionRulesManager",
 		"sap.uxap.AnchorBar",
 		"sap.uxap.BlockBase",
 		"sap.uxap.BreadCrumbs",
 		"sap.uxap.ObjectPageHeader",
 		"sap.uxap.ObjectPageSubSection",
-		"sap.uiext.inbox.SubstitutionRulesManager",
-		"sap.uiext.inbox.composite.InboxTaskTitleControl",
-		"sap.uiext.inbox.InboxFormattedTextView",
-		"sap.uiext.inbox.InboxToggleTextView",
-		"sap.uiext.inbox.InboxTaskDetails",
 		"sap.viz.ui5.controls.common.BaseControl",
 		"sap.viz.ui5.controls.VizRangeSlider",
-		"sap.viz.ui5.core.BaseChart",
-		"sap.viz.ui5.controls.VizTooltip"
+		"sap.viz.ui5.controls.VizTooltip",
+		"sap.viz.ui5.core.BaseChart"
 	];
 
-	ControlIterator.controlCanBeRendered = function(sControlName) {
-		if (!ControlIterator.controlCanBeInstantiated(sControlName)) {
+	function controlCanBeRendered(sControlName, fnControlClass) {
+		if (!controlCanBeInstantiated(sControlName, fnControlClass)) {
 			return false;
 		}
 
 		// controls which are known not to work standalone - some of them cannot work, some might need to be improved
-		if (ControlIterator._aControlsThatCannotBeRenderedGenerically.indexOf(sControlName) > -1)  { // known to be untestable
+		if (aControlsThatCannotBeRenderedGenerically.indexOf(sControlName) > -1)  { // known to be untestable
 			return false;
 		}
 
 		return true;
-	};
+	}
 
+	var aControlsThatCannotBeInstantiated = [
+		"sap.makit.Chart",
+		"sap.ui.commons.SearchField", // can be instantiated, but fails before rendering
+		"sap.ui.commons.SearchField.CB", // a MESS!
+		"sap.ui.commons.SearchFieldCB",
+		"sap.ui.commons.Tab",
+		"sap.ui.comp.transport.TransportDialog",
+		"sap.ui.core.ComponentContainer",
+		"sap.ui.core.mvc.HTMLView",
+		"sap.ui.core.mvc.JSONView",
+		"sap.ui.core.mvc.JSView",
+		"sap.ui.core.mvc.TemplateView",
+		"sap.ui.core.mvc.View",
+		"sap.ui.core.mvc.XMLView",
+		"sap.ui.core.XMLComposite",
+		"sap.ui.demokit.IndexLayout._Tile",
+		"sap.ui.mdc.BaseControl", // should be abstract?
+		"sap.ui.mdc.FilterBar", //The control only runs in views with XML pre-processor. The test can't provide this environment
+		"sap.ui.mdc.FilterField", //The control only runs in views with XML pre-processor. The test can't provide this environment
+		"sap.ui.mdc.odata.v4.microchart.MicroChart", //The control only runs in views with XML pre-processor. The test can't provide this environment
+		"sap.ui.mdc.ValueHelpDialog", //The control only runs in views with XML pre-processor. The test can't provide this environment
+		"sap.ui.mdc.XMLComposite", //The control only runs in views with XML pre-processor. The test can't provide this environment
+		"sap.ui.rta.AddElementsDialog",
+		"sap.ui.rta.ContextMenu"
+	];
 
-	ControlIterator.controlCanBeInstantiated = function(sControlName) {
+	function controlCanBeInstantiated(sControlName, fnControlClass) {
 		// controls which are known not to work standalone
 
-		if ([
-			"sap.ui.codeeditor.CodeEditor",
-			"sap.ui.demokit.IndexLayout._Tile",
-			"sap.ui.commons.SearchField", // can be instantiated, but fails before rendering
-			"sap.ui.commons.SearchField.CB", // a MESS!
-			"sap.ui.commons.SearchFieldCB",
-			"sap.ui.commons.Tab",
-			"sap.ui.comp.transport.TransportDialog",
-			"sap.ui.core.ComponentContainer",
-			"sap.ui.core.mvc.View",
-			"sap.ui.core.mvc.XMLView",
-			"sap.ui.core.XMLComposite",
-			"sap.ui.core.mvc.JSView",
-			"sap.ui.core.mvc.JSONView",
-			"sap.ui.core.mvc.HTMLView",
-			"sap.ui.core.mvc.TemplateView",
-			"sap.ui.mdc.FilterBar", //The control only runs in views with XML pre-processor. The test can't provide this environment
-			"sap.ui.mdc.XMLComposite", //The control only runs in views with XML pre-processor. The test can't provide this environment
-			"sap.ui.mdc.ValueHelpDialog", //The control only runs in views with XML pre-processor. The test can't provide this environment
-			"sap.ui.mdc.FilterField", //The control only runs in views with XML pre-processor. The test can't provide this environment
-            "sap.ui.mdc.odata.v4.microchart.MicroChart", //The control only runs in views with XML pre-processor. The test can't provide this environment
-			"sap.makit.Chart",
-			"sap.ui.rta.AddElementsDialog",
-			"sap.ui.rta.ContextMenu"
-		].indexOf(sControlName) > -1)  { // known to be not instantiable
+		if (aControlsThatCannotBeInstantiated.indexOf(sControlName) > -1)  { // known to be not instantiable
 			return false;
 		}
 
-		var oControlClass = ObjectPath.get(sControlName);
-		if (!oControlClass) {
+		if (!fnControlClass) {
 			return false;
 		}
-		var oMetadata = oControlClass.getMetadata();
+		var oMetadata = fnControlClass.getMetadata();
 
 		if (oMetadata.isAbstract()) {
 			return false;
 		}
 
 		return true;
-	};
+	}
 
+	ControlIterator.aKnownOpenUI5Libraries = [
+		"sap.f", "sap.m", "sap.tnt", "sap.ui.codeeditor", "sap.ui.commons", "sap.ui.core",
+		"sap.ui.demokit", "sap.ui.documentation", "sap.ui.dt", "sap.ui.fl", "sap.ui.integration",
+		"sap.ui.layout", "sap.ui.rta", "sap.ui.suite", "sap.ui.support", "sap.ui.table",
+		"sap.ui.unified", "sap.ui.ux3",	"sap.uxap"
+	];
 
-	var aKnownRuntimeLayerLibraries = ["sap.ui.core","sap.chart","sap.f","sap.m","sap.makit","sap.me","sap.ndc",
-		   "sap.suite.ui.microchart","sap.tnt","sap.ui.codeeditor","sap.ui.commons","sap.ui.comp","sap.ui.dt",
-		   "sap.ui.fl","sap.ui.integration","sap.ui.generic.app","sap.ui.generic.template","sap.ui.layout","sap.ui.mdc",
-		   "sap.ui.richtexteditor","sap.ui.rta","sap.ui.suite","sap.ui.table",
-		   "sap.ui.unified","sap.ui.ux3","sap.uxap","sap.viz"];
+	ControlIterator.aKnownRuntimeLayerLibraries = ControlIterator.aKnownOpenUI5Libraries.concat([
+		"sap.chart", "sap.makit", "sap.me", "sap.ndc", "sap.suite.ui.microchart", "sap.ui.comp",
+		"sap.ui.generic.app", "sap.ui.generic.template", "sap.ui.mdc", "sap.ui.richtexteditor",
+		"sap.viz"]);
 
 	ControlIterator.isKnownRuntimeLayerLibrary = function(sLibName) {
-		return aKnownRuntimeLayerLibraries.indexOf(sLibName) > -1;
+		return ControlIterator.aKnownRuntimeLayerLibraries.indexOf(sLibName) > -1;
 	};
 
-	function getAllLibrariesPromise(fnFilter) {
+	function nop() {
+	}
+
+	function alwaysTrue() {
+		return true;
+	}
+
+	function alwaysFalse() {
+		return false;
+	}
+
+	function toName(oLibrary) {
+		return oLibrary.name;
+	}
+
+	function getAllLibraries(fnFilter) {
+
+		fnFilter = fnFilter || alwaysTrue;
 
 		// discover what is available in order to also test other libraries than those loaded in bootstrap
-		return VersionInfo.load().then(function(oInfo) {
-			var mLibraries = sap.ui.getCore().getLoadedLibraries(),
-				sInfoLibName,
-				i ,aPromises = [], bNewLibrary;
-
-			var fnSetNewLibrary = function() {
-				bNewLibrary = true;
-			};
-			var fnEmptyLibrary = function() {
-			};
-			for (i = 0; i < oInfo.libraries.length; i++) {
-				sInfoLibName = oInfo.libraries[i].name;
-				if (!mLibraries[sInfoLibName] && (!fnFilter || fnFilter(sInfoLibName))) {
-					Log.info("Libary '" + sInfoLibName + "' is not loaded!");
-					try {
-						aPromises.push(sap.ui.getCore().loadLibrary(sInfoLibName, true).then(fnSetNewLibrary)).catch(fnEmptyLibrary);
-					} catch (e) {
-						// not a control lib? This happens for e.g. "themelib_sap_bluecrystal"...
-					}
-				}
-			}
-			return Promise.all(aPromises).then(function() {
-				// Renew the libraries object if new libraries are added
-				if (bNewLibrary) {
-					mLibraries = sap.ui.getCore().getLoadedLibraries();
-				}
+		return VersionInfo.load()
+			.then(function(oInfo) {
+				return oInfo.libraries.map(toName).filter(fnFilter);
+			})
+			.then(function(aLibraries) {
+				return Promise.all(
+					aLibraries.map(function(sLibName) {
+						// ignore load errors. This happens for e.g. "themelib_sap_bluecrystal"...
+						return oCore.loadLibrary(sLibName, {async: true}).catch(nop);
+					})
+				);
+			})
+			.then(function() {
+				// get a shallow copy the loaded library metadata
+				var mLibraries = oCore.getLoadedLibraries();
+				// filter libraries out that have not been requested
 				for (var sLibName in mLibraries) {
-					if (fnFilter && !fnFilter(sLibName)) {
+					if (!fnFilter(sLibName)) {
 						delete mLibraries[sLibName];
 					}
 				}
 				return mLibraries;
 			});
+	}
+
+	/**
+	 * Asynchronously loads the module for the class with the given name and returns the export of that module
+	 * @param {string} sClassName name of the class to load
+	 */
+	function loadControlClass(sClassName) {
+		var sModuleName = sClassName.replace(/\./g, "/");
+		return new Promise(function(resolve, reject) {
+			sap.ui.require([sModuleName], function(FNClass) {
+				resolve(FNClass);
+			}, function(oErr) {
+				reject(new Error("failed to load class " + sModuleName + ":" + oErr));
+			});
 		});
 	}
 
-
 	/**
-	 * Returns a map with all libraries found, depending on the given arguments
+	 * Creates a filter function for libraries, taking the given parameters into account.
 	 *
-	 * @param {Array} aExcludedLibraries the list of libraries to exclude
-	 * @param {boolean} bIncludeDistLayer whether the list of libraries should be restricted to known runtime-layer libraries (superset of the OpenUI5 libraries) or include any dist-layer libraries
-	 * @returns a map of library infos
+	 * When a list of libraries is given (<code>aLibrariesToTest</code>), the returned filter
+	 * function will match exactly the given libraries (whitelist).
+	 * Alternatively, a list of libraries to exclude can be given (<code>aExcludedLibraries</code>,
+	 * blacklist) which will then not be matched by the returned filter function. In the case of
+	 * the blacklist, the filter is additionally restricted to openui5 and sapui5.runtime libraries
+	 * unless <code>bIncludeDistLayer</code> is set to true.
+	 *
+	 * @param {string[]} [aLibrariesToTest] List of libraries to load
+	 * @param {string[]} [aExcludedLibraries] List of libraries to exclude
+	 * @param {boolean} [bIncludeDistLayer] whether the list of libraries should be restricted to
+	 *            known runtime-layer libraries (superset of the OpenUI5 libraries) or include any
+	 *            dist-layer libraries
+	 * @returns {function(string):boolean} A filter function for library names
 	 */
-	function getAllLibraries(aExcludedLibraries, bIncludeDistLayer) {
-		var mLibraries = sap.ui.getCore().getLoadedLibraries(),
-			sInfoLibName,
-			bNewLibrary,
-			oInfo,
-			i;
-
-		// discover what is available in order to also test other libraries than those loaded in bootstrap
-		oInfo = sap.ui.getVersionInfo();
-		for (i = 0; i < oInfo.libraries.length; i++) {
-			sInfoLibName = oInfo.libraries[i].name;
-			if (jQuery.inArray(sInfoLibName, aExcludedLibraries) === -1 && !mLibraries[sInfoLibName]) {
-				Log.info("Libary '" + sInfoLibName + "' is not loaded!");
-				try {
-					sap.ui.getCore().loadLibrary(sInfoLibName);
-					bNewLibrary = true;
-				} catch (e) {
-					// not a control lib? This happens for e.g. "themelib_sap_bluecrystal"...
-				}
-			}
+	function makeLibraryFilter(aLibrariesToTest, aExcludedLibraries, bIncludeDistLayer) {
+		if ( aLibrariesToTest ) {
+			return function(sLibName) {
+				return aLibrariesToTest.indexOf(sLibName) >= 0;
+			};
+		} else if ( bIncludeDistLayer ) {
+			return function(sLibName) {
+				return aExcludedLibraries.indexOf(sLibName) < 0;
+			};
 		}
-
-		// Renew the libraries object if new libraries are added
-		if (bNewLibrary) {
-			mLibraries = sap.ui.getCore().getLoadedLibraries();
-		}
-
-		// excluded libraries should even be excluded when already loaded initially
-		aExcludedLibraries.forEach(function(sLibraryName) {
-			mLibraries[sLibraryName] = undefined;
-		});
-
-		// ignore dist-layer libraries if requested
-		if (!bIncludeDistLayer) {
-			for (var sLibName in mLibraries) {
-				if (!ControlIterator.isKnownRuntimeLayerLibrary(sLibName)) {
-					mLibraries[sLibName] = undefined;
-				}
-			}
-		}
-
-		return mLibraries;
+		return function(sLibName) {
+			return aExcludedLibraries.indexOf(sLibName) < 0 &&
+				(bIncludeDistLayer || ControlIterator.isKnownRuntimeLayerLibrary(sLibName));
+		};
 	}
 
-
-	/**
-	 * Returns a map with library infos for the requested libraries
-	 *
-	 * @param {Array} aLibrariesToTest list of libraries to load
-	 * @returns a map of library infos
-	 */
-	function getRequestedLibraries(aLibrariesToTest) {
-		var mLibraries = sap.ui.getCore().getLoadedLibraries(),
-			bNewLibrary,
-			i;
-
-		// make sure the explicitly requested libraries are there
-		for (i = 0; i < aLibrariesToTest.length; i++) {
-			if (!mLibraries[aLibrariesToTest[i]]) {
-				sap.ui.getCore().loadLibrary(aLibrariesToTest[i]); // no try-catch, as this library was explicitly requested
-				bNewLibrary = true;
-			}
+	ControlIterator.loadLibraries = function(vLibraries) {
+		if ( vLibraries === "openui5" ) {
+			vLibraries = ControlIterator.aKnownOpenUI5Libraries;
+		} else if ( vLibraries === "sapui5.runtime" ) {
+			vLibraries = ControlIterator.aKnownRuntimeLayerLibraries;
 		}
 
-		if (bNewLibrary) {
-			mLibraries = sap.ui.getCore().getLoadedLibraries();
+		var fnFilter;
+		if ( Array.isArray(vLibraries) ) {
+			fnFilter = makeLibraryFilter(vLibraries);
+		} else if ( typeof vLibraries === "function" ) {
+			fnFilter = vLibraries;
+		} else if ( vLibraries == null ) {
+			fnFilter = alwaysTrue;
+		} else {
+			throw new TypeError("unexpected filter " + vLibraries);
 		}
 
-		for (var sLibraryName in mLibraries) {
-			if (aLibrariesToTest.indexOf(sLibraryName) === -1) {
-				mLibraries[sLibraryName] = undefined;
-			}
-		}
+		return getAllLibraries(fnFilter);
+	};
 
-		return mLibraries;
-	}
-
-
-	/**
-	 * Returns a map of libraries - either exactly those requested in aLibrariesToTest, if defined, or all discoverable libraries
-	 * under the given conditions.
-	 */
-	var getLibraries = function(aLibrariesToTest, aExcludedLibraries, bIncludeDistLayer, QUnit) {
-		var mLibraries = aLibrariesToTest ?
-				getRequestedLibraries(aLibrariesToTest)
-				:
-				getAllLibraries(aExcludedLibraries, bIncludeDistLayer);
-
+	function checkLibraries(mLibraries, QUnit) {
 		QUnit.test("Should load at least one library and some controls", function(assert) {
 			assert.expect(2);
 
@@ -344,35 +331,48 @@ sap.ui.define(['sap/ui/core/Core', "sap/base/util/ObjectPath", "sap/base/Log", "
 				}
 			}
 		});
-
-		return mLibraries;
-	};
+	}
 
 	/**
-	 * Returns true if the control is not among the explicitly excluded controls and is not excluded due to its rendering/instantiation capabilities.
+	 * Checks whether the control is not among the explicitly excluded controls and is not excluded due to its
+	 * rendering/instantiation capabilities.
+	 *
+	 * The returned promise resolves with an info object describing the control's capabilities when the class
+	 * should be included in the iterator or with a falsy value otherwise.
+	 *
+	 * @param {string} sControlName Qualified name (dot notation) of the control to test
+	 * @param {string[]} aControlsToTest List of controls to include in the tests (whitelist)
+	 * @param {string[]} aExcludedControls List of controls to exclude from the tests (blacklist)
+	 * @param {boolean} bIncludeNonRenderable Whether the iterator should include controls that can't be rendered
+	 * @param {boolean} bIncludeNonInstantiable Whether the iterator should include controls that can't be instantiated
+	 * @returns Promise<({name:string,class:function,canBeInstantiated:boolean,canBeRendered:boolean}|false)>
+	 *             A promise on an info object or <code>false</code> if the class should not be tested
 	 */
 	var shouldTestControl = function(sControlName, aControlsToTest, aExcludedControls, bIncludeNonRenderable, bIncludeNonInstantiable) {
-		if (!sControlName) {
-			return false;
+		if (!sControlName
+			|| aControlsToTest.length && aControlsToTest.indexOf(sControlName) < 0  // only test specific controls
+			|| aExcludedControls.indexOf(sControlName) >= 0 ) {
+			return Promise.resolve(false);
 		}
 
-		if (aControlsToTest.length) { // only test specific controls
-			if (aControlsToTest.indexOf(sControlName) === -1) { // not one of the chosen ones
+		return loadControlClass(sControlName).then(function(FNControlClass) {
+			var oInfo = {
+				name: sControlName,
+				"class": FNControlClass,
+				canBeInstantiated: controlCanBeInstantiated(sControlName, FNControlClass),
+				canBeRendered: controlCanBeRendered(sControlName, FNControlClass)
+			};
+
+			if (!bIncludeNonInstantiable && !oInfo.canBeInstantiated) {
 				return false;
 			}
-		} else if (aExcludedControls.indexOf(sControlName) > -1) {
-			return false;
-		}
 
-		if (!bIncludeNonRenderable && !ControlIterator.controlCanBeRendered(sControlName)) {
-			return false;
-		}
+			if (!bIncludeNonRenderable && !oInfo.canBeRendered) {
+				return false;
+			}
 
-		if (!bIncludeNonInstantiable && !ControlIterator.controlCanBeInstantiated(sControlName)) {
-			return false;
-		}
-
-		return true;
+			return oInfo;
+		}, alwaysFalse);
 	};
 
 	/**
@@ -402,20 +402,20 @@ sap.ui.define(['sap/ui/core/Core', "sap/base/util/ObjectPath", "sap/base/Log", "
 	};
 
 	function handleControl(sControlName, aControlsToTest, aExcludedControls, bIncludeNonRenderable, bIncludeNonInstantiable, fnCallback) {
-		return new Promise(function(resolve){
-			var bCountThisControl = false;
-
-			if (shouldTestControl(sControlName, aControlsToTest, aExcludedControls, bIncludeNonRenderable, bIncludeNonInstantiable)) {
-				bCountThisControl = true;
-				var oControlClass = ObjectPath.get(sControlName || "");
-
-				fnCallback(sControlName, oControlClass, {
-					canInstantiate: ControlIterator.controlCanBeInstantiated(sControlName),
-					canRender: ControlIterator.controlCanBeRendered(sControlName)
+		return shouldTestControl(sControlName, aControlsToTest, aExcludedControls, bIncludeNonRenderable, bIncludeNonInstantiable)
+		.then(function(oControlInfo) {
+			if ( oControlInfo ) {
+				fnCallback(sControlName, oControlInfo.class, {
+					canInstantiate: oControlInfo.canBeInstantiated,
+					canRender: oControlInfo.canBeRendered
 				});
 			}
-
-			window.setTimeout(function(){resolve(bCountThisControl);}, 0); // give the UI the chance to be responsive to user interaction and to update information about the currently handled control
+			return new Promise(function(resolve) {
+				// give the UI the chance to be responsive to user interaction and to update information about the currently handled control
+				setTimeout(function(){
+					resolve(!!oControlInfo);
+				}, 0);
+			});
 		});
 	}
 
@@ -449,30 +449,6 @@ sap.ui.define(['sap/ui/core/Core', "sap/base/util/ObjectPath", "sap/base/Log", "
 		}, 1);
 	};
 
-	/**
-	 * @param {function} [fnFilterLibraries] filter function, by default all libraries are taken
-	 * Retrieves all control names of all libraries, including dist layer
-	 * @return {Promise<Array>} of all control names, e.g. ["sap.m.Button", "sap.m.Text"]
-	 */
-	ControlIterator.getAllControlNames = function(fnFilterLibraries) {
-
-		return getAllLibrariesPromise(fnFilterLibraries).then(function(mLibraries) {
-
-			var aAllControls = [];
-			Object.keys(mLibraries).forEach(function(sLibraryName) {
-				var oLibrary = mLibraries[sLibraryName];
-				if (oLibrary.controls) {
-					aAllControls = aAllControls.concat(oLibrary.controls);
-				}
-				if (oLibrary.elements) {
-					aAllControls = aAllControls.concat(oLibrary.elements);
-				}
-			});
-			return aAllControls;
-		});
-
-	};
-
 
 	/**
 	 * Called by run() with a 1:1 parameter forwarding
@@ -482,7 +458,7 @@ sap.ui.define(['sap/ui/core/Core', "sap/base/util/ObjectPath", "sap/base/Log", "
 			mOptions = {};
 		}
 
-		var fnDone = mOptions.done || function(){};
+		var fnDone = mOptions.done || nop;
 		var aLibrariesToTest = mOptions.librariesToTest || undefined;
 		var aExcludedLibraries = mOptions.excludedLibraries || [];
 		var aControlsToTest = mOptions.controlsToTest || [];
@@ -498,7 +474,6 @@ sap.ui.define(['sap/ui/core/Core', "sap/base/util/ObjectPath", "sap/base/Log", "
 				assert.ok(true, "The given QUnit should be able to assert");
 			});
 		} else { // otherwise create a mock QUnit that can be used for assert.ok() only
-			var nop = function(){};
 			var assert = {
 				ok: function(bCondition, sText) {
 					if (!bCondition) {
@@ -517,9 +492,9 @@ sap.ui.define(['sap/ui/core/Core', "sap/base/util/ObjectPath", "sap/base/Log", "
 
 		// check given parameters
 		QUnit.test("Checking the given options", function(assert) {
-			assert.ok(mOptions.librariesToTest === undefined || jQuery.isArray(mOptions.librariesToTest), "The given librariesToTest must be undefined or an array, but is: " + mOptions.librariesToTest);
-			assert.ok(mOptions.excludedLibraries === undefined || jQuery.isArray(mOptions.excludedLibraries), "The given excludedLibraries must be undefined or an array, but is: " + mOptions.excludedLibraries);
-			assert.ok(mOptions.excludedControls === undefined || jQuery.isArray(mOptions.excludedControls), "The given excludedControls must be undefined or an array, but is: " + mOptions.excludedControls);
+			assert.ok(mOptions.librariesToTest === undefined || Array.isArray(mOptions.librariesToTest), "The given librariesToTest must be undefined or an array, but is: " + mOptions.librariesToTest);
+			assert.ok(mOptions.excludedLibraries === undefined || Array.isArray(mOptions.excludedLibraries), "The given excludedLibraries must be undefined or an array, but is: " + mOptions.excludedLibraries);
+			assert.ok(mOptions.excludedControls === undefined || Array.isArray(mOptions.excludedControls), "The given excludedControls must be undefined or an array, but is: " + mOptions.excludedControls);
 			assert.ok(mOptions.includeDistLayer === undefined || typeof mOptions.includeDistLayer === "boolean", "The given includeDistLayer must be undefined or a boolean, but is: " + mOptions.includeDistLayer);
 			assert.ok(mOptions.includeElements === undefined || typeof mOptions.includeElements === "boolean", "The given includeElements must be undefined or a boolean, but is: " + mOptions.includeElements);
 			assert.ok(mOptions.includeNonRenderable === undefined || typeof mOptions.includeNonRenderable === "boolean", "The given includeNonRenderable must be undefined or a boolean, but is: " + mOptions.includeNonRenderable);
@@ -529,26 +504,28 @@ sap.ui.define(['sap/ui/core/Core', "sap/base/util/ObjectPath", "sap/base/Log", "
 
 
 		// get the libraries we are interested in
-		var mLibraries = getLibraries(aLibrariesToTest, aExcludedLibraries, bIncludeDistLayer, QUnit);
-
-		loopLibraries(mLibraries, bIncludeElements, aControlsToTest, aExcludedControls, bIncludeNonRenderable, bIncludeNonInstantiable, fnCallback).then(function(aResults){
-			fnDone({
-				testedControlCount: aResults[0],
-				testedLibraryCount: aResults[1]
+		var fnFilter = makeLibraryFilter(aLibrariesToTest, aExcludedLibraries, bIncludeDistLayer);
+		return getAllLibraries(fnFilter)
+			.then(function(mLibraries) {
+				checkLibraries(mLibraries, QUnit);
+				return mLibraries;
+			})
+			.then(function(mLibraries) {
+				return loopLibraries(mLibraries, bIncludeElements, aControlsToTest, aExcludedControls, bIncludeNonRenderable, bIncludeNonInstantiable, fnCallback).then(function(aResults){
+					fnDone({
+						testedControlCount: aResults[0],
+						testedLibraryCount: aResults[1]
+					});
+				});
 			});
-		});
 	}
 
 	function loopLibraries(mLibraries, bIncludeElements, aControlsToTest, aExcludedControls, bIncludeNonRenderable, bIncludeNonInstantiable, fnCallback) {
 		return new Promise(function(resolve) {
 			// loop over all libs and controls and call the callback for each
-			var iControlCount = 0,
+			var aLibraryNames = Object.keys(mLibraries),
+				iControlCount = 0,
 				iLibCount = 0;
-
-			var aLibraryNames = [];
-			for (var sLibName in mLibraries) {
-				aLibraryNames.push(sLibName);
-			}
 
 			var loop = function(i) {
 				if (i < aLibraryNames.length) {

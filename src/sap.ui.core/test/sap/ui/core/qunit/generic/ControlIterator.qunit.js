@@ -5,7 +5,15 @@ sap.ui.define([
 ], function(ControlIterator, Control) {
 	"use strict";
 
-	// create content div
+	// disable require.js to avoid issues with thirdparty
+	sap.ui.loader.config({
+		map: {
+			"*": {
+				"sap/ui/thirdparty/require": "test-resources/sap/ui/core/qunit/generic/helper/_emptyModule"
+			}
+		}
+	});
+
 	var oDIV = document.createElement("div");
 	oDIV.id = "content";
 	document.body.appendChild(oDIV);
