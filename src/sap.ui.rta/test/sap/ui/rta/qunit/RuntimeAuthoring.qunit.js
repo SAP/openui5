@@ -13,21 +13,21 @@ sap.ui.define([
 	"sap/ui/dt/Overlay",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/FakeLrepSessionStorage",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils",
-	"sap/ui/fl/FakeLrepSessionStorage",
+	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/RuntimeAuthoring",
+	"sap/ui/rta/command/BaseCommand",
 	"sap/ui/rta/command/Stack",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/Remove",
 	"sap/ui/base/Event",
 	"sap/ui/base/EventProvider",
-	"sap/ui/rta/command/BaseCommand",
-	"qunit/RtaQunitUtils",
-	"sap/ui/rta/appVariant/Feature",
 	"sap/base/Log",
 	"sap/base/util/UriParameters",
+	"qunit/RtaQunitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/sinon-4"
 ],
@@ -44,21 +44,21 @@ function(
 	Overlay,
 	ChangeRegistry,
 	Change,
+	FakeLrepSessionStorage,
 	Utils,
 	RtaUtils,
 	AppVariantUtils,
-	FakeLrepSessionStorage,
+	RtaAppVariantFeature,
 	RuntimeAuthoring,
+	RTABaseCommand,
 	Stack,
 	CommandFactory,
 	Remove,
 	Event,
 	EventProvider,
-	RTABaseCommand,
-	RtaQunitUtils,
-	RtaAppVariantFeature,
 	Log,
 	UriParameters,
+	RtaQunitUtils,
 	QUnitUtils,
 	sinon
 ) {
@@ -869,7 +869,12 @@ function(
 				_oChangePersistence: this.oChangePersistence,
 				resetChanges: function() {}
 			};
+			this.oAppDescriptorFlexController = {
+				_oChangePersistence: this.oChangePersistence,
+				resetChanges: function() {}
+			};
 			this.oFlexControllerStub = sandbox.stub(this.oRta, "_getFlexController").returns(this.oFlexController);
+			this.oAppDescriptorFlexControllerStub = sandbox.stub(RtaUtils, "getAppDescriptorFlexController").returns(this.oFlexController);
 			sandbox.stub(this.oRta, "_serializeToLrep").returns(Promise.resolve());
 			this.oDeleteChangesStub = sandbox.stub(this.oRta, "_deleteChanges");
 			this.oEnableRestartSpy = sandbox.spy(RuntimeAuthoring, "enableRestart");
@@ -1029,13 +1034,42 @@ function(
 		});
 
 		QUnit.test("when calling '_deleteChanges' successfully, ", function(assert) {
+			assert.expect(7);
 			this.oDeleteChangesStub.restore();
+			sandbox.stub(Utils, "isApplicationVariant").returns(false);
 			sandbox.stub(this.oFlexController, "resetChanges").callsFake(function() {
 				assert.strictEqual(arguments[0], this.oRta.getLayer(), "then correct layer parameter passed");
 				assert.strictEqual(arguments[1], "Change.createInitialFileContent", "then correct generator parameter passed");
 				assert.deepEqual(arguments[2], Utils.getAppComponentForControl(this.oRootControl), "then correct component parameter passed");
 				return Promise.resolve();
 			}.bind(this));
+
+			sandbox.stub(this.oAppDescriptorFlexController, "resetChanges").callsFake(function() {
+				assert.strictEqual(arguments[0], this.oRta.getLayer(), "then correct layer parameter passed");
+				assert.strictEqual(arguments[1], "Change.createInitialFileContent", "then correct generator parameter passed");
+				assert.deepEqual(arguments[2], RtaUtils.getAppDescriptorFlexController(this.oRootControl), "then correct component parameter passed");
+				return Promise.resolve();
+			}.bind(this));
+
+			return this.oRta._deleteChanges().then(function() {
+				assert.ok(this.oReloadPageStub.callCount, 1, "then page reload is triggered");
+			}.bind(this));
+		});
+
+		QUnit.test("when calling '_deleteChanges' successfully in AppVariant, ", function(assert) {
+			assert.expect(4);
+			this.oDeleteChangesStub.restore();
+			sandbox.stub(Utils, "isApplicationVariant").returns(true);
+			sandbox.stub(this.oFlexController, "resetChanges").callsFake(function() {
+				assert.strictEqual(arguments[0], this.oRta.getLayer(), "then correct layer parameter passed");
+				assert.strictEqual(arguments[1], "Change.createInitialFileContent", "then correct generator parameter passed");
+				assert.deepEqual(arguments[2], Utils.getAppComponentForControl(this.oRootControl), "then correct component parameter passed");
+				return Promise.resolve();
+			}.bind(this));
+
+			sandbox.stub(this.oAppDescriptorFlexController, "resetChanges").callsFake(function() {
+				assert.ok(false, "should never go here");
+			});
 
 			return this.oRta._deleteChanges().then(function() {
 				assert.ok(this.oReloadPageStub.callCount, 1, "then page reload is triggered");
