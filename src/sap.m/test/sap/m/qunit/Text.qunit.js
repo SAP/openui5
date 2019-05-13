@@ -30,6 +30,8 @@ sap.ui.define([
 	createAndAppendDiv("content68");
 	createAndAppendDiv("content69");
 	createAndAppendDiv("content8");
+	createAndAppendDiv("content91");
+	createAndAppendDiv("content92");
 	var sView1 =
 		"<mvc:View xmlns=\"sap.m\" xmlns:mvc=\"sap.ui.core.mvc\" controllerName=\"myController\">" +
 		"    <Text id=\"xmltext1\" text=\"Should visualize tab&#009;and new line&#xA;and escaped \n and \t\" renderWhitespace=\"true\" width=\"100%\"></Text>" +
@@ -310,7 +312,6 @@ sap.ui.define([
 
 		}, 200);
 	});
-
 	QUnit.test("When width is not set max-width should apply to control", function(assert) {
 		var sut = new Text({text : "text"}).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
@@ -384,5 +385,74 @@ sap.ui.define([
 		assert.strictEqual(oInfo.enabled, undefined, "Enabled");
 		assert.strictEqual(oInfo.editable, undefined, "Editable");
 		oControl.destroy();
+	});
+
+	QUnit.test("max lines with isThemeApplied true in RTL", function (assert){
+
+		var stubIsThemeApplied = sinon.stub(sap.ui.getCore(), "isThemeApplied", function () {
+			return true;
+		});
+
+		var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
+		var textWithMaxLines = new sap.m.Text("textML-RTL", {
+			width: "300px",
+			text: lorem,
+			textDirection: "RTL",
+			maxLines: 2
+		});
+		var stubCanUseNativeLineClamp = sinon.stub(textWithMaxLines,"canUseNativeLineClamp",function () {
+			return false;
+		});
+		sinon.spy(textWithMaxLines, "clampHeight");
+		textWithMaxLines.placeAt("content91");
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(textWithMaxLines.clampHeight.calledOnce, "clampHeight was called ones");
+		textWithMaxLines.clampHeight.restore();
+		stubIsThemeApplied.restore();
+		stubCanUseNativeLineClamp.restore();
+
+	});
+
+	QUnit.test("max lines with isThemeApplied false", function(assert) {
+		function themeChanged() {
+			return new Promise(function(resolve) {
+				function onChanged() {
+					sap.ui.getCore().detachThemeChanged(onChanged);
+					resolve();
+				}
+				sap.ui.getCore().attachThemeChanged(onChanged);
+			});
+		}
+
+		var done = assert.async();
+		var sCurrentTheme = sap.ui.getCore().getConfiguration().getTheme();
+		var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
+		var stubIsThemeApplied = sinon.stub(sap.ui.getCore(), "isThemeApplied", function () {
+			return false;
+		});
+
+		var textWithMaxLines = new sap.m.Text("textML", {
+			width: "300px",
+			text: lorem,
+			maxLines: 2
+		});
+		var stubCanUseNativeLineClamp = sinon.stub(textWithMaxLines,"canUseNativeLineClamp",function () {
+			return false;
+		});
+
+		sinon.spy(textWithMaxLines, "_handleThemeLoad");
+		textWithMaxLines.placeAt("content92");
+
+		themeChanged().then(function () {
+			assert.ok(textWithMaxLines._handleThemeLoad.calledOnce, "_handleThemeLoad was called ones");
+			textWithMaxLines._handleThemeLoad.restore();
+			stubIsThemeApplied.restore();
+			stubCanUseNativeLineClamp.restore();
+			sap.ui.getCore().applyTheme(sCurrentTheme);
+			done();
+		});
+		sap.ui.getCore().applyChanges();
+		sap.ui.getCore().applyTheme(sCurrentTheme == "sap_belize" ? "sap_fiori_3" : "sap_belize");
 	});
 });
