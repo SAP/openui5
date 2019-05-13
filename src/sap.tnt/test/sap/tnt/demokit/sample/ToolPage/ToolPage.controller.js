@@ -1,15 +1,20 @@
 sap.ui.define([
 	'jquery.sap.global',
+	'sap/ui/Device',
 	'sap/ui/core/Fragment',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel',
 	'sap/m/Popover',
-	'sap/m/Button'
-], function (jQuery, Fragment, Controller, JSONModel, Popover, Button) {
+	'sap/m/Button',
+	'sap/m/library'
+], function (jQuery, Device, Fragment, Controller, JSONModel, Popover, Button, mobileLibrary) {
 	"use strict";
 
+	var ButtonType = mobileLibrary.ButtonType,
+		PlacementType = mobileLibrary.PlacementType;
+
 	var CController = Controller.extend("sap.tnt.sample.ToolPage.ToolPage", {
-		model : new sap.ui.model.json.JSONModel(),
+		model : new JSONModel(),
 		data : {
 			selectedKey: 'page2',
 			navigation: [{
@@ -259,31 +264,30 @@ sap.ui.define([
 			this.model.setData(this.data);
 			this.getView().setModel(this.model);
 
-			this._setToggleButtonTooltip(!sap.ui.Device.system.desktop);
+			this._setToggleButtonTooltip(!Device.system.desktop);
 		},
 
 		onItemSelect : function(oEvent) {
 			var item = oEvent.getParameter('item');
-			var viewId = this.getView().getId();
-			sap.ui.getCore().byId(viewId + "--pageContainer").to(viewId + "--" + item.getKey());
+			this.byId("pageContainer").to(this.getView().createId(item.getKey()));
 		},
 
 		handleUserNamePress: function (event) {
 			var popover = new Popover({
 				showHeader: false,
-				placement: sap.m.PlacementType.Bottom,
+				placement: PlacementType.Bottom,
 				content:[
 					new Button({
 						text: 'Feedback',
-						type: sap.m.ButtonType.Transparent
+						type: ButtonType.Transparent
 					}),
 					new Button({
 						text: 'Help',
-						type: sap.m.ButtonType.Transparent
+						type: ButtonType.Transparent
 					}),
 					new Button({
 						text: 'Logout',
-						type: sap.m.ButtonType.Transparent
+						type: ButtonType.Transparent
 					})
 				]
 			}).addStyleClass('sapMOTAPopover sapTntToolHeaderPopover');
@@ -292,8 +296,7 @@ sap.ui.define([
 		},
 
 		onSideNavButtonPress : function() {
-			var viewId = this.getView().getId();
-			var toolPage = sap.ui.getCore().byId(viewId + "--toolPage");
+			var toolPage = this.byId("toolPage");
 			var sideExpanded = toolPage.getSideExpanded();
 
 			this._setToggleButtonTooltip(sideExpanded);

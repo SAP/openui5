@@ -6,6 +6,11 @@
 		}
 	},
 	"sap.ui5": {
+		"rootView": {
+			"viewName" : "sap.tnt.sample.InfoLabelInTable.V",
+			"type": "XML",
+			"async": true
+		},
 		"dependencies": {
 			"libs": {
 				"sap.ui.layout": {}
