@@ -296,7 +296,7 @@ function(
 	 * Creates an anonymous TemplateControl for the Template and places the control
 	 * into the specified DOM element.
 	 *
-	 * @param {string|DomRef} oRef the id or the DOM reference where to render the template
+	 * @param {string|Element|sap.ui.core.Control} oRef the id or the DOM reference where to render the template
 	 * @param {object} [oContext] The context to use to evaluate the Template. It will be applied as value for the context property of the created control.
 	 * @param {string|int} [vPosition] Describes the position where the control should be put into the container
 	 * @param {boolean} bInline
@@ -433,7 +433,7 @@ function(
 	 *   });
 	 * </pre>
 	 *
-	 * @param {string|DomRef|object} [oTemplate] the ID or the DOM reference to the template to lookup or a configuration object containing the src, type and eventually the ID of the Template.
+	 * @param {string|Element|object} [oTemplate] the ID or the DOM reference to the template to lookup or a configuration object containing the src, type and eventually the ID of the Template.
 	 * @param {string} oTemplate.id - the ID of the Template / the ID  of the DOM element containing the source of the Template</li>
 	 * @param {Element} oTemplate.domref - the DOM element containing the source of the Template</li>
 	 * @param {string} [oTemplate.type] - the type of the Template</li>

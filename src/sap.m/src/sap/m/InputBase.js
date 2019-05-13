@@ -807,7 +807,7 @@ function(
 	/**
 	 * Gets the DOM element reference where the message popup is attached.
 	 *
-	 * @returns {object} The DOM element reference where the message popup is attached
+	 * @returns {Element} The DOM element reference where the message popup is attached
 	 * @since 1.26
 	 * @protected
 	 */
@@ -818,7 +818,7 @@ function(
 	/**
 	 * Gets the DOM reference the popup should be docked to.
 	 *
-	 * @return {object} The DOM reference
+	 * @return {Element} The DOM reference
 	 */
 	InputBase.prototype.getPopupAnchorDomRef = function() {
 		return this.getDomRef();

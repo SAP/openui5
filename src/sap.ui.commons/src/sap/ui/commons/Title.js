@@ -45,7 +45,7 @@ sap.ui.define(['./library', 'sap/ui/core/Title'],
 	*
 	* Default value is <code>Auto</code>
 	*
-	* @return {sap.ui.commons.TitleLevel} the value of property <code>level</code>
+	* @return {sap.ui.core.TitleLevel} the value of property <code>level</code>
 	* @public
 	* @since 1.9.1
 	* @name sap.ui.commons.Title#getLevel
@@ -56,7 +56,7 @@ sap.ui.define(['./library', 'sap/ui/core/Title'],
 	*
 	* Default value is <code>Auto</code>
 	*
-	* @param {sap.ui.commons.TitleLevel} oLevel new value for property <code>level</code>
+	* @param {sap.ui.core.TitleLevel} oLevel new value for property <code>level</code>
 	* @return {sap.ui.commons.Title} <code>this</code> to allow method chaining
 	* @public
 	* @since 1.9.1

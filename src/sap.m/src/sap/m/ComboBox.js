@@ -2058,7 +2058,7 @@ sap.ui.define([
 		 * Creates picker if doesn't exist yet and sync with Control items
 		 *
 		 * @protected
-		 * @returns {Dialog|Popover}
+		 * @returns {sap.m.Dialog|sap.m.Popover}
 		 */
 		ComboBox.prototype.syncPickerContent = function () {
 			var oPickerTextField,

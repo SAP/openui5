@@ -213,7 +213,7 @@ sap.ui.define([
 	 * <li><code>oEvent.control</code>: The control which was given during registration of the event handler (if present)</li>
 	 * </ul>
 	 *
-	 * @param {DOMRef|sap.ui.core.Control} oRef The control or the DOM reference for which the given event handler should be registered (beside the window)
+	 * @param {Element|sap.ui.core.Control} oRef The control or the DOM reference for which the given event handler should be registered (beside the window)
 	 * @param {function} fHandler
 	 *             The event handler which should be called whenever the size of the given reference is changed.
 	 *             The event object is passed as first argument to the event handler. See the description of this function for more details about the available parameters of this event.

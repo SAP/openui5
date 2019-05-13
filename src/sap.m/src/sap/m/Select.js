@@ -2287,7 +2287,7 @@ function(
 		/**
 		 * Gets the DOM element reference where the message popup is attached.
 		 *
-		 * @returns {object} The DOM element reference where the message popup is attached.
+		 * @returns {Element} The DOM element reference where the message popup is attached.
 		 * @since 1.40.5
 		 */
 		Select.prototype.getDomRefForValueStateMessage = function() {

@@ -989,7 +989,7 @@ function(
 	 *
 	 * @param {boolean} bForceListSync Force MultiComboBox to SuggestionPopover sync
 	 * @protected
-	 * @returns {Dialog|Popover}
+	 * @returns {sap.m.Dialog|sap.m.Popover}
 	 */
 	MultiComboBox.prototype.syncPickerContent = function (bForceListSync) {
 		var aItems, oList,
