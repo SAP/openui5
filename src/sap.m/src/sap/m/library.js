@@ -247,6 +247,7 @@ sap.ui.define([
 			"sap.m.SelectList",
 			"sap.m.SelectionDetails",
 			"sap.m.Shell",
+			"sap.m.SimpleFixFlex",
 			"sap.m.SinglePlanningCalendar",
 			"sap.m.SinglePlanningCalendarGrid",
 			"sap.m.Slider",

@@ -142,11 +142,6 @@ sap.ui.define([
 					only: ["sap/ui/layout/FixFlex"]
 				}
 			},
-			"SimpleFixFlex": {
-				coverage: {
-					only: ["sap/ui/layout/SimpleFixFlex"]
-				}
-			},
 			"BlockLayout": {
 				coverage: {
 					only: [

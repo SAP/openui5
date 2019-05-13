@@ -1064,6 +1064,13 @@ sap.ui.define([
 					theme: "sap_bluecrystal"
 				}
 			},
+			SimpleFixFlex: {
+				title: "Test Page for sap.m.SimpleFixFlex",
+				_alternativeTitle: "QUnit tests: sap.m.SimpleFixFlex",
+				sinon: {
+					useFakeTimers: true
+				}
+			},
 			SinglePlanningCalendar: {
 				title: "QUnit Page for sap.m.SinglePlanningCalendar",
 				ui5: {

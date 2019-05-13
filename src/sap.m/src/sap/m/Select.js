@@ -24,7 +24,7 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/KeyCodes",
 	'./Text',
-	'sap/ui/layout/SimpleFixFlex'
+	'sap/m/SimpleFixFlex'
 ],
 function(
 	Dialog,
