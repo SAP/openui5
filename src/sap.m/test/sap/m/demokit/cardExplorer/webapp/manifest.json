@@ -111,14 +111,9 @@
 		  "target": "learnCardFeatures"
 		},
 		{
-		  "pattern": "explore",
-		  "name": "exploreCardTypes",
-		  "target": "exploreCardTypes"
-		},
-		{
-		  "pattern": "explore/tablecard",
-		  "name": "exploreTableCard",
-		  "target": "exploreTableCard"
+		  "pattern": "explore/:key:",
+		  "name": "exploreSamples",
+		  "target": "exploreSamples"
 		}
 	  ],
 	  "targets": {
@@ -147,14 +142,9 @@
 		  "viewId": "learnCardFeatures",
 		  "viewLevel": 2
 		},
-		"exploreCardTypes": {
-		  "viewName": "ExploreCardTypes",
-		  "viewId": "exploreCardTypes",
-		  "viewLevel": 2
-		},
-		"exploreTableCard": {
-		  "viewName": "ExploreTableCard",
-		  "viewId": "exploreTableCard",
+		"exploreSamples": {
+		  "viewName": "ExploreSamples",
+		  "viewId": "exploreSamples",
 		  "viewLevel": 2
 		},
 		"notFound": {

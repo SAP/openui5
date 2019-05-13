@@ -1,0 +1,102 @@
+{
+	"sap.app": {
+		"type": "card"
+	},
+	"sap.card": {
+	"type": "Object",
+	"data": {
+	  "json": {
+		"firstName": "Donna",
+		"lastName": "Moore",
+		"position": "Sales Executive",
+		"phone": "+1 202 555 5555",
+		"email": "my@mymail.com",
+		"photo": "./test-resources/sap/ui/integration/demokit/sample/ObjectCard/images/Woman_avatar_01.png",
+		"manager": {
+		  "firstName": "John",
+		  "lastName": "Miller",
+		  "photo": "./test-resources/sap/ui/integration/demokit/sample/ObjectCard/images/Woman_avatar_02.png"
+		},
+		"company": {
+		  "name": "Robert Brown Entertainment",
+		  "address": "481 West Street, Anytown OH 45066, USA",
+		  "email": "mail@mycompany.com",
+		  "emailSubject": "Subject",
+		  "website": "www.company_a.example.com",
+		  "url": "http://www.company_a.example.com"
+		}
+	  }
+	},
+	"header": {
+	  "icon": {
+		"src": "{photo}"
+	  },
+	  "title": "{firstName} {lastName}",
+	  "subTitle": "{position}"
+	},
+	"content": {
+	  "groups": [
+		{
+		  "title": "Contact Details",
+		  "items": [
+			{
+			  "label": "First Name",
+			  "value": "{firstName}"
+			},
+			{
+			  "label": "Last Name",
+			  "value": "{lastName}"
+			},
+			{
+			  "label": "Phone",
+			  "value": "{phone}",
+			  "type": "phone"
+			},
+			{
+			  "label": "Email",
+			  "value": "{email}",
+			  "type": "email"
+			}
+		  ]
+		},
+		{
+		  "title": "Organizational Details",
+		  "items": [
+			{
+			  "label": "Direct Manager",
+			  "value": "{manager/firstName} {manager/lastName}",
+			  "icon": {
+				"src": "{manager/photo}"
+			  }
+			}
+		  ]
+		},
+		{
+		  "title": "Company Details",
+		  "items": [
+			{
+			  "label": "Company Name",
+			  "value": "{company/name}"
+			},
+			{
+			  "label": "Address",
+			  "value": "{company/address}"
+			},
+			{
+			  "label": "Email",
+			  "value": "{company/email}",
+			  "emailSubject": "{company/emailSubject}",
+			  "type": "email"
+			},
+			{
+			  "label": "Website",
+			  "value": "{company/website}",
+			  "url": "{company/url}",
+			  "type": "link"
+			}
+		  ]
+		}
+	  ]
+	}
+  }
+}

@@ -21,7 +21,7 @@
 				<IconTabHeader backgroundDesign="Transparent" id="iconTabHeader" select="onTabSelect">
 					<items>
 						<IconTabFilter key="learnGettingStarted" text="Learn" />
-						<IconTabFilter key="exploreCardTypes" text="Explore" />
+						<IconTabFilter key="exploreSamples" text="Explore" />
 					</items>
 				</IconTabHeader>
 			</tnt:ToolHeader>

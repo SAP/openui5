@@ -1,0 +1,78 @@
+{
+	"sap.app": {
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "Table",
+		"header": {
+			"title": "Table Card with Top 65 Products",
+			"subTitle": "These are the top sellers this month",
+			"icon": {
+				"src": "sap-icon://sales-order"
+			},
+			"status": {
+				"text": "6 of 100"
+			}
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+					"salesOrder": "5000010050",
+					"netAmount": "2K USD",
+					"status": "Delivered",
+					"statusState": "Success"
+					},
+					{
+						"salesOrder": "5000010051",
+						"netAmount": "127k USD",
+						"status": "Canceled",
+						"statusState": "Error"
+					},
+					{
+						"salesOrder": "5000010052",
+						"netAmount": "8K USD",
+						"status": "In Progress",
+						"statusState": "Warning"
+					},
+					{
+						"salesOrder": "5000010053",
+						"netAmount": "25K USD",
+						"status": "Delivered",
+						"statusState": "Success"
+					},
+					{
+						"salesOrder": "5000010054",
+						"netAmount": "7K USD",
+						"status": "Delivered",
+						"statusState": "Success"
+					},
+					{
+						"salesOrder": "5000010050",
+						"netAmount": "2K USD",
+						"status": "Delivered",
+						"statusState": "Success"
+					}
+				]
+			},
+			"row": {
+				"columns": [
+					{
+						"title": "Sales Order",
+						"value": "{salesOrder}",
+						"identifier": true
+					},
+					{
+						"title": "Net Amount",
+						"value": "{netAmount}"
+					},
+					{
+						"title": "Status",
+						"value": "{status}",
+						"state": "{statusState}"
+					}
+				]
+			}
+		}
+	}
+}
