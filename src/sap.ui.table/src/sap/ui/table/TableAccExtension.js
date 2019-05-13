@@ -710,6 +710,8 @@ sap.ui.define([
 
 					if (oTable.getSelectionMode() !== SelectionMode.None && mParams && mParams.rowSelected) {
 						mAttributes["aria-selected"] = "true";
+					} else {
+						mAttributes["aria-selected"] = "false";
 					}
 
 					// Handle expand state for first Column in TreeTable
