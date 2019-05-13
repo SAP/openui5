@@ -4,28 +4,101 @@ sap.ui.define([
 	"use strict";
 
 	return new JSONModel({
-		selectedKey: 'learnGettingStarted',
+		selectedKey: 'learnOverview',
 		navigation: [
 			{
-				title: 'Getting Started',
-				key: 'learnGettingStarted'
+				title: 'Overview',
+				icon: 'sap-icon://home',
+				target: 'learnDetail',
+				key: 'overview'
 			},
 			{
-				title: 'Authoring Cards',
-				icon: 'sap-icon://card',
-				key: 'learnAuthoringCards',
+				title: 'Getting Started',
+				icon: 'sap-icon://initiative',
+				target: 'learnDetail',
+				key: 'gettingStarted'
+			},
+			{
+				title: 'Headers',
+				icon: 'sap-icon://header',
+				target: 'learnDetail',
+				key: 'headers',
 				items: [
 					{
-						title: 'Card schemas',
-						key: 'learnCardSchemas'
+						title: 'Default',
+						target: 'learnDetail',
+						key: 'headerDefault'
 					},
 					{
-						title: 'Card types',
-						key: 'learnCardTypes'
+						title: 'Numeric',
+						target: 'learnDetail',
+						key: 'headerNumeric'
+					}
+				]
+			},
+			{
+				title: 'Types',
+				icon: 'sap-icon://overview-chart',
+				target: 'learnDetail',
+				key: 'types',
+				items: [
+					{
+						title: 'List',
+						target: 'learnDetail',
+						key: 'typeList'
 					},
 					{
-						title: 'Card Features',
-						key: 'learnCardFeatures'
+						title: 'Table',
+						target: 'learnDetail',
+						key: 'typeTable'
+					},
+					{
+						title: 'Object',
+						target: 'learnDetail',
+						key: 'typeObject'
+					},
+					{
+						title: 'Timeline',
+						target: 'learnDetail',
+						key: 'typeTimeline'
+					},
+					{
+						title: 'Analytical',
+						target: 'learnDetail',
+						key: 'typeAnalytical'
+					},
+					{
+						title: 'Component',
+						target: 'learnDetail',
+						key: 'typeComponent'
+					}
+				]
+			},
+			{
+				title: 'Features',
+				icon: 'sap-icon://activities',
+				target: 'learnDetail',
+				key: 'features',
+				items: [
+					{
+						title: 'Actions',
+						target: 'learnDetail',
+						key: 'featureActions'
+					},
+					{
+						title: 'Data',
+						target: 'learnDetail',
+						key: 'featureData'
+					},
+					{
+						title: 'Parameters',
+						target: 'learnDetail',
+						key: 'featureParameters'
+					},
+					{
+						title: 'Translation',
+						target: 'learnDetail',
+						key: 'featureTranslation'
 					}
 				]
 			}

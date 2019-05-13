@@ -12,7 +12,10 @@ sap.ui.define([
 	return UIComponent.extend("sap.ui.demo.cardExplorer.Component", {
 
 		metadata: {
-			manifest: "json"
+			manifest: "json",
+			includes : [
+				"css/style.css"
+			]
 		},
 
 		/**

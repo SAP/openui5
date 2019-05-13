@@ -75,40 +75,20 @@
 		"controlId": "navContainer",
 		 "controlAggregation": "pages",
 		"bypassed": {
-		  "target": "learnGettingStarted"
+		  "target": "learnDetail"
 		},
 		"async": true
 	  },
 	  "routes": [
 		{
 		  "pattern": "",
-		  "name": "learnGettingStarted",
-		  "target": "learnGettingStarted"
+		  "name": "default",
+		  "target": "learnDetail"
 		},
 		{
-		  "pattern": "learn/authoringcards",
-		  "name": "learnAuthoringCards",
-		  "target": "learnAuthoringCards"
-		},
-		{
-		  "pattern": "learn/cardschemas",
-		  "name": "learnCardSchemas",
-		  "target": "learnCardSchemas"
-		},
-		{
-		  "pattern": "learn/cardtypes",
-		  "name": "learnCardTypes",
-		  "target": "learnCardTypes"
-		},
-		{
-		  "pattern": "learn/cardfeatures",
-		  "name": "learnCardFeatures",
-		  "target": "learnCardFeatures"
-		},
-		{
-		  "pattern": "learn/cardfeatures",
-		  "name": "learnCardFeatures",
-		  "target": "learnCardFeatures"
+		  "pattern": "learn/:key:",
+		  "name": "learnDetail",
+		  "target": "learnDetail"
 		},
 		{
 		  "pattern": "explore/:key:",
@@ -117,29 +97,9 @@
 		}
 	  ],
 	  "targets": {
-		"learnGettingStarted": {
-		  "viewName": "LearnGettingStarted",
-		  "viewId": "learnGettingStarted",
-		  "viewLevel": 2
-		},
-		"learnAuthoringCards": {
-		  "viewName": "LearnAuthoringCards",
-		  "viewId": "learnAuthoringCards",
-		  "viewLevel": 2
-		},
-		"learnCardSchemas": {
-		  "viewName": "LearnCardSchemas",
-		  "viewId": "learnCardSchemas",
-		  "viewLevel": 2
-		},
-		"learnCardTypes": {
-		  "viewName": "LearnCardTypes",
-		  "viewId": "learnCardTypes",
-		  "viewLevel": 2
-		},
-		"learnCardFeatures": {
-		  "viewName": "LearnCardFeatures",
-		  "viewId": "learnCardFeatures",
+		"learnDetail": {
+		  "viewName": "LearnDetail",
+		  "viewId": "learnDetail",
 		  "viewLevel": 2
 		},
 		"exploreSamples": {

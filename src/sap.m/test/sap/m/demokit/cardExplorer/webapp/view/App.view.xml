@@ -20,7 +20,7 @@
 				<Title text="UI Integration Cards" />
 				<IconTabHeader backgroundDesign="Transparent" id="iconTabHeader" select="onTabSelect">
 					<items>
-						<IconTabFilter key="learnGettingStarted" text="Learn" />
+						<IconTabFilter key="default" text="Learn" />
 						<IconTabFilter key="exploreSamples" text="Explore" />
 					</items>
 				</IconTabHeader>
@@ -28,6 +28,7 @@
 		</tnt:header>
 		<tnt:sideContent>
 			<tnt:SideNavigation id="sideNavigation"
+								selectedKey="{/selectedKey}"
 								itemSelect="onSideNavigationItemSelect">
 				<tnt:NavigationList items="{path: '/navigation'}">
 					<tnt:NavigationListItem text="{title}"
