@@ -25,96 +25,125 @@ function (Core, JSONModel, XMLView) {
 	});
 
 	QUnit.test("initial model mapping is applied", function (assert) {
-
+		// Arrange
 		var oExpectedFirstName = "John",
-			oExpectedLastName = "Miller";
+			oExpectedLastName = "Miller",
+			oModel = new JSONModel({
+				Employee: {
+					firstName: oExpectedFirstName,
+					lastName: oExpectedLastName
+				}
+			}),
+			done = assert.async(),
+			oSelectedView,
+			oActualFirstName,
+			oActualLastName;
 
-		var oModel = new JSONModel({
-			Employee: {
-				firstName: oExpectedFirstName,
-				lastName: oExpectedLastName
-			}
-		});
+		assert.expect(2);
+
+		// Act
 		this.oView.setModel(oModel, "jsonModel");
 		Core.applyChanges(); // allow model info to propagare
 
-		// check
-		var oSelectedView = Core.byId(this.oView.byId('block').getSelectedView()),
-			oActualFirstName = oSelectedView.byId("txtFirstName").getText(),
+		setTimeout(function () {
+			oSelectedView = Core.byId(this.oView.byId('block').getSelectedView());
+			oActualFirstName = oSelectedView.byId("txtFirstName").getText();
 			oActualLastName = oSelectedView.byId("txtLastName").getText();
 
-		assert.strictEqual(oActualFirstName, oExpectedFirstName);
-		assert.strictEqual(oActualLastName, oExpectedLastName);
+			// Assert
+			assert.strictEqual(oActualFirstName, oExpectedFirstName);
+			assert.strictEqual(oActualLastName, oExpectedLastName);
+
+			done();
+		}.bind(this), 400);
 	});
 
 	QUnit.test("updated externalPath is applied", function (assert) {
-
-		var oBlock = Core.byId("UxAP-ModelMapping--block"),
-			oSelectedView = Core.byId(this.oView.byId('block').getSelectedView());
-
-		// test data
+		// Arrange
 		var oNewFirstName = "John1",
-			oNewLastName = "Miller1";
+			oNewLastName = "Miller1",
+			oModel = new JSONModel({
+				Employee: {
+					firstName: "John",
+					lastName: "Miller"
+				},
+				newEmployee: {
+					firstName: oNewFirstName,
+					lastName: oNewLastName
+				}
+			}),
+			done = assert.async(),
+			oBlock,
+			oSelectedView,
+			oActualFirstName,
+			oActualLastName;
 
-		var oModel = new JSONModel({
-			Employee: {
-				firstName: "John",
-				lastName: "Miller"
-			},
-			newEmployee: {
-				firstName: oNewFirstName,
-				lastName: oNewLastName
-			}
-		});
+		assert.expect(2);
 
 		//setup
 		this.oView.setModel(oModel, "jsonModel");
 		Core.applyChanges(); // allow model info to propagare
 
+		setTimeout(function () {
+			oBlock = Core.byId("UxAP-ModelMapping--block");
+			oSelectedView = Core.byId(this.oView.byId('block').getSelectedView());
 
-		//act
-		oBlock.getMappings()[0].setExternalPath("/newEmployee"); // update external path
-		Core.applyChanges(); // allow model info to propagare
+			// Act
+			oBlock.getMappings()[0].setExternalPath("/newEmployee"); // update external path
+			Core.applyChanges(); // allow model info to propagare
 
-		// check
-		var oActualFirstName = oSelectedView.byId("txtFirstName").getText(),
-		oActualLastName = oSelectedView.byId("txtLastName").getText();
+			oActualFirstName = oSelectedView.byId("txtFirstName").getText();
+			oActualLastName = oSelectedView.byId("txtLastName").getText();
 
-		assert.strictEqual(oActualFirstName, oNewFirstName);
-		assert.strictEqual(oActualLastName, oNewLastName);
+			// Assert
+			assert.strictEqual(oActualFirstName, oNewFirstName);
+			assert.strictEqual(oActualLastName, oNewLastName);
+
+			done();
+		}.bind(this), 400);
 	});
 
 	QUnit.test("mapping is updated when the model is changed", function (assert) {
-
+		// Arrange
 		var oExpectedFirstName = "JohnChanged",
-			oExpectedLastName = "MillerChanged";
+			oExpectedLastName = "MillerChanged",
+			oModel = new JSONModel({
+				Employee: {
+					firstName: "John",
+					lastName: "Miller"
+				}
+			}),
+			oChangedModel = new JSONModel({
+				Employee: {
+					firstName: oExpectedFirstName,
+					lastName: oExpectedLastName
+				}
+			}),
+			done = assert.async(),
+			oSelectedView,
+			oActualFirstName,
+			oActualLastName;
 
-		var oModel = new JSONModel({
-			Employee: {
-				firstName: "John",
-				lastName: "Miller"
-			}
-		});
+		assert.expect(2);
+
 		this.oView.setModel(oModel, "jsonModel");
 		Core.applyChanges(); // allow model info to propagare
 
-		//act
-		var oChangedModel = new JSONModel({
-			Employee: {
-				firstName: oExpectedFirstName,
-				lastName: oExpectedLastName
-			}
-		});
+		// Act
 		this.oView.setModel(oChangedModel, "jsonModel");
 		Core.applyChanges(); // allow model info to propagare
 
-		// check
-		var oSelectedView = Core.byId(this.oView.byId('block').getSelectedView()),
-			oActualFirstName = oSelectedView.byId("txtFirstName").getText(),
+		setTimeout(function () {
+			oSelectedView = Core.byId(this.oView.byId('block').getSelectedView());
+			oActualFirstName = oSelectedView.byId("txtFirstName").getText();
 			oActualLastName = oSelectedView.byId("txtLastName").getText();
 
-		assert.strictEqual(oActualFirstName, oExpectedFirstName);
-		assert.strictEqual(oActualLastName, oExpectedLastName);
+			// Assert
+			assert.strictEqual(oActualFirstName, oExpectedFirstName);
+			assert.strictEqual(oActualLastName, oExpectedLastName);
+
+			done();
+		}.bind(this), 400);
 	});
 
 });
