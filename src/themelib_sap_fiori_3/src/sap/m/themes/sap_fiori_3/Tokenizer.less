@@ -50,3 +50,32 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 		padding-left: 0.25rem;
 	}
 }
+
+/* ------------------------------ */
+/* Disabled                       */
+/* ------------------------------ */
+
+.sapMTokenizer.sapMTokenizerDisabled .sapMToken  {
+  &.sapMToken:hover,
+  &.sapMToken:focus,
+  &.sapMTokenSelected {
+    background: darken(@sapUiButtonBackground, 2);
+    cursor: default;
+    color: @sapUiBaseText;
+    outline: none;
+    border: 1px solid darken(@sapUiButtonBackground, 24);
+  }
+
+  &.sapMTokenSelected .sapMTokenText {
+    color: @sapUiBaseText;
+  }
+
+  &.sapMTokenSelected .sapMTokenIcon {
+    color: @sapUiContentIconColor;
+    cursor: default;
+  }
+
+  & .sapMTokenIcon {
+    cursor: default;
+  }
+}

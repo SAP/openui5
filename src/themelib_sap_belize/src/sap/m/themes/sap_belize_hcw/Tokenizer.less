@@ -15,3 +15,23 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 		}
 	}
 }
+
+/* ------------------------------ */
+/* Disabled                       */
+/* ------------------------------ */
+
+.sapMTokenizer.sapMTokenizerDisabled .sapMToken  {
+  &.sapMToken:hover,
+  &.sapMToken:focus,
+  &.sapMTokenSelected,
+  &.sapMToken .sapMTokenIcon {
+    background: @sapUiButtonBackground;
+    cursor: default;
+    color: @sapUiButtonTextColor;
+    outline: none;
+  }
+
+  &.sapMTokenText {
+    color: @sapUiButtonTextColor;
+  }
+}

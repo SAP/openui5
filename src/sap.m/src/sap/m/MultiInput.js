@@ -73,7 +73,7 @@ function(
 	* <li> When multiple values are copied and pasted in the field, separate tokens are created for each of them.</li>
 	* <li> When a single value is copied and pasted in the field, it is shown as a text value, as further editing might be required before it is converted into a token.</li>
 	* <li> Provide meaningful labels for all input fields. Do not use the placeholder as a replacement for the label.</li>
-	* <li> <code>showValueHelp</code> property is overwritten and after initialization of the control, its value becomes <code>truthy</code>.</li>
+	* <li> The <code>showValueHelp</code> property is overwritten and after initialization of the control, its value becomes <code>truthy</code>.</li>
 	* </ul>
 	* <h3>Usage</h3>
 	* <h4>When to use:</h4>
@@ -294,6 +294,11 @@ function(
 		}
 
 		this._deregisterResizeHandler();
+	};
+
+	MultiInput.prototype.onBeforeRendering = function () {
+		Input.onBeforeRendering.apply(this, arguments);
+		this._tokenizer.setEnabled(this.getEnabled());
 	};
 
 	/**
@@ -658,6 +663,9 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype.onkeydown = function (oEvent) {
+		if (!this.getEnabled()) {
+			return;
+		}
 
 		if (oEvent.which === KeyCodes.TAB) {
 			this._tokenizer._changeAllTokensSelection(false);

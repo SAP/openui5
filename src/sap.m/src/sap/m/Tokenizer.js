@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
+	"sap/ui/core/EnabledPropagator",
 	"sap/ui/thirdparty/jquery",
 	// jQuery Plugin "control"
 	"sap/ui/dom/jquery/control"
@@ -29,6 +30,7 @@ sap.ui.define([
 		containsOrEquals,
 		KeyCodes,
 		Log,
+		EnabledPropagator,
 		jQuery
 	) {
 	"use strict";
@@ -180,6 +182,8 @@ sap.ui.define([
 
 	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
+	EnabledPropagator.apply(Tokenizer.prototype, [true]);
+
 	///**
 	// * This file defines behavior for the control,
 	// */
@@ -208,7 +212,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function determines the callback to be executed on N-more label press
+	 * Function determines the callback to be executed on N-more label press.
 	 *
 	 * @param {function} fCallback The callback
 	 * @private
@@ -230,7 +234,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function determines which tokens should be displayed and adds N-more label
+	 * Function determines which tokens should be displayed and adds N-more label.
 	 *
 	 * @private
 	 */
@@ -285,7 +289,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Renders the N-more label
+	 * Renders the N-more label.
 	 * @private
 	 *
 	 * @param {number} iHiddenTokensCount The number of hidden tokens
@@ -319,7 +323,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the visible tokens
+	 * Returns the visible tokens.
 	 *
 	 * @returns {array} Array of tokens
 	 * @private
@@ -331,7 +335,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function makes all tokens visible, used for collapsed=false
+	 * Function makes all tokens visible, used for collapsed=false.
 	 *
 	 * @private
 	 */
@@ -344,7 +348,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function returns the internally used scroll delegate
+	 * Function returns the internally used scroll delegate.
 	 *
 	 * @public
 	 * @returns {sap.ui.core.delegate.ScrollEnablement} The scroll delegate
@@ -354,7 +358,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function scrolls the tokens to the end
+	 * Function scrolls the tokens to the end.
 	 *
 	 * @public
 	 */
@@ -395,7 +399,7 @@ sap.ui.define([
 	 };
 
 	/**
-	 * Function returns whether the n-more indicator is visible
+	 * Function returns whether the n-more indicator is visible.
 	 *
 	 * @protected
 	 * @returns {boolean} If true the indicator is visible
@@ -405,7 +409,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function sets whether the tokens visibility should be adjusted
+	 * Function sets whether the tokens visibility should be adjusted.
 	 *
 	 * @protected
 	 * @param {boolean} If true the the tokenizer should adjust the tokens visibility
@@ -415,7 +419,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function gets whether the tokens visibility should be adjusted
+	 * Function gets whether the tokens visibility should be adjusted.
 	 *
 	 * @protected
 	 * @returns {boolean} If true the the tokenizer should adjust the tokens visibility
@@ -425,7 +429,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function sets the tokenizer's width in pixels
+	 * Function sets the tokenizer's width in pixels.
 	 *
 	 * @public
 	 * @param {number} nWidth The new width in pixels
@@ -445,7 +449,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function scrolls the tokens to the start
+	 * Function scrolls the tokens to the start.
 	 *
 	 * @public
 	 *
@@ -467,7 +471,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function returns the tokens' width
+	 * Function returns the tokens' width.
 	 *
 	 * @public
 	 *
@@ -543,7 +547,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handles the setting of collapsed state
+	 * Handles the setting of collapsed state.
 	 *
 	 * @param {boolean} bCollapse If true collapses the tokenizer's content
 	 * @param {boolean} bSkipSizeAdjustment If true the tokenizer won't trigger input width adjustment
@@ -578,7 +582,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handle the focus leave event, deselects token
+	 * Handle the focus leave event, deselects token.
 	 *
 	 * @param {jQuery.Event} oEvent The occuring event
 	 * @private
@@ -606,13 +610,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handle the key down event for Ctrl+ a , Ctrl+ c and Ctrl+ x
+	 * Handle the key down event for Ctrl+ a , Ctrl+ c and Ctrl+ x.
 	 *
 	 * @param {jQuery.Event}oEvent The occuring event
 	 * @private
 	 */
 	Tokenizer.prototype.onkeydown = function(oEvent) {
 		var bSelectAll;
+
+		if (!this.getEnabled()) {
+			return;
+		}
 
 		if (oEvent.which === KeyCodes.TAB) {
 			this._changeAllTokensSelection(false);
@@ -649,7 +657,7 @@ sap.ui.define([
 	};
 
 	/**
-	* Pseudo event for pseudo 'previous' event with modifiers (Ctrl, Alt or Shift)
+	* Pseudo event for pseudo 'previous' event with modifiers (Ctrl, Alt or Shift).
 	*
 	* @see #onsapprevious
 	* @param {jQuery.Event} oEvent The event object
@@ -660,7 +668,7 @@ sap.ui.define([
 	};
 
 	/**
-	* Pseudo event for pseudo 'next' event with modifiers (Ctrl, Alt or Shift)
+	* Pseudo event for pseudo 'next' event with modifiers (Ctrl, Alt or Shift).
 	*
 	* @see #onsapnext
 	* @param {jQuery.Event} oEvent The event object
@@ -671,7 +679,7 @@ sap.ui.define([
 	};
 
 	/**
-	* Pseudo event for keyboard Home with modifiers (Ctrl, Alt or Shift)
+	* Pseudo event for keyboard Home with modifiers (Ctrl, Alt or Shift).
 	*
 	* @see #onsaphome
 	* @param {jQuery.Event} oEvent The event object
@@ -682,7 +690,7 @@ sap.ui.define([
 	};
 
 	/**
-	* Pseudo event for keyboard End with modifiers (Ctrl, Alt or Shift)
+	* Pseudo event for keyboard End with modifiers (Ctrl, Alt or Shift).
 	*
 	* @see #onsapend
 	* @param {jQuery.Event} oEvent The event object
@@ -725,7 +733,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handles the copy event
+	 * Handles the copy event.
 	 *
 	 * @private
 	 */
@@ -763,7 +771,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handles the cut event
+	 * Handles the cut event.
 	 *
 	 * @private
 	 */
@@ -815,7 +823,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function is called on keyboard backspace, deletes selected tokens
+	 * Function is called on keyboard backspace, deletes selected tokens.
 	 *
 	 * @private
 	 * @param {jQuery.Event} oEvent The event object
@@ -823,6 +831,10 @@ sap.ui.define([
 
 	Tokenizer.prototype.onsapbackspace = function(oEvent) {
 		var aSelectedTokens = this.getSelectedTokens();
+
+		if (!this.getEnabled()) {
+			return;
+		}
 
 		if (aSelectedTokens.length < 2) {
 			this.onsapprevious(oEvent);
@@ -859,13 +871,19 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function is called on keyboard delete, deletes token
+	 * Function is called on keyboard delete, deletes token.
 	 *
 	 * @private
 	 * @param {jQuery.Event} oEvent The event object
 	 */
 	Tokenizer.prototype.onsapdelete = function(oEvent) {
-		var aSelectedTokens = this.getSelectedTokens();
+		var aSelectedTokens;
+
+		if (!this.getEnabled()) {
+			return;
+		}
+
+		aSelectedTokens = this.getSelectedTokens();
 
 		if (aSelectedTokens.length < 2) {
 			this.onsapnext(oEvent);
@@ -895,7 +913,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adjusts the scrollLeft so that the given token is visible from its left side
+	 * Adjusts the scrollLeft so that the given token is visible from its left side.
 	 * @param {sap.m.Token} oToken The token that will be fully visible
 	 * @private
 	 */
@@ -924,7 +942,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Called when the user presses the left arrow key, focuses previous token
+	 * Called when the user presses the left arrow key, focuses previous token.
 	 * @param {jQuery.Event} oEvent The event triggered by the user
 	 * @private
 	 */
@@ -974,7 +992,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Called when the user presses the right arrow key, focuses next token
+	 * Called when the user presses the right arrow key, focuses next token.
 	 * @param {jQuery.Event} oEvent The event triggered by the user
 	 * @private
 	 */
@@ -1018,7 +1036,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function adds a validation callback called before any new token gets added to the tokens aggregation
+	 * Function adds a validation callback called before any new token gets added to the tokens aggregation.
 	 *
 	 * @public
 	 * @param {function} fValidator The validation function
@@ -1030,7 +1048,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function removes a validation callback
+	 * Function removes a validation callback.
 	 *
 	 * @public
 	 * @param {function} fValidator The validation function
@@ -1052,7 +1070,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function validates a given token using the set validators
+	 * Function validates a given token using the set validators.
 	 *
 	 * @private
 	 * @param {object} oParameters Parameter bag containing fields for text, token, suggestionObject and validation callback
@@ -1112,7 +1130,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function returns a callback function which is used for executing validators after an asynchronous validator was triggered
+	 * Function returns a callback function which is used for executing validators after an asynchronous validator was triggered.
 	 * @param {function[]} aValidators The validator array
 	 * @param {int} iValidatorIndex The current validator index
 	 * @param {string} sInitialText The initial text used for validation
@@ -1153,7 +1171,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function validates the given text and adds a new token if validation was successful
+	 * Function validates the given text and adds a new token if validation was successful.
 	 *
 	 * @public
 	 * @param {object} oParameters Parameter bag containing the following fields:
@@ -1168,7 +1186,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Private function used by MultiInput which validates the given text and adds a new token if validation was successful
+	 * Private function used by MultiInput which validates the given text and adds a new token if validation was successful.
 	 *
 	 * @private
 	 * @param {object} oParameters Parameter bag containing the following fields:
@@ -1191,7 +1209,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function adds token if it does not already exist
+	 * Function adds token if it does not already exist.
 	 *
 	 * @private
 	 * @param {sap.m.Token} oToken The token to be added
@@ -1229,7 +1247,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function parses given text, and text is separated by line break
+	 * Function parses given text, and text is separated by line break.
 	 *
 	 * @private
 	 * @param {String} sString  The texts that needs to be parsed
@@ -1253,7 +1271,7 @@ sap.ui.define([
 
 
 	/**
-	 * Function checks if a given token already exists in the tokens aggregation based on their keys
+	 * Function checks if a given token already exists in the tokens aggregation based on their keys.
 	 *
 	 * @private
 	 * @param {sap.m.Token} oToken The token to search for
@@ -1373,7 +1391,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function removes all selected tokens
+	 * Function removes all selected tokens.
 	 *
 	 * @public
 	 * @returns {sap.m.Tokenizer} this instance for method chaining
@@ -1433,7 +1451,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function selects all tokens
+	 * Function selects all tokens.
 	 *
 	 * @public
 	 * @param {boolean} bSelect [optional] true for selecting, false for deselecting
@@ -1482,7 +1500,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function returns all currently selected tokens
+	 * Function returns all currently selected tokens.
 	 *
 	 * @public
 	 * @returns {sap.m.Token[]} Array of selected tokens or empty array
@@ -1504,13 +1522,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function is called when token's delete icon was pressed function destroys token from Tokenizer's aggregation
+	 * Function is called when token's delete icon was pressed function destroys token from Tokenizer's aggregation.
 	 *
 	 * @private
 	 * @param {sap.m.Token} token  The deleted token
 	 */
 	Tokenizer.prototype._onTokenDelete = function(token) {
-		if (token && this.getEditable()) {
+		if (token && this.getEditable() && this.getEnabled()) {
 
 			var eventResult = this.fireTokenUpdate({
 				addedTokens : [],
@@ -1601,7 +1619,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handle the home button, scrolls to the first token
+	 * Handle the home button, scrolls to the first token.
 	 *
 	 * @param {jQuery.Event}oEvent The occuring event
 	 * @private
@@ -1614,7 +1632,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handle the end button, scrolls to the last token and focuses it
+	 * Handle the end button, scrolls to the last token and focuses it.
 	 *
 	 * @param {jQuery.Event} oEvent The occuring event
 	 * @private
@@ -1639,7 +1657,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handle the focus event on the control
+	 * Handle the focus event on the control.
 	 *
 	 * @param {jQuery.Event} oEvent The occuring event
 	 * @protected
@@ -1648,6 +1666,10 @@ sap.ui.define([
 		var bFireIndicatorHandler;
 
 			bFireIndicatorHandler = jQuery(oEvent.target).hasClass("sapMTokenizerIndicator") || (oEvent.target === this.getFocusDomRef());
+
+		if (!this.getEnabled()) {
+			return;
+		}
 
 		if (bFireIndicatorHandler) {
 			this._fnOnNMorePress && this._fnOnNMorePress(oEvent);
@@ -1672,7 +1694,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function cleans up registered eventhandlers
+	 * Function cleans up registered event handlers.
 	 *
 	 * @private
 	 */
@@ -1681,7 +1703,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function deregisters eventhandlers
+	 * Function deregisters event handlers.
 	 *
 	 * @private
 	 */
@@ -1693,7 +1715,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets accessibility information about the tokens
+	 * Sets accessibility information about the tokens.
 	 *
 	 * @private
 	 */
@@ -1742,7 +1764,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns if tokens should be rendered in reverse order
+	 * Returns if tokens should be rendered in reverse order.
 	 * @private
 	 * @returns {boolean} true if tokens should be rendered in reverse order
 	 */
@@ -1751,7 +1773,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets internal property defining if tokens should be rendered in reverse order
+	 * Sets internal property defining if tokens should be rendered in reverse order.
 	 * @param {boolean} bReverseTokens Whether tokens should be rendered in reverse
 	 * @private
 	 */
@@ -1781,7 +1803,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the accessibility text aggregation id
+	 * Gets the accessibility text aggregation id.
 	 * @returns {string} Returns the InvisibleText control id
 	 * @protected
 	 */

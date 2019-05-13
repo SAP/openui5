@@ -234,14 +234,22 @@ sap.ui.define([
 	QUnit.test("Pressing delete icon", function(assert) {
 		// arrange
 		var fnFireDeleteSpy = this.spy(this.token1, "fireDelete"),
-			oTokenIcon = jQuery("#t1-icon")[0];
+			oDeleteTokenSpy = this.spy(this.tokenizer, "_onTokenDelete"),
+			oPreventSpy = this.spy(),
+			oTokenIcon = this.token1.$("icon"),
+			oFakeEvent = {
+				preventDefault: oPreventSpy
+			};
 
 		// act
-		sap.ui.test.qunit.triggerEvent("click", oTokenIcon);
+		this.token1._tokenIconPress(oFakeEvent);
 
 		// assert
 		assert.equal(fnFireDeleteSpy.callCount, 1, "delete event was fired");
 		assert.ok(this.token1.bIsDestroyed, "Token1 is destroyed");
+		assert.strictEqual(oPreventSpy.calledOnce, true, "The event was prevented from bubbling.");
+		assert.strictEqual(oDeleteTokenSpy.calledOnce, true, "The tokenizer's '_onTokenDelete' was called");
+		assert.deepEqual(oDeleteTokenSpy.firstCall.args[0], this.token1, "The deleted token was passed to the tokenizer.");
 	});
 
 	QUnit.module("ARIA attributes", {
