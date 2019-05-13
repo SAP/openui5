@@ -135,6 +135,40 @@ sap.ui.define([
 	};
 
 	/**
+	 * Calls {@link #checkUpdateInternal}.
+	 *
+	 * @param {boolean} [bForceUpdate]
+	 *   Whether the change event is fired in any case
+	 * @throws {Error}
+	 *   If there are unexpected parameters
+	 *
+	 * @private
+	 */
+	// @override sap.ui.model.Binding#checkUpdate
+	ODataBinding.prototype.checkUpdate = function (bForceUpdate) {
+		if (arguments.length > 1) {
+			throw new Error("Only the parameter bForceUpdate is supported");
+		}
+
+		this.checkUpdateInternal(bForceUpdate);
+	};
+
+	/**
+	 * A property binding re-fetches its value and fires a change event if the value has changed. A
+	 * parent binding checks dependent bindings for updates or refreshes the binding if the resource
+	 * path of its parent context changed.
+	 *
+	 * @param {boolean} [bForceUpdate]
+	 *   Whether the change event is fired in any case (only allowed for property bindings)
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise resolving without a defined result when the check is finished; never rejecting
+	 *
+	 * @abstract
+	 * @name sap.ui.model.odata.v4.ODataBinding#checkUpdateInternal
+	 * @private
+	 */
+
+	/**
 	 * Destroys the object. The object must not be used anymore after this function was called.
 	 *
 	 * @public
@@ -149,8 +183,8 @@ sap.ui.define([
 		}, function () {});
 		this.oCachePromise = SyncPromise.resolve(); // be nice to #withCache
 		this.mCacheQueryOptions = undefined;
-		// resolving functions e.g. for oReadPromise in #checkUpdate may run after destroy of this
-		// binding and must not access the context
+		// resolving functions e.g. for oReadPromise in #checkUpdateInternal may run after destroy
+		// of this binding and must not access the context
 		this.oContext = undefined;
 		this.oFetchCacheCallToken = undefined;
 	};

@@ -540,7 +540,7 @@ sap.ui.define([
 
 		oListBinding3.setContext(oBaseContext);
 		this.mock(oPropertyBinding2).expects("fetchCache");
-		this.mock(oPropertyBinding2).expects("checkUpdate");
+		this.mock(oPropertyBinding2).expects("checkUpdateInternal");
 		oPropertyBinding2.setContext(oBaseContext);
 
 		oListBinding.attachChange(function () {});

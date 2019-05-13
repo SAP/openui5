@@ -1463,7 +1463,7 @@ sap.ui.define([
 		{sPath : "/Employees(ID='1')", oContext : {}}, // absolute binding with context (edge case)
 		{sPath : "TEAM_2_MANAGER", oContext : {}} // relative binding with standard context
 	].forEach(function (oFixture) {
-		QUnit.test("checkUpdate: " + JSON.stringify(oFixture), function (assert) {
+		QUnit.test("checkUpdateInternal: " + JSON.stringify(oFixture), function (assert) {
 			var bRelative = oFixture.sPath[0] !== '/',
 				oBinding = new ODataParentBinding({
 					oCachePromise : SyncPromise.resolve(
@@ -1478,7 +1478,7 @@ sap.ui.define([
 					};
 				},
 				oDependent0 = {
-					checkUpdate : function () {},
+					checkUpdateInternal : function () {},
 					getContext : fnGetContext
 				},
 				bDependent0Refreshed = false,
@@ -1489,7 +1489,7 @@ sap.ui.define([
 					});
 				}),
 				oDependent1 = {
-					checkUpdate : function () {},
+					checkUpdateInternal : function () {},
 					getContext : fnGetContext
 				},
 				bDependent1Refreshed = false,
@@ -1503,13 +1503,13 @@ sap.ui.define([
 			this.mock(oBinding).expects("getDependentBindings")
 				.withExactArgs()
 				.returns([oDependent0, oDependent1]);
-			this.mock(oDependent0).expects("checkUpdate").withExactArgs()
+			this.mock(oDependent0).expects("checkUpdateInternal").withExactArgs()
 				.returns(oDependent0Promise);
-			this.mock(oDependent1).expects("checkUpdate").withExactArgs()
+			this.mock(oDependent1).expects("checkUpdateInternal").withExactArgs()
 				.returns(oDependent1Promise);
 
 			// code under test
-			return oBinding.checkUpdate().then(function (oResult) {
+			return oBinding.checkUpdateInternal().then(function (oResult) {
 				assert.strictEqual(bDependent0Refreshed, true);
 				assert.strictEqual(bDependent1Refreshed, true);
 			});
@@ -1519,7 +1519,7 @@ sap.ui.define([
 	//  a different result compared to the previous call
 
 	//*********************************************************************************************
-	QUnit.test("checkUpdate: no cache, no dependents", function (assert) {
+	QUnit.test("checkUpdateInternal: no cache, no dependents", function (assert) {
 		var oBinding = new ODataParentBinding({
 				bRelative : true
 			});
@@ -1527,21 +1527,23 @@ sap.ui.define([
 		this.mock(oBinding).expects("getDependentBindings").withExactArgs().returns([]);
 
 		// code under test
-		assert.strictEqual(oBinding.checkUpdate().isFulfilled(), true);
+		assert.strictEqual(oBinding.checkUpdateInternal().isFulfilled(), true);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("checkUpdate: with parameters", function (assert) {
+		var bForceUpdate = {/*false or true*/};
+
 		assert.throws(function () {
 			// code under test
-			new ODataParentBinding().checkUpdate(true);
+			new ODataParentBinding().checkUpdateInternal(bForceUpdate);
 		}, new Error("Unsupported operation:"
-			+ " sap.ui.model.odata.v4.ODataParentBinding#checkUpdate must not be called"
+			+ " sap.ui.model.odata.v4.ODataParentBinding#checkUpdateInternal must not be called"
 			+ " with parameters"));
 	});
 
 	//*********************************************************************************************
-	QUnit.test("checkUpdate: relative binding with cache, parent binding data has changed",
+	QUnit.test("checkUpdateInternal: relative binding with cache, parent binding data has changed",
 			function (assert) {
 		var oBinding = new ODataParentBinding({
 				oCachePromise : SyncPromise.resolve({
@@ -1567,14 +1569,14 @@ sap.ui.define([
 			}));
 
 		// code under test
-		return oBinding.checkUpdate().then(function (oResult) {
+		return oBinding.checkUpdateInternal().then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
 			assert.strictEqual(bRefreshed, true);
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("checkUpdate: relative binding with cache, parent binding not changed",
+	QUnit.test("checkUpdateInternal: relative binding with cache, parent binding not changed",
 			function (assert) {
 		var sPath = "/TEAMS('4711')/TEAM_2_MANAGER",
 			oBinding = new ODataParentBinding({
@@ -1593,7 +1595,7 @@ sap.ui.define([
 				};
 			},
 			oDependent0 = {
-				checkUpdate : function () {},
+				checkUpdateInternal : function () {},
 				getContext : fnGetContext
 			},
 			bDependent0Refreshed = false,
@@ -1604,7 +1606,7 @@ sap.ui.define([
 				});
 			}),
 			oDependent1 = {
-				checkUpdate : function () {},
+				checkUpdateInternal : function () {},
 				getContext : fnGetContext
 			},
 			bDependent1Refreshed = false,
@@ -1622,20 +1624,20 @@ sap.ui.define([
 		this.mock(oBinding).expects("getDependentBindings")
 			.withExactArgs()
 			.returns([oDependent0, oDependent1]);
-		this.mock(oDependent0).expects("checkUpdate").withExactArgs()
+		this.mock(oDependent0).expects("checkUpdateInternal").withExactArgs()
 			.returns(oDependent0Promise);
-		this.mock(oDependent1).expects("checkUpdate").withExactArgs()
+		this.mock(oDependent1).expects("checkUpdateInternal").withExactArgs()
 			.returns(oDependent1Promise);
 
 		// code under test
-		return oBinding.checkUpdate().then(function (oResult) {
+		return oBinding.checkUpdateInternal().then(function (oResult) {
 			assert.strictEqual(bDependent0Refreshed, true);
 			assert.strictEqual(bDependent1Refreshed, true);
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("checkUpdate: error handling", function (assert) {
+	QUnit.test("checkUpdateInternal: error handling", function (assert) {
 		var oBinding = new ODataParentBinding({
 				oCachePromise : SyncPromise.resolve({}),
 				oContext : {
@@ -1660,7 +1662,7 @@ sap.ui.define([
 			.withExactArgs("Failed to update foo", sClassName, sinon.match.same(oError));
 
 		// code under test
-		oBinding.checkUpdate();
+		oBinding.checkUpdateInternal();
 
 		return oPathPromise.then(undefined, function () {});
 	});
