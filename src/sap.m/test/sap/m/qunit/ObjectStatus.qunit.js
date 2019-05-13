@@ -60,6 +60,14 @@ sap.ui.define([
 		assert.notEqual(jQuery.sap.domById("os3"), null, "Object Status #3 should be rendered.");
 	});
 
+	QUnit.test("IconOnly Class Rendered", function(assert) {
+		// Assert
+		var $objectStatus = os2.$("icon");
+
+		assert.ok($objectStatus.hasClass("sapMObjStatusIconOnly"), "ObjectStatus that has only icon has the correct class set.");
+
+	});
+
 	QUnit.test("render a placeholder if _isEmpty", function(assert) {
 		//arrange
 		var oOS = new ObjectStatus(),

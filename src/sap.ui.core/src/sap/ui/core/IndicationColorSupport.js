@@ -17,6 +17,7 @@ sap.ui.define(['./Element', './library', "sap/base/assert"],
 		 * @version ${version}
 		 * @public
 		 * @namespace sap.ui.core.IndicationColorSupport
+		 * @since 1.66
 		 */
 		var IndicationColorSupport = {};
 		var mTexts = null;
@@ -37,7 +38,7 @@ sap.ui.define(['./Element', './library', "sap/base/assert"],
 
 		/**
 		 * Returns a generic indication color message if the given Element
-		 * has a property "indicationColor" with one of the states or the given IndicationColor
+		 * has a property <code>IndicationColor</code> with one of the states or the given <code>indicationColor</code> string
 		 * represents one of five states.
 		 *
 		 * @param {sap.ui.core.Element|sap.ui.core.IndicationColor} vValue the Element of which the indicationColor needs to be checked, or the IndicationColor explicitly

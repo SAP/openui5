@@ -112,6 +112,9 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/IndicationColorSupp
 				oRm.write("<span");
 				oRm.writeAttributeEscaped("id", oObjStatus.getId() + "-icon");
 				oRm.addClass("sapMObjStatusIcon");
+				if (!oObjStatus.getText()) {
+					oRm.addClass("sapMObjStatusIconOnly");
+				}
 				oRm.writeClasses();
 				oRm.write(">");
 				oRm.renderControl(oObjStatus._getImageControl());
