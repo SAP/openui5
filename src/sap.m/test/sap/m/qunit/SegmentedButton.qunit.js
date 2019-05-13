@@ -1666,6 +1666,18 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Method 'getFormDoNotAdjustWidth' always returns true", function(assert) {
+		// prepare
+		var oSB = new SegmentedButton();
+
+		// act
+		// assert
+		assert.equal(oSB.getFormDoNotAdjustWidth(), true, "The method has returned the correct value.");
+
+		// clean
+		oSB.destroy();
+	});
+
 	QUnit.module("API Items aggregation", {
 		beforeEach: function () {
 			this.oSB = new SegmentedButton().placeAt("qunit-fixture");
