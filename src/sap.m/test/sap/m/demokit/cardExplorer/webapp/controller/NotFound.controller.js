@@ -10,7 +10,7 @@ sap.ui.define([
 			 * @public
 			 */
 			onLinkPressed : function () {
-				this.getRouter().navTo("learnGettingStarted");
+				this.getRouter().navTo("");
 			}
 		});
 

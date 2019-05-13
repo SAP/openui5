@@ -1,0 +1,14 @@
+<mvc:View
+	controllerName="sap.ui.demo.cardExplorer.controller.LearnDetail"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Page class="docuPage" showHeader="false">
+		<content>
+			<core:HTML id="testHTML"
+					   preferDOM="false"
+					   content='&lt;div style="height:100%; overflow-x:auto;"&gt;&lt;iframe {/iframeAttribute} class="sapUiDocumentationTopicsIframe" name="content" src="{/topicURL}" frameborder="0""&gt;&lt;/iframe&gt;&lt;/div&gt;'>
+			</core:HTML>
+		</content>
+	</Page>
+</mvc:View>
