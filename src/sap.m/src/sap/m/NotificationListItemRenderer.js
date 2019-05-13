@@ -54,7 +54,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer"], function
 
             // ARIA
             oRm.writeAccessibilityState(oControl, {
-                role: "listitem",
+                role: "option",
                 labelledby: labelledBy
             });
 
