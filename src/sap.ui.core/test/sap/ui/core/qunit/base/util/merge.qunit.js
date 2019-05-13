@@ -105,4 +105,14 @@ sap.ui.define(["sap/base/util/merge"], function(merge) {
 		assert.equal(oMerged.nested[0], 1, "nested array value should be 1");
 		assert.equal(oMerged.nested[2][0], "inner", "inner nested array value should inner test");
 	});
+
+	QUnit.test("merge Object.prototype pollution", function(assert) {
+
+		var src = JSON.parse('{"__proto__": {"x":42}}');
+		var oBaseObject = {};
+
+		merge(oBaseObject, src);
+
+		assert.ok(!("x" in {}), "Object.prototype not polluted");
+	});
 });
