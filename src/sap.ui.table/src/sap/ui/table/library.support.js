@@ -300,37 +300,44 @@ sap.ui.define([
 		],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			var aTables = SupportHelper.find(oScope, true, "sap.ui.table.Table");
-			var aVisibleRows;
-			var fActualRowHeight;
-			var iExpectedRowHeight;
-			var oRowElement;
 			var bIsZoomedInChrome = Device.browser.chrome && window.devicePixelRatio != 1;
-			var bUnexpectedRowHeightDetected = false;
 
 			for (var i = 0; i < aTables.length; i++) {
-				aVisibleRows = aTables[i].getRows();
-				iExpectedRowHeight = aTables[i]._getDefaultRowHeight();
+				var aVisibleRows = aTables[i].getRows();
+				var iExpectedRowHeight = aTables[i]._getDefaultRowHeight();
+				var bUnexpectedRowHeightDetected = false;
 
 				for (var j = 0; j < aVisibleRows.length; j++) {
-					oRowElement = aVisibleRows[j].getDomRef();
+					var oRowElement = aVisibleRows[j].getDomRef();
+					var oRowElementFixedPart = aVisibleRows[j].getDomRef("fixed");
 
 					if (oRowElement) {
-						fActualRowHeight = oRowElement.getBoundingClientRect().height;
+						var nActualRowHeight = oRowElement.getBoundingClientRect().height;
+						var nActualRowHeightFixedPart = oRowElementFixedPart ? oRowElementFixedPart.getBoundingClientRect().height : null;
+						var nHeightToReport = nActualRowHeight;
 
 						if (bIsZoomedInChrome) {
-							var nHeightDeviation = Math.abs(iExpectedRowHeight - fActualRowHeight);
+							var nHeightDeviation = Math.abs(iExpectedRowHeight - nActualRowHeight);
+							var nHeightDeviationFixedPart = Math.abs(nActualRowHeightFixedPart - nActualRowHeight);
+
+							// If zoomed in Chrome, the actual height may deviate from the expected height by less than 1 pixel. Any higher
+							// deviation shall be considered as defective.
 							if (nHeightDeviation > 1) {
-								// If zoomed in Chrome, the actual height may deviate from the expected height by less than 1 pixel. Any higher
-								// deviation shall be considered as defective.
 								bUnexpectedRowHeightDetected = true;
+							} else if (nHeightDeviationFixedPart > 1) {
+								bUnexpectedRowHeightDetected = true;
+								nHeightToReport = nActualRowHeightFixedPart;
 							}
-						} else if (fActualRowHeight !== iExpectedRowHeight) {
+						} else if (nActualRowHeight !== iExpectedRowHeight) {
 							bUnexpectedRowHeightDetected = true;
+						} else if (nActualRowHeightFixedPart !== iExpectedRowHeight) {
+							bUnexpectedRowHeightDetected = true;
+							nHeightToReport = nActualRowHeightFixedPart;
 						}
 
 						if (bUnexpectedRowHeightDetected) {
 							SupportHelper.reportIssue(oIssueManager,
-								"The row height was expected to be " + iExpectedRowHeight + "px, but was " + fActualRowHeight + "px instead."
+								"The row height was expected to be " + iExpectedRowHeight + "px, but was " + nHeightToReport + "px instead."
 								+ " This causes issues with vertical scrolling.",
 								Severity.High, aVisibleRows[j].getId());
 							break;
