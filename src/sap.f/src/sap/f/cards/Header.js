@@ -293,6 +293,7 @@ sap.ui.define([
 		oHeader.setDataProviderFactory(oDataProviderFactory);
 		oHeader._setData(mConfiguration.data);
 
+		oHeader._attachActions(mConfiguration, oHeader);
 		return oHeader;
 	};
 
