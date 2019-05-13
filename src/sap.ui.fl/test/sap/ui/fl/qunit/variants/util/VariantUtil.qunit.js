@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/core/routing/History",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/ManagedObjectObserver",
-	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Component",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -17,7 +17,7 @@ function(
 	History,
 	jQuery,
 	ManagedObjectObserver,
-	ManagedObject,
+	Component,
 	sinon
 ) {
 	"use strict";
@@ -26,7 +26,7 @@ function(
 	var sVariantParameterName = "sap-ui-fl-control-variant-id";
 	QUnit.module("Given an instance of VariantModel", {
 		before: function() {
-			this.oAppComponent = new ManagedObject("appComponent");
+			this.oAppComponent = new Component("appComponent");
 		},
 		beforeEach: function () {
 			this._oHashRegister = {
@@ -117,11 +117,37 @@ function(
 				}
 			});
 
-			VariantUtil.attachHashHandlers.call(this);
+			VariantUtil.attachHashHandlers.call(this, "", true);
 			var aCallArgs = this.fnDestroyObserverSpy.getCall(0).args;
 			assert.deepEqual(aCallArgs[0], this.oAppComponent, "then ManagedObjectObserver observers the AppComponent");
 			assert.strictEqual(aCallArgs[1].destroy, true, "then ManagedObjectObserver observers the destroy() method");
 			this.oComponentDestroyObserver.unobserve(this.oAppComponent, {destroy:true}); // remove component observer
+		});
+
+		QUnit.test("when calling 'attachHashHandlers' with _oHashRegister.currentIndex set to null and updateURL set to false", function (assert) {
+			this._oHashRegister.currentIndex = null;
+			VariantUtil.initializeHashRegister.call(this);
+			sandbox.stub(VariantUtil, "_navigationHandler").callsFake(function() {
+				assert.ok(false, "VariantUtil._navigationHandler() should not be called");
+			});
+
+			sandbox.stub(HashChanger, "getInstance").returns({
+				attachEvent: function () {
+					assert.ok(false, "no event should be attached");
+				}
+			});
+
+			// first call
+			VariantUtil.attachHashHandlers.call(this, "mockControlId1", false);
+			var aCallArgs = this.fnDestroyObserverSpy.getCall(0).args;
+			assert.deepEqual(aCallArgs[0], this.oAppComponent, "then ManagedObjectObserver observers the AppComponent");
+			assert.strictEqual(aCallArgs[1].destroy, true, "then ManagedObjectObserver observers the destroy() method");
+			assert.strictEqual(this._oHashRegister.variantControlIds.length, 0, "then the control id was not added to the hash register");
+			this.oComponentDestroyObserver.unobserve(this.oAppComponent, {destroy:true}); // remove component observer
+
+			// second call
+			VariantUtil.attachHashHandlers.call(this, "mockControlId2", false);
+			assert.ok(this.fnDestroyObserverSpy.calledOnce, "then no new observers were listening to Component.destroy()");
 		});
 
 		QUnit.test("when Component is destroyed after 'attachHashHandlers' was already called", function (assert) {
@@ -157,7 +183,7 @@ function(
 					assert.ok(true, "then resetMap() of the variant controller was called");
 				}
 			};
-			VariantUtil.attachHashHandlers.call(this);
+			VariantUtil.attachHashHandlers.call(this, "", true);
 
 			sandbox.stub(VariantUtil, "_setOrUnsetCustomNavigationForParameter").callsFake(function(bSet) {
 				assert.strictEqual(bSet, false, "then _setOrUnsetCustomNavigationForParameter called with a false value");
@@ -182,7 +208,7 @@ function(
 		QUnit.test("when calling 'attachHashHandlers' with _oHashRegister.currentIndex not set to null", function (assert) {
 			this._oHashRegister.currentIndex = 0;
 			sandbox.stub(VariantUtil, "_navigationHandler");
-			VariantUtil.attachHashHandlers.call(this);
+			VariantUtil.attachHashHandlers.call(this, "", true);
 			assert.strictEqual(VariantUtil._navigationHandler.callCount, 0, "then VariantUtil._navigationHandler() not called");
 		});
 
@@ -521,7 +547,7 @@ function(
 				variantControlIds: []
 			};
 			sandbox.stub(VariantUtil, "_navigationHandler");
-			VariantUtil.attachHashHandlers.call(this);
+			VariantUtil.attachHashHandlers.call(this, "", true);
 			HashChanger.getInstance().fireEvent("hashReplaced", oEventReturn);
 			assert.strictEqual(this._sReplacedHash, oEventReturn.sHash, "then hash is replaced, _sReplacedHash set to the replaced hash");
 		});
