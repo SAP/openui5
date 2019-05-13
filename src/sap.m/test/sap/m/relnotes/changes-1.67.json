@@ -1,0 +1,43 @@
+{
+  "1.67.0": {
+    "date": "May 2019",
+    "notes": [
+      {
+        "id": "364aa0f22cae8f66e6ac67bb9135b1fc9d9a1dcd",
+        "type": "FIX",
+        "text": " sap.m.IconTabHeader: IconTabFilters content is no longer cloned",
+        "references": []
+      },
+      {
+        "id": "a6a617bde42345488596de62dac23e3300e9a8c5",
+        "type": "FIX",
+        "text": " sap.m.Input: Selected key and value are now synchronized",
+        "references": []
+      },
+      {
+        "id": "8d688e93a8d44e5742061586ea03109b3fe954a2",
+        "type": "FIX",
+        "text": " sap.m.MultiInput, sap.m.SuggestionPopover: Newly added tokens are not removed on arrow right press",
+        "references": []
+      },
+      {
+        "id": "14f7a61abc83fff48ee4f1a0f9499ebbec9df582",
+        "type": "FIX",
+        "text": " sap.m.NotificationListItemBase: Focusing parent after close is now working correctly",
+        "references": []
+      },
+      {
+        "id": "8f88dfe1d930f892578d780e3e0035a0b2d7d26f",
+        "type": "FIX",
+        "text": " sap.m.Select: \"setValueStateText\" method now returns the control instance",
+        "references": []
+      },
+      {
+        "id": "93a3ddff2ce0230faccfc999d068c0d60120b070",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Fixed onkeydown with SPACE key",
+        "references": []
+      }
+    ]
+  }
+}

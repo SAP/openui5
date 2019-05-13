@@ -1,0 +1,25 @@
+{
+  "1.67.0": {
+    "date": "May 2019",
+    "notes": [
+      {
+        "id": "c21a958a016724e55be5f05327e1b9966bedef58",
+        "type": "FIX",
+        "text": " DateFormat: Use Gannen instead of Ichinen also in interval formats",
+        "references": []
+      },
+      {
+        "id": "ff2cd56de36258707e61f8b96ac434bac0507466",
+        "type": "FIX",
+        "text": " _getOdataQuerySelect method handling non-top-level result array",
+        "references": []
+      },
+      {
+        "id": "05b63d58322774f4bc2a2147f962e1256db55b64",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: Initialize relative bindings",
+        "references": []
+      }
+    ]
+  }
+}

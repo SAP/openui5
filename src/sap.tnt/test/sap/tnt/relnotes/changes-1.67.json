@@ -1,0 +1,13 @@
+{
+  "1.67.0": {
+    "date": "May 2019",
+    "notes": [
+      {
+        "id": "119f916ffad49405aca5e853b77a498bc902c4fb",
+        "type": "FIX",
+        "text": " sap.tnt.InfoLabel: Font weight adjusted",
+        "references": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "1.67.0": {
+    "date": "May 2019",
+    "notes": [
+      {
+        "id": "7ac54e3c985ce093c12f098fc4f78fd0b1d332d3",
+        "type": "FIX",
+        "text": " sap.uxap.ObjecPageSection: Fixed title visibility",
+        "references": []
+      },
+      {
+        "id": "0b4597b9c51c173d541e31f75ca9e8d1309d8263",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Corrected title layout",
+        "references": []
+      }
+    ]
+  }
+}

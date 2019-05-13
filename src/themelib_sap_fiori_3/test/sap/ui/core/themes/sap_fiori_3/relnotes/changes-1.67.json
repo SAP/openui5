@@ -1,0 +1,19 @@
+{
+  "1.67.0": {
+    "date": "May 2019",
+    "notes": [
+      {
+        "id": "7573c181aacbd21451147ff3fcdc24f3326e17c9",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Fixed width of text underline for SAP Fiori 3",
+        "references": []
+      },
+      {
+        "id": "3b50760bdc3246d86e7ec41cf4fff2214b75e501",
+        "type": "FIX",
+        "text": ": RTA Minimenu Fixes",
+        "references": []
+      }
+    ]
+  }
+}
