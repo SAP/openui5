@@ -58,6 +58,19 @@ describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 		expect(takeScreenshot(oSPC)).toLookAs("work_week_sticky_none_scrolled");
 	});
 
+	it("[Work week view] Column headers should not stick for stickyMode: None after changing the start date", function () {
+		var oSPC = element(by.id("SinglePlanningCalendar"));
+
+		_scrollToTop();
+		element(by.id("SinglePlanningCalendar-Header-NavToolbar-NextBtn")).click();
+		_overrideTime();
+		_scrollToBottom();
+
+		expect(takeScreenshot(oSPC)).toLookAs("work_week_sticky_none_scrolled_after_date_change");
+
+		element(by.id("SinglePlanningCalendar-Header-NavToolbar-PrevBtn")).click();
+	});
+
 	it("[Work week view] Whole header should stick stick for stickyMode: All", function () {
 		var oSPC = element(by.id("SinglePlanningCalendar"));
 
@@ -69,6 +82,19 @@ describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 		expect(takeScreenshot(oSPC)).toLookAs("work_week_sticky_all_scrolled");
 	});
 
+	it("[Work week view] Column headers should stick for stickyMode: All after changing the start date", function () {
+		var oSPC = element(by.id("SinglePlanningCalendar"));
+
+		_scrollToTop();
+		element(by.id("SinglePlanningCalendar-Header-NavToolbar-NextBtn")).click();
+		_overrideTime();
+		_scrollToBottom();
+
+		expect(takeScreenshot(oSPC)).toLookAs("work_week_sticky_all_scrolled_after_date_change");
+
+		element(by.id("SinglePlanningCalendar-Header-NavToolbar-PrevBtn")).click();
+	});
+
 	it("[Work week view] Only navigation toolbar & column headers should stick for stickyMode: NavigationAndColHeaders", function () {
 		var oSPC = element(by.id("SinglePlanningCalendar"));
 
@@ -78,6 +104,19 @@ describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 		_scrollToBottom();
 
 		expect(takeScreenshot(oSPC)).toLookAs("work_week_sticky_navandcols_scrolled");
+	});
+
+	it("[Work week view] Column headers should stick for stickyMode: NavigationAndColHeaders after changing the start date", function () {
+		var oSPC = element(by.id("SinglePlanningCalendar"));
+
+		_scrollToTop();
+		element(by.id("SinglePlanningCalendar-Header-NavToolbar-NextBtn")).click();
+		_overrideTime();
+		_scrollToBottom();
+
+		expect(takeScreenshot(oSPC)).toLookAs("work_week_sticky_cols_scrolled_after_date_change");
+
+		element(by.id("SinglePlanningCalendar-Header-NavToolbar-PrevBtn")).click();
 	});
 
 
@@ -98,6 +137,19 @@ describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 		expect(takeScreenshot(oSPC)).toLookAs("week_sticky_none_scrolled");
 	});
 
+	it("[Week view] Column headers should not stick for stickyMode: None after changing the start date", function () {
+		var oSPC = element(by.id("SinglePlanningCalendar"));
+
+		_scrollToTop();
+		element(by.id("SinglePlanningCalendar-Header-NavToolbar-NextBtn")).click();
+		_overrideTime();
+		_scrollToBottom();
+
+		expect(takeScreenshot(oSPC)).toLookAs("week_sticky_none_scrolled_after_date_change");
+
+		element(by.id("SinglePlanningCalendar-Header-NavToolbar-PrevBtn")).click();
+	});
+
 	it("[Week view] Whole header should stick stick for stickyMode: All", function () {
 		var oSPC = element(by.id("SinglePlanningCalendar"));
 
@@ -109,6 +161,19 @@ describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 		expect(takeScreenshot(oSPC)).toLookAs("week_sticky_all_scrolled");
 	});
 
+	it("[Week view] Column headers should stick for stickyMode: All after changing the start date", function () {
+		var oSPC = element(by.id("SinglePlanningCalendar"));
+
+		_scrollToTop();
+		element(by.id("SinglePlanningCalendar-Header-NavToolbar-NextBtn")).click();
+		_overrideTime();
+		_scrollToBottom();
+
+		expect(takeScreenshot(oSPC)).toLookAs("week_sticky_all_scrolled_after_date_change");
+
+		element(by.id("SinglePlanningCalendar-Header-NavToolbar-PrevBtn")).click();
+	});
+
 	it("[Week view] Only navigation toolbar & column headers should stick for stickyMode: NavigationAndColHeaders", function () {
 		var oSPC = element(by.id("SinglePlanningCalendar"));
 
@@ -118,6 +183,19 @@ describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 		_scrollToBottom();
 
 		expect(takeScreenshot(oSPC)).toLookAs("week_sticky_navandcols_scrolled");
+	});
+
+	it("[Week view] Column headers should stick for stickyMode: NavigationAndColHeaders after changing the start date", function () {
+		var oSPC = element(by.id("SinglePlanningCalendar"));
+
+		_scrollToTop();
+		element(by.id("SinglePlanningCalendar-Header-NavToolbar-NextBtn")).click();
+		_overrideTime();
+		_scrollToBottom();
+
+		expect(takeScreenshot(oSPC)).toLookAs("week_sticky_cols_scrolled_after_date_change");
+
+		element(by.id("SinglePlanningCalendar-Header-NavToolbar-PrevBtn")).click();
 	});
 
 
@@ -159,7 +237,7 @@ describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 			element(by.id("__item4-button")).click();
 		} else {
 			element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
-			element.all(by.cssContainingText(".sapMSelectListItem", "Work Week View")).click();
+			element(by.id("__item7")).click();
 		}
 	}
 
@@ -169,7 +247,7 @@ describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 			element(by.id("__item5-button")).click();
 		} else {
 			element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
-			element.all(by.cssContainingText(".sapMSelectListItem", "Week View")).click();
+			element(by.id("__item8")).click();
 		}
 	}
 

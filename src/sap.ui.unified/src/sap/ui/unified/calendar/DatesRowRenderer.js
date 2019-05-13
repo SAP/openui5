@@ -35,6 +35,15 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/unified/calendar/CalendarDate', '
 
 	};
 
+	DatesRowRenderer.addWrapperAdditionalStyles = function(oRm, oDatesRow){
+
+		if (oDatesRow._iTopPosition) {
+			oRm.addStyle("top", oDatesRow._iTopPosition + "px");
+			oRm.writeStyles();
+		}
+
+	};
+
 	DatesRowRenderer.renderMonth = function(oRm, oDatesRow, oDate) {
 		MonthRenderer.renderMonth.apply(this, arguments);
 		this.renderWeekNumbers(oRm, oDatesRow);
