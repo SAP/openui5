@@ -1,12 +1,11 @@
 <mvc:View xmlns:mvc="sap.ui.core.mvc"
-		   xmlns="sap.uxap"
-		   xmlns:m="sap.m"
-		   xmlns:blockcolor="sap.uxap.sample.SharedBlocks"
-		   height="100%">
-	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="false" showAnchorBarPopover="false">
+	xmlns="sap.uxap"
+	xmlns:m="sap.m"
+	xmlns:blockcolor="sap.uxap.sample.SharedBlocks"
+	height="100%">
+	<ObjectPageLayout id="ObjectPageLayout" showAnchorBarPopover="false">
 		<headerTitle>
-			<ObjectPageHeader objectTitle="Navigation to sections">
-			</ObjectPageHeader>
+			<ObjectPageHeader objectTitle="Navigation to sections"/>
 		</headerTitle>
 
 		<headerContent>

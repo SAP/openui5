@@ -18,8 +18,7 @@
 						</blocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection title="Collapsed by default"
-										  mode="Collapsed">
+					<ObjectPageSubSection title="Collapsed by default">
 						<blocks>
 							<sample:MultiViewBlock id="multiview11"/>
 							<sample:MultiViewBlock id="multiview12"/>

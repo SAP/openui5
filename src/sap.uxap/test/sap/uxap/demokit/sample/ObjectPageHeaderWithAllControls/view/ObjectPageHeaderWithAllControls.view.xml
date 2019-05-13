@@ -11,7 +11,6 @@
 	<ObjectPageLayout id="ObjectPageLayout">
 		<headerTitle>
 			<ObjectPageHeader id="headerForTest"
-							  headerDesign="Light"
 							  objectTitle="Long title that wraps and goes over more lines"
 							  showTitleSelector="true"
 							  titleSelectorPress="handleTitleSelectorPress"
@@ -58,36 +57,26 @@
 					showValue="true"
 					state="None"/>
 			<layout:VerticalLayout>
-				<layout:layoutData>
-					<ObjectPageHeaderLayoutData
-							showSeparatorAfter="false"/>
-				</layout:layoutData>
 				<m:Label text="PC, Unrestricted-Use Stock"/>
 				<m:ObjectNumber number="219" numberUnit="K"/>
 			</layout:VerticalLayout>
 			<layout:VerticalLayout>
 				<layout:layoutData>
-					<ObjectPageHeaderLayoutData
-							visibleS="false"
-							showSeparatorAfter="false"/>
+					<ObjectPageHeaderLayoutData visibleS="false"/>
 				</layout:layoutData>
 				<m:Label text="PC, Not in Small Size"/>
 				<m:ObjectNumber number="220" numberUnit="K"/>
 			</layout:VerticalLayout>
 			<layout:VerticalLayout>
 				<layout:layoutData>
-					<ObjectPageHeaderLayoutData
-							visibleM="false"
-							showSeparatorAfter="false"/>
+					<ObjectPageHeaderLayoutData visibleM="false" />
 				</layout:layoutData>
 				<m:Label text="PC, Not in Medium Size"/>
 				<m:ObjectNumber number="221" numberUnit="K"/>
 			</layout:VerticalLayout>
 			<layout:VerticalLayout>
 				<layout:layoutData>
-					<ObjectPageHeaderLayoutData
-							visibleL="false"
-							showSeparatorAfter="true"/>
+					<ObjectPageHeaderLayoutData visibleL="false"/>
 				</layout:layoutData>
 				<m:Label text="PC, Not in Large Size"/>
 				<m:ObjectNumber number="219" numberUnit="K"/>
@@ -105,7 +94,7 @@
 		<sections>
 			<ObjectPageSection title="2014 Goals Plan">
 				<subSections>
-					<ObjectPageSubSection title=" ">
+					<ObjectPageSubSection>
 						<blocks>
 							<goals:GoalsBlock id="goalsblock"/>
 						</blocks>

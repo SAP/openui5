@@ -1,11 +1,9 @@
 <mvc:View xmlns:mvc="sap.ui.core.mvc"
-		   xmlns="sap.uxap"
-		   xmlns:m="sap.m"
-		   xmlns:blockcolor="sap.uxap.sample.SharedBlocks"
-		   height="100%"
-		>
-
-	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="false">
+	xmlns="sap.uxap"
+	xmlns:m="sap.m"
+	xmlns:blockcolor="sap.uxap.sample.SharedBlocks"
+	height="100%">
+	<ObjectPageLayout id="ObjectPageLayout">
 		<headerTitle>
 			<ObjectPageHeader objectTitle="Section sample">
 			</ObjectPageHeader>
@@ -36,7 +34,7 @@
 
 			<ObjectPageSection title="Section 3">
 				<subSections>
-					<ObjectPageSubSection title=" ">
+					<ObjectPageSubSection>
 						<blocks>
 							<blockcolor:BlockBlueT3 id="bbt3"/>
 						</blocks>
@@ -56,7 +54,7 @@
 
 			<ObjectPageSection title="Section 5">
 				<subSections>
-					<ObjectPageSubSection title=" ">
+					<ObjectPageSubSection>
 						<blocks>
 							<blockcolor:BlockBlueT5 id="bbt5"/>
 						</blocks>

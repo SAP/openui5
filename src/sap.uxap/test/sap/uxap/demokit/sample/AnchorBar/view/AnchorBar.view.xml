@@ -1,14 +1,11 @@
 <mvc:View xmlns:mvc="sap.ui.core.mvc"
-		   xmlns="sap.uxap"
-		   xmlns:m="sap.m"
-		   xmlns:sample="sap.uxap.sample.AnchorBar.controller.blocks"
-		   height="100%"
-		>
-
-	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="false">
+	xmlns="sap.uxap"
+	xmlns:m="sap.m"
+	xmlns:sample="sap.uxap.sample.AnchorBar.controller.blocks"
+	height="100%">
+	<ObjectPageLayout id="ObjectPageLayout">
 		<headerTitle>
-			<ObjectPageHeader objectTitle="AnchorBar sample">
-			</ObjectPageHeader>
+			<ObjectPageHeader objectTitle="AnchorBar sample"/>
 		</headerTitle>
 
 		<headerContent>

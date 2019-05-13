@@ -8,7 +8,10 @@
 		   xmlns:connections="sap.uxap.sample.SharedBlocks.connections"
 		   controllerName="sap.uxap.sample.ObjectPageTabNavigationMode.controller.ObjectPageTabNavigationMode"
 		   height="100%">
-	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="true" useIconTabBar="true" showTitleInHeaderContent="true">
+	<ObjectPageLayout id="ObjectPageLayout"
+		enableLazyLoading="true"
+		useIconTabBar="true"
+		showTitleInHeaderContent="true">
 		<headerTitle>
 			<ObjectPageHeader objectImageURI="./test-resources/sap/uxap/images/imageID_275314.png"
 							  objectTitle="Denise Smith"
@@ -52,7 +55,7 @@
 		<sections>
 			<ObjectPageSection id="goals" title="2014 Goals Plan">
 			<subSections>
-				<ObjectPageSubSection id="goalsSS1" title="">
+				<ObjectPageSubSection id="goalsSS1">
 					<blocks>
 						<goals:GoalsBlock id="goalsblock"/>
 					</blocks>
@@ -92,7 +95,7 @@
 						</blocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection id="employmentSS2" title="Employee Details" mode="Collapsed">
+					<ObjectPageSubSection id="employmentSS2" title="Employee Details">
 						<blocks>
 							<employment:BlockEmpDetailPart1 id="empdetailpart1" columnLayout="1"/>
 						</blocks>
@@ -102,7 +105,7 @@
 						</moreBlocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection id="employmentSS3" title="Job Relationship" mode="Collapsed">
+					<ObjectPageSubSection id="employmentSS3" title="Job Relationship">
 						<blocks>
 							<employment:EmploymentBlockJob id="employmentblockjob" showSubSectionMore="true">
 								<employment:mappings>
@@ -126,7 +129,7 @@
 			</ObjectPageSection>
 			<ObjectPageSection id="connections" title="Connections">
 				<subSections>
-					<ObjectPageSubSection id="connectionsSS1" title="">
+					<ObjectPageSubSection id="connectionsSS1">
 						<blocks>
 							<connections:ConnectionsBlock id="connectionsblock">
 								<connections:mappings>

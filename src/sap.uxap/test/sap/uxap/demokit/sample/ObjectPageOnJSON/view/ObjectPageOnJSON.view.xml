@@ -1,17 +1,16 @@
 <mvc:View xmlns:mvc="sap.ui.core.mvc"
-		   xmlns="sap.uxap"
-		   xmlns:layout="sap.ui.layout"
-		   xmlns:m="sap.m"
-		   xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
-		   xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
-		   xmlns:employment="sap.uxap.sample.SharedBlocks.employment"
-		   controllerName="sap.uxap.sample.ObjectPageOnJSON.controller.ObjectPageOnJSON"
-		   height="100%">
+	xmlns="sap.uxap"
+	xmlns:layout="sap.ui.layout"
+	xmlns:m="sap.m"
+	xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
+	xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
+	xmlns:employment="sap.uxap.sample.SharedBlocks.employment"
+	controllerName="sap.uxap.sample.ObjectPageOnJSON.controller.ObjectPageOnJSON"
+	height="100%">
 	<ObjectPageLayout id="ObjectPageLayout"
-					  enableLazyLoading="false"
-					  showTitleInHeaderContent="true"
-					  showEditHeaderButton="true"
-					  editHeaderButtonPress="handleEditBtnPress">
+		showTitleInHeaderContent="true"
+		showEditHeaderButton="true"
+		editHeaderButtonPress="handleEditBtnPress">
 		<headerTitle>
 			<ObjectPageHeader objectImageURI="./test-resources/sap/uxap/images/imageID_275314.png"
 							  objectTitle="Denise Smith"
@@ -19,7 +18,6 @@
 							  objectImageAlt="Denise Smith"
 							  objectSubtitle="Senior UI Developer"
 
-							  isObjectIconAlwaysVisible="false"
 							  isObjectTitleAlwaysVisible="false"
 							  isObjectSubtitleAlwaysVisible="false">
 				<actions>
@@ -71,7 +69,7 @@
 		<sections>
 			<ObjectPageSection id="goalsSection" title="2014 Goals Plan">
 				<subSections>
-					<ObjectPageSubSection id="goalsSectionSS1" title=" ">
+					<ObjectPageSubSection id="goalsSectionSS1">
 						<blocks>
 							<goals:GoalsBlock id="goalsblock"/>
 						</blocks>
@@ -111,7 +109,7 @@
 						</blocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection id="employmentSectionSS2" title="Employee Details" mode="Collapsed" importance="Medium">
+					<ObjectPageSubSection id="employmentSectionSS2" title="Employee Details" importance="Medium">
 						<blocks>
 							<employment:BlockEmpDetailPart1 id="empdetailpart1" columnLayout="1"/>
 						</blocks>
@@ -121,7 +119,7 @@
 						</moreBlocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection id="employmentSectionSS3" title="Job Relationship" mode="Collapsed" importance="Low">
+					<ObjectPageSubSection id="employmentSectionSS3" title="Job Relationship" importance="Low">
 						<blocks>
 							<employment:EmploymentBlockJob id="employmentblockjob" showSubSectionMore="true">
 								<employment:mappings>

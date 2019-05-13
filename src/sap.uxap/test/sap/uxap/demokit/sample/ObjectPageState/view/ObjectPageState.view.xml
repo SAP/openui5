@@ -1,15 +1,13 @@
 <mvc:View xmlns:mvc="sap.ui.core.mvc"
-		   xmlns="sap.uxap"
-		   xmlns:layout="sap.ui.layout"
-		   xmlns:m="sap.m"
-		   xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
-		   xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
-		   xmlns:employment="sap.uxap.sample.SharedBlocks.employment"
-		   controllerName="sap.uxap.sample.ObjectPageState.controller.ObjectPageState"
-		   height="100%"
-		>
-
-	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="false" showTitleInHeaderContent="true">
+	xmlns="sap.uxap"
+	xmlns:layout="sap.ui.layout"
+	xmlns:m="sap.m"
+	xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
+	xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
+	xmlns:employment="sap.uxap.sample.SharedBlocks.employment"
+	controllerName="sap.uxap.sample.ObjectPageState.controller.ObjectPageState"
+	height="100%">
+	<ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="true" selectedSection="paymentSubSection">
 		<headerTitle>
 			<ObjectPageHeader objectImageURI="./test-resources/sap/uxap/images/imageID_275314.png"
 							  objectTitle="Denise Smith"
@@ -53,7 +51,7 @@
 		<sections>
 			<ObjectPageSection title="2014 Goals Plan">
 				<subSections>
-					<ObjectPageSubSection title=" ">
+					<ObjectPageSubSection >
 						<blocks>
 							<goals:GoalsBlock id="goalsblock"/>
 						</blocks>
@@ -72,7 +70,7 @@
 						</blocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection id="paymentSubSection" title="Payment information">
+					<ObjectPageSubSection id="paymentSubSection" title="Payment information" mode="Expanded">
 						<blocks>
 							<personal:PersonalBlockPart1 id="part1" columnLayout="1"/>
 						</blocks>
@@ -93,7 +91,7 @@
 						</blocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection title="Employee Details" mode="Collapsed">
+					<ObjectPageSubSection title="Employee Details">
 						<blocks>
 							<employment:BlockEmpDetailPart1 id="empdetailpart1" columnLayout="1"/>
 						</blocks>
@@ -103,7 +101,7 @@
 						</moreBlocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection title="Job Relationship" mode="Collapsed">
+					<ObjectPageSubSection title="Job Relationship">
 						<blocks>
 							<employment:EmploymentBlockJob id="employmentblockjob" showSubSectionMore="true">
 								<employment:mappings>

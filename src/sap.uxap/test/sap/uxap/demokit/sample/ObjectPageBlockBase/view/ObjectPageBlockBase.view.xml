@@ -7,10 +7,7 @@
 		>
 	<ObjectPageLayout id="ObjectPageLayout" subSectionLayout="{ConfigModel>/subSectionLayout}">
 		<headerTitle>
-			<ObjectPageHeader
-					objectTitle="ObjectPage BlockBase"
-					objectSubtitle=""
-					objectImageURI="">
+			<ObjectPageHeader objectTitle="ObjectPage BlockBase">
 				<actions>
 					<ObjectPageHeaderActionButton icon="sap-icon://synchronize" press="toggleTitle"
 												  text="toggle title" tooltip="synchronize"/>
@@ -20,7 +17,7 @@
 		<sections>
 			<ObjectPageSection>
 				<subSections>
-					<ObjectPageSubSection title="Blocks with columnLayout 1" mode="Collapsed">
+					<ObjectPageSubSection title="Blocks with columnLayout 1">
 						<blocks>
 							<blockcolor:BlockBlue columnLayout="auto"/>
 							<blockcolor:BlockBlue columnLayout="1"/>
@@ -28,13 +25,13 @@
 						</blocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection title="Blocks with columnLayout 2" mode="Collapsed">
+					<ObjectPageSubSection title="Blocks with columnLayout 2">
 						<blocks>
 							<blockcolor:BlockBlueWithInfo showSubSectionMore="true" columnLayout="2"/>
 							<blockcolor:BlockBlue columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="Blocks with columnLayout 3" mode="Collapsed">
+					<ObjectPageSubSection title="Blocks with columnLayout 3">
 						<blocks>
 							<blockcolor:BlockBlue columnLayout="3"/>
 							<blockcolor:BlockBlue columnLayout="3"/>
