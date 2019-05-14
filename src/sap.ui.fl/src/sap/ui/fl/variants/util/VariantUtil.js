@@ -48,15 +48,10 @@ sap.ui.define([
 			VariantUtil._setOrUnsetCustomNavigationForParameter.call(this, true);
 		},
 
-		attachHashHandlers: function (sVariantManagementReference) {
+		attachHashHandlers: function (sVariantManagementReference, sUpdateURL) {
 			// only for first variant management control with 'updateVariantInURL' property set to true
 			if (this._oHashRegister.currentIndex === null) {
 				var oHashChanger = HashChanger.getInstance();
-
-				// attach handler to check if hash was replaced
-				oHashChanger.attachEvent("hashReplaced", VariantUtil._handleHashReplaced, this);
-				// attach handler to process hash changes
-				oHashChanger.attachEvent("hashChanged", VariantUtil._navigationHandler, this);
 
 				// de-register method to process hash changes
 				var fnObserverHandler = function () {
@@ -79,16 +74,27 @@ sap.ui.define([
 					}.bind(this));
 				};
 
-				// observer for oAppComponent.destroy()
-				this.oComponentDestroyObserver = new ManagedObjectObserver(fnObserverHandler.bind(this));
-				this.oComponentDestroyObserver.observe(this.oAppComponent, { destroy: true });
+				if (!this.oComponentDestroyObserver && this.oAppComponent instanceof Component) {
+					// observer for oAppComponent.destroy()
+					this.oComponentDestroyObserver = new ManagedObjectObserver(fnObserverHandler.bind(this));
+					this.oComponentDestroyObserver.observe(this.oAppComponent, {destroy: true});
+				}
 
-				VariantUtil._navigationHandler.call(this);
+				if (sUpdateURL) {
+					// attach handler to check if hash was replaced
+					oHashChanger.attachEvent("hashReplaced", VariantUtil._handleHashReplaced, this);
+					// attach handler to process hash changes
+					oHashChanger.attachEvent("hashChanged", VariantUtil._navigationHandler, this);
+					// first explicit call
+					VariantUtil._navigationHandler.call(this);
+				}
 			}
-			if (Array.isArray(this._oHashRegister.variantControlIds[this._oHashRegister.variantControlIds])) {
-				this._oHashRegister.variantControlIds[this._oHashRegister.currentIndex].push(sVariantManagementReference);
-			} else {
-				this._oHashRegister.variantControlIds[this._oHashRegister.currentIndex] = [sVariantManagementReference];
+			if (sUpdateURL) {
+				if (Array.isArray(this._oHashRegister.variantControlIds[this._oHashRegister.variantControlIds])) {
+					this._oHashRegister.variantControlIds[this._oHashRegister.currentIndex].push(sVariantManagementReference);
+				} else {
+					this._oHashRegister.variantControlIds[this._oHashRegister.currentIndex] = [sVariantManagementReference];
+				}
 			}
 		},
 
