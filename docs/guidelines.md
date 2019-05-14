@@ -146,7 +146,7 @@ See the [example for creating a class (with documentation)](guidelines/classexam
 
 ### Documentation (JSDoc)
 
-For documenting JavaScript, UI5 uses the JSDoc3 toolkit which mimics JavaDoc. See the [JSDoc3 Toolkit Homepage](http://usejsdoc.org/) for an explanation of the available tags.
+For documenting JavaScript, UI5 uses the JSDoc3 toolkit which mimics JavaDoc. See the [JSDoc3 Toolkit Homepage](https://jsdoc.app/) for an explanation of the available tags.
 
 -   Document the constructor with `@class, @author, @since`, …
 -   For subclasses, document the inheritance by using an `@extends` tag in their constructor doclet
@@ -295,7 +295,7 @@ General:
 -   Proper API documentation
 -   Translation: all texts visible in the UI must be translatable
     -   Do not provide translations, only provide the "developer english" version in messagebundle.properties, but annotate properly for translators, see [this page](guidelines/translationfiles.md) for details.
--   Follow the compatibility rules, as specified [here](https://openui5.hana.ondemand.com/docs/guide/91f087396f4d1014b6dd926db0e91070.html)
+-   Follow the compatibility rules, as specified [here](https://openui5.hana.ondemand.com/#/topic/91f087396f4d1014b6dd926db0e91070)
 -   Make sure other Open Source libraries (or parts of them) are officially approved before adding them to UI5. Do not add code you "found" somewhere.
 
 For controls in addition:
