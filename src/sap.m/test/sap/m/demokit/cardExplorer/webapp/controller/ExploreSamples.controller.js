@@ -1,11 +1,13 @@
 sap.ui.define([
 	"sap/ui/demo/cardExplorer/controller/BaseController",
 	'sap/ui/model/json/JSONModel',
-	"../model/ExploreNavigationModel"
+	"../model/ExploreNavigationModel",
+	"../model/ExploreSettingsModel"
 ], function(
 	BaseController,
 	JSONModel,
-	exploreNavigationModel
+	exploreNavigationModel,
+	exploreSettingsModel
 ) {
 	"use strict";
 
@@ -17,6 +19,7 @@ sap.ui.define([
 		onInit: function () {
 			var oRouter = this.getRouter();
 			oRouter.getRoute("exploreSamples").attachMatched(this._onRouteMatched, this);
+			this.getView().setModel(exploreSettingsModel, "settings");
 		},
 
 		_onRouteMatched: function (oEvent) {
@@ -63,9 +66,7 @@ sap.ui.define([
 			});
 		},
 
-		onManifestEdited: function (oEvent) {
-			var sValue = oEvent.getParameter("value");
-
+		_updateSample :function (sValue) {
 			if (!sValue) {
 				// TODO hide the card or something like that. Currently it shows busy indicator which might be confusing
 				this.byId("cardSample").setManifest(null);
@@ -75,6 +76,23 @@ sap.ui.define([
 			// TODO try/catch, handle errors, handle json validation, schema validation and etc.
 			var oData = JSON.parse(sValue);
 			this.byId("cardSample").setManifest(oData);
+		},
+		onManifestEdited: function (oEvent) {
+			var sValue = oEvent.getParameter("value");
+
+			if (exploreSettingsModel.getProperty("/autoRun")) {
+				this._updateSample(sValue);
+			}
+		},
+		onRunPressed:function (oEvent) {
+			var sValue = this.getView().byId("editor").getValue();
+			this._updateSample(sValue);
+		},
+		onChangeSplitterOrientation:function (oEvent) {
+			//Toggles the value of splitter orientation
+			exploreSettingsModel.setProperty("/splitViewVertically", !exploreSettingsModel.getProperty("/splitViewVertically"));
+			var isOrientationVertical = exploreSettingsModel.getProperty("/splitViewVertically");
+			this.getView().byId("splitView").getRootPaneContainer().setOrientation(isOrientationVertical ? "Vertical" : "Horizontal");
 		}
 	});
 });
