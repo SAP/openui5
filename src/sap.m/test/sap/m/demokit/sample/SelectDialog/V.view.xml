@@ -40,7 +40,7 @@
 			</Button>
 			<Button
 				class="sapUiSmallMarginBottom"
-				text="Show Select Dialog (growing=true and growingThreshold=15)"
+				text="Show Select Dialog (growingThreshold=15)"
 				press="handleSelectDialogPress">
 				<customData>
 					<core:CustomData
