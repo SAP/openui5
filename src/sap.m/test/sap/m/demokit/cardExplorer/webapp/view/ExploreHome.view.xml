@@ -1,0 +1,7 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Page title="Explore">
+		<Text class="sapUiSmallMargin" text="(todo) Display general info for explore or directly show the first sample." />
+	</Page>
+</mvc:View>

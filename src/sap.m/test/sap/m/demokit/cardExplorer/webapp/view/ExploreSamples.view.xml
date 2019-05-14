@@ -6,47 +6,49 @@
 	xmlns:core="sap.ui.core"
 	xmlns:editor="sap.ui.codeeditor"
 	xmlns:widgets="sap.ui.integration.widgets">
-	<!--<Page title="{sample>/title}">-->
-		<l:ResponsiveSplitter id="splitView" defaultPane="default">
-			<l:PaneContainer orientation="Horizontal">
-				<l:SplitPane>
-					<Page>
-						<customHeader>
-							<Bar>
-								<contentLeft>
-									<Title class="sapUiSmallMarginBegin" text="{sample>/title}"></Title>
-								</contentLeft>
-								<contentRight>
-									<ComboBox selectedKey="t1">
-										<core:Item key="t1" text="Sub Sample 1" />
-									</ComboBox>
-								</contentRight>
-							</Bar>
-						</customHeader>
-						<widgets:Card class="sapUiLargeMargin" id="cardSample" width="400px"></widgets:Card>
-					</Page>
-				</l:SplitPane>
-				<l:SplitPane>
-					<Page >
-						<customHeader>
-							<Bar>
-								<contentLeft>
-									<Button class="sapUiSmallMarginBegin" text="Run" type="Emphasized" icon="sap-icon://media-play" press="onRunPressed" ></Button>
-									<CheckBox text="Auto Run" selected="{settings>/autoRun}"></CheckBox>
-								</contentLeft>
-								<contentRight>
-									<core:Icon
-											press="onChangeSplitterOrientation"
-											src="sap-icon://header"
-											color="#0a6ed1" >
-									</core:Icon>
-								</contentRight>
-							</Bar>
-						</customHeader>
-						<editor:CodeEditor class="sapUiSmallMarginBegin" id="editor" height="100%" editable="true" liveChange="onManifestEdited"></editor:CodeEditor>
-					</Page>
-				</l:SplitPane>
-			</l:PaneContainer>
-		</l:ResponsiveSplitter>
-	<!--</Page>-->
+	<l:ResponsiveSplitter id="splitView" defaultPane="default">
+		<l:PaneContainer orientation="Horizontal">
+			<l:SplitPane>
+				<Page>
+					<customHeader>
+						<Bar>
+							<contentLeft>
+								<Title class="sapUiSmallMarginBegin" text="{/sample/title}"></Title>
+							</contentLeft>
+							<contentRight>
+								<ComboBox
+									selectedKey="{/subSample/key}"
+									items="{/sample/subSamples}"
+									visible="{= ${/sample/subSamples} ? true : false }"
+									selectionChange="onSubSampleChange">
+									<core:Item key="{key}" text="{title}" />
+								</ComboBox>
+							</contentRight>
+						</Bar>
+					</customHeader>
+					<widgets:Card class="sapUiLargeMargin" id="cardSample" width="400px"></widgets:Card>
+				</Page>
+			</l:SplitPane>
+			<l:SplitPane>
+				<Page >
+					<customHeader>
+						<Bar>
+							<contentLeft>
+								<Button class="sapUiSmallMarginBegin" text="Run" type="Emphasized" icon="sap-icon://media-play" press="onRunPressed" ></Button>
+								<CheckBox text="Auto Run" selected="{settings>/autoRun}"></CheckBox>
+							</contentLeft>
+							<contentRight>
+								<core:Icon
+										press="onChangeSplitterOrientation"
+										src="sap-icon://header"
+										color="#0a6ed1" >
+								</core:Icon>
+							</contentRight>
+						</Bar>
+					</customHeader>
+					<editor:CodeEditor class="sapUiSmallMarginBegin" id="editor" height="100%" editable="true" liveChange="onManifestEdited"></editor:CodeEditor>
+				</Page>
+			</l:SplitPane>
+		</l:PaneContainer>
+	</l:ResponsiveSplitter>
 </mvc:View>
