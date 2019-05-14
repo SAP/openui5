@@ -110,8 +110,8 @@ sap.ui.define([
 	/**
 	 * Starts the process of uploading the specified file.
 	 *
-	 * @param {UploadSetItem} oItem Item representing the file to be uploaded.
-	 * @param {Item[]} aHeaderFields Collection of request header fields to be send along.
+	 * @param {sap.m.upload.UploadSetItem} oItem Item representing the file to be uploaded.
+	 * @param {sap.ui.core.Item[]} aHeaderFields Collection of request header fields to be send along.
 	 * @public
 	 */
 	Uploader.prototype.uploadItem = function (oItem, aHeaderFields) {
@@ -157,7 +157,7 @@ sap.ui.define([
 	/**
 	 * Attempts to terminate the process of uploading the specified file.
 	 *
-	 * @param {UploadSetItem} oItem Item representing the file whose ongoing upload process is to be terminated.
+	 * @param {sap.m.upload.UploadSetItem} oItem Item representing the file whose ongoing upload process is to be terminated.
 	 * @public
 	 */
 	Uploader.prototype.terminateItem = function (oItem) {

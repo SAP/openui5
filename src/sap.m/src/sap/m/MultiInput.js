@@ -1305,7 +1305,7 @@ function(
 	 * Function returns domref which acts as reference point for the opening suggestion menu
 	 *
 	 * @public
-	 * @returns {domRef} The domref at which to open the suggestion menu
+	 * @returns {Element} The domref at which to open the suggestion menu
 	 */
 	MultiInput.prototype.getPopupAnchorDomRef = function () {
 		return this.getDomRef("content");
@@ -1354,7 +1354,7 @@ function(
 	/**
 	 * Get the reference element which the message popup should dock to
 	 *
-	 * @return {DOMRef} Dom Element which the message popup should dock to
+	 * @return {Element} DOM Element which the message popup should dock to
 	 * @protected
 	 * @function
 	 */

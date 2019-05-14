@@ -719,7 +719,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
 		 * @param {string} sEventName - Event name
 		 * @param {string} sFunctionPath - Absolute path to a function
-		 * @param {vData} vData - Predefined values for event handler function
+		 * @param {object} vData - Predefined values for event handler function
 		 * @public
 		 */
 		attachEvent: function(oObject, sEventName, sFunctionPath, vData) {},

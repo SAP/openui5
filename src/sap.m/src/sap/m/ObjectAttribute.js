@@ -237,7 +237,7 @@ function(library, Control, coreLibrary, Text, KeyCodes, ObjectAttributeRenderer,
 	 * Defines to which DOM reference the Popup should be docked.
 	 *
 	 * @protected
-	 * @return {DomNode} The DOM reference that Popup should dock to
+	 * @return {Element} The DOM reference that Popup should dock to
 	 */
 	ObjectAttribute.prototype.getPopupAnchorDomRef = function() {
 		return this.getDomRef("text");

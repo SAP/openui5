@@ -315,7 +315,7 @@ sap.ui.define([
 		/**
 		 * Sets the TextField handler
 		 *
-		 * @param {sap.m.TextField} oTextField Text field instance
+		 * @param {sap.m.ComboBoxTextField | sap.m.Input} oTextField Text field instance
 		 * @protected
 		 */
 		ComboBoxBase.prototype.setTextFieldHandler = function (oTextField) {
@@ -791,7 +791,7 @@ sap.ui.define([
 		/**
 		 * Gets the DOM reference the popup should be docked to.
 		 *
-		 * @return {object} The DOM reference
+		 * @return {Element} The DOM reference
 		 */
 		ComboBoxBase.prototype.getPopupAnchorDomRef = function() {
 			return this.getDomRef();
@@ -871,7 +871,7 @@ sap.ui.define([
 		 * Sets the visualization of the validation state of the control,
 		 * e.g. <code>Error</code>, <code>Warning</code>, <code>Success</code>.
 		 *
-		 * @param {sap.m.ValueState} [sValueState] The new value state
+		 * @param {sap.ui.core.ValueState} [sValueState] The new value state
 		 * @returns {sap.m.InputBase} this for chaining
 		 *
 		 * @public
@@ -1037,6 +1037,7 @@ sap.ui.define([
 		 * Base method for picker text field creation
 		 *
 		 * @protected
+		 * @returns {sap.m.InputBase}
 		 */
 		ComboBoxBase.prototype.createPickerTextField = function () {};
 

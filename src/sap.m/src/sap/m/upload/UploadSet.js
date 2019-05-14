@@ -572,7 +572,7 @@ sap.ui.define([
 
 	/**
 	 * Provides access to the instance of the inner {@link sap.m.List} control, so that it can be customized.
-	 * @return {List} The inner {@link sap.m.List} control.
+	 * @return {sap.m.List} The inner {@link sap.m.List} control.
 	 * @public
 	 */
 	UploadSet.prototype.getList = function () {
@@ -620,7 +620,7 @@ sap.ui.define([
 	/**
 	 * Returns an instance of the default <code>sap.ui.unified.FileUploader</code> used for adding files using
 	 * the operating system's open file dialog, so that it can be customized, for example made invisible or assigned a different icon.
-	 * @return {FileUploader} Instance of the default <code>sap.ui.unified.FileUploader</code>.
+	 * @return {sap.ui.unified.FileUploader} Instance of the default <code>sap.ui.unified.FileUploader</code>.
 	 * @public
 	 */
 	UploadSet.prototype.getDefaultFileUploader = function () {
@@ -653,7 +653,7 @@ sap.ui.define([
 	/**
 	 * Attaches all necessary handlers to the given uploader instance, so that the progress and status of the upload can be
 	 * displayed and monitored.
-	 * @param {Uploader} oUploader Instance of <code>sap.m.upload.Uploader</code> to which the default request handlers are attached.
+	 * @param {sap.m.upload.Uploader} oUploader Instance of <code>sap.m.upload.Uploader</code> to which the default request handlers are attached.
 	 * @public
 	 */
 	UploadSet.prototype.registerUploaderEvents = function (oUploader) {

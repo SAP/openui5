@@ -293,7 +293,7 @@ sap.ui.define([
 	 * @param {string} oFESRHandle.stepName The step name with <Trigger>_<Event>
 	 * @param {string} oFESRHandle.appNameLong The application name with max 70 chars
 	 * @param {string} oFESRHandle.appNameShort The application name with max 20 chars
-	 * @param {integer} oFESRHandle.timeToInteractive The Time To Interactive (TTI) with max 16 digits
+	 * @param {int} oFESRHandle.timeToInteractive The Time To Interactive (TTI) with max 16 digits
 	 * @param  {object} oInteraction The corresponding interaction object, read-only
 	 * @return {object} Modified header information
 	 * @private

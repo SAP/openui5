@@ -766,7 +766,7 @@ sap.ui.define([
 
 	/**
 	 * Returns all controls from the toolbar that are not in the Popover
-	 * @returns {*|Array.<T>}
+	 * @returns {*|Array.<sap.ui.core.Control>}
 	 */
 	OverflowToolbar.prototype._getVisibleContent = function () {
 		var aToolbarContent = this.getContent(),
@@ -782,7 +782,7 @@ sap.ui.define([
 	* that are not in the overflow area and their <code>visible</code> property is <code>true</code>.
 	* @private
 	* @sap-restricted
-	* @returns {*|Array.<T>}
+	* @returns {*|Array.<sap.ui.core.Control>}
 	*/
 	OverflowToolbar.prototype._getVisibleAndNonOverflowContent = function () {
 		return this._getVisibleContent().filter(function (oControl) {

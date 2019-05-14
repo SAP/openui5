@@ -860,7 +860,7 @@ sap.ui.define([
 	 *
 	 * @protected
 	 * @since 1.34
-	 * @returns {domRef} the DOM element at which to open the suggestion list
+	 * @returns {Element} the DOM element at which to open the suggestion list
 	 */
 	SearchField.prototype.getPopupAnchorDomRef = function() {
 		return this.getDomRef("F"); // the form element inside the search  field is the anchor

@@ -1912,7 +1912,7 @@ function(
 	 * issues if you would like to persist DesignTime based information. In that case
 	 * you need to take care of identification yourself.
 	 *
-	 * @param {ManageObject} [oManagedObject] instance that could have instance specific design time metadata
+	 * @param {sap.ui.base.ManagedObject} [oManagedObject] instance that could have instance specific design time metadata
 	 * @param {string} [sScopeKey] scope name for which metadata will be resolved, see sap.ui.base.ManagedObjectMetadataScope
 	 * @return {Promise} A promise which will return the loaded design time metadata
 	 * @private

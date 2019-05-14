@@ -2600,7 +2600,7 @@ function(
 	 * Sets the visualization of the validation state of the control,
 	 * e.g. <code>Error</code>, <code>Warning</code>, <code>Success</code>.
 	 *
-	 * @param {sap.m.ValueState} [sValueState] The new value state
+	 * @param {sap.ui.core.ValueState} [sValueState] The new value state
 	 * @returns {sap.m.InputBase} this for chaining
 	 *
 	 * @public

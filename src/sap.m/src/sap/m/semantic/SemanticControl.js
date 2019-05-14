@@ -147,7 +147,7 @@ sap.ui.define([
 	/**
 	 * Implementation of a commonly used function that adapts <code>sap.ui.core.Element</code>
 	 * to provide DOM reference for opening popovers.
-	 * @returns The DOM reference of the actual wrapped control
+	 * @returns {Element} The DOM reference of the actual wrapped control
 	 * @public
 	 */
 	SemanticControl.prototype.getPopupAnchorDomRef = function() {

@@ -168,7 +168,7 @@ sap.ui.define(["sap/base/assert", "sap/base/Log", "sap/ui/thirdparty/jquery"],
 	/**
 	 * Adds a control to predefined lightbox category in instance manager.
 	 *
-	 * @param {sap.m.LigthBox} oLightBox Dialog to be added to instance manager. Dialog which doesn't inherit from sap.m.Dialog can also be added as long as it has a close method.
+	 * @param {sap.m.LightBox} oLightBox Dialog to be added to instance manager. Dialog which doesn't inherit from sap.m.Dialog can also be added as long as it has a close method.
 	 * @returns {sap.m.InstanceManager} Enable method chaining.
 	 * @protected
 	 */
