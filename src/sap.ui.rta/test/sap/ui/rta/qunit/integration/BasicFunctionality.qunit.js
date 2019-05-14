@@ -40,6 +40,7 @@ sap.ui.define([
 	QUnit.done(function () {
 		QUnit.config.fixture = '';
 		FakeLrepConnectorSessionStorage.disableFakeConnector();
+		jQuery("#qunit-fixture").hide();
 	});
 
 	QUnit.module("Given RTA is started...", {
@@ -157,7 +158,6 @@ sap.ui.define([
 		});
 	});
 
-
 	QUnit.module("Given that RuntimeAuthoring based on test-view is available and CTRL-Z/CTRL-Y are pressed...", {
 		beforeEach : function(assert) {
 			this.bMacintoshOriginal = Device.os.macintosh;
@@ -184,7 +184,6 @@ sap.ui.define([
 				this.oElementOverlay = OverlayRegistry.getOverlay(sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode"));
 			}.bind(this));
 		},
-
 		afterEach : function () {
 			sandbox.restore();
 			this.oRta.destroy();
@@ -217,20 +216,21 @@ sap.ui.define([
 
 			this.oElementOverlay.focus();
 			this.oElementOverlay.setSelected(true);
-			QUnitUtils.triggerKeyup(this.oElementOverlay.getDomRef(), KeyCodes.F10, true, false, false);
-			var oContextMenuButton = this.oRta.getPlugins()["contextMenu"].oContextMenuControl.getButtons()[1];
-			oContextMenuButton.firePress();
-			sap.ui.getCore().applyChanges();
-
-			var oDialog = this.oRta.getPlugins()["additionalElements"].getDialog();
-			oDialog.attachOpened(function() {
-				QUnitUtils.triggerKeydown(document, KeyCodes.Z, false, false, true);
-				assert.equal(this.fnUndoSpy.callCount, 0, "then _onUndo was not called");
-				QUnitUtils.triggerKeydown(document, KeyCodes.Y, false, false, true);
-				assert.equal(this.fnRedoSpy.callCount, 0, "then _onRedo was not called");
-				sap.ui.qunit.QUnitUtils.triggerEvent("tap", oDialog._oOKButton.getDomRef());
+			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oElementOverlay, sinon).then(function() {
+				var oContextMenuButton = this.oRta.getPlugins()["contextMenu"].oContextMenuControl.getButtons()[1];
+				oContextMenuButton.firePress();
 				sap.ui.getCore().applyChanges();
-				done();
+
+				var oDialog = this.oRta.getPlugins()["additionalElements"].getDialog();
+				oDialog.attachOpened(function() {
+					QUnitUtils.triggerKeydown(document, KeyCodes.Z, false, false, true);
+					assert.equal(this.fnUndoSpy.callCount, 0, "then _onUndo was not called");
+					QUnitUtils.triggerKeydown(document, KeyCodes.Y, false, false, true);
+					assert.equal(this.fnRedoSpy.callCount, 0, "then _onRedo was not called");
+					sap.ui.qunit.QUnitUtils.triggerEvent("tap", oDialog._oOKButton.getDomRef());
+					sap.ui.getCore().applyChanges();
+					done();
+				}.bind(this));
 			}.bind(this));
 		});
 
@@ -249,14 +249,10 @@ sap.ui.define([
 
 			this.oElementOverlay.focus();
 			this.oElementOverlay.setSelected(true);
-			QUnitUtils.triggerKeyup(this.oElementOverlay.getDomRef(), KeyCodes.F10, true, false, false);
-			var oContextMenuButton = this.oRta.getPlugins()["contextMenu"].oContextMenuControl.getButtons()[0];
-			oContextMenuButton.firePress();
+			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oElementOverlay, sinon).then(function() {
+				var oContextMenuButton = this.oRta.getPlugins()["contextMenu"].oContextMenuControl.getButtons()[0];
+				oContextMenuButton.firePress();
+			}.bind(this));
 		});
 	});
-
-	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
-	});
-
 });

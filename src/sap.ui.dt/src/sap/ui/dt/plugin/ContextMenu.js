@@ -180,46 +180,50 @@ sap.ui.define([
 			return !mMenuItemEntry.fromPlugin;
 		});
 
+		var oPromise = Promise.resolve();
 		if (!bIsSubMenu) {
-			this._aGroupedItems = [];
-			this._aSubMenus = [];
-
-			this.getDesignTime().getPlugins().forEach(function (oPlugin) {
-				var aPluginMenuItems = oPlugin.getMenuItems(aSelectedOverlays) || [];
-				aPluginMenuItems.forEach(function (mMenuItem) {
-					if (mMenuItem.group != undefined && !bContextMenu) {
-						this._addMenuItemToGroup(mMenuItem);
-					} else if (mMenuItem.submenu != undefined) {
-						this._addSubMenu(mMenuItem, mPosition, oOverlay);
-					} else {
-						this.addMenuItem(mMenuItem, true);
-					}
+			oPromise = Utils.waitForSynced(this.getDesignTime())().then(function() {
+				this._aGroupedItems = [];
+				this._aSubMenus = [];
+				this.getDesignTime().getPlugins().forEach(function (oPlugin) {
+					var aPluginMenuItems = oPlugin.getMenuItems(aSelectedOverlays) || [];
+					aPluginMenuItems.forEach(function (mMenuItem) {
+						if (mMenuItem.group != undefined && !bContextMenu) {
+							this._addMenuItemToGroup(mMenuItem);
+						} else if (mMenuItem.submenu != undefined) {
+							this._addSubMenu(mMenuItem, mPosition, oOverlay);
+						} else {
+							this.addMenuItem(mMenuItem, true);
+						}
+					}.bind(this));
 				}.bind(this));
-			}.bind(this));
 
-			this._addItemGroupsToMenu(mPosition, oOverlay);
+				this._addItemGroupsToMenu(mPosition, oOverlay);
+			}.bind(this));
 		}
 
-		var aMenuItems = this._aMenuItems.map(function (mMenuItemEntry) {
-			return mMenuItemEntry.menuItem;
-		});
+		oPromise.then(function() {
+			var aMenuItems = this._aMenuItems.map(function (mMenuItemEntry) {
+				return mMenuItemEntry.menuItem;
+			});
 
-		if (aMenuItems.length > 0) {
-			this.oContextMenuControl._bUseExpPop = !!bContextMenu;
-			aMenuItems = this._sortMenuItems(aMenuItems);
-			this.oContextMenuControl.setButtons(aMenuItems, this._onItemSelected.bind(this), aSelectedOverlays);
-			this.oContextMenuControl.setStyleClass(this.getStyleClass());
-			if (bIsSubMenu) {
-				this.oContextMenuControl.setOpenNew(true);
+			if (aMenuItems.length > 0) {
+				this.oContextMenuControl._bUseExpPop = !!bContextMenu;
+				aMenuItems = this._sortMenuItems(aMenuItems);
+				this.oContextMenuControl.setButtons(aMenuItems, this._onItemSelected.bind(this), aSelectedOverlays);
+				this.oContextMenuControl.setStyleClass(this.getStyleClass());
+				if (bIsSubMenu) {
+					this.oContextMenuControl.setOpenNew(true);
+				}
+
+				this.oContextMenuControl.show(oOverlay, bContextMenu, {
+					x: mPosition.clientX,
+					y: mPosition.clientY
+				});
 			}
 
-			this.oContextMenuControl.show(oOverlay, bContextMenu, {
-				x: mPosition.clientX,
-				y: mPosition.clientY
-			});
-		}
-
-		this.fireOpenedContextMenu();
+			this.fireOpenedContextMenu();
+		}.bind(this));
 	};
 
 	/**

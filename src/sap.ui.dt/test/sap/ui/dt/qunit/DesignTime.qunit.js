@@ -151,7 +151,7 @@ function(
 
 			this.oDesignTime.addPlugin(oCustomPlugin1);
 			this.oDesignTime.addPlugin(oCustomPlugin2);
-			assert.deepEqual(this.oDesignTime.getBusyPlugins(), [ oCustomPlugin2 ]);
+			assert.deepEqual(this.oDesignTime.getBusyPlugins(), [oCustomPlugin2]);
 		});
 	});
 

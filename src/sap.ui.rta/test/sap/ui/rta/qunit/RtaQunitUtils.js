@@ -1,11 +1,15 @@
 sap.ui.define([
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/fl/FakeLrepSessionStorage",
-	"sap/ui/core/ComponentContainer"
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/events/KeyCodes"
 ], function(
 	FakeLrepConnectorSessionStorage,
 	FakeLrepSessionStorage,
-	ComponentContainer
+	ComponentContainer,
+	QUnitUtils,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -119,6 +123,32 @@ sap.ui.define([
 		FakeLrepSessionStorage.attachModifyCallback(fnAssert);
 
 		return fnDetachEvent;
+	};
+
+	RtaQunitUtils.openContextMenuWithKeyboard = function(oTarget) {
+		return new Promise(function(resolve) {
+			this.oRta.getPlugins()["contextMenu"].attachEventOnce("openedContextMenu", resolve);
+
+			var oParams = {};
+			oParams.keyCode = KeyCodes.F10;
+			oParams.which = oParams.keyCode;
+			oParams.shiftKey = true;
+			oParams.altKey = false;
+			oParams.metaKey = false;
+			oParams.ctrlKey = false;
+			QUnitUtils.triggerEvent("keyup", oTarget.getDomRef(), oParams);
+		}.bind(this));
+	};
+
+	RtaQunitUtils.openContextMenuWithClick = function(oTarget, sinon) {
+		return new Promise(function(resolve) {
+			this.oRta.getPlugins()["contextMenu"].attachEventOnce("openedContextMenu", resolve);
+
+			var clock = sinon.useFakeTimers();
+			QUnitUtils.triggerMouseEvent(oTarget.getDomRef(), "contextmenu");
+			clock.tick(50);
+			clock.restore();
+		}.bind(this));
 	};
 
 	return RtaQunitUtils;
