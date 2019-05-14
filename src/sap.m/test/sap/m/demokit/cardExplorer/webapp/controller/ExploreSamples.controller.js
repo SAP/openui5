@@ -1,11 +1,13 @@
 sap.ui.define([
 	"sap/ui/demo/cardExplorer/controller/BaseController",
 	'sap/ui/model/json/JSONModel',
+	"sap/ui/model/BindingMode",
 	"../model/ExploreNavigationModel",
 	"../model/ExploreSettingsModel"
 ], function(
 	BaseController,
 	JSONModel,
+	BindingMode,
 	exploreNavigationModel,
 	exploreSettingsModel
 ) {
@@ -19,20 +21,41 @@ sap.ui.define([
 		onInit: function () {
 			var oRouter = this.getRouter();
 			oRouter.getRoute("exploreSamples").attachMatched(this._onRouteMatched, this);
+
+			this.oModel = new JSONModel();
+			this.oModel.setDefaultBindingMode(BindingMode.OneWay);
+
+			this.getView().setModel(this.oModel);
 			this.getView().setModel(exploreSettingsModel, "settings");
 		},
 
 		_onRouteMatched: function (oEvent) {
 			var oArgs = oEvent.getParameter("arguments"),
 				sSampleKey = oArgs["key"],
-				oSample = this._findSample(sSampleKey);
+				oSample = this._findSample(sSampleKey),
+				sSubSampleKey = oArgs["subSampleKey"],
+				oSubSample;
+
+			// reset the model
+			this.oModel.setData({});
 
 			if (!oSample) {
 				//TODO sample not found
 				return;
 			}
 
-			this._showSample(oSample);
+			if (oSample.subSamples && !sSubSampleKey) {
+				// select the first sub sample
+				sSubSampleKey = oSample.subSamples[0].key;
+			}
+
+			oSubSample = this._findSubSample(oSample, sSubSampleKey);
+			if (sSubSampleKey && !oSubSample) {
+				//TODO sub sample not found
+				return;
+			}
+
+			this._showSample(oSample, oSubSample);
 		},
 
 		_findSample: function (sSampleKey) {
@@ -52,10 +75,45 @@ sap.ui.define([
 			return oFoundSample;
 		},
 
-		_showSample: function (oSample) {
-			this.getView().setModel(new JSONModel(oSample), "sample");
+		_findSubSample: function (oSample, sSubSampleKey) {
+			var oFoundSubSample;
 
-			var sUrl = jQuery.sap.getModulePath("sap.ui.demo.cardExplorer") + "/" + oSample.manifestUrl;
+			if (!sSubSampleKey) {
+				return null;
+			}
+
+			oSample.subSamples.some(function (oSubSample) {
+				if (oSubSample.key === sSubSampleKey) {
+					oFoundSubSample = oSubSample;
+					return true;
+				}
+			});
+
+			return oFoundSubSample;
+		},
+
+		_showSample: function (oSample, oSubSample) {
+			var sManifestUrl;
+
+			this.oModel.setProperty("/sample", oSample);
+
+			if (oSubSample) {
+				this.oModel.setProperty("/subSample", oSubSample);
+				sManifestUrl = oSubSample.manifestUrl;
+			} else {
+				sManifestUrl = oSample.manifestUrl;
+			}
+
+			if (!sManifestUrl) {
+				// TODO no manifest for the given sample or sub sample
+				return;
+			}
+
+			this._loadManifest(sManifestUrl);
+		},
+
+		_loadManifest: function (sManifestUrl) {
+			var sUrl = jQuery.sap.getModulePath("sap.ui.demo.cardExplorer") + "/" + sManifestUrl;
 
 			jQuery.ajax(sUrl, {
 				async: true,
@@ -76,6 +134,17 @@ sap.ui.define([
 			// TODO try/catch, handle errors, handle json validation, schema validation and etc.
 			var oData = JSON.parse(sValue);
 			this.byId("cardSample").setManifest(oData);
+		},
+		onSubSampleChange: function (oEvent) {
+			var item = oEvent.getParameter('selectedItem');
+
+			this.getRouter().navTo(
+				"exploreSamples",
+				{
+					key: this.oModel.getProperty("/sample").key,
+					subSampleKey: item.getKey()
+				}
+			);
 		},
 		onManifestEdited: function (oEvent) {
 			var sValue = oEvent.getParameter("value");

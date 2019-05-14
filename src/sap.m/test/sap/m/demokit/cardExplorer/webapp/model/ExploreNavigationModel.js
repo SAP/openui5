@@ -10,72 +10,76 @@ sap.ui.define([
 				title: 'Types',
 				icon: 'sap-icon://card',
 				key: 'types',
-				target: 'exploreSamples',
+				target: 'exploreHome',
 				items: [
 					{
 						title: 'List',
 						target: 'exploreSamples',
-						key: 'sample.list.manifestUrl',
-						manifestUrl: '/samples/list.manifest.json'
+						key: 'list',
+						subSamples: [
+							{
+								title: 'General',
+								key: 'general',
+								manifestUrl: '/samples/list.manifest.json'
+							},
+							{
+								title: 'Highlight',
+								key: 'highlight',
+								manifestUrl: '/samples/list.highlight.manifest.json'
+							},
+							{
+								title: 'Icon',
+								key: 'icon',
+								manifestUrl: '/samples/list.icon.manifest.json'
+							},
+							{
+								title: 'Numeric',
+								key: 'numeric',
+								manifestUrl: '/samples/list.numeric.manifest.json'
+							}
+						]
 					},
-					{
-						title: 'List highlight',
-						target: 'exploreSamples',
-						key: 'sample.list.highlight',
-						manifestUrl: '/samples/list.highlight.manifest.json'
-					},
-					{
-						title: 'List icon',
-						target: 'exploreSamples',
-						key: 'sample.list.icon',
-						manifestUrl: '/samples/list.icon.manifest.json'
-					},
-					{
-						title: 'List numeric',
-						target: 'exploreSamples',
-						key: 'sample.list.numeric',
-						manifestUrl: '/samples/list.numeric.manifest.json'
-					},
+
 					{
 						title: 'Analytical',
 						target: 'exploreSamples',
-						key: 'sample.analytical',
+						key: 'analytical',
 						manifestUrl: '/samples/analytical.manifest.json'
 					},
 					{
 						title: 'Object',
 						target: 'exploreSamples',
-						key: 'sample.object',
+						key: 'object',
 						manifestUrl: '/samples/object.manifest.json'
 					},
 					{
 						title: 'Table',
 						target: 'exploreSamples',
-						key: 'sample.table',
+						key: 'table',
 						manifestUrl: '/samples/table.manifest.json'
 					},
 					{
 						title: 'Timeline',
 						target: 'exploreSamples',
-						key: 'sample.timeline',
+						key: 'timeline',
 						manifestUrl: '/samples/timeline.manifest.json'
 					}
 				]
 			},
 			{
 				key: 'features',
-				target: 'exploreSamples',
+				target: 'exploreHome',
 				title: 'Features',
 				icon: 'sap-icon://activities',
 				items: [
 					{
-						key: 'sample.actions',
+						key: 'actions',
 						target: 'exploreSamples',
 						title: 'Actions TODO',
 						manifestUrl: '/samples/list.manifest.json'
 					},
 					{
-						key: 'sample.data',
+						key: 'data',
 						target: 'exploreSamples',
 						title: 'Data TODO',
 						manifestUrl: '/samples/list.manifest.json'
