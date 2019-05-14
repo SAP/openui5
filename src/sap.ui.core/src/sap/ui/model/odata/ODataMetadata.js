@@ -31,7 +31,7 @@ sap.ui.define([
 	 * @param {string} [mParams.cacheKey] (optional) A valid cache key
 	 *
 	 * @class
-	 * Implementation to access oData metadata
+	 * Implementation to access OData metadata
 	 *
 	 * @author SAP SE
 	 * @version ${version}
