@@ -179,8 +179,6 @@ sap.ui.define([
 	 *   </li>
 	 *   </ul>
 	 *
-	 *   <b>Note: The model does not support any public events; attaching an event handler leads to
-	 *   an error.</b>
 	 * @extends sap.ui.model.Model
 	 * @public
 	 * @since 1.37.0
