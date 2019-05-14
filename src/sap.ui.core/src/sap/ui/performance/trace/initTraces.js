@@ -10,7 +10,7 @@ sap.ui.define(["sap/ui/performance/trace/FESR", "sap/base/Log"], function(FESR, 
 	"use strict";
 
 	/**
-	 * Determine wether to activate SAP Passport or FESR
+	 * Determines whether to activate SAP Passport or FESR.
 	 *
 	 * @function
 	 * @since 1.58
