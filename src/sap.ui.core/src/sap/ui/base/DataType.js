@@ -7,9 +7,10 @@ sap.ui.define([
 	'sap/base/util/ObjectPath',
 	"sap/base/assert",
 	"sap/base/Log",
-	"sap/base/util/isPlainObject"
+	"sap/base/util/isPlainObject",
+	'sap/base/util/resolveReference'
 ],
-	function(ObjectPath, assert, Log, isPlainObject) {
+	function(ObjectPath, assert, Log, isPlainObject, resolveReference) {
 	"use strict";
 
 
@@ -447,24 +448,15 @@ sap.ui.define([
 							"simple identifiers (A-Z, 0-9, _ or $) only, but was '" + sValue + "'");
 					}
 
-					// TODO implementation should be moved to / shared with EventHandlerResolver
 					var fnResult,
-						bLocal,
-						contextObj = _oOptions && _oOptions.context;
+						oContext = _oOptions && _oOptions.context,
+						oLocals = _oOptions && _oOptions.locals;
 
-					if ( sValue[0] === '.' ) {
-						// starts with a dot, must be a controller local function
-						// usage of ObjectPath.get to allow addressing functions in properties
-						if ( contextObj ) {
-							fnResult = ObjectPath.get(sValue.slice(1), contextObj);
-							bLocal = true;
-						}
-					} else {
-						fnResult = ObjectPath.get(sValue);
-					}
+					fnResult = resolveReference(sValue,
+						Object.assign({".": oContext}, oLocals));
 
 					if ( fnResult && this.isValid(fnResult) ) {
-						return bLocal ? fnResult.bind(contextObj) : fnResult;
+						return fnResult;
 					}
 
 					throw new TypeError("The string '" + sValue + "' couldn't be resolved to a function");
@@ -648,6 +640,7 @@ sap.ui.define([
 	DataType.isInterfaceType = function(sType) {
 		return mInterfaces.hasOwnProperty(sType) && ObjectPath.get(sType) === mInterfaces[sType];
 	};
+
 
 	return DataType;
 

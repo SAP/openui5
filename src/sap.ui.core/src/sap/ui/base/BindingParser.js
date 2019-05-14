@@ -10,7 +10,8 @@ sap.ui.define([
 	'sap/ui/model/Sorter',
 	"sap/base/Log",
 	'sap/base/util/ObjectPath',
-	"sap/base/util/JSTokenizer"
+	"sap/base/util/JSTokenizer",
+	"sap/base/util/resolveReference"
 ], function(
 		ExpressionParser,
 		BindingMode,
@@ -18,7 +19,8 @@ sap.ui.define([
 		Sorter,
 		Log,
 		ObjectPath,
-		JSTokenizer
+		JSTokenizer,
+		resolveReference
 	) {
 	"use strict";
 
@@ -156,6 +158,7 @@ sap.ui.define([
 	}
 
 	function resolveBindingInfo(oEnv, oBindingInfo) {
+		var mVariables = Object.assign({".": oEnv.oContext}, oEnv.mLocals);
 
 		/*
 		 * Resolves a function name to a function.
@@ -164,20 +167,21 @@ sap.ui.define([
 		 *
 		 * If the name starts with a dot ('.'), lookup happens within the given context only;
 		 * otherwise it will first happen within the given context (only if
-		 * <code>bPreferContext</code> is set) and then fall back to the global context (window).
+		 * <code>bPreferContext</code> is set) and then use <code>mLocals</code> to resolve
+		 * the function and finally fall back to the global context (window).
 		 *
 		 * @param {object} o Object from which the property should be read and resolved
 		 * @param {string} sProp name of the property to resolve
 		 */
 		function resolveRef(o,sProp) {
 			if ( typeof o[sProp] === "string" ) {
-				var fn, sName = o[sProp];
-				if ( o[sProp][0] === "." ) {
-					fn = ObjectPath.get(o[sProp].slice(1), oEnv.oContext);
-					o[sProp] = oEnv.bStaticContext ? fn : (fn && fn.bind(oEnv.oContext));
-				} else {
-					o[sProp] = oEnv.bPreferContext && ObjectPath.get(o[sProp], oEnv.oContext) || ObjectPath.get(o[sProp]);
-				}
+				var sName = o[sProp];
+
+				o[sProp] = resolveReference(o[sProp], mVariables, {
+					preferDotContext: oEnv.bPreferContext,
+					bindDotContext: !oEnv.bStaticContext
+				});
+
 				if (typeof (o[sProp]) !== "function") {
 					if (oEnv.bTolerateFunctionsNotFound) {
 						oEnv.aFunctionsNotFound = oEnv.aFunctionsNotFound || [];
@@ -192,8 +196,8 @@ sap.ui.define([
 		/*
 		 * Resolves a data type name and configuration either to a type constructor or to a type instance.
 		 *
-		 * The name is resolved locally (against oEnv) if it starts with a '.', otherwise against
-		 * the global context (window).
+		 * The name is resolved locally (against oEnv.oContext) if it starts with a '.', otherwise against
+		 * the oEnv.mLocals and if it's still not resolved, against the global context (window).
 		 *
 		 * The resolution is done inplace. If the name resolves to a function, it is assumed to be the
 		 * constructor of a data type. A new instance will be created, using the values of the
@@ -205,11 +209,10 @@ sap.ui.define([
 		function resolveType(o) {
 			var FNType;
 			if (typeof o.type === "string" ) {
-				if ( o.type[0] === "." ) {
-					FNType = ObjectPath.get(o.type.slice(1), oEnv.oContext);
-				} else {
-					FNType = ObjectPath.get(o.type);
-				}
+				FNType = resolveReference(o.type, mVariables, {
+					bindContext: false
+				});
+
 				// TODO find another solution for the type parameters?
 				if (typeof FNType === "function") {
 					o.type = new FNType(o.formatOptions, o.constraints);
@@ -378,19 +381,22 @@ sap.ui.define([
 	 *   string array <code>functionsNotFound</code> of the result object; else they are logged
 	 *   as errors
 	 * @param {boolean} [bStaticContext=false]
-	 *   if true, relative function names found via <code>oContext</code> will not be treated as
-	 *   instance methods of the context, but as static methods
+	 *   If true, relative function names found via <code>oContext</code> will not be treated as
+	 *   instance methods of the context, but as static methods.
 	 * @param {boolean} [bPreferContext=false]
 	 *   if true, names without an initial dot are searched in the given context first and then
 	 *   globally
+	 * @param {object} [mLocals]
+	 *   variables allowed in the expression as map of variable name to its value
 	 */
 	BindingParser.complexParser = function(sString, oContext, bUnescape,
-			bTolerateFunctionsNotFound, bStaticContext, bPreferContext) {
+			bTolerateFunctionsNotFound, bStaticContext, bPreferContext, mLocals) {
 		var b2ndLevelMergedNeeded = false, // whether some 2nd level parts again have parts
 			oBindingInfo = {parts:[]},
 			bMergeNeeded = false, // whether some top-level parts again have parts
 			oEnv = {
 				oContext: oContext,
+				mLocals: mLocals,
 				aFunctionsNotFound: undefined, // lazy creation
 				bPreferContext : bPreferContext,
 				bStaticContext: bStaticContext,
@@ -414,7 +420,7 @@ sap.ui.define([
 		 */
 		function expression(sInput, iStart, oBindingMode) {
 			var oBinding = ExpressionParser.parse(resolveEmbeddedBinding.bind(null, oEnv), sString,
-					iStart, null, bStaticContext ? oContext : null);
+					iStart, null, mLocals || (bStaticContext ? oContext : null));
 
 			/**
 			 * Recursively sets the mode <code>oBindingMode</code> on the given binding (or its
@@ -620,8 +626,8 @@ sap.ui.define([
 	 *   the index to start parsing
 	 * @param {object} [oEnv]
 	 *   the "environment" (see resolveEmbeddedBinding function for details)
-	 * @param {object} [mGlobals]
-	 *   global variables allowed in the expression as map of variable name to its value
+	 * @param {object} [mLocals]
+	 *   variables allowed in the expression as map of variable name to value
 	 * @returns {object}
 	 *   the parse result with the following properties
 	 *   <ul>
@@ -636,9 +642,14 @@ sap.ui.define([
 	 *   the error contains the position where parsing failed.
 	 * @private
 	 */
-	BindingParser.parseExpression = function (sInput, iStart, oEnv, mGlobals) {
-		return ExpressionParser.parse(resolveEmbeddedBinding.bind(null, oEnv || {}), sInput, iStart,
-			mGlobals);
+	BindingParser.parseExpression = function (sInput, iStart, oEnv, mLocals) {
+		oEnv = oEnv || {};
+
+		if (mLocals) {
+			oEnv.mLocals = mLocals;
+		}
+
+		return ExpressionParser.parse(resolveEmbeddedBinding.bind(null, oEnv), sInput, iStart, mLocals);
 	};
 
 	return BindingParser;

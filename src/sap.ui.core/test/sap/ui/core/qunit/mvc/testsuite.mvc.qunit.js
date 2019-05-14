@@ -145,6 +145,17 @@ sap.ui.define(function() {
 						"my": "test-resources/sap/ui/core/qunit/fragment/"
 					}
 				}
+			},
+			XMLTemplateProcessorRequireXML: {
+				title: "QUnit Page for XMLTemplateProcessor - Require in XML",
+				ui5: {
+					libs: "sap.m"
+				},
+				loader: {
+					paths: {
+						"testdata": "test-resources/sap/ui/core/qunit/testdata"
+					}
+				}
 			}
 		}
 	};
