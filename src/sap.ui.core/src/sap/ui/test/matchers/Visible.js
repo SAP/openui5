@@ -6,7 +6,7 @@ sap.ui.define(['sap/ui/test/matchers/Matcher'], function (Matcher) {
 	"use strict";
 
 	/**
-	 * @class Visible - check if a controls domref is visible
+	 * @class Checks if a controls domref is visible.
 	 * @private
 	 * @extends sap.ui.test.matchers.Matcher
 	 * @name sap.ui.test.matchers.Visible

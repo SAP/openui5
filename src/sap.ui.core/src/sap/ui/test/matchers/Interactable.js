@@ -17,7 +17,7 @@ sap.ui.define([
 
 	/**
 	 * @class
-	 * Interactable - check if a control is currently able to take user interactions.
+	 * Checks if a control is currently able to take user interactions.
 	 * OPA5 will automatically apply this matcher if you specify actions in {@link sap.ui.test.Opa5#waitFor}.
 	 * A control will be filtered out by this matcher when:
 	 * <ul>
@@ -37,7 +37,7 @@ sap.ui.define([
 	 *         The UIArea of the control needs new rendering
 	 *     </li>
 	 * </ul>
-	 * Since 1.53 Interactable no longer uses internal autoWait functionality.
+	 * Since 1.53, Interactable no longer uses internal autoWait functionality.
 	 * Interactable matcher might be made private in the near future.
 	 * It is recommended to enable autoWait OPA option instead of using the Interactable matcher directly.
 	 * @public

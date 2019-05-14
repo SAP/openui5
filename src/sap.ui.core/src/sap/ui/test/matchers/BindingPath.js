@@ -6,15 +6,17 @@ sap.ui.define(['sap/ui/test/matchers/Matcher'], function(Matcher) {
 	"use strict";
 
 	/**
-	 * BindingPath - checks if a control has a specific binding
-	 * @since 1.60 Comparison is strict and can include one or more binding criteria:
-	 * - context path (matches children of bound controls, eg: items in a table)
-	 * - property path (matches controls with no context and a single bound property, eg: Text with binding for property text)
-	 * - context path + property path (matches children of bound controls, where the child has a binding for a certain property within the context)
+	 * @class
+	 * Checks if a control has a binding context with the exact same binding path.
 	 *
-	 * Before v1.60 he only available criteria is binding context path!
+	 * As of version 1.60, comparison is strict and can include one or more binding criteria:
+	 * <ul>
+	 * <li>context path (matches children of bound controls, eg: items in a table)</li>
+	 * <li>property path (matches controls with no context and a single bound property, eg: Text with binding for property text)</li>
+	 * <li>context path + property path (matches children of bound controls, where the child has a binding for a certain property within the context)</li>
+	 * </ul>
 	 *
-	 * @class BindingPath - checks if a control has a binding context with the exact same binding path
+	 * <b>Note:</b> Before version 1.60, the only available criteria is binding context path.
 	 * @extends sap.ui.test.matchers.Matcher
 	 * @param {object} [mSettings] Map/JSON-object with initial settings for the new BindingPath.
 	 * @public

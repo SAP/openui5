@@ -14,7 +14,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @class record-and-replay implementation for OPA5
+	 * @class Record-and-replay implementation for OPA5.
 	 *
 	 * @public
 	 * @alias sap.ui.test.RecordReplay

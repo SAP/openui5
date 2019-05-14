@@ -11,7 +11,7 @@ sap.ui.define([
 		"use strict";
 
 		/**
-		 * @class Page Object Factory
+		 * @class Page Object Factory.
 		 * @extends sap.ui.base.Object
 		 * @protected
 		 * @alias sap.ui.test.PageObjectFactory

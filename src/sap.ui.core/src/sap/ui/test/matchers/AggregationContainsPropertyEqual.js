@@ -10,9 +10,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * AggregationContainsPropertyEqual - checks if an aggregation contains at least one item that has a Property set to a certain value.
-	 *
-	 * @class AggregationContainsPropertyEqual - checks if an aggregation contains at least one item that has a Property set to a certain value
+	 * @class Checks if an aggregation contains at least one item that has a property set to a certain value.
 	 * @extends sap.ui.test.matchers.Matcher
 	 * @param {object} [mSettings] optional map/JSON-object with initial settings for the new AggregationContainsPropertyEqualMatcher
 	 * @public

@@ -12,7 +12,7 @@ sap.ui.define([
 	var oLogger = Log.getLogger("sap.ui.test.matchers.Properties");
 
 	/**
-	 * @class Properties - checks if a control's properties have the provided values - all properties have to match their values.
+	 * @class Checks if a control's properties have the provided values - all properties have to match their values.
 	 * @param {object} oProperties the object with the properties to be checked. Example:
 	 * <pre>
 	 * // Would filter for an enabled control with the text "Accept".

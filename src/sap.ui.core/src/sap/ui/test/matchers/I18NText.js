@@ -7,16 +7,17 @@ sap.ui.define(['sap/ui/test/matchers/Matcher', "sap/base/strings/capitalize"], f
 	/**
 	 * @class
 	 * The I18NText matcher checks if a control property has the same value as a text from an I18N file.
-	 * The matcher does automatically
+	 *
+	 * The matcher automatically:
 	 * <ul>
 	 *     <li>
-	 *         retrieve the text from the assigned 'i18n' model (name can be changed)
+	 *         retrieves the text from the assigned 'i18n' model (name can be changed)
 	 *     </li>
 	 *     <li>
-	 *         check that the I18N key does actually exist in the file
+	 *         checks that the I18N key does actually exist in the file
 	 *     </li>
 	 *     <li>
-	 *         check if asynchronously loaded I18N have actually been loaded
+	 *         checks if asynchronously loaded I18N have actually been loaded
 	 *     </li>
 	 * </ul>
 	 *
