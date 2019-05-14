@@ -1,17 +1,310 @@
-/*global QUnit */
+/*global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/table/CreationRow",
 	"sap/ui/table/Column",
 	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Control",
-	"sap/ui/model/json/JSONModel"
-], function(CreationRow, Column, TableQUnitUtils, Control, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/m/Toolbar"
+], function(CreationRow, Column, TableQUnitUtils, QUnitUtils, KeyCodes, Control, JSONModel, Toolbar) {
 	"use strict";
 
-	// TODO: a lot lot more...
-
 	var TestControl = TableQUnitUtils.getTestControl();
+	var TestInputControl = TableQUnitUtils.getTestInputControl();
+
+	QUnit.module("Public API", {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
+				visibleRowCount: 1,
+				rows: {path: "/"},
+				models: new JSONModel(new Array(1))
+			}, function(oTable) {
+				oTable.addColumn(new Column({
+					id: "column1",
+					template: new TestControl({text: "test"})
+				}).setCreationTemplate(new TestControl({text: "test"})));
+
+				oTable.addColumn(new Column({
+					id: "column2",
+					template: new TestControl({text: "test2"})
+				}).setCreationTemplate(new TestInputControl({text: "test2"})));
+
+				oTable.setCreationRow(new CreationRow());
+			});
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("#resetFocus", function(assert) {
+		var oCreationRow = this.oTable.getCreationRow();
+
+		this.oTable.qunit.getDataCell(0, 0).focus();
+
+		assert.strictEqual(oCreationRow.resetFocus(), true, "Returned true, because an element was focused");
+		assert.strictEqual(document.activeElement, oCreationRow.getCells()[1].getDomRef(), "The first interactive element is focused");
+		assert.strictEqual(window.getSelection().toString(), "test2", "The text of the interactive element is selected");
+
+		this.oTable.getColumns()[1].destroy();
+		sap.ui.getCore().applyChanges();
+		this.oTable.qunit.getDataCell(0, 0).focus();
+
+		assert.strictEqual(oCreationRow.resetFocus(), false, "Returned false, because no element was focused");
+		assert.strictEqual(document.activeElement, this.oTable.qunit.getDataCell(0, 0), "The focus was not changed");
+	});
+
+	QUnit.module("Private API", {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
+				visibleRowCount: 1,
+				rows: {path: "/"},
+				models: new JSONModel(new Array(1))
+			}, function(oTable) {
+				oTable.addColumn(new Column({
+					id: "column1",
+					template: new TestControl({text: "test"})
+				}).setCreationTemplate(new TestControl({text: "test"})));
+
+				oTable.addColumn(new Column({
+					id: "column2",
+					template: new TestControl({text: "test2"})
+				}).setCreationTemplate(new TestInputControl({text: "test2"})));
+
+				oTable.setCreationRow(new CreationRow());
+			});
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("#_fireApply", function(assert) {
+		var oCreationRow = this.oTable.getCreationRow();
+		var oApplySpy = sinon.spy();
+		var oResetFocusSpy = sinon.spy(oCreationRow, "resetFocus");
+
+		oCreationRow.attachApply(oApplySpy);
+
+		assert.strictEqual(oCreationRow._fireApply(), true, "Returned true, because an element was focused");
+		assert.ok(oApplySpy.calledOnce, "The CreationRow's \"apply\" event was called once");
+		assert.ok(oResetFocusSpy.calledOnce, "CreationRow#resetFocus was called once");
+
+		oApplySpy.reset();
+		oResetFocusSpy.reset();
+
+		oCreationRow.attachEventOnce("apply", function(oEvent) {
+			oEvent.preventDefault();
+		});
+
+		assert.strictEqual(oCreationRow._fireApply(), false,
+			"Returned false, because the default action was prevented and therefore no focus was set");
+		assert.ok(oApplySpy.calledOnce, "The CreationRow's \"apply\" event was called once");
+		assert.ok(oResetFocusSpy.notCalled, "CreationRow#resetFocus was not called");
+
+		oApplySpy.reset();
+		oResetFocusSpy.reset();
+		this.oTable.getColumns()[1].destroy();
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oCreationRow._fireApply(), false, "Returned false, because no element was focused");
+		assert.ok(oApplySpy.calledOnce, "The CreationRow's \"apply\" event was called once");
+		assert.ok(oResetFocusSpy.calledOnce, "CreationRow#resetFocus was called once");
+	});
+
+	QUnit.module("Rendering", {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable();
+			this.oCreationRow = new CreationRow();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+			this.oCreationRow.destroy();
+		}
+	});
+
+	QUnit.test("If child of a table", function(assert) {
+		this.oTable.setCreationRow(this.oCreationRow);
+		sap.ui.getCore().applyChanges();
+
+		assert.notEqual(this.oCreationRow.getDomRef(), null, "The creation row is rendered");
+	});
+
+	QUnit.test("If not child of a table", function(assert) {
+		this.oCreationRow.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(this.oCreationRow.getDomRef(), null, "The creation row did not render anything");
+	});
+
+	QUnit.test("Toolbar", function(assert) {
+		this.oTable.setCreationRow(this.oCreationRow);
+		sap.ui.getCore().applyChanges();
+
+		assert.notEqual(this.oCreationRow._oDefaultToolbar.getDomRef(), null, "No custom toolbar is set: The default toolbar is rendered");
+
+		this.oCreationRow.setToolbar(new Toolbar());
+		sap.ui.getCore().applyChanges();
+
+		assert.notEqual(this.oCreationRow.getToolbar().getDomRef(), null, "Custom toolbar is set: The custom toolbar is rendered");
+		assert.equal(this.oCreationRow._oDefaultToolbar.getDomRef(), null, "Custom toolbar is set: The default toolbar is not rendered");
+
+		this.oCreationRow.destroyToolbar();
+		sap.ui.getCore().applyChanges();
+
+		assert.notEqual(this.oCreationRow._oDefaultToolbar.getDomRef(), null, "No custom toolbar is set: The default toolbar is rendered");
+	});
+
+	QUnit.module("Accessibility", {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
+				visibleRowCount: 1,
+				fixedColumnCount: 1,
+				rows: {path: "/"},
+				models: new JSONModel(new Array(1))
+			}, function(oTable) {
+				oTable.addColumn(new Column({
+					id: "column1",
+					template: new TestControl({text: "test"})
+				}).setCreationTemplate(new TestControl({text: "test"})));
+
+				oTable.addColumn(new Column({
+					id: "column2",
+					template: new TestControl({text: "test2"})
+				}).setCreationTemplate(new TestControl({text: "test2"})));
+
+				oTable.setCreationRow(new CreationRow());
+			});
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("Root", function(assert) {
+		var oRow = this.oTable.getCreationRow();
+		var $Row = oRow.$();
+
+		assert.strictEqual($Row.attr("role"), "form", "Aria Role of creation row root element");
+		assert.strictEqual($Row.attr("aria-labelledby"), oRow.getId() + "-label", "Label of creation row root element");
+	});
+
+	QUnit.test("Default Toolbar", function(assert) {
+		var oRow = this.oTable.getCreationRow();
+
+		assert.strictEqual(oRow._oDefaultToolbar.getAriaLabelledBy()[0], oRow.getId() + "-label", "Default toolbar has correct label");
+	});
+
+	QUnit.test("Inner table elements", function(assert) {
+		var oRow = this.oTable.getCreationRow();
+		var $Row = oRow.$();
+
+		assert.strictEqual($Row.find("table").attr("role"), "presentation", "Aria Role of creation row inner table element");
+	});
+
+	QUnit.test("Cells", function(assert) {
+		var oRow = this.oTable.getCreationRow();
+		var aCells = oRow.getCells();
+
+		assert.strictEqual(aCells[0].getAriaLabelledBy()[0], "column1", "The first cell is labelled by the correct column");
+		assert.strictEqual(aCells[1].getAriaLabelledBy()[0], "column2", "The first cell is labelled by the correct column");
+	});
+
+	QUnit.module("Keyboard", {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
+				visibleRowCount: 1,
+				fixedColumnCount: 1,
+				rows: {path: "/"},
+				models: new JSONModel(new Array(1))
+			}, function(oTable) {
+				oTable.addColumn(new Column({
+					id: "column1",
+					template: new TestControl({text: "test"})
+				}).setCreationTemplate(new TestInputControl({text: "test"})));
+
+				oTable.addColumn(new Column({
+					id: "column2",
+					template: new TestControl({text: "test2"})
+				}).setCreationTemplate(new TestControl({text: "test2"})));
+
+				oTable.addColumn(new Column({
+					id: "column3",
+					template: new TestControl({text: "test3"})
+				}).setCreationTemplate(new TestInputControl({text: "test3"})));
+
+				oTable.setCreationRow(new CreationRow());
+			});
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("Fire apply with CTRL+Enter", function(assert) {
+		var done = assert.async();
+		var oCreationRow = this.oTable.getCreationRow();
+		var oFormElement = oCreationRow.getCells()[0].getDomRef();
+		var oFireApplySpy = sinon.spy(oCreationRow, "_fireApply");
+		var aEvents = [];
+
+		function test(fnAct, fnAssert) {
+			oFireApplySpy.reset();
+			aEvents = [];
+			fnAct();
+
+			return new Promise(function(resolve) {
+				setTimeout(function() {
+					fnAssert();
+					resolve();
+				}, 10);
+			});
+		}
+
+		oFormElement.focus();
+
+		oCreationRow.getCells()[0].addEventDelegate({
+			onsapfocusleave: function() {
+				aEvents.push("sapfocusleave");
+			},
+			onfocusin: function() {
+				aEvents.push("focusin");
+			}
+		});
+
+		test(function() {
+			QUnitUtils.triggerKeydown(oFormElement, KeyCodes.ENTER, false, false, true);
+		}, function() {
+			assert.ok(oFireApplySpy.calledOnce, "CreationRow#_fireApply was called once");
+			assert.deepEqual(aEvents, ["sapfocusleave", "focusin"], "The events on the form element were correctly fired");
+
+		}).then(function() {
+			return test(function() {
+				oCreationRow.attachEventOnce("apply", function(oEvent) {
+					oEvent.preventDefault();
+				});
+				QUnitUtils.triggerKeydown(oFormElement, KeyCodes.ENTER, false, false, true);
+			}, function() {
+				assert.ok(oFireApplySpy.calledOnce, "CreationRow#_fireApply was called once");
+				assert.deepEqual(aEvents, ["sapfocusleave", "focusin"], "The events on the form element were correctly fired");
+
+			});
+
+		}).then(function() {
+			return test(function() {
+				oCreationRow.setApplyEnabled(false);
+				QUnitUtils.triggerKeydown(oFormElement, KeyCodes.ENTER, false, false, true);
+			}, function() {
+				assert.ok(oFireApplySpy.notCalled, "CreationRow#_fireApply was not called");
+				assert.deepEqual(aEvents, [], "The events on the form element were correctly fired");
+
+			});
+
+		}).then(done);
+	});
 
 	QUnit.module("Cells", {
 		beforeEach: function() {
@@ -32,11 +325,12 @@ sap.ui.define([
 				oTable.addColumn(new Column({template: new TestControl({text: "Column7"})}));
 				oTable.addColumn(new Column({template: new TestControl({text: "Column8"})})
 					.setCreationTemplate(new TestControl({text: "Column8*"})));
-			});
-			this.oTable.setCreationRow(new CreationRow());
 
-			sap.ui.getCore().applyChanges();
-			return this.oTable.qunit.whenInitialRenderingFinished();
+				oTable.setCreationRow(new CreationRow());
+			});
+		},
+		afterEach: function() {
+			this.oTable.destroy();
 		},
 		assertCells: function(assert) {
 			var aActualCells = this.oTable.getCreationRow().getCells().map(function(oCell) {
@@ -46,9 +340,6 @@ sap.ui.define([
 			var aExpectedCells = Array.prototype.slice.call(arguments, 1);
 
 			assert.deepEqual(aActualCells, aExpectedCells, "The creation row has the correct cells");
-		},
-		afterEach: function() {
-			this.oTable.destroy();
 		}
 	});
 
@@ -124,28 +415,112 @@ sap.ui.define([
 		this.assertCells(assert, "Column0", "Column4", "Column8", "Column9");
 	});
 
-	QUnit.test("Accessibility", function(assert) {
-		var oRow = this.oTable.getCreationRow();
-		var $Row = oRow.$();
-		assert.strictEqual($Row.attr("role"), "form", "Aria Role of creation row root element");
-		assert.strictEqual($Row.attr("aria-labelledby"), oRow.getId() + "-label", "Label of creation row root element");
-		assert.ok(oRow._oDefaultToolbar.getAriaLabelledBy()[0] === oRow.getId() + "-label", "Default toolbar has correct label");
-		assert.strictEqual($Row.find("table").attr("role"), "presentation", "Aria Role of creation row inner table element");
-	});
-
-	QUnit.module("Toolbar", {
+	QUnit.module("Default Toolbar", {
 		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable();
+			this.oCreationRow = new CreationRow();
 		},
 		afterEach: function() {
+			this.oTable.destroy();
+			this.oCreationRow.destroy();
 		}
 	});
 
-	QUnit.test("Default Toolbar", function(assert) {
-		var oCreationRow = new CreationRow();
+	QUnit.test("After initialization", function(assert) {
+		assert.ok(this.oCreationRow.getToolbar() === null, "No custom toolbar is set");
+		assert.ok(this.oCreationRow._oDefaultToolbar == null, "No default toolbar exists");
+	});
 
-		assert.strictEqual(oCreationRow.getToolbar(), null, "No toolbar is set");
-		assert.ok(oCreationRow._oDefaultToolbar == null, "No default toolbar is created yet");
+	QUnit.test("Create if no custom toolbar is provided", function(assert) {
+		this.oCreationRow.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
 
-		//...
+		assert.ok(this.oCreationRow.getToolbar() === null, "No custom toolbar is set");
+		assert.ok(this.oCreationRow._oDefaultToolbar == null, "No default toolbar exists if rendered while not a child of the table");
+
+		this.oTable.setCreationRow(this.oCreationRow);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(this.oCreationRow.getToolbar() === null, "No custom toolbar is set");
+		assert.ok(this.oCreationRow._oDefaultToolbar != null, "The default toolbar is created if rendered as a child of a table");
+	});
+
+	QUnit.test("Do not create if a custom toolbar is provided", function(assert) {
+		var oToolbar = new Toolbar();
+		this.oCreationRow.setToolbar(oToolbar);
+		this.oTable.setCreationRow(this.oCreationRow);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(this.oCreationRow.getToolbar() === oToolbar, "A custom toolbar is set");
+		assert.ok(this.oCreationRow._oDefaultToolbar == null, "The default toolbar is not created");
+	});
+
+	QUnit.test("Do not recreate", function(assert) {
+		this.oCreationRow.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var oDefaultToolbar = this.oCreationRow._oDefaultToolbar;
+
+		this.oCreationRow.setToolbar(new Toolbar());
+		sap.ui.getCore().applyChanges();
+
+		this.oCreationRow.destroyToolbar();
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oDefaultToolbar, this.oCreationRow._oDefaultToolbar, "The custom toolbar is reused");
+	});
+
+	QUnit.test("Destroy when the CreationRow is destroyed", function(assert) {
+		this.oTable.setCreationRow(this.oCreationRow);
+		sap.ui.getCore().applyChanges();
+
+		this.oCreationRow.destroy();
+		assert.ok(this.oCreationRow._oDefaultToolbar.bIsDestroyed, "The default toolbar is destroyed");
+	});
+
+	QUnit.test("Content", function(assert) {
+		this.oTable.setCreationRow(this.oCreationRow);
+		sap.ui.getCore().applyChanges();
+
+		var oApplyButton = this.oCreationRow._oDefaultToolbar.getContent().slice(-1)[0];
+		var oApplySpy = sinon.spy(this.oCreationRow, "_fireApply");
+
+		oApplyButton.firePress();
+
+		assert.ok(oApplyButton.isA("sap.m.Button"), "The last item is a button");
+		assert.ok(oApplySpy.calledOnce, "CreationRow#_fireApply is called when pressing the apply button");
+		assert.strictEqual(oApplyButton.getEnabled(), true, "The button is enabled");
+
+		this.oCreationRow.destroy();
+		this.oCreationRow = new CreationRow({
+			applyEnabled: false
+		});
+		this.oTable.setCreationRow(this.oCreationRow);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oApplyButton.getEnabled(), true, "The button is disabled");
+	});
+
+	QUnit.test("Update content", function(assert) {
+		this.oTable.setCreationRow(this.oCreationRow);
+		sap.ui.getCore().applyChanges();
+
+		var oApplyButton = this.oCreationRow._oDefaultToolbar.getContent().slice(-1)[0];
+
+		this.oCreationRow.setApplyEnabled(false);
+		assert.strictEqual(oApplyButton.getEnabled(), false, "The button is disabled after setting \"applyEnabled\" of the CreationRow to \"false\"");
+
+		this.oCreationRow.setApplyEnabled(true);
+		assert.strictEqual(oApplyButton.getEnabled(), true, "The button is enabled after setting \"applyEnabled\" of the CreationRow to \"true\"");
+
+		this.oCreationRow.setToolbar(new Toolbar());
+		this.oCreationRow.setApplyEnabled(false);
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(oApplyButton.getEnabled(), true,
+			"The button is still enabled after setting \"applyEnabled\" of the CreationRow to \"false\", if there is a custom toolbar");
+
+		this.oCreationRow.destroyToolbar();
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(oApplyButton.getEnabled(), false, "The button is updated after removing the custom toolbar, and is disabled");
 	});
 });

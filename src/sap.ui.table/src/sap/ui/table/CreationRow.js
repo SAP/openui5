@@ -209,7 +209,7 @@ sap.ui.define([
 	 * Updates the default toolbar. For example, the enabled state of the apply button is updated according to the <code>applyEnabled</code>
 	 * property value.
 	 * If a toolbar is set, the default toolbar is not updated, but just marked as "invalid". It will then be updated the next time
-	 * the default toolbar will be returned by {@link #_getToolbar}.
+	 * the default toolbar is returned by {@link #_getToolbar}.
 	 *
 	 * @private
 	 */
