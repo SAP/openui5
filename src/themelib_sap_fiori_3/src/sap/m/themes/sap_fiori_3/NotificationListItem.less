@@ -35,7 +35,6 @@
 
 .sapMNLI-Header {
 	box-shadow: inset 0 -0.0625rem @sapUiPageHeaderBorderColor;
-	max-height: none;
 }
 
 .sapMNLG-Body .sapMNLI-Header {
@@ -44,18 +43,4 @@
 
 .sapMNLB-Header .sapMText {
 	vertical-align: bottom;
-}
-
-// Focus Styles ========================================================================================================
-
-.sapMNLI:focus::before {
-	border: 1px dotted @sapUiContentFocusColor;
-	position: absolute;
-	content: " ";
-	top: 1px;
-	right: 1px;
-	bottom: 1px;
-	left: 1px;
-	z-index: 2;
-	pointer-events: none;
 }
