@@ -10,11 +10,12 @@ sap.ui.define([], function() {
 	"use strict";
 
 	/**
-	 * Creates a property stub which allows to retrieve the according property value lazily
-	 * <strong>Note:</strong> Within the callback the property value shows as undefined and
+	 * Creates a property stub which allows to retrieve the corresponding property value lazily.
+	 *
+	 * <b>Note:</b> Within the callback, the property value shows as undefined and
 	 * should not be set other than via assignment (no <code>Object.defineProperty</code>).
 	 * The function callback should return the actual property's value like that:
-	 * @example
+	 * <pre>
 	 * sap.ui.require(["sap/base/util/defineLazyProperty"], function(defineLazyProperty){
 	 *		var oTarget = {};
 	 *		defineLazyProperty(oTarget, "sProp", function() {
@@ -22,6 +23,7 @@ sap.ui.define([], function() {
 	 *		});
 	 *		console.log(oTarget["sProp"]); // should be 7
 	 * });
+	 * </pre>
 	 *
 	 * @function
 	 * @since 1.58
