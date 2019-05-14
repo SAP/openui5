@@ -32,7 +32,7 @@ sap.ui.define([
 		 * Creates a ScrollEnablement delegate that can be attached to Controls requiring
 		 * capabilities for scrolling of a certain part of their DOM.
 		 *
-		 * @class Delegate for touch scrolling on mobile devices
+		 * @class Delegate for touch scrolling on mobile devices.
 		 *
 		 * This delegate uses native scrolling of mobile and desktop browsers. Third party scrolling libraries are not supported.
 		 *

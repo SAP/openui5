@@ -19,9 +19,10 @@ sap.ui.define(["jquery.sap.global",
 	/**
 	 * @class
 	 * This class represents an extension for OPA tests which allows running Support Assistant checks.
-	 * It enriches the OPA assertions with the methods described in {@link sap.ui.core.support.RuleEngineOpaAssertions}
 	 *
-	 * For more information, see {@link topic:cfabbd4dfc054936997d9d00916e1668 Integrating the Support Assistant in OPA Tests}
+	 * It enriches the OPA assertions with the methods described in {@link sap.ui.core.support.RuleEngineOpaAssertions}.
+	 *
+	 * For more information, see {@link topic:cfabbd4dfc054936997d9d00916e1668 Integrating the Support Assistant in OPA Tests}.
 	 *
 	 * @extends sap.ui.base.Object
 	 * @alias sap.ui.core.support.RuleEngineOpaExtension

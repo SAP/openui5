@@ -10,7 +10,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/base/Object', './CalendarType
 	/**
 	 * Creates an instance of LocaleData for the given locale.
 	 *
-	 * @class Provides access to locale-specific data, like date formats, number formats, currencies, etc.
+	 * @class Provides access to locale-specific data, such as, date formats, number formats, and currencies.
 	 *
 	 * @param {sap.ui.core.Locale} oLocale the locale
 	 *

@@ -19,7 +19,7 @@ sap.ui.define(['./Element', './library'],
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * Represents a title element that can be used for aggregation with other controls
+	 * Represents a title element that can be used for aggregation with other controls.
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE

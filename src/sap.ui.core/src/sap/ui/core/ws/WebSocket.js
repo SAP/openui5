@@ -21,7 +21,7 @@ sap.ui.define([
 	 * @param {array} [aProtocols] array of protocols as strings, a single protocol as a string
 	 * @public
 	 *
-	 * @class Basic WebSocket class
+	 * @class Basic WebSocket class.
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
 	 * @version ${version}

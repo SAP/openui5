@@ -16,7 +16,7 @@ sap.ui.define(['./WebSocket', "sap/base/Log"],
 	 *
 	 * @public
 	 *
-	 * @class WebSocket class implementing the pcp-protocol
+	 * @class WebSocket class implementing the pcp-protocol.
 	 * @extends sap.ui.core.ws.WebSocket
 	 * @author SAP SE
 	 * @version ${version}
