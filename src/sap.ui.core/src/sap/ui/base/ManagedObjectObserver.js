@@ -16,8 +16,8 @@ sap.ui.define([
 	 * Constructor for a new ManagedObjectObserver.
 	 *
 	 * @classdesc
-	 * Use the ManagedObjectObserver to get notified when properties, aggregations or associations of a
-	 * ManagedObject instance have changed.
+	 * Use the <code>ManagedObjectObserver</code> to get notified when properties, aggregations or associations of a
+	 * <code>ManagedObject</code> instance have changed.
 	 *
 	 * Use the {@link #observe} method to add instances of ManagedObject that should be observed or to enhance
 	 * the set of observed properties, aggregations etc. for an already observed instance.

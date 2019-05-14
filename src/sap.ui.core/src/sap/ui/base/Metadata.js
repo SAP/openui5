@@ -17,11 +17,11 @@ sap.ui.define([
 	/**
 	 * Creates a new metadata object from the given static infos.
 	 *
-	 * Note: throughout this class documentation, the described subclass of Object
+	 * <b>Note:</b> Throughout this class documentation, the described subclass of Object
 	 * is referenced as <i>the described class</i>.
 	 *
-	 * @param {string} sClassName fully qualified name of the described class
-	 * @param {object} oClassInfo info to construct the class and its metadata from
+	 * @param {string} sClassName Fully qualified name of the described class
+	 * @param {object} oClassInfo Info to construct the class and its metadata from
 	 *
 	 * @class Metadata for a class.
 	 * @author Frank Weigel

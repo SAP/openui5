@@ -167,7 +167,7 @@ sap.ui.define([
 	 *
 	 *
 	 * @abstract
-	 * @class Base Class that introduces some basic concepts like state management or databinding.
+	 * @class Base Class that introduces some basic concepts, such as, state management and data binding.
 	 *
 	 * New subclasses of ManagedObject are created with a call to {@link #.extend ManagedObject.extend} and can make use
 	 * of the following managed features:
