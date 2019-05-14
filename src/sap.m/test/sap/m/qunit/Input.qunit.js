@@ -24,6 +24,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/events/KeyCodes",
 	"sap/m/Link",
+	"sap/m/Toolbar",
 	"jquery.sap.global"
 ], function(
 	qutils,
@@ -48,7 +49,8 @@ sap.ui.define([
 	SuggestionItem,
 	waitForThemeApplied,
 	KeyCodes,
-	Link
+	Link,
+	Toolbar
 ) {
 	// shortcut for sap.m.InputTextFormatMode
 	var InputTextFormatMode = mobileLibrary.InputTextFormatMode;
@@ -3961,11 +3963,7 @@ sap.ui.define([
 				showValueStateMessage: true
 			});
 
-			this.dialog = new Dialog({
-				content: this.input
-			});
-
-			sap.ui.getCore().applyChanges();
+			this.dialog = new Dialog();
 		},
 		afterEach: function () {
 
@@ -3976,6 +3974,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("valueStateMsg z-index", function (assert) {
+		this.dialog.addContent(this.input);
 		this.dialog.open();
 
 		this.clock.tick(300);
@@ -3987,6 +3986,32 @@ sap.ui.define([
 		assert.ok(parseFloat(jQuery(this.input._oValueStateMessage._oPopup.getContent()).css('z-index')) > 1, 'z-index is correct');
 	});
 
+	QUnit.test("valueStateMsg z-index inside a parent with position absolute", function (assert) {
+
+		// arrange
+		var oToolbar = new Toolbar({
+			content: this.input
+		});
+
+		this.dialog.addContent(oToolbar);
+		this.dialog.open();
+		this.clock.tick(300);
+
+		oToolbar.$().css({
+			position: "absolute",
+			zIndex: 5
+		});
+
+		this.input.setValueState("Error");
+
+		// act
+		this.input.onfocusin();
+		this.clock.tick(300);
+		var iValueStateZIndex = jQuery(this.input._oValueStateMessage._oPopup.getContent()).zIndex();
+
+		// assert
+		assert.ok(iValueStateZIndex > this.dialog.$().zIndex(), "z-index of the value state message should be higher from all the parents z-indices");
+	});
 
 	QUnit.module("Input with suggestions - change event", {
 		beforeEach: function () {

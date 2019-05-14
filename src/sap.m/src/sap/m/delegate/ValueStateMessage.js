@@ -289,7 +289,17 @@ sap.ui.define([
 				return 1;
 			}
 
-			return parseInt(aParents.first().css('z-index')) + 1;
+			var iHighestZIndex = 0;
+
+			aParents.each(function () {
+				var iZIndex = parseInt(jQuery(this).css('z-index'));
+
+				if (iZIndex > iHighestZIndex) {
+					iHighestZIndex = iZIndex;
+				}
+			});
+
+			return iHighestZIndex + 1;
 		};
 
 		return ValueStateMessage;
