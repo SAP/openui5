@@ -158,7 +158,7 @@ sap.ui.define([
 	 *            Set this array to make custom response headers bindable via the entity's "__metadata/headers" property
 	 * @param {boolean} [mParameters.canonicalRequests=false]
 	 *            When setting this flag to <code>true</code> the model tries to calculate a canonical url to the data.
-	 * @param {boolean} [mParameters.tokenHandlingForGet=false] Send CSRF token for GET requests in case read access logging is activated for the oData Service in the backend.
+	 * @param {boolean} [mParameters.tokenHandlingForGet=false] Send CSRF token for GET requests in case read access logging is activated for the OData Service in the backend.
 	 * @class
 	 * Model implementation based on the OData protocol.
 	 *

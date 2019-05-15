@@ -86,7 +86,7 @@ sap.ui.define([
 	 * @param {boolean} [mParameters.skipMetadataAnnotationParsing] Whether to skip the automated loading of annotations from the metadata document. Loading annotations from metadata does not have any effects (except the lost performance by invoking the parser) if there are not annotations inside the metadata document
 	 *
 	 * @class
-	 * Model implementation for oData format
+	 * Model implementation for OData format
 	 *
 	 *
 	 * @author SAP SE
@@ -826,7 +826,7 @@ sap.ui.define([
 
 		/**
 		 * this method is used to retrieve all desired data. It triggers additional read requests if the server paging size
-		 * permits to return all the requested data. This could only happen for servers with support for oData > 2.0.
+		 * permits to return all the requested data. This could only happen for servers with support for OData > 2.0.
 		 */
 		function _submit(){
 			// execute the request and use the metadata if available

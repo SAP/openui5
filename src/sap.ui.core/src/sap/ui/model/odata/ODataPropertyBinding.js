@@ -17,7 +17,7 @@ sap.ui.define([
 	/**
 	 *
 	 * @class
-	 * Property binding implementation for oData format
+	 * Property binding implementation for OData format
 	 *
 	 * @param {sap.ui.model.Model} oModel
 	 * @param {string} sPath
