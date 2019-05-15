@@ -271,9 +271,15 @@ function(
 		// If list is closed...
 		var aItems = this.getSelectableItems();
 		var oItem = aItems[0];
+		var that = this;
 
 		if (oItem && this.isOpen()) {
-			this.getListItem(oItem).focus();
+			// wait for the composition and input events to fire properly
+			// since the focus of the list item triggers unwanted extra events
+			// when called in while composing
+			setTimeout(function() {
+				that.getListItem(oItem).focus();
+			}, 0);
 			return;
 		}
 
@@ -283,7 +289,7 @@ function(
 
 		this._oTraversalItem = this._getNextTraversalItem();
 
-		if (this._oTraversalItem) {
+		if (this._oTraversalItem && !this.isComposingCharacter()) {
 			this.updateDomValue(this._oTraversalItem.getText());
 			this.selectText(0, this.getValue().length);
 		}
@@ -427,7 +433,7 @@ function(
 				this._showAlreadySelectedVisualEffect();
 			}
 			this._bPreventValueRemove = true;
-			this._showWrongValueVisualEffect();
+			!this.isComposingCharacter() && this._showWrongValueVisualEffect();
 		}
 
 		if (oEvent) {
@@ -840,8 +846,7 @@ function(
 				return oItem.getText().toLowerCase();
 			}),
 			sAlreadySelected = this._oRbM.getText("VALUE_STATE_ERROR_ALREADY_SELECTED");
-
-		if (aText.indexOf(sValue) > -1 && sValueState !== ValueState.Error) {
+		if (aText.indexOf(sValue) > -1 && sValueState !== ValueState.Error && !this.isComposingCharacter()) {
 			if (bIsPickerDialog) {
 				oPickerTextField.setValueState(ValueState.Error);
 				oPickerTextField.setValueStateText(sAlreadySelected);
