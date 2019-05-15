@@ -867,6 +867,7 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 * Available FormLayouts used for the SimpleForm.
 	 * @deprecated Since version 1.16.0. Moved to sap.ui.layout library. Please use this one.
 	 * @public
+	 * @enum {string}
 	 */
 	sap.ui.commons.form.SimpleFormLayout = sap.ui.layout.form.SimpleFormLayout;
 
