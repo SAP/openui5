@@ -509,4 +509,24 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 
 	});
 
+	QUnit.test("Update Resize Info", function(assert){
+		var done = assert.async();
+
+		Device.resize.height = 100;
+		Device.resize.width = 100;
+
+		Device.resize.attachHandler(function(evt){
+
+			assert.equal(window.innerHeight, Device.resize.height, "Height value was updated.");
+			assert.equal(window.innerHeight, evt.height, "Width value was updated.");
+
+			assert.equal(window.innerWidth, Device.resize.width, "Height value was updated.");
+			assert.equal(window.innerWidth, evt.width, "Width value was updated.");
+
+			done();
+		});
+
+		Device.resize._update();
+	});
+
 });
