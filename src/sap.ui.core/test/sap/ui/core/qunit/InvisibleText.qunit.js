@@ -88,4 +88,13 @@ sap.ui.define([
 		}, this);
 	});
 
+	QUnit.test("getRendererMarkup is an equivalent of renderer output", function(assert) {
+		var oSUT = new InvisibleText({text: "Hello"});
+		oSUT.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(oSUT.getDomRef().outerHTML, oSUT.getRendererMarkup());
+		oSUT.destroy();
+	});
+
 });

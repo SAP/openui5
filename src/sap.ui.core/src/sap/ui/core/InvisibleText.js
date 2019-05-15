@@ -121,6 +121,13 @@ sap.ui.define(['./Control', './library', "sap/base/Log", "sap/base/security/enco
 		return this;
 	};
 
+	InvisibleText.prototype.getRendererMarkup = function() {
+		var sId = this.getId();
+		return	'<span id="' + sId + '" data-sap-ui="' + sId + '" class="sapUiInvisibleText" aria-hidden="true">' +
+					encodeXML(this.getText()) +
+				'</span>';
+	};
+
 	/**
 	 * Adds <code>this</code> control into the static, hidden area UI area container.
 	 *
@@ -133,9 +140,8 @@ sap.ui.define(['./Control', './library', "sap/base/Log", "sap/base/security/enco
 
 		try {
 			var oStatic = oCore.getStaticAreaRef();
-			var oRM = oCore.createRenderManager();
-			oRM.render(this, oStatic);
-			oRM.destroy();
+			oStatic.insertAdjacentHTML("beforeend", this.getRendererMarkup());
+			this.bOutput = true;
 		} catch (e) {
 			this.placeAt("sap-ui-static");
 		}
