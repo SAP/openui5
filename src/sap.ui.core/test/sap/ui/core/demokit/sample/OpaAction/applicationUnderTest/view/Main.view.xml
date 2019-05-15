@@ -46,7 +46,13 @@
 					class="editableForm"
 					id="myForm">
 				<Label text="Name" />
-				<Input/>
+				<Input showSuggestion="true">
+					<suggestionItems>
+						<core:Item text="John" key="John"/>
+						<core:Item text="Jonathan" key="Jonathan"/>
+						<core:Item text="Joey" key="Joey"/>
+					</suggestionItems>
+				</Input>
 				<Label text="Street/No." />
 				<Input >
 				</Input>

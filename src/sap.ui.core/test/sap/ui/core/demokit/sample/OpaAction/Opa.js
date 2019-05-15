@@ -8,6 +8,7 @@ sap.ui.require([
 	"sap/ui/test/matchers/AggregationLengthEquals",
 	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/matchers/Properties",
+	"sap/ui/test/matchers/LabelFor",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/actions/EnterText"
 ], function (Opa5,
@@ -15,6 +16,7 @@ sap.ui.require([
 			 AggregationLengthEquals,
 			 Ancestor,
 			 Properties,
+			 LabelFor,
 			 Press,
 			 EnterText) {
 	"use strict";
@@ -70,7 +72,8 @@ sap.ui.require([
 	});
 
 	QUnit.module("Entering text in Controls");
-	opaTest("Should enter a text to all", function (Given, When, Then) {
+
+	opaTest("Should enter text in form inputs", function (Given, When, Then) {
 		// Fill all inputs on the screen with the same text
 		When.waitFor({
 			controlType: "sap.m.Input",
@@ -88,6 +91,47 @@ sap.ui.require([
 				});
 			},
 			errorMessage: "The text was not entered"
+		});
+	});
+
+	opaTest("Should enter text with suggestion", function (Given, When, Then) {
+		// show the suggestion list
+		When.waitFor({
+			controlType: "sap.m.Input",
+			matchers: new LabelFor({
+				text: "Name"
+			}),
+			actions: new EnterText({
+				text: "Jo",
+				keepFocus: true
+			}),
+			success: function (aInputs) {
+				// select a suggestion
+				this.waitFor({
+					controlType: "sap.m.StandardListItem",
+					matchers: [
+						new Ancestor(aInputs[0]),
+						new Properties({
+							title: "John"
+						})
+					],
+					actions: new Press(),
+					errorMessage: "Did not select a suggestion"
+				});
+			},
+			errorMessage: "Did not find the input"
+		});
+
+		// verify the input value
+		Then.waitFor({
+			controlType: "sap.m.Input",
+			matchers: new LabelFor({
+				text: "Name"
+			}),
+			success: function (aInputs) {
+				Opa5.assert.strictEqual(aInputs[0].getValue(), "John", aInputs[0] + " contains the text");
+			},
+			errorMessage: "Did not find the input"
 		});
 	});
 

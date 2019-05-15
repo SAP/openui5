@@ -10,13 +10,13 @@ sap.ui.define([
 
 	/**
 	 * @class
-	 * The EnterText action is used to simulate a user entering texts to inputs.
-	 * EnterText will be executed on a control's focus dom ref.
+	 * The <code>EnterText</code> action is used to simulate a user entering texts to inputs.
+	 * <code>EnterText</code> will be executed on a control's focus dom ref.
 	 * Supported controls are (for other controls this action still might work):
 	 * <ul>
-	 *     <li>sap.m.Input</li>
-	 *     <li>sap.m.SearchField</li>
-	 *     <li>sap.m.TextArea</li>
+	 *     <li><code>sap.m.Input</code></li>
+	 *     <li><code>sap.m.SearchField</code></li>
+	 *     <li><code>sap.m.TextArea</code></li>
 	 * </ul>
 	 *
 	 * @extends sap.ui.test.actions.Action
@@ -36,13 +36,23 @@ sap.ui.define([
 					type: "string"
 				},
 				/**
-				 * @Since 1.38.0 If it is set to false, the current text of the Control will be preserved. By default the current text of the control will be cleared.
+				 * If it is set to <code>false</code>, the current text of the control will be preserved. By default, the current text of the control will be cleared.
 				 * When the text is going to be cleared, a delete character event will be fired and then the value of the input is emptied.
-				 * This will trigger a liveChange event on the input with an empty value.
+				 * This will trigger a <code>liveChange</code> event on the input with an empty value.
+				 * @since 1.38.0
 				 */
 				clearTextFirst: {
 					type: "boolean",
 					defaultValue: true
+				},
+				/*
+				 * If it is set to <code>true</code>, the input will remain focused after text is entered.
+				 * Use this for inputs with a suggestion list that you want to keep open.
+				 * @since 1.67
+				 */
+				keepFocus: {
+					type: "boolean",
+					defaultValue: false
 				}
 			},
 			publicMethods : [ "executeOn" ]
@@ -91,11 +101,13 @@ sap.ui.define([
 				oUtils.triggerEvent("input", oActionDomRef);
 			});
 
-			// simulate the blur - focus stays but the value is updated now
-			this._simulateFocusout(oActionDomRef);
+			if (!this.getKeepFocus()) {
+				// simulate the blur - focus stays but the value is updated now
+				this._simulateFocusout(oActionDomRef);
 
-			// always trigger search since searchfield does not react to loosing the focus
-			oUtils.triggerEvent("search", oActionDomRef);
+				// always trigger search since searchfield does not react to loosing the focus
+				oUtils.triggerEvent("search", oActionDomRef);
+			}
 		}
 	});
 
