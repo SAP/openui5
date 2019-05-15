@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/core/routing/History",
 	"sap/ui/core/routing/HashChanger",
 	"sap/base/Log",
-	"sap/base/util/deepEqual"
+	"sap/base/util/deepEqual",
+	"sap/ui/base/ManagedObjectObserver"
 ], function(
 	jQuery,
 	Component,
@@ -17,7 +18,8 @@ sap.ui.define([
 	History,
 	HashChanger,
 	Log,
-	deepEqual
+	deepEqual,
+	ManagedObjectObserver
 ) {
 	"use strict";
 
@@ -46,19 +48,13 @@ sap.ui.define([
 			VariantUtil._setOrUnsetCustomNavigationForParameter.call(this, true);
 		},
 
-		attachHashHandlers: function (sVariantManagementReference) {
+		attachHashHandlers: function (sVariantManagementReference, sUpdateURL) {
 			// only for first variant management control with 'updateVariantInURL' property set to true
 			if (this._oHashRegister.currentIndex === null) {
 				var oHashChanger = HashChanger.getInstance();
 
-				// attach handler to check if hash was replaced
-				oHashChanger.attachEvent("hashReplaced", VariantUtil._handleHashReplaced, this);
-				// attach handler to process hash changes
-				oHashChanger.attachEvent("hashChanged", VariantUtil._navigationHandler, this);
-
 				// de-register method to process hash changes
-				var fnOriginalDestroy = this.oComponent.destroy;
-				this.oComponent.destroy = function () {
+				var fnObserverHandler = function () {
 					// deregister navigation filter if ushell is available
 					VariantUtil._setOrUnsetCustomNavigationForParameter.call(this, false);
 					// detach handler to check if hash was replaced
@@ -69,15 +65,33 @@ sap.ui.define([
 					this.oVariantController.resetMap();
 					// destroy VariantModel
 					this.destroy();
-					fnOriginalDestroy.apply(this.oComponent, arguments);
-				}.bind(this);
+					// destroy oComponent.destroy() observer
+					this.oComponentDestroyObserver.unobserve(this.oComponent, { destroy: true });
+					this.oComponentDestroyObserver.destroy();
+				};
 
-				VariantUtil._navigationHandler.call(this);
+				if (!this.oComponentDestroyObserver && this.oComponent instanceof Component) {
+					// observer for oComponent.destroy()
+					this.oComponentDestroyObserver = new ManagedObjectObserver(fnObserverHandler.bind(this));
+					this.oComponentDestroyObserver.observe(this.oComponent, {destroy: true});
+				}
+
+				if (sUpdateURL) {
+					// attach handler to check if hash was replaced
+					oHashChanger.attachEvent("hashReplaced", VariantUtil._handleHashReplaced, this);
+					// attach handler to process hash changes
+					oHashChanger.attachEvent("hashChanged", VariantUtil._navigationHandler, this);
+					// first explicit call
+					VariantUtil._navigationHandler.call(this);
+				}
 			}
-			if (Array.isArray(this._oHashRegister.variantControlIds[this._oHashRegister.variantControlIds])) {
-				this._oHashRegister.variantControlIds[this._oHashRegister.currentIndex].push(sVariantManagementReference);
-			} else {
-				this._oHashRegister.variantControlIds[this._oHashRegister.currentIndex] = [sVariantManagementReference];
+
+			if (sUpdateURL) {
+				if (Array.isArray(this._oHashRegister.variantControlIds[this._oHashRegister.variantControlIds])) {
+					this._oHashRegister.variantControlIds[this._oHashRegister.currentIndex].push(sVariantManagementReference);
+				} else {
+					this._oHashRegister.variantControlIds[this._oHashRegister.currentIndex] = [sVariantManagementReference];
+				}
 			}
 		},
 

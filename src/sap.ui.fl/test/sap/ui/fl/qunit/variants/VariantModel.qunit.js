@@ -92,6 +92,7 @@ function(
 			};
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oComponent);
 			sandbox.stub(Utils, "getComponentClassName").returns(this.oComponent.name);
+			sandbox.stub(VariantUtil, "attachHashHandlers");
 
 			this.oFlexController = FlexControllerFactory.createForControl(this.oComponent, oManifest);
 			this.fnLoadSwitchChangesStub = sandbox.stub(this.oFlexController._oChangePersistence, "loadSwitchChangesMapForComponent").returns({aRevert:[], aNew:[]});
@@ -1420,7 +1421,12 @@ function(
 				getManifest: function() {
 					return oManifest;
 				},
-				getLocalId: function() {}
+				getLocalId: function(sId) {
+					if (sId === this.oVariantManagement.getId()) {
+						return "localId";
+					}
+					return null;
+				}.bind(this)
 			};
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 			sandbox.stub(Utils, "getComponentClassName").returns("MyComponent");
@@ -1429,7 +1435,7 @@ function(
 			this.fnLoadSwitchChangesStub = sandbox.stub(this.oFlexController._oChangePersistence, "loadSwitchChangesMapForComponent").returns({aRevert:[], aNew:[]});
 			this.fnRevertChangesStub = sandbox.stub(this.oFlexController, "revertChangesOnControl");
 			this.fnApplyChangesStub = sandbox.stub(this.oFlexController, "applyVariantChanges");
-
+			this.oAttachHashHandlersStub = sandbox.stub(VariantUtil, "attachHashHandlers");
 			this.oModel = new VariantModel(this.oData, this.oFlexController, oComponent);
 			this.oVariantManagement = new VariantManagement("varMgmtRef1");
 		},
@@ -1448,6 +1454,15 @@ function(
 			assert.equal(this.oModel.getCurrentVariantReference("varMgmtRef1"), "varMgmtRef1", "then the Current Variant is set to the standard variant");
 			assert.ok(fnRegisterToModelSpy.calledOnce, "then registerToModel called once, when VariantManagement control setModel is called");
 			assert.ok(fnRegisterToModelSpy.calledWith(this.oVariantManagement), "then registerToModel called with VariantManagement control");
+		});
+
+		QUnit.test("when variant management controls are initialized with with 'updateVariantInURL' property set and default (false)", function(assert) {
+			var oVariantManagementWithURLUpdate = new VariantManagement("varMgmtRef2", {updateVariantInURL: true});
+			this.oVariantManagement.setModel(this.oModel, "$FlexVariants");
+			oVariantManagementWithURLUpdate.setModel(this.oModel, "$FlexVariants");
+			assert.deepEqual(this.oAttachHashHandlersStub.getCall(0).args, [this.oModel.oComponent.getLocalId(this.oVariantManagement.getId()), false], "then VariantUtil.attachHashHandlers was called once for a control to update URL");
+			assert.deepEqual(this.oAttachHashHandlersStub.getCall(1).args, [oVariantManagementWithURLUpdate.getId(), true], "then VariantUtil.attachHashHandlers was called once for a control without URL update");
+			oVariantManagementWithURLUpdate.destroy();
 		});
 
 		QUnit.test("when calling 'addEmbeddedComponent' for the first time", function(assert) {

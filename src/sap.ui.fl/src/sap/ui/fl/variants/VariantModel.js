@@ -875,10 +875,9 @@ sap.ui.define([
 			oVariantManagementControl.attachSave(this._handleSave, this);
 
 			//control property updateVariantInURL set initially
-			if (oVariantManagementControl.getUpdateVariantInURL()) {
-				this.oData[sVariantManagementReference].updateVariantInURL = true;
-				VariantUtil.attachHashHandlers.call(this, sVariantManagementReference);
-			}
+			var sUpdateURL = oVariantManagementControl.getUpdateVariantInURL(); // default false
+			this.oData[sVariantManagementReference].updateVariantInURL = sUpdateURL;
+			VariantUtil.attachHashHandlers.call(this, sVariantManagementReference, !!sUpdateURL);
 		}
 	};
 

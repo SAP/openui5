@@ -6,6 +6,8 @@ sap.ui.define([
 	"sap/ui/core/routing/HashChanger",
 	"sap/ui/core/routing/History",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/base/ManagedObjectObserver",
+	"sap/ui/core/Component",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -14,6 +16,8 @@ function(
 	HashChanger,
 	History,
 	jQuery,
+	ManagedObjectObserver,
+	Component,
 	sinon
 ) {
 	"use strict";
@@ -22,14 +26,20 @@ function(
 	var sVariantParameterName = "sap-ui-fl-control-variant-id";
 	QUnit.module("Given an instance of VariantModel", {
 		beforeEach: function () {
+			this.oComponent = new Component("appComponent");
 			this._oHashRegister = {
 				currentIndex: undefined,
 				hashParams : [],
 				variantControlIds : []
 			};
-			this.oComponent = { };
+			this.fnDestroyObserverSpy = sandbox.spy(ManagedObjectObserver.prototype, "observe");
+			this.fnDestroyUnobserverSpy = sandbox.spy(ManagedObjectObserver.prototype, "unobserve");
+			this.oComponentDestroyObserver = { }; // if this variable already exists, component will not be observed
 		},
 		afterEach: function () {
+			if (this.oComponent instanceof Component) {
+				this.oComponent.destroy();
+			}
 			sandbox.restore();
 		}
 	}, function () {
@@ -80,7 +90,7 @@ function(
 		});
 
 		QUnit.test("when calling 'attachHashHandlers' with _oHashRegister.currentIndex set to null", function (assert) {
-			assert.expect(5);
+			assert.expect(7);
 			var done = assert.async();
 			var iIndex = 0;
 			var aHashEvents = [{
@@ -97,24 +107,55 @@ function(
 				assert.ok(true, "then VariantUtil._navigationHandler() was called intitally on attaching hash handler functions");
 			});
 
-			sandbox.stub(HashChanger, "getInstance").callsFake(function() {
-				return {
-					attachEvent: function(sEvtName, fnEventHandler) {
-						assert.strictEqual(sEvtName, aHashEvents[iIndex].name, "then '" + aHashEvents[iIndex].name + "' attachEvent is called for HashChanger.getInstance()");
-						assert.strictEqual(fnEventHandler.toString(), VariantUtil[aHashEvents[iIndex].handler].toString(), "then VariantUtil." + aHashEvents[iIndex].handler + " attached to '" + aHashEvents[iIndex].name + "'  event");
-						if (iIndex === 1) {
-							done();
-						}
-						iIndex++;
+			sandbox.stub(HashChanger, "getInstance").returns({
+				attachEvent: function (sEvtName, fnEventHandler) {
+					assert.strictEqual(sEvtName, aHashEvents[iIndex].name, "then '" + aHashEvents[iIndex].name + "' attachEvent is called for HashChanger.getInstance()");
+					assert.strictEqual(fnEventHandler.toString(), VariantUtil[aHashEvents[iIndex].handler].toString(), "then VariantUtil." + aHashEvents[iIndex].handler + " attached to '" + aHashEvents[iIndex].name + "'  event");
+					if (iIndex === 1) {
+						done();
 					}
-				};
+					iIndex++;
+				}
 			});
 
-			VariantUtil.attachHashHandlers.call(this);
+			delete this.oComponentDestroyObserver; // for this test we need an observer on Component.destroy()
+			VariantUtil.attachHashHandlers.call(this, "", true);
+			var aCallArgs = this.fnDestroyObserverSpy.getCall(0).args;
+			assert.deepEqual(aCallArgs[0], this.oComponent, "then ManagedObjectObserver observers the Component");
+			assert.strictEqual(aCallArgs[1].destroy, true, "then ManagedObjectObserver observers the destroy() method");
+			this.oComponentDestroyObserver.unobserve(this.oComponent, {destroy:true}); // remove component observer
+		});
+
+		QUnit.test("when calling 'attachHashHandlers' with _oHashRegister.currentIndex set to null and updateURL set to false", function (assert) {
+			this._oHashRegister.currentIndex = null;
+			VariantUtil.initializeHashRegister.call(this);
+			sandbox.stub(VariantUtil, "_navigationHandler").callsFake(function() {
+				assert.ok(false, "VariantUtil._navigationHandler() should not be called");
+			});
+
+			sandbox.stub(HashChanger, "getInstance").returns({
+				attachEvent: function () {
+					assert.ok(false, "no event should be attached");
+				}
+			});
+
+			// first call
+			delete this.oComponentDestroyObserver; // for this test we need an observer on Component.destroy()
+			VariantUtil.attachHashHandlers.call(this, "mockControlId1", false);
+			var aCallArgs = this.fnDestroyObserverSpy.getCall(0).args;
+			assert.deepEqual(aCallArgs[0], this.oComponent, "then ManagedObjectObserver observers the Component");
+			assert.strictEqual(aCallArgs[1].destroy, true, "then ManagedObjectObserver observers the destroy() method");
+			assert.strictEqual(this._oHashRegister.variantControlIds.length, 0, "then the control id was not added to the hash register");
+			this.oComponentDestroyObserver.unobserve(this.oComponent, {destroy:true}); // remove component observer
+
+			// second call
+			VariantUtil.attachHashHandlers.call(this, "mockControlId2", false);
+			assert.ok(this.fnDestroyObserverSpy.calledOnce, "then no new observers were listening to Component.destroy()");
 		});
 
 		QUnit.test("when Component is destroyed after 'attachHashHandlers' was already called", function (assert) {
-			assert.expect(8);
+			assert.expect(9);
+			var done = assert.async();
 			var iIndex = 0;
 			this._oHashRegister.currentIndex = null;
 			var aHashEvents = [{
@@ -124,43 +165,53 @@ function(
 				name: "hashChanged",
 				handler: "_navigationHandler"
 			}];
+			var fnManagedObjectObserverDestroy = ManagedObjectObserver.prototype.destroy;
 
 			VariantUtil.initializeHashRegister.call(this);
 			sandbox.stub(VariantUtil, "_navigationHandler");
-			sandbox.stub(HashChanger, "getInstance").callsFake(function() {
-				return {
-					attachEvent: function () { },
-					detachEvent: function(sEvtName, fnEventHandler) {
-						assert.strictEqual(sEvtName, aHashEvents[iIndex].name, "then '" + aHashEvents[iIndex].name + "' detachEvent is called for HashChanger.getInstance()");
-						assert.strictEqual(fnEventHandler.toString(), VariantUtil[aHashEvents[iIndex].handler].toString(), "then VariantUtil." + aHashEvents[iIndex].handler + " detached for '" + aHashEvents[iIndex].name + "' event");
-						iIndex++;
-					}
-				};
+			sandbox.stub(HashChanger, "getInstance").returns({
+				attachEvent: function () {
+				},
+				detachEvent: function (sEvtName, fnEventHandler) {
+					assert.strictEqual(sEvtName, aHashEvents[iIndex].name, "then '" + aHashEvents[iIndex].name + "' detachEvent is called for HashChanger.getInstance()");
+					assert.strictEqual(fnEventHandler.toString(), VariantUtil[aHashEvents[iIndex].handler].toString(), "then VariantUtil." + aHashEvents[iIndex].handler + " detached for '" + aHashEvents[iIndex].name + "' event");
+					iIndex++;
+				}
+			});
+
+			sandbox.stub(VariantUtil, "_setOrUnsetCustomNavigationForParameter").callsFake(function(bSet) {
+				assert.strictEqual(bSet, false, "then _setOrUnsetCustomNavigationForParameter called with a false value");
+			});
+
+			var that = this;
+			sandbox.stub(ManagedObjectObserver.prototype, "destroy")
+			.callsFake(function() {
+				fnManagedObjectObserverDestroy.apply(this, arguments);
+				var aCallArgs = that.fnDestroyUnobserverSpy.getCall(0).args;
+				assert.deepEqual(aCallArgs[0], that.oComponent, "then ManagedObjectObserver unobserve() was called for the Component");
+				assert.strictEqual(aCallArgs[1].destroy, true, "then ManagedObjectObserver unobserve() was called for the destroy() method");
+				done();
 			});
 
 			this.destroy = function() {
 				assert.ok(true, "then the VariantModel passed as context is destroyed");
-			};
-			this.oComponent.destroy = function() {
-				assert.ok(true, "then the original Component.destroy() is also called");
 			};
 			this.oVariantController = {
 				resetMap: function() {
 					assert.ok(true, "then resetMap() of the variant controller was called");
 				}
 			};
-			VariantUtil.attachHashHandlers.call(this);
 
-			sandbox.stub(VariantUtil, "_setOrUnsetCustomNavigationForParameter").callsFake(function(bSet) {
-				assert.strictEqual(bSet, false, "then _setOrUnsetCustomNavigationForParameter called with a false value");
-			});
+			delete this.oComponentDestroyObserver; // for this test we need an observer on Component.destroy()
+			VariantUtil.attachHashHandlers.call(this, "", true);
+
 			this.oComponent.destroy();
 		});
 
 		QUnit.test("when calling 'attachHashHandlers' with _oHashRegister.currentIndex not set to null", function (assert) {
 			this._oHashRegister.currentIndex = 0;
 			sandbox.stub(VariantUtil, "_navigationHandler");
-			VariantUtil.attachHashHandlers.call(this);
+			VariantUtil.attachHashHandlers.call(this, "", true);
 			assert.strictEqual(VariantUtil._navigationHandler.callCount, 0, "then VariantUtil._navigationHandler() not called");
 		});
 
@@ -233,7 +284,6 @@ function(
 				parameters: ["testParam1", "testParam2"],
 				updateURL: true
 			};
-			this.oComponent = { id : "TestComponent" };
 
 			sandbox.stub(Utils, "setTechnicalURLParameterValues");
 
@@ -508,12 +558,8 @@ function(
 				hashParams: [],
 				variantControlIds: []
 			};
-			this.oComponent = {
-				destroy: function () {
-				}
-			};
 			sandbox.stub(VariantUtil, "_navigationHandler");
-			VariantUtil.attachHashHandlers.call(this);
+			VariantUtil.attachHashHandlers.call(this, "", true);
 			HashChanger.getInstance().fireEvent("hashReplaced", oEventReturn);
 			assert.strictEqual(this._sReplacedHash, oEventReturn.sHash, "then hash is replaced, _sReplacedHash set to the replaced hash");
 		});
