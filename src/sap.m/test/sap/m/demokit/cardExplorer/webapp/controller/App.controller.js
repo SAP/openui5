@@ -1,10 +1,12 @@
 sap.ui.define([
 		"sap/ui/demo/cardExplorer/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
+		"sap/ui/Device",
 		"../model/DocumentationNavigationModel",
 		"../model/ExploreNavigationModel"
 	], function (BaseController,
 				 JSONModel,
+				 Device,
 				 documentationNavigationModel,
 				 exploreNavigationModel) {
 		"use strict";
@@ -20,10 +22,19 @@ sap.ui.define([
 				this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
 
 				this.getRouter().attachRouteMatched(this.onRouteChange.bind(this));
+
+				Device.media.attachHandler(this.onDeviceSizeChange.bind(this), null, Device.media.RANGESETS.SAP_STANDARD);
 			},
 
 			onTabSelect: function (oEvent) {
 				var item = oEvent.getParameter('item');
+
+				if (item.getKey() === "exploreSamples") { // TODO implement in generic way
+					// there is no home page for exploreSamples, so navigate to first example
+					this.getRouter().navTo("exploreSamples", {key: "list"});
+					return;
+				}
+
 				this.getRouter().navTo(item.getKey());
 			},
 
@@ -71,6 +82,19 @@ sap.ui.define([
 					sideNavigation.setSelectedKey(routeArgs["key"]);
 				} else if (routeConfig.name !== "default") {
 					sideNavigation.setSelectedKey(routeConfig.name);
+				}
+			},
+
+			onDeviceSizeChange: function (mParams) {
+				var toolPage = this.byId('toolPage');
+				switch (mParams.name) {
+					case "Phone":
+					case "Tablet":
+						toolPage.setSideExpanded(false);
+						break;
+					case "Desktop":
+						toolPage.setSideExpanded(true);
+						break;
 				}
 			},
 
