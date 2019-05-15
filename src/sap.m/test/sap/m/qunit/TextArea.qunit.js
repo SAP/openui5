@@ -1,4 +1,4 @@
-/*global QUnit, sinon*/
+/*global QUnit */
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
@@ -9,8 +9,7 @@ sap.ui.define([
 	"sap/m/InputBase",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/thirdparty/jquery"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -20,8 +19,7 @@ sap.ui.define([
 	InputBase,
 	core,
 	coreLibrary,
-	jQuery,
-	KeyCodes
+	jQuery
 ) {
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
@@ -793,103 +791,4 @@ sap.ui.define([
 		oTA.destroy();
 	});
 
-	QUnit.module('Keyboard Handling', {
-		beforeEach: function () {
-			this.oTextArea = new TextArea({
-				width: "50px",
-				value: "Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt" +
-				"ut labore et dolore magna aliquyam erat, sed diam voluptua.",
-				rows: 3
-			});
-
-			this.oTextArea.placeAt("content");
-			this.fnHandleScrollByKeyboard = sinon.spy(this.oTextArea, "handleScrollByKeyboard");
-			sap.ui.getCore().applyChanges();
-		},
-		afterEach: function () {
-			this.fnHandleScrollByKeyboard.restore();
-			this.oTextArea.destroy();
-		}
-	});
-
-	QUnit.test("onsaphome - HOME key", function (assert) {
-		// act
-		this.oTextArea.focus();
-		sap.ui.test.qunit.triggerKeydown(this.oTextArea.getFocusDomRef(), KeyCodes.HOME);
-
-		// assert
-		assert.strictEqual(this.fnHandleScrollByKeyboard.callCount, 1, "handleScrollByKeyboard should be called");
-		assert.strictEqual(this.fnHandleScrollByKeyboard.getCall(0).args[1], false, 'The second argument should be false');
-	});
-
-	QUnit.test("onsapend - END key", function (assert) {
-		var iTextAreaScrollPosition = this.oTextArea.getFocusDomRef().scrollTop;
-
-		// act
-		this.oTextArea.focus();
-		sap.ui.test.qunit.triggerKeydown(this.oTextArea.getFocusDomRef(), KeyCodes.END);
-
-		// assert
-		assert.strictEqual(this.fnHandleScrollByKeyboard.callCount, 1, "handleScrollByKeyboard should be called");
-		assert.strictEqual(this.fnHandleScrollByKeyboard.getCall(0).args[1], true, 'The second argument should be true');
-		assert.notOk(iTextAreaScrollPosition, this.oTextArea.getFocusDomRef().scrollTop, 'The content should be scrolled');
-	});
-
-	QUnit.test("onsappagedown", function (assert) {
-		// act
-		this.oTextArea.focus();
-		sap.ui.test.qunit.triggerKeydown(this.oTextArea.getFocusDomRef(), KeyCodes.PAGE_DOWN);
-
-		// assert
-		assert.strictEqual(this.fnHandleScrollByKeyboard.callCount, 1, "handleScrollByKeyboard should be called");
-		assert.strictEqual(this.fnHandleScrollByKeyboard.getCall(0).args[1], true, 'The second argument should be true');
-	});
-
-	QUnit.test("onsappageup", function (assert) {
-		// act
-		this.oTextArea.focus();
-		sap.ui.test.qunit.triggerKeydown(this.oTextArea.getFocusDomRef(), KeyCodes.PAGE_UP);
-
-		// assert
-		assert.strictEqual(this.fnHandleScrollByKeyboard.callCount, 1, "handleScrollByKeyboard should be called");
-		assert.strictEqual(this.fnHandleScrollByKeyboard.getCall(0).args[1], false, 'The second argument should be false');
-	});
-
-	QUnit.test("onsapdown", function (assert) {
-		// act
-		this.oTextArea.focus();
-		sap.ui.test.qunit.triggerKeydown(this.oTextArea.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-
-		// assert
-		assert.strictEqual(this.fnHandleScrollByKeyboard.callCount, 1, "handleScrollByKeyboard should be called");
-		assert.strictEqual(this.fnHandleScrollByKeyboard.getCall(0).args[1], true, 'The second argument should be true');
-	});
-
-	QUnit.test("onsapup", function (assert) {
-		// act
-		this.oTextArea.focus();
-		sap.ui.test.qunit.triggerKeydown(this.oTextArea.getFocusDomRef(), KeyCodes.ARROW_UP);
-
-		// assert
-		assert.strictEqual(this.fnHandleScrollByKeyboard.callCount, 1, "handleScrollByKeyboard should be called");
-		assert.strictEqual(this.fnHandleScrollByKeyboard.getCall(0).args[1], false, 'The second argument should be false');
-	});
-
-	QUnit.test("handleScrollByKeyboard should prevent outer content from scrolling", function (assert) {
-		var fnPreventDefault = this.spy(jQuery.Event.prototype, "preventDefault"),
-			oFocusDomRef = this.oTextArea.getFocusDomRef();
-
-		// act
-		this.oTextArea.focus();
-		oFocusDomRef.scrollTop = Math.round(oFocusDomRef.scrollHeight - oFocusDomRef.clientHeight);
-		sap.ui.test.qunit.triggerKeydown(oFocusDomRef, KeyCodes.END);
-
-		// assert
-		assert.strictEqual(this.fnHandleScrollByKeyboard.callCount, 1, "handleScrollByKeyboard should be called");
-		assert.strictEqual(this.fnHandleScrollByKeyboard.getCall(0).args[1], true, 'The second argument should be true');
-		assert.strictEqual(fnPreventDefault.callCount, 1, "preventDefault should be called");
-
-		// cleanup
-		fnPreventDefault.restore();
-	});
 });
