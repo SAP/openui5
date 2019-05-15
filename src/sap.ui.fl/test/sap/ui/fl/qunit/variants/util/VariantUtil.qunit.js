@@ -25,10 +25,8 @@ function(
 	var sandbox = sinon.sandbox.create();
 	var sVariantParameterName = "sap-ui-fl-control-variant-id";
 	QUnit.module("Given an instance of VariantModel", {
-		before: function() {
-			this.oAppComponent = new Component("appComponent");
-		},
 		beforeEach: function () {
+			this.oAppComponent = new Component("appComponent");
 			this._oHashRegister = {
 				currentIndex: undefined,
 				hashParams : [],
@@ -36,8 +34,12 @@ function(
 			};
 			this.fnDestroyObserverSpy = sandbox.spy(ManagedObjectObserver.prototype, "observe");
 			this.fnDestroyUnobserverSpy = sandbox.spy(ManagedObjectObserver.prototype, "unobserve");
+			this.oComponentDestroyObserver = { }; // if this variable already exists, component will not be observed
 		},
 		afterEach: function () {
+			if (this.oAppComponent instanceof Component) {
+				this.oAppComponent.destroy();
+			}
 			sandbox.restore();
 		}
 	}, function () {
@@ -116,6 +118,7 @@ function(
 				}
 			});
 
+			delete this.oComponentDestroyObserver; // for this test we need an observer on Component.destroy()
 			VariantUtil.attachHashHandlers.call(this, "", true);
 			var aCallArgs = this.fnDestroyObserverSpy.getCall(0).args;
 			assert.deepEqual(aCallArgs[0], this.oAppComponent, "then ManagedObjectObserver observers the AppComponent");
@@ -137,6 +140,7 @@ function(
 			});
 
 			// first call
+			delete this.oComponentDestroyObserver; // for this test we need an observer on Component.destroy()
 			VariantUtil.attachHashHandlers.call(this, "mockControlId1", false);
 			var aCallArgs = this.fnDestroyObserverSpy.getCall(0).args;
 			assert.deepEqual(aCallArgs[0], this.oAppComponent, "then ManagedObjectObserver observers the AppComponent");
@@ -182,6 +186,7 @@ function(
 					assert.ok(true, "then resetMap() of the variant controller was called");
 				}
 			};
+			delete this.oComponentDestroyObserver; // for this test we need an observer on Component.destroy()
 			VariantUtil.attachHashHandlers.call(this, "", true);
 
 			sandbox.stub(VariantUtil, "_setOrUnsetCustomNavigationForParameter").callsFake(function(bSet) {
@@ -280,7 +285,6 @@ function(
 				parameters: ["testParam1", "testParam2"],
 				updateURL: true
 			};
-			this.oAppComponent = { id : "TestComponent" };
 
 			sandbox.stub(Utils, "setTechnicalURLParameterValues");
 
