@@ -55,7 +55,7 @@
 
 			</l:content>
 		</l:VerticalLayout>
-				<l:VerticalLayout
+		<l:VerticalLayout
 			class="sapUiContentPadding"
 			width="100%">
 			<l:content>
@@ -81,6 +81,49 @@
 					text="Indication 5"
 					state="Indication05" />
 
+			</l:content>
+		</l:VerticalLayout>
+		<l:VerticalLayout
+			class="sapUiContentPadding"
+			width="100%">
+			<l:content>
+				<Label text="Inverted ObjectStatus with different states and indication states. " class="sapUiSmallMarginTop"/>
+				<Label text="Note: Inverted ObjectStatus, looks as none-inverted status in HCW and HCB themes"/>
+				<ObjectStatus
+					class="sapUiSmallMarginBottom"
+					text="Unknown"
+					inverted="true"
+					state="None" />
+				<ObjectStatus
+					class="sapUiSmallMarginBottom"
+					text="Inverted Indication1"
+					inverted="true"
+					state="Indication01" />
+				<ObjectStatus
+					class="sapUiSmallMarginBottom"
+					text="Indication active"
+					inverted="true"
+					active="true"
+					state="Indication03" />
+				<ObjectStatus
+					class="sapUiSmallMarginBottom"
+					text="Product Shipped"
+					inverted="true"
+					icon="sap-icon://status-positive"
+					state="Success" />
+				<ObjectStatus
+					class="sapUiSmallMarginBottom"
+					text="Currently closed (click)"
+					inverted="true"
+					active="true"
+					icon="sap-icon://hint"
+					state="Information" />
+				<ObjectStatus
+					class="sapUiSmallMarginBottom"
+					active="true"
+					inverted="true"
+					state="Error"
+					icon="sap-icon://alert" />
 			</l:content>
 		</l:VerticalLayout>
 	</l:HorizontalLayout>

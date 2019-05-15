@@ -81,7 +81,8 @@ sap.ui.define([
 			state : {type : "string", group : "Misc", defaultValue : ValueState.None},
 
 			/**
-			 * If set to true the background will be colored in the given <code>state</code> instead of the control text.
+			 * Determines whether the background color reflects the set <code>state</code> instead of the control's text.
+			 * @since 1.66
 			 */
 			inverted : {type : "boolean", group : "Misc", defaultValue : false},
 
@@ -193,8 +194,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the state.
-	 * The default value is ValueState.None.
+	 * Sets value for the <code>state</code> property. The default value is <code>ValueState.None</code>.
 	 * @public
 	 * @param {string} sValue New value for property state.
 	 * It should be valid value of enumeration <code>sap.ui.core.ValueState</code> or <code>sap.ui.core.IndicationColor</code>
