@@ -5,7 +5,7 @@
 	"sap.card": {
 		"type": "Table",
 		"header": {
-			"title": "Table Card with Top 65 Products",
+			"title": "Table Card with Top 6 Products",
 			"subTitle": "These are the top sellers this month",
 			"icon": {
 				"src": "sap-icon://sales-order"
