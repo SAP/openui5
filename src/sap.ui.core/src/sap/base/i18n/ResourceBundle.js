@@ -557,7 +557,7 @@ sap.ui.define([
 	 *      // specify url of the base .properties file
 	 *      url : "i18n/messagebundle.properties",
 	 *      async : true
-	 *  ).then(function(oBundle){
+	 *  }).then(function(oBundle){
 	 *      // now you can access the bundle
 	 *  });
 	 *  // ...

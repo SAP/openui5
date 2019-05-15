@@ -58,20 +58,20 @@ sap.ui.define([
 	/**
 	 * Creates an instance of a declarative HTML view.
 	 *
-	 * @param {map} mOptions A map containing the view configuration options.
-	 * @param {string} [mOptions.id] Specifies an ID for the View instance. If no ID is given, an ID will be generated.
-	 * @param {string} [mOptions.viewName] Name of the view resource in module name notation (without suffix)
-	 * @param {string} [mOptions.definition] The view definition.
-	 * @param {sap.ui.core.mvc.Controller} [mOptions.controller] Controller instance to be used for this view.
+	 * @param {object} oOptions An object containing the view configuration options.
+	 * @param {string} [oOptions.id] Specifies an ID for the view instance. If no ID is given, an ID will be generated.
+	 * @param {string} [oOptions.viewName] Name of the view resource in module name notation (without suffix)
+	 * @param {string} [oOptions.definition] The view definition.
+	 * @param {sap.ui.core.mvc.Controller} [oOptions.controller] Controller instance to be used for this view.
 	 * The given controller instance overrides the controller defined in the view definition. Sharing a controller instance
 	 * between multiple views is not supported.
 	 * @public
 	 * @static
 	 * @since 1.56.0
-	 * @return {Promise} A Promise which resolves with the created HTMLView instance
+	 * @return {Promise<sap.ui.core.mvc.HTMLView>} A promise which resolves with the created <code>HTMLView</code> instance
 	 */
-	HTMLView.create = function(mOptions) {
-		var mParameters = merge({}, mOptions);
+	HTMLView.create = function(oOptions) {
+		var mParameters = merge({}, oOptions);
 		mParameters.type = ViewType.HTML;
 		return View.create(mParameters);
 	};

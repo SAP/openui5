@@ -2394,7 +2394,7 @@ sap.ui.define([
 	 * copy of the internal data (for efficiency reasons) and the framework is not prepared
 	 * to handle modifications to these objects.
 	 *
-	 * @return {map} Map of library info objects keyed by the library names.
+	 * @return {Object<string,Object>} Map of library info objects keyed by the library names.
 	 * @public
 	 */
 	Core.prototype.getLoadedLibraries = function() {
@@ -3754,24 +3754,20 @@ sap.ui.define([
 
 
 	/**
-	 * Fire event parseError to attached listeners.
+	 * Fire event <code>parseError</code> to attached listeners.
 	 *
-	 * Expects following event parameters:
-	 * <ul>
-	 * <li>'element' of type <code>sap.ui.core.Element</code> </li>
-	 * <li>'property' of type <code>string</code> </li>
-	 * <li>'type' of type <code>string</code> </li>
-	 * <li>'newValue' of type <code>object</code> </li>
-	 * <li>'oldValue' of type <code>object</code> </li>
-	 * <li>'exception' of type <code>object</code> </li>
-	 * </ul>
-	 *
-	 * @param {Map} [mArguments] the arguments to pass along with the event.
-	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
+	 * @param {object} [oParameters] the arguments to pass along with the event.
+	 * @param {sap.ui.core.Element} oParameters.element The Element where the parse error occurred
+	 * @param {string}oParameters.property The property name of the element where the parse error occurred
+	 * @param {sap.ui.model.Type} oParameters.type The type of the property
+	 * @param {object} oParameters.newValue The value of the property which was entered when the parse error occurred
+	 * @param {object} oParameters.oldValue The value of the property which was present before a new value was entered (before the parse error)
+	 * @param {object} oParameters.exception The exception object which occurred and has more information about the parse error
+	 * @returns {sap.ui.core.Core} <code>this</code> to allow method chaining
 	 * @protected
 	 */
-	Core.prototype.fireParseError = function(mArguments) {
-		_oEventProvider.fireEvent(Core.M_EVENTS.ParseError, mArguments);
+	Core.prototype.fireParseError = function(oParameters) {
+		_oEventProvider.fireEvent(Core.M_EVENTS.ParseError, oParameters);
 		return this;
 	};
 
@@ -3783,7 +3779,6 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
 	 * @param {object} oControlEvent.getParameters
-
 	 * @param {sap.ui.core.Element} oControlEvent.getParameters.element The Element where the parse error occurred
 	 * @param {string} oControlEvent.getParameters.property The property name of the element where the parse error occurred
 	 * @param {sap.ui.model.Type} oControlEvent.getParameters.type The type of the property
@@ -3794,24 +3789,20 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Fire event validationError to attached listeners.
+	 * Fire event <code>validationError</code> to attached listeners.
 	 *
-	 * Expects following event parameters:
-	 * <ul>
-	 * <li>'element' of type <code>sap.ui.core.Element</code> </li>
-	 * <li>'property' of type <code>string</code> </li>
-	 * <li>'type' of type <code>string</code> </li>
-	 * <li>'newValue' of type <code>object</code> </li>
-	 * <li>'oldValue' of type <code>object</code> </li>
-	 * <li>'exception' of type <code>object</code> </li>
-	 * </ul>
-	 *
-	 * @param {Map} [mArguments] the arguments to pass along with the event.
+	 * @param {object} [oParameters] the arguments to pass along with the event.
+	 * @param {sap.ui.core.Element} oParameters.element The Element where the validation error occurred
+	 * @param {string}oParameters.property The property name of the element where the validation error occurred
+	 * @param {sap.ui.model.Type} oParameters.type The type of the property
+	 * @param {object} oParameters.newValue The value of the property which was entered when the validation error occurred
+	 * @param {object} oParameters.oldValue The value of the property which was present before a new value was entered (before the validation error)
+	 * @param {object} oParameters.exception The exception object which occurred and has more information about the validation error
 	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
 	 * @protected
 	 */
-	Core.prototype.fireValidationError = function(mArguments) {
-		_oEventProvider.fireEvent(Core.M_EVENTS.ValidationError, mArguments);
+	Core.prototype.fireValidationError = function(oParameters) {
+		_oEventProvider.fireEvent(Core.M_EVENTS.ValidationError, oParameters);
 		return this;
 	};
 
@@ -3823,7 +3814,6 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
 	 * @param {object} oControlEvent.getParameters
-
 	 * @param {sap.ui.core.Element} oControlEvent.getParameters.element The Element where the validation error occurred
 	 * @param {string} oControlEvent.getParameters.property The property name of the element where the validation error occurred
 	 * @param {sap.ui.model.Type} oControlEvent.getParameters.type The type of the property
@@ -3834,24 +3824,20 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Fire event formatError to attached listeners.
+	 * Fire event <code>formatError</code> to attached listeners.
 	 *
-	 * Expects following event parameters:
-	 * <ul>
-	 * <li>'element' of type <code>sap.ui.core.Element</code> </li>
-	 * <li>'property' of type <code>string</code> </li>
-	 * <li>'type' of type <code>string</code> </li>
-	 * <li>'newValue' of type <code>object</code> </li>
-	 * <li>'oldValue' of type <code>object</code> </li>
-	 * <li>'exception' of type <code>object</code> </li>
-	 * </ul>
-	 *
-	 * @param {Map} [mArguments] the arguments to pass along with the event.
-	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
+	 * @param {object} [oParameters] Parameters to pass along with the event.
+	 * @param {sap.ui.core.Element} oParameters.element The Element where the format error occurred
+	 * @param {string} oParameters.property The property name of the element where the format error occurred
+	 * @param {sap.ui.model.Type} oParameters.type The type of the property
+	 * @param {any} oParameters.newValue The value of the property which was entered when the format error occurred
+	 * @param {any} oParameters.oldValue The value of the property which was present before a new value was entered (before the format error)
+	 * @param {object} oParameters.exception The exception object which occurred and has more information about the format error
+	 * @returns {sap.ui.core.Core} <code>this</code> to allow method chaining
 	 * @protected
 	 */
-	Core.prototype.fireFormatError = function(mArguments) {
-		_oEventProvider.fireEvent(Core.M_EVENTS.FormatError, mArguments);
+	Core.prototype.fireFormatError = function(oParameters) {
+		_oEventProvider.fireEvent(Core.M_EVENTS.FormatError, oParameters);
 		return this;
 	};
 
@@ -3863,7 +3849,6 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
 	 * @param {object} oControlEvent.getParameters
-
 	 * @param {sap.ui.core.Element} oControlEvent.getParameters.element The Element where the format error occurred
 	 * @param {string} oControlEvent.getParameters.property The property name of the element where the format error occurred
 	 * @param {sap.ui.model.Type} oControlEvent.getParameters.type The type of the property

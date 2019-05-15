@@ -885,16 +885,16 @@ sap.ui.define([
 	 * <li>{@link sap.ui.core.mvc.HTMLView.create}</li>
 	 * </ul>
 	 *
-	 * @param {object} mOptions A parameter map for the view instantiation. Specialized view types could bring in additional parameter.
-	 * @param {string} [mOptions.id] Specifies an ID for the View instance. If no ID is given, an ID will be generated.
-	 * @param {string} [mOptions.viewName] Name of the view resource in module name notation (without suffix)
-	 * @param {sap.ui.core.mvc.ViewType} [mOptions.type] Specifies what kind of view will be instantiated. All valid
+	 * @param {object} oOptions A parameter object for the view instantiation. Specialized view types could bring in additional parameters.
+	 * @param {string} [oOptions.id] Specifies an ID for the View instance. If no ID is given, an ID will be generated.
+	 * @param {string} [oOptions.viewName] Name of the view resource in module name notation (without suffix)
+	 * @param {sap.ui.core.mvc.ViewType} [oOptions.type] Specifies what kind of view will be instantiated. All valid
 	 * view types are listed in the enumeration  {@link sap.ui.core.mvc.ViewType}.
-	 * @param {any} [mOptions.viewData] The view data can hold user specific data. This data is available
+	 * @param {any} [oOptions.viewData] The view data can hold user specific data. This data is available
 	 * during the whole lifecycle of the view and the controller
-	 * @param {any} [mOptions.definition] The view definition. Only supported for XML and HTML views.
+	 * @param {any} [oOptions.definition] The view definition. Only supported for XML and HTML views.
 	 * See also {@link sap.ui.core.mvc.XMLView.create} and {@link sap.ui.core.mvc.HTMLView.create} for more information.
-	 * @param {object} [mOptions.preprocessors] Can hold a map from the specified preprocessor type (e.g. "xml") to an array of
+	 * @param {object} [oOptions.preprocessors] Can hold a map from the specified preprocessor type (e.g. "xml") to an array of
 	 * preprocessor configurations; each configuration consists of a <code>preprocessor</code> property (optional when
 	 * registered as on-demand preprocessor) and may contain further preprocessor-specific settings. The preprocessor can
 	 * be either a module name as string implementation of {@link sap.ui.core.mvc.View.Preprocessor} or a function according to
@@ -905,16 +905,16 @@ sap.ui.define([
 	 * on-demand availability use {@link sap.ui.core.mvc.XMLView.registerPreprocessor}.
 	 * <strong>Note</strong>: Please note that preprocessors in general are currently only available
 	 * to XMLViews
-	 * @param {sap.ui.core.mvc.Controller} [mOptions.controller] Controller instance to be used for this view.
+	 * @param {sap.ui.core.mvc.Controller} [oOptions.controller] Controller instance to be used for this view.
 	 * The given controller instance overrides the controller defined in the view definition. Sharing a controller instance
 	 * between multiple views is not supported.
 	 * @public
 	 * @static
 	 * @since 1.56.0
-	 * @return {Promise} a Promise which resolves with the created View instance
+	 * @return {Promise<sap.ui.core.mvc.View>} a Promise which resolves with the created View instance
 	 */
-	View.create = function(mOptions) {
-		var mParameters = merge({}, mOptions);
+	View.create = function(oOptions) {
+		var mParameters = merge({}, oOptions);
 		mParameters.async = true;
 		mParameters.viewContent = mParameters.definition;
 

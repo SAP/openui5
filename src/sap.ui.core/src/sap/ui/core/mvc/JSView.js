@@ -67,19 +67,19 @@ sap.ui.define([
 	/**
 	 * Creates an instance of the view with the given name (and id).
 	 *
-	 * @param {map} mOptions A map containing the view configuration options.
-	 * @param {string} [mOptions.id] Specifies an ID for the View instance. If no ID is given, an ID will be generated.
-	 * @param {string} [mOptions.viewName] Name of the view. The view must be defined using <code>sap.ui.core.mvc.JSView.extend</code>.
-	 * @param {sap.ui.core.mvc.Controller} [mOptions.controller] Controller instance to be used for this view.
+	 * @param {object} oOptions An object containing the view configuration options.
+	 * @param {string} [oOptions.id] Specifies an ID for the view instance. If no ID is given, an ID will be generated.
+	 * @param {string} [oOptions.viewName] Name of the view. The view must be defined using <code>sap.ui.core.mvc.JSView.extend</code>.
+	 * @param {sap.ui.core.mvc.Controller} [oOptions.controller] Controller instance to be used for this view.
 	 * The given controller instance overrides the controller defined in the view definition. Sharing a controller instance
 	 * between multiple views is not supported.
 	 * @public
 	 * @static
 	 * @since 1.56.0
-	 * @return {Promise} A Promise that resolves with the view instance
+	 * @return {Promise<sap.ui.core.mvc.JSView>} A promise that resolves with the view instance
 	 */
-	JSView.create = function(mOptions) {
-		var mParameters = merge({}, mOptions);
+	JSView.create = function(oOptions) {
+		var mParameters = merge({}, oOptions);
 		//remove unsupported options:
 		for (var sOption in mParameters) {
 			if (sOption === 'definition' || sOption === 'preprocessors') {

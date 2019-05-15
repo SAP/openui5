@@ -842,7 +842,7 @@ function(
 			return (m && m[1]) || "";
 		}
 
-		// init basic metadata from static infos and fallback to defaults
+		// init basic metadata from static information and fallback to defaults
 		this._sLibraryName = oStaticInfo.library || defaultLibName(this.getName());
 		this._mSpecialSettings = normalize(oStaticInfo.specialSettings, this.metaFactorySpecialSetting);
 		var mAllProperties = normalize(oStaticInfo.properties, this.metaFactoryProperty);
@@ -980,7 +980,7 @@ function(
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
 	 *
-	 * @return {map} Map of property info objects keyed by the property names
+	 * @return {Object<string,Object>} Map of property info objects keyed by the property names
 	 * @public
 	 */
 	ManagedObjectMetadata.prototype.getProperties = function() {
@@ -997,7 +997,7 @@ function(
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
 	 *
-	 * @return {map} Map of property info objects keyed by the property names
+	 * @return {Object<string,Object>} Map of property info objects keyed by the property names
 	 * @public
 	 */
 	ManagedObjectMetadata.prototype.getAllProperties = function() {
@@ -1014,7 +1014,7 @@ function(
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
 	 *
-	 * @return {map} Map of property infos keyed by property names
+	 * @return {Object<string,Object>} Map of property info objects keyed by property names
 	 * @protected
 	 */
 	ManagedObjectMetadata.prototype.getAllPrivateProperties = function() {
@@ -1118,7 +1118,7 @@ function(
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
 	 *
-	 * @return {map} Map of aggregation info objects keyed by aggregation names
+	 * @return {Object<string,Object>} Map of aggregation info objects keyed by aggregation names
 	 * @public
 	 */
 	ManagedObjectMetadata.prototype.getAggregations = function() {
@@ -1137,7 +1137,7 @@ function(
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
 	 *
-	 * @return {map} Map of aggregation info objects keyed by aggregation names
+	 * @return {Object<string,Object>} Map of aggregation info objects keyed by aggregation names
 	 * @public
 	 */
 	ManagedObjectMetadata.prototype.getAllAggregations = function() {
@@ -1155,7 +1155,7 @@ function(
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
 	 *
-	 * @return {map} Map of aggregation infos keyed by aggregation names
+	 * @return {Object<string,Object>} Map of aggregation info objects keyed by aggregation names
 	 * @protected
 	 */
 	ManagedObjectMetadata.prototype.getAllPrivateAggregations = function() {
@@ -1433,7 +1433,7 @@ function(
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
 	 *
-	 * @return {map} Map of association info objects keyed by association names
+	 * @return {Object<string,Object>} Map of association info objects keyed by association names
 	 * @public
 	 */
 	ManagedObjectMetadata.prototype.getAssociations = function() {
@@ -1451,7 +1451,7 @@ function(
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
 	 *
-	 * @return {map} Map of association info objects keyed by association names
+	 * @return {Object<string,Object>} Map of association info objects keyed by association names
 	 * @public
 	 */
 	ManagedObjectMetadata.prototype.getAllAssociations = function() {
@@ -1469,7 +1469,7 @@ function(
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
 	 *
-	 * @return {map} Map of association infos keyed by association names
+	 * @return {Object<string,Object>} Map of association info objects keyed by association names
 	 * @protected
 	 */
 	ManagedObjectMetadata.prototype.getAllPrivateAssociations = function() {
@@ -1540,7 +1540,7 @@ function(
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
 	 *
-	 * @return {map} Map of event info objects keyed by event names
+	 * @return {Object<string,Object>} Map of event info objects keyed by event names
 	 * @public
 	 */
 	ManagedObjectMetadata.prototype.getEvents = function() {
@@ -1557,7 +1557,7 @@ function(
 	 *   and therefore not part of the API. See the {@link #constructor Notes about Info objects}
 	 *   in the constructor documentation of this class.
 	 *
-	 * @return {map} Map of event info objects keyed by event names
+	 * @return {Object<string,Object>} Map of event info objects keyed by event names
 	 * @public
 	 */
 	ManagedObjectMetadata.prototype.getAllEvents = function() {
@@ -1606,7 +1606,7 @@ function(
 	 * Returns a map of default values for all properties declared by the
 	 * described class and its ancestors, keyed by the property name.
 	 *
-	 * @return {map} Map of default values keyed by property names
+	 * @return {Object<string,any>} Map of default values keyed by property names
 	 * @public
 	 */
 	ManagedObjectMetadata.prototype.getPropertyDefaults = function() {
