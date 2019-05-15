@@ -24,7 +24,7 @@ sap.ui.define(['sap/base/Log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 	function PerfMeasurement() {
 
 		/**
-		 * Single Measurement Entry
+		 * Single Measurement Entry.
 		 *
 		 * @public
 		 * @typedef {object} module:sap/ui/performance/Measurement.Entry
