@@ -1374,6 +1374,28 @@ function(
 			});
 			this.oModel.getVariant("varRef");
 		});
+
+		QUnit.test("when 'getCurrentControlVariantIds' is called to get all current variant references", function(assert){
+			this.oData = {
+				"variantManagementRef1": {
+					"currentVariant": "currentVariantRef1"
+				},
+				"variantManagementRef2": {
+					"currentVariant": "currentVariantRef2"
+				}
+			};
+			this.oModel.setData(this.oData);
+			assert.deepEqual(
+				this.oModel.getCurrentControlVariantIds(),
+				[this.oData["variantManagementRef1"]["currentVariant"], this.oData["variantManagementRef2"]["currentVariant"]],
+				"then the function returns an array current variant references"
+			);
+		});
+
+		QUnit.test("when 'getCurrentControlVariantIds' is called with no variant model data", function(assert){
+			this.oModel.setData({});
+			assert.deepEqual(this.oModel.getCurrentControlVariantIds(), [], "then the function returns an empty array");
+		});
 	});
 
 	QUnit.module("Given an empty VariantModel and a VariantManagement control", {
