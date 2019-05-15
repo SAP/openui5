@@ -46,6 +46,17 @@ html[data-sap-ui-browser^="ie"] .sapMFocus > .sapMSFF {
 	color: @sapUiContentIconColor;
 }
 
+html.sap-desktop .sapMFocus > .sapMSFF::before {
+	border: 0.125rem dotted @sapUiContentFocusColor;
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMFocus > .sapMSFF::before  {
+		border: 0.125rem dashed @sapUiContentFocusColor;
+	}
+}
+
 /* button highlight on hover/press */
 html.sap-desktop .sapMSFB:hover,
 .sapMSFB:active {
