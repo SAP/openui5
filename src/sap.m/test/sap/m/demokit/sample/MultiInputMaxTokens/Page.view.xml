@@ -11,7 +11,7 @@
 	<Label text="No more than 2 products can be added"	width="100%" labelFor="multiInput1"/>
 	<MultiInput
 		id="multiInput1"
-		width="500px"
+		width="70%"
 		maxTokens="2"
 		suggestionItems="{
 			path: '/ProductCollection',
