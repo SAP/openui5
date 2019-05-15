@@ -44,6 +44,9 @@ sap.ui.define([
 						title: 'Analytical',
 						target: 'exploreSamples',
 						key: 'analytical',
+						settings: {
+							height: '400px'
+						},
 						manifestUrl: '/samples/analytical.manifest.json'
 					},
 					{

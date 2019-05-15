@@ -26,7 +26,12 @@
 							</contentRight>
 						</Bar>
 					</customHeader>
-					<widgets:Card class="sapUiLargeMargin" id="cardSample" width="400px"></widgets:Card>
+					<widgets:Card
+						class="sapUiLargeMargin"
+						id="cardSample"
+						width="{= ${/sampleSettings/width} ? ${/sampleSettings/width} : '400px'}"
+						height="{= ${/sampleSettings/height} ? ${/sampleSettings/height} : 'auto'}">
+					</widgets:Card>
 				</Page>
 			</l:SplitPane>
 			<l:SplitPane>
