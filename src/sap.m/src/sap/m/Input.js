@@ -874,6 +874,11 @@ function(
 
 		this.updateInputField(sNewValue);
 
+		// don't continue if the input is destroyed after firing change event through updateInputField
+		if (this.bIsDestroyed) {
+			return;
+		}
+
 		this._oSuggPopover._iPopupListSelectedIndex = -1;
 
 		if (!(this._bUseDialog && this instanceof sap.m.MultiInput && this._isMultiLineMode)) {
