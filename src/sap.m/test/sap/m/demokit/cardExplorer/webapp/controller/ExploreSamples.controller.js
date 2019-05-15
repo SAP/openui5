@@ -99,8 +99,10 @@ sap.ui.define([
 
 			if (oSubSample) {
 				this.oModel.setProperty("/subSample", oSubSample);
+				this.oModel.setProperty("/sampleSettings", oSubSample.settings);
 				sManifestUrl = oSubSample.manifestUrl;
 			} else {
+				this.oModel.setProperty("/sampleSettings", oSample.settings);
 				sManifestUrl = oSample.manifestUrl;
 			}
 
@@ -132,8 +134,13 @@ sap.ui.define([
 			}
 
 			// TODO try/catch, handle errors, handle json validation, schema validation and etc.
-			var oData = JSON.parse(sValue);
-			this.byId("cardSample").setManifest(oData);
+			try {
+				var oData = JSON.parse(sValue);
+				this.byId("cardSample").setManifest(oData);
+			} catch (oException) {
+				this.byId("cardSample").setManifest(null);
+			}
+
 		},
 		onSubSampleChange: function (oEvent) {
 			var item = oEvent.getParameter('selectedItem');
