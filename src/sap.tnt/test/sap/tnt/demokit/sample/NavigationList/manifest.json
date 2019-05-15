@@ -6,7 +6,11 @@
 		}
 	},
 	"sap.ui5": {
-		"rootView": "sap.tnt.sample.NavigationList.V",
+		"rootView": {
+			"viewName": "sap.tnt.sample.NavigationList.V",
+			"type": "XML",
+			"async": true
+		},
 		"dependencies": {
 			"libs": {
 				"sap.m": {}
