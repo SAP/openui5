@@ -25,7 +25,7 @@ sap.ui.define([], function() {
 	 *
 	 * @class A class whose instances act as a facade for other objects.
 	 *
-	 * Note: If a class returns a facade in its constructor, only the defined functions will be visible, no
+	 * <b>Note:</b> If a class returns a facade in its constructor, only the defined functions will be visible, no
 	 * internals of the class can be accessed.
 	 *
 	 * @author Malte Wedel, Daniel Brinkmann

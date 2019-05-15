@@ -103,7 +103,7 @@ sap.ui.define(['./Object'],
 	 * with the same signature as their {@link #init} method (to be used by applications).
 	 *
 	 * @name sap.ui.base.Poolable
-	 * @interface Contract for objects that can be pooled by ObjectPool
+	 * @interface Contract for objects that can be pooled by <code>ObjectPool</code>.
 	 * @public
 	 */
 
