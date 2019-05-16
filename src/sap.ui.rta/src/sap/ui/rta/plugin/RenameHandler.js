@@ -57,7 +57,7 @@ sap.ui.define([
 		 * @public
 		 */
 		startEdit : function (mPropertyBag) {
-			this._bPreventMenu = true;
+			this.setBusy(true);
 			this._oEditedOverlay = mPropertyBag.overlay;
 
 			var oElement = mPropertyBag.overlay.getElement();
@@ -245,7 +245,7 @@ sap.ui.define([
 		 */
 		_stopEdit : function (bRestoreFocus, sPluginMethodName) {
 			var oOverlay;
-			this._bPreventMenu = false;
+			this.setBusy(false);
 
 			// exchange the dummy text at the label with the genuine empty text (see start_edit function)
 			if (this._$oEditableControlDomRef.text() === "_?_") {

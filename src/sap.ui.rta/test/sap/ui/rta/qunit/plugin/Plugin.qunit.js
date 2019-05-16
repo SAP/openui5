@@ -182,7 +182,7 @@ function (
 		QUnit.test("when evaluateEditable is called for elements", function(assert) {
 			var oModifyPluginListSpy = sandbox.spy(this.oPlugin, "_modifyPluginList");
 
-			this.oPlugin.evaluateEditable([this.oLayoutOverlay]);
+			this.oPlugin.evaluateEditable([this.oLayoutOverlay], {onRegistration: false});
 			assert.equal(oModifyPluginListSpy.callCount, 1, "_modifyPluginList was called once");
 			assert.equal(oModifyPluginListSpy.lastCall.args[0], this.oLayoutOverlay, "first parameter is the overlay");
 		});
@@ -191,7 +191,7 @@ function (
 			sandbox.stub(this.oLayoutOverlay.getDesignTimeMetadata(), "markedAsNotAdaptable").returns(true);
 			var oModifyPluginListSpy = sandbox.spy(this.oPlugin, "_modifyPluginList");
 
-			this.oPlugin.evaluateEditable([this.oLayoutOverlay]);
+			this.oPlugin.evaluateEditable([this.oLayoutOverlay], {onRegistration: false});
 			assert.equal(oModifyPluginListSpy.callCount, 1, "_modifyPluginList was called once");
 			assert.equal(oModifyPluginListSpy.lastCall.args[0], this.oLayoutOverlay, "first parameter is the overlay");
 			assert.equal(oModifyPluginListSpy.lastCall.args[1], false, "then editable is false");
@@ -199,10 +199,30 @@ function (
 
 		QUnit.test("when evaluateEditable is called with getStableElements in DTMD returning a selector", function(assert) {
 			var oModifyPluginListSpy = sandbox.spy(this.oPlugin, "_modifyPluginList");
+			var oSetBusySpy = sandbox.spy(this.oPlugin, "setBusy");
 			sandbox.stub(this.oLayoutOverlay.getDesignTimeMetadata(), "getStableElements").returns([{id: "id"}]);
 
-			this.oPlugin.evaluateEditable([this.oLayoutOverlay]);
-			assert.equal(oModifyPluginListSpy.lastCall.args[1], true, "the function returns the result of _isEditable");
+			this.oPlugin.evaluateEditable([this.oLayoutOverlay], {onRegistration: false});
+			assert.equal(oSetBusySpy.firstCall.args[0], true, "the plugin switched to busy mode first");
+			assert.equal(oModifyPluginListSpy.lastCall.args[1], true, "the _modifyPluginList function is called");
+			assert.equal(oSetBusySpy.lastCall.args[0], false, "the plugin switched the busy mode off again");
+		});
+
+		QUnit.test("when evaluateEditable is called and _isEditable returns a promise", function(assert) {
+			sandbox.restore();
+			var fnDone = assert.async();
+			var oModifyPluginListSpy = sandbox.spy(this.oPlugin, "_modifyPluginList");
+			var oSetBusySpy = sandbox.spy(this.oPlugin, "setBusy");
+			sandbox.stub(this.oLayoutOverlay.getDesignTimeMetadata(), "getStableElements").returns([{id: "id"}]);
+			sandbox.stub(this.oPlugin, "_isEditable").resolves(true);
+
+			this.oPlugin.evaluateEditable([this.oLayoutOverlay], {onRegistration: false});
+			assert.equal(oSetBusySpy.firstCall.args[0], true, "the plugin switched to busy mode first");
+			this.oPlugin.attachEventOnce('busyChange', function() {
+				assert.equal(oModifyPluginListSpy.lastCall.args[1], true, "the _modifyPluginList function is called");
+				assert.equal(oSetBusySpy.lastCall.args[0], false, "the plugin switched the busy mode off again");
+				fnDone();
+			});
 		});
 	});
 
@@ -251,10 +271,11 @@ function (
 			assert.strictEqual(this.oButtonOverlay.getElementHasStableId(), true, "and the 'getElementHasStableId' property of the Overlay is set to true");
 			assert.ok(this.oPlugin.hasStableId(this.oButtonOverlay), "then if hasStableId is called again it also returns true");
 			assert.equal(this.oCheckControlIdSpy.callCount, 2, "but then the utility method to check the control ids is not called another time");
+			assert.equal(this.oButtonOverlay.getEditableByPlugins().length, 2, "then the overlay is editable by 2 plugins");
 		});
 	});
 
-	QUnit.module("Given the Designtime is initialized with 2 Plugins with _isEditable stubbed", {
+	QUnit.module("Given the Designtime is initialized with 2 Plugins with _isEditable stubbed asynchronous", {
 		beforeEach : function(assert) {
 			var done = assert.async();
 
@@ -273,8 +294,9 @@ function (
 			this.oRemovePlugin = new Remove({
 				commandFactory : oCommandFactory
 			});
-			sandbox.stub(this.oRenamePlugin, "_isEditable").returns(true);
+			sandbox.stub(this.oRenamePlugin, "_isEditable").resolves(true);
 			sandbox.stub(this.oRemovePlugin, "_isEditable").returns(false);
+			this.oModifyPluginListSpy = sandbox.spy(Plugin.prototype, "_modifyPluginList");
 
 			this.oDesignTime = new DesignTime({
 				rootElements : [this.oLayout],
@@ -303,6 +325,7 @@ function (
 
 			assert.notOk(this.oPlugin.hasStableId(this.oButtonOverlay2), "then the button has no stable ID");
 			assert.equal(oSetStableIdSpy.callCount, 0, "and the result is not saved on the overlay");
+			assert.equal(this.oModifyPluginListSpy.callCount, 4, "then the plugin modifikation is triggered twice for each plugin");
 		});
 
 		QUnit.test("when the event elementModified is thrown with visibility change", function(assert) {
@@ -371,6 +394,7 @@ function (
 		});
 
 		QUnit.test("when the event elementModified is thrown but the plugin is busy", function(assert) {
+			sandbox.restore();
 			var oModifyPluginListSpy = sandbox.spy(this.oRenamePlugin, "_modifyPluginList");
 			sandbox.stub(OverlayUtil, "findAllOverlaysInContainer").returns([this.oLayoutOverlay]);
 			this.oRenamePlugin.isBusy = function(){

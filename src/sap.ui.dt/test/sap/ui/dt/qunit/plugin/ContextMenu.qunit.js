@@ -58,7 +58,6 @@ sap.ui.define([
 	QUnit.module("ContextMenu API", {
 		beforeEach: function (assert) {
 			var done = assert.async();
-			this.clock = sinon.useFakeTimers();
 			this.oButton1 = new Button("button1");
 			this.oButton2 = new Button();
 			this.oButtonUnselectable = new Button();
@@ -151,6 +150,7 @@ sap.ui.define([
 				this.oButton2Overlay = OverlayRegistry.getOverlay(this.oButton2);
 				this.oButton2Overlay.setSelectable(true);
 				this.oUnselectableOverlay = OverlayRegistry.getOverlay(this.oButtonUnselectable);
+				this.clock = sinon.useFakeTimers();
 				done();
 			}.bind(this));
 			this.oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
@@ -658,7 +658,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("calling _clearHoverTimeout", function(assert) {
-			this.clock = sinon.useFakeTimers();
 			var done = assert.async();
 			this.oContextMenuPlugin.hoverTimeout = setTimeout(function() {
 				assert.notOk(true, "hover timeout should not be finished");

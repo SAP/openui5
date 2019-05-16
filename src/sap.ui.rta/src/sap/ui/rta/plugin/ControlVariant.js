@@ -389,10 +389,6 @@ sap.ui.define([
 		RenameHandler._stopEdit.call(this, bRestoreFocus, "plugin.ControlVariant.stopEdit");
 	};
 
-	ControlVariant.prototype.isBusy = function(){
-		return this._bPreventMenu;
-	};
-
 	ControlVariant.prototype._createDuplicateCommand = function (mPropertyBag) {
 		return this.getCommandFactory().getCommandFor(mPropertyBag.element, "duplicate", {
 			sourceVariantReference: mPropertyBag.currentVariantReference,

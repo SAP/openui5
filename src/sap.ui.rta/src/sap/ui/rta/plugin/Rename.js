@@ -62,7 +62,7 @@ sap.ui.define([
 	Rename.prototype.exit = function() {
 		Plugin.prototype.exit.apply(this, arguments);
 
-		this._bPreventMenu = false;
+		this.setBusy(false);
 		RenameHandler._exit.call(this);
 	};
 
@@ -238,14 +238,6 @@ sap.ui.define([
 	 */
 	Rename.prototype.getActionName = function(){
 		return "rename";
-	};
-
-	/**
-	 * Indicates whether the Plugin is busy
-	 * @return {boolean} true if Plugin is busy
-	 */
-	Rename.prototype.isBusy = function(){
-		return this._bPreventMenu;
 	};
 
 	return Rename;

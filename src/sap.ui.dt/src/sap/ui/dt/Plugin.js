@@ -46,6 +46,17 @@ function(
 				designTime: { // its defined as a property because spa.ui.dt.designTime is a managed object and UI5 only allows associations for elements
 					type : "object",
 					multiple : false
+				},
+				busy: {
+					type : "boolean",
+					defaultValue : false
+				}
+			},
+			events : {
+				busyChange : {
+					parameters : {
+						busy : {type : "boolean"}
+					}
 				}
 			}
 		}
@@ -55,7 +66,9 @@ function(
 	 * Called when the Plugin is initialized
 	 * @protected
 	 */
-	Plugin.prototype.init = function() {};
+	Plugin.prototype.init = function() {
+		this._bBusyCounter = 0;
+	};
 
 	/**
 	 * Called when the Plugin is destroyed
@@ -133,7 +146,9 @@ function(
 	Plugin.prototype._registerOverlays = function(oDesignTime) {
 		if (this.registerElementOverlay || this.registerAggregationOverlay) {
 			var aElementOverlays = oDesignTime.getElementOverlays();
+			this.setBusy(true);
 			aElementOverlays.forEach(this.callElementOverlayRegistrationMethods.bind(this));
+			this.setBusy(false);
 		}
 	};
 
@@ -213,12 +228,24 @@ function(
 
 	/**
 	 * Indicate if a plugin is currently busy
-	 * Method to be overwritten by the different plugins
 	 *
 	 * @returns {boolean} Returns whether the plugin is currently busy
 	 */
-	Plugin.prototype.isBusy = function() {
-		return false;
+	Plugin.prototype.isBusy = Plugin.prototype.getBusy;
+
+	/**
+	 * @param {boolean} bBusy - busy state to set
+	 */
+	Plugin.prototype.setBusy = function(bBusy) {
+		this._bBusyCounter = bBusy ? this._bBusyCounter + 1 : this._bBusyCounter - 1;
+		if ((bBusy === true && this._bBusyCounter === 1) ||
+			(bBusy === false && this._bBusyCounter === 0)
+		) {
+			this.setProperty("busy", bBusy);
+			this.fireBusyChange({
+				busy: bBusy
+			});
+		}
 	};
 
 	/**

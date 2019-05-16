@@ -129,6 +129,17 @@ function (
 				},
 
 				/**
+				 * Fires when new plugin is added
+				 */
+				addPlugin: {
+					parameters: {
+						plugin: {
+							type: "sap.ui.dt.Plugin"
+						}
+					}
+				},
+
+				/**
 				 * Fires when property 'enabled' is changed
 				 */
 				enabledChanged: {
@@ -246,8 +257,14 @@ function (
 				complete: function (oEvent) {
 					if (oEvent.getSource().isEmpty()) {
 						this._registerElementOverlays();
-						this._sStatus = DesignTimeStatus.SYNCED;
-						this.fireSynced();
+						// TODO: get rid of this temporary solution with UICSFLEX-3718 BLI
+						// new teasks are created during element overlay registration
+						if (this._oTaskManager.isEmpty() && this._sStatus !== DesignTimeStatus.SYNCED) {
+							this._sStatus = DesignTimeStatus.SYNCED;
+							setTimeout(function () {
+								this.fireSynced();
+							}.bind(this), 0);
+						}
 					}
 				}.bind(this),
 				add: function (oEvent) {
@@ -262,6 +279,9 @@ function (
 
 			this._onElementOverlayDestroyed = this._onElementOverlayDestroyed.bind(this);
 
+			// Syncing batch of overlays
+			this._aOverlaysCreatedInLastBatch = [];
+
 			ManagedObject.apply(this, arguments);
 
 			// Create overlays for root elements
@@ -270,6 +290,14 @@ function (
 			// Create overlays for future root elements
 			this.attachEvent("addRootElement", function (oEvent) {
 				this._createOverlaysForRootElement(oEvent.getParameter('element'));
+			}, this);
+
+			// Attach busyChange to available plugins
+			this.getPlugins().forEach(this._attachBusyChange, this);
+
+			// Attach busyChange for future added plugins
+			this.attachEvent("addPlugin", function (oEvent) {
+				this._attachBusyChange(oEvent.getParameter('plugin'));
 			}, this);
 
 			// Toggle root overlays visibility when property 'enabled' is changed
@@ -289,11 +317,22 @@ function (
 					}
 				});
 			}, this);
-
-			// Syncing batch of overlays
-			this._aOverlaysCreatedInLastBatch = [];
 		}
 	});
+
+	DesignTime.prototype._attachBusyChange = function (oPlugin) {
+		var iTaskId;
+		oPlugin.attachBusyChange(function (oEvent) {
+			if (oEvent.getParameter("busy")) {
+				iTaskId = this._oTaskManager.add({
+					type: "pluginBusy",
+					plugin: oEvent.getSource().getActionName()
+				});
+			} else {
+				this._oTaskManager.complete(iTaskId);
+			}
+		}, this);
+	};
 
 	DesignTime.prototype._removeOverlayFromSyncingBatch = function (oElementOverlay) {
 		var iIndex = this._aOverlaysCreatedInLastBatch.indexOf(oElementOverlay);
@@ -303,8 +342,17 @@ function (
 	};
 
 	DesignTime.prototype._registerElementOverlays = function () {
-		var aPlugins = this.getPlugins();
 		var aElementOverlays = this._aOverlaysCreatedInLastBatch.slice();
+
+		if (!aElementOverlays.length) {
+			return;
+		}
+
+		// TODO: get rid of this temporary solution with UICSFLEX-3718 BLI
+		var iTaskId = this._oTaskManager.add({
+			type: "registerElementOverlays"
+		});
+		var aPlugins = this.getPlugins();
 
 		// IMPORTANT: cycles below should not be combined in one.
 		// Reason: overlays life-cycle:
@@ -366,6 +414,7 @@ function (
 		}, this);
 
 		this._aOverlaysCreatedInLastBatch = [];
+		this._oTaskManager.complete(iTaskId);
 	};
 
 	/**
@@ -386,7 +435,7 @@ function (
 
 		this._destroyAllOverlays();
 
-		delete this._aOverlaysCreatedInLastBatch;
+		this._aOverlaysCreatedInLastBatch = [];
 		delete this._bDestroyPending;
 	};
 
@@ -435,10 +484,11 @@ function (
 	 * @protected
 	 */
 	DesignTime.prototype.addPlugin = function (oPlugin) {
-		oPlugin.setDesignTime(this);
-
 		this.addAggregation("plugins", oPlugin);
-
+		oPlugin.setDesignTime(this);
+		this.fireAddPlugin({
+			plugin: oPlugin
+		});
 		return this;
 	};
 
