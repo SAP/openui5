@@ -1535,7 +1535,6 @@ function(
 			this._oDesignTime.setEnabled(bOverlaysEnabled);
 			this.getPlugins()['tabHandling'][bOverlaysEnabled ? 'removeTabIndex' : 'restoreTabIndex']();
 			this.setProperty('mode', sNewMode);
-			document.activeElement.blur();
 			this.fireModeChanged({mode: sNewMode});
 		}
 	};
