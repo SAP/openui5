@@ -98,8 +98,15 @@ sap.ui.define([
 		this.setBusyIndicatorDelay(0);
 	};
 
-	BaseContent.prototype.ontap = function () {
-		this.firePress({/* no parameters */});
+	/**
+	 * Handles tap event.
+	 * @param {jQuery.Event} oEvent The event object
+	 * @private
+	 */
+	BaseContent.prototype.ontap = function (oEvent) {
+		if (!oEvent.isMarked()) {
+			this.firePress({/* no parameters */});
+		}
 	};
 
 	BaseContent.prototype.exit = function () {

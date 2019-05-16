@@ -117,15 +117,15 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/m/HBox", "sap/m/VBox", "sap/m/Tex
 			}
 
 			if (oConfiguration.groups) {
-				this._addGroups();
+				this._addGroups(oConfiguration);
 			}
 
 			return this;
 		};
 
-		ObjectContent.prototype._addGroups = function () {
+		ObjectContent.prototype._addGroups = function (oConfiguration) {
 			var oContainer = this._getRootContainer();
-			var aGroups = this.getConfiguration().groups || [];
+			var aGroups = oConfiguration.groups || [];
 
 			aGroups.forEach(function (oGroup) {
 
@@ -201,9 +201,8 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/m/HBox", "sap/m/VBox", "sap/m/Tex
 				oContainer.addContent(oGroupContainer);
 			});
 
-			this._attachActions(oContainer, this);
+			this._attachActions(oConfiguration, this);
 		};
-
 		ActionEnablement.enrich(ObjectContent);
 
 		return ObjectContent;

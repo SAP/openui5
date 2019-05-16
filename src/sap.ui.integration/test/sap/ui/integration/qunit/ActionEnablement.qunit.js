@@ -682,6 +682,184 @@ sap.ui.define([
 			}
 		};
 
+		var objectContent_service = {
+			"sap.app": {
+				"type": "card"
+			},
+			"sap.ui5": {
+				"services": {
+					"Navigation2": {
+						"factoryName": "test.service.SampleNavigationFactory"
+					}
+				}
+			},
+			"sap.card": {
+				"type": "Object",
+				"data": {
+					"request": {
+						"url": "test-resources/sap/ui/integration/qunit/manifests/datahandling_employee.json"
+					}
+				},
+				"header": {
+					"data": {
+						"path": "/nested_level_1/nested_level_2"
+					},
+					"icon": {
+						"src": "{photo}"
+					},
+					"title": "{firstName} {lastName}",
+					"subTitle": "{position}"
+				},
+				"content": {
+					"data": {
+						"path": "/nested_level_1/nested_level_2"
+					},
+					"groups": [
+						{
+							"title": "{{contactDetails}}",
+							"items": [
+								{
+									"label": "{{firstName}}",
+									"value": "{firstName}"
+								},
+								{
+									"label": "{{lastName}}",
+									"value": "{lastName}"
+								},
+								{
+									"label": "{{phone}}",
+									"value": "{phone}"
+								}
+							]
+						},
+						{
+							"title": "{{organizationalDetails}}",
+							"items": [
+								{
+									"label": "{{directManager}}",
+									"value": "{manager/firstName} {manager/lastName}",
+									"icon": {
+										"src": "{manager/photo}"
+									}
+								}
+							]
+						},
+						{
+							"title": "{{companyDetails}}",
+							"items": [
+								{
+									"label": "{{companyName}}",
+									"value": "{company/name}"
+								},
+								{
+									"label": "{{address}}",
+									"value": "{company/address}"
+								},
+								{
+									"label": "{{website}}",
+									"type": "link",
+									"value": "{company/website}"
+								}
+							]
+						}
+					],
+					"actions": [
+						{
+							"type": "Navigation",
+							"target": "_blank",
+							"enabled": "{= ${url}}",
+							"url": "{url}"
+						}
+					]
+				}
+			}
+		};
+
+		var objectCotnent_url = {
+			"sap.app": {
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Object",
+				"data": {
+					"request": {
+						"url": "test-resources/sap/ui/integration/qunit/manifests/employee.json"
+					}
+				},
+				"header": {
+					"icon": {
+						"src": "{photo}"
+					},
+					"title": "{firstName} {lastName}",
+					"subTitle": "{position}",
+					"actions": [
+						{
+							"type": "Navigation",
+							"url": "https://www.sap.com"
+
+						}
+					]
+				},
+				"content": {
+					"groups": [
+						{
+							"title": "{{contactDetails}}",
+							"items": [
+								{
+									"label": "{{firstName}}",
+									"value": "{firstName}"
+								},
+								{
+									"label": "{{lastName}}",
+									"value": "{lastName}"
+								},
+								{
+									"label": "{{phone}}",
+									"value": "{phone}"
+								}
+							]
+						},
+						{
+							"title": "{{organizationalDetails}}",
+							"items": [
+								{
+									"label": "{{directManager}}",
+									"value": "{manager/firstName} {manager/lastName}",
+									"icon": {
+										"src": "{manager/photo}"
+									}
+								}
+							]
+						},
+						{
+							"title": "{{companyDetails}}",
+							"items": [
+								{
+									"label": "{{companyName}}",
+									"value": "{company/name}"
+								},
+								{
+									"label": "{{address}}",
+									"value": "{company/address}"
+								},
+								{
+									"label": "{{website}}",
+									"link": "{company/website}"
+								}
+							]
+						}
+					],
+					"actions": [
+						{
+							"type": "Navigation",
+							"url": "https://www.sap.com"
+
+						}
+					]
+				}
+			}
+		};
+
 		function testNavigationServiceListContent(oManifest, assert) {
 			// Arrange
 			var done = assert.async(),
@@ -713,6 +891,81 @@ sap.ui.define([
 
 				// Assert
 				assert.ok(oActionSpy.callCount === 1, "Card List Item is clicked");
+
+				// Cleanup
+				oStubOpenUrl.restore();
+				oActionSpy.restore();
+				oCard.destroy();
+				done();
+			});
+		}
+
+		function testActionOnContentService(oManifest, assert) {
+			// Arrange
+			var done = assert.async(),
+				oActionSpy = sinon.spy(ActionEnablement, "_fireAction"),
+				oStubOpenUrl = sinon.stub(ActionEnablement, "openUrl").callsFake( function () {}),
+				oCard = new Card({
+					width: "400px",
+					height: "600px",
+					manifest: oManifest
+				});
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+
+			oCard.attachEvent("_ready", function () {
+
+				Core.applyChanges();
+				var oCardLContent = oCard.getCardContent();
+
+				oCard.attachAction(function () {
+
+					// Assert
+					assert.ok(oCardLContent.hasStyleClass("sapFCardClickable"), "Card Content is clickable");
+					assert.ok(oActionSpy.callCount === 1, "Card Content is clicked and action event is fired");
+
+					// Cleanup
+					oStubOpenUrl.restore();
+					oActionSpy.restore();
+					oCard.destroy();
+					done();
+				});
+
+				//Act
+				oCardLContent.firePress();
+				Core.applyChanges();
+			});
+		}
+
+		function testActionOnContentUrl(oManifest, assert) {
+			// Arrange
+			var done = assert.async(),
+				oActionSpy = sinon.spy(ActionEnablement, "_fireAction"),
+				oStubOpenUrl = sinon.stub(ActionEnablement, "openUrl").callsFake( function () {}),
+				oCard = new Card({
+					width: "400px",
+					height: "600px",
+					manifest: oManifest_Analytical_Url
+				});
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+
+			oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+				var oCardLContent = oCard.getCardContent(),
+					oCardHeader =  oCard.getCardHeader();
+
+				// Assert
+				assert.ok(oCardLContent.hasStyleClass("sapFCardClickable"), "Card Content is clickable");
+				assert.ok(oCardHeader.hasStyleClass("sapFCardClickable"), "Card Header is clickable");
+
+				//Act
+				oCardLContent.firePress();
+				oCardHeader.firePress();
+				Core.applyChanges();
+
+				//Assert
+				assert.strictEqual(oActionSpy.callCount, 2, "Card Content and header are clicked and action event is fired twice");
 
 				// Cleanup
 				oStubOpenUrl.restore();
@@ -1113,71 +1366,13 @@ sap.ui.define([
 		});
 
 		QUnit.test("Analytical content should be actionable - service ", function (assert) {
-			// Arrange
-			var done = assert.async(),
-				oActionSpy = sinon.spy(ActionEnablement, "_fireAction"),
-				oStubOpenUrl = sinon.stub(ActionEnablement, "openUrl").callsFake( function () {});
 
-			this.oCard.setManifest(oManifest_Analytical_Service);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
-
-			this.oCard.attachEvent("_ready", function () {
-
-				Core.applyChanges();
-				var oCardLContent = this.oCard.getCardContent();
-
-				this.oCard.attachAction(function () {
-
-					// Assert
-					assert.ok(oCardLContent.hasStyleClass("sapFCardClickable"), "Card Content is clickable");
-					assert.ok(oActionSpy.callCount === 1, "Card Content is clicked and action event is fired");
-
-					// Cleanup
-					oStubOpenUrl.restore();
-					oActionSpy.restore();
-					done();
-				});
-
-				//Act
-				oCardLContent.firePress();
-				Core.applyChanges();
-			}.bind(this));
+			testActionOnContentService(oManifest_Analytical_Service, assert);
 		});
 
-
 		QUnit.test("Analytical Card should be actionable - url", function (assert) {
-			// Arrange
-			var done = assert.async(),
-				oActionSpy = sinon.spy(ActionEnablement, "_fireAction"),
-				oStubOpenUrl = sinon.stub(ActionEnablement, "openUrl").callsFake( function () {});
 
-			this.oCard.setManifest(oManifest_Analytical_Url);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				var oCardLContent = this.oCard.getCardContent(),
-					oCardHeader =  this.oCard.getCardHeader();
-
-				// Assert
-				assert.ok(oCardLContent.hasStyleClass("sapFCardClickable"), "Card Content is clickable");
-				assert.ok(oCardHeader.hasStyleClass("sapFCardClickable"), "Card Content is clickable");
-
-				//Act
-				oCardLContent.firePress();
-				oCardHeader.firePress();
-				Core.applyChanges();
-
-				//Assert
-				assert.strictEqual(oActionSpy.callCount, 2, "Card Content and header are clicked and action event is fired twice");
-
-				// Cleanup
-				oStubOpenUrl.restore();
-				oActionSpy.restore();
-				done();
-			}.bind(this));
+			testActionOnContentUrl(oManifest_Analytical_Url, assert);
 		});
 
 		QUnit.test("Analytical Card should be not actionable", function (assert) {
@@ -1209,6 +1404,56 @@ sap.ui.define([
 
 				// Cleanup
 				oStubOpenUrl.restore();
+				oActionSpy.restore();
+				done();
+			}.bind(this));
+		});
+
+		QUnit.module("Navigation Action - Object Content", {
+			beforeEach: function () {
+				this.oCard = new Card({
+					width: "400px",
+					height: "600px"
+				});
+
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("Object content should be actionable - service ", function (assert) {
+
+			testActionOnContentService(objectContent_service, assert);
+		});
+
+		QUnit.test("Object content should be actionable - url", function (assert) {
+
+			testActionOnContentUrl(objectCotnent_url, assert);
+		});
+
+		QUnit.test("On pressing link, action should not be fired", function (assert) {
+			var done = assert.async(),
+				oActionSpy = sinon.spy(ActionEnablement, "_fireAction");
+
+			this.oCard.setManifest(objectContent_service);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+				var oCardLContent = this.oCard.getCardContent();
+
+				//Act
+				qutils.triggerEvent("mousedown", document.querySelector("[role='link']"));
+				Core.applyChanges();
+
+				// Assert
+				assert.ok(oCardLContent.hasStyleClass("sapFCardClickable"), "Card Content is clickable");
+				assert.ok(oActionSpy.callCount === 0, "Card Content is clicked and action event is fired");
+
+				// Cleanup
 				oActionSpy.restore();
 				done();
 			}.bind(this));

@@ -248,7 +248,7 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 				}
 			}
 
-			if ((oControl.isA("sap.f.cards.IHeader") || oControl.isA("sap.f.cards.AnalyticalContent")) && oAction.service) {
+			if ((oControl.isA("sap.f.cards.IHeader") || oControl.isA("sap.f.cards.AnalyticalContent")  || oControl.isA("sap.f.cards.ObjectContent")) && oAction.service) {
 				this._setHeaderActionEnabledState(mItem).then(function (bEnabled) {
 					if (bEnabled) {
 						attachPress();
@@ -287,7 +287,7 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/f/cards/Binding
 				Control.prototype._setItemTypeFormatter = _setItemTypeFormatter;
 				Control.prototype._setActionEnabledState = _setActionEnabledState;
 			}
-			if (Control.prototype.isA("sap.f.cards.IHeader") || Control.prototype.isA("sap.f.cards.AnalyticalContent")) {
+			if (Control.prototype.isA("sap.f.cards.IHeader") || Control.prototype.isA("sap.f.cards.AnalyticalContent") || Control.prototype.isA("sap.f.cards.ObjectContent")) {
 				Control.prototype._addHeaderClasses = _addHeaderClasses;
 				//After refactor -> new name of function
 				Control.prototype._setHeaderActionEnabledState = _setHeaderActionEnabledState;
