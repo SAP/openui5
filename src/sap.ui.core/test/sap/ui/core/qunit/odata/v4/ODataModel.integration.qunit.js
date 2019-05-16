@@ -17932,9 +17932,43 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: POST is "in flight", GET request should wait for the POST's response because
-	// exclusive $filter needs to be adjusted.
-	// JIRA: CPOUI5UISERVICESV3-1825
-	QUnit.skip("JIRA: CPOUI5UISERVICESV3-1825 - POST still pending", function (assert) {
+	// exclusive $filter needs to be adjusted. Similarly, side effects should update the created
+	// entity and thus must also wait.
+	// JIRA: CPOUI5UISERVICESV3-1845
+[function () {
+	this.expectRequest("BusinessPartnerList?$select=BusinessPartnerID,CompanyName"
+			+ "&$filter=not(BusinessPartnerID eq '4710')"
+			+ "&$skip=2&$top=1", {
+			value : [{
+				"BusinessPartnerID" : "4713",
+				"CompanyName" : "FooBar"
+			}]
+		})
+		.expectChange("id", [,, "4712", "4713"])
+		.expectChange("name", [,, "Bar", "FooBar"]);
+	// show more items while POST is still pending
+	this.oView.byId("table-trigger").firePress();
+}, function () {
+	// Note: 4712 is discarded because it is currently not visible
+	this.expectRequest("BusinessPartnerList?$select=BusinessPartnerID,CompanyName"
+			+ "&$filter=BusinessPartnerID eq '4710' or BusinessPartnerID eq '4711'", {
+			value : [{
+				"BusinessPartnerID" : "4710",
+					"CompanyName" : "Baz*"
+			}, {
+				"BusinessPartnerID" : "4711",
+					"CompanyName" : "Foo*"
+			}]
+		})
+		.expectChange("name", ["Baz*", "Foo*"]);
+	// request side effects while POST is still pending
+	return Promise.all([
+		this.oView.byId("table").getBinding("items").getHeaderContext()
+			.requestSideEffects([{$PropertyPath : "CompanyName"}]),
+		this.oModel.submitBatch("update")
+	]);
+}].forEach(function (fnCodeUnderTest, i) {
+	QUnit.test("JIRA: CPOUI5UISERVICESV3-1845 - POST still pending, " + i, function (assert) {
 		var oContext,
 			oModel = createSalesOrdersModel({
 				autoExpandSelect : true,
@@ -17947,18 +17981,23 @@ sap.ui.define([
 	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="id" text="{BusinessPartnerID}" />\
+		<Text id="name" text="{CompanyName}" />\
 	</ColumnListItem>\
 </Table>',
 			that = this;
 
-		this.expectRequest("BusinessPartnerList?$select=BusinessPartnerID&$skip=0&$top=2", {
+		this.expectRequest("BusinessPartnerList?$select=BusinessPartnerID,CompanyName"
+				+ "&$skip=0&$top=2", {
 				value : [{
-					"BusinessPartnerID" : "4711"
+					"BusinessPartnerID" : "4711",
+					"CompanyName" : "Foo"
 				}, {
-					"BusinessPartnerID" : "4712"
+					"BusinessPartnerID" : "4712",
+					"CompanyName" : "Bar"
 				}]
 			})
-			.expectChange("id", ["4711", "4712"]);
+			.expectChange("id", ["4711", "4712"])
+			.expectChange("name", ["Foo", "Bar"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest({
@@ -17967,36 +18006,33 @@ sap.ui.define([
 					url : "BusinessPartnerList"
 				}, new Promise(function (resolve, reject) {
 					fnRespond = resolve.bind(null, {
-						"BusinessPartnerID" : "4710"
+						"BusinessPartnerID" : "4710",
+						"CompanyName" : "Baz"
 					});
 				}))
-				.expectChange("id", [""]);
+				.expectChange("id", [""])
+				.expectChange("name", [""]);
 			oContext = that.oView.byId("table").getBinding("items").create({}, true);
 			oSubmitBatchPromise = that.oModel.submitBatch("update");
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("BusinessPartnerList?$select=BusinessPartnerID"
-					+ "&$filter=not(BusinessPartnerID eq '4710')" //TODO this is missing!
-					+ "&$skip=2&$top=1", {
-					value : [{
-						"BusinessPartnerID" : "4713"
-					}]
-				})
-				.expectChange("id", [,, "4712", "4713"]);
-			// show more items while POST is still pending
-			that.oView.byId("table-trigger").firePress();
+			var oPromise;
 
-			that.expectChange("id", ["4710"]);
+			that.expectChange("id", ["4710"])
+				.expectChange("name", ["Baz"]);
+			oPromise = fnCodeUnderTest.call(that);
 			fnRespond();
 
 			return Promise.all([
+				oPromise,
 				oSubmitBatchPromise,
 				oContext.created(),
 				that.waitForChanges(assert)
 			]);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: GET request is triggered before POST, but ends up inside same $batch and thus

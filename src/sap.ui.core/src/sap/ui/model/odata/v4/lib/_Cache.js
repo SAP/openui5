@@ -100,8 +100,9 @@ sap.ui.define([
 		this.fnGetOriginalResourcePath = fnGetOriginalResourcePath;
 		this.sMetaPath = _Helper.getMetaPath("/" + sResourcePath);
 		this.mPatchRequests = {}; // map from path to an array of (PATCH) promises
-		// a promise with attached properties $count, $resolve existing while deletes are pending
-		this.oPendingDeletePromise = null;
+		// a promise with attached properties $count, $resolve existing while DELETEs or POSTs are
+		// being sent
+		this.oPendingRequestsPromise = null;
 		this.mPostRequests = {}; // map from path to an array of entity data (POST bodies)
 		this.oRequestor = oRequestor;
 		this.sResourcePath = sResourcePath;
@@ -133,17 +134,10 @@ sap.ui.define([
 		var aSegments = sPath.split("/"),
 			vDeleteProperty = aSegments.pop(),
 			sParentPath = aSegments.join("/"),
-			fnResolve,
 			that = this;
 
-		if (!this.oPendingDeletePromise) {
-			this.oPendingDeletePromise = new Promise(function (resolve) {
-				fnResolve = resolve;
-			});
-			this.oPendingDeletePromise.$count = 0;
-			this.oPendingDeletePromise.$resolve = fnResolve;
-		}
-		this.oPendingDeletePromise.$count += 1;
+		this.addPendingRequest();
+
 		return this.fetchValue(_GroupLock.$cached, sParentPath).then(function (vCacheData) {
 			var oEntity = vDeleteProperty
 					? vCacheData[Cache.from$skip(vDeleteProperty, vCacheData)]
@@ -197,12 +191,26 @@ sap.ui.define([
 						[sEntityPath]);
 				});
 		}).finally(function () {
-			that.oPendingDeletePromise.$count -= 1;
-			if (!that.oPendingDeletePromise.$count) {
-				that.oPendingDeletePromise.$resolve();
-				that.oPendingDeletePromise = null;
-			}
+			that.removePendingRequest();
 		});
+	};
+
+	/**
+	 * Adds one to the count of pending (that is, "currently being sent to the server") requests.
+	 *
+	 * @private
+	 */
+	Cache.prototype.addPendingRequest = function () {
+		var fnResolve;
+
+		if (!this.oPendingRequestsPromise) {
+			this.oPendingRequestsPromise = new SyncPromise(function (resolve) {
+				fnResolve = resolve;
+			});
+			this.oPendingRequestsPromise.$count = 0;
+			this.oPendingRequestsPromise.$resolve = fnResolve;
+		}
+		this.oPendingRequestsPromise.$count += 1;
 	};
 
 	/**
@@ -301,6 +309,7 @@ sap.ui.define([
 
 		// Sets a marker that the create request is pending, so that update and delete fail.
 		function setCreatePending() {
+			that.addPendingRequest();
 			_Helper.setPrivateAnnotation(oEntityData, "transient", true);
 			fnSubmitCallback();
 		}
@@ -341,12 +350,14 @@ sap.ui.define([
 					_Helper.buildPath(sPath, sPredicate || sTransientPredicate), oEntityData,
 					oCreatedEntity, _Helper.getSelectForPath(that.mQueryOptions, sPath));
 
+				that.removePendingRequest();
 				return oEntityData;
 			}, function (oError) {
 				if (oError.canceled) {
 					// for cancellation no error is reported via fnErrorCallback
 					throw oError;
 				}
+				that.removePendingRequest();
 				fnErrorCallback(oError);
 				return request(sPostPath, new _GroupLock(
 					that.oRequestor.getGroupSubmitMode(sPostGroupId) === "API" ?
@@ -718,6 +729,20 @@ sap.ui.define([
 		}
 		addToCount(this.mChangeListeners, sParentPath, aElements, -1);
 		return iIndex;
+	};
+
+	/**
+	 * Removes one from the count of pending (that is, "currently being sent to the server")
+	 * requests.
+	 *
+	 * @private
+	 */
+	Cache.prototype.removePendingRequest = function () {
+		this.oPendingRequestsPromise.$count -= 1;
+		if (!this.oPendingRequestsPromise.$count) {
+			this.oPendingRequestsPromise.$resolve();
+			this.oPendingRequestsPromise = null;
+		}
 	};
 
 	/**
@@ -1232,7 +1257,7 @@ sap.ui.define([
 			if (oReadRequest.iStart >= iIndex) {
 				oReadRequest.iStart += iOffset;
 				oReadRequest.iEnd += iOffset;
-			}
+			} // Note: no changes can happen inside *gaps*
 		});
 	};
 
@@ -1556,7 +1581,7 @@ sap.ui.define([
 			aElementsRange,
 			iEnd,
 			iGapStart = -1,
-			oPromise = this.oPendingDeletePromise || this.aElements.$tail,
+			oPromise = this.oPendingRequestsPromise || this.aElements.$tail,
 			oRange,
 			that = this;
 
@@ -1826,9 +1851,7 @@ sap.ui.define([
 			mNavigationPropertyPaths, iStart, iLength) {
 		var oElement,
 			aFilters = [],
-			mQueryOptions = _Helper.intersectQueryOptions(this.mQueryOptions, aPaths,
-				this.oRequestor.getModelInterface().fetchMetadata, this.sMetaPath,
-				mNavigationPropertyPaths),
+			mQueryOptions,
 			sResourcePath,
 			mTypeForMetaPath = this.fetchTypes().getResult(),
 			that = this,
@@ -1848,6 +1871,16 @@ sap.ui.define([
 			return sFilter;
 		}
 
+		if (this.oPendingRequestsPromise) {
+			return this.oPendingRequestsPromise.then(function () {
+				return that.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths,
+					iStart, iLength);
+			});
+		}
+
+		mQueryOptions = _Helper.intersectQueryOptions(this.mQueryOptions, aPaths,
+			this.oRequestor.getModelInterface().fetchMetadata, this.sMetaPath,
+			mNavigationPropertyPaths);
 		if (!mQueryOptions) {
 			return SyncPromise.resolve(); // micro optimization: use *sync.* promise which is cached
 		}
