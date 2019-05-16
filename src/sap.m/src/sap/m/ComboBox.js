@@ -414,11 +414,12 @@ sap.ui.define([
 				oTextField = this.createPickerTextField(),
 				sPickerInvisibleTextId = this.getPickerInvisibleTextId();
 
+			this._oPickerCustomHeader = this.createPickerHeader();
 			this.setTextFieldHandler(oTextField);
 
 			oDialog._oPopupInput = oTextField;
 			oDialog.setStretch(true)
-				.setCustomHeader(this.createPickerHeader())
+				.setCustomHeader(this._oPickerCustomHeader)
 				.setSubHeader(new Toolbar({
 					content: oTextField
 				}))
@@ -818,6 +819,10 @@ sap.ui.define([
 			this._oLastFocusedListItem = null;
 
 			if (this._oSuggestionPopover) {
+				if (this._oPickerCustomHeader) {
+					this._oPickerCustomHeader.destroy();
+					this._oPickerCustomHeader = null;
+				}
 				this._oSuggestionPopover.destroy();
 				this._oSuggestionPopover = null;
 			}
