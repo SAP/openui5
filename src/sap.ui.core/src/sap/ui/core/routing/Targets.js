@@ -14,11 +14,13 @@ sap.ui.define([
 		"use strict";
 
 		/**
-		 * Provides a convenient way for placing views into the correct containers of your application.
-		 * The main benefit of Targets is lazy loading: you do not have to create the views until you really need them.
-		 * If you are using the mobile library, please use {@link sap.m.routing.Targets} instead of this class.
+		 * Constructor for a new Targets class.
 		 *
 		 * @class
+		 * Provides a convenient way for placing views into the correct containers of your application.
+		 *
+		 * The main benefit of <code>Targets</code> is lazy loading: you do not have to create the views until you really need them.
+		 * If you are using the mobile library, please use {@link sap.m.routing.Targets} instead of this class.
 		 * @extends sap.ui.base.EventProvider
 		 * @param {object} oOptions
 		 * @param {sap.ui.core.routing.Views} oOptions.views the views instance will create the views of all the targets defined, so if 2 targets have the same viewName, the same instance of the view will be displayed.

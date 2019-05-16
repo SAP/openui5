@@ -13,7 +13,8 @@ sap.ui.define([
 
 	/**
 	 * @class Class for manipulating and receiving changes of the browserhash with the hasher framework.
-	 * Fires a "hashChanged" event if the browser hash changes.
+	 *
+	 * Fires a <code>hashChanged</code> event if the browser hash changes.
 	 * @extends sap.ui.base.EventProvider
 	 *
 	 * @public

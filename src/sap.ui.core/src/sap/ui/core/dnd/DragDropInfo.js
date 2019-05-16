@@ -14,6 +14,7 @@ sap.ui.define(["./DragInfo", "./DropInfo", "sap/base/Log"],
 	 *
 	 * @class
 	 * Provides the configuration for drag-and-drop operations.
+	 *
 	 * <b>Note:</b> This configuration might be ignored due to control {@link sap.ui.core.Element.extend metadata} restrictions.
 	 *
 	 * @extends sap.ui.core.dnd.DropInfo

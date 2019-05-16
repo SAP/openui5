@@ -8,8 +8,8 @@ sap.ui.define(function() {
 
 
 	/**
-	 * Execution option for overrides defined by a ControllerExtension
-     *
+	 * Execution option for overrides defined by a <code>ControllerExtension</code>.
+	 *
 	 * @enum {string}
 	 * @public
 	 * @alias sap.ui.core.mvc.OverrideExcecution

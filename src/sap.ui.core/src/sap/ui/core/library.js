@@ -693,7 +693,7 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 	};
 
 	/**
-	 * Configuration options for the colors of a progress bar
+	 * Configuration options for the colors of a progress bar.
 	 *
 	 * @enum {string}
 	 * @public
@@ -728,7 +728,7 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 	};
 
 	/**
-	 * Configuration options for the BusyIndicator size
+	 * Configuration options for the <code>BusyIndicator</code> size.
 	 *
 	 * @enum {string}
 	 * @public
@@ -895,7 +895,7 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 
 
 	/**
-	 * Font design for texts
+	 * Font design for texts.
 	 *
 	 * @enum {string}
 	 * @public
@@ -942,7 +942,7 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 
 
 	/**
-	 * Configuration options for horizontal alignments of controls
+	 * Configuration options for horizontal alignments of controls.
 	 *
 	 * @enum {string}
 	 * @public
@@ -984,7 +984,7 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 
 
 	/**
-	 * @classdesc A string type representing an Id or a name.
+	 * @classdesc A string type representing an ID or a name.
 	 *
 	 * Allowed is a sequence of characters (capital/lowercase), digits, underscores, dashes, points and/or colons.
 	 * It may start with a character or underscore only.
@@ -1116,7 +1116,8 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 
 	/**
 	 * Colors to highlight certain UI elements.
-	 * In contrast to the <code>ValueState</code> the semantic meaning must be defined by the application.
+	 *
+	 * In contrast to the <code>ValueState</code>, the semantic meaning must be defined by the application.
 	 *
 	 * @enum {string}
 	 * @public
@@ -1159,7 +1160,7 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 
 
 	/**
-	 * Defines the different message types of a message
+	 * Defines the different message types.
 	 *
 	 * @enum {string}
 	 * @public
@@ -1238,7 +1239,7 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 
 
 	/**
-	 * Orientation of a UI element
+	 * Orientation of a UI element.
 	 *
 	 * @enum {string}
 	 * @public
@@ -1327,7 +1328,7 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 
 
 	/**
-	 * Actions are: Click on track, button, drag of thumb, or mouse wheel click
+	 * Actions are: Click on track, button, drag of thumb, or mouse wheel click.
 	 *
 	 * @enum {string}
 	 * @public
@@ -1399,7 +1400,7 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 
 
 	/**
-	 * Sort order of a column
+	 * Sort order of a column.
 	 *
 	 * @version ${version}
 	 * @enum {string}
@@ -1577,7 +1578,8 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 
 	/**
 	 * Marker interface for controls that can serve as a context menu.
-	 * Implementation of this interface should implement <li><code>openAsContextMenu</code></li> method.
+	 *
+	 * Implementation of this interface should implement the <code>openAsContextMenu</code> method.
 	 *
 	 * @name sap.ui.core.IContextMenu
 	 * @interface
@@ -1898,7 +1900,7 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 	thisLib.mvc = thisLib.mvc || {};
 
 	/**
-	 * Specifies possible view types
+	 * Specifies possible view types.
 	 *
 	 * @enum {string}
 	 * @public
@@ -1942,7 +1944,7 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 	thisLib.routing = thisLib.routing || {};
 
 	/**
-	 * Enumaration for different HistoryDirections
+	 * Enumaration for different HistoryDirections.
 	 *
 	 * @enum {string}
 	 * @public

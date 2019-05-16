@@ -12,15 +12,14 @@ sap.ui.define(['sap/ui/core/library', './HashChanger', "sap/base/Log", "sap/ui/t
 
 
 	/**
-	 * Used to determine the {@link sap.ui.core.routing.HistoryDirection} of the current or a future navigation,
-	 * done with a {@link sap.ui.core.routing.Router} or {@link sap.ui.core.routing.HashChanger}.
-	 *
-	 * <strong>ATTENTION:</strong> this class will not be accurate if someone does hash-replacement without the named classes above
-	 * If you are manipulating the hash directly this class is not supported anymore.
-	 *
 	 * @param {sap.ui.core.routing.HashChanger} oHashChanger required, without a HashChanger this class cannot work. The class needs to be aware of the hash-changes.
 	 * @public
 	 * @class
+	 * Used to determine the {@link sap.ui.core.routing.HistoryDirection} of the current or a future navigation,
+	 * done with a {@link sap.ui.core.routing.Router} or {@link sap.ui.core.routing.HashChanger}.
+	 *
+	 * <strong>ATTENTION:</strong> this class will not be accurate if someone does hash-replacement without the named classes above.
+	 * If you are manipulating the hash directly, this class is not supported anymore.
 	 * @alias sap.ui.core.routing.History
 	 */
 	var History = function(oHashChanger) {

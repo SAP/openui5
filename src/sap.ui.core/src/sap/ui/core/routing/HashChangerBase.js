@@ -10,7 +10,7 @@ sap.ui.define([
 	/**
 	 * @class Base Class for manipulating and receiving changes of hash segment.
 	 *
-	 * Fires a "hashChanged" event if the relevant hash changes.
+	 * Fires a <code>hashChanged</code> event if the relevant hash changes.
 	 * @extends sap.ui.base.EventProvider
 	 *
 	 * @protected

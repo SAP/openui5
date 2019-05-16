@@ -18,9 +18,9 @@ sap.ui.define(['./Element', './library', "sap/base/Log"],
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * This element used to provide messages. Rendering must be done within the control that uses this kind of element.
+	 * This element is used to provide messages.
 	 *
-	 * Its default level is none.
+	 * Rendering must be done within the control that uses this kind of element. Its default level is none.
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE

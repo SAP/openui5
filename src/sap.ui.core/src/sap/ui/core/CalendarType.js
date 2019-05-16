@@ -7,7 +7,7 @@ sap.ui.define([], function() {
 	"use strict";
 
 	/**
-	 * The types of Calendar
+	 * The types of <code>Calendar</code>.
 	 *
 	 * @enum {string}
 	 * @alias sap.ui.core.CalendarType
