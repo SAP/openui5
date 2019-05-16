@@ -1262,7 +1262,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.module("Paste Data");
+	QUnit.module("Paste data into the Table");
 
 	QUnit.test("Paste to the table on input-enabled cell", function(assert) {
 		assert.expect(1);
@@ -1293,5 +1293,21 @@ sap.ui.define([
 		table.getItems()[0].getCells()[1].$("inner").trigger(jQuery.Event("paste", {originalEvent:{clipboardData: {getData : function () { return sTest;}}}}));
 
 		table.destroy();
+	});
+
+
+	QUnit.test("Ctrl+V as a workaround for Paste event in IE browser", function(assert) {
+		assert.expect(1);
+		var sut = createSUT('pasteInIETable');
+		sut.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var onPasteSpy = sinon.spy(sut, "onkeydown");
+		var oStub = this.stub(Device, "browser", { msie: true });
+		qutils.triggerKeydown(sut.getDomRef(), KeyCodes.V, false, false, true);
+		assert.ok(onPasteSpy.calledOnce, "OnPaste is called from CTRL-V one time");
+
+		sut.destroy();
+		oStub.restore();
 	});
 });
