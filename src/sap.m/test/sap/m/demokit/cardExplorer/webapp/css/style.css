@@ -4,3 +4,8 @@
 	height: 99%;
 	background: transparent;
 }
+
+.topicPage .sapMBarPH {
+	text-align: left;
+	padding-left: 2rem;
+}

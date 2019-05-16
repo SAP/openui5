@@ -9,7 +9,7 @@
 	vertical-align: top;
 	display: inline-block;
 	box-sizing: border-box;
-	width: calc(100% - 15rem);
+	width: calc(100% - 10rem);
 }
 
 .navigation {
@@ -20,5 +20,5 @@
 	vertical-align: top;
 	display: inline-block;
 	box-sizing: border-box;
-	width: 15rem;
+	width: 10rem;
 }
