@@ -725,7 +725,7 @@ sap.ui.define([
 			this.$titleArea.removeClass(Device.system.phone && oDynamicPageTitle.getSnappedTitleOnMobile() ?
 					"sapFDynamicPageTitleSnappedTitleOnMobile" : "sapFDynamicPageTitleSnapped");
 			this._updateToggleHeaderVisualIndicators();
-			if (!this.getPreserveHeaderStateOnScroll()) {
+			if (!this.getPreserveHeaderStateOnScroll() && !this._headerBiggerThanAllowedToPin()) {
 				this._togglePinButtonVisibility(true);
 			}
 		}

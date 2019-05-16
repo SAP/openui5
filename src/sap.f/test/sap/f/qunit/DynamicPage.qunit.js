@@ -1383,12 +1383,17 @@ function (
 			fnStubConfig = function (iHeaderHeight, iDynamicPageHeight) {
 				oSandBox.stub(oDynamicPage, "_getEntireHeaderHeight").returns(iHeaderHeight);
 				oSandBox.stub(oDynamicPage, "_getOwnHeight").returns(iDynamicPageHeight);
-			};
+			},
+			fnSpy = this.spy(DynamicPage.prototype, "_togglePinButtonVisibility");
 
 		fnStubConfig(700, 999);
 
 		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToPin(), true,
 			"DynamicPage Header is bigger than allowed");
+
+		oDynamicPage._expandHeader();
+
+		assert.ok(fnSpy.notCalled, "_togglePinButtonVisibility should not be called");
 
 		oSandBox.restore();
 
@@ -1396,6 +1401,10 @@ function (
 
 		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToPin(), false,
 			"DynamicPage Header is not bigger than allowed");
+
+		oDynamicPage._expandHeader();
+
+		assert.ok(fnSpy.calledOnce, "_togglePinButtonVisibility should be called");
 	});
 
 	QUnit.test("DynamicPage _headerBiggerThanAllowedToBeExpandedInTitleArea() returns the correct value on desktop", function (assert) {
