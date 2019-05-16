@@ -296,6 +296,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer"], function
 	NotificationListGroupRenderer.renderBody = function (oRm, oControl) {
 		oRm.write('<ul');
 		oRm.addClass(classNameBody);
+		oRm.writeAttribute('role', 'listbox');
 		oRm.writeClasses();
 		oRm.write('>');
 

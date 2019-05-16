@@ -908,7 +908,7 @@ sap.ui.define([
 		var role = notificationDomRef.getAttribute('role');
 
 		// assert
-		assert.strictEqual(role, 'listitem', 'The control should have "listitem" role');
+		assert.strictEqual(role, 'option', 'The control should have "option" role');
 	});
 
 	QUnit.test('Checking the labelledby attribute', function(assert) {
