@@ -1,7 +1,52 @@
 <mvc:View controllerName="sap.m.sample.MenuButton.MB"
 			height="100%"
 			xmlns:mvc="sap.ui.core.mvc"
+			xmlns:core="sap.ui.core"
 			xmlns="sap.m">
+
+	<Toolbar>
+		<ToolbarSpacer/>
+		<Label text = "In a toolbar"/>
+		<MenuButton text="File">
+			<menu>
+				<Menu>
+					<items>
+						<MenuItem text="Edit" icon="sap-icon://edit" press="onPress">
+							<customData>
+					<core:CustomData
+						key="target"
+						value="p1" />
+				</customData>
+						</MenuItem>
+						<MenuItem text="Save" icon="sap-icon://save" press="onPress" />
+						<MenuItem text="Open" icon="sap-icon://open-folder" press="onPress" />
+					</items>
+				</Menu>
+			</menu>
+		</MenuButton>
+		<MenuButton text="Calculator" buttonMode="Split" useDefaultActionOnly="true">
+			<menu>
+				<Menu itemSelected="onMenuAction">
+					<items>
+						<MenuItem text="basic" icon="sap-icon://chalkboard">
+							<items>
+								<MenuItem text="add" icon="sap-icon://add" />
+								<MenuItem text="subtract" icon="sap-icon://less" />
+								<MenuItem text="multiply" icon="sap-icon://decline" />
+							</items>
+						</MenuItem>
+						<MenuItem text="complex" icon="sap-icon://display">
+							<items>
+								<MenuItem text="square" icon="sap-icon://status-completed" />
+							</items>
+						</MenuItem>
+					</items>
+				</Menu>
+			</menu>
+		</MenuButton>
+		<ToolbarSpacer/>
+	</Toolbar>
+
 
 	<VBox class="sapUiSmallMargin">
 		<Label text = "With a complex menu"/>

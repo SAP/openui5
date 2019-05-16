@@ -1,5 +1,5 @@
-sap.ui.define(['sap/ui/core/mvc/Controller'],
-	function(Controller) {
+sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/m/MessageToast'],
+	function(Controller, MessageToast) {
 		"use strict";
 
 		var MBController = Controller.extend("sap.m.sample.MenuButton.MB", {
@@ -8,6 +8,9 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 			},
 			onDefaultActionAccept: function() {
 				sap.m.MessageToast.show("Accepted");
+			},
+			onPress: function (evt) {
+				MessageToast.show(evt.getSource().getId() + " Pressed");
 			},
 			onMenuAction: function(oEvent) {
 				var oItem = oEvent.getParameter("item"),
