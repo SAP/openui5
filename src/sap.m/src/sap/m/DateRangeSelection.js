@@ -753,6 +753,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library'
 				var oDate1Old = this.getDateValue();
 				var oDate2Old = this.getSecondDateValue();
 
+				// the selected range includes all of the hours from the second date
+				oDate2.setHours(23, 59, 59, 999);
+
 				var sValue;
 				if (!jQuery.sap.equal(oDate1, oDate1Old) || !jQuery.sap.equal(oDate2, oDate2Old)) {
 					// compare Dates because value can be the same if only 2 digits for year
