@@ -10,7 +10,9 @@ sap.ui.define([
 				title: 'Types',
 				icon: 'sap-icon://card',
 				key: 'types',
-				target: 'exploreHome',
+				target: 'exploreSamples',
+				targetKey: 'list',
+				hasExpander: false,
 				items: [
 					{
 						title: 'List',
@@ -71,9 +73,11 @@ sap.ui.define([
 			},
 			{
 				key: 'features',
-				target: 'exploreHome',
+				target: 'exploreSamples',
+				targetKey: 'actions',
 				title: 'Features',
 				icon: 'sap-icon://activities',
+				hasExpander: false,
 				items: [
 					{
 						key: 'actions',

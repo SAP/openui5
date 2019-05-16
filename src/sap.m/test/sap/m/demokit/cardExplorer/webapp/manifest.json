@@ -91,11 +91,6 @@
 		  "target": "learnDetail"
 		},
 		{
-		  "pattern": "explore",
-		  "name": "exploreHome",
-		  "target": "exploreHome"
-		},
-		{
 		  "pattern": "explore/:key:/:subSampleKey:",
 		  "name": "exploreSamples",
 		  "target": "exploreSamples"
@@ -105,11 +100,6 @@
 		"learnDetail": {
 		  "viewName": "LearnDetail",
 		  "viewId": "learnDetail",
-		  "viewLevel": 2
-		},
-		"exploreHome": {
-		  "viewName": "ExploreHome",
-		  "viewId": "exploreHome",
 		  "viewLevel": 2
 		},
 		"exploreSamples": {
