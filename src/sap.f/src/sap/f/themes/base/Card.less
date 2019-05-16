@@ -71,13 +71,6 @@
 	display: flex;
 	align-items: flex-start;
 	outline: none;
-	&.sapFCardHeaderClickable:hover{
-		background: @_sap_f_Card_HeaderHoverColor;
-	}
-
-	&.sapFCardHeaderClickable:active{
-		background: @_sap_f_Card_HeaderActiveColor;
-	}
 
 	.sapFCardIcon.sapFAvatar:not(.sapFAvatarImage ):not(.sapFAvatarInitials ){
 		background-color: transparent;
@@ -302,6 +295,14 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 
 	.sapMText {
 	  cursor: pointer;
+	}
+
+	&.sapFCardClickable:hover{
+	  background: @_sap_f_Card_HeaderHoverColor;
+	}
+
+	&.sapFCardClickable:active{
+	  background: @_sap_f_Card_HeaderActiveColor;
 	}
   }
 }
