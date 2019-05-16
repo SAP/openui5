@@ -1712,7 +1712,6 @@ sap.ui.define([
 		var fnHandler = function() {
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
-			oLabel.getElementBinding().attachChange(fnHandler2);
 			oModel.attachRequestSent(fnHandler2);
 			oTestContext = oModel.getContext("/Products(1)");
 			oLabel.setBindingContext(oTestContext);
@@ -1741,7 +1740,6 @@ sap.ui.define([
 		var fnHandler = function() {
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
-			oLabel.getElementBinding().attachChange(fnHandler2);
 			oModel.attachRequestSent(fnHandler2);
 			oTestContext = oModel.getContext("/Products(1)");
 			oPanel.setBindingContext(oTestContext);
@@ -1789,6 +1787,51 @@ sap.ui.define([
 			oLabel.setBindingContext();
 			done();
 		};
+	});
+
+	QUnit.test("test bindElement 8 - parent context and model exist initially", function(assert) {
+		var done = assert.async();
+		cleanSharedData();
+		var oModel = initModel(sURI, {json:false});
+		var oPanel, oBox, oText;
+		var fnHandler = function() {
+			assert.equal(oText.getBindingContext().getPath(), "/Categories(2)", "Context is set after change");
+			oBox.getObjectBinding().detachChange(fnHandler);
+			oBox.getObjectBinding().attachChange(fnHandler2);
+			oModel.createBindingContext("/Products(3)", function(oContext) {
+				oPanel.setBindingContext(oContext);
+			});
+		};
+		var fnHandler2 = function() {
+			assert.ok(oText.getBindingContext() === null, "Binding context on text must be null after parent context change");
+			oBox.getObjectBinding().detachChange(fnHandler2);
+			oBox.getObjectBinding().attachChange(fnHandler3);
+		};
+		var fnHandler3 = function() {
+			assert.equal(oText.getBindingContext().getPath(), "/Categories(7)", "Context is set after change");
+			oBox.getObjectBinding().detachChange(fnHandler3);
+			done();
+		};
+		oModel.createBindingContext("/Products(2)", function(oContext) {
+			oPanel = new sap.m.Panel({
+				models: oModel,
+				bindingContexts: oContext,
+				content: [
+					new sap.m.HBox({
+						objectBindings: {path: "Category"},
+						items: [
+							new sap.m.Text({
+								text: "{Name}"
+							})
+						]
+					})
+				]
+			});
+			oBox = oPanel.getContent()[0];
+			oText = oBox.getItems()[0];
+			assert.ok(oText.getBindingContext() === null, "Binding context on text must be null");
+			oBox.getObjectBinding().attachChange(fnHandler);
+		});
 	});
 
 	QUnit.test("test getBindingContext", function(assert) {
@@ -5927,7 +5970,7 @@ sap.ui.define([
 
 	QUnit.test("createEntry and absolute bindings", function(assert) {
 		var done = assert.async();
-		assert.expect(6);
+		assert.expect(7);
 		this.oModel.metadataLoaded().then(function() {
 			var fnSuccess = function() {
 				assert.ok(false, "success handler must not be called");
@@ -5938,17 +5981,17 @@ sap.ui.define([
 			});
 			var oContextBinding = this.oModel.bindContext("/Categories(1)", oCreatedContext);
 			oContextBinding.attachChange(function() {
-				assert.ok(true, "ContextBinding change most be fired");
+				assert.ok(true, "ContextBinding change must be fired");
 			});
 			oContextBinding.initialize();
 			var oListBinding = this.oModel.bindList("/Products", oCreatedContext);
 			oListBinding.attachChange(function() {
-				assert.ok(true, "ListBinding change most be fired");
+				assert.ok(true, "ListBinding change must be fired");
 				done();
 			});
 			oListBinding.attachRefresh(function() {
 				oListBinding.getContexts(0,10);
-				assert.ok(true, "ListBinding refresh most be fired");
+				assert.ok(true, "ListBinding refresh must be fired");
 			});
 			oListBinding.initialize();
 			this.oModel.attachRequestSent(function() {

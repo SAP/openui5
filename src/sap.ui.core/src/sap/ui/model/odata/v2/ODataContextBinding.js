@@ -110,14 +110,18 @@ sap.ui.define([
 				that.bPendingRequest = false;
 			}
 		}, bReloadNeeded);
-		if (oContext && this.bCreatePreliminaryContext) {
-			if (this.oElementContext !== oContext) {
+		if (oContext) {
+			if (this.bCreatePreliminaryContext && this.oElementContext !== oContext) {
 				oContext.setPreliminary(true);
 				this.oElementContext = oContext;
 				this.oModel.oMetadata.loaded().then(function() {
 					this._fireChange({ reason: ChangeReason.Context });
 				}.bind(this));
 			}
+		} else if (this.oContext) {
+			// if parent context exists, set to null to avoid propagation of wrong context
+			this.oElementContext = null;
+			this._fireChange({ reason: ChangeReason.Context });
 		}
 	};
 
@@ -327,13 +331,19 @@ sap.ui.define([
 					that.bPendingRequest = false;
 				}
 			}, bReloadNeeded);
-			if (oContext && this.bCreatePreliminaryContext) {
-				oContext.setPreliminary(true);
-				this.oElementContext = oContext;
-				sContextPath = this.oElementContext.sPath;
-				this.oModel._updateContext(this.oElementContext, sResolvedPath);
-				this._fireChange({ reason: ChangeReason.Context }, bForceUpdate);
-				this.oModel._updateContext(this.oElementContext, sContextPath);
+			if (oContext) {
+				if (this.bCreatePreliminaryContext) {
+					oContext.setPreliminary(true);
+					this.oElementContext = oContext;
+					sContextPath = this.oElementContext.sPath;
+					this.oModel._updateContext(this.oElementContext, sResolvedPath);
+					this._fireChange({ reason: ChangeReason.Context }, bForceUpdate);
+					this.oModel._updateContext(this.oElementContext, sContextPath);
+				}
+			} else if (this.oContext && this.oElementContext !== null) {
+				// if parent context exists, set to null to avoid propagation of wrong context
+				this.oElementContext = null;
+				this._fireChange({ reason: ChangeReason.Context });
 			}
 		}
 	};
