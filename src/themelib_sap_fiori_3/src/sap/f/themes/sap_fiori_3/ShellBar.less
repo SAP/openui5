@@ -169,23 +169,23 @@
 				color: @sapUiShellTextColor;
 			}
 			&:hover {
-				.sapMBtnContent,
-				.sapMBtnInner,
-				.sapMBtnIcon {
+				.sapMBtnInner {
 					background: @sapUiShellHoverBackground !important;
+					border-color: transparent;
 				}
 			}
 			.sapMToggleBtnPressed {
 				background: @sapUiShellActiveBackground !important;
-				border-color: @sapUiShellActiveBackground !important;
+				border-color: transparent !important;
 			}
 			&:active {
 				.sapMBtnContent,
 				.sapMBtnInner,
 				.sapMBtnIcon {
-					background: @sapUiShellActiveBackground !important;
-					border-color: @sapUiShellActiveBackground !important;
 					color: @sapUiShellActiveTextColor;
+				}
+				.sapMBtnInner {
+					background: @sapUiShellActiveBackground !important;
 				}
 			}
 			&:disabled {
