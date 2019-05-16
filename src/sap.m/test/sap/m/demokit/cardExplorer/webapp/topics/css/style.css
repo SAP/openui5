@@ -1,9 +1,54 @@
+.topicBody {
+	overflow-x: hidden;
+}
+
 .topic {
 	white-space: nowrap;
+	font-size: 1rem;
+	line-height: 22px;
+
+	color: #32363A;
+}
+
+.topic h1 {
+	border-bottom: 1px solid #d9d9d9;
+	padding-bottom: 1rem;
+	font-size: 2.25rem;
+	line-height: 3rem;
+}
+
+.topic h2 {
+	font-size: 24px;
+	line-height: 28px;
+}
+
+.topic h3 {
+	font-size: 20px;
+	line-height: 23px;
+}
+
+.topic h4 {
+	font-size: 16px;
+	line-height: 18px;
+}
+
+.topic .navigation h4 {
+	margin-bottom: 1rem;
+}
+
+.topic a {
+	color: #0A6ED1;
+	text-decoration: none;
+	font-size: 12px;
+	line-height: 14px;
+}
+
+.topic .navigation a {
+	padding: 8px 0 0 0;
 }
 
 .content {
-	padding: 0 1rem;
+	padding: 0 2rem;
 	overflow: hidden;
 	white-space: normal;
 	vertical-align: top;
@@ -13,7 +58,7 @@
 }
 
 .navigation {
-	top: 1rem;
+	top: 0.5rem;
 	position: sticky;
 	overflow: hidden;
 	white-space: normal;
@@ -21,4 +66,9 @@
 	display: inline-block;
 	box-sizing: border-box;
 	width: 10rem;
+}
+
+.prettyprint xmp {
+	margin: 0;
+	white-space: pre-line;
 }
