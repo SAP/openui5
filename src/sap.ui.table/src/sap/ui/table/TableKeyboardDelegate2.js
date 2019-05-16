@@ -861,12 +861,19 @@ sap.ui.define([
 
 	/*
 	 * Handled keys:
-	 * Shift, Space, F2, F4, Ctrl+A, Ctrl+Shift+A
+	 * Shift, Space, F2, F4, Ctrl+A, Ctrl+Shift+A, Ctrl+V (for msie)
 	 */
 	TableKeyboardDelegate.prototype.onkeydown = function(oEvent) {
 		var oKeyboardExtension = this._getKeyboardExtension();
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 		var sSelectionMode = this.getSelectionMode();
+
+		// Handles key down CTRL+v event in MS IE Browser and calls onpaste event that fires Paste event of the Table.
+		// It is a workaround as IE allows browser paste event only on editable DOM elements.
+		if (Device.browser.msie && TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.V, ModKey.CTRL )) {
+			this.onpaste(oEvent);
+			return;
+		}
 
 		// Toggle the action mode by changing the focus between a data cell and its interactive controls.
 		if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.F2)) {

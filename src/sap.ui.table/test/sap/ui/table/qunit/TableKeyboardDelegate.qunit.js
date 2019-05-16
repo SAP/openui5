@@ -5320,6 +5320,46 @@ sap.ui.define([
 		this.testNoCollapseExpand(assert, oTreeTable, getRowHeader(0, null, null, oTreeTable));
 	});
 
+
+	QUnit.module("TableKeyboardDelegate2 - Interaction > Ctrl+V (Workaround for Paste event in IE browser)", {
+		beforeEach: function() {
+			setupTest();
+		},
+		afterEach: function() {
+			teardownTest();
+		}
+	});
+
+	QUnit.test("Call onpaste on TD tag", function(assert) {
+		var oElem = getCell(0, 0, true);
+		var onPasteSpy = this.spy(oTable, "onpaste");
+		var oStub = this.stub(Device, "browser", { msie: true });
+		qutils.triggerKeydown(oElem, KeyCodes.V, false, false, true);
+		assert.ok(onPasteSpy.calledOnce, "OnPaste is called from CTRL-V one time");
+		oStub.restore();
+	});
+
+	QUnit.test("Call onpaste on Text Control", function(assert) {
+		var oElem = oTable.getRows()[0].getCells()[0].getDomRef();
+		var onPasteSpy = this.spy(oTable, "onpaste");
+		var oStub = this.stub(Device, "browser", { msie: true });
+		oElem.focus();
+		qutils.triggerKeydown(oElem, KeyCodes.V, false, false, true);
+		assert.ok(onPasteSpy.calledOnce, "OnPaste is called from CTRL-V one time");
+		oStub.restore();
+	});
+
+	QUnit.test("Call onpaste on Input Control", function(assert) {
+		var oElem = oTable.getRows()[0].getCells()[1].getDomRef();
+		var onPasteSpy = this.spy(oTable, "onpaste");
+		var oStub = this.stub(Device, "browser", { msie: true });
+		oElem.focus();
+		qutils.triggerKeydown(oElem, KeyCodes.V, false, false, true);
+		assert.ok(onPasteSpy.calledOnce, "OnPaste is called from CTRL-V one time");
+		oStub.restore();
+	});
+
+
 	QUnit.module("TableKeyboardDelegate2 - Interaction > F4 (Expand/Collapse Group)", {
 		beforeEach: function() {
 			setupTest();
