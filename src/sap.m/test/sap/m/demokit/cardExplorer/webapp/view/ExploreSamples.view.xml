@@ -8,7 +8,7 @@
 	xmlns:widgets="sap.ui.integration.widgets">
 	<l:ResponsiveSplitter id="splitView" defaultPane="default">
 		<l:PaneContainer orientation="Horizontal">
-			<l:SplitPane>
+			<l:SplitPane requiredParentWidth="1">
 				<Page>
 					<customHeader>
 						<Bar>
@@ -34,7 +34,7 @@
 					</widgets:Card>
 				</Page>
 			</l:SplitPane>
-			<l:SplitPane>
+			<l:SplitPane requiredParentWidth="1" >
 				<Page >
 					<customHeader>
 						<Bar>
@@ -51,7 +51,7 @@
 							</contentRight>
 						</Bar>
 					</customHeader>
-					<editor:CodeEditor class="sapUiSmallMarginBegin" id="editor" height="100%" editable="true" liveChange="onManifestEdited"></editor:CodeEditor>
+					<editor:CodeEditor type="json" class="sapUiSmallMarginBegin" id="editor" height="100%" editable="true" liveChange="onManifestEdited"></editor:CodeEditor>
 				</Page>
 			</l:SplitPane>
 		</l:PaneContainer>
