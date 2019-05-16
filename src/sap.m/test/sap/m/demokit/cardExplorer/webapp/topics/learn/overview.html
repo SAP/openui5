@@ -1,18 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<title>Title</title>
+	<title>Integration Cards</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
 	<link rel="stylesheet" href="../css/style.css">
+	<link rel="stylesheet" href="../css/prettify-light.css"/>
+	<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 </head>
 <body>
-<h1>
-	Overview
-</h1>
-<ul>
-	<li>1</li>
-	<li>2</li>
-	<li>3</li>
-</ul>
+
+<div class="topic">
+	<div class="content">
+
+		<h1>
+			Integration Cards
+		</h1>
+
+		<h2 id="overview">
+			Overview
+		</h2>
+		<p>
+			Cards are small user interface elements which provide the most important information from an application related to
+			a specific role or task in a compact manner allowing for actions to be executed. Cards can be described as small
+			representations of an application which can be put in different systems (for example, widgets). Cards can also be
+			used as any other UI5 control.
+		</p>
+
+		<p>Cards consist of:</p>
+		<ol>
+			<li>A card container - a white background and a border with radius which holds the header and the content.</li>
+			<li>A header - the header can have a title, a subtitle, an icon, and a status indicator. If the header is of type
+				Numeric, it may have different attributes, describing numeric indicator, like KPI for example.
+			</li>
+			<li>Content - depends on the card type.</li>
+		</ol>
+		<p>Advantages of cards over tiles:</p>
+		<ol>
+			<li>Decoupled from Components</li>
+			<li>Flexible size</li>
+			<li>Support progressive disclosure [TBD]</li>
+			<li>Provide actions</li>
+			<li>Described in a technology-agnostic way (using JSON)</li>
+		</ol>
+
+		<h2 id="use">When to Use
+		</h2>
+		Card is a self-contained user interface element, connected to a manifest and used as a widget.
+
+		<p>The application developer and the card developer are two different people. The card developer is responsible for the
+			card and its content, whereas the application developer is responsible for integrating the card in the application
+			without having to configure the card in any special way (using it as a self-contained component, as a widget). This
+			case is technology-agnostic, which means that the card created should be integratable with different host
+			environments and technologies.</p>
+		<p>An application developer user story:</p>
+		<pre class="prettyprint small">
+As a JAM developer
+I want to add a SuccessFactor card
+so that the user does not
+have to switch applications to do a task
+</pre>
+		<p>A card developer user story:</p>
+		<pre class="prettyprint small">
+As a SuccessFactor developer
+
+I want to create a card
+
+So that other lines of businesses can integrate
+the SuccessFactor functionality in
+their applications (in a UI5 agnostic way).
+</pre>
+		<p>
+			To integrate the card (as described in the above use case), the application developer must load sap.ui.integration
+			library and use sap.ui.integration.widgets.Card. This card is self-contained and is similar to UI5's
+			ComponentContainers. The difference is that the card is much lighter as it does not necessarily instantiate a
+			Component. It is sufficient for a card to have a manifest and it will render as a self-contained user interface
+			element (the same way as the ComponentContainer will).
+		</p>
+		<p>In the manifest the card developer can specify:
+		</p>
+		<ol>
+			<li>The header type (e.g. Numeric), properties and actions
+			</li>
+			<li>The content type (List, Analytical, etc..), data source and actions
+			</li>
+			<li>How the data source response is bound to the card properties
+			</li>
+		</ol>
+		<p>To learn more about the manifest schema, go to Schema
+		</p>
+		<p>You can use the sap.ui.integration.widgets.Card by passing the path to the card manifest:
+		</p>
+		<pre class="prettyprint small">
+<xmp class="language-xml">
+	<mvc:View xmlns:w="sap.ui.integration.widgets">
+	<w:Card manifest="./demo/manifest.json"/>
+</xmp>
+</pre>
+		<p>or if the manifest is already loaded, you can take it from a model:</p>
+		<pre class="prettyprint small">
+<xmp class="language-xml">
+	<w:Card manifest="{manifestAsObject}"/>
+</xmp>
+</pre>
+		<p>One of the benefits of the manifest approach is that every technology can understand a JSON object and render a card
+			based on it.
+		</p>
+
+	</div>
+	<div class="navigation">
+		<h4>Table of Contents</h4>
+		<ul>
+			<li>
+				<a href="#overview">Overview</a>
+			</li>
+			<li>
+				<a href="#use">When to Use</a>
+			</li>
+		</ul>
+	</div>
+</div>
+
+
 </body>
 </html>

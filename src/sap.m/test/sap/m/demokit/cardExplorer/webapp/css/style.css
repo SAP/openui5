@@ -1,5 +1,6 @@
 /* Make the iframe transparent so that the content in it will use the theme's background */
-.sapUiDocumentationTopicsIframe {
+.sapUiTopicsIframe {
 	width: 100%;
 	height: 99%;
+	background: transparent;
 }

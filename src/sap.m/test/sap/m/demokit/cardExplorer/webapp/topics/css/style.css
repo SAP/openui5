@@ -1,0 +1,24 @@
+.topic {
+	white-space: nowrap;
+}
+
+.content {
+	padding: 0 1rem;
+	overflow: hidden;
+	white-space: normal;
+	vertical-align: top;
+	display: inline-block;
+	box-sizing: border-box;
+	width: calc(100% - 15rem);
+}
+
+.navigation {
+	top: 1rem;
+	position: sticky;
+	overflow: hidden;
+	white-space: normal;
+	vertical-align: top;
+	display: inline-block;
+	box-sizing: border-box;
+	width: 15rem;
+}
