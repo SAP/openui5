@@ -7,7 +7,12 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/variants/VariantModel"
-], function(FlexController, Utils, ChangePersistenceFactory, VariantModel) {
+], function(
+	FlexController,
+	Utils,
+	ChangePersistenceFactory,
+	VariantModel
+) {
 	"use strict";
 
 	/**
@@ -18,7 +23,6 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 */
-	var sVariantModelName = "$FlexVariants";
 	var FlexControllerFactory = {};
 
 	FlexControllerFactory._instanceCache = {};
@@ -88,7 +92,7 @@ sap.ui.define([
 			// Some embedded components might not have an app component, e.g. sap.ushell.plugins.rta, sap.ushell.plugins.rta-personalize
 			if (oAppComponent) {
 				return Promise.resolve().then( function() {
-					var oExistingVariantModel = oAppComponent.getModel(sVariantModelName);
+					var oExistingVariantModel = oAppComponent.getModel(Utils.VARIANT_MODEL_NAME);
 					if (!oExistingVariantModel) {
 						// If variant model is not present on the app component
 						// then a new variant model should be set on it.
@@ -100,7 +104,7 @@ sap.ui.define([
 					}
 				}).then(function (oVariantModel) {
 					// set app component's variant model on the embedded component
-					oComponent.setModel(oVariantModel, sVariantModelName);
+					oComponent.setModel(oVariantModel, Utils.VARIANT_MODEL_NAME);
 				});
 			}
 		}
@@ -127,7 +131,7 @@ sap.ui.define([
 			oAppComponent.addPropagationListener(oFlexController.getBoundApplyChangesOnControl(fnGetChangesMap, oAppComponent));
 			var oData = oFlexController.getVariantModelData() || {};
 			var oVariantModel = new VariantModel(oData, oFlexController, oAppComponent);
-			oAppComponent.setModel(oVariantModel, sVariantModelName);
+			oAppComponent.setModel(oVariantModel, Utils.VARIANT_MODEL_NAME);
 			return oVariantModel;
 		});
 	}

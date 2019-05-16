@@ -28,7 +28,7 @@ sap.ui.define([
 	RtaQunitUtils,
 	FlexControllerFactory,
 	FlexController,
-	Utils,
+	flUtils,
 	VariantModel,
 	VariantManagement,
 	Input,
@@ -70,7 +70,7 @@ sap.ui.define([
 		},
 		getModel: function () {return oModel;} // eslint-disable-line no-use-before-define
 	};
-	var oGetAppComponentForControlStub = sinon.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+	var oGetAppComponentForControlStub = sinon.stub(flUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 
 	QUnit.done(function () {
 		oGetAppComponentForControlStub.restore();
@@ -1034,7 +1034,7 @@ sap.ui.define([
 
 			// Create Variant Management Control
 			this.oVariantManagement = new VariantManagement("variantMgmtId1");
-			this.oVariantManagement.setModel(oModel, "$FlexVariants");
+			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
 			this.oDesignTimeMetadata = new DesignTimeMetadata({ data : {} });
 
 			// Create serializer instance

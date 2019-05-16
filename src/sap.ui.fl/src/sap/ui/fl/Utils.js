@@ -58,6 +58,7 @@ function(
 		_sMaxLayer : aLayers[aLayers.length - 1],
 		DEFAULT_APP_VERSION : "DEFAULT_APP_VERSION",
 		APP_ID_AT_DESIGN_TIME : "${pro" + "ject.art" + "ifactId}", //avoid replaced by content of ${project.artifactId} placeholder at build steps
+		VARIANT_MODEL_NAME: "$FlexVariants",
 		/**
 		 * log object exposes available log functions
 		 *

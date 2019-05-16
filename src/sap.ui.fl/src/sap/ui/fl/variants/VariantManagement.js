@@ -4,8 +4,82 @@
 
 // Provides control sap.ui.fl.variants.VariantManagement.
 sap.ui.define([
-	'sap/ui/model/Context', 'sap/ui/model/PropertyBinding', 'sap/ui/model/json/JSONModel', 'sap/ui/model/Filter', 'sap/ui/model/FilterOperator', 'sap/ui/Device', 'sap/ui/core/InvisibleText', 'sap/ui/core/Control', 'sap/ui/core/Icon', 'sap/ui/layout/HorizontalLayout', 'sap/ui/layout/Grid', 'sap/m/SearchField', 'sap/m/RadioButton', 'sap/m/ColumnListItem', 'sap/m/Column', 'sap/m/Text', 'sap/m/Bar', 'sap/m/Table', 'sap/m/Page', 'sap/m/Toolbar', 'sap/m/ToolbarSpacer', 'sap/m/Button', 'sap/m/CheckBox', 'sap/m/Dialog', 'sap/m/Input', 'sap/m/Label', 'sap/m/Title', 'sap/m/ResponsivePopover', 'sap/m/SelectList', 'sap/m/ObjectIdentifier', 'sap/m/OverflowToolbar', 'sap/m/OverflowToolbarLayoutData', 'sap/m/VBox', 'sap/ui/events/KeyCodes', 'sap/ui/core/library', 'sap/m/library'
-], function(Context, PropertyBinding, JSONModel, Filter, FilterOperator, Device, InvisibleText, Control, Icon, HorizontalLayout, Grid, SearchField, RadioButton, ColumnListItem, Column, Text, Bar, Table, Page, Toolbar, ToolbarSpacer, Button, CheckBox, Dialog, Input, Label, Title, ResponsivePopover, SelectList, ObjectIdentifier, OverflowToolbar, OverflowToolbarLayoutData, VBox, KeyCodes, coreLibrary, mobileLibrary) {
+	'sap/ui/model/Context',
+	'sap/ui/model/PropertyBinding',
+	'sap/ui/model/json/JSONModel',
+	'sap/ui/model/Filter',
+	'sap/ui/model/FilterOperator',
+	'sap/ui/Device',
+	'sap/ui/core/InvisibleText',
+	'sap/ui/core/Control',
+	'sap/ui/core/Icon',
+	'sap/ui/layout/HorizontalLayout',
+	'sap/ui/layout/Grid',
+	'sap/m/SearchField',
+	'sap/m/RadioButton',
+	'sap/m/ColumnListItem',
+	'sap/m/Column',
+	'sap/m/Text',
+	'sap/m/Bar',
+	'sap/m/Table',
+	'sap/m/Page',
+	'sap/m/Toolbar',
+	'sap/m/ToolbarSpacer',
+	'sap/m/Button',
+	'sap/m/CheckBox',
+	'sap/m/Dialog',
+	'sap/m/Input',
+	'sap/m/Label',
+	'sap/m/Title',
+	'sap/m/ResponsivePopover',
+	'sap/m/SelectList',
+	'sap/m/ObjectIdentifier',
+	'sap/m/OverflowToolbar',
+	'sap/m/OverflowToolbarLayoutData',
+	'sap/m/VBox',
+	'sap/ui/events/KeyCodes',
+	'sap/ui/core/library',
+	'sap/m/library',
+	'sap/ui/fl/Utils'
+], function(
+	Context,
+	PropertyBinding,
+	JSONModel,
+	Filter,
+	FilterOperator,
+	Device,
+	InvisibleText,
+	Control,
+	Icon,
+	HorizontalLayout,
+	Grid,
+	SearchField,
+	RadioButton,
+	ColumnListItem,
+	Column,
+	Text,
+	Bar,
+	Table,
+	Page,
+	Toolbar,
+	ToolbarSpacer,
+	Button,
+	CheckBox,
+	Dialog,
+	Input,
+	Label,
+	Title,
+	ResponsivePopover,
+	SelectList,
+	ObjectIdentifier,
+	OverflowToolbar,
+	OverflowToolbarLayoutData,
+	VBox,
+	KeyCodes,
+	coreLibrary,
+	mobileLibrary,
+	flUtils
+) {
 	"use strict";
 
 	// shortcut for sap.m.OverflowToolbarPriority
@@ -218,7 +292,6 @@ sap.ui.define([
 		}
 	});
 
-	VariantManagement.MODEL_NAME = "$FlexVariants";
 	VariantManagement.INNER_MODEL_NAME = "$sapUiFlVariants";
 	VariantManagement.MAX_NAME_LEN = 100;
 	VariantManagement.COLUMN_FAV_IDX = 0;
@@ -229,7 +302,7 @@ sap.ui.define([
 	 */
 	VariantManagement.prototype.init = function() {
 
-		this._sModelName = VariantManagement.MODEL_NAME;
+		this._sModelName = flUtils.VARIANT_MODEL_NAME;
 
 		this.attachModelContextChange(this._setModel, this);
 
@@ -602,7 +675,7 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype._getLocalId = function(oModel) {
-		if (this.getModelName() && (this._sModelName !== VariantManagement.MODEL_NAME)) {
+		if (this.getModelName() && (this._sModelName !== flUtils.VARIANT_MODEL_NAME)) {
 			return this.getId();
 		}
 		return oModel.getVariantManagementReferenceForControl(this);

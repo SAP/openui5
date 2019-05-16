@@ -14,7 +14,7 @@ sap.ui.define([
 	RtaControlTreeModifier,
 	JsControlTreeModifier,
 	FlexControllerFactory,
-	FlUtils,
+	flUtils,
 	Log,
 	merge
 ) {
@@ -80,7 +80,7 @@ sap.ui.define([
 	 */
 	FlexCommand.prototype.getAppComponent = function() {
 		var oElement = this.getElement();
-		return oElement ? FlUtils.getAppComponentForControl(oElement) : this.getSelector().appComponent;
+		return oElement ? flUtils.getAppComponentForControl(oElement) : this.getSelector().appComponent;
 	};
 
 	/**
@@ -93,14 +93,14 @@ sap.ui.define([
 			var oSelector = {
 				id: mFlexSettings.templateSelector,
 				appComponent: this.getAppComponent(),
-				controlType: FlUtils.getControlType(sap.ui.getCore().byId(mFlexSettings.templateSelector))
+				controlType: flUtils.getControlType(sap.ui.getCore().byId(mFlexSettings.templateSelector))
 			};
 			this.setSelector(oSelector);
 		} else if (!this.getSelector() && this.getElement()) {
 			var oSelector = {
 				id: this.getElement().getId(),
 				appComponent: this.getAppComponent(),
-				controlType: FlUtils.getControlType(this.getElement())
+				controlType: flUtils.getControlType(this.getElement())
 			};
 			this.setSelector(oSelector);
 		}
@@ -175,7 +175,7 @@ sap.ui.define([
 			mChangeSpecificData = merge({}, mChangeSpecificData, mFlexSettings);
 		}
 		mChangeSpecificData.jsOnly = this.getJsOnly();
-		var oModel = this.getAppComponent().getModel("$FlexVariants");
+		var oModel = this.getAppComponent().getModel(flUtils.VARIANT_MODEL_NAME);
 		var sVariantReference;
 		if (oModel && sVariantManagementReference) {
 			sVariantReference = oModel.getCurrentVariantReference(sVariantManagementReference);
@@ -249,7 +249,7 @@ sap.ui.define([
 		var mPropertyBag = {
 			modifier: bRevertible ? JsControlTreeModifier : RtaControlTreeModifier,
 			appComponent: oAppComponent,
-			view: FlUtils.getViewForControl(oSelectorElement)
+			view: flUtils.getViewForControl(oSelectorElement)
 		};
 
 		if (!bRevertible) {
@@ -296,7 +296,7 @@ sap.ui.define([
 			return {
 				id: mFlexSettings.originalSelector,
 				appComponent: this.getAppComponent(),
-				controlType: FlUtils.getControlType(sap.ui.getCore().byId(mFlexSettings.originalSelector))
+				controlType: flUtils.getControlType(sap.ui.getCore().byId(mFlexSettings.originalSelector))
 			};
 		} else {
 			return this.getElement() || this.getSelector();

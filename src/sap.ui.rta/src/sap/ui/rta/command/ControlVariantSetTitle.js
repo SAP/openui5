@@ -36,8 +36,6 @@ sap.ui.define([
 		}
 	});
 
-	ControlVariantSetTitle.prototype.MODEL_NAME = "$FlexVariants";
-
 	/**
 	 * @override
 	 */
@@ -64,7 +62,7 @@ sap.ui.define([
 			oVariantManagementControlBinding = oVariantManagementControl.getTitle().getBinding("text");
 
 		this.oAppComponent = flUtils.getAppComponentForControl(oVariantManagementControl);
-		this.oModel = this.oAppComponent.getModel(this.MODEL_NAME);
+		this.oModel = this.oAppComponent.getModel(flUtils.VARIANT_MODEL_NAME);
 		this.sVariantManagementReference = JsControlTreeModifier.getSelector(oVariantManagementControl, this.oAppComponent).id;
 		this.sCurrentVariant = this.oModel.getCurrentVariantReference(this.sVariantManagementReference);
 

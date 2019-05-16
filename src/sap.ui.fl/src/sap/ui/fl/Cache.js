@@ -364,7 +364,7 @@ function(
 			})
 			.then(function(sCacheKey) {
 				// concat current control variant ids to cachekey if available
-				var oVariantModel = oAppComponent.getModel("$FlexVariants");
+				var oVariantModel = oAppComponent.getModel(Utils.VARIANT_MODEL_NAME);
 				var aCurrentControlVariantIds = oVariantModel ? oVariantModel.getCurrentControlVariantIds() : [];
 				return Cache._concatControlVariantIdWithCacheKey(sCacheKey, aCurrentControlVariantIds.join("-"));
 			});
