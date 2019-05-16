@@ -4,16 +4,18 @@ sap.ui.define([
 	"use strict";
 
 	return new JSONModel({
-		selectedKey: 'learnOverview',
+		selectedKey: 'overview',
 		navigation: [
 			{
 				title: 'Overview',
+				topicTitle: 'Integration Card Overview',
 				icon: 'sap-icon://home',
 				target: 'learnDetail',
 				key: 'overview'
 			},
 			{
 				title: 'Getting Started',
+				topicTitle: 'Integration Card Getting Started',
 				icon: 'sap-icon://initiative',
 				target: 'learnDetail',
 				key: 'gettingStarted'

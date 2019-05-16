@@ -1,10 +1,12 @@
 sap.ui.define([
 	"sap/ui/demo/cardExplorer/controller/BaseController",
 	"sap/ui/model/json/JSONModel",
+	"../model/DocumentationNavigationModel",
 	"sap/ui/Device"
 ], function(
 	BaseController,
 	JSONModel,
+	DocumentationNavigationModel,
 	Device
 ) {
 	"use strict";
@@ -16,6 +18,7 @@ sap.ui.define([
 		 */
 		onInit : function () {
 			this.getRouter().getRoute("learnDetail").attachPatternMatched(this._onTopicMatched, this);
+			this.getRouter().getRoute("default").attachPatternMatched(this._onTopicMatched, this);
 
 			this.jsonDefModel = new JSONModel();
 			this.getView().setModel(this.jsonDefModel);
@@ -28,16 +31,44 @@ sap.ui.define([
 		 * @private
 		 */
 		_onTopicMatched: function (event) {
-			var topicId = event.getParameter("arguments").key,
-				topicURL = "./topics/learn/" + topicId + '.html';
+			var topicId = event.getParameter("arguments").key || 'overview',
+				navEntry = this._findNavEntry(topicId),
+				topicURL = "./topics/learn/" + topicId + '.html',
+				pageTitle = navEntry.topicTitle ||  navEntry.title;
 
 			var jsonObj = {
+				pageTitle: pageTitle,
 				topicURL : topicURL,
-				iframeAttribute : Device.os.name === Device.os.OS.IOS ? ' scrolling="no" ' : "",
 				bIsPhone : Device.system.phone
 			};
 
 			this.jsonDefModel.setData(jsonObj);
+		},
+
+		_findNavEntry: function (key) {
+			var navEntries = DocumentationNavigationModel.getProperty('/navigation'),
+				navEntry,
+				subItems,
+				i,
+				j;
+
+			for (i = 0; i < navEntries.length; i++) {
+				navEntry  = navEntries[i];
+
+				if (navEntry.key === key) {
+					return navEntry;
+				}
+
+				subItems = navEntry.items;
+
+				if (subItems) {
+					for (j = 0; j < subItems.length; j++) {
+						if (subItems[j].key === key) {
+							return subItems[j];
+						}
+					}
+				}
+			}
 		}
 	});
 });
