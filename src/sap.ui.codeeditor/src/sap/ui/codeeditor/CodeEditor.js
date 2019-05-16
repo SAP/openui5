@@ -2,8 +2,6 @@
  * ${copyright}
  */
 
-/*global ace */
-
 sap.ui.loader.config({
 	shim: {
 		'sap/ui/codeeditor/js/ace/ace': {
@@ -29,12 +27,13 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/Device',
 	'sap/ui/core/ResizeHandler',
+	"sap/ui/thirdparty/jquery",
 	'sap/ui/codeeditor/js/ace/ace',
 	'sap/ui/codeeditor/js/ace/ext-language_tools',
 	'sap/ui/codeeditor/js/ace/ext-beautify',
 	'sap/ui/codeeditor/js/ace/mode-javascript',
 	'sap/ui/codeeditor/js/ace/mode-json'
-], function(Control, Device, ResizeHandler) {
+], function(Control, Device, ResizeHandler, jQuery, ace) {
 	"use strict";
 
 	// TODO remove after 1.62 version
@@ -416,6 +415,10 @@ sap.ui.define([
 	 */
 	CodeEditor.prototype.exit = function() {
 		this._deregisterResizeListener();
+		this._oEditor.destroy(); // clear ace intervals
+		jQuery(this._oEditorDomRef).remove(); // remove DOM node together with all event listeners
+		this._oEditorDomRef = null;
+		this._oEditor = null;
 	};
 
 	/**

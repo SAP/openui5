@@ -95,4 +95,20 @@ sap.ui.define([
 			assert.ok(oSpy.notCalled, "Should not fire liveChange event when readonly.");
 			assert.ok(oSpy2.notCalled, "Should not fire change event when readonly.");
 		});
+
+		QUnit.module("Destroy");
+
+		QUnit.test("ACE Editor should be destroyed on exit", function (assert) {
+			// Arrange
+			var oCodeEditor = new CodeEditor({});
+			oCodeEditor.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Act
+			oCodeEditor.destroy();
+
+			// Assert
+			assert.notOk(oCodeEditor._oEditorDomRef, "DOM node of the editor should be destroyed.");
+			assert.notOk(oCodeEditor._oEditor, "ACE editor should be destroyed");
+		});
 });
