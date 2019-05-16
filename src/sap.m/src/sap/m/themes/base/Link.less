@@ -107,9 +107,13 @@ html.sap-desktop .sapMLnk:focus:not(.sapMLnkDsbl) {
 	outline: 1px dotted @sapUiContentFocusColor;
 }
 
+.sapUiForm .sapMLnk {
+	min-height: 1rem; /* do give empty links a size too. Keep the Form stable */
+}
+
 .sapUiFormEdit .sapMLnk {
 	line-height: normal;
-	margin-top: 1rem;
+	margin-top: 1rem; /* don't use padding as this would stretch the focus outline */
 	margin-bottom: 0.75rem; /* for some reason browser adds 4px, display: block would lead to stretched focus outline*/
 }
 
