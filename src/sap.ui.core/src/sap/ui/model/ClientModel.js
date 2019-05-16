@@ -2,22 +2,22 @@
  * ${copyright}
  */
 
+/* global XMLHttpRequest */
+
 // Provides client-based DataBinding implementation
 sap.ui.define([
 	'./ClientContextBinding',
 	'./ClientListBinding',
 	'./ClientPropertyBinding',
 	'./ClientTreeBinding',
-	'./Model',
-	"sap/ui/thirdparty/jquery"
+	'./Model'
 ],
 	function(
 		ClientContextBinding,
 		ClientListBinding,
 		ClientPropertyBinding,
 		ClientTreeBinding,
-		Model,
-		jQuery
+		Model
 	) {
 	"use strict";
 
@@ -131,7 +131,6 @@ sap.ui.define([
 		if (oParameters.async) {
 			this.aPendingRequestHandles.push(oRequestHandle);
 		}
-
 	};
 
 	/**
@@ -188,7 +187,5 @@ sap.ui.define([
 		this.bCache = !bForceNoCache;
 	};
 
-
 	return ClientModel;
-
 });

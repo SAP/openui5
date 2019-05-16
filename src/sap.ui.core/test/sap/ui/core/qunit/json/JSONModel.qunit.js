@@ -898,7 +898,6 @@ sap.ui.define([
 		spy.restore();
 	});
 
-
 	QUnit.test("test JSONModel loadData after destroy", function(assert) {
 
 		var spy = sinon.spy(jQuery, "ajax");
