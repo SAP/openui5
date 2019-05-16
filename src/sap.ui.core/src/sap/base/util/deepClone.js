@@ -90,9 +90,12 @@ sap.ui.define(["./isPlainObject"], function(isPlainObject) {
 			throw new TypeError("Cloning is only supported for plain objects");
 		}
 
-		var oClone =  {};
+		var oClone = {};
 
 		for (var key in src) {
+			if (key === "__proto__") {
+				continue;
+			}
 			oClone[key] = clone(src[key], depth + 1, maxDepth);
 		}
 
