@@ -10,9 +10,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * AggregationFilled - checks if an aggregation contains at least one entry.
-	 *
-	 * @class AggregationFilled - checks if an aggregation contains at least one entry
+	 * @class Checks if an aggregation contains at least one entry.
 	 * @param {object} [mSettings] optional map/JSON-object with initial settings for the new AggregationFilledMatcher
 	 * @extends sap.ui.test.matchers.Matcher
 	 * @public

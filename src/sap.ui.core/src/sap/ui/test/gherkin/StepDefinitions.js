@@ -6,15 +6,15 @@ sap.ui.define(["sap/ui/base/Object", "sap/ui/thirdparty/jquery"], function(BaseO
   "use strict";
 
   /**
-   * A Gherkin feature file is human-readable, and the computer does not know how to execute its steps. This
-   * StepDefinitions class provides the interface between human and machine. It defines what each step in the Gherkin
-   * feature file will actually do when it is executed.
-   *
    * Meant to be implemented/overridden by a child object. Specifically, the functions "init" and "closeApplication"
    * need to be overridden.
    *
    * @abstract
    * @class
+   * Provides the interface between human and machine since a Gherkin feature file is human-readable
+   * and the computer does not know how to execute its steps.
+   *
+   * It defines what each step in the Gherkin feature file will actually do when it is executed.
    * @author Rodrigo Jordao
    * @author Jonathan Benn
    * @extends sap.ui.base.Object

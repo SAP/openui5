@@ -6,9 +6,7 @@ sap.ui.define(['sap/ui/test/matchers/Matcher', "sap/base/strings/capitalize"], f
 	"use strict";
 
 	/**
-	 * PropertyStrictEquals - checks if a property has the exact same value.
-	 *
-	 * @class PropertyStrictEquals - checks if a property has the exact same value
+	 * @class Checks if a property has the exact same value.
 	 * @extends sap.ui.test.matchers.Matcher
 	 * @param {object} [mSettings] optional map/JSON-object with initial settings for the new PropertyStrictEquals
 	 * @public

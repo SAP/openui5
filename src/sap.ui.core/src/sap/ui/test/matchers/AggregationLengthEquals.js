@@ -10,9 +10,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * AggregationLengthEquals - checks if an aggregation contains a specified number of entries.
-	 *
-	 * @class AggregationLengthEquals - checks if an aggregation contains a specified number of entries.
+	 * @class Checks if an aggregation contains a specified number of entries.
 	 * @param {object} [mSettings] optional map/JSON-object with initial settings for the new AggregationLengthEqualsMatcher
 	 * @extends sap.ui.test.matchers.Matcher
 	 * @public

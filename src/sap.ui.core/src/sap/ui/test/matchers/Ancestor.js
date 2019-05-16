@@ -12,7 +12,7 @@ sap.ui.define([
 	var oVisitor = new _Visitor();
 
 	/**
-	 * @class Ancestor - checks if a control has a defined ancestor
+	 * @class Checks if a control has a defined ancestor.
 	 * @param {object|string} vAncestor the ancestor control to check, if undefined, validates every control to true. Can be a control or a control ID
 	 * @param {boolean} [bDirect] specifies if the ancestor should be a direct ancestor (parent)
 	 * @public

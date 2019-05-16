@@ -13,9 +13,7 @@ sap.ui.define([
 	});
 
 	/**
-	 * AggregationEmpty - checks if an aggregation is empty.
-	 *
-	 * @class AggregationEmpty - checks if an aggregation is empty
+	 * @class Checks if an aggregation is empty.
 	 * @param {object} [mSettings] optional map/JSON-object with initial settings for the new AggregationEmptyMatcher
 	 * @extends sap.ui.test.matchers.Matcher
 	 * @public
