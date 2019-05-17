@@ -23,7 +23,11 @@ sap.ui.define([
 
 				this.getRouter().attachRouteMatched(this.onRouteChange.bind(this));
 
-				Device.media.attachHandler(this.onDeviceSizeChange.bind(this), null, Device.media.RANGESETS.SAP_STANDARD);
+				Device.media.attachHandler(this.onDeviceSizeChange, this, Device.media.RANGESETS.SAP_STANDARD);
+			},
+
+			onExit: function () {
+				Device.media.detachHandler(this.onDeviceSizeChange, this, Device.media.RANGESETS.SAP_STANDARD);
 			},
 
 			onTabSelect: function (oEvent) {
