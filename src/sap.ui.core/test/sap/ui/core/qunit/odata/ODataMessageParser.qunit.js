@@ -620,9 +620,7 @@ sap.ui.define([
 			assert.equal(aNewMessages.length, 1);
 			assert.equal(aNewMessages[0].target, "/Products(1)", "target is read from the provided key");
 			assert.equal(aNewMessages[0].code, "888", "target is read from the provided key");
-			assert.equal(aOldMessages.length, 1);
-			assert.equal(aOldMessages[0].target, "/Products(1)", "target is read from the provided key");
-			assert.equal(aOldMessages[0].code, "999", "target is read from the provided key");
+			assert.equal(aOldMessages.length, 0, "No state change, keep messages.");
 
 			//request uri:          fakeservice://testdata/odata/northwind/Products
 			oRequest.created = false;
@@ -1509,5 +1507,173 @@ sap.ui.define([
 	};
 
 	QUnit.test("Propagate Message: Binding to NavProp", fnTestNavProp);
+
+	QUnit.test("ODataMessageParser: Keep messages when request failed", function(assert) {
+		var done = assert.async();
+
+		var sServiceURI = "fakeservice://testdata/odata/northwind";
+
+		var oMetadata = new ODataMetadata(sServiceURI + "/$metadata", {});
+		oMetadata.loaded().then(function() {
+
+			var oParser = new ODataMessageParser(sServiceURI, oMetadata);
+			// Use processor to get new messages
+			var aNewMessages = [];
+			var aOldMessages = [];
+			oParser.setProcessor({
+				fireMessageChange: function(oObj) {
+					aNewMessages = oObj.newMessages;
+					aOldMessages = oObj.oldMessages;
+				},
+				resolve: function(sPath){
+					return sPath;
+				}
+			});
+
+			//SETUP
+			var oRequest = {
+				method: "GET",
+				key: "Products(1)",
+				created: true,
+				requestUri: sServiceURI + "/Products(1)"
+			};
+
+			var oResponseGET200 = {
+				statusCode: "200",
+				body: "OK",
+				headers: {
+					"Content-Type": "text/plain;charset=utf-8",
+					"DataServiceVersion": "2.0;",
+					"sap-message": JSON.stringify({
+						"code":		"999",
+						"message":	"This is test message",
+						"severity":	"error",
+						"details": []
+					})
+				}
+			};
+
+			var oResponseGET400 = {
+				statusCode: "400",
+				body: JSON.stringify({
+					"error": {
+						"message": {
+							"value": "Bad Request - ..."
+						},
+						"code": "999"
+					}
+				}),
+			headers: {
+				"Content-Type": "text/plain;charset=utf-8",
+					"DataServiceVersion": "2.0;"
+			}
+		};
+
+			oParser.parse(oResponseGET200, oRequest);
+			assert.equal(aNewMessages.length, 1);
+			assert.equal(aNewMessages[0].technical, false);
+			assert.equal(aNewMessages[0].target, "/Products(1)", "target is read from the provided key");
+
+			oParser.parse(oResponseGET400, oRequest);
+			assert.equal(aNewMessages.length, 1);
+			assert.equal(aNewMessages[0].technical, true);
+
+			assert.equal(aOldMessages.length, 0);
+
+
+			oParser.parse(oResponseGET200, oRequest);
+			assert.equal(aNewMessages.length, 1);
+			assert.equal(aNewMessages[0].technical, false);
+
+			assert.equal(aOldMessages.length, 2);
+			assert.equal(aOldMessages[0].technical, false);
+			assert.equal(aOldMessages[1].technical, true);
+
+			done();
+		});
+	});
+
+	QUnit.test("ODataMessageParser: Function imports with location", function(assert) {
+		var done = assert.async();
+
+		var sServiceURI = "fakeservice://testdata/odata/function-imports";
+
+		var oMetadata = new ODataMetadata(sServiceURI + "/$metadata", {});
+		oMetadata.loaded().then(function() {
+
+
+			var oParser = new ODataMessageParser(sServiceURI, oMetadata);
+			// Use processor to get new messages
+			var aNewMessages = [];
+			var aOldMessages = [];
+			oParser.setProcessor({
+				fireMessageChange: function(oObj) {
+					aNewMessages = oObj.newMessages;
+					aOldMessages = oObj.oldMessages;
+				},
+				resolve: function(sPath){
+					return sPath;
+				}
+			});
+
+			//SETUP
+			var oRequest = {
+				method: "POST",
+				key: "EditProduct",
+				created: true,
+				requestUri: sServiceURI + "/EditProduct"
+			};
+
+			var oResponseGET200 = {
+				statusCode: "200",
+				body: "OK",
+				headers: {
+					"location": sServiceURI + "/Products(1)",
+					"Content-Type": "text/plain;charset=utf-8",
+					"DataServiceVersion": "2.0;",
+					"sap-message": JSON.stringify({
+						"code":		"999",
+						"message":	"This is test message",
+						"severity":	"error",
+						"details": []
+					})
+				}
+			};
+
+			var oResponseGET400 = {
+				statusCode: "400",
+				body: JSON.stringify({
+					"error": {
+						"message": {
+							"value": "Bad Request - ..."
+						},
+						"code": "999"
+					}
+				}),
+			headers: {
+				"location": sServiceURI + "/Products(1)",
+				"Content-Type": "text/plain;charset=utf-8",
+					"DataServiceVersion": "2.0;"
+			}
+		};
+
+			oParser.parse(oResponseGET200, oRequest);
+
+			assert.equal(aNewMessages.length, 1);
+			assert.equal(aNewMessages[0].target, "/Products(1)", "Correct target");
+			assert.equal(aNewMessages[0].fullTarget, "/Products(1)", "Correct full target");
+
+			oParser.parse(oResponseGET400, oRequest);
+
+			assert.equal(aNewMessages.length, 1);
+			assert.equal(aNewMessages[0].target, "/Products(1)", "Correct target");
+			assert.equal(aNewMessages[0].fullTarget, "/Products(1)", "Correct full target");
+			assert.equal(aNewMessages[0].technical, true);
+
+			assert.equal(aOldMessages.length, 0);
+
+			done();
+		});
+	});
 
 });

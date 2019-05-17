@@ -271,29 +271,31 @@ ODataMessageParser.prototype._getAffectedTargets = function(aMessages, mRequestI
  */
 ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestInfo, mGetEntities, mChangeEntities) {
 	var i, sTarget;
-
-	var mAffectedTargets = this._getAffectedTargets(aMessages, mRequestInfo, mGetEntities, mChangeEntities);
-
 	var aRemovedMessages = [];
+	var mAffectedTargets = this._getAffectedTargets(aMessages, mRequestInfo, mGetEntities, mChangeEntities);
 	var aKeptMessages = [];
-	for (i = 0; i < this._lastMessages.length; ++i) {
-		// Note: mGetEntities and mChangeEntities contain the keys without leading or trailing "/", so all targets must
-		// be trimmed here
-		sTarget = this._lastMessages[i].getTarget().replace(/^\/+|\/$/g, "");
+	if (mRequestInfo.response.statusCode >= 200 && mRequestInfo.response.statusCode < 300) {
+		for (i = 0; i < this._lastMessages.length; ++i) {
+			// Note: mGetEntities and mChangeEntities contain the keys without leading or trailing "/", so all targets must
+			// be trimmed here
+			sTarget = this._lastMessages[i].getTarget().replace(/^\/+|\/$/g, "");
 
-		// Get entity for given target (properties are not affected targets as all messages must be sent for affected entity)
-		var iPropertyPos = sTarget.lastIndexOf(")/");
-		if (iPropertyPos > 0) {
-			sTarget = sTarget.substr(0, iPropertyPos + 1);
-		}
+			// Get entity for given target (properties are not affected targets as all messages must be sent for affected entity)
+			var iPropertyPos = sTarget.lastIndexOf(")/");
+			if (iPropertyPos > 0) {
+				sTarget = sTarget.substr(0, iPropertyPos + 1);
+			}
 
-		if (mAffectedTargets[sTarget] && !this._lastMessages[i].getPersistent()) {
-			// Message belongs to targets handled/requested by this request
-			aRemovedMessages.push(this._lastMessages[i]);
-		} else {
-			// Message is not affected, i.e. should stay
-			aKeptMessages.push(this._lastMessages[i]);
+			if (mAffectedTargets[sTarget] && !this._lastMessages[i].getPersistent()) {
+				// Message belongs to targets handled/requested by this request
+				aRemovedMessages.push(this._lastMessages[i]);
+			} else {
+				// Message is not affected, i.e. should stay
+				aKeptMessages.push(this._lastMessages[i]);
+			}
 		}
+	} else {
+		aKeptMessages = this._lastMessages;
 	}
 
 	this.getProcessor().fireMessageChange({
@@ -458,7 +460,7 @@ ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mReque
  */
 ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestInfo) {
 	var sTarget = oMessageObject.target;
-	var sDeepPath;
+	var sDeepPath = "";
 	var that = this;
 	var bCollection = false;
 
@@ -519,6 +521,7 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 
 			if (mFunctionInfo) {
 				sRequestTarget = this._getFunctionTarget(mFunctionInfo, mRequestInfo, mUrlData);
+				sDeepPath = sRequestTarget;
 			}
 		}
 
@@ -528,8 +531,10 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 		var iSlashPos = sRequestTarget.lastIndexOf("/");
 		var sRequestTargetName = iSlashPos > -1 ? sRequestTarget.substr(iSlashPos) : sRequestTarget;
 
-		sDeepPath = mRequestInfo.request && mRequestInfo.request.deepPath;
 
+		if (!sDeepPath && mRequestInfo.request && mRequestInfo.request.deepPath){
+			sDeepPath = mRequestInfo.request.deepPath;
+		}
 		if (sRequestTargetName.indexOf("(") > -1) {
 			// It is an entity
 			sTarget = sTarget ? sRequestTarget + "/" + sTarget : sRequestTarget;
