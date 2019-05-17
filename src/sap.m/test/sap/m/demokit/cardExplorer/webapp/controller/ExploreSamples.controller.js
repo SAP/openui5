@@ -3,13 +3,15 @@ sap.ui.define([
 	'sap/ui/model/json/JSONModel',
 	"sap/ui/model/BindingMode",
 	"../model/ExploreNavigationModel",
-	"../model/ExploreSettingsModel"
+	"../model/ExploreSettingsModel",
+	"sap/ui/Device"
 ], function(
 	BaseController,
 	JSONModel,
 	BindingMode,
 	exploreNavigationModel,
-	exploreSettingsModel
+	exploreSettingsModel,
+	Device
 ) {
 	"use strict";
 
@@ -27,8 +29,26 @@ sap.ui.define([
 
 			this.getView().setModel(this.oModel);
 			this.getView().setModel(exploreSettingsModel, "settings");
+			this._registerResize();
 		},
+		onExit: function() {
+			this._deregisterResize();
+		},
+		_deregisterResize: function () {
+			Device.media.detachHandler(this._onResize, this);
+		},
+		_registerResize: function () {
+			Device.media.attachHandler(this._onResize, this);
+		},
+		_onResize: function (oEvent) {
+			var isOrientationVertical = exploreSettingsModel.getProperty("/splitViewVertically");
 
+			if (oEvent.name == "Tablet" || oEvent.name == "Phone" && !isOrientationVertical) {
+				exploreSettingsModel.setProperty("/splitViewVertically", true);
+				this.getView().byId("splitView").getRootPaneContainer().setOrientation("Vertical");
+			}
+
+		},
 		_onRouteMatched: function (oEvent) {
 			var oArgs = oEvent.getParameter("arguments"),
 				sSampleKey = oArgs["key"],
