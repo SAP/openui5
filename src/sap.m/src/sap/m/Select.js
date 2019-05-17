@@ -1186,6 +1186,8 @@ function(
 
 			// delegate object used to open/close value state message popups
 			this._oValueStateMessage = new ValueStateMessage(this);
+
+			this._bValueStateMessageOpened = false;
 		};
 
 		Select.prototype.onBeforeRendering = function() {
@@ -1227,6 +1229,7 @@ function(
 			}
 
 			this._oValueStateMessage = null;
+			this._bValueStateMessageOpened = false;
 		};
 
 		/* =========================================================== */
@@ -2323,7 +2326,8 @@ function(
 		Select.prototype.openValueStateMessage = function() {
 			var oValueStateMessage = this.getValueStateMessage();
 
-			if (oValueStateMessage) {
+			if (oValueStateMessage && !this._bValueStateMessageOpened) {
+				this._bValueStateMessageOpened = true;
 				oValueStateMessage.open();
 			}
 		};
@@ -2336,7 +2340,8 @@ function(
 		Select.prototype.closeValueStateMessage = function() {
 			var oValueStateMessage = this.getValueStateMessage();
 
-			if (oValueStateMessage) {
+			if (oValueStateMessage && this._bValueStateMessageOpened) {
+				this._bValueStateMessageOpened = false;
 				oValueStateMessage.close();
 			}
 		};
@@ -2349,7 +2354,8 @@ function(
 		 * @since 1.40.5
 		 */
 		Select.prototype.shouldValueStateMessageBeOpened = function() {
-			return (this.getValueState() !== ValueState.None) && this.getEnabled() && this.getEditable();
+			return (this.getValueState() !== ValueState.None) && this.getEnabled()
+				&& this.getEditable() && !this._bValueStateMessageOpened;
 		};
 
 		/* ----------------------------------------------------------- */
