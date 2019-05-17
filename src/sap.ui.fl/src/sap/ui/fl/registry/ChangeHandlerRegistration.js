@@ -24,10 +24,14 @@ sap.ui.define(["sap/ui/fl/registry/ChangeRegistry", "sap/ui/thirdparty/jquery"],
 			return this._mRegistrationPromises[sKey] || Promise.resolve();
 		},
 
+		isChangeHandlerRegistrationInProgress: function(sKey) {
+			return !!this._mRegistrationPromises[sKey];
+		},
+
 		/**
 		 * Detects already loaded libraries and registers defined changeHandlers.
 		 *
-		 * @returns {Promise} Returns an empty promise when all changeHandlers from all liblraries are registered.
+		 * @returns {Promise} Returns an empty promise when all changeHandlers from all libraries are registered.
 		 */
 		getChangeHandlersOfLoadedLibsAndRegisterOnNewLoadedLibs: function () {
 			var oCore = sap.ui.getCore();

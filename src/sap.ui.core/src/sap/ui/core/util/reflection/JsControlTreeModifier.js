@@ -238,6 +238,13 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
+		getControlMetadata: function (oControl) {
+			return oControl && oControl.getMetadata();
+		},
+
+		/**
+		 * @inheritDoc
+		 */
 		getControlType: function (oControl) {
 			return oControl && oControl.getMetadata().getName();
 		},

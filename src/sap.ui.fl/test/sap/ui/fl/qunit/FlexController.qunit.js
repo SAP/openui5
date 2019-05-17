@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/registry/ChangeHandlerRegistration",
 	"sap/ui/core/Control",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/changeHandler/HideControl",
@@ -33,6 +34,7 @@ function (
 	Change,
 	ChangeRegistry,
 	Settings,
+	ChangeHandlerRegistration,
 	Control,
 	Utils,
 	HideControl,
@@ -120,7 +122,7 @@ function (
 			var oUtilsLogStub = sandbox.stub(Utils.log, "warning");
 			var oChangeSpecificData = {};
 			var oControlType = {};
-			var oControl = {};
+			var oControl = new Control();
 			var oChange = {
 				setQueuedForApply: function() {
 					assert.ok(true, "the change was queued");
@@ -133,7 +135,7 @@ function (
 			sandbox.stub(this.oFlexController, "_getChangeHandler").returns(undefined);
 			sandbox.stub(JsControlTreeModifier, "getControlType").returns(oControlType);
 			sandbox.stub(this.oFlexController, "addChange").returns(oChange);
-			sandbox.stub(this.oFlexController, "_getControlIfTemplateAffected").returns({control: {}, controlType: "dummy", bTemplateAffected: false});
+			sandbox.stub(this.oFlexController, "_getControlIfTemplateAffected").returns({control: oControl, controlType: "dummy", bTemplateAffected: false});
 			sandbox.stub(this.oFlexController._oChangePersistence, "deleteChange");
 
 			return this.oFlexController.createAndApplyChange(oChangeSpecificData, oControl)
@@ -2104,6 +2106,80 @@ function (
 				assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0], oChange1, "the second change was processed second");
 				assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(2).args[0], oChange2, "the third change was processed third");
 			}.bind(this));
+		});
+
+		QUnit.test("_applyChangesOnControl dependency test - when the change handler is registered after the applyChangesOnControl is triggered", function (assert) {
+			var oSomeControl = new Control("group8-1");
+			var oChange0 = new Change(getLabelChangeContent("fileNameChange0"));
+			oChange0._oDefinition.layer = "CUSTOMER";
+
+			var fnGetChangesMap = function () {
+				return {
+					"mChanges": {
+						"group8-1": [oChange0]
+					},
+					"mDependencies": {},
+					"mDependentChangesOnMe": {}
+				};
+			};
+			var applyChangeSpy = sandbox.spy();
+			var oMockedLibraryChangedEvent = {
+				parameters: {
+					operation: "add",
+					metadata: {
+						sName : "sap.ui.core",
+						extensions : {
+							flChangeHandlers : {
+								"sap.ui.core.Control" : {
+									"labelChange" : {
+										applyChange : applyChangeSpy,
+										revertChange : sandbox.spy(),
+										completeChangeContent : sandbox.spy()
+									}
+								}
+							}
+						}
+					}
+				},
+				getParameter : function (key) {
+					return oMockedLibraryChangedEvent.parameters[key];
+				}
+			};
+
+			//have real behavior again
+			this.oCheckTargetAndApplyChangeStub.restore();
+
+			var fnTriggerRegistration;
+			var oRegistrationDone = new Promise(function(resolve){
+				//leak resolve function to be able to control the resolution from the outside
+				fnTriggerRegistration = resolve;
+			});
+			var fnOriginalRegisterFlexChangeHandlers = ChangeHandlerRegistration._registerFlexChangeHandlers;
+			sandbox.stub(ChangeHandlerRegistration, "_registerFlexChangeHandlers").callsFake(function(oFlChangeHandlers){
+				//delay registration until we want it to happen in this test
+				return oRegistrationDone.then(function(){
+					fnOriginalRegisterFlexChangeHandlers.call(this, oFlChangeHandlers);
+				}.bind(this));
+			});
+
+			return Promise.resolve()
+
+			.then(function(){
+				//start registering the change handler async, but it is blocked for now
+				ChangeHandlerRegistration._handleLibraryRegistrationAfterFlexLibraryIsLoaded(oMockedLibraryChangedEvent);
+
+				//change handler is not registered yet, but change processing should wait
+				var oApplyingDone = this.oFlexController._applyChangesOnControl(fnGetChangesMap, {}, oSomeControl);
+
+				//now register the change handler
+				fnTriggerRegistration();
+
+				return oApplyingDone;
+			}.bind(this))
+			.then(function() {
+				assert.ok(oChange0.isApplyProcessFinished(), "then the change is still applied");
+				assert.equal(applyChangeSpy.callCount, 1, "then the change is applied once");
+			});
 		});
 	});
 
