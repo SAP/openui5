@@ -107,7 +107,7 @@ sap.ui.define([
 
 			this.oModel = new VariantModel(this.oData, oMockFlexController);
 			this.oAppComponent = new Component("AppComponent");
-			this.oAppComponent.setModel(this.oModel, "$FlexVariants");
+			this.oAppComponent.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
 			this.oComponent = new Component("EmbeddedComponent");
 			sandbox.stub(Utils, "getAppComponentForControl")
 				.callThrough()
@@ -219,7 +219,7 @@ sap.ui.define([
 
 		QUnit.test("when calling 'activateVariant' with a control with an invalid variantModel", function(assert) {
 			fnStubUpdateCurrentVariant.call(this);
-			this.oAppComponent.setModel(null, "$FlexVariants");
+			this.oAppComponent.setModel(null, Utils.VARIANT_MODEL_NAME);
 
 			return ControlPersonalizationAPI.activateVariant(this.oDummyControl, "variant1")
 			.then(function() {},
@@ -412,7 +412,7 @@ sap.ui.define([
 				this.oFlexController = FlexControllerFactory.createForControl(this.oComp);
 				var oVariantModel = new VariantModel({}, this.oFlexController, this.oComp);
 				sandbox.stub(oVariantModel, "addChange");
-				this.oComp.setModel(oVariantModel, "$FlexVariants");
+				this.oComp.setModel(oVariantModel, Utils.VARIANT_MODEL_NAME);
 				this.oCompContainer = new ComponentContainer("sap-ui-static", {
 					component: this.oComp
 				}).placeAt("qunit-fixture");

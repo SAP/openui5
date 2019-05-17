@@ -5,7 +5,11 @@ sap.ui.define([
 	'sap/ui/rta/command/BaseCommand',
 	'sap/ui/core/util/reflection/JsControlTreeModifier',
 	'sap/ui/fl/Utils'
-], function(BaseCommand, JsControlTreeModifier, flUtils) {
+], function(
+	BaseCommand,
+	JsControlTreeModifier,
+	flUtils
+) {
 	"use strict";
 
 	/**
@@ -39,8 +43,6 @@ sap.ui.define([
 		}
 	});
 
-	ControlVariantDuplicate.prototype.MODEL_NAME = "$FlexVariants";
-
 	/**
 	 * @override
 	 */
@@ -73,7 +75,7 @@ sap.ui.define([
 		}
 
 		this.sVariantManagementReference = JsControlTreeModifier.getSelector(oVariantManagementControl, this.oAppComponent).id;
-		this.oModel = this.oAppComponent.getModel(this.MODEL_NAME);
+		this.oModel = this.oAppComponent.getModel(flUtils.VARIANT_MODEL_NAME);
 
 		var mPropertyBag = {
 				variantManagementReference : this.sVariantManagementReference,

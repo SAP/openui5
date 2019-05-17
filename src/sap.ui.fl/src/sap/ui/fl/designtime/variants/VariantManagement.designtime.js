@@ -9,11 +9,10 @@ sap.ui.define([
 	flUtils
 ) {
 	"use strict";
-	var sVariantModelName = "$FlexVariants";
 	var fnSetControlAttributes = function (oVariantManagement, bDesignTimeMode) {
 		var oAppComponent = flUtils.getAppComponentForControl(oVariantManagement),
 			sControlId = oVariantManagement.getId(),
-			oModel = oAppComponent.getModel(sVariantModelName),
+			oModel = oAppComponent.getModel(flUtils.VARIANT_MODEL_NAME),
 			sVariantManagementReference = oAppComponent.getLocalId(sControlId) || sControlId;
 
 		if (!oModel) {

@@ -58,7 +58,7 @@ function (
 	ChangePersistenceFactory,
 	Change,
 	JSONModel,
-	FlexUtils,
+	flUtils,
 	RtaControlTreeModifier,
 	sinon
 ) {
@@ -71,7 +71,7 @@ function (
 	});
 
 	var sandbox = sinon.sandbox.create();
-	sinon.stub(FlexUtils, "getCurrentLayer").returns("VENDOR");
+	sinon.stub(flUtils, "getCurrentLayer").returns("VENDOR");
 	var ERROR_INTENTIONALLY = new Error("this command intentionally failed");
 
 	var oMockedAppComponent = {
@@ -104,7 +104,7 @@ function (
 	QUnit.module("Given a command factory", {
 		beforeEach : function(assert) {
 			this.oButton = new Button(oMockedAppComponent.createId("myButton"));
-			sandbox.stub(FlexUtils, "_getComponentForControl")
+			sandbox.stub(flUtils, "_getComponentForControl")
 				.callThrough()
 				.withArgs(this.oButton)
 				.returns(oMockedAppComponent);
@@ -180,7 +180,7 @@ function (
 
 	QUnit.module("Given a flex command", {
 		beforeEach : function(assert) {
-			sandbox.stub(FlexUtils, "_getComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 			this.oButton = new Button("mockButton");
 			this.fnApplyChangeSpy = sandbox.spy(HideControl, "applyChange");
 			this.oFlexCommand = new FlexCommand({
@@ -225,7 +225,7 @@ function (
 	QUnit.module("Given a command stack", {
 		beforeEach : function(assert) {
 			this.stack = new Stack();
-			sandbox.stub(FlexUtils, "_getComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 			this.command = new BaseCommand();
 			this.failingCommand = this.command.clone();
 			this.failingCommand.execute = function(oElement) {
@@ -419,7 +419,7 @@ function (
 				developerMode: true,
 				layer: "VENDOR"
 			};
-			sandbox.stub(FlexUtils, "_getComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 			this.OLD_VALUE = '2px';
 			this.NEW_VALUE = '5px';
 			this.oControl = new Column(oMockedAppComponent.createId("control"), {
@@ -476,7 +476,7 @@ function (
 				developerMode: true,
 				layer: "VENDOR"
 			};
-			sandbox.stub(FlexUtils, "_getComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 			this.OLD_BOOLEAN_VALUE = false;
 			this.NEW_BOOLEAN_BINDING_WITH_CRITICAL_CHARS = "{= ( ${/field1} === 'critical' ) &&  ( ${/field2} > 100 ) }";
 			this.NEW_BOOLEAN_VALUE = true;
@@ -599,7 +599,7 @@ function (
 
 	QUnit.module("Given remove command", {
 		beforeEach : function(assert) {
-			sandbox.stub(FlexUtils, "_getComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 			this.oButton = new Button(oMockedAppComponent.createId("button"));
 
 			return CommandFactory.getCommandFor(this.oButton, "Remove", {
@@ -646,7 +646,7 @@ function (
 
 			this.fnOriginalGetModel = oMockedAppComponent.getModel;
 			oMockedAppComponent.getModel = function (sModelName) {
-				if (sModelName === "$FlexVariants") {
+				if (sModelName === flUtils.VARIANT_MODEL_NAME) {
 					return {
 						getCurrentVariantReference: function (sVariantManagementRef) {
 							if (sVariantManagementRef === sVariantManagementReference) {
@@ -657,7 +657,7 @@ function (
 				}
 			}.bind(this);
 
-			sandbox.stub(FlexUtils, "_getComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 			sandbox.spy(FlexCommand.prototype, "prepare");
 
 			this.oButton = new Button(oMockedAppComponent.createId("button"));
@@ -702,7 +702,7 @@ function (
 
 	QUnit.module("Given a command stack with multiple already executed commands", {
 		beforeEach : function(assert) {
-			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(flUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 			this.renamedButton = new Button();
 			this.stack = new Stack();
 			this.command = new BaseCommand();
@@ -840,7 +840,7 @@ function (
 	QUnit.module("Given an empty command stack and commands", {
 		beforeEach : function(assert) {
 			this.stack = new Stack();
-			sandbox.stub(FlexUtils, "_getComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 			this.command = new BaseCommand();
 			this.command2 = new BaseCommand();
 			this.command3 = new BaseCommand();
@@ -1056,7 +1056,7 @@ function (
 
 	QUnit.module("Given controls and designTimeMetadata", {
 		beforeEach : function () {
-			sandbox.stub(FlexUtils, "_getComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 			return ChangeRegistry.getInstance().registerControlsForChanges({
 				"sap.m.ObjectHeader": [SimpleChanges.moveControls]
 			})
@@ -1130,7 +1130,7 @@ function (
 	QUnit.module("Given a command stack with a hideControl flex command", {
 		beforeEach : function(assert) {
 			this.oCommandStack = new Stack();
-			sandbox.stub(FlexUtils, "_getComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 			var oButton = new Button(oMockedAppComponent.createId("button"));
 			this.oLayout = new VerticalLayout(oMockedAppComponent.createId("layout"), {
 				content : [oButton]
@@ -1245,7 +1245,7 @@ function (
 
 	QUnit.module("Given a command factory and a bound control containing a template binding", {
 		beforeEach : function(assert) {
-			sandbox.stub(FlexUtils, "_getComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 
 			var done = assert.async();
 
@@ -1396,7 +1396,7 @@ function (
 
 	QUnit.module("Given a command factory and a bound control containing multiple template bindings", {
 		beforeEach : function(assert) {
-			sandbox.stub(FlexUtils, "_getComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 
 			var done = assert.async();
 

@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
-	FlUtils,
+	flUtils,
 	Manifest,
 	CommandFactory,
 	ElementDesignTimeMetadata,
@@ -51,8 +51,8 @@ sap.ui.define([
 				}.bind(this)
 			};
 
-			this.oGetAppComponentForControlStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
-			this.oGetComponentClassNameStub = sinon.stub(FlUtils, "getComponentClassName").returns("Dummy.Component");
+			this.oGetAppComponentForControlStub = sinon.stub(flUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+			this.oGetComponentClassNameStub = sinon.stub(flUtils, "getComponentClassName").returns("Dummy.Component");
 
 			var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent, this.oManifest);
 			var oData = {
@@ -112,7 +112,7 @@ sap.ui.define([
 		},
 		beforeEach : function () {
 			this.oVariantManagement = new VariantManagement("variantMgmtId1");
-			this.oVariantManagement.setModel(this.oModel, "$FlexVariants");
+			this.oVariantManagement.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
 		},
 		afterEach : function () {
 			this.oVariantManagement.destroy();

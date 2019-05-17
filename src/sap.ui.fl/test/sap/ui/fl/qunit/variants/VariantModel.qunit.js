@@ -140,7 +140,7 @@ function(
 			var sSourceVariantReference = this.oModel.oData[sVariantManagementReference].currentVariant;
 			var oVarMgt = new VariantManagement(sVariantManagementReference);
 			var aChangesToBeRemoved = ["change1", "change2"];
-			oVarMgt.setModel(this.oModel, "$FlexVariants");
+			oVarMgt.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
 
 			sandbox.stub(this.oModel, "updateCurrentVariant").resolves();
 			sandbox.stub(this.oModel.oVariantController, "getVariantChanges").returns(aChangesToBeRemoved);
@@ -1320,7 +1320,7 @@ function(
 			var sVariantManagementReference = "variantMgmtId1";
 			var oVariantManagement = new VariantManagement(sVariantManagementReference);
 			var sLayer = "CUSTOMER";
-			oVariantManagement.setModel(this.oModel, "$FlexVariants");
+			oVariantManagement.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
 
 			sandbox.stub(oVariantManagement, "openManagementDialog").callsFake(oVariantManagement.fireManage);
 			sandbox.stub(this.oModel.oChangePersistence._oVariantController, "_setVariantData");
@@ -1713,7 +1713,7 @@ function(
 		QUnit.test("when calling 'setModel' of VariantManagement control", function(assert) {
 			var fnRegisterToModelSpy = sandbox.spy(this.oModel, "registerToModel");
 			sandbox.stub(this.oModel, "getVariantManagementReferenceForControl").returns("varMgmtRef1");
-			this.oVariantManagement.setModel(this.oModel, "$FlexVariants");
+			this.oVariantManagement.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
 
 			assert.equal(this.oModel.getCurrentVariantReference("varMgmtRef1"), "varMgmtRef1", "then the Current Variant is set to the standard variant");
 			assert.ok(fnRegisterToModelSpy.calledOnce, "then registerToModel called once, when VariantManagement control setModel is called");
@@ -1722,8 +1722,8 @@ function(
 
 		QUnit.test("when variant management controls are initialized with with 'updateVariantInURL' property set and default (false)", function(assert) {
 			var oVariantManagementWithURLUpdate = new VariantManagement("varMgmtRef2", {updateVariantInURL: true});
-			this.oVariantManagement.setModel(this.oModel, "$FlexVariants");
-			oVariantManagementWithURLUpdate.setModel(this.oModel, "$FlexVariants");
+			this.oVariantManagement.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
+			oVariantManagementWithURLUpdate.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
 			assert.deepEqual(this.oAttachHashHandlersStub.getCall(0).args, [this.oModel.oAppComponent.getLocalId(this.oVariantManagement.getId()), false], "then VariantUtil.attachHashHandlers was called once for a control to update URL");
 			assert.deepEqual(this.oAttachHashHandlersStub.getCall(1).args, [oVariantManagementWithURLUpdate.getId(), true], "then VariantUtil.attachHashHandlers was called once for a control without URL update");
 			oVariantManagementWithURLUpdate.destroy();

@@ -68,7 +68,7 @@ sap.ui.define([
 			var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
 			var oRootControl = oAppComponent.getRootControl();
 			var oView = Utils.getViewForControl(oControl);
-			var oVariantModel = oAppComponent.getModel("$FlexVariants");
+			var oVariantModel = oAppComponent.getModel(Utils.VARIANT_MODEL_NAME);
 
 			var mParams = {
 				rootControl : oRootControl,
@@ -128,7 +128,7 @@ sap.ui.define([
 		clearVariantParameterInURL : function (oControl) {
 			var aUrlParameters = [];
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
-			var oVariantModel = oAppComponent instanceof Component ? oAppComponent.getModel("$FlexVariants") : undefined;
+			var oVariantModel = oAppComponent instanceof Component ? oAppComponent.getModel(Utils.VARIANT_MODEL_NAME) : undefined;
 			if (!oVariantModel) {
 				//technical parameters are not updated, only URL hash is updated
 				Utils.setTechnicalURLParameterValues(undefined, VARIANT_TECHNICAL_PARAMETER_NAME, aUrlParameters);
@@ -189,7 +189,7 @@ sap.ui.define([
 						throw new Error("A valid variant management control or component (instance or ID) should be passed as parameter");
 					}
 
-					var oVariantModel = oAppComponent.getModel("$FlexVariants");
+					var oVariantModel = oAppComponent.getModel(Utils.VARIANT_MODEL_NAME);
 					if (!oVariantModel) {
 						throw new Error("No variant management model found for the passed control or application component");
 					}

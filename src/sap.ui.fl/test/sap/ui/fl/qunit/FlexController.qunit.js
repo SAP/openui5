@@ -695,7 +695,7 @@ function (
 			};
 			var oAppComponent = {
 				getModel: function(sModel) {
-					assert.strictEqual(sModel, "$FlexVariants", "then variant model called on the app component");
+					assert.strictEqual(sModel, Utils.VARIANT_MODEL_NAME, "then variant model called on the app component");
 					return oModel;
 				}
 			};

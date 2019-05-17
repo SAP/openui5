@@ -72,8 +72,6 @@ sap.ui.define([
 		}
 	});
 
-	ControlVariant.MODEL_NAME = "$FlexVariants";
-
 	/**
 	 * Register an overlay
 	 *
@@ -175,7 +173,7 @@ sap.ui.define([
 
 	ControlVariant.prototype._getVariantModel = function(oElement) {
 		var oAppComponent = flUtils.getAppComponentForControl(oElement);
-		return oAppComponent ? oAppComponent.getModel(ControlVariant.MODEL_NAME) : undefined;
+		return oAppComponent ? oAppComponent.getModel(flUtils.VARIANT_MODEL_NAME) : undefined;
 	};
 
 	/**

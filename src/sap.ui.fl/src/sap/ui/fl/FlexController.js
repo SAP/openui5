@@ -287,7 +287,7 @@ sap.ui.define([
 	FlexController.prototype.addPreparedChange = function (oChange, oAppComponent) {
 		if (oChange.getVariantReference()) {
 			// variant model is always associated with the app component
-			var oModel = oAppComponent.getModel("$FlexVariants");
+			var oModel = oAppComponent.getModel(Utils.VARIANT_MODEL_NAME);
 			oModel.addChange(oChange);
 		}
 
@@ -312,7 +312,7 @@ sap.ui.define([
 	FlexController.prototype.deleteChange = function (oChange, oAppComponent) {
 		this._oChangePersistence.deleteChange(oChange);
 		if (oChange.getVariantReference()) {
-			oAppComponent.getModel("$FlexVariants").removeChange(oChange);
+			oAppComponent.getModel(Utils.VARIANT_MODEL_NAME).removeChange(oChange);
 		}
 	};
 
@@ -955,7 +955,7 @@ sap.ui.define([
 			}.bind(this))
 			.then( function() {
 				if (oComponent) {
-					var oModel = oComponent.getModel("$FlexVariants");
+					var oModel = oComponent.getModel(Utils.VARIANT_MODEL_NAME);
 					if (oModel) {
 						oModel.updateHasherEntry({
 							parameters: [],

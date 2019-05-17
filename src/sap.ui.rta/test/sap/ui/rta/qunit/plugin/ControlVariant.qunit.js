@@ -29,7 +29,7 @@ sap.ui.define([
 	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	Utils,
+	flUtils,
 	VerticalLayout,
 	DesignTime,
 	CommandFactory,
@@ -114,9 +114,9 @@ sap.ui.define([
 			var done = assert.async();
 
 			var oMockAppComponent = fnGetMockComponent.call(this);
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockAppComponent);
-			sandbox.stub(Utils, "getComponentForControl").returns(oMockAppComponent);
-			sandbox.stub(Utils, "getComponentClassName").returns("Dummy.Component");
+			sandbox.stub(flUtils, "getAppComponentForControl").returns(oMockAppComponent);
+			sandbox.stub(flUtils, "getComponentForControl").returns(oMockAppComponent);
+			sandbox.stub(flUtils, "getComponentClassName").returns("Dummy.Component");
 			var oFlexController = FlexControllerFactory.createForControl(oMockAppComponent, oManifest);
 			this.oData = {
 				"varMgtKey": {
@@ -167,7 +167,7 @@ sap.ui.define([
 				this.sLocalVariantManagementId = "varMgtKey";
 				this.oModel = new VariantModel(this.oData, oFlexController, oMockAppComponent);
 				this.oVariantManagementControl = new VariantManagement(this.sLocalVariantManagementId);
-				this.oVariantManagementControl.setModel(this.oModel, "$FlexVariants");
+				this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
 				this.oObjectPageLayout = new ObjectPageLayout("objPage",{
 					headerContent: [this.oVariantManagementControl],
 					sections : [this.oObjectPageSection]
@@ -552,14 +552,14 @@ sap.ui.define([
 			var done = assert.async();
 
 			var oMockAppComponent = fnGetMockComponent.call(this);
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockAppComponent);
-			sandbox.stub(Utils, "getComponentClassName").returns("Dummy.Component");
+			sandbox.stub(flUtils, "getAppComponentForControl").returns(oMockAppComponent);
+			sandbox.stub(flUtils, "getComponentClassName").returns("Dummy.Component");
 
 			var oFlexController = FlexControllerFactory.createForControl(oMockAppComponent, oManifest);
 
 			this.oModel = new VariantModel({}, oFlexController, oMockAppComponent);
 			this.oVariantManagementControl = new VariantManagement("varMgtKey").placeAt("qunit-fixture");
-			this.oVariantManagementControl.setModel(this.oModel, "$FlexVariants");
+			this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
 
 			var oVariantManagementDesignTimeMetadata = {
 				"sap.ui.fl.variants.VariantManagement": {
@@ -1116,9 +1116,9 @@ sap.ui.define([
 			var done = assert.async();
 
 			var oMockAppComponent = fnGetMockComponent.call(this);
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockAppComponent);
-			sandbox.stub(Utils, "getComponentForControl").returns(oMockAppComponent);
-			sandbox.stub(Utils, "getComponentClassName").returns("Dummy.Component");
+			sandbox.stub(flUtils, "getAppComponentForControl").returns(oMockAppComponent);
+			sandbox.stub(flUtils, "getComponentForControl").returns(oMockAppComponent);
+			sandbox.stub(flUtils, "getComponentClassName").returns("Dummy.Component");
 			var oFlexController = FlexControllerFactory.createForControl(oMockAppComponent, oManifest);
 			this.oData = {
 				"varMgtKey": {
@@ -1161,7 +1161,7 @@ sap.ui.define([
 				this.sGlobalVariantManagementId = "Comp1--varMgtKey";
 				this.oModel = new VariantModel(this.oData, oFlexController, oMockAppComponent);
 				this.oVariantManagementControl = new VariantManagement(this.sGlobalVariantManagementId);
-				this.oVariantManagementControl.setModel(this.oModel, "$FlexVariants");
+				this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
 				this.oObjectPageLayout = new ObjectPageLayout("objPage",{
 					headerContent: [this.oVariantManagementControl],
 					sections : [this.oObjectPageSection]
@@ -1221,9 +1221,9 @@ sap.ui.define([
 			var done = assert.async();
 
 			var oMockAppComponent = fnGetMockComponent.call(this);
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockAppComponent);
-			sandbox.stub(Utils, "getComponentForControl").returns(oMockAppComponent);
-			sandbox.stub(Utils, "getComponentClassName").returns("Dummy.Component");
+			sandbox.stub(flUtils, "getAppComponentForControl").returns(oMockAppComponent);
+			sandbox.stub(flUtils, "getComponentForControl").returns(oMockAppComponent);
+			sandbox.stub(flUtils, "getComponentClassName").returns("Dummy.Component");
 			var oFlexController = FlexControllerFactory.createForControl(oMockAppComponent, oManifest);
 			this.oData = {
 				"varMgtKey": {
@@ -1247,7 +1247,7 @@ sap.ui.define([
 			this.sLocalVariantManagementId = "varMgtKey";
 			this.oModel = new VariantModel(this.oData, oFlexController, oMockAppComponent);
 			this.oVariantManagementControl = new VariantManagement(this.sLocalVariantManagementId);
-			this.oVariantManagementControl.setModel(this.oModel, "$FlexVariants");
+			this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
 			this.oVariantManagementControl.setAssociation("for", "objPage", true);
 
 			var oVariantManagementDesignTimeMetadata = {

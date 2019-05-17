@@ -36,8 +36,6 @@ sap.ui.define([
 		}
 	});
 
-	ControlVariantSwitch.prototype.MODEL_NAME = "$FlexVariants";
-
 	ControlVariantSwitch.prototype._getAppComponent = function () {
 		var oElement = this.getElement();
 		return oElement ? flUtils.getAppComponentForControl(oElement) : this.getSelector().appComponent;
@@ -54,7 +52,7 @@ sap.ui.define([
 			oAppComponent = this._getAppComponent(),
 			sNewVariantReference = this.getTargetVariantReference();
 
-		this.oModel = oAppComponent.getModel(this.MODEL_NAME);
+		this.oModel = oAppComponent.getModel(flUtils.VARIANT_MODEL_NAME);
 		this.sVariantManagementReference = JsControlTreeModifier.getSelector(oElement, oAppComponent).id;
 		return this._updateModelVariant(sNewVariantReference, oAppComponent);
 	};

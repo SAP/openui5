@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
-	FlUtils,
+	flUtils,
 	Manifest,
 	CommandFactory,
 	ElementDesignTimeMetadata,
@@ -52,8 +52,8 @@ function(
 				}.bind(this)
 			};
 
-			this.oGetAppComponentForControlStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(this.oMockedAppComponent);
-			this.oGetComponentClassNameStub = sinon.stub(FlUtils, "getComponentClassName").returns("Dummy.Component");
+			this.oGetAppComponentForControlStub = sinon.stub(flUtils, "getAppComponentForControl").returns(this.oMockedAppComponent);
+			this.oGetComponentClassNameStub = sinon.stub(flUtils, "getComponentClassName").returns("Dummy.Component");
 
 			var oFlexController = FlexControllerFactory.createForControl(this.oMockedAppComponent, this.oManifest);
 			this.oData = {
@@ -100,7 +100,7 @@ function(
 		},
 		beforeEach: function() {
 			this.oVariantManagement = new VariantManagement("variantMgmtId1");
-			this.oVariantManagement.setModel(this.oModel, "$FlexVariants");
+			this.oVariantManagement.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
 
 			var oDummyOverlay = {
 				getVariantManagement : function(){
