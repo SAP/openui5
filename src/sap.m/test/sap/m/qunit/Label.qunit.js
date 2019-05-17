@@ -429,38 +429,6 @@ sap.ui.define([
 		this.label.onAfterRendering.restore();
 	});
 
-	QUnit.module("DisplayOnlyForm", {
-		beforeEach: function() {
-			var formLayout = new FormLayout("FL1");
-			this.form = new Form("F1", {
-				layout: formLayout
-			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-		},
-		afterEach: function() {
-			if (this.form) {
-				this.form.destroy();
-				this.form = undefined;
-			}
-		}
-	});
-
-	QUnit.test("Aria", function(assert) {
-		var formContainer1 = new FormContainer("FC1");
-		var formElement1 = new FormElement("FE1");
-		formElement1.setLabel("Test1");
-		var field1 = new Text("Text1", {
-			text: 'Display Value'
-		});
-		formElement1.addField(field1);
-
-		formContainer1.addFormElement(formElement1);
-		this.form.addFormContainer(formContainer1);
-		sap.ui.getCore().applyChanges();
-
-		assert.equal(this.form.$().find('.sapUiFormElement.sapUiFormElementLbl').text(), 'Test1:Display Value', '":" span is added.');
-	});
-
 	QUnit.module("Label in Overflow Toolbar", {
 		beforeEach: function () {
 			this.clock = sinon.useFakeTimers();
