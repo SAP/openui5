@@ -1164,10 +1164,7 @@ sap.ui.define([
 			// compare Dates because value can be the same if only 2 digits for year
 			sValue = this.getValue();
 			this.fireChangeEvent(sValue, {valid: true});
-			if (this.getDomRef() && (Device.system.desktop || !Device.support.touch)) { // as control could be destroyed during update binding
-				this._curpos = this._$input.val().length;
-				this._$input.cursorPos(this._curpos);
-			}
+			this._focusInput();
 		}else if (!this._bValid){
 			// wrong input before open calendar
 			sValue = this._formatValue(oDate);
@@ -1182,6 +1179,7 @@ sap.ui.define([
 				sValue = this._formatValue(oDate, true);
 				this.setProperty("value", sValue, true); // no rerendering
 				this.fireChangeEvent(sValue, {valid: true});
+				this._focusInput();
 			}
 		} else if (Device.system.desktop || !Device.support.touch) {
 			this.focus();
@@ -1189,6 +1187,17 @@ sap.ui.define([
 
 		// close popup and focus input after change event to allow application to reset value state or similar things
 		this._oPopup.close();
+
+	};
+
+	/* sets cursor inside the input in order to focus it */
+	DatePicker.prototype._focusInput = function(){
+
+		if (this.getDomRef() && (Device.system.desktop || !Device.support.touch)) { // as control could be destroyed during update binding
+			this._curpos = this._$input.val().length;
+			this._$input.cursorPos(this._curpos);
+		}
+		return this;
 
 	};
 
