@@ -214,7 +214,10 @@ function(
 	 * @protected
 	 */
 	MultiComboBox.prototype.open = function () {
-		this._bPickerIsOpening = true;
+
+		if (!this.isOpen()) {
+			this._bPickerIsOpening = true;
+		}
 		this.syncPickerContent();
 
 		return ComboBoxBase.prototype.open.apply(this, arguments);

@@ -6711,6 +6711,27 @@ sap.ui.define([
 		assert.strictEqual(this.oMultiComboBox.getValue(), "", "The input value is deleted");
 	});
 
+	QUnit.test("onfocusout value should be cleared", function(assert) {
+		//arrange
+		var oFocusedDomRef = this.oMultiComboBox.getFocusDomRef();
+
+		// act
+		this.oMultiComboBox.open();
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(500);
+
+		sap.ui.test.qunit.triggerCharacterInput(oFocusedDomRef, "Brussel");
+		sap.ui.test.qunit.triggerKeydown(oFocusedDomRef, KeyCodes.BACKSPACE);
+		sap.ui.test.qunit.triggerKeydown(oFocusedDomRef, KeyCodes.ENTER);
+
+		this.oMultiComboBox.getFocusDomRef().blur();
+		this.clock.tick(500);
+
+		// assert
+		assert.notEqual(document.activeElement, this.oMultiComboBox.getFocusDomRef(), "Focus is not in the input field");
+		assert.strictEqual(this.oMultiComboBox.getValue(), "", "The input value is deleted");
+	});
+
 	QUnit.module("Composition characters handling", {
 		beforeEach: function () {
 			this.multiComboBox = new MultiComboBox({
