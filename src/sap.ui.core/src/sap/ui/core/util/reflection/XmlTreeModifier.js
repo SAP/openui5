@@ -110,7 +110,7 @@ sap.ui.define([
 		getProperty: function (oControl, sPropertyName) {
 			var vPropertyValue = oControl.getAttribute(sPropertyName);
 
-			var oPropertyInfo = this._getControlMetadata(oControl).getProperty(sPropertyName);
+			var oPropertyInfo = this.getControlMetadata(oControl).getProperty(sPropertyName);
 			if (oPropertyInfo) { //not a property like aggregation
 				var oType = oPropertyInfo.getType();
 				if (vPropertyValue === null) {
@@ -200,7 +200,7 @@ sap.ui.define([
 		 * @inheritDoc
 		 */
 		applySettings: function(oControl, mSettings) {
-			var oMetadata = this._getControlMetadata(oControl);
+			var oMetadata = this.getControlMetadata(oControl);
 			var mMetadata = oMetadata.getJSONKeys();
 			Object.keys(mSettings).forEach(function(sKey) {
 				var oKeyInfo = mMetadata[sKey];
@@ -291,7 +291,7 @@ sap.ui.define([
 		 * @inheritDoc
 		 */
 		getAllAggregations: function (oControl) {
-			var oControlMetadata = this._getControlMetadata(oControl);
+			var oControlMetadata = this.getControlMetadata(oControl);
 			return oControlMetadata.getAllAggregations();
 		},
 
@@ -383,7 +383,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_isDefaultAggregation: function(oParent, sAggregationName) {
-			var oControlMetadata = this._getControlMetadata(oParent);
+			var oControlMetadata = this.getControlMetadata(oParent);
 			var oDefaultAggregation = oControlMetadata.getDefaultAggregation();
 			return oDefaultAggregation && sAggregationName === oDefaultAggregation.name;
 		},
@@ -410,15 +410,15 @@ sap.ui.define([
 		 * @private
 		 */
 		_isAltTypeAggregation: function(oParent, sAggregationName) {
-			var oControlMetadata = this._getControlMetadata(oParent);
+			var oControlMetadata = this.getControlMetadata(oParent);
 			var oAggregationMetadata = oControlMetadata.getAllAggregations()[sAggregationName];
 			return !!oAggregationMetadata.altTypes;
 		},
 
 		/**
-		 * @private
+		 * @inheritDoc
 		 */
-		_getControlMetadata: function(oControl) {
+		getControlMetadata: function(oControl) {
 			return this._getControlMetadataInXml(oControl);
 		},
 
@@ -523,7 +523,7 @@ sap.ui.define([
 			// and get the name of the aggregation
 			if (bNotNamedAggregation) {
 				// the control is in the default aggregation of the parent
-				sAggregationName = this._getControlMetadata(oParent).getDefaultAggregationName();
+				sAggregationName = this.getControlMetadata(oParent).getDefaultAggregationName();
 			} else {
 				// the agregation name is provided and we can simply take it from the xml node
 				sAggregationName = this._getLocalName(oControl.parentNode);
@@ -536,7 +536,7 @@ sap.ui.define([
 		 * @inheritDoc
 		 */
 		findAggregation: function(oControl, sAggregationName) {
-			var oMetadata = this._getControlMetadata(oControl);
+			var oMetadata = this.getControlMetadata(oControl);
 			var oAggregations = oMetadata.getAllAggregations();
 			if (oAggregations) {
 				return oAggregations[sAggregationName];

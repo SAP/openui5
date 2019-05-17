@@ -285,7 +285,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Gets the metadata of am XML control.
+		 * Gets the metadata of an XML control.
 		 *
 		 * @param {Element} oControl - Control in XML
 		 * @returns {sap.ui.base.Metadata} Metadata of the control
@@ -296,6 +296,26 @@ sap.ui.define([
 			var ControlType = ObjectPath.get(sControlType);
 			return ControlType.getMetadata();
 		},
+
+		/**
+		 * Gets the metadata of a control.
+		 *
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
+		 * @returns {sap.ui.base.Metadata} Metadata of the control
+		 */
+		getControlMetadata: function(vControl) {},
+
+		/**
+		 * Gets the library name for a control
+		 *
+		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
+		 * @returns {string} library name
+		 */
+		getLibraryName: function(vControl) {
+			var oMetadata = this.getControlMetadata(vControl);
+			return oMetadata.getLibraryName();
+		},
+
 
 		/**
 		 * Gets the ControlType of an XML control.
