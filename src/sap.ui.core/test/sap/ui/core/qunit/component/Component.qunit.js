@@ -7,8 +7,9 @@ sap.ui.define([
 	'samples/components/loadfromfile/Component',
 	'samples/components/routing/Component',
 	'samples/components/routing/RouterExtension',
-	'sap/ui/thirdparty/URI'
-], function(jQuery, Component, ComponentContainer, UIComponent, UIComponentMetadata, SamplesLoadFromFileComponent, SamplesRoutingComponent, SamplesRouterExtension, URI) {
+	'sap/ui/thirdparty/URI',
+	'sap/ui/base/ManagedObjectRegistry'
+], function(jQuery, Component, ComponentContainer, UIComponent, UIComponentMetadata, SamplesLoadFromFileComponent, SamplesRoutingComponent, SamplesRouterExtension, URI, ManagedObjectRegistry) {
 
 	"use strict";
 	/*global sinon, QUnit, foo*/
@@ -1712,6 +1713,34 @@ sap.ui.define([
 				"Passing an URL should not override final resourceRoots");
 
 		});
+	});
+
+	QUnit.test("Component registry access", function(assert) {
+		var oFooA = new Component("A");
+		var oFooB = new Component("B");
+		var oFooC = new Component("C");
+		var fnCallbackSpy = sinon.spy(function() {});
+		var aFilteredComponents = [];
+
+		assert.ok(Component.hasOwnProperty("registry"), "Component has static method to access registry");
+		assert.equal(Component.registry.size, 3, "Return number of registered component instances");
+		assert.deepEqual(Object.keys(Component.registry.all()), ["A", "B", "C"], "Return all registered component instances");
+		assert.deepEqual(Component.registry.get("B"), oFooB, "Return reference of component B from registry by ID");
+
+		Component.registry.forEach(fnCallbackSpy);
+		assert.ok(fnCallbackSpy.calledThrice, "Callback was executed 3 times");
+
+		aFilteredComponents = Component.registry.filter(function(oComponent) {
+			return ["B", "C"].indexOf(oComponent.getId()) > -1;
+		});
+
+		assert.equal(aFilteredComponents.length, 2, "Return 2 components matching the filter criteria");
+
+		oFooA.destroy();
+		oFooB.destroy();
+		oFooC.destroy();
+
+		fnCallbackSpy.reset();
 	});
 
 	QUnit.test("Component.create with asyncHints.components should respect final URL flag (legacy scenario)", function(assert) {

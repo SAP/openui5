@@ -7,8 +7,9 @@ sap.ui.require([
 	'sap/base/i18n/ResourceBundle',
 	'sap/base/Log',
 	'sap/base/util/LoaderExtensions',
-	'sap/ui/Device'
-], function(ResourceBundle, Log, LoaderExtensions, Device) {
+	'sap/ui/Device',
+	'sap/ui/core/Element'
+], function(ResourceBundle, Log, LoaderExtensions, Device, Element) {
 	"use strict";
 
 	function _providesPublicMethods(/**sap.ui.base.Object*/oObject, /** function */ fnClass, /**boolean*/ bFailEarly) {
@@ -1232,6 +1233,28 @@ sap.ui.require([
 			assert.ok(!sap.ui.getCore().getLoadedLibraries()['my.lib13'], "Core should not know or report lib13 as 'loaded'");
 			assert.ok(jQuery.sap.isResourceLoaded('my/lib13/library.js'), "lib13 library module should be preloaded");
 		});
+	});
+
+	QUnit.test("Test piggyback access of private Core methods", function(assert) {
+
+		var oCoreInternals;
+		var oErrorLogSpy = sinon.spy(Log, "error");
+
+		sap.ui.getCore().registerPlugin({
+			startPlugin : function(oCore) {
+				oCoreInternals = oCore;
+			}
+		});
+
+		var oElementA = new Element("A");
+		var oElementB = new Element("B");
+
+		assert.ok(Object.keys(oCoreInternals.mElements).length, 2, "Return all registered Element instances");
+		assert.equal(oErrorLogSpy.getCall(0).args[0], "oCore.mElements was a private member and has been removed. Use one of the methods in sap.ui.core.Element.registry instead", "Logs error on private methode access");
+
+		oErrorLogSpy.reset();
+		oElementA.destroy();
+		oElementB.destroy();
 	});
 
 	QUnit.start();

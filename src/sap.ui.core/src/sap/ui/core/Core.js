@@ -300,16 +300,13 @@ sap.ui.define([
 			 */
 			this.oEventBus = null;
 
-			/**
-			 * Map of of created Elements keyed by their id.
-			 *
-			 * Each element registers itself in its constructor and deregisters itself in its
-			 * destroy method.
-			 *
-			 * @private
-			 * @todo get rid of this collection as it represents a candidate for memory leaks
-			 */
-			this.mElements = {};
+			Object.defineProperty(this, "mElements", {
+				get: function() {
+					Log.error("oCore.mElements was a private member and has been removed. Use one of the methods in sap.ui.core.Element.registry instead");
+					return Element.registry.all(); // this is a very costly snapshot!
+				},
+				configurable: false
+			});
 
 			/**
 			 * Map of of created objects structured by their type which contains a map
@@ -322,7 +319,6 @@ sap.ui.define([
 			 * @todo get rid of this collection as it represents a candidate for memory leaks
 			 */
 			this.mObjects = {
-				"component": {},
 				"template": {}
 			};
 
@@ -672,13 +668,6 @@ sap.ui.define([
 		ElementMetadata.prototype.register = function(oMetadata) {
 			that.registerElementClass(oMetadata);
 		};
-		// grant Element "friend" access to Core for (de-)registration
-		Element.prototype.register = function() {
-			that.registerElement(this);
-		};
-		Element.prototype.deregister = function() {
-			that.deregisterElement(this);
-		};
 
 		// grant Element "friend" access to Core / FocusHandler to update the given elements focus info
 		Element._updateFocusInfo = function(oElement) {
@@ -686,23 +675,6 @@ sap.ui.define([
 				that.oFocusHandler.updateControlFocusInfo(oElement);
 			}
 		};
-
-		// grant Component "friend" access to Core for (de-)registration
-		Component.prototype.register = function() {
-			that.registerObject(this);
-		};
-		Component.prototype.deregister = function() {
-			var sComponentId = this.sId;
-			for (var sElementId in that.mElements) {
-				var oElement = that.mElements[sElementId];
-				if ( oElement._sapui_candidateForDestroy && oElement._sOwnerId === sComponentId && !oElement.getParent() ) {
-					Log.debug("destroying dangling template " + oElement + " when destroying the owner component");
-					oElement.destroy();
-				}
-			}
-			that.deregisterObject(this);
-		};
-
 	};
 
 	/**
@@ -2838,7 +2810,7 @@ sap.ui.define([
 		var sEventId = Core.M_EVENTS.ThemeChanged;
 		var oEvent = jQuery.Event(sEventId);
 		oEvent.theme = mParameters.theme;
-		each(this.mElements, function (prop, oElement) {
+		Element.registry.forEach(function(oElement) {
 			oElement._handleEvent(oEvent);
 		});
 
@@ -2956,11 +2928,14 @@ sap.ui.define([
 		 * and then to update their bindings and corresponding data types (phase 2)
 		 */
 		function notifyAll(iPhase) {
-			var aElementsToNotify = [this.mUIAreas, this.mObjects["component"], this.mElements];
-			aElementsToNotify.forEach(function (mElements) {
-				each(mElements, function (prop, oElement) {
-					fnAdapt.call(oElement, iPhase);
-				});
+			each(this.mUIAreas, function(prop, oUIArea) {
+				fnAdapt.call(oUIArea, iPhase);
+			});
+			Component.registry.forEach(function(oComponent) {
+				fnAdapt.call(oComponent, iPhase);
+			});
+			Element.registry.forEach(function(oElement) {
+				fnAdapt.call(oElement, iPhase);
 			});
 		}
 
@@ -2981,7 +2956,7 @@ sap.ui.define([
 		}
 
 		// notify Elements via a pseudo browser event (onlocalizationChanged, note the lower case 'l')
-		each(this.mElements, function (prop, oElement) {
+		Element.registry.forEach(function(oElement) {
 			oElement._handleEvent(oBrowserEvent);
 		});
 
@@ -3082,44 +3057,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Registers the given element. Must be called once during construction.
-	 * @param {sap.ui.core.Element} oElement
-	 * @private
-	 */
-	Core.prototype.registerElement = function(oElement) {
-
-		var sId = oElement.getId(),
-			oldElement = this.mElements[sId];
-
-		if ( oldElement && oldElement !== oElement ) {
-			if ( oldElement._sapui_candidateForDestroy ) {
-				Log.debug("destroying dangling template " + oldElement + " when creating new object with same ID");
-				oldElement.destroy();
-			} else {
-				// duplicate ID detected => fail or at least log a warning
-				if (this.oConfiguration.getNoDuplicateIds()) {
-					Log.error("adding element with duplicate id '" + sId + "'");
-					throw new Error("Error: adding element with duplicate id '" + sId + "'");
-				} else {
-					Log.warning("adding element with duplicate id '" + sId + "'");
-				}
-			}
-		}
-
-		this.mElements[sId] = oElement;
-
-	};
-
-	/**
-	 * Deregisters the given element. Must be called once during destruction.
-	 * @param {sap.ui.core.Element} oElement
-	 * @private
-	 */
-	Core.prototype.deregisterElement = function(oElement) {
-		delete this.mElements[oElement.getId()];
-	};
-
-	/**
 	 * Registers the given object. Must be called once during construction.
 	 * @param {sap.ui.base.ManagedObject} oObject the object instance
 	 * @private
@@ -3161,53 +3098,9 @@ sap.ui.define([
 	 * @param {string} sId ID of the element to search for
 	 * @return {sap.ui.core.Element} Element with the given ID or <code>undefined</code>
 	 * @public
+	 * @function
 	 */
-	Core.prototype.byId = function(sId) {
-		assert(sId == null || typeof sId === "string", "sId must be a string when defined");
-		// allow null, as this occurs frequently and it is easier to check whether there is a control in the end than
-		// first checking whether there is an ID and then checking for a control
-
-		/*
-		// test alternative implementation
-		function findById(sId, mUIAreas) {
-			function _find(oControl) {
-				if ( !oControl )
-					return undefined;
-				if ( oControl.getId() === sId ) {
-					return oControl;
-				}
-				for (var n in oControl.mAggregations) {
-					var a = oControl.mAggregations[n];
-					if ( Array.isArray(a) ) {
-						for (var i=0; i<a.length; i++) {
-							var r = _find(a[i]);
-							if ( r ) return r;
-						}
-					} else if ( a instanceof sap.ui.core.Element ) {
-						var r = _find(a[i]);
-						if ( r ) return r;
-					}
-				}
-				return undefined;
-			}
-
-			//var t0=new Date().getTime();
-			var r=undefined;
-			for (var n in mUIAreas) {
-				r=_find(mUIAreas[n].getRootControl()); //TODO: Adapt to mUIAreas[n].getContent
-				if ( r ) break;
-			}
-			//var t1=new Date().getTime();
-			//t=t+(t1-t0);
-			return r;
-		}
-
-		if ( findById(sId, this.mUIAreas) !== this.mElements[sId] ) {
-			Log.error("failed to resolve " + sId + " (" + this.mElements[sId] + ")");
-		}
-		*/
-		return sId == null ? undefined : this.mElements[sId];
-	};
+	Core.prototype.byId = Element.registry.get;
 
 	/**
 	 * Returns the registered element for the given ID, if any.
@@ -3217,7 +3110,7 @@ sap.ui.define([
 	 * @function
 	 * @public
 	 */
-	Core.prototype.getControl = Core.prototype.byId;
+	Core.prototype.getControl = Element.registry.get;
 
 	/**
 	 * Returns the registered element for the given ID, if any.
@@ -3227,7 +3120,7 @@ sap.ui.define([
 	 * @function
 	 * @public
 	 */
-	Core.prototype.getElementById = Core.prototype.byId;
+	Core.prototype.getElementById = Element.registry.get;
 
 	/**
 	 * Returns the registered object for the given id, if any.
@@ -3246,11 +3139,10 @@ sap.ui.define([
 	 * Returns the registered component for the given id, if any.
 	 * @param {string} sId
 	 * @return {sap.ui.core.Component} the component for the given id
+	 * @function
 	 * @public
 	 */
-	Core.prototype.getComponent = function(sId) {
-		return this.getObject("component", sId);
-	};
+	Core.prototype.getComponent = Component.registry.get;
 
 	/**
 	 * Returns the registered template for the given id, if any.
@@ -3626,14 +3518,9 @@ sap.ui.define([
 	 * @public
 	 */
 	Core.prototype.byFieldGroupId = function(vFieldGroupIds) {
-		var aResult = [];
-		for (var n in this.mElements) {
-			var oElement = this.mElements[n];
-			if (oElement instanceof Control && oElement.checkFieldGroupIds(vFieldGroupIds)) {
-				aResult.push(oElement);
-			}
-		}
-		return aResult;
+		return Element.registry.filter(function(oElement) {
+			return oElement instanceof Control && oElement.checkFieldGroupIds(vFieldGroupIds);
+		});
 	};
 
 	/**

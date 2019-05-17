@@ -13,10 +13,10 @@
  */
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/core/Element",
 	"sap/ui/core/Control",
-	"./helper/_CoreInternals",
 	"./helper/_cleanupStyles"
-], function (jQuery, Control, CoreInternals) {
+], function (jQuery, Element, Control) {
 	"use strict";
 
 	/*global QUnit */
@@ -203,7 +203,7 @@ sap.ui.define([
 	// Creates and renders two instances of the given control and asserts that the second instance does not leak any controls after destruction.
 	// Has some special logic to ignore or work around problems where certain controls do not work standalone.
 	var checkControl = function(sControlName, assert) {
-		var //mPrePreElements = CoreInternals.snapshotOfElements(),
+		var //mPrePreElements = Element.registry.all(),
 			oControlClass = jQuery.sap.getObject(sControlName),
 			oControl1 = new oControlClass(),
 			bCanRender = false;
@@ -237,7 +237,7 @@ sap.ui.define([
 
 		// Render Control Instance 2 - any new controls leaked?
 
-		var mPreElements = CoreInternals.snapshotOfElements(),
+		var mPreElements = Element.registry.all(),
 			oControl2 = new oControlClass();
 
 		fillControlProperties(oControl2);
@@ -260,7 +260,7 @@ sap.ui.define([
 
 		oControl2.destroy();
 		sap.ui.getCore().applyChanges();
-		var mPostElements = CoreInternals.snapshotOfElements();
+		var mPostElements = Element.registry.all();
 
 		// controls left over by second instance are real leaks that will grow proportionally to instance count => ERROR
 		assert.equalElementsInControlList(mPostElements, mPreElements, "Memory leak check in " + sControlName);
@@ -275,7 +275,7 @@ sap.ui.define([
 
 	QUnit.module("Memory.Controls", {
 		afterEach: function() {
-			CoreInternals.forEachElement(function(oElement) {
+			Element.registry.forEach(function(oElement, sId) {
 				oElement.destroy();
 			});
 		}

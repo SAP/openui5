@@ -26,25 +26,22 @@
  * @class sap.ui.support.ExecutionScope
  */
 sap.ui.define(
-	["jquery.sap.global"],
-	function (jQuery) {
+	["jquery.sap.global", "sap/ui/core/Component", "sap/ui/core/Element"],
+	function (jQuery, Component, Element) {
 		"use strict";
 
-		var coreInstance = null,
-			_context = null,
+		var _context = null,
 			elements = [];
 
 		var globalContext = {
 			setScope: function () {
-				for (var i in coreInstance.mElements) {
-					elements.push(coreInstance.mElements[i]);
-				}
+				elements = Element.registry.filter(function() { return true;});
 			}
 		};
 
 		var subtreeContext = {
 			setScope: function () {
-				var parent = sap.ui.getCore().byId(_context.parentId);
+				var parent = Element.registry.get(_context.parentId);
 				//TODO: Handle parent not found
 				elements = parent.findAggregatedObjects(true);
 			}
@@ -54,7 +51,7 @@ sap.ui.define(
 			setScope: function () {
 				var set = {};
 				_context.components.forEach(function (componentId) {
-					var component = coreInstance.mObjects.component[componentId],
+					var component = Component.registry.get(componentId),
 						aggregations = component.findAggregatedObjects(true);
 
 					aggregations.forEach(function (agg) {
@@ -155,7 +152,6 @@ sap.ui.define(
 		}
 
 		function ExecutionScope(core, context) {
-			coreInstance = core;
 			elements = [];
 			_context = context;
 
@@ -248,14 +244,13 @@ sap.ui.define(
 				 */
 				getPublicElements: function () {
 					var aPublicElements = [];
-					var mComponents = core.mObjects.component;
 					var mUIAreas = core.mUIAreas;
 
-					for (var i in mComponents) {
+					Component.registry.forEach(function(oComponent) {
 						aPublicElements = aPublicElements.concat(
-							getPublicElementsInside(mComponents[i])
+							getPublicElementsInside(oComponent)
 						);
-					}
+					});
 
 					for (var key in mUIAreas) {
 						aPublicElements = aPublicElements.concat(

@@ -4,8 +4,8 @@
 
 /*global QUnit*/
 
-sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', 'sap/ui/core/Control' ],
-		function(jQuery, Core, BaseObject, Control) {
+sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', 'sap/ui/core/Element', 'sap/ui/core/Control' ],
+		function(jQuery, Core, BaseObject, Element, Control) {
 	"use strict";
 
 	//TODO: global jquery call found
@@ -36,20 +36,9 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 	var MemoryLeakCheck = {};
 
 
-	// get access to the real core object to access the control list
-	sap.ui.getCore().registerPlugin({
-		startPlugin : function(oRealCore) {
-			MemoryLeakCheck.oCore = oRealCore;
-		},
-		stopPlugin : function() {
-			MemoryLeakCheck.oCore = undefined;
-		}
-	});
-
-
-	// gets the map of all currently registered controls from the Core
+	// gets a snapshot of all currently registered controls (keyed by their ID)
 	function getAllAliveControls() {
-		return jQuery.extend({}, MemoryLeakCheck.oCore.mElements);
+		return Element.registry.all();
 	}
 
 
@@ -219,13 +208,12 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 				mOriginalElements = getAllAliveControls();
 			},
 			afterEach: function(assert) {
-				for (var sId in MemoryLeakCheck.oCore.mElements) {
+				Element.registry.forEach(function(oControl, sId) {
 					if (!mOriginalElements[sId]) {
-						var oControl = sap.ui.getCore().byId(sId);
 						assert.ok(oControl.getMetadata().getName(), "Cleanup of id: " + sId + ", control: " + oControl.getMetadata().getName());
 						oControl.destroy();
 					}
-				}
+				});
 			}
 		});
 

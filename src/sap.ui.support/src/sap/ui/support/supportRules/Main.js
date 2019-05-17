@@ -7,6 +7,8 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Element",
+	"sap/ui/core/Component",
 	"sap/ui/support/supportRules/Analyzer",
 	"sap/ui/support/supportRules/CoreFacade",
 	"sap/ui/support/supportRules/ExecutionScope",
@@ -21,7 +23,7 @@ sap.ui.define([
 	"sap/ui/support/supportRules/RuleSerializer",
 	"sap/ui/support/library"
 ],
-function (jQuery, ManagedObject, Analyzer, CoreFacade,
+function (jQuery, ManagedObject, Element, Component, Analyzer, CoreFacade,
 		  ExecutionScope, Highlighter, CommunicationBus,
 		  IssueManager, History, DataCollector, channelNames,
 		  constants, RuleSetLoader, RuleSerializer, library) {
@@ -106,7 +108,7 @@ function (jQuery, ManagedObject, Analyzer, CoreFacade,
 				that._oDataCollector = new DataCollector(oCore);
 				that._oCoreFacade = CoreFacade(oCore);
 				that._oExecutionScope = null;
-				that._createCoreSpies();
+				that._createElementSpies();
 				oCore.attachLibraryChanged(RuleSetLoader._onLibraryChanged);
 
 				// Make sure that we load UI frame, when no parameter supplied
@@ -155,11 +157,11 @@ function (jQuery, ManagedObject, Analyzer, CoreFacade,
 	};
 
 	/**
-	 * Creates event listeners for new elements that are published to the Core object by the CommunicationBus.
+	 * Creates event listeners for new elements that are published by the CommunicationBus.
 	 *
 	 * @private
 	 */
-	Main.prototype._createCoreSpies = function () {
+	Main.prototype._createElementSpies = function () {
 		var that = this,
 			iNotifyDirtyStateInterval = 500;
 
@@ -167,10 +169,10 @@ function (jQuery, ManagedObject, Analyzer, CoreFacade,
 
 		var spyFunction = function (fnName) {
 
-			var oldFunction = that._oCore[fnName];
+			var oldFunction = Element.prototype[fnName];
 
-			that._oCore[fnName] = function () {
-				oldFunction.apply(that._oCore, arguments);
+			Element.prototype[fnName] = function () {
+				oldFunction.apply(this, arguments);
 
 				/**
 				 * If we have 50 new elements in the core, don't send 50 new messages for
@@ -184,8 +186,8 @@ function (jQuery, ManagedObject, Analyzer, CoreFacade,
 			};
 		};
 
-		spyFunction("registerElement");
-		spyFunction("deregisterElement");
+		spyFunction("register");
+		spyFunction("deregister");
 	};
 
 	/**
@@ -260,7 +262,7 @@ function (jQuery, ManagedObject, Analyzer, CoreFacade,
 		}, this);
 
 		CommunicationBus.subscribe(channelNames.GET_AVAILABLE_COMPONENTS, function () {
-			CommunicationBus.publish(channelNames.POST_AVAILABLE_COMPONENTS, Object.keys(this._oCore.mObjects.component));
+			CommunicationBus.publish(channelNames.POST_AVAILABLE_COMPONENTS, Object.keys(Component.registry.all()));
 		}, this);
 
 		CommunicationBus.subscribe(channelNames.ON_ANALYZE_REQUEST, function (data) {
@@ -566,7 +568,7 @@ function (jQuery, ManagedObject, Analyzer, CoreFacade,
 	 * @param {object} oContextElements Contains all context elements from the element tree
 	 */
 	Main.prototype._setContextElementReferences = function (oContextElements) {
-		var coreElements = this._oCore.mElements;
+		var coreElements = Element.registry.all();
 
 		for (var elementId in oContextElements) {
 			var element = oContextElements[elementId],
@@ -603,12 +605,11 @@ function (jQuery, ManagedObject, Analyzer, CoreFacade,
 	 */
 	// TODO: the element crushing needs to be encapsulated on its own
 	Main.prototype._copyElementsStructure = function () {
-		var copy = {},
-			that = this;
+		var copy = {};
 
 		var copyElementsFromCoreObject = function (coreObject, elemNames) {
 			for (var i in coreObject) {
-				if (coreObject.hasOwnProperty(i)) {
+				if (Object.prototype.hasOwnProperty.call(coreObject,i)) {
 					var element = coreObject[i];
 					var elementCopy = {
 						content: [],
@@ -625,7 +626,7 @@ function (jQuery, ManagedObject, Analyzer, CoreFacade,
 		this._oExecutionScope.getElements().forEach(function (element) {
 			if (element instanceof sap.ui.core.ComponentContainer) {
 				var componentId = element.getComponent(),
-					component = that._oCore.mObjects.component[componentId];
+					component = Component.registry.get(componentId);
 				if (component) {
 					copyElementsFromCoreObject([component], "sap-ui-component");
 				}
@@ -641,13 +642,13 @@ function (jQuery, ManagedObject, Analyzer, CoreFacade,
 
 			case "subtree":
 				var parentId = this._oExecutionScope._getContext().parentId;
-				copyElementsFromCoreObject([this._oCore.mElements[parentId]]);
+				copyElementsFromCoreObject([ Element.registry.get(parentId) ]);
 				break;
 
 			case "components":
 				var components = this._oExecutionScope._getContext().components;
 				components.forEach(function (componentId) {
-					copyElementsFromCoreObject([that._oCore.mObjects.component[componentId]], "sap-ui-component");
+					copyElementsFromCoreObject([Component.registry.get(componentId)], "sap-ui-component");
 				});
 				break;
 		}

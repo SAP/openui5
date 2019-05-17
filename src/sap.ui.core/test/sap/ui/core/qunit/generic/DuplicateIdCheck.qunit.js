@@ -14,9 +14,8 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/ui/commons/TextField",
 	"sap/m/Text",
-	"./helper/_CoreInternals",
 	"./helper/_cleanupStyles"
-], function (Log, ObjectPath, DataType, Element, Control, Item, CommonsTextField, MobileText, CoreInternals) {
+], function (Log, ObjectPath, DataType, Element, Control, Item, CommonsTextField, MobileText) {
 	"use strict";
 
 	var iAllControls = 0,
@@ -353,7 +352,7 @@ sap.ui.define([
 
 	QUnit.module("Duplicate ID issues in Controls", {
 		afterEach: function() {
-			CoreInternals.forEachElement(function(oElement) {
+			Element.registry.forEach(function(oElement, sId) {
 				oElement.destroy();
 			});
 		}

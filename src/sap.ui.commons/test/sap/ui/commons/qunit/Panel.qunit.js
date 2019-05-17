@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/library",
+	"sap/ui/core/Element",
 	"sap/ui/commons/Panel",
 	"sap/ui/commons/ListBox",
 	"sap/ui/thirdparty/jquery",
@@ -13,6 +14,7 @@ sap.ui.define([
 ], function(
 	createAndAppendDiv,
 	coreLibrary,
+	Element,
 	Panel,
 	ListBox,
 	jQuery,
@@ -64,21 +66,6 @@ sap.ui.define([
 	});
 	oCtrl.addContent(oContent);
 	oCtrl.placeAt("uiArea1");
-
-	var oCore;
-	sap.ui.getCore().registerPlugin({
-		startPlugin: function(oCoreRef) {
-			oCore = oCoreRef;
-		}
-	});
-
-	function sizeof(o) {
-		var count = 0;
-		for (var i in o) { // eslint-disable-line no-unused-vars
-			count++;
-		}
-		return count;
-	}
 
 	QUnit.test("Initial Check", function(assert) {
 		assert.ok(oCtrl, "Panel should exist after creating");
@@ -404,18 +391,17 @@ sap.ui.define([
    });
 
 	QUnit.test("Clone", function(assert) {
-		assert.ok(!!oCore, "ref to oCore is required");
 		oCtrl.setTitle(null);
-		var n = sizeof(oCore.mElements);
+		var n = Element.registry.size;
 		var oClone1 = oCtrl.clone("-0");
-		assert.ok(n < sizeof(oCore.mElements), "Clone 1 created");
+		assert.ok(n < Element.registry.size, "Clone 1 created");
 		oClone1.setText("Some Title");
 		oClone1.setTitle(new CoreTitle({text:"Some other Title"}));
 		oClone1.destroy();
-		assert.equal(sizeof(oCore.mElements), n, "Clone 1 destroyed");
+		assert.equal(Element.registry.size, n, "Clone 1 destroyed");
 		var oClone2 = oCtrl.clone("-0");
-		assert.ok(n < sizeof(oCore.mElements), "Clone 2 created");
+		assert.ok(n < Element.registry.size, "Clone 2 created");
 		oClone2.destroy();
-		assert.equal(sizeof(oCore.mElements), n, "Clone 2 destroyed");
+		assert.equal(Element.registry.size, n, "Clone 2 destroyed");
 	});
 });

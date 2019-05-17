@@ -156,6 +156,7 @@ sap.ui.define(function() {
 			Element: {
 				title: "sap.ui.core: Element",
 				module: [
+					'testdata/core/Element_base.qunit',
 					'testdata/core/Element_contextualSettings.qunit',
 					'testdata/core/Element_data.qunit',
 					'testdata/core/Element_delegates.qunit',
@@ -238,6 +239,9 @@ sap.ui.define(function() {
 			},
 			ManagedObjectObserver: {
 				title: "sap.ui.base.ManagedObjectObserver"
+			},
+			ManagedObjectRegistry: {
+				title: "sap.ui.base.ManagedObjectRegistry"
 			},
 			ManagedObject_forwardAggregation: {
 				title: "sap.ui.base.ManagedObject: forwardAggregation"
