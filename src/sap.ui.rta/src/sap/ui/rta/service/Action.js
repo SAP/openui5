@@ -12,7 +12,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Provides necessary functionality to get and execute actions on controls. Actions are UI operations available in RTA such as rename, remove, move etc.
+	 * Provides necessary functionality to get and execute actions on controls. Actions are UI operations available in key user adaptation such as rename, remove, move etc.
 	 *
 	 * @namespace
 	 * @name sap.ui.rta.service.Action
@@ -45,7 +45,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted
 	 * @property {string} id - ID of the action
-	 * @property {string} group - Group name, in case the action has been grouped with other action(s)
+	 * @property {string} group - Group name in case the action has been grouped with other action(s)
 	 * @property {string} icon - Icon name
 	 * @property {boolean} enabled - Indicates whether the action is active and can be executed
 	 * @property {int} rank - Sorting rank for visual representation of the action position

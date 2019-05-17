@@ -16,7 +16,7 @@ sap.ui.define([
 	var _fnResetMapListener = function() {};
 
 	/**
-	 * Helper object to handle variants and their changes
+	 * Helper object to handle variants and their changes.
 	 *
 	 * @param {string} sComponentName - Component name the flexibility controller is responsible for
 	 * @param {string} sAppVersion - Current version of the application
@@ -38,9 +38,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the component name of the VariantController
+	 * Returns the component name of the <code>VariantController</code>.
 	 *
-	 * @returns {String} the name of the component
+	 * @returns {String} Name of the component
 	 * @public
 	 */
 	VariantController.prototype.getComponentName = function () {
@@ -48,7 +48,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the application version of the VariantController
+	 * Returns the application version of the <code>VariantController</code>.
 	 *
 	 * @returns {String} Application version
 	 * @public
@@ -135,10 +135,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the variants for a given variant management id
+	 * Returns the variants for a given variant management reference.
 	 *
-	 * @param {String} sVariantManagementReference The variant management id
-	 * @returns {Array} The array containing all variants of the variant management control
+	 * @param {String} sVariantManagementReference - Variant management reference
+	 * @returns {Array} All variants of the variant management control
 	 * @public
 	 */
 	VariantController.prototype.getVariants = function (sVariantManagementReference) {
@@ -159,12 +159,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the changes of a given variant
+	 * Gets the changes of a given variant.
 	 *
-	 * @param {String} sVariantManagementReference The variant management id
-	 * @param {String} sVariantReference The id of the variant
-	 * @param {boolean} [bChangeInstance] True if each change has to be an instance of sap.ui.fl.Change
-	 * @returns {Array} The array containing all changes of the variant
+	 * @param {String} sVariantManagementReference - Variant management reference
+	 * @param {String} sVariantReference - ID of the variant
+	 * @param {boolean} [bChangeInstance] <code>true</code> if each change has to be an instance of <code>sap.ui.fl.Change</code>
+	 * @returns {Array} All changes of the variant
 	 * @public
 	 */
 	VariantController.prototype.getVariantChanges = function(sVariantManagementReference, sVariantReference, bChangeInstance) {
@@ -287,13 +287,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Load the initial changes of all variants
-	 * If the application is started with valid variant references, use them
-	 * If no references or invalid references were passed, load the changes from
-	 * the default variant
+	 * Loads the initial changes of all variants.
+	 * If the application is started with valid variant references, they are used.
+	 * If no references or invalid references were passed, the changes are loaded from
+	 * the default variant.
 	 *
 	 * @param {object} oComponent - Component instance used to get the technical parameters
-	 * @returns {Array} The array containing all changes of the default variants
+	 * @returns {Array} All changes of the default variants
 	 * @public
 	 */
 	VariantController.prototype.loadInitialChanges = function() {
@@ -315,19 +315,19 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the map with all changes to be reverted and applied when switching variants
+	 * Returns the map with all changes to be reverted and applied when switching variants.
 	 *
-	 * @param {object} mPropertyBag Additional properties for variant switch
-	 * @param {string} mPropertyBag.variantManagementReference - The variant management id
-	 * @param {string} mPropertyBag.currentVariantReference - The id of the currently used variant
-	 * @param {string} mPropertyBag.newVariantReference - The id of the newly selected variant
-	 * @param {object} mPropertyBag.changesMap - The changes inside the current changes map
+	 * @param {object} mPropertyBag - Additional properties for variant switch
+	 * @param {string} mPropertyBag.variantManagementReference - Variant management ID
+	 * @param {string} mPropertyBag.currentVariantReference - The ID of the currently used variant
+	 * @param {string} mPropertyBag.newVariantReference - ID of the newly selected variant
+	 * @param {object} mPropertyBag.changesMap - Changes inside the current changes map
 	 *
 	 * @typedef {object} sap.ui.fl.variants.SwitchChanges
-	 * @property {array} changesToBeReverted - an array of changes to be reverted
-	 * @property {array} changesToBeApplied - an array of changes to be applied
+	 * @property {array} changesToBeReverted - Array of changes to be reverted
+	 * @property {array} changesToBeApplied - Array of changes to be applied
 	 *
-	 * @returns {sap.ui.fl.variants.SwitchChanges} The map containing all changes to be reverted and all new changes
+	 * @returns {sap.ui.fl.variants.SwitchChanges} Map containing all changes to be reverted and all new changes
 	 * @public
 	 */
 	VariantController.prototype.getChangesForVariantSwitch = function(mPropertyBag) {
@@ -422,9 +422,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates the data for the variant model
+	 * Creates the data for the variant model.
 	 *
-	 * @returns {Object} oVariantData The JSON object for the Variant Model
+	 * @returns {Object} JSON object for the variant model
 	 * @private
 	 */
 	VariantController.prototype.fillVariantModel = function() {
@@ -529,8 +529,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Assigns a listener, which is called when Variant Controller's map is reset at runtime.
-	 * @param {function} fnListener Listener function
+	 * Assigns a listener, which is called when variant controller's map is reset at runtime.
+	 * @param {function} fnListener - Listener function
 	 * @private
 	 * @restricted sap.ui.fl.variants.VariantModel
 	 */
@@ -539,8 +539,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Clears variant controller map
-	 * @param {boolean} bResetAtRuntime If the map is reset at runtime
+	 * Clears variant controller map.
+	 * @param {boolean} bResetAtRuntime - Indicates whether the map is reset at runtime
 	 * @returns {Promise} Promise which resolves when changes for the current variants are reverted
 	 * @public
 	 */
@@ -554,8 +554,8 @@ sap.ui.define([
 
 	/**
 	 * Checks if variant content is required and sets the new content if validated.
-	 * @param {object} oChangeFileContent Changes response object
-	 * @param {object} mTechnicalParameters Technical parameters from the app component
+	 * @param {object} oChangeFileContent - Changes response object
+	 * @param {object} mTechnicalParameters - Technical parameters from the app component
 	 * @private
 	 * @restricted sap.ui.fl.ChangePersistence
 	 */

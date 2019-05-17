@@ -31,7 +31,7 @@ sap.ui.define([
 
 
 	/**
-	 * When VariantController map is reset at runtime, this listener is called.
+	 * When the <code>VariantController</code> map is reset at runtime, this listener is called.
 	 * It reverts all applied changes and resets all variant management controls to default state.
 	 * @returns {Promise} Promise which resolves when all applied changes have been reverted
 	 */
@@ -62,14 +62,14 @@ sap.ui.define([
 
 	/**
 	 * Constructor for a new sap.ui.fl.variants.VariantModel model.
-	 * @class Variant Model implementation for JSON format
+	 * @class Variant model implementation for JSON format.
 	 * @extends sap.ui.model.json.JSONModel
 	 * @author SAP SE
 	 * @version ${version}
-	 * @param {object} oData either the URL where to load the JSON from or a JS object
-	 * @param {sap.ui.fl.FlexController} oFlexController the FlexController instance for the component which uses the variant model
-	 * @param {sap.ui.core.Component} oAppComponent Application component instance that is currently loading
-	 * @param {boolean} bObserve whether to observe the JSON data for property changes (experimental)
+	 * @param {object} oData - Either the URL where to load the JSON from or a JS object
+	 * @param {sap.ui.fl.FlexController} oFlexController - <code>FlexController</code> instance for the component which uses the variant model
+	 * @param {sap.ui.core.Component} oAppComponent - Application component instance that is currently loading
+	 * @param {boolean} bObserve -Indicates whether to observe the JSON data for property changes (experimental)
 	 * @constructor
 	 * @private
 	 * @ui5-restricted
@@ -124,12 +124,12 @@ sap.ui.define([
 	});
 
 	/**
-	 * Updates the storage of the current variant for a given variant management control
+	 * Updates the storage of the current variant for a given variant management control.
 	 * @param {String} sVariantManagementReference - Variant management reference
 	 * @param {String} sNewVariantReference - Newly selected variant reference
 	 * @param {sap.ui.core.Component} [oAppComponent] - Application component responsible for the variant management reference
 	 *
-	 * @returns {Promise} Returns Promise that resolves after the variant is updated
+	 * @returns {Promise} Promise that resolves after the variant is updated
 	 * @private
 	 */
 	VariantModel.prototype.updateCurrentVariant = function(sVariantManagementReference, sNewVariantReference, oAppComponent) {
@@ -247,9 +247,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the current variant for a given variant management control
-	 * @param {string} sVariantManagementReference The variant management reference
-	 * @returns {string} The current variant reference
+	 * Returns the current variant for a given variant management control.
+	 * @param {string} sVariantManagementReference - Variant management reference
+	 * @returns {string} Current variant reference
 	 * @public
 	 */
 	VariantModel.prototype.getCurrentVariantReference = function(sVariantManagementReference){
@@ -303,11 +303,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Removes passed control changes which are in DIRTY state from the variant controller and flex controller
-	 * @param {sap.ui.fl.Change[]} aVariantControlChanges Array of control changes
-	 * @param {string} sVariantManagementReference Variant management reference
-	 * @param {string} sVariantReference Variant reference
-	 * @param {sap.ui.core.Component} oAppComponent App Component
+	 * Removes passed control changes which are in DIRTY state from the variant controller and flex controller.
+	 * @param {sap.ui.fl.Change[]} aVariantControlChanges - Array of control changes
+	 * @param {string} sVariantManagementReference - Variant management reference
+	 * @param {string} sVariantReference - Variant reference
+	 * @param {sap.ui.core.Component} oAppComponent - App component
 	 * @private
 	 */
 	VariantModel.prototype._removeDirtyChanges = function(aVariantControlChanges, sVariantManagementReference, sVariantReference, oAppComponent) {
@@ -393,15 +393,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Copies a variant
-	 * @param {Object} mPropertyBag
-	 * @param {String} mPropertyBag.variantManagementReference variantManagementReference
-	 * @param {String} mPropertyBag.title title for the variant
-	 * @param {sap.ui.core.Component} mPropertyBag.appComponent model's app component
-	 * @param {String} mPropertyBag.layer layer on which the new variant should be created
-	 * @param {String} mPropertyBag.newVariantReference variantReference for the new variant
-	 * @param {String} mPropertyBag.sourceVariantReference variantReference of the source variant
-	 * @returns {Promise} Returns a promise resolving to dirty changes created during variant copy
+	 * Copies a variant.
+	 * @param {Object} mPropertyBag - Map of properties
+	 * @param {String} mPropertyBag.variantManagementReference - Variant management reference
+	 * @param {String} mPropertyBag.title - Title for the variant
+	 * @param {sap.ui.core.Component} mPropertyBag.appComponent - Model's app component
+	 * @param {String} mPropertyBag.layer - Layer on which the new variant should be created
+	 * @param {String} mPropertyBag.newVariantReference - <code>variantReference</code> for the new variant
+	 * @param {String} mPropertyBag.sourceVariantReference - >code>variantReference</code> of the source variant
+	 * @returns {Promise} Promise resolving to dirty changes created during variant copy
 	 * @private
 	 */
 	VariantModel.prototype.copyVariant = function(mPropertyBag) {
@@ -511,12 +511,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Opens the manage dialog.
+	 * Opens the <i>Manage Views</i> dialog.
 	 * Returns a promise which resolves to changes made from the manage dialog, based on the parameters passed.
-	 * @param {sap.ui.fl.variants.VariantManagement} oVariantManagementControl Variant Management control
-	 * @param {String} sVariantManagementReference Variant Management reference
-	 * @param {String} sLayer Current layer
-	 * @returns {Promise} Returns a promise which resolves when "manage" event is fired from the variant management control
+	 * @param {sap.ui.fl.variants.VariantManagement} oVariantManagementControl - Variant management control
+	 * @param {String} sVariantManagementReference - Variant management reference
+	 * @param {String} sLayer - Current layer
+	 * @returns {Promise} Promise which resolves when "manage" event is fired from the variant management control
 	 * @public
 	 */
 	VariantModel.prototype.manageVariants = function(oVariantManagementControl, sVariantManagementReference, sLayer) {
@@ -533,20 +533,20 @@ sap.ui.define([
 
 	/**
 	 * Sets the passed properties on a variant for the passed variant management reference.
-	 * Also adds or removes a change depending upon the parameters passed.
-	 * @param {sap.ui.fl.variants.VariantManagement} sVariantManagementReference Variant Management reference
-	 * @param {Object} mPropertyBag
-	 * @param {String} mPropertyBag.variantReference Variant Reference for which properties should be set
-	 * @param {String} mPropertyBag.changeType Change type due to which properties are being set
-	 * @param {String} mPropertyBag.layer Current layer
-	 * @param {String} mPropertyBag.appComponent App Component instance
-	 * @param {String} [mPropertyBag.title] App New title value for "setTitle" change type
-	 * @param {boolean} [mPropertyBag.visible] New visible value for "setVisible" change type
-	 * @param {boolean} [mPropertyBag.favorite] New favorite value for "setFavorite" change type
-	 * @param {String} [mPropertyBag.defaultVariant] New default variant for "setDefault" change type
-	 * @param {sap.ui.fl.Change} [mPropertyBag.change] Change to be deleted
-	 * @param {boolean} [bAddChange] if change needs to be added
-	 * @returns {sap.ui.fl.Change | null} Returns the created change object or null if no change is created
+	 * Also adds or removes a change depending on the parameters passed.
+	 * @param {sap.ui.fl.variants.VariantManagement} sVariantManagementReference - Variant management reference
+	 * @param {Object} mPropertyBag - Map of properties
+	 * @param {String} mPropertyBag.variantReference - Variant reference for which properties should be set
+	 * @param {String} mPropertyBag.changeType - Change type due to which properties are being set
+	 * @param {String} mPropertyBag.layer - Current layer
+	 * @param {String} mPropertyBag.appComponent - App component instance
+	 * @param {String} [mPropertyBag.title] - New app title value for <code>setTitle</code> change type
+	 * @param {boolean} [mPropertyBag.visible] - New visible value for <code>setVisible</code> change type
+	 * @param {boolean} [mPropertyBag.favorite] - New favorite value for <code>setFavorite</code> change type
+	 * @param {String} [mPropertyBag.defaultVariant] - New default variant for <code>setDefault</code> change type
+	 * @param {sap.ui.fl.Change} [mPropertyBag.change] - Change to be deleted
+	 * @param {boolean} [bAddChange] - Indicates whether change needs to be added
+	 * @returns {sap.ui.fl.Change | null} Created change object or <code>null</code> if no change is created
 	 * @public
 	 */
 	VariantModel.prototype.setVariantProperties = function(sVariantManagementReference, mPropertyBag, bAddChange) {
@@ -757,7 +757,7 @@ sap.ui.define([
 		oControl.detachManage(this.fnManageClick, this); /* attach done below */
 
 		if (bDesignTimeMode) {
-			// Runtime Adaptation Settings
+			// Key user adaptation settings
 			this.oData[sVariantManagementReference].variantsEditable = false;
 
 			// Properties for variant management control's internal model
@@ -767,7 +767,7 @@ sap.ui.define([
 				oVariant.remove = fnRemove(oVariant, sVariantManagementReference, bDesignTimeMode);
 			});
 		} else {
-			// Personalization Settings
+			// Personalization settings
 			if (this.oData[sVariantManagementReference]._isEditable) {
 				oControl.attachManage({
 					variantManagementReference: sVariantManagementReference
@@ -818,14 +818,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Event handler listening to title binding change on a variant management control
+	 * Event handler listening to title binding change on a variant management control.
 	 * @see sap.ui.fl.variants.VariantManagement
-	 * @param {object} oEvent Event object
-	 * @param {object} mControl
-	 * @param {sap.ui.fl.variants.VariantManagement} mControl.control Variant management control
+	 * @param {sap.ui.base.Event} oEvent - Event object
+	 * @param {sap.ui.fl.variants.VariantManagement} oControl - Variant management control
 	 * @private
 	 */
-	VariantModel.prototype._handleCurrentVariantChange = function(oEvent, mControl) {
+	VariantModel.prototype._handleCurrentVariantChange = function(oEvent, oControl) {
 		var oPropertyBinding = oEvent.getSource();
 		var sVariantManagementReference = oPropertyBinding.getContext().getPath().replace(/^\//, '');
 
@@ -834,7 +833,7 @@ sap.ui.define([
 			&& this.oData[sVariantManagementReference].currentVariant !== this.oData[sVariantManagementReference].originalCurrentVariant
 		) {
 			var sSourceVariantReference = this.oData[sVariantManagementReference].originalCurrentVariant;
-			this.updateCurrentVariant(sVariantManagementReference, oPropertyBinding.getValue(), Utils.getAppComponentForControl(mControl.control))
+			this.updateCurrentVariant(sVariantManagementReference, oPropertyBinding.getValue(), Utils.getAppComponentForControl(oControl))
 			.then( function() {
 				// when variant is switched without saving source variant changes
 				// happens only in personalization mode
@@ -936,7 +935,7 @@ sap.ui.define([
 			this.oData[sVariantManagementReference]._isEditable = oVariantManagementControl.getEditable();
 
 			//attach binding change event on VariantManagement control title
-			oVariantManagementControl.getTitle().getBinding("text").attachEvent("change", {control: oVariantManagementControl}, this._handleCurrentVariantChange, this);
+			oVariantManagementControl.getTitle().getBinding("text").attachEvent("change", oVariantManagementControl, this._handleCurrentVariantChange, this);
 
 			this.setModelPropertiesForControl(sVariantManagementReference, false, oVariantManagementControl);
 
@@ -951,8 +950,8 @@ sap.ui.define([
 
 	/**
 	 * Checks if the passed changes exist as dirty changes.
-	 * @param {sap.ui.fl.Change[]} aControlChanges Array of changes to be checked
-	 * @returns {sap.ui.fl.Change[]} Returns an array of filtered changes
+	 * @param {sap.ui.fl.Change[]} aControlChanges - Array of changes to be checked
+	 * @returns {sap.ui.fl.Change[]} Array of filtered changes
 	 * @private
 	 */
 	VariantModel.prototype._getDirtyChangesFromVariantChanges = function(aControlChanges) {
@@ -967,8 +966,8 @@ sap.ui.define([
 
 	/**
 	 * Checks if dirty changes exist for the current variant inside the passed variant management reference.
-	 * If no dirty changes exist, it marks the associated 'modified' model property to false.
-	 * @param {string[]} aVariantManagementReferences Array of variant management references
+	 * If no dirty changes exist, it marks the associated 'modified' model property to <code>false</code>.
+	 * @param {string[]} aVariantManagementReferences - Array of variant management references
 	 * @public
 	 */
 	VariantModel.prototype.checkDirtyStateForControlModels = function(aVariantManagementReferences) {
@@ -989,9 +988,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the current variant references for the model passed as context
+	 * Returns the current variant references for the model passed as context.
 	 *
-	 * @returns {array} An array of current variant references
+	 * @returns {array} Array of current variant references
 	 */
 	VariantModel.prototype.getCurrentControlVariantIds = function() {
 		return Object.keys(this.oData || {})

@@ -40,11 +40,11 @@ sap.ui.define([
 	 * @since 1.58
 	 * @private
 	 * @ui5-restricted
-	 * @property {object} name - name object from dt-metadata
-	 * @property {object} properties - properties object from dt-metadata and control metadata
-	 * @property {object} annotations - annotations object from dt-metadata
-	 * @property {string} [label] - label from getLabel property of dt-metadata
-	 * @property {object} [links] - links from dt-metadata
+	 * @property {object} name - Name object from design time metadata
+	 * @property {object} properties - Properties object from design time metadata and control metadata
+	 * @property {object} annotations - Annotations object from design time metadata
+	 * @property {string} [label] - Label from <code>getLabel</code> property of design time metadata
+	 * @property {object} [links] - Links from design time metadata
 	 */
 
 	return function() {
@@ -53,11 +53,11 @@ sap.ui.define([
 
 		/**
 		 * Returns properties, annotations, label and name
-		 * from the passed control id's design time metadata and control metadata.
+		 * from the passed control ID's design time metadata and control metadata.
 		 *
-		 * @param {string} sControlId - id of the control
+		 * @param {string} sControlId - ID of the control
 		 *
-		 * @return {object} an object containing properties, annotations, label and name
+		 * @return {object} Object containing properties, annotations, label and name
 		 * @private
 		 */
 		oProperty._getDesignTimeProperties = function (sControlId) {
@@ -99,13 +99,13 @@ sap.ui.define([
 
 		/**
 		 * Calculates and returns properties
-		 * from the passed dt-metadata and control metadata objects.
+		 * from the passed design time metadata and control metadata objects.
 		 *
-		 * @param {object|function} vDtProperties - dt-metadata properties
-		 * @param {object} mMetadataObj - control metadata properties object
-		 * @param {sap.ui.core.Element} oElement - element for which properties need to be calculated
+		 * @param {object|function} vDtProperties - Design time metadata properties
+		 * @param {object} mMetadataObj - Control metadata properties object
+		 * @param {sap.ui.core.Element} oElement - Element for which properties need to be calculated
 		 *
-		 * @return {object} promise resolving to an object containing all properties consolidated
+		 * @return {object} Promise resolving to an object containing all properties consolidated
 		 * @private
 		 */
 		oProperty._getConsolidatedProperties = function (vDtProperties, mMetadataObj, oElement) {
@@ -181,14 +181,14 @@ sap.ui.define([
 		};
 
 		/**
-		 * Returns evaluated virtual property for direct consumption by the service
+		 * Returns evaluated virtual property for direct consumption by the service.
 		 *
-		 * @param {object} mDtObj - dt-metadata properties object
-		 * @param {object} sPropertyName - virtual property name
-		 * @param {sap.ui.core.Element} oElement - element for which the virtual property needs to be evaluated
-		 * @param {boolean} bIgnore - evaluated value of ignore property
+		 * @param {object} mDtObj - Design time metadata properties object
+		 * @param {object} sPropertyName - Virtual property name
+		 * @param {sap.ui.core.Element} oElement - Element for which the virtual property needs to be evaluated
+		 * @param {boolean} bIgnore - Evaluated value of ignore property
 		 *
-		 * @return {Promise} promise resolving to the evaluated virtual property object
+		 * @return {Promise} Promise resolving to the evaluated virtual property object
 		 * @private
 		 */
 		oProperty._getEvaluatedVirtualProperty = function(mDtObj, sPropertyName, oElement, bIgnore) {
@@ -221,12 +221,12 @@ sap.ui.define([
 
 		/**
 		 * Calculates and returns annotations
-		 * from the passed dt-metadata annotations object.
+		 * from the passed design time metadata annotations object.
 		 *
-		 * @param {object} mDtObj - dt-metadata annotations object
-		 * @param {sap.ui.core.Element} oElement - element for which properties need to be calculated
+		 * @param {object} mDtObj - Design time metadata annotations object
+		 * @param {sap.ui.core.Element} oElement - Element for which properties need to be calculated
 		 *
-		 * @return {Promise} promise resolving to an object containing all annotations consolidated
+		 * @return {Promise} Pomise resolving to an object containing all annotations consolidated
 		 * @private
 		 */
 		oProperty._getConsolidatedAnnotations = function (mDtObj, oElement) {
@@ -265,7 +265,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Resolves the 'links' object containing the format:
+		 * Resolves the <code>links</code> object containing the format:
 		 *    links: {
 		 *       "link1": [{
 		 *          href: "href-to-link1",
@@ -279,10 +279,10 @@ sap.ui.define([
 		 *       }]
 		 *    }
 		 *
-		 * @param {map} mLinks - links map
-		 * @param {sap.ui.core.Element} oElement - element for which 'links' object is required to be resolved
+		 * @param {map} mLinks - Links map
+		 * @param {sap.ui.core.Element} oElement - Element for which <code>links</code> object is required to be resolved
 		 *
-		 * @return {Promise} promise resolving to links map
+		 * @return {Promise} Promise resolving to links map
 		 * @private
 		 */
 		oProperty._getResolvedLinks = function (mLinks, oElement){
@@ -316,10 +316,10 @@ sap.ui.define([
 		/**
 		 * Gets binding information for the passed property and element.
 		 *
-		 * @param {string} sKey - property name
-		 * @param {sap.ui.core.Element} oElement - element for which binding information is required
+		 * @param {string} sKey - Property name
+		 * @param {sap.ui.core.Element} oElement - Element for which binding information is required
 		 *
-		 * @return {object} object containing the binding information
+		 * @return {object} Object containing the binding information
 		 * @private
 		 */
 		oProperty._getBindingInfo = function (sKey, oElement) {
@@ -361,10 +361,10 @@ sap.ui.define([
 		/**
 		 * Wraps the passed first argument in a promise and resolves it.
 		 *
-		 * @param {any}  vProperty - property which needs to be resolved (e.g. function, string)
-		 * @param {sap.ui.core.Element} oElement - element for which property needs to be resolved
+		 * @param {any}  vProperty - Property which needs to be resolved (e.g. <code>function</code>, <code>string</code>)
+		 * @param {sap.ui.core.Element} oElement - Element for which the property needs to be resolved
 		 *
-		 * @return {Promise} promise resolving to the property value
+		 * @return {Promise} Promise resolving to the property value
 		 * @private
 		 */
 		oProperty._getResolvedFunction = function (vProperty, oElement) {
@@ -378,8 +378,8 @@ sap.ui.define([
 		return {
 			exports: {
 				/**
-				 * Returns an object containing design time properties for the passed control's id.
-				 * Throws an error if the control id parameter is not a valid control with a stable id.
+				 * Returns an object containing design time properties for the passed control's ID.
+				 * Throws an error if the control ID parameter is not a valid control with a stable ID.
 				 *
 				 * Example:
 				 *
@@ -474,8 +474,8 @@ sap.ui.define([
 				 *     }
 				 * </pre>
 				 * @name sap.ui.rta.service.Property.get
-				 * @param {string} sControlId - the id of the control to start with.
-				 * @returns {sap.ui.rta.service.Property.PropertyObject} an object containing relevant property data for the passed control
+				 * @param {string} sControlId - ID of the control to start with
+				 * @returns {sap.ui.rta.service.Property.PropertyObject} Object containing relevant property data for the passed control
 				 * @function
 				 * @public
 				 */

@@ -104,13 +104,12 @@ sap.ui.define([
 	var TextAlign = coreLibrary.TextAlign;
 
 	/**
-	 * Constructor for a new VariantManagement.
-	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new control
-	 * @class The <code>VariantManagement</code> control can be used to manage variants.
-	 *        <h3>Usage</h3>
-	 *        You can use this control in most controls that are enabled for <i>UI adaptation at runtime</i>.
-	 * @see {@link topic:f1430c0337534d469da3a56307ff76af UI Adaptation at Runtime: Enable Your App}
+	 * Constructor for a new <code>VariantManagement</code>.
+	 * @param {string} [sId] - ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] - Initial settings for the new control
+	 * @class Can be used to manage variants. You can use this control in most controls that are enabled for <i>key user adaptation</i>.<br>
+	 * <b>Note: </b>On the user interface, variants are generally referred to as "views".
+	 * @see {@link topic:f1430c0337534d469da3a56307ff76af Key User Adaptation: Enable Your App}
 	 * @extends sap.ui.core.Control
 	 * @constructor
 	 * @public
@@ -126,7 +125,7 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Indicates that Execute on Selection is visible in the Save Variant and the Manage Variants dialogs.
+				 * Indicates that <i>Apply Automatically</i> is visible in the <i>Save View</i> and the <i>Manage Views</i> dialogs.
 				 */
 				showExecuteOnSelection: {
 					type: "boolean",
@@ -135,7 +134,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Indicates that set as default is visible in the Save Variant and the Manage Variants dialogs.
+				 * Indicates that <i>Set as Default</i> is visible in the <i>Save View</i> and the <i>Manage Views</i> dialogs.
 				 */
 				showSetAsDefault: {
 					type: "boolean",
@@ -145,7 +144,7 @@ sap.ui.define([
 
 				/**
 				 * If set to <code>true</code>, the key for a vendor variant will be added manually.<br>
-				 * <b>Node:</b>This flag is only used internally in the app variant scenarios.
+				 * <b>Note:</b>This flag is only used internally in the app variant scenarios.
 				 */
 				manualVariantKey: {
 					type: "boolean",
@@ -154,7 +153,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Indicates that the control is in error state. If set to <code>true</code> error message will be displayed whenever the variant is
+				 * Indicates that the control is in error state. If set to <code>true</code>, an error message will be displayed whenever the variant is
 				 * opened.
 				 */
 				inErrorState: {
@@ -164,7 +163,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Indicates that the control is in edit state. If set to <code>false</code> the footer of the views list will be hidden.
+				 * Indicates that the control is in edit state. If set to <code>false</code>, the footer of the <i>Views</i> list will be hidden.
 				 */
 				editable: {
 					type: "boolean",
@@ -175,7 +174,7 @@ sap.ui.define([
 				/**
 				 * Determines the name of the model. The binding context will be defined by the current ID.
 				 * <p>
-				 * <b>Note:</b> In a UI adaptation scenario, this property is not used at all because the model name is <i>$FlexVariants</i>
+				 * <b>Note:</b> In a UI adaptation scenario, this property is not used at all, because the model name is <code>$FlexVariants</code>.
 				 */
 				modelName: {
 					type: "string",
@@ -186,7 +185,7 @@ sap.ui.define([
 				/**
 				 * Determines the intention of setting the current variant based on passed information.
 				 * <p>
-				 * <b>Note:</b> The VariantManagement control does not react in any way to this property.
+				 * <b>Note:</b> The <code>VariantManagement</code> control does not react in any way to this property.
 				 */
 				updateVariantInURL: {
 					type: "boolean",
@@ -197,7 +196,7 @@ sap.ui.define([
 			associations: {
 
 				/**
-				 * Contains the controls, for which the variant management is responsible.
+				 * Contains the controls for which the variant management is responsible.
 				 */
 				"for": {
 					type: "sap.ui.core.Control",
@@ -207,33 +206,33 @@ sap.ui.define([
 			events: {
 
 				/**
-				 * This event is fired when the Save Variant dialog is closed with OK for a variant.
+				 * This event is fired when the <i>Save View</i> dialog is closed with <i>OK</i> for a variant.
 				 */
 				save: {
 					parameters: {
 						/**
-						 * The variant title
+						 * Variant title
 						 */
 						name: {
 							type: "string"
 						},
 
 						/**
-						 * Indicates if an existing variant is overwritten or if a new variant is created
+						 * Indicates if an existing variant is overwritten or if a new variant is created.
 						 */
 						overwrite: {
 							type: "boolean"
 						},
 
 						/**
-						 * The variant key
+						 * Variant key
 						 */
 						key: {
 							type: "string"
 						},
 
 						/**
-						 * The Execute on Selection indicator
+						 * <i>Apply Automatically</i> indicator
 						 */
 						execute: {
 							type: "boolean"
@@ -249,7 +248,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * This event is fired when users apply changes to variants in the Manage Variants dialog.
+				 * This event is fired when users apply changes to variants in the <i>Manage Views</i> dialog.
 				 */
 				manage: {},
 
@@ -264,7 +263,7 @@ sap.ui.define([
 				select: {
 					parameters: {
 						/**
-						 * The variant key
+						 * Variant key
 						 */
 						key: {
 							type: "string"
@@ -276,8 +275,8 @@ sap.ui.define([
 
 		/**
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+		 * @param {sap.ui.core.RenderManager} oRm - <code>RenderManager</code> that can be used for writing to the render output buffer
+		 * @param {sap.ui.core.Control} oControl - Object representation of the control that should be rendered
 		 */
 		renderer: function(oRm, oControl) {
 			oRm.write("<div ");
@@ -298,7 +297,7 @@ sap.ui.define([
 	VariantManagement.COLUMN_NAME_IDX = 1;
 
 	/*
-	 * Constructs and initializes the VariantManagement control.
+	 * Constructs and initializes the <code>VariantManagement</code> control.
 	 */
 	VariantManagement.prototype.init = function() {
 
@@ -389,9 +388,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the title control of the VariantManagement. Usage in RTA scenario.
+	 * Returns the title control of the <code>VariantManagement</code>. This is used in the key user scenario.
 	 * @protected
-	 * @returns {sap.m.Title} title part of the VariantManagement control.
+	 * @returns {sap.m.Title} Title part of the <code>VariantManagement</code> control.
 	 */
 	VariantManagement.prototype.getTitle = function() {
 		return this.oVariantText;
@@ -451,8 +450,8 @@ sap.ui.define([
 	/**
 	 * Sets the new selected variant.
 	 * @public
-	 * @param {String} sKey the variant key which should be selected.
-	 * @returns {sap.ui.fl.variants.VariantManagement} the current instance of {@link sap.ui.fl.variants.VariantManagement}.
+	 * @param {String} sKey - Key of the variant that should be selected.
+	 * @returns {sap.ui.fl.variants.VariantManagement} Current instance of {@link sap.ui.fl.variants.VariantManagement}.
 	 */
 	VariantManagement.prototype.setCurrentVariantKey = function(sKey) {
 		var oModel = this.getModel(this._sModelName);
@@ -466,7 +465,7 @@ sap.ui.define([
 	/**
 	 * Gets the currently selected variant key.
 	 * @public
-	 * @returns {String} The currently selected variant key. In case the model is yet not set <code>null</code> will be returned.
+	 * @returns {String} Key of the currently selected variant. In case the model is not yet set <code>null</code> will be returned.
 	 */
 	VariantManagement.prototype.getCurrentVariantKey = function() {
 		var oModel = this.getModel(this._sModelName);
@@ -497,7 +496,7 @@ sap.ui.define([
 	/**
 	 * Retrieves all variants.
 	 * @public
-	 * @returns {array} with all variants. In case the model is yet not set an empty array will be returned.
+	 * @returns {array} All variants. In case the model is not yet set, an empty array will be returned.
 	 */
 	VariantManagement.prototype.getVariants = function() {
 		return this._getItems();
@@ -660,7 +659,7 @@ sap.ui.define([
 					this.oContext = new Context(oModel, "/" + sLocalId);
 					this.setBindingContext(this.oContext, this._sModelName);
 
-					if (!this.getModelName() && oModel.registerToModel) { // RTA relevant
+					if (!this.getModelName() && oModel.registerToModel) { // Relevant for key user adaptation
 						oModel.registerToModel(this);
 					}
 
@@ -809,7 +808,7 @@ sap.ui.define([
 		this.oErrorVariantPopOver.openBy(this.oVariantLayout);
 	};
 
-	// VARIANT LIST
+	// My Views List
 	VariantManagement.prototype._createVariantList = function() {
 
 		if (this.oVariantPopOver) {
@@ -952,8 +951,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Hide or show "Save" button and emphasize "most positive action" - either "Save" button when visible, "Save As" button if "Save" is hidden.
-	 * @param bShow indicator if "Save" button should be visible
+	 * Hide or show <i>Save</i> button and emphasize "most positive action" - either <i>Save</i> button if it is visible, or <i>Save As</i> button if <i>Save</i> is hidden.
+	 * @param bShow - Indicator if <i>Save</i> button should be visible
 	 * @private
 	 */
 	VariantManagement.prototype.showSaveButton = function(bShow) {
@@ -1024,7 +1023,7 @@ sap.ui.define([
 		oVariantList.getBinding("items").filter(this._getFilters(oFilter));
 	};
 
-	// SAVE DIALOG
+	// Save View dialog
 
 	VariantManagement.prototype._createSaveAsDialog = function() {
 
@@ -1210,12 +1209,12 @@ sap.ui.define([
 		this.setModified(false);
 	};
 
-	// MANAGE DIALOG
+	// Manage Views dialog
 
 	/**
-	 * Opens the manage dialog.
+	 * Opens the <i>Manage Views</i> dialog.
 	 * @public
-	 * @param {boolean} bCreateAlways in case this is set to <code>true</code> the former dialog will be destroyed, before a new one is created.
+	 * @param {boolean} bCreateAlways - Indicates that if this is set to <code>true</code>, the former dialog will be destroyed before a new one is created
 	 */
 	VariantManagement.prototype.openManagementDialog = function(bCreateAlways) {
 		if (bCreateAlways && this.oManagementDialog) {
@@ -1529,11 +1528,11 @@ sap.ui.define([
 		this.oManagementSave.setEnabled(false);
 		this._oSearchFieldOnMgmtDialog.setValue("");
 
-		// Idealy this should be done only once in _createtManagementDialog. But the binding does not recognize a change, when filtering is involved.
-		// After delete on the ui we filter the item out .visible=false. The real deletion will occure only when OK is pressed.
-		// But the filterd items and the result after real deletion is identical, so no change is detected; based on this the context on the table is
+		// Ideally, this should be done only once in <code>_createtManagementDialog</code>. However, the binding does not recognize a change if filtering is involved.
+		// After a deletion on the UI, the item is filtered out <code>.visible=false</code>. The real deletion will occur only when <i>OK</i> is pressed.
+		// Since the filterd items and the result after the real deletion are identical, no change is detected. Based on this, the context on the table is
 		// not invalidated....
-		// WA: do the binding always, while opening the dialog.
+		// WA: Always do the binding while opening the dialog.
 		if (this._bDeleteOccured) {
 
 			this._bDeleteOccured = false;
