@@ -2139,6 +2139,35 @@ function (
 			"The ObjectPage Header Pin Button is visible");
 	});
 
+	QUnit.test("ObjectPage Header Pin Button focus preservation", function (assert) {
+		// Arrange
+		var oHeader = this.oObjectPage._getHeaderContent(),
+			oPinButton = oHeader.getAggregation("_pinButton"),
+			oPinButtonDomRef = oPinButton.$();
+
+		// Act
+		Core.applyChanges();
+		oPinButtonDomRef.focus();
+
+		// Assert
+		assert.ok(oPinButtonDomRef.is(":focus"),
+			"The Pin Button is initially focused");
+
+		// Act
+		oPinButton.firePress();
+
+		// Assert
+		assert.ok(oPinButtonDomRef.is(":focus"),
+			"The Pin Button remain focused after triggering");
+
+		// Act
+		oPinButton.firePress();
+
+		// Assert
+		assert.ok(oPinButtonDomRef.is(":focus"),
+			"The Pin Button remain focused after triggering for a second time");
+	});
+
 	QUnit.test("ObjectPage Header - expanding/collapsing by clicking the title", function (assert) {
 
 		var oObjectPage = this.oObjectPage,
