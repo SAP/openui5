@@ -18,6 +18,7 @@
 		<FeedContent contentText="@@notify Great outcome of the Presentation today. The new functionality and the new design was well received."
 					 subheader="about 1 minute ago in Computer Market" />
 
+		<Input></Input>
 		<NumericContent size="S" scale="M" value="1.75" valueColor="Good" indicator="Up" press="press" />
 		<NumericContent size="S" scale="M" value="0.57" valueColor="Error" indicator="Down" press="press" />
 		<NumericContent value="1762" icon="sap-icon://line-charts"/>

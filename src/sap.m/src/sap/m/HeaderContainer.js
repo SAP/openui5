@@ -6,6 +6,7 @@ sap.ui.define([
 		'sap/ui/core/Core',
 		'sap/ui/core/Control',
 		'sap/ui/Device',
+		'sap/m/HeaderContainerItemNavigator',
 		'sap/ui/core/delegate/ItemNavigation',
 		'sap/ui/core/library',
 		'sap/ui/core/IntervalTrigger',
@@ -29,6 +30,7 @@ sap.ui.define([
 		Core,
 		Control,
 		Device,
+		HeaderContainerItemNavigator,
 		ItemNavigation,
 		coreLibrary,
 		IntervalTrigger,
@@ -305,7 +307,7 @@ sap.ui.define([
 						var aDomRefs = oFocusObj.find(".sapMHrdrCntrInner").attr("tabindex", "0");
 
 						if (!this._oItemNavigation) {
-							this._oItemNavigation = new ItemNavigation();
+							this._oItemNavigation = new HeaderContainerItemNavigator();
 							this.addDelegate(this._oItemNavigation);
 							this._oItemNavigation.attachEvent(ItemNavigation.Events.BorderReached, this._handleBorderReached, this);
 							this._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, this._handleBorderReached, this);
