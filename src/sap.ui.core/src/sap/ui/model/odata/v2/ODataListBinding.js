@@ -726,7 +726,7 @@ sap.ui.define([
 			}
 			this.bSkipDataEvents = false;
 			//if load is triggered by a refresh we have to check the refreshGroup
-			sGroupId = this.sRefreshGroup ? this.sRefreshGroup : this.sGroupId;
+			sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
 			this.mRequestHandles[sGuid] = this.oModel.read(sPath, {groupId: sGroupId, urlParameters: aParams, success: fnSuccess, error: fnError});
 		}
 
@@ -821,7 +821,7 @@ sap.ui.define([
 			// execute the request and use the metadata if available
 			sPath = sPath + "/$count";
 			//if load is triggered by a refresh we have to check the refreshGroup
-			sGroupId = this.sRefreshGroup ? this.sRefreshGroup : this.sGroupId;
+			sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
 			this.oCountHandle = this.oModel.read(sPath, {
 				withCredentials: this.oModel.bWithCredentials,
 				groupId: sGroupId,
@@ -848,9 +848,9 @@ sap.ui.define([
 			sGroupId = bForceUpdate;
 			bForceUpdate = false;
 		}
-		this.sRefreshGroup = sGroupId;
+		this.sRefreshGroupId = sGroupId;
 		this._refresh(bForceUpdate);
-		this.sRefreshGroup = undefined;
+		this.sRefreshGroupId = undefined;
 	};
 
 	/**

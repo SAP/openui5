@@ -37,7 +37,7 @@ sap.ui.define([
 
 		constructor : function(oModel, sPath, oContext, mParameters, oEvents){
 			ContextBinding.call(this, oModel, sPath, oContext, mParameters, oEvents);
-			this.bRefreshGroupId = undefined;
+			this.sRefreshGroupId = undefined;
 			this.bPendingRequest = false;
 			this.mParameters = jQuery.extend(true, {}, this.mParameters);
 			this.bCreatePreliminaryContext = this.mParameters.createPreliminaryContext || oModel.bPreliminaryContext;
@@ -173,9 +173,9 @@ sap.ui.define([
 			sGroupId = bForceUpdate;
 			bForceUpdate = false;
 		}
-		this.sRefreshGroup = sGroupId;
+		this.sRefreshGroupId = sGroupId;
 		this._refresh(bForceUpdate);
-		this.sRefreshGroup = undefined;
+		this.sRefreshGroupId = undefined;
 	};
 
 	/**
@@ -214,9 +214,9 @@ sap.ui.define([
 				this.fireDataRequested();
 				this.bPendingRequest = true;
 			}
-			if (this.sRefreshGroup) {
+			if (this.sRefreshGroupId) {
 				mParameters = jQuery.extend({},this.mParameters);
-				mParameters.groupId = this.sRefreshGroup;
+				mParameters.groupId = this.sRefreshGroupId;
 			}
 			var oContext = this.oModel.createBindingContext(this.sPath, this.oContext, mParameters, function(oContext) {
 				if (that.bCreatePreliminaryContext && oContext && that.oElementContext && that.oElementContext.isPreliminary()) {
