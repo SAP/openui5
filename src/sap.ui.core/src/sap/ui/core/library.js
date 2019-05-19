@@ -1652,15 +1652,19 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 	 */
 
 	/**
-	 * In the <code>Form</code> control all content controls are positioned on a grid cell base. By default
+	 * Whether a control wants to keep its original width even when used in a <code>Form</code>.
+	 *
+	 * In the <code>Form</code> control, all content controls are positioned on a grid cell base. By default,
 	 * the controls use the full width of the used grid cell. But for some controls (like image controls),
 	 * this is not the desired behavior. In this case the control must keep its original width.
+	 *
+	 * This is an optional method. When not defined, the width of the control might be adjusted.
 	 *
 	 * @return {boolean} true if the <code>Form</code> is not allowed to adjust the width of the control to use the cell's width
 	 * @since 1.48.0
 	 * @public
 	 * @function
-	 * @name sap.ui.core.IFormContent.getFormDoNotAdjustWidth
+	 * @name sap.ui.core.IFormContent.getFormDoNotAdjustWidth?
 	 */
 
 	/**

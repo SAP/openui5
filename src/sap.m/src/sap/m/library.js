@@ -1588,7 +1588,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Returns How many tickmarks would be drawn on the screen.
+	 * Returns how many tickmarks would be drawn on the screen.
 	 *
 	 * <b>Note:</b> There would always be a tickmark in the beginning and in the end of the slider,
 	 * regardless of the value this method returns. The start and the end tickmark are taken into account
@@ -1604,24 +1604,31 @@ sap.ui.define([
 
 	/**
 	 * Called, when the slider is getting resized.
-	 * The Slider/RangeSlider control, could be accessed via the oEvent.control parameter.
+	 *
+	 * The Slider/RangeSlider control could be accessed via the oEvent.control parameter.
+	 *
+	 * Implementing this method is optional.
+	 *
 	 * @param {jQuery.Event} oEvent The event object passed.
 	 *
 	 * @function
-	 * @name sap.m.IScale.handleResize
+	 * @name sap.m.IScale.handleResize?
 	 * @public
 	 */
 
 	/**
 	 * Provides a custom tickmark label.
+	 *
 	 * This method is optional. If it is not provided, the slider values will be placed as labels.
 	 * If provided, the value of the tickmark labels and accessibility attributes
 	 * (aria-valuenow and aria-valuetext) of the slider are changed accordingly.
 	 *
+	 * @param {float} fValue Value represented by the tickmark
+	 * @param {sap.m.SLider|sap.m.RangeSLider} oSlider Slider control that asks for a label
 	 * @returns {string | number} The label that should be placed in the current position.
 	 *
 	 * @function
-	 * @name sap.m.IScale.getLabel
+	 * @name sap.m.IScale.getLabel?
 	 * @public
 	 */
 

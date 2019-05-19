@@ -288,7 +288,7 @@ sap.ui.define([
 	 *
 	 * @see sap.ui.commons.MenuButton#fireItemSelected
 	 *
-	 * @param {Map} [mArguments] the arguments to pass along with the event.
+	 * @param {object} [mArguments] the arguments to pass along with the event.
 	 * @return {sap.ui.commons.MenuButton} <code>this</code> to allow method chaining
 	 * @protected
 	 * @name sap.ui.commons.MenuButton#firePress

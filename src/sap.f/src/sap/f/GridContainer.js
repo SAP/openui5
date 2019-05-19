@@ -363,7 +363,7 @@ sap.ui.define([
 	/**
 	 * Gets a map of the CSS styles that should be applied to the grid, based on the current layout.
 	 * @protected
-	 * @returns {map} The current css styles
+	 * @returns {object} The current CSS styles
 	 */
 	GridContainer.prototype._getActiveGridStyles = function () {
 		var oSettings = this.getActiveLayoutSettings(),
