@@ -26,8 +26,7 @@ sap.ui.define(["sap/base/Log", "sap/base/util/defineLazyProperty", "sap/ui/third
 					"denormalizeScrollBeginRTL",
 					"ownerWindow",
 					"scrollbarSize",
-					"syncStyleClass",
-					"replaceDOM"
+					"syncStyleClass"
 				],
 				"jquery.sap.encoder": [
 					"encodeHTML",

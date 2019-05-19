@@ -6,7 +6,6 @@
 sap.ui.define([
 	'./LabelEnablement',
 	'sap/ui/base/Object',
-	'sap/ui/dom/patch',
 	'sap/ui/performance/trace/Interaction',
 	'sap/base/util/uid',
 	"sap/ui/util/ActivityDetection",
@@ -16,11 +15,11 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/ui/performance/Measurement",
 	"sap/base/Log",
-	"./InvisibleRenderer"
+	"./InvisibleRenderer",
+	"./Patcher"
 ], function(
 	LabelEnablement,
 	BaseObject,
-	domPatch,
 	Interaction,
 	uid,
 	ActivityDetection,
@@ -30,23 +29,21 @@ sap.ui.define([
 	assert,
 	Measurement,
 	Log,
-	InvisibleRenderer
+	InvisibleRenderer,
+	Patcher
 ) {
 
 	"use strict";
 
-	var aCommonMethods = ["renderControl", "cleanupControlWithoutRendering"];
+	var aCommonMethods = ["renderControl", "cleanupControlWithoutRendering", "accessibilityState", "icon"];
 
-	var aStringRendererMethods = ["write", "writeEscaped", "writeAcceleratorKey", "writeControlData", "writeElementData",
+	var aStrInterfaceMethods = ["write", "writeEscaped", "writeAcceleratorKey", "writeControlData", "writeElementData",
 		"writeAttribute", "writeAttributeEscaped", "addClass", "writeClasses", "addStyle", "writeStyles",
 		"writeAccessibilityState", "writeIcon", "translate", "getConfiguration", "getHTML"];
 
-	var aDomRendererMethods = ["openStart", "openEnd", "close", "voidStart", "voidEnd", "text", "attr", "class", "style",
-		"accessibilityState", "icon", "unsafeHtml"];
+	var aDomInterfaceMethods = ["openStart", "voidStart", "attr", "class", "style", "openEnd", "voidEnd", "text", "unsafeHtml", "close"];
 
 	var aNonRendererMethods = ["render", "flush", "destroy"];
-
-	var bDebugRendering = ((window["sap-ui-config"] && window["sap-ui-config"]["xx-debugRendering"]) || /sap-ui-xx-debug(R|-r)endering=(true|x|X)/.test(document.location.search));
 
 	/**
 	 * Creates an instance of the RenderManager.
@@ -81,6 +78,9 @@ sap.ui.define([
 	 * @see sap.ui.core.Core
 	 * @see sap.ui.getCore
 	 *
+	 * @borrows sap.ui.core.RenderManager#writeAccessibilityState as accessibilityState
+	 * @borrows sap.ui.core.RenderManager#writeIcon as icon
+	 *
 	 * @extends Object
 	 * @author SAP SE
 	 * @version ${version}
@@ -95,7 +95,13 @@ sap.ui.define([
 			aRenderedControls,
 			aStyleStack,
 			aRenderStack,
-			bLocked;
+			bLocked,
+			sOpenTag = "",                 // stores the last open tag that is used for the validation
+			bVoidOpen = false,             // specifies whether the last open tag is a void tag or not
+			bDomInterface,                 // specifies the rendering interface that is used by the control renderers
+			sLegacyRendererControlId = "", // stores the id of the control that has a legacy renderer while its parent has the new semantic renderer
+			oStringInterface = {},         // holds old string based rendering API and the string implementation of the new semantic rendering API
+			oDomInterface = {};            // semantic rendering API for the controls whose renderer provides apiVersion=2 marker
 
 		/**
 		 * Sets the focus handler to be used by the RenderManager.
@@ -115,8 +121,41 @@ sap.ui.define([
 			aBuffer = that.aBuffer = [];
 			aRenderedControls = that.aRenderedControls = [];
 			aStyleStack = that.aStyleStack = [{}];
+			bDomInterface = undefined;
+			bVoidOpen = false;
+			sOpenTag = "";
 		}
 
+		//#################################################################################################
+		// Assertion methods for validating Semantic Rendering API calls
+		// These methods will be converted to inline asserts when assertion removal is supported
+		//#################################################################################################
+
+		function assertValidName(sName, sField) {
+			assert(sName && typeof sName == "string" && /^[a-z_][a-zA-Z0-9_\-]*$/.test(sName), "The " + sField + " name provided '" + sName + "' is not valid; it must contain alphanumeric characters, hyphens or underscores");
+		}
+
+		function assertOpenTagHasStarted(sMethod) {
+			assert(sOpenTag, "There is no open tag; '" + sMethod + "' must not be called without an open tag");
+		}
+
+		function assertOpenTagHasEnded(bCustomAssertion) {
+			var bAssertion = (bCustomAssertion === undefined) ? !sOpenTag : bCustomAssertion;
+			assert(bAssertion, "There is an open tag; '" + sOpenTag + "' tag has not yet ended with '" + (bVoidOpen ? "voidEnd" : "openEnd") + "'");
+		}
+
+		function assertValidAttr(sAttr) {
+			assertValidName(sAttr, "attr");
+			assert(sAttr != "class" && sAttr != "style", "Attributes 'class' and 'style' must not be written, instead use dedicated 'class' or 'style' method");
+		}
+
+		function assertValidClass(sClass) {
+			assert(typeof sClass == "string" && !/\s/.test(sClass) && arguments.length === 1, "Method 'class' must be called with exactly one class name");
+		}
+
+		function assertValidStyle(sStyle) {
+			assert(sStyle && typeof sStyle == "string" && !/\s/.test(sStyle), "Method 'style' must be called with a non-empty string name");
+		}
 
 		//#################################################################################################
 		// Methods for 'Buffered writer' functionality... (all public)
@@ -290,31 +329,27 @@ sap.ui.define([
 		};
 
 		//#################################################################################################
-		// Methods for new DOM renderer API
+		// Semantic Rendering Interface for String Based Rendering
 		//#################################################################################################
-
-		var sOpenTag = "";
-		var bVoidOpen = false;
-
-		function assertOpenTags(bAssertion) {
-			assert(bAssertion, "There is an open tag; '" + sOpenTag + "' tag not yet closed with '" + (bVoidOpen ? "voidEnd" : "openEnd") + "'");
-		}
 
 		/**
 		 * Opens the start tag of an HTML element.
 		 *
 		 * This must be followed by <code>openEnd</code> and concluded with <code>close</code>.
+		 * To allow a more efficient DOM update, all tag names have to be used in their canonical form.
+		 * For HTML elements, {@link https://developer.mozilla.org/en-US/docs/Web/HTML/Element tag names} must all be set in lowercase.
+		 * For foreign elements, such as SVG, {@link https://developer.mozilla.org/en-US/docs/Web/SVG/Element tag names} can be set in upper camel case (e.g. linearGradient).
 		 *
-		 * @param {string} sTagName The tag name of the HTML element; all lowercase
-	 	 * @param {sap.ui.core.Element|sap.ui.core.ID} [vControlOrId] The control instance or ID to identify the element
+		 * @param {string} sTagName Tag name of the HTML element
+	 	 * @param {sap.ui.core.Element|sap.ui.core.ID} [vControlOrId] Control instance or ID to identify the element
 		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 		 *
 		 * @private
 		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
 		 */
 		this.openStart = function(sTagName, vControlOrId) {
-			assert(typeof sTagName == "string" && /^[a-z_][a-z0-9_\-]*$/.test(sTagName), "The tag name provided ('" + sTagName + "') is not a valid name to open tag");
-			assertOpenTags(!sOpenTag);
+			assertValidName(sTagName, "tag");
+			assertOpenTagHasEnded();
 			sOpenTag = sTagName;
 
 			this.write("<" + sTagName);
@@ -338,12 +373,12 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
 		 */
-		this.openEnd = function() {
-			assert(sOpenTag, "Ending a tag via 'openEnd' must be preceded by 'openStart'");
-			assertOpenTags(!bVoidOpen);
+		this.openEnd = function(bExludeStyleClasses /* private */) {
+			assertOpenTagHasStarted("openEnd");
+			assertOpenTagHasEnded(!bVoidOpen);
 			sOpenTag = "";
 
-			this.writeClasses();
+			this.writeClasses(bExludeStyleClasses ? false : undefined);
 			this.writeStyles();
 			this.write(">");
 			return this;
@@ -354,14 +389,14 @@ sap.ui.define([
 		 *
 		 * This indicates that there are no more children to append to the open tag.
 		 *
-		 * @param {string} sTagName The tag name of the HTML element
+		 * @param {string} sTagName Tag name of the HTML element
 		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 		 * @private
 		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
 		 */
 		this.close = function(sTagName) {
-			assert(typeof sTagName == "string" && /^[a-z][a-z0-9_\-]*$/.test(sTagName), "The tag name provided ('" + sTagName + "') is not a valid name to close tag");
-			assertOpenTags(!sOpenTag);
+			assertValidName(sTagName, "tag");
+			assertOpenTagHasEnded();
 
 			this.write("</" + sTagName + ">");
 			return this;
@@ -370,16 +405,20 @@ sap.ui.define([
 		/**
 		 * Starts a self-closing tag, such as <code>img</code> or <code>input</code>.
 		 *
-		 * This must be followed by <code>voidEnd</code>.
+		 * This must be followed by <code>voidEnd</code>. For self-closing tags, the <code>close</code> method must not be called.
+		 * To allow a more efficient DOM update, void tag names have to be set in lowercase.
+		 * This API is specific for void elements and must not be used for foreign elements.
+		 * For more information, see {@link https://www.w3.org/TR/html5/syntax.html#void-elements}.
 		 *
-		 * @param {string} sTagName Name of tag
-		 * @param {sap.ui.core.Element|sap.ui.core.ID} [vControlOrId] The control instance or ID to identify the element
+		 * @param {string} sTagName Tag name of the HTML element
+		 * @param {sap.ui.core.Element|sap.ui.core.ID} [vControlOrId] Control instance or ID to identify the element
 		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 		 * @private
 		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
 		 */
 		this.voidStart = function (sTagName, vControlOrId) {
 			this.openStart(sTagName, vControlOrId);
+
 			bVoidOpen = true;
 			return this;
 		};
@@ -394,13 +433,13 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
 		 */
-		this.voidEnd = function () {
-			assert(sOpenTag, "Ending a tag via 'voidEnd' must be preceded by 'voidStart'");
-			assertOpenTags(bVoidOpen || !sOpenTag);
+		this.voidEnd = function (bExludeStyleClasses /* private */) {
+			assertOpenTagHasStarted("voidEnd");
+			assertOpenTagHasEnded(bVoidOpen || !sOpenTag);
 			bVoidOpen = false;
 			sOpenTag = "";
 
-			this.writeClasses();
+			this.writeClasses(bExludeStyleClasses ? false : undefined);
 			this.writeStyles();
 			this.write(">");
 			return this;
@@ -416,7 +455,7 @@ sap.ui.define([
 		 * @SecSink {*|XSS}
 		 */
 		this.unsafeHtml = function(sHtml) {
-			assertOpenTags(!sOpenTag);
+			assertOpenTagHasEnded();
 
 			this.write(sHtml);
 			return this;
@@ -431,7 +470,7 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
 		 */
 		this.text = function(sText) {
-			assertOpenTags(!sOpenTag);
+			assertOpenTagHasEnded();
 
 			this.writeEscaped(sText);
 			return this;
@@ -443,18 +482,20 @@ sap.ui.define([
 		 * This is only valid when called between <code>openStart/voidStart</code> and <code>openEnd/voidEnd</code>.
 		 * The attribute name must not be equal to <code>style</code> or <code>class</code>.
 		 * Styles and classes must be set via dedicated <code>class</code> or <code>style</code> methods.
-		 * Case-insensitive attribute names must all be set in lowercase.
+		 * To update the DOM correctly, all attribute names have to be used in their canonical form.
+		 * For HTML elements, {@link https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes attribute names} must all be set in lowercase.
+		 * For foreign elements, such as SVG, {@link https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute attribute names} can be set in upper camel case (e.g. viewBox).
 		 *
-		 * @param {string} vAttr Name of the attribute
+		 * @param {string} sName Name of the attribute
 		 * @param {*} vValue Value of the attribute
 		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 		 * @private
 		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
 		 */
-		this.attr = function(vAttr, vValue) {
-			assert(vAttr !== "class" && vAttr !== "style", "Attributes 'class' and 'style' must not be written, instead use dedicated 'class' or 'style' methods");
+		this.attr = function(sName, vValue) {
+			assertValidAttr(sName);
 
-			this.writeAttributeEscaped(vAttr, vValue);
+			this.writeAttributeEscaped(sName, vValue);
 			return this;
 		};
 
@@ -471,8 +512,8 @@ sap.ui.define([
 		 */
 		this.class = function(sClass) {
 			if (sClass) {
-				assert(typeof sClass === "string" && !/\s/.test(sClass) && arguments.length === 1, "Method 'class' must be called with exactly one class name");
-				this.addClass(sClass);
+				assertValidClass.apply(this, arguments);
+				this.addClass(encodeXML(sClass));
 			}
 
 			return this;
@@ -483,95 +524,150 @@ sap.ui.define([
 		 *
 		 * This is only valid when called between <code>openStart/voidStart</code> and <code>openEnd/voidEnd</code>.
 		 *
-		 * @param {string} sStyle Name of the style property
+		 * @param {string} sName Name of the style property
 		 * @param {string} sValue Value of the style property
 		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 		 * @private
 		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
 		 */
-		this.style = function(sStyle, sValue) {
-			assert(typeof sStyle === "string" && sStyle && !/\s/.test(sStyle), "Method 'style' must be called with a non-empty string name");
+		this.style = function(sName, sValue) {
+			assertValidStyle(sName);
 
-			this.addStyle(sStyle, sValue);
+			this.addStyle(sName, sValue);
 			return this;
 		};
 
-		/**
-		 * Writes the accessibility state (see WAI-ARIA specification) of the provided element into the HTML
-		 * based on the element's properties and associations.
-		 *
-		 * The ARIA properties are only written when the accessibility feature is activated in the UI5 configuration.
-		 *
-		 * The following properties/values to ARIA attribute mappings are done (if the element does have such properties):
-		 * <ul>
-		 * <li><code>editable===false</code> => <code>aria-readonly="true"</code></li>
-		 * <li><code>enabled===false</code> => <code>aria-disabled="true"</code></li>
-		 * <li><code>visible===false</code> => <code>aria-hidden="true"</code></li>
-		 * <li><code>required===true</code> => <code>aria-required="true"</code></li>
-		 * <li><code>selected===true</code> => <code>aria-selected="true"</code></li>
-		 * <li><code>checked===true</code> => <code>aria-checked="true"</code></li>
-		 * </ul>
-		 *
-		 * In case of the required attribute also the Label controls which referencing the given element in their 'for' relation
-		 * are taken into account to compute the <code>aria-required</code> attribute.
-		 *
-		 * Additionally, the association <code>ariaDescribedBy</code> and <code>ariaLabelledBy</code> are used to write
-		 * the ID lists of the ARIA attributes <code>aria-describedby</code> and <code>aria-labelledby</code>.
-		 *
-		 * Label controls that reference the given element in their 'for' relation are automatically added to the
-		 * <code>aria-labelledby</code> attributes.
-		 *
-		 * Note: This function is only a heuristic of a control property to ARIA attribute mapping. Control developers
-		 * have to check whether it fulfills their requirements. In case of problems (for example the RadioButton has a
-		 * <code>selected</code> property but must provide an <code>aria-checked</code> attribute) the auto-generated
-		 * result of this function can be influenced via the parameter <code>mProps</code> as described below.
-		 *
-		 * The parameter <code>mProps</code> can be used to either provide additional attributes which should be added and/or
-		 * to avoid the automatic generation of single ARIA attributes. The 'aria-' prefix will be prepended automatically to the keys
-		 * (Exception: Attribute 'role' does not get the prefix 'aria-').
-		 *
-		 * Examples:
-		 * <code>{hidden : true}</code> results in <code>aria-hidden="true"</code> independent of the presence or absence of
-		 * the visibility property.
-		 * <code>{hidden : null}</code> ensures that no <code>aria-hidden</code> attribute is written independent of the presence
-		 * or absence of the visibility property.
-		 * The function behaves in the same way for the associations <code>ariaDescribedBy</code> and <code>ariaLabelledBy</code>.
-		 * To append additional values to the auto-generated <code>aria-describedby</code> and <code>aria-labelledby</code> attributes
-		 * the following format can be used:
-		 * <code>{describedby : {value: "id1 id2", append: true}}</code> => <code>aria-describedby="ida idb id1 id2"</code> (assuming that "ida idb"
-		 * is the auto-generated part based on the association <code>ariaDescribedBy</code>).
-		 *
-		 * @param {sap.ui.core.Element}
-		 *            [oElement] the element whose accessibility state should be rendered
-		 * @param {Object}
-		 *            [mProps] a map of properties that should be added additionally or changed.
-		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
-		 * @private
-		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
-		 */
+		// @borrows sap.ui.core.RenderManager#writeAccessibilityState as accessibilityState
 		this.accessibilityState = this.writeAccessibilityState;
 
-		/**
-		 * Writes either an &lt;img&gt; tag for normal URI or a &lt;span&gt; tag with needed properties for an icon URI.
-		 *
-		 * Additional classes and attributes can be added to the tag with the second and third parameter.
-		 * All of the given attributes are escaped for security consideration.
-		 *
-		 * When an &lt;img&gt; tag is rendered, the following two attributes are added by default
-		 * and can be overwritten with corresponding values in the <code>mAttributes</code> parameter:
-		 * <ul>
-		 * <li><code>role: "presentation"</code></Li>
-		 * <li><code>alt: ""</code></li>
-		 * </ul>
-		 *
-		 * @param {sap.ui.core.URI} sURI URI of an image or of an icon registered in {@link sap.ui.core.IconPool}
-		 * @param {array|string} [aClasses] Additional classes that are added to the rendered tag
-		 * @param {object} [mAttributes] Additional attributes that will be added to the rendered tag
-		 * @returns {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
-		 * @private
-		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
-		 */
+		// @borrows sap.ui.core.RenderManager#writeIcon as icon
 		this.icon = this.writeIcon;
+
+
+		//#################################################################################################
+		// Semantic Rendering Interface for DOM Based Rendering
+		//#################################################################################################
+
+		// @see sap.ui.core.RenderManager#openStart
+		oDomInterface.openStart = function(sTagName, vControlOrId) {
+			assertValidName(sTagName, "tag");
+			assertOpenTagHasEnded();
+			sOpenTag = sTagName;
+
+			if (!vControlOrId) {
+				Patcher.openStart(sTagName);
+			} else if (typeof vControlOrId == "string") {
+				Patcher.openStart(sTagName, vControlOrId);
+			} else {
+				Patcher.openStart(sTagName, vControlOrId.getId());
+				renderElementData(this, vControlOrId);
+			}
+
+			return this;
+		};
+
+		// @see sap.ui.core.RenderManager#voidStart
+		oDomInterface.voidStart = function(sTagName, vControlOrId) {
+			this.openStart(sTagName, vControlOrId);
+
+			bVoidOpen = true;
+			return this;
+		};
+
+		// @see sap.ui.core.RenderManager#attr
+		oDomInterface.attr = function(sName, vValue) {
+			assertValidAttr(sName);
+			assertOpenTagHasStarted("attr");
+
+			Patcher.attr(sName, vValue);
+			return this;
+		};
+
+		// @see sap.ui.core.RenderManager#class
+		oDomInterface.class = function(sClass) {
+			assertValidClass.apply(this, arguments);
+			assertOpenTagHasStarted("class");
+
+			Patcher.class(sClass);
+			return this;
+		};
+
+		// @see sap.ui.core.RenderManager#style
+		oDomInterface.style = function(sName, vValue) {
+			assertValidStyle(sName);
+			assertOpenTagHasStarted("style");
+
+			Patcher.style(sName, vValue);
+			return this;
+		};
+
+		// @see sap.ui.core.RenderManager#openEnd
+		oDomInterface.openEnd = function(bExludeStyleClasses /* private */) {
+			if (!bExludeStyleClasses) {
+				var oStyle = aStyleStack[aStyleStack.length - 1];
+				var aStyleClasses = oStyle.aCustomStyleClasses;
+				if (aStyleClasses) {
+					aStyleClasses.forEach(Patcher.class, Patcher);
+					oStyle.aCustomStyleClasses = null;
+				}
+			}
+
+			assertOpenTagHasStarted("openEnd");
+			assertOpenTagHasEnded(!bVoidOpen);
+			sOpenTag = "";
+
+			Patcher.openEnd();
+			return this;
+		};
+
+		// @see sap.ui.core.RenderManager#voidEnd
+		oDomInterface.voidEnd = function(bExludeStyleClasses /* private */) {
+			if (!bExludeStyleClasses) {
+				var oStyle = aStyleStack[aStyleStack.length - 1];
+				var aStyleClasses = oStyle.aCustomStyleClasses;
+				if (aStyleClasses) {
+					aStyleClasses.forEach(Patcher.class, Patcher);
+					oStyle.aCustomStyleClasses = null;
+				}
+			}
+
+			assertOpenTagHasStarted("voidEnd");
+			assertOpenTagHasEnded(bVoidOpen || !sOpenTag);
+			bVoidOpen = false;
+			sOpenTag = "";
+
+			Patcher.voidEnd();
+			return this;
+		};
+
+		// @see sap.ui.core.RenderManager#text
+		oDomInterface.text = function(sText) {
+			assertOpenTagHasEnded();
+
+			if (sText != null) {
+				Patcher.text(sText);
+			}
+
+			return this;
+		};
+
+		// @see sap.ui.core.RenderManager#unsafeHtml
+		oDomInterface.unsafeHtml = function(sHtml) {
+			assertOpenTagHasEnded();
+
+			Patcher.unsafeHtml(sHtml);
+			return this;
+		};
+
+		// @see sap.ui.core.RenderManager#close
+		oDomInterface.close = function(sTagName) {
+			assertValidName(sTagName, "tag");
+			assertOpenTagHasEnded();
+
+			Patcher.close(sTagName);
+			return this;
+		};
+
 
 		//Triggers the BeforeRendering event on the given Control
 		function triggerBeforeRendering(oControl){
@@ -686,15 +782,6 @@ sap.ui.define([
 				Measurement.pause(oControl.getParent().getId() + "---rerender");
 			}
 			aRenderStack.unshift(oControl.getId());
-			// start performance measurement
-			Measurement.start(oControl.getId() + "---renderControl","Rendering of " + oControl.getMetadata().getName(), ["rendering","control"]);
-
-			//Remember the current buffer size to check later whether the control produced output
-			var iBufferLength = aBuffer.length;
-
-			Measurement.pause(oControl.getId() + "---renderControl");
-			// don't measure getRenderer because if Load needed its measured in Ajax call
-			// but start measurement before is to see general rendering time including loading time
 
 			// Either render the control normally, or invoke the InvisibleRenderer in case the control
 			// uses the default visible property
@@ -723,7 +810,8 @@ sap.ui.define([
 					: oMetadata.getRenderer();
 			}
 
-			Measurement.resume(oControl.getId() + "---renderControl");
+			// start performance measurement
+			Measurement.start(oControl.getId() + "---renderControl","Rendering of " + oControl.getMetadata().getName(), ["rendering","control"]);
 
 			triggerBeforeRendering(oControl);
 
@@ -739,32 +827,119 @@ sap.ui.define([
 				}
 			}
 
-			//Render the control using the RenderManager interface
+			// Render the control using the RenderManager interface
 			if (oRenderer && typeof oRenderer.render === "function") {
-				var oControlStyles = {};
-				if (oControl.aCustomStyleClasses && oControl.aCustomStyleClasses.length > 0) {
-					oControlStyles.aCustomStyleClasses = oControl.aCustomStyleClasses; //cleared again in the writeClasses function
+
+				// Determine the rendering interface
+				if (aBuffer.length) {
+
+					// string rendering has already started therefore we cannot use DOM rendering interface
+					bDomInterface = false;
+
+				} else if (bDomInterface === undefined) {
+
+					// rendering interface must be determined for the root control once per rendering
+					// depending on the DOM reference of the control within the DOM tree
+					var oDomRef = oControl.getDomRef();
+					if (!oDomRef && !bVisible) {
+						oDomRef = document.getElementById(InvisibleRenderer.createInvisiblePlaceholderId(oControl));
+					}
+
+					// DOM based rendering is valid only for the controls that are already rendered and providing apiVersion=2 marker.
+					// If the control is in the preserved area then we should not use DOM rendering interface to avoid patching of preserved nodes.
+					if (oDomRef && RenderManager.getApiVersion(oRenderer) == 2 && !RenderManager.isPreservedContent(oDomRef)) {
+
+						// patching will happen during the control renderer calls therefore we need to get the focus info before the patching
+						oFocusHandler && oFocusHandler.storePatchingControlFocusInfo(oDomRef);
+
+						// set the starting point of the Patcher
+						Patcher.setRootNode(oDomRef);
+
+						// remember that we are using DOM based rendering interface
+						bDomInterface = true;
+
+					} else {
+
+						// DOM rendering is not possible we fall back to string rendering interface
+						bDomInterface = false;
+					}
+
+				} else if (!sLegacyRendererControlId && bDomInterface) {
+
+					// for every subsequent renderControl call we need to check whether we can continue with the DOM based rendering
+					if (RenderManager.getApiVersion(oRenderer) != 2) {
+
+						// remember the control id that we have to provide string rendering interface
+						sLegacyRendererControlId = oControl.getId();
+						bDomInterface = false;
+					}
 				}
 
+				// before the rendering get custom style classes of the control
+				var oControlStyles = {};
+				if (oControl.aCustomStyleClasses && oControl.aCustomStyleClasses.length > 0) {
+					oControlStyles.aCustomStyleClasses = oControl.aCustomStyleClasses;
+				}
+
+				// push them to the style stack that will be read by the first writeClasses/openEnd/voidEnd call to append additional classes
 				aStyleStack.push(oControlStyles);
-				oRenderer.render(oDomRendererInterface, oControl);
+
+				// execute the renderer of the control via valid rendering interface
+				if (bDomInterface) {
+
+					// remember the cursor of the Patcher before the control renderer is executed
+					var oCurrentNode = Patcher.getCurrentNode();
+
+					// execute the control renderer with DOM rendering interface
+					oRenderer.render(oDomInterface, oControl);
+
+					// during the rendering the cursor of the Patcher should move to the next element when openStart or voidStart is called
+					// compare after rendering cursor with before rendering cursor to determine whether the control produced any output
+					if (Patcher.getCurrentNode() == oCurrentNode) {
+
+						// we need to remove the control DOM if there is no output produced
+						Patcher.unsafeHtml("", oControl.getId());
+						oControl.bOutput = false;
+					} else {
+						oControl.bOutput = true;
+					}
+
+				} else {
+
+					// remember the buffer size before the control renderer is executed
+					var iBufferLength = aBuffer.length;
+
+					// execute the control renderer with string rendering interface
+					oRenderer.render(oStringInterface, oControl);
+
+					// compare after rendering buffer size with before rendering buffer size to determine whether the control produced any output
+					oControl.bOutput = (aBuffer.length !== iBufferLength);
+				}
+
+				// pop from the style stack after rendering for the next control
 				aStyleStack.pop();
+
+				// at the end of the rendering apply the rendering buffer of the control that is forced to render string interface
+				if (sLegacyRendererControlId && sLegacyRendererControlId === oControl.getId()) {
+					Patcher.unsafeHtml(aBuffer.join(""), sLegacyRendererControlId);
+					sLegacyRendererControlId = "";
+					bDomInterface = true;
+					aBuffer = [];
+				}
 			} else {
 				Log.error("The renderer for class " + oMetadata.getName() + " is not defined or does not define a render function! Rendering of " + oControl.getId() + " will be skipped!");
 			}
 
-			//Remember the rendered control
+			// Remember the rendered control
 			aRenderedControls.push(oControl);
 
 			// let the UIArea know that this control has been rendered
 			// FIXME: RenderManager (RM) should not need to know about UIArea. Maybe UIArea should delegate rendering to RM
-			if ( oControl.getUIArea && oControl.getUIArea() ) {
+			if (oControl.getUIArea && oControl.getUIArea()) {
 				oControl.getUIArea()._onControlRendered(oControl);
 			}
 
-			//Check whether the control has produced HTML
 			// Special case: If an invisible placeholder was rendered, use a non-boolean value
-			oControl.bOutput = aBuffer.length != iBufferLength;
 			if (oRenderer === InvisibleRenderer) {
 				oControl.bOutput = "invisible"; // Still evaluates to true, but can be checked for the special case
 			}
@@ -772,12 +947,14 @@ sap.ui.define([
 			// end performance measurement
 			Measurement.end(oControl.getId() + "---renderControl");
 			aRenderStack.shift();
+
 			// resume the measurement of parent
 			if (aRenderStack && aRenderStack.length > 0) {
 				Measurement.resume(aRenderStack[0] + "---renderControl");
 			} else if (oControl.getParent() && oControl.getParent().getMetadata().getName() == "sap.ui.core.UIArea") {
 				Measurement.resume(oControl.getParent().getId() + "---rerender");
 			}
+
 			return this;
 		};
 
@@ -862,11 +1039,14 @@ sap.ui.define([
 
 		function flushInternal(fnPutIntoDom) {
 
-			var oStoredFocusInfo = oFocusHandler ? oFocusHandler.getControlFocusInfo() : null;
-
-			var sHTML = aBuffer.join("");
-
-			fnPutIntoDom(sHTML);
+			var oStoredFocusInfo;
+			if (!bDomInterface) {
+				oStoredFocusInfo = oFocusHandler && oFocusHandler.getControlFocusInfo();
+				fnPutIntoDom(aBuffer.join(""));
+			} else {
+				oStoredFocusInfo = oFocusHandler && oFocusHandler.getPatchingControlFocusInfo();
+				Patcher.reset();
+			}
 
 			finalizeRendering(oStoredFocusInfo);
 
@@ -1025,11 +1205,6 @@ sap.ui.define([
 							if (oldDomNode) {
 								if (RenderManager.isInlineTemplate(oldDomNode)) {
 									jQuery(oldDomNode).html(sHTML);
-								} else if ( isDomPatchingEnabled() ) {
-									var oNewDom = jQuery.parseHTML(sHTML)[0];
-									jQuery.cleanData([oldDomNode]);
-									jQuery.cleanData(oldDomNode.getElementsByTagName("*"));
-									domPatch(oldDomNode, oNewDom);
 								} else {
 									jQuery(oldDomNode).replaceWith(sHTML);
 								}
@@ -1069,30 +1244,23 @@ sap.ui.define([
 			reset();
 		};
 
-		var oStringRendererInterface = {};
-		var oDomRendererInterface = {};
-		var oInterface = {};
-		aCommonMethods.forEach(function(sMethod) {
-			oStringRendererInterface[sMethod] = oDomRendererInterface[sMethod] = oInterface[sMethod] = that[sMethod];
-		});
-		aDomRendererMethods.forEach(function(sMethod) {
-			oDomRendererInterface[sMethod] = oInterface[sMethod] = that[sMethod];
-		});
-		aStringRendererMethods.forEach(function(sMethod) {
-			oStringRendererInterface[sMethod] = oInterface[sMethod] = that[sMethod];
-			if ( bDebugRendering ) {
-				oDomRendererInterface[sMethod] = function() {
-					Log.error("**** calling legacy render method " + sMethod);
-					return that[sMethod].apply(this,arguments);
-				};
-			} else {
-				oDomRendererInterface[sMethod] = that[sMethod];
-			}
-		});
+		//#################################################################################################
+		// Build up interfaces that can be used by Renderers
+		//#################################################################################################
 
-		aNonRendererMethods.forEach(function(sMethod) {
-			oInterface[sMethod] = that[sMethod];
-		});
+		var oInterface = {};
+		aCommonMethods.forEach(function (sMethod) {
+			oStringInterface[sMethod] = oDomInterface[sMethod] = oInterface[sMethod] = this[sMethod];
+		}, this);
+		aDomInterfaceMethods.forEach(function (sMethod) {
+			oStringInterface[sMethod] = oInterface[sMethod] = this[sMethod];
+		}, this);
+		aStrInterfaceMethods.forEach(function (sMethod) {
+			oStringInterface[sMethod] = oInterface[sMethod] = this[sMethod];
+		}, this);
+		aNonRendererMethods.forEach(function (sMethod) {
+			oInterface[sMethod] = this[sMethod];
+		}, this);
 
 		/**
 		 * Returns the public interface of the RenderManager which can be used by Renderers.
@@ -1101,7 +1269,7 @@ sap.ui.define([
 		 * @private
 		 */
 		this.getRendererInterface = function() {
-			return oDomRendererInterface;
+			return oStringInterface;
 		};
 
 		this.getInterface = function() {
@@ -1169,39 +1337,9 @@ sap.ui.define([
 	 */
 	RenderManager.prototype.writeElementData = function(oElement) {
 		assert(oElement && BaseObject.isA(oElement, 'sap.ui.core.Element'), "oElement must be an sap.ui.core.Element");
-		var sId = oElement.getId();
-		if (sId) {
-			this.attr("id", sId);
-			this.attr("data-sap-ui", sId);
-		}
-		var aData = oElement.getCustomData();
-		var l = aData.length;
-		for (var i = 0; i < l; i++) {
-			var oCheckResult = aData[i]._checkWriteToDom(oElement);
-			if (oCheckResult) {
-				this.attr(oCheckResult.key, oCheckResult.value);
-			}
-		}
 
-		// whether this element is configured to be draggable
-		var bDraggable = oElement.getDragDropConfig().some(function(vDragDropInfo){
-			return vDragDropInfo.isDraggable(oElement);
-		});
-
-		if (!bDraggable) {
-			// also check parent config
-			var oParent = oElement.getParent();
-			if (oParent && oParent.getDragDropConfig) {
-				bDraggable = oParent.getDragDropConfig().some(function(vDragDropInfo){
-					return vDragDropInfo.isDraggable(oElement);
-				});
-			}
-		}
-
-		if (bDraggable) {
-			this.attr("draggable", "true");
-			this.attr("data-sap-ui-draggable", "true");
-		}
+		this.attr("id", oElement.getId());
+		renderElementData(this, oElement);
 
 		return this;
 	};
@@ -1816,27 +1954,82 @@ sap.ui.define([
 		return ( oDomNode && oDomNode.hasAttribute(ATTR_INLINE_TEMPLATE_MARKER) );
 	};
 
+	/**
+	 * Determines the API version of a control renderer from the <code>apiVersion</code> marker.
+	 * If this marker does not exist on the renderer then the default value 1 is returned.
+	 * This value is retrieved at the first call and then cached as an own property of the renderer.
+	 * Inherited <code>apiVersion</code> is only valid if there is no additional method implemented by the subclass.
+	 *
+	 * @param {sap.ui.core.Renderer} oRenderer The renderer of the control
+	 * @return {int} API version of the Renderer
+	 * @private
+	 * @static
+	 */
+	RenderManager.getApiVersion = function(oRenderer) {
+		// return the defined or cached apiVersion value of the Renderer, if any.
+		if (oRenderer.hasOwnProperty("apiVersion")) {
+			return oRenderer.apiVersion;
+		}
+
+		// inherited apiVersion value is only valid if there is no additional method implemented by subclasses.
+		if (oRenderer.apiVersion == 2) {
+			var iOwnMethodsCount = Object.keys(oRenderer).length;
+			if ((oRenderer.hasOwnProperty("_super") && iOwnMethodsCount == 2)    /* old Renderer.extend syntax */
+				|| (oRenderer.hasOwnProperty("extend") && iOwnMethodsCount == 1) /* new Renderer.extend syntax */
+				|| (iOwnMethodsCount == 0)) {                                    /* inheritance without Renderer.extend */
+				return (oRenderer.apiVersion = 2);
+			}
+		}
+
+		// default apiVersion
+		return (oRenderer.apiVersion = 1);
+	};
 
 	//#################################################################################################
 	// Helper Methods
 	//#################################################################################################
 
-	var bDomPatching;
-
 	/**
-	 * Determines whether Dom Patching is enabled or not
-	 * @returns {boolean} whether or not dom patching is enabled
+	 * Renders the element data that can be used for both DOM and String rendering interfaces
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The <code>RenderManager</code> instance
+	 * @param {sap.ui.core.Element} oElement The <code>Element</code> instance
 	 * @private
 	 */
-	function isDomPatchingEnabled() {
-		if (bDomPatching === undefined) {
-			bDomPatching = sap.ui.getCore().getConfiguration().getDomPatching();
-			if (bDomPatching) {
-				Log.warning("DOM Patching is enabled: This feature should be used only for testing purposes!");
+	function renderElementData(oRm, oElement) {
+		// render data attribute
+		var sId = oElement.getId();
+		oRm.attr("data-sap-ui", sId);
+
+		// render custom data
+		oElement.getCustomData().forEach(function(oData) {
+			var oCheckResult = oData._checkWriteToDom(oElement);
+			if (oCheckResult) {
+				oRm.attr(oCheckResult.key.toLowerCase(), oCheckResult.value);
+			}
+		});
+
+		// whether this element is configured to be draggable
+		var bDraggable = oElement.getDragDropConfig().some(function(vDragDropInfo){
+			return vDragDropInfo.isDraggable(oElement);
+		});
+
+		if (!bDraggable) {
+			// also check parent config
+			var oParent = oElement.getParent();
+			if (oParent && oParent.getDragDropConfig) {
+				bDraggable = oParent.getDragDropConfig().some(function(vDragDropInfo){
+					return vDragDropInfo.isDraggable(oElement);
+				});
 			}
 		}
 
-		return bDomPatching;
+		if (bDraggable) {
+			oRm.attr("draggable", "true");
+			oRm.attr("data-sap-ui-draggable", "true");
+		}
+
+		return this;
 	}
 
 	return RenderManager;

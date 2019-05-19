@@ -43,6 +43,8 @@ sap.ui.define([
 				this.aEventQueue = [];
 				// keep track of last focused element
 				this.oLastFocusedControlInfo = null;
+				// keep track of focused element which is using Renderer.apiVersion=2
+				this.oPatchingControlFocusInfo = null;
 
 				this.fEventHandler = jQuery.proxy(this.onEvent, this);
 
@@ -106,6 +108,36 @@ sap.ui.define([
 		};
 
 		/**
+		 * Stores the focus info of the current focused control which is using Renderer.apiVersion=2
+		 *
+		 * @see sap.ui.core.FocusHandler#restoreFocus
+		 * @see sap.ui.core.FocusHandler#getControlFocusInfo
+		 * @param {HTMLElement} oDomRef The DOM reference of the control where the rendering is happening
+		 * @private
+		 */
+		FocusHandler.prototype.storePatchingControlFocusInfo = function(oDomRef) {
+			var oActiveElement = document.activeElement;
+			if (!oActiveElement || !oDomRef.contains(oActiveElement)) {
+				this.oPatchingControlFocusInfo = null;
+			} else {
+				this.oPatchingControlFocusInfo = this.getControlFocusInfo();
+				if (this.oPatchingControlFocusInfo) {
+					this.oPatchingControlFocusInfo.patching = true;
+				}
+			}
+		};
+
+		/**
+		 * Returns the focus info of the last focused control which is using Renderer.apiVersion=2
+		 *
+		 * @see sap.ui.core.FocusHandler#storePatchingControlFocusInfo
+		 * @private
+		 */
+		FocusHandler.prototype.getPatchingControlFocusInfo = function() {
+			return this.oPatchingControlFocusInfo;
+		};
+
+		/**
 		 * If the given control is the last known focused control, the stored focusInfo is updated.
 		 *
 		 * @see sap.ui.core.FocusHandler#restoreFocus
@@ -136,10 +168,13 @@ sap.ui.define([
 			}
 
 			var oControl = this.oCore && this.oCore.byId(oInfo.id);
-			if (oControl && oInfo.info
-					&& oControl.getMetadata().getName() == oInfo.type
-					&& oControl.getFocusDomRef() != oInfo.focusref
-					&& (oControlFocusInfo || /*!oControlFocusInfo &&*/ oControl !== oInfo.control)) {
+			var oFocusRef = oInfo.focusref;
+			if (oControl
+				&& oInfo.info
+				&& oControl.getMetadata().getName() == oInfo.type
+				&& (oInfo.patching
+					|| (oControl.getFocusDomRef() != oFocusRef
+						&& (oControlFocusInfo || /*!oControlFocusInfo &&*/ oControl !== oInfo.control)))) {
 				Log.debug("Apply focus info of control " + oInfo.id, null, "sap.ui.core.FocusHandler");
 				oInfo.control = oControl;
 				this.oLastFocusedControlInfo = oInfo;

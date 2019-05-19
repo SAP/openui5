@@ -19,7 +19,9 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/m/library', 'sap/ui/core/library', '
 	 * @author SAP SE
 	 * @namespace
 	 */
-	var LabelRenderer = {};
+	var LabelRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -66,7 +68,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/m/library', 'sap/ui/core/library', '
 			rm.class("sapMLabelTBHeader");
 		}
 
-		rm.writeAccessibilityState({
+		rm.accessibilityState({
 			label: oLabel.getText()
 		});
 

@@ -488,38 +488,6 @@ sap.ui.define([
 			$El.remove();
 		});
 
-		QUnit.test("DOMPatching", function (assert) {
-			var $Ref = jQuery('' +
-				'<div id="id" title="Ref" style="color:black" class="x" tabindex="-1">' +
-				'<!--Ref-->' +
-				'<span title="Ref" style="color:black" class="x" tabindex="-1">Ref</span>' +
-				'Ref' +
-				'</div>').click(jQuery.noop);
-
-			var $New = jQuery('' +
-				'<div id="id" dir="rtl" style="color:blue" class="x y" tabindex="0">' +
-				'<!--New-->' +
-				'<span dir="rtl" style="color:blue" class="x y" tabindex="0">Something Deep</span>' +
-				'New' +
-				'</div>');
-
-			// let the reference have parent to replace
-			jQuery(document.body).append($Ref);
-
-			// test the patch
-			assert.strictEqual(jQuery.sap.replaceDOM($Ref[0], $New.outerHTML(), true), true, "Should apply the patch");
-			assert.ok($Ref[0].isEqualNode($New[0]), "Patch is applied correctly");
-			assert.strictEqual($Ref._sapTest_dataEvents(), undefined, "Events are removed while patching");
-
-			// test replace
-			$Ref.append("<div></div>");
-			assert.strictEqual(jQuery.sap.replaceDOM($Ref[0], $New[0]), false, "Should replace the reference DOM");
-			$Ref = jQuery("#id"); // get it again since it is replaced
-			assert.ok($Ref[0].isEqualNode($New[0]), "Replace is done correctly");
-
-			$Ref.remove();
-		});
-
 		QUnit.module("Selector", {
 			beforeEach: function () {
 				this.$Image = jQuery('' +

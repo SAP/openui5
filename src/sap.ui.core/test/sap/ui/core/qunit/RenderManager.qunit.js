@@ -804,6 +804,21 @@ sap.ui.define([
 		assert.equal(this.oAssertionSpy.callCount, 1);
 	});
 
+	QUnit.test("RenderManager.class", function (assert) {
+		this.oRM.openStart("div").class("class1 class2");
+		assert.equal(this.oAssertionSpy.callCount, 1);
+	});
+
+	QUnit.test("RenderManager.class", function (assert) {
+		this.oRM.openStart("div").class("class1", "class2");
+		assert.equal(this.oAssertionSpy.callCount, 1);
+	});
+
+	QUnit.test("RenderManager.style", function (assert) {
+		this.oRM.openStart("div").style("", "100px");
+		assert.equal(this.oAssertionSpy.callCount, 1);
+	});
+
 	QUnit.test("RenderManager.style", function (assert) {
 		this.oRM.openStart("div").attr("style", "width: 100%");
 		assert.equal(this.oAssertionSpy.callCount, 1);
@@ -813,7 +828,16 @@ sap.ui.define([
 		this.oRM.
 		openStart("div").attr("id", "x").style("width", "100%").class("x").openEnd().
 			voidStart("img").attr("id", "y").style("width", "100px").class("y").voidEnd().
+			openStart("so-me_Tag1").attr("some-3Attri_bute", "x").openEnd().close("so-me_Tag1").
+			voidStart("so-me_Void5Tag").voidEnd().
 		close("div");
+
+		// nested
+		this.oRM.openStart("div");
+			var oRM = sap.ui.getCore().createRenderManager();
+			oRM.voidStart("img").voidEnd();
+			oRM.destroy();
+		this.oRM.openEnd();
 
 		assert.equal(this.oAssertionSpy.callCount, 0);
 	});

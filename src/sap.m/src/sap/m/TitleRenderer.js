@@ -19,7 +19,9 @@ sap.ui.define(["sap/ui/core/library", "sap/m/HyphenationSupport"],
 	 * Title renderer.
 	 * @namespace
 	 */
-	var TitleRenderer = {};
+	var TitleRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.

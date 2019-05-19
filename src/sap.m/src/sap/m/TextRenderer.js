@@ -16,7 +16,9 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/m/Hyphenation
 		 * @author SAP SE
 		 * @namespace
 		 */
-		var TextRenderer = {};
+		var TextRenderer = {
+			apiVersion: 2
+		};
 
 		/**
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.

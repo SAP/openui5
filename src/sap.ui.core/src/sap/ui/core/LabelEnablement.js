@@ -161,7 +161,7 @@ sap.ui.define(['../base/ManagedObject', "sap/base/assert"],
 
 		// The "for" attribute should only reference labelable HTML elements.
 		if (sControlId && isLabelableControl(oControl)) {
-			oRenderManager.writeAttributeEscaped("for", sControlId);
+			oRenderManager.attr("for", sControlId);
 		}
 	};
 
