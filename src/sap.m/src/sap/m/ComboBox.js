@@ -2029,6 +2029,7 @@ sap.ui.define([
 				oList = this._getList();
 
 			if (!this.isBound("items") && oList) {
+				oComboBoxClone.syncPickerContent();
 				oComboBoxClone.setSelectedIndex(this.indexOfItem(this.getSelectedItem()));
 			}
 

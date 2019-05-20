@@ -10511,6 +10511,43 @@ sap.ui.define([
 
 	QUnit.module("Integration");
 
+	QUnit.test("Object cloning", function (assert) {
+		// Setup
+		var oComboBoxClone,
+			oComboBox = new ComboBox({
+			items: [
+				new Item({key: "A", text: "Amount"}),
+				new Item({key: "C", text: "Checkbox"}),
+				new Item({key: "D", text: "Date"}),
+				new Item({key: "E", text: "Email Address"}),
+				new Item({key: "L", text: "List"}),
+				new Item({key: "N", text: "Number"}),
+				new Item({key: "Q", text: "Quantity"}),
+				new Item({key: "T1", text: "Text"})
+			]
+		});
+
+		assert.ok(!oComboBox._getList(), "The List is not yet loaded");
+
+		// Act
+		oComboBox.open();
+		oComboBox.close();
+
+		// Assert
+		assert.ok(oComboBox._getList(), "The List got loaded");
+
+		// Act
+		oComboBoxClone = oComboBox.clone();
+
+		// Assert
+		assert.ok(oComboBoxClone._getList(), "The List got clonned");
+		assert.strictEqual(oComboBoxClone._getList().getItems().length, 8, "List items were clonned");
+
+		// Cleanup
+		oComboBoxClone.destroy();
+		oComboBox.destroy();
+	});
+
 	QUnit.test("Keep selected value on parent re-render", function (assert) {
 		var oComboBox = new ComboBox({
 			items: [
