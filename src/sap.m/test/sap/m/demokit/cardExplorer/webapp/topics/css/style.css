@@ -68,6 +68,34 @@
 	width: 10rem;
 }
 
+/* table styles */
+
+.topic table {
+	border-collapse: collapse;
+	background-color: #FFFFFF;
+	border: 1px solid #E5E5E5;
+}
+
+.topic table th,
+.topic table td {
+	text-align: left;
+	padding-left: 12px;
+	padding-right: 12px;
+	border-bottom: 1px solid #E5E5E5;
+	border-top: 1px solid #E5E5E5;
+}
+
+.topic table th:first-of-type,
+.topic table td:first-of-type {
+	font-weight: bold;
+}
+
+.topic table th {
+	height: 40px;
+	background-color: #F7F7F7;
+	font-weight: normal;
+}
+
 .prettyprint {
 	overflow: auto;
 }
