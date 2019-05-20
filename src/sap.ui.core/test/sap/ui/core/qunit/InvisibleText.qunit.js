@@ -93,7 +93,7 @@ sap.ui.define([
 		oSUT.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(oSUT.getDomRef().outerHTML, oSUT.getRendererMarkup());
+		assert.ok(oSUT.getDomRef().isEqualNode(jQuery(oSUT.getRendererMarkup())[0]));
 		oSUT.destroy();
 	});
 
