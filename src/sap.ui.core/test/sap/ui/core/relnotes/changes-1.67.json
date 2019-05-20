@@ -19,6 +19,36 @@
         "type": "FIX",
         "text": " v2.ODataListBinding: Initialize relative bindings",
         "references": []
+      },
+      {
+        "id": "c2dc7de0fa122bf41d89c71094a83bc5cfc11f41",
+        "type": "FEATURE",
+        "text": " Opa: Added keepfocus in EnterText",
+        "references": []
+      },
+      {
+        "id": "21046d21851542fa2460a406869a6a85931ac867",
+        "type": "FIX",
+        "text": " DateFormat: Make date input field use Gregorian date",
+        "references": []
+      },
+      {
+        "id": "ce93ba74361bace0a3ad0615a163cfead4cf8915",
+        "type": "FIX",
+        "text": " ODataMessageParser: FullTarget calc + message lifecycle",
+        "references": []
+      },
+      {
+        "id": "c781dd2eea2b4392d045d0f34212db8aa2dc4539",
+        "type": "FIX",
+        "text": " _getOdataQuerySelect method handling non-top-level result array - Revert",
+        "references": []
+      },
+      {
+        "id": "cc5e67dcb2ce8cabd0a6fad8f2a04981686867af",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Inverted state is shown correctly now",
+        "references": []
       }
     ]
   }

@@ -1,0 +1,13 @@
+{
+  "1.67.0": {
+    "date": "May 2019",
+    "notes": [
+      {
+        "id": "74656f1c4c54a201a3ad19756f7c58edbab59b34",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: stickyMode works correctly when start date changes",
+        "references": []
+      }
+    ]
+  }
+}

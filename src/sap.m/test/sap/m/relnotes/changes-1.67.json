@@ -37,6 +37,120 @@
         "type": "FIX",
         "text": " sap.m.Toolbar: Fixed onkeydown with SPACE key",
         "references": []
+      },
+      {
+        "id": "6e26bad990ca7385d1dd28a2685ca3d97bdcbb96",
+        "type": "FIX",
+        "text": " Form: Empty Link is too small",
+        "references": []
+      },
+      {
+        "id": "4fff4ea1762d099fce58bc3d9f52b4ad712df525",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Input field is focused after closing the picker",
+        "references": []
+      },
+      {
+        "id": "ebb030d596137c5890e130423b317e4e044d5d92",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Support for data types is now improved",
+        "references": []
+      },
+      {
+        "id": "c23a558306130b4933aa29f110aa64289b921ae4",
+        "type": "FIX",
+        "text": " sap.m.Input: Changing selection row now stops if input is destroyed",
+        "references": []
+      },
+      {
+        "id": "6728a98da92dda8be71a480eaa4bf77896b82721",
+        "type": "FIX",
+        "text": " sap.m.InputBase: z-index of value state message is now correct",
+        "references": []
+      },
+      {
+        "id": "aeabbf2bbd5238ecbc2be22c5f9a82c0be04ccf6",
+        "type": "FIX",
+        "text": " sap.m.Label: aria-label is now updated correctly",
+        "references": []
+      },
+      {
+        "id": "25eec675be21c1187b74641cdf6123e17d58e192",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Dialog`s custom header is now destroyed",
+        "references": []
+      },
+      {
+        "id": "dbfcbb142b370e02e943fd99f829580089c1caed",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Value is cleared, when the focus is lost",
+        "references": []
+      },
+      {
+        "id": "87600a526e47feb955e0fec996eae26ce3acd59b",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Demo Kit sample adjusted",
+        "references": []
+      },
+      {
+        "id": "a9def37a0be7b057fffd1293f2079f1fa638ccca",
+        "type": "FIX",
+        "text": " sap.m.NotificationListGroup: Items position is now read out correctly",
+        "references": []
+      },
+      {
+        "id": "163e1f679c3eb93fbbaf6e65c5cec17e6f6d2b8a",
+        "type": "FIX",
+        "text": " sap.m.NotificationListItem: Position of the item is now read out correctly",
+        "references": []
+      },
+      {
+        "id": "a713ab3238372220ef142738807db58daf05eae6",
+        "type": "FIX",
+        "text": " sap.m.NotificationListItem: Show more button now shows up in Quartz",
+        "references": []
+      },
+      {
+        "id": "cc5e67dcb2ce8cabd0a6fad8f2a04981686867af",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Inverted state is shown correctly now",
+        "references": []
+      },
+      {
+        "id": "a504d24199f1a79a04209d8613b64f7eba04c144",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed visibility of scroll",
+        "references": []
+      },
+      {
+        "id": "908ce69da25db62eb8fcd5293611e32e0f847280",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed visibility of scroll",
+        "references": []
+      },
+      {
+        "id": "c227324517a546094d8d38a25ec4e7cfa6b40759",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: Demo Kit sample adjusted",
+        "references": []
+      },
+      {
+        "id": "74656f1c4c54a201a3ad19756f7c58edbab59b34",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: stickyMode works correctly when start date changes",
+        "references": []
+      },
+      {
+        "id": "f6c76bb7317ebde1727bcdfa0b1a4f004f779622",
+        "type": "FIX",
+        "text": " sap.m.Text: Max lines calculations are made only after the theme is applied",
+        "references": []
+      },
+      {
+        "id": "13727f65eab058ea3c5342b388ff6c574e6eea1b",
+        "type": "FIX",
+        "text": "sap.m.MessageView: Demo Kit sample adjusted",
+        "references": []
       }
     ]
   }

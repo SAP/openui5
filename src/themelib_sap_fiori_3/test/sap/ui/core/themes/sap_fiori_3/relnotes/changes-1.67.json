@@ -13,6 +13,18 @@
         "type": "FIX",
         "text": ": RTA Minimenu Fixes",
         "references": []
+      },
+      {
+        "id": "a713ab3238372220ef142738807db58daf05eae6",
+        "type": "FIX",
+        "text": " sap.m.NotificationListItem: Show more button now shows up in Quartz",
+        "references": []
+      },
+      {
+        "id": "8dd576a5fb741790d5ff5e5c097e7c5ad0d48bbe",
+        "type": "FIX",
+        "text": ": RTA Toolbar-Buttons fix",
+        "references": []
       }
     ]
   }
