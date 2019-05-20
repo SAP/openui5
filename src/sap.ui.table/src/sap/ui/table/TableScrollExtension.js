@@ -61,6 +61,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks whether an element is connected with the DOM.
+	 *
+	 * @param {HTMLElement} oElement The element to check.
+	 * @returns {boolean} Whether the element is connected with the DOM.
+	 */
+	function isConnected(oElement) {
+		return typeof oElement.isConnected === "boolean" && oElement.isConnected || /* IE */ document.body.contains(oElement);
+	}
+
+	/**
 	 * The configuration options for event listeners.
 	 *
 	 * @typedef {Object} TableScrollExtension.EventListenerOptions
@@ -1152,9 +1162,12 @@ sap.ui.define([
 	/**
 	 * Gets DOM reference of the vertical scrollbar.
 	 *
+	 * @param {boolean} [bIgnoreDOMConnection=false] Whether the scrollbar should also be returned if it is not connected to the DOM. This can
+	 *                                               happen if the table's DOM is removed without notifying the table. For example, if the parent
+	 *                                               of the table is made invisible.
 	 * @returns {HTMLElement|null} Returns <code>null</code>, if the vertical scrollbar does not exist.
 	 */
-	TableScrollExtension.prototype.getVerticalScrollbar = function() {
+	TableScrollExtension.prototype.getVerticalScrollbar = function(bIgnoreDOMConnection) {
 		var oTable = this.getTable();
 		var bIsExternal = this.isVerticalScrollbarExternal();
 
@@ -1169,9 +1182,7 @@ sap.ui.define([
 			}
 		}
 
-		if (this._oVerticalScrollbar && !bIsExternal
-			&& (typeof this._oVerticalScrollbar.isConnected === "boolean" && !this._oVerticalScrollbar.isConnected
-				|| !document.body.contains(this._oVerticalScrollbar) /* IE */)) {
+		if (this._oVerticalScrollbar && !bIsExternal && !bIgnoreDOMConnection && !isConnected(this._oVerticalScrollbar)) {
 			// The internal scrollbar was removed from DOM without notifying the table.
 			// This can be the case, for example, if the parent of the table was made invisible.
 			return null;
@@ -1606,7 +1617,7 @@ sap.ui.define([
 				// large data or when zoomed in Chrome. In this case it can not be scrolled to the last row. To overcome this issue we consider the
 				// table to be scrolled to the end, if the scroll position is less than 1 pixel away from the maximum.
 				var nDistanceToMaximumScrollPosition = iScrollRange - nScrollPosition;
-				var bScrolledViaScrollTop = this.getVerticalScrollbar()._scrollTop == null || this._bIsScrolledVerticallyByWheel;
+				var bScrolledViaScrollTop = this.getVerticalScrollbar(true)._scrollTop == null || this._bIsScrolledVerticallyByWheel;
 				var bScrolledToBottom = nDistanceToMaximumScrollPosition < 1;
 
 				if (bScrolledToBottom && bScrolledViaScrollTop) {
