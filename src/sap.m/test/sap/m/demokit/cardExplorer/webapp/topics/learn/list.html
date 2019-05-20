@@ -23,10 +23,212 @@
 		<p>
 			The list card is used to display multiple list items of various types.
 		</p>
+		<h2 id="structure">Structure</h2>
+		<p>The list card contains an array of list items.</p>
+
+		<h4>List item properties</h4>
+
+		<table>
+			<tr>
+				<th>Property</th>
+				<th>Type</th>
+				<th>Required</th>
+				<th>Description</th>
+				<th>Version</th>
+			</tr>
+			<tr>
+				<td>title</td>
+				<td>string</td>
+				<td>No</td>
+				<td>The title of the item</td>
+				<td>1.1.0</td>
+			</tr>
+			<tr>
+				<td>description</td>
+				<td>string</td>
+				<td>No</td>
+				<td>The description of the item</td>
+				<td>1.1.0</td>
+			</tr>
+			<tr>
+				<td>info</td>
+				<td>array</td>
+				<td>No</td>
+				<td>Represents additional information text</td>
+				<td>1.1.0</td>
+			</tr>
+			<tr>
+				<td>highlight</td>
+				<td>string</td>
+				<td>No</td>
+				<td>The highlight of the item</td>
+				<td>1.1.0</td>
+			</tr>
+			<tr>
+				<td>icon</td>
+				<td>icon</td>
+				<td>No</td>
+				<td>The icon of the item</td>
+				<td>1.1.0</td>
+			</tr>
+			<tr>
+				<td>actions</td>
+				<td>array</td>
+				<td>No</td>
+				<td>Represents actions that can be applied on the item</td>
+				<td>1.1.0</td>
+			</tr>
+		</table>
+		<h2 id="example">Example</h2>
+		<p>Defining the type and data for the card:
+		</p>
+		<pre class="prettyprint"><xmp class="language-json">{
+	"sap.app": {
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "Request list content Card",
+			"subTitle": "Card subtitle",
+			"icon": {
+				"src": "sap-icon://accept"
+			},
+			"status": {
+				"text": "8 of 17"
+			}
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "./cardcontent/sometimes.json"
+				}
+			},
+			"item": {
+				"icon": {
+					"src": "{icon}"
+				},
+				"title": {
+					"label": "{{title_label}}",
+					"value": "{Name}"
+				},
+				"description": {
+					"label": "{{description_label}}",
+					"value": "{Description}"
+				},
+				"highlight": "{state}",
+				"info": {
+					"value": "{info}",
+					"state": "{infoState}"
+				}
+			}
+		}
+	}
+}</xmp></pre>
+		<p>
+			The content of the sometimes.json which we are requesting:
+		</p>
+		<pre class="prettyprint"><xmp class="language-json">[{
+	"Name": "Notebook Basic 15",
+	"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+	"Id": "HT-1000",
+	"SubCategoryId": "Notebooks",
+	"icon": "../images/Woman_avatar_01.png",
+	"state": "Information",
+	"info": "27.45 EUR",
+	"infoState": "Success"
+},
+{
+	"Name": "Notebook Basic 17",
+	"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+	"Id": "HT-1001",
+	"SubCategoryId": "Notebooks",
+	"icon": "../images/Woman_avatar_01.png",
+	"state": "Success",
+	"info": "27.45 EUR",
+	"infoState": "Success"
+
+},
+{
+	"Name": "Notebook Basic 18",
+	"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+	"Id": "HT-1002",
+	"SubCategoryId": "Notebooks",
+	"icon": "../images/Woman_avatar_01.png",
+	"state": "Warning",
+	"info": "9.45 EUR",
+	"infoState": "Error"
+},
+{
+	"Name": "Notebook Basic 19",
+	"Description": "Notebook Basic 19 with 2,80 GHz quad core, 19\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+	"Id": "HT-1003",
+	"SubCategoryId": "Notebooks",
+	"icon": "../images/Woman_avatar_01.png",
+	"state": "Error",
+	"info": "9.45 EUR",
+	"infoState": "Error"
+},
+{
+	"Name": "ITelO Vault",
+	"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
+	"Id": "HT-1007",
+	"SubCategoryId": "PDAs & Organizers",
+	"icon": "../images/Woman_avatar_01.png",
+	"state": "Success",
+	"info": "29.45 EUR",
+	"infoState": "Success"
+},
+{
+	"Name": "Notebook Professional 15",
+	"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+	"Id": "HT-1010",
+	"SubCategoryId": "Notebooks",
+	"icon": "../images/Woman_avatar_01.png",
+	"state": "Success",
+	"info": "29.45 EUR",
+	"infoState": "Success"
+},
+{
+	"Name": "Notebook Professional 26",
+	"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+	"Id": "HT-1022",
+	"SubCategoryId": "Notebooks",
+	"icon": "../images/Woman_avatar_01.png",
+	"state": "Success",
+	"info": "29.45 EUR",
+	"infoState": "Success"
+},
+{
+	"Name": "Notebook Professional 27",
+	"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+	"Id": "HT-1024",
+	"SubCategoryId": "Notebooks",
+	"icon": "../images/Woman_avatar_01.png",
+	"state": "Success",
+	"info": "29.45 EUR",
+	"infoState": "Success"
+}]</xmp></pre>
+		<p>Defining the header:</p>
+		<pre class="prettyprint"><xmp class="language-json">"header": {
+	"title": "New Team Members",
+	"icon": {
+	  "src": "sap-icon://group"
+	}
+}</xmp></pre>
+		<p>Finally create an widget card that actually can use the manifest.json which we created:</p>
+		<pre class="prettyprint">
+<xmp class="language-xml"><mvc:View xmlns:w="sap.ui.integration.widgets">
+	<w:Card manifest="./manifest.json" width="400px" height="auto"/>
+</mvc:View>
+</xmp></pre>
+		<a class="try-button" href="../../index.html#/explore/list" target="_parent">Try it Out</a>
 	</div>
 	<div class="navigation">
 		<h4>Table of Contents</h4>
-		<div><a href="#overview">List Card</a></div>
+		<div><a href="#overview">Timeline Card</a></div>
+		<div><a href="#structure">Structure</a></div>
+		<div><a href="#example">Example</a></div>
 	</div>
 </div>
 </body>
