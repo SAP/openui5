@@ -29,12 +29,14 @@ sap.ui.define([
 					{
 						title: 'Default',
 						target: 'learnDetail',
-						key: 'headerDefault'
+						key: 'headerDefault',
+						topicTitle: 'Headers'
 					},
 					{
 						title: 'Numeric',
 						target: 'learnDetail',
-						key: 'headerNumeric'
+						key: 'headerNumeric',
+						topicTitle: 'Headers'
 					}
 				]
 			},

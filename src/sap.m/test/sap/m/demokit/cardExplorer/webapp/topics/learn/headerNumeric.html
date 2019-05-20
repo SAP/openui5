@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Integration Cards</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="../css/style.css">
+	<link rel="stylesheet" href="../css/prettify-light.css"/>
+	<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+	<script id="sap-ui-bootstrap"
+			src="../../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_fiori_3">
+	</script>
+</head>
+<body class="sapUiBody topicBody">
+<div class="topic">
+	<div class="content">
+		<h1 id="numerictHeader">
+			Numeric Header
+		</h1>
+		<h3>Overview</h3>
+		<p>
+				The NumericHeader shows general information about the card and allows the configuration of a numeric value visualization. You can configure the title, subtitle, status text and icon, using properties.
+		</p>
+
+		<h3>Usage</h3>
+		<p>
+			To show only basic information, use Header instead. It is possible to add more side number indicators, using the sideIndicators aggregation. You should always set a title. You should always have a maximum of two side indicators.
+		</p>
+
+		<h2 id="properties">Properties</h2>
+		<table>
+			<tr>
+			  <th>Property</th>
+			  <th>Type</th> 
+			  <th>Required</th>
+			  <th>Description</th>
+			  <th>Version</th>
+			</tr>
+			<tr>
+			  <td>number</td>
+			  <td>string</td>
+			  <td></td>
+			  <td>The numeric value of the main number indicator. If the value contains more than five characters, only the first five are displayed. Without rounding the number.</td>
+			  <td></td>
+			</tr>
+			<tr>
+			  <td>scale</td>
+			  <td>string</td>
+			  <td></td>
+			  <td>Defines the unit of measurement (scaling prefix) for the main indicator. Financial characters can be used for currencies and counters. The International System of Units (SI) prefixes can be used. If the unit contains more than three characters, only the first three characters are displayed.</td>
+			  <td></td>
+			</tr>
+			<tr>
+			  <td>state</td>
+			  <td>sap.m.ValueColor</td>
+			  <td>Neutral</td>
+			  <td>The semantic color which represents the state of the main number indicator.<em>Experimental API since 1.64 Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.</em></td>
+			  <td></td>
+			</tr>
+			<tr>
+				<td>subtitle</td>
+				<td>string</td>
+				<td></td>
+				<td>The subtitle of the card</td>
+				<td></td>
+			  </tr>
+			  <tr>
+				<td>title</td>
+				<td>string</td>
+				<td>empty string</td>
+				<td>Defines the title.</td>
+				<td></td>
+			  </tr>
+			  <tr>
+				<td>trend</td>
+				<td>sap.m.DeviationIndicator</td>
+				<td>None</td>
+				<td>The direction of the trend arrow. Shows deviation for the value of the main number indicator.</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>unitOfMeasurement</td>
+				<td>string</td>
+				<td></td>
+				<td>General unit of measurement for the header. Displayed as side information to the subtitle.</td>
+				<td></td>
+			</tr>
+		  </table>
+
+		  <h2 id="events">Events</h2>
+		  <table>
+			  <tr>
+				<th>Event</th>
+				<th>Description</th> 
+			  </tr>
+			  <tr>
+				<td>press</td>
+				<td>Fires when the user presses the control.</td>
+			  </tr>
+			</table>
+
+			<h3 id="example">Example</h3>
+			<pre class="prettyprint small">
+<xmp class="language-json">"header": {
+	"type": "Numeric",
+	"title": "Project Cloud Transformation",
+	"subTitle": "Revenue",
+	"unitOfMeasurement": "EUR",
+	"mainIndicator": {
+	"number": "44",
+	"unit": "%",
+	"trend": "Down",
+	"state": "Critical"
+	},
+	"details": "Some details",
+	"sideIndicators": [
+	{
+		"title": "Target",
+		"number": "17",
+		"unit": "%"
+	},
+	{
+		"title": "Deviation",
+		"number": "5",
+		"unit": "%"
+	}
+	]
+}</xmp></pre>
+
+				<h2 id="actions">Actions</h2>
+				<p><a href="../../index.html#/learn/featureActions" target="_parent">Actions</a> add behavior to the card. To add a navigation action to the header and to the items, you can configure it inside the manifest.</p>
+
+	</div>
+	<div class="navigation">
+		<h4>Table of Contents</h4>
+		<div><a href="#defaultHeader">Overview</a></div>
+		<div><a href="#properties">Properties</a></div>
+		<div><a href="#events">Events</a></div>
+		<div><a href="#example">Example</a></div>
+		<div><a href="#actions">Actions</a></div>
+	</div>
+</div>
+</body>
+</html>
