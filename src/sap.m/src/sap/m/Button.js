@@ -308,18 +308,36 @@ sap.ui.define([
 	 */
 	Button.prototype.onkeydown = function(oEvent) {
 
-		if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
+		if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER || oEvent.which === KeyCodes.ESCAPE) {
 
-			// mark the event for components that needs to know if the event was handled by the button
-			oEvent.setMarked();
+			if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
+				// mark the event for components that needs to know if the event was handled by the button
+				oEvent.setMarked();
 
-			// set active button state
-			this._activeButton();
+				// set active button state
+				this._activeButton();
+			}
+
+			if (oEvent.which === KeyCodes.ENTER) {
+				this.firePress({/* no parameters */});
+			}
+
+			if (oEvent.which === KeyCodes.SPACE) {
+				this._bPressedSpace = true;
+			}
+
+			// set inactive state of the button and marked ESCAPE as pressed only if SPACE was pressed before it
+			if (this._bPressedSpace && oEvent.which === KeyCodes.ESCAPE) {
+				this._bPressedEscape = true;
+				// set inactive button state
+				this._inactiveButton();
+			}
+		} else {
+			if (this._bPressedSpace) {
+				oEvent.preventDefault();
+			}
 		}
 
-		if (oEvent.which === KeyCodes.ENTER) {
-			this.firePress({/* no parameters */});
-		}
 	};
 
 	/**
@@ -330,8 +348,7 @@ sap.ui.define([
 	 */
 	Button.prototype.onkeyup = function(oEvent) {
 
-		if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
-
+		if (oEvent.which === KeyCodes.ENTER) {
 			// mark the event for components that needs to know if the event was handled by the button
 			oEvent.setMarked();
 
@@ -340,7 +357,17 @@ sap.ui.define([
 		}
 
 		if (oEvent.which === KeyCodes.SPACE) {
-			this.firePress({/* no parameters */});
+			if (!this._bPressedEscape) {
+				// mark the event for components that needs to know if the event was handled by the button
+				oEvent.setMarked();
+
+				// set inactive button state
+				this._inactiveButton();
+				this.firePress({/* no parameters */});
+			} else {
+				this._bPressedEscape = false;
+			}
+			this._bPressedSpace = false;
 		}
 	};
 
