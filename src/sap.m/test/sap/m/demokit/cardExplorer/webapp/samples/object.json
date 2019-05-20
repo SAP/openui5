@@ -11,11 +11,11 @@
 		"position": "Sales Executive",
 		"phone": "+1 202 555 5555",
 		"email": "my@mymail.com",
-		"photo": "./test-resources/sap/ui/integration/demokit/sample/ObjectCard/images/Woman_avatar_01.png",
+		"photo": "./images/Woman_avatar_01.png",
 		"manager": {
 		  "firstName": "John",
 		  "lastName": "Miller",
-		  "photo": "./test-resources/sap/ui/integration/demokit/sample/ObjectCard/images/Woman_avatar_02.png"
+		  "photo": "./images/Woman_avatar_02.png"
 		},
 		"company": {
 		  "name": "Robert Brown Entertainment",
