@@ -481,18 +481,20 @@ sap.ui.define([
 
 	QUnit.test("getVerticalScrollbar", function(assert) {
 		assert.strictEqual(this.oScrollExtension.getVerticalScrollbar(), oTable.getDomRef(tableLibrary.SharedDomRef.VerticalScrollBar),
-			"Returned: Vertical scrollbar element");
+			"Returned the vertical scrollbar");
 
 		var oScrollbar = this.oScrollExtension.getVerticalScrollbar();
 		var oScrollbarParent = oScrollbar.parentNode;
 
 		oScrollbarParent.removeChild(oScrollbar);
 		assert.strictEqual(this.oScrollExtension.getVerticalScrollbar(), null,
-			"Returned null: The Scrollbar was removed from DOM");
+			"Returned null: The scrollbar was removed from DOM");
+		assert.strictEqual(this.oScrollExtension.getVerticalScrollbar(true), oScrollbar,
+			"Returned the vertical scrollbar: The scrollbar was removed from DOM, but the connection to the DOM is ignored");
 
 		oScrollbarParent.appendChild(oScrollbar);
 		assert.strictEqual(this.oScrollExtension.getVerticalScrollbar(), oScrollbar,
-			"Returned: Vertical scrollbar element");
+			"Returned the vertical scrollbar: The scrollbar was added back to the DOM");
 
 		destroyTables();
 		createTables();
@@ -5592,6 +5594,91 @@ sap.ui.define([
 		//}).then(oTable.qunit.whenRenderingFinished).then(function() {
 		//	that.assertPosition(assert, iFirstVisibleRow, iScrollPosition, iInnerScrollPosition,
 		//		"ScrollTop = In buffer; After visible row count decreased (collapse)");
+
+		}).then(done);
+	});
+
+	QUnit.test("The table's DOM is removed without notifying the table", function(assert) {
+		var done = assert.async();
+		var that = this;
+		var oTable = that.createTable();
+		var oScrollExtension = oTable._getScrollExtension();
+		var oTableElement;
+		var oTableParentElement;
+
+		oScrollExtension._debug();
+
+		Promise.resolve().then(oTable.qunit.whenInitialRenderingFinished).then(function() {
+			oTableElement = oTable.getDomRef();
+			oTableParentElement = oTableElement.parentNode;
+			oTable.setFirstVisibleRow(5);
+			oTableParentElement.removeChild(oTableElement);
+
+		}).then(TableQUnitUtils.$wait()).then(function() {
+			assert.strictEqual(oTable.getFirstVisibleRow(), 5,
+				"Remove DOM synchronously after setting firstVisibleRow: The firstVisibleRow is correct");
+			assert.strictEqual(oScrollExtension._VerticalScrollingHelper.getScrollPosition(oTable), 5 * that.defaultRowHeight,
+				"Remove DOM synchronously after setting firstVisibleRow: ScrollTop is correct");
+
+			oTable.setFirstVisibleRow(6);
+
+		}).then(TableQUnitUtils.$wait()).then(function() {
+			assert.strictEqual(oTable.getFirstVisibleRow(), 6,
+				"Set firstVisibleRow if DOM is removed: The firstVisibleRow is correct");
+			assert.strictEqual(oScrollExtension._VerticalScrollingHelper.getScrollPosition(oTable), 6 * that.defaultRowHeight,
+				"Set firstVisibleRow if DOM is removed: The vertical scroll position is correct");
+
+		}).then(function() {
+			oTableParentElement.appendChild(oTableElement);
+			oTable.setFirstVisibleRow(5);
+		}).then(TableQUnitUtils.$wait()).then(function() {
+			oTableParentElement.removeChild(oTableElement);
+
+		}).then(TableQUnitUtils.$wait()).then(function() {
+			assert.strictEqual(oTable.getFirstVisibleRow(), 5,
+				"Remove DOM asynchronously after setting firstVisibleRow: The firstVisibleRow is correct");
+			assert.strictEqual(oScrollExtension._VerticalScrollingHelper.getScrollPosition(oTable), 5 * that.defaultRowHeight,
+				"Remove DOM asynchronously after setting firstVisibleRow: ScrollTop is correct");
+
+		}).then(function() {
+			oTableParentElement.appendChild(oTableElement);
+			oScrollExtension.getVerticalScrollbar().scrollTop = 100;
+			oTableParentElement.removeChild(oTableElement);
+
+		}).then(TableQUnitUtils.$wait()).then(function() {
+			assert.strictEqual(oTable.getFirstVisibleRow(), 5,
+				"Remove DOM synchronously after scrolling with scrollbar: The firstVisibleRow is correct");
+			assert.strictEqual(oScrollExtension._VerticalScrollingHelper.getScrollPosition(oTable), 5 * that.defaultRowHeight,
+				"Remove DOM synchronously after scrolling with scrollbar: The vertical scroll position is correct");
+
+		}).then(function() {
+			oTableParentElement.appendChild(oTableElement);
+			oScrollExtension.getVerticalScrollbar().scrollTop = 100;
+			return oTable.qunit.whenVSbScrolled();
+
+		}).then(function() {
+			oTableParentElement.removeChild(oTableElement);
+
+		}).then(TableQUnitUtils.$wait()).then(function() {
+			assert.strictEqual(oTable.getFirstVisibleRow(), 2,
+				"Remove DOM asynchronously after scrolling with scrollbar: The firstVisibleRow is correct");
+			assert.strictEqual(oScrollExtension._VerticalScrollingHelper.getScrollPosition(oTable), 100,
+				"Remove DOM asynchronously after scrolling with scrollbar: The vertical scroll position is correct");
+
+		}).then(function() {
+			oTableParentElement.appendChild(oTableElement);
+			oTable._setLargeDataScrolling(true);
+			oScrollExtension.getVerticalScrollbar().scrollTop = 200;
+			return oTable.qunit.whenVSbScrolled();
+
+		}).then(function() {
+			oTableParentElement.removeChild(oTableElement);
+
+		}).then(TableQUnitUtils.$wait(300)).then(function() {
+			assert.strictEqual(oTable.getFirstVisibleRow(), 4,
+				"Remove DOM asynchronously after scrolling with scrollbar and large data scrolling enabled: The firstVisibleRow is correct");
+			assert.strictEqual(oScrollExtension._VerticalScrollingHelper.getScrollPosition(oTable), 200,
+				"Remove DOM asynchronously after scrolling with scrollbar and large data scrolling enabled: The vertical scroll position is correct");
 
 		}).then(done);
 	});

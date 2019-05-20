@@ -592,21 +592,27 @@ sap.ui.define([
 	/**
 	 * Returns a promise that resolves after a certain delay.
 	 *
-	 * @param {int} iMilliseconds The delay in milliseconds.
+	 * @param {int} [iMilliseconds] The delay in milliseconds. If none is set, <code>requestAnimationFrame</code> is used.
 	 * @returns {Promise} A promise.
 	 */
 	TableQUnitUtils.wait = function(iMilliseconds) {
+		var bUseRequestAnimationFrame = iMilliseconds == null;
+
 		iMilliseconds = iMilliseconds == null ? 0 : iMilliseconds;
 
 		return new Promise(function(resolve) {
-			setTimeout(resolve, iMilliseconds);
+			if (bUseRequestAnimationFrame) {
+				window.requestAnimationFrame(resolve);
+			} else {
+				setTimeout(resolve, iMilliseconds);
+			}
 		});
 	};
 
 	/**
 	 * Wrapper around #wait for easier promise chaining. Returns a function that returns a promise.
 	 *
-	 * @param {int} iMilliseconds The delay in milliseconds.
+	 * @param {int} [iMilliseconds] The delay in milliseconds. If none is set, <code>requestAnimationFrame</code> is used.
 	 * @returns {function(): Promise} Wrapper function.
 	 */
 	TableQUnitUtils.$wait = function(iMilliseconds) {

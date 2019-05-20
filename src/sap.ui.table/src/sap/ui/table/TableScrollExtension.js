@@ -94,6 +94,16 @@ sap.ui.define([
 	}
 
 	/**
+	 * Checks whether an element is connected with the DOM.
+	 *
+	 * @param {HTMLElement} oElement The element to check.
+	 * @returns {boolean} Whether the element is connected with the DOM.
+	 */
+	function isConnected(oElement) {
+		return typeof oElement.isConnected === "boolean" && oElement.isConnected || /* IE */ document.body.contains(oElement);
+	}
+
+	/**
 	 * Static object to store internal instance information that should not be exposed but be hidden in this extension.
 	 */
 	var internalMap = new window.WeakMap();
@@ -307,7 +317,7 @@ sap.ui.define([
 			sTrigger = sTrigger == null ? ScrollTrigger.EXTENSION : sTrigger;
 
 			var oScrollExtension = oTable ? oTable._getScrollExtension() : null;
-			var oVSb = oScrollExtension ? oScrollExtension.getVerticalScrollbar() : null;
+			var oVSb = oScrollExtension ? oScrollExtension.getVerticalScrollbar(true) : null;
 
 			if (!oTable || !oVSb || !oScrollExtension.isVerticalScrollbarRequired() || internal(oTable).bVerticalScrollingSuspended) {
 				log("VerticalScrollingHelper#updateScrollPosition: Not executed - Guard clause not passed", oTable);
@@ -341,6 +351,11 @@ sap.ui.define([
 
 			if (bPreventScroll === true) {
 				log("VerticalScrollingHelper#updateScrollPosition: Scrolling prevented", oTable);
+				return;
+			}
+
+			if (!isConnected(oVSb)) {
+				log("VerticalScrollingHelper#updateScrollPosition: Scrollbar is not connected with the DOM", oTable);
 				return;
 			}
 
@@ -445,7 +460,9 @@ sap.ui.define([
 			var nOldScrollTop = oEvent.target._scrollTop; // This will be set in VerticalScrollingHelper#updateScrollPosition.
 			var bScrollWithScrollbar = nNewScrollTop !== nOldScrollTop;
 
-			if (bScrollWithScrollbar) {
+			if (nNewScrollTop === 0 && !isConnected(oEvent.target)) {
+				log("Vertical scroll event handler: Scrollbar is not connected with the DOM", this);
+			} else if (bScrollWithScrollbar) {
 				log("Vertical scroll event handler: Scroll position changed by scrolling with the scrollbar:"
 					+ " From " + internal(this).nVerticalScrollPosition + " to " + nNewScrollTop, this);
 				delete oEvent.target._scrollTop;
@@ -545,7 +562,7 @@ sap.ui.define([
 					// large data or when zoomed in Chrome. In this case it can not be scrolled to the last row. To overcome this issue we consider the
 					// table to be scrolled to the end, if the scroll position is less than 1 pixel away from the maximum.
 					var nDistanceToMaximumScrollPosition = iScrollRange - nScrollPosition;
-					var bScrolledViaScrollTop = oScrollExtension.getVerticalScrollbar()._scrollTop == null
+					var bScrolledViaScrollTop = oScrollExtension.getVerticalScrollbar(true)._scrollTop == null
 												|| internal(oTable).bIsScrolledVerticallyByWheel;
 					var bScrolledToBottom = nDistanceToMaximumScrollPosition < 1 && bScrolledViaScrollTop
 											|| nDistanceToMaximumScrollPosition < 0.01;
@@ -1549,9 +1566,12 @@ sap.ui.define([
 	/**
 	 * Gets DOM reference of the vertical scrollbar.
 	 *
+	 * @param {boolean} [bIgnoreDOMConnection=false] Whether the scrollbar should also be returned if it is not connected with the DOM. This can
+	 *                                               happen if the table's DOM is removed without notifying the table. For example, if the parent
+	 *                                               of the table is made invisible.
 	 * @returns {HTMLElement|null} Returns <code>null</code>, if the vertical scrollbar does not exist.
 	 */
-	TableScrollExtension.prototype.getVerticalScrollbar = function() {
+	TableScrollExtension.prototype.getVerticalScrollbar = function(bIgnoreDOMConnection) {
 		var oTable = this.getTable();
 		var bIsExternal = this.isVerticalScrollbarExternal();
 
@@ -1568,9 +1588,7 @@ sap.ui.define([
 
 		var oScrollbar = internal(oTable).oVerticalScrollbar;
 
-		if (oScrollbar && !bIsExternal
-			&& (typeof oScrollbar.isConnected === "boolean" && !oScrollbar.isConnected
-				|| !document.body.contains(oScrollbar) /* IE */)) {
+		if (oScrollbar && !bIsExternal && !bIgnoreDOMConnection && !isConnected(oScrollbar)) {
 			// The internal scrollbar was removed from DOM without notifying the table.
 			// This can be the case, for example, if the parent of the table was made invisible.
 			return null;
