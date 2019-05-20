@@ -34,6 +34,9 @@ function(Renderer) {
 			oRm.renderControl(oControl._getOverflowToolbar());
 
 			oRm.write("</div>");
+		},
+		shouldAddIBarContext: function () {
+			return false;
 		}
 	};
 
