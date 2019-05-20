@@ -102,4 +102,15 @@ describe("sap.f.GridListVisualTests", function () {
 		goToIconTabFilter("GridList9");
 		takePictureOfContent("9_grouping5");
 	});
+
+	it("should visualize GridList with some properties changed", function () {
+		goToIconTabFilter("GridList10");
+		takePictureOfContent("10_properties_counters");
+
+		browser.executeScript('document.getElementById("__xmlview10--GridListSingleSelectLeft").scrollIntoView()');
+		takePictureOfContent("10_properties_SingleSelectLeft");
+
+		browser.executeScript('document.getElementById("__xmlview10--GridListMultiSelect").scrollIntoView()');
+		takePictureOfContent("10_properties_MultiSelect");
+	});
 });

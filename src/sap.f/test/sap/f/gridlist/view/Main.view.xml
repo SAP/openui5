@@ -38,6 +38,9 @@
                     <IconTabFilter id="GridList9" text="GridList Grouping 5" key="GridList9">
                         <mvc:XMLView viewName="sap.f.gridlist.view.examples.Grouping5" />
                     </IconTabFilter>
+                     <IconTabFilter id="GridList10" text="GridList Properties" key="GridList10">
+                        <mvc:XMLView viewName="sap.f.gridlist.view.examples.Properties" />
+                    </IconTabFilter>
                 </items>
             </IconTabBar>
         </Page>
