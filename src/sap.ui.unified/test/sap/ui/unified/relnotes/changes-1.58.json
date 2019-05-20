@@ -158,5 +158,155 @@
         ]
       }
     ]
+  },
+  "1.58.1": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "1636cc363d88fa762cf1641f4c7a97710b684a4a",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: returns empty string now when file has no extension",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880468008"
+          }
+        ]
+      },
+      {
+        "id": "5b949cddb0f47691289555d76bc2cca0a982b3fd",
+        "type": "FIX",
+        "text": "unified.ColorPicker: Hue value of 360 is the same as 0",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880490034"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.2": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "a1014eaffc2820c10b3256282bbf1182472fe5d5",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: button is not cut when displaying two months and years in Bulgarian",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880434903"
+          }
+        ]
+      },
+      {
+        "id": "8df161e39f2358bc23e983ebd063b841b4faea10",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: visual fix of the DatesRow on hover",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880484945"
+          }
+        ]
+      },
+      {
+        "id": "57008d240c667899928c7783b1b4852148b47a89",
+        "type": "FIX",
+        "text": "sap.ui.unified.ColorPicker: Now the dialog's style is not broken",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870330317"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.3": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "0185262652f208d2faa47ea0117804f5a83fa9f0",
+        "type": "FIX",
+        "text": "PlanningCalendar: Spaces in internal aria-label are removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870391389"
+          }
+        ]
+      },
+      {
+        "id": "94347d186859480390989f2748d44efad15d9b37",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: correct width of the input when invalidated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870362150"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.5": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "27293da9f3ad3ea8e2e451d84e271c590cd82de8",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarTimeInterval: navigates to the correct date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005182132018"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.6": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "76c5c5135c79baf2b1136ed811aa0abffc5c1dea",
+        "type": "FIX",
+        "text": "sap.m.ColorPalette: Now the Dialog responds to the new size of the Color Picker",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880570125"
+          }
+        ]
+      },
+      {
+        "id": "37704a0276c736e61b8f570ce969cb86d339d705",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: aria-label is not encoded twice now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870391389"
+          }
+        ]
+      },
+      {
+        "id": "fc701c67e4b72ef3b7ccd027d6fc6f7062b836d8",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Menu works correctly on combi devices",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2289"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880727749"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -1,603 +1,831 @@
 {
-	"1.40.0": {
-		"date": "June 2016",
-		"notes": [
-			{
-				"id": "426ca3d9500549414bc80e9c86caa30f87161e5c",
-				"type": "FEATURE",
-				"text": "sap.m.BackgroundDesign: new type Solid2\"",
-				"references": []
-			},
-			{
-				"id": "3b13b67121bb43393350759c0491a67a50c3c682",
-				"type": "FEATURE",
-				"text": "sap.uxap.ObjectPageLayout footer implemented",
-				"references": []
-			},
-			{
-				"id": "51d02d5319df2d70d029494cfeeb31c860d26bbf",
-				"type": "FEATURE",
-				"text": "Control less Files for sap_belize Change 1",
-				"references": []
-			},
-			{
-				"id": "2146206287875aff39d47f6bdf1686dc1fae3ce5",
-				"type": "FEATURE",
-				"text": "Control less Files for sap_belize Change 2",
-				"references": []
-			},
-			{
-				"id": "86466dbf21f6c640dadf1289f7596c3578db523e",
-				"type": "FEATURE",
-				"text": "Control less Files for sap_belize Change 3",
-				"references": []
-			},
-			{
-				"id": "e3408cb5f62cb8c5e3ca304639fc7ae0d396e6fc",
-				"type": "FEATURE",
-				"text": "Control less Files for sap_belize Change 4",
-				"references": []
-			},
-			{
-				"id": "0e424ed502be441300944b10e46ea31dbefcfc19",
-				"type": "FEATURE",
-				"text": "Control less Files for sap_belize Change 5",
-				"references": []
-			},
-			{
-				"id": "920668f4e39598c197693ba8052641d98735435f",
-				"type": "FEATURE",
-				"text": "Control less Files for sap_belize Change 6",
-				"references": []
-			},
-			{
-				"id": "3bc16807f77570e1b4bd97363269412a6cc476e3",
-				"type": "FEATURE",
-				"text": "Layout less Files for sap_belize Change 8",
-				"references": []
-			},
-			{
-				"id": "048613f2ea00bd1f1314f121e9147e4e022994c5",
-				"type": "FEATURE",
-				"text": "New Theme Library: sap_belize",
-				"references": []
-			},
-			{
-				"id": "5c12096d50367e6fcb7e629a8d20889c5a2a608e",
-				"type": "FEATURE",
-				"text": "New Theme: sap_belize_plus",
-				"references": []
-			},
-			{
-				"id": "ced262e69e4c1e89a42181684b8780bf35b94388",
-				"type": "FEATURE",
-				"text": "Table less Files for sap_belize Change 7",
-				"references": []
-			},
-			{
-				"id": "310f7698bd017958388d94552243e457d0cf0d36",
-				"type": "FEATURE",
-				"text": "Unified less Files for sap_belize Change 9",
-				"references": []
-			},
-			{
-				"id": "1b7304f6f92a0c4b3a7ca29bb9c490b1a6915daa",
-				"type": "FEATURE",
-				"text": "dt less Files for sap_belize Change 12",
-				"references": []
-			},
-			{
-				"id": "9869e1e5d2c90baf500d8af68e1d59e8feac3868",
-				"type": "FEATURE",
-				"text": "sap.m.BackgroundDesign: new type Solid2",
-				"references": []
-			},
-			{
-				"id": "ab6fdc54d2e97122285401accdfeee2521579c3f",
-				"type": "FEATURE",
-				"text": "sap.m.ComboBox: redesign for mobile devices",
-				"references": []
-			},
-			{
-				"id": "4e79347aa014699bf930ae4a30ffa6ad300ff9a4",
-				"type": "FEATURE",
-				"text": "sap.m.DynamicPage - new control implemented",
-				"references": []
-			},
-			{
-				"id": "e706b356dc3c50c208f3e63d352782cf07ecc01d",
-				"type": "FEATURE",
-				"text": "sap.m.GenericTile: Tile and font size adapted, size property set to deprecated",
-				"references": []
-			},
-			{
-				"id": "7163a4f261ea5e8539d92ea4bcdce680c6dd2298",
-				"type": "FEATURE",
-				"text": "sap.m.ImageContent: New control ImageContent added",
-				"references": []
-			},
-			{
-				"id": "64b5d943036a9f462f6dc74daa2978a35fd605f8",
-				"type": "FEATURE",
-				"text": "sap.m.ObjectMarker: New control implementation",
-				"references": []
-			},
-			{
-				"id": "512820692c87e35ae699ee9a5e430e0b858276c3",
-				"type": "FEATURE",
-				"text": "sap.m.Page - floating footer property added",
-				"references": []
-			},
-			{
-				"id": "ba19e480f6daa701a87766fe065ca8cc5f94c75e",
-				"type": "FEATURE",
-				"text": "sap.m.PlanningCalendar: new appointment design",
-				"references": []
-			},
-			{
-				"id": "ca6b8697002e0545f40f64f400233fee143fb885",
-				"type": "FEATURE",
-				"text": "sap.m.PlanningCalendar: new focus visualization",
-				"references": []
-			},
-			{
-				"id": "b8616a14f83d6d62c12af35c121c6a2bf32cc48b",
-				"type": "FEATURE",
-				"text": "sap.m.Shell: defining shell outer background for Belize theme This also introduces a background for stand-alone apps like explored",
-				"references": []
-			},
-			{
-				"id": "abb22af2036393ea061181d325800642f38a2e69",
-				"type": "FEATURE",
-				"text": "sap.ui.unified.Calendar: focus vizualisation for header",
-				"references": []
-			},
-			{
-				"id": "eed0b4d0abb60bb7fef39f69c9edc5f5e15ae901",
-				"type": "FEATURE",
-				"text": "sap_belize_plus for commons and UX3",
-				"references": []
-			},
-			{
-				"id": "d7f15563587f3c374cc56f25bf872b9a1ef2f185",
-				"type": "FEATURE",
-				"text": "shared.less for sap_belize Change 10",
-				"references": []
-			},
-			{
-				"id": "2bacfd3d8dd4d4b0ff9fb86f309066d9d7e6dd5a",
-				"type": "FEATURE",
-				"text": "suite less Files for sap_belize Change 13",
-				"references": []
-			},
-			{
-				"id": "e85c3130ce62f865fbffa991575abd454eb6857f",
-				"type": "FEATURE",
-				"text": "tnt less Files for sap_belize Change 11",
-				"references": []
-			},
-			{
-				"id": "ede5108b657efeefeaf8d8cba35af8e7e1bad861",
-				"type": "FEATURE",
-				"text": "uxap less Files for sap_belize Change 14",
-				"references": []
-			},
-			{
-				"id": "7f0ced4ea50122649fe94664abf9c7daa74e4e99",
-				"type": "FEATURE",
-				"text": "uxap less Files for sap_belize Change 15",
-				"references": []
-			},
-			{
-				"id": "c8328845c3c27498340f985e627dc7b3c951920b",
-				"type": "FEATURE",
-				"text": "uxap less Files for sap_belize Change 16",
-				"references": []
-			},
-			{
-				"id": "8dc6bb289b85e1ad790da023cdca2797330ac523",
-				"type": "FIX",
-				"text": "@sapShell_TextColor fixed for sap_belize",
-				"references": []
-			},
-			{
-				"id": "f738d2cc3a6091a12a0b8c51b5c8d303385a5641",
-				"type": "FIX",
-				"text": "Belize issues",
-				"references": []
-			},
-			{
-				"id": "92cb81a9be48c3991e6f963f8b30322c27b6c785",
-				"type": "FIX",
-				"text": "Fix reference to core/base.less in belize plus theme of sap.tnt",
-				"references": []
-			},
-			{
-				"id": "203bf7029ff102941d7643ab8468bdd44013e696",
-				"type": "FIX",
-				"text": "Less Parameter @sapUiFieldRequiredColor contrast issue",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570862997"
-					}
-				]
-			},
-			{
-				"id": "c40f68462e1eb53161b02141bbbccad6cbb5c583",
-				"type": "FIX",
-				"text": "m.IconTabBar: windows 10 rules added",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670168457"
-					}
-				]
-			},
-			{
-				"id": "bf0459db67030cee221ab2823e2e36137be3ba67",
-				"type": "FIX",
-				"text": "sap.m.ActionSheet: Dialog's \"Cancel\" button is now positioned correctly on IE",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680008807"
-					}
-				]
-			},
-			{
-				"id": "4019e687395c4ec084c109383ca15bf4de2fb8ec",
-				"type": "FIX",
-				"text": "sap.m.Bar: Toolbar now has a consistent color across devices",
-				"references": []
-			},
-			{
-				"id": "68c90a75a2bc163584fee40f5fd1013bcdcdc6e7",
-				"type": "FIX",
-				"text": "sap.m.Button: Emphasized button has sufficient contrast ratio of the focus",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680021221"
-					}
-				]
-			},
-			{
-				"id": "2f41ee778bf2781aec17d266a6e755798afd093e",
-				"type": "FIX",
-				"text": "sap.m.Carousel: Fixed nav arrows on combi devices",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670121451"
-					}
-				]
-			},
-			{
-				"id": "373a5366152f8d953904fe1f3f470854ed7211d6",
-				"type": "FIX",
-				"text": "sap.m.IconTaBar: count in RTL is right aligned",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670163085"
-					}
-				]
-			},
-			{
-				"id": "913fdf09e73a97ec42b34f3e58606a57603c5632",
-				"type": "FIX",
-				"text": "sap.m.IconTaBar: scroll arrows in Text-only mode are aligned with the text now",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670015003"
-					}
-				]
-			},
-			{
-				"id": "535dc6a0f3e09290fa419d23325e94f7e69bb71f",
-				"type": "FIX",
-				"text": "sap.m.IconTabBar: padding on phone fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670120798"
-					}
-				]
-			},
-			{
-				"id": "f224fd2a87635dbc998ba4ea0d959e3e42133aa0",
-				"type": "FIX",
-				"text": "sap.m.MessageStrip: Hover and active state added to the close button on Belize theme",
-				"references": []
-			},
-			{
-				"id": "7ccce7518757ee7585d539bb7c296d30395731af",
-				"type": "FIX",
-				"text": "sap.m.MessageToast: Text contrast fixed",
-				"references": []
-			},
-			{
-				"id": "54e0380d58b69de1e7871fac3f9aec5bf6343b1e",
-				"type": "FIX",
-				"text": "sap.m.NotificationListItem: Box shadow corrected",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670289766"
-					}
-				]
-			},
-			{
-				"id": "f76262a53aafdd0114ff571943fc2dc380deb1fd",
-				"type": "FIX",
-				"text": "sap.m.NotificationListItem: Text contrast fixed",
-				"references": []
-			},
-			{
-				"id": "03de0b82050ebaf46fdb58c1e9d19fe53a16718f",
-				"type": "FIX",
-				"text": "sap.m.SearchField - placeholder is not completely visible",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670317106"
-					}
-				]
-			},
-			{
-				"id": "3e0fc67f935ba9582fb825dc447186f8f9c9ecb2",
-				"type": "FIX",
-				"text": "sap.m.Select: remove the margin inside the table cell",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670334763"
-					}
-				]
-			},
-			{
-				"id": "69cbcb09a15cbd3e7215618ed131140d9776b0b0",
-				"type": "FIX",
-				"text": "sap.m.StandardListItem: Update Icon correctly.",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670320921"
-					},
-					{
-						"type": "BCP",
-						"reference": "1670314180"
-					}
-				]
-			},
-			{
-				"id": "2f3b1bbec01b8d45febc0f7af204615378377246",
-				"type": "FIX",
-				"text": "sap.m.Wizard - Belize theme fixed",
-				"references": []
-			},
-			{
-				"id": "c4bae96d1a6167a63e79e73259b6729729b4af8e",
-				"type": "FIX",
-				"text": "sap.m.label required color corrected",
-				"references": []
-			},
-			{
-				"id": "cb945bbd34ead40e6baad48302a5edb47cfe4c27",
-				"type": "FIX",
-				"text": "sap.ui.commons belize fixes",
-				"references": []
-			},
-			{
-				"id": "47123cd5e9f74c2be76122de39a839d7af67939f",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.GridLayout: labels not aligned in Firefox",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670208916"
-					}
-				]
-			},
-			{
-				"id": "945b5767ff55d0f431578de210b14f1dd0510a4a",
-				"type": "FIX",
-				"text": "sap.ui.table.Table: Aligned Belize with latest CSS performance changes",
-				"references": []
-			},
-			{
-				"id": "678f87a9c45b90303d79099ccc51fc017cd2c940",
-				"type": "FIX",
-				"text": "sap.ui.table.Table: Fix positioning and focus visualization of No Data area",
-				"references": []
-			},
-			{
-				"id": "ce09d99cd08f9988e4c5f3e11dd8518abac73b1b",
-				"type": "FIX",
-				"text": "sap_belize: GlobalOuterBackground for sap.m.Shell in Launchpad fixed",
-				"references": []
-			}
-		]
-	},
-	"1.40.1": {
-		"date": "July 2016",
-		"notes": [
-			{
-				"id": "8607fea6f6ca71cd1b86730c9135b91b9dd941f6",
-				"type": "FEATURE",
-				"text": "m.Select m.SelcetList: theme belize implemented CR-Id: 012006153200001250472016",
-				"references": []
-			},
-			{
-				"id": "06e9ccca394d479f266269ac7e42e13d03019577",
-				"type": "FIX",
-				"text": "sap.m.CheckBox: focus outline was cut when put in a Grid",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680020740"
-					}
-				]
-			},
-			{
-				"id": "210412017ff2d098b088422a3454dc178d8e117f",
-				"type": "FIX",
-				"text": "sap.m.MessagePopover: Belize theme adjustments",
-				"references": []
-			},
-			{
-				"id": "b6ae08b4c1592cb750971bd5f13281d7bb597056",
-				"type": "FIX",
-				"text": "sap.m.Shell - belize support enabled.",
-				"references": []
-			},
-			{
-				"id": "188f804fb1be1a62783e1151971c94e00d485146",
-				"type": "FIX",
-				"text": "sap.m.Table: insufficient contrast of focus outline",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680089765"
-					}
-				]
-			}
-		]
-	},
-	"1.40.2": {
-		"date": "July 2016",
-		"notes": [
-			{
-				"id": "b35f1a66d9d4aadb08b35094d4e2b98f66089611",
-				"type": "FEATURE",
-				"text": "sap.m.Select: add \"valueState\" property",
-				"references": []
-			},
-			{
-				"id": "ad683101a8f91ce141bcf9c8777060de13b33a61",
-				"type": "FIX",
-				"text": "sap.m.Input: The input field in an InputListItem is more recognizable now",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670295059"
-					}
-				]
-			},
-			{
-				"id": "3466e221497492c7ac3306f2c05395ce2eb3e8e7",
-				"type": "FIX",
-				"text": "sap.m.ObjectHeader: ObjectAttribute is verticaly aligned correctly",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680058747"
-					}
-				]
-			},
-			{
-				"id": "82eb12ca87030031015ad761a9ae78dbd3ef8148",
-				"type": "FIX",
-				"text": "sap.m.ObjectHeader: Transparent background works in Belize",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680132141"
-					},
-					{
-						"type": "BCP",
-						"reference": "1680131801"
-					}
-				]
-			},
-			{
-				"id": "727bf4f49e69b9c580aa0472bbb33700072359e8",
-				"type": "FIX",
-				"text": "sap.m.QuickView: Page sub title now can have 2 lines in Belize",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680120902"
-					}
-				]
-			},
-			{
-				"id": "a14ba608f9a5ae3ac7628ae8946e5bc7f9526eaa",
-				"type": "FIX",
-				"text": "sap.ui.table.AnalyticalTable: Fix focus visualization on group headers",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670335892"
-					}
-				]
-			}
-		]
-	},
-	"1.40.3": {
-		"date": "July 2016",
-		"notes": [
-			{
-				"id": "330d603b6d2dab27a0f30a895f890c486ebf5327",
-				"type": "FIX",
-				"text": "sap.m.Button: Emphasized button has sufficient contrast ratio",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680021221"
-					}
-				]
-			},
-			{
-				"id": "1b85f3d180b792f6a869d7b43d16b56ec1ee56fb",
-				"type": "FIX",
-				"text": "sap.m.IconTabBar: Downport Belize styles to 1.40",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680140177"
-					},
-					{
-						"type": "BCP",
-						"reference": "1680128526"
-					}
-				]
-			},
-			{
-				"id": "b1f6b020b9365e2093789e7bf8444ca80e6d73bc",
-				"type": "FIX",
-				"text": "sap.m.Link: Focus visualization within table cell",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680084755"
-					}
-				]
-			},
-			{
-				"id": "059d6a5dfcddbb951c2457f0e68604b76fcb834c",
-				"type": "FIX",
-				"text": "sap.m.MessagePopover: Styles for markup description improved",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680154117"
-					}
-				]
-			},
-			{
-				"id": "e94fcbe3fc55f39f64cfa5951383f47a00638988",
-				"type": "FIX",
-				"text": "sap.ui.table.AnalyticalTable: fix group header background for Belize",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680039579"
-					}
-				]
-			}
-		]
-	}
+  "1.40.0": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "426ca3d9500549414bc80e9c86caa30f87161e5c",
+        "type": "FEATURE",
+        "text": "sap.m.BackgroundDesign: new type Solid2\"",
+        "references": []
+      },
+      {
+        "id": "3b13b67121bb43393350759c0491a67a50c3c682",
+        "type": "FEATURE",
+        "text": "sap.uxap.ObjectPageLayout footer implemented",
+        "references": []
+      },
+      {
+        "id": "51d02d5319df2d70d029494cfeeb31c860d26bbf",
+        "type": "FEATURE",
+        "text": "Control less Files for sap_belize Change 1",
+        "references": []
+      },
+      {
+        "id": "2146206287875aff39d47f6bdf1686dc1fae3ce5",
+        "type": "FEATURE",
+        "text": "Control less Files for sap_belize Change 2",
+        "references": []
+      },
+      {
+        "id": "86466dbf21f6c640dadf1289f7596c3578db523e",
+        "type": "FEATURE",
+        "text": "Control less Files for sap_belize Change 3",
+        "references": []
+      },
+      {
+        "id": "e3408cb5f62cb8c5e3ca304639fc7ae0d396e6fc",
+        "type": "FEATURE",
+        "text": "Control less Files for sap_belize Change 4",
+        "references": []
+      },
+      {
+        "id": "0e424ed502be441300944b10e46ea31dbefcfc19",
+        "type": "FEATURE",
+        "text": "Control less Files for sap_belize Change 5",
+        "references": []
+      },
+      {
+        "id": "920668f4e39598c197693ba8052641d98735435f",
+        "type": "FEATURE",
+        "text": "Control less Files for sap_belize Change 6",
+        "references": []
+      },
+      {
+        "id": "3bc16807f77570e1b4bd97363269412a6cc476e3",
+        "type": "FEATURE",
+        "text": "Layout less Files for sap_belize Change 8",
+        "references": []
+      },
+      {
+        "id": "048613f2ea00bd1f1314f121e9147e4e022994c5",
+        "type": "FEATURE",
+        "text": "New Theme Library: sap_belize",
+        "references": []
+      },
+      {
+        "id": "5c12096d50367e6fcb7e629a8d20889c5a2a608e",
+        "type": "FEATURE",
+        "text": "New Theme: sap_belize_plus",
+        "references": []
+      },
+      {
+        "id": "ced262e69e4c1e89a42181684b8780bf35b94388",
+        "type": "FEATURE",
+        "text": "Table less Files for sap_belize Change 7",
+        "references": []
+      },
+      {
+        "id": "310f7698bd017958388d94552243e457d0cf0d36",
+        "type": "FEATURE",
+        "text": "Unified less Files for sap_belize Change 9",
+        "references": []
+      },
+      {
+        "id": "1b7304f6f92a0c4b3a7ca29bb9c490b1a6915daa",
+        "type": "FEATURE",
+        "text": "dt less Files for sap_belize Change 12",
+        "references": []
+      },
+      {
+        "id": "9869e1e5d2c90baf500d8af68e1d59e8feac3868",
+        "type": "FEATURE",
+        "text": "sap.m.BackgroundDesign: new type Solid2",
+        "references": []
+      },
+      {
+        "id": "ab6fdc54d2e97122285401accdfeee2521579c3f",
+        "type": "FEATURE",
+        "text": "sap.m.ComboBox: redesign for mobile devices",
+        "references": []
+      },
+      {
+        "id": "4e79347aa014699bf930ae4a30ffa6ad300ff9a4",
+        "type": "FEATURE",
+        "text": "sap.m.DynamicPage - new control implemented",
+        "references": []
+      },
+      {
+        "id": "e706b356dc3c50c208f3e63d352782cf07ecc01d",
+        "type": "FEATURE",
+        "text": "sap.m.GenericTile: Tile and font size adapted, size property set to deprecated",
+        "references": []
+      },
+      {
+        "id": "7163a4f261ea5e8539d92ea4bcdce680c6dd2298",
+        "type": "FEATURE",
+        "text": "sap.m.ImageContent: New control ImageContent added",
+        "references": []
+      },
+      {
+        "id": "64b5d943036a9f462f6dc74daa2978a35fd605f8",
+        "type": "FEATURE",
+        "text": "sap.m.ObjectMarker: New control implementation",
+        "references": []
+      },
+      {
+        "id": "512820692c87e35ae699ee9a5e430e0b858276c3",
+        "type": "FEATURE",
+        "text": "sap.m.Page - floating footer property added",
+        "references": []
+      },
+      {
+        "id": "ba19e480f6daa701a87766fe065ca8cc5f94c75e",
+        "type": "FEATURE",
+        "text": "sap.m.PlanningCalendar: new appointment design",
+        "references": []
+      },
+      {
+        "id": "ca6b8697002e0545f40f64f400233fee143fb885",
+        "type": "FEATURE",
+        "text": "sap.m.PlanningCalendar: new focus visualization",
+        "references": []
+      },
+      {
+        "id": "b8616a14f83d6d62c12af35c121c6a2bf32cc48b",
+        "type": "FEATURE",
+        "text": "sap.m.Shell: defining shell outer background for Belize theme This also introduces a background for stand-alone apps like explored",
+        "references": []
+      },
+      {
+        "id": "abb22af2036393ea061181d325800642f38a2e69",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.Calendar: focus vizualisation for header",
+        "references": []
+      },
+      {
+        "id": "eed0b4d0abb60bb7fef39f69c9edc5f5e15ae901",
+        "type": "FEATURE",
+        "text": "sap_belize_plus for commons and UX3",
+        "references": []
+      },
+      {
+        "id": "d7f15563587f3c374cc56f25bf872b9a1ef2f185",
+        "type": "FEATURE",
+        "text": "shared.less for sap_belize Change 10",
+        "references": []
+      },
+      {
+        "id": "2bacfd3d8dd4d4b0ff9fb86f309066d9d7e6dd5a",
+        "type": "FEATURE",
+        "text": "suite less Files for sap_belize Change 13",
+        "references": []
+      },
+      {
+        "id": "e85c3130ce62f865fbffa991575abd454eb6857f",
+        "type": "FEATURE",
+        "text": "tnt less Files for sap_belize Change 11",
+        "references": []
+      },
+      {
+        "id": "ede5108b657efeefeaf8d8cba35af8e7e1bad861",
+        "type": "FEATURE",
+        "text": "uxap less Files for sap_belize Change 14",
+        "references": []
+      },
+      {
+        "id": "7f0ced4ea50122649fe94664abf9c7daa74e4e99",
+        "type": "FEATURE",
+        "text": "uxap less Files for sap_belize Change 15",
+        "references": []
+      },
+      {
+        "id": "c8328845c3c27498340f985e627dc7b3c951920b",
+        "type": "FEATURE",
+        "text": "uxap less Files for sap_belize Change 16",
+        "references": []
+      },
+      {
+        "id": "8dc6bb289b85e1ad790da023cdca2797330ac523",
+        "type": "FIX",
+        "text": "@sapShell_TextColor fixed for sap_belize",
+        "references": []
+      },
+      {
+        "id": "f738d2cc3a6091a12a0b8c51b5c8d303385a5641",
+        "type": "FIX",
+        "text": "Belize issues",
+        "references": []
+      },
+      {
+        "id": "92cb81a9be48c3991e6f963f8b30322c27b6c785",
+        "type": "FIX",
+        "text": "Fix reference to core/base.less in belize plus theme of sap.tnt",
+        "references": []
+      },
+      {
+        "id": "203bf7029ff102941d7643ab8468bdd44013e696",
+        "type": "FIX",
+        "text": "Less Parameter @sapUiFieldRequiredColor contrast issue",
+        "references": []
+      },
+      {
+        "id": "c40f68462e1eb53161b02141bbbccad6cbb5c583",
+        "type": "FIX",
+        "text": "m.IconTabBar: windows 10 rules added",
+        "references": []
+      },
+      {
+        "id": "bf0459db67030cee221ab2823e2e36137be3ba67",
+        "type": "FIX",
+        "text": "sap.m.ActionSheet: Dialog\u0027s \"Cancel\" button is now positioned correctly on IE",
+        "references": []
+      },
+      {
+        "id": "4019e687395c4ec084c109383ca15bf4de2fb8ec",
+        "type": "FIX",
+        "text": "sap.m.Bar: Toolbar now has a consistent color across devices",
+        "references": []
+      },
+      {
+        "id": "68c90a75a2bc163584fee40f5fd1013bcdcdc6e7",
+        "type": "FIX",
+        "text": "sap.m.Button: Emphasized button has sufficient contrast ratio of the focus",
+        "references": []
+      },
+      {
+        "id": "2f41ee778bf2781aec17d266a6e755798afd093e",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Fixed nav arrows on combi devices",
+        "references": []
+      },
+      {
+        "id": "373a5366152f8d953904fe1f3f470854ed7211d6",
+        "type": "FIX",
+        "text": "sap.m.IconTaBar: count in RTL is right aligned",
+        "references": []
+      },
+      {
+        "id": "913fdf09e73a97ec42b34f3e58606a57603c5632",
+        "type": "FIX",
+        "text": "sap.m.IconTaBar: scroll arrows in Text-only mode are aligned with the text now",
+        "references": []
+      },
+      {
+        "id": "535dc6a0f3e09290fa419d23325e94f7e69bb71f",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: padding on phone fixed",
+        "references": []
+      },
+      {
+        "id": "f224fd2a87635dbc998ba4ea0d959e3e42133aa0",
+        "type": "FIX",
+        "text": "sap.m.MessageStrip: Hover and active state added to the close button on Belize theme",
+        "references": []
+      },
+      {
+        "id": "7ccce7518757ee7585d539bb7c296d30395731af",
+        "type": "FIX",
+        "text": "sap.m.MessageToast: Text contrast fixed",
+        "references": []
+      },
+      {
+        "id": "54e0380d58b69de1e7871fac3f9aec5bf6343b1e",
+        "type": "FIX",
+        "text": "sap.m.NotificationListItem: Box shadow corrected",
+        "references": []
+      },
+      {
+        "id": "f76262a53aafdd0114ff571943fc2dc380deb1fd",
+        "type": "FIX",
+        "text": "sap.m.NotificationListItem: Text contrast fixed",
+        "references": []
+      },
+      {
+        "id": "03de0b82050ebaf46fdb58c1e9d19fe53a16718f",
+        "type": "FIX",
+        "text": "sap.m.SearchField - placeholder is not completely visible",
+        "references": []
+      },
+      {
+        "id": "3e0fc67f935ba9582fb825dc447186f8f9c9ecb2",
+        "type": "FIX",
+        "text": "sap.m.Select: remove the margin inside the table cell",
+        "references": []
+      },
+      {
+        "id": "69cbcb09a15cbd3e7215618ed131140d9776b0b0",
+        "type": "FIX",
+        "text": "sap.m.StandardListItem: Update Icon correctly.",
+        "references": []
+      },
+      {
+        "id": "2f3b1bbec01b8d45febc0f7af204615378377246",
+        "type": "FIX",
+        "text": "sap.m.Wizard - Belize theme fixed",
+        "references": []
+      },
+      {
+        "id": "c4bae96d1a6167a63e79e73259b6729729b4af8e",
+        "type": "FIX",
+        "text": "sap.m.label required color corrected",
+        "references": []
+      },
+      {
+        "id": "cb945bbd34ead40e6baad48302a5edb47cfe4c27",
+        "type": "FIX",
+        "text": "sap.ui.commons belize fixes",
+        "references": []
+      },
+      {
+        "id": "47123cd5e9f74c2be76122de39a839d7af67939f",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.GridLayout: labels not aligned in Firefox",
+        "references": []
+      },
+      {
+        "id": "945b5767ff55d0f431578de210b14f1dd0510a4a",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Aligned Belize with latest CSS performance changes",
+        "references": []
+      },
+      {
+        "id": "678f87a9c45b90303d79099ccc51fc017cd2c940",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fix positioning and focus visualization of No Data area",
+        "references": []
+      },
+      {
+        "id": "ce09d99cd08f9988e4c5f3e11dd8518abac73b1b",
+        "type": "FIX",
+        "text": "sap_belize: GlobalOuterBackground for sap.m.Shell in Launchpad fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.40.1": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "8607fea6f6ca71cd1b86730c9135b91b9dd941f6",
+        "type": "FEATURE",
+        "text": "m.Select m.SelcetList: theme belize implemented CR-Id: 012006153200001250472016",
+        "references": []
+      },
+      {
+        "id": "06e9ccca394d479f266269ac7e42e13d03019577",
+        "type": "FIX",
+        "text": "sap.m.CheckBox: focus outline was cut when put in a Grid",
+        "references": []
+      },
+      {
+        "id": "210412017ff2d098b088422a3454dc178d8e117f",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Belize theme adjustments",
+        "references": []
+      },
+      {
+        "id": "b6ae08b4c1592cb750971bd5f13281d7bb597056",
+        "type": "FIX",
+        "text": "sap.m.Shell - belize support enabled.",
+        "references": []
+      },
+      {
+        "id": "188f804fb1be1a62783e1151971c94e00d485146",
+        "type": "FIX",
+        "text": "sap.m.Table: insufficient contrast of focus outline",
+        "references": []
+      }
+    ]
+  },
+  "1.40.2": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "b35f1a66d9d4aadb08b35094d4e2b98f66089611",
+        "type": "FEATURE",
+        "text": "sap.m.Select: add \"valueState\" property",
+        "references": []
+      },
+      {
+        "id": "ad683101a8f91ce141bcf9c8777060de13b33a61",
+        "type": "FIX",
+        "text": "sap.m.Input: The input field in an InputListItem is more recognizable now",
+        "references": []
+      },
+      {
+        "id": "3466e221497492c7ac3306f2c05395ce2eb3e8e7",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: ObjectAttribute is verticaly aligned correctly",
+        "references": []
+      },
+      {
+        "id": "82eb12ca87030031015ad761a9ae78dbd3ef8148",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: Transparent background works in Belize",
+        "references": []
+      },
+      {
+        "id": "727bf4f49e69b9c580aa0472bbb33700072359e8",
+        "type": "FIX",
+        "text": "sap.m.QuickView: Page sub title now can have 2 lines in Belize",
+        "references": []
+      },
+      {
+        "id": "a14ba608f9a5ae3ac7628ae8946e5bc7f9526eaa",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: Fix focus visualization on group headers",
+        "references": []
+      }
+    ]
+  },
+  "1.40.3": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "330d603b6d2dab27a0f30a895f890c486ebf5327",
+        "type": "FIX",
+        "text": "sap.m.Button: Emphasized button has sufficient contrast ratio",
+        "references": []
+      },
+      {
+        "id": "1b85f3d180b792f6a869d7b43d16b56ec1ee56fb",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Downport Belize styles to 1.40",
+        "references": []
+      },
+      {
+        "id": "b1f6b020b9365e2093789e7bf8444ca80e6d73bc",
+        "type": "FIX",
+        "text": "sap.m.Link: Focus visualization within table cell",
+        "references": []
+      },
+      {
+        "id": "059d6a5dfcddbb951c2457f0e68604b76fcb834c",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Styles for markup description improved",
+        "references": []
+      },
+      {
+        "id": "e94fcbe3fc55f39f64cfa5951383f47a00638988",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: fix group header background for Belize",
+        "references": []
+      }
+    ]
+  },
+  "1.40.4": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "fb35c0e53e9c281ef9dc148250ed4efe3347d42e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Fix error state visualization in table cell",
+        "references": []
+      },
+      {
+        "id": "4f2cde3db32ed6c2dd4d1e17c66414a8f79cd64a",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: hover disabled multi input blue border removed",
+        "references": []
+      },
+      {
+        "id": "734b8ff70bd4a4a253d2091e92867941120170de",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Problem with Check Box in Tree Table",
+        "references": []
+      }
+    ]
+  },
+  "1.40.5": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "4c28ba2b135a8cae87362aa9421b6a54cf86c853",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Add solid border to GenericTile",
+        "references": []
+      },
+      {
+        "id": "9d1bee4e8ef53e88ec0e79d93a2d2cbe7983ab57",
+        "type": "FIX",
+        "text": "sap.m.Table - focus outline in IE",
+        "references": []
+      }
+    ]
+  },
+  "1.40.6": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "4c95bcde66c068bb130752b90c69bd135219cf87",
+        "type": "FIX",
+        "text": "sap.m.Page Fix position of footer in Belize",
+        "references": []
+      },
+      {
+        "id": "74e3fa0f5e02186aa012fac1f9eb1d7c7c31d747",
+        "type": "FIX",
+        "text": "sap.m.RadioButton: Overflowing label text now has proper ellipsis at the end",
+        "references": []
+      },
+      {
+        "id": "1229904c2bd7797565f5adfa927db46f521a3cfe",
+        "type": "FIX",
+        "text": "sap.m.TextArea: State outline now has proper offsets/paddings",
+        "references": []
+      }
+    ]
+  },
+  "1.40.7": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "031595ed64d29b20a51fd71c727ec5fd77d62928",
+        "type": "FIX",
+        "text": "sap.m.CheckBox: the icon is wrongly positioned in Safari on Mac",
+        "references": []
+      },
+      {
+        "id": "5cbcbffb0d03c45457dc417cf9c4b7d9d4ebfa69",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Disabled filters doesn\u0027t have \"pointer\" cursor any more",
+        "references": []
+      },
+      {
+        "id": "d71a4e52e06c47e0cd3dc5651d43221930e22c92",
+        "type": "FIX",
+        "text": "sap.m.ListBase - double focus outline in IE",
+        "references": []
+      },
+      {
+        "id": "c26869ae1bf92beb88faa764c4e2b638e695e261",
+        "type": "FIX",
+        "text": "sap.m.ProgressIndicator: border values caused visual issues",
+        "references": []
+      },
+      {
+        "id": "1bc36bb94056d37a5730d8f874b3b2060c7b3697",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPage - outline in IE fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.40.8": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "21cbf3aa9a97493f9e77aae698fecb3d2661a181",
+        "type": "FIX",
+        "text": "sap.m.Button: focus didn\u0027t have enough contrast in active toolbar contest",
+        "references": []
+      }
+    ]
+  },
+  "1.40.10": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "d3b201e4ffb82cac7ebcd1027c59eb2de34d15b5",
+        "type": "FIX",
+        "text": "Theme image URLs in commons/ux3/layout libraries",
+        "references": []
+      },
+      {
+        "id": "de6d2f6d20aec890466d334850277a68870ed4d9",
+        "type": "FIX",
+        "text": "sap.m.Token: Border type is changed for Internet Explorer due to visual issues",
+        "references": []
+      },
+      {
+        "id": "2cef64e15f04456b832b3205f87c8257c3af5d90",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Text isn\u0027t overlapping in IE",
+        "references": []
+      },
+      {
+        "id": "7785352ff2074bdd7ea540c7148b73ca7b3d3f88",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Scrollbar appearence on mobile devices",
+        "references": []
+      },
+      {
+        "id": "aabcf38699e9595a53866c29bfce7f8189d9fd2a",
+        "type": "FIX",
+        "text": "sap.ui.table.*: getDefaultRowHeight to consider the content density",
+        "references": []
+      },
+      {
+        "id": "ab462fa06187239be787c1d3fe97ed8974201d7c",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Corrected focus for Planning Calendar",
+        "references": []
+      }
+    ]
+  },
+  "1.40.11": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "ecdedcb28fdc0319b2af001c17794b36fa57f6df",
+        "type": "FIX",
+        "text": "sap.m.Button: doesn\u0027t overwrite ToggleButton Pressed style",
+        "references": []
+      },
+      {
+        "id": "74e5d584e74aa67d29ec08bd1e3f6db3cb372edb",
+        "type": "FIX",
+        "text": "sap.m.ObjectIdentifier: margin inside table + cleanup selectors",
+        "references": []
+      },
+      {
+        "id": "05ab80d90d2d0f0877163769a0a790e4b53095a6",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: context selector in the button caused focus to not appear in IE",
+        "references": []
+      },
+      {
+        "id": "15278ae2a01e6b43c6ecbf034dc1f63d16d6ec72",
+        "type": "FIX",
+        "text": "uxap.ObjectPageHeaderContent: fix placeholder icon representation",
+        "references": []
+      }
+    ]
+  },
+  "1.40.12": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "66fabb32aabdf9b86be0ee1f2e13963367aaefcb",
+        "type": "FIX",
+        "text": " sap.m.Bar: sap.m.Text and sap.m.Lable has correct color and shadow in Belize",
+        "references": []
+      },
+      {
+        "id": "83122f21e26f7966c8955625002ac4ae960f5ab3",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Line height increased to fit Devanagari script",
+        "references": []
+      },
+      {
+        "id": "0c7c92822ea5ea495bb496bcbc6a4b78fb389478",
+        "type": "FIX",
+        "text": " sap.m.Input: Text selection on tablets is now correct",
+        "references": []
+      },
+      {
+        "id": "4571ff621d4790526ecd8b1f3ba921b45f914697",
+        "type": "FIX",
+        "text": " sap.m.Panel: corrected focus for IE",
+        "references": []
+      },
+      {
+        "id": "78c419ca54f1eba92cc3e9ab0cae14cfe97a6e1e",
+        "type": "FIX",
+        "text": " sap.ui.unified.Currency: Correct aligned in table",
+        "references": []
+      }
+    ]
+  },
+  "1.40.13": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "fce10e4eeec5ef3863f0a9298b6015703e434fda",
+        "type": "FIX",
+        "text": " sap.m.Button, sap.m.ToggleButton: Css selectors fixed in Belize",
+        "references": []
+      },
+      {
+        "id": "a4056b312333584a5adea0d5a090351f093e4ed2",
+        "type": "FIX",
+        "text": " sap.m.MessageToast - width property is no longer restricted to a maximum of 15rems",
+        "references": []
+      },
+      {
+        "id": "fcfce59a083217a3e007f116f465d87d120ad8b4",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: SetEditable no longer modifies its tokens",
+        "references": []
+      },
+      {
+        "id": "23aba18d350513d3bda83f07b4ba78021259588c",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Token selection corrected",
+        "references": []
+      },
+      {
+        "id": "96c9b09291aa16cd2338688a9df854bed4aa1de8",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: Arrows\u0027 click behaviour in firefox is now handled properly",
+        "references": []
+      },
+      {
+        "id": "fc1fc714fd7c1bed958158bba88c423dc801105e",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Correctly displayed in Belize",
+        "references": []
+      }
+    ]
+  },
+  "1.40.14": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "3466944670a87baaa3f8124484b5fd7037f82bdb",
+        "type": "FIX",
+        "text": " sap.m.Button: Emphasized button has correct contrast ratio",
+        "references": []
+      },
+      {
+        "id": "2ddddd37c165336d186f99208d87ff6309f257ac",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Layout no longer breaks on resize",
+        "references": []
+      },
+      {
+        "id": "9f2838908f1f089eb5d5df3f27051cdbab35830f",
+        "type": "FIX",
+        "text": " sap.m.ToggleButton: Icon has correct color in pressed state",
+        "references": []
+      }
+    ]
+  },
+  "1.40.15": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "193df59e6c7015833d79f5d460dc214016cb6b29",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Focus outline corrected",
+        "references": []
+      },
+      {
+        "id": "924162f23a8304c9cb625fb82ae857c2f1c75f81",
+        "type": "FIX",
+        "text": " sap.m.Link: Dashed focus outline in IE",
+        "references": []
+      },
+      {
+        "id": "8fa6a9c44dce82f2614e8e48617cce811bb3ed0d",
+        "type": "FIX",
+        "text": " sap.m.NotificationListGroup: Focus outline in IE corrected",
+        "references": []
+      },
+      {
+        "id": "553ce281a247c88477f1f53462f3eb657e86dea1",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: Focus clear visible on IE",
+        "references": []
+      },
+      {
+        "id": "895f376af16feab0cf303f4da51ef2cb715b6c12",
+        "type": "FIX",
+        "text": " sap.m.Page: rendering performance",
+        "references": []
+      },
+      {
+        "id": "c9f7a734bb0d4e6362ea6f8bd914647d4fc0e003",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Appointments focus corrected for Belize on IE",
+        "references": []
+      },
+      {
+        "id": "be69daa7fd645b21331ec8bae15f62bc62777ff4",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Focus contrast ratio in IE/Edge is now correct",
+        "references": []
+      },
+      {
+        "id": "0a5c53872da189448708225bfaf664a0c668ff7c",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationList: Focus contrast ratio in IE is now correct",
+        "references": []
+      },
+      {
+        "id": "bab1fbdac705a9c2607d90d4e38df648ae55a810",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Focus has sufficient contrast ratio in IE",
+        "references": []
+      }
+    ]
+  },
+  "1.40.17": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "9c819005ab0ef80cdc6455423976f2a7a9a56ce1",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Focus with background image improved",
+        "references": []
+      },
+      {
+        "id": "d9cd3bbb651a37dea090bd9421f3c03c96a55454",
+        "type": "FIX",
+        "text": " sap.m.Panel: Expandable icon contrast ratio fix",
+        "references": []
+      }
+    ]
+  },
+  "1.40.18": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "c40dd6cb5cc00482967ff8d3cf238164c58c7edd",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar-tap on appointment on mobile should not fire rowSelectionChange.",
+        "references": []
+      }
+    ]
+  }
 }
