@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Object Card</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="../css/style.css">
+	<link rel="stylesheet" href="../css/prettify-light.css"/>
+	<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+	<script id="sap-ui-bootstrap"
+			src="../../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_fiori_3">
+	</script>
+</head>
+<body class="sapUiBody topicBody">
+<div class="topic">
+	<div class="content">
+		<h1 id="overview">
+			Object Card
+		</h1>
+		<p>
+			This type of card can display information about any object in groups. Each group can contain as much items
+			as it needs. The object card header is coupled with the content which means that the header cannot make
+			separated requests.
+		</p>
+		<h2 id="manifest">Card Manifest</h2>
+		<p>Defining the type and data for the card:
+		</p>
+		<pre class="prettyprint"><xmp class="language-json">{
+	"sap.card": {
+		"type": "Object",
+		"data": {
+			"request": {
+				"url": "./employee.json"
+			}
+		}
+	}
+}</xmp></pre>
+		<p>
+			The content of the employee.json which we are requesting:
+		</p>
+		<pre class="prettyprint"><xmp class="language-json">{
+	"firstName": "Donna",
+	"lastName": "Moore",
+	"position": "Sales Executive",
+	"phone": "+1 202 555 5555",
+	"photo": "../images/Woman_avatar_01.png",
+	"manager": {
+		"firstName": "John",
+		"lastName": "Miller",
+		"photo": "../images/Woman_avatar_02.png"
+	},
+	"company": {
+		"name": "Company A",
+		"address": "481 West Street, Anytown OH 45066, USA",
+		"website": "www.company_a.example.com"
+	}
+}</xmp></pre>
+		<p>Defining the header:</p>
+		<pre class="prettyprint"><xmp class="language-json">"header": {
+	"icon": {
+		"src": "{photo}"
+	},
+	"title": "{firstName} {lastName}",
+	"subTitle": "{position}"
+},</xmp></pre>
+		<p>Defining the content in groups:</p>
+		<pre class="prettyprint"><xmp class="language-json">"content": {
+	"groups": [
+		{
+			"title": "Contact Details",
+			"items": [
+				{
+					"label": "First Name",
+					"value": "{firstName}"
+				},
+				{
+					"label": "Last Name",
+					"value": "{lastName}"
+				},
+				{
+					"label": "Phone",
+					"value": "{phone}",
+					"type": "phone"
+				},
+				{
+					"label": "Email",
+					"value": "{email}",
+					"type": "email"
+				}
+			]
+		},
+		{
+			"title": "Company Details",
+			"items": [
+				{
+					"label": "Company Name",
+					"value": "{company/name}"
+				},
+				{
+					"label": "Address",
+					"value": "{company/address}"
+				},
+				{
+					"label": "Email",
+					"value": "{company/email}",
+					"emailSubject": "{company/emailSubject}",
+					"type": "email"
+				},
+				{
+					"label": "Website",
+					"value": "{company/website}",
+					"url": "{company/url}",
+					"type": "link"
+				}
+			]
+		},
+		{
+			"title": "Organizational Details",
+			"items": [
+				{
+					"label": "Direct Manager",
+					"value": "{manager/firstName} {manager/lastName}",
+					"icon": {
+						"src": "{manager/photo}"
+					}
+				}
+			]
+		}
+	]
+}</xmp></pre>
+		<p>Here is the final manifest definition here:</p>
+		<pre class="prettyprint"><xmp class="language-json">{
+	"sap.app": {
+		"type": "card",
+		"i18n": "i18n/i18n.properties"
+	},
+	"sap.card": {
+		"type": "Object",
+		"data": {
+			"request": {
+				"url": "./cardcontent/objectcontent/employee.json"
+			}
+		},
+		"header": {
+			"icon": {
+				"src": "{photo}"
+			},
+			"title": "{firstName} {lastName}",
+			"subTitle": "{position}"
+		},
+		"content": {
+			"groups": [
+				{
+					"title": "{{contactDetails}}",
+					"items": [
+						{
+							"label": "{{firstName}}",
+							"value": "{firstName}"
+						},
+						{
+							"label": "{{lastName}}",
+							"value": "{lastName}"
+						},
+						{
+							"label": "{{phone}}",
+							"value": "{phone}",
+							"type": "phone"
+						},
+						{
+							"label": "{{email}}",
+							"value": "{email}",
+							"type": "email"
+						}
+					]
+				},
+				{
+					"title": "{{organizationalDetails}}",
+					"items": [
+						{
+							"label": "{{directManager}}",
+							"value": "{manager/firstName} {manager/lastName}",
+							"icon": {
+								"src": "{manager/photo}"
+							}
+						}
+					]
+				},
+				{
+					"title": "{{companyDetails}}",
+					"items": [
+						{
+							"label": "{{companyName}}",
+							"value": "{company/name}"
+						},
+						{
+							"label": "{{address}}",
+							"value": "{company/address}"
+						},
+						{
+							"label": "{{email}}",
+							"value": "{company/email}",
+							"emailSubject": "{company/emailSubject}",
+							"type": "email"
+						},
+						{
+							"label": "{{website}}",
+							"value": "{company/website}",
+							"url": "{company/url}",
+							"type": "link"
+						}
+					]
+				}
+			]
+		}
+	}
+ }</xmp></pre>
+		<h2 id="example">
+			Example
+		</h2>
+		<p>Finally create an widget card that actually can use the manifest.json which we created:</p>
+		<pre class="prettyprint">
+<xmp class="language-xml"><mvc:View xmlns:w="sap.ui.integration.widgets">
+	<w:Card manifest="./manifest.json" width="400px" height="auto"/>
+</mvc:View>
+</xmp></pre>
+		<a  href="../../index.html#/explore/object" target="_parent">Check the example here</a>.
+	</div>
+	<div class="navigation">
+		<h4>Table of Contents</h4>
+		<div><a href="#overview">Object Card</a></div>
+		<div><a href="#manifest">Card Manifest</a></div>
+		<div><a href="#example">Example</a></div>
+	</div>
+</div>
+</body>
+</html>
