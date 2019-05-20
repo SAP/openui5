@@ -25,7 +25,99 @@
 			as it needs. The object card header is coupled with the content which means that the header cannot make
 			separated requests.
 		</p>
-		<h2 id="manifest">Card Manifest</h2>
+		<h2 id="structure">Structure</h2>
+		<p>The object card contains an array of groups.</p>
+
+		<h4>Object Group properties</h4>
+
+		<table>
+			<tr>
+				<th>Property</th>
+				<th>Type</th>
+				<th>Required</th>
+				<th>Description</th>
+				<th>Version</th>
+			</tr>
+			<tr>
+				<td>title</td>
+				<td>string</td>
+				<td>Yes</td>
+				<td>Represents language-dependent title of the object group</td>
+				<td>1.1.0</td>
+			</tr>
+			<tr>
+				<td>items</td>
+				<td>array</td>
+				<td>Yes</td>
+				<td>Represents items of information</td>
+				<td>1.1.0</td>
+			</tr>
+		</table>
+
+		<h4>Object Group Item properties</h4>
+
+		<table>
+			<tr>
+				<th>Property</th>
+				<th>Type</th>
+				<th>Required</th>
+				<th>Description</th>
+				<th>Version</th>
+			</tr>
+			<tr>
+				<td>icon</td>
+				<td>icon</td>
+				<td>No</td>
+				<td>Represents the icon of the item</td>
+				<td>1.1.0</td>
+			</tr>
+			<tr>
+				<td>label</td>
+				<td>string</td>
+				<td>Yes</td>
+				<td>Represents the label of the item</td>
+				<td>1.1.0</td>
+			</tr>
+			<tr>
+				<td>value</td>
+				<td>string</td>
+				<td>Yes</td>
+				<td>Represents the text, which is associated with the label</td>
+				<td>1.1.0</td>
+			</tr>
+			<tr>
+				<td>type</td>
+				<td>string</td>
+				<td>No</td>
+				<td>Represents the type of the displayed information.It can be - 'text', 'link', 'email' or 'phone'</td>
+				<td>1.1.0</td>
+			</tr>
+			<tr>
+				<td>url</td>
+				<td>string</td>
+				<td>No</td>
+				<td>Represents a URL string. Works only with item of type 'link'</td>
+				<td>1.1.0</td>
+			</tr>
+			<tr>
+				<td>target</td>
+				<td>string</td>
+				<td>No</td>
+				<td>Represents the target of the link - it works like the target property of the HTML 'a' tag. Works
+					only with item of type 'link'
+				</td>
+				<td>1.1.0</td>
+			</tr>
+			<tr>
+				<td>emailSubject</td>
+				<td>string</td>
+				<td>No</td>
+				<td>Represents the subject of the email. Works only with item of type 'email'</td>
+				<td>1.1.0</td>
+			</tr>
+		</table>
+
+		<h2 id="example">Example</h2>
 		<p>Defining the type and data for the card:
 		</p>
 		<pre class="prettyprint"><xmp class="language-json">{
@@ -217,21 +309,18 @@
 		}
 	}
  }</xmp></pre>
-		<h2 id="example">
-			Example
-		</h2>
 		<p>Finally create an widget card that actually can use the manifest.json which we created:</p>
 		<pre class="prettyprint">
 <xmp class="language-xml"><mvc:View xmlns:w="sap.ui.integration.widgets">
 	<w:Card manifest="./manifest.json" width="400px" height="auto"/>
 </mvc:View>
 </xmp></pre>
-		<a  href="../../index.html#/explore/object" target="_parent">Check the example here</a>.
+		<a href="../../index.html#/explore/object" target="_parent">Try it Out</a>
 	</div>
 	<div class="navigation">
 		<h4>Table of Contents</h4>
 		<div><a href="#overview">Object Card</a></div>
-		<div><a href="#manifest">Card Manifest</a></div>
+		<div><a href="#structure">Structure</a></div>
 		<div><a href="#example">Example</a></div>
 	</div>
 </div>
