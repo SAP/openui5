@@ -46,33 +46,39 @@ sap.ui.define([
 				items: [
 					{
 						title: 'List',
+						topicTitle: 'Types',
 						target: 'learnDetail',
-						key: 'typeList'
+						key: 'list'
 					},
 					{
 						title: 'Table',
+						topicTitle: 'Types',
 						target: 'learnDetail',
-						key: 'typeTable'
+						key: 'table'
 					},
 					{
 						title: 'Object',
+						topicTitle: 'Types',
 						target: 'learnDetail',
-						key: 'typeObject'
+						key: 'object'
 					},
 					{
 						title: 'Timeline',
+						topicTitle: 'Types',
 						target: 'learnDetail',
-						key: 'typeTimeline'
+						key: 'timeline'
 					},
 					{
 						title: 'Analytical',
+						topicTitle: 'Types',
 						target: 'learnDetail',
-						key: 'typeAnalytical'
+						key: 'analytical'
 					},
 					{
 						title: 'Component',
+						topicTitle: 'Types',
 						target: 'learnDetail',
-						key: 'typeComponent'
+						key: 'component'
 					}
 				]
 			},

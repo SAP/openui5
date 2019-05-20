@@ -39,12 +39,12 @@
 .topic a {
 	color: #0A6ED1;
 	text-decoration: none;
-	font-size: 12px;
-	line-height: 14px;
 }
 
 .topic .navigation a {
 	padding: 8px 0 0 0;
+	font-size: 12px;
+	line-height: 14px;
 }
 
 .content {
@@ -68,7 +68,10 @@
 	width: 10rem;
 }
 
+.prettyprint {
+	overflow: auto;
+}
+
 .prettyprint xmp {
 	margin: 0;
-	white-space: pre-line;
 }
