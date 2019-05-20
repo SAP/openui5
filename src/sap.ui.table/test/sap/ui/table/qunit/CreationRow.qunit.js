@@ -47,7 +47,10 @@ sap.ui.define([
 
 		assert.strictEqual(oCreationRow.resetFocus(), true, "Returned true, because an element was focused");
 		assert.strictEqual(document.activeElement, oCreationRow.getCells()[1].getDomRef(), "The first interactive element is focused");
-		assert.strictEqual(window.getSelection().toString(), "test2", "The text of the interactive element is selected");
+
+		var oInput = oCreationRow.getCells()[1].getDomRef();
+		assert.strictEqual(oInput.selectionStart, 0, "The selection starts from index 0");
+		assert.strictEqual(oInput.selectionEnd, 5, "The selection ends as index 5");
 
 		this.oTable.getColumns()[1].destroy();
 		sap.ui.getCore().applyChanges();
