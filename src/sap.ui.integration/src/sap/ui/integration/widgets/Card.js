@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/integration/util/CardManifest",
 	"sap/ui/integration/util/ServiceManager",
@@ -16,11 +17,13 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/m/Text",
 	'sap/ui/model/json/JSONModel',
+	"sap/ui/model/resource/ResourceModel",
 	"sap/f/CardRenderer",
 	"sap/f/library",
 	"sap/ui/integration/library"
 ], function (
 	jQuery,
+	Core,
 	Control,
 	CardManifest,
 	ServiceManager,
@@ -34,6 +37,7 @@ sap.ui.define([
 	Icon,
 	Text,
 	JSONModel,
+	ResourceModel,
 	CardRenderer,
 	fLibrary,
 	library
@@ -809,6 +813,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype.init = function () {
+		this.setModel(new JSONModel(), "parameters");
 		this._initReadyState();
 		this.setBusyIndicatorDelay(0);
 	};
@@ -820,7 +825,6 @@ sap.ui.define([
 	 */
 	Card.prototype._initReadyState = function () {
 		this._aReadyPromises = [];
-		this._bApplyManifest = true;
 
 		this._awaitEvent("_headerReady");
 		this._awaitEvent("_contentReady");
@@ -946,6 +950,13 @@ sap.ui.define([
 		if (typeof vValue === "string" && vValue !== "") {
 			this._oCardManifest = new CardManifest();
 			this._oCardManifest.load({ manifestUrl: vValue }).then(function () {
+				if (this._oCardManifest && this._oCardManifest.getResourceBundle()) {
+					var oResourceModel = new ResourceModel({
+						bundle: this._oCardManifest.getResourceBundle()
+					});
+					oResourceModel.enhance(Core.getLibraryResourceBundle("sap.ui.integration"));
+					this.setModel(oResourceModel, "i18n");
+				}
 				this._bApplyManifest = true;
 				this.invalidate();
 			}.bind(this));

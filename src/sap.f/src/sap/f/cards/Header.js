@@ -10,7 +10,8 @@ sap.ui.define([
 	'sap/f/cards/DataProviderFactory',
 	'sap/ui/model/json/JSONModel',
 	"sap/f/cards/HeaderRenderer",
-	"sap/f/cards/ActionEnablement"
+	"sap/f/cards/ActionEnablement",
+	"sap/base/strings/formatMessage"
 ], function (
 	library,
 	Control,
@@ -20,7 +21,8 @@ sap.ui.define([
 	DataProviderFactory,
 	JSONModel,
 	HeaderRenderer,
-	ActionEnablement
+	ActionEnablement,
+	formatMessage
 ) {
 	"use strict";
 
@@ -268,9 +270,10 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @static
-	 * @param {Object} mConfiguration A map containing the header configuration options
-	 * @param {Object} oServiceManager A service manager instance to handle services
-	 * @return {sap.f.cards.Header} The created Header
+	 * @param {Object} mConfiguration A map containing the header configuration options.
+	 * @param {Object} oServiceManager A service manager instance to handle services.
+	 * @param {Object} oDataProviderFactory A DataProviderFactory instance.
+	 * @return {sap.f.cards.Header} The created Header.
 	 */
 	Header.create = function(mConfiguration, oServiceManager, oDataProviderFactory) {
 		var mSettings = {
@@ -284,17 +287,59 @@ sap.ui.define([
 			mSettings.iconInitials = mConfiguration.icon.text;
 		}
 
-		if (mConfiguration.status) {
+		if (mConfiguration.status && typeof mConfiguration.status.text === "string") {
 			mSettings.statusText = mConfiguration.status.text;
 		}
 
 		var oHeader = new Header(mSettings);
+		if (mConfiguration.status && mConfiguration.status.text && mConfiguration.status.text.format) {
+			Header._bindStatusText(mConfiguration.status.text.format, oHeader);
+		}
 		oHeader.setServiceManager(oServiceManager);
 		oHeader.setDataProviderFactory(oDataProviderFactory);
 		oHeader._setData(mConfiguration.data);
 
 		oHeader._attachActions(mConfiguration, oHeader);
 		return oHeader;
+	};
+
+	/**
+	 * Binds the statusText of a header to the provided format configuration.
+	 *
+	 * @private
+	 * @static
+	 * @param {Object} mFormat The formatting configuration.
+	 * @param {sap.f.cards.Header} oHeader The header instance.
+	 */
+	Header._bindStatusText = function (mFormat, oHeader) {
+
+		if (mFormat.parts && mFormat.translationKey && mFormat.parts.length === 2) {
+			var oBindingInfo = {
+				parts: [
+					mFormat.translationKey,
+					mFormat.parts[0].toString(),
+					mFormat.parts[1].toString()
+				],
+				formatter: function (sText, vParam1, vParam2) {
+					var sParam1 = vParam1 || mFormat.parts[0];
+					var sParam2 = vParam2 || mFormat.parts[1];
+
+					if (Array.isArray(vParam1)) {
+						sParam1 = vParam1.length;
+					}
+					if (Array.isArray(vParam2)) {
+						sParam2 = vParam2.length;
+					}
+
+					var iParam1 = parseFloat(sParam1) || 0;
+					var iParam2 = parseFloat(sParam2) || 0;
+
+					return formatMessage(sText, [iParam1, iParam2]);
+				}
+			};
+
+			oHeader.bindProperty("statusText", oBindingInfo);
+		}
 	};
 
 	Header.prototype.setServiceManager = function (oServiceManager) {

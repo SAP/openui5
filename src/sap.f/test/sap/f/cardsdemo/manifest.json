@@ -201,6 +201,11 @@
 		  "pattern": "dataMode",
 		  "name": "dataMode",
 		  "target": "dataMode"
+		},
+		{
+		  "pattern": "translation",
+		  "name": "translation",
+		  "target": "translation"
 		}
 	  ],
 		"targets": {
@@ -337,6 +342,11 @@
 			"dataMode": {
 				"viewId": "dataMode",
 				"viewName": "DataMode",
+				"viewLevel": 1
+			},
+			"translation": {
+				"viewId": "translation",
+				"viewName": "Translation",
 				"viewLevel": 1
 			}
 		}

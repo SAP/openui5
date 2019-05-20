@@ -80,6 +80,13 @@ sap.ui.define([
 	};
 
 	/**
+	 * @returns {sap.base.i18n.ResourceBundle} The resource bundle.
+	 */
+	CardManifest.prototype.getResourceBundle = function () {
+		return this.oResourceBundle;
+	};
+
+	/**
 	 * Use stringify/parse to clone and unfreeze object/array values.
 	 *
 	 * @param {*} vValue The value to unfreeze.
@@ -97,7 +104,7 @@ sap.ui.define([
 	 */
 	CardManifest.prototype.destroy = function () {
 		this.oJson = null;
-		this.oTranslator = null;
+		this.oResourceBundle = null;
 		if (this._oManifest) {
 			this._oManifest.destroy();
 		}
@@ -135,7 +142,7 @@ sap.ui.define([
 	 */
 	CardManifest.prototype.loadI18n = function () {
 		return this._oManifest._loadI18n(true).then(function (oBundle) {
-			this.oTranslator = oBundle;
+			this.oResourceBundle = oBundle;
 		}.bind(this));
 	};
 
@@ -152,7 +159,7 @@ sap.ui.define([
 			//Always need the unprocessed manifest
 			oUnprocessedJson = jQuery.extend(true, {}, this._oManifest.getRawJson());
 
-		process(oUnprocessedJson, this.oTranslator, iCurrentLevel, iMaxLevel, oParams);
+		process(oUnprocessedJson, this.oResourceBundle, iCurrentLevel, iMaxLevel, oParams);
 		deepFreeze(oUnprocessedJson);
 
 		this.oJson = oUnprocessedJson;
@@ -213,6 +220,7 @@ sap.ui.define([
 		var sISODate = new Date().toISOString();
 		var sProcessed = sPlaceholder.replace("{{parameters.NOW_ISO}}", sISODate);
 		sProcessed = sProcessed.replace("{{parameters.TODAY_ISO}}", sISODate.slice(0, 10));
+
 		if (oParam) {
 			for (var oProperty in oParam) {
 				sProcessed = sProcessed.replace("{{parameters." + oProperty + "}}", oParam[oProperty].value);
@@ -227,12 +235,12 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @param {Object} oObject The Manifest to process.
-	 * @param {Object} oTranslator The translator.
+	 * @param {Object} oResourceBundle The resource bundle to use for translation.
 	 * @param {number} iCurrentLevel The current level of recursion.
 	 * @param {number} iMaxLevel The maximum level of recursion.
 	 * @param {Object} oParams The parameters to be replaced in the manifest.
 	 */
-	function process (oObject, oTranslator, iCurrentLevel, iMaxLevel, oParams) {
+	function process (oObject, oResourceBundle, iCurrentLevel, iMaxLevel, oParams) {
 		if (iCurrentLevel === iMaxLevel) {
 			return;
 		}
@@ -240,21 +248,21 @@ sap.ui.define([
 		if (Array.isArray(oObject)) {
 			oObject.forEach(function (vItem, iIndex, aArray) {
 				if (typeof vItem === "object") {
-					process(vItem, oTranslator, iCurrentLevel + 1, iMaxLevel, oParams);
+					process(vItem, oResourceBundle, iCurrentLevel + 1, iMaxLevel, oParams);
 				} else if (isProcessable(vItem, oObject, oParams)) {
 					aArray[iIndex] = processPlaceholder(vItem, oParams);
-				} else if (isTranslatable(vItem) && oTranslator) {
-					aArray[iIndex] = oTranslator.getText(vItem.substring(2, vItem.length - 2));
+				} else if (isTranslatable(vItem) && oResourceBundle) {
+					aArray[iIndex] = oResourceBundle.getText(vItem.substring(2, vItem.length - 2));
 				}
 			}, this);
 		} else {
 			for (var sProp in oObject) {
 				if (typeof oObject[sProp] === "object") {
-					process(oObject[sProp], oTranslator, iCurrentLevel + 1, iMaxLevel, oParams);
+					process(oObject[sProp], oResourceBundle, iCurrentLevel + 1, iMaxLevel, oParams);
 				}  else if (isProcessable(oObject[sProp], oObject, oParams)) {
 					oObject[sProp] = processPlaceholder(oObject[sProp], oParams);
-				} else if (isTranslatable(oObject[sProp]) && oTranslator) {
-					oObject[sProp] = oTranslator.getText(oObject[sProp].substring(2, oObject[sProp].length - 2));
+				} else if (isTranslatable(oObject[sProp]) && oResourceBundle) {
+					oObject[sProp] = oResourceBundle.getText(oObject[sProp].substring(2, oObject[sProp].length - 2));
 				}
 			}
 		}
