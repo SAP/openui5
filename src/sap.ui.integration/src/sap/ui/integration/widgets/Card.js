@@ -600,13 +600,28 @@ sap.ui.define([
 	 * </pre>
 	 *
 	 * <h3>Actions</h3>
-	 * Actions add behavior to the card. To add a navigation action to the header and to the items, you can configure it inside the manifest.
 	 *
-	 * Actions have:
+	 * Actions add behavior to the card. Actions have:
 	 * <ul>
 	 * <li>Type</li>
 	 * <li>Parameters</li>
 	 * <li>Enabled flag (true by default)</li>
+	 * </ul>
+	 *
+	 * The available action types are:
+	 *
+	 * <ul>
+	 * <li>Navigation</li>
+	 * </ul>
+	 *
+	 * To add a navigation action, you need to configure it inside the manifest and the action itself can be set on:
+	 *
+	 * <ul>
+	 * <li>Header</li>
+	 * <li>Items of the list card</li>
+	 * <li>Rows of the table card</li>
+	 * <li>Analytical content</li>
+	 * <li>Object content</li>
 	 * </ul>
 	 *
 	 * In the example below, a navigation action is added both to the header and the list items:
@@ -661,6 +676,41 @@ sap.ui.define([
 	 *           }
 	 *         ]
 	 *       }
+	 *     }
+	 *   }
+	 * }
+	 * </code>
+	 * </pre>
+	 *
+	 *	In the example below, a navigation action is added on the Object content(same as Analytical content):
+	 * <pre>
+	 * <code>
+	 * {
+	 *   "sap.app": {
+	 *     "type": "card"
+	 *   },
+	 *   "sap.card": {
+	 *     "type": "Object",
+	 *     ...
+	 *     "content": {
+	 *       "data": {
+	 *         "request": {
+	 *           "url": "./objectitems_services2.json"
+	 *         },
+	 *         "path": "/items"
+	 *       },
+	 *        "groups": {
+	 *          ...
+	 *        },
+	 *        "actions": [
+	 *          {
+	 *            "type": "Navigation",
+	 *            "enabled": "{= ${url}}",
+	 *            "parameters": {
+	 *             	"url": "{url}"
+	 *            }
+	 *         }
+	 *       ]
 	 *     }
 	 *   }
 	 * }
