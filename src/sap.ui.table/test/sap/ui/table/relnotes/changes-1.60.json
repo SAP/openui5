@@ -293,5 +293,16 @@
         "references": []
       }
     ]
+  },
+  "1.60.13": {
+    "date": "May 2019",
+    "notes": [
+      {
+        "id": "57ff256eb702abea09a3ee7495074e15b389c203",
+        "type": "FIX",
+        "text": " Table: Update column menu visibility to match actual state",
+        "references": []
+      }
+    ]
   }
 }

@@ -339,5 +339,58 @@
         "references": []
       }
     ]
+  },
+  "1.65.2": {
+    "date": "May 2019",
+    "notes": [
+      {
+        "id": "7a0ee05df1353bf697db7c91de05529183e51655",
+        "type": "FIX",
+        "text": " CLDR: Added new Japanese era name",
+        "references": []
+      },
+      {
+        "id": "632654c5f8a1da28622bc8333827c1b32b4471e3",
+        "type": "FIX",
+        "text": " Core/Component: Respect \"final\" resourceRoot configuration",
+        "references": []
+      },
+      {
+        "id": "3ad3e1cf36fd4ad5b55330f46ea3e2f554bb975f",
+        "type": "FIX",
+        "text": " ODataMessageParser: FullTarget calc + message lifecycle",
+        "references": []
+      },
+      {
+        "id": "9a217e71b5673b0a1bb1d2f2cd7f2ee39de816e2",
+        "type": "FIX",
+        "text": " date.Japanese: adapt unit test to era change",
+        "references": []
+      },
+      {
+        "id": "ab0c90817f6ccc37a2cf75315f8e03ff4a5e72bb",
+        "type": "FIX",
+        "text": " sap/base/util/deepClone: Do not clone __proto__",
+        "references": []
+      },
+      {
+        "id": "4fd91733f7525b2d2915cc56ad48afef866b41f7",
+        "type": "FIX",
+        "text": " sap/base/util/merge: Avoid Object.prototype pollution",
+        "references": []
+      },
+      {
+        "id": "965622b2ff7231d5a1a22a539f4ba947be434862",
+        "type": "FIX",
+        "text": " sap/ui/thirdparty/jQuery: Prevent Object.prototype pollution",
+        "references": []
+      },
+      {
+        "id": "58b88f0401dadcac52f4bee2b4e554828116ed8f",
+        "type": "FIX",
+        "text": " v2/ODataModel: Prevent unexpected error handler calls",
+        "references": []
+      }
+    ]
   }
 }

@@ -238,5 +238,16 @@
         "references": []
       }
     ]
+  },
+  "1.60.13": {
+    "date": "May 2019",
+    "notes": [
+      {
+        "id": "76f0179a31aed3bb3d58a969fe78b4ff9b07ef07",
+        "type": "FIX",
+        "text": " CLDR: Added new Japanese era name",
+        "references": []
+      }
+    ]
   }
 }

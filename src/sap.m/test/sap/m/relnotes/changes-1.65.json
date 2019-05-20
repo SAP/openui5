@@ -735,5 +735,52 @@
         "references": []
       }
     ]
+  },
+  "1.65.2": {
+    "date": "May 2019",
+    "notes": [
+      {
+        "id": "934e060130c7bb48dc9114d04849dfd4c4dd4bb5",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Input field is focused after closing the picker",
+        "references": []
+      },
+      {
+        "id": "814914c52db504a816bc71ea5fb39e4d39864b8b",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: range now covers all hours from last day",
+        "references": []
+      },
+      {
+        "id": "3752255c62edffd0726c18e71138bfecb9e06d81",
+        "type": "FIX",
+        "text": " sap.m.GrowingEnablement: CountMode\u003dNone should not jump",
+        "references": []
+      },
+      {
+        "id": "419ddc534079d29760a1aa3fb1fa6235a7389083",
+        "type": "FIX",
+        "text": " sap.m.Input: Changing selection row now stops if input is destroyed",
+        "references": []
+      },
+      {
+        "id": "e338691b5e6303973472baa8c92ae97c5c7d67b1",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed visibility of scroll",
+        "references": []
+      },
+      {
+        "id": "8855801bab8617fd5651773c9bf5040205b210fb",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: Remove unnecessary padding",
+        "references": []
+      },
+      {
+        "id": "baa623346d30ab653301210d6164a27c6d1a4529",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: stickyMode works correctly when start date changes",
+        "references": []
+      }
+    ]
   }
 }

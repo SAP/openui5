@@ -99,5 +99,16 @@
         "references": []
       }
     ]
+  },
+  "1.65.2": {
+    "date": "May 2019",
+    "notes": [
+      {
+        "id": "bdcdfd388390f11e4425a18f37925d94a1b86a6b",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: shows side content on small screen",
+        "references": []
+      }
+    ]
   }
 }

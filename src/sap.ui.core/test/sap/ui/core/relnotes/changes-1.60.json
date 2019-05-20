@@ -1052,5 +1052,34 @@
         "references": []
       }
     ]
+  },
+  "1.60.13": {
+    "date": "May 2019",
+    "notes": [
+      {
+        "id": "967c238cbfd41d32717c2500dcfa612ee0e86495",
+        "type": "FIX",
+        "text": " AppCacheBuster: ignore hash-only URLs for rewriting",
+        "references": []
+      },
+      {
+        "id": "76f0179a31aed3bb3d58a969fe78b4ff9b07ef07",
+        "type": "FIX",
+        "text": " CLDR: Added new Japanese era name",
+        "references": []
+      },
+      {
+        "id": "db42aef8796ffe783883942f0a4fe8be539b1b72",
+        "type": "FIX",
+        "text": " Core/Component: Respect \"final\" resourceRoot configuration",
+        "references": []
+      },
+      {
+        "id": "89249d1a3246552ac83040c586ae53901e4b9254",
+        "type": "FIX",
+        "text": " date.Japanese: adapt unit test to era change",
+        "references": []
+      }
+    ]
   }
 }
