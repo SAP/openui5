@@ -880,7 +880,9 @@ sap.ui.define([
 				assert.ok(true, "[INFO] Navigate right to the top right cell.");
 			}
 
-			for (i = bHasRowHeaders ? 0 : 1; i < oTable.columnCount; i++) {
+			var iColumnCount = oTable.getGroupBy() ? oTable._getVisibleColumns().length : oTable.columnCount;
+
+			for (i = bHasRowHeaders ? 0 : 1; i < iColumnCount; i++) {
 				qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, false, false, false);
 
 				if (bHasColumnHeaders) {
@@ -914,7 +916,7 @@ sap.ui.define([
 				checkFocus(oElem, assert);
 
 				qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, false);
-				oElem = checkFocus(getCell(0, oTable.columnCount - 1), assert);
+				oElem = checkFocus(getCell(0, iColumnCount - 1), assert);
 				qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, false, false, false);
 				oElem = checkFocus(getRowAction(0), assert);
 
@@ -931,6 +933,8 @@ sap.ui.define([
 			if (bShowInfo) {
 				assert.ok(true, "[INFO] Navigate down to the bottom right cell, taking scrolling into account.");
 			}
+
+			iNumberOfRows = oTable.getGroupBy() ? 2 * window.iNumberOfRows : window.iNumberOfRows;
 
 			for (i = (bHasColumnHeaders && !bHasRowActions) ? 0 : 1; i < iNumberOfRows; i++) {
 				qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, false);
@@ -965,7 +969,9 @@ sap.ui.define([
 				assert.ok(true, "[INFO] Navigate left to the bottom left cell.");
 			}
 
-			for (i = oTable.columnCount - (bHasRowActions ? 1 : 2); i >= 0; i--) {
+			var iStartIndex = iColumnCount - (bHasRowActions || oTable.getGroupBy() ? 1 : 2);
+			var iEndIndex = oTable.getGroupBy() ? 1 : 0;
+			for (i = iStartIndex; i >= iEndIndex; i--) {
 				qutils.triggerKeydown(oElem, Key.Arrow.LEFT, false, false, false);
 				oElem = checkFocus(getCell(iVisibleRowCount - 1, i), assert);
 			}
@@ -1016,6 +1022,16 @@ sap.ui.define([
 				}
 			}
 		}
+	});
+
+	QUnit.test("Grouping", function(assert) {
+		oTable.setFixedColumnCount(0);
+		oTable.setEnableGrouping(true);
+		oTable.setGroupBy(oTable._getVisibleColumns()[0]);
+
+		sap.ui.getCore().applyChanges();
+
+		this.testArrowKeys(assert);
 	});
 
 	QUnit.test("Default Test Table - Row Header, Column Header", function(assert) {
@@ -5934,6 +5950,172 @@ sap.ui.define([
 		checkFocus(getRowAction(0), assert);
 		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 		assert.equal(oTable.isIndexSelected(0), false, "Row 1: Not Selected");
+	});
+
+	QUnit.module("TableKeyboardDelegate2 - Action Mode > Navigation when some inputs are disabled", {
+		beforeEach: function() {
+			setupTest();
+
+			oTable.removeAllColumns();
+			var oControl = new TestControl({text:"{A_TITLE}"});
+			oTable.addColumn(new Column({label: new TestControl({text: "A_TITLE"}), template: oControl, sortProperty: "A_TITLE", filterProperty: "lastName", width: "100px"}));
+			oControl = new TestControl({tabbable:"{bTabbable}"});
+			oTable.addColumn(new Column({label: new TestControl({text: "B_TITLE"}), template: oControl, sortProperty: "B_TITLE", filterProperty: "name", width: "100px"}));
+
+			var aData = [
+				{A_TITLE: "A1", bTabbable: true},
+				{A_TITLE: "A2", bTabbable: false},
+				{A_TITLE: "A3", bTabbable: false},
+				{A_TITLE: "A4", bTabbable: true},
+				{A_TITLE: "A5", bTabbable: false},
+				{A_TITLE: "A6", bTabbable: false},
+				{A_TITLE: "A7", bTabbable: false}
+			];
+
+			// create a JSONModel, fill in the data and bind the Table to this model
+			var oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData({modelData: aData});
+			oTable.setModel(oModel);
+			oTable.bindRows("/modelData");
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			teardownTest();
+		}
+	});
+
+	QUnit.test("TAB & Shift+TAB", function(assert) {
+		var done = assert.async();
+
+		new Promise(function(resolve) {
+			var oElem = checkFocus(getCell(0, 1, true), assert);
+			qutils.triggerKeydown(oElem, KeyCodes.F2, false, false, false);
+			oElem = checkFocus(oTable.getCellControl(0,1, true).getDomRef(), assert);
+
+			simulateTabEvent(oElem, false);
+			oElem = checkFocus(getRowHeader(1)[0], assert);
+			simulateTabEvent(oElem, false);
+			oElem = checkFocus(getRowHeader(2)[0], assert);
+			simulateTabEvent(oElem, false);
+			oTable.attachEventOnce("_rowsUpdated", function() {
+				setTimeout(function() {
+					assert.equal(oTable.getRows()[2].getIndex(), 3, "The table is scrolled");
+					assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+					oElem = checkFocus(getRowHeader(2)[0], assert);
+					resolve(oElem);
+				}, 0);
+			});
+		}).then(function(oElem){
+			return new Promise(function(resolve){
+				simulateTabEvent(oElem, false);
+				oElem = checkFocus(oTable.getCellControl(2, 1, true).getDomRef(), assert);
+
+				simulateTabEvent(oElem, true);
+				oElem = checkFocus(getRowHeader(2)[0], assert);
+				simulateTabEvent(oElem, true);
+				oElem = checkFocus(getRowHeader(1)[0], assert);
+				simulateTabEvent(oElem, true);
+				oElem = checkFocus(getRowHeader(0)[0], assert);
+				simulateTabEvent(oElem, true);
+				oTable.attachEventOnce("_rowsUpdated", function() {
+					setTimeout(function() {
+						assert.equal(oTable.getRows()[0].getIndex(), 0, "The table is scrolled");
+						assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+						oElem = checkFocus(oTable.getCellControl(0, 1, true).getDomRef(), assert);
+						resolve();
+					}, 0);
+				});
+			});
+		}).then(function(){
+			done();
+		});
+	});
+
+	QUnit.test("TAB & Shift+TAB - selectionMode is None", function(assert) {
+		var done = assert.async();
+		oTable.setSelectionMode("None");
+		sap.ui.getCore().applyChanges();
+
+		new Promise(function(resolve) {
+			var oElem = checkFocus(getCell(0, 1, true), assert);
+			qutils.triggerKeydown(oElem, KeyCodes.F2, false, false, false);
+			oElem = checkFocus(oTable.getCellControl(0, 1, true).getDomRef(), assert);
+
+			simulateTabEvent(oElem, false);
+			oTable.attachEventOnce("_rowsUpdated", function() {
+				setTimeout(function() {
+					assert.equal(oTable.getRows()[2].getIndex(), 3, "The table is scrolled");
+					assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+					oElem = checkFocus(oTable.getCellControl(2, 1, true).getDomRef(), assert);
+					resolve(oElem);
+				}, 0);
+			});
+		}).then(function(oElem){
+			return new Promise(function(resolve){
+				simulateTabEvent(oElem, false);
+				oTable.attachEventOnce("_rowsUpdated", function() {
+					setTimeout(function() {
+						assert.equal(oTable.getRows()[2].getIndex(), 4, "The table is scrolled");
+						assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+						oElem = checkFocus(getCell(2, 0)[0], assert);
+						resolve(oElem);
+					}, 0);
+				});
+			});
+		}).then(function(oElem){
+			return new Promise(function(resolve){
+				simulateTabEvent(oElem, false);
+				oTable.attachEventOnce("_rowsUpdated", function() {
+					setTimeout(function() {
+						assert.equal(oTable.getRows()[2].getIndex(), 5, "The table is scrolled");
+						assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+						oElem = checkFocus(getCell(2, 0)[0], assert);
+						resolve(oElem);
+					}, 0);
+				});
+			});
+		}).then(function(oElem){
+			return new Promise(function(resolve){
+				simulateTabEvent(oElem, true);
+				oElem = checkFocus(oTable.getCellControl(0, 1, true).getDomRef(), assert);
+				simulateTabEvent(oElem, true);
+				oTable.attachEventOnce("_rowsUpdated", function() {
+					setTimeout(function() {
+						assert.equal(oTable.getRows()[0].getIndex(), 2, "The table is scrolled");
+						assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+						oElem = checkFocus(getCell(0, 0)[0], assert);
+						resolve(oElem);
+					}, 0);
+				});
+			});
+		}).then(function(oElem){
+			return new Promise(function(resolve){
+				simulateTabEvent(oElem, true);
+				oTable.attachEventOnce("_rowsUpdated", function() {
+					setTimeout(function() {
+						assert.equal(oTable.getRows()[0].getIndex(), 1, "The table is scrolled");
+						assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+						oElem = checkFocus(getCell(0, 0)[0], assert);
+						resolve(oElem);
+					}, 0);
+				});
+			});
+		}).then(function(oElem){
+			return new Promise(function(resolve){
+				simulateTabEvent(oElem, true);
+				oTable.attachEventOnce("_rowsUpdated", function() {
+					setTimeout(function() {
+						assert.equal(oTable.getRows()[0].getIndex(), 0, "The table is scrolled");
+						assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+						checkFocus(oTable.getCellControl(0, 1, true).getDomRef(), assert);
+						resolve();
+					}, 0);
+				});
+			});
+		}).then(function(){
+			done();
+		});
 	});
 
 	QUnit.module("TableKeyboardDelegate2 - Action Mode > Navigation", {
