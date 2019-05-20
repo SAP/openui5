@@ -589,18 +589,20 @@ sap.ui.define([
 
 	QUnit.test("getVerticalScrollbar", function(assert) {
 		assert.strictEqual(this.oScrollExtension.getVerticalScrollbar(), oTable.getDomRef(tableLibrary.SharedDomRef.VerticalScrollBar),
-			"Returned: Vertical scrollbar element");
+			"Returned the vertical scrollbar");
 
 		var oScrollbar = this.oScrollExtension.getVerticalScrollbar();
 		var oScrollbarParent = oScrollbar.parentNode;
 
 		oScrollbarParent.removeChild(oScrollbar);
 		assert.strictEqual(this.oScrollExtension.getVerticalScrollbar(), null,
-			"Returned null: The Scrollbar was removed from DOM");
+			"Returned null: The scrollbar was removed from DOM");
+		assert.strictEqual(this.oScrollExtension.getVerticalScrollbar(true), oScrollbar,
+			"Returned the vertical scrollbar: The scrollbar was removed from DOM, but the connection to the DOM is ignored");
 
 		oScrollbarParent.appendChild(oScrollbar);
 		assert.strictEqual(this.oScrollExtension.getVerticalScrollbar(), oScrollbar,
-			"Returned: Vertical scrollbar element");
+			"Returned the vertical scrollbar: The scrollbar was added back to the DOM");
 
 		destroyTables();
 		createTables();
@@ -1885,6 +1887,106 @@ sap.ui.define([
 			scrollTop: 1000000,
 			expectedFirstVisibleRow: 20000000 - 10
 		});
+	});
+
+	QUnit.test("The table's DOM is removed without notifying the table", function(assert) {
+		var done = assert.async();
+		var oScrollExtension = oTable._getScrollExtension();
+		var oTableElement;
+		var oTableParentElement;
+
+		// The purpose of this test is to identify TypeErrors.
+
+		Promise.resolve().then(function() {
+			oTableElement = oTable.getDomRef();
+			oTableParentElement = oTableElement.parentNode;
+			oTable.setFirstVisibleRow(5);
+			oTableParentElement.removeChild(oTableElement);
+
+			return new Promise(function(resolve) {
+				window.requestAnimationFrame(resolve);
+			});
+
+		}).then(function() {
+			assert.ok(true, "Remove DOM synchronously after setting firstVisibleRow");
+
+			oTable.setFirstVisibleRow(6);
+
+			return new Promise(function(resolve) {
+				window.requestAnimationFrame(resolve);
+			});
+
+		}).then(function() {
+			assert.ok(true, "Set firstVisibleRow if DOM is removed");
+
+		}).then(function() {
+			oTableParentElement.appendChild(oTableElement);
+			oTable.setFirstVisibleRow(5);
+
+			return new Promise(function(resolve) {
+				window.requestAnimationFrame(resolve);
+			});
+
+		}).then(function() {
+			oTableParentElement.removeChild(oTableElement);
+
+			return new Promise(function(resolve) {
+				window.requestAnimationFrame(resolve);
+			});
+
+		}).then(function() {
+			assert.ok(true, "Remove DOM asynchronously after setting firstVisibleRow");
+
+		}).then(function() {
+			oTableParentElement.appendChild(oTableElement);
+			oScrollExtension.getVerticalScrollbar().scrollTop = 100;
+			oTableParentElement.removeChild(oTableElement);
+
+			return new Promise(function(resolve) {
+				window.requestAnimationFrame(resolve);
+			});
+
+		}).then(function() {
+			assert.ok(true, "Remove DOM synchronously after scrolling with scrollbar");
+
+		}).then(function() {
+			oTableParentElement.appendChild(oTableElement);
+			oScrollExtension.getVerticalScrollbar().scrollTop = 100;
+
+			return new Promise(function(resolve) {
+				window.requestAnimationFrame(resolve);
+			});
+
+		}).then(function() {
+			oTableParentElement.removeChild(oTableElement);
+
+			return new Promise(function(resolve) {
+				window.requestAnimationFrame(resolve);
+			});
+
+		}).then(function() {
+			assert.ok(true, "Remove DOM asynchronously after scrolling with scrollbar");
+
+		}).then(function() {
+			oTableParentElement.appendChild(oTableElement);
+			oTable._setLargeDataScrolling(true);
+			oScrollExtension.getVerticalScrollbar().scrollTop = 200;
+
+			return new Promise(function(resolve) {
+				window.requestAnimationFrame(resolve);
+			});
+
+		}).then(function() {
+			oTableParentElement.removeChild(oTableElement);
+
+			return new Promise(function(resolve) {
+				setTimeout(resolve, 300);
+			});
+
+		}).then(function() {
+			assert.ok(true, "Remove DOM asynchronously after scrolling with scrollbar and large data scrolling enabled");
+
+		}).then(done);
 	});
 
 	QUnit.module("Special cases", {
