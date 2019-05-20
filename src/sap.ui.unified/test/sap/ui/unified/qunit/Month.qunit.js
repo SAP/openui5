@@ -355,6 +355,26 @@ sap.ui.define([
 			isValueInThresholdStub.restore();
 		});
 
+		QUnit.test("Date can't be selected via mouse's right button click", function (assert) {
+			// Arrange
+			var oTarget = document.createElement("span");
+			oTarget.classList.add("sapUiCalItemText");
+			var oMouseEvent = { clientX: 10, clientY: 10, target: oTarget, button: 2 },
+				deviceStub = this.stub(sap.ui.Device.support, "touch", true),
+				isSelectedDaySpy = this.spy(this.oM, "_selectDay");
+
+			//act
+			this.oM._oMousedownPosition = oMouseEvent;
+			this.oM.onmouseup(oMouseEvent);
+
+			//assert
+			assert.notOk(isSelectedDaySpy.called, "onmouseup with the right button on the mouse does not invoke _selectDay");
+
+			//cleanup
+			deviceStub.restore();
+			isSelectedDaySpy.restore();
+		});
+
 		QUnit.test("Selecting a week number in IE + touch does not cause day selection", function (assert) {
 			// Arrange
 			var oTarget = document.createElement("span");

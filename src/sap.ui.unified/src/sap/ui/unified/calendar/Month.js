@@ -1005,6 +1005,9 @@ sap.ui.define([
 	};
 
 	Month.prototype.onmouseup = function(oEvent){
+		// BCP: 1980116734
+		// on a combi device right mouse button resulted in a selection (both a week or a single day)
+		var bNotRightMouseButton = oEvent.button !== 2;
 
 		// fire select event on mouseup to prevent closing calendar during click
 
@@ -1040,7 +1043,7 @@ sap.ui.define([
 		if (this._bMousedownChange) {
 			this._bMousedownChange = false;
 			_fireSelect.call(this);
-		} else if (Device.support.touch && this._areMouseEventCoordinatesInThreshold(oEvent.clientX, oEvent.clientY, 10)) {
+		} else if (Device.support.touch && bNotRightMouseButton && this._areMouseEventCoordinatesInThreshold(oEvent.clientX, oEvent.clientY, 10)) {
 			var classList = oEvent.target.classList,
 				bIsDateSelected = (classList.contains("sapUiCalItemText") || classList.contains("sapUiCalDayName")),
 				bIsWeekSelected = classList.contains("sapUiCalWeekNum"),
