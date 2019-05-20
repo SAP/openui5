@@ -690,6 +690,9 @@ sap.ui.define([
 			} else if (!this._SCVisible && !this._MCVisible) {
 				$mainContent.addClass(HIDDEN_CLASS);
 				$sideContent.addClass(HIDDEN_CLASS);
+			} else if (!this._SCVisible && this._MCVisible && bSideContentVisibleProperty && bMainContentVisibleProperty) {
+				$sideContent.removeClass().addClass(SPAN_SIZE_12_CLASS);
+				$mainContent.addClass(HIDDEN_CLASS);
 			} else if (this._MCVisible && bMainContentVisibleProperty) {
 				$mainContent.removeClass().addClass(SPAN_SIZE_12_CLASS);
 				$sideContent.addClass(HIDDEN_CLASS);
