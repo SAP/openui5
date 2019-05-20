@@ -1058,10 +1058,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', './DateTimeF
 			// compare Dates because value can be the same if only 2 digits for year
 			sValue = this.getValue();
 			this.fireChangeEvent(sValue, {valid: true});
-			if (this.getDomRef() && (Device.system.desktop || !Device.support.touch) && !jQuery.sap.simulateMobileOnDesktop) { // as control could be destroyed during update binding
-				this._curpos = this._$input.val().length;
-				this._$input.cursorPos(this._curpos);
-			}
+			this._focusInput();
 		}else if (!this._bValid){
 			// wrong input before open calendar
 			sValue = this._formatValue(oDate);
@@ -1076,6 +1073,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', './DateTimeF
 				sValue = this._formatValue(oDate, true);
 				this.setProperty("value", sValue, true); // no rerendering
 				this.fireChangeEvent(sValue, {valid: true});
+				this._focusInput();
 			}
 		} else if ((Device.system.desktop || !Device.support.touch) && !jQuery.sap.simulateMobileOnDesktop) {
 			this.focus();
@@ -1085,6 +1083,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', './DateTimeF
 		this._oPopup.close();
 
 	};
+
+	/* sets cursor inside the input in order to focus it */
+	DatePicker.prototype._focusInput = function(){
+
+		if (this.getDomRef() && (Device.system.desktop || !Device.support.touch)) { // as control could be destroyed during update binding
+			this._curpos = this._$input.val().length;
+			this._$input.cursorPos(this._curpos);
+		}
+		return this;
+
+	};
+
 
 	DatePicker.prototype._getSelectedDate = function(){
 

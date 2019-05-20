@@ -710,6 +710,15 @@
 				qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
 				assert.equal(document.activeElement.id, "DP5-inner", "Focus is on the input field after selecting the same date");
 
+				oDP5.focus();
+				jQuery("#DP5").find("input").val("4"); // enter invalid date
+				qutils.triggerKeyboardEvent("DP2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+				jQuery("#DP5").find("input").change();
+				qutils.triggerEvent("click", "DP5-icon");
+				jQuery("#DP5-cal--Month0-20151124").focus(); // choose previous valid date
+				qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
+				assert.equal(document.activeElement.id, "DP5-inner", "Focus is on the input field after first entering invalid date and then selecting the previous valid date");
+
 				qutils.triggerEvent("click", "DP5-icon");
 				jQuery("#DP5-cal").control(0).fireCancel();
 				assert.equal(document.activeElement.id, "DP5-inner", "Focus is on the input field after cancel");
