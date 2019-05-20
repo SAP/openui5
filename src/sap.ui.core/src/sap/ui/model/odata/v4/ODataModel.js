@@ -784,24 +784,20 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks whether the given group ID is a deferred application group as specified in
-	 * {@link sap.ui.model.odata.v4.ODataModel} and not having group property
-	 * {@link sap.ui.model.odata.v4.SubmitMode.Auto} or
+	 * Checks whether the given group ID is valid (see {@link #checkGroupId}) and does not have
 	 * {@link sap.ui.model.odata.v4.SubmitMode.Direct}.
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID
 	 * @throws {Error}
-	 *   For invalid deferred group IDs, or group IDs having group property
-	 *   {@link sap.ui.model.odata.v4.SubmitMode.Auto} or
-	 *   {@link sap.ui.model.odata.v4.SubmitMode.Direct}
+	 *   For invalid group IDs, or group IDs with {@link sap.ui.model.odata.v4.SubmitMode.Direct}
 	 *
 	 * @private
 	 */
-	ODataModel.prototype.checkDeferredGroupId = function (sGroupId) {
-		this.checkGroupId(sGroupId, true, "Invalid deferred group ID: ");
-		if (this.isAutoGroup(sGroupId) || this.isDirectGroup(sGroupId)) {
-			throw new Error("Group ID is not deferred: " + sGroupId);
+	ODataModel.prototype.checkBatchGroupId = function (sGroupId) {
+		this.checkGroupId(sGroupId);
+		if (this.isDirectGroup(sGroupId)) {
+			throw new Error("Group ID does not use batch requests: " + sGroupId);
 		}
 	};
 
@@ -1557,14 +1553,14 @@ sap.ui.define([
 	 * (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute}).
 	 *
 	 * @param {string} [sGroupId]
-	 *   The application group ID as specified in {@link sap.ui.model.odata.v4.ODataModel}. If it is
+	 *   A valid group ID as specified in {@link sap.ui.model.odata.v4.ODataModel}. If it is
 	 *   <code>undefined</code>, the model's <code>updateGroupId</code> is used. Note that the
-	 *   default <code>updateGroupId</code> is '$auto', which is invalid here.
+	 *   default <code>updateGroupId</code> is '$auto', which is valid here since 1.67.0.
 	 * @throws {Error}
-	 *   If the given group ID is not an application group ID or has
-	 *   {@link sap.ui.model.odata.v4.SubmitMode.Auto} or
-	 *   {@link sap.ui.model.odata.v4.SubmitMode.Direct} or if change requests for the given group
-	 *   ID are running.
+	 *   If the given group ID is not a valid group ID, or has
+	 *   {@link sap.ui.model.odata.v4.SubmitMode.Direct} (since 1.67.0,
+	 *   {@link sap.ui.model.odata.v4.SubmitMode.Auto} is allowed), or if change requests for the
+	 *   given group ID are running.
 	 *
 	 * @public
 	 * @see sap.ui.model.odata.v4.ODataModel#constructor.
@@ -1572,9 +1568,11 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.resetChanges = function (sGroupId) {
 		sGroupId = sGroupId || this.sUpdateGroupId;
-		this.checkDeferredGroupId(sGroupId);
+		this.checkBatchGroupId(sGroupId);
 
-		this.oRequestor.cancelChanges(sGroupId);
+		this.oRequestor.cancelChanges(
+			this.isAutoGroup(sGroupId) ? "$parked." + sGroupId : sGroupId);
+
 		this.aAllBindings.forEach(function (oBinding) {
 			if (sGroupId === oBinding.getUpdateGroupId()) {
 				oBinding.resetInvalidDataState();
@@ -1642,19 +1640,21 @@ sap.ui.define([
 	};
 
 	/**
-	 * Submits the requests associated with the given application group ID in one batch request.
-	 * Requests from subsequent calls to this method for the same group ID may be combined in one
-	 * batch request using separate change sets.
+	 * Submits the requests associated with the given group ID in one batch request. Requests from
+	 * subsequent calls to this method for the same group ID may be combined in one batch request
+	 * using separate change sets. For group IDs with {@link sap.ui.model.odata.v4.SubmitMode.Auto},
+	 * only a single change set is used; this method is useful to repeat failed updates or creates
+	 * (see {@link sap.ui.model.odata.v4.ODataListBinding#create}).
 	 *
 	 * @param {string} sGroupId
-	 *   The application group ID as specified in {@link sap.ui.model.odata.v4.ODataModel}.
+	 *   A valid group ID as specified in {@link sap.ui.model.odata.v4.ODataModel}.
 	 * @returns {Promise}
 	 *   A promise on the outcome of the HTTP request resolving with <code>undefined</code>; it is
 	 *   rejected with an error if the batch request itself fails
 	 * @throws {Error}
-	 *   If the given group ID is not an application group ID or has
-	 *   {@link sap.ui.model.odata.v4.SubmitMode.Auto} or
+	 *   If the given group ID is not a valid group ID or has
 	 *   {@link sap.ui.model.odata.v4.SubmitMode.Direct}
+	 *   (since 1.67.0, {@link sap.ui.model.odata.v4.SubmitMode.Auto} is allowed)
 	 *
 	 * @public
 	 * @since 1.37.0
@@ -1662,9 +1662,13 @@ sap.ui.define([
 	ODataModel.prototype.submitBatch = function (sGroupId) {
 		var that = this;
 
-		this.checkDeferredGroupId(sGroupId);
+		this.checkBatchGroupId(sGroupId);
+		if (this.isAutoGroup(sGroupId)) {
+			sGroupId = "$parked." + sGroupId;
+		} else {
+			this.oRequestor.addChangeSet(sGroupId);
+		}
 
-		this.oRequestor.addChangeSet(sGroupId);
 		return new Promise(function (resolve) {
 			sap.ui.getCore().addPrerenderingTask(function () {
 				resolve(that._submitBatch(sGroupId));
