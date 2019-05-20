@@ -8,7 +8,8 @@ sap.ui.define([
 	"../library",
 	"../TableUtils",
 	"sap/ui/core/Icon",
-	"sap/ui/core/IconPool"
+	"sap/ui/core/IconPool",
+	"sap/base/Log"
 ], function(
 	SelectionPlugin,
 	SelectionModelPlugin,
@@ -16,7 +17,8 @@ sap.ui.define([
 	library,
 	TableUtils,
 	Icon,
-	IconPool
+	IconPool,
+	Log
 ) {
 
 	"use strict";
@@ -28,21 +30,20 @@ sap.ui.define([
 	 *
 	 * @class  Implements a plugin to enable a special multi-selection behavior:
 	 * <ul>
-	 * <li>No Select All button, select all can only be done via range selection</li>
-	 * <li>Dedicated button to clear the selection</li>
+	 * <li>No Select All checkbox, select all can only be done via range selection</li>
+	 * <li>Dedicated Deselect All button to clear the selection</li>
 	 * <li>The number of items which can be selected in a range is defined with the limit property by the application.
 	 * If the user tries to select more items, the selection is automatically limited, and the table scrolls back to the last selected item</li>
 	 * <li>If not already loaded, the table loads the selected items up to the given limit</li>
 	 * <li>Multiple consecutive selections are possible</li>
 	 * </ul>
 	 *
-	 * When this plugin is applied to the table, the selection mode is automatically set to MultiToggle and cannot be changed.
+	 * When this plugin is applied to the table, the table's selection mode is automatically set to MultiToggle and cannot be changed.
 	 *
 	 * @extends sap.ui.table.plugins.SelectionPlugin
 	 * @constructor
 	 * @public
 	 * @since 1.64
-	 * @experimental As of version 1.64
 	 * @author SAP SE
 	 * @alias sap.ui.table.plugins.MultiSelectionPlugin
 	 */
@@ -50,6 +51,13 @@ sap.ui.define([
 		properties: {
 			/**
 			 * Number of items which can be selected in a range.
+			 * Accepts positive integer values. If set to 0, the limit is disabled, and the Select All checkbox appears instead of the Deselect All button. The plugin loads all selected items.
+			 * <b>Note:</b> To avoid severe performance problems, the limit should only be set to 0 in the following cases:
+			 * <ul>
+			 * <li>With client-side models</li>
+			 * <li>With server-side models if they are used in client mode</li>
+			 * <li>If the entity set is small</li>
+			 * </ul>
 			 */
 			limit: {type: "int", group: "Behavior", defaultValue: 200}
 		},
@@ -74,9 +82,6 @@ sap.ui.define([
 		}
 	}});
 
-	/**
-	 * Sets up the initial values.
-	 */
 	MultiSelectionPlugin.prototype.init = function() {
 		SelectionPlugin.prototype.init.call(this);
 
@@ -84,6 +89,7 @@ sap.ui.define([
 		oIcon.addStyleClass("sapUiTableSelectClear");
 
 		this._bLimitReached = false;
+		this._bLimitDisabled = this.getLimit() === 0;
 		this.oSelectionPlugin = null;
 		this.oDeselectAllIcon = oIcon;
 	};
@@ -108,7 +114,7 @@ sap.ui.define([
 	MultiSelectionPlugin.prototype.getRenderConfig = function() {
 		return {
 			headerSelector: {
-				type: "clear",
+				type: this._bLimitDisabled ? "toggle" : "clear",
 				icon: this.oDeselectAllIcon
 			}
 		};
@@ -120,7 +126,11 @@ sap.ui.define([
 	 * @return {boolean}
 	 */
 	MultiSelectionPlugin.prototype.onHeaderSelectorPress = function() {
-		this.clearSelection();
+		if (this._bLimitDisabled && this.getSelectableCount() > this.getSelectedCount()) {
+			this.selectAll();
+		} else {
+			this.clearSelection();
+		}
 		return true;
 	};
 
@@ -137,36 +147,105 @@ sap.ui.define([
 		}
 	};
 
+	MultiSelectionPlugin.prototype.setLimit = function(iLimit) {
+		if (typeof iLimit === "number" && iLimit < 0) {
+			Log.warning("The limit must be greater than or equal to 0", this);
+			return this;
+		}
+
+		this.setProperty("limit", iLimit);
+		this._bLimitDisabled = iLimit === 0;
+		return this;
+	};
+
 	/**
-	 * @override
-	 * @inheritDoc
+	 * Returns <code>true</code> if the selection limit has been reached (only the last selection), <code>false</code> otherwise.
+	 *
+	 * @return {boolean}
 	 */
-	MultiSelectionPlugin.prototype.addSelectionInterval = function(iIndexFrom, iIndexTo) {
-		if (!this.oSelectionPlugin) {
-			return;
-		}
+	MultiSelectionPlugin.prototype.isLimitReached = function() {
+		return this._bLimitReached;
+	};
 
-		var iLimit = this.getLimit();
-		// in case iIndexFrom is already selected the range starts from the next index
-		if (this.isIndexSelected(iIndexFrom)) {
-			iIndexFrom++;
+	/**
+	 * Sets the value.
+	 *
+	 * @param bLimitReached
+	 */
+	MultiSelectionPlugin.prototype.setLimitReached = function(bLimitReached) {
+		this._bLimitReached = bLimitReached;
+	};
+
+	/**
+	 * Loads all contexts and adds all indices to the selection if the limit is disabled.
+	 *
+	 * @override
+	 * @public
+	 */
+	MultiSelectionPlugin.prototype.selectAll = function() {
+		if (this._bLimitDisabled){
+			var iLastIndex = this._getBinding().getLength() - 1;
+			this.addSelectionInterval(0, iLastIndex);
 		}
+	};
+
+
+	function prepareSelection(oMultiSelectionPlugin, iIndexFrom, iIndexTo) {
+		var iLimit = oMultiSelectionPlugin.getLimit();
 		var iLength = iIndexTo - iIndexFrom + 1;
-		var that = this;
-		var oBinding = this._getBinding();
+		var oBinding = oMultiSelectionPlugin._getBinding();
 
-		this.setLimitReached(false);
-		if (iLength > iLimit) {
-			iIndexTo = iIndexFrom + iLimit - 1;
-			iLength = iLimit;
-			this.setLimitReached(true);
+		if (!oMultiSelectionPlugin._bLimitDisabled) {
+			// in case iIndexFrom is already selected the range starts from the next index
+			if (oMultiSelectionPlugin.isIndexSelected(iIndexFrom) && iIndexTo > iIndexFrom) {
+				iIndexFrom++;
+			}
+
+			oMultiSelectionPlugin.setLimitReached(false);
+			if (iLength > iLimit) {
+				iIndexTo = iIndexFrom + iLimit - 1;
+				iLength = iLimit;
+				oMultiSelectionPlugin.setLimitReached(true);
+			}
 		}
 
-		if (oBinding && iIndexFrom >= 0 && iLength >= 0) {
-			loadMultipleContexts(oBinding, iIndexFrom, iLength).then(function () {
-				that.oSelectionPlugin.addSelectionInterval(iIndexFrom, iIndexTo);
+		if (oBinding && iIndexFrom >= 0 && iLength > 0) {
+			return loadMultipleContexts(oBinding, iIndexFrom, iLength).then(function () {
+				return {indexFrom: iIndexFrom, indexTo: iIndexTo};
 			});
 		}
+		return Promise.resolve();
+	}
+
+	/**
+	 * Loads the contexts of the selected range and sets the given selection interval as the selection.
+	 *
+	 * @param {int} iIndexFrom Index from which the selection starts
+	 * @param {int} iIndexTo Index up to which to select
+	 * @public
+	 */
+	MultiSelectionPlugin.prototype.setSelectionInterval = function(iIndexFrom, iIndexTo) {
+		prepareSelection(this, iIndexFrom, iIndexTo).then(function(mIndices) {
+			if (mIndices) {
+				this.oSelectionPlugin.setSelectionInterval(mIndices.indexFrom, mIndices.indexTo);
+			}
+		}.bind(this));
+	};
+
+	/**
+	 * Loads the context of the selected range and adds the given selection interval to the selection.
+	 *
+	 * @override
+	 * @param {int} iIndexFrom Index from which the selection starts
+	 * @param {int} iIndexTo Index up to which to select
+	 * @public
+	 */
+	MultiSelectionPlugin.prototype.addSelectionInterval = function(iIndexFrom, iIndexTo) {
+		prepareSelection(this, iIndexFrom, iIndexTo).then(function(mIndices) {
+			if (mIndices) {
+				this.oSelectionPlugin.addSelectionInterval(mIndices.indexFrom, mIndices.indexTo);
+			}
+		}.bind(this));
 	};
 
 	function loadMultipleContexts(oBinding, iStartIndex, iLength){
@@ -201,26 +280,10 @@ sap.ui.define([
 	}
 
 	/**
-	 * Returns <code>true</code> if the selection limit has been reached (only the last selection), <code>false</code> otherwise.
+	 * Removes the complete selection.
 	 *
-	 * @return {boolean}
-	 */
-	MultiSelectionPlugin.prototype.isLimitReached = function() {
-		return this._bLimitReached;
-	};
-
-	/**
-	 * Sets the value.
-	 *
-	 * @param bLimitReached
-	 */
-	MultiSelectionPlugin.prototype.setLimitReached = function(bLimitReached) {
-		this._bLimitReached = bLimitReached;
-	};
-
-	/**
 	 * @override
-	 * @inheritDoc
+	 * @public
 	 */
 	MultiSelectionPlugin.prototype.clearSelection = function() {
 		if (this.oSelectionPlugin) {
@@ -241,8 +304,11 @@ sap.ui.define([
 	};
 
 	/**
+	 * Zero-based indices of selected items, wrapped in an array. An empty array means nothing has been selected.
+	 *
+	 * @returns {int[]} An array containing all selected indices
 	 * @override
-	 * @inheritDoc
+	 * @public
 	 */
 	MultiSelectionPlugin.prototype.getSelectedIndices = function() {
 		if (this.oSelectionPlugin) {
@@ -285,8 +351,12 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the information whether the given index is selected.
+	 *
+	 * @param {int} iIndex The index for which the selection state is retrieved
+	 * @returns {boolean} <code>true</code> if the index is selected
 	 * @override
-	 * @inheritDoc
+	 * @public
 	 */
 	MultiSelectionPlugin.prototype.isIndexSelected = function(iIndex) {
 		if (this.oSelectionPlugin) {
@@ -296,8 +366,12 @@ sap.ui.define([
 	};
 
 	/**
+	 * Removes the given selection interval from the selection. In case of single selection, only <code>iIndexTo</code> is removed from the selection.
+	 *
+	 * @param {int} iIndexFrom Index from which the deselection starts
+	 * @param {int} iIndexTo Index up to which to deselect
 	 * @override
-	 * @inheritDoc
+	 * @public
 	 */
 	MultiSelectionPlugin.prototype.removeSelectionInterval = function(iIndexFrom, iIndexTo) {
 		if (this.oSelectionPlugin) {
@@ -320,34 +394,6 @@ sap.ui.define([
 					that.oSelectionPlugin.setSelectedIndex(iIndex);
 				});
 			}
-		}
-	};
-
-	/**
-	 * @override
-	 * @inheritDoc
-	 */
-	MultiSelectionPlugin.prototype.setSelectionInterval = function(iIndexFrom, iIndexTo) {
-		if (!this.oSelectionPlugin) {
-			return;
-		}
-
-		var iLimit = this.getLimit();
-		var iLength = iIndexTo - iIndexFrom + 1;
-		var that = this;
-		var oBinding = this._getBinding();
-
-		this.setLimitReached(false);
-		if (iLength > iLimit) {
-			iIndexTo = iIndexFrom + iLimit - 1;
-			iLength = iLimit;
-			this.setLimitReached(true);
-		}
-
-		if (oBinding && iIndexFrom >= 0 && iLength > 0) {
-			loadMultipleContexts(oBinding, iIndexFrom, iLength).then(function () {
-				that.oSelectionPlugin.setSelectionInterval(iIndexFrom, iIndexTo);
-			});
 		}
 	};
 

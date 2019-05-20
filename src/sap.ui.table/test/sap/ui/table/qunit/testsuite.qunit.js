@@ -199,7 +199,8 @@ sap.ui.define([
 
 			"MultiSelectionPlugin": {
 				group: "Plugins",
-				module: "./plugins/{name}.qunit"
+				module: "./plugins/{name}.qunit",
+				sinon: false /*uses Mockserver*/
 			}
 		}
 	};

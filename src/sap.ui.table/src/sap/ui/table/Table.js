@@ -3157,7 +3157,7 @@ sap.ui.define([
 
 			if (this._getShowStandardTooltips()) {
 				$SelectAll.attr('title', sSelectAllText);
-			} else if (this._oSelectionPlugin.getRenderConfig().headerSelector.type === "toggle") {
+			} else if (mRenderConfig.headerSelector.type === "toggle") {
 				this.getDomRef("ariaselectall").innerText = sSelectAllText;
 			}
 		}
