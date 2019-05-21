@@ -13,6 +13,14 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	var SelectionMode = library.SelectionMode,
 		VisibleRowCountMode = library.VisibleRowCountMode;
 
+	var mFlexCellContentAlignment = {
+		Begin: "flex-start",
+		End: "flex-end",
+		Left: undefined, // Set on every call of TableRenderer#render to respect the current text direction.
+		Right: undefined, // Set on every call of TableRenderer#render to respect the current text direction.
+		Center: "center"
+	};
+
 	/**
 	 * Table renderer.
 	 *
@@ -30,6 +38,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	TableRenderer.render = function(rm, oTable) {
 		// Clear cashed header row count
 		delete oTable._iHeaderRowCount;
+
+		mFlexCellContentAlignment.Left = oTable._bRtlMode ? "flex-end" : "flex-start";
+		mFlexCellContentAlignment.Right = oTable._bRtlMode ? "flex-start" : "flex-end";
 
 		// The resource bundle is required for rendering. In case it is not already loaded, it should be loaded synchronously.
 		TableUtils.getResourceBundle();
@@ -511,16 +522,27 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.addClass("sapUiTableCellInner");
 		rm.writeAttribute("id", sHeaderId + "-inner");
 		rm.writeClasses();
-		var sHAlign = Renderer.getTextAlign(oColumn.getHAlign(), oLabel && oLabel.getTextDirection && oLabel.getTextDirection());
-		if (sHAlign) {
-			rm.addStyle("text-align", sHAlign);
+
+		var sHAlign = oColumn.getHAlign();
+		var sTextAlign = Renderer.getTextAlign(sHAlign);
+
+		if (sTextAlign) {
+			rm.addStyle("text-align", sTextAlign);
 		}
+
+		rm.writeStyles();
+		rm.write(">");
+
+		rm.write("<div");
+		rm.addStyle("justify-content", mFlexCellContentAlignment[sHAlign]);
 		rm.writeStyles();
 		rm.write(">");
 
 		if (oLabel) {
 			rm.renderControl(oLabel);
 		}
+
+		rm.write("</div>");
 
 		rm.write("</div></td>");
 	};
@@ -1098,10 +1120,11 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 				rowSelected: bSelected
 			});
 
-			var sHAlign = Renderer.getTextAlign(oColumn.getHAlign(), oCell && oCell.getTextDirection && oCell.getTextDirection());
-			if (sHAlign) {
-				rm.addStyle("text-align", sHAlign);
+			var sTextAlign = Renderer.getTextAlign(oColumn.getHAlign());
+			if (sTextAlign) {
+				rm.addStyle("text-align", sTextAlign);
 			}
+
 			rm.writeStyles();
 			rm.addClass("sapUiTableCell");
 			rm.addClass("sapUiTableContentCell");
