@@ -189,6 +189,8 @@ sap.ui.define([
 
 	QUnit.module("Rendering tests", {
 		beforeEach : function() {
+			this.fnSpyBeforeRendering = sinon.spy(GenericTile.prototype, "onBeforeRendering");
+
 			this.oGenericTile = new GenericTile("generic-tile", {
 				subheader : "Expenses By Region",
 				frameType : FrameType.OneByOne,
@@ -252,7 +254,13 @@ sap.ui.define([
 
 			var done = assert.async();
 			this.applyTheme(this.sStartTheme, done);
+
+			this.fnSpyBeforeRendering.restore();
 		}
+	});
+
+	QUnit.test("OnBeforeRendering is called once", function(assert) {
+		assert.ok(this.fnSpyBeforeRendering.calledOnce, "Generic tile was rendered only once");
 	});
 
 	QUnit.test("GenericTile rendered", function(assert) {
@@ -2713,5 +2721,4 @@ sap.ui.define([
 			assert.equal(oEvent.getParameter("domRef"), oGenericTile._oRemoveButton.getPopupAnchorDomRef(), "Event parameter 'domRef' points to Remove Button");
 		}
 	});
-
 });
