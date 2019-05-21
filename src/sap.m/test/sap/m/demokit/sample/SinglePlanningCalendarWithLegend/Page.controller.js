@@ -4,10 +4,9 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/unified/library",
-	"sap/m/MessageToast"
+	"sap/ui/unified/library"
 ],
-function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, MessageToast) {
+function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary) {
 	"use strict";
 
 	var CalendarDayType = unifiedLibrary.CalendarDayType;
@@ -185,12 +184,6 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary, Messag
 						type: CalendarDayType.Type07,
 						startDate: new Date("2018", "6", "12", "20", "0"),
 						endDate: new Date("2018", "6", "12", "21", "30")
-					}, {
-						title: "Vacation",
-						type: CalendarDayType.Type09,
-						text: "out of office",
-						startDate: new Date("2018", "6", "11", "12", "0"),
-						endDate: new Date("2018", "6", "13", "14", "0")
 					}, {
 						title: "Reminder",
 						type: CalendarDayType.Type09,
