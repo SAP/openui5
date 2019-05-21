@@ -207,6 +207,25 @@ function(
 	IconPool.insertFontFaceStyle();
 	EnabledPropagator.apply(MultiComboBox.prototype, [true]);
 
+
+	/**
+	 * Clones the <code>sap.m.MultiComboBox</code> control.
+	 *
+	 * @param {string} sIdSuffix Suffix to be added to the ids of the new control and its internal objects.
+	 * @returns {sap.m.ComboBox} The cloned <code>sap.m.MultiComboBox</code> control.
+	 * @protected
+	 */
+	MultiComboBox.prototype.clone = function (sIdSuffix) {
+		var oComboBoxClone = ComboBoxBase.prototype.clone.apply(this, arguments),
+			oList = this._getList();
+
+		if (oList) {
+			oComboBoxClone.syncPickerContent();
+		}
+
+		return oComboBoxClone;
+	};
+
 	/**
 	 * Opens the control's picker popup.
 	 *
