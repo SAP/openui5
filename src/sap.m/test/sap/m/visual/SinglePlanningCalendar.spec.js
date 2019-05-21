@@ -145,19 +145,19 @@ describe("sap.m.SinglePlanningCalendar", function() {
 	});
 
 	it("should focus a cell in the right with ARROW RIGHT keyboard key", function () {
-		_focusFromAppToCell("__appointment0-SinglePlanningCalendar-25", "focused_cell_with_arrow_right_kb_from_app", protractor.Key.ARROW_RIGHT);
+		_focusFromAppToCell("__appointment0-SinglePlanningCalendar-25", "focused_cell_with_arrow_right_kb_app", protractor.Key.ARROW_RIGHT);
 	});
 
 	it("should focus a cell in the left with ARROW LEFT keyboard key", function () {
-		_focusFromAppToCell("__appointment0-SinglePlanningCalendar-25", "focused_cell_with_arrow_left_kb_from_app", protractor.Key.ARROW_LEFT);
+		_focusFromAppToCell("__appointment0-SinglePlanningCalendar-25", "focused_cell_with_arrow_left_kb_app", protractor.Key.ARROW_LEFT);
 	});
 
 	it("should focus a cell up with ARROW UP keyboard key", function () {
-		_focusFromAppToCell("__appointment0-SinglePlanningCalendar-25", "focused_cell_with_arrow_up_kb_from_app", protractor.Key.ARROW_UP);
+		_focusFromAppToCell("__appointment0-SinglePlanningCalendar-25", "focused_cell_with_arrow_up_kb_app", protractor.Key.ARROW_UP);
 	});
 
 	it("should focus a cell down with ARROW DOWN keyboard key", function () {
-		_focusFromAppToCell("__appointment0-SinglePlanningCalendar-25", "focused_cell_with_arrow_down_kb_from_app", protractor.Key.ARROW_DOWN);
+		_focusFromAppToCell("__appointment0-SinglePlanningCalendar-25", "focused_cell_with_arrow_down_kb_app", protractor.Key.ARROW_DOWN);
 	});
 
 	function _focusFromCellToCell(sSelector, sRefImage, iControl) {
