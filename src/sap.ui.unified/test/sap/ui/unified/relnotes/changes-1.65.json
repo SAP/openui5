@@ -68,5 +68,16 @@
         "references": []
       }
     ]
+  },
+  "1.65.3": {
+    "date": "May 2019",
+    "notes": [
+      {
+        "id": "3dd4b8d4f82eb3a54fd989fe38e2d2f270b4fe7d",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: closes on scroll",
+        "references": []
+      }
+    ]
   }
 }

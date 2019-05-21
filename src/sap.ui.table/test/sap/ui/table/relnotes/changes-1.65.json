@@ -27,5 +27,16 @@
         "references": []
       }
     ]
+  },
+  "1.65.3": {
+    "date": "May 2019",
+    "notes": [
+      {
+        "id": "fb94f266001c99ddc389b0d92844388fc969ae85",
+        "type": "FIX",
+        "text": " Table: Align cell content according to column configuration",
+        "references": []
+      }
+    ]
   }
 }
