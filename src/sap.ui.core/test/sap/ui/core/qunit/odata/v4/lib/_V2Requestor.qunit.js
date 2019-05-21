@@ -4,13 +4,14 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/core/CalendarType",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Parser",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/model/odata/v4/lib/_V2Requestor"
-], function (Log, SyncPromise, DateFormat, ODataUtils, _Helper, _Parser, _Requestor,
+], function (Log, SyncPromise, CalendarType, DateFormat, ODataUtils, _Helper, _Parser, _Requestor,
 		asV2Requestor0) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
@@ -24,9 +25,13 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._V2Requestor", {
 		beforeEach : function () {
+			this.sDefaultCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
+		},
+		afterEach : function () {
+			sap.ui.getCore().getConfiguration().setCalendarType(this.sDefaultCalendarType);
 		}
 	});
 
@@ -519,6 +524,9 @@ sap.ui.define([
 
 		asV2Requestor(oRequestor);
 
+		sap.ui.getCore().getConfiguration().setCalendarType(CalendarType.Japanese);
+		asV2Requestor0._setDateTimeFormatter();
+
 		// code under test
 		assert.strictEqual(oRequestor.convertDate("\/Date(1395705600000)\/"), "2014-03-25");
 
@@ -588,6 +596,9 @@ sap.ui.define([
 			var oRequestor = {};
 
 			asV2Requestor(oRequestor);
+
+			sap.ui.getCore().getConfiguration().setCalendarType(CalendarType.Japanese);
+			asV2Requestor0._setDateTimeFormatter();
 
 			// code under test
 			assert.strictEqual(oRequestor.convertDateTimeOffset(oFixture.input,
@@ -1126,6 +1137,10 @@ sap.ui.define([
 			// {value : "13:47:26.123", type : "Edm.TimeOfDay", v2type: "Edm.Time",
 			// 	result : "time'PT13H47M26.123S'"},
 		].forEach(function (oFixture) {
+
+			sap.ui.getCore().getConfiguration().setCalendarType(CalendarType.Japanese);
+			asV2Requestor0._setDateTimeFormatter();
+
 			assert.strictEqual(oRequestor.formatPropertyAsLiteral(oFixture.value, {
 					$Type : oFixture.type,
 					$v2Type : oFixture.v2type
@@ -1735,5 +1750,34 @@ sap.ui.define([
 		oRequestor.getModelInterface().reportBoundMessages("Teams('42')", {/*mPathToMessages*/});
 
 		assert.notOk(fnReportBoundMessages.called);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_setDateTimeFormatter", function (assert) {
+		var oDateFormatMock = this.mock(DateFormat);
+
+		oDateFormatMock.expects("getDateInstance")
+			.withExactArgs({
+				calendarType : CalendarType.Gregorian,
+				pattern: "yyyy-MM-dd",
+				UTC : true
+			})
+			.callThrough();
+		oDateFormatMock.expects("getDateTimeInstance")
+			.withExactArgs({
+				calendarType : CalendarType.Gregorian,
+				pattern: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+			})
+			.callThrough();
+		oDateFormatMock.expects("getTimeInstance")
+			.withExactArgs({
+				calendarType : CalendarType.Gregorian,
+				pattern: "HH:mm:ss",
+				UTC : true
+			})
+			.callThrough();
+
+		// code under test
+		asV2Requestor0._setDateTimeFormatter();
 	});
 });

@@ -4,6 +4,7 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/base/Log",
+	"sap/ui/core/CalendarType",
 	"sap/ui/core/Control",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/FormatException",
@@ -15,14 +16,13 @@ sap.ui.define([
 	"sap/ui/model/odata/type/DateTimeOffset",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Log, Control, DateFormat, FormatException, ParseException, ValidateException,
-		JSONModel, DateTime, DateTimeBase, DateTimeOffset, ODataType, TestUtils) {
+], function (jQuery, Log, CalendarType, Control, DateFormat, FormatException, ParseException,
+	ValidateException, JSONModel, DateTime, DateTimeBase, DateTimeOffset, ODataType, TestUtils) {
 	/*global QUnit */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
 
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
-		oDateOnly = new Date(Date.UTC(2014, 10, 27, 0, 0, 0, 0)),
+	var oDateOnly = new Date(Date.UTC(2014, 10, 27, 0, 0, 0, 0)),
 		oDateTime = new Date(2014, 10, 27, 13, 47, 26),
 		sDateTimeOffset = "2014-11-27T13:47:26" + getTimezoneOffset(oDateTime),
 		oDateTimeWithMS = new Date(2014, 10, 27, 13, 47, 26, 456),
@@ -76,13 +76,21 @@ sap.ui.define([
 	function module(sTitle) {
 		QUnit.module(sTitle, {
 			beforeEach : function () {
+				var oConfiguration = sap.ui.getCore().getConfiguration();
+
+				this.sDefaultCalendarType = oConfiguration.getCalendarType();
+				this.sDefaultLanguage = oConfiguration.getLanguage();
 				this.oLogMock = this.mock(Log);
 				this.oLogMock.expects("warning").never();
 				this.oLogMock.expects("error").never();
-				sap.ui.getCore().getConfiguration().setLanguage("en-US");
+				oConfiguration.setCalendarType(CalendarType.Gregorian);
+				oConfiguration.setLanguage("en-US");
 			},
 			afterEach : function () {
-				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+				var oConfiguration = sap.ui.getCore().getConfiguration();
+
+				oConfiguration.setCalendarType(this.sDefaultCalendarType);
+				oConfiguration.setLanguage(this.sDefaultLanguage);
 			}
 		});
 	}
@@ -591,18 +599,49 @@ sap.ui.define([
 			sDateTime = "2014-11-27T13:47:26Z",
 			sFormattedDateTime = "Nov 27, 2014, 1:47:26 PM";
 
+		oType._resetModelFormatter();
+		this.mock(DateFormat).expects("getDateInstance") // getModelFormatter
+			.withExactArgs({
+				calendarType : CalendarType.Gregorian,
+				pattern : "yyyy-MM-dd'T'HH:mm:ssX",
+				strictParsing : true,
+				UTC : oType.oFormatOptions && oType.oFormatOptions.UTC
+			})
+			.callThrough();
+
 		assert.strictEqual(oType.formatValue(sDateTime, "string"), sFormattedDateTime);
 		assert.strictEqual(oType.parseValue(sFormattedDateTime, "string"), sDateTime);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("V4: getModelFormat", function (assert) {
-		var oDateTimeOffset = new DateTimeOffset(undefined, {precision : 3}).setV4(),
-			oFormat = oDateTimeOffset.getModelFormat(),
-			oParsedDate = oFormat.parse(sDateTimeOffsetWithMS);
+	QUnit.test("V4: getModelFormat uses Gregorian calendar type", function (assert) {
+		var oFormat,
+			oParsedDate,
+			oType = new DateTimeOffset(undefined, {precision : 3}).setV4();
 
+		sap.ui.getCore().getConfiguration().setCalendarType(CalendarType.Japanese);
+		oType._resetModelFormatter();
+
+		// code under test
+		oFormat = oType.getModelFormat();
+
+		oParsedDate = oFormat.parse(sDateTimeOffsetWithMS);
 		assert.ok(oParsedDate instanceof Date, "parse delivers a Date");
 		assert.strictEqual(oParsedDate.getTime(), oDateTimeWithMS.getTime(), "parse value");
 		assert.strictEqual(oFormat.format(oParsedDate), sDateTimeOffsetWithMS, "format");
+		assert.strictEqual(oFormat.oFormatOptions.calendarType, CalendarType.Gregorian);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_resetModelFormatter", function (assert) {
+		var oType = new DateTimeOffset().setV4(),
+			oFormat = oType.getModelFormat();
+
+		assert.strictEqual(oFormat, oType.getModelFormat());
+
+		// code under test
+		oType._resetModelFormatter();
+
+		assert.notStrictEqual(oFormat, oType.getModelFormat());
 	});
 });

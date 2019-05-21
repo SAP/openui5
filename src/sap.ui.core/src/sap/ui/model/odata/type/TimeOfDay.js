@@ -4,14 +4,15 @@
 
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/CalendarType",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/thirdparty/jquery"
-], function (Log, DateFormat, FormatException, ParseException, ValidateException, ODataType,
-		jQuery) {
+], function (Log, CalendarType, DateFormat, FormatException, ParseException, ValidateException,
+	ODataType, jQuery) {
 	"use strict";
 
 	/*
@@ -25,29 +26,6 @@ sap.ui.define([
 	function getErrorMessage(oType) {
 		return sap.ui.getCore().getLibraryResourceBundle().getText("EnterTime",
 			[oType.formatValue("23:59:58", "string")]);
-	}
-
-	/*
-	 * Returns the DateFormat instance for OData values in the model. Creates it lazily.
-	 *
-	 * @param {sap.ui.model.odata.type.TimeOfDay} oType
-	 *   The type
-	 * @returns {sap.ui.core.format.DateFormat}
-	 *   The DateFormat
-	 */
-	function getModelFormat(oType) {
-		var sPattern = "HH:mm:ss",
-			iPrecision;
-
-		if (!oType.oModelFormat) {
-			iPrecision = oType.oConstraints && oType.oConstraints.precision;
-			if (iPrecision) {
-				sPattern += "." + "".padEnd(iPrecision, "S");
-			}
-			oType.oModelFormat = DateFormat.getTimeInstance({pattern : sPattern,
-				strictParsing : true, UTC : true});
-		}
-		return oType.oModelFormat;
 	}
 
 	/*
@@ -154,6 +132,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * Resets the model formatter instance which is recreated on demand, for example via
+	 * {@link #getModelFormat}, and cached.
+	 *
+	 * @private
+	 */
+	TimeOfDay.prototype._resetModelFormatter = function () {
+		this.oModelFormat = undefined;
+	};
+
+	/**
 	 * Formats the given value to the given target type.
 	 *
 	 * @param {string} sValue
@@ -188,7 +176,7 @@ sap.ui.define([
 			if (iIndex >= 0) {
 				sValue = sValue.slice(0, iIndex + 4); // cut off after milliseconds
 			}
-			oDate = getModelFormat(this).parse(sValue);
+			oDate = this.getModelFormat().parse(sValue);
 			if (oDate) {
 				return getUiFormat(this).format(oDate);
 			}
@@ -211,7 +199,22 @@ sap.ui.define([
 	 * @protected
 	 */
 	TimeOfDay.prototype.getModelFormat = function () {
-		return getModelFormat(this);
+		var sPattern = "HH:mm:ss",
+			iPrecision;
+
+		if (!this.oModelFormat) {
+			iPrecision = this.oConstraints && this.oConstraints.precision;
+			if (iPrecision) {
+				sPattern += "." + "".padEnd(iPrecision, "S");
+			}
+			this.oModelFormat = DateFormat.getTimeInstance({
+				calendarType : CalendarType.Gregorian,
+				pattern : sPattern,
+				strictParsing : true,
+				UTC : true
+			});
+		}
+		return this.oModelFormat;
 	};
 
 	/**
@@ -263,7 +266,7 @@ sap.ui.define([
 			throw new ParseException(getErrorMessage(this));
 		}
 
-		return getModelFormat(this).format(oDate);
+		return this.getModelFormat().format(oDate);
 	};
 
 	/**
