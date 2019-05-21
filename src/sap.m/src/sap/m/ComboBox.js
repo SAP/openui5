@@ -768,7 +768,6 @@ sap.ui.define([
 		 */
 		ComboBox.prototype.onBeforeRendering = function() {
 			ComboBoxBase.prototype.onBeforeRendering.apply(this, arguments);
-			this._fillList();
 			this.synchronizeSelection();
 		};
 

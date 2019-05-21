@@ -12073,6 +12073,41 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Should filter internal list properly", function (assert) {
+		// Setup
+		var oEvent = {
+				target: {value: "A Item"},
+				srcControl: this.oCombobox,
+				isMarked: function () {
+				}
+			},
+			fnFilterVisibleItems = function (aItems) {
+				return aItems.filter(function (oItem) {
+					return oItem.getVisible();
+				});
+			};
+
+		// Act
+		this.oCombobox.oninput(oEvent);
+		this.oCombobox.invalidate();
+		this.clock.tick(500);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oCombobox._getList().getItems().length, 5, "There should be 5 items in the list...");
+		assert.strictEqual(fnFilterVisibleItems(this.oCombobox._getList().getItems()).length, 2, "... but 2 should be visible");
+
+		// Act
+		oEvent.target.value = "";
+		this.oCombobox.oninput(oEvent);
+		this.oCombobox.invalidate();
+		this.clock.tick(500);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(fnFilterVisibleItems(this.oCombobox._getList().getItems()).length, 5, "All items should be visible");
+	});
+
 	QUnit.test("Should restore default filtering function", function (assert) {
 		// Setup
 		var fnFilter = this.oCombobox.fnFilter;
