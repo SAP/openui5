@@ -2632,7 +2632,7 @@ sap.ui.define([
 			}
 		}).observe(oRow, {
 			properties: ["icon", "text", "title", "nonWorkingDays", "nonWorkingHours", "selected", "enableAppointmentsDragAndDrop", "enableAppointmentsResize", "enableAppointmentsCreate"],
-			aggregations: ["tooltip", "appointments", "intervalHeaders"],
+			aggregations: ["tooltip", "appointments", "intervalHeaders", "headerContent"],
 			destroy: true
 		});
 
@@ -2663,12 +2663,18 @@ sap.ui.define([
 	PlanningCalendar.prototype._createPlanningCalendarListItem = function(oRow) {
 		var oListItem, oRowHeader, oRowTimeline;
 
-		oRowHeader = new PlanningCalendarRowHeader(oRow.getId() + "-Head", {
-			icon : oRow.getIcon(),
-			description : oRow.getText(),
-			title : oRow.getTitle(),
-			tooltip : oRow.getTooltip()
-		});
+		//if there's a headerContent in the row - render only the content, otherwise render
+		//PlanningCalendarRowHeader
+		if (oRow.getHeaderContent().length) {
+			oRowHeader = oRow._getPlanningCalendarCustomRowHeader();
+		} else {
+			oRowHeader = new PlanningCalendarRowHeader(oRow.getId() + "-Head", {
+				icon : oRow.getIcon(),
+				description : oRow.getText(),
+				title : oRow.getTitle(),
+				tooltip : oRow.getTooltip()
+			});
+		}
 
 		oRowTimeline = new PlanningCalendarRowTimeline(oRow.getId() + "-CalRow", {
 			checkResize: false,
