@@ -6188,26 +6188,39 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	//TODO With CPOUI5UISERVICESV3-1814, call refreshSingle also for relative bindings
-[true, false].forEach(function (bHeaderContext) {
-	QUnit.test("requestSideEffects: call refreshInternal for relative binding, " + bHeaderContext,
-		function (assert) {
-			var oBinding = this.bindList("relative"),
-				oContext = bHeaderContext
-					? oBinding.getHeaderContext()
-					: Context.create(this.oModel, {}, "/EMPLOYEES('42')"),
-				oResult = {};
+	QUnit.test("requestSideEffects: call refreshInternal for relative binding", function (assert) {
+		var oBinding = this.bindList("relative"),
+			oContext = oBinding.getHeaderContext(),
+			oResult = {};
 
-			this.mock(oBinding).expects("refreshSingle").never();
-			this.mock(oBinding).expects("refreshInternal").withExactArgs("", "group", false, true)
-				.resolves(oResult);
+		this.mock(oBinding).expects("refreshSingle").never();
+		this.mock(oBinding).expects("refreshInternal").withExactArgs("", "group", false, true)
+			.resolves(oResult);
 
-			// code under test
-			return oBinding.requestSideEffects("group", [""], oContext).then(function (oResult0) {
-				assert.strictEqual(oResult0, oResult);
+		// code under test
+		return oBinding.requestSideEffects("group", [""], oContext).then(function (oResult0) {
+			assert.strictEqual(oResult0, oResult);
 		});
 	});
-});
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects: call refreshSingle for relative binding", function (assert) {
+		var oBinding = this.bindList("relative"),
+			oContext = Context.create(this.oModel, {}, "/EMPLOYEES('42')"),
+			oGroupLock = {},
+			oResult = {};
+
+		this.mock(this.oModel).expects("lockGroup").withExactArgs("group").returns(oGroupLock);
+		this.mock(oBinding).expects("refreshSingle")
+			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oGroupLock), false)
+			.resolves(oResult);
+		this.mock(oBinding).expects("refreshInternal").never();
+
+		// code under test
+		return oBinding.requestSideEffects("group", [""], oContext).then(function (oResult0) {
+			assert.strictEqual(oResult0, oResult);
+		});
+	});
 
 	//*********************************************************************************************
 [false, true].forEach(function (bHeader) {

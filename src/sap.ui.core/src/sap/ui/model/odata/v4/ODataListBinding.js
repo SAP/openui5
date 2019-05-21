@@ -1841,7 +1841,7 @@ sap.ui.define([
 					return SyncPromise.all(aPromises.map(reportError));
 				}
 			}
-			if (bSingle && that.isRoot()) {
+			if (bSingle) {
 				return that.refreshSingle(oContext, oModel.lockGroup(sGroupId), false);
 			}
 			return that.refreshInternal("", sGroupId, false, true);

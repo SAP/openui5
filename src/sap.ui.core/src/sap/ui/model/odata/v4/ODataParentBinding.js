@@ -856,7 +856,7 @@ sap.ui.define([
 	 *   A promise resolving without a defined result, or rejecting with an error if loading of side
 	 *   effects fails
 	 * @throws {Error}
-	 *   If this binding does not use own service data requests or if the binding's root binding is
+	 *   If this binding does not use own data service requests or if the binding's root binding is
 	 *   suspended and the given group ID is not the binding's group
 	 *
 	 * @abstract

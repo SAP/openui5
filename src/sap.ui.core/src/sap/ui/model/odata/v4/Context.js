@@ -762,10 +762,10 @@ sap.ui.define([
 	 * @throws {Error}
 	 *   If <code>aPathExpressions</code> contains objects other than
 	 *   "14.5.11 Expression edm:NavigationPropertyPath" or "14.5.13 Expression edm:PropertyPath",
-	 *   or if this context is neither the bound context of a context binding which uses own service
-	 *   data requests nor the return value context of an operation binding, or if the root binding
-	 *   of this context's binding is suspended, or if the context is transient, or if the binding
-	 *   of this context is unresolved
+	 *   or if this context is neither the return value context of an operation binding nor belongs
+	 *   to a binding which uses own data service requests, or if the root binding of this context's
+	 *   binding is suspended, or if the context is transient, or if the binding of this context is
+	 *   unresolved
 	 *
 	 * @public
 	 * @see sap.ui.model.odata.v4.ODataContextBinding#execute
