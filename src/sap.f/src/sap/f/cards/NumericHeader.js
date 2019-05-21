@@ -8,14 +8,17 @@ sap.ui.define([
 	'sap/m/Text',
 	'sap/ui/model/json/JSONModel',
 	"sap/f/cards/NumericSideIndicator",
-	"sap/f/cards/NumericHeaderRenderer"
+	"sap/f/cards/NumericHeaderRenderer",
+	"sap/base/strings/formatMessage"
 ], function (
 		Control,
 		ActionEnablement,
 		NumericContent,
 		Text,
 		JSONModel,
-		NumericSideIndicator
+		NumericSideIndicator,
+		NumericHeaderRenderer,
+		formatMessage
 	) {
 		"use strict";
 
@@ -63,6 +66,11 @@ sap.ui.define([
 				 * The subtitle of the card
 				 */
 				subtitle: { "type": "string", group: "Appearance" },
+
+				/**
+				 * Defines the status text.
+				 */
+				statusText: { type: "string", defaultValue: "" },
 
 				/**
 				 * General unit of measurement for the header. Displayed as side information to the subtitle.
@@ -434,13 +442,61 @@ sap.ui.define([
 			});
 		}
 
+		if (mConfiguration.status && typeof mConfiguration.status.text === "string") {
+			mSettings.statusText = mConfiguration.status.text;
+		}
+
 		var oHeader = new NumericHeader(mSettings);
+
+		if (mConfiguration.status && mConfiguration.status.text && mConfiguration.status.text.format) {
+			NumericHeader._bindStatusText(mConfiguration.status.text.format, oHeader);
+		}
+
 		oHeader.setServiceManager(oServiceManager);
 		oHeader.setDataProviderFactory(oDataProviderFactory);
 		oHeader._setData(mConfiguration.data);
 
 		oHeader._attachActions(mConfiguration, oHeader);
 		return oHeader;
+	};
+
+/**
+	 * Binds the statusText of a header to the provided format configuration.
+	 *
+	 * @private
+	 * @static
+	 * @param {Object} mFormat The formatting configuration.
+	 * @param {sap.f.cards.Header} oHeader The header instance.
+	 */
+	NumericHeader._bindStatusText = function (mFormat, oHeader) {
+
+		if (mFormat.parts && mFormat.translationKey && mFormat.parts.length === 2) {
+			var oBindingInfo = {
+				parts: [
+					mFormat.translationKey,
+					mFormat.parts[0].toString(),
+					mFormat.parts[1].toString()
+				],
+				formatter: function (sText, vParam1, vParam2) {
+					var sParam1 = vParam1 || mFormat.parts[0];
+					var sParam2 = vParam2 || mFormat.parts[1];
+
+					if (Array.isArray(vParam1)) {
+						sParam1 = vParam1.length;
+					}
+					if (Array.isArray(vParam2)) {
+						sParam2 = vParam2.length;
+					}
+
+					var iParam1 = parseFloat(sParam1) || 0;
+					var iParam2 = parseFloat(sParam2) || 0;
+
+					return formatMessage(sText, [iParam1, iParam2]);
+				}
+			};
+
+			oHeader.bindProperty("statusText", oBindingInfo);
+		}
 	};
 
 	NumericHeader.prototype.setServiceManager = function (oServiceManager) {

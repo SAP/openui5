@@ -15,6 +15,9 @@ sap.ui.define([], function () {
 	 * @param {sap.f.cards.Header} oControl An object representation of the control that should be rendered
 	 */
 	HeaderRenderer.render = function (oRm, oControl) {
+
+		var sStatus = oControl.getStatusText();
+
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
 		oRm.writeAttribute("tabindex", "0");
@@ -33,25 +36,41 @@ sap.ui.define([], function () {
 		}
 
 		if (oControl.getTitle()) {
+
 			oRm.write("<div");
 			oRm.addClass("sapFCardHeaderText");
 			oRm.writeClasses();
 			oRm.write(">");
+
+			oRm.write("<div");
+			oRm.addClass("sapFCardHeaderTextFirstLine");
+			oRm.writeClasses();
+			oRm.write(">");
+
+			oRm.write("<div");
+			oRm.addClass("sapFCardHeaderTitle");
+			oRm.writeClasses();
+			oRm.write(">");
 			oRm.renderControl(oControl._getTitle());
+
+			oRm.write("</div>");
+
+			if (sStatus) {
+				oRm.write("<span");
+				oRm.addClass("sapFCardStatus");
+				oRm.writeClasses();
+				oRm.write(">");
+				oRm.writeEscaped(sStatus);
+				oRm.write("</span>");
+			}
+
+			oRm.write("</div>");
+
 			if (oControl.getSubtitle()) {
 				oRm.renderControl(oControl._getSubtitle());
 			}
-			oRm.write("</div>");
-		}
 
-		var sStatus = oControl.getStatusText();
-		if (sStatus) {
-			oRm.write("<span");
-			oRm.addClass("sapFCardStatus");
-			oRm.writeClasses();
-			oRm.write(">");
-			oRm.writeEscaped(sStatus);
-			oRm.write("</span>");
+			oRm.write("</div>");
 		}
 		oRm.write("</div>");
 	};

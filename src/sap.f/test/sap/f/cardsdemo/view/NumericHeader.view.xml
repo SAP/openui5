@@ -49,6 +49,7 @@
                         <w:Card manifest="{manifests>/kpiManifests/kpicard3}"/>
                         <w:Card manifest="{manifests>/kpiManifests/kpicard4}"/>
                         <w:Card manifest="{manifests>/kpiManifests/tablecard1}"/>
+                        <w:Card manifest="{manifests>/kpiManifests/tablecard123}"/>
                     </grid:items>
                 </grid:CSSGrid>
             </Panel>

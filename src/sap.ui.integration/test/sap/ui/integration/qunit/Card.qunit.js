@@ -1071,6 +1071,17 @@ sap.ui.define([
 			}
 		};
 
+		var oManifest_NumericHeader_OnlyTitleAndSubtitle = {
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"title": "Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
+					"subTitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
+					"unitOfMeasurement": "EUR"}
+			}
+		};
+
 		var oManifest_ComponentCardAllInOne = {
 			"_version": "1.12.0",
 			"sap.app": {
@@ -1462,6 +1473,35 @@ sap.ui.define([
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		});
+
+		QUnit.test("Numeric Header with no Details and no Indicators (Main and Side)", function (assert) {
+
+			// Arrange
+			var done = assert.async();
+
+			// Act
+			this.oCard.attachEvent("_ready", function () {
+				var oHeader = this.oCard.getAggregation("_header");
+
+				Core.applyChanges();
+
+				// Assert
+				assert.equal((oHeader.getAggregation("_details").getText()).length, "", "Card header should have no Details.");
+				assert.equal(oHeader.getAggregation("_mainIndicator").getValue(), "", "Card header should have no Main indicators.");
+				assert.equal(oHeader.getAggregation("sideIndicators").length, 0, "Card header should have no Side indicators.");
+
+				assert.equal(document.getElementsByClassName("sapFCardHeaderDetails").length, 0, "Card header Details are not rendered.");
+				assert.equal(document.getElementsByClassName("sapFCardHeaderIndicators").length, 0, "Card header Indicators are not rendered.");
+				assert.equal(document.getElementsByClassName("sapFCardHeaderMainIndicator").length, 0, "Card header Main Indicator is not rendered.");
+				assert.equal(document.getElementsByClassName("sapFCardHeaderSideIndicators").length, 0, "Card header Side Indicator is not rendered.");
+
+				done();
+			}.bind(this));
+			this.oCard.setManifest(oManifest_NumericHeader_OnlyTitleAndSubtitle);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		});
+
 
 		QUnit.module("Analytical Card", {
 			beforeEach: function () {

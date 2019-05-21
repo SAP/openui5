@@ -5,10 +5,10 @@
 	"sap.card": {
 	  "type": "List",
 	  "header": {
-		"title": "Quick Links",
-		"status": {
-		  "text": "7 of 28"
-		}
+			"title": "Quick Links",
+			"status": {
+				"text": "7 of 285"
+			}
 	  },
 	  "content": {
 		"data": {
