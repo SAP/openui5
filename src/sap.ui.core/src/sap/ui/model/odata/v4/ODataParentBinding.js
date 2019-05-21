@@ -682,27 +682,14 @@ sap.ui.define([
 	 *   The context that is used to compute the inherited query options; only relevant for the
 	 *   call from ODataListBinding#doCreateCache as this.oContext might not yet be set
 	 * @returns {object}
-	 *   The computed query options
+	 *   The computed query options (live reference, no clone!)
 	 *
 	 * @private
 	 */
 	ODataParentBinding.prototype.getQueryOptionsForPath = function (sPath, oContext) {
-		var mQueryOptions;
-
 		if (Object.keys(this.mParameters).length) {
 			// binding has parameters -> all query options need to be defined at the binding
-			mQueryOptions = this.mQueryOptions;
-			// getMetaPath needs an absolute path, a relative path starting with an index would not
-			// result in a correct meta path -> first add, then remove '/'
-			this.oModel.getMetaModel().getMetaPath("/" + sPath).slice(1)
-				.split("/").some(function (sSegment) {
-					mQueryOptions = mQueryOptions.$expand && mQueryOptions.$expand[sSegment];
-					if (!mQueryOptions || mQueryOptions === true) {
-						mQueryOptions = {};
-						return true;
-					}
-				});
-			return jQuery.extend(true, {}, mQueryOptions);
+			return _Helper.getQueryOptionsForPath(this.mQueryOptions, sPath);
 		}
 
 		oContext = oContext || this.oContext;

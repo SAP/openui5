@@ -637,28 +637,35 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the properties that have been selected for the given path.
+		 * Returns the query options corresponding to the given path.
 		 *
 		 * @param {object} [mQueryOptions]
 		 *   A map of query options as returned by
 		 *   {@link sap.ui.model.odata.v4.ODataModel#buildQueryOptions}
 		 * @param {string} sPath
 		 *   The path of the cache value in the cache
-		 * @returns {string[]} aSelect
-		 *   The properties that have been selected for the given path or undefined otherwise
+		 * @returns {object}
+		 *   The corresponding query options (live reference, no clone!); may be empty, but not
+		 *   falsy
 		 */
-		getSelectForPath : function (mQueryOptions, sPath) {
+		getQueryOptionsForPath : function (mQueryOptions, sPath) {
 			sPath = sPath[0] === "("
 				? _Helper.getMetaPath(sPath).slice(1) // avoid leading "/"
-				: _Helper.getMetaPath(sPath);
+				// getMetaPath needs an absolute path, a relative path starting with an index would
+				// not result in a correct meta path -> first add, then remove '/'
+				: _Helper.getMetaPath("/" + sPath).slice(1);
 			if (sPath) {
 				sPath.split("/").some(function (sSegment) {
 					mQueryOptions = mQueryOptions && mQueryOptions.$expand
 						&& mQueryOptions.$expand[sSegment];
-					return !mQueryOptions;
+					if (!mQueryOptions || mQueryOptions === true) {
+						mQueryOptions = {};
+						return true;
+					}
 				});
 			}
-			return mQueryOptions && mQueryOptions.$select;
+
+			return mQueryOptions || {};
 		},
 
 		/**
@@ -683,7 +690,7 @@ sap.ui.define([
 		 * Returns a copy of given query options where "$expand" and "$select" are replaced by the
 		 * intersection with the given (navigation) property paths.
 		 *
-		 * @param {object} mCacheQueryOptions
+		 * @param {object} [mCacheQueryOptions]
 		 *   A map of query options as returned by
 		 *   {@link sap.ui.model.odata.v4.ODataModel#buildQueryOptions}
 		 * @param {string[]} aPaths
@@ -742,7 +749,8 @@ sap.ui.define([
 				throw new Error("Unsupported empty navigation property path");
 			}
 
-			if (mCacheQueryOptions.$select && mCacheQueryOptions.$select.indexOf("*") < 0) {
+			if (mCacheQueryOptions && mCacheQueryOptions.$select
+					&& mCacheQueryOptions.$select.indexOf("*") < 0) {
 				_Helper.addChildrenWithAncestor(aPaths, mCacheQueryOptions.$select, mSelects);
 				_Helper.addChildrenWithAncestor(mCacheQueryOptions.$select, aPaths, mSelects);
 				aSelects = Object.keys(mSelects).filter(filterStructural.bind(null, true));
@@ -750,7 +758,7 @@ sap.ui.define([
 				aSelects = aPaths.filter(filterStructural.bind(null, false));
 			}
 
-			if (mCacheQueryOptions.$expand) {
+			if (mCacheQueryOptions && mCacheQueryOptions.$expand) {
 				aExpands = Object.keys(mCacheQueryOptions.$expand);
 				aExpands.forEach(function (sNavigationPropertyPath) {
 					var mChildQueryOptions,

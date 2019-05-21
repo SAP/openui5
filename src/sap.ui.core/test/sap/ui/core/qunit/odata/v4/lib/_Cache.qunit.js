@@ -2459,6 +2459,129 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[false, true].forEach(function (bTransient) {
+	QUnit.test("_Cache#replaceElement, bTransient= " + bTransient, function (assert) {
+		var oCache = new _Cache(this.oRequestor, "TEAMS('0')"),
+			oElement = {},
+			aElements = [],
+			oOldElement = {},
+			sTransientPredicate = "($uid=id-1-23)",
+			mTypeForMetaPath = {};
+
+		aElements[3] = oOldElement;
+		aElements.$byPredicate = {"('42')" : oOldElement};
+		if (bTransient) {
+			aElements.$byPredicate[sTransientPredicate] = oOldElement;
+		}
+		this.mock(_Cache).expects("getElementIndex")
+			.withExactArgs(sinon.match.same(aElements), "('42')", 4)
+			.returns(3);
+		this.mock(_Helper).expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oOldElement), "transientPredicate")
+			.returns(bTransient ? sTransientPredicate : undefined);
+		this.mock(_Helper).expects("setPrivateAnnotation")
+			.exactly(bTransient ? 1 : 0)
+			.withExactArgs(sinon.match.same(oElement), "transientPredicate",
+				sTransientPredicate);
+		this.mock(_Helper).expects("buildPath")
+			.withExactArgs("/TEAMS", "TEAM_2_EMPLOYEES('23')/EMPLOYEE_2_EQUIPMENTS")
+			.returns("/TEAMS/TEAM_2_EMPLOYEES('23')/EMPLOYEE_2_EQUIPMENTS");
+		this.mock(_Helper).expects("getMetaPath")
+			.withExactArgs("/TEAMS/TEAM_2_EMPLOYEES('23')/EMPLOYEE_2_EQUIPMENTS")
+			.returns("/TEAMS/TEAM_2_EMPLOYEES/EMPLOYEE_2_EQUIPMENTS");
+		this.mock(oCache).expects("visitResponse")
+			.withExactArgs(sinon.match.same(oElement), sinon.match.same(mTypeForMetaPath),
+				"/TEAMS/TEAM_2_EMPLOYEES/EMPLOYEE_2_EQUIPMENTS",
+				"TEAM_2_EMPLOYEES('23')/EMPLOYEE_2_EQUIPMENTS('42')");
+
+		// code under test
+		oCache.replaceElement(aElements, 4, "('42')", oElement, mTypeForMetaPath,
+			"TEAM_2_EMPLOYEES('23')/EMPLOYEE_2_EQUIPMENTS");
+
+		assert.strictEqual(aElements[3], oElement);
+		assert.strictEqual(aElements.$byPredicate["('42')"], oElement);
+		assert.strictEqual(aElements.$byPredicate[sTransientPredicate],
+			bTransient ? oElement : undefined);
+		assert.strictEqual(aElements[3]["@$ui5.context.isTransient"],
+			bTransient ? false : undefined);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#refreshSingle", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Employees('31')"),
+			oCacheMock = this.mock(oCache),
+			mCacheQueryOptions = {},
+			fnDataRequested = this.spy(),
+			sKeyPredicate = "('13')",
+			oElement = {"@$ui5._" : {"predicate" : sKeyPredicate}},
+			aElements = [{}, oElement],
+			oFetchValuePromise = Promise.resolve(aElements),
+			oHelperMock = this.mock(_Helper),
+			oPromise,
+			mQueryOptionsCopy = {$filter: "foo", $count: true, $orderby: "bar", $select: "Name"},
+			mQueryOptionsForPath = {},
+			oResponse = {},
+			mTypeForMetaPath = {};
+
+		aElements.$byPredicate = {};
+		oCache.fetchValue = function () {};
+		oCacheMock.expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "EMPLOYEE_2_EQUIPMENTS")
+			// Note: CollectionCache#fetchValue may be async, $cached just sends no new request!
+			.returns(SyncPromise.resolve(oFetchValuePromise));
+
+		// code under test
+		oPromise = oCache.refreshSingle("group", "EMPLOYEE_2_EQUIPMENTS", 1, fnDataRequested);
+
+		assert.ok(oPromise.isFulfilled, "returned a SyncPromise");
+		assert.strictEqual(oCache.bSentReadRequest, false);
+		// simulate _Cache#setQueryOptions which is still allowed because of bSentReadRequest
+		oCache.mQueryOptions = mCacheQueryOptions;
+		this.mock(_Helper).expects("getQueryOptionsForPath")
+			.withExactArgs(sinon.match.same(mCacheQueryOptions), "EMPLOYEE_2_EQUIPMENTS")
+			.returns(mQueryOptionsForPath);
+		this.mock(Object).expects("assign")
+			.withExactArgs({}, sinon.match.same(mQueryOptionsForPath))
+			.returns(mQueryOptionsCopy);
+		oHelperMock.expects("buildPath")
+			.withExactArgs("Employees('31')", "EMPLOYEE_2_EQUIPMENTS", sKeyPredicate)
+			.returns("~");
+		this.oRequestorMock.expects("buildQueryString")
+			.withExactArgs(oCache.sMetaPath, {$select: "Name"}, false, oCache.bSortExpandSelect)
+			.returns("?$select=Name");
+		this.oRequestorMock.expects("request")
+			.withExactArgs("GET", "~?$select=Name", "group", undefined, undefined,
+				sinon.match.same(fnDataRequested))
+			.resolves(oResponse);
+		oCacheMock.expects("fetchTypes").withExactArgs()
+			.returns(SyncPromise.resolve(mTypeForMetaPath));
+
+		return oFetchValuePromise.then(function () {
+			// we are AFTER refreshSingle's then-handler, but before the GET is responded to
+			assert.strictEqual(oCache.bSentReadRequest, true);
+			assert.strictEqual(aElements[1], oElement, "not replaced yet");
+			oCacheMock.expects("replaceElement")
+				.withExactArgs(sinon.match.same(aElements), 1, sKeyPredicate,
+					sinon.match.same(oResponse), sinon.match.same(mTypeForMetaPath),
+					"EMPLOYEE_2_EQUIPMENTS")
+				.callThrough();
+			oHelperMock.expects("buildPath") // called in replaceElement
+				.withExactArgs("/Employees", "EMPLOYEE_2_EQUIPMENTS")
+				.returns("/Employees/EMPLOYEE_2_EQUIPMENTS");
+			oCacheMock.expects("visitResponse") // called in replaceElement
+				.withExactArgs(sinon.match.same(oResponse), sinon.match.same(mTypeForMetaPath),
+					"/Employees/EMPLOYEE_2_EQUIPMENTS", "EMPLOYEE_2_EQUIPMENTS('13')");
+
+			return oPromise;
+		}).then(function (oResult) {
+			assert.strictEqual(oResult, oResponse);
+			assert.strictEqual(aElements[1], oResponse);
+			assert.strictEqual(aElements.$byPredicate[sKeyPredicate], oResponse);
+		});
+	});
+
+	//*********************************************************************************************
 	[
 		{index : 1, length : 1, result : [{key : "b"}], types : true},
 		{index : 0, length : 2, result : [{key : "a"}, {key : "b"}], types : true},
@@ -4138,9 +4261,9 @@ sap.ui.define([
 					.callThrough();
 			}
 
-			oHelperMock.expects("getSelectForPath")
+			oHelperMock.expects("getQueryOptionsForPath")
 				.withExactArgs(sinon.match.same(oCache.mQueryOptions), sPathInCache)
-				.returns(aSelectForPath);
+				.returns({$select : aSelectForPath});
 			oHelperMock.expects("updateSelected")
 				.withExactArgs(sinon.match.same(oCache.mChangeListeners),
 					sPathInCache
@@ -4403,9 +4526,9 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sTransientPredicate,
 				sinon.match(transientCacheData), {bar : "baz"});
 		// called from the POST's success handler
-		oHelperMock.expects("getSelectForPath")
+		oHelperMock.expects("getQueryOptionsForPath")
 			.withExactArgs(sinon.match.same(oCache.mQueryOptions), "")
-			.returns(aSelect);
+			.returns({$select : aSelect});
 		oCacheMock.expects("visitResponse")
 			.withExactArgs(sinon.match.same(oPostResult), sinon.match.same(mTypeForMetaPath),
 				"/Employees", sTransientPredicate, true);
@@ -6583,102 +6706,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bTransient) {
-		QUnit.test("CollectionCache#replaceElement, bTransient= " + bTransient, function (assert) {
-			var oCache = this.createCache("Employees"),
-				oElement = {},
-				oOldElement = {},
-				sPredicate = "('42')",
-				sTransientPredicate = "($uid=id-1-23)",
-				mTypeForMetaPath = {};
-
-			oCache.aElements[3] = oOldElement;
-			oCache.aElements.$byPredicate = {"('42')" : oOldElement};
-			if (bTransient) {
-				oCache.aElements.$byPredicate[sTransientPredicate] = oOldElement;
-			}
-			this.mock(_Cache).expects("getElementIndex")
-				.withExactArgs(sinon.match.same(oCache.aElements), "('42')", 4)
-				.returns(3);
-			this.mock(_Helper).expects("getPrivateAnnotation")
-				.withExactArgs(sinon.match.same(oOldElement), "transientPredicate")
-				.returns(bTransient ? sTransientPredicate : undefined);
-			this.mock(_Helper).expects("setPrivateAnnotation")
-				.exactly(bTransient ? 1 : 0)
-				.withExactArgs(sinon.match.same(oElement), "transientPredicate",
-					sTransientPredicate);
-			this.mock(oCache).expects("visitResponse")
-				.withExactArgs(sinon.match.same(oElement), sinon.match.same(mTypeForMetaPath),
-					undefined, sPredicate);
-
-			// code under test
-			oCache.replaceElement(4, sPredicate, oElement, mTypeForMetaPath);
-
-			assert.strictEqual(oCache.aElements[3], oElement);
-			assert.strictEqual(oCache.aElements.$byPredicate["('42')"], oElement);
-			assert.strictEqual(oCache.aElements.$byPredicate[sTransientPredicate],
-				bTransient ? oElement : undefined);
-			assert.strictEqual(oCache.aElements[3]["@$ui5.context.isTransient"],
-				bTransient ? false : undefined);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("CollectionCache#refreshSingle", function (assert) {
-		var fnDataRequested = this.spy(),
-			sKeyPredicate = "('13')",
-			oElement = {"@$ui5._" : {"predicate" : sKeyPredicate}},
-			aElements = [{}, oElement],
-			sResourcePath = "Employees",
-			mQueryOptionsCopy = {$filter: "foo", $count: true, $orderby: "bar", $select: "Name"},
-			oCache = this.createCache(sResourcePath,
-				{$filter: "foo", $count: true, $orderby: "bar", $select: "Name"}),
-			oCacheMock = this.mock(oCache),
-			oPromise,
-			sQueryString = "?$select=Name",
-			oResponse = {},
-			mTypeForMetaPath = {};
-
-		oCache.aElements = aElements;
-		oCache.aElements.$byPredicate = {};
-
-		this.mock(jQuery).expects("extend")
-			.withExactArgs({}, sinon.match.same(oCache.mQueryOptions))
-			.returns(mQueryOptionsCopy);
-		this.oRequestorMock.expects("buildQueryString")
-			.withExactArgs(oCache.sMetaPath, {$select: "Name"}, false,
-				oCache.bSortExpandSelect)
-			.returns(sQueryString);
-		this.oRequestorMock.expects("request")
-			.withExactArgs("GET", sResourcePath + sKeyPredicate + sQueryString, "group", undefined,
-				undefined, sinon.match.same(fnDataRequested))
-			.resolves(oResponse);
-		oCacheMock.expects("fetchTypes").withExactArgs()
-			.returns(SyncPromise.resolve(mTypeForMetaPath));
-		oCacheMock.expects("replaceElement")
-			.withExactArgs(1, sKeyPredicate, sinon.match.same(oResponse),
-				sinon.match.same(mTypeForMetaPath))
-			.callThrough();
-		oCacheMock.expects("visitResponse") // called in replaceElement
-			.withExactArgs(sinon.match.same(oResponse), sinon.match.same(mTypeForMetaPath),
-				undefined, sKeyPredicate);
-
-		// code under test
-		oPromise = oCache.refreshSingle("group", 1, fnDataRequested);
-		assert.ok(oPromise.isFulfilled, "returned a SyncPromise");
-
-		assert.strictEqual(oCache.bSentReadRequest, true);
-		assert.deepEqual(oCache.aElements, aElements);
-		assert.strictEqual(oCache.aElements[1], oElement);
-
-		return oPromise.then(function (oResult) {
-			assert.strictEqual(oResult, oResponse);
-			assert.strictEqual(oCache.aElements[1], oResponse);
-			assert.strictEqual(oCache.aElements.$byPredicate[sKeyPredicate], oResponse);
-		});
-	});
-
-	//*********************************************************************************************
 	[{
 		mBindingQueryOptions : {$filter: "age gt 40"},
 		sQueryString : "?$filter=(age%20gt%2040)%20and%20~key%20filter~",
@@ -6776,13 +6803,13 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(aElements), 1, sKeyPredicate, "");
 			oCacheMock.expects("replaceElement")
 				.exactly(oFixture.bRemoved ? 0 : 1)
-				.withExactArgs(1, sKeyPredicate, sinon.match.same(oResponse.value[0]),
-					sinon.match.same(mTypeForMetaPath))
+				.withExactArgs(sinon.match.same(oCache.aElements), 1, sKeyPredicate,
+					sinon.match.same(oResponse.value[0]), sinon.match.same(mTypeForMetaPath), "")
 				.callThrough();
 			oCacheMock.expects("visitResponse")
 				.exactly(oFixture.bRemoved ? 0 : 1)
 				.withExactArgs(sinon.match.same(oResponse.value[0]),
-					sinon.match.same(mTypeForMetaPath), undefined, sKeyPredicate);
+					sinon.match.same(mTypeForMetaPath), "/Employees", sKeyPredicate);
 
 			// code under test
 			oPromise = oCache.refreshSingleWithRemove(oGroupLock, 1, fnDataRequested, fnOnRemove);

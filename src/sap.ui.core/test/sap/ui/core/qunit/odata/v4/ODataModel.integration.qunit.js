@@ -718,7 +718,7 @@ sap.ui.define([
 						return Array.isArray(oRequest)
 							? processRequests(oRequest, i + 1)
 							: checkRequest(oRequest.method, oRequest.url, oRequest.headers,
-								oRequest.body, undefined, iChangeSetNo || i + 1
+								oRequest.body, undefined, that.iBatchNo, iChangeSetNo || i + 1
 							).then(function (oResponse) {
 								var mHeaders = {};
 
@@ -774,12 +774,13 @@ sap.ui.define([
 			 *  "body".
 			 * @param {string} [sOriginalResourcePath] The path by which the resource has originally
 			 *   been requested
+			 * @param {number} [iBatchNo] Number of the batch which the request belongs to
 			 * @param {number} [iChangeSetNo] Number of the change set in the current batch which
-			 *   the request is expected to belong to
+			 *   the request belongs to
 			 * @returns {Promise} A promise on an object with the response in the property "body"
 			 */
 			function checkRequest(sMethod, sUrl, mHeaders, vPayload, sOriginalResourcePath,
-					iChangeSetNo) {
+					iBatchNo, iChangeSetNo) {
 				var oActualRequest = {
 						method : sMethod,
 						url : sUrl,
@@ -818,7 +819,7 @@ sap.ui.define([
 					delete oExpectedRequest.response;
 					delete oExpectedRequest.responseHeaders;
 					if ("batchNo" in oExpectedRequest) {
-						oActualRequest.batchNo = that.iBatchNo;
+						oActualRequest.batchNo = iBatchNo;
 					}
 					if ("changeSetNo" in oExpectedRequest) {
 						oActualRequest.changeSetNo = iChangeSetNo;
@@ -7146,7 +7147,12 @@ sap.ui.define([
 					"ID" : "7",
 					"Name" : "John Doe"
 				})
-				.expectChange("id", "7", 0);
+				.expectRequest("TEAMS('42')/TEAM_2_EMPLOYEES('7')?$select=ID,Name", {
+					"ID" : "7",
+					"Name" : "The real John Doe"
+				})
+				.expectChange("id", "7", 0)
+				.expectChange("text", "The real John Doe", 0);
 
 			return Promise.all([
 				that.oModel.submitBatch("update"),
@@ -11361,6 +11367,11 @@ sap.ui.define([
 				}, {
 					"SalesOrderID" : "0500000000",
 					"ItemPosition" : "0010"
+				})
+				.expectRequest("SalesOrderList('0500000000')"
+					+ "/SO_2_SOITEM(SalesOrderID='0500000000',ItemPosition='0010')", {
+					"SalesOrderID" : "0500000000",
+					"ItemPosition" : "0010"
 				});
 
 			oListBinding.create();
@@ -13733,6 +13744,9 @@ sap.ui.define([
 				}, {
 					"ID" : "7"
 				})
+				.expectRequest("TEAMS('42')/TEAM_2_EMPLOYEES('7')?$select=ID", {
+					"ID" : "7"
+				})
 				.expectChange("id", "", 0) // from setValue(null)
 				.expectChange("id", ["7", "2"]);
 			oTeam2EmployeesBinding = that.oView.byId("table").getBinding("items");
@@ -13836,6 +13850,12 @@ sap.ui.define([
 						"ItemPosition" : "newPos"
 					}
 				}, {
+					"SalesOrderID" : "43",
+					"ItemPosition" : "10"
+				})
+				.expectRequest("SalesOrderList('43')"
+					+ "/SO_2_SOITEM(SalesOrderID='43',ItemPosition='10')"
+					+ "?$select=ItemPosition,SalesOrderID", {
 					"SalesOrderID" : "43",
 					"ItemPosition" : "10"
 				})
@@ -18147,6 +18167,120 @@ sap.ui.define([
 			assert.deepEqual(oModel.getMetaModel().getObject("/Artists/special.cases.Create"
 					+ "/Countryoforigin@com.sap.vocabularies.Common.v1.ValueListReferences"),
 				["../countryoforigin/$metadata"]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create on a relative binding with $expand refreshes the newly created entity so
+	// that navigation properties are available.
+	// JIRA: CPOUI5UISERVICESV3-1814
+	QUnit.test("Create on a relative binding with $expand", function (assert) {
+		var oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				groupId : "$auto",
+				updateGroupId : "$auto"
+			}),
+			sView = '\
+<FlexBox binding="{/SalesOrderList(\'1\')}">\
+	<Table id="table" items="{path : \'SO_2_SOITEM\', parameters : {$select : \'Messages\'}}">\
+		<columns><Column/></columns>\
+		<items>\
+			<ColumnListItem>\
+				<Text id="position" text="{ItemPosition}"/>\
+				<Input id="quantity" value="{Quantity}"/>\
+				<Text id="product" text="{SOITEM_2_PRODUCT/ProductID}"/>\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest({
+				batchNo : 1,
+				method : "GET",
+				url : "SalesOrderList('1')?$select=SalesOrderID"
+					+ "&$expand=SO_2_SOITEM($select=ItemPosition,Messages,Quantity,SalesOrderID;"
+						+ "$expand=SOITEM_2_PRODUCT($select=ProductID))"
+			}, {
+				"SalesOrderID" : "1",
+				"SO_2_SOITEM" : [{
+					"ItemPosition" : "10",
+					"Messages" : [],
+					"Quantity" : "7",
+					"SalesOrderID" : "1",
+					"SOITEM_2_PRODUCT" : {
+						"ProductID" : "2"
+					}
+				}]
+			})
+			.expectChange("position", ["10"])
+			.expectChange("quantity", ["7.000"])
+			.expectChange("product", ["2"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oBinding = that.oView.byId("table").getBinding("items"),
+				oCreatedContext;
+
+			that.expectRequest({
+					batchNo : 2,
+					method : "POST",
+					url : "SalesOrderList('1')/SO_2_SOITEM",
+					payload : {}
+				}, {
+					"SalesOrderID" : "1",
+					"ItemPosition" : "20"
+				})
+				.expectRequest({
+					batchNo : 3,
+					method : "GET",
+					url : "SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='20')"
+						+ "?$select=ItemPosition,Messages,Quantity,SalesOrderID"
+						+ "&$expand=SOITEM_2_PRODUCT($select=ProductID)"
+				}, {
+					"ItemPosition" : "20",
+					"Messages" : [{
+						"code" : "23",
+						"message" : "Enter a minimum quantity of 2",
+						"numericSeverity" : 3,
+						"target" : "Quantity"
+					}],
+					"Quantity" : "0",
+					"SalesOrderID" : "1",
+					"SOITEM_2_PRODUCT" : {
+						"ProductID" : "3"
+					}
+				})
+				// position becomes "" and product null, as _Cache#drillDown resolves with
+				// null for ItemPosition and undefined for SOITEM_2_PRODUCT/ProductID. These values
+				// are formatted differently by sap.ui.model.odata.type.String#formatValue
+				.expectChange("position", ["", "10"])
+				.expectChange("quantity", [null, "7.000"])
+				.expectChange("product", [null, "2"])
+				.expectChange("position", ["20"])
+				.expectChange("quantity", ["0.000"])
+				.expectChange("product", ["3"])
+				.expectMessages([{
+					"code" : "23",
+					"message" : "Enter a minimum quantity of 2",
+					"persistent" : false,
+					"target" : "/SalesOrderList('1')"
+						+ "/SO_2_SOITEM(SalesOrderID='1',ItemPosition='20')/Quantity",
+					"technical" : false,
+					"type" : "Warning"
+				}]);
+
+			// code under test
+			oCreatedContext = oBinding.create();
+
+			return Promise.all([
+				oCreatedContext.created(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			var oQuantityField = that.oView.byId("table").getItems()[0].getCells()[1];
+
+			return that.checkValueState(assert, oQuantityField, "Warning",
+				"Enter a minimum quantity of 2");
 		});
 	});
 });

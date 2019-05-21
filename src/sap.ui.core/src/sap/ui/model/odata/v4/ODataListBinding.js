@@ -600,7 +600,7 @@ sap.ui.define([
 				}
 			}
 			that.fireEvent("createCompleted", {context : oContext, success : true});
-			if (!bSkipRefresh && that.isRoot()) {
+			if (!bSkipRefresh) {
 				sGroupId = that.getGroupId();
 				if (!that.oModel.isDirectGroup(sGroupId) && !that.oModel.isAutoGroup(sGroupId)) {
 					sGroupId = "$auto";
@@ -1718,7 +1718,7 @@ sap.ui.define([
 		var sResourcePathPrefix = oContext.getPath().slice(1),
 			that = this;
 
-		return this.oCachePromise.then(function (oCache) {
+		return this.withCache(function (oCache, sPath, oBinding) {
 			var bDataRequested = false,
 				aPromises = [];
 
@@ -1752,12 +1752,13 @@ sap.ui.define([
 				that._fireChange({reason : ChangeReason.Remove});
 			}
 
-			oGroupLock.setGroupId(that.getGroupId());
+			oGroupLock.setGroupId(oBinding.getGroupId());
 			aPromises.push(
 				(bAllowRemoval
 					? oCache.refreshSingleWithRemove(oGroupLock, oContext.getModelIndex(),
 						fireDataRequested, onRemove)
-					: oCache.refreshSingle(oGroupLock, oContext.getModelIndex(), fireDataRequested))
+					: oCache.refreshSingle(oGroupLock, sPath, oContext.getModelIndex(),
+						fireDataRequested))
 				.then(function (oEntity) {
 					var aUpdatePromises = [];
 
