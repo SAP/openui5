@@ -31,15 +31,21 @@ sap.ui.define([
 			},
 
 			onTabSelect: function (oEvent) {
-				var item = oEvent.getParameter('item');
+				var item = oEvent.getParameter('item'),
+					key = item.getKey();
 
-				if (item.getKey() === "exploreSamples") { // TODO implement in generic way
-					// there is no home page for exploreSamples, so navigate to first example
-					this.getRouter().navTo("exploreSamples", {key: "list"});
-					return;
+				// TODO implement in generic way
+				switch (key) {
+					case "exploreSamples":
+						// there is no home page for exploreSamples, so navigate to first example
+						this.getRouter().navTo("exploreSamples", {key: "list"});
+						return;
+					case "learnDetail":
+						this.getRouter().navTo("learnDetail", {key: "overview"});
+						return;
 				}
 
-				this.getRouter().navTo(item.getKey());
+				this.getRouter().navTo(key);
 			},
 
 			onSideNavigationItemSelect: function (oEvent) {
@@ -78,6 +84,8 @@ sap.ui.define([
 				if (routeName.indexOf('explore') === 0) {
 					model = exploreNavigationModel;
 					iconTabHeader.setSelectedKey("exploreSamples");
+				} else {
+					iconTabHeader.setSelectedKey("learnDetail");
 				}
 
 				this.getView().setModel(model);

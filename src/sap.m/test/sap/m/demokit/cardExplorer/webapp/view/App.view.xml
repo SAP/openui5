@@ -20,7 +20,7 @@
 				<Title text="UI Integration Cards" />
 				<IconTabHeader backgroundDesign="Transparent" id="iconTabHeader" select="onTabSelect">
 					<items>
-						<IconTabFilter key="default" text="Learn" />
+						<IconTabFilter key="learnDetail" text="Learn" />
 						<IconTabFilter key="exploreSamples" text="Explore" />
 					</items>
 				</IconTabHeader>
