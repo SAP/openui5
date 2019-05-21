@@ -4,8 +4,8 @@
  */
 
 // Provides an abstraction for list bindings
-sap.ui.define(['./Binding', './Filter', './Sorter'],
-	function(Binding, Filter, Sorter) {
+sap.ui.define(['./Binding', './Filter', './Sorter', 'sap/base/util/array/diff'],
+	function(Binding, Filter, Sorter, diff) {
 	"use strict";
 
 
@@ -286,6 +286,20 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 	};
 
 	/**
+	 * Calculates delta of specified old data array and new data array.
+	 *
+	 * For more information, see {@link module:sap/base/util/array/diff}.
+	 *
+	 * @param {Array} aOld Old data array
+	 * @param {Array} aNew New data array
+	 * @returns {Array.<{type:string,index:int}>} List of update operations
+	 * @protected
+	 */
+	ListBinding.prototype.diffData = function(aOld, aNew) {
+		return diff(aOld, aNew, this.oExtendedChangeDetectionConfig);
+	};
+
+	/**
 	 * Enable extended change detection.
 	 * When extended change detection is enabled, the list binding provides detailed information about changes, for example
 	 * which entries have been removed or inserted. This can be utilized by a control for fine-grained update of its elements.
@@ -298,9 +312,10 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 	 * @param {function|string} vKey The path of the property containing the key or a function getting the context as only parameter to calculate a key to identify an entry
 	 * @protected
 	 */
-	ListBinding.prototype.enableExtendedChangeDetection = function(bDetectUpdates, vKey) {
+	ListBinding.prototype.enableExtendedChangeDetection = function(bDetectUpdates, vKey, oExtendedChangeDetectionConfig /* restricted */) {
 		this.bUseExtendedChangeDetection = true;
 		this.bDetectUpdates = bDetectUpdates;
+		this.oExtendedChangeDetectionConfig = oExtendedChangeDetectionConfig;
 		if (typeof vKey === "string") {
 			this.getEntryKey = function(oContext) {
 				return oContext.getProperty(vKey);

@@ -23,19 +23,19 @@ sap.ui.define(['sap/base/util/deepEqual', 'sap/base/strings/hash'], function(dee
 	 * to non-string items and reduces the strings to a hash code. It is not guaranteed that this default
 	 * implementation fulfills the above constraint in all cases, but it is a compromise between implementation
 	 * effort, generality and performance. If items are known to be non-stringifiable (e.g. because they may
-	 * contain cyclic references) or when hash collisions are likely, an own <code>fnSymbol</code> function
-	 * must be provided.
+	 * contain cyclic references) or when hash collisions are likely, an own <code>symbol</code> function
+	 * must be provided via the configuration object.
 	 *
 	 * The result of the diff is a sequence of update operations, each consisting of a <code>type</code>
-	 * (either <code>"insert"</code> or <code>"delete"</code>) and an <code>index</code>.
-	 * By applying the operations one after the other to the old array, it can be transformed to an
+	 * (either <code>"insert"</code>, <code>"delete"</code> or <code>"replace"</code> when enabled via configuration object)
+	 * and an <code>index</code>. By applying the operations one after the other to the old array, it can be transformed to an
 	 * array whose items are equal to the new array.
 	 *
 	 * @example <caption>Sample implementation of the update</caption>
 	 * function update(aOldArray, aNewArray) {
 	 *
 	 *   // calculate the diff
-	 *   var aDiff = diff(aOldArray, aNewArray, __provide_your_symbol_function_here__);
+	 *   var aDiff = diff(aOldArray, aNewArray, __provide_your_configuration_object_here__);
 	 *
 	 *   // apply update operations
 	 *   aDiff.forEach( function(op) {
@@ -51,6 +51,10 @@ sap.ui.define(['sap/base/util/deepEqual', 'sap/base/strings/hash'], function(dee
 	 *        // an item is no longer part of the array (or has been moved to another position), remove it
 	 *        aOldArray.splice(op.index, 1);
 	 *        break;
+	 *      case 'replace': // available only when replace flag of the configuration object is set to true
+	 *        // an item within the array has been changed, replace it
+	 *        aOldArray[op.index] = aNewArray[op.index];
+	 *        break;
 	 *      default:
 	 *        throw new Error('unexpected diff operation type');
 	 *      }
@@ -63,28 +67,41 @@ sap.ui.define(['sap/base/util/deepEqual', 'sap/base/strings/hash'], function(dee
 	 * @since 1.58
 	 * @param {Array} aOld Old Array
 	 * @param {Array} aNew New Array
-	 * @param {function} [fnSymbol] Function to calculate substitute symbols for array items
+	 * @param {object|function} [vConfigOrSymbol] Configuration object or a function to calculate substitute symbols for array items
+	 * @param {function} [vConfigOrSymbol.symbol] Function to calculate substitute symbols for array items
+	 * @param {boolean} [vConfigOrSymbol.replace=false] Switch for the <code>replace</code> type which specifies that an item within the array has been changed
 	 * @alias module:sap/base/util/array/diff
 	 * @return {Array.<{type:string,index:int}>} List of update operations
 	 * @public
 	 */
-	var fnDiff = function(aOld, aNew, fnSymbol){
+	var fnDiff = function(aOld, aNew, vConfigOrSymbol){
 		var mSymbols = {},
 			aOldRefs = [],
 			aNewRefs = [],
 			iOldLine,
-			vSymbol, oSymbol,
+			vSymbol,
+			oSymbol,
+			fnSymbol,
 			iOld = 0,
 			iNew = 0,
 			iOldRefLine,
 			iNewRefLine,
 			iOldDistance,
 			iNewDistance,
+			bReplaceEnabled,
 			aDiff = [];
 
 		// If arrays are equal, don't try to diff them
 		if (aOld === aNew || deepEqual(aOld, aNew)) {
 			return aDiff;
+		}
+
+		// Assign configurations
+		if (!vConfigOrSymbol || typeof vConfigOrSymbol == "function") {
+			fnSymbol = vConfigOrSymbol;
+		} else {
+			fnSymbol = vConfigOrSymbol.symbol;
+			bReplaceEnabled = vConfigOrSymbol.replace;
 		}
 
 		// If no symbol function is provided, we stringify, if it is not type string, and create a hash from it
@@ -163,7 +180,14 @@ sap.ui.define(['sap/base/util/deepEqual', 'sap/base/strings/hash'], function(dee
 		while (iOld < aOld.length || iNew < aNew.length) {
 			iNewRefLine = aOldRefs[iOld] && aOldRefs[iOld].line;
 			iOldRefLine = aNewRefs[iNew] && aNewRefs[iNew].line;
-			if (iOld < aOld.length && (iNewRefLine === undefined || iNewRefLine < iNew)) {
+			if (bReplaceEnabled && iNewRefLine === undefined && iOldRefLine === undefined && iOld < aOld.length && iNew < aNew.length) {
+				aDiff.push({
+					index: iNew,
+					type: "replace"
+				});
+				iOld++;
+				iNew++;
+			} else if (iOld < aOld.length && (iNewRefLine === undefined || iNewRefLine < iNew)) {
 				aDiff.push({
 					index: iNew,
 					type: "delete"

@@ -7,11 +7,10 @@ sap.ui.define([
 	'sap/ui/model/ChangeReason',
 	'sap/ui/model/ClientListBinding',
 	"sap/base/strings/hash",
-	"sap/base/util/array/diff",
 	"sap/base/util/deepEqual",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(ChangeReason, ClientListBinding, hash, diff, deepEqual, jQuery) {
+	function(ChangeReason, ClientListBinding, hash, deepEqual, jQuery) {
 	"use strict";
 
 
@@ -31,6 +30,21 @@ sap.ui.define([
 	 * @extends sap.ui.model.ClientListBinding
 	 */
 	var MessageListBinding = ClientListBinding.extend("sap.ui.model.message.MessageListBinding");
+
+	/**
+	 * Define the symbol function when extended change detection is enabled
+	 * @override
+	 */
+	MessageListBinding.prototype.enableExtendedChangeDetection = function() {
+		ClientListBinding.prototype.enableExtendedChangeDetection.apply(this, arguments);
+		this.oExtendedChangeDetectionConfig = this.oExtendedChangeDetectionConfig || {};
+		this.oExtendedChangeDetectionConfig.symbol = function (vContext) {
+			if (typeof vContext !== "string") {
+				return this.getContextData(vContext); // objects require JSON string representation
+			}
+			return hash(vContext); // string use hash codes
+		}.bind(this);
+	};
 
 	/**
 	 * Return contexts for the list or a specified subset of contexts.
@@ -62,13 +76,7 @@ sap.ui.define([
 
 			//Check diff
 			if (this.aLastContexts && iStartIndex < this.iLastEndIndex) {
-				var that = this;
-				aContexts.diff = diff(this.aLastContextData, aContexts, function (vContext){
-					if (typeof vContext !== "string") {
-						return that.getContextData(vContext); // objects require JSON string representation
-					}
-					return hash(vContext); // string use hash codes
-				});
+				aContexts.diff = this.diffData(this.aLastContextData, aContexts);
 			}
 			this.iLastEndIndex = iStartIndex + iLength;
 			this.aLastContexts = aContexts.slice(0);

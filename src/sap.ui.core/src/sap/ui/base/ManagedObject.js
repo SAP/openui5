@@ -3849,7 +3849,8 @@ sap.ui.define([
 			} else {
 				oBinding = oModel.bindList(oBindingInfo.path, this.getBindingContext(oBindingInfo.model), oBindingInfo.sorter, oBindingInfo.filters, oBindingInfo.parameters);
 				if (this.bUseExtendedChangeDetection) {
-					oBinding.enableExtendedChangeDetection(!oBindingInfo.template, oBindingInfo.key);
+					assert(!this.oExtendedChangeDetectionConfig || !this.oExtendedChangeDetectionConfig.symbol, "symbol function must not be set by controls");
+					oBinding.enableExtendedChangeDetection(!oBindingInfo.template, oBindingInfo.key, this.oExtendedChangeDetectionConfig);
 				}
 			}
 

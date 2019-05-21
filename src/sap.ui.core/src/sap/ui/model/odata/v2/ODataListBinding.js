@@ -16,7 +16,6 @@ sap.ui.define([
 	'sap/ui/model/FilterProcessor',
 	'sap/ui/model/Sorter',
 	'sap/ui/model/SorterProcessor',
-	"sap/base/util/array/diff",
 	"sap/base/util/uid",
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
@@ -36,7 +35,6 @@ sap.ui.define([
 			FilterProcessor,
 			Sorter,
 			SorterProcessor,
-			diff,
 			uid,
 			deepEqual,
 			Log,
@@ -234,7 +232,7 @@ sap.ui.define([
 			if (this.bUseExtendedChangeDetection) {
 				//Check diff
 				if (this.aLastContexts && iStartIndex < this.iLastEndIndex) {
-					aContexts.diff = diff(this.aLastContextData, aContextData);
+					aContexts.diff = this.diffData(this.aLastContextData, aContextData);
 				}
 			}
 			this.iLastEndIndex = iStartIndex + iLength;

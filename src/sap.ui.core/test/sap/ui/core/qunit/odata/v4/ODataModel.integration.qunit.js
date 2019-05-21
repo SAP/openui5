@@ -3528,7 +3528,6 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectChange("count", "5")
-				.expectChange("id", "", 1)
 				.expectChange("note", "New 1", 1);
 
 			return Promise.all([

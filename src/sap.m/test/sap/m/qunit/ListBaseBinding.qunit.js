@@ -1,4 +1,4 @@
-/*global QUnit, jQuery*/
+/*global QUnit, jQuery, sinon*/
 sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/thirdparty/sinon-qunit",
@@ -660,6 +660,83 @@ sap.ui.define([
 			assert.strictEqual(fnUpdateStartedSpy.callCount, 0, "Property update did not update the list binding.");
 
 			// clean up
+			oMockServer.stop();
+			oList.destroy();
+			done();
+		});
+	});
+
+	QUnit.module("ExtendedChangeDetection");
+	QUnit.test("Replace option when template is available", function(assert) {
+		var done = assert.async();
+
+		// arrange
+		var oMockServer = startMockServer(),
+			oDeferred = jQuery.Deferred(),
+			oCreateListItemSpy,
+			oSetBindingContextSpy,
+			oList = createList({
+				growing: true,
+				growingThreshold: 4
+			});
+
+		// when initial binding has been completed
+		oList.done(function () {
+			oList.attachUpdateFinished(oDeferred.resolve);
+			oCreateListItemSpy = sinon.spy(StandardListItem.prototype, "init");
+			oSetBindingContextSpy = sinon.spy(StandardListItem.prototype, "setBindingContext");
+			this.getBinding("items").sort(new Sorter("ProductId", true));
+		});
+
+		// when sorting has been completed
+		jQuery.when(oDeferred).done(function () {
+
+			assert.equal(oCreateListItemSpy.callCount, 0, "No List Item is created because of sort");
+			assert.equal(oSetBindingContextSpy.callCount, 4, "Only binding contexts are set for list items");
+
+			// clean up
+			oSetBindingContextSpy.restore();
+			oCreateListItemSpy.restore();
+			oMockServer.stop();
+			oList.destroy();
+			done();
+		});
+	});
+
+	QUnit.test("No replace option when factory is available", function(assert) {
+		var done = assert.async();
+
+		// arrange
+		var oMockServer = startMockServer(),
+			oDeferred = jQuery.Deferred(),
+			oCreateListItemSpy,
+			oList = createList({
+				growing: true,
+				growingThreshold: 4
+			}, {
+				template: null,
+				factory: function() {
+					return new StandardListItem({
+						title : "{Name}",
+						description : "{Category}"
+					});
+				}
+			});
+
+		// when initial binding has been completed
+		oList.done(function () {
+			oList.attachUpdateFinished(oDeferred.resolve);
+			oCreateListItemSpy = sinon.spy(StandardListItem.prototype, "init");
+			this.getBinding("items").sort(new Sorter("ProductId", true));
+		});
+
+		// when sorting has been completed
+		jQuery.when(oDeferred).done(function () {
+
+			assert.equal(oCreateListItemSpy.callCount, 4, "4 List Items are created");
+
+			// clean up
+			oCreateListItemSpy.restore();
 			oMockServer.stop();
 			oList.destroy();
 			done();

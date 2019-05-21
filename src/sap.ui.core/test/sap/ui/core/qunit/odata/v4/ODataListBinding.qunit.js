@@ -4309,7 +4309,7 @@ sap.ui.define([
 			.withExactArgs(0, 50).returns(aContexts);
 		this.mock(oContext0).expects("getPath").withExactArgs().returns("~path~0");
 		this.mock(oContext1).expects("getPath").withExactArgs().returns("~path~1");
-		this.mock(jQuery.sap).expects("arraySymbolDiff")
+		this.mock(oBinding).expects("diffData")
 			.withExactArgs(sinon.match.same(aPreviousData), ["~path~0", "~path~1"])
 			.returns(aDiff);
 
@@ -4344,7 +4344,7 @@ sap.ui.define([
 		oJSONMock.expects("stringify").withExactArgs("~value~0").returns("~json~0");
 		this.mock(oContext1).expects("getValue").withExactArgs().returns("~value~1");
 		oJSONMock.expects("stringify").withExactArgs("~value~1").returns("~json~1");
-		this.mock(jQuery.sap).expects("arraySymbolDiff")
+		this.mock(oBinding).expects("diffData")
 			.withExactArgs(sinon.match.same(aPreviousData), ["~json~0", "~json~1"])
 			.returns(aDiff);
 
