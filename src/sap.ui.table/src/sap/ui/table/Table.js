@@ -16,7 +16,7 @@ sap.ui.define([
 	'./Column',
 	'./Row',
 	'./library',
-	'./TableUtils',
+	'./utils/TableUtils',
 	'./TableExtension',
 	'./TableAccExtension',
 	'./TableKeyboardExtension',
@@ -4068,7 +4068,7 @@ sap.ui.define([
 	/**
 	 * Fires the <code>_rowsUpdated</code> event asynchronously.
 	 *
-	 * @param {sap.ui.table.TableUtils.RowsUpdateReason} [sReason=sap.ui.table.TableUtils.RowsUpdateReason.Unknown]
+	 * @param {sap.ui.table.utils.TableUtils.RowsUpdateReason} [sReason=sap.ui.table.utils.TableUtils.RowsUpdateReason.Unknown]
 	 * The reason why the rows have been updated.
 	 * @fires Table#_rowsUpdated
 	 * @private
@@ -4092,7 +4092,7 @@ sap.ui.define([
 			 *
 			 * @event Table#_rowsUpdated
 			 * @type {Object}
-			 * @property {sap.ui.table.TableUtils.RowsUpdateReason} reason - The reason why the rows have been updated.
+			 * @property {sap.ui.table.utils.TableUtils.RowsUpdateReason} reason - The reason why the rows have been updated.
 			 * @private
 			 */
 			this.fireEvent("_rowsUpdated", mParameters);

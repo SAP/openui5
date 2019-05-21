@@ -4,7 +4,7 @@
 sap.ui.define([
 	'sap/ui/model/SelectionModel',
 	'./SelectionPlugin',
-	"../TableUtils",
+	"../utils/TableUtils",
 	'../library'
 ], function(
 	SelectionModel,

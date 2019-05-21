@@ -13,7 +13,7 @@ sap.ui.define([
 	'sap/ui/model/Sorter',
 	'sap/ui/model/Type',
 	'sap/ui/model/type/String',
-	'./TableUtils',
+	'./utils/TableUtils',
 	'./library',
 	'./ColumnMenu',
 	'sap/base/util/ObjectPath',

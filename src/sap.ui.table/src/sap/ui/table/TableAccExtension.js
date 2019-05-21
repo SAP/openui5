@@ -8,7 +8,7 @@ sap.ui.define([
 	"./library",
 	"./TableExtension",
 	"./TableAccRenderExtension",
-	"./TableUtils",
+	"./utils/TableUtils",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery"
 ], function(Control, library, TableExtension, TableAccRenderExtension, TableUtils, Device, jQuery) {
@@ -138,7 +138,7 @@ sap.ui.define([
 		 * the cell type and the jQuery wrapper object of the corresponding cell:
 		 *
 		 * @param {sap.ui.table.TableAccExtension} oExtension The accessibility extension.
-		 * @returns {sap.ui.table.TableUtils.CellInfo} An object containing information about the cell.
+		 * @returns {sap.ui.table.utils.TableUtils.CellInfo} An object containing information about the cell.
 		 */
 		getInfoOfFocusedCell: function(oExtension) {
 			var oTable = oExtension.getTable();
@@ -1063,8 +1063,8 @@ sap.ui.define([
 	/**
 	 * Determines the current focused cell and modifies the labels and descriptions if needed.
 	 *
-	 * @param {sap.ui.table.TableUtils.RowsUpdateReason} sReason Why the accessibility information of the cell needs to be updated. Additionally
-	 * to the reasons in {@link sap.ui.table.TableUtils.RowsUpdateReason RowsUpdateReason}, also \"Focus\" is possible.
+	 * @param {sap.ui.table.utils.TableUtils.RowsUpdateReason} sReason Why the accessibility information of the cell needs to be updated. Additionally
+	 * to the reasons in {@link sap.ui.table.utils.TableUtils.RowsUpdateReason RowsUpdateReason}, also \"Focus\" is possible.
 	 * @public
 	 */
 	TableAccExtension.prototype.updateAccForCurrentCell = function(sReason) {

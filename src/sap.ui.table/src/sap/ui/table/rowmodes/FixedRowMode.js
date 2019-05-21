@@ -4,7 +4,7 @@
 sap.ui.define([
 	"../library",
 	"./RowMode",
-	"../TableUtils"
+	"../utils/TableUtils"
 ], function(
 	library,
 	RowMode,

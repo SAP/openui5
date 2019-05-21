@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/Column",
 	"sap/ui/model/odata/v2/ODataModel",
-	"sap/ui/table/TableUtils",
+	"sap/ui/table/utils/TableUtils",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/thirdparty/sinon-qunit" /*Sinon itself already part of MockServer*/
 ], function(TreeTable, Column, ODataModel, TableUtils, MockServer, SinonQUnit) {

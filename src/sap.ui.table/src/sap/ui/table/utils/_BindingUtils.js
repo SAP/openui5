@@ -2,22 +2,22 @@
  * ${copyright}
  */
 
-// Provides helper sap.ui.table.TableBindingUtils.
+// Provides helper sap.ui.table.utils._BindingUtils.
 sap.ui.define([], function() {
 	"use strict";
 
 	/**
 	 * Static collection of utility functions related to the binding of sap.ui.table.Table, ...
 	 *
-	 * Note: Do not access the function of this helper directly but via <code>sap.ui.table.TableUtils.Binding...</code>
+	 * Note: Do not access the functions of this helper directly, but via <code>sap.ui.table.utils.TableUtils.Binding...</code>
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 * @namespace
-	 * @alias sap.ui.table.TableBindingUtils
+	 * @alias sap.ui.table.utils._BindingUtils
 	 * @private
 	 */
-	return {
+	var BindingUtils = {
 		TableUtils: null, // Avoid cyclic dependency. Will be filled by TableUtils.
 
 		/**
@@ -58,4 +58,7 @@ sap.ui.define([], function() {
 			return pMetadataLoaded;
 		}
 	};
+
+	return BindingUtils;
+
 }, /* bExport= */ true);

@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/ui/Device",
 	"./library",
-	"./TableUtils",
+	"./utils/TableUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery"
 ], function(BaseObject, Device, library, TableUtils, KeyCodes, jQuery) {
@@ -323,7 +323,7 @@ sap.ui.define([
 	 * If there are no interactive elements, the cell is focused instead.
 	 *
 	 * @param {sap.ui.table.Table} oTable Instance of the table.
-	 * @param {sap.ui.table.TableUtils.CellType} iCellType The type of the cell.
+	 * @param {sap.ui.table.utils.TableUtils.CellType} iCellType The type of the cell.
 	 * @param {int} iRowIndex Index of the row in the rows aggregation.
 	 * @param {int} [iColumnIndex] Index of the column in the columns aggregation. Only required for data cells.
 	 * @param {boolean} [bFirstInteractiveElement=false] If <code>true</code>, the first interactive element in a cell is focused.

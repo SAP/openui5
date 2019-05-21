@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/RowSettings",
-	"sap/ui/table/TableUtils",
+	"sap/ui/table/utils/TableUtils",
 	"sap/ui/core/library",
 	"sap/ui/core/theming/Parameters"
 ], function(TableQUnitUtils, RowSettings, TableUtils, CoreLibrary, ThemeParameters) {

@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/table/TableUtils",
+	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/table/CreationRow",
@@ -1406,7 +1406,7 @@ sap.ui.define([
 
 			this.oTable = new Table();
 
-			this.TableUtilsDummyControl = Control.extend("sap.ui.table.TableUtilsDummyControl", {
+			this.TableUtilsDummyControl = Control.extend("sap.ui.table.utils.TableUtilsDummyControl", {
 				metadata: {
 					library: "sap.ui.table",
 					aggregations: {

@@ -6,7 +6,7 @@
 sap.ui.define([
 	"./library",
 	"./TableExtension",
-	"./TableUtils",
+	"./utils/TableUtils",
 	"sap/ui/Device",
 	"sap/ui/core/Popup",
 	"sap/base/Log",

@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"../library",
-	"../TableUtils",
+	"../utils/TableUtils",
 	"./RowMode",
 	"sap/ui/Device",
 	"sap/base/Log"
@@ -73,7 +73,7 @@ sap.ui.define([
 		/**
 		 * Asynchronously calculates and applies the row count based on the available vertical space.
 		 *
-		 * @param {sap.ui.table.TableUtils.RowsUpdateReason} sReason The reason for updating the rows.
+		 * @param {sap.ui.table.utils.TableUtils.RowsUpdateReason} sReason The reason for updating the rows.
 		 * @param {boolean} [bStartAutomaticAdjustment=false] Whether to start automatic row count adjustment by attaching a resize handler after
 		 * adjusting the row count.
 		 * @private
@@ -409,7 +409,7 @@ sap.ui.define([
 	/**
 	 * Calculates and applies the row count based on the available vertical space.
 	 *
-	 * @param {sap.ui.table.TableUtils.RowsUpdateReason} sReason The reason for updating the rows.
+	 * @param {sap.ui.table.utils.TableUtils.RowsUpdateReason} sReason The reason for updating the rows.
 	 * @param {boolean} [bStartAutomaticAdjustment=false] Whether to start automatic row count adjustment by attaching a resize handler after
 	 * adjusting the row count.
 	 * @private

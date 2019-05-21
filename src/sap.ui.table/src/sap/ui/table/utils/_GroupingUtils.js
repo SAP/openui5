@@ -2,12 +2,12 @@
  * ${copyright}
  */
 
-// Provides helper sap.ui.table.TableUtils.
+// Provides helper sap.ui.table.utils._GroupingUtils.
 sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/model/Sorter",
 	"sap/ui/Device",
-	"./library",
+	"../library",
 	"sap/ui/thirdparty/jquery"
 ], function(Element, Sorter, Device, library, jQuery) {
 	"use strict";
@@ -15,15 +15,15 @@ sap.ui.define([
 	/**
 	 * Static collection of utility functions related to grouping of sap.ui.table.Table, ...
 	 *
-	 * Note: Do not access the function of this helper directly but via <code>sap.ui.table.TableUtils.Grouping...</code>
+	 * Note: Do not access the functions of this helper directly, but via <code>sap.ui.table.utils.TableUtils.Grouping...</code>
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 * @namespace
-	 * @alias sap.ui.table.TableGrouping
+	 * @alias sap.ui.table.utils._GroupingUtils
 	 * @private
 	 */
-	var TableGrouping = {
+	var GroupingUtils = {
 
 		TableUtils: null, // Avoid cyclic dependency. Will be filled by TableUtils
 
@@ -99,7 +99,7 @@ sap.ui.define([
 		 * @returns {boolean} Whether the group menu button should be shown.
 		 */
 		showGroupMenuButton: function(oTable) {
-			return !Device.system.desktop && TableGrouping.TableUtils.isA(oTable, "sap.ui.table.AnalyticalTable");
+			return !Device.system.desktop && GroupingUtils.TableUtils.isA(oTable, "sap.ui.table.AnalyticalTable");
 		},
 
 		/**
@@ -195,7 +195,7 @@ sap.ui.define([
 			var $Ref = jQuery(oRef);
 			var $GroupRef;
 
-			if ($Ref.hasClass("sapUiTableTreeIcon") || (TableGrouping.isTreeMode(oTable) && $Ref.hasClass("sapUiTableCellFirst"))) {
+			if ($Ref.hasClass("sapUiTableTreeIcon") || (GroupingUtils.isTreeMode(oTable) && $Ref.hasClass("sapUiTableCellFirst"))) {
 				$GroupRef = $Ref.closest("tr", oTable.getDomRef());
 			} else {
 				$GroupRef = $Ref.closest(".sapUiTableGroupHeader", oTable.getDomRef());
@@ -208,7 +208,7 @@ sap.ui.define([
 
 				if (oRow) {
 					var iAbsoluteRowIndex = oRow.getIndex();
-					var bIsExpanded = TableGrouping.toggleGroupHeader(oTable, iAbsoluteRowIndex, bExpand);
+					var bIsExpanded = GroupingUtils.toggleGroupHeader(oTable, iAbsoluteRowIndex, bExpand);
 					var bChanged = bIsExpanded === true || bIsExpanded === false;
 
 					if (bChanged && oTable._onGroupHeaderChanged) {
@@ -229,9 +229,9 @@ sap.ui.define([
 		 * @returns {boolean} Whether the element is in a group header row.
 		 */
 		isInGroupingRow: function(oCellRef) {
-			var oInfo = TableGrouping.TableUtils.getCellInfo(oCellRef);
+			var oInfo = GroupingUtils.TableUtils.getCellInfo(oCellRef);
 
-			if (oInfo.isOfType(TableGrouping.TableUtils.CELLTYPE.ANYCONTENTCELL)) {
+			if (oInfo.isOfType(GroupingUtils.TableUtils.CELLTYPE.ANYCONTENTCELL)) {
 				return oInfo.cell.parent().hasClass("sapUiTableGroupHeader");
 			}
 
@@ -258,9 +258,9 @@ sap.ui.define([
 		 * @returns {boolean} Whether the element is in a summary row.
 		 */
 		isInSumRow: function(oCellRef) {
-			var oInfo = TableGrouping.TableUtils.getCellInfo(oCellRef);
+			var oInfo = GroupingUtils.TableUtils.getCellInfo(oCellRef);
 
-			if (oInfo.isOfType(TableGrouping.TableUtils.CELLTYPE.ANYCONTENTCELL)) {
+			if (oInfo.isOfType(GroupingUtils.TableUtils.CELLTYPE.ANYCONTENTCELL)) {
 				return oInfo.cell.parent().hasClass("sapUiAnalyticalTableSum");
 			}
 
@@ -360,7 +360,7 @@ sap.ui.define([
 
 			$Row.data("sap-ui-level", iLevel);
 
-			if (TableGrouping.isGroupMode(oTable)) {
+			if (GroupingUtils.isGroupMode(oTable)) {
 				$Row.toggleClass("sapUiAnalyticalTableSum", !bChildren && bSum)
 					.toggleClass("sapUiTableGroupHeader", bChildren)
 					.toggleClass("sapUiTableRowHidden", bChildren && bHidden || oRow._bHidden);
@@ -371,14 +371,14 @@ sap.ui.define([
 					.attr("title", oTable._getShowStandardTooltips() && sGroupHeaderText ? sGroupHeaderText : null)
 					.text(sGroupHeaderText || "");
 
-				var iIndent = TableGrouping.calcGroupIndent(oTable, iLevel, bChildren, bSum);
+				var iIndent = GroupingUtils.calcGroupIndent(oTable, iLevel, bChildren, bSum);
 
-				TableGrouping.setIndent(oTable, $Row, $RowHdr, iIndent);
+				GroupingUtils.setIndent(oTable, $Row, $RowHdr, iIndent);
 				$Row.toggleClass("sapUiTableRowIndented", iIndent > 0);
 			}
 
 			var $TreeIcon = null;
-			if (TableGrouping.isTreeMode(oTable)) {
+			if (GroupingUtils.isTreeMode(oTable)) {
 				$TreeIcon = $Row.find(".sapUiTableTreeIcon");
 				$TreeIcon.css(oTable._bRtlMode ? "margin-right" : "margin-left", (iLevel * 17) + "px")
 						 .toggleClass("sapUiTableTreeIconLeaf", !bChildren)
@@ -386,7 +386,7 @@ sap.ui.define([
 						 .toggleClass("sapUiTableTreeIconNodeClosed", bChildren && !bExpanded);
 			}
 
-			if (TableGrouping.showGroupMenuButton(oTable)) {
+			if (GroupingUtils.showGroupMenuButton(oTable)) {
 				// Update the GroupMenuButton
 				var iScrollbarOffset = 0;
 				var $Table = oTable.$();
@@ -420,13 +420,13 @@ sap.ui.define([
 			oDomRefs.row.removeAttr("data-sap-ui-level");
 			oDomRefs.row.removeData("sap-ui-level");
 
-			if (TableGrouping.isGroupMode(oTable)) {
+			if (GroupingUtils.isGroupMode(oTable)) {
 				oDomRefs.row.removeClass("sapUiTableGroupHeader sapUiAnalyticalTableSum");
-				TableGrouping.setIndent(oTable, oDomRefs.row, oDomRefs.rowSelector, 0);
+				GroupingUtils.setIndent(oTable, oDomRefs.row, oDomRefs.rowSelector, 0);
 			}
 
 			var $TreeIcon = null;
-			if (TableGrouping.isTreeMode(oTable)) {
+			if (GroupingUtils.isTreeMode(oTable)) {
 				$TreeIcon = oDomRefs.row.find(".sapUiTableTreeIcon");
 				$TreeIcon.removeClass("sapUiTableTreeIconLeaf")
 						 .removeClass("sapUiTableTreeIconNodeOpen")
@@ -443,11 +443,11 @@ sap.ui.define([
 		 * Updates the dom of the rows of the given table.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @see TableGrouping.updateTableRowForGrouping
-		 * @see TableGrouping.cleanupTableRowForGrouping
+		 * @see GroupingUtils.updateTableRowForGrouping
+		 * @see GroupingUtils.cleanupTableRowForGrouping
 		 */
 		updateGroups: function(oTable) {
-			if (TableGrouping.isGroupMode(oTable) || TableGrouping.isTreeMode(oTable)) {
+			if (GroupingUtils.isGroupMode(oTable) || GroupingUtils.isTreeMode(oTable)) {
 				var oBinding = oTable.getBinding("rows");
 				var oRowBindingInfo = oTable.getBindingInfo("rows");
 				var aRows = oTable.getRows();
@@ -456,13 +456,13 @@ sap.ui.define([
 
 				if (oBinding) {
 					for (iRow = 0; iRow < iCount; iRow++) {
-						var oRowGroupInfo = TableGrouping.getRowGroupInfo(oTable, aRows[iRow], oBinding, oRowBindingInfo);
-						TableGrouping.updateTableRowForGrouping(oTable, aRows[iRow], oRowGroupInfo.isHeader, oRowGroupInfo.expanded,
+						var oRowGroupInfo = GroupingUtils.getRowGroupInfo(oTable, aRows[iRow], oBinding, oRowBindingInfo);
+						GroupingUtils.updateTableRowForGrouping(oTable, aRows[iRow], oRowGroupInfo.isHeader, oRowGroupInfo.expanded,
 							oRowGroupInfo.hidden, false, oRowGroupInfo.level, oRowGroupInfo.title);
 					}
 				} else {
 					for (iRow = 0; iRow < iCount; iRow++) {
-						TableGrouping.cleanupTableRowForGrouping(oTable, aRows[iRow]);
+						GroupingUtils.cleanupTableRowForGrouping(oTable, aRows[iRow]);
 					}
 				}
 			}
@@ -495,7 +495,7 @@ sap.ui.define([
 
 				var sHeaderProp = oTable.getGroupHeaderProperty();
 
-				if (TableGrouping.isGroupMode(oTable) && sHeaderProp) {
+				if (GroupingUtils.isGroupMode(oTable) && sHeaderProp) {
 					var sModelName = oRowBindingInfo && oRowBindingInfo.model;
 					oRowGroupInfo.title = oTable.getModel(sModelName).getProperty(sHeaderProp, oRow.getBindingContext(sModelName));
 				}
@@ -546,7 +546,7 @@ sap.ui.define([
 
 			// check for grouping being supported or not (only for client ListBindings!!)
 			var oGroupBy = sap.ui.getCore().byId(oTable.getGroupBy());
-			var bIsSupported = oGroupBy && oGroupBy.getGrouped() && TableGrouping.TableUtils.isA(oBinding, "sap.ui.model.ClientListBinding");
+			var bIsSupported = oGroupBy && oGroupBy.getGrouped() && GroupingUtils.TableUtils.isA(oBinding, "sap.ui.model.ClientListBinding");
 
 			// only enhance the binding if it has not been done yet and supported!
 			if (!bIsSupported || oBinding._modified) {
@@ -558,7 +558,7 @@ sap.ui.define([
 			oBinding._modified = true;
 
 			// set the table into grouping mode
-			TableGrouping.setGroupMode(oTable);
+			GroupingUtils.setGroupMode(oTable);
 
 			// we use sorting finally to sort the values and afterwards group them
 			var sPropertyName = oGroupBy.getSortProperty();
@@ -676,7 +676,7 @@ sap.ui.define([
 		resetExperimentalGrouping: function(oTable) {
 			var oBinding = oTable.getBinding("rows");
 			if (oBinding && oBinding._modified) {
-				TableGrouping.clearMode(oTable);
+				GroupingUtils.clearMode(oTable);
 				var oBindingInfo = oTable.getBindingInfo("rows");
 				oTable.unbindRows();
 				oTable.bindRows(oBindingInfo);
@@ -685,6 +685,6 @@ sap.ui.define([
 
 	};
 
-	return TableGrouping;
+	return GroupingUtils;
 
 }, /* bExport= */ true);

@@ -10,7 +10,7 @@ sap.ui.define([
 	'sap/ui/model/TreeBindingCompatibilityAdapter',
 	'./library',
 	'sap/ui/core/Element',
-	'./TableUtils',
+	'./utils/TableUtils',
 	"./plugins/BindingSelectionPlugin",
 	"sap/base/Log",
 	"sap/base/assert"

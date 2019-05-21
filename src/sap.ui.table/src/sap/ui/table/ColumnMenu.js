@@ -10,7 +10,7 @@ sap.ui.define([
 	'sap/ui/unified/MenuTextFieldItem',
 	"sap/ui/unified/MenuRenderer",
 	'sap/ui/Device',
-	'./TableUtils',
+	'./utils/TableUtils',
 	"sap/base/assert",
 	"sap/ui/thirdparty/jquery"
 ],

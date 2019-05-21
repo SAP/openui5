@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/ODataTreeBindingAdapter",
-	"sap/ui/table/TableUtils",
+	"sap/ui/table/utils/TableUtils",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/Sorter",
 	"sap/ui/thirdparty/sinon-qunit" /*Sinon itself already part of MockServer*/

@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides helper sap.ui.table.TableMenuUtils.
+// Provides helper sap.ui.table.utils._MenuUtils.
 sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/unified/Menu",
@@ -18,12 +18,12 @@ sap.ui.define([
 	/**
 	 * Static collection of utility functions related to menus of sap.ui.table.Table, ...
 	 *
-	 * Note: Do not access the function of this helper directly but via <code>sap.ui.table.TableUtils.Menu...</code>
+	 * Note: Do not access the functions of this helper directly, but via <code>sap.ui.table.utils.TableUtils.Menu...</code>
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 * @namespace
-	 * @alias sap.ui.table.TableMenuUtils
+	 * @alias sap.ui.table.utils._MenuUtils
 	 * @private
 	 */
 	var MenuUtils = {
@@ -211,7 +211,7 @@ sap.ui.define([
 		 * If a context menu of another cell is open, it will be closed.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {sap.ui.table.TableUtils.CellInfo} oCellInfo An object containing information about the cell.
+		 * @param {sap.ui.table.utils.TableUtils.CellInfo} oCellInfo An object containing information about the cell.
 		 * @param {boolean} [bHoverFirstMenuItem=false] If <code>true</code>, the first item in the opened menu will be hovered.
 		 * @param {jQuery.Event} oEvent event object
 		 * @see openContextMenu

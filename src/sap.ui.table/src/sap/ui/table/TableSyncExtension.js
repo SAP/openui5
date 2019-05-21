@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"./Table", "./TableExtension", "./TableUtils", "./library", "sap/base/Log"
+	"./Table", "./TableExtension", "./utils/TableUtils", "./library", "sap/base/Log"
 ], function(Table, TableExtension, TableUtils, library, Log) {
 	"use strict";
 
