@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Getting Started</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="../css/style.css">
+	<link rel="stylesheet" href="../css/prettify-light.css" />
+	<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+	<script id="sap-ui-bootstrap"
+			src="../../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_fiori_3">
+	</script>
+</head>
+
+<body class="sapUiBody topicBody">
+
+	<div class="topic">
+		<div class="content">
+
+			<h1>
+				Getting Started
+			</h1>
+
+			<p>
+				Creating a card is as simple as creating a new manifest.json file.
+				The manifest holds all configurations necessary to render a card.
+			</p>
+
+			<h2 id="step1">
+				Step 1: Add the manifest skeleton
+			</h2>
+
+			<p>
+				Add sap.app namespace and set the type to "card". Add sap.card namespace where all card configurations will be added.
+				Set the type of the card to "List".
+			</p>
+
+			<pre class="prettyprint small">
+<xmp class="language-json">{
+	"sap.app": {
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "List"
+	}
+}</xmp></pre>
+
+			<h2 id="step2">
+				Step 2: Add a header
+			</h2>
+
+			<p>
+				Add a header property with title, subTitle and icon.
+			</p>
+
+			<pre class="prettyprint small">
+<xmp class="language-json">{
+	"sap.app": {
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "My Sales Orders",
+			"subTitle": "New sales orders",
+			"icon": {
+				"src": "sap-icon://sales-order"
+			}
+		}
+	}
+}</xmp></pre>
+
+			<h2 id="step3">
+				Step 3: Add a navigation action
+			</h2>
+
+			<p>
+				Add an actions property with an action of type "Navigation". Set a URL to navigate to, when the header is clicked.
+			</p>
+
+<pre class="prettyprint small">
+<xmp class="language-json">{
+	"sap.app": {
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "My Sales Orders",
+			"subTitle": "New sales orders",
+			"icon": {
+				"src": "sap-icon://sales-order"
+			},
+			"actions": [
+				{
+					"type": "Navigation",
+					"url": "http://www.sap.com"
+				}
+			]
+		}
+	}
+}</xmp></pre>
+
+			<h2 id="step4">
+				Step 4: Add a content
+			</h2>
+
+			<p>
+				Add a content property to the card. Inside it add a data section with static JSON with an array of 3 sales orders.
+				After that add an item template which will be used for all items in the data section.
+				To bind the item title and description you can use UI5's binding syntax.
+			</p>
+
+			<pre class="prettyprint small">
+<xmp class="language-json">{
+	"sap.app": {
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "My Sales Orders",
+			"subTitle": "New sales orders",
+			"icon": {
+				"src": "sap-icon://sales-order"
+			},
+			"actions": [
+				{
+					"type": "Navigation",
+					"url": "http://www.sap.com"
+				}
+			]
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+						"Name": "Sales order 1",
+						"Description": "The description of sales order 1"
+					},
+					{
+						"Name": "Sales order 2",
+						"Description": "The description of sales order 2"
+					},
+					{
+						"Name": "Sales order 3",
+						"Description": "The description of sales order 3"
+					}
+				]
+			},
+			"item": {
+				"title": {
+					"value": "{Name}"
+				},
+				"description": {
+					"value": "{Description}"
+				}
+			}
+		}
+	}
+}</xmp></pre>
+
+		<h2 id="step5">
+			Step 5: Use the card in an XML View
+		</h2>
+
+		<p>Finally create a widget card inside an XML View which points to the created manifest:</p>
+
+		<pre class="prettyprint">
+<xmp class="language-xml"><mvc:View xmlns:w="sap.ui.integration.widgets">
+	<w:Card manifest="./manifest.json" width="400px" height="auto"/>
+</mvc:View>
+</xmp></pre>
+
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#step1">Step 1 - Skeleton</a></div>
+			<div><a href="#step2">Step 2 - Header</a></div>
+			<div><a href="#step3">Step 3 - Navigation</a></div>
+			<div><a href="#step4">Step 4 - Content</a></div>
+			<div><a href="#step5">Step 5 - Add in XML View</a></div>
+		</div>
+	</div>
+
+</body>
+
+</html>
