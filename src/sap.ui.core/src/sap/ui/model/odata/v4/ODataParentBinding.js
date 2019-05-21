@@ -560,6 +560,8 @@ sap.ui.define([
 			bCacheImmutable,
 			oCanUseCachePromise,
 			sChildMetaPath,
+			bDependsOnOperation = this.oModel.resolve(this.sPath, this.oContext)
+				.indexOf("(...)") >= 0, // whether this binding is an operation or depends on one
 			sFullMetaPath,
 			bIsAdvertisement,
 			oMetaModel = this.oModel.getMetaModel(),
@@ -594,7 +596,7 @@ sap.ui.define([
 			});
 		}
 
-		if (this.oOperation || sChildPath === "$count" || sChildPath.slice(-7) === "/$count"
+		if (bDependsOnOperation || sChildPath === "$count" || sChildPath.slice(-7) === "/$count"
 				|| sChildPath[0] === "@" || this.getRootBinding().isSuspended()) {
 			// Note: Operation bindings do not support auto-$expand/$select yet
 			return SyncPromise.resolve(true);
