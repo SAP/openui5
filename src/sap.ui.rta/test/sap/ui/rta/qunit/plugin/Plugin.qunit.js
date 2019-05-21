@@ -103,6 +103,12 @@ function (
 			assert.strictEqual(this.oPlugin.hasChangeHandler("moveControls", this.oLayout), true, "then the function returns true");
 		});
 
+		QUnit.test("when the hasChangeHandler function is called with 'async' = true", function(assert) {
+			return this.oPlugin.hasChangeHandler("moveControls", this.oLayout, true).then(function(bHasChangeHandler) {
+				assert.strictEqual(bHasChangeHandler, true, "then the function returns a promise with true as value");
+			});
+		});
+
 		QUnit.test("when an overlay gets deregistered and registered again and visible change event gets fired", function(assert) {
 			var oGetRelevantOverlays = sandbox.spy(this.oRemovePlugin, "_getRelevantOverlays");
 

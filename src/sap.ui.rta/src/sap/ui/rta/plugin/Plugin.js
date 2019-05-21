@@ -366,7 +366,14 @@ function(
 		}
 	};
 
-	BasePlugin.prototype.hasChangeHandler = function(sChangeType, oElement) {
+	BasePlugin.prototype.hasChangeHandler = function(sChangeType, oElement, bAsync) {
+		if (bAsync === true) {
+			return Promise.resolve()
+			.then(this._getChangeHandler.bind(this, sChangeType, oElement))
+			.then(function(oChangeHandler) {
+				return !!oChangeHandler;
+			});
+		}
 		return !!this._getChangeHandler(sChangeType, oElement);
 	};
 
