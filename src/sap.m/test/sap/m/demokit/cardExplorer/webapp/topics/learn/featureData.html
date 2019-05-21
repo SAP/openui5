@@ -16,7 +16,7 @@
 	</script>
 </head>
 
-<body>
+<body class="sapUiBody topicBody">
 
 	<div class="topic">
 		<div class="content">
@@ -42,133 +42,128 @@
 				<li>Provide "path" only to specify the context path of the current level.</li>
 			</ol>
 
-			<section>
-				<div>
-					<div>Data:</div>
-				</div>
-				<table>
-					<tr>
-						<th>Property</th>
-						<th>Type</th>
-						<th>Required</th>
-						<th>Description</th>
-						<th>Version</th>
-					</tr>
-					<tr>
-						<td>request</td>
-						<td>Request</td>
-						<td>No</td>
-						<td>An object defining a request.</td>
-						<td>1.1.0</td>
-					</tr>
-					<tr>
-						<td>json</td>
-						<td>Object</td>
-						<td>No</td>
-						<td>A data object.</td>
-						<td>1.1.0</td>
-					</tr>
-					<tr>
-						<td>service</td>
-						<td>string or Service</td>
-						<td>No</td>
-						<td>The name of the service or an object representation of the service.</td>
-						<td>1.1.0</td>
-					</tr>
-					<tr>
-						<td>path</td>
-						<td>string</td>
-						<td>No</td>
-						<td>The context path. Default value is "/".</td>
-						<td>1.1.0</td>
-					</tr>
-					<tr>
-						<td>updateInterval</td>
-						<td>number</td>
-						<td>No</td>
-						<td>The interval in seconds on which the data will be updated. Used for requests and services.
-						</td>
-						<td>1.4.0</td>
-					</tr>
-				</table>
-			</section>
+			<p>Data:</p>
 
-			<section>
-				<div>Request:</div>
-				<table>
-					<tr>
-						<th>Property</th>
-						<th>Type</th>
-						<th>Required</th>
-						<th>Description</th>
-						<th>Version</th>
-					</tr>
-					<tr>
-						<td>mode</td>
-						<td>string</td>
-						<td>No</td>
-						<td>The mode of the request. Possible values are "cors", "no-cors", "same-origin". Default value
-							is "cors".</td>
-						<td>1.1.0</td>
-					</tr>
-					<tr>
-						<td>url</td>
-						<td>string</td>
-						<td>Yes</td>
-						<td>The URL of the request.</td>
-						<td>1.1.0</td>
-					</tr>
-					<tr>
-						<td>method</td>
-						<td>string</td>
-						<td>No</td>
-						<td>The HTTP method. Possible values are "GET", "POST". Default value is "GET".</td>
-						<td>1.1.0</td>
-					</tr>
-					<tr>
-						<td>parameters</td>
-						<td>Object</td>
-						<td>No</td>
-						<td>The request parameters. If the method is "POST" the parameters will be put as key/value
-							pairs into the body of the request.</td>
-						<td>1.1.0</td>
-					</tr>
-					<tr>
-						<td>headers</td>
-						<td>Object</td>
-						<td>No</td>
-						<td>The HTTP headers of the request.</td>
-						<td>1.1.0</td>
-					</tr>
-				</table>
-			</section>
+			<table>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Required</th>
+					<th>Description</th>
+					<th>Version</th>
+				</tr>
+				<tr>
+					<td>request</td>
+					<td>Request</td>
+					<td>No</td>
+					<td>An object defining a request.</td>
+					<td>1.1.0</td>
+				</tr>
+				<tr>
+					<td>json</td>
+					<td>Object</td>
+					<td>No</td>
+					<td>A data object.</td>
+					<td>1.1.0</td>
+				</tr>
+				<tr>
+					<td>service</td>
+					<td>string or Service</td>
+					<td>No</td>
+					<td>The name of the service or an object representation of the service.</td>
+					<td>1.1.0</td>
+				</tr>
+				<tr>
+					<td>path</td>
+					<td>string</td>
+					<td>No</td>
+					<td>The context path. Default value is "/".</td>
+					<td>1.1.0</td>
+				</tr>
+				<tr>
+					<td>updateInterval</td>
+					<td>number</td>
+					<td>No</td>
+					<td>The interval in seconds on which the data will be updated. Used for requests and services.
+					</td>
+					<td>1.4.0</td>
+				</tr>
+			</table>
 
-			<section>
-				<div>Service:</div>
-				<table>
-					<tr>
-						<th>Property</th>
-						<th>Type</th>
-						<th>Required</th>
-						<th>Description</th>
-						<th>Version</th>
-					</tr>
-					<tr>
-						<td>name</td>
-						<td>string</td>
-						<td>Yes</td>
-						<td>The name of the service.</td>
-						<td>1.1.0</td>
-					</tr>
-					<tr>
-						<td>parameters</td>
-						<td>Object</td>
-						<td>No</td>
-						<td>The parameters of the service.</td>
-						<td>1.1.0</td>
-					</tr>
-				</table>
-			</section>
+			<p>Request:</p>
+
+			<table>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Required</th>
+					<th>Description</th>
+					<th>Version</th>
+				</tr>
+				<tr>
+					<td>mode</td>
+					<td>string</td>
+					<td>No</td>
+					<td>The mode of the request. Possible values are "cors", "no-cors", "same-origin". Default value
+						is "cors".</td>
+					<td>1.1.0</td>
+				</tr>
+				<tr>
+					<td>url</td>
+					<td>string</td>
+					<td>Yes</td>
+					<td>The URL of the request.</td>
+					<td>1.1.0</td>
+				</tr>
+				<tr>
+					<td>method</td>
+					<td>string</td>
+					<td>No</td>
+					<td>The HTTP method. Possible values are "GET", "POST". Default value is "GET".</td>
+					<td>1.1.0</td>
+				</tr>
+				<tr>
+					<td>parameters</td>
+					<td>Object</td>
+					<td>No</td>
+					<td>The request parameters. If the method is "POST" the parameters will be put as key/value
+						pairs into the body of the request.</td>
+					<td>1.1.0</td>
+				</tr>
+				<tr>
+					<td>headers</td>
+					<td>Object</td>
+					<td>No</td>
+					<td>The HTTP headers of the request.</td>
+					<td>1.1.0</td>
+				</tr>
+			</table>
+
+			<p>Service:</p>
+
+			<table>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Required</th>
+					<th>Description</th>
+					<th>Version</th>
+				</tr>
+				<tr>
+					<td>name</td>
+					<td>string</td>
+					<td>Yes</td>
+					<td>The name of the service.</td>
+					<td>1.1.0</td>
+				</tr>
+				<tr>
+					<td>parameters</td>
+					<td>Object</td>
+					<td>No</td>
+					<td>The parameters of the service.</td>
+					<td>1.1.0</td>
+				</tr>
+			</table>
 
 			<h2 id="examples">
 				Examples

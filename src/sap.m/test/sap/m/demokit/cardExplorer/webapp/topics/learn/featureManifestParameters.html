@@ -16,7 +16,7 @@
 	</script>
 </head>
 
-<body>
+<body class="sapUiBody topicBody">
 
 	<div class="topic">
 		<div class="content">
@@ -25,23 +25,59 @@
 				Manifest Parameters
 			</h1>
 
-			<h2 id="overview">
-				Overview
+			<p>
+				The manifest parameters are replaced during manifest processing and
+				can be used with a double bracket syntax like: "{{parameters.city}}".
+				There are two types:
+			</p>
+			<ol>
+				<li>User defined manifest parameters</li>
+				<li>Static manifest parameters</li>
+			</ol>
+
+			<h2 id="userParameters">
+				User Defined Manifest Parameters
 			</h2>
 
 			<p>
 				Cards can define input parameters in their manifests. The input parameters can be everything including user IDs, authentication tokens, locations, language etc...
 				It is possible to assign default values to the input parameters in the manifest.
 				When creating or integrating a card, it is possible to assign values to parameters otherwise they are replaced with their default values.
-				Parameters are described in the configuration section of the manifest. After that they can be used with a double bracket syntax like: "{{parameters.city}}".
+				Parameters are described in the configuration section of the manifest.
 				All parameters are replaced during manifest processing and changing them will cause re-processing of the manifest.
 			</p>
+
+			<h2 id="staticParameters">
+				Static Manifest Parameters
+			</h2>
+
+			<p>
+				There is also a set of predefined parameters that can be used inside the manifest without having to describe them in the "configuration" section.
+			</p>
+
+			<table>
+				<tr>
+					<th>Parameter</th>
+					<th>Type</th>
+					<th>Description</th>
+				</tr>
+				<tr>
+					<td>TODAY_ISO</td>
+					<td>string</td>
+					<td>Replaced with the today's date in ISO format</td>
+				</tr>
+				<tr>
+					<td>NOW_ISO</td>
+					<td>string</td>
+					<td>Replaced with the "now" timestamp in ISO format</td>
+				</tr>
+			</table>
 
 			<h2 id="examples">
 				Examples
 			</h2>
 
-			<p>A card having a city parameter with a default value of "Walldorf" which is used inside the request:</p>
+			<p>A card having a user defined city manifest parameter with a default value of "Walldorf" which is used inside the request:</p>
 			<pre class="prettyprint small">
 <xmp class="language-json">{
 	"sap.card": {
@@ -85,10 +121,26 @@
 oCard.setParameters(oParameters);
 </xmp></pre>
 
+		<p>
+			Using the static manifest parameter "TODAY_ISO" inside the subtitle of the card:
+		</p>
+		<pre class="prettyprint small">
+<xmp class="language-json">{
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "Some title",
+			"subTitle": "Date: {{parameters.TODAY_ISO}}"
+		},
+		...
+	}
+}</xmp></pre>
+
 		</div>
 		<div class="navigation">
 			<h4>Table of Contents</h4>
-			<div><a href="#overview">Overview</a></div>
+			<div><a href="#userParameters">User Defined Manifest Parameters</a></div>
+			<div><a href="#staticParameters">Static Manifest Parameters</a></div>
 			<div><a href="#examples">Examples</a></div>
 		</div>
 	</div>

@@ -93,22 +93,32 @@ sap.ui.define([
 					{
 						title: 'Actions',
 						target: 'learnDetail',
-						key: 'featureActions'
+						key: 'featureActions',
+						topicTitle: 'Features'
 					},
 					{
 						title: 'Data',
 						target: 'learnDetail',
-						key: 'featureData'
-					},
-					{
-						title: 'Manifest Parameters',
-						target: 'learnDetail',
-						key: 'featureManifestParameters'
+						key: 'featureData',
+						topicTitle: 'Features'
 					},
 					{
 						title: 'Translation',
 						target: 'learnDetail',
-						key: 'featureTranslation'
+						key: 'featureTranslation',
+						topicTitle: 'Features'
+					},
+					{
+						title: 'Manifest Parameters',
+						target: 'learnDetail',
+						key: 'featureManifestParameters',
+						topicTitle: 'Features'
+					},
+					{
+						title: 'Dynamic Parameters',
+						target: 'learnDetail',
+						key: 'featureDynamicParameters',
+						topicTitle: 'Features'
 					}
 				]
 			}
