@@ -5599,7 +5599,6 @@ sap.ui.define([
 				oCache = {
 					refreshSingle : function () {}
 				},
-				sCachePath = {/*path in cache*/},
 				bContextUpdated = false,
 				oContext,
 				bDependentsRefreshed = false,
@@ -5626,14 +5625,12 @@ sap.ui.define([
 
 			oBindingMock.expects("withCache")
 				.withExactArgs(sinon.match.func)
-				.callsFake(function (fnProcessor) {
-					return fnProcessor(oCache, sCachePath, oRootBinding);
-				});
+				.callsArgWith(0, oCache, "path/in/cache", oRootBinding);
 			this.mock(oContext).expects("getPath").withExactArgs().returns("/EMPLOYEES('2')");
 			this.mock(oRootBinding).expects("getGroupId").withExactArgs().returns("$auto");
 			this.mock(oContext).expects("getModelIndex").withExactArgs().returns(42);
 			oRefreshSingleExpectation = this.mock(oCache).expects("refreshSingle")
-				.withExactArgs(new _GroupLock(sExpectedGroupId), sinon.match.same(sCachePath), 42,
+				.withExactArgs(new _GroupLock(sExpectedGroupId), "path/in/cache", 42,
 					sinon.match.func)
 				.returns(oRefreshSinglePromise);
 			oBindingMock.expects("refreshDependentBindings")
@@ -5703,6 +5700,7 @@ sap.ui.define([
 							resolve();
 						});
 					}),
+					oRootBinding = {getGroupId : function () {}},
 					that = this;
 
 				// initialize with 6 contexts, bLengthFinal===true and bKeyPredicates===true
@@ -5740,7 +5738,7 @@ sap.ui.define([
 						that.mock(that.oModel).expects("getDependentBindings").never();
 
 						// code under test
-						oExpectation.firstCall.args[3](iIndex);
+						oExpectation.firstCall.args[4](iIndex);
 
 						assert.strictEqual(oBinding.aContexts.length, 7);
 						assert.notOk(4 in oBinding.aContexts);
@@ -5772,13 +5770,16 @@ sap.ui.define([
 				}));
 
 				oContextMock.expects("getPath").returns("/EMPLOYEES('2')");
-				oBindingMock.expects("getGroupId").returns("groupId");
+				oBindingMock.expects("withCache")
+					.withExactArgs(sinon.match.func)
+					.callsArgWith(0, oCache, "path/in/cache", oRootBinding);
+				this.mock(oRootBinding).expects("getGroupId").returns("groupId");
 				this.mock(oGroupLock).expects("setGroupId").withExactArgs("groupId");
 				oContextMock.expects("getModelIndex").withExactArgs().returns(42);
 				oExpectation = this.mock(oCache).expects("refreshSingleWithRemove")
-					.withExactArgs(sinon.match.same(oGroupLock), 42, sinon.match.func,
-						sinon.match.func)
-					.callsArg(2) //fireDataRequested
+					.withExactArgs(sinon.match.same(oGroupLock), "path/in/cache", 42,
+						sinon.match.func, sinon.match.func)
+					.callsArg(3) //fireDataRequested
 					.returns(oCacheRequestPromise);
 				oBindingMock.expects("fireDataRequested").withExactArgs();
 				oBindingMock.expects("fireDataReceived").withExactArgs({data : {}});
@@ -5869,6 +5870,17 @@ sap.ui.define([
 			// code under test
 			return oBinding.refreshSingle(oContext, oGroupLock);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refreshSingle: forbidden header context", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oHeaderContext = oBinding.getHeaderContext();
+
+		assert.throws(function () {
+			// code under test
+			oBinding.refreshSingle(oHeaderContext);
+		}, new Error("Unsupported header context: " + oHeaderContext));
 	});
 
 	//*********************************************************************************************

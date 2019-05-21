@@ -796,7 +796,7 @@ sap.ui.define([
 		var oCache = new _Cache(this.oRequestor, "Products"),
 			oData = [{productPicture : {}}];
 
-		oData.$byPredicate = {"('42')": oData[0]};
+		oData.$byPredicate = {"('42')" : oData[0]};
 
 		this.oModelInterfaceMock.expects("fetchMetadata")
 			.withExactArgs("/Products/productPicture/picture")
@@ -2509,17 +2509,28 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#refreshSingle", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "Employees('31')"),
+		var oCache = new _Cache(this.oRequestor, "Employees('31')", {/*mQueryOptions*/},
+				{/*bSortExpandSelect*/}),
 			oCacheMock = this.mock(oCache),
 			mCacheQueryOptions = {},
 			fnDataRequested = this.spy(),
 			sKeyPredicate = "('13')",
 			oElement = {"@$ui5._" : {"predicate" : sKeyPredicate}},
-			aElements = [{}, oElement],
+			aElements = [{}, oElement, {}],
 			oFetchValuePromise = Promise.resolve(aElements),
-			oHelperMock = this.mock(_Helper),
+			oGroupLock = new _GroupLock(),
 			oPromise,
-			mQueryOptionsCopy = {$filter: "foo", $count: true, $orderby: "bar", $select: "Name"},
+			mQueryOptionsCopy = {
+				$apply : "A.P.P.L.E.", // dropped
+				$count : true, // dropped
+				$expand : {"EMPLOYEE_2_TEAM" : null},
+				$filter : "age gt 40", // dropped
+				$orderby : "TEAM_ID desc", // dropped
+				$search : "OR", // dropped
+				$select : ["Name"],
+				foo : "bar",
+				"sap-client" : "123"
+			},
 			mQueryOptionsForPath = {},
 			oResponse = {},
 			mTypeForMetaPath = {};
@@ -2532,10 +2543,11 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(oFetchValuePromise));
 
 		// code under test
-		oPromise = oCache.refreshSingle("group", "EMPLOYEE_2_EQUIPMENTS", 1, fnDataRequested);
+		oPromise = oCache.refreshSingle(oGroupLock, "EMPLOYEE_2_EQUIPMENTS", 1, fnDataRequested);
 
 		assert.ok(oPromise.isFulfilled, "returned a SyncPromise");
 		assert.strictEqual(oCache.bSentReadRequest, false);
+
 		// simulate _Cache#setQueryOptions which is still allowed because of bSentReadRequest
 		oCache.mQueryOptions = mCacheQueryOptions;
 		this.mock(_Helper).expects("getQueryOptionsForPath")
@@ -2544,15 +2556,20 @@ sap.ui.define([
 		this.mock(Object).expects("assign")
 			.withExactArgs({}, sinon.match.same(mQueryOptionsForPath))
 			.returns(mQueryOptionsCopy);
-		oHelperMock.expects("buildPath")
+		this.mock(_Helper).expects("buildPath")
 			.withExactArgs("Employees('31')", "EMPLOYEE_2_EQUIPMENTS", sKeyPredicate)
 			.returns("~");
 		this.oRequestorMock.expects("buildQueryString")
-			.withExactArgs(oCache.sMetaPath, {$select: "Name"}, false, oCache.bSortExpandSelect)
+			.withExactArgs(oCache.sMetaPath, {
+					$expand : {"EMPLOYEE_2_TEAM" : null},
+					$select : ["Name"],
+					foo : "bar",
+					"sap-client" : "123"
+				}, false, sinon.match.same(oCache.bSortExpandSelect))
 			.returns("?$select=Name");
 		this.oRequestorMock.expects("request")
-			.withExactArgs("GET", "~?$select=Name", "group", undefined, undefined,
-				sinon.match.same(fnDataRequested))
+			.withExactArgs("GET", "~?$select=Name", sinon.match.same(oGroupLock), undefined,
+				undefined, sinon.match.same(fnDataRequested))
 			.resolves(oResponse);
 		oCacheMock.expects("fetchTypes").withExactArgs()
 			.returns(SyncPromise.resolve(mTypeForMetaPath));
@@ -2561,24 +2578,199 @@ sap.ui.define([
 			// we are AFTER refreshSingle's then-handler, but before the GET is responded to
 			assert.strictEqual(oCache.bSentReadRequest, true);
 			assert.strictEqual(aElements[1], oElement, "not replaced yet");
+
 			oCacheMock.expects("replaceElement")
 				.withExactArgs(sinon.match.same(aElements), 1, sKeyPredicate,
 					sinon.match.same(oResponse), sinon.match.same(mTypeForMetaPath),
-					"EMPLOYEE_2_EQUIPMENTS")
-				.callThrough();
-			oHelperMock.expects("buildPath") // called in replaceElement
-				.withExactArgs("/Employees", "EMPLOYEE_2_EQUIPMENTS")
-				.returns("/Employees/EMPLOYEE_2_EQUIPMENTS");
-			oCacheMock.expects("visitResponse") // called in replaceElement
-				.withExactArgs(sinon.match.same(oResponse), sinon.match.same(mTypeForMetaPath),
-					"/Employees/EMPLOYEE_2_EQUIPMENTS", "EMPLOYEE_2_EQUIPMENTS('13')");
+					"EMPLOYEE_2_EQUIPMENTS");
 
 			return oPromise;
 		}).then(function (oResult) {
 			assert.strictEqual(oResult, oResponse);
-			assert.strictEqual(aElements[1], oResponse);
-			assert.strictEqual(aElements.$byPredicate[sKeyPredicate], oResponse);
 		});
+	});
+
+	//*********************************************************************************************
+[{
+	mBindingQueryOptions : {
+		$apply : "A.P.P.L.E.",
+		$count : true, // dropped
+		$expand : {"EMPLOYEE_2_TEAM" : null},
+		$filter : "age gt 40", // is enhanced
+		$orderby : "TEAM_ID desc", // dropped
+		$search : "OR",
+		$select : ["Name"],
+		foo : "bar",
+		"sap-client" : "123"
+	},
+	mQueryOptionsForRequest : {
+		$apply : "A.P.P.L.E.",
+		$expand : {"EMPLOYEE_2_TEAM" : null},
+		$filter : "(age gt 40) and ~key filter~",
+		$search : "OR",
+		$select : ["Name"],
+		foo : "bar",
+		"sap-client" : "123"
+	}
+}, {
+	mBindingQueryOptions : {$filter : "age gt 40 or age lt 20"},
+	mQueryOptionsForRequest : {$filter : "(age gt 40 or age lt 20) and ~key filter~"}
+}, { // with transient predicate
+	mBindingQueryOptions : {},
+	mQueryOptionsForRequest : {$filter : "~key filter~"},
+	bWithTransientPredicate : true
+}].forEach(function (oFixture, i) {
+	[false, true].forEach(function (bRemoved) {
+		var sTitle = "_Cache#refreshSingleWithRemove: removed=" + bRemoved + ", " + i;
+
+	QUnit.test(sTitle, function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Employees('31')", {/*mQueryOptions*/},
+				{/*bSortExpandSelect*/}),
+			oCacheMock = this.mock(oCache),
+			mCacheQueryOptions = {},
+			// Note: due to the inner forEach, make sure oFixture is not modified by c.u.t.!
+			oClonedQueryOptions = Object.assign({}, oFixture.mBindingQueryOptions),
+			fnDataRequested = this.spy(),
+			sKeyPredicate = "('13')",
+			oElement = {"@$ui5._" : {"predicate" : sKeyPredicate}},
+			aElements = [{}, oElement, {}],
+			oFetchValuePromise = Promise.resolve(aElements),
+			oGroupLock = new _GroupLock(),
+			fnOnRemove = this.spy(),
+			oPromise,
+			mQueryOptionsForPath = {},
+			oResponse = bRemoved
+				? {value : []}
+				: {value : [{Foo : "Bar"}]}, // at least an entity is returned
+			sTransientPredicate = "($uid=id-1-23)",
+			mTypeForMetaPath = {},
+			that = this;
+
+		aElements.$byPredicate = {};
+		aElements.$byPredicate[sKeyPredicate] =  oElement;
+		if (oFixture.bWithTransientPredicate) {
+			aElements.$byPredicate[sTransientPredicate] =  oElement;
+			_Helper.setPrivateAnnotation(oElement, "transientPredicate", sTransientPredicate);
+		}
+		oCache.fetchValue = function () {};
+		oCacheMock.expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "EMPLOYEE_2_EQUIPMENTS")
+			// Note: CollectionCache#fetchValue may be async, $cached just sends no new request!
+			.returns(SyncPromise.resolve(oFetchValuePromise));
+		oCacheMock.expects("fetchTypes").withExactArgs()
+			.returns(SyncPromise.resolve(mTypeForMetaPath));
+
+		// code under test
+		oPromise = oCache.refreshSingleWithRemove(oGroupLock, "EMPLOYEE_2_EQUIPMENTS", 1,
+			fnDataRequested, fnOnRemove);
+
+		assert.ok(oPromise.isFulfilled, "returned a SyncPromise");
+		assert.strictEqual(oCache.bSentReadRequest, false);
+
+		// simulate _Cache#setQueryOptions which is still allowed because of bSentReadRequest
+		oCache.mQueryOptions = mCacheQueryOptions;
+		this.mock(_Helper).expects("getQueryOptionsForPath")
+			.withExactArgs(sinon.match.same(mCacheQueryOptions), "EMPLOYEE_2_EQUIPMENTS")
+			.returns(mQueryOptionsForPath);
+		this.mock(Object).expects("assign")
+			.withExactArgs({}, sinon.match.same(mQueryOptionsForPath))
+			.returns(oClonedQueryOptions);
+		this.mock(_Helper).expects("buildPath")
+			.withExactArgs("Employees('31')", "EMPLOYEE_2_EQUIPMENTS")
+			.returns("~");
+		this.mock(_Helper).expects("getKeyFilter")
+			.withExactArgs(sinon.match.same(oElement), "/Employees",
+				sinon.match.same(mTypeForMetaPath))
+			.returns("~key filter~");
+		this.oRequestorMock.expects("buildQueryString")
+			.withExactArgs(oCache.sMetaPath, oFixture.mQueryOptionsForRequest, false,
+				sinon.match.same(oCache.bSortExpandSelect))
+			.returns("?$filter=...");
+		this.oRequestorMock.expects("request")
+			.withExactArgs("GET", "~?$filter=...", sinon.match.same(oGroupLock), undefined,
+				undefined, sinon.match.same(fnDataRequested))
+			.callsFake(function () {
+				assert.strictEqual(oCache.bSentReadRequest, true);
+
+				oCacheMock.expects("removeElement").exactly(bRemoved ? 1 : 0)
+					.withExactArgs(sinon.match.same(aElements), 1, sKeyPredicate,
+						"EMPLOYEE_2_EQUIPMENTS");
+				that.oModelInterfaceMock.expects("reportBoundMessages")
+					.exactly(bRemoved ? 1 : 0)
+					.withExactArgs(oCache.sResourcePath, [],
+						["EMPLOYEE_2_EQUIPMENTS('13')"]);
+				oCacheMock.expects("replaceElement").exactly(bRemoved ? 0 : 1)
+					.withExactArgs(sinon.match.same(aElements), 1, sKeyPredicate,
+						sinon.match.same(oResponse.value[0]),
+						sinon.match.same(mTypeForMetaPath), "EMPLOYEE_2_EQUIPMENTS");
+
+				return Promise.resolve(oResponse);
+			});
+
+		return oPromise.then(function () {
+			assert.deepEqual(arguments, {"0" : undefined});
+			if (bRemoved) {
+				sinon.assert.calledOnce(fnOnRemove);
+			}
+		});
+	});
+
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("refreshSingleWithRemove: server returns more than one entity", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Employees('31')", {/*mQueryOptions*/},
+				{/*bSortExpandSelect*/}),
+			oCacheMock = this.mock(oCache),
+			fnDataRequested = this.spy(),
+			oElement = {"@$ui5._" : {"predicate" : "('13')"}},
+			aElements = [{}, {}, {}, oElement],
+			oFetchValuePromise = Promise.resolve(aElements),
+			oGroupLock = new _GroupLock(),
+			mQueryOptionsForPath = {},
+			oResult = {"ID" : "13"},
+			mTypeForMetaPath = {};
+
+		aElements.$byPredicate = {"('13')" : oElement};
+		oCache.fetchValue = function () {};
+		oCacheMock.expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "EMPLOYEE_2_EQUIPMENTS")
+			// Note: CollectionCache#fetchValue may be async, $cached just sends no new request!
+			.returns(SyncPromise.resolve(oFetchValuePromise));
+		oCacheMock.expects("fetchTypes").withExactArgs()
+			.returns(SyncPromise.resolve(mTypeForMetaPath));
+		this.mock(_Helper).expects("getQueryOptionsForPath")
+			.withExactArgs(sinon.match.same(oCache.mQueryOptions), "EMPLOYEE_2_EQUIPMENTS")
+			.returns(mQueryOptionsForPath);
+		this.mock(Object).expects("assign")
+			.withExactArgs({}, sinon.match.same(mQueryOptionsForPath))
+			.returns({"$filter" : "age gt 40"});
+		this.mock(_Helper).expects("buildPath")
+			.withExactArgs("Employees('31')", "EMPLOYEE_2_EQUIPMENTS")
+			.returns("~");
+		this.mock(_Helper).expects("getKeyFilter")
+			.withExactArgs(sinon.match.same(oElement), "/Employees",
+				sinon.match.same(mTypeForMetaPath))
+			.returns("~key filter~");
+		this.oRequestorMock.expects("buildQueryString")
+			.withExactArgs("/Employees", {$filter : "(age gt 40) and ~key filter~"}, false,
+				sinon.match.same(oCache.bSortExpandSelect))
+			.returns("?$filter=...");
+		this.oRequestorMock.expects("request")
+			.withExactArgs("GET", "~?$filter=...", sinon.match.same(oGroupLock), undefined,
+				undefined, sinon.match.same(fnDataRequested))
+			.resolves({value : [oResult, oResult]});
+
+		// code under test
+		return oCache.refreshSingleWithRemove(oGroupLock, "EMPLOYEE_2_EQUIPMENTS", 3,
+				fnDataRequested)
+			.then(function () {
+				assert.ok(false);
+			}, function (oError) {
+				assert.strictEqual(oError.message,
+					"Unexpected server response, more than one entity returned.");
+			});
 	});
 
 	//*********************************************************************************************
@@ -4310,7 +4502,7 @@ sap.ui.define([
 				oExpectedPrivateAnnotation.transientPredicate = sTransientPredicate;
 				assert.deepEqual(oEntityData, {
 					"@$ui5._" : oExpectedPrivateAnnotation,
-					"@$ui5.context.isTransient": false,
+					"@$ui5.context.isTransient" : false,
 					ID : "7",
 					Name : "John Doe"
 				});
@@ -4433,7 +4625,7 @@ sap.ui.define([
 		this.oRequestorMock.expects("request")
 			.withExactArgs("GET", sResourcePath + sQueryParams + "&$skip=0&$top=5",
 				new _GroupLock("group"), undefined, undefined, undefined)
-			.resolves({value: []});
+			.resolves({value : []});
 
 		// code under test
 		mQueryParams.$select = "foo"; // modification must not affect cache
@@ -4549,7 +4741,7 @@ sap.ui.define([
 		assert.deepEqual(oCache.aElements[0], {
 			name : "John Doe",
 			"@$ui5._" : {"transient" : "updateGroup", "transientPredicate" : sTransientPredicate},
-			"@$ui5.context.isTransient": true
+			"@$ui5.context.isTransient" : true
 		});
 
 		// The lock must be unlocked although no request is created
@@ -4756,13 +4948,13 @@ sap.ui.define([
 					return Promise.resolve().then(function () {
 						fnSubmit();
 					}).then(function () {
-						return {Name: "John Doe", Age: 47};
+						return {Name : "John Doe", Age : 47};
 					});
 				});
 
 			// code under test
 			oCache.create(oGroupLock, SyncPromise.resolve("Employees"), "", sTransientPredicate,
-				{Name: null},
+				{Name : null},
 				function () {
 					throw new Error("unexpected call to fnCancelCallback");
 				}, function fnErrorCallback() {}, function fnSubmitCallback() {});
@@ -4822,7 +5014,7 @@ sap.ui.define([
 
 		assert.deepEqual(oCache.aElements[0], {
 			"@$ui5._" : {"transient" : "updateGroup", "transientPredicate" : sTransientPredicate},
-			"@$ui5.context.isTransient": true
+			"@$ui5.context.isTransient" : true
 		});
 
 		// code under test
@@ -5054,7 +5246,7 @@ sap.ui.define([
 			oCache = _Cache.create(oRequestor, "Employees"),
 			fnCallback = this.spy(),
 			oCreatedPromise,
-			oEntity = {EmployeeId: "4711", "@odata.etag" : "anyEtag"},
+			oEntity = {EmployeeId : "4711", "@odata.etag" : "anyEtag"},
 			sGroupId = "updateGroup",
 			oGroupLock = new _GroupLock(sGroupId),
 			sTransientPredicate = "($uid=id-1-23)",
@@ -6703,170 +6895,6 @@ sap.ui.define([
 			assert.strictEqual(oCache.aElements[0], oValue0);
 			assert.strictEqual(oCache.aElements[1], oValue1);
 		});
-	});
-
-	//*********************************************************************************************
-	[{
-		mBindingQueryOptions : {$filter: "age gt 40"},
-		sQueryString : "?$filter=(age%20gt%2040)%20and%20~key%20filter~",
-		mQueryOptionsForRequest : {$filter: "(age gt 40) and ~key filter~"},
-		bRemoved : true
-	}, {
-		mBindingQueryOptions : {$filter: "age gt 40"},
-		sQueryString : "?$filter=%28age%20gt%2040%29%20and%20~key%20filter~",
-		mQueryOptionsForRequest : {$filter: "(age gt 40) and ~key filter~"},
-		bRemoved : false
-	}, {
-		mBindingQueryOptions : {$filter: "age gt 40 or age lt 20"},
-		sQueryString : "?$filter=(age%20gt%2040%20or%20age%20lt%2020)%20and%20~key%20filter~",
-			mQueryOptionsForRequest : {$filter: "(age gt 40 or age lt 20) and ~key filter~"},
-		bRemoved : true
-	}, {
-		mBindingQueryOptions : {$filter: "age gt 40"},
-		sQueryString : "?$filter=age%20gt%2040%20and%20~key%20filter~",
-		mQueryOptionsForRequest : {$filter: "(age gt 40) and ~key filter~"},
-		bRemoved : false
-	}, {
-		mBindingQueryOptions : {$count : true},
-		sQueryString : "?$filter=~key%20filter~",
-		mQueryOptionsForRequest : {$filter: "~key filter~"},
-		bRemoved : false
-	}, { // with transient predicate
-		mBindingQueryOptions : {$orderby : "key"},
-		sQueryString : "?$filter=~key%20filter~",
-		mQueryOptionsForRequest : {$filter: "~key filter~"},
-		bRemoved : true,
-		bWithTransientPredicate : true
-	}, { // with transient predicate
-		mBindingQueryOptions : {},
-		sQueryString : "?$filter=~key%20filter~",
-		mQueryOptionsForRequest : {$filter: "~key filter~"},
-		bRemoved : false,
-		bWithTransientPredicate : true
-	}].forEach(function (oFixture, i) {
-		var sTitle = "CollectionCache#refreshSingleWithRemove: removed=" + oFixture.bRemoved
-				+ ", " + i;
-
-		QUnit.test(sTitle, function (assert) {
-			var sResourcePath = "Employees",
-				oCache = this.createCache(sResourcePath, {$filter: "age gt 40"}),
-				oCacheMock = this.mock(oCache),
-				fnDataRequested = this.spy(),
-				sKeyPredicate = "('0')",
-				oElement = {"@$ui5._" : {"predicate" : sKeyPredicate}},
-				aElements = [{}, {}, {}],
-				oGroupLock = new _GroupLock(),
-				mTypeForMetaPath = {},
-				fnOnRemove = this.spy(),
-				oPromiseFetchTypes = SyncPromise.resolve(mTypeForMetaPath),
-				oPromise,
-				oResponse = oFixture.bRemoved
-					? {value : []}
-					: {value : [{Foo : "Bar"}]}, // at least an entity is returned
-				oPromiseRequest = Promise.resolve(oResponse),
-				sTransientPredicate = "($uid=id-1-23)",
-				that = this;
-
-			// cache preparation
-			oCache.iLimit = 2;
-			aElements[1] = oElement;
-			oCache.aElements = aElements;
-			oCache.aElements.$byPredicate = {};
-			oCache.aElements.$byPredicate[sKeyPredicate] =  oElement;
-			if (oFixture.bWithTransientPredicate) {
-				oCache.aElements.$byPredicate[sTransientPredicate] =  oElement;
-				_Helper.setPrivateAnnotation(oElement, "transientPredicate", sTransientPredicate);
-			}
-
-			this.mock(jQuery).expects("extend")
-				.withExactArgs({}, sinon.match.same(oCache.mQueryOptions))
-				.returns(oFixture.mBindingQueryOptions);
-			oCacheMock.expects("fetchTypes")
-				.withExactArgs()
-				.callsFake(function () {
-					that.oRequestorMock.expects("request")
-						.withExactArgs("GET", sResourcePath + oFixture.sQueryString,
-							sinon.match.same(oGroupLock), undefined, undefined,
-							sinon.match.same(fnDataRequested))
-						.returns(oPromiseRequest);
-					return oPromiseFetchTypes;
-				});
-			this.mock(_Helper).expects("getKeyFilter")
-				.withExactArgs(oElement, "/Employees", sinon.match.same(mTypeForMetaPath))
-				.returns("~key filter~");
-			this.oRequestorMock.expects("buildQueryString")
-				.withExactArgs(oCache.sMetaPath, oFixture.mQueryOptionsForRequest, false,
-					oCache.bSortExpandSelect)
-				.returns(oFixture.sQueryString);
-			oCacheMock.expects("removeElement")
-				.exactly(oFixture.bRemoved ? 1 : 0)
-				.withExactArgs(sinon.match.same(aElements), 1, sKeyPredicate, "");
-			oCacheMock.expects("replaceElement")
-				.exactly(oFixture.bRemoved ? 0 : 1)
-				.withExactArgs(sinon.match.same(oCache.aElements), 1, sKeyPredicate,
-					sinon.match.same(oResponse.value[0]), sinon.match.same(mTypeForMetaPath), "")
-				.callThrough();
-			oCacheMock.expects("visitResponse")
-				.exactly(oFixture.bRemoved ? 0 : 1)
-				.withExactArgs(sinon.match.same(oResponse.value[0]),
-					sinon.match.same(mTypeForMetaPath), "/Employees", sKeyPredicate);
-
-			// code under test
-			oPromise = oCache.refreshSingleWithRemove(oGroupLock, 1, fnDataRequested, fnOnRemove);
-
-			assert.strictEqual(oCache.bSentReadRequest, true);
-			return oPromise.then(function () {
-				if (oFixture.bRemoved) {
-					sinon.assert.calledOnce(fnOnRemove);
-				} else {
-					assert.strictEqual(oCache.aElements[1], oResponse.value[0]);
-					assert.strictEqual(oCache.aElements.$byPredicate[sKeyPredicate],
-						oResponse.value[0]);
-					if (oFixture.bWithTransientPredicate) {
-						assert.strictEqual(oCache.aElements.$byPredicate[sTransientPredicate],
-							oResponse.value[0]);
-					}
-					assert.strictEqual(oCache.iLimit, 2);
-				}
-			});
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("refreshSingleWithRemove: server returns more than one entity", function (assert) {
-		var fnOnRemove = this.spy(),
-			sResourcePath = "Employees",
-			oCache = this.createCache(sResourcePath, {$filter: "age gt 40"}),
-			oCacheMock = this.mock(oCache),
-			oElement = {"@$ui5._" : {"predicate" : "('3')"}},
-			oResult = {"ID" : "3"},
-			mTypeForMetaPath = {};
-
-		// cache preparation
-		oCache.aElements = [{}, {}, {}, oElement];
-		oCache.aElements.$byPredicate = {"('3')" : oElement};
-
-		oCacheMock.expects("fetchTypes").withExactArgs()
-			.returns(SyncPromise.resolve(mTypeForMetaPath));
-		this.mock(_Helper).expects("getKeyFilter")
-			.withExactArgs(oElement, "/Employees", sinon.match.same(mTypeForMetaPath))
-			.returns("~key filter~");
-		this.oRequestorMock.expects("buildQueryString")
-			.withExactArgs("/Employees", {$filter : "(age gt 40) and ~key filter~"}, false, false)
-			.returns("?$filter=%28age%20gt%2040%29%20and%20~key%20filter~");
-		this.oRequestorMock.expects("request")
-			.callsFake(function () {
-				return Promise.resolve({value : [oResult, oResult]});
-			});
-
-		// code under test
-		return oCache.refreshSingleWithRemove("group", 3, undefined, fnOnRemove)
-			.then(function () {
-				assert.ok(false);
-			}, function (oError) {
-				assert.strictEqual(oError.message,
-					"Unexpected server response, more than one entity returned.");
-			});
 	});
 
 	//*********************************************************************************************
