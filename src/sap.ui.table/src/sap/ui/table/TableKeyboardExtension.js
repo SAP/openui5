@@ -389,6 +389,9 @@ sap.ui.define([
 	 * @public (Part of the API for Table control only!)
 	 */
 	TableKeyboardExtension.prototype.setActionMode = function(bEnter) {
+		if (!this._delegate) {
+			return;
+		}
 		if (bEnter === true && !this._actionMode && this._delegate.enterActionMode) {
 			this._actionMode = this._delegate.enterActionMode.apply(this.getTable(), Array.prototype.slice.call(arguments, 1)) === true;
 		} else if (bEnter === false && this._actionMode && this._delegate.leaveActionMode) {
