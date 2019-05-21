@@ -21,12 +21,58 @@
 			Component Card
 		</h1>
 		<p>
-			The component card is used to display different types of content.
+			With this card type, the developer can display a whole UI5 Component as a content. The card itself will load
+			the specified component and display it. It allows a huge flexibility, so the developer is responsible to
+			follow the guidelines to achieve good and consistent user experience.
 		</p>
+		<h2 id="usage">Usage</h2>
+		<ul>
+			<li>Use this card type only if there is no other card type which can fulfill the requirements.
+			</li>
+			<li>The component in the card must be simple. The card should be used only to navigate you to an application
+				where the actual work can be done.
+			</li>
+		</ul>
+		<h2 id="example">Example</h2>
+		<p>Create a Card manifest and include the manifest for the component in the same file:
+		</p>
+		<pre class="prettyprint"><xmp class="language-json">{
+	"sap.card": {
+		"type": "Component",
+		"header": {
+			"title": "Buy bus ticket on-line",
+			"subTitle": "Buy a single drive ticket for a date"
+		}
+	},
+
+	"sap.app": {
+		"id": "sap.myapp.bookingComponent",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.myapp.bookingComponent.Main",
+			"type": "XML",
+			"async": true
+		}
+	}
+}
+</xmp></pre>
+		<p>Create an widget card that actually can use the manifest.json which we created:</p>
+		<pre class="prettyprint">
+<xmp class="language-xml"><mvc:View xmlns:w="sap.ui.integration.widgets">
+	<w:Card manifest="./manifest.json" width="400px" height="auto"/>
+</mvc:View>
+</xmp></pre>
+		<a class="try-button" href="../../index.html#/explore/component" target="_parent">Try it Out</a>
 	</div>
 	<div class="navigation">
 		<h4>Table of Contents</h4>
 		<div><a href="#overview">Component Card</a></div>
+		<div><a href="#usage">Usage</a></div>
+		<div><a href="#example">Example</a></div>
 	</div>
 </div>
 </body>

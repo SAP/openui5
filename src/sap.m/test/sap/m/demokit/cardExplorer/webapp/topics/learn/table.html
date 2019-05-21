@@ -23,10 +23,249 @@
 		<p>
 			The table card is used to display multiple items in table view.
 		</p>
+		<h2 id="structure">Structure</h2>
+		<p>The table card contains an array of rows.</p>
+
+		<h4>Table row properties</h4>
+
+		<table>
+			<tr>
+				<th>Property</th>
+				<th>Type</th>
+				<th>Required</th>
+				<th>Description</th>
+				<th>Version</th>
+			</tr>
+			<tr>
+				<td>columns</td>
+				<td>array</td>
+				<td>No</td>
+				<td>Represents columns attributes</td>
+				<td>1.1.0</td>
+			</tr>
+			<tr>
+				<td>actions</td>
+				<td>object</td>
+				<td>No</td>
+				<td>Represents actions that can be applied on the item</td>
+				<td>1.1.0</td>
+			</tr>
+		</table>
+
+		<h4>Table column properties</h4>
+
+		<table>
+			<tr>
+				<th>Property</th>
+				<th>Type</th>
+				<th>Required</th>
+				<th>Description</th>
+				<th>Version</th>
+			</tr>
+			<tr>
+				<td>title</td>
+				<td>string</td>
+				<td>No</td>
+				<td>Represents language-dependent title of the column</td>
+				<td>1.1.0</td>
+			</tr>
+			<tr>
+				<td>width</td>
+				<td>string</td>
+				<td>No</td>
+				<td>Defines the width of the column</td>
+				<td>1.1.0</td>
+			</tr>
+			<tr>
+				<td>value</td>
+				<td>string</td>
+				<td>No</td>
+				<td>Represents text value of the column</td>
+				<td>1.1.0</td>
+			</tr>
+			<tr>
+				<td>icon</td>
+				<td>icon</td>
+				<td>No</td>
+				<td>Represents column with icon</td>
+				<td>1.1.0</td>
+			</tr>
+			<tr>
+				<td>state</td>
+				<td>string</td>
+				<td>No</td>
+				<td>Represents the state of the column</td>
+				<td>1.1.0</td>
+			</tr>
+			<tr>
+				<td>url</td>
+				<td>string</td>
+				<td>No</td>
+				<td>Represents URL string</td>
+				<td>1.1.0</td>
+			</tr>
+			<tr>
+				<td>target</td>
+				<td>string</td>
+				<td>No</td>
+				<td>Specifies where to open the 'url', if it is provided.</td>
+				<td>1.1.0</td>
+			</tr>
+			<tr>
+				<td>identifier</td>
+				<td>string</td>
+				<td>No</td>
+				<td>...</td>
+				<td>1.1.0</td>
+			</tr>
+			<tr>
+				<td>progressIndicator</td>
+				<td>string</td>
+				<td>No</td>
+				<td>...</td>
+				<td>1.1.0</td>
+			</tr>
+		</table>
+
+		<h2 id="example">Example</h2>
+		<p>Defining the type and data for the card:
+		</p>
+		<pre class="prettyprint"><xmp class="language-json">{
+	"sap.app": {
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "Table",
+		"header": {
+			"title": "Sales Orders for Key Accounts",
+			"subTitle": "Today",
+			"status": {
+				"text": "5 of 27"
+			}
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "./cardcontent/tableitems.json"
+				}
+			},
+			"row": {
+				"columns": [
+					{
+						"label": "Sales Order",
+						"value": "{salesOrder}",
+						"identifier": true
+					},
+					{
+						"label": "Customer",
+						"value": "{name}"
+					},
+					{
+						"label": "Net Amount",
+						"value": "{netAmount}"
+					},
+					{
+						"label": "Status",
+						"value": "{status}",
+						"state": "{statusState}"
+					},
+					{
+						"label": "Avatar",
+						"width": "12%",
+						"icon": {
+							"src": "{icon}"
+						}
+					},
+					{
+						"label": "Progress",
+						"progressIndicator": {
+							"percent": "{percent}",
+							"text": "{percentValue}",
+							"state": "{progressState}"
+						}
+					}
+				]
+			}
+		}
+	}
+}</xmp></pre>
+		<p>
+			The content of the tableitems.json which we are requesting:
+		</p>
+		<pre class="prettyprint"><xmp class="language-json">[
+	{
+		"salesOrder": "5000010050",
+		"isActive": true,
+		"name": "Robert Brown Entertainment",
+		"netAmount": "2K USD",
+		"status": "Delivered",
+		"statusState": "Success",
+		"icon": "../images/Woman_avatar_01.png",
+		"percent": 30,
+		"percentValue": "30%",
+		"progressState": "Error"
+	},
+	{
+		"salesOrder": "5000010051",
+		"isActive": true,
+		"name": "Entertainment Argentinia",
+		"netAmount": "127k USD",
+		"status": "Canceled",
+		"statusState": "Error",
+		"icon": "../images/Woman_avatar_01.png",
+		"percent": 70,
+		"percentValue": "70 of 100",
+		"progressState": "Success"
+	},
+	{
+		"salesOrder": "5000010052",
+		"isActive": false,
+		"name": "Brazil Technologies",
+		"netAmount": "8K USD",
+		"status": "In Progress",
+		"statusState": "Warning",
+		"icon": "../images/Woman_avatar_01.png",
+		"percent": 40,
+		"percentValue": "40 of 100",
+		"progressState": "Warning"
+	},
+	{
+		"salesOrder": "5000010053",
+		"isActive": true,
+		"name": "Quimica Madrilenos",
+		"netAmount": "25K USD",
+		"status": "Delivered",
+		"statusState": "Success",
+		"icon": "../images/Woman_avatar_01.png",
+		"percent": 20,
+		"percentValue": "20 of 100",
+		"progressState": "Error"
+	},
+	{
+		"salesOrder": "5000010054",
+		"name": "Development Para O Governo",
+		"netAmount": "7K USD",
+		"status": "Delivered",
+		"statusState": "Success",
+		"icon": "../images/Woman_avatar_01.png",
+		"percent": 40,
+		"percentValue": "40 of 100",
+		"progressState": "Warning"
+	}
+]</xmp></pre>
+		<p>Finally create an widget card that actually can use the manifest.json which we created:</p>
+		<pre class="prettyprint">
+<xmp class="language-xml"><mvc:View xmlns:w="sap.ui.integration.widgets">
+	<w:Card manifest="./manifest.json" width="400px" height="auto"/>
+</mvc:View>
+</xmp></pre>
+		<a class="try-button" href="../../index.html#/explore/table" target="_parent">Try it Out</a>
 	</div>
 	<div class="navigation">
 		<h4>Table of Contents</h4>
 		<div><a href="#overview">Table Card</a></div>
+		<div><a href="#structure">Structure</a></div>
+		<div><a href="#example">Example</a></div>
 	</div>
 </div>
 </body>
