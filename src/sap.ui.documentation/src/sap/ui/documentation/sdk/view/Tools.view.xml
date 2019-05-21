@@ -417,6 +417,49 @@
 
 		<l:BlockLayout>
 			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeB">
+					<FlexBox
+							alignItems="Start"
+							justifyContent="SpaceBetween"
+							wrap="Wrap">
+						<items>
+							<VBox class="toolsPageVbox">
+								<custom:TitleLink
+										level="H1"
+										titleStyle="H1"
+										text="Card Explorer"
+										href="test-resources/sap/ui/integration/demokit/cardExplorer/index.html"
+										class="sapUiMediumMarginBottom"
+										target="_blank" />
+
+								<Text text="Integration Cards are new way to provide and consume widget-like cards for home page or dashboard."
+									  class="demokitInitialPagesBlueText sapUiMediumMarginBottom"/>
+
+								<Link text="View Documentation"
+									  target="_blank"
+									  href="test-resources/sap/ui/integration/demokit/cardExplorer/webapp/index.html" />
+
+								<Link text="Explore Samples"
+									  target="_blank"
+									  href="test-resources/sap/ui/integration/demokit/cardExplorer/webapp/index.html#/explore/list"
+									  class="sapUiSmallMarginBottom" />
+							</VBox>
+							<Image src="./resources/sap/ui/documentation/sdk/images/tools/CardExplorer.png" class="toolsPageImage"/>
+						</items>
+					</FlexBox>
+				</l:BlockLayoutCell>
+
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeB">
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+
+			<l:BlockLayoutRow>
 				<core:Fragment id="footerFragment" fragmentName="sap.ui.documentation.sdk.view.Footer" type="XML" />
 			</l:BlockLayoutRow>
 		</l:BlockLayout>
