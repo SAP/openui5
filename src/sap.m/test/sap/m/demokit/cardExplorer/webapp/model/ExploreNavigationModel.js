@@ -8,7 +8,7 @@ sap.ui.define([
 		navigation: [
 			{
 				title: 'Types',
-				icon: 'sap-icon://card',
+				icon: 'sap-icon://overview-chart',
 				key: 'types',
 				target: 'exploreSamples',
 				targetKey: 'list',
@@ -25,11 +25,6 @@ sap.ui.define([
 								manifestUrl: '/samples/list/highlight.json'
 							},
 							{
-								title: 'General',
-								key: 'general',
-								manifestUrl: '/samples/list/general.json'
-							},
-							{
 								title: 'Icon',
 								key: 'icon',
 								manifestUrl: '/samples/list/icon.json'
@@ -43,7 +38,7 @@ sap.ui.define([
 								title: 'Quick Links',
 								key: 'quickLinks',
 								settings: {
-									width: 'auto'
+									columns: 3
 								},
 								manifestUrl: '/samples/list/quickLinks.json'
 							}
@@ -58,7 +53,8 @@ sap.ui.define([
 								title: 'Line',
 								key: 'line',
 								settings: {
-									height: '464px'
+									rows: 5,
+									columns: 4
 								},
 								manifestUrl: '/samples/analytical/line.json'
 							},
@@ -66,7 +62,8 @@ sap.ui.define([
 								title: 'Stacked Column',
 								key: 'stackedColumn',
 								settings: {
-									height: '464px'
+									rows: 5,
+									columns: 4
 								},
 								manifestUrl: '/samples/analytical/stackedColumn.json'
 							},
@@ -74,8 +71,8 @@ sap.ui.define([
 								title: 'Donut',
 								key: 'donut',
 								settings: {
-									width: '272px',
-									height: '272px'
+									rows: 3,
+									columns: 3
 								},
 								manifestUrl: '/samples/analytical/donut.json'
 							}
@@ -85,12 +82,18 @@ sap.ui.define([
 						title: 'Object',
 						target: 'exploreSamples',
 						key: 'object',
+						settings: {
+							columns: 5
+						},
 						manifestUrl: '/samples/object.json'
 					},
 					{
 						title: 'Table',
 						target: 'exploreSamples',
 						key: 'table',
+						settings: {
+							columns: 6
+						},
 						manifestUrl: '/samples/table.json'
 					},
 					{
@@ -103,7 +106,7 @@ sap.ui.define([
 								key: 'general',
 								manifestUrl: '/samples/timeline/activities.json',
 								settings: {
-									width: '272px'
+									columns: 3
 								}
 							},
 							{
@@ -128,15 +131,9 @@ sap.ui.define([
 						target: 'exploreSamples',
 						title: 'Actions',
 						settings: {
-							width: 'auto'
+							columns: 3
 						},
 						manifestUrl: '/samples/actions.json'
-					},
-					{
-						key: 'data',
-						target: 'exploreSamples',
-						title: 'Data TODO',
-						manifestUrl: '/samples/table.json'
 					},
 					{
 						key: 'parameters',

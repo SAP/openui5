@@ -3,57 +3,73 @@
 		"type": "card"
 	},
 	"sap.card": {
-	  "type": "List",
-	  "header": {
-		"title": "Quick Links",
-		"status": {
-		  "text": "7 of 28"
-		}
-	  },
-	  "content": {
-		"data": {
-		  "json": [
-			{
-			  "Name": "Template Based Segmentation",
-			  "icon": "sap-icon://horizontal-bullet-chart"
-			},
-			{
-			  "Name": "Segmentation Models",
-			  "icon": "sap-icon://opportunity"
-			},
-			{
-			  "Name": "Marketing plans",
-			  "icon": "sap-icon://line-charts"
-			},
-			{
-			  "Name": "Target Groups",
-			  "icon": "sap-icon://horizontal-bar-chart"
-			},
-			{
-			  "Name": "Program Structure",
-			  "icon": "sap-icon://org-chart"
-			},
-			{
-			  "Name": "AdWords Campaigns",
-			  "icon": "sap-icon://bar-chart"
-			},
-			{
-			  "Name": "Winter Campaign Results",
-			  "icon": "sap-icon://tools-opportunity"
-			}
-		  ]
+		"type": "List",
+		"header": {
+			"title": "Quick Links",
+			"actions": [
+				{
+					"type": "Navigation",
+					"parameters": {
+						"url": "/quickLinks"
+					}
+				}
+			]
 		},
-		"item": {
-		  "icon": {
-			"src": "{icon}"
-		  },
-		  "title": {
-			"value": "{Name}"
-		  },
-		  "description": {
-			"value": "{Description}"
-		  }
+		"content": {
+			"data": {
+				"json": [
+					{
+						"Name": "Career",
+						"icon": "sap-icon://leads",
+						"url": "/careers"
+					},
+					{
+						"Name": "Company Directory",
+						"icon": "sap-icon://address-book",
+						"url": "/companyDirectory"
+					},
+					{
+						"Name": "Development Plan",
+						"icon": "sap-icon://activity-items",
+						"url": "/developmentPlan"
+					},
+					{
+						"Name": "Business Goals",
+						"icon": "sap-icon://target-group",
+						"url": "/businessGoals"
+					},
+					{
+						"Name": "Travel and Expenses",
+						"icon": "sap-icon://travel-expense",
+						"url": "/travelAndExpenses"
+					},
+					{
+						"Name": "Time off",
+						"icon": "sap-icon://general-leave-request",
+						"url": "/timeOff"
+					}
+				]
+			},
+			"item": {
+				"icon": {
+					"src": "{icon}"
+				},
+				"title": {
+					"value": "{Name}"
+				},
+				"description": {
+					"value": "{Description}"
+				},
+				"actions": [
+					{
+						"type": "Navigation",
+						"enabled": "{= ${url}}",
+						"parameters": {
+							"url": "{url}"
+						}
+					}
+				]
+			}
 		}
-	  }
 	}
 }

@@ -3,12 +3,13 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
 	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.f"
 	xmlns:core="sap.ui.core"
 	xmlns:editor="sap.ui.codeeditor"
-	xmlns:widgets="sap.ui.integration.widgets">
+	xmlns:w="sap.ui.integration.widgets">
 	<l:ResponsiveSplitter id="splitView" defaultPane="default">
 		<l:PaneContainer orientation="Horizontal">
-			<l:SplitPane requiredParentWidth="1">
+			<l:SplitPane id="cardPane" requiredParentWidth="1">
 				<Page>
 					<customHeader>
 						<Bar>
@@ -26,12 +27,10 @@
 							</contentRight>
 						</Bar>
 					</customHeader>
-					<widgets:Card
-						class="sapUiLargeMargin"
-						id="cardSample"
-						width="{= ${/sampleSettings/width} ? ${/sampleSettings/width} : '400px'}"
-						height="{= ${/sampleSettings/height} ? ${/sampleSettings/height} : 'auto'}">
-					</widgets:Card>
+					<f:GridContainer id="cardContainer">
+						<w:Card id="cardSample" class="sapUiLargeMargin">
+						</w:Card>
+					</f:GridContainer>
 				</Page>
 			</l:SplitPane>
 			<l:SplitPane requiredParentWidth="1" >

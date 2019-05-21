@@ -4,15 +4,19 @@ sap.ui.define([
 	"sap/ui/model/BindingMode",
 	"../model/ExploreNavigationModel",
 	"../model/ExploreSettingsModel",
-	"sap/m/MessageStrip",
+	"sap/m/MessageToast",
+	"sap/f/GridContainerItemLayoutData",
 	"sap/ui/Device"
-], function (BaseController,
-             JSONModel,
-             BindingMode,
-             exploreNavigationModel,
-             exploreSettingsModel,
-             MessageStrip,
-             Device) {
+], function (
+	BaseController,
+	JSONModel,
+	BindingMode,
+	exploreNavigationModel,
+	exploreSettingsModel,
+	MessageToast,
+	GridContainerItemLayoutData,
+	Device
+) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.cardExplorer.controller.ExploreSamples", {
@@ -41,6 +45,8 @@ sap.ui.define([
 
 			this._errorMessageStrip = this.getView().byId("errorMessageStrip");
 			this._registerResize();
+
+			this.byId("cardSample").attachEvent("action", this._onCardAction, this);
 		},
 
 		onExit: function () {
@@ -144,6 +150,22 @@ sap.ui.define([
 			this._showSample(oSample, oSubSample);
 		},
 
+		_onCardAction: function (oEvent) {
+			var sType = oEvent.getParameter("type"),
+				mParameters = oEvent.getParameter("manifestParameters"),
+				sMessage;
+
+			sMessage = "Action '" + sType + "'";
+			if (mParameters) {
+				sMessage += " with parameters '" + JSON.stringify(mParameters) + "'";
+			}
+
+			MessageToast.show(sMessage, {
+				at: "center center",
+				width: "25rem"
+			});
+		},
+
 		_findSample: function (sSampleKey) {
 			var aSections = exploreNavigationModel.getProperty("/navigation"),
 				oFoundSample;
@@ -179,17 +201,27 @@ sap.ui.define([
 		},
 
 		_showSample: function (oSample, oSubSample) {
-			var sManifestUrl;
+			var sManifestUrl,
+				oLayoutSettings = {
+					minRows: 1,
+					columns: 4
+				},
+				oCard = this.byId("cardSample");
 
 			this.oModel.setProperty("/sample", oSample);
 
 			if (oSubSample) {
 				this.oModel.setProperty("/subSample", oSubSample);
-				this.oModel.setProperty("/sampleSettings", oSubSample.settings);
+				oLayoutSettings = Object.assign(oLayoutSettings, oSubSample.settings);
 				sManifestUrl = oSubSample.manifestUrl;
 			} else {
-				this.oModel.setProperty("/sampleSettings", oSample.settings);
+				oLayoutSettings = Object.assign(oLayoutSettings, oSample.settings);
 				sManifestUrl = oSample.manifestUrl;
+			}
+
+			if (oCard) {
+				oCard.setLayoutData(new GridContainerItemLayoutData(oLayoutSettings));
+				this.byId("cardContainer").rerender();
 			}
 
 			if (!sManifestUrl) {
