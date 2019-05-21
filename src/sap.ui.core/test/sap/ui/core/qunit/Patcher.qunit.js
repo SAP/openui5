@@ -666,9 +666,11 @@ sap.ui.define([
 		this.html("<div></div>").patch(function() {
 			Patcher.unsafeHtml("<img>");
 		}, function(aMutations, oElement) {
-			assert.equal(aMutations.length, bLegacyObserver ? 2 : 1, "outerHTML is replaced");
+			// IE11 and Edge do not include the child nodes when they are removed by setting the innerHTML.
+			var bLegacyInnerHtmlObserver = bLegacyObserver || Device.browser.edge;
+			assert.equal(aMutations.length, bLegacyInnerHtmlObserver ? 2 : 1, "outerHTML is replaced");
 			assert.equal(aMutations[0].removedNodes[0].tagName, "DIV", "div element is removed");
-			assert.equal(aMutations[bLegacyObserver ? 1 : 0].addedNodes[0].tagName, "IMG", "img element is added");
+			assert.equal(aMutations[bLegacyInnerHtmlObserver ? 1 : 0].addedNodes[0].tagName, "IMG", "img element is added");
 			assert.equal(oElement.tagName, "IMG", "There is only an img element");
 		});
 
