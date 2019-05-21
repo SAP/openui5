@@ -3,15 +3,15 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.ui.commons">
+	xmlns="sap.m">
 	<l:Splitter id="mainSplitter" height="500px" width="100%">
-		<Button height="100%" width="100%" text="Content 1">
+		<Button width="100%" text="Content 1">
 			<layoutData><l:SplitterLayoutData size="300px" /></layoutData>
 		</Button>
-		<Button height="100%" width="100%" text="Content 2">
+		<Button width="100%" text="Content 2">
 			<layoutData><l:SplitterLayoutData size="auto" /></layoutData>
 		</Button>
-		<Button height="100%" width="100%" text="Content 3">
+		<Button width="100%" text="Content 3">
 			<layoutData><l:SplitterLayoutData size="30%" minSize="200px" /></layoutData>
 		</Button>
 	</l:Splitter>
@@ -20,7 +20,7 @@
 		<Button text="Remove content area" press="btnRemoveContentArea"></Button>
 		<Button text="Invalidate Splitter" press="btnInvalidateSplitter"></Button>
 		<Button text="Change Orientation" press="btnChangeOrientation"></Button>
-		<TextView id="eventStatus" text="Nothing happened so far..."></TextView>
+		<Text id="eventStatus" text="Nothing happened so far..." class="sapUiTinyMarginTop sapUiTinyMarginBegin"></Text>
 	</l:HorizontalLayout>
 	<l:VerticalLayout id="mainOptions" class="options">
 	</l:VerticalLayout>
