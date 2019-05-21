@@ -274,30 +274,35 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestIn
 	var aRemovedMessages = [];
 	var mAffectedTargets = this._getAffectedTargets(aMessages, mRequestInfo, mGetEntities, mChangeEntities);
 	var aKeptMessages = [];
-	if (mRequestInfo.response.statusCode >= 200 && mRequestInfo.response.statusCode < 300) {
-		for (i = 0; i < this._lastMessages.length; ++i) {
-			// Note: mGetEntities and mChangeEntities contain the keys without leading or trailing "/", so all targets must
-			// be trimmed here
-			sTarget = this._lastMessages[i].getTarget().replace(/^\/+|\/$/g, "");
+	for (i = 0; i < this._lastMessages.length; ++i) {
+		// Note: mGetEntities and mChangeEntities contain the keys without leading or trailing "/", so all targets must
+		// be trimmed here
+		sTarget = this._lastMessages[i].getTarget().replace(/^\/+|\/$/g, "");
 
-			// Get entity for given target (properties are not affected targets as all messages must be sent for affected entity)
-			var iPropertyPos = sTarget.lastIndexOf(")/");
-			if (iPropertyPos > 0) {
-				sTarget = sTarget.substr(0, iPropertyPos + 1);
-			}
+		// Get entity for given target (properties are not affected targets as all messages must be sent for affected entity)
+		var iPropertyPos = sTarget.lastIndexOf(")/");
+		if (iPropertyPos > 0) {
+			sTarget = sTarget.substr(0, iPropertyPos + 1);
+		}
 
-			if (mAffectedTargets[sTarget] && !this._lastMessages[i].getPersistent()) {
-				// Message belongs to targets handled/requested by this request
+		if (mRequestInfo.response.statusCode >= 200 && mRequestInfo.response.statusCode < 300){
+			if (mAffectedTargets[sTarget] && !this._lastMessages[i].getPersistent()){
+				// New non-technical message => remove old message
 				aRemovedMessages.push(this._lastMessages[i]);
 			} else {
-				// Message is not affected, i.e. should stay
+				// Old message is not affected or persistent => keep message
+				aKeptMessages.push(this._lastMessages[i]);
+			}
+		} else {
+			if (mAffectedTargets[sTarget] && !this._lastMessages[i].getPersistent() && this._lastMessages[i].getTechnical()) {
+				// New technical message => remove old technical message
+				aRemovedMessages.push(this._lastMessages[i]);
+			} else {
+				// Old message is non-technical or persistent or not affected => keep message
 				aKeptMessages.push(this._lastMessages[i]);
 			}
 		}
-	} else {
-		aKeptMessages = this._lastMessages;
 	}
-
 	this.getProcessor().fireMessageChange({
 		oldMessages: aRemovedMessages,
 		newMessages: aMessages

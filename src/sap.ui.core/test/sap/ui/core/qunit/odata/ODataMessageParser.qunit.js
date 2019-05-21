@@ -620,7 +620,7 @@ sap.ui.define([
 			assert.equal(aNewMessages.length, 1);
 			assert.equal(aNewMessages[0].target, "/Products(1)", "target is read from the provided key");
 			assert.equal(aNewMessages[0].code, "888", "target is read from the provided key");
-			assert.equal(aOldMessages.length, 0, "No state change, keep messages.");
+			assert.equal(aOldMessages.length, 1, "Remove technical message.");
 
 			//request uri:          fakeservice://testdata/odata/northwind/Products
 			oRequest.created = false;
@@ -1571,22 +1571,24 @@ sap.ui.define([
 
 			oParser.parse(oResponseGET200, oRequest);
 			assert.equal(aNewMessages.length, 1);
-			assert.equal(aNewMessages[0].technical, false);
+			assert.equal(aNewMessages[0].technical, false, "non-technical");
 			assert.equal(aNewMessages[0].target, "/Products(1)", "target is read from the provided key");
 
 			oParser.parse(oResponseGET400, oRequest);
-			assert.equal(aNewMessages.length, 1);
-			assert.equal(aNewMessages[0].technical, true);
-
+			assert.equal(aNewMessages.length, 1, "New technical message created.");
+			assert.equal(aNewMessages[0].technical, true, "technical");
 			assert.equal(aOldMessages.length, 0);
 
+			oParser.parse(oResponseGET400, oRequest);
+			assert.equal(aNewMessages.length, 1, "New technical message created.");
+			assert.equal(aNewMessages[0].technical, true, "technical");
+			assert.equal(aOldMessages.length, 1, "Old technical message removed.");
 
 			oParser.parse(oResponseGET200, oRequest);
 			assert.equal(aNewMessages.length, 1);
-			assert.equal(aNewMessages[0].technical, false);
-
+			assert.equal(aNewMessages[0].technical, false, "non-technical");
 			assert.equal(aOldMessages.length, 2);
-			assert.equal(aOldMessages[0].technical, false);
+			assert.equal(aOldMessages[0].technical, false, "non-technical");
 			assert.equal(aOldMessages[1].technical, true);
 
 			done();
