@@ -265,6 +265,32 @@ sap.ui.define([
 
 	QUnit.module("data binding");
 
+	QUnit.test("data binding with sap.ui.model.type.Date", function(assert) {
+		// arrange
+		var oDatePicker = new DatePicker({
+			value: {
+				path: "/myTimestamp",
+				type: new TypeDate({
+					source: {
+						pattern: 'timestamp'
+					}
+				})
+			}
+		});
+
+		// act
+		oDatePicker.setModel(new JSONModel({
+			myTimestamp: 1420529121547 // Tue Jan 06 2015 09:25:21 GMT+0200 (FLE Standard Time)
+		}));
+
+		// assert
+		assert.equal(oDatePicker.getDateValue().getTime(), new Date(2015, 0, 6).getTime(),
+			"DatePicker Date value equals the model timestamp representation");
+
+		// cleanup
+		oDatePicker.destroy();
+	});
+
 	QUnit.test("data binding with OData", function(assert) {
 		var done = assert.async();
 		sap.ui.controller("my.own.controller", {
