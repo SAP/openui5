@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Manifest Parameters</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="../css/style.css">
+	<link rel="stylesheet" href="../css/prettify-light.css" />
+	<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+	<script id="sap-ui-bootstrap"
+			src="../../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_fiori_3">
+	</script>
+</head>
+
+<body>
+
+	<div class="topic">
+		<div class="content">
+
+			<h1>
+				Manifest Parameters
+			</h1>
+
+			<h2 id="overview">
+				Overview
+			</h2>
+
+			<p>
+				Cards can define input parameters in their manifests. The input parameters can be everything including user IDs, authentication tokens, locations, language etc...
+				It is possible to assign default values to the input parameters in the manifest.
+				When creating or integrating a card, it is possible to assign values to parameters otherwise they are replaced with their default values.
+				Parameters are described in the configuration section of the manifest. After that they can be used with a double bracket syntax like: "{{parameters.city}}".
+				All parameters are replaced during manifest processing and changing them will cause re-processing of the manifest.
+			</p>
+
+			<h2 id="examples">
+				Examples
+			</h2>
+
+			<p>A card having a city parameter with a default value of "Walldorf" which is used inside the request:</p>
+			<pre class="prettyprint small">
+<xmp class="language-json">{
+	"sap.card": {
+		"configuration": {
+			"parameters": {
+				"city": "Walldorf"
+			}
+		},
+		"type": "List",
+		"header": {
+			"title": "Weather"
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "weather/api?q={{parameters.city}}"
+				}
+			},
+			"item": {
+				"icon": {
+					"src": "{/current/condition/icon}"
+				},
+				"title": {
+					"value": "{/location/name}"
+				},
+				"description": {
+					"value": "{/current/condition/text}"
+				}
+			}
+		}
+	}
+}</xmp></pre>
+
+		<p>
+			Changing the city parameter can be done by using the API of the card. This will cause manifest re-processing:
+		</p>
+		<pre class="prettyprint small">
+<xmp class="language-js">var oParameters = {
+	"city": "Sofia"
+}
+oCard.setParameters(oParameters);
+</xmp></pre>
+
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#overview">Overview</a></div>
+			<div><a href="#examples">Examples</a></div>
+		</div>
+	</div>
+
+</body>
+
+</html>

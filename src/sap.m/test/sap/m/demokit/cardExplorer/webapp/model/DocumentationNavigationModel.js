@@ -101,9 +101,9 @@ sap.ui.define([
 						key: 'featureData'
 					},
 					{
-						title: 'Parameters',
+						title: 'Manifest Parameters',
 						target: 'learnDetail',
-						key: 'featureParameters'
+						key: 'featureManifestParameters'
 					},
 					{
 						title: 'Translation',
