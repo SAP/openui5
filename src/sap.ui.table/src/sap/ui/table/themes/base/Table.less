@@ -30,11 +30,21 @@
 }
 
 .sapUiTableHdr {
+	display: flex;
+	align-items: center;
 	padding-left: @_sap_ui_table_Table_HeaderPaddingLeft;
 	padding-right: @_sap_ui_table_Table_HeaderPaddingRight;
 	background-color: @sapUiGroupTitleBackground;
 	min-height: @_sap_ui_table_Table_HeaderHeight;
-	margin-bottom: 0.125rem;
+
+	> * {
+		flex: 1 1 auto;
+	}
+
+	html[data-sap-ui-browser^="ie"] & {
+		height: @_sap_ui_table_Table_HeaderHeight;
+	}
+
 	._sap_ui_table_Table_Header();
 }
 
@@ -43,7 +53,6 @@
 	font-size: @sapMFontHeader4Size;
 	font-weight: @sapUiFontHeaderWeight;
 	color: @sapUiGroupTitleTextColor;
-	height: 100%;
 }
 
 .sapUiTableTbr,
