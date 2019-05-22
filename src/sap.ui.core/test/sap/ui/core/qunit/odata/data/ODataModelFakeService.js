@@ -154,6 +154,8 @@ sap.ui.define([], function() {
           [200, oXMLHeaders, sCategoriesXML],
         "Products(2)/Category":
           [200, oXMLHeaders, sCategories2XML],
+        "Products(3)/Category":
+          [200, oXMLHeaders, sCategories7XML],
         "Products(1)/Category?$select=CategoryID":
           [200, oJSONHeaders, sCategorySelect2JSON],
         "Products(1)/Category":
