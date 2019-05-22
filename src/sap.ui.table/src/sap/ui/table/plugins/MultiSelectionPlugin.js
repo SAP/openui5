@@ -59,7 +59,11 @@ sap.ui.define([
 			 * <li>If the entity set is small</li>
 			 * </ul>
 			 */
-			limit: {type: "int", group: "Behavior", defaultValue: 200}
+			limit: {type: "int", group: "Behavior", defaultValue: 200},
+			/**
+			 * Show header selector
+			 */
+			showHeaderSelector: {type: "boolean", group: "Appearance", defaultValue: true}
 		},
 		events: {
 			/**
@@ -115,7 +119,8 @@ sap.ui.define([
 		return {
 			headerSelector: {
 				type: this._bLimitDisabled ? "toggle" : "clear",
-				icon: this.oDeselectAllIcon
+				icon: this.oDeselectAllIcon,
+				visible: this.getShowHeaderSelector()
 			}
 		};
 	};
@@ -126,12 +131,14 @@ sap.ui.define([
 	 * @return {boolean}
 	 */
 	MultiSelectionPlugin.prototype.onHeaderSelectorPress = function() {
-		if (this._bLimitDisabled && this.getSelectableCount() > this.getSelectedCount()) {
-			this.selectAll();
-		} else {
-			this.clearSelection();
+		if (this.getShowHeaderSelector()) {
+			if (this._bLimitDisabled && this.getSelectableCount() > this.getSelectedCount()) {
+				this.selectAll();
+			} else {
+				this.clearSelection();
+			}
+			return true;
 		}
-		return true;
 	};
 
 	/**

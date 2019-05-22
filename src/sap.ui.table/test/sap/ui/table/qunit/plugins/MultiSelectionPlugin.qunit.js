@@ -5,8 +5,10 @@ sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/table/library",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/table/plugins/MultiSelectionPlugin"
-], function(MockServer, Table, ODataModel, tableLibrary, MultiSelectionPlugin) {
+], function(MockServer, Table, ODataModel, tableLibrary, qutils, KeyCodes, MultiSelectionPlugin) {
 	"use strict";
 
 	var sServiceURI = "/service/";
@@ -277,5 +279,28 @@ sap.ui.define([
 			assert.deepEqual(aSelectedIndices.length, 16, "The correct indices are selected");
 			done();
 		});
+	});
+
+	QUnit.test("showHeaderSelector is false", function(assert) {
+		var done = assert.async();
+
+		this.oTable._oSelectionPlugin.setShowHeaderSelector(false);
+		sap.ui.getCore().applyChanges();
+		var $Cell = this.oTable.$("selall");
+		var that = this;
+
+		assert.ok(!$Cell.attr("role"), "role is not set");
+		assert.ok(!$Cell.attr("title"), "title is not set");
+		assert.ok(!$Cell[0].hasChildNodes(), "No icon");
+
+		that.oTable._oSelectionPlugin.attachEventOnce("selectionChange", function(){
+			$Cell.trigger("click");
+			assert.equal(that.oTable._oSelectionPlugin.getSelectedCount(), 10, "the selection is not cleared");
+
+			qutils.triggerKeydown($Cell, KeyCodes.A, false, false, true);
+			assert.equal(that.oTable._oSelectionPlugin.getSelectedCount(), 0, "the selection is cleared");
+			done();
+		});
+		that.oTable._oSelectionPlugin.addSelectionInterval(0, 9);
 	});
 });
