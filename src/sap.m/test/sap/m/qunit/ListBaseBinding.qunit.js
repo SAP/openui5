@@ -1,9 +1,8 @@
-/*global QUnit, sinon, jQuery*/
+/*global QUnit, jQuery*/
 sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/thirdparty/sinon-qunit",
 	/*Sinon itself already part of MockServer*/
-	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/m/ListBase",
 	"jquery.sap.strings",
@@ -22,7 +21,6 @@ sap.ui.define([
 	MockServer,
 	SinonQUnit,
 	ODataModel,
-	ODataModelV2,
 	ListBase,
 	StringUtil,
 	Sjax,
@@ -38,20 +36,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
-
-
 	// global service URL keep the path relative not to have cross domain issue.
 	var sServiceURI = "/service/";
-
-	function testOData(sMessage, fnTest) {
-		QUnit.test("ODATA: " + sMessage, fnTest);
-
-		// stub odata constructor with the new odata version 2
-		sinon.stub(sap.ui.model.odata, "ODataModel", ODataModelV2);
-		QUnit.test("ODATAV2: " + sMessage, fnTest);
-
-		sap.ui.model.odata.ODataModel.restore();
-	}
 
 	function createODataModel(sURL, mSettings) {
 		sURL = sURL || sServiceURI;
@@ -128,7 +114,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("BusyIndicator");
-	testOData("List should show busy indicator during the binding update", function(assert) {
+	QUnit.test("List should show busy indicator during the binding update", function(assert) {
 		var done = assert.async();
 		var oMockServer = startMockServer(0),
 			oList = createList({
@@ -156,7 +142,7 @@ sap.ui.define([
 		});
 	});
 
-	testOData("List should show busy indicator during the binding update when growing is true", function(assert) {
+	QUnit.test("List should show busy indicator during the binding update when growing is true", function(assert) {
 		var done = assert.async();
 		var oMockServer = startMockServer(),
 			oList = createList({
@@ -189,7 +175,7 @@ sap.ui.define([
 		});
 	});
 
-	testOData("List should show busy indicator when there is no data found", function(assert) {
+	QUnit.test("List should show busy indicator when there is no data found", function(assert) {
 		var done = assert.async();
 		var oMockServer = startMockServer(),
 			oList = createList({
@@ -221,7 +207,7 @@ sap.ui.define([
 		});
 	});
 
-	testOData("List should respect busyIndicatorDelay property to show busy indicator.", function(assert) {
+	QUnit.test("List should respect busyIndicatorDelay property to show busy indicator.", function(assert) {
 		var done = assert.async();
 		var iRespondDelay = 10,
 			oMockServer = startMockServer(iRespondDelay),
@@ -241,7 +227,7 @@ sap.ui.define([
 		});
 	});
 
-	testOData("List should respect enableBusyIndicator property to show busy indicator.", function(assert) {
+	QUnit.test("List should respect enableBusyIndicator property to show busy indicator.", function(assert) {
 		var done = assert.async();
 		var oMockServer = startMockServer(),
 			oList = createList({
@@ -260,7 +246,7 @@ sap.ui.define([
 		});
 	});
 
-	testOData("List should clear busy state when binding error has occured", function(assert) {
+	QUnit.test("List should clear busy state when binding error has occured", function(assert) {
 		var done = assert.async();
 		var oMockServer = startMockServer(),
 			oList = createList({
@@ -294,7 +280,7 @@ sap.ui.define([
 		});
 	});
 
-	testOData("Growing List should clear busy state and all data when binding error has occured", function(assert) {
+	QUnit.test("Growing List should clear busy state and all data when binding error has occured", function(assert) {
 		var done = assert.async();
 		var oMockServer = startMockServer(),
 			oDeferred = jQuery.Deferred(),
@@ -363,7 +349,7 @@ sap.ui.define([
 		oList.destroy();
 	});
 
-	testOData("Should not have a static after busy", function(assert) {
+	QUnit.test("Should not have a static after busy", function(assert) {
 		var done = assert.async();
 		// Arrange
 		var oMockServer = startMockServer();
@@ -390,7 +376,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Abort");
-	testOData("List should abort multiple requests and runs only the last one", function(assert) {
+	QUnit.test("List should abort multiple requests and runs only the last one", function(assert) {
 		var done = assert.async();
 
 		// arrange
@@ -437,7 +423,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("CountMode");
-	testOData("CountMode.None should show growing indicator when list is not complete yet", function(assert) {
+	QUnit.test("CountMode.None should show growing indicator when list is not complete yet", function(assert) {
 		var done = assert.async();
 		var iThreshold = 10,
 			oMockServer = startMockServer(),
@@ -466,7 +452,7 @@ sap.ui.define([
 		});
 	});
 
-	testOData("CountMode.None should not show growing indicator when all items are shown", function(assert) {
+	QUnit.test("CountMode.None should not show growing indicator when all items are shown", function(assert) {
 		var done = assert.async();
 		var iThreshold = 20,
 			oMockServer = startMockServer(),
@@ -511,7 +497,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("FocusAfterBindingUpdate");
-	document.hasFocus() && testOData("Focus should be retained after binding update", function(assert) {
+	document.hasFocus() && QUnit.test("Focus should be retained after binding update", function(assert) {
 		var done = assert.async();
 		var sFocusedControlId,
 			oMockServer = startMockServer(),
@@ -560,7 +546,7 @@ sap.ui.define([
 		});
 	});
 
-	testOData("Last setGrowingThreshold should be respected before data fetching", function(assert) {
+	QUnit.test("Last setGrowingThreshold should be respected before data fetching", function(assert) {
 		var done = assert.async();
 		var iInitThreshold = 5,
 			iLastThreshold = 10,
@@ -584,7 +570,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Upwards Growing Direction");
-	testOData("Should fetch the data and render in reverse order", function(assert) {
+	QUnit.test("Should fetch the data and render in reverse order", function(assert) {
 		var done = assert.async();
 		var iThreshold = 5,
 			oDeferred = jQuery.Deferred(),
@@ -630,7 +616,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("TwoWayBinding And Growing");
-	testOData("Property changes updates the list binding when growing feature is enabled", function(assert) {
+	QUnit.test("Property changes updates the list binding when growing feature is enabled", function(assert) {
 		var done = assert.async();
 		// arrange
 		var fnUpdateStartedSpy = this.spy(),
@@ -654,7 +640,7 @@ sap.ui.define([
 		});
 	});
 
-	testOData("Property changes should not update the list binding when unique key is defined", function(assert) {
+	QUnit.test("Property changes should not update the list binding when unique key is defined", function(assert) {
 		var done = assert.async();
 		// arrange
 		var fnUpdateStartedSpy = this.spy(),
