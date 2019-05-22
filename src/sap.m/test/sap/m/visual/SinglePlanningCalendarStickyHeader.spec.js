@@ -66,7 +66,7 @@ describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 		_overrideTime();
 		_scrollToBottom();
 
-		expect(takeScreenshot(oSPC)).toLookAs("work_week_sticky_none_scrolled_after_date_change");
+		expect(takeScreenshot(oSPC)).toLookAs("work_week_none_scrolled_date_changed");
 
 		element(by.id("SinglePlanningCalendar-Header-NavToolbar-PrevBtn")).click();
 	});
@@ -90,7 +90,7 @@ describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 		_overrideTime();
 		_scrollToBottom();
 
-		expect(takeScreenshot(oSPC)).toLookAs("work_week_sticky_all_scrolled_after_date_change");
+		expect(takeScreenshot(oSPC)).toLookAs("work_week_all_scrolled_date_change");
 
 		element(by.id("SinglePlanningCalendar-Header-NavToolbar-PrevBtn")).click();
 	});
@@ -114,7 +114,7 @@ describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 		_overrideTime();
 		_scrollToBottom();
 
-		expect(takeScreenshot(oSPC)).toLookAs("work_week_sticky_cols_scrolled_after_date_change");
+		expect(takeScreenshot(oSPC)).toLookAs("work_week_cols_scrolled_date_change");
 
 		element(by.id("SinglePlanningCalendar-Header-NavToolbar-PrevBtn")).click();
 	});
@@ -145,7 +145,7 @@ describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 		_overrideTime();
 		_scrollToBottom();
 
-		expect(takeScreenshot(oSPC)).toLookAs("week_sticky_none_scrolled_after_date_change");
+		expect(takeScreenshot(oSPC)).toLookAs("week_none_scrolled_date_change");
 
 		element(by.id("SinglePlanningCalendar-Header-NavToolbar-PrevBtn")).click();
 	});
@@ -169,7 +169,7 @@ describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 		_overrideTime();
 		_scrollToBottom();
 
-		expect(takeScreenshot(oSPC)).toLookAs("week_sticky_all_scrolled_after_date_change");
+		expect(takeScreenshot(oSPC)).toLookAs("week_all_scrolled_date_change");
 
 		element(by.id("SinglePlanningCalendar-Header-NavToolbar-PrevBtn")).click();
 	});
@@ -193,7 +193,7 @@ describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 		_overrideTime();
 		_scrollToBottom();
 
-		expect(takeScreenshot(oSPC)).toLookAs("week_sticky_cols_scrolled_after_date_change");
+		expect(takeScreenshot(oSPC)).toLookAs("week_cols_scrolled_date_change");
 
 		element(by.id("SinglePlanningCalendar-Header-NavToolbar-PrevBtn")).click();
 	});
