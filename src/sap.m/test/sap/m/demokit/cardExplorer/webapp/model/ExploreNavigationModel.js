@@ -45,6 +45,44 @@ sap.ui.define([
 						]
 					},
 					{
+						title: 'Table',
+						target: 'exploreSamples',
+						key: 'table',
+						settings: {
+							columns: 6
+						},
+						manifestUrl: '/samples/table.json'
+					},
+					{
+						title: 'Object',
+						target: 'exploreSamples',
+						key: 'object',
+						settings: {
+							columns: 5
+						},
+						manifestUrl: '/samples/object.json'
+					},
+					{
+						title: 'Timeline',
+						target: 'exploreSamples',
+						key: 'timeline',
+						subSamples: [
+							{
+								title: 'Upcoming Activities',
+								key: 'general',
+								manifestUrl: '/samples/timeline/activities.json',
+								settings: {
+									columns: 3
+								}
+							},
+							{
+								title: 'New Team Members',
+								key: 'line',
+								manifestUrl: '/samples/timeline/members.json'
+							}
+						]
+					},
+					{
 						title: 'Analytical',
 						target: 'exploreSamples',
 						key: 'analytical',
@@ -79,40 +117,24 @@ sap.ui.define([
 						]
 					},
 					{
-						title: 'Object',
+						title: 'Component',
 						target: 'exploreSamples',
-						key: 'object',
-						settings: {
-							columns: 5
-						},
-						manifestUrl: '/samples/object.json'
-					},
-					{
-						title: 'Table',
-						target: 'exploreSamples',
-						key: 'table',
-						settings: {
-							columns: 6
-						},
-						manifestUrl: '/samples/table.json'
-					},
-					{
-						title: 'Timeline',
-						target: 'exploreSamples',
-						key: 'timeline',
+						key: 'component',
 						subSamples: [
 							{
-								title: 'Upcoming Activities',
-								key: 'general',
-								manifestUrl: '/samples/timeline/activities.json',
-								settings: {
-									columns: 3
-								}
+								title: 'Media',
+								key: 'media',
+								manifestUrl: '/samples/component/cardContent/manifest.json'
 							},
 							{
-								title: 'New Team Members',
-								key: 'line',
-								manifestUrl: '/samples/timeline/members.json'
+								title: 'Media, header at bottom',
+								key: 'mediaBottom',
+								manifestUrl: '/samples/component/cardContentHeaderBottom/manifest.json'
+							},
+							{
+								title: 'Buy bus ticket',
+								key: 'busTicket',
+								manifestUrl: '/samples/component/cardContentControls/manifest.json'
 							}
 						]
 					}
