@@ -444,7 +444,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.write(">");
 
 		if (oTable.getSelectionMode() !== SelectionMode.Single) {
-			if (mRenderConfig.headerSelector.icon) {
+			if (mRenderConfig.headerSelector.type === "clear" && mRenderConfig.headerSelector.icon) {
 				rm.renderControl(mRenderConfig.headerSelector.icon);
 			} else {
 				rm.write("<div");
