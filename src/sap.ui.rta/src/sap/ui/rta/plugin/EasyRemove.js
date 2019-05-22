@@ -99,7 +99,7 @@ sap.ui.define([
 		var oHtmlIconOuter = jQuery("<div class='sapUiRtaPersDeleteIconOuter'> </div>");
 
 		oOverlay._oDeleteButton = new Button(sId, {
-			icon : "sap-icon://decline",
+			icon : "sap-icon://less",
 			tooltip: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("CTX_REMOVE"),
 			enabled: bEnabled
 		}).placeAt(oHtmlIconOuter.get(0));
