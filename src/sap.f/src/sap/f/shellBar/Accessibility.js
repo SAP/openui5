@@ -8,8 +8,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var oControl;
-
 	/**
 	 * This class is used to maintain all the accessibility roles, tooltips, etc., needed for the ShellBar control life cycle.
 	 * @alias sap/f/shellBar/Accessibility
@@ -18,8 +16,8 @@ sap.ui.define([
 	 */
 	var Accessibility = function (oContext) {
 		if (oContext) {
-			oControl = oContext;
-			oControl.addDelegate(this._controlDelegate, false, this);
+			this._oControl = oContext;
+			this._oControl.addDelegate(this._controlDelegate, false, this);
 		}
 
 		this.oRb = Core.getLibraryResourceBundle("sap.f");
@@ -55,26 +53,26 @@ sap.ui.define([
 		};
 
 		// Attach Event Delegates
-		if (oControl._oSecondTitle) {
-			oControl._oSecondTitle.addDelegate(this._oDelegateSecondTitle, false, this);
+		if (this._oControl._oSecondTitle) {
+			this._oControl._oSecondTitle.addDelegate(this._oDelegateSecondTitle, false, this);
 		}
-		if (oControl._oSearch) {
-			oControl._oSearch.addDelegate(this._oDelegateSearch, false, this);
+		if (this._oControl._oSearch) {
+			this._oControl._oSearch.addDelegate(this._oDelegateSearch, false, this);
 		}
-		if (oControl._oNotifications) {
-			oControl._oNotifications.addDelegate(this._oDelegateNotifications, false, this);
+		if (this._oControl._oNotifications) {
+			this._oControl._oNotifications.addDelegate(this._oDelegateNotifications, false, this);
 		}
-		if (oControl._oAvatarButton) {
-			oControl._oAvatarButton.addDelegate(this._oDelegateAvatar, false, this);
+		if (this._oControl._oAvatarButton) {
+			this._oControl._oAvatarButton.addDelegate(this._oDelegateAvatar, false, this);
 		}
-		if (oControl._oProductSwitcher) {
-			oControl._oProductSwitcher.addDelegate(this._oDelegateProducts, false, this);
+		if (this._oControl._oProductSwitcher) {
+			this._oControl._oProductSwitcher.addDelegate(this._oDelegateProducts, false, this);
 		}
-		if (oControl._oNavButton) {
-			oControl._oNavButton.addDelegate(this._oDelegateNavButton, false, this);
+		if (this._oControl._oNavButton) {
+			this._oControl._oNavButton.addDelegate(this._oDelegateNavButton, false, this);
 		}
-		if (oControl._oMenuButton) {
-			oControl._oMenuButton.addDelegate(this._oDelegateMenuButton, false, this);
+		if (this._oControl._oMenuButton) {
+			this._oControl._oMenuButton.addDelegate(this._oDelegateMenuButton, false, this);
 		}
 	};
 
@@ -100,25 +98,25 @@ sap.ui.define([
 		var sTooltip = this.getEntityTooltip("NOTIFICATIONS"),
 			sAriaLabel = sNotificationsNumber ? sNotificationsNumber + " " + sTooltip : sTooltip;
 
-		oControl._oNotifications.setTooltip(sAriaLabel);
-		oControl._oNotifications.$().attr("aria-label", sAriaLabel);
+		this._oControl._oNotifications.setTooltip(sAriaLabel);
+		this._oControl._oNotifications.$().attr("aria-label", sAriaLabel);
 	};
 
 	Accessibility.prototype.onAfterRenderingSecondTitle = function () {
-		var $oSecondTitle = oControl._oSecondTitle.$();
+		var $oSecondTitle = this._oControl._oSecondTitle.$();
 
 		$oSecondTitle.attr("role", "heading");
 		$oSecondTitle.attr("aria-level", "2");
 	};
 
 	Accessibility.prototype.onAfterRenderingSearch = function () {
-		oControl._oSearch.$().attr("aria-label", this.getEntityTooltip("SEARCH"));
+		this._oControl._oSearch.$().attr("aria-label", this.getEntityTooltip("SEARCH"));
 	};
 
 	Accessibility.prototype.onAfterRenderingNotifications = function () {
-		var $oNotifications = oControl._oNotifications.$(),
+		var $oNotifications = this._oControl._oNotifications.$(),
 			sTooltip = this.getEntityTooltip("NOTIFICATIONS"),
-			sNotificationsNubmer = oControl._oNotifications.data("notifications"),
+			sNotificationsNubmer = this._oControl._oNotifications.data("notifications"),
 			sAriaLabel = sNotificationsNubmer ? sNotificationsNubmer + " " + sTooltip : sTooltip;
 
 		$oNotifications.attr("aria-label", sAriaLabel);
@@ -126,25 +124,25 @@ sap.ui.define([
 	};
 
 	Accessibility.prototype.onAfterRenderingAvatar = function () {
-		var $oAvatar = oControl._oAvatarButton.$();
+		var $oAvatar = this._oControl._oAvatarButton.$();
 
 		$oAvatar.attr("aria-label", this.getEntityTooltip("PROFILE"));
 		$oAvatar.attr("aria-haspopup", "menu");
 	};
 
 	Accessibility.prototype.onAfterRenderingProducts = function () {
-		var $oProducts = oControl._oProductSwitcher.$();
+		var $oProducts = this._oControl._oProductSwitcher.$();
 
 		$oProducts.attr("aria-label", this.getEntityTooltip("PRODUCTS"));
 		$oProducts.attr("aria-haspopup", "menu");
 	};
 
 	Accessibility.prototype.onAfterRenderingNavButton = function () {
-		oControl._oNavButton.$().attr("aria-label", this.getEntityTooltip("BACK"));
+		this._oControl._oNavButton.$().attr("aria-label", this.getEntityTooltip("BACK"));
 	};
 
 	Accessibility.prototype.onAfterRenderingMenuButton = function () {
-		var $oMenuButton = oControl._oMenuButton.$();
+		var $oMenuButton = this._oControl._oMenuButton.$();
 
 		$oMenuButton.attr("aria-label", this.getEntityTooltip("MENU"));
 		$oMenuButton.attr("aria-haspopup", "menu");
@@ -152,29 +150,29 @@ sap.ui.define([
 
 	Accessibility.prototype.exit = function () {
 		// Detach Event Delegates
-		if (oControl) {
-			oControl.removeDelegate(this._controlDelegate);
+		if (this._oControl) {
+			this._oControl.removeDelegate(this._controlDelegate);
 		}
-		if (oControl._oSecondTitle) {
-			oControl._oSecondTitle.removeDelegate(this._oDelegateSecondTitle);
+		if (this._oControl._oSecondTitle) {
+			this._oControl._oSecondTitle.removeDelegate(this._oDelegateSecondTitle);
 		}
-		if (oControl._oSearch) {
-			oControl._oSearch.removeDelegate(this._oDelegateSearch);
+		if (this._oControl._oSearch) {
+			this._oControl._oSearch.removeDelegate(this._oDelegateSearch);
 		}
-		if (oControl._oNotifications) {
-			oControl._oNotifications.removeDelegate(this._oDelegateNotifications);
+		if (this._oControl._oNotifications) {
+			this._oControl._oNotifications.removeDelegate(this._oDelegateNotifications);
 		}
-		if (oControl._oAvatarButton) {
-			oControl._oAvatarButton.removeDelegate(this._oDelegateAvatar);
+		if (this._oControl._oAvatarButton) {
+			this._oControl._oAvatarButton.removeDelegate(this._oDelegateAvatar);
 		}
-		if (oControl._oProductSwitcher) {
-			oControl._oProductSwitcher.removeDelegate(this._oDelegateProducts);
+		if (this._oControl._oProductSwitcher) {
+			this._oControl._oProductSwitcher.removeDelegate(this._oDelegateProducts);
 		}
-		if (oControl._oNavButton) {
-			oControl._oNavButton.removeDelegate(this._oDelegateNavButton);
+		if (this._oControl._oNavButton) {
+			this._oControl._oNavButton.removeDelegate(this._oDelegateNavButton);
 		}
-		if (oControl._oMenuButton) {
-			oControl._oMenuButton.removeDelegate(this._oDelegateMenuButton);
+		if (this._oControl._oMenuButton) {
+			this._oControl._oMenuButton.removeDelegate(this._oDelegateMenuButton);
 		}
 	};
 
