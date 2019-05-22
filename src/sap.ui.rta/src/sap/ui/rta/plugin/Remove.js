@@ -57,12 +57,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * @param {sap.ui.dt.ElementOverlay} oOverlay overlay
-	 * @returns {boolean} editable or not
+	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay - Overlay to be checked for editable
+	 * @return {promise.<boolean>|booolean} <code>true</code> if it's editable wrapped in a promise.
 	 * @private
 	 */
 	Remove.prototype._isEditable = function (oElementOverlay) {
-		var bEditable = false;
 		var oElement = oElementOverlay.getElement();
 
 		var oRemoveAction = this.getAction(oElementOverlay);
@@ -70,15 +69,14 @@ sap.ui.define([
 			if (oRemoveAction.changeOnRelevantContainer) {
 				oElement = oElementOverlay.getRelevantContainer();
 			}
-			bEditable = this.hasChangeHandler(oRemoveAction.changeType, oElement) &&
-						this._checkRelevantContainerStableID(oRemoveAction, oElementOverlay);
+			return this.hasChangeHandler(oRemoveAction.changeType, oElement, true)
+				.then(function(bHasChangeHandler) {
+					return bHasChangeHandler
+						&& this._checkRelevantContainerStableID(oRemoveAction, oElementOverlay)
+						&& this.hasStableId(oElementOverlay);
+				}.bind(this));
 		}
-
-		if (bEditable) {
-			return this.hasStableId(oElementOverlay);
-		}
-
-		return bEditable;
+		return false;
 	};
 
 	/**

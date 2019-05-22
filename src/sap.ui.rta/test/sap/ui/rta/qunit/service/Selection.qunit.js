@@ -53,7 +53,7 @@ function (
 			this.oComponentContainer.placeAt('qunit-fixture');
 			sap.ui.getCore().applyChanges();
 
-			this.oHasChangeHandlerStud = sinon.stub(BasePlugin.prototype, 'hasChangeHandler').returns(true);
+			this.oHasChangeHandlerStud = sinon.stub(BasePlugin.prototype, 'hasChangeHandler').resolves(true);
 		},
 		beforeEach: function () {
 			this.oRta = new RuntimeAuthoring({
