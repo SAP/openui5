@@ -893,20 +893,22 @@ sap.ui.define([
 	 * Sets the given date as start date. The current date is used as default.
 	 * Depending on the current view the start date may be adjusted (for example, the week view shows always the first weekday
 	 * of the same week as the given date).
-	 * @param {Date} oStartDate the date to set as <code>sap.m.PlanningCalendar</code> <code>startDate</code>. May be changed(adjusted) if
+	 * @param {Date} oDate the date to set as <code>sap.m.PlanningCalendar</code> <code>startDate</code>. May be changed(adjusted) if
 	 * property <code>startDate</code> is adjusted. See remark about week view above.
 	 * @returns {sap.m.PlanningCalendar} <code>this</code> to allow method chaining
 	 * @public
 	 */
-	PlanningCalendar.prototype.setStartDate = function(oStartDate){
+	PlanningCalendar.prototype.setStartDate = function(oDate) {
 		var oFirstDateOfWeek,
-			oFirstDateOfMonth;
+			oFirstDateOfMonth,
+			oStartDate;
 
-		if (!oStartDate) {
+		if (!oDate) {
 			//set default value
 			oStartDate = new Date();
 		} else {
-			CalendarUtils._checkJSDateObject(oStartDate);
+			CalendarUtils._checkJSDateObject(oDate);
+			oStartDate = new Date(oDate.getTime());
 		}
 
 		if (this.getViewKey() === PlanningCalendarBuiltInView.Week) {
@@ -2082,6 +2084,11 @@ sap.ui.define([
 	PlanningCalendar.prototype._handleCalendarSelect = function (oEvent) {
 
 		var aSelectedDates = oEvent.oSource.getSelectedDates();
+
+		if (!aSelectedDates.length) {
+			return;
+		}
+
 		var oEvtSelectedStartDate = new Date(aSelectedDates[0].getStartDate());
 		// calculate end date
 		var oEndDate = CalendarUtils._createUniversalUTCDate(oEvtSelectedStartDate, undefined, true);
