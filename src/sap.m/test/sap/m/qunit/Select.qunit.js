@@ -9420,6 +9420,35 @@ sap.ui.define([
 			oSelect.destroy();
 		});
 
+		QUnit.test("it should not open the value state message when it is already opened", function (assert) {
+
+			// system under test
+			var oSelect = new Select({
+					valueState: ValueState.Warning
+				}),
+				oValueState,
+				oSpy;
+
+			// arrange
+			oSelect.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oSelect.openValueStateMessage();
+			this.clock.tick(101);
+
+			oValueState = oSelect.getValueStateMessage();
+			oSpy = this.spy(oValueState, "open");
+			oSelect.openValueStateMessage();
+
+			// assert
+			assert.strictEqual(oSpy.callCount, 0, "Value state message is not opened again");
+			assert.strictEqual(oSelect._bValueStateMessageOpened, true, "_bValueStateMessageOpened is true");
+
+			// cleanup
+			oSelect.destroy();
+		});
+
 		QUnit.test("it should close the value state message popup on focusout", function (assert) {
 
 			this.stub(Device, "system", {
@@ -9485,6 +9514,38 @@ sap.ui.define([
 			oSelect.destroy();
 		});
 
+		QUnit.test("it should not close the value state message when it is already closed", function (assert) {
+
+			// system under test
+			var oSelect = new Select({
+					valueState: ValueState.Warning
+				}),
+				oValueState,
+				oSpy;
+
+			// arrange
+			oSelect.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oSelect.openValueStateMessage();
+			this.clock.tick(101);
+
+			oSelect.closeValueStateMessage();
+			this.clock.tick(101);
+
+			oValueState = oSelect.getValueStateMessage();
+			oSpy = this.spy(oValueState, "close");
+			oSelect.closeValueStateMessage();
+
+			// assert
+			assert.strictEqual(oSpy.callCount, 0, "Value state message is not closed again");
+			assert.strictEqual(oSelect._bValueStateMessageOpened, false, "_bValueStateMessageOpened is false");
+
+			// cleanup
+			oSelect.destroy();
+		});
+
 		QUnit.test("it should open the value state message popup on setValueState to Error", function (assert) {
 
 			this.stub(Device, "system", {
@@ -9541,6 +9602,40 @@ sap.ui.define([
 			// assert
 			var oValueStateMessageDomRef = document.getElementById(oSelect.getValueStateMessageId());
 			assert.strictEqual(oValueStateMessageDomRef, null);
+
+			// cleanup
+			oSelect.destroy();
+		});
+
+		QUnit.test("shouldValueStateMessageBeOpened returns correct value, based on _bValueStateMessageOpened property", function (assert) {
+
+			// system under test
+			var oSelect = new Select({
+					valueState: ValueState.Error,
+					enabled: true,
+					editable: true
+				}),
+				bShouldOpenValueStateMessage;
+
+			// arrange
+			oSelect._bValueStateMessageOpened = true;
+			oSelect.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			bShouldOpenValueStateMessage = oSelect.shouldValueStateMessageBeOpened();
+
+			//assert
+			assert.strictEqual(bShouldOpenValueStateMessage, false,
+				"Value state message popup should not be opened again when it already opened");
+
+			// act
+			oSelect._bValueStateMessageOpened = false;
+			bShouldOpenValueStateMessage = oSelect.shouldValueStateMessageBeOpened();
+
+			// assert
+			assert.strictEqual(bShouldOpenValueStateMessage, true,
+				"Value state message popup should be opened if it is currently closed");
 
 			// cleanup
 			oSelect.destroy();
