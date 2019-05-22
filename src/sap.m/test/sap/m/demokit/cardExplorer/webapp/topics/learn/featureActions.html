@@ -8,136 +8,140 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="utf-8">
 	<link rel="stylesheet" href="../css/style.css">
-	<link rel="stylesheet" href="../css/prettify-light.css" />
-	<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 	<script id="sap-ui-bootstrap"
 			src="../../../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_fiori_3">
 	</script>
+
+	<link href="../google-code-prettify/prettify.css" rel="stylesheet">
+	<script src="../google-code-prettify/run_prettify.js"></script>
+
 </head>
 
 <body class="sapUiBody topicBody">
 
-	<div class="topic">
-		<div class="content">
+<div class="topic">
+	<div class="content">
 
-			<h1>
-				Actions
-			</h1>
+		<h1>
+			Actions
+		</h1>
 
-			<h2 id="overview">
-				Overview
-			</h2>
+		<h2 id="overview">
+			Overview
+		</h2>
 
-			<p>
-				Actions can be defined on different levels inside the card manifest. Actionable parts of the card are header, content, list items, table rows.
-			</p>
+		<p>
+			Actions can be defined on different levels inside the card manifest. Actionable parts of the card are
+			header, content, list items, table rows.
+		</p>
 
-			<p>
-				Action properties:
-			</p>
+		<p>
+			Action properties:
+		</p>
 
-			<table>
-				<tr>
-					<th>Property</th>
-					<th>Type</th>
-					<th>Required</th>
-					<th>Description</th>
-					<th>Version</th>
-				</tr>
-				<tr>
-					<td>type</td>
-					<td>string</td>
-					<td>Yes</td>
-					<td>The type of the action. Possible values: "Navigation".</td>
-					<td>1.2.0</td>
-				</tr>
-				<tr>
-					<td>enabled</td>
-					<td>boolean</td>
-					<td>No</td>
-					<td>If the action is enabled. Default value is true.</td>
-					<td>1.2.0</td>
-				</tr>
-				<tr>
-					<td>parameters</td>
-					<td>Object</td>
-					<td>No</td>
-					<td>The parameters of the action.</td>
-					<td>1.2.0</td>
-				</tr>
-			</table>
+		<table>
+			<tr>
+				<th>Property</th>
+				<th>Type</th>
+				<th>Required</th>
+				<th>Description</th>
+				<th>Version</th>
+			</tr>
+			<tr>
+				<td>type</td>
+				<td>string</td>
+				<td>Yes</td>
+				<td>The type of the action. Possible values: "Navigation".</td>
+				<td>1.2.0</td>
+			</tr>
+			<tr>
+				<td>enabled</td>
+				<td>boolean</td>
+				<td>No</td>
+				<td>If the action is enabled. Default value is true.</td>
+				<td>1.2.0</td>
+			</tr>
+			<tr>
+				<td>parameters</td>
+				<td>Object</td>
+				<td>No</td>
+				<td>The parameters of the action.</td>
+				<td>1.2.0</td>
+			</tr>
+		</table>
 
-			<p>
-				Navigation (extends Action):
-			</p>
+		<p>
+			Navigation (extends Action):
+		</p>
 
-			<table>
-				<tr>
-					<th>Property</th>
-					<th>Type</th>
-					<th>Required</th>
-					<th>Description</th>
-					<th>Version</th>
-				</tr>
-				<tr>
-					<td>service</td>
-					<td>string or Service</td>
-					<td>No</td>
-					<td>The service to handle the navigation.</td>
-					<td>1.2.0</td>
-				</tr>
-				<tr>
-					<td>url</td>
-					<td>string</td>
-					<td>No</td>
-					<td>The URL to navigate to.</td>
-					<td>1.2.0</td>
-				</tr>
-				<tr>
-					<td>target</td>
-					<td>string</td>
-					<td>No</td>
-					<td>If the browser should open a new window or use the same window. Possible values: "_blank", "_self". Default value is "_blank".</td>
-					<td>1.2.0</td>
-				</tr>
-			</table>
+		<table>
+			<tr>
+				<th>Property</th>
+				<th>Type</th>
+				<th>Required</th>
+				<th>Description</th>
+				<th>Version</th>
+			</tr>
+			<tr>
+				<td>service</td>
+				<td>string or Service</td>
+				<td>No</td>
+				<td>The service to handle the navigation.</td>
+				<td>1.2.0</td>
+			</tr>
+			<tr>
+				<td>url</td>
+				<td>string</td>
+				<td>No</td>
+				<td>The URL to navigate to.</td>
+				<td>1.2.0</td>
+			</tr>
+			<tr>
+				<td>target</td>
+				<td>string</td>
+				<td>No</td>
+				<td>If the browser should open a new window or use the same window. Possible values: "_blank", "_self".
+					Default value is "_blank".
+				</td>
+				<td>1.2.0</td>
+			</tr>
+		</table>
 
-			<p>
-				Service:
-			</p>
+		<p>
+			Service:
+		</p>
 
-			<table>
-				<tr>
-					<th>Property</th>
-					<th>Type</th>
-					<th>Required</th>
-					<th>Description</th>
-					<th>Version</th>
-				</tr>
-				<tr>
-					<td>name</td>
-					<td>string</td>
-					<td>Yes</td>
-					<td>The name of the service.</td>
-					<td>1.1.0</td>
-				</tr>
-				<tr>
-					<td>parameters</td>
-					<td>Object</td>
-					<td>No</td>
-					<td>The parameters of the service.</td>
-					<td>1.1.0</td>
-				</tr>
-			</table>
+		<table>
+			<tr>
+				<th>Property</th>
+				<th>Type</th>
+				<th>Required</th>
+				<th>Description</th>
+				<th>Version</th>
+			</tr>
+			<tr>
+				<td>name</td>
+				<td>string</td>
+				<td>Yes</td>
+				<td>The name of the service.</td>
+				<td>1.1.0</td>
+			</tr>
+			<tr>
+				<td>parameters</td>
+				<td>Object</td>
+				<td>No</td>
+				<td>The parameters of the service.</td>
+				<td>1.1.0</td>
+			</tr>
+		</table>
 
-			<h2 id="examples">
-				Examples
-			</h2>
+		<h2 id="examples">
+			Examples
+		</h2>
 
-			<p>Header level navigation action with static URL:</p>
-			<pre class="prettyprint small">
-<xmp class="language-json">{
+		<p>Header level navigation action with static URL:</p>
+		<pre class="prettyprint">{
 	"sap.card": {
 		"header": {
 			"title": "Some title",
@@ -150,11 +154,10 @@
 		},
 		...
 	}
-}</xmp></pre>
+}</pre>
 
-			<p>Content level navigation action with static URL and target:</p>
-			<pre class="prettyprint small">
-<xmp class="language-json">{
+		<p>Content level navigation action with static URL and target:</p>
+		<pre class="prettyprint">{
 	"sap.card": {
 		"content": {
 			...
@@ -168,11 +171,11 @@
 		},
 		...
 	}
-}</xmp></pre>
+}</pre>
 
-			<p>List item navigation action with service navigation. The service will decide if every item is a correct navigation target or not:</p>
-			<pre class="prettyprint small">
-<xmp class="language-json">{
+		<p>List item navigation action with service navigation. The service will decide if every item is a correct
+			navigation target or not:</p>
+		<pre class="prettyprint">{
 	"sap.ui5": {
 		"services": {
 			"Navigation": {
@@ -213,11 +216,11 @@
 			}
 		}
 	}
-}</xmp></pre>
+}</pre>
 
-			<p>Table row navigation action. In the example below the enabled flag is set based on if the item has a URL or not:</p>
-			<pre class="prettyprint small">
-<xmp class="language-json">{
+		<p>Table row navigation action. In the example below the enabled flag is set based on if the item has a URL or
+			not:</p>
+		<pre class="prettyprint">{
 	"sap.card": {
 		"type": "Table",
 		"content": {
@@ -260,16 +263,13 @@
 			}
 		}
 	}
-}</xmp></pre>
-
-		</div>
-		<div class="navigation">
-			<h4>Table of Contents</h4>
-			<div><a href="#overview">Overview</a></div>
-			<div><a href="#examples">Examples</a></div>
-		</div>
+}</pre>
 	</div>
-
+	<div class="navigation">
+		<h4>Table of Contents</h4>
+		<div><a href="#overview">Overview</a></div>
+		<div><a href="#examples">Examples</a></div>
+	</div>
+</div>
 </body>
-
 </html>
