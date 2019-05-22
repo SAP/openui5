@@ -250,12 +250,19 @@ sap.ui.define([
 	DateTimeField.prototype._parseValue = function (sValue, bDisplayFormat) {
 		var oBinding = this.getBinding("value"),
 			oBindingType = oBinding && oBinding.getType && oBinding.getType(),
+			oFormatOptions,
 			oDateLocal,
 			oDate;
 
 		if (oBindingType && this._isSupportedBindingType(oBindingType)) {
 			try {
 				oDate = oBindingType.parseValue(sValue, "string");
+
+				oFormatOptions = oBindingType.oFormatOptions;
+				if (oFormatOptions && oFormatOptions.source && oFormatOptions.source.pattern == "timestamp") {
+					// convert timestamp back to Date
+					oDate = new Date(oDate);
+				}
 			} catch (e) {
 				// ignore, ParseException to be handled in ManagedObject.updateModelProperty()
 			}
@@ -281,6 +288,7 @@ sap.ui.define([
 
 		var oBinding = this.getBinding("value"),
 			oBindingType = oBinding && oBinding.getType && oBinding.getType(),
+			oFormatOptions,
 			oDateUTC;
 
 		if (oBindingType && this._isSupportedBindingType(oBindingType)) {
@@ -292,6 +300,13 @@ sap.ui.define([
 				oDateUTC.setUTCFullYear(oDate.getFullYear());
 				oDate = oDateUTC;
 			}
+
+			oFormatOptions = oBindingType.oFormatOptions;
+			if (oFormatOptions && oFormatOptions.source && oFormatOptions.source.pattern == "timestamp") {
+				// convert Date to timestamp
+				oDate = oDate.getTime();
+			}
+
 			return oBindingType.formatValue(oDate, "string");
 		}
 
