@@ -14,6 +14,7 @@
 	border-bottom: 1px solid #d9d9d9;
 	padding-bottom: 1rem;
 	font-size: 2.25rem;
+	font-weight: bold;
 	line-height: 3rem;
 }
 
@@ -30,6 +31,7 @@
 .topic h4 {
 	font-size: 16px;
 	line-height: 18px;
+	font-weight: bold;
 }
 
 .topic .navigation h4 {
@@ -55,6 +57,10 @@
 	display: inline-block;
 	box-sizing: border-box;
 	width: calc(100% - 10rem);
+}
+
+.topic .content a {
+	line-height: 24px;
 }
 
 .navigation {
