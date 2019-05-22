@@ -34,7 +34,9 @@
 				<m:ObjectStatus title="Functional Area" text="Developement"/>
 				<m:ObjectStatus title="Cost Center" text="PI DFA GD Programs and Product"/>
 				<m:ObjectStatus title="Email" text="email@address.com"/>
-				<m:Token text="Visible on M and L size"/>
+				<m:Tokenizer>
+					<m:Token text="Visible on M and L size"/>
+				</m:Tokenizer>
 			</layout:VerticalLayout>
 
 			<layout:VerticalLayout>
@@ -43,7 +45,9 @@
 				</layout:layoutData>
 				<m:ObjectStatus text="Senior UI Developer" state="Success"/>
 				<m:RatingIndicator maxValue="6" class="sapUiSmallMarginBottom" value="5" tooltip="Rating Tooltip"/>
-				<m:Token text="Visible on L size"/>
+				<m:Tokenizer>
+					<m:Token text="Visible on L size"/>
+				</m:Tokenizer>
 			</layout:VerticalLayout>
 		</headerContent>
 
