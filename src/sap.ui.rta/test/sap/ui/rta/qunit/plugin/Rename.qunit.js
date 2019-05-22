@@ -115,8 +115,11 @@ function (
 			this.oRenamePlugin.deregisterElementOverlay(this.oFormContainerOverlay);
 			this.oRenamePlugin.registerElementOverlay(this.oFormContainerOverlay);
 
-			assert.strictEqual(this.oRenamePlugin._isEditable(this.oFormContainerOverlay), true, "then the overlay is editable");
-			assert.strictEqual(this.oRenamePlugin.isAvailable([this.oFormContainerOverlay]), true, "then rename is available for the overlay");
+			return this.oRenamePlugin._isEditable(this.oFormContainerOverlay)
+				.then(function(bEditable) {
+					assert.strictEqual(bEditable, true, "then the overlay is editable");
+					assert.strictEqual(this.oRenamePlugin.isAvailable([this.oFormContainerOverlay]), true, "then rename is available for the overlay");
+				}.bind(this));
 		});
 
 		QUnit.test("when _isEditable is called, rename has changeOnRelevantContainer true and the Form does not have a stable id", function(assert) {
@@ -140,10 +143,14 @@ function (
 
 			sandbox.stub(this.oFormContainerOverlay, "getRelevantContainer").returns(this.oForm);
 
-			assert.strictEqual(this.oRenamePlugin._isEditable(this.oFormContainerOverlay), false, "then the overlay is not editable");
+			return this.oRenamePlugin._isEditable(this.oFormContainerOverlay)
+				.then(function(bEditable) {
+					assert.strictEqual(bEditable, false, "then the overlay is not editable");
+				});
 		});
 
 		QUnit.test("when isAvailable and isEnabled are called", function(assert) {
+			var done = assert.async();
 			this.oFormContainerOverlay.setDesignTimeMetadata({
 				actions: {
 					rename: {
@@ -157,12 +164,19 @@ function (
 					}
 				}
 			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				assert.strictEqual(this.oRenamePlugin.isAvailable([this.oFormContainerOverlay]), true, "then rename is available for the overlay");
+				assert.strictEqual(this.oRenamePlugin.isEnabled([this.oFormContainerOverlay]), true, "then rename is enabled for the overlay");
+				this.oRenamePlugin._isEditable(this.oFormContainerOverlay)
+					.then(function(bEditable) {
+						assert.strictEqual(bEditable, true, "then rename is editable for the overlay");
+						done();
+					});
+			}.bind(this));
+
 			this.oRenamePlugin.deregisterElementOverlay(this.oFormContainerOverlay);
 			this.oRenamePlugin.registerElementOverlay(this.oFormContainerOverlay);
-
-			assert.strictEqual(this.oRenamePlugin.isAvailable([this.oFormContainerOverlay]), true, "then rename is available for the overlay");
-			assert.strictEqual(this.oRenamePlugin.isEnabled([this.oFormContainerOverlay]), true, "then rename is enabled for the overlay");
-			assert.strictEqual(this.oRenamePlugin._isEditable(this.oFormContainerOverlay), true, "then rename is editable for the overlay");
 		});
 
 		QUnit.test("when retrieving the context menu item", function(assert) {
@@ -199,7 +213,12 @@ function (
 
 			assert.strictEqual(this.oRenamePlugin.isAvailable([this.oFormContainerOverlay]), false, "then rename is not available for the overlay");
 			assert.strictEqual(this.oRenamePlugin.isEnabled([this.oFormContainerOverlay]), false, "then rename is not enabled for the overlay");
-			assert.strictEqual(this.oRenamePlugin._isEditable(this.oFormContainerOverlay), false, "then rename is not editable for the overlay");
+
+			return Promise.resolve()
+				.then(this.oRenamePlugin._isEditable.bind(this.oRenamePlugin, this.oFormContainerOverlay))
+				.then(function(bEditable) {
+					assert.strictEqual(bEditable, false, "then rename is not editable for the overlay");
+				});
 		});
 	});
 

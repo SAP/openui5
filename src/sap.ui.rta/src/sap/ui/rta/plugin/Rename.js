@@ -153,28 +153,25 @@ sap.ui.define([
 	};
 
 	/**
-	 * @param {sap.ui.dt.ElementOverlay} oOverlay overlay to be checked for editable
-	 * @returns {boolean} true if it's editable
+	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Overlay to be checked for editable
+	 * @returns {promise.<boolean>|booolean} <code>true</code> if it's editable wrapped in a promise.
 	 * @private
 	 */
 	Rename.prototype._isEditable = function(oOverlay) {
-		var bEditable = false;
 		var oElement = oOverlay.getElement();
-
 		var oRenameAction = this.getAction(oOverlay);
 		if (oRenameAction && oRenameAction.changeType) {
 			if (oRenameAction.changeOnRelevantContainer) {
 				oElement = oOverlay.getRelevantContainer();
 			}
-			bEditable = this.hasChangeHandler(oRenameAction.changeType, oElement) &&
-						this._checkRelevantContainerStableID(oRenameAction, oOverlay);
+			return this.hasChangeHandler(oRenameAction.changeType, oElement, true)
+				.then(function(bHasChangeHandler) {
+					return bHasChangeHandler
+						&& this._checkRelevantContainerStableID(oRenameAction, oOverlay)
+						&& this.hasStableId(oOverlay);
+				}.bind(this));
 		}
-
-		if (bEditable) {
-			return this.hasStableId(oOverlay);
-		}
-
-		return bEditable;
+		return false;
 	};
 
 	/**
