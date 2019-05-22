@@ -269,7 +269,7 @@ sap.ui.define([
 			Patcher.openStart("div").openEnd().close("div");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "Only one change");
-			assert.equal(oElement.getAttribute("class"), null, "class attribute is removed");
+			assert.notOk(oElement.getAttribute("class"), "class attribute is removed");
 		});
 
 		this.html("<div class='x y'></div>").patch(function() {
@@ -283,7 +283,7 @@ sap.ui.define([
 			Patcher.openStart("div").style("width", "calc(100% - 2rem)").openEnd().close("div");
 		}, function(aMutations, oElement) {
 			assert.equal(aMutations.length, 1, "Only one change");
-			assert.equal(oElement.style.width, "calc(100% - 2rem)", "style is changed");
+			assert.equal(oElement.getAttribute("style"), "width: calc(100% - 2rem);", "style is changed");
 		});
 
 		this.html("<div style='width: 10px;'></div>").patch(function() {
