@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/uxap/library",
+	"sap/uxap/ObjectPageDynamicHeaderTitle",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSectionBase",
 	"sap/uxap/ObjectPageSubSection",
@@ -10,7 +11,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageLayout",
 	"sap/m/Label",
 	"sap/m/Button"],
-function($, Core, Lib, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, Label, Button) {
+function($, Core, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, Label, Button) {
 	"use strict";
 
 	var aStandardModeConfig = [{
@@ -1361,6 +1362,35 @@ function($, Core, Lib, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSe
 			//check
 			assert.strictEqual(oSpy.called, true, "_requestAdjustLayoutAndUxRules is called");
 			done();
+		}, this);
+	});
+
+	QUnit.test("sapUxAPObjectPageSubSectionFitContainer with dynamic header title - no scroll when only one SubSection",
+		function (assert) {
+			// Set-up
+			var oPage = this.oObjectPage,
+				oSection = this.oObjectPage.getSections()[0],
+				oSubSection = oSection.getSubSections()[0],
+				oToggleScrollingSpy = sinon.spy(oPage, "_toggleScrolling"),
+				oComputerSpacerHeightSpy = sinon.spy(oPage, "_computeSpacerHeight"),
+				done = assert.async();
+
+			assert.expect(5);
+
+			// Аct
+			oPage.setHeaderTitle(new ObjectPageDynamicHeaderTitle());
+			oSubSection.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS);
+
+			oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+				// Assert
+				assert.strictEqual(oPage._bAllContentFitsContainer, true, "_bAllContentFitsContainer is 'true'");
+				assert.ok(oToggleScrollingSpy.calledWith(false), "oToggleScrollingSpy called with 'false' - scrolling is supressed");
+				assert.strictEqual(oPage._$opWrapper.css("overflow"), "hidden", "Wrapper's overflow property is 'hidden'");
+				assert.strictEqual(oComputerSpacerHeightSpy.args[0][2], false,
+					"oComputerSpacerHeightSpy called with bAllowScrollSectionToTop = false");
+				assert.ok(parseInt(oSubSection.$().css("height")) < oPage._getSectionsContainerHeight(false),
+					"With content fit container no scrollbar is needed");
+				done();
 		}, this);
 	});
 
