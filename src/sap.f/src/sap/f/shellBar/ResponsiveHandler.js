@@ -17,8 +17,6 @@ sap.ui.define([
 	// shortcut for sap.m.OverflowToolbarPriority
 	var OverflowToolbarPriority = library.OverflowToolbarPriority;
 
-	var oControl;
-
 	/**
 	 * Class taking care of the control responsive behaviour.
 	 * @alias sap/f/shellBar/ResponsiveHandler
@@ -27,7 +25,7 @@ sap.ui.define([
 	 * @property {object} oContext the context of the ShellBar control instance
 	 */
 	var ResponsiveHandler = function (oContext) {
-		oControl = oContext;
+		this._oControl = oContext;
 
 		// Get and calculate padding's
 		this._iREMSize = parseInt(jQuery("body").css("font-size"));
@@ -43,24 +41,24 @@ sap.ui.define([
 		};
 
 		// Attach Event Delegates
-		oControl.addDelegate(this._oDelegate, false, this);
+		this._oControl.addDelegate(this._oDelegate, false, this);
 
 		// Init resize handler method
 		this._fnResize = this._resize;
 
 		// Attach events
-		oControl._oOverflowToolbar.attachEvent("_controlWidthChanged", this._handleResize, this);
+		this._oControl._oOverflowToolbar.attachEvent("_controlWidthChanged", this._handleResize, this);
 	};
 
 	/**
 	 * Lifecycle event handler for ShellBar onAfterRendering event
 	 */
 	ResponsiveHandler.prototype.onAfterRendering = function () {
-		this._oDomRef = oControl.getDomRef(); // Cache DOM Reference
+		this._oDomRef = this._oControl.getDomRef(); // Cache DOM Reference
 
-		if (oControl._oMegaMenu) {
+		if (this._oControl._oMegaMenu) {
 			// Attach on internal button image load
-			this._oButton = oControl._oMegaMenu.getAggregation("_button");
+			this._oButton = this._oControl._oMegaMenu.getAggregation("_button");
 			if (this._oButton && this._oButton._image) {
 				// We need to update all the measurements of the control when the image is loaded in the DOM as we can't
 				// measure it before that
@@ -76,8 +74,8 @@ sap.ui.define([
 	 * Lifecycle event handler for ShellBar onBeforeRendering event
 	 */
 	ResponsiveHandler.prototype.onBeforeRendering = function () {
-		if (oControl._oHomeIcon) {
-			oControl._oHomeIcon.attachEvent("load", this._updateHomeIconWidth, this);
+		if (this._oControl._oHomeIcon) {
+			this._oControl._oHomeIcon.attachEvent("load", this._updateHomeIconWidth, this);
 		}
 	};
 
@@ -85,16 +83,16 @@ sap.ui.define([
 	 * Lifecycle event handler for cleaning after the control is not needed anymore
 	 */
 	ResponsiveHandler.prototype.exit = function () {
-		if (oControl._oOverflowToolbar) {
-			oControl._oOverflowToolbar.detachEvent("_controlWidthChanged", this._handleResize, this);
+		if (this._oControl._oOverflowToolbar) {
+			this._oControl._oOverflowToolbar.detachEvent("_controlWidthChanged", this._handleResize, this);
 		}
-		if (oControl._oHomeIcon) {
-			oControl._oHomeIcon.detachEvent("load", this._updateHomeIconWidth, this);
+		if (this._oControl._oHomeIcon) {
+			this._oControl._oHomeIcon.detachEvent("load", this._updateHomeIconWidth, this);
 		}
 		if (this._oButton) {
 			this._oButton.detachEvent("load", this._updateMegaMenuWidth, this);
 		}
-		oControl.removeDelegate(this._oDelegate);
+		this._oControl.removeDelegate(this._oDelegate);
 	};
 
 	/**
@@ -105,18 +103,18 @@ sap.ui.define([
 	ResponsiveHandler.prototype._initResize = function () {
 		this._iStaticWidth = 0;
 
-		this._iMBWidth = this.getTargetWidth(oControl._oMegaMenu) + 65/* Control padding and arrow */ + (2 * this._iChildControlMargin);
-		this._iTitleWidth = this.getTargetWidth(oControl._oSecondTitle);
+		this._iMBWidth = this.getTargetWidth(this._oControl._oMegaMenu) + 65/* Control padding and arrow */ + (2 * this._iChildControlMargin);
+		this._iTitleWidth = this.getTargetWidth(this._oControl._oSecondTitle);
 
-		if (oControl._oHomeIcon) {
-			this._iStaticWidth += oControl._oHomeIcon.$().outerWidth(true);
+		if (this._oControl._oHomeIcon) {
+			this._iStaticWidth += this._oControl._oHomeIcon.$().outerWidth(true);
 		}
 
-		if (oControl._oNavButton) {
+		if (this._oControl._oNavButton) {
 			this._iStaticWidth += 36 + this._iDoubleChildControlMargin;
 		}
 
-		if (oControl._oMenuButton) {
+		if (this._oControl._oMenuButton) {
 			this._iStaticWidth += 36 + this._iDoubleChildControlMargin;
 		}
 	};
@@ -150,7 +148,7 @@ sap.ui.define([
 	ResponsiveHandler.prototype._handleResize = function () {
 		if (!this._oDomRef) {return;}
 
-		var $Control = oControl.$(),
+		var $Control = this._oControl.$(),
 			iWidth = $Control.outerWidth(),
 			oCurrentRange = Device.media.getCurrentRange("Std", iWidth),
 			bPhoneRange;
@@ -170,12 +168,12 @@ sap.ui.define([
 		this._iPreviousWidth = iWidth;
 
 		// If none of the managed controls are available - no further adaptation is needed
-		if (!oControl._oNavButton &&
-			!oControl._oMenuButton &&
-			!oControl._oHomeIcon &&
-			!oControl._oMegaMenu &&
-			!oControl._oSecondTitle &&
-			!oControl._oCopilot) {
+		if (!this._oControl._oNavButton &&
+			!this._oControl._oMenuButton &&
+			!this._oControl._oHomeIcon &&
+			!this._oControl._oMegaMenu &&
+			!this._oControl._oSecondTitle &&
+			!this._oControl._oCopilot) {
 			return;
 		}
 
@@ -201,16 +199,16 @@ sap.ui.define([
 	 */
 	ResponsiveHandler.prototype._transformToPhoneState = function () {
 		// Second title should not be visible
-		if (oControl._oSecondTitle) {
-			oControl._oSecondTitle.setVisible(false);
+		if (this._oControl._oSecondTitle) {
+			this._oControl._oSecondTitle.setVisible(false);
 		}
 
 		// Home icon should not be visible
-		if (oControl._oHomeIcon) {
-			oControl._oHomeIcon.setVisible(false);
+		if (this._oControl._oHomeIcon) {
+			this._oControl._oHomeIcon.setVisible(false);
 			// We should inject the homeIcon in the MegaMenu and remove the text
-			if (oControl._oMegaMenu) {
-				oControl._oMegaMenu.setWidth("auto").setText("").setIcon(oControl.getHomeIcon());
+			if (this._oControl._oMegaMenu) {
+				this._oControl._oMegaMenu.setWidth("auto").setText("").setIcon(this._oControl.getHomeIcon());
 			}
 		}
 
@@ -218,14 +216,14 @@ sap.ui.define([
 		this._cacheControlsLayoutData();
 
 		// Force all controls in the overflow
-		oControl._aOverflowControls.forEach(function (oControl) {
+		this._oControl._aOverflowControls.forEach(function (oControl) {
 			oControl.setLayoutData(new OverflowToolbarLayoutData({
 				priority: OverflowToolbarPriority.AlwaysOverflow
 			}));
 		});
 
 		this.bWasInPhoneRange = true;
-		oControl.invalidate();
+		this._oControl.invalidate();
 	};
 
 	/**
@@ -234,16 +232,16 @@ sap.ui.define([
 	 */
 	ResponsiveHandler.prototype._transformToRegularState = function () {
 		// Second title should be visible
-		if (oControl._oSecondTitle) {
-			oControl._oSecondTitle.setVisible(true);
+		if (this._oControl._oSecondTitle) {
+			this._oControl._oSecondTitle.setVisible(true);
 		}
 
 		// Home icon should be visible
-		if (oControl._oHomeIcon) {
-			oControl._oHomeIcon.setVisible(true);
+		if (this._oControl._oHomeIcon) {
+			this._oControl._oHomeIcon.setVisible(true);
 			// If we have MegaMenu we should get back the Icon and restore it's text
-			if (oControl._oMegaMenu) {
-				oControl._oMegaMenu.setWidth("auto").setText(oControl._sTitle).setIcon("");
+			if (this._oControl._oMegaMenu) {
+				this._oControl._oMegaMenu.setWidth("auto").setText(this._oControl._sTitle).setIcon("");
 			}
 		}
 
@@ -251,7 +249,7 @@ sap.ui.define([
 		this._restoreControlsLayoutData();
 
 		this.bWasInPhoneRange = false;
-		oControl.invalidate();
+		this._oControl.invalidate();
 	};
 
 	/**
@@ -263,30 +261,30 @@ sap.ui.define([
 		var iWidth,
 			iAvailableWidth;
 
-		if  (oControl._oCopilot) {
-			iWidth = oControl.$().width() - this._iCoPilotWidth;
+		if  (this._oControl._oCopilot) {
+			iWidth = this._oControl.$().width() - this._iCoPilotWidth;
 			iAvailableWidth = (iWidth / 2) - this._iStaticWidth;
 		} else {
-			iWidth = oControl.$().width();
+			iWidth = this._oControl.$().width();
 			iAvailableWidth = iWidth - this._iStaticWidth - this._getWidthOfAllNonManagedControls();
 		}
 
-		if (!oControl._oHomeIcon && oControl._sTitle) {
+		if (!this._oControl._oHomeIcon && this._oControl._sTitle) {
 			if (this._iMBWidth >= iAvailableWidth) {
 				// Applied width should be without margins
-				oControl._oMegaMenu.setWidth((iAvailableWidth - this._iDoubleChildControlMargin) + "px");
+				this._oControl._oMegaMenu.setWidth((iAvailableWidth - this._iDoubleChildControlMargin) + "px");
 			} else {
 				// Applied width should be without margins
-				oControl._oMegaMenu.setWidth((this._iMBWidth - this._iDoubleChildControlMargin) + "px");
+				this._oControl._oMegaMenu.setWidth((this._iMBWidth - this._iDoubleChildControlMargin) + "px");
 			}
 		}
 
-		if (oControl._oMegaMenu) {
-			iAvailableWidth -= oControl._oMegaMenu.$().outerWidth(true);
+		if (this._oControl._oMegaMenu) {
+			iAvailableWidth -= this._oControl._oMegaMenu.$().outerWidth(true);
 		}
 
 		if (iAvailableWidth < 0) {iAvailableWidth = 0;}
-		oControl._oControlSpacer.setWidth(iAvailableWidth + "px");
+		this._oControl._oControlSpacer.setWidth(iAvailableWidth + "px");
 	};
 
 	/**
@@ -295,11 +293,11 @@ sap.ui.define([
 	 * @private
 	 */
 	ResponsiveHandler.prototype._resize = function () {
-		var iWidth = oControl.$().width(),
+		var iWidth = this._oControl.$().width(),
 			iAvailableWidth,
 			iOTBControls;
 
-		if (!oControl._oCopilot) {
+		if (!this._oControl._oCopilot) {
 			iOTBControls = this._getWidthOfAllNonManagedControls();
 			iAvailableWidth = iWidth - iOTBControls - this._iStaticWidth - (8 * this._iREMSize);
 
@@ -318,20 +316,20 @@ sap.ui.define([
 	 * @private
 	 */
 	ResponsiveHandler.prototype._getWidthOfAllNonManagedControls = function () {
-		var aControls = oControl._oOverflowToolbar.$().children(),
+		var aControls = this._oControl._oOverflowToolbar.$().children(),
 			iOTBControls = 0;
 
 		aControls.filter(function (i, oDomRef) {
 			var $Ctr = jQuery(oDomRef),
 				oCtr = $Ctr.control(0);
 
-			if (oCtr === oControl._oNavButton) {return false;}
-			if (oCtr === oControl._oMenuButton) {return false;}
-			if (oCtr === oControl._oHomeIcon) {return false;}
-			if (oCtr === oControl._oMegaMenu) {return false;}
-			if (oCtr === oControl._oSecondTitle) {return false;}
-			if (oCtr === oControl._oControlSpacer) {return false;}
-			if (oCtr === oControl._oToolbarSpacer) {return false;}
+			if (oCtr === this._oControl._oNavButton) {return false;}
+			if (oCtr === this._oControl._oMenuButton) {return false;}
+			if (oCtr === this._oControl._oHomeIcon) {return false;}
+			if (oCtr === this._oControl._oMegaMenu) {return false;}
+			if (oCtr === this._oControl._oSecondTitle) {return false;}
+			if (oCtr === this._oControl._oControlSpacer) {return false;}
+			if (oCtr === this._oControl._oToolbarSpacer) {return false;}
 
 			iOTBControls += $Ctr.outerWidth(true);
 			return true;
@@ -348,13 +346,13 @@ sap.ui.define([
 	 * @private
 	 */
 	ResponsiveHandler.prototype._adaptManagedWidthControls = function (iAvailableWidth) {
-		var bHasTitle = oControl._sTitle,
+		var bHasTitle = this._oControl._sTitle,
 			iMBWidth = bHasTitle ? this._iMBWidth : 36 + this._iDoubleChildControlMargin,
 			iTitleWidth = this._iTitleWidth,
 			iCollectiveWidth = iMBWidth + iTitleWidth,
-			oSecondTitle = oControl._oSecondTitle,
-			oMegaMenu = oControl._oMegaMenu,
-			oControlSpacer = oControl._oControlSpacer,
+			oSecondTitle = this._oControl._oSecondTitle,
+			oMegaMenu = this._oControl._oMegaMenu,
+			oControlSpacer = this._oControl._oControlSpacer,
 			iSecondTitleWidth;
 
 		if (!oMegaMenu) {
@@ -404,7 +402,7 @@ sap.ui.define([
 	 */
 	ResponsiveHandler.prototype._cacheControlsLayoutData = function () {
 		this._oCachedLayoutData = {};
-		oControl._aOverflowControls.forEach(function (oCtr) {
+		this._oControl._aOverflowControls.forEach(function (oCtr) {
 			this._oCachedLayoutData[oCtr.getId()] = oCtr.getLayoutData();
 		}.bind(this));
 	};
@@ -414,7 +412,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ResponsiveHandler.prototype._restoreControlsLayoutData = function () {
-		oControl._aOverflowControls.forEach(function (oCtr) {
+		this._oControl._aOverflowControls.forEach(function (oCtr) {
 			var oLayoutData = this._oCachedLayoutData[oCtr.getId()];
 			if (oLayoutData) {
 				oCtr.setLayoutData(oLayoutData);
