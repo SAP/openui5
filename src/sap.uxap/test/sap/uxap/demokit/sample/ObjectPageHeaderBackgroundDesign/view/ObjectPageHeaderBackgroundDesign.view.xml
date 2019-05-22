@@ -1,24 +1,15 @@
 <mvc:View xmlns:mvc="sap.ui.core.mvc"
-		   xmlns="sap.uxap"
-		   xmlns:m="sap.m"
-		   xmlns:layout="sap.ui.layout"
-		   xmlns:sample="sap.uxap.sample.AnchorBar.controller.blocks"
-		   height="100%"
->
-
+	xmlns="sap.uxap"
+	xmlns:m="sap.m"
+	xmlns:layout="sap.ui.layout"
+	xmlns:sample="sap.uxap.sample.AnchorBar.controller.blocks"
+	height="100%">
 	<ObjectPageLayout id="ObjectPageLayout"
-					  showTitleInHeaderContent="true"
-					  alwaysShowContentHeader="false"
-					  preserveHeaderStateOnScroll="false"
-					  headerContentPinnable="true"
-					  isChildPage="true"
-					  enableLazyLoading="false"
-					  upperCaseAnchorBar="false"
-					  backgroundDesignAnchorBar="Translucent">
+		showTitleInHeaderContent="true"
+		upperCaseAnchorBar="false"
+		backgroundDesignAnchorBar="Translucent">
 		<headerTitle>
-			<ObjectPageDynamicHeaderTitle 
-				areaShrinkRatio="1:1.6:1.6" 
-				backgroundDesign="Solid">
+			<ObjectPageDynamicHeaderTitle backgroundDesign="Solid">
 				<breadcrumbs>
 					<m:Breadcrumbs>
 						<m:Link text='Page 1'/>
@@ -85,7 +76,7 @@
 
 			<ObjectPageSection id="section3" title="Section 3">
 				<subSections>
-					<ObjectPageSubSection id="section3_SS1" title=" ">
+					<ObjectPageSubSection id="section3_SS1">
 						<blocks>
 							<sample:mySimpleBlock id="bbt3"/>
 						</blocks>
@@ -105,7 +96,7 @@
 
 			<ObjectPageSection id="section5" title="Section 5">
 				<subSections>
-					<ObjectPageSubSection id="section5_SS1" title=" ">
+					<ObjectPageSubSection id="section5_SS1">
 						<blocks>
 							<sample:mySimpleBlock id="bbt5"/>
 						</blocks>

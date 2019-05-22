@@ -1,20 +1,15 @@
 <mvc:View xmlns:mvc="sap.ui.core.mvc"
-		   xmlns="sap.uxap"
-		   xmlns:layout="sap.ui.layout"
-		   xmlns:m="sap.m"
-		   xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
-		   height="100%"
-		>
-
-	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="false" showTitleInHeaderContent="true"
-					  showHeaderContent="true">
+	xmlns="sap.uxap"
+	xmlns:layout="sap.ui.layout"
+	xmlns:m="sap.m"
+	xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
+	height="100%">
+	<ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="true">
 		<headerTitle>
-			<ObjectPageHeader objectImageURI=""
-							  objectImageShape="Circle"
+			<ObjectPageHeader objectImageShape="Circle"
 							  objectTitle="Denise Smith"
 							  objectImageAlt="Senior UI Developer"
 							  id="ObjectPageLayoutHeaderTitle"
-							  isObjectIconAlwaysVisible="false"
 							  isObjectTitleAlwaysVisible="false"
 							  showPlaceholder="true">
 				<actions>

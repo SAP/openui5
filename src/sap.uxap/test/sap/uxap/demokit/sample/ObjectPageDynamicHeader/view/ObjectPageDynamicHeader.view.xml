@@ -1,22 +1,14 @@
 <mvc:View xmlns:mvc="sap.ui.core.mvc"
-		   xmlns="sap.uxap"
-		   xmlns:m="sap.m"
-		   xmlns:f="sap.f"
-		   xmlns:l="sap.ui.layout"
-		   xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
-		   xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
-		   xmlns:employment="sap.uxap.sample.SharedBlocks.employment"
-		   controllerName="sap.uxap.sample.ObjectPageDynamicHeader.controller.ObjectPageDynamicHeader"
-		   height="100%"
->
-
-	<ObjectPageLayout id="ObjectPageLayout"
-					  showTitleInHeaderContent="true"
-					  alwaysShowContentHeader="false"
-					  preserveHeaderStateOnScroll="false"
-					  headerContentPinnable="true"
-					  isChildPage="true"
-					  enableLazyLoading="false">
+	xmlns="sap.uxap"
+	xmlns:m="sap.m"
+	xmlns:f="sap.f"
+	xmlns:l="sap.ui.layout"
+	xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
+	xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
+	xmlns:employment="sap.uxap.sample.SharedBlocks.employment"
+	controllerName="sap.uxap.sample.ObjectPageDynamicHeader.controller.ObjectPageDynamicHeader"
+	height="100%">
+	<ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="true">
 		<headerTitle>
 			<ObjectPageDynamicHeaderTitle>
 				<breadcrumbs>

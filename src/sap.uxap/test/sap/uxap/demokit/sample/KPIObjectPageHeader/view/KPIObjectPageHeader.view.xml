@@ -1,18 +1,14 @@
-<mvc:View
-		xmlns:mvc="sap.ui.core.mvc"
-		xmlns="sap.uxap"
-		xmlns:layout="sap.ui.layout"
-		xmlns:m="sap.m"
-		xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
-		xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
-		controllerName="sap.uxap.sample.KPIObjectPageHeader.controller.KPIObjectPageHeader"
-		height="100%">
-
-
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.uxap"
+	xmlns:layout="sap.ui.layout"
+	xmlns:m="sap.m"
+	xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
+	xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
+	controllerName="sap.uxap.sample.KPIObjectPageHeader.controller.KPIObjectPageHeader"
+	height="100%">
 	<ObjectPageLayout id="ObjectPageLayout">
 		<headerTitle>
 			<ObjectPageHeader id="headerForTest"
-							  headerDesign="Light"
 							  objectTitle="Generic T-Shirt Fa, SIZE AS, Colour blau"
 							  objectSubtitle="AAUFSA000100003002">
 

@@ -1,24 +1,19 @@
 <mvc:View xmlns:mvc="sap.ui.core.mvc"
-		   xmlns="sap.uxap"
-		   xmlns:layout="sap.ui.layout"
-		   xmlns:m="sap.m"
-		   xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
-		   xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
-		   xmlns:employment="sap.uxap.sample.SharedBlocks.employment"
-		   controllerName="sap.uxap.sample.ObjectPageTitleOnLeft.controller.ObjectPageTitleOnLeft"
-		   height="100%"
-		>
-
-	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="false" subSectionLayout="TitleOnLeft"
-					  showTitleInHeaderContent="true" showHeaderContent="true">
+	xmlns="sap.uxap"
+	xmlns:layout="sap.ui.layout"
+	xmlns:m="sap.m"
+	xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
+	xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
+	xmlns:employment="sap.uxap.sample.SharedBlocks.employment"
+	controllerName="sap.uxap.sample.ObjectPageTitleOnLeft.controller.ObjectPageTitleOnLeft"
+	height="100%">
+	<ObjectPageLayout id="ObjectPageLayout" subSectionLayout="TitleOnLeft" showTitleInHeaderContent="true">
 		<headerTitle>
-			<ObjectPageHeader objectImageURI=""
-							  objectImageShape="Circle"
+			<ObjectPageHeader objectImageShape="Circle"
 							  objectTitle="Denise Smith"
 							  objectSubtitle="Senior UI Developer"
 							  objectImageAlt="Senior UI Developer"
 							  id="ObjectPageLayoutHeaderTitle"
-							  isObjectIconAlwaysVisible="false"
 							  isObjectTitleAlwaysVisible="false"
 							  isObjectSubtitleAlwaysVisible="false"
 							  isActionAreaAlwaysVisible="true"
@@ -98,7 +93,7 @@
 						</blocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection title="Employee Details" mode="Collapsed">
+					<ObjectPageSubSection title="Employee Details">
 						<blocks>
 							<employment:BlockEmpDetailPart1 id="empdetailpart1" columnLayout="1"/>
 						</blocks>
@@ -108,7 +103,7 @@
 						</moreBlocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection title="Job Relationship" mode="Collapsed">
+					<ObjectPageSubSection title="Job Relationship">
 						<blocks>
 							<employment:EmploymentBlockJob id="employmentblockjob" showSubSectionMore="true">
 								<employment:mappings>

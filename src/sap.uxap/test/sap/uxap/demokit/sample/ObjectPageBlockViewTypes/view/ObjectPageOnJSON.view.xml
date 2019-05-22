@@ -15,8 +15,6 @@
 							  objectImageShape="Circle"
 							  objectImageAlt="Denise Smith"
 							  objectSubtitle="Senior UI Developer"
-
-							  isObjectIconAlwaysVisible="false"
 							  isObjectTitleAlwaysVisible="false"
 							  isObjectSubtitleAlwaysVisible="false">
 				<actions>
@@ -68,7 +66,7 @@
 		<sections>
 			<ObjectPageSection title="JS View">
 				<subSections>
-					<ObjectPageSubSection title=" ">
+					<ObjectPageSubSection>
 						<blocks>
 							<goals:GoalsBlockJS id="goalsblock2"/>
 						</blocks>
@@ -77,7 +75,7 @@
 			</ObjectPageSection>
 			<ObjectPageSection title="JSON View">
 				<subSections>
-					<ObjectPageSubSection title=" ">
+					<ObjectPageSubSection>
 						<blocks>
 							<goals:GoalsBlockJSON id="goalsblock3"/>
 						</blocks>
@@ -86,7 +84,7 @@
 			</ObjectPageSection>
 			<ObjectPageSection title="HTML View">
 				<subSections>
-					<ObjectPageSubSection title=" ">
+					<ObjectPageSubSection>
 						<blocks>
 							<goals:GoalsBlockHTML id="goalsblock4"/>
 						</blocks>
@@ -95,7 +93,7 @@
 			</ObjectPageSection>
 			<ObjectPageSection title="XML View">
 				<subSections>
-					<ObjectPageSubSection title=" ">
+					<ObjectPageSubSection>
 						<blocks>
 							<goals:GoalsBlock id="goalsblock1"/>
 						</blocks>

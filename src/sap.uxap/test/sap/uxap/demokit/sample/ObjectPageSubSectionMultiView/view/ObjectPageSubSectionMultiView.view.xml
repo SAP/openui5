@@ -14,28 +14,28 @@
 		</headerTitle>
 
 		<sections>
-			<ObjectPageSection title="" showTitle="false">
+			<ObjectPageSection showTitle="false">
 				<subSections>
-					<ObjectPageSubSection title="1 block" mode="Collapsed">
+					<ObjectPageSubSection title="1 block">
 						<blocks>
 							<sample:BlockEmpty id="multiview11"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="2 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="2 blocks">
 						<blocks>
 							<sample:BlockEmpty id="multiview21"/>
 							<sample:BlockEmpty id="multiview22"/>
 
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="3 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="3 blocks">
 						<blocks>
 							<sample:BlockEmpty id="multiview41"/>
 							<sample:BlockEmpty id="multiview42"/>
 							<sample:BlockEmpty id="multiview43"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="4 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="4 blocks">
 						<blocks>
 							<sample:BlockEmpty id="multiview51"/>
 							<sample:BlockEmpty id="multiview52"/>
@@ -43,7 +43,7 @@
 							<sample:BlockEmpty id="multiview54"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="5 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="5 blocks">
 						<blocks>
 							<sample:BlockEmpty id="multiview61"/>
 							<sample:BlockEmpty id="multiview62"/>
@@ -52,7 +52,7 @@
 							<sample:BlockEmpty id="multiview65"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="6 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="6 blocks">
 						<blocks>
 							<sample:BlockEmpty id="multiview71"/>
 							<sample:BlockEmpty id="multiview72"/>

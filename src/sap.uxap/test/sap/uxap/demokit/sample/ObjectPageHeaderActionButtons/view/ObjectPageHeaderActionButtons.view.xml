@@ -1,21 +1,12 @@
 <mvc:View xmlns:mvc="sap.ui.core.mvc"
-		   xmlns="sap.uxap"
-		   xmlns:m="sap.m"
-		   xmlns:layout="sap.ui.layout"
-		   xmlns:sample="sap.uxap.sample.AnchorBar.controller.blocks"
-		   height="100%"
->
-
-	<ObjectPageLayout id="ObjectPageLayout"
-					  showTitleInHeaderContent="true"
-					  alwaysShowContentHeader="false"
-					  preserveHeaderStateOnScroll="false"
-					  headerContentPinnable="true"
-					  isChildPage="true"
-					  enableLazyLoading="false"
-					  upperCaseAnchorBar="false">
+	xmlns="sap.uxap"
+	xmlns:m="sap.m"
+	xmlns:layout="sap.ui.layout"
+	xmlns:sample="sap.uxap.sample.AnchorBar.controller.blocks"
+	height="100%">
+	<ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="true" upperCaseAnchorBar="false">
 		<headerTitle>
-			<ObjectPageDynamicHeaderTitle areaShrinkRatio="1:1.6:1.6">
+			<ObjectPageDynamicHeaderTitle>
 				<breadcrumbs>
 					<m:Breadcrumbs>
 						<m:Link text='Page 1'/>

@@ -11,7 +11,6 @@
 	<ObjectPageLayout id="ObjectPageLayout" isChildPage="true">
 		<headerTitle>
 			<ObjectPageHeader id="headerForTest"
-							  headerDesign="Light"
 							  objectTitle="Denise Smith"
 							  objectSubtitle="Example of a child page in ObjectPage terms"
 							  objectImageShape="Circle"

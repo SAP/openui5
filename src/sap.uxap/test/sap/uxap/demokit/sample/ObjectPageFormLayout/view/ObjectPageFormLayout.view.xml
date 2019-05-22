@@ -1,13 +1,12 @@
 <mvc:View xmlns:mvc="sap.ui.core.mvc"
-		   xmlns="sap.uxap"
-		   xmlns:layout="sap.ui.layout"
-		   xmlns:m="sap.m"
-		   xmlns:personal="sap.uxap.sample.ObjectPageFormLayout.controller.blocks"
-		   xmlns:employment="sap.uxap.sample.ObjectPageFormLayout.controller.blocks"
-		   xmlns:blockcolor="sap.uxap.sample.ObjectPageFormLayout.controller.blocks"
-		   controllerName="sap.uxap.sample.ObjectPageFormLayout.controller.ObjectPageFormLayout"
-		   height="100%">
-
+	xmlns="sap.uxap"
+	xmlns:layout="sap.ui.layout"
+	xmlns:m="sap.m"
+	xmlns:personal="sap.uxap.sample.ObjectPageFormLayout.controller.blocks"
+	xmlns:employment="sap.uxap.sample.ObjectPageFormLayout.controller.blocks"
+	xmlns:blockcolor="sap.uxap.sample.ObjectPageFormLayout.controller.blocks"
+	controllerName="sap.uxap.sample.ObjectPageFormLayout.controller.ObjectPageFormLayout"
+	height="100%">
 	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="true">
 		<headerTitle>
 			<ObjectPageHeader objectImageURI="./test-resources/sap/uxap/images/imageID_275314.png"
@@ -57,7 +56,7 @@
 		<sections>
 			<ObjectPageSection title="Personal">
 				<subSections>
-					<ObjectPageSubSection title=" ">
+					<ObjectPageSubSection>
 						<blocks>
 							<personal:PersonalFormBlock id="personalinfo" columnLayout="3"/>
 							<blockcolor:BlockBlue id="bbt1"/>

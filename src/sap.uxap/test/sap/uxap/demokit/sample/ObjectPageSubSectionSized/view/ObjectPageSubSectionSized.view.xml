@@ -1,18 +1,14 @@
-<mvc:View
-		height="100%"
-		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:m="sap.m"
-		xmlns="sap.uxap"
-		xmlns:sample="sap.uxap.sample.ObjectPageSubSectionSized.controller.blocks"
-		controllerName="sap.uxap.sample.ObjectPageSubSectionSized.controller.ObjectPageSubSectionSize"
-		>
-	<ObjectPageLayout id="ObjectPageLayout" useTwoColumnsForLargeScreen="{ConfigModel>/useTwoColumnsForLargeScreen}"
-					  subSectionLayout="{ConfigModel>/subSectionLayout}">
+<mvc:View height="100%"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:m="sap.m"
+	xmlns="sap.uxap"
+	xmlns:sample="sap.uxap.sample.ObjectPageSubSectionSized.controller.blocks"
+	controllerName="sap.uxap.sample.ObjectPageSubSectionSized.controller.ObjectPageSubSectionSize">
+	<ObjectPageLayout id="ObjectPageLayout"
+		useTwoColumnsForLargeScreen="{ConfigModel>/useTwoColumnsForLargeScreen}"
+		subSectionLayout="{ConfigModel>/subSectionLayout}">
 		<headerTitle>
-			<ObjectPageHeader
-					objectTitle="Subsection with blocks using column layout"
-					objectSubtitle=""
-					objectImageURI="">
+			<ObjectPageHeader objectTitle="Subsection with blocks using column layout">
 				<actions>
 					<m:ToggleButton text="Use Title on the Left" press="toggleTitle"/>
 					<m:ToggleButton text="Use Two Columns Mode" press="toggleUseTwoColumns"/>
@@ -22,37 +18,37 @@
 		<sections>
 			<ObjectPageSection title="2 blocks" showTitle="true">
 				<subSections>
-					<ObjectPageSubSection title="a-1" mode="Collapsed">
+					<ObjectPageSubSection title="a-1">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-2" mode="Collapsed">
+					<ObjectPageSubSection title="a-2">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-3" mode="Collapsed">
+					<ObjectPageSubSection title="a-3">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="3"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="1-a" mode="Collapsed">
+					<ObjectPageSubSection title="1-a">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="2 -a" mode="Collapsed">
+					<ObjectPageSubSection title="2 -a">
 						<blocks>
 							<sample:InfoButton columnLayout="2"/>
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="3-a" mode="Collapsed">
+					<ObjectPageSubSection title="3-a">
 						<blocks>
 							<sample:InfoButton columnLayout="3"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -62,49 +58,49 @@
 			</ObjectPageSection>
 			<ObjectPageSection title="3 blocks" showTitle="true">
 				<subSections>
-					<ObjectPageSubSection title="a-a-1" mode="Collapsed">
+					<ObjectPageSubSection title="a-a-1">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-a-2" mode="Collapsed">
+					<ObjectPageSubSection title="a-a-2">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="1-a-1" mode="Collapsed">
+					<ObjectPageSubSection title="1-a-1">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="1-a-2" mode="Collapsed">
+					<ObjectPageSubSection title="1-a-2">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="2-a-a" mode="Collapsed">
+					<ObjectPageSubSection title="2-a-a">
 						<blocks>
 							<sample:InfoButton columnLayout="2"/>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="2-a-1" mode="Collapsed">
+					<ObjectPageSubSection title="2-a-1">
 						<blocks>
 							<sample:InfoButton columnLayout="2"/>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="2-1-a" mode="Collapsed">
+					<ObjectPageSubSection title="2-1-a">
 						<blocks>
 							<sample:InfoButton columnLayout="2"/>
 							<sample:InfoButton columnLayout="1"/>
@@ -115,7 +111,7 @@
 			</ObjectPageSection>
 			<ObjectPageSection title="4 blocks" showTitle="true">
 				<subSections>
-					<ObjectPageSubSection title="a-a-a-1" mode="Collapsed">
+					<ObjectPageSubSection title="a-a-a-1">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -123,7 +119,7 @@
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-a-a-2" mode="Collapsed">
+					<ObjectPageSubSection title="a-a-a-2">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -131,7 +127,7 @@
 							<sample:InfoButton columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-1-a-1" mode="Collapsed">
+					<ObjectPageSubSection title="a-1-a-1">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="1"/>
@@ -139,7 +135,7 @@
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="1-a-1-a" mode="Collapsed">
+					<ObjectPageSubSection title="1-a-1-a">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -147,7 +143,7 @@
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="1-a-a-1" mode="Collapsed">
+					<ObjectPageSubSection title="1-a-a-1">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -155,23 +151,23 @@
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-2-a-1" mode="Collapsed">
-						<blocks>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="2"/>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="1"/>
-						</blocks>
-					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-2-a-2" mode="Collapsed">
+					<ObjectPageSubSection title="a-2-a-1">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="2"/>
 							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="1"/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="a-2-a-2">
+						<blocks>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="2"/>
+							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="2-a-a-2" mode="Collapsed">
+					<ObjectPageSubSection title="2-a-a-2">
 						<blocks>
 							<sample:InfoButton columnLayout="2"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -179,7 +175,7 @@
 							<sample:InfoButton columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="3-a-3-a" mode="Collapsed">
+					<ObjectPageSubSection title="3-a-3-a">
 						<blocks>
 							<sample:InfoButton columnLayout="3"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -191,7 +187,7 @@
 			</ObjectPageSection>
 			<ObjectPageSection title="5 blocks" showTitle="true">
 				<subSections>
-					<ObjectPageSubSection title="1-a-a-a-1" mode="Collapsed">
+					<ObjectPageSubSection title="1-a-a-a-1">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -200,7 +196,7 @@
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="2-a-a-a-2" mode="Collapsed">
+					<ObjectPageSubSection title="2-a-a-a-2">
 						<blocks>
 							<sample:InfoButton columnLayout="2"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -209,7 +205,7 @@
 							<sample:InfoButton columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="3-a-a-a-1" mode="Collapsed">
+					<ObjectPageSubSection title="3-a-a-a-1">
 						<blocks>
 							<sample:InfoButton columnLayout="3"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -218,7 +214,7 @@
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="3-a-a-a-2" mode="Collapsed">
+					<ObjectPageSubSection title="3-a-a-a-2">
 						<blocks>
 							<sample:InfoButton columnLayout="3"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -227,7 +223,7 @@
 							<sample:InfoButton columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-a-1-1-a" mode="Collapsed">
+					<ObjectPageSubSection title="a-a-1-1-a">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -236,7 +232,7 @@
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-a-1-a-1" mode="Collapsed">
+					<ObjectPageSubSection title="a-a-1-a-1">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -245,70 +241,70 @@
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-3-a-a-2" mode="Collapsed">
-						<blocks>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="3"/>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="2"/>
-						</blocks>
-					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-2-a-a-1" mode="Collapsed">
-						<blocks>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="2"/>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="1"/>
-						</blocks>
-					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-2-a-a-2" mode="Collapsed">
-						<blocks>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="2"/>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="2"/>
-						</blocks>
-					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-1-a-1-a" mode="Collapsed">
-						<blocks>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="1"/>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="1"/>
-							<sample:InfoButton columnLayout="auto"/>
-						</blocks>
-					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-1-a-2-a" mode="Collapsed">
-						<blocks>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="1"/>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="2"/>
-							<sample:InfoButton columnLayout="auto"/>
-						</blocks>
-					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-2-a-1-a" mode="Collapsed">
-						<blocks>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="2"/>
-							<sample:InfoButton columnLayout="auto"/>
-							<sample:InfoButton columnLayout="1"/>
-							<sample:InfoButton columnLayout="auto"/>
-						</blocks>
-					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-3-a-1-a" mode="Collapsed">
+					<ObjectPageSubSection title="a-3-a-a-2">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="3"/>
 							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="2"/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="a-2-a-a-1">
+						<blocks>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="2"/>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="1"/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="a-2-a-a-2">
+						<blocks>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="2"/>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="2"/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="a-1-a-1-a">
+						<blocks>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="1"/>
+							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="1-a-1-a-1" mode="Collapsed">
+					<ObjectPageSubSection title="a-1-a-2-a">
+						<blocks>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="1"/>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="2"/>
+							<sample:InfoButton columnLayout="auto"/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="a-2-a-1-a">
+						<blocks>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="2"/>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="1"/>
+							<sample:InfoButton columnLayout="auto"/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="a-3-a-1-a">
+						<blocks>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="3"/>
+							<sample:InfoButton columnLayout="auto"/>
+							<sample:InfoButton columnLayout="1"/>
+							<sample:InfoButton columnLayout="auto"/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="1-a-1-a-1">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -317,7 +313,7 @@
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="1-a-a-1-a" mode="Collapsed">
+					<ObjectPageSubSection title="1-a-a-1-a">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -326,7 +322,7 @@
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="1-a-2-a-1" mode="Collapsed">
+					<ObjectPageSubSection title="1-a-2-a-1">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -335,7 +331,7 @@
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="1-a-3-a-2" mode="Collapsed">
+					<ObjectPageSubSection title="1-a-3-a-2">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -344,7 +340,7 @@
 							<sample:InfoButton columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="2-a-a-2-a" mode="Collapsed">
+					<ObjectPageSubSection title="2-a-a-2-a">
 						<blocks>
 							<sample:InfoButton columnLayout="2"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -353,7 +349,7 @@
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="3-a-a-3-a" mode="Collapsed">
+					<ObjectPageSubSection title="3-a-a-3-a">
 						<blocks>
 							<sample:InfoButton columnLayout="3"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -366,7 +362,7 @@
 			</ObjectPageSection>
 			<ObjectPageSection title="6 blocks" showTitle="true">
 				<subSections>
-					<ObjectPageSubSection title="1-a-a-a-a-1" mode="Collapsed">
+					<ObjectPageSubSection title="1-a-a-a-a-1">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -376,7 +372,7 @@
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="1-a-a-a-a-3" mode="Collapsed">
+					<ObjectPageSubSection title="1-a-a-a-a-3">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -386,7 +382,7 @@
 							<sample:InfoButton columnLayout="3"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-a-a-1-a-a" mode="Collapsed">
+					<ObjectPageSubSection title="a-a-a-1-a-a">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -396,7 +392,7 @@
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-a-a-2-a-a" mode="Collapsed">
+					<ObjectPageSubSection title="a-a-a-2-a-a">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -406,7 +402,7 @@
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-a-1-a-a-a" mode="Collapsed">
+					<ObjectPageSubSection title="a-a-1-a-a-a">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -416,7 +412,7 @@
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-a-2-a-a-a" mode="Collapsed">
+					<ObjectPageSubSection title="a-a-2-a-a-a">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -426,7 +422,7 @@
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-a-3-a-a-a" mode="Collapsed">
+					<ObjectPageSubSection title="a-a-3-a-a-a">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="auto"/>
@@ -436,7 +432,7 @@
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-1-a-a-1-a" mode="Collapsed">
+					<ObjectPageSubSection title="a-1-a-a-1-a">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="1"/>
@@ -446,7 +442,7 @@
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-2-a-a-2-a" mode="Collapsed">
+					<ObjectPageSubSection title="a-2-a-a-2-a">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="2"/>
@@ -456,7 +452,7 @@
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-3-a-a-3-a" mode="Collapsed">
+					<ObjectPageSubSection title="a-3-a-a-3-a">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="3"/>
@@ -466,7 +462,7 @@
 							<sample:InfoButton columnLayout="auto"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-1-a-a-a-1" mode="Collapsed">
+					<ObjectPageSubSection title="a-1-a-a-a-1">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="1"/>
@@ -476,7 +472,7 @@
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-2-a-a-a-1" mode="Collapsed">
+					<ObjectPageSubSection title="a-2-a-a-a-1">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="2"/>
@@ -486,7 +482,7 @@
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-1-a-1-a-1" mode="Collapsed">
+					<ObjectPageSubSection title="a-1-a-1-a-1">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="1"/>
@@ -496,7 +492,7 @@
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-2-a-2-a-2" mode="Collapsed">
+					<ObjectPageSubSection title="a-2-a-2-a-2">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="2"/>
@@ -506,7 +502,7 @@
 							<sample:InfoButton columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="a-3-a-2-a-1" mode="Collapsed">
+					<ObjectPageSubSection title="a-3-a-2-a-1">
 						<blocks>
 							<sample:InfoButton columnLayout="auto"/>
 							<sample:InfoButton columnLayout="3"/>
@@ -521,26 +517,26 @@
 
 			<ObjectPageSection title="All default" showTitle="true">
 				<subSections>
-					<ObjectPageSubSection title="1 block" mode="Collapsed">
+					<ObjectPageSubSection title="1 block">
 						<blocks>
 							<sample:InfoButton/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="2 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="2 blocks">
 						<blocks>
 							<sample:InfoButton/>
 							<sample:InfoButton/>
 
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="3 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="3 blocks">
 						<blocks>
 							<sample:InfoButton/>
 							<sample:InfoButton/>
 							<sample:InfoButton/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="4 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="4 blocks">
 						<blocks>
 							<sample:InfoButton/>
 							<sample:InfoButton/>
@@ -549,7 +545,7 @@
 
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="5 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="5 blocks">
 						<blocks>
 							<sample:InfoButton/>
 							<sample:InfoButton/>
@@ -558,7 +554,7 @@
 							<sample:InfoButton/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="6 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="6 blocks">
 						<blocks>
 							<sample:InfoButton/>
 							<sample:InfoButton/>
@@ -572,25 +568,25 @@
 			</ObjectPageSection>
 			<ObjectPageSection title="All 1" showTitle="true">
 				<subSections>
-					<ObjectPageSubSection title="1 block" mode="Collapsed">
+					<ObjectPageSubSection title="1 block">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="2 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="2 blocks">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="3 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="3 blocks">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="4 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="4 blocks">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="1"/>
@@ -599,7 +595,7 @@
 
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="5 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="5 blocks">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="1"/>
@@ -608,7 +604,7 @@
 							<sample:InfoButton columnLayout="1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="6 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="6 blocks">
 						<blocks>
 							<sample:InfoButton columnLayout="1"/>
 							<sample:InfoButton columnLayout="1"/>
@@ -622,25 +618,25 @@
 			</ObjectPageSection>
 			<ObjectPageSection title="All 2" showTitle="true">
 				<subSections>
-					<ObjectPageSubSection title="1 block" mode="Collapsed">
+					<ObjectPageSubSection title="1 block">
 						<blocks>
 							<sample:InfoButton columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="2 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="2 blocks">
 						<blocks>
 							<sample:InfoButton columnLayout="2"/>
 							<sample:InfoButton columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="3 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="3 blocks">
 						<blocks>
 							<sample:InfoButton columnLayout="2"/>
 							<sample:InfoButton columnLayout="2"/>
 							<sample:InfoButton columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="4 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="4 blocks">
 						<blocks>
 							<sample:InfoButton columnLayout="2"/>
 							<sample:InfoButton columnLayout="2"/>
@@ -649,7 +645,7 @@
 
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="5 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="5 blocks">
 						<blocks>
 							<sample:InfoButton columnLayout="2"/>
 							<sample:InfoButton columnLayout="2"/>
@@ -658,7 +654,7 @@
 							<sample:InfoButton columnLayout="2"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="6 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="6 blocks">
 						<blocks>
 							<sample:InfoButton columnLayout="2"/>
 							<sample:InfoButton columnLayout="2"/>
@@ -672,25 +668,25 @@
 			</ObjectPageSection>
 			<ObjectPageSection title="All 3" showTitle="true">
 				<subSections>
-					<ObjectPageSubSection title="1 block" mode="Collapsed">
+					<ObjectPageSubSection title="1 block">
 						<blocks>
 							<sample:InfoButton columnLayout="3"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="2 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="2 blocks">
 						<blocks>
 							<sample:InfoButton columnLayout="3"/>
 							<sample:InfoButton columnLayout="3"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="3 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="3 blocks">
 						<blocks>
 							<sample:InfoButton columnLayout="3"/>
 							<sample:InfoButton columnLayout="3"/>
 							<sample:InfoButton columnLayout="3"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="4 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="4 blocks">
 						<blocks>
 							<sample:InfoButton columnLayout="3"/>
 							<sample:InfoButton columnLayout="3"/>
@@ -699,7 +695,7 @@
 
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="5 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="5 blocks">
 						<blocks>
 							<sample:InfoButton columnLayout="3"/>
 							<sample:InfoButton columnLayout="3"/>
@@ -708,7 +704,7 @@
 							<sample:InfoButton columnLayout="3"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="6 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="6 blocks">
 						<blocks>
 							<sample:InfoButton columnLayout="3"/>
 							<sample:InfoButton columnLayout="3"/>
@@ -722,25 +718,25 @@
 			</ObjectPageSection>
 			<ObjectPageSection title="All 4" showTitle="true">
 				<subSections>
-					<ObjectPageSubSection title="1 block" mode="Collapsed">
+					<ObjectPageSubSection title="1 block">
 						<blocks>
 							<sample:InfoButton columnLayout="4"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="2 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="2 blocks">
 						<blocks>
 							<sample:InfoButton columnLayout="4"/>
 							<sample:InfoButton columnLayout="4"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="3 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="3 blocks">
 						<blocks>
 							<sample:InfoButton columnLayout="4"/>
 							<sample:InfoButton columnLayout="4"/>
 							<sample:InfoButton columnLayout="4"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="4 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="4 blocks">
 						<blocks>
 							<sample:InfoButton columnLayout="4"/>
 							<sample:InfoButton columnLayout="4"/>
@@ -749,7 +745,7 @@
 
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="5 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="5 blocks">
 						<blocks>
 							<sample:InfoButton columnLayout="4"/>
 							<sample:InfoButton columnLayout="4"/>
@@ -758,7 +754,7 @@
 							<sample:InfoButton columnLayout="4"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="6 blocks" mode="Collapsed">
+					<ObjectPageSubSection title="6 blocks">
 						<blocks>
 							<sample:InfoButton columnLayout="4"/>
 							<sample:InfoButton columnLayout="4"/>
