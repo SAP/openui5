@@ -735,17 +735,17 @@ sap.ui.define([
 							oMockLastSwatch = {focus: oSpyFocus},
 							aMockSwatches = new Array(oCP.getColors().length),
 							oMockEvent = this.mockEhancedKeybEvent("", ItemNavigationHomeEnd.BorderReachedDirectionBackward),
-							iMockIndexOfTheFirstItemInLastRow = aMockSwatches.length - 5;
+							iMockIndexOfTheLastItemInLastRow = aMockSwatches.length - 1;
 
 						oCP._ensureItemNavigation();
-						aMockSwatches[iMockIndexOfTheFirstItemInLastRow] = oMockLastSwatch;
+						aMockSwatches[iMockIndexOfTheLastItemInLastRow] = oMockLastSwatch;
 						this.stub(oCP, "_getAllSwatches").returns(aMockSwatches);
-						this.stub(oCP._oItemNavigation, "_getIndexOfTheFirstItemInLastRow").returns(iMockIndexOfTheFirstItemInLastRow);
+						this.stub(oCP._oItemNavigation, "_getIndexOfTheFirstItemInLastRow").returns(iMockIndexOfTheLastItemInLastRow);
 
 						// Act
 						oCP._onSwatchContainerBorderReached(oMockEvent);
 						// Assert
-						assert.equal(oSpyFocus.callCount, 1, "..should focus the first swatch in the last row");
+						assert.equal(oSpyFocus.callCount, 1, "..should focus the last swatch in the last row");
 					});
 			});
 
