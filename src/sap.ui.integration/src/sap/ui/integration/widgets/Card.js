@@ -1314,7 +1314,7 @@ sap.ui.define([
 		Log.error(sLogMessage);
 		this.setBusy(false);
 
-		this.fireEvent("_error");
+		this.fireEvent("_error", {message:sLogMessage});
 
 		var sDefaultDisplayMessage = "Unable to load the data.",
 			sErrorMessage = sDisplayMessage || sDefaultDisplayMessage,

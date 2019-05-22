@@ -368,7 +368,7 @@ sap.ui.define([
 						sap.ui.require(["sap/f/cards/ComponentContent"], fnCreateContentInstance);
 						break;
 					default:
-						Log.error(sType.toUpperCase() + " content type is not supported.");
+						reject(sType.toUpperCase() + " content type is not supported.");
 				}
 			} catch (sError) {
 				reject(sError);
