@@ -242,20 +242,20 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		this._oCurrent = null;
 	};
 
-
 	/**
 	 * Gets and stores attributes of the current node.
 	 *
 	 * Using getAttributeNames along with getAttribute is a memory-efficient and performant alternative to accessing Element.attributes.
+	 * Edge 44 is supporting getAttributeNames, but it does not return qualified names of attributes.
 	 * For more information, see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/getAttributeNames}.
 	 */
-	Patcher._getAttributes = ("getAttributeNames" in document.documentElement) ? function() {
-		for (var i = 0, aAttributeNames = this._oCurrent.getAttributeNames(); i < aAttributeNames.length; i++) {
-			this._mAttributes[aAttributeNames[i]] = this._oCurrent.getAttribute(aAttributeNames[i]);
-		}
-	} : function() {
+	Patcher._getAttributes = (Device.browser.msie || Device.browser.edge) ? function() {
 		for (var i = 0, aAttributes = this._oCurrent.attributes, iLength = aAttributes.length; i < iLength; i++) {
 			this._mAttributes[aAttributes[i].name] = aAttributes[i].value;
+		}
+	} : function() {
+		for (var i = 0, aAttributeNames = this._oCurrent.getAttributeNames(); i < aAttributeNames.length; i++) {
+			this._mAttributes[aAttributeNames[i]] = this._oCurrent.getAttribute(aAttributeNames[i]);
 		}
 	};
 
