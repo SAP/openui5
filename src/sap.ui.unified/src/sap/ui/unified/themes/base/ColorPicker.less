@@ -426,6 +426,10 @@
 	.sapUiColorPicker-ColorPickerInputFieldsLeft,
 	.sapUiColorPicker-ColorPickerInputFieldsRight {
 		flex-grow: 4;
+		//override the input in order to fit rgb/hsl inputs + button
+		.sapMInputBaseContentWrapper {
+			min-width: auto;
+		}
 		.sapMInputBaseInner {
 			padding: 0;
 			min-width: 2rem; //override the input in order to fit rgb/hsl inputs + button
