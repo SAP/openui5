@@ -13,7 +13,7 @@
 			<Button id="resetButton" binding="{v4>/ResetEdmTypes(...)}" text="Reset" press="onReset" visible="{ui>/realOData}"/>
 			<Button id="messagesButton" icon="sap-icon://message-popup" tooltip="Show messages"
 				press="onToggleMessagePopover" text="{ui>/iMessages}"
-				type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }" visible="{ui>/realOData}"/>
+				type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
 			<Button id="resetModelButton" icon="sap-icon://sys-cancel" text="Reset Model" tooltip="Reset Model" press="onResetModel"/>
 			<ToggleButton id="toggleV4Button" icon="sap-icon://switch-views" press="onV4" pressed="{ui>/v4}" text="V4"/>
 			<ToggleButton id="toggleSourceCodeButton" icon="sap-icon://syntax" press="onSourceCode" text="Source Code after Templating"/>
@@ -122,7 +122,7 @@
 			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {precision: 10, scale: 3}}" id="I28"/>
 			<Label text="scale: default (0), nullable: false"  labelFor="I29"/>
 			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false}}" id="I29"/>
-			<StepInput min="0" max="99" value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false}}"/>
+			<StepInput id="stepInput" min="0" max="99" value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false}}"/>
 			<Label text="scale: &quot;variable&quot;, style: &quot;short&quot;, shortDecimals: 3" labelFor="I30"/>
 			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false, scale: 'variable'}, formatOptions: {style: 'short', shortDecimals: 3}}" id="I30"/>
 			<Label text="precision: 10, scale: 3, minimum: 100 (exclusive), maximum: 1000" labelFor="decimalInput"/>

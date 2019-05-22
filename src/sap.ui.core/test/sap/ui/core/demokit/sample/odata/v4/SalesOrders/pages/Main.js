@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/ODataUtils",
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press",
@@ -15,8 +14,8 @@ sap.ui.define([
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/TestUtils"
-], function (MessageBox, Helper, Filter, FilterOperator, ODataUtils, QUnitUtils, Opa5, EnterText,
-		Press, Interactable, Properties, PropertyStrictEquals, TestUtils) {
+], function (MessageBox, Helper, Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press,
+		Interactable, Properties, PropertyStrictEquals, TestUtils) {
 	"use strict";
 	var COMPANY_NAME_COLUMN_INDEX = 1,
 		GROSS_AMOUNT_COLUMN_INDEX = 2,
@@ -416,19 +415,6 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
-				pressBackToMessagesButton : function (sMessage) {
-					return this.waitFor({
-						controlType : "sap.m.Page",
-						id : /-messageView-detailsPage/,
-						success : function (aPages) {
-							var $page = aPages[0].getDomRef();
-
-							QUnitUtils.triggerEvent("tap",
-								$page.getElementsByClassName("sapMMsgViewBackBtn")[0]);
-							Opa5.assert.ok(true, "Back to Messages button pressed");
-						}
-					});
-				},
 				pressCancelSalesOrderChangesButton : function () {
 					return pressButton(this, "cancelSalesOrderChanges");
 				},
@@ -466,15 +452,6 @@ sap.ui.define([
 				},
 				pressMessagesButton : function () {
 					return pressButton(this, "showMessages");
-				},
-				pressMessagePopoverCloseButton : function () {
-					return this.waitFor({
-						controlType : "sap.m.MessagePopover",
-						success : function (aMessagePopover) {
-							aMessagePopover[0].close();
-							Opa5.assert.ok(true, "MessagePopover closed");
-						}
-					});
 				},
 				pressRefreshAllButton : function () {
 					return pressButton(this, "refreshAll");
@@ -533,20 +510,6 @@ sap.ui.define([
 				},
 				selectFirstSalesOrder : function ( bRememberGrossAmount) {
 					return selectSalesOrder(this, 0, bRememberGrossAmount);
-				},
-				selectMessage : function (sMessage) {
-					return this.waitFor({
-						controlType : "sap.m.StandardListItem",
-						matchers : new Properties({title: sMessage}),
-						success : function (aItems) {
-							if (aItems.length === 1) {
-								QUnitUtils.triggerEvent("tap", aItems[0].getDomRef());
-								Opa5.assert.ok(true, "Message selected: " + sMessage);
-							} else {
-								Opa5.assert.ok(false, "Duplicate Message: " + sMessage);
-							}
-						}
-					});
 				},
 				selectSalesOrder : function (iIndex) {
 					return selectSalesOrder(this, iIndex);
@@ -745,6 +708,17 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
+				checkMessagesButtonCount : function (iExpectedCount) {
+					return this.waitFor({
+						controlType : "sap.m.Button",
+						id : "showMessages",
+						success : function (oButton) {
+							Opa5.assert.strictEqual(parseInt(oButton.getText()), iExpectedCount,
+								"Message count is as expected: " + iExpectedCount);
+						},
+						viewName : sViewName
+					});
+				},
 				checkNewSalesOrderItemProductName : function (sExpectProductName) {
 					return this.waitFor({
 						controlType : "sap.m.Table",
@@ -774,7 +748,7 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
-				checkNoteValueState : function (iRow, sExpectedValueState, sExpectedValueStateText) {
+				checkNoteValueState : function (iRow, sExpectedState, sExpectedStateText) {
 					return this.waitFor({
 						controlType : "sap.m.Table",
 						id : "SalesOrderList",
@@ -782,64 +756,14 @@ sap.ui.define([
 							var oInput = oSalesOrderTable.getItems()[iRow]
 									.getCells()[NOTE_COLUMN_INDEX];
 
-							Opa5.assert.strictEqual(oInput.getValueState(), sExpectedValueState,
+							Opa5.assert.strictEqual(oInput.getValueState(), sExpectedState,
 								"ValueState of note in row " + iRow + " as expected: "
-									+ sExpectedValueState);
-							Opa5.assert.strictEqual(oInput.getValueStateText(),
-								sExpectedValueStateText,
+									+ sExpectedState);
+							Opa5.assert.strictEqual(oInput.getValueStateText(), sExpectedStateText,
 								"ValueStateText of note in row " + iRow + " as expected: "
-									+ sExpectedValueStateText);
+									+ sExpectedStateText);
 						},
 						viewName : sViewName
-					});
-				},
-				checkMessageCount : function (iExpectedCount) {
-					return this.waitFor({
-						controlType : "sap.m.Button",
-						id : "showMessages",
-						success : function (oButton) {
-							Opa5.assert.strictEqual(parseInt(oButton.getText()), iExpectedCount,
-								"Message count is as expected: " + iExpectedCount);
-						},
-						viewName : sViewName
-					});
-				},
-				checkMessageDetails : function (sMessage, sExpectedDetails) {
-					return this.waitFor({
-						id : /-messageViewMarkupDescription/,
-						success : function (aDetailsHtml) {
-							Opa5.assert.strictEqual(aDetailsHtml.length, 1);
-							Opa5.assert.ok(aDetailsHtml[0].getContent().includes(sExpectedDetails),
-								"Check Message Details: Details for message '" + sMessage
-									+ " as expected: " + sExpectedDetails);
-						}
-					});
-				},
-				/*
-				 * Checks whether the given array of messages matches the displayed messages
-				 * {object[]} aExpectedMessages - Expected messages
-				 * {string} aExpectedMessages.message - Expected message text
-				 * {sap.ui.core.MessageType} aExpectedMessages.type - Expected message type
-				 */
-				checkMessages : function (aExpectedMessages) {
-					return this.waitFor({
-						controlType : "sap.m.MessagePopover",
-						success : function (aMessagePopover) {
-							var iExpectedCount = aExpectedMessages.length,
-								aItems = aMessagePopover[0].getItems();
-
-							Opa5.assert.strictEqual(aItems.length, iExpectedCount,
-								"Check Messages: message count is as expected: " + iExpectedCount);
-							aExpectedMessages.forEach(function (oExpectedMessage, i) {
-								var bFound = aItems.some(function (oItem) {
-									return oItem.getTitle() === oExpectedMessage.message &&
-										oItem.getType() === oExpectedMessage.type;
-								});
-								Opa5.assert.ok(bFound, "Check Messages: expected message[" + i
-									+ "]: " + oExpectedMessage.message + " type: "
-									+ oExpectedMessage.type);
-							});
-						}
 					});
 				},
 				checkSalesOrderIdInDetails : function (bChanged) {
