@@ -7,12 +7,14 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="utf-8">
 	<link rel="stylesheet" href="../css/style.css">
-	<link rel="stylesheet" href="../css/prettify-light.css"/>
-	<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 	<script id="sap-ui-bootstrap"
 			src="../../../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_fiori_3">
 	</script>
+
+	<link  href="../google-code-prettify/prettify.css" rel="stylesheet">
+	<script src="../google-code-prettify/run_prettify.js"></script>
+
 </head>
 <body class="sapUiBody topicBody">
 <div class="topic">
@@ -103,16 +105,12 @@
 		<p>You can use the sap.ui.integration.widgets.Card by passing the path to the card manifest:
 		</p>
 		<pre class="prettyprint">
-<xmp class="language-xml">
-<mvc:View xmlns:w="sap.ui.integration.widgets">
-<w:Card manifest="./demo/manifest.json"/>
-</xmp>
+&lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
+&lt;w:Card manifest="./demo/manifest.json"/&gt;
 </pre>
 		<p>or if the manifest is already loaded, you can take it from a model:</p>
 		<pre class="prettyprint">
-<xmp class="language-xml">
-<w:Card manifest="{manifestAsObject}"/>
-</xmp>
+&lt;w:Card manifest="{manifestAsObject}"/&gt;
 </pre>
 		<p>One of the benefits of the manifest approach is that every technology can understand a JSON object and render
 			a card

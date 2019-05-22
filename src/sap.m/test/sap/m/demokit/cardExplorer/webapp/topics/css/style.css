@@ -117,10 +117,12 @@
 	background-color: #1F69B0;
 }
 
-.prettyprint {
-	overflow: auto;
+pre.prettyprint {
+	background: #fff;
+	border: 1px solid #e0e0e0 !important;
+	border-radius: 5px;
 }
 
-.prettyprint xmp {
-	margin: 0;
+.prettyprint {
+	overflow: auto;
 }

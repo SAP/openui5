@@ -7,12 +7,14 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="utf-8">
 	<link rel="stylesheet" href="../css/style.css">
-	<link rel="stylesheet" href="../css/prettify-light.css"/>
-	<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 	<script id="sap-ui-bootstrap"
 			src="../../../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_fiori_3">
 	</script>
+
+	<link  href="../google-code-prettify/prettify.css" rel="stylesheet">
+	<script src="../google-code-prettify/run_prettify.js"></script>
+
 </head>
 <body class="sapUiBody topicBody">
 <div class="topic">
@@ -82,7 +84,7 @@
 		<h2 id="example">Example</h2>
 		<p>Defining the type and data for the card:
 		</p>
-		<pre class="prettyprint"><xmp class="language-json">{
+		<pre class="prettyprint">{
 	"sap.app": {
 		"type": "card"
 	},
@@ -124,11 +126,11 @@
 			}
 		}
 	}
-}</xmp></pre>
+}</pre>
 		<p>
 			The content of the sometimes.json which we are requesting:
 		</p>
-		<pre class="prettyprint"><xmp class="language-json">[{
+		<pre class="prettyprint">[{
 	"Name": "Notebook Basic 15",
 	"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
 	"Id": "HT-1000",
@@ -208,13 +210,12 @@
 	"state": "Success",
 	"info": "29.45 EUR",
 	"infoState": "Success"
-}]</xmp></pre>
+}]</pre>
 		<p>Finally create an widget card that actually can use the manifest.json which we created:</p>
 		<pre class="prettyprint">
-<xmp class="language-xml"><mvc:View xmlns:w="sap.ui.integration.widgets">
-	<w:Card manifest="./manifest.json" width="400px" height="auto"/>
-</mvc:View>
-</xmp></pre>
+&lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
+	&lt;w:Card manifest="./manifest.json" width="400px" height="auto"/&gt;
+&lt;/mvc:View&gt;</pre>
 		<a class="try-button" href="../../index.html#/explore/list" target="_parent">Try it Out</a>
 	</div>
 	<div class="navigation">

@@ -8,12 +8,14 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="utf-8">
 	<link rel="stylesheet" href="../css/style.css">
-	<link rel="stylesheet" href="../css/prettify-light.css" />
-	<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 	<script id="sap-ui-bootstrap"
 			src="../../../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_fiori_3">
 	</script>
+
+	<link  href="../google-code-prettify/prettify.css" rel="stylesheet">
+	<script src="../google-code-prettify/run_prettify.js"></script>
+
 </head>
 
 <body class="sapUiBody topicBody">
@@ -46,8 +48,7 @@
 			</h2>
 
 			<p>Translating properties during manifest processing (where the user i18n files contain keys "TITLE" and "SUBTITLE"):</p>
-			<pre class="prettyprint small">
-<xmp class="language-json">{
+			<pre class="prettyprint">{
 	"sap.app": {
 		"type": "card",
 		"i18n": "i18n/i18n.properties"
@@ -60,11 +61,10 @@
 		},
 		...
 	}
-}</xmp></pre>
+}</pre>
 
 			<p>Translations in binding syntaxes by using the i18n model of the card (where the user i18n files contain keys "EXPECTED_ITEMS" and "SUBTITLE"):</p>
-			<pre class="prettyprint small">
-<xmp class="language-json">{
+			<pre class="prettyprint">{
 	"sap.app": {
 		"type": "card",
 		"i18n": "i18n/i18n.properties"
@@ -82,7 +82,7 @@
 		},
 		...
 	}
-}</xmp></pre>
+}</pre>
 
 			<h2 id="translationKeys">
 				Predefined Translation Keys
