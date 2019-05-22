@@ -129,7 +129,7 @@ sap.ui.define([
 					var iSelectedIndex = oTable.getSelectedIndex();
 					if (iSelectedIndex >= 0) {
 						oTable.addSelectionInterval(iSelectedIndex, iRowIndex);
-					} else {
+					} else if (oTable._getSelectedIndicesCount() === 0) {
 						oTable.setSelectedIndex(iRowIndex);
 					}
 
