@@ -238,6 +238,10 @@ sap.ui.define([
 		assert.strictEqual(oTabStrip.$().length, 0, 'TabStrip is not re-rendered upon TabContainer re-rendering after TabStrip was destroyed.');
 	});
 
+	QUnit.test("F6", function(assert) {
+		assert.equal(this.oTabContainer.$().attr("data-sap-ui-fastnavgroup"), "true", 'TabContainer is a fast navigation group.');
+	});
+
 	QUnit.test("Add button rendering in nested TabContainer with binding", function (assert) {
 		//arrange
 		var oTemplate2,

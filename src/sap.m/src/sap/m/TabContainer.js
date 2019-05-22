@@ -182,6 +182,7 @@ sap.ui.define([
 					this.addItem(oItem);
 				}, this);
 
+				this.data("sap-ui-fastnavgroup", "true", true);
 			}
 		});
 
