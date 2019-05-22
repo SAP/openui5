@@ -3882,6 +3882,19 @@ sap.ui.define([
 			this._unPin();
 		} else {
 			this._pin();
+			this._restorePinButtonFocus();
+		}
+	};
+
+	/**
+	 * Restores the focus of the pin button in the HeaderContent.
+	 * @private
+	 */
+	ObjectPageLayout.prototype._restorePinButtonFocus = function () {
+		var oHeaderContent = this._getHeaderContent();
+
+		if (exists(oHeaderContent) && oHeaderContent.supportsPinUnpin()) {
+			oHeaderContent._focusPinButton();
 		}
 	};
 
