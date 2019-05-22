@@ -233,17 +233,28 @@ sap.ui.define([
 	 * @since 1.46.0
 	 */
 	TreeItemBase.prototype._updateExpander = function() {
+		if (this._bInvalidated) {
+			return;
+		}
+
+		var oTree = this.getTree();
+		if (oTree && oTree._bInvalidated) {
+			return;
+		}
+
 		if (this._oExpanderControl) {
 			var sSrc = this.CollapsedIconURI;
 			if (this.getExpanded()) {
 				sSrc = this.ExpandedIconURI;
 			}
 			this._oExpanderControl.setSrc(sSrc);
-			this.$().attr("aria-expanded", this.getExpanded());
 
 			// make the expander visible
 			if (!this.isLeaf()) {
 				this.$().removeClass("sapMTreeItemBaseLeaf");
+				this.$().attr("aria-expanded", this.getExpanded());
+			} else {
+				this.$().removeAttr("aria-expanded");
 			}
 
 			// update the indentation again
@@ -252,6 +263,17 @@ sap.ui.define([
 			this.$().css(sStyleRule, iIndentation + "rem");
 
 		}
+
+	};
+
+	TreeItemBase.prototype.invalidate = function() {
+		ListItemBase.prototype.invalidate.apply(this, arguments);
+		this._bInvalidated = true;
+	};
+
+	TreeItemBase.prototype.onAfterRendering = function() {
+		ListItemBase.prototype.onAfterRendering.apply(this, arguments);
+		this._bInvalidated = false;
 	};
 
 	TreeItemBase.prototype.setBindingContext = function() {

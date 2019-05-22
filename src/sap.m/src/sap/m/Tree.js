@@ -119,6 +119,7 @@ function(
 			var aChildren = oControl.getItems() || [],
 				oContext,
 				oClone;
+
 			if (aChildren.length > aContexts.length) {
 				for (var i = aContexts.length; i < aChildren.length; i++) {
 					oControl.removeItem(aChildren[i]);
@@ -136,6 +137,7 @@ function(
 					oControl.addItem(oClone);
 				}
 			}
+
 		}
 
 		// Context length will be filled by model.
@@ -155,6 +157,16 @@ function(
 			throw new Error(oObject + " is not a valid items aggregation of " + this + ". Items aggregation in Tree control only supports TreeItemBase-based objects, e.g. StandardTreeItem.");
 		}
 		return oResult;
+	};
+
+	Tree.prototype.invalidate = function() {
+		ListBase.prototype.invalidate.apply(this, arguments);
+		this._bInvalidated = true;
+	};
+
+	Tree.prototype.onAfterRendering = function() {
+		ListBase.prototype.onAfterRendering.apply(this, arguments);
+		this._bInvalidated = false;
 	};
 
 	Tree.prototype._updateDeepestLevel = function(oItem) {
