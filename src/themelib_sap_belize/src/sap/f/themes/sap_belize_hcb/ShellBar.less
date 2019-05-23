@@ -18,4 +18,11 @@
 	.color2 {
 		stop-color: #FFFFFF;
 	}
+	&:focus {
+		outline-width: 0.125rem;
+		outline-offset: -0.375rem;
+	}
+	html[data-sap-ui-browser^="ie"] &:focus:before {
+		border-width: 0.125rem;
+	}
 }

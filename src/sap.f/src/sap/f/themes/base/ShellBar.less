@@ -119,7 +119,7 @@
 		}
 		&:focus {
 			outline: 1px dotted @sapUiContentFocusColor;
-			outline-offset: -3px;
+			outline-offset: -0.3125rem;
 		}
 		html[data-sap-ui-browser^="ed"] &:focus {
 			outline-style: dashed;
@@ -131,11 +131,11 @@
 		html[data-sap-ui-browser^="ie"] &:focus:before {
 			content: " ";
 			box-sizing: border-box;
-			width: 100%;
-			height: 100%;
+			width: 88%;
+			height: 88%;
 			position: absolute;
-			left: 0;
-			top: 0;
+			left: 3px;
+			top: 3px;
 			border: 1px dashed @sapUiContentFocusColor;
 			pointer-events: none;
 		}
