@@ -22,6 +22,26 @@ sap.ui.define(function () {
 			autostart: true
 		},
 		tests: {
+			// new tests
+			"read/api/ControlPersonalizationReadAPI": {
+				group: 'Read API',
+				coverage: {
+					only: ["sap/ui/fl/read/api/ControlPersonalizationReadAPI", "sap/ui/fl/ControlPersonalizationAPI"]
+				}
+			},
+			"read/api/ControlVariantReadAPI": {
+				group: 'Read API',
+				coverage: {
+					only: ["sap/ui/fl/read/api/ControlVariantReadAPI", "sap/ui/fl/ControlPersonalizationAPI"]
+				}
+			},
+			"write/api/ControlPersonalizationWriteAPI": {
+				group: 'Write API',
+				coverage: {
+					only: ["sap/ui/fl/write/api/ControlPersonalizationWriteAPI", "sap/ui/fl/ControlPersonalizationAPI"]
+				}
+			},
+
 			// Team Gravity tests
 			"descriptorRelated/api/Api": {
 				group: 'Descriptor related APIs',
@@ -59,11 +79,6 @@ sap.ui.define(function () {
 			"ChangePersistenceFactory": {
 				coverage: {
 					only: ["sap/ui/fl/ChangePersistenceFactory"]
-				}
-			},
-			"ControlPersonalizationAPI": {
-				coverage: {
-					only: ["sap/ui/fl/ControlPersonalizationAPI"]
 				}
 			},
 			"FakeLrepConnector": {

@@ -2,233 +2,36 @@
 
 sap.ui.define([
 	"sap/ui/fl/variants/VariantModel",
-	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/ControlPersonalizationAPI",
+	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/registry/ChangeRegistry",
-	"sap/ui/core/Component",
+	"sap/ui/fl/registry/ChangeHandlerRegistration",
 	"sap/ui/core/UIComponent",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Element",
 	"sap/ui/core/Control",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/Cache",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	VariantModel,
-	VariantManagement,
 	Utils,
 	ControlPersonalizationAPI,
+	ControlPersonalizationWriteAPI,
 	FlexControllerFactory,
 	ChangeRegistry,
-	Component,
+	ChangeHandlerRegistration,
 	UIComponent,
 	ManagedObject,
 	ComponentContainer,
 	Element,
 	Control,
-	JsControlTreeModifier,
-	ChangePersistenceFactory,
-	Cache,
 	sinon
 ) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
-
-	var fnStubTechnicalParameterValues = function (aUrlTechnicalParameters) {
-		sandbox.stub(this.oModel, "getLocalId").withArgs(this.oDummyControl.getId(), this.oAppComponent).returns("variantMgmtId1");
-		sandbox.spy(this.oModel, "updateHasherEntry");
-		sandbox.stub(this.oModel.oVariantController, "getVariant").withArgs("variantMgmtId1", "variant1").returns(true);
-		sandbox.stub(Utils, "getUshellContainer").returns(true);
-		sandbox.stub(Utils, "getParsedURLHash").returns({
-			params: {
-			'sap-ui-fl-control-variant-id' : aUrlTechnicalParameters
-			}
-		});
-		sandbox.stub(Utils, "setTechnicalURLParameterValues");
-	};
-
-	var fnStubUpdateCurrentVariant = function () {
-		sandbox.stub(this.oModel, "updateCurrentVariant").returns(Promise.resolve());
-	};
-
-	var fnCheckUpdateCurrentVariantCalled = function (assert, sVariantManagement, sVariant) {
-		assert.ok(this.oModel.updateCurrentVariant.calledOnce, "then variantModel.updateCurrentVariant called once");
-		assert.ok(this.oModel.updateCurrentVariant.calledWithExactly(sVariantManagement, sVariant, this.oAppComponent), "then variantModel.updateCurrentVariant called to activate the target variant");
-	};
-
-	var fnCheckActivateVariantErrorResponse = function (assert, sExpectedError, sReceivedError) {
-		assert.equal(sReceivedError, sExpectedError, "then Promise.reject() with the appropriate error message returned");
-		assert.equal(this.oModel.updateCurrentVariant.callCount, 0, "then variantModel.updateCurrentVariant not called");
-	};
-
-	QUnit.module("Given an instance of VariantModel", {
-		beforeEach: function() {
-			this.oData = {
-				"variantMgmtId1": {
-					"defaultVariant": "variantMgmtId1",
-					"originalDefaultVariant": "variantMgmtId1",
-					"variants": [
-						{
-							"author": "SAP",
-							"key": "variantMgmtId1",
-							"layer": "VENDOR",
-							"title": "Standard",
-							"favorite": true,
-							"visible": true
-						},
-						{
-							"author": "Me",
-							"key": "variant1",
-							"layer": "CUSTOMER",
-							"title": "variant B",
-							"favorite": false,
-							"visible": true
-						}
-					]
-				}
-			};
-
-			var oMockFlexController = {
-				_oChangePersistence: {
-					_oVariantController: {
-						getVariant: function () {},
-						sVariantTechnicalParameterName: "sap-ui-fl-control-variant-id",
-						assignResetMapListener: function() {}
-					}
-				}
-			};
-
-			this.oDummyControl = new VariantManagement("dummyControl");
-
-			this.oModel = new VariantModel(this.oData, oMockFlexController);
-			this.oAppComponent = new Component("AppComponent");
-			this.oAppComponent.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
-			this.oComponent = new Component("EmbeddedComponent");
-			sandbox.stub(Utils, "getAppComponentForControl")
-				.callThrough()
-				.withArgs(this.oDummyControl).returns(this.oAppComponent)
-				.withArgs(this.oComponent).returns(this.oAppComponent);
-		},
-		afterEach: function() {
-			sandbox.restore();
-			this.oModel.destroy();
-			this.oAppComponent.destroy();
-			this.oComponent.destroy();
-			this.oDummyControl.destroy();
-		}
-	}, function() {
-		QUnit.test("when calling 'clearVariantParameterInURL' with a control as parameter", function(assert) {
-			var aUrlTechnicalParameters = ["fakevariant", "variant1"];
-			fnStubTechnicalParameterValues.call(this, aUrlTechnicalParameters);
-
-			ControlPersonalizationAPI.clearVariantParameterInURL(this.oDummyControl);
-
-			assert.ok(Utils.getParsedURLHash.calledOnce, "then hash parameter values are requested");
-			assert.ok(Utils.setTechnicalURLParameterValues.calledWithExactly(this.oAppComponent, 'sap-ui-fl-control-variant-id', [aUrlTechnicalParameters[0]]), "then 'sap-ui-fl-control-variant-id' parameter value for the provided variant management control is cleared");
-			assert.deepEqual(this.oModel.updateHasherEntry.getCall(0).args[0], {
-				parameters: [aUrlTechnicalParameters[0]],
-				updateURL: true,
-				component: this.oAppComponent
-			}, "then VariantModel.updateHasherEntry called with the desired arguments");
-		});
-
-		QUnit.test("when calling 'clearVariantParameterInURL' without a parameter", function(assert) {
-			var aUrlTechnicalParameters = ["fakevariant", "variant1"];
-			fnStubTechnicalParameterValues.call(this, aUrlTechnicalParameters);
-
-			ControlPersonalizationAPI.clearVariantParameterInURL();
-
-			assert.equal(Utils.getParsedURLHash.callCount, 0, "then 'sap-ui-fl-control-variant-id' parameter values are not requested");
-			assert.ok(Utils.setTechnicalURLParameterValues.calledWithExactly(undefined, 'sap-ui-fl-control-variant-id', []), "then all 'sap-ui-fl-control-variant-id' parameter values are cleared");
-			assert.strictEqual(this.oModel.updateHasherEntry.callCount, 0, "then VariantModel.updateHasherEntry not called");
-		});
-
-		QUnit.test("when calling 'activateVariant' with a control id", function(assert) {
-			fnStubUpdateCurrentVariant.call(this);
-
-			return ControlPersonalizationAPI.activateVariant("dummyControl", "variant1")
-			.then( function () {
-				fnCheckUpdateCurrentVariantCalled.call(this, assert, "variantMgmtId1", "variant1");
-			}.bind(this));
-		});
-
-		QUnit.test("when calling 'activateVariant' with a control", function(assert) {
-			fnStubUpdateCurrentVariant.call(this);
-
-			return ControlPersonalizationAPI.activateVariant(this.oDummyControl, "variant1")
-			.then( function () {
-				fnCheckUpdateCurrentVariantCalled.call(this, assert, "variantMgmtId1", "variant1");
-			}.bind(this));
-		});
-
-		QUnit.test("when calling 'activateVariant' with a component id", function(assert) {
-			fnStubUpdateCurrentVariant.call(this);
-
-			return ControlPersonalizationAPI.activateVariant(this.oComponent.getId(), "variant1")
-			.then( function () {
-				fnCheckUpdateCurrentVariantCalled.call(this, assert, "variantMgmtId1", "variant1");
-			}.bind(this));
-		});
-
-		QUnit.test("when calling 'activateVariant' with a component", function(assert) {
-			fnStubUpdateCurrentVariant.call(this);
-
-			return ControlPersonalizationAPI.activateVariant(this.oComponent, "variant1")
-			.then(function () {
-				fnCheckUpdateCurrentVariantCalled.call(this, assert, "variantMgmtId1", "variant1");
-			}.bind(this));
-		});
-
-		QUnit.test("when calling 'activateVariant' with an invalid variant reference", function(assert) {
-			fnStubUpdateCurrentVariant.call(this);
-
-			return ControlPersonalizationAPI.activateVariant(this.oComponent, "variantInvalid")
-			.then(function() {},
-				function (oError) {
-					fnCheckActivateVariantErrorResponse.call(this, assert, "A valid control or component, and a valid variant/ID combination are required", oError.message);
-				}.bind(this)
-			);
-		});
-
-		QUnit.test("when calling 'activateVariant' with a random object", function(assert) {
-			fnStubUpdateCurrentVariant.call(this);
-
-			return ControlPersonalizationAPI.activateVariant({}, "variant1")
-			.then(function() {},
-				function (oError) {
-					fnCheckActivateVariantErrorResponse.call(this, assert, "A valid variant management control or component (instance or ID) should be passed as parameter", oError.message);
-				}.bind(this)
-			);
-		});
-
-		QUnit.test("when calling 'activateVariant' with an invalid id", function(assert) {
-			fnStubUpdateCurrentVariant.call(this);
-
-			return ControlPersonalizationAPI.activateVariant("invalidId", "variant1")
-			.then(function() {},
-				function (oError) {
-					fnCheckActivateVariantErrorResponse.call(this, assert, "No valid component or control found for the provided ID", oError.message);
-				}.bind(this)
-			);
-		});
-
-		QUnit.test("when calling 'activateVariant' with a control with an invalid variantModel", function(assert) {
-			fnStubUpdateCurrentVariant.call(this);
-			this.oAppComponent.setModel(null, Utils.VARIANT_MODEL_NAME);
-
-			return ControlPersonalizationAPI.activateVariant(this.oDummyControl, "variant1")
-			.then(function() {},
-				function (oError) {
-					fnCheckActivateVariantErrorResponse.call(this, assert, "No variant management model found for the passed control or application component", oError.message);
-				}.bind(this)
-			);
-		});
-	});
 
 	QUnit.module("_checkChangeSpecificData", {
 		before: function() {
@@ -368,7 +171,7 @@ sap.ui.define([
 					}
 				});
 
-			return ControlPersonalizationAPI.saveChanges(aSuccessfulChanges, oManagedObject)
+			return ControlPersonalizationWriteAPI.saveChanges(aSuccessfulChanges, oManagedObject)
 				.then(function (vResponse) {
 					assert.strictEqual(vResponse, sChangesSaved, "then the correct response was received");
 					assert.strictEqual(Utils.log.error.callCount, 0, "then Utils.log.error() not called");
@@ -377,7 +180,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When saveChanges() is called with an invalid element", function(assert) {
-			ControlPersonalizationAPI.saveChanges([], {});
+			ControlPersonalizationWriteAPI.saveChanges([], {});
 			assert.ok(Utils.log.error.calledWith("A valid sap.ui.base.ManagedObject instance is required as a parameter"),  "then Utils.log.error() called with an error");
 		});
 	});
@@ -390,7 +193,7 @@ sap.ui.define([
 			function(viewContent) {
 				var MockComponent = UIComponent.extend("MockController", {
 					metadata: {
-						manifest: 	{
+						manifest: {
 							"sap.app" : {
 								applicationVersion : {
 									version : "1.2.3"
@@ -479,7 +282,8 @@ sap.ui.define([
 				this.fnUtilsLogErrorSpy = sandbox.spy(Utils.log, "error");
 				this.fnCreateAndApplyChangeSpy = sandbox.spy(this.oFlexController, "createAndApplyChange");
 
-				done();
+				//registration is triggered by instantiation of XML View above
+				ChangeHandlerRegistration.waitForChangeHandlerRegistration("sap.uxap").then(done);
 			}.bind(this));
 		},
 		afterEach: function() {
@@ -488,20 +292,8 @@ sap.ui.define([
 			this.oComp.destroy();
 		}
 	}, function() {
-		QUnit.test("when calling 'hasVariantManagement' with a control that belong to a variant management control", function(assert) {
-			var bVariantManagementReference1 = ControlPersonalizationAPI.hasVariantManagement(this.mMoveChangeData2.selectorControl);
-			var bVariantManagementReference2 = ControlPersonalizationAPI.hasVariantManagement(this.mRenameChangeData2.selectorControl);
-			assert.ok(bVariantManagementReference1, "true is returned for the first variant management control");
-			assert.ok(bVariantManagementReference2, "true is returned for the second variant management control");
-		});
-
-		QUnit.test("when calling 'hasVariantManagement' with a control that doesn't belong to a variant management control", function(assert) {
-			var bVariantManagementReference = ControlPersonalizationAPI.hasVariantManagement(sap.ui.getCore().byId("testComponent---mockview--Button"));
-			assert.notOk(bVariantManagementReference, "false is returned");
-		});
-
 		QUnit.test("when calling 'addPersonalizationChanges' with two valid variant changes", function(assert) {
-			return ControlPersonalizationAPI.addPersonalizationChanges({
+			return ControlPersonalizationWriteAPI.addPersonalizationChanges({
 				controlChanges: [this.mMoveChangeData1, this.mMoveChangeData2]
 			})
 			.then(function (aSuccessfulChanges) {
@@ -523,7 +315,7 @@ sap.ui.define([
 				.callThrough()
 				.withArgs(this.mMoveChangeData1)
 				.returns("myError");
-			return ControlPersonalizationAPI.addPersonalizationChanges({
+			return ControlPersonalizationWriteAPI.addPersonalizationChanges({
 				controlChanges: [this.mMoveChangeData1, this.mMoveChangeData2]
 			})
 			.then(function(aSuccessfulChanges) {
@@ -538,7 +330,7 @@ sap.ui.define([
 			var oUnstableIdChangeData = Object.assign({}, this.mMoveChangeData2);
 			// mocking unstable id
 			oUnstableIdChangeData.changeSpecificData.movedElements[0].id = "__" + oUnstableIdChangeData.changeSpecificData.movedElements[0].id;
-			return ControlPersonalizationAPI.addPersonalizationChanges({
+			return ControlPersonalizationWriteAPI.addPersonalizationChanges({
 				controlChanges: [oUnstableIdChangeData, this.mMoveChangeData1]
 			})
 			.then(function(aSuccessfulChanges) {
@@ -552,7 +344,7 @@ sap.ui.define([
 
 		QUnit.test("when calling 'addPersonalizationChanges' with two valid variant changes and an invalid change", function(assert) {
 			this.mRenameChangeData1.selectorControl = undefined;
-			return ControlPersonalizationAPI.addPersonalizationChanges({
+			return ControlPersonalizationWriteAPI.addPersonalizationChanges({
 				controlChanges: [this.mMoveChangeData1, this.mRenameChangeData1, this.mMoveChangeData2]
 			})
 			.then(function() {
@@ -565,7 +357,7 @@ sap.ui.define([
 			sandbox.stub(Utils, "getCurrentLayer").returns("CUSTOMER"); //needed as some ChangeHandlers are not available for USER layer
 			sandbox.spy(ControlPersonalizationAPI, "_getVariantManagement");
 			this.mMoveChangeData1.changeSpecificData.variantReference = "mockVariantReference";
-			return ControlPersonalizationAPI.addPersonalizationChanges({
+			return ControlPersonalizationWriteAPI.addPersonalizationChanges({
 				controlChanges: [this.mMoveChangeData1, this.mRenameChangeData1, this.mMoveChangeData2, this.mRenameChangeData2]
 			})
 			.then(function(aSuccessfulChanges) {
@@ -593,7 +385,7 @@ sap.ui.define([
 					value : "Personalized Text"
 				}
 			};
-			return ControlPersonalizationAPI.addPersonalizationChanges({
+			return ControlPersonalizationWriteAPI.addPersonalizationChanges({
 				controlChanges: [oChangeData]
 			})
 			.then(function() {
@@ -610,7 +402,7 @@ sap.ui.define([
 		QUnit.test("when calling 'addPersonalizationChanges' with 'ignoreVariantManagement' property set, for change contents with and without variantReference", function(assert) {
 			sandbox.stub(Utils, "getCurrentLayer").returns("CUSTOMER"); //needed as some ChangeHandlers are not available for USER layer
 			this.mMoveChangeData1.changeSpecificData.variantReference = "mockVariantReference";
-			return ControlPersonalizationAPI.addPersonalizationChanges({
+			return ControlPersonalizationWriteAPI.addPersonalizationChanges({
 				controlChanges: [this.mMoveChangeData1, this.mRenameChangeData1, this.mMoveChangeData2, this.mRenameChangeData2],
 				ignoreVariantManagement: true
 			})
@@ -669,7 +461,7 @@ sap.ui.define([
 			this.aControls.push({id: "controlId", appComponent: this.oAppComponent});
 			var fnResetChangesStub = createResetStub(this.oAppComponent);
 
-			return ControlPersonalizationAPI.resetChanges(this.aControls, aChangeType)
+			return ControlPersonalizationWriteAPI.resetChanges(this.aControls, aChangeType)
 				.then(function () {
 					assert.ok(fnResetChangesStub.calledWith("USER", undefined, this.oAppComponent, this.getControlIds(), aChangeType), "then FlexController.resetChanges is called with the passed selectors and change types");
 				}.bind(this));
@@ -682,7 +474,7 @@ sap.ui.define([
 			this.aControls.push({id: "feElementsView::controlId", appComponent: this.oAppComponent}); // element currently not present in the runtime
 			var fnResetChangesStub = createResetStub(this.oAppComponent);
 
-			return ControlPersonalizationAPI.resetChanges(this.aControls, aChangeType)
+			return ControlPersonalizationWriteAPI.resetChanges(this.aControls, aChangeType)
 				.then(function () {
 					assert.ok(fnResetChangesStub.calledWith("USER", undefined, this.oAppComponent, ["view--controlId2", "feElementsView::controlId"], aChangeType), "then FlexController.resetChanges is called with the passed control IDs and change types");
 				}.bind(this));
@@ -695,7 +487,7 @@ sap.ui.define([
 			var aSelector = [{id: "controlId3", appComponent: this.oAppComponent}, oControl];
 			var fnResetChangesStub = createResetStub(this.oAppComponent);
 
-			return ControlPersonalizationAPI.resetChanges(aSelector, undefined)
+			return ControlPersonalizationWriteAPI.resetChanges(aSelector, undefined)
 				.then(function () {
 					assert.ok(fnResetChangesStub.calledWith("USER", undefined, this.oAppComponent, ["controlId3", "view--controlId4"], undefined), "then FlexController.resetChanges is called with the passed control IDs and change types");
 				}.bind(this));
@@ -706,7 +498,7 @@ sap.ui.define([
 			var aSelector = [{id: "controlId3", appComponent: this.oAppComponent}, {id: "controlId4", appComponent: this.oAppComponent}];
 			var fnResetChangesStub = createResetStub(this.oAppComponent);
 
-			return ControlPersonalizationAPI.resetChanges(aSelector, undefined)
+			return ControlPersonalizationWriteAPI.resetChanges(aSelector, undefined)
 				.then(function () {
 					assert.ok(fnResetChangesStub.calledWith("USER", undefined, this.oAppComponent, ["controlId3", "controlId4"], undefined), "then FlexController.resetChanges is called with the passed control IDs and change types");
 				}.bind(this));
@@ -714,14 +506,14 @@ sap.ui.define([
 
 		QUnit.test("When resetChanges() is called with an undefined selector array", function(assert) {
 			assert.throws(
-				ControlPersonalizationAPI.resetChanges(undefined, undefined),
+				ControlPersonalizationWriteAPI.resetChanges(undefined, undefined),
 				"a rejection takes place"
 			);
 		});
 
 		QUnit.test("When resetChanges() is called with an empty selector array", function(assert) {
 			assert.throws(
-				ControlPersonalizationAPI.resetChanges([], undefined),
+				ControlPersonalizationWriteAPI.resetChanges([], undefined),
 				"a rejection takes place"
 			);
 		});
@@ -729,189 +521,11 @@ sap.ui.define([
 		QUnit.test("When resetChanges() is called with an  control IDs map and no app component", function(assert) {
 			var aSelector = [" controlId3", " controlId4"];
 			assert.throws(
-				ControlPersonalizationAPI.resetChanges(aSelector, undefined, undefined),
+				ControlPersonalizationWriteAPI.resetChanges(aSelector, undefined, undefined),
 				"a rejection takes place"
 			);
 		});
 	});
-
-	QUnit.module("isPersonalized", {
-		beforeEach : function() {
-			this.oAppComponent = new UIComponent("AppComponent21");
-			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
-		},
-		afterEach: function() {
-			if (this.oControl){
-				this.oControl.destroy();
-			}
-			this.oAppComponent.destroy();
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("When isPersonalized() is called with controls of type sap.ui.core.Element and no change type", function(assert) {
-			this.aChangeTypes = ["changeType1", "changeType2"];
-			this.oControl = new Control("controlId1");
-			var aControls = [this.oControl, {id: "controlId2", appComponent: this.oAppComponent}];
-			return ControlPersonalizationAPI.isPersonalized(aControls, this.aChangeTypes).then(function(bIsPersonalized){
-				assert.ok(!bIsPersonalized, "No personalization changes on control were found.");
-			});
-		});
-		QUnit.test("When isPersonalized() is called with controls as a map and no change type", function(assert) {
-			this.aChangeTypes = ["changeType1", "changeType2"];
-			var aControls = [{id: "controlId1", appComponent: this.oAppComponent}];
-			return ControlPersonalizationAPI.isPersonalized(aControls, this.aChangeTypes).then(function(bIsPersonalized){
-				assert.ok(!bIsPersonalized, "No personalization changes on control were found.");
-			});
-		});
-
-		QUnit.test("When isPersonalized() is called with an array of control ids and change type", function(assert) {
-			this.aChangeTypes = ["changeType1", "changeType2"];
-			this.oControl = new Control("controlId1");
-			var aControls = [this.oControl];
-
-			var oChangeContent0 = {"fileName":"change0", "fileType":"change", "variantReference":"", "selector":{"id":"controlId1", "idIsLocal":false}, "changeType": "changeType1", "layer": "USER"};
-			var oChangeContent1 = {"fileName":"change1", "fileType":"change", "variantReference":"variantManagementId", "selector":{"id":"controlId1", "idIsLocal":false}, "changeType": "changeType1", "layer": "USER"};
-			var oChangeContent2 = {"fileName":"change2", "fileType":"change", "variantReference":"variantManagementId", "selector":{"id":"controlId1", "idIsLocal":false}, "changeType": "changeType2", "layer": "USER"};
-			var oChangeContent3 = {"fileName":"change3", "fileType":"change", "variantReference":"variant1", "selector":{"id":"controlId1", "idIsLocal":false}, "changeType": "changeType2", "layer": "USER"};
-			var oVariantChangeContent0 = {"fileName": "variantChange0", "fileType": "ctrl_variant_change", "layer": "USER", "selector": {"id": "variantManagementId"}, "changeType": "changeType1"};
-			var oVariantManagementChangeContent0 = {"fileName": "variantManagementChange0", "fileType": "ctrl_variant_management_change", "layer": "USER", "changeType": "changeType1", "selector": {"id": "variantManagementId"}, "content": {"defaultVariant": "defaultVariant0"}};
-
-
-			var oMockedWrappedContent = {
-				"changes" : {
-					"changes" : [oChangeContent0],
-					"variantSection" : {
-						"variantManagementId" : {
-							"variants" : [{
-								"content" : {
-									"fileName": "variantManagementId",
-									"fileType":"ctrl_variant",
-									"content": {
-										"title": "variant 0"
-									}
-								},
-								"controlChanges" : [oChangeContent1, oChangeContent2],
-								"variantChanges" : {
-									"setTitle": [oVariantChangeContent0]
-								}
-							},
-							{
-								"content" : {
-									"fileName": "variant1",
-									"fileType":"ctrl_variant",
-									"variantReference":"variantManagementId",
-									"content": {
-										"title": "variant 1"
-									}
-								},
-								"controlChanges" : [oChangeContent3],
-								"variantChanges" : {}
-							}],
-							"variantManagementChanges": {
-								"setDefault": [oVariantManagementChangeContent0]
-							}
-						}
-					}
-				}
-			};
-
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
-			return ControlPersonalizationAPI.isPersonalized(aControls, this.aChangeTypes).then(function(bIsPersonalized){
-				assert.equal(!!bIsPersonalized, true, "Personalization changes were found on control.");
-			});
-		});
-
-		QUnit.test("When isPersonalized() is called with an empty control ids, non-empty change types", function(assert) {
-			this.aChangeTypes = ["changeType1", "changeType2"];
-			assert.throws(
-				ControlPersonalizationAPI.isPersonalized([], this.aChangeTypes),
-				"a rejection takes place"
-			);
-		});
-
-		QUnit.test("When isPersonalized() is called with an array of control maps, without an app component and empty changes", function(assert) {
-			var aControlIds = [{id: "controlId1"}];
-			assert.throws(
-				ControlPersonalizationAPI.isPersonalized(aControlIds, []),
-				"a rejection takes place"
-			);
-		});
-
-		QUnit.test("When isPersonalized() is called with undefined change types", function(assert) {
-			var oChangeContent0 = {"fileName":"change0", "fileType":"change", "variantReference":"", "selector":{"id":"controlId1", "idIsLocal":false}, "changeType": "changeType1", "layer": "USER"};
-			var aControls = [{id: "controlId1", appComponent: this.oAppComponent}];
-			var oMockedWrappedContent = {
-				"changes": {
-					"changes": [oChangeContent0]
-				}
-			};
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
-			return ControlPersonalizationAPI.isPersonalized(aControls).then(function(bIsPersonalized){
-				assert.equal(!!bIsPersonalized, true, "Personalization changes were found on control.");
-			});
-		});
-
-		QUnit.test("When isPersonalized() is called with an empty array of change types", function(assert) {
-			var oChangeContent0 = {"fileName":"change0", "fileType":"change", "variantReference":"", "selector":{"id":"controlId1", "idIsLocal":false}, "changeType": "changeType1", "layer": "USER"};
-			var aControls = [{id: "controlId1", appComponent: this.oAppComponent}];
-			var oMockedWrappedContent = {
-				"changes": {
-					"changes": [oChangeContent0]
-				}
-			};
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
-			return ControlPersonalizationAPI.isPersonalized(aControls, []).then(function(bIsPersonalized){
-				assert.equal(!!bIsPersonalized, true, "Personalization changes were found on control.");
-			});
-		});
-
-		QUnit.test("When isPersonalized() is called with variant control changes", function(assert) {
-			this.aChangeTypes = ["change0", "changeType2"];
-			this.oControl = new Control("controlId1");
-
-			var oChangeContent0 = {"fileName":"change0", "variantReference":""};
-			var oChangeContent1 = {"fileName":"change1", "variantReference":"variant0"};
-			var oChangeContent2 = {"fileName":"change2", "variantReference":"variant0"};
-			var oChangeContent3 = {"fileName":"change3", "variantReference":"variant1"};
-			var oChangeContent4 = {"fileName":"change4", "variantReference":"variant1"};
-
-			var oMockedWrappedContent = {
-				"changes" : {
-					"changes" : [oChangeContent0],
-					"variantSection" : {
-						"variantManagementId" : {
-							"variants" : [{
-								"content" : {
-									"fileName": "variantManagementId",
-									"content": {
-										"title": "variant 0"
-									}
-								},
-								"controlChanges" : [oChangeContent1, oChangeContent2],
-								"variantChanges" : {}
-							},
-							{
-								"content" : {
-									"fileName": "variant1",
-									"variantReference":"variant0",
-									"content": {
-										"title": "variant 1"
-									}
-								},
-								"controlChanges" : [oChangeContent3, oChangeContent4],
-								"variantChanges" : {}
-							}],
-							"variantManagementChanges": {}
-						}
-					}
-				}
-			};
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
-			return ControlPersonalizationAPI.isPersonalized([this.oControl], this.aChangeTypes).then(function(bIsPersonalized){
-					assert.equal(bIsPersonalized, false, "Personalization changes were found on control.");
-				});
-			});
-		});
 
 	QUnit.done(function () {
 		jQuery('#qunit-fixture').hide();
