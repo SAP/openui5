@@ -525,6 +525,9 @@ sap.ui.define([
 					vNextElement = this._getDefaultColorButton();
 				} else if (!bHomeOrEnd && this._getShowMoreColorsButton()) {// More Colors, but excluding "home" and "end"
 					vNextElement = this._getMoreColorsButton();
+				} else if (!bHomeOrEnd && !this._getShowDefaultColorButton()) { // swatch, but not due to "home" and "end" keys
+					aSwatches = this._getAllSwatches();
+					vNextElement = aSwatches[aSwatches.length - 1];
 				} else if (!bHomeOrEnd) { // swatch, but not due to "home" and "end" keys
 					aSwatches = this._getAllSwatches();
 					vNextElement = aSwatches[this._oItemNavigation._getIndexOfTheFirstItemInLastRow()];
