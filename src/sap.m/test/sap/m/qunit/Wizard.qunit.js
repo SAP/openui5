@@ -387,8 +387,8 @@ sap.ui.define([
 		var oStep1 = new WizardStep({
 			title: "First"
 		}), oWizard = new Wizard({
-				steps: [oStep1]
-			});
+			steps: [oStep1]
+		});
 
 		sap.ui.getCore().applyChanges();
 
@@ -401,6 +401,34 @@ sap.ui.define([
 		// assert
 		assert.strictEqual(oStep1._oNextButton.mEventRegistry.press.length, 1,
 			"Only one press handler is attached to the next button.");
+
+		// clean up
+		oWizard.destroy();
+	});
+
+	QUnit.module("Methods");
+
+	QUnit.test("_getStepScrollOffset", function (assert) {
+		var oStep1 = new WizardStep({
+			title: "First"
+		}), oWizard = new Wizard({
+			steps: [oStep1]
+		});
+
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oWizard.removeAllSteps();
+		oWizard._getStepScrollOffset(oStep1);
+
+		// assert
+		assert.ok(true, "No exceptions thrown from _getStepScrollOffset()");
+
+		// Act
+		oWizard.goToStep(oStep1);
+
+		// assert
+		assert.ok(true, "No exceptions thrown from goToStep()");
 
 		// clean up
 		oWizard.destroy();
