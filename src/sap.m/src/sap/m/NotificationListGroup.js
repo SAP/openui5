@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	'./library',
+	'sap/ui/core/Core',
 	'./NotificationListBase',
 	'sap/ui/core/InvisibleText',
 	'./ListItemBase',
@@ -16,6 +17,7 @@ sap.ui.define([
 ],
 function(
 	library,
+	Core,
 	NotificationListBase,
 	InvisibleText,
 	ListItemBase,
@@ -33,6 +35,12 @@ function(
 
 	// shortcut for sap.m.ButtonType
 	var ButtonType = library.ButtonType;
+
+	var resourceBundle = Core.getLibraryResourceBundle('sap.m'),
+		expandText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_EXPAND'),
+		collapseText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_COLLAPSE'),
+		expandIcon = 'sap-icon://slim-arrow-right',
+		collapseIcon = 'sap-icon://slim-arrow-down';
 
 	/**
 	 * Constructor for a new NotificationListGroup.
@@ -83,7 +91,35 @@ function(
 				/**
 				 * Determines if the collapse/expand button should be enabled for an empty group.
 				 */
-				enableCollapseButtonWhenEmpty: {type: 'boolean', group: 'Behavior', defaultValue: false}
+				enableCollapseButtonWhenEmpty: {type: 'boolean', group: 'Behavior', defaultValue: false},
+
+				/**
+				 * Determines if counter inside the group title will be visible.
+				 *
+				 *<b>Note:</b> Counter value represents the number of currently visible (loaded) items inside the group.
+				 */
+				showCounter: {type: 'boolean', group: 'Behavior', defaultValue: true},
+
+				/**
+				 * Determines the notification group's author name.
+				 *
+				 * @deprecated Since version 1.73
+				 */
+				authorName: {type: 'string', group: 'Appearance', defaultValue: '', deprecated: true},
+
+				/**
+				 * Determines the URL of the notification group's author picture.
+				 *
+				 *  @deprecated Since version 1.73
+				 */
+				authorPicture: {type: 'sap.ui.core.URI', multiple: false, deprecated: true},
+
+				/**
+				 * Determines the due date of the NotificationListItem.
+				 *
+				 *  @deprecated Since version 1.73
+				 */
+				datetime: {type: 'string', group: 'Appearance', defaultValue: '', deprecated: true}
 			},
 			defaultAggregation : 'items',
 			aggregations: {
@@ -94,9 +130,10 @@ function(
 				items: {type: 'sap.m.NotificationListItem', multiple: true, singularName: 'item'},
 
 				/**
-				 * The details of the NotificationListGroup that will be used to implement the ARIA specification
+				 * The collapse button.
+				 * @private
 				 */
-				_ariaDetailsText: {type: 'sap.ui.core.InvisibleText', multiple: false, visibility: 'hidden'}
+				_collapseButton: {type: 'sap.m.Button', multiple: false, visibility: "hidden"}
 			},
 			events: {
 				/**
@@ -115,79 +152,72 @@ function(
 		}
 	});
 
-	/**
-	 * Sets up the initial values of the control.
-	 *
-	 * @protected
-	 */
-	NotificationListGroup.prototype.init = function () {
-		NotificationListBase.prototype.init.call(this);
+	NotificationListGroup.prototype._getCollapseButton = function() {
 
-		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
-		this._closeText = resourceBundle.getText('NOTIFICATION_LIST_BASE_CLOSE');
 
-		/**
-		 * @type {sap.m.Button}
-		 * @private
-		 */
-		var _closeButton = new Button(this.getId() + '-closeButton', {
-			type: ButtonType.Transparent,
-			icon: IconPool.getIconURI('decline'),
-			tooltip: this._closeText,
-			press: function () {
-				this.close();
-			}.bind(this)
-		});
+		var collapseButton = this.getAggregation('_collapseButton'),
+			collapsed = this.getCollapsed();
 
-		this.setAggregation('_closeButton', _closeButton, true);
+		if (!collapseButton) {
+			collapseButton = new Button(this.getId() + '-collapseButton', {
+				type: ButtonType.Transparent,
+				icon: collapsed ? expandIcon : collapseIcon,
+				tooltip: collapsed ? expandText : collapseText,
+				press: function () {
+					this.setCollapsed(!this.getCollapsed());
+				}.bind(this)
+			});
 
-		/**
-		 * @type {sap.m.Button}
-		 * @private
-		 */
-		var _collapseButton = new Button({
-			type: ButtonType.Transparent,
-			press: function () {
-				this.setCollapsed(!this.getCollapsed());
-			}.bind(this)
-		});
+			this.setAggregation("_collapseButton", collapseButton, true);
+		}
 
-		this.setAggregation('_collapseButton', _collapseButton, true);
-		this._maxNumberReached = false;
-		this._ariaLabbeledByIds = '';
-
-		this.setAggregation('_ariaDetailsText', new InvisibleText());
-
-		/**
-		 * Resource bundle used for translation
-		 * @private
-		 */
-		this._resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
+		return collapseButton;
 	};
 
-	//================================================================================
-	// Overwritten setters and getters
-	//================================================================================
-
-	/**
-	 * Sets a new value for property {@link #collapsed}.
-	 * Determines if the group is collapsed or expanded.
-	 *
-	 * @override
-	 * @public
-	 * @param {boolean} bCollapsed New value for property <code>collapsed</code>.
-	 * @returns {sap.m.NotificationListGroup} this NotificationListGroup reference for chaining.
-	 */
 	NotificationListGroup.prototype.setCollapsed = function (bCollapsed) {
-		this._toggleCollapsed(bCollapsed);
 
-		//Setter overwritten to suppress invalidation
+		var $that = this.$(),
+			collapseButton = this._getCollapseButton(),
+			display = "";
+
+		$that.toggleClass('sapMNLGroupCollapsed', bCollapsed);
+		$that.attr('aria-expanded', !bCollapsed);
+		bCollapsed ? display = "none" : display = "block";
+		$that.find(".sapMNLGroupHeader .sapMNLIActions").css("display", display);
+
+		collapseButton.setIcon(bCollapsed ? expandIcon : collapseIcon);
+		collapseButton.setTooltip(bCollapsed ? expandText : collapseText);
+
+		// Setter overwritten to suppress invalidation
 		this.setProperty('collapsed', bCollapsed, true);
 		this.fireOnCollapse({collapsed: bCollapsed});
 
 		return this;
 	};
 
+	NotificationListGroup.prototype.getVisibleItems = function () {
+		var visibleItems = this.getItems().filter(function (item) {
+			return item.getVisible();
+		});
+
+		return visibleItems;
+	};
+
+	/**
+	 * Gets the number of visible NotificationListItems inside the group.
+	 *
+	 * @private
+	 * @returns {number} The number of visible notifications.
+	 */
+	NotificationListGroup.prototype._getVisibleItemsCount = function () {
+		return this.getVisibleItems().length;
+	};
+
+	NotificationListGroup.prototype.getAccessibilityText = function() {
+		var ariaTexts = [this.getTitle()];
+
+		return ariaTexts.join(' ');
+	};
 
 	/**
 	 * Overrides the getter for priority property.
@@ -220,246 +250,6 @@ function(
 	};
 
 	/**
-	 * Overwrites the getter for unread property.
-	 *
-	 * @override
-	 * @public
-	 * @returns {boolean} Unread items.
-	 */
-	NotificationListGroup.prototype.getUnread = function () {
-		/** @type {sap.m.NotificationListItem[]} */
-		var notifications = this.getItems();
-
-		if (notifications.length) {
-			return notifications.some(function (item) {
-				return item.getUnread();
-			});
-		}
-		return this.getProperty('unread');
-	};
-
-	//================================================================================
-	// Control methods
-	//================================================================================
-
-	/**
-	 * Overwrites the onBeforeRendering.
-	 *
-	 * @overwrites
-	 * @public
-	 */
-	NotificationListGroup.prototype.onBeforeRendering = function() {
-		/** @type {sap.m.NotificationListItem[]} */
-		var notifications = this.getItems();
-		var notificationsCount = notifications.length;
-		var collapseButton = this.getAggregation('_collapseButton');
-
-		this._maxNumberOfNotifications = Device.system.desktop ? 400 : 100;
-		collapseButton.setEnabled(this._getCollapseButtonEnabled(), true);
-		this._maxNumberReached = notificationsCount > this._maxNumberOfNotifications;
-
-		notifications.forEach(function (item) {
-			item.addEventDelegate({onfocusin: this._notificationFocusHandler}, this);
-			item.addEventDelegate({onkeydown: this._notificationNavigationHandler}, this);
-		}.bind(this));
-
-		this._updateAccessibilityInfo();
-		this._updateCollapseButtonText(this.getCollapsed());
-
-		var oAuthorPicture = this.getAuthorPicture();
-		this._getAuthorImage().setSrc(oAuthorPicture);
-
-		this._maxNumberOfNotificationsTitle = this._resourceBundle.getText('NOTIFICATION_LIST_GROUP_MAX_NOTIFICATIONS_TITLE', notificationsCount - this._maxNumberOfNotifications);
-		this._maxNumberOfNotificationsBody = this._resourceBundle.getText('NOTIFICATION_LIST_GROUP_MAX_NOTIFICATIONS_BODY');
-	};
-
-	//================================================================================
-	// Private and protected getters and setters
-	//================================================================================
-
-	/**
-	 * Returns the sap.m.Title control used in the NotificationListGroup's title.
-	 *
-	 * @private
-	 * @returns {sap.m.Text} The hidden title control aggregation used in the group title.
-	 */
-	NotificationListGroup.prototype._getHeaderTitle = function () {
-		/** @type {sap.m.Text} */
-		var title = NotificationListBase.prototype._getHeaderTitle.call(this);
-		title.addStyleClass('sapMNLG-Title');
-
-		if (this.getUnread()) {
-			title.addStyleClass('sapMNLGTitleUnread');
-		}
-
-		return title;
-	};
-
-	/**
-	 * Returns the sap.m.Text control used in the NotificationListGroup's datetime.
-	 *
-	 * @private
-	 * @returns {sap.m.Text} The hidden text control aggregation used in the group's timestamp.
-	 */
-	NotificationListGroup.prototype._getDateTimeText = function () {
-		/** @type {sap.m.Text} */
-		var dateTime = NotificationListBase.prototype._getDateTimeText.call(this);
-		dateTime.setTextAlign('End');
-
-		return dateTime;
-	};
-
-	//================================================================================
-	// Private and protected internal methods
-	//================================================================================
-
-	/**
-	 * Toggles the NotificationListGroup state between collapsed/expanded.
-	 *
-	 * @param {boolean} bCollapsed The desired collapse state.
-	 * @private
-	 */
-	NotificationListGroup.prototype._toggleCollapsed = function (bCollapsed) {
-		this._updateCollapseButtonText(bCollapsed);
-		this.$().toggleClass('sapMNLG-Collapsed', bCollapsed);
-		this.$().toggleClass('sapMNLG-NoNotifications', this._getVisibleItemsCount() <= 0);
-	};
-
-	/**
-	 * Gets the number of visible NotificationListItems inside the group.
-	 *
-	 * @private
-	 * @returns {number} The number of visible notifications.
-	 */
-	NotificationListGroup.prototype._getVisibleItemsCount = function () {
-		/** @type {sap.m.NotificationListItem[]} */
-		var items = this.getItems();
-		var result = 0;
-
-		items.forEach(function (item) {
-			if (item.getVisible()) {
-				result += 1;
-			}
-		});
-
-		return result;
-	};
-
-	/**
-	 * Gets what the state (enabled/disabled) of the collapse button should be.
-	 *
-	 * @private
-	 * @returns {boolean} Should the collapse button be enabled.
-	 */
-	NotificationListGroup.prototype._getCollapseButtonEnabled = function () {
-		if (this._getVisibleItemsCount() > 0) {
-			return true;
-		}
-
-		return this.getEnableCollapseButtonWhenEmpty();
-	};
-
-	/**
-	 * Focus handler for the NotificationListGroup's items.
-	 *
-	 * @private
-	 * @param {jQuery.Event} event The passed event object.
-	 */
-	NotificationListGroup.prototype._notificationFocusHandler = function (event) {
-		ListItemBase.prototype.onfocusin.call(this, event);
-		var targetControl = event.srcControl;
-
-		if (targetControl.getMetadata().getName() != 'sap.m.NotificationListItem') {
-			return;
-		}
-
-		var notificationGroup = targetControl.getParent();
-		var visibleItems = notificationGroup.getItems().filter(function (item) {
-			return item.getVisible();
-		});
-
-		var groupIndex = visibleItems.indexOf(targetControl);
-		var targetDomRef = targetControl.getDomRef();
-
-		targetDomRef.setAttribute('aria-posinset', groupIndex + 1);
-		targetDomRef.setAttribute('aria-setsize', visibleItems.length);
-	};
-
-	/**
-	 * Event handler for keypressed.
-	 *
-	 * @private
-	 * @param {jQuery.Event} event The passed event object.
-	 */
-	NotificationListGroup.prototype._notificationNavigationHandler = function (event) {
-		ListItemBase.prototype.onkeydown.call(this, event);
-		var targetControl = event.srcControl;
-
-		if (targetControl.getMetadata().getName() != 'sap.m.NotificationListItem') {
-			return;
-		}
-
-		var notificationGroup = targetControl.getParent();
-		var groupIndex = notificationGroup.indexOfItem(targetControl);
-
-		switch (event.which) {
-			case KeyCodes.ARROW_UP:
-				if (groupIndex == 0) {
-					return;
-				}
-
-				var previousIndex = groupIndex - 1;
-				notificationGroup.getItems()[previousIndex].focus();
-				break;
-			case KeyCodes.ARROW_DOWN:
-				var nextIndex = groupIndex + 1;
-				if (nextIndex == notificationGroup.getItems().length) {
-					return;
-				}
-
-				notificationGroup.getItems()[nextIndex].focus();
-				break;
-			default:
-				return;
-		}
-	};
-
-	/**
-	 * Updates all the text needed for accessibility.
-	 *
-	 * @private
-	 */
-	NotificationListGroup.prototype._updateAccessibilityInfo = function() {
-		var authorName = this.getAuthorName();
-		var infoText = this._resourceBundle.getText('NOTIFICATION_LIST_ITEM_DATETIME_PRIORITY', [this.getDatetime(), this.getPriority()]);
-		var unreadText =  this.getUnread() ? this._resourceBundle.getText('NOTIFICATION_LIST_GROUP_UNREAD') : this._resourceBundle.getText('NOTIFICATION_LIST_GROUP_READ');
-		var ariaText = '';
-		var ariaDetailsText = this.getAggregation('_ariaDetailsText');
-
-		if (authorName) {
-			ariaText += this._resourceBundle.getText('NOTIFICATION_LIST_ITEM_CREATED_BY') + ' ' + authorName + ' ';
-		}
-
-		ariaText += infoText + ' ' + unreadText;
-
-		ariaDetailsText.setText(ariaText);
-		this._ariaLabbeledByIds = this._getHeaderTitle().getId() + ' ' + ariaDetailsText.getId();
-	};
-
-	/**
-	 * Updates the collapse/expand text according to the new passed state.
-	 *
-	 * @private
-	 * @param {boolean} collapsed The new collapsed state.
-	 */
-	NotificationListGroup.prototype._updateCollapseButtonText = function(collapsed) {
-		var collapseButtonText = collapsed ? this._resourceBundle.getText('NOTIFICATION_LIST_GROUP_EXPAND') :
-			this._resourceBundle.getText('NOTIFICATION_LIST_GROUP_COLLAPSE');
-
-		this.getAggregation('_collapseButton').setText(collapseButtonText, true);
-	};
-
-	/**
 	 * Compares two priorities and returns the higher one.
 	 *
 	 * @private
@@ -486,6 +276,13 @@ function(
 
 		return firstPriority;
 	}
+
+	NotificationListGroup.prototype.onBeforeRendering = function () {
+
+		NotificationListBase.prototype.onBeforeRendering.apply(this, arguments);
+
+		this._getCollapseButton().setVisible(this.getEnableCollapseButtonWhenEmpty() || this._getVisibleItemsCount() > 0);
+	};
 
 	return NotificationListGroup;
 });

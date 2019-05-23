@@ -643,9 +643,6 @@ sap.ui.define([
 					language: "en"
 				}
 			},
-			NotificationListBase: {
-				title: "QUnit Page for sap.m.NotificationListBase"
-			},
 			NotificationListGroup: {
 				title: "QUnit Page for sap.m.NotificationListGroup"
 			},

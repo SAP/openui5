@@ -8,13 +8,10 @@
 			class="sapUiContentPadding"
 			width="100%">
 		<l:content>
-			<List items="{path: '/NotificationGroups', templateShareable : true}">
+			<List id="notificationList" items="{path: '/NotificationGroups', templateShareable : true}">
 					<NotificationListGroup
 							title="{title}"
-							datetime="{creationDate}"
 							showCloseButton="{showCloseButton}"
-							authorName="{authorName}"
-							authorPicture="{authorPicture}"
 							showEmptyGroup="{showEmptyGroup}"
 							close="{onGroupClose}"
 							items="{path: 'groupItems', templateShareable : true}"
@@ -31,11 +28,11 @@
 									authorPicture="{authorPicture}"
 									buttons="{path: 'itemButtons', templateShareable : true}">
 								<buttons>
-									<Button text="{text}" type="{type}" press="{onButtonPress}"/>
+									<Button text="{text}" press="{onButtonPress}"/>
 								</buttons>
 							</NotificationListItem>
 						<buttons>
-							<Button text="{text}" type="{type}" press="{onButtonPress}"/>
+							<Button text="{text}" press="{onButtonPress}"/>
 						</buttons>
 					</NotificationListGroup>
 			</List>

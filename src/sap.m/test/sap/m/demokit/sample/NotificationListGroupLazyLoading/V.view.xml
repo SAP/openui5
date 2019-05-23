@@ -8,39 +8,35 @@
 			class="sapUiContentPadding"
 			width="100%">
 		<l:content>
-			<List class="sapContrast sapContrastPlus">
+			<List id="notificationList"  class="sapContrast sapContrastPlus">
 				<NotificationListGroup
 						title="Group with 3 messages from the backend. They will be lazy loaded when 'Expand' button is pressed."
-						datetime="15 minutes"
 						showCloseButton="true"
-						authorName="Michael Muller"
-						authorPicture="sap-icon://person-placeholder"
+						showCounter="false"
 						collapsed="true"
 						onCollapse="loadNotifications"
 						close="onItemClose"
 						showEmptyGroup="true"
 						enableCollapseButtonWhenEmpty="true">
 					<buttons>
-						<Button text="Accept All" type="Accept" press="onAcceptPress"/>
-						<Button text="Reject All" type="Reject" press="onRejectPress"/>
-						<Button text="Get items count" type="None" press="onGetItemsCount"/>
+						<Button text="Accept All" press="onAcceptPress"/>
+						<Button text="Reject All" press="onRejectPress"/>
+						<Button text="Get items count" press="onGetItemsCount"/>
 					</buttons>
 				</NotificationListGroup>
 				<NotificationListGroup
 						title="Group with 3 messages from the backend. They will be lazy loaded when 'Expand' button is pressed."
-						datetime="1 hour"
 						showCloseButton="true"
-						authorName="Peter Smith"
-						authorPicture="sap-icon://person-placeholder"
+						showCounter="false"
 						collapsed="true"
 						onCollapse="loadNotifications"
 						close="onItemClose"
 						showEmptyGroup="true"
 						enableCollapseButtonWhenEmpty="true">
 					<buttons>
-						<Button text="Accept All" type="Accept" press="onAcceptPress"/>
-						<Button text="Reject All" type="Reject" press="onRejectPress"/>
-						<Button text="Get items count" type="None" press="onGetItemsCount"/>
+						<Button text="Accept All" press="onAcceptPress"/>
+						<Button text="Reject All" press="onRejectPress"/>
+						<Button text="Get items count" press="onGetItemsCount"/>
 					</buttons>
 				</NotificationListGroup>
 			</List>
