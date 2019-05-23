@@ -198,6 +198,10 @@ function (
 		}
 
 		var oOverlay = OverlayRegistry.getOverlay(oEvent.getParameters().id);
+		if (oOverlay === undefined || oOverlay === null) {
+			return;
+		}
+
 		var aRelevantOverlays = this._getRelevantOverlays(oOverlay);
 		var fnDebounced = DtUtil.debounce(function () {
 			if (!this.bIsDestroyed && !oOverlay.bIsDestroyed) {

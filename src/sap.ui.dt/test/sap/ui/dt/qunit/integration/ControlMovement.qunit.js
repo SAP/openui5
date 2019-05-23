@@ -95,9 +95,9 @@ function (
 
 			var fnCheckMovable = function (oOverlay) {
 				if (oOverlay.getElement() === this.oNotMovableButton) {
-					return false;
+					return Promise.resolve(false);
 				}
-				return true;
+				return Promise.resolve(true);
 			}.bind(this);
 			this.checkMovableDragStub = sinon.stub(this.oControlDragDrop.getElementMover(), "checkMovable").callsFake(fnCheckMovable);
 			this.checkMovableCutStub = sinon.stub(this.oCutPaste.getElementMover(), "checkMovable").callsFake(fnCheckMovable);
@@ -133,34 +133,46 @@ function (
 		}
 	}, function () {
 		QUnit.test("when the dragstart is triggered on a button overlay, that doesn't fit to ObjectHeader", function(assert) {
+			var done = assert.async();
 			this.oControlDragDrop._onDragStart(stubEventFor(this.oButtonOverlay));
 
-			assert.ok(this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation is marked as target zone");
-			assert.ok(!this.oObjectHeaderAggregationOverlay.isTargetZone(), "the invalid aggregation is not marked as target zone");
+			this.oControlDragDrop.getElementMover().attachValidTargetZonesActivated(function() {
+				assert.ok(this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation is marked as target zone");
+				assert.ok(!this.oObjectHeaderAggregationOverlay.isTargetZone(), "the invalid aggregation is not marked as target zone");
 
-			assert.ok(this.oLayoutAggregationOverlay.hasStyleClass("sapUiDtOverlayDropZone"), "the valid aggregation overlay has the additional drop zone style");
-			assert.ok(!this.oObjectHeaderAggregationOverlay.hasStyleClass("sapUiDtOverlayDropZone"), "the invalid aggregation overlay has not the additional drop zone style");
-			assert.equal(this.oControlDragDrop.getDraggedOverlay(), this.oButtonOverlay, "Dragged Overlay is remembered");
+				assert.ok(this.oLayoutAggregationOverlay.hasStyleClass("sapUiDtOverlayDropZone"), "the valid aggregation overlay has the additional drop zone style");
+				assert.ok(!this.oObjectHeaderAggregationOverlay.hasStyleClass("sapUiDtOverlayDropZone"), "the invalid aggregation overlay has not the additional drop zone style");
+				assert.equal(this.oControlDragDrop.getDraggedOverlay(), this.oButtonOverlay, "Dragged Overlay is remembered");
+				done();
+			}.bind(this));
 		});
 
 		QUnit.test("when the dragstart is triggered on the objectAttribute overlay, that fit into both aggregations", function(assert) {
+			var done = assert.async();
 			this.oControlDragDrop._onDragStart(stubEventFor(this.oObjectAttributeOverlay));
 
-			assert.ok(this.oLayoutAggregationOverlay.isTargetZone(), "both aggregations are marked as target zone");
-			assert.ok(this.oObjectHeaderAggregationOverlay.isTargetZone(), "both aggregations are marked as target zone");
-			assert.equal(this.oControlDragDrop.getDraggedOverlay(), this.oObjectAttributeOverlay, "Dragged Overlay is remembered");
+			this.oControlDragDrop.getElementMover().attachValidTargetZonesActivated(function() {
+				assert.ok(this.oLayoutAggregationOverlay.isTargetZone(), "both aggregations are marked as target zone");
+				assert.ok(this.oObjectHeaderAggregationOverlay.isTargetZone(), "both aggregations are marked as target zone");
+				assert.equal(this.oControlDragDrop.getDraggedOverlay(), this.oObjectAttributeOverlay, "Dragged Overlay is remembered");
+				done();
+			}.bind(this));
 		});
 
 		QUnit.test("when the cut is triggered on a button overlay, that doesn't fit to ObjectHeader", function(assert) {
+			var done = assert.async();
 			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.X, false, false, true);
 
-			assert.ok(this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation is marked as target zone");
-			assert.ok(!this.oObjectHeaderAggregationOverlay.isTargetZone(), "the invalid aggregation is not marked as target zone");
+			this.oCutPaste.getElementMover().attachValidTargetZonesActivated(function() {
+				assert.ok(this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation is marked as target zone");
+				assert.ok(!this.oObjectHeaderAggregationOverlay.isTargetZone(), "the invalid aggregation is not marked as target zone");
 
-			assert.ok(!this.oLayoutAggregationOverlay.hasStyleClass("sapUiDtOverlayDropZone"), "the valid aggregation overlay has not the additional drop zone style (we cutted!)");
+				assert.ok(!this.oLayoutAggregationOverlay.hasStyleClass("sapUiDtOverlayDropZone"), "the valid aggregation overlay has not the additional drop zone style (we cutted!)");
 
-			assert.ok(this.oButtonOverlay.hasStyleClass("sapUiDtOverlayCutted"), "the button overlay is marked with the correct style");
-			assert.equal(this.oCutPaste.getCuttedOverlay(), this.oButtonOverlay, "then the button overlay is remembered as to be cutted");
+				assert.ok(this.oButtonOverlay.hasStyleClass("sapUiDtOverlayCutted"), "the button overlay is marked with the correct style");
+				assert.equal(this.oCutPaste.getCuttedOverlay(), this.oButtonOverlay, "then the button overlay is remembered as to be cutted");
+				done();
+			}.bind(this));
 		});
 
 		QUnit.test("when the cut is triggered on a non movable overlay (ObjectHeader)", function(assert) {
@@ -178,10 +190,14 @@ function (
 		});
 
 		QUnit.test("when the cut is triggered on a button overlay,", function(assert) {
+			var done = assert.async();
 			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.X, false, false, true);
 
-			assert.ok(this.oCutPaste.isElementPasteable(this.oLayoutOverlay), "the target overlay of a valid element is pasteable");
-			assert.ok(!this.oCutPaste.isElementPasteable(this.oObjectAttributeOverlay), "the target overlay of an invalid element is not pasteable");
+			this.oCutPaste.getElementMover().attachValidTargetZonesActivated(function() {
+				assert.ok(this.oCutPaste.isElementPasteable(this.oLayoutOverlay), "the target overlay of a valid element is pasteable");
+				assert.ok(!this.oCutPaste.isElementPasteable(this.oObjectAttributeOverlay), "the target overlay of an invalid element is not pasteable");
+				done();
+			}.bind(this));
 		});
 
 		QUnit.test("and cut was triggered, when ESCAPE is triggered", function(assert) {
@@ -196,27 +212,33 @@ function (
 		});
 
 		QUnit.test("and cut was triggered, when another cut is triggered, then", function(assert) {
+			var done = assert.async();
 			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.X, false, false, true);
-
 			QUnitUtils.triggerKeydown(this.oObjectAttributeOverlay.getDomRef(), KeyCodes.X, false, false, true);
 
-			assert.ok(this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation (layout) is marked as target zone");
-			assert.ok(this.oObjectHeaderAggregationOverlay.isTargetZone(), "the valid aggregation (objectHeader) is marked as target zone");
+			this.oCutPaste.getElementMover().attachEventOnce("validTargetZonesActivated", function() {
+				assert.ok(this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation (layout) is marked as target zone");
+				assert.ok(this.oObjectHeaderAggregationOverlay.isTargetZone(), "the valid aggregation (objectHeader) is marked as target zone");
 
-			assert.ok(!this.oButtonOverlay.hasStyleClass("sapUiDtOverlayCutted"), "the overlay cut style class is removed from previously cutted overlay");
-			assert.ok(this.oObjectAttributeOverlay.hasStyleClass("sapUiDtOverlayCutted"), "the overlay cut style class is added to the newly cutted overlay");
+				assert.ok(!this.oButtonOverlay.hasStyleClass("sapUiDtOverlayCutted"), "the overlay cut style class is removed from previously cutted overlay");
+				assert.ok(this.oObjectAttributeOverlay.hasStyleClass("sapUiDtOverlayCutted"), "the overlay cut style class is added to the newly cutted overlay");
+				done();
+			}.bind(this));
 		});
 
 		QUnit.test("while dragging the button when dragenter is triggered on the ObjectHeader overlay,", function(assert) {
+			var done = assert.async();
 			assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "before ObjectHeader is at first position");
 			assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "before Button is at second position");
 
 			this.oControlDragDrop._onDragStart(stubEventFor(this.oButtonOverlay));
 
-			this.oControlDragDrop._onDragEnter(stubEventFor(this.oObjectHeaderOverlay));
-
-			assert.equal(this.oLayout.getContent()[0].getId(), this.oButton.getId(), "Button is at position of the ObjectHeader");
-			assert.equal(this.oLayout.getContent()[1].getId(), this.oObjectHeader.getId(), "ObjectHeader is at position below");
+			this.oControlDragDrop.getElementMover().attachValidTargetZonesActivated(function() {
+				this.oControlDragDrop._onDragEnter(stubEventFor(this.oObjectHeaderOverlay));
+				assert.equal(this.oLayout.getContent()[0].getId(), this.oButton.getId(), "Button is at position of the ObjectHeader");
+				assert.equal(this.oLayout.getContent()[1].getId(), this.oObjectHeader.getId(), "ObjectHeader is at position below");
+				done();
+			}.bind(this));
 		});
 
 		QUnit.test("while dragging the button when dragenter is triggered on the ObjectAttribute overlay,", function(assert) {
@@ -274,51 +296,62 @@ function (
 		});
 
 		QUnit.test("and object attribute was cutted, when paste is triggered on the layout (control with target zone aggregation), then", function(assert) {
+			var done = assert.async();
 			QUnitUtils.triggerKeydown(this.oObjectAttributeOverlay.getDomRef(), KeyCodes.X, false, false, true);
 
-			QUnitUtils.triggerKeydown(this.oLayoutOverlay.getDomRef(), KeyCodes.V, false, false, true);
+			this.oCutPaste.getElementMover().attachValidTargetZonesActivated(function() {
+				QUnitUtils.triggerKeydown(this.oLayoutOverlay.getDomRef(), KeyCodes.V, false, false, true);
+				assert.equal(this.oObjectHeader.getAttributes().length, 0, "object attribute is removed from the header");
+				assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 1. position");
+				assert.equal(this.oLayout.getContent()[1].getId(), this.oObjectHeader.getId(), "object header is now at 2. position");
+				assert.equal(this.oLayout.getContent()[2].getId(), this.oButton.getId(), "button is now at 3. position");
+				assert.equal(this.oLayout.getContent()[3].getId(), this.oNotMovableButton.getId(), "not movable button is now at 4. position");
 
-			assert.equal(this.oObjectHeader.getAttributes().length, 0, "object attribute is removed from the header");
-			assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 1. position");
-			assert.equal(this.oLayout.getContent()[1].getId(), this.oObjectHeader.getId(), "object header is now at 2. position");
-			assert.equal(this.oLayout.getContent()[2].getId(), this.oButton.getId(), "button is now at 3. position");
-			assert.equal(this.oLayout.getContent()[3].getId(), this.oNotMovableButton.getId(), "not movable button is now at 4. position");
-
-			assert.ok(!this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation (layout) is not marked as target zone");
-			assert.ok(!this.oObjectHeaderAggregationOverlay.isTargetZone(), "the valid aggregation (objectHeader) is not marked as target zone");
-			assert.ok(!this.oObjectAttributeOverlay.hasStyleClass("sapUiDtOverlayCutted"), "the overlay cut style class is removed");
+				assert.ok(!this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation (layout) is not marked as target zone");
+				assert.ok(!this.oObjectHeaderAggregationOverlay.isTargetZone(), "the valid aggregation (objectHeader) is not marked as target zone");
+				assert.ok(!this.oObjectAttributeOverlay.hasStyleClass("sapUiDtOverlayCutted"), "the overlay cut style class is removed");
+				done();
+			}.bind(this));
 		});
 
 		QUnit.test("and object attribute was cutted, when paste is triggered on the button (control in a target zone aggregation), then", function(assert) {
+			var done = assert.async();
 			QUnitUtils.triggerKeydown(this.oObjectAttributeOverlay.getDomRef(), KeyCodes.X, false, false, true);
 
-			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.V, false, false, true);
+			this.oCutPaste.getElementMover().attachValidTargetZonesActivated(function() {
+				QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.V, false, false, true);
 
-			assert.equal(this.oObjectHeader.getAttributes().length, 0, "object attribute is removed from the header");
-			assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header stays at 1. position");
-			assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "button is still at 2. position");
-			assert.equal(this.oLayout.getContent()[2].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 3. position after the button");
+				assert.equal(this.oObjectHeader.getAttributes().length, 0, "object attribute is removed from the header");
+				assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header stays at 1. position");
+				assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "button is still at 2. position");
+				assert.equal(this.oLayout.getContent()[2].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 3. position after the button");
 
-			assert.ok(!this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation (layout) is not marked as target zone");
-			assert.ok(!this.oObjectHeaderAggregationOverlay.isTargetZone(), "the valid aggregation (objectHeader) is not marked as target zone");
-			assert.ok(!this.oObjectAttributeOverlay.hasStyleClass("sapUiDtOverlayCutted"), "the overlay cut style class is removed");
+				assert.ok(!this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation (layout) is not marked as target zone");
+				assert.ok(!this.oObjectHeaderAggregationOverlay.isTargetZone(), "the valid aggregation (objectHeader) is not marked as target zone");
+				assert.ok(!this.oObjectAttributeOverlay.hasStyleClass("sapUiDtOverlayCutted"), "the overlay cut style class is removed");
 
-			assert.ok(!this.oCutPaste.getElementMover()._getSource(), "source information should be deleted after move has finished");
+				assert.ok(!this.oCutPaste.getElementMover()._getSource(), "source information should be deleted after move has finished");
+				done();
+			}.bind(this));
 		});
 
 		QUnit.test("and button was cutted, when paste is triggered on the object attribute (control in an invalid aggregation), then", function(assert) {
+			var done = assert.async();
 			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.X, false, false, true);
 
-			QUnitUtils.triggerKeydown(this.oObjectAttributeOverlay.getDomRef(), KeyCodes.V, false, false, true);
+			this.oCutPaste.getElementMover().attachValidTargetZonesActivated(function() {
+				QUnitUtils.triggerKeydown(this.oObjectAttributeOverlay.getDomRef(), KeyCodes.V, false, false, true);
 
-			assert.equal(this.oObjectHeader.getAttributes().length, 1, "object attribute is removed from the header");
-			assert.equal(this.oObjectHeader.getAttributes()[0].getId(), this.oObjectAttribute.getId(), "object attribute stays in header at 1. position");
-			assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header stays at 1. position");
-			assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "the button stays at the 2. position");
+				assert.equal(this.oObjectHeader.getAttributes().length, 1, "object attribute is removed from the header");
+				assert.equal(this.oObjectHeader.getAttributes()[0].getId(), this.oObjectAttribute.getId(), "object attribute stays in header at 1. position");
+				assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header stays at 1. position");
+				assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "the button stays at the 2. position");
 
-			assert.ok(this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation (layout) is marked as target zone");
-			assert.ok(!this.oObjectHeaderAggregationOverlay.isTargetZone(), "the invalid aggregation (objectHeader) is not marked as target zone");
-			assert.ok(this.oButtonOverlay.hasStyleClass("sapUiDtOverlayCutted"), "the overlay cut style class is still there");
+				assert.ok(this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation (layout) is marked as target zone");
+				assert.ok(!this.oObjectHeaderAggregationOverlay.isTargetZone(), "the invalid aggregation (objectHeader) is not marked as target zone");
+				assert.ok(this.oButtonOverlay.hasStyleClass("sapUiDtOverlayCutted"), "the overlay cut style class is still there");
+				done();
+			}.bind(this));
 		});
 	});
 
@@ -388,10 +421,14 @@ function (
 		}
 	}, function () {
 		QUnit.test("when the dragstart is triggered on the page overlay, that fit into both aggregations", function(assert) {
+			var done = assert.async();
 			this.oControlDragDrop._onDragStart(stubEventFor(this.oPage1Overlay));
 
-			assert.ok(this.oSplitContainerMasterPagesAggregationOverlay.isTargetZone(), "both aggregations are marked as target zone");
-			assert.ok(this.oSplitContainerDetailPagesAggregationOverlay.isTargetZone(), "both aggregations are marked as target zone");
+			this.oControlDragDrop.getElementMover().attachValidTargetZonesActivated(function() {
+				assert.ok(this.oSplitContainerMasterPagesAggregationOverlay.isTargetZone(), "both aggregations are marked as target zone");
+				assert.ok(this.oSplitContainerDetailPagesAggregationOverlay.isTargetZone(), "both aggregations are marked as target zone");
+				done();
+			}.bind(this));
 		});
 
 		QUnit.test("when the page overlay is dragged into the empty detail pages aggregations", function(assert) {
@@ -415,10 +452,14 @@ function (
 		});
 
 		QUnit.test("when the cut is triggered on the page overlay, that fit into both aggregations", function(assert) {
+			var done = assert.async();
 			QUnitUtils.triggerKeydown(this.oPage1Overlay.getDomRef(), KeyCodes.X, false, false, true);
 
-			assert.ok(this.oSplitContainerMasterPagesAggregationOverlay.isTargetZone(), "both aggregations are marked as target zone");
-			assert.ok(this.oSplitContainerDetailPagesAggregationOverlay.isTargetZone(), "both aggregations are marked as target zone");
+			this.oCutPaste.getElementMover().attachValidTargetZonesActivated(function() {
+				assert.ok(this.oSplitContainerMasterPagesAggregationOverlay.isTargetZone(), "both aggregations are marked as target zone");
+				assert.ok(this.oSplitContainerDetailPagesAggregationOverlay.isTargetZone(), "both aggregations are marked as target zone");
+				done();
+			}.bind(this));
 		});
 	});
 

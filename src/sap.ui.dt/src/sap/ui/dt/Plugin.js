@@ -209,10 +209,14 @@ function(
 	};
 
 	/**
-	 * Called to retrieve a context menu item for the plugin
+	 * Called to retrieve a context menu item for the plugin.
+	 * Needs to be overriden by extending plugins.
+	 * @returns {array} Empty array
 	 * @protected
 	 */
-	Plugin.prototype.getMenuItems = function () {};
+	Plugin.prototype.getMenuItems = function () {
+		return [];
+	};
 
 	/**
 	 * Retrieve the action name related to the plugin

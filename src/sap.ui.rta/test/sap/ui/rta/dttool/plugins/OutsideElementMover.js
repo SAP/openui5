@@ -54,7 +54,7 @@ function(
 
 	OutsideElementMover.prototype.checkTargetZone = function() {
 		if (this.isMovingFromOutside()) {
-			return true;
+			return Promise.resolve(true);
 		}
 		return RTAElementMover.prototype.checkTargetZone.apply(this, arguments);
 	};

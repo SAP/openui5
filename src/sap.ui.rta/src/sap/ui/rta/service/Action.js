@@ -61,20 +61,24 @@ sap.ui.define([
 		}
 
 		function getActions(aElementOverlays) {
-			return oRta._oDesignTime.getPlugins()
+			var aMenuItemPromises = oRta._oDesignTime.getPlugins()
 				.map(function (oPlugin) {
 					return oPlugin.getMenuItems(aElementOverlays);
-				})
-				.reduce(function (aResult, aMenuItems) {
+				});
+			return Promise.all(aMenuItemPromises)
+				.then(function(aMenuItems) {
 					return aMenuItems
-						? aResult.concat(aMenuItems)
-						: aResult;
-				}, [])
-				.map(function (mMenuItem) {
-					return Object.assign({}, mMenuItem, {
-						enabled: invoke(mMenuItem.enabled, aElementOverlays),
-						text: invoke(mMenuItem.text, aElementOverlays[0])
-					});
+						.reduce(function (aResult, aMenuItems) {
+							return aMenuItems
+								? aResult.concat(aMenuItems)
+								: aResult;
+						}, [])
+						.map(function (mMenuItem) {
+							return Object.assign({}, mMenuItem, {
+								enabled: invoke(mMenuItem.enabled, aElementOverlays),
+								text: invoke(mMenuItem.text, aElementOverlays[0])
+							});
+						});
 				});
 		}
 
@@ -91,8 +95,10 @@ sap.ui.define([
 			});
 
 			return getActions(aElementOverlays)
-				.map(function (mMenuItem) {
-					return DtUtil.pick(mMenuItem, ['id', 'icon', 'rank', 'group', 'enabled', 'text']);
+				.then(function(aMenuItems) {
+					return aMenuItems.map(function (mMenuItem) {
+						return DtUtil.pick(mMenuItem, ['id', 'icon', 'rank', 'group', 'enabled', 'text']);
+					});
 				});
 		}
 
@@ -108,22 +114,24 @@ sap.ui.define([
 				return oElementOverlay;
 			});
 
-			var aActions = getActions(aElementOverlays);
-			var mAction = aActions.filter(function (mAction) {
-				return mAction.id === sActionId;
-			}).pop();
+			return getActions(aElementOverlays)
+				.then(function(aActions) {
+					var mAction = aActions.filter(function (mAction) {
+						return mAction.id === sActionId;
+					}).pop();
 
-			if (!mAction) {
-				throw new Error('No action found by specified ID');
-			} else {
-				return mAction.handler(aElementOverlays, {});
-			}
+					if (!mAction) {
+						throw new Error('No action found by specified ID');
+					} else {
+						return mAction.handler(aElementOverlays, {});
+					}
+				});
 		}
 
 		return {
 			exports: {
 				/**
-				 * Returns a list of available actions for the specified control(s).
+				 * Returns a list of available actions for the specified control(s) wrapped in a promise.
 				 *
 				 * Example:
 				 *
@@ -170,7 +178,7 @@ sap.ui.define([
 				 *
 				 * @name sap.ui.rta.service.Action.get
 				 * @param {string|string[]} vControlIds - Control ID or an array of IDs to get actions for
-				 * @returns {sap.ui.rta.service.Action.ActionObject[]} List of available actions
+				 * @returns {promise.<sap.ui.rta.service.Action.ActionObject[]>} List of available actions wrapped in a promise
 				 * @public
 				 * @function
 				 */
@@ -182,7 +190,7 @@ sap.ui.define([
 				 * @name sap.ui.rta.service.Action.execute
 				 * @param {string|string[]} vControlIds - Control ID or an array of IDs to get actions for
 				 * @param {string} sActionId - Action ID to be executed on the specified controls
-				 * @returns {any} Result of the operation
+				 * @returns {promise.<any>} Result of the operation wrapped in a promise.
 				 * @public
 				 * @function
 				 */
