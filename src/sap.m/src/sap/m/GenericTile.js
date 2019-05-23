@@ -18,7 +18,7 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/ui/events/PseudoEvents",
 	"sap/ui/thirdparty/jquery"
-], function(
+], function (
 	library,
 	Control,
 	Text,
@@ -131,7 +131,7 @@ sap.ui.define([
 				 * Defines the type of text wrapping to be used (hyphenated or normal).
 				 * @since 1.60
 				 */
-				wrappingType : {type: "sap.m.WrappingType", group : "Appearance", defaultValue : WrappingType.Normal}
+				wrappingType: {type: "sap.m.WrappingType", group: "Appearance", defaultValue: WrappingType.Normal}
 			},
 			defaultAggregation: "tileContent",
 			aggregations: {
@@ -300,17 +300,17 @@ sap.ui.define([
 					break;
 				}
 				this._oMoreIcon = this._oMoreIcon || IconPool.createControlByURI({
-						id: this.getId() + "-action-more",
-						size: "1rem",
-						useIconTooltip: false,
-						src: "sap-icon://overflow"
-					}).addStyleClass("sapMPointer").addStyleClass(sTileClass + "MoreIcon");
+					id: this.getId() + "-action-more",
+					size: "1rem",
+					useIconTooltip: false,
+					src: "sap-icon://overflow"
+				}).addStyleClass("sapMPointer").addStyleClass(sTileClass + "MoreIcon");
 
 				this._oRemoveButton = this._oRemoveButton || new Button({
-						id: this.getId() + "-action-remove",
-						icon: "sap-icon://decline",
-						tooltip: this._oRb.getText("GENERICTILE_REMOVEBUTTON_TEXT")
-					}).addStyleClass("sapUiSizeCompact").addStyleClass(sTileClass + "RemoveButton");
+					id: this.getId() + "-action-remove",
+					icon: "sap-icon://decline",
+					tooltip: this._oRb.getText("GENERICTILE_REMOVEBUTTON_TEXT")
+				}).addStyleClass("sapUiSizeCompact").addStyleClass(sTileClass + "RemoveButton");
 
 				this._oRemoveButton._bExcludeFromTabChain = true;
 				break;
@@ -358,7 +358,7 @@ sap.ui.define([
 		}
 		var iTiles = this.getTileContent().length;
 		for (var i = 0; i < iTiles; i++) {
-			this.getTileContent()[i].setDisabled(this.getState() === library.LoadState.Disabled);
+			this.getTileContent()[i].setProperty("disabled", this.getState() === library.LoadState.Disabled, true);
 		}
 
 		this._initScopeContent("sapMGT");
@@ -892,9 +892,9 @@ sap.ui.define([
 		// when subheader is available, the header can have maximal 4 lines and the subheader can have 1 line
 		// when subheader is unavailable, the header can have maximal 5 lines
 		if (bSubheader) {
-			this._oTitle.setMaxLines(4);
+			this._oTitle.setProperty("maxLines", 4, true);
 		} else {
-			this._oTitle.setMaxLines(5);
+			this._oTitle.setProperty("maxLines", 5, true);
 		}
 
 		this._changeTileContentContentVisibility(false);
@@ -909,9 +909,9 @@ sap.ui.define([
 		// when subheader is available, the header can have maximal 2 lines and the subheader can have 1 line
 		// when subheader is unavailable, the header can have maximal 3 lines
 		if (bSubheader) {
-			this._oTitle.setMaxLines(2);
+			this._oTitle.setProperty("maxLines", 2, true);
 		} else {
-			this._oTitle.setMaxLines(3);
+			this._oTitle.setProperty("maxLines", 3, true);
 		}
 
 		this._changeTileContentContentVisibility(true);
@@ -1073,8 +1073,8 @@ sap.ui.define([
 	GenericTile.prototype._generateFailedText = function () {
 		var sCustomFailedMsg = this.getFailedText();
 		var sFailedMsg = sCustomFailedMsg ? sCustomFailedMsg : this._sFailedToLoad;
-		this._oFailedText.setText(sFailedMsg);
-		this._oFailedText.setTooltip(sFailedMsg);
+		this._oFailedText.setProperty("text", sFailedMsg, true);
+		this._oFailedText.setAggregation("tooltip", sFailedMsg, true);
 	};
 
 	/**
@@ -1142,38 +1142,38 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-    GenericTile.prototype._setTooltipFromControl = function () {
-        var sTooltip = "";
-        var bIsFirst = true;
-        var aTiles = this.getTileContent();
+	GenericTile.prototype._setTooltipFromControl = function () {
+		var sTooltip = "";
+		var bIsFirst = true;
+		var aTiles = this.getTileContent();
 
-        if (this._oTitle.getText()) {
-            sTooltip = this._oTitle.getText();
-            bIsFirst = false;
-        }
+		if (this._oTitle.getText()) {
+			sTooltip = this._oTitle.getText();
+			bIsFirst = false;
+		}
 
-        if (this.getSubheader()) {
-            sTooltip += (bIsFirst ? "" : "\n") + this.getSubheader();
-            bIsFirst = false;
-        }
+		if (this.getSubheader()) {
+			sTooltip += (bIsFirst ? "" : "\n") + this.getSubheader();
+			bIsFirst = false;
+		}
 
-        // not valid in actions scope and LineMode
-        if (this.getScope() !== library.GenericTileScope.Actions && this.getMode() !== library.GenericTileMode.LineMode ) {
-            if (aTiles[0] && aTiles[0].getTooltip_AsString() && aTiles[0].getTooltip_AsString() !== "" ) {
-                sTooltip += (bIsFirst ? "" : "\n") + aTiles[0].getTooltip_AsString();
-                bIsFirst = false;
-            }
-            if (this.getFrameType() === "TwoByOne" && aTiles[1] && aTiles[1].getTooltip_AsString() && aTiles[1].getTooltip_AsString() !== ""){
-                sTooltip += (bIsFirst ? "" : "\n") + aTiles[1].getTooltip_AsString();
-            }
-        }
+		// not valid in actions scope and LineMode
+		if (this.getScope() !== library.GenericTileScope.Actions && this.getMode() !== library.GenericTileMode.LineMode) {
+			if (aTiles[0] && aTiles[0].getTooltip_AsString() && aTiles[0].getTooltip_AsString() !== "") {
+				sTooltip += (bIsFirst ? "" : "\n") + aTiles[0].getTooltip_AsString();
+				bIsFirst = false;
+			}
+			if (this.getFrameType() === "TwoByOne" && aTiles[1] && aTiles[1].getTooltip_AsString() && aTiles[1].getTooltip_AsString() !== "") {
+				sTooltip += (bIsFirst ? "" : "\n") + aTiles[1].getTooltip_AsString();
+			}
+		}
 
-        // when user does not set tooltip, apply the tooltip below
-        if (sTooltip && !this._getTooltipText() && !this._isTooltipSuppressed()) {
-            this.$().attr("title", sTooltip.trim());
-            this._bTooltipFromControl = true;
-        }
-    };
+		// when user does not set tooltip, apply the tooltip below
+		if (sTooltip && !this._getTooltipText() && !this._isTooltipSuppressed()) {
+			this.$().attr("title", sTooltip.trim());
+			this._bTooltipFromControl = true;
+		}
+	};
 
 	/**
 	 * Updates the attributes ARIA-label and title of the GenericTile. The updated attribute title is used for tooltip as well.
