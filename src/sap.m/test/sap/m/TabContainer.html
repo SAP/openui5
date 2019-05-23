@@ -234,6 +234,7 @@
 
 		var changeTabButton1 = new sap.m.Button({
 			text: "0",
+			tooltip: "{/ProductCollection/0/Name}",
 			press: function() {
 				tabContainer.setSelectedItem(tabContainer.getItems()[0]);
 			}
@@ -241,6 +242,7 @@
 
 		var changeTabButton2 = new sap.m.Button({
 			text: "1",
+			tooltip: "{/ProductCollection/1/Name}",
 			press: function() {
 				tabContainer.setSelectedItem(tabContainer.getItems()[1]);
 			}
@@ -248,6 +250,7 @@
 
 		var changeTabButton3 = new sap.m.Button({
 			text: "2",
+			tooltip: "{/ProductCollection/2/Name}",
 			press: function() {
 				tabContainer.setSelectedItem(tabContainer.getItems()[2]);
 			}
