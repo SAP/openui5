@@ -4,6 +4,7 @@
 /* ========================== */
 
 @_sap_ui_table_Cell_FocusOutlineOffset: -1px;
+@_sap_ui_table_Cell_FocusOutlineOffsetInZoomedChrome: -2px;
 @_sap_ui_table_Cell_Padding: 0 0.5rem;
 @_sap_ui_table_Cell_TouchMenuIconSize: 1.375rem;
 @_sap_ui_table_Cell_ColumnIconSize: 0.75rem;
@@ -13,17 +14,24 @@
  * NOTE: IE and Edge use native outline rendering. It has correct contrast and offset. Any attempt to specify another outline in CSS breaks it.
  */
 
-/* WebKit */
-.sapUiTableCell:focus:not(*:root) {
+.outline() {
 	outline-offset: @_sap_ui_table_Cell_FocusOutlineOffset;
 	outline: @_sap_ui_table_FocusOutlineWidth dotted @sapUiContentFocusColor;
+
+	.sapUiTableZoomout & {
+		outline-offset: @_sap_ui_table_Cell_FocusOutlineOffsetInZoomedChrome;
+	}
+}
+
+/* WebKit */
+.sapUiTableCell:focus:not(*:root) {
+	.outline();
 }
 
 /* Firefox */
 @supports (-moz-appearance:meterbar) {
 	.sapUiTableCell:focus {
-		outline-offset: @_sap_ui_table_Cell_FocusOutlineOffset;
-		outline: @_sap_ui_table_FocusOutlineWidth dotted @sapUiContentFocusColor;
+		.outline();
 	}
 }
 
