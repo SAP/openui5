@@ -21,7 +21,7 @@ sap.ui.define(["sap/ui/performance/trace/FESR", "sap/base/Log"], function(FESR, 
 	return function() {
 		var oFESRMeta = document.querySelector("meta[name=sap-ui-fesr]"),
 			sFESRMetaContent = oFESRMeta ? oFESRMeta.getAttribute("content") : undefined,
-			bActive = !!sFESRMetaContent,
+			bActive =  !!sFESRMetaContent && sFESRMetaContent !== "false",
 			aParamMatches = window.location.search.match(/[\?|&]sap-ui-(?:xx-)?fesr=(true|x|X|false|.+)&?/),
 			sUrl = sFESRMetaContent && sFESRMetaContent !== "true" ? sFESRMetaContent : undefined;
 
