@@ -5,11 +5,10 @@
 sap.ui.define([
 	'./FlexBoxStylingHelper',
 	'sap/m/library',
-	"sap/base/security/encodeXML",
 	"sap/base/Log",
-    "sap/m/FlexItemData"
+	"sap/m/FlexItemData"
 ],
-	function(FlexBoxStylingHelper, library, encodeXML, Log, FlexItemData) {
+	function(FlexBoxStylingHelper, library, Log, FlexItemData) {
 	"use strict";
 
 	// shortcut for sap.m.FlexDirection
@@ -23,7 +22,9 @@ sap.ui.define([
 	 * @namespace
 	 */
 
-	var FlexBoxRenderer = {};
+	var FlexBoxRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -33,20 +34,14 @@ sap.ui.define([
 	 */
 	FlexBoxRenderer.render = function(oRm, oControl) {
 		// Open FlexBox HTML element
-		if (oControl.getRenderType() === FlexRendertype.List) {
-			oRm.write('<ul');
-		} else {
-			oRm.write('<div');
-		}
-
-		oRm.writeControlData(oControl);
+		oRm.openStart(oControl.getRenderType() == FlexRendertype.List ? "ul" : "div", oControl);
 
 		// Special treatment if FlexBox is itself an item of a parent FlexBox
 		var oParent = oControl.getParent();
 		if (oParent && oParent.isA("sap.m.FlexBox")) {
 
 			if (!oControl.hasStyleClass("sapMFlexItem")) {
-				oRm.addClass("sapMFlexItem");
+				oRm.class("sapMFlexItem");
 			}
 
 			// Set layout properties for flex item
@@ -54,69 +49,61 @@ sap.ui.define([
 			if (oLayoutData instanceof FlexItemData) {
 				FlexBoxStylingHelper.setFlexItemStyles(oRm, oLayoutData);
 			}
-
-			// Wrap in list item
-			if (oParent.getRenderType() === FlexRendertype.List) {
-				oRm.write('<li');
-			}
 		} else if (oControl.getFitContainer()) {
-			oRm.addClass("sapMFlexBoxFit");
+			oRm.class("sapMFlexBoxFit");
 		}
 
 		// Add classes for flex styling
-		oRm.addClass("sapMFlexBox");
+		oRm.class("sapMFlexBox");
 		if (oControl.getDisplayInline()) {
-			oRm.addClass("sapMFlexBoxInline");
+			oRm.class("sapMFlexBoxInline");
 		}
 
 		if (oControl.getDirection() === FlexDirection.Column || oControl.getDirection() === FlexDirection.ColumnReverse) {
-			oRm.addClass("sapMVBox");
+			oRm.class("sapMVBox");
 		} else {
-			oRm.addClass("sapMHBox");
+			oRm.class("sapMHBox");
 		}
 
 		if (oControl.getDirection() === FlexDirection.RowReverse || oControl.getDirection() === FlexDirection.ColumnReverse) {
-			oRm.addClass("sapMFlexBoxReverse");
+			oRm.class("sapMFlexBoxReverse");
 		}
 
-		oRm.addClass("sapMFlexBoxJustify" + oControl.getJustifyContent());
-		oRm.addClass("sapMFlexBoxAlignItems" + oControl.getAlignItems());
-		oRm.addClass("sapMFlexBoxWrap" + oControl.getWrap());
-		oRm.addClass("sapMFlexBoxAlignContent" + oControl.getAlignContent());
+		oRm.class("sapMFlexBoxJustify" + oControl.getJustifyContent());
+		oRm.class("sapMFlexBoxAlignItems" + oControl.getAlignItems());
+		oRm.class("sapMFlexBoxWrap" + oControl.getWrap());
+		oRm.class("sapMFlexBoxAlignContent" + oControl.getAlignContent());
 
 		var sBGClass = "sapMFlexBoxBG" + oControl.getBackgroundDesign();
-			if (!oControl.hasStyleClass(sBGClass)) {
-				oRm.addClass(sBGClass);
-			}
-
-		oRm.writeClasses();
+		if (!oControl.hasStyleClass(sBGClass)) {
+			oRm.class(sBGClass);
+		}
 
 		// Add inline styles
 		if (oControl.getHeight()) {
-			oRm.addStyle("height", oControl.getHeight());
+			oRm.style("height", oControl.getHeight());
 		}
 		if (oControl.getWidth()) {
-			oRm.addStyle("width", oControl.getWidth());
+			oRm.style("width", oControl.getWidth());
 		}
-		oRm.writeStyles();
 
 		// Add tooltip
 		var sTooltip = oControl.getTooltip_AsString();
 		if (sTooltip) {
-			oRm.writeAttributeEscaped("title", sTooltip);
+			oRm.attr("title", sTooltip);
 		}
 
 		// Close opening tag
-		oRm.write(">");
+		oRm.openEnd();
 
 		// Render the flex items
 		FlexBoxRenderer.renderItems(oControl, oRm);
 
 		// Close FlexBox HTML element
 		if (oControl.getRenderType() === FlexRendertype.List) {
-			oRm.write("</ul>");
+			oRm.close("ul");
 		} else {
-			oRm.write("</div>");
+			oRm.close("div");
 		}
 	};
 
@@ -139,20 +126,6 @@ sap.ui.define([
 	};
 
 	FlexBoxRenderer.renderItem = function(oItem, sWrapperTag, oRm) {
-		if (sWrapperTag) {
-			// Open wrapper
-			oRm.write('<' + sWrapperTag);
-
-			// ScrollContainer needs height:100% on the flex item
-			if (oItem instanceof sap.m.ScrollContainer) {
-				oRm.addClass("sapMFlexBoxScroll");
-			}
-
-			// Hide invisible items, but leave them in the DOM
-			if (!oItem.getVisible()) {
-				oRm.addClass("sapUiHiddenPlaceholder");
-			}
-		}
 
 		// Set layout properties
 		var oLayoutData = oItem.getLayoutData();
@@ -167,15 +140,19 @@ sap.ui.define([
 			if (oLayoutData) {
 				Log.warning(oLayoutData + " set on " + oItem + " is not of type sap.m.FlexItemData");
 			}
+			if (sWrapperTag) {
+				// Open wrapper
+				oRm.openStart(sWrapperTag);
+			}
 		} else {
 			// FlexItemData is an element not a control, so we need to write id and style class ourselves if a wrapper tag is used
-			if (sWrapperTag && oLayoutData.getId()) {
-				oRm.writeAttributeEscaped("id", oLayoutData.getId());
+			if (sWrapperTag) {
+				oRm.openStart(sWrapperTag, oLayoutData.getId());
 			}
 
 			// Add style class set by app
 			if (oLayoutData.getStyleClass()) {
-				FlexBoxRenderer.addItemClass(encodeXML(oLayoutData.getStyleClass()), oItem, sWrapperTag, oRm);
+				FlexBoxRenderer.addItemClass(oLayoutData.getStyleClass(), oItem, sWrapperTag, oRm);
 			}
 
 			// Add classes relevant for flex item
@@ -190,11 +167,20 @@ sap.ui.define([
 
 		FlexBoxRenderer.addItemClass("sapMFlexItem", oItem, sWrapperTag, oRm);
 
-		// Write the styles and classes and close the wrapper tag
+		// Write the styles and classes and end the opening wrapper tag
 		if (sWrapperTag) {
-			oRm.writeStyles();
-			oRm.writeClasses();
-			oRm.write(">");
+
+			// ScrollContainer needs height:100% on the flex item
+			if (oItem.isA("sap.m.ScrollContainer")) {
+				oRm.class("sapMFlexBoxScroll");
+			}
+
+			// Hide invisible items, but leave them in the DOM
+			if (!oItem.getVisible()) {
+				oRm.class("sapUiHiddenPlaceholder");
+			}
+
+			oRm.openEnd();
 		}
 
 		// Render control
@@ -202,13 +188,13 @@ sap.ui.define([
 
 		if (sWrapperTag) {
 			// Close wrapper
-			oRm.write('</' + sWrapperTag + '>');
+			oRm.close(sWrapperTag);
 		}
 	};
 
 	FlexBoxRenderer.addItemClass = function(sClass, oItem, sWrapperTag, oRm) {
 		if (sWrapperTag) {
-			oRm.addClass(sClass);
+			oRm.class(sClass);
 		} else {
 			oItem.addStyleClass(sClass);
 		}

@@ -102,7 +102,7 @@ sap.ui.define(['./FlexBoxCssPropertyMap', 'sap/ui/Device'],
 		// Finally, write property value to control using either the render manager or the element directly
 		if (oRm) {
 			if (sValue === "0" || sValue) {
-				oRm.addStyle(sProperty, sValue);
+				oRm.style(sProperty, sValue);
 			}
 		} else {
 			// Set the property on the wrapper or the control root itself

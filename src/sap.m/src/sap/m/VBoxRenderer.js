@@ -12,6 +12,7 @@ sap.ui.define(['./FlexBoxRenderer'],
 	 * @namespace
 	 */
 	var VBoxRenderer = {
+		apiVersion: 2
 	};
 
 
