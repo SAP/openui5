@@ -545,6 +545,7 @@ sap.ui.define([
 				if (oCurrentFieldExtInfo) {
 					this._oCurrentFieldExtInfo = oCurrentFieldExtInfo;
 					this.getDialog().setCustomFieldEnabled(true);
+					this.getDialog().addBusinessContext(this._oCurrentFieldExtInfo.BusinessContexts);
 					this.getDialog().detachEvent('openCustomField', this._onOpenCustomField, this);
 					this.getDialog().attachEvent('openCustomField', null, this._onOpenCustomField, this);
 				}

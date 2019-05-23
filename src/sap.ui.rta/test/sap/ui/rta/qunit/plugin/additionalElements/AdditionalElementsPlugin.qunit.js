@@ -1137,6 +1137,8 @@ sap.ui.define([
 				assert.ok(fnServiceUpToDateStub.getCall(0).args[0], "addODataProperty is dependent on up to date service, it should be called with a control");
 
 				assert.equal(this.oDialog.getCustomFieldEnabled(), true, "then in the dialog custom field is enabled");
+				assert.equal(this.oDialog._oBCContainer.getVisible(), true, "then in the Business Context Container in the Dialog is visible");
+				assert.equal(this.oDialog._oBCContainer.getContent().length > 1, true, "then in the Business Context Container shows Business Contexts");
 
 				//Simulate custom field button pressed, should trigger openNewWindow
 				this.oDialog.fireOpenCustomField();
@@ -1169,6 +1171,8 @@ sap.ui.define([
 
 				.then(function() {
 					assert.equal(this.oDialog.getCustomFieldEnabled(), true, "then in the dialog custom field is enabled");
+					assert.equal(this.oDialog._oBCContainer.getVisible(), true, "then in the Business Context Container in the Dialog is visible");
+					assert.equal(this.oDialog._oBCContainer.getContent().length > 1, true, "then in the Business Context Container shows Business Contexts");
 					return this.oPlugin.showAvailableElements(false, [oOverlay]);
 				}.bind(this))
 				.then(function() {
