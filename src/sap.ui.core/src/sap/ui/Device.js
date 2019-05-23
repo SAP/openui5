@@ -1880,13 +1880,20 @@ if (typeof window.sap.ui !== "object") {
 		});
 	}
 
-	function handleResizeChange() {
+	/**
+	 * Updates the current size values (height/width).
+	 *
+	 * @name sap.ui.Device.resize._update
+	 * @function
+	 * @private
+	 */
+	var handleResizeChange = Device.resize._update = function() {
 		setResizeInfo(Device.resize);
 		fireEvent("resize", {
 			height: Device.resize.height,
 			width: Device.resize.width
 		});
-	}
+	};
 
 	function setResizeInfo(oInfo) {
 		oInfo.width = windowSize()[0];

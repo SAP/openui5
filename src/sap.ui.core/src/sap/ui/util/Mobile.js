@@ -120,6 +120,8 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 			// initialize viewport
 			if (options.viewport) {
 				var sMeta;
+				var iInnerHeightBefore = Device.resize.height;
+				var iInnerWidthBefore = Device.resize.width;
 				if (bIsIOS7Safari && Device.system.phone) {
 					//if the softkeyboard is open in orientation change, we have to do this to solve the zoom bug
 					// on the phone - the phone zooms into the view although it shouldn't so these two lines will
@@ -140,7 +142,13 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 					sMeta = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
 				}
 				$head.append(jQuery('<meta name="viewport" content="' + sMeta + '">'));
+
+				// Update Device API resize info, which is necessary in some scenarios after setting the viewport info
+				if ((iInnerHeightBefore !== window.innerHeight || iInnerWidthBefore !== window.innerWidth) && Device.resize._update){
+					Device.resize._update();
+				}
 			}
+
 
 			if (options.mobileWebAppCapable === "default") {
 				if (Device.os.ios) {

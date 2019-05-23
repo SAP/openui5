@@ -2,7 +2,7 @@
  * ${copyright}
  */
 /*global QUnit */
-sap.ui.define(["sap/ui/util/Mobile"], function(Mobile) {
+sap.ui.define(["sap/ui/util/Mobile", "sap/ui/Device"], function(Mobile, Device) {
 	"use strict";
 
 	var fnRemoveViewort = function(){
@@ -24,7 +24,7 @@ sap.ui.define(["sap/ui/util/Mobile"], function(Mobile) {
 		assert.ok($v.attr("content").length > 0, "viewport meta tag has content");
 
 		// check <meta name="apple-mobile-web-app-status-bar-style" content="default">
-		if (sap.ui.Device.os.ios) {
+		if (Device.os.ios) {
 			var $amwac = jQuery("meta").filter("[name=apple-mobile-web-app-capable]");
 			var $mwac = jQuery("meta").filter("[name=mobile-web-app-capable]");
 			assert.equal($amwac.length, 1, "There should be an apple-mobile-web-app-capable meta tag");
@@ -33,7 +33,7 @@ sap.ui.define(["sap/ui/util/Mobile"], function(Mobile) {
 		}
 
 		// check status bar style: <meta name="apple-mobile-web-app-status-bar-style" content="default">
-		if (sap.ui.Device.os.ios) {
+		if (Device.os.ios) {
 			var $sb = jQuery("meta").filter("[name=apple-mobile-web-app-status-bar-style]");
 			assert.equal($sb.length, 1, "There should be an apple-mobile-web-app-status-bar-style meta tag");
 			assert.equal($sb.attr("content"), "default", "The apple-mobile-web-app-status-bar-style meta tag content should be correct");
@@ -42,6 +42,10 @@ sap.ui.define(["sap/ui/util/Mobile"], function(Mobile) {
 		// no touch icon  <link rel="apple-touch-icon...
 		var $ti = jQuery("link").filter("[rel=apple-touch-icon]");
 		assert.equal($ti.length, 0, "There should be no apple-touch-icon tag");
+
+		// Check whether size changes through new viewport were detected and the Device.resize values were adapted.
+		assert.equal(window.innerHeight, Device.resize.height, "Device.resize.height is set correctly.");
+		assert.equal(window.innerWidth, Device.resize.width, "Device.resize.width is set correctly.");
 	});
 
 	QUnit.test("Test init with custom settings", function (assert) {
@@ -69,17 +73,17 @@ sap.ui.define(["sap/ui/util/Mobile"], function(Mobile) {
 			};
 
 			(function(newValue){
-				var _orig = sap.ui.Device.system;
-				sap.ui.Device.system = newValue;
-				sap.ui.Device.system.restore = function(){
-					sap.ui.Device.system = _orig;
+				var _orig = Device.system;
+				Device.system = newValue;
+				Device.system.restore = function(){
+					Device.system = _orig;
 				};
 			})(oSystem);
 
 			fnRemoveViewort();
 		},
 		afterEach: function() {
-			sap.ui.Device.system.restore();
+			Device.system.restore();
 			fnRemoveViewort();
 		}
 	});
