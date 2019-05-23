@@ -6,9 +6,6 @@
 		"type": "List",
 		"header": {
 			"title": "Quick Links",
-			"status": {
-				"text": "7 of 28"
-			},
 			"actions": [
 				{
 					"type": "Navigation",
@@ -22,36 +19,31 @@
 			"data": {
 				"json": [
 					{
-						"Name": "Template Based Segmentation",
-						"icon": "sap-icon://horizontal-bullet-chart",
-						"url": "/templateBasedSegmentation"
+						"Name": "Career",
+						"icon": "sap-icon://leads",
+						"url": "/careers"
 					},
 					{
-						"Name": "Segmentation Models",
-						"icon": "sap-icon://opportunity"
+						"Name": "Company Directory",
+						"icon": "sap-icon://address-book"
 					},
 					{
-						"Name": "Marketing plans",
-						"icon": "sap-icon://line-charts",
-						"url": "/marketingPlans"
+						"Name": "Development Plan",
+						"icon": "sap-icon://activity-items"
 					},
 					{
-						"Name": "Target Groups",
-						"icon": "sap-icon://horizontal-bar-chart",
-						"url": "/targetGroups"
+						"Name": "Business Goals",
+						"icon": "sap-icon://target-group",
+						"url": "/businessGoals"
 					},
 					{
-						"Name": "Program Structure",
-						"icon": "sap-icon://org-chart"
+						"Name": "Travel and Expenses",
+						"icon": "sap-icon://travel-expense"
 					},
 					{
-						"Name": "AdWords Campaigns",
-						"icon": "sap-icon://bar-chart",
-						"url": "/adwords"
-					},
-					{
-						"Name": "Winter Campaign Results",
-						"icon": "sap-icon://tools-opportunity"
+						"Name": "Time off",
+						"icon": "sap-icon://general-leave-request",
+						"url": "/timeOff"
 					}
 				]
 			},

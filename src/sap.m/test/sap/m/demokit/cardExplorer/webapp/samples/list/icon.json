@@ -8,7 +8,7 @@
 			"title": "List Card with Top 5 Products",
 			"subTitle": "These are the top sellers this month",
 			"icon": {
-				"src": "sap-icon://sales-order"
+				"src": "sap-icon://desktop-mobile"
 			},
 			"status": {
 				"text": "5 of 20"
