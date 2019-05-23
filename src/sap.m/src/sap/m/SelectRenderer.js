@@ -361,13 +361,14 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 		 */
 		SelectRenderer.writeAccessibilityState = function(oRm, oSelect) {
 			var sValueState = this._getValueStateString(oSelect),
-				oSelectedItem = oSelect.getSelectedItem();
+				oSelectedItem = oSelect.getSelectedItem(),
+				bIconOnly = oSelect.getType() === SelectType.IconOnly,
+				oAriaLabelledBy,
+				sDesc;
 
 			if (sValueState) {
 				sValueState = " " + sValueState;
 			}
-
-			var sDesc;
 
 			if (oSelectedItem && !oSelectedItem.getText() && oSelectedItem.getIcon && oSelectedItem.getIcon()) {
 				var oIconInfo = IconPool.getIconInfo(oSelectedItem.getIcon());
@@ -376,16 +377,18 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				}
 			}
 
+			oAriaLabelledBy = {
+				value: sDesc ? oSelect._getValueIcon().getId() : oSelect.getId() + "-label" + sValueState,
+				append: true
+			};
+
 			oRm.writeAccessibilityState(oSelect, {
 				role: this.getAriaRole(oSelect),
 				disabled: !oSelect.getEnabled(),
 				readonly: oSelect.getEnabled() && !oSelect.getEditable(),
 				expanded: oSelect.isOpen(),
 				invalid: (oSelect.getValueState() === ValueState.Error) ? true : undefined,
-				labelledby: {
-					value: sDesc ? oSelect._getValueIcon().getId() : oSelect.getId() + "-label" + sValueState,
-					append: true
-				},
+				labelledby: bIconOnly ? undefined : oAriaLabelledBy,
 				haspopup: (oSelect.getType() === SelectType.IconOnly) ? true : undefined
 			});
 		};

@@ -9246,7 +9246,13 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			assert.strictEqual(document.getElementById("iconOnlySelect-label").innerHTML, "", "No label text is rendered for IconOnly select");
+			assert.strictEqual(oIconOnlySelect.$().attr("aria-labelledby"), undefined, "IconOnly select should not have aria-labelledby attribute");
 			assert.notStrictEqual(document.getElementById("standardSelect-label").innerHTML, "", "Label text is rendered for standard select");
+			assert.strictEqual(oStandardSelect.$().attr("aria-labelledby"), "standardSelect-label", "Standard select should be labelled by its label");
+
+			oStandardSelect.setType("IconOnly");
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual(oStandardSelect.$().attr("aria-labelledby"), undefined, "Select set to IconOnly should not have aria-labelledby attribute");
 
 			oIconOnlySelect.destroy();
 			oStandardSelect.destroy();
