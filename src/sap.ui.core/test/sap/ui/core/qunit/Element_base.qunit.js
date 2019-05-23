@@ -1,16 +1,29 @@
-/*global QUnit, sinon */
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/core/Element"
 ], function(Element) {
 	"use strict";
 
-	QUnit.module("Element base functionality");
+	function cleanUpRegistry() {
+		Element.registry.forEach(function(oElement) {
+			oElement.destroy();
+		});
+	}
+
+	QUnit.module("Element registry", {
+		beforeEach: function () {
+			cleanUpRegistry();
+		},
+		afterEach: function() {
+			cleanUpRegistry();
+		}
+	});
 
 	QUnit.test("Element registry access", function(assert) {
 		var oFooA = new Element("A");
 		var oFooB = new Element("B");
 		var oFooC = new Element("C");
-		var fnCallbackSpy = sinon.spy(function() {});
+		var fnCallbackSpy = this.spy(function() {});
 		var aFilteredElements = [];
 
 		assert.ok(Element.hasOwnProperty("registry"), "Element has static method to access registry");
@@ -21,8 +34,8 @@ sap.ui.define([
 		Element.registry.forEach(fnCallbackSpy);
 		assert.ok(fnCallbackSpy.calledThrice, "Callback was executed 3 times");
 
-		aFilteredElements = Element.registry.filter(function(oComponent) {
-			return ["B", "C"].indexOf(oComponent.getId()) > -1;
+		aFilteredElements = Element.registry.filter(function(oElement) {
+			return ["B", "C"].indexOf(oElement.getId()) > -1;
 		});
 
 		assert.equal(aFilteredElements.length, 2, "Return 2 components matching the filter criteria");
@@ -30,8 +43,6 @@ sap.ui.define([
 		oFooA.destroy();
 		oFooB.destroy();
 		oFooC.destroy();
-
-		fnCallbackSpy.reset();
 	});
 
 });
