@@ -4,14 +4,18 @@
 
 //Provides class sap.ui.model.odata.v4.ODataUtils
 sap.ui.define([
+	"sap/ui/core/CalendarType",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v4/lib/_Helper"
-], function (DateFormat, BaseODataUtils, _Helper) {
+], function (CalendarType, DateFormat, BaseODataUtils, _Helper) {
 	"use strict";
 
 	// see http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/abnf/odata-abnf-construction-rules.txt
-	var sDateValue = "\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\\d|3[01])",
+	var oDateFormatter,
+		oDateTimeOffsetFormatter,
+		sDateValue = "\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\\d|3[01])",
+		oTimeFormatter,
 		sTimeOfDayValue = "(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(\\.\\d{1,12})?)?",
 		rDate = new RegExp("^" + sDateValue + "$"),
 		rDateTimeOffset = new RegExp("^" + sDateValue + "T" + sTimeOfDayValue
@@ -27,6 +31,31 @@ sap.ui.define([
 		 * @alias sap.ui.model.odata.v4.ODataUtils
 		 */
 		ODataUtils = {
+			/**
+			 * Sets the static date and time formatter instances.
+			 *
+			 * @private
+			 */
+			_setDateTimeFormatter : function () {
+				oDateFormatter = DateFormat.getDateInstance({
+					calendarType : CalendarType.Gregorian,
+					pattern: "yyyy-MM-dd",
+					strictParsing : true,
+					UTC : true
+				});
+				oDateTimeOffsetFormatter = DateFormat.getDateTimeInstance({
+					calendarType : CalendarType.Gregorian,
+					pattern : "yyyy-MM-dd'T'HH:mm:ss.SSSX",
+					strictParsing : true
+				});
+				oTimeFormatter = DateFormat.getTimeInstance({
+					calendarType : CalendarType.Gregorian,
+					pattern : "HH:mm:ss.SSS",
+					strictParsing : true,
+					UTC : true
+				});
+			},
+
 			/**
 			 * Compares the given OData values.
 			 *
@@ -109,11 +138,7 @@ sap.ui.define([
 			 * @since 1.43.0
 			 */
 			parseDate : function (sDate) {
-				var oDate = rDate.test(sDate) && DateFormat.getDateInstance({
-						pattern : "yyyy-MM-dd",
-						strictParsing : true,
-						UTC : true
-					}).parse(sDate);
+				var oDate = rDate.test(sDate) && oDateFormatter.parse(sDate);
 
 				if (!oDate) {
 					throw new Error("Not a valid Edm.Date value: " + sDate);
@@ -145,10 +170,7 @@ sap.ui.define([
 						sDateTimeOffset
 							= sDateTimeOffset.replace(aMatches[1], aMatches[1].slice(0, 4));
 					}
-					oDateTimeOffset = DateFormat.getDateTimeInstance({
-						pattern : "yyyy-MM-dd'T'HH:mm:ss.SSSX",
-						strictParsing : true
-					}).parse(sDateTimeOffset.toUpperCase());
+					oDateTimeOffset = oDateTimeOffsetFormatter.parse(sDateTimeOffset.toUpperCase());
 				}
 				if (!oDateTimeOffset) {
 					throw new Error("Not a valid Edm.DateTimeOffset value: " + sDateTimeOffset);
@@ -178,11 +200,7 @@ sap.ui.define([
 						// "round" to millis: "HH:mm:ss.SSS"
 						sTimeOfDay = sTimeOfDay.slice(0, 12);
 					}
-					oTimeOfDay =  DateFormat.getTimeInstance({
-						pattern : "HH:mm:ss.SSS",
-						strictParsing : true,
-						UTC : true
-					}).parse(sTimeOfDay);
+					oTimeOfDay =  oTimeFormatter.parse(sTimeOfDay);
 				}
 				if (!oTimeOfDay) {
 					throw new Error("Not a valid Edm.TimeOfDay value: " + sTimeOfDay);
@@ -190,6 +208,8 @@ sap.ui.define([
 				return oTimeOfDay;
 			}
 		};
+
+	ODataUtils._setDateTimeFormatter();
 
 	return ODataUtils;
 }, /* bExport= */ true);

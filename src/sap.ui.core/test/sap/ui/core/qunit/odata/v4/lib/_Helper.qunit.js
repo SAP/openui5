@@ -1043,88 +1043,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[{
-		options : {
-			$select : ["Param1", "Param2"]
-		},
-		sPath : "",
-		result : ["Param1", "Param2"]
-	}, {
-		options : {},
-		sPath : "",
-		result : undefined
-	}, {
-		options : undefined,
-		sPath : "",
-		result : undefined
-	}, {
-		options : undefined,
-		sPath : "FooSet",
-		result : undefined
-	}, {
-		options : {
-			$select : ["Param1", "Param2"]
-		},
-		sPath : "FooSet",
-		result : undefined
-	}, {
-		options : {
-			$expand : {
-				FooSet : {
-					$select : ["Param1", "Param2"]
-				}
-			}
-		},
-		sPath : "FooSet",
-		result : ["Param1", "Param2"]
-	}, {
-		options : {
-			$expand : {
-				FooSet : true
-			}
-		},
-		sPath : "FooSet/BarSet",
-		result : undefined
-	}, {
-		options : {
-			$expand : {
-				BarSet : {
-					$select : ["Param1", "Param2"]
-				}
-			},
-			$select : ["Param3", "Param4"]
-		},
-		sPath : "('42')/BarSet",
-		result : ["Param1", "Param2"]
-	}, {
-		options : {
-			$select : ["Param3", "Param4"]
-		},
-		sPath : "('42')",
-		result : ["Param3", "Param4"]
-	}, {
-		options : {
-			$expand : {
-				FooSet : {
-					$expand : {
-						BarSet : {
-							$select : ["Param1", "Param2"]
-						}
-					},
-					$select : ["Param3", "Param4"]
-				}
-			}
-		},
-		sPath : "FooSet($uid=id-1-23)/BarSet",
-		result : ["Param1", "Param2"]
-	}].forEach(function (o) {
-		QUnit.test("getSelectForPath: " + o.sPath, function (assert) {
-			assert.deepEqual(_Helper.getSelectForPath(o.options, o.sPath), o.result);
-		});
-		//TODO sPath : "42/BarSet" currently does not work, but should not happen(?)
-	});
-
-	//*********************************************************************************************
 	[true, false].forEach(function (bUseProperties) {
 		QUnit.test("updateSelected: simple/complex and not wanted properties," +
 			" bUseProperties: " + bUseProperties, function (assert) {
@@ -1971,7 +1889,7 @@ sap.ui.define([
 				"/Me/toN" : "N"
 			});
 
-		function test() {
+		function test(mExpectedResult) {
 			var sCacheQueryOptions = JSON.stringify(mCacheQueryOptions),
 				mNavigationPropertyPaths = {};
 
@@ -1979,16 +1897,18 @@ sap.ui.define([
 			assert.deepEqual(
 				_Helper.intersectQueryOptions(mCacheQueryOptions, ["B/C", "D", "B/toN", "toN"],
 					fnFetchMetadata, "/Me", mNavigationPropertyPaths),
-				{$select : ["B/C", "D"], "sap-client" : "123"});
+				mExpectedResult);
 
 			assert.strictEqual(JSON.stringify(mCacheQueryOptions), sCacheQueryOptions,
 				"unmodified");
 			assert.deepEqual(mNavigationPropertyPaths, {});
 		}
 
-		test();
+		test({$select : ["B/C", "D"], "sap-client" : "123"});
 		delete mCacheQueryOptions.$select; // missing $select means *
-		test();
+		test({$select : ["B/C", "D"], "sap-client" : "123"});
+		mCacheQueryOptions = undefined; // query options are optional
+		test({$select : ["B/C", "D"]});
 	});
 
 	//*********************************************************************************************
@@ -2317,4 +2237,123 @@ sap.ui.define([
 			}
 		});
 	});
+
+	//*********************************************************************************************
+[{ // $select=Bar
+	mQueryOptions : {
+		$select : "Bar"
+	},
+	sArg4GetMetaPath : "/",
+	sPath : "",
+	mQueryOptionsForPath : {
+		$select : "Bar"
+	}
+}, { // mQueryOptions has to be optional
+	mQueryOptions : undefined,
+	sArg4GetMetaPath : "/",
+	sPath : "",
+	mQueryOptionsForPath : {}
+}, { // mQueryOptions has to be optional
+	mQueryOptions : undefined,
+	sArg4GetMetaPath : "/FooSet",
+	sPath : "FooSet",
+	mQueryOptionsForPath : {}
+}, { // $select=Bar
+	mQueryOptions : {
+		$select : "Bar"
+	},
+	sArg4GetMetaPath : "/FooSet/WithoutExpand",
+	sPath : "FooSet/WithoutExpand",
+	mQueryOptionsForPath : {}
+}, { // $expand(FooSet=$expand(BarSet=$select(Baz)))
+	mQueryOptions : {
+		$expand : {
+			FooSet : {
+				$expand : {
+					BarSet : {
+						$select : ["Baz"]
+					}
+				}
+			}
+		}
+	},
+	sArg4GetMetaPath : "/15/FooSet('0815')/BarSet",
+	sPath : "15/FooSet('0815')/BarSet",
+	mQueryOptionsForPath : {
+		$select : ["Baz"]
+	}
+}, { // $expand(ExpandWithoutOptions)
+	mQueryOptions : {
+		$expand : {
+			ExpandWithoutOptions : true
+		}
+	},
+	sArg4GetMetaPath : "/ExpandWithoutOptions",
+	sPath : "ExpandWithoutOptions",
+	mQueryOptionsForPath : {}
+}, { // $expand(FooSet=$select(Bar,Baz))
+	mQueryOptions : {
+		$expand : {
+			FooSet : {
+				$select : ["Bar", "Baz"]
+			}
+		}
+	},
+	sArg4GetMetaPath : "/FooSet('0815')",
+	sPath : "FooSet('0815')",
+	mQueryOptionsForPath : {
+		$select : ["Bar", "Baz"]
+	}
+}, {// $expand(FooSet=$expand(BarSet=$select(Baz)))
+	mQueryOptions : {
+		$expand : {
+			FooSet : {
+				$expand : {
+					BarSet : {
+						$select : ["Baz"]
+					}
+				}
+			}
+		}
+	},
+	// combination of key predicate and index is unrealistic ;-)
+	sArg4GetMetaPath : "/FooSet($uid=id-1-23)/12/BarSet",
+	sPath : "FooSet($uid=id-1-23)/12/BarSet",
+	mQueryOptionsForPath : {
+		$select : ["Baz"]
+	}
+}, {
+	mQueryOptions : {
+		$expand : {
+			BarSet : {
+				$select : ["Param1", "Param2"]
+			}
+		},
+		$select : ["Param3", "Param4"]
+	},
+	sArg4GetMetaPath : "('42')/BarSet",
+	sPath : "('42')/BarSet",
+	mQueryOptionsForPath : {
+		$select : ["Param1", "Param2"]
+	}
+}, {
+	mQueryOptions : {
+		$select : ["Param3", "Param4"]
+	},
+	sArg4GetMetaPath : "('42')",
+	sPath : "('42')",
+	mQueryOptionsForPath : {
+		$select : ["Param3", "Param4"]
+	}
+}].forEach(function (oFixture) {
+	QUnit.test("getQueryOptionsForPath " + oFixture.sPath, function (assert) {
+		this.mock(_Helper).expects("getMetaPath").withExactArgs(oFixture.sArg4GetMetaPath)
+			.callThrough();
+
+		// code under test
+		assert.deepEqual(
+			_Helper.getQueryOptionsForPath(oFixture.mQueryOptions, oFixture.sPath),
+			oFixture.mQueryOptionsForPath);
+	});
+});
 });

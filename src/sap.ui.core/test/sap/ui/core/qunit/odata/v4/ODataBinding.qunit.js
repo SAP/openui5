@@ -113,6 +113,25 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("checkUpdate", function (assert) {
+		var oBinding = new ODataBinding({
+				checkUpdateInternal : function () {}
+			}),
+			oBindingMock = this.mock(oBinding),
+			bForceUpdate = {/*false or true*/};
+
+		oBindingMock.expects("checkUpdateInternal")
+			.withExactArgs(sinon.match.same(bForceUpdate));
+
+		// code under test
+		oBinding.checkUpdate(bForceUpdate);
+
+		assert.throws(function () {
+			oBinding.checkUpdate(bForceUpdate, {/*additional argument*/});
+		}, new Error("Only the parameter bForceUpdate is supported"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("destroy binding w/ rejected cache promise", function (assert) {
 		var oBinding = new ODataBinding();
 
@@ -238,8 +257,28 @@ sap.ui.define([
 		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
 		this.mock(oBinding).expects("hasPendingChanges").returns(false);
 		this.mock(oBinding.oModel).expects("checkGroupId");
-		this.mock(oBinding).expects("refreshInternal").withExactArgs("", "groupId", true);
+		this.mock(oBinding).expects("refreshInternal").withExactArgs("", "groupId", true)
+			.resolves();
 
+		oBinding.refresh("groupId");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refresh: reject", function (assert) {
+		var oBinding = new ODataBinding({
+				oModel : {
+					checkGroupId : function () {}
+				},
+				refreshInternal : function () {}
+			});
+
+		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
+		this.mock(oBinding).expects("hasPendingChanges").returns(false);
+		this.mock(oBinding.oModel).expects("checkGroupId");
+		this.mock(oBinding).expects("refreshInternal").withExactArgs("", "groupId", true)
+			.rejects(new Error());
+
+		// code under test - must not cause "Uncaught (in promise)"
 		oBinding.refresh("groupId");
 	});
 

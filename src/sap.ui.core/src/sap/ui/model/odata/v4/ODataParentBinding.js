@@ -37,6 +37,7 @@ sap.ui.define([
 		// whether all sent PATCHes have been successfully processed
 		this.bPatchSuccess = true;
 		this.oReadGroupLock = undefined; // see #createReadGroupLock
+		this.oRefreshPromise = null; // see #createRefreshPromise and #resolveRefreshPromise
 		this.oResumePromise = undefined; // see #getResumePromise
 	}
 
@@ -325,23 +326,23 @@ sap.ui.define([
 	 * parent context changed.
 	 *
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving without a defined result when the update is finished
+	 *   A promise resolving without a defined result when the check is finished; never rejecting
 	 * @throws {Error} If called with parameters
 	 */
 	// @override
-	ODataParentBinding.prototype.checkUpdate = function () {
+	ODataParentBinding.prototype.checkUpdateInternal = function (bForceUpdate) {
 		var that = this;
 
 		function updateDependents() {
 			// Do not fire a change event in ListBinding, there is no change in the list of contexts
 			return SyncPromise.all(that.getDependentBindings().map(function (oDependentBinding) {
-				return oDependentBinding.checkUpdate();
+				return oDependentBinding.checkUpdateInternal();
 			}));
 		}
 
-		if (arguments.length > 0) {
-			throw new Error("Unsupported operation: " + sClassName + "#checkUpdate must not be"
-				+ " called with parameters");
+		if (bForceUpdate !== undefined) {
+			throw new Error("Unsupported operation: " + sClassName + "#checkUpdateInternal must not"
+				+ " be called with parameters");
 		}
 
 		return this.oCachePromise.then(function (oCache) {
@@ -458,6 +459,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * Creates a promise for the refresh to be resolved by the binding's GET request.
+	 *
+	 * @returns {Promise} the created promise
+	 *
+	 * @see #resolveRefreshPromise
+	 * @private
+	 */
+	ODataParentBinding.prototype.createRefreshPromise = function () {
+		var oPromise, fnResolve;
+
+		oPromise = new Promise(function (resolve) {
+			fnResolve = resolve;
+		});
+		oPromise.$resolve = fnResolve;
+		this.oRefreshPromise = oPromise;
+		return oPromise;
+	};
+
+	/**
 	 * Deletes the entity in the cache. If the binding doesn't have a cache, it forwards to the
 	 * parent binding adjusting the path.
 	 *
@@ -540,6 +560,8 @@ sap.ui.define([
 			bCacheImmutable,
 			oCanUseCachePromise,
 			sChildMetaPath,
+			bDependsOnOperation = this.oModel.resolve(this.sPath, this.oContext)
+				.indexOf("(...)") >= 0, // whether this binding is an operation or depends on one
 			sFullMetaPath,
 			bIsAdvertisement,
 			oMetaModel = this.oModel.getMetaModel(),
@@ -574,7 +596,7 @@ sap.ui.define([
 			});
 		}
 
-		if (this.oOperation || sChildPath === "$count" || sChildPath.slice(-7) === "/$count"
+		if (bDependsOnOperation || sChildPath === "$count" || sChildPath.slice(-7) === "/$count"
 				|| sChildPath[0] === "@" || this.getRootBinding().isSuspended()) {
 			// Note: Operation bindings do not support auto-$expand/$select yet
 			return SyncPromise.resolve(true);
@@ -660,27 +682,14 @@ sap.ui.define([
 	 *   The context that is used to compute the inherited query options; only relevant for the
 	 *   call from ODataListBinding#doCreateCache as this.oContext might not yet be set
 	 * @returns {object}
-	 *   The computed query options
+	 *   The computed query options (live reference, no clone!)
 	 *
 	 * @private
 	 */
 	ODataParentBinding.prototype.getQueryOptionsForPath = function (sPath, oContext) {
-		var mQueryOptions;
-
 		if (Object.keys(this.mParameters).length) {
 			// binding has parameters -> all query options need to be defined at the binding
-			mQueryOptions = this.mQueryOptions;
-			// getMetaPath needs an absolute path, a relative path starting with an index would not
-			// result in a correct meta path -> first add, then remove '/'
-			this.oModel.getMetaModel().getMetaPath("/" + sPath).slice(1)
-				.split("/").some(function (sSegment) {
-					mQueryOptions = mQueryOptions.$expand && mQueryOptions.$expand[sSegment];
-					if (!mQueryOptions || mQueryOptions === true) {
-						mQueryOptions = {};
-						return true;
-					}
-				});
-			return jQuery.extend(true, {}, mQueryOptions);
+			return _Helper.getQueryOptionsForPath(this.mQueryOptions, sPath);
 		}
 
 		oContext = oContext || this.oContext;
@@ -784,6 +793,8 @@ sap.ui.define([
 	 *   The group ID to be used for refresh
 	 * @param {boolean} [bCheckUpdate]
 	 *   If <code>true</code>, a property binding is expected to check for updates
+	 * @param {boolean} [bKeepCacheOnError]
+	 *   If <code>true</code>, the binding data remains unchanged if the refresh fails
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving when all dependent bindings are refreshed; it is rejected if the
 	 *   binding's root binding is suspended and a group ID different from the binding's group ID is
@@ -792,9 +803,10 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataParentBinding.prototype.refreshDependentBindings = function (sResourcePathPrefix, sGroupId,
-			bCheckUpdate) {
+			bCheckUpdate, bKeepCacheOnError) {
 		return SyncPromise.all(this.getDependentBindings().map(function (oDependentBinding) {
-			return oDependentBinding.refreshInternal(sResourcePathPrefix, sGroupId, bCheckUpdate);
+			return oDependentBinding.refreshInternal(sResourcePathPrefix, sGroupId, bCheckUpdate,
+				bKeepCacheOnError);
 		}));
 	};
 
@@ -841,7 +853,7 @@ sap.ui.define([
 	 *   The context for which to request side effects; if this parameter is missing or if it is the
 	 *   header context of a list binding, the whole binding is affected
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving without a defined result, or rejected with an error if loading of side
+	 *   A promise resolving without a defined result, or rejecting with an error if loading of side
 	 *   effects fails
 	 * @throws {Error}
 	 *   If this binding does not use own service data requests or if the binding's root binding is
@@ -880,6 +892,23 @@ sap.ui.define([
 			// mCacheByResourcePath
 			oDependent.resetChangesInDependents();
 		});
+	};
+
+	/**
+	 * Resolves and clears the refresh promise created by {@link #createRefreshPromise} with the
+	 * given result if there is one.
+	 *
+	 * @param {any} vResult - The result to resolve with
+	 * @returns {any} vResult for chaining
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.resolveRefreshPromise = function (vResult) {
+		if (this.oRefreshPromise) {
+			this.oRefreshPromise.$resolve(vResult);
+			this.oRefreshPromise = null;
+		}
+		return vResult;
 	};
 
 	/**

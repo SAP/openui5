@@ -493,10 +493,14 @@ sap.ui.define([
 	 * automatically. If the binding's update group ID has
 	 * {@link sap.ui.model.odata.v4.SubmitMode.API}, it is repeated with the next call of
 	 * {@link sap.ui.model.odata.v4.ODataModel#submitBatch}. Otherwise it is repeated with the next
-	 * update for the entity. Each time the data for the created entity is sent to the server, a
-	 * {@link #event:createSent} event is fired and each time the client receives a response for the
-	 * creation, a {@link #event:createCompleted} event is fired, independent of whether the
-	 * creation was successful or not.
+	 * update for the entity. Since 1.67.0, {@link sap.ui.model.odata.v4.ODataModel#submitBatch} can
+	 * also be used for group IDs with {@link sap.ui.model.odata.v4.SubmitMode.Auto} in order to
+	 * repeat the creation even if there is no update for the entity.
+	 *
+	 * Each time the data for the created entity is sent to the server, a {@link #event:createSent}
+	 * event is fired and each time the client receives a response for the creation, a
+	 * {@link #event:createCompleted} event is fired, independent of whether the creation was
+	 * successful or not.
 	 *
 	 * The initial data for the created entity can be supplied via the parameter
 	 * <code>oInitialData</code> and modified via property bindings. Properties that are not part of
@@ -596,7 +600,7 @@ sap.ui.define([
 				}
 			}
 			that.fireEvent("createCompleted", {context : oContext, success : true});
-			if (!bSkipRefresh && that.isRoot()) {
+			if (!bSkipRefresh) {
 				sGroupId = that.getGroupId();
 				if (!that.oModel.isDirectGroup(sGroupId) && !that.oModel.isAutoGroup(sGroupId)) {
 					sGroupId = "$auto";
@@ -1225,6 +1229,7 @@ sap.ui.define([
 					});
 				}
 			});
+			this.resolveRefreshPromise(oPromise);
 			if (oPromise.isFulfilled() && bRefreshEvent) {
 				// make sure "refresh" is followed by async "change"
 				oPromise = Promise.resolve(oPromise);
@@ -1647,34 +1652,45 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */
 	ODataListBinding.prototype.refreshInternal = function (sResourcePathPrefix, sGroupId,
-			bCheckUpdate) {
+			bCheckUpdate, bKeepCacheOnError) {
 		var that = this;
 
+		// calls refreshInternal on all dependent bindings and returns an array of promises
 		function refreshDependentBindings() {
-			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
+			return that.oModel.getDependentBindings(that).map(function (oDependentBinding) {
 				// Call refreshInternal with bCheckUpdate = false because property bindings
 				// should not check for updates yet, otherwise they will cause a "Failed to
 				// drill down..." when the row is no longer part of the collection. They get
 				// another update request in createContexts, when the context for the row is
 				// reused.
-				oDependentBinding.refreshInternal(sResourcePathPrefix, sGroupId, false);
+				return oDependentBinding.refreshInternal(sResourcePathPrefix, sGroupId, false,
+					bKeepCacheOnError);
 			});
 		}
 
 		if (this.isRootBindingSuspended()) {
 			this.refreshSuspended(sGroupId);
-			refreshDependentBindings();
-			return SyncPromise.resolve();
+			return SyncPromise.all(refreshDependentBindings());
 		}
 
 		this.createReadGroupLock(sGroupId, this.isRoot());
 		return this.oCachePromise.then(function (oCache) {
-			if (oCache) {
+			var oPromise = that.oRefreshPromise;
+
+			if (oCache && !oPromise) { // do not refresh twice
 				that.removeCachesAndMessages(sResourcePathPrefix);
 				that.fetchCache(that.oContext);
+				oPromise = that.createRefreshPromise();
+				if (bKeepCacheOnError) {
+					oPromise.catch(function (oError) {
+						that.oCachePromise = SyncPromise.resolve(oCache);
+						oCache.setActive(true);
+						that._fireChange({reason : ChangeReason.Change});
+					});
+				}
 			}
-			that.reset(ChangeReason.Refresh);
-			refreshDependentBindings();
+			that.reset(ChangeReason.Refresh); // this may reset that.oRefreshPromise
+			return SyncPromise.all(refreshDependentBindings().concat(oPromise));
 		});
 	};
 
@@ -1702,7 +1718,7 @@ sap.ui.define([
 		var sResourcePathPrefix = oContext.getPath().slice(1),
 			that = this;
 
-		return this.oCachePromise.then(function (oCache) {
+		return this.withCache(function (oCache, sPath, oBinding) {
 			var bDataRequested = false,
 				aPromises = [];
 
@@ -1736,12 +1752,13 @@ sap.ui.define([
 				that._fireChange({reason : ChangeReason.Remove});
 			}
 
-			oGroupLock.setGroupId(that.getGroupId());
+			oGroupLock.setGroupId(oBinding.getGroupId());
 			aPromises.push(
 				(bAllowRemoval
 					? oCache.refreshSingleWithRemove(oGroupLock, oContext.getModelIndex(),
 						fireDataRequested, onRemove)
-					: oCache.refreshSingle(oGroupLock, oContext.getModelIndex(), fireDataRequested))
+					: oCache.refreshSingle(oGroupLock, sPath, oContext.getModelIndex(),
+						fireDataRequested))
 				.then(function (oEntity) {
 					var aUpdatePromises = [];
 
@@ -1827,7 +1844,7 @@ sap.ui.define([
 			if (bSingle && that.isRoot()) {
 				return that.refreshSingle(oContext, oModel.lockGroup(sGroupId), false);
 			}
-			return that.refreshInternal("", sGroupId);
+			return that.refreshInternal("", sGroupId, false, true);
 		});
 	};
 

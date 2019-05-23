@@ -1,4 +1,4 @@
-	/*!
+/*!
  * ${copyright}
  */
 sap.ui.define([
@@ -201,7 +201,7 @@ sap.ui.define([
 				oModelMock.expects("buildQueryOptions")
 					.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
 				oBindingMock.expects("isRootBindingSuspended").withExactArgs().returns(bSuspended);
-				oBindingMock.expects("checkUpdate").never();
+				oBindingMock.expects("checkUpdateInternal").never();
 				oBindingMock.expects("execute").exactly(bSuspended || bAction !== false ? 0 : 1)
 					.withExactArgs();
 				oBindingMock.expects("fetchCache").never();
@@ -239,7 +239,7 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
 			oBindingMock.expects("checkBindingParameters")
 				.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters);
-			oBindingMock.expects("checkUpdate").never();
+			oBindingMock.expects("checkUpdateInternal").never();
 			oBindingMock.expects("execute").never();
 			oBindingMock.expects("fetchCache").never();
 			oBindingMock.expects("refreshInternal").never();
@@ -276,12 +276,16 @@ sap.ui.define([
 			oModelMock.expects("buildQueryOptions")
 				.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
 			oBindingMock.expects("isRootBindingSuspended").withExactArgs().returns(bSuspended);
-			oBindingMock.expects("checkUpdate").never();
+			oBindingMock.expects("checkUpdateInternal").never();
 			oBindingMock.expects("execute").never();
 			oBindingMock.expects("fetchCache").exactly(bSuspended ? 0 : 1)
 				.withExactArgs(sinon.match.same(oContext));
-			oBindingMock.expects("refreshInternal").exactly(bSuspended ? 0 : 1)
-				.withExactArgs("", undefined, true);
+			if (bSuspended) {
+				oBindingMock.expects("refreshInternal").never();
+			} else {
+				oBindingMock.expects("refreshInternal").withExactArgs("", undefined, true)
+					.returns(SyncPromise.reject(new Error())); // avoid "Uncaught (in promise)"
+			}
 
 			// code under test (as called by ODataParentBinding#changeParameters)
 			oBinding.applyParameters(mParameters, ChangeReason.Filter);
@@ -661,7 +665,8 @@ sap.ui.define([
 			var oBinding = this.bindContext("/absolute"),
 				oBindingMock = this.mock(oBinding),
 				oError = {},
-				oReadGroupLock = {};
+				oReadGroupLock = {},
+				oReadPromise = bSuccess ? SyncPromise.resolve("value") : SyncPromise.reject(oError);
 
 			oBinding.oReadGroupLock = oReadGroupLock;
 			this.mock(this.oModel).expects("lockGroup").never();
@@ -671,7 +676,10 @@ sap.ui.define([
 			this.mock(oBinding.oCachePromise.getResult()).expects("fetchValue")
 				.withExactArgs(sinon.match.same(_GroupLock.$cached), "bar", sinon.match.func, null)
 				// no read required! .callsArg(2)
-				.returns(bSuccess ? SyncPromise.resolve("value") : SyncPromise.reject(oError));
+				.returns(oReadPromise);
+			this.mock(oBinding).expects("resolveRefreshPromise")
+				.withExactArgs(sinon.match.same(oReadPromise))
+				.returns(oReadPromise);
 
 			// code under test
 			return oBinding.fetchValue("/absolute/bar", null, true).then(function (vValue) {
@@ -2099,9 +2107,10 @@ sap.ui.define([
 			sinon.assert.calledOnce(fnOnRemove);
 			oBinding.detachChange(fnOnRemove);
 			oBinding.attachChange(fnOnRefresh);
+			this.mock(oBinding).expects("createRefreshPromise").withExactArgs();
 
 			// code under test
-			return oBinding.refreshInternal("");
+			return oBinding.refreshInternal("", undefined, true);
 		});
 	});
 
@@ -2119,7 +2128,9 @@ sap.ui.define([
 				});
 			}),
 			oGroupLock = {},
-			sPath = {/*EMPLOYEES('42')*/};
+			bKeepCacheOnError = {/*true or false*/},
+			sPath = {/*EMPLOYEES('42')*/},
+			oRefreshResult;
 
 		oBinding = this.bindContext("EMPLOYEE_2_TEAM", oContext, {"foo" : "bar"});
 
@@ -2131,21 +2142,27 @@ sap.ui.define([
 		this.mock(oBinding).expects("removeCachesAndMessages")
 			.withExactArgs(sinon.match.same(sPath));
 		oBindingMock.expects("fetchCache").withExactArgs(sinon.match.same(oContext));
+		this.mock(oBinding).expects("createRefreshPromise").withExactArgs().callThrough();
 		this.mock(oBinding).expects("refreshDependentBindings")
-			.withExactArgs(sinon.match.same(sPath), "myGroup", sinon.match.same(bCheckUpdate))
+			.withExactArgs(sinon.match.same(sPath), "myGroup", sinon.match.same(bCheckUpdate),
+				sinon.match.same(bKeepCacheOnError))
 			.returns(oDependentsPromise);
 
 		// code under test
-		return oBinding.refreshInternal(sPath, "myGroup", bCheckUpdate).then(function (oResult) {
-			assert.strictEqual(bDependentsRefreshed, true);
-		});
+		oRefreshResult = oBinding.refreshInternal(sPath, "myGroup", bCheckUpdate, bKeepCacheOnError)
+			.then(function () {
+				assert.strictEqual(bDependentsRefreshed, true);
+			});
+
+		oBinding.resolveRefreshPromise(); // simulate fetchValue triggered by a property binding
+		return oRefreshResult;
 	});
 
 	//*********************************************************************************************
 	QUnit.test("refreshInternal: suspended", function (assert) {
 		var oBinding,
 			oBindingMock = this.mock(ODataContextBinding.prototype),
-			oContext = Context.create(this.oModel, {}, "/EMPLOYEE('42')"),
+			oContext = Context.create(this.oModel, {}, "/EMPLOYEES('42')"),
 			bCheckUpdate = {/*true or false*/},
 			bDependentsRefreshed = false,
 			oDependentsPromise = new SyncPromise(function (resolve) {
@@ -2155,6 +2172,7 @@ sap.ui.define([
 				});
 			}),
 			sGroupId = {},
+			bKeepCacheOnError = {/*true or false*/},
 			sPath = {/*EMPLOYEES('42')*/};
 
 		oBinding = this.bindContext("EMPLOYEE_2_TEAM", oContext, {"foo" : "bar"});
@@ -2165,13 +2183,15 @@ sap.ui.define([
 		this.mock(oBinding).expects("removeCachesAndMessages").never();
 		oBindingMock.expects("fetchCache").never();
 		this.mock(oBinding).expects("refreshDependentBindings")
-			.withExactArgs(sinon.match.same(sPath), sGroupId, sinon.match.same(bCheckUpdate))
+			.withExactArgs(sinon.match.same(sPath), sGroupId, sinon.match.same(bCheckUpdate),
+				sinon.match.same(bKeepCacheOnError))
 			.returns(oDependentsPromise);
 
 		// code under test
-		return oBinding.refreshInternal(sPath, sGroupId, bCheckUpdate).then(function (oResult) {
-			assert.strictEqual(bDependentsRefreshed, true);
-		});
+		return oBinding.refreshInternal(sPath, sGroupId, bCheckUpdate, bKeepCacheOnError)
+			.then(function (oResult) {
+				assert.strictEqual(bDependentsRefreshed, true);
+			});
 	});
 
 	//*********************************************************************************************
@@ -2197,7 +2217,7 @@ sap.ui.define([
 			this.mock(_Cache).expects("createSingle").returns(oCache);
 
 			// code under test
-			oBinding.refreshInternal("", "myGroup", false);
+			oBinding.refreshInternal("", "myGroup", true);
 
 			this.mock(oBinding).expects("lockGroup")
 				.withExactArgs("$auto", sinon.match.same(oReadGroupLock))
@@ -2212,6 +2232,119 @@ sap.ui.define([
 			assert.deepEqual(oBinding.oReadGroupLock, undefined);
 		});
 	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bKeepCacheOnError) {
+	var sTitle = "refreshInternal: bCheckUpdate=false, bKeepCacheOnError=" + bKeepCacheOnError;
+
+	QUnit.test(sTitle, function (assert) {
+		var oContext = Context.create(this.oModel, {}, "/EMPLOYEES('42')"),
+			oBinding = this.bindContext("EMPLOYEE_2_TEAM", oContext, {$$ownRequest : true}),
+			oBindingMock = this.mock(oBinding),
+			oCache = oBinding.oCachePromise.getResult(),
+			oError = new Error(),
+			oNewCache = {
+				setActive : function () {}
+			},
+			oReadPromise = Promise.reject(oError);
+
+		oBindingMock.expects("isRootBindingSuspended").returns(false);
+		oBindingMock.expects("isRoot").returns(false);
+		oBindingMock.expects("createReadGroupLock").withExactArgs("myGroup", false);
+		oBindingMock.expects("removeCachesAndMessages").withExactArgs("path");
+		oBindingMock.expects("fetchCache")
+			.withExactArgs(sinon.match.same(oContext))
+			.callsFake(function () {
+				oBinding.oCachePromise = SyncPromise.resolve(oNewCache);
+			});
+		oBindingMock.expects("createRefreshPromise").withExactArgs().callThrough();
+		oBindingMock.expects("fetchValue").withExactArgs("").callsFake(function () {
+			oBinding.resolveRefreshPromise(oReadPromise);
+			return SyncPromise.resolve(oReadPromise);
+		});
+		this.mock(oCache).expects("setActive").exactly(bKeepCacheOnError ? 1 : 0)
+			.withExactArgs(true);
+		oBindingMock.expects("checkUpdate").exactly(bKeepCacheOnError ? 1 : 0)
+			.withExactArgs()
+			.callsFake(function () {
+				assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
+			});
+
+		// code under test
+		return oBinding.refreshInternal("path", "myGroup", false, bKeepCacheOnError)
+			.then(function () {
+				assert.ok(false);
+			}, function (oReturnedError) {
+				assert.strictEqual(oReturnedError, oError);
+				if (bKeepCacheOnError) {
+					assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
+				} else {
+					assert.notStrictEqual(oBinding.oCachePromise.getResult(), oCache);
+				}
+			});
+	});
+});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bKeepCacheOnError) {
+	var sTitle = "refreshInternal: bCheckUpdate=true, bKeepCacheOnError=" + bKeepCacheOnError;
+
+	QUnit.test(sTitle, function (assert) {
+		var oContext = Context.create(this.oModel, {}, "/EMPLOYEES('42')"),
+			oBinding = this.bindContext("EMPLOYEE_2_TEAM", oContext, {$$ownRequest : true}),
+			oBindingMock = this.mock(oBinding),
+			oCache = oBinding.oCachePromise.getResult(),
+			oError = new Error(),
+			oNewCache = {
+				setActive : function () {}
+			},
+			oReadPromise = Promise.reject(oError),
+			oRefreshPromise1,
+			oRefreshPromise2;
+
+		oBindingMock.expects("isRootBindingSuspended").twice().returns(false);
+		oBindingMock.expects("isRoot").twice().returns(false);
+		oBindingMock.expects("createReadGroupLock").twice().withExactArgs("myGroup", false);
+		oBindingMock.expects("removeCachesAndMessages").withExactArgs("path");
+		oBindingMock.expects("fetchCache")
+			.withExactArgs(sinon.match.same(oContext))
+			.callsFake(function () {
+				oBinding.oCachePromise = SyncPromise.resolve(oNewCache);
+			});
+		oBindingMock.expects("createRefreshPromise").withExactArgs().callThrough();
+		oBindingMock.expects("fetchValue").never();
+		this.mock(oCache).expects("setActive").exactly(bKeepCacheOnError ? 1 : 0)
+			.withExactArgs(true);
+		oBindingMock.expects("checkUpdate").exactly(bKeepCacheOnError ? 1 : 0)
+			.withExactArgs()
+			.callsFake(function () {
+				assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
+			});
+
+		// code under test
+		oRefreshPromise1 = oBinding.refreshInternal("path", "myGroup", true, bKeepCacheOnError)
+			.then(function () {
+				assert.ok(false);
+			}, function (oReturnedError) {
+				assert.strictEqual(oReturnedError, oError);
+			});
+		oRefreshPromise2 = oBinding.refreshInternal("path", "myGroup", true, bKeepCacheOnError)
+			.then(function () {
+				assert.ok(false);
+			}, function (oReturnedError) {
+				assert.strictEqual(oReturnedError, oError);
+			});
+		oBinding.resolveRefreshPromise(oReadPromise); // simulate fetchValue by property binding
+
+		return Promise.all([oRefreshPromise1, oRefreshPromise2]).then(function () {
+			if (bKeepCacheOnError) {
+				assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
+			} else {
+				assert.notStrictEqual(oBinding.oCachePromise.getResult(), oCache);
+			}
+		});
+	});
+});
 
 	//*********************************************************************************************
 	[undefined, false, true].forEach(function (bAction) {
@@ -2262,6 +2395,7 @@ sap.ui.define([
 				refreshInternal : function () {}
 			},
 			bCheckUpdate = {/*true or false*/},
+			bKeepCacheOnError = {/*true or false*/},
 			sResourcePathPrefix = "TEAMS('42')";
 
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
@@ -2269,12 +2403,15 @@ sap.ui.define([
 			.withExactArgs()
 			.returns([oChild0, oChild1]);
 		this.mock(oChild0).expects("refreshInternal")
-			.withExactArgs(sResourcePathPrefix, "myGroup", sinon.match.same(bCheckUpdate));
+			.withExactArgs(sResourcePathPrefix, "myGroup", sinon.match.same(bCheckUpdate),
+				sinon.match.same(bKeepCacheOnError));
 		this.mock(oChild1).expects("refreshInternal")
-			.withExactArgs(sResourcePathPrefix, "myGroup", sinon.match.same(bCheckUpdate));
+			.withExactArgs(sResourcePathPrefix, "myGroup", sinon.match.same(bCheckUpdate),
+				sinon.match.same(bKeepCacheOnError));
 
 		// code under test
-		return oBinding.refreshInternal(sResourcePathPrefix, "myGroup", bCheckUpdate);
+		return oBinding.refreshInternal(sResourcePathPrefix, "myGroup", bCheckUpdate,
+			bKeepCacheOnError);
 	});
 
 	//*********************************************************************************************
@@ -2873,8 +3010,8 @@ sap.ui.define([
 				this.mock(oBinding).expects("refreshReturnValueContext")
 					.withExactArgs(sinon.match.same(oContext), sGroupId)
 					.returns(oRefreshPromise);
-				this.mock(oBinding).expects("refreshInternal").withExactArgs("", sGroupId, true)
-					.exactly(bReturnValueContext ? 0 : 1)
+				this.mock(oBinding).expects("refreshInternal").exactly(bReturnValueContext ? 0 : 1)
+					.withExactArgs("", sGroupId, true, true)
 					.returns(oRefreshInternalPromise);
 				this.mock(this.oModel).expects("getDependentBindings").never();
 				this.mock(oBinding).expects("getDependentBindings").never();
@@ -2912,7 +3049,7 @@ sap.ui.define([
 					.throws(oError);
 			}
 			this.mock(oBinding).expects("refreshReturnValueContext").never();
-			this.mock(oBinding).expects("refreshInternal").withExactArgs("", sGroupId, true)
+			this.mock(oBinding).expects("refreshInternal").withExactArgs("", sGroupId, true, true)
 				.returns(oPromise);
 			this.mock(this.oModel).expects("getDependentBindings").never();
 			this.mock(oBinding).expects("getDependentBindings").never();
