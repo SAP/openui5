@@ -5,16 +5,11 @@
 sap.ui.define([
 	'./Dialog',
 	'./ComboBoxTextField',
-	'./Toolbar',
-	'./Button',
-	'./Bar',
-	'./Text',
-	'./Title',
+	'./Input',
 	'./GroupHeaderListItem',
 	'./SuggestionsPopover',
 	'sap/ui/core/SeparatorItem',
 	'sap/ui/core/InvisibleText',
-	'sap/ui/core/IconPool',
 	'sap/base/Log',
 	'./library',
 	'sap/ui/Device',
@@ -29,16 +24,11 @@ sap.ui.define([
 	function(
 		Dialog,
 		ComboBoxTextField,
-		Toolbar,
-		Button,
-		Bar,
-		Text,
-		Title,
+		Input,
 		GroupHeaderListItem,
 		SuggestionsPopover,
 		SeparatorItem,
 		InvisibleText,
-		IconPool,
 		Log,
 		library,
 		Device,
@@ -310,6 +300,11 @@ sap.ui.define([
 
 			this.highLightList(sValue, aListItemsDOM);
 			this.highLightList(sValue, aListItemAdditionalText);
+		};
+
+		ComboBoxBase.prototype._modifyPopupInput = function (oInput) {
+			this.setTextFieldHandler(oInput);
+			return oInput;
 		};
 
 		/**
@@ -965,6 +960,21 @@ sap.ui.define([
 			return bTablet;
 		};
 
+		/**
+		 * Creates an instance of <code>sap.m.ComboBoxTextField</code>.
+		 *
+		 * @returns {sap.m.ComboBoxTextField} The TextField instance
+		 * @private
+		 */
+		ComboBoxBase.prototype.createPickerTextField = function() {
+			var oInput = new Input({
+				width: "100%",
+				showValueStateMessage: false
+			});
+
+			return oInput;
+		};
+
 		/*
 		 * Gets the dropdown default settings.
 		 * @returns {object} A map object with the default settings
@@ -989,13 +999,6 @@ sap.ui.define([
 		 */
 		ComboBoxBase.prototype._configureList = function () {};
 
-		/*
-		 * Base method for the <code>Dialog</code> configuration
-		 *
-		 * @protected
-		 */
-		ComboBoxBase.prototype.configureDialog = function () {};
-
 		/**
 		 * Creates a picker popup container where the selection should take place.
 		 * To be overwritten by subclasses.
@@ -1016,10 +1019,6 @@ sap.ui.define([
 			// define a parent-child relationship between the control's and the picker pop-up (Popover or Dialog)
 			this.setAggregation("picker", oPicker, true);
 
-			if (this.isPickerDialog()) {
-				this.configureDialog(oPicker);
-			}
-
 			this.configPicker(oPicker);
 
 			return oPicker;
@@ -1033,13 +1032,9 @@ sap.ui.define([
 		 */
 		ComboBoxBase.prototype.configPicker = function (oPicker) {};
 
-		/**
-		 * Base method for picker text field creation
-		 *
-		 * @protected
-		 * @returns {sap.m.InputBase}
-		 */
-		ComboBoxBase.prototype.createPickerTextField = function () {};
+		ComboBoxBase.prototype._hasShowSelectedButton = function () {
+			return false;
+		};
 
 		/**
 		 * Creates and configures a new instance of the <code>SuggestionsPopover</code> and its internal controls.
@@ -1054,21 +1049,43 @@ sap.ui.define([
 			oSuggPopover = new SuggestionsPopover(this);
 
 			if (bUseDialog) {
-				oSuggPopover._oPopupInput = this.createPickerTextField();
+				var oInput = this.createPickerTextField();
+				oSuggPopover._oPopupInput = this._modifyPopupInput(oInput);
 			}
 
 			// Creates the internal controls of the <code>SuggestionsPopover</code>
-			oSuggPopover._createSuggestionPopup();
+			oSuggPopover._createSuggestionPopup({showSelectedButton: this._hasShowSelectedButton()});
 			oSuggPopover._createSuggestionPopupContent(false, false, false);
 
+			this.forwardEventHandlersToSuggPopover(oSuggPopover);
 			this._updateSuggestionsPopoverValueState();
 
-			// Ammends the suggestions popovers list
+			// Amends the suggestions popovers list
 			// this._oList is used by the ComboBoxBase
 			this._oList = oSuggPopover._oList;
 			this._configureList(this._oList);
 
 			return oSuggPopover;
+		};
+
+		ComboBoxBase.prototype.forwardEventHandlersToSuggPopover = function (oSuggPopover) {
+			oSuggPopover.setOkPressHandler(this._handleOkPress.bind(this));
+			oSuggPopover.setCancelPressHandler(this._handleCancelPress.bind(this));
+			oSuggPopover.setInputLabels(this.getLabels.bind(this));
+		};
+
+		ComboBoxBase.prototype._handleOkPress = function () {
+			var that = this,
+				oTextField = that.getPickerTextField();
+
+			that.updateDomValue(oTextField.getValue());
+			that.onChange();
+			that.close();
+		};
+
+		ComboBoxBase.prototype._handleCancelPress = function(){
+			this.close();
+			this.revertSelection();
 		};
 
 		/**
@@ -1177,58 +1194,6 @@ sap.ui.define([
 			return oFocusDomRef.parentNode;
 		};
 
-		/**
-		 * Creates an instance of <code>sap.m.Dialog</code>.
-		 *
-		 * @returns {sap.m.Dialog} The created Dialog
-		 */
-		ComboBoxBase.prototype.createDialog = function() {
-			var that = this,
-				oTextField = this.createPickerTextField();
-
-			this.setTextFieldHandler(oTextField);
-
-			return new Dialog({
-				stretch: true,
-				customHeader: that.createPickerHeader(),
-				buttons: this.createPickerCloseButton(),
-				subHeader: new Toolbar({
-					content: oTextField
-				}),
-				beforeOpen: function() {
-					that.updatePickerHeaderTitle();
-				},
-				afterClose: function() {
-					that.focus();
-					library.closeKeyboard();
-				},
-				ariaLabelledBy: that.getPickerInvisibleTextId() || undefined
-			});
-		};
-
-		/**
-		 * Creates an instance of <code>sap.m.Bar</code>.
-		 *
-		 * @returns {sap.m.Bar} Picker's header
-		 * @protected
-		 * @since 1.42
-		 */
-		ComboBoxBase.prototype.createPickerHeader = function() {
-			var that = this,
-				sIconURI = IconPool.getIconURI("decline");
-
-			return new Bar({
-				contentMiddle: new Title(),
-				contentRight: new Button({
-					icon: sIconURI,
-					press: function() {
-						that.close();
-						that.revertSelection();
-					}
-				})
-			});
-		};
-
 		/*
 		 * Reverts the selection as before opening the picker
 		 *
@@ -1237,58 +1202,6 @@ sap.ui.define([
 		 * @since 1.42
 		 */
 		ComboBoxBase.prototype.revertSelection = function() {};
-
-		/*
-		 * Updates the title of the Picker. If it is labeled the text of the label is assigned as a title,
-		 * otherwise a default text is shown.
-		 *
-		 * @protected
-		 * @since 1.42
-		 */
-		ComboBoxBase.prototype.updatePickerHeaderTitle = function() {
-			var oPicker = this.getPicker(),
-				oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
-				oLabel, aLabels;
-
-			if (!oPicker) {
-				return;
-			}
-
-			aLabels = this.getLabels();
-
-			if (aLabels.length) {
-				oLabel = aLabels[0];
-
-				if (oLabel && (typeof oLabel.getText === "function")) {
-					this.getPickerTitle().setText(oLabel.getText());
-				}
-			} else {
-				this.getPickerTitle().setText(oResourceBundle.getText("COMBOBOX_PICKER_TITLE"));
-			}
-		};
-
-		/**
-		 * Creates an instance of <code>sap.m.Button</code>.
-		 *
-		 * @returns {sap.m.Button} The created Button
-		 * @private
-		 * @since 1.42
-		 */
-		ComboBoxBase.prototype.createPickerCloseButton = function() {
-			var that = this, oTextField,
-				oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-
-			return new Button({
-				text: oResourceBundle.getText("COMBOBOX_CLOSE_BUTTON"),
-				press: function() {
-					oTextField = that.getPickerTextField();
-					that.updateDomValue(oTextField.getValue());
-					that.onChange();
-					that.close();
-				}
-			});
-		};
-
 		/**
 		 * Determines whether the control has content or not.
 		 *

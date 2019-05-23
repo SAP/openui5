@@ -12,8 +12,6 @@ sap.ui.define([
 	'sap/ui/base/ManagedObjectMetadata',
 	'sap/ui/Device',
 	'./Popover',
-	'./Button',
-	'./ToggleButton',
 	'./List',
 	'./Title',
 	'./Bar',
@@ -39,8 +37,6 @@ function(
 	ManagedObjectMetadata,
 	Device,
 	Popover,
-	Button,
-	ToggleButton,
 	List,
 	Title,
 	Bar,
@@ -1012,6 +1008,9 @@ function(
 	};
 
 	MultiInput.prototype._onclick = function (oEvent) {
+		if (this._bUseDialog && this.getTokens().length) {
+			this._openSuggestionsPopover();
+		}
 	};
 
 	/**
@@ -1026,7 +1025,7 @@ function(
 			Input.prototype.onfocusin.apply(this, arguments);
 		}
 
-		if (this.getEditable() && (!oEvent.target.classList.contains("sapMInputValHelp")
+		if (!this._bUseDialog && this.getEditable() && (!oEvent.target.classList.contains("sapMInputValHelp")
 			&& !oEvent.target.classList.contains("sapMInputValHelpInner"))) {
 
 				if (this._oSuggestionPopup && this._oSuggestionPopup.isOpen()) {
@@ -1392,8 +1391,10 @@ function(
 
 
 	/**
-	 * Modifies the picker provided from sap.m.Input when on mobile
+	 * Modifies the suggestions dialog input
+	 * @param {sap.m.Input} oInput The input
 	 *
+	 * @returns {sap.m.Input} The modified input control
 	 * @private
 	 */
 	MultiInput.prototype._modifySuggestionPicker = function () {
@@ -1405,8 +1406,6 @@ function(
 		if (!this._bUseDialog) {
 			return;
 		}
-
-		this._bShowSelectedButton = this._createFilterSelectedButton();
 		this._oSuggPopover._oPopover.addContent(this._getTokensList());
 		this._oSuggPopover._oPopover
 			.attachBeforeOpen(function(){
@@ -1420,68 +1419,44 @@ function(
 				that._tokenizer._useCollapsedMode(true);
 				that._bShowListWithTokens = false;
 			});
-
-		this._oSuggPopover._oPopover.getCustomHeader().removeAllContentMiddle();
-		this._oSuggPopover._oPopover.destroyCustomHeader(true);
-		this._oSuggPopover._oPopover.setCustomHeader(new Bar({
-			contentMiddle: [new Title()],
-			contentRight: new Button({
-				icon: IconPool.getIconURI("decline"),
-				press: function() {
-					that._oSuggPopover._oPopover.close();
-				}
-			})
-		}));
-		this._oSuggPopover._oPopover.setSubHeader(new Toolbar({
-			content : [
-				this._oSuggPopover._oPopupInput,
-				this._bShowSelectedButton
-			]}
-		));
-
-		this._oSuggPopover._oPopupInput.onsapenter = function (oEvent) {
-			that._validateCurrentText();
-			that._setValueInvisible();
-
-			if (that._oSuggPopover._oPopupInput.getValue()) {
-				that._oSuggPopover._oPopover.close();
-			}
-			// Fire through the MultiInput Popup's input value and save it
-			that.onChange(oEvent, null, this.getValue());
-		};
-
-		this._oSuggPopover._oPopupInput.attachLiveChange(function(){
-			if (that._bShowListWithTokens) {
-				// filter inside tokens
-				that._filterTokens(this.getValue());
-			}
-
-			that._manageListsVisibility(that._bShowListWithTokens);
-		});
-
-		this._oSuggPopover._oPopupInput.oninput = function (oEvent) {
-			Input.prototype.oninput.call(this, oEvent);
-			that._manageListsVisibility(false);
-		};
 	};
 
-	/**
-	 * Creates an instance of <code>sap.m.ToggleButton</code>.
-	 *
-	 * @returns {sap.m.ToggleButton} The Button instance
-	 * @private
-	 */
-	MultiInput.prototype._createFilterSelectedButton = function () {
-		var sIconURI = IconPool.getIconURI("multiselect-all"),
-			that = this;
+	MultiInput.prototype._modifyPopupInput = function (oPopupInput) {
+		var that = this;
 
-		return new ToggleButton({
-			icon: sIconURI,
-			press: function (oEvent) {
-				that._bShowListWithTokens = oEvent.getSource().getPressed();
-				that._manageListsVisibility(that._bShowListWithTokens);
+		oPopupInput.addEventDelegate({
+			oninput: that._manageListsVisibility.bind(that, false),
+			onsapenter: function (oEvent) {
+				that._validateCurrentText();
+				that._setValueInvisible();
+
+				// Fire through the MultiInput Popup's input value and save it
+				that.onChange(oEvent, null, oPopupInput.getValue());
+
+				if (oPopupInput.getValue()) {
+					that._closeSuggestionPopup();
+				}
 			}
 		});
+
+		return oPopupInput;
+	};
+
+
+	MultiInput.prototype._hasShowSelectedButton = function () {
+		return true;
+	};
+
+
+	MultiInput.prototype.forwardEventHandlersToSuggPopover = function (oSuggPopover) {
+
+		Input.prototype.forwardEventHandlersToSuggPopover.apply(this, arguments);
+		oSuggPopover.setShowSelectedPressHandler(this._handleShowSelectedPress.bind(this));
+	};
+
+	MultiInput.prototype._handleShowSelectedPress  = function (oEvent) {
+		this._bShowListWithTokens = oEvent.getSource().getPressed();
+		this._manageListsVisibility(this._bShowListWithTokens);
 	};
 
 
@@ -1630,6 +1605,16 @@ function(
 	};
 
 	/**
+	 * Gets the filter selected toggle button for the control's picker.
+	 *
+	 * @returns {sap.m.ToggleButton} The button's instance
+	 * @private
+	 */
+	MultiInput.prototype.getFilterSelectedButton = function () {
+		return this._getSuggestionsPopover().getFilterSelectedButton();
+	};
+
+	/**
 	 * Manages the visibility of the suggestion list and the selected items list
 	 *
 	 * @param {boolean} bShowListWithTokens True if the selected items list should be shown
@@ -1640,7 +1625,7 @@ function(
 		this._getSuggestionsList() && this._getSuggestionsList().setVisible(!bShowListWithTokens);
 
 		if (this._bUseDialog) {
-			this._bShowSelectedButton.setPressed(bShowListWithTokens);
+			this.getFilterSelectedButton().setPressed(bShowListWithTokens);
 		}
 	};
 

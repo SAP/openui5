@@ -21,6 +21,7 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/m/Button",
 	"sap/m/SuggestionItem",
+	"sap/ui/core/IconPool",
 	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/events/KeyCodes",
 	"sap/m/Link",
@@ -47,6 +48,7 @@ sap.ui.define([
 	Dialog,
 	Button,
 	SuggestionItem,
+	IconPool,
 	waitForThemeApplied,
 	KeyCodes,
 	Link,
@@ -4421,6 +4423,94 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(this.oInput._oSuggPopover._oSuggestionTable.getItems().length, 5, "All the items are available");
 		assert.strictEqual(fnGetVisisbleItems(this.oInput._oSuggPopover._oSuggestionTable.getItems()).length, 1, "Only the matching items are visible");
+	});
+
+	QUnit.module("Dialog on mobile");
+
+	QUnit.test("Dialog elements", function (assert) {
+		var oDialog, oCustomHeader,
+			oSystem = {
+				desktop: false,
+				phone: true,
+				tablet: false
+			};
+
+		this.stub(Device, "system", oSystem);
+
+		this.oInput = new Input({showSuggestion: true});
+		this.oLabel = new Label({text: "Label text", labelFor: this.oInput.getId()});
+		this.oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+		this.oInput._openSuggestionsPopover();
+		sap.ui.getCore().applyChanges();
+
+		oDialog = this.oInput._getSuggestionsPopover()._oPopover;
+		oCustomHeader = oDialog.getCustomHeader();
+
+		assert.ok(oCustomHeader.getContentMiddle()[0].isA("sap.m.Title"), "A title is added to the dialog");
+		assert.strictEqual(oCustomHeader.getContentMiddle()[0].getText(), this.oLabel.getText(), "The title has a correct value.");
+
+		assert.ok(oCustomHeader.getContentRight()[0].isA("sap.m.Button"), "A button is added to the header.");
+		assert.strictEqual(oCustomHeader.getContentRight()[0].getIcon(),  IconPool.getIconURI("decline"), "The button renders a decline icon");
+
+		assert.strictEqual(oDialog.getBeginButton().getText(), this.oRb.getText("SUGGESTIONSPOPOVER_CLOSE_BUTTON"),
+			"The OK button has a correct text value");
+
+		this.oInput.destroy();
+
+	});
+
+	QUnit.test("Close button press", function (assert) {
+		var oCloseButton,
+			oSuggPopover,
+			oSystem = {
+				desktop: false,
+				phone: true,
+				tablet: false
+			};
+
+		this.stub(Device, "system", oSystem);
+
+		this.oInput = new Input({showSuggestion: true});
+		this.oInput._openSuggestionsPopover();
+		sap.ui.getCore().applyChanges();
+
+		oSuggPopover = this.oInput._getSuggestionsPopover();
+		oCloseButton = oSuggPopover._oPopover.getCustomHeader().getContentRight()[0];
+
+		oCloseButton.firePress();
+		this.clock.tick(400);
+
+		assert.notOk(oSuggPopover.isOpen(), "The dialog is closed on X press.");
+
+		this.oInput.destroy();
+
+	});
+
+	QUnit.test("OK button press", function (assert) {
+		var oOKButton,
+			oSuggPopover,
+			oSystem = {
+				desktop: false,
+				phone: true,
+				tablet: false
+			};
+
+		this.stub(Device, "system", oSystem);
+
+		this.oInput = new Input({showSuggestion: true});
+		this.oInput._openSuggestionsPopover();
+		sap.ui.getCore().applyChanges();
+
+		oSuggPopover = this.oInput._getSuggestionsPopover();
+		oOKButton = oSuggPopover._oPopover.getBeginButton();
+
+		oOKButton.firePress();
+		this.clock.tick(400);
+
+		assert.notOk(oSuggPopover.isOpen(), "The dialog is closed on OK press.");
+
+		this.oInput.destroy();
 	});
 
 	return waitForThemeApplied(this.oInput);
