@@ -59,28 +59,14 @@ sap.ui.define([
 
 		// only use Passport for non CORS requests
 		if (!isCORSRequest(arguments[1])) {
-			var oPendingInteraction = Interaction.getPending();
-
-			// only use Passport for non CORS requests
-			if (!isCORSRequest(arguments[1])) {
-
-				// set passport with Root Context ID, Transaction ID, Component Info, Action
-				this.setRequestHeader("SAP-PASSPORT", Passport.header(
-					Passport.traceFlags(),
-					ROOT_ID,
-					Passport.getTransactionId(),
-					sPassportComponentInfo,
-					sPassportAction
-				));
-			}
 
 			// set passport with Root Context ID, Transaction ID, Component Info, Action
 			this.setRequestHeader("SAP-PASSPORT", Passport.header(
 				Passport.traceFlags(),
 				ROOT_ID,
 				Passport.getTransactionId(),
-				oPendingInteraction ? oPendingInteraction.component + sAppVersion : undefined,
-				oPendingInteraction ? oPendingInteraction.trigger + "_" + oPendingInteraction.event + "_" + iStepCounter : undefined
+				sPassportComponentInfo,
+				sPassportAction
 			));
 		}
 	}
