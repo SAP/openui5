@@ -258,7 +258,7 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function (LoaderExtensions) {
 	 * If the given component is part of the version-info, an array with all transitive dependencies is returned.
 	 * The dependency list includes the library in which the component itself is contained.
 	 * @param {string} sComponentName the component name
-	 * @returns {Array<{library:string,dependencies:string[]}>} list of the located library and all transitive dependencies for the given component
+	 * @returns {Array<{library:string,dependencies:Array<string>}>} list of the located library and all transitive dependencies for the given component
 	 *    or undefined if the component is not part of the version-info. Each object has two properties: "library" and "dependencies".
 	 *    The property "library" contains the name of the library which contains the component implementation.
 	 *    The property "dependencies" is an array with all transitive dependencies of the component.

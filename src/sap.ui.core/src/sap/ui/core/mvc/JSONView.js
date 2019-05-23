@@ -56,20 +56,20 @@ sap.ui.define([
 	/**
 	 * Creates a JSON view of the given configuration.
 	 *
-	 * @param {map} mOptions A map containing the view configuration options.
-	 * @param {string} [mOptions.id] Specifies an ID for the View instance. If no ID is given, an ID will be generated.
-	 * @param {string} [mOptions.viewName] The view name that corresponds to a JSON module that can be loaded
-	 * via the module system (viewName + suffix ".view.json").
-	 * @param {string|object} [mOptions.definition] view definition as a JSON string or an object literal
-	 * @param {sap.ui.core.mvc.Controller} [mOptions.controller] Controller instance to be used for this view.
+	 * @param {object} oOptions An object containing the view configuration options.
+	 * @param {string} [oOptions.id] Specifies an ID for the view instance. If no ID is given, an ID will be generated.
+	 * @param {string} [oOptions.viewName] The view name (in dot-notation) that corresponds to a JSON resource that can
+	 *                    be loaded via the module system (viewName + suffix ".view.json").
+	 * @param {string|object} [oOptions.definition] view definition as a JSON string or an object literal
+	 * @param {sap.ui.core.mvc.Controller} [oOptions.controller] Controller instance to be used for this view.
 	 * The given controller instance overrides the controller defined in the view definition. Sharing a controller instance
 	 * between multiple views is not supported.
 	 * @public
 	 * @static
-	 * @return {Promise} a Promise which resolves with the created JSONView instance.
+	 * @returns {Promise<sap.ui.core.mvc.JSONView>} A promise which resolves with the created <code>JSONView</code> instance.
 	 */
-	JSONView.create = function(mOptions) {
-		var mParameters = merge({}, mOptions);
+	JSONView.create = function(oOptions) {
+		var mParameters = merge({}, oOptions);
 		//remove unsupported options:
 		for (var sOption in mParameters) {
 			if (sOption === 'preprocessors') {

@@ -1263,7 +1263,7 @@ sap.ui.define([
 	 * Returns the current media range of the Device or the closest media container
 	 *
 	 * @param {string} sName
-	 * @returns {map}
+	 * @returns {object}
 	 * @private
 	 * @sap-restricted
 	 */

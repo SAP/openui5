@@ -188,28 +188,28 @@ sap.ui.define([
 		 * still an experimental feature and may experience slight changes of the invalidation parameters or the cache
 		 * key format.
 		 *
-		 * @param {object} mOptions - An object containing the view configuration options.
-		 * @param {string} [mOptions.id] - Specifies an ID for the View instance. If no ID is given, an ID will be generated.
-		 * @param {string} [mOptions.viewName] - Corresponds to an XML module that can be loaded via the module system
-		 *                     (mOptions.viewName + suffix ".view.xml")
-		 * @param {string|Document} [mOptions.definition] - XML string or XML document that defines the view.
+		 * @param {object} oOptions - An object containing the view configuration options.
+		 * @param {string} [oOptions.id] - Specifies an ID for the View instance. If no ID is given, an ID will be generated.
+		 * @param {string} [oOptions.viewName] - Corresponds to an XML module that can be loaded via the module system
+		 *                     (oOptions.viewName + suffix ".view.xml")
+		 * @param {string|Document} [oOptions.definition] - XML string or XML document that defines the view.
 		 *                     Exactly one of <code>viewName</code> or <code>definition</code> must be given.
-		 * @param {sap.ui.core.mvc.Controller} [mOptions.controller] - Controller instance to be used for this view.
+		 * @param {sap.ui.core.mvc.Controller} [oOptions.controller] - Controller instance to be used for this view.
 		 *                     The given controller instance overrides the controller defined in the view definition.
 		 *                     Sharing one controller instance between multiple views is not possible.
-		 * @param {object} [mOptions.cache] - Cache configuration; caching gets active when this object is provided
+		 * @param {object} [oOptions.cache] - Cache configuration; caching gets active when this object is provided
 		 *                     with vView.cache.keys array; keys are used to store data in the cache and for invalidation
 		 *                     of the cache.
-		 * @param {Array.<(string|Promise)>} [mOptions.cache.keys] - Array with strings or Promises resolving with strings
-		 * @param {object} [mOptions.preprocessors] Preprocessors configuration, see {@link sap.ui.core.mvc.View}
+		 * @param {Array.<(string|Promise)>} [oOptions.cache.keys] - Array with strings or Promises resolving with strings
+		 * @param {object} [oOptions.preprocessors] Preprocessors configuration, see {@link sap.ui.core.mvc.View}
 		 *                     <strong>Note</strong>: These preprocessors are only available to this instance.
 		 *                     For global or on-demand availability use {@link sap.ui.core.mvc.XMLView.registerPreprocessor}.
 		 * @public
 		 * @static
 		 * @return {Promise<sap.ui.core.mvc.XMLView>} A Promise that resolves with the view instance or rejects with any thrown error.
 		 */
-		XMLView.create = function (mOptions) {
-			var mParameters = merge({}, mOptions);
+		XMLView.create = function (oOptions) {
+			var mParameters = merge({}, oOptions);
 
 			// mapping renamed parameters
 			mParameters.viewContent = mParameters.definition;
