@@ -53,7 +53,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		oRm.addClass("sapContrastPlus");
 		oRm.addClass("sapFDynamicPageTitleWrapper");
 		if (!bHeaderExpanded) {
-			oRm.addClass(Device.system.phone && oDynamicPageTitle.getSnappedTitleOnMobile() ?
+			oRm.addClass(Device.system.phone && oDynamicPageTitle && oDynamicPageTitle.getSnappedTitleOnMobile() ?
 					"sapFDynamicPageTitleSnappedTitleOnMobile" : "sapFDynamicPageTitleSnapped");
 		}
 		if (!bHeaderHasContent) {
