@@ -16,17 +16,8 @@
 
 			var testfwk = sap.ui.testfwk.TestFWK;
 
-			var bCommonsAvailable = false;
-			if ( !gup("sap-ui-protectedMode") ) {
-				bCommonsAvailable = jQuery.sap.syncHead("../../resources/sap/ui/commons/library.js");
-			}
-
 			var settingsURL = "settings.html";
 			var traceURL = "trace.html";
-			if ( bCommonsAvailable ) {
-				settingsURL = "sapui5/" + settingsURL;
-				// traceURL = "sapui5/" + traceURL;
-			}
 
 			function _onload() {
 
@@ -100,17 +91,6 @@
 					oPropertyListWindow.document.body.style.backgroundPosition = '-' + rightX0 + 'px 0px';
 				}
 			};
-
-			function gup( name ) {
-				name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-				var regexS = "[\\?&]"+name+"=([^&#]*)";
-				var regex = new RegExp( regexS );
-				var results = regex.exec( window.location.href );
-				if( results == null )
-					return null;
-				else
-					return results[1];
-			}
 
 			function setFrameLayout(layout) {
 				var oOuterFrameset = document.getElementById('sap-ui-testsuite-outer');
