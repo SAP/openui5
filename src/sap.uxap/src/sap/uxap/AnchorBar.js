@@ -937,11 +937,6 @@ sap.ui.define([
 			this.$().attr("aria-label", sHeaderTitleAriaLabelText);
 		}
 
-		//restore state from previous rendering
-		if (oSelectedButton) {
-			this.setSelectedButton(oSelectedButton);
-		}
-
 		//initial state
 		if (this._bHasButtonsBar) {
 			setTimeout(function () {
@@ -949,6 +944,11 @@ sap.ui.define([
 					this._computeBarSectionsInfo();
 				}
 				this._adjustSize();
+
+				//restore selected button state from previous rendering
+				if (oSelectedButton) {
+					this.setSelectedButton(oSelectedButton);
+				}
 			}.bind(this), AnchorBar.DOM_CALC_DELAY);
 		}
 	};

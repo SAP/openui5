@@ -92,7 +92,9 @@ sap.ui.define([
 			aAnchorBarContent = oAnchorBar.getContent(),
 			oFirstSectionButton = aAnchorBarContent[0],
 			oLastSectionButton = aAnchorBarContent[aAnchorBarContent.length - 1],
-			oMenuButton = aAnchorBarContent[1];
+			oMenuButton = aAnchorBarContent[1],
+			computeSpy = this.spy(oAnchorBar, "_computeBarSectionsInfo"),
+			selectSpy = this.spy(oAnchorBar, "setSelectedButton");
 
 		oAnchorBar.setSelectedButton(oLastSectionButton);
 
@@ -110,6 +112,11 @@ sap.ui.define([
 		this.clock.tick(iRenderingDelay);
 
 		checkButtonAriaAttribute(assert, oMenuButton, "aria-checked", "true", "ARIA checked state should be true for the selected split button");
+
+		this.oObjectPage.rerender();
+		this.clock.tick(iRenderingDelay);
+
+		assert.ok(selectSpy.calledAfter(computeSpy), "setSelectedButton should be called after _computeBarSectionsInfo");
 	});
 
 	QUnit.test("Selected button always set correctly", function (assert) {
