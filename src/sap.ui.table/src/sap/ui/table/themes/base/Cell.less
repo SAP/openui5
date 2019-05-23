@@ -21,6 +21,11 @@
 	.sapUiTableZoomout & {
 		outline-offset: @_sap_ui_table_Cell_FocusOutlineOffsetInZoomedChrome;
 	}
+
+	// To show the bottom focus outline of row selection cells that would otherwise be hidden by the top border of the selection cell below.
+	.sapUiTableGroupMode &.sapUiTableRowSelectionCell:focus {
+		z-index: 1;
+	}
 }
 
 /* WebKit */
@@ -52,13 +57,9 @@
 		border-left: @_sap_ui_table_BaseBorderWidth solid @sapUiListVerticalBorderColor;
 	}
 
-	.sapUiTableGroupMode &.sapUiTableRowSelectionCell::before {
-		content: "";
-		position: absolute;
-		top: -@_sap_ui_table_BaseBorderWidth;
-		left: 0;
-		right: 0;
-		border-bottom: @_sap_ui_table_BaseBorderWidth solid @sapUiListBorderColor;
+	// Adds a border on top that might be required due to indentation of the row above.
+	.sapUiTableGroupMode &.sapUiTableRowSelectionCell {
+		box-shadow: 0 -@_sap_ui_table_BaseBorderWidth @sapUiListBorderColor;
 	}
 
 	// Last data column border
