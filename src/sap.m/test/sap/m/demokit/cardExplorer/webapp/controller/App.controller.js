@@ -94,6 +94,8 @@ sap.ui.define([
 					sideNavigation.setSelectedKey(routeArgs["key"]);
 				} else if (routeConfig.name !== "default") {
 					sideNavigation.setSelectedKey(routeConfig.name);
+				} else {
+					sideNavigation.setSelectedKey('overview');
 				}
 			},
 
