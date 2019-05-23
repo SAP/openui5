@@ -3048,8 +3048,15 @@ sap.ui.define([
 		var fnFireSelectionFinishSpy = this.spy(oMultiComboBox, "fireSelectionFinish");
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.BACKSPACE); // select last token
-		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.BACKSPACE); // delete selected token
+		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getFocusDomRef(), KeyCodes.BACKSPACE); // select last token
+
+		// assert
+		assert.strictEqual(document.activeElement, oMultiComboBox._oTokenizer.getTokens()[0].getDomRef(),
+			"The focus is forwarded to the token.");
+
+		// act
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.BACKSPACE); // delete selected token
+		sap.ui.getCore().applyChanges();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
@@ -3083,7 +3090,13 @@ sap.ui.define([
 
 		// act
 		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.BACKSPACE); // select last token
-		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.DELETE); // delete selected token
+		// assert
+		assert.strictEqual(document.activeElement, oMultiComboBox._oTokenizer.getTokens()[0].getDomRef(),
+			"The focus is forwarded to the token.");
+
+		// act
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.DELETE); // delete selected token
+		sap.ui.getCore().applyChanges();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
@@ -5264,24 +5277,44 @@ sap.ui.define([
 		assert.ok(oPreviousItem.getText() !== 'Item3', "Should not return the last item anymore as it's selected already");
 	});
 
-	QUnit.test("onsapend should trigger Tokenizer's onsapend", function (assert) {
-		var oSapEndSpy = sinon.spy(Tokenizer.prototype, "onsapend");
+	QUnit.test("onsapend should focus the input if the tokenizer has forwarded the focus", function (assert) {
+		var oEvent = {isMarked: function(sKey){ if (sKey === "forwardFocusToParent") { return true;}}};
 
-		this.oMultiComboBox.onsapend();
+		this.oMultiComboBox.onsapend(oEvent);
 		this.clock.tick();
 
-		assert.ok(oSapEndSpy.called, "onsapend of the Tokenizer should be called");
-		assert.ok(oSapEndSpy.calledOn(this.oTokenizer), "onsapend should be called on the internal Tokenizer");
+		assert.strictEqual(this.oMultiComboBox.getFocusDomRef(), document.activeElement, "The input is focused");
 	});
 
 	QUnit.test("onsaphome should trigger Tokenizer's onsaphome", function (assert) {
-		var oSapEndSpy = sinon.spy(Tokenizer.prototype, "onsaphome");
+		var oToken,
+			oSapHomeSpy = sinon.spy(Tokenizer.prototype, "onsaphome"),
+			oItem = new sap.ui.core.Item({text: "text123", key: "key123"});
 
-		this.oMultiComboBox.onsaphome();
+		// setup
+		this.oMultiComboBox.addItem(oItem);
+		this.oMultiComboBox.setSelectedItems([oItem]);
+
+		this.oMultiComboBox.setValue = "text";
+		this.oMultiComboBox.getFocusDomRef().selectionStart = 3;
+
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oToken = this.oMultiComboBox._oTokenizer.getTokens()[0];
+		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.HOME);
 		this.clock.tick();
 
-		assert.ok(oSapEndSpy.called, "onsaphome of the Tokenizer should be called");
-		assert.ok(oSapEndSpy.calledOn(this.oTokenizer), "onsapend should be called on the internal Tokenizer");
+		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.HOME);
+		this.clock.tick();
+
+		// assert
+		assert.strictEqual(oToken.getDomRef(), document.activeElement, "The first token is selected");
+		assert.ok(oSapHomeSpy.called, "onsaphome of the Tokenizer should be called");
+		assert.ok(oSapHomeSpy.calledOn(this.oTokenizer), "onsapend should be called on the internal Tokenizer");
+
+		// clean up
+		oSapHomeSpy.restore();
 	});
 
 	QUnit.test("onsapdown should update input's value with first item's text", function (assert) {

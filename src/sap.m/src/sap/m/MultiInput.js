@@ -367,15 +367,8 @@ function(
 		this.fireTokenChange(args.getParameters());
 		this.invalidate();
 
-		// check if active element is part of MultiInput
-		var bFocusOnMultiInput = containsOrEquals(this.getDomRef(), document.activeElement);
-		if (args.getParameter("type") === "tokensChanged" && args.getParameter("removedTokens").length > 0 && bFocusOnMultiInput) {
-			this.focus();
-		}
-
 		if (args.getParameter("type") === "removed") {
 			this._tokenizer._useCollapsedMode(false);
-			this.focus();
 		}
 
 		this._fillList();
@@ -387,6 +380,10 @@ function(
 
 	MultiInput.prototype._onTokenUpdate = function (args) {
 		var eventResult = this.fireTokenUpdate(args.getParameters());
+
+		if (!this.getTokens().length) {
+			this.$().find("input").focus();
+		}
 
 		if (!eventResult) {
 			args.preventDefault();
@@ -602,7 +599,6 @@ function(
 			// we therefore handle the event and focus the input element
 			this._scrollAndFocus();
 		}
-
 	};
 
 	/**
@@ -617,7 +613,13 @@ function(
 			return;
 		}
 
-		Tokenizer.prototype.onsapbackspace.apply(this._tokenizer, arguments);
+		if (!oEvent.isMarked()) {
+			Tokenizer.prototype.onsapbackspace.apply(this._tokenizer, arguments);
+		}
+
+		if (oEvent.isMarked("forwardFocusToParent")) {
+			this.focus();
+		}
 
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
@@ -638,11 +640,13 @@ function(
 			return;
 		}
 
-		Tokenizer.prototype.onsapdelete.apply(this._tokenizer, arguments);
+		if (oEvent.isMarked("forwardFocusToParent")) {
+			this.focus();
+		}
 	};
 
 	/**
-	 * Handle the key down event for Ctrl + A
+	 * Handles the key down event.
 	 *
 	 * @param {jQuery.Event} oEvent The event object
 	 * @private
@@ -653,7 +657,6 @@ function(
 			this._tokenizer._changeAllTokensSelection(false);
 		}
 
-		// ctrl/meta + A - Select all Tokens
 		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === KeyCodes.A) {
 			if (this._tokenizer.getTokens().length > 0) {
 				this._tokenizer.focus();
@@ -826,11 +829,11 @@ function(
 		if (this.getCursorPosition() === 0) {
 			if (oEvent.srcControl === this) {
 				Tokenizer.prototype.onsapprevious.apply(this._tokenizer, arguments);
-
-				// we need this otherwise navigating with the left arrow key will trigger a scroll of the Tokens
-				oEvent.preventDefault();
 			}
 		}
+
+		// prevent scroll of the page
+		oEvent.preventDefault();
 	};
 
 	/**
@@ -852,21 +855,22 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype.onsaphome = function (oEvent) {
-		if (this._tokenizer._checkFocus()) {
+		// if the caret is already moved to the start of the input text
+		// execute tokenizer's onsaphome handler
+		if (!this.getFocusDomRef().selectionStart) {
 			Tokenizer.prototype.onsaphome.apply(this._tokenizer, arguments);
 		}
 	};
 
 	/**
-	 * Handle the end button, gives control to tokenizer to move to last token
+	 * Handles the End key. Scrolls the last token into viewport.
 	 *
 	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
 	MultiInput.prototype.onsapend = function (oEvent) {
-		if (this._tokenizer._checkFocus()) {
-			Tokenizer.prototype.onsapend.apply(this._tokenizer, arguments);
-			oEvent.preventDefault();
+		if (oEvent.isMarked("forwardFocusToParent")) {
+			this.focus();
 		}
 	};
 
@@ -950,10 +954,10 @@ function(
 			return;
 		}
 
-		if (!this._bUseDialog										// Validation occurs if we are not on phone
-			&& !bNewFocusIsInSuggestionPopup						// AND the focus is not in the suggestion popup
-			&& oEvent.relatedControlId !== this.getId()				// AND the focus is not in the input field
-			&& oEvent.relatedControlId !== this._tokenizer.getId()) {	// AND the focus is not on the tokenizer
+		if (!this._bUseDialog							// Validation occurs if we are not on phone
+			&& !bNewFocusIsInSuggestionPopup				// AND the focus is not in the suggestion popup
+			&& oEvent.relatedControlId !== this.getId()			// AND the focus is not in the input field
+			&& !bNewFocusIsInTokenizer) {					// AND the focus is not in the tokenizer
 
 			this._validateCurrentText(true);
 		}

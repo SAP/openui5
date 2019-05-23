@@ -247,7 +247,9 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onsapend = function(oEvent) {
-		sap.m.Tokenizer.prototype.onsapend.apply(this._oTokenizer, arguments);
+		if (oEvent.isMarked("forwardFocusToParent")) {
+			this.focus();
+		}
 	};
 
 	/**
@@ -257,7 +259,13 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onsaphome = function(oEvent) {
-		sap.m.Tokenizer.prototype.onsaphome.apply(this._oTokenizer, arguments);
+		// if the caret is already moved to the start of the input text
+		// execute tokenizer's onsaphome handler
+		if (!this.getFocusDomRef().selectionStart) {
+			Tokenizer.prototype.onsaphome.apply(this._oTokenizer, arguments);
+		}
+
+		oEvent.setMarked();
 	};
 
 	/**
@@ -293,7 +301,7 @@ function(
 			return;
 		}
 
-		if (this._oTokenizer.getSelectedTokens().length) {
+		if (this.isFocusInTokenizer()) {
 			return;
 		}
 
@@ -325,7 +333,7 @@ function(
 		// note: prevent document scrolling when arrow keys are pressed
 		oEvent.preventDefault();
 
-		if (this._oTokenizer.getSelectedTokens().length) {
+		if (this.isFocusInTokenizer()) {
 			return;
 		}
 
@@ -335,6 +343,15 @@ function(
 			this.updateDomValue(this._oTraversalItem.getText());
 			this.selectText(0, this.getValue().length);
 		}
+	};
+
+	/**
+	 * Checks if the focused element is part of the Tokenizer.
+	 * @returns {boolean} True if the focus is inside the Tokenizer
+	 * @private
+	 */
+	MultiComboBox.prototype.isFocusInTokenizer = function () {
+		return jQuery.contains(this._oTokenizer.getFocusDomRef(), document.activeElement);
 	};
 
 	/**
@@ -501,10 +518,7 @@ function(
 			oControl = core.byId(oEvent.relatedControlId),
 			oFocusDomRef = oControl && oControl.getFocusDomRef(),
 			sOldValue = this.getValue(),
-			oPicker;
-
-		this.syncPickerContent();
-		oPicker = this.getPicker();
+			oPicker = this.getPicker();
 
 		// If focus target is outside of picker and the picker is fully opened
 		if (!this._bPickerIsOpening && (!oPicker || !oPicker.getFocusDomRef() || !oFocusDomRef || !jQuery.contains(oPicker.getFocusDomRef(), oFocusDomRef))) {
@@ -1976,7 +1990,7 @@ function(
 					suppressInvalidate: true
 				});
 
-				!this.isPickerDialog() && this.focus();
+				!this.isPickerDialog() && !this.isFocusInTokenizer() && this.focus();
 				this.fireChangeEvent("");
 			}
 		}
@@ -2087,7 +2101,6 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onsapbackspace = function(oEvent) {
-
 		// validate the input value
 		this._showAlreadySelectedVisualEffect();
 
@@ -2103,7 +2116,13 @@ function(
 			return;
 		}
 
-		sap.m.Tokenizer.prototype.onsapbackspace.apply(this._oTokenizer, arguments);
+		if (!oEvent.isMarked()) {
+			Tokenizer.prototype.onsapbackspace.apply(this._oTokenizer, arguments);
+		}
+
+		if (oEvent.isMarked("forwardFocusToParent")) {
+			this.focus();
+		}
 
 		// Prevent the backspace key from navigating back
 		oEvent.preventDefault();
@@ -2129,7 +2148,13 @@ function(
 			return;
 		}
 
-		sap.m.Tokenizer.prototype.onsapdelete.apply(this._oTokenizer, arguments);
+		if (!oEvent.isMarked()) {
+			Tokenizer.prototype.onsapbackspace.apply(this._oTokenizer, arguments);
+		}
+
+		if (oEvent.isMarked("forwardFocusToParent")) {
+			this.focus();
+		}
 	};
 
 	/**

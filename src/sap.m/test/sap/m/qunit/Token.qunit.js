@@ -177,18 +177,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Selection", function(assert) {
-		// arrange
-		var fnFireSelectSpy = this.spy(this.token2, "fireSelect"),
-			fnFireDeselectSpy = this.spy(this.token1, "fireDeselect");
-
 		// act
 		sap.ui.test.qunit.triggerEvent("tap", this.token1.getDomRef());
-
 		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.ARROW_RIGHT);
 
 		// assert
-		assert.equal(fnFireDeselectSpy.callCount, 1, "Token1 deselect event was fired");
-		assert.equal(fnFireSelectSpy.callCount, 1, "Token2 select event was fired");
+		assert.ok(this.token1.getSelected(), 1, "Token1 is selected.");
+		assert.equal(document.activeElement, this.token2.getDomRef(), "Token2 is focused after navigation.");
 	});
 
 	QUnit.test("Pressing delete icon", function(assert) {

@@ -6,9 +6,10 @@ sap.ui.define([
 	"sap/m/Tokenizer",
 	"sap/m/Token",
 	"sap/m/MultiInput",
+	"sap/ui/base/Event",
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes"
-], function(QUnitUtils, createAndAppendDiv, Tokenizer, Token, MultiInput, Device, KeyCodes) {
+], function(QUnitUtils, createAndAppendDiv, Tokenizer, Token, MultiInput, Event, Device, KeyCodes) {
 	createAndAppendDiv("content");
 
 
@@ -300,7 +301,7 @@ sap.ui.define([
 		this.tokenizer.setTokens([token1, token2, token3]);
 
 		// act
-		this.tokenizer.onkeydown({ctrlKey: true, which: KeyCodes.A, preventDefault: function(){}});
+		this.tokenizer.onkeydown({ctrlKey: true, which: KeyCodes.A, preventDefault: function(){}, stopPropagation: function(){}});
 
 		// assert
 		assert.equal(token1.getSelected(), true, "Token1 got selected using ctrl+a");
@@ -312,7 +313,7 @@ sap.ui.define([
 		token2.setSelected(false);
 		token3.setSelected(false);
 
-		this.tokenizer.onkeydown({metaKey: true, which: KeyCodes.A, preventDefault: function(){}});
+		this.tokenizer.onkeydown({metaKey: true, which: KeyCodes.A, preventDefault: function(){}, stopPropagation: function(){}});
 
 		// assert
 		assert.equal(token1.getSelected(), true, "Token1 got selected using metaKey+a");
@@ -355,12 +356,19 @@ sap.ui.define([
 
 		var oTokenizerDomRef = oMultiInput.$().find('.sapMTokenizer')[0];
 
-		sap.ui.test.qunit.triggerKeydown(oTokenizerDomRef, KeyCodes.ARROW_LEFT);
-		assert.equal(sap.ui.getCore().byId("t6").getSelected(), true, "Token6 is selected");
-
+		// act
 		sap.ui.test.qunit.triggerKeydown(oTokenizerDomRef, KeyCodes.ARROW_LEFT);
 
-		assert.equal(oSpecialToken.getSelected(), true, "Token5 is selected");
+		// assert
+		assert.strictEqual(sap.ui.getCore().byId("t6").getDomRef().id, document.activeElement.id,
+			"Token6 is selected.");
+
+		// act
+		sap.ui.test.qunit.triggerKeydown(oTokenizerDomRef, KeyCodes.ARROW_LEFT);
+
+		// assert
+		assert.strictEqual(oSpecialToken.getDomRef().id, document.activeElement.id,
+			"Token5 is selected.");
 		assert.ok(oSpecialToken.$().offset().left >= jQuery(oTokenizerDomRef).offset().left, "token 5 left side is visible.");
 
 		oMultiInput.destroy();
@@ -531,6 +539,19 @@ sap.ui.define([
 		assert.equal(document.activeElement, this.tokenizer.$()[0], "tokenizer is focused");
 	});
 
+	QUnit.test("backspace with no selected tokens", function(assert) {
+		// arrange
+		this.tokenizer._changeAllTokensSelection(false);
+
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.BACKSPACE);
+
+		// assert
+		assert.equal(this.tokenizer.getSelectedTokens().length, 0, "There aren't any selected tokens");
+		assert.strictEqual(this.tokenizer.getTokens()[2].getDomRef().id, document.activeElement.id,
+			"The last token is selected");
+	});
+
 	QUnit.test("backspace with editable=false", function(assert) {
 		// arrange
 		this.tokenizer.setEditable(false);
@@ -548,18 +569,6 @@ sap.ui.define([
 
 		// assert
 		assert.equal(this.tokenizer.getTokens().length, 1, "Two tokens were removed");
-	});
-
-	QUnit.test("backspace with no selected tokens", function(assert) {
-		// arrange
-		this.tokenizer._changeAllTokensSelection(false);
-
-		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.BACKSPACE);
-
-		// assert
-		assert.equal(this.tokenizer.getSelectedTokens().length, 1, "There is one selected token");
-		assert.equal(this.tokenizer.getTokens()[2].getSelected(), true, "The last token is selected");
 	});
 
 	QUnit.test("tab", function(assert) {
@@ -641,8 +650,8 @@ sap.ui.define([
 		sap.ui.test.qunit.triggerKeyboardEvent("t1", KeyCodes.ARROW_RIGHT);
 
 		// assert
-		assert.equal(this.tokenizer.getSelectedTokens().length, 1, "There is one selected token");
-		assert.equal(this.tokenizer.getSelectedTokens()[0].getId(), "t2", "The second token is selected");
+		assert.equal(this.tokenizer.getSelectedTokens().length, 2, "The initial selection is preserved");
+		assert.equal(this.tokenizer.getTokens()[1].getId(), "t2", "The second token is not selected");
 	});
 
 	QUnit.test("Arrow_right when tokenizer is focused", function(assert) {
@@ -653,8 +662,9 @@ sap.ui.define([
 		sap.ui.test.qunit.triggerKeydown(this.tokenizer.getId(), KeyCodes.ARROW_RIGHT);
 
 		// assert
-		assert.equal(this.tokenizer.getSelectedTokens().length, 1, "There is one selected token");
-		assert.equal(this.tokenizer.getSelectedTokens()[0].getId(), "t1", "The first token is selected");
+		assert.equal(this.tokenizer.getSelectedTokens().length, 0, "There aren't any selected token");
+		assert.strictEqual(this.tokenizer.getTokens()[0].getId(), document.activeElement.id,
+			"The first token in the multiinput is focused.");
 	});
 
 	QUnit.test("Arrow_right when last token in tokenizer is focused", function(assert) {
@@ -690,6 +700,155 @@ sap.ui.define([
 		// assert
 		assert.equal(this.tokenizer.getSelectedTokens().length, 2, "Token selection is not changed");
 	});
+
+	QUnit.test("_selectRange(true)", function() {
+		var oTokenizer = new Tokenizer().placeAt("content"),
+			aSelectedTokens,
+			oSecondToken = new Token("tok1");
+
+		oTokenizer.setTokens([
+			new Token("tok0"),
+			oSecondToken,
+			new Token("tok2")
+		]);
+
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oSecondToken.focus();
+		oTokenizer._selectRange(true); // select all tokens till the end
+
+		// assert
+		aSelectedTokens = oTokenizer.getSelectedTokens();
+		assert.equal(aSelectedTokens.length, 2, "Two tokens are selected");
+		assert.strictEqual(aSelectedTokens[0].getId(), oSecondToken.getId(), "The middle token is selected");
+		assert.strictEqual(aSelectedTokens[1].getId(), "tok2", "The last token is selected");
+
+		// clean up
+		oTokenizer.destroy();
+	});
+
+	QUnit.test("_selectRange(false)", function() {
+		var oTokenizer = new Tokenizer().placeAt("content"),
+			aSelectedTokens,
+			oSecondToken = new Token("tok1");
+
+		oTokenizer.setTokens([
+			new Token("tok0"),
+			oSecondToken,
+			new Token("tok2")
+		]);
+
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oSecondToken.focus();
+		oTokenizer._selectRange(false); // select all tokens till the beginning
+
+		// assert
+		aSelectedTokens = oTokenizer.getSelectedTokens();
+		assert.equal(aSelectedTokens.length, 2, "Two tokens are selected");
+		assert.strictEqual(aSelectedTokens[0].getId(), "tok0", "The first token is selected");
+		assert.strictEqual(aSelectedTokens[1].getId(), oSecondToken.getId(), "The middle token is selected");
+
+		// clean up
+		oTokenizer.destroy();
+	});
+
+	QUnit.test("onsapend", function() {
+		var oEvent = new jQuery.Event(),
+			aTokens,
+			oTokenizer = new sap.m.Tokenizer({
+				tokens: [new Token(), new Token(), new Token()]
+			}).placeAt("content");
+
+		aTokens = oTokenizer.getTokens();
+
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oTokenizer.onsapend(oEvent);
+
+		// assert
+		assert.strictEqual(aTokens[aTokens.length - 1].getDomRef(), document.activeElement, "The last token is focused.");
+
+		// clean up
+		oTokenizer.destroy();
+	});
+
+	QUnit.test("onsaphome", function() {
+		var oEvent = new jQuery.Event(),
+			oTokenizer = new sap.m.Tokenizer({
+				tokens: [new Token(), new Token(), new Token()]
+			}).placeAt("content");
+
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oTokenizer.onsaphome(oEvent);
+
+		// assert
+		assert.strictEqual(oTokenizer.getTokens()[0].getDomRef(), document.activeElement, "The first token is focused.");
+
+		// clean up
+		oTokenizer.destroy();
+	});
+
+	QUnit.test("HOME + SHIFT", function() {
+		var oSpySelection = this.spy(this.tokenizer, "_selectRange");
+
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.HOME, true);
+
+		// assert
+		assert.ok(oSpySelection.called, "Range selection is triggered");
+		assert.ok(oSpySelection.calledWith(false), "Range selection should select all tokens until the beginning");
+
+		// clean up
+		oSpySelection.restore();
+	});
+
+	QUnit.test("END + SHIFT", function() {
+		var oSpySelection = this.spy(this.tokenizer, "_selectRange");
+
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.END, true);
+
+		// assert
+		assert.ok(oSpySelection.called, "Range selection is triggered");
+		assert.ok(oSpySelection.calledWith(true), "Range selection should select all tokens until the end");
+
+		// clean up
+		oSpySelection.restore();
+	});
+
+	QUnit.test("ARROW_LEFT + CTR", function() {
+		var oSpyPrevious = this.spy(this.tokenizer, "onsapprevious");
+
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.ARROW_LEFT, false, false, true);
+
+		// assert
+		assert.ok(oSpyPrevious.called, "Backward navigation is triggered");
+
+		// clean up
+		oSpyPrevious.restore();
+	});
+
+	QUnit.test("ARROW_RIGHT + CTR", function() {
+		var oSpyNext = this.spy(this.tokenizer, "onsapnext");
+
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.ARROW_RIGHT, false, false, true);
+
+		// assert
+		assert.ok(oSpyNext.called, "Forward navigation is triggered");
+
+		// clean up
+		oSpyNext.restore();
+	});
+
+
 
 	QUnit.module("Token selection", {
 		beforeEach : function() {
