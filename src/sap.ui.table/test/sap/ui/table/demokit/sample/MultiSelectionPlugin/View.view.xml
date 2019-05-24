@@ -32,6 +32,12 @@
                                 placeholder="limit"
                                 tooltip="limit"
                                 submit="submitValue"/>
+                            <m:ToolbarSeparator/>
+                            <m:ToggleButton
+                                    icon="sap-icon://complete"
+                                    tooltip="showHeaderSelector"
+                                    press="toggleShowHeaderSelector"
+                                    pressed="true"/>
                         </m:content>
                     </m:OverflowToolbar>
                 </extension>

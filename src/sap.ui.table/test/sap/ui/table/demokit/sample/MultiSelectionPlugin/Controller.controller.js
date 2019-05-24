@@ -64,6 +64,11 @@ sap.ui.define([
 			return this.byId("table");
 		},
 
+		toggleShowHeaderSelector : function(oEvent) {
+			var oTable = this.getTable();
+			oTable._oSelectionPlugin.setShowHeaderSelector(oEvent.getParameter("pressed"));
+		},
+
 		submitValue : function() {
 			var oView = this.getView(),
 				oTable = this.getTable(),
