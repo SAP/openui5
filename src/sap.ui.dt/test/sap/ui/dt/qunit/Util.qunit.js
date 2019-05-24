@@ -355,7 +355,7 @@ function(
 			var fnOriginalStub = sandbox.stub().resolves("returnObject");
 
 			// Wrapper function
-			var fnReturn = Util.waitForSynced(fnOriginalStub, oDesignTime);
+			var fnReturn = Util.waitForSynced(oDesignTime, fnOriginalStub);
 			assert.ok(typeof fnReturn === "function", "then a function was returned");
 
 			var oReturnPromise = fnReturn.apply(null, aMockParams);
@@ -369,6 +369,35 @@ function(
 				});
 			});
 		});
+
+		QUnit.test("when waitForSynced is called without function with the DT in 'syncing' status which later turns to 'synced'", function(assert) {
+			assert.expect(5);
+			var fnToBeResolved = sandbox.stub();
+			var oDesignTime = {
+				getStatus: sandbox.stub().returns("syncing"),
+				attachEventOnce: function(sEventName, fnHandler) {
+					if (sEventName === "synced") {
+						assert.ok(true, "then the handler was attached to the synced event");
+						fnToBeResolved.callsFake(fnHandler);
+					} else if (sEventName === "syncFailed") {
+						assert.ok(true, "then the handler was attached to the syncFailed event");
+					}
+				}
+			};
+			var aMockParams = ["mockParam1", "mockParam2"];
+
+			// Wrapper function
+			var fnReturn = Util.waitForSynced(oDesignTime);
+			assert.ok(typeof fnReturn === "function", "then a function was returned");
+
+			var oReturnPromise = fnReturn.apply(null, aMockParams);
+			assert.strictEqual(fnToBeResolved.callCount, 0, "then the 'synced' callback function was not called");
+			setTimeout(fnToBeResolved, 50);
+			return oReturnPromise.then(function() {
+				assert.ok(fnToBeResolved.calledOnce, "then the wrapper function returns a resolved promise only after the 'synced' callback function was called");
+			});
+		});
+
 		QUnit.test("when waitForSynced is called with the DT in 'synced' status", function(assert) {
 			var oDesignTime = {
 				getStatus: sandbox.stub().returns("synced"),
@@ -386,7 +415,7 @@ function(
 			var fnOriginalStub = sandbox.stub().resolves("returnObject");
 
 			// Wrapper funcion
-			var fnReturn = Util.waitForSynced(fnOriginalStub, oDesignTime);
+			var fnReturn = Util.waitForSynced(oDesignTime, fnOriginalStub);
 			assert.ok(typeof fnReturn === "function", "then a function was returned");
 
 			return fnReturn.apply(null, aMockParams).then(function(sReturn) {
@@ -396,6 +425,7 @@ function(
 				});
 			});
 		});
+
 		QUnit.test("when waitForSynced is called with the DT in 'syncing' status which later turns to 'syncFailed'", function(assert) {
 			assert.expect(4);
 			var oDesignTime = {
@@ -412,7 +442,7 @@ function(
 			var fnPassed = function () {
 				return "returnObject";
 			};
-			var fnReturn = Util.waitForSynced(fnPassed, oDesignTime);
+			var fnReturn = Util.waitForSynced(oDesignTime, fnPassed);
 			assert.ok(typeof fnReturn === "function", "then a function was returned");
 			return fnReturn().catch(function() {
 				assert.ok(true, "then a Promise.reject() was returned");

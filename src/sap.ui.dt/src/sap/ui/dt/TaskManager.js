@@ -137,12 +137,6 @@ function(
 	TaskManager.prototype.getList = function () {
 		return this._aList.slice(0);
 	};
-	/**
-	 * Returns list of pending tasks
-	 */
-	TaskManager.prototype.getList = function () {
-		return this._aList.slice(0);
-	};
 
 	/**
 	 * @override

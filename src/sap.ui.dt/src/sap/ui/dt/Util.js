@@ -347,8 +347,9 @@ sap.ui.define([
 	 * @param {sap.ui.dt.DesignTime} oDtInstance designTime instance
 	 * @returns {Promise} Returns a Promise.resolve() to the passed function's return value or a Promise.reject() when designTime fails to sync
 	 */
-	Util.waitForSynced = function(fnOriginal, oDtInstance) {
+	Util.waitForSynced = function(oDtInstance, fnOriginal) {
 		return function () {
+			fnOriginal = fnOriginal || function () {};
 			var aArguments = arguments;
 			return new Promise(function (fnResolve, fnReject) {
 				if (oDtInstance.getStatus() === DesignTimeStatus.SYNCING) {
