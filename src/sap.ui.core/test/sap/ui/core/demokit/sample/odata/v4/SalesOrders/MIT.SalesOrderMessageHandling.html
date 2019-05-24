@@ -32,14 +32,13 @@
 				the ID <code>0500000001</code> the warning "Enter customer reference if available"
 				is displayed.</li>
 			<li>Click on the <code>Show Messages</code> button.</li>
-			<li><b>Check:</b> A popover is diplayed containing 2 messages, an information message
+			<li><b>Check:</b> A popover is diplayed containing 2 messages: an information message
 				with the text "Example for an unbound message" and a warning message with the text
 				"Enter customer reference if available".</li>
 			<li>Click on the message "Example for an unbound message" to get to the message details.
 			</li>
-			<li><b>Check:</b> The content of the message details is the same as you get with the URL
-				<a href="http://raw.githubusercontent.com/SAP/openui5/master/NOTICE.txt">
-				http://raw.githubusercontent.com/SAP/openui5/master/NOTICE.txt</a>.</li>
+			<li><b>Check:</b> The content of the message details is "Details for "Enter customer
+				reference if available" (relative longtext URL).".</li>
 			<li>Go back to the messages overview.</li>
 			<li>Click on the message "Enter customer reference if available" to get to the message
 				details.</li>
@@ -47,12 +46,14 @@
 				customer reference if available" (relative longtext URL).</code></li>
 			<li>Go back to the messages overview.</li>
 			<li>Close the message popover.</li>
-			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is now
-				<code>0</code>.</li>
+			<li><b>Check:</b> On the <code>Show messages</code> button, the number of messages is
+				now <code>1</code>. When clicking into the <code>Note</code> field of the sales
+				order with the ID <code>0500000001</code>, the "Enter customer reference if
+				available" warning is still displayed.</li>
 			<li><b>Check:</b> The <code>Note</code> field of the sales order with the ID
-				<code>0500000001</code> does not have a colored border any more.</li>
+				<code>0500000001</code> still has a colored border.</li>
 			<li>Click on the <code>Show Messages</code> button.</li>
-			<li><b>Check:</b> A popover is diplayed containing 0 messages.</li>
+			<li><b>Check:</b> A popover is diplayed containing 1 messages.</li>
 			<li>Close the message popover.</li>
 			<li>In the <code>New Sales Orders</code> table select the sales order with the ID
 				<code>0500000001</code>.</li>
@@ -74,7 +75,7 @@
 				line item with the item position <code>0000000020</code> the error "Minimum order
 				quantity is 2" is displayed.</li>
 			<li>Click on the <code>Show Messages</code> button.</li>
-			<li><b>Check:</b> A popover is diplayed containing 2 messages, a warning message with
+			<li><b>Check:</b> A popover is diplayed containing 2 messages: a warning message with
 				the text "Enter customer reference if available" and an error message with the text
 				"Minimum order quantity is 2".</li>
 			<li>Click on the message "Minimum order quantity is 2" to get to the message details.
@@ -84,15 +85,11 @@
 			<li>Go back to the messages overview.</li>
 			<li>Close the message popover.</li>
 			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
-				<code>1</code>.</li>
-			<li>Click on the <code>Show Messages</code> button.</li>
-			<li><b>Check:</b> A popover is diplayed containing 1 message, an error message with the
-				text "Minimum order quantity is 2".</li>
-			<li>Close the message popover.</li>
+				<code>2</code>.</li>
 			<li><b>Check:</b> The <code>Note</code> field of the sales order with the ID
-				<code>0500000001</code> does not have a colored border any more.</li>
+				<code>0500000001</code> still has a colored border.</li>
 			<li><b>Check:</b> The <code>Note</code> field in the <code>Sales Order Details</code>
-				section does not have a colored border any more.</li>
+				section still has a colored border.</li>
 			<li><b>Check:</b> The <code>Quantity</code> field of the sales order line item with the
 				item position <code>0000000020</code> still has a colored border indicating an
 				error.</li>
@@ -101,26 +98,27 @@
 			<li><b>Check:</b> There is no input field with a colored border in the <code>Sales Order
 				Line Items</code> table.</li>
 			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
-				still <code>1</code>.</li>
+				still <code>2</code>.</li>
 			<li>In the <code>New Sales Orders</code> table select again the sales order with the ID
 				<code>0500000001</code>.</li>
 			<li><b>Check:</b> The <code>Quantity</code> field of the sales order line item with the
 				item position <code>0000000020</code> again has a colored border indicating an
 				error.</li>
 			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
-				<code>1</code>.</li>
+				<code>2</code>.</li>
 			<li>Click on the <code>Show Messages</code> button.</li>
-			<li><b>Check:</b> A popover is diplayed containing 1 message, an error message with the
-				text "Minimum order quantity is 2".</li>
+			<li><b>Check:</b> A popover is diplayed containing 2 messages: a warning message with
+				the text "Enter customer reference if available" and an error message with the text
+				"Minimum order quantity is 2".</li>
 			<li>Close the message popover.</li>
 		</ol>
 		<h3>Error messages in Sales Orders application</h3>
 		<h4>PATCH scenario</h4>
 		<ol>
-			<li>Within table <code>Sales Order List</code> in the row for sales order with ID <code>
-			  0500000004</code> enter value <code>RAISE_ERROR</code> in input field <code>Note
-			  </code>.
-			<li>Press the <code>Save sales orders</code> button in the <code>Sales Order List
+			<li>In the <code>New Sales Orders</code> table, in the row for sales order ID <code>
+				0500000004</code>, enter the value <code>RAISE_ERROR</code> in the <code>Note</code>
+				input field.</li>
+			<li>Press the <code>Save sales orders</code> button in the <code>New Sales Orders
 			  </code> table</li>
 			<li><b>Check:</b> The message popover is opened and you got an error regarding the
 				invalid <code>Note</code> value.</li>
@@ -132,9 +130,9 @@
 			<li>Close the message popover.</li>
 			<li><b>Check:</b> The <code>Note</code> error state indicator is gone.</li>
 			<li>Enter a different value in the <code>Note</code> input field.</li>
-			<li>Press the <code>Save sales orders</code> button in the <code>Sales Order List</code>
+			<li>Press the <code>Save sales orders</code> button in the <code>New Sales Orders</code>
 				</li>
-			<li><b>Check:</b> The error is gone.</li>
+			<li><b>Check:</b> The error is no longer raised.</li>
 		</ol>
 		<h4>POST scenario</h4>
 		<ol>
@@ -160,7 +158,7 @@
 			<li>Confirm the success popup.</li>
 			<li><b>Check:</b> No error is shown (and the items gets again it's initial values,
 				because of the refreshSingle() triggered by the <code>Save sales order</code> in the
-				<code>Sales Order Details</code> section.</li>
+				<code>Sales Order Details</code> section).</li>
 		</ol>
 	</body>
 </html>

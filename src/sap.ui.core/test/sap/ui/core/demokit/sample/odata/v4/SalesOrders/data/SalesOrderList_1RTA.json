@@ -52,11 +52,11 @@
 		"DeliveryDate" : "2016-06-26T22:00:00Z"
 	}],
 	"Messages" : [{
-		"code" : "TRANSIENT/1234",
+		"code" : "CODE/1234",
 		"longtextUrl" : "SalesOrderList('0500000001')/Messages(1)",
 		"message" : "Enter customer reference if available",
 		"numericSeverity" : 3,
 		"target" : "Note",
-		"transition" : true
+		"transition" : false
 	}]
 }

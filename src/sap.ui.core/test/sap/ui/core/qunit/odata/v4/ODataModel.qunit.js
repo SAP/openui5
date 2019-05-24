@@ -540,7 +540,7 @@ sap.ui.define([
 
 		oListBinding3.setContext(oBaseContext);
 		this.mock(oPropertyBinding2).expects("fetchCache");
-		this.mock(oPropertyBinding2).expects("checkUpdate");
+		this.mock(oPropertyBinding2).expects("checkUpdateInternal");
 		oPropertyBinding2.setContext(oBaseContext);
 
 		oListBinding.attachChange(function () {});
@@ -650,7 +650,8 @@ sap.ui.define([
 			oModelMock = this.mock(oModel),
 			oSubmitPromise = {};
 
-		oModelMock.expects("checkDeferredGroupId").withExactArgs("groupId");
+		oModelMock.expects("checkBatchGroupId").withExactArgs("groupId");
+		oModelMock.expects("isAutoGroup").withExactArgs("groupId").returns(false);
 		this.mock(oModel.oRequestor).expects("addChangeSet").withExactArgs("groupId");
 		oModelMock.expects("_submitBatch").never(); // not yet
 		this.mock(sap.ui.getCore()).expects("addPrerenderingTask").callsFake(function (fnCallback) {
@@ -677,25 +678,73 @@ sap.ui.define([
 			oModelMock = this.mock(oModel);
 
 		oModelMock.expects("_submitBatch").never();
-		oModelMock.expects("checkDeferredGroupId").withExactArgs("$auto").throws(oError);
+		oModelMock.expects("checkBatchGroupId").withExactArgs("$direct").throws(oError);
 
 		assert.throws(function () {
 			//code under test
-			oModel.submitBatch("$auto");
+			oModel.submitBatch("$direct");
 		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("submitBatch: $auto", function (assert) {
+		var oModel = createModel(),
+			oModelMock = this.mock(oModel),
+			oSubmitPromise = {};
+
+		oModelMock.expects("checkBatchGroupId").withExactArgs("groupId");
+		oModelMock.expects("isAutoGroup").withExactArgs("groupId").returns(true);
+		this.mock(oModel.oRequestor).expects("addChangeSet").never();
+		oModelMock.expects("_submitBatch").never(); // not yet
+		this.mock(sap.ui.getCore()).expects("addPrerenderingTask").callsFake(function (fnCallback) {
+			setTimeout(function () {
+				// make sure that _submitBatch is called within fnCallback
+				oModelMock.expects("_submitBatch").withExactArgs("$parked.groupId")
+					.returns(oSubmitPromise);
+				fnCallback();
+			}, 0);
+		});
+
+		// code under test
+		return oModel.submitBatch("groupId").then(function (oResult) {
+			// this proves that submitBatch() returns a promise which is resolved with the result
+			// of _submitBatch(), which in reality is of course a promise itself
+			assert.strictEqual(oResult, oSubmitPromise);
+		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("resetChanges with group ID", function (assert) {
 		var oModel = createModel();
 
-		this.mock(oModel).expects("checkDeferredGroupId").withExactArgs("groupId");
+		this.mock(oModel).expects("checkBatchGroupId").withExactArgs("groupId");
+		this.mock(oModel).expects("isAutoGroup").withExactArgs("groupId").returns(false);
 		this.mock(oModel.oRequestor).expects("cancelChanges").withExactArgs("groupId");
 
 		// code under test
 		oModel.resetChanges("groupId");
 	});
 	// TODO reset the POST requests in this group
+
+	//*********************************************************************************************
+	QUnit.test("resetChanges with $auto group", function (assert) {
+		var oModel = createModel("", {updateGroupId : "$auto"}),
+			oBinding1 = oModel.bindList("/EMPLOYEES"),
+			oBinding2 = oModel.bindProperty("/EMPLOYEES('1')/AGE"),
+			oBinding3 = oModel.bindContext("/EMPLOYEES('1')", undefined, {
+				$$updateGroupId : "anotherGroup"
+			});
+
+		this.mock(oModel).expects("checkBatchGroupId").withExactArgs("$auto");
+		this.mock(oModel).expects("isAutoGroup").withExactArgs("$auto").returns(true);
+		this.mock(oModel.oRequestor).expects("cancelChanges").withExactArgs("$parked.$auto");
+		this.mock(oBinding1).expects("resetInvalidDataState").withExactArgs();
+		this.mock(oBinding2).expects("resetInvalidDataState").withExactArgs();
+		this.mock(oBinding3).expects("resetInvalidDataState").never();
+
+		// code under test
+		oModel.resetChanges("$auto");
+	});
 
 	//*********************************************************************************************
 	QUnit.test("resetChanges w/o group ID", function (assert) {
@@ -706,7 +755,8 @@ sap.ui.define([
 				$$updateGroupId : "anotherGroup"
 			});
 
-		this.mock(oModel).expects("checkDeferredGroupId").withExactArgs("updateGroupId");
+		this.mock(oModel).expects("checkBatchGroupId").withExactArgs("updateGroupId");
+		this.mock(oModel).expects("isAutoGroup").withExactArgs("updateGroupId").returns(false);
 		this.mock(oModel.oRequestor).expects("cancelChanges").withExactArgs("updateGroupId");
 		this.mock(oBinding1).expects("resetInvalidDataState").withExactArgs();
 		this.mock(oBinding2).expects("resetInvalidDataState").withExactArgs();
@@ -721,7 +771,7 @@ sap.ui.define([
 		var oError = new Error(),
 			oModel = createModel();
 
-		this.mock(oModel).expects("checkDeferredGroupId").withExactArgs("$auto").throws(oError);
+		this.mock(oModel).expects("checkBatchGroupId").withExactArgs("$auto").throws(oError);
 		this.mock(oModel.oRequestor).expects("cancelChanges").never();
 
 		assert.throws(function () {
@@ -1354,26 +1404,45 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("checkDeferredGroupId", function (assert) {
-		var oModel = createModel("", {
-				groupProperties : {
-					"myAPIGroup" : {submit : SubmitMode.API},
-					"myAutoGroup" : {submit : SubmitMode.Auto},
-					"myDirectGroup" : {submit : SubmitMode.Direct}
-				}
-			});
+	QUnit.test("checkBatchGroupId: success", function (assert) {
+		var oModel = createModel(),
+			sGroupId = {};
 
-		// valid group IDs
+		this.mock(oModel).expects("checkGroupId").withExactArgs(sinon.match.same(sGroupId));
+		this.mock(oModel).expects("isDirectGroup").withExactArgs(sinon.match.same(sGroupId))
+			.returns(false);
+
 		// code under test
-		assert.strictEqual(oModel.checkDeferredGroupId("myAPIGroup"), undefined);
+		oModel.checkBatchGroupId(sGroupId);
+	});
 
-		// invalid group IDs, others already tested by checkGroupId
-		["myAutoGroup", "myDirectGroup"].forEach(function (sGroupId) {
-			assert.throws(function () {
-				// code under test
-				oModel.checkDeferredGroupId(sGroupId);
-			}, new Error("Group ID is not deferred: " + sGroupId));
-		});
+	//*********************************************************************************************
+	QUnit.test("checkBatchGroupId: checkGroupId fails", function (assert) {
+		var oError = new Error(),
+			oModel = createModel(),
+			sGroupId = {};
+
+		this.mock(oModel).expects("checkGroupId").withExactArgs(sinon.match.same(sGroupId))
+			.throws(oError);
+		this.mock(oModel).expects("isDirectGroup").never();
+
+		assert.throws(function () {
+			// code under test
+			oModel.checkBatchGroupId(sGroupId);
+		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkBatchGroupId: fails due to isDirectGroup", function (assert) {
+		var oModel = createModel();
+
+		this.mock(oModel).expects("checkGroupId").withExactArgs("foo");
+		this.mock(oModel).expects("isDirectGroup").withExactArgs("foo").returns(true);
+
+		assert.throws(function () {
+			// code under test
+			oModel.checkBatchGroupId("foo");
+		}, new Error("Group ID does not use batch requests: foo"));
 	});
 
 	//*********************************************************************************************

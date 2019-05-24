@@ -359,7 +359,8 @@ sap.ui.define([
 		if (!this.oOperation) {
 			this.fetchCache(this.oContext);
 			if (sChangeReason) {
-				this.refreshInternal("", undefined, true);
+				this.refreshInternal("", undefined, true)
+					.catch(function () {/*avoid "Uncaught (in promise)"*/});
 			} else {
 				this.checkUpdate();
 			}
@@ -748,10 +749,12 @@ sap.ui.define([
 						oGroupLock = that.lockGroup(that.getGroupId(), that.oReadGroupLock);
 						that.oReadGroupLock = undefined;
 					}
-					return oCache.fetchValue(oGroupLock, sRelativePath, function () {
-						bDataRequested = true;
-						that.fireDataRequested();
-					}, oListener).then(function (vValue) {
+					return that.resolveRefreshPromise(
+						oCache.fetchValue(oGroupLock, sRelativePath, function () {
+							bDataRequested = true;
+							that.fireDataRequested();
+						}, oListener)
+					).then(function (vValue) {
 						if (bDataRequested) {
 							that.fireDataReceived({data : {}});
 						}
@@ -897,7 +900,7 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */
 	ODataContextBinding.prototype.refreshInternal = function (sResourcePathPrefix, sGroupId,
-			bCheckUpdate) {
+			bCheckUpdate, bKeepCacheOnError) {
 		var that = this;
 
 		if (this.oOperation && this.oOperation.bAction !== false) {
@@ -906,12 +909,14 @@ sap.ui.define([
 
 		if (this.isRootBindingSuspended()) {
 			this.refreshSuspended(sGroupId);
-			return this.refreshDependentBindings(sResourcePathPrefix, sGroupId, bCheckUpdate);
+			return this.refreshDependentBindings(sResourcePathPrefix, sGroupId, bCheckUpdate,
+				bKeepCacheOnError);
 		}
 
 		this.createReadGroupLock(sGroupId, this.isRoot());
 		return this.oCachePromise.then(function (oCache) {
-			var oReadGroupLock = that.oReadGroupLock;
+			var oPromise = that.oRefreshPromise,
+				oReadGroupLock = that.oReadGroupLock;
 
 			if (!that.oElementContext) { // refresh after delete
 				that.oElementContext = Context.create(that.oModel, that,
@@ -924,14 +929,32 @@ sap.ui.define([
 				that.oReadGroupLock = undefined;
 				return that._execute(oReadGroupLock);
 			}
-			if (oCache) {
+			if (oCache && !oPromise) { // do not refresh twice
 				// remove all cached Caches before fetching a new one
 				that.removeCachesAndMessages(sResourcePathPrefix);
 				that.fetchCache(that.oContext);
 				// Do not fire a change event, or else ManagedObject destroys and recreates the
-				// binding hierarchy causing a flood of events
+				// binding hierarchy causing a flood of events.
+				oPromise = that.createRefreshPromise();
+				if (bKeepCacheOnError) {
+					oPromise.catch(function () {
+						that.oCachePromise = SyncPromise.resolve(oCache);
+						oCache.setActive(true);
+						that.checkUpdate();
+					});
+				}
+				if (!bCheckUpdate) {
+					// If bCheckUpdate is unset, dependent bindings do not call fetchValue, and we
+					// have to call it here.
+					// Note: this resets that.oRefreshPromise
+					that.fetchValue("").catch(function () {/*avoid "Uncaught (in promise)"*/});
+				}
 			}
-			return that.refreshDependentBindings(sResourcePathPrefix, sGroupId, bCheckUpdate);
+			return SyncPromise.all([
+				oPromise,
+				that.refreshDependentBindings(sResourcePathPrefix, sGroupId, bCheckUpdate,
+					bKeepCacheOnError)
+			]);
 		});
 	};
 
@@ -1005,14 +1028,14 @@ sap.ui.define([
 			}
 		}
 		return oContext && this.refreshReturnValueContext(oContext, sGroupId)
-			|| this.refreshInternal("", sGroupId, true);
+			|| this.refreshInternal("", sGroupId, true, true);
 	};
 
 	/**
 	 * Resumes this binding and all dependent bindings and fires a change event afterwards.
 	 *
 	 * @param {boolean} bCheckUpdate
-	 *   Whether dependent property bindings shall call <code>checkUpdate</code>
+	 *   Whether dependent property bindings shall call <code>checkUpdateInternal</code>
 	 *
 	 * @private
 	 */

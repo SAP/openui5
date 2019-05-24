@@ -271,7 +271,7 @@
 				<Input value="{CreatedAt}" editable="false" />
 				<Label text="Changed At" />
 				<Input value="{ChangedAt}" editable="false" />
-				<Label text="Lifecycle Status Desc" />
+				<Label text="Lifecycle Status" />
 				<Input value="{LifecycleStatusDesc}" editable="false" />
 				<Label text="Note" />
 				<Input id="Note::detail" value="{Note}" editable="{= %{LifecycleStatus} === 'N'}"/>

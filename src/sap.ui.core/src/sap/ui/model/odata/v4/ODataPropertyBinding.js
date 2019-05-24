@@ -187,8 +187,8 @@ sap.ui.define([
 	 * <code>undefined</code>. As described above, this may trigger a change event depending on the
 	 * previous value and the <code>bForceUpdate</code> parameter. In the end the data state is
 	 * checked (see {@link sap.ui.model.PropertyBinding#checkDataState}) even if there is no change
-	 * event. If there are multiple synchronous <code>checkUpdate</code> calls the data state is
-	 * checked only after the last call is processed.
+	 * event. If there are multiple synchronous <code>checkUpdateInternal</code> calls the data
+	 * state is checked only after the last call is processed.
 	 *
 	 * @param {boolean} [bForceUpdate=false]
 	 *   If <code>true</code> the change event is always fired except there is no context for a
@@ -199,16 +199,17 @@ sap.ui.define([
 	 *   The group ID to be used for the read.
 	 * @param {any} [vValue]
 	 *   The new value obtained from the cache, see {@link #onChange}
-	 * @returns {Promise}
-	 *   A Promise to be resolved when the check is finished
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise resolving without a defined result when the check is finished; never rejecting
 	 *
 	 * @private
 	 * @see sap.ui.model.Binding#checkUpdate
+	 * @see sap.ui.model.ODataBinding#checkUpdateInternal
 	 * @see sap.ui.model.PropertyBinding#checkDataState
 	 */
 	// @override
-	ODataPropertyBinding.prototype.checkUpdate = function (bForceUpdate, sChangeReason, sGroupId,
-			vValue) {
+	ODataPropertyBinding.prototype.checkUpdateInternal = function (bForceUpdate, sChangeReason,
+			sGroupId, vValue) {
 		var bDataRequested = false,
 			iHashHash = this.sPath.indexOf("##"),
 			bIsMeta = iHashHash >= 0,
@@ -216,8 +217,9 @@ sap.ui.define([
 			mParametersForDataReceived = {data : {}},
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
 			oCallToken = {
-				// a resolved binding fires a change event if checkUpdate is called at least once
-				// with bForceUpdate=true; an unresolved binding only fires if it had a value before
+				// a resolved binding fires a change event if checkUpdateInternal is called at least
+				// once with bForceUpdate=true; an unresolved binding only fires if it had a value
+				// before
 				forceUpdate : sResolvedPath
 					&& (bForceUpdate
 						|| this.oCheckUpdateCallToken && this.oCheckUpdateCallToken.forceUpdate)
@@ -230,7 +232,8 @@ sap.ui.define([
 			this.bHasDeclaredType = !!vType;
 		}
 		if (arguments.length < 4) {
-			// Use Promise to become async so that only the latest sync call to checkUpdate wins
+			// Use Promise to become async so that only the latest sync call to checkUpdateInternal
+			// wins
 			vValue = Promise.resolve(this.oCachePromise.then(function (oCache) {
 				var sDataPath, sMetaPath;
 
@@ -242,7 +245,8 @@ sap.ui.define([
 						}, that);
 				}
 				if (that.bRelative && !that.oContext) {
-					// binding is unresolved or context was reset by another call to checkUpdate
+					// binding is unresolved or context was reset by another call to
+					// checkUpdateInternal
 					return undefined;
 				}
 				if (that.bRelative && that.oContext.iIndex === Context.VIRTUAL) {
@@ -291,7 +295,7 @@ sap.ui.define([
 			var oType = aResults[1],
 				vValue = aResults[0];
 
-			if (oCallToken === that.oCheckUpdateCallToken) { // latest call to checkUpdate
+			if (oCallToken === that.oCheckUpdateCallToken) { // latest call to checkUpdateInternal
 				that.oCheckUpdateCallToken = undefined;
 				that.setType(oType, that.sInternalType);
 				if (oCallToken.forceUpdate || that.vValue !== vValue) {
@@ -454,7 +458,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataPropertyBinding.prototype.onChange = function (vValue) {
-		this.checkUpdate(undefined, undefined, undefined, vValue);
+		this.checkUpdateInternal(undefined, undefined, undefined, vValue);
 	};
 
 	/**
@@ -462,14 +466,14 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */
 	ODataPropertyBinding.prototype.refreshInternal = function (sResourcePathPrefix, sGroupId,
-			bCheckUpdate) {
+			bCheckUpdate/*, bKeepCacheOnError*/) {
 		if (this.isRootBindingSuspended()) {
 			this.sResumeChangeReason = ChangeReason.Refresh;
 			return SyncPromise.resolve();
 		}
 		this.fetchCache(this.oContext);
 		return bCheckUpdate
-			? this.checkUpdate(false, ChangeReason.Refresh, sGroupId)
+			? this.checkUpdateInternal(false, ChangeReason.Refresh, sGroupId)
 			: SyncPromise.resolve();
 	};
 
@@ -584,7 +588,7 @@ sap.ui.define([
 	ODataPropertyBinding.prototype.resumeInternal = function (bCheckUpdate) {
 		this.fetchCache(this.oContext);
 		if (bCheckUpdate) {
-			this.checkUpdate(false, this.sResumeChangeReason);
+			this.checkUpdateInternal(false, this.sResumeChangeReason);
 		}
 		// the change event is fired asynchronously, so it is safe to reset here
 		this.sResumeChangeReason = ChangeReason.Change;
@@ -610,7 +614,7 @@ sap.ui.define([
 			this.oContext = oContext;
 			if (this.bRelative) {
 				this.fetchCache(this.oContext);
-				this.checkUpdate(false, ChangeReason.Context);
+				this.checkUpdateInternal(false, ChangeReason.Context);
 			}
 		}
 	};

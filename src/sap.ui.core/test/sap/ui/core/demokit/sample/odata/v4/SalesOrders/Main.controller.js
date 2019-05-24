@@ -181,7 +181,7 @@ sap.ui.define([
 				"ProductID" : "HT-1000",
 				"Quantity" : "1.000",
 				"QuantityUnit" : "EA"
-			}, false, true);
+			}, /*TODO bSkipRefresh : false!*/true, true);
 			// select the newly created one
 			this.byId("SO_2_SOITEM").setSelectedItem(
 				this.byId("SO_2_SOITEM").getItems()[oContext.getIndex()]);
