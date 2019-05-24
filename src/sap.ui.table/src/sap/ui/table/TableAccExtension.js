@@ -620,15 +620,18 @@ sap.ui.define([
 			switch (sType) {
 				case TableAccExtension.ELEMENTTYPES.COLUMNROWHEADER:
 					mAttributes["aria-labelledby"] = [sTableId + "-ariacolrowheaderlabel"];
+					var mRenderConfig = oTable._oSelectionPlugin.getRenderConfig();
 
-					mAttributes["role"] = ["button"];
+					if (mRenderConfig.headerSelector.visible) {
+						mAttributes["role"] = ["button"];
+					}
 					if (mParams && mParams.enabled) {
 						mAttributes["aria-pressed"] = mParams.checked ? "true" : "false";
 					} else {
 						mAttributes["aria-disabled"] = "true";
 						mAttributes["aria-pressed"] = "false";
 					}
-					if (!oTable._getShowStandardTooltips() && oTable._oSelectionPlugin.getRenderConfig().headerSelector.type === "toggle") {
+					if (!oTable._getShowStandardTooltips() && mRenderConfig.headerSelector.type === "toggle") {
 						mAttributes["aria-labelledby"].push(sTableId + "-ariaselectall");
 					}
 					break;

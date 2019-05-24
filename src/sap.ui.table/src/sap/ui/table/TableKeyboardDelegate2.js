@@ -182,7 +182,7 @@ sap.ui.define([
 
 		// Select/Deselect all.
 		if (oCellInfo.isOfType(CellType.COLUMNROWHEADER)) {
-			if (!oTable._oSelectionPlugin.onHeaderSelectorPress || this._oSelectionPlugin.onHeaderSelectorPress()) {
+			if (!oTable._oSelectionPlugin.onHeaderSelectorPress || oTable._oSelectionPlugin.onHeaderSelectorPress()) {
 				oTable._toggleSelectAll();
 			}
 			// Expand/Collapse group.

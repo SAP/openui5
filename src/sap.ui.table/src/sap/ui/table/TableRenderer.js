@@ -411,7 +411,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		if (TableUtils.hasSelectAll(oTable)) {
 			var bAllRowsSelected = TableUtils.areAllRowsSelected(oTable);
 
-			if (oTable._getShowStandardTooltips()) {
+			if (oTable._getShowStandardTooltips() && mRenderConfig.headerSelector.visible) {
 				var sSelectAllResourceTextID;
 
 				if (mRenderConfig.headerSelector.type === "toggle") {
@@ -443,7 +443,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 		rm.write(">");
 
-		if (oTable.getSelectionMode() !== SelectionMode.Single) {
+		if (oTable.getSelectionMode() !== SelectionMode.Single && mRenderConfig.headerSelector.visible) {
 			if (mRenderConfig.headerSelector.type === "clear" && mRenderConfig.headerSelector.icon) {
 				rm.renderControl(mRenderConfig.headerSelector.icon);
 			} else {
