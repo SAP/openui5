@@ -21,6 +21,7 @@ sap.ui.define([
 	"sap/ui/dt/plugin/ContextMenu",
 	"sap/ui/dt/plugin/DragDrop",
 	"sap/ui/dt/ElementDesignTimeMetadata",
+	"sap/ui/dt/Util",
 	"qunit/MetadataTestUtil",
 	"sap/base/util/includes",
 	"sap/ui/dt/DOMUtil",
@@ -47,6 +48,7 @@ function(
 	ContextMenuPlugin,
 	DragDrop,
 	ElementDesignTimeMetadata,
+	DtUtil,
 	MetadataTestUtil,
 	includes,
 	DOMUtil,
@@ -584,28 +586,53 @@ function(
 		});
 
 		QUnit.test("when plugins are inserted and removed", function (assert) {
+			var done = assert.async(6);
 			var oTabHandlingPlugin = new TabHandling();
 			var oContextMenuPlugin = new ContextMenuPlugin();
 			var oDragDropPlugin = new DragDrop();
+			var oRegisterElementOverlay = sandbox.spy(oTabHandlingPlugin, "registerElementOverlay");
+			var oTaskManagerAddSpy = sandbox.spy(this.oDesignTime._oTaskManager, "add");
 
 			assert.equal(this.oDesignTime.getPlugins().length, 0, "initially there are no plugins on the design time");
 
 			this.oDesignTime.addPlugin(oTabHandlingPlugin);
-			this.oDesignTime.insertPlugin(oContextMenuPlugin, 0);
-			this.oDesignTime.insertPlugin(oDragDropPlugin, 1);
-
-			assert.equal(this.oDesignTime.getPlugins().length, 3, "then three plugins are present in design time");
-			assert.strictEqual(this.oDesignTime.getPlugins()[0], oContextMenuPlugin, "the ContextMenu plugin was inserted in the right position of the aggregation");
-			assert.strictEqual(this.oDesignTime.getPlugins()[1], oDragDropPlugin, "the ElementMover plugin was inserted in the right position of the aggregation");
-
-			this.oDesignTime.removePlugin(oDragDropPlugin);
-
-			assert.equal(this.oDesignTime.getPlugins().length, 2, "after removing one, two plugins remain in design time");
-			assert.strictEqual(this.oDesignTime.getPlugins()[1], oTabHandlingPlugin, "the TabHandlingPlugin plugin is in the right position of the aggregation");
-
-			this.oDesignTime.removeAllPlugins();
-
-			assert.equal(this.oDesignTime.getPlugins().length, 0, "after calling 'removeAllPlugins' the are no more plugins on the design time");
+			DtUtil.waitForSynced(this.oDesignTime, done)()
+				.then(function() {
+					assert.equal(oRegisterElementOverlay.callCount, 4,
+						"then the tabHandlingPlugin registration is called before designtime is synced");
+					assert.equal(oTaskManagerAddSpy.calledWith({ type: "pluginBusy", plugin: oTabHandlingPlugin.getMetadata().getName()}), true,
+						"then on addPlugin the taskManager is used with tasks from 'pluginBusy' type");
+					this.oDesignTime.insertPlugin(oContextMenuPlugin, 0);
+					return DtUtil.waitForSynced(this.oDesignTime, done)();
+				}.bind(this))
+				.then(function() {
+					assert.equal(oTaskManagerAddSpy.calledWith({ type: "pluginBusy", plugin: oContextMenuPlugin.getMetadata().getName()}), true,
+						"then on insertPlugin the taskManager is used with tasks from 'pluginBusy' type");
+					this.oDesignTime.insertPlugin(oDragDropPlugin, 1);
+					return DtUtil.waitForSynced(this.oDesignTime, done)();
+				}.bind(this))
+				.then(function() {
+					assert.equal(this.oDesignTime.getPlugins().length, 3, "then three plugins are present in design time");
+					assert.strictEqual(this.oDesignTime.getPlugins()[0], oContextMenuPlugin,
+						"the ContextMenu plugin was inserted in the right position of the aggregation");
+					assert.strictEqual(this.oDesignTime.getPlugins()[1], oDragDropPlugin,
+						"the ElementMover plugin was inserted in the right position of the aggregation");
+					this.oDesignTime.removePlugin(oDragDropPlugin);
+					return DtUtil.waitForSynced(this.oDesignTime, done)();
+				}.bind(this))
+				.then(function() {
+					assert.equal(this.oDesignTime.getPlugins().length, 2,
+						"after removing one, two plugins remain in design time");
+					assert.strictEqual(this.oDesignTime.getPlugins()[1], oTabHandlingPlugin,
+						"the TabHandlingPlugin plugin is in the right position of the aggregation");
+					this.oDesignTime.removeAllPlugins();
+					return DtUtil.waitForSynced(this.oDesignTime, done)();
+				}.bind(this))
+				.then(function() {
+					assert.equal(this.oDesignTime.getPlugins().length, 0,
+						"after calling 'removeAllPlugins' the are no more plugins on the design time");
+					done();
+				}.bind(this));
 		});
 
 		QUnit.test("when the element inside of the DesignTime is destroyed", function(assert) {

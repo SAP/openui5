@@ -1,7 +1,6 @@
 /*!
  * ${copyright}
  */
-
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/base/util/isPlainObject"
@@ -29,7 +28,6 @@ function(
 	 * @alias sap.ui.dt.TaskManager
 	 * @experimental Since 1.54. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
-
 	var TaskManager = ManagedObject.extend("sap.ui.dt.TaskManager", {
 		metadata: {
 			library: "sap.ui.dt",
@@ -54,7 +52,6 @@ function(
 		},
 		constructor: function () {
 			ManagedObject.apply(this, arguments);
-
 			this._aList = [];
 		},
 		/**
@@ -81,17 +78,14 @@ function(
 		this._validateTask(mTask);
 
 		var iTaskId = this._iNextId++;
-
 		this._aList.push(Object.assign({}, mTask, {
 			id: iTaskId
 		}));
-
 		if (!this.getSuppressEvents()) {
 			this.fireAdd({
 				taskId: iTaskId
 			});
 		}
-
 		return iTaskId;
 	};
 
@@ -103,7 +97,6 @@ function(
 		this._aList = this._aList.filter(function (mTask) {
 			return mTask.id !== iTaskId;
 		});
-
 		if (!this.getSuppressEvents()) {
 			this.fireComplete({
 				taskId: [iTaskId]
@@ -120,7 +113,6 @@ function(
 	TaskManager.prototype.completeBy = function (mTask) {
 		this._validateTask(mTask);
 		var aCompledTaskIds = [];
-
 		this._aList = this._aList.filter(function (mLocalTask) {
 			var bCompleteTask = Object.keys(mTask).every(function(sKey) {
 				return mLocalTask[sKey] && mLocalTask[sKey] === mTask[sKey];
@@ -131,7 +123,6 @@ function(
 			}
 			return true;
 		});
-
 		if (!this.getSuppressEvents()) {
 			this.fireComplete({
 				taskId: aCompledTaskIds
@@ -157,6 +148,7 @@ function(
 
 	/**
 	 * Returns amount of the tasks in the queue
+	 * @return {number} Amoutn of tasks
 	 */
 	TaskManager.prototype.count = function () {
 		return this._aList.length;
@@ -164,6 +156,7 @@ function(
 
 	/**
 	 * Returns list of pending tasks
+	 * @return {array} List copy of pending tasks
 	 */
 	TaskManager.prototype.getList = function () {
 		return this._aList.slice(0);

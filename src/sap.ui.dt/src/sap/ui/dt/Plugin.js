@@ -59,13 +59,13 @@ function(
 		}
 	});
 
+	Plugin.prototype._bBusyCounter = 0;
+
 	/**
 	 * Called when the Plugin is initialized
 	 * @protected
 	 */
-	Plugin.prototype.init = function() {
-		this._bBusyCounter = 0;
-	};
+	Plugin.prototype.init = function() {};
 
 	/**
 	 * Called when the Plugin is destroyed
@@ -184,7 +184,7 @@ function(
 	};
 
 	/**
-	 * @param {sap.ui.dt.Overlay} oOverlay to callde registration methods for
+	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay to callde registration methods for
 	 * @private
 	 */
 	Plugin.prototype._callElementOverlayDeregestrationMethods = function(oElementOverlay) {
