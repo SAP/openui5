@@ -29,7 +29,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 
 	/**
@@ -39,7 +39,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 
 	/**
@@ -54,7 +54,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	var DescriptorChange = function(mChangeFile,oInlineChange,oSettings) { //so far, parameter correspond to inline change format
 		this._mChangeFile = mChangeFile;
@@ -72,7 +72,7 @@ sap.ui.define([
 	 * @return {Promise} resolving when setting of transport request was successful
 	 *
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorChange.prototype.setTransportRequest = function(sTransportRequest) {
 		try {
@@ -94,7 +94,7 @@ sap.ui.define([
 	 * @return {Promise} resolving when setting of package was successful
 	 *
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorChange.prototype.setPackage = function(sPackage) {
 		try {
@@ -113,7 +113,7 @@ sap.ui.define([
 	 * @return {Promise} resolving after all changes have been saved
 	 *
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorChange.prototype.submit = function() {
 		this.store();
@@ -129,7 +129,7 @@ sap.ui.define([
 	 * @return {object} change object
 	 *
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorChange.prototype.store = function() {
 		// create persistence
@@ -174,7 +174,7 @@ sap.ui.define([
 	 * @return {object} copy of JSON object of the descriptor change
 	 *
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorChange.prototype.getJson = function() {
 		return fnBaseMerge({}, this._getMap());
@@ -189,7 +189,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 
 	var DescriptorChangeFactory = function() {};
@@ -206,7 +206,7 @@ sap.ui.define([
 	 * @return {Promise} resolving the new Change instance
 	 *
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorChangeFactory.prototype.createNew = function(sReference, oInlineChange, sLayer, oAppComponent, sTool) {
 		var fSetHostingIdForTextKey = function(_oDescriptorInlineChange, sId){

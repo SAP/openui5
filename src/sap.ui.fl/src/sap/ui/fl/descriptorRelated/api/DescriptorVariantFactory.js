@@ -35,7 +35,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 
 
@@ -76,7 +76,7 @@ sap.ui.define([
 	 * @return {Promise} resolving when adding the descriptor inline change was successful (without backend access)
 	 *
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariant.prototype.addDescriptorInlineChange = function(oDescriptorInlineChange) {
 		var that = this;
@@ -114,7 +114,7 @@ sap.ui.define([
 	 * @return {Promise} resolving when setting of transport request was successful
 	 *
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariant.prototype.setTransportRequest = function(sTransportRequest) {
 		try {
@@ -135,7 +135,7 @@ sap.ui.define([
 	 * @return {Promise} resolving when setting of package was successful
 	 *
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariant.prototype.setPackage = function(sPackage) {
 		try {
@@ -154,7 +154,7 @@ sap.ui.define([
 	 * @return {Promise} resolving when submitting the app variant was successful
 	 *
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariant.prototype.submit = function() {
 		var sRoute = '/sap/bc/lrep/appdescr_variants/';
@@ -202,7 +202,7 @@ sap.ui.define([
 	 * @param {string} sReference the new reference
 	 *
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariant.prototype.setReference = function(sReference) {
 		if (sReference === undefined || typeof sReference !== "string") {
@@ -237,7 +237,7 @@ sap.ui.define([
 	 * @return {object} copy of JSON object of the app variant/CDM app config
 	 *
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariant.prototype.getJson = function() {
 		return fnBaseMerge({}, this._getMap());
@@ -292,7 +292,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	var DescriptorVariantFactory = {};
 
@@ -315,7 +315,7 @@ sap.ui.define([
 	 * @return {Promise} resolving the new DescriptorVariant instance
 	 *
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariantFactory.createNew = function(mParameters) {
 		Utils.checkParameterAndType(mParameters, "reference", "string");
@@ -358,7 +358,7 @@ sap.ui.define([
 	 * @return {Promise} resolving the DescriptorVariant instance
 	 *
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariantFactory.createForExisting = function(sId) {
 		if (sId === undefined || typeof sId !== "string") {
@@ -387,7 +387,7 @@ sap.ui.define([
 	 * @return {Promise} resolving the DescriptorVariant instance
 	 *
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariantFactory.createFromJson = function(mParameters) {
 		if (!jQuery.isPlainObject(mParameters)) {
@@ -406,7 +406,7 @@ sap.ui.define([
 	 * @return {Promise} resolving the DescriptorVariant instance
 	 *
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariantFactory.createDeletion = function(sId) {
 		if (sId === undefined || typeof sId !== "string") {
