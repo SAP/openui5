@@ -436,7 +436,7 @@ sap.ui.define([
 			var oEvent = jQuery.Event({type: "contextmenu"});
 			/*eslint-enable new-cap */
 			oEvent.target = oTable.getDomRef("rows-row0-col4");
-			oTable._onContextMenu(oEvent);
+			oTable.oncontextmenu(oEvent);
 			assert.ok(oTable._getGroupHeaderMenu().bOpen, "Menu is open");
 			done();
 		}

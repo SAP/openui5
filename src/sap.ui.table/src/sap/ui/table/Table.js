@@ -3136,8 +3136,6 @@ sap.ui.define([
 			var oRow = aRows[i];
 			oRow._updateSelection(this, mTooltipTexts, bSelectOnCellsAllowed);
 		}
-		// update internal property to reflect the correct index
-		this.setProperty("selectedIndex", this.getSelectedIndex(), true);
 
 		if (TableUtils.hasSelectAll(this)) {
 			var $SelectAll = this.$("selall");

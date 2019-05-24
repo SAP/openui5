@@ -336,10 +336,11 @@ sap.ui.define([
 		 * Modifies the labels and descriptions of a data cell.
 		 * @see ExtensionHelper.performCellModifications
 		 */
-		modifyAccOfDATACELL: function($Cell) {
-			var oTable = this.getTable(),
-				sTableId = oTable.getId(),
-				oIN = oTable._getItemNavigation();
+		modifyAccOfDATACELL: function(oCellInfo) {
+			var oTable = this.getTable();
+			var sTableId = oTable.getId();
+			var oIN = oTable._getItemNavigation();
+			var $Cell = oCellInfo.cell;
 
 			if (!oIN) {
 				return;
@@ -426,14 +427,15 @@ sap.ui.define([
 		 * Modifies the labels and descriptions of a row header cell.
 		 * @see ExtensionHelper.performCellModifications
 		 */
-		modifyAccOfROWHEADER: function($Cell) {
-			var oTable = this.getTable(),
-				sTableId = oTable.getId(),
-				bIsInGroupingRow = TableUtils.Grouping.isInGroupingRow($Cell),
-				bIsInSumRow = TableUtils.Grouping.isInSumRow($Cell),
-				oRow = oTable.getRows()[$Cell.attr("data-sap-ui-rowindex")],
-				aDefaultLabels = ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.ROWHEADER)["aria-labelledby"] || [],
-				aLabels = aDefaultLabels.concat([sTableId + "-rownumberofrows"]);
+		modifyAccOfROWHEADER: function(oCellInfo) {
+			var oTable = this.getTable();
+			var sTableId = oTable.getId();
+			var $Cell = oCellInfo.cell;
+			var bIsInGroupingRow = TableUtils.Grouping.isInGroupingRow($Cell);
+			var bIsInSumRow = TableUtils.Grouping.isInSumRow($Cell);
+			var oRow = oTable.getRows()[oCellInfo.rowIndex];
+			var aDefaultLabels = ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.ROWHEADER)["aria-labelledby"] || [];
+			var aLabels = aDefaultLabels.concat([sTableId + "-rownumberofrows"]);
 
 			if (!bIsInSumRow && !bIsInGroupingRow) {
 				if (!$Cell.hasClass("sapUiTableRowHidden")) {
@@ -468,18 +470,18 @@ sap.ui.define([
 		 * Modifies the labels and descriptions of a column header cell.
 		 * @see ExtensionHelper.performCellModifications
 		 */
-		modifyAccOfCOLUMNHEADER: function($Cell) {
-			var oTable = this.getTable(),
-				oColumn = sap.ui.getCore().byId($Cell.attr("data-sap-ui-colid")),
-				mAttributes = ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.COLUMNHEADER, {
+		modifyAccOfCOLUMNHEADER: function(oCellInfo) {
+			var oTable = this.getTable();
+			var $Cell = oCellInfo.cell;
+			var oColumn = sap.ui.getCore().byId($Cell.attr("data-sap-ui-colid"));
+			var mAttributes = ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.COLUMNHEADER, {
 					headerId: $Cell.attr("id"),
 					column: oColumn,
 					index: $Cell.attr("data-sap-ui-colindex")
-				}),
-				sText = ExtensionHelper.getColumnTooltip(oColumn),
-				aLabels = [oTable.getId() + "-colnumberofcols"].concat(mAttributes["aria-labelledby"]),
-				oCellInfo = TableUtils.getCellInfo($Cell),
-				iSpan = oCellInfo.columnSpan;
+				});
+			var sText = ExtensionHelper.getColumnTooltip(oColumn);
+			var aLabels = [oTable.getId() + "-colnumberofcols"].concat(mAttributes["aria-labelledby"]);
+			var iSpan = oCellInfo.columnSpan;
 
 			if (iSpan > 1) {
 				aLabels.push(oTable.getId() + "-ariacolspan");
@@ -513,9 +515,11 @@ sap.ui.define([
 		 * Modifies the labels and descriptions of the column row header.
 		 * @see ExtensionHelper.performCellModifications
 		 */
-		modifyAccOfCOLUMNROWHEADER: function($Cell) {
-			var oTable = this.getTable(),
-				bEnabled = $Cell.hasClass("sapUiTableSelAllEnabled");
+		modifyAccOfCOLUMNROWHEADER: function(oCellInfo) {
+			var oTable = this.getTable();
+			var $Cell = oCellInfo.cell;
+			var bEnabled = $Cell.hasClass("sapUiTableSelAllEnabled");
+
 			oTable.$("sapUiTableGridCnt").removeAttr("role");
 
 			var mAttributes = ExtensionHelper.getAriaAttributesFor(
@@ -531,21 +535,22 @@ sap.ui.define([
 		 * Modifies the labels and descriptions of a row action cell.
 		 * @see ExtensionHelper.performCellModifications
 		 */
-		modifyAccOfROWACTION: function($Cell) {
-			var oTable = this.getTable(),
-				sTableId = oTable.getId(),
-				bIsInGroupingRow = TableUtils.Grouping.isInGroupingRow($Cell),
-				bIsInSumRow = TableUtils.Grouping.isInSumRow($Cell),
-				iRow = $Cell.attr("data-sap-ui-rowindex"),
-				oRow = oTable.getRows()[iRow],
-				bHidden = ExtensionHelper.isHiddenCell($Cell),
-				aDefaultLabels = ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.ROWACTION)["aria-labelledby"] || [],
-				aLabels = [sTableId + "-rownumberofrows", sTableId + "-colnumberofcols"].concat(aDefaultLabels),
-				aDescriptions = [];
+		modifyAccOfROWACTION: function(oCellInfo) {
+			var oTable = this.getTable();
+			var sTableId = oTable.getId();
+			var $Cell = oCellInfo.cell;
+			var bIsInGroupingRow = TableUtils.Grouping.isInGroupingRow($Cell);
+			var bIsInSumRow = TableUtils.Grouping.isInSumRow($Cell);
+			var iRowIndex = oCellInfo.rowIndex;
+			var oRow = oTable.getRows()[oCellInfo.rowIndex];
+			var bHidden = ExtensionHelper.isHiddenCell($Cell);
+			var aDefaultLabels = ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.ROWACTION)["aria-labelledby"] || [];
+			var aLabels = [sTableId + "-rownumberofrows", sTableId + "-colnumberofcols"].concat(aDefaultLabels);
+			var aDescriptions = [];
 
 			if (bIsInGroupingRow) {
 				aLabels.push(sTableId + "-ariarowgrouplabel");
-				aLabels.push(sTableId + "-rows-row" + iRow + "-groupHeader");
+				aLabels.push(sTableId + "-rows-row" + iRowIndex + "-groupHeader");
 				aLabels.push(sTableId + (oRow._bIsExpanded ? "-rowcollapsetext" : "-rowexpandtext"));
 			}
 
@@ -555,7 +560,7 @@ sap.ui.define([
 					aLabels.push(sTableId + "-ariagrandtotallabel");
 				} else if (iLevel > 0) {
 					aLabels.push(sTableId + "-ariagrouptotallabel");
-					aLabels.push(sTableId + "-rows-row" + iRow + "-groupHeader");
+					aLabels.push(sTableId + "-rows-row" + iRowIndex + "-groupHeader");
 				}
 			}
 
@@ -1107,7 +1112,7 @@ sap.ui.define([
 			}
 		}
 
-		ExtensionHelper["modifyAccOf" + sCellType].apply(this, [oInfo.cell]);
+		ExtensionHelper["modifyAccOf" + sCellType].apply(this, [oInfo]);
 	};
 
 	/**

@@ -845,8 +845,7 @@ sap.ui.define([
 				return;
 			} else if ($Target.hasClass("sapUiTableGroupMenuButton")) {
 				// Analytical Table: Mobile Group Menu Button in Grouping rows
-				this._onContextMenu(oEvent);
-				oEvent.preventDefault();
+				this.oncontextmenu(oEvent);
 				return;
 			} else if ($Target.hasClass("sapUiTableGroupIcon") || $Target.hasClass("sapUiTableTreeIcon")) {
 				// Grouping Row: Toggle grouping
