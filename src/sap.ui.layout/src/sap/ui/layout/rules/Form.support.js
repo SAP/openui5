@@ -45,7 +45,7 @@ sap.ui.define(["sap/ui/support/library"],
 		minversion: "1.48",
 		title: "Form: Use of ResponsiveLayout",
 		description: "ResponsiveLayout should not be used any longer because of UX requirements",
-		resolution: "Use the ResponsiveGridLayout instead",
+		resolution: "Use the ResponsiveGridLayout or ColumnLayout instead",
 		resolutionurls: [{
 				text: "API Reference: Form",
 				href: "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.Form.html"
@@ -57,6 +57,10 @@ sap.ui.define(["sap/ui/support/library"],
 			{
 				text: "API Reference: ResponsiveGridLayout",
 				href: "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.ResponsiveGridLayout.html"
+			},
+			{
+				text: "API Reference: ColumnLayout",
+				href: "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.ColumnLayout.html"
 			}],
 		check: function (oIssueManager, oCoreFacade, oScope) {
 			oScope.getElementsByClassName("sap.ui.layout.form.Form")
@@ -861,6 +865,63 @@ sap.ui.define(["sap/ui/support/library"],
 		}
 	};
 
+	var oFormGridLayoutRule = {
+			id: "formGridLayout",
+			audiences: [Audiences.Control],
+			categories: [Categories.Functionality],
+			enabled: true,
+			minversion: "1.65",
+			title: "Form: Use of GridLayout",
+			description: "GridLayout should not be used any longer because of UX requirements",
+			resolution: "Use the ResponsiveGridLayout or ColumnLayout instead",
+			resolutionurls: [{
+					text: "API Reference: Form",
+					href: "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.Form.html"
+				},
+				{
+					text: "API Reference: SimpleForm",
+					href: "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.SimpleForm.html"
+				},
+				{
+					text: "API Reference: ResponsiveGridLayout",
+					href: "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.ResponsiveGridLayout.html"
+				},
+				{
+					text: "API Reference: ColumnLayout",
+					href: "https://sapui5.hana.ondemand.com/#docs/api/symbols/sap.ui.layout.form.ColumnLayout.html"
+				}],
+			check: function (oIssueManager, oCoreFacade, oScope) {
+				oScope.getElementsByClassName("sap.ui.layout.form.Form")
+					.forEach(function (oForm) {
+						var oLayout = oForm.getLayout();
+						var oLoadedLibraries = sap.ui.getCore().getLoadedLibraries();
+						if (oLayout && oLayout.isA("sap.ui.layout.form.ColumnLayout") && !oLoadedLibraries.hasOwnProperty("sap.ui.commons")) {
+							var oParent = oForm.getParent();
+							var sId;
+							var sName = "Form";
+
+							if (isSimpleForm(oParent)) {
+								sId = oParent.getId();
+								sName = "SimpleForm";
+							} else if (isSmartForm(oParent)) {
+								// for SmartForm don't check on Form level
+								return;
+							} else {
+								sId = oForm.getId();
+							}
+
+							oIssueManager.addIssue({
+								severity: Severity.Medium,
+								details: sName + " " + sId + " uses GridLayout.",
+								context: {
+									id: sId
+								}
+							});
+						}
+					});
+			}
+		};
+
 	return [
 		oFormResponsiveLayoutRule,
 		oFormTitleAndToolbarRule,
@@ -871,7 +932,8 @@ sap.ui.define(["sap/ui/support/library"],
 		oFormEditableContentRule,
 		oFormWrongLayoutDataRule,
 		oFormMissingLabelRule,
-		oFormLabelAsFieldRule
+		oFormLabelAsFieldRule,
+		oFormGridLayoutRule
 	];
 
 }, true);
