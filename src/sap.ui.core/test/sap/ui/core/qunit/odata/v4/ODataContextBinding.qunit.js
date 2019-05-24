@@ -2935,7 +2935,7 @@ sap.ui.define([
 		var oBinding = this.bindContext("/Me/name.space.Operation(...)");
 
 		// @see sap.ui.model.odata.v4.ODataParentBinding#requestSideEffects
-		// @throws {Error} - If this binding does not use own service data requests
+		// @throws {Error} - If this binding does not use own data service requests
 		assert.throws(function () {
 			// code under test
 			oBinding.requestSideEffects("group", [], {/*oContext*/});

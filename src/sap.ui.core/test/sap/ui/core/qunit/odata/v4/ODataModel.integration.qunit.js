@@ -15971,6 +15971,7 @@ sap.ui.define([
 	// by the side effect; instead of refreshing the whole collection, an efficient request is sent.
 	// Additionally, there are detail "views" (form and table) which send their own requests and are
 	// affected by the side effect.
+	// Finally, read a side effect that affects a single row, refreshing it completely.
 	QUnit.test("requestSideEffects: collection & master/detail", function (assert) {
 		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
@@ -16123,6 +16124,31 @@ sap.ui.define([
 				// code under test
 				that.oView.byId("form").getBindingContext().requestSideEffects([{
 					$PropertyPath : "BestFriend/_Publication/_Artist/_Friend/Name"
+				}]),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			var o2ndRowContext
+					= that.oView.byId("table").getBinding("items").getCurrentContexts()[1];
+
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/BestFriend"
+				+ "/_Publication('42-1')?$select=CurrencyCode,Price,PublicationID", {
+					"CurrencyCode" : "JPY",
+					"Price" : "123", // side effect
+					"PublicationID" : "42-1"
+				})
+				.expectChange("price", [, "123"])
+				.expectChange("currency", [, "JPY"]);
+
+			//TODO @see CPOUI5UISERVICESV3-1832: open issue with autoExpandSelect, detailTable
+			// would not send own request anymore because master table's oCachePromise becomes
+			// pending again (see PS1 of POC #4122940); workaround by removing binding context
+			that.oView.byId("detailTable").setBindingContext(null);
+
+			return Promise.all([
+				// code under test
+				o2ndRowContext.requestSideEffects([{
+					$NavigationPropertyPath : ""
 				}]),
 				that.waitForChanges(assert)
 			]);
