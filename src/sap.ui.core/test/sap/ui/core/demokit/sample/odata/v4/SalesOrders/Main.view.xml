@@ -44,8 +44,8 @@
 					<ToolbarLayoutData shrinkable="false" />
 				</layoutData>
 			</Input>
-			<Button ariaDescribedBy="favoriteProductId::Label favoriteProductId"
-				icon="sap-icon://accept" id="setBindingContext" press="onSetBindingContext"
+			<Button ariaDescribedBy="favoriteProductId::Label" icon="sap-icon://accept"
+				id="setBindingContext" press="onSetBindingContext"
 				tooltip="Get favorite product ID"/>
 			<ToolbarSpacer />
 			<Button press="onRefreshAll" id="refreshAll" text="Refresh all"/>
