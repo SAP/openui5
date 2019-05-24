@@ -7,6 +7,29 @@
 @_sap_ui_table_Row_ColorHovered: @_sap_ui_table_Row_Color;
 
 .sapUiTableTr,
+.sapUiTableRowSelectionCell, // In the current DOM structure, row selection cells are also CSS rows, as they are a section of the full table row.
+.sapUiTableRowActionCell { // In the current DOM structure, row action cells are also CSS rows, as they are a section of the full table row.
+	background-color: @sapUiListBackground;
+
+	&.sapUiTableRowAlternate {
+		background-color: darken(@sapUiListBackground, 2);
+	}
+
+	&.sapUiTableRowSel {
+		background-color: @sapUiListSelectionBackgroundColor;
+	}
+
+	&.sapUiTableRowHvr {
+		background-color: @sapUiListHoverBackground;
+		color: @_sap_ui_table_Row_ColorHovered;
+	}
+
+	&.sapUiTableRowSel.sapUiTableRowHvr {
+		background-color: @sapUiListSelectionHoverBackground;
+	}
+}
+
+.sapUiTableTr,
 .sapUiTableColHdrTr {
 	color: @_sap_ui_table_Row_Color;
 	height: @_sap_ui_table_RowHeight;
@@ -30,26 +53,5 @@
 
 	.sapUiTableResizing .sapUiTableCtrlCnt & {
 		pointer-events: none;
-	}
-}
-
-.sapUiTableTr,
-.sapUiTableRowSelectionCell, // In the current DOM structure, row selection cells are also CSS rows, as they are a section of the full table row.
-.sapUiTableRowActionCell { // In the current DOM structure, row action cells are also CSS rows, as they are a section of the full table row.
-	&.sapUiTableRowAlternate {
-		background-color: darken(@sapUiListBackground, 2);
-	}
-
-	&.sapUiTableRowSel {
-		background-color: @sapUiListSelectionBackgroundColor;
-	}
-
-	&.sapUiTableRowHvr {
-		background-color: @sapUiListHoverBackground;
-		color: @_sap_ui_table_Row_ColorHovered;
-	}
-
-	&.sapUiTableRowSel.sapUiTableRowHvr {
-		background-color: @sapUiListSelectionHoverBackground;
 	}
 }
