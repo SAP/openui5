@@ -642,41 +642,45 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	};
 
 	TableRenderer.renderRowAddon = function(rm, oTable, oRow, iRowIndex, bHeader) {
+		var bRowSelected = oTable.isIndexSelected(oRow.getIndex());
+
 		rm.write("<div");
-		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TR", {index: iRowIndex});
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TR", {index: iRowIndex, rowHidden: oRow._bHidden});
+		rm.writeAttribute("data-sap-ui-related", oRow.getId());
+		rm.writeAttribute("data-sap-ui-rowindex", iRowIndex);
+
+		rm.addClass("sapUiTableRow");
+		rm.addClass("sapUiTableContentRow");
+
+		if (oRow._bHidden) {
+			rm.addClass("sapUiTableRowHidden");
+		} else if (bRowSelected) {
+			rm.addClass("sapUiTableRowSel");
+		}
+
+		if (iRowIndex % 2 != 0 && oTable.getAlternateRowColors() && !TableUtils.Grouping.isTreeMode(oTable)) {
+			rm.addClass("sapUiTableRowAlternate");
+		}
+
+		this.addRowCSSClasses(rm, oTable, iRowIndex);
+
+		rm.writeClasses();
 		rm.write(">");
 
 		rm.write("<div");
 		rm.writeAttribute("id", oTable.getId() + (bHeader ? "-rowsel" : "-rowact") + iRowIndex);
-		rm.writeAttribute("data-sap-ui-related", oRow.getId());
-		rm.writeAttribute("data-sap-ui-rowindex", iRowIndex);
 		rm.addClass("sapUiTableCell");
 		rm.addClass("sapUiTableContentCell");
 		rm.addClass(bHeader ? "sapUiTableRowSelectionCell" : "sapUiTableRowActionCell");
-		if (iRowIndex % 2 != 0 && oTable.getAlternateRowColors() && !TableUtils.Grouping.isTreeMode(oTable)) {
-			rm.addClass("sapUiTableRowAlternate");
-		}
-		this.addRowCSSClasses(rm, oTable, iRowIndex);
-		var bRowSelected = false;
-		var bRowHidden = false;
-		if (oRow._bHidden) {
-			rm.addClass("sapUiTableRowHidden");
-			bRowHidden = true;
-		} else {
-			if (oTable.isIndexSelected(oRow.getIndex())) {
-				rm.addClass("sapUiTableRowSel");
-				bRowSelected = true;
-			}
-		}
-
 		rm.writeClasses();
+
 		if (oTable.getRowHeight() > 0) {
 			rm.addStyle("height", oTable._getDefaultRowHeight() + "px");
 		}
 
 		rm.writeAttribute("tabindex", "-1");
 
-		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, bHeader ? "ROWHEADER" : "ROWACTION", {rowSelected: bRowSelected, rowHidden: bRowHidden});
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, bHeader ? "ROWHEADER" : "ROWACTION", {rowSelected: bRowSelected, rowHidden: oRow._bHidden});
 
 		rm.writeStyles();
 		rm.write(">");
@@ -971,6 +975,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 	TableRenderer.renderColumnHeaderRow = function(rm, oTable, iRow, bFixedTable, iStartColumn, iEndColumn, bHasOnlyFixedColumns, bLastRow) {
 		rm.write("<tr");
+		rm.addClass("sapUiTableRow");
+		rm.addClass("sapUiTableHeaderRow");
 		rm.addClass("sapUiTableColHdrTr");
 		rm.writeClasses();
 		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "COLUMNHEADER_ROW");
@@ -1044,6 +1050,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		if (oRow._bDummyRow) {
 			rm.addStyle("opacity", "0");
 		}
+		rm.addClass("sapUiTableRow");
+		rm.addClass("sapUiTableContentRow");
 		rm.addClass("sapUiTableTr");
 		if (bFixedTable) {
 			rm.writeAttribute("id", oRow.getId() + "-fixed");
@@ -1075,7 +1083,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		}
 		rm.writeStyles();
 
-		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TR", {index: iRowIndex});
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TR", {index: iRowIndex, rowHidden: oRow._bHidden});
 
 		rm.write(">");
 

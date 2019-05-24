@@ -90,10 +90,9 @@
 		align-items: center;
 	}
 
-	.sapUiTableGroupHeader&,
-	.sapUiTableRowHidden&,
-	.sapUiAnalyticalTableDummy&,
-	.sapUiAnalyticalTableSum& {
+	.sapUiTableGroupHeader > &,
+	.sapUiTableRowHidden > &,
+	.sapUiAnalyticalTableSum > & {
 		.sapUiTableSelModeMultiToggle & {
 			display: none;
 		}
@@ -109,13 +108,13 @@
 		left: @_sap_ui_table_RowHighlightWidth;
 	}
 
-	.sapUiTableRowSel& {
+	.sapUiTableRowSel & {
 		.sapUiTableSelModeMultiToggle & {
 			content: '\e05b';
 		}
 	}
 
-	.sapUiTableRowHvr& {
+	.sapUiTableRowHvr & {
 		border-color: @_sap_ui_table_RowSelection_CheckBoxBorderColorHovered;
 	}
 }

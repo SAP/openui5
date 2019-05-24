@@ -6,9 +6,12 @@
 @_sap_ui_table_Row_Color: @sapUiListTextColor;
 @_sap_ui_table_Row_ColorHovered: @_sap_ui_table_Row_Color;
 
-.sapUiTableTr,
-.sapUiTableRowSelectionCell, // In the current DOM structure, row selection cells are also CSS rows, as they are a section of the full table row.
-.sapUiTableRowActionCell { // In the current DOM structure, row action cells are also CSS rows, as they are a section of the full table row.
+.sapUiTableHeaderRow {
+	background-color: @sapUiListHeaderBackground;
+}
+
+.sapUiTableContentRow {
+	position: relative;
 	background-color: @sapUiListBackground;
 
 	&.sapUiTableRowAlternate {
@@ -29,18 +32,14 @@
 	}
 }
 
-.sapUiTableTr,
-.sapUiTableColHdrTr {
+.sapUiTableColHdrTr,
+.sapUiTableTr {
 	color: @_sap_ui_table_Row_Color;
 	height: @_sap_ui_table_RowHeight;
 
 	.sapUiSizeCozy & {
 		height: @_sap_ui_table_RowHeightCozy;
 	}
-}
-
-.sapUiTableColHdrTr {
-	background-color: @sapUiListHeaderBackground;
 }
 
 .sapUiTableTr {

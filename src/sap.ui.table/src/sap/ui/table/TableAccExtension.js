@@ -396,7 +396,7 @@ sap.ui.define([
 					aDescriptions.push(sTableId + "-toggleedit");
 				}
 
-				if (TableUtils.Grouping.isTreeMode(oTable) && !!$Cell.parent().attr("aria-selected")) {
+				if (TableUtils.Grouping.isTreeMode(oTable) && $Cell.parent().attr("aria-selected") === "true") {
 					// aria-selected on the row seems not be enough for treegrids
 					aLabels.push(sTableId + "-ariarowselected");
 				}
@@ -454,7 +454,7 @@ sap.ui.define([
 			}
 
 			if (bIsInSumRow) {
-				var iLevel = $Cell.data("sap-ui-level");
+				var iLevel = $Cell.parent().data("sap-ui-level");
 				if (iLevel == 0) {
 					aLabels.push(sTableId + "-ariagrandtotallabel");
 				} else if (iLevel > 0) {
@@ -555,7 +555,7 @@ sap.ui.define([
 			}
 
 			if (bIsInSumRow) {
-				var iLevel = $Cell.data("sap-ui-level");
+				var iLevel = $Cell.parent().data("sap-ui-level");
 				if (iLevel == 0) {
 					aLabels.push(sTableId + "-ariagrandtotallabel");
 				} else if (iLevel > 0) {
@@ -564,7 +564,7 @@ sap.ui.define([
 				}
 			}
 
-			if (!bIsInSumRow && !bIsInGroupingRow && $Cell.attr("aria-selected") == "true") {
+			if (!bIsInSumRow && !bIsInGroupingRow && $Cell.attr("aria-selected") === "true") {
 				aLabels.push(sTableId + "-ariarowselected");
 			}
 
@@ -643,9 +643,11 @@ sap.ui.define([
 					if (Device.browser.msie) {
 						mAttributes["aria-labelledby"] = [sTableId + "-ariarowheaderlabel"];
 					}
-					if (oTable.getSelectionMode() !== SelectionMode.None && (!mParams || !mParams.rowHidden)) {
-						var bSelected = mParams && mParams.rowSelected;
-						mAttributes["aria-selected"] = "" + bSelected;
+					if (oTable.getSelectionMode() !== SelectionMode.None && mParams && mParams.rowSelected) {
+						mAttributes["aria-selected"] = "true";
+					}
+					if (TableUtils.isRowSelectorSelectionAllowed(oTable) && (!mParams || !mParams.rowHidden)) {
+						var bSelected = !!(mParams && mParams.rowSelected);
 						var mTooltipTexts = oExtension.getAriaTextsForSelectionMode(true);
 						mAttributes["title"] = mTooltipTexts.mouse[bSelected ? "rowDeselect" : "rowSelect"];
 					}
@@ -654,9 +656,8 @@ sap.ui.define([
 				case TableAccExtension.ELEMENTTYPES.ROWACTION:
 					mAttributes["role"] = "gridcell";
 					mAttributes["aria-labelledby"] = [sTableId + "-rowacthdr"];
-					if (oTable.getSelectionMode() !== SelectionMode.None && (!mParams || !mParams.rowHidden)) {
-						var bSelected = mParams && mParams.rowSelected;
-						mAttributes["aria-selected"] = "" + bSelected;
+					if (oTable.getSelectionMode() !== SelectionMode.None && mParams && mParams.rowSelected) {
+						mAttributes["aria-selected"] = "true";
 					}
 					break;
 
@@ -821,8 +822,10 @@ sap.ui.define([
 						&& oTable.isIndexSelected(mParams.index)) {
 						mAttributes["aria-selected"] = "true";
 						bSelected = true;
+					} else {
+						mAttributes["aria-selected"] = "false";
 					}
-					if (TableUtils.isRowSelectionAllowed(oTable) && oTable.getContextByIndex(mParams.index)) {
+					if (TableUtils.isRowSelectionAllowed(oTable) && (!mParams || !mParams.rowHidden)) {
 						var mTooltipTexts = oExtension.getAriaTextsForSelectionMode(true);
 						mAttributes["title"] = mTooltipTexts.mouse[bSelected ? "rowDeselect" : "rowSelect"];
 					}
@@ -1161,7 +1164,7 @@ sap.ui.define([
 		}
 
 		if ($Ref.row) {
-			$Ref.row.children("td").add($Ref.row).attr("aria-selected", bIsSelected ? "true" : "false");
+			$Ref.row.add($Ref.row.children(".sapUiTableCell")).attr("aria-selected", bIsSelected ? "true" : "false");
 			if (bIsSelected && $Ref.rowSelectorText) {
 				var sText = $Ref.rowSelectorText.text();
 				if (sText) {
@@ -1194,12 +1197,7 @@ sap.ui.define([
 
 		var sTitle = null,
 			oTable = this.getTable(),
-			$RowElements = [
-				$RowHdr ? $RowHdr.parent() : null,
-				$FixedRow,
-				$ScrollRow,
-				$RowAct ? $RowAct.parent() : null
-			],
+			$RowElements = [$RowHdr, $FixedRow, $ScrollRow, $RowAct],
 			bTreeMode = !!$TreeIcon,
 			oBinding = oTable.getBinding("rows");
 

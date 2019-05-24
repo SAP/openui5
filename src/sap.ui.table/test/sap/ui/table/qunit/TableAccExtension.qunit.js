@@ -173,8 +173,8 @@ sap.ui.define([
 			aLabels.push(oTable.getId() + "-ariafixedcolumn");
 		}
 
-		if (!bGroup || iIndex != 0) {
-			if (iIndex == 4) {
+		if (!bGroup) {
+			if (iIndex === 4) {
 				aLabels.push(oCell.getId());
 			} else {
 				aLabels.push(oTable.getId() + "-cellacc");
@@ -272,9 +272,12 @@ sap.ui.define([
 		var oCell = oRow.getCells()[iCol];
 		var iIndex = oCell.getIndex();
 
-		if ((iIndex == 0 && !bGroup) || iIndex == 2 || iIndex == 4) {
-			aDescriptions.push(oTable.getId() + "-toggleedit");
+		if (!bGroup) {
+			if (iIndex === 0 || iIndex === 2 || iIndex === 4) {
+				aDescriptions.push(oTable.getId() + "-toggleedit");
+			}
 		}
+
 		if (oTable instanceof sap.ui.table.TreeTable && iIndex == 0 && $Cell.find(".sapUiTableTreeIcon").not(".sapUiTableTreeIconLeaf").length == 1 || bGroup){
 			aDescriptions.push(oTable.getId() + (bExpanded ? "-rowcollapsetext" : "-rowexpandtext"));
 		}
@@ -467,8 +470,8 @@ sap.ui.define([
 		assert.strictEqual(oRefs.row.attr("aria-level"), "2", "aria-level set on group row");
 		assert.strictEqual(oRefs.fixed.attr("aria-expanded"), "true", "aria-expanded set on group row (fixed)");
 		assert.strictEqual(oRefs.fixed.attr("aria-level"), "2", "aria-level set on group row (fixed)");
-		assert.strictEqual(oRefs.act.parent().attr("aria-expanded"), "true", "aria-expanded set on row action");
-		assert.strictEqual(oRefs.act.parent().attr("aria-level"), "2", "aria-level set on row action");
+		assert.strictEqual(oRefs.act.attr("aria-expanded"), "true", "aria-expanded set on row action");
+		assert.strictEqual(oRefs.act.attr("aria-level"), "2", "aria-level set on row action");
 
 		var $Cell;
 		var i;
@@ -500,7 +503,7 @@ sap.ui.define([
 
 		assert.strictEqual(oRefs.row.attr("aria-level"), "2", "aria-level set on group row");
 		assert.strictEqual(oRefs.fixed.attr("aria-level"), "2", "aria-level set on group row (fixed)");
-		assert.strictEqual(oRefs.act.parent().attr("aria-level"), "2", "aria-level set on row action");
+		assert.strictEqual(oRefs.act.attr("aria-level"), "2", "aria-level set on row action");
 
 		var $Cell;
 		var i;
@@ -782,8 +785,8 @@ sap.ui.define([
 		var done = assert.async();
 		var oRefs = fakeGroupRow(1);
 
-		assert.strictEqual(oRefs.hdr.parent().attr("aria-expanded"), "true", "aria-expanded set on group row header");
-		assert.strictEqual(oRefs.hdr.parent().attr("aria-level"), "2", "aria-level set on group row header");
+		assert.strictEqual(oRefs.hdr.attr("aria-expanded"), "true", "aria-expanded set on group row header");
+		assert.strictEqual(oRefs.hdr.attr("aria-level"), "2", "aria-level set on group row header");
 		assert.strictEqual(oRefs.hdr.attr("aria-haspopup"), "true", "aria-haspopup set on group row header");
 
 		var $Cell = getRowHeader(1, false, assert);
@@ -804,7 +807,7 @@ sap.ui.define([
 		var done = assert.async();
 		var oRefs = fakeSumRow(1);
 
-		assert.strictEqual(oRefs.hdr.parent().attr("aria-level"), "2", "aria-level set on sum row header");
+		assert.strictEqual(oRefs.hdr.attr("aria-level"), "2", "aria-level set on sum row header");
 
 		var $Cell = getRowHeader(1, false, assert);
 		testAriaLabelsForRowHeader($Cell, 1, assert, {sum: true});
@@ -885,7 +888,9 @@ sap.ui.define([
 				aLabels.push(oTable.getId() + "-ariagrouptotallabel");
 				aLabels.push(oTable.getId() + "-rows-row" + iRow + "-groupHeader");
 			}
-			aLabels.push(oTable.getId() + "-cellacc");
+			if (!bGroup) {
+				aLabels.push(oTable.getId() + "-cellacc");
+			}
 		} else {
 			aLabels.push(oTable.getId() + "-rowacthdr");
 		}
@@ -1487,8 +1492,8 @@ sap.ui.define([
 		checkTooltips(true, "Row", "MultiToggle", 1 /*SelAll*/ + iRowElements + iRowSelectors + iActionItems);
 		checkTooltips(true, "Row", "Single", iRowElements + iRowSelectors + iActionItems);
 		checkTooltips(true, "Row", "None", iActionItems);
-		checkTooltips(true, "RowOnly", "MultiToggle", 1 /*SelAll*/ + iRowElements + iRowSelectors + iActionItems);
-		checkTooltips(true, "RowOnly", "Single", iRowElements + iRowSelectors + iActionItems);
+		checkTooltips(true, "RowOnly", "MultiToggle", 1 /*SelAll*/ + iRowElements + iActionItems);
+		checkTooltips(true, "RowOnly", "Single", iRowElements + iActionItems);
 		checkTooltips(true, "RowOnly", "None", iActionItems);
 		checkTooltips(true, "RowSelector", "MultiToggle", 1 /*SelAll*/ + iRowSelectors + iActionItems);
 		checkTooltips(true, "RowSelector", "Single", iRowSelectors + iActionItems);

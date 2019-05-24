@@ -124,31 +124,31 @@ sap.ui.define([
 		},
 		assertRowStyleHovered: function(assert, oRow) {
 			var mDomRefs = oRow.getDomRefs(false);
-			assert.ok(mDomRefs.rowSelector.classList.contains("sapUiTableRowHvr"), "Selector part is styled as hovered");
+			assert.ok(mDomRefs.rowHeaderPart.classList.contains("sapUiTableRowHvr"), "Selector part is styled as hovered");
 			assert.ok(mDomRefs.rowFixedPart.classList.contains("sapUiTableRowHvr"), "Fixed part is styled as hovered");
 			assert.ok(mDomRefs.rowScrollPart.classList.contains("sapUiTableRowHvr"), "Scrollable part is styled as hovered");
-			assert.ok(mDomRefs.rowAction.classList.contains("sapUiTableRowHvr"), "Action part is styled as hovered");
+			assert.ok(mDomRefs.rowActionPart.classList.contains("sapUiTableRowHvr"), "Action part is styled as hovered");
 		},
 		assertRowStyleUnhovered: function(assert, oRow) {
 			var mDomRefs = oRow.getDomRefs(false);
-			assert.ok(!mDomRefs.rowSelector.classList.contains("sapUiTableRowHvr"), "Selector part is styled as unhovered");
+			assert.ok(!mDomRefs.rowHeaderPart.classList.contains("sapUiTableRowHvr"), "Selector part is styled as unhovered");
 			assert.ok(!mDomRefs.rowFixedPart.classList.contains("sapUiTableRowHvr"), "Fixed part is styled as unhovered");
 			assert.ok(!mDomRefs.rowScrollPart.classList.contains("sapUiTableRowHvr"), "Scrollable part is styled as unhovered");
-			assert.ok(!mDomRefs.rowAction.classList.contains("sapUiTableRowHvr"), "Action part is styled as unhovered");
+			assert.ok(!mDomRefs.rowActionPart.classList.contains("sapUiTableRowHvr"), "Action part is styled as unhovered");
 		},
 		assertRowStyleSelected: function(assert, oRow) {
 			var mDomRefs = oRow.getDomRefs(false);
-			assert.ok(mDomRefs.rowSelector.classList.contains("sapUiTableRowSel"), "Selector part is styled as selected");
+			assert.ok(mDomRefs.rowHeaderPart.classList.contains("sapUiTableRowSel"), "Selector part is styled as selected");
 			assert.ok(mDomRefs.rowFixedPart.classList.contains("sapUiTableRowSel"), "Fixed part is styled as selected");
 			assert.ok(mDomRefs.rowScrollPart.classList.contains("sapUiTableRowSel"), "Scrollable part is styled as selected");
-			assert.ok(mDomRefs.rowAction.classList.contains("sapUiTableRowSel"), "Action part is styled as selected");
+			assert.ok(mDomRefs.rowActionPart.classList.contains("sapUiTableRowSel"), "Action part is styled as selected");
 		},
 		assertRowStyleUnselected: function(assert, oRow) {
 			var mDomRefs = oRow.getDomRefs(false);
-			assert.ok(!mDomRefs.rowSelector.classList.contains("sapUiTableRowSel"), "Selector part is styled as unselected");
+			assert.ok(!mDomRefs.rowHeaderPart.classList.contains("sapUiTableRowSel"), "Selector part is styled as unselected");
 			assert.ok(!mDomRefs.rowFixedPart.classList.contains("sapUiTableRowSel"), "Fixed part is styled as unselected");
 			assert.ok(!mDomRefs.rowScrollPart.classList.contains("sapUiTableRowSel"), "Scrollable part is styled as unselected");
-			assert.ok(!mDomRefs.rowAction.classList.contains("sapUiTableRowSel"), "Action part is styled as unselected");
+			assert.ok(!mDomRefs.rowActionPart.classList.contains("sapUiTableRowSel"), "Action part is styled as unselected");
 		}
 	});
 
