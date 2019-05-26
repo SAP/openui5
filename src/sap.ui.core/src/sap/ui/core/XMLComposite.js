@@ -426,9 +426,12 @@ sap.ui.define([
 				}
 				oNewContent.bindObject("$" + this.alias + ">/");//first define the context
 				oNewContent.setModel(this._oManagedObjectModel, "$" + this.alias);//then set the model
-				var oResourceModel = this._getResourceModel();
-				if (oResourceModel) {
-					oNewContent.setModel(oResourceModel, "$" + this.alias + ".i18n");
+
+				if (this.bUsesI18n) {
+					var oResourceModel = this._getResourceModel();
+					if (oResourceModel) {
+						oNewContent.setModel(oResourceModel, "$" + this.alias + ".i18n");
+					}
 				}
 			}
 			this.setAggregation(sCompositeName, oNewContent);
@@ -520,6 +523,9 @@ sap.ui.define([
 					delete mSettings[sAggregationName];
 				}
 			}
+
+			var sFragment = oFragmentContent ? (new XMLSerializer()).serializeToString(oFragmentContent) : undefined;
+			this.bUsesI18n = sFragment ? (sFragment.indexOf("$" + this.alias + ".i18n") != -1) : true;
 
 			this._setCompositeAggregation(sap.ui.xmlfragment({
 				sId: this.getId(),
