@@ -267,13 +267,13 @@
 			return new sap.m.Toolbar({
 				content: [
 					new sap.m.FlexBox({
-						items: fnGenerateLabelledMenuButton("", sap.m.MenuButtonMode.Split, sap.m.ButtonType.Accept, "", "", "sap-icon://accept", true, fnUseOnlyDefaultActionHandler, oMenuEnumeration.Simple)
+						items: fnGenerateLabelledMenuButton("", sap.m.MenuButtonMode.Split, sap.m.ButtonType.Accept, "positive actions", "", "sap-icon://accept", true, fnUseOnlyDefaultActionHandler, oMenuEnumeration.Simple)
 					}),
 					new sap.m.FlexBox({
 						items: fnGenerateLabelledMenuButton("", sap.m.MenuButtonMode.Split, sap.m.ButtonType.Reject, "", "", "sap-icon://message-error", true, fnUseOnlyDefaultActionHandler, oMenuEnumeration.Simple)
 					}),
 					new sap.m.FlexBox({
-						items: fnGenerateLabelledMenuButton("", sap.m.MenuButtonMode.Split, sap.m.ButtonType.Emphasized, "", "", "sap-icon://alert", true, fnUseOnlyDefaultActionHandler, oMenuEnumeration.Simple)
+						items: fnGenerateLabelledMenuButton("", sap.m.MenuButtonMode.Split, sap.m.ButtonType.Emphasized, "additional actions", "", "sap-icon://alert", true, fnUseOnlyDefaultActionHandler, oMenuEnumeration.Simple)
 					}),
 					new sap.m.FlexBox({
 						items: fnGenerateLabelledMenuButton("", sap.m.MenuButtonMode.Split, sap.m.ButtonType.Transparent, "", "", "sap-icon://display", true, fnUseOnlyDefaultActionHandler, oMenuEnumeration.Simple)
