@@ -265,15 +265,20 @@ function(
 		events: {
 
 			/**
-			 * Fired if an appointment is selected.
+			 * Fired when the selected state of an appointment is changed.
 			 */
 			appointmentSelect: {
 				parameters: {
 
 					/**
-					 * The selected appointment.
+					 * The appointment on which the event was triggered.
 					 */
-					appointment: {type: "sap.ui.unified.CalendarAppointment"}
+					appointment: {type: "sap.ui.unified.CalendarAppointment"},
+					/**
+					 * All appointments with changed selected state.
+					 * @since 1.67.0
+					 */
+					appointments : {type : "sap.ui.unified.CalendarAppointment[]"}
 
 				}
 			},
@@ -858,7 +863,8 @@ function(
 
 		oGrid.attachEvent("appointmentSelect", function (oEvent) {
 			this.fireAppointmentSelect({
-				appointment: oEvent.getParameter("appointment")
+				appointment: oEvent.getParameter("appointment"),
+				appointments: oEvent.getParameter("appointments")
 			});
 		}, this);
 

@@ -38,12 +38,18 @@
 					'sap/ui/unified/CalendarAppointment',
 					'sap/ui/unified/CalendarLegendItem',
 					'sap/m/MessageToast',
+					'sap/m/MessageView',
+					'sap/m/MessageItem',
+					'sap/ui/core/MessageType',
+					'sap/m/PlacementType',
 					'sap/m/App',
 					'sap/m/Page'
 				],
 				function (JSONModel, SinglePlanningCalendar, SinglePlanningCalendarDayView,
-							SinglePlanningCalendarWorkWeekView, SinglePlanningCalendarWeekView, PlanningCalendarLegend,
-							Dialog, Button, Item, CalendarAppointment, CalendarLegendItem, MessageToast, App, Page) {
+							SinglePlanningCalendarWorkWeekView, SinglePlanningCalendarWeekView,
+							PlanningCalendarLegend, Dialog, Button, Item, CalendarAppointment,
+							CalendarLegendItem, MessageToast, MessageView,
+							MessageItem, MessageType, PlacementType, App, Page) {
 					var aAppointments = [
 						{
 							title: "1 hour app. 0 without type and color",
@@ -455,10 +461,42 @@
 						})
 					});
 
+					var createMessage = function(sTitle, sSubtitle) {
+							return new MessageItem({
+								type: MessageType.None,
+								title: sTitle,
+								subtitle: sSubtitle
+							});
+						},
+						oMessageView = new MessageView({}),
+						oPopover = new sap.m.Popover({
+							customHeader: new sap.m.Bar({
+								contentLeft: [],
+								contentMiddle: [
+									new sap.m.Text({
+										text: "Messages"
+									})
+								]
+							}),
+							placement: PlacementType.Auto,
+							verticalScrolling: false,
+							contentWidth: "440px",
+							contentHeight: "440px",
+							content: [oMessageView],
+							footer: new sap.m.Bar({
+								contentRight: [new sap.m.Button({
+									text: "Close",
+									press: function () {
+										oPopover.close();
+									}
+								})]
+							})
+						});
+
 					oSPC = new SinglePlanningCalendar("SinglePlanningCalendar", {
 						title: "SinglePlanningCalendar",
 						startDate: new Date(2018, 6, 9),
-						views: [oDayView, oWorkWeekView,oWeekView, oCustomView],
+						views: [oDayView, oWorkWeekView, oWeekView, oCustomView],
 						actions: [
 							new Button("overrideTime", {
 								text: "Override current time",
@@ -524,12 +562,25 @@
 								type: sap.ui.unified.CalendarDayType.Type08
 							})
 						],
+
 						appointmentSelect: function (oEvent) {
 							var oAppointment = oEvent.getParameter("appointment"),
-								sAppointmentTitle = oAppointment.getTitle(),
-								sAppointmentSelected = oAppointment.getSelected() ? "selected" : "deselected";
+								aAppointments = oEvent.getParameter("appointments");
 
-							MessageToast.show("Appointment with title \n'" + sAppointmentTitle + "'\n has been " + sAppointmentSelected);
+							if (!oAppointment && aAppointments && aAppointments.length) {
+								oMessageView.destroyItems();
+								oMessageView.navigateBack();
+
+								aAppointments.forEach(function(oApp) {
+									if (oApp.getSelected()) {
+										oMessageView.addItem(createMessage("Selected: " + oApp.getTitle(), oApp.getText()));
+									} else {
+										oMessageView.addItem(createMessage("Deselected: " + oApp.getTitle(), oApp.getText()));
+									}
+								});
+
+								oPopover.openBy(aAppointments[aAppointments.length - 1]);
+							}
 						},
 						enableAppointmentsDragAndDrop: true,
 						enableAppointmentsResize: true,
