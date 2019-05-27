@@ -18198,23 +18198,25 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Create on a relative binding with $expand refreshes the newly created entity so
-	// that navigation properties are available.
+	// that navigation properties are available. Context#refresh is then used.
 	// JIRA: CPOUI5UISERVICESV3-1814
 	QUnit.test("Create on a relative binding with $expand", function (assert) {
-		var oModel = createSalesOrdersModel({
+		var oCreatedContext,
+			oModel = createSalesOrdersModel({
 				autoExpandSelect : true,
 				groupId : "$auto",
 				updateGroupId : "$auto"
 			}),
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'1\')}">\
+	<Text id="count" text="{headerContext>$count}"/>\
 	<Table id="table" items="{path : \'SO_2_SOITEM\', parameters : {$select : \'Messages\'}}">\
 		<columns><Column/></columns>\
 		<items>\
 			<ColumnListItem>\
 				<Text id="position" text="{ItemPosition}"/>\
 				<Input id="quantity" value="{Quantity}"/>\
-				<Text id="product" text="{SOITEM_2_PRODUCT/ProductID}"/>\
+				<Input id="product" value="{SOITEM_2_PRODUCT/ProductID}"/>\
 			</ColumnListItem>\
 		</items>\
 	</Table>\
@@ -18239,13 +18241,23 @@ sap.ui.define([
 					}
 				}]
 			})
+			.expectChange("count")
 			.expectChange("position", ["10"])
 			.expectChange("quantity", ["7.000"])
 			.expectChange("product", ["2"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oBinding = that.oView.byId("table").getBinding("items"),
-				oCreatedContext;
+			var oBinding = that.oView.byId("table").getBinding("items");
+
+			that.expectChange("count", "1");
+
+			that.oView.setModel(that.oView.getModel(), "headerContext");
+			that.oView.byId("count")
+				.setBindingContext(oBinding.getHeaderContext(), "headerContext");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oBinding = that.oView.byId("table").getBinding("items");
 
 			that.expectRequest({
 					batchNo : 2,
@@ -18276,6 +18288,7 @@ sap.ui.define([
 						"ProductID" : "3"
 					}
 				})
+				.expectChange("count", "2")
 				// position becomes "" and product null, as _Cache#drillDown resolves with
 				// null for ItemPosition and undefined for SOITEM_2_PRODUCT/ProductID. These values
 				// are formatted differently by sap.ui.model.odata.type.String#formatValue
@@ -18307,6 +18320,104 @@ sap.ui.define([
 
 			return that.checkValueState(assert, oQuantityField, "Warning",
 				"Enter a minimum quantity of 2");
+		}).then(function () {
+			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='20')"
+					+ "?$select=ItemPosition,Messages,Quantity,SalesOrderID"
+					+ "&$expand=SOITEM_2_PRODUCT($select=ProductID)", {
+					"ItemPosition" : "20",
+					"Messages" : [{
+						"code" : "0815",
+						"message" : "Best Product Ever",
+						"numericSeverity" : 2,
+						"target" : "SOITEM_2_PRODUCT/ProductID"
+					}],
+					"Quantity" : "2",
+					"SalesOrderID" : "1",
+					"SOITEM_2_PRODUCT" : {
+						"ProductID" : "42"
+					}
+				})
+				.expectChange("quantity", ["2.000"])
+				.expectChange("product", ["42"])
+				.expectMessages([{
+					"code" : "0815",
+					"message" : "Best Product Ever",
+					"persistent" : false,
+					"target" : "/SalesOrderList('1')"
+						+ "/SO_2_SOITEM(SalesOrderID='1',ItemPosition='20')"
+						+ "/SOITEM_2_PRODUCT/ProductID",
+					"technical" : false,
+					"type" : "Information"
+				}]);
+
+			return Promise.all([
+				// code under test
+				oCreatedContext.refresh("$auto", false),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			var oProductField = that.oView.byId("table").getItems()[0].getCells()[2];
+
+			return that.checkValueState(assert, oProductField, "Information", "Best Product Ever");
+		}).then(function () {
+			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
+					+ "?$select=ItemPosition,Messages,Quantity,SalesOrderID"
+					+ "&$expand=SOITEM_2_PRODUCT($select=ProductID)"
+					+ "&$filter=SalesOrderID%20eq%20'1'", {
+					value: [{ // simulate that entity still matches list's filter
+						"ItemPosition" : "20",
+						"Messages" : [{
+							"code" : "0123",
+							"message" : "Keep on buying!",
+							"numericSeverity" : 1,
+							"target" : "SOITEM_2_PRODUCT/ProductID"
+						}],
+						"Quantity" : "3",
+						"SalesOrderID" : "1",
+						"SOITEM_2_PRODUCT" : {
+							"ProductID" : "42"
+						}
+					}]
+				})
+				.expectChange("quantity", ["3.000"])
+				.expectMessages([{
+					"code" : "0123",
+					"message" : "Keep on buying!",
+					"persistent" : false,
+					"target" : "/SalesOrderList('1')"
+						+ "/SO_2_SOITEM(SalesOrderID='1',ItemPosition='20')"
+						+ "/SOITEM_2_PRODUCT/ProductID",
+					"technical" : false,
+					"type" : "Success"
+				}]);
+
+			return Promise.all([
+				// code under test
+				oCreatedContext.refresh("$auto", true),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			var oProductField = that.oView.byId("table").getItems()[0].getCells()[2];
+
+			return that.checkValueState(assert, oProductField, "Success", "Keep on buying!");
+		}).then(function () {
+			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
+					+ "?$select=ItemPosition,Messages,Quantity,SalesOrderID"
+					+ "&$expand=SOITEM_2_PRODUCT($select=ProductID)"
+					+ "&$filter=SalesOrderID%20eq%20'1'", {
+					value : [] // simulate that entity does not match list's filter anymore
+				})
+				.expectChange("count", "1")
+				.expectChange("position", ["10"])
+				.expectChange("quantity", ["7.000"])
+				.expectChange("product", ["2"])
+				.expectMessages([]); // message for removed row must disappear!
+
+			return Promise.all([
+				// code under test
+				oCreatedContext.refresh("$auto", true),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 });

@@ -607,8 +607,9 @@ sap.ui.define([
 	 *   binding, the parameter must not be used.
 	 *   Supported since 1.55.0
 	 * @throws {Error}
-	 *   If the group ID is not valid, if this context has pending changes, if the binding is not
-	 *   refreshable, if its root binding is suspended, or if the parameter
+	 *   If the group ID is not valid, if this context has pending changes or does not represent a
+	 *   single entity (see {@link sap.ui.model.odata.v4.ODataListBinding#getHeaderContext}), if the
+	 *   binding is not refreshable, if its root binding is suspended, or if the parameter
 	 *   <code>bAllowRemoval/code> is set for a context belonging to a context binding.
 	 *
 	 * @public
@@ -622,10 +623,6 @@ sap.ui.define([
 		}
 
 		if (this.oBinding.refreshSingle) {
-			if (!this.oBinding.isRoot()) {
-				throw new Error("Binding is not refreshable; cannot refresh entity: " + this);
-			}
-
 			this.oBinding.refreshSingle(this, this.oModel.lockGroup(sGroupId, true, this),
 				bAllowRemoval);
 		} else {

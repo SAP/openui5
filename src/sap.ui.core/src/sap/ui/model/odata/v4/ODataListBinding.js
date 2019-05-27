@@ -1711,12 +1711,18 @@ sap.ui.define([
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which resolves with the entity when the entity is updated in the
 	 *   cache, or <code>undefined</code> if <code>bAllowRemoval</code> is set to true.
+	 * @throws {Error}
+	 *   If the given context does not represent a single entity (see {@link #getHeaderContext})
 	 *
 	 * @private
 	 */
 	ODataListBinding.prototype.refreshSingle = function (oContext, oGroupLock, bAllowRemoval) {
 		var sResourcePathPrefix = oContext.getPath().slice(1),
 			that = this;
+
+		if (oContext === this.oHeaderContext) {
+			throw new Error("Unsupported header context: " + oContext);
+		}
 
 		return this.withCache(function (oCache, sPath, oBinding) {
 			var bDataRequested = false,
@@ -1755,7 +1761,7 @@ sap.ui.define([
 			oGroupLock.setGroupId(oBinding.getGroupId());
 			aPromises.push(
 				(bAllowRemoval
-					? oCache.refreshSingleWithRemove(oGroupLock, oContext.getModelIndex(),
+					? oCache.refreshSingleWithRemove(oGroupLock, sPath, oContext.getModelIndex(),
 						fireDataRequested, onRemove)
 					: oCache.refreshSingle(oGroupLock, sPath, oContext.getModelIndex(),
 						fireDataRequested))

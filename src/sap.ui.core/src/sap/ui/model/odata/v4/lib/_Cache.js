@@ -709,9 +709,11 @@ sap.ui.define([
 					= Object.assign({}, _Helper.getQueryOptionsForPath(that.mQueryOptions, sPath));
 
 			// drop collection related system query options
+			delete mQueryOptions["$apply"];
 			delete mQueryOptions["$count"];
 			delete mQueryOptions["$filter"];
 			delete mQueryOptions["$orderby"];
+			delete mQueryOptions["$search"];
 			sReadUrl += that.oRequestor.buildQueryString(that.sMetaPath, mQueryOptions, false,
 				that.bSortExpandSelect);
 
@@ -727,6 +729,73 @@ sap.ui.define([
 
 				return oElement;
 			});
+		});
+	};
+
+	/**
+	 * Refreshes a single entity within a collection cache and removes it from the cache if the
+	 * filter does not match anymore.
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group ID
+	 * @param {string} sPath
+	 *   The entity collection's path within this cache, may be <code>""</code>
+	 * @param {number} iIndex
+	 *   The array index of the entity to be refreshed
+	 * @param {function} [fnDataRequested]
+	 *   The function is called just before the back-end request is sent.
+	 *   If no back-end request is needed, the function is not called.
+	 * @param {function} [fnOnRemove]
+	 *   A function which is called after the entity does not match the binding's filter anymore,
+	 *   see {@link sap.ui.model.odata.v4.ODataListBinding#filter}
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise which resolves with <code>undefined</code> when the entity is updated in
+	 *   the cache.
+	 *
+	 * @private
+	 */
+	Cache.prototype.refreshSingleWithRemove = function (oGroupLock, sPath, iIndex, fnDataRequested,
+			fnOnRemove) {
+		var that = this;
+
+		return SyncPromise.all([
+			this.fetchValue(_GroupLock.$cached, sPath),
+			this.fetchTypes()
+		]).then(function (aResults) {
+			var aElements = aResults[0],
+				oEntity = aElements[iIndex],
+				sPredicate = _Helper.getPrivateAnnotation(oEntity, "predicate"),
+				mQueryOptions
+					= Object.assign({}, _Helper.getQueryOptionsForPath(that.mQueryOptions, sPath)),
+				sFilterOptions = mQueryOptions["$filter"],
+				sReadUrl = _Helper.buildPath(that.sResourcePath, sPath),
+				mTypeForMetaPath = aResults[1];
+
+			delete mQueryOptions["$count"];
+			delete mQueryOptions["$orderby"];
+			mQueryOptions["$filter"] = (sFilterOptions ? "(" + sFilterOptions + ") and " : "")
+				+ _Helper.getKeyFilter(oEntity, that.sMetaPath, mTypeForMetaPath);
+
+			sReadUrl += that.oRequestor.buildQueryString(that.sMetaPath, mQueryOptions, false,
+				that.bSortExpandSelect);
+
+			that.bSentReadRequest = true;
+			return that.oRequestor
+				.request("GET", sReadUrl, oGroupLock, undefined, undefined, fnDataRequested)
+				.then(function (oResult) {
+					if (oResult.value.length > 1) {
+						throw new Error(
+							"Unexpected server response, more than one entity returned.");
+					} else if (oResult.value.length === 0) {
+						that.removeElement(aElements, iIndex, sPredicate, sPath);
+						that.oRequestor.getModelInterface()
+							.reportBoundMessages(that.sResourcePath, [], [sPath + sPredicate]);
+						fnOnRemove();
+					} else {
+						that.replaceElement(aElements, iIndex, sPredicate, oResult.value[0],
+							mTypeForMetaPath, sPath);
+					}
+				});
 		});
 	};
 
@@ -753,12 +822,13 @@ sap.ui.define([
 	 *   The array index of the old element to be removed
 	 * @param {string} sPredicate
 	 *   The key predicate of the old element to be removed
-	 * @param {string} sParentPath
-	 *   The array's path within the cache (as used by change listeners)
+	 * @param {string} sPath
+	 *   The element collection's path within this cache (as used by change listeners), may be
+	 *   <code>""</code>
 	 * @returns {number} The index at which the element actually was (it might have moved due to
 	 *   parallel insert/delete)
 	 */
-	Cache.prototype.removeElement = function (aElements, iIndex, sPredicate, sParentPath) {
+	Cache.prototype.removeElement = function (aElements, iIndex, sPredicate, sPath) {
 		var oElement, sTransientPredicate;
 
 		// the element might have moved due to parallel insert/delete
@@ -770,13 +840,13 @@ sap.ui.define([
 		if (sTransientPredicate) {
 			aElements.$created -= 1;
 			delete aElements.$byPredicate[sTransientPredicate];
-		} else if (!sParentPath) {
-			// Note: sParentPath is empty only in a CollectionCache, so we may use iLmit and
+		} else if (!sPath) {
+			// Note: sPath is empty only in a CollectionCache, so we may use iLmit and
 			// adjustReadRequests
 			this.iLimit -= 1;
 			this.adjustReadRequests(iIndex, -1);
 		}
-		addToCount(this.mChangeListeners, sParentPath, aElements, -1);
+		addToCount(this.mChangeListeners, sPath, aElements, -1);
 		return iIndex;
 	};
 
@@ -800,7 +870,7 @@ sap.ui.define([
 	 * <code>$byPredicate</code> for the transient predicate of the old element.
 	 *
 	 * @param {object[]} aElements
-	 *   The element collection
+	 *   The array of elements
 	 * @param {number} iIndex
 	 *   The array index of the old element to be replaced
 	 * @param {string} sPredicate
@@ -1771,63 +1841,6 @@ sap.ui.define([
 		this.bSentReadRequest = true;
 		// Note: oPromise MUST be a SyncPromise for performance reasons, see SyncPromise#all
 		this.fill(oPromise, iStart, iEnd);
-	};
-
-	/**
-	 * Refreshes a single entity within a collection cache and removes it from the cache if the
-	 * filter does not match anymore.
-	 *
-	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
-	 *   A lock for the group ID
-	 * @param {number} iIndex
-	 *   The array index of the element to be refreshed
-	 * @param {function} [fnDataRequested]
-	 *   The function is called just before the back-end request is sent.
-	 *   If no back-end request is needed, the function is not called.
-	 * @param {function} [fnOnRemove]
-	 *   A function which is called after the entity does not match the binding's filter anymore,
-	 *   see {@link sap.ui.model.odata.v4.ODataListBinding#filter}
-	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise which resolves with <code>undefined</code> when the entity is updated in
-	 *   the cache.
-	 *
-	 * @private
-	 */
-	CollectionCache.prototype.refreshSingleWithRemove = function (oGroupLock, iIndex,
-			fnDataRequested, fnOnRemove) {
-		var that = this;
-
-		return this.fetchTypes().then(function (mTypeForMetaPath) {
-			var oEntity = that.aElements[iIndex],
-				sPredicate = _Helper.getPrivateAnnotation(oEntity, "predicate"),
-				mQueryOptions = jQuery.extend({}, that.mQueryOptions),
-				sFilterOptions = mQueryOptions["$filter"],
-				sReadUrl = that.sResourcePath;
-
-			delete mQueryOptions["$count"];
-			delete mQueryOptions["$orderby"];
-			mQueryOptions["$filter"] = (sFilterOptions ? "(" + sFilterOptions + ") and " : "")
-				+ _Helper.getKeyFilter(oEntity, that.sMetaPath, mTypeForMetaPath);
-
-			sReadUrl += that.oRequestor.buildQueryString(that.sMetaPath, mQueryOptions, false,
-				that.bSortExpandSelect);
-
-			that.bSentReadRequest = true;
-			return that.oRequestor
-				.request("GET", sReadUrl, oGroupLock, undefined, undefined, fnDataRequested)
-				.then(function (oResult) {
-					if (oResult.value.length > 1) {
-						throw new Error(
-							"Unexpected server response, more than one entity returned.");
-					} else if (oResult.value.length === 0) {
-						that.removeElement(that.aElements, iIndex, sPredicate, "");
-						fnOnRemove();
-					} else {
-						that.replaceElement(that.aElements, iIndex, sPredicate, oResult.value[0],
-							mTypeForMetaPath, "");
-					}
-				});
-		});
 	};
 
 	/**
