@@ -877,16 +877,6 @@ sap.ui.define([
 		}
 	};
 
-
-	/**
-	 * @private
-	 * @param {object} oEvent The fired event
-	 */
-	ObjectHeader.prototype.onsapspace = function(oEvent) {
-		// prevent scrolling on SAPCE
-		oEvent.preventDefault();
-	};
-
 	/**
 	 * Handles space key on kye up
 	 *
