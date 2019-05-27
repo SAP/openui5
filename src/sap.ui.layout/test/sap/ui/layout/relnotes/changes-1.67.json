@@ -13,6 +13,12 @@
         "type": "FIX",
         "text": " sap.ui.layout.Grid: Fixed incorrect CSS calculations for IE",
         "references": []
+      },
+      {
+        "id": "494f79dbafa756beaa8108726dea5af36a99e63a",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: shows side content on small screen",
+        "references": []
       }
     ]
   }

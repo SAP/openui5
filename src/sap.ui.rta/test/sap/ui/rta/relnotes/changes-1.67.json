@@ -13,6 +13,12 @@
         "type": "FIX",
         "text": ": RTA Toolbar-Buttons fix",
         "references": []
+      },
+      {
+        "id": "dc6cf6f5965ecafa29acb1c1f9accee37cdf1891",
+        "type": "FIX",
+        "text": ": RTA Context Menu Remove Icon replacement",
+        "references": []
       }
     ]
   }

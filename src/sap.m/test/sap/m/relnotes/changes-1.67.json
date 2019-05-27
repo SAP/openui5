@@ -151,6 +151,102 @@
         "type": "FIX",
         "text": "sap.m.MessageView: Demo Kit sample adjusted",
         "references": []
+      },
+      {
+        "id": "4b3bb2cb621c6c8c05e0372cab3099c9431ca1d5",
+        "type": "FEATURE",
+        "text": " sap.m.Button: Now ignores keys on Space key hold",
+        "references": []
+      },
+      {
+        "id": "049f06bc5153da5c4f48e6c121a4bed4385cb5d6",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendarRow: headerContent aggregation added",
+        "references": []
+      },
+      {
+        "id": "16e4ed29fda891201b13d07bd33938f73bff3754",
+        "type": "FEATURE",
+        "text": " sap.m.Tokenizer: Enhance keyboard handling",
+        "references": []
+      },
+      {
+        "id": "71b7bdbb509291741d53979bf6a262e7d322fa4b",
+        "type": "FIX",
+        "text": " CardExplorer: Learn Section - types topics",
+        "references": []
+      },
+      {
+        "id": "f6dc7a97070328f616369b7a4eb67a5e4720bbf0",
+        "type": "FIX",
+        "text": " HeaderContainer - fix keyboard arrows navigation for some inner components",
+        "references": []
+      },
+      {
+        "id": "fbbee00f69edbdd496173d09f177063b6cc9f118",
+        "type": "FIX",
+        "text": " sap.m.ColorPalette: keyboard navigation fixed",
+        "references": []
+      },
+      {
+        "id": "eb8d0c15d1435350e9a339179ec3a4c1e91c5e29",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Properly clone objects with picker lazy loading",
+        "references": []
+      },
+      {
+        "id": "98d4084b3582fd2db1bd208718465f8ab165f953",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: sap.ui.model.type.Date is now handled correctly",
+        "references": []
+      },
+      {
+        "id": "be1cf7cf6550c80e039cb8970cb8a7e818645722",
+        "type": "FIX",
+        "text": " sap.m.InputBase: When there is BusyIndicator the border is not double anymore",
+        "references": []
+      },
+      {
+        "id": "9dac9b678e5a6e2340ed61b8d5056445e5dea8a6",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Changing month works with minDate and maxDate",
+        "references": []
+      },
+      {
+        "id": "38e34730e4018ca73e4297178e902ade1d21f72d",
+        "type": "FIX",
+        "text": " sap.m.Select: Accessibility labeling in IconOnly mode fixed",
+        "references": []
+      },
+      {
+        "id": "81b8a10477bce3c8ca6a246e3298d1c1132b7234",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed error upon scrolling when Select is opened",
+        "references": []
+      },
+      {
+        "id": "eae62eb4143c206b8acc21910375d408f01e1fd0",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: proper lenght of image names in VT",
+        "references": []
+      },
+      {
+        "id": "1032ccc1a208ac89d6d567d97530c9f199947280",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: The control is a fast navigation group",
+        "references": []
+      },
+      {
+        "id": "1b506513796a310f544f622e225b85f3937939bd",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Better handling of method arguments",
+        "references": []
+      },
+      {
+        "id": "e8884dc9cdd78f1439d89bb70a1ade0a814ad066",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.DatesRow: showDayNamesLine\u003dfalse now works correctly in compact mode for all themes",
+        "references": []
       }
     ]
   }

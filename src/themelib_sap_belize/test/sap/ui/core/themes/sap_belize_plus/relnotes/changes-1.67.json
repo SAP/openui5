@@ -13,6 +13,12 @@
         "type": "FIX",
         "text": " sap.m.SearchField: Focus indication fixed in HCB and HCW themes",
         "references": []
+      },
+      {
+        "id": "449f05f280d35b769de45548d858ab044482a299",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Split button has corect focus in HCB and HCW",
+        "references": []
       }
     ]
   }

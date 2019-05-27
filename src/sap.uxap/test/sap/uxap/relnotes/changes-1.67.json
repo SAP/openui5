@@ -13,6 +13,24 @@
         "type": "FIX",
         "text": " sap.uxap.ObjectPageHeader: Corrected title layout",
         "references": []
+      },
+      {
+        "id": "810ae72f1729b578e719e6444fbb243e1f60e6bf",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageLayout: Single section snap without scroll",
+        "references": []
+      },
+      {
+        "id": "046929ac7316c8f946adaffb8c4d685b005fcb2a",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: setSelectedButton is now called correctly",
+        "references": []
+      },
+      {
+        "id": "6fea24df69798f9afcd110bc43d33540ddb6c10b",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fixed lost focus of pin button",
+        "references": []
       }
     ]
   }

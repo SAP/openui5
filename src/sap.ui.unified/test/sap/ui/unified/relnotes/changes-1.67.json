@@ -7,6 +7,36 @@
         "type": "FIX",
         "text": " sap.m.SinglePlanningCalendar: stickyMode works correctly when start date changes",
         "references": []
+      },
+      {
+        "id": "9dac9b678e5a6e2340ed61b8d5056445e5dea8a6",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Changing month works with minDate and maxDate",
+        "references": []
+      },
+      {
+        "id": "dbfdd5eeed741d8db1385503b106a3ef08268dea",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Two months displayed correctly in Compact mode",
+        "references": []
+      },
+      {
+        "id": "8f7a005baf2075b6d39a16de7b1d731a2727ed65",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: Now the width of the inputs is correct",
+        "references": []
+      },
+      {
+        "id": "e8884dc9cdd78f1439d89bb70a1ade0a814ad066",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.DatesRow: showDayNamesLine\u003dfalse now works correctly in compact mode for all themes",
+        "references": []
+      },
+      {
+        "id": "47d0be57df12171816e6f128b6b958196eaf0698",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month: Now dates are not selected via right click",
+        "references": []
       }
     ]
   }

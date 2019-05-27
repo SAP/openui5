@@ -49,6 +49,36 @@
         "type": "FIX",
         "text": " sap.m.ObjectStatus: Inverted state is shown correctly now",
         "references": []
+      },
+      {
+        "id": "4a2fa1fc148254aa6b68648ced81f847d23e9474",
+        "type": "FIX",
+        "text": " Cleanup Element and Component registry before test execution",
+        "references": []
+      },
+      {
+        "id": "82ab75be0d16672f76b67a9d728a2fddd746400a",
+        "type": "FIX",
+        "text": " ODataMessageParser: Technical message lifecycle",
+        "references": []
+      },
+      {
+        "id": "1ac2f123499b7f4bb170246e660cb3071a867c44",
+        "type": "FIX",
+        "text": " Set FESR state to inactive if content was set to false",
+        "references": []
+      },
+      {
+        "id": "fd3adb42bc98dcfa95d743b89ae2d58a3fe06012",
+        "type": "FIX",
+        "text": " performance/trace/FESR: avoid sending duplicate Passport header",
+        "references": []
+      },
+      {
+        "id": "611e3b29083e0308e90b95070a39a0dc7e225572",
+        "type": "FIX",
+        "text": " v2.ODataContextBinding: Set context or null, to prevent parent context to be applied",
+        "references": []
       }
     ]
   }

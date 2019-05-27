@@ -7,6 +7,12 @@
         "type": "FIX",
         "text": " sap.f.DynamicPage: Pin button visibility toggled correctly",
         "references": []
+      },
+      {
+        "id": "0a19c1796dccabd3733686feb9fe204535bd344f",
+        "type": "FIX",
+        "text": " sap.f.GridList: Counters are correctly positioned",
+        "references": []
       }
     ]
   }

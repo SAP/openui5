@@ -25,6 +25,12 @@
         "type": "FIX",
         "text": ": RTA Toolbar-Buttons fix",
         "references": []
+      },
+      {
+        "id": "e8884dc9cdd78f1439d89bb70a1ade0a814ad066",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.DatesRow: showDayNamesLine\u003dfalse now works correctly in compact mode for all themes",
+        "references": []
       }
     ]
   }
