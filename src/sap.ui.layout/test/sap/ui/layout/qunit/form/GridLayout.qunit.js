@@ -125,7 +125,7 @@ sap.ui.define([
 			title: oTitle1,
 			editable: true,
 			formContainers: aFormContainers
-		}).placeAt("content");
+		}).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 	}
 

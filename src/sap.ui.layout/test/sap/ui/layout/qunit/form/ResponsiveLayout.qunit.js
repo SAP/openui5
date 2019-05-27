@@ -108,7 +108,7 @@ sap.ui.define([
 			layout: oResponsiveLayout,
 			editable: true,
 			formContainers: aFormContainers
-		}).placeAt("content");
+		}).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 	}
 

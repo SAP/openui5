@@ -37,7 +37,7 @@ sap.ui.define([
 				id: "SimpleForm", title: "Simple Form",
 				content: [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
 			});
-			this.oSimpleForm.placeAt("content");
+			this.oSimpleForm.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			var mCommonChangeData = {
@@ -167,7 +167,7 @@ sap.ui.define([
 				id: "SimpleForm", title: "Simple Form",
 				content: [this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
 			});
-			this.oSimpleForm.placeAt("content");
+			this.oSimpleForm.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			var mCommonChangeData = {
@@ -325,7 +325,7 @@ sap.ui.define([
 				id: "SimpleForm", title: "Simple Form",
 				content: [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
 			});
-			this.oSimpleForm.placeAt("content");
+			this.oSimpleForm.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			var mCommonChangeData = {
@@ -435,7 +435,7 @@ sap.ui.define([
 				id: "SimpleForm", title: "Simple Form",
 				content: [this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
 			});
-			this.oSimpleForm.placeAt("content");
+			this.oSimpleForm.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			var mCommonChangeData = {
@@ -552,7 +552,7 @@ sap.ui.define([
 				id: "SimpleForm", title: "Simple Form",
 				content: [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1, this.oTitle1, this.oLabel2, this.oInput2, this.oLabel3, this.oInput3]
 			});
-			this.oSimpleForm.placeAt("content");
+			this.oSimpleForm.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			var mCommonChangeData = {
