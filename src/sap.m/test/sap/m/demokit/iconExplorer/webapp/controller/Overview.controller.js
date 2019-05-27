@@ -740,7 +740,7 @@ sap.ui.define([
 				path: sGroupPath + "/icons",
 				length: this.getModel("view").getProperty("/growingThreshold"),
 				template: this.byId("results").getBindingInfo(this._sAggregationName).template.clone(),
-				templateSharable: true,
+				templateShareable: true,
 				events: {
 					change: this.onUpdateFinished.bind(this)
 				},
