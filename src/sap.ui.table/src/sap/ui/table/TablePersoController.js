@@ -420,7 +420,7 @@ sap.ui.define([
 						persoService: that.getPersoService(),
 						showSelectAll: true,
 						showResetAll: true,
-						grouping: false,
+						hasGrouping: false,
 						contentWidth: mSettings && mSettings.contentWidth,
 						contentHeight: mSettings && mSettings.contentHeight || "20rem",
 						initialColumnState: that._oInitialPersoData.aColumns,
