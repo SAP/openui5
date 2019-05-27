@@ -6,11 +6,12 @@
 sap.ui.define([
 	'./TablePersoDialog',
 	'sap/ui/base/ManagedObject',
+	'sap/ui/base/ManagedObjectRegistry',
 	"sap/ui/core/syncStyleClass",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(TablePersoDialog, ManagedObject, syncStyleClass, Log, jQuery) {
+	function(TablePersoDialog, ManagedObject, ManagedObjectRegistry, syncStyleClass, Log, jQuery) {
 	"use strict";
 
 
@@ -88,6 +89,24 @@ sap.ui.define([
 
 	});
 
+	// apply the registry mixin
+	ManagedObjectRegistry.apply(TablePersoController, {
+		onDuplicate: function(sId, oldController, newController) {
+			if ( oldController._sapui_candidateForDestroy ) {
+				Log.debug("destroying dangling template " + oldController + " when creating new object with same ID");
+				oldController.destroy();
+			} else {
+				var sMsg = "adding TablePersoController with duplicate id '" + sId + "'";
+				// duplicate ID detected => fail or at least log a warning
+				if (sap.ui.getCore().getConfiguration().getNoDuplicateIds()) {
+					Log.error(sMsg);
+					throw new Error("Error: " + sMsg);
+				} else {
+					Log.warning(sMsg);
+				}
+			}
+		}
+	});
 
 	/**
 	 * Initializes the TablePersoController instance after creation.

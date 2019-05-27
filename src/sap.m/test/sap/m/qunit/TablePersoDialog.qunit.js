@@ -204,6 +204,26 @@ sap.ui.define([
 		assert.strictEqual(oPersData.aColumns, undefined, "No personalization data until dialog opened");
 	});
 
+	QUnit.test("Duplicate TablePersoDialog", function(assert) {
+
+		var oTPD1 = new TablePersoDialog("TPD");
+		var oTPD2;
+		var oException;
+
+		try {
+			oTPD2 = new TablePersoDialog("TPD");
+		} catch (oError) {
+			oException = oError;
+		}
+
+		assert.ok(oException, "Exception fired");
+		assert.equal(oException.message, "Error: adding TablePersoDialog with duplicate id 'TPD'");
+		assert.notOk(oTPD2, "No duplicate created");
+
+		oTPD1.destroy();
+
+	});
+
 
 	QUnit.module("Open, 'Reset All'-, 'Select All' Visibility", {
 		beforeEach: fnInit,
