@@ -94,7 +94,12 @@
 		  "pattern": "explore/:key:/:subSampleKey:",
 		  "name": "exploreSamples",
 		  "target": "exploreSamples"
-		}
+		},
+		  {
+			  "pattern": "exploreOverview/:key:",
+			  "name": "exploreOverview",
+			  "target": "exploreOverview"
+		  }
 	  ],
 	  "targets": {
 		"learnDetail": {
@@ -107,6 +112,11 @@
 		  "viewId": "exploreSamples",
 		  "viewLevel": 2
 		},
+	    "exploreOverview": {
+		  "viewName": "ExploreOverview",
+		  "viewId": "exploreOverview",
+		  "viewLevel": 2
+	    },
 		"notFound": {
 		  "viewName": "NotFound",
 		  "viewId": "notFound"
