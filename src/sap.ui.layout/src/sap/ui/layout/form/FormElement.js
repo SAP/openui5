@@ -328,7 +328,7 @@ sap.ui.define([
 		if (oChanges.object == this) {
 			// it's the FormElement
 			if (oChanges.name == "fields") {
-				_fieldsChanged.call(this, oChanges);
+				_fieldChanged.call(this, oChanges.child, oChanges.mutation);
 			}
 		} else {
 			// it's some content control
@@ -338,20 +338,6 @@ sap.ui.define([
 	};
 
 	// *** Private helper functions ***
-
-	function _fieldsChanged(oChanges) {
-
-			if (oChanges.child) {
-				_fieldChanged.call(this, oChanges.child, oChanges.mutation);
-			} else if (oChanges.children) {
-				for (var i = 0; i < oChanges.chlidren.length; i++) {
-					_fieldChanged.call(this, oChanges.children[i], oChanges.mutation);
-				}
-			}
-
-		_updateLabelFor.call(this);
-
-	}
 
 	function _fieldChanged(oField, sMutation) {
 
@@ -363,6 +349,8 @@ sap.ui.define([
 		} else {
 			_detachDelegate.call(this, oField);
 		}
+
+		_updateLabelFor.call(this);
 
 	}
 
