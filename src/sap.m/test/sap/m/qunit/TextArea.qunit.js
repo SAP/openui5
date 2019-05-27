@@ -674,6 +674,7 @@ sap.ui.define([
 
 		//arrange
 		oTA.setValue(sInitValue);
+		sap.ui.getCore().applyChanges();
 		assert.strictEqual(oTA.getValue(), sInitValue, "The TextArea value is correct");
 		assert.strictEqual(oCounter[0].innerText, oBundle.getText(sMessageBundleKey + "_EXCEEDED", 12), "The counter is empty");
 		assert.strictEqual(oTA.$("inner")[0].hasAttribute("aria-labelledby"), true, "The TextArea has got an aria-labelledby attribute");

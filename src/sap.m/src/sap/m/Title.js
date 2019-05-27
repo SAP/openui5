@@ -12,10 +12,9 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/library',
 	'./TitleRenderer',
-	"sap/base/security/encodeXML",
 	"sap/m/HyphenationSupport"
 ],
-	function(Control, library, coreLibrary, TitleRenderer, encodeXML, HyphenationSupport) {
+	function(Control, library, coreLibrary, TitleRenderer, HyphenationSupport) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextAlign
@@ -144,26 +143,6 @@ sap.ui.define([
 		designtime: "sap/m/designtime/Title.designtime"
 
 	}});
-
-	/**
-	 * Sets text within the title.
-	 *
-	 * @name sap.m.Title.setText
-	 * @method
-	 * @public
-	 * @param {string} sText Text that will be set for the title.
-	 * @returns {sap.m.Title} this Title reference for chaining.
-	 */
-	Title.prototype.setText = function(sText) {
-		var oRef = this.getDomRef("inner");
-		var bPatchDom = oRef && !this._getTitle();
-		this.setProperty("text", sText, bPatchDom);
-		if (bPatchDom) {
-			oRef.innerHTML = encodeXML(HyphenationSupport.getTextForRender(this, "main") || "");
-		}
-		return this;
-	};
-
 
 	/**
 	 * Gets the currently set title.

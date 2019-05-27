@@ -405,6 +405,7 @@ function (
 	}, function () {
 		QUnit.test("when the control's domRef is changed to visible...", function(assert) {
 			this.oLabel.setText("test");
+			sap.ui.getCore().applyChanges();
 			this.oOverlay.applyStyles();
 			assert.ok(DOMUtil.isVisible(this.oOverlay.getDomRef()), "the overlay is also visible in DOM");
 		});
