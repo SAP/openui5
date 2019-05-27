@@ -30,7 +30,8 @@ sap.ui.define([
 
 	var oFakeMsgProcessor = {
 		_getFunctionImportMetadata: function(){},
-		resolve: function(){}
+		resolve: function(){},
+		_isCollection: function(){return false;}
 	};
 
 	function createControls() {

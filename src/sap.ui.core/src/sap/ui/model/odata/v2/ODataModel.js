@@ -1332,7 +1332,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a request URL.
+	 * Creates a request URL with binding path and context.
 	 * @param {string} sPath Binding path
 	 * @param {object} [oContext] Binding context
 	 * @param {array} [aUrlParams] URL parameters
@@ -1341,12 +1341,19 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._createRequestUrl = function(sPath, oContext, aUrlParams, bBatch) {
-		// create the url for the service
-		var sNormalizedPath,
-			sUrl = "";
+		return this._createRequestUrlWithNormalizedPath(this._normalizePath(sPath, oContext), aUrlParams, bBatch);
+	};
 
-		sNormalizedPath = this._normalizePath(sPath, oContext);
-
+	/**
+	 * Creates a request URL with normalized absolute binding path.
+	 * @param {string} sNormalizedPath normalized binding path
+	 * @param {array} [aUrlParams] URL parameters
+	 * @param {boolean} [bBatch] For requests nested in a batch, a relative URI will be created
+	 * @returns {string} The request URL
+	 * @private
+	 */
+	ODataModel.prototype._createRequestUrlWithNormalizedPath = function(sNormalizedPath, aUrlParams, bBatch) {
+		var sUrl = "";
 		if (!bBatch) {
 			sUrl = this.sServiceUrl + sNormalizedPath;
 		} else {
@@ -1953,8 +1960,7 @@ sap.ui.define([
 		if (!bReload) {
 			sCanonicalPath = this.resolve(sPath, oContext, true);
 			if (sCanonicalPath) {
-				oNewContext = this.getContext(sCanonicalPath);
-				oNewContext.sDeepPath = sDeepPath;
+				oNewContext = this.getContext(sCanonicalPath, sDeepPath);
 			} else {
 				oNewContext = null;
 			}
@@ -1973,8 +1979,7 @@ sap.ui.define([
 			oNewContext = null;
 
 			if (sKey) {
-				oNewContext = that.getContext('/' + sKey);
-				oNewContext.sDeepPath = sDeepPath;
+				oNewContext = that.getContext('/' + sKey, sDeepPath);
 				oRef = {__ref: sKey};
 			}
 			/* in case of sPath == "" or a deep path (entity(1)/entities) we
@@ -2026,8 +2031,7 @@ sap.ui.define([
 
 		if (mParameters && mParameters.createPreliminaryContext) {
 			sResolvedPath = this.resolve(sPath, oContext);
-			oNewContext = this.getContext(sResolvedPath);
-			oNewContext.sDeepPath = sDeepPath;
+			oNewContext = this.getContext(sResolvedPath, sDeepPath);
 			return oNewContext;
 		}
 
@@ -2836,7 +2840,7 @@ sap.ui.define([
 	ODataModel.prototype.refreshSecurityToken = function(fnSuccess, fnError, bAsync) {
 		var sToken;
 		var that = this;
-		var sUrl = this._createRequestUrl("/");
+		var sUrl = this._createRequestUrlWithNormalizedPath("/");
 
 		var mTokenRequest = {
 			abort: function() {
@@ -3598,10 +3602,7 @@ sap.ui.define([
 								that.increaseLaundering(sPath, aChangeSet[i].request.data);
 								checkAbort(aChangeSet[i], oWrappedBatchRequestHandle);
 								if (aChangeSet[i].parts.length > 0) {
-									//clear metadata.create
-									if (aChangeSet[i].request.data && aChangeSet[i].request.data.__metadata) {
-										delete aChangeSet[i].request.data.__metadata.created;
-									}
+									that.removeInternalMetadata(aChangeSet[i].request.data);
 									oChangeSet.__changeRequests.push(aChangeSet[i].request);
 									aChanges.push(aChangeSet[i]);
 								}
@@ -3845,6 +3846,7 @@ sap.ui.define([
 	 */
 	ODataModel.prototype._processError = function(oRequest, oResponse, fnError, bBatch, aRequests) {
 		var sPath, oError = this._handleError(oResponse, oRequest);
+
 		if (!bBatch) {
 			// decrease laundering
 			sPath = '/' + this.getKey(oRequest.data);
@@ -3928,6 +3930,14 @@ sap.ui.define([
 	 */
 	ODataModel.prototype._processChange = function(sKey, oData, sUpdateMethod, sDeepPath) {
 		var oPayload, oEntityType, mParams, sMethod, sETag, sUrl, bCreated, mHeaders, aUrlParams, oRequest, oUnModifiedEntry, that = this;
+
+		if (sDeepPath && this.mChangedEntities[sKey].__metadata) {
+			// store or update deep path
+			this.mChangedEntities[sKey].__metadata.deepPath = sDeepPath;
+		} else if (!sDeepPath && this.mChangedEntities[sKey].__metadata && this.mChangedEntities[sKey].__metadata.deepPath){
+			// retrieve deep path
+			sDeepPath = this.mChangedEntities[sKey].__metadata.deepPath;
+		}
 
 		// delete expand properties = navigation properties
 		oEntityType = this.oMetadata._getEntityTypeByPath(sKey);
@@ -4013,7 +4023,7 @@ sap.ui.define([
 
 		sUrl = this._createRequestUrl('/' + sKey, null, aUrlParams, this.bUseBatch);
 
-		oRequest = this._createRequest(sUrl, sDeepPath ,sMethod, mHeaders, oPayload, sETag);
+		oRequest = this._createRequest(sUrl, sDeepPath, sMethod, mHeaders, oPayload, sETag);
 
 
 		//for createEntry requests we need to flag request again
@@ -4371,7 +4381,7 @@ sap.ui.define([
 		var fnSuccess, fnError, oRequest, sUrl, oContext, sETag,
 			aUrlParams, sGroupId, sChangeSetId,
 			mUrlParams, mHeaders, sMethod, mRequests, bRefreshAfterChange,
-			bDeferred, that = this;
+			bDeferred, that = this, sNormalizedPath, sDeepPath;
 
 		if (mParameters) {
 			sGroupId = mParameters.groupId || mParameters.batchGroupId;
@@ -4398,10 +4408,12 @@ sap.ui.define([
 		sMethod = sMethod ? sMethod : this.sDefaultUpdateMethod;
 		sETag = sETag || this._getETag(sPath, oContext, oData);
 
+		sNormalizedPath = this._normalizePath(sPath, oContext);
+		sDeepPath = this.resolveDeep(sPath, oContext);
 
 		return this._processRequest(function(requestHandle) {
-			sUrl = that._createRequestUrl(sPath, oContext, aUrlParams, that.bUseBatch);
-			oRequest = that._createRequest(sUrl, that.resolveDeep(sPath, oContext), sMethod, mHeaders, oData, sETag);
+			sUrl = that._createRequestUrlWithNormalizedPath(sNormalizedPath, aUrlParams, that.bUseBatch);
+			oRequest = that._createRequest(sUrl, sDeepPath, sMethod, mHeaders, oData, sETag);
 
 			mRequests = that.mRequests;
 			if (bDeferred) {
@@ -4446,7 +4458,7 @@ sap.ui.define([
 		var oRequest, sUrl, oEntityMetadata,
 		oContext, fnSuccess, fnError, mUrlParams, mRequests,
 		mHeaders, aUrlParams, sEtag, sGroupId, sMethod, sChangeSetId, bRefreshAfterChange,
-		bDeferred, that = this;
+		bDeferred, that = this, sNormalizedPath, sDeepPath;
 
 		// The object parameter syntax has been used.
 		if (mParameters) {
@@ -4468,13 +4480,15 @@ sap.ui.define([
 
 		bDeferred = sGroupId in that.mDeferredGroups;
 
+		sNormalizedPath = that._normalizePath(sPath, oContext);
+		sDeepPath = this.resolveDeep(sPath, oContext);
+
 		return this._processRequest(function(requestHandle) {
-			sUrl = that._createRequestUrl(sPath, oContext, aUrlParams, that.bUseBatch);
-			oRequest = that._createRequest(sUrl, that.resolveDeep(sPath, oContext), sMethod, mHeaders, oData, sEtag);
+			sUrl = that._createRequestUrlWithNormalizedPath(sNormalizedPath, aUrlParams, that.bUseBatch);
+			oRequest = that._createRequest(sUrl, sDeepPath, sMethod, mHeaders, oData, sEtag);
 			oRequest.created = true;
 
-			sPath = that._normalizePath(sPath, oContext);
-			oEntityMetadata = that.oMetadata._getEntityTypeByPath(sPath);
+			oEntityMetadata = that.oMetadata._getEntityTypeByPath(sNormalizedPath);
 			oRequest.entityTypes = {};
 			if (oEntityMetadata) {
 				oRequest.entityTypes[oEntityMetadata.entityType] = true;
@@ -4518,7 +4532,7 @@ sap.ui.define([
 		var oContext, sKey, fnSuccess, fnError, oRequest, sUrl, sGroupId,
 		sChangeSetId, sETag, bRefreshAfterChange,
 		mUrlParams, mHeaders, aUrlParams, sMethod, mRequests,
-		bDeferred, that = this;
+		bDeferred, that = this, sNormalizedPath, sDeepPath;
 
 		if (mParameters) {
 			sGroupId = mParameters.groupId || mParameters.batchGroupId;
@@ -4540,6 +4554,9 @@ sap.ui.define([
 
 		bDeferred = sGroupId in that.mDeferredGroups;
 
+		sNormalizedPath = this._normalizePath(sPath, oContext);
+		sDeepPath = this.resolveDeep(sPath, oContext);
+
 		function handleSuccess(oData, oResponse) {
 			sKey = sUrl.substr(sUrl.lastIndexOf('/') + 1);
 			//remove query params if any
@@ -4554,8 +4571,8 @@ sap.ui.define([
 		}
 
 		return this._processRequest(function(requestHandle) {
-			sUrl = that._createRequestUrl(sPath, oContext, aUrlParams, that.bUseBatch);
-			oRequest = that._createRequest(sUrl, that.resolveDeep(sPath, oContext), sMethod, mHeaders, undefined, sETag);
+			sUrl = that._createRequestUrlWithNormalizedPath(sNormalizedPath, aUrlParams, that.bUseBatch);
+			oRequest = that._createRequest(sUrl, sDeepPath, sMethod, mHeaders, undefined, sETag);
 
 			mRequests = that.mRequests;
 			if (bDeferred) {
@@ -4697,7 +4714,7 @@ sap.ui.define([
 
 			aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
 
-			sUrl = that._createRequestUrl(sFunctionName, null, aUrlParams, that.bUseBatch);
+			sUrl = that._createRequestUrlWithNormalizedPath(sFunctionName, aUrlParams, that.bUseBatch);
 			oRequest = that._createRequest(sUrl, that.resolveDeep(sFunctionName, oContext), sMethod, mHeaders, undefined, sETag);
 			oRequest.key = sKey;
 
@@ -4768,10 +4785,10 @@ sap.ui.define([
 		var oRequest, sUrl,
 		oContext, mUrlParams, fnSuccess, fnError,
 		aFilters, aSorters, sFilterParams, sSorterParams,
-		oFilter, oEntityType, sNormalizedPath,
+		oFilter, oEntityType,
 		aUrlParams, mHeaders, sMethod,
 		sGroupId, sETag,
-		mRequests,
+		mRequests, sNormalizedTempPath, sDeepPath, sNormalizedPath,
 		that = this;
 
 		// The object parameter syntax has been used.
@@ -4805,6 +4822,19 @@ sap.ui.define([
 			}
 		};
 
+		var sTempPath = sPath;
+		var iIndex = sPath.indexOf("$count");
+		// check if we have a manual count request with filters. Then we have to manually adjust the path.
+		if (iIndex !== -1) {
+			sTempPath = sPath.substring(0, iIndex - 1);
+		}
+		sNormalizedTempPath = that._normalizePath(sTempPath, oContext);
+
+		sNormalizedPath = this._normalizePath(sPath, oContext);
+		sDeepPath = this.resolveDeep(sPath, oContext);
+
+
+
 		function createReadRequest(requestHandle) {
 			// Add filter/sorter to URL parameters
 			sSorterParams = ODataUtils.createSortParams(aSorters);
@@ -4812,23 +4842,15 @@ sap.ui.define([
 				aUrlParams.push(sSorterParams);
 			}
 
-			var sTempPath = sPath;
-			var iIndex = sPath.indexOf("$count");
-			// check if we have a manual count request with filters. Then we have to manually adjust the path.
-			if (iIndex !== -1) {
-				sTempPath = sPath.substring(0, iIndex - 1);
-			}
-
-			sNormalizedPath = that._normalizePath(sTempPath, oContext);
-			oEntityType = that.oMetadata._getEntityTypeByPath(sNormalizedPath);
+			oEntityType = that.oMetadata._getEntityTypeByPath(sNormalizedTempPath);
 			oFilter = FilterProcessor.groupFilters(aFilters);
 			sFilterParams = ODataUtils.createFilterParams(oFilter, that.oMetadata, oEntityType);
 			if (sFilterParams) {
 				aUrlParams.push(sFilterParams);
 			}
 
-			sUrl = that._createRequestUrl(sPath, oContext, aUrlParams, that.bUseBatch);
-			oRequest = that._createRequest(sUrl, that.resolveDeep(sPath, oContext), sMethod, mHeaders, null, sETag);
+			sUrl = that._createRequestUrlWithNormalizedPath(sNormalizedPath, aUrlParams, that.bUseBatch);
+			oRequest = that._createRequest(sUrl, sDeepPath, sMethod, mHeaders, null, sETag);
 
 			mRequests = that.mRequests;
 			if (sGroupId in that.mDeferredGroups) {
@@ -5176,6 +5198,8 @@ sap.ui.define([
 				merge(oEntry, oData);
 
 				sRootPath = '/' + sKey;
+
+				var sDeepPath = that.removeInternalMetadata(oChangedEntry).deepPath;
 				updateChangedEntities(oEntry, oChangedEntry, sRootPath);
 
 				if (isEmptyObject(oChangedEntry)) {
@@ -5183,7 +5207,7 @@ sap.ui.define([
 					that.abortInternalRequest(that._resolveGroup(sKey).groupId, {requestKey: sKey});
 				} else {
 					that.mChangedEntities[sKey] = oChangedEntry;
-					oChangedEntry.__metadata = {};
+					oChangedEntry.__metadata = {deepPath: sDeepPath};
 					jQuery.extend(oChangedEntry.__metadata, oEntry.__metadata);
 				}
 			}
@@ -5304,7 +5328,7 @@ sap.ui.define([
 			sResolvedPath, aParts,	sKey, oGroupInfo, oRequestHandle, oEntityMetadata,
 			mChangedEntities = {}, oEntityInfo = {}, mParams, oChangeObject, bRefreshAfterChange,
 			bFunction = false, that = this, bCreated,
-			oEntityType, oNavPropRefInfo, bIsNavPropExpanded, mKeys, oRef;
+			oEntityType, oNavPropRefInfo, bIsNavPropExpanded, mKeys, oRef, sDeepPath;
 
 		function updateChangedEntities(oOriginalObject, oChangedObject) {
 			each(oChangedObject,function(sKey) {
@@ -5320,8 +5344,10 @@ sap.ui.define([
 		}
 
 		sResolvedPath = this.resolve(sPath, oContext);
+		sDeepPath = this.resolveDeep(sPath, oContext);
 
 		oEntry = this.getEntityByPath(sResolvedPath, null, oEntityInfo);
+
 		if (!oEntry) {
 			return false;
 		}
@@ -5335,7 +5361,11 @@ sap.ui.define([
 		if (!this.mChangedEntities[sKey]) {
 			oEntityMetadata = oEntry.__metadata;
 			oEntry = {};
-			oEntry.__metadata = Object.assign({},oEntityMetadata);
+			oEntry.__metadata = Object.assign({}, oEntityMetadata);
+			if (oEntityInfo.propertyPath.length > 0){
+				var iIndex = sDeepPath.lastIndexOf(oEntityInfo.propertyPath);
+				oEntry.__metadata.deepPath = sDeepPath.substring(0, iIndex - 1);
+			}
 			this.mChangedEntities[sKey] = oEntry;
 		}
 
@@ -5402,12 +5432,11 @@ sap.ui.define([
 
 		mRequests = this.mRequests;
 
-		var sDeepPath = this.resolveDeep(sPath, oContext);
 		if (oGroupInfo.groupId in this.mDeferredGroups) {
 			mRequests = this.mDeferredRequests;
-			oRequest = this._processChange(sKey, {__metadata : oEntry.__metadata}, this.sDefaultUpdateMethod, sDeepPath);
+			oRequest = this._processChange(sKey, {__metadata : oEntry.__metadata}, this.sDefaultUpdateMethod);
 		} else {
-			oRequest = this._processChange(sKey, this._getObject('/' + sKey), this.sDefaultUpdateMethod, sDeepPath);
+			oRequest = this._processChange(sKey, this._getObject('/' + sKey), this.sDefaultUpdateMethod);
 		}
 		oRequest.key = sKey;
 		//get params for created entries: could contain success/error handler
@@ -5687,7 +5716,7 @@ sap.ui.define([
 			mUrlParams, mHeaders, mRequests, vProperties, oEntity = {},
 			fnCreated,
 			sMethod = "POST",
-			that = this;
+			that = this, sDeepPath, sNormalizedPath;
 
 		if (mParameters) {
 			vProperties = mParameters.properties;
@@ -5717,15 +5746,20 @@ sap.ui.define([
 			}
 		};
 
+		if (!sPath.startsWith("/") && !oContext) {
+			sPath = "/" + sPath;
+		}
+
+		sNormalizedPath = that._normalizePath(sPath, oContext);
+		sDeepPath = that.resolveDeep(sPath, oContext);
+
 		function create() {
 			var oCreatedContext;
-			if (!sPath.startsWith("/")) {
-				sPath = "/" + sPath;
-			}
-			var oEntityMetadata = that.oMetadata._getEntityTypeByPath(sPath);
+
+			var oEntityMetadata = that.oMetadata._getEntityTypeByPath(sNormalizedPath);
 			if (!oEntityMetadata) {
 
-				assert(oEntityMetadata, "No Metadata for collection " + sPath + " found");
+				assert(oEntityMetadata, "No Metadata for collection " + sNormalizedPath + " found");
 				return undefined;
 			}
 			if (typeof vProperties === "object" && !Array.isArray(vProperties)) {
@@ -5748,26 +5782,37 @@ sap.ui.define([
 			}
 			//get EntitySet metadata for data storage
 			var oEntitySetMetadata = that.oMetadata._getEntitySetByType(oEntityMetadata);
-			sKey = oEntitySetMetadata.name + "('" + uid() + "')";
+			var sUiD = "('" + uid() + "')";
+			sKey = oEntitySetMetadata.name + sUiD;
 
-			oEntity.__metadata = {type: "" + oEntityMetadata.entityType, uri: that.sServiceUrl + '/' + sKey, created: {
-				//store path for later POST
-				key: sPath.substring(1),
-				success: fnSuccess,
-				error: fnError,
-				headers: mHeaders,
-				urlParameters: mUrlParams,
-				groupId: sGroupId,
-				changeSetId: sChangeSetId,
-				eTag: sETag}};
+
+			if (sDeepPath && that.oMetadata._isCollection(sDeepPath)){
+				sDeepPath = sDeepPath + sUiD;
+			}
+
+			oEntity.__metadata = {
+				type: "" + oEntityMetadata.entityType,
+				uri: that.sServiceUrl + '/' + sKey,
+				created: {//store path for later POST
+					key: sNormalizedPath.substring(1),
+					success: fnSuccess,
+					error: fnError,
+					headers: mHeaders,
+					urlParameters: mUrlParams,
+					groupId: sGroupId,
+					changeSetId: sChangeSetId,
+					eTag: sETag
+				},
+				deepPath: sDeepPath
+			};
 
 			sKey = that._addEntity(merge({}, oEntity));
 			that.mChangedEntities[sKey] = oEntity;
 
-			sUrl = that._createRequestUrl(sPath, oContext, aUrlParams, that.bUseBatch);
-			oRequest = that._createRequest(sUrl, that.resolveDeep(sPath, oContext), sMethod, mHeaders, oEntity, sETag);
+			sUrl = that._createRequestUrlWithNormalizedPath(sNormalizedPath, aUrlParams, that.bUseBatch);
+			oRequest = that._createRequest(sUrl, sDeepPath, sMethod, mHeaders, oEntity, sETag);
 
-			oCreatedContext = that.getContext("/" + sKey); // context wants a path
+			oCreatedContext = that.getContext("/" + sKey, sDeepPath); // context wants a path
 			oCreatedContext.bCreated = true;
 
 			oRequest.key = sKey;
@@ -6636,5 +6681,37 @@ sap.ui.define([
 			});
 	};
 
+	/**
+	 * Enriches the context with the deep path information.
+	 * @param {string} context path
+	 * @param {string} [sDeepPath=sPath] context deep path
+	 * @returns {sap.ui.model.Context} Enriched context
+	 * @private
+	 */
+	ODataModel.prototype.getContext = function(sPath, sDeepPath){
+		var oContext = Model.prototype.getContext.apply(this, arguments);
+		oContext.sDeepPath = sDeepPath || sPath;
+		return oContext;
+	};
+
+	/**
+	 * Removes model internal metadata information, which is not known to the back-end.
+	 * @param {object} entity data
+	 * @returns {map} Map containing the removed information
+	 * @private
+	 */
+
+	ODataModel.prototype.removeInternalMetadata = function(oEntityData){
+		var sCreated, sDeepPath;
+		if (oEntityData && oEntityData.__metadata) {
+			sCreated = oEntityData.__metadata.created;
+			sDeepPath = oEntityData.__metadata.deepPath;
+			delete oEntityData.__metadata.created;
+			delete oEntityData.__metadata.deepPath;
+		}
+		return {created: sCreated, deepPath: sDeepPath};
+	};
+
 	return ODataModel;
 });
+
