@@ -980,14 +980,15 @@ sap.ui.define([
 	};
 
 	AnchorBar.prototype._computeNextSectionInfo = function (oContent) {
-		var oButton = oContent.isA("sap.m.MenuButton") ? oContent._getButtonControl() : oContent;
+		var oButton = oContent.isA("sap.m.MenuButton") ? oContent._getButtonControl() : oContent,
+			bSelected = oContent.hasStyleClass("sapUxAPAnchorBarButtonSelected");
 
 		// set ARIA has-popup if button opens submenu
 		if (oContent.data("bHasSubMenu")) {
 			oButton.$().attr("aria-haspopup", "true");
 		}
 		// set ARIA attributes of main buttons
-		oButton.$().attr("aria-controls", oContent.data("sectionId")).attr("aria-checked", false);
+		oButton.$().attr("aria-controls", oContent.data("sectionId")).attr("aria-checked", bSelected);
 
 		var iWidth = oContent.$().outerWidth(true);
 
