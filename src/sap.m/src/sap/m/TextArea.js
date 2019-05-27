@@ -216,6 +216,7 @@ function(
 		InputBase.prototype.exit.call(this);
 		jQuery(window).off("resize.sapMTextAreaGrowing");
 		this._detachResizeHandler();
+		this._deregisterEvents();
 	};
 
 	TextArea.prototype.onBeforeRendering = function() {
@@ -225,6 +226,7 @@ function(
 			oCounter.setVisible(false);
 		}
 		this._detachResizeHandler();
+		this._deregisterEvents();
 	};
 
 	// Attach listeners on after rendering and find iscroll
@@ -264,6 +266,17 @@ function(
 					e.stopPropagation();
 				}
 			});
+		}
+	};
+
+	/**
+	 * Removes events from the textarea.
+	 *
+	 * @private
+	 */
+	TextArea.prototype._deregisterEvents = function() {
+		if (Device.support.touch) {
+			this.$("inner").off();
 		}
 	};
 

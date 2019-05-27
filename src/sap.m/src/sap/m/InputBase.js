@@ -1030,63 +1030,6 @@ function(
 		return this.getId() + "-inner";
 	};
 
-	InputBase.prototype.setTooltip = function(vTooltip) {
-		var oDomRef = this.getDomRef();
-
-		this._refreshTooltipBaseDelegate(vTooltip);
-		this.setAggregation("tooltip", vTooltip, true);
-
-		if (!oDomRef) {
-			return this;
-		}
-
-		var sTooltip = this.getTooltip_AsString();
-
-		if (sTooltip) {
-			oDomRef.setAttribute("title", sTooltip);
-		} else {
-			oDomRef.removeAttribute("title");
-		}
-
-		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
-
-			var oDescribedByDomRef = this.getDomRef("describedby"),
-				sAnnouncement = this.getRenderer().getDescribedByAnnouncement(this),
-				sDescribedbyId = this.getId() + "-describedby",
-				sAriaDescribedByAttr = "aria-describedby",
-				oFocusDomRef = this.getFocusDomRef(),
-				sAriaDescribedby = oFocusDomRef.getAttribute(sAriaDescribedByAttr);
-
-			if (!oDescribedByDomRef && sAnnouncement) {
-				oDescribedByDomRef = document.createElement("span");
-				oDescribedByDomRef.id = sDescribedbyId;
-				oDescribedByDomRef.setAttribute("aria-hidden", "true");
-				oDescribedByDomRef.className = "sapUiInvisibleText";
-
-				if (this.getAriaDescribedBy) {
-					oFocusDomRef.setAttribute(sAriaDescribedByAttr, (this.getAriaDescribedBy().join(" ") + " " + sDescribedbyId).trim());
-				} else {
-					oFocusDomRef.setAttribute(sAriaDescribedByAttr, sDescribedbyId);
-				}
-
-				oDomRef.appendChild(oDescribedByDomRef);
-			} else if (oDescribedByDomRef && !sAnnouncement) {
-				oDescribedByDomRef.parentNode.removeChild(oDescribedByDomRef);
-				var sDescribedByDomRefId = oDescribedByDomRef.id;
-
-				if (sAriaDescribedby && sDescribedByDomRefId) {
-					oFocusDomRef.setAttribute(sAriaDescribedByAttr, sAriaDescribedby.replace(sDescribedByDomRefId, "").trim());
-				}
-			}
-
-			if (oDescribedByDomRef) {
-				oDescribedByDomRef.textContent = sAnnouncement;
-			}
-		}
-
-		return this;
-	};
-
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
