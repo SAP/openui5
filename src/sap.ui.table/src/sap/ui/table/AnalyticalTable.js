@@ -177,8 +177,6 @@ sap.ui.define([
 
 		this.addStyleClass("sapUiAnalyticalTable");
 
-		this.attachBrowserEvent("contextmenu", this._onContextMenu);
-
 		// defaulting properties
 		this.setShowColumnVisibilityMenu(true);
 		this.setEnableColumnFreeze(true);
@@ -473,7 +471,7 @@ sap.ui.define([
 		}
 	};
 
-	AnalyticalTable.prototype._onContextMenu = function(oEvent) {
+	AnalyticalTable.prototype.oncontextmenu = function(oEvent) {
 		if (jQuery(oEvent.target).closest('tr').hasClass('sapUiTableGroupHeader') ||
 				jQuery(oEvent.target).closest('.sapUiTableRowSelectionCell.sapUiTableGroupHeader').length > 0) {
 			this._iGroupedLevel = jQuery(oEvent.target).closest('[data-sap-ui-level]').data('sap-ui-level');
@@ -483,10 +481,7 @@ sap.ui.define([
 
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
-			return;
 		}
-
-		return true;
 	};
 
 	AnalyticalTable.prototype._getGroupHeaderMenu = function() {

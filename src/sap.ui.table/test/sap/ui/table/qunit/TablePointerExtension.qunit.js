@@ -627,20 +627,18 @@ sap.ui.define([
 		oExtension._debug();
 
 		var bSelected = false;
-		var bContextMenu = false;
 		oExtension._ExtensionHelper.__handleClickSelection = oExtension._ExtensionHelper._handleClickSelection;
 		oExtension._ExtensionHelper._handleClickSelection = function() {
 			bSelected = true;
 		};
-		oTreeTable._onContextMenu = function() {
-			bContextMenu = true;
-		};
+
+		oTreeTable.oncontextmenu = this.spy();
 
 		var $FakeButton = TableUtils.getRowColCell(oTreeTable, 0, 0).cell.$();
 		$FakeButton.addClass("sapUiTableGroupMenuButton");
 		qutils.triggerMouseEvent($FakeButton, "click");
 		assert.ok(!bSelected, "Selection was not performed");
-		assert.ok(bContextMenu, "Context Menu was opened");
+		assert.ok(oTreeTable.oncontextmenu.calledOnce, "Context Menu was opened");
 
 		oExtension._ExtensionHelper._handleClickSelection = oExtension._ExtensionHelper.__handleClickSelection;
 		oExtension._ExtensionHelper.__handleClickSelection = null;

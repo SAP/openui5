@@ -185,13 +185,15 @@ sap.ui.define([
 			if (!oTable._oSelectionPlugin.onHeaderSelectorPress || oTable._oSelectionPlugin.onHeaderSelectorPress()) {
 				oTable._toggleSelectAll();
 			}
-			// Expand/Collapse group.
+
+		// Expand/Collapse group.
 		} else if (TableKeyboardDelegate._isElementGroupToggler(oTable, oEvent.target)) {
 			TableUtils.Grouping.toggleGroupHeaderByRef(oTable, oEvent.target);
 
-			// Select/Deselect row.
+		// Select/Deselect row.
 		} else if (oCellInfo.isOfType(CellType.ROWHEADER)) {
 			selectItems();
+
 		} else if (oCellInfo.isOfType(CellType.DATACELL | CellType.ROWACTION)) {
 			// The action mode should only be entered when cellClick is not handled and no selection is performed.
 			var bEnterActionMode = !oTable.hasListeners("cellClick");
@@ -868,9 +870,8 @@ sap.ui.define([
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 		var sSelectionMode = this.getSelectionMode();
 
-		// Handles key down CTRL+v event in MS IE Browser and calls onpaste event that fires Paste event of the Table.
-		// It is a workaround as IE allows browser paste event only on editable DOM elements.
-		if (Device.browser.msie && TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.V, ModKey.CTRL )) {
+		// IE fires the paste event only on editable DOM elements, but we need it on any element, e.g. cells.
+		if (Device.browser.msie && TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.V, ModKey.CTRL)) {
 			this.onpaste(oEvent);
 			return;
 		}
@@ -1031,10 +1032,10 @@ sap.ui.define([
 				TableUtils.Menu.openContextMenu(this, oEvent.target, true);
 			}
 		} else if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SPACE)) {
-				TableKeyboardDelegate._handleSpaceAndEnter(this, oEvent);
+			TableKeyboardDelegate._handleSpaceAndEnter(this, oEvent);
 		} else if (this._legacyMultiSelection && !oCellInfo.isOfType(CellType.COLUMNROWHEADER) &&
 				   (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SPACE, ModKey.CTRL) ||
-				   TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.ENTER, ModKey.CTRL))) {
+					TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.ENTER, ModKey.CTRL))) {
 			TableKeyboardDelegate._handleSpaceAndEnter(this, oEvent);
 		}
 	};
@@ -1147,8 +1148,8 @@ sap.ui.define([
 		});
 
 		if (bScrolled) {
-			oTable.attachEventOnce("_rowsUpdated", function () {
-				setTimeout(function () {
+			oTable.attachEventOnce("_rowsUpdated", function() {
+				setTimeout(function() {
 					var bIsGroupHeaderRow = TableUtils.Grouping.isGroupingRow(oRow.getDomRef());
 
 					setFocusNext(oTable, oRow, iRowIndex, bTableHasRowSelectors, bIsGroupHeaderRow);
@@ -1213,7 +1214,9 @@ sap.ui.define([
 				oEvent.preventDefault();
 				TableKeyboardDelegate._focusCell(this, CellType.ROWHEADER, oCellInfo.rowIndex);
 
-			} else if ((bIsFirstInteractiveElementInRow && !bRowHasInteractiveRowHeader) || oCellInfo.isOfType(CellType.ROWHEADER) || $FirstInteractiveElement === null) {
+			} else if ((bIsFirstInteractiveElementInRow && !bRowHasInteractiveRowHeader)
+					   || oCellInfo.isOfType(CellType.ROWHEADER)
+					   || $FirstInteractiveElement === null) {
 				var bIsFirstScrollableRow = TableUtils.isFirstScrollableRow(this, $Cell);
 				var bIsAbsoluteFirstRow = iAbsoluteRowIndex === 0;
 
@@ -1274,7 +1277,7 @@ sap.ui.define([
 		}
 	};
 
-	function scrollUpAndFocus (oTable, oCellInfo, bRowHasInteractiveRowHeader, iRowIndex, oRow) {
+	function scrollUpAndFocus(oTable, oCellInfo, bRowHasInteractiveRowHeader, iRowIndex, oRow) {
 		// The FocusHandler triggers the "sapfocusleave" event in a timeout of 0ms after a blur event. To give the control in the cell
 		// enough time to react to the "sapfocusleave" event (e.g. sap.m.Input - changes its value), scrolling is performed
 		// asynchronously.
@@ -1313,7 +1316,7 @@ sap.ui.define([
 
 		if ($InteractiveElement) {
 			TableKeyboardDelegate._focusElement(oTable, $InteractiveElement[0]);
-		} else if (bRowHasInteractiveRowHeader || bIsGroupHeaderRow){
+		} else if (bRowHasInteractiveRowHeader || bIsGroupHeaderRow) {
 			TableKeyboardDelegate._focusCell(oTable, CellType.ROWHEADER, iRowIndex);
 		} else {
 			TableKeyboardDelegate._focusCell(oTable, CellType.DATACELL, iRowIndex, 0, false, true);
