@@ -1419,4 +1419,326 @@ sap.ui.define([
 			oHeaderContext.requestSideEffects([{$PropertyPath : "TEAM_ID"}]);
 		}, new Error("Cannot request side effects of unresolved binding's context: /EMPLOYEES"));
 	});
+
+	//*********************************************************************************************
+	QUnit.test("doSetProperty: fetchUpdataData fails", function (assert) {
+		var oMetaModel = {
+				fetchUpdateData : function () {}
+			},
+			oModel = {
+				getMetaModel : function () {
+					return oMetaModel;
+				}
+			},
+			oContext = Context.create(oModel, null, "/ProductList('HT-1000')"),
+			oError = new Error("This call intentionally failed");
+
+		this.mock(oMetaModel).expects("fetchUpdateData")
+			.withExactArgs("some/relative/path", sinon.match.same(oContext))
+			.returns(SyncPromise.resolve(Promise.reject(oError)));
+
+		// code under test
+		return oContext.doSetProperty("some/relative/path").then(function () {
+			assert.ok(false, "Unexpected success");
+		}, function (oError0) {
+			assert.strictEqual(oError0, oError);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("doSetProperty: withCache fails", function (assert) {
+		var oMetaModel = {
+				fetchUpdateData : function () {}
+			},
+			oModel = {
+				getMetaModel : function () {
+					return oMetaModel;
+				}
+			},
+			oContext = Context.create(oModel, null, "/ProductList('HT-1000')"),
+			oError = new Error("This call intentionally failed");
+
+		this.mock(oMetaModel).expects("fetchUpdateData")
+			.withExactArgs("some/relative/path", sinon.match.same(oContext))
+			.returns(SyncPromise.resolve({entityPath : "/entity/path"}));
+		this.mock(oContext).expects("withCache").withExactArgs(sinon.match.func, "/entity/path")
+			.returns(SyncPromise.reject(oError));
+
+		// code under test
+		return oContext.doSetProperty("some/relative/path").then(function () {
+			assert.ok(false, "Unexpected success");
+		}, function (oError0) {
+			assert.strictEqual(oError0, oError);
+		});
+	});
+
+	//*********************************************************************************************
+[function (oModelMock, oBinding, oBindingMock, fnErrorCallback, fnPatchSent, oError) {
+	return Promise.reject(oError); // #update fails
+}, function (oModelMock, oBinding, oBindingMock, fnErrorCallback, fnPatchSent, oError) {
+	// simulate a failed PATCH via Context#setProperty
+	oBindingMock.expects("firePatchSent").on(oBinding).withExactArgs();
+
+	// code under test: fnPatchSent
+	fnPatchSent();
+
+	oBindingMock.expects("firePatchCompleted").on(oBinding).withExactArgs(false);
+
+	return Promise.reject(oError); // #update fails
+}, function () {
+	// simulate a PATCH for a newly created entity (PATCH is merged into POST -> no events)
+	return Promise.resolve("n/a"); // #update succeeds
+}, function (oModelMock, oBinding, oBindingMock, fnErrorCallback, fnPatchSent) {
+	// simulate repeating a patch if first request failed
+	var oError = new Error("500 Internal Server Error");
+
+	oBindingMock.expects("firePatchSent").on(oBinding).withExactArgs();
+
+	// code under test: fnPatchSent
+	fnPatchSent();
+
+	oModelMock.expects("reportError").twice()
+		.withExactArgs("Failed to update path /resolved/data/path",
+			"sap.ui.model.odata.v4.Context", sinon.match.same(oError));
+	oBindingMock.expects("firePatchCompleted").on(oBinding).withExactArgs(false);
+
+	// code under test: simulate retry; call fnErrorCallback and then fnPatchSent
+	fnErrorCallback(oError);
+	fnErrorCallback(oError); // no patchCompleted event if it is already fired
+
+	oBindingMock.expects("firePatchSent").on(oBinding).withExactArgs();
+	fnPatchSent();
+
+	oBindingMock.expects("firePatchCompleted").on(oBinding).withExactArgs(true);
+
+	return Promise.resolve("n/a"); // #update succeeds after retry
+}].forEach(function (fnScenario, i) {
+	var sTitle = "doSetProperty: scenario " + i;
+
+	QUnit.test(sTitle, function (assert) {
+		var oGroupLock = new _GroupLock(),
+			oMetaModel = {
+				fetchUpdateData : function () {},
+				getUnitOrCurrencyPath : function () {}
+			},
+			oModel = {
+				getMetaModel : function () {
+					return oMetaModel;
+				},
+				reportError : function () {},
+				resolve : function () {}
+			},
+			oContext = Context.create(oModel, null, "/BusinessPartnerList('0100000000')"),
+			oError = new Error("This call intentionally failed"),
+			bSkipRetry = i === 1,
+			vWithCacheResult = {},
+			that = this;
+
+		this.mock(oMetaModel).expects("fetchUpdateData")
+			.withExactArgs("some/relative/path", sinon.match.same(oContext))
+			.returns(SyncPromise.resolve({
+				editUrl : "/edit/url",
+				entityPath : "/entity/path",
+				propertyPath : "property/path"
+			}));
+		this.mock(oContext).expects("withCache").withExactArgs(sinon.match.func, "/entity/path")
+			.callsFake(function (fnProcessor) {
+				var oBinding = {
+						firePatchCompleted : function () {},
+						firePatchSent : function () {},
+						getUpdateGroupId : function () {},
+						isPatchWithoutSideEffects : function () {}
+					},
+					oBindingMock = that.mock(oBinding),
+					oCache = {
+						update : function () {}
+					},
+					bPatchWithoutSideEffects = {/*false,true*/},
+					oUpdatePromise;
+
+				oBindingMock.expects("firePatchCompleted").never();
+				oBindingMock.expects("firePatchSent").never();
+				oBindingMock.expects("getUpdateGroupId").withExactArgs().returns("up");
+				oBindingMock.expects("isPatchWithoutSideEffects").withExactArgs()
+					.returns(bPatchWithoutSideEffects);
+				that.mock(oGroupLock).expects("setGroupId").withExactArgs("up");
+				that.mock(oModel).expects("resolve").atLeast(1) // fnErrorCallback also needs it
+					.withExactArgs("some/relative/path", sinon.match.same(oContext))
+					.returns("/resolved/data/path");
+				that.mock(oMetaModel).expects("getUnitOrCurrencyPath")
+					.withExactArgs("/resolved/data/path")
+					.returns("unit/or/currency/path");
+				that.mock(oCache).expects("update")
+					.withExactArgs(sinon.match.same(oGroupLock), "property/path", "new value",
+						/*fnErrorCallback*/bSkipRetry ? undefined : sinon.match.func, "/edit/url",
+						"cache/path", "unit/or/currency/path",
+						sinon.match.same(bPatchWithoutSideEffects), /*fnPatchSent*/sinon.match.func)
+					.callsFake(function () {
+						return SyncPromise.resolve(
+							fnScenario(that.mock(oModel), oBinding, oBindingMock,
+								/*fnErrorCallback*/arguments[3], /*fnPatchSent*/arguments[8],
+								oError));
+					});
+
+				// code under test
+				oUpdatePromise = fnProcessor(oCache, "cache/path", oBinding);
+
+				assert.strictEqual(oUpdatePromise.isPending(), true);
+
+				return oUpdatePromise.then(function (vResult) {
+					if (i > 1) {
+						assert.strictEqual(vResult, undefined);
+					} else {
+						assert.ok(false, "Unexpected success");
+					}
+
+					return vWithCacheResult; // allow check that #withCache's result is propagated
+				}, function (oError0) {
+					assert.ok(i < 2);
+					assert.strictEqual(oError0, oError);
+
+					throw oError;
+				});
+			});
+
+		// code under test
+		return oContext.doSetProperty("some/relative/path", "new value", oGroupLock, bSkipRetry)
+			.then(function (vResult) {
+				if (i > 1) {
+					assert.strictEqual(vResult, vWithCacheResult);
+				} else {
+					assert.ok(false, "Unexpected success");
+				}
+			}, function (oError0) {
+				assert.ok(i < 2);
+				assert.strictEqual(oError0, oError);
+			});
+	});
+});
+
+	//*********************************************************************************************
+[null, "new value"].forEach(function (vValue) {
+	QUnit.test("setProperty: " + vValue, function (assert) {
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			oModel = {
+				checkGroupId : function () {},
+				lockGroup : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/ProductList('HT-1000')"),
+			oGroupLock = {},
+			vWithCacheResult = {};
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oModel).expects("checkGroupId").withExactArgs("group");
+		this.mock(oModel).expects("lockGroup")
+			.withExactArgs("group", true)
+			.returns(oGroupLock);
+		this.mock(oContext).expects("doSetProperty")
+			.withExactArgs("some/relative/path", vValue, sinon.match.same(oGroupLock), true)
+			.resolves(vWithCacheResult); // allow check that #withCache's result is propagated
+
+		// code under test
+		return oContext.setProperty("some/relative/path", vValue, "group").then(function (vResult) {
+			assert.strictEqual(vResult, vWithCacheResult);
+		});
+	});
+});
+
+	//*********************************************************************************************
+[String, {}].forEach(function (vForbiddenValue) {
+	QUnit.test("setProperty: Not a primitive value: " + vForbiddenValue, function (assert) {
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			oModel = {
+				checkGroupId : function () {},
+				lockGroup : function () {},
+				reportError : function () {},
+				resolve : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/ProductList('HT-1000')"),
+			oExpectedError = new Error("Not a primitive value");
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oModel).expects("checkGroupId").withExactArgs("group");
+		this.mock(oModel).expects("lockGroup").never();
+		this.mock(oModel).expects("reportError").never();
+		this.mock(oContext).expects("doSetProperty").never();
+
+		assert.throws(function () {
+			// code under test
+			oContext.setProperty("some/relative/path", vForbiddenValue, "group");
+		}, oExpectedError);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("setProperty: doSetProperty fails, unlock oGroupLock", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			oModel = {
+				checkGroupId : function () {},
+				lockGroup : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/ProductList('HT-1000')"),
+			oError = new Error("This call intentionally failed"),
+			oGroupLock = {
+				unlock : function () {}
+			},
+			oGroupLockMock = this.mock(oGroupLock),
+			oPromise;
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oModel).expects("checkGroupId").withExactArgs("group");
+		this.mock(oModel).expects("lockGroup")
+			.withExactArgs("group", true)
+			.returns(oGroupLock);
+		oGroupLockMock.expects("unlock").never(); // not yet
+		this.mock(oContext).expects("doSetProperty")
+			.withExactArgs("some/relative/path", "new value", sinon.match.same(oGroupLock), true)
+			.rejects(oError);
+
+		// code under test
+		oPromise = oContext.setProperty("some/relative/path", "new value", "group");
+
+		oGroupLockMock.expects("unlock").withExactArgs(true);
+
+		return oPromise.then(function () {
+				oPromise.ok(false, "unexpected success");
+			}, function (oError0) {
+				assert.strictEqual(oError0, oError);
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setProperty: optional update group ID", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			oModel = {
+				checkGroupId : function () {},
+				lockGroup : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/ProductList('HT-1000')"),
+			oGroupLock = {},
+			vWithCacheResult = {};
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oModel).expects("checkGroupId").withExactArgs(undefined);
+		this.mock(oContext).expects("getUpdateGroupId").withExactArgs().returns("group");
+		this.mock(oModel).expects("lockGroup")
+			.withExactArgs("group", true)
+			.returns(oGroupLock);
+		this.mock(oContext).expects("doSetProperty")
+			.withExactArgs("some/relative/path", "new value", sinon.match.same(oGroupLock), true)
+			.resolves(vWithCacheResult); // allow check that #withCache's result is propagated
+
+		// code under test
+		return oContext.setProperty("some/relative/path", "new value").then(function (vResult) {
+			assert.strictEqual(vResult, vWithCacheResult);
+		});
+	});
 });

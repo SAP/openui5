@@ -380,25 +380,6 @@ sap.ui.define([
 	ODataPropertyBinding.prototype.getResumePromise = function () {};
 
 	/**
-	 * Returns the path for the unit or currency of the given property path.
-	 *
-	 * @returns {string}
-	 *   The path of the unit or currency relative to the entity
-	 *
-	 * @private
-	 */
-	ODataPropertyBinding.prototype.getUnitOrCurrencyPath = function () {
-		var oMetaModel = this.oModel.getMetaModel(),
-			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
-			mAnnotations = oMetaModel.getObject("@", oMetaModel.getMetaContext(sResolvedPath)),
-			oMeasureAnnotation = mAnnotations
-				&& (mAnnotations["@Org.OData.Measures.V1.Unit"]
-					|| mAnnotations["@Org.OData.Measures.V1.ISOCurrency"]);
-
-		return oMeasureAnnotation && oMeasureAnnotation.$Path;
-	};
-
-	/**
 	 * Returns the current value.
 	 *
 	 * @returns {any}
@@ -674,8 +655,8 @@ sap.ui.define([
 			that = this;
 
 		function reportError(oError) {
-			that.oModel.reportError("Failed to update path "
-				+ that.oModel.resolve(that.sPath, that.oContext),
+			that.oModel.reportError(
+				"Failed to update path " + that.oModel.resolve(that.sPath, that.oContext),
 				sClassName, oError);
 
 			return oError;
@@ -698,40 +679,7 @@ sap.ui.define([
 						+ " to a sap.ui.model.odata.v4.Context"));
 					// do not update that.vValue!
 				} else {
-					return that.oModel.getMetaModel().fetchUpdateData(that.sPath, that.oContext)
-						.then(function (oResult) {
-							return that.withCache(function (oCache, sCachePath, oBinding) {
-								// If a PATCH is merged into a POST request, firePatchSent is not
-								// called so don't call firePatchCompleted
-								var bFirePatchCompleted = false;
-
-								function errorCallback(oError) {
-									reportError(oError);
-									if (bFirePatchCompleted) {
-										oBinding.firePatchCompleted(false);
-										bFirePatchCompleted = false;
-									}
-								}
-
-								function patchSent() {
-									bFirePatchCompleted = true;
-									oBinding.firePatchSent();
-								}
-
-								oGroupLock.setGroupId(oBinding.getUpdateGroupId());
-								// if request is canceled fnPatchSent and fnErrorCallback are not
-								// called and update Promise is rejected -> no patch events
-								return oCache.update(oGroupLock, oResult.propertyPath, vValue,
-									errorCallback, oResult.editUrl, sCachePath,
-									that.getUnitOrCurrencyPath(),
-									oBinding.isPatchWithoutSideEffects(), patchSent
-								).then(function () {
-									if (bFirePatchCompleted) {
-										oBinding.firePatchCompleted(true);
-									}
-								});
-							}, oResult.entityPath);
-						});
+					return that.oContext.doSetProperty(that.sPath, vValue, oGroupLock);
 				}
 			}).catch(function (oError) {
 				oGroupLock.unlock(true);

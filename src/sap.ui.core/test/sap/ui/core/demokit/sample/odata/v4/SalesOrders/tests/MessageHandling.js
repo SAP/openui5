@@ -167,7 +167,7 @@ sap.ui.define([
 			Then.onTheMainPage.checkMessageCount(2);
 
 			Then.onAnyPage.checkLog([{
-					component : "sap.ui.model.odata.v4.ODataPropertyBinding",
+					component : "sap.ui.model.odata.v4.Context",
 					level : Log.Level.ERROR,
 					message: "Failed to update path /SalesOrderList('0500000004')/Note",
 					details : "Property `Note` value `RAISE_ERROR` not allowed!"
