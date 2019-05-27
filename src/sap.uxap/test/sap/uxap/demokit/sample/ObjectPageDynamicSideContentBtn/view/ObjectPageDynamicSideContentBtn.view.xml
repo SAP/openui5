@@ -28,7 +28,7 @@
 										  isObjectTitleAlwaysVisible="false"
 										  isObjectSubtitleAlwaysVisible="false">
 							<sideContentButton>
-								<m:Button icon="sap-icon://detail-view" type="Transparent" press="handleSCBtnPress" tooltip="detail-view"/>
+								<m:Button id="openSideContentBtn" icon="sap-icon://detail-view" type="Transparent" press="handleSCBtnPress" tooltip="detail-view"/>
 							</sideContentButton>
 							<actions>
 								<ObjectPageHeaderActionButton text="Public Profile" icon="sap-icon://edit" tooltip="edit"/>
@@ -95,7 +95,7 @@
 				<m:Toolbar>
 					<m:Title text="My tasks"/>
 					<m:ToolbarSpacer />
-					<m:Button text="Close" type="Transparent" press="handleSideContentHide" />
+					<m:Button id="closeSideContentBtn" text="Close" type="Transparent" press="handleSideContentHide" />
 				</m:Toolbar>
 				<m:Text text=" Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 				Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.

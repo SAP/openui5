@@ -19,6 +19,10 @@ sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/core/mvc/Controller"], fun
 				oDynamicSideView.setShowSideContent(false);
 			}
 			oOPSideContentBtn.setVisible(true);
+
+			setTimeout(function () {
+				this.byId("openSideContentBtn").focus();
+			}.bind(this));
 		},
 		handleSCBtnPress: function (oEvent) {
 			if (sCurrentBreakpoint === "S") {
@@ -26,7 +30,10 @@ sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/core/mvc/Controller"], fun
 			} else {
 				oDynamicSideView.setShowSideContent(true);
 			}
+
 			oOPSideContentBtn.setVisible(false);
+
+			this.byId("closeSideContentBtn").focus();
 		},
 		updateToggleButtonState: function (oEvent) {
 			sCurrentBreakpoint = oEvent.getParameter("currentBreakpoint");
