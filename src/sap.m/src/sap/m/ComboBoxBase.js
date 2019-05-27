@@ -252,19 +252,12 @@ sap.ui.define([
 		 * @protected
 		 * @since 1.58
 		 */
-		ComboBoxBase.prototype.highLightList = function (sValue, aItemsDomRefs) {
-			var iInitialValueLength = sValue.length,
-				// do not care for any special character
-				sValue = sValue.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'),
-				// find all words that start with a value
-				oRegex = new RegExp("\\b" + sValue, "gi"),
-				$ItemRef;
-
-			aItemsDomRefs.forEach(function(oItemTextRef) {
-				$ItemRef = jQuery(oItemTextRef.ref);
-
-				$ItemRef.html(this._boldItemRef.call(this, oItemTextRef.text, oRegex, iInitialValueLength));
-			}, this);
+		ComboBoxBase.prototype.highLightList = function (sValue, aItemsDomRefs, fnBold) {
+			if (fnBold && typeof fnBold === "function") {
+				fnBold(aItemsDomRefs, sValue);
+			} else {
+				this._oSuggestionPopover.highlightSuggestionItems(aItemsDomRefs, sValue, true);
+			}
 		};
 
 		/**
@@ -273,27 +266,22 @@ sap.ui.define([
 		 * @param {string} sValue The value of the item
 		 * @protected
 		 */
-		ComboBoxBase.prototype._highlightList = function(sValue) {
+		ComboBoxBase.prototype._highlightList = function (sValue) {
 			var aListItemsDOM = [],
 				aListItemAdditionalText = [],
-				oItemAdditionalTextRef, oItemDomRef;
+				oItemAdditionalTextRef, oItemDomRef, oItemTitleDomRef;
 
-			this._getList().getItems().forEach(function(oItem) {
+			this._getList().getItems().forEach(function (oItem) {
 				oItemDomRef = oItem.getDomRef();
+				oItemTitleDomRef = oItemDomRef && oItemDomRef.getElementsByClassName("sapMSLITitleOnly")[0];
 
-				if (oItemDomRef) {
-					aListItemsDOM.push({
-						ref: oItemDomRef.getElementsByClassName("sapMSLITitleOnly")[0],
-						text: oItem.getTitle()
-					});
+				if (oItemTitleDomRef) {
+					aListItemsDOM.push(oItemTitleDomRef);
 
 					oItemAdditionalTextRef = oItemDomRef.querySelector(".sapMSLIInfo");
 
 					if (oItemAdditionalTextRef && oItem.getInfo) {
-						aListItemAdditionalText.push({
-							ref: oItemAdditionalTextRef,
-							text: oItem.getInfo()
-						});
+						aListItemAdditionalText.push(oItemAdditionalTextRef);
 					}
 				}
 			});
@@ -324,47 +312,6 @@ sap.ui.define([
 					that._handleEvent(oEvent);
 				}
 			};
-		};
-
-		/**
-		 * Handles bolding of innerHTML of items.
-		 *
-		 * @param {string} sItemText The item text
-		 * @param {RegExp} oRegex A regEx to split the item
-		 * @param {string} iInitialValueLength The characters length of the value of the item
-		 *
-		 * @returns {string} The HTML string
-		 * @private
-		 * @since 1.58
-		 */
-		ComboBoxBase.prototype._boldItemRef = function (sItemText, oRegex, iInitialValueLength) {
-			// reset regex last index
-			oRegex.lastIndex = 0;
-
-			var sResult,
-				oRegexInfo = oRegex.exec(sItemText);
-
-			if (oRegexInfo === null) {
-				return encodeXML(sItemText);
-			}
-
-			var iMatchedIndex = oRegexInfo.index;
-			var sTextReplacement = "<b>" + encodeXML(sItemText.slice(iMatchedIndex, iMatchedIndex + iInitialValueLength)) + "</b>";
-
-			// parts should always be max of two because regex is not defined as global
-			// see above method
-			var aParts = sItemText.split(oRegex);
-
-			if (aParts.length === 1) {
-				// no match found, return value as it is
-				sResult = encodeXML(sItemText);
-			} else {
-				sResult = aParts.map(function (sPart) {
-					return encodeXML(sPart);
-				}).join(sTextReplacement);
-			}
-
-			return sResult;
 		};
 
 		/**
