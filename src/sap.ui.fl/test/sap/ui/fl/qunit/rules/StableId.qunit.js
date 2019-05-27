@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/support/Bootstrap",
-	"sap/ui/support/TestHelper"
+	"test-resources/sap/ui/support/TestHelper"
 ], function (
 	UIComponent,
 	ComponentContainer,
@@ -82,7 +82,7 @@ sap.ui.define([
 							'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">' +
 								'<l:VerticalLayout id="layout" content="{/buttons}">' +
 									'<l:content>' +
-										'<m:Button text="{text}" d="button" />' +
+										'<m:Button text="{text}" />' +
 									'</l:content>' +
 								'</l:VerticalLayout>' +
 							'</mvc:View>'
