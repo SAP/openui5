@@ -91,15 +91,81 @@ sap.ui.define([
 		});
 		QUnit.test("must trigger 'complete' event", function (assert) {
 			var iTaskId = this.oTaskManager.add({ type: 'foo' });
-			var iTaskIdInEvent;
+			var aTaskIdsInEvent;
 
 			this.oTaskManager.attachEventOnce("complete", function (oEvent) {
-				iTaskIdInEvent = oEvent.getParameter('taskId');
+				aTaskIdsInEvent = oEvent.getParameter('taskId');
 				assert.ok(true, 'event is called');
 			});
 			this.oTaskManager.complete(iTaskId);
 
-			assert.strictEqual(iTaskId, iTaskIdInEvent, 'then event is called with same task ID');
+			assert.equal(iTaskId, aTaskIdsInEvent[0], 'then event is called with same task ID');
+		});
+	});
+
+	QUnit.module("Public API - completeBy()", {
+		beforeEach: function () {
+			this.oTaskManager = new TaskManager();
+		},
+		afterEach: function () {
+			this.oTaskManager.destroy();
+		}
+	}, function () {
+		QUnit.test("must remove task from the list", function (assert) {
+			this.oTaskManager.add({ type: 'foo' });
+			this.oTaskManager.add({ type: 'bar' });
+			this.oTaskManager.completeBy({ type: 'foo' });
+			assert.notOk(
+				this.oTaskManager.getList().some(function (oTask) {
+					return oTask.type === "foo";
+				}),
+				"then 'foo' task was removed properly"
+			);
+			assert.equal(this.oTaskManager.getList().length, 1,
+				"then second task from another type is still available");
+		});
+		QUnit.test("must remove task from the list with condition", function (assert) {
+			var iTaskToBeRemovedId = this.oTaskManager.add({ type: "foo", someTaskParameter: "someCondition" });
+			this.oTaskManager.add({ type: 'bar', someTaskParameter: "someCondition" });
+			this.oTaskManager.add({ type: 'foo', someTaskParameter: "anotherCondition" });
+			this.oTaskManager.completeBy({ type: 'foo', someTaskParameter: "someCondition" });
+			assert.notOk(
+				this.oTaskManager.getList().some(function (oTask) {
+					return oTask.id === iTaskToBeRemovedId;
+				}),
+				"then 'foo' task was removed properly"
+			);
+			assert.equal(this.oTaskManager.getList().length, 2,
+				"then other tasks from same type another condition and the task with another type are still available");
+		});
+		QUnit.test("must remove all tasks from the list", function (assert) {
+			this.oTaskManager.add({ type: 'bar' });
+			this.oTaskManager.add({ type: 'foo' });
+			this.oTaskManager.add({ type: 'foo' });
+			this.oTaskManager.completeBy({ type: 'foo' });
+			assert.notOk(
+				this.oTaskManager.getList().some(function (oTask) {
+					return oTask.type === "foo";
+				}),
+				"then all foo tasks were removed properly"
+			);
+			assert.ok(
+				this.oTaskManager.getList().some(function (oTask) {
+					return oTask.type === "bar";
+				}),
+				"then task from another type is still available");
+		});
+		QUnit.test("must trigger 'complete' event", function (assert) {
+			var iTaskId = this.oTaskManager.add({ type: 'foo' });
+			var aTaskIdsInEvent;
+
+			this.oTaskManager.attachEventOnce("complete", function (oEvent) {
+				aTaskIdsInEvent = oEvent.getParameter('taskId');
+				assert.ok(true, 'event is called');
+			});
+			this.oTaskManager.completeBy({ type: 'foo' });
+
+			assert.strictEqual(iTaskId, aTaskIdsInEvent[0], 'then event is called with same task ID');
 		});
 	});
 
