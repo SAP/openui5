@@ -1801,8 +1801,8 @@ sap.ui.define([
 
 		assert.ok(Component.hasOwnProperty("registry"), "Component has static method to access registry");
 		assert.equal(Component.registry.size, 3, "Return number of registered component instances");
-		assert.deepEqual(Object.keys(Component.registry.all()), ["A", "B", "C"], "Return all registered component instances");
-		assert.deepEqual(Component.registry.get("B"), oFooB, "Return reference of component B from registry by ID");
+		assert.deepEqual(Object.keys(Component.registry.all()).sort(), ["A", "B", "C"], "Return all registered component instances");
+		assert.ok(Component.registry.get("B") === oFooB, "Return reference of component B from registry by ID");
 
 		Component.registry.forEach(fnCallbackSpy);
 		assert.ok(fnCallbackSpy.calledThrice, "Callback was executed 3 times");
