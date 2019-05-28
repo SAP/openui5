@@ -61,7 +61,7 @@ sap.ui.define([
 				if (oUri.is("relative")) {
 					// Rewrite relative URLs based on the theme base url
 					// Otherwise they would be relative to the HTML page which is incorrect
-					var sNormalizedUrl = oUri.absoluteTo(sThemeBaseUrl).normalize().path();
+					var sNormalizedUrl = oUri.absoluteTo(sThemeBaseUrl).normalize().toString();
 					sUrl = "url('" + sNormalizedUrl + "')";
 				}
 			}
