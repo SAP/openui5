@@ -124,16 +124,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/m/library', 'sap/ui/core/library', '
 		rm.close("bdi");
 
 		rm.close(sHtmlTagToRender);
-
-		// add invisible ":" span in "display only" mode
-		if (!sLabelForRendering && oLabel.isDisplayOnly && oLabel.isDisplayOnly()) {
-			rm.openStart("span");
-			rm.attr("id", oLabel.getId() + "-colon");
-			rm.class("sapUiPseudoInvisibleText");
-			rm.openEnd();
-			rm.text(":");
-			rm.close("span");
-		}
 	};
 
 	/**
