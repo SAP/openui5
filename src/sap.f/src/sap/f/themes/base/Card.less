@@ -89,37 +89,52 @@
 			color: @_sap_f_Card_HeaderIconColor;
 		}
 	}
+
 	.sapFCardHeaderText {
 		flex: 1 1 auto;
-	.sapFCardTitle {
-		margin: 0px;
-		display: block;
+
+		.sapFCardTitle {
+			margin: 0px;
+			display: block;
 			font-family: @sapUiFontHeaderFamily;
 			font-size: @sapMFontHeader5Size;
 			font-weight: @sapUiFontHeaderWeight;
-		color: @sapUiTileTitleTextColor;
-		min-height: 1rem;
+			color: @sapUiTileTitleTextColor;
+			min-height: 1rem;
+		}
 	}
+
 	.sapFCardSubtitle {
 		margin: 0.5rem 0 0 0;
-			font-family: @sapUiFontFamily;
-			font-size: @sapMFontMediumSize;
-			font-weight: normal;
+		font-family: @sapUiFontFamily;
+		font-size: @sapMFontMediumSize;
+		font-weight: normal;
 		color: @sapUiTileTextColor;
 		min-height: 1rem;
 	}
 
-	}
 	.sapFCardStatus {
-			font-family: @sapUiFontFamily;
-			font-size: @sapMFontSmallSize;
-			color: @sapUiTileTextColor;
-			text-align: left;
-			line-height: 1.125rem;
-			padding-left: 1rem;
-			margin-left: auto;
-			text-wrap: avoid;
-			display: inline-block;
+		font-family: @sapUiFontFamily;
+		font-size: @sapMFontSmallSize;
+		color: @sapUiTileTextColor;
+		text-align: left;
+		line-height: normal;
+		padding-left: 1rem;
+		margin-left: auto;
+		text-wrap: avoid;
+		display: inline-block;
+		white-space: nowrap;
+		margin-top: 0.188rem;
+	}
+
+	.sapFCardHeaderTextFirstLine {
+		display: flex;
+		justify-content: space-between;
+		width: 100%;
+	}
+
+	.sapFCardHeaderText {
+		width: 100%;
 	}
 }
 
@@ -130,6 +145,10 @@
 
 .sapFCard .sapFCardHeader.sapFCardNumericHeader {
 	display: block;
+
+	.sapFCardStatus {
+		min-width: fit-content;
+	}
 
 	.sapFCardSubtitle {
 		display: flex;

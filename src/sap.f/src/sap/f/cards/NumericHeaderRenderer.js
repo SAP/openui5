@@ -37,7 +37,7 @@ sap.ui.define([],
 			NumericHeaderRenderer.renderIndicators(oRm, oControl);
 
 			var oDetails = oControl.getAggregation("_details");
-			if (oDetails) {
+			if (oDetails && oDetails.getText()) {
 				oDetails.addStyleClass("sapFCardHeaderDetails");
 				oRm.renderControl(oDetails);
 			}
@@ -54,7 +54,8 @@ sap.ui.define([],
 		NumericHeaderRenderer.renderHeaderText = function(oRm, oControl) {
 			var oTitle = oControl.getAggregation("_title"),
 				oSubtitle = oControl.getAggregation("_subtitle"),
-				oUnitOfMeasurement = oControl.getAggregation("_unitOfMeasurement");
+				oUnitOfMeasurement = oControl.getAggregation("_unitOfMeasurement"),
+				sStatus = oControl.getStatusText();
 
 			// TODO reuse title and subtitle rendering from the default header if possible
 			oRm.write("<div");
@@ -62,10 +63,26 @@ sap.ui.define([],
 			oRm.writeClasses();
 			oRm.write(">");
 
+			oRm.write("<div");
+			oRm.addClass("sapFCardHeaderTextFirstLine");
+			oRm.writeClasses();
+			oRm.write(">");
+
 			if (oTitle) {
 				oTitle.addStyleClass("sapFCardTitle");
 				oRm.renderControl(oTitle);
 			}
+
+			if (sStatus) {
+				oRm.write("<span");
+				oRm.addClass("sapFCardStatus");
+				oRm.writeClasses();
+				oRm.write(">");
+				oRm.writeEscaped(sStatus);
+				oRm.write("</span>");
+			}
+
+			oRm.write("</div>");
 
 			if (oSubtitle || oUnitOfMeasurement) {
 				oRm.write("<div");
@@ -101,37 +118,39 @@ sap.ui.define([],
 			var oMainIndicator = oControl.getAggregation("_mainIndicator"),
 				oSideIndicators = oControl.getAggregation("sideIndicators");
 
-			oRm.write("<div");
-			oRm.addClass("sapFCardHeaderIndicators");
-			oRm.writeClasses();
-			oRm.write(">");
-
-			if (oMainIndicator) {
-				oMainIndicator.addStyleClass("sapFCardHeaderMainIndicator");
-				oRm.renderControl(oMainIndicator);
-
+			if ((oMainIndicator && oMainIndicator.getValue()) || oSideIndicators.length !== 0){
 				oRm.write("<div");
-				oRm.addClass("sapFCardHeaderIndicatorsGap");
-				oRm.writeClasses();
-				oRm.write(">");
-				oRm.write("</div>");
-			}
-
-			if (oSideIndicators) {
-				oRm.write("<div");
-				oRm.addClass("sapFCardHeaderSideIndicators");
+				oRm.addClass("sapFCardHeaderIndicators");
 				oRm.writeClasses();
 				oRm.write(">");
 
-				// TODO min-width for side indicator. Now it starts to truncate too early
-				// Maybe wrap them when card is toooo small
-				oSideIndicators.forEach(function(oIndicator) {
-					oRm.renderControl(oIndicator);
-				});
+				if (oMainIndicator && oMainIndicator.getValue()) {
+					oMainIndicator.addStyleClass("sapFCardHeaderMainIndicator");
+					oRm.renderControl(oMainIndicator);
+
+					oRm.write("<div");
+					oRm.addClass("sapFCardHeaderIndicatorsGap");
+					oRm.writeClasses();
+					oRm.write(">");
+					oRm.write("</div>");
+				}
+
+				if (oSideIndicators.length !== 0) {
+					oRm.write("<div");
+					oRm.addClass("sapFCardHeaderSideIndicators");
+					oRm.writeClasses();
+					oRm.write(">");
+
+					// TODO min-width for side indicator. Now it starts to truncate too early
+					// Maybe wrap them when card is toooo small
+					oSideIndicators.forEach(function(oIndicator) {
+						oRm.renderControl(oIndicator);
+					});
+					oRm.write("</div>");
+				}
+
 				oRm.write("</div>");
 			}
-
-			oRm.write("</div>");
 		};
 
 		return NumericHeaderRenderer;
