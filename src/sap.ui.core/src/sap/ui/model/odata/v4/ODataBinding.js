@@ -135,6 +135,40 @@ sap.ui.define([
 	};
 
 	/**
+	 * Calls {@link #checkUpdateInternal}.
+	 *
+	 * @param {boolean} [bForceUpdate]
+	 *   Whether the change event is fired in any case
+	 * @throws {Error}
+	 *   If there are unexpected parameters
+	 *
+	 * @private
+	 */
+	// @override sap.ui.model.Binding#checkUpdate
+	ODataBinding.prototype.checkUpdate = function (bForceUpdate) {
+		if (arguments.length > 1) {
+			throw new Error("Only the parameter bForceUpdate is supported");
+		}
+
+		this.checkUpdateInternal(bForceUpdate);
+	};
+
+	/**
+	 * A property binding re-fetches its value and fires a change event if the value has changed. A
+	 * parent binding checks dependent bindings for updates or refreshes the binding if the resource
+	 * path of its parent context changed.
+	 *
+	 * @param {boolean} [bForceUpdate]
+	 *   Whether the change event is fired in any case (only allowed for property bindings)
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise resolving without a defined result when the check is finished; never rejecting
+	 *
+	 * @abstract
+	 * @name sap.ui.model.odata.v4.ODataBinding#checkUpdateInternal
+	 * @private
+	 */
+
+	/**
 	 * Destroys the object. The object must not be used anymore after this function was called.
 	 *
 	 * @public
@@ -149,8 +183,8 @@ sap.ui.define([
 		}, function () {});
 		this.oCachePromise = SyncPromise.resolve(); // be nice to #withCache
 		this.mCacheQueryOptions = undefined;
-		// resolving functions e.g. for oReadPromise in #checkUpdate may run after destroy of this
-		// binding and must not access the context
+		// resolving functions e.g. for oReadPromise in #checkUpdateInternal may run after destroy
+		// of this binding and must not access the context
 		this.oContext = undefined;
 		this.oFetchCacheCallToken = undefined;
 	};
@@ -703,7 +737,10 @@ sap.ui.define([
 		this.oModel.checkGroupId(sGroupId);
 
 		// The actual refresh is specific to the binding and is implemented in each binding class.
-		this.refreshInternal("", sGroupId, true);
+		this.refreshInternal("", sGroupId, true).catch(function () {
+			// Nothing to do here, the error is already logged. The catch however is necessary,
+			// because we drop the promise here, so there is no other code to catch it.
+		});
 	};
 
 	/**
@@ -718,8 +755,11 @@ sap.ui.define([
 	 *   The group ID to be used for refresh
 	 * @param {boolean} [bCheckUpdate]
 	 *   If <code>true</code>, a property binding is expected to check for updates
+	 * @param {boolean} [bKeepCacheOnError]
+	 *   If <code>true</code>, the binding data remains unchanged if the refresh fails
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving without a defined result when the refresh is finished
+	 *   A promise resolving without a defined result when the refresh is finished; it is rejected
+	 *   when the refresh fails; the promise is resolved immediately on a suspended binding
 	 * @throws {Error}
 	 *   If the binding's root binding is suspended and a group ID different from the binding's
 	 *   group ID is given

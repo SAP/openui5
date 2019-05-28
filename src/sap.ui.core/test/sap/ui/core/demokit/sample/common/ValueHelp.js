@@ -232,8 +232,8 @@ sap.ui.define([
 				oButton.attachPress(onClose);
 				oPopover.addContent(oTable);
 				oPopover.data("openedBy", oInput);
+				oPopover.setInitialFocus(oTable);
 				oPopover.openBy(oInput);
-
 			}).catch(function (oError) {
 				Log.error(oError, undefined, "sap.ui.core.sample.common.ValueHelp");
 			});

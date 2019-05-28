@@ -4,14 +4,15 @@
 
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/CalendarType",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/thirdparty/jquery"
-], function (Log, DateFormat, FormatException, ParseException, ValidateException, ODataType,
-		jQuery) {
+], function (Log, CalendarType, DateFormat, FormatException, ParseException, ValidateException,
+		ODataType, jQuery) {
 	"use strict";
 
 	var rDate = /\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])/,
@@ -58,6 +59,7 @@ sap.ui.define([
 	function getModelFormatter() {
 		if (!oModelFormatter) {
 			oModelFormatter = DateFormat.getDateInstance({
+				calendarType : CalendarType.Gregorian,
 				pattern : 'yyyy-MM-dd',
 				strictParsing : true,
 				UTC : true
@@ -246,6 +248,20 @@ sap.ui.define([
 		} else if (typeof sValue !== "string" || !rDate.test(sValue)) {
 			throw new ValidateException("Illegal " + this.getName() + " value: " + sValue);
 		}
+	};
+
+	//*********************************************************************************************
+	// "static" functions
+	//*********************************************************************************************
+
+	/**
+	 * Resets the static model formatter instance which is recreated on demand, for example via
+	 * {@link #getModelFormat}, and cached.
+	 *
+	 * @private
+	 */
+	EdmDate._resetModelFormatter = function () {
+		oModelFormatter = undefined;
 	};
 
 	return EdmDate;

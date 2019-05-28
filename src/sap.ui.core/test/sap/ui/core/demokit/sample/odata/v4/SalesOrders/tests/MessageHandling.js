@@ -14,11 +14,11 @@ sap.ui.define([
 
 	return {
 		checkMessages : function (Given, When, Then, sUIComponent) {
-			var sNoteError = "Property `Note` value `RAISE_ERROR` not allowed!",
-				sPersistentMessage = "Enter customer reference if available",
-				sQuantityError = "Value must be greater than 0",
-				sTransientMessage = "Minimum order quantity is 2",
-				sUnboundMessage = "Example for an unbound message";
+			var sNoteBoundWarning = "Enter customer reference if available",
+				sNoteFailure = "Property `Note` value `RAISE_ERROR` not allowed!",
+				sQuantityBoundError = "Minimum order quantity is 2",
+				sQuantityFailure = "Value must be greater than 0",
+				sUnboundInfo = "Example for an unbound message";
 
 			if (TestUtils.isRealOData()) {
 				Opa5.assert.ok(true, "Test runs only with mock data");
@@ -35,88 +35,87 @@ sap.ui.define([
 			// Unbound/Bound Messages
 			When.onTheMainPage.firstSalesOrderIsVisible();
 			Then.onTheMainPage.checkMessageCount(2);
-			Then.onTheMainPage.checkNoteValueState(1, "Warning", sPersistentMessage);
+			Then.onTheMainPage.checkNoteValueState(1, "Warning", sNoteBoundWarning);
 
 			When.onTheMainPage.pressMessagesButton();
 			Then.onTheMainPage.checkMessages([{
-				message : sUnboundMessage,
+				message : sUnboundInfo,
 				type : MessageType.Information
 			}, {
-				message : sPersistentMessage,
+				message : sNoteBoundWarning,
 				type : MessageType.Warning
 			}]);
 
-			When.onTheMainPage.selectMessage(sUnboundMessage);
-			Then.onTheMainPage.checkMessageDetails(sUnboundMessage,
+			When.onTheMainPage.selectMessage(sUnboundInfo);
+			Then.onTheMainPage.checkMessageDetails(sUnboundInfo,
 				"Details for \"Example for an unbound message\" (absolute longtext URL).");
 
 			When.onTheMainPage.pressBackToMessagesButton();
 
-			When.onTheMainPage.selectMessage(sPersistentMessage);
-			Then.onTheMainPage.checkMessageDetails(sPersistentMessage,
+			When.onTheMainPage.selectMessage(sNoteBoundWarning);
+			Then.onTheMainPage.checkMessageDetails(sNoteBoundWarning,
 				"Details for \"Enter customer reference if available\" (relative longtext URL).");
 
 			When.onTheMainPage.pressBackToMessagesButton();
 
 			When.onTheMainPage.pressMessagePopoverCloseButton();
-			Then.onTheMainPage.checkMessageCount(0);
-			Then.onTheMainPage.checkNoteValueState(1, "None", "");
+			Then.onTheMainPage.checkMessageCount(1);
+			Then.onTheMainPage.checkNoteValueState(1, "Warning", sNoteBoundWarning);
 
 			When.onTheMainPage.pressMessagesButton();
-			Then.onTheMainPage.checkMessages([]);
+			Then.onTheMainPage.checkMessages([{
+				message : sNoteBoundWarning,
+				type : MessageType.Warning
+			}]);
 
 			When.onTheMainPage.pressMessagePopoverCloseButton();
 			When.onTheMainPage.selectSalesOrder(1);
 			Then.onTheMainPage.checkMessageCount(2);
-			Then.onTheMainPage.checkNoteValueState(1, "Warning", sPersistentMessage);
+			Then.onTheMainPage.checkNoteValueState(1, "Warning", sNoteBoundWarning);
 			Then.onTheMainPage.checkInputValueState("Note::detail", "Warning",
-				sPersistentMessage);
+				sNoteBoundWarning);
 			Then.onTheMainPage.checkSalesOrderLineItemQuantityValueState(1, "Error",
-				sTransientMessage);
+				sQuantityBoundError);
 
 			When.onTheMainPage.pressMessagesButton();
 			Then.onTheMainPage.checkMessages([{
-				message : sPersistentMessage,
-				type : MessageType.Warning
-			}, {
-				message : sTransientMessage,
-				type : MessageType.Error
+					message : sNoteBoundWarning,
+					type : MessageType.Warning
+				}, {
+					message : sQuantityBoundError,
+					type : MessageType.Error
 			}]);
 
-			When.onTheMainPage.selectMessage(sTransientMessage);
-			Then.onTheMainPage.checkMessageDetails(sTransientMessage,
+			When.onTheMainPage.selectMessage(sQuantityBoundError);
+			Then.onTheMainPage.checkMessageDetails(sQuantityBoundError,
 				"Details for \"Minimum order quantity is 2\" (absolute longtext URL).");
 
 			When.onTheMainPage.pressBackToMessagesButton();
 
 			When.onTheMainPage.pressMessagePopoverCloseButton();
-			Then.onTheMainPage.checkMessageCount(1);
+			Then.onTheMainPage.checkMessageCount(2);
 
-			When.onTheMainPage.pressMessagesButton();
-			Then.onTheMainPage.checkMessages([{
-				message : sTransientMessage,
-				type : MessageType.Error
-			}]);
-
-			When.onTheMainPage.pressMessagePopoverCloseButton();
-			Then.onTheMainPage.checkNoteValueState(1, "None", "");
-			Then.onTheMainPage.checkInputValueState("Note::detail", "None", "");
+			Then.onTheMainPage.checkNoteValueState(1, "Warning", sNoteBoundWarning);
+			Then.onTheMainPage.checkInputValueState("Note::detail", "Warning", sNoteBoundWarning);
 			Then.onTheMainPage.checkSalesOrderLineItemQuantityValueState(1, "Error",
-				sTransientMessage);
+				sQuantityBoundError);
 
 			When.onTheMainPage.selectSalesOrder(0);
 			Then.onTheMainPage.checkSalesOrderLineItemQuantityValueState(1, "None", "");
-			Then.onTheMainPage.checkMessageCount(1);
+			Then.onTheMainPage.checkMessageCount(2);
 
 			When.onTheMainPage.selectSalesOrder(1);
 			Then.onTheMainPage.checkSalesOrderLineItemQuantityValueState(1, "Error",
-				sTransientMessage);
-			Then.onTheMainPage.checkMessageCount(1);
+				sQuantityBoundError);
+			Then.onTheMainPage.checkMessageCount(2);
 
 			When.onTheMainPage.pressMessagesButton();
 			Then.onTheMainPage.checkMessages([{
-				message : sTransientMessage,
-				type : MessageType.Error
+					message : sNoteBoundWarning,
+					type : MessageType.Warning
+				}, {
+					message : sQuantityBoundError,
+					type : MessageType.Error
 			}]);
 
 			When.onTheMainPage.pressMessagePopoverCloseButton();
@@ -124,42 +123,48 @@ sap.ui.define([
 			// ************************************************************************************
 			// Error Messages
 			// PATCH scenario
-			Then.onTheMainPage.checkMessageCount(1); // still one for 0500000001
+			Then.onTheMainPage.checkMessageCount(2); // still two for 0500000001
 			When.onTheMainPage.selectSalesOrder(4);
 			When.onTheMainPage.changeNoteInSalesOrders(4, "RAISE_ERROR");
 			When.onTheMainPage.pressSaveSalesOrdersButton();
 			Then.onTheMainPage.checkMessages([{
-					message : sTransientMessage,
+					message : sNoteBoundWarning,
+					type : MessageType.Warning
+				}, {
+					message : sQuantityBoundError,
 					type : MessageType.Error
 				}, {
-					message : sNoteError,
+					message : sNoteFailure,
 					type : MessageType.Error
 			}]);
-			Then.onTheMainPage.checkNoteValueState(4, "Error", sNoteError);
+			Then.onTheMainPage.checkNoteValueState(4, "Error", sNoteFailure);
 			When.onTheMainPage.pressMessagePopoverCloseButton();
 			When.onTheMainPage.changeNoteInSalesOrders(4, "any Note");
 			When.onTheMainPage.pressSaveSalesOrdersButton();
 			Then.onTheMainPage.checkNoteValueState(4, "None", "");
-			Then.onTheMainPage.checkMessageCount(1);
+			Then.onTheMainPage.checkMessageCount(2);
 
 			// POST scenario
 			When.onTheMainPage.pressCreateSalesOrderItemButton();
 			When.onTheMainPage.changeQuantityInLineItem(6, "0");
 			When.onTheMainPage.pressSaveSalesOrderButton();
 			Then.onTheMainPage.checkSalesOrderLineItemQuantityValueState(6, "Error",
-				sQuantityError);
+				sQuantityFailure);
 			Then.onTheMainPage.checkMessages([{
-					message : sTransientMessage,
+					message : sNoteBoundWarning,
+					type : MessageType.Warning
+				}, {
+					message : sQuantityBoundError,
 					type : MessageType.Error
 				}, {
-					message : sQuantityError,
+					message : sQuantityFailure,
 					type : MessageType.Error
 			}]);
 			When.onTheMainPage.pressMessagePopoverCloseButton();
 			When.onTheMainPage.changeQuantityInLineItem(6, "2.0");
 			When.onTheMainPage.pressSaveSalesOrderButton();
 			When.onTheSuccessInfo.confirm();
-			Then.onTheMainPage.checkMessageCount(1);
+			Then.onTheMainPage.checkMessageCount(2);
 
 			Then.onAnyPage.checkLog([{
 					component : "sap.ui.model.odata.v4.ODataPropertyBinding",

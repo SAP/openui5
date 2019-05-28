@@ -1082,7 +1082,6 @@ sap.ui.define([
 				checkSuspended : function () {},
 				getContext : function () { return null; },
 				isRelative : function () { return false; },
-				isRoot : function () {},
 				refresh : function () {},
 				refreshSingle : function () {}
 			},
@@ -1101,7 +1100,6 @@ sap.ui.define([
 			.returns(oGroupLock);
 		oBindingMock.expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("hasPendingChanges").withExactArgs().returns(false);
-		oBindingMock.expects("isRoot").withExactArgs().returns(true);
 		oBindingMock.expects("refresh").never();
 		oBindingMock.expects("refreshSingle")
 			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oGroupLock),
@@ -1193,32 +1191,6 @@ sap.ui.define([
 			// code under test
 			oContext.refresh(sGroupId);
 		}, new Error("Cannot refresh entity due to pending changes: /EMPLOYEES('42')"));
-	});
-
-	//*********************************************************************************************
-	QUnit.test("refresh, error handling: list binding is not refreshable", function (assert) {
-		var oBinding = {
-				checkSuspended : function () {},
-				isRoot : function () {},
-				refreshSingle : function () {}
-			},
-			oBindingMock = this.mock(oBinding),
-			sGroupId = "myGroup",
-			oModel = {
-				checkGroupId : function () {}
-			},
-			oModelMock = this.mock(oModel),
-			oContext =  Context.create(oModel, oBinding, "/EMPLOYEES('42')");
-
-		oModelMock.expects("checkGroupId").withExactArgs(sGroupId);
-		oBindingMock.expects("checkSuspended").withExactArgs();
-		this.mock(oContext).expects("hasPendingChanges").withExactArgs().returns(false);
-		oBindingMock.expects("isRoot").withExactArgs().returns(false);
-
-		assert.throws(function () {
-			// code under test
-			oContext.refresh(sGroupId);
-		}, new Error("Binding is not refreshable; cannot refresh entity: /EMPLOYEES('42')"));
 	});
 
 	//*********************************************************************************************
