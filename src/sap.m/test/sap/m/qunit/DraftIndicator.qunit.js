@@ -69,6 +69,7 @@ sap.ui.define([
 
 		// Act
 		oDraftIndi.showDraftSaved();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oDraftIndi.$("label").text(), oBundle.getText("DRAFT_INDICATOR_DRAFT_SAVED"), "Draft saved is shown");
@@ -91,6 +92,7 @@ sap.ui.define([
 
 		// Act
 		oDraftIndi.showDraftSaving();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oDraftIndi.$("label").text(), oBundle.getText("DRAFT_INDICATOR_SAVING_DRAFT"), "Draft saved is shown");

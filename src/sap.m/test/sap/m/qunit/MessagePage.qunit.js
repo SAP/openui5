@@ -150,6 +150,7 @@ sap.ui.define([
 
 		// Act
 		this.oMessagePage.setTitle(sExpectedValue);
+		sap.ui.getCore().applyChanges();
 
 		// Assert
 		sActualValue =  jQuery("#" + messagePageId + " .sapMBarChild").text();
@@ -163,6 +164,7 @@ sap.ui.define([
 
 		// Act
 		this.oMessagePage.setText(sExpectedValue);
+		sap.ui.getCore().applyChanges();
 
 		// Assert
 		sActualValue =  jQuery(".sapMMessagePageMainText").text();
@@ -176,6 +178,7 @@ sap.ui.define([
 
 		// Act
 		this.oMessagePage.setDescription(sExpectedValue);
+		sap.ui.getCore().applyChanges();
 
 		// Assert
 		sActualValue =  jQuery(".sapMMessagePageDescription").text();
