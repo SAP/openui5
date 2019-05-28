@@ -18,6 +18,7 @@ sap.ui.define(["sap/base/assert"], function (assert) {
 
 	/**
 	 * @class A Storage API for JavaScript.
+	 *
 	 * <b>Note:</b> The Web Storage API stores the data on the client. Therefore, you must not use this API for confidential information.
  	 *
 	 * Provides a unified interface and methods to store data on the client using the Web Storage API or a custom implementation.
