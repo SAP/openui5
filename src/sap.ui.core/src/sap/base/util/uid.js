@@ -5,14 +5,14 @@ sap.ui.define([], function() {
 	"use strict";
 
 	/**
-	 * Some private variable used for creation of (pseudo-)unique ids.
+	 * Some private variable used for creation of (pseudo-)unique IDs.
 	 * @type int
 	 * @private
 	 */
 	var iIdCounter = 0;
 
 	/**
-	 * Creates and returns a pseudo-unique id.
+	 * Creates and returns a pseudo-unique ID.
 	 *
 	 * No means for detection of overlap with already present or future UIDs.
 	 *

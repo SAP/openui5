@@ -5,7 +5,7 @@ sap.ui.define(['sap/base/util/deepEqual', 'sap/base/strings/hash'], function(dee
 	"use strict";
 
 	/**
-	 * Calculate delta of old list and new list.
+	 * Calculates delta of old list and new list.
 	 *
 	 * This function implements the algorithm described in "A Technique for Isolating Differences Between Files"
 	 * (Commun. ACM, April 1978, Volume 21, Number 4, Pages 264-268).
