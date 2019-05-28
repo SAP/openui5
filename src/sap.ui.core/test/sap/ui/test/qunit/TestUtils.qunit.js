@@ -273,7 +273,7 @@ sap.ui.define([
 					+ "Content-Type: application/http\r\n"
 					+ "Content-Transfer-Encoding: binary\r\n"
 					+ "\r\n"
-					+ "HTTP/1.1 " + oFixture.status + "\r\n"
+					+ "HTTP/1.1 " + oFixture.status + " \r\n"
 					+ headerString(oFixture.responseHeaders)
 					+ "\r\n"
 					+ (oFixture.responseBody || "")
@@ -351,7 +351,7 @@ sap.ui.define([
 				"Content-Transfer-Encoding: binary",
 				"Content-ID: 0.0",
 				"",
-				"HTTP/1.1 204", // "auto responder"
+				"HTTP/1.1 204 ", // "auto responder"
 				"OData-Version: 4.0",
 				"Content-Type: text/plain;charset=utf-8",
 				"",
@@ -361,7 +361,7 @@ sap.ui.define([
 				"Content-Transfer-Encoding: binary",
 				"Content-ID: 1.0",
 				"",
-				"HTTP/1.1 200", // "server fixture"
+				"HTTP/1.1 200 ", // "server fixture"
 				"OData-Version: 4.0",
 				"Content-Type: application/json;charset=utf-8",
 				"",
@@ -416,7 +416,7 @@ sap.ui.define([
 				"Content-Type: application/http",
 				"Content-Transfer-Encoding: binary",
 				"",
-				"HTTP/1.1 400",
+				"HTTP/1.1 400 ",
 				"OData-Version: 4.0",
 				"Content-Type: application/json;charset=utf-8",
 				"",

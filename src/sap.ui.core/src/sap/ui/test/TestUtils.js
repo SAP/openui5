@@ -374,9 +374,10 @@ sap.ui.define([
 			function formatResponse(oResponse, mODataHeaders) {
 				var mHeaders = jQuery.extend({}, mODataHeaders, oResponse.headers);
 
+				// Note: datajs expects a space after the response code
 				return sMimeHeaders
 					+ (oResponse.contentId ? "Content-ID: " + oResponse.contentId + "\r\n" : "")
-					+ "\r\nHTTP/1.1 " + oResponse.code + "\r\n"
+					+ "\r\nHTTP/1.1 " + oResponse.code + " \r\n"
 					+ Object.keys(mHeaders).map(function (sHeader) {
 							return sHeader + ": " + mHeaders[sHeader];
 						}).join("\r\n")
@@ -465,8 +466,11 @@ sap.ui.define([
 			 * @returns {object} An object with the properties boundary and parts
 			 */
 			function multipart(sServiceBase, sBody) {
-				var sBoundary = firstLine(sBody);
+				var sBoundary;
 
+				// skip preamble consisting of whitespace (as sent by datajs)
+				sBody = sBody.replace(/^\s+/, "");
+				sBoundary = firstLine(sBody);
 				return {
 					boundary : firstLine(sBody).slice(2),
 					parts : sBody.split(sBoundary).slice(1, -1).map(function (sRequestPart) {
