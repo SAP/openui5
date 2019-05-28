@@ -2,7 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/fl/context/BaseContextProvider", "sap/ui/Device"], function(BaseContextProvider, Device) {
+sap.ui.define([
+	"sap/ui/fl/context/BaseContextProvider",
+	"sap/ui/Device"
+], function(
+	BaseContextProvider,
+	Device
+) {
 	"use strict";
 
 	/**
@@ -44,10 +50,9 @@ sap.ui.define(["sap/ui/fl/context/BaseContextProvider", "sap/ui/Device"], functi
 		return Promise.resolve({});
 	};
 
-	DeviceContextProvider.prototype.validate = function(sKey, vValue) {
+	DeviceContextProvider.prototype.validate = function() {
 		return Promise.resolve(true);
 	};
 
 	return DeviceContextProvider;
-
 }, /* bExport= */true);

@@ -47,11 +47,11 @@ sap.ui.define([
 
 			var oChangePersistence = {
 				_mChangesEntries: {
-					"id1": {
+					id1: {
 						_oDefinition: oDefinition1,
 						_aDependentSelectorList: [{id: "someControl"}]
 					},
-					"id2": {
+					id2: {
 						_oDefinition: oDefinition2,
 						_aDependentSelectorList: []
 					}
@@ -88,11 +88,11 @@ sap.ui.define([
 			var oChangePersistence = {
 				_mChangesInitial: {
 					mDependencies: {
-						"id1": {
+						id1: {
 							controlsDependencies: [sId1ControlDependency1, sId1ControlDependency2],
 							dependencies: []
 						},
-						"id2": {
+						id2: {
 							controlsDependencies: [sId2ControlDependency],
 							dependencies: ["id1"]
 						}
@@ -156,7 +156,7 @@ sap.ui.define([
 			var oChangePersistence = {
 				_mChanges: {
 					mChanges: {
-						"someControlId": {}
+						someControlId: {}
 					}
 				}
 			};
@@ -187,7 +187,7 @@ sap.ui.define([
 			var oChangePersistence = {
 				_mChanges: {
 					mChanges: {
-						"someControlId": {}
+						someControlId: {}
 					}
 				}
 			};
@@ -208,7 +208,7 @@ sap.ui.define([
 			var oChangePersistence = {
 				_mChanges: {
 					mChanges: {
-						"someControlId": {}
+						someControlId: {}
 					}
 				}
 			};
@@ -282,7 +282,7 @@ sap.ui.define([
 			var oChangePersistence = {
 				_mChanges: {
 					mChanges: {
-						"someControlId": {}
+						someControlId: {}
 					}
 				}
 			};

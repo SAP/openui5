@@ -11,7 +11,15 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/fl/EventHistory"
-], function(FlexControllerFactory, Component, ChangeHandlerRegistration, ChangePersistenceFactory, MvcController, XMLView, EventHistory) {
+], function(
+	FlexControllerFactory,
+	Component,
+	ChangeHandlerRegistration,
+	ChangePersistenceFactory,
+	MvcController,
+	XMLView,
+	EventHistory
+) {
 	"use strict";
 
 	/**
@@ -71,7 +79,7 @@ sap.ui.define([
 	 * @public
 	 */
 	RegistrationDelegator.registerXMLPreprocessor = function() {
-		if (XMLView.registerPreprocessor){
+		if (XMLView.registerPreprocessor) {
 			XMLView.registerPreprocessor("viewxml", "sap.ui.fl.XmlPreprocessorImpl", true);
 		}
 	};
@@ -100,5 +108,4 @@ sap.ui.define([
 	};
 
 	return RegistrationDelegator;
-
 }, /* bExport= */true);

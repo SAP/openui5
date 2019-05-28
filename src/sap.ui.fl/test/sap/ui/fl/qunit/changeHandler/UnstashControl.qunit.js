@@ -29,24 +29,24 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oChangeHandler = UnstashControlChangeHandler;
 			var oChangeJson = {
-					"changeType" : "unstashControl",
-					"selector": {
-						"id": "key"
-					},
-					"content": {
-						"parentAggregationName" : "sections",
-						"index" : 0
-					}
+				changeType : "unstashControl",
+				selector: {
+					id: "key"
+				},
+				content: {
+					parentAggregationName : "sections",
+					index : 0
+				}
 			};
 			this.oChange = new Change(oChangeJson);
 
 			var oNonMoveChangeJson = {
-					"changeType" : "unstashControl",
-					"selector": {
-						"id": "key"
-					},
-					"content": {
-					}
+				changeType : "unstashControl",
+				selector: {
+					id: "key"
+				},
+				content: {
+				}
 			};
 			this.oNonMoveChange = new Change(oNonMoveChangeJson);
 
@@ -94,7 +94,6 @@ sap.ui.define([
 			this.oObjectPageLayout.destroy();
 		}
 	}, function() {
-
 		QUnit.test('applyChange is called with a stashed ObjectPageSection on an xml control tree', function(assert) {
 			var oControl = this.oChangeHandler.applyChange(this.oChange, this.oXmlObjectPageSection3, {modifier: XmlTreeModifier, view: this.oXmlView});
 			assert.deepEqual(oControl, this.oXmlObjectPageSection3, "then the passed control node is returned");

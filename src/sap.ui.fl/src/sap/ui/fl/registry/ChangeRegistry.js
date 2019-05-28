@@ -55,22 +55,22 @@ sap.ui.define([
 	ChangeRegistry.prototype._oDefaultActiveChangeHandlers = {};
 
 	ChangeRegistry.prototype._oDefaultChangeHandlers = {
-		"hideControl": HideControl,
-		"moveElements": MoveElements,
-		"moveControls": MoveControls,
-		"unhideControl": UnhideControl,
-		"stashControl": StashControl,
-		"unstashControl": UnstashControl
+		hideControl: HideControl,
+		moveElements: MoveElements,
+		moveControls: MoveControls,
+		unhideControl: UnhideControl,
+		stashControl: StashControl,
+		unstashControl: UnstashControl
 	};
 
 	ChangeRegistry.prototype._mDeveloperModeChangeHandlers = {
-		"propertyChange": {
+		propertyChange: {
 			changeHandler: PropertyChange
 		},
-		"propertyBindingChange": {
+		propertyBindingChange: {
 			changeHandler: PropertyBindingChange
 		},
-		"addXML": {
+		addXML: {
 			changeHandler: AddXML
 		}
 	};
@@ -150,9 +150,9 @@ sap.ui.define([
 				jQuery.each(vResult, function(sChangeType, sChangeHandler) {
 					var oChangeHandler = this._getChangeHandlerEntry(sChangeType, sChangeHandler);
 					var oSimpleChange = {
-						"changeType": sChangeType,
-						"changeHandler": oChangeHandler.changeHandler,
-						"layers":oChangeHandler.layers
+						changeType: sChangeType,
+						changeHandler: oChangeHandler.changeHandler,
+						layers:oChangeHandler.layers
 					};
 					this.registerControlForSimpleChange(sControlType, oSimpleChange);
 				}.bind(this));
@@ -191,9 +191,9 @@ sap.ui.define([
 
 		oChangeHandler = this._getChangeHandlerEntry(sChangeType, vChangeHandler);
 		oSimpleChange = {
-			"changeType": sChangeType,
-			"changeHandler": oChangeHandler.changeHandler,
-			"layers":oChangeHandler.layers
+			changeType: sChangeType,
+			changeHandler: oChangeHandler.changeHandler,
+			layers:oChangeHandler.layers
 		};
 		sControlType = oModifier.getControlType(oControl);
 		oChangeRegistryItem = this._createChangeRegistryItemForSimpleChange(sControlType, oSimpleChange);
@@ -249,17 +249,17 @@ sap.ui.define([
 		}
 
 		mChangeRegistryItem = this.getRegistryItems({
-			"changeTypeName": sChangeType,
-			"controlType": sControlType,
-			"layer": sLayer
+			changeTypeName: sChangeType,
+			controlType: sControlType,
+			layer: sLayer
 		});
 		if (mChangeRegistryItem && mChangeRegistryItem[sControlType] && mChangeRegistryItem[sControlType][sChangeType]) {
 			return mChangeRegistryItem[sControlType][sChangeType];
 		} else if (mChangeRegistryItem && mChangeRegistryItem[sControlType]) {
 			return mChangeRegistryItem[sControlType];
-		} else {
-			return mChangeRegistryItem;
 		}
+
+		return mChangeRegistryItem;
 	};
 
 	/**
@@ -406,7 +406,7 @@ sap.ui.define([
 			}
 		//or via changeType on all control types
 		} else if (mParam.changeTypeName) {
-			for ( var controlTypeKey in this._registeredItems) {
+			for (var controlTypeKey in this._registeredItems) {
 				var controlItem = this._registeredItems[controlTypeKey];
 				delete controlItem[mParam.changeTypeName];
 			}
@@ -474,7 +474,7 @@ sap.ui.define([
 			}
 		} else if (sChangeType) {
 			result = {};
-			for ( sControlType in this._registeredItems) {
+			for (sControlType in this._registeredItems) {
 				if (this._registeredItems[sControlType][sChangeType]) {
 					result[sControlType] = {};
 					result[sControlType][sChangeType] = this._getOrLoadChangeHandler(sControlType, sChangeType);
@@ -499,7 +499,7 @@ sap.ui.define([
 				var oChangeHandlerImplementation = oChangeHandlerMetadata.getChangeHandler();
 				if (typeof oChangeHandlerImplementation === "string") {
 					// load the module synchronously
-					oChangeHandlerImplementation = sap.ui.requireSync(oChangeHandlerImplementation.replace(/\./g,"/"));
+					oChangeHandlerImplementation = sap.ui.requireSync(oChangeHandlerImplementation.replace(/\./g, "/"));
 					oChangeHandlerMetadata._changeHandler = oChangeHandlerImplementation;
 				}
 

@@ -2,8 +2,11 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
-], function(Utils) {
+sap.ui.define([
+	"sap/ui/fl/descriptorRelated/internal/Utils"
+], function(
+	Utils
+) {
 	"use strict";
 
 	/**
@@ -20,7 +23,7 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	 * @private
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
-	var DescriptorInlineChange = function(sChangeType,mParameters,mTexts) {
+	var DescriptorInlineChange = function(sChangeType, mParameters, mTexts) {
 		//parameter correspond to inline change format
 		//exception: appdescr_app_setTitle, and similar
 
@@ -55,16 +58,16 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	var DescriptorInlineChangeFactory = {};
 
 	DescriptorInlineChangeFactory.getDescriptorChangeTypes = function() {
-		return ["appdescr_ovp_addNewCard","appdescr_ovp_removeCard","appdescr_ovp_changeCard",
-		        "appdescr_app_addNewInbound", "appdescr_app_changeInbound", "appdescr_app_removeInbound", "appdescr_app_removeAllInboundsExceptOne",
-		        "appdescr_app_addNewOutbound", "appdescr_app_changeOutbound", "appdescr_app_removeOutbound",
-		        "appdescr_app_addNewDataSource", "appdescr_app_changeDataSource", "appdescr_app_removeDataSource",
-		        "appdescr_app_addAnnotationsToOData", "appdescr_app_addTechnicalAttributes", "appdescr_app_removeTechnicalAttributes",
-		        "appdescr_app_setTitle", "appdescr_app_setSubTitle", "appdescr_app_setShortTitle", "appdescr_app_setDescription", "appdescr_app_setInfo",
-		        "appdescr_app_setDestination", "appdescr_app_setKeywords", "appdescr_app_setAch", "appdescr_flp_setConfig",
-		        "appdescr_ui5_addNewModel", "appdescr_ui5_addNewModelEnhanceWith", "appdescr_ui5_removeModel", "appdescr_ui5_replaceComponentUsage", "appdescr_ui5_setMinUI5Version",
-		        "appdescr_smb_addNamespace", "appdescr_smb_changeNamespace", "appdescr_ui_generic_app_setMainPage", "appdescr_ui_setIcon", "appdescr_ui_setDeviceTypes",
-		        "appdescr_ui5_addLibraries", "appdescr_url_setUri", "appdescr_fiori_setRegistrationIds"];
+		return ["appdescr_ovp_addNewCard", "appdescr_ovp_removeCard", "appdescr_ovp_changeCard",
+				"appdescr_app_addNewInbound", "appdescr_app_changeInbound", "appdescr_app_removeInbound", "appdescr_app_removeAllInboundsExceptOne",
+				"appdescr_app_addNewOutbound", "appdescr_app_changeOutbound", "appdescr_app_removeOutbound",
+				"appdescr_app_addNewDataSource", "appdescr_app_changeDataSource", "appdescr_app_removeDataSource",
+				"appdescr_app_addAnnotationsToOData", "appdescr_app_addTechnicalAttributes", "appdescr_app_removeTechnicalAttributes",
+				"appdescr_app_setTitle", "appdescr_app_setSubTitle", "appdescr_app_setShortTitle", "appdescr_app_setDescription", "appdescr_app_setInfo",
+				"appdescr_app_setDestination", "appdescr_app_setKeywords", "appdescr_app_setAch", "appdescr_flp_setConfig",
+				"appdescr_ui5_addNewModel", "appdescr_ui5_addNewModelEnhanceWith", "appdescr_ui5_removeModel", "appdescr_ui5_replaceComponentUsage", "appdescr_ui5_setMinUI5Version",
+				"appdescr_smb_addNamespace", "appdescr_smb_changeNamespace", "appdescr_ui_generic_app_setMainPage", "appdescr_ui_setIcon", "appdescr_ui_setDeviceTypes",
+				"appdescr_ui5_addLibraries", "appdescr_url_setUri", "appdescr_fiori_setRegistrationIds"];
 	};
 
 	/**
@@ -72,25 +75,25 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	 */
 	DescriptorInlineChangeFactory.getCondensableDescriptorChangeTypes = function() {
 		return [
-				"appdescr_app_setTitle",
-				"appdescr_app_setInfo",
-				"appdescr_app_setShortTitle",
-				"appdescr_app_setSubTitle",
-				"appdescr_app_setDescription",
-				"appdescr_app_setDestination",
-				"appdescr_app_setKeywords",
-				"appdescr_app_setAch",
-				"appdescr_ui_setIcon",
-				"appdescr_ui_setDeviceTypes",
-				"appdescr_ui_setIcon",
-				"appdescr_ui_setDeviceTypes",
-				"appdescr_fiori_setRegistrationIds",
-				"appdescr_smb_changeNamespace"
-			];
+			"appdescr_app_setTitle",
+			"appdescr_app_setInfo",
+			"appdescr_app_setShortTitle",
+			"appdescr_app_setSubTitle",
+			"appdescr_app_setDescription",
+			"appdescr_app_setDestination",
+			"appdescr_app_setKeywords",
+			"appdescr_app_setAch",
+			"appdescr_ui_setIcon",
+			"appdescr_ui_setDeviceTypes",
+			"appdescr_ui_setIcon",
+			"appdescr_ui_setDeviceTypes",
+			"appdescr_fiori_setRegistrationIds",
+			"appdescr_smb_changeNamespace"
+		];
 	};
 
-	DescriptorInlineChangeFactory.createNew = function(sChangeType,mParameters,mTexts) {
-		var oDescriptorInlineChange = new DescriptorInlineChange(sChangeType,mParameters,mTexts);
+	DescriptorInlineChangeFactory.createNew = function(sChangeType, mParameters, mTexts) {
+		var oDescriptorInlineChange = new DescriptorInlineChange(sChangeType, mParameters, mTexts);
 
 		return new Promise(function(resolve, reject) {
 			//no check in backend at that point, check only after submitting in service provider
@@ -101,14 +104,13 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 				var oError = {}; //TODO
 				reject(oError);
 			}
-
 		});
 	};
 
 
 //private static methods
-	DescriptorInlineChangeFactory._createDescriptorInlineChange = function( sDescriptorChangeType,mParameters,mTexts ){
-		var oDescriptorInlineChange = new DescriptorInlineChange(sDescriptorChangeType,mParameters,mTexts);
+	DescriptorInlineChangeFactory._createDescriptorInlineChange = function(sDescriptorChangeType, mParameters, mTexts) {
+		var oDescriptorInlineChange = new DescriptorInlineChange(sDescriptorChangeType, mParameters, mTexts);
 
 		//no check in backend at that point, check only after submitting in service provider
 		return new Promise(function(resolve, reject) {
@@ -135,8 +137,8 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	 * @private
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
-	DescriptorInlineChangeFactory.createDescriptorInlineChange = function( sDescriptorChangeType,mParameters,mTexts ){
-		return this._createDescriptorInlineChange( sDescriptorChangeType,mParameters,mTexts );
+	DescriptorInlineChangeFactory.createDescriptorInlineChange = function(sDescriptorChangeType, mParameters, mTexts) {
+		return this._createDescriptorInlineChange(sDescriptorChangeType, mParameters, mTexts);
 	};
 
 	/**
@@ -153,9 +155,9 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	 * @private
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
-	DescriptorInlineChangeFactory.create_ovp_addNewCard = function(mParameters,mTexts) {
+	DescriptorInlineChangeFactory.create_ovp_addNewCard = function(mParameters, mTexts) {
 		Utils.checkParameterAndType(mParameters, "card", "object");
-		return this._createDescriptorInlineChange('appdescr_ovp_addNewCard', mParameters,mTexts);
+		return this._createDescriptorInlineChange('appdescr_ovp_addNewCard', mParameters, mTexts);
 	};
 
 	/**
@@ -172,7 +174,6 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	DescriptorInlineChangeFactory.create_ovp_removeCard = function(mParameters) {
 		Utils.checkParameterAndType(mParameters, "cardId", "string");
 		return this._createDescriptorInlineChange('appdescr_ovp_removeCard', mParameters);
-
 	};
 
     /**
@@ -191,12 +192,11 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
      * @private
      * @ui5-restricted sap.ui.rta, smart business
      */
-    DescriptorInlineChangeFactory.create_ovp_changeCard = function(mParameters,mTexts) {
-        Utils.checkParameterAndType(mParameters, "cardId", "string");
-        Utils.checkEntityPropertyChange(mParameters);
-        return this._createDescriptorInlineChange('appdescr_ovp_changeCard', mParameters, mTexts);
-
-    };
+	DescriptorInlineChangeFactory.create_ovp_changeCard = function(mParameters, mTexts) {
+		Utils.checkParameterAndType(mParameters, "cardId", "string");
+		Utils.checkEntityPropertyChange(mParameters);
+		return this._createDescriptorInlineChange('appdescr_ovp_changeCard', mParameters, mTexts);
+	};
 
     /**
 	 * Creates an inline change of change type appdescr_app_addNewInbound
@@ -210,10 +210,9 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	 * @private
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
-	DescriptorInlineChangeFactory.create_app_addNewInbound = function(mParameters,mTexts) {
+	DescriptorInlineChangeFactory.create_app_addNewInbound = function(mParameters, mTexts) {
 		Utils.checkParameterAndType(mParameters, "inbound", "object");
 		return this._createDescriptorInlineChange('appdescr_app_addNewInbound', mParameters, mTexts);
-
 	};
 
 	/**
@@ -230,7 +229,6 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	DescriptorInlineChangeFactory.create_app_removeInbound = function(mParameters) {
 		Utils.checkParameterAndType(mParameters, "inboundId", "string");
 		return this._createDescriptorInlineChange('appdescr_app_removeInbound', mParameters);
-
 	};
 
 	/**
@@ -266,11 +264,10 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	 * @private
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
-	DescriptorInlineChangeFactory.create_app_changeInbound = function(mParameters,mTexts) {
+	DescriptorInlineChangeFactory.create_app_changeInbound = function(mParameters, mTexts) {
 		Utils.checkParameterAndType(mParameters, "inboundId", "string");
 		Utils.checkEntityPropertyChange(mParameters);
 		return this._createDescriptorInlineChange('appdescr_app_changeInbound', mParameters, mTexts);
-
 	};
 
 	/**
@@ -287,7 +284,6 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	DescriptorInlineChangeFactory.create_app_addNewOutbound = function(mParameters) {
 		Utils.checkParameterAndType(mParameters, "outbound", "object");
 		return this._createDescriptorInlineChange('appdescr_app_addNewOutbound', mParameters);
-
 	};
 
 	/**
@@ -304,7 +300,6 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	DescriptorInlineChangeFactory.create_app_removeOutbound = function(mParameters) {
 		Utils.checkParameterAndType(mParameters, "outboundId", "string");
 		return this._createDescriptorInlineChange('appdescr_app_removeOutbound', mParameters);
-
 	};
 
 	/**
@@ -327,7 +322,6 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 		Utils.checkParameterAndType(mParameters, "outboundId", "string");
 		Utils.checkEntityPropertyChange(mParameters);
 		return this._createDescriptorInlineChange('appdescr_app_changeOutbound', mParameters);
-
 	};
 
 	/**
@@ -344,7 +338,6 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	DescriptorInlineChangeFactory.create_app_addNewDataSource = function(mParameters) {
 		Utils.checkParameterAndType(mParameters, "dataSource", "object");
 		return this._createDescriptorInlineChange('appdescr_app_addNewDataSource', mParameters);
-
 	};
 
 	/**
@@ -362,7 +355,6 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	DescriptorInlineChangeFactory.create_app_removeDataSource = function(mParameters) {
 		Utils.checkParameterAndType(mParameters, "dataSourceId", "string");
 		return this._createDescriptorInlineChange('appdescr_app_removeDataSource', mParameters);
-
 	};
 
 	/**
@@ -384,7 +376,6 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 		Utils.checkParameterAndType(mParameters, "dataSourceId", "string");
 		Utils.checkEntityPropertyChange(mParameters);
 		return this._createDescriptorInlineChange('appdescr_app_changeDataSource', mParameters);
-
 	};
 
 	/**
@@ -425,7 +416,6 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 		Utils.checkParameterAndType(mParameters, "annotations", "array");
 		Utils.checkParameterAndType(mParameters, "dataSource", "object");
 		return this._createDescriptorInlineChange('appdescr_app_addAnnotationsToOData', mParameters);
-
 	};
 
 
@@ -444,16 +434,14 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorInlineChangeFactory.create_app_setTitle = function(mParameters) {
-
 		var mTexts = {
-					"" : mParameters //property name = text key set when adding to descriptor variant
+			"" : mParameters //property name = text key set when adding to descriptor variant
 		};
 
-		return this._createDescriptorInlineChange('appdescr_app_setTitle', {}, mTexts).then(function(oDescriptorInlineChange){
-
+		return this._createDescriptorInlineChange('appdescr_app_setTitle', {}, mTexts).then(function(oDescriptorInlineChange) {
 			//TODO check how this can be done nicer, e.g. by sub classing
-			return new Promise(function(resolve){
-				oDescriptorInlineChange["setHostingIdForTextKey"] = function(sHostingId){
+			return new Promise(function(resolve) {
+				oDescriptorInlineChange["setHostingIdForTextKey"] = function(sHostingId) {
 					var that = oDescriptorInlineChange;
 					var sTextKey = sHostingId + "_sap.app.title";
 					that._mParameters.texts[sTextKey] = that._mParameters.texts[""];
@@ -479,16 +467,14 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorInlineChangeFactory.create_app_setSubTitle = function(mParameters) {
-
 		var mTexts = {
-					"" : mParameters //property name = text key set when adding to descriptor variant
+			"" : mParameters //property name = text key set when adding to descriptor variant
 		};
 
-		return this._createDescriptorInlineChange('appdescr_app_setSubTitle', {}, mTexts).then(function(oDescriptorInlineChange){
-
+		return this._createDescriptorInlineChange('appdescr_app_setSubTitle', {}, mTexts).then(function(oDescriptorInlineChange) {
 			//TODO check how this can be done nicer, e.g. by sub classing
-			return new Promise(function(resolve){
-				oDescriptorInlineChange["setHostingIdForTextKey"] = function(sHostingId){
+			return new Promise(function(resolve) {
+				oDescriptorInlineChange["setHostingIdForTextKey"] = function(sHostingId) {
 					var that = oDescriptorInlineChange;
 					var sTextKey = sHostingId + "_sap.app.subTitle";
 					that._mParameters.texts[sTextKey] = that._mParameters.texts[""];
@@ -514,16 +500,14 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorInlineChangeFactory.create_app_setShortTitle = function(mParameters) {
-
 		var mTexts = {
-					"" : mParameters //property name = text key set when adding to descriptor variant
+			"" : mParameters //property name = text key set when adding to descriptor variant
 		};
 
-		return this._createDescriptorInlineChange('appdescr_app_setShortTitle', {}, mTexts).then(function(oDescriptorInlineChange){
-
+		return this._createDescriptorInlineChange('appdescr_app_setShortTitle', {}, mTexts).then(function(oDescriptorInlineChange) {
 			//TODO check how this can be done nicer, e.g. by sub classing
-			return new Promise(function(resolve){
-				oDescriptorInlineChange["setHostingIdForTextKey"] = function(sHostingId){
+			return new Promise(function(resolve) {
+				oDescriptorInlineChange["setHostingIdForTextKey"] = function(sHostingId) {
 					var that = oDescriptorInlineChange;
 					var sTextKey = sHostingId + "_sap.app.shortTitle";
 					that._mParameters.texts[sTextKey] = that._mParameters.texts[""];
@@ -549,16 +533,14 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorInlineChangeFactory.create_app_setDescription = function(mParameters) {
-
 		var mTexts = {
-					"" : mParameters //property name = text key set when adding to descriptor variant
+			"" : mParameters //property name = text key set when adding to descriptor variant
 		};
 
-		return this._createDescriptorInlineChange('appdescr_app_setDescription', {}, mTexts).then(function(oDescriptorInlineChange){
-
+		return this._createDescriptorInlineChange('appdescr_app_setDescription', {}, mTexts).then(function(oDescriptorInlineChange) {
 			//TODO check how this can be done nicer, e.g. by sub classing
-			return new Promise(function(resolve){
-				oDescriptorInlineChange["setHostingIdForTextKey"] = function(sHostingId){
+			return new Promise(function(resolve) {
+				oDescriptorInlineChange["setHostingIdForTextKey"] = function(sHostingId) {
 					var that = oDescriptorInlineChange;
 					var sTextKey = sHostingId + "_sap.app.description";
 					that._mParameters.texts[sTextKey] = that._mParameters.texts[""];
@@ -584,16 +566,14 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorInlineChangeFactory.create_app_setInfo = function(mParameters) {
-
 		var mTexts = {
-					"" : mParameters //property name = text key set when adding to descriptor variant
+			"" : mParameters //property name = text key set when adding to descriptor variant
 		};
 
-		return this._createDescriptorInlineChange('appdescr_app_setInfo', {}, mTexts).then(function(oDescriptorInlineChange){
-
+		return this._createDescriptorInlineChange('appdescr_app_setInfo', {}, mTexts).then(function(oDescriptorInlineChange) {
 			//TODO check how this can be done nicer, e.g. by sub classing
-			return new Promise(function(resolve){
-				oDescriptorInlineChange["setHostingIdForTextKey"] = function(sHostingId){
+			return new Promise(function(resolve) {
+				oDescriptorInlineChange["setHostingIdForTextKey"] = function(sHostingId) {
 					var that = oDescriptorInlineChange;
 					var sTextKey = sHostingId + "_sap.app.info";
 					that._mParameters.texts[sTextKey] = that._mParameters.texts[""];
@@ -847,7 +827,7 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	 * @private
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
-	DescriptorInlineChangeFactory.create_ui_generic_app_setMainPage = function(mParameters,mTexts) {
+	DescriptorInlineChangeFactory.create_ui_generic_app_setMainPage = function(mParameters, mTexts) {
 		Utils.checkParameterAndType(mParameters, "page", "object");
 		return this._createDescriptorInlineChange('appdescr_ui_generic_app_setMainPage', mParameters, mTexts);
 	};
@@ -917,5 +897,4 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	};
 
 	return DescriptorInlineChangeFactory;
-
-},true);
+}, true);

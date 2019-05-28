@@ -79,17 +79,16 @@ sap.ui.define([
 		});
 
 		QUnit.test("onLoadComponent does nothing if no manifest was passed", function (assert) {
-
 			var oComponent = {
 				name : "componentName"
 			};
 			var oConfig = {
-				"name": oComponent.name,
-				"asyncHints": {
-					"requests": [
+				name: oComponent.name,
+				asyncHints: {
+					requests: [
 						{
-							"name": "sap.ui.fl.changes",
-							"reference": oComponent.name
+							name: "sap.ui.fl.changes",
+							reference: oComponent.name
 						}
 					]
 				}
@@ -104,17 +103,16 @@ sap.ui.define([
 		});
 
 		QUnit.test("onLoadComponent does nothing if the passed manifest does not contain a type", function (assert) {
-
 			var oComponent = {
 				name : "componentName"
 			};
 			var oConfig = {
-				"name": oComponent.name,
-				"asyncHints": {
-					"requests": [
+				name: oComponent.name,
+				asyncHints: {
+					requests: [
 						{
-							"name": "sap.ui.fl.changes",
-							"reference": oComponent.name
+							name: "sap.ui.fl.changes",
+							reference: oComponent.name
 						}
 					]
 				}
@@ -136,17 +134,16 @@ sap.ui.define([
 		});
 
 		QUnit.test("onLoadComponent does nothing if the passed manifest is not of the type 'application'", function (assert) {
-
 			var oComponent = {
 				name : "componentName"
 			};
 			var oConfig = {
-				"name": oComponent.name,
-				"asyncHints": {
-					"requests": [
+				name: oComponent.name,
+				asyncHints: {
+					requests: [
 						{
-							"name": "sap.ui.fl.changes",
-							"reference": oComponent.name
+							name: "sap.ui.fl.changes",
+							reference: oComponent.name
 						}
 					]
 				}
@@ -154,7 +151,7 @@ sap.ui.define([
 
 			var oManifest = {
 				"sap.app": {
-					"type": "notAnApplication"
+					type: "notAnApplication"
 				},
 				getEntry: function (key) {
 					return this[key];
@@ -170,16 +167,15 @@ sap.ui.define([
 		});
 
 		QUnit.test("onLoadComponent determines legacy app variant ids and has no caching", function (assert) {
-
 			var oComponent = {
 				name : "componentName"
 			};
 			var sAppVariantId = "legacyAppVariantId";
 
 			var oConfig = {
-				"name": oComponent.name,
-				"componentData": {
-					"startupParameters": {
+				name: oComponent.name,
+				componentData: {
+					startupParameters: {
 						"sap-app-id": [sAppVariantId]
 					}
 				}
@@ -187,7 +183,7 @@ sap.ui.define([
 
 			var oManifest = {
 				"sap.app": {
-					"type": "application"
+					type: "application"
 				},
 				"sap.ui5" : null,
 				getEntry: function (key) {
@@ -197,7 +193,7 @@ sap.ui.define([
 
 			var oChangePersistence = new ChangePersistence(oComponent);
 			var oChangePersistenceStub = sandbox.stub(oChangePersistence, "getChangesForComponent");
-			var oStubbedGetChangePersistence = sandbox.stub(ChangePersistenceFactory,"getChangePersistenceForComponent").returns(oChangePersistence);
+			var oStubbedGetChangePersistence = sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
 
 			ChangePersistenceFactory._onLoadComponent(oConfig, oManifest);
 
@@ -205,21 +201,20 @@ sap.ui.define([
 			var oGetChangePersistenceForComponentCall = oStubbedGetChangePersistence.getCall(0).args[0];
 			assert.equal(oGetChangePersistenceForComponentCall, sAppVariantId, "the app variant id was passed correct");
 			var oGetChangesForComponentCall = oChangePersistenceStub.getCall(0).args[0];
-			assert.notOk( "cacheKey" in oGetChangesForComponentCall, "no cache parameter was passed");
+			assert.notOk("cacheKey" in oGetChangesForComponentCall, "no cache parameter was passed");
 		});
 
 		QUnit.test("onLoadComponent determines the component name from the component config and that no changes are present", function (assert) {
-
 			var oComponent = {
 				name : "componentName"
 			};
 			var oConfig = {
-				"name": oComponent.name,
-				"asyncHints": {
-					"requests": [
+				name: oComponent.name,
+				asyncHints: {
+					requests: [
 						{
-							"name": "sap.ui.fl.changes",
-							"reference": oComponent.name + ".Component"
+							name: "sap.ui.fl.changes",
+							reference: oComponent.name + ".Component"
 						}
 					]
 				}
@@ -227,10 +222,10 @@ sap.ui.define([
 
 			var oManifest = {
 				"sap.app": {
-					"type": "application"
+					type: "application"
 				},
 				"sap.ui5" : {
-					"componentName": oComponent.name
+					componentName: oComponent.name
 				},
 				getEntry: function (key) {
 					return this[key];
@@ -239,32 +234,31 @@ sap.ui.define([
 
 			var oChangePersistence = new ChangePersistence(oComponent);
 			var oChangePersistenceStub = sandbox.stub(oChangePersistence, "getChangesForComponent");
-			var oStubbedGetChangePersistence = sandbox.stub(ChangePersistenceFactory,"getChangePersistenceForComponent").returns(oChangePersistence);
+			var oStubbedGetChangePersistence = sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
 
 			ChangePersistenceFactory._onLoadComponent(oConfig, oManifest);
 
 			assert.equal(oChangePersistenceStub.callCount, 1, "changes were requested once");
 			var oGetChangePersistenceForComponentCall = oStubbedGetChangePersistence.getCall(0).args[0];
-			assert.equal(oGetChangePersistenceForComponentCall, oComponent.name  + ".Component", "the component name was passed correct");
+			assert.equal(oGetChangePersistenceForComponentCall, oComponent.name + ".Component", "the component name was passed correct");
 			var oGetChangesForComponentCall = oChangePersistenceStub.getCall(0).args[0];
-			assert.ok( "cacheKey" in oGetChangesForComponentCall, "a cache parameter was passed");
+			assert.ok("cacheKey" in oGetChangesForComponentCall, "a cache parameter was passed");
 			assert.equal(oGetChangesForComponentCall.cacheKey, "<NO CHANGES>", "no changes was the cache information");
 		});
 
 		QUnit.test("onLoadComponent determines the app variant id within the async hints", function (assert) {
-
 			var oComponent = {
 				name : "componentName"
 			};
 			var sAppVariantId = "legacyAppVariantId";
 
 			var oConfig = {
-				"name": oComponent.name,
-				"asyncHints": {
-					"requests": [
+				name: oComponent.name,
+				asyncHints: {
+					requests: [
 						{
-							"name": "sap.ui.fl.changes",
-							"reference": sAppVariantId
+							name: "sap.ui.fl.changes",
+							reference: sAppVariantId
 						}
 					]
 				}
@@ -272,10 +266,10 @@ sap.ui.define([
 
 			var oManifest = {
 				"sap.app": {
-					"type": "application"
+					type: "application"
 				},
 				"sap.ui5" : {
-					"appVariantId": sAppVariantId
+					appVariantId: sAppVariantId
 				},
 				getEntry: function (key) {
 					return this[key];
@@ -284,7 +278,7 @@ sap.ui.define([
 
 			var oChangePersistence = new ChangePersistence(oComponent);
 			var oChangePersistenceStub = sandbox.stub(oChangePersistence, "getChangesForComponent");
-			var oStubbedGetChangePersistence = sandbox.stub(ChangePersistenceFactory,"getChangePersistenceForComponent").returns(oChangePersistence);
+			var oStubbedGetChangePersistence = sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
 
 			ChangePersistenceFactory._onLoadComponent(oConfig, oManifest);
 
@@ -294,7 +288,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("onLoadComponent passes the cache key and url from within the async hints", function (assert) {
-
 			var oComponent = {
 				name : "componentName"
 			};
@@ -302,14 +295,14 @@ sap.ui.define([
 			var sUrl = "/a/url/for/the/bachend/call/~" + sCacheKey + "~/";
 
 			var oConfig = {
-				"name": oComponent.name,
-				"asyncHints": {
-					"requests": [
+				name: oComponent.name,
+				asyncHints: {
+					requests: [
 						{
-							"name": "sap.ui.fl.changes",
-							"reference": oComponent.name + ".Component",
-							"cachebusterToken": sCacheKey,
-							"url": sUrl
+							name: "sap.ui.fl.changes",
+							reference: oComponent.name + ".Component",
+							cachebusterToken: sCacheKey,
+							url: sUrl
 						}
 					]
 				}
@@ -317,10 +310,10 @@ sap.ui.define([
 
 			var oManifest = {
 				"sap.app": {
-					"type": "application"
+					type: "application"
 				},
 				"sap.ui5" : {
-					"componentName": oComponent.name
+					componentName: oComponent.name
 				},
 				getEntry: function (key) {
 					return this[key];
@@ -329,22 +322,21 @@ sap.ui.define([
 
 			var oChangePersistence = new ChangePersistence(oComponent);
 			var oChangePersistenceStub = sandbox.stub(oChangePersistence, "getChangesForComponent");
-			sandbox.stub(ChangePersistenceFactory,"getChangePersistenceForComponent").returns(oChangePersistence);
+			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
 
 			ChangePersistenceFactory._onLoadComponent(oConfig, oManifest);
 
 			var oGetChangesForComponentCall = oChangePersistenceStub.getCall(0).args[0];
-			assert.ok( "cacheKey" in oGetChangesForComponentCall, "a cache parameter was passed");
+			assert.ok("cacheKey" in oGetChangesForComponentCall, "a cache parameter was passed");
 			assert.equal(oGetChangesForComponentCall.cacheKey, sCacheKey, "the cacheKey was determined correct");
 		});
 
 		QUnit.test("onLoadComponent sets max layer filter passed on component data", function (assert) {
-
 			var oComponent = {
 				name : "componentName"
 			};
 			var oConfig = {
-				"name": oComponent.name,
+				name: oComponent.name,
 				componentData : {
 					technicalParameters : {
 						"sap-ui-fl-max-layer" : ["CUSTOMER"]
@@ -354,10 +346,10 @@ sap.ui.define([
 
 			var oManifest = {
 				"sap.app": {
-					"type": "application"
+					type: "application"
 				},
 				"sap.ui5" : {
-					"componentName": oComponent.name
+					componentName: oComponent.name
 				},
 				getEntry: function (key) {
 					return this[key];
@@ -366,7 +358,7 @@ sap.ui.define([
 
 			var oChangePersistence = new ChangePersistence(oComponent);
 			sandbox.stub(oChangePersistence, "getChangesForComponent");
-			sandbox.stub(ChangePersistenceFactory,"getChangePersistenceForComponent").returns(oChangePersistence);
+			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
 
 			//---------Actual Test----------------
 			var fnSetMaxLayer = sandbox.stub(Utils, "setMaxLayerParameter");
@@ -374,16 +366,14 @@ sap.ui.define([
 			ChangePersistenceFactory._onLoadComponent(oConfig, oManifest);
 			assert.equal(fnSetMaxLayer.callCount, 1, "max layer was set once");
 			assert.equal(fnSetMaxLayer.firstCall.args[0], "CUSTOMER", "correct layer has been passed");
-
 		});
 
 		QUnit.test("onLoadComponent sets max layer filter passed on component data (the old way)", function (assert) {
-
 			var oComponent = {
 				name : "componentName"
 			};
 			var oConfig = {
-				"name": oComponent.name,
+				name: oComponent.name,
 				componentData : {
 					startupParameters : {
 						"sap-ui-fl-max-layer" : ["CUSTOMER"]
@@ -393,10 +383,10 @@ sap.ui.define([
 
 			var oManifest = {
 				"sap.app": {
-					"type": "application"
+					type: "application"
 				},
 				"sap.ui5" : {
-					"componentName": oComponent.name
+					componentName: oComponent.name
 				},
 				getEntry: function (key) {
 					return this[key];
@@ -405,7 +395,7 @@ sap.ui.define([
 
 			var oChangePersistence = new ChangePersistence(oComponent);
 			sandbox.stub(oChangePersistence, "getChangesForComponent");
-			sandbox.stub(ChangePersistenceFactory,"getChangePersistenceForComponent").returns(oChangePersistence);
+			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
 
 			//---------Actual Test----------------
 			var fnSetMaxLayer = sandbox.stub(Utils, "setMaxLayerParameter");
@@ -413,24 +403,22 @@ sap.ui.define([
 			ChangePersistenceFactory._onLoadComponent(oConfig, oManifest);
 			assert.equal(fnSetMaxLayer.callCount, 1, "max layer was set once");
 			assert.equal(fnSetMaxLayer.firstCall.args[0], "CUSTOMER", "correct layer has been passed");
-
 		});
 
 		QUnit.test("onLoadComponent sets default max layer if nothing is passed", function (assert) {
-
 			var oComponent = {
 				name : "componentName"
 			};
 			var oConfig = {
-				"name": oComponent.name
+				name: oComponent.name
 			};
 
 			var oManifest = {
 				"sap.app": {
-					"type": "application"
+					type: "application"
 				},
 				"sap.ui5" : {
-					"componentName": oComponent.name
+					componentName: oComponent.name
 				},
 				getEntry: function (key) {
 					return this[key];
@@ -439,7 +427,7 @@ sap.ui.define([
 
 			var oChangePersistence = new ChangePersistence(oComponent);
 			sandbox.stub(oChangePersistence, "getChangesForComponent");
-			sandbox.stub(ChangePersistenceFactory,"getChangePersistenceForComponent").returns(oChangePersistence);
+			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
 
 			//---------Actual Test----------------
 			var fnSetMaxLayer = sandbox.stub(Utils, "setMaxLayerParameter");
@@ -447,7 +435,6 @@ sap.ui.define([
 			ChangePersistenceFactory._onLoadComponent(oConfig, oManifest);
 			assert.equal(fnSetMaxLayer.callCount, 1, "max layer was set once");
 			assert.equal(fnSetMaxLayer.firstCall.args[0], undefined, "correct layer has been passed");
-
 		});
 
 		QUnit.test("_findFlAsyncHint cn determine the flAsyncHint", function(assert) {
@@ -471,13 +458,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("_onLoadComponent does nothing if the component is not of the type 'application'", function (assert) {
-
 			var oConfig = {
 				name: "theComponentName"
 			};
 			var oManifest = {
 				"sap.app": {
-					"type": "component"
+					type: "component"
 				},
 				getEntry: function (key) {
 					return this[key];
@@ -493,13 +479,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("_onLoadComponent requests mapped changes for a component of the type 'application'", function (assert) {
-
 			var oConfig = {
 				name: "theComponentName"
 			};
 			var oManifest = {
 				"sap.app": {
-					"type": "application"
+					type: "application"
 				},
 				getEntry: function (key) {
 					return this[key];
@@ -519,7 +504,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("_onLoadComponent requests mapped changes for a component with technical parameters present in passed config", function (assert) {
-
 			var oConfig = {
 				name: "theComponentName",
 				componentData : {
@@ -537,7 +521,7 @@ sap.ui.define([
 
 			var oManifest = {
 				"sap.app": {
-					"type": "application"
+					type: "application"
 				},
 				getEntry: function (key) {
 					return this[key];
@@ -556,13 +540,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("_getChangesForComponentAfterInstantiation does nothing if the component is not of the type 'application'", function (assert) {
-
 			var oConfig = {
 				name: "theComponentName"
 			};
 			var oManifest = {
 				"sap.app": {
-					"type": "component"
+					type: "component"
 				},
 				getEntry: function (key) {
 					return this[key];
@@ -583,7 +566,7 @@ sap.ui.define([
 			};
 			var oManifest = {
 				"sap.app": {
-					"type": "application"
+					type: "application"
 				},
 				getEntry: function (key) {
 					return this[key];
@@ -604,21 +587,20 @@ sap.ui.define([
 		});
 
 		QUnit.test("_findFlAsyncHint can find the one flex async hint which targets the current component", function (assert) {
-
 			var sComponentName = "thisIsTheComponentNameYouAreLookingFor";
 			var oFlAsyncHint1 = {
-				"reference": "another.component",
-				"name": "sap.ui.fl.changes"
+				reference: "another.component",
+				name: "sap.ui.fl.changes"
 			};
 
 			var oFlAsyncHint2 = {
-				"reference": sComponentName,
-				"name": "sap.ui.fl.changes"
+				reference: sComponentName,
+				name: "sap.ui.fl.changes"
 
 			};
 
 			var oAnotherAsyncHint = {
-				"name": "something.different"
+				name: "something.different"
 			};
 
 			var aAsyncHints = [oFlAsyncHint1, oAnotherAsyncHint, oFlAsyncHint2];

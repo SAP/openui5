@@ -6,19 +6,16 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery"
 ], function(
-	defaultVariant,
+	DefaultVariant,
 	Change,
 	sinon,
 	jQuery
 ) {
-
 	"use strict";
 
 	QUnit.module("sap.ui.fl.DefaultVariant", {
 		beforeEach: function() {
-			this.oDefaultVariant = new defaultVariant.constructor();
-		},
-		afterEach: function() {
+			this.oDefaultVariant = new DefaultVariant.constructor();
 		}
 	});
 
@@ -97,7 +94,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("getDefaultVariantId - shall return an empty string if there are no defaultVariant changes", function(assert) {
-
 		var oChanges = {};
 
 		new Array(5).forEach(function(index) {

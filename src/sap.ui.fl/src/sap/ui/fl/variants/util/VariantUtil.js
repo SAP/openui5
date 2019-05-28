@@ -57,7 +57,7 @@ sap.ui.define([
 				var fnObserverHandler = function () {
 					// variant switch promise needs to be checked, since there might be a pending on-going variants switch
 					// which might result in unnecessary data being stored
-					return this._oVariantSwitchPromise.then( function() {
+					return this._oVariantSwitchPromise.then(function() {
 						// deregister navigation filter if ushell is available
 						VariantUtil._setOrUnsetCustomNavigationForParameter.call(this, false);
 						// detach handler to check if hash was replaced
@@ -155,7 +155,6 @@ sap.ui.define([
 			}
 
 			if (this._oHashRegister.currentIndex >= 0) {
-
 				var aVariantParamValues;
 				var mPropertyBag = {};
 				if (sDirection === "NewEntry" || sDirection === "Unknown") {
@@ -167,15 +166,15 @@ sap.ui.define([
 
 					var bURLUpdateRequired = VariantUtil._adjustForDuplicateParameters.call(this, aVariantParamValues);
 
-					aVariantParamValues = aVariantParamValues.map( function(sParameterValue) {
+					aVariantParamValues = aVariantParamValues.map(function(sParameterValue) {
 						return decodeURIComponent(sParameterValue);
 					});
 
 					// check if variant management control for previously existing register entry exists
 					// if yes, reset to default variant
 					var aExisitingParams = this._oHashRegister.variantControlIds[this._oHashRegister.currentIndex];
-					if (Array.isArray(aExisitingParams)){
-						aExisitingParams.forEach(function(sParam){
+					if (Array.isArray(aExisitingParams)) {
+						aExisitingParams.forEach(function(sParam) {
 							this.switchToDefaultForVariantManagement(sParam);
 						}.bind(this));
 					}
@@ -271,14 +270,14 @@ sap.ui.define([
 			if (bSuppressDefaultNavigation) {
 				bSuppressDefaultNavigation =
 					// true returned from some() if other parameters exist, which is then negated
-					!( [oOldParsed, oNewParsed].some(function (oParsedHash) {
-							if (oParsedHash.params.hasOwnProperty(VariantUtil.variantTechnicalParameterName)) {
+					!([oOldParsed, oNewParsed].some(function (oParsedHash) {
+						if (oParsedHash.params.hasOwnProperty(VariantUtil.variantTechnicalParameterName)) {
 								// If parameter exists but it's not the only one, it's invalid
-								return Object.keys(oParsedHash.params).length > 1;
-							}
-							return Object.keys(oParsedHash.params).length > 0;
+							return Object.keys(oParsedHash.params).length > 1;
 						}
-					) );
+						return Object.keys(oParsedHash.params).length > 0;
+					}
+					));
 			}
 
 			if (bSuppressDefaultNavigation) {

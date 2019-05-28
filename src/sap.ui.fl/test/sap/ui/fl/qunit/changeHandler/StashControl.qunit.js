@@ -44,11 +44,11 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oChangeHandler = StashControlChangeHandler;
 			var oChangeJson = {
-					"selector": {
-						"id": "key"
-					},
-					"content": {},
-					"texts": {}
+				selector: {
+					id: "key"
+				},
+				content: {},
+				texts: {}
 			};
 
 			this.oChange = new Change(oChangeJson);
@@ -65,10 +65,10 @@ sap.ui.define([
 
 			var oXmlString =
 				'<mvc:View  xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:layout="sap.ui.layout"><layout:VerticalLayout id="' + this.oVerticalLayout.getId() + '" flexEnabled="true">' +
-				'<content>' +
-				'<core:Control id="' + this.oControl1.getId() + '"></core:Control>' +
-				'<core:Control id="ToBeStashed"></core:Control>' +
-				'</content>' +
+					'<content>' +
+						'<core:Control id="' + this.oControl1.getId() + '"></core:Control>' +
+						'<core:Control id="ToBeStashed"></core:Control>' +
+					'</content>' +
 				'</layout:VerticalLayout></mvc:View>';
 
 			var oDOMParser = new DOMParser();

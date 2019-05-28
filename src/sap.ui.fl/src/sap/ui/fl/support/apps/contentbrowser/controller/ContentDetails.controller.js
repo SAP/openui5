@@ -8,12 +8,19 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Button",
 	"sap/m/Input",
-	"sap/m/Label",
-	"sap/m/MessageBox",
 	"sap/ui/fl/support/apps/contentbrowser/lrepConnector/LRepConnector",
 	"sap/ui/fl/support/apps/contentbrowser/utils/DataUtils",
 	"sap/m/library"
-], function (Controller, Dialog, Text, Button, Input, Label, MessageBox, LRepConnector, DataUtils, mobileLibrary) {
+], function (
+	Controller,
+	Dialog,
+	Text,
+	Button,
+	Input,
+	LRepConnector,
+	DataUtils,
+	mobileLibrary
+) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -108,9 +115,9 @@ sap.ui.define([
 						oPage.setBusy(false);
 					}
 				);
-			} else {
-				return Promise().resolve();
 			}
+
+			return Promise.resolve();
 		},
 
 		/**
@@ -127,7 +134,7 @@ sap.ui.define([
 			var oCore = sap.ui.getCore();
 			var sIconTabBarId = this.getView().createId("contentDetailsIconTabBar");
 			var oIconTabBar = oCore.getElementById(sIconTabBarId);
-			if (oIconTabBar){
+			if (oIconTabBar) {
 				var oFirstIconTabBarItem = oIconTabBar.getItems()[0];
 				if (oIconTabBar.getSelectedKey() !== oFirstIconTabBarItem.getId()) {
 					oIconTabBar.setSelectedItem(oFirstIconTabBarItem);
@@ -146,10 +153,10 @@ sap.ui.define([
 			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 
 			oRouter.navTo("ContentDetailsEdit", {
-				"layer": oContentData.layer,
-				"namespace": encodeURIComponent(oContentData.namespace),
-				"fileName": oContentData.fileName,
-				"fileType": oContentData.fileType
+				layer: oContentData.layer,
+				namespace: encodeURIComponent(oContentData.namespace),
+				fileName: oContentData.fileName,
+				fileType: oContentData.fileType
 			});
 		},
 
@@ -226,7 +233,7 @@ sap.ui.define([
 			if ((sContentLayer === "USER") ||
 				(sContentLayer === "LOAD") ||
 				(sContentLayer === "VENDOR_LOAD") ||
-				(!sTransportIdFromContent && (!sPackageFromContent || sPackageFromContent === "$TMP"))){
+				(!sTransportIdFromContent && (!sPackageFromContent || sPackageFromContent === "$TMP"))) {
 				//USER, LOAD (and VENDOR_LOAD) layers together with non-ABAP and local ABAP content do not need transport
 				sTransportId = undefined;
 				that._deleteFile(sContentLayer, sNamespace, sFileName, sFileType, sTransportId, sSelectedLayer);
@@ -276,8 +283,8 @@ sap.ui.define([
 			return LRepConnector.deleteFile(sLayer, sNamespace, sFileName, sFileType, sTransportId, sSelectedLayer).then(function () {
 				var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 				oRouter.navTo("LayerContentMaster", {
-					"layer": sSelectedLayer,
-					"namespace": encodeURIComponent(sNamespace)
+					layer: sSelectedLayer,
+					namespace: encodeURIComponent(sNamespace)
 				});
 			}.bind(this));
 		}

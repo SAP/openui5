@@ -28,13 +28,11 @@ function(
 
 			// create new instance of ChangeRegistry
 			this.instance = new ChangeRegistry();
-
 		},
 		afterEach: function () {
 			sandbox.restore();
 		}
 	}, function() {
-
 		QUnit.test("getInstance", function (assert) {
 			var changeRegistryInstance = ChangeRegistry.getInstance();
 			assert.ok(changeRegistryInstance);
@@ -165,14 +163,14 @@ function(
 		QUnit.test("getRegistryItem - identified by controlType and changeTypeName", function (assert) {
 			//Arrange
 			var simpleDummyControlChange1 = {
-				"changeType": "myChangeType1",
-				"changeHandler": {} // stub
+				changeType: "myChangeType1",
+				changeHandler: {} // stub
 			};
 			var registryItem1 = this.instance._createChangeRegistryItemForSimpleChange("sap.ui.fl.DummyControl", simpleDummyControlChange1);
 
 			var simpleDummyControlChange2 = {
-				"changeType": "myChangeType2",
-				"changeHandler": {} // stub
+				changeType: "myChangeType2",
+				changeHandler: {} // stub
 			};
 			var registryItem2 = this.instance._createChangeRegistryItemForSimpleChange("sap.ui.fl.DummyControlGroup", simpleDummyControlChange2);
 			this.instance.addRegistryItem(registryItem1);
@@ -189,21 +187,20 @@ function(
 
 			//Assert
 			assert.strictEqual(Object.keys(result).length, 1);
-			assert.deepEqual(result["sap.ui.fl.DummyControl"], {"myChangeType1": registryItem1});
-
+			assert.deepEqual(result["sap.ui.fl.DummyControl"], {myChangeType1: registryItem1});
 		});
 
 		QUnit.test("getRegistryItem - identified by controlType", function (assert) {
 			//Arrange
 			var simpleDummyControlChange1 = {
-				"changeType": "myChangeType1",
-				"changeHandler": {} // stub
+				changeType: "myChangeType1",
+				changeHandler: {} // stub
 			};
 			var registryItem1 = this.instance._createChangeRegistryItemForSimpleChange("sap.ui.fl.DummyControl1", simpleDummyControlChange1);
 
 			var simpleDummyControlChange2 = {
-				"changeType": "myChangeType2",
-				"changeHandler": {} // stub
+				changeType: "myChangeType2",
+				changeHandler: {} // stub
 			};
 			var registryItem2 = this.instance._createChangeRegistryItemForSimpleChange("sap.ui.fl.DummyControl2", simpleDummyControlChange2);
 			this.instance.addRegistryItem(registryItem1);
@@ -222,14 +219,14 @@ function(
 		QUnit.test("getRegistryItem - identified by controlType, filter by layer", function (assert) {
 			//Arrange
 			var simpleDummyControlChange1 = {
-				"changeType": "myChangeType1",
-				"changeHandler": {} // stub
+				changeType: "myChangeType1",
+				changeHandler: {} // stub
 			};
 			var registryItem1 = this.instance._createChangeRegistryItemForSimpleChange("sap.ui.fl.DummyControl1", simpleDummyControlChange1);
 
 			var simpleDummyControlChange2 = {
-				"changeType": "myChangeType2",
-				"changeHandler": {} // stub
+				changeType: "myChangeType2",
+				changeHandler: {} // stub
 			};
 			var registryItem2 = this.instance._createChangeRegistryItemForSimpleChange("sap.ui.fl.DummyControl2", simpleDummyControlChange2);
 			this.instance.addRegistryItem(registryItem1);
@@ -242,7 +239,7 @@ function(
 			//Assert
 			assert.ok(result);
 			assert.strictEqual(Object.keys(result).length, 1);
-			assert.deepEqual(result["sap.ui.fl.DummyControl1"], {"myChangeType1": registryItem1});
+			assert.deepEqual(result["sap.ui.fl.DummyControl1"], {myChangeType1: registryItem1});
 
 			//Act
 			//Will not be found because it will be filtered by the default <code>Layers</code>
@@ -252,24 +249,23 @@ function(
 			assert.ok(result);
 			assert.strictEqual(Object.keys(result).length, 1);
 			assert.deepEqual(result["sap.ui.fl.DummyControl2"], {});
-			assert.deepEqual(this.instance._registeredItems["sap.ui.fl.DummyControl2"], {"myChangeType2": registryItem2});
-
+			assert.deepEqual(this.instance._registeredItems["sap.ui.fl.DummyControl2"], {myChangeType2: registryItem2});
 		});
 
 		QUnit.test("getRegistryItem - filter by default Layer", function (assert) {
 			//Arrange
 			var simpleDummyControlChange1 = {
-				"changeType": "myChangeType1",
-				"changeHandler": {}, // stub
-				"layers": {
-					"USER": true
+				changeType: "myChangeType1",
+				changeHandler: {}, // stub
+				layers: {
+					USER: true
 				}
 			};
 			var registryItem1 = this.instance._createChangeRegistryItemForSimpleChange("sap.ui.fl.DummyControl1", simpleDummyControlChange1);
 
 			var simpleDummyControlChange2 = {
-				"changeType": "myChangeType2",
-				"changeHandler": {} // stub
+				changeType: "myChangeType2",
+				changeHandler: {} // stub
 			};
 			var registryItem2 = this.instance._createChangeRegistryItemForSimpleChange("sap.ui.fl.DummyControl2", simpleDummyControlChange2);
 
@@ -283,7 +279,7 @@ function(
 			//Assert
 			assert.ok(result);
 			assert.strictEqual(Object.keys(result).length, 1);
-			assert.deepEqual(result["sap.ui.fl.DummyControl1"], {"myChangeType1": registryItem1});
+			assert.deepEqual(result["sap.ui.fl.DummyControl1"], {myChangeType1: registryItem1});
 
 			//Act
 			//Will not be found because it will be filtered by the default layers
@@ -293,9 +289,9 @@ function(
 			assert.ok(result);
 			assert.strictEqual(Object.keys(result).length, 1);
 			assert.deepEqual(result["sap.ui.fl.DummyControl2"], {});
-			assert.deepEqual(this.instance._registeredItems["sap.ui.fl.DummyControl2"], {"myChangeType2": registryItem2});
+			assert.deepEqual(this.instance._registeredItems["sap.ui.fl.DummyControl2"], {myChangeType2: registryItem2});
 
-			var mDefaultLayers =  this.instance._oSettings.getDefaultLayerPermissions();
+			var mDefaultLayers = this.instance._oSettings.getDefaultLayerPermissions();
 			assert.deepEqual(registryItem2.getChangeTypeMetadata().getLayers(), mDefaultLayers, "then the defaultLayers are used");
 
 			mDefaultLayers.USER = true;
@@ -305,14 +301,14 @@ function(
 		QUnit.test("getRegistryItem - identified by changeTypeName", function (assert) {
 			//Arrange
 			var simpleDummyControlChange1 = {
-				"changeType": "myChangeType1",
-				"changeHandler": {} // stub
+				changeType: "myChangeType1",
+				changeHandler: {} // stub
 			};
 			var registryItem1 = this.instance._createChangeRegistryItemForSimpleChange("sap.ui.fl.DummyControl1", simpleDummyControlChange1);
 
 			var simpleDummyControlChange2 = {
-				"changeType": "myChangeType2",
-				"changeHandler": {} // stub
+				changeType: "myChangeType2",
+				changeHandler: {} // stub
 			};
 			var registryItem2 = this.instance._createChangeRegistryItemForSimpleChange("sap.ui.fl.DummyControl2", simpleDummyControlChange2);
 			this.instance.addRegistryItem(registryItem1);
@@ -328,8 +324,7 @@ function(
 
 			//Assert
 			assert.strictEqual(Object.keys(result).length, 2);
-			assert.deepEqual(result["sap.ui.fl.DummyControl1"], {"myChangeType1": registryItem1});
-
+			assert.deepEqual(result["sap.ui.fl.DummyControl1"], {myChangeType1: registryItem1});
 		});
 
 		QUnit.test("getRegistryItem - developerMode ChangeHandlers", function(assert) {
@@ -371,10 +366,10 @@ function(
 
 		QUnit.test("_createChangeRegistryItemForSimpleChange - when we register a change with an unsupported layer in change.layers", function(assert) {
 			var simpleDummyControlChange1 = {
-				"changeType": "myChangeType1",
-				"changeHandler": {}, // stub
-				"layers": {
-					"unsupportedLayer": true
+				changeType: "myChangeType1",
+				changeHandler: {}, // stub
+				layers: {
+					unsupportedLayer: true
 				}
 			};
 			assert.throws(function() {
@@ -383,7 +378,6 @@ function(
 		});
 
 		QUnit.test("registerChangeHandlersForControl understands 'default' as a parameter", function (assert) {
-
 			var someChangeType = "someChange";
 			var sSomeChangeModuleName = "some/module/name";
 			var sHideControlChangeType = "hideControl";
@@ -408,7 +402,6 @@ function(
 		});
 
 		QUnit.test("registerChangeHandlersForControl understands {changeHandler: 'default'} as a parameter", function (assert) {
-
 			var someChangeType = "someChange";
 			var sSomeChangeModuleName = "some/module/name";
 			var sHideControlChangeType = "hideControl";
@@ -482,8 +475,8 @@ function(
 
 		QUnit.test("registerControlsForChanges shall add a map of controls and changes to the registry", function (assert) {
 			return this.instance.registerControlsForChanges({
-				'controlA': [SimpleChanges.unhideControl, SimpleChanges.hideControl],
-				'controlB': [SimpleChanges.unhideControl, SimpleChanges.hideControl]
+				controlA: [SimpleChanges.unhideControl, SimpleChanges.hideControl],
+				controlB: [SimpleChanges.unhideControl, SimpleChanges.hideControl]
 			})
 			.then(function() {
 				var oRegistryItemsA = this.instance.getRegistryItems({
@@ -502,8 +495,8 @@ function(
 
 		QUnit.test("registerControlsForChanges: when adding a propertyChange or propertyBindingChange without 'default' changeHandler", function (assert) {
 			return this.instance.registerControlsForChanges({
-				"controlA": {
-					'propertyChange': {
+				controlA: {
+					propertyChange: {
 						changeHandler: {}
 					}
 				}
@@ -513,8 +506,8 @@ function(
 			})
 			.then(function() {
 				return this.instance.registerControlsForChanges({
-					"controlA": {
-						'propertyBindingChange': {
+					controlA: {
+						propertyBindingChange: {
 							changeHandler: {}
 						}
 					}
@@ -533,7 +526,6 @@ function(
 		});
 
 		QUnit.test("registerControlForSimpleChange shall add a new registry item", function (assert) {
-
 			//Call CUT
 			this.instance.registerControlForSimpleChange("ganttChart", SimpleChanges.unhideControl);
 
@@ -630,7 +622,7 @@ function(
 
 			var bHasRegisteredChangeHandlers = this.instance.hasChangeHandlerForControlAndChange(sSomeOtherControlType, sChangeType);
 
-			assert.strictEqual(bHasRegisteredChangeHandlers,  false, "the registry tells that there is NO registered change handler for the given control and change");
+			assert.strictEqual(bHasRegisteredChangeHandlers, false, "the registry tells that there is NO registered change handler for the given control and change");
 		});
 
 		QUnit.test("can determine if a given control has NOT a change handler for a specific change type if it has some change handlers registered for other change types for that control", function (assert) {
@@ -694,7 +686,7 @@ function(
 			var sPropertyChangeType = "propertyChange";
 
 			this.instance._registeredItems[sControlType] = {
-				"someOtherChange": {}
+				someOtherChange: {}
 			};
 
 			var oChangeHandler = this.instance._getOrLoadChangeHandler(sControlType, sPropertyChangeType);
@@ -714,8 +706,8 @@ function(
 			var oChangeRegistryItem = this.instance._createChangeRegistryItemForSimpleChange(sControlType, oSimpleChangeObject);
 
 			this.instance._registeredItems[sControlType] = {
-				"someOtherChange": {},
-				"propertyChange": oChangeRegistryItem
+				someOtherChange: {},
+				propertyChange: oChangeRegistryItem
 			};
 
 			var oChangeHandler = this.instance._getOrLoadChangeHandler(sControlType, sPropertyChangeType);
@@ -735,8 +727,8 @@ function(
 			var oChangeRegistryItem = this.instance._createChangeRegistryItemForSimpleChange(sControlType, oSimpleChangeObject);
 
 			this.instance._registeredItems[sControlType] = {
-				"someOtherChange": {},
-				"propertyChange": oChangeRegistryItem
+				someOtherChange: {},
+				propertyChange: oChangeRegistryItem
 			};
 
 			var oChangeHandler = this.instance._getOrLoadChangeHandler(sControlType, sPropertyChangeType);
@@ -760,7 +752,7 @@ function(
 			var sPropertyBindingChangeType = "propertyBindingChange";
 
 			this.instance._registeredItems[sControlType] = {
-				"someOtherChange": {}
+				someOtherChange: {}
 			};
 
 			var oChangeHandler = this.instance._getOrLoadChangeHandler(sControlType, sPropertyBindingChangeType);
@@ -780,8 +772,8 @@ function(
 			var oChangeRegistryItem = this.instance._createChangeRegistryItemForSimpleChange(sControlType, oSimpleChangeObject);
 
 			this.instance._registeredItems[sControlType] = {
-				"someOtherChange": {},
-				"propertyBindingChange": oChangeRegistryItem
+				someOtherChange: {},
+				propertyBindingChange: oChangeRegistryItem
 			};
 
 			var oChangeHandler = this.instance._getOrLoadChangeHandler(sControlType, sPropertyBindingChangeType);
@@ -856,8 +848,8 @@ function(
 			var sControlType = "VerticalLayout";
 			var sLayer, oErrorLoggingStub, oGetChangeHandlerModuleStub, oChangeHandler;
 			return this.instance.registerControlsForChanges({
-				"VerticalLayout" : {
-					"moveControls": "default"
+				VerticalLayout : {
+					moveControls: "default"
 				}
 			})
 			.then(function() {
@@ -871,7 +863,6 @@ function(
 				assert.equal(oErrorLoggingStub.callCount, 0, "then no error was logged");
 				assert.equal(oChangeHandler, MoveControlsChangeHandler, "then correct changehandler is returned");
 			}.bind(this));
-
 		});
 
 		QUnit.test("when getChangeHandler is called for a control with instance specific and default changeHandlers", function (assert) {
@@ -882,8 +873,8 @@ function(
 			sandbox.stub(JsControlTreeModifier, "getChangeHandlerModulePath").returns("sap/ui/fl/test/registry/TestChangeHandlers.flexibility");
 			sandbox.stub(JsControlTreeModifier, "getControlType").returns("VerticalLayout");
 			return this.instance.registerControlsForChanges({
-				"VerticalLayout" : {
-					"doSomething": "default"
+				VerticalLayout : {
+					doSomething: "default"
 				}
 			})
 			.then(function() {
@@ -900,8 +891,8 @@ function(
 			sandbox.stub(JsControlTreeModifier, "getChangeHandlerModulePath").returns("sap/ui/fl/test/registry/TestChangeHandlers.flexibility");
 			sandbox.stub(JsControlTreeModifier, "getControlType").returns("VerticalLayout");
 			return this.instance.registerControlsForChanges({
-				"VerticalLayout" : {
-					"moveControls": "default"
+				VerticalLayout : {
+					moveControls: "default"
 				}
 			})
 			.then(function() {

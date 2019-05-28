@@ -53,7 +53,7 @@ function(
 		};
 		var oChangePersistence = new ChangePersistence({name: sFlexReference});
 		var oFlexControllerCreationStub = sandbox.stub(FlexControllerFactory, "create").returns({
-			processXmlView: function(oView, mProperties){
+			processXmlView: function(oView) {
 				return Promise.resolve(oView);
 			}
 		});
@@ -92,7 +92,7 @@ function(
 		};
 		var oChangePersistence = new ChangePersistence({name: sFlexReference});
 		var oFlexControllerCreationStub = sandbox.stub(FlexControllerFactory, "create").returns({
-			processXmlView: function(oView, mProperties){
+			processXmlView: function(oView) {
 				return Promise.resolve(oView);
 			}
 		});
@@ -200,7 +200,7 @@ function(
 		};
 		var oChangePersistence = new ChangePersistence({name: sFlexReference});
 		var oFlexControllerCreationStub = sandbox.stub(FlexControllerFactory, "create").returns({
-			processXmlView: function(oView, mProperties){
+			processXmlView: function(oView) {
 				return Promise.resolve(oView);
 			}
 		});

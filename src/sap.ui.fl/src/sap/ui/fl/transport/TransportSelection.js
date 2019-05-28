@@ -7,7 +7,12 @@ sap.ui.define([
 	"sap/ui/fl/transport/Transports",
 	"sap/ui/fl/transport/TransportDialog",
 	"sap/ui/fl/registry/Settings"
-], function(Utils, Transports, TransportDialog, FlexSettings) {
+], function(
+	Utils,
+	Transports,
+	TransportDialog,
+	FlexSettings
+) {
 	"use strict";
 	/**
 	 * @public
@@ -275,33 +280,31 @@ sap.ui.define([
 					iChangeIdx--;
 					// set the transport for the next request
 					return fnSetTransports(aChanges, iChangeIdx, oControl, sTransport, bFromDialog);
-				} else {
-					// bring up the transport dialog to get the transport information for a change
-					if (oCurrentChange.getDefinition().packageName !== "$TMP") {
-						return that.openTransportSelection(oCurrentChange, oControl).then(function(oTransportInfo) {
+				}
+				// bring up the transport dialog to get the transport information for a change
+				if (oCurrentChange.getDefinition().packageName !== "$TMP") {
+					return that.openTransportSelection(oCurrentChange, oControl).then(function(oTransportInfo) {
+						oCurrentChange.setRequest(oTransportInfo.transport);
 
-							oCurrentChange.setRequest(oTransportInfo.transport);
+						if (oTransportInfo.fromDialog === true) {
+							sTransport = oTransportInfo.transport;
+							bFromDialog = true;
+						}
 
-							if (oTransportInfo.fromDialog === true) {
-								sTransport = oTransportInfo.transport;
-								bFromDialog = true;
-							}
-
-							iChangeIdx--;
-							// set the transport for the next request
-							return fnSetTransports(aChanges, iChangeIdx, oControl, sTransport, bFromDialog);
-						}, function () {
-							return null;
-						});
-					} else {
 						iChangeIdx--;
 						// set the transport for the next request
 						return fnSetTransports(aChanges, iChangeIdx, oControl, sTransport, bFromDialog);
-					}
+					}, function () {
+						return null;
+					});
 				}
-			} else {
-				return Promise.resolve(); // last change has been processed, continue with discarding the changes
+
+				iChangeIdx--;
+				// set the transport for the next request
+				return fnSetTransports(aChanges, iChangeIdx, oControl, sTransport, bFromDialog);
 			}
+
+			return Promise.resolve(); // last change has been processed, continue with discarding the changes
 		};
 
 		return fnSetTransports(aChanges, iChangeIdx, oControl);
@@ -316,7 +319,6 @@ sap.ui.define([
 	 * @public
 	 */
 	TransportSelection.prototype.openTransportSelection = function(oChange, oControl, sStyleClass) {
-
 		var that = this;
 
 		return new Promise(function(resolve, reject) {
@@ -388,11 +390,9 @@ sap.ui.define([
 			oTransportParams.changeIds = aTransportData;
 
 			return oTransports.makeChangesTransportable(oTransportParams).then(function() {
-
 				// remove the $TMP package from all changes; has been done on the server as well,
 				// but is not reflected in the client cache until the application is reloaded
 				aAllLocalChanges.forEach(function(oChange) {
-
 					if (oChange.getPackage() === '$TMP') {
 						var oDefinition = oChange.getDefinition();
 						oDefinition.packageName = oTransportInfo.packageName;

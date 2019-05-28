@@ -121,7 +121,7 @@ sap.ui.define(function () {
 		FakeLrepStorage.getNumChanges = function() {
 			var iChanges = 0;
 
-			this.forEachLrepChangeInLocalStorage(function(sKey) {
+			this.forEachLrepChangeInLocalStorage(function() {
 				iChanges++;
 			});
 
@@ -144,13 +144,13 @@ sap.ui.define(function () {
 		 */
 		FakeLrepStorage.detachModifyCallback = function(fnCallback) {
 			var i = this._aModifyCallbacks.indexOf(fnCallback);
-			if (i !== -1){
-				this._aModifyCallbacks.splice(i,1);
+			if (i !== -1) {
+				this._aModifyCallbacks.splice(i, 1);
 			}
 		};
 
 		FakeLrepStorage._callModifyCallbacks = function(sModifyType) {
-			this._aModifyCallbacks.forEach(function(fnCallback){
+			this._aModifyCallbacks.forEach(function(fnCallback) {
 				fnCallback(sModifyType);
 			});
 		};
@@ -202,5 +202,4 @@ sap.ui.define(function () {
 
 		return FakeLrepStorage;
 	};
-
 }, /* bExport= */ true);

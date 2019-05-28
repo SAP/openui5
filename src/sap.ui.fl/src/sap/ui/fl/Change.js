@@ -13,7 +13,6 @@ sap.ui.define([
 	Utils,
 	Settings
 ) {
-
 	"use strict";
 
 	/**
@@ -28,9 +27,8 @@ sap.ui.define([
 	 * @alias sap.ui.fl.Change
 	 * @experimental Since 1.25.0
 	 */
-	var Change = ManagedObject.extend("sap.ui.fl.Change", /** @lends sap.ui.fl.Change.prototype */
-	{
-		constructor : function(oFile){
+	var Change = ManagedObject.extend("sap.ui.fl.Change", /** @lends sap.ui.fl.Change.prototype */ {
+		constructor : function(oFile) {
 			ManagedObject.apply(this);
 
 			if (!jQuery.isPlainObject(oFile)) {
@@ -223,7 +221,7 @@ sap.ui.define([
 	Change.prototype._isValidState = function(sState) {
 		//new state have to be in the Change.states value list
 		var bStateFound = false;
-		Object.keys(Change.states).some(function(sKey){
+		Object.keys(Change.states).some(function(sKey) {
 			if (Change.states[sKey] === sState) {
 				bStateFound = true;
 			}
@@ -820,9 +818,9 @@ sap.ui.define([
 				aDependentControls.push(oModifier.bySelector(oSelector, oAppComponent, mPropertyBag.view));
 			});
 			return aDependentControls;
-		} else {
-			return oModifier.bySelector(oDependentSelector, oAppComponent, mPropertyBag.view);
 		}
+
+		return oModifier.bySelector(oDependentSelector, oAppComponent, mPropertyBag.view);
 	};
 
 	/**
@@ -836,8 +834,8 @@ sap.ui.define([
 		var aDependentSelectors = [this.getSelector()];
 
 		if (!this._aDependentSelectorList) {
-			if (this._oDefinition.dependentSelector){
-				Object.keys(this._oDefinition.dependentSelector).forEach(function(sAlias){
+			if (this._oDefinition.dependentSelector) {
+				Object.keys(this._oDefinition.dependentSelector).forEach(function(sAlias) {
 					var aCurrentSelector = that._oDefinition.dependentSelector[sAlias];
 					if (!Array.isArray(aCurrentSelector)) {
 						aCurrentSelector = [aCurrentSelector];
@@ -969,7 +967,6 @@ sap.ui.define([
 	 * @public
 	 */
 	Change.createInitialFileContent = function (oPropertyBag) {
-
 		if (!oPropertyBag) {
 			oPropertyBag = {};
 		}

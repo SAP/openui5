@@ -4,7 +4,8 @@
 /*global Promise */
 
 sap.ui.define([
-	"sap/ui/fl/LrepConnector", "sap/ui/fl/Utils"
+	"sap/ui/fl/LrepConnector",
+	"sap/ui/fl/Utils"
 ], function(LrepConnector, FlexUtils) {
 	"use strict";
 
@@ -68,9 +69,9 @@ sap.ui.define([
 					oResponse.response.errorCode = "";
 				}
 				return Promise.resolve(oResponse.response);
-			} else {
-				return Promise.reject('response is empty');
 			}
+
+			return Promise.reject('response is empty');
 		});
 	};
 
@@ -98,7 +99,7 @@ sap.ui.define([
 			return Promise.reject(new Error("no changeIds provided as attribute of mParameters"));
 		}
 		oLrepConnector = LrepConnector.createConnector();
-		return oLrepConnector.send(sUri,'POST',mParameters);
+		return oLrepConnector.send(sUri, 'POST', mParameters);
 	};
 
 	/**

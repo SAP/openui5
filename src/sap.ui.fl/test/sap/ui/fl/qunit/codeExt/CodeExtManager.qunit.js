@@ -33,7 +33,6 @@ sap.ui.define([
 			assert.throws(function() {
 				CodeExtManager.createOrUpdateCodeExtChange(oPropertyBag);
 			}, new Error("no code reference passed for the code extension change"), "an error was thrown");
-
 		});
 
 		QUnit.test("createOrUpdateCodeExtChange throws an error if no controller name is provided", function(assert) {
@@ -59,7 +58,6 @@ sap.ui.define([
 			assert.throws(function() {
 				CodeExtManager.createOrUpdateCodeExtChange(oPropertyBag2);
 			}, new Error("no controller name passed for the code extension change"), "an error was thrown");
-
 		});
 
 		QUnit.test("createOrUpdateCodeExtChange throws an error if no reference is provided", function(assert) {
@@ -75,7 +73,6 @@ sap.ui.define([
 			assert.throws(function() {
 				CodeExtManager.createOrUpdateCodeExtChange(oPropertyBag);
 			}, new Error("no reference passed for the code extension change"), "an error was thrown");
-
 		});
 
 		QUnit.test("createOrUpdateCodeExtChange creates a new change and calls the backend connection class to propagate the creation", function(assert) {
@@ -139,9 +136,9 @@ sap.ui.define([
 			};
 
 			var mOptions = {
-					transportId: "myTransportId",
-					packageName: "myPackageName"
-				};
+				transportId: "myTransportId",
+				packageName: "myPackageName"
+			};
 
 			var oLrepConnectorSendStub = sandbox.stub(CodeExtManager._oLrepConnector, "send");
 
@@ -197,10 +194,10 @@ sap.ui.define([
 				}];
 
 			var mOptions = {
-					transportId: "myTransportId",
-					packageName: "myPackageName",
-					codeRef: sCodeRef
-				};
+				transportId: "myTransportId",
+				packageName: "myPackageName",
+				codeRef: sCodeRef
+			};
 
 			var aExpectedPayload = [
 				{
@@ -296,7 +293,6 @@ sap.ui.define([
 			assert.throws(function() {
 				CodeExtManager.deleteCodeExtChange(oPropertyBag);
 			}, new Error("the change is not of type 'code extension'"), "an error was thrown");
-
 		});
 		QUnit.test("deleteCodeExtChange throws an error if the passed object is not an change file", function(assert) {
 			var oPropertyBag = {
@@ -307,7 +303,6 @@ sap.ui.define([
 			assert.throws(function() {
 				CodeExtManager.deleteCodeExtChange(oPropertyBag);
 			}, new Error("the change is not of type 'code extension'"), "an error was thrown");
-
 		});
 
 		QUnit.test("deleteCodeExtChange throws an error if the file name is not specified", function(assert) {
@@ -324,7 +319,6 @@ sap.ui.define([
 			assert.throws(function() {
 				CodeExtManager.deleteCodeExtChange(oPropertyBag);
 			}, new Error("the extension does not contains a file name"), "an error was thrown");
-
 		});
 
 		QUnit.test("deleteCodeExtChange throws an error if the passed object has no namepsace property", function(assert) {
@@ -341,7 +335,6 @@ sap.ui.define([
 			assert.throws(function() {
 				CodeExtManager.deleteCodeExtChange(oPropertyBag);
 			}, new Error("the extension does not contains a namespace"), "an error was thrown");
-
 		});
 
 		QUnit.test("deleteCodeExtChange deletes a change and calls the backend connection class to propagate the deletion", function(assert) {

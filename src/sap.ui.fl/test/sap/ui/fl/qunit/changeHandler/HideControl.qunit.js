@@ -30,11 +30,11 @@ function(
 			'</mvc:View>';
 			this.oXmlDocument = oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
 			var oChangeJson = {
-				"selector": {
-					"id": "key"
+				selector: {
+					id: "key"
 				},
-				"content": {},
-				"texts": {}
+				content: {},
+				texts: {}
 			};
 
 			this.oChange = new Change(oChangeJson);

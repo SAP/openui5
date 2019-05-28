@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery"
 ], function(
-	standardVariant,
+	StandardVariant,
 	Change,
 	sinon,
 	jQuery
@@ -15,31 +15,31 @@ sap.ui.define([
 
 	/*eslint-disable no-unused-vars */
 	var standardVariantChangeDefinitionSpecifics = {
-		"fileType": "change", //set by Change.createInitialFileContent if not variant
-		"layer": "USER", //enforced
-		"fileName": "<name>", //currently set by Change.createInitialFileContent, must not be set
-		"namespace": "<namespace>", //currently set by Change.createInitialFileContent, must not be set
-		"packageName": "<packageName>", //currently set by Change.createInitialFileContent, must not be set
-		"changeType": "standardVariant",
-		"creation": "<timestamp>", //set by Change.createInitialFileContent
-		"reference": "<component>", //set by Change.createInitialFileContent
-		"selector": {
-			"persistenceKey": "control1"
+		fileType: "change", //set by Change.createInitialFileContent if not variant
+		layer: "USER", //enforced
+		fileName: "<name>", //currently set by Change.createInitialFileContent, must not be set
+		namespace: "<namespace>", //currently set by Change.createInitialFileContent, must not be set
+		packageName: "<packageName>", //currently set by Change.createInitialFileContent, must not be set
+		changeType: "standardVariant",
+		creation: "<timestamp>", //set by Change.createInitialFileContent
+		reference: "<component>", //set by Change.createInitialFileContent
+		selector: {
+			persistenceKey: "control1"
 		}, //optional
-		"content": {
-			"executeOnSelect": false
+		content: {
+			executeOnSelect: false
 		},
-		"support": {  //set by Change.createInitialFileContent
-			"generator": "<generator>",
-			"user": "<user>",
-			"service": "<service>"
+		support: {  //set by Change.createInitialFileContent
+			generator: "<generator>",
+			user: "<user>",
+			service: "<service>"
 		}
 	};
 	/*eslint-enable no-unused-vars */
 
 	QUnit.module("sap.ui.fl.StandardVariant", {
 		beforeEach: function() {
-			this.oStandardVariant = new standardVariant.constructor();
+			this.oStandardVariant = new StandardVariant.constructor();
 		},
 		afterEach: function() {
 		}
@@ -120,7 +120,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("getExecuteOnSelect - shall return null if there are no standardVariant changes", function(assert) {
-
 		var oChanges = {};
 
 		new Array(5).forEach(function(index) {

@@ -75,7 +75,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("_resolveUrl with request url prefix", function(assert) {
-
 			LrepConnector.prototype.setRequestUrlPrefix("/newprefix");
 
 			//Arrange
@@ -243,7 +242,7 @@ sap.ui.define([
 				"Content-Type": "application/json",
 				"Content-Length": 13,
 				"X-CSRF-Token": "0987654321",
-				"etag": sEtag
+				etag: sEtag
 			}, "{ test: 123 }"]);
 			this.server.autoRespond = true;
 
@@ -423,7 +422,7 @@ sap.ui.define([
 			LrepConnector._oLoadSettingsPromise = undefined;
 			var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.resolve(oResponse));
 
-			return Promise.all([this.oLrepConnector.loadSettings(), this.oLrepConnector.loadSettings(), this.oLrepConnector.loadSettings()]).then(function(oSettings){
+			return Promise.all([this.oLrepConnector.loadSettings(), this.oLrepConnector.loadSettings(), this.oLrepConnector.loadSettings()]).then(function(oSettings) {
 				assert.equal(oSendStub.callCount, 1, "the backend request was triggered only one");
 				assert.notEqual(LrepConnector._oLoadSettingsPromise, undefined, "loadSettings promise was saved");
 				assert.deepEqual(oSettings[0], oSetting, "settings content is correct in the first request");
@@ -432,10 +431,10 @@ sap.ui.define([
 			});
 		});
 
-	QUnit.test("loadChanges failed with 404 error code", function(assert) {
-		var oError = {
-			code: 404
-		};
+		QUnit.test("loadChanges failed with 404 error code", function(assert) {
+			var oError = {
+				code: 404
+			};
 
 			var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.reject(oError));
 
@@ -463,7 +462,7 @@ sap.ui.define([
 			this.server = sinon.fakeServer.create();
 			var sEtag = "abc123";
 			this.server.respondWith([200,
-				{"Content-Type": "application/json", "Content-Length": 13, "X-CSRF-Token": "0987654321", "etag": sEtag},
+				{"Content-Type": "application/json", "Content-Length": 13, "X-CSRF-Token": "0987654321", etag: sEtag},
 				'{ "changes": [ ], "settings": { "isKeyUser": true, "isAtoAvailable": false, "isAtoEnabled": false, "isProductiveSystem": false }, "messagebundle": {"i_123": "translatedKey"} }'
 			]);
 			this.server.autoRespond = true;
@@ -475,7 +474,7 @@ sap.ui.define([
 				assert.equal(oResult.changes.settings.isKeyUser, true);
 				assert.equal(oResult.changes.componentClassName, this.sComponentClassName);
 				assert.equal(oResult.etag, sEtag);
-				assert.deepEqual(oResult.changes.messagebundle, {"i_123": "translatedKey"}, "returns the responded messagebundle within the result");
+				assert.deepEqual(oResult.changes.messagebundle, {i_123: "translatedKey"}, "returns the responded messagebundle within the result");
 				assert.equal(oEnableTrialStub.callCount, 0, "the fakeLrep was not enabled because isTrial was not set");
 			}.bind(this));
 		});
@@ -494,7 +493,7 @@ sap.ui.define([
 			this.server = sinon.fakeServer.create();
 			var sEtag = "abc123";
 			this.server.respondWith([200,
-				{"Content-Type": "application/json", "Content-Length": 13, "X-CSRF-Token": "0987654321", "etag": sEtag},
+				{"Content-Type": "application/json", "Content-Length": 13, "X-CSRF-Token": "0987654321", etag: sEtag},
 				JSON.stringify(oReturn)
 			]);
 			this.server.autoRespond = true;
@@ -534,7 +533,7 @@ sap.ui.define([
 			sComponentClassName = "smartFilterBar.Component";
 			var oAppDescriptor = {
 				"sap.app": {
-					"id": "sap.ui.smartFormOData"
+					id: "sap.ui.smartFormOData"
 				}
 			};
 
@@ -816,7 +815,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("create - all params", function(assert) {
-
 			//Arrange
 			var expectedResult = {abc: 123};
 			var payload = {testVariant: "Foo"};
@@ -1182,9 +1180,8 @@ sap.ui.define([
 			function responder(request) {
 				requestCount++;
 				if (request.method === "HEAD" && request.requestHeaders["X-CSRF-Token"] === "fetch") {  //fetch XSRF Token
-					if (( request.method === "HEAD") && (request.url === "/sap/bc/lrep/actions/getcsrftoken/")) {
+					if ((request.method === "HEAD") && (request.url === "/sap/bc/lrep/actions/getcsrftoken/")) {
 						bValidFetchXSRFReceived = true;
-
 					}
 					request.respond(200, {"X-CSRF-Token": "123"}); // valid token
 				} else if (request.requestHeaders["X-CSRF-Token"] === "123") {  //valid request
@@ -1248,18 +1245,17 @@ sap.ui.define([
 		});
 
 		QUnit.test("_sendAjaxRequest - shall reject Promise when no flexibility services url prefix is returned", function(assert) {
-
-		    sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns("");
-		    var sSampleUri = "http://www.abc.de/files/";
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns("");
+			var sSampleUri = "http://www.abc.de/files/";
 
 			//Act
 			return this.oLrepConnector._sendAjaxRequest(sSampleUri).then(function() {
-			    assert.ok(false, "The Promise has not rejected");
+				assert.ok(false, "The Promise has not rejected");
 			}, function(oError) {
-			    assert.ok(true, "The Promise has rejected");
-			    assert.equal("warning", oError.status);
-			    assert.equal(1, oError.messages.length);
-			    assert.equal("Flexibility Services requests were not sent. The UI5 bootstrap is configured to not send any requests.", oError.messages[0].text);
+				assert.ok(true, "The Promise has rejected");
+				assert.equal("warning", oError.status);
+				assert.equal(1, oError.messages.length);
+				assert.equal("Flexibility Services requests were not sent. The UI5 bootstrap is configured to not send any requests.", oError.messages[0].text);
 			});
 		});
 
@@ -1300,10 +1296,10 @@ sap.ui.define([
 			//Arrange
 			this.server = sinon.fakeServer.create();
 			this.server.respondWith([500, {}, JSON.stringify({
-				"messages": [
+				messages: [
 					{
-						"severity": "Error",
-						"text": "content id must be non-initial"
+						severity: "Error",
+						text: "content id must be non-initial"
 					}
 				]
 			})]);
@@ -1362,10 +1358,10 @@ sap.ui.define([
 					appVersion : sAppVersion
 				}, {}
 			).then(function () {
-					assert.equal(this.server.requests.length, 1, "only one request was sent");
-					assert.equal(this.server.requests[0].url, sFlexDataRequestUrl, "the request is the flex data request");
-					assert.equal(this.oLoadModulesStub.callCount, 0, "no modules request was sent");
-				}.bind(this)
+				assert.equal(this.server.requests.length, 1, "only one request was sent");
+				assert.equal(this.server.requests[0].url, sFlexDataRequestUrl, "the request is the flex data request");
+				assert.equal(this.oLoadModulesStub.callCount, 0, "no modules request was sent");
+			}.bind(this)
 			);
 		});
 
@@ -1389,10 +1385,10 @@ sap.ui.define([
 					appVersion : sAppVersion
 				}, {}
 			).then(function () {
-					assert.equal(this.server.requests.length, 1, "only one request was sent");
-					assert.equal(this.server.requests[0].url, sFlexDataRequestUrl, "the request is the flex data request");
-					assert.equal(this.oLoadModulesStub.callCount, 0, "no modules request was sent");
-				}.bind(this)
+				assert.equal(this.server.requests.length, 1, "only one request was sent");
+				assert.equal(this.server.requests[0].url, sFlexDataRequestUrl, "the request is the flex data request");
+				assert.equal(this.oLoadModulesStub.callCount, 0, "no modules request was sent");
+			}.bind(this)
 			);
 		});
 
@@ -1423,18 +1419,17 @@ sap.ui.define([
 					appVersion : sAppVersion
 				}, {}
 			).then(function () {
-					assert.equal(this.server.requests.length, 1, "one /flex/data requests was sent");
-					assert.equal(this.server.requests[0].url, sFlexDataRequestUrl, "the request is the flex data request");
-					assert.equal(this.oLoadModulesStub.callCount, 1, "a /flex/modules request was sent");
-					assert.equal(this.oLoadModulesStub.getCall(0).args[0], sFlexModulesRequestUrl, "the request is the flex modules request");
-				}.bind(this)
+				assert.equal(this.server.requests.length, 1, "one /flex/data requests was sent");
+				assert.equal(this.server.requests[0].url, sFlexDataRequestUrl, "the request is the flex data request");
+				assert.equal(this.oLoadModulesStub.callCount, 1, "a /flex/modules request was sent");
+				assert.equal(this.oLoadModulesStub.getCall(0).args[0], sFlexModulesRequestUrl, "the request is the flex modules request");
+			}.bind(this)
 			);
 		});
 	});
 
 	QUnit.module("the connector reacts on the core configuration 'flexibilityServices'", function () {
 		QUnit.test("does send a request in case no 'sap-data-ui-flexibilityServices' was set", function (assert) {
-
 			this.server = sinon.fakeServer.create();
 			this.server.respondWith([200, {
 				"Content-Type": "application/json",

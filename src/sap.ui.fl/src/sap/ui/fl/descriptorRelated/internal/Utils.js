@@ -20,27 +20,27 @@ sap.ui.define([
 		return this._oLREPConnector.send(sRoute, sMethod, mMap);
 	};
 
-	Utils.prototype.getNameAndNameSpace = function(sId,sReference) {
+	Utils.prototype.getNameAndNameSpace = function(sId, sReference) {
 		//namespace and file name according to namespace concept: apps/<Descriptor ID>/appVariants/<Descriptor Variant ID>/manifest.appdescr_variant
 		return {
-			"fileName": "manifest", //appdescr_variant" is the file type
-			"namespace": "apps/" + sReference + "/appVariants/" + sId + "/"
+			fileName: "manifest", //appdescr_variant" is the file type
+			namespace: "apps/" + sReference + "/appVariants/" + sId + "/"
 		};
 	};
 
 	Utils.prototype.checkEntityPropertyChange = function(mParameters) {
 		this.checkParameterAndType(mParameters, "entityPropertyChange", "object");
-		if (mParameters.entityPropertyChange instanceof Array){
-			for (var i = 0; i < mParameters.entityPropertyChange.length; i++){
+		if (mParameters.entityPropertyChange instanceof Array) {
+			for (var i = 0; i < mParameters.entityPropertyChange.length; i++) {
 				var oChange = mParameters.entityPropertyChange[i];
 				this.checkEntityPropertyChangeContent(oChange);
 			}
-		}else if (mParameters.entityPropertyChange instanceof Object){
-				this.checkEntityPropertyChangeContent(mParameters.entityPropertyChange);
+		}else if (mParameters.entityPropertyChange instanceof Object) {
+			this.checkEntityPropertyChangeContent(mParameters.entityPropertyChange);
 		}
 	};
 
-	Utils.prototype.checkEntityPropertyChangeContent = function(oChange){
+	Utils.prototype.checkEntityPropertyChangeContent = function(oChange) {
 		this.checkParameterAndType(oChange, "propertyPath", "string");
 		this.checkParameterAndType(oChange, "operation", "string");
 
@@ -57,10 +57,8 @@ sap.ui.define([
 			if (mParameters === undefined || mParameters[sParameterName] === undefined || !Array.isArray(mParameters[sParameterName])) {
 				throw new Error("No parameter \"" + sParameterName + "\" of type " + sType + " provided");
 			}
-		} else {
-			if (mParameters === undefined || mParameters[sParameterName] === undefined || typeof mParameters[sParameterName] !== sType) {
-				throw new Error("No parameter \"" + sParameterName + "\" of type " + sType + " provided");
-			}
+		} else if (mParameters === undefined || mParameters[sParameterName] === undefined || typeof mParameters[sParameterName] !== sType) {
+			throw new Error("No parameter \"" + sParameterName + "\" of type " + sType + " provided");
 		}
 	};
 
@@ -84,5 +82,5 @@ sap.ui.define([
 			throw new Error("Wrong format for provided \"sPackage\" parameter");
 		}
 	};
-	return new Utils( );
+	return new Utils();
 }, /* bExport= */true);

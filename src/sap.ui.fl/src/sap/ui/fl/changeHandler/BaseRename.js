@@ -54,10 +54,10 @@ sap.ui.define([
 						oChange.setRevertData(oModifier.getPropertyBindingOrProperty(oControl, sPropertyName));
 						oModifier.setPropertyBindingOrProperty(oControl, sPropertyName, sValue);
 						return true;
-					} else {
-						Utils.log.error("Change does not contain sufficient information to be applied: [" + oChangeDefinition.layer + "]" + oChangeDefinition.namespace + "/" + oChangeDefinition.fileName + "." + oChangeDefinition.fileType);
-						//however subsequent changes should be applied
 					}
+
+					Utils.log.error("Change does not contain sufficient information to be applied: [" + oChangeDefinition.layer + "]" + oChangeDefinition.namespace + "/" + oChangeDefinition.fileName + "." + oChangeDefinition.fileType);
+					//however subsequent changes should be applied
 				},
 
 				/**
@@ -79,9 +79,9 @@ sap.ui.define([
 						oModifier.setPropertyBindingOrProperty(oControl, sPropertyName, vOldValue);
 						oChange.resetRevertData();
 						return true;
-					} else {
-						Utils.log.error("Change doesn't contain sufficient information to be reverted. Most Likely the Change didn't go through applyChange.");
 					}
+
+					Utils.log.error("Change doesn't contain sufficient information to be reverted. Most Likely the Change didn't go through applyChange.");
 				},
 
 				/**

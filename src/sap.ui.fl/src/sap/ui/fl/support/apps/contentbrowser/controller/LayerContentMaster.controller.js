@@ -9,7 +9,14 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/fl/support/apps/contentbrowser/lrepConnector/LRepConnector",
 	"sap/ui/fl/support/apps/contentbrowser/utils/DataUtils"
-], function (Controller, UIComponent, Filter, FilterOperator, LRepConnector, DataUtils) {
+], function (
+	Controller,
+	UIComponent,
+	Filter,
+	FilterOperator,
+	LRepConnector,
+	DataUtils
+) {
 	"use strict";
 
 	/**
@@ -22,7 +29,6 @@ sap.ui.define([
 	 * @experimental Since 1.45
 	 */
 	return Controller.extend("sap.ui.fl.support.apps.contentbrowser.controller.LayerContentMaster", {
-
 		sNamespace: "",
 		sLayer: "",
 		oDataUtils : DataUtils,
@@ -55,7 +61,7 @@ sap.ui.define([
 
 			LRepConnector.getContent(that.sLayer, that.sNamespace).then(
 				that._onContentReceived.bind(that, oPage),
-				function(){
+				function() {
 					oPage.setBusy(false);
 				}).then(function () {
 					LRepConnector.requestPending = false;
@@ -129,20 +135,20 @@ sap.ui.define([
 
 			this.sNamespace = (this.sNamespace ? this.sNamespace : '/');
 
-				if (sContentFileType) {
+			if (sContentFileType) {
 					// show details to a file
-					var mRouteParameters = {
-						"layer": this.sLayer,
-						"namespace": encodeURIComponent(this.sNamespace),
-						"fileName": sContentName,
-						"fileType": sContentFileType
-					};
-					oRouter.navTo("ContentDetails", mRouteParameters);
-				} else {
+				var mRouteParameters = {
+					layer: this.sLayer,
+					namespace: encodeURIComponent(this.sNamespace),
+					fileName: sContentName,
+					fileType: sContentFileType
+				};
+				oRouter.navTo("ContentDetails", mRouteParameters);
+			} else {
 					// navigation to a namespace
-					this.sNamespace += sContentName + '/';
-					oRouter.navTo("LayerContentMaster", {"layer": this.sLayer, "namespace": encodeURIComponent(this.sNamespace)});
-				}
+				this.sNamespace += sContentName + '/';
+				oRouter.navTo("LayerContentMaster", {layer: this.sLayer, namespace: encodeURIComponent(this.sNamespace)});
+			}
 		},
 
 		/**
@@ -158,7 +164,7 @@ sap.ui.define([
 				var sSplittedNamespace = this.sNamespace.split("/");
 				sSplittedNamespace.splice(-2, 1);
 				var sTargetNamespace = sSplittedNamespace.join("/");
-				oRouter.navTo("LayerContentMaster", {"layer": this.sLayer, "namespace": encodeURIComponent(sTargetNamespace)}, true);
+				oRouter.navTo("LayerContentMaster", {layer: this.sLayer, namespace: encodeURIComponent(sTargetNamespace)}, true);
 			}
 		},
 

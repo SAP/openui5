@@ -35,7 +35,7 @@ sap.ui.define([
 		 * @method sap.ui.fl.read.api.ControlVariantReadAPI.clearVariantParameterInURL
 		 * @public
 		 */
-		clearVariantParameterInURL : function (oVariantManagementControl) {
+		clearVariantParameterInURL : function () {
 			OldControlPersonalizationAPI.clearVariantParameterInURL.apply(OldControlPersonalizationAPI, arguments);
 		},
 
@@ -51,7 +51,7 @@ sap.ui.define([
 		 * @method sap.ui.fl.read.api.ControlVariantReadAPI.activateVariant
 		 * @public
 		 */
-		activateVariant : function(vElement, sVariantReference) {
+		activateVariant : function() {
 			return OldControlPersonalizationAPI.activateVariant.apply(OldControlPersonalizationAPI, arguments);
 		},
 
@@ -66,7 +66,7 @@ sap.ui.define([
 		 * @method sap.ui.fl.read.api.ControlVariantReadAPI.hasVariantManagement
 		 * @public
 		 */
-		hasVariantManagement : function(oControl) {
+		hasVariantManagement : function() {
 			return OldControlPersonalizationAPI.hasVariantManagement.apply(OldControlPersonalizationAPI, arguments);
 		}
 	};

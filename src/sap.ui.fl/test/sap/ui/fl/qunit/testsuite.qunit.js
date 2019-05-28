@@ -61,12 +61,12 @@ sap.ui.define(function () {
 			},
 
 			// Team 42 tests:
-			"Change": {
+			Change: {
 				coverage: {
 					only: ["sap/ui/fl/Change"]
 				}
 			},
-			"ChangePersistence": {
+			ChangePersistence: {
 				coverage: {
 					only: ["sap/ui/fl/ChangePersistence"]
 				},
@@ -76,17 +76,17 @@ sap.ui.define(function () {
 					}
 				}
 			},
-			"ChangePersistenceFactory": {
+			ChangePersistenceFactory: {
 				coverage: {
 					only: ["sap/ui/fl/ChangePersistenceFactory"]
 				}
 			},
-			"FakeLrepConnector": {
+			FakeLrepConnector: {
 				coverage: {
 					only: ["sap/ui/fl/FakeLrepConnector"]
 				}
 			},
-			"FakeLrepConnectorStorage": {
+			FakeLrepConnectorStorage: {
 				coverage: {
 					only: ["sap/ui/fl/FakeLrepConnectorStorage"]
 				},
@@ -96,27 +96,27 @@ sap.ui.define(function () {
 					}
 				}
 			},
-			"FlexController": {
+			FlexController: {
 				coverage: {
 					only: ["sap/ui/fl/FlexController"]
 				},
 				ui5: {
 					resourceroots: {
-						"testComponent": "test-resources/sap/ui/fl/qunit/testComponent"
+						testComponent: "test-resources/sap/ui/fl/qunit/testComponent"
 					}
 				}
 			},
-			"FlexControllerFactory": {
+			FlexControllerFactory: {
 				coverage: {
 					only: ["sap/ui/fl/FlexControllerFactory"]
 				}
 			},
-			"FlexCustomData": {
+			FlexCustomData: {
 				coverage: {
 					only: ["sap/ui/fl/FlexCustomData"]
 				}
 			},
-			"Variant": {
+			Variant: {
 				coverage: {
 					only: ["sap/ui/fl/Variant"]
 				},
@@ -140,7 +140,7 @@ sap.ui.define(function () {
 				},
 				ui5: {
 					resourceroots: {
-						"testComponent": "test-resources/sap/ui/fl/qunit/testComponent"
+						testComponent: "test-resources/sap/ui/fl/qunit/testComponent"
 					}
 				}
 			},
@@ -157,7 +157,7 @@ sap.ui.define(function () {
 				},
 				ui5: {
 					resourceroots: {
-						"testComponent": "test-resources/sap/ui/fl/qunit/testComponent"
+						testComponent: "test-resources/sap/ui/fl/qunit/testComponent"
 					}
 				}
 			},
@@ -180,7 +180,7 @@ sap.ui.define(function () {
 				},
 				ui5: {
 					resourceroots: {
-						"testComponent": "test-resources/sap/ui/fl/qunit/testComponent"
+						testComponent: "test-resources/sap/ui/fl/qunit/testComponent"
 					}
 				}
 			},
@@ -191,7 +191,7 @@ sap.ui.define(function () {
 				},
 				ui5: {
 					resourceroots: {
-						"testComponent": "test-resources/sap/ui/fl/qunit/testComponent"
+						testComponent: "test-resources/sap/ui/fl/qunit/testComponent"
 					}
 				}
 			},
@@ -286,13 +286,13 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/variants/VariantModel"]
 				}
 			},
-			"StandardVariant": {
+			StandardVariant: {
 				group: "Variants",
 				coverage: {
 					only: ["sap/ui/fl/StandardVariant"]
 				}
 			},
-			"DefaultVariant": {
+			DefaultVariant: {
 				group: "Variants",
 				coverage: {
 					only: ["sap/ui/fl/DefaultVariant"]
@@ -300,22 +300,22 @@ sap.ui.define(function () {
 			},
 
 			// CLOUD IOI tests:
-			"Cache": {
+			Cache: {
 				coverage: {
 					only: ["sap/ui/fl/Cache"]
 				}
 			},
-			"EventHistory": {
+			EventHistory: {
 				coverage: {
 					only: ["sap/ui/fl/EventHistory"]
 				}
 			},
-			"FakeLrepStorage": {
+			FakeLrepStorage: {
 				coverage: {
 					only: ["sap/ui/fl/FakeLrepStorage"]
 				}
 			},
-			"library": {
+			library: {
 				coverage: {
 					only: ["sap/ui/fl/library"]
 				},
@@ -324,17 +324,17 @@ sap.ui.define(function () {
 					libs: null // The fl library is being loaded inside the test
 				}
 			},
-			"LrepConnector": {
+			LrepConnector: {
 				coverage: {
 					only: ["sap/ui/fl/LrepConnector"]
 				}
 			},
-			"Persistence": {
+			Persistence: {
 				coverage: {
 					only: ["sap/ui/fl/Persistence"]
 				}
 			},
-			"PreprocessorImpl": {
+			PreprocessorImpl: {
 				coverage: {
 					only: ["sap/ui/fl/PreprocessorImpl"]
 				},
@@ -344,7 +344,7 @@ sap.ui.define(function () {
 					}
 				}
 			},
-			"RegistrationDelegator": {
+			RegistrationDelegator: {
 				coverage: {
 					only: ["sap/ui/fl/RegistrationDelegator"]
 				},
@@ -352,17 +352,17 @@ sap.ui.define(function () {
 					libs: null // The fl library is being loaded inside the test
 				}
 			},
-			"Transports": {
+			Transports: {
 				coverage: {
 					only: ["sap/ui/fl/Transports"]
 				}
 			},
-			"Utils": {
+			Utils: {
 				coverage: {
 					only: ["sap/ui/fl/Utils"]
 				}
 			},
-			"XmlPreprocessorImpl": {
+			XmlPreprocessorImpl: {
 				coverage: {
 					only: ["sap/ui/fl/XmlPreprocessorImpl"]
 				}

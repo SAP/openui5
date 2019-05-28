@@ -22,13 +22,13 @@ sap.ui.define(["sap/ui/fl/Utils"], function(Utils) {
 	 * @experimental Since 1.27.0
 	 *
 	 */
-		var ChangeTypeMetadata = function(mParam) {
-			if (!mParam.name) {
-				Utils.log.error("sap.ui.fl.registry.ChangeType: Name required");
-			}
-			if (!mParam.changeHandler) {
-				Utils.log.error("sap.ui.fl.registry.ChangeType: ChangeHandler required");
-			}
+	var ChangeTypeMetadata = function(mParam) {
+		if (!mParam.name) {
+			Utils.log.error("sap.ui.fl.registry.ChangeType: Name required");
+		}
+		if (!mParam.changeHandler) {
+			Utils.log.error("sap.ui.fl.registry.ChangeType: ChangeHandler required");
+		}
 
 		this._name = mParam.name;
 		this._changeHandler = mParam.changeHandler;

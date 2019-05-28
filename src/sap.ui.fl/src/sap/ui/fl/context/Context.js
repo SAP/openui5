@@ -49,12 +49,12 @@ sap.ui.define(['sap/ui/base/ManagedObject', "sap/base/Log"], function(ManagedObj
 		return this._getProviderContent(aRequest, "getValueHelp");
 	};
 
-	var fnRemoveDomainFromRequest = function(sDomain, sRequest)  {
-		if (sDomain.indexOf(sRequest) !== -1){
+	var fnRemoveDomainFromRequest = function(sDomain, sRequest) {
+		if (sDomain.indexOf(sRequest) !== -1) {
 			//partial or full request for a domain, return all values of the domain
 			return undefined;
 		}
-		if (sRequest.indexOf(sDomain + ".") !== -1){
+		if (sRequest.indexOf(sDomain + ".") !== -1) {
 			//sub request for a domain, return all values of the domain
 			return sRequest.substring(sDomain.length + 1);
 		}
@@ -62,7 +62,6 @@ sap.ui.define(['sap/ui/base/ManagedObject', "sap/base/Log"], function(ManagedObj
 	};
 
 	Context.prototype._getProviderContent = function(aRequest, sPropertyName) {
-
 		var that = this;
 		var aPromises = [];
 		var aRequestByDomain = [];
@@ -103,14 +102,14 @@ sap.ui.define(['sap/ui/base/ManagedObject', "sap/base/Log"], function(ManagedObj
 
 
 		if (aRequest instanceof Array) {
-			aRequest.forEach(function(sRequest){
+			aRequest.forEach(function(sRequest) {
 				fnHandleOneDomain(sRequest);
 			});
 		} else if (aRequest === undefined) {
-			for ( var sDomain in this.getConfiguration()) {
+			for (var sDomain in this.getConfiguration()) {
 				aPromises.push(this._loadProvider(sDomain));
 			}
-			aRequestByDomain = Object.keys(this.getConfiguration()).map(function(sDomain){
+			aRequestByDomain = Object.keys(this.getConfiguration()).map(function(sDomain) {
 				return {
 					domain : sDomain,
 					request : undefined
@@ -119,7 +118,7 @@ sap.ui.define(['sap/ui/base/ManagedObject', "sap/base/Log"], function(ManagedObj
 		}
 
 		return Promise.all(aPromises).then(fnMassUpdateConfiguration).then(function() {
-			return that._mergeProviderContent(aRequestByDomain, sPropertyName, aRequest);
+			return that._mergeProviderContent(aRequestByDomain, sPropertyName);
 		});
 	};
 
@@ -127,30 +126,30 @@ sap.ui.define(['sap/ui/base/ManagedObject', "sap/base/Log"], function(ManagedObj
 		var mConfiguration = this.getConfiguration();
 		if (mConfiguration.hasOwnProperty(oDomain)) {
 			return oDomain;
-		} else {
-			var aKeys = Object.keys(mConfiguration);
-			for (var i = 0; i < aKeys.length; i++) {
-				var sKey = aKeys[i];
-				if (oDomain.indexOf(sKey) === 0 || sKey.indexOf(oDomain) === 0) {
-					return sKey;
-				}
+		}
+
+		var aKeys = Object.keys(mConfiguration);
+		for (var i = 0; i < aKeys.length; i++) {
+			var sKey = aKeys[i];
+			if (oDomain.indexOf(sKey) === 0 || sKey.indexOf(oDomain) === 0) {
+				return sKey;
 			}
 		}
+
 		return null;
 	};
 
-	Context.prototype._loadProvider = function(sDomain, mConfiguration) {
+	Context.prototype._loadProvider = function(sDomain) {
 		var sActConfigPath = this.getConfiguration()[sDomain];
 		if (typeof (sActConfigPath) === "string") {
-
-			return new Promise(function(resolve, reject) {
+			return new Promise(function(resolve) {
 				try {
 					sap.ui.require([sActConfigPath],
-						function(ProviderConstructor){
+						function(ProviderConstructor) {
 							var oProvider = new ProviderConstructor();
 							resolve({
-								"domain" : sDomain,
-								"provider" : oProvider
+								domain : sDomain,
+								provider : oProvider
 							});
 						},
 						function(oError) {
@@ -165,24 +164,23 @@ sap.ui.define(['sap/ui/base/ManagedObject', "sap/base/Log"], function(ManagedObj
 					return;
 				}
 			});
-		} else {
-			return Promise.resolve();
 		}
+
+		return Promise.resolve();
 	};
 
-	Context.prototype._mergeProviderContent = function(aRequestByDomain, sPropertyName, aRequest) {
-
+	Context.prototype._mergeProviderContent = function(aRequestByDomain, sPropertyName) {
 		var aPromises = [];
 
 		var mConfiguration = this.getConfiguration();
-		aRequestByDomain.forEach(function(oRequest){
+		aRequestByDomain.forEach(function(oRequest) {
 			if (mConfiguration.hasOwnProperty(oRequest.domain)) {
 				var oActProvider = mConfiguration[oRequest.domain];
 				if (oActProvider instanceof sap.ui.fl.context.BaseContextProvider) {
-					aPromises.push(oActProvider[sPropertyName].call(oActProvider, oRequest.request).then(function(mValue){
+					aPromises.push(oActProvider[sPropertyName].call(oActProvider, oRequest.request).then(function(mValue) {
 						var mSingleResult = {};
 						var sResultKey = oRequest.domain;
-						if (oRequest.request){
+						if (oRequest.request) {
 							sResultKey = sResultKey + "." + oRequest.request;
 						}
 						mSingleResult[sResultKey] = mValue;
@@ -204,9 +202,7 @@ sap.ui.define(['sap/ui/base/ManagedObject', "sap/base/Log"], function(ManagedObj
 				return mResults;
 			}, {});
 		});
-
 	};
 
 	return Context;
-
 }, /* bExport= */true);

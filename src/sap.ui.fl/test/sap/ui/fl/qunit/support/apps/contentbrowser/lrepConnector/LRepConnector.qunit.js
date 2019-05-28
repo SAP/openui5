@@ -8,7 +8,7 @@ sap.ui.define([
 	LRepConnector,
 	jQuery,
 	sinon
-){
+) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
@@ -41,7 +41,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("sending a GET request and getting a success answer leads to the resolving of the promise", function(assert) {
-			var oData = {"some": "data"};
+			var oData = {some: "data"};
 			sandbox.stub(jQuery, "ajax").yieldsTo("success", oData);
 			var oStubbedResolve = sandbox.stub();
 			var oStubbedReject = sandbox.stub();
@@ -54,7 +54,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("sending a GET request and getting a erroneous answer leads to the rejection of the promise", function(assert) {
-			var oData = {"some": "data"};
+			var oData = {some: "data"};
 			sandbox.stub(jQuery, "ajax").yieldsTo("error", oData);
 			var oStubbedResolve = sandbox.stub();
 			var oStubbedReject = sandbox.stub();
@@ -68,8 +68,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("sending a GET request for a file content will leads to a correct data type of ajax request and the resolving of the promise", function(assert) {
-			var oData = {"some": "data"};
-			var oStubbedAjaxRequest =  sandbox.stub(jQuery, "ajax").yieldsTo("success", oData);
+			var oData = {some: "data"};
+			var oStubbedAjaxRequest = sandbox.stub(jQuery, "ajax").yieldsTo("success", oData);
 			var oStubbedResolve = sandbox.stub();
 			var oStubbedReject = sandbox.stub();
 
@@ -82,7 +82,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("sending a PUT request and getting a success answer leads to the resolving of the promise", function(assert) {
-			var oData = {"some": "data"};
+			var oData = {some: "data"};
 			sandbox.stub(jQuery, "ajax").yieldsTo("success", oData);
 			var oStubbedResolve = sandbox.stub();
 			var ostubbedReject = sandbox.stub();
@@ -94,7 +94,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("sending a PUT request and getting a erroneous answer leads to the rejection of the promise", function(assert) {
-			var oData = {"some": "data"};
+			var oData = {some: "data"};
 			sandbox.stub(jQuery, "ajax").yieldsTo("error", oData);
 			var oStubbedResolve = sandbox.stub();
 			var ostubbedReject = sandbox.stub();
@@ -106,8 +106,9 @@ sap.ui.define([
 			assert.ok(oErrorReportingStub.calledOnce, "the error will be displayed (passed to the ErrorUtils");
 			assert.equal(oStubbedResolve.callCount, 0, "the promise rejection was never called");
 		});
+
 		QUnit.test("sending a DELETE request and getting a success answer leads to the resolving of the promise", function(assert) {
-			var oData = {"some": "data"};
+			var oData = {some: "data"};
 			sandbox.stub(jQuery, "ajax").yieldsTo("success", oData);
 			var oStubbedResolve = sandbox.stub();
 			var ostubbedReject = sandbox.stub();
@@ -119,7 +120,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("sending a DELETE request and getting a erroneous answer leads to the rejection of the promise", function(assert) {
-			var oData = {"some": "data"};
+			var oData = {some: "data"};
 			sandbox.stub(jQuery, "ajax").yieldsTo("error", oData);
 			var oStubbedResolve = sandbox.stub();
 			var ostubbedReject = sandbox.stub();

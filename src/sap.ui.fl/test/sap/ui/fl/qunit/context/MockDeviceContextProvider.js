@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/fl/context/BaseContextProvider'], function(BaseContextProvider) {
+sap.ui.define(["sap/ui/fl/context/BaseContextProvider"], function(BaseContextProvider) {
 	"use strict";
 
 	/**
@@ -33,30 +33,29 @@ sap.ui.define(['sap/ui/fl/context/BaseContextProvider'], function(BaseContextPro
 		}
 	});
 
-	MockDeviceContextProvider.prototype.loadData = function(){
+	MockDeviceContextProvider.prototype.loadData = function() {
 		return Promise.resolve({
-			"agent" : "Safari",
-			"screen_size" : "5K"
+			agent : "Safari",
+			screen_size : "5K"
 		});
 	};
 
 	MockDeviceContextProvider.prototype.getValueHelp = function() {
 		return Promise.resolve({
-			"agent" : {
-				"text" : "Agent",
-				"description" : "Browser agent",
-				"values" : [{
-					"text" : "Safari",
-					"description" : "Browser on OS x and IOs platform",
-					"value" : "Safari"
+			agent : {
+				text : "Agent",
+				description : "Browser agent",
+				values : [{
+					text : "Safari",
+					description : "Browser on OS x and IOs platform",
+					value : "Safari"
 				}, {
-					"text" : "Chrome",
-					"description" : "A web browser built for speed, simplicity, and security",
-					"value" : "Chrome"
+					text : "Chrome",
+					description : "A web browser built for speed, simplicity, and security",
+					value : "Chrome"
 				}]
 			}
 		});
 	};
 	return MockDeviceContextProvider;
-
 }, /* bExport= */true);

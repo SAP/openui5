@@ -15,7 +15,6 @@ sap.ui.define([
 	Settings,
 	fnBaseMerge
 ) {
-
 	"use strict";
 
 	/**
@@ -30,9 +29,8 @@ sap.ui.define([
 	 * @alias sap.ui.fl.Variant
 	 * @experimental Since 1.52.0
 	 */
-	var Variant = ManagedObject.extend("sap.ui.fl.Variant", /** @lends sap.ui.fl.Variant.prototype */
-	{
-		constructor : function(oFile){
+	var Variant = ManagedObject.extend("sap.ui.fl.Variant", /** @lends sap.ui.fl.Variant.prototype */ {
+		constructor : function(oFile) {
 			ManagedObject.apply(this);
 
 			if (!jQuery.isPlainObject(oFile)) {
@@ -84,7 +82,7 @@ sap.ui.define([
 	Variant.prototype._isValidState = function(sState) {
 		//new state have to be in the Variant.states value list
 		var bStateFound = false;
-		Object.keys(Variant.states).some(function(sKey){
+		Object.keys(Variant.states).some(function(sKey) {
 			if (Variant.states[sKey] === sState) {
 				bStateFound = true;
 			}
@@ -588,7 +586,6 @@ sap.ui.define([
 	 * @public
 	 */
 	Variant.createInitialFileContent = function (oPropertyBag) {
-
 		if (!oPropertyBag) {
 			oPropertyBag = {};
 		}

@@ -3,10 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/CustomData"
-], function(
-	CustomData // needs to be preloaded
-) {
+	"sap/ui/core/CustomData" // needs to be preloaded
+], function() {
 	"use strict";
 
 	/**

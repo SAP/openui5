@@ -18,7 +18,6 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-
 		QUnit.test("Check if all the registration functions were called", function(assert) {
 			var oRegisterChangeHandlersStub = sandbox.stub(RegistrationDelegator, "registerChangeHandlers");
 			var oRegisterLoadComponentEventHandlerStub = sandbox.stub(RegistrationDelegator, "registerLoadComponentEventHandler");
@@ -39,7 +38,6 @@ sap.ui.define([
 			});
 		});
 	});
-
 
 	QUnit.done(function () {
 		jQuery('#qunit-fixture').hide();

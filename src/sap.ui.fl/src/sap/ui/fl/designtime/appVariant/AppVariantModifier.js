@@ -78,10 +78,10 @@ sap.ui.define([
 		});
 
 		return {
-				 descriptorChanges: aDescriptorChanges,
-				 inlineChanges: aInlineChanges,
-				 otherFiles: aOtherFiles
-				};
+			descriptorChanges: aDescriptorChanges,
+			inlineChanges: aInlineChanges,
+			otherFiles: aOtherFiles
+		};
 	};
 
 	/**
