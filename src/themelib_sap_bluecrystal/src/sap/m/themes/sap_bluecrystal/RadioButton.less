@@ -7,41 +7,71 @@
 	border: 1px dotted @sapUiContentFocusColor;
 }
 
-.sapMLIBActive .sapMRbB .sapMRbBOut{
-	border: 2px solid @sapUiListActiveTextColor;
+.sapMRb:not(.sapMRbErr):not(.sapMRbWarn)  .sapMRbHoverable:hover .sapMRbBOut {
+	stroke: @sapUiFieldHoverBorderColor;
+	fill: @sapUiFieldHoverBackground;
 }
 
 .sapMLIBActive .sapMRbSel .sapMRbBOut {
-	background-color: @sapUiListActiveBackground;
+	fill: @sapUiListActiveBackground;
+	stroke: @sapUiListActiveTextColor;
+}
+
+.sapMLIBActive .sapMRb.sapMRbSel > .sapMRbHoverable:hover .sapMRbSvg .sapMRbBOut {
+	stroke: @sapUiListActiveTextColor;
+	fill: @sapUiListActiveBackground;
+}
+
+.sapMLIBActive .sapMRb > .sapMRbB.sapMRbHoverable {
+	.sapMRbSvg .sapMRbBOut {
+		stroke: @sapUiListActiveTextColor;
+	}
+	&:hover > .sapMRbSvg > .sapMRbBOut {
+		stroke: @sapUiListActiveTextColor;
+	}
 }
 
 .sapMRbDis {
 	opacity: @sapUiContentDisabledOpacity;
 }
 
-/* Read only */
-.sapMRbRo .sapMRbBOut {
-	border-color: @sapUiFieldBorderColor;
+.sapMRb.sapMRbRo {
+	.sapMRbBOut {
+		stroke: @sapUiDarkBorder;
+		fill: none;
+	}
+	&.sapMRbSel .sapMRbBInn {
+		fill: @sapUiElement;
+		stroke: none;
+	}
 }
 
 /* Value states */
-
-.sapMRbErr.sapMRbSel .sapMRbBInn {
-	background-color: @sapUiFieldInvalidColor;
+.sapMRbErr .sapMRbB,
+.sapMRbErr.sapMRbBTouched .sapMRbB{
+	.sapMRbBOut {
+		stroke: @sapUiErrorBorder;
+		fill: @sapUiLightestBG;
+	}
 }
 
-.sapMRbErr .sapMRbBOut,
-.sapMRbErr.sapMRbBTouched .sapMRbBOut {
-	border-color: @sapUiFieldInvalidColor;
-	background-color: @sapUiFieldInvalidBackground;
+.sapMRbErr.sapMRbSel,
+.sapMRbErr.sapMRbSel.sapMRbRo {
+	.sapMRbBInn {
+		fill: @sapUiErrorBorder;
+		stroke: none;
+	}
 }
 
-.sapMRbWarn.sapMRbSel .sapMRbBInn {
-	background-color: darken(@sapUiFieldWarningColor, 100);
+.sapMRbWarn .sapMRbB .sapMRbBOut {
+	stroke: @sapUiWarningBorder;
+	fill: @sapUiLightestBG;
 }
 
-.sapMRbWarn .sapMRbBOut,
-.sapMRbWarn.sapMRbBTouched .sapMRbBOut {
-	border-color: @sapUiFieldWarningColor;
-	background-color: @sapUiFieldWarningBackground;
+.sapMRbWarn.sapMRbSel,
+.sapMRbWarn.sapMRbSel.sapMRbRo {
+	.sapMRbBInn {
+		fill: @sapUiDarkestBG;
+		stroke: none;
+	}
 }
