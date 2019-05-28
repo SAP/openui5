@@ -74,6 +74,11 @@ function(
 				 */
 				homeIcon: {type: "sap.ui.core.URI", group: "Appearance", defaultValue: ""},
 				/**
+				 * Defines a custom tooltip for the home icon. If not set, a default tooltip is used.
+				 * @since 1.67
+				 */
+				homeIconTooltip: {type: "string", group: "Appearance", defaultValue: ""},
+				/**
 				 * Determines whether a hamburger menu button is displayed (as an alternative
 				 * if the <code>menu</code> aggregation is not used).
 				 */
@@ -275,6 +280,23 @@ function(
 
 		this._bOTBUpdateNeeded = true;
 		return this.setProperty("homeIcon", sSrc);
+	};
+
+	ShellBar.prototype.setHomeIconTooltip = function (sTooltip) {
+		var sDefaultTooltip = this._oAcc.getEntityTooltip("LOGO");
+
+		if (!this._oHomeIcon) {
+			this._oHomeIcon = this._oFactory.getHomeIcon();
+		}
+
+		if (sTooltip) {
+			this._oHomeIcon.setTooltip(sTooltip);
+		} else {
+			this._oHomeIcon.setTooltip(sDefaultTooltip);
+		}
+
+		this._bOTBUpdateNeeded = false;
+		return this.setProperty("homeIconTooltip", sTooltip, true);
 	};
 
 	ShellBar.prototype.setTitle = function (sTitle) {

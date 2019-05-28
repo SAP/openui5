@@ -131,6 +131,7 @@ function (
 			{name: "title", type: "string", defaultValue: ""},
 			{name: "secondTitle", type: "string", defaultValue: ""},
 			{name: "homeIcon", type: "sap.ui.core.URI", defaultValue: ""},
+			{name: "homeIconTooltip", type: "string", defaultValue: ""},
 			{name: "showMenuButton", type: "boolean", defaultValue: false},
 			{name: "showNavButton", type: "boolean", defaultValue: false},
 			{name: "showCopilot", type: "boolean", defaultValue: false},
@@ -629,10 +630,23 @@ function (
 
 	QUnit.test("Home icon tooltip", function (assert) {
 		var oHomeIcon = this.oSB._oHomeIcon,
-			sTooltip = this.oRb.getText("SHELLBAR_LOGO_TOOLTIP");
+			sTooltip = this.oRb.getText("SHELLBAR_LOGO_TOOLTIP"),
+			sNewTooltip = "Test";
 
 		// Assert
-		assert.strictEqual(oHomeIcon.getTooltip(), sTooltip, "Home icon tooltip is correct");
+		assert.strictEqual(oHomeIcon.getTooltip(), sTooltip, "Home icon tooltip is the default one");
+
+		// Act
+		this.oSB.setHomeIconTooltip(sNewTooltip);
+
+		// Assert
+		assert.strictEqual(oHomeIcon.getTooltip(), sNewTooltip, "Custom tooltip is set correctly");
+
+		// Act
+		this.oSB.setHomeIconTooltip(null);
+
+		// Assert
+		assert.strictEqual(oHomeIcon.getTooltip(), sTooltip, "Default tooltip is restored");
 	});
 
 	QUnit.test("CoPilot attributes", function (assert) {
