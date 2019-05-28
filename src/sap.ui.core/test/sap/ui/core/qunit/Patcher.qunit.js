@@ -306,7 +306,7 @@ sap.ui.define([
 			assert.equal(aMutations.length, 1, "Only one change - style attribute");
 
 			// safari is returning the full path e.g. "url("http://localhost:8080/testsuite/~!@#$%^&()_+{}'.jpg")"
-			assert.equal(oElement.style.backgroundImage.split("/").pop(), "url(\"~!@#$%^&()_+{}'.jpg\")", "style attribute is set via cssText");
+			assert.equal(oElement.style.backgroundImage.replace(/http.*\//, ""), "url(\"~!@#$%^&()_+{}'.jpg\")", "style attribute is set via cssText");
 		});
 
 		this.html("<div id='x' tabindex='0' title='t'></div>").patch(function() {
