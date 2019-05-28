@@ -1,19 +1,19 @@
+/*! Color themes for Google Code Prettify | MIT License | github.com/jmblog/color-themes-for-google-code-prettify */
 .prettyprint {
-	background: #fff;
-	font-family: Menlo, "Bitstream Vera Sans Mono", "DejaVu Sans Mono", Monaco, Consolas, monospace;
-	border: 1px solid #e0e0e0 !important;
-	border-radius: 5px;
+    background: #1d1f21;
+    font-family: Menlo, "Bitstream Vera Sans Mono", "DejaVu Sans Mono", Monaco, Consolas, monospace;
+    border: 0 !important;
 }
 
 .pln {
-	color: #1b1918;
+    color: #c5c8c6;
 }
 
 /* Specify class=linenums on a pre to get line numbering */
 ol.linenums {
-	margin-top: 0;
-	margin-bottom: 0;
-	color: #9c9491;
+    margin-top: 0;
+    margin-bottom: 0;
+    color: #969896;
 }
 
 li.L0,
@@ -26,94 +26,94 @@ li.L6,
 li.L7,
 li.L8,
 li.L9 {
-	padding-left: 1em;
-	background-color: #f1efee;
-	list-style-type: decimal;
+    padding-left: 1em;
+    background-color: #1d1f21;
+    list-style-type: decimal;
 }
 
 @media screen {
 
-	/* string content */
+    /* string content */
 
-	.str {
-		color: #7b9726;
-	}
+    .str {
+        color: #ffffff;
+    }
 
-	/* keyword */
+    /* keyword */
 
-	.kwd {
-		color: #6666ea;
-	}
+    .kwd {
+        color: #b294bb;
+    }
 
-	/* comment */
+    /* comment */
 
-	.com {
-		color: #9c9491;
-	}
+    .com {
+        color: #969896;
+    }
 
-	/* type name */
+    /* type name */
 
-	.typ {
-		color: #407ee7;
-	}
+    .typ {
+        color: #81a2be;
+    }
 
-	/* literal value */
+    /* literal value */
 
-	.lit {
-		color: #df5320;
-	}
+    .lit {
+        color: #de935f;
+    }
 
-	/* punctuation */
+    /* punctuation */
 
-	.pun {
-		color: #1b1918;
-	}
+    .pun {
+        color: #c5c8c6;
+    }
 
-	/* lisp open bracket */
+    /* lisp open bracket */
 
-	.opn {
-		color: #1b1918;
-	}
+    .opn {
+        color: #c5c8c6;
+    }
 
-	/* lisp close bracket */
+    /* lisp close bracket */
 
-	.clo {
-		color: #1b1918;
-	}
+    .clo {
+        color: #c5c8c6;
+    }
 
-	/* markup tag name */
+    /* markup tag name */
 
-	.tag {
-		color: #f22c40;
-	}
+    .tag {
+        color: #cc6666;
+    }
 
-	/* markup attribute name */
+    /* markup attribute name */
 
-	.atn {
-		color: #df5320;
-	}
+    .atn {
+        color: greenyellow;
+    }
 
-	/* markup attribute value */
+    /* markup attribute value */
 
-	.atv {
-		color: #3d97b8;
-	}
+    .atv {
+        color: #FFFFFF;
+    }
 
-	/* declaration */
+    /* declaration */
 
-	.dec {
-		color: #df5320;
-	}
+    .dec {
+        color: #de935f;
+    }
 
-	/* variable name */
+    /* variable name */
 
-	.var {
-		color: #f22c40;
-	}
+    .var {
+        color: #cc6666;
+    }
 
-	/* function name */
+    /* function name */
 
-	.fun {
-		color: #407ee7;
-	}
+    .fun {
+        color: #81a2be;
+    }
 }
