@@ -514,7 +514,7 @@ sap.ui.define([
 			right : {value : "foo"}
 		}
 	}, {
-		string :"not foo and bar",
+		string :"not%20foo and%20bar",
 		parsed :{
 			id : "and",
 			left : {
@@ -524,7 +524,7 @@ sap.ui.define([
 			right : {value : "bar"}
 		}
 	}, {
-		string :"not (foo and bar)",
+		string :"not  (foo  and  bar)",
 		parsed :{
 			id : "not",
 			right : {
@@ -798,18 +798,18 @@ sap.ui.define([
 	}, {
 		string : "foo='bar'",
 		error : "Expected end of input but instead saw '=' at 4"
-	}, {
+	}, { // 'eq' is only recognized surrounded by whitespace
 		string : "foo eq",
-		error : "Expected expression but instead saw end of input"
+		error : "Expected end of input but instead saw ' ' at 4"
 	}, {
 		string : "foo eq ",
 		error : "Expected expression but instead saw end of input"
 	}, {
 		string : "foo eq  ",
 		error : "Expected expression but instead saw end of input"
-	}, {
+	}, { // 'not' is only recognized followed by whitespace
 		string : "foo and not;",
-		error : "Expected expression but instead saw ';' at 12"
+		error : "Expected end of input but instead saw ';' at 12"
 	}, {
 		string : "foo and (bar or baz",
 		error : "Expected ')' but instead saw end of input"
@@ -822,6 +822,15 @@ sap.ui.define([
 	}, {
 		string : "trim()",
 		error : "Expected expression but instead saw ')' at 6"
+	}, { // 'not' is only recognized followed by whitespace
+		string : "not(foo and bar)",
+		error : "Unknown function 'not' at 1"
+	}, { // 'and' is only recognized surrounded by whitespace
+		string : "foo and(bar or baz)",
+		error : "Expected end of input but instead saw ' ' at 4"
+	}, { // 'or' is only recognized surrounded by whitespace
+		string : "(foo and bar)or baz",
+		error : "Expected end of input but instead saw 'or' at 14"
 	}].forEach(function (oFixture) {
 		QUnit.test('_Parser#parseFilter: "' + oFixture.string + '"', function (assert) {
 			assert.throws(function () {
