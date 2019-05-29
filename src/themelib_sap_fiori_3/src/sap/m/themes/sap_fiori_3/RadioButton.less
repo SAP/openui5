@@ -5,14 +5,19 @@
 
 @_sap_m_RadioButton_SelectedWarningColor: darken(@sapUiFieldWarningColor, 100);
 
-.sapMRbB {
-	height:2.75rem;
+.sapMRb {
+	height: 2.75rem;
+}
+
+.sapMRb .sapMRbB {
+	height: 2.75rem;
 	line-height: 2.75rem;
 	width: 2.75rem;
 }
 
 .sapMRb > .sapMLabel {
-		max-width: calc(~"100% - 2.75rem");
+	height: 2.75rem;
+	max-width: calc(~"100% - 2.75rem");
 }
 
 .sapMRbHasLabel .sapMRbB {
@@ -27,6 +32,11 @@
 		.sapMRbBOut {
 			border-width: 0.0625rem;
 		}
+	}
+
+	.sapMRb > .sapMLabel {
+		height: 2rem;
+		max-width: calc(~"100% - 2rem");
 	}
 
 	.sapMRbErr .sapMRbBOut,
@@ -47,6 +57,7 @@
 
 .sapMRb:focus:before {
 	border: 1px dotted @sapUiContentFocusColor;
+	bottom: .375rem;
 }
 
 .sapMLIBActive .sapMRbB .sapMRbBOut {
@@ -67,34 +78,52 @@
 
 /* Value states */
 
-.sapMRbErr.sapMRbSel .sapMRbBInn {
-	background-color: @sapUiFieldInvalidColor;
+.sapMRbErr.sapMRbSel,
+.sapMRbErr.sapMRbSel.sapMRbRo {
+	.sapMRbBInn {
+		fill: @sapUiFieldInvalidColor;
+		stroke: none;
+	}
 }
 
-.sapMRbErr .sapMRbBOut,
-.sapMRbErr.sapMRbBTouched .sapMRbBOut {
-	border: 0.125rem solid @sapUiFieldInvalidColor;
-	background-color: @sapUiFieldInvalidBackground;
+.sapMRbErr,
+.sapMRbErr.sapMRbBTouched {
+	.sapMRbB .sapMRbBOut {
+		stroke: @sapUiFieldInvalidColor;
+		fill: none;
+	}
 }
 
-.sapMRbWarn.sapMRbSel .sapMRbBInn {
-	background-color: @_sap_m_RadioButton_SelectedWarningColor;
+.sapMRbWarn.sapMRbSel,
+.sapMRbWarn.sapMRbSel.sapMRbRo {
+	.sapMRbBInn {
+		fill: @_sap_m_RadioButton_SelectedWarningColor;
+		stroke: none;
+	}
 }
 
-.sapMRbWarn .sapMRbBOut,
-.sapMRbWarn.sapMRbBTouched .sapMRbBOut {
-	border: 0.125rem solid @sapUiFieldWarningColor;
-	background-color: @sapUiFieldWarningBackground;
+.sapMRbWarn,
+.sapMRbWarn.sapMRbBTouched {
+	.sapMRbB .sapMRbBOut {
+		stroke: @sapUiFieldWarningColor;
+		fill: none;
+	}
 }
 
-.sapMRbSucc.sapMRbSel .sapMRbBInn {
-	background-color: @sapUiFieldSuccessColor;
+.sapMRbSucc.sapMRbSel,
+.sapMRbSucc.sapMRbSel.sapMRbRo {
+	.sapMRbBInn {
+		fill: @sapUiFieldSuccessColor;
+		stroke: none;
+	}
 }
 
-.sapMRbSucc .sapMRbBOut,
-.sapMRbSucc.sapMRbBTouched .sapMRbBOut {
-	border-color: @sapUiFieldSuccessColor;
-	background-color: @sapUiFieldSuccessBackground;
+.sapMRbSucc,
+.sapMRbSucc.sapMRbBTouched {
+	.sapMRbB .sapMRbBOut {
+		stroke: @sapUiFieldSuccessColor;
+		fill: none;
+	}
 }
 
 .sapMRbInfo.sapMRbSel .sapMRbBInn {
@@ -103,29 +132,9 @@
 
 .sapMRbInfo .sapMRbBOut,
 .sapMRbInfo.sapMRbBTouched .sapMRbBOut {
-	border: 0.125rem solid @sapUiFieldInformationColor;
 	background-color: @sapUiFieldInformationBackground;
 }
 
-/* When printing border is needed for the selection */
-@media only print {
-	.sapMLIBActive .sapMRbSel .sapMRbBOut {
-		border-color: @sapUiListActiveBackground;
-	}
-
-	.sapMRbErr.sapMRbSel .sapMRbBInn {
-		border-color: @sapUiFieldInvalidColor;
-	}
-
-	.sapMRbWarn.sapMRbSel .sapMRbBInn {
-		border-color: @_sap_m_RadioButton_SelectedWarningColor;
-	}
-
-	.sapMRbSucc.sapMRbSel .sapMRbBInn {
-		border-color: @sapUiFieldSuccessColor;
-	}
-
-	.sapMRbInfo.sapMRbSel .sapMRbBInn {
-		border-color: @sapUiFieldInformationColor;
-	}
+.sapMRb:not(.sapMRbErr):not(.sapMRbWarn):not(.sapMRbSucc) > .sapMRbB .sapMRbBOut {
+	stroke-width: 1px;
 }
