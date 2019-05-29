@@ -295,7 +295,7 @@ sap.ui.define([
 		var sSourceId = oEvent.target.id;
 
 		//event should only be fired if the click is on the text, link or icon
-		return this._isActive() && (sSourceId === this.getId() + "-link" || sSourceId === this.getId() + "-text" || sSourceId === this.getId() + "-icon");
+		return this._isActive() && (sSourceId === this.getId() + "-link" || sSourceId === this.getId() + "-text" || sSourceId === this.getId() + "-statusIcon");
 	};
 
 	return ObjectStatus;
