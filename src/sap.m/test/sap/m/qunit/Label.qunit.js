@@ -234,9 +234,20 @@ sap.ui.define([
 		l1.setWrappingType(mobileLibrary.WrappingType.Hyphenated);
 		sap.ui.getCore().applyChanges();
 
+		var fnIsHyphenated = function () {
+			if (l1.$().outerHeight() >= 2 * iHeight) {
+				assert.ok(true, "Tested label is hyphenated.");
+				done();
+				return true;
+			}
+			return false;
+		};
+
 		setTimeout(function() {
-			assert.ok(l1.$().outerHeight() >= 2 * iHeight, "Tested label is hyphenated.");
-			done();
+			if (!fnIsHyphenated()) {
+				// try again after a while if not yet hyphenatated
+				setTimeout(fnIsHyphenated, 1000);
+			}
 		}, 500);
 	});
 

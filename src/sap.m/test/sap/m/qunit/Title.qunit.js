@@ -129,10 +129,21 @@ sap.ui.define([
 		this.title.setWrappingType(mobileLibrary.WrappingType.Hyphenated);
 		sap.ui.getCore().applyChanges();
 
+		var fnIsHyphenated = function () {
+			if (this.title.$().outerHeight() >= 2 * iHeight) {
+				assert.ok(true, "Tested title is hyphenated.");
+				done();
+				return true;
+			}
+			return false;
+		}.bind(this);
+
 		setTimeout(function() {
-			assert.ok(this.title.$().outerHeight() >= 2 * iHeight, "Tested title is hyphenated.");
-			done();
-		}.bind(this), 500);
+			if (!fnIsHyphenated()) {
+				// try again after a while if not yet hyphenatated
+				setTimeout(fnIsHyphenated, 1000);
+			}
+		}, 500);
 	});
 
 	QUnit.test("TitleStyle correct", function(assert){
