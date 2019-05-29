@@ -332,17 +332,16 @@ sap.ui.define([
 	};
 
 	/**
-	 * The 'change' event is fired when the binding is initialized or new contexts are created or
-	 * its parent context is changed. It is to be used by controls to get notified about changes to
-	 * the binding contexts of this list binding. Registered event handlers are called with the
-	 * change reason as parameter.
+	 * The 'change' event is fired when new contexts are created or its parent context is changed.
+	 * Controls use the event to get notified about changes to the binding contexts of this
+	 * list binding. Registered event handlers are called with the change reason as parameter.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
-	 * @param {object} oEvent.getParameters
-	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters.reason
-	 *   The reason for the 'change' event: {@link sap.ui.model.ChangeReason.Change} when the
-	 *   binding is initialized and or a new context is created, or
-	 *   {@link sap.ui.model.ChangeReason.Context} when the parent context is changed
+	 * @param {object} oEvent.getParameters()
+	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters().reason
+	 *   The reason for the 'change' event: {@link sap.ui.model.ChangeReason.Change} when a new
+	 *   context is created, or {@link sap.ui.model.ChangeReason.Context} when the parent context is
+	 *   changed
 	 *
 	 * @event
 	 * @name sap.ui.model.odata.v4.ODataListBinding#change
@@ -405,10 +404,10 @@ sap.ui.define([
 	 * 'error' event parameter.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
-	 * @param {object} oEvent.getParameters
-	 * @param {object} [oEvent.getParameters.data]
+	 * @param {object} oEvent.getParameters()
+	 * @param {object} [oEvent.getParameters().data]
 	 *   An empty data object if a back-end request succeeds
-	 * @param {Error} [oEvent.getParameters.error] The error object if a back-end request failed.
+	 * @param {Error} [oEvent.getParameters().error] The error object if a back-end request failed.
 	 *   If there are multiple failed back-end requests, the error of the first one is provided.
 	 *
 	 * @event
@@ -462,6 +461,44 @@ sap.ui.define([
 	 * @name sap.ui.model.odata.v4.ODataListBinding#patchSent
 	 * @public
 	 * @since 1.59.0
+	 */
+
+	/**
+	 * The 'refresh' event is fired when the binding is initialized (since 1.67.0), or its parent
+	 * context is changed or one of the methods {@link #changeParameters}, {@link #filter},
+	 * {@link #refresh}, {@link #resume}, {@link #setAggregation} or {@link #sort} is called.
+	 * Controls use the event to get notified about a refresh of the binding contexts of this list
+	 * binding. Registered event handlers are called with the change reason as parameter.
+	 *
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {object} oEvent.getParameters()
+	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters().reason
+	 *   The reason for the 'refresh' event is
+	 *   <ul>
+	 *   <li> {@link sap.ui.model.ChangeReason.Change Change} on {@link #setAggregation},
+	 *   <li> {@link sap.ui.model.ChangeReason.Context Context} when the binding's
+	 *     parent context is changed,
+	 *   <li> {@link sap.ui.model.ChangeReason.Filter Filter} on {@link #filter},
+	 *   <li> {@link sap.ui.model.ChangeReason.Refresh Refresh} on {@link #refresh}, or when the
+	 *     binding is initialized,
+	 *   <li> {@link sap.ui.model.ChangeReason.Sort Sort} on {@link #sort}.
+	 *   </ul>
+	 *   {@link #changeParameters} leads to {@link sap.ui.model.ChangeReason.Filter Filter} if one
+	 *   of the parameters '$filter' and '$search' is changed, otherwise it leads to
+	 *   {@link sap.ui.model.ChangeReason.Sort Sort} if the parameter '$orderby' is
+	 *   changed; in other cases, it leads to {@link sap.ui.model.ChangeReason.Change Change}.<br>
+	 *   {@link #resume} leads to {@link sap.ui.model.ChangeReason.Change Change}; if APIs firing
+	 *   change events have been called on the binding while suspended, the &quot;strongest&quot;
+	 *   change reason in the order
+	 *   {@link sap.ui.model.ChangeReason.Filter Filter},
+	 *   {@link sap.ui.model.ChangeReason.Sort Sort},
+	 *   {@link sap.ui.model.ChangeReason.Refresh Refresh},
+	 *   {@link sap.ui.model.ChangeReason.Change Change} is used.
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataListBinding#refresh
+	 * @public
+	 * @since 1.37.0
 	 */
 
 	// See class documentation
@@ -1628,6 +1665,28 @@ sap.ui.define([
 		}
 
 		return mQueryOptions;
+	};
+
+	/**
+	 * Initializes the OData list binding: Fires an event in case the binding has a resolved path
+	 * and its root binding is not suspended. If the model's parameter <code>autoExpandSelect</code>
+	 * is used (see {@link sap.ui.model.odata.v4.ODataModel#constructor}), it fires a 'change'
+	 * event, else it fires a 'refresh' event (since 1.67.0).
+	 *
+	 * @protected
+	 * @see sap.ui.model.Binding#initialize
+	 * @see #getRootBinding
+	 * @since 1.37.0
+	 */
+	// @override sap.ui.model.Binding#initialize
+	ODataListBinding.prototype.initialize = function () {
+		if ((!this.bRelative || this.oContext) && !this.getRootBinding().isSuspended()) {
+			if (this.oModel.bAutoExpandSelect) {
+				this._fireChange({reason : ChangeReason.Change});
+			} else {
+				this._fireRefresh({reason : ChangeReason.Refresh});
+			}
+		}
 	};
 
 	/**

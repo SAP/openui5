@@ -104,8 +104,8 @@ sap.ui.define([
 	 * change reason as parameter.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
-	 * @param {object} oEvent.getParameters
-	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters.reason
+	 * @param {object} oEvent.getParameters()
+	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters().reason
 	 *   The reason for the 'change' event: {@link sap.ui.model.ChangeReason.Change} when the
 	 *   binding is initialized, {@link sap.ui.model.ChangeReason.Refresh} when the binding is
 	 *   refreshed, and {@link sap.ui.model.ChangeReason.Context} when the parent context is changed
@@ -133,10 +133,10 @@ sap.ui.define([
 	 * 'error' event parameter.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
-	 * @param {object} oEvent.getParameters
-	 * @param {object} [oEvent.getParameters.data]
+	 * @param {object} oEvent.getParameters()
+	 * @param {object} [oEvent.getParameters().data]
 	 *   An empty data object if a back-end request succeeds
-	 * @param {Error} [oEvent.getParameters.error] The error object if a back-end request failed.
+	 * @param {Error} [oEvent.getParameters().error] The error object if a back-end request failed.
 	 *   If there are multiple failed back-end requests, the error of the first one is provided.
 	 *
 	 * @event
