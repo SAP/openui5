@@ -16,7 +16,7 @@ sap.ui.define([
     };
 
     // Simulate data changed on server
-    var changeNavigationTargets = function (oMockServer, sProductId, sBusinessPartnerID) {
+    var changeNavigationTargets = function (oMockServer, sProductId, sBusinessPartnerID, bRemoveProductOnly) {
         oMockServer.stop();
 
 
@@ -34,20 +34,24 @@ sap.ui.define([
                     oXhr._fnOrignalXHRRespond = oXhr.respond;
                     oXhr.respond = function (status, headers, content) {
                         var oC = JSON.parse(content);
-                        if (oC.d.ToLineItems) {
-                            oC.d.ToLineItems.results[0].ProductID = sProductId;
-                            oC.d.ToLineItems.results[0].ToProduct.ProductID = sProductId;
-                            oC.d.ToLineItems.results[0].ToProduct.__metadata.uri = "/SalesOrderSrv/ProductSet('" + sProductId + "')";
-                            arguments[2] = JSON.stringify(oC);
-                        } else if (oC.d.ToProduct) {
-                            oC.d.ProductID = sProductId;
-                            oC.d.ToProduct.ProductID = sProductId;
-                            oC.d.ToProduct.__metadata.uri = "/SalesOrderSrv/ProductSet('" + sProductId + "')";
-                            oC.d.ToProduct.SupplierID = sBusinessPartnerID;
-                            oC.d.ToProduct.ToSupplier.BusinessPartnerID = sBusinessPartnerID;
-                            oC.d.ToProduct.ToSupplier.__metadata.uri = "/SalesOrderSrv/BusinessPartnerSet('" + sBusinessPartnerID + "')";
-                            arguments[2] = JSON.stringify(oC);
+
+                        if (bRemoveProductOnly){
+                            oC.d.ToProduct = null;
+                        } else {
+                            if (oC.d.ToLineItems) {
+                                oC.d.ToLineItems.results[0].ProductID = sProductId;
+                                oC.d.ToLineItems.results[0].ToProduct.ProductID = sProductId;
+                                oC.d.ToLineItems.results[0].ToProduct.__metadata.uri = "/SalesOrderSrv/ProductSet('" + sProductId + "')";
+                            } else if (oC.d.ToProduct) {
+                                oC.d.ProductID = sProductId;
+                                oC.d.ToProduct.ProductID = sProductId;
+                                oC.d.ToProduct.__metadata.uri = "/SalesOrderSrv/ProductSet('" + sProductId + "')";
+                                oC.d.ToProduct.SupplierID = sBusinessPartnerID;
+                                oC.d.ToProduct.ToSupplier.BusinessPartnerID = sBusinessPartnerID;
+                                oC.d.ToProduct.ToSupplier.__metadata.uri = "/SalesOrderSrv/BusinessPartnerSet('" + sBusinessPartnerID + "')";
+                            }
                         }
+                        arguments[2] = JSON.stringify(oC);
                         oXhr._fnOrignalXHRRespond.apply(this, arguments);
                     };
                     oRequest._fnOrginalResponse.apply(this, arguments);
@@ -547,7 +551,34 @@ sap.ui.define([
         });
     });
 
-    /*
+    QUnit.test("ODataModel._importData - Invalidation of null values", function(assert){
+        var that = this;
+        var done = assert.async();
+        var oObject;
+
+        this.oModel.metadataLoaded().then(function(){
+            that.oModel.read("/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')", {urlParameters: {$expand:"ToProduct"}});
+            var fnRequestCompleted = function(){
+                that.oModel.detachBatchRequestCompleted(fnRequestCompleted);
+                oObject = that.oModel.getObject("/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct");
+                assert.strictEqual(oObject["ProductID"], "HT-1000", "Navigation property is set correctly.");
+                changeNavigationTargets(that.oMockServer, undefined, undefined, true);
+                that.oModel.read("/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')", {urlParameters: {$expand:"ToProduct"}});
+
+                var fnRequestCompleted2 = function(){
+                    that.oModel.detachBatchRequestCompleted(fnRequestCompleted2);
+                    oObject = that.oModel.getObject("/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct");
+                    assert.strictEqual(oObject, null, "Navigation property was reset correctly.");
+                    done();
+                };
+                that.oModel.attachBatchRequestCompleted(fnRequestCompleted2);
+            };
+
+            that.oModel.attachBatchRequestCompleted(fnRequestCompleted);
+        });
+
+    });
+/*
     QUnit.module("Message Scope supported", {
         beforeEach: function () {
             this.sServiceUri = "/SalesOrderSrv/";

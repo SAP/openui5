@@ -153,7 +153,8 @@ sap.ui.define([
 		}
 
 		oContext = this.oModel.createBindingContext(this.sPath, this.oContext, this._mParameters);
-		if (oContext && oContext !== this.oElementContext) {
+		//'null' is a valid value for navigation properties (e.g. if no entity is assigned). We also need to fire a change in this case
+		if (oContext !== undefined && oContext !== this.oElementContext) {
 			this.oElementContext = oContext;
 			this._fireChange({ reason: ChangeReason.Context });
 		}

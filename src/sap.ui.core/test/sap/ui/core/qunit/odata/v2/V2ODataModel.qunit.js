@@ -10,13 +10,15 @@ sap.ui.define([
 	"sap/ui/core/message/Message",
 	"sap/m/DateTimeInput",
 	"sap/m/Label",
+	"sap/m/Panel",
 	"sap/m/Input",
 	"sap/m/List",
 	"sap/m/StandardListItem",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/base/util/isEmptyObject",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/ui/qunit/utils/createAndAppendDiv"
 ], function(
 		MockServer,
 		ODataModel,
@@ -28,13 +30,15 @@ sap.ui.define([
 		Message,
 		DateTimeInput,
 		Label,
+		Panel,
 		Input,
 		List,
 		ListItem,
 		Table,
 		Column,
 		isEmptyObject,
-		library
+		library,
+		createAndAppendDiv
 	) {
 
 	"use strict";
@@ -43,9 +47,7 @@ sap.ui.define([
 	var MessageType = library.MessageType;
 
 	//add divs for control tests
-	var oContent = document.createElement("div");
-	oContent.id = "target1";
-	document.body.appendChild(oContent);
+	createAndAppendDiv("target1");
 
 	var sServiceUri = "/SalesOrderSrv/";
 	var sDataRootPath =  "test-resources/sap/ui/core/qunit/testdata/SalesOrder/";
@@ -7121,5 +7123,92 @@ sap.ui.define([
 			oList.getElementBinding().attachChange(fnCount);
 		});
 
+	});
+
+	QUnit.module("ODataContextBinding", {
+		beforeEach : function() {
+			initServer();
+			oModel = initModel({defaultBindingMode: "TwoWay", useBatch: "true"});
+		},
+		afterEach : function() {
+			oModel.destroy();
+			oModel = undefined;
+			cleanSharedData();
+			stopServer();
+		}
+	});
+
+
+	QUnit.test("Fire change when parent context was removed - Entity was deleted", function(assert) {
+		var done = assert.async();
+		var oSalesOrderData;
+
+		oMockServer.stop();
+		var aRequests = oMockServer.getRequests();
+		aRequests.forEach(function (oRequest) {
+			var sPath = String(oRequest.path);
+			if (sPath.indexOf("$") == -1) {
+
+				if (oRequest._fnOrginalResponse){
+					oRequest.response = oRequest._fnOrginalResponse;
+				}
+
+				oRequest._fnOrginalResponse = oRequest.response;
+				oRequest.response = function (oXhr) {
+					oXhr._fnOrignalXHRRespond = oXhr.respond;
+					oXhr.respond = function (status, headers, content) {
+						if (content){
+							var oC = JSON.parse(content);
+							if (oC.d && oC.d.SalesOrderID){
+								// first time
+								oSalesOrderData = oC.d;
+							} else if (oC.error){ // second time
+								oSalesOrderData.ToProduct = null;
+								oC = {d: oSalesOrderData};
+								status = 200;
+							}
+						}
+						oXhr._fnOrignalXHRRespond.apply(this, [status, headers, JSON.stringify(oC)]);
+					};
+					oRequest._fnOrginalResponse.apply(this, arguments);
+				};
+			}
+		});
+		oMockServer.start();
+
+		oModel.metadataLoaded().then(function(){
+			oModel.read("/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')", {urlParameters: {$expand: "ToProduct"}, success: function(){
+
+				var oInput = new Input({
+					objectBindings: {
+						path: "ToProduct"
+					},
+					value: "{Name}"
+				});
+
+				var oPanel = new Panel({
+					objectBindings: {
+						path: "/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')"
+					},
+					content: oInput
+				});
+				oPanel.setModel(oModel);
+
+				assert.equal(oInput.getValue(), "Notebook Basic 15", "Value is set correctly.");
+
+				// Is not supported by mockserver, but response is correct
+				oModel.remove("/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')/$links/ToProduct", {success: function(){
+
+					assert.equal(oInput.getValue(), "Notebook Basic 15", "Value is still set.");
+
+					oModel.read("/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')", {urlParameters: {$expand: "ToProduct"}, success: function(){
+						oInput.getBinding("value").attachChange(function(){
+							assert.equal(oInput.getValue(), "", "Value was reset to null");
+							done();
+						});
+					}});
+				}});
+			}});
+		});
 	});
 });
