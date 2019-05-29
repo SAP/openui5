@@ -1158,7 +1158,8 @@
 			"sap.m.sample.StandardListItemTitle",
 			"sap.m.sample.StandardListItemDescription",
 			"sap.m.sample.StandardListItemIcon",
-			"sap.m.sample.StandardListItemInfo"
+			"sap.m.sample.StandardListItemInfo",
+			"sap.m.sample.StandardListItemWrapping"
 		  ]
 		},
 		{
@@ -2689,6 +2690,11 @@
 		  "id": "sap.m.sample.StandardListItemTitle",
 		  "name": "Standard List Item - Adapt Title",
 		  "description": "By default the title size adapts to the available space and gets bigger if the description is empty. List items with and without descriptions results in titles with different sizes. In this cases it is better to switch the size adaption off."
+		},
+		{
+		  "id": "sap.m.sample.StandardListItemWrapping",
+		  "name": "Standard List Item - Wrapping",
+		  "description": "This sample demonstrates the wrapping behavior of the title text and the description text. In desktop mode, the character limit is set to 300 characters, whereas in the phone mode, the character limit is set to 100 characters."
 		},
 		{
 		  "id": "sap.m.sample.MaskInput",
