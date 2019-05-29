@@ -362,7 +362,6 @@ sap.ui.define([
 
 			if (TableGrouping.isGroupMode(oTable)) {
 				$Row.toggleClass("sapUiAnalyticalTableSum", !bChildren && bSum)
-					.toggleClass("sapUiAnalyticalTableDummy", false)
 					.toggleClass("sapUiTableGroupHeader", bChildren)
 					.toggleClass("sapUiTableRowHidden", bChildren && bHidden || oRow._bHidden);
 
@@ -422,7 +421,7 @@ sap.ui.define([
 			oDomRefs.row.removeData("sap-ui-level");
 
 			if (TableGrouping.isGroupMode(oTable)) {
-				oDomRefs.row.removeClass("sapUiTableGroupHeader sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
+				oDomRefs.row.removeClass("sapUiTableGroupHeader sapUiAnalyticalTableSum");
 				TableGrouping.setIndent(oTable, oDomRefs.row, oDomRefs.rowSelector, 0);
 			}
 

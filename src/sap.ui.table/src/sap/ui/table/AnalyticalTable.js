@@ -403,7 +403,6 @@ sap.ui.define([
 
 	AnalyticalTable.prototype._updateTableContent = function() {
 		var oBinding = this.getBinding("rows"),
-			iFirstRow = this.getFirstVisibleRow(),
 			iFixedBottomRowCount = this.getFixedBottomRowCount(),
 			iCount = this.getVisibleRowCount();
 
@@ -420,11 +419,9 @@ sap.ui.define([
 		var oBindingInfo = this.getBindingInfo("rows");
 
 		for (var iRow = 0, l = Math.min(iCount, aRows.length); iRow < l; iRow++) {
-			var bIsFixedRow = iRow > (iCount - iFixedBottomRowCount - 1) && this._getTotalRowCount() > iCount,
-				iRowIndex = bIsFixedRow ? (this._getTotalRowCount() - 1 - (iCount - 1 - iRow)) : iFirstRow + iRow,
-				oRow = aRows[iRow],
-				$row = oRow.$(),
-				$rowHdr = this.$().find("div[data-sap-ui-rowindex=" + $row.attr("data-sap-ui-rowindex") + "]");
+			var bIsFixedRow = iRow > (iCount - iFixedBottomRowCount - 1) && this._getTotalRowCount() > iCount;
+			var oRow = aRows[iRow];
+			var iRowIndex = oRow.getIndex();
 
 			var oContextInfo;
 			if (bIsFixedRow && oBinding.bProvideGrandTotals) {
@@ -437,10 +434,6 @@ sap.ui.define([
 
 			if (!oContextInfo || !oContextInfo.context) {
 				TableUtils.Grouping.cleanupTableRowForGrouping(this, oRow);
-				if (oContextInfo && !oContextInfo.context) {
-					$row.addClass("sapUiAnalyticalTableDummy");
-					$rowHdr.addClass("sapUiAnalyticalTableDummy");
-				}
 				continue;
 			}
 
