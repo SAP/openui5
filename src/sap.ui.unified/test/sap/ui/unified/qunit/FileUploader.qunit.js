@@ -803,4 +803,52 @@ sap.ui.define([
 		// Cleanup
 		oFileUploader.destroy();
 	});
+
+	QUnit.test("Description for FileUploader after tooltip update", function (assert) {
+		// Setup
+		var sInitialTooltip = "initial-tooltip",
+			sUpdatedTooltip = "updated-tooltip",
+			oFileUploader = new sap.ui.unified.FileUploader("fu", {
+				tooltip: sInitialTooltip
+			}),
+			sAccDescription;
+
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oFileUploader.setTooltip(sUpdatedTooltip);
+
+		// Assert
+		sAccDescription = document.getElementById("fu-AccDescr").innerHTML;
+		assert.ok(sAccDescription.indexOf(sInitialTooltip) === -1, "FileUploader's initial tooltip isn't in the description");
+		assert.ok(sAccDescription.indexOf(sUpdatedTooltip) !== -1, "FileUploader's updated tooltip is in the description");
+
+		// Cleanup
+		oFileUploader.destroy();
+	});
+
+	QUnit.test("Description for FileUploader after placeholder update", function (assert) {
+		// Setup
+		var sInitialPlaceholder = "initial-placeholder",
+			sUpdatedPlaceholder = "updated-placeholder",
+			oFileUploader = new sap.ui.unified.FileUploader("fu", {
+				placeholder: sInitialPlaceholder
+			}),
+			sAccDescription;
+
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oFileUploader.setPlaceholder(sUpdatedPlaceholder);
+
+		// Assert
+		sAccDescription = document.getElementById("fu-AccDescr").innerHTML;
+		assert.ok(sAccDescription.indexOf(sInitialPlaceholder) === -1, "FileUploader's initial placeholder isn't in the description");
+		assert.ok(sAccDescription.indexOf(sUpdatedPlaceholder) !== -1, "FileUploader's updated placeholder is in the description");
+
+		// Cleanup
+		oFileUploader.destroy();
+	});
 });

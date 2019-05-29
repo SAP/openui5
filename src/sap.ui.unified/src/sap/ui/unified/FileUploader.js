@@ -606,22 +606,61 @@ sap.ui.define([
 
 		this._refreshTooltipBaseDelegate(oTooltip);
 		this.setAggregation("tooltip", oTooltip, true);
+		this._updateAccDescription();
 
 		if (this.oFileUpload) {
-			if (typeof oTooltip  === "string") {
-				sTooltip = this.getTooltip_AsString();
-				sapUiFupInputMaskDOM = this.$().find(".sapUiFupInputMask")[0];
+			sTooltip = this.getTooltip_AsString();
+			sapUiFupInputMaskDOM = this.$().find(".sapUiFupInputMask")[0];
 
-				if (sTooltip) {
-					this.oFileUpload.setAttribute("title", sTooltip);
-					sapUiFupInputMaskDOM && sapUiFupInputMaskDOM.setAttribute("title", sTooltip);
-				} else {
-					this.oFileUpload.removeAttribute("title");
-					sapUiFupInputMaskDOM && sapUiFupInputMaskDOM.removeAttribute("title");
-				}
+			if (sTooltip) {
+				this.oFileUpload.setAttribute("title", sTooltip);
+				sapUiFupInputMaskDOM && sapUiFupInputMaskDOM.setAttribute("title", sTooltip);
+			} else {
+				this.oFileUpload.removeAttribute("title");
+				sapUiFupInputMaskDOM && sapUiFupInputMaskDOM.removeAttribute("title");
 			}
 		}
 		return this;
+	};
+
+	/*
+	 * Generates the text, which would be placed as an accessibility description,
+	 * based on the current FileUploader's placeholder, value and tooltip.
+	 */
+	FileUploader.prototype._generateAccDescriptionText = function () {
+		var sTooltip = this.getTooltip_AsString(),
+			sPlaceholder = this.getPlaceholder(),
+			sValue = this.getValue(),
+			sAccDescription = "";
+
+		if (sTooltip) {
+			sAccDescription += sTooltip + " ";
+		}
+
+		if (sValue) {
+			sAccDescription += sValue + " ";
+		} else if (sPlaceholder) {
+			sAccDescription += sPlaceholder + " ";
+		}
+
+		sAccDescription += this._sAccText;
+
+		return sAccDescription;
+	};
+
+	/*
+	 * Updates the hidden element's text, which holds the accessibility description.
+	 * This method should be called whenever the placeholder/value/tooltip update.
+	 * Otherwise screen readers will simply read a description, which doesn't match
+	 * what's visible on the screen.
+	 */
+	FileUploader.prototype._updateAccDescription = function () {
+		var oAccDescriptionHolder = document.getElementById(this.getId() + "-AccDescr"),
+			sNewDescription = this._generateAccDescriptionText();
+
+		if (oAccDescriptionHolder) {
+			oAccDescriptionHolder.innerHTML = encodeXML(sNewDescription);
+		}
 	};
 
 	FileUploader.prototype.setXhrSettings = function (oXhrSettings) {
@@ -877,6 +916,9 @@ sap.ui.define([
 	FileUploader.prototype.setPlaceholder = function(sPlaceholder) {
 		this.setProperty("placeholder", sPlaceholder, true);
 		this.oFilePath.setPlaceholder(sPlaceholder);
+
+		this._updateAccDescription();
+
 		return this;
 	};
 
