@@ -2146,6 +2146,16 @@ sap.ui.define([
 		assert.strictEqual(sSize, 333);
 	});
 
+	QUnit.test("Size of a ToolbarSpacer with specified witdh is reported correctly", function (assert) {
+		var oTestToolbarSpacer = new ToolbarSpacer({ width: "20px" });
+
+		oTestToolbarSpacer.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var sSize = OverflowToolbar._getOptimalControlWidth(oTestToolbarSpacer);
+		assert.strictEqual(sSize, 20);
+	});
+
 	QUnit.test("Size of a control with LayoutData, shrinkable = true and minWidth, is reported correctly", function (assert) {
 		var oTestButton = new Button(
 							{
