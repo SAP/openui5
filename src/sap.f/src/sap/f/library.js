@@ -110,7 +110,7 @@ sap.ui.define(["sap/ui/base/DataType",
 	var thisLib = sap.f;
 
 	/**
-	* Defines the areas within the <code>sap.f.DynamicPageTitle</code>.
+	* Defines the areas within the <code>sap.f.DynamicPageTitle</code> control.
 	*
 	* @enum {string}
 	* @public
@@ -441,7 +441,7 @@ sap.ui.define(["sap/ui/base/DataType",
 	};
 
 	/**
-	 * Interface for card controls
+	 * Interface that should be implemented by all card controls.
 	 *
 	 * @since 1.62
 	 * @public
@@ -450,7 +450,7 @@ sap.ui.define(["sap/ui/base/DataType",
 	 */
 
 	/**
-	 * The function is used to allow for a common header renderer between different card implementations
+	 * The function is used to allow for a common header renderer between different implementations of the {@link sap.f.ICard} interface.
 	 *
 	 * @returns {sap.f.cards.IHeader} The header of the card
 	 * @since 1.62
@@ -460,7 +460,7 @@ sap.ui.define(["sap/ui/base/DataType",
 	 */
 
 	/**
-	 * The function is used to allow for a common content renderer between different card implementations
+	 * The function is used to allow for a common content renderer between different implementations of the {@link sap.f.ICard} interface.
 	 *
 	 * @returns {sap.ui.core.Control} The content of the card
 	 * @since 1.62
@@ -470,7 +470,7 @@ sap.ui.define(["sap/ui/base/DataType",
 	 */
 
 	/**
-	 * Allows for a common header renderer between different card implementations.
+	 * Allows for a common header renderer between different implementations of the {@link sap.f.ICard} interface.
 	 *
 	 * @returns {sap.f.cards.HeaderPosition} The position of the header of the card
 	 * @since 1.65
@@ -480,7 +480,7 @@ sap.ui.define(["sap/ui/base/DataType",
 	 */
 
 	/**
-	 * Marker interface for card headers
+	 * Marker interface for controls suitable as a header in controls that implement the {@link sap.f.ICard} interface.
 	 *
 	 * @since 1.62
 	 * @public
@@ -501,7 +501,7 @@ sap.ui.define(["sap/ui/base/DataType",
 	 */
 
 	 /**
-	 * Different options for the position of the <code>Card</code> header.
+	 * Different options for the position of the header in controls that implement the {@link sap.f.ICard} interface.
 	 *
 	 * @enum {string}
 	 * @public

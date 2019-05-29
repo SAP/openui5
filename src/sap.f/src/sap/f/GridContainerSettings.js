@@ -47,7 +47,7 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Holds a set of settings that define the dimensions of <code>sap.f.GridContainer</code>
+	 * Holds a set of settings that define the dimensions of <code>sap.f.GridContainer</code>.
 	 *
 	 * Can be used to define the sizes of columns and rows for different screen sizes, by using the <code>layout</code> aggregations of <code>sap.f.GridContainer</code>.
 	 *
