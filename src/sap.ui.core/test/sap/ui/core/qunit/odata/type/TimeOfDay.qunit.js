@@ -4,6 +4,7 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/base/Log",
+	"sap/ui/core/CalendarType",
 	"sap/ui/core/Control",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/FormatException",
@@ -12,12 +13,10 @@ sap.ui.define([
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/model/odata/type/TimeOfDay",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Log, Control, DateFormat, FormatException, ParseException, ValidateException,
-		ODataType, TimeOfDay, TestUtils) {
+], function (jQuery, Log, CalendarType, Control, DateFormat, FormatException, ParseException,
+		ValidateException, ODataType, TimeOfDay, TestUtils) {
 	/*global QUnit */
 	"use strict";
-
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
 
 	/*
 	 * Tests that the given value leads to a ParseException.
@@ -38,14 +37,21 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.TimeOfDay", {
 		beforeEach : function () {
+			var oConfiguration = sap.ui.getCore().getConfiguration();
+
+			this.sDefaultCalendarType = oConfiguration.getCalendarType();
+			this.sDefaultLanguage = oConfiguration.getLanguage();
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			oConfiguration.setCalendarType(CalendarType.Gregorian);
+			oConfiguration.setLanguage("en-US");
 		},
 		afterEach : function () {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			var oConfiguration = sap.ui.getCore().getConfiguration();
+
+			oConfiguration.setCalendarType(this.sDefaultCalendarType);
+			oConfiguration.setLanguage(this.sDefaultLanguage);
 		}
 	});
 
@@ -141,25 +147,30 @@ sap.ui.define([
 			].forEach(function (oFixture) {
 		QUnit.test("formatValue with oFormatOptions=" + JSON.stringify(oFixture.oFormatOptions),
 			function (assert) {
-				var oSpy,
-					oType;
-
-				//code under test
-				oType = new TimeOfDay(oFixture.oFormatOptions);
+				var oDateFormatMock = this.mock(DateFormat),
+					oType = new TimeOfDay(oFixture.oFormatOptions);
 
 				assert.deepEqual(oType.oFormatOptions, oFixture.oFormatOptions,
 						"format options: " + JSON.stringify(oFixture.oFormatOptions) + " set");
 
-				oSpy = this.spy(DateFormat, "getTimeInstance");
+				oType._resetModelFormatter();
+				oDateFormatMock.expects("getTimeInstance") // getModelFormatter
+					.withExactArgs({
+						calendarType : CalendarType.Gregorian,
+						pattern : 'HH:mm:ss',
+						strictParsing : true,
+						UTC : true
+					})
+					.callThrough();
+				oDateFormatMock.expects("getTimeInstance") // getFormatter
+					.withExactArgs(oFixture.oExpected)
+					.callThrough();
 
-				//code under test
+				// first call
 				oType.formatValue("13:53:49", "string");
-				oType.formatValue("13:53:49", "string"); // test that formatter is created once
 
-				assert.ok(oSpy.calledWithExactly({pattern : "HH:mm:ss", strictParsing : true,
-					UTC : true}));
-				assert.ok(oSpy.calledWithExactly(oFixture.oExpected));
-				assert.strictEqual(oSpy.callCount, 2);
+				// second call - reuse formatters
+				oType.formatValue("13:53:49", "string");
 			});
 	});
 
@@ -299,16 +310,24 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getModelFormat()", function (assert) {
-		var oType = new TimeOfDay(undefined, {precision : 3}),
-			oFormat = oType.getModelFormat(),
+	QUnit.test("getModelFormat() uses Gregorian calendar type", function (assert) {
+		var oFormat,
 			sModelValue = "13:53:49.123",
-			oParsedTimeOfDay = oFormat.parse(sModelValue);
+			oType = new TimeOfDay(undefined, {precision : 3}),
+			oParsedTimeOfDay;
 
+		sap.ui.getCore().getConfiguration().setCalendarType(CalendarType.Japanese);
+		oType._resetModelFormatter();
+
+		// code under test
+		oFormat = oType.getModelFormat();
+
+		oParsedTimeOfDay = oFormat.parse(sModelValue);
 		assert.ok(oParsedTimeOfDay instanceof Date, "parse delivers a Date");
 		assert.strictEqual(oParsedTimeOfDay.getTime(), Date.UTC(1970, 0, 1, 13, 53, 49, 123),
 			"parse value");
 		assert.strictEqual(oFormat.format(oParsedTimeOfDay), sModelValue, "format");
+		assert.strictEqual(oFormat.oFormatOptions.calendarType, CalendarType.Gregorian);
 	});
 
 	//*********************************************************************************************
@@ -322,5 +341,18 @@ sap.ui.define([
 		sap.ui.getCore().getConfiguration().setLanguage("de");
 		assert.strictEqual(oType.formatValue(sValue, "string"), sValue,
 			"adjusted to changed language");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_resetModelFormatter", function (assert) {
+		var oType = new TimeOfDay(),
+			oFormat = oType.getModelFormat();
+
+		assert.strictEqual(oFormat, oType.getModelFormat());
+
+		// code under test
+		oType._resetModelFormatter();
+
+		assert.notStrictEqual(oFormat, oType.getModelFormat());
 	});
 });

@@ -1,0 +1,93 @@
+{
+	"d":{
+		"results":[{
+			"__metadata":{
+				"id":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~0~EUR.1~0000000001')",
+				"uri":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~0~EUR.1~0000000001')",
+				"type":"FAR_CUSTOMER_LINE_ITEMS.Item"
+			},
+			"AmountInCompanyCodeCurrency":"0.00",
+			"CompanyCode":"A",
+			"CompanyCodeCurrency":"EUR",
+			"Customer":"1",
+			"CustomerName":"EB1_Customer"
+		}, {
+			"__metadata":{
+				"id":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~1~EUR.1~0000000011')",
+				"uri":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~1~EUR.1~0000000011')",
+				"type":"FAR_CUSTOMER_LINE_ITEMS.Item"
+			},
+			"AmountInCompanyCodeCurrency":"1.00",
+			"CompanyCode":"A",
+			"CompanyCodeCurrency":"EUR",
+			"Customer":"11",
+			"CustomerName":"Susi KB-Sorglos"
+		}, {
+			"__metadata":{
+				"id":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~2~EUR.2~0000000021')",
+				"uri":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~2~EUR.2~0000000021')",
+				"type":"FAR_CUSTOMER_LINE_ITEMS.Item"
+			},
+			"AmountInCompanyCodeCurrency":"2.00",
+			"CompanyCode":"A",
+			"CompanyCodeCurrency":"EUR",
+			"Customer":"21",
+			"CustomerName":"Susi Susi KB-Sorglos"
+		}, {
+			"__metadata":{
+				"id":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~3~EUR.3~0000000027')",
+				"uri":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~3~EUR.3~0000000027')",
+				"type":"FAR_CUSTOMER_LINE_ITEMS.Item"
+			},
+			"AmountInCompanyCodeCurrency":"3.00",
+			"CompanyCode":"A",
+			"CompanyCodeCurrency":"EUR",
+			"Customer":"27",
+			"CustomerName":"eileen customer 1"
+		}, {
+			"__metadata":{
+				"id":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~4~EUR.4~0000000027')",
+				"uri":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~4~EUR.4~0000000027')",
+				"type":"FAR_CUSTOMER_LINE_ITEMS.Item"
+			},
+			"AmountInCompanyCodeCurrency":"4.00",
+			"CompanyCode":"A",
+			"CompanyCodeCurrency":"EUR",
+			"Customer":"27",
+			"CustomerName":"eileen customer 1"
+		}, {
+			"__metadata":{
+				"id":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~5~EUR.5~0000000027')",
+				"uri":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~5~EUR.5~0000000027')",
+				"type":"FAR_CUSTOMER_LINE_ITEMS.Item"
+			},
+			"AmountInCompanyCodeCurrency":"5.00",
+			"CompanyCode":"A",
+			"CompanyCodeCurrency":"EUR",
+			"Customer":"27",
+			"CustomerName":"eileen customer 1"
+		}, {
+			"__metadata":{
+				"id":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~6~EUR.6~0000000027')",
+				"uri":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~6~EUR.6~0000000027')",
+				"type":"FAR_CUSTOMER_LINE_ITEMS.Item"
+			},
+			"AmountInCompanyCodeCurrency":"6.00",
+			"CompanyCode":"A",
+			"CompanyCodeCurrency":"EUR",
+			"Customer":"27",
+			"CustomerName":"eileen customer 1"
+		}, {
+			"__metadata":{
+				"id":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~7~EUR.7~0000000027')",
+				"uri":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~7~EUR.7~0000000027')",
+				"type":"FAR_CUSTOMER_LINE_ITEMS.Item"
+			},
+			"AmountInCompanyCodeCurrency":"7.00",
+			"CompanyCode":"A",
+			"CompanyCodeCurrency":"EUR",
+			"Customer":"27",
+			"CustomerName":"eileen customer 1"
+		}]
+	}
+}

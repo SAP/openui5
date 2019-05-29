@@ -153,9 +153,8 @@ sap.ui.define([
 			// don't try to add separators to invalid value
 			return sValue;
 		}
-		sResult = sResult.slice(0, 8) + '-' + sResult.slice(8, 12) + '-' + sResult.slice(12, 16)
+		return sResult.slice(0, 8) + '-' + sResult.slice(8, 12) + '-' + sResult.slice(12, 16)
 			+ '-' + sResult.slice(16, 20) + '-' + sResult.slice(20);
-		return sResult.toUpperCase();
 	};
 
 	/**
