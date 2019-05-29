@@ -278,6 +278,19 @@
 		assert.strictEqual(sf5.hasClass("sapUiInvisibleText"), true, 'Invisible text has class sapUiInvisibleText');
 	});
 
+	QUnit.test("Test focus when clicked on the form outside of the input", function(assert) {
+		// arrange
+		var done = assert.async();
+		this.SearchField.$("I").on("focus", function () {
+			//assert
+			assert.ok(true, "Input element is focused");
+			done();
+		});
+
+		// act
+		this.SearchField.$("F").click(); // click the form
+	});
+
 </script>
 
 </head>
