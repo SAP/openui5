@@ -5863,6 +5863,39 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("Clearing values after highlighting", function(assert) {
+		var oMultiComboBox = new MultiComboBox({
+			items: [
+				new Item({
+					key: "ALG",
+					text: "Algeria"
+				})
+			]
+		}), oFakeEvent = {
+				target: {
+					value: "a"
+				},
+				setMarked: function () { },
+				srcControl: oMultiComboBox
+			};
+
+		// arrange
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		oMultiComboBox.oninput(oFakeEvent);
+		this.clock.tick(100);
+
+		oMultiComboBox.getFocusDomRef().blur();
+		this.clock.tick(100);
+
+		// assert
+		assert.strictEqual(oMultiComboBox._getSuggestionsPopover()._sTypedInValue, "", "The input value is deleted");
+
+		// cleanup
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.test("The tokens are rendered after opening the picker", function (assert) {
 		//arrange
 		var aTokens,

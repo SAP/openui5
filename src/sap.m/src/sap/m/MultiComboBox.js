@@ -1192,6 +1192,10 @@ function(
 		this._sOldValue = "";
 		this._sOldInput = "";
 
+		// clear the typed in value, since SP does not clean it itself,
+		// if no autocomplete property is present
+		this._getSuggestionsPopover()._sTypedInValue = "";
+
 		if (this.isPickerDialog()) {
 			// reset the value state after the dialog is closed
 			this._showAlreadySelectedVisualEffect();
