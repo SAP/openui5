@@ -510,6 +510,12 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Menu container has the correct role", function (assert) {
+		var $oMenu = jQuery("#UxAP-69_anchorBarBinding--ObjectPageLayout-anchBar-scroll");
+
+		assert.strictEqual($oMenu.attr("role"), "menubar", "Menu container has the menubar role.");
+	});
+
 	QUnit.test("Tooltip set on HierarchicalSelect", function (assert) {
 		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
 			oSelect = oAnchorBar._getHierarchicalSelect(),

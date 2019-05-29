@@ -1051,7 +1051,6 @@ sap.ui.define([
 
 		if (iIndex !== -1) {
 			mAriaProps.role = "menuitemradio";
-			mAriaProps.type = "button";
 			mAriaProps.roledescription = this.oLibraryResourceBundleOP.getText("ANCHOR_BAR_MENUITEM");
 			mAriaProps.setsize = oContent.length;
 			mAriaProps.posinset = iIndex + 1; // we need "+ 1", since iIndex would start from 0 (due to indexOf)
