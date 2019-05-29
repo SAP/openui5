@@ -1,0 +1,32 @@
+{
+	"d":{
+		"results":[{
+			"__metadata":{
+				"id":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('1EURA')",
+				"uri":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('1EURA')",
+				"type":"FAR_CUSTOMER_LINE_ITEMS.Item"
+			},
+			"AmountInCompanyCodeCurrency":"1.00",
+			"CompanyCode":"A",
+			"CompanyCodeCurrency":"EUR"
+		}, {
+			"__metadata":{
+				"id":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('2EURB')",
+				"uri":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('2EURB')",
+				"type":"FAR_CUSTOMER_LINE_ITEMS.Item"
+			},
+			"AmountInCompanyCodeCurrency":"2.00",
+			"CompanyCode":"B",
+			"CompanyCodeCurrency":"EUR"
+		}, {
+			"__metadata":{
+				"id":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('3EURC')",
+				"uri":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('3EURC')",
+				"type":"FAR_CUSTOMER_LINE_ITEMS.Item"
+			},
+			"AmountInCompanyCodeCurrency":"3.00",
+			"CompanyCode":"C",
+			"CompanyCodeCurrency":"EUR"
+		}]
+	}
+}

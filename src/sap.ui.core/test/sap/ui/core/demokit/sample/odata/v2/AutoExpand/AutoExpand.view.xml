@@ -1,0 +1,19 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.ui.table">
+
+	<AnalyticalTable id="analyticalTable" rows="{path : '/Items', parameters : {
+			numberOfExpandedLevels : 1,
+			provideGrandTotals : false,
+			provideTotalResultSize : false,
+			reloadSingleUnitMeasures : false
+		}}" threshold="5" title="Analytical Table with AutoExpand to level 1" visibleRowCount="5" >
+		<columns>
+			<AnalyticalColumn leadingProperty="CustomerName" template="CustomerName" />
+			<AnalyticalColumn grouped="true" leadingProperty="CompanyCode" template="CompanyCode" />
+			<AnalyticalColumn leadingProperty="AmountInCompanyCodeCurrency" summed="true"
+				template="AmountInCompanyCodeCurrency" />
+			<AnalyticalColumn leadingProperty="CompanyCodeCurrency" template="CompanyCodeCurrency" />
+		</columns>
+	</AnalyticalTable>
+</mvc:View>

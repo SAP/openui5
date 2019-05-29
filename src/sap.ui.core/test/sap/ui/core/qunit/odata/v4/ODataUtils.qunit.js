@@ -4,10 +4,12 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/base/Log",
+	"sap/ui/core/CalendarType",
+	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v4/ODataUtils",
 	"sap/ui/model/odata/v4/lib/_Helper"
-], function (jQuery, Log, BaseODataUtils, ODataUtils, _Helper) {
+], function (jQuery, Log, CalendarType, DateFormat, BaseODataUtils, ODataUtils, _Helper) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -15,9 +17,13 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataUtils", {
 		beforeEach : function () {
+			this.sDefaultCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
+		},
+		afterEach : function () {
+			sap.ui.getCore().getConfiguration().setCalendarType(this.sDefaultCalendarType);
 		}
 	});
 
@@ -60,6 +66,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("parseDate", function (assert) {
+		sap.ui.getCore().getConfiguration().setCalendarType(CalendarType.Japanese);
+		ODataUtils._setDateTimeFormatter();
+
 		assert.strictEqual(ODataUtils.parseDate("2000-01-01").getTime(), Date.UTC(2000, 0, 1));
 
 		[
@@ -81,6 +90,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("parseDateTimeOffset", function (assert) {
+		sap.ui.getCore().getConfiguration().setCalendarType(CalendarType.Japanese);
+		ODataUtils._setDateTimeFormatter();
+
 		assert.strictEqual(
 			ODataUtils.parseDateTimeOffset("2015-03-08T19:32:56.123456789012+02:00").getTime(),
 			Date.UTC(2015, 2, 8, 17, 32, 56, 123));
@@ -123,6 +135,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("parseTimeOfDay", function (assert) {
+		sap.ui.getCore().getConfiguration().setCalendarType(CalendarType.Japanese);
+		ODataUtils._setDateTimeFormatter();
+
 		assert.strictEqual(ODataUtils.parseTimeOfDay("23:59:59.123456789012").getTime(),
 			Date.UTC(1970, 0, 1, 23, 59, 59, 123));
 
@@ -175,6 +190,38 @@ sap.ui.define([
 			.returns("bar");
 
 		assert.strictEqual(ODataUtils.formatLiteral(42, "foo"), "bar");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_setDateTimeFormatter", function (assert) {
+		var oDateFormatMock = this.mock(DateFormat);
+
+		oDateFormatMock.expects("getDateInstance")
+			.withExactArgs({
+				calendarType : CalendarType.Gregorian,
+				pattern: "yyyy-MM-dd",
+				strictParsing : true,
+				UTC : true
+			})
+			.callThrough();
+		oDateFormatMock.expects("getDateTimeInstance")
+			.withExactArgs({
+				calendarType : CalendarType.Gregorian,
+				pattern : "yyyy-MM-dd'T'HH:mm:ss.SSSX",
+				strictParsing : true
+			})
+			.callThrough();
+		oDateFormatMock.expects("getTimeInstance")
+			.withExactArgs({
+				calendarType : CalendarType.Gregorian,
+				pattern : "HH:mm:ss.SSS",
+				strictParsing : true,
+				UTC : true
+			})
+			.callThrough();
+
+		// code under test
+		ODataUtils._setDateTimeFormatter();
 	});
 });
 //TODO from https://www.w3.org/TR/xmlschema11-2/#vp-dt-timezone:

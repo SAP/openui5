@@ -91,6 +91,8 @@ sap.ui.define([
 				Then.onTheMainPage.checkNote(1, "Sending ETag header...", true);
 				When.onTheMainPage.changeNoteInSalesOrders(1, "*");
 				Then.onTheMainPage.checkNote(1, "You have used the new ETag!", true);
+
+				Then.onAnyPage.checkLog([]);
 			}
 
 			Then.iTeardownMyUIComponent();

@@ -481,7 +481,7 @@ sap.ui.define([
 	 * @param {string} sPath
 	 *   The relative path for which the query options are requested
 	 * @returns {object}
-	 *   The query options from the associated binding
+	 *   The query options from the associated binding (live reference, no clone!)
 	 *
 	 * @private
 	 */
@@ -607,8 +607,9 @@ sap.ui.define([
 	 *   binding, the parameter must not be used.
 	 *   Supported since 1.55.0
 	 * @throws {Error}
-	 *   If the group ID is not valid, if this context has pending changes, if the binding is not
-	 *   refreshable, if its root binding is suspended, or if the parameter
+	 *   If the group ID is not valid, if this context has pending changes or does not represent a
+	 *   single entity (see {@link sap.ui.model.odata.v4.ODataListBinding#getHeaderContext}), if the
+	 *   binding is not refreshable, if its root binding is suspended, or if the parameter
 	 *   <code>bAllowRemoval/code> is set for a context belonging to a context binding.
 	 *
 	 * @public
@@ -622,10 +623,6 @@ sap.ui.define([
 		}
 
 		if (this.oBinding.refreshSingle) {
-			if (!this.oBinding.isRoot()) {
-				throw new Error("Binding is not refreshable; cannot refresh entity: " + this);
-			}
-
 			this.oBinding.refreshSingle(this, this.oModel.lockGroup(sGroupId, true, this),
 				bAllowRemoval);
 		} else {
@@ -762,10 +759,10 @@ sap.ui.define([
 	 * @throws {Error}
 	 *   If <code>aPathExpressions</code> contains objects other than
 	 *   "14.5.11 Expression edm:NavigationPropertyPath" or "14.5.13 Expression edm:PropertyPath",
-	 *   or if this context is neither the bound context of a context binding which uses own service
-	 *   data requests nor the return value context of an operation binding, or if the root binding
-	 *   of this context's binding is suspended, or if the context is transient, or if the binding
-	 *   of this context is unresolved
+	 *   or if this context is neither the return value context of an operation binding nor belongs
+	 *   to a binding which uses own data service requests, or if the root binding of this context's
+	 *   binding is suspended, or if the context is transient, or if the binding of this context is
+	 *   unresolved
 	 *
 	 * @public
 	 * @see sap.ui.model.odata.v4.ODataContextBinding#execute
