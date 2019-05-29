@@ -406,4 +406,17 @@ sap.ui.define([
 		assert.strictEqual(fnLiveChange.callCount, 1, "LiveChange event is fired once");
 		assert.strictEqual(this.SearchField.getValue(), "abc", "Value is correct");
 	});
+
+	QUnit.test("Test focus when clicked on the form outside of the input", function(assert) {
+		// arrange
+		var done = assert.async();
+		this.SearchField.$("I").on("focus", function () {
+			//assert
+			assert.ok(true, "Input element is focused");
+			done();
+		});
+
+		// act
+		this.SearchField.$("F").click(); // click the form
+	});
 });
