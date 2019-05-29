@@ -489,7 +489,9 @@ sap.ui.define([
 			focusedSectionId = jQuery(aSections[0]).attr("id");
 		}
 
-		this._scrollParent(focusedSectionId);
+		if (aSections.length > 1) {
+			this._scrollParent(focusedSectionId);
+		}
 	};
 
 	/**
@@ -524,7 +526,9 @@ sap.ui.define([
 			focusedSectionId = jQuery(aSections[aSections.length - 1]).attr("id");
 		}
 
-		this._scrollParent(focusedSectionId);
+		if (aSections.length > 1) {
+			this._scrollParent(focusedSectionId);
+		}
 	};
 
 	/**
