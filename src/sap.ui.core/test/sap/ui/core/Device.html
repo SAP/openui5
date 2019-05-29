@@ -25,7 +25,7 @@
 	</script>
 	<script>
 		sap.ui.require(['sap/ui/Device'], function(Device) {
-			
+
 			// Config
 			var customUA = "";
 			//Enable this to activate Fullscreen mode on iOS in combination with the "Add to home screen" feature
@@ -147,6 +147,8 @@
 				}
 
 				printProperties(Device, "sap.ui.Device");
+				_html.push("<h3>jQuery.support</h3><hr>");
+				printProperties(jQuery.support);
 				return _html.join("");
 
 			};
