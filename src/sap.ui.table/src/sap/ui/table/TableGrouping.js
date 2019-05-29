@@ -231,10 +231,8 @@ sap.ui.define([
 		isInGroupingRow: function(oCellRef) {
 			var oInfo = TableGrouping.TableUtils.getCellInfo(oCellRef);
 
-			if (oInfo.isOfType(TableGrouping.TableUtils.CELLTYPE.DATACELL)) {
+			if (oInfo.isOfType(TableGrouping.TableUtils.CELLTYPE.ANYCONTENTCELL)) {
 				return oInfo.cell.parent().hasClass("sapUiTableGroupHeader");
-			} else if (oInfo.isOfType(TableGrouping.TableUtils.CELLTYPE.ROWHEADER | TableGrouping.TableUtils.CELLTYPE.ROWACTION)) {
-				return oInfo.cell.hasClass("sapUiTableGroupHeader");
 			}
 
 			return false;
@@ -262,10 +260,8 @@ sap.ui.define([
 		isInSumRow: function(oCellRef) {
 			var oInfo = TableGrouping.TableUtils.getCellInfo(oCellRef);
 
-			if (oInfo.isOfType(TableGrouping.TableUtils.CELLTYPE.DATACELL)) {
+			if (oInfo.isOfType(TableGrouping.TableUtils.CELLTYPE.ANYCONTENTCELL)) {
 				return oInfo.cell.parent().hasClass("sapUiAnalyticalTableSum");
-			} else if (oInfo.isOfType(TableGrouping.TableUtils.CELLTYPE.ROWHEADER | TableGrouping.TableUtils.CELLTYPE.ROWACTION)) {
-				return oInfo.cell.hasClass("sapUiAnalyticalTableSum");
 			}
 
 			return false;
@@ -355,8 +351,8 @@ sap.ui.define([
 				$Row = oDomRefs.row,
 				$ScrollRow = oDomRefs.rowScrollPart,
 				$FixedRow = oDomRefs.rowFixedPart,
-				$RowHdr = oDomRefs.rowSelector,
-				$RowAct = oDomRefs.rowAction;
+				$RowHdr = oDomRefs.rowHeaderPart,
+				$RowAct = oDomRefs.rowActionPart;
 
 			$Row.attr({
 				"data-sap-ui-level": iLevel

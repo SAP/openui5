@@ -3,28 +3,15 @@
 /* Base theme                                    */
 /* ============================================= */
 
-.sapUiAnalyticalTable .sapUiTableRowSelectionCell {
-	&.sapUiAnalyticalTableSum {
-		border-left: 0;
-		border-right: 0;
-	}
-
-	&.sapUiAnalyticalTableDummy {
-		font-size: 14px;
-		line-height: 28px;
-		color: @sapUiContentLabelColor;
-	}
+.sapUiAnalyticalTable .sapUiAnalyticalTableSum > .sapUiTableCell {
+	border-left-color: transparent;
+	border-right-color: transparent;
 }
 
-.sapUiAnalyticalTable .sapUiTableTr.sapUiAnalyticalTableSum {
-	> .sapUiTableCell {
-		border-left: 0;
-		border-right: 0;
-	}
-}
-
-.sapUiAnalyticalTable .sapUiTableTr.sapUiAnalyticalTableSum > .sapUiTableCellLast {
-	border-right: @_sap_ui_table_BaseBorderWidth solid @sapUiListVerticalBorderColor;
+.sapUiAnalyticalTable .sapUiAnalyticalTableDummy {
+	font-size: 14px;
+	line-height: 28px;
+	color: @sapUiContentLabelColor;
 }
 
 .sapUiAnalyticalTable .sapUiTableTr.sapUiAnalyticalTableDummy .sapUiTableCell {

@@ -38,12 +38,12 @@ sap.ui.define([
 			}),
 			sRowId = $oTitle.parents("tr").attr("id"),
 			$oRow = oTable.$().find("[data-sap-ui-related='" + sRowId + "']"),
-			oCheckbox = $oRow[0],
+			oCheckbox = $oRow[0].firstChild,
 			oCopyIcon = $oRow.find("[title='Copy']")[0],
 			oDeleteIcon = $oRow.find("[title='Delete']")[0],
 			oEditIcon = $oRow.find("[title='Edit']")[0],
 			expandCollapse = $oTitle.siblings()[0],
-			bSelected = Opa5.getJQuery()(oCheckbox).hasClass("sapUiTableRowSel");
+			bSelected = Opa5.getJQuery()($oRow[0]).hasClass("sapUiTableRowSel");
 
 		return {
 			checkbox: oCheckbox,

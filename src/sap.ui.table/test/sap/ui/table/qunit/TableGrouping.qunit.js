@@ -430,16 +430,22 @@ sap.ui.define([
 	});
 
 	QUnit.test("isGroupingRow", function(assert) {
+		initRowActions(oTable, 1, 1);
 		fakeGroupRow(0);
 
 		assert.ok(!TableUtils.Grouping.isGroupingRow(), "Returned false: Invalid parameter passed");
 		assert.ok(!TableUtils.Grouping.isGroupingRow(null), "Returned false: Invalid parameter passed");
 
 		assert.ok(TableUtils.Grouping.isGroupingRow(oTable.getRows()[0].getDomRef()), "Returned true: Row 1 is a group header row");
-		assert.ok(TableUtils.Grouping.isGroupingRow(getRowHeader(0)), "Returned true: The row header cell in Row 1 is part of the group header row");
+		assert.ok(TableUtils.Grouping.isGroupingRow(getRowHeader(0).parent()),
+			"Returned true: The header is part of the group header row");
+		assert.ok(TableUtils.Grouping.isGroupingRow(getRowAction(0).parent()),
+			"Returned true: The action part of Row 1 is part of the group header row");
 
 		assert.ok(!TableUtils.Grouping.isGroupingRow(oTable.getRows()[1].getDomRef()), "Returned false: Row 2 is a normal row");
+		assert.ok(!TableUtils.Grouping.isGroupingRow(getRowHeader(0)), "Returned false: The row header cell is not a group header row");
 		assert.ok(!TableUtils.Grouping.isGroupingRow(getCell(0, 0)), "Returned false: A cell is not a group header row");
+		assert.ok(!TableUtils.Grouping.isGroupingRow(getRowAction(0)), "Returned false: The row action cell is not a group header row");
 		assert.ok(!TableUtils.Grouping.isGroupingRow(getColumnHeader(0)), "Returned false: A column header cell is not a group header row");
 	});
 
@@ -662,7 +668,7 @@ sap.ui.define([
 
 			for (var i = 0; i < iCount; i++) {
 				var $Row = jQuery.sap.byId(oTreeTable.getId() + "-rows-row" + i);
-				var $RowHdr = jQuery.sap.byId(oTreeTable.getId() + "-rowsel" + i);
+				var $RowHdr = jQuery.sap.byId(oTreeTable.getId() + "-rowsel" + i).parent();
 				var $GroupHdr = jQuery.sap.byId(oTreeTable.getId() + "-rows-row" + i + "-groupHeader");
 				var iLevel = 0;
 				var bExpectGroupHeaderClass = true;
@@ -803,9 +809,9 @@ sap.ui.define([
 		var fnHandler = function() {
 			for (var i = 0; i < iNumberOfRows + 2; i++) {
 				if (i == 0 || i == 5) {
-					assert.ok(getRowHeader(i).hasClass("sapUiTableGroupHeader"), "Row " + i + " is group header");
+					assert.ok(getRowHeader(i).parent().hasClass("sapUiTableGroupHeader"), "Row " + i + " is group header");
 				} else {
-					assert.ok(!getRowHeader(i).hasClass("sapUiTableGroupHeader"), "Row " + i + " is no group header");
+					assert.ok(!getRowHeader(i).parent().hasClass("sapUiTableGroupHeader"), "Row " + i + " is no group header");
 				}
 			}
 
