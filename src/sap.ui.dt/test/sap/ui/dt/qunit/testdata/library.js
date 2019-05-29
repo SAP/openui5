@@ -6,10 +6,9 @@
  * Initialization Code and shared classes of test library sap.ui.testLibrary.
  */
 sap.ui.define([
-	'sap/ui/core/library'
+	"sap/ui/core/library"
 ],
 function () {
-
 	"use strict";
 
 	/**
@@ -37,12 +36,11 @@ function () {
 		extensions: {
 			flChangeHandlers: {
 				"dt.control.SimpleScrollControl": {
-					"moveControls": "default"
+					moveControls: "default"
 				}
 			}
 		}
 	});
 
 	return sap.ui.testLibrary;
-
 }, /* bExport= */ true);

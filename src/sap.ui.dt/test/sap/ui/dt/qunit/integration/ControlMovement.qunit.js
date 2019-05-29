@@ -2,10 +2,8 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/plugin/ControlDragDrop",
 	"sap/ui/dt/plugin/CutPaste",
-	"sap/ui/dt/plugin/ElementMover",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
 	"sap/m/Button",
@@ -20,10 +18,8 @@ sap.ui.define([
 ],
 function (
 	jQuery,
-	ElementOverlay,
 	ControlDragDrop,
 	CutPaste,
-	ElementMover,
 	OverlayRegistry,
 	DesignTime,
 	Button,
@@ -100,12 +96,11 @@ function (
 			var fnCheckMovable = function (oOverlay) {
 				if (oOverlay.getElement() === this.oNotMovableButton) {
 					return false;
-				} else {
-					return true;
 				}
+				return true;
 			}.bind(this);
-			this.checkMovableDragStub = sinon.stub(this.oControlDragDrop.getElementMover(),"checkMovable").callsFake(fnCheckMovable);
-			this.checkMovableCutStub = sinon.stub(this.oCutPaste.getElementMover(),"checkMovable").callsFake(fnCheckMovable);
+			this.checkMovableDragStub = sinon.stub(this.oControlDragDrop.getElementMover(), "checkMovable").callsFake(fnCheckMovable);
+			this.checkMovableCutStub = sinon.stub(this.oCutPaste.getElementMover(), "checkMovable").callsFake(fnCheckMovable);
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [
@@ -173,16 +168,13 @@ function (
 
 			assert.ok(!this.oObjectHeaderOverlay.hasStyleClass("sapUiDtOverlayCutted"), "then the object header overlay is not marked with the cut style");
 			assert.ok(!this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation is not marked as target zone");
-
 		});
 
-		QUnit.test("when the cut is triggered on an in this situation non movable overlay" , function(assert) {
-
+		QUnit.test("when the cut is triggered on an in this situation non movable overlay", function(assert) {
 			QUnitUtils.triggerKeydown(this.oNotMovableButtonOverlay.getDomRef(), KeyCodes.X, false, false, true);
 
 			assert.ok(!this.oNotMovableButtonOverlay.hasStyleClass("sapUiDtOverlayCutted"), "then the button overlay is not marked with the cut style");
 			assert.ok(!this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation is not marked as target zone");
-
 		});
 
 		QUnit.test("when the cut is triggered on a button overlay,", function(assert) {
@@ -273,7 +265,6 @@ function (
 			assert.ok(!this.oObjectHeaderAggregationOverlay.isTargetZone(), "the invalid aggregation is not marked as target zone");
 
 			assert.ok(!this.oLayoutAggregationOverlay.hasStyleClass("sapUiDtOverlayDropZone"), "the valid aggregation overlay has the additional drop zone style removed after drop");
-
 		});
 
 		QUnit.test("when paste is triggered without cut before, then", function(assert) {
@@ -397,7 +388,6 @@ function (
 		}
 	}, function () {
 		QUnit.test("when the dragstart is triggered on the page overlay, that fit into both aggregations", function(assert) {
-
 			this.oControlDragDrop._onDragStart(stubEventFor(this.oPage1Overlay));
 
 			assert.ok(this.oSplitContainerMasterPagesAggregationOverlay.isTargetZone(), "both aggregations are marked as target zone");
@@ -435,5 +425,4 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

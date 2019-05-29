@@ -1,7 +1,8 @@
 // Provides control sap.ui.dt.test.controls.SimpleScrollControl
 /*globals sap*/
-sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/core/Control'],
-	function(jQuery, Control) {
+sap.ui.define([
+	"sap/ui/core/Control"
+], function(Control) {
 	"use strict";
 
 	/**
@@ -61,7 +62,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/core/Control'],
 					}
 				],
 				actions: {
-					"move": {
+					move: {
 						changeType: "moveControls"
 					}
 				}
@@ -81,7 +82,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/core/Control'],
 				sId = oCtrl.getId() + "-content1";
 				oRm.write("<div id='" + sId + "'>");
 				aContent = oCtrl.getAggregation("content1", []);
-				aContent.forEach(function(oCtrl){
+				aContent.forEach(function(oCtrl) {
 					oRm.renderControl(oCtrl);
 				});
 				oRm.write("</div>");
@@ -89,7 +90,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/core/Control'],
 				sId = oCtrl.getId() + "-content2";
 				oRm.write("<div id='" + sId + "'>");
 				aContent = oCtrl.getAggregation("content2", []);
-				aContent.forEach(function(oCtrl){
+				aContent.forEach(function(oCtrl) {
 					oRm.renderControl(oCtrl);
 				});
 				oRm.write("</div>");
@@ -107,7 +108,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/core/Control'],
 
 				renderAggregations();
 
-				//end scrollcontainer
+			//end scrollcontainer
 				oRm.write("</div>");
 			} else {
 				renderAggregations();
@@ -116,7 +117,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/core/Control'],
 			sId = oCtrl.getId() + "-footer";
 			oRm.write("<div id='" + sId + "'>");
 			aContent = oCtrl.getAggregation("footer", []);
-			aContent.forEach(function(oCtrl){
+			aContent.forEach(function(oCtrl) {
 				oRm.renderControl(oCtrl);
 			});
 			oRm.write("</div>");
@@ -126,5 +127,4 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/core/Control'],
 	});
 
 	return SimpleScrollControl;
-
 }, /* bExport= */ true);

@@ -17,7 +17,7 @@ function(
 	Dialog,
 	Log,
 	sinon
-){
+) {
 	"use strict";
 	var sAdaptableDialogId = "adaptableDialog";
 	var sandbox = sinon.sandbox.create();
@@ -230,5 +230,4 @@ function(
 	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
-
 });

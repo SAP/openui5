@@ -15,7 +15,7 @@ sap.ui.define([
 	Panel,
 	Device
 ) {
-	'use strict';
+	"use strict";
 
 	QUnit.module("Given that an Overlay is created on RTL mode", {
 		beforeEach : function(assert) {
@@ -96,7 +96,6 @@ sap.ui.define([
 				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 				fnDone();
 			}.bind(this));
-
 		},
 		afterEach : function() {
 			this.oDesignTime.destroy();
@@ -121,5 +120,4 @@ sap.ui.define([
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

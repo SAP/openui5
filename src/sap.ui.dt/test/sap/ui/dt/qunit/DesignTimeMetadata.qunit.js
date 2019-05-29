@@ -69,7 +69,7 @@ function(
 				getText : sandbox.stub().returns("translated text"),
 				hasText : sandbox.stub().returns(true)
 			};
-			sandbox.stub(sap.ui.getCore(),"getLibraryResourceBundle").returns(oFakeLibBundle);
+			sandbox.stub(sap.ui.getCore(), "getLibraryResourceBundle").returns(oFakeLibBundle);
 			assert.equal(this.oDesignTimeMetadata.getLibraryText(oFakeElement, "I18N_KEY"), "translated text", "then you get the text from the resource bundle of the corresponding library");
 		});
 
@@ -87,7 +87,7 @@ function(
 				getText : sandbox.stub().returns("translated text"),
 				hasText : sandbox.stub().withArgs("I18N_KEY").returns(true)
 			};
-			sandbox.stub(sap.ui.getCore(),"getLibraryResourceBundle").withArgs("fakeLibrary").returns(oFakeLibBundle);
+			sandbox.stub(sap.ui.getCore(), "getLibraryResourceBundle").withArgs("fakeLibrary").returns(oFakeLibBundle);
 			assert.equal(this.oDesignTimeMetadata.getLibraryText(oFakeElement, "I18N_KEY"), "translated text", "then you get the text from the resource bundle of the library from the parent");
 		});
 
@@ -112,7 +112,7 @@ function(
 		QUnit.test("when ignore is a function returning false", function(assert) {
 			this.oDesignTimeMetadata = new DesignTimeMetadata({
 				data : {
-					ignore : function(){return false; }
+					ignore : function() {return false; }
 				}
 			});
 			assert.strictEqual(this.oDesignTimeMetadata.isIgnored(), false, "then ignore property is returned right");
@@ -121,7 +121,7 @@ function(
 		QUnit.test("when ignore is a function returning true", function(assert) {
 			this.oDesignTimeMetadata = new DesignTimeMetadata({
 				data : {
-					ignore : function(){return true; }
+					ignore : function() {return true; }
 				}
 			});
 			assert.strictEqual(this.oDesignTimeMetadata.isIgnored(), true, "then ignore property is returned right");
@@ -164,7 +164,7 @@ function(
 				data : {
 					actions: {
 						rename : {
-							domRef : function (oElement){
+							domRef : function (oElement) {
 								return oElement.getDomRef();
 							}
 						}
@@ -177,7 +177,6 @@ function(
 
 	QUnit.module("Given a dedicated rendered control and designtime metadata is created", {
 		beforeEach: function() {
-
 			this.oButton = new Button({
 				text : "myButton"
 			});
@@ -194,7 +193,7 @@ function(
 				data : {
 					actions : {
 						rename : {
-							domRef : function (oElement){
+							domRef : function (oElement) {
 								return oElement.getDomRef();
 							}
 						}
@@ -212,7 +211,7 @@ function(
 				data : {
 					actions : {
 						rename : {
-							domRef : function (oElement){
+							domRef : function (oElement) {
 								return oElement.getDomRef();
 							}
 						}
@@ -287,8 +286,8 @@ function(
 
 	QUnit.module("Given a dedicated rendered control and an AggregationDesignTimeMetadata is created for a control", {
 		beforeEach: function() {
-			this.oTitle0 = new Title({id : "Title0",  text : "Title 0"});
-			this.oLabel0 = new Label({id : "Label0",  text : "Label 0"});
+			this.oTitle0 = new Title({id : "Title0", text : "Title 0"});
+			this.oLabel0 = new Label({id : "Label0", text : "Label 0"});
 			this.oInput0 = new Input({id : "Input0"});
 
 			this.oSimpleForm = new SimpleForm("form", {
@@ -310,7 +309,7 @@ function(
 					actions : {
 						rename : function() {
 							return {
-								domRef : function (oElement){
+								domRef : function (oElement) {
 									return oElement.getDomRef();
 								}
 							};
@@ -348,5 +347,4 @@ function(
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

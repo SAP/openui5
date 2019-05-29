@@ -86,7 +86,7 @@ function(
 		}
 
 		// add propagation array to current aggregation designtime-metadata
-		mMetadata.propagationInfos = aPropagationInfoListFromParent ? aPropagationInfoListFromParent : [];
+		mMetadata.propagationInfos = aPropagationInfoListFromParent || [];
 		if (!jQuery.isEmptyObject(mNewPropagationInfo)) {
 			mMetadata.propagationInfos.push(mNewPropagationInfo);
 		}
@@ -115,9 +115,8 @@ function(
 		if (aPropagatedRelevantContainersFromParent || !jQuery.isEmptyObject(mRelevantContainerPropagation) || !jQuery.isEmptyObject(mMetadataFunctionPropagation)) {
 			mNewPropagationInfo = Object.assign({}, mRelevantContainerPropagation, mMetadataFunctionPropagation);
 			return MetadataPropagationUtil._setPropagationInfo(mMetadata, mNewPropagationInfo, aPropagatedRelevantContainersFromParent);
-		} else {
-			return mMetadata;
 		}
+		return mMetadata;
 	};
 
 	/**
@@ -135,7 +134,7 @@ function(
 			return false;
 		}
 
-		mParentMetadata.propagationInfos.some(function(oPropagatedInfo){
+		mParentMetadata.propagationInfos.some(function(oPropagatedInfo) {
 			if (oPropagatedInfo.relevantContainerFunction &&
 				oPropagatedInfo.relevantContainerFunction(oElement)) {
 				vPropagatedRelevantContainer = oPropagatedInfo.relevantContainerElement;
@@ -143,7 +142,7 @@ function(
 			}
 		});
 
-		return vPropagatedRelevantContainer ? vPropagatedRelevantContainer : false;
+		return vPropagatedRelevantContainer || false;
 	};
 
 	/**
@@ -165,13 +164,12 @@ function(
 		//The highest parent always "wins", so we need to extend starting from the bottom
 		var aRevertedPropagationInfos = mParentMetadata.propagationInfos.slice().reverse();
 
-		vReturnMetadata = aRevertedPropagationInfos.reduce(function(vReturnMetadata, oPropagatedInfo){
+		vReturnMetadata = aRevertedPropagationInfos.reduce(function(vReturnMetadata, oPropagatedInfo) {
 			if (oPropagatedInfo.metadataFunction) {
 				var oCurrentMetadata = oPropagatedInfo.metadataFunction(oElement, oPropagatedInfo.relevantContainerElement);
 				return merge(vReturnMetadata, oCurrentMetadata);
-			} else {
-				return vReturnMetadata;
 			}
+			return vReturnMetadata;
 		}, vReturnMetadata);
 
 		return jQuery.isEmptyObject(vReturnMetadata) ? false : vReturnMetadata;
@@ -199,8 +197,7 @@ function(
 			mResultMetadata.relevantContainer = vPropagatedRelevantContainer;
 		}
 
-		if (vPropagatedMetadata){
-
+		if (vPropagatedMetadata) {
 			if (vPropagatedMetadata.actions === null || vPropagatedMetadata.actions === "not-adaptable") {
 				var mAggregations = oElement.getMetadata().getAllAggregations();
 				var aAggregationNames = Object.keys(mAggregations);

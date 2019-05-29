@@ -3,16 +3,12 @@
 sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/dt/ElementOverlay",
-	"sap/ui/dt/SelectionManager",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Button,
 	VerticalLayout,
-	ElementOverlay,
-	SelectionManager,
 	DesignTime,
 	OverlayRegistry,
 	sinon
@@ -457,7 +453,6 @@ sap.ui.define([
 			assert.ok(this.oButton1Overlay.isSelected(), "overlay for Button1 is selected");
 			assert.ok(this.oButton2Overlay.isSelected(), "overlay for Button2 is selected");
 			assert.ok(oSpy.notCalled);
-
 		});
 
 		QUnit.test("when remove() is called with one element which is not selected", function (assert) {
@@ -554,5 +549,4 @@ sap.ui.define([
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

@@ -36,12 +36,8 @@ sap.ui.define([
 	 * @experimental Since 1.34. This class is experimental and provides only limited functionality. Also the API might be
 	 *               changed in future.
 	 */
-	var ElementMover = ManagedObject.extend("sap.ui.dt.plugin.ElementMover", /** @lends sap.ui.dt.plugin.ElementMover.prototype */
-	{
+	var ElementMover = ManagedObject.extend("sap.ui.dt.plugin.ElementMover", /** @lends sap.ui.dt.plugin.ElementMover.prototype */ {
 		metadata : {
-			// ---- object ----
-
-			// ---- control specific ----
 			library : "sap.ui.dt",
 			properties : {
 				movableTypes : {
@@ -74,9 +70,10 @@ sap.ui.define([
 	};
 
 	/**
+	 * @param {sap.ui.dt.Overlay} oOverlay overlay instance
 	 * @protected
 	 */
-	ElementMover.prototype.checkMovable = function(oOverlay) {
+	ElementMover.prototype.checkMovable = function() {
 		return true;
 	};
 
@@ -132,7 +129,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	ElementMover.prototype.checkTargetZone = function(oAggregationOverlay, oOverlay, bOverlayNotInDom) {
-		var oMovedOverlay = oOverlay ? oOverlay : this.getMovedOverlay();
+		var oMovedOverlay = oOverlay || this.getMovedOverlay();
 		var oGeometry = oAggregationOverlay.getGeometry();
 		var bGeometryVisible = oGeometry && oGeometry.size.height > 0 && oGeometry.size.width > 0;
 
@@ -144,7 +141,7 @@ sap.ui.define([
 		}
 		var oParentElement = oAggregationOverlay.getElement();
 		// an aggregation can still have visible = true even if it has been removed from its parent
-		if (!oParentElement.getParent()){
+		if (!oParentElement.getParent()) {
 			return false;
 		}
 		var oMovedElement = oMovedOverlay.getElement();
@@ -231,7 +228,7 @@ sap.ui.define([
 		}
 
 		if (oTargetParentInformation.index !== -1) {
-			if (oAggregationDesignTimeMetadata && oAggregationDesignTimeMetadata.beforeMove){
+			if (oAggregationDesignTimeMetadata && oAggregationDesignTimeMetadata.beforeMove) {
 				oAggregationDesignTimeMetadata.beforeMove(oRelevantContainerElement, oMovedElement);
 			}
 			if (bInsertAfterElement) {
@@ -243,7 +240,7 @@ sap.ui.define([
 			}
 			ElementUtil.insertAggregation(oTargetParentInformation.parent, oTargetParentInformation.aggregation,
 				oMovedElement, oTargetParentInformation.index);
-			if (oAggregationDesignTimeMetadata && oAggregationDesignTimeMetadata.afterMove){
+			if (oAggregationDesignTimeMetadata && oAggregationDesignTimeMetadata.afterMove) {
 				oAggregationDesignTimeMetadata.afterMove(oRelevantContainerElement, oMovedElement);
 			}
 		}
@@ -275,12 +272,12 @@ sap.ui.define([
 		var iIndex = aTargetAggregationItems.indexOf(oMovedElement);
 		// Don't do anything when the element is already in the aggregation and is the first element
 		if (!(iIndex > -1 && iIndex === 0)) {
-			if (oAggregationDesignTimeMetadata && oAggregationDesignTimeMetadata.beforeMove){
+			if (oAggregationDesignTimeMetadata && oAggregationDesignTimeMetadata.beforeMove) {
 				oAggregationDesignTimeMetadata.beforeMove(oRelevantContainerElement, oMovedElement);
 			}
 			var sTargetAggregationName = oTargetAggregationOverlay.getAggregationName();
 			ElementUtil.insertAggregation(oTargetParentElement, sTargetAggregationName, oMovedElement, 0);
-			if (oAggregationDesignTimeMetadata && oAggregationDesignTimeMetadata.afterMove){
+			if (oAggregationDesignTimeMetadata && oAggregationDesignTimeMetadata.afterMove) {
 				oAggregationDesignTimeMetadata.afterMove(oRelevantContainerElement, oMovedElement);
 			}
 		}

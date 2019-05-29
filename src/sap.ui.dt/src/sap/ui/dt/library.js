@@ -13,7 +13,6 @@ sap.ui.define([
 function (
 	ManagedObjectMetadata
 ) {
-
 	"use strict";
 
 	/**
@@ -46,5 +45,4 @@ function (
 	});
 
 	return sap.ui.dt;
-
 }, /* bExport= */ true);

@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/dt/AggregationOverlay",
 	"sap/ui/dt/AggregationDesignTimeMetadata",
 	"sap/ui/dt/DOMUtil",
-	"sap/ui/dt/Util",
 	"sap/m/Page",
 	"sap/m/Button",
 	"sap/m/Panel",
@@ -19,7 +18,6 @@ function(
 	AggregationOverlay,
 	AggregationDesignTimeMetadata,
 	DOMUtil,
-	DtUtil,
 	Page,
 	Button,
 	Panel,
@@ -136,7 +134,7 @@ function(
 
 		QUnit.test("when an un-rendered ElementOverlay is added as child into the AggregationOverlay", function(assert) {
 			var done = assert.async();
-			this.oChildNotAdded.attachEventOnce("afterRendering", function(oEvent){
+			this.oChildNotAdded.attachEventOnce("afterRendering", function(oEvent) {
 				assert.deepEqual(oEvent.getSource(), this.oChildNotAdded, "then 'afterRendering' event is fired for the added un-rendered ElementOverlay");
 				done();
 			}, this);
@@ -296,5 +294,4 @@ function(
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

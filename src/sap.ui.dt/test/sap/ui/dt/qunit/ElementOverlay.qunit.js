@@ -332,7 +332,7 @@ function (
 		QUnit.test("when the overlay is selected and selected again", function (assert) {
 			this.oElementOverlay.setSelected(true);
 			var bFired = false;
-			this.oElementOverlay.attachSelectionChange(function (oEvent) {
+			this.oElementOverlay.attachSelectionChange(function () {
 				bFired = true;
 			}, this);
 			this.oElementOverlay.setSelected(true);
@@ -344,7 +344,7 @@ function (
 			assert.ok(!this.oElementOverlay.isSelectable(), 'then the state of the overlay is "not selectable"');
 
 			var bFired = false;
-			this.oElementOverlay.attachSelectionChange(function (oEvent) {
+			this.oElementOverlay.attachSelectionChange(function () {
 				bFired = true;
 			}, this);
 			this.oElementOverlay.setSelected(true);
@@ -517,7 +517,6 @@ function (
 				this.oOverlayLayout2 = OverlayRegistry.getOverlay(this.oVerticalLayout2);
 				fnDone();
 			}.bind(this));
-
 		},
 		afterEach : function() {
 			this.oButton1.destroy();
@@ -625,7 +624,7 @@ function (
 			});
 
 			this.oVerticalLayout1 = new VerticalLayout({
-					content : [this.oButton1, this.oButton2]
+				content : [this.oButton1, this.oButton2]
 			});
 
 			this.oVerticalLayout2 = new VerticalLayout({
@@ -777,7 +776,7 @@ function (
 
 			this.oSimpleScrollControlOverlay.attachEventOnce('scrollSynced', function() {
 				if (!Device.browser.msie) {
-					assert.equal(oApplyStylesSpy.callCount, 0,  "then the applyStyles Method is not called");
+					assert.equal(oApplyStylesSpy.callCount, 0, "then the applyStyles Method is not called");
 				} else {
 					this.oContent1Overlay.applyStyles();
 				}
@@ -802,7 +801,7 @@ function (
 
 			this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").scroll(function() {
 				if (!Device.browser.msie) {
-					assert.equal(oApplyStylesSpy.callCount, 0,  "then the applyStyles Method is not called");
+					assert.equal(oApplyStylesSpy.callCount, 0, "then the applyStyles Method is not called");
 				} else {
 					this.oContent1Overlay.applyStyles();
 				}
@@ -1134,7 +1133,7 @@ function (
 						this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBar')
 						&& this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBarVertical')
 					);
-					this.oScrollControlOverlay.attachEventOnce("geometryChanged",function (){
+					this.oScrollControlOverlay.attachEventOnce("geometryChanged", function () {
 						this.oDesignTime.destroy();
 						this.oScrollControl.destroy();
 						fnDone();
@@ -1198,7 +1197,7 @@ function (
 						this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBar')
 						&& this.oScrollControlOverlay.hasStyleClass('sapUiDtOverlayWithScrollBarVertical')
 					);
-					this.oScrollControlOverlay.attachEventOnce("geometryChanged",function () {
+					this.oScrollControlOverlay.attachEventOnce("geometryChanged", function () {
 						this.oDesignTime.destroy();
 						this.oScrollControl.destroy();
 						fnDone();
@@ -1317,7 +1316,6 @@ function (
 				}.bind(this));
 			}.bind(this));
 		});
-
 	});
 
 	QUnit.module("Given that an Overlay is created when scrolling is present", {
@@ -1355,14 +1353,14 @@ function (
 			this.oPanel.destroy();
 			this.oDesignTime.destroy();
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("then", function(assert) {
 			var fnDone = assert.async();
 			this.oPanelOverlay = OverlayRegistry.getOverlay(this.oPanel);
 			this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 			this.oButton2Overlay = OverlayRegistry.getOverlay(this.oButton2);
 
-			var fnAssertPositions = function(){
+			var fnAssertPositions = function() {
 				// Math.round is required for IE and Edge
 				assert.equal(
 					Math.round(this.oPanelOverlay.$().offset().left),
@@ -1398,11 +1396,11 @@ function (
 
 			// In internet explorer/edge, the checks happen before the overlays inside the scroll container
 			// are properly placed, so we must wait until they are finalized before checking
-			if (this.oButtonOverlay.$().offset().left !== this.oButton.$().offset().left){
-				this.oButton2Overlay.attachEventOnce("geometryChanged", function(){
+			if (this.oButtonOverlay.$().offset().left !== this.oButton.$().offset().left) {
+				this.oButton2Overlay.attachEventOnce("geometryChanged", function() {
 					fnAssertPositions.apply(this);
 					fnDone();
-				},this);
+				}, this);
 			} else {
 				fnAssertPositions.apply(this);
 				fnDone();
@@ -1494,5 +1492,4 @@ function (
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

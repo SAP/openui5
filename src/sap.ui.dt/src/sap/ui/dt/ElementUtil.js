@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/Object",
 	"sap/ui/dt/Util",
-	"sap/base/Log",
 	"sap/ui/core/Element",
 	"sap/ui/core/Component"
 ],
@@ -15,7 +14,6 @@ function(
 	jQuery,
 	BaseObject,
 	Util,
-	Log,
 	Element,
 	Component
 ) {
@@ -58,9 +56,8 @@ function(
 		if (typeof vElement === "string") {
 			var oElement = sap.ui.getCore().byId(vElement);
 			return oElement || Component.get(vElement);
-		} else {
-			return vElement;
 		}
+		return vElement;
 	};
 
 	/**
@@ -112,12 +109,11 @@ function(
 		if (BaseObject.isA(oElement, "sap.ui.core.ComponentContainer")) {
 			// This happens when the compontentContainer has not been rendered yet
 			if (!oElement.getComponentInstance()) {
-				return;
+				return undefined;
 			}
 			return oElement.getComponentInstance().getRootControl();
-		} else {
-			return oElement;
 		}
+		return oElement;
 	};
 
 	/**
@@ -145,9 +141,9 @@ function(
 			return [];
 		}
 
-		if (oParent !== oContainer){
+		if (oParent !== oContainer) {
 			var aParents = ElementUtil.findAllSiblingsInContainer(oParent, oContainer);
-			return aParents.map(function(oParent){
+			return aParents.map(function(oParent) {
 				return ElementUtil.getAggregation(oParent, oElement.sParentAggregationName);
 			}).reduce(function(a, b) {
 				return a.concat(b);
@@ -177,9 +173,8 @@ function(
 				insert : oAggregationMetadata._sInsertMutator,
 				removeAll : oAggregationMetadata._sRemoveAllMutator
 			};
-		} else {
-			return {};
 		}
+		return {};
 	};
 
 	ElementUtil.getAggregation = function(oElement, sAggregationName) {
@@ -221,7 +216,6 @@ function(
 		} else {
 			oParent.addAggregation(sAggregationName, oElement);
 		}
-
 	};
 
 	/**
@@ -288,7 +282,6 @@ function(
 			}
 			return BaseObject.isA(oElement, sTypeOrInterface) || this.hasInterface(oElement, sTypeOrInterface);
 		}
-
 	};
 
 	ElementUtil.getAssociationAccessors = function(oElement, sAggregationName) {
@@ -303,9 +296,8 @@ function(
 				insert : oAssociationMetadata._sInsertMutator,
 				removeAll : oAssociationMetadata._sRemoveAllMutator
 			};
-		} else {
-			return {};
 		}
+		return {};
 	};
 
 	ElementUtil.getAssociation = function(oElement, sAssociationName) {
@@ -370,34 +362,31 @@ function(
 	 * @return {String|undefined} label string or undefined when no label can be extracted
 	 */
 	ElementUtil.getLabelForElement = function(oElement, fnFunction) {
-
 		if (!ElementUtil.isElementValid(oElement)) {
 			throw Util.createError("ElementUtil#getLabelForElement", "A valid managed object instance should be passed as parameter", "sap.ui.dt");
 		}
 		// if there is a function, only the function is executed
 		if (typeof fnFunction === "function") {
 			return fnFunction(oElement);
-		} else {
-
-			var fnCalculateLabel = function(oElement) {
-
-				var vFieldLabel = (
-					typeof oElement.getText === "function" && oElement.getText()
-					|| typeof oElement.getLabelText === "function" && oElement.getLabelText()
-					|| typeof oElement.getLabel === "function" && oElement.getLabel()
-					|| typeof oElement.getTitle === "function" && oElement.getTitle()
-					|| typeof oElement.getHeading === "function" && oElement.getHeading()
-				);
-
-				if (ElementUtil.isElementValid(vFieldLabel)) {
-					return fnCalculateLabel(vFieldLabel);
-				} else {
-					return vFieldLabel;
-				}
-			};
-			var vCalculatedLabel = fnCalculateLabel(oElement);
-			return typeof vCalculatedLabel !== "string" ? oElement.getId() : vCalculatedLabel;
 		}
+
+		function calculateLabel(oElement) {
+			var vFieldLabel = (
+				typeof oElement.getText === "function" && oElement.getText()
+				|| typeof oElement.getLabelText === "function" && oElement.getLabelText()
+				|| typeof oElement.getLabel === "function" && oElement.getLabel()
+				|| typeof oElement.getTitle === "function" && oElement.getTitle()
+				|| typeof oElement.getHeading === "function" && oElement.getHeading()
+			);
+
+			if (ElementUtil.isElementValid(vFieldLabel)) {
+				return calculateLabel(vFieldLabel);
+			}
+			return vFieldLabel;
+		}
+
+		var vCalculatedLabel = calculateLabel(oElement);
+		return typeof vCalculatedLabel !== "string" ? oElement.getId() : vCalculatedLabel;
 	};
 
 	/**

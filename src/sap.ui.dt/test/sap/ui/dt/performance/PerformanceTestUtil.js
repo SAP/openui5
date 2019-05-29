@@ -58,19 +58,19 @@ sap.ui.define([
 			Util.createNestedPanels(oPanel, sAggregation, iNumberOfControls - 1, oLastElement);
 		},
 
-		addMixedControlsTo : function(oLayout, iFrom, iTo, bVisible){
+		addMixedControlsTo : function(oLayout, iFrom, iTo, bVisible) {
 			var aControlTypes = [Button, Label, DatePicker, Slider, RatingIndicator];
 
 			var oControl = null;
 			var ControlType = null;
 
-			for (var i = iFrom; i <= iTo; i++){
+			for (var i = iFrom; i <= iTo; i++) {
 				ControlType = aControlTypes[i % aControlTypes.length];
 
-				oControl = new ControlType( "Control" + i, {
+				oControl = new ControlType("Control" + i, {
 					visible: bVisible
 				});
-				if (oControl.setText){
+				if (oControl.setText) {
 					oControl.setText("Control " + i);
 				}
 
@@ -79,7 +79,7 @@ sap.ui.define([
 		},
 
 		addBoxesWithMixedControls: function(oParent, iCount, iOffset) {
-			var i = iOffset ? iOffset : 0;
+			var i = iOffset || 0;
 			iCount = iOffset ? iOffset + iCount : iCount;
 			for (i; i < iCount; i++) {
 				oParent.addContent(
@@ -96,13 +96,13 @@ sap.ui.define([
 			}
 		},
 
-		startDesignTime: function(oRootControl, sSelectedOverlayId){
+		startDesignTime: function(oRootControl, sSelectedOverlayId) {
 			// Create DesignTime in other tick
-			return new Promise(function(resolve, reject){
+			return new Promise(function(resolve) {
 				//will result in custom timer in webPageTest
 				window.performance.mark("dt.starts");
 
-				var MOVABLE_TYPES = ["sap.ui.layout.VerticalLayout","sap.m.Button","sap.m.Label","sap.m.DatePicker","sap.m.Slider","sap.m.RatingIndicator"];
+				var MOVABLE_TYPES = ["sap.ui.layout.VerticalLayout", "sap.m.Button", "sap.m.Label", "sap.m.DatePicker", "sap.m.Slider", "sap.m.RatingIndicator"];
 
 				var oTabHandlingPlugin = new TabHandling();
 				var oSelectionPlugin = new MouseSelection();
@@ -137,9 +137,9 @@ sap.ui.define([
 					resolve();
 				});
 				oDesignTime.addRootElement(oRootControl);
-			}).then(function(){
+			}).then(function() {
 				sap.ui.getCore().applyChanges();
-				document.getElementById("overlay-container").setAttribute("sap-ui-dt-loaded","true");
+				document.getElementById("overlay-container").setAttribute("sap-ui-dt-loaded", "true");
 			});
 		},
 

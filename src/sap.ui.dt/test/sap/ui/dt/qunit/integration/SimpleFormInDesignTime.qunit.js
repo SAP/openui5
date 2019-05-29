@@ -96,7 +96,6 @@ function(
 				assert.ok(oButtonOverlay.isVisible(), "overlay is visible");
 				fnDone();
 			}, this);
-
 		});
 
 		QUnit.test("when the label is inserted to a SimpleForm ...", function(assert) {
@@ -148,5 +147,4 @@ function(
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

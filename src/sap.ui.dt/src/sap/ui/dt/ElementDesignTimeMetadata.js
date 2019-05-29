@@ -4,9 +4,9 @@
 
 // Provides class sap.ui.dt.ElementDesignTimeMetadata.
 sap.ui.define([
-	'sap/ui/dt/DesignTimeMetadata',
-	'sap/ui/dt/AggregationDesignTimeMetadata',
-	'sap/ui/dt/ElementUtil'
+	"sap/ui/dt/DesignTimeMetadata",
+	"sap/ui/dt/AggregationDesignTimeMetadata",
+	"sap/ui/dt/ElementUtil"
 ],
 function(
 	DesignTimeMetadata,
@@ -48,10 +48,10 @@ function(
 	 * @return {Object} default data
 	 * @override
 	 */
-	ElementDesignTimeMetadata.prototype.getDefaultData = function(oData) {
+	ElementDesignTimeMetadata.prototype.getDefaultData = function() {
 		var oDefaultData = DesignTimeMetadata.prototype.getDefaultData.apply(this, arguments);
 
-		oDefaultData.aggregations  = {
+		oDefaultData.aggregations = {
 			layout : {
 				ignore : true
 			},
@@ -103,7 +103,7 @@ function(
 	 * @return {sap.ui.dt.AggregationDesignTimeMetadata} returns the aggregation DT metadata for an aggregation with a given name
 	 * @public
 	 */
-	ElementDesignTimeMetadata.prototype.createAggregationDesignTimeMetadata  = function(mMetadata) {
+	ElementDesignTimeMetadata.prototype.createAggregationDesignTimeMetadata = function(mMetadata) {
 		return new AggregationDesignTimeMetadata({
 			data: mMetadata
 		});
@@ -118,9 +118,9 @@ function(
 	ElementDesignTimeMetadata.prototype.getAggregations = function() {
 		var mAggregations = this.getData().aggregations || {};
 		var mAssociations = this.getData().associations || {};
-		Object.keys(mAssociations).forEach(function(sAssociation){
+		Object.keys(mAssociations).forEach(function(sAssociation) {
 			var mAssociation = mAssociations[sAssociation];
-			if (mAssociation.aggregationLike){
+			if (mAssociation.aggregationLike) {
 				mAggregations[sAssociation] = mAssociation;
 			}
 		});
@@ -153,12 +153,12 @@ function(
 				}
 				if (typeof vAction === "function") {
 					var aActionParameters = [oElement];
-					if (aArgs){
+					if (aArgs) {
 						aActionParameters = aActionParameters.concat(aArgs);
 					}
 					vAction = vAction.apply(null, aActionParameters);
 				}
-				if (typeof (vAction) === "string" ) {
+				if (typeof (vAction) === "string") {
 					vAction = { changeType : vAction };
 				}
 				if (vAction) {
@@ -170,20 +170,19 @@ function(
 		return aActions;
 	};
 
-	ElementDesignTimeMetadata.prototype._getText = function(oElement, vName){
+	ElementDesignTimeMetadata.prototype._getText = function(oElement, vName) {
 		if (typeof vName === "function") {
 			return vName();
-		} else {
-			return this.getLibraryText(oElement, vName);
 		}
+		return this.getLibraryText(oElement, vName);
 	};
 
-	ElementDesignTimeMetadata.prototype.getAggregationDescription = function(sAggregationName, oElement){
+	ElementDesignTimeMetadata.prototype.getAggregationDescription = function(sAggregationName, oElement) {
 		var vChildNames = this.getAggregation(sAggregationName).childNames;
 		if (typeof vChildNames === "function") {
 			vChildNames = vChildNames.call(null, oElement);
 		}
-		if (vChildNames){
+		if (vChildNames) {
 			return {
 				singular : this._getText(oElement, vChildNames.singular),
 				plural : this._getText(oElement, vChildNames.plural)
@@ -191,12 +190,12 @@ function(
 		}
 	};
 
-	ElementDesignTimeMetadata.prototype.getName = function(oElement){
+	ElementDesignTimeMetadata.prototype.getName = function(oElement) {
 		var vName = this.getData().name;
 		if (typeof vName === "function") {
 			vName = vName.call(null, oElement);
 		}
-		if (vName){
+		if (vName) {
 			return {
 				singular : this._getText(oElement, vName.singular),
 				plural : this._getText(oElement, vName.plural)
@@ -224,9 +223,8 @@ function(
 		var vIgnore = (oAggregationMetadata) ? oAggregationMetadata.ignore : false;
 		if (!vIgnore || (vIgnore && typeof vIgnore === "function" && !vIgnore(oElement))) {
 			return false;
-		} else {
-			return true;
 		}
+		return true;
 	};
 
 	/**

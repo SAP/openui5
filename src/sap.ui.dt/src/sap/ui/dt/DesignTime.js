@@ -3,21 +3,20 @@
  */
 
 sap.ui.define([
-	'sap/ui/base/ManagedObject',
-	'sap/ui/dt/ElementOverlay',
-	'sap/ui/dt/AggregationOverlay',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/dt/SelectionManager',
-	'sap/ui/dt/ElementDesignTimeMetadata',
-	'sap/ui/dt/AggregationDesignTimeMetadata',
-	'sap/ui/dt/ElementUtil',
-	'sap/ui/dt/Overlay',
-	'sap/ui/dt/OverlayUtil',
-	'sap/ui/dt/MetadataPropagationUtil',
-	'sap/ui/dt/Util',
-	'sap/ui/dt/TaskManager',
+	"sap/ui/base/ManagedObject",
+	"sap/ui/dt/ElementOverlay",
+	"sap/ui/dt/AggregationOverlay",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/SelectionManager",
+	"sap/ui/dt/ElementDesignTimeMetadata",
+	"sap/ui/dt/AggregationDesignTimeMetadata",
+	"sap/ui/dt/ElementUtil",
+	"sap/ui/dt/Overlay",
+	"sap/ui/dt/OverlayUtil",
+	"sap/ui/dt/MetadataPropagationUtil",
+	"sap/ui/dt/Util",
+	"sap/ui/dt/TaskManager",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery",
 	"sap/base/util/isPlainObject",
 	"sap/base/util/merge",
 	"sap/ui/dt/SelectionMode",
@@ -39,7 +38,6 @@ function (
 	Util,
 	TaskManager,
 	Log,
-	jQuery,
 	isPlainObject,
 	merge,
 	SelectionMode,
@@ -690,89 +688,89 @@ function (
 		if (!mParams.element || !ElementUtil.isElementValid(mParams.element)) {
 			this._oTaskManager.cancel(iTaskId);
 			return this._rejectCreateOverlay(mParams.element);
-		} else {
-			var sElementId = mParams.element.getId();
-			var oElementOverlay = OverlayRegistry.getOverlay(sElementId);
-
-			// 2. ElementOverlay is already created
-			if (oElementOverlay) {
-				this._oTaskManager.complete(iTaskId);
-				return Promise.resolve(oElementOverlay);
-			// 3. ElementOverlay is in creation phase
-			} else if (sElementId in this._mPendingOverlays) {
-				this._oTaskManager.complete(iTaskId);
-				return this._mPendingOverlays[sElementId];
-			// 4. Create new ElementOverlay
-			} else {
-				if (typeof mParams.root === "undefined") {
-					mParams.root = true;
-				}
-				this._mPendingOverlays[sElementId] = this._createElementOverlay(mParams)
-					.then(
-						// Fulfilled
-						function (oElementOverlay) {
-							return this._createChildren(oElementOverlay, mParams.parentMetadata)
-								.then(function () {
-									// Remove overlay promise from the map only when it is "officially" available
-									// and registered everywhere (OverlayRegistry, Plugins, etc)
-									this.attachEventOnce("synced", function () {
-										delete this._mPendingOverlays[sElementId];
-									}, this);
-
-									// When DesignTime instance was destroyed during overlay creation process
-									if (this.bIsDestroyed) {
-										// TODO: refactor destroy() logic. See @676 & @788
-										oElementOverlay.detachEvent('destroyed', this._onElementOverlayDestroyed);
-										oElementOverlay.destroy();
-										this._oTaskManager.cancel(iTaskId);
-										return Promise.reject(Util.createError(
-											"DesignTime#createOverlay",
-											"while creating overlay, DesignTime instance has been destroyed"
-										));
-									// When element was destroyed during overlay creation process
-									} else if (oElementOverlay.bIsDestroyed) {
-										this._oTaskManager.cancel(iTaskId);
-										return Promise.reject(Util.createError(
-											"DesignTime#createOverlay",
-											"while creating children overlays, its parent overlay has been destroyed"
-										));
-									} else {
-										this._aOverlaysCreatedInLastBatch.push(oElementOverlay);
-										this._oTaskManager.complete(iTaskId);
-										return oElementOverlay;
-									}
-								}.bind(this));
-						}.bind(this),
-						// Rejected
-						function (vError) {
-							// Will be handled by catch() below
-							throw vError;
-						}
-					)
-					.catch(function (vError) {
-						var oError = Util.propagateError(
-							vError,
-							'DesignTime#createOverlay',
-							Util.printf("Failed attempt to create overlay for '{0}'", sElementId)
-						);
-
-						// If it crashes by any reason, we must always remove pending Promise, otherwise
-						// potential second attempt for creating overlay will not be possible
-						delete this._mPendingOverlays[sElementId];
-
-						// TODO: move away SyncFailed event from here
-						this.fireSyncFailed({
-							error: oError
-						});
-
-						this._oTaskManager.cancel(iTaskId);
-
-						return Promise.reject(oError);
-					}.bind(this));
-
-				return this._mPendingOverlays[sElementId];
-			}
 		}
+
+		var sElementId = mParams.element.getId();
+		var oElementOverlay = OverlayRegistry.getOverlay(sElementId);
+
+		// 2. ElementOverlay is already created
+		if (oElementOverlay) {
+			this._oTaskManager.complete(iTaskId);
+			return Promise.resolve(oElementOverlay);
+		// 3. ElementOverlay is in creation phase
+		} else if (sElementId in this._mPendingOverlays) {
+			this._oTaskManager.complete(iTaskId);
+			return this._mPendingOverlays[sElementId];
+		}
+
+		// 4. Create new ElementOverlay
+		if (typeof mParams.root === "undefined") {
+			mParams.root = true;
+		}
+		this._mPendingOverlays[sElementId] = this._createElementOverlay(mParams)
+			.then(
+				// Fulfilled
+				function (oElementOverlay) {
+					return this._createChildren(oElementOverlay, mParams.parentMetadata)
+						.then(function () {
+							// Remove overlay promise from the map only when it is "officially" available
+							// and registered everywhere (OverlayRegistry, Plugins, etc)
+							this.attachEventOnce("synced", function () {
+								delete this._mPendingOverlays[sElementId];
+							}, this);
+
+							// When DesignTime instance was destroyed during overlay creation process
+							if (this.bIsDestroyed) {
+								// TODO: refactor destroy() logic. See @676 & @788
+								oElementOverlay.detachEvent('destroyed', this._onElementOverlayDestroyed);
+								oElementOverlay.destroy();
+								this._oTaskManager.cancel(iTaskId);
+								return Promise.reject(Util.createError(
+									"DesignTime#createOverlay",
+									"while creating overlay, DesignTime instance has been destroyed"
+								));
+							// When element was destroyed during overlay creation process
+							} else if (oElementOverlay.bIsDestroyed) {
+								this._oTaskManager.cancel(iTaskId);
+								return Promise.reject(Util.createError(
+									"DesignTime#createOverlay",
+									"while creating children overlays, its parent overlay has been destroyed"
+								));
+							}
+
+							this._aOverlaysCreatedInLastBatch.push(oElementOverlay);
+							this._oTaskManager.complete(iTaskId);
+							return oElementOverlay;
+						}.bind(this));
+				}.bind(this),
+				// Rejected
+				function (vError) {
+					// Will be handled by catch() below
+					throw vError;
+				}
+			)
+			.catch(function (vError) {
+				var oError = Util.propagateError(
+					vError,
+					'DesignTime#createOverlay',
+					Util.printf("Failed attempt to create overlay for '{0}'", sElementId)
+				);
+
+				// If it crashes by any reason, we must always remove pending Promise, otherwise
+				// potential second attempt for creating overlay will not be possible
+				delete this._mPendingOverlays[sElementId];
+
+				// TODO: move away SyncFailed event from here
+				this.fireSyncFailed({
+					error: oError
+				});
+
+				this._oTaskManager.cancel(iTaskId);
+
+				return Promise.reject(oError);
+			}.bind(this));
+
+		return this._mPendingOverlays[sElementId];
 	};
 
 	/**
@@ -1157,24 +1155,24 @@ function (
 					parentMetadata: oParentAggregationOverlay.getDesignTimeMetadata().getData()
 				})
 					.then(function (oElementOverlay) {
-							oParentAggregationOverlay.insertChild(null, oElementOverlay);
-							oElementOverlay.applyStyles(); // TODO: remove after Task Manager implementation
+						oParentAggregationOverlay.insertChild(null, oElementOverlay);
+						oElementOverlay.applyStyles(); // TODO: remove after Task Manager implementation
 
-							var iOverlayPosition = oParentAggregationOverlay.indexOfAggregation('children', oElementOverlay);
+						var iOverlayPosition = oParentAggregationOverlay.indexOfAggregation('children', oElementOverlay);
 
 							// `ElementOverlayAdded` event should be emitted only when overlays are ready to prevent
 							// an access to still syncing overlays (e.g. the overlay is still not available in overlay registry
 							// at this point and not registered in the plugins).
-							this.attachEventOnce("synced", function () {
-								this.fireElementOverlayAdded({
-									id: oElementOverlay.getId(),
-									targetIndex: iOverlayPosition,
-									targetId: oParentAggregationOverlay.getId(),
-									targetAggregation: oParentAggregationOverlay.getAggregationName()
-								});
-							}, this);
-							this._oTaskManager.complete(iTaskId);
-						}.bind(this),
+						this.attachEventOnce("synced", function () {
+							this.fireElementOverlayAdded({
+								id: oElementOverlay.getId(),
+								targetIndex: iOverlayPosition,
+								targetId: oParentAggregationOverlay.getId(),
+								targetAggregation: oParentAggregationOverlay.getAggregationName()
+							});
+						}, this);
+						this._oTaskManager.complete(iTaskId);
+					}.bind(this),
 						function (vError) {
 							// Will be handled by catch() below
 							throw vError;

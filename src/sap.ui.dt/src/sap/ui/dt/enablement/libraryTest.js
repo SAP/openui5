@@ -57,7 +57,7 @@ sap.ui.define([
 				sLibrary = sTestLibrary;
 				sap.ui.require(aElements.map(function(s) {
 					//TODO: global jquery call found
-					return jQuery.sap.getResourceName(s,"");
+					return jQuery.sap.getResourceName(s, "");
 				}), function() {
 					//all controls are loaded, now all libs are loaded
 					var mLazyLibraries = sap.ui.getCore().getLoadedLibraries();
@@ -131,12 +131,10 @@ sap.ui.define([
 				Object.keys(mActions).forEach(function(sAction) {
 					if (mActions[sAction].changeType) {
 						assert.strictEqual(typeof mActions[sAction].changeType, "string", sControlName + " defines " + sAction + " with changetype:" + mActions[sAction].changeType);
+					} else if (typeof mActions[sAction] === "string") {
+						assert.strictEqual(typeof mActions[sAction], "string", sControlName + " defines " + sAction + " as string");
 					} else {
-						if (typeof mActions[sAction] === "string") {
-							assert.strictEqual(typeof mActions[sAction], "string", sControlName + " defines " + sAction + " as string");
-						} else {
-							assert.strictEqual(typeof mActions[sAction], "function", sControlName + " defines " + sAction + " as function");
-						}
+						assert.strictEqual(typeof mActions[sAction], "function", sControlName + " defines " + sAction + " as function");
 					}
 				});
 			}
@@ -146,7 +144,7 @@ sap.ui.define([
 			check: function (assert, mEntry, sControlName) {
 				//name can be a string like this "{name}"
 				//TODO: be more strict here
-				if (typeof mEntry === "string" && mEntry.indexOf("{") === 0 && mEntry.indexOf("}") == mEntry.length - 1) {
+				if (typeof mEntry === "string" && mEntry.indexOf("{") === 0 && mEntry.indexOf("}") === mEntry.length - 1) {
 					return true;
 				}
 				//checking name.plural and name.singular if any
@@ -213,7 +211,7 @@ sap.ui.define([
 		},
 		"/templates" : {
 			optional: true,
-			check: function (assert, mEntry, sControlName) {
+			check: function (assert, mEntry /* ,sControlName */) {
 				if (mEntry.create) { //icons in palette optional
 					var sCreateTemplate = mEntry.create;
 					assert.strictEqual(typeof sCreateTemplate, "string", "templates/create entry defines fragment path to " + sCreateTemplate);
@@ -247,8 +245,8 @@ sap.ui.define([
 		});
 		QUnit.test("Checking loaded designtime data", function(assert) {
 			aDesigntimeElements.forEach(function(oDTData) {
-				assert.strictEqual(oDTData != null, true, "Designtime data found and loaded successful");
-				assert.strictEqual(typeof oDTData,"object", "Designtime data returned an object");
+				assert.strictEqual(oDTData !== null, true, "Designtime data found and loaded successful");
+				assert.strictEqual(typeof oDTData, "object", "Designtime data returned an object");
 			});
 		});
 		aModels.forEach(function(oModel) {

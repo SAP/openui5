@@ -3,13 +3,11 @@
  */
 
 sap.ui.define([
-	'sap/ui/base/ManagedObject',
-	"sap/ui/thirdparty/jquery",
+	"sap/ui/base/ManagedObject",
 	"sap/base/util/isPlainObject"
 ],
 function(
 	ManagedObject,
-	jQuery,
 	isPlainObject
 ) {
 	"use strict";

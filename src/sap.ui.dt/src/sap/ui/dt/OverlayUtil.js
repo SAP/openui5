@@ -4,8 +4,8 @@
 
 // Provides object sap.ui.dt.OverlayUtil.
 sap.ui.define([
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/dt/ElementUtil'
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/ElementUtil"
 ],
 function(
 	OverlayRegistry,
@@ -50,7 +50,7 @@ function(
 	 */
 	OverlayUtil.getParentInformation = function(oElementOverlay) {
 		var oParentOverlay = oElementOverlay.getParentElementOverlay();
-		if (oParentOverlay){
+		if (oParentOverlay) {
 			//calculate index in direct (maybe in hidden tree) parent
 			var oParent = oParentOverlay.getElement();
 			var sParentAggregationName = oElementOverlay.getParentAggregationOverlay().getAggregationName();
@@ -63,14 +63,13 @@ function(
 				aggregation : sParentAggregationName,
 				index: iIndex
 			};
-		} else {
-			return {
-				parent: null,
-				aggregation: "",
-				index: -1
-			};
 		}
 
+		return {
+			parent: null,
+			aggregation: "",
+			index: -1
+		};
 	};
 
 	/**
@@ -403,10 +402,10 @@ function(
 		var oParentOverlay = oOverlay.getParentElementOverlay();
 		var aRelevantOverlays = [];
 
-		if (oParentOverlay){
-			if (oParentOverlay !== oRelevantContainerOverlay){
+		if (oParentOverlay) {
+			if (oParentOverlay !== oRelevantContainerOverlay) {
 				var aParents = OverlayUtil.findAllSiblingOverlaysInContainer(oParentOverlay, oRelevantContainerOverlay);
-				aRelevantOverlays = aParents.map(function(oParentOverlay){
+				aRelevantOverlays = aParents.map(function(oParentOverlay) {
 					var oAggregationOverlay = oParentOverlay.getAggregationOverlay(oOverlay.getParentAggregationOverlay().getAggregationName());
 					return oAggregationOverlay ? oAggregationOverlay.getChildren() : [];
 				}).reduce(function(aFlattenedArray, oCurrentValue) {
@@ -486,9 +485,9 @@ function(
 			return [];
 		}
 
-		if (oParent !== oRelevantContainerOverlay){
+		if (oParent !== oRelevantContainerOverlay) {
 			var mParents = OverlayUtil._findAllSiblingsAndParents(oParent, oRelevantContainerOverlay, iLevel + 1);
-			var aOverlays = mParents[iLevel + 1].map(function(oParent){
+			var aOverlays = mParents[iLevel + 1].map(function(oParent) {
 				var oAggregationOverlay = oParent.getAggregationOverlay(oOverlay.getParentAggregationOverlay().getAggregationName());
 				return oAggregationOverlay ? oAggregationOverlay.getChildren() : [];
 			}).reduce(function(a, b) {
@@ -513,7 +512,7 @@ function(
 	 * @private
 	 */
 	OverlayUtil._findAllChildrenInContainer = function(oElementOverlay, oRelevantContainer, _aRelevantOverlays) {
-		_aRelevantOverlays = _aRelevantOverlays ? _aRelevantOverlays : [];
+		_aRelevantOverlays = _aRelevantOverlays || [];
 		if (oElementOverlay.getChildren().length > 0) {
 			oElementOverlay.getChildren().forEach(function(oAggregationOverlay) {
 				oAggregationOverlay.getChildren().forEach(function(oChildElementOverlay) {
@@ -598,11 +597,11 @@ function(
 		}
 		return oElementOverlay.isRoot()
 			? {
-					elementId: undefined,
-					aggregation: undefined,
-					templateId: undefined,
-					stack: aStack
-				}
+				elementId: undefined,
+				aggregation: undefined,
+				templateId: undefined,
+				stack: aStack
+			}
 			: (
 				this._evaluateBinding(
 					oElementOverlay.getParentElementOverlay(),

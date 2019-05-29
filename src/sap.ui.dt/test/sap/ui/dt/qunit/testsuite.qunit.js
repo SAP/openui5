@@ -21,42 +21,42 @@ sap.ui.define(function () {
 			autostart: true
 		},
 		tests: {
-			"AggregationDesignTimeMetadata": {
+			AggregationDesignTimeMetadata: {
 				coverage: {
 					only: ["sap/ui/dt/AggregationDesignTimeMetadata"]
 				}
 			},
-			"AggregationOverlay": {
+			AggregationOverlay: {
 				coverage: {
 					only: ["sap/ui/dt/AggregationOverlay"]
 				}
 			},
-			"ControlObserver": {
+			ControlObserver: {
 				coverage: {
 					only: ['sap/ui/dt/ControlObserver']
 				}
 			},
-			"DesignTime": {
+			DesignTime: {
 				coverage: {
 					only: ['sap/ui/dt/DesignTime']
 				},
 				ui5: {
 					resourceroots: {
-						"qunit": "test-resources/sap/ui/dt/qunit/"
+						qunit: "test-resources/sap/ui/dt/qunit/"
 					}
 				}
 			},
-			"DesignTimeMetadata": {
+			DesignTimeMetadata: {
 				coverage: {
 					only: ['sap/ui/dt/DesignTimeMetadata']
 				}
 			},
-			"DOMUtil": {
+			DOMUtil: {
 				coverage: {
 					only: ['sap/ui/dt/DOMUtil']
 				}
 			},
-			"DOMUtilRtl": {
+			DOMUtilRtl: {
 				coverage: {
 					only: ['sap/ui/dt/DOMUtil']
 				},
@@ -64,12 +64,12 @@ sap.ui.define(function () {
 					rtl: true
 				}
 			},
-			"ElementDesignTimeMetadata": {
+			ElementDesignTimeMetadata: {
 				coverage: {
 					only: ['sap/ui/dt/ElementDesignTimeMetadata']
 				}
 			},
-			"ElementOverlay": {
+			ElementOverlay: {
 				coverage: {
 					only: ['sap/ui/dt/ElementOverlay']
 				},
@@ -79,7 +79,7 @@ sap.ui.define(function () {
 					}
 				}
 			},
-			"ElementOverlayRTL": {
+			ElementOverlayRTL: {
 				coverage: {
 					only: ['sap/ui/dt/ElementOverlay']
 				},
@@ -87,63 +87,63 @@ sap.ui.define(function () {
 					rtl: true
 				}
 			},
-			"ElementUtil": {
+			ElementUtil: {
 				coverage: {
 					only: ['sap/ui/dt/ElementUtil']
 				}
 			},
 
-			"MetadataPropagationUtil": {
+			MetadataPropagationUtil: {
 				coverage: {
 					only: ['sap/ui/dt/MetadataPropagationUtil']
 				},
 				ui5: {
 					resourceroots: {
-						"qunit": "test-resources/sap/ui/dt/qunit/"
+						qunit: "test-resources/sap/ui/dt/qunit/"
 					}
 				}
 			},
-			"MutationObserver": {
+			MutationObserver: {
 				coverage: {
 					only: ['sap/ui/dt/MutationObserver']
 				}
 			},
-			"OverlayRegistry": {
+			OverlayRegistry: {
 				coverage: {
 					only: ['sap/ui/dt/OverlayRegistry']
 				}
 			},
-			"OverlayUtil": {
+			OverlayUtil: {
 				coverage: {
 					only: ['sap/ui/dt/OverlayUtil']
 				}
 			},
-			"Plugin": {
+			Plugin: {
 				coverage: {
 					only: ['sap/ui/dt/Plugin']
 				}
 			},
-			"ScrollbarSynchronizer": {
+			ScrollbarSynchronizer: {
 				coverage: {
 					only: ['sap/ui/dt/ScrollbarSynchronizer']
 				}
 			},
-			"SelectionManager": {
+			SelectionManager: {
 				coverage: {
 					only: ['sap/ui/dt/SelectionManager']
 				}
 			},
-			"TaskManager": {
+			TaskManager: {
 				coverage: {
 					only: ['sap/ui/dt/TaskManager']
 				}
 			},
-			"ManagedObjectObserver": {
+			ManagedObjectObserver: {
 				coverage: {
 					only: ['sap/ui/dt/ManagedObjectObserver']
 				}
 			},
-			"Util": {
+			Util: {
 				coverage: {
 					only: ["sap/ui/dt/Util"]
 				}
@@ -288,7 +288,7 @@ sap.ui.define(function () {
 					resourceroots: {
 						"dt.control": "test-resources/sap/ui/dt/qunit/testdata/controls/",
 						"sap.ui.testLibrary": "test-resources/sap/ui/dt/qunit/testdata/",
-						"controlEnablementReport": "test-resources/sap/ui/dt/controlEnablementReport/"
+						controlEnablementReport: "test-resources/sap/ui/dt/controlEnablementReport/"
 					}
 				},
 				coverage: {
