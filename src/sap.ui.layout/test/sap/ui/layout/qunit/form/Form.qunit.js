@@ -47,7 +47,7 @@ sap.ui.define([
 		oFormLayout = new FormLayout("FL1");
 		oForm = new Form("F1", {
 			layout: oFormLayout
-		}).placeAt("content");
+		}).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 	}
 

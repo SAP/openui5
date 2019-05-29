@@ -37,7 +37,7 @@ sap.ui.define([
 				id : "SimpleForm", title : "Simple Form",
 				content : [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
 			});
-			this.oSimpleForm.placeAt("content");
+			this.oSimpleForm.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oMockedComponent = {
@@ -87,7 +87,7 @@ sap.ui.define([
 				id : "component---SimpleForm", title : "Simple Form",
 				content : [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
 			});
-			this.oSimpleForm.placeAt("content");
+			this.oSimpleForm.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oMockedComponent = {
@@ -276,7 +276,7 @@ sap.ui.define([
 				id : "SimpleForm", title : "Simple Form",
 				content : [this.oToolbar0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1, this.oToolbar1, this.oLabel10, this.oInput10, this.oLabel11, this.oInput11]
 			});
-			this.oSimpleForm.placeAt("content");
+			this.oSimpleForm.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oMockedComponent = {
@@ -384,7 +384,7 @@ sap.ui.define([
 				id : "SimpleForm", title : "Simple Form",
 				content : [this.oLabel0, this.oInput0, this.oLabel1, this.oInput1, this.oToolbar1, this.oLabel10, this.oInput10, this.oLabel11, this.oInput11]
 			});
-			this.oSimpleForm.placeAt("content");
+			this.oSimpleForm.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oMockedComponent = {

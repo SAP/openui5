@@ -79,7 +79,7 @@ sap.ui.define([
 			layout: oColumnLayout,
 			editable: false,
 			formContainers: aFormContainers
-		}).placeAt("content");
+		}).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 	}
 

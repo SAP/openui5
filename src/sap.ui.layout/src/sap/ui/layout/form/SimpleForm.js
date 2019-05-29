@@ -1481,8 +1481,11 @@ sap.ui.define([
 
 	function _checkLayoutDataReady() {
 
-		if (this._bResponsiveLayoutRequested || this._bGridLayoutRequested ||
-				this._bResponsiveGridLayoutRequested || this._bColumnLayoutRequested) {
+		var sLayout = this.getLayout();
+		if ((sLayout === SimpleFormLayout.ResponsiveLayout && this._bResponsiveLayoutRequested) ||
+				(sLayout === SimpleFormLayout.GridLayout && this._bGridLayoutRequested) ||
+				(sLayout === SimpleFormLayout.ResponsiveGridLayout && this._bResponsiveGridLayoutRequested) ||
+				(sLayout === SimpleFormLayout.ColumnLayout && this._bColumnLayoutRequested)) {
 			// LayoutData waiting to be loaded -> are set after they are loaded
 			return false;
 		}
