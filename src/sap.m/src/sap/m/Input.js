@@ -257,7 +257,21 @@ function(
 		aggregations : {
 
 			/**
-			 * SuggestItems are the items which will be shown in the suggestion popup. Changing this aggregation (by calling addSuggestionItem, insertSuggestionItem, removeSuggestionItem, removeAllSuggestionItems, destroySuggestionItems) after input is rendered will open/close the suggestion popup. o display suggestions with two text values, it is also possible to add sap.ui.core/ListItems as SuggestionItems (since 1.21.1). For the selected ListItem, only the first value is returned to the input field.
+			 * Defines the items displayed in the suggestion popup. Changing this aggregation
+			 * (by calling <code>addSuggestionItem</code>, <code>insertSuggestionItem</code>,
+			 * <code>removeSuggestionItem</code>, <code>removeAllSuggestionItems</code>, or
+			 * <code>destroySuggestionItems</code>) after <code>Input</code> is rendered
+			 * opens/closes the suggestion popup.
+			 *
+			 * To display suggestions with two text values, add <code>sap.ui.core.ListItem</code>
+			 * as <code>SuggestionItems</code> (since 1.21.1). For the selected
+			 * <code>ListItem</code>, only the first value is returned to the input field.
+			 *
+			 * <b>Note:</b> Only <code>text</code> and <code>additionalText</code> property values
+			 * of the item are displayed. For example, if an <code>icon</code> is set, it is
+			 * ignored. To display more information per item (including icons), you can use the
+			 * <code>suggestionRows</code> aggregation.
+			 *
 			 * @since 1.16.1
 			 */
 			suggestionItems : {type : "sap.ui.core.Item", multiple : true, singularName : "suggestionItem"},
