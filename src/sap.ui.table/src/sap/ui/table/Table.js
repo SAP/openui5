@@ -432,11 +432,12 @@ sap.ui.define([
 			 *
 			 * The following restrictions apply:
 			 * <ul>
+			 *  <li>If a selection plugin is applied to the table, the table's selection API must not be used. Instead, use the API of the
+			 *      plugin.</li>
 			 *  <li>Only one MultiSelectionPlugin can be applied. No other plugins can be applied.</li>
 			 * </ul>
 			 *
 			 * @since 1.64
-			 * @experimental As of version 1.64
 			 */
 			plugins : {type : "sap.ui.table.plugins.SelectionPlugin", multiple : true, singularName : "plugin"}
 		},

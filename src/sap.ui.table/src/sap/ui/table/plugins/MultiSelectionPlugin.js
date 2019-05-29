@@ -186,7 +186,6 @@ sap.ui.define([
 	/**
 	 * Loads all contexts and adds all indices to the selection if the limit is disabled.
 	 *
-	 * @override
 	 * @public
 	 */
 	MultiSelectionPlugin.prototype.selectAll = function() {
@@ -242,7 +241,6 @@ sap.ui.define([
 	/**
 	 * Loads the context of the selected range and adds the given selection interval to the selection.
 	 *
-	 * @override
 	 * @param {int} iIndexFrom Index from which the selection starts
 	 * @param {int} iIndexTo Index up to which to select
 	 * @public
@@ -289,7 +287,6 @@ sap.ui.define([
 	/**
 	 * Removes the complete selection.
 	 *
-	 * @override
 	 * @public
 	 */
 	MultiSelectionPlugin.prototype.clearSelection = function() {
@@ -314,7 +311,6 @@ sap.ui.define([
 	 * Zero-based indices of selected items, wrapped in an array. An empty array means nothing has been selected.
 	 *
 	 * @returns {int[]} An array containing all selected indices
-	 * @override
 	 * @public
 	 */
 	MultiSelectionPlugin.prototype.getSelectedIndices = function() {
@@ -362,7 +358,6 @@ sap.ui.define([
 	 *
 	 * @param {int} iIndex The index for which the selection state is retrieved
 	 * @returns {boolean} <code>true</code> if the index is selected
-	 * @override
 	 * @public
 	 */
 	MultiSelectionPlugin.prototype.isIndexSelected = function(iIndex) {
@@ -377,7 +372,6 @@ sap.ui.define([
 	 *
 	 * @param {int} iIndexFrom Index from which the deselection starts
 	 * @param {int} iIndexTo Index up to which to deselect
-	 * @override
 	 * @public
 	 */
 	MultiSelectionPlugin.prototype.removeSelectionInterval = function(iIndexFrom, iIndexTo) {
