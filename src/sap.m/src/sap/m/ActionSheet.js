@@ -394,11 +394,11 @@ sap.ui.define([
 
 	/**
 	 * Calling this method will make the ActionSheet disappear from the screen.
-	 * @param {object} oControl The control to close
+	 *
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	ActionSheet.prototype.close = function(oControl){
+	ActionSheet.prototype.close = function(){
 		if (this._parent) {
 			this._parent.close();
 		}
@@ -406,12 +406,12 @@ sap.ui.define([
 
 	/**
 	 * The method checks if the ActionSheet is open. It returns true when the ActionSheet is currently open (this includes opening and closing animations), otherwise it returns false.
-	 * @param {object} oControl The control in question
+	 *
 	 * @returns {boolean} Whether the ActionSheet is open.
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	ActionSheet.prototype.isOpen = function(oControl){
+	ActionSheet.prototype.isOpen = function(){
 		return !!this._parent && this._parent.isOpen();
 	};
 
