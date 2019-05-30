@@ -375,6 +375,30 @@ sap.ui.define([
 		oFlagAction.destroy();
 	});
 
+	QUnit.test("FlagAction aria-pressed attribute", function(assert) {
+		//setup
+		var oFlagAction = new FlagAction({}),
+			oSemanticPage = new DetailPage({
+				flagAction: oFlagAction
+			});
+
+		oSemanticPage.placeAt("qunit-fixture-visible");
+		Core.applyChanges();
+
+		//assert
+		assert.strictEqual(oFlagAction.$().attr("aria-pressed"), "false", "aria-pressed attribute is set to false");
+
+		//act
+		oFlagAction.setPressed(true);
+		Core.applyChanges();
+
+		//assert
+		assert.strictEqual(oFlagAction.$().attr("aria-pressed"), "true", "aria-pressed attribute is set to true");
+
+		//cleanup
+		oSemanticPage.destroy();
+	});
+
 	QUnit.module("domRef available");
 
 	QUnit.test("Popover can be opened by a semantic button", function(assert) {
