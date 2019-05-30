@@ -128,6 +128,19 @@ sap.ui.define([
 	 */
 	var OverflowToolbar = Toolbar.extend("sap.m.OverflowToolbar", {
 		metadata: {
+			properties : {
+
+				/**
+				 * Defines whether the <code>OverflowToolbar</code> works in async mode.
+				 *
+				 * <b>Note:</b> When this property is set to <code>true</code>, the <code>OverflowToolbar</code>
+				 * makes its layout recalculations asynchronously. This way it is not blocking the thread
+				 * immediately after re-rendering or resizing.
+				 *
+				 * @since 1.67
+				 */
+				asyncMode : {type : "boolean", group : "Behavior", defaultValue : false}
+			},
 			aggregations: {
 				_overflowButton: {type: "sap.m.ToggleButton", multiple: false, visibility: "hidden"},
 				_popover: {type: "sap.m.Popover", multiple: false, visibility: "hidden"}
@@ -178,6 +191,8 @@ sap.ui.define([
 
 		this._aControlSizes = {}; // A map of control id -> control *optimal* size in pixels; the optimal size is outerWidth for most controls and min-width for spacers
 
+		this._iFrameRequest = null;
+
 		this._aMovableControls = []; // Controls that can be in the toolbar or Popover
 		this._aToolbarOnlyControls = []; // Controls that can't go to the Popover (inputs, labels, buttons with special layout, etc...)
 		this._aPopoverOnlyControls = []; // Controls that are forced to stay in the Popover (buttons with layout)
@@ -189,7 +204,27 @@ sap.ui.define([
 		if (oPopover) {
 			oPopover.destroy();
 		}
+
+		if (this._iFrameRequest) {
+			window.cancelAnimationFrame(this._iFrameRequest);
+			this._iFrameRequest = null;
+		}
 	};
+
+	/**
+	 * Sets the <code>asyncMode</code> property.
+	 *
+	 * @since 1.67
+	 *
+	 * @public
+	 * @param {boolean} bValue
+	 * @return {sap.m.OverflowToolbar} <code>this</code> pointer for chaining
+	 */
+	OverflowToolbar.prototype.setAsyncMode = function(bValue) {
+		// No invalidation is needed
+		return this.setProperty("asyncMode", bValue, true);
+	};
+
 
 	/**
 	 * Called after the control is rendered
@@ -199,8 +234,13 @@ sap.ui.define([
 		this._getOverflowButton().$().attr("aria-haspopup", "true");
 
 		// Unlike toolbar, we don't set flexbox classes here, we rather set them on a later stage only if needed
-		this._doLayout();
-		this._applyFocus();
+
+		if (this.getAsyncMode()) {
+			this._doLayoutAsync().then(this._applyFocus.bind(this));
+		} else {
+			this._doLayout();
+			this._applyFocus();
+		}
 	};
 
 	OverflowToolbar.prototype.onsapfocusleave = function() {
@@ -261,6 +301,20 @@ sap.ui.define([
 
 		// Start listening for invalidation events once again
 		this._bListenForInvalidationEvents = true;
+	};
+
+
+	/**
+	 * Asynchronous layouting
+	 * @private
+	 */
+	OverflowToolbar.prototype._doLayoutAsync = function () {
+		return new Promise(function(resolve, reject) {
+			this._iFrameRequest = window.requestAnimationFrame(function () {
+				this._doLayout();
+				resolve();
+			}.bind(this));
+		}.bind(this));
 	};
 
 	OverflowToolbar.prototype._applyFocus = function () {
@@ -335,7 +389,11 @@ sap.ui.define([
 
 	// Resize Handler
 	OverflowToolbar.prototype._handleResize = function() {
-		this._doLayout();
+		if (this.getAsyncMode()) {
+			this._doLayoutAsync();
+		} else {
+			this._doLayout();
+		}
 	};
 
 	/**

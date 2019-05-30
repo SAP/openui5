@@ -334,6 +334,61 @@ sap.ui.define([
 		oOverflowTB.destroy();
 	});
 
+	testAllFlexBoxModes("Async: Changing the width of a control moves other controls to the overflow", function (assert) {
+		// Arrange - create a toolbar 550px wide with 5 buttons x 100px each, so all can fit (button margins included)
+		var aDefaultContent = [
+					new Button({text: "1", width: "100px"}),
+					new Button({text: "2", width: "100px"}),
+					new Button({text: "3", width: "100px"}),
+					new Button({text: "4", width: "100px"}),
+					new Button({text: "5", width: "100px"})
+				],
+				oOverflowTB = createOverflowToolbar({
+					width: "550px",
+					asyncMode: true
+				}, aDefaultContent),
+				done = assert.async(),
+				iVisibleButtons;
+
+		assert.expect(5);
+		this.clock.restore();
+
+		setTimeout(function () {
+			// Assert - before the resize, all buttons are visible
+			iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
+			assert.strictEqual(iVisibleButtons, aDefaultContent.length, "Initially all buttons should be visible");
+
+			// Act - change the width of a button
+			aDefaultContent[4].setWidth("500px");
+			sap.ui.getCore().applyChanges();
+
+			setTimeout(function () {
+				// Assert - after the width change there should be less buttons visible on the toolbar
+				iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
+				assert.strictEqual(iVisibleButtons < aDefaultContent.length, true, "After the resize, the number of visible buttons should have decreased");
+
+				// There should be an overflow button and it should be visible
+				var oOverflowButton = oOverflowTB._getOverflowButton();
+				assert.strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible");
+
+				// Act - resize the button back
+				aDefaultContent[4].setWidth("100px");
+				sap.ui.getCore().applyChanges();
+
+				setTimeout(function () {
+					// Assert - there should be no overflow button, no overflow area, all buttons visible again
+					assert.strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible after resizing the button back");
+					iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
+					assert.strictEqual(iVisibleButtons, aDefaultContent.length, "Again all buttons should be visible");
+
+					// Clean up
+					oOverflowTB.destroy();
+					done();
+				}, 500);
+			}, 200);
+		}, 200);
+	});
+
 	QUnit.module("Priority");
 
 	testAllFlexBoxModes("Buttons with layout to stay in overflow never go to the toolbar", function (assert) {
@@ -1843,6 +1898,23 @@ sap.ui.define([
 		oOverflowTB.destroy();
 	});
 
+	QUnit.test("requestAnimationFrame is canceled when OverflowToolbar is destroyed", function (assert) {
+		var aContent = getDefaultContent(),
+			oOverflowTB = createOverflowToolbar({width: 'auto', asyncMode: true}, aContent),
+			done = assert.async();
+
+		assert.expect(2);
+		this.clock.restore();
+
+		setTimeout(function () {
+			assert.ok(oOverflowTB._iFrameRequest !== null, "requestAnimationFrame is assigned");
+			oOverflowTB.destroy();
+				assert.strictEqual(oOverflowTB._iFrameRequest, null, "requestAnimationFrame is canceled after destroy");
+
+				done();
+		}, 200);
+	});
+
 	QUnit.module("Resize handling");
 
 	QUnit.test("Handling of resizes that don't move elements around", function (assert) {
@@ -2018,6 +2090,134 @@ sap.ui.define([
 		"the resize handler is called once",
 		"_markControlsWithShrinkableLayoutData is called and the button is shrinked",
 		"_checkContents is called and the text is also shrinked"]);
+
+	QUnit.module("Resize handling async");
+
+	QUnit.test("Handling of resizes that don't move elements around", function (assert) {
+		// Arrange
+		var aDefaultContent = [
+			new Button({text: "1", width: "100px"}),
+			new Button({text: "2", width: "100px"}),
+			new Button({text: "3", width: "100px"}),
+			new Button({text: "4", width: "100px"}),
+			new Button({text: "5", width: "100px"})
+		],
+		oOverflowTB = createOverflowToolbar({
+			width: "550px"
+		}, aDefaultContent),
+		done = assert.async(),
+		oSpy = this.spy,
+		oSpyResizeHandler,
+		oSpyInvalidate,
+		oSpyFlexbox;
+
+		assert.expect(4);
+		this.clock.restore();
+
+		setTimeout(function () {
+			oSpyResizeHandler = oSpy(oOverflowTB, "_setControlsOverflowAndShrinking");
+			oSpyInvalidate = oSpy(oOverflowTB, "invalidate");
+			oSpyFlexbox = oSpy(oOverflowTB, "_checkContents");
+
+			// Act - the toolbar already can fit all items, increase its size by 1px so that no rearranging will be necessary
+			oOverflowTB.setWidth("551px");
+			assert.strictEqual(oSpyInvalidate.callCount, 1, "invalidate was called by the framework after the resize");
+
+			setTimeout(function () {
+				// Assert
+				assert.strictEqual(oSpyResizeHandler.callCount, 1, "The resize handler was called once");
+				assert.strictEqual(oSpyInvalidate.callCount, 1, "It did NOT call invalidate again");
+				assert.strictEqual(oSpyFlexbox.callCount, 0, "It did NOT set flexbox css");
+
+				// Clean up
+				oOverflowTB.destroy();
+				done();
+			}, 200);
+		}, 200);
+	});
+
+	QUnit.test("Handling of resizes that move elements around", function (assert) {
+		// Arrange
+		var aDefaultContent = [
+				new Button({text: "1", width: "100px"}),
+				new Button({text: "2", width: "100px"}),
+				new Button({text: "3", width: "100px"}),
+				new Button({text: "4", width: "100px"}),
+				new Button({text: "5", width: "100px"})
+			],
+			oOverflowTB = createOverflowToolbar({
+				width: "550px"
+			}, aDefaultContent),
+			done = assert.async(),
+			oSpy = this.spy,
+			oSpyResizeHandler,
+			oSpyInvalidate,
+			oSpyFlexbox;
+
+		assert.expect(4);
+		this.clock.restore();
+
+		setTimeout(function () {
+			oSpyResizeHandler = oSpy(oOverflowTB, "_setControlsOverflowAndShrinking");
+			oSpyInvalidate = oSpy(oOverflowTB, "invalidate");
+			oSpyFlexbox = oSpy(oOverflowTB, "_checkContents");
+
+			// Act - decrease the size so that some buttons have to move the popover
+			oOverflowTB.setWidth("200px");
+			assert.strictEqual(oSpyInvalidate.callCount, 1, "invalidate was called by the framework after the resize");
+
+			setTimeout(function () {
+				// Assert
+				assert.strictEqual(oSpyResizeHandler.callCount, 1, "The resize handler was called once");
+				assert.strictEqual(oSpyInvalidate.callCount, 2, "It called invalidate");
+				assert.strictEqual(oSpyFlexbox.callCount, 0, "It did NOT set flexbox css");
+
+				// Clean up
+				oOverflowTB.destroy();
+				done();
+			}, 200);
+		}, 200);
+	});
+
+	QUnit.test("Items must first overflow and then shrink", function (assert) {
+		// Arrange
+		var aDefaultContent = [
+				new Text({text: "This is a very very very long text"}),
+				new Button({text: "2", width: "100px"})
+			],
+			oOverflowTB = createOverflowToolbar({
+				width: "550px"
+			}, aDefaultContent),
+			done = assert.async(),
+			oSpy = this.spy,
+			oSpyResizeHandler,
+			oSpyInvalidate,
+			oSpyFlexbox;
+
+		assert.expect(4);
+		this.clock.restore();
+
+		setTimeout(function () {
+			oSpyResizeHandler = oSpy(oOverflowTB, "_setControlsOverflowAndShrinking");
+			oSpyInvalidate = oSpy(oOverflowTB, "invalidate");
+			oSpyFlexbox = oSpy(oOverflowTB, "_checkContents");
+
+			// Act - decrease the size so that all buttons must overflow and the label must be shrunk
+			oOverflowTB.setWidth("60px");
+			assert.strictEqual(oSpyInvalidate.callCount, 1, "invalidate was called by the framework after the resize");
+
+			setTimeout(function () {
+				// Assert
+				assert.strictEqual(oSpyResizeHandler.callCount, 1, "The resize handler was called once");
+				assert.strictEqual(oSpyInvalidate.callCount, 2, "It called invalidate");
+				assert.strictEqual(oSpyFlexbox.callCount, 1, "It set flexbox css");
+
+				// Clean up
+				oOverflowTB.destroy();
+				done();
+			}, 200);
+		}, 200);
+	});
 
 	QUnit.module("Integration");
 
@@ -2399,6 +2599,33 @@ sap.ui.define([
 		// assert
 		assert.ok(oResetChildControlFocusInfoSpy.calledOnce, "Method _resetChildControlFocusInfo called upon onsapfocusleave.");
 		assert.strictEqual(this.oOTB.sFocusedChildControlId, "", "Focus info cleared.");
+	});
+
+	QUnit.test("Async: Focus on toolbar child is retained after toolbar invalidation", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oSpy = this.spy,
+			oOverflowTBbar = this.oOTB,
+			oButtonUnderTest = this.oButtonUnderTest,
+			oApplyFocusSpy;
+
+		oOverflowTBbar.setAsyncMode(true);
+		assert.expect(2);
+
+		setTimeout(function () {
+			// Act - child control is on focus, invalidate the toolbar.
+			oApplyFocusSpy = oSpy(oOverflowTBbar, "_applyFocus");
+			oOverflowTBbar.sFocusedChildControlId = oButtonUnderTest.getId();
+			oOverflowTBbar.setWidth("1000px");
+			sap.ui.getCore().applyChanges();
+
+			setTimeout(function () {
+				// Assert
+				assert.ok(oApplyFocusSpy.calledOnce, "Method _applyFocus called upon button focus.");
+				assert.strictEqual(document.activeElement, oButtonUnderTest.getDomRef(), "Button is focused correctly :: " + oButtonUnderTest.getId());
+				done();
+			}, 200);
+		}, 200);
 	});
 
 	QUnit.module("Control destroy");
