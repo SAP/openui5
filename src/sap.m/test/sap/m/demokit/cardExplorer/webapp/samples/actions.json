@@ -51,12 +51,8 @@
 				"icon": {
 					"src": "{icon}"
 				},
-				"title": {
-					"value": "{Name}"
-				},
-				"description": {
-					"value": "{Description}"
-				},
+				"title": "{Name}",
+				"description": "{Description}",
 				"actions": [
 					{
 						"type": "Navigation",

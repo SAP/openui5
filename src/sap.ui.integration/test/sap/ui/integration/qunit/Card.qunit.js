@@ -163,6 +163,106 @@ sap.ui.define([
 			}
 		};
 
+		var oManifest_ListCard2 = {
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "L3 Request list content Card"
+				},
+				"content": {
+					"data": {
+						"json": [
+							{
+								"Name": "Notebook Basic 15",
+								"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1000",
+								"SubCategoryId": "Notebooks",
+								"icon": "../images/Woman_avatar_01.png",
+								"state": "Information",
+								"info": "27.45 EUR",
+								"infoState": "Success"
+							},
+							{
+								"Name": "Notebook Basic 17",
+								"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1001",
+								"SubCategoryId": "Notebooks",
+								"icon": "../images/Woman_avatar_01.png",
+								"state": "Success",
+								"info": "27.45 EUR",
+								"infoState": "Success"
+
+							},
+							{
+								"Name": "Notebook Basic 18",
+								"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1002",
+								"SubCategoryId": "Notebooks",
+								"icon": "../images/Woman_avatar_01.png",
+								"state": "Warning",
+								"info": "9.45 EUR",
+								"infoState": "Error"
+							},
+							{
+								"Name": "Notebook Basic 19",
+								"Description": "Notebook Basic 19 with 2,80 GHz quad core, 19\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1003",
+								"SubCategoryId": "Notebooks",
+								"icon": "../images/Woman_avatar_01.png",
+								"state": "Error",
+								"info": "9.45 EUR",
+								"infoState": "Error"
+							},
+							{
+								"Name": "ITelO Vault",
+								"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
+								"Id": "HT-1007",
+								"SubCategoryId": "PDAs & Organizers",
+								"icon": "../images/Woman_avatar_01.png",
+								"state": "Success",
+								"info": "29.45 EUR",
+								"infoState": "Success"
+							},
+							{
+								"Name": "Notebook Professional 15",
+								"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+								"Id": "HT-1010",
+								"SubCategoryId": "Notebooks",
+								"icon": "../images/Woman_avatar_01.png",
+								"state": "Success",
+								"info": "29.45 EUR",
+								"infoState": "Success"
+							},
+							{
+								"Name": "Notebook Professional 26",
+								"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+								"Id": "HT-1022",
+								"SubCategoryId": "Notebooks",
+								"icon": "../images/Woman_avatar_01.png",
+								"state": "Success",
+								"info": "29.45 EUR",
+								"infoState": "Success"
+							},
+							{
+								"Name": "Notebook Professional 27",
+								"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+								"Id": "HT-1024",
+								"SubCategoryId": "Notebooks",
+								"icon": "../images/Woman_avatar_01.png",
+								"state": "Success",
+								"info": "29.45 EUR",
+								"infoState": "Success"
+							}
+						]
+					},
+					"item": {
+						"title": "{Name}",
+						"description": "{Description}"
+					}
+				}
+			}
+		};
+
 		var oManifest_ListCard_StaticContent = {
 			"sap.card": {
 				"type": "List",
@@ -1620,6 +1720,48 @@ sap.ui.define([
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
+		QUnit.test("List Card - item title and description with string values", function (assert) {
+
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				var oListItem = this.oCard.getCardContent().getAggregation("_content").getItems()[0];
+				var oItem = oManifest_ListCard2["sap.card"]["content"]["data"]["json"][0];
+
+				Core.applyChanges();
+
+				// Assert
+				assert.equal(oListItem.getDescription(), oItem.Description, "Item description should be set.");
+				assert.equal(oListItem.getTitle(), oItem.Name, "Item title should be set.");
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest_ListCard2);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
+		QUnit.test("Using maxItems manifest property", function (assert) {
+
+			// Arrange
+			var done = assert.async();
+			var iMaxItems = oManifest_ListCard_MaxItems["sap.card"]["content"]["maxItems"];
+
+			this.oCard.attachEvent("_ready", function () {
+
+				Core.applyChanges();
+
+				var iNumberOfItems = this.oCard.getCardContent().getAggregation("_content").getItems().length;
+				assert.ok(iNumberOfItems <= iMaxItems, "Should have less items than the maximum.");
+
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest_ListCard_MaxItems);
+		});
+
 		QUnit.module("Object Card", {
 			beforeEach: function () {
 				this.oCard = new Card({
@@ -1734,41 +1876,6 @@ sap.ui.define([
 			// Act
 			this.oCard.setManifest(oManifest_ObjectCard);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-		});
-
-		QUnit.module("List Card", {
-			beforeEach: function () {
-				this.oCard = new Card({
-					width: "800px"
-				});
-
-				this.oCard.placeAt(DOM_RENDER_LOCATION);
-				Core.applyChanges();
-			},
-			afterEach: function () {
-				this.oCard.destroy();
-				this.oCard = null;
-			}
-		});
-
-		QUnit.test("Using maxItems manifest property", function (assert) {
-
-			// Arrange
-			var done = assert.async();
-			var iMaxItems = oManifest_ListCard_MaxItems["sap.card"]["content"]["maxItems"];
-
-			this.oCard.attachEvent("_ready", function () {
-
-				Core.applyChanges();
-
-				var iNumberOfItems = this.oCard.getCardContent().getAggregation("_content").getItems().length;
-				assert.ok(iNumberOfItems <= iMaxItems, "Should have less items than the maximum.");
-
-				done();
-			}.bind(this));
-
-			// Act
-			this.oCard.setManifest(oManifest_ListCard_MaxItems);
 		});
 
 		QUnit.module("Table Card", {
@@ -2114,10 +2221,12 @@ sap.ui.define([
 			this.oCard.attachEvent("_ready", function () {
 
 				Core.applyChanges();
-				var oListItems = this.oCard.getCardContent()._getList().getItems();
+				var oListItems = this.oCard.getCardContent()._getList().getItems(),
+				 oItem = oManifest_ListCard2["sap.card"]["content"]["data"]["json"][0];
 				// Assert
 				assert.ok(oListItems[0].getDescription().indexOf("Vratza") > -1, "Card parameter 'city' should be replaced in rendered html  with 'Vratza'");
 				assert.ok(oListItems[0].getDescription().indexOf("Bulgaria") > -1, "Card parameter 'country' should be replaced in rendered html  with 'Bulgaria'");
+				assert.ok(oListItems[0].getTitle().indexOf(oItem.Name) > -1, "Card title should be rendered with its value");
 
 				done();
 			}.bind(this));
