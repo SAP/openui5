@@ -574,11 +574,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._bMasterisOpen = false;
 		}
 
-		//BCP: 002028376500005408012018
-		if (this.getMode() === "HideMode" && Device.system.phone && this._aDetailPages) {
-			this._oMasterNav.setInitialPage(this.getInitialDetail() ? this.getInitialDetail() : (this.getInitialMaster() || this._aDetailPages[0]));
-		}
-
 		this._updateMasterButtonTooltip();
 	};
 
@@ -613,6 +608,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._oMasterNav.removeStyleClass("sapMSplitContainerNoTransition");
 		});
 	};
+
+	SplitContainer.prototype.applySettings = function (mSettings, oScope) {
+		Control.prototype.applySettings.call(this, mSettings, oScope);
+
+		this._updateMasterInitialPage();
+	};
+
 	/**************************************************************
 	* END - Life Cycle Methods
 	**************************************************************/
@@ -1625,6 +1627,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**************************************************************
 	* START - Private methods
 	**************************************************************/
+
+	/**
+	 * @private
+	 */
+	SplitContainer.prototype._updateMasterInitialPage = function() {
+		//BCP: 002028376500005408012018
+		if (this.getMode() === "HideMode" && Device.system.phone && this._aDetailPages) {
+			this._oMasterNav.setInitialPage(this.getInitialDetail() ? this.getInitialDetail() : (this.getInitialMaster() || this._aDetailPages[0]));
+		}
+	};
 
 	/**
 	 * @private
