@@ -24,55 +24,56 @@ sap.ui.define([],
 	 * {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager}
-	 *            rm The RenderManager that can be used for writing to the render-output-buffer.
+	 *            oRm The RenderManager that can be used for writing to the render-output-buffer.
 	 * @param {sap.ui.core.Control}
 	 *            oMenu An object representation of the control that should be rendered
 	 */
-	MenuRenderer.render = function(rm, oMenu) {
+	MenuRenderer.render = function(oRm, oMenu) {
+		var bAccessible = sap.ui.getCore().getConfiguration().getAccessibility(),
+			oRootMenu = oMenu.getRootMenu();
+
 		if (oMenu.oHoveredItem && oMenu.indexOfItem(oMenu.oHoveredItem) < 0) {
 			//Hover item not valid anymore
 			oMenu.oHoveredItem = null;
 		}
 
-		rm.write("<div tabindex=\"-1\" hideFocus=\"true\"");
+		oRm.write("<div");
+		oRm.writeAttribute("tabindex", -1);
+		oRm.writeAttribute("hideFocus", true);
 
 		if (oMenu.getTooltip_AsString()) {
-			rm.writeAttributeEscaped("title", oMenu.getTooltip_AsString());
+			oRm.writeAttributeEscaped("title", oMenu.getTooltip_AsString());
 		}
 
 		// ARIA
-		var bAccessible = sap.ui.getCore().getConfiguration().getAccessibility();
 		if (bAccessible) {
-			rm.writeAccessibilityState(oMenu, {
-				role: "menu",
+			oRm.writeAccessibilityState(oMenu, {
 				disabled: null,
 				labelledby: {value: oMenu.getId() + "-label", append: true}
 			});
 			if (oMenu.oHoveredItem) {
-				rm.writeAttribute("aria-activedescendant", oMenu.oHoveredItem.getId());
+				oRm.writeAttribute("aria-activedescendant", oMenu.oHoveredItem.getId());
 			}
 		}
 
-		rm.addClass("sapUiMnu");
-
-		var oRootMenu = oMenu.getRootMenu();
+		oRm.addClass("sapUiMnu");
 
 		if (oRootMenu.bUseTopStyle) {
-			rm.addClass("sapUiMnuTop");
+			oRm.addClass("sapUiMnuTop");
 		}
 
 		if (oRootMenu.isCozy()) {
-			rm.addClass("sapUiSizeCozy");
+			oRm.addClass("sapUiSizeCozy");
 		}
 
 		if (oMenu.bCozySupported) {
-			rm.addClass("sapUiMnuCozySupport");
+			oRm.addClass("sapUiMnuCozySupport");
 		}
 
-		rm.writeClasses();
-		rm.writeControlData(oMenu);
-		rm.write(">");
-		MenuRenderer.renderItems(rm, oMenu);
+		oRm.writeClasses();
+		oRm.writeControlData(oMenu);
+		oRm.write(">");
+		MenuRenderer.renderItems(oRm, oMenu);
 		if (bAccessible) {
 			/*var _getText = function(sKey, aArgs) {
 				var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
@@ -82,66 +83,90 @@ sap.ui.define([],
 				return sKey;
 			};*/
 
-			rm.write("<span id='", oMenu.getId(), "-label' class='sapUiInvisibleText' aria-hidden='true'>");
-			rm.writeEscaped(oMenu.getAriaDescription() ? oMenu.getAriaDescription() : ""/*_getText("MNU_ARIA_NAME")*/);
-			rm.write("</span>");
+			oRm.write("<span id='" + oMenu.getId() + "-label' class='sapUiInvisibleText' aria-hidden='true'>");
+			oRm.writeEscaped(oMenu.getAriaDescription() ? oMenu.getAriaDescription() : ""/*_getText("MNU_ARIA_NAME")*/);
+			oRm.write("</span>");
 		}
-		rm.write("</div>");
+		oRm.write("</div>");
 	};
 
-	MenuRenderer.renderItems = function(rm, oMenu) {
-		var aItems = oMenu.getItems();
-		var bAccessible = sap.ui.getCore().getConfiguration().getAccessibility();
+	MenuRenderer.renderItems = function(oRm, oMenu) {
+		var aItems = oMenu.getItems(),
+			bAccessible = sap.ui.getCore().getConfiguration().getAccessibility(),
+			bHasIcons = false,
+			bHasSubMenus = false,
+			iNumberOfVisibleItems = 0,
+			index = 0,
+			i,
+			oItem;
 
-		rm.write("<ul class=\"sapUiMnuLst");
+		oRm.write("<ul");
+		oRm.writeAttribute("role", "menu");
+		oRm.addClass("sapUiMnuLst");
 
-		var bHasIcons = false;
-		var bHasSubMenus = false;
-		for (var idx = 0; idx < aItems.length; idx++) {
-			if (aItems[idx].getIcon && aItems[idx].getIcon()) {
+		for (i = 0; i < aItems.length; i++) {
+			if (aItems[i].getIcon && aItems[i].getIcon()) {
 				bHasIcons = true;
 			}
-			if (aItems[idx].getSubmenu()) {
+			if (aItems[i].getSubmenu()) {
 				bHasSubMenus = true;
 			}
 		}
 
 		if (!bHasIcons) {
-			rm.write(" sapUiMnuNoIco");
+			oRm.addClass("sapUiMnuNoIco");
 		}
 		if (!bHasSubMenus) {
-			rm.write(" sapUiMnuNoSbMnu");
+			oRm.addClass("sapUiMnuNoSbMnu");
 		}
 
-		rm.write("\">");
+		oRm.writeClasses();
+		oRm.write(">");
 
-		var iNumberOfVisibleItems = 0;
-		for (var i = 0;i < aItems.length;i++) {
+		iNumberOfVisibleItems = 0;
+		for (i = 0; i < aItems.length; i++) {
 			if (aItems[i].getVisible() && aItems[i].render) {
 				iNumberOfVisibleItems++;
 			}
 		}
 
-		var index = 0;
 		// Menu items
-		for (var i = 0;i < aItems.length;i++) {
-			var oItem = aItems[i];
+		for (i = 0; i < aItems.length; i++) {
+			oItem = aItems[i];
 			if (oItem.getVisible() && oItem.render) {
 				index++;
 
 				if (oItem.getStartsSection()) {
-					rm.write("<li ");
+					oRm.write("<li");
 					if (bAccessible) {
-						rm.write("role=\"separator\" ");
+						oRm.writeAttribute("role", "separator");
 					}
-					rm.write("class=\"sapUiMnuDiv\"><div class=\"sapUiMnuDivL\"></div><hr><div class=\"sapUiMnuDivR\"></div></li>");
+					oRm.addClass("sapUiMnuDiv");
+					oRm.writeClasses();
+					oRm.write(">");
+
+					oRm.write("<div");
+					oRm.addClass("sapUiMnuDivL");
+					oRm.writeClasses();
+					oRm.write(">");
+					oRm.write("</div>");
+
+					oRm.write("<hr>");
+
+					oRm.write("<div");
+					oRm.addClass("sapUiMnuDivR");
+					oRm.writeClasses();
+					oRm.write(">");
+					oRm.write("</div>");
+
+					oRm.write("</li>");
 				}
 
-				oItem.render(rm, oItem, oMenu, {bAccessible: bAccessible, iItemNo: index, iTotalItems: iNumberOfVisibleItems});
+				oItem.render(oRm, oItem, oMenu, {bAccessible: bAccessible, iItemNo: index, iTotalItems: iNumberOfVisibleItems});
 			}
 		}
 
-		rm.write("</ul>");
+		oRm.write("</ul>");
 	};
 
 	return MenuRenderer;
