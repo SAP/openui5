@@ -1348,34 +1348,22 @@ function(
 
 			// note: jQuery oEvent.which normalizes oEvent.keyCode and oEvent.charCode
 			var sTypedCharacter = String.fromCharCode(oEvent.which),
-				oSelectedItem = this.getSelectedItem(),
-				sText = sTypedCharacter,
-				oItem = null;
+				sText;
 
 			this.sTypedChars += sTypedCharacter;
 
-			var bStartsWithTypedChars = typeof this.sTypedChars === "string" &&
-				this.sTypedChars !== "" &&
-				oSelectedItem &&
-				oSelectedItem.getText().toLowerCase().startsWith(this.sTypedChars.toLowerCase());
+			// We check if we have more than one characters and they are all duplicate, we set the
+			// text to be the last input character (sTypedCharacter). If not, we set the text to be
+			// the whole input string.
 
-			// the typed characters match the text of the selected item
-			if (bStartsWithTypedChars ||
-				// one or more characters have been typed (excluding patterns such as "aa" or "bb")
-				((this.sTypedChars.length === 1) ||
-				((this.sTypedChars.length > 1) &&
-				(this.sTypedChars.charAt(0) !== this.sTypedChars.charAt(1))))) {
+			sText = (/^(.)\1+$/i).test(this.sTypedChars) ? sTypedCharacter : this.sTypedChars;
 
-				sText = this.sTypedChars;
-			}
-
-			oItem = this.searchNextItemByText(sText);
 			clearTimeout(this.iTypingTimeoutID);
 			this.iTypingTimeoutID = setTimeout(function() {
 				this.sTypedChars = "";
 				this.iTypingTimeoutID = -1;
 			}.bind(this), 1000);
-			fnHandleKeyboardNavigation.call(this, oItem);
+			fnHandleKeyboardNavigation.call(this, this.searchNextItemByText(sText));
 		};
 
 		/**

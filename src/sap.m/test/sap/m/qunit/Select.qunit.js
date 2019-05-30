@@ -7213,8 +7213,8 @@ sap.ui.define([
 		QUnit.test("it should select Gglorem", function (assert) {
 
 			// system under test
-			var oExpectedItem;
-			var oSelect = new Select({
+			var oExpectedItem,
+				oSelect = new Select({
 				items: [
 					new Item({
 						text: "Argentina"
@@ -7238,9 +7238,114 @@ sap.ui.define([
 			// act
 			qutils.triggerKeypress(oSelect.getDomRef(), "G");
 			qutils.triggerKeypress(oSelect.getDomRef(), "G");
+			qutils.triggerKeypress(oSelect.getDomRef(), "L");
 
 			// assert
 			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
+
+			// cleanup
+			oSelect.destroy();
+		});
+
+		QUnit.test("it should select Gglorem", function (assert) {
+
+			// system under test
+			var oExpectedItem,
+				oExpectedItem2,
+				oExpectedItem3,
+				oSelect = new Select({
+				items: [
+					oExpectedItem = new Item({
+						key: "AR",
+						text: "Argentina"
+					}),
+					oExpectedItem = new Item({
+						text: "Germany"
+					}),
+					oExpectedItem2 = new Item({
+						"text": "Ghana"
+					}),
+					oExpectedItem3 = new Item({
+						text: "Gglorem"
+					})
+				],
+				selectedKey: "GER"
+			});
+
+			// arrange
+			oSelect.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oSelect.focus();
+
+			// act
+			qutils.triggerKeypress(oSelect.getDomRef(), "G");
+
+			// assert
+			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
+
+			// act
+			qutils.triggerKeypress(oSelect.getDomRef(), "G");
+
+			// assert
+			assert.ok(oSelect.getSelectedItem() === oExpectedItem2);
+
+			// act
+			qutils.triggerKeypress(oSelect.getDomRef(), "L");
+
+			// assert
+			assert.ok(oSelect.getSelectedItem() === oExpectedItem3);
+
+			// cleanup
+			oSelect.destroy();
+		});
+
+		QUnit.test("it should select Greece", function (assert) {
+
+			// system under test
+			var oExpectedItem,
+				oExpectedItem2,
+				oExpectedItem3,
+				oSelect = new Select({
+				items: [
+					oExpectedItem = new Item({
+						key: "AR",
+						text: "Argentina"
+					}),
+					oExpectedItem = new Item({
+						text: "Germany"
+					}),
+					oExpectedItem2 = new Item({
+						"text": "Ghana"
+					}),
+					oExpectedItem3 = new Item({
+						"text": "Greece"
+					})
+				],
+				selectedKey: "GER"
+			});
+
+			// arrange
+			oSelect.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oSelect.focus();
+
+			// act
+			qutils.triggerKeypress(oSelect.getDomRef(), "G");
+
+			// assert
+			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
+
+			// act
+			qutils.triggerKeypress(oSelect.getDomRef(), "G");
+
+			// assert
+			assert.ok(oSelect.getSelectedItem() === oExpectedItem2);
+
+			// act
+			qutils.triggerKeypress(oSelect.getDomRef(), "G");
+
+			// assert
+			assert.ok(oSelect.getSelectedItem() === oExpectedItem3);
 
 			// cleanup
 			oSelect.destroy();
