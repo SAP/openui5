@@ -968,33 +968,6 @@ sap.ui.define([
 		_checkColor(oBorderColor, {R: 255, G:0, B: 0}, "Row2: IntervalHeader1 has the right custom border color");
 	});
 
-	QUnit.test("headerContent rendering", function(assert) {
-		//prepare
-		var oPC = new PlanningCalendar(),
-			oRow = new PlanningCalendarRow(oPC.getId() + "-Row", {
-				icon: "sap-icon://employee",
-				title: "Angela Merker",
-				text: "Angela",
-				tooltip: "Header tooltip",
-				headerContent: new sap.m.ObjectListItem({
-					title: "Alfonso",
-					intro: "headerContent aggregation"
-				})
-			}),
-			oRowHead = sap.ui.getCore().byId(oRow.getId() + "-Head"),
-			oRowCustomHead = sap.ui.getCore().byId(oRow.getId() + "-CustomHead");
-
-		//act
-		oPC.addRow(oRow);
-
-		//assert
-		assert.equal(oRowHead, undefined, "when there's headerContent, it creates only '-CustomHead' instance");
-		assert.equal(oRowCustomHead.getContent()[0].getTitle(), "Alfonso", "when there's headerContent, the content is set accordingly");
-
-		//destroy
-		oPC.destroy();
-	});
-
 	QUnit.module("rendering - Hours View", {
 		beforeEach: function () {
 			this.oPC = createPlanningCalendar("PC3", new SearchField(), new Button());
@@ -5459,6 +5432,88 @@ sap.ui.define([
 
 	QUnit.test("startIndex is greater than the end Index: startIndex = 6, endIndex = 3 - (3 months event in 3 months from the row's startDate)", function (assert) {
 		this.test(assert, 6, 3, new Date(2018, 1, 1), new Date(2018, 4, 1));
+	});
+
+	QUnit.module("headerContent + binding");
+
+	QUnit.test("headerContent is rendered properly in a js view", function(assert) {
+		// Prepare
+		var oModel = new JSONModel(),
+			oPC = new PlanningCalendar(),
+			oRow = new PlanningCalendarRow(oPC.getId() + "-Row", {
+				icon: "sap-icon://employee",
+				title: "Angela Merker",
+				text: "Angela",
+				tooltip: "Header tooltip",
+				headerContent: {
+					path: '/',
+					template: new sap.m.ObjectListItem({
+						title: "{title}",
+						intro: "{intro}"
+					})
+				}
+			}),
+			oRowHead,
+			oRowCustomHead;
+
+		// Act
+		oModel.setData([{
+			title: "Alfonso",
+			intro: "headerContent aggregation"
+		}]);
+		oPC.setModel(oModel);
+		oPC.addRow(oRow);
+
+		oRowHead = sap.ui.getCore().byId(oRow.getId() + "-Head");
+		oRowCustomHead = sap.ui.getCore().byId(oRow.getId() + "-CustomHead");
+
+		// Assert
+		assert.equal(oRowHead, undefined, "when there's headerContent, it creates only '-CustomHead' instance");
+		assert.equal(oRowCustomHead.getContent()[0].getTitle(), "Alfonso", "when there's headerContent, the content is set accordingly");
+
+		// Destroy
+		oPC.destroy();
+	});
+
+	QUnit.test("headerContent is rendered properly in a xml view", function (assert) {
+		// Prepare
+		var oPC,
+			oModel = new JSONModel(),
+			sXMLText =
+				'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">' +
+				'	<PlanningCalendar id="pc" rows="{/people}">' +
+				'		<rows id="idRow">' +
+				'			<PlanningCalendarRow headerContent="{path : \'headerContent\', templateShareable: \'true\'}">' +
+				'				<headerContent>' +
+				'				<ObjectListItem title="{title}"/>' +
+				'				</headerContent>' +
+				'			</PlanningCalendarRow>' +
+				'		</rows>' +
+				'	</PlanningCalendar>' +
+				'</mvc:View>',
+			oView = sap.ui.xmlview({viewContent: sXMLText});
+
+		oModel.setData({
+			people: [{
+				pic: "test-resources/sap/ui/documentation/sdk/images/John_Miller.png",
+				name: "John Miller",
+				role: "team member",
+				headerContent: [{
+					title: "Alfonso",
+					intro: "headerContent aggregation"
+				}]
+			}]
+		});
+		oView.setModel(oModel);
+		oView.placeAt("bigUiArea");
+		sap.ui.getCore().applyChanges();
+		oPC = oView.byId("pc");
+
+		// Assert
+		assert.deepEqual(oPC.getRows()[0].getHeaderContent()[0].getTitle(), "Alfonso", "headerContent is successfully binded");
+
+		//Destroy
+		oView.destroy();
 	});
 
 	return waitForThemeApplied();

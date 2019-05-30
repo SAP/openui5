@@ -2670,9 +2670,9 @@ sap.ui.define([
 	PlanningCalendar.prototype._createPlanningCalendarListItem = function(oRow) {
 		var oListItem, oRowHeader, oRowTimeline;
 
-		//if there's a headerContent in the row - render only the content, otherwise render
-		//PlanningCalendarRowHeader
-		if (oRow.getHeaderContent().length) {
+		//if there's a headerContent in the row or binding - render only the content,
+		//otherwise render PlanningCalendarRowHeader
+		if (oRow.getHeaderContent().length || oRow.getBindingInfo("headerContent")) {
 			oRowHeader = oRow._getPlanningCalendarCustomRowHeader();
 		} else {
 			oRowHeader = new PlanningCalendarRowHeader(oRow.getId() + "-Head", {

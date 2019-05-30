@@ -203,11 +203,13 @@ sap.ui.define(['sap/ui/core/Element', 'sap/m/CustomListItem'], function (Element
 			 * @since 1.67
 			 * @experimental Since 1.67, providing only limited functionality. Also, the API might be changed in the future.
 			 */
-			headerContent : {type : "sap.ui.core.Control", multiple : true, singularName : "headerContent", forwarding: {
+			headerContent : {type : "sap.ui.core.Control", multiple : true, singularName : "headerContent",
+				forwarding: {
 					getter: "_getPlanningCalendarCustomRowHeader",
-					aggregation: "content",
-					forwardBinding: true
-				}}
+					aggregation: "content"
+				},
+				forwardBinding: true
+				}
 
 		},
 		events : {
