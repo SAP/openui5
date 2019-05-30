@@ -89,6 +89,30 @@ function($, Core, KeyCodes, QUtils, Device, XMLView) {
 		assert.equal(document.getElementById(iSecondAnchorId), document.activeElement, "Previous button should be focused after arrow left");
 	});
 
+	QUnit.test("DOWN", function (assert) {
+		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
+			oEvent = {
+				keyCode: KeyCodes.ARROW_DOWN,
+				preventDefault: function () {}
+			},
+			oSpy = this.spy(oEvent, "preventDefault");
+
+		oAnchorBar.onsapdown(oEvent);
+		assert.ok(oSpy.calledOnce, "preventDefault is called on DOWN key for the AnchorBar");
+	});
+
+	QUnit.test("UP", function (assert) {
+		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
+			oEvent = {
+				keyCode: KeyCodes.ARROW_UP,
+				preventDefault: function () {}
+			},
+			oSpy = this.spy(oEvent, "preventDefault");
+
+		oAnchorBar.onsapdown(oEvent);
+		assert.ok(oSpy.calledOnce, "preventDefault is called on UP key for the AnchorBar");
+	});
+
 	QUnit.test("HOME/END", function (assert) {
 		var aAnchors = $(sAnchorSelector),
 			iFirstAnchorId = aAnchors[0].id,
