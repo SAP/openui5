@@ -82,6 +82,24 @@
 	}
 }
 
+.sapMFocus.sapMTextArea {
+	& .sapMInputBaseContentWrapper {
+		outline: none;
+
+		.sapMInputBaseInner {
+			outline: 1px dotted @sapUiContentFocusColor;
+			outline-offset: -2px;
+		}
+	}
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMFocus.sapMTextArea .sapMInputBaseContentWrapper .sapMInputBaseInner {
+		outline: none;
+	}
+}
+
 /**** Compact Size ****/
 .sapUiSizeCompact {
 	.sapMInputBase.sapMTextArea {
