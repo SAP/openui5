@@ -54,29 +54,42 @@ sap.ui.define([
 	 * Lifecycle event handler for ShellBar onAfterRendering event
 	 */
 	ResponsiveHandler.prototype.onAfterRendering = function () {
-		this._oDomRef = this._oControl.getDomRef(); // Cache DOM Reference
 
-		if (this._oControl._oMegaMenu) {
+		var bPhoneRange = Device.media.getCurrentRange("Std", this._oControl.$().outerWidth(true)).name === "Phone";
+		this._oButton = this._oControl._oMegaMenu && this._oControl._oMegaMenu.getAggregation("_button");
+		this._oDomRef = this._oControl.getDomRef(); // Cache DOM Reference
+		this.bIsMegaMenuConfigured = this._oControl._oTitleControl &&
+		this._oControl._oTitleControl === this._oControl._oMegaMenu;
+
+		if (this._oControl._oTitleControl) {
 			// Attach on internal button image load
-			this._oButton = this._oControl._oMegaMenu.getAggregation("_button");
-			if (this._oButton && this._oButton._image) {
+			// Title control is either MegaMenu or Title
+			if (this.bIsMegaMenuConfigured && this._oButton && this._oButton._image) {
 				// We need to update all the measurements of the control when the image is loaded in the DOM as we can't
 				// measure it before that
-				this._oButton._image.attachEvent("load", this._updateMegaMenuWidth, this);
+				if (!this.bMenuButtonImageLoadAttached) {
+					//Load callback attached only on initial rendering
+					this._oButton._image.attachEvent("load", this._updateMegaMenuWidth, this);
+					this.bMenuButtonImageLoadAttached = true;
+				}
 			}
+			if (!this.bIsMegaMenuConfigured) {
+				setTimeout(this._updateMegaMenuWidth.bind(this), 0);
+			}
+		}
+		if (this._oControl._oHomeIcon && !this.bHomeIconLoadAttached) {
+			//Load callback attached only on initial rendering
+			this._oControl._oHomeIcon.attachEvent("load", this._updateHomeIconWidth, this);
+			this.bHomeIconLoadAttached = true;
+		}
+
+
+		if (bPhoneRange) {
+			this._transformTitleControlMobile();
 		}
 
 		this._initResize();
 		this._handleResize();
-	};
-
-	/**
-	 * Lifecycle event handler for ShellBar onBeforeRendering event
-	 */
-	ResponsiveHandler.prototype.onBeforeRendering = function () {
-		if (this._oControl._oHomeIcon) {
-			this._oControl._oHomeIcon.attachEvent("load", this._updateHomeIconWidth, this);
-		}
 	};
 
 	/**
@@ -88,10 +101,17 @@ sap.ui.define([
 		}
 		if (this._oControl._oHomeIcon) {
 			this._oControl._oHomeIcon.detachEvent("load", this._updateHomeIconWidth, this);
+			this.bHomeIconLoadAttached = false;
 		}
 		if (this._oButton) {
 			this._oButton.detachEvent("load", this._updateMegaMenuWidth, this);
 		}
+		if (this._oControl._oTitleControl && this.bIsMegaMenuConfigured &&
+			this._oButton && this._oButton._image) {
+			this._oButton._image.detachEvent("load", this._updateMegaMenuWidth, this);
+			this.bMenuButtonImageLoadAttached = false;
+		}
+
 		this._oControl.removeDelegate(this._oDelegate);
 	};
 
@@ -102,8 +122,13 @@ sap.ui.define([
 	 */
 	ResponsiveHandler.prototype._initResize = function () {
 		this._iStaticWidth = 0;
+		this._iMBWidth = 0;
 
-		this._iMBWidth = this.getTargetWidth(this._oControl._oMegaMenu) + 65/* Control padding and arrow */ + (2 * this._iChildControlMargin);
+		if (this._oControl._oTitleControl ) {
+			this._iMBWidth = this.getTargetWidth(this._oControl._oTitleControl, true) +
+			this._oControl._oTitleControl._iStaticWidth + this._iDoubleChildControlMargin ;
+		}
+
 		this._iTitleWidth = this.getTargetWidth(this._oControl._oSecondTitle);
 
 		if (this._oControl._oHomeIcon) {
@@ -115,7 +140,7 @@ sap.ui.define([
 		}
 
 		if (this._oControl._oMenuButton) {
-			this._iStaticWidth += 36 + this._iDoubleChildControlMargin;
+			this._iStaticWidth += 36 + this._iChildControlMargin;
 		}
 	};
 
@@ -182,11 +207,11 @@ sap.ui.define([
 		if (bPhoneRange && !this.bWasInPhoneRange) {
 			this._fnResize = this._resizeOnPhone;
 			this._transformToPhoneState();
-			return;
+
 		} else if (!bPhoneRange && this.bWasInPhoneRange) {
 			this._fnResize = this._resize;
 			this._transformToRegularState();
-			return;
+
 		}
 
 		// We call the final resize handler which will resize the managed controls according to the UX rules
@@ -203,14 +228,7 @@ sap.ui.define([
 			this._oControl._oSecondTitle.setVisible(false);
 		}
 
-		// Home icon should not be visible
-		if (this._oControl._oHomeIcon) {
-			this._oControl._oHomeIcon.setVisible(false);
-			// We should inject the homeIcon in the MegaMenu and remove the text
-			if (this._oControl._oMegaMenu) {
-				this._oControl._oMegaMenu.setWidth("auto").setText("").setIcon(this._oControl.getHomeIcon());
-			}
-		}
+		this._transformTitleControlMobile();
 
 		// Cache controls layout data
 		this._cacheControlsLayoutData();
@@ -225,7 +243,6 @@ sap.ui.define([
 		this.bWasInPhoneRange = true;
 		this._oControl.invalidate();
 	};
-
 	/**
 	 * Apply's UX rules to the control for bigger than phone screen sizes
 	 * @private
@@ -238,10 +255,15 @@ sap.ui.define([
 
 		// Home icon should be visible
 		if (this._oControl._oHomeIcon) {
-			this._oControl._oHomeIcon.setVisible(true);
 			// If we have MegaMenu we should get back the Icon and restore it's text
 			if (this._oControl._oMegaMenu) {
 				this._oControl._oMegaMenu.setWidth("auto").setText(this._oControl._sTitle).setIcon("");
+			}
+			if (this._oControl._oPrimaryTitle) {
+				this._oControl._oPrimaryTitle.setWidth("auto").setText(this._oControl._sTitle);
+			}
+			if (this.bIsMegaMenuConfigured) {
+				this._oControl._oHomeIcon.setVisible(true);
 			}
 		}
 
@@ -250,6 +272,23 @@ sap.ui.define([
 
 		this.bWasInPhoneRange = false;
 		this._oControl.invalidate();
+	};
+	/**
+	 * Applies different configuration for mobile for some of the contained controls
+	 * @private
+	 */
+	ResponsiveHandler.prototype._transformTitleControlMobile = function (){
+		// Home icon should not be visible
+		if (this._oControl._oHomeIcon) {
+			// We should inject the homeIcon in the MegaMenu and remove the text
+			if (this._oControl._oMegaMenu) {
+				this._oControl._oMegaMenu.setWidth("auto").setText("").setIcon(this._oControl.getHomeIcon());
+			}
+			if (this._oControl._oPrimaryTitle) {
+				this._oControl._oPrimaryTitle.setWidth("0").setText("");
+			}
+			this._oControl._oHomeIcon.setVisible(!this.bIsMegaMenuConfigured);
+		}
 	};
 
 	/**
@@ -269,18 +308,18 @@ sap.ui.define([
 			iAvailableWidth = iWidth - this._iStaticWidth - this._getWidthOfAllNonManagedControls();
 		}
 
-		if (!this._oControl._oHomeIcon && this._oControl._sTitle) {
+		if (!this._oControl._oHomeIcon && this.bIsMegaMenuConfigured) {
 			if (this._iMBWidth >= iAvailableWidth) {
 				// Applied width should be without margins
-				this._oControl._oMegaMenu.setWidth((iAvailableWidth - this._iDoubleChildControlMargin) + "px");
+				this._oControl._oTitleControl.setWidth((iAvailableWidth - this._iDoubleChildControlMargin) + "px");
 			} else {
 				// Applied width should be without margins
-				this._oControl._oMegaMenu.setWidth((this._iMBWidth - this._iDoubleChildControlMargin) + "px");
+				this._oControl._oTitleControl.setWidth((this._iMBWidth - this._iDoubleChildControlMargin) + "px");
 			}
 		}
 
-		if (this._oControl._oMegaMenu) {
-			iAvailableWidth -= this._oControl._oMegaMenu.$().outerWidth(true);
+		if (this._oControl._oTitleControl) {
+			iAvailableWidth -= this._oControl._oTitleControl.$().outerWidth(true);
 		}
 
 		if (iAvailableWidth < 0) {iAvailableWidth = 0;}
@@ -346,18 +385,13 @@ sap.ui.define([
 	 * @private
 	 */
 	ResponsiveHandler.prototype._adaptManagedWidthControls = function (iAvailableWidth) {
-		var bHasTitle = this._oControl._sTitle,
-			iMBWidth = bHasTitle ? this._iMBWidth : 36 + this._iDoubleChildControlMargin,
+		var bHasTitle = !!this._oControl._oTitleControl,
+			iMBWidth = bHasTitle ? this._iMBWidth : 0,
 			iTitleWidth = this._iTitleWidth,
 			iCollectiveWidth = iMBWidth + iTitleWidth,
 			oSecondTitle = this._oControl._oSecondTitle,
-			oMegaMenu = this._oControl._oMegaMenu,
 			oControlSpacer = this._oControl._oControlSpacer,
 			iSecondTitleWidth;
-
-		if (!oMegaMenu) {
-			iCollectiveWidth -= 36 + this._iDoubleChildControlMargin;
-		}
 
 		if (iCollectiveWidth < 0) {iCollectiveWidth = 0;}
 		if (iMBWidth < 0) {iMBWidth = 0;}
@@ -367,11 +401,11 @@ sap.ui.define([
 			oSecondTitle && oSecondTitle.setWidth("0px");
 
 			// Applied width should be without margins
-			bHasTitle && oMegaMenu.setWidth((iAvailableWidth - this._iDoubleChildControlMargin) + "px");
+			bHasTitle && this._oControl._oTitleControl.setWidth((iAvailableWidth - this._iDoubleChildControlMargin) + "px");
 			return;
 		} else {
 			// Applied width should be without margins
-			bHasTitle && oMegaMenu.setWidth((iMBWidth - this._iDoubleChildControlMargin) + "px");
+			bHasTitle && this._oControl._oTitleControl.setWidth((iMBWidth - this._iDoubleChildControlMargin) + "px");
 		}
 
 		if (iAvailableWidth >= iMBWidth && iAvailableWidth <= iCollectiveWidth) {
@@ -440,7 +474,7 @@ sap.ui.define([
 		oDiv.appendChild(oText);
 		oDiv.style.setProperty("white-space", "nowrap");
 		oDiv.style.setProperty("display", "inline-block");
-		oDiv.style.setProperty("font-size", "0.875rem");
+		oDiv.style.setProperty("font-size", oCtr._sFontSize);
 		if (bBold) {
 			oDiv.style.setProperty("font-weight", "bold");
 		}

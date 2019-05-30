@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/core/Element",
-	"sap/m/Label",
+	"sap/m/Title",
 	"sap/m/Image",
 	"sap/tnt/InfoLabel",
 	"./ContentButton",
@@ -15,10 +15,12 @@ sap.ui.define([
 	"sap/m/OverflowToolbarLayoutData",
 	"./CoPilot",
 	"./Accessibility",
-	"sap/m/library"
+	"sap/m/library",
+	"sap/ui/core/library",
+	"sap/ui/core/theming/Parameters"
 ], function(
 	Element,
-	Label,
+	Title,
 	Image,
 	InfoLabel,
 	ContentButton,
@@ -30,7 +32,9 @@ sap.ui.define([
 	OverflowToolbarLayoutData,
 	CoPilot,
 	Accessibility,
-	library
+	library,
+	coreLibrary,
+	Parameters
 ) {
 	"use strict";
 
@@ -42,6 +46,9 @@ sap.ui.define([
 
 	// shortcut for sap.m.ButtonType
 	var ButtonType = library.ButtonType;
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	/**
 	 * Factory class which is used to create internal controls used by the ShellBar control and care for their
@@ -86,12 +93,15 @@ sap.ui.define([
 
 	Factory.prototype.getSecondTitle = function () {
 		if (!this._oControls.oSecondTitle) {
-			this._oControls.oSecondTitle = new Label()
+			this._oControls.oSecondTitle = new Title({
+				titleStyle: TitleLevel.H6
+			})
 				.addStyleClass("sapFShellBarSecondTitle")
 				.setLayoutData(new OverflowToolbarLayoutData({
 					priority: OverflowToolbarPriority.NeverOverflow
 				}));
 		}
+		this._oControls.oSecondTitle._sFontSize = Parameters.get("_sap_f_ShellBar_SecondTitle_FontSize");
 		return this._oControls.oSecondTitle;
 	};
 
@@ -142,7 +152,25 @@ sap.ui.define([
 				priority: OverflowToolbarPriority.NeverOverflow
 			}));
 		}
+		this._oControls.oMegaMenu._iStaticWidth = 36;
+		this._oControls.oMegaMenu._sFontSize = Parameters.get("_sap_f_ShellBar_PrimaryTitle_FontSize");
+
 		return this._oControls.oMegaMenu;
+	};
+
+	Factory.prototype.getPrimaryTitle = function () {
+		if (!this._oControls.oPrimaryTitle) {
+			this._oControls.oPrimaryTitle = new Title({
+				titleStyle: TitleLevel.H6
+			})
+				.setLayoutData(new OverflowToolbarLayoutData({
+					priority: OverflowToolbarPriority.NeverOverflow
+				}))
+				.addStyleClass("sapFShellBarPrimaryTitle");
+		}
+		this._oControls.oPrimaryTitle._iStaticWidth = 12;
+		this._oControls.oPrimaryTitle._sFontSize = Parameters.get("_sap_f_ShellBar_PrimaryTitle_FontSize");
+		return this._oControls.oPrimaryTitle;
 	};
 
 	Factory.prototype.getCopilot = function () {

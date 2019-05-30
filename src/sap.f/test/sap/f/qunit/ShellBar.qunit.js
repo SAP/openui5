@@ -285,6 +285,49 @@ function (
 		oAdditionalButtonSecond.destroy();
 	});
 
+	QUnit.test("Configurations", function (assert) {
+
+		// Act
+		this.oSB.setTitle("Title");
+		this.oSB.setShowMenuButton(true);
+		this.oSB._assignControlsToOverflowToolbar();
+
+
+		// Assert
+		assert.strictEqual(this.oSB._oTitleControl, this.oSB._oPrimaryTitle,
+		"Configuration with MenuButton is correctly rendered");
+		assert.strictEqual(this.oSB._oMegaMenu !== null, true,  "MegaMenu element instance is hold by the control");
+		assert.strictEqual(this.oSB._oOverflowToolbar.getContent().indexOf(this.oSB._oMegaMenu ), -1,
+		"MegaMenu element is not part of the control Overflow Toolbar");
+
+		// Act
+		this.oSB.setMenu(new Menu({}));
+		this.oSB.setShowMenuButton(false);
+		this.oSB._assignControlsToOverflowToolbar();
+
+		// Assert
+		assert.strictEqual(this.oSB._oTitleControl, this.oSB._oMegaMenu,
+			"Configuration without MenuButton is correctly rendered");
+		assert.strictEqual(this.oSB._oPrimaryTitle !== null, true,  "PrimaryTitle element instance is hold by the control");
+		assert.strictEqual(this.oSB._oOverflowToolbar.getContent().indexOf(this.oSB._oPrimaryTitle ), -1,
+			"PrimaryTitle element is not part of the control Overflow Toolbar");
+
+		// Act
+		this.oSB.setTitle("");
+		this.oSB._assignControlsToOverflowToolbar();
+		// Assert
+		assert.strictEqual(this.oSB._oTitleControl,null,
+			"Configuration without MenuButton is correctly rendered");
+		assert.strictEqual(this.oSB._oPrimaryTitle === null && this.oSB._oMegaMenu === null, true,  "PrimaryTitle element instance is hold by the control");
+		assert.strictEqual(this.oSB._oOverflowToolbar.getContent().indexOf(this.oSB._oMegaMenu ), -1,
+			"PrimaryTitle element is not part of the control Overflow Toolbar");
+		assert.strictEqual(this.oSB._oOverflowToolbar.getContent().indexOf(this.oSB._oPrimaryTitle ), -1,
+			"PrimaryTitle element is not part of the control Overflow Toolbar");
+
+		// Cleanup
+
+	});
+
 	QUnit.module("Rendering", {
 		beforeEach: function () {
 			this.oSB = new ShellBar();
@@ -464,7 +507,7 @@ function (
 		assert.ok(aContent[0] === this.oSB._oNavButton, "Control at index 0 is NavButton");
 		assert.ok(aContent[1] === this.oSB._oMenuButton, "Control at index 1 is MenuButton");
 		assert.ok(aContent[2] === this.oSB._oHomeIcon, "Control at index 2 is HomeIcon");
-		assert.ok(aContent[3] === this.oSB._oMegaMenu, "Control at index 3 is MegaMenu");
+		assert.ok(aContent[3] === this.oSB._oPrimaryTitle, "Control at index 3 is PrimaryTitle");
 		assert.ok(aContent[4] === this.oSB._oSecondTitle, "Control at index 4 is SecondTitle");
 		assert.ok(aContent[5] === this.oSB._oControlSpacer, "Control at index 5 is ControlSpacer");
 		assert.ok(aContent[6] === this.oSB._oCopilot, "Control at index 6 is CoPilot");
@@ -486,7 +529,7 @@ function (
 	});
 
 	// Responsiveness
-	QUnit.module("Utility methods", {
+	QUnit.module("Responsiveness", {
 		beforeEach: function () {
 			this.oSB = new ShellBar();
 		},
@@ -536,7 +579,7 @@ function (
 			oControl._oResponsiveHandler._initResize();
 
 			// Assert
-			assert.strictEqual(oControl._oResponsiveHandler._iStaticWidth, oControl._oHomeIcon.$().outerWidth(true) /*logo*/ + 36 + 4 * 2 /*nav button*/ + 36 + 4 * 2 /*menu button*/,
+			assert.strictEqual(oControl._oResponsiveHandler._iStaticWidth, oControl._oHomeIcon.$().outerWidth(true) /*logo*/ + 36 + 4 * 2 /*nav button*/ + 36 + 4 * 1 /*menu button*/,
 			"We calculate size of the logo image " +
 			"side margins of the three elements + twice incrementing with 36 (size of the button)");
 
@@ -549,6 +592,7 @@ function (
 		var oControl = this.oSB;
 		oControl.setSecondTitle("Second title");
 		oControl.setHomeIcon(sap.ui.require.toUrl("sap/ui/documentation/sdk/images/logo_sap.png"));
+		oControl.setShowMenuButton(true);
 
 		oControl.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
@@ -560,7 +604,7 @@ function (
 		// Assert
 
 		assert.strictEqual(oControl._oSecondTitle.getVisible(), false, "phone mode requirements passed");
-		assert.strictEqual(oControl._oHomeIcon.getVisible(), false, "phone mode requirements passed");
+		assert.strictEqual(oControl._oHomeIcon.getVisible(), true, "phone mode requirements passed");
 
 		// Act
 		document.getElementById(DOM_RENDER_LOCATION).style.width = 1024 + "px";
@@ -572,6 +616,17 @@ function (
 		assert.strictEqual(oControl._oHomeIcon.getVisible(), true, "regular mode requirements passed");
 
 
+		// Act
+		document.getElementById(DOM_RENDER_LOCATION).style.width = 300 + "px";
+		oControl.setShowMenuButton(false);
+		this.oSB._oResponsiveHandler._handleResize();
+
+		// Assert
+
+		assert.strictEqual(oControl._oHomeIcon.getVisible(), true, "regular mode requirements passed");
+
+		//Cleanup
+		document.getElementById(DOM_RENDER_LOCATION).style.width = 1024 + "px";
 	});
 
 	// Accessibility related tests

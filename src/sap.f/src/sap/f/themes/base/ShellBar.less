@@ -4,6 +4,9 @@
 @_sap_f_ShellBar_ChildMargin: 4;
 @_sap_f_ShellBar_CoPilotWidth: 48;
 
+@_sap_f_ShellBar_PrimaryTitle_FontSize: @sapMFontMediumSize;
+@_sap_f_ShellBar_SecondTitle_FontSize: @sapMFontSmallSize;
+
 .sapFShellBar {
 	height: 3rem;
 	padding-left: ~"@{_sap_f_ShellBar_PaddingDesktop}rem";
@@ -155,6 +158,31 @@
 			margin-right: 0;
 		}
 	}
+
+	.sapFShellBarPrimaryTitle,
+	.sapFShellBarSecondTitle {
+		vertical-align: middle;
+	}
+
+	.sapFShellBarPrimaryTitle {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		background: transparent;
+		color: @sapUiShellTextColor;
+		font-size: @_sap_f_ShellBar_PrimaryTitle_FontSize;
+		line-height: 1rem;
+		vertical-align: middle;
+		font-weight: bold;
+	}
+
+	.sapFShellBarSecondTitle {
+		font-family: @sapUiFontFamily;
+		font-size: @_sap_f_ShellBar_SecondTitle_FontSize;
+		color: @sapUiShellTextColor;
+		line-height: 2rem;
+		vertical-align: middle;
+	}
+
 	.sapUiSizeCompact & {
 		&.sapMPageHeader .sapMIBar {
 			height: 3rem;
@@ -214,4 +242,11 @@
 	.sapFShellBarOverflowButton[data-notifications]:after {
 		display: none;
 	}
+}
+
+.sapFShellBarTitleCollapsed {
+	&>span {
+		display: none;
+	}
+
 }
