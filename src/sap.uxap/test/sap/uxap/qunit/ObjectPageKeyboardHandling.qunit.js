@@ -292,7 +292,9 @@ function($, Core, KeyCodes, QUtils, Device, XMLView) {
 
 	QUnit.test("PAGE_DOWN/PAGE_UP", function (assert) {
 		var aSections = this.oObjectPage.getSections(),
-			aSubSections = aSections[8].getSubSections();
+			aSubSections = aSections[8].getSubSections(),
+			oSingleSubsection = aSections[0].getSubSections()[0],
+		    oSpy = this.spy(oSingleSubsection, "_scrollParent");
 
 		// Section
 		aSections[0].$().focus();
@@ -319,6 +321,13 @@ function($, Core, KeyCodes, QUtils, Device, XMLView) {
 		aSubSections[2].$().focus();
 		QUtils.triggerKeydown(aSubSections[2].sId, KeyCodes.PAGE_UP);
 		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[0].sId, "First subsection up should be focused after PAGE UP");
+
+		// Single subsection should not scroll the page
+		oSingleSubsection.$().focus();
+		QUtils.triggerKeydown(oSingleSubsection.getId(), KeyCodes.PAGE_DOWN);
+		assert.ok(oSpy.notCalled, "_scrollParent should not be called");
+		QUtils.triggerKeydown(oSingleSubsection.getId(), KeyCodes.PAGE_UP);
+		assert.ok(oSpy.notCalled, "_scrollParent should not be called");
 	});
 
 	/*******************************************************************************
