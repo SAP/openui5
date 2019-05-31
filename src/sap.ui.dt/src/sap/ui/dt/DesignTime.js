@@ -291,11 +291,14 @@ function (
 			}, this);
 
 			// Attach busyChange to available plugins
-			this.getPlugins().forEach(this._attachBusyChange, this);
+			this.getPlugins().forEach(function(oPlugin) {
+				oPlugin.attachEvent("busyChange", this._onBusyChange, this);
+			}, this);
 
 			// Attach busyChange for future added plugins
 			this.attachEvent("addPlugin", function (oEvent) {
-				this._attachBusyChange(oEvent.getParameter('plugin'));
+				var oPlugin = oEvent.getParameter('plugin');
+				oPlugin.attachEvent("busyChange", this._onBusyChange, this);
 			}, this);
 
 			// Toggle root overlays visibility when property 'enabled' is changed
@@ -318,18 +321,18 @@ function (
 		}
 	});
 
-	DesignTime.prototype._attachBusyChange = function (oPlugin) {
-		var iTaskId;
-		oPlugin.attachBusyChange(function (oEvent) {
-			if (oEvent.getParameter("busy")) {
-				iTaskId = this._oTaskManager.add({
-					type: "pluginBusy",
-					plugin: oEvent.getSource().getActionName()
-				});
-			} else {
-				this._oTaskManager.complete(iTaskId);
-			}
-		}, this);
+	DesignTime.prototype._onBusyChange = function (oEvent) {
+		if (oEvent.getParameter("busy")) {
+			this._oTaskManager.add({
+				type: "pluginBusy",
+				plugin: oEvent.getSource().getMetadata().getName()
+			});
+		} else {
+			this._oTaskManager.completeBy({
+				type: "pluginBusy",
+				plugin: oEvent.getSource().getMetadata().getName()
+			});
+		}
 	};
 
 	DesignTime.prototype._removeOverlayFromSyncingBatch = function (oElementOverlay) {
@@ -483,10 +486,10 @@ function (
 	 */
 	DesignTime.prototype.addPlugin = function (oPlugin) {
 		this.addAggregation("plugins", oPlugin);
-		oPlugin.setDesignTime(this);
 		this.fireAddPlugin({
 			plugin: oPlugin
 		});
+		oPlugin.setDesignTime(this);
 		return this;
 	};
 
@@ -498,10 +501,11 @@ function (
 	 * @protected
 	 */
 	DesignTime.prototype.insertPlugin = function (oPlugin, iIndex) {
-		oPlugin.setDesignTime(this);
-
 		this.insertAggregation("plugins", oPlugin, iIndex);
-
+		this.fireAddPlugin({
+			plugin: oPlugin
+		});
+		oPlugin.setDesignTime(this);
 		return this;
 	};
 
@@ -515,9 +519,9 @@ function (
 		this.getPlugins().forEach(function (oCurrentPlugin) {
 			if (oCurrentPlugin === oPlugin) {
 				oPlugin.setDesignTime(null);
-				return;
+				oPlugin.detachEvent("busyChange", this._onBusyChange, this);
 			}
-		});
+		}.bind(this));
 
 		this.removeAggregation("plugins", oPlugin);
 
@@ -532,7 +536,8 @@ function (
 	DesignTime.prototype.removeAllPlugins = function () {
 		this.getPlugins().forEach(function (oPlugin) {
 			oPlugin.setDesignTime(null);
-		});
+			oPlugin.detachEvent("busyChange", this._onBusyChange, this);
+		}.bind(this));
 
 		this.removeAllAggregation("plugins");
 
