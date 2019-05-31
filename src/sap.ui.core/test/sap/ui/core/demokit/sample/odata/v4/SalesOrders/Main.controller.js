@@ -55,6 +55,8 @@ sap.ui.define([
 				oUIModel = this.getView().getModel("ui");
 
 			oUIModel.setProperty("/bLineItemSelected", !!oSalesOrderLineItemContext);
+			oUIModel.setProperty("/bSelectedSalesOrderItemTransient",
+				oSalesOrderLineItemContext && oSalesOrderLineItemContext.isTransient());
 
 			if (!oSalesOrderLineItemContext) {
 				oSalesOrderLineItemsTable.removeSelections();
@@ -171,6 +173,7 @@ sap.ui.define([
 		onCreateSalesOrderLineItem : function (oEvent) {
 			var oContext,
 				oDeliveryDate = new Date(),
+				oTable = this.byId("SO_2_SOITEM"),
 				that = this;
 
 			oDeliveryDate.setFullYear(oDeliveryDate.getFullYear() + 1);
@@ -181,17 +184,21 @@ sap.ui.define([
 				"ProductID" : "HT-1000",
 				"Quantity" : "1.000",
 				"QuantityUnit" : "EA"
-			}, /*TODO bSkipRefresh : false!*/true, true);
+			}, false, true);
 			// select the newly created one
-			this.byId("SO_2_SOITEM").setSelectedItem(
-				this.byId("SO_2_SOITEM").getItems()[oContext.getIndex()]);
+			oTable.setSelectedItem(oTable.getItems()[oContext.getIndex()]);
 			this._setSalesOrderLineItemBindingContext(oContext);
 			this.setSelectionMode(oContext);
-			this.byId("SO_2_SOITEM").getItems()[0].focus();
+			oTable.getItems()[0].focus();
 
 			// Note: this promise fails only if the transient entity is delete or canceled
 			this.oSalesOrderLineItemCreated = oContext.created().then(function () {
+				var oItem = oTable.getSelectedItem();
+
 				MessageBox.success("Line item created: " + oContext.getProperty("ItemPosition"));
+				if (oItem && oItem.getBindingContext() === oContext) {
+					that._setSalesOrderLineItemBindingContext(oContext);
+				}
 			}).catch(function () {
 				// avoid 'Uncaught (in promise)' console errors
 			}).finally(function () {
@@ -273,7 +280,7 @@ sap.ui.define([
 						MessageBox.success("Deleted Sales Order " + sSalesOrderLineItem);
 						// item removed, remove context of dependent bindings and hide details
 						that._setSalesOrderLineItemBindingContext();
-						that.refreshSingle();
+						that.requestSideEffects();
 					});
 			}
 
@@ -390,7 +397,7 @@ sap.ui.define([
 				// wait until created handler (if any) is processed
 				return that.oSalesOrderLineItemCreated;
 			}).then(function () {
-				that.refreshSingle();
+				that.requestSideEffects();
 			});
 		},
 
@@ -516,18 +523,21 @@ sap.ui.define([
 		},
 
 		/**
-		 * Refreshes the given context if there are no pending changes.
+		 * Request side effects for the selected sales order if there are no pending changes.
 		 */
-		refreshSingle : function () {
+		requestSideEffects : function () {
 			var oContext = this.byId("objectPage").getObjectBinding().getContext();
 
 			if (oContext.hasPendingChanges()) {
 				MessageToast.show("Cannot refresh due to unsaved changes, reset changes before"
 					+ " refresh");
 			} else {
-				// Trigger refresh for the corresponding entry in the SalesOrderList to get
-				// the new ETag also there. This refreshes also all dependent bindings.
-				oContext.refresh();
+				// Request side effects (and ETag) of the corresponding entry in the SalesOrderList
+				oContext.requestSideEffects([
+					{$PropertyPath : "ChangedAt"},
+					{$PropertyPath : "GrossAmount"},
+					{$PropertyPath : "Note"}]);
+				this.submitBatch("UpdateGroup");
 			}
 		},
 

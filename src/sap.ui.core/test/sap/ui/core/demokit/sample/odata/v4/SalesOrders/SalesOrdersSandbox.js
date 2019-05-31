@@ -117,6 +117,15 @@ sap.ui.define([
 			"SalesOrderList('0500000004')?custom-option=value&$select=BuyerID,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
 				source : "SalesOrderList_4_refresh.json"
 			},
+			"SalesOrderList?custom-option=value&$filter=SalesOrderID%20eq%20'0500000004'&$select=ChangedAt,GrossAmount,Note,SalesOrderID" : {
+				source : "SalesOrderList_4_sideEffects1.json"
+			},
+			"SalesOrderList('0500000004')?custom-option=value&$select=ChangedAt,Note" : {
+				source : "SalesOrderList_4_sideEffects2.json"
+			},
+			"SalesOrderList('0500000004')/SO_2_SOITEM(SalesOrderID='0500000004',ItemPosition='0000000070')?custom-option=value&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$select=DeliveryDate,GrossAmount,ItemPosition,Messages,Note,ProductID,Quantity,QuantityUnit,SalesOrderID" : {
+				source : "SalesOrderIist('05000000004')-SO_2_SOITEM('70').json"
+			},
 			"SalesOrderList('0500000005')?custom-option=value&$select=ChangedAt,CreatedAt,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=Address/City,Address/PostalCode,BusinessPartnerID,CompanyName,PhoneNumber),SO_2_SCHDL($select=DeliveryDate,ScheduleKey)" : {
 				source : "SalesOrderList_5.json"
 			},
@@ -156,8 +165,17 @@ sap.ui.define([
 			"SalesOrderList('NEW1')?custom-option=value&$select=BuyerID,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
 				source : "SalesOrderList('NEW1')_refresh.json"
 			},
+			"SalesOrderList?custom-option=value&$filter=SalesOrderID%20eq%20'NEW1'&$select=ChangedAt,GrossAmount,Note,SalesOrderID" : {
+				source : "SalesOrderList('NEW1')_sideEffects1.json"
+			},
+			"SalesOrderList('NEW1')?custom-option=value&$select=ChangedAt,Note" : {
+				source : "SalesOrderList('NEW1')_sideEffects2.json"
+			},
 			"SalesOrderList('NEW1')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$orderby=ItemPosition&$select=DeliveryDate,GrossAmount,ItemPosition,Messages,Note,ProductID,Quantity,QuantityUnit,SalesOrderID&$filter=ItemPosition%20gt%20'0000000000'&$skip=0&$top=100" : {
 				source : "SalesOrderItemsList_empty.json"
+			},
+			"SalesOrderList('NEW1')/SO_2_SOITEM(SalesOrderID='NEW1',ItemPosition='10')?custom-option=value&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$select=DeliveryDate,GrossAmount,ItemPosition,Messages,Note,ProductID,Quantity,QuantityUnit,SalesOrderID" : {
+				source : "SalesOrderList('NEW1')-SO_2_SOITEM('10').json"
 			},
 			"POST SalesOrderList('NEW1')/SO_2_SOITEM?custom-option=value" : {
 				source : "POST-SalesOrderList('NEW1')-SO_2_SOITEM.json"
@@ -177,8 +195,20 @@ sap.ui.define([
 			"SalesOrderList('NEW3')?custom-option=value&$select=BuyerID,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
 				source : "SalesOrderList('NEW3')_refresh.json"
 			},
+			"SalesOrderList?custom-option=value&$filter=SalesOrderID%20eq%20'NEW3'&$select=ChangedAt,GrossAmount,Note,SalesOrderID" : {
+				source : "SalesOrderList('NEW3')_sideEffects1.json"
+			},
+			"SalesOrderList('NEW3')?custom-option=value&$select=ChangedAt,Note" : {
+				source : "SalesOrderList('NEW3')_sideEffects2.json"
+			},
 			"SalesOrderList('NEW3')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$orderby=ItemPosition&$select=DeliveryDate,GrossAmount,ItemPosition,Messages,Note,ProductID,Quantity,QuantityUnit,SalesOrderID&$filter=ItemPosition%20gt%20'0000000000'&$skip=0&$top=100" : {
 				source : "SalesOrderItemsList_empty.json"
+			},
+			"SalesOrderList('NEW3')/SO_2_SOITEM(SalesOrderID='NEW3',ItemPosition='10')?custom-option=value&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$select=DeliveryDate,GrossAmount,ItemPosition,Messages,Note,ProductID,Quantity,QuantityUnit,SalesOrderID" : {
+				source : "SalesOrderList('NEW3')-SO_2_SOITEM('10').json"
+			},
+			"SalesOrderList('NEW3')/SO_2_SOITEM(SalesOrderID='NEW3',ItemPosition='20')?custom-option=value&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$select=DeliveryDate,GrossAmount,ItemPosition,Messages,Note,ProductID,Quantity,QuantityUnit,SalesOrderID" : {
+				source : "SalesOrderList('NEW3')-SO_2_SOITEM('20').json"
 			},
 			"POST SalesOrderList('NEW3')/SO_2_SOITEM?custom-option=value" : [{
 				ifMatch : /,"Note":"new 10"/g,

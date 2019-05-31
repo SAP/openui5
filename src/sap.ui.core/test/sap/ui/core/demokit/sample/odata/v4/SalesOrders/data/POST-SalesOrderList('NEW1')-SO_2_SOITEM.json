@@ -1,6 +1,6 @@
 {
 	"SalesOrderID" : "NEW1",
-	"ItemPosition" : "",
+	"ItemPosition" : "10",
 	"DeliveryDate" : "2019-08-22T11:22:16.000Z",
 	"GrossAmount" : "1137.64",
 	"ProductID" : "HT-1000",
