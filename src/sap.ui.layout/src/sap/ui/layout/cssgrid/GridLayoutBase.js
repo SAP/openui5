@@ -148,7 +148,7 @@ sap.ui.define([
 		oGrid.getGridDomRefs().forEach(function (oDomRef) {
 			if (oDomRef.children){
 				for (var i = 0; i < oDomRef.children.length; i++) {
-					if (!oDomRef.children[i].classList.contains("sapMGHLI")) {
+					if (!oDomRef.children[i].classList.contains("sapMGHLI") && !oDomRef.children[i].classList.contains("sapUiBlockLayerTabbable")) { // the item is not group header or a block layer tabbable
 						oDomRef.children[i].classList.add("sapUiLayoutCSSGridItem");
 					}
 				}

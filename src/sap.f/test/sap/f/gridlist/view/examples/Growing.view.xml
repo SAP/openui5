@@ -7,7 +7,7 @@
 
     <f:GridList
 		id="growingGridList"
-		headerText="GridList with a basic layout"
+		headerText="GridList with growing"
 		items="{ path: '/' }"
 		growing="true"
 		growingThreshold="4">
@@ -19,7 +19,7 @@
             </grid:GridBasicLayout>
         </f:customLayout>
 
-		<CustomListItem>
+		<CustomListItem blocked="{blocked}" busy="{busy}">
 			<VBox height="100%">
 				<VBox class="sapUiSmallMargin">
 					<layoutData>
