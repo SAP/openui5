@@ -746,11 +746,15 @@ sap.ui.define([
 			return;
 		}
 
-		// toggle select all header checkbox and fire its event
-		if (this._selectAllCheckBox && oEvent.target === this.getDomRef("tblHeader")) {
-			this._selectAllCheckBox.setSelected(!this._selectAllCheckBox.getSelected()).fireSelect();
+		if (oEvent.target.id == this.getId("tblHeader")) {
+			// prevent from scrolling
 			oEvent.preventDefault();
-			oEvent.setMarked();
+
+			// toggle select all header checkbox and fire its event
+			if (this._selectAllCheckBox) {
+				this._selectAllCheckBox.setSelected(!this._selectAllCheckBox.getSelected()).fireSelect();
+				oEvent.setMarked();
+			}
 		}
 	};
 
