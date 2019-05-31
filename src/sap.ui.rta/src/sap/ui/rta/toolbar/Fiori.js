@@ -3,9 +3,9 @@
  */
 
 sap.ui.define([
-	'sap/m/Image',
-	'./Adaptation',
-	'../Utils',
+	"sap/m/Image",
+	"./Adaptation",
+	"../Utils",
 	"sap/base/Log"
 ],
 function(
@@ -114,5 +114,4 @@ function(
 	};
 
 	return Fiori;
-
 }, true);

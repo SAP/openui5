@@ -5,17 +5,17 @@
 /* global Map */
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	'sap/ui/base/ManagedObject',
-	'sap/m/InstanceManager',
-	'sap/ui/dt/Overlay',
-	'sap/ui/dt/Util',
-	'sap/ui/fl/Utils',
-	'sap/ui/core/Component',
-	'sap/ui/core/ComponentContainer',
-	'sap/ui/core/Element',
-	'sap/ui/dt/util/ZIndexManager',
-	'sap/m/Dialog',
-	'sap/m/Popover'
+	"sap/ui/base/ManagedObject",
+	"sap/m/InstanceManager",
+	"sap/ui/dt/Overlay",
+	"sap/ui/dt/Util",
+	"sap/ui/fl/Utils",
+	"sap/ui/core/Component",
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/Element",
+	"sap/ui/dt/util/ZIndexManager",
+	"sap/m/Dialog",
+	"sap/m/Popover"
 ],
 function (
 	jQuery,
@@ -34,8 +34,8 @@ function (
 	"use strict";
 
 	var FOCUS_EVENT_NAMES = {
-		"add": "_activateFocusHandle",
-		"remove": "_deactivateFocusHandle"
+		add: "_activateFocusHandle",
+		remove: "_deactivateFocusHandle"
 	};
 
 	/**
@@ -100,7 +100,6 @@ function (
 	 * @private
 	 */
 	PopupManager.prototype._overrideInstanceFunctions = function() {
-
 		//check open popups and create overlays while starting RTA
 		this._applyPopupAttributes({
 			method: this._createPopupOverlays,
@@ -153,14 +152,14 @@ function (
 	PopupManager.prototype._getValidatedPopups = function(aOpenPopups) {
 		var aAllSupportedPopups = [];
 		aOpenPopups = aOpenPopups.filter(function(oPopupElement) {
-				if (this._isPopupAdaptable(oPopupElement)) {
-					aAllSupportedPopups.push(oPopupElement);
-					return true;
-				} else if (oPopupElement instanceof Dialog) {
+			if (this._isPopupAdaptable(oPopupElement)) {
+				aAllSupportedPopups.push(oPopupElement);
+				return true;
+			} else if (oPopupElement instanceof Dialog) {
 					// all modal type popups are supported for which modal property is later turned true, when in Adaptation mode
-					aAllSupportedPopups.push(oPopupElement);
-				}
-			}.bind(this));
+				aAllSupportedPopups.push(oPopupElement);
+			}
+		}.bind(this));
 
 		return {
 			relevant: aOpenPopups,
@@ -224,7 +223,7 @@ function (
 		var sNewMode = oEvent.getParameters().mode;
 
 		var fnApplyFocusAndSetModal = function (sMode, oPopover) {
-			if (sMode === 'navigation'){
+			if (sMode === 'navigation') {
 				// add focus handlers
 				oPopover.oPopup[this._getFocusEventName("add")]();
 			} else {
@@ -284,7 +283,6 @@ function (
 	 * @private
 	 */
 	PopupManager.prototype._overrideAddPopupInstance = function() {
-
 		//Dialog
 		this._fnOriginalAddDialogInstance = InstanceManager.addDialogInstance;
 		InstanceManager.addDialogInstance = this._overrideAddFunctions(this._fnOriginalAddDialogInstance);
@@ -363,7 +361,6 @@ function (
 					//call passed method for all relevant popups
 					mPropertyBag.method.call(this, oPopupElement);
 				}.bind(this));
-
 			}
 		}.bind(this));
 
@@ -424,7 +421,6 @@ function (
 	 * @private
 	 */
 	PopupManager.prototype._overrideRemovePopupInstance = function() {
-
 		//Dialog
 		this._fnOriginalRemoveDialogInstance = InstanceManager.removeDialogInstance;
 		InstanceManager.removeDialogInstance = this._overrideRemoveFunctions(this._fnOriginalRemoveDialogInstance);
@@ -506,7 +502,7 @@ function (
 			}
 		}
 
-		return oRootComponent ? oRootComponent : oComponent;
+		return oRootComponent || oComponent;
 	};
 
 	/**
@@ -599,5 +595,4 @@ function (
 	};
 
 	return PopupManager;
-
 }, /* bExport= */ true);

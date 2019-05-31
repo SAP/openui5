@@ -70,10 +70,10 @@ function (
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.uxap.ObjectPageSection" : {
-					"stashControl": {
-						"changeHandler": "default",
-						"layers": {
-							"USER": true
+					stashControl: {
+						changeHandler: "default",
+						layers: {
+							USER: true
 						}
 					}
 				}
@@ -173,10 +173,10 @@ function (
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.uxap.ObjectPageSection" : {
-					"stashControl": {
-						"changeHandler": "default",
-						"layers": {
-							"USER": true
+					stashControl: {
+						changeHandler: "default",
+						layers: {
+							USER: true
 						}
 					}
 				}
@@ -222,5 +222,4 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

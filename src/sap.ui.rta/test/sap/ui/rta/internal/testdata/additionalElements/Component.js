@@ -19,7 +19,6 @@ sap.ui.define([
 	App,
 	library
 ) {
-
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
@@ -48,7 +47,6 @@ sap.ui.define([
 		 * @returns {sap.ui.core.Control} the content
 		 */
 		createContent : function() {
-
 			// app specific setup
 			this._createFakeLrep();
 
@@ -69,7 +67,6 @@ sap.ui.define([
 			oApp.addPage(oPage);
 
 			return oApp;
-
 		},
 
 		/**
@@ -79,8 +76,8 @@ sap.ui.define([
 		_createFakeLrep: function () {
 			if (UrlParser.getParam('sap-rta-mock-lrep') !== false) {
 				this.FakeLrepConnectorStorage.enableFakeConnector({
-					"isAtoEnabled": true,
-					"isAtoAvailable": true
+					isAtoEnabled: true,
+					isAtoAvailable: true
 				});
 			}
 		},
@@ -90,9 +87,9 @@ sap.ui.define([
 		 * @private
 		 */
 		_enableExtensibility: function () {
-			Access.getBusinessContexts = function(sServiceUri, sEntityTypeName, sEntitySetName){
+			Access.getBusinessContexts = function(sServiceUri, sEntityTypeName, sEntitySetName) {
 				return Promise.resolve({
-					BusinessContexts: [{ BusinessContext: sEntityTypeName + " EntityTypeContext", BusinessContextDescription: "Other BusinessContext description" }, { BusinessContext: sEntitySetName + " EntitySetContext" , BusinessContextDescription: "Some BusinessContext description"} ],
+					BusinessContexts: [{ BusinessContext: sEntityTypeName + " EntityTypeContext", BusinessContextDescription: "Other BusinessContext description" }, { BusinessContext: sEntitySetName + " EntitySetContext", BusinessContextDescription: "Some BusinessContext description"}],
 					ServiceName: sServiceUri,
 					ServiceVersion: "some dummy ServiceVersion 0.0.1",
 					EntityType : sEntityTypeName
@@ -101,23 +98,23 @@ sap.ui.define([
 
 			sap.ushell = Object.assign({}, sap.ushell, {
 				Container : {
-					getService : function(){
+					getService : function() {
 						return {
-							hrefForExternal : function(mData){
+							hrefForExternal : function(mData) {
 								return "./testdata/additionalElements/extensibilityTool.html?" + URI.encodeQuery(JSON.stringify(mData));
 							},
-							parseShellHash : function(){
+							parseShellHash : function() {
 								//dummy
 							},
-							registerNavigationFilter : function(){
+							registerNavigationFilter : function() {
 								//dummy
 							},
-							unregisterNavigationFilter : function(){
+							unregisterNavigationFilter : function() {
 								//dummy
 							}
 						};
 					},
-					getLogonSystem : function(){
+					getLogonSystem : function() {
 						return {
 							getName: function() {
 								return "ABC";
@@ -136,7 +133,7 @@ sap.ui.define([
 				}
 			});
 
-			sap.ui.getCore().getEventBus().subscribe("sap.ui.core.UnrecoverableClientStateCorruption","RequestReload", function(){
+			sap.ui.getCore().getEventBus().subscribe("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", function() {
 				sap.m.MessageBox.warning("Service Outdated, Please restart the UI - In real world other dialog will come up, that can restart the UI");
 			});
 		}

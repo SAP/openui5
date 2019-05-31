@@ -6,10 +6,8 @@ sap.ui.define([
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/transport/Transports",
-	"sap/ui/fl/transport/TransportSelection",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/Utils",
-	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/descriptorRelated/internal/Utils",
 	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
 	"sap/base/Log",
@@ -20,10 +18,8 @@ sap.ui.define([
 	FakeLrepConnectorSessionStorage,
 	Settings,
 	Transports,
-	TransportSelection,
 	FlUtils,
 	RtaUtils,
-	LrepConnector,
 	DescriptorUtils,
 	DescriptorVariantFactory,
 	Log,
@@ -117,10 +113,10 @@ sap.ui.define([
 
 		QUnit.test("When getInlinePropertyChange() method is called", function (assert) {
 			var oPropertyChange = {
-				"type": "XTIT",
-				"maxLength": 50,
-				"comment": "New title entered by a key user via RTA tool",
-				"value": {
+				type: "XTIT",
+				maxLength: 50,
+				comment: "New title entered by a key user via RTA tool",
+				value: {
 					"": "TestTitle"
 				}
 			};
@@ -137,15 +133,15 @@ sap.ui.define([
 
 		QUnit.test("When getInboundInfo() is called, the semantic object and action of running inbound does not match with all possible inbounds", function (assert) {
 			var oInbounds = {
-				"inbound1": {
+				inbound1: {
 					semanticObject: "semanticObject1",
 					action: "action1"
 				},
-				"inbound2": {
+				inbound2: {
 					semanticObject: "semanticObject2",
 					action: "action2"
 				},
-				"inbound3": {
+				inbound3: {
 					semanticObject: "semanticObject3",
 					action: "action3"
 				}
@@ -156,15 +152,15 @@ sap.ui.define([
 
 		QUnit.test("When getInboundInfo() is called, the semantic object and action of running inbound match with 1 inbounds' SO and action", function (assert) {
 			var oInbounds = {
-				"inbound1": {
+				inbound1: {
 					semanticObject: "semanticObject1",
 					action: "action1"
 				},
-				"inbound2": {
+				inbound2: {
 					semanticObject: "testSemanticObject",
 					action: "testAction"
 				},
-				"inbound3": {
+				inbound3: {
 					semanticObject: "semanticObject3",
 					action: "action3"
 				}
@@ -175,15 +171,15 @@ sap.ui.define([
 
 		QUnit.test("When getInboundInfo() is called, the semantic object and action of running inbound match with 2 inbounds' SO and action", function (assert) {
 			var oInbounds = {
-				"inbound1": {
+				inbound1: {
 					semanticObject: "semanticObject1",
 					action: "action1"
 				},
-				"inbound2": {
+				inbound2: {
 					semanticObject: "testSemanticObject",
 					action: "testAction"
 				},
-				"inbound3": {
+				inbound3: {
 					semanticObject: "testSemanticObject",
 					action: "testAction"
 				}
@@ -194,18 +190,18 @@ sap.ui.define([
 
 		QUnit.test("When getInlineChangesForInboundProperties() method is called for title inline change of inbound", function (assert) {
 			var oInboundPropertyChange = {
-				"inboundId": "testInbound",
-				"entityPropertyChange": {
-					"propertyPath": "title",
-					"operation": "UPSERT",
-					"propertyValue": "{{appVariantId_sap.app.crossNavigation.inbounds.testInbound.title}}"
+				inboundId: "testInbound",
+				entityPropertyChange: {
+					propertyPath: "title",
+					operation: "UPSERT",
+					propertyValue: "{{appVariantId_sap.app.crossNavigation.inbounds.testInbound.title}}"
 				},
-				"texts": {
+				texts: {
 					"appVariantId_sap.app.crossNavigation.inbounds.testInbound.title": {
-						"type": "XTIT",
-						"maxLength": 50,
-						"comment": "New title entered by a key user via RTA tool",
-						"value": {
+						type: "XTIT",
+						maxLength: 50,
+						comment: "New title entered by a key user via RTA tool",
+						value: {
 							"": "Test Title"
 						}
 					}
@@ -216,13 +212,13 @@ sap.ui.define([
 
 		QUnit.test("When getInlineChangesForInboundProperties() method is called for icon inline change of inbound", function (assert) {
 			var oInboundPropertyChange = {
-				"inboundId": "testInbound",
-				"entityPropertyChange": {
-					"propertyPath": "icon",
-					"operation": "UPSERT",
-					"propertyValue": "Test icon"
+				inboundId: "testInbound",
+				entityPropertyChange: {
+					propertyPath: "icon",
+					operation: "UPSERT",
+					propertyValue: "Test icon"
 				},
-				"texts": {}
+				texts: {}
 			};
 			assert.deepEqual(AppVariantUtils.getInlineChangesForInboundProperties("testInbound", "appVariantId", "icon", "Test icon"), oInboundPropertyChange, "then the inbound property change is correct");
 		});
@@ -230,18 +226,18 @@ sap.ui.define([
 		QUnit.test("When getInlineChangeForInboundPropertySaveAs() method is called", function (assert) {
 			var oGeneratedID = AppVariantUtils.getId("testId");
 			var oInboundPropertyChange = {
-				"inboundId": "testInbound",
-				"entityPropertyChange": {
-					"propertyPath": "signature/parameters/sap-appvar-id",
-					"operation": "UPSERT",
-					"propertyValue": {
-						"required": true,
-						"filter": {
-							"value": oGeneratedID,
-							"format": "plain"
+				inboundId: "testInbound",
+				entityPropertyChange: {
+					propertyPath: "signature/parameters/sap-appvar-id",
+					operation: "UPSERT",
+					propertyValue: {
+						required: true,
+						filter: {
+							value: oGeneratedID,
+							format: "plain"
 						},
-						"launcherValue": {
-							"value": oGeneratedID
+						launcherValue: {
+							value: oGeneratedID
 						}
 					}
 				}
@@ -269,10 +265,10 @@ sap.ui.define([
 
 		QUnit.test("When createInlineChange() method is called for propertyChange 'title'", function (assert) {
 			var oPropertyChange = {
-				"type": "XTIT",
-				"maxLength": 50,
-				"comment": "New title entered by a key user via RTA tool",
-				"value": {
+				type: "XTIT",
+				maxLength: 50,
+				comment: "New title entered by a key user via RTA tool",
+				value: {
 					"": "Test Title"
 				}
 			};
@@ -285,10 +281,10 @@ sap.ui.define([
 
 		QUnit.test("When createInlineChange() method is called for propertyChange 'subTitle'", function (assert) {
 			var oPropertyChange = {
-				"type": "XTIT",
-				"maxLength": 50,
-				"comment": "New subtitle entered by a key user via RTA tool",
-				"value": {
+				type: "XTIT",
+				maxLength: 50,
+				comment: "New subtitle entered by a key user via RTA tool",
+				value: {
 					"": "Test Subtitle"
 				}
 			};
@@ -301,10 +297,10 @@ sap.ui.define([
 
 		QUnit.test("When createInlineChange() method is called for propertyChange 'description'", function (assert) {
 			var oPropertyChange = {
-				"type": "XTIT",
-				"maxLength": 50,
-				"comment": "New description entered by a key user via RTA tool",
-				"value": {
+				type: "XTIT",
+				maxLength: 50,
+				comment: "New description entered by a key user via RTA tool",
+				value: {
 					"": "Test Description"
 				}
 			};
@@ -329,18 +325,18 @@ sap.ui.define([
 		QUnit.test("When createInlineChange() method is called for propertyChange 'inbound'", function (assert) {
 			var oGeneratedID = AppVariantUtils.getId("testId");
 			var oPropertyChange = {
-				"inboundId": "testInbound",
-				"entityPropertyChange": {
-					"propertyPath": "signature/parameters/sap-appvar-id",
-					"operation": "UPSERT",
-					"propertyValue": {
-						"required": true,
-						"filter": {
-							"value": oGeneratedID,
-							"format": "plain"
+				inboundId: "testInbound",
+				entityPropertyChange: {
+					propertyPath: "signature/parameters/sap-appvar-id",
+					operation: "UPSERT",
+					propertyValue: {
+						required: true,
+						filter: {
+							value: oGeneratedID,
+							format: "plain"
 						},
-						"launcherValue": {
-							"value": oGeneratedID
+						launcherValue: {
+							value: oGeneratedID
 						}
 					}
 				}
@@ -354,8 +350,8 @@ sap.ui.define([
 
 		QUnit.test("When createInlineChange() method is called for propertyChange 'createInbound'", function (assert) {
 			var oPropertyChange = {
-				"inbound": {
-					"testInbound": {
+				inbound: {
+					testInbound: {
 						semanticObject: "testSemanticObject",
 						action: "testAction"
 					}
@@ -370,18 +366,18 @@ sap.ui.define([
 
 		QUnit.test("When createInlineChange() method is called for propertyChange 'inboundTitle'", function (assert) {
 			var oPropertyChange = {
-				"inboundId": "testInbound",
-				"entityPropertyChange": {
-					"propertyPath": "title",
-					"operation": "UPSERT",
-					"propertyValue": "{{appVariantId_sap.app.crossNavigation.inbounds.testInbound.title}}"
+				inboundId: "testInbound",
+				entityPropertyChange: {
+					propertyPath: "title",
+					operation: "UPSERT",
+					propertyValue: "{{appVariantId_sap.app.crossNavigation.inbounds.testInbound.title}}"
 				},
-				"texts": {
+				texts: {
 					"appVariantId_sap.app.crossNavigation.inbounds.testInbound.title": {
-						"type": "XTIT",
-						"maxLength": 50,
-						"comment": "New title entered by a key user via RTA tool",
-						"value": {
+						type: "XTIT",
+						maxLength: 50,
+						comment: "New title entered by a key user via RTA tool",
+						value: {
 							"": "Test Title"
 						}
 					}
@@ -396,18 +392,18 @@ sap.ui.define([
 
 		QUnit.test("When createInlineChange() method is called for propertyChange 'inboundSubtitle'", function (assert) {
 			var oPropertyChange = {
-				"inboundId": "testInbound",
-				"entityPropertyChange": {
-					"propertyPath": "subTitle",
-					"operation": "UPSERT",
-					"propertyValue": "{{appVariantId_sap.app.crossNavigation.inbounds.testInbound.subtitle}}"
+				inboundId: "testInbound",
+				entityPropertyChange: {
+					propertyPath: "subTitle",
+					operation: "UPSERT",
+					propertyValue: "{{appVariantId_sap.app.crossNavigation.inbounds.testInbound.subtitle}}"
 				},
-				"texts": {
+				texts: {
 					"appVariantId_sap.app.crossNavigation.inbounds.testInbound.subtitle": {
-						"type": "XTIT",
-						"maxLength": 50,
-						"comment": "New subtitle entered by a key user via RTA tool",
-						"value": {
+						type: "XTIT",
+						maxLength: 50,
+						comment: "New subtitle entered by a key user via RTA tool",
+						value: {
 							"": "Test Subtitle"
 						}
 					}
@@ -422,13 +418,13 @@ sap.ui.define([
 
 		QUnit.test("When createInlineChange() method is called for propertyChange 'inboundIcon'", function (assert) {
 			var oPropertyChange = {
-				"inboundId": "testInbound",
-				"entityPropertyChange": {
-					"propertyPath": "icon",
-					"operation": "UPSERT",
-					"propertyValue": "testIcon"
+				inboundId: "testInbound",
+				entityPropertyChange: {
+					propertyPath: "icon",
+					operation: "UPSERT",
+					propertyValue: "testIcon"
 				},
-				"texts": {}
+				texts: {}
 			};
 
 			return AppVariantUtils.createInlineChange(oPropertyChange, "inboundIcon").then(function(oChangeInboundInlineChange) {
@@ -439,7 +435,7 @@ sap.ui.define([
 
 		QUnit.test("When createInlineChange() method is called for propertyChange 'removeInbound'", function (assert) {
 			var oPropertyChange = {
-				"inboundId": "testInbound"
+				inboundId: "testInbound"
 			};
 
 			return AppVariantUtils.createInlineChange(oPropertyChange, "removeInbound").then(function(oRemoveAllInboundsExceptOneInlineChange) {
@@ -470,7 +466,6 @@ sap.ui.define([
 			.catch(function() {
 				assert.ok("Operation cancelled successfully");
 			});
-
 		});
 
 		QUnit.test("When isS4HanaCloud() method is called", function (assert) {
@@ -498,7 +493,7 @@ sap.ui.define([
 				}]
 			};
 
-			sandbox.stub(Log,"error").callThrough().withArgs("App variant error: ", "Error1").returns();
+			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "Error1").returns();
 			var oResult = AppVariantUtils.buildErrorInfo('MSG_COPY_UNSAVED_CHANGES_FAILED', oError, "AppVariantId");
 			assert.strictEqual(oResult.appVariantId, "AppVariantId", "then the appVariantId is correct");
 			assert.notEqual(oResult.text, undefined, "then the text is correct");
@@ -509,7 +504,7 @@ sap.ui.define([
 				iamAppId: "IamId"
 			};
 
-			sandbox.stub(Log,"error").callThrough().withArgs("App variant error: ", "IAM App Id: IamId").returns();
+			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "IAM App Id: IamId").returns();
 			oResult = AppVariantUtils.buildErrorInfo('MSG_COPY_UNSAVED_CHANGES_FAILED', oError, "AppVariantId");
 			assert.strictEqual(oResult.appVariantId, "AppVariantId", "then the appVariantId is correct");
 			assert.notEqual(oResult.text, undefined, "then the text is correct");
@@ -518,7 +513,7 @@ sap.ui.define([
 
 			oError = "Error2";
 
-			sandbox.stub(Log,"error").callThrough().withArgs("App variant error: ", "Error2").returns();
+			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "Error2").returns();
 			oResult = AppVariantUtils.buildErrorInfo('MSG_COPY_UNSAVED_CHANGES_FAILED', oError, "AppVariantId");
 			assert.strictEqual(oResult.appVariantId, "AppVariantId", "then the appVariantId is correct");
 			assert.notEqual(oResult.text, undefined, "then the text is correct");
@@ -528,17 +523,17 @@ sap.ui.define([
 			var fnShowMessageBoxStub = sandbox.stub(RtaUtils, "_showMessageBox").resolves(true);
 
 			var oTransport = {
-				"transports": ["TRANSPORT123"],
-				"localonly": false,
-				"errorCode": ""
+				transports: ["TRANSPORT123"],
+				localonly: false,
+				errorCode: ""
 			};
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":false,
-					"isAtoEnabled":false,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:false,
+					isAtoEnabled:false,
+					isProductiveSystem:false
 				})
 			);
 
@@ -574,17 +569,17 @@ sap.ui.define([
 			var fnShowMessageBoxStub = sandbox.stub(RtaUtils, "_showMessageBox").resolves(true);
 
 			var oTransport = {
-				"transports": ["TRANSPORT123"],
-				"localonly": false,
-				"errorCode": ""
+				transports: ["TRANSPORT123"],
+				localonly: false,
+				errorCode: ""
 			};
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":false,
-					"isAtoEnabled":false,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:false,
+					isAtoEnabled:false,
+					isProductiveSystem:false
 				})
 			);
 
@@ -617,9 +612,9 @@ sap.ui.define([
 			var fnShowMessageBoxSpy = sandbox.stub(RtaUtils, "_showMessageBox").resolves();
 
 			var oTransport = {
-				"transports": [],
-				"localonly": false,
-				"errorCode": ""
+				transports: [],
+				localonly: false,
+				errorCode: ""
 			};
 
 			var fnGetTransportInformationStub = sandbox.stub(AppVariantUtils, "_getTransportInformation").resolves(oTransport);
@@ -636,24 +631,23 @@ sap.ui.define([
 				assert.ok(fnGetTransportInformationStub.calledOnce, "then the _getTransportInformation is called once");
 				assert.ok(fnOpenTransportSelectionSpy.notCalled, "then the openTransportSelection is not called");
 			});
-
 		});
 
 		QUnit.test("When triggerDeleteAppVariantFromLREP() is called in S/4 cloud system", function (assert) {
 			var fnShowMessageBoxStub = sandbox.stub(RtaUtils, "_showMessageBox").resolves();
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":true,
-					"isAtoEnabled":true,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:true,
+					isAtoEnabled:true,
+					isProductiveSystem:false
 				})
 			);
 
 			var oTransport = {
-				"transports": "NO_TRANSPORTS",
-				"localonly": false,
-				"errorCode": ""
+				transports: "NO_TRANSPORTS",
+				localonly: false,
+				errorCode: ""
 			};
 
 			var fnDescriptorVariantSubmitSpy;
@@ -742,7 +736,7 @@ sap.ui.define([
 
 			return AppVariantUtils.showRelevantDialog(oInfo).catch(
 				function() {
-					assert.ok("then the failure dialog pops up and Ok button pressed" );
+					assert.ok("then the failure dialog pops up and Ok button pressed");
 				}
 			);
 		});
@@ -760,7 +754,7 @@ sap.ui.define([
 
 			return AppVariantUtils.showRelevantDialog(oInfo).catch(
 				function() {
-					assert.ok("then the failure dialog pops up and Copy ID and close button pressed" );
+					assert.ok("then the failure dialog pops up and Copy ID and close button pressed");
 				}
 			);
 		});
@@ -776,7 +770,7 @@ sap.ui.define([
 			});
 
 			return AppVariantUtils.showRelevantDialog(oInfo).then(function() {
-				assert.ok("then the info dialog pops up and Ok button pressed" );
+				assert.ok("then the info dialog pops up and Ok button pressed");
 			});
 		});
 
@@ -792,7 +786,7 @@ sap.ui.define([
 
 			return AppVariantUtils.showRelevantDialog(oInfo).catch(
 				function() {
-					assert.ok("then the info dialog pops up and Close button pressed" );
+					assert.ok("then the info dialog pops up and Close button pressed");
 				}
 			);
 		});
@@ -892,16 +886,16 @@ sap.ui.define([
 		QUnit.test("When triggerDeleteAppVariantFromLREP() is called in S/4 cloud system and failed", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":true,
-					"isAtoEnabled":true,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:true,
+					isAtoEnabled:true,
+					isProductiveSystem:false
 				})
 			);
 
 			var fnGetTransportInformationStub = sandbox.stub(AppVariantUtils, "_getTransportInformation").returns(Promise.reject("Transport error"));
-			sandbox.stub(Log,"error").callThrough().withArgs("App variant error: ", "Transport error").returns();
-			var fnShowRelevantDialog =  sandbox.stub(AppVariantUtils, "showRelevantDialog");
+			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "Transport error").returns();
+			var fnShowRelevantDialog = sandbox.stub(AppVariantUtils, "showRelevantDialog");
 
 			return DescriptorVariantFactory.createNew({
 				id: "customer.TestId",
@@ -915,7 +909,6 @@ sap.ui.define([
 				assert.ok(fnShowRelevantDialog.calledOnce, "then the showRelevantDialog is called once");
 			});
 		});
-
 	});
 
 	QUnit.module("Given an AppVariantUtils is instantiated and FakeLrepConnector not used", {
@@ -952,17 +945,17 @@ sap.ui.define([
 			var fnShowMessageBoxStub = sandbox.stub(RtaUtils, "_showMessageBox").resolves();
 
 			var oTransport = {
-				"transports": [],
-				"localonly": true,
-				"errorCode": "NO_TRANSPORTS"
+				transports: [],
+				localonly: true,
+				errorCode: "NO_TRANSPORTS"
 			};
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":false,
-					"isAtoEnabled":false,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:false,
+					isAtoEnabled:false,
+					isProductiveSystem:false
 				})
 			);
 
@@ -970,9 +963,9 @@ sap.ui.define([
 			var fnGetTransportsStub = sandbox.stub(Transports.prototype, "getTransports").resolves(oTransport);
 
 			var oTransportInfo = {
-				"transport": "",
-				"packageName": "",
-				"fromDialog": false
+				transport: "",
+				packageName: "",
+				fromDialog: false
 			};
 			var fnOpenTransportSelectionStub = sandbox.stub(AppVariantUtils, "openTransportSelection").resolves(oTransportInfo);
 			var fnOnTransportInDialogSelectedSpy = sandbox.spy(AppVariantUtils, "onTransportInDialogSelected");
@@ -1000,5 +993,4 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

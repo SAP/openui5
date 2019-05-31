@@ -3,10 +3,10 @@
  */
 
 sap.ui.define([
-	'sap/ui/rta/plugin/Plugin',
-	'sap/ui/rta/Utils',
-	'sap/ui/rta/command/CompositeCommand',
-	'sap/ui/dt/OverlayRegistry',
+	"sap/ui/rta/plugin/Plugin",
+	"sap/ui/rta/Utils",
+	"sap/ui/rta/command/CompositeCommand",
+	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log"
 ], function(
@@ -34,12 +34,8 @@ sap.ui.define([
 	 * @alias sap.ui.rta.plugin.Remove
 	 * @experimental Since 1.34. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
-	var Remove = Plugin.extend("sap.ui.rta.plugin.Remove", /** @lends sap.ui.rta.plugin.Remove.prototype */
-	{
+	var Remove = Plugin.extend("sap.ui.rta.plugin.Remove", /** @lends sap.ui.rta.plugin.Remove.prototype */{
 		metadata: {
-			// ---- object ----
-
-			// ---- control specific ----
 			library: "sap.ui.rta",
 			properties: {},
 			associations: {},
@@ -120,24 +116,24 @@ sap.ui.define([
 	 * @return {boolean} Returns true if the control can be removed
 	 * @private
 	 */
-	Remove.prototype._canBeRemovedFromAggregation = function(aElementOverlays){
+	Remove.prototype._canBeRemovedFromAggregation = function(aElementOverlays) {
 		var oOverlay = aElementOverlays[0];
 		var oElement = oOverlay.getElement();
 		var oParent = oElement.getParent();
-		if (!oParent){
+		if (!oParent) {
 			return false;
 		}
 		var aElements = oParent.getAggregation(oElement.sParentAggregationName);
-		if (!Array.isArray(aElements)){
+		if (!Array.isArray(aElements)) {
 			return true;
 		}
-		if (aElements.length === 1){
+		if (aElements.length === 1) {
 			return false;
 		}
 
 		// Fallback to 1 if no overlay is selected
 		var iNumberOfSelectedOverlays = aElementOverlays.length;
-		var aInvisibleElements = aElements.filter(function(oElement){
+		var aInvisibleElements = aElements.filter(function(oElement) {
 			var oElementOverlay = OverlayRegistry.getOverlay(oElement);
 			return !(oElementOverlay && oElementOverlay.getElementVisibility());
 		});
@@ -188,7 +184,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Remove.prototype.removeElement = function (aElementOverlays) {
-		var aTargetOverlays = aElementOverlays ? aElementOverlays : this.getSelectedOverlays();
+		var aTargetOverlays = aElementOverlays || this.getSelectedOverlays();
 
 		aTargetOverlays = aTargetOverlays.filter(function (oElementOverlay) {
 			return this.isEnabled([oElementOverlay]);
@@ -208,7 +204,7 @@ sap.ui.define([
 	Remove.prototype._fireElementModified = function(oCompositeCommand) {
 		if (oCompositeCommand.getCommands().length) {
 			this.fireElementModified({
-				"command" : oCompositeCommand
+				command : oCompositeCommand
 			});
 		}
 	};
@@ -319,7 +315,7 @@ sap.ui.define([
 	 * Get the name of the action related to this plugin.
 	 * @return {string} Returns the action name
 	 */
-	Remove.prototype.getActionName = function(){
+	Remove.prototype.getActionName = function() {
 		return "remove";
 	};
 

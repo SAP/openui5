@@ -25,13 +25,12 @@ function(
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given a test view",
-	{
-		afterEach: function() {
-			sandbox.restore();
-		}
-	},
+		{
+			afterEach: function() {
+				sandbox.restore();
+			}
+		},
 	function () {
-
 		QUnit.test("checks if navigation and absolute binding works", function(assert) {
 			var oGroupElement1 = oView.byId("EntityType02.NavigationProperty"); // With correct navigation binding
 			var oGroupElement2 = oView.byId("EntityType02.IncorrectNavigationProperty"); // With incorrect navigation binding
@@ -46,12 +45,12 @@ function(
 						action : {
 							//nothing relevant for the analyzer tests
 						}
-					},{
+					}, {
 						element : oGroupElement2,
 						action : {
 							//nothing relevant for the analyzer tests
 						}
-					},{
+					}, {
 						element : oGroupElement3,
 						action : {
 							//nothing relevant for the analyzer tests
@@ -87,7 +86,7 @@ function(
 							action : {
 								//nothing relevant for the analyzer tests
 							}
-						},{
+						}, {
 							element : oView.byId("idMain1--ObjectPageSectionStashed1"),
 							action : {
 								//nothing relevant for the analyzer tests
@@ -141,7 +140,7 @@ function(
 				relevantContainer: mAddODataPropertyAction.relevantContainer
 			};
 
-			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, oActionObject).then(function(aAdditionalElements){
+			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, oActionObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 3, "then 3 additional properties are available");
 				assert.deepEqual(aAdditionalElements[0], {
 					selected : false,
@@ -194,7 +193,7 @@ function(
 				relevantContainer: oSmartForm
 			};
 
-			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, oActionObject).then(function(aAdditionalElements){
+			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, oActionObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 2, "then 2 additional properties are available");
 				assert.deepEqual(aAdditionalElements[0], {
 					selected : false,
@@ -220,7 +219,7 @@ function(
 				}
 			};
 
-			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, oActionObject).then(function(aAdditionalElements){
+			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, oActionObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 3, "then all properties of EntityType01 are available, because the GroupElements are not bound to any of them");
 				assert.deepEqual(aAdditionalElements[0], {
 					selected : false,
@@ -259,7 +258,7 @@ function(
 				relevantContainer: mAddODataPropertyAction.relevantContainer
 			};
 
-			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, oActionObject).then(function(aAdditionalElements){
+			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, oActionObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 10, "then 10 additional properties are available");
 				assert.deepEqual(aAdditionalElements[0], {
 					selected : false,
@@ -322,7 +321,7 @@ function(
 				relevantContainer: mAddODataPropertyAction.relevantContainer
 			};
 
-			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, oActionObject).then(function(aAdditionalElements){
+			return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, oActionObject).then(function(aAdditionalElements) {
 				assert.ok(aAdditionalElements.length > 0, "then the properties are found");
 			});
 		});
@@ -344,7 +343,7 @@ function(
 						action : {
 							//nothing relevant for the analyzer test
 						}
-					},{
+					}, {
 						element: oGroupElement2,
 						action : {
 							//nothing relevant for the analyzer test
@@ -477,26 +476,26 @@ function(
 			sap.ui.getCore().applyChanges();
 
 			var oActionsObject = {
-					aggregation: "formElements",
-					reveal : {
-						elements : [{
-							element: oGroupElement1,
-							action : {
-								//nothing relevant for the analyzer test
-							}
-						},{
-							element: oGroupElement2,
-							action : {
-								//nothing relevant for the analyzer test
-							}
-						}]
-					},
-					addODataProperty : {
+				aggregation: "formElements",
+				reveal : {
+					elements : [{
+						element: oGroupElement1,
 						action : {
-							//not relevant for test
+								//nothing relevant for the analyzer test
 						}
+					}, {
+						element: oGroupElement2,
+						action : {
+								//nothing relevant for the analyzer test
+						}
+					}]
+				},
+				addODataProperty : {
+					action : {
+							//not relevant for test
 					}
-				};
+				}
+			};
 
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 2, "then there are 2 additional Elements available");
@@ -507,11 +506,11 @@ function(
 
 		QUnit.test("when asking for the invisible fields of a simpleForm", function(assert) {
 			var oSimpleForm = oView.byId("SimpleForm");
-			var aFormElements = oSimpleForm.getAggregation("form").getFormContainers().reduce(function(aAllFormElements, oFormContainer){
+			var aFormElements = oSimpleForm.getAggregation("form").getFormContainers().reduce(function(aAllFormElements, oFormContainer) {
 				return aAllFormElements.concat(oFormContainer.getFormElements());
-			},[]).filter(function(oFormElement){
+			}, []).filter(function(oFormElement) {
 				return oFormElement.isVisible() === false;
-			}).map(function(oFormElement){
+			}).map(function(oFormElement) {
 				return {
 					element : oFormElement,
 					action : {
@@ -628,7 +627,7 @@ function(
 						action : {
 							//nothing relevant for the analyzer test
 						}
-					},{
+					}, {
 						element: oGroupElement2,
 						action : {
 							//nothing relevant for the analyzer test
@@ -680,14 +679,14 @@ function(
 
 		QUnit.test("when getCustomAddItems is called for an element and custom add action", function(assert) {
 			var mAction = {
-				"items": [{
-					"label": "CustomItem1",
-					"id": "customId1" // element exists
+				items: [{
+					label: "CustomItem1",
+					id: "customId1" // element exists
 				}, {
-					"label": "CustomItem2",
-					"id": "customId2" // element doesn't exist
+					label: "CustomItem2",
+					id: "customId2" // element doesn't exist
 				}, {
-					"label": "CustomItem3" // no id was given
+					label: "CustomItem3" // no id was given
 				}]
 			};
 			var oGroup = oView.byId("OtherGroup");
@@ -699,8 +698,8 @@ function(
 			sandbox.stub(Log, "error");
 
 			return AdditionalElementsAnalyzer.getCustomAddItems(oGroup, mAction)
-				.then( function(aReturnValues) {
-					assert.ok(ElementUtil.getElementInstance.callCount, 3,  "then ElementUtil.getElementInstance called thrice for each custom item");
+				.then(function(aReturnValues) {
+					assert.ok(ElementUtil.getElementInstance.callCount, 3, "then ElementUtil.getElementInstance called thrice for each custom item");
 					assert.strictEqual(aReturnValues.length, 1, "then one custom item2 are returned");
 					assert.strictEqual(aReturnValues[0].itemId, oGroup.getParent().getId() + "--" + mAction.items[1].id, "then the returned custom item has the itemId property correctly set");
 					assert.strictEqual(aReturnValues[0].key, oGroup.getParent().getId() + "--" + mAction.items[1].id, "then the returned custom item has the key property correctly set");
@@ -711,9 +710,9 @@ function(
 
 		QUnit.test("when getFilteredItemsList is called with existing addODataProperty items, for filtering custom add items which also exist as invisible items", function(assert) {
 			var aInvisibleItems = [
-				[ { elementId: "invisibleElement1" }, { elementId: "invisibleElement2" } ],
-				[ { property: "oDataProperty1" } ],
-				[ { itemId: "invisibleElement1" }, { itemId: "customItem1" }, { itemId: "invisibleElement2" } ]
+				[{ elementId: "invisibleElement1" }, { elementId: "invisibleElement2" }],
+				[{ property: "oDataProperty1" }],
+				[{ itemId: "invisibleElement1" }, { itemId: "customItem1" }, { itemId: "invisibleElement2" }]
 			];
 			var aFilteredItems = AdditionalElementsAnalyzer.getFilteredItemsList(aInvisibleItems, true);
 			assert.strictEqual(aFilteredItems.length, 4, "then the filtered array has the correct length of items");
@@ -722,9 +721,9 @@ function(
 
 		QUnit.test("when getFilteredItemsList is called without addODataProperty items, for filtering custom add items which also exist as invisible items", function(assert) {
 			var aInvisibleItems = [
-				[ { elementId: "invisibleElement1" }, { elementId: "invisibleElement2" } ],
-				[ ],
-				[ { itemId: "invisibleElement1" }, { itemId: "customItem1" }, { itemId: "invisibleElement2" } ]
+				[{ elementId: "invisibleElement1" }, { elementId: "invisibleElement2" }],
+				[],
+				[{ itemId: "invisibleElement1" }, { itemId: "customItem1" }, { itemId: "invisibleElement2" }]
 			];
 			var aFilteredItems = AdditionalElementsAnalyzer.getFilteredItemsList(aInvisibleItems, false);
 			assert.strictEqual(aFilteredItems.length, 3, "then the filtered array has the correct length of items");
@@ -733,9 +732,9 @@ function(
 
 		QUnit.test("when getFilteredItemsList is called without addODataProperty items, for filtering custom add items which do not exist as invisible items", function(assert) {
 			var aInvisibleItems = [
-				[ { elementId: "invisibleElement1" }, { elementId: "invisibleElement2" } ],
-				[ ],
-				[ { itemId: "customItem1" }, { itemId: "customItem2" } ]
+				[{ elementId: "invisibleElement1" }, { elementId: "invisibleElement2" }],
+				[],
+				[{ itemId: "customItem1" }, { itemId: "customItem2" }]
 			];
 			var aFilteredItems = AdditionalElementsAnalyzer.getFilteredItemsList(aInvisibleItems, false);
 			assert.strictEqual(aFilteredItems.length, 4, "then the filtered array has the correct length if items");
@@ -812,7 +811,7 @@ function(
 		});
 
 		QUnit.test("when getting unbound elements for table with absolute binding in a named model", function(assert) {
-			var oSomeNamedModel = new JSONModel({ foo : [1,2]});
+			var oSomeNamedModel = new JSONModel({ foo : [1, 2]});
 			this.oTable.setModel(oSomeNamedModel, "named");
 			this.oTable.bindItems("named>/foo", new ColumnListItem());
 
@@ -867,5 +866,4 @@ function(
 		oView.destroy();
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

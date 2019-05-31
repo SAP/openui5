@@ -30,8 +30,7 @@ sap.ui.define([
 	 * @alias sap.ui.rta.plugin.EasyAdd
 	 * @experimental Since 1.48. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
-	var EasyAdd = AdditionalElementsPlugin.extend("sap.ui.rta.plugin.EasyAdd", /** @lends sap.ui.rta.plugin.EasyAdd.prototype */
-	{
+	var EasyAdd = AdditionalElementsPlugin.extend("sap.ui.rta.plugin.EasyAdd", /** @lends sap.ui.rta.plugin.EasyAdd.prototype */ {
 		metadata: {
 			library: "sap.ui.rta",
 			properties: {},

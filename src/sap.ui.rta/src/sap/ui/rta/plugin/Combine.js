@@ -3,14 +3,12 @@
  */
 
 sap.ui.define([
-	'sap/ui/rta/plugin/Plugin',
-	'sap/ui/rta/Utils',
-	'sap/ui/rta/util/BindingsExtractor',
-	'sap/ui/dt/Util'
+	"sap/ui/rta/plugin/Plugin",
+	"sap/ui/rta/Utils",
+	"sap/ui/dt/Util"
 ], function(
 	Plugin,
 	Utils,
-	BindingsExtractor,
 	DtUtil
 ) {
 	"use strict";
@@ -28,12 +26,8 @@ sap.ui.define([
 	 * @alias sap.ui.rta.plugin.Combine
 	 * @experimental Since 1.46. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
-	var Combine = Plugin.extend("sap.ui.rta.plugin.Combine", /** @lends sap.ui.rta.plugin.Combine.prototype */
-	{
+	var Combine = Plugin.extend("sap.ui.rta.plugin.Combine", /** @lends sap.ui.rta.plugin.Combine.prototype */ {
 		metadata: {
-			// ---- object ----
-
-			// ---- control specific ----
 			library: "sap.ui.rta",
 			properties: {},
 			associations: {},
@@ -54,9 +48,8 @@ sap.ui.define([
 			return this.hasChangeHandler(oCombineAction.changeType, oRelevantContainer) &&
 				this.hasStableId(oOverlay) &&
 				this._checkRelevantContainerStableID(oCombineAction, oOverlay);
-		} else {
-			return false;
 		}
+		return false;
 	};
 
 	Combine.prototype._checkForSameRelevantContainer = function(aElementOverlays) {
@@ -64,7 +57,7 @@ sap.ui.define([
 		for (var i = 0, n = aElementOverlays.length; i < n; i++) {
 			aRelevantContainer[i] = aElementOverlays[i].getRelevantContainer();
 			var oCombineAction = this.getAction(aElementOverlays[i]);
-			if (!oCombineAction || !oCombineAction.changeType){
+			if (!oCombineAction || !oCombineAction.changeType) {
 				return false;
 			}
 			if (i > 0) {
@@ -138,9 +131,8 @@ sap.ui.define([
 			if (typeof oAction.isEnabled !== "undefined") {
 				if (typeof oAction.isEnabled === "function") {
 					return oAction.isEnabled(aControls);
-				} else {
-					return oAction.isEnabled;
 				}
+				return oAction.isEnabled;
 			}
 
 			return true;
@@ -162,7 +154,7 @@ sap.ui.define([
 	Combine.prototype.handleCombine = function(aElementOverlays, oCombineElement) {
 		var oCombineElementOverlay;
 		var aElements = aElementOverlays.map(function (oElementOverlay) {
-			if (oElementOverlay.getElement().getId() === oCombineElement.getId()){
+			if (oElementOverlay.getElement().getId() === oCombineElement.getId()) {
 				oCombineElementOverlay = oElementOverlay;
 			}
 			return oElementOverlay.getElement();
@@ -184,7 +176,7 @@ sap.ui.define([
 
 		.then(function(oCombineCommand) {
 			this.fireElementModified({
-				"command" : oCombineCommand
+				command : oCombineCommand
 			});
 		}.bind(this))
 
@@ -213,7 +205,7 @@ sap.ui.define([
 	 * Get the name of the action related to this plugin.
 	 * @return {string} Returns the action name
 	 */
-	Combine.prototype.getActionName = function(){
+	Combine.prototype.getActionName = function() {
 		return "combine";
 	};
 

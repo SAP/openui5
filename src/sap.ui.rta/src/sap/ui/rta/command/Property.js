@@ -2,11 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/rta/command/FlexCommand',
-	"sap/ui/rta/Utils"
+	"sap/ui/rta/command/FlexCommand"
 ], function(
-	FlexCommand,
-	Utils
+	FlexCommand
 ) {
 	"use strict";
 
@@ -65,5 +63,4 @@ sap.ui.define([
 	};
 
 	return Property;
-
 }, /* bExport= */true);

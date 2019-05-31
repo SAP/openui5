@@ -14,9 +14,7 @@ sap.ui.define([
 	"sap/ui/layout/form/Form",
 	"sap/ui/base/Event",
 	"sap/ui/dt/Overlay",
-	"sap/ui/dt/ElementUtil",
 	"sap/ui/core/Component",
-	"sap/m/App",
 	"sap/ui/core/UIArea",
 	"sap/base/util/merge",
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
@@ -38,9 +36,7 @@ function(
 	Form,
 	Event,
 	Overlay,
-	ElementUtil,
 	Component,
-	App,
 	UIArea,
 	merge,
 	FakeLrepConnectorSessionStorage,
@@ -91,8 +87,8 @@ function(
 	};
 
 	QUnit.module("Given PopupManager exists", {
-		beforeEach : function(assert) {
-			this.fnAddPopupFilterStub =  sandbox.stub(ZIndexManager, "addPopupFilter");
+		beforeEach : function() {
+			this.fnAddPopupFilterStub = sandbox.stub(ZIndexManager, "addPopupFilter");
 		},
 		afterEach : function() {
 			sandbox.restore();
@@ -136,7 +132,7 @@ function(
 	});
 
 	QUnit.module("Given RTA instance is initialized", {
-		beforeEach : function(assert) {
+		beforeEach : function() {
 			//mock RTA instance
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oComp.getAggregation("rootControl")
@@ -286,7 +282,6 @@ function(
 					contentHeight: "800px",
 					contentWidth: "1000px"
 				});
-
 			});
 			oDialogNotAllowed.attachAfterOpen(function() {
 				assert.ok(this.oRta.getPopupManager()._isPopupAdaptable(oDialogNotAllowed), "then true returned when isPopupAdaptationAllowed function doesn't exist for dialog");
@@ -593,7 +588,7 @@ function(
 			var fnOpenDone = assert.async();
 			this.oDialog.attachAfterOpen(function() {
 				assert.strictEqual(this.fnCreateDialogSpy.callCount, 1, "then '_createPopupOverlays' called once");
-				assert.notEqual(this.oRta._oDesignTime.getRootElements().map(function(oRootElement){
+				assert.notEqual(this.oRta._oDesignTime.getRootElements().map(function(oRootElement) {
 					return oRootElement.getId();
 				}).indexOf(this.oDialog.getId()), -1, "then the opened dialog was added as a root element");
 				assert.ok(this.fnCreateDialogSpy.calledOn(this.oRta.getPopupManager()), "then '_createPopupOverlays' with the opened dialog");
@@ -671,7 +666,7 @@ function(
 				rootControl : oComp.getAggregation("rootControl")
 			});
 			var fnAfterRTA = function() {
-				assert.notEqual(oRta._oDesignTime.getRootElements().map(function(oRootElement){
+				assert.notEqual(oRta._oDesignTime.getRootElements().map(function(oRootElement) {
 					return oRootElement.getId();
 				}).indexOf(this.oDialog.getId()), -1, "then the opened dialog was added as a root element");
 				assert.ok(fnFindOverlay(this.oDialog, oRta._oDesignTime), "then overlay exists for root dialog element");
@@ -804,7 +799,7 @@ function(
 	}, function () {
 		//_getComponentForControl
 		QUnit.test("when _getComponentForControl is called with a dialog inside an embedded component", function(assert) {
-			var  sBaseCompId = this.oRta.getPopupManager()._getComponentForControl(this.oNonRtaDialog).getId();
+			var sBaseCompId = this.oRta.getPopupManager()._getComponentForControl(this.oNonRtaDialog).getId();
 			assert.strictEqual(sBaseCompId, oComp.getId(), "then base component id returned");
 		});
 	});
@@ -812,5 +807,4 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

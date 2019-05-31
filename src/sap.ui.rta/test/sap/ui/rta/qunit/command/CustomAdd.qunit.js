@@ -2,8 +2,6 @@
 
 sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
-	"sap/ui/rta/command/AddODataProperty",
-	"sap/ui/dt/DesignTimeMetadata",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/rta/command/CustomAdd",
@@ -15,8 +13,6 @@ sap.ui.define([
 ],
 function(
 	CommandFactory,
-	AddODataProperty,
-	DesignTimeMetadata,
 	OverlayRegistry,
 	VerticalLayout,
 	CustomAdd,
@@ -53,7 +49,7 @@ function(
 		getModel: function () {}
 	};
 
-	var fnCheckCommand = function(assert, sSelectorId, oCommand) {
+	function fnCheckCommand(assert, oCommand) {
 		assert.ok(oCommand instanceof CustomAdd, "then CustomAdd command was created");
 		assert.deepEqual(oCommand.getAddElementInfo(), this.mSettings.addElementInfo);
 		assert.strictEqual(oCommand.getIndex(), this.mSettings.index);
@@ -68,7 +64,7 @@ function(
 		.catch(function (oError) {
 			assert.ok(false, 'catch must never be called - Error: ' + oError);
 		});
-	};
+	}
 
 	QUnit.module("Given a customAdd change with a valid entry in the change registry", {
 		before: function () {
@@ -88,7 +84,6 @@ function(
 					}
 				}
 			});
-
 		},
 		beforeEach: function () {
 			var oChangeRegistry = ChangeRegistry.getInstance();
@@ -97,7 +92,7 @@ function(
 			this.fnCompleteChangeContentSpy = sandbox.stub();
 
 			var oCustomAddChangeHandler = {
-				"customAdd": {
+				customAdd: {
 					completeChangeContent: this.fnCompleteChangeContentSpy,
 					applyChange: this.fnApplyChangeSpy
 				}
@@ -118,8 +113,8 @@ function(
 				aggregationName: "aggregationName",
 				changeType: "customAdd",
 				addElementInfo: {
-					"property1": "value1",
-					"property2": "value2"
+					property1: "value1",
+					property2: "value2"
 				},
 				index: 1,
 				customItemId: "customItemId"
@@ -140,7 +135,7 @@ function(
 				this.mSettings,
 				this.oDesignTimeMetadata
 			)
-			.then(fnCheckCommand.bind(this, assert, this.oButton.getId()));
+			.then(fnCheckCommand.bind(this, assert));
 		});
 
 		QUnit.test("when getting a CustomAdd command for a control, with changeOnRelevantContainer set to true", function(assert) {
@@ -151,7 +146,7 @@ function(
 				this.mSettings,
 				this.oDesignTimeMetadata
 			)
-			.then(fnCheckCommand.bind(this, assert, this.oVericalLayout.getId()));
+			.then(fnCheckCommand.bind(this, assert));
 		});
 
 		QUnit.test("when getting a CustomAdd command for a control, where custom add's getItems is not a function", function(assert) {
@@ -167,11 +162,10 @@ function(
 				assert.notOk(oCommand, "then no command was created");
 			});
 		});
-		}
+	}
 	);
 
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

@@ -114,7 +114,7 @@ function (
 		var bSelectable = oOverlay.getEditable();
 		if (oOverlay.getSelectable() !== bSelectable) {
 			oOverlay.setSelectable(bSelectable);
-			if (!bSelectable){
+			if (!bSelectable) {
 				this._removePreviousHover();
 			}
 			this.fireElementEditableChange({
@@ -194,12 +194,10 @@ function (
 				if (!bContextMenu) {
 					this.getDesignTime().getSelectionManager().remove(oOverlay);
 				}
+			} else if (bMultiSelection) {
+				this.getDesignTime().getSelectionManager().add(oOverlay);
 			} else {
-				if (bMultiSelection) {
-					this.getDesignTime().getSelectionManager().add(oOverlay);
-				} else {
-					this.getDesignTime().getSelectionManager().set(oOverlay);
-				}
+				this.getDesignTime().getSelectionManager().set(oOverlay);
 			}
 
 			oEvent.preventDefault();
@@ -215,7 +213,7 @@ function (
 	 */
 	Selection.prototype._onMouseDown = function(oEvent) {
 		// set focus after clicking, needed only for internet explorer
-		if (Device.browser.name == "ie"){
+		if (Device.browser.name === "ie") {
 			// when the EasyAdd Button is clicked, we don't want to focus/stopPropagation.
 			// but when the OverlayScrollContainer is the target, we want it to behave like a click on an overlay
 			var oTarget = OverlayRegistry.getOverlay(oEvent.target.id);
@@ -225,7 +223,7 @@ function (
 				oOverlay
 				&& (bTargetIsScrollContainer || oTarget instanceof Overlay)
 			) {
-				if (oOverlay.getSelectable()){
+				if (oOverlay.getSelectable()) {
 					oOverlay.focus();
 					oEvent.stopPropagation();
 				} else {
@@ -242,7 +240,7 @@ function (
 	 */
 	Selection.prototype._onMouseover = function(oEvent) {
 		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
-		if (oOverlay.isSelectable()){
+		if (oOverlay.isSelectable()) {
 			if (oOverlay !== this._oHoverTarget) {
 				this._removePreviousHover();
 				this._oHoverTarget = oOverlay;
@@ -260,7 +258,7 @@ function (
 	 */
 	Selection.prototype._onMouseleave = function(oEvent) {
 		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
-		if (oOverlay.isSelectable()){
+		if (oOverlay.isSelectable()) {
 			this._removePreviousHover();
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
@@ -281,7 +279,7 @@ function (
 	/**
 	 * @override
 	 */
-	Selection.prototype.setDesignTime = function(oDesignTime) {
+	Selection.prototype.setDesignTime = function() {
 		//detach from listener from old DesignTime instance
 		if (this.getDesignTime()) {
 			this.getDesignTime().getSelectionManager().removeValidator(this._multiSelectionValidator);

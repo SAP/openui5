@@ -1,6 +1,5 @@
 {
 	"_version": "1.12.0",
-
 	"sap.app": {
 		"id": "sap.ui.rta.dttool",
 		"type": "application",
@@ -8,9 +7,6 @@
 			"version": "1.0.0"
 		}
 	},
-
-
-
 	"sap.ui": {
 		"technology": "UI5",
 		"deviceTypes": {
@@ -19,7 +15,6 @@
 			"phone": false
 		}
 	},
-
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.rta.dttool.view.App",
@@ -27,7 +22,6 @@
 			"async": true,
 			"id": "app"
 		},
-
 		"dependencies": {
 			"minUI5Version": "1.54.0",
 			"libs": {
@@ -51,22 +45,20 @@
 				}
 			}
 		},
-
 		"models": {
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
 					"bundleName": "sap.ui.rta.dttool.i18n.i18n"
 				},
-              "preload": true
-            }
+				"preload": true
+			}
 		},
 		"resources": {
 			"css": [{
 				"uri": "css/style.css"
 			}]
 		},
-
 		"routing": {
 			"config": {
 				"routerClass": "sap.m.routing.Router",

@@ -1,6 +1,10 @@
 sap.ui.define([
-	'sap/ui/base/Object', 'sap/ui/comp/navpopover/Factory'
-], function(BaseObject, Factory) {
+	"sap/ui/base/Object",
+	"sap/ui/comp/navpopover/Factory"
+], function(
+	BaseObject,
+	Factory
+) {
 	"use strict";
 
 	var SmartLinkUtil = BaseObject.extend("sap.ui.rta.test.SmartlinkSmartLinkUtil",
@@ -9,7 +13,6 @@ sap.ui.define([
 	SmartLinkUtil.getServiceReal = Factory.getService;
 
 	var mSetting = {
-
 		semanticObjectSupplierId: {
 			links: [
 				{
@@ -30,7 +33,6 @@ sap.ui.define([
 	};
 
 	SmartLinkUtil.mockUShellServices = function() {
-
 		Factory.getService = function(sServiceName) {
 			switch (sServiceName) {
 				case "CrossApplicationNavigation":
@@ -43,7 +45,7 @@ sap.ui.define([
 						},
 						getDistinctSemanticObjects: function() {
 							var aSemanticObjects = [];
-							for ( var sSemanticObject in mSetting) {
+							for (var sSemanticObject in mSetting) {
 								aSemanticObjects.push(sSemanticObject);
 							}
 							var oDeferred = jQuery.Deferred();
@@ -76,7 +78,7 @@ sap.ui.define([
 					return {
 						parseShellHash: function(sIntent) {
 							var sAction;
-							for ( var sSemanticObject in mSetting) {
+							for (var sSemanticObject in mSetting) {
 								mSetting[sSemanticObject].links.some(function(oLink) { // eslint-disable-line no-loop-func
 									if (oLink.intent === sIntent) {
 										sAction = oLink.action;

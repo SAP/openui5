@@ -38,7 +38,6 @@ function (
 	QUnit.module("Initialisation", {
 		beforeEach: function () {
 			this.oPostMessageBus = getPostMessageBus(window);
-
 		},
 		afterEach: function () {
 			this.oPostMessageBus.destroy();
@@ -1409,12 +1408,10 @@ function (
 				});
 			this.oService.attachEventOnce('customEvent', oSpy);
 			this.oService.attachEvent('customEvent', oStub);
-
 		});
 	});
 
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

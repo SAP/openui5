@@ -31,8 +31,8 @@ function(
 			var oManifestObj = {
 				"sap.app": {
 					id: "MyComponent",
-					"applicationVersion": {
-						"version": "1.2.3"
+					applicationVersion: {
+						version: "1.2.3"
 					}
 				}
 			};
@@ -57,21 +57,21 @@ function(
 
 			var oFlexController = FlexControllerFactory.createForControl(this.oMockedAppComponent, this.oManifest);
 			this.oData = {
-				"variantMgmtId1": {
-					"defaultVariant": "variant0",
-					"variants": [
+				variantMgmtId1: {
+					defaultVariant: "variant0",
+					variants: [
 						{
-							"author": "SAP",
-							"key": "variantMgmtId1",
-							"layer": "VENDOR",
-							"visible": true,
-							"title": "Standard"
+							author: "SAP",
+							key: "variantMgmtId1",
+							layer: "VENDOR",
+							visible: true,
+							title: "Standard"
 						}, {
-							"author": "Me",
-							"key": "variant0",
-							"layer": "CUSTOMER",
-							"visible": true,
-							"title": "variant A"
+							author: "Me",
+							key: "variant0",
+							layer: "CUSTOMER",
+							visible: true,
+							title: "variant A"
 						}
 					]
 				}
@@ -80,16 +80,16 @@ function(
 			this.oModel = new VariantModel(this.oData, oFlexController, this.oMockedAppComponent);
 
 			this.oVariant = {
-				"content": {
-					"fileName":"variant0",
-					"content": {
-						"title":"variant A"
+				content: {
+					fileName:"variant0",
+					content: {
+						title:"variant A"
 					},
-					"layer":"CUSTOMER",
-					"variantReference":"variant00",
-					"reference": "Dummy.Component"
+					layer:"CUSTOMER",
+					variantReference:"variant00",
+					reference: "Dummy.Component"
 				},
-				"controlChanges" : []
+				controlChanges : []
 			};
 		},
 		after: function () {
@@ -103,7 +103,7 @@ function(
 			this.oVariantManagement.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
 
 			var oDummyOverlay = {
-				getVariantManagement : function(){
+				getVariantManagement : function() {
 					return "idMain1--variantManagementOrdersTable";
 				}
 			};
@@ -190,13 +190,13 @@ function(
 			var oDesignTimeMetadata = new ElementDesignTimeMetadata({ data : {} });
 			var mFlexSettings = {layer: "CUSTOMER"};
 			var oDefaultChange = {
-					appComponent : this.oMockedAppComponent,
-					changeType : "setDefault",
-					defaultVariant : "variantMgmtId1",
-					layer : "CUSTOMER",
-					originalDefaultVariant : "variant0",
-					variantManagementReference : "variantMgmtId1"
-				};
+				appComponent : this.oMockedAppComponent,
+				changeType : "setDefault",
+				defaultVariant : "variantMgmtId1",
+				layer : "CUSTOMER",
+				originalDefaultVariant : "variant0",
+				variantManagementReference : "variantMgmtId1"
+			};
 			var aChanges = [oDefaultChange],
 				oControlVariantConfigureCommand;
 			return CommandFactory.getCommandFor(this.oVariantManagement, "configure", {
@@ -217,7 +217,7 @@ function(
 
 				return oControlVariantConfigureCommand.undo();
 			})
-			.then( function() {
+			.then(function() {
 				var oData = oControlVariantConfigureCommand.oModel.getData();
 				assert.equal(oData["variantMgmtId1"].defaultVariant, oDefaultChange.originalDefaultVariant, "then default variant is correctly reverted in the model");
 				assert.equal(oControlVariantConfigureCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 0, "then the dirty change is removed");
@@ -231,5 +231,4 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

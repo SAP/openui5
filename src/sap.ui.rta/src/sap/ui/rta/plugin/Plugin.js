@@ -10,8 +10,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/dt/ElementOverlay",
-	"sap/ui/fl/changeHandler/JsControlTreeModifier",
-	"sap/ui/base/ManagedObject"
+	"sap/ui/fl/changeHandler/JsControlTreeModifier"
 ],
 function(
 	Plugin,
@@ -20,8 +19,7 @@ function(
 	OverlayRegistry,
 	OverlayUtil,
 	ElementOverlay,
-	JsControlTreeModifier,
-	ManagedObject
+	JsControlTreeModifier
 ) {
 	"use strict";
 
@@ -50,14 +48,11 @@ function(
 	ElementOverlay.prototype._bElementHasStableId = undefined;
 	ElementOverlay.prototype.getElementHasStableId = function() { return this._bElementHasStableId;};
 	ElementOverlay.prototype.setElementHasStableId = function(bHasStableId) { this._bElementHasStableId = bHasStableId; };
-	ElementOverlay.prototype.hasElementStableId = function() { return this._bElementHasStableId ? true : false; };
+	ElementOverlay.prototype.hasElementStableId = function() { return !!this._bElementHasStableId; };
 
 	var BasePlugin = Plugin.extend("sap.ui.rta.plugin.Plugin", /** @lends sap.ui.dt.Plugin.prototype */ {
 		metadata : {
 			"abstract" : true,
-			// ---- object ----
-
-			// ---- control specific ----
 			library : "sap.ui.rta",
 			properties : {
 				commandFactory : {
@@ -154,7 +149,7 @@ function(
 		// When the action is finished, if the affected controls are modified, the evaluation will be done anyway
 		if (!mPropertyBag.onRegistration &&
 			this.getDesignTime() &&
-			this.getDesignTime().getBusyPlugins().length){
+			this.getDesignTime().getBusyPlugins().length) {
 			return;
 		}
 		this.setBusy(true);
@@ -261,7 +256,7 @@ function(
 			return false;
 		}
 
-		if (oOverlay.getElementHasStableId() === undefined){
+		if (oOverlay.getElementHasStableId() === undefined) {
 			var aStableElements = oOverlay.getDesignTimeMetadata().getStableElements(oOverlay);
 			var bUnstable = aStableElements.length > 0 ? aStableElements.some(function(vStableElement) {
 				var oControl = vStableElement.id || vStableElement;
@@ -275,13 +270,13 @@ function(
 	};
 
 	//Check if related binding template has stable id
-	function _checkAggregationBindingTemplateID(oOverlay, vStableElement){
+	function _checkAggregationBindingTemplateID(oOverlay, vStableElement) {
 		var mAggregationInfo = OverlayUtil.getAggregationInformation(oOverlay, oOverlay.getElement().sParentAggregationName);
 		if (!mAggregationInfo.templateId) {
 			return true;
-		} else {
-			return !FlexUtils.checkControlId(mAggregationInfo.templateId, vStableElement.appComponent);
 		}
+
+		return !FlexUtils.checkControlId(mAggregationInfo.templateId, vStableElement.appComponent);
 	}
 
 	BasePlugin.prototype.getVariantManagementReference = function (oOverlay, oAction, bForceRelevantContainer, oStashedElement) {
@@ -306,7 +301,7 @@ function(
 		return sVariantManagementReference;
 	};
 
-	BasePlugin.prototype._hasVariantChangeHandler = function (sChangeType, oElement){
+	BasePlugin.prototype._hasVariantChangeHandler = function (sChangeType, oElement) {
 		var oChangeHandler = this._getChangeHandler(sChangeType, oElement);
 		return (oChangeHandler && oChangeHandler.revertChange);
 	};
@@ -325,19 +320,18 @@ function(
 		var bIsEditable = false;
 
 		var aActionData = oDesignTimeMetadata.getActionDataFromAggregations(sAction, oOverlay.getElement());
-		var oAction = aActionData.filter(function(oActionData){
-			if (oActionData && sParentAggregationName){
+		var oAction = aActionData.filter(function(oActionData) {
+			if (oActionData && sParentAggregationName) {
 				return oActionData.aggregation === sParentAggregationName;
-			} else {
-				return true;
 			}
+			return true;
 		})[0];
 		var sChangeType = oAction ? oAction.changeType : null;
 		var bChangeOnRelevantContainer = oAction && oAction.changeOnRelevantContainer;
 		if (bChangeOnRelevantContainer) {
 			oElement = oOverlay.getRelevantContainer();
 			var oRelevantOverlay = OverlayRegistry.getOverlay(oElement);
-			if (!this.hasStableId(oRelevantOverlay)){
+			if (!this.hasStableId(oRelevantOverlay)) {
 				return false;
 			}
 		}
@@ -378,7 +372,7 @@ function(
 	};
 
 	BasePlugin.prototype._getChangeHandler = function(sChangeType, oElement, sControlType) {
-		if (!sControlType){
+		if (!sControlType) {
 			sControlType = oElement.getMetadata().getName();
 		}
 		var sLayer = this.getCommandFactory().getFlexSettings().layer;
@@ -391,11 +385,11 @@ function(
 		}, this);
 	};
 
-	BasePlugin.prototype._checkRelevantContainerStableID = function(oAction, oElementOverlay){
+	BasePlugin.prototype._checkRelevantContainerStableID = function(oAction, oElementOverlay) {
 		if (oAction.changeOnRelevantContainer) {
 			var oRelevantContainer = oElementOverlay.getRelevantContainer();
 			var oRelevantOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
-			if (!this.hasStableId(oRelevantOverlay)){
+			if (!this.hasStableId(oRelevantOverlay)) {
 				return false;
 			}
 		}
@@ -403,5 +397,4 @@ function(
 	};
 
 	return BasePlugin;
-
 }, /* bExport= */ true);

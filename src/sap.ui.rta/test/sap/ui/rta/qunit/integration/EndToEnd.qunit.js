@@ -148,10 +148,10 @@ sap.ui.define([
 
 						oDialog.attachOpened(function() {
 							var oFieldToAdd = oDialog.getElements().filter(function(oField) {return oField.type === "invisible";})[0];
-							oCommandStack.attachModified(function(oEvent) {
+							oCommandStack.attachModified(function() {
 								var aCommands = oCommandStack.getAllExecutedCommands();
 								if (aCommands &&
-									aCommands.length  === 3) {
+									aCommands.length === 3) {
 									sap.ui.getCore().applyChanges();
 
 									fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
@@ -166,7 +166,7 @@ sap.ui.define([
 									.then(this.oRta.stop.bind(this.oRta))
 
 									.then(done);
-									}
+								}
 							}.bind(this));
 
 							// select the field in the list and close the dialog with OK
@@ -211,7 +211,7 @@ sap.ui.define([
 					var sFieldToAddText = oFieldToAdd.getContent()[0].getItems()[0].getText();
 
 					// observer gets called when the Group changes. Then the new field is on the UI.
-					var oObserver = new MutationObserver(function(mutations) {
+					var oObserver = new MutationObserver(function() {
 						var oGroupElements = this.oGeneralGroup.getGroupElements();
 						var iIndex = oGroupElements.indexOf(this.oCompanyCodeField) + 1;
 						assert.equal(oGroupElements[iIndex].getLabelText(), sFieldToAddText, "the added element is at the correct position");
@@ -229,7 +229,6 @@ sap.ui.define([
 					QUnitUtils.triggerKeydown(oFieldToAdd.getDomRef(), KeyCodes.ENTER, false, false, false);
 					sap.ui.qunit.QUnitUtils.triggerEvent("tap", oDialog._oOKButton.getDomRef());
 					sap.ui.getCore().applyChanges();
-
 				}.bind(this));
 			}.bind(this));
 		});
@@ -269,7 +268,7 @@ sap.ui.define([
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(this.oCompanyCodeField);
 			assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then there is no dirty change in the FL ChangePersistence");
 
-			oCommandStack.attachModified(function(oEvent) {
+			oCommandStack.attachModified(function() {
 				var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
 				if (oFirstExecutedCommand &&
 					oFirstExecutedCommand.getName() === "move") {
@@ -306,7 +305,7 @@ sap.ui.define([
 					Promise.all([
 						new Promise(function (fnResolve) {
 							var oCommandStack = this.oRta.getCommandStack();
-							oCommandStack.attachModified(function(oEvent) {
+							oCommandStack.attachModified(function() {
 								var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
 								if (oFirstExecutedCommand &&
 									oFirstExecutedCommand.getName() === "rename") {
@@ -377,10 +376,10 @@ sap.ui.define([
 						// wait for opening additional Elements dialog
 						oDialog.attachOpened(function() {
 							var oFieldToAdd = oDialog.getElements().filter(function(oField) {return oField.type === "invisible";})[0];
-							oCommandStack.attachModified(function(oEvent) {
+							oCommandStack.attachModified(function() {
 								var aCommands = oCommandStack.getAllExecutedCommands();
 								if (aCommands &&
-									aCommands.length  === 3) {
+									aCommands.length === 3) {
 									fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
 										sap.ui.getCore().applyChanges();
 										assert.equal(oChangePersistence.getDirtyChanges().length, 3, "then there are 3 dirty change in the FL ChangePersistence");
@@ -498,5 +497,4 @@ sap.ui.define([
 		oCompCont.destroy();
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

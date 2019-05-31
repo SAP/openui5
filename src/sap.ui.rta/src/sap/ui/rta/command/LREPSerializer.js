@@ -46,12 +46,12 @@ sap.ui.define([
 			library : "sap.ui.rta",
 			associations : {
 				/** The root control which is needed for the Flex Controller */
-				"rootControl" : {
+				rootControl : {
 					type : "sap.ui.core.Control"
 				}
 			},
 			properties : {
-				"commandStack" : {
+				commandStack : {
 					type : "object" // has to be of type sap.ui.rta.command.Stack
 				}
 			},
@@ -69,16 +69,16 @@ sap.ui.define([
 	LREPSerializer.prototype._lastPromise = Promise.resolve();
 
 	LREPSerializer.prototype.setCommandStack = function(oCommandStack) {
-		if (this.getCommandStack()){
+		if (this.getCommandStack()) {
 			this.getCommandStack().removeCommandExecutionHandler(this._fnHandleCommandExecuted);
 		}
 		this.setProperty("commandStack", oCommandStack);
 		oCommandStack.addCommandExecutionHandler(this._fnHandleCommandExecuted);
 	};
-	LREPSerializer.prototype.init = function(){
+	LREPSerializer.prototype.init = function() {
 		this._fnHandleCommandExecuted = this.handleCommandExecuted.bind(this);
 	};
-	LREPSerializer.prototype.exit = function(){
+	LREPSerializer.prototype.exit = function() {
 		this.getCommandStack().removeCommandExecutionHandler(this._fnHandleCommandExecuted);
 	};
 	LREPSerializer.prototype._isPersistedChange = function(oPreparedChange) {
@@ -103,7 +103,7 @@ sap.ui.define([
 						var oChange = oCommand.getPreparedChange();
 						var oAppComponent = oCommand.getAppComponent();
 						if (oAppComponent) {
-							if (oCommand instanceof FlexCommand){
+							if (oCommand instanceof FlexCommand) {
 								oFlexController = FlexControllerFactory.createForControl(oAppComponent);
 								var oControl = RtaControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
 								oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oControl);
@@ -118,10 +118,10 @@ sap.ui.define([
 					var aDescriptorCreateAndAdd = [];
 					aCommands.forEach(function(oCommand) {
 						// Runtime only changes should not be added to the persistence
-						if (oCommand.getRuntimeOnly()){
+						if (oCommand.getRuntimeOnly()) {
 							return;
 						}
-						if (oCommand instanceof FlexCommand){
+						if (oCommand instanceof FlexCommand) {
 							var oAppComponent = oCommand.getAppComponent();
 							if (oAppComponent) {
 								var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
@@ -156,7 +156,7 @@ sap.ui.define([
 			// _lastPromise chain must not be interrupted
 		}).then(function() {
 			var aCommands = this.getCommandStack().getAllExecutedCommands();
-			return aCommands.some(function(oCommand){
+			return aCommands.some(function(oCommand) {
 				return !!oCommand.needsReload;
 			});
 		}.bind(this));
@@ -251,7 +251,7 @@ sap.ui.define([
 		var aCommands = oCommandStack.getAllExecutedCommands();
 
 		aCommands.forEach(function(oCommand) {
-			if (oCommand instanceof FlexCommand){
+			if (oCommand instanceof FlexCommand) {
 				var oChange = oCommand.getPreparedChange();
 				var oAppComponent = oCommand.getAppComponent();
 				var oControl = RtaControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);

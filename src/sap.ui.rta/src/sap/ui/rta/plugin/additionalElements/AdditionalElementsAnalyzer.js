@@ -2,16 +2,14 @@
  * ${copyright}
  */
 
- sap.ui.define([
+sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	'sap/ui/core/StashedControlSupport',
-	'sap/ui/dt/ElementUtil',
-	'sap/ui/rta/Utils',
-	'sap/base/Log',
-	'sap/ui/rta/util/BindingsExtractor'
+	"sap/ui/dt/ElementUtil",
+	"sap/ui/rta/Utils",
+	"sap/base/Log",
+	"sap/ui/rta/util/BindingsExtractor"
 ], function (
 	jQuery,
-	StashedControlSupport,
 	ElementUtil,
 	RtaUtils,
 	Log,
@@ -19,8 +17,8 @@
 ) {
 	"use strict";
 
-	function _enrichProperty(mProperty, mEntity){
-		var mProp = jQuery.extend({},mProperty);
+	function _enrichProperty(mProperty, mEntity) {
+		var mProp = jQuery.extend({}, mProperty);
 		mProp.entityName = mEntity.name;
 
 		var mLabelAnnotation = mProperty["com.sap.vocabularies.Common.v1.Label"];
@@ -33,10 +31,10 @@
 		var mHiddenAnnotation = mProperty["com.sap.vocabularies.UI.v1.Hidden"];
 		mProp.hidden = mHiddenAnnotation && mHiddenAnnotation.Bool === "true";
 
-		if (!mProp.hidden){
+		if (!mProp.hidden) {
 			// Old hidden annotation
 			var mFieldControlAnnotation = mProperty["com.sap.vocabularies.Common.v1.FieldControl"];
-			if (mFieldControlAnnotation){
+			if (mFieldControlAnnotation) {
 				mProp.hidden = mFieldControlAnnotation.EnumMember === "com.sap.vocabularies.Common.v1.FieldControlType/Hidden";
 			}
 		}
@@ -58,13 +56,13 @@
 		return false;
 	}
 
-	function _expandComplexProperties(aODataProperties, oMetaModel, mEntity){
-		return aODataProperties.reduce(function(aExpandedProperties, mProperty){
+	function _expandComplexProperties(aODataProperties, oMetaModel, mEntity) {
+		return aODataProperties.reduce(function(aExpandedProperties, mProperty) {
 			var vProps = _enrichProperty(mProperty, mEntity);
 			if (_isComplexType(vProps)) {
 				var mComplexType = oMetaModel.getODataComplexType(vProps.type);
 				if (mComplexType) {
-					vProps = mComplexType.property.map(function(oComplexProperty){
+					vProps = mComplexType.property.map(function(oComplexProperty) {
 						oComplexProperty = _enrichProperty(oComplexProperty, mEntity);
 						oComplexProperty.bindingPath = vProps.name + "/" + oComplexProperty.name;
 						oComplexProperty.referencedComplexPropertyName = vProps.fieldLabel || vProps.name;
@@ -80,14 +78,14 @@
 	}
 
 	function _filterInvisibleProperties(aODataProperties, oElement, sAggregationName) {
-		return aODataProperties.filter(function(mProperty){
+		return aODataProperties.filter(function(mProperty) {
 			//see _enrichProperty
 			return !mProperty.hidden;
-		}).filter(function(mProperty){
+		}).filter(function(mProperty) {
 			//@runtime hidden by field control value = 0
 			var mFieldControlAnnotation = mProperty["com.sap.vocabularies.Common.v1.FieldControl"];
 			var sFieldControlPath = mFieldControlAnnotation && mFieldControlAnnotation.Path;
-			if (sFieldControlPath){
+			if (sFieldControlPath) {
 				// if the binding is a listbinding, we skip the check for field control
 				var bListBinding = oElement.getBinding(sAggregationName) instanceof sap.ui.model.ListBinding;
 				if (bListBinding) {
@@ -120,7 +118,7 @@
 		if (bAbsoluteAggregationBinding) {
 			vBinding = oElement.getBindingInfo(sAggregationName);
 			//check to be default model binding otherwise return undefined
-			if (typeof vBinding.model === "string" && vBinding.model !== ""){
+			if (typeof vBinding.model === "string" && vBinding.model !== "") {
 				vBinding = undefined;
 			}
 		} else {
@@ -166,7 +164,7 @@
 			var sModelName = oModel.getMetadata().getName();
 			if (sModelName === "sap.ui.model.odata.ODataModel" || sModelName === "sap.ui.model.odata.v2.ODataModel") {
 				var oMetaModel = oModel.getMetaModel();
-				return oMetaModel.loaded().then(function(){
+				return oMetaModel.loaded().then(function() {
 					var sBindingContextPath = _getBindingPath(oElement, sAggregationName);
 					if (sBindingContextPath) {
 						var oMetaModelContext = oMetaModel.getMetaContext(sBindingContextPath);
@@ -192,16 +190,16 @@
 						mData.property = _expandComplexProperties(mData.property, oMetaModel, mODataEntity);
 						mData.property = _filterInvisibleProperties(mData.property, oElement, sAggregationName);
 
-						if (mODataEntity.navigationProperty){
+						if (mODataEntity.navigationProperty) {
 							mData.navigationProperty = mODataEntity.navigationProperty;
-							mODataEntity.navigationProperty.forEach(function(oNavProp){
+							mODataEntity.navigationProperty.forEach(function(oNavProp) {
 								var sFullyQualifiedEntityName = (
 									oMetaModel.getODataAssociationEnd(mODataEntity, oNavProp.name)
 									&& oMetaModel.getODataAssociationEnd(mODataEntity, oNavProp.name).type
 								);
 								var oEntityType = oMetaModel.getODataEntityType(sFullyQualifiedEntityName);
-								if (oEntityType && oEntityType.name){
-									if (mData.navigationEntityNames.indexOf(oEntityType.name) === -1){
+								if (oEntityType && oEntityType.name) {
+									if (mData.navigationEntityNames.indexOf(oEntityType.name) === -1) {
 										mData.navigationEntityNames.push(oEntityType.name);
 									}
 								}
@@ -216,7 +214,7 @@
 		return Promise.resolve(mData);
 	}
 
-	function _oDataPropertyToAdditionalElementInfo (oODataProperty){
+	function _oDataPropertyToAdditionalElementInfo (oODataProperty) {
 		return {
 			selected : false,
 			label : oODataProperty.fieldLabel || oODataProperty.name,
@@ -232,7 +230,7 @@
 		};
 	}
 
-	function _elementToAdditionalElementInfo (mData){
+	function _elementToAdditionalElementInfo (mData) {
 		var oElement = mData.element;
 		var mAction = mData.action;
 		var mBindingPathCollection = mData.bindingPathCollection;
@@ -278,9 +276,8 @@
 					}
 					return false;
 				});
-		} else {
-			return [oElement];
 		}
+		return [oElement];
 	}
 
 	function _checkForComplexDuplicates(aODataProperties) {
@@ -335,7 +332,7 @@
 
 		// BindingContextPath : "/SEPMRA_C_PD_Supplier('100000001')"
 		// NavigationEntityName : "SEPMRA_C_PD_Supplier"
-		var bNavigationInEntity = aBindingContextPaths.some(function(sContextPath){
+		var bNavigationInEntity = aBindingContextPaths.some(function(sContextPath) {
 			sContextPath = sContextPath.match(/^\/?([A-Za-z0-9_]+)/)[0];
 			return (aNavigationEntityNames.indexOf(sContextPath) >= 0);
 		});
@@ -414,7 +411,7 @@
 			// with extra data from it
 			|| (
 				(mODataProperty = _findODataProperty(aBindingPaths, aODataProperties))
-				&&  (_enhanceInvisibleElement(oInvisibleElement, mODataProperty) || true)
+				&& (_enhanceInvisibleElement(oInvisibleElement, mODataProperty) || true)
 			)
 		);
 	}
@@ -429,7 +426,7 @@
 		 *
 		 * @return {Promise} - returns a Promise which resolves with a list of hidden controls are available to display
 		 */
-		enhanceInvisibleElements : function(oElement, mActions){
+		enhanceInvisibleElements : function(oElement, mActions) {
 			var oModel = oElement.getModel();
 			var mRevealData = mActions.reveal;
 			var mAddODataProperty = mActions.addODataProperty;
@@ -471,7 +468,7 @@
 								//if oData is available and the element is not present in it, do not include it
 								//Example use case: custom field which was hidden and then removed from system
 								//should not be available for adding after the removal
-								if (aODataProperties.length > 0){
+								if (aODataProperties.length > 0) {
 									bIncludeElement = _checkAndEnhanceODataProperty(
 										oInvisibleElement,
 										aODataProperties,
@@ -530,7 +527,7 @@
 					var aRelevantElements = _getRelevantElements(oElement, mAction.relevantContainer, sAggregationName);
 					var aBindings = [];
 
-					aRelevantElements.forEach(function(oElement){
+					aRelevantElements.forEach(function(oElement) {
 						aBindings = aBindings.concat(BindingsExtractor.getBindings(oElement, oModel));
 					});
 
@@ -538,7 +535,7 @@
 
 					aODataProperties = aODataProperties.filter(function(oDataProperty) {
 						var bHasBindingPath = false;
-						if (aBindings){
+						if (aBindings) {
 							bHasBindingPath = aBindings.some(function(vBinding) {
 								return (
 									jQuery.isPlainObject(vBinding)

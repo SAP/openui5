@@ -30,7 +30,6 @@ sap.ui.define([
 	var oPostMessageBus = PostMessageBus.getInstance();
 
 	Preview.loadComponent = function(oEvent) {
-
 		var sCompName = oEvent.data.compName;
 
 		if (this.oRta) {
@@ -46,7 +45,7 @@ sap.ui.define([
 		});
 
 		var fnEnsureXMLNodeStableIds = function ($XML) {
-			if (!$XML.id){
+			if (!$XML.id) {
 				$XML.id = uid();
 			}
 			if ($XML.childNodes) {
@@ -56,7 +55,7 @@ sap.ui.define([
 		};
 
 		// TODO: Temporary solution
-		var fnLoaderExtensionsOriginal =  LoaderExtensions.loadResource;
+		var fnLoaderExtensionsOriginal = LoaderExtensions.loadResource;
 		LoaderExtensions.loadResource = function(sModuleName, mOptions) {
 			if (typeof sModuleName === "string" && sModuleName.indexOf("create"/*"create.fragment.xml"*/) > -1 && !mOptions.async) {
 				var oDocument = fnLoaderExtensionsOriginal.call(this, sModuleName, {dataType: "xml"});
@@ -83,7 +82,6 @@ sap.ui.define([
 				eventId : "newRTA",
 				data : {}
 			});
-
 		} else {
 			this.refreshIframe(sCompName);
 		}
@@ -91,16 +89,15 @@ sap.ui.define([
 		this.oOutlineProvider = null;
 
 		FakeLrepConnectorLocalStorage.enableFakeConnector({
-			"isProductiveSystem": true
+			isProductiveSystem: true
 		});
 
 		Utils.checkControlId = function() {
 			return true;
 		};
-
 	};
 
-	Preview.refreshIframe = function(sCompName){
+	Preview.refreshIframe = function(sCompName) {
 		this.sCompId = "sampleComp-" + sCompName;
 
 		this.oUiComponent = sap.ui.getCore().createComponent({
@@ -218,9 +215,7 @@ sap.ui.define([
 
 
 	Preview.onRTAStarted = function () {
-
 		this.oUiComponent.getRootControl().loaded().then(function() {
-
 			if (!this.oDesignTime || this.oDesignTime.getId() !== this.oRta._oDesignTime.getId()) {
 				this.oDesignTime = this.oRta._oDesignTime;
 			}
@@ -248,13 +243,11 @@ sap.ui.define([
 	};
 
 	Preview.onElementModified = function (oEvent) {
-
 		this.oProperties = oEvent && oEvent.getParameters() && oEvent.getParameters().command && oEvent.getParameters().command.mProperties;
 
 		setTimeout(function () {
-
+			var oElement;
 			if (this.oProperties && this.oProperties.changeType) {
-
 				if (
 					this.oProperties.changeType === "rename" &&
 					this.oProperties.renamedElement &&
@@ -263,8 +256,7 @@ sap.ui.define([
 					this.oProperties.selector.controlType &&
 					this.oProperties.selector.controlType.match(/(.*)\..*$/) &&
 					this.oProperties.selector.controlType.match(/(.*)\..*$/)[1]
-				)  {
-
+				) {
 					oPostMessageBus.publish({
 						target : window.parent,
 						origin : window.parent.origin,
@@ -274,14 +266,13 @@ sap.ui.define([
 							properties : this.oProperties.renamedElement.mProperties
 						}
 					});
-
 				} else if (
 					this.oProperties.changeType === "moveControls" &&
 					this.oProperties.movedElements &&
 					this.oProperties.movedElements[0] &&
 					this.oProperties.movedElements[0].element
 				) {
-					var oElement = this.oProperties.movedElements[0].element;
+					oElement = this.oProperties.movedElements[0].element;
 					this.updateOutline(oElement);
 				}
 
@@ -298,12 +289,12 @@ sap.ui.define([
 						oComand.mProperties.movedElements[0] &&
 						oComand.mProperties.movedElements[0].element
 					) {
-						var oElement = oComand.mProperties.movedElements[0].element;
+						oElement = oComand.mProperties.movedElements[0].element;
 						this.updateOutline(oElement);
 						return true;
 					} else if (oComand.mProperties.changeType === "hideControl" &&
 						oComand.mProperties.removedElement) {
-						var oElement = oComand.mProperties.removedElement;
+						oElement = oComand.mProperties.removedElement;
 						this.updateOutline(oElement);
 						return true;
 					}
@@ -313,7 +304,6 @@ sap.ui.define([
 	};
 
 	Preview.updateOutline = function (oElement, bNotify) {
-
 		var oOverlay = OverlayRegistry.getOverlay(this.oDragElement);
 
 		var sOverlayId;
@@ -339,7 +329,6 @@ sap.ui.define([
 	};
 
 	Preview.loadOutline = function (oEvent) {
-
 		var sId = oEvent.data.id,
 			iDepth = oEvent.depth;
 
@@ -392,9 +381,7 @@ sap.ui.define([
 	};
 
 	Preview.onOverlaySelected = function (oEvent) {
-
-		if (oEvent.getParameter("selection")[0] && oEvent.getParameter("selection")[0] != this.oLastSelection) {
-
+		if (oEvent.getParameter("selection")[0] && oEvent.getParameter("selection")[0] !== this.oLastSelection) {
 			this.oLastSelection = oEvent.getParameter("selection")[0];
 
 			var sId = this.oLastSelection.getElement().getId();
@@ -447,7 +434,6 @@ sap.ui.define([
 					id: oElement.getId()
 				}
 			});
-
 		}
 	};
 	Preview.propertyChange = function (oEvent) {
@@ -475,7 +461,6 @@ sap.ui.define([
 	};
 
 	Preview.editorDTData = function (oEvent) {
-
 		var oEditorDTData = oEvent.data.dtData;
 
 		var oElement = this.getSelection().getElement();
@@ -491,7 +476,6 @@ sap.ui.define([
 		oMetadata._oDesignTimePromise = null;
 
 		oMetadata.loadDesignTime(oElement).then(function (oDTData) {
-
 			oPostMessageBus.publish({
 				target : window.parent,
 				origin : window.parent.origin,
@@ -515,7 +499,6 @@ sap.ui.define([
 	};
 
 	Preview.dragStart = function (oEvent) {
-
 		var sClassName = oEvent.data.className;
 
 		this.getClass(sClassName).then(function (aResults) {
@@ -526,7 +509,7 @@ sap.ui.define([
 			this.oDragElement
 				.placeAt("dragDropContainer")
 				.addEventDelegate({
-					"onAfterRendering": function () {
+					onAfterRendering: function () {
 						DragDropUtil.startDragWithElement(this.oDragElement, this.oRta, oEvent);
 					}.bind(this)
 				});
@@ -544,7 +527,7 @@ sap.ui.define([
 	Preview.getClass = function (sClassName) {
 		var oClass = ObjectPath.get(sClassName);
 
-		return new Promise(function (resolve, reject) {
+		return new Promise(function (resolve) {
 			if (oClass) {
 				resolve(oClass);
 			} else {
@@ -558,10 +541,10 @@ sap.ui.define([
 	Preview.getSelection = function () {
 		if (this.oSelectionManager.get()[0]) {
 			return this.oSelectionManager.get()[0];
-		} else {
-			this.oSelectionManager.set(this.oLastSelection);
-			return this.oLastSelection;
 		}
+
+		this.oSelectionManager.set(this.oLastSelection);
+		return this.oLastSelection;
 	};
 
 	Preview.undo = function () {

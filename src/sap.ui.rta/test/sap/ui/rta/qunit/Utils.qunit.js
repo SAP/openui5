@@ -41,7 +41,7 @@ function(
 
 	var sandbox = sinon.sandbox.create();
 
-	QUnit.module("Given a test app...",{
+	QUnit.module("Given a test app...", {
 		before: function() {
 			this.oCompCont = RtaQunitUtils.renderRuntimeAuthoringAppAt("qunit-fixture");
 			this.oView = sap.ui.getCore().byId("Comp1---idMain1");
@@ -85,10 +85,9 @@ function(
 			var isServiceOutdatedStub = sandbox.stub(Access, "isServiceOutdated");
 			var oAnything = {};
 
-			return Utils.isServiceUpToDate(oAnything).then(function(){
+			return Utils.isServiceUpToDate(oAnything).then(function() {
 				assert.equal(isServiceOutdatedStub.callCount, 0, "then service is not asked to be invalid");
 			});
-
 		});
 
 		QUnit.test("Given extensibility enabled and an unbound control when isServiceUpToDate is called", function(assert) {
@@ -96,7 +95,7 @@ function(
 			var isServiceOutdatedStub = sandbox.stub(Access, "isServiceOutdated");
 			var oUnboundControl = new Button({text: "unbound"});
 
-			return Utils.isServiceUpToDate(oUnboundControl).then(function(){
+			return Utils.isServiceUpToDate(oUnboundControl).then(function() {
 				assert.equal(isServiceOutdatedStub.callCount, 0, "then service is not asked to be invalid");
 			});
 		});
@@ -108,12 +107,11 @@ function(
 
 			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 
-			return Utils.isServiceUpToDate(oBoundControl).then(function(){
+			return Utils.isServiceUpToDate(oBoundControl).then(function() {
 				assert.ok(true, "then the service is recognized as up to date");
 				assert.equal(isServiceOutdatedStub.callCount, 1, "then service is asked to be invalid");
 				assert.equal(setServiceValidStub.callCount, 0, "then service is not unneccessarily set to be valid");
 			});
-
 		});
 
 		QUnit.test("Given extensibility enabled and a bound control and an outdated service when isServiceUpToDate is called", function(assert) {
@@ -123,10 +121,10 @@ function(
 
 			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 
-			sap.ui.getCore().getEventBus().subscribe("sap.ui.core.UnrecoverableClientStateCorruption","RequestReload", function(){
+			sap.ui.getCore().getEventBus().subscribe("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", function() {
 				assert.ok(true, "then the UI refresh is requested");
 			});
-			return Utils.isServiceUpToDate(oBoundControl).then(function(){
+			return Utils.isServiceUpToDate(oBoundControl).then(function() {
 				assert.ok(false, "then the service should be recognized as outdated");
 			}).catch(function() {
 				assert.ok(true, "then the service is recognized as outdated date");
@@ -139,14 +137,14 @@ function(
 
 			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 
-			return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult){
+			return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult) {
 				assert.strictEqual(vResult, false, "then custom fields is disabled");
 			});
 		});
 
 		QUnit.test("Given extensibility enabled and a custom field enabled bound control when isCustomFieldAvailable is called", function(assert) {
 			var oExtensibilityBusinessContext = {
-				BusinessContexts : [{ BusinessContext: "some context", BusinessContextDescription: "Some context description"} ],
+				BusinessContexts : [{ BusinessContext: "some context", BusinessContextDescription: "Some context description"}],
 				ServiceName : "servive name",
 				ServiceVersion : "some dummy ServiceVersion"
 			};
@@ -156,7 +154,7 @@ function(
 					Promise.resolve(JSON.parse(JSON.stringify(oExtensibilityBusinessContext))));
 			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 
-			return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult){
+			return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult) {
 				var mExpectedResult = JSON.parse(JSON.stringify(oExtensibilityBusinessContext));
 				mExpectedResult.EntityType = "Header";
 				assert.deepEqual(vResult, mExpectedResult, "then extensibility business context is enriched with the bound entity type");
@@ -169,7 +167,7 @@ function(
 				Promise.resolve({ BusinessContexts: [] })
 			);
 			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
-			return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult){
+			return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult) {
 				assert.strictEqual(vResult, false, "then the custom field is disabled");
 			});
 		});
@@ -179,7 +177,7 @@ function(
 			sandbox.stub(sap.ui, "require")
 				.callThrough()
 				.withArgs(["sap/ui/fl/fieldExt/Access"], sinon.match.any, sinon.match.any)
-				.callsFake(function(sModule, fnResolve, fnReject){
+				.callsFake(function(sModule, fnResolve, fnReject) {
 					fnReject();
 				});
 
@@ -188,8 +186,8 @@ function(
 				function () {
 					assert.ok(false, "then the returned promise should not be resolved");
 				}, function () {
-					assert.ok(true, "then the returned promise is rejected");
-				}
+				assert.ok(true, "then the returned promise is rejected");
+			}
 			);
 		});
 
@@ -199,7 +197,7 @@ function(
 				Promise.resolve()
 			);
 			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
-			return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult){
+			return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult) {
 				assert.strictEqual(vResult, false, "then the custom field is disabled");
 			});
 		});
@@ -207,7 +205,7 @@ function(
 		QUnit.test("Given extensibility enabled and unbound control when isCustomFieldAvailable is called", function(assert) {
 			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
 
-			return Utils.isCustomFieldAvailable(new Button()).then(function(vResult){
+			return Utils.isCustomFieldAvailable(new Button()).then(function(vResult) {
 				assert.strictEqual(vResult, false, "then custom fields is disabled");
 			});
 		});
@@ -217,7 +215,7 @@ function(
 			sandbox.stub(Access, "getBusinessContexts").resolves();
 			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 
-			return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult){
+			return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult) {
 				assert.strictEqual(vResult, false, "then custom fields is disabled");
 			});
 		});
@@ -229,7 +227,7 @@ function(
 			);
 			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 
-			return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult){
+			return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult) {
 				assert.strictEqual(vResult, false, "then custom fields is disabled");
 			});
 		});
@@ -239,7 +237,7 @@ function(
 			sandbox.stub(Access, "getBusinessContexts").throws(new Error("some simulated error"));
 			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 
-			return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult){
+			return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult) {
 				assert.strictEqual(vResult, false, "then custom fields is disabled");
 			});
 		});
@@ -248,7 +246,6 @@ function(
 	// -------------------------- Tests that don't need the runtimeAuthoring page --------------------------
 	QUnit.module("Given that the ObjectPage with overlays is given...", {
 		beforeEach : function(assert) {
-
 			//	ObjectPageLayout
 			//		ObjectPageSection1
 			//			ObjectPageSubSection1
@@ -445,7 +442,6 @@ function(
 				this.oButtonOverlay4.setSelectable(true);
 				fnDone();
 			}.bind(this));
-
 		},
 		afterEach: function () {
 			this.oLayout0.destroy();
@@ -542,25 +538,24 @@ function(
 	});
 
 	QUnit.module("Given two generic objects...", {
-		beforeEach : function(){
-
+		beforeEach : function() {
 			this.oObject1 = {
-				function11 : function(){
+				function11 : function() {
 					return "function11Object1";
 				},
-				function12 : function(){}
+				function12 : function() {}
 			};
 
 			this.oObject2 = {
-				function21 : function(){},
-				function11 : function(){
+				function21 : function() {},
+				function11 : function() {
 					return "function11Object2";
 				}
 			};
 		}
 	}, function () {
-		QUnit.test("when extendWith is called with a customizer function that always returns true", function(assert){
-			var fnCustomizer = function(){
+		QUnit.test("when extendWith is called with a customizer function that always returns true", function(assert) {
+			var fnCustomizer = function() {
 				return true;
 			};
 
@@ -570,8 +565,8 @@ function(
 			assert.equal(this.oObject1.function11(), "function11Object2", "then function11 from Object2 is now in Object1");
 		});
 
-		QUnit.test("when extendWith is called with a customizer function that always returns false", function(assert){
-			var fnCustomizer = function(){
+		QUnit.test("when extendWith is called with a customizer function that always returns false", function(assert) {
+			var fnCustomizer = function() {
 				return false;
 			};
 
@@ -580,7 +575,7 @@ function(
 			assert.deepEqual(oObject1Before, this.oObject1, "then the Object was not modified");
 		});
 
-		QUnit.test("when mergeWith is called with a customizer function", function(assert){
+		QUnit.test("when mergeWith is called with a customizer function", function(assert) {
 			var fnCustomizer = function() {
 				return function () {
 					return "mergedProperty";
@@ -593,32 +588,32 @@ function(
 		});
 
 		QUnit.test("when omit is called with an object and some properties", function (assert) {
-			var oSourceObject = {'a' : 1, 'b' : 2, 'c' : 3, 'd' : 4};
-			assert.deepEqual(Utils.omit(oSourceObject, ['b', 'd']), {'a' : 1, 'c' : 3}, "then a new object is returned without the properties");
+			var oSourceObject = {a : 1, b : 2, c : 3, d : 4};
+			assert.deepEqual(Utils.omit(oSourceObject, ['b', 'd']), {a : 1, c : 3}, "then a new object is returned without the properties");
 		});
 
 		QUnit.test("when omit is called with a single property as a string", function (assert) {
-			var oSourceObject = {'a' : 1, 'b' : 2, 'c' : 3};
-			assert.deepEqual(Utils.omit(oSourceObject, 'b'), {'a' : 1, 'c' : 3}, "then a new object is returned without the property 'b'");
+			var oSourceObject = {a : 1, b : 2, c : 3};
+			assert.deepEqual(Utils.omit(oSourceObject, 'b'), {a : 1, c : 3}, "then a new object is returned without the property 'b'");
 		});
 
 		QUnit.test("when omit is called with an object containing a property with undefined value and the other properties are removed", function (assert) {
-			var oSourceObject = {'a' : 1, 'b' : undefined, 'c' : 3};
-			assert.deepEqual(Utils.omit(oSourceObject, ['a', 'c']), {'b' : undefined}, "then the new object returned has only the property that has undefined value");
+			var oSourceObject = {a : 1, b : undefined, c : 3};
+			assert.deepEqual(Utils.omit(oSourceObject, ['a', 'c']), {b : undefined}, "then the new object returned has only the property that has undefined value");
 		});
 
 		QUnit.test("when omit is called with a deep object and some properties", function (assert) {
-			var oSourceObject = {'a' : 1, 'b' : { 'd': 4, 'e': 5 }, 'c' : 3};
+			var oSourceObject = {a : 1, b : { d: 4, e: 5 }, c : 3};
 			var oNewObject = Utils.omit(oSourceObject, ['a', 'c', 'd']);
-			assert.deepEqual(oNewObject, {'b' : { 'd': 4, 'e': 5 }},  "then a new object is returned without the properties");
+			assert.deepEqual(oNewObject, {b : { d: 4, e: 5 }}, "then a new object is returned without the properties");
 			oSourceObject.b.d = 0;
-			assert.deepEqual(oNewObject.b, { 'd': 0, 'e': 5 }, "then modifying the old object effects change the new object");
+			assert.deepEqual(oNewObject.b, { d: 0, e: 5 }, "then modifying the old object effects change the new object");
 		});
 	});
 
 	// One model with EntityType01 and EntityType02 (default) + one i18n model ("i18n")
 	QUnit.module("Given a complex test view with oData Model...", {
-		beforeEach : function(assert) {
+		beforeEach : function() {
 			this.oSource = new Label({text: "Label1" });
 			this.oTarget = new Label({text: "Label2" });
 		},
@@ -629,13 +624,12 @@ function(
 			sandbox.restore();
 		}
 	}, function () {
-
 		QUnit.test("Given checkSourceTargetBindingCompatibility is called with source control without bindings", function(assert) {
 			var sBindingContextPath = "/fakeBindingContext",
 				mBindingsCollection = {
-				bindingPaths: [],
-				bindingContextPaths: [sBindingContextPath]
-			};
+					bindingPaths: [],
+					bindingContextPaths: [sBindingContextPath]
+				};
 			sandbox.stub(BindingsExtractor, "collectBindingPaths")
 				.callThrough()
 				.withArgs(this.oSource, undefined)
@@ -651,9 +645,9 @@ function(
 		QUnit.test("Given checkSourceTargetBindingCompatibility is called with compatible controls", function(assert) {
 			var sBindingContextPath = "/fakeBindingContext",
 				mBindingsCollection = {
-				bindingPaths: ["fakeBindingProperty"],
-				bindingContextPaths: [sBindingContextPath]
-			};
+					bindingPaths: ["fakeBindingProperty"],
+					bindingContextPaths: [sBindingContextPath]
+				};
 			sandbox.stub(BindingsExtractor, "collectBindingPaths")
 				.callThrough()
 				.withArgs(this.oSource, undefined)
@@ -669,9 +663,9 @@ function(
 		QUnit.test("Given checkSourceTargetBindingCompatibility is called with incompatible controls", function(assert) {
 			var	sBindingContextPath = "/fakeBindingContext",
 				mBindingsCollection = {
-				bindingPaths: ["fakeBindingProperty"],
-				bindingContextPaths: [sBindingContextPath]
-			};
+					bindingPaths: ["fakeBindingProperty"],
+					bindingContextPaths: [sBindingContextPath]
+				};
 			sandbox.stub(BindingsExtractor, "collectBindingPaths")
 				.callThrough()
 				.withArgs(this.oSource, undefined)
@@ -683,7 +677,6 @@ function(
 				Utils.checkSourceTargetBindingCompatibility(this.oSource, this.oTarget), false,
 				"then bindings are not compatible");
 		});
-
 	});
 
 	QUnit.done(function () {

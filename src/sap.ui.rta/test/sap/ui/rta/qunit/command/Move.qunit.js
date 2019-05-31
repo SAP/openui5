@@ -91,7 +91,7 @@ sap.ui.define([
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Button": {
-					"moveStuff" : {
+					moveStuff : {
 						applyChange: this.fnApplyChangeSpy,
 						// This gets called twice: once for straightforward, once for undo preparation
 						completeChangeContent: this.fnCompleteChangeContentSpy
@@ -131,7 +131,7 @@ sap.ui.define([
 				return oMoveCommand.execute();
 			}.bind(this))
 
-			.then( function() {
+			.then(function() {
 				assert.equal(this.fnCompleteChangeContentSpy.callCount, 2, "then completeChangeContent is called twice (1x SF, 1x undo preparation)");
 				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
 			}.bind(this))
@@ -218,7 +218,7 @@ sap.ui.define([
 	}, function () {
 		QUnit.test("After executing the command", function(assert) {
 			var done = assert.async();
-			this.oMoveCommand.execute().then( function() {
+			this.oMoveCommand.execute().then(function() {
 				assertObjectAttributeMoved.call(this, assert);
 				done();
 			}.bind(this));
@@ -260,5 +260,4 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

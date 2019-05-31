@@ -12,10 +12,8 @@ QUnit.config.autostart = false;
 
 sap.ui.require([
 	"sap/ui/test/Opa5",
-	"sap/ui/rta/dttool/integration/pages/Common",
-	"sap/ui/rta/dttool/integration/pages/App"
-], function(Opa5, Common, App) {
-
+	"sap/ui/rta/dttool/integration/pages/Common"
+], function(Opa5, Common) {
 	"use strict";
 
 	Opa5.extendConfig({

@@ -7,11 +7,9 @@ sap.ui.define([
 	FakeLrepConnectorLocalStorage,
 	UrlParser
 ) {
-
 	"use strict";
 
 	return UIComponent.extend("sap.ui.rta.dttool.sample.Component", {
-
 		metadata: {
 			manifest: "json",
 			config : {

@@ -41,11 +41,11 @@ sap.ui.define([
 			library : "sap.ui.rta",
 			properties : {
 				/** The root control which is needed for the Flex Controller */
-				"rootControl" : {
-					type : "sap.ui.core.Control"
+				rootControl : {
+					type: "sap.ui.core.Control"
 				},
-				"commandSerializer" : {
-					type : "object" // has to be of type sap.ui.rta.command.LrepSerializer
+				commandSerializer : {
+					type: "object" // has to be of type sap.ui.rta.command.LrepSerializer
 				}
 			}
 		}
@@ -56,7 +56,6 @@ sap.ui.define([
 	 * @private
 	 */
 	AppVariantManager.prototype._openDialog = function(fnCreate, fnCancel) {
-
 		var oDialog = new AppVariantDialog("appVariantDialog");
 
 		oDialog.attachCreate(fnCreate);
@@ -121,9 +120,7 @@ sap.ui.define([
 		oPropertyChange = AppVariantUtils.getInlineChangeInputIcon(oAppVariantData.icon);
 		aBackendOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "icon"));
 
-		/*********************************************************************************************************************************************
-		***********************************************************Inbounds handling******************************************************************
-		*********************************************************************************************************************************************/
+		// ***********************************************************Inbounds handling******************************************************************
 		var oInboundInfo = AppVariantUtils.getInboundInfo(oAppVariantData.inbounds);
 		var sCurrentRunningInboundId = oInboundInfo.currentRunningInbound;
 		var bAddNewInboundRequired = oInboundInfo.addNewInboundRequired;
@@ -168,7 +165,7 @@ sap.ui.define([
 		var aInlineChanges = this.createAllInlineChanges(oAppVariantData);
 
 		var oAppVariantDescriptor;
-		return Promise.all(aInlineChanges).then(function(aResponses){
+		return Promise.all(aInlineChanges).then(function(aResponses) {
 			oAppVariantDescriptor = aResponses.shift();
 			aInlineChanges = [];
 
@@ -184,12 +181,11 @@ sap.ui.define([
 			if (AppVariantUtils.isS4HanaCloud(oSettings)) {
 				var oTransportInput = AppVariantUtils.getTransportInput("", sNamespace, "manifest", "appdescr_variant");
 				return AppVariantUtils.openTransportSelection(oTransportInput);
-			} else {
-				return Promise.resolve({
-					packageName: "$TMP",
-					transport: ""
-				});
 			}
+			return Promise.resolve({
+				packageName: "$TMP",
+				transport: ""
+			});
 		}).then(function(oTransportInfo) {
 			return AppVariantUtils.onTransportInDialogSelected(oAppVariantDescriptor, oTransportInfo);
 		}).catch(function(oError) {
@@ -220,7 +216,7 @@ sap.ui.define([
 					return RtaAppVariantFeature.onGetOverview(true);
 				}
 			};
-			//open app variant creation dialog
+			// open app variant creation dialog
 			return this._openDialog(fnCreate, fnCancel);
 		}.bind(this));
 	};

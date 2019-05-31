@@ -42,7 +42,6 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent the event
 		 */
 		_onRouteMatched: function (oEvent) {
-
 			this._aFilesAvailable = [];
 			this.sCompName = null;
 
@@ -57,7 +56,6 @@ sap.ui.define([
 				if (!this.bIFrameReady) {
 					this.sCompName = "sap.ui.rta.dttool.emptyView";
 				} else {
-
 					this.oPostMessageBus.publish({
 						target : DTToolUtils.getIframeWindow(),
 						origin : DTToolUtils.getIframeWindow().origin,
@@ -84,11 +82,9 @@ sap.ui.define([
 		 * Called when the iFrame is ready to receive messages
 		 */
 		onIFrameReady: function () {
-
 			this.bIFrameReady = true;
 
 			if (this.sCompName) {
-
 				this.oPostMessageBus.publish({
 					target : DTToolUtils.getIframeWindow(),
 					origin : DTToolUtils.getIframeWindow().origin,
@@ -106,7 +102,6 @@ sap.ui.define([
 		 * @param {object} oData the data of the samples
 		 */
 		_loadCode: function (oData) {
-
 			// retrieve sample object
 			var oSample = oData.samples[this._sId];
 			if (!oSample) {
@@ -116,7 +111,6 @@ sap.ui.define([
 
 			// cache the data to be reused
 			if (!this._oData || oSample.id !== this._oData.id) {
-
 				// get component and data when sample is changed or nothing exists so far
 				var sCompName = this._sId;
 
@@ -125,7 +119,6 @@ sap.ui.define([
 				if (!this.bIFrameReady) {
 					this.sCompName = sCompName;
 				} else {
-
 					this.oPostMessageBus.publish({
 						target : DTToolUtils.getIframeWindow(),
 						origin : DTToolUtils.getIframeWindow().origin,
@@ -153,7 +146,6 @@ sap.ui.define([
 		 * @param {object} oEvent.data.files some file names
 		 */
 		retrieveXMLFiles : function (oEvent) {
-
 			var aFiles = oEvent.data.files;
 
 			if (aFiles) {
@@ -164,7 +156,6 @@ sap.ui.define([
 				var sRef = this.sSampleId ? sap.ui.require.toUrl(this.sSampleId.replace(/\./g, "/")) : "test-resources/sap/ui/rta/dttool/emptyView";
 
 				Promise.all(aFiles.map(function (sFile) {
-
 					if (sFile.match(/\.xml$/i)) {
 						return this.fetchSourceFile(sRef, sFile).then(function (sContent) {
 							if (!this._oData) {
@@ -178,7 +169,6 @@ sap.ui.define([
 						}.bind(this));
 					}
 				}.bind(this))).then(function () {
-
 					var sFileName = this._getInitialFileName();
 
 					this.getView().getModel().setProperty("/", this._oData);
@@ -250,7 +240,6 @@ sap.ui.define([
 				var sDTFileName = sName ? sName.match(/^.*\.(.*?)$/)[1] + ".designtime.js" : null;
 
 				var fnNoDT = function () {
-
 					var sDisplayName = "",
 						sLib = "";
 
@@ -282,7 +271,6 @@ sap.ui.define([
 						this._replaceDTFileInEditor(sDTFileName, sDtFile);
 					}.bind(this), fnNoDT);
 				}
-
 			} else {
 				this._replaceDTFileInEditor();
 			}
@@ -320,7 +308,7 @@ sap.ui.define([
 			// set the <code>CodeEditor</code> scroll pos to line 0
 			oAceInstance.gotoLine(/*line*/0, /*column*/0, /*animate*/false);
 
-			jQuery.sap.delayedCall(0, this, function(){
+			jQuery.sap.delayedCall(0, this, function() {
 				oAceInstance.resize(true);
 			});
 		},
@@ -340,7 +328,6 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent the event
 		 */
 		onCodeEditorLiveChange : function (oEvent) {
-
 			var oCurrentFile;
 			var sName = this.byId("tabHead").getSelectedKey();
 
@@ -384,7 +371,6 @@ sap.ui.define([
 				sap.ui.define = fnSapUiDefine;
 
 				if (oResult) {
-
 					this.oPostMessageBus.publish({
 						target : DTToolUtils.getIframeWindow(),
 						origin : DTToolUtils.getIframeWindow().origin,
@@ -395,7 +381,6 @@ sap.ui.define([
 						}
 					});
 				}
-
 			} catch (ex) {
 				//jQuery.sap.log.error("Invalid effective DT data");
 			}
@@ -410,7 +395,7 @@ sap.ui.define([
 			var oActions = oEvent.data.actions || [];
 			if (sControlId) {
 				DTToolUtils.getRTAClient().getService("property").then(function (oPropertyService) {
-					oPropertyService.get(sControlId).then(function(oPropertyData){
+					oPropertyService.get(sControlId).then(function(oPropertyData) {
 						var sProperties = JSON.stringify(Object.assign({actions: oActions}, oPropertyData), null, "\t");
 						var sFileName = sControlId.split("--").slice(-1)[0] + ".properties.json";
 						this._addFile(sFileName, sProperties, false, "properties.json");
@@ -424,7 +409,7 @@ sap.ui.define([
 		/**
 		 * removes a file with the same type from the icon tab header and editor and adds a new one if sFileName and sRawFile are passed
 		 * @param {string} sFileName the name of the new file
-		 * @param {string} sDTFile the content of the new file
+		 * @param {string} sRawFile the content of the new file
 		 * @param {boolean} bIsDTFile Whether the file is a DTM file or not
 		 * @param {string} sFileType The type of the file which should be removed
 		 */
@@ -515,5 +500,5 @@ sap.ui.define([
 
 			return this.oCodeEditor;
 		}
-	 });
+	});
 });

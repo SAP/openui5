@@ -1,8 +1,8 @@
 sap.ui.define([
-	'sap/ui/rta/plugin/DragDrop',
-	'sap/ui/rta/dttool/plugins/OutsideElementMover',
-	'sap/ui/dt/Util',
-	'sap/ui/dt/plugin/ControlDragDrop'
+	"sap/ui/rta/plugin/DragDrop",
+	"sap/ui/rta/dttool/plugins/OutsideElementMover",
+	"sap/ui/dt/Util",
+	"sap/ui/dt/plugin/ControlDragDrop"
 ],
 function(
 	DragDrop,
@@ -52,7 +52,7 @@ function(
 			.then(function(oCommand) {
 				oOverlay.getElement().destroy();
 				this.fireElementModified({
-					"command" : oCommand
+					command : oCommand
 				});
 
 				oOverlay.$().removeClass("sapUiRtaOverlayPlaceholder");

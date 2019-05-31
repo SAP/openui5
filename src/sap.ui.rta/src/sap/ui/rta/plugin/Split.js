@@ -3,9 +3,9 @@
  */
 
 sap.ui.define([
-	'sap/ui/rta/plugin/Plugin',
-	'sap/ui/dt/Util',
-	'sap/ui/fl/Utils',
+	"sap/ui/rta/plugin/Plugin",
+	"sap/ui/dt/Util",
+	"sap/ui/fl/Utils",
 	"sap/base/util/uid"
 ], function(
 	Plugin,
@@ -28,12 +28,8 @@ sap.ui.define([
 	 * @alias sap.ui.rta.plugin.Split
 	 * @experimental Since 1.46. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
-	var Split = Plugin.extend("sap.ui.rta.plugin.Split", /** @lends sap.ui.rta.plugin.Split.prototype */
-	{
+	var Split = Plugin.extend("sap.ui.rta.plugin.Split", /** @lends sap.ui.rta.plugin.Split.prototype */ {
 		metadata: {
-			// ---- object ----
-
-			// ---- control specific ----
 			library: "sap.ui.rta",
 			properties: {},
 			associations: {},
@@ -52,9 +48,8 @@ sap.ui.define([
 			return this.hasChangeHandler(oSplitAction.changeType, oOverlay.getRelevantContainer()) &&
 					this.hasStableId(oOverlay) &&
 					this._checkRelevantContainerStableID(oSplitAction, oOverlay);
-		} else {
-			return false;
 		}
+		return false;
 	};
 
 	/**
@@ -104,7 +99,7 @@ sap.ui.define([
 		var bActionIsEnabled = true;
 		if (typeof oAction.isEnabled !== "undefined") {
 			if (typeof oAction.isEnabled === "function") {
-				 bActionIsEnabled = oAction.isEnabled(oElementOverlay.getElement());
+				bActionIsEnabled = oAction.isEnabled(oElementOverlay.getElement());
 			} else {
 				bActionIsEnabled = oAction.isEnabled;
 			}
@@ -124,7 +119,7 @@ sap.ui.define([
 		var oView = FlexUtils.getViewForControl(oSplitElement);
 		var aNewElementIds = [];
 
-		for (var i = 0; i < iElementsCount; i++){
+		for (var i = 0; i < iElementsCount; i++) {
 			aNewElementIds.push(oView.createId(uid()));
 		}
 
@@ -139,7 +134,7 @@ sap.ui.define([
 
 		.then(function(oSplitCommand) {
 			this.fireElementModified({
-				"command" : oSplitCommand
+				command : oSplitCommand
 			});
 		}.bind(this))
 
@@ -166,7 +161,7 @@ sap.ui.define([
 	 * Get the name of the action related to this plugin.
 	 * @return {string} Returns the action name
 	 */
-	Split.prototype.getActionName = function(){
+	Split.prototype.getActionName = function() {
 		return "split";
 	};
 

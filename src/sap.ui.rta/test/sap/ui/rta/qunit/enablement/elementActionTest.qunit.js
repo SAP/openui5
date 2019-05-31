@@ -31,8 +31,7 @@ sap.ui.define([
 						'</FormElement>' +
 					'</FormContainer>' +
 				'</Form>' +
-			'</mvc:View>'
-		,
+			'</mvc:View>',
 		action: {
 			name: "remove",
 			controlId: "formelement",
@@ -62,7 +61,7 @@ sap.ui.define([
 		}
 	});
 
-	var fnConfirmFormContainerIsInvisible = function(oUiComponent, oViewAfterAction, assert){
+	var fnConfirmFormContainerIsInvisible = function(oUiComponent, oViewAfterAction, assert) {
 		assert.strictEqual(oViewAfterAction.byId("container").getVisible(), false, "then the form container is invisible");
 		var oButton = oViewAfterAction.byId("btn");
 		oButton.firePress();
@@ -70,7 +69,7 @@ sap.ui.define([
 		window.oPressSpy.resetHistory();
 	};
 
-	var fnConfirmFormContainerIsVisible = function(oUiComponent, oViewAfterAction, assert){
+	var fnConfirmFormContainerIsVisible = function(oUiComponent, oViewAfterAction, assert) {
 		assert.strictEqual(oViewAfterAction.byId("container").getVisible(), true, "then the form container is visible");
 	};
 	elementActionTest("Checking the remove action for a simple control with always async view and preprocessors", {
@@ -92,7 +91,7 @@ sap.ui.define([
 		action : {
 			name : "remove",
 			controlId : "container",
-			parameter : function(oView){
+			parameter : function(oView) {
 				return {
 					removedElement : oView.byId("container")
 				};

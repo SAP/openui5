@@ -26,7 +26,7 @@ sap.ui.define([
 			var aVals = [true, 7, 3.14159265358979323846, "Fluffier Dirks", "Bare", ""];
 			var aTypes = ["boolean", "int", "float", "string", "sap.m.FlexRendertype", "thatOtherType"];
 
-			var aDTTLs =  [];
+			var aDTTLs = [];
 
 			for (var i0 = 0; i0 < aPropNames.length; i0++) {
 				aDTTLs[i0] = new DTToolListItem({
@@ -69,14 +69,14 @@ sap.ui.define([
 					vValue = vValue === "true";
 					assert.ok(oControl.getItems()[0].getText(), "first item is true");
 					assert.ok(oControl.getItems()[1].getText(), "second item is false");
-				} else if (jQuery.isPlainObject( jQuery.sap.getObject(aTypes[i1]))) {
+				} else if (jQuery.isPlainObject(jQuery.sap.getObject(aTypes[i1]))) {
 					var oEnum = jQuery.sap.getObject(aTypes[i1]);
 					assert.strictEqual(oControl.getItems().length, Object.keys(oEnum).length, "right number of enum values");
 					Object.keys(oEnum).forEach(fnCheckEnumVals.bind(this, oControl));
 				} else if (aTypes[i1] === "int") {
-						vValue = parseInt(vValue);
+					vValue = parseInt(vValue);
 				} else if (aTypes[i1] === "float") {
-						vValue = parseFloat(vValue);
+					vValue = parseFloat(vValue);
 				}
 
 				assert.strictEqual(vValue, aVals[i1], "value set correctly");
@@ -94,16 +94,15 @@ sap.ui.define([
 			var done = assert.async();
 
 			var newVals = {
-				"DTTLi0" : "Dirk",
-				"DTTLi1" : true,
-				"DTTLi2" : 42,
-				"DTTLi3" : 0.0238095
+				DTTLi0 : "Dirk",
+				DTTLi1 : true,
+				DTTLi2 : 42,
+				DTTLi3 : 0.0238095
 			};
 
 			var iChanges = 0;
 
 			var fnChange = function (oEvent) {
-
 				iChanges++;
 				assert.strictEqual(oEvent.getParameter("newValue"), newVals[oEvent.getSource().getId()], "event fired with correct new value");
 
@@ -165,5 +164,4 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

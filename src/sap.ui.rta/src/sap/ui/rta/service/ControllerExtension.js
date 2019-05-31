@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
- sap.ui.define([
+sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/Utils",

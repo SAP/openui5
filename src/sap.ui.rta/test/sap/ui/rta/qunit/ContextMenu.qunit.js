@@ -10,8 +10,6 @@ sap.ui.define([
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/m/Page",
 	"sap/m/Button",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -24,8 +22,6 @@ function(
 	ChangeRegistry,
 	Page,
 	Button,
-	KeyCodes,
-	QUnitUtils,
 	sinon
 ) {
 	"use strict";
@@ -152,11 +148,11 @@ function(
 				assert.ok(oContextMenuControl.bOpen, "when context menu (context menu) is opened on two selected GroupElements when one field has no binding");
 				assert.equal(oContextMenuControl.getButtons().length, 6, "6 Menu Buttons are available");
 				assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "we can rename a label");
-				assert.equal(oContextMenuControl.getButtons()[1].data("id") , "CTX_ADD_ELEMENTS_AS_SIBLING", "we can add field");
+				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "we can add field");
 				assert.equal(oContextMenuControl.getButtons()[2].data("id"), "CTX_REMOVE", "we can remove field");
 				assert.equal(oContextMenuControl.getButtons()[3].data("id"), "CTX_CUT", "we can cut groups");
 				assert.equal(oContextMenuControl.getButtons()[4].data("id"), "CTX_PASTE", "we can paste groups");
-				assert.equal(oContextMenuControl.getButtons()[5].data("id"), "CTX_GROUP_FIELDS" , "group fields is there ");
+				assert.equal(oContextMenuControl.getButtons()[5].data("id"), "CTX_GROUP_FIELDS", "group fields is there ");
 				assert.equal(oContextMenuControl.getButtons()[0].getEnabled(), false, "we can not rename multiple fields");
 				assert.equal(oContextMenuControl.getButtons()[5].getEnabled(), true, "we can group fields");
 
@@ -170,12 +166,12 @@ function(
 				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 				assert.ok(oContextMenuControl.bOpen, "when context menu (context menu) is opened on GroupElement when two fields, one field has no binding");
 				assert.equal(oContextMenuControl.getButtons().length, 6, "6 Menu Buttons are available");
-				assert.equal(oContextMenuControl.getButtons()[0].data("id") , "CTX_RENAME", "we can rename a label");
-				assert.equal(oContextMenuControl.getButtons()[1].data("id") , "CTX_ADD_ELEMENTS_AS_SIBLING", "we can add field");
-				assert.equal(oContextMenuControl.getButtons()[2].data("id") , "CTX_REMOVE", "we can remove field");
+				assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "we can rename a label");
+				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "we can add field");
+				assert.equal(oContextMenuControl.getButtons()[2].data("id"), "CTX_REMOVE", "we can remove field");
 				assert.equal(oContextMenuControl.getButtons()[3].data("id"), "CTX_CUT", "we can cut groups");
 				assert.equal(oContextMenuControl.getButtons()[4].data("id"), "CTX_PASTE", "we can paste groups");
-				assert.equal(oContextMenuControl.getButtons()[5].data("id") , "CTX_UNGROUP_FIELDS", "ungroup fields is there ");
+				assert.equal(oContextMenuControl.getButtons()[5].data("id"), "CTX_UNGROUP_FIELDS", "ungroup fields is there ");
 				assert.equal(oContextMenuControl.getButtons()[5].getEnabled(), true, "we can ungroup fields");
 			}.bind(this));
 		}
@@ -186,12 +182,12 @@ function(
 				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 				assert.ok(oContextMenuControl.bOpen, "when context menu (context menu) is opened on GroupElement with two fields");
 				assert.equal(oContextMenuControl.getButtons().length, 6, "6 Menu Buttons are available");
-				assert.equal(oContextMenuControl.getButtons()[0].data("id") , "CTX_RENAME", "we can rename a label");
-				assert.equal(oContextMenuControl.getButtons()[1].data("id") , "CTX_ADD_ELEMENTS_AS_SIBLING", "we can add field");
-				assert.equal(oContextMenuControl.getButtons()[2].data("id") , "CTX_REMOVE", "we can remove field");
+				assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "we can rename a label");
+				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "we can add field");
+				assert.equal(oContextMenuControl.getButtons()[2].data("id"), "CTX_REMOVE", "we can remove field");
 				assert.equal(oContextMenuControl.getButtons()[3].data("id"), "CTX_CUT", "we can cut groups");
 				assert.equal(oContextMenuControl.getButtons()[4].data("id"), "CTX_PASTE", "we can paste groups");
-				assert.equal(oContextMenuControl.getButtons()[5].data("id") , "CTX_UNGROUP_FIELDS", "ungroup fields is there ");
+				assert.equal(oContextMenuControl.getButtons()[5].data("id"), "CTX_UNGROUP_FIELDS", "ungroup fields is there ");
 				assert.equal(oContextMenuControl.getButtons()[5].getEnabled(), true, "we can ungroup fields");
 			}.bind(this));
 		}
@@ -202,9 +198,9 @@ function(
 				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 				assert.ok(oContextMenuControl.bOpen, "when context menu (context menu) is opened on GroupElement with stable id, but the Group has no stable id");
 				assert.equal(oContextMenuControl.getButtons().length, 2, "2 Menu Buttons are available");
-				assert.equal(oContextMenuControl.getButtons()[0].data("id") , "CTX_RENAME", "rename is available");
+				assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "rename is available");
 				assert.equal(oContextMenuControl.getButtons()[0].getEnabled(), true, "and rename is enabled");
-				assert.equal(oContextMenuControl.getButtons()[1].data("id") , "CTX_REMOVE", "remove field is available");
+				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_REMOVE", "remove field is available");
 				assert.equal(oContextMenuControl.getButtons()[1].getEnabled(), false, "we cannot remove the field");
 			}.bind(this));
 		}
@@ -215,7 +211,7 @@ function(
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.ui.comp.smartform.Group" : {
-				"changeSettings" : "sap/ui/fl/changeHandler/PropertyChange"
+					changeSettings : "sap/ui/fl/changeHandler/PropertyChange"
 				}
 			})
 			.then(function() {
@@ -318,13 +314,13 @@ function(
 
 			sandbox.stub(oContextMenuPlugin.getDesignTime(), "getSelection").returns([oFormOverlay]);
 			var oEvent = {
-				data : function(sDataParamName){
+				data : function(sDataParamName) {
 					var oItemData = {
 						id : "CTX_TEST"
 					};
 					return oItemData[sDataParamName];
 				},
-				getSubmenu : function(){
+				getSubmenu : function() {
 					return false;
 				}
 			};
@@ -332,7 +328,7 @@ function(
 			oContextMenuPlugin._aMenuItems = [{
 				menuItem : {
 					id : "CTX_TEST",
-					handler : function(){
+					handler : function() {
 						assert.ok("Then the handler for the Button is called");
 						done();
 					}
@@ -344,7 +340,6 @@ function(
 
 	QUnit.module("Given RTA is started for Object Page...", {
 		beforeEach : function() {
-
 			// View
 			// 	Page
 			// 		ObjectPageLayout
@@ -411,15 +406,15 @@ function(
 				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 				assert.ok(oContextMenuControl.bOpen, "then Menu gets opened");
 				assert.equal(oContextMenuControl.getButtons().length, 5, " and 5 Menu Buttons are available");
-				assert.equal(oContextMenuControl.getButtons()[0].data("id") , "CTX_RENAME", "rename section is available");
+				assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "rename section is available");
 				assert.equal(oContextMenuControl.getButtons()[0].getEnabled(), true, "rename section is enabled");
-				assert.equal(oContextMenuControl.getButtons()[1].data("id") , "CTX_ADD_ELEMENTS_AS_SIBLING", "add section is available");
+				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "add section is available");
 				assert.equal(oContextMenuControl.getButtons()[1].getEnabled(), true, "add section is enabled");
-				assert.equal(oContextMenuControl.getButtons()[2].data("id") , "CTX_REMOVE", "remove section is available");
+				assert.equal(oContextMenuControl.getButtons()[2].data("id"), "CTX_REMOVE", "remove section is available");
 				assert.equal(oContextMenuControl.getButtons()[2].getEnabled(), true, "we can remove a section");
-				assert.equal(oContextMenuControl.getButtons()[3].data("id") , "CTX_CUT", "cut sections available");
+				assert.equal(oContextMenuControl.getButtons()[3].data("id"), "CTX_CUT", "cut sections available");
 				assert.equal(oContextMenuControl.getButtons()[3].getEnabled(), true, "cut is enabled");
-				assert.equal(oContextMenuControl.getButtons()[4].data("id") , "CTX_PASTE", "paste is available");
+				assert.equal(oContextMenuControl.getButtons()[4].data("id"), "CTX_PASTE", "paste is available");
 				assert.equal(oContextMenuControl.getButtons()[4].getEnabled(), false, "we cannot paste a section");
 			}.bind(this));
 		});
@@ -482,9 +477,9 @@ function(
 				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 				assert.ok(oContextMenuControl.bOpen, "then Menu gets opened");
 				assert.equal(oContextMenuControl.getButtons().length, 2, " and 2 Menu Buttons are available");
-				assert.equal(oContextMenuControl.getButtons()[0].data("id") , "CTX_RENAME", "rename section is available");
+				assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "rename section is available");
 				assert.equal(oContextMenuControl.getButtons()[0].getEnabled(), true, "add section is enabled");
-				assert.equal(oContextMenuControl.getButtons()[1].data("id") , "CTX_REMOVE", "remove section is available");
+				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_REMOVE", "remove section is available");
 				assert.equal(oContextMenuControl.getButtons()[1].getEnabled(), true, "we cannot remove a section");
 				oContextMenuControl.close();
 			}.bind(this));

@@ -120,7 +120,6 @@ function(
 				this.oSectionOverlay2 = OverlayRegistry.getOverlay(this.oSection2);
 				done();
 			}.bind(this));
-
 		},
 		afterEach : function () {
 			sandbox.restore();
@@ -235,7 +234,6 @@ function(
 				this.oSectionOverlay = OverlayRegistry.getOverlay(this.oSection);
 				done();
 			}.bind(this));
-
 		},
 		afterEach : function() {
 			this.oVBox.destroy();
@@ -278,7 +276,6 @@ function(
 				this.oSectionOverlay = OverlayRegistry.getOverlay(this.oSection);
 				done();
 			}.bind(this));
-
 		},
 		afterEach : function() {
 			this.oLayout.destroy();
@@ -294,5 +291,4 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

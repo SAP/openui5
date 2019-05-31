@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	'sap/ui/core/Renderer',
-	'sap/m/HBoxRenderer'
+	"sap/ui/core/Renderer",
+	"sap/m/HBoxRenderer"
 ],
 function(
 	Renderer,

@@ -43,7 +43,6 @@ sap.ui.define([
 			sap.ushell = this.originalUShell;
 		}
 	}, function() {
-
 		QUnit.test("When getAppVariantOverviewAttributes() method is called with some missing properties (Key user view) on S4/Hana Cloud", function (assert) {
 			var oAppVariantInfo = {
 				appId : "id1",
@@ -54,17 +53,17 @@ sap.ui.define([
 				descriptorUrl : "url1",
 				hasStartableIntent: true,
 				startWith: {
-					"semanticObject": "SemObj",
-					"action": "Action"
+					semanticObject: "SemObj",
+					action: "Action"
 				}
 			};
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":true,
-					"isAtoEnabled":true,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:true,
+					isAtoEnabled:true,
+					isProductiveSystem:false
 				})
 			);
 
@@ -87,18 +86,18 @@ sap.ui.define([
 				descriptorUrl : "url1",
 				hasStartableIntent: true,
 				startWith: {
-					"semanticObject": "SemObj",
-					"action": "Action"
+					semanticObject: "SemObj",
+					action: "Action"
 				},
 				appVarStatus: 'U'
 			};
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":true,
-					"isAtoEnabled":true,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:true,
+					isAtoEnabled:true,
+					isProductiveSystem:false
 				})
 			);
 
@@ -126,10 +125,10 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":true,
-					"isAtoEnabled":true,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:true,
+					isAtoEnabled:true,
+					isProductiveSystem:false
 				})
 			);
 
@@ -156,10 +155,10 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":false,
-					"isAtoEnabled":false,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:false,
+					isAtoEnabled:false,
+					isProductiveSystem:false
 				})
 			);
 
@@ -183,17 +182,17 @@ sap.ui.define([
 				descriptorUrl : "url1",
 				hasStartableIntent: true,
 				startWith: {
-					"semanticObject": "SemObj",
-					"action": "Action"
+					semanticObject: "SemObj",
+					action: "Action"
 				}
 			};
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":false,
-					"isAtoEnabled":false,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:false,
+					isAtoEnabled:false,
+					isProductiveSystem:false
 				})
 			);
 
@@ -217,18 +216,18 @@ sap.ui.define([
 				descriptorUrl : "url1",
 				hasStartableIntent: true,
 				startWith: {
-					"semanticObject": "SemObj",
-					"action": "Action"
+					semanticObject: "SemObj",
+					action: "Action"
 				},
 				appVarStatus: 'R'
 			};
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":true,
-					"isAtoEnabled":true,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:true,
+					isAtoEnabled:true,
+					isProductiveSystem:false
 				})
 			);
 
@@ -256,17 +255,17 @@ sap.ui.define([
 				descriptorUrl : "url1",
 				hasStartableIntent: true,
 				startWith: {
-					"semanticObject": "SemObj",
-					"action": "Action"
+					semanticObject: "SemObj",
+					action: "Action"
 				}
 			};
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":false,
-					"isAtoEnabled":false,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:false,
+					isAtoEnabled:false,
+					isProductiveSystem:false
 				})
 			);
 
@@ -291,9 +290,9 @@ sap.ui.define([
 				descriptorUrl : "url1",
 				hasStartableIntent: true,
 				startWith: {
-					"semanticObject": "SemObj",
-					"action": "Action",
-					"parameters": {
+					semanticObject: "SemObj",
+					action: "Action",
+					parameters: {
 						"sap-appvar-id" : {
 							value: "id1",
 							required: true
@@ -304,10 +303,10 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":true,
-					"isAtoEnabled":true,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:true,
+					isAtoEnabled:true,
+					isProductiveSystem:false
 				})
 			);
 
@@ -329,9 +328,9 @@ sap.ui.define([
 				descriptorUrl : "url1",
 				hasStartableIntent: true,
 				startWith: {
-					"semanticObject": "SemObj",
-					"action": "Action",
-					"parameters": {
+					semanticObject: "SemObj",
+					action: "Action",
+					parameters: {
 						"sap-appvar-id" : "id1"
 					}
 				}
@@ -339,10 +338,10 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":false,
-					"isAtoEnabled":false,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:false,
+					isAtoEnabled:false,
+					isProductiveSystem:false
 				})
 			);
 
@@ -367,9 +366,9 @@ sap.ui.define([
 							descriptorUrl : "url1",
 							hasStartableIntent: true,
 							startWith: {
-								"semanticObject": "SemObj",
-								"action": "Action",
-								"parameters": {
+								semanticObject: "SemObj",
+								action: "Action",
+								parameters: {
 									"sap-appvar-id" : {
 										value: "id1"
 									}
@@ -382,16 +381,16 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":true,
-					"isAtoEnabled":true,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:true,
+					isAtoEnabled:true,
+					isProductiveSystem:false
 				})
 			);
 
 			var sendRequestStub = sandbox.stub(AppVariantOverviewUtils, "sendRequest").resolves(oResult);
 
-			return AppVariantOverviewUtils.getAppVariantOverview("testId", true).then(function(aAppVariantOverviewAttributes){
+			return AppVariantOverviewUtils.getAppVariantOverview("testId", true).then(function(aAppVariantOverviewAttributes) {
 				assert.ok(aAppVariantOverviewAttributes, "then the result contains app variant overview properties");
 				assert.strictEqual(aAppVariantOverviewAttributes[0].icon, "sap-icon://history", "then the icon of an app variant is correct");
 				assert.equal(aAppVariantOverviewAttributes[0].iconText, "history", "then the icon tooltip text of an app variant is correct");
@@ -413,14 +412,14 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":true,
-					"isAtoEnabled":true,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:true,
+					isAtoEnabled:true,
+					isProductiveSystem:false
 				})
 			);
 
-			return AppVariantOverviewUtils.getAppVariantOverview("testId", false).then(function(aAppVariantOverviewAttributes){
+			return AppVariantOverviewUtils.getAppVariantOverview("testId", false).then(function(aAppVariantOverviewAttributes) {
 				assert.equal(aAppVariantOverviewAttributes.length, 0, "then the result contains no app variant entries");
 				assert.ok(AppVariantOverviewUtils.sendRequest.calledOnce, "then the sendRequest is called once");
 				assert.strictEqual(sendRequestStub.firstCall.args[0], "/sap/bc/lrep/app_variant_overview/?sap.app/id=testId&layer=VENDOR", "then the route is correct");
@@ -450,16 +449,16 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":false,
-					"isAtoEnabled":false,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:false,
+					isAtoEnabled:false,
+					isProductiveSystem:false
 				})
 			);
 
 			var sendRequestStub = sandbox.stub(AppVariantOverviewUtils, "sendRequest").resolves(oResult);
 
-			return AppVariantOverviewUtils.getAppVariantOverview("testId", false).then(function(aAppVariantOverviewAttributes){
+			return AppVariantOverviewUtils.getAppVariantOverview("testId", false).then(function(aAppVariantOverviewAttributes) {
 				assert.ok(aAppVariantOverviewAttributes, "then the result contains app variant overview properties");
 				assert.strictEqual(aAppVariantOverviewAttributes[0].icon, "sap-icon://history", "then the icon of an app variant is correct");
 				assert.equal(aAppVariantOverviewAttributes[0].iconText, "history", "then the icon tooltip text of an app variant is correct");
@@ -486,9 +485,9 @@ sap.ui.define([
 							descriptorUrl : "url1",
 							hasStartableIntent: false,
 							startWith: {
-								"semanticObject": "",
-								"action": "",
-								"parameters": {}
+								semanticObject: "",
+								action: "",
+								parameters: {}
 							}
 						},
 						{
@@ -503,9 +502,9 @@ sap.ui.define([
 							descriptorUrl : "url2",
 							hasStartableIntent: true,
 							startWith: {
-								"semanticObject": "SemObj",
-								"action": "Action",
-								"parameters": {
+								semanticObject: "SemObj",
+								action: "Action",
+								parameters: {
 									"sap-appvar-id" : "id2"
 								}
 							}
@@ -524,10 +523,10 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":true,
-					"isAtoEnabled":true,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:true,
+					isAtoEnabled:true,
+					isProductiveSystem:false
 				})
 			);
 
@@ -569,9 +568,9 @@ sap.ui.define([
 							descriptorUrl : "url1",
 							hasStartableIntent: true,
 							startWith: {
-								"semanticObject": "SemObj",
-								"action": "Action",
-								"parameters": {
+								semanticObject: "SemObj",
+								action: "Action",
+								parameters: {
 									"sap-appvar-id" : {
 										value: "id1"
 									}
@@ -594,10 +593,10 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":true,
-					"isAtoEnabled":true,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:true,
+					isAtoEnabled:true,
+					isProductiveSystem:false
 				})
 			);
 
@@ -656,9 +655,9 @@ sap.ui.define([
 							descriptorUrl : "url1",
 							hasStartableIntent: true,
 							startWith: {
-								"semanticObject": "SemObj",
-								"action": "Action",
-								"parameters": {
+								semanticObject: "SemObj",
+								action: "Action",
+								parameters: {
 									"sap-appvar-id" : "id1"
 								}
 							}
@@ -669,16 +668,16 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":true,
-					"isAtoEnabled":true,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:true,
+					isAtoEnabled:true,
+					isProductiveSystem:false
 				})
 			);
 
 			var sendRequestStub = sandbox.stub(AppVariantOverviewUtils, "sendRequest").resolves(oResult);
 
-			return AppVariantOverviewUtils.getAppVariantOverview("testId", true).then(function(aAppVariantOverviewAttributes){
+			return AppVariantOverviewUtils.getAppVariantOverview("testId", true).then(function(aAppVariantOverviewAttributes) {
 				assert.ok(aAppVariantOverviewAttributes, "then the result contains app variant overview properties");
 
 				assert.strictEqual(aAppVariantOverviewAttributes[0].icon, "sap-icon://history", "then the icon of an app variant is correct");
@@ -702,7 +701,7 @@ sap.ui.define([
 
 			sandbox.stub(AppVariantOverviewUtils, "sendRequest").resolves(oResult);
 
-			return AppVariantOverviewUtils.getDescriptor("testIdDescriptorUrl").then(function(oDescriptor){
+			return AppVariantOverviewUtils.getDescriptor("testIdDescriptorUrl").then(function(oDescriptor) {
 				assert.ok(oDescriptor, "then the descriptor of the app is returned");
 				assert.strictEqual(oDescriptor["sap.app"].id, "testId", "then the id of the descriptor is right");
 				assert.ok(AppVariantOverviewUtils.sendRequest.calledOnce, "then the sendRequest is called once");
@@ -713,5 +712,4 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

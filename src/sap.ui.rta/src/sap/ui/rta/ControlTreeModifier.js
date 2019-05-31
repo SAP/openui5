@@ -5,8 +5,10 @@
 sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/base/util/merge"
-], function(JsControlTreeModifier, merge) {
-
+], function(
+	JsControlTreeModifier,
+	merge
+) {
 	"use strict";
 
 	/**
@@ -26,7 +28,7 @@ sap.ui.define([
 	 */
 	var _aUndoStack;
 
-	var RtaControlTreeModifier = /** @lends sap.ui.rta.ControlTreeModifier */{
+	var RtaControlTreeModifier = /** @lends sap.ui.rta.ControlTreeModifier */ {
 
 		/**
 		 * Start recording operations
@@ -74,13 +76,13 @@ sap.ui.define([
 		 * Execute the visibility change from parent and record the opposite visibility as undo operation
 		 * @override
 		 */
-		setVisible : function (oControl, bVisible) {
+		setVisible : function (oControl) {
 			var bOldVisible = this.getVisible(oControl);
 
 			var vReturnValue = JsControlTreeModifier.setVisible.apply(this, arguments);
 
 			/* If the visibility changed, record the reversal as undo operation */
-			if (bOldVisible !== this.getVisible(oControl)){
+			if (bOldVisible !== this.getVisible(oControl)) {
 				this._saveUndoOperation("setVisible", [oControl, bOldVisible]);
 			}
 
@@ -99,7 +101,7 @@ sap.ui.define([
 		setStashed: function (oControl, bStashed) {
 			var bOldValue;
 			var vControlId = oControl.getId();
-			if (oControl.getVisible){
+			if (oControl.getVisible) {
 				bOldValue = !oControl.getVisible();
 			} else {
 				bOldValue = oControl.getStashed();
@@ -119,7 +121,7 @@ sap.ui.define([
 		 * If the property had a previous value, this value is restored with the undo
 		 * @override
 		 */
-		bindProperty: function (oControl, sPropertyName, mBindingInfos) {
+		bindProperty: function (oControl, sPropertyName) {
 			var mOldBindingInfos = oControl.getBindingInfo(sPropertyName);
 			var vOldValue;
 
@@ -131,7 +133,7 @@ sap.ui.define([
 
 			JsControlTreeModifier.bindProperty.apply(this, arguments);
 
-			if (mOldBindingInfos){
+			if (mOldBindingInfos) {
 				this._saveUndoOperation("bindProperty", [oControl, sPropertyName, mOldBindingInfos]);
 			} else {
 				this._saveUndoOperation("unbindProperty", [oControl, sPropertyName]);
@@ -152,7 +154,7 @@ sap.ui.define([
 
 			JsControlTreeModifier.unbindProperty.apply(this, arguments);
 
-			if (mOldBindingInfos){
+			if (mOldBindingInfos) {
 				this._saveUndoOperation("bindProperty", [oControl, sPropertyName, mOldBindingInfos]);
 			}
 		},
@@ -173,7 +175,7 @@ sap.ui.define([
 			var vReturnValue = JsControlTreeModifier.setProperty.apply(this, arguments);
 
 			/* If the value changed, record the reversal as undo operation */
-			if (vOldValue !== oPropertyValue){
+			if (vOldValue !== oPropertyValue) {
 				this._saveUndoOperation("setProperty", [oControl, sPropertyName, vOldValue]);
 			}
 
@@ -232,7 +234,7 @@ sap.ui.define([
 		 * This control has to be destroyed on undo
 		 * @override
 		 */
-		instantiateFragment: function(sFragment, sChangeId, oView, oController) {
+		instantiateFragment: function() {
 			var aControls = JsControlTreeModifier.instantiateFragment.apply(this, arguments);
 
 			aControls.forEach(function(oControl) {
@@ -258,7 +260,7 @@ sap.ui.define([
 		 * Adds removeAggregation as the undo operation
 		 * @override
 		 */
-		 insertAggregation: function (oParent, sName, oObject, iIndex) {
+		insertAggregation: function (oParent, sName, oObject) {
 			var oOldAggregationValue = JsControlTreeModifier.getAggregation.call(this, oParent, sName);
 
 			JsControlTreeModifier.insertAggregation.apply(this, arguments);
@@ -290,11 +292,11 @@ sap.ui.define([
 		removeAggregation: function (oParent, sName, oObject) {
 			var iOldIndex;
 			var oAggregationElements;
-			if (oParent && oObject){
+			if (oParent && oObject) {
 				oAggregationElements = JsControlTreeModifier.getAggregation.call(this, oParent, sName);
-				if (oAggregationElements){
+				if (oAggregationElements) {
 					oAggregationElements.some(function(oElement, iIndex) {
-						if (oElement === oObject){
+						if (oElement === oObject) {
 							iOldIndex = iIndex;
 							return true;
 						}
@@ -323,13 +325,13 @@ sap.ui.define([
 
 			if (vAggregationElements && vAggregationElements instanceof Array) {
 				aOldAggregationElements = vAggregationElements.slice();
-			} else  if (vAggregationElements && vAggregationElements instanceof Object) {
+			} else if (vAggregationElements && vAggregationElements instanceof Object) {
 				aOldAggregationElements[0] = vAggregationElements;
 			}
 
 			JsControlTreeModifier.removeAllAggregation(oParent, sName);
 
-			if (aOldAggregationElements){
+			if (aOldAggregationElements) {
 				aOldAggregationElements.forEach(function(oElement) {
 					this._saveUndoOperation("insertAggregation", [oParent, sName, oElement]);
 				}, this);

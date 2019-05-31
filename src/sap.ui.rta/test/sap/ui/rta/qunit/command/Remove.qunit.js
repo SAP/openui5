@@ -2,7 +2,6 @@
 
 sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
-	"sap/ui/rta/command/Remove",
 	"sap/ui/dt/DesignTimeMetadata",
 	"sap/ui/core/Popup",
 	"sap/ui/fl/Utils",
@@ -11,7 +10,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	CommandFactory,
-	Remove,
 	DesignTimeMetadata,
 	Popup,
 	FlUtils,
@@ -24,9 +22,7 @@ sap.ui.define([
 	QUnit.module("Given a popup with empty designtime metadata is created...", {
 		beforeEach: function () {
 			this.oPopup = new Popup();
-
 			this.oPopupDesignTimeMetadata = new DesignTimeMetadata();
-
 		},
 		afterEach: function () {
 			this.oPopup.destroy();
@@ -86,7 +82,7 @@ sap.ui.define([
 
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Link": {
-					"hideControl" : {
+					hideControl : {
 						applyChange: this.fnApplyChangeSpy,
 						completeChangeContent: this.fnCompleteChangeContentSpy
 					}
@@ -147,7 +143,7 @@ sap.ui.define([
 				assert.equal(oRemoveCommand.getChangeType(), sChangeType, "correct change type is assigned to a command");
 				return oRemoveCommand.execute();
 			}.bind(this))
-			.then( function() {
+			.then(function() {
 				assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
 				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
 			}.bind(this))
@@ -160,5 +156,4 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

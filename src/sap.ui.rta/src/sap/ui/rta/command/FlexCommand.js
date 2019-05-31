@@ -89,15 +89,16 @@ sap.ui.define([
 	 * @override
 	 */
 	FlexCommand.prototype.prepare = function(mFlexSettings, sVariantManagementReference) {
+		var oSelector;
 		if (!this.getSelector() && mFlexSettings && mFlexSettings.templateSelector) {
-			var oSelector = {
+			oSelector = {
 				id: mFlexSettings.templateSelector,
 				appComponent: this.getAppComponent(),
 				controlType: flUtils.getControlType(sap.ui.getCore().byId(mFlexSettings.templateSelector))
 			};
 			this.setSelector(oSelector);
 		} else if (!this.getSelector() && this.getElement()) {
-			var oSelector = {
+			oSelector = {
 				id: this.getElement().getId(),
 				appComponent: this.getAppComponent(),
 				controlType: flUtils.getControlType(this.getElement())
@@ -182,8 +183,8 @@ sap.ui.define([
 		}
 		var oFlexController = FlexControllerFactory.createForControl(this.getAppComponent());
 		var mVariantObj = {
-			"variantManagementReference": sVariantManagementReference,
-			"variantReference": sVariantReference
+			variantManagementReference: sVariantManagementReference,
+			variantReference: sVariantReference
 		};
 		if (sVariantReference) {
 			mChangeSpecificData = Object.assign({}, mChangeSpecificData, mVariantObj);
@@ -277,7 +278,7 @@ sap.ui.define([
 		})
 
 		.then(function(oResult) {
-			if (!bRevertible){
+			if (!bRevertible) {
 				if (!oChange.getUndoOperations()) {
 					this._aRecordedUndo = RtaControlTreeModifier.stopRecordingUndo();
 				} else {
@@ -298,11 +299,9 @@ sap.ui.define([
 				appComponent: this.getAppComponent(),
 				controlType: flUtils.getControlType(sap.ui.getCore().byId(mFlexSettings.originalSelector))
 			};
-		} else {
-			return this.getElement() || this.getSelector();
 		}
+		return this.getElement() || this.getSelector();
 	};
 
 	return FlexCommand;
-
 }, /* bExport= */true);

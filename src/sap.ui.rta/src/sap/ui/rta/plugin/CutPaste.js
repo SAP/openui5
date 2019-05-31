@@ -3,11 +3,11 @@
  */
 
 sap.ui.define([
-	'sap/ui/dt/plugin/CutPaste',
-	'sap/ui/dt/Util',
-	'sap/ui/rta/plugin/Plugin',
-	'sap/ui/rta/plugin/RTAElementMover',
-	'sap/ui/rta/Utils'
+	"sap/ui/dt/plugin/CutPaste",
+	"sap/ui/dt/Util",
+	"sap/ui/rta/plugin/Plugin",
+	"sap/ui/rta/plugin/RTAElementMover",
+	"sap/ui/rta/Utils"
 ],
 function(
 	ControlCutPaste,
@@ -39,9 +39,6 @@ function(
 	 */
 	var CutPaste = ControlCutPaste.extend("sap.ui.rta.plugin.CutPaste", /** @lends sap.ui.rta.plugin.CutPaste.prototype */ {
 		metadata : {
-			// ---- object ----
-
-			// ---- control specific ----
 			library : "sap.ui.rta",
 			properties : {
 				commandFactory : {
@@ -105,7 +102,7 @@ function(
 	 * @param  {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
 	 */
-	CutPaste.prototype.registerElementOverlay = function(oOverlay) {
+	CutPaste.prototype.registerElementOverlay = function() {
 		ControlCutPaste.prototype.registerElementOverlay.apply(this, arguments);
 		Plugin.prototype.registerElementOverlay.apply(this, arguments);
 	};
@@ -115,7 +112,7 @@ function(
 	 * @param  {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
 	 */
-	CutPaste.prototype.deregisterElementOverlay = function(oOverlay) {
+	CutPaste.prototype.deregisterElementOverlay = function() {
 		ControlCutPaste.prototype.deregisterElementOverlay.apply(this, arguments);
 		Plugin.prototype.removeFromPluginsList.apply(this, arguments);
 	};
@@ -124,14 +121,13 @@ function(
 	 * @override
 	 */
 	CutPaste.prototype.paste = function(oTargetOverlay) {
-
 		this._executePaste(oTargetOverlay);
 
 		this.getElementMover().buildMoveCommand()
 
 		.then(function(oMoveCommand) {
 			this.fireElementModified({
-				"command" : oMoveCommand
+				command : oMoveCommand
 			});
 			this.stopCutAndPaste();
 		}.bind(this))
@@ -139,7 +135,6 @@ function(
 		.catch(function(oMessage) {
 			throw DtUtil.createError("CutPaste#paste", oMessage, "sap.ui.rta");
 		});
-
 	};
 
 	/**

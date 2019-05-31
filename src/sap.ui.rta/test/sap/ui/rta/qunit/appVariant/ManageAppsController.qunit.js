@@ -156,10 +156,10 @@ sap.ui.define([
 			sandbox.stub(RtaUtils, "_showMessageBox").resolves(true);
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.reject(false));
 			var getAppVariantOverviewSpy = sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").returns(Promise.reject("Server error"));
-			sandbox.stub(Log,"error").callThrough().withArgs("App variant error: ", "Server error").returns();
+			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "Server error").returns();
 
 			return oManageAppsController.onInit().catch(function(bSuccess) {
-				assert.equal(bSuccess, false, "Error: An unexpected exception occured" );
+				assert.equal(bSuccess, false, "Error: An unexpected exception occured");
 				assert.ok(highlightAppVariantSpy.notCalled, "the _highlightNewCreatedAppVariant method is not called");
 				assert.ok(getAppVariantOverviewSpy.calledOnce, "the getAppVariantOverview method is called once");
 				assert.ok(showMessageWhenNoAppVariantsSpy.notCalled, "the showMessageWhenNoAppVariantsSpy method is not called");
@@ -346,7 +346,7 @@ sap.ui.define([
 			modelPropertySpy.onFirstCall().returns("SemObj");
 			modelPropertySpy.onSecondCall().returns("Action");
 			modelPropertySpy.onThirdCall().returns({
-				"saveAs" : "customer.id"
+				saveAs : "customer.id"
 			});
 
 			var oButton = {
@@ -370,5 +370,4 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

@@ -31,11 +31,11 @@ function(
 		QUnit.test("when getting invisible elements with a control without model", function(assert) {
 			var oSimpleFormWithoutModel = new SimpleForm();
 			var oSimpleForm = this.oView.byId("SimpleForm");
-			var aFormElements = oSimpleForm.getAggregation("form").getFormContainers().reduce(function(aAllFormElements, oFormContainer){
+			var aFormElements = oSimpleForm.getAggregation("form").getFormContainers().reduce(function(aAllFormElements, oFormContainer) {
 				return aAllFormElements.concat(oFormContainer.getFormElements());
-			},[]).filter(function(oFormElement){
+			}, []).filter(function(oFormElement) {
 				return oFormElement.isVisible() === false;
-			}).map(function(oFormElement){
+			}).map(function(oFormElement) {
 				return {
 					element : oFormElement,
 					action : {
@@ -69,11 +69,11 @@ function(
 		QUnit.test("when getting invisible elements with an element with a json model", function(assert) {
 			var oSimpleFormWithJSONModel = new SimpleForm();
 			var oSimpleForm = this.oView.byId("SimpleForm");
-			var aFormElements = oSimpleForm.getAggregation("form").getFormContainers().reduce(function(aAllFormElements, oFormContainer){
+			var aFormElements = oSimpleForm.getAggregation("form").getFormContainers().reduce(function(aAllFormElements, oFormContainer) {
 				return aAllFormElements.concat(oFormContainer.getFormElements());
-			},[]).filter(function(oFormElement){
+			}, []).filter(function(oFormElement) {
 				return oFormElement.isVisible() === false;
-			}).map(function(oFormElement){
+			}).map(function(oFormElement) {
 				return {
 					element : oFormElement,
 					action : {
@@ -116,5 +116,4 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

@@ -5,15 +5,11 @@
 sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
-	"sap/ui/dt/Overlay",
-	"sap/ui/dt/ElementUtil",
 	"sap/base/util/merge",
 	"sap/ui/rta/Utils"
 ], function(
 	OverlayRegistry,
 	DtUtil,
-	Overlay,
-	ElementUtil,
 	merge,
 	RtaUtils
 ) {
@@ -48,7 +44,6 @@ sap.ui.define([
 	 */
 
 	return function() {
-
 		var oProperty = {};
 
 		/**
@@ -138,7 +133,6 @@ sap.ui.define([
 							.map(function (sKey) {
 								return oProperty._getResolvedFunction(mDtObj[sKey].ignore, oElement)
 									.then(function (bIgnore) {
-
 										if (typeof bIgnore !== "boolean") {
 											throw DtUtil.createError(
 												"services.Property#get",
@@ -207,7 +201,6 @@ sap.ui.define([
 			// evaluate possibleValues
 			return oProperty._getResolvedFunction(mDtObj[sPropertyName].possibleValues, oElement)
 				.then(function(vPossibleValues) {
-
 					Object.assign(
 						mEvaluatedProperty[sPropertyName],
 						mBindingInfo && {binding: mBindingInfo},
@@ -241,20 +234,20 @@ sap.ui.define([
 										"services.Property#get",
 										"Invalid ignore property value found in designtime for element with id " + oElement.getId() + " .", "sap.ui.rta"
 									);
-							}
+								}
 							// to ensure ignore function is replaced by a boolean value
-							mDtObj[sKey].ignore = bIgnore;
-							if (!bIgnore) {
-								mFiltered[sKey] = Object.assign({}, mDtObj[sKey]);
-								return oProperty._getResolvedLinks(mFiltered[sKey].links, oElement)
+								mDtObj[sKey].ignore = bIgnore;
+								if (!bIgnore) {
+									mFiltered[sKey] = Object.assign({}, mDtObj[sKey]);
+									return oProperty._getResolvedLinks(mFiltered[sKey].links, oElement)
 									.then(function (mLinks) {
 										if (!jQuery.isEmptyObject(mLinks)) {
 											mFiltered[sKey].links = mLinks;
 										}
 										return mFiltered;
 									});
-							}
-						});
+								}
+							});
 					})
 			)
 				.then(function (aFilteredResults) {
@@ -285,14 +278,13 @@ sap.ui.define([
 		 * @return {Promise} Promise resolving to links map
 		 * @private
 		 */
-		oProperty._getResolvedLinks = function (mLinks, oElement){
+		oProperty._getResolvedLinks = function (mLinks, oElement) {
 			var aTextPromises = [];
 			var mResolvedLinks = Object.assign({}, mLinks);
 
 			Object.keys(mResolvedLinks).forEach(function (sLinkName) {
 				if (Array.isArray(mResolvedLinks[sLinkName])) {
 					mResolvedLinks[sLinkName].forEach(function (oLink) {
-
 						aTextPromises.push(
 							DtUtil.wrapIntoPromise(function () {
 								if (typeof oLink.text === "function") {
@@ -300,10 +292,9 @@ sap.ui.define([
 								}
 							})(oLink)
 								.then(function (sLinkText) {
-									oLink.text = sLinkText ? sLinkText : oLink.text;
+									oLink.text = sLinkText || oLink.text;
 								})
 						);
-
 					});
 				}
 			});

@@ -2,14 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
-	"sap/ui/rta/command/ControlVariantSwitch",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	CommandFactory,
-	ControlVariantSwitch,
 	Utils,
 	VariantManagement,
 	VariantModel,
@@ -58,7 +56,6 @@ sap.ui.define([
 
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oMockedAppComponent);
 			this.fnUpdateCurrentVariantStub = sandbox.stub(oModel, "updateCurrentVariant");
-
 		},
 		afterEach: function () {
 			this.oVariantManagement.destroy();
@@ -68,9 +65,9 @@ sap.ui.define([
 		QUnit.test("when getting a switch command for VariantManagement...", function(assert) {
 			var oSwitchCommand,
 				oSwitchCommandData = {
-				targetVariantReference : "newVariantReference",
-				sourceVariantReference : "oldVariantReference"
-			};
+					targetVariantReference : "newVariantReference",
+					sourceVariantReference : "oldVariantReference"
+				};
 
 			return CommandFactory.getCommandFor(this.oVariantManagement, "switch", oSwitchCommandData)
 				.then(function(oCommand) {
@@ -99,9 +96,9 @@ sap.ui.define([
 		QUnit.test("when getting a switch command for VariantManagement with equal source and target variantId ...", function(assert) {
 			var oSwitchCommand,
 				oSwitchCommandData = {
-				targetVariantReference : "variantReference",
-				sourceVariantReference : "variantReference"
-			};
+					targetVariantReference : "variantReference",
+					sourceVariantReference : "variantReference"
+				};
 
 			return CommandFactory.getCommandFor(this.oVariantManagement, "switch", oSwitchCommandData)
 				.then(function(oCommand) {
@@ -126,5 +123,4 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

@@ -30,7 +30,6 @@ sap.ui.define([
 		 * @returns {sap.ui.core.Control} the content
 		 */
 		createContent : function() {
-
 			SmartLinkUtil.mockUShellServices();
 
 			// app specific setup
@@ -64,7 +63,6 @@ sap.ui.define([
 			oApp.addPage(oPage);
 
 			return oApp;
-
 		},
 
 		/**

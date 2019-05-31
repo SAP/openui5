@@ -3,10 +3,10 @@
  */
 
 sap.ui.define([
-	'sap/ui/rta/plugin/Plugin',
-	'sap/ui/rta/Utils',
-	'sap/ui/dt/Util',
-	'sap/base/Log'
+	"sap/ui/rta/plugin/Plugin",
+	"sap/ui/rta/Utils",
+	"sap/ui/dt/Util",
+	"sap/base/Log"
 ], function(
 	Plugin,
 	Utils,
@@ -30,12 +30,8 @@ sap.ui.define([
 	 * @alias sap.ui.rta.plugin.Settings
 	 * @experimental Since 1.44. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
-	var Settings = Plugin.extend("sap.ui.rta.plugin.Settings", /** @lends sap.ui.rta.plugin.Settings.prototype */
-	{
+	var Settings = Plugin.extend("sap.ui.rta.plugin.Settings", /** @lends sap.ui.rta.plugin.Settings.prototype */ {
 		metadata: {
-			// ---- object ----
-
-			// ---- control specific ----
 			library: "sap.ui.rta",
 			properties: {
 				commandStack : {
@@ -58,14 +54,14 @@ sap.ui.define([
 		if (vSettingsAction) {
 			if (vSettingsAction.handler) {
 				return this.hasStableId(oOverlay);
-			} else {
-				var bHandlerAndStableIdFound = Object.keys(vSettingsAction).some(function(sSettingsAction) {
-					var oSettingsAction = vSettingsAction[sSettingsAction];
-					return oSettingsAction.handler && this._checkRelevantContainerStableID(oSettingsAction, oOverlay);
-				}.bind(this));
-				if (bHandlerAndStableIdFound) {
-					return this.hasStableId(oOverlay);
-				}
+			}
+
+			var bHandlerAndStableIdFound = Object.keys(vSettingsAction).some(function(sSettingsAction) {
+				var oSettingsAction = vSettingsAction[sSettingsAction];
+				return oSettingsAction.handler && this._checkRelevantContainerStableID(oSettingsAction, oOverlay);
+			}.bind(this));
+			if (bHandlerAndStableIdFound) {
+				return this.hasStableId(oOverlay);
 			}
 		}
 
@@ -89,9 +85,8 @@ sap.ui.define([
 		if (typeof oAction.isEnabled !== "undefined") {
 			if (typeof oAction.isEnabled === "function") {
 				return oAction.isEnabled(oElementOverlay.getElement());
-			} else {
-				return oAction.isEnabled;
 			}
+			return oAction.isEnabled;
 		}
 		return true;
 	};
@@ -118,7 +113,7 @@ sap.ui.define([
 		var sControlType;
 		var oControl;
 
-		if (vSelectorControl.controlType){
+		if (vSelectorControl.controlType) {
 			sControlType = vSelectorControl.controlType;
 		} else {
 			oControl = vSelectorControl;
@@ -179,7 +174,7 @@ sap.ui.define([
 				if (mChangeSpecificData.changeType) {
 					return this._handleFlexChangeCommand(mChange, aElementOverlays, oCompositeCommand);
 				// App Descriptor Change
-				} else if (mChangeSpecificData.appDescriptorChangeType){
+				} else if (mChangeSpecificData.appDescriptorChangeType) {
 					return this._handleAppDescriptorChangeCommand(mChange, oElement, oCompositeCommand);
 				}
 			}, this);
@@ -190,9 +185,9 @@ sap.ui.define([
 		})
 
 		.then(function() {
-			if (oCompositeCommand.getCommands().length > 0){
+			if (oCompositeCommand.getCommands().length > 0) {
 				this.fireElementModified({
-					"command" : oCompositeCommand
+					command : oCompositeCommand
 				});
 			}
 		}.bind(this));
@@ -211,7 +206,7 @@ sap.ui.define([
 		var oElement = aElementOverlays[0].getElement();
 		var fnHandler = mPropertyBag.fnHandler;
 
-		if (!fnHandler){
+		if (!fnHandler) {
 			fnHandler = aElementOverlays[0].getDesignTimeMetadata().getAction("settings").handler;
 			if (!fnHandler) {
 				throw new Error("Handler not found for settings action");
@@ -223,7 +218,7 @@ sap.ui.define([
 		return fnHandler(oElement, mPropertyBag)
 
 		.then(function(aChanges) {
-			if (aChanges.length > 0){
+			if (aChanges.length > 0) {
 				return this._handleCompositeCommand(aElementOverlays, oElement, aChanges);
 			}
 		}.bind(this))
@@ -259,41 +254,41 @@ sap.ui.define([
 					icon: this._getActionIcon(vSettingsActions)
 				});
 			// Multiple actions: return one menu item for each action
-			} else {
-				var aMenuItems = [];
-				var aSettingsActions = Object.keys(vSettingsActions);
-				var iActionCounter = 0;
-				aSettingsActions.forEach(function (sSettingsAction) {
-					var oSettingsAction = vSettingsActions[sSettingsAction];
-					var sActionText = this.getActionText(oElementOverlay, oSettingsAction, oSettingsAction.name);
-					if (oSettingsAction.handler && this._checkRelevantContainerStableID(oSettingsAction, oElementOverlay)) {
-						aMenuItems.push({
-							id: sPluginId + iActionCounter,
-							text: sActionText,
-							icon: this._getActionIcon(oSettingsAction),
-							enabled: (
-								typeof oSettingsAction.isEnabled === 'function'
-								&& ( // eslint-disable-line no-extra-parens
-									function (aElementOverlays) {
-										return oSettingsAction.isEnabled(aElementOverlays[0].getElement());
-									}
-								)
-								|| oSettingsAction.isEnabled
-							),
-							handler: function(fnHandler, aElementOverlays, mPropertyBag) {
-								mPropertyBag = mPropertyBag || {};
-								mPropertyBag.fnHandler = fnHandler;
-								return this.handler(aElementOverlays, mPropertyBag);
-							}.bind(this, oSettingsAction.handler),
-							rank: iRank + iActionCounter
-						});
-						iActionCounter++;
-					} else {
-						BaseLog.warning("Handler not found for settings action '" + sActionText + "' or relevant container has no stable id");
-					}
-				}, this);
-				return aMenuItems;
 			}
+
+			var aMenuItems = [];
+			var aSettingsActions = Object.keys(vSettingsActions);
+			var iActionCounter = 0;
+			aSettingsActions.forEach(function (sSettingsAction) {
+				var oSettingsAction = vSettingsActions[sSettingsAction];
+				var sActionText = this.getActionText(oElementOverlay, oSettingsAction, oSettingsAction.name);
+				if (oSettingsAction.handler && this._checkRelevantContainerStableID(oSettingsAction, oElementOverlay)) {
+					aMenuItems.push({
+						id: sPluginId + iActionCounter,
+						text: sActionText,
+						icon: this._getActionIcon(oSettingsAction),
+						enabled: (
+							typeof oSettingsAction.isEnabled === 'function'
+							&& ( // eslint-disable-line no-extra-parens
+								function (aElementOverlays) {
+									return oSettingsAction.isEnabled(aElementOverlays[0].getElement());
+								}
+							)
+							|| oSettingsAction.isEnabled
+						),
+						handler: function(fnHandler, aElementOverlays, mPropertyBag) {
+							mPropertyBag = mPropertyBag || {};
+							mPropertyBag.fnHandler = fnHandler;
+							return this.handler(aElementOverlays, mPropertyBag);
+						}.bind(this, oSettingsAction.handler),
+						rank: iRank + iActionCounter
+					});
+					iActionCounter++;
+				} else {
+					BaseLog.warning("Handler not found for settings action '" + sActionText + "' or relevant container has no stable id");
+				}
+			}, this);
+			return aMenuItems;
 		}
 	};
 
@@ -314,7 +309,7 @@ sap.ui.define([
 	 * Get the name of the action related to this plugin.
 	 * @return {string} Returns the action name
 	 */
-	Settings.prototype.getActionName = function(){
+	Settings.prototype.getActionName = function() {
 		return "settings";
 	};
 

@@ -5,20 +5,18 @@
 // Provides class sap.ui.rta.plugin.RenameHandler.
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	'sap/ui/rta/plugin/Plugin',
-	'sap/ui/dt/Overlay',
-	'sap/ui/dt/ElementUtil',
-	'sap/ui/dt/OverlayUtil',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/rta/Utils',
-	'sap/ui/dt/DOMUtil',
+	"sap/ui/rta/plugin/Plugin",
+	"sap/ui/dt/Overlay",
+	"sap/ui/dt/ElementUtil",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/rta/Utils",
+	"sap/ui/dt/DOMUtil",
 	"sap/ui/events/KeyCodes"
 ], function(
 	jQuery,
 	Plugin,
 	Overlay,
 	ElementUtil,
-	OverlayUtil,
 	OverlayRegistry,
 	Utils,
 	DOMUtil,
@@ -111,8 +109,8 @@ sap.ui.define([
 			var _$oWrapper = jQuery("<div class='sapUiRtaEditableField'></div>")
 				.css({
 					"white-space": "nowrap",
-					"overflow":"hidden",
-					"width": "calc(100% - (" + iWidthDifference + "px))"
+					overflow:"hidden",
+					width: "calc(100% - (" + iWidthDifference + "px))"
 				}).appendTo(oOverlayForWrapper.$());
 			this._$editableField = jQuery("<div contentEditable='true'></div>").appendTo(_$oWrapper);
 
@@ -140,8 +138,10 @@ sap.ui.define([
 			});
 
 			//only for renaming variants in edge browser [SPECIAL CASE]
-			if (sap.ui.Device.browser.name == "ed" &&
-				  oElement.getMetadata().getName() == "sap.ui.fl.variants.VariantManagement"){
+			if (
+				sap.ui.Device.browser.name === "ed"
+				&& oElement.getMetadata().getName() === "sap.ui.fl.variants.VariantManagement"
+			) {
 				this._$editableField.css({
 					"line-height": "normal"
 				});
@@ -279,7 +279,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - event object
 		 * @private
 		 */
-		_onEditableFieldBlur : function (oEvent) {
+		_onEditableFieldBlur : function () {
 			return RenameHandler._handlePostRename.call(this, false);
 		},
 

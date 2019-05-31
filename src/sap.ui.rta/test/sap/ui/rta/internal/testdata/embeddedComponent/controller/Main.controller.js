@@ -1,9 +1,5 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/core/util/MockServer",
-	"sap/ui/model/resource/ResourceModel",
-	"sap/ui/model/odata/v2/ODataModel",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/ControlPersonalizationAPI",
@@ -11,10 +7,6 @@ sap.ui.define([
 	"sap/ui/core/Component"
 ], function(
 	Controller,
-	MockServer,
-	ResourceModel,
-	ODataModel,
-	JSONModel,
 	RuntimeAuthoring,
 	Utils,
 	ControlPersonalizationAPI,
@@ -30,7 +22,7 @@ sap.ui.define([
 			this.iCounter = 0;
 			var oView = this.getView();
 			this._data.push(
-				new Promise(function (resolve, reject) {
+				new Promise(function (resolve) {
 					oView.bindElement({
 						path: "/EntityTypes(Property01='propValue01',Property02='propValue02',Property03='propValue03')",
 						events: {
@@ -42,7 +34,7 @@ sap.ui.define([
 					});
 				}),
 
-				new Promise(function (resolve, reject) {
+				new Promise(function (resolve) {
 					oView.byId("page").bindElement({
 						path: "/EntityTypes2(EntityType02_Property01='EntityType02Property01Value')",
 						events: {
@@ -68,7 +60,7 @@ sap.ui.define([
 			var sURLVariables = sPageURL.split('&');
 			for (var i = 0; i < sURLVariables.length; i++) {
 				var sParameterName = sURLVariables[i].split('=');
-				if (sParameterName[0] == sParam) {
+				if (sParameterName[0] === sParam) {
 					sReturn = sParameterName[1];
 				}
 			}
@@ -76,9 +68,7 @@ sap.ui.define([
 		},
 
 		switchToAdaptionMode: function () {
-
 			if (this.getView().getModel("app").getProperty("/showOuterAdaptButton"))	{
-
 				var oRta = new RuntimeAuthoring({
 					rootControl: this.getOwnerComponent(),
 					flexSettings: {
@@ -110,26 +100,26 @@ sap.ui.define([
 					onClose: function(oAction) {
 						if (oAction === "YES") {
 							if (this.iCounter === 0) {
-								var mMoveChangeData  = {
+								var mMoveChangeData = {
 									selectorControl : sap.ui.getCore().byId(oAppComponent.createId("idMain1--ObjectPageLayout")),
 									changeSpecificData: {
 										changeType: "moveControls",
 										movedElements: [{
-											"id": oAppComponent.createId("idMain1--ObjectPageSectionWithForm"),
-											"sourceIndex": 0,
-											"targetIndex": 1
+											id: oAppComponent.createId("idMain1--ObjectPageSectionWithForm"),
+											sourceIndex: 0,
+											targetIndex: 1
 										}],
 										source: {
-											"id": oAppComponent.createId("idMain1--ObjectPageLayout"),
-											"aggregation": "sections"
+											id: oAppComponent.createId("idMain1--ObjectPageLayout"),
+											aggregation: "sections"
 										},
 										target: {
-											"id": oAppComponent.createId("idMain1--ObjectPageLayout"),
-											"aggregation": "sections"
+											id: oAppComponent.createId("idMain1--ObjectPageLayout"),
+											aggregation: "sections"
 										}
 									}
 								};
-								var mRenameChangeData1  = {
+								var mRenameChangeData1 = {
 									selectorControl : sap.ui.getCore().byId(oAppComponent.createId("idMain1--ObjectPageSectionWithForm")),
 									changeSpecificData: {
 										changeType: "rename",
@@ -139,7 +129,7 @@ sap.ui.define([
 										value : "Personalization Test"
 									}
 								};
-								var mRenameChangeData2  = {
+								var mRenameChangeData2 = {
 									selectorControl : sap.ui.getCore().byId(oAppComponent.createId("idMain1--TitleForVM1")),
 									changeSpecificData: {
 										changeType: "rename",
@@ -153,7 +143,7 @@ sap.ui.define([
 
 								this.iCounter++;
 							} else if (this.iCounter === 1) {
-								var mRenameChangeData3  = {
+								var mRenameChangeData3 = {
 									selectorControl : sap.ui.getCore().byId(oAppComponent.createId("idMain1--ObjectPageSectionWithForm")),
 									changeSpecificData: {
 										changeType: "rename",
@@ -178,6 +168,4 @@ sap.ui.define([
 			return Promise.all(this._data);
 		}
 	});
-
-
 });

@@ -64,15 +64,15 @@ sap.ui.define([
 	var oManifestObj = {
 		"sap.app": {
 			id: "MyComponent",
-			"applicationVersion": {
-				"version": "1.2.3"
+			applicationVersion: {
+				version: "1.2.3"
 			}
 		}
 	};
 
 	var oManifest = new Manifest(oManifestObj);
 
-	var fnGetMockComponent = function () {
+	function getMockComponent() {
 		return {
 			getLocalId: function () {
 				return "varMgtKey";
@@ -80,14 +80,14 @@ sap.ui.define([
 			getModel: function () { return this.oModel; }.bind(this),
 			getManifest: function() { return oManifest; }
 		};
-	};
+	}
 
 	var checkTitle = function(assert, sExpectedTitle, sTitleToBeCopied) {
 		assert.strictEqual(this.oControlVariantPlugin._getVariantTitleForCopy(sTitleToBeCopied, "varMgtKey", this.oModel.getData()), sExpectedTitle, "then correct title returned for duplicate");
 	};
 
 	var fnCheckErrorRequirements = function(assert, oOverlay, fnMessageBoxShowStub, fnValueStateMessageOpenStub, oPlugin, sTextKey, bShowError) {
-		assert.strictEqual(oPlugin._createSetTitleCommand.callCount, 0,  "then _createSetTitleCommand() was not called");
+		assert.strictEqual(oPlugin._createSetTitleCommand.callCount, 0, "then _createSetTitleCommand() was not called");
 		assert.strictEqual(oPlugin._createDuplicateCommand.callCount, 0, "then _createDuplicateCommand() was not called");
 		assert.ok(oPlugin.stopEdit.calledOnce, "then stopEdit() was called once");
 
@@ -100,26 +100,26 @@ sap.ui.define([
 			assert.ok(oPlugin._oValueStateMessage instanceof ValueStateMessage, "then value state message initialized for plugin");
 			assert.equal(typeof oOverlay.getValueState, "function", "then getValueState function set for VariantManagement control overlay");
 			assert.equal(typeof oOverlay.getValueStateText, "function", "then getValueStateText function set for VariantManagement control overlay");
-			assert.equal(oOverlay.getValueStateText(), fnGetText(sTextKey), "then getValueStateText function set for VariantManagement control overlay");
+			assert.equal(oOverlay.getValueStateText(), getText(sTextKey), "then getValueStateText function set for VariantManagement control overlay");
 			assert.equal(typeof oOverlay.getDomRefForValueStateMessage, "function", "then getValueStateText function set for VariantManagement control overlay");
 		}
 	};
 
-	var fnGetText = function(sKey) {
+	function getText(sKey) {
 		return sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText(sKey);
-	};
+	}
 
 	QUnit.module("Given a designTime and ControlVariant plugin are instantiated", {
 		beforeEach: function (assert) {
 			var done = assert.async();
 
-			var oMockAppComponent = fnGetMockComponent.call(this);
+			var oMockAppComponent = getMockComponent.call(this);
 			sandbox.stub(flUtils, "getAppComponentForControl").returns(oMockAppComponent);
 			sandbox.stub(flUtils, "getComponentForControl").returns(oMockAppComponent);
 			sandbox.stub(flUtils, "getComponentClassName").returns("Dummy.Component");
 			var oFlexController = FlexControllerFactory.createForControl(oMockAppComponent, oManifest);
 			this.oData = {
-				"varMgtKey": {
+				varMgtKey: {
 					defaultVariant : "variant1",
 					variantsEditable : true,
 					variants: [
@@ -149,26 +149,26 @@ sap.ui.define([
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.ui.layout.VerticalLayout" : {
-					"moveControls": "default"
+					moveControls: "default"
 				}
 			})
 
 			.then(function() {
 				this.oButton = new Button();
-				this.oLayout = new VerticalLayout("overlay1",{
+				this.oLayout = new VerticalLayout("overlay1", {
 					content : [this.oButton]
 				});
 				this.oObjectPageSubSection = new ObjectPageSubSection("objSubSection", {
 					blocks: [this.oLayout]
 				});
-				this.oObjectPageSection = new ObjectPageSection("objSection",{
+				this.oObjectPageSection = new ObjectPageSection("objSection", {
 					subSections: [this.oObjectPageSubSection]
 				});
 				this.sLocalVariantManagementId = "varMgtKey";
 				this.oModel = new VariantModel(this.oData, oFlexController, oMockAppComponent);
 				this.oVariantManagementControl = new VariantManagement(this.sLocalVariantManagementId);
 				this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
-				this.oObjectPageLayout = new ObjectPageLayout("objPage",{
+				this.oObjectPageLayout = new ObjectPageLayout("objPage", {
 					headerContent: [this.oVariantManagementControl],
 					sections : [this.oObjectPageSection]
 				});
@@ -390,10 +390,10 @@ sap.ui.define([
 
 		QUnit.test("when calling '_getVariantTitleForCopy' with the greatest counter at the beginning of the model and title containing -> copy pattern, counter, previous existence with counter", function(assert) {
 			this.oModel.oData["varMgtKey"].variants.unshift({
-					key: "variant100",
-					title: "SampleTitle Copy(100)",
-					visible: true
-				});
+				key: "variant100",
+				title: "SampleTitle Copy(100)",
+				visible: true
+			});
 			checkTitle.call(this, assert, "SampleTitle Copy(101)", "SampleTitle Copy");
 			this.oModel.oData["varMgtKey"].variants.splice(0, 1);
 		});
@@ -432,7 +432,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling '_getVariantTitleForCopy' with a title containing -> copy pattern, counter, no previous existence and a different resource bundle pattern", function(assert) {
-			sandbox.stub(this.oModel._oResourceBundle, "getText").callsFake(function(sText, aArguments){
+			sandbox.stub(this.oModel._oResourceBundle, "getText").callsFake(function(sText, aArguments) {
 				if (sText === "VARIANT_COPY_SINGLE_TEXT") {
 					return "{0} Copy";
 				} else if (sText === "VARIANT_COPY_MULTIPLE_TEXT") {
@@ -470,7 +470,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when retrieving the context menu items", function(assert){
+		QUnit.test("when retrieving the context menu items", function(assert) {
 			var duplicateDone = assert.async();
 			var renameDone = assert.async();
 			var configureDone = assert.async();
@@ -490,7 +490,7 @@ sap.ui.define([
 			}.bind(this));
 
 			// Configure
-			sandbox.stub(this.oControlVariantPlugin, "configureVariants").callsFake(function(){
+			sandbox.stub(this.oControlVariantPlugin, "configureVariants").callsFake(function() {
 				assert.ok(true, "the 'handler' function calls the configureVariants method");
 				configureDone();
 			});
@@ -506,7 +506,7 @@ sap.ui.define([
 					}
 				}
 			};
-			this.oVariantManagementOverlay.getVariantManagement = function(){
+			this.oVariantManagementOverlay.getVariantManagement = function() {
 				return "varMgtKey";
 			};
 			var aExpectedSubmenu = [
@@ -551,7 +551,7 @@ sap.ui.define([
 		beforeEach: function (assert) {
 			var done = assert.async();
 
-			var oMockAppComponent = fnGetMockComponent.call(this);
+			var oMockAppComponent = getMockComponent.call(this);
 			sandbox.stub(flUtils, "getAppComponentForControl").returns(oMockAppComponent);
 			sandbox.stub(flUtils, "getComponentClassName").returns("Dummy.Component");
 
@@ -583,8 +583,6 @@ sap.ui.define([
 				this.oControlVariantPlugin._$oEditableControlDomRef = jQuery(this.oVariantManagementControl.getTitle().getDomRef("inner"));
 				done();
 			}.bind(this));
-
-
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -592,12 +590,11 @@ sap.ui.define([
 			this.oDesignTime.destroy();
 		}
 	}, function () {
-
 		QUnit.test("when variant is renamed with a new title", function(assert) {
 			assert.expect(2);
 			var sOldVariantTitle = "Old Variant Title";
 			this.oControlVariantPlugin._$editableField = {
-				text : function(){
+				text : function() {
 					return "New Variant Title  ";
 				}
 			};
@@ -619,11 +616,11 @@ sap.ui.define([
 			sandbox.stub(this.oControlVariantPlugin, "stopEdit");
 
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin)
-				.then( function() {
+				.then(function() {
 					assert.strictEqual(this.oControlVariantPlugin._emitLabelChangeEvent.callCount, 1, "then RenameHandler._emitLabelChangeEvent called once");
 					assert.strictEqual(this.oControlVariantPlugin.stopEdit.callCount, 1, "then RenameHandler._stopEdit called once");
 					assert.ok(this.oControlVariantPlugin._bBlurOrKeyDownStarted, "then flag for blur / keydown event is set");
-					return RenameHandler._handlePostRename.call(this.oControlVariantPlugin).then( function() {
+					return RenameHandler._handlePostRename.call(this.oControlVariantPlugin).then(function() {
 						assert.strictEqual(this.oControlVariantPlugin._emitLabelChangeEvent.callCount, 1, "then RenameHandler._emitLabelChangeEvent not called another time");
 						assert.strictEqual(this.oControlVariantPlugin.stopEdit.callCount, 1, "then RenameHandler._stopEdit not called another time");
 						assert.ok(this.oControlVariantPlugin._bBlurOrKeyDownStarted, "then flag for blur / keydown is still set");
@@ -642,7 +639,7 @@ sap.ui.define([
 			sandbox.spy(this.oControlVariantPlugin, "stopEdit");
 
 			this.oModel.setData({
-				"varMgtKey" : {
+				varMgtKey : {
 					variants: [
 						{
 							title: sNewVariantTitle,
@@ -668,7 +665,7 @@ sap.ui.define([
 			var sNewVariantTitle = "Existing Variant Title";
 
 			this.oModel.setData({
-				"varMgtKey" : {
+				varMgtKey : {
 					variants: [
 						{
 							title: "Standard",
@@ -706,7 +703,7 @@ sap.ui.define([
 			sandbox.spy(this.oControlVariantPlugin, "stopEdit");
 
 			this.oModel.setData({
-				"varMgtKey" : {
+				varMgtKey : {
 					variants: [
 						{
 							title: sExistingVariantTitle,
@@ -775,7 +772,7 @@ sap.ui.define([
 			sandbox.spy(this.oControlVariantPlugin, "stopEdit");
 
 			this.oModel.setData({
-				"varMgtKey" : {
+				varMgtKey : {
 					variants: [
 						{
 							title: sExistingVariantTitle,
@@ -801,7 +798,7 @@ sap.ui.define([
 				fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
 
 			this.oModel.setData({
-				"varMgtKey" : {
+				varMgtKey : {
 					variants: [
 						{
 							title: sExistingVariantTitle,
@@ -819,7 +816,7 @@ sap.ui.define([
 				assert.ok(oEvent, "then fireElementModified is called once");
 				var oCommand = oEvent.getParameter("command");
 
-				assert.equal(fnCreateSetTitleCommandSpy.callCount, 1,  "then ControlVariantPlugin._createSetTitleCommand called once");
+				assert.equal(fnCreateSetTitleCommandSpy.callCount, 1, "then ControlVariantPlugin._createSetTitleCommand called once");
 				assert.ok(oCommand instanceof ControlVariantSetTitle, "then an event is received with a setTitle command, returned from ControlVariantPlugin._createSetTitleCommand");
 				assert.equal(oCommand.getNewText(), "Existing Variant Title Copy", "then command has the correct new title");
 				assert.equal(oCommand.getElement(), this.oVariantManagementControl, "then command has the correct control");
@@ -827,7 +824,7 @@ sap.ui.define([
 				assert.notOk(this.oVariantManagementOverlay.hasStyleClass("sapUiRtaErrorBg"), "then error border not added to VariantManagement control overlay");
 				assert.notOk(this.oControlVariantPlugin._oValueStateMessage, "then no value state message exists for plugin");
 				assert.equal(fnMessageBoxShowStub.callCount, 0, "then RtaUtils._showMessageBox never called");
-				assert.equal(fnValueStateMessageOpenStub.callCount, 0,  "then ValueStateMessage.open never called");
+				assert.equal(fnValueStateMessageOpenStub.callCount, 0, "then ValueStateMessage.open never called");
 			}.bind(this));
 
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin);
@@ -842,7 +839,7 @@ sap.ui.define([
 				fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
 
 			this.oModel.setData({
-				"varMgtKey" : {
+				varMgtKey : {
 					variants: [
 						{
 							title: sExistingVariantTitle,
@@ -865,9 +862,9 @@ sap.ui.define([
 				var oCommand = oEvent.getParameter("command");
 				var oDuplicateCommand = oCommand.getCommands()[0];
 
-				assert.equal(fnCreateDuplicateCommandSpy.callCount, 1,  "then ControlVariantPlugin._createDuplicateCommand called once");
+				assert.equal(fnCreateDuplicateCommandSpy.callCount, 1, "then ControlVariantPlugin._createDuplicateCommand called once");
 				assert.ok(oCommand instanceof CompositeCommand, "then a composite command is received");
-				assert.equal(oCommand.getCommands().length, 1,  "then one command inside composite command");
+				assert.equal(oCommand.getCommands().length, 1, "then one command inside composite command");
 
 				assert.ok(oDuplicateCommand instanceof ControlVariantDuplicate, "then control variant duplicate command present inside composite command, returned from ControlVariantPlugin._createDuplicateCommand");
 				assert.equal(oDuplicateCommand.getNewVariantTitle(), "Source Variant Title Copy", "then command has the correct title");
@@ -877,7 +874,7 @@ sap.ui.define([
 				assert.notOk(this.oVariantManagementOverlay.hasStyleClass("sapUiRtaErrorBg"), "then error border not added to VariantManagement control overlay");
 				assert.notOk(this.oControlVariantPlugin._oValueStateMessage, "then no value state message exists for plugin");
 				assert.equal(fnMessageBoxShowStub.callCount, 0, "then RtaUtils._showMessageBox never called");
-				assert.equal(fnValueStateMessageOpenStub.callCount, 0,  "then ValueStateMessage.open never called");
+				assert.equal(fnValueStateMessageOpenStub.callCount, 0, "then ValueStateMessage.open never called");
 			}.bind(this));
 
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin);
@@ -893,7 +890,7 @@ sap.ui.define([
 				fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
 
 			this.oModel.setData({
-				"varMgtKey" : {
+				varMgtKey : {
 					variants: [
 						{
 							title: sExistingVariantTitle,
@@ -916,12 +913,12 @@ sap.ui.define([
 				var oDuplicateCommand = oCommand.getCommands()[0];
 				var oSetTitleCommand = oCommand.getCommands()[1];
 
-				assert.equal(fnCreateDuplicateCommandSpy.callCount, 1,  "then ControlVariantPlugin._createDuplicateCommand called once");
-				assert.equal(fnCreateSetTitleCommandSpy.callCount, 1,  "then ControlVariantPlugin._createSetTitleCommand called once");
+				assert.equal(fnCreateDuplicateCommandSpy.callCount, 1, "then ControlVariantPlugin._createDuplicateCommand called once");
+				assert.equal(fnCreateSetTitleCommandSpy.callCount, 1, "then ControlVariantPlugin._createSetTitleCommand called once");
 				assert.ok(oCommand instanceof CompositeCommand, "then a composite command is received");
-				assert.equal(oCommand.getCommands().length, 2,  "then one command inside composite command");
+				assert.equal(oCommand.getCommands().length, 2, "then one command inside composite command");
 
-				assert.ok(oSetTitleCommand  instanceof ControlVariantSetTitle, "then an event is received with a setTitle command, returned from ControlVariantPlugin._createSetTitleCommand");
+				assert.ok(oSetTitleCommand instanceof ControlVariantSetTitle, "then an event is received with a setTitle command, returned from ControlVariantPlugin._createSetTitleCommand");
 				assert.equal(oSetTitleCommand .getNewText(), "Modified Source Variant Title Copy", "then setTitle command has the correct new title");
 				assert.equal(oSetTitleCommand .getElement(), this.oVariantManagementControl, "then setTitle command has the correct control");
 
@@ -933,7 +930,7 @@ sap.ui.define([
 				assert.notOk(this.oVariantManagementOverlay.hasStyleClass("sapUiRtaErrorBg"), "then error border not added to VariantManagement control overlay");
 				assert.notOk(this.oControlVariantPlugin._oValueStateMessage, "then no value state message exists for plugin");
 				assert.equal(fnMessageBoxShowStub.callCount, 0, "then RtaUtils._showMessageBox never called");
-				assert.equal(fnValueStateMessageOpenStub.callCount, 0,  "then ValueStateMessage.open never called");
+				assert.equal(fnValueStateMessageOpenStub.callCount, 0, "then ValueStateMessage.open never called");
 			}.bind(this));
 
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin);
@@ -947,19 +944,19 @@ sap.ui.define([
 			var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.$().outerWidth());
 
 			$control.css({
-				"width": "10px",
+				width: "10px",
 				"max-width": "10px",
-				"position": "fixed"
+				position: "fixed"
 			});
 			$editableControl.css({
 				"min-width": "15px",
-				"width": "15px",
-				"position": "fixed"
+				width: "15px",
+				position: "fixed"
 			});
 			$editableControl.parent().css({
-				"width": "8px",
+				width: "8px",
 				"max-width": "8px",
-				"position": "fixed"
+				position: "fixed"
 			});
 
 			var iWidthDiff = parseInt($control.outerWidth()) - parseInt($editableControl.parent().outerWidth());
@@ -990,14 +987,14 @@ sap.ui.define([
 			var $control = jQuery(this.oVariantManagementControl.getDomRef()); /* Main control */
 
 			$control.css({
-				"width": "10px",
+				width: "10px",
 				"max-width": "10px",
-				"position": "fixed"
+				position: "fixed"
 			});
 			$editableControl.parent().css({
-				"width": "20px",
+				width: "20px",
 				"min-width": "20px",
-				"position": "fixed"
+				position: "fixed"
 			});
 			var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.$().innerWidth());
 
@@ -1014,9 +1011,9 @@ sap.ui.define([
 			var $control = jQuery(this.oVariantManagementControl.getDomRef());/* Main control */
 			var sInnerControlOverlayWidth = "10px";
 			$control.css({
-				"width": "100px",
+				width: "100px",
 				"max-width": "100px",
-				"position": "fixed"
+				position: "fixed"
 			});
 
 			return new Promise(function (fnResolve) {
@@ -1032,9 +1029,9 @@ sap.ui.define([
 			}.bind(this))
 				.then(function (oTitleOverlay) {
 					oTitleOverlay.$().css({
-						"width": sInnerControlOverlayWidth,
+						width: sInnerControlOverlayWidth,
 						"min-width": sInnerControlOverlayWidth,
-						"position": "fixed"
+						position: "fixed"
 					});
 
 					sandbox.stub(OverlayRegistry, "getOverlay")
@@ -1115,13 +1112,13 @@ sap.ui.define([
 		beforeEach: function (assert) {
 			var done = assert.async();
 
-			var oMockAppComponent = fnGetMockComponent.call(this);
+			var oMockAppComponent = getMockComponent.call(this);
 			sandbox.stub(flUtils, "getAppComponentForControl").returns(oMockAppComponent);
 			sandbox.stub(flUtils, "getComponentForControl").returns(oMockAppComponent);
 			sandbox.stub(flUtils, "getComponentClassName").returns("Dummy.Component");
 			var oFlexController = FlexControllerFactory.createForControl(oMockAppComponent, oManifest);
 			this.oData = {
-				"varMgtKey": {
+				varMgtKey: {
 					defaultVariant : "variant1",
 					variantsEditable : true,
 					variants: [
@@ -1143,18 +1140,18 @@ sap.ui.define([
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.ui.layout.VerticalLayout" : {
-					"moveControls": "default"
+					moveControls: "default"
 				}
 			})
 			.then(function() {
 				this.oButton = new Button();
-				this.oLayout = new VerticalLayout("overlay1",{
+				this.oLayout = new VerticalLayout("overlay1", {
 					content : [this.oButton]
 				});
 				this.oObjectPageSubSection = new ObjectPageSubSection("objSubSection", {
 					blocks: [this.oLayout]
 				});
-				this.oObjectPageSection = new ObjectPageSection("objSection",{
+				this.oObjectPageSection = new ObjectPageSection("objSection", {
 					subSections: [this.oObjectPageSubSection]
 				});
 				this.sLocalVariantManagementId = "varMgtKey";
@@ -1162,7 +1159,7 @@ sap.ui.define([
 				this.oModel = new VariantModel(this.oData, oFlexController, oMockAppComponent);
 				this.oVariantManagementControl = new VariantManagement(this.sGlobalVariantManagementId);
 				this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
-				this.oObjectPageLayout = new ObjectPageLayout("objPage",{
+				this.oObjectPageLayout = new ObjectPageLayout("objPage", {
 					headerContent: [this.oVariantManagementControl],
 					sections : [this.oObjectPageSection]
 				});
@@ -1220,13 +1217,13 @@ sap.ui.define([
 		beforeEach: function (assert) {
 			var done = assert.async();
 
-			var oMockAppComponent = fnGetMockComponent.call(this);
+			var oMockAppComponent = getMockComponent.call(this);
 			sandbox.stub(flUtils, "getAppComponentForControl").returns(oMockAppComponent);
 			sandbox.stub(flUtils, "getComponentForControl").returns(oMockAppComponent);
 			sandbox.stub(flUtils, "getComponentClassName").returns("Dummy.Component");
 			var oFlexController = FlexControllerFactory.createForControl(oMockAppComponent, oManifest);
 			this.oData = {
-				"varMgtKey": {
+				varMgtKey: {
 					defaultVariant : "variant1",
 					variantsEditable : true,
 					variants: [
@@ -1280,8 +1277,8 @@ sap.ui.define([
 			this.oModel.destroy();
 		}
 	}, function () {
-		QUnit.test("when retrieving the context menu items", function(assert){
-			this.oVariantManagementOverlay.getVariantManagement = function(){
+		QUnit.test("when retrieving the context menu items", function(assert) {
+			this.oVariantManagementOverlay.getVariantManagement = function() {
 				return "varMgtKey";
 			};
 
@@ -1296,5 +1293,4 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	'./Adaptation'
+	"./Adaptation"
 ],
 function(
 	Adaptation
@@ -32,5 +32,4 @@ function(
 	});
 
 	return Standalone;
-
 }, true);
