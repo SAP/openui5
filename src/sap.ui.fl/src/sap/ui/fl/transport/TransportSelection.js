@@ -399,9 +399,9 @@ sap.ui.define([
 						oChange.setResponse(oDefinition);
 					}
 				});
-				return Promise.resolve();
 			});
 		}
+		return Promise.resolve();
 	};
 
 	return TransportSelection;

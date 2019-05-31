@@ -227,6 +227,12 @@ sap.ui.define([
 				assert.equal(aMockLocalChanges[0].packageName, oMockTransportInfo.packageName, "but the new local change is updated");
 			});
 		});
+
+		QUnit.test("when preparing and checking for transport without local UI changes", function(assert) {
+			return this.oTransportSelection._prepareChangesForTransport({}, []).then(function() {
+				assert.ok(true, "it doesn't fail");
+			});
+		});
 	});
 
 	QUnit.module("sap.ui.fl.transport.TransportSelection", {
