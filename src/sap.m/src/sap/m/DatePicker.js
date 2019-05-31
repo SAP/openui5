@@ -310,6 +310,8 @@ sap.ui.define([
 		oIcon.attachPress(function () {
 			this.toggleOpen(this._bShouldClosePicker);
 		}, this);
+
+		this._popupFollowOf = _popupFollowOf.bind(this);
 	};
 
 	/**
@@ -1029,13 +1031,42 @@ sap.ui.define([
 		var sAt;
 		if (this.getTextAlign() == TextAlign.End) {
 			sAt = eDock.EndBottom + "-4"; // as m.Input has some padding around
-			this._oPopup.open(0, eDock.EndTop, sAt, this, null, "fit", true);
+			this._oPopup.open(0, eDock.EndTop, sAt, this, null, "fit", this._popupFollowOf);
 		}else {
 			sAt = eDock.BeginBottom + "-4"; // as m.Input has some padding around
-			this._oPopup.open(0, eDock.BeginTop, sAt, this, null, "fit", true);
+			this._oPopup.open(0, eDock.BeginTop, sAt, this, null, "fit", this._popupFollowOf);
+		}
+	};
+
+	function _popupFollowOf(oPopupPosition) {
+		var oOfDom = this.getDomRef();
+		if (!oOfDom || !jQuery(oOfDom).is(":visible") || !_isElementInViewport(oOfDom)) {
+			this._oPopup.close();
+		} else {
+			this._oPopup._applyPosition(oPopupPosition.lastPosition);
+		}
+	}
+
+	function _isElementInViewport(oDomElement) {
+		var mRect;
+
+		if (!oDomElement) {
+			return false;
 		}
 
-	};
+		if (oDomElement instanceof jQuery) {
+			oDomElement = oDomElement.get(0);
+		}
+
+		mRect = oDomElement.getBoundingClientRect();
+
+		return (
+			mRect.top >= 0 &&
+			mRect.left >= 0 &&
+			mRect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+			mRect.right <= (window.innerWidth || document.documentElement.clientWidth)
+		);
+	}
 
 	/*
 	 * helper to resolve lazy dependencies
