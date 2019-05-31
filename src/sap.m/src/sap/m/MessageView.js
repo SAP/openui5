@@ -361,7 +361,7 @@ sap.ui.define([
 		var sSelector,
 			bActiveTitle = oListItem.getActiveTitle();
 
-		if (!oListItem.getDescription()) {
+		if (!oListItem.getTitle() || !oListItem.getDescription()) {
 			if (bActiveTitle) {
 				sSelector = ".sapMSLITitleOnly a";
 			} else {
