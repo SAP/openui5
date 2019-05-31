@@ -90,6 +90,32 @@
 		height: 2rem;
 	}
 
+	.sapFShellBarSearch {
+		display: flex;
+		max-width: 28rem; // max width of searchField + button width
+		min-width: 12rem; // min width of searchField + button width
+		width: 100%;
+
+		.sapMSF {
+			max-width: 25rem;
+			min-width: 9rem;
+			margin-right: 0.5rem;
+		}
+
+		.sapFShellBarSearchCancelButton {
+			margin-left: 0.5rem;
+		}
+		&.sapFShellBarSearchFullWidth {
+			max-width: 100%;
+			margin: 0;
+
+			.sapMSF {
+				max-width: 100%;
+			}
+		}
+
+	}
+
 	.CPImage {
 		width: ~"@{_sap_f_ShellBar_CoPilotWidth}px";
 		height: ~"@{_sap_f_ShellBar_CoPilotWidth}px";
@@ -197,6 +223,24 @@
 				height: 2.125rem;
 			}
 		}
+		.sapFShellBarSearch {
+			max-width: 27.5rem; // max width of searchField + button width
+			min-width: 11.5rem; // min width of searchField + button width
+			.sapMSF {
+				max-width: 25rem;
+				min-width: 9rem;
+				margin-right: 0.5rem;
+			}
+
+			&.sapFShellBarSearchFullWidth {
+				max-width: 100%;
+				margin: 0;
+
+				.sapMSF {
+					max-width: 100%;
+				}
+			}
+		}
 	}
 }
 
@@ -227,6 +271,15 @@
 		text-overflow: ellipsis;
 		overflow: hidden;
 
+	}
+}
+
+.sapFShellBarSearchOverflowToolbar {
+	max-width: 100%;
+	width: 100%;
+
+	.sapMBtnContent {
+		text-align: left;
 	}
 }
 

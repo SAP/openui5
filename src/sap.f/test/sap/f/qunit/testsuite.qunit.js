@@ -130,6 +130,11 @@ sap.ui.define(function () {
 					only: ["sap/f/Router"]
 				}
 			},
+			"SearchManager": {
+				coverage: {
+					only: ["sap/f/SearchManager"]
+				}
+			},
 			"SemanticContainer": {
 				coverage: {
 					only: ["sap/f/SemanticContainer"]

@@ -83,6 +83,11 @@ sap.ui.define([
 			this.bHomeIconLoadAttached = true;
 		}
 
+		if (this._oControl._oManagedSearch && !this._bAttachedManagedSearchHandler) {
+			this._oControl._oManagedSearch.attachEvent("_updateVisualState", this._switchOpenStateOnSearch, this);
+
+			this._bAttachedManagedSearchHandler = true;
+		}
 
 		if (bPhoneRange) {
 			this._transformTitleControlMobile();
@@ -123,6 +128,7 @@ sap.ui.define([
 	ResponsiveHandler.prototype._initResize = function () {
 		this._iStaticWidth = 0;
 		this._iMBWidth = 0;
+		this._iStaticWidthForSearch = 0;
 
 		if (this._oControl._oTitleControl ) {
 			this._iMBWidth = this.getTargetWidth(this._oControl._oTitleControl, true) +
@@ -141,6 +147,19 @@ sap.ui.define([
 
 		if (this._oControl._oMenuButton) {
 			this._iStaticWidth += 36 + this._iChildControlMargin;
+		}
+
+		if (this._oControl._oAvatarButton) {
+			this._iStaticWidthForSearch += 36 + this._iDoubleChildControlMargin;
+		}
+
+		// check is the overflow button should be shown
+		if (this._oControl._oProductSwitcher || this._oControl._oNotifications || this._oControl.getAdditionalContent()) {
+			this._iStaticWidthForSearch += 36 + this._iDoubleChildControlMargin;
+		}
+
+		if (this._oControl && this._oControl._oCopilot) {
+			this._iStaticWidthForSearch += this._iHalfCoPilotWidth;
 		}
 	};
 
@@ -218,11 +237,20 @@ sap.ui.define([
 		setTimeout(this._fnResize.bind(this), 0);
 	};
 
+	ResponsiveHandler.prototype._switchOpenStateOnSearch = function () {
+		if (this.bWasInPhoneRange) {
+			this._transformToPhoneState();
+		} else {
+			this._transformToRegularState();
+		}
+	};
+
 	/**
 	 * Apply's UX rules to the control for phone size
 	 * @private
 	 */
 	ResponsiveHandler.prototype._transformToPhoneState = function () {
+		var oSearch = this._oControl._oManagedSearch;
 		// Second title should not be visible
 		if (this._oControl._oSecondTitle) {
 			this._oControl._oSecondTitle.setVisible(false);
@@ -230,9 +258,11 @@ sap.ui.define([
 
 		this._transformTitleControlMobile();
 
-		// Cache controls layout data
-		this._cacheControlsLayoutData();
-
+		if (!this._controlsLayoutDataCached) {
+			// Cache controls layout data
+			this._cacheControlsLayoutData();
+			this._controlsLayoutDataCached = true;
+		}
 		// Force all controls in the overflow
 		this._oControl._aOverflowControls.forEach(function (oControl) {
 			oControl.setLayoutData(new OverflowToolbarLayoutData({
@@ -241,6 +271,24 @@ sap.ui.define([
 		});
 
 		this.bWasInPhoneRange = true;
+
+		if (oSearch) {
+			oSearch.setPhoneMode(true);
+
+			if (oSearch.getIsOpen()) {
+				this._toggleAllControlsExceptSearch(false);
+
+				this._bSearchWasOpen = true;
+			} else if (this._bSearchWasOpen) {
+				this._toggleAllControlsExceptSearch(true);
+
+				this._oControl._oHomeIcon.setVisible(false);
+				this._oControl._oSecondTitle.setVisible(false);
+
+				this._bSearchWasOpen = false;
+			}
+		}
+
 		this._oControl.invalidate();
 	};
 	/**
@@ -248,7 +296,10 @@ sap.ui.define([
 	 * @private
 	 */
 	ResponsiveHandler.prototype._transformToRegularState = function () {
+		var oSearch = this._oControl._oManagedSearch;
 		// Second title should be visible
+		this._toggleAllControlsExceptSearch(true);
+
 		if (this._oControl._oSecondTitle) {
 			this._oControl._oSecondTitle.setVisible(true);
 		}
@@ -267,10 +318,16 @@ sap.ui.define([
 			}
 		}
 
-		// Restore controls layout data from cache
-		this._restoreControlsLayoutData();
+		if (this._controlsLayoutDataCached) {
+			// Restore controls layout data from cache
+			this._restoreControlsLayoutData();
+			this._controlsLayoutDataCached = false;
+		}
 
 		this.bWasInPhoneRange = false;
+
+		oSearch && oSearch.setPhoneMode(false);
+
 		this._oControl.invalidate();
 	};
 	/**
@@ -323,7 +380,7 @@ sap.ui.define([
 		}
 
 		if (iAvailableWidth < 0) {iAvailableWidth = 0;}
-		this._oControl._oControlSpacer.setWidth(iAvailableWidth + "px");
+		this._oControl._oCopilot && this._oControl._oControlSpacer.setWidth(iAvailableWidth + "px");
 	};
 
 	/**
@@ -334,7 +391,13 @@ sap.ui.define([
 	ResponsiveHandler.prototype._resize = function () {
 		var iWidth = this._oControl.$().width(),
 			iAvailableWidth,
-			iOTBControls;
+			iOTBControls,
+			// iNeededWidthForSearch,
+			iHalfWidth = iWidth / 2;
+
+		if (this._oControl._oManagedSearch && this._oControl._oManagedSearch.getIsOpen()) {
+			this._adaptSearch(iHalfWidth);
+		}
 
 		if (!this._oControl._oCopilot) {
 			iOTBControls = this._getWidthOfAllNonManagedControls();
@@ -344,7 +407,7 @@ sap.ui.define([
 			return;
 		}
 
-		iAvailableWidth = (iWidth / 2) - this._iHalfCoPilotWidth - this._iStaticWidth;
+		iAvailableWidth = iHalfWidth - this._iHalfCoPilotWidth - this._iStaticWidth;
 		this._adaptManagedWidthControls(iAvailableWidth);
 	};
 
@@ -377,6 +440,44 @@ sap.ui.define([
 		return iOTBControls;
 	};
 
+	ResponsiveHandler.prototype._adaptSearch = function (iAvailableWidth) {
+		iAvailableWidth = iAvailableWidth - this._iStaticWidthForSearch - this._iDoubleChildControlMargin;
+
+		// By UX design search max-width should be 29rem (464px)
+		if (iAvailableWidth > 464) {
+			this._oControl._oManagedSearch.setWidth("464px");
+			return;
+		}
+
+		// By UX design search min-width should be 12rem (192px)
+		if (iAvailableWidth < 192) {
+			this._toggleAllControlsExceptSearch(false);
+			this._oControl._oManagedSearch.setWidth("100%");
+			this._oControl._oManagedSearch.setPhoneMode(true);
+
+			this._bSearchFullWidth = true;
+			return;
+		}
+
+		if (this._bSearchFullWidth) {
+			this._toggleAllControlsExceptSearch(true);
+
+			this._oControl._oManagedSearch.setPhoneMode(false);
+			this._bSearchFullWidth = false;
+		}
+
+		// If available space is between 192px and 464px search should take whole
+		this._oControl._oManagedSearch.setWidth(iAvailableWidth + "px");
+	};
+
+	ResponsiveHandler.prototype._toggleAllControlsExceptSearch = function (bShow) {
+		this._oControl._oOverflowToolbar.getContent().forEach(function (oOTBControl) {
+			if (oOTBControl !== this._oControl._oManagedSearch) {
+				oOTBControl.setVisible(bShow);
+			}
+		}.bind(this));
+	};
+
 	/**
 	 * Final resize handler which handles control widths of all managed controls according to UX rules and the available
 	 * width for them. Keep in mind that this handler takes care for different scenarios based on availability of
@@ -391,7 +492,17 @@ sap.ui.define([
 			iCollectiveWidth = iMBWidth + iTitleWidth,
 			oSecondTitle = this._oControl._oSecondTitle,
 			oControlSpacer = this._oControl._oControlSpacer,
-			iSecondTitleWidth;
+			iSecondTitleWidth,
+			iMegaMenuWidth;
+
+		if (iAvailableWidth <= 0) {
+			oControlSpacer && oControlSpacer.setWidth("0px");
+			oSecondTitle && oSecondTitle.setWidth("0px");
+
+			// Applied width should be without margins
+			bHasTitle && this._oControl._oTitleControl.setWidth("80px");
+			return;
+		}
 
 		if (iCollectiveWidth < 0) {iCollectiveWidth = 0;}
 		if (iMBWidth < 0) {iMBWidth = 0;}
@@ -400,12 +511,16 @@ sap.ui.define([
 			oControlSpacer && oControlSpacer.setWidth("0px");
 			oSecondTitle && oSecondTitle.setWidth("0px");
 
+			iMegaMenuWidth = iAvailableWidth - this._iDoubleChildControlMargin <= 80 ?
+				80 : iAvailableWidth - this._iDoubleChildControlMargin;
 			// Applied width should be without margins
-			bHasTitle && this._oControl._oTitleControl.setWidth((iAvailableWidth - this._iDoubleChildControlMargin) + "px");
+			bHasTitle && this._oControl._oTitleControl.setWidth(iMegaMenuWidth + "px");
 			return;
 		} else {
+			iMegaMenuWidth = iMBWidth - this._iDoubleChildControlMargin <= 80 ?
+				80 : iMBWidth - this._iDoubleChildControlMargin;
 			// Applied width should be without margins
-			bHasTitle && this._oControl._oTitleControl.setWidth((iMBWidth - this._iDoubleChildControlMargin) + "px");
+			bHasTitle && this._oControl._oTitleControl.setWidth(iMegaMenuWidth + "px");
 		}
 
 		if (iAvailableWidth >= iMBWidth && iAvailableWidth <= iCollectiveWidth) {

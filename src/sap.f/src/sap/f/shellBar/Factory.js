@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/m/MenuButton",
 	"sap/m/OverflowToolbar",
 	"sap/m/OverflowToolbarButton",
+	"sap/f/SearchManager",
 	"./ControlSpacer",
 	"sap/m/ToolbarSpacer",
 	"sap/m/OverflowToolbarLayoutData",
@@ -27,6 +28,7 @@ sap.ui.define([
 	MenuButton,
 	OverflowToolbar,
 	OverflowToolbarButton,
+	ShellBarSearch,
 	ControlSpacer,
 	ToolbarSpacer,
 	OverflowToolbarLayoutData,
@@ -61,6 +63,8 @@ sap.ui.define([
 		this._oContext = oContext;
 		this._oControls = {};
 		this._oAcc = new Accessibility();
+
+		this._alreadyAttachedSearchHandlers = false;
 	};
 
 	Factory.prototype.getOverflowToolbar = function () {
@@ -203,6 +207,14 @@ sap.ui.define([
 			}));
 		}
 		return this._oControls.oSearch;
+	};
+
+	Factory.prototype.getManagedSearch = function () {
+		if (!this._oControls.oManagedSearch) {
+			this._oControls.oManagedSearch = this._oContext.getSearchManager()._oSearch;
+		}
+
+		return this._oControls.oManagedSearch;
 	};
 
 	Factory.prototype.getNavButton = function () {

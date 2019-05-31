@@ -118,6 +118,13 @@ function(
 					aggregation: "menu"
 				}},
 				/**
+				 * Configurable search.
+				 *
+				 * <b>Note:</b> If <code>showSearch</code> is set to <code>true</code>, two search buttons appear.
+				 * @since 1.67
+				 */
+				searchManager: { type: "sap.f.SearchManager", multiple: false },
+				/**
 				 * The profile avatar.
 				 */
 				profile: {type: "sap.f.Avatar", multiple: false, forwarding: {
@@ -279,6 +286,7 @@ function(
 		}
 
 		this._bOTBUpdateNeeded = true;
+
 		return this.setProperty("homeIcon", sSrc);
 	};
 
@@ -316,6 +324,7 @@ function(
 
 		}
 		this._bOTBUpdateNeeded = true;
+
 		return this.setProperty("title", sTitle);
 	};
 
@@ -330,6 +339,7 @@ function(
 		}
 
 		this._bOTBUpdateNeeded = true;
+
 		return this.setProperty("secondTitle", sTitle);
 	};
 
@@ -343,6 +353,7 @@ function(
 		}
 
 		this._bOTBUpdateNeeded = true;
+
 		return this.setProperty("showCopilot", bShow);
 	};
 
@@ -356,7 +367,24 @@ function(
 		}
 
 		this._bOTBUpdateNeeded = true;
+
 		return this.setProperty("showSearch", bShow);
+	};
+
+	ShellBar.prototype.setSearchManager = function (oConfig) {
+		this.setAggregation("searchManager", oConfig);
+
+		if (oConfig) {
+			if (!this._oManagedSearch) {
+				this._oManagedSearch = this._oFactory.getManagedSearch();
+			}
+		} else {
+			this._oManagedSearch = null;
+		}
+
+		this._bOTBUpdateNeeded = true;
+
+		return this;
 	};
 
 	ShellBar.prototype.setShowNotifications = function (bShow) {
@@ -369,6 +397,7 @@ function(
 		}
 
 		this._bOTBUpdateNeeded = true;
+
 		return this.setProperty("showNotifications", bShow);
 	};
 
@@ -382,6 +411,7 @@ function(
 		}
 
 		this._bOTBUpdateNeeded = true;
+
 		return this.setProperty("showProductSwitcher", bShow);
 	};
 
@@ -395,6 +425,7 @@ function(
 		}
 
 		this._bOTBUpdateNeeded = true;
+
 		return this.setProperty("showNavButton", bShow);
 	};
 
@@ -408,6 +439,7 @@ function(
 		}
 
 		this._bOTBUpdateNeeded = true;
+
 		return this.setProperty("showMenuButton", bShow);
 	};
 
@@ -474,10 +506,16 @@ function(
 
 		this._oOverflowToolbar.addContent(this._oToolbarSpacer);
 
+		if (this._oManagedSearch) {
+			this._oOverflowToolbar.addContent(this._oManagedSearch);
+			this._aOverflowControls.push(this._oManagedSearch);
+		}
+
 		if (this._oSearch) {
 			this._oOverflowToolbar.addContent(this._oSearch);
 			this._aOverflowControls.push(this._oSearch);
 		}
+
 		if (this._oNotifications) {
 			this._oOverflowToolbar.addContent(this._oNotifications);
 			this._aOverflowControls.push(this._oNotifications);

@@ -96,7 +96,8 @@
 		  "since": "1.63",
 			"samples": [
 				"sap.f.sample.ShellBar",
-				"sap.f.sample.ShellBarWIthMenuButton"
+				"sap.f.sample.ShellBarWIthMenuButton",
+				"sap.f.sample.ShellBarWithSearch"
 			]
 		},
 		{
@@ -202,6 +203,11 @@
 		  "id": "sap.f.sample.ShellBarWIthMenuButton",
 		  "name": "Shell Bar with menu button",
 		  "description": "Shell Bar example with a menu button and a plain title."
+		},
+		{
+		  "id": "sap.f.sample.ShellBarWithSearch",
+		  "name": "Shell Bar with search",
+		  "description": "Shell Bar example with configured search functionality."
 		},
 		{
 		  "id": "sap.f.sample.Card",
