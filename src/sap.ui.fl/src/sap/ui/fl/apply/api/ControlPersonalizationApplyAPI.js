@@ -13,14 +13,14 @@ sap.ui.define([
 	 * Provides an API to handle specific functionality for personalized changes.
 	 *
 	 * @namespace
-	 * @name sap.ui.fl.read.api.ControlPersonalizationReadAPI
+	 * @name sap.ui.fl.apply.api.ControlPersonalizationApplyAPI
 	 * @author SAP SE
 	 * @experimental Since 1.67
 	 * @since 1.67
 	 * @version ${version}
 	 * @public
 	 */
-	var ControlPersonalizationReadAPI = {
+	var ControlPersonalizationApplyAPI = {
 
 		/**
 		 * Checks if personalization changes exists for control.
@@ -32,7 +32,7 @@ sap.ui.define([
 		 *
 		 * @returns {Promise} Promise resolving with true if personalization changes exists, otherwise false.
 		 *
-		 * @method sap.ui.fl.read.api.ControlPersonalizationReadAPI.isPersonalized
+		 * @method sap.ui.fl.apply.api.ControlPersonalizationApplyAPI.isPersonalized
 		 * @public
 		 */
 		isPersonalized: function() {
@@ -40,5 +40,5 @@ sap.ui.define([
 		}
 
 	};
-	return ControlPersonalizationReadAPI;
+	return ControlPersonalizationApplyAPI;
 }, true);
