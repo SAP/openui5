@@ -19,6 +19,45 @@
 <body class="sapUiBody topicBody">
 <div class="topic">
 	<div class="content">
+
+		<h1 id="overview">Integration Cards Overview</h1>
+		Integration Cards are a new way to expose application content in a unified way to the end user. <br>
+		Depending on the use cases Cards can be embedded in a host environment like application, dashboard or any HTML page, easily.
+		A variety of Card types can be configured by a simple JSON configuration (schema) without the need to write code for UI Rendering.
+		With that even users without programming skill can be enabled to create new Cards for their special needs.
+
+
+		<h2>Card Configuration</h2>
+		Based on a JSON schema definition, a card author defines either static card content or dynamic content from REST services.
+		The upcoming design-time capabilities of Cards will help the author in the future.
+
+		<h2>Host Environment</h2>
+		The host environment is responsible to integrate a Card. Action events allow the host environment to react on user interactions
+		within the Card.
+		For HTML environments UI5 provides two ways of integration, as a Custom Element or as a UI5 control.
+
+		<h2>Card Types</h2>
+
+		<h3>List Card</h3>
+		<img width="300px" src="../images/list.png" alt="List card">
+
+		<h3>Analytical Card</h3>
+		<img width="600px" src="../images/barcharts.png" alt="Analytical cards with bar charts">
+		<img width="600px" src="../images/donutlinecharts.png" alt="Analytical cards with line and donut charts">
+
+		<h3>Table Card</h3>
+		<img width="300px" src="../images/table.png" alt="Table card">
+
+		<h3>Object Card</h3>
+		<img width="300px" src="../images/object.png" alt="Object card">
+		<h3>Timeline Card</h3>
+
+		<img width="300px" src="../images/timeline.png" alt="Timeline card">
+
+		<h3>Component Card</h3>
+		For more flexible implementations of Card content, the Component Card allows to integrate UI5 Components as content.
+		Such Card could only be rendered within a HTML host environment.
+
 		<h1 id="concept">
 			UX Concept
 		</h1>
@@ -46,15 +85,6 @@
 			</li>
 		</ul>
 
-		<p>Card types:</p>
-
-		<img width="600px" src="../images/barcharts.png" alt="Analytical cards with bar charts">
-		<img width="600px" src="../images/donutlinecharts.png" alt="Analytical cards with line and donut charts">
-		<img width="300px" src="../images/list.png" alt="List card">
-		<img width="500px" src="../images/table.png" alt="Table card">
-		<img width="400px" src="../images/object.png" alt="Object card">
-		<img width="300px" src="../images/timeline.png" alt="Timeline card">
-
 		<h1 id="characteristics">
 			Characteristics
 		</h1>
@@ -75,6 +105,7 @@
 	</div>
 	<div class="navigation">
 		<h4>Table of Contents</h4>
+		<div><a href="#overview">Overview</a></div>
 		<div><a href="#concept">UX Concept</a></div>
 		<div><a href="#characteristics">Characteristics</a></div>
 		<div><a href="#developingCards">Developing Cards</a></div>
