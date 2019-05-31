@@ -10985,62 +10985,6 @@ sap.ui.define([
 
 	QUnit.module("highlighting");
 
-	QUnit.test("_boldItemRef should return a bold string", function (assert) {
-		var oFunctionRef = ComboBox.prototype._boldItemRef;
-
-		assert.strictEqual(oFunctionRef("Test", /^t/i, 1), "<b>T</b>est");
-		assert.strictEqual(oFunctionRef("Test", /^Test/i, 4), "<b>Test</b>");
-		assert.strictEqual(oFunctionRef("Test", /^/i, 0), "Test");
-		assert.strictEqual(oFunctionRef("Test (TE)", /^Test/i, 4), "<b>Test</b>&#x20;&#x28;TE&#x29;");
-
-	});
-
-	QUnit.test("_boldItemRef bold starts with per term", function (assert) {
-		var oFunctionRef = ComboBox.prototype._boldItemRef,
-			sItemText = "Hong Kong China",
-			sQuery1 = "Kong",
-			sQuery2 = "Hong",
-			sQuery3 = "ong",
-			sQuery4 = "Ch",
-			sQuery5 = "i";
-
-		assert.strictEqual(oFunctionRef(sItemText, /\bKong/gi, sQuery1.length), "Hong&#x20;<b>Kong</b>&#x20;China");
-		assert.strictEqual(oFunctionRef(sItemText, /\bHong/gi, sQuery2.length), "<b>Hong</b>&#x20;Kong&#x20;China");
-		assert.strictEqual(oFunctionRef(sItemText, /\bong/gi, sQuery3.length), "Hong&#x20;Kong&#x20;China");
-		assert.strictEqual(oFunctionRef(sItemText, /\bCh/gi, sQuery4.length), "Hong&#x20;Kong&#x20;<b>Ch</b>ina");
-		assert.strictEqual(oFunctionRef(sItemText, /\bi/gi, sQuery5.length), "Hong&#x20;Kong&#x20;China");
-	});
-
-	QUnit.test("_highlightList should call _boldItemRef on items", function (assert) {
-		// arrange
-		var oComboBox = new ComboBox();
-		oComboBox.syncPickerContent();
-
-		var oFakeDom = document.createElement("li"),
-			oItem = new StandardListItem({
-				title: "test"
-			}),
-			oGetItemsStub = this.stub(oComboBox._oList, "getItems"),
-			oBoldItemRefSpy = this.spy(ComboBox.prototype, "_boldItemRef"),
-			оItemRefStub = this.stub(oItem, "getDomRef");
-
-		// act
-		oFakeDom.innerHTML = "Test";
-		oGetItemsStub.withArgs().returns([oItem]);
-		оItemRefStub.withArgs().returns(oFakeDom);
-		oComboBox._highlightList("T");
-
-		// assert
-		assert.strictEqual(oBoldItemRefSpy.callCount, 1, "_boldItemRef called exactly once");
-
-		// cleanup
-		oGetItemsStub.restore();
-		оItemRefStub.restore();
-		oComboBox.destroy();
-		oItem.destroy();
-		oFakeDom = null;
-	});
-
 	QUnit.test("_highlightList doesn't throw an error when showSecondaryValues=true and sap.ui.core.Item is set", function (assert) {
 
 		// system under test
