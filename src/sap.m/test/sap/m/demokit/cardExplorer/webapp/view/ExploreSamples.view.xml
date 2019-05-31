@@ -42,11 +42,11 @@
 								<CheckBox text="Auto Run" selected="{settings>/autoRun}"></CheckBox>
 							</contentLeft>
 							<contentRight>
-								<core:Icon
+								<Button class="orientationBtn"
 										press="onChangeSplitterOrientation"
-										src="sap-icon://header"
-										color="#0a6ed1" >
-								</core:Icon>
+										icon="sap-icon://header"
+										type="Transparent">
+								</Button>
 							</contentRight>
 						</Bar>
 					</customHeader>
