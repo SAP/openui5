@@ -291,6 +291,57 @@
 		this.SearchField.$("F").click(); // click the form
 	});
 
+	QUnit.module("Suggestions", {
+		beforeEach: function () {
+			this.oSearchField = new sap.m.SearchField("sf8", {
+				enableSuggestions: true,
+				suggestionItems: [
+					this.oSuggestionItem1 = new sap.m.SuggestionItem({key: "suggest1", text: "suggest1"}),
+					new sap.m.SuggestionItem({key: "suggest2", text: "suggest2"})
+				],
+				suggest: function () {
+					this.oSearchField.suggest();
+				}.bind(this)
+			});
+			this.oSearchField.placeAt("content");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oSearchField.destroy();
+		}
+	});
+
+	QUnit.test("Search is fired once when suggestion item is tapped", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			fnSearchSpy = this.stub();
+
+		this.stub(sap.ui.Device, "system", {
+			desktop: false,
+			phone: true, // test on phone
+			tablet: false
+		});
+
+		this.oSearchField.attachEvent("search", function () {
+			fnSearchSpy();
+		});
+
+		// Act
+		this.oSearchField.focus();
+		sap.ui.getCore().applyChanges();
+
+
+		setTimeout(function () {
+			this.oSuggestionItem1.$().tap();
+
+			// Asert
+			setTimeout(function () {
+				assert.ok(fnSearchSpy.calledOnce, "Search is fired once");
+				done();
+			}, 500);
+		}.bind(this), 300); // requires that timeout to work on IE
+	});
+
 </script>
 
 </head>
