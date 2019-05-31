@@ -51,7 +51,7 @@
 						</Bar>
 					</customHeader>
 					<MessageStrip id="errorMessageStrip" visible="false" type="Error" showIcon="true"></MessageStrip>
-					<editor:CodeEditor type="json" syntaxHints="false" class="sapUiSmallMarginBegin" id="editor" height="100%" editable="true" liveChange="onManifestEdited"></editor:CodeEditor>
+					<editor:CodeEditor type="json" syntaxHints="false" class="sapUiSmallMarginBegin" id="editor" height="100%" editable="{settings>/editable}" liveChange="onManifestEdited"></editor:CodeEditor>
 				</Page>
 			</l:SplitPane>
 		</l:PaneContainer>
