@@ -465,7 +465,7 @@ sap.ui.define([
 			}
 		};
 		var aMessages = [];
-		oOdataMessageParser._parseHeader(aMessages, oResponse, {url: "myUrl"});
+		oOdataMessageParser._parseHeader(aMessages, oResponse, {url: "myurl", response: oResponse});
 		assert.equal(aMessages.length, 3, "Duplicate messages is ignored.");
 
 	});
@@ -502,7 +502,7 @@ sap.ui.define([
 				}
 			};
 		var aMessages = [];
-		oOdataMessageParser._parseBody(aMessages, oResponse, {url: "myUrl"});
+		oOdataMessageParser._parseBody(aMessages, oResponse, {url: "myurl", response: oResponse});
 		assert.equal(aMessages.length, 2, "Duplicate messages is ignored.");
 	});
 

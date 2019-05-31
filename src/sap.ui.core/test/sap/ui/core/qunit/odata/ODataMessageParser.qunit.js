@@ -1678,4 +1678,64 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("ODataMessageParser: technicalDetails", function(assert) {
+		var done = assert.async();
+
+		var sServiceURI = "fakeservice://testdata/odata/function-imports";
+
+		var oMetadata = new ODataMetadata(sServiceURI + "/$metadata", {});
+		oMetadata.loaded().then(function() {
+
+
+			var oParser = new ODataMessageParser(sServiceURI, oMetadata);
+			// Use processor to get new messages
+			var aNewMessages = [];
+			var aOldMessages = [];
+			oParser.setProcessor({
+				fireMessageChange: function(oObj) {
+					aNewMessages = oObj.newMessages;
+					aOldMessages = oObj.oldMessages;
+				},
+				resolve: function(sPath){
+					return sPath;
+				}
+			});
+
+			//SETUP
+			var oRequest = {
+				method: "POST",
+				key: "Activate",
+				created: true,
+				requestUri: sServiceURI + "/Activate"
+			};
+
+			var oResponse412 = {
+				statusCode: "412",
+				body: JSON.stringify({
+					"error": {
+						"message": {
+							"value": "Precondition failed"
+						},
+						"code": "412"
+					}
+				}),
+				headers: {
+					"location": sServiceURI + "/Products(1)",
+					"Content-Type": "text/plain;charset=utf-8",
+					"DataServiceVersion": "2.0;",
+					"preference-applied": "handling=strict"
+				}
+			};
+
+			oParser.parse(oResponse412, oRequest);
+
+			assert.equal(aNewMessages.length, 1);
+			assert.equal(aNewMessages[0].technical, true);
+			assert.strictEqual(aNewMessages[0].technicalDetails.headers, oResponse412.headers);
+			assert.strictEqual(aNewMessages[0].technicalDetails.statusCode, "412");
+			assert.equal(aOldMessages.length, 0);
+
+			done();
+		});
+	});
 });
