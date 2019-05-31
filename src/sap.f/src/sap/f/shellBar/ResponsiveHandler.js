@@ -372,7 +372,7 @@ sap.ui.define([
 
 			iOTBControls += $Ctr.outerWidth(true);
 			return true;
-		});
+		}.bind(this));
 
 		return iOTBControls;
 	};
