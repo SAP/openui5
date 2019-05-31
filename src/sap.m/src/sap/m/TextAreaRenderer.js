@@ -6,47 +6,39 @@ sap.ui.define([
 	'sap/ui/core/Renderer',
 	'./InputBaseRenderer',
 	'sap/ui/Device',
-	'sap/ui/core/library',
-	"sap/base/security/encodeXML"
+	'sap/ui/core/library'
 ],
-	function(Renderer, InputBaseRenderer, Device, coreLibrary, encodeXML) {
+	function(Renderer, InputBaseRenderer, Device, coreLibrary) {
 	"use strict";
 
 
 	// shortcut for sap.ui.core.Wrapping
 	var Wrapping = coreLibrary.Wrapping;
 
-
 	/**
 	 * TextArea renderer.
-	 * @namespace
-	 */
-	var TextAreaRenderer = {};
-
-
-	/**
-	 * Input renderer.
 	 * @namespace
 	 *
 	 * TextAreaRenderer extends the TextAreaRenderer
 	 */
 	var TextAreaRenderer = Renderer.extend(InputBaseRenderer);
+	TextAreaRenderer.apiVersion = 2;
 
 	// Adds control specific class
 	TextAreaRenderer.addOuterClasses = function(oRm, oControl) {
-		oRm.addClass("sapMTextArea");
+		oRm.class("sapMTextArea");
 
 		if (oControl.getShowExceededText()) {
-			oRm.addClass("sapMTextAreaWithCounter");
+			oRm.class("sapMTextAreaWithCounter");
 		}
 		if (oControl.getHeight()) {
-			oRm.addClass("sapMTextAreaWithHeight");
+			oRm.class("sapMTextAreaWithHeight");
 		}
 	};
 
 	// Add extra styles to Container
 	TextAreaRenderer.addOuterStyles = function(oRm, oControl) {
-		oControl.getHeight() && oRm.addStyle("height", oControl.getHeight());
+		oRm.style("height", oControl.getHeight());
 	};
 
 	// Write the counter of the TextArea.
@@ -58,21 +50,25 @@ sap.ui.define([
 
 	// Write the opening tag name of the TextArea
 	TextAreaRenderer.openInputTag = function(oRm, oControl) {
-		oRm.write("<textarea");
+		oRm.openStart("textarea");
+	};
+
+	// End the open textarea tag
+	TextAreaRenderer.endInputTag = function(oRm, oControl) {
+		oRm.openEnd();
 	};
 
 	// Write the closing tag name of the TextArea
 	TextAreaRenderer.closeInputTag = function(oRm, oControl) {
-		oRm.write("</textarea>");
+		oRm.close("textarea");
 	};
 
 	TextAreaRenderer.prependInnerContent = function(oRm, oControl) {
 		if (oControl.getGrowing()) {
-			oRm.write("<div");
-			oRm.addClass("sapMTextAreaMirror");
-			oRm.writeClasses();
-			oRm.writeAttribute("id", oControl.getId() + '-hidden');
-			oRm.write("></div>");
+			oRm.openStart("div", oControl.getId() + "-hidden");
+			oRm.class("sapMTextAreaMirror");
+			oRm.openEnd();
+			oRm.close("div");
 		}
 	};
 
@@ -83,16 +79,15 @@ sap.ui.define([
 	// Write the value of the TextArea
 	TextAreaRenderer.writeInnerContent = function(oRm, oControl) {
 		var sValue = oControl.getValue();
-		sValue = encodeXML(sValue);
 
-		oRm.write(sValue);
+		oRm.text(sValue);
 	};
 
 	// Add extra classes for TextArea element
 	TextAreaRenderer.addInnerClasses = function(oRm, oControl) {
-		oRm.addClass("sapMTextAreaInner");
+		oRm.class("sapMTextAreaInner");
 		if (oControl.getGrowing()) {
-			oRm.addClass("sapMTextAreaGrow");
+			oRm.class("sapMTextAreaGrow");
 		}
 	};
 
@@ -104,11 +99,11 @@ sap.ui.define([
 	// Add extra attributes to TextArea
 	TextAreaRenderer.writeInnerAttributes = function(oRm, oControl) {
 		if (oControl.getWrapping() != Wrapping.None) {
-			oRm.writeAttribute("wrap", oControl.getWrapping());
+			oRm.attr("wrap", oControl.getWrapping());
 		}
 
-		oRm.writeAttribute("rows", oControl.getRows());
-		oRm.writeAttribute("cols", oControl.getCols());
+		oRm.attr("rows", oControl.getRows());
+		oRm.attr("cols", oControl.getCols());
 	};
 
 	return TextAreaRenderer;
