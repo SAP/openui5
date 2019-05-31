@@ -29,17 +29,18 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A control used to group a set of card attributes in a header.
+	 * Displays general information in the header of the {@link sap.f.Card} and allows the
+	 * configuration of a numeric value visualization..
 	 *
-	 * <h3>Overview</h3>
-	 * The <code>NumericHeader</code> shows general information about the card and allows the configuration of a numeric value visualization.
-	 * You can configure the title, subtitle, status text and icon, using properties.
+	 * You can configure the title, subtitle, status text and icon, using the provided properties.
+	 * To add more side number indicators, use the <code>sideIndicators</code> aggregation.
 	 *
-	 * <h3>Usage</h3>
-	 * To show only basic information, use {@link sap.f.cards.Header Header} instead.
-	 * It is possible to add more side number indicators, using the <code>sideIndicators</code> aggregation.
-	 * You should always set a title.
-	 * You should always have a maximum of two side indicators.
+	 * <b>Notes:</b>
+	 * <ul>
+	 * <li>You should always set a title.</li>
+	 * <li>You should always have a maximum of two side indicators.</li>
+	 * <li>To show only basic information, use {@link sap.f.cards.Header Header} instead.</li>
+	 * </ul>
 	 *
 	 * @extends sap.ui.core.Control
 	 *
