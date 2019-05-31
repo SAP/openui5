@@ -24,11 +24,17 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer"],
 	 */
 	SegmentedButtonRenderer.render = function(oRM, oControl){
 		var aButtons = oControl.getButtons(),
+			aVisibleButtons = aButtons.filter(function(oButton) { return oButton.getVisible(); }),
+			iVisibleButtonPos = 0,
 			sSelectedButton = oControl.getSelectedButton(),
 			oButton,
 			sTooltip,
 			sButtonWidth,
 			sButtonTextDirection;
+
+		if (aVisibleButtons.length) {
+			aVisibleButtons[aVisibleButtons.length - 1].addStyleClass("sapMSegBtnLastVisibleButton");
+		}
 
 		// Select representation mockup
 		if (oControl._bInOverflow) {
@@ -76,12 +82,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer"],
 					sIconAriaLabel = "",
 					oImage;
 
-				for (var k = aButtons.length - 1; k > 0; k--) {
-					if (aButtons[k].getVisible()) {
-						aButtons[k].addStyleClass("sapMSegBtnLastVisibleButton");
-						break;
-					}
-				}
+				++iVisibleButtonPos;
 
 				if (oButtonIcon) {
 					oImage = oButton._getImage((oButton.getId() + "-img"), oButtonIcon);
@@ -96,8 +97,8 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer"],
 				// only the button properties enabled, width, icon, text, and tooltip are evaluated here
 				oRM.write("<li");
 				oRM.writeControlData(oButton);
-				oRM.writeAttribute("aria-posinset", i + 1);
-				oRM.writeAttribute("aria-setsize", aButtons.length);
+				oRM.writeAttribute("aria-posinset", iVisibleButtonPos);
+				oRM.writeAttribute("aria-setsize", aVisibleButtons.length);
 				oRM.addClass("sapMSegBBtn");
 				if (oButton.aCustomStyleClasses !== undefined && oButton.aCustomStyleClasses instanceof Array) {
 					for (var j = 0; j < oButton.aCustomStyleClasses.length; j++) {

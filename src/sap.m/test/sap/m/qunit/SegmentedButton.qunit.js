@@ -2752,6 +2752,40 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
+	QUnit.test("Chech aria-posinset and aria-setsize attributes for SegmentedButton with invisible button ", function(assert) {
+		// Arrange
+		var oButton1 = new Button({ text: "First" }),
+			oButton2 = new Button({ text: "Second", visible: false }),
+			oButton3 = new Button({ text: "Third" }),
+			oSegmentedButton = new SegmentedButton({
+				buttons : [oButton1, oButton2, oButton3]
+			});
+
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		// Assert
+		assert.strictEqual(oButton1.$().attr("aria-posinset"), "1", "Property 'aria-pointset' of First is set correctly");
+		assert.strictEqual(oButton1.$().attr("aria-setsize"), "2", "Property 'aria-setsize' of First is set correctly");
+		assert.strictEqual(oButton3.$().attr("aria-posinset"), "2", "Property 'aria-pointset' of Third is set correctly");
+		assert.strictEqual(oButton3.$().attr("aria-setsize"), "2", "Property 'aria-setsize' of Third is set correctly");
+
+		// Act
+		oButton2.setVisible(true);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oButton1.$().attr("aria-posinset"), "1", "Property 'aria-pointset' of First is set correctly");
+		assert.strictEqual(oButton1.$().attr("aria-setsize"), "3", "Property 'aria-setsize' of First is set correctly");
+		assert.strictEqual(oButton2.$().attr("aria-posinset"), "2", "Property 'aria-pointset' of Second is set correctly");
+		assert.strictEqual(oButton2.$().attr("aria-setsize"), "3", "Property 'aria-setsize' of Second is set correctly");
+		assert.strictEqual(oButton3.$().attr("aria-posinset"), "3", "Property 'aria-pointset' of Third is set correctly");
+		assert.strictEqual(oButton3.$().attr("aria-setsize"), "3", "Property 'aria-setsize' of Third is set correctly");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+	});
 
 	/* Module Select Mode */
 
