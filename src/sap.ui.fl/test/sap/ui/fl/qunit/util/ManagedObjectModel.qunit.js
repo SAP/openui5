@@ -2,11 +2,9 @@
 
 sap.ui.define([
 	"sap/ui/fl/util/ManagedObjectModel",
-	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Element"
 ], function(
 	ManagedObjectModel,
-	ManagedObject,
 	Element
 ) {
 	"use strict";
@@ -70,7 +68,6 @@ sap.ui.define([
 			});
 			oAnotherElement.destroy();
 		});
-
 	});
 
 	QUnit.done(function () {

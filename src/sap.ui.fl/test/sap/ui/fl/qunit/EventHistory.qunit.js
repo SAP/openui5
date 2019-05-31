@@ -57,30 +57,30 @@ sap.ui.define([
 		var sChannelId = "sap.ui";
 		var sEventId = EventHistory._aEventIds[0];
 		var mParameters1 = {
-			"param11": "value11",
-			"param12": "value12",
-			"getId": function () {
+			param11: "value11",
+			param12: "value12",
+			getId: function () {
 				return "id1";
 			}
 		};
 		var mParameters2 = {
-			"param21": "value21",
-			"param22": "value22",
-			"getId": function () {
+			param21: "value21",
+			param22: "value22",
+			getId: function () {
 				return "id2";
 			}
 		};
 
 		var oExpectedEvent1 = {
-			"channelId": sChannelId,
-			"eventId": sEventId,
-			"parameters": mParameters1.getId()
+			channelId: sChannelId,
+			eventId: sEventId,
+			parameters: mParameters1.getId()
 		};
 
 		var oExpectedEvent2 = {
-			"channelId": sChannelId,
-			"eventId": sEventId,
-			"parameters": mParameters2.getId()
+			channelId: sChannelId,
+			eventId: sEventId,
+			parameters: mParameters2.getId()
 		};
 
 		EventHistory.start();
@@ -88,7 +88,7 @@ sap.ui.define([
 		EventHistory.saveEvent(sChannelId, "anotherEventId", mParameters1);
 		EventHistory.saveEvent(sChannelId, sEventId, mParameters2);
 
-		var sEventId = EventHistory._aEventIds[0];
+		sEventId = EventHistory._aEventIds[0];
 		var oHistory = EventHistory._oHistory[sEventId];
 		assert.equal(oHistory.length, 2);
 		assert.deepEqual(oHistory[0], oExpectedEvent1);
@@ -99,30 +99,30 @@ sap.ui.define([
 		var sChannelId = "sap.ui";
 		var sEventId = EventHistory._aEventIds[0];
 		var mParameters1 = {
-			"param11": "value11",
-			"param12": "value12",
-			"getId": function () {
+			param11: "value11",
+			param12: "value12",
+			getId: function () {
 				return "id1";
 			}
 		};
 		var mParameters2 = {
-			"param21": "value21",
-			"param22": "value22",
-			"getId": function () {
+			param21: "value21",
+			param22: "value22",
+			getId: function () {
 				return "id2";
 			}
 		};
 
 		var oExpectedEvent1 = {
-			"channelId": sChannelId,
-			"eventId": sEventId,
-			"parameters": mParameters1.getId()
+			channelId: sChannelId,
+			eventId: sEventId,
+			parameters: mParameters1.getId()
 		};
 
 		var oExpectedEvent2 = {
-			"channelId": sChannelId,
-			"eventId": sEventId,
-			"parameters": mParameters2.getId()
+			channelId: sChannelId,
+			eventId: sEventId,
+			parameters: mParameters2.getId()
 		};
 
 		EventHistory.start();
@@ -144,30 +144,30 @@ sap.ui.define([
 		var sChannelId = "sap.ui";
 		var sEventId = EventHistory._aEventIds[0];
 		var mParameters1 = {
-			"param11": "value11",
-			"param12": "value12",
-			"getId": function () {
+			param11: "value11",
+			param12: "value12",
+			getId: function () {
 				return "id1";
 			}
 		};
 		var mParameters2 = {
-			"param21": "value21",
-			"param22": "value22",
-			"getId": function () {
+			param21: "value21",
+			param22: "value22",
+			getId: function () {
 				return "id2";
 			}
 		};
 
 		var oExpectedEvent1 = {
-			"channelId": sChannelId,
-			"eventId": sEventId,
-			"parameters": mParameters1.getId()
+			channelId: sChannelId,
+			eventId: sEventId,
+			parameters: mParameters1.getId()
 		};
 
 		var oExpectedEvent2 = {
-			"channelId": sChannelId,
-			"eventId": sEventId,
-			"parameters": mParameters2.getId()
+			channelId: sChannelId,
+			eventId: sEventId,
+			parameters: mParameters2.getId()
 		};
 
 		EventHistory.start();
@@ -181,7 +181,7 @@ sap.ui.define([
 		EventHistory.saveEvent(sChannelId, sEventId, mParameters2);
 		EventHistory.saveEvent(sChannelId, sEventId, mParameters2);
 
-		var sEventId = EventHistory._aEventIds[0];
+		sEventId = EventHistory._aEventIds[0];
 		var oHistory = EventHistory._oHistory[sEventId];
 		assert.equal(oHistory.length, 2);
 		assert.deepEqual(oHistory[0], oExpectedEvent1);

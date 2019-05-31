@@ -24,11 +24,11 @@ function(
 		beforeEach: function() {
 			this.oChangeHandler = UnhideControlChangeHandler;
 			var oChangeJson = {
-				"selector": {
-					"id": "key"
+				selector: {
+					id: "key"
 				},
-				"content": {},
-				"texts": {}
+				content: {},
+				texts: {}
 			};
 
 			this.oChange = new Change(oChangeJson);

@@ -107,9 +107,8 @@ sap.ui.define([
 					return fnCheckForControl(oControl.getParent());
 				} else if (!oControl.getParent() || oControl.getId() === mParams.rootControl.getId()) {
 					return mParams.variantManagement[oControl.getId()] || "";
-				} else {
-					return mParams.variantManagement[oControl.getId()];
 				}
+				return mParams.variantManagement[oControl.getId()];
 			};
 
 			return fnCheckForControl(oControl);
@@ -170,40 +169,40 @@ sap.ui.define([
 			var oElement;
 			return Promise.resolve()
 			.then(function () {
-					if (typeof vElement === 'string' || vElement instanceof String) {
-						oElement = Component.get(vElement);
+				if (typeof vElement === 'string' || vElement instanceof String) {
+					oElement = Component.get(vElement);
 
-						if (!(oElement instanceof Component)) {
-							oElement = sap.ui.getCore().byId(vElement);
+					if (!(oElement instanceof Component)) {
+						oElement = sap.ui.getCore().byId(vElement);
 
-							if (!(oElement instanceof Element)) {
-								throw new Error("No valid component or control found for the provided ID");
-							}
+						if (!(oElement instanceof Element)) {
+							throw new Error("No valid component or control found for the provided ID");
 						}
-					} else if (vElement instanceof Component || vElement instanceof Element) {
-						oElement = vElement;
 					}
+				} else if (vElement instanceof Component || vElement instanceof Element) {
+					oElement = vElement;
+				}
 
-					var oAppComponent = Utils.getAppComponentForControl(oElement);
-					if (!oAppComponent) {
-						throw new Error("A valid variant management control or component (instance or ID) should be passed as parameter");
-					}
+				var oAppComponent = Utils.getAppComponentForControl(oElement);
+				if (!oAppComponent) {
+					throw new Error("A valid variant management control or component (instance or ID) should be passed as parameter");
+				}
 
-					var oVariantModel = oAppComponent.getModel(Utils.VARIANT_MODEL_NAME);
-					if (!oVariantModel) {
-						throw new Error("No variant management model found for the passed control or application component");
-					}
-					var sVariantManagementReference = oVariantModel.getVariantManagementReference(sVariantReference).variantManagementReference;
-					if (!sVariantManagementReference) {
-						throw new Error("A valid control or component, and a valid variant/ID combination are required");
-					}
+				var oVariantModel = oAppComponent.getModel(Utils.VARIANT_MODEL_NAME);
+				if (!oVariantModel) {
+					throw new Error("No variant management model found for the passed control or application component");
+				}
+				var sVariantManagementReference = oVariantModel.getVariantManagementReference(sVariantReference).variantManagementReference;
+				if (!sVariantManagementReference) {
+					throw new Error("A valid control or component, and a valid variant/ID combination are required");
+				}
 
 				return oVariantModel.updateCurrentVariant(sVariantManagementReference, sVariantReference, oAppComponent);
 			})
 			["catch"](function (oError) {
-						Utils.log.error(oError);
-						return Promise.reject(oError);
-					});
+				Utils.log.error(oError);
+				return Promise.reject(oError);
+			});
 		},
 
 		_checkChangeSpecificData: function(oChange, sLayer) {

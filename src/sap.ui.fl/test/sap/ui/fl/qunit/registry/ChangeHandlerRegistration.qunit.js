@@ -124,10 +124,10 @@ sap.ui.define([
 
 			var oMockedLibraryChangedEvent = {
 				parameters: {
-					"operation": "add",
-					"metadata": {
-						"extensions": {
-							"flChangeHandlers": oFlChangeHandlerObject
+					operation: "add",
+					metadata: {
+						extensions: {
+							flChangeHandlers: oFlChangeHandlerObject
 						}
 					}
 				}
@@ -151,10 +151,10 @@ sap.ui.define([
 
 			var oMockedLibraryChangedEvent = {
 				parameters: {
-					"operation": "changed",
-					"metadata": {
-						"extensions": {
-							"flChangeHandlers": oFlChangeHandlerObject
+					operation: "changed",
+					metadata: {
+						extensions: {
+							flChangeHandlers: oFlChangeHandlerObject
 						}
 					}
 				}
@@ -175,9 +175,9 @@ sap.ui.define([
 		QUnit.test("the registry does nothing if a later loaded library has no change handlers", function (assert) {
 			var oMockedLibraryChangedEvent = {
 				parameters: {
-					"operation": "add",
-					"metadata": {
-						"extensions" : {}
+					operation: "add",
+					metadata: {
+						extensions : {}
 					}
 				}
 			};
@@ -198,5 +198,4 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

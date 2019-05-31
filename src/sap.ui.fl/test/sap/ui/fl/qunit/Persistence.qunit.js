@@ -1,21 +1,19 @@
 /*global QUnit*/
 
 sap.ui.define([
-		"sap/ui/fl/Persistence",
-		"sap/ui/fl/Utils",
-		"sap/ui/fl/Change",
-		"sap/ui/fl/DefaultVariant",
-		"sap/ui/fl/LrepConnector",
-		"sap/ui/core/Control",
-		"sap/ui/fl/Cache",
-		"sap/ui/thirdparty/sinon-4",
-		"sap/ui/thirdparty/jquery"
-	],
+	"sap/ui/fl/Persistence",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/Change",
+	"sap/ui/fl/LrepConnector",
+	"sap/ui/core/Control",
+	"sap/ui/fl/Cache",
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/thirdparty/jquery"
+],
 function(
 	Persistence,
 	utils,
 	Change,
-	defaultVariant,
 	LrepConnector,
 	Control,
 	Cache,
@@ -40,7 +38,7 @@ function(
 					changeType: "filterVariant",
 					creation: "2014-10-22T08:51:49.6376240Z",
 					reference: "smartFilterBar",
-					selector: {"persistencyKey": "control1"},
+					selector: {persistencyKey: "control1"},
 					conditions: {},
 					content: {something: "createNewVariant"},
 					texts: {
@@ -64,7 +62,7 @@ function(
 					changeType: "setDefaultVariant",
 					creation: "2014-10-22T08:52:49.6376240Z",
 					reference: "smartFilterBar",
-					selector: {"persistencyKey": "control1"},
+					selector: {persistencyKey: "control1"},
 					conditions: {something: "setVariantToDefault"},
 					content: {},
 					texts: {
@@ -87,7 +85,7 @@ function(
 					changeType: "setDefaultVariant",
 					creation: "2014-10-22T08:52:49.6376240Z",
 					reference: "smartFilterBar",
-					selector: {"persistencyKey": "control2"},
+					selector: {persistencyKey: "control2"},
 					conditions: {something: "setVariantToDefault"},
 					content: {},
 					texts: {
@@ -115,9 +113,8 @@ function(
 				getProperty: function(sPropertyName) {
 					if (sPropertyName === "persistencyKey") {
 						return "control1";
-					} else {
-						return "";
 					}
+					return "";
 				},
 				getId: function() {
 					return 'controlId';
@@ -130,7 +127,7 @@ function(
 				}
 			};
 
-			sandbox.stub(utils,"getAppDescriptor").returns({
+			sandbox.stub(utils, "getAppDescriptor").returns({
 				"sap.app":{
 					id: "myapp",
 					applicationVersion: {
@@ -139,8 +136,8 @@ function(
 				}
 			});
 
-			sandbox.stub(utils,"getAppVersionFromManifest").returns("1.0.0");
-			sandbox.stub(utils,"getAppComponentForControl").returns({getManifest : function(){}});
+			sandbox.stub(utils, "getAppVersionFromManifest").returns("1.0.0");
+			sandbox.stub(utils, "getAppComponentForControl").returns({getManifest : function() {}});
 
 			Cache.setActive(false);
 			Cache._entries = {};
@@ -224,11 +221,9 @@ function(
 			assert.equal(oNewChange.isVariant(), true);
 			assert.deepEqual(oNewChange._oDefinition.validAppVersions, {creation: "1.0.0", from: "1.0.0"});
 		});
-
 	});
 
 	QUnit.test("getExecuteOnSelect shall return null if there are no changes", function(assert) {
-
 		sandbox.stub(this.oPersistence, 'getChanges').returns(Promise.resolve({}));
 
 		//Call CUT
@@ -238,24 +233,23 @@ function(
 	});
 
 	QUnit.test("getExecuteOnSelectSync shall return the execute on select flag synchronously", function(assert) {
-
 		var sampleChanges = {
-			"changes": {
-				"changes": [
+			changes: {
+				changes: [
 					{},
 					{
-						"fileName": "005056AB1D001ED4968654C88CB2A21F",
-						"fileType": "change",
-						"changeType": "standardVariant",
-						"namespace": "localchange",
-						"content": {
-							"executeOnSelect": true
+						fileName: "005056AB1D001ED4968654C88CB2A21F",
+						fileType: "change",
+						changeType: "standardVariant",
+						namespace: "localchange",
+						content: {
+							executeOnSelect: true
 						},
-						"selector": {
-							"persistencyKey": "control1"
+						selector: {
+							persistencyKey: "control1"
 						},
-						"layer": "USER",
-						"originalLanguage": "EN"
+						layer: "USER",
+						originalLanguage: "EN"
 					}
 				]
 			}
@@ -278,7 +272,6 @@ function(
 	});
 
 	QUnit.test("getDefaultVariantId shall return an empty string if there are no changes", function(assert) {
-
 		sandbox.stub(this.oPersistence, 'getChanges').returns(Promise.resolve({}));
 
 		//Call CUT
@@ -288,24 +281,23 @@ function(
 	});
 
 	QUnit.test("getDefaultVariantIdSync shall return the default change id synchronously", function(assert) {
-
 		var sampleChanges = {
-			"changes": {
-				"changes": [
+			changes: {
+				changes: [
 					{},
 					{
-						"fileName": "005056AB1D001ED4968654C88CB2A21E",
-						"fileType": "change",
-						"changeType": "defaultVariant",
-						"namespace": "localchange",
-						"content": {
-							"defaultVariantName": "theDefaultVariantYo"
+						fileName: "005056AB1D001ED4968654C88CB2A21E",
+						fileType: "change",
+						changeType: "defaultVariant",
+						namespace: "localchange",
+						content: {
+							defaultVariantName: "theDefaultVariantYo"
 						},
-						"selector": {
-							"persistencyKey": "control1"
+						selector: {
+							persistencyKey: "control1"
 						},
-						"layer": "USER",
-						"originalLanguage": "EN"
+						layer: "USER",
+						originalLanguage: "EN"
 					}
 				]
 			}
@@ -338,7 +330,7 @@ function(
 		assert.ok(oChange instanceof Change);
 		assert.equal(oChange.getContent().defaultVariantName, "rominikum");
 		assert.deepEqual(oChange.getSelector(), {
-			'id': 'someId'
+			id: 'someId'
 		});
 		assert.equal(oChange.getDefinition().validAppVersions.creation, "1.0.0");
 		assert.equal(oChange.getDefinition().validAppVersions.from, "1.0.0");
@@ -374,7 +366,6 @@ function(
 	});
 
 	QUnit.test("sap.ui.fl.Persistence.addChange shall provide an API to set the id (fileName) of the new file", function(assert) {
-
 		var mParameters = {
 			type: "filterVariant",
 			id: "LethGarminil",

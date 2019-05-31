@@ -27,7 +27,7 @@ sap.ui.define([
 		QUnit.test("displays correct a failed change", function (assert) {
 			var sKey = "id_123_moveControl";
 			var aAppliedChanges = ["id_456_hideControl"];
-			var aFailedChanges = [ "id_123_moveControl"];
+			var aFailedChanges = ["id_123_moveControl"];
 			var aNotApplicableChanges = [];
 
 			var sStatus = this.oController.formatStatus(sKey, aAppliedChanges, aFailedChanges, aNotApplicableChanges);
@@ -89,7 +89,7 @@ sap.ui.define([
 					from: sVersion
 				},
 				dependentSelector: {
-					"some": [{
+					some: [{
 						id: sSomeDependentControlId,
 						isLocalId: true
 					}],
@@ -113,9 +113,9 @@ sap.ui.define([
 			assert.equal(aAttributes[3].value, sVersion, "the 'created with app version' attribute value was set correct");
 			assert.equal(aAttributes[4].label, "created by", "the 'created by' attribute label was set correct");
 			assert.equal(aAttributes[4].value, sUser, "the 'created by' attribute value was set correct");
-			assert.equal(aAttributes[5].label, "Variant Reference", "the 'Variant Reference' attribute label was set correct" );
+			assert.equal(aAttributes[5].label, "Variant Reference", "the 'Variant Reference' attribute label was set correct");
 			assert.equal(aAttributes[5].value, "", "the 'Variant Reference' attribute value was set correct");
-			assert.equal(aAttributes[6].label, "selector", "the 'selector' attribute label was set correct" );
+			assert.equal(aAttributes[6].label, "selector", "the 'selector' attribute label was set correct");
 			assert.equal(aAttributes[6].value, sSelector, "the 'selector' attribute value was set correct");
 			assert.equal(aAttributes[7].label, "dependency (some)", "the 'dependency (some)' attribute label was set correct");
 			assert.equal(aAttributes[7].value, sSomeDependentControlId, "the 'dependency (some)' attribute value was set correct");
@@ -138,20 +138,19 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("the generated dependencies are freed of shortcuts", function (assert) {
-
 			var mChangesInitial = {
 				mChangesEntries : {
-					"change1" : {
-						"mDefinition" : {},
-						"aDependencies" : []
+					change1 : {
+						mDefinition : {},
+						aDependencies : []
 					},
-					"change2" : {
-						"mDefinition" : {},
-						"aDependencies" : ["change1"]
+					change2 : {
+						mDefinition : {},
+						aDependencies : ["change1"]
 					},
-					"change3" : {
-						"mDefinition" : {},
-						"aDependencies" : ["change1", "change2"]
+					change3 : {
+						mDefinition : {},
+						aDependencies : ["change1", "change2"]
 					}
 				}
 			};
@@ -179,14 +178,14 @@ sap.ui.define([
 				aFailedChanges: [],
 				aNotApplicableChanges: [],
 				mChangesEntries: {
-					"id1": {
+					id1: {
 						mDefinition: {
 							changeType: "moveControl",
 							fileName: "id_123_moveControl",
 							layer: "CUSTOMER",
 							dependentSelector: [],
 							selector: {
-								"id": "id1"
+								id: "id1"
 							},
 							support: {
 								user: "x"
@@ -198,14 +197,14 @@ sap.ui.define([
 						],
 						aDependencies: ["id2"]
 					},
-					"id2": {
+					id2: {
 						mDefinition: {
 							changeType: "renameField",
 							fileName: "id_456_renameField",
 							layer: "CUSTOMER",
 							dependentSelector: [],
 							selector: {
-								"id": "id2"
+								id: "id2"
 							},
 							support: {
 								user: "x"

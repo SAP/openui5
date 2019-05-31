@@ -6,15 +6,13 @@
 sap.ui.define([
 	"sap/m/List",
 	"sap/m/InputListItem",
-	'sap/m/Button',
-	'sap/m/ComboBox',
-	'sap/m/Dialog',
-	'sap/m/DialogRenderer',
-	'sap/m/Input',
-	'sap/m/Label',
-	'sap/m/MessageToast',
-	'sap/ui/core/ListItem',
-	'sap/ui/fl/transport/Transports'
+	"sap/m/Button",
+	"sap/m/ComboBox",
+	"sap/m/Dialog",
+	"sap/m/DialogRenderer",
+	"sap/m/Input",
+	"sap/m/MessageToast",
+	"sap/ui/core/ListItem"
 ],
 function(
 	List,
@@ -24,13 +22,10 @@ function(
 	Dialog,
 	DialogRenderer,
 	Input,
-	Label,
 	MessageToast,
-	ListItem,
-	Transports
+	ListItem
 ) {
 	"use strict";
-
 
 	/**
 	 * Constructor for a new transport/TransportDialog.
@@ -47,45 +42,45 @@ function(
 	 * @alias sap.ui.fl.transport.TransportDialog
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var TransportDialog = Dialog.extend("sap.ui.fl.transport.TransportDialog", /** @lends sap.ui.fl.transport.TransportDialog.prototype */ { metadata : {
+	var TransportDialog = Dialog.extend("sap.ui.fl.transport.TransportDialog", /** @lends sap.ui.fl.transport.TransportDialog.prototype */ {
+		metadata : {
+			library : "sap.ui.fl",
+			properties : {
 
-		library : "sap.ui.fl",
-		properties : {
+				/**
+				 * An ABAP package that can be used as default for the ABAP package selection.
+				 */
+				pkg : {type : "string", group : "Misc", defaultValue : null},
 
-			/**
-			 * An ABAP package that can be used as default for the ABAP package selection.
-			 */
-			pkg : {type : "string", group : "Misc", defaultValue : null},
+				/**
+				 * The set of ABAP transport requests that can be selected by a user.
+				 */
+				transports : {type : "any", group : "Misc", defaultValue : null},
 
-			/**
-			 * The set of ABAP transport requests that can be selected by a user.
-			 */
-			transports : {type : "any", group : "Misc", defaultValue : null},
+				/**
+				 * The LREP object for which as transport request has to be selected
+				 */
+				lrepObject : {type : "any", group : "Misc", defaultValue : null},
 
-			/**
-			 * The LREP object for which as transport request has to be selected
-			 */
-			lrepObject : {type : "any", group : "Misc", defaultValue : null},
+				/**
+				 * Flag indicating whether the selection of an ABAP package is to be hidden or not.
+				 */
+				hidePackage : {type : "boolean", group : "Misc", defaultValue : null}
+			},
+			events : {
 
-			/**
-			 * Flag indicating whether the selection of an ABAP package is to be hidden or not.
-			 */
-			hidePackage : {type : "boolean", group : "Misc", defaultValue : null}
+				/**
+				 * This event will be fired when the user clicks the OK button on the dialog.
+				 */
+				ok : {},
+
+				/**
+				 * This event will be fired when the user clicks the Cancel button on the dialog or Escape button on the keyboard.
+				 */
+				cancel : {}
+			}
 		},
-		events : {
-
-			/**
-			 * This event will be fired when the user clicks the OK button on the dialog.
-			 */
-			ok : {},
-
-			/**
-			 * This event will be fired when the user clicks the Cancel button on the dialog or Escape button on the keyboard.
-			 */
-			cancel : {}
-		}
-	},
-	renderer: DialogRenderer.render
+		renderer: DialogRenderer.render
 	});
 
 
@@ -95,7 +90,6 @@ function(
 	 * @private
 	 */
 	TransportDialog.prototype.init = function() {
-
 		Dialog.prototype.init.apply(this);
 
 		// initialize dialog and create member variables.
@@ -122,7 +116,6 @@ function(
 	 * @private
 	 */
 	TransportDialog.prototype._createContentList = function() {
-
 		this._oPackageListItem = new InputListItem({
 			label: this._oResources.getText("TRANSPORT_DIALOG_PACKAGE"),
 			content: [
@@ -151,7 +144,6 @@ function(
 	 * @private
 	 */
 	TransportDialog.prototype._createButtons = function() {
-
 		var that = this;
 
 		this.addButton(new Button({
@@ -186,7 +178,6 @@ function(
 	 * @private
 	 */
 	TransportDialog.prototype._onLocal = function() {
-
 		this.fireOk({
 			selectedTransport: "",
 			selectedPackage: this.getPkg() || "$TMP",
@@ -202,7 +193,6 @@ function(
 	 * @private
 	 */
 	TransportDialog.prototype._onOkay = function() {
-
 		var sTransport = this._oTransport.getSelectedKey();
 
 		if (this._checkOkay(sTransport)) {
@@ -229,7 +219,6 @@ function(
 	 * @private
 	 */
 	TransportDialog.prototype._checkOkay = function(sTransport) {
-
 		if (sTransport) {
 			return true;
 		}
@@ -244,7 +233,6 @@ function(
 	 * @private
 	 */
 	TransportDialog.prototype._createTransportCombo = function() {
-
 		var that = this;
 
 		return new ComboBox({
@@ -288,7 +276,6 @@ function(
 	 * @private
 	 */
 	TransportDialog.prototype._createPackageField = function() {
-
 		var that = this;
 
 		return new Input({
@@ -321,10 +308,9 @@ function(
 	 * @private
 	 */
 	TransportDialog.prototype._createObjectInfo = function() {
-
 		var oObject, oResult = {
-			"package" : this._oPackage.getValue() || ""
-		};
+				"package" : this._oPackage.getValue() || ""
+			};
 
 		oObject = this.getProperty("lrepObject");
 
@@ -353,7 +339,6 @@ function(
 	 * @private
 	 */
 	TransportDialog.prototype._onPackageChangeSuccess = function(oTransports) {
-
 		if (oTransports) {
 			if (oTransports.localonly) {
 				this._oTransport.setEnabled(false);
@@ -380,14 +365,13 @@ function(
 	 * @private
 	 */
 	TransportDialog.prototype._setTransports = function(oTransports) {
-
 		var oLock, aTransports;
 
 		//get the transports into an array.
 		oLock = this._hasLock(oTransports.transports);
 
 		if (oLock) {
-			aTransports = [ oLock ];
+			aTransports = [oLock];
 		} else {
 			aTransports = oTransports.transports;
 		}
@@ -417,7 +401,6 @@ function(
 	 * @private
 	 */
 	TransportDialog.prototype._onPackageChangeError = function(oResult) {
-
 		MessageToast.show(oResult);
 		this.setTransports([]);
 	};
@@ -431,7 +414,6 @@ function(
 	 * @private
 	 */
 	TransportDialog.prototype._hasLock = function(aTransports) {
-
 		var oTransport, len = aTransports.length;
 
 		while (len--) {
@@ -454,7 +436,6 @@ function(
 	 * @public
 	 */
 	TransportDialog.prototype.setPkg = function(sPackage) {
-
 		if (sPackage && !this.getProperty("pkg")) {
 			// set the property itself.
 			this.setProperty("pkg", sPackage);
@@ -484,7 +465,6 @@ function(
 	 * @public
 	 */
 	TransportDialog.prototype.setTransports = function(aSelection) {
-
 		var i, len = 0, oItem;
 
 		if (aSelection) {
@@ -524,7 +504,6 @@ function(
 	 * @public
 	 */
 	TransportDialog.prototype.setLrepObject = function(oObject) {
-
 		if (oObject && !this.getProperty("lrepObject")) {
 			this.setProperty("lrepObject", oObject);
 		}
@@ -540,7 +519,6 @@ function(
 	 * @public
 	 */
 	TransportDialog.prototype.setHidePackage = function(bHide) {
-
 		//set the property itself.
 		this.setProperty("hidePackage", bHide);
 
@@ -560,5 +538,4 @@ function(
 	};
 
 	return TransportDialog;
-
 }, /* bExport= */ true);

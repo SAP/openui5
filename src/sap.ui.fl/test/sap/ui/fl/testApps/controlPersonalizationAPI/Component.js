@@ -1,16 +1,21 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/FakeLrepConnectorLocalStorage",
 	"sap/ui/fl/ControlPersonalizationAPI",
 	"sap/ui/rta/util/UrlParser"
-], function (UIComponent, JSONModel, FlexControllerFactory, ChangePersistenceFactory, FakeLrepConnectorLocalStorage, ControlPersonalizationAPI, UrlParser) {
+], function (
+	UIComponent,
+	FlexControllerFactory,
+	ChangePersistenceFactory,
+	FakeLrepConnectorLocalStorage,
+	ControlPersonalizationAPI,
+	UrlParser
+) {
 	"use strict";
 
 	return UIComponent.extend("test.sap.ui.fl.testApps.controlPersonalizationAPIChanges.Component", {
-
 		metadata: {
 			manifest: "json"
 		},

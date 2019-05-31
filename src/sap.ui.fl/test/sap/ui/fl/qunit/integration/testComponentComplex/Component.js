@@ -4,11 +4,9 @@
 
 sap.ui.define([
 	"sap/ui/core/UIComponent",
-	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer"
 ], function(
 	UIComponent,
-	Component,
 	ComponentContainer
 ) {
 	"use strict";
@@ -24,7 +22,7 @@ sap.ui.define([
 				usage: "myUsage",
 				id: this.createId("sap.ui.fl.qunit.integration.testComponentReuse"),
 				metadata: {
-					"manifest": "json"
+					manifest: "json"
 				},
 				async: false
 			});
@@ -34,7 +32,6 @@ sap.ui.define([
 			});
 
 			return oComponentContainer;
-
 		}
 	});
 });

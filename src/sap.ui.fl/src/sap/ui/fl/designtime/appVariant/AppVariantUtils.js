@@ -6,7 +6,11 @@ sap.ui.define([
 	"sap/ui/fl/designtime/appVariant/ChangeModifier",
 	"sap/ui/fl/designtime/appVariant/AppVariantModifier",
 	"sap/ui/fl/designtime/appVariant/ModuleModifier"
-], function(ChangeModifier, AppVariantModifier, ModuleModifier) {
+], function(
+	ChangeModifier,
+	AppVariantModifier,
+	ModuleModifier
+) {
 	"use strict";
 
 	var AppVariantUtils = {};
@@ -24,7 +28,6 @@ sap.ui.define([
 	 * @returns {Promise} Promise resolving with an array of all files that are necessary to create a new app variant
 	 */
 	AppVariantUtils.prepareContent = function (aFiles, oNewAppVariantManifest, sNewReference, sNewVersion, sScenario) {
-
 		sScenario = sScenario || sap.ui.fl.Scenario.VersionedAppVariant;
 
 		return new Promise(function (resolve, reject) {
@@ -37,7 +40,6 @@ sap.ui.define([
 		.then(ModuleModifier.modify.bind(ModuleModifier, sNewReference))
 		.then(ChangeModifier.modify.bind(ChangeModifier, sNewReference, sNewVersion, sScenario))
 		.then(AppVariantModifier.modify.bind(AppVariantModifier, oNewAppVariantManifest));
-
 	};
 
 	return AppVariantUtils;

@@ -22,7 +22,7 @@ sap.ui.define([
 
 		onAfterRendering: function () {
 			var oModel = this.oView.getModel();
-			var oModelData =  {
+			var oModelData = {
 				firstView: {
 					label: this.oLabel,
 					variantLabel: this.oVariantLabel

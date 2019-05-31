@@ -10,10 +10,10 @@ sap.ui.define([
 ) {
 	"use strict";
 	var fnSetControlAttributes = function (oVariantManagement, bDesignTimeMode) {
-		var oAppComponent = flUtils.getAppComponentForControl(oVariantManagement),
-			sControlId = oVariantManagement.getId(),
-			oModel = oAppComponent.getModel(flUtils.VARIANT_MODEL_NAME),
-			sVariantManagementReference = oAppComponent.getLocalId(sControlId) || sControlId;
+		var oAppComponent = flUtils.getAppComponentForControl(oVariantManagement);
+		var sControlId = oVariantManagement.getId();
+		var oModel = oAppComponent.getModel(flUtils.VARIANT_MODEL_NAME);
+		var sVariantManagementReference = oAppComponent.getLocalId(sControlId) || sControlId;
 
 		if (!oModel) {
 			return;

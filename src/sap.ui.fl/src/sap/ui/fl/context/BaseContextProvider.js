@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
+sap.ui.define(["sap/ui/base/ManagedObject"], function(ManagedObject) {
 	"use strict";
 
 	/**
@@ -48,10 +48,10 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
 	};
 
 	BaseContextProvider.prototype.getValue = function(sRequest) {
-		return this.loadData().then(function(mData){
+		return this.loadData().then(function(mData) {
 			var aRequestParts = sRequest && sRequest.split(".") || [];
-			var mResult = aRequestParts.reduce(function(mContextPart, sCurrent){
-				if (mContextPart && mContextPart.hasOwnProperty(sCurrent)){
+			var mResult = aRequestParts.reduce(function(mContextPart, sCurrent) {
+				if (mContextPart && mContextPart.hasOwnProperty(sCurrent)) {
 					return mContextPart[sCurrent];
 				}
 				return undefined;
@@ -60,14 +60,13 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
 		});
 	};
 
-	BaseContextProvider.prototype.getValueHelp = function(sRequest) {
+	BaseContextProvider.prototype.getValueHelp = function() {
 		return Promise.resolve({});
 	};
 
-	BaseContextProvider.prototype.validate = function(sKey, vValue) {
+	BaseContextProvider.prototype.validate = function() {
 		return Promise.resolve(true);
 	};
 
 	return BaseContextProvider;
-
 }, /* bExport= */true);

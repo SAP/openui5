@@ -116,14 +116,12 @@ function(
 		if (oStartupParameters["sap-app-id"] && oStartupParameters["sap-app-id"].length === 1) {
 			// deprecated app variant id support with no caching
 			sComponentName = oStartupParameters["sap-app-id"][0];
-		} else {
-			if (oConfig) {
-				var aAsyncHints = oConfig.asyncHints;
-				if (aAsyncHints && aAsyncHints.requests && Array.isArray(aAsyncHints.requests)) {
-					var oFlAsyncHint = this._findFlAsyncHint(aAsyncHints.requests, sComponentName);
-					if (oFlAsyncHint) {
-						oChangePersistenceWrapper.oRequestOptions.cacheKey = oFlAsyncHint.cachebusterToken || "<NO CHANGES>";
-					}
+		} else if (oConfig) {
+			var aAsyncHints = oConfig.asyncHints;
+			if (aAsyncHints && aAsyncHints.requests && Array.isArray(aAsyncHints.requests)) {
+				var oFlAsyncHint = this._findFlAsyncHint(aAsyncHints.requests, sComponentName);
+				if (oFlAsyncHint) {
+					oChangePersistenceWrapper.oRequestOptions.cacheKey = oFlAsyncHint.cachebusterToken || "<NO CHANGES>";
 				}
 			}
 		}
@@ -154,7 +152,6 @@ function(
 	 * @private
 	 */
 	ChangePersistenceFactory._onLoadComponent = function (oConfig, oManifest) {
-
 		// stop processing if the component is not of the type application
 		if (!Utils.isApplication(oManifest)) {
 			return;
@@ -182,7 +179,6 @@ function(
 	 * @private
 	 */
 	ChangePersistenceFactory._getChangesForComponentAfterInstantiation = function (oConfig, oManifest, oComponent) {
-
 		// stop processing if the component is not of the type application
 		if (!Utils.isApplication(oManifest)) {
 			return Promise.resolve(function() {

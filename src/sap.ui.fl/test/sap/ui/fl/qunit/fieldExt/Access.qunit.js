@@ -12,15 +12,15 @@ sap.ui.define([
 	"use strict";
 
 	var oBusinessExpectedContextRetrievalResult = {
-		BusinessContexts: [ { BusinessContext: "CFD_TSM_BUPA_ADR" , BusinessContextDescription: "Description for CFD_TSM_BUPA_ADR"}, { BusinessContext: "CFD_TSM_BUPA", BusinessContextDescription: "Description for CFD_TSM_BUPA"} ],
+		BusinessContexts: [{ BusinessContext: "CFD_TSM_BUPA_ADR", BusinessContextDescription: "Description for CFD_TSM_BUPA_ADR"}, { BusinessContext: "CFD_TSM_BUPA", BusinessContextDescription: "Description for CFD_TSM_BUPA"}],
 		ServiceName: "someService",
 		ServiceVersion: "0001"
 	};
 	var oBusinessExpectedContextRetrievalResultWithDescriptions = {
-			BusinessContexts: [ { BusinessContext: "CFD_TSM_BUPA_ADR", BusinessContextDescription: "Description for CFD_TSM_BUPA_ADR" } , { BusinessContext: "CFD_TSM_BUPA", BusinessContextDescription: "Description for CFD_TSM_BUPA" } ],
-			ServiceName: "someService",
-			ServiceVersion: "0001"
-		};
+		BusinessContexts: [{ BusinessContext: "CFD_TSM_BUPA_ADR", BusinessContextDescription: "Description for CFD_TSM_BUPA_ADR" }, { BusinessContext: "CFD_TSM_BUPA", BusinessContextDescription: "Description for CFD_TSM_BUPA" }],
+		ServiceName: "someService",
+		ServiceVersion: "0001"
+	};
 
 	var oBusinessExpectedContextRetrievalResultWithoutBusinesscontexts = {
 		BusinessContexts: [],
@@ -29,17 +29,17 @@ sap.ui.define([
 	};
 
 	var oHttpErrorResponse = {
-		"error": {
-			"code": "005056A509B11EE1B9A8FEC11C21578E",
-			"message": {
-				"lang": "en",
-				"value": "Invalid Function Import Parameter"
+		error: {
+			code: "005056A509B11EE1B9A8FEC11C21578E",
+			message: {
+				lang: "en",
+				value: "Invalid Function Import Parameter"
 			},
-			"innererror": {
-				"transactionid": "54E429A74593458DE10000000A420908",
-				"timestamp": "20150219074515.1395610",
-				"Error_Resolution": {
-					"SAP_Transaction": "Run transaction /IWFND/ERROR_LOG on SAP NW Gateway hub system and search for entries with the timestamp above for more details", "SAP_Note": "See SAP Note 1797736 for error analysis (https://service.sap.com/sap/support/notes/1797736)"
+			innererror: {
+				transactionid: "54E429A74593458DE10000000A420908",
+				timestamp: "20150219074515.1395610",
+				Error_Resolution: {
+					SAP_Transaction: "Run transaction /IWFND/ERROR_LOG on SAP NW Gateway hub system and search for entries with the timestamp above for more details", SAP_Note: "See SAP Note 1797736 for error analysis (https://service.sap.com/sap/support/notes/1797736)"
 				}
 			}
 		}
@@ -170,7 +170,6 @@ sap.ui.define([
 					"Content-Length": 13,
 					"X-CSRF-Token": "0987654321"
 				}, '{ "d": {"results":[{"BusinessContext":"CFD_TSM_BUPA_ADR", "BusinessContextDescription": "Description for CFD_TSM_BUPA_ADR"},{"BusinessContext":"CFD_TSM_BUPA" , "BusinessContextDescription": "Description for CFD_TSM_BUPA"}] }}');
-
 			} catch (e) {
 				oServer.restore();
 				assert.ok(false, e);
@@ -202,7 +201,6 @@ sap.ui.define([
 					"Content-Length": 13,
 					"X-CSRF-Token": "0987654321"
 				}, '{ "d": {"results":[{"BusinessContext":"CFD_TSM_BUPA_ADR", "BusinessContextDescription": "Description for CFD_TSM_BUPA_ADR"},{"BusinessContext":"CFD_TSM_BUPA", "BusinessContextDescription": "Description for CFD_TSM_BUPA" }] }}');
-
 			} catch (e) {
 				oServer.restore();
 				assert.ok(false, e);
@@ -233,7 +231,6 @@ sap.ui.define([
 					"Content-Length": 13,
 					"X-CSRF-Token": "0987654321"
 				}, '{ "d": {"results":[{"BusinessContext":"CFD_TSM_BUPA_ADR", "BusinessContextDescription":"Description for CFD_TSM_BUPA_ADR"}, { "BusinessContext":"CFD_TSM_BUPA", "BusinessContextDescription":"Description for CFD_TSM_BUPA" }] }}');
-
 			} catch (e) {
 				oServer.restore();
 				assert.ok(false, e);
@@ -265,7 +262,6 @@ sap.ui.define([
 					"Content-Length": 13,
 					"X-CSRF-Token": "0987654321"
 				}, '{ "results":[] }');
-
 			} catch (e) {
 				oServer.restore();
 				assert.ok(false, e);
@@ -275,7 +271,6 @@ sap.ui.define([
 		//In case EntitySetName was not provided at all - at least EntitySetName='' has to be provided -
 		// the real get response is used in respond parameter of this test
 		QUnit.test("getBusinessContextsWhereRetrievalFails", function(assert) {
-
 			var sServiceUrl = "/someService";
 			var sEntityTypeName = "BusinessPartner";
 
@@ -285,7 +280,7 @@ sap.ui.define([
 			try {
 				var oPromise = Access.getBusinessContexts(sServiceUrl, sEntityTypeName);
 
-				oPromise.done(function(oBusinessContexts) {
+				oPromise.done(function() {
 					oServer.restore();
 					assert.ok(false, "Should not run into done branch. ");
 				});
@@ -301,7 +296,6 @@ sap.ui.define([
 					"Content-Length": 13,
 					"X-CSRF-Token": "0987654321"
 				}, JSON.stringify(oHttpErrorResponse));
-
 			} catch (e) {
 				oServer.restore();
 				assert.ok(false, e);
@@ -491,8 +485,7 @@ sap.ui.define([
 				assert.ok(Access.isServiceOutdated(service));
 
 				storageItem = window.localStorage.getItem("state.key_-sap.ui.fl.fieldExt.Access");
-				assert.ok(storageItem != "\"{ }\"");
-
+				assert.ok(storageItem !== "\"{ }\"");
 			}
 			unMockAccessJs(oUnchangedAccess);
 			assert.ok(true);
@@ -700,19 +693,19 @@ sap.ui.define([
 				ServiceVersion: "0001"
 			};
 			var oMockResponse = {
-				"error" : {
-					"code" : "005056A509B11EE1B9A8FEC11C21D78E",
-					"message" : {
-					  "lang" : "en",
-					  "value" : "Resource not found for the segment 'GetBusinessContextsByResourcePath'."
+				error : {
+					code : "005056A509B11EE1B9A8FEC11C21D78E",
+					message : {
+						lang : "en",
+						value : "Resource not found for the segment 'GetBusinessContextsByResourcePath'."
 					},
-					"innererror" : {
-					  "transactionid" : "80E2B6AC2FB801F0E005A26F672AEE62",
-					  "timestamp" : "20171206180317.9903950",
-					  "Error_Resolution" : {
-						"SAP_Transaction" : "For backend administrators: run transaction /IWFND/ERROR_LOG on SAP Gateway hub system and search for entries with the timestamp above for more details",
-						"SAP_Note" : "See SAP Note 1797736 for error analysis (https://service.sap.com/sap/support/notes/1797736)"
-					  }
+					innererror : {
+						transactionid : "80E2B6AC2FB801F0E005A26F672AEE62",
+						timestamp : "20171206180317.9903950",
+						Error_Resolution : {
+							SAP_Transaction : "For backend administrators: run transaction /IWFND/ERROR_LOG on SAP Gateway hub system and search for entries with the timestamp above for more details",
+							SAP_Note : "See SAP Note 1797736 for error analysis (https://service.sap.com/sap/support/notes/1797736)"
+						}
 					}
 				}
 			};
@@ -725,7 +718,7 @@ sap.ui.define([
 					assert.deepEqual(oBusinessContexts, oExpectedResult);
 				});
 
-				oPromise.fail(function(oError) {
+				oPromise.fail(function() {
 					oServer.restore();
 					assert.ok(false, "Should not run into fail branch");
 				});
@@ -735,7 +728,6 @@ sap.ui.define([
 					"Content-Length": 13,
 					"X-CSRF-Token": "0987654321"
 				}, JSON.stringify(oMockResponse));
-
 			} catch (e) {
 				oServer.restore();
 				assert.ok(false, e);
@@ -746,5 +738,4 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

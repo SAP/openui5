@@ -1,10 +1,7 @@
 /*global QUnit*/
 
-
-
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/fl/Utils",
 	"sap/ui/fl/changeHandler/AddXML",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/changeHandler/JsControlTreeModifier",
@@ -13,7 +10,6 @@ sap.ui.define([
 	"sap/m/Button"
 ], function(
 	jQuery,
-	Utils,
 	AddXML,
 	Change,
 	JsControlTreeModifier,
@@ -220,10 +216,10 @@ sap.ui.define([
 			this.oChange.setModuleName(sNonExistingPath);
 			assert.throws(
 				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);},
-				function( err ) {
+				function(err) {
 					var sErrorMessage = "Error: resource sap/ui/fl/qunit/changeHander/AddXML/$$flexModules/" +
 						"1.0.0/changes/fragments/NonExisting could not be loaded from";
-					return err.toString().indexOf(sErrorMessage) == 0;
+					return err.toString().indexOf(sErrorMessage) === 0;
 				},
 				"then apply change throws an error"
 			);
@@ -317,8 +313,8 @@ sap.ui.define([
 			this.oComponent = sap.ui.getCore().createComponent({
 				name: "testComponent",
 				id: "testComponent",
-				"metadata": {
-					"manifest": "json"
+				metadata: {
+					manifest: "json"
 				}
 			});
 			this.oXmlString =
@@ -445,10 +441,10 @@ sap.ui.define([
 			this.oChange.setModuleName(sNonExistingPath);
 			assert.throws(
 				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);},
-				function( err ) {
+				function(err) {
 					var sErrorMessage = "Error: resource sap/ui/fl/qunit/changeHander/AddXML/$$flexModules/" +
 						"1.0.0/changes/fragments/NonExisting could not be loaded from";
-					return err.toString().indexOf(sErrorMessage) == 0;
+					return err.toString().indexOf(sErrorMessage) === 0;
 				},
 				"then apply change throws an error"
 			);

@@ -148,7 +148,7 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 	 * @private
 	 */
 	LrepConnector._getLayerSuffix = function (sLayer) {
-		if (sLayer === "All"){
+		if (sLayer === "All") {
 			return "";
 		}
 		return "?layer=" + sLayer;
@@ -189,7 +189,7 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 			sReadRuntimeContextSuffix += (sLayerSuffix ? "&" : "?");
 			sReadRuntimeContextSuffix += "dt=true";
 		}
-		if (!!bReadContextMetadata) {
+		if (bReadContextMetadata) {
 			sReadRuntimeContextSuffix += (sLayerSuffix || sReadRuntimeContextSuffix ? "&" : "?");
 			sReadRuntimeContextSuffix += "metadata=true";
 		}
@@ -232,7 +232,7 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 			}
 		};
 		//code extension content should be treated as plain text to avoid parser error.
-		if (!!bRequestAsText){
+		if (bRequestAsText) {
 			oRequest.dataType = "text";
 		}
 		jQuery.ajax(oRequest);

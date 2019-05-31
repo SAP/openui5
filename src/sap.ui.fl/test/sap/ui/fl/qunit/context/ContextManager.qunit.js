@@ -18,8 +18,8 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 
 	var oRuntimeContext = {
-		"weather": "nice",
-		"coolDrinks": "unavailable"
+		weather: "nice",
+		coolDrinks: "unavailable"
 	};
 
 	QUnit.module("sap.ui.fl.context.ContextManager", {
@@ -34,7 +34,7 @@ sap.ui.define([
 				changeType: "filterVariant",
 				reference: "smartFilterBar",
 				componentName: "smartFilterBar",
-				selector: {"persistenceKey": "control1"},
+				selector: {persistenceKey: "control1"},
 				conditions: {},
 				context: "ctx001",
 				content: {something: "createNewVariant"},
@@ -207,20 +207,20 @@ sap.ui.define([
 				id: "ctx001",
 				parameters: [
 					{
-						"selector": "weather",
-						"operator": "EQ",
-						"value": "nice"
+						selector: "weather",
+						operator: "EQ",
+						value: "nice"
 					},
 					{
-						"selector": "coolDrinks",
-						"operator": "EQ",
-						"value": "available"
+						selector: "coolDrinks",
+						operator: "EQ",
+						value: "available"
 					}
 				]
 			};
 			var oRuntimeContext = {
-				"weather": "nice",
-				"coolDrinks": "unavailable"
+				weather: "nice",
+				coolDrinks: "unavailable"
 			};
 			sandbox.stub(ContextManager, "_getContextIdsFromUrl").returns([]);
 
@@ -247,14 +247,14 @@ sap.ui.define([
 				id: sContextObjectId,
 				parameters: [
 					{
-						"selector": "weather",
-						"operator": "EQ",
-						"value": "nice"
+						selector: "weather",
+						operator: "EQ",
+						value: "nice"
 					},
 					{
-						"selector": "coolDrinks",
-						"operator": "EQ",
-						"value": "available"
+						selector: "coolDrinks",
+						operator: "EQ",
+						value: "available"
 					}
 				]
 			};
@@ -314,9 +314,9 @@ sap.ui.define([
 			var sSelector = "country";
 			var sValue = "china";
 			var oContext = {
-				"selector": sSelector,
-				"operator": "EQ",
-				"value": sValue
+				selector: sSelector,
+				operator: "EQ",
+				value: sValue
 			};
 			var checkEqualsStub = sandbox.stub(ContextManager, "_checkEquals").returns(true);
 			ContextManager._checkContextParameter(oContext, aRuntimeContext);
@@ -334,9 +334,9 @@ sap.ui.define([
 			var sValue = "china";
 
 			var oContext = {
-				"selector": sSelector,
-				"operator": "NE",
-				"value": sValue
+				selector: sSelector,
+				operator: "NE",
+				value: sValue
 			};
 			var checkEqualsStub = sandbox.stub(ContextManager, "_checkEquals").returns(false);
 			ContextManager._checkContextParameter(oContext, aRuntimeContext);
@@ -354,9 +354,9 @@ sap.ui.define([
 			var sOperator = "some absolutely unknown operator";
 			var sValue = "china";
 			var oContext = {
-				"selector": sSelector,
-				"operator": sOperator,
-				"value": sValue
+				selector: sSelector,
+				operator: sOperator,
+				value: sValue
 			};
 			var loggerStub = sandbox.stub(Log, "info");
 			var bContextActive = ContextManager._checkContextParameter(oContext, aRuntimeContext);

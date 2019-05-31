@@ -37,14 +37,14 @@ sap.ui.define([
 	 *
 	 */
 	FlexControllerFactory.create = function(sComponentName, sAppVersion) {
-		var sAppVersion = sAppVersion || Utils.DEFAULT_APP_VERSION;
+		sAppVersion = sAppVersion || Utils.DEFAULT_APP_VERSION;
 
 		if (!FlexControllerFactory._instanceCache[sComponentName]) {
 			FlexControllerFactory._instanceCache[sComponentName] = {};
 		}
 		var oFlexController = FlexControllerFactory._instanceCache[sComponentName][sAppVersion];
 
-		if (!oFlexController){
+		if (!oFlexController) {
 			oFlexController = new FlexController(sComponentName, sAppVersion);
 			FlexControllerFactory._instanceCache[sComponentName][sAppVersion] = oFlexController;
 		}
@@ -66,10 +66,10 @@ sap.ui.define([
 	FlexControllerFactory.createForControl = function(oControl, oManifest) {
 		try {
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
-			var sComponentName = Utils.getComponentClassName(oAppComponent ? oAppComponent : oControl);
+			var sComponentName = Utils.getComponentClassName(oAppComponent || oControl);
 			var sAppVersion = Utils.getAppVersionFromManifest(oAppComponent ? oAppComponent.getManifest() : oManifest);
 			return FlexControllerFactory.create(sComponentName, sAppVersion);
-		} catch (oError){
+		} catch (oError) {
 			Utils.log.error(oError.message, undefined, "sap.ui.fl.FlexControllerFactory");
 		}
 	};
@@ -91,7 +91,7 @@ sap.ui.define([
 			var oAppComponent = Utils.getAppComponentForControl(oComponent);
 			// Some embedded components might not have an app component, e.g. sap.ushell.plugins.rta, sap.ushell.plugins.rta-personalize
 			if (oAppComponent) {
-				return Promise.resolve().then( function() {
+				return Promise.resolve().then(function() {
 					var oExistingVariantModel = oAppComponent.getModel(Utils.VARIANT_MODEL_NAME);
 					if (!oExistingVariantModel) {
 						// If variant model is not present on the app component
@@ -99,9 +99,8 @@ sap.ui.define([
 						// Setting a variant model will ensure that at least a standard variant will exist
 						// for all variant management controls.
 						return _propagateChangesForAppComponent(oAppComponent, vConfig);
-					} else {
-						return oExistingVariantModel;
 					}
+					return oExistingVariantModel;
 				}).then(function (oVariantModel) {
 					// set app component's variant model on the embedded component
 					oComponent.setModel(oVariantModel, Utils.VARIANT_MODEL_NAME);

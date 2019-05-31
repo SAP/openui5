@@ -5,7 +5,10 @@
 sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/designtime/appVariant/ModifierUtils"
-], function(Utils, ModifierUtils) {
+], function(
+	Utils,
+	ModifierUtils
+) {
 	"use strict";
 
 	var ChangeModifier = {};
@@ -35,7 +38,7 @@ sap.ui.define([
 		});
 	};
 
-	var _rChangeFolderPattern = new RegExp( "(apps/[^/]*/).*/", "g" );
+	var _rChangeFolderPattern = new RegExp("(apps/[^/]*/).*/", "g");
 
 	/** Adjusts all fields within a single change file.
 	 *
@@ -47,7 +50,6 @@ sap.ui.define([
 	 * @private
 	 */
 	ChangeModifier._modifyChangeFile = function (sChangeFileContent, sNewReference, sNewVersion, sScenario) {
-
 		var oChange = JSON.parse(sChangeFileContent);
 
 		oChange.reference = sNewReference;
@@ -79,7 +81,6 @@ sap.ui.define([
 	 * @private
 	 */
 	ChangeModifier._adjustFileName = function (sNamespace, sNewReference) {
-
 		return sNamespace.replace(_rChangeFolderPattern, "$1appVariants/" + sNewReference + "/changes/");
 	};
 

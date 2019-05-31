@@ -118,7 +118,7 @@ sap.ui.define([
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.ui.core.Element" : {
-					"foo" : function() {
+					foo : function() {
 						return {
 							applyChange: function() {},
 							completeChangeContent: function() {}
@@ -166,8 +166,8 @@ sap.ui.define([
 					},
 					variantModel: oVariantModel,
 					variantManagement: {
-						"id1": aReferences[0],
-						"id2": aReferences[1]
+						id1: aReferences[0],
+						id2: aReferences[1]
 					}
 				});
 
@@ -181,7 +181,7 @@ sap.ui.define([
 
 		QUnit.test("When saveChanges() is called with an invalid element", function(assert) {
 			ControlPersonalizationWriteAPI.saveChanges([], {});
-			assert.ok(Utils.log.error.calledWith("A valid sap.ui.base.ManagedObject instance is required as a parameter"),  "then Utils.log.error() called with an error");
+			assert.ok(Utils.log.error.calledWith("A valid sap.ui.base.ManagedObject instance is required as a parameter"), "then Utils.log.error() called with an error");
 		});
 	});
 
@@ -220,45 +220,45 @@ sap.ui.define([
 					component: this.oComp
 				}).placeAt("qunit-fixture");
 
-				this.mMoveChangeData1  = {
+				this.mMoveChangeData1 = {
 					selectorControl : sap.ui.getCore().byId("testComponent---mockview--ObjectPageLayout"),
 					changeSpecificData: {
 						changeType: "moveControls",
 						movedElements: [{
-							"id": "testComponent---mockview--ObjectPageSection1",
-							"sourceIndex": 0,
-							"targetIndex": 1
+							id: "testComponent---mockview--ObjectPageSection1",
+							sourceIndex: 0,
+							targetIndex: 1
 						}],
 						source: {
-							"id": "testComponent---mockview--ObjectPageLayout",
-							"aggregation": "sections"
+							id: "testComponent---mockview--ObjectPageLayout",
+							aggregation: "sections"
 						},
 						target: {
-							"id": "testComponent---mockview--ObjectPageLayout",
-							"aggregation": "sections"
+							id: "testComponent---mockview--ObjectPageLayout",
+							aggregation: "sections"
 						}
 					}
 				};
-				this.mMoveChangeData2  = {
+				this.mMoveChangeData2 = {
 					selectorControl : sap.ui.getCore().byId("testComponent---mockview--ObjectPageLayout"),
 					changeSpecificData: {
 						changeType: "moveControls",
 						movedElements: [{
-							"id": "testComponent---mockview--ObjectPageSection3",
-							"sourceIndex": 2,
-							"targetIndex": 1
+							id: "testComponent---mockview--ObjectPageSection3",
+							sourceIndex: 2,
+							targetIndex: 1
 						}],
 						source: {
-							"id": "testComponent---mockview--ObjectPageLayout",
-							"aggregation": "sections"
+							id: "testComponent---mockview--ObjectPageLayout",
+							aggregation: "sections"
 						},
 						target: {
-							"id": "testComponent---mockview--ObjectPageLayout",
-							"aggregation": "sections"
+							id: "testComponent---mockview--ObjectPageLayout",
+							aggregation: "sections"
 						}
 					}
 				};
-				this.mRenameChangeData1  = {
+				this.mRenameChangeData1 = {
 					selectorControl : sap.ui.getCore().byId("testComponent---mockview--ObjectPageSection1"),
 					changeSpecificData: {
 						changeType: "rename",
@@ -268,7 +268,7 @@ sap.ui.define([
 						value : "Personalization Test"
 					}
 				};
-				this.mRenameChangeData2  = {
+				this.mRenameChangeData2 = {
 					selectorControl : sap.ui.getCore().byId("testComponent---mockview--TextTitle1"),
 					changeSpecificData: {
 						changeType: "rename",

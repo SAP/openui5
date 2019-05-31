@@ -17,59 +17,59 @@ function(
 	"use strict";
 
 	var mUserContext = {
-		"settings" : {
-			"language" : "DE",
-			"TIME_ZONE" : "CEST"
+		settings : {
+			language : "DE",
+			TIME_ZONE : "CEST"
 		},
-		"role" : "admin"
+		role : "admin"
 	};
 
 	var mUserValueHelp = {
-		"timezone" : {
-			"text" : "Time Zone",
-			"description" : "Time zones of a country the user lives in",
-			"values" : [{
-				"text" : "Central European Time ",
-				"description" : "UTC+01:00 (CET)",
-				"value" : "CET"
+		timezone : {
+			text : "Time Zone",
+			description : "Time zones of a country the user lives in",
+			values : [{
+				text : "Central European Time ",
+				description : "UTC+01:00 (CET)",
+				value : "CET"
 			}, {
-				"text" : "The Pacific Time Zone",
-				"description" : "The states on the Pacific coast, Nevada, and parts of Idaho",
-				"value" : "PT"
+				text : "The Pacific Time Zone",
+				description : "The states on the Pacific coast, Nevada, and parts of Idaho",
+				value : "PT"
 			}]
 		},
-		"language" : {
-			"text" : "Language",
-			"description" : "Preferred language of the user",
-			"values" : [{
-				"text" : "German",
-				"description" : "German language (Deutsch)",
-				"value" : "DE"
+		language : {
+			text : "Language",
+			description : "Preferred language of the user",
+			values : [{
+				text : "German",
+				description : "German language (Deutsch)",
+				value : "DE"
 			}, {
-				"text" : "English",
-				"description" : "American English",
-				"value" : "EN_US"
+				text : "English",
+				description : "American English",
+				value : "EN_US"
 			}]
 		}
 	};
 
 	var mDeviceContext = {
-		"agent" : "Safari",
-		"screen_size" : "5K"
+		agent : "Safari",
+		screen_size : "5K"
 	};
 
 	var mDeviceValueHelp = {
-		"agent" : {
-			"text" : "Agent",
-			"description" : "Browser agent",
-			"values" : [{
-				"text" : "Safari",
-				"description" : "Browser on OS x and IOs platform",
-				"value" : "Safari"
+		agent : {
+			text : "Agent",
+			description : "Browser agent",
+			values : [{
+				text : "Safari",
+				description : "Browser on OS x and IOs platform",
+				value : "Safari"
 			}, {
-				"text" : "Chrome",
-				"description" : "A web browser built for speed, simplicity, and security",
-				"value" : "Chrome"
+				text : "Chrome",
+				description : "A web browser built for speed, simplicity, and security",
+				value : "Chrome"
 			}]
 		}
 	};
@@ -78,8 +78,8 @@ function(
 	var sUserContextText = "Context";
 	var sUserDescription = "User context";
 	var mContextConfigurationUser = {
-		"user" : "sap/ui/fl/qunit/context/MockUserContextProvider",
-		"device" : "sap/ui/fl/qunit/context/MockDeviceContextProvider"
+		user : "sap/ui/fl/qunit/context/MockUserContextProvider",
+		device : "sap/ui/fl/qunit/context/MockDeviceContextProvider"
 	};
 
 	/*
@@ -129,11 +129,11 @@ function(
 		}
 	}, function() {
 		QUnit.test("when calling getText(),", function(assert) {
-			assert.ok(oMockContextProvider.getText() == sUserContextText, "then it returns the correct value");
+			assert.ok(oMockContextProvider.getText() === sUserContextText, "then it returns the correct value");
 		});
 
 		QUnit.test("when calling getDescription(),", function(assert) {
-			assert.ok(oMockContextProvider.getDescription() == sUserDescription, "then it returns the correct value");
+			assert.ok(oMockContextProvider.getDescription() === sUserDescription, "then it returns the correct value");
 		});
 	});
 
@@ -191,7 +191,7 @@ function(
 
 		QUnit.test("when calling getValue with a unkown argument ['user.unknownProperty']", function(assert) {
 			return oContextWithUserConfiguration.getValue(["user.unknownProperty"]).then(function(mValue) {
-				assert.deepEqual(mValue,{
+				assert.deepEqual(mValue, {
 					"user.unknownProperty" : undefined
 				}, " then undefined is returned");
 			});
@@ -203,21 +203,20 @@ function(
 					"user.unknown.secondLevelProperty" : undefined
 				}, " then undefined is returned");
 			});
-
 		});
 
 		QUnit.test("when calling getValue with the array with a single request ['device'] as parameter", function(assert) {
 			return oContextWithUserConfiguration.getValue(["device"]).then(function(mValue) {
 				assert.deepEqual(mValue, {
 					device : mDeviceContext
-				} , " then data of the request is returned");
+				}, " then data of the request is returned");
 			});
 		});
 
 		QUnit.test("when calling getValue with a filtering array ['device', 'user.settings'] as parameter", function(assert) {
 			return oContextWithUserConfiguration.getValue(["device", "user.settings"]).then(function(mValue) {
 				assert.deepEqual(mValue, {
-					"device" : mDeviceContext,
+					device : mDeviceContext,
 					"user.settings" : mUserContext.settings
 				}, " then correct data is returned in a map with the request as key");
 			});
@@ -229,7 +228,7 @@ function(
 					"device.agent" : mDeviceContext.agent,
 					"user.settings.language" : mUserContext.settings.language,
 					"user.role" : mUserContext.role,
-					'unknownDomain' : undefined,
+					unknownDomain : undefined,
 					'user.unknownProperty' : undefined
 				}, " then correct data is returned in a map with the requests as key");
 			});
@@ -246,17 +245,17 @@ function(
 		QUnit.test("when calling getValueHelp without an argument", function(assert) {
 			return oContextWithUserConfiguration.getValueHelp().then(function(mValue) {
 				assert.deepEqual(mValue, {
-					"device" : mDeviceValueHelp,
-					"user" : mUserValueHelp
+					device : mDeviceValueHelp,
+					user : mUserValueHelp
 				}, " then all values from all ContextProviders are returned");
 			});
 		});
 
 		QUnit.test("when calling getValueHelp with argument 'user'", function(assert) {
 			return oContextWithUserConfiguration.getValueHelp(["user"]).then(function(mValue) {
-				assert.deepEqual(mValue,{
-					"user" : mUserValueHelp
-				} , " then only the user help of 'user' is returned");
+				assert.deepEqual(mValue, {
+					user : mUserValueHelp
+				}, " then only the user help of 'user' is returned");
 			});
 		});
 
@@ -279,7 +278,7 @@ function(
 		QUnit.test("when calling getValueHelp with a filtering array ['device', 'user.settings'] as parameter", function(assert) {
 			return oContextWithUserConfiguration.getValueHelp(["device", "user.settings"]).then(function(mValue) {
 				assert.deepEqual(mValue, {
-					"device" : mDeviceValueHelp,
+					device : mDeviceValueHelp,
 					"user.settings" : mUserValueHelp //mock provider doesn't filter, real one should
 				}, " then filtered value help data is returned with the requests as key");
 			});
@@ -288,7 +287,7 @@ function(
 		QUnit.test("when calling getValueHelp with a partial domain 'us' ", function(assert) {
 			return oContextWithUserConfiguration.getValueHelp(["us"]).then(function(mValue) {
 				assert.deepEqual(mValue, {
-					"user" : mUserValueHelp //mock provider doesn't filter, real one should
+					user : mUserValueHelp //mock provider doesn't filter, real one should
 				}, " then correct data is returned");
 			});
 		});
@@ -296,7 +295,7 @@ function(
 		QUnit.test("when calling getValueHelp with a partial domain 'dev'", function(assert) {
 			return oContextWithUserConfiguration.getValueHelp(["dev"]).then(function(mValue) {
 				assert.deepEqual(mValue, {
-					"device" : mDeviceValueHelp
+					device : mDeviceValueHelp
 				}, " then correct data is returned");
 			});
 		});
@@ -304,7 +303,7 @@ function(
 		QUnit.test("when calling getValueHelp with a partial domain in the array ['user']", function(assert) {
 			return oContextWithUserConfiguration.getValueHelp(["user"]).then(function(mValue) {
 				assert.deepEqual(mValue, {
-					"user" : mUserValueHelp //mock provider doesn't filter, real one should
+					user : mUserValueHelp //mock provider doesn't filter, real one should
 				}, " then correct data is returned");
 			});
 		});
@@ -316,7 +315,7 @@ function(
 		beforeEach : function() {
 			oContextWithDefectConfiguration = new Context({
 				configuration : {
-					"device" : "path/to/module/forDeviceInformation"
+					device : "path/to/module/forDeviceInformation"
 				}
 			});
 			fnjQueryLogStub = sinon.spy(Log, "error");

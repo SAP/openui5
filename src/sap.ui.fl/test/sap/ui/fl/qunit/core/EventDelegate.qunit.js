@@ -19,11 +19,10 @@ sap.ui.define([
 		afterEach: function() {
 		}
 	}, function() {
-
 		QUnit.test("constructor - required parameters", function(assert) {
 			//Arrange
 			var oControl = {name: "ThisShouldBeASAPUI5Control"};
-			var oSupportedRegistryItems = {"labelChange": "myLabelChange", "visibility": "myVisibilityChange"};
+			var oSupportedRegistryItems = {labelChange: "myLabelChange", visibility: "myVisibilityChange"};
 			var Log = sap.ui.require("sap/base/Log");
 			assert.ok(Log, "Log module should be available");
 			var spyLog = sinon.spy(Log, "error");
@@ -89,7 +88,7 @@ sap.ui.define([
 
 		QUnit.test("registerExplicitChanges - register control when changetypes available", function(assert) {
 			//Arrange
-			var oSupportedRegistryItems = {"labelChange": "myLabelChange", "visibility": "myVisibilityChange"};
+			var oSupportedRegistryItems = {labelChange: "myLabelChange", visibility: "myVisibilityChange"};
 			var changeRegSpy = sinon.spy(ChangeRegistry, "getInstance");
 
 			var changeRegGetRegItemsStub = sinon.stub(ChangeRegistry.prototype, "getRegistryItems").returns(oSupportedRegistryItems);

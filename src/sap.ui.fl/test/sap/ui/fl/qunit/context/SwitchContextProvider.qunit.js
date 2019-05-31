@@ -25,7 +25,7 @@ function(
 		}
 	}, function() {
 		QUnit.test("when calling loadData", function(assert) {
-			var mSwitches = {"bFunction1": true, "bFunction2": true};
+			var mSwitches = {bFunction1: true, bFunction2: true};
 
 			sandbox.stub(Cache, "getSwitches").returns(mSwitches);
 			return this.oSwitchContextProvider.loadData().then(function(mValue) {

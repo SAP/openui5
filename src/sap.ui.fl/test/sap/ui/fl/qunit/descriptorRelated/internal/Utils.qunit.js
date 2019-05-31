@@ -24,10 +24,10 @@ sap.ui.define([
 
 			oSandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":false,
-					"isAtoAvailable":false,
-					"isAtoEnabled":true,
-					"isProductiveSystem":false
+					isKeyUser:false,
+					isAtoAvailable:false,
+					isAtoEnabled:true,
+					isProductiveSystem:false
 				})
 			);
 		},
@@ -36,20 +36,19 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("sendRequest - LREPConnector created once", function(assert) {
-
 			var fnSendAjaxRequest = oSandbox.stub(LrepConnector.prototype, "_sendAjaxRequest");
 			fnSendAjaxRequest.onFirstCall().resolves({
 				response: {
-					"id" : "a.id",
-					"reference": "a.reference"
+					id : "a.id",
+					reference: "a.reference"
 				}
 			});
 
 			fnSendAjaxRequest.onSecondCall().resolves({
 				response: {
-					"IAMId" : "IAMId",
-					"VariantId": "a.id",
-					"CatalogIds": [
+					IAMId : "IAMId",
+					VariantId: "a.id",
+					CatalogIds: [
 						"TEST_CATALOG"
 					]
 				}
@@ -66,109 +65,109 @@ sap.ui.define([
 			var fnCreateConnectorSpy = oSandbox.spy(LrepConnector, "createConnector");
 
 			return DescriptorVariantFactory.createNew({
-				"id" : "a.id",
-				"reference": "a.reference"
+				id : "a.id",
+				reference: "a.reference"
 			}).then(function(oDescriptorVariant) {
 				return Utils.sendRequest("/sap/bc/lrep/appdescr_variants/", "POST", oDescriptorVariant._getMap());
 			}).then(function(oResult) {
 				var oResponse = oResult.response;
 				var sRoute = '/sap/bc/lrep/appdescr_variants/' + oResponse.id + '?action=assignCatalogs&assignFromAppId=' + oResponse.reference;
 				return Utils.sendRequest(sRoute, "POST");
-			}).then(function(oResult) {
+			}).then(function() {
 				assert.ok(fnCreateConnectorSpy.calledOnce, "then the createConnector is called only once");
 			});
 		});
 
 		QUnit.test("getNameAndNameSpace", function(assert) {
 			assert.deepEqual(Utils.getNameAndNameSpace("id", "reference"), {
-				"fileName": "manifest",
-				"namespace": "apps/reference/appVariants/id/"
-				});
+				fileName: "manifest",
+				namespace: "apps/reference/appVariants/id/"
+			});
 		});
 
 		QUnit.test("checkEntityPropertyChange", function(assert) {
 			assert.equal(Utils.checkEntityPropertyChange({
-				"entityPropertyChange": {
-					"propertyPath": "signature/parameters/id/required",
-					"operation": "INSERT",
-					"propertyValue": false
+				entityPropertyChange: {
+					propertyPath: "signature/parameters/id/required",
+					operation: "INSERT",
+					propertyValue: false
 				}
 			}), undefined);
 			assert.equal(Utils.checkEntityPropertyChange({
-				"entityPropertyChange": {
-					"propertyPath": "signature/parameters/id/required",
-					"operation": "UPDATE",
-					"propertyValue": false
+				entityPropertyChange: {
+					propertyPath: "signature/parameters/id/required",
+					operation: "UPDATE",
+					propertyValue: false
 				}
 			}), undefined);
 			assert.equal(Utils.checkEntityPropertyChange({
-				"entityPropertyChange": {
-					"propertyPath": "signature/parameters/id/required",
-					"operation": "UPSERT",
-					"propertyValue": false
+				entityPropertyChange: {
+					propertyPath: "signature/parameters/id/required",
+					operation: "UPSERT",
+					propertyValue: false
 				}
 			}), undefined);
 			assert.equal(Utils.checkEntityPropertyChange({
-				"entityPropertyChange": {
-					"propertyPath": "signature/parameters/id/required",
-					"operation": "DELETE"
+				entityPropertyChange: {
+					propertyPath: "signature/parameters/id/required",
+					operation: "DELETE"
 				}
 			}), undefined);
 		});
 
 		QUnit.test("checkEntityPropertyChange failure", function (assert) {
-			assert.throws(function(){
+			assert.throws(function() {
 				Utils.checkEntityPropertyChange({
-					"entityPropertyChange": {
+					entityPropertyChange: {
 					}
 				});
 			});
-			assert.throws(function(){
+			assert.throws(function() {
 				Utils.checkEntityPropertyChange({
-					"entityPropertyChange": {
-						"propertyPath": "signature/parameters/id/required"
+					entityPropertyChange: {
+						propertyPath: "signature/parameters/id/required"
 					}
 				});
 			});
-			assert.throws(function(){
+			assert.throws(function() {
 				Utils.checkEntityPropertyChange({
-					"entityPropertyChange": {
-						"propertyPath": "signature/parameters/id/required",
-						"operation": "UPSERT"
+					entityPropertyChange: {
+						propertyPath: "signature/parameters/id/required",
+						operation: "UPSERT"
 					}
 				});
 			});
-			assert.throws(function(){
+			assert.throws(function() {
 				Utils.checkEntityPropertyChange({
-					"entityPropertyChange": {
-						"propertyPath": "signature/parameters/id/required",
-						"propertyValue": false
+					entityPropertyChange: {
+						propertyPath: "signature/parameters/id/required",
+						propertyValue: false
 					}
 				});
 			});
-			assert.throws(function(){
+			assert.throws(function() {
 				Utils.checkEntityPropertyChange({
-					"entityPropertyChange": {
-						"operation": "UPSERT",
-						"propertyValue": false
+					entityPropertyChange: {
+						operation: "UPSERT",
+						propertyValue: false
 					}
 				});
 			});
-			assert.throws(function(){
+			assert.throws(function() {
 				Utils.checkEntityPropertyChange({
-					"entityPropertyChange": {
-						"propertyPath": 1,
-						"operation": "UPSERT",
-						"propertyValue": false
+					entityPropertyChange: {
+						propertyPath: 1,
+						operation: "UPSERT",
+						propertyValue: false
 					}
 				});
 			});
-			assert.throws(function(){
+			assert.throws(function() {
 				Utils.checkEntityPropertyChange({
-					"entityPropertyChange": {
-						"propertyPath": "signature/parameters/id/required",
-						"operation": "HUGO",
-						"propertyValue": false
+					entityPropertyChange: {
+						propertyPath: "signature/parameters/id/required",
+						operation: "HUGO",
+						propertyValue: false
 					}
 				});
 			});
@@ -177,22 +176,22 @@ sap.ui.define([
 		QUnit.test("checkTexts", function(assert) {
 			assert.equal(Utils.checkTexts(), undefined);
 			assert.equal(Utils.checkTexts({
-				"category": {
-					"type": "XTIT",
-					"maxLength": 20,
-					"comment": "example",
-					"value": {
+				category: {
+					type: "XTIT",
+					maxLength: 20,
+					comment: "example",
+					value: {
 						"": "Category example default text",
-						"en": "Category example text in en",
-						"de": "Kategorie Beispieltext in de",
-						"en_US": "Category example text in en_US"
+						en: "Category example text in en",
+						de: "Kategorie Beispieltext in de",
+						en_US: "Category example text in en_US"
 					}
 				}
 			}), undefined);
 		});
 
 		QUnit.test("checkTexts failure", function(assert) {
-			assert.throws(function(){
+			assert.throws(function() {
 				Utils.checkTexts("wrong type");
 			});
 		});
@@ -203,10 +202,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("checkPackage failure", function(assert) {
-			assert.throws(function(){
+			assert.throws(function() {
 				Utils.checkPackage("wrong type");
 			});
-			assert.throws(function(){
+			assert.throws(function() {
 				Utils.checkPackage("wrongtype");
 			});
 		});
@@ -217,7 +216,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("checkTransportRequest failure", function(assert) {
-			assert.throws(function(){
+			assert.throws(function() {
 				Utils.checkTransportRequest("wrong type");
 			});
 		});

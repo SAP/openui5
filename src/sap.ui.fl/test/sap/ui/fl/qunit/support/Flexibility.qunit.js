@@ -90,7 +90,6 @@ sap.ui.define([
 			});
 
 			this.oFlexibility.onsapUiSupportFlexibilityGetApps();
-
 		});
 
 		QUnit.test("sends an empty object to the support window if the flexibility cache is not filled", function (assert) {

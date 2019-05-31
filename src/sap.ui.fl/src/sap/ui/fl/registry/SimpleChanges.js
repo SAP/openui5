@@ -71,5 +71,4 @@ sap.ui.define([
 	};
 
 	return SimpleChanges;
-
 }, true);

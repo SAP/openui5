@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./Base", "sap/ui/fl/Utils"],
-function(Base, FlexUtils) {
+sap.ui.define(["sap/ui/fl/Utils"],
+function(FlexUtils) {
 	"use strict";
 
 	/**
@@ -90,7 +90,6 @@ function(Base, FlexUtils) {
 	};
 
 	MoveControls._getSpecificChangeInfo = function(oModifier, mSpecificChangeInfo, oAppComponent) {
-
 		delete mSpecificChangeInfo.source.publicAggregation;
 		delete mSpecificChangeInfo.target.publicAggregation;
 
@@ -102,9 +101,9 @@ function(Base, FlexUtils) {
 
 
 		var mAdditionalSourceInfo = {
-				aggregation: mSpecificChangeInfo.source.aggregation,
-				type: oModifier.getControlType(oSourceParent)
-			};
+			aggregation: mSpecificChangeInfo.source.aggregation,
+			type: oModifier.getControlType(oSourceParent)
+		};
 
 		var mAdditionalTargetInfo = {
 			aggregation: mSpecificChangeInfo.target.aggregation,
@@ -159,7 +158,7 @@ function(Base, FlexUtils) {
 		var sTargetAggregation = mPropertyBag.targetAggregation || oChangeContent.target.selector.aggregation;
 
 		var aRevertData = [];
-		oChangeContent.movedElements.forEach(function(mMovedElement, iElementIndex) {
+		oChangeContent.movedElements.forEach(function(mMovedElement) {
 			var oMovedElement = this._getElementControlOrThrowError(mMovedElement, oModifier, oAppComponent, oView);
 
 			var oSourceParent = oModifier.getParent(oMovedElement);

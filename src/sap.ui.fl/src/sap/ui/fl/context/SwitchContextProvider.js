@@ -2,7 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/fl/context/BaseContextProvider", "sap/ui/fl/Cache"], function(BaseContextProvider, Cache) {
+sap.ui.define([
+	"sap/ui/fl/context/BaseContextProvider",
+	"sap/ui/fl/Cache"
+], function(
+	BaseContextProvider,
+	Cache
+) {
 	"use strict";
 
 	/**
@@ -44,10 +50,9 @@ sap.ui.define(["sap/ui/fl/context/BaseContextProvider", "sap/ui/fl/Cache"], func
 		return Promise.resolve({});
 	};
 
-	SwitchContextProvider.prototype.validate = function(sKey, vValue) {
+	SwitchContextProvider.prototype.validate = function() {
 		return Promise.resolve(true);
 	};
 
 	return SwitchContextProvider;
-
 }, /* bExport= */true);

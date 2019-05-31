@@ -8,52 +8,58 @@ sap.ui.define([
 	"sap/ui/fl/designtime/appVariant/ChangeModifier",
 	"sap/ui/fl/designtime/appVariant/AppVariantModifier",
 	"sap/ui/fl/designtime/appVariant/ModuleModifier"
-], function (sinon, AppVariantUtils, ChangeModifier, AppVariantModifier, ModuleModifier) {
-		"use strict";
+], function (
+	sinon,
+	AppVariantUtils,
+	ChangeModifier,
+	AppVariantModifier,
+	ModuleModifier
+) {
+	"use strict";
 
-		var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.sandbox.create();
 
-		QUnit.module("AppVariantUtils", {
-			afterEach: function () {
-				sandbox.restore();
-			}
-		}, function () {
-			QUnit.test("does complain about missing files", function (assert) {
-				assert.throws(AppVariantUtils.prepareContent());
-			});
-			QUnit.test("does complain about missing appDescriptorVariant object", function (assert) {
-				assert.throws(AppVariantUtils.prepareContent([]));
-			});
-			QUnit.test("does complain about missing new reference", function (assert) {
-				assert.throws(AppVariantUtils.prepareContent([], {}));
-			});
-			QUnit.test("does complain about empty new reference", function (assert) {
-				assert.throws(AppVariantUtils.prepareContent([], {}, ""));
-			});
-			QUnit.test("does complain about missing new version", function (assert) {
-				assert.throws(AppVariantUtils.prepareContent([], {}, "newReference"));
-			});
-			QUnit.test("does complain about empty new version", function (assert) {
-				assert.throws(AppVariantUtils.prepareContent([], {}, "newReference", ""));
-			});
+	QUnit.module("AppVariantUtils", {
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("does complain about missing files", function (assert) {
+			assert.throws(AppVariantUtils.prepareContent());
 		});
+		QUnit.test("does complain about missing appDescriptorVariant object", function (assert) {
+			assert.throws(AppVariantUtils.prepareContent([]));
+		});
+		QUnit.test("does complain about missing new reference", function (assert) {
+			assert.throws(AppVariantUtils.prepareContent([], {}));
+		});
+		QUnit.test("does complain about empty new reference", function (assert) {
+			assert.throws(AppVariantUtils.prepareContent([], {}, ""));
+		});
+		QUnit.test("does complain about missing new version", function (assert) {
+			assert.throws(AppVariantUtils.prepareContent([], {}, "newReference"));
+		});
+		QUnit.test("does complain about empty new version", function (assert) {
+			assert.throws(AppVariantUtils.prepareContent([], {}, "newReference", ""));
+		});
+	});
 
-		QUnit.module("AppVariantUtils", {
-			before: function () {
-				this.oModifyModuleSpy = sandbox.spy(ModuleModifier, "modify");
-				this.oModifyChangeSpy = sandbox.spy(ChangeModifier, "modify");
-				this.oModifyAppVariantStub = sandbox.stub(AppVariantModifier, "modify");
-			},
-			afterEach: function () {
-				sandbox.restore();
-			}
-		}, function () {
-			QUnit.test("does pass arguments though the whole promise chain", function (assert) {
-				var aFiles = [];
-				var newVersion = "1.0.0";
-				var newReference = "newReference";
-				var oNewAppVariant = {};
-				return AppVariantUtils.prepareContent(aFiles, oNewAppVariant, newReference, newVersion)
+	QUnit.module("AppVariantUtils", {
+		before: function () {
+			this.oModifyModuleSpy = sandbox.spy(ModuleModifier, "modify");
+			this.oModifyChangeSpy = sandbox.spy(ChangeModifier, "modify");
+			this.oModifyAppVariantStub = sandbox.stub(AppVariantModifier, "modify");
+		},
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("does pass arguments though the whole promise chain", function (assert) {
+			var aFiles = [];
+			var newVersion = "1.0.0";
+			var newReference = "newReference";
+			var oNewAppVariant = {};
+			return AppVariantUtils.prepareContent(aFiles, oNewAppVariant, newReference, newVersion)
 				.then(function () {
 					assert.equal(this.oModifyModuleSpy.callCount, 1, "ModuleModifier was called once");
 					assert.equal(this.oModifyModuleSpy.getCall(0).args[0], newReference, "newReference was passed correctly through the promise chain to ModuleModifier");
@@ -69,10 +75,10 @@ sap.ui.define([
 					assert.equal(this.oModifyAppVariantStub.getCall(0).args[0], oNewAppVariant, "oNewAppVariant was passed correctly through the promise chain to AppVariantModifier");
 					assert.deepEqual(this.oModifyAppVariantStub.getCall(0).args[1], aFiles, "aFiles was passed correctly through the promise chain to AppVariantModifier");
 				}.bind(this));
-			});
-		});
-				QUnit.done(function () {
-			jQuery("#qunit-fixture").hide();
-			QUnit.dump.maxDepth = iOriginalMaxDepth;
 		});
 	});
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
+		QUnit.dump.maxDepth = iOriginalMaxDepth;
+	});
+});

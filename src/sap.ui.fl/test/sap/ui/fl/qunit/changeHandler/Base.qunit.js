@@ -29,8 +29,8 @@ function(
 	}, function () {
 		QUnit.test('setTextInChange', function (assert) {
 			var oChange = {
-				"selector": {
-					"id": "QUnit.testkey"
+				selector: {
+					id: "QUnit.testkey"
 				}
 			};
 			this.oBaseHandler.setTextInChange(oChange, "fieldLabel", "new field label", "XFLD");

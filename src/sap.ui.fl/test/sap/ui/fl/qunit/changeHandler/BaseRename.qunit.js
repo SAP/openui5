@@ -53,9 +53,9 @@ function (
 			});
 
 			var oChangeJson = {
-				"selector": JsControlTreeModifier.getSelector(this.oButton, oComponent),
-				"content": {},
-				"texts": {}
+				selector: JsControlTreeModifier.getSelector(this.oButton, oComponent),
+				content: {},
+				texts: {}
 			};
 
 			this.oChange = new Change(oChangeJson);
@@ -63,7 +63,7 @@ function (
 				value : "Button New Text"
 			};
 		},
-		afterEach: function(){
+		afterEach: function() {
 			this.oButton.destroy();
 			sandbox.restore();
 		}
@@ -113,7 +113,7 @@ function (
 
 		QUnit.test('when completeChangeContent & applyChange with XmlTreeModifier are called, and reverted later', function (assert) {
 			this.myLayoutId = "myLayout";
-			this.oLayout = new VerticalLayout(oComponent.createId(this.myLayoutId) ,{
+			this.oLayout = new VerticalLayout(oComponent.createId(this.myLayoutId), {
 				content : [this.oButton]
 			});
 
@@ -145,7 +145,7 @@ function (
 
 		QUnit.test('when completeChangeContent & applyChange with XmlTreeModifier are called, and reverted later in XML and JS (on button with binding)', function (assert) {
 			this.myLayoutId = "myLayout";
-			this.oLayout = new VerticalLayout(oComponent.createId(this.myLayoutId) ,{
+			this.oLayout = new VerticalLayout(oComponent.createId(this.myLayoutId), {
 				content : [this.oButton]
 			});
 			var oModel = new JSONModel({

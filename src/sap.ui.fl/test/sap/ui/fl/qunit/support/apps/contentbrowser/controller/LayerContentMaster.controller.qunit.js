@@ -12,7 +12,7 @@ sap.ui.define([
 	Router,
 	jQuery,
 	sinon
-){
+) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
@@ -30,20 +30,20 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("on LRep content received", function(assert) {
 			var oPage = {
-				setBusy : function (busy){}
-			},
-			oData = {},
-			oStubbedFilterList = sandbox.stub(oController, "filterListByQuery"),
-			oStubbedSetBusy = sandbox.stub(oPage, "setBusy");
+					setBusy : function () {}
+				},
+				oData = {},
+				oStubbedFilterList = sandbox.stub(oController, "filterListByQuery"),
+				oStubbedSetBusy = sandbox.stub(oPage, "setBusy");
 			sandbox.stub(oController, "getView").returns({
-					getModel: function () {
-						return {
-							setData : function (oData){}
-						};
-					}
-				});
+				getModel: function () {
+					return {
+						setData : function () {}
+					};
+				}
+			});
 			sandbox.stub(oController, "byId").returns({
-				setValue : function(){}
+				setValue : function() {}
 			});
 
 			oController._onContentReceived(oPage, oData);
@@ -56,12 +56,12 @@ sap.ui.define([
 			var sLayer = "USER";
 			var oModel = new sap.ui.model.json.JSONModel([
 				{
-					"name": "someFile",
-					"filetype": "json"
+					name: "someFile",
+					filetype: "json"
 				},
 				{
-					"name": "someFolder",
-					"filetype": ""
+					name: "someFolder",
+					filetype: ""
 				}
 			]);
 			var eSelectionEvent = {
@@ -95,12 +95,12 @@ sap.ui.define([
 			var sLayer = "USER";
 			var oModel = new sap.ui.model.json.JSONModel([
 				{
-					"name": "someFile",
-					"fileType": "json"
+					name: "someFile",
+					fileType: "json"
 				},
 				{
-					"name": "someFolder",
-					"fileType": ""
+					name: "someFolder",
+					fileType: ""
 				}
 			]);
 			var oSelectionEvent = {

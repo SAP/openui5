@@ -20,7 +20,7 @@ sap.ui.define([
 
 		formatStatus: function (sKey, aAppliedChanges, aFailedChanges, aNotApplicableChanges) {
 			if (!sKey || !aAppliedChanges || !aFailedChanges) {
-				return;
+				return undefined;
 			}
 
 			aNotApplicableChanges = aNotApplicableChanges || [];
@@ -31,25 +31,23 @@ sap.ui.define([
 			if (bSuccessful) {
 				if (!bFailed) {
 					return "Success";
-				} else {
-					return "Warning";
 				}
+				return "Warning";
 			}
 			if (bNotApplicable) {
 				if (!bFailed) {
 					return "CustomNotApplicable";
-				} else {
-					return "Warning";
 				}
+				return "Warning";
 			}
 			if (bFailed) {
 				return "Error";
 			}
 		},
 
-		loadFile: function(oEvent){
+		loadFile: function(oEvent) {
 			var file = oEvent.getParameter("files") && oEvent.getParameter("files")[0];
-			if (file && window.FileReader){
+			if (file && window.FileReader) {
 				var oReader = new FileReader();
 				oReader.onload = function(evn) {
 					var sFileContent = evn.target.result;
@@ -61,32 +59,32 @@ sap.ui.define([
 			}
 		},
 
-		 _generateAttributes: function(oDefinition) {
-			 function _extractSelectorAttribute (sKey, oSelector) {
-				 return {
-					 label: "dependency (" + sKey + ")",
-					 value: oSelector.id ? oSelector.id : oSelector
-				 };
-			 }
+		_generateAttributes: function(oDefinition) {
+			function _extractSelectorAttribute (sKey, oSelector) {
+				return {
+					label: "dependency (" + sKey + ")",
+					value: oSelector.id ? oSelector.id : oSelector
+				};
+			}
 			var aAttributes = [{
 				label: "Filename",
 				value: oDefinition.fileName
-			},{
+			}, {
 				label: "Layer",
 				value: oDefinition.layer
-			},{
+			}, {
 				label: "created at",
 				value: oDefinition.creation
-			},{
+			}, {
 				label: "created with app version",
 				value: oDefinition.validAppVersions ? oDefinition.validAppVersions.creation : "N/A"
-			},{
+			}, {
 				label: "created by",
 				value: oDefinition.support.user
-			},{
+			}, {
 				label: "Variant Reference",
 				value: oDefinition.variantReference
-			},{
+			}, {
 				label: "selector",
 				value: oDefinition.selector.id ? oDefinition.selector.id : oDefinition.selector
 			}];
@@ -100,14 +98,14 @@ sap.ui.define([
 					}
 				});
 			}
-			if (oDefinition.oDataInformation && oDefinition.oDataInformation.propertyName){
+			if (oDefinition.oDataInformation && oDefinition.oDataInformation.propertyName) {
 				aAttributes = aAttributes.concat([{
 					label: "OData Property",
 					value: oDefinition.oDataInformation.propertyName
-				},{
+				}, {
 					label: "OData EntityType",
 					value: oDefinition.oDataInformation.entityType
-				},{
+				}, {
 					label: "OData URI",
 					value: oDefinition.oDataInformation.oDataServiceUri
 				}]);
@@ -120,31 +118,31 @@ sap.ui.define([
 			return aAttributes;
 		},
 
-		 _defineIcon: function(sChangeType) {
-			if (sChangeType.indexOf("move") !== -1){
+		_defineIcon: function(sChangeType) {
+			if (sChangeType.indexOf("move") !== -1) {
 				return "sap-icon://move";
-			} else if (sChangeType.indexOf("add") !== -1){
+			} else if (sChangeType.indexOf("add") !== -1) {
 				return "sap-icon://add";
-			} else if (sChangeType.indexOf("unhide") !== -1){
+			} else if (sChangeType.indexOf("unhide") !== -1) {
 				return "sap-icon://show";
-			} else if (sChangeType.indexOf("hide") !== -1){
+			} else if (sChangeType.indexOf("hide") !== -1) {
 				return "sap-icon://hide";
-			} else if (sChangeType.indexOf("unstash") !== -1){
+			} else if (sChangeType.indexOf("unstash") !== -1) {
 				return "sap-icon://show";
-			} else if (sChangeType.indexOf("stash") !== -1){
+			} else if (sChangeType.indexOf("stash") !== -1) {
 				return "sap-icon://hide";
-			} else if (sChangeType.indexOf("split") !== -1){
+			} else if (sChangeType.indexOf("split") !== -1) {
 				return "sap-icon://split";
-			} else if (sChangeType.indexOf("combine") !== -1){
+			} else if (sChangeType.indexOf("combine") !== -1) {
 				return "sap-icon://combine";
-			} else if (sChangeType.indexOf("rename") !== -1){
+			} else if (sChangeType.indexOf("rename") !== -1) {
 				return "sap-icon://text";
 			}
 
 			return "sap-icon://verify-api";
 		},
 
-		 _generateDependencies: function(mFlexData, mGraphData) {
+		_generateDependencies: function(mFlexData, mGraphData) {
 			var mChangesEntries = mFlexData.mChangesEntries;
 
 			jQuery.each(mChangesEntries, function (sChangeId, mChangeEntry) {
@@ -160,20 +158,20 @@ sap.ui.define([
 
 				// loop over all lines and detect lines with the same start
 				var aLinesWithSameStart = mGraphData.lines.filter(function (mLine) {
-					return mLine.from == sFrom && mLine.to != sTo;
+					return mLine.from === sFrom && mLine.to !== sTo;
 				});
 
 				var aFromIdsOfLinesWithSameEnd = [];
 
 				mGraphData.lines.filter(function (mLine) {
-					if (mLine.from != sFrom && mLine.to == sTo) {
+					if (mLine.from !== sFrom && mLine.to === sTo) {
 						aFromIdsOfLinesWithSameEnd.push(mLine.from);
 					}
 				});
 
 				// search for any of these lines which have the endpoint of the line under evaluation
 				mLineUnderEvaluation.obsolete = aLinesWithSameStart.some(function (mLine) {
-					return aFromIdsOfLinesWithSameEnd.indexOf(mLine.to) != -1;
+					return aFromIdsOfLinesWithSameEnd.indexOf(mLine.to) !== -1;
 				});
 			});
 

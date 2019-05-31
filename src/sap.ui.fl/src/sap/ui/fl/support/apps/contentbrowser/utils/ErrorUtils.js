@@ -68,9 +68,9 @@ sap.ui.define([
 			if (ErrorUtils._messagesModel) {
 				var sMessages = ErrorUtils._messagesModel.getData();
 				sMessages.push({
-					"type": sType || "Information",
-					"title": sTitle || "",
-					"description": sDescription || ""
+					type: sType || "Information",
+					title: sTitle || "",
+					description: sDescription || ""
 				});
 				ErrorUtils._messagesModel.setData(sMessages);
 				// force update bindings
@@ -80,4 +80,4 @@ sap.ui.define([
 		};
 
 		return ErrorUtils;
-});
+	});

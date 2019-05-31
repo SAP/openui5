@@ -560,7 +560,7 @@ function(
 			var aResultantParameters = aExistingParameters.slice(0);
 
 			this.oData = {
-				"sVariantManagementReference": {
+				sVariantManagementReference: {
 					currentVariant: "existingParameter3",
 					variants: [
 						{key: "existingParameter2"},
@@ -579,7 +579,7 @@ function(
 			var aResultantParameters = aExistingParameters.slice(0);
 
 			this.oData = {
-				"sVariantManagementReference": {
+				sVariantManagementReference: {
 					currentVariant: "existingParameter2",
 					variants: [
 						{key: "existingParameter2"},
@@ -602,7 +602,6 @@ function(
 			assert.notOk(bRestartRequired, "then no restart required is returned, since the URL parameters are not adjusted");
 			assert.deepEqual(aResultantParameters, aExistingParameters, "then the URL parameters are unchanged");
 		});
-
 	});
 
 	QUnit.module("Given an instance of VariantModel and a function is registered as a navigation filter", {
@@ -656,9 +655,9 @@ function(
 				getService: function(sName) {
 					if (sName === "URLParsing") {
 						return {
-							parseShellHash: function(oHashParams) { } // returns undefined
+							parseShellHash: function() {}
 						};
-					}  else if (sName === "ShellNavigation") {
+					} else if (sName === "ShellNavigation") {
 						return {
 							NavigationFilterStatus: {
 								Continue: this.sDefaultStatus,

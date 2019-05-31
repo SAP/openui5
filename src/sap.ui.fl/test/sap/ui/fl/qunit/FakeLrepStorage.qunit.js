@@ -9,16 +9,15 @@ sap.ui.define([
 	sinon,
 	jQuery
 ) {
-
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
 
 	var oTestData = {};
-	oTestData.oChange1 = {"fileName":"id_1445501120486_25","fileType":"change","changeType":"hideControl","reference":"sap.ui.fl.test.Demo.md","component":"sap.ui.fl.test.Demo.md.Component","packageName":"$TMP","content":{},"selector":{"id":"FLDemoAppMD---detail--GroupElementDatesShippingStatus"},"layer":"CUSTOMER","texts":{},"namespace":"sap.ui.fl.test.Demo.md.Component","creation":"","originalLanguage":"EN","conditions":{},"support":{"generator":"Change.createInitialFileContent","service":"","user":""}};
-	oTestData.oChange2 = {"fileName":"id_1445517849455_16","fileType":"change","changeType":"addField","reference":"sap.ui.fl.test.Demo.Component","component":"sap.ui.fl.test.Demo.Component","packageName":"$TMP","content":{"field":{"value":"SalesOrderId","valueProperty":"value","id":"FLDemoApp---detail--GroupDates_SalesOrder_SalesOrderId","jsType":"sap.ui.comp.smartfield.SmartField","index":4}},"selector":{"id":"FLDemoApp---detail--GroupDates"},"layer":"USER","texts":{"fieldLabel":{"value":"Sales Order ID","type":"XFLD"}},"namespace":"sap.ui.fl.test.Demo.Component","creation":"","originalLanguage":"DE","conditions":{},"support":{"generator":"Change.createInitialFileContent","service":"","user":""}};
-	oTestData.oChange3 = {"fileName":"id_1445517849455_17","fileType":"change","changeType":"addField","reference":"sap.ui.fl.test.Demo","component":"sap.ui.fl.test.Demo.Component","packageName":"$TMP","content":{"field":{"value":"SalesOrderId","valueProperty":"value","id":"FLDemoApp---detail--GroupDates_SalesOrder_SalesOrderId","jsType":"sap.ui.comp.smartfield.SmartField","index":4}},"selector":{"id":"FLDemoApp---detail--GroupDates"},"layer":"CUSTOMER","texts":{"fieldLabel":{"value":"Sales Order ID","type":"XFLD"}},"namespace":"sap.ui.fl.test.Demo.Component","creation":"","originalLanguage":"DE","conditions":{},"support":{"generator":"Change.createInitialFileContent","service":"","user":""}};
-	oTestData.oVariant1 = {"fileName":"id_1445501120486_27", "fileType": "ctrl_variant", "variantManagementReference":"dummy"};
+	oTestData.oChange1 = {fileName:"id_1445501120486_25", fileType:"change", changeType:"hideControl", reference:"sap.ui.fl.test.Demo.md", component:"sap.ui.fl.test.Demo.md.Component", packageName:"$TMP", content:{}, selector:{id:"FLDemoAppMD---detail--GroupElementDatesShippingStatus"}, layer:"CUSTOMER", texts:{}, namespace:"sap.ui.fl.test.Demo.md.Component", creation:"", originalLanguage:"EN", conditions:{}, support:{generator:"Change.createInitialFileContent", service:"", user:""}};
+	oTestData.oChange2 = {fileName:"id_1445517849455_16", fileType:"change", changeType:"addField", reference:"sap.ui.fl.test.Demo.Component", component:"sap.ui.fl.test.Demo.Component", packageName:"$TMP", content:{field:{value:"SalesOrderId", valueProperty:"value", id:"FLDemoApp---detail--GroupDates_SalesOrder_SalesOrderId", jsType:"sap.ui.comp.smartfield.SmartField", index:4}}, selector:{id:"FLDemoApp---detail--GroupDates"}, layer:"USER", texts:{fieldLabel:{value:"Sales Order ID", type:"XFLD"}}, namespace:"sap.ui.fl.test.Demo.Component", creation:"", originalLanguage:"DE", conditions:{}, support:{generator:"Change.createInitialFileContent", service:"", user:""}};
+	oTestData.oChange3 = {fileName:"id_1445517849455_17", fileType:"change", changeType:"addField", reference:"sap.ui.fl.test.Demo", component:"sap.ui.fl.test.Demo.Component", packageName:"$TMP", content:{field:{value:"SalesOrderId", valueProperty:"value", id:"FLDemoApp---detail--GroupDates_SalesOrder_SalesOrderId", jsType:"sap.ui.comp.smartfield.SmartField", index:4}}, selector:{id:"FLDemoApp---detail--GroupDates"}, layer:"CUSTOMER", texts:{fieldLabel:{value:"Sales Order ID", type:"XFLD"}}, namespace:"sap.ui.fl.test.Demo.Component", creation:"", originalLanguage:"DE", conditions:{}, support:{generator:"Change.createInitialFileContent", service:"", user:""}};
+	oTestData.oVariant1 = {fileName:"id_1445501120486_27", fileType: "ctrl_variant", variantManagementReference:"dummy"};
 
 	oTestData.sChangeId1 = oTestData.oChange1.fileName;
 	oTestData.sChangeId2 = oTestData.oChange2.fileName;
@@ -100,11 +99,11 @@ sap.ui.define([
 		QUnit.test("when I attach modify callbacks", function(assert) {
 			assert.expect(3);
 
-			var fnDeleteCallback = function(){
-				assert.ok(true,"Callback called after delete");
+			var fnDeleteCallback = function() {
+				assert.ok(true, "Callback called after delete");
 			};
-			var fnSaveCallback = function(){
-				assert.ok(true,"Callback called after save changes");
+			var fnSaveCallback = function() {
+				assert.ok(true, "Callback called after save changes");
 			};
 
 			FakeLrepSessionStorage.attachModifyCallback(fnDeleteCallback);

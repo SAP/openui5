@@ -7,11 +7,9 @@ sap.ui.define([
 	FakeLrepConnectorSessionStorage,
 	FakeLrepConnector
 ) {
-
 	"use strict";
 
 	return UIComponent.extend("fl.performance.flexApplyChanges.Component", {
-
 		metadata: {
 			manifest: "json"
 		},

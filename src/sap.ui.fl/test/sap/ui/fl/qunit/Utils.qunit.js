@@ -31,7 +31,7 @@ function(
 	UriParameters,
 	sinon,
 	jQuery
-){
+) {
 	"use strict";
 
 	var Scenario = library.Scenario;
@@ -159,7 +159,6 @@ function(
 		});
 
 		QUnit.test("isVariantByStartupParameter can detect a variant by the startup parameter", function (assert) {
-
 			sandbox.stub(Utils, "getAppComponentForControl").returns({});
 			sandbox.stub(Utils, "_getComponentStartUpParameter").returns("someId");
 
@@ -169,7 +168,6 @@ function(
 		});
 
 		QUnit.test("isVariantByStartupParameter returns false if no variant by the startup parameter is present", function (assert) {
-
 			sandbox.stub(Utils, "getAppComponentForControl").returns({});
 			sandbox.stub(Utils, "_getComponentStartUpParameter").returns();
 
@@ -494,7 +492,6 @@ function(
 			ancestorControlOfType = Utils.getFirstAncestorOfControlWithControlType(button1, Button);
 
 			assert.strictEqual(button1, ancestorControlOfType);
-
 		});
 
 		QUnit.test('hasControlAncestorWithId shall return true if the control itself is the ancestor', function (assert) {
@@ -550,7 +547,7 @@ function(
 
 		QUnit.test("getAppDescriptor shall return the an appDescriptor instance", function (assert) {
 			var oAppDescriptor = {
-				"id": "sap.ui.smartFormOData",
+				id: "sap.ui.smartFormOData",
 				getEntry: function (sEntryKey) {
 					return sEntryKey === "sap.ui5" ? {} : undefined;
 				}
@@ -591,7 +588,7 @@ function(
 					return {
 						startupParameters: {
 							//"scopeId": [
-							"hcpApplicationId": [
+							hcpApplicationId: [
 								sSiteId, 'dummyId4712'
 							]
 						}
@@ -845,7 +842,7 @@ function(
 
 	function fnCreateComponentMockup(mTechnicalParameters) {
 		return {
-			getComponentData: function(){
+			getComponentData: function() {
 				return {
 					technicalParameters: mTechnicalParameters
 				};
@@ -854,11 +851,11 @@ function(
 	}
 
 	QUnit.module("get/set URL Technical Parameter values", {
-		afterEach : function(){
+		afterEach : function() {
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when calling 'getTechnicalParametersForComponent' with a Component containing a valid URL parameter", function(assert){
+		QUnit.test("when calling 'getTechnicalParametersForComponent' with a Component containing a valid URL parameter", function(assert) {
 			var mParameters = {
 				"first-tech-parameter" : ["value1, value2"],
 				"second-tech-parameter" : ["value3"]
@@ -868,18 +865,18 @@ function(
 				"then the function returns the variant reference in the URL parameter");
 		});
 
-		QUnit.test("when calling 'getTechnicalParametersForComponent' with technical parameters not existing", function(assert){
+		QUnit.test("when calling 'getTechnicalParametersForComponent' with technical parameters not existing", function(assert) {
 			var oComponentMock = fnCreateComponentMockup({});
 			assert.deepEqual(Utils.getTechnicalParametersForComponent(oComponentMock), {},
 				"then the function returns the variant reference in the URL parameter");
 		});
 
-		QUnit.test("when calling 'getTechnicalParametersForComponent' with an invalid component", function(assert){
+		QUnit.test("when calling 'getTechnicalParametersForComponent' with an invalid component", function(assert) {
 			var oComponentMock = {};
 			assert.notOk(Utils.getTechnicalParametersForComponent(oComponentMock), "then the function returns undefined");
 		});
 
-		QUnit.test("when calling 'getParsedURLHash' with a ushell container", function(assert){
+		QUnit.test("when calling 'getParsedURLHash' with a ushell container", function(assert) {
 			var oParameters = {
 				params: {
 					"sap-ui-fl-max-layer": ["CUSTOMER"]
@@ -891,7 +888,7 @@ function(
 						getHash: function () {
 							return "";
 						},
-						parseShellHash: function (sHash) {
+						parseShellHash: function () {
 							return oParameters;
 						}
 					};
@@ -901,12 +898,12 @@ function(
 			assert.deepEqual(Utils.getParsedURLHash(), oParameters, "then the url parameters calculated from the url are received");
 		});
 
-		QUnit.test("when calling 'getParsedURLHash' with a ushell container and a URL which cannot be parsed properly", function(assert){
+		QUnit.test("when calling 'getParsedURLHash' with a ushell container and a URL which cannot be parsed properly", function(assert) {
 			sandbox.stub(Utils, "getUshellContainer").returns({
 				getService: function () {
 					return {
 						getHash: function () { },
-						parseShellHash: function (sHash) { }
+						parseShellHash: function () { }
 					};
 				}
 			});
@@ -914,16 +911,16 @@ function(
 			assert.ok(jQuery.isEmptyObject(Utils.getParsedURLHash()), "then an empty object is received");
 		});
 
-		QUnit.test("when calling 'getParsedURLHash' without a ushell container", function(assert){
+		QUnit.test("when calling 'getParsedURLHash' without a ushell container", function(assert) {
 			assert.ok(jQuery.isEmptyObject(Utils.getParsedURLHash()), "then no url parameters are received");
 		});
 
-		QUnit.test("when calling 'setTechnicalURLParameterValues' with a component, parameter name and some values", function(assert){
+		QUnit.test("when calling 'setTechnicalURLParameterValues' with a component, parameter name and some values", function(assert) {
 			var oMockedURLParser = {
-				getHash : function(){
+				getHash : function() {
 					return "";
 				},
-				parseShellHash : function(sHash){
+				parseShellHash : function() {
 					return {
 						semanticObject : "Action",
 						action : "somestring",
@@ -932,7 +929,7 @@ function(
 						}
 					};
 				},
-				constructShellHash : function(oParsedHash){
+				constructShellHash : function(oParsedHash) {
 					assert.equal(hasher.changed.active, false, "then the 'active' flag of the hasher is first set to false (to avoid navigation)");
 					assert.deepEqual(oParsedHash.params["sap-ui-fl-max-layer"][0], "CUSTOMER", "then the previous parameters are still present for the hash");
 					assert.deepEqual(oParsedHash.params["testParameter"][0], "testValue", "then the new parameter is properly added to the hash");
@@ -967,12 +964,12 @@ function(
 			assert.equal(oMockComponent.getComponentData().technicalParameters["testParameter"][1], "testValue2", "then the new parameter is properly added to the technical parameter");
 		});
 
-		QUnit.test("when calling 'setTechnicalURLParameterValues' with an invalid component, parameter name and some values", function(assert){
+		QUnit.test("when calling 'setTechnicalURLParameterValues' with an invalid component, parameter name and some values", function(assert) {
 			var oMockedURLParser = {
-				getHash : function(){
+				getHash : function() {
 					return "";
 				},
-				parseShellHash : function(sHash){
+				parseShellHash : function() {
 					return {
 						semanticObject : "Action",
 						action : "somestring",
@@ -981,7 +978,7 @@ function(
 						}
 					};
 				},
-				constructShellHash : function(oParsedHash){
+				constructShellHash : function(oParsedHash) {
 					assert.equal(hasher.changed.active, false, "then the 'active' flag of the hasher is first set to false (to avoid navigation)");
 					assert.deepEqual(oParsedHash.params["sap-ui-fl-max-layer"][0], "CUSTOMER", "then the previous parameters are still present for the hash");
 					assert.deepEqual(oParsedHash.params["testParameter"][0], "testValue", "then the new parameter is properly added to the hash");
@@ -1005,22 +1002,22 @@ function(
 			assert.equal(hasher.changed.active, true, "then the 'active' flag of the hasher is restored to true");
 		});
 
-		QUnit.test("when calling 'setTechnicalURLParameterValues' with a component, parameter name (having previously existing values) and no values", function(assert){
+		QUnit.test("when calling 'setTechnicalURLParameterValues' with a component, parameter name (having previously existing values) and no values", function(assert) {
 			var oMockedURLParser = {
-				getHash : function(){
+				getHash : function() {
 					return "";
 				},
-				parseShellHash : function(sHash){
+				parseShellHash : function() {
 					return {
 						semanticObject : "Action",
 						action : "somestring",
 						params : {
 							"sap-ui-fl-max-layer" : ["CUSTOMER"],
-							"testParameter" : ["testValue", "testValue2"]
+							testParameter : ["testValue", "testValue2"]
 						}
 					};
 				},
-				constructShellHash : function(oParsedHash){
+				constructShellHash : function(oParsedHash) {
 					assert.equal(hasher.changed.active, false, "then the 'active' flag of the hasher is first set to false (to avoid navigation)");
 					assert.deepEqual(oParsedHash.params["sap-ui-fl-max-layer"][0], "CUSTOMER", "then the previous parameters are still present for the hash");
 					assert.notOk(oParsedHash.params["testParameter"], "then the parameter name no longer exists for the hash");
@@ -1031,7 +1028,7 @@ function(
 			var oMockComponent = {
 				oComponentData : {
 					technicalParameters: {
-						"testParameter" : ["testValue", "testValue2"]
+						testParameter : ["testValue", "testValue2"]
 					}
 				},
 				getComponentData : function () {
@@ -1091,7 +1088,6 @@ function(
 			].forEach(function(oChange) {
 				assert.ok(Utils.isChangeRelatedToVariants(oChange), "then for change type " + oChange.getFileType() + " true was returned");
 			});
-
 		});
 	});
 
@@ -1106,7 +1102,7 @@ function(
 
 			this.oComponentOfVariant = new Component();
 			this.oStubbedManifestEntryUi5WithVariantId = {
-				"appVariantId": this.sAppVariantId
+				appVariantId: this.sAppVariantId
 			};
 			sandbox.stub(this.oComponentOfVariant, "getManifestEntry").returns(this.oStubbedManifestEntryUi5WithVariantId);
 			sandbox.stub(Utils, "getComponentName").returns(this.sComponentName);
@@ -1139,18 +1135,17 @@ function(
 		});
 
 		QUnit.test("getFlexReference returns the variantId if it exists", function (assert) {
-
 			var sAppVariantId = "appVariantId";
 			var sComponentName = "componentName";
 			var sAppId = "appId";
 			var oManifest = {
 				"sap.app": {
-					"type": "application",
-					"id": sAppId
+					type: "application",
+					id: sAppId
 				},
 				"sap.ui5": {
-					"appVariantId": sAppVariantId,
-					"componentName": sComponentName
+					appVariantId: sAppVariantId,
+					componentName: sComponentName
 				},
 				getEntry: function (key) {
 					return this[key];
@@ -1206,7 +1201,7 @@ function(
 					.callThrough()
 					.withArgs("sap.app")
 					.returns({
-						"type": "random"
+						type: "random"
 					});
 
 				assert.notOk(Utils[oFunction.name](this.oComponent), "then false is returned");
@@ -1217,7 +1212,7 @@ function(
 					.callThrough()
 					.withArgs("sap.app")
 					.returns({
-						"type": oFunction.type
+						type: oFunction.type
 					});
 
 				assert.ok(Utils[oFunction.name](this.oComponent), "then true is returned");
@@ -1341,11 +1336,11 @@ function(
 			var sAppId = "appId";
 			var oManifest = {
 				"sap.app": {
-					"type": "application",
-					"id": sAppId
+					type: "application",
+					id: sAppId
 				},
 				"sap.ui5": {
-					"componentName": sComponentName
+					componentName: sComponentName
 				},
 				getEntry: function (key) {
 					return this[key];
@@ -1359,8 +1354,8 @@ function(
 			var sAppId = "appId";
 			var oManifest = {
 				"sap.app": {
-					"type": "application",
-					"id": sAppId
+					type: "application",
+					id: sAppId
 				},
 				getEntry: function (key) {
 					return this[key];
@@ -1375,13 +1370,13 @@ function(
 			var sComName = "comName";
 			var oManifest = {
 				"sap.app": {
-					"type": "application",
-					"id": sAppId
+					type: "application",
+					id: sAppId
 				},
 				getEntry: function (key) {
 					return this[key];
 				},
-				getComponentName: function(){
+				getComponentName: function() {
 					return sComName;
 				}
 			};
@@ -1394,11 +1389,11 @@ function(
 			var sAppId = "appId";
 			var oManifest = {
 				"sap.app": {
-					"type": "application",
-					"id": sAppId
+					type: "application",
+					id: sAppId
 				},
 				"sap.ui5": {
-					"componentName": sComponentName
+					componentName: sComponentName
 				},
 				getEntry: function (key) {
 					return this[key];
@@ -1412,8 +1407,8 @@ function(
 			var sAppId = "appId.Component";
 			var oManifest = {
 				"sap.app": {
-					"type": "application",
-					"id": sAppId
+					type: "application",
+					id: sAppId
 				},
 				getEntry: function (key) {
 					return this[key];
@@ -1428,13 +1423,13 @@ function(
 			var sComName = "comName.Component";
 			var oManifest = {
 				"sap.app": {
-					"type": "application",
-					"id": sAppId
+					type: "application",
+					id: sAppId
 				},
 				getEntry: function (key) {
 					return this[key];
 				},
-				getComponentName: function(){
+				getComponentName: function() {
 					return sComName;
 				}
 			};
@@ -1497,7 +1492,7 @@ function(
 	});
 
 	QUnit.module("Utils.execPromiseQueueSequentially", {
-		beforeEach: function (assert) {
+		beforeEach: function () {
 			var fnResolve = function() {
 				return Promise.resolve();
 			};
@@ -1530,7 +1525,6 @@ function(
 			sandbox.restore();
 		}
 	}, function() {
-
 		QUnit.test("when called with a empty array and async 'false' as parameters", function(assert) {
 			var vResult = Utils.execPromiseQueueSequentially([], false, false);
 			assert.ok(vResult instanceof Utils.FakePromise, "then synchronous FakePromise is retured");
@@ -1556,7 +1550,7 @@ function(
 
 		QUnit.test("when called with a resolved promises array as parameter", function(assert) {
 			var done = assert.async();
-			Utils.execPromiseQueueSequentially(this.aPromisesWithoutReject).then( function() {
+			Utils.execPromiseQueueSequentially(this.aPromisesWithoutReject).then(function() {
 				assert.strictEqual(this.fnExecPromiseQueueSpy.callCount, 4, "then execPromiseQueueSequentially called four times");
 				sinon.assert.callOrder(this.fnPromise1, this.fnPromise2, this.fnPromise3);
 				assert.strictEqual(sandbox.spyLog.callCount, 0, "then error log not called");
@@ -1565,7 +1559,7 @@ function(
 		});
 
 		QUnit.test("when called with an array containing resolved, rejected and rejected without return promises", function(assert) {
-			return Utils.execPromiseQueueSequentially(this.aPromisesWithReject).then( function() {
+			return Utils.execPromiseQueueSequentially(this.aPromisesWithReject).then(function() {
 				assert.strictEqual(this.fnExecPromiseQueueSpy.callCount, 3, "then execPromiseQueueSequentially called three times");
 				sinon.assert.callOrder(this.fnPromise1, this.fnPromise4);
 				assert.strictEqual(sandbox.spyLog.callCount, 1, "then error log called once inside catch block, for the rejected promise without return");
@@ -1573,7 +1567,7 @@ function(
 		});
 
 		QUnit.test("when called with an array containing an object and a promise", function(assert) {
-			return Utils.execPromiseQueueSequentially(this.aPromisesWithObj).then( function() {
+			return Utils.execPromiseQueueSequentially(this.aPromisesWithObj).then(function() {
 				assert.strictEqual(this.fnExecPromiseQueueSpy.callCount, 3, "then execPromiseQueueSequentially called three times");
 				sinon.assert.callOrder(this.fnPromise1);
 				assert.strictEqual(sandbox.spyLog.callCount, 1, "then error log called once, as one element (object) was not a function");
@@ -1581,7 +1575,7 @@ function(
 		});
 
 		QUnit.test("when called with an array containing a rejected followed by a resolved promise", function(assert) {
-			return Utils.execPromiseQueueSequentially(this.aPromisesResolveAfterReject).then( function() {
+			return Utils.execPromiseQueueSequentially(this.aPromisesResolveAfterReject).then(function() {
 				assert.strictEqual(this.fnExecPromiseQueueSpy.callCount, 3, "then execPromiseQueueSequentially called three times");
 				sinon.assert.callOrder(this.fnPromise4, this.fnPromise1);
 				assert.strictEqual(sandbox.spyLog.callCount, 1, "then error log called once inside catch block, for the rejected promise without return");
@@ -1589,7 +1583,7 @@ function(
 		});
 
 		QUnit.test("when called with an array containing a resolved promise and a failing promise execution", function(assert) {
-			return Utils.execPromiseQueueSequentially(this.aPromisesWithFailedExecution).then( function() {
+			return Utils.execPromiseQueueSequentially(this.aPromisesWithFailedExecution).then(function() {
 				assert.strictEqual(this.fnExecPromiseQueueSpy.callCount, 3, "then execPromiseQueueSequentially called three times");
 				sinon.assert.callOrder(this.fnPromise1);
 				assert.strictEqual(sandbox.spyLog.callCount, 1, "then error log called once, as the promise execution throwed an error");
@@ -1601,7 +1595,6 @@ function(
 		beforeEach: function () {},
 		afterEach: function () {}
 	}, function() {
-
 		[42, undefined, {then : 42}, {then : function () {}}]
 		.forEach(function (vResult) {
 			QUnit.test("when instanciated with " + vResult + " value as parameter", function(assert) {
@@ -1615,7 +1608,7 @@ function(
 			QUnit.test("when instanciated with " + vResult + " error value as second parameter", function(assert) {
 				vResult = vResult || "undefined";
 				var oFakePromise = new Utils.FakePromise(undefined, vResult)
-				.then(function(vValue) {
+				.then(function() {
 					assert.notOk(true, "then the 'then' method shouldn't be called");
 				})
 				.catch(function(vError) {
@@ -1878,13 +1871,12 @@ function(
 				}
 			};
 			this.mChanges = {
-				"c1": [this.oChange1, this.oChange2, this.oChange4],
-				"c2": [this.oChange3]
+				c1: [this.oChange1, this.oChange2, this.oChange4],
+				c2: [this.oChange3]
 			};
 		},
 		afterEach: function() {}
 	}, function() {
-
 		QUnit.test("when called with existing Change keys", function(assert) {
 			assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange1.getId()), this.oChange1, "then the correct change is returned");
 			assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange2.getId()), this.oChange2, "then the correct change is returned");

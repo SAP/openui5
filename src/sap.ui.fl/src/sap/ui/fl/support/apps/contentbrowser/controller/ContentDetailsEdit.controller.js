@@ -10,9 +10,17 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Button",
 	"sap/m/Input",
-	"sap/m/Label",
 	"sap/m/library"
-], function (Controller, LRepConnector, DataUtils, Dialog, Text, Button, Input, Label, mobileLibrary) {
+], function (
+	Controller,
+	LRepConnector,
+	DataUtils,
+	Dialog,
+	Text,
+	Button,
+	Input,
+	mobileLibrary
+) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -105,8 +113,8 @@ sap.ui.define([
 					that.oSelectedContentModel.setData(oModelData);
 					oPage.setBusy(false);
 				}, function () {
-					oPage.setBusy(false);
-				}
+				oPage.setBusy(false);
+			}
 			);
 		},
 
@@ -142,14 +150,14 @@ sap.ui.define([
 			if ((sLayer === "USER") ||
 				(sLayer === "LOAD") ||
 				(sLayer === "VENDOR_LOAD") ||
-				(!sTransportIdFromContent && (!sPackageFromContent || sPackageFromContent === "$TMP"))){
+				(!sTransportIdFromContent && (!sPackageFromContent || sPackageFromContent === "$TMP"))) {
 				sTransportId = undefined;
 				this._saveFile(sLayer, oContentData.namespace, oContentData.fileName, oContentData.fileType, oContentData.data, sTransportId, sPackageName);
 			} else if (sTransportIdFromContent === "ATO_NOTIFICATION") {
 				sTransportId = sTransportIdFromContent;
 				this._saveFile(sLayer, oContentData.namespace, oContentData.fileName, oContentData.fileType, oContentData.data, sTransportId, sPackageName);
 			} else {
-				var isPackageVisible = (sLayer === "VENDOR" || sLayer === "CUSTOMER_BASE") ? true : false;
+				var isPackageVisible = !!(sLayer === "VENDOR" || sLayer === "CUSTOMER_BASE");
 				var oPackageInput = new Input({visible: isPackageVisible, placeholder: "Package name (Only necessary for cross client content)" });
 				var oTransportInput = new Input({placeholder: "Transport ID or ATO_NOTIFICATION" });
 				var oDialog = new Dialog({
@@ -214,10 +222,10 @@ sap.ui.define([
 			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 
 			oRouter.navTo("ContentDetailsFlip", {
-				"layer": oContentData.layer,
-				"namespace": encodeURIComponent(oContentData.namespace),
-				"fileName": oContentData.fileName,
-				"fileType": oContentData.fileType
+				layer: oContentData.layer,
+				namespace: encodeURIComponent(oContentData.namespace),
+				fileName: oContentData.fileName,
+				fileType: oContentData.fileType
 			});
 		}
 	});

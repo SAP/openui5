@@ -12,4 +12,3 @@ sap.ui.define([
 	//just for compatibility reasons
 	return BaseTreeModifier;
 });
-

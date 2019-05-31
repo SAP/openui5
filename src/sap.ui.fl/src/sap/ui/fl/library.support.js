@@ -36,9 +36,8 @@ sap.ui.define([
 				&& oControl instanceof oBindingInfo.template.getMetadata().getClass()
 			) {
 				return true;
-			} else {
-				return isClonedElementFromListBinding(oParent);
 			}
+			return isClonedElementFromListBinding(oParent);
 		}
 		return false;
 	}
@@ -58,7 +57,6 @@ sap.ui.define([
 		}],
 		async: true,
 		check: function (issueManager, oCoreFacade, oScope, resolve) {
-
 			var aElements = oScope.getElements(),
 				oElement,
 				oAppComponent;
@@ -127,5 +125,4 @@ sap.ui.define([
 			oStableIdRule
 		]
 	};
-
 }, true);

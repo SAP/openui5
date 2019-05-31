@@ -76,7 +76,7 @@ sap.ui.define([
 	 * @param {object} oSpecificChangeInfo as an empty object since no additional attributes are required for this operation
 	 * @public
 	 */
-	StashControl.completeChangeContent = function(oChange, oSpecificChangeInfo) {
+	StashControl.completeChangeContent = function() {
 	};
 
 	StashControl.setChangeRevertData = function(oChange, bValue, iOriginalIndex) {

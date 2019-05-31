@@ -40,8 +40,8 @@ function(
 				reference: "smartFilterBar",
 				componentName: "smartFilterBar",
 				selector: {
-					"id": "control1",
-					"idIsLocal": true
+					id: "control1",
+					idIsLocal: true
 				},
 				conditions: {},
 				context: [],
@@ -81,7 +81,7 @@ function(
 			sandbox.stub(Utils, "getCurrentLayer").returns("VENDOR");
 		},
 		afterEach: function() {
-			 sap.ushell = this.ushellStore;
+			sap.ushell = this.ushellStore;
 			sandbox.restore();
 		}
 	}, function() {
@@ -386,7 +386,7 @@ function(
 				isVariant: true,
 				packageName: "/UIF/LREP",
 				namespace: "apps/smartFilterBar/adapt/oil/changes/",
-				selector: {"id": "control1"},
+				selector: {id: "control1"},
 				id: "0815_1",
 				dependentSelector: {
 					source: {
@@ -423,7 +423,7 @@ function(
 			assert.equal(oCreatedFile.support.generator, "Change.createInitialFileContent");
 			assert.deepEqual(oCreatedFile.content, {something: "createNewVariant"});
 			assert.deepEqual(oCreatedFile.texts, {variantName: {value: "myVariantName", type: "myTextType"}});
-			assert.deepEqual(oCreatedFile.selector, {"id": "control1"});
+			assert.deepEqual(oCreatedFile.selector, {id: "control1"});
 			assert.deepEqual(oCreatedFile.dependentSelector, {source: {id: "controlSource1", idIsLocal: true}, target: {id: "controlTarget1", idIsLocal: true}});
 			assert.deepEqual(oCreatedFile.validAppVersions, {creation: "1.0.0", from: "1.0.0", to: "1.0.0"});
 			assert.deepEqual(oCreatedFile.oDataInformation, {propertyName: "propertyName", entityType: "entityType", oDataServiceUri: "oDataServiceUri"});
@@ -488,7 +488,7 @@ function(
 				changeType: "filterVariant",
 				component: "smartFilterBar",
 				content: {something: "createNewVariant"},
-				selector: {"id": "control1"},
+				selector: {id: "control1"},
 				layer: "VENDOR",
 				texts: {
 					variantName: {
@@ -557,7 +557,6 @@ function(
 			oChange._isReadOnlyDueToOriginalLanguage = sinon.stub().returns(true);
 			assert.strictEqual(oChange.isReadOnly(), true);
 			assert.strictEqual(oChange.isLabelReadOnly(), true);
-
 		});
 
 		QUnit.test("Change.isReadOnly", function(assert) {

@@ -39,20 +39,20 @@ sap.ui.define([
 				 * Proxy object for oData parameter of ManagedObjectModel
 				 * @see sap.ui.model.base.ManagedObjectModel
 				 */
-				"data": {
+				data: {
 					type: "object"
 				},
 
 				/**
 				 * Model name. Used to set/remove the model on the target object.
 				 */
-				"name": {
+				name: {
 					type: "string",
 					defaultValue: "$sap.ui.fl.ManagedObjectModel"
 				}
 			},
 			associations: {
-				"object": {
+				object: {
 					type: "sap.ui.core.Element" // Should be an element, because only elements have a `dependents` aggregation to store the object.
 				}
 			}
@@ -92,5 +92,4 @@ sap.ui.define([
 	};
 
 	return ManagedObjectModelFantomas;
-
 }, true);

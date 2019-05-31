@@ -36,7 +36,6 @@ sap.ui.define([
 		if (mParameters) {
 			this._sXsrfToken = mParameters.XsrfToken;
 		}
-
 	};
 
 	LrepConnector.createConnector = function(mParameters) {
@@ -67,12 +66,12 @@ sap.ui.define([
 	 * @function
 	 * @name sap.ui.fl.LrepConnector.isFlexServiceAvailable
 	 */
-	LrepConnector.isFlexServiceAvailable =  function() {
+	LrepConnector.isFlexServiceAvailable = function() {
 		if (LrepConnector._bServiceAvailability !== undefined) {
 			return Promise.resolve(LrepConnector._bServiceAvailability);
 		}
 		//probe service availability by sending settings request
-		return LrepConnector.createConnector().loadSettings().then(function (){
+		return LrepConnector.createConnector().loadSettings().then(function () {
 			return Promise.resolve(LrepConnector._bServiceAvailability);
 		});
 	};
@@ -282,13 +281,12 @@ sap.ui.define([
 	 * @private
 	 */
 	LrepConnector.prototype._sendAjaxRequest = function(sUri, mOptions) {
-
 		var sFlexibilityServicePrefix = this._getFlexibilityServicesUrlPrefix();
 
 		if (!sFlexibilityServicePrefix) {
 			return Promise.reject({
 				status: "warning",
-				messages: [{"severity":"warning", "text":"Flexibility Services requests were not sent. The UI5 bootstrap is configured to not send any requests."}]
+				messages: [{severity:"warning", text:"Flexibility Services requests were not sent. The UI5 bootstrap is configured to not send any requests."}]
 			});
 		}
 
@@ -306,7 +304,6 @@ sap.ui.define([
 
 		return new Promise(function(resolve, reject) {
 			function handleValidRequest(oResponse, sStatus, oXhr) {
-
 				var sNewCsrfToken = oXhr.getResponseHeader("X-CSRF-Token");
 				this._sXsrfToken = sNewCsrfToken || this._sXsrfToken;
 				var sEtag = oXhr.getResponseHeader("etag");
@@ -348,20 +345,18 @@ sap.ui.define([
 							status: "error"
 						});
 					});
-				} else {
-					if (mOptions && mOptions.type === "DELETE" && oXhr.status === 404) {
+				} else if (mOptions && mOptions.type === "DELETE" && oXhr.status === 404) {
 						// Do not reject, if a file was not found during deletion
 						// (can be the case if another user already triggered a restore meanwhile)
-						resolve();
-					} else {
-						var result;
-						result = {
-							status: "error",
-							code: oXhr.statusCode().status,
-							messages: this._getMessagesFromXHR(oXhr)
-						};
-						reject(result);
-					}
+					resolve();
+				} else {
+					var result;
+					result = {
+						status: "error",
+						code: oXhr.statusCode().status,
+						messages: this._getMessagesFromXHR(oXhr)
+					};
+					reject(result);
 				}
 			}
 
@@ -580,15 +575,15 @@ sap.ui.define([
 		}
 
 		return LrepConnector._oLoadSettingsPromise.then(function(oResponse) {
-				LrepConnector._bServiceAvailability = true;
-				return oResponse.response;
-			}, function(oError) {
-				if (oError.code === 404) {
-					LrepConnector._bServiceAvailability = false;
-				}
+			LrepConnector._bServiceAvailability = true;
+			return oResponse.response;
+		}, function(oError) {
+			if (oError.code === 404) {
+				LrepConnector._bServiceAvailability = false;
+			}
 				//In case of failure, resolve promise without value. Error handle is done in Settings class
-				return Promise.resolve();
-			});
+			return Promise.resolve();
+		});
 	};
 
 	/**
@@ -753,7 +748,6 @@ sap.ui.define([
 	 * @public
 	 */
 	LrepConnector.prototype.resetChanges = function(mParameters) {
-
 		var sRequestPath = this._getUrlPrefix();
 
 		var aParams = [];

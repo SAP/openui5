@@ -68,7 +68,7 @@ sap.ui.define([
 	 * @param {object} oSpecificChangeInfo as an empty object since no additional attributes are required for this operation
 	 * @public
 	 */
-	UnhideControl.completeChangeContent = function(oChange, oSpecificChangeInfo) {
+	UnhideControl.completeChangeContent = function() {
 	};
 
 	return UnhideControl;
