@@ -3,12 +3,12 @@
  */
 
 sap.ui.define([
-	'sap/ui/base/ManagedObject',
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/dt/Util',
-	'sap/ui/dt/SelectionMode',
-	'sap/ui/dt/ElementOverlay',
-	'sap/base/util/includes'
+	"sap/ui/base/ManagedObject",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/Util",
+	"sap/ui/dt/SelectionMode",
+	"sap/ui/dt/ElementOverlay",
+	"sap/base/util/includes"
 ],
 function (
 	ManagedObject,
@@ -43,7 +43,7 @@ function (
 	var SelectionManager = ManagedObject.extend("sap.ui.dt.SelectionManager", {
 		metadata : {
 			events: {
-				"change" : {
+				change : {
 					parameters : {
 						selection : {
 							type : "sap.ui.dt.ElementOverlay[]"
@@ -60,11 +60,11 @@ function (
 			.map(function (oObject) {
 				if (oObject instanceof ElementOverlay) {
 					return oObject;
-				} else {
-					var oElementOverlay = OverlayRegistry.getOverlay(oObject);
-					if (oElementOverlay) {
-						return oElementOverlay;
-					}
+				}
+
+				var oElementOverlay = OverlayRegistry.getOverlay(oObject);
+				if (oElementOverlay) {
+					return oElementOverlay;
 				}
 			})
 			// Filter out not found overlays & duplicates
@@ -167,7 +167,7 @@ function (
 			if (this._validate(aNextSelection)) {
 				this._aSelection = aNextSelection;
 
-				aElementOverlays.forEach(function (oElementOverlay){
+				aElementOverlays.forEach(function (oElementOverlay) {
 					oElementOverlay.setSelected(true);
 				}, this);
 

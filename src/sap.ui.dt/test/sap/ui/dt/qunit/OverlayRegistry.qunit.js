@@ -1,11 +1,11 @@
 /* global QUnit */
 
 sap.ui.define([
-	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/dt/ElementOverlay',
-	'sap/ui/dt/AggregationOverlay',
-	'sap/ui/core/UIComponent',
-	'sap/m/Button'
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/ElementOverlay",
+	"sap/ui/dt/AggregationOverlay",
+	"sap/ui/core/UIComponent",
+	"sap/m/Button"
 ], function (
 	OverlayRegistry,
 	ElementOverlay,
@@ -13,7 +13,7 @@ sap.ui.define([
 	UIComponent,
 	Button
 ) {
-	'use strict';
+	"use strict";
 
 	QUnit.module("Basic functionality", {
 		beforeEach : function() {
@@ -34,6 +34,7 @@ sap.ui.define([
 			OverlayRegistry.deregister(this.oOverlay);
 			assert.strictEqual(OverlayRegistry.getOverlays().length, 0, "then OverlayRegistry has no overlays");
 		});
+
 		QUnit.test("hasOverlays()", function(assert) {
 			OverlayRegistry.register(this.oOverlay);
 			assert.ok(OverlayRegistry.hasOverlays(), "then OverlayRegistry has one overlay");
@@ -41,6 +42,7 @@ sap.ui.define([
 			OverlayRegistry.deregister(this.oOverlay);
 			assert.notOk(OverlayRegistry.hasOverlays(), "then OverlayRegistry has no overlays");
 		});
+
 		QUnit.test("getOverlay()", function(assert) {
 			OverlayRegistry.register(this.oOverlay);
 			assert.strictEqual(OverlayRegistry.getOverlay(this.oOverlay.getId()), this.oOverlay, "then the correct overlay was returned by its id");
@@ -51,6 +53,7 @@ sap.ui.define([
 			assert.strictEqual(OverlayRegistry.getOverlay(this.oButton.getId()), undefined, "then no overlay was returned by corresponding element id");
 			assert.strictEqual(OverlayRegistry.getOverlay(this.oButton), undefined, "then no overlay was returned by corresponding element instance");
 		});
+
 		QUnit.test("getOverlay() for AggregationOverlay", function(assert) {
 			var oAggregationOverlay = new AggregationOverlay({
 				element: this.oButton
@@ -116,5 +119,4 @@ sap.ui.define([
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

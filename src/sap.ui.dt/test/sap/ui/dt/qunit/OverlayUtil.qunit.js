@@ -40,7 +40,6 @@ function(
 
 	QUnit.module("Given that an Overlay is created for a control", {
 		beforeEach : function(assert) {
-
 			//	Layout2
 			//		Layout1
 			//			Layout0
@@ -391,9 +390,8 @@ function(
 
 				fnDone();
 			}.bind(this));
-
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			sandbox.restore();
 			this.oVBox0.destroy();
 			this.oDesignTime.destroy();
@@ -422,7 +420,7 @@ function(
 			assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oButtonOverlay8).length, 1, "then the overlay without DT Metadata is not returned");
 		});
 
-		QUnit.test("when findAllSiblingOverlaysInContainer is called", function(assert){
+		QUnit.test("when findAllSiblingOverlaysInContainer is called", function(assert) {
 			assert.equal(OverlayUtil.findAllSiblingOverlaysInContainer(this.oVBoxOverlay0, this.oVBoxOverlay0).length, 0, "then it returns no overlays");
 
 			assert.equal(OverlayUtil.findAllSiblingOverlaysInContainer(this.oLayoutOverlay0, this.oVBoxOverlay0).length, 1, "then it returns the correct overlays");
@@ -442,7 +440,7 @@ function(
 			assert.equal(OverlayUtil.findAllSiblingOverlaysInContainer(this.oButtonOverlay8, this.oSubSectionOverlay1).length, 1, "then it returns the correct overlays");
 		});
 
-		QUnit.test("when findAllUniqueAggregationOverlaysInContainer is called", function(assert){
+		QUnit.test("when findAllUniqueAggregationOverlaysInContainer is called", function(assert) {
 			assert.equal(OverlayUtil.findAllUniqueAggregationOverlaysInContainer(this.oVBoxOverlay0, this.oVBoxOverlay0).length, 0, "then it returns no overlays");
 
 			assert.equal(OverlayUtil.findAllUniqueAggregationOverlaysInContainer(this.oLayoutOverlay0, this.oVBoxOverlay0).length, 1, "then it returns the correct overlays");
@@ -459,7 +457,7 @@ function(
 			assert.equal(OverlayUtil.findAllUniqueAggregationOverlaysInContainer(this.oButtonOverlay8, this.oSubSectionOverlay1).length, 1, "then it returns the correct overlays");
 		});
 
-		QUnit.test("when isInTargetZoneAggregation is called", function(assert){
+		QUnit.test("when isInTargetZoneAggregation is called", function(assert) {
 			assert.equal(OverlayUtil.isInTargetZoneAggregation(this.oButtonOverlay0), false, "then it returns false if Targetzone is false");
 			this.oButtonOverlay0.getParent().setTargetZone(true);
 			assert.equal(OverlayUtil.isInTargetZoneAggregation(this.oButtonOverlay0), true, "then it returns true if Targetzone is true");
@@ -521,25 +519,25 @@ function(
 			this.oBoundList = new List("boundlist").setModel(oModel);
 			this.oBoundList.bindAggregation("items", {
 				path: "/",
-				template: new CustomListItem("item", {content: [new Button("item-btn",{text:'{text}'})]}),
+				template: new CustomListItem("item", {content: [new Button("item-btn", {text:'{text}'})]}),
 				templateShareable : false
 			});
 
 			this.oFactoryBoundList = new List("factoryboundlist").setModel(oModel);
 			this.oFactoryBoundList.bindAggregation("items", {
 				path: "/",
-				factory: function(sId, oContext) {
-					return new CustomListItem(sId, {content: [new Button(sId + "-btn",{text:'{text}'})]});
+				factory: function(sId) {
+					return new CustomListItem(sId, {content: [new Button(sId + "-btn", {text:'{text}'})]});
 				}
 			});
 
 			//create list with unbound items
 			this.oUnboundList = new List("unboundlist");
-			this.oUnboundList.addItem(new CustomListItem("unboundlist-0", {content: [new Button("item1-btn",{text:'item1-unbound'})]}));
-			this.oUnboundList.addItem(new CustomListItem("unboundlist-1", {content: [new Button("item2-btn",{text:'item2-unbound'})]}));
+			this.oUnboundList.addItem(new CustomListItem("unboundlist-0", {content: [new Button("item1-btn", {text:'item1-unbound'})]}));
+			this.oUnboundList.addItem(new CustomListItem("unboundlist-1", {content: [new Button("item2-btn", {text:'item2-unbound'})]}));
 
 			//create a HorizontalLayout containing the two lists
-			this.oVerticalLayout = new VerticalLayout("verticalLayout0",{
+			this.oVerticalLayout = new VerticalLayout("verticalLayout0", {
 				content: [this.oBoundList, this.oUnboundList, this.oFactoryBoundList]
 			});
 			this.oVerticalLayout.placeAt("qunit-fixture");
@@ -559,14 +557,13 @@ function(
 				this.oFactoryBoundOverlay = OverlayRegistry.getOverlay(this.oFactoryBoundList.getItems()[0]);
 				done();
 			}.bind(this));
-
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			this.oVerticalLayout.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when 'getAggregationInformation' is called", function(assert) {
 			var mAggregationInfo = OverlayUtil.getAggregationInformation(this.oBoundOverlay);
 			assert.equal(mAggregationInfo.elementId, "boundlist", "... then for the bound Item it returns the id of the bound control");
@@ -616,7 +613,7 @@ function(
 			assert.equal(mAggregationInfo.stack[1].aggregation, "items", "... with the aggregation name");
 			assert.equal(mAggregationInfo.stack[1].index, 1, "... with the index of the element in the aggregation");
 
-			var mAggregationInfo = OverlayUtil.getAggregationInformation(this.oFactoryBoundOverlay);
+			mAggregationInfo = OverlayUtil.getAggregationInformation(this.oFactoryBoundOverlay);
 			assert.equal(mAggregationInfo.elementId, "factoryboundlist", "... then for the bound Item it returns the id of the bound control");
 			assert.equal(mAggregationInfo.aggregation, "items", "... and the bound aggregation name");
 			assert.equal(mAggregationInfo.templateId, undefined, "... and the template id is not set");
@@ -643,5 +640,4 @@ function(
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

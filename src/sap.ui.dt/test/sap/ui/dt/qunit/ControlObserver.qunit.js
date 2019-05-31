@@ -8,7 +8,7 @@ function (
 	ControlObserver,
 	Button
 ) {
-	'use strict';
+	"use strict";
 
 	QUnit.module("Given that a Button is observed", {
 		beforeEach : function() {
@@ -50,5 +50,4 @@ function (
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

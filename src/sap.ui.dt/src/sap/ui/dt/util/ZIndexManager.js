@@ -43,31 +43,31 @@ sap.ui.define([
 
 	var _aPopupFilters = [];
 
-	var fnGetPopups = function() {
+	function getPopups() {
 		return InstanceManager.getOpenDialogs()
 			.concat(
 				InstanceManager.getOpenPopovers(),
 				BusyIndicator.oPopup && BusyIndicator.oPopup.isOpen() ? [BusyIndicator.oPopup] : []
 			);
-	};
+	}
 
-	var fnGetLastZIndex = function (iCurrent, iMax, aExistingIndices) {
+	function getLastZIndex(iCurrent, iMax, aExistingIndices) {
 		if (++iCurrent <= iMax) {
 			if (includes(aExistingIndices, iCurrent)) {
-				return fnGetLastZIndex(iCurrent, iMax, aExistingIndices);
+				return getLastZIndex(iCurrent, iMax, aExistingIndices);
 			}
 			return iCurrent;
-		} else {
-			Log.error('sap.ui.dt.util.ZIndexManager: z-index limit has been exceeded, therefore all following calls receive the same z-Index = ' + iMax);
-			return iMax;
 		}
-	};
 
-	var fnGetZIndexFromPopups = function(aPopups) {
+		Log.error('sap.ui.dt.util.ZIndexManager: z-index limit has been exceeded, therefore all following calls receive the same z-Index = ' + iMax);
+		return iMax;
+	}
+
+	function getZIndexFromPopups(aPopups) {
 		return aPopups.map(function (oPopupElement) {
 			return oPopupElement._iZIndex || oPopupElement.oPopup._iZIndex;
 		});
-	};
+	}
 
 	var ZIndexManager = {
 		/**
@@ -96,7 +96,7 @@ sap.ui.define([
 		 */
 		getNextZIndex: function () {
 			//get all open popups from InstanceManager
-			var aAllOpenPopups = fnGetPopups();
+			var aAllOpenPopups = getPopups();
 			var aValidatedPopups = [];
 			var aInvalidatedPopups = [];
 
@@ -112,20 +112,19 @@ sap.ui.define([
 
 			// get max Z-Index from validated popups
 			var iMaxValidatedZIndex = aValidatedPopups.length > 0
-				? Math.max.apply(null, fnGetZIndexFromPopups(aValidatedPopups))
+				? Math.max.apply(null, getZIndexFromPopups(aValidatedPopups))
 				: -1;
 
 			// get minimum Z-Index from invalidated popups
 			var iMinInvalidatedZIndex = aInvalidatedPopups.length > 0
-				? Math.min.apply(null, fnGetZIndexFromPopups(aInvalidatedPopups))
+				? Math.min.apply(null, getZIndexFromPopups(aInvalidatedPopups))
 				: -1;
 
 			// compare Z-Index of adaptable and non-adaptable popups - the higher one wins
 			if (iMaxValidatedZIndex < iMinInvalidatedZIndex) {
 				return this._getNextMinZIndex(iMinInvalidatedZIndex);
-			} else {
-				return Popup.getNextZIndex();
 			}
+			return Popup.getNextZIndex();
 		},
 
 		/**
@@ -135,11 +134,11 @@ sap.ui.define([
 		 * @public
 		 */
 		getZIndexBelowPopups: function () {
-			var aOpenPopups = fnGetPopups();
+			var aOpenPopups = getPopups();
 			var iLowestPopupZIndex;
 
 			if (aOpenPopups.length > 0) {
-				iLowestPopupZIndex = Math.min.apply(null, fnGetZIndexFromPopups(aOpenPopups));
+				iLowestPopupZIndex = Math.min.apply(null, getZIndexFromPopups(aOpenPopups));
 			}
 
 			// if no open popups
@@ -187,7 +186,7 @@ sap.ui.define([
 			var iMaxZIndex = iCurrent - Z_INDICES_RESERVED;
 			// initial minimum z-index
 			var iMinZIndex = iCurrent - Z_INDEX_STEP;
-			var iNextZIndex = fnGetLastZIndex(iMinZIndex, iMaxZIndex, aAssignedZIndices);
+			var iNextZIndex = getLastZIndex(iMinZIndex, iMaxZIndex, aAssignedZIndices);
 			aAssignedZIndices.push(iNextZIndex);
 			return iNextZIndex;
 		}

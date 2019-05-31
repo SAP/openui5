@@ -4,9 +4,9 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	'sap/ui/dt/Plugin',
-	'sap/ui/dt/Overlay',
-	'sap/ui/dt/OverlayRegistry',
+	"sap/ui/dt/Plugin",
+	"sap/ui/dt/Overlay",
+	"sap/ui/dt/OverlayRegistry",
 	// jQuery custom selectors ":focusable"
 	"sap/ui/dom/jquery/Selectors"
 ], function(
@@ -32,19 +32,14 @@ sap.ui.define([
 	 * @alias sap.ui.dt.plugin.TabHandling
 	 * @experimental Since 1.38. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
-	var TabHandling = Plugin.extend("sap.ui.dt.plugin.TabHandling", /** @lends sap.ui.dt.plugin.TabHandling.prototype */
-	{
+	var TabHandling = Plugin.extend("sap.ui.dt.plugin.TabHandling", /** @lends sap.ui.dt.plugin.TabHandling.prototype */ {
 		metadata: {
-			// ---- object ----
-
-			// ---- control specific ----
 			library: "sap.ui.dt",
 			properties: {},
 			associations: {},
 			events: {}
 		}
 	});
-
 
 	TabHandling.prototype.registerElementOverlay = function(oOverlay) {
 		if (oOverlay.isRoot()) {
@@ -87,7 +82,7 @@ sap.ui.define([
 		aRootElements.forEach(function(oRootElement) {
 			var oRootOverlay = OverlayRegistry.getOverlay(oRootElement);
 			var $RootElement = oRootOverlay && oRootOverlay.getAssociatedDomRef();
-			if ($RootElement){
+			if ($RootElement) {
 				$RootElement.find(":focusable:not([tabIndex=-1], #overlay-container *)").each(function(iIndex, oNode) {
 					oNode.setAttribute("data-sap-ui-dt-tabindex", oNode.tabIndex);
 					oNode.setAttribute("tabindex", -1);

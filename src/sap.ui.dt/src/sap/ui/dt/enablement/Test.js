@@ -4,7 +4,7 @@
 
 // Provides class sap.ui.dt.test.Test.
 sap.ui.define([
-	'sap/ui/base/ManagedObject'
+	"sap/ui/base/ManagedObject"
 ],
 function(ManagedObject) {
 	"use strict";
@@ -40,27 +40,27 @@ function(ManagedObject) {
 	 * @static
 	 */
 	Test.STATUS = {
-		"SUPPORTED" : {
+		SUPPORTED : {
 			key: "SUPPORTED",
 			text: "supported",
 			value: 3
 		},
-		"PARTIAL_SUPPORTED" : {
+		PARTIAL_SUPPORTED : {
 			key: "PARTIAL_SUPPORTED",
 			text: "partial supported",
 			value: 2
 		},
-		"NOT_SUPPORTED" : {
+		NOT_SUPPORTED : {
 			key: "NOT_SUPPORTED",
 			text: "not supported",
 			value: 1
 		},
-		"ERROR" : {
+		ERROR : {
 			key: "ERROR",
 			text: "error",
 			value: 0
 		},
-		"UNKNOWN" : {
+		UNKNOWN : {
 			key: "UNKNOWN",
 			text: "unknown",
 			value: 0
@@ -72,9 +72,9 @@ function(ManagedObject) {
 	 * @static
 	 */
 	Test.TYPE = {
-		"TEST" : "Test",
-		"GROUP" : "Group",
-		"SUITE" : "Suite"
+		TEST : "Test",
+		GROUP : "Group",
+		SUITE : "Suite"
 	};
 
 
@@ -157,7 +157,6 @@ function(ManagedObject) {
 	 * @protected
 	 */
 	Test.prototype.add = function(aParentChildren, bResult, sName, sMessage, mStatus, sType) {
-
 		if (!mStatus) {
 			if (bResult) {
 				mStatus = Test.STATUS.SUPPORTED;
@@ -201,7 +200,7 @@ function(ManagedObject) {
 	 * @protected
 	 */
 	Test.prototype.aggregate = function(mResult) {
-		if (mResult.type != Test.TYPE.TEST && mResult.children.length > 0) {
+		if (mResult.type !== Test.TYPE.TEST && mResult.children.length > 0) {
 			var aChildren = mResult.children;
 
 			var aMappedResult = aChildren.map(function(mEntry) {
@@ -212,7 +211,7 @@ function(ManagedObject) {
 				};
 			}, this);
 
-			if (aMappedResult.length == 1) {
+			if (aMappedResult.length === 1) {
 				aMappedResult.push(aMappedResult[0]);
 			}
 

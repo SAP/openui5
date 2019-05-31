@@ -34,7 +34,7 @@ function(
 			var done = assert.async();
 
 			this.oDesignTime = new DesignTime({
-				rootElements: [ this.oLayout ],
+				rootElements: [this.oLayout],
 				plugins: [
 					this.oTabHandling
 				]
@@ -63,5 +63,4 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

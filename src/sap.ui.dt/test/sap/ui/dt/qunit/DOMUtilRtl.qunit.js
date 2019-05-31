@@ -19,7 +19,7 @@ function(
 		afterEach : function() {
 			this.oContainer.remove();
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when getOffsetFromParent is called for the content without scrolling", function(assert) {
 			var oContentGeometry = DOMUtil.getGeometry(this.oContent.get(0));
 			var mOffset = DOMUtil.getOffsetFromParent(oContentGeometry, this.oContainer.get(0));
@@ -43,7 +43,7 @@ function(
 				iScrollValue = -iScrollValue;
 			}
 			// Blink (Chrome) uses positive leftScroll but starts on the extreme left
-			if (Device.browser.blink){
+			if (Device.browser.blink) {
 				var iMaxScrollWidth = oContainerDomRef.scrollWidth - oContainerDomRef.clientWidth;
 				iScrollValue = iMaxScrollWidth + iScrollValue;
 			}
@@ -60,14 +60,14 @@ function(
 	QUnit.module("getScrollLeft()", {
 		beforeEach: function() {
 			this.$Panel = jQuery('<div/>').css({
-				'width': '100px',
-				'height': '100px',
-				'overflow': 'auto'
+				width: '100px',
+				height: '100px',
+				overflow: 'auto'
 			}).appendTo("#qunit-fixture");
 
 			jQuery('<div/>').css({
-				'width': '200px',
-				'height': '200px'
+				width: '200px',
+				height: '200px'
 			}).appendTo(this.$Panel);
 		},
 		afterEach: function() {
@@ -97,5 +97,4 @@ function(
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

@@ -35,13 +35,11 @@ sap.ui.define([
 		 * @returns {sap.ui.core.Control} the content
 		 */
 		createContent: function() {
-
 			return new VerticalLayout({
 				content: [
 					new Button({ text: "Text" })
 				]
 			});
-
 		}
 	});
 
@@ -202,5 +200,4 @@ sap.ui.define([
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

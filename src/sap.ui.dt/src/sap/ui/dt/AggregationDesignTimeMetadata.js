@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	'sap/ui/dt/DesignTimeMetadata'
+	"sap/ui/dt/DesignTimeMetadata"
 ],
 function (
 	DesignTimeMetadata

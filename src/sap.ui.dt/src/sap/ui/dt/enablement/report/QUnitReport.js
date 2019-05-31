@@ -5,7 +5,7 @@
 /* global QUnit */
 
 sap.ui.define([
-	'sap/ui/base/ManagedObject'
+	"sap/ui/base/ManagedObject"
 ],
 function(
 	ManagedObject

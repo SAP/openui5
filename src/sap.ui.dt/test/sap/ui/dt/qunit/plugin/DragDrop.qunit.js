@@ -3,38 +3,36 @@
 sap.ui.define([
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/plugin/DragDrop",
-	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/Button",
 	"sap/ui/Device",
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/thirdparty/jquery"
 ], function (
 	ElementOverlay,
 	DragDrop,
-	ElementUtil,
 	DesignTime,
 	OverlayRegistry,
 	VerticalLayout,
 	Button,
 	Device,
-	QUnitUtils,
-	sinon
+	sinon,
+	jQuery
 ) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
 
-	function testDragAndDropEventHandlerTriggering(sHandlerFunctionName, oOverlay, aDomDragEvents, assert, mFakeTouchEvents, oTargetOverlay){
+	function testDragAndDropEventHandlerTriggering(sHandlerFunctionName, oOverlay, aDomDragEvents, assert, mFakeTouchEvents, oTargetOverlay) {
 		var done = assert.async();
 
 		this.oDragDrop[sHandlerFunctionName] = function(oOverlayInHandler) {
 			assert.ok(true, "handler was called");
 			if (oTargetOverlay) {
 				assert.equal(oTargetOverlay.getId(), oOverlayInHandler.getId(), "correct overlay passed to the handler");
-			}  else {
+			} else {
 				assert.equal(oOverlay.getId(), oOverlayInHandler.getId(), "correct overlay passed to the handler");
 			}
 			done();
@@ -45,7 +43,7 @@ sap.ui.define([
 				if (mFakeTouchEvents) {
 					var oEventData = mFakeTouchEvents[aDomDragEvents[i]];
 					var oEvent;
-					if ( oEventData ) {
+					if (oEventData) {
 						oEvent = jQuery.Event(aDomDragEvents[i], oEventData);
 						oOverlay.$().trigger(oEvent);
 					}
@@ -144,7 +142,7 @@ sap.ui.define([
 			var fnElementFromPointStub = sandbox.stub(document, 'elementFromPoint');
 
 			var fakeIdStub = {
-			  id: this.oButtonOverlay.getId()
+				id: this.oButtonOverlay.getId()
 			};
 
 			fnElementFromPointStub.returns(fakeIdStub);
@@ -158,7 +156,7 @@ sap.ui.define([
 			var fnElementFromPointStub = sandbox.stub(document, 'elementFromPoint');
 
 			var fakeIdStub = {
-			  id: this.oButtonOverlay.getId()
+				id: this.oButtonOverlay.getId()
 			};
 
 			fnElementFromPointStub.returns(fakeIdStub);
@@ -175,7 +173,7 @@ sap.ui.define([
 			var fnElementFromPointStub = sandbox.stub(document, 'elementFromPoint');
 
 			var fakeIdStub = {
-			  id: this.oAggregationOverlay.getId()
+				id: this.oAggregationOverlay.getId()
 			};
 
 			fnElementFromPointStub.returns(fakeIdStub);
@@ -188,7 +186,7 @@ sap.ui.define([
 			var fnElementFromPointStub = sandbox.stub(document, 'elementFromPoint');
 
 			var fakeIdStub = {
-			  id: this.oAggregationOverlay.getId()
+				id: this.oAggregationOverlay.getId()
 			};
 
 			fnElementFromPointStub.returns(fakeIdStub);
@@ -329,7 +327,7 @@ sap.ui.define([
 			var fnElementFromPointStub = sandbox.stub(document, 'elementFromPoint');
 
 			var fakeIdStub = {
-			  id: this.oButtonOverlay.getId()
+				id: this.oButtonOverlay.getId()
 			};
 
 			fnElementFromPointStub.returns(fakeIdStub);
@@ -343,7 +341,7 @@ sap.ui.define([
 			var fnElementFromPointStub = sandbox.stub(document, 'elementFromPoint');
 
 			var fakeIdStub = {
-			  id: this.oButtonOverlay.getId()
+				id: this.oButtonOverlay.getId()
 			};
 
 			fnElementFromPointStub.returns(fakeIdStub);
@@ -357,7 +355,7 @@ sap.ui.define([
 			var fnElementFromPointStub = sandbox.stub(document, 'elementFromPoint');
 
 			var fakeIdStub = {
-			  id: this.oAggregationOverlay.getId()
+				id: this.oAggregationOverlay.getId()
 			};
 
 			fnElementFromPointStub.returns(fakeIdStub);
@@ -371,7 +369,7 @@ sap.ui.define([
 			var fnElementFromPointStub = sandbox.stub(document, 'elementFromPoint');
 
 			var fakeIdStub = {
-			  id: this.oAggregationOverlay.getId()
+				id: this.oAggregationOverlay.getId()
 			};
 
 			fnElementFromPointStub.returns(fakeIdStub);
@@ -395,7 +393,7 @@ sap.ui.define([
 				for (var i = 0; i < 10; i++) {
 					var oPanel = new sap.m.Panel();
 					this.aPanels.push(oPanel);
-					var oPanelOverlay =  new ElementOverlay({
+					var oPanelOverlay = new ElementOverlay({
 						element : oPanel
 					});
 					this.aPanelOverlays.push(oPanelOverlay);
@@ -470,7 +468,6 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });
 
 

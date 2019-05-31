@@ -3,7 +3,6 @@
 sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/dt/ElementUtil",
 	"sap/ui/layout/form/FormElement",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/Form",
@@ -15,7 +14,6 @@ sap.ui.define([
 function(
 	DesignTime,
 	OverlayRegistry,
-	ElementUtil,
 	FormElement,
 	FormContainer,
 	Form,
@@ -54,7 +52,7 @@ function(
 				}),
 				new FormElement({
 					label: new Label({text:"Label1"}),
-					fields: [new Input( {required:true})]
+					fields: [new Input({required:true})]
 				})
 			]
 		});
@@ -65,8 +63,10 @@ function(
 			expandable: true,
 			formElements: [
 				new FormElement({
-					fields: [new CheckBox({text: 'one'}),
-					         new CheckBox({text: 'two'})]
+					fields: [
+						new CheckBox({text: 'one'}),
+						new CheckBox({text: 'two'})
+					]
 				}),
 				new FormElement({
 					fields: [new CheckBox({text: 'three'})]
@@ -150,7 +150,7 @@ function(
 		afterEach: function() {
 			cleanup.call(this);
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when rendering is finished overlays are visible and ...", function(assert) {
 			testFormHierarchyWithDesignTime.call(this, assert);
 		});
@@ -163,7 +163,7 @@ function(
 		afterEach : function() {
 			cleanup.call(this);
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when rendering is finished overlays are visible and ...", function(assert) {
 			testFormHierarchyWithDesignTime.call(this, assert);
 		});
@@ -176,7 +176,7 @@ function(
 		afterEach : function() {
 			cleanup.call(this);
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when rendering is finished overlays are visible and ...", function(assert) {
 			testFormHierarchyWithDesignTime.call(this, assert);
 		});
@@ -189,7 +189,7 @@ function(
 		afterEach : function() {
 			cleanup.call(this);
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when rendering is finished overlays are visible and ...", function(assert) {
 			testFormHierarchyWithDesignTime.call(this, assert);
 		});
@@ -198,5 +198,4 @@ function(
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

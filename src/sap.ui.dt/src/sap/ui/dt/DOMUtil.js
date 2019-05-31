@@ -5,8 +5,8 @@
 // Provides object sap.ui.dt.DOMUtil.
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	'sap/ui/Device',
-	'sap/ui/dt/Util',
+	"sap/ui/Device",
+	"sap/ui/dt/Util",
 	// jQuery Plugin "zIndex"
 	"sap/ui/dom/jquery/zIndex"
 ],
@@ -74,8 +74,8 @@ function(
 		};
 
 		if (mParentOffset) {
-			mOffset.left -= (mParentOffset.left - (iScrollLeft ? iScrollLeft : 0));
-			mOffset.top -= (mParentOffset.top - (iScrollTop ? iScrollTop : 0));
+			mOffset.left -= (mParentOffset.left - (iScrollLeft || 0));
+			mOffset.top -= (mParentOffset.top - (iScrollTop || 0));
 		}
 
 		if (sap.ui.getCore().getConfiguration().getRTL()) {
@@ -110,7 +110,7 @@ function(
 		}
 		// Blink (Chrome) considers zero scrollLeft when the scrollBar is all the way to the left
 		// and moves positively to the right
-		if (Device.browser.blink){
+		if (Device.browser.blink) {
 			var iMaxScrollValue = oElement.scrollWidth - oElement.clientWidth;
 			return iScrollLeft - iMaxScrollValue;
 		// Internet Explorer considers zero scrollLeft when the scrollbar is all the way
@@ -119,9 +119,9 @@ function(
 			return -iScrollLeft;
 		// Firefox (Gecko) & Safari (Webkit) consider zero scrollLeft when the scrollbar is
 		// all the way to the right (initial position) and moves negatively to the left [desired behavior]
-		} else {
-			return iScrollLeft;
 		}
+
+		return iScrollLeft;
 	};
 
 	/**
@@ -278,10 +278,10 @@ function(
 
 			// normal selector
 			return $domRef.find(sCSSSelector);
-		} else {
-			// empty jQuery object for typing
-			return jQuery();
 		}
+
+		// empty jQuery object for typing
+		return jQuery();
 	};
 
 	/**
@@ -372,7 +372,7 @@ function(
 		oDest = jQuery(oDest).get(0);
 		var mStyles = window.getComputedStyle(oSrc);
 
-		if (mStyles.getPropertyValue("display") == "none") {
+		if (mStyles.getPropertyValue("display") === "none") {
 			oDest.style.display = "none";
 			return;
 		}
@@ -459,9 +459,8 @@ function(
 	 * @param {HTMLElement} oTargetNode - Target node to whom focus should be set
 	 */
 	DOMUtil.focusWithoutScrolling = function (oTargetNode) {
-
 		// Only for Newer Devices
-		if (Device.browser.name != "ie"){
+		if (Device.browser.name !== "ie") {
 			oTargetNode.focus({preventScroll: true});
 			return;
 		}
@@ -480,11 +479,11 @@ function(
 			var oElementNode = oItem[0];
 
 			// Check first to avoid triggering unnecessary `scroll` events
-			if (oElementNode.scrollLeft != oItem[1]) {
+			if (oElementNode.scrollLeft !== oItem[1]) {
 				oElementNode.scrollLeft = oItem[1];
 			}
 
-			if (oElementNode.scrollTop != oItem[2]) {
+			if (oElementNode.scrollTop !== oItem[2]) {
 				oElementNode.scrollTop = oItem[2];
 			}
 		});

@@ -4,11 +4,10 @@
 
 // Provides class sap.ui.dt.ControlObserver.
 sap.ui.define([
-	'sap/ui/dt/ManagedObjectObserver'
+	"sap/ui/dt/ManagedObjectObserver"
 ],
 function(ManagedObjectObserver) {
 	"use strict";
-
 
 	/**
 	 * Constructor for a new ControlObserver.
@@ -43,8 +42,8 @@ function(ManagedObjectObserver) {
 				/**
 				 * target Control to observe
 				 */
-				"target" : {
-					"type" : "sap.ui.core.Control"
+				target : {
+					type : "sap.ui.core.Control"
 				}
 			}
 		}

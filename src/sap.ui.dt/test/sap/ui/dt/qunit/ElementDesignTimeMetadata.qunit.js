@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/core/Element",
 	"sap/ui/thirdparty/sinon-4"
-],function (
+], function (
 	ElementDesignTimeMetadata,
 	Core,
 	ElementUtil,
@@ -62,16 +62,16 @@ sap.ui.define([
 							}
 						},
 						testAggregation3 : {
-							childNames : function(oElement){
+							childNames : function(oElement) {
 								//fake 2 cases:
 								//1. childNames is a function, that returns the object
 								//2. singular and plural can be functions to handle cases with self made resource bundling
 								return {
-									singular : function(){
+									singular : function() {
 										//fake own resource bundle handling
 										return "I18N_KEY" + oElement.getText();
 									},
-									plural :  function(){
+									plural :  function() {
 										//fake own resource bundle handling
 										return "I18N_KEY_PLURAL" + oElement.getText();
 									}
@@ -105,7 +105,7 @@ sap.ui.define([
 			assert.strictEqual(this.oElementDesignTimeMetadata.getAggregation("testAssociation").aggregationLike, true, "getAggregation returns correct data for aggregation-like association");
 		});
 
-		QUnit.test("when creating aggregation dt metadata", function(assert){
+		QUnit.test("when creating aggregation dt metadata", function(assert) {
 			var oAggregationDesignTimeMetadata = this.oElementDesignTimeMetadata.createAggregationDesignTimeMetadata({testData: "TestData"});
 			assert.equal(oAggregationDesignTimeMetadata.getMetadata().getName(), "sap.ui.dt.AggregationDesignTimeMetadata", "then aggregation designtime metadata class is created");
 		});
@@ -134,7 +134,7 @@ sap.ui.define([
 				getText : sandbox.stub().returnsArg(0), //just return i18n keys
 				hasText : sandbox.stub().returns(false)
 			};
-			sandbox.stub(Core,"getLibraryResourceBundle").returns(oFakeLibBundle);
+			sandbox.stub(Core, "getLibraryResourceBundle").returns(oFakeLibBundle);
 
 			assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationDescription("testAggregation", oFakeElement), {
 				singular : "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
@@ -159,7 +159,7 @@ sap.ui.define([
 				getText : sandbox.stub().returnsArg(0), //just return i18n keys
 				hasText : sandbox.stub().returns(false)
 			};
-			sandbox.stub(sap.ui.getCore(),"getLibraryResourceBundle").returns(oFakeLibBundle);
+			sandbox.stub(sap.ui.getCore(), "getLibraryResourceBundle").returns(oFakeLibBundle);
 
 			assert.deepEqual(this.oElementDesignTimeMetadata.getName(oFakeElement), {
 				singular : "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
@@ -185,7 +185,7 @@ sap.ui.define([
 			assert.ok(fnLabelForElementStub.calledWith(aMockArguments), "then ElementUtil.getLabelForElement() called with the correct arguments");
 		});
 
-		QUnit.test("when getAggregations method is called and DT Metadata has no aggregations nor associations", function(assert){
+		QUnit.test("when getAggregations method is called and DT Metadata has no aggregations nor associations", function(assert) {
 			this.oElementDesignTimeMetadata.getData().aggregations = null;
 			this.oElementDesignTimeMetadata.getData().associations = null;
 			assert.deepEqual(this.oElementDesignTimeMetadata.getAggregations(), {}, "then an empty object is returned");
@@ -318,5 +318,4 @@ sap.ui.define([
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

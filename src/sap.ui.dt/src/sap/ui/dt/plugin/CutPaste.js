@@ -3,10 +3,10 @@
  */
 
 sap.ui.define([
-	'sap/ui/dt/Plugin',
-	'sap/ui/dt/plugin/ElementMover',
-	'sap/ui/dt/OverlayUtil',
-	'sap/ui/dt/OverlayRegistry',
+	"sap/ui/dt/Plugin",
+	"sap/ui/dt/plugin/ElementMover",
+	"sap/ui/dt/OverlayUtil",
+	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/events/KeyCodes"
 ], function(
 	Plugin,
@@ -34,8 +34,7 @@ sap.ui.define([
 	 * @alias sap.ui.dt.plugin.CutPaste
 	 * @experimental Since 1.34. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
-	var CutPaste = Plugin.extend("sap.ui.dt.plugin.CutPaste", /** @lends sap.ui.dt.plugin.CutPaste.prototype */
-	{
+	var CutPaste = Plugin.extend("sap.ui.dt.plugin.CutPaste", /** @lends sap.ui.dt.plugin.CutPaste.prototype */ {
 		metadata: {
 			library: "sap.ui.dt",
 			properties: {
@@ -106,9 +105,8 @@ sap.ui.define([
 		var oTargetZoneAggregation = this._getTargetZoneAggregation(oTargetOverlay);
 		if ((oTargetZoneAggregation) || (OverlayUtil.isInTargetZoneAggregation(oTargetOverlay))) {
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	};
 
 	CutPaste.prototype._onKeyDown = function(oEvent) {
@@ -189,7 +187,7 @@ sap.ui.define([
 	CutPaste.prototype.paste = function(oTargetOverlay) {
 		var bPasteExecuted = this._executePaste(oTargetOverlay);
 
-		if (bPasteExecuted === true){
+		if (bPasteExecuted === true) {
 			this.stopCutAndPaste();
 		}
 	};
@@ -217,9 +215,8 @@ sap.ui.define([
 		});
 		if (aPossibleTargetZones.length > 0) {
 			return aPossibleTargetZones[0];
-		} else {
-			return null;
 		}
+		return null;
 	};
 
 	return CutPaste;

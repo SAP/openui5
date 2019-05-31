@@ -762,7 +762,6 @@ sap.ui.define([
 				sandbox.restore();
 			});
 		});
-
 	});
 
 	QUnit.module("ContextMenuControl API", {

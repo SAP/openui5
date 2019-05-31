@@ -4,9 +4,9 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	'sap/ui/dt/enablement/Test',
-	'sap/ui/dt/DesignTime',
-	'sap/ui/dt/enablement/Util',
+	"sap/ui/dt/enablement/Test",
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/enablement/Util",
 	"sap/base/util/ObjectPath",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/qunit/utils/waitForThemeApplied",
@@ -115,7 +115,6 @@ function(
 	 */
 	ElementEnablementTest.prototype.run = function() {
 		return this._setup().then(function() {
-
 			this._mResult = this.createSuite("Element Enablement Test");
 
 			var mElementTest = this.addGroup(
@@ -162,7 +161,7 @@ function(
 	 */
 	ElementEnablementTest.prototype._getTestArea = function() {
 		if (!this._$TestAreaDomRef) {
-			this._$TestAreaDomRef =  jQuery("<div id='" + this.getId() + "--testArea" + "'></div>").css({
+			this._$TestAreaDomRef = jQuery("<div id='" + this.getId() + "--testArea" + "'></div>").css({
 				height : "500px",
 				width: "1000px"// test area needs a height, so that some controls render correctly
 			}).appendTo("body");
@@ -209,7 +208,6 @@ function(
 							} else {
 								fnResolve();
 							}
-
 						}, this);
 					} else {
 						fnResolve();
@@ -226,7 +224,6 @@ function(
 	 * @private
 	 */
 	ElementEnablementTest.prototype._testAggregations = function(aTests) {
-
 		var mAggregationsTests = this.addGroup(
 			aTests,
 			"Aggregations",
@@ -243,18 +240,16 @@ function(
 				Test.STATUS.UNKNOWN
 			);
 		} else if (this._bErrorDuringRendering) {
-
 			this.addTest(mAggregationsTests.children,
 				true,
 				"Error during rendering",
-				 "Element can't be rendered, not supported by the DesignTime (please, provide a create method for this element)",
+				"Element can't be rendered, not supported by the DesignTime (please, provide a create method for this element)",
 				Test.STATUS.ERROR
 			);
 		} else {
 			var mAggregationsTestInfo = EnablementUtil.getAggregationsInfo(this._oElement);
 
 			for (var sAggregationName in mAggregationsTestInfo) {
-
 				var mAggregationTestInfo = mAggregationsTestInfo[sAggregationName];
 
 				var mAggregationTest = this.addGroup(mAggregationsTests.children,
@@ -269,7 +264,7 @@ function(
 						"Overlay domRef is visible in DOM"
 					);
 
-					if (mAggregationTestInfo.domRefDeclared){
+					if (mAggregationTestInfo.domRefDeclared) {
 						this.addTest(mAggregationTest.children,
 							mAggregationTestInfo.domRefDeclared,
 							"Dom Ref Declared",

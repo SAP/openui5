@@ -4,11 +4,11 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	'sap/ui/Device',
-	'sap/ui/base/ManagedObject',
-	'sap/base/util/includes',
-	'sap/base/util/isPlainObject',
-	'sap/ui/dt/DesignTimeStatus'
+	"sap/ui/Device",
+	"sap/ui/base/ManagedObject",
+	"sap/base/util/includes",
+	"sap/base/util/isPlainObject",
+	"sap/ui/dt/DesignTimeStatus"
 ], function(
 	jQuery,
 	Device,
@@ -62,9 +62,8 @@ sap.ui.define([
 	Util.isForeignError = function (oError, sLibraryName) {
 		if (oError instanceof Error) {
 			return oError.name.indexOf(sLibraryName || S_LIBRARY_NAME) === -1;
-		} else {
-			throw Util.createError('Util#isForeignError', 'Wrong parameter specified');
 		}
+		throw Util.createError('Util#isForeignError', 'Wrong parameter specified');
 	};
 
 	/**
@@ -109,9 +108,8 @@ sap.ui.define([
 				sError += '\n' + vError.stack.replace(sError, '').trim();
 			}
 			return sError;
-		} else {
-			throw Util.createError('Util#errorToString', 'Wrong parameter specified');
 		}
+		throw Util.createError('Util#errorToString', 'Wrong parameter specified');
 	};
 
 	/**
@@ -200,11 +198,11 @@ sap.ui.define([
 			var aArguments = Array.prototype.slice.call(arguments);
 			if (aArguments.length >= iArity) {
 				return fnOriginal.apply(this, aArguments);
-			} else {
-				return function () {
-					return fnResolver.apply(this, aArguments.concat(Array.prototype.slice.call(arguments)));
-				};
 			}
+
+			return function () {
+				return fnResolver.apply(this, aArguments.concat(Array.prototype.slice.call(arguments)));
+			};
 		};
 
 		return fnResolver;
@@ -250,7 +248,7 @@ sap.ui.define([
 	Util.castArray = function(vValue) {
 		var aResult = [];
 		if (vValue) {
-			if (!Array.isArray(vValue)){
+			if (!Array.isArray(vValue)) {
 				aResult.push(vValue);
 			} else {
 				aResult = vValue;
@@ -284,7 +282,7 @@ sap.ui.define([
 	 * Webkit can be safari or chrome mobile
 	 * @return {Boolean} Returns true if the device browser uses webkit
 	 */
-	Util.isWebkit = function(){
+	Util.isWebkit = function() {
 		return Device.browser.webkit && (Device.browser.safari || Device.browser.chrome && Device.browser.mobile);
 	};
 

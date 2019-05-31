@@ -4,20 +4,16 @@
 
 // Provides control sap.ui.dt.test.report.Table.
 sap.ui.define([
-	'sap/ui/core/Control',
-	'sap/ui/model/json/JSONModel',
-	'sap/ui/table/TreeTable',
-	'sap/ui/table/Column',
-	'sap/m/Toolbar',
-	'sap/m/Title',
-	'sap/m/ToolbarSpacer',
-	'sap/m/Button',
-	'sap/m/SearchField',
-	'sap/m/Text',
-	'sap/m/RatingIndicator',
-	'sap/ui/model/Filter',
-	'sap/ui/model/FilterOperator',
-	"./TableRenderer"
+	"sap/ui/core/Control",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/table/TreeTable",
+	"sap/ui/table/Column",
+	"sap/m/Toolbar",
+	"sap/m/ToolbarSpacer",
+	"sap/m/Button",
+	"sap/m/SearchField",
+	"sap/m/Text",
+	"sap/m/RatingIndicator"
 ],
 function(
 	Control,
@@ -25,15 +21,11 @@ function(
 	TreeTable,
 	Column,
 	Toolbar,
-	Title,
 	ToolbarSpacer,
 	Button,
 	SearchField,
 	Text,
-	RatingIndicator,
-	Filter,
-	FilterOperator,
-	TableRenderer
+	RatingIndicator
 ) {
 	"use strict";
 
@@ -65,7 +57,7 @@ function(
 				}
 			},
 			aggregations : {
-				"_table" : {
+				_table : {
 					type : "sap.ui.table.TreeTable",
 					hidden : true,
 					multiple : false
@@ -128,12 +120,10 @@ function(
 					// As UI5 does not support filtering on first level, we have to do it on our own
 					var aData = this.getData();
 					var aFilteredData = aData.children.filter(function(oEntry) {
-
-						if (sFilter.indexOf("status=") != -1) {
-							return oEntry.status.value == sFilter.substring(sFilter.indexOf("=") + 1);
-						} else {
-							return oEntry.name.toLowerCase().indexOf(sFilter.toLowerCase()) != -1;
+						if (sFilter.indexOf("status=") !== -1) {
+							return oEntry.status.value === sFilter.substring(sFilter.indexOf("=") + 1);
 						}
+						return oEntry.name.toLowerCase().indexOf(sFilter.toLowerCase()) !== -1;
 					});
 					oModel.setData(aFilteredData);
 				} else {
@@ -197,7 +187,7 @@ function(
 			clearTimeout(this._iFilterTimeout);
 			this._iFilterTimeout = setTimeout(function() {
 				this.filter(sFilter);
-			}.bind(this),100);
+			}.bind(this), 100);
 		},
 
 
@@ -251,7 +241,7 @@ function(
 		/**
 		 * @private
 		 */
-		_onCollapseAll : function(oEvt) {
+		_onCollapseAll : function() {
 			var oTable = this._getTable();
 			oTable.collapseAll();
 		},
@@ -260,7 +250,7 @@ function(
 		/**
 		 * @private
 		 */
-		_onExpandSecondLevel : function(oEvt) {
+		_onExpandSecondLevel : function() {
 			var oTable = this._getTable();
 			oTable.expandToLevel(2);
 		}

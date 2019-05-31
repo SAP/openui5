@@ -21,12 +21,8 @@ sap.ui.define([
 	 * @alias sap.ui.dt.plugin.ToolHooks
 	 * @experimental Since 1.61. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
-	var ToolHooks = Plugin.extend("sap.ui.dt.plugin.ToolHooks", /** @lends sap.ui.dt.plugin.ToolHooks.prototype */
-	{
+	var ToolHooks = Plugin.extend("sap.ui.dt.plugin.ToolHooks", /** @lends sap.ui.dt.plugin.ToolHooks.prototype */ {
 		metadata: {
-			// ---- object ----
-
-			// ---- control specific ----
 			library: "sap.ui.dt",
 			properties: {},
 			associations: {},
