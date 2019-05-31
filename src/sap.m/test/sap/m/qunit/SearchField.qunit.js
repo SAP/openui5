@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon*/
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/ui/Device",
 	"sap/ui/core/InvisibleText",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/m/SuggestionItem"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -19,7 +20,8 @@ sap.ui.define([
 	Label,
 	Device,
 	InvisibleText,
-	Button
+	Button,
+	SuggestionItem
 ) {
 	createAndAppendDiv("content");
 
@@ -413,5 +415,56 @@ sap.ui.define([
 
 		// act
 		this.oSearchField.$("F").click(); // click the form
+	});
+
+	QUnit.module("Suggestions", {
+		beforeEach: function () {
+			this.oSearchField = new SearchField("sf8", {
+				enableSuggestions: true,
+				suggestionItems: [
+					this.oSuggestionItem1 = new SuggestionItem({key: "suggest1", text: "suggest1"}),
+					new SuggestionItem({key: "suggest2", text: "suggest2"})
+				],
+				suggest: function () {
+					this.oSearchField.suggest();
+				}.bind(this)
+			});
+			this.oSearchField.placeAt("content");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oSearchField.destroy();
+		}
+	});
+
+	QUnit.test("Search is fired once when suggestion item is tapped", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			fnSearchSpy = this.stub();
+
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true, // test on phone
+			tablet: false
+		});
+
+		this.oSearchField.attachEvent("search", function () {
+			fnSearchSpy();
+		});
+
+		// Act
+		this.oSearchField.focus();
+		sap.ui.getCore().applyChanges();
+
+
+		setTimeout(function () {
+			this.oSuggestionItem1.$().tap();
+
+			// Asert
+			setTimeout(function () {
+				assert.ok(fnSearchSpy.calledOnce, "Search is fired once");
+				done();
+			}, 500);
+		}.bind(this), 300); // requires that timeout to work on IE
 	});
 });
