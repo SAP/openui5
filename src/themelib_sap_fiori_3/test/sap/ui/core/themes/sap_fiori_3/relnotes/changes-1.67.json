@@ -5,8 +5,13 @@
       {
         "id": "7573c181aacbd21451147ff3fcdc24f3326e17c9",
         "type": "FIX",
-        "text": " sap.uxap.AnchorBar: Fixed width of text underline for SAP Fiori 3",
-        "references": []
+        "text": "sap.uxap.AnchorBar: Fixed width of text underline for SAP Fiori 3",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980227797"
+          }
+        ]
       },
       {
         "id": "3b50760bdc3246d86e7ec41cf4fff2214b75e501",
@@ -17,8 +22,13 @@
       {
         "id": "a713ab3238372220ef142738807db58daf05eae6",
         "type": "FIX",
-        "text": " sap.m.NotificationListItem: Show more button now shows up in Quartz",
-        "references": []
+        "text": "sap.m.NotificationListItem: Show more button now shows up in Quartz",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980227102"
+          }
+        ]
       },
       {
         "id": "8dd576a5fb741790d5ff5e5c097e7c5ad0d48bbe",
@@ -29,8 +39,13 @@
       {
         "id": "e8884dc9cdd78f1439d89bb70a1ade0a814ad066",
         "type": "FIX",
-        "text": " sap.ui.unified.calendar.DatesRow: showDayNamesLine\u003dfalse now works correctly in compact mode for all themes",
-        "references": []
+        "text": "sap.ui.unified.calendar.DatesRow: showDayNamesLine=false now works correctly in compact mode for all themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980088691"
+          }
+        ]
       }
     ]
   }
