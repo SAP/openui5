@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/m/ObjectHeader",
 	"sap/m/ObjectAttribute",
 	"sap/ui/fl/registry/ChangeRegistry",
-	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/rta/ControlTreeModifier",
 	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
@@ -26,7 +27,8 @@ sap.ui.define([
 	ObjectHeader,
 	ObjectAttribute,
 	ChangeRegistry,
-	FlexControllerFactory,
+	ChangesWriteAPI,
+	PersistenceWriteAPI,
 	ControlTreeModifier,
 	Log,
 	sinon
@@ -240,10 +242,7 @@ sap.ui.define([
 			.then(function() {
 				var oChange = this.oMoveCommand.getPreparedChange();
 				if (this.oMoveCommand.getAppComponent) {
-					var oAppComponent = this.oMoveCommand.getAppComponent();
-					var oControl = ControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
-					var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
-					return oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oControl);
+					return PersistenceWriteAPI.remove(oChange, {appComponent: this.oMoveCommand.getAppComponent()});
 				}
 			}.bind(this))
 

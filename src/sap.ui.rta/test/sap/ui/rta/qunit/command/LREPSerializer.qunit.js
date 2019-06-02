@@ -9,13 +9,13 @@ sap.ui.define([
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"qunit/RtaQunitUtils",
-	"sap/ui/fl/FlexControllerFactory",
-	"sap/ui/fl/FlexController",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/m/Input",
 	"sap/m/Panel",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/write/ChangesController",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	CommandFactory,
@@ -26,13 +26,13 @@ sap.ui.define([
 	FakeLrepConnectorSessionStorage,
 	ChangeRegistry,
 	RtaQunitUtils,
-	FlexControllerFactory,
-	FlexController,
 	flUtils,
 	VariantModel,
 	VariantManagement,
 	Input,
 	Panel,
+	PersistenceWriteAPI,
+	ChangesController,
 	sinon
 ) {
 	"use strict";
@@ -116,10 +116,8 @@ sap.ui.define([
 		variantChanges: {}
 	};
 
-	var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent);
-	var oAppDescriptorFlexController = FlexControllerFactory.create(COMPONENT_NAME, "1.2.3");
-	var oModel = new VariantModel(oData, oFlexController, oMockedAppComponent);
-	sandbox.stub(oFlexController, "checkForOpenDependenciesForControl").returns(false);
+	var oModel = new VariantModel(oData, undefined, oMockedAppComponent);
+	sandbox.stub(ChangesController.getFlexControllerInstance(oMockedAppComponent), "checkForOpenDependenciesForControl").returns(false);
 
 	QUnit.module("Given a command serializer loaded with an RTA command stack", {
 		beforeEach : function(assert) {
@@ -180,8 +178,8 @@ sap.ui.define([
 		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(2, assert, "save");
 
 		var oInput3 = new Input("input3"),
-			oDeleteChangeSpy = sandbox.spy(oFlexController, "deleteChange"),
-			oAddPreparedChangeSpy = sandbox.spy(oFlexController, "addPreparedChange"),
+			oDeleteChangeSpy = sandbox.spy(PersistenceWriteAPI, "remove"),
+			oAddChangeSpy = sandbox.spy(PersistenceWriteAPI, "add"),
 			oSettingsCommand1, oSettingsCommand2;
 
 		// Create commands
@@ -202,15 +200,14 @@ sap.ui.define([
 
 		.then(function(oSettingsCommand) {
 			oSettingsCommand2 = oSettingsCommand;
-			assert.equal(oAddPreparedChangeSpy.callCount, 1, "1. change got added");
+			assert.equal(oAddChangeSpy.callCount, 1, "1. change got added");
 			return this.oCommandStack.pushAndExecute(oSettingsCommand2);
 		}.bind(this))
 
 		.then(function() {
 			// simulate command having no app component
 			sandbox.stub(oSettingsCommand2, "getAppComponent");
-			sandbox.stub(FlexController.prototype, "checkForOpenDependenciesForControl").returns(false);
-			assert.equal(oAddPreparedChangeSpy.callCount, 2, "until now 2 changes got added");
+			assert.equal(oAddChangeSpy.callCount, 2, "until now 2 changes got added");
 			assert.equal(oDeleteChangeSpy.callCount, 0, "until now no changes got deleted");
 			return this.oCommandStack.undo();
 		}.bind(this))
@@ -230,7 +227,7 @@ sap.ui.define([
 		}.bind(this))
 
 		.then(function() {
-			assert.equal(oAddPreparedChangeSpy.callCount, 3, "only one more change got added");
+			assert.equal(oAddChangeSpy.callCount, 3, "only one more change got added");
 			assert.equal(oDeleteChangeSpy.callCount, 1, "only one change got deleted");
 
 			return this.oSerializer.saveCommands();
@@ -250,7 +247,7 @@ sap.ui.define([
 
 	QUnit.test("when a command with an already persisted change gets executed and saved", function(assert) {
 		var oInput = new Input("input"),
-			oAddPreparedChangeSpy = sandbox.spy(oFlexController, "addPreparedChange");
+			oAddChangeSpy = sandbox.spy(PersistenceWriteAPI, "add");
 
 		// Create command
 		return CommandFactory.getCommandFor(oInput, "Settings", {
@@ -265,7 +262,7 @@ sap.ui.define([
 
 		// simulate the change as persisted change in stack
 		.then(function() {
-			assert.equal(oAddPreparedChangeSpy.callCount, 0, "no change got added");
+			assert.equal(oAddChangeSpy.callCount, 0, "no change got added");
 
 			return this.oSerializer.saveCommands();
 		}.bind(this))
@@ -283,7 +280,7 @@ sap.ui.define([
 		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(2, assert, "save"),
 			oRemoveCommand1, oRemoveCommand2;
 
-		var oAddPreparedChangeSpy = sandbox.spy(oFlexController, "addPreparedChange");
+		var oAddChangeSpy = sandbox.spy(PersistenceWriteAPI, "add");
 
 		// Create commands
 		return CommandFactory.getCommandFor(this.oInput1, "Remove", {
@@ -303,12 +300,12 @@ sap.ui.define([
 		}.bind(this))
 
 		.then(function() {
-			assert.equal(oAddPreparedChangeSpy.callCount, 1, "now 1. change got added directly after execute");
+			assert.equal(oAddChangeSpy.callCount, 1, "now 1. change got added directly after execute");
 			return this.oCommandStack.pushAndExecute(oRemoveCommand2);
 		}.bind(this))
 
 		.then(function() {
-			assert.equal(oAddPreparedChangeSpy.callCount, 2, "now 2. change got added directly after execute");
+			assert.equal(oAddChangeSpy.callCount, 2, "now 2. change got added directly after execute");
 			return this.oSerializer.saveCommands();
 		}.bind(this))
 
@@ -610,7 +607,7 @@ sap.ui.define([
 
 		.then(function(oAddLibraryCommand) {
 			oCreateAndStoreChangeSpy = sandbox.spy(oAddLibraryCommand, "createAndStoreChange");
-			oDeleteChangeSpy = sandbox.spy(oAppDescriptorFlexController, "deleteChange");
+			oDeleteChangeSpy = sandbox.spy(PersistenceWriteAPI, "remove");
 			return this.oCommandStack.pushAndExecute(oAddLibraryCommand);
 		}.bind(this))
 
@@ -644,8 +641,9 @@ sap.ui.define([
 
 	QUnit.test("Execute 1 'remove' command and 1 App Descriptor 'add library' command," +
 				"undo the 'add library' command and call saveCommands which rejects", function(assert) {
-		var oSaveAllStub = sandbox.stub(oFlexController, "saveAll").returns(Promise.reject()),
-			oRemoveCommand, oAddLibraryCommand;
+		var oSaveChangesStub = sandbox.stub(PersistenceWriteAPI, "saveChanges").rejects();
+		var oRemoveCommand;
+		var oAddLibraryCommand;
 
 		// Create commands
 		return CommandFactory.getCommandFor(this.oInput1, "Remove", {
@@ -696,7 +694,7 @@ sap.ui.define([
 
 		.then(function() {
 			// clean up dirty canges
-			oSaveAllStub.restore();
+			oSaveChangesStub.restore();
 			this.oSerializer.saveCommands();
 		}.bind(this));
 	});

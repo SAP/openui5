@@ -85,6 +85,9 @@ sap.ui.define([
 			JSONModel.apply(this, arguments);
 			this.bObserve = bObserve;
 
+			if (!oFlexController) {
+				oFlexController = sap.ui.requireSync("sap/ui/fl/FlexControllerFactory").createForControl(oAppComponent);
+			}
 			// FlexControllerFactory creates a FlexController instance for an application component,
 			// which creates a ChangePersistence instance,
 			// which creates a VariantController instance.
@@ -103,12 +106,12 @@ sap.ui.define([
 			VariantUtil.initializeHashRegister.call(this);
 
 			if (oData && typeof oData === "object") {
-				Object.keys(oData).forEach(function(sKey) {
-					oData[sKey].variants.forEach(function(oVariant) {
+				Object.keys(oData).forEach(function (sKey) {
+					oData[sKey].variants.forEach(function (oVariant) {
 						if (!oData[sKey].currentVariant && (oVariant.key === oData[sKey].defaultVariant)) { /*Case when initial variant is not set from URL*/
 							oData[sKey].currentVariant = oVariant.key;
 						}
-					// persisting original properties, since they're changed in real time in sap.ui.fl.variants.VariantManagement
+						// persisting original properties, since they're changed in real time in sap.ui.fl.variants.VariantManagement
 						oVariant.originalTitle = oVariant.title;
 						oVariant.originalFavorite = oVariant.favorite;
 						oVariant.originalVisible = oVariant.visible;

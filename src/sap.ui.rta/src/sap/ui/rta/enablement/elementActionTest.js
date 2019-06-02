@@ -13,9 +13,10 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/model/Model",
-	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/rta/ControlTreeModifier",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/library" //we have to ensure to load fl, so that change handler gets registered
 ],
@@ -29,9 +30,10 @@ function (
 	OverlayRegistry,
 	ChangePersistence,
 	Model,
-	FlexControllerFactory,
 	Settings,
 	ControlTreeModifier,
+	ChangesWriteAPI,
+	PersistenceWriteAPI,
 	sinon
 ) {
 	"use strict";
@@ -230,10 +232,7 @@ function (
 		function cleanUpAfterUndo(oCommand) {
 			var oChange = oCommand.getPreparedChange();
 			if (oCommand.getAppComponent) {
-				var oAppComponent = oCommand.getAppComponent();
-				var oControl = ControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
-				var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
-				return oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oControl);
+				return PersistenceWriteAPI.remove(oChange, {appComponent: oCommand.getAppComponent()});
 			}
 		}
 

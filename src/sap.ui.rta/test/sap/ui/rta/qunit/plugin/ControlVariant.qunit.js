@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/fl/registry/ChangeRegistry",
-	'sap/ui/fl/FlexControllerFactory',
 	"sap/ui/rta/plugin/ControlVariant",
 	"sap/ui/dt/plugin/ToolHooks",
 	"sap/ui/rta/plugin/RenameHandler",
@@ -41,7 +40,6 @@ sap.ui.define([
 	OverlayRegistry,
 	ElementOverlay,
 	ChangeRegistry,
-	FlexControllerFactory,
 	ControlVariantPlugin,
 	ToolHooksPlugin,
 	RenameHandler,
@@ -117,7 +115,6 @@ sap.ui.define([
 			sandbox.stub(flUtils, "getAppComponentForControl").returns(oMockAppComponent);
 			sandbox.stub(flUtils, "getComponentForControl").returns(oMockAppComponent);
 			sandbox.stub(flUtils, "getComponentClassName").returns("Dummy.Component");
-			var oFlexController = FlexControllerFactory.createForControl(oMockAppComponent, oManifest);
 			this.oData = {
 				varMgtKey: {
 					defaultVariant : "variant1",
@@ -165,7 +162,7 @@ sap.ui.define([
 					subSections: [this.oObjectPageSubSection]
 				});
 				this.sLocalVariantManagementId = "varMgtKey";
-				this.oModel = new VariantModel(this.oData, oFlexController, oMockAppComponent);
+				this.oModel = new VariantModel(this.oData, undefined, oMockAppComponent);
 				this.oVariantManagementControl = new VariantManagement(this.sLocalVariantManagementId);
 				this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
 				this.oObjectPageLayout = new ObjectPageLayout("objPage", {
@@ -555,9 +552,7 @@ sap.ui.define([
 			sandbox.stub(flUtils, "getAppComponentForControl").returns(oMockAppComponent);
 			sandbox.stub(flUtils, "getComponentClassName").returns("Dummy.Component");
 
-			var oFlexController = FlexControllerFactory.createForControl(oMockAppComponent, oManifest);
-
-			this.oModel = new VariantModel({}, oFlexController, oMockAppComponent);
+			this.oModel = new VariantModel({}, undefined, oMockAppComponent);
 			this.oVariantManagementControl = new VariantManagement("varMgtKey").placeAt("qunit-fixture");
 			this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
 
@@ -1116,7 +1111,6 @@ sap.ui.define([
 			sandbox.stub(flUtils, "getAppComponentForControl").returns(oMockAppComponent);
 			sandbox.stub(flUtils, "getComponentForControl").returns(oMockAppComponent);
 			sandbox.stub(flUtils, "getComponentClassName").returns("Dummy.Component");
-			var oFlexController = FlexControllerFactory.createForControl(oMockAppComponent, oManifest);
 			this.oData = {
 				varMgtKey: {
 					defaultVariant : "variant1",
@@ -1156,7 +1150,7 @@ sap.ui.define([
 				});
 				this.sLocalVariantManagementId = "varMgtKey";
 				this.sGlobalVariantManagementId = "Comp1--varMgtKey";
-				this.oModel = new VariantModel(this.oData, oFlexController, oMockAppComponent);
+				this.oModel = new VariantModel(this.oData, undefined, oMockAppComponent);
 				this.oVariantManagementControl = new VariantManagement(this.sGlobalVariantManagementId);
 				this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
 				this.oObjectPageLayout = new ObjectPageLayout("objPage", {
@@ -1221,7 +1215,6 @@ sap.ui.define([
 			sandbox.stub(flUtils, "getAppComponentForControl").returns(oMockAppComponent);
 			sandbox.stub(flUtils, "getComponentForControl").returns(oMockAppComponent);
 			sandbox.stub(flUtils, "getComponentClassName").returns("Dummy.Component");
-			var oFlexController = FlexControllerFactory.createForControl(oMockAppComponent, oManifest);
 			this.oData = {
 				varMgtKey: {
 					defaultVariant : "variant1",
@@ -1242,7 +1235,7 @@ sap.ui.define([
 			};
 
 			this.sLocalVariantManagementId = "varMgtKey";
-			this.oModel = new VariantModel(this.oData, oFlexController, oMockAppComponent);
+			this.oModel = new VariantModel(this.oData, undefined, oMockAppComponent);
 			this.oVariantManagementControl = new VariantManagement(this.sLocalVariantManagementId);
 			this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
 			this.oVariantManagementControl.setAssociation("for", "objPage", true);

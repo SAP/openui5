@@ -19,7 +19,7 @@ sap.ui.define([
 
 	QUnit.module("Given a VariantManagement control and its designtime metadata are created...", {
 		before: function () {
-			this.fnGetMockedAppComponent = function(oModel) {
+			this.fnGetMockedAppComponent = function() {
 				return {
 					getLocalId: function () {},
 					getManifestEntry: function () {
@@ -42,20 +42,18 @@ sap.ui.define([
 						};
 					},
 					getModel: function () {
-						return oModel;
-					}
+						return this.oModel;
+					}.bind(this)
 				};
 			};
 		},
 		beforeEach: function () {
 			this.sVariantManagementReference = "variantManagementReference-1";
 			this.oVariantManagement = new VariantManagement(this.sVariantManagementReference, {});
-
-			var oModel = new VariantModel({}, { _oChangePersistence: { _oVariantController: { assignResetMapListener: function() {} } } });
-			this.oMockedAppComponent = this.fnGetMockedAppComponent(oModel);
-
+			this.oMockedAppComponent = this.fnGetMockedAppComponent.call(this);
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oMockedAppComponent);
-			this.fnUpdateCurrentVariantStub = sandbox.stub(oModel, "updateCurrentVariant");
+			this.oModel = new VariantModel({}, undefined, this.oMockedAppComponent);
+			this.fnUpdateCurrentVariantStub = sandbox.stub(this.oModel, "updateCurrentVariant");
 		},
 		afterEach: function () {
 			this.oVariantManagement.destroy();

@@ -7,6 +7,8 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/mvc/View",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -16,6 +18,8 @@ function(
 	UIComponent,
 	ComponentContainer,
 	View,
+	ChangesWriteAPI,
+	PersistenceWriteAPI,
 	sinon
 ) {
 	"use strict";
@@ -62,22 +66,21 @@ function(
 				showToolbars: false,
 				rootControl: this.oComponentContainer
 			});
-			this.iCreateBaseChangeCounter = 0;
-			this.iAddPreparedChangeCounter = 0;
-			sandbox.stub(this.oRta, "_getFlexController").returns({
-				createBaseChange: function(oChangeSpecificData) {
-					this.iCreateBaseChangeCounter ++;
-					this.oCreateBaseChangeParameter = oChangeSpecificData;
-					return {
-						getDefinition: function() {
-							return {definition: "definition"};
-						}
-					};
-				}.bind(this),
-				addPreparedChange: function() {
-					this.iAddPreparedChangeCounter ++;
-				}.bind(this)
-			});
+			this.iCreateChangeCounter = 0;
+			this.iAddChangeCounter = 0;
+			sandbox.stub(ChangesWriteAPI, "create").callsFake(function (oChangeSpecificData) {
+				this.iCreateChangeCounter++;
+				this.oCreateChangeParameter = oChangeSpecificData;
+				return {
+					getDefinition: function () {
+						return {definition: "definition"};
+					}
+				};
+			}.bind(this));
+
+			sandbox.stub(PersistenceWriteAPI, "add").callsFake(function() {
+				this.iAddChangeCounter ++;
+			}.bind(this));
 			sandbox.stub(FlexUtils, "getAppComponentForControl");
 			return this.oRta.start().then(function () {
 				return this.oRta.getService("controllerExtension").then(function(oService) {
@@ -108,13 +111,13 @@ function(
 
 			return this.oControllerExtension.add("foo.js", this.oView.getId()).then(function (oDefinition) {
 				assert.deepEqual(oDefinition, {definition: "definition"}, "the function returns the definition of the change");
-				assert.equal(this.iCreateBaseChangeCounter, 1, "and FlexController.createBaseChange was called once");
-				assert.equal(this.iAddPreparedChangeCounter, 1, "and FlexController.addPreparedChange was called once");
-				assert.equal(this.oCreateBaseChangeParameter.changeType, "codeExt", "the changeType was set correctly");
-				assert.equal(this.oCreateBaseChangeParameter.selector.controllerName, "controllerName", "the controllerName was set correctly");
-				assert.equal(this.oCreateBaseChangeParameter.content.codeRef, "foo.js", "the codeRef was set correctly");
-				assert.equal(this.oCreateBaseChangeParameter.developerMode, true, "the developerMode was set correctly");
-				assert.equal(this.oCreateBaseChangeParameter.scenario, "scenario", "the scenario was set correctly");
+				assert.equal(this.iCreateChangeCounter, 1, "and ChangesWriteAPI.create was called once");
+				assert.equal(this.iAddChangeCounter, 1, "and PersistenceWriteAPI.add was called once");
+				assert.equal(this.oCreateChangeParameter.changeType, "codeExt", "the changeType was set correctly");
+				assert.equal(this.oCreateChangeParameter.selector.controllerName, "controllerName", "the controllerName was set correctly");
+				assert.equal(this.oCreateChangeParameter.content.codeRef, "foo.js", "the codeRef was set correctly");
+				assert.equal(this.oCreateChangeParameter.developerMode, true, "the developerMode was set correctly");
+				assert.equal(this.oCreateChangeParameter.scenario, "scenario", "the scenario was set correctly");
 			}.bind(this));
 		});
 
@@ -127,8 +130,8 @@ function(
 			})
 			.catch(function(oError) {
 				assert.equal(oError.message, "code extensions can only be created in developer mode", "then ControllerExtension.add throws an error");
-				assert.equal(this.iCreateBaseChangeCounter, 0, "and FlexController.createBaseChange was not called");
-				assert.equal(this.iAddPreparedChangeCounter, 0, "and FlexController.addPreparedChange was not called");
+				assert.equal(this.iCreateChangeCounter, 0, "and ChangesWriteAPI.create was not called");
+				assert.equal(this.iAddChangeCounter, 0, "and PersistenceWriteAPI.add was not called");
 			}.bind(this));
 		});
 
@@ -139,8 +142,8 @@ function(
 			})
 			.catch(function(oError) {
 				assert.equal(oError.message, "can't create controller extension without codeRef", "then ControllerExtension.add throws an error");
-				assert.equal(this.iCreateBaseChangeCounter, 0, "and FlexController.createBaseChange was not called");
-				assert.equal(this.iAddPreparedChangeCounter, 0, "and FlexController.addPreparedChange was not called");
+				assert.equal(this.iCreateChangeCounter, 0, "and ChangesWriteAPI.create was not called");
+				assert.equal(this.iAddChangeCounter, 0, "and PersistenceWriteAPI.add was not called");
 			}.bind(this));
 		});
 
@@ -151,8 +154,8 @@ function(
 			})
 			.catch(function(oError) {
 				assert.equal(oError.message, "codeRef has to end with 'js'", "then ControllerExtension.add throws an error");
-				assert.equal(this.iCreateBaseChangeCounter, 0, "and FlexController.createBaseChange was not called");
-				assert.equal(this.iAddPreparedChangeCounter, 0, "and FlexController.addPreparedChange was not called");
+				assert.equal(this.iCreateChangeCounter, 0, "and ChangesWriteAPI.create was not called");
+				assert.equal(this.iAddChangeCounter, 0, "and PersistenceWriteAPI.add was not called");
 			}.bind(this));
 		});
 	});

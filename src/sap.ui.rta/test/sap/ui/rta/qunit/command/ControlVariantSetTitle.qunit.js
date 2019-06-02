@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
-	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	flUtils,
@@ -18,7 +18,7 @@ sap.ui.define([
 	OverlayRegistry,
 	VariantManagement,
 	VariantModel,
-	FlexControllerFactory,
+	PersistenceWriteAPI,
 	sinon
 ) {
 	'use strict';
@@ -38,7 +38,7 @@ sap.ui.define([
 
 			this.oManifest = new Manifest(oManifestObj);
 
-			var oMockedAppComponent = {
+			this.oMockedAppComponent = {
 				getLocalId: function () {},
 				getModel: function () {
 					return this.oModel;
@@ -51,10 +51,9 @@ sap.ui.define([
 				}.bind(this)
 			};
 
-			this.oGetAppComponentForControlStub = sinon.stub(flUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+			this.oGetAppComponentForControlStub = sinon.stub(flUtils, "getAppComponentForControl").returns(this.oMockedAppComponent);
 			this.oGetComponentClassNameStub = sinon.stub(flUtils, "getComponentClassName").returns("Dummy.Component");
 
-			var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent, this.oManifest);
 			var oData = {
 				variantMgmtId1: {
 					defaultVariant: "variant0",
@@ -76,7 +75,7 @@ sap.ui.define([
 				}
 			};
 
-			this.oModel = new VariantModel(oData, oFlexController, oMockedAppComponent);
+			this.oModel = new VariantModel(oData, undefined, this.oMockedAppComponent);
 
 			var oVariant = {
 				content: {
@@ -150,7 +149,7 @@ sap.ui.define([
 				var oData = oControlVariantSetTitleCommand.oModel.getData();
 				assert.equal(oData["variantMgmtId1"].variants[1].title, sNewText, "then title is correctly set in model");
 				assert.equal(this.oVariantManagement.getTitle().getText(), sNewText, "then title is correctly set in variant management control");
-				assert.equal(oControlVariantSetTitleCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 1, "then 1 dirty change is present");
+				assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oMockedAppComponent).length, 1, "then 1 dirty change is present");
 
 				return oControlVariantSetTitleCommand.undo();
 			}.bind(this))
@@ -161,7 +160,7 @@ sap.ui.define([
 				var oData = oControlVariantSetTitleCommand.oModel.getData();
 				assert.equal(oData["variantMgmtId1"].variants[1].title, "variant A", "then title is correctly reverted in model");
 				assert.equal(this.oVariantManagement.getTitle().getText(), "variant A", "then title is correctly set in variant management control");
-				assert.equal(oControlVariantSetTitleCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 0, "then the dirty change is removed");
+				assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oMockedAppComponent).length, 0, "then the dirty change is removed");
 				assert.notOk(oTitleChange, "then title change from command unset");
 				done();
 			}.bind(this))

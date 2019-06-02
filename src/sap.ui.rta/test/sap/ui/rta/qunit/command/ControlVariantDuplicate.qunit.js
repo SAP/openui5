@@ -11,10 +11,11 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/variants/VariantController",
-	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/thirdparty/sinon-4",
 	// needs to be included so that the ElementOverlay prototype is enhanced
 	"sap/ui/rta/plugin/ControlVariant"
+
 ],
 function (
 	FlUtils,
@@ -27,7 +28,7 @@ function (
 	VariantManagement,
 	VariantModel,
 	VariantController,
-	FlexControllerFactory,
+	PersistenceWriteAPI,
 	sinon
 ) {
 	'use strict';
@@ -62,7 +63,7 @@ function (
 
 			this.oManifest = new Manifest(oManifestObj);
 
-			var oMockedAppComponent = {
+			this.oMockedAppComponent = {
 				getLocalId: function () {},
 				getModel: function () {
 					return this.oModel;
@@ -75,12 +76,10 @@ function (
 				}.bind(this)
 			};
 
-			this.oGetAppComponentForControlStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+			this.oGetAppComponentForControlStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(this.oMockedAppComponent);
 			this.oGetComponentClassNameStub = sinon.stub(FlUtils, "getComponentClassName").returns("Dummy.Component");
 
-			var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent, this.oManifest);
-
-			this.oModel = new VariantModel(oData, oFlexController, oMockedAppComponent);
+			this.oModel = new VariantModel(oData, undefined, this.oMockedAppComponent);
 			// non-personalization mode
 			this.oModel._bDesignTimeMode = true;
 
@@ -168,7 +167,7 @@ function (
 				assert.equal(oDuplicateVariant.getTitle(), "variant A" + " Copy", "then variant reference correctly duplicated");
 				assert.equal(oDuplicateVariant.getControlChanges().length, 2, "then 2 changes duplicated");
 				assert.equal(oDuplicateVariant.getControlChanges()[0].getDefinition().support.sourceChangeFileName, this.oVariant.controlChanges[0].getDefinition().fileName, "then changes duplicated with source filenames in Change.support.sourceChangeFileName");
-				assert.equal(oControlVariantDuplicateCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 3, "then 3 dirty changes present - variant and 2 changes");
+				assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oMockedAppComponent).length, 3, "then 3 dirty changes present - variant and 2 changes");
 				assert.deepEqual(oControlVariantDuplicateCommand._oVariantChange, aPreparedChanges[0], "then _oVariantChange property was set for the command");
 				return oControlVariantDuplicateCommand.undo();
 			}.bind(this))
@@ -176,11 +175,11 @@ function (
 				oDuplicateVariant = oControlVariantDuplicateCommand.getVariantChange();
 				aPreparedChanges = oControlVariantDuplicateCommand.getPreparedChange();
 				assert.notOk(aPreparedChanges, "then no prepared changes are available after undo");
-				assert.equal(oControlVariantDuplicateCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 0, "then all dirty changes removed");
+				assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oMockedAppComponent).length, 0, "then all dirty changes removed");
 				assert.notOk(oDuplicateVariant, "then duplicate variant from command unset");
 				assert.notOk(oControlVariantDuplicateCommand._oVariantChange, "then _oVariantChange property was unset for the command");
 				return oControlVariantDuplicateCommand.undo();
-			})
+			}.bind(this))
 			.then(function () {
 				assert.ok(true, "then by default a Promise.resolve() is returned on undo(), even if no changes exist for the command");
 			})
