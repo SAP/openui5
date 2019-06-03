@@ -405,10 +405,15 @@ sap.ui.define([
 	};
 
 	ObjectPageSectionBase.prototype._handleFocusing = function (oEvent, oElementToReceiveFocus) {
+		var aSections;
+
 		if (this._targetIsCorrect(oEvent) && oElementToReceiveFocus) {
+			aSections = jQuery(oEvent.currentTarget).parent().children();
 			oEvent.preventDefault();
 			oElementToReceiveFocus.focus();
-			this._scrollParent(jQuery(oElementToReceiveFocus).attr("id"));
+			if (aSections.length > 1) {
+				this._scrollParent(jQuery(oElementToReceiveFocus).attr("id"));
+			}
 		}
 	};
 

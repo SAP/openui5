@@ -297,7 +297,9 @@ function($, Core, KeyCodes, QUtils, Device, XMLView) {
 
 	QUnit.test("HOME/END", function (assert) {
 		var aSections = this.oObjectPage.getSections(),
-			aSubSections = aSections[8].getSubSections();
+			aSubSections = aSections[8].getSubSections(),
+			oSingleSubsection = aSections[0].getSubSections()[0],
+		    oSpy = this.spy(oSingleSubsection, "_scrollParent");
 
 		// Section
 		aSections[0].$().focus();
@@ -312,6 +314,13 @@ function($, Core, KeyCodes, QUtils, Device, XMLView) {
 		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[9].sId, "Last subsection should be focused after END key");
 		QUtils.triggerKeydown(aSubSections[9].sId, KeyCodes.HOME);
 		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[0].sId, "First subsection should be focused after HOME key");
+
+		// Single subsection should not scroll the page
+		oSingleSubsection.$().focus();
+		QUtils.triggerKeydown(oSingleSubsection.getId(), KeyCodes.HOME);
+		assert.ok(oSpy.notCalled, "_scrollParent should not be called");
+		QUtils.triggerKeydown(oSingleSubsection.getId(), KeyCodes.END);
+		assert.ok(oSpy.notCalled, "_scrollParent should not be called");
 	});
 
 	QUnit.test("PAGE_DOWN/PAGE_UP", function (assert) {
