@@ -7,6 +7,12 @@
         "type": "FIX",
         "text": ": RTA Minimenu Fixes",
         "references": []
+      },
+      {
+        "id": "645f8c748d1503e148cdd0a67067e248fc332d16",
+        "type": "FIX",
+        "text": " sap.ui.dt - designtime add or insert plugin handling",
+        "references": []
       }
     ]
   }

@@ -104,6 +104,18 @@
             "reference": "1980166777"
           }
         ]
+      },
+      {
+        "id": "5321f4dfe2cd436823e49a9918e1e40c0fcb283c",
+        "type": "FIX",
+        "text": " Theming Parameters: Fix urls when UI5 is loaded from other domain",
+        "references": []
+      },
+      {
+        "id": "b1d5766c6a039d15be1a0248d37c1d812852b567",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: Bundle text moved to mobile library",
+        "references": []
       }
     ]
   }

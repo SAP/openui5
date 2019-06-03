@@ -51,6 +51,12 @@
             "reference": "1980283300"
           }
         ]
+      },
+      {
+        "id": "e118086b5f0e82c51904fb507efb71fab36d051f",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: selectedButton aria-checked setting fixed",
+        "references": []
       }
     ]
   }
