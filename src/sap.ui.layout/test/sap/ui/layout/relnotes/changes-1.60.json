@@ -204,5 +204,16 @@
         "references": []
       }
     ]
+  },
+  "1.60.14": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "f37bd464514815ae8679b621b07bffcdfecc2c98",
+        "type": "FIX",
+        "text": " sap.ui.layout.BlockLayout: Width of the cells is now set properly in IE",
+        "references": []
+      }
+    ]
   }
 }

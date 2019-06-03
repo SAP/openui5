@@ -4477,5 +4477,28 @@
         "references": []
       }
     ]
+  },
+  "1.52.29": {
+    "date": "May 2019",
+    "notes": [
+      {
+        "id": "9a3bcd8a198f4de2df43f8415293b594a1007143",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: including invalid value doesn\u0027t make the control throw an error",
+        "references": []
+      },
+      {
+        "id": "ed56d0dfb2aa6db36b8797a2f2077cc9226986f1",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: range now covers all hours from last day",
+        "references": []
+      },
+      {
+        "id": "ef08155ff59e5162ed5e8614f59059715f827727",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Growing property is now corrected",
+        "references": []
+      }
+    ]
   }
 }
