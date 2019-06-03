@@ -4234,7 +4234,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("SalesOrderList?$filter=(contains(Note,'SalesOrder'))"
-					+ "and not(SalesOrderID eq '46' or SalesOrderID eq '44')"
+					+ " and not (SalesOrderID eq '46' or SalesOrderID eq '44')"
 					+ "&$select=Note,SalesOrderID&$skip=2&$top=2", {
 					"value" : []
 				});
@@ -17997,7 +17997,7 @@ sap.ui.define([
 	// JIRA: CPOUI5UISERVICESV3-1845
 [function () {
 	this.expectRequest("BusinessPartnerList?$select=BusinessPartnerID,CompanyName"
-			+ "&$filter=not(BusinessPartnerID eq '4710')"
+			+ "&$filter=not (BusinessPartnerID eq '4710')"
 			+ "&$skip=2&$top=1", {
 			value : [{
 				"BusinessPartnerID" : "4713",
@@ -18139,7 +18139,7 @@ sap.ui.define([
 					changeSetNo : 2,
 					method : "GET",
 					url : "BusinessPartnerList?$count=true&$select=BusinessPartnerID"
-						+ "&$filter=not(BusinessPartnerID eq '4710')" //TODO this is missing!
+						+ "&$filter=not (BusinessPartnerID eq '4710')" //TODO this is missing!
 						+ "&$skip=2&$top=1"
 				}, {
 					"@odata.count" : "3",
