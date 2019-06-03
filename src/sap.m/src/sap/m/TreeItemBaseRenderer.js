@@ -20,6 +20,8 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer'],
 		}
 		if (oLI.isLeaf()) {
 			rm.addClass("sapMTreeItemBaseLeaf");
+		} else {
+			rm.writeAttribute("aria-expanded", oLI.getExpanded());
 		}
 
 		var iIndentation = oLI._getPadding();
