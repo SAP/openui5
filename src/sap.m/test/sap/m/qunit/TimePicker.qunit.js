@@ -2249,16 +2249,12 @@ sap.ui.define([
 						fnAssert.strictEqual(oSut.$(sPlaceholderHiddenLblIdSuffix).length, 1, "placeholder invisible label is rendered");
 						fnAssert.strictEqual(oSut.$(sPlaceholderHiddenLblIdSuffix).text(), sDefaultPlaceholder, "placeholder invisible label text is as expected");
 					}
-				},
-				fnTestTooltipReference = function () {
-					//assert
-					fnAssert.strictEqual(oSut.$(sTooltipHiddenLblIdSuffix).length, 0, "tooltip invisible label is not rendered");
 				};
 
 			//Test execution check
 			if (!Array.isArray(aScenarios)) {
 				fnAssert.ok(false, "First argument of 'fnTestLabelReferencing' test function is not of a correct type");
-			} else if (aScenarios.length !== 3) {
+			} else if (aScenarios.length !== 2) {
 				fnAssert.ok(false, "First argument of 'fnTestLabelReferencing' test function do not have sufficient number of items. For more information please read the test comment");
 			}
 
@@ -2274,7 +2270,6 @@ sap.ui.define([
 						break;
 					case 2:
 						fnTestCustomRole();
-						fnTestTooltipReference();
 						break;
 					default:
 						break;
@@ -2381,47 +2376,27 @@ sap.ui.define([
 
 	So here are all possible reference combinations.
 	|===============================================================================================================================================================|
-	|	TP is labelled by other label(X)		|		Placeholder		|	 Tooltip 	|	ariaDescribedBy			|			ariaLabelledBy 						|
+	|	TP is labelled by other label(X)		|		Placeholder		ariaDescribedBy			|			ariaLabelledBy 						|
 	|===============================================================================================================================================================|
-	1						no					|		yes (default)	|		no		|	"TimePicker"			|		default placeholder						|
-	2						no					|			yes			|		no		|	"TimePicker"			|		custom placeholder						|
-	3						no					|		yes (default)	|		yes		|	"TimePicker" tooltip	|		default placeholder						|
-	4						no					|			yes			|		yes		|	"TimePicker" tooltip	|		custom placeholder						|
-	5						yes					|			yes			|		yes		|	"TimePicker" tooltip	|		X + custom placeholder					|
-	6						yes					|			yes			|		no		|	"TimePicker"			|		X + custom placeholder					|
-	7						yes					|		yes (default)	|		yes		|	"TimePicker" tooltip	|		X + default placeholder					|
-	8						yes					|		yes (default)	|		no		|	"TimePicker"			|		X + default placeholder					|
+	1						no					|		yes (default)	"TimePicker"			|		default placeholder						|
+	2						no					|			yes			"TimePicker"			|		custom placeholder						|
+	3						yes					|			yes			"TimePicker"			|		X + custom placeholder					|
+	4						yes					|		yes (default)	"TimePicker"			|		X + default placeholder					|
 	*/
 	QUnit.test("Time picker aria references: Scenario 1: 'aria-labelledby' is correctly referenced with its default placeholder", function(assert) {
-		this.fnTestReferencing(this.oTP, assert, this.oRB, [false, false, false]);
+		this.fnTestReferencing(this.oTP, assert, this.oRB, [false, false]);
 	});
 
 	QUnit.test("Time picker aria references: Scenario 2: 'aria-labelledby' & 'aria-describedby' are correctly referenced with its custom placeholder", function (assert) {
-		this.fnTestReferencing(this.oTP, assert, this.oRB, [false, true, false]);
+		this.fnTestReferencing(this.oTP, assert, this.oRB, [false, true]);
 	});
 
-	QUnit.test("Time picker aria references: Scenario 3: 'aria-labelledby' & 'aria-describedby' are correctly referenced with its tooltip", function (assert) {
-		this.fnTestReferencing(this.oTP, assert, this.oRB, [false, false, true]);
+	QUnit.test("Time picker aria references: Scenario 3: 'aria-labelledby' & 'aria-describedby' are correctly referenced with its external label & custom placeholder", function (assert) {
+		this.fnTestReferencing(this.oTP, assert, this.oRB, [true, true]);
 	});
 
-	QUnit.test("Time picker aria references: Scenario 4: 'aria-labelledby' & 'aria-describedby' are correctly referenced with its custom placeholder & tooltip", function (assert) {
-		this.fnTestReferencing(this.oTP, assert, this.oRB, [false, true, true]);
-	});
-
-	QUnit.test("Time picker aria references: Scenario 5: 'aria-labelledby' & 'aria-describedby' are correctly referenced with its external label, custom placeholder & tooltip", function (assert) {
-		this.fnTestReferencing(this.oTP, assert, this.oRB, [true, true, true]);
-	});
-
-	QUnit.test("Time picker aria references: Scenario 6: 'aria-labelledby' & 'aria-describedby' are correctly referenced with its external label & custom placeholder", function (assert) {
-		this.fnTestReferencing(this.oTP, assert, this.oRB, [true, true, false]);
-	});
-
-	QUnit.test("Time picker aria references: Scenario 7: 'aria-labelledby' & 'aria-describedby' are correctly referenced with its external label & tooltip", function (assert) {
-		this.fnTestReferencing(this.oTP, assert, this.oRB, [true, false, true]);
-	});
-
-	QUnit.test("Time picker aria references: Scenario 8: 'aria-labelledby' & 'aria-describedby' are correctly referenced with its external label", function (assert) {
-		this.fnTestReferencing(this.oTP, assert, this.oRB, [true, false, false]);
+	QUnit.test("Time picker aria references: Scenario 4: 'aria-labelledby' & 'aria-describedby' are correctly referenced with its external label", function (assert) {
+		this.fnTestReferencing(this.oTP, assert, this.oRB, [true, false]);
 	});
 
 	QUnit.test("Popover's placeholder text", function (assert) {
