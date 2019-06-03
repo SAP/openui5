@@ -514,7 +514,7 @@ sap.ui.define([
 		this._iStoredScrollTop = 0; // used by RTA to restore state upon drag'n'drop operation
 		this._oStoredScrolledSubSectionInfo = {}; // used to (re)store the position within the currently scrolled section upon rerender
 		this._bAllContentFitsContainer = false; // indicates if the page has only one visible subSection in total (and it is marked to fit its container)
-
+		this._bIsFooterAanimationGoing = false; // Indicates if the animation of the floating footer is still going.
 		// anchorbar management
 		this._bInternalAnchorBarVisible = true;
 
@@ -625,6 +625,9 @@ sap.ui.define([
 		this._attachVisualIndicatorMouseOverHandlers(this._addHoverClass, this._removeHoverClass, this);
 		this._attachTitleMouseOverHandlers(this._addHoverClass, this._removeHoverClass, this);
 
+		if (this.getFooter() && this._bIsFooterAanimationGoing) {
+			this._onToggleFooterAnimationEnd(this.getFooter());
+		}
 	};
 
 	/**
@@ -3760,6 +3763,8 @@ sap.ui.define([
 
 		this._$footerWrapper.bind("webkitAnimationEnd animationend",
 		this._onToggleFooterAnimationEnd.bind(this, oFooter));
+		//Flagging if the animation has started
+		this._bIsFooterAanimationGoing = true;
 
 		if (bShow) {
 			this._$footerWrapper.removeClass("sapUiHidden");
@@ -3784,6 +3789,7 @@ sap.ui.define([
 		} else {
 			oFooter.removeStyleClass(ObjectPageLayout.SHOW_FOOTER_CLASS_NAME);
 		}
+		this._bIsFooterAanimationGoing = false;
 	};
 
 	/**
