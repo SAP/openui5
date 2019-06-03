@@ -29,7 +29,7 @@ sap.ui.define([
 	/**
 	 * Calls a parent function if it's defined.
 	 * @param {string} sFnName Name of the function.
-	 * @param {[object]} aArguments Arguments to pass to the function.
+	 * @param {object} [aArguments] Arguments to pass to the function.
 	 * @private
 	 */
 	HeaderContainerItemNavigator.prototype._callParent = function (sFnName, aArguments) {

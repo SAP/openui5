@@ -1614,6 +1614,7 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 	 * @name sap.ui.core.IDScope
 	 * @interface
 	 * @private
+	 * @ui5-restricted
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
