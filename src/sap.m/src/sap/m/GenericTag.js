@@ -63,7 +63,8 @@ sap.ui.define([
 		metadata: {
 			library : "sap.m",
 			interfaces : [
-				"sap.m.IOverflowToolbarContent"
+				"sap.m.IOverflowToolbarContent",
+				"sap.m.IOverflowToolbarFlexibleContent"
 			],
 			properties : {
 				/**
