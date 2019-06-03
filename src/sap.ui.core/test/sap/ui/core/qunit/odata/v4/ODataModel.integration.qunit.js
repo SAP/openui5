@@ -2669,7 +2669,7 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=3", {
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=3", {
 				"value" : [
 					{"SalesOrderID" : "0500000001"},
 					{"SalesOrderID" : "0500000002"},
@@ -3359,8 +3359,6 @@ sap.ui.define([
 					url : "SalesOrderList('45')"
 				})
 				.expectChange("count", "3")
-				.expectChange("id", null) // events for unresolved ODPB after deletion
-				.expectChange("note", null)
 				.expectChange("id", ["44", "43", "42"])
 				.expectChange("note", ["New 2", "New 1", "First SalesOrder"]);
 
@@ -3446,8 +3444,6 @@ sap.ui.define([
 					url : "SalesOrderList('44')"
 				})
 				.expectChange("count", "3")
-				.expectChange("id", null) // events for unresolved ODPB after deletion
-				.expectChange("note", null)
 				.expectChange("id", [, "43", "42"])
 				.expectChange("note", [, "New 1", "First SalesOrder"]);
 
@@ -3678,9 +3674,7 @@ sap.ui.define([
 			that.expectRequest({
 					method : "DELETE",
 					url : "SalesOrderList('44')"
-				})
-				.expectChange("id", null) // events for unresolved ODPB after deletion
-				.expectChange("note", null);
+				});
 
 			return Promise.all([
 				oTable.getItems()[1].getBindingContext().delete("$auto"),
@@ -4075,9 +4069,7 @@ sap.ui.define([
 			that.expectRequest({
 					method : "DELETE",
 					url : "SalesOrderList('44')"
-				})
-				.expectChange("id", null) // events for unresolved ODPB after deletion
-				.expectChange("note", null);
+				});
 			// no change event: getContexts with E.C.D. returns a diff containing one delete only
 
 			oCreatedContext1.delete("$auto");
@@ -4194,10 +4186,6 @@ sap.ui.define([
 					method : "DELETE",
 					url : "SalesOrderList('45')"
 				})
-				// change event for children of the destroyed context; parent context is already
-				// destroyed when formatter is called
-				.expectChange("id", null)
-				.expectChange("note", null)
 				// next row "scrolls into view"
 				.expectChange("id", [, "44"])
 				.expectChange("note", [, "New 1"]);
@@ -5271,8 +5259,7 @@ sap.ui.define([
 	//  Table control: sap.ui.table.Table
 	//  Create at: end
 	// CPOUI5UISERVICESV3-1818
-	// TODO test skipped as it often fails with this.expectChange("id", "", 2)
-	QUnit.skip("All pairs test for multi create (16)", function (assert) {
+	QUnit.test("All pairs test for multi create (16)", function (assert) {
 		var oBinding,
 			oCreatedContext0,
 			oCreatedContext1,
@@ -5322,10 +5309,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectChange("id", null)
-				.expectChange("note", null)
-				.expectChange("id", "", 2)
-				.expectChange("note", "New 3", 2);
+			that.expectChange("note", "New 3", 2);
 
 			return Promise.all([
 				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */
@@ -7563,6 +7547,7 @@ sap.ui.define([
 	// Scenario: Execute a bound action for an entity in a list binding and afterwards call refresh
 	// with bAllowRemoval=true for the context the entity is pointing to. If the entity is gone from
 	// the list binding no error should happen because of the just deleted context.
+	// TODO Test with a created binding parameter, too. This failed in an OPA test previously.
 	QUnit.test("Bound action with context refresh which removes the context", function (assert) {
 		var oAction,
 			oContext,

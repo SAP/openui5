@@ -1419,7 +1419,7 @@ sap.ui.define([
 		sId : "77",
 		bRead : true
 	}].forEach(function (oFixture) {
-		QUnit.test("_execute: bound operation " + oFixture.bRead ? "" : "on context w/o read " +
+		QUnit.test("_execute: bound operation " + (oFixture.bRead ? "" : "on context w/o read ") +
 				"returning the same entity type with key " + oFixture.sId,
 				function (assert) {
 			var oParentContext = Context.create(this.oModel, {/*binding*/}, "/TEAMS('42')"),
