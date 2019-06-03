@@ -48,6 +48,18 @@
 			sap.m.MessageToast.show(oEvent.getSource().getId() + " pressed");
 		}
 
+		function onIconPressHandler(oEvent) {
+			sap.m.MessageToast.show(oEvent.getSource().getId() + "'s icon pressed");
+		}
+
+		function onTitlePressHandler(oEvent) {
+			sap.m.MessageToast.show(oEvent.getSource().getId() + "'s title pressed");
+		}
+
+		function onIntroPressHandler(oEvent) {
+			sap.m.MessageToast.show(oEvent.getSource().getId() + "'s intro pressed");
+		}
+
 		function getTitle(sText) {
 			return new sap.m.Title({
 				text: sText
@@ -158,13 +170,13 @@
 			icon: "sap-icon://building",
 			iconAlt: "Building icon",
 			iconTooltip: "Building icon",
-			iconPress: onPress,
+			iconPress: onIconPressHandler,
 			intro: "Google Intro",
 			introActive: true,
-			introPress: onPress,
+			introPress: onIntroPressHandler,
 			title: "Google Title",
 			titleActive: true,
-			titlePress: onPress,
+			titlePress: onTitlePressHandler,
 			attributes: [
 				oActiveObjectAttribute1,
 				oActiveTitlelessObjectAttribute
