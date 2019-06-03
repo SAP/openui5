@@ -59,14 +59,14 @@ html[data-sap-ui-browser*='ie11'] .sapMSLIDiv {
 	color: @sapUiListTextColor;
 }
 
-.sapMSLITitle {
-	padding-bottom: 0.375rem;
-}
-
 .sapMSLIDescription,
 .sapMSLIDescriptionText {
 	font-size: @sapMFontMediumSize;
 	color: @sapUiContentLabelColor;
+}
+
+.sapMSLIWithDescription > .sapMLIBContent > .sapMSLIDiv > .sapMSLIDescription {
+	padding-top: 0.5rem;
 }
 
 .sapMSLIImgIcon,
@@ -175,7 +175,6 @@ html[dir=rtl] .sapMSLIInfo {
 	padding-top: 0.5rem;
 }
 
-.sapMSLIWrapping .sapMSLITitleOnly,
 .sapMSLIWrapping .sapMSLIDescription:not(.sapMSLIDescriptionAndInfo),
 .sapMSLIWrapping .sapMSLIDescriptionAndInfo > .sapMSLIDescriptionText {
 	padding-bottom: 0.5rem;
