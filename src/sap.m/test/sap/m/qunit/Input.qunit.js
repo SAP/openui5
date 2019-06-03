@@ -3967,6 +3967,25 @@ sap.ui.define([
 		assert.equal(fnFireChangeSpy.callCount , 1 , "Change event should be fired only once");
 	});
 
+	QUnit.test("Force closing suggestions popover on 'change' event", function(assert) {
+
+		var oInput = this.oInput;
+
+		oInput.attachSuggestionItemSelected(function () {
+			oInput.closeSuggestions();
+		});
+
+		oInput.onfocusin();
+		oInput._$input.focus().val("u").trigger("input");
+		this.clock.tick(300);
+
+		sap.ui.test.qunit.triggerKeydown(oInput.getDomRef("inner"), jQuery.sap.KeyCodes.ARROW_DOWN);
+		sap.ui.getCore().applyChanges();
+		sap.ui.test.qunit.triggerKeydown(oInput.getDomRef("inner"), jQuery.sap.KeyCodes.ENTER);
+
+		assert.ok(true, 'there is no endless loop');
+	});
+
 	QUnit.module("Suggestions grouping", {
 		beforeEach : function() {
 			var oModel,
