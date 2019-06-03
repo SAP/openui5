@@ -194,7 +194,13 @@ sap.ui.define([
 				return iCursorX < mDropRect.width * 0.5 ? "before" : "after";
 			}
 
-			// for same size items the order matters
+			// for same size items - try to place the drag item on the position of the target item by comparing the indexes
+			// if items are from different containers, drag item will be new and should push other items
+			if (this.$dragItem[0].parentElement !== $target[0].parentElement) {
+				return "before";
+			}
+
+			// if drag item is originally after target item - push the target
 			if (this.dragFromIndex > $target.index()) {
 				return "before";
 			}
