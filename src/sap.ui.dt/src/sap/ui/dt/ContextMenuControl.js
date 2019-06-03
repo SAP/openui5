@@ -924,11 +924,15 @@ sap.ui.define([
 				return;
 			}
 			this.getPopover().detachAfterClose(this._handleAfterClose, this);
-			DOMUtil.focusWithoutScrolling(document.getElementById(this._oTarget.getAttribute("overlay")));
-
-			// Remember the last Source & Position for Opening in same place
-			this._oLastSourceOverlay = OverlayRegistry.getOverlay(this._oTarget.getAttribute("overlay"));
-			this._oLastSourceClientRects = this._oLastSourceOverlay.getDomRef().getClientRects();
+			var oNode = document.getElementById(this._oTarget.getAttribute("overlay"));
+			// Set focus & remember the last Source & Position for Opening in same place
+			if (oNode) {
+				DOMUtil.focusWithoutScrolling(oNode);
+				this._oLastSourceOverlay = OverlayRegistry.getOverlay(oNode.id);
+				this._oLastSourceClientRects = this._oLastSourceOverlay.getDomRef().getClientRects();
+			} else {
+				this._oLastSourceClientRects = null;
+			}
 			this._oLastPosition = {
 				x: this._oContextMenuPosition.x,
 				y: this._oContextMenuPosition.y

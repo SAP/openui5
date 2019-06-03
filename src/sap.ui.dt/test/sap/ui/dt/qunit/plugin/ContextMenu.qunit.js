@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/m/FlexBox",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/dt/DOMUtil"
 ], function (
 	ContextMenuPlugin,
 	OverlayRegistry,
@@ -33,7 +34,8 @@ sap.ui.define([
 	FlexBox,
 	VerticalLayout,
 	KeyCodes,
-	sinon
+	sinon,
+	DOMUtil
 ) {
 	"use strict";
 	var sandbox = sinon.sandbox.create();
@@ -177,6 +179,30 @@ sap.ui.define([
 				return openContextMenu.call(this, this.oButton2Overlay).then(function() {
 					assert.ok(oContextMenuControl.getPopover().isOpen(), "ContextMenu should be open");
 				});
+			}.bind(this));
+		});
+
+		QUnit.test("Closing the ContextMenu with existing caller-overlay", function (assert) {
+			return openContextMenu.call(this, this.oButton2Overlay).then(function() {
+				var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
+				var fnSpy = sinon.spy(DOMUtil, "focusWithoutScrolling");
+				QUnitUtils.triggerKeydown(oContextMenuControl.getPopover().getDomRef(), KeyCodes.ESCAPE);
+				this.clock.tick(400); //animation of the closing of the Popover
+				assert.strictEqual(fnSpy.callCount, 1, "the focus without scrolling function is called");
+				fnSpy.restore();
+			}.bind(this));
+		});
+
+		QUnit.test("Closing the ContextMenu with non-existing caller-overlay", function (assert) {
+			return openContextMenu.call(this, this.oButton2Overlay).then(function() {
+				var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
+				// clear the overlay-reference to simulate non-existing overlay
+				oContextMenuControl._oTarget.setAttribute("overlay", "");
+				var fnSpy = sinon.spy(DOMUtil, "focusWithoutScrolling");
+				QUnitUtils.triggerKeydown(oContextMenuControl.getPopover().getDomRef(), KeyCodes.ESCAPE);
+				this.clock.tick(400); //animation of the closing of the Popover
+				assert.strictEqual(fnSpy.callCount, 0, "the focus without scrolling function is not called");
+				fnSpy.restore();
 			}.bind(this));
 		});
 
