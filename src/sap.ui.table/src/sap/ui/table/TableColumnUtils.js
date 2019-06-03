@@ -50,14 +50,19 @@ sap.ui.define([
 		//  but not so important because the functions are anyhow private
 
 		/**
+		 * A Column info object.
+		 * @typedef sap.ui.table.ColumnInfo
+		 * @property {int} columnCount Number of columns in the columns aggregation.
+		 * @property {int} visibleColumnCount Number of columns which should be rendered.
+		 * @property {Object.<string, sap.ui.table.ColumnMapItem>} columnMap Map of detailed column information, keyed by column IDs
+		 * @private
+		 */
+
+		/**
 		 * Updates the column info object.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {ColumnInfo} oColumnInfo Column info object.
-		 * @type {Object} ColumnInfo
-		 * @type {int} ColumnInfo.columnCount Number of columns in the columns aggregation.
-		 * @type {int} ColumnInfo.visibleColumnCount Number of columns which should be rendered.
-		 * @type {ColumnMap} ColumnInfo.columnMap Map of detailed column information.
+		 * @param {sap.ui.table.ColumnInfo} oColumnInfo Column info object.
 		 * @private
 		 */
 		updateColumnInfo: function(oTable, oColumnInfo) {
@@ -68,7 +73,7 @@ sap.ui.define([
 		 * Collects and returns column info.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @returns {ColumnInfo} Map of detailed column information.
+		 * @returns {sap.ui.table.ColumnInfo} Map of detailed column information.
 		 * @private
 		 */
 		collectColumnInfo: function(oTable) {
@@ -80,27 +85,34 @@ sap.ui.define([
 		},
 
 		/**
+		 * @typedef sap.ui.table.ColumnMapItemLevelInfo
+		 * @property {sap.ui.table.Column[]} spannedColumns Array of columns which are spanned by the source column
+		 * @private
+		 */
+
+		/**
+		 * @typedef sap.ui.table.ColumnMapItemParents
+		 * @property {sap.ui.table.Column} column Column reference
+		 * @property {int} level Level as which the parent resides
+		 * @private
+		 */
+
+		/**
+		 * Object with information about a column.
+		 *
+		 * @typedef sap.ui.table.ColumnMapItem
+		 * @property {string} id Column ID
+		 * @property {sap.ui.table.Column} column Column instance
+		 * @property {sap.ui.table.ColumnMapItemLevelInfo[]} levelInfo Array of level information. Each index represents one level of headers
+		 * @property {sap.ui.table.ColumnMapItemParents[]} parents Array of parents of the source column
+		 * @private
+		 */
+
+		/**
 		 * Collects and returns information about the current column configuration of the table.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 *
-		 * @type {Object} ColumnMapItemLevelInfo
-		 * @type {sap.ui.table.Column[]} ColumnMapItemLevelInfo.spannedColumns Array of columns which are spanned by the source column
-		 *
-		 * @type {Object} ColumnMapItemParents
-		 * @type {sap.ui.table.Column} ColumnMapItemParents.column Column reference
-		 * @type {int} ColumnMapItemParents.level Level as which the parent resides
-		 *
-		 * @type {Object} ColumnMapItem
-		 * @type {string} oColumnMapItem.id Column ID
-		 * @type {sap.ui.table.Column} oColumnManItem.column Column instance
-		 * @type {ColumnMapItemLevelInfo[]} oColumnMapItem.levelInfo Array of level information. Each index represents one level of headers
-		 * @type {ColumnMapItemParents[]} oColumnMapItem.parents Array of parents of the source column
-		 *
-		 * @type {Object.<string, ColumnMapItem>} ColumnMap
-		 * @type {ColumnMapItem} ColumnMap.<columnID> Object with information about column where the column ID is the key
-		 *
-		 * @returns {ColumnMap} Map of column information where the key is the column ID,
+		 * @returns {Object.<string, sap.ui.table.ColumnMapItem>} Map of column information where the key is the column ID, and the value is a
 		 * @private
 		 */
 		getColumnMap: function(oTable) {
@@ -158,7 +170,7 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 * @param {string} sColumnId ID of the column.
-		 * @returns {ColumnMapItem | undefined} Column map item with detailed column information.
+		 * @returns {sap.ui.table.ColumnMapItem | undefined} Column map item with detailed column information.
 		 * @private
 		 */
 		getColumnMapItem: function(oTable, sColumnId) {
