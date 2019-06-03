@@ -8,9 +8,11 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper",
+	"sap/ui/model/odata/v4/lib/_Parser",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Log, SyncPromise, _Cache, _GroupLock, _Helper, _Requestor, TestUtils) {
+], function (jQuery, Log, SyncPromise, _Cache, _GroupLock, _Helper, _Parser, _Requestor,
+		TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -3423,10 +3425,11 @@ sap.ui.define([
 			oElement2 = {},
 			oElement3 = {},
 			sExclusiveFilter = bMultiple
-				? "not(EmployeeId eq '43' or EmployeeId eq '42')"
-				: "not(EmployeeId eq '42')",
+				? "not (EmployeeId eq '43' or EmployeeId eq '42')"
+				: "not (EmployeeId eq '42')",
 			oHelperMock = this.mock(_Helper),
 			sQueryString = "?foo=bar",
+			sResultingFilter,
 			mTypeForMetaPath = {};
 
 		oCache.bSortExpandSelect = "bSortExpandSelect";
@@ -3434,16 +3437,19 @@ sap.ui.define([
 		if (sFilter) {
 			oCache.mQueryOptions.$filter = sFilter;
 			sQueryString += "&$filter=(" + sFilter + ")";
+			sResultingFilter = "(" + sFilter + ") and " + sExclusiveFilter;
 			this.oRequestorMock.expects("buildQueryString")
 				.withExactArgs(oCache.sMetaPath, {
 						foo : "bar",
-						$filter : "(" + sFilter + ")and " + sExclusiveFilter
+						$filter : sResultingFilter
 					}, false, "bSortExpandSelect")
 				.returns("?foo=bar&$filter=...");
 		} else {
+			sResultingFilter = sExclusiveFilter;
 			this.mock(_Helper).expects("encode").withExactArgs(sExclusiveFilter, false)
 				.returns("~");
 		}
+		_Parser.parseFilter(sResultingFilter); // ensure that the parser accepts the result
 		oCache.sQueryString = sQueryString;
 		oCache.aElements.$created = bMultiple ? 4 : 1;
 		oCache.aElements.unshift(oElement0);
@@ -3491,8 +3497,9 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oElement0), oCache.sMetaPath,
 				sinon.match.same(mTypeForMetaPath))
 			.returns("EmployeeId eq '42'");
-		this.mock(_Helper).expects("encode").withExactArgs("not(EmployeeId eq '42')", false)
+		this.mock(_Helper).expects("encode").withExactArgs("not (EmployeeId eq '42')", false)
 			.returns("~");
+		_Parser.parseFilter("not (EmployeeId eq '42')");
 
 		// code under test
 		assert.strictEqual(oCache.getQueryString(), "?$filter=~");
