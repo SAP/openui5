@@ -196,6 +196,12 @@ sap.ui.define([
 			afterRedo: fnPressEventFiredCorrectlyAfterSplit
 		});
 
+	// The following tests were commented because they rely on "originalButtonId".
+	// Reuse of original button is dropped for now, because of 2 things:
+	// 1. the case is a bit more complex as it might seem to be since we have ManagedObjectModel in place
+	// and reuse has to be implemented in both change handler — Combine and Split, not only in Split;
+	// 2. it’s an additional optimization and can be postponed. Implementing this optimization later will not break existent changes.
+
 		// // Split action with button in dependents aggregation and custom data for it
 		// var fnConfirmButtonIsTakenOutSuccessfully = function (oUiComponent, oViewAfterAction, assert) {
 		// 	var aContent = oViewAfterAction.byId("toolbar").getContent();
