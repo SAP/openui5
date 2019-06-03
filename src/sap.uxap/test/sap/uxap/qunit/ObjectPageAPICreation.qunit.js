@@ -1420,32 +1420,38 @@ function (
 				this.appControl = new App();
 				this.appControl.addPage(this.oSampleView);
 				this.appControl.placeAt("qunit-fixture");
+
 				Core.applyChanges();
+				this.oObjectPage = this.oSampleView.byId("objectPage13");
+				this.oObjectPageClone = this.oObjectPage.clone();
 				done();
 			}.bind(this));
 		},
 		afterEach: function () {
 			this.appControl.destroy();
 			this.oSampleView.destroy();
+
+			this.oObjectPage.destroy();
+			this.oObjectPageClone.destroy();
 		}
 	});
 
 	QUnit.test("test ObjectPageHeader for ObjectPageLayout defined into XMLView", function (assert) {
-		var oObjectPage = this.oSampleView.byId("objectPage13");
-		var oHeader = oObjectPage.getHeaderTitle();
+		var oHeader = this.oObjectPage.getHeaderTitle(),
+			oNewHeader;
 
 		assert.ok(oHeader);
-		assert.equal(oObjectPage.getHeaderContent()[0].getText(), "Personal description");
+		assert.equal(this.oObjectPage.getHeaderContent()[0].getText(), "Personal description");
 
-		oObjectPage.destroyHeaderTitle();
-		oObjectPage.destroyHeaderContent();
-		assert.ok(!oObjectPage.getHeaderTitle());
+		this.oObjectPage.destroyHeaderTitle();
+		this.oObjectPage.destroyHeaderContent();
+		assert.ok(!this.oObjectPage.getHeaderTitle());
 
-		var oNewHeader = new ObjectPageHeader(this.oSampleView.createId("newHeader"));
-		oObjectPage.addHeaderContent(new Text(this.oSampleView.createId("newHeaderText"), {text: "test"}));
-		oObjectPage.setHeaderTitle(oNewHeader);
-		assert.ok(oObjectPage.getHeaderTitle());
-		assert.equal(oObjectPage.getHeaderContent()[0].getText(), "test");
+		oNewHeader = new ObjectPageHeader(this.oSampleView.createId("newHeader"));
+		this.oObjectPage.addHeaderContent(new Text(this.oSampleView.createId("newHeaderText"), {text: "test"}));
+		this.oObjectPage.setHeaderTitle(oNewHeader);
+		assert.ok(this.oObjectPage.getHeaderTitle());
+		assert.equal(this.oObjectPage.getHeaderContent()[0].getText(), "test");
 
 		Core.applyChanges();
 
@@ -1453,39 +1459,37 @@ function (
 	});
 
 	QUnit.test("Should not call ObjectPageHeader _toggleFocusableState in non DynamicPageTitle case", function (assert) {
-		var oObjectPage = this.oSampleView.byId("objectPage13"),
-			oHeader = oObjectPage.getHeaderTitle(),
-			oHeaderSpy = this.spy(oHeader, "_toggleFocusableState");
+
+		var oHeader = this.oObjectPage.getHeaderTitle(),
+		oHeaderSpy = this.spy(oHeader, "_toggleFocusableState");
 
 		// act
-		oObjectPage.setToggleHeaderOnTitleClick(false);
+		this.oObjectPage.setToggleHeaderOnTitleClick(false);
 
 		// assert
 		assert.strictEqual(oHeaderSpy.callCount, 0, "ObjectPageHeader _toggleFocusableState is not called");
 	});
 
 	QUnit.test("Should copy _headerContent hidden aggregation to the ObjectPage clone", function (assert) {
-		var oObjectPage = this.oSampleView.byId("objectPage13"),
-			oObjectPageClone = oObjectPage.clone(),
-			oHeaderContent = oObjectPage.getHeaderContent(),
-			oHeaderContentClone = oObjectPageClone.getHeaderContent();
+
+		var oHeaderContent = this.oObjectPage.getHeaderContent(),
+			oHeaderContentClone = this.oObjectPageClone.getHeaderContent();
 
 		assert.strictEqual(oHeaderContentClone !== null, true, "HeaderContent aggregation should exist in the clone");
 		assert.strictEqual(oHeaderContent.length, oHeaderContentClone.length, "HeaderContent and it's clone should have the same nubmer of elements");
 	});
 
 	QUnit.test("Should destroy cloned _headerContent hidden aggregation", function (assert) {
-		var oObjectPage = this.oSampleView.byId("objectPage13"),
-			oDestroySpy = sinon.spy(ManagedObject.prototype, "destroy"),
-			oObjectPageClone = oObjectPage.clone(),
-			aDestroyedObjectIds;
+		var oDestroySpy = sinon.spy(ManagedObject.prototype, "destroy"),
+			aDestroyedObjectIds,
+			sHeaderContentId = this.oObjectPageClone.getHeaderContent()[0].getId();
 
 		// act
-		oObjectPageClone.destroy();
+		this.oObjectPageClone.destroy();
 
 		// check
 		aDestroyedObjectIds = oDestroySpy.thisValues.map(function(x) {return x.getId();});
-		assert.ok(aDestroyedObjectIds.indexOf(oObjectPageClone.getId() + "-OPHeaderContent") > -1, "default headerContent clone is destroyed");
+		assert.ok(aDestroyedObjectIds.indexOf(sHeaderContentId) > -1, "default headerContent clone is destroyed");
 	});
 
 	QUnit.module("ObjectPage API", {
