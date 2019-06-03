@@ -1020,7 +1020,7 @@ sap.ui.define([
 			}),
 			oSPCGrid = oSPC._getGrid(),
 			// Expecting start/end information to look like this: "Start Time: *date here*; End Time: *date here*"
-			sExpectedInfo = oSPCGrid._oUnifiedRB.getText("CALENDAR_START_TIME") + ": " +
+			sAnnouncement = oSPCGrid._oUnifiedRB.getText("CALENDAR_START_TIME") + ": " +
 							oSPCGrid._oFormatAriaApp.format(oStartDate) + "; " +
 							oSPCGrid._oUnifiedRB.getText("CALENDAR_END_TIME") + ": " +
 							oSPCGrid._oFormatAriaApp.format(oEndDate) + "; ";
@@ -1029,9 +1029,9 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(jQuery("#test-appointment-Descr").html(), sExpectedInfo + oLegendItem.getText(),
+		assert.strictEqual(jQuery("#test-appointment-Descr").html(), sAnnouncement + oLegendItem.getText(),
 			"Information for appointment's start/end date + legend is present in the DOM");
-		assert.strictEqual(jQuery("#test-appointment2-Descr").html(), sExpectedInfo + oAppointmentWithNoCorresspondingLegendItem.getType(),
+		assert.strictEqual(jQuery("#test-appointment2-Descr").html(), sAnnouncement + oAppointmentWithNoCorresspondingLegendItem.getType(),
 			"When the appointment has no corresponding legend item, its own type goes to the aria");
 		assert.ok(oAppointment.$().attr("aria-labelledby") !== -1, "The appointment has reference to that information");
 
@@ -1040,7 +1040,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(jQuery("#test-appointment-Descr").html(), sExpectedInfo + oAppointment.getType(),
+		assert.strictEqual(jQuery("#test-appointment-Descr").html(), sAnnouncement + oAppointment.getType(),
 			"when the legend is destroyed, the aria contains the correct info");
 
 		// Clean up

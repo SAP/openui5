@@ -289,7 +289,8 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 			}
 
 			oRm.write("<span id=\"" + sId + "-Descr\" class=\"sapUiInvisibleText\">" +
-				oControl._getAppointmentStartEndInfo(oBlocker) + "</span>");
+				oControl._getAppointmentAnnouncementInfo(oBlocker) + "</span>");
+
 
 			oRm.write("</div>");
 
@@ -478,7 +479,6 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 				iAppTop = bAppStartIsOutsideVisibleStartHour ? 0 : oControl._calculateTopPosition(oAppStartDate),
 				iAppBottom = bAppEndIsOutsideVisibleEndHour ? 0 : oControl._calculateBottomPosition(oAppEndDate),
 				iAppChunkWidth = 100 / (iMaxLevel + 1),
-				sLegendItemType,
 				iStartDayDiff,
 				iEndDayDiff,
 				bArrowLeft,
@@ -659,12 +659,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 			// }
 
 			oRm.write("<span id=\"" + sId + "-Descr\" class=\"sapUiInvisibleText\">" +
-				oControl._getAppointmentStartEndInfo(oAppointment));
-			if (oControl._sLegendId) {
-				sLegendItemType = oControl._findCorrespondingLegendItem(oControl, oAppointment);
-				oRm.writeEscaped(sLegendItemType);
-			}
-			oRm.write("</span>");
+				oControl._getAppointmentAnnouncementInfo(oAppointment) + "</span>");
 
 			oRm.write("</div>");
 
