@@ -2484,7 +2484,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("request: $cached as groupId", function (assert) {
+	QUnit.test("request: $cached as groupId fails synchronously", function (assert) {
 		var oRequestor = _Requestor.create("/");
 
 		assert.throws(function () {

@@ -15,14 +15,8 @@ sap.ui.define([
 					level : Log.Level.ERROR,
 					message : "POST on 'SalesOrderList' failed; will be repeated automatically"
 				}],
-				oExpectedPatchLog0 = {
-					component : "sap.ui.model.odata.v4.ODataPropertyBinding",
-					level : Log.Level.ERROR,
-					message: "Failed to update path /SalesOrderList",
-					details : "Property `Note` value `RAISE_ERROR` not allowed!"
-				},
 				oExpectedPatchLog1 = {
-					component : "sap.ui.model.odata.v4.ODataPropertyBinding",
+					component : "sap.ui.model.odata.v4.Context",
 					level : Log.Level.ERROR,
 					message: "Failed to update path /SalesOrderList"
 //					details : "Error occurred while processing the request"
@@ -51,10 +45,20 @@ sap.ui.define([
 				When.onTheMessagePopover.close();
 				When.onTheMainPage.changeNoteInSalesOrders(0, "My patched Note");
 				Then.onTheMainPage.checkNote(0, "My patched Note");
-				aExpectedLogs.push(oExpectedPatchLog0);
+				aExpectedLogs.push({
+					component : "sap.ui.model.odata.v4.Context",
+					level : Log.Level.ERROR,
+					message: "Failed to update path /SalesOrderList",
+					details : "Property `Note` value `RAISE_ERROR` not allowed!"
+				});
 				if (sGroupId.includes("irect")) { // Note: better check group submit mode, but how?
 					//TODO avoid duplicate reporting in case PATCH is not retried
-					aExpectedLogs.push(oExpectedPatchLog0);
+					aExpectedLogs.push({
+						component : "sap.ui.model.odata.v4.ODataPropertyBinding",
+						level : Log.Level.ERROR,
+						message: "Failed to update path /SalesOrderList",
+						details : "Property `Note` value `RAISE_ERROR` not allowed!"
+					});
 				}
 
 				When.onTheMainPage.selectFirstSalesOrder();

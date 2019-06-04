@@ -1003,8 +1003,9 @@ sap.ui.define([
 	 *   Path of the property to update, relative to the entity
 	 * @param {any} vValue
 	 *   The new value
-	 * @param {function} fnErrorCallback
-	 *   A function which is called with an Error object each time a PATCH request fails
+	 * @param {function} [fnErrorCallback]
+	 *   A function which is called with an Error object each time a PATCH request fails; if it is
+	 *   missing, the PATCH is not retried, but this method's returned promise is rejected
 	 * @param {string} sEditUrl
 	 *   The edit URL for the entity which is updated via PATCH
 	 * @param {string} [sEntityPath]
@@ -1017,17 +1018,29 @@ sap.ui.define([
 	 *   The function is called just before a back-end request is sent for the first time.
 	 *   If no back-end request is needed, the function is not called.
 	 * @returns {Promise}
-	 *   A promise for the PATCH request (resolves with <code>undefined</code>)
+	 *   A promise for the PATCH request (resolves with <code>undefined</code>); rejected in case of
+	 *   cancellation or if no <code>fnErrorCallback</code> is given
 	 *
 	 * @public
 	 */
 	Cache.prototype.update = function (oGroupLock, sPropertyPath, vValue, fnErrorCallback, sEditUrl,
 			sEntityPath, sUnitOrCurrencyPath, bPatchWithoutSideEffects, fnPatchSent) {
-		var aPropertyPath = sPropertyPath.split("/"),
+		var oPromise,
+			aPropertyPath = sPropertyPath.split("/"),
 			aUnitOrCurrencyPath,
 			that = this;
 
-		return this.fetchValue(oGroupLock.getUnlockedCopy(), sEntityPath).then(function (oEntity) {
+		try {
+			oPromise = this.fetchValue(_GroupLock.$cached, sEntityPath);
+		} catch (oError) {
+			if (!oError.$cached) {
+				throw oError;
+			}
+			// Note: we need a unique "entity" instance to avoid merging of PATCH requests!
+			oPromise = SyncPromise.resolve({"@odata.etag" : "*"});
+		}
+
+		return oPromise.then(function (oEntity) {
 			var sFullPath = _Helper.buildPath(sEntityPath, sPropertyPath),
 				sGroupId = oGroupLock.getGroupId(),
 				vOldValue,
@@ -1092,7 +1105,7 @@ sap.ui.define([
 					var sRetryGroupId = sGroupId;
 
 					_Helper.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
-					if (oError.canceled) {
+					if (!fnErrorCallback || oError.canceled) {
 						throw oError;
 					}
 
@@ -1809,6 +1822,8 @@ sap.ui.define([
 	 *   A lock for the group ID
 	 * @param {function} [fnDataRequested]
 	 *   The function is called when the back-end requests have been sent.
+	 * @throws {Error}
+	 *   If group ID is '$cached'. The error has a property <code>$cached = true</code>
 	 *
 	 * @private
 	 */
@@ -1866,6 +1881,8 @@ sap.ui.define([
 	 * @returns {Promise}
 	 *   A promise resolving without a defined result, or <code>null</code> if a key property is
 	 *   missing
+	 * @throws {Error}
+	 *   If group ID is '$cached'. The error has a property <code>$cached = true</code>
 	 *
 	 * @public
 	 */
@@ -2030,6 +2047,8 @@ sap.ui.define([
 	 *   A promise to be resolved with the element.
 	 *   The promise is rejected if the cache is inactive (see {@link #setActive}) when the response
 	 *   arrives.
+	 * @throws {Error}
+	 *   If group ID is '$cached'. The error has a property <code>$cached = true</code>
 	 *
 	 * @public
 	 */
@@ -2130,7 +2149,8 @@ sap.ui.define([
 	 *   The promise is rejected if the cache is inactive (see {@link #setActive}) when the response
 	 *   arrives.
 	 * @throws {Error}
-	 *   If the cache is using POST but no POST request has been sent yet
+	 *   If the cache is using POST but no POST request has been sent yet, or if group ID is
+	 *   '$cached' (the error has a property <code>$cached = true</code> then)
 	 *
 	 * @public
 	 */
@@ -2262,7 +2282,8 @@ sap.ui.define([
 	 * @returns {Promise}
 	 *   A promise resolving with the updated data, or rejected with an error if loading of side
 	 *   effects fails.
-	 * @throws {Error} If the side effects require a $expand
+	 * @throws {Error} If the side effects require a $expand, or if group ID is '$cached' (the error
+	 *   has a property <code>$cached = true</code> then)
 	 *
 	 * @public
 	 */

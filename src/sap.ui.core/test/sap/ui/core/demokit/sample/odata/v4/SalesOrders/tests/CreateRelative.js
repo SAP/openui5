@@ -10,7 +10,7 @@ sap.ui.define([
 	return {
 		createRelative : function (Given, When, Then, sUIComponent) {
 			var oExpectedError = {
-					component : "sap.ui.model.odata.v4.ODataPropertyBinding",
+					component : "sap.ui.model.odata.v4.Context",
 					level : Log.Level.ERROR,
 					message : "Failed to update path /SalesOrderList"
 				},
