@@ -148,7 +148,7 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library', 'sap/ui/D
 		oRm.write(">");
 		oRm.write("</circle>");
 
-		oRm.write('<circle r="25%" stroke-width="10"');
+		oRm.write('<circle r="22%" stroke-width="10"');
 		oRm.addClass("sapMRbBInn");
 		oRm.writeClasses();
 		oRm.write(">");
