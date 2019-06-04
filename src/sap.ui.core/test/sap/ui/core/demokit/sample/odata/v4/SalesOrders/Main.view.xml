@@ -174,7 +174,7 @@
 				<Column width="5em">
 					<Text text="Currency"/>
 				</Column>
-				<Column demandPopin="true" minScreenWidth="Medium">
+				<Column demandPopin="true" minScreenWidth="Large">
 					<Text text="Note"/>
 				</Column>
 				<Column demandPopin="true" minScreenWidth="Large">
@@ -359,16 +359,16 @@
 					<Column>
 						<Text text="ProductID"/>
 					</Column>
-					<Column>
+					<Column demandPopin="true" minScreenWidth="Large">
 						<Text text="Product"/>
 					</Column>
-					<Column>
+					<Column demandPopin="true" minScreenWidth="XXLarge">
 						<Text text="Category"/>
 					</Column>
-					<Column>
+					<Column demandPopin="true" minScreenWidth="XXLarge">
 						<Text text="TypeCode"/>
 					</Column>
-					<Column>
+					<Column demandPopin="true" minScreenWidth="XXLarge">
 						<Text text="Supplier"/>
 					</Column>
 					<Column hAlign="Right">
@@ -380,10 +380,10 @@
 					<Column hAlign="Right">
 						<Text text="Gross Amount"/>
 					</Column>
-					<Column>
+					<Column demandPopin="true" minScreenWidth="XXLarge">
 						<Text text="Delivery Date"/>
 					</Column>
-					<Column>
+					<Column demandPopin="true" minScreenWidth="XXLarge">
 						<Text text="Note"/>
 					</Column>
 				</columns>
@@ -405,7 +405,8 @@
 				</ColumnListItem>
 			</Table>
 		</VBox>
-		<VBox visible="{ui>/bLineItemSelected}">
+		<VBox visible="{=${ui>/bLineItemSelected} &amp;&amp;
+				!${ui>/bSelectedSalesOrderItemTransient}}">
 			<form:SimpleForm binding="{SOITEM_2_PRODUCT/PRODUCT_2_BP}" editable="true"
 				id="PRODUCT_2_BP" title="Supplier Details" layout="ResponsiveGridLayout">
 				<Toolbar>

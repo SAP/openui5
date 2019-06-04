@@ -744,22 +744,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Initializes the OData list binding: Fires a 'change' event in case the binding has a
-	 * resolved path and its root binding is not suspended.
-	 *
-	 * @protected
-	 * @see sap.ui.model.Binding#initialize
-	 * @see #getRootBinding
-	 * @since 1.37.0
-	 */
-	// @override sap.ui.model.Binding#initialize
-	ODataParentBinding.prototype.initialize = function () {
-		if ((!this.bRelative || this.oContext) && !this.getRootBinding().isSuspended()) {
-			this._fireChange({reason : ChangeReason.Change});
-		}
-	};
-
-	/**
 	 * Tells whether implicit loading of side effects via PATCH requests is switched off for this
 	 * binding.
 	 *

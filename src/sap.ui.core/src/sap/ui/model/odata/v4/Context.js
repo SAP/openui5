@@ -253,6 +253,83 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the new current value and updates the cache.
+	 *
+	 * @param {string} sPath
+	 *   A relative path within the JSON structure
+	 * @param {any} vValue
+	 *   The new value which must be primitive
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group ID to be used for the PATCH request
+	 * @param {boolean} [bSkipRetry=false]
+	 *   Whether to skip retries of failed PATCH requests and instead fail accordingly, but still
+	 *   fire "patchSent" and "patchCompleted" events
+	 * @returns {Promise}
+	 *   A promise which is resolved without a result in case of success, or rejected with an
+	 *   instance of <code>Error</code> in case of failure
+	 *
+	 * @private
+	 */
+	Context.prototype.doSetProperty = function (sPath, vValue, oGroupLock, bSkipRetry) {
+		var oMetaModel = this.oModel.getMetaModel(),
+			that = this;
+
+		return oMetaModel.fetchUpdateData(sPath, this).then(function (oResult) {
+			return that.withCache(function (oCache, sCachePath, oBinding) {
+				// If a PATCH is merged into a POST request, firePatchSent is not called, thus
+				// don't call firePatchCompleted
+				var bFirePatchCompleted = false;
+
+				/*
+				 * Error callback to report the given error and fire "patchCompleted" accordingly.
+				 *
+				 * @param {Error} oError
+				 */
+				function errorCallback(oError) {
+					that.oModel.reportError(
+						"Failed to update path " + that.oModel.resolve(sPath, that),
+						sClassName, oError);
+					firePatchCompleted(false);
+				}
+
+				/*
+				 * Fire "patchCompleted" according to the given success flag, if needed.
+				 *
+				 * @param {boolean} bSuccess
+				 */
+				function firePatchCompleted(bSuccess) {
+					if (bFirePatchCompleted) {
+						oBinding.firePatchCompleted(bSuccess);
+						bFirePatchCompleted = false;
+					}
+				}
+
+				/*
+				 * Fire "patchSent" and remember to later fire "patchCompleted".
+				 */
+				function patchSent() {
+					bFirePatchCompleted = true;
+					oBinding.firePatchSent();
+				}
+
+				oGroupLock.setGroupId(oBinding.getUpdateGroupId());
+				// if request is canceled fnPatchSent and fnErrorCallback are not called and
+				// returned Promise is rejected -> no patch events
+				return oCache.update(oGroupLock, oResult.propertyPath, vValue,
+					bSkipRetry ? undefined : errorCallback, oResult.editUrl, sCachePath,
+					oMetaModel.getUnitOrCurrencyPath(that.oModel.resolve(sPath, that)),
+					oBinding.isPatchWithoutSideEffects(), patchSent
+				).then(function () {
+					firePatchCompleted(true);
+				}, function (oError) {
+					firePatchCompleted(false);
+					throw oError;
+				});
+			}, oResult.entityPath);
+		});
+	};
+
+	/**
 	 * Returns a promise for the "canonical path" of the entity for this context.
 	 *
 	 * @returns {sap.ui.base.SyncPromise}
@@ -804,6 +881,46 @@ sap.ui.define([
 				this.oBinding.requestSideEffects(this.getUpdateGroupId(), aPaths, this)
 			).then(function () {
 				// return undefined;
+			});
+	};
+
+	/**
+	 * Sets a new value for the property identified by the given path. The path is relative to this
+	 * context and is expected to point to a structural property with primitive type.
+	 *
+	 * @param {string} sPath
+	 *   A relative path within the JSON structure
+	 * @param {any} vValue
+	 *   The new value which must be primitive
+	 * @param {string} [sGroupId]
+	 *   The group ID to be used for the PATCH request; if not specified, the update group ID for
+	 *   the context's binding is used, see {@link sap.ui.model.odata.v4.ODataModel#bindList} and
+	 *   {@link sap.ui.model.odata.v4.ODataModel#bindContext}.
+	 * @returns {Promise}
+	 *   A promise which is resolved without a result in case of success, or rejected with an
+	 *   instance of <code>Error</code> in case of failure
+	 * @throws {Error}
+	 *   If the binding's root binding is suspended, for invalid group IDs, or if the new value is
+	 *   not primitive
+	 *
+	 * @public
+	 * @see #getProperty
+	 * @since 1.67.0
+	 */
+	Context.prototype.setProperty = function (sPath, vValue, sGroupId) {
+		var oGroupLock;
+
+		this.oBinding.checkSuspended();
+		this.oModel.checkGroupId(sGroupId);
+		if (typeof vValue === "function" || (vValue && typeof vValue === "object")) {
+			throw new Error("Not a primitive value");
+		}
+		sGroupId = sGroupId || this.getUpdateGroupId();
+		oGroupLock = this.oModel.lockGroup(sGroupId, true);
+
+		return this.doSetProperty(sPath, vValue, oGroupLock, true).catch(function (oError) {
+				oGroupLock.unlock(true);
+				throw oError;
 			});
 	};
 

@@ -287,6 +287,68 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	[false, true].forEach(function (bSuspended) {
+		QUnit.test("initialize: absolute, suspended = " + bSuspended, function (assert) {
+			var oBinding = this.bindList("/absolute"),
+				oBindingMock = this.mock(oBinding);
+
+			oBindingMock.expects("getRootBinding").withExactArgs().returns(oBinding);
+			oBindingMock.expects("isSuspended").withExactArgs().returns(bSuspended);
+
+			oBindingMock.expects("_fireRefresh")
+				.exactly(bSuspended ? 0 : 1)
+				.withExactArgs({reason : ChangeReason.Refresh});
+
+			// code under test
+			oBinding.initialize();
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("initialize: relative, unresolved", function (assert) {
+		var oBinding = this.bindList("relative");
+
+		this.mock(oBinding).expects("_fireRefresh").never();
+
+		// code under test
+		oBinding.initialize();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("initialize: absolute, with change reason", function (assert) {
+		var oBinding;
+
+		this.oModel.bAutoExpandSelect = true;
+		// mock fetchCache as cache creation becomes async otherwise
+		this.mock(ODataListBinding.prototype).expects("fetchCache").withExactArgs(undefined);
+		oBinding = this.bindList("/absolute");
+
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
+
+		// code under test
+		oBinding.initialize();
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bSuspended) {
+		QUnit.test("initialize: relative, resolved, bSuspended = " + bSuspended, function (assert) {
+			var oContext = Context.create(this.oModel, {}, "/EMPLOYEES"),
+				oBinding = this.bindList("relative", oContext),
+				oBindingMock = this.mock(oBinding),
+				oRootBinding = {isSuspended : function () {}};
+
+			oBindingMock.expects("getRootBinding").withExactArgs().returns(oRootBinding);
+			this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(bSuspended);
+			oBindingMock.expects("_fireRefresh")
+				.exactly(bSuspended ? 0 : 1)
+				.withExactArgs({reason : ChangeReason.Refresh});
+
+			// code under test
+			oBinding.initialize();
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("constructor", function (assert) {
 		var oBinding,
 			oContext = {},

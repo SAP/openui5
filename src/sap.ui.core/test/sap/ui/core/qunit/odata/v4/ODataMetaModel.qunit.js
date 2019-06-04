@@ -6325,5 +6325,54 @@ sap.ui.define([
 			});
 		});
 	}
+
+	//*********************************************************************************************
+	[{
+		mAnnotations : {},
+		sExpectedPath : undefined,
+		sPathInEntity : "Quantity"
+	}, {
+		mAnnotations : undefined,
+		sExpectedPath : undefined,
+		sPathInEntity : "@$ui5.foo"
+	}, {
+		mAnnotations : {
+			"@Org.OData.Measures.V1.Unit" : {$Path : "QuantityUnit"}
+		},
+		sExpectedPath : "QuantityUnit",
+		sPathInEntity : "Quantity"
+	}, {
+		mAnnotations : {
+			"@Org.OData.Measures.V1.ISOCurrency" : {$Path : "CurrencyCode"}
+		},
+		sExpectedPath : "CurrencyCode",
+		sPathInEntity : "GrossAmount"
+	}, {
+		mAnnotations : {
+			"@Org.OData.Measures.V1.Unit" : {$Path : "WeightUnit"}
+		},
+		sExpectedPath : "WeightUnit",
+		sPathInEntity : "ProductInfo/WeightMeasure"
+	}].forEach(function (oFixture, i) {
+		QUnit.test("getUnitOrCurrencyPath, " + i, function (assert) {
+			var oModel = new ODataModel({
+					serviceUrl : TestUtils.proxy(sSampleServiceUrl),
+					synchronizationMode : "None"
+				}),
+				oMetaModel = oModel.getMetaModel(),
+				sPropertyPath = "/SalesOrderList('42')/SO_2_SOITEM('10')/" + oFixture.sPathInEntity,
+				oMetaContext = {};
+
+			this.mock(oMetaModel).expects("getMetaContext").withExactArgs(sPropertyPath)
+				.returns(oMetaContext);
+			this.mock(oMetaModel).expects("getObject")
+				.withExactArgs("@", sinon.match.same(oMetaContext))
+				.returns(oFixture.mAnnotations);
+
+			// code under test
+			assert.strictEqual(oMetaModel.getUnitOrCurrencyPath(sPropertyPath),
+				oFixture.sExpectedPath);
+		});
+	});
 });
 //TODO getContext vs. createBindingContext; map of "singletons" vs. memory leak

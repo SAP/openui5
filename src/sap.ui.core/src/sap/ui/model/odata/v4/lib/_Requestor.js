@@ -887,7 +887,8 @@ sap.ui.define([
 	 * @param {string} sNewGroupId
 	 *   The ID of the group for the new request
 	 * @throws {Error}
-	 *   If the request could not be found
+	 *   If the request could not be found, or if the new group ID is '$cached' (the error has a
+	 *   property <code>$cached = true</code> then)
 	 *
 	 * @private
 	 */
@@ -920,6 +921,8 @@ sap.ui.define([
 	 *   The entity used to identify a request based on its "If-Match" header
 	 * @param {string} sNewGroupId
 	 *   The ID of the group for the new requests
+	 * @throws {Error}
+	 *   If group ID is '$cached'. The error has a property <code>$cached = true</code>
 	 *
 	 * @private
 	 */
@@ -1063,7 +1066,7 @@ sap.ui.define([
 		if (sGroupId === "$cached") {
 			oError = new Error("Unexpected request: " + sMethod + " " + sResourcePath);
 			oError.$cached = true;
-			throw oError;
+			throw oError; // fail synchronously!
 		}
 
 		if (oGroupLock) {

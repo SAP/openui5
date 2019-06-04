@@ -6055,10 +6055,9 @@ sap.ui.define([
 			return that.checkValueState(assert, "quantity", "Warning",
 				"Enter a minimum quantity of 2");
 		}).then(function () {
-			that.oLogMock.expects("error").twice() // TODO twice?
-				.withExactArgs("Failed to update path /BusinessPartnerList('1')/BP_2_SO('42')"
-					+ "/SO_2_SOITEM('0010')/Quantity",
-					sinon.match(oError.message), "sap.ui.model.odata.v4.ODataPropertyBinding");
+			that.oLogMock.expects("error").twice() // Note: twice, w/ different class name :-(
+				.withArgs("Failed to update path /BusinessPartnerList('1')/BP_2_SO('42')"
+					+ "/SO_2_SOITEM('0010')/Quantity", sinon.match(oError.message));
 			that.expectChange("quantity", "0.000")
 				.expectRequest({
 						method : "PATCH",
@@ -6315,11 +6314,11 @@ sap.ui.define([
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to update path /SalesOrderList('41')/GrossAmount",
 					sinon.match("Value 4.22 not allowed"),
-					"sap.ui.model.odata.v4.ODataPropertyBinding");
+					"sap.ui.model.odata.v4.Context");
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to update path /SalesOrderList('42')/GrossAmount",
 					sinon.match("Value 4.22 not allowed"),
-					"sap.ui.model.odata.v4.ODataPropertyBinding");
+					"sap.ui.model.odata.v4.Context");
 
 			// Code under test
 			oBindingAmount0.setValue("4.11");
@@ -7367,6 +7366,7 @@ sap.ui.define([
 	// Scenario: Call a bound action on a collection and check that return value context has right
 	// path and messages are reported as expected. Refreshing the return value context updates also
 	// messages properly. (CPOUI5UISERVICESV3-1674)
+	// Return value context can be used with v4.Context#setProperty (CPOUI5UISERVICESV3-1874).
 	QUnit.test("Bound action on collection", function (assert) {
 		var oExecutePromise,
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
@@ -7445,7 +7445,7 @@ sap.ui.define([
 					+ "$select=ArtistID,IsActiveEntity,Messages,Name", {
 					"@odata.etag" : "ETagAfterRefresh",
 					"ArtistID" : "ABC",
-					"IsActiveEntity" : true,
+					"IsActiveEntity" : false,
 					"Messages" : [{
 						"code" : "23",
 						"message" : "Just Another Message",
@@ -7469,6 +7469,42 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			return that.checkValueState(assert, "nameCreated", "Success", "Just Another Message");
+		}).then(function () {
+			that.expectChange("nameCreated", "TAFKAP")
+				.expectRequest({
+					headers : {"If-Match" : "ETagAfterRefresh"},
+					method : "PATCH",
+					payload : {"Name" : "TAFKAP"},
+					url : "Artists(ArtistID='ABC',IsActiveEntity=false)"
+				}, {
+					// "@odata.etag" : "ETagAfterPatch",
+					"ArtistID" : "ABC",
+					"IsActiveEntity" : false,
+					"Messages" : [{
+						"code" : "CODE",
+						"message" : "What a nice acronym!",
+						"numericSeverity" : 1,
+						"transition" : false,
+						"target" : "Name"
+					}],
+					"Name" : "T.A.F.K.A.P."
+				})
+				.expectChange("nameCreated", "T.A.F.K.A.P.")
+				.expectMessages([{
+					code : "CODE",
+					message : "What a nice acronym!",
+					target : "/Artists(ArtistID='ABC',IsActiveEntity=false)/Name",
+					persistent : false,
+					type : "Success"
+				}]);
+
+			return Promise.all([
+				// code under test
+				oReturnValueContext.setProperty("Name", "TAFKAP"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			return that.checkValueState(assert, "nameCreated", "Success", "What a nice acronym!");
 		});
 	});
 
@@ -17114,10 +17150,9 @@ sap.ui.define([
 						"target" : "Name"
 					}]
 				};
-				that.oLogMock.expects("error")
-					.withExactArgs("Failed to update path /SalesOrderList('0500000000')/SO_2_BP/"
-							+ "BP_2_PRODUCT('1')/Name", sinon.match(oError.message),
-						"sap.ui.model.odata.v4.ODataPropertyBinding").twice();
+				that.oLogMock.expects("error").twice() // Note: twice, w/ different class name :-(
+					.withArgs("Failed to update path /SalesOrderList('0500000000')/SO_2_BP/"
+						+ "BP_2_PRODUCT('1')/Name", sinon.match(oError.message));
 				that.expectRequest({
 						method : "PATCH",
 						url : "ProductList('1')",
@@ -18418,6 +18453,112 @@ sap.ui.define([
 				oCreatedContext.refresh("$auto", true),
 				that.waitForChanges(assert)
 			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: View contains a form for an entity. Context#setProperty is called. Property binding
+	// is updated and PATCH request is sent via update group ID. Server returns a bound message.
+	// JIRA: CPOUI5UISERVICESV3-1790
+	QUnit.test("Context#setProperty: read/write", function (assert) {
+		var oModel = createTeaBusiModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			oPromise,
+			sView = '\
+<FlexBox id="form" binding="{/TEAMS(\'TEAM_01\')}">\
+	<Text id="id" text="{Team_Id}" />\
+	<Input id="name" value="{Name}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("TEAMS('TEAM_01')?$select=Name,Team_Id", {
+				"Name" : "Team #1",
+				"Team_Id" : "TEAM_01"
+			})
+			.expectChange("id", "TEAM_01")
+			.expectChange("name", "Team #1");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("form").getObjectBinding().getBoundContext();
+
+			that.expectChange("name", "Best Team Ever");
+
+			// code under test
+			oPromise = oContext.setProperty("Name", "Best Team Ever");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "PATCH",
+					payload : {"Name" : "Best Team Ever"},
+					url : "TEAMS('TEAM_01')"
+				}, {
+					"Name" : "Best Team Ever",
+					"Team_Id" : "TEAM_01",
+					"__CT__FAKE__Message" : {
+						"__FAKE__Messages" : [{
+							"code" : "CODE",
+							"message" : "What a stupid name!",
+							"numericSeverity" : 3,
+							"target" : "Name",
+							"transition" : false
+						}]
+					}
+				}).expectMessages([{
+					"code" : "CODE",
+					"message" : "What a stupid name!",
+					"persistent" : false,
+					"target" : "/TEAMS('TEAM_01')/Name",
+					"type" : "Warning"
+				}]);
+
+			return Promise.all([
+				that.oModel.submitBatch("update"),
+				oPromise,
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			return that.checkValueState(assert, "name", "Warning", "What a stupid name!");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create a context binding for an entity and call setProperty at its bound context
+	// w/o reading before. A PATCH request for the property should be sent.
+	// JIRA: CPOUI5UISERVICESV3-1790
+	QUnit.test("Context#setProperty: write only", function (assert) {
+		var iNoPatchCompleted = 0,
+			iNoPatchSent = 0,
+			that = this;
+
+		return this.createView(assert).then(function () {
+			var oContextBinding = that.oModel.bindContext("/TEAMS('TEAM_01')"),
+				oContext = oContextBinding.getBoundContext();
+
+			oContextBinding.attachPatchCompleted(function (oEvent) {
+				iNoPatchCompleted += 1;
+				assert.strictEqual(oEvent.getParameter("success"), true);
+			});
+			oContextBinding.attachPatchSent(function () {
+				iNoPatchSent += 1;
+			});
+			that.expectRequest({
+					headers : {"If-Match" : "*"},
+					method : "PATCH",
+					payload : {"Name" : "Best Team Ever"},
+					url : "TEAMS('TEAM_01')"
+				});
+
+			return Promise.all([
+				// code under test
+				oContext.setProperty("Name", "Best Team Ever"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.strictEqual(iNoPatchCompleted, 1);
+			assert.strictEqual(iNoPatchSent, 1);
 		});
 	});
 });

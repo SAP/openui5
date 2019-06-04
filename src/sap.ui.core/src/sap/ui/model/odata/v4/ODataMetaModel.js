@@ -2066,6 +2066,27 @@ sap.ui.define([
 	ODataMetaModel.prototype.getUI5Type = _Helper.createGetMethod("fetchUI5Type", true);
 
 	/**
+	 * Returns the path of the unit or currency associated with the property identified by the given
+	 * path.
+	 *
+	 * @param {string} sPropertyPath
+	 *   An absolute path to an OData property within the OData data model
+	 * @returns {string}
+	 *   The path of the property's unit or currency relative to the property's entity, or
+	 *   <code>undefined</code> in case the property has no associated unit or currency
+	 *
+	 * @private
+	 */
+	ODataMetaModel.prototype.getUnitOrCurrencyPath = function (sPropertyPath) {
+		var mAnnotations = this.getObject("@", this.getMetaContext(sPropertyPath)),
+			oMeasureAnnotation = mAnnotations
+				&& (mAnnotations["@Org.OData.Measures.V1.Unit"]
+					|| mAnnotations["@Org.OData.Measures.V1.ISOCurrency"]);
+
+		return oMeasureAnnotation && oMeasureAnnotation.$Path;
+	};
+
+	/**
 	 * Determines which type of value list exists for the given property.
 	 *
 	 * @param {string} sPropertyPath

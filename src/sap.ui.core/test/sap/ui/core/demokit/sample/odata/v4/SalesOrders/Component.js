@@ -62,6 +62,7 @@ sap.ui.define([
 							bRealOData : TestUtils.isRealOData(),
 							bSalesOrderSelected : false,
 							bScheduleSelected : false,
+							bSelectedSalesOrderItemTransient : false,
 							bSelectedSalesOrderTransient : false,
 							bSortGrossAmountDescending : undefined,
 							bSortSalesOrderIDDescending : undefined,
