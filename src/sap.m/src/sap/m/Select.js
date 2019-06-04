@@ -2773,14 +2773,15 @@ function(
 		 * @returns {Object} The <code>sap.m.Select</code> accessibility information
 		 */
 		Select.prototype.getAccessibilityInfo = function() {
-			var oInfo = {
-				role: this.getRenderer().getAriaRole(this),
-				focusable: this.getEnabled(),
-				enabled: this.getEnabled(),
-				readonly: this.getEnabled() && !this.getEditable()
-			};
+			var bIconOnly = this.getType() === "IconOnly",
+				oInfo = {
+					role: this.getRenderer().getAriaRole(this),
+					focusable: this.getEnabled(),
+					enabled: this.getEnabled(),
+					readonly: bIconOnly ? undefined : this.getEnabled() && !this.getEditable()
+				};
 
-			if (this.getType() === "IconOnly") {
+			if (bIconOnly) {
 				var sDesc = this.getTooltip_AsString();
 				if (!sDesc) {
 					var oIconInfo = IconPool.getIconInfo(this.getIcon());
