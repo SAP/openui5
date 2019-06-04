@@ -4,6 +4,7 @@
 
 // Provides the base class for all controls and UI elements.
 sap.ui.define([
+	'../base/DataType',
 	'../base/Object',
 	'../base/ManagedObject',
 	'../base/ManagedObjectRegistry',
@@ -12,9 +13,11 @@ sap.ui.define([
 	"sap/ui/performance/trace/Interaction",
 	"sap/base/Log",
 	"sap/base/assert",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/events/F6Navigation"
 ],
 	function(
+		DataType,
 		BaseObject,
 		ManagedObject,
 		ManagedObjectRegistry,
@@ -23,7 +26,8 @@ sap.ui.define([
 		Interaction,
 		Log,
 		assert,
-		jQuery
+		jQuery,
+		F6Navigation
 	) {
 	"use strict";
 
@@ -514,17 +518,6 @@ sap.ui.define([
 		this.data = noCustomDataAfterDestroy;
 	};
 
-	function noCustomDataAfterDestroy() {
-		// Report and ignore only write calls; read and remove calls are well-behaving
-		var argLength = arguments.length;
-		if ( argLength === 1 && arguments[0] !== null && typeof arguments[0] == "object"
-			 || argLength > 1 && argLength < 4 && arguments[1] !== null ) {
-			Log.error("Cannot create custom data on an already destroyed element '" + this + "'");
-			return this;
-		}
-		return Element.prototype.data.apply(this, arguments);
-	}
-
 	/*
 	 * Class <code>sap.ui.core.Element</code> intercepts fireEvent calls to enforce an 'id' property
 	 * and to notify others like interaction detection etc.
@@ -894,150 +887,289 @@ sap.ui.define([
 	 */
 	// sap.ui.core.Element.prototype.getMetadata = sap.ui.base.Object.ABSTRACT_METHOD;
 
-	//data container
+	// ---- data container ----------------------------------
 
-	(function(){
+	// Note: the real class documentation can be found in sap/ui/core/CustomData so that the right module is
+	// shown in the API reference. A reduced copy of the class documentation and the documentation of the
+	// settings has to provided here, close to the runtime metadata to allow deriving the CustomData.control file.
+	/**
+	 * @class
+	 * Contains a single key/value pair of custom data attached to an <code>Element</code>.
+	 * @public
+	 * @alias sap.ui.core.CustomData
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 * @synthetic
+	 */
+	var CustomData = Element.extend("sap.ui.core.CustomData", /** @lends sap.ui.core.CustomData.prototype */ { metadata : {
 
-		/**
-		 * Returns the data object with the given key
-		 */
-		var getDataObject = function(element, key) {
-			var aData = element.getAggregation("customData");
+		library : "sap.ui.core",
+		properties : {
+
+			/**
+			 * The key of the data in this CustomData object.
+			 * When the data is just stored, it can be any string, but when it is to be written to HTML
+			 * (<code>writeToDom == true</code>) then it must also be a valid HTML attribute name.
+			 * It must conform to the {@link sap.ui.core.ID} type and may contain no colon. To avoid collisions,
+			 * it also may not start with "sap-ui". When written to HTML, the key is prefixed with "data-".
+			 * If any restriction is violated, a warning will be logged and nothing will be written to the DOM.
+			 */
+			key : {type : "string", group : "Data", defaultValue : null},
+
+			/**
+			 * The data stored in this CustomData object.
+			 * When the data is just stored, it can be any JS type, but when it is to be written to HTML
+			 * (<code>writeToDom == true</code>) then it must be a string. If this restriction is violated,
+			 * a warning will be logged and nothing will be written to the DOM.
+			 */
+			value : {type : "any", group : "Data", defaultValue : null},
+
+			/**
+			 * If set to "true" and the value is of type "string" and the key conforms to the documented restrictions,
+			 * this custom data is written to the HTML root element of the control as a "data-*" attribute.
+			 * If the key is "abc" and the value is "cde", the HTML will look as follows:
+			 *
+			 * &lt;SomeTag ... data-abc="cde" ... &gt;
+			 *
+			 * Thus the application can provide stable attributes by data binding which can be used for styling or
+			 * identification purposes.
+			 *
+			 * <b>ATTENTION:</b> use carefully to not create huge attributes or a large number of them.
+			 * @since 1.9.0
+			 */
+			writeToDom : {type : "boolean", group : "Data", defaultValue : false}
+		},
+		designtime: "sap/ui/core/designtime/CustomData.designtime"
+	}});
+
+	CustomData.prototype.setValue = function(oValue) {
+		this.setProperty("value", oValue, true);
+
+		var oControl = this.getParent();
+		if (oControl && oControl.getDomRef()) {
+			var oCheckResult = this._checkWriteToDom(oControl);
+			if (oCheckResult) {
+				// update DOM directly
+				oControl.$().attr(oCheckResult.key, oCheckResult.value);
+			}
+		}
+		return this;
+	};
+
+	CustomData.prototype._checkWriteToDom = function(oRelated) {
+		if (!this.getWriteToDom()) {
+			return null;
+		}
+
+		var key = this.getKey();
+		var value = this.getValue();
+
+		function error(reason) {
+			Log.error("CustomData with key " + key + " should be written to HTML of " + oRelated + " but " + reason);
+			return null;
+		}
+
+		if (typeof value != "string") {
+			return error("the value is not a string.");
+		}
+
+		var ID = DataType.getType("sap.ui.core.ID");
+
+		if (!(ID.isValid(key)) || (key.indexOf(":") != -1)) {
+			return error("the key is not valid (must be a valid sap.ui.core.ID without any colon).");
+		}
+
+		if (key == F6Navigation.fastNavigationKey) {
+			value = /^\s*(x|true)\s*$/i.test(value) ? "true" : "false"; // normalize values
+		} else if (key.indexOf("sap-ui") == 0) {
+			return error("the key is not valid (may not start with 'sap-ui').");
+		}
+
+		return {key: "data-" + key, value: value};
+
+	};
+
+	/**
+	 * Returns the data object with the given key
+	 */
+	function findCustomData(element, key) {
+		var aData = element.getAggregation("customData");
+		if (aData) {
+			for (var i = 0; i < aData.length; i++) {
+				if (aData[i].getKey() == key) {
+					return aData[i];
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Contains the data modification logic
+	 */
+	function setCustomData(element, key, value, writeToDom) {
+
+		// DELETE
+		if (value === null) { // delete this property
+			var dataObject = findCustomData(element, key);
+			if (!dataObject) {
+				return;
+			}
+
+			var dataCount = element.getAggregation("customData").length;
+			if (dataCount == 1) {
+				element.destroyAggregation("customData", true); // destroy if there is no other data
+			} else {
+				element.removeAggregation("customData", dataObject, true);
+				dataObject.destroy();
+			}
+
+			// ADD or CHANGE
+		} else {
+			var dataObject = findCustomData(element, key);
+			if (dataObject) {
+				dataObject.setValue(value);
+				dataObject.setWriteToDom(writeToDom);
+			} else {
+				var dataObject = new CustomData({key:key,value:value, writeToDom:writeToDom});
+				element.addAggregation("customData", dataObject, true);
+			}
+		}
+	}
+
+	/**
+	 * Retrieves, modifies or removes custom data attached to an <code>Element</code>.
+	 *
+	 * Usage:
+	 * <pre>
+	 *    data("myKey", myData)
+	 * </pre>
+	 * Attaches <code>myData</code> (which can be any JS data type, e.g. a number, a string, an object, or a function)
+	 * to this element, under the given key "myKey". If the key already exists,the value will be updated.
+	 *
+	 * <pre>
+	 *    data("myKey", myData, writeToDom)
+	 * </pre>
+	 * Attaches <code>myData</code> to this element, under the given key "myKey" and (if <code>writeToDom</code>
+	 * is true) writes key and value to the HTML. If the key already exists,the value will be updated.
+	 * While <code>oValue</code> can be any JS data type to be attached, it must be a string to be also
+	 * written to DOM. The key must also be a valid HTML attribute name (it must conform to <code>sap.ui.core.ID</code>
+	 * and may contain no colon) and may not start with "sap-ui". When written to HTML, the key is prefixed with "data-".
+	 *
+	 * <pre>
+	 *    data("myKey")
+	 * </pre>
+	 * Retrieves whatever data has been attached to this element (using the key "myKey") before
+	 *
+	 * <pre>
+	 *    data("myKey", null)
+	 * </pre>
+	 * Removes whatever data has been attached to this element (using the key "myKey") before
+	 *
+	 * <pre>
+	 *    data(null)
+	 * </pre>
+	 * Removes all data
+	 *
+	 * <pre>
+	 *    data()
+	 * </pre>
+	 * Returns all data, as a map
+	 *
+	 * <pre>
+	 *    data({"myKey1": myData, "myKey2": null})
+	 * </pre>
+	 * Attaches <code>myData</code> (using the key "myKey1" and removes any data that had been
+	 * attached for key "myKey2"
+	 *
+	 * @see See chapter {@link topic:91f0c3ee6f4d1014b6dd926db0e91070 Custom Data - Attaching Data Objects to Controls}
+	 *    in the documentation.
+	 *
+	 * @param {string|Object<string,any>|null} [vKeyOrData]
+	 *     Single key to set or remove, or an object with key/value pairs or <code>null</code> to remove
+	 *     all custom data
+	 * @param {string|any} [vValue]
+	 *     Value to set or <code>null</code> to remove the corresponding custom data
+	 * @param {boolean} [bWriteToDom=false]
+	 *     Whether this custom data entry should be written to the DOM during rendering
+	 * @returns {Object<string,any>|any|null|sap.ui.core.Element}
+	 *     A map with all custom data, a custom data value for a single specified key or <code>null</code>
+	 *     when no custom data exists for such a key or this element when custom data was to be removed.
+	 * @throws {TypeError}
+	 *     When the type of the given parameters doesn't match any of the documented usages
+	 * @public
+	 */
+	Element.prototype.data = function() {
+		var argLength = arguments.length;
+
+		if (argLength == 0) {                    // return ALL data as a map
+			var aData = this.getAggregation("customData"),
+				result = {};
 			if (aData) {
 				for (var i = 0; i < aData.length; i++) {
-					if (aData[i].getKey() == key) {
-						return aData[i];
-					}
+					result[aData[i].getKey()] = aData[i].getValue();
 				}
 			}
-			return null;
-		};
+			return result;
 
-		/**
-		 * Contains the data modification logic
-		 */
-		var setData = function(element, key, value, writeToDom) {
+		} else if (argLength == 1) {
+			var arg0 = arguments[0];
 
-			// DELETE
-			if (value === null) { // delete this property
-				var dataObject = getDataObject(element, key);
-				if (!dataObject) {
-					return;
-				}
-
-				var dataCount = element.getAggregation("customData").length;
-				if (dataCount == 1) {
-					element.destroyAggregation("customData", true); // destroy if there is no other data
-				} else {
-					element.removeAggregation("customData", dataObject, true);
-					dataObject.destroy();
-				}
-
-				// ADD or CHANGE
-			} else {
-				var CustomData = sap.ui.requireSync('sap/ui/core/CustomData');
-				var dataObject = getDataObject(element, key);
-				if (dataObject) {
-					dataObject.setValue(value);
-					dataObject.setWriteToDom(writeToDom);
-				} else {
-					var dataObject = new CustomData({key:key,value:value, writeToDom:writeToDom});
-					element.addAggregation("customData", dataObject, true);
-				}
-			}
-		};
-
-		/**
-		 * Attaches custom data to an <code>Element</code> or retrieves attached data.
-		 *
-		 * Usage:
-		 * <pre>
-		 *    data("myKey", myData)
-		 * </pre>
-		 * Attaches <code>myData</code> (which can be any JS data type, e.g. a number, a string, an object, or a function)
-		 * to this element, under the given key "myKey". If the key already exists,the value will be updated.
-		 *
-		 * <pre>
-		 *    data("myKey", myData, writeToDom)
-		 * </pre>
-		 * Attaches <code>myData</code> to this element, under the given key "myKey" and (if <code>writeToDom</code>
-		 * is true) writes key and value to the HTML. If the key already exists,the value will be updated.
-		 * While <code>oValue</code> can be any JS data type to be attached, it must be a string to be also
-		 * written to DOM. The key must also be a valid HTML attribute name (it must conform to <code>sap.ui.core.ID</code>
-		 * and may contain no colon) and may not start with "sap-ui". When written to HTML, the key is prefixed with "data-".
-		 *
-		 * <pre>
-		 *    data("myKey")
-		 * </pre>
-		 * Retrieves whatever data has been attached to this element (using the key "myKey") before
-		 *
-		 * <pre>
-		 *    data("myKey", null)
-		 * </pre>
-		 * Removes whatever data has been attached to this element (using the key "myKey") before
-		 *
-		 * <pre>
-		 *    data(null)
-		 * </pre>
-		 * Removes all data
-		 *
-		 * <pre>
-		 *    data()
-		 * </pre>
-		 * Returns all data, as a map
-		 *
-		 * @public
-		 */
-		Element.prototype.data = function() {
-			var argLength = arguments.length;
-
-			if (argLength == 0) {                    // return ALL data as a map
-				var aData = this.getAggregation("customData"),
-					result = {};
-				if (aData) {
-					for (var i = 0; i < aData.length; i++) {
-						result[aData[i].getKey()] = aData[i].getValue();
-					}
-				}
-				return result;
-
-			} else if (argLength == 1) {
-				var arg0 = arguments[0];
-
-				if (arg0 === null) {                  // delete ALL data
-					this.destroyAggregation("customData", true); // delete whole map
-					return this;
-
-				} else if (typeof arg0 == "string") { // return requested data element
-					var dataObject = getDataObject(this, arg0);
-					return dataObject ? dataObject.getValue() : null;
-
-				} else if (typeof arg0 == "object") { // should be a map - set multiple data elements
-					for (var key in arg0) { // TODO: improve performance and avoid executing setData multiple times
-						setData(this, key, arg0[key]);
-					}
-					return this;
-
-				} else {
-					// error, illegal argument
-					throw new Error("When data() is called with one argument, this argument must be a string, an object or null, but is " + (typeof arg0) + ":" + arg0 + " (on UI Element with ID '" + this.getId() + "')");
-				}
-
-			} else if (argLength == 2) {            // set or remove one data element
-				setData(this, arguments[0], arguments[1]);
+			if (arg0 === null) {                  // delete ALL data
+				this.destroyAggregation("customData", true); // delete whole map
 				return this;
 
-			} else if (argLength == 3) {            // set or remove one data element
-				setData(this, arguments[0], arguments[1], arguments[2]);
+			} else if (typeof arg0 == "string") { // return requested data element
+				var dataObject = findCustomData(this, arg0);
+				return dataObject ? dataObject.getValue() : null;
+
+			} else if (typeof arg0 == "object") { // should be a map - set multiple data elements
+				for (var key in arg0) { // TODO: improve performance and avoid executing setData multiple times
+					setCustomData(this, key, arg0[key]);
+				}
 				return this;
 
 			} else {
-				// error, illegal arguments
-				throw new Error("data() may only be called with 0-3 arguments (on UI Element with ID '" + this.getId() + "')");
+				// error, illegal argument
+				throw new TypeError("When data() is called with one argument, this argument must be a string, an object or null, but is " + (typeof arg0) + ":" + arg0 + " (on UI Element with ID '" + this.getId() + "')");
 			}
-		};
 
-	})();
+		} else if (argLength == 2) {            // set or remove one data element
+			setCustomData(this, arguments[0], arguments[1]);
+			return this;
+
+		} else if (argLength == 3) {            // set or remove one data element
+			setCustomData(this, arguments[0], arguments[1], arguments[2]);
+			return this;
+
+		} else {
+			// error, illegal arguments
+			throw new TypeError("data() may only be called with 0-3 arguments (on UI Element with ID '" + this.getId() + "')");
+		}
+	};
+
+	/**
+	 * Expose CustomData class privately
+	 * @private
+	 */
+	Element._CustomData = CustomData;
+
+	/*
+	 * Alternative implementation of <code>Element#data</code> which is applied after an element has been
+	 * destroyed. It prevents the creation of new CustomData instances.
+	 *
+	 * See {@link sap.ui.core.Element.prototype.destroy}
+	 */
+	function noCustomDataAfterDestroy() {
+		// Report and ignore only write calls; read and remove calls are well-behaving
+		var argLength = arguments.length;
+		if ( argLength === 1 && arguments[0] !== null && typeof arguments[0] == "object"
+			 || argLength > 1 && argLength < 4 && arguments[1] !== null ) {
+			Log.error("Cannot create custom data on an already destroyed element '" + this + "'");
+			return this;
+		}
+		return Element.prototype.data.apply(this, arguments);
+	}
+
 
 	/**
 	 * Create a clone of this Element.
