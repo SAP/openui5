@@ -2451,15 +2451,27 @@ sap.ui.define([
 	};
 
 	/**
-	 * @callback appointmentsSorterCallback
-	 * @param {sap.ui.unified.CalendarAppointment} appointment1
-	 * @param {sap.ui.unified.CalendarAppointment} appointment2
+	 * A comparison function for appointments.
+	 *
+	 * Used by the {@link sap.m.PlanningCalendar PlanningCalendar} to sort appointments in a timeline.
+	 *
+	 * @callback sap.m.PlanningCalendar.appointmentsSorterCallback
+	 * @param {sap.ui.unified.CalendarAppointment} appointment1 First appointment to compare
+	 * @param {sap.ui.unified.CalendarAppointment} appointment2 Second appointment to compare
+	 * @returns {int} A negative value to indicate that <code>appointment1</code> should be sorted before
+	 *    <code>appointment2</code>, a positive value to indicate that <code>appointment1</code> should be sorted
+	 *    after <code>appointment2</code>; a value of 0 if the relative order of <code>appointment1</code> and
+	 *    <code>appointment2</code> should be preserved by the sort. <br>
+	 *
+	 *    <b>Note:</b> The behavior for a return value of 0 cannot be guaranteed, it depends on the browser's
+	 *    implementation of <code>Array.prototype.sort</code>. In modern browsers, it works as described above.
+	 * @public
 	 */
 
 	/**
 	 * Setter for custom sorting of appointments. If not used, the appointments will be sorted according to their duration vertically.
 	 * For example, the start time and order to the X axis won't change.
-	 * @param {appointmentsSorterCallback} fnSorter
+	 * @param {sap.m.PlanningCalendar.appointmentsSorterCallback} fnSorter
 	 * @since 1.54
 	 * @returns {sap.m.PlanningCalendar} <code>this</code> for chaining
 	 * @public
@@ -2481,7 +2493,7 @@ sap.ui.define([
 	/**
 	 * Getter for custom appointments sorter (if any).
 	 * @since 1.54
-	 * @returns {appointmentsSorterCallback}
+	 * @returns {sap.m.PlanningCalendar.appointmentsSorterCallback}
 	 * @public
 	 */
 	PlanningCalendar.prototype.getCustomAppointmentsSorterCallback = function() {

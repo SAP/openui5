@@ -1625,7 +1625,7 @@ sap.ui.define([
 	 * (aria-valuenow and aria-valuetext) of the slider are changed accordingly.
 	 *
 	 * @param {float} fValue Value represented by the tickmark
-	 * @param {sap.m.SLider|sap.m.RangeSLider} oSlider Slider control that asks for a label
+	 * @param {sap.m.Slider|sap.m.RangeSlider} oSlider Slider control that asks for a label
 	 * @returns {string | number} The label that should be placed in the current position.
 	 *
 	 * @function
@@ -1757,12 +1757,23 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Marker interface for flexible controls that have a special behavior inside <code>sap.m.OverflowToolbar</code>.
+	 *
+	 * @since 1.67
+	 * @name sap.m.IOverflowToolbarFlexibleContent
+	 * @interface
+	 * @private
+	 * @ui5-restricted sap.m.GenericTag
+	 */
+
+	/**
 	 * Represents an Interface for controls that can have their text hyphenated.
 	 * Those controls can use <code>HyphenationSupport</code> mixin.
 	 *
 	 * @name sap.m.IHyphenation
 	 * @interface
 	 * @private
+	 * @ui5-restricted
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
@@ -1774,6 +1785,7 @@ sap.ui.define([
 	 * @function
 	 * @name sap.m.IHyphenation.getWrapping
 	 * @private
+	 * @ui5-restricted
 	 */
 
 	/**
@@ -1784,6 +1796,7 @@ sap.ui.define([
 	 * @function
 	 * @name sap.m.IHyphenation.getWrappingType
 	 * @private
+	 * @ui5-restricted
 	 */
 
 	/**
@@ -1795,6 +1808,7 @@ sap.ui.define([
 	 * @function
 	 * @name sap.m.IHyphenation.getTextsToBeHyphenated
 	 * @private
+	 * @ui5-restricted
 	 */
 
 	/**
@@ -1809,6 +1823,7 @@ sap.ui.define([
 	 * @function
 	 * @name sap.m.IHyphenation.getDomRefsForHyphenatedTexts
 	 * @private
+	 * @ui5-restricted
 	 */
 
 	/**

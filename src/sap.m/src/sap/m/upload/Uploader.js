@@ -175,7 +175,7 @@ sap.ui.define([
 	/**
 	 * Starts the process of downloading a file.
 	 *
-	 * @param {UploadSetItem} oItem Item representing the file to be downloaded.
+	 * @param {sap.m.upload.UploadSetItem} oItem Item representing the file to be downloaded.
 	 * @param {sap.ui.core.Item[]} aHeaderFields List of header fields to be added to the GET request.
 	 * @param {boolean} bAskForLocation True if the location to where download the file should be first queried by a browser dialog.
 	 * @return {boolean} True if the download process successfully

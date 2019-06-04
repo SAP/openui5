@@ -111,7 +111,6 @@ function(Device, UIArea, jQuery) {
 		 * @namespace
 		 * @name sap.ui.core.dnd.DragSession
 		 * @static
-		 * @abstract
 		 * @public
 		 */
 		return /** @lends sap.ui.core.dnd.DragSession */ {
