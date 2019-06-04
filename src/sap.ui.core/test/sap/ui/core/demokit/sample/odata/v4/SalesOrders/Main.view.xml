@@ -405,7 +405,8 @@
 				</ColumnListItem>
 			</Table>
 		</VBox>
-		<VBox visible="{ui>/bLineItemSelected}">
+		<VBox visible="{=${ui>/bLineItemSelected} &amp;&amp;
+				!${ui>/bSelectedSalesOrderItemTransient}}">
 			<form:SimpleForm binding="{SOITEM_2_PRODUCT/PRODUCT_2_BP}" editable="true"
 				id="PRODUCT_2_BP" title="Supplier Details" layout="ResponsiveGridLayout">
 				<Toolbar>

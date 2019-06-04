@@ -212,7 +212,8 @@ sap.ui.define([
 							return oControl.getBindingContext().getIndex() === iRow;
 						},
 						success : function () {
-							Opa5.assert.ok(true, "SO Item Quantity of first row set to " + sValue);
+							Opa5.assert.ok(true, "SO Item Quantity of row " + iRow + " set to "
+								+ sValue);
 						},
 						viewName : sViewName
 					});

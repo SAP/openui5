@@ -35,6 +35,7 @@ sap.ui.define([
 			When.onTheCreateNewSalesOrderDialog.confirmDialog();
 			When.onTheMainPage.pressSaveSalesOrdersButton();
 			When.onTheSuccessInfo.confirm();
+			Then.onTheMainPage.checkCompanyName(0, "SAP");
 			Then.onTheMainPage.checkTableLength(0, "SO_2_SOITEM");
 
 			// Create a new sales order line item; no refresh allowed; cancel created item
@@ -63,10 +64,7 @@ sap.ui.define([
 			When.onTheMainPage.selectSalesOrderItemWithPosition("");
 			When.onTheMainPage.pressSaveSalesOrderButton();
 			When.onTheSuccessInfo.confirm();
-			// Saving the sales order causes a refresh of the entity; mock server cannot
-			// differentiate between fist call with empty content and second call with the created
-			// line item.
-			Then.onTheMainPage.checkSalesOrderItemsCount(bRealOData ? 1 : 0);
+			Then.onTheMainPage.checkSalesOrderItemsCount(1);
 
 			if (bRealOData) {
 				Then.onTheMainPage.checkNewSalesOrderItemProductName("Notebook Basic 15");
@@ -133,25 +131,24 @@ sap.ui.define([
 				When.onTheSuccessInfo.confirm();
 				When.onTheMainPage.pressConfirmSalesOrderButton();
 				//TODO how to wait until confirmation is done?
-			}
 
-			// test refresh single
-			// preparation
-			When.onTheMainPage.pressRefreshSalesOrdersButton();
-			When.onTheMainPage.pressCreateSalesOrdersButton();
-			When.onTheCreateNewSalesOrderDialog.confirmDialog();
-			When.onTheMainPage.pressSaveSalesOrdersButton();
-			When.onTheSuccessInfo.confirm();
-			// test: refresh single reads expands
-			When.onTheMainPage.pressRefreshSelectedSalesOrdersButton();
-			Then.onTheMainPage.checkCompanyName(0, "SAP");
-			When.onTheMainPage.pressCreateSalesOrderItemButton();
-			When.onTheMainPage.pressSaveSalesOrderButton();
-			When.onTheSuccessInfo.confirm();
-			Then.onTheMainPage.checkTableLength(bRealOData ? 1 : 0, "SO_2_SOITEM");
-			// test: refresh single refreshes also dependent bindings
-			When.onTheMainPage.pressRefreshSelectedSalesOrdersButton();
-			Then.onTheMainPage.checkTableLength(bRealOData ? 1 : 0, "SO_2_SOITEM");
+				// test refresh single row
+				// preparation
+				When.onTheMainPage.pressRefreshSalesOrdersButton();
+				When.onTheMainPage.pressCreateSalesOrdersButton();
+				When.onTheCreateNewSalesOrderDialog.confirmDialog();
+				When.onTheMainPage.pressSaveSalesOrdersButton();
+				When.onTheSuccessInfo.confirm();
+				// test: refresh single row reads expands
+				When.onTheMainPage.pressRefreshSelectedSalesOrdersButton();
+				When.onTheMainPage.pressCreateSalesOrderItemButton();
+				When.onTheMainPage.pressSaveSalesOrderButton();
+				When.onTheSuccessInfo.confirm();
+				Then.onTheMainPage.checkTableLength(1, "SO_2_SOITEM");
+				// test: refresh single refreshes also dependent bindings
+				When.onTheMainPage.pressRefreshSelectedSalesOrdersButton();
+				Then.onTheMainPage.checkTableLength(1, "SO_2_SOITEM");
+			}
 
 			// delete created sales orders
 			When.onAnyPage.cleanUp("SalesOrderList");
