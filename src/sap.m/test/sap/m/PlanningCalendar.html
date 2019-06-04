@@ -94,8 +94,10 @@
 		var oModel = new sap.ui.model.json.JSONModel();
 
 		oModel.setData({
-			name : "Edward",
-			text: "headerContent aggregation with binding"
+			headerContentBinding: [{
+				name: "Edward II",
+				text: "headerContent aggregation with binding"
+			}]
 		});
 		sap.ui.getCore().setModel(oModel);
 
@@ -654,6 +656,11 @@
 			})
 		});
 
+		var oOLI = new sap.m.ObjectListItem({
+			title: "{name}",
+			intro: "{text}"
+		});
+
 		var oPC1 = new sap.m.PlanningCalendar("PC1", {
 			startDate: new Date("2015", "0", "1", "08", "00"),
 			rows: [
@@ -720,10 +727,10 @@
 				}),
 				new sap.m.PlanningCalendarRow("Row2", {
 					title: "This must not be shown",
-					headerContent: new sap.m.ObjectListItem({
-						title: {path: "/name"},
-						intro: {path: "/text"}
-					}).setModel(oModel),
+					headerContent: {
+						path: "/headerContentBinding",
+						template: oOLI
+					},
 					intervalHeaders: [
 						new sap.ui.unified.CalendarAppointment("R2H1", {
 							startDate: new Date("2015", "0", "2", "00", "00"),
