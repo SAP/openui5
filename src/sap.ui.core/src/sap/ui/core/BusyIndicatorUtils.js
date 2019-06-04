@@ -108,6 +108,11 @@ sap.ui.define(['./BlockLayerUtils', "sap/ui/thirdparty/jquery"], //require of sa
 				sAnimationSizeClass = "sapUiLocalBusyIndicatorAnimStandard";
 				break;
 		}
+
+		if (!oBusyBlockState) {
+			return;
+		}
+
 		var oParentDOM = oBusyBlockState.$parent.get(0),
 			oBlockLayerDOM = oBusyBlockState.$blockLayer.get(0);
 
