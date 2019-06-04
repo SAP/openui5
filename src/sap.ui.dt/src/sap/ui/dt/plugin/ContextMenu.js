@@ -416,7 +416,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Called when user presses key on keyboard. Opens the Compact ContextMenu on ENTER or SPACE
+	 * Called when user presses key on keyboard.
+	 * Opens the Compact ContextMenu on ENTER or SPACE when no other plugin is active
 	 * Opens the Context Menu when user presses SHIFT-F10
 	 * @param {sap.ui.base.Event} oEvent the event which was fired
 	 */
@@ -426,7 +427,7 @@ sap.ui.define([
 			(oEvent.shiftKey === false) &&
 			(oEvent.altKey === false) &&
 			(oEvent.ctrlKey === false)) {
-			if (oOverlay && oOverlay.isSelectable()) {
+			if (oOverlay && oOverlay.isSelectable() && !this._checkForPluginLock()) {
 				this._startOpening(oEvent, true);
 				oEvent.stopPropagation();
 				oEvent.preventDefault();
@@ -450,7 +451,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Called when user presses key on keyboard. Needed for supressing the scrolling on pressing SPACE
+	 * Called when user presses key on keyboard.
+	 * Needed for suppressing the scrolling on pressing SPACE when no other plugin is active.
 	 * @param {sap.ui.base.Event} oEvent the event which was fired
 	 */
 	ContextMenu.prototype._onKeyDown = function (oEvent) {
@@ -459,7 +461,7 @@ sap.ui.define([
 			(oEvent.shiftKey === false) &&
 			(oEvent.altKey === false) &&
 			(oEvent.ctrlKey === false)) {
-			if (oOverlay && oOverlay.isSelectable()) {
+			if (oOverlay && oOverlay.isSelectable() && !this._checkForPluginLock()) {
 				oEvent.stopPropagation();
 				oEvent.preventDefault();
 			}
