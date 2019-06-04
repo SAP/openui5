@@ -401,43 +401,56 @@ function(
 	NotificationListItem.prototype._showHideTruncateButton = function () {
 
 		var notificationDomRef = this.getDomRef(),
-			oCore = sap.ui.getCore();
+			oCore = sap.ui.getCore(),
+			oHeaderDomRef,
+			oTextWrapperDomRef,
+			oCollapseButtonDomRef;
 
 		if (!notificationDomRef) {
 			return;
 		}
 
+		oHeaderDomRef = notificationDomRef.querySelector('.sapMNLI-Header');
+		oTextWrapperDomRef = notificationDomRef.querySelector('.sapMNLI-TextWrapper');
+		oCollapseButtonDomRef = this.getDomRef('expandCollapseButton');
+
 		if (this._canTruncate() && (!this.getHideShowMoreButton())) { // if the Notification has long text
 			// show the truncate button
-			this.getDomRef('expandCollapseButton').classList.remove('sapMNLI-CollapseButtonHide');
+			if (oCollapseButtonDomRef) {
+				oCollapseButtonDomRef.classList.remove('sapMNLI-CollapseButtonHide');
+			}
 
 			// set the truncate button text && toggle 'collapse' class
 			if (this.getTruncate()) {
 				this.getAggregation('_collapseButton').setText(this._expandText);
-				notificationDomRef.querySelector('.sapMNLI-Header').classList.remove('sapMNLI-TitleWrapper--is-expanded');
+				if (oHeaderDomRef) {
+					oHeaderDomRef.classList.remove('sapMNLI-TitleWrapper--is-expanded');
+				}
 
-				if (this.getDescription()) {
-					notificationDomRef.querySelector('.sapMNLI-TextWrapper').classList.remove('sapMNLI-TextWrapper--is-expanded');
+				if (this.getDescription() && oTextWrapperDomRef) {
+					oTextWrapperDomRef.classList.remove('sapMNLI-TextWrapper--is-expanded');
 				}
 			} else {
 				this.getAggregation('_collapseButton').setText(this._collapseText);
 				this.$().find('.sapMNLI-TextWrapper').toggleClass('sapMNLI-TextWrapper--is-expanded', this.getDescription());
 
-				notificationDomRef.querySelector('.sapMNLI-Header').classList.add('sapMNLI-TitleWrapper--is-expanded');
+				if (oHeaderDomRef) {
+					oHeaderDomRef.classList.add('sapMNLI-TitleWrapper--is-expanded');
+				}
 			}
 
-		} else {
+		} else if (oCollapseButtonDomRef) {
 			// hide the truncate button
-			this.getDomRef('expandCollapseButton').classList.add('sapMNLI-CollapseButtonHide');
+			oCollapseButtonDomRef.classList.add('sapMNLI-CollapseButtonHide');
 		}
 
 		// remove classes used only to calculate text size
-		if (this.getDescription()) {
-			notificationDomRef.querySelector('.sapMNLI-TextWrapper').classList.remove('sapMNLI-TextWrapper--initial-overwrite');
+		if (this.getDescription() && oTextWrapperDomRef) {
+			oTextWrapperDomRef.classList.remove('sapMNLI-TextWrapper--initial-overwrite');
 		}
 
-		if (this.getTitle()) {
-			notificationDomRef.querySelector('.sapMNLI-Header').classList.remove('sapMNLI-TitleWrapper--initial-overwrite');
+		if (this.getTitle() && oHeaderDomRef) {
+			oHeaderDomRef.classList.remove('sapMNLI-TitleWrapper--initial-overwrite');
 		}
 
 		oCore.detachThemeChanged(this._showHideTruncateButton, this);
