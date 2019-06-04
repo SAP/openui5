@@ -1283,20 +1283,6 @@
 		  "samples": ["sap.m.sample.ToggleButton"]
 		},
 		{
-		  "id": "sap.m.Token",
-		  "name": "Token",
-		  "category": "User Input",
-		  "since": "1.22",
-		  "samples": ["sap.m.sample.Token"]
-		},
-		{
-		  "id": "sap.m.Tokenizer",
-		  "name": "Tokenizer",
-		  "category": "User Input",
-		  "since": "1.22",
-		  "samples": ["sap.m.sample.Tokenizer"]
-		},
-		{
 		  "id": "sap.m.Toolbar",
 		  "name": "Toolbar",
 		  "category": "Container",
@@ -2276,16 +2262,6 @@
 			"id": "sap.m.sample.NumericContentWithoutMargin",
 			"name": "Numeric Content Without Margins",
 			"description": "This is an example of the NumericContent that contains no margins, so the control is aligned to the left and to the top without any margins."
-		},
-		{
-		  "id": "sap.m.sample.Token",
-		  "name": "Token",
-		  "description": "Token renders a token containing text and an optional delete icon."
-		},
-		{
-		  "id": "sap.m.sample.Tokenizer",
-		  "name": "Tokenizer",
-		  "description": "Tokenizer displays multiple tokens."
 		},
 		{
 		  "id": "sap.m.sample.Tree",
