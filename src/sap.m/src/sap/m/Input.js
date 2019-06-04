@@ -2496,8 +2496,10 @@ function(
 					}, this);
 			} else {
 				oPopover
-					.attachBeforeClose(this._updateSelectionFromList, this)
 					.attachAfterClose(function() {
+
+						this._updateSelectionFromList();
+
 						var oList = oSuggPopover._oList;
 
 						// only destroy items in simple suggestion mode
@@ -2506,7 +2508,9 @@ function(
 						} else {
 							oList.destroyItems();
 						}
-					})
+
+						oSuggPopover._deregisterResize();
+					}, this)
 					.attachBeforeOpen(function () {
 						oSuggPopover._sPopoverContentWidth = this.getMaxSuggestionWidth();
 						oSuggPopover._bEnableHighlighting = this.getEnableSuggestionsHighlighting();
@@ -2516,9 +2520,6 @@ function(
 						this._sBeforeSuggest = this.getValue();
 						oSuggPopover._resizePopup();
 						oSuggPopover._registerResize();
-					}, this)
-					.attachAfterClose(function() {
-						oSuggPopover._deregisterResize();
 					}, this);
 			}
 
