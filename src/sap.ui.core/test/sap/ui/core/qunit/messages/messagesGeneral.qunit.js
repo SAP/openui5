@@ -424,7 +424,34 @@ sap.ui.define([
 		oMessageManager.addMessages(oMessage);
 	});
 
-	QUnit.test("Control Message target", function(assert) {
+	QUnit.test("Update when adding ControlId", function(assert) {
+		var count = 0;
+		var done = assert.async();
+		var oMessageManager = sap.ui.getCore().getMessageManager();
+		oMessageManager.removeAllMessages();
+		var oTestInput = new Input({value:""});
+		oTestInput.placeAt("content");
+		var sControlId = oTestInput.getId();
+		var oMessage = createControlMessage("TEST", "/" + sControlId + "/value");
+
+		var oBinding = oMessageManager.getMessageModel().bindProperty("/0/controlIds");
+		var fnChange = function(oEvent) {
+			count++;
+			if (count === 1) {
+				assert.equal(oBinding.getValue().length, 0);
+			} else if (count === 2) {
+				assert.equal(oBinding.getValue().length, 1);
+				done();
+			}
+		};
+		oMessageManager.addMessages(oMessage);
+		oBinding.attachChange(fnChange);
+		oBinding.checkUpdate();
+		oMessage.addControlId("/" + sControlId + "/value");
+		oBinding.checkUpdate();
+	});
+
+	QUnit.test("Control Id", function(assert) {
 		var done = assert.async();
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oTestInput = new Input({value:""});

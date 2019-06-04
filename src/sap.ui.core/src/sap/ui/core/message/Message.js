@@ -129,6 +129,8 @@ sap.ui.define([
 	 */
 	Message.prototype.addControlId = function(sControlId) {
 		if (this.controlIds.indexOf(sControlId) == -1) {
+			//clone array to get update working.
+			this.controlIds = this.controlIds.slice();
 			this.controlIds.push(sControlId);
 		}
 	};
