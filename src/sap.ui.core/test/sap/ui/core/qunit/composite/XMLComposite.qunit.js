@@ -707,17 +707,95 @@ sap.ui.define([
 		var oXMLComposite = new TranslatableText();
 		oXMLComposite.placeAt("qunit-fixture");
 		Core.applyChanges();
+		assert.equal(oXMLComposite.bUsesI18n, true, "The i18n resource model is used");
 		if (oXMLComposite.getResourceBundle().then) {
 			//async loading of resource bundle
 			oXMLComposite.getResourceBundle().then(function (oBundle) {
 				assert.strictEqual(oXMLComposite.byId("myTranslatableTextControl").getText(), "Translatable Text", "Text was read from messagemodel via binding (lib)");
 				assert.strictEqual(oBundle.getText("key"), "Translatable Text", "Text was read from messagebundle via API (lib)");
-				var oContent = oXMLComposite.getAggregation(oXMLComposite.getMetadata().getCompositeAggregationName());
+				var oContent = oXMLComposite._getCompositeAggregation();
 				assert.strictEqual(oContent.getModel("$" + oXMLComposite.alias + ".i18n").getProperty("key"), "Translatable Text", "Text was read from messagemodel via getProperty (lib)");
 				oXMLComposite.destroy();
 				done();
 			});
 		}
+	});
+
+	QUnit.test("positive tests - not in root", function (assert) {
+		var done = assert.async();
+
+		var sFragmentContent = '<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:layout="sap.ui.layout">'
+			+ '<layout:HorizontalLayout><Input id="innerInput" placeholder="{$this>/placeholder}" />'
+			+ '<Button id="myTranslatableTextControl" text="{$this.i18n>buttonText}" press="handleSearch" /></layout:HorizontalLayout></core:FragmentDefinition>';
+		var oXml = new DOMParser().parseFromString(sFragmentContent, "text/xml").documentElement;
+
+		var TextInButton = XMLComposite.extend("composites.TextInButton", {
+			metadata: {
+				properties: {
+					placeholder: { type: "string", defaultValue: "Enter Search Term..." }
+				}
+			},
+			fragmentContent: oXml
+		});
+
+		var oXMLComposite = new TextInButton({placeholder: "custom placeholder"});
+		oXMLComposite.placeAt("qunit-fixture");
+		Core.applyChanges();
+		assert.equal(oXMLComposite.bUsesI18n, true, "The i18n resource model is used");
+		if (oXMLComposite.getResourceBundle().then) {
+			//async loading of resource bundle
+			oXMLComposite.getResourceBundle().then(function (oBundle) {
+				assert.strictEqual(oXMLComposite.byId("myTranslatableTextControl").getText(), "My Text", "Text was read from messagemodel via binding (lib)");
+				assert.strictEqual(oBundle.getText("buttonText"), "My Text", "Text was read from messagebundle via API (lib)");
+				var oContent = oXMLComposite._getCompositeAggregation();
+				assert.strictEqual(oContent.getModel("$" + oXMLComposite.alias + ".i18n").getProperty("key"), "Translatable Text", "Text was read from messagemodel via getProperty (lib)");
+				oXMLComposite.destroy();
+				done();
+			});
+		}
+	});
+
+	QUnit.test("positive tests - in root", function (assert) {
+		var done = assert.async();
+		var sFragmentContent = '<m:Panel id="myTranslatableTextControl" headerText="{$this.i18n>panelText}" xmlns:m="sap.m"><m:Input id="innerInput" placeholder="{$this>/placeholder}" />'
+			+ '<m:Button text="{$this>/buttonText}" press="handleSearch" /></m:Panel>';
+		var oXml = new DOMParser().parseFromString(sFragmentContent, "text/xml").documentElement;
+
+		var TextInRoot = XMLComposite.extend("composites.TextInRoot", {
+			metadata: {
+				properties: {
+					placeholder: { type: "string", defaultValue: "Enter Search Term..." },
+					buttonText: {type: "string", defaultValue: "My Text"}
+				}
+			},
+			fragmentContent: oXml
+		});
+
+		var oXMLComposite = new TextInRoot({placeholder: "custom placeholder"});
+		oXMLComposite.placeAt("qunit-fixture");
+		Core.applyChanges();
+		assert.equal(oXMLComposite.bUsesI18n, true, "The i18n resource model is used");
+		if (oXMLComposite.getResourceBundle().then) {
+			//async loading of resource bundle
+			oXMLComposite.getResourceBundle().then(function (oBundle) {
+				assert.strictEqual(oXMLComposite.byId("myTranslatableTextControl").getHeaderText(), "My Panel Text", "Text was read from messagemodel via binding (lib)");
+				assert.strictEqual(oBundle.getText("panelText"), "My Panel Text", "Text was read from messagebundle via API (lib)");
+				var oContent = oXMLComposite._getCompositeAggregation();
+				assert.strictEqual(oContent.getModel("$" + oXMLComposite.alias + ".i18n").getProperty("key"), "Translatable Text", "Text was read from messagemodel via getProperty (lib)");
+				oXMLComposite.destroy();
+				done();
+			});
+		}
+	});
+
+	QUnit.test("negative test lib not loaded when not used", function (assert) {
+		var oXMLComposite = new TextToggleButton();
+		oXMLComposite.placeAt("qunit-fixture");
+		Core.applyChanges();
+		var oContent = oXMLComposite._getCompositeAggregation();
+		assert.equal(oXMLComposite.bUsesI18n, false, "No reference for the i18n resource model is found");
+		assert.notOk(oContent.getModel("$" + oXMLComposite.alias + ".i18n"), "there is no i18n Model");
+
 	});
 
 	//*********************************************************************************************
