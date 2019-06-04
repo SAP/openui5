@@ -249,6 +249,15 @@ sap.ui.define([
 				bTokenHandlingForGet = mParameters.tokenHandlingForGet;
 			}
 
+			/* Path cache to avoid multiple expensive resolve operations
+			 * this.mPathCache =
+			 * {
+			 *		'aBindingPath': {
+			 *			canonicalPath: 'The canonicalPath',
+			 *			updateKey: 'path relevant for path invalidation'
+			 *		}
+			 * }
+			 */
 			this.mPathCache = {};
 			this.mInvalidatedPaths = {};
 			this.bCanonicalRequests = !!bCanonicalRequests;
@@ -1434,6 +1443,10 @@ sap.ui.define([
 					}
 				} else if (!oProperty || !oProperty.__deferred) { //do not store deferred navprops
 					oEntry[sName] = oProperty;
+					//'null' is a valid value for navigation properties (e.g. if no entity is assigned). We need to invalidate the path cache
+					if (oProperty === null) {
+						that.mInvalidatedPaths[sPath.substr(sPath.lastIndexOf("(")) + "/" + sName] = null;
+					}
 				}
 			});
 			// if we got new data we have to update changed entities
@@ -3249,9 +3262,9 @@ sap.ui.define([
 				for (var sUpdateKey in that.mInvalidatedPaths) {
 					iIndex = sKey.indexOf(sUpdateKey);
 					if (iIndex > -1) {
-						if (iIndex + sUpdateKey.length !== that.mPathCache[sKey].canonicalPath.length) {
+						if (that.mPathCache[sKey].canonicalPath !== null && iIndex + sUpdateKey.length !== that.mPathCache[sKey].canonicalPath.length) {
 							var sEnd = sKey.substr(iIndex + sUpdateKey.length);
-							that.mPathCache[sKey].canonicalPath = that.mInvalidatedPaths[sUpdateKey] + sEnd;
+							that.mPathCache[sKey].canonicalPath = that.mInvalidatedPaths[sUpdateKey] === null ? null : that.mInvalidatedPaths[sUpdateKey] + sEnd;
 						} else {
 							that.mPathCache[sKey].canonicalPath = that.mInvalidatedPaths[sUpdateKey];
 						}
