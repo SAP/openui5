@@ -15,7 +15,6 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/m/HBox", "sap/m/VBox", "sap/m/Tex
 		 * Displays the basic details for an object, for example, a person or a sales order.
 		 *
 		 * @extends sap.f.cards.BaseContent
-		 *
 		 * @author SAP SE
 		 * @version ${version}
 		 *
