@@ -1,17 +1,14 @@
 sap.ui.define([
-	'sap/ui/core/UIComponent',
-	'sap/ui/core/mvc/XMLView',
+	"sap/ui/core/UIComponent",
 	"sap/ui/fl/FakeLrepConnectorLocalStorage"
 ],
 function(
 	UIComponent,
-	XMLView,
 	FakeLrepConnectorLocalStorage
 ) {
 	"use strict";
 
 	var Component = UIComponent.extend("sap.m.sample.Table.Component", {
-
 		metadata : {
 			manifest: "json",
 			publicMethods : [
@@ -59,5 +56,4 @@ function(
 	};
 
 	return Component;
-
 });

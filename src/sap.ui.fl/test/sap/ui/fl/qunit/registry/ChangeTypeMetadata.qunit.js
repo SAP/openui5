@@ -12,10 +12,6 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("sap.ui.fl.registry.ChangeTypeMetadata", {
-		beforeEach: function() {
-		},
-		afterEach: function() {
-		}
 	}, function() {
 		QUnit.test("constructor - required params and their getter", function(assert) {
 			//Arrange

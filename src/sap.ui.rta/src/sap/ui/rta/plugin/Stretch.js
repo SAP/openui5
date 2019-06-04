@@ -40,9 +40,6 @@ function (
 	 */
 	var Stretch = Plugin.extend("sap.ui.rta.plugin.Stretch", /** @lends sap.ui.rta.plugin.Stretch.prototype */ {
 		metadata: {
-			// ---- object ----
-
-			// ---- control specific ----
 			library: "sap.ui.rta",
 			properties: {},
 			associations: {
@@ -372,18 +369,18 @@ function (
 
 		if (bAtLeastOneChildEditable) {
 			return true;
-		} else {
-			var aChildrensChildrenOverlays = [];
-			aChildOverlays.forEach(function (oChildOverlay) {
-				aChildrensChildrenOverlays = aChildrensChildrenOverlays.concat(OverlayUtil.getAllChildOverlays(oChildOverlay));
-			});
+		}
 
-			if (!aChildrensChildrenOverlays.length > 0) {
-				return false;
-			}
-			if (this._childrenAreSameSize(oReferenceOverlay, aChildrensChildrenOverlays)) {
-				return this._atLeastOneDescendantEditable(oReferenceOverlay, aChildrensChildrenOverlays);
-			}
+		var aChildrensChildrenOverlays = [];
+		aChildOverlays.forEach(function (oChildOverlay) {
+			aChildrensChildrenOverlays = aChildrensChildrenOverlays.concat(OverlayUtil.getAllChildOverlays(oChildOverlay));
+		});
+
+		if (!aChildrensChildrenOverlays.length > 0) {
+			return false;
+		}
+		if (this._childrenAreSameSize(oReferenceOverlay, aChildrensChildrenOverlays)) {
+			return this._atLeastOneDescendantEditable(oReferenceOverlay, aChildrensChildrenOverlays);
 		}
 	};
 

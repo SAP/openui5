@@ -24,13 +24,13 @@ sap.ui.define([
 			bFlexibilityAdaptationButtonAllowed = Settings._bFlexibilityAdaptationButtonAllowed;
 
 			var oSettings = {
-				"isKeyUser": false,
-				"isAtoAvailable": false,
-				"isAtoEnabled": false,
-				"features": {
-					"addField": ["CUSTOMER", "VENDOR"],
-					"changeTypeOnlyForUser": ["USER"],
-					"completelyDisabledChangeType": []
+				isKeyUser: false,
+				isAtoAvailable: false,
+				isAtoEnabled: false,
+				features: {
+					addField: ["CUSTOMER", "VENDOR"],
+					changeTypeOnlyForUser: ["USER"],
+					completelyDisabledChangeType: []
 				}
 			};
 			this.cut = new Settings(oSettings);
@@ -81,7 +81,7 @@ sap.ui.define([
 
 		QUnit.test("variants sharing is set to false", function(assert) {
 			var oSettings = {
-				"isVariantSharingEnabled": false
+				isVariantSharingEnabled: false
 			};
 			this.cut = new Settings(oSettings);
 			assert.equal(this.cut._oSettings.isVariantSharingEnabled, false);
@@ -98,7 +98,7 @@ sap.ui.define([
 			};
 
 			var oStubCreateConnector = sandbox.stub(sap.ui.fl.LrepConnector, "createConnector").returns({
-				loadSettings : function(){
+				loadSettings : function() {
 					return Promise.resolve(oSetting);
 				}
 			});
@@ -126,7 +126,7 @@ sap.ui.define([
 				isAtoAvailable: true
 			};
 			var oStubCreateConnector = sandbox.stub(sap.ui.fl.LrepConnector, "createConnector").returns({
-				loadSettings : function(){
+				loadSettings : function() {
 					return Promise.resolve(oSetting);
 				}
 			});
@@ -178,7 +178,7 @@ sap.ui.define([
 				isAtoAvailable: true
 			};
 			var oStubCreateConnector = sandbox.stub(sap.ui.fl.LrepConnector, "createConnector").returns({
-				loadSettings : function(){
+				loadSettings : function() {
 					return Promise.resolve(oSetting);
 				}
 			});

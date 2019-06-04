@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	'sap/ui/base/ManagedObject',
-	'sap/ui/dt/DOMUtil',
+	"sap/ui/base/ManagedObject",
+	"sap/ui/dt/DOMUtil",
 	"sap/ui/thirdparty/jquery"
 ],
 function(
@@ -34,13 +34,13 @@ function(
 		metadata: {
 			library: "sap.ui.dt",
 			properties: {
-				"scrollTop": {
+				scrollTop: {
 					type: "float"	// replaced 'int' with 'float'. In some special cases (chrome on a retina mac) jquery returns a float value instead of int
 				},
-				"scrollLeft": {
+				scrollLeft: {
 					type: "float"	// replaced 'int' with 'float'. In some special cases (chrome on a retina mac) jquery returns a float value instead of int
 				},
-				"targets": {
+				targets: {
 					type: "any[]",
 					defaultValue: []
 				}

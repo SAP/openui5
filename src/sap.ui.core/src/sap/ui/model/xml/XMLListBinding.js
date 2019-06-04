@@ -7,11 +7,10 @@ sap.ui.define([
 	'sap/ui/model/ChangeReason',
 	'sap/ui/model/ClientListBinding',
 	"sap/ui/util/XMLHelper",
-	"sap/base/util/array/diff",
 	"sap/base/util/deepEqual",
 	"sap/base/util/each"
 ],
-	function(ChangeReason, ClientListBinding, XMLHelper, diff, deepEqual, each) {
+	function(ChangeReason, ClientListBinding, XMLHelper, deepEqual, each) {
 	"use strict";
 
 
@@ -62,7 +61,7 @@ sap.ui.define([
 
 			//Check diff
 			if (this.aLastContexts && iStartIndex < this.iLastEndIndex) {
-				aContexts.diff = diff(this.aLastContextData, aContextData);
+				aContexts.diff = this.diffData(this.aLastContextData, aContextData);
 			}
 
 			this.iLastEndIndex = iStartIndex + iLength;

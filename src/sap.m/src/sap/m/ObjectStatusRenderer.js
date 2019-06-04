@@ -110,7 +110,7 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/IndicationColorSupp
 
 			if (oObjStatus.getIcon()) {
 				oRm.write("<span");
-				oRm.writeAttributeEscaped("id", oObjStatus.getId() + "-icon");
+				oRm.writeAttributeEscaped("id", oObjStatus.getId() + "-statusIcon");
 				oRm.addClass("sapMObjStatusIcon");
 				if (!oObjStatus.getText()) {
 					oRm.addClass("sapMObjStatusIconOnly");

@@ -23,7 +23,7 @@ sap.ui.define([
 	}
 
 	/**
-	* Checks if value is included in collection
+	* Checks if value is included in collection.
 	*
 	* @example
 	* sap.ui.require(["sap/base/util/includes"], function(includes){

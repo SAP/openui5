@@ -39,31 +39,31 @@ function(
 	QUnit.module("Given an instance of VariantModel", {
 		beforeEach: function() {
 			this.oData = {
-				"variantMgmtId1": {
-					"defaultVariant": "variant1",
-					"originalDefaultVariant": "variant1",
-					"variants": [
+				variantMgmtId1: {
+					defaultVariant: "variant1",
+					originalDefaultVariant: "variant1",
+					variants: [
 						{
-							"author": "SAP",
-							"key": "variantMgmtId1",
-							"layer": "VENDOR",
-							"title": "Standard",
-							"favorite": true,
-							"visible": true
+							author: "SAP",
+							key: "variantMgmtId1",
+							layer: "VENDOR",
+							title: "Standard",
+							favorite: true,
+							visible: true
 						}, {
-							"author": "Me",
-							"key": "variant0",
-							"layer": "CUSTOMER",
-							"title": "variant A",
-							"favorite": true,
-							"visible": true
+							author: "Me",
+							key: "variant0",
+							layer: "CUSTOMER",
+							title: "variant A",
+							favorite: true,
+							visible: true
 						}, {
-							"author": "Me",
-							"key": "variant1",
-							"layer": "CUSTOMER",
-							"title": "variant B",
-							"favorite": false,
-							"visible": true
+							author: "Me",
+							key: "variant1",
+							layer: "CUSTOMER",
+							title: "variant B",
+							favorite: false,
+							visible: true
 						}
 					]
 				}
@@ -72,8 +72,8 @@ function(
 			var oManifestObj = {
 				"sap.app": {
 					id: "MyComponent",
-					"applicationVersion": {
-						"version": "1.2.3"
+					applicationVersion: {
+						version: "1.2.3"
 					}
 				}
 			};
@@ -218,7 +218,6 @@ function(
 			assert.strictEqual(VariantUtil.getCurrentHashParamsFromRegister.callCount, 1, "then VariantUtil.getCurrentHashParamsFromRegister called once");
 
 			assert.strictEqual(this.oModel.updateHasherEntry.callCount, 3, "then VariantModel._updateVariantInURL() called 3 times");
-
 		});
 
 		QUnit.test("when calling 'switchToDefaultForVariant' for a current variant reference", function(assert) {
@@ -281,8 +280,8 @@ function(
 		QUnit.test("when calling 'getVariantManagementReference'", function(assert) {
 			var mVariantManagementReference = this.oModel.getVariantManagementReference("variant1");
 			assert.deepEqual(mVariantManagementReference, {
-				"variantIndex": 2,
-				"variantManagementReference": "variantMgmtId1"
+				variantIndex: 2,
+				variantManagementReference: "variantMgmtId1"
 			}, "then the correct variant management reference is returned");
 		});
 
@@ -290,11 +289,11 @@ function(
 			sandbox.stub(this.oModel.oVariantController, "getVariant").returns(
 				{
 					content:
-						{
-							content: {
-								title: this.oData["variantMgmtId1"].variants[2].title
-							}
+					{
+						content: {
+							title: this.oData["variantMgmtId1"].variants[2].title
 						}
+					}
 				}
 			);
 			var sPropertyValue = this.oModel.getVariantProperty("variant1", "title");
@@ -306,11 +305,11 @@ function(
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(this.oModel.oVariantController, "_updateChangesForVariantManagementInMap").returns(1);
 			var fnAddDirtyChangeStub = sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
 			var mPropertyBag = {
-				"changeType" : "setTitle",
-				"title" : "New Title",
-				"layer" : "CUSTOMER",
-				"variantReference" : "variant1",
-				"appComponent" : this.oComponent
+				changeType : "setTitle",
+				title : "New Title",
+				layer : "CUSTOMER",
+				variantReference : "variant1",
+				appComponent : this.oComponent
 			};
 
 			var oChange = this.oModel.setVariantProperties("variantMgmtId1", mPropertyBag, true);
@@ -329,10 +328,10 @@ function(
 			var fnChangeStub = sandbox.stub().returns({ getDefinition : function() {} });
 			var fnDeleteChangeStub = sandbox.stub(this.oModel.oChangePersistence, "deleteChange");
 			var mPropertyBag = {
-				"changeType" : "setTitle",
-				"title" : "Old Title",
-				"variantReference" : "variant1",
-				"change" : fnChangeStub()
+				changeType : "setTitle",
+				title : "Old Title",
+				variantReference : "variant1",
+				change : fnChangeStub()
 			};
 
 			var oChange = this.oModel.setVariantProperties("variantMgmtId1", mPropertyBag, false);
@@ -348,11 +347,11 @@ function(
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(this.oModel.oVariantController, "_updateChangesForVariantManagementInMap").returns(1);
 			var fnAddDirtyChangeStub = sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
 			var mPropertyBag = {
-				"changeType" : "setFavorite",
-				"favorite" : false,
-				"layer" : "CUSTOMER",
-				"variantReference" : "variant1",
-				"appComponent" : this.oComponent
+				changeType : "setFavorite",
+				favorite : false,
+				layer : "CUSTOMER",
+				variantReference : "variant1",
+				appComponent : this.oComponent
 			};
 
 			var oChange = this.oModel.setVariantProperties("variantMgmtId1", mPropertyBag, true);
@@ -371,10 +370,10 @@ function(
 			var fnChangeStub = sandbox.stub().returns({ getDefinition : function() {} });
 			var fnDeleteChangeStub = sandbox.stub(this.oModel.oChangePersistence, "deleteChange");
 			var mPropertyBag = {
-				"changeType" : "setFavorite",
-				"favorite" : true,
-				"variantReference" : "variant1",
-				"change" : fnChangeStub()
+				changeType : "setFavorite",
+				favorite : true,
+				variantReference : "variant1",
+				change : fnChangeStub()
 			};
 
 			var oChange = this.oModel.setVariantProperties("variantMgmtId1", mPropertyBag, false);
@@ -390,11 +389,11 @@ function(
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(this.oModel.oVariantController, "_updateChangesForVariantManagementInMap").returns(1);
 			var fnAddDirtyChangeStub = sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
 			var mPropertyBag = {
-				"changeType" : "setVisible",
-				"visible" : false,
-				"layer" : "CUSTOMER",
-				"variantReference" : "variant1",
-				"appComponent" : this.oComponent
+				changeType : "setVisible",
+				visible : false,
+				layer : "CUSTOMER",
+				variantReference : "variant1",
+				appComponent : this.oComponent
 			};
 
 			var oChange = this.oModel.setVariantProperties("variantMgmtId1", mPropertyBag, true);
@@ -413,10 +412,10 @@ function(
 			var fnChangeStub = sandbox.stub().returns({ getDefinition : function() {} });
 			var fnDeleteChangeStub = sandbox.stub(this.oModel.oChangePersistence, "deleteChange");
 			var mPropertyBag = {
-				"changeType" : "setVisible",
-				"visible" : true,
-				"variantReference" : "variant1",
-				"change" : fnChangeStub()
+				changeType : "setVisible",
+				visible : true,
+				variantReference : "variant1",
+				change : fnChangeStub()
 			};
 
 			var oChange = this.oModel.setVariantProperties("variantMgmtId1", mPropertyBag, false);
@@ -431,11 +430,11 @@ function(
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(this.oModel.oVariantController, "_updateChangesForVariantManagementInMap").returns(1);
 			var fnAddDirtyChangeStub = sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
 			var mPropertyBag = {
-				"changeType" : "setDefault",
-				"defaultVariant" : "variant0",
-				"layer" : "CUSTOMER",
-				"variantManagementReference" : "variantMgmtId1",
-				"appComponent" : this.oComponent
+				changeType : "setDefault",
+				defaultVariant : "variant0",
+				layer : "CUSTOMER",
+				variantManagementReference : "variantMgmtId1",
+				appComponent : this.oComponent
 			};
 			this.oModel.oVariantController._mVariantManagement = {};
 			this.oModel.oVariantController._mVariantManagement["variantMgmtId1"] = {defaultVariant : this.oData["variantMgmtId1"].defaultVariant};
@@ -454,11 +453,11 @@ function(
 			var fnChangeStub = sandbox.stub().returns({ getDefinition : function() {} });
 			var fnDeleteChangeStub = sandbox.stub(this.oModel.oChangePersistence, "deleteChange");
 			var mPropertyBag = {
-					"changeType" : "setDefault",
-					"defaultVariant" : "variant1",
-					"variantManagementReference" : "variantMgmtId1",
-					"change" : fnChangeStub()
-				};
+				changeType : "setDefault",
+				defaultVariant : "variant1",
+				variantManagementReference : "variantMgmtId1",
+				change : fnChangeStub()
+			};
 			this.oModel.oVariantController._mVariantManagement = {};
 			this.oModel.oVariantController._mVariantManagement["variantMgmtId1"] = {defaultVariant : this.oData["variantMgmtId1"].defaultVariant};
 
@@ -471,12 +470,12 @@ function(
 
 		QUnit.test("when calling 'setVariantProperties' for 'setDefault' with different current and default variants, in UI adaptation mode", function(assert) {
 			var mPropertyBag = {
-				"changeType" : "setDefault",
-				"defaultVariant" : "variant1",
-				"layer" : "CUSTOMER",
-				"variantManagementReference" : "variantMgmtId1",
-				"appComponent" : this.oComponent,
-				"change" : { getDefinition : function() {} }
+				changeType : "setDefault",
+				defaultVariant : "variant1",
+				layer : "CUSTOMER",
+				variantManagementReference : "variantMgmtId1",
+				appComponent : this.oComponent,
+				change : { getDefinition : function() {} }
 			};
 			sandbox.stub(this.oModel.oVariantController, "_updateChangesForVariantManagementInMap").returns(1);
 			sandbox.stub(VariantUtil, "getCurrentHashParamsFromRegister").returns([]);
@@ -494,7 +493,7 @@ function(
 			this.oModel.oVariantController._mVariantManagement["variantMgmtId1"] = {defaultVariant : this.oData["variantMgmtId1"].defaultVariant};
 
 			this.oModel.setVariantProperties("variantMgmtId1", mPropertyBag, true);
-			assert.ok( this.oModel.updateHasherEntry.calledWithExactly({
+			assert.ok(this.oModel.updateHasherEntry.calledWithExactly({
 				parameters: [this.oModel.oData["variantMgmtId1"].currentVariant],
 				updateURL: !this.oModel._bDesignTimeMode
 			}), "then the 'updateHasherEntry' called with the current variant id as a parameter in UI adaptation mode");
@@ -502,12 +501,12 @@ function(
 
 		QUnit.test("when calling 'setVariantProperties' for 'setDefault' with same current and default variants, in personalization mode", function(assert) {
 			var mPropertyBag = {
-				"changeType" : "setDefault",
-				"defaultVariant" : "variant1",
-				"layer" : "CUSTOMER",
-				"variantManagementReference" : "variantMgmtId1",
-				"appComponent" : this.oComponent,
-				"change" : { getDefinition : function() {} }
+				changeType : "setDefault",
+				defaultVariant : "variant1",
+				layer : "CUSTOMER",
+				variantManagementReference : "variantMgmtId1",
+				appComponent : this.oComponent,
+				change : { getDefinition : function() {} }
 			};
 			sandbox.stub(this.oModel.oVariantController, "_updateChangesForVariantManagementInMap").returns(1);
 			// current variant already exists in hash parameters
@@ -523,7 +522,7 @@ function(
 			this.oModel.oVariantController._mVariantManagement["variantMgmtId1"] = {defaultVariant : this.oData["variantMgmtId1"].defaultVariant};
 
 			this.oModel.setVariantProperties("variantMgmtId1", mPropertyBag, true);
-			assert.ok( this.oModel.updateHasherEntry.calledWithExactly({
+			assert.ok(this.oModel.updateHasherEntry.calledWithExactly({
 				parameters: [],
 				updateURL: !this.oModel._bDesignTimeMode
 			}), "then the 'updateHasherEntry' called without the current variant id as a parameter in personalization mode");
@@ -671,7 +670,7 @@ function(
 			var sTargetVariantId = "variant0";
 			var oParameters = {
 				params: {
-					"sap-ui-fl-control-variant-id": aExistingParameters.map( function(sExistingParameter) {
+					"sap-ui-fl-control-variant-id": aExistingParameters.map(function(sExistingParameter) {
 						return encodeURIComponent(sExistingParameter);
 					})
 				}
@@ -772,27 +771,27 @@ function(
 
 		QUnit.test("when calling '_removeDirtyChanges'", function(assert) {
 			var oChange1 = new Change({
-				"fileName": "change1",
-				"selector": {
-					"id": "abc123"
+				fileName: "change1",
+				selector: {
+					id: "abc123"
 				}
 			});
 			var oChange2 = new Change({
-				"fileName": "change2",
-				"selector": {
-					"id": "abc123"
+				fileName: "change2",
+				selector: {
+					id: "abc123"
 				}
 			});
 			var oChange3 = new Change({
-				"fileName": "change3",
-				"selector": {
-					"id": "abc123"
+				fileName: "change3",
+				selector: {
+					id: "abc123"
 				}
 			});
 			var oChange4 = new Change({
-				"fileName": "change4",
-				"selector": {
-					"id": "abc123"
+				fileName: "change4",
+				selector: {
+					id: "abc123"
 				}
 			});
 			var aDirtyChanges = [oChange2, oChange3, oChange4];
@@ -809,20 +808,20 @@ function(
 
 		QUnit.test("when calling '_duplicateVariant' on the same layer", function(assert) {
 			var oSourceVariant = {
-				"content": {
-					"fileName":"variant0",
-					"fileType":"ctrl_variant",
-					"variantManagementReference":"variantMgmtId1",
-					"variantReference":"variant2",
-					"content":{
-						"title":"variant A"
+				content: {
+					fileName:"variant0",
+					fileType:"ctrl_variant",
+					variantManagementReference:"variantMgmtId1",
+					variantReference:"variant2",
+					content:{
+						title:"variant A"
 					},
-					"selector":{},
-					"layer":"CUSTOMER",
-					"namespace":"Dummy.Component"
+					selector:{},
+					layer:"CUSTOMER",
+					namespace:"Dummy.Component"
 				},
-				"controlChanges": [],
-				"variantChanges": {}
+				controlChanges: [],
+				variantChanges: {}
 			};
 
 			var mPropertyBag = {
@@ -845,20 +844,20 @@ function(
 
 		QUnit.test("when calling '_duplicateVariant' from CUSTOMER layer referencing variant on VENDOR layer", function(assert) {
 			var oSourceVariant = {
-				"content": {
-					"fileName":"variant0",
-					"fileType":"ctrl_variant",
-					"variantManagementReference":"variantMgmtId1",
-					"variantReference":"variant2",
-					"content":{
-						"title":"variant A"
+				content: {
+					fileName:"variant0",
+					fileType:"ctrl_variant",
+					variantManagementReference:"variantMgmtId1",
+					variantReference:"variant2",
+					content:{
+						title:"variant A"
 					},
-					"selector":{},
-					"layer":"VENDOR",
-					"namespace":"Dummy.Component"
+					selector:{},
+					layer:"VENDOR",
+					namespace:"Dummy.Component"
 				},
-				"controlChanges": [],
-				"variantChanges": {}
+				controlChanges: [],
+				variantChanges: {}
 			};
 
 			var mPropertyBag = {
@@ -883,38 +882,38 @@ function(
 			// non-personalization mode
 			this.oModel._bDesignTimeMode = true;
 			var oChange0 = new Change({
-				"fileName": "change0",
-				"selector": {"id": "abc123"},
-				"variantReference": "variant0",
-				"layer": "CUSTOMER",
-				"support": {},
-				"reference": "test.Component",
-				"packageName": "MockPackageName"
+				fileName: "change0",
+				selector: {id: "abc123"},
+				variantReference: "variant0",
+				layer: "CUSTOMER",
+				support: {},
+				reference: "test.Component",
+				packageName: "MockPackageName"
 			});
 			var oChange1 = new Change({
-				"fileName": "change1",
-				"selector": {"id": "abc123"},
-				"variantReference": "variant0",
-				"layer": "VENDOR",
-				"support": {},
-				"reference": "test.Component"
+				fileName: "change1",
+				selector: {id: "abc123"},
+				variantReference: "variant0",
+				layer: "VENDOR",
+				support: {},
+				reference: "test.Component"
 			});
 
 			var oSourceVariant = {
-				"content": {
-					"fileName":"variant0",
-					"fileType":"ctrl_variant",
-					"variantManagementReference":"variantMgmtId1",
-					"variantReference":"variant2",
-					"content":{
-						"title":"variant A"
+				content: {
+					fileName:"variant0",
+					fileType:"ctrl_variant",
+					variantManagementReference:"variantMgmtId1",
+					variantReference:"variant2",
+					content:{
+						title:"variant A"
 					},
-					"selector":{},
-					"layer":"VENDOR",
-					"namespace":"Dummy.Component"
+					selector:{},
+					layer:"VENDOR",
+					namespace:"Dummy.Component"
 				},
-				"controlChanges": [oChange0, oChange1],
-				"variantChanges": {}
+				controlChanges: [oChange0, oChange1],
+				variantChanges: {}
 			};
 
 			var mPropertyBag = {
@@ -946,45 +945,45 @@ function(
 		QUnit.test("when calling '_duplicateVariant' from USER layer with reference to a variant on VENDOR layer with one USER, one CUSTOMER, one VENDOR change", function(assert) {
 			Utils.getCurrentLayer.restore();
 			var oChange0 = new Change({
-				"fileName": "change0",
-				"selector": {"id": "abc123"},
-				"variantReference": "variant0",
-				"layer": "USER",
-				"support": {},
-				"reference": "test.Component"
+				fileName: "change0",
+				selector: {id: "abc123"},
+				variantReference: "variant0",
+				layer: "USER",
+				support: {},
+				reference: "test.Component"
 			});
 			var oChange1 = new Change({
-				"fileName": "change1",
-				"selector": {"id": "abc123"},
-				"variantReference": "variant0",
-				"layer": "CUSTOMER",
-				"support": {},
-				"reference": "test.Component"
+				fileName: "change1",
+				selector: {id: "abc123"},
+				variantReference: "variant0",
+				layer: "CUSTOMER",
+				support: {},
+				reference: "test.Component"
 			});
 			var oChange2 = new Change({
-				"fileName": "change2",
-				"selector": {"id": "abc123"},
-				"variantReference": "variant0",
-				"layer": "VENDOR",
-				"support": {},
-				"reference": "test.Component"
+				fileName: "change2",
+				selector: {id: "abc123"},
+				variantReference: "variant0",
+				layer: "VENDOR",
+				support: {},
+				reference: "test.Component"
 			});
 
 			var oSourceVariant = {
-				"content": {
-					"fileName":"variant0",
-					"fileType":"ctrl_variant",
-					"variantManagementReference":"variantMgmtId1",
-					"variantReference":"variant2",
-					"content":{
-						"title":"variant A"
+				content: {
+					fileName:"variant0",
+					fileType:"ctrl_variant",
+					variantManagementReference:"variantMgmtId1",
+					variantReference:"variant2",
+					content:{
+						title:"variant A"
 					},
-					"selector":{},
-					"layer":"VENDOR",
-					"namespace":"Dummy.Component"
+					selector:{},
+					layer:"VENDOR",
+					namespace:"Dummy.Component"
 				},
-				"controlChanges": [oChange0, oChange1, oChange2],
-				"variantChanges": {}
+				controlChanges: [oChange0, oChange1, oChange2],
+				variantChanges: {}
 			};
 
 			var mPropertyBag = {
@@ -1015,19 +1014,19 @@ function(
 
 		QUnit.test("when calling '_duplicateVariant' from CUSTOMER layer with reference to a variant with no layer", function(assert) {
 			var oSourceVariant = {
-				"content": {
-					"fileName":"variant0",
-					"fileType":"ctrl_variant",
-					"variantManagementReference":"variantMgmtId1",
-					"variantReference":"variant0",
-					"content":{
-						"title":"variant A"
+				content: {
+					fileName:"variant0",
+					fileType:"ctrl_variant",
+					variantManagementReference:"variantMgmtId1",
+					variantReference:"variant0",
+					content:{
+						title:"variant A"
 					},
-					"selector":{},
-					"namespace":"Dummy.Component"
+					selector:{},
+					namespace:"Dummy.Component"
 				},
-				"controlChanges": [],
-				"variantChanges": {}
+				controlChanges: [],
+				variantChanges: {}
 			};
 
 			var mPropertyBag = {
@@ -1053,19 +1052,19 @@ function(
 		QUnit.test("when calling '_duplicateVariant' from USER layer with reference to a variant with no layer", function(assert) {
 			Utils.getCurrentLayer.restore();
 			var oSourceVariant = {
-				"content": {
-					"fileName":"variant0",
-					"fileType":"ctrl_variant",
-					"variantManagementReference":"variantMgmtId1",
-					"variantReference":"variant0",
-					"content":{
-						"title":"variant A"
+				content: {
+					fileName:"variant0",
+					fileType:"ctrl_variant",
+					variantManagementReference:"variantMgmtId1",
+					variantReference:"variant0",
+					content:{
+						title:"variant A"
 					},
-					"selector":{},
-					"namespace":"Dummy.Component"
+					selector:{},
+					namespace:"Dummy.Component"
 				},
-				"controlChanges": [],
-				"variantChanges": {}
+				controlChanges: [],
+				variantChanges: {}
 			};
 
 			var mPropertyBag = {
@@ -1092,24 +1091,24 @@ function(
 		QUnit.test("when calling '_duplicateVariant' from CUSTOMER layer with reference to a variant on the same layer", function(assert) {
 			// non-personalization mode
 			this.oModel._bDesignTimeMode = true;
-			var oChange0 = new Change({"fileName":"change0", "selector": {"id": "abc123"}, "variantReference":"variant0", "layer": "CUSTOMER", "support": {}, "reference": "test.Component"});
-			var oChange1 = new Change({"fileName":"change1", "selector": {"id": "abc123"}, "variantReference":"variant0", "layer": "CUSTOMER", "support": {}, "reference": "test.Component"});
+			var oChange0 = new Change({fileName:"change0", selector: {id: "abc123"}, variantReference:"variant0", layer: "CUSTOMER", support: {}, reference: "test.Component"});
+			var oChange1 = new Change({fileName:"change1", selector: {id: "abc123"}, variantReference:"variant0", layer: "CUSTOMER", support: {}, reference: "test.Component"});
 
 			var oSourceVariant = {
-				"content": {
-					"fileName":"variant0",
-					"fileType":"ctrl_variant",
-					"variantManagementReference":"variantMgmtId1",
-					"variantReference":"variant2",
-					"content":{
-						"title":"variant A"
+				content: {
+					fileName:"variant0",
+					fileType:"ctrl_variant",
+					variantManagementReference:"variantMgmtId1",
+					variantReference:"variant2",
+					content:{
+						title:"variant A"
 					},
-					"selector":{},
-					"layer":"CUSTOMER",
-					"namespace":"Dummy.Component"
+					selector:{},
+					layer:"CUSTOMER",
+					namespace:"Dummy.Component"
 				},
-				"controlChanges": [oChange0, oChange1],
-				"variantChanges": {}
+				controlChanges: [oChange0, oChange1],
+				variantChanges: {}
 			};
 
 			var mPropertyBag = {
@@ -1139,39 +1138,39 @@ function(
 
 		QUnit.test("when calling '_ensureStandardVariantExists'", function(assert) {
 			var oVariantControllerContent = {
-				"variants": [{
-				"content": {
-					"fileName": "mockVariantManagement",
-					"fileType": "ctrl_variant",
-					"variantManagementReference": "mockVariantManagement",
-					"variantReference": "",
-					"content": {
-						"title": "Standard",
-						"favorite": true,
-						"visible": true
-					}
-				},
-				"controlChanges": [],
-				"variantChanges": {}
-			}
+				variants: [{
+					content: {
+						fileName: "mockVariantManagement",
+						fileType: "ctrl_variant",
+						variantManagementReference: "mockVariantManagement",
+						variantReference: "",
+						content: {
+							title: "Standard",
+							favorite: true,
+							visible: true
+						}
+					},
+					controlChanges: [],
+					variantChanges: {}
+				}
 			],
-				"defaultVariant": "mockVariantManagement",
-				"variantManagementChanges": {}
+				defaultVariant: "mockVariantManagement",
+				variantManagementChanges: {}
 			};
 
 			var oVariantModelResponse = {
-				"currentVariant": "mockVariantManagement",
-				"originalCurrentVariant": "mockVariantManagement",
-				"defaultVariant": "mockVariantManagement",
-				"originalDefaultVariant": "mockVariantManagement",
-				"variants": [{
-					"key": "mockVariantManagement",
-					"title": "Standard",
-					"originalTitle": "Standard",
-					"favorite": true,
-					"originalFavorite": true,
-					"visible": true,
-					"originalVisible": true
+				currentVariant: "mockVariantManagement",
+				originalCurrentVariant: "mockVariantManagement",
+				defaultVariant: "mockVariantManagement",
+				originalDefaultVariant: "mockVariantManagement",
+				variants: [{
+					key: "mockVariantManagement",
+					title: "Standard",
+					originalTitle: "Standard",
+					favorite: true,
+					originalFavorite: true,
+					visible: true,
+					originalVisible: true
 				}]
 			};
 
@@ -1185,35 +1184,35 @@ function(
 		QUnit.test("when calling 'copyVariant'", function(assert) {
 			var fnAddVariantToControllerStub = sandbox.stub(this.oModel.oVariantController, "addVariantToVariantManagement").returns(3);
 			var oVariantData = {
-				"content": {
-					"fileName":"variant0",
-					"fileType":"ctrl_variant",
-					"variantManagementReference":"variantMgmtId1",
-					"variantReference":"",
-					"reference":"Dummy.Component",
-					"packageName":"$TMP",
-					"content":{
-						"title":"variant A"
+				content: {
+					fileName:"variant0",
+					fileType:"ctrl_variant",
+					variantManagementReference:"variantMgmtId1",
+					variantReference:"",
+					reference:"Dummy.Component",
+					packageName:"$TMP",
+					content:{
+						title:"variant A"
 					},
-					"layer":"CUSTOMER",
-					"texts":{
-						"TextDemo": {
-							"value": "Text for TextDemo",
-							"type": "myTextType"
+					layer:"CUSTOMER",
+					texts:{
+						TextDemo: {
+							value: "Text for TextDemo",
+							type: "myTextType"
 						}
 					},
-					"namespace":"Dummy.Component",
-					"creation":"",
-					"originalLanguage":"EN",
-					"conditions":{},
-					"support":{
-						"generator":"Change.createInitialFileContent",
-						"service":"",
-						"user":""
+					namespace:"Dummy.Component",
+					creation:"",
+					originalLanguage:"EN",
+					conditions:{},
+					support:{
+						generator:"Change.createInitialFileContent",
+						service:"",
+						user:""
 					}
 				},
-				"controlChanges": [],
-				"variantChanges": {}
+				controlChanges: [],
+				variantChanges: {}
 			};
 			sandbox.stub(this.oModel, "_duplicateVariant").returns(oVariantData);
 			sandbox.stub(JsControlTreeModifier, "getSelector").returns({id: "variantMgmtId1"});
@@ -1223,7 +1222,7 @@ function(
 				variantManagementReference: "variantMgmtId1",
 				appComponent: this.oComponent
 			};
-			return this.oModel.copyVariant(mPropertyBag).then( function (aChanges) {
+			return this.oModel.copyVariant(mPropertyBag).then(function (aChanges) {
 				var oVariantDefinition = aChanges[0].getDefinitionWithChanges();
 
 				assert.ok(fnAddVariantToControllerStub.calledOnce, "then function to add variant to VariantController called");
@@ -1247,9 +1246,9 @@ function(
 		QUnit.test("when calling 'removeVariant' with a component", function(assert) {
 			var fnDeleteChangeStub = sandbox.stub(this.oModel.oChangePersistence, "deleteChange");
 			var oChangeInVariant = {
-				"fileName": "change0",
-				"variantReference": "variant0",
-				"layer": "VENDOR",
+				fileName: "change0",
+				variantReference: "variant0",
+				layer: "VENDOR",
 				getId: function () {
 					return this.fileName;
 				},
@@ -1258,7 +1257,7 @@ function(
 				}
 			};
 			var oVariant = {
-				"fileName": "variant0",
+				fileName: "variant0",
 				getId: function() {
 					return this.fileName;
 				}
@@ -1303,7 +1302,6 @@ function(
 			assert.equal(this.oModel.oData["variantMgmtId1"].modified, this.oModel.oData["variantMgmtId1"].variantsEditable, "then modified property equals variantEditable property");
 			assert.ok(fnAddChangeToVariant.calledOnce, "then VariantController.addChangeToVariant called once");
 			assert.ok(fnAddChangeToVariant.calledWith(oChange), "then VariantController.addChangeToVariant called with the passed change");
-
 		});
 
 		QUnit.test("when calling 'collectModelChanges'", function(assert) {
@@ -1355,21 +1353,21 @@ function(
 			var done = assert.async();
 
 			var oChange1 = new Change({
-				"fileName": "change1",
-				"selector": {
-					"id": "abc123"
+				fileName: "change1",
+				selector: {
+					id: "abc123"
 				}
 			});
 			var oChange2 = new Change({
-				"fileName": "change2",
-				"selector": {
-					"id": "abc123"
+				fileName: "change2",
+				selector: {
+					id: "abc123"
 				}
 			});
 			var oChange3 = new Change({
-				"fileName": "change3",
-				"selector": {
-					"id": "abc123"
+				fileName: "change3",
+				selector: {
+					id: "abc123"
 				}
 			});
 
@@ -1439,21 +1437,21 @@ function(
 			var done = assert.async();
 
 			var oChange1 = new Change({
-				"fileName": "change1",
-				"selector": {
-					"id": "abc123"
+				fileName: "change1",
+				selector: {
+					id: "abc123"
 				}
 			});
 			var oChange2 = new Change({
-				"fileName": "change2",
-				"selector": {
-					"id": "abc123"
+				fileName: "change2",
+				selector: {
+					id: "abc123"
 				}
 			});
 			var oChange3 = new Change({
-				"fileName": "change3",
-				"selector": {
-					"id": "abc123"
+				fileName: "change3",
+				selector: {
+					id: "abc123"
 				}
 			});
 
@@ -1505,15 +1503,15 @@ function(
 
 		QUnit.test("when calling '_handleSave' with parameter from Save button, which calls 'checkDirtyStateForControlModels' later, with no dirty changes existing after Save", function(assert) {
 			var oChange1 = new Change({
-				"fileName": "change1",
-				"selector": {
-					"id": "abc123"
+				fileName: "change1",
+				selector: {
+					id: "abc123"
 				}
 			});
 			var oChange2 = new Change({
-				"fileName": "change2",
-				"selector": {
-					"id": "abc123"
+				fileName: "change2",
+				selector: {
+					id: "abc123"
 				}
 			});
 
@@ -1556,9 +1554,9 @@ function(
 
 		QUnit.test("when calling '_handleSave' with parameter from Save button, which calls 'checkDirtyStateForControlModels' later, with dirty changes still existing after Save", function(assert) {
 			var oChange1 = new Change({
-				"fileName": "change1",
-				"selector": {
-					"id": "abc123"
+				fileName: "change1",
+				selector: {
+					id: "abc123"
 				}
 			});
 
@@ -1628,7 +1626,7 @@ function(
 		});
 
 		QUnit.test("when calling 'getVariant' without a variant management reference", function(assert) {
-			sandbox.stub(this.oModel.oVariantController, "getVariant").callsFake(function(){
+			sandbox.stub(this.oModel.oVariantController, "getVariant").callsFake(function() {
 				assert.ok(this.oModel.getVariantManagementReference.calledOnce, "then variant management reference calculated");
 				assert.equal(arguments[0], "varMgmtRef", "then correct variant management reference received");
 				assert.equal(arguments[1], "varRef", "then correct variant reference received");
@@ -1639,13 +1637,13 @@ function(
 			this.oModel.getVariant("varRef");
 		});
 
-		QUnit.test("when 'getCurrentControlVariantIds' is called to get all current variant references", function(assert){
+		QUnit.test("when 'getCurrentControlVariantIds' is called to get all current variant references", function(assert) {
 			this.oData = {
-				"variantManagementRef1": {
-					"currentVariant": "currentVariantRef1"
+				variantManagementRef1: {
+					currentVariant: "currentVariantRef1"
 				},
-				"variantManagementRef2": {
-					"currentVariant": "currentVariantRef2"
+				variantManagementRef2: {
+					currentVariant: "currentVariantRef2"
 				}
 			};
 			this.oModel.setData(this.oData);
@@ -1656,7 +1654,7 @@ function(
 			);
 		});
 
-		QUnit.test("when 'getCurrentControlVariantIds' is called with no variant model data", function(assert){
+		QUnit.test("when 'getCurrentControlVariantIds' is called with no variant model data", function(assert) {
 			this.oModel.setData({});
 			assert.deepEqual(this.oModel.getCurrentControlVariantIds(), [], "then the function returns an empty array");
 		});
@@ -1669,8 +1667,8 @@ function(
 			var oManifestObj = {
 				"sap.app": {
 					id: "MyComponent",
-					"applicationVersion": {
-						"version": "1.2.3"
+					applicationVersion: {
+						version: "1.2.3"
 					}
 				}
 			};

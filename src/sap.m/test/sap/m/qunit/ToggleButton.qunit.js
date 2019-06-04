@@ -50,7 +50,7 @@ sap.ui.define([
 	QUnit.test("Check Accessibility States", function(assert) {
 		assert.strictEqual(oToggleButton1.$().attr("aria-pressed"), "true", "aria-pressed state is true for testToggleButton_1");
 		assert.strictEqual(oToggleButton2.$().attr("aria-pressed"), "false", "aria-pressed state is false for testToggleButton_2");
-		assert.strictEqual(oToggleButton3.$().attr("aria-disabled"), "true", "aria-disabled status is set");
+		assert.strictEqual(oToggleButton3.$().attr("aria-disabled"), undefined, "aria-disabled status is not rendered");
 	});
 
 	QUnit.test("TestPressedToUnpressedOK", function(assert) {
@@ -84,7 +84,7 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oToggleButton.getPressed(), true, "the pressed state is still true");
 		assert.strictEqual(oTapSpy.callCount, 1, "tap was fired");
-		assert.strictEqual(oToggleButton.$().attr("aria-disabled"), "true", "aria-disabled is true");
+		assert.strictEqual(oToggleButton.$().attr("aria-disabled"), undefined, "aria-disabled is not rendered");
 	});
 
 	QUnit.test("Should not change the pressed state, from untoggled to toggled, on a tap Event if the toggle button is disabled", function(assert) {
@@ -163,7 +163,7 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(oToggleButton.getEnabled(), false, "the enabled state of the toolbar got propagated");
-		assert.strictEqual(oToggleButton.$().attr("aria-disabled"), "true", "aria-disabled is true");
+		assert.strictEqual(oToggleButton.$().attr("aria-disabled"), undefined, "aria-disabled is not rendered");
 		assert.strictEqual(oToggleButton.getPressed(), true, "the pressed state is still true");
 		assert.ok(oToggleButton.$("inner").hasClass("sapMToggleBtnPressed"), "still has the pressed class");
 		assert.strictEqual(oTapSpy.callCount, 1, "tap was fired");

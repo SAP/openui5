@@ -50,9 +50,9 @@ sap.ui.define(function () {
 	 */
 	EventHistory.saveEvent = function (sChannelId, sEventId, mParameters) {
 		var oEvent = {
-			"channelId": sChannelId,
-			"eventId": sEventId,
-			"parameters": mParameters.getId() //we only need the id. In unified.shell sap.ui.getCore().byId(vControl); will be used.
+			channelId: sChannelId,
+			eventId: sEventId,
+			parameters: mParameters.getId() //we only need the id. In unified.shell sap.ui.getCore().byId(vControl); will be used.
 		};
 
 		if (EventHistory._oHistory[sEventId]) {

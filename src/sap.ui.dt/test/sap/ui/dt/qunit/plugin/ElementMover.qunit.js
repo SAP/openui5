@@ -40,7 +40,6 @@ sap.ui.define([
 			this.oForm1.destroy();
 		}
 	}, function () {
-
 		QUnit.test("Calling a _compareSourceAndTarget method, when the aggregation property of the source and target is same", function(assert) {
 			assert.strictEqual(this.oElementMover._compareSourceAndTarget({aggregation: "formElements"}, {aggregation: "formElements"}), true, "then there is no move operation and the command stack is empty");
 		});
@@ -82,7 +81,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("Calling a _compareSourceAndTarget method, when all the properties of source and target are same", function(assert) {
-
 			var oSource = {
 				aggregation: "formElements",
 				index: 0,
@@ -103,7 +101,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("Calling a _compareSourceAndTarget method, when one of the properties of source and target is not same", function(assert) {
-
 			var oSource = {
 				aggregation: "formElements",
 				index: 0,
@@ -153,7 +150,6 @@ sap.ui.define([
 				this.oButton3Overlay = OverlayRegistry.getOverlay(this.oButton3);
 				done();
 			}.bind(this));
-
 		},
 		afterEach: function() {
 			this.oButton1Overlay.destroy();
@@ -200,5 +196,4 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

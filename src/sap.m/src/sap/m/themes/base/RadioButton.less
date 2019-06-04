@@ -4,6 +4,7 @@
 /* ================================== */
 
 .sapMRb {
+	height: 3rem;
 	float: left;
 	clear: left;
 	outline: none;
@@ -23,27 +24,46 @@
 	float: right;
 }
 
-.sapMRbHasLabel .sapMRbB {
+.sapMRb .sapMRbB {
+	height: 3rem;
 	width: 3rem;
-}
-
-.sapMRbB {
 	display: inline-block; /* for ie*/
 	font-size: 1rem; /* override font size of the message dialog */
+
+	&:focus {
+		outline: none
+	}
+
+	.sapMRbBOut {
+		height: 100%;
+		width: 100%;
+		transform: translate(50%, 50%);
+		margin: 0.825rem;
+		padding: 1px; /* using padding here so that margin won't collide */
+		stroke: @sapUiFieldBorderColor;
+		fill: @sapUiFieldBackground;
+	}
 }
 
-.sapMRbB .sapMRbBOut {
-	height: 1rem;
-	width: 1rem;
-	border: 0.125rem solid @sapUiFieldBorderColor;
-	border-radius: 1rem;
-	background-color: @sapUiFieldBackground;
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMRbSvg {
+		position: relative;
+		left: 0.6875rem;
+		top: 0.6875rem;
+	}
+
+	.sapUiSizeCompact .sapMRbSvg {
+		left: 0.5rem;
+		top: 0.5rem;
+	}
+}
+
+.sapMRbSvg {
+	height: 1.375rem;
+	width: 1.375rem;
 	margin: 0.825rem;
-	padding: 1px; /* using padding here so that margin won't collide */
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
+	overflow: visible;
 }
 
 .sapMRbBLabel {
@@ -59,10 +79,6 @@
 	visibility: hidden;
 }
 
-.sapMRbB:focus {
-	outline: none;
-}
-
 .sapMRb:focus:before {
 	content: "";
 	display: block;
@@ -74,16 +90,12 @@
 	pointer-events: none;
 }
 
-.sapMRbBInn {
-	background-color: transparent;
+.sapMRbB .sapMRbBInn {
+	transform: translate(50%, 50%);
+	stroke: transparent;
+	fill: none;
 	-webkit-user-select: none;
 	align-self: center;
-}
-
-.sapMRbB .sapMRbBInn {
-	height: 0.625rem;
-	width: 0.625rem;
-	border-radius: 1rem;
 }
 
 .sapMRbHasLabel.sapMRb:focus:before {
@@ -94,7 +106,46 @@
 	display: none;
 }
 
-.sapUiSizeCompact {
+.sapMRbSel .sapMRbBInn {
+	fill: @sapUiSelected;
+	stroke: none;
+}
+
+.sapMLIBActive .sapMRbSel .sapMRbBInn {
+	fill: @sapUiListActiveTextColor;
+}
+
+/* Read only */
+.sapMRb.sapMRbRo {
+	.sapMRbBOut {
+		stroke: @sapUiFieldReadOnlyBorderColor;
+		fill: @sapUiFieldReadOnlyBackground;
+	}
+
+	&.sapMRbSel .sapMRbBInn {
+		fill: @sapUiContentNonInteractiveIconColor;
+		stroke: none;
+	}
+}
+
+/* Compact size */
+.sapUiSizeCompact{
+	.sapMRb {
+		height: 2rem;
+
+		> .sapMLabel {
+			max-width: calc(~"100% - 2rem + 1px");
+		}
+	}
+
+	.sapMRbSvg {
+		height: 1rem;
+		width: 1rem;
+		display: inline-block;
+		overflow: visible;
+		margin: 0.5rem;
+	}
+
 	.sapMRb:focus:before {
 		top: .375rem;
 		bottom: .375rem;
@@ -102,54 +153,18 @@
 		right: .325rem;
 	}
 
-	.sapMRbHasLabel .sapMRbB {
-		width: 2rem;
-	}
-
-	.sapMRb > .sapMLabel {
-		max-width: calc(~"100% - 2rem + 1px");
-	}
-}
-
-.sapMRbHoverable:hover {
-	border-color: @sapUiFieldHoverBorderColor;
-	background-color: @sapUiFieldHoverBackground;
-}
-
-.sapMRbSel .sapMRbBInn {
-	background-color: @sapUiSelected;
-}
-
-.sapMLIBActive .sapMRbSel .sapMRbBInn {
-	background-color: @sapUiListActiveTextColor;
-}
-
-/* Read only */
-.sapMRbRo .sapMRbBOut {
-	background-color: @sapUiFieldReadOnlyBackground;
-	border-color: @sapUiFieldReadOnlyBorderColor;
-}
-
-.sapMRbRo.sapMRbSel .sapMRbBInn {
-	background-color: @sapUiContentNonInteractiveIconColor;
-}
-
-/* Compact size */
-.sapUiSizeCompact{
-	.sapMRb {
-		height : 2rem;
-	}
-
 	.sapMRbB {
+		height : 2rem;
+		width: 2rem;
 		font-size: 1rem; /* override font size of the message dialog */
-	}
 
-	.sapMRbB .sapMRbBOut {
-		height: 1rem;
-		width: 1rem;
-		border-width: 0.125rem;
-		margin: 0.5rem;
-		box-sizing: border-box;
+		.sapMRbBOut {
+			height: 100%;
+			width: 100%;
+			border-width: 0.125rem;
+			margin: 0.5rem;
+			box-sizing: border-box;
+		}
 	}
 
 	.sapMRbB .sapMRbBInn {
@@ -179,55 +194,27 @@
 		font-size: 1rem; /* override font size of the message dialog */
 		height: 1.375rem;
 		width: 1.375rem;
+
+		.sapMRbBOut {
+			height: 0.75rem;
+			width: 0.75rem;
+			border-width: 1px;
+			margin: 0.375rem;
+		}
+
+		.sapMRbBInn {
+			height: 0.25rem;
+			width: 0.25rem;
+			margin: 0.0625rem;
+		}
 	}
 
 	.sapUiTableDataCell > .sapUiTableCellInner > .sapMRb>.sapMRbB{
 			margin: 0 0.25rem; /* extra space in the condensed ULV */
 	}
 
-	.sapMRbB .sapMRbBOut {
-		height: 0.75rem;
-		width: 0.75rem;
-		border-width: 1px;
-		margin: 0.375rem;
-	}
-
-	.sapMRbB .sapMRbBInn {
-		height: 0.25rem;
-		width: 0.25rem;
-		margin: 0.0625rem;
-	}
-
 	.sapMRbBLabel {
 		line-height: 1.5rem;
 		height: 1.5rem;
-	}
-}
-
-/* When printing border is needed for the selection */
-@media only print {
-	.sapMRbBInn {
-		box-sizing: border-box;
-	}
-
-	.sapMRbSel .sapMRbBInn {
-		border-color: @sapUiSelected;
-		border-style: solid;
-		border-width: 5px;
-	}
-
-	.sapMRbRo.sapMRbSel .sapMRbBInn {
-		border-color: @sapUiContentNonInteractiveIconColor;
-	}
-
-	.sapMLIBActive .sapMRbSel .sapMRbBInn {
-		border-color: @sapUiListActiveTextColor;
-	}
-
-	/* Compact size */
-	.sapUiSizeCompact{
-		.sapMRbSel .sapMRbBInn {
-			border-width: 3px;
-		}
 	}
 }

@@ -59,7 +59,7 @@ sap.ui.define([
 			oView.setModel(oStateModel, "state");
 
 			this._data.push(
-				new Promise(function (resolve, reject) {
+				new Promise(function (resolve) {
 					oView.bindElement({
 						path: "/EntityTypes(Property01='propValue01',Property02='propValue02',Property03='propValue03')",
 						events: {
@@ -67,7 +67,7 @@ sap.ui.define([
 						}
 					});
 				}),
-				new Promise(function (resolve, reject) {
+				new Promise(function (resolve) {
 					oView.byId("GroupEntityType01").bindElement({
 						path: "/EntityTypes(Property01='propValue01',Property02='propValue02',Property03='propValue03')",
 						events: {
@@ -76,7 +76,7 @@ sap.ui.define([
 					});
 				}),
 
-				new Promise(function (resolve, reject) {
+				new Promise(function (resolve) {
 					oView.byId("MainForm").bindElement({
 						path: "/EntityTypes2(EntityType02_Property01='EntityType02Property01Value')",
 						events: {
@@ -96,7 +96,7 @@ sap.ui.define([
 			var sURLVariables = sPageURL.split('&');
 			for (var i = 0; i < sURLVariables.length; i++) {
 				var sParameterName = sURLVariables[i].split('=');
-				if (sParameterName[0] == sParam) {
+				if (sParameterName[0] === sParam) {
 					sReturn = sParameterName[1];
 				}
 			}

@@ -3,9 +3,9 @@ var iOriginalMaxDepth = QUnit.dump.maxDepth;
 QUnit.dump.maxDepth = 10;
 
 sap.ui.define([
-		"sap/ui/thirdparty/sinon-4",
-		"sap/ui/fl/designtime/appVariant/ModuleModifier"
-	],
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/fl/designtime/appVariant/ModuleModifier"
+],
 	function (sinon, ModuleModifier) {
 		"use strict";
 
@@ -37,32 +37,32 @@ sap.ui.define([
 		}, function() {
 			QUnit.test("does modify module files in the '/changes/coding/ and /changes/fragments/' folder", function (assert) {
 				this.oChange = {
-					"fileName": "change12",
-					"fileType": "change",
-					"changeType": "codeExt",
-					"moduleName": "",
-					"reference": "oldReference"
+					fileName: "change12",
+					fileType: "change",
+					changeType: "codeExt",
+					moduleName: "",
+					reference: "oldReference"
 				};
 
 				var aFiles = [{
 					fileName: "/changes/coding/x11.js",
 					content: this.sCodeExt
-				},{
+				}, {
 					fileName: "/changes/coding/x12.js",
 					content: this.sCodeExt
-				},{
+				}, {
 					fileName: "/descriptorChanges/id_1550588173383_11_setTitle.change",
 					content: "{}"
-				},{
+				}, {
 					fileName: "/changes/id_1550588173383_10_changeLabel.change",
 					content: JSON.stringify(this.oChange)
-				},{
+				}, {
 					fileName: "/changes/id_1550588173383_11_changeLabel.change",
 					content: JSON.stringify(this.oChange)
 				}, {
 					fileName: "/changes/coding/subfolder/x11.js",
 					content: this.sCodeExt
-				},{
+				}, {
 					fileName: "/changes/fragments/my.fragment.xml",
 					content: this.sFragment
 				}
@@ -72,11 +72,9 @@ sap.ui.define([
 
 				ModuleModifier.modify("newReference", aFiles);
 				assert.equal(modifyModuleFileStub.callCount, 3, "three files were modified");
-
 			});
 
 			QUnit.test("does nothing when no files are present'", function (assert) {
-
 				var aFiles = [];
 
 				var modifyModuleFileStub = sandbox.stub(ModuleModifier, "_modifyModuleFile");

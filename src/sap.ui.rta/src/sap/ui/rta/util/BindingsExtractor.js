@@ -3,9 +3,9 @@
  */
 
 sap.ui.define([
-	'sap/ui/dt/ElementUtil',
-	'sap/base/util/isPlainObject',
-	'sap/ui/thirdparty/jquery'
+	"sap/ui/dt/ElementUtil",
+	"sap/base/util/isPlainObject",
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	ElementUtil,
@@ -23,7 +23,7 @@ function(
 	 *
 	 * @private
 	 */
-	function collectBindingPaths(oElement, oModel){
+	function collectBindingPaths(oElement, oModel) {
 		var mBindingsCollection = {
 			bindingPaths: [],
 			bindingContextPaths: []
@@ -56,18 +56,18 @@ function(
 		for (var i = 0, l = aBindings.length; i < l; i++) {
 			if (aBindings[i].getPath) {
 				var sBindingPath = aBindings[i].getPath();
-				if (sBindingPath &&	mBindingsCollection.bindingPaths.indexOf(sBindingPath) === -1){
+				if (sBindingPath &&	mBindingsCollection.bindingPaths.indexOf(sBindingPath) === -1) {
 					mBindingsCollection.bindingPaths.push(sBindingPath);
 				}
 			}
 			if (aBindings[i].getContext && aBindings[i].getContext() && aBindings[i].getContext().getPath) {
 				var sBindingContextPath = aBindings[i].getContext().getPath();
-				if (sBindingContextPath && mBindingsCollection.bindingContextPaths.indexOf(sBindingContextPath) === -1){
+				if (sBindingContextPath && mBindingsCollection.bindingContextPaths.indexOf(sBindingContextPath) === -1) {
 					mBindingsCollection.bindingContextPaths.push(sBindingContextPath);
 				}
 			}
-			if (isPlainObject(aBindings[i])){
-				if (mBindingsCollection.bindingPaths.indexOf(aBindings[i].parts[0].path) === -1){
+			if (isPlainObject(aBindings[i])) {
+				if (mBindingsCollection.bindingPaths.indexOf(aBindings[i].parts[0].path) === -1) {
 					mBindingsCollection.bindingPaths.push(aBindings[i].parts[0].path);
 				}
 			}
@@ -93,7 +93,7 @@ function(
 			? getBindingsFromTemplateProperties(oElement)
 			: getBindingsFromProperties(oElement, oParentDefaultModel)
 		);
-		var aAggregationNames = sAggregationName ? [ sAggregationName ] : Object.keys(oElement.getMetadata().getAllAggregations());
+		var aAggregationNames = sAggregationName ? [sAggregationName] : Object.keys(oElement.getMetadata().getAllAggregations());
 
 		aAggregationNames.forEach(function (sAggregationNameInLoop) {
 			aBindings = aBindings.concat(getBindingsForAggregation(oElement, oParentDefaultModel, bTemplate, sAggregationNameInLoop));

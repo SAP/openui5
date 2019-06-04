@@ -66,13 +66,13 @@ function (
 
 			this.mTexts = {
 				"customer.newid_sap.ovp.cards.customer.fancy_card.settings.category": {
-					"type": "XTIT",
-					"maxLength": 20,
-					"comment": "example",
-					"value": {
+					type: "XTIT",
+					maxLength: 20,
+					comment: "example",
+					value: {
 						"": "Category example default text",
-						"en": "Category example text in en",
-						"de": "Kategorie Beispieltext in de"
+						en: "Category example text in en",
+						de: "Kategorie Beispieltext in de"
 					}
 				}
 			};
@@ -88,14 +88,14 @@ function (
 			var fnAssertSpy = sinon.spy(ManagedObject.prototype, "applySettings");
 
 			var oMockDescriptorInlineChange = {
-				"mockName" : "mocked"
+				mockName : "mocked"
 			};
 
 			var oMockDescriptorChange = {
 				store : function() {
 					assert.ok(true, "the descriptor change was submitted");
 					var mPassedSettings = fnAssertSpy.getCall(0).args[0];
-					var bHasSelector = Object.keys(mPassedSettings).some(function(sKey){
+					var bHasSelector = Object.keys(mPassedSettings).some(function(sKey) {
 						return sKey === "selector";
 					});
 					assert.notOk(bHasSelector, "the selector is not part of the passed settings");
@@ -129,7 +129,7 @@ function (
 				texts : this.mTexts,
 				changeType : this.sChangeType,
 				appComponent : this.oMockedAppComponent
-			}, {}, {"layer" : this.sLayer})
+			}, {}, {layer : this.sLayer})
 
 			.then(function(oAppDescriptorCommand) {
 				assert.ok(oAppDescriptorCommand, "App Descriptor command exists for element");
@@ -146,5 +146,4 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

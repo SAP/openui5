@@ -2,8 +2,6 @@
 
 sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
-	"sap/ui/rta/command/AddODataProperty",
-	"sap/ui/dt/DesignTimeMetadata",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/fl/Utils",
@@ -12,8 +10,6 @@ sap.ui.define([
 ],
 function(
 	CommandFactory,
-	AddODataProperty,
-	DesignTimeMetadata,
 	ChangeRegistry,
 	ElementDesignTimeMetadata,
 	Utils,
@@ -60,7 +56,7 @@ function(
 
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Button" : {
-					"addODataProperty" : {
+					addODataProperty : {
 						completeChangeContent: this.fnCompleteChangeContentSpy,
 						applyChange: this.fnApplyChangeSpy
 					}
@@ -80,8 +76,6 @@ function(
 					}
 				});
 			}.bind(this));
-		},
-		afterEach : function(assert) {
 		}
 	});
 
@@ -118,5 +112,4 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

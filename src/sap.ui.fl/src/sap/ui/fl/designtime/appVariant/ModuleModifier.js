@@ -54,7 +54,7 @@ sap.ui.define([
 	ModuleModifier._extractOldReference = function (aFiles) {
 		var sOldReference = null;
 		var oChange;
-		aFiles.some(function(mFile){
+		aFiles.some(function(mFile) {
 			if (ModifierUtils.fileNameMatchesPattern(mFile.fileName, ChangeModifier.CHANGE_PATTERN)) {
 				if (mFile.content) {
 					oChange = JSON.parse(mFile.content);
@@ -79,7 +79,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ModuleModifier._modifyModuleFile = function (sModuleFileContent, sOldReference, sNewReference) {
-		var sOldReferenceWithSlashes = sOldReference.replace(/\./g,'\/');
+		var sOldReferenceWithSlashes = sOldReference.replace(/\./g, '\/');
 
 		var sModifiedModuleFileContent = sModuleFileContent.replace(new RegExp(sOldReference, 'g'), sNewReference);
 		sModifiedModuleFileContent = sModifiedModuleFileContent.replace(new RegExp(sOldReferenceWithSlashes, 'g'), sNewReference);

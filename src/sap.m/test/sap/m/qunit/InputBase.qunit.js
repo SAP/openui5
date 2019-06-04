@@ -1878,6 +1878,7 @@ sap.ui.define([
 
 		// act
 		oInput.setTooltip("");
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.strictEqual(oInput.$().attr("title"), undefined);
@@ -1900,6 +1901,7 @@ sap.ui.define([
 
 		// act
 		oInput.setTooltip("");
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.ok(oInput.$().attr("title") === undefined);
@@ -1932,6 +1934,7 @@ sap.ui.define([
 
 		// act
 		oInput.setTooltip("");
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.ok(oInput.$().attr("title") === undefined);
@@ -1970,6 +1973,7 @@ sap.ui.define([
 
 		// act
 		oInput.setTooltip("");
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.strictEqual(oInput.getFocusDomRef().getAttribute("aria-describedby"), "text");

@@ -11,7 +11,8 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 
 	/**
 	 * Compares the two given values for equality, especially by comparing the content.
-	 * Note: function does not work with comparing XML objects
+	 *
+	 * <b>Note:</b> Function does not work with comparing XML objects.
 	 *
 	 * @function
 	 * @since 1.58

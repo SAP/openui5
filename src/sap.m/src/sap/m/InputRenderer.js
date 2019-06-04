@@ -18,6 +18,7 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 	 * InputRenderer extends the InputBaseRenderer
 	 */
 	var InputRenderer = Renderer.extend(InputBaseRenderer);
+	InputRenderer.apiVersion = 2;
 
 	/**
 	 * Adds control specific class
@@ -26,10 +27,10 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	InputRenderer.addOuterClasses = function(oRm, oControl) {
-		oRm.addClass("sapMInput");
+		oRm.class("sapMInput");
 
 		if (oControl.getDescription()) {
-			oRm.addClass("sapMInputWithDescription");
+			oRm.class("sapMInputWithDescription");
 		}
 	};
 
@@ -40,25 +41,25 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	InputRenderer.writeInnerAttributes = function(oRm, oControl) {
-		oRm.writeAttribute("type", oControl.getType().toLowerCase());
+		oRm.attr("type", oControl.getType().toLowerCase());
 		//if Input is of type "Number" step attribute should be "any" allowing input of floating point numbers
 		if (oControl.getType() == InputType.Number) {
-			oRm.writeAttribute("step", "any");
+			oRm.attr("step", "any");
 		}
 		if (oControl.getType() == InputType.Number && sap.ui.getCore().getConfiguration().getRTL()) {
-			oRm.writeAttribute("dir", "ltr");
-			oRm.addStyle("text-align", "right");
+			oRm.attr("dir", "ltr");
+			oRm.style("text-align", "right");
 		}
 
 		if (oControl.getShowSuggestion() || oControl.getShowValueStateMessage()) {
-			oRm.writeAttribute("autocomplete", "off");
+			oRm.attr("autocomplete", "off");
 		}
 
 		if ((!oControl.getEnabled() && oControl.getType() == "Password")
 				|| (oControl.getShowSuggestion() && oControl._bUseDialog)
 				|| (oControl.getValueHelpOnly() && oControl.getEnabled() && oControl.getEditable() && oControl.getShowValueHelp())) {
 			// required for JAWS reader on password fields on desktop and in other cases:
-			oRm.writeAttribute("readonly", "readonly");
+			oRm.attr("readonly", "readonly");
 		}
 	};
 
@@ -71,23 +72,19 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 	InputRenderer.addInnerClasses = function(oRm, oControl) {};
 
 	InputRenderer.writeDescription = function (oRm, oControl) {
-		oRm.write("<div");
-		oRm.addClass("sapMInputDescriptionWrapper");
-		oRm.addStyle("width", "calc(100% - " + oControl.getFieldWidth() + ")");
-		oRm.writeClasses();
-		oRm.writeStyles();
-		oRm.write(">");
+		oRm.openStart("div");
+		oRm.class("sapMInputDescriptionWrapper");
+		oRm.style("width", "calc(100% - " + oControl.getFieldWidth() + ")");
+		oRm.openEnd();
 
-		oRm.write("<span");
-		oRm.writeAttribute("id", oControl.getId() + "-descr");
-		oRm.addClass("sapMInputDescriptionText");
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openStart("span", oControl.getId() + "-descr");
+		oRm.class("sapMInputDescriptionText");
+		oRm.openEnd();
 
-		oRm.writeEscaped(oControl.getDescription());
+		oRm.text(oControl.getDescription());
 
-		oRm.write("</span>");
-		oRm.write("</div>");
+		oRm.close("span");
+		oRm.close("div");
 	};
 
 	InputRenderer.writeDecorations = function (oRm, oControl) {
@@ -97,13 +94,13 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 
 		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
 			if (oControl.getShowSuggestion() && oControl.getEnabled() && oControl.getEditable()) {
-				oRm.write("<span id=\"" +  oControl.getId() + "-SuggDescr\" class=\"sapUiPseudoInvisibleText\" role=\"status\" aria-live=\"polite\"></span>");
+				oRm.openStart("span").attr("id", oControl.getId() + "-SuggDescr").class("sapUiPseudoInvisibleText").attr("role", "status").attr("aria-live", "polite").openEnd().close("span");
 			}
 		}
 	};
 
 	InputRenderer.addWrapperStyles = function (oRm, oControl) {
-		oRm.addStyle("width", oControl.getDescription() ? oControl.getFieldWidth() : "100%");
+		oRm.style("width", oControl.getDescription() ? oControl.getFieldWidth() : "100%");
 	};
 
 	InputRenderer.getAriaLabelledBy = function(oControl) {

@@ -35,7 +35,7 @@ sap.ui.define([
 		 * @method sap.ui.fl.read.api.ControlPersonalizationReadAPI.isPersonalized
 		 * @public
 		 */
-		isPersonalized: function(aControls, aChangeTypes) {
+		isPersonalized: function() {
 			return OldControlPersonalizationAPI.isPersonalized.apply(OldControlPersonalizationAPI, arguments);
 		}
 

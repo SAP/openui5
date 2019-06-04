@@ -18,18 +18,18 @@ function (
 
 	sinon.stub(LrepConnector.prototype, "loadChanges")
 	.resolves({
-		"changes": {
-			"changes": [],
-			"contexts": [],
-			"variantSection": {},
-			"settings": {
-				"isKeyUser": true,
-				"isAtoAvailable": false,
-				"isAtoEnabled": false,
-				"isProductiveSystem": false
+		changes: {
+			changes: [],
+			contexts: [],
+			variantSection: {},
+			settings: {
+				isKeyUser: true,
+				isAtoAvailable: false,
+				isAtoEnabled: false,
+				isProductiveSystem: false
 			}
 		}
-		}
+	}
 	);
 
 	QUnit.module("Creation of the first change without a registered propagationListener", {
@@ -38,8 +38,8 @@ function (
 				name: "sap.ui.fl.qunit.integration.testComponentComplex",
 				id: "sap.ui.fl.qunit.integration.testComponentComplex",
 				manifestFirst: true,
-				"metadata": {
-					"manifest": "json"
+				metadata: {
+					manifest: "json"
 				}
 			})
 			.then(function (oComponent) {
@@ -49,7 +49,7 @@ function (
 			}.bind(this));
 		},
 
-		afterEach: function (assert) {
+		afterEach: function () {
 			this.oComponent.destroy();
 		}
 	}, function() {
@@ -63,14 +63,14 @@ function (
 			var oInitialFieldInstance = oView.byId("myGroupField");
 
 			var oChangeContent = {
-				"fileType": "change",
-				"layer": "VENDOR",
-				"fileName": "a",
-				"namespace": "b",
-				"packageName": "c",
-				"changeType": "hideControl",
-				"reference": sFlexReference,
-				"content": ""
+				fileType: "change",
+				layer: "VENDOR",
+				fileName: "a",
+				namespace: "b",
+				packageName: "c",
+				changeType: "hideControl",
+				reference: sFlexReference,
+				content: ""
 			};
 
 			// simulate no component loaded callback (no loaded fl library)
@@ -100,7 +100,6 @@ function (
 				// final check
 				assert.deepEqual(oNewFieldInstance.getVisible(), false, "the label is still hidden");
 			});
-
 		});
 	});
 
@@ -110,8 +109,8 @@ function (
 				name: "integration/testComponentComplex",
 				id: "testComponentComplex",
 				manifestFirst: true,
-				"metadata": {
-					"manifest": "json"
+				metadata: {
+					manifest: "json"
 				}
 			});
 
@@ -119,7 +118,7 @@ function (
 			this.oComponent.aPropagationListeners = [];
 		},
 
-		afterEach: function (assert) {
+		afterEach: function () {
 			this.oComponent.destroy();
 		}
 	});

@@ -18,7 +18,7 @@ sap.ui.define([
 	jQuery,
 	sinon,
 	Dialog
-){
+) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
@@ -64,7 +64,7 @@ sap.ui.define([
 
 			var oStubbedGetContent = sandbox.stub(LRepConnector, "getContent").returns(Promise.resolve());
 			var oStubbedOnContentReceived = sandbox.stub(oController, "_onContentReceived").returns(Promise.resolve());
-			return oController._onRouteMatched(routeParameters).then(function(){
+			return oController._onRouteMatched(routeParameters).then(function() {
 				assert.ok(oStubbedGetContent.calledOnce, "then a request for getting lrep data is sent");
 				assert.equal(oStubbedGetContent.getCall(0).args[0], sLayer, "with correct layer");
 				assert.equal(oStubbedGetContent.getCall(0).args[1], sNamespace + sFileName + "." + sFileType, "and with correct suffix");
@@ -74,19 +74,19 @@ sap.ui.define([
 
 		QUnit.test("on LRep content received", function(assert) {
 			var oModelData = {
-				fileType : "json"
-			},
-			oData = {},
-			oPage = {
-					setBusy : function (busy){}
-			},
-			sContentSuffix = "pathtothefile",
-			oStubbedFormatData = sandbox.stub(DataUtils, "formatData"),
-			oStubbedReceivedMetadata = sandbox.stub(oController, "_onContentMetadataReceived"),
-			oStubbedGetContent = sandbox.stub(LRepConnector, "getContent").returns(Promise.resolve());
+					fileType : "json"
+				},
+				oData = {},
+				oPage = {
+					setBusy : function () {}
+				},
+				sContentSuffix = "pathtothefile",
+				oStubbedFormatData = sandbox.stub(DataUtils, "formatData"),
+				oStubbedReceivedMetadata = sandbox.stub(oController, "_onContentMetadataReceived"),
+				oStubbedGetContent = sandbox.stub(LRepConnector, "getContent").returns(Promise.resolve());
 
 			return oController._onContentReceived(oModelData, oPage, sContentSuffix, oData).then(
-				function (){
+				function () {
 					assert.ok(oStubbedFormatData.calledOnce, "then received data is formatted");
 					assert.equal(oStubbedFormatData.getCall(0).args[0], oData, "with correct data");
 					assert.equal(oStubbedFormatData.getCall(0).args[1], oModelData.fileType, "and correct file type");
@@ -133,7 +133,7 @@ sap.ui.define([
 			var oStubbedNavTo = sandbox.stub(oRouter, "navTo");
 			var oStubbedLrepConDeleteFile = sandbox.stub(LRepConnector, "deleteFile").returns(Promise.resolve());
 
-			return oController._deleteFile("VENDOR", "namespace", "fileName", "fileType", "transportId", "All").then(function(){
+			return oController._deleteFile("VENDOR", "namespace", "fileName", "fileType", "transportId", "All").then(function() {
 				assert.ok(oStubbedGetRouterFor.calledOnce, "then call for get a router");
 				assert.ok(oStubbedLrepConDeleteFile.calledOnce, "then call Lrep connector for deleting file");
 				assert.ok(oStubbedNavTo.calledOnce, "then navigation is triggered");
@@ -215,7 +215,7 @@ sap.ui.define([
 								metadata : [{
 									name : "layer",
 									value : "CUSTOMER"
-								},{
+								}, {
 									name : "transportId",
 									value : "ATO_NOTIFICATION"
 								}]
@@ -278,7 +278,7 @@ sap.ui.define([
 								metadata : [{
 									name : "layer",
 									value : "VENDOR"
-								},{
+								}, {
 									name : "transportId",
 									value : "transportId"
 								}]
@@ -295,7 +295,7 @@ sap.ui.define([
 			assert.equal(oStubbedGetView.callCount, 2, "then getView is called twice, first to get selected data, second to attach transport dialog");
 			assert.ok(oStubbedOpenDialog.calledOnce, "The transport Dialog is opened");
 		});
-});
+	});
 
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();

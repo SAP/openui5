@@ -709,22 +709,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the document's base URI, even on IE where the property <code>baseURI</code> is
-		 * not supported.
-		 *
-		 * @returns {string} The base URI
-		 */
-		getBaseUri : function () {
-			var aElements;
-
-			if (document.baseURI) {
-				return document.baseURI;
-			}
-			aElements = document.getElementsByTagName("base");
-			return aElements[0] && aElements[0].href || location.href;
-		},
-
-		/**
 		 * Adjusts the given absolute path so that (in case of "realOData=proxy" or
 		 * "realOData=true") the request is passed through the SimpleProxyServlet.
 		 *
@@ -742,7 +726,7 @@ sap.ui.define([
 			}
 			iQueryPos = sAbsolutePath.indexOf("?");
 			sProxyUrl = sap.ui.require.toUrl("sap/ui").replace("resources/sap/ui", "proxy");
-			return new URI(sProxyUrl + sAbsolutePath, TestUtils.getBaseUri()).pathname().toString()
+			return new URI(sProxyUrl + sAbsolutePath, document.baseURI).pathname().toString()
 				+ (iQueryPos >= 0 ? sAbsolutePath.slice(iQueryPos) : "");
 		},
 

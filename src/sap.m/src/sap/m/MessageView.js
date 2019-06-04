@@ -358,8 +358,22 @@ sap.ui.define([
 	 * @private
 	 */
 	MessageView.prototype._setItemType = function (oListItem) {
-		var sSelector = oListItem.getActiveTitle() ? ".sapMSLITitleDiv a" : ".sapMSLITitleDiv > div",
-			oItemDomRef = oListItem.getDomRef().querySelector(sSelector);
+		var sSelector,
+			bActiveTitle = oListItem.getActiveTitle();
+
+		if (!oListItem.getTitle() || !oListItem.getDescription()) {
+			if (bActiveTitle) {
+				sSelector = ".sapMSLITitleOnly a";
+			} else {
+				sSelector = ".sapMSLITitleOnly";
+			}
+		} else if (bActiveTitle) {
+			sSelector = ".sapMSLITitle a";
+		} else {
+			sSelector = ".sapMSLITitle";
+		}
+
+		var oItemDomRef = oListItem.getDomRef().querySelector(sSelector);
 
 		if (oItemDomRef.offsetWidth < oItemDomRef.scrollWidth) {
 			oListItem.setType(ListType.Navigation);

@@ -232,7 +232,7 @@ function (
 			oChangeRegistry.removeRegistryItem({controlType : "sap.m.List"});
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.List" : {
-					"addXML": "default"
+					addXML: "default"
 				}
 			})
 			.then(function() {
@@ -294,5 +294,4 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

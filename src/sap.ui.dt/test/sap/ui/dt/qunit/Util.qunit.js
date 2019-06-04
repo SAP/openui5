@@ -190,7 +190,7 @@ function(
 	});
 
 	QUnit.module('printf()', function () {
-		QUnit.test("basic functionality", function(assert){
+		QUnit.test("basic functionality", function(assert) {
 			assert.equal(
 				Util.printf("Arg1: {0}, Arg2: {1}", "Val1", "Val2"),
 				"Arg1: Val1, Arg2: Val2",
@@ -200,8 +200,8 @@ function(
 	});
 
 	QUnit.module('curry()', function () {
-		QUnit.test("curry()", function(assert){
-			var fnOriginalFunction = function(sPar1, sPar2){
+		QUnit.test("curry()", function(assert) {
+			var fnOriginalFunction = function(sPar1, sPar2) {
 				return sPar1 + sPar2;
 			};
 			var fnCurriedFunction = Util.curry(fnOriginalFunction);
@@ -212,7 +212,7 @@ function(
 	});
 
 	QUnit.module('objectValues()', function () {
-		QUnit.test("objectValues()", function(assert){
+		QUnit.test("objectValues()", function(assert) {
 			var sValue1 = "test1";
 			var sValue2 = "test2";
 			var mObject = {
@@ -225,7 +225,7 @@ function(
 	});
 
 	QUnit.module('intersection()', function () {
-		QUnit.test("basic functionality", function(assert){
+		QUnit.test("basic functionality", function(assert) {
 			var aArray1 = [0, 1, 2, 3];
 			var aArray2 = [1, 3, 5, 6];
 
@@ -234,7 +234,7 @@ function(
 	});
 
 	QUnit.module('isInteger()', function () {
-		QUnit.test("basic functionality", function(assert){
+		QUnit.test("basic functionality", function(assert) {
 			assert.ok(Util.isInteger(0), "zero is an integer");
 			assert.ok(Util.isInteger(1.0), "real number pretended as integer is an integer");
 			assert.notOk(Util.isInteger("0"), "string of zero is not an integer");
@@ -247,7 +247,7 @@ function(
 	});
 
 	QUnit.module('castArray()', function () {
-		QUnit.test("castArray()", function(assert){
+		QUnit.test("castArray()", function(assert) {
 			var sValue = "test1";
 			var nValue = 7;
 			var aValue = ["xyz", 1, {text: "test"}];
@@ -474,5 +474,4 @@ function(
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

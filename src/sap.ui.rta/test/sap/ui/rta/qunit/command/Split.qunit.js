@@ -58,7 +58,6 @@ function(
 			this.oGetAppComponentForControlStub.restore();
 		},
 		beforeEach: function () {
-
 			this.oButton1 = new Button("button1");
 			this.oButton2 = new Button("button2");
 			this.oPanel = new Panel("panel", {
@@ -75,13 +74,12 @@ function(
 
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Panel": {
-					"splitStuff" : {
+					splitStuff : {
 						completeChangeContent: this.fnCompleteChangeContentSpy,
 						applyChange: this.fnApplyChangeSpy
 					}
 				}
 			});
-
 		},
 		afterEach: function () {
 			this.oPanel.destroy();
@@ -132,5 +130,4 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

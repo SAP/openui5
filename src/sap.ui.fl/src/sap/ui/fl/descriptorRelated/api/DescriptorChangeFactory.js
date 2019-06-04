@@ -3,21 +3,17 @@
  */
 sap.ui.define([
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/descriptorRelated/internal/Utils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils",
-	"sap/ui/thirdparty/jquery",
 	"sap/base/util/merge"
 ], function(
 	ChangePersistenceFactory,
-	ChangePersistence,
 	Change,
 	Utils,
 	Settings,
 	FlexUtils,
-	jQuery,
 	fnBaseMerge
 ) {
 	"use strict";
@@ -56,7 +52,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
-	var DescriptorChange = function(mChangeFile,oInlineChange,oSettings) { //so far, parameter correspond to inline change format
+	var DescriptorChange = function(mChangeFile, oInlineChange, oSettings) { //so far, parameter correspond to inline change format
 		this._mChangeFile = mChangeFile;
 		this._mChangeFile.packageName = '$TMP';
 		this._oInlineChange = oInlineChange;
@@ -152,10 +148,10 @@ sap.ui.define([
 		//create Change
 		var oChange = new Change(this._getMap());
 
-		if ( this._sTransportRequest ) {
-			oChange.setRequest( this._sTransportRequest );
-		}  else if ( this._oSettings.isAtoEnabled() && FlexUtils.isCustomerDependentLayer(this._mChangeFile.layer) ) {
-			oChange.setRequest( 'ATO_NOTIFICATION' );
+		if (this._sTransportRequest) {
+			oChange.setRequest(this._sTransportRequest);
+		} else if (this._oSettings.isAtoEnabled() && FlexUtils.isCustomerDependentLayer(this._mChangeFile.layer)) {
+			oChange.setRequest('ATO_NOTIFICATION');
 		}
 		return oChange;
 	};
@@ -209,14 +205,14 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorChangeFactory.prototype.createNew = function(sReference, oInlineChange, sLayer, oAppComponent, sTool) {
-		var fSetHostingIdForTextKey = function(_oDescriptorInlineChange, sId){
+		var fSetHostingIdForTextKey = function(_oDescriptorInlineChange, sId) {
 			//providing "hosting id" for appdescr_app_setTitle and similar
 			//"hosting id" is descriptor variant id
-			if ( _oDescriptorInlineChange["setHostingIdForTextKey"] ){
+			if (_oDescriptorInlineChange["setHostingIdForTextKey"]) {
 				_oDescriptorInlineChange.setHostingIdForTextKey(sId);
 			}
 		};
-		fSetHostingIdForTextKey(oInlineChange,sReference);
+		fSetHostingIdForTextKey(oInlineChange, sReference);
 
 		var sAppVersion;
 		if (oAppComponent) {
@@ -228,25 +224,25 @@ sap.ui.define([
 		mPropertyBag.changeType = oInlineChange._getChangeType();
 		mPropertyBag.componentName = sReference;
 		mPropertyBag.reference = sReference;
-		mPropertyBag.validAppVersions =  sAppVersion ? {
-			"creation": sAppVersion,
-			"from": sAppVersion
+		mPropertyBag.validAppVersions = sAppVersion ? {
+			creation: sAppVersion,
+			from: sAppVersion
 		} : {};
 		mPropertyBag.generator = sTool;
 
-		if (!sLayer){
+		if (!sLayer) {
 			//default to 'CUSTOMER'
 			mPropertyBag.layer = 'CUSTOMER';
 		} else {
-			if (sLayer != 'VENDOR' && sLayer != 'PARTNER' && !FlexUtils.isCustomerDependentLayer(sLayer)) {
+			if (sLayer !== 'VENDOR' && sLayer !== 'PARTNER' && !FlexUtils.isCustomerDependentLayer(sLayer)) {
 				throw new Error("Parameter \"layer\" needs to be 'VENDOR', 'PARTNER' or customer dependent");
 			}
 			mPropertyBag.layer = sLayer;
 		}
 
-		var mChangeFile = Change.createInitialFileContent(mPropertyBag );
+		var mChangeFile = Change.createInitialFileContent(mPropertyBag);
 		return Settings.getInstance().then(function(oSettings) {
-			return Promise.resolve( new DescriptorChange(mChangeFile, oInlineChange, oSettings) );
+			return Promise.resolve(new DescriptorChange(mChangeFile, oInlineChange, oSettings));
 		});
 	};
 

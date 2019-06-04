@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-		"sap/ui/thirdparty/jquery"
-	],
+	"sap/ui/thirdparty/jquery"
+],
 	function(jQuery) {
 		"use strict";
 

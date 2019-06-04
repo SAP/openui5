@@ -15,13 +15,13 @@ sap.ui.define([
 
 	var RtaQunitUtils = {};
 
-	RtaQunitUtils.renderTestModuleAt = function(sNamespace, sDomId){
+	RtaQunitUtils.renderTestModuleAt = function(sNamespace, sDomId) {
 		var oComp = sap.ui.getCore().createComponent({
 			name : "sap.ui.rta.qunitrta",
 			id : "Comp1",
 			settings : {
 				componentData : {
-					"showAdaptButton" : true
+					showAdaptButton : true
 				}
 			}
 		});
@@ -34,7 +34,7 @@ sap.ui.define([
 		return oCompCont;
 	};
 
-	RtaQunitUtils.renderTestAppAt = function(sDomId){
+	RtaQunitUtils.renderTestAppAt = function(sDomId) {
 		FakeLrepConnectorSessionStorage.enableFakeConnector();
 
 		var oComp = sap.ui.getCore().createComponent({
@@ -42,7 +42,7 @@ sap.ui.define([
 			id : "Comp1",
 			settings : {
 				componentData : {
-					"showAdaptButton" : true
+					showAdaptButton : true
 				}
 			}
 		});
@@ -55,14 +55,14 @@ sap.ui.define([
 		return oCompCont;
 	};
 
-	RtaQunitUtils.renderRuntimeAuthoringAppAt = function(sDomId){
+	RtaQunitUtils.renderRuntimeAuthoringAppAt = function(sDomId) {
 		var oComp = sap.ui.getCore().createComponent({
 			name : "sap.ui.rta.test",
 			id : "Comp1",
 			settings : {
 				componentData : {
-					"showAdaptButton" : true,
-					"useSessionStorage": true
+					showAdaptButton : true,
+					useSessionStorage: true
 				}
 			}
 		});
@@ -110,13 +110,13 @@ sap.ui.define([
 				assert.equal(iChangeCounter, iNumberOfChanges,
 					"then " + iNumberOfChanges + " operations of type " + sModifyType + " happen in LREP");
 			}
-			if (iChangeCounter > iNumberOfChanges){
+			if (iChangeCounter > iNumberOfChanges) {
 				assert.notOk(true, "Error: there are more " + sModifyType + " operations done in LREP than expected");
 				return;
 			}
 			done[iChangeCounter - 1]();
 		};
-		var fnDetachEvent = function(){
+		var fnDetachEvent = function() {
 			FakeLrepSessionStorage.detachModifyCallback(fnAssert);
 		};
 

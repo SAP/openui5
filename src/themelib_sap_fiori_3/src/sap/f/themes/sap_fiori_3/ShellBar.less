@@ -6,6 +6,10 @@
 
 .sapFShellBar {
 	background: @sapUiShellColor;
+	height: 2.75rem;
+	.sapFShellBarOTB {
+		height: 2.75rem;
+	}
 	.CPImage {
 		.color1 {
 			stop-color: #C0D9F2;
@@ -22,6 +26,10 @@
 	}
 	.sapFShellBarHomeIcon:focus {
 		outline-color: @sapUiContentContrastFocusColor;
+	}
+
+	.sapFShellBarSearch {
+		max-width: 27.5rem; // max width of searchField + button width
 	}
 }
 

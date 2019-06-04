@@ -2,9 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/rta/command/BaseCommand',
-	'sap/ui/core/util/reflection/JsControlTreeModifier',
-	'sap/ui/fl/Utils'
+	"sap/ui/rta/command/BaseCommand",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/fl/Utils"
 ], function(
 	BaseCommand,
 	JsControlTreeModifier,
@@ -46,7 +46,7 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	ControlVariantDuplicate.prototype.prepare = function(mFlexSettings, sVariantManagementReference) {
+	ControlVariantDuplicate.prototype.prepare = function(mFlexSettings) {
 		this.sLayer = mFlexSettings.layer;
 		return true;
 	};
@@ -64,9 +64,9 @@ sap.ui.define([
 	 * @returns {Promise} Returns resolve after execution
 	 */
 	ControlVariantDuplicate.prototype.execute = function() {
-		var oVariantManagementControl = this.getElement(),
-		sSourceVariantReference = this.getSourceVariantReference(),
-		sNewVariantReference = this.getNewVariantReference();
+		var oVariantManagementControl = this.getElement();
+		var sSourceVariantReference = this.getSourceVariantReference();
+		var sNewVariantReference = this.getNewVariantReference();
 		this.oAppComponent = flUtils.getAppComponentForControl(oVariantManagementControl);
 
 		if (!sNewVariantReference) {
@@ -78,16 +78,16 @@ sap.ui.define([
 		this.oModel = this.oAppComponent.getModel(flUtils.VARIANT_MODEL_NAME);
 
 		var mPropertyBag = {
-				variantManagementReference : this.sVariantManagementReference,
-				appComponent : this.oAppComponent,
-				layer : this.sLayer,
-				newVariantReference : sNewVariantReference,
-				sourceVariantReference : sSourceVariantReference,
-				title: this.getNewVariantTitle()
+			variantManagementReference : this.sVariantManagementReference,
+			appComponent : this.oAppComponent,
+			layer : this.sLayer,
+			newVariantReference : sNewVariantReference,
+			sourceVariantReference : sSourceVariantReference,
+			title: this.getNewVariantTitle()
 		};
 
 		return this.oModel.copyVariant(mPropertyBag)
-			.then(function(aChanges){
+			.then(function(aChanges) {
 				this._oVariantChange = aChanges[0];
 				this._aPreparedChanges = aChanges;
 			}.bind(this));
@@ -116,5 +116,4 @@ sap.ui.define([
 	};
 
 	return ControlVariantDuplicate;
-
 }, /* bExport= */true);

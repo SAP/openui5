@@ -48,7 +48,7 @@ function(
 	ContextMenuPlugin,
 	DragDrop,
 	ElementDesignTimeMetadata,
-	Util,
+	DtUtil,
 	MetadataTestUtil,
 	includes,
 	DOMUtil,
@@ -187,7 +187,7 @@ function(
 			this.oDesignTime.destroy();
 			sandbox.restore();
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when the DesignTime is initialized ", function (assert) {
 			var aOverlays = OverlayRegistry.getOverlays();
 
@@ -434,7 +434,7 @@ function(
 			var fnDone = assert.async();
 			var oButton = new Button("button");
 			var oLayout = new VerticalLayout("layout", {
-				content: [ oButton ]
+				content: [oButton]
 			});
 			var mExpectedResponse = {
 				id: undefined,
@@ -586,28 +586,53 @@ function(
 		});
 
 		QUnit.test("when plugins are inserted and removed", function (assert) {
+			var done = assert.async(6);
 			var oTabHandlingPlugin = new TabHandling();
 			var oContextMenuPlugin = new ContextMenuPlugin();
 			var oDragDropPlugin = new DragDrop();
+			var oRegisterElementOverlay = sandbox.spy(oTabHandlingPlugin, "registerElementOverlay");
+			var oTaskManagerAddSpy = sandbox.spy(this.oDesignTime._oTaskManager, "add");
 
 			assert.equal(this.oDesignTime.getPlugins().length, 0, "initially there are no plugins on the design time");
 
 			this.oDesignTime.addPlugin(oTabHandlingPlugin);
-			this.oDesignTime.insertPlugin(oContextMenuPlugin, 0);
-			this.oDesignTime.insertPlugin(oDragDropPlugin, 1);
-
-			assert.equal(this.oDesignTime.getPlugins().length, 3, "then three plugins are present in design time");
-			assert.strictEqual(this.oDesignTime.getPlugins()[0], oContextMenuPlugin, "the ContextMenu plugin was inserted in the right position of the aggregation");
-			assert.strictEqual(this.oDesignTime.getPlugins()[1], oDragDropPlugin, "the ElementMover plugin was inserted in the right position of the aggregation");
-
-			this.oDesignTime.removePlugin(oDragDropPlugin);
-
-			assert.equal(this.oDesignTime.getPlugins().length, 2, "after removing one, two plugins remain in design time");
-			assert.strictEqual(this.oDesignTime.getPlugins()[1], oTabHandlingPlugin, "the TabHandlingPlugin plugin is in the right position of the aggregation");
-
-			this.oDesignTime.removeAllPlugins();
-
-			assert.equal(this.oDesignTime.getPlugins().length, 0, "after calling 'removeAllPlugins' the are no more plugins on the design time");
+			DtUtil.waitForSynced(this.oDesignTime, done)()
+				.then(function() {
+					assert.equal(oRegisterElementOverlay.callCount, 4,
+						"then the tabHandlingPlugin registration is called before designtime is synced");
+					assert.equal(oTaskManagerAddSpy.calledWith({ type: "pluginBusy", plugin: oTabHandlingPlugin.getMetadata().getName()}), true,
+						"then on addPlugin the taskManager is used with tasks from 'pluginBusy' type");
+					this.oDesignTime.insertPlugin(oContextMenuPlugin, 0);
+					return DtUtil.waitForSynced(this.oDesignTime, done)();
+				}.bind(this))
+				.then(function() {
+					assert.equal(oTaskManagerAddSpy.calledWith({ type: "pluginBusy", plugin: oContextMenuPlugin.getMetadata().getName()}), true,
+						"then on insertPlugin the taskManager is used with tasks from 'pluginBusy' type");
+					this.oDesignTime.insertPlugin(oDragDropPlugin, 1);
+					return DtUtil.waitForSynced(this.oDesignTime, done)();
+				}.bind(this))
+				.then(function() {
+					assert.equal(this.oDesignTime.getPlugins().length, 3, "then three plugins are present in design time");
+					assert.strictEqual(this.oDesignTime.getPlugins()[0], oContextMenuPlugin,
+						"the ContextMenu plugin was inserted in the right position of the aggregation");
+					assert.strictEqual(this.oDesignTime.getPlugins()[1], oDragDropPlugin,
+						"the ElementMover plugin was inserted in the right position of the aggregation");
+					this.oDesignTime.removePlugin(oDragDropPlugin);
+					return DtUtil.waitForSynced(this.oDesignTime, done)();
+				}.bind(this))
+				.then(function() {
+					assert.equal(this.oDesignTime.getPlugins().length, 2,
+						"after removing one, two plugins remain in design time");
+					assert.strictEqual(this.oDesignTime.getPlugins()[1], oTabHandlingPlugin,
+						"the TabHandlingPlugin plugin is in the right position of the aggregation");
+					this.oDesignTime.removeAllPlugins();
+					return DtUtil.waitForSynced(this.oDesignTime, done)();
+				}.bind(this))
+				.then(function() {
+					assert.equal(this.oDesignTime.getPlugins().length, 0,
+						"after calling 'removeAllPlugins' the are no more plugins on the design time");
+					done();
+				}.bind(this));
 		});
 
 		QUnit.test("when the element inside of the DesignTime is destroyed", function(assert) {
@@ -653,7 +678,7 @@ function(
 			var fnOriginalCheckIfOverlayShouldBeDestroyed = this.oDesignTime._checkIfOverlayShouldBeDestroyed;
 
 			//stub the important async functionality to get a trigger that it was called
-			sandbox.stub(DesignTime.prototype, "_checkIfOverlayShouldBeDestroyed").callsFake(function(){
+			sandbox.stub(DesignTime.prototype, "_checkIfOverlayShouldBeDestroyed").callsFake(function() {
 				fnOriginalCheckIfOverlayShouldBeDestroyed.apply(this, arguments);
 
 				var oOverlayAfterwards = OverlayRegistry.getOverlay(oElement);
@@ -671,7 +696,7 @@ function(
 			var fnOriginalCheckIfOverlayShouldBeDestroyed = this.oDesignTime._checkIfOverlayShouldBeDestroyed;
 
 			//stub the important async functionality to get a trigger that it was called
-			sandbox.stub(DesignTime.prototype, "_checkIfOverlayShouldBeDestroyed").callsFake(function(){
+			sandbox.stub(DesignTime.prototype, "_checkIfOverlayShouldBeDestroyed").callsFake(function() {
 				fnOriginalCheckIfOverlayShouldBeDestroyed.apply(this, arguments);
 				var oOverlayAfterwards = OverlayRegistry.getOverlay(sElementId);
 				assert.ok(oOverlayAfterwards, "overlay for recreated control is not destroyed");
@@ -680,7 +705,7 @@ function(
 
 			this.oInnerLayout.removeContent(this.oButton1); //triggers setParent modified
 			this.oButton1.destroy(); //triggers overlay removal
-			this.oInnerLayout.addContent( new Button({ id : sElementId, text : "recreated"} )); //triggers overlay being added
+			this.oInnerLayout.addContent(new Button({ id : sElementId, text : "recreated"})); //triggers overlay being added
 		});
 
 		// TODO: check after DesignTime API Enhancement
@@ -764,7 +789,7 @@ function(
 			sap.ui.getCore().applyChanges();
 		});
 
-		QUnit.test("when inner layout is destroyed and then _createChildren is called for the outer layout", function(assert){
+		QUnit.test("when inner layout is destroyed and then _createChildren is called for the outer layout", function(assert) {
 			var fnDone = assert.async();
 			var oOuterLayoutOverlay = OverlayRegistry.getOverlay(this.oOuterLayout);
 			var oInnerLayoutOverlay = OverlayRegistry.getOverlay(this.oInnerLayout);
@@ -776,7 +801,7 @@ function(
 
 			var fnSpy = sandbox.spy(DesignTime.prototype, "_createChildren");
 
-			this.oDesignTime._createChildren(oOuterLayoutOverlay).then(function(){
+			this.oDesignTime._createChildren(oOuterLayoutOverlay).then(function() {
 				oButton1Overlay = OverlayRegistry.getOverlay(this.oButton1);
 				var oOuterLayoutAggregationOverlay = OverlayRegistry.getOverlay(this.oOuterLayout).getAggregationOverlay("content");
 				var oInnerLayoutAggregationOverlay = OverlayRegistry.getOverlay(this.oInnerLayout).getAggregationOverlay("content");
@@ -824,7 +849,7 @@ function(
 			sandbox.restore();
 		}
 	}, function () {
-		QUnit.test("when the content of the layout behaves like an association and DesignTime is created", function(assert){
+		QUnit.test("when the content of the layout behaves like an association and DesignTime is created", function(assert) {
 			var fnDone = assert.async();
 			sandbox.stub(AggregationOverlay.prototype, "isAssociation").returns(true);
 			sandbox.stub(ElementUtil, "getAssociationInstances").returns([this.oButton1]);
@@ -843,12 +868,12 @@ function(
 			}.bind(this));
 		});
 
-		QUnit.test("when the design time is initialized", function(assert){
+		QUnit.test("when the design time is initialized", function(assert) {
 			var fnDone = assert.async();
 
 			var oSpy = sandbox.spy(DesignTime.prototype, "_createElementOverlay");
 
-			this.oLayout1.getMetadata().loadDesignTime().then(function(mDesignTimeMetadata){
+			this.oLayout1.getMetadata().loadDesignTime().then(function(mDesignTimeMetadata) {
 				this.oDesignTime = new DesignTime({
 					rootElements : [this.oLayout1]
 				});
@@ -904,7 +929,7 @@ function(
 			this.oDesignTime.destroy();
 			sandbox.restore();
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when getting the created overlays", function(assert) {
 			assert.ok(OverlayRegistry.getOverlay(this.oLayout1), "then overlay for layout1 exists");
 			assert.notOk(OverlayRegistry.getOverlay(this.oLayout2), "then overlay for layout2 doesn't exist");
@@ -949,7 +974,7 @@ function(
 		QUnit.test("when the overlay for a root element cannot be created", function(assert) {
 			var fnDone = assert.async();
 			var sErrorMessage = "some error";
-			sandbox.stub(DesignTime.prototype, "createOverlay").callsFake(function(){
+			sandbox.stub(DesignTime.prototype, "createOverlay").callsFake(function() {
 				return Promise.reject(sErrorMessage);
 			});
 
@@ -1003,7 +1028,7 @@ function(
 		});
 
 		QUnit.test("when getting the metadata for sap.m.Page from DesignTime (using control name - backwards compatibility)", function(assert) {
-			var spyLog = sandbox.stub(Log, "error").callsFake(function(){
+			var spyLog = sandbox.stub(Log, "error").callsFake(function() {
 				assert.equal(spyLog.callCount, 1, "an error is raised telling how the method should be called now");
 			});
 			var oDTMetadata = this.oDesignTime.getDesignTimeMetadataFor("sap.m.Page");
@@ -1051,7 +1076,7 @@ function(
 			this.oDesignTime.destroy();
 			this.oLayoutOuter.destroy();
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when hidden layout becomes visible", function(assert) {
 			var fnDone = assert.async();
 			this.oButton2 = new Button({ text: 'Button2' });
@@ -1110,7 +1135,7 @@ function(
 						this.oLayout1.removeStyleClass('hidden');
 					}, this);
 
-					this.oOverlayLayout2.attachEventOnce("destroyed", function(){
+					this.oOverlayLayout2.attachEventOnce("destroyed", function() {
 						this.oLayoutOuter.addContent(this.oLayout1);
 					}, this);
 					this.oLayoutOuter.removeContent(this.oLayout2);
@@ -1119,7 +1144,7 @@ function(
 			}, this);
 
 			this.oOverlayLayout1 = OverlayRegistry.getOverlay(this.oLayout1);
-			this.oOverlayLayout1.attachEventOnce("destroyed", function(){
+			this.oOverlayLayout1.attachEventOnce("destroyed", function() {
 				this.oLayoutOuter.addContent(this.oLayout2);
 			}, this);
 			this.oLayoutOuter.removeContent(this.oLayout1);
@@ -1127,7 +1152,7 @@ function(
 	});
 
 	QUnit.module("Metadata propagation - Given independent controls consisting of vertical layout and buttons", {
-		beforeEach: function(assert){
+		beforeEach: function(assert) {
 			var fnDone = assert.async();
 
 			this.oButton1 = new Button("button1");
@@ -1160,14 +1185,14 @@ function(
 				}.bind(this));
 			}.bind(this));
 		},
-		afterEach: function(){
+		afterEach: function() {
 			this.oButton1.destroy();
 			this.oButton2.destroy();
 			this.oLayout1.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when existing element is added and element overlay already exists", function(assert) {
 			var mData = this.oMtDtFunction.propagateMetadata(this.oButton1);
 
@@ -1187,7 +1212,7 @@ function(
 			var fnDone = assert.async();
 			var mData = this.oMtDtFunction.propagateMetadata(this.oButton2);
 
-			this.oDesignTime.attachElementOverlayCreated(function(oEvent){
+			this.oDesignTime.attachElementOverlayCreated(function(oEvent) {
 				assert.deepEqual(oEvent.getParameter("elementOverlay").getDesignTimeMetadata().getData().aggregations.content, mData.aggregations.content,
 					"designtime metadata was set successfully after adding the element without an existing overlay");
 				fnDone();
@@ -1198,7 +1223,7 @@ function(
 	});
 
 	QUnit.module("Metadata propagation - Given two verticalLayouts with different designTimeMetadata", {
-		beforeEach: function(assert){
+		beforeEach: function(assert) {
 			var fnDone = assert.async();
 
 			this.oPropagateMetadataFunctionForLayout1 = MetadataTestUtil.createPropagateMetadataObject("sap.m.Button", "layout1");
@@ -1234,12 +1259,12 @@ function(
 				fnDone();
 			}.bind(this));
 		},
-		afterEach: function(){
+		afterEach: function() {
 			this.oPage.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when button1 is moved from verticalLayout1 to verticalLayout2", function(assert) {
 			this.oVerticalLayout1.removeContent(this.oButton1);
 			assert.deepEqual(
@@ -1928,5 +1953,4 @@ function(
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

@@ -4,7 +4,7 @@
 sap.ui.define([], function() {
 	"use strict";
 	/**
-	 * Validates if the given object is empty
+	 * Validates if the given object is empty.
 	 *
 	 * @example
 	 * sap.ui.require(["sap/base/util/isEmptyObject"], function(isEmptyObject){

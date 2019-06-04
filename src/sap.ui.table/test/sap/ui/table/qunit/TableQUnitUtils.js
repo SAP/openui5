@@ -842,13 +842,13 @@ sap.ui.define([
 		var oRow = oTable.getRows()[iRow];
 		var $Row = oTable.$("rows-row" + iRow);
 		var $RowFixed = oTable.$("rows-row" + iRow + "-fixed");
-		var $RowHdr = oTable.$("rowsel" + iRow);
-		var $RowAct = oTable.$("rowact" + iRow);
+		var $RowHdr = oTable.$("rowsel" + iRow).parent();
+		var $RowAct = oTable.$("rowact" + iRow).parent();
 
-		$Row.toggleClass("sapUiTableGroupHeader", true).data("sap-ui-level", 1);
-		$RowFixed.toggleClass("sapUiTableGroupHeader", true).data("sap-ui-level", 1);
-		$RowHdr.toggleClass("sapUiTableGroupHeader", true).data("sap-ui-level", 1);
-		$RowAct.toggleClass("sapUiTableGroupHeader", true).data("sap-ui-level", 1);
+		$Row.toggleClass("sapUiTableGroupHeader sapUiTableRowHidden", true).data("sap-ui-level", 1);
+		$RowFixed.toggleClass("sapUiTableGroupHeader sapUiTableRowHidden", true).data("sap-ui-level", 1);
+		$RowHdr.toggleClass("sapUiTableGroupHeader sapUiTableRowHidden", true).data("sap-ui-level", 1);
+		$RowAct.toggleClass("sapUiTableGroupHeader sapUiTableRowHidden", true).data("sap-ui-level", 1);
 		oTable._getAccExtension().updateAriaExpandAndLevelState(oRow, $Row, $RowHdr, $RowFixed, $RowAct, true, true, 1, null);
 		return {
 			row: $Row,
@@ -862,8 +862,8 @@ sap.ui.define([
 		var oRow = oTable.getRows()[iRow];
 		var $Row = oTable.$("rows-row" + iRow);
 		var $RowFixed = oTable.$("rows-row" + iRow + "-fixed");
-		var $RowHdr = oTable.$("rowsel" + iRow);
-		var $RowAct = oTable.$("rowact" + iRow);
+		var $RowHdr = oTable.$("rowsel" + iRow).parent();
+		var $RowAct = oTable.$("rowact" + iRow).parent();
 
 		$Row.toggleClass("sapUiAnalyticalTableSum", true).data("sap-ui-level", 1);
 		$RowFixed.toggleClass("sapUiAnalyticalTableSum", true).data("sap-ui-level", 1);

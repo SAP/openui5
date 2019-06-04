@@ -18,7 +18,7 @@ sap.ui.define([
 	jQuery,
 	sinon,
 	Dialog
-){
+) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
@@ -54,7 +54,7 @@ sap.ui.define([
 			sandbox.stub(oController, "getView").returns({
 				getContent: function () {
 					return [{
-						setBusy: function (busy) {
+						setBusy: function () {
 						}
 					}];
 				}
@@ -63,7 +63,7 @@ sap.ui.define([
 			var oSubbedLRepConGetContent = sandbox.stub(LRepConnector, "getContent").returns(Promise.resolve(oData));
 			var oSubbedFormatData = sandbox.stub(DataUtils, "formatData");
 			var oSubbedSetData = sandbox.stub(oSelectedContentModel, "setData");
-			return oController._onRouteMatched(oRouteParameters).then(function(){
+			return oController._onRouteMatched(oRouteParameters).then(function() {
 				assert.equal(oSubbedLRepConGetContent.callCount, 2, "then the Lrep getcontent called twice");
 				assert.equal(oSubbedLRepConGetContent.getCall(0).args[0], sLayer, "first call has correct layer");
 				assert.equal(oSubbedLRepConGetContent.getCall(0).args[1], sNamespace + sFileName + "." + sFileType, "first call has correct suffix");
@@ -81,18 +81,18 @@ sap.ui.define([
 				},
 				oData = {},
 				oPage = {
-					setBusy : function (busy){}
+					setBusy : function () {}
 				},
 				sContentSuffix = "pathtothefile",
 				oStubbedFormatData = sandbox.stub(DataUtils, "formatData"),
 				oStubbedGetContent = sandbox.stub(LRepConnector, "getContent").returns(Promise.resolve()),
 				oStubbedSetBusy = sandbox.stub(oPage, "setBusy");
 			oController.oSelectedContentModel = {
-				setData : function(){}
+				setData : function() {}
 			};
 
 			return oController._onContentReceived(oModelData, oPage, sContentSuffix, oData).then(
-				function (){
+				function () {
 					assert.ok(oStubbedGetContent.calledOnce, "then request for metadata is sent");
 					assert.ok(oStubbedFormatData.calledOnce, "then received data is formatted");
 					assert.equal(oStubbedFormatData.getCall(0).args[0], oData, "with correct data");
@@ -105,7 +105,7 @@ sap.ui.define([
 		QUnit.test("when _saveFile is called", function (assert) {
 			var oStubbedNavTo = sandbox.stub(oController, "_navToDisplayMode");
 			var oStubbedLrepConSaveFile = sandbox.stub(LRepConnector, "saveFile").returns(Promise.resolve());
-			return oController._saveFile("VENDOR", "namespace", "fileName", "fileType", "somedata", "sTransportId", "package").then(function(){
+			return oController._saveFile("VENDOR", "namespace", "fileName", "fileType", "somedata", "sTransportId", "package").then(function() {
 				assert.ok(oStubbedNavTo.calledOnce, "then call for get a router");
 				assert.ok(oStubbedLrepConSaveFile.calledOnce, "then call Lrep connector for save file");
 			});
@@ -191,7 +191,7 @@ sap.ui.define([
 								metadata : [{
 									name : "layer",
 									value : "CUSTOMER"
-								},{
+								}, {
 									name : "transportId",
 									value : "ATO_NOTIFICATION"
 								}]
@@ -262,7 +262,7 @@ sap.ui.define([
 								metadata : [{
 									name : "layer",
 									value : "VENDOR"
-								},{
+								}, {
 									name : "transportId",
 									value : "transportId"
 								}]

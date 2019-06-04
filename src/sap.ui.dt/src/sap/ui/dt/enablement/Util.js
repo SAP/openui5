@@ -4,13 +4,11 @@
 
 // Provides object sap.ui.dt.test.Element.
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/DOMUtil",
 	"sap/ui/dt/OverlayRegistry"
 ],
 function(
-	jQuery,
 	ElementUtil,
 	DOMUtil,
 	OverlayRegistry
@@ -35,7 +33,6 @@ function(
 
 	var MIN_SIZE = 5;
 	var ElementTest = {};
-
 
 	/**
 	 * Returns all design time information of the element

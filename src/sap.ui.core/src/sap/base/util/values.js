@@ -5,7 +5,7 @@ sap.ui.define(function() {
 	"use strict";
 
 	/**
-	 * Returns values from an object
+	 * Returns values from an object.
 	 *
 	 * @function
 	 * @since 1.58

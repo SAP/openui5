@@ -3,7 +3,6 @@
 sap.ui.define([
 	"sap/ui/rta/plugin/CutPaste",
 	"sap/ui/rta/command/CommandFactory",
-	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/ObjectStatus",
 	"sap/ui/rta/plugin/Plugin",
@@ -15,7 +14,6 @@ sap.ui.define([
 function(
 	CutPastePlugin,
 	CommandFactory,
-	SimpleForm,
 	VerticalLayout,
 	ObjectStatus,
 	Plugin,
@@ -235,5 +233,4 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

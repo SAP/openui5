@@ -16,7 +16,6 @@ sap.ui.define([], function() {
 	 *
 	 */
 	var FlexVisualizer = function() {
-
 	};
 
 	/**
@@ -26,8 +25,7 @@ sap.ui.define([], function() {
 	 *
 	 * @public
 	 */
-	FlexVisualizer.showDialog = function(oAffectedRegistryItems, bIsKeyUser) {
-
+	FlexVisualizer.showDialog = function() {
 	};
 
 	/**
@@ -36,9 +34,7 @@ sap.ui.define([], function() {
 	 * @public
 	 */
 	FlexVisualizer.closeDialog = function() {
-
 	};
 
 	return FlexVisualizer;
-
 }, true);

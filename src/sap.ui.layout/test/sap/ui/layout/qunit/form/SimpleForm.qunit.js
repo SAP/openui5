@@ -67,7 +67,7 @@ sap.ui.define([
 			          new Input("I5"),
 			          new Input("I6")
 			          ]
-		}).placeAt("content");
+		}).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 		oForm = oSimpleForm.getAggregation("form");
 		oFormLayout = oForm.getLayout();
@@ -143,7 +143,7 @@ sap.ui.define([
 		var aFormContainers = oForm.getFormContainers();
 		assert.equal(aFormContainers.length, 0, "Form has no FormContainers");
 
-		oSimpleForm.placeAt("content");
+		oSimpleForm.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 		oFormLayout = oForm.getLayout();
 
@@ -151,7 +151,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("width", function(assert) {
-		oSimpleForm.placeAt("content");
+		oSimpleForm.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 		assert.ok(!/width:/.test(oSimpleForm.$().attr("style")), "SimpleForm2: no width set");
 
@@ -196,7 +196,7 @@ sap.ui.define([
 
 	QUnit.test("AriaLabelledBy", function(assert) {
 		oSimpleForm.addAriaLabelledBy("XXX");
-		oSimpleForm.placeAt("content");
+		oSimpleForm.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(oForm.getAriaLabelledBy(), "XXX", "Form getAriaLabelledBy");
@@ -205,7 +205,7 @@ sap.ui.define([
 
 	QUnit.test("_suggestTitleId", function(assert) {
 		oSimpleForm._suggestTitleId("ID1");
-		oSimpleForm.placeAt("content");
+		oSimpleForm.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 		assert.equal(jQuery("#SF1--Form").attr("aria-labelledby"), "ID1", "aria-labelledby points to TitleID");
 
@@ -2206,7 +2206,7 @@ sap.ui.define([
 
 	function clone(assert) {
 		var oClone = oSimpleForm.clone("MyClone");
-		oClone.placeAt("content");
+		oClone.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		var aContent = oClone.getContent();
@@ -2285,7 +2285,7 @@ sap.ui.define([
 		var fnDone = assert.async();
 
 		setTimeout( function(){ // to wait for rendeing
-			jQuery("#content").attr("style", "width: 50%");
+			jQuery("#qunit-fixture").attr("style", "width: 50%");
 			setTimeout( function(){ // to wait for resize handler
 				assert.ok(oSimpleForm._applyLinebreaks.called, "linebreaks calculation called");
 				jQuery("#content").removeAttr("style");

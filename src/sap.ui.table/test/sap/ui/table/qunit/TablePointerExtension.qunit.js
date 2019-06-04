@@ -1083,43 +1083,43 @@ sap.ui.define([
 	});
 
 	QUnit.test("RowHeader", function(assert) {
-		assert.ok(!getRowHeader(0).hasClass("sapUiTableRowHvr"), "No hover effect on row header");
+		assert.ok(!getRowHeader(0).parent().hasClass("sapUiTableRowHvr"), "No hover effect on row header");
 		assert.ok(!getCell(0, 0).parent().hasClass("sapUiTableRowHvr"), "No hover effect on fixed part of row");
 		assert.ok(!getCell(0, 2).parent().hasClass("sapUiTableRowHvr"), "No hover effect on scroll part of row");
 		getRowHeader(0).mouseover();
-		assert.ok(getRowHeader(0).hasClass("sapUiTableRowHvr"), "Hover effect on row header");
+		assert.ok(getRowHeader(0).parent().hasClass("sapUiTableRowHvr"), "Hover effect on row header");
 		assert.ok(getCell(0, 0).parent().hasClass("sapUiTableRowHvr"), "Hover effect on fixed part of row");
 		assert.ok(getCell(0, 2).parent().hasClass("sapUiTableRowHvr"), "Hover effect on scroll part of row");
 		getRowHeader(0).mouseout();
-		assert.ok(!getRowHeader(0).hasClass("sapUiTableRowHvr"), "No hover effect on row header");
+		assert.ok(!getRowHeader(0).parent().hasClass("sapUiTableRowHvr"), "No hover effect on row header");
 		assert.ok(!getCell(0, 0).parent().hasClass("sapUiTableRowHvr"), "No hover effect on fixed part of row");
 		assert.ok(!getCell(0, 2).parent().hasClass("sapUiTableRowHvr"), "No hover effect on scroll part of row");
 	});
 
 	QUnit.test("Fixed column area", function(assert) {
-		assert.ok(!getRowHeader(0).hasClass("sapUiTableRowHvr"), "No hover effect on row header");
+		assert.ok(!getRowHeader(0).parent().hasClass("sapUiTableRowHvr"), "No hover effect on row header");
 		assert.ok(!getCell(0, 0).parent().hasClass("sapUiTableRowHvr"), "No hover effect on fixed part of row");
 		assert.ok(!getCell(0, 2).parent().hasClass("sapUiTableRowHvr"), "No hover effect on scroll part of row");
 		getCell(0, 0).mouseover();
-		assert.ok(getRowHeader(0).hasClass("sapUiTableRowHvr"), "Hover effect on row header");
+		assert.ok(getRowHeader(0).parent().hasClass("sapUiTableRowHvr"), "Hover effect on row header");
 		assert.ok(getCell(0, 0).parent().hasClass("sapUiTableRowHvr"), "Hover effect on fixed part of row");
 		assert.ok(getCell(0, 2).parent().hasClass("sapUiTableRowHvr"), "Hover effect on scroll part of row");
 		getCell(0, 0).mouseout();
-		assert.ok(!getRowHeader(0).hasClass("sapUiTableRowHvr"), "No hover effect on row header");
+		assert.ok(!getRowHeader(0).parent().hasClass("sapUiTableRowHvr"), "No hover effect on row header");
 		assert.ok(!getCell(0, 0).parent().hasClass("sapUiTableRowHvr"), "No hover effect on fixed part of row");
 		assert.ok(!getCell(0, 2).parent().hasClass("sapUiTableRowHvr"), "No hover effect on scroll part of row");
 	});
 
 	QUnit.test("Scroll column area", function(assert) {
-		assert.ok(!getRowHeader(0).hasClass("sapUiTableRowHvr"), "No hover effect on row header");
+		assert.ok(!getRowHeader(0).parent().hasClass("sapUiTableRowHvr"), "No hover effect on row header");
 		assert.ok(!getCell(0, 0).parent().hasClass("sapUiTableRowHvr"), "No hover effect on fixed part of row");
 		assert.ok(!getCell(0, 2).parent().hasClass("sapUiTableRowHvr"), "No hover effect on scroll part of row");
 		getCell(0, 2).mouseover();
-		assert.ok(getRowHeader(0).hasClass("sapUiTableRowHvr"), "Hover effect on row header");
+		assert.ok(getRowHeader(0).parent().hasClass("sapUiTableRowHvr"), "Hover effect on row header");
 		assert.ok(getCell(0, 0).parent().hasClass("sapUiTableRowHvr"), "Hover effect on fixed part of row");
 		assert.ok(getCell(0, 2).parent().hasClass("sapUiTableRowHvr"), "Hover effect on scroll part of row");
 		getCell(0, 2).mouseout();
-		assert.ok(!getRowHeader(0).hasClass("sapUiTableRowHvr"), "No hover effect on row header");
+		assert.ok(!getRowHeader(0).parent().hasClass("sapUiTableRowHvr"), "No hover effect on row header");
 		assert.ok(!getCell(0, 0).parent().hasClass("sapUiTableRowHvr"), "No hover effect on fixed part of row");
 		assert.ok(!getCell(0, 2).parent().hasClass("sapUiTableRowHvr"), "No hover effect on scroll part of row");
 	});

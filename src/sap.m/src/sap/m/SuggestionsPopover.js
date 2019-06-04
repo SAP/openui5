@@ -188,17 +188,21 @@ sap.ui.define([
 	 * @param {string} sValue The value which must be compared to the word.
 	 * @returns {boolean} Indication if the word starts with the passed value.
 	 */
-	SuggestionsPopover._wordStartsWithValue = function(sText, sValue) {
-
+	SuggestionsPopover._wordStartsWithValue = function (sText, sValue) {
 		var index;
 
+		if (!sText || !sValue ||
+			typeof sText !== "string" || typeof sValue !== "string") {
+			return false;
+		}
+
 		while (sText) {
-			if (typeof sValue === "string" && sValue !== "" && sText.toLowerCase().startsWith(sValue.toLowerCase())) {
+			if (typeof sValue === "string" && sValue !== "" && sText.toLowerCase().indexOf(sValue.toLowerCase()) === 0 /* startsWith */) {
 				return true;
 			}
 
 			index = sText.indexOf(' ');
-			if (index == -1) {
+			if (index === -1) {
 				break;
 			}
 
@@ -481,10 +485,16 @@ sap.ui.define([
 
 			this._oList.addEventDelegate({
 				onAfterRendering: function () {
+					var aListItemsDomRef, sInputValue;
+
 					if (!this._bEnableHighlighting) {
 						return;
 					}
-					this._highlightListText(oInput.getValue());
+
+					aListItemsDomRef = this._oList.$().find('.sapMDLILabel, .sapMSLITitleOnly, .sapMDLIValue');
+					sInputValue = (this._sTypedInValue || this._oInput.getValue()).toLowerCase();
+
+					this.highlightSuggestionItems(aListItemsDomRef, sInputValue);
 				}.bind(this)
 			});
 
@@ -878,10 +888,16 @@ sap.ui.define([
 
 			this._oSuggestionTable.addEventDelegate({
 				onAfterRendering: function () {
+					var aTableCellsDomRef, sInputValue;
+
 					if (!oInput.getEnableSuggestionsHighlighting()) {
 						return;
 					}
-					this._highlightTableText(oInput.getValue());
+
+					aTableCellsDomRef = this._oSuggestionTable.$().find('tbody .sapMLabel');
+					sInputValue = (this._sTypedInValue || this._oInput.getValue()).toLowerCase();
+
+					this.highlightSuggestionItems(aTableCellsDomRef, sInputValue);
 				}.bind(this)
 			});
 
@@ -906,79 +922,83 @@ sap.ui.define([
 	 * Creates highlighted text.
 	 *
 	 * @private
-	 * @param {sap.m.Label} label Label within the input.
+	 * @param {sap.m.Label} oItemDomRef Label within the input.
+	 * @param {string} sInputValue Text to highlight
+	 * @param {boolean} bWordMode Whether to highlight single string or to highlight each string that starts with space + sInputValue
 	 * @returns {string} newText Created text.
 	 */
-	SuggestionsPopover.prototype._createHighlightedText = function (label) {
-		var text = label.innerText,
-			value = (this._sTypedInValue || this._oInput.getValue()).toLowerCase(),
-			count = value.length,
-			lowerText = text.toLowerCase(),
-			subString,
-			newText = '';
+	SuggestionsPopover.prototype._createHighlightedText = function (oItemDomRef, sInputValue, bWordMode) {
+		var sDomRefLowerText, iStartHighlightingIndex, iInputLength, iNextSpaceIndex, sChunk,
+			sText = oItemDomRef ? oItemDomRef.innerText : "",
+			sFormattedText = "";
 
-		if (!SuggestionsPopover._wordStartsWithValue(text, value)) {
-			return encodeXML(text);
+		if (!SuggestionsPopover._wordStartsWithValue(sText, sInputValue)) {
+			return encodeXML(sText);
 		}
 
-		var index = lowerText.indexOf(value);
+		sInputValue = sInputValue.toLowerCase();
+		iInputLength = sInputValue.length;
 
-		// search for the first word which starts with these characters
-		if (index > 0) {
-			index = lowerText.indexOf(' ' + value) + 1;
+		while (SuggestionsPopover._wordStartsWithValue(sText, sInputValue)) {
+			sDomRefLowerText = sText.toLowerCase();
+			iStartHighlightingIndex = sDomRefLowerText.indexOf(sInputValue);
+			// search for the first word which starts with these characters
+			iStartHighlightingIndex = (iStartHighlightingIndex > 0) ?
+				sDomRefLowerText.indexOf(' ' + sInputValue) + 1 : iStartHighlightingIndex;
+
+
+			// Chunk before highlighting
+			sChunk = sText.substring(0, iStartHighlightingIndex);
+			sText = sText.substring(iStartHighlightingIndex);
+			sFormattedText += encodeXML(sChunk);
+
+			// Highlighting chunk
+			sChunk = sText.substring(0, iInputLength);
+			sText = sText.substring(iInputLength);
+			sFormattedText += '<span class="sapMInputHighlight">' + encodeXML(sChunk) + '</span>';
+
+
+			// Check for repetitive patterns. For example: "prodProdProd prod" should highlight only
+			// the starting of every word, but not the whole string when tested with "prod" input.
+			iNextSpaceIndex = sText.indexOf(" ");
+			iNextSpaceIndex = iNextSpaceIndex === -1 ? sText.length : iNextSpaceIndex;
+
+			// The rest
+			sChunk = sText.substring(0, iNextSpaceIndex);
+			sText = sText.substring(iNextSpaceIndex);
+			sFormattedText += encodeXML(sChunk);
+
+			// Run only for the first occurrence when highlighting for the Input for example
+			if (!bWordMode) {
+				break;
+			}
 		}
 
-		if (index > -1) {
-			newText += encodeXML(text.substring(0, index));
-			subString = text.substring(index, index + count);
-			newText += '<span class="sapMInputHighlight">' + encodeXML(subString) + '</span>';
-			newText += encodeXML(text.substring(index + count));
-		} else {
-			newText = encodeXML(text);
+		if (sText) {
+			sFormattedText += encodeXML(sText);
 		}
 
-		return newText;
+		return sFormattedText;
 	};
 
 	/**
-	 * Highlights matched text in the suggestion list.
+	 * Highlights text in DOM items.
 	 *
-	 * @private
+	 * @param {Array<HTMLElement>} aItemsDomRef DOM elements on which formatting would be applied
+	 * @param {string} sInputValue Text to highlight
+	 * @param {boolean} bWordMode Whether to highlight single string or to highlight each string that starts with space + sInputValue
+	 * @protected
+	 * @sap-restricted
 	 */
-	SuggestionsPopover.prototype._highlightListText = function () {
+	SuggestionsPopover.prototype.highlightSuggestionItems = function (aItemsDomRef, sInputValue, bWordMode) {
+		var i;
 
-		if (!this._bEnableHighlighting) {
+		if (!this._bEnableHighlighting || (!aItemsDomRef && !aItemsDomRef.length)) {
 			return;
 		}
 
-		var i,
-			label,
-			labels = this._oList.$().find('.sapMDLILabel, .sapMSLITitleOnly, .sapMDLIValue');
-
-		for (i = 0; i < labels.length; i++) {
-			label = labels[i];
-			label.innerHTML = this._createHighlightedText(label);
-		}
-	};
-
-	/**
-	 * Highlights matched text in the suggestion table.
-	 *
-	 * @private
-	 */
-	SuggestionsPopover.prototype._highlightTableText = function () {
-
-		if (!this._bEnableHighlighting) {
-			return;
-		}
-
-		var i,
-			label,
-			labels = this._oSuggestionTable.$().find('tbody .sapMLabel');
-
-		for (i = 0; i < labels.length; i++) {
-			label = labels[i];
-			label.innerHTML = this._createHighlightedText(label);
+		for (i = 0; i < aItemsDomRef.length; i++) {
+			aItemsDomRef[i].innerHTML = this._createHighlightedText(aItemsDomRef[i], sInputValue, bWordMode);
 		}
 	};
 
@@ -1060,7 +1080,7 @@ sap.ui.define([
 		for (i = 0; i < iLength; i++) {
 			sItemText =  bSearchSuggestionRows ? this._oInput._fnRowResultFilter(aItems[i]) : aItems[i].getText();
 
-			if (sItemText.toLowerCase().startsWith(sValueLowerCase)) {
+			if (sItemText.toLowerCase().indexOf(sValueLowerCase) === 0) { // startsWith
 				this._oProposedItem = aItems[i];
 				sNewValue = sItemText;
 				break;

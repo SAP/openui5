@@ -58,7 +58,9 @@
 			printAction: new sap.m.semantic.PrintAction(),
 			content: [
 					new sap.ui.layout.form.SimpleForm({
-						maxContainerCols: 2,
+						layout: sap.ui.layout.form.SimpleFormLayout.ColumnLayout,
+						columnsL: 1,
+						columnsM: 1,
 						content: [
 							new sap.ui.core.Title({text:"Detailed Info"}),
 							new sap.m.Label({text: "Name"}),

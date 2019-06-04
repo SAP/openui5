@@ -23,17 +23,17 @@ function(
 			this.sModel = "ODataV2";
 
 			this.mAddFieldSettings = {
-				"requiredLibraries" : {
+				requiredLibraries : {
 					"sap.ui.layout": {
-						"minVersion": "1.48",
-						"lazy": false
+						minVersion: "1.48",
+						lazy: false
 					}
 				},
-				"appContext" : "AddFieldContext",
-				"create" : function() {
+				appContext : "AddFieldContext",
+				create : function() {
 					return {
-						"label" : {},
-						"control" : {}
+						label : {},
+						control : {}
 					};
 				}
 			};
@@ -41,31 +41,30 @@ function(
 			this.sDummyKey = "dummyKey";
 
 			this.mSecondAddFieldSettings = {
-				"requiredLibraries" : {
+				requiredLibraries : {
 					"sap.ui.layout": {
-						"minVersion": "1.48",
-						"lazy": false
+						minVersion: "1.48",
+						lazy: false
 					}
 				},
-				"appContext" : "SecondAddFieldContext",
-				"create" : function() {
+				appContext : "SecondAddFieldContext",
+				create : function() {
 					return {
-						"label" : {},
-						"control" : {}
+						label : {},
+						control : {}
 					};
 				}
 			};
 
 			this.mAddColumnSettings = {
-				"requiredLibraries" : {},
-				"create" : function() {
+				requiredLibraries : {},
+				create : function() {
 					return {
-						"label" : "testLabel",
-						"control" : {}
+						label : "testLabel",
+						control : {}
 					};
 				}
 			};
-
 		},
 		afterEach: function() {
 		}
@@ -74,7 +73,7 @@ function(
 			return Promise.resolve()
 			.then(function() {
 				return ChangeHandlerMediator.addChangeHandlerSettings(
-					{ "scenario" : this.sAddFieldScenario, "model" : this.sModel});
+					{ scenario : this.sAddFieldScenario, model : this.sModel});
 			}.bind(this))
 
 			.catch(function(oReturn) {
@@ -84,16 +83,16 @@ function(
 
 			.then(function() {
 				return ChangeHandlerMediator.addChangeHandlerSettings(
-					{ "scenario" : this.sAddFieldScenario, "model" : this.sModel }, this.mAddFieldSettings);
+					{ scenario : this.sAddFieldScenario, model : this.sModel }, this.mAddFieldSettings);
 			}.bind(this))
 
 			.then(function() {
 				return ChangeHandlerMediator.addChangeHandlerSettings(
-					{ "scenario" : this.sAddColumnScenario, "model" : this.sModel }, this.mAddColumnSettings);
+					{ scenario : this.sAddColumnScenario, model : this.sModel }, this.mAddColumnSettings);
 			}.bind(this))
 
 			.then(function() {
-				return ChangeHandlerMediator.getChangeHandlerSettings({ "scenario" : this.sAddFieldScenario, "model" : this.sModel });
+				return ChangeHandlerMediator.getChangeHandlerSettings({ scenario : this.sAddFieldScenario, model : this.sModel });
 			}.bind(this))
 
 			.then(function(mAddFieldSettings) {
@@ -102,7 +101,7 @@ function(
 				assert.equal(mAddFieldSettings.scenarioInitialized, true, "then the scenario was successfully initialized");
 
 				return ChangeHandlerMediator.getChangeHandlerSettings(
-					{ "scenario" : this.sAddColumnScenario, "model" : this.sModel}, true);
+					{ scenario : this.sAddColumnScenario, model : this.sModel}, true);
 			}.bind(this))
 
 			.then(function(mAddColumnSettings) {
@@ -112,13 +111,13 @@ function(
 					false, "then getting the settings with 'skipInitialization = true' does not initialize the scenario");
 
 				return ChangeHandlerMediator.addChangeHandlerSettings(
-					{ "scenario" : this.sAddFieldScenario, "model" : this.sModel, "dummyKey" : this.sDummyKey},
+					{ scenario : this.sAddFieldScenario, model : this.sModel, dummyKey : this.sDummyKey},
 					this.mSecondAddFieldSettings);
 			}.bind(this))
 
 			.then(function() {
 				return ChangeHandlerMediator.getChangeHandlerSettings(
-					{ "scenario" : this.sAddFieldScenario, "model" : this.sModel, "dummyKey" : this.sDummyKey});
+					{ scenario : this.sAddFieldScenario, model : this.sModel, dummyKey : this.sDummyKey});
 			}.bind(this))
 
 			.then(function(mAddFieldSettings) {
@@ -126,7 +125,7 @@ function(
 					"then for entries with similar keys the entry with all matching keys is retrieved");
 
 				return ChangeHandlerMediator.getChangeHandlerSettings(
-					{ "scenario" : this.sAddFieldScenario, "model" : this.sModel, "wrongKey" : "nonexistent"});
+					{ scenario : this.sAddFieldScenario, model : this.sModel, wrongKey : "nonexistent"});
 			}.bind(this))
 
 			.then(function(mAddFieldSettings) {
@@ -134,7 +133,7 @@ function(
 					undefined, "then keys with partially existing entries are not found");
 
 				return ChangeHandlerMediator.getChangeHandlerSettings(
-					{ "scenario" : this.sAddColumnScenario });
+					{ scenario : this.sAddColumnScenario });
 			}.bind(this))
 
 			.then(function(mAddColumnSettings) {
@@ -149,14 +148,14 @@ function(
 					undefined, "then for an empty key no entries are found");
 
 				return ChangeHandlerMediator.getChangeHandlerSettings(
-					{ "scenario" : this.sAddFieldScenario, "model" : this.sModel});
+					{ scenario : this.sAddFieldScenario, model : this.sModel});
 			}.bind(this))
 
 			.then(function(mAddFieldSettings) {
 				assert.equal(mAddFieldSettings.content.appContext,
 					"AddFieldContext", "then for entries with similar keys the entry with all matching keys is retrieved");
 
-				return ChangeHandlerMediator.getChangeHandlerSettings({"scenario" : "hugo"});
+				return ChangeHandlerMediator.getChangeHandlerSettings({scenario : "hugo"});
 			})
 
 			.then(function(mChangeHandlerSettings) {
@@ -167,19 +166,19 @@ function(
 
 		QUnit.test('when adding settings for an already existing entry...', function(assert) {
 			return ChangeHandlerMediator.getChangeHandlerSettings(
-				{ "scenario" : this.sAddColumnScenario, "model" : this.sModel })
+				{ scenario : this.sAddColumnScenario, model : this.sModel })
 
 			.then(function(mSettingsBeforeUpdate) {
 				assert.equal(mSettingsBeforeUpdate.scenarioInitialized,
 					true, "before the update, the scenario is initialized");
 
 				return ChangeHandlerMediator.addChangeHandlerSettings(
-					{ "scenario" : this.sAddColumnScenario, "model" : this.sModel }, { "newSetting" : "hugo" });
+					{ scenario : this.sAddColumnScenario, model : this.sModel }, { newSetting : "hugo" });
 			}.bind(this))
 
 			.then(function() {
 				return ChangeHandlerMediator.getChangeHandlerSettings(
-					{ "scenario" : this.sAddColumnScenario, "model" : this.sModel }, true);
+					{ scenario : this.sAddColumnScenario, model : this.sModel }, true);
 			}.bind(this))
 
 			.then(function(mSettingsAfterUpdate) {
@@ -196,13 +195,13 @@ function(
 			var spyLog;
 			this.sDummyLibraryScenario = "dummyLibraryScenario";
 			this.mDummyLibrarySettings = {
-				"requiredLibraries" : {
-					"dummy" : {}
+				requiredLibraries : {
+					dummy : {}
 				},
-				"create" : function() {
+				create : function() {
 					return {
-						"label" : "testLabel",
-						"control" : {}
+						label : "testLabel",
+						control : {}
 					};
 				}
 			};
@@ -210,10 +209,10 @@ function(
 			var sSpyArg = "Required library not available: " + "dummy" + " - "
 							+ this.sDummyLibraryScenario + " could not be initialized";
 
-			return ChangeHandlerMediator.addChangeHandlerSettings({ "scenario" : this.sDummyLibraryScenario }, this.mDummyLibrarySettings)
+			return ChangeHandlerMediator.addChangeHandlerSettings({ scenario : this.sDummyLibraryScenario }, this.mDummyLibrarySettings)
 			.then(function() {
 				spyLog = sinon.spy(Log, "warning");
-				return ChangeHandlerMediator.getChangeHandlerSettings({ "scenario" : this.sDummyLibraryScenario });
+				return ChangeHandlerMediator.getChangeHandlerSettings({ scenario : this.sDummyLibraryScenario });
 			}.bind(this))
 
 			.then(function(mChangeHandlerSettings) {
@@ -225,26 +224,26 @@ function(
 	});
 
 	QUnit.module('Given the AddODataField scenario is registered with a create function...', {
-		beforeEach : function(){
+		beforeEach : function() {
 			this.sAddFieldScenario = "testAddField";
 
 			this.mAddFieldSettings = {
-				"requiredLibraries" : {
+				requiredLibraries : {
 					"sap.ui.layout": {
-						"minVersion": "1.48",
-						"lazy": false
+						minVersion: "1.48",
+						lazy: false
 					}
 				},
-				"appContext" : "AddFieldContext",
-				"createFunction" : function() {
+				appContext : "AddFieldContext",
+				createFunction : function() {
 					return {
-						"label" : {},
-						"control" : {}
+						label : {},
+						control : {}
 					};
 				}
 			};
 
-			return ChangeHandlerMediator.addChangeHandlerSettings({ "scenario" : this.sAddFieldScenario, "oDataServiceVersion" : "2.0" }, this.mAddFieldSettings);
+			return ChangeHandlerMediator.addChangeHandlerSettings({ scenario : this.sAddFieldScenario, oDataServiceVersion : "2.0" }, this.mAddFieldSettings);
 		}
 	}, function() {
 		QUnit.test('when getting settings for testAddField in an ODataV2 control...', function(assert) {
@@ -253,8 +252,8 @@ function(
 					return {
 						getMetaModel : function() {
 							return {
-								getProperty : function(sProperty){
-									if (sProperty === "/dataServices/dataServiceVersion"){
+								getProperty : function(sProperty) {
+									if (sProperty === "/dataServices/dataServiceVersion") {
 										return "2.0";
 									}
 								}
@@ -280,8 +279,8 @@ function(
 					return {
 						getMetaModel : function() {
 							return {
-								getProperty : function(sProperty){
-									if (sProperty === "/dataServices/dataServiceVersion"){
+								getProperty : function(sProperty) {
+									if (sProperty === "/dataServices/dataServiceVersion") {
 										return "123.0";
 									}
 								}
@@ -292,16 +291,16 @@ function(
 			};
 
 			this.mDummySettings = {
-				"requiredLibraries" : {
+				requiredLibraries : {
 					"sap.ui.layout": {
-						"minVersion": "1.48",
-						"lazy": false
+						minVersion: "1.48",
+						lazy: false
 					}
 				}
 			};
 
 			return ChangeHandlerMediator.addChangeHandlerSettings(
-				{"scenario" : "addODataField", "oDataServiceVersion" : "123.0"}, this.mDummySettings)
+				{scenario : "addODataField", oDataServiceVersion : "123.0"}, this.mDummySettings)
 
 			.then(function() {
 				return ChangeHandlerMediator.getAddODataFieldSettings(oMockControl);
@@ -318,8 +317,8 @@ function(
 					return {
 						getMetaModel : function() {
 							return {
-								getProperty : function(sProperty){
-									if (sProperty === "/dataServices/dataServiceVersion"){
+								getProperty : function(sProperty) {
+									if (sProperty === "/dataServices/dataServiceVersion") {
 										return "666.0";
 									}
 								}

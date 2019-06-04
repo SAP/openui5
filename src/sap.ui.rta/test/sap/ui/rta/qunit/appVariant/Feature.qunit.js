@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/command/Stack",
-	"sap/ui/rta/Utils",
 	"sap/ui/core/Control",
 	"sap/ui/core/Manifest",
 	"sap/base/Log",
@@ -27,7 +26,6 @@ sap.ui.define([
 	Settings,
 	FlUtils,
 	Stack,
-	RtaUtils,
 	Control,
 	Manifest,
 	Log,
@@ -71,7 +69,7 @@ sap.ui.define([
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
 			var fnGetManifirstSupport = sandbox.stub(AppVariantUtils, "getManifirstSupport").returns(Promise.reject("Server error"));
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.reject(false));
-			sandbox.stub(Log,"error").callThrough().withArgs("App variant error: ", "Server error").returns();
+			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "Server error").returns();
 
 			return RtaAppVariantFeature.isManifestSupported().catch(function(bSuccess) {
 				assert.ok(fnGetManifirstSupport.calledWith("BaseAppId"), "then getManifirstSupport is called with correct parameters");
@@ -90,7 +88,7 @@ sap.ui.define([
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
 			var oDummyAppVarDescr = {
-				"hugo": "foo"
+				hugo: "foo"
 			};
 			var oAppVarDescrStub = sandbox.stub(AppVariantUtils, "getDescriptorFromLREP").resolves(oDummyAppVarDescr);
 
@@ -109,7 +107,7 @@ sap.ui.define([
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
 			var oDummyAppVarDescr = {
-				"hugo": "foo"
+				hugo: "foo"
 			};
 			var oAppVarDescrStub = sandbox.stub(AppVariantUtils, "getDescriptorFromLREP").resolves(oDummyAppVarDescr);
 
@@ -196,7 +194,7 @@ sap.ui.define([
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
 
-			sandbox.stub(FlUtils,"getUshellContainer").returns(false);
+			sandbox.stub(FlUtils, "getUshellContainer").returns(false);
 
 			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
 
@@ -218,7 +216,7 @@ sap.ui.define([
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
 
-			sandbox.stub(FlUtils,"getUshellContainer").returns(true);
+			sandbox.stub(FlUtils, "getUshellContainer").returns(true);
 
 			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
 
@@ -241,7 +239,7 @@ sap.ui.define([
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
 
-			sandbox.stub(FlUtils,"getUshellContainer").returns(true);
+			sandbox.stub(FlUtils, "getUshellContainer").returns(true);
 
 			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(true);
 
@@ -271,7 +269,7 @@ sap.ui.define([
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
 
-			sandbox.stub(FlUtils,"getUshellContainer").returns(true);
+			sandbox.stub(FlUtils, "getUshellContainer").returns(true);
 
 			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
 
@@ -313,7 +311,7 @@ sap.ui.define([
 			};
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
-			sandbox.stub(FlUtils,"getUshellContainer").returns(true);
+			sandbox.stub(FlUtils, "getUshellContainer").returns(true);
 
 			sandbox.stub(AppVariantUtils, "isStandAloneApp").returns(false);
 
@@ -369,7 +367,6 @@ sap.ui.define([
 			jQuery("#sapUiBusyIndicator").hide();
 		}
 	}, function() {
-
 		QUnit.test("when onSaveAsFromOverviewDialog() method is called", function(assert) {
 			var oDescriptor = {
 				"sap.app" : {
@@ -415,19 +412,19 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":false,
-					"isAtoEnabled":false,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:false,
+					isAtoEnabled:false,
+					isProductiveSystem:false
 				})
 			);
 
 			var oResponse = {
-				"transports": [{
-					"transportId": "4711",
-					"owner": "TESTUSER",
-					"description": "test transport1",
-					"locked" : true
+				transports: [{
+					transportId: "4711",
+					owner: "TESTUSER",
+					description: "test transport1",
+					locked : true
 				}]
 			};
 
@@ -448,9 +445,9 @@ sap.ui.define([
 			]);
 
 			oResponse = {
-				"id": "AppVariantId",
-				"reference":"ReferenceAppId",
-				"content": []
+				id: "AppVariantId",
+				reference:"ReferenceAppId",
+				content: []
 			};
 
 			this.oServer.respondWith("POST", /\/sap\/bc\/lrep\/appdescr_variants/, [
@@ -464,9 +461,9 @@ sap.ui.define([
 
 			oResponse = {
 				response: {
-					"VariantId" : "customer.TestId",
-					"IAMId" : "IAMId",
-					"CatalogIds" : ["TEST_CATALOG"]
+					VariantId : "customer.TestId",
+					IAMId : "IAMId",
+					CatalogIds : ["TEST_CATALOG"]
 				}
 			};
 
@@ -537,42 +534,42 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":false,
-					"isAtoEnabled":false,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:false,
+					isAtoEnabled:false,
+					isProductiveSystem:false
 				})
 			);
 
-				var oResponse = {
-					"transports": [{
-						"transportId": "4711",
-						"owner": "TESTUSER",
-						"description": "test transport1",
-						"locked" : true
-					}]
-				};
+			var oResponse = {
+				transports: [{
+					transportId: "4711",
+					owner: "TESTUSER",
+					description: "test transport1",
+					locked : true
+				}]
+			};
 
-				this.oServer.respondWith("GET", /\/sap\/bc\/lrep\/actions\/gettransports/, [
-					200,
-					{
-						"Content-Type": "application/json"
-					},
-					JSON.stringify(oResponse)
-				]);
+			this.oServer.respondWith("GET", /\/sap\/bc\/lrep\/actions\/gettransports/, [
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify(oResponse)
+			]);
 
-				this.oServer.respondWith("HEAD", /\/sap\/bc\/lrep\/actions\/getcsrftoken/, [
-					200,
-					{
-						"X-CSRF-Token": "0987654321"
-					},
-					""
-				]);
+			this.oServer.respondWith("HEAD", /\/sap\/bc\/lrep\/actions\/getcsrftoken/, [
+				200,
+				{
+					"X-CSRF-Token": "0987654321"
+				},
+				""
+			]);
 
 			oResponse = {
-				"id": "AppVariantId",
-				"reference":"ReferenceAppId",
-				"content": []
+				id: "AppVariantId",
+				reference:"ReferenceAppId",
+				content: []
 			};
 
 			this.oServer.respondWith("POST", /\/sap\/bc\/lrep\/appdescr_variants/, [
@@ -586,9 +583,9 @@ sap.ui.define([
 
 			oResponse = {
 				response: {
-					"VariantId" : "customer.TestId",
-					"IAMId" : "IAMId",
-					"CatalogIds" : ["TEST_CATALOG"]
+					VariantId : "customer.TestId",
+					IAMId : "IAMId",
+					CatalogIds : ["TEST_CATALOG"]
 				}
 			};
 
@@ -599,7 +596,7 @@ sap.ui.define([
 
 			this.oServer.autoRespond = true;
 
-			sandbox.stub(Log,"error").callThrough().withArgs("App variant error: ", "IAM App Id: IAMId").returns();
+			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "IAM App Id: IAMId").returns();
 
 			var fnCreateDescriptorSpy = sandbox.spy(AppVariantManager.prototype, "createDescriptor");
 			var fnSaveAppVariantToLREP = sandbox.spy(AppVariantManager.prototype, "saveAppVariantToLREP");
@@ -620,7 +617,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when onDeleteFromOverviewDialog() method is called on S4/Hana Cloud with published catalogs", function(assert) {
-
 			var oDescriptor = {
 				"sap.app" : {
 					id : "TestId",
@@ -661,19 +657,19 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":false,
-					"isAtoEnabled":false,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:false,
+					isAtoEnabled:false,
+					isProductiveSystem:false
 				})
 			);
 
 			var oResponse = {
-				"transports": [{
-					"transportId": "4711",
-					"owner": "TESTUSER",
-					"description": "test transport1",
-					"locked" : true
+				transports: [{
+					transportId: "4711",
+					owner: "TESTUSER",
+					description: "test transport1",
+					locked : true
 				}]
 			};
 
@@ -694,9 +690,9 @@ sap.ui.define([
 			]);
 
 			oResponse = {
-				"id": "AppVariantId",
-				"reference":"ReferenceAppId",
-				"content": []
+				id: "AppVariantId",
+				reference:"ReferenceAppId",
+				content: []
 			};
 
 			this.oServer.respondWith("POST", /\/sap\/bc\/lrep\/appdescr_variants/, [
@@ -710,8 +706,8 @@ sap.ui.define([
 
 			oResponse = {
 				response: {
-					"IAMId" : "IAMId",
-					"inProgress" : true
+					IAMId : "IAMId",
+					inProgress : true
 				}
 			};
 
@@ -735,7 +731,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when onDeleteFromOverviewDialog() method is called on S4/Hana Cloud with unpublished catalogs", function(assert) {
-
 			var oDescriptor = {
 				"sap.app" : {
 					id : "TestId",
@@ -772,19 +767,19 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":false,
-					"isAtoEnabled":false,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:false,
+					isAtoEnabled:false,
+					isProductiveSystem:false
 				})
 			);
 
 			var oResponse = {
-				"transports": [{
-					"transportId": "4711",
-					"owner": "TESTUSER",
-					"description": "test transport1",
-					"locked" : true
+				transports: [{
+					transportId: "4711",
+					owner: "TESTUSER",
+					description: "test transport1",
+					locked : true
 				}]
 			};
 
@@ -805,9 +800,9 @@ sap.ui.define([
 			]);
 
 			oResponse = {
-				"id": "AppVariantId",
-				"reference":"ReferenceAppId",
-				"content": []
+				id: "AppVariantId",
+				reference:"ReferenceAppId",
+				content: []
 			};
 
 			this.oServer.respondWith("POST", /\/sap\/bc\/lrep\/appdescr_variants/, [
@@ -821,8 +816,8 @@ sap.ui.define([
 
 			oResponse = {
 				response: {
-					"IAMId" : "IAMId",
-					"inProgress" : false
+					IAMId : "IAMId",
+					inProgress : false
 				}
 			};
 
@@ -845,7 +840,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when onDeleteFromOverviewDialog() method is called on S4/Hana on premise", function(assert) {
-
 			var oDescriptor = {
 				"sap.app" : {
 					id : "TestId",
@@ -885,19 +879,19 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					"isKeyUser":true,
-					"isAtoAvailable":false,
-					"isAtoEnabled":false,
-					"isProductiveSystem":false
+					isKeyUser:true,
+					isAtoAvailable:false,
+					isAtoEnabled:false,
+					isProductiveSystem:false
 				})
 			);
 
 			var oResponse = {
-				"transports": [{
-					"transportId": "4711",
-					"owner": "TESTUSER",
-					"description": "test transport1",
-					"locked" : true
+				transports: [{
+					transportId: "4711",
+					owner: "TESTUSER",
+					description: "test transport1",
+					locked : true
 				}]
 			};
 
@@ -918,9 +912,9 @@ sap.ui.define([
 			]);
 
 			oResponse = {
-				"id": "AppVariantId",
-				"reference":"ReferenceAppId",
-				"content": []
+				id: "AppVariantId",
+				reference:"ReferenceAppId",
+				content: []
 			};
 
 			this.oServer.respondWith("POST", /\/sap\/bc\/lrep\/appdescr_variants/, [
@@ -955,5 +949,4 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

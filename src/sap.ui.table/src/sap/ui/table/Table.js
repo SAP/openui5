@@ -886,9 +886,9 @@ sap.ui.define([
 				return;
 			}
 
-			this._getAccExtension().updateAccForCurrentCell(sReason);
 			this._updateTableContent();
 			this._updateSelection();
+			this._getAccExtension().updateAccForCurrentCell(sReason);
 
 			this._aRowHeights = this._collectRowHeights(false);
 			this._updateRowHeights(this._collectRowHeights(true), true); // column header rows

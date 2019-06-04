@@ -89,6 +89,30 @@ function($, Core, KeyCodes, QUtils, Device, XMLView) {
 		assert.equal(document.getElementById(iSecondAnchorId), document.activeElement, "Previous button should be focused after arrow left");
 	});
 
+	QUnit.test("DOWN", function (assert) {
+		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
+			oEvent = {
+				keyCode: KeyCodes.ARROW_DOWN,
+				preventDefault: function () {}
+			},
+			oSpy = this.spy(oEvent, "preventDefault");
+
+		oAnchorBar.onsapdown(oEvent);
+		assert.ok(oSpy.calledOnce, "preventDefault is called on DOWN key for the AnchorBar");
+	});
+
+	QUnit.test("UP", function (assert) {
+		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
+			oEvent = {
+				keyCode: KeyCodes.ARROW_UP,
+				preventDefault: function () {}
+			},
+			oSpy = this.spy(oEvent, "preventDefault");
+
+		oAnchorBar.onsapdown(oEvent);
+		assert.ok(oSpy.calledOnce, "preventDefault is called on UP key for the AnchorBar");
+	});
+
 	QUnit.test("HOME/END", function (assert) {
 		var aAnchors = $(sAnchorSelector),
 			iFirstAnchorId = aAnchors[0].id,
@@ -292,7 +316,9 @@ function($, Core, KeyCodes, QUtils, Device, XMLView) {
 
 	QUnit.test("PAGE_DOWN/PAGE_UP", function (assert) {
 		var aSections = this.oObjectPage.getSections(),
-			aSubSections = aSections[8].getSubSections();
+			aSubSections = aSections[8].getSubSections(),
+			oSingleSubsection = aSections[0].getSubSections()[0],
+		    oSpy = this.spy(oSingleSubsection, "_scrollParent");
 
 		// Section
 		aSections[0].$().focus();
@@ -319,6 +345,13 @@ function($, Core, KeyCodes, QUtils, Device, XMLView) {
 		aSubSections[2].$().focus();
 		QUtils.triggerKeydown(aSubSections[2].sId, KeyCodes.PAGE_UP);
 		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[0].sId, "First subsection up should be focused after PAGE UP");
+
+		// Single subsection should not scroll the page
+		oSingleSubsection.$().focus();
+		QUtils.triggerKeydown(oSingleSubsection.getId(), KeyCodes.PAGE_DOWN);
+		assert.ok(oSpy.notCalled, "_scrollParent should not be called");
+		QUtils.triggerKeydown(oSingleSubsection.getId(), KeyCodes.PAGE_UP);
+		assert.ok(oSpy.notCalled, "_scrollParent should not be called");
 	});
 
 	/*******************************************************************************

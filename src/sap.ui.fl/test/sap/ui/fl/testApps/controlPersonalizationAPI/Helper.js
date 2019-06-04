@@ -15,7 +15,7 @@ sap.ui.define(["sap/ui/fl/ControlPersonalizationAPI"], function(ControlPersonali
 				return sap.ui.core.ValueState.None;
 			}
 
-			return ControlPersonalizationAPI.isPersonalized(aControlIds).then( function (bIsPersonalized) {
+			return ControlPersonalizationAPI.isPersonalized(aControlIds).then(function (bIsPersonalized) {
 				return bIsPersonalized ? sap.ui.core.ValueState.Success : sap.ui.core.ValueState.Error;
 			});
 		},

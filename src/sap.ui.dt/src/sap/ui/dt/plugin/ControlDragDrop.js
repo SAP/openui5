@@ -4,15 +4,11 @@
 
 // Provides class sap.ui.dt.plugin.ControlDragDrop.
 sap.ui.define([
-	'sap/ui/dt/plugin/DragDrop',
-	'sap/ui/dt/plugin/ElementMover',
-	'sap/ui/dt/ElementUtil',
-	'sap/ui/dt/OverlayUtil'
+	"sap/ui/dt/plugin/DragDrop",
+	"sap/ui/dt/plugin/ElementMover"
 ], function(
 	DragDrop,
-	ElementMover,
-	ElementUtil,
-	OverlayUtil
+	ElementMover
 ) {
 	"use strict";
 
@@ -34,11 +30,8 @@ sap.ui.define([
 	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be
 	 *               changed in future.
 	 */
-	var ControlDragDrop = DragDrop.extend("sap.ui.dt.plugin.ControlDragDrop", /** @lends sap.ui.dt.plugin.ControlDragDrop.prototype */
-	{
+	var ControlDragDrop = DragDrop.extend("sap.ui.dt.plugin.ControlDragDrop", /** @lends sap.ui.dt.plugin.ControlDragDrop.prototype */ {
 		metadata : {
-			// ---- object ----
-
 			// ---- control specific ----
 			library : "sap.ui.dt",
 			properties : {
@@ -136,7 +129,7 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	ControlDragDrop.prototype.onDragEnd = function(oOverlay) {
+	ControlDragDrop.prototype.onDragEnd = function() {
 		delete this._oPreviousTarget;
 		this.getElementMover().deactivateAllTargetZones(this.getDesignTime(), sDROP_ZONE_STYLE);
 		delete this._oDraggedOverlay;

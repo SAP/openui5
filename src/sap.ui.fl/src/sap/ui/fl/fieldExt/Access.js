@@ -7,7 +7,12 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/base/security/encodeURLParameters",
 	"sap/ui/thirdparty/jquery"
-], function(Storage, Utils, encodeURLParameters, jQuery) {
+], function(
+	Storage,
+	Utils,
+	encodeURLParameters,
+	jQuery
+) {
 	"use strict";
 
 	/**
@@ -100,12 +105,10 @@ sap.ui.define([
 			if (this._isServiceExpired(mServiceItem)) {
 				this.setServiceValid(mServiceInfo);
 				return false;
-			} else {
-				return true;
 			}
-		} else {
-			return false;
+			return true;
 		}
+		return false;
 	};
 
 	/**
@@ -197,9 +200,8 @@ sap.ui.define([
 	Access._parseServiceUri = function(sServiceUri) {
 		if (sServiceUri.toLowerCase().indexOf(this._sODataV4ResourcePathPrefix) !== -1) {
 			return this._parseV4ServiceUri(sServiceUri);
-		} else {
-			return this._parseV2ServiceUri(sServiceUri);
 		}
+		return this._parseV2ServiceUri(sServiceUri);
 	};
 
 	/**
@@ -266,13 +268,12 @@ sap.ui.define([
 				serviceVersion: aVersionSegments[2],
 				serviceType: this._mServiceType.v2
 			};
-		} else {
-			return {
-				serviceName: sServiceNameWithVersion,
-				serviceVersion: "0001",
-				serviceType: this._mServiceType.v2
-			};
 		}
+		return {
+			serviceName: sServiceNameWithVersion,
+			serviceVersion: "0001",
+			serviceType: this._mServiceType.v2
+		};
 	};
 
 	/**
@@ -342,7 +343,7 @@ sap.ui.define([
 			// Example call:
 			// sap/opu/odata/SAP/APS_CUSTOM_FIELD_MAINTENANCE_SRV/GetBusinessContextsByResourcePath?ResourcePath='/sap/opu/odata4/sap/aps_integration_test/sadl/sap/i_cfd_tsm_so_core/0001/'&EntitySetName=''&EntityTypeName='BusinessPartner'&$format=json
 			var sResourcePath = this._sODataV4ResourcePathPrefix + mServiceInfo.serviceName + "/" + mServiceInfo.serviceVersion;
-			sBusinessContextRetrievalUri += "GetBusinessContextsByResourcePath?" + encodeURLParameters({	"ResourcePath": "'" + sResourcePath + "'" });
+			sBusinessContextRetrievalUri += "GetBusinessContextsByResourcePath?" + encodeURLParameters({	ResourcePath: "'" + sResourcePath + "'" });
 		} else {
 			// Example call:
 			// sap/opu/odata/SAP/APS_CUSTOM_FIELD_MAINTENANCE_SRV/GetBusinessContextsByEntityType?ServiceName='CFD_TSM_BUPA_MAINT_SRV'&ServiceVersion='0001'&EntitySetName=''&EntityTypeName='BusinessPartner'&&$format=json
@@ -373,10 +374,10 @@ sap.ui.define([
 			ServiceVersion: mServiceInfo.serviceVersion
 		};
 
-		jQuery.ajax(sBusinessContextRetrievalUri, mAjaxSettings).done(function(data, textStatus, jqXHR) {
+		jQuery.ajax(sBusinessContextRetrievalUri, mAjaxSettings).done(function(data) {
 			oResult.BusinessContexts = that._extractBusinessContexts(data);
 			oDeferred.resolve(oResult);
-		}).fail(function(jqXHR, textStatus, errorThrown) {
+		}).fail(function(jqXHR) {
 			if (jqXHR.status === 404 && mServiceInfo.serviceType === that._mServiceType.v4) {
 				// in this case we assume that the backend system is just too old to support v4 based services
 				oDeferred.resolve(oResult);
@@ -458,7 +459,6 @@ sap.ui.define([
 					text: oXHR.responseText
 				});
 			}
-
 		} catch (e) {
 			// ignore
 		}
@@ -527,8 +527,8 @@ sap.ui.define([
 		var parsedServiceInfo = this._extractServiceInfo(mServiceInfo);
 
 		return {
-			"serviceKey": mSystemInfo.getName() + mSystemInfo.getClient() + parsedServiceInfo.serviceName + parsedServiceInfo.serviceVersion,
-			"expirationDate": iExpirationDate
+			serviceKey: mSystemInfo.getName() + mSystemInfo.getClient() + parsedServiceInfo.serviceName + parsedServiceInfo.serviceVersion,
+			expirationDate: iExpirationDate
 		};
 	};
 
@@ -541,9 +541,8 @@ sap.ui.define([
 	Access._extractServiceInfo = function(mServiceInfo) {
 		if (typeof mServiceInfo === "string") {
 			return this._parseServiceUri(mServiceInfo);
-		} else {
-			return mServiceInfo;
 		}
+		return mServiceInfo;
 	};
 
 	/**
@@ -595,9 +594,8 @@ sap.ui.define([
 		if (!sServiceData) {
 			// No data available => return empty map
 			return {};
-		} else {
-			return JSON.parse(sServiceData);
 		}
+		return JSON.parse(sServiceData);
 	};
 
 	return Access;

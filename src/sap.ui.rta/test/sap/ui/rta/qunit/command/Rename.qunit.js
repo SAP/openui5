@@ -2,7 +2,6 @@
 
 sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
-	"sap/ui/rta/command/Rename",
 	"sap/ui/dt/DesignTimeMetadata",
 	"sap/ui/fl/Utils",
 	"sap/m/Button",
@@ -10,7 +9,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	CommandFactory,
-	Rename,
 	DesignTimeMetadata,
 	FlUtils,
 	Button,
@@ -61,7 +59,7 @@ sap.ui.define([
 
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Button": {
-					"rename" : {
+					rename : {
 						applyChange: this.fnApplyChangeSpy,
 						completeChangeContent: this.fnCompleteChangeContentSpy
 					}
@@ -96,7 +94,7 @@ sap.ui.define([
 				return oRenameCommand.execute();
 			}.bind(this))
 
-			.then( function() {
+			.then(function() {
 				assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
 				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
 			}.bind(this))
@@ -110,5 +108,4 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

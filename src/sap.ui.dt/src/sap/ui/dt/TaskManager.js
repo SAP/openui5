@@ -1,15 +1,12 @@
 /*!
  * ${copyright}
  */
-
 sap.ui.define([
-	'sap/ui/base/ManagedObject',
-	"sap/ui/thirdparty/jquery",
+	"sap/ui/base/ManagedObject",
 	"sap/base/util/isPlainObject"
 ],
 function(
 	ManagedObject,
-	jQuery,
 	isPlainObject
 ) {
 	"use strict";
@@ -31,7 +28,6 @@ function(
 	 * @alias sap.ui.dt.TaskManager
 	 * @experimental Since 1.54. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
-
 	var TaskManager = ManagedObject.extend("sap.ui.dt.TaskManager", {
 		metadata: {
 			library: "sap.ui.dt",
@@ -49,14 +45,13 @@ function(
 				},
 				complete: {
 					parameters: {
-						taskId: "int"
+						taskId: "array"
 					}
 				}
 			}
 		},
 		constructor: function () {
 			ManagedObject.apply(this, arguments);
-
 			this._aList = [];
 		},
 		/**
@@ -67,28 +62,30 @@ function(
 		_iNextId: 0
 	});
 
-	/**
-	 * Adds new task into the list
-	 * @param mTask
-	 * @return {number} - returns task ID
-	 */
-	TaskManager.prototype.add = function (mTask) {
+	TaskManager.prototype._validateTask = function(mTask) {
 		if (!isPlainObject(mTask) || !mTask.type) {
 			throw new Error('Invalid task specified');
 		}
+	};
+
+	/**
+	 * Adds new task into the list
+	 * @param {object} mTask - Task definition map
+	 * @param {string} mTask.type - Task type
+	 * @return {number} Task ID
+	 */
+	TaskManager.prototype.add = function (mTask) {
+		this._validateTask(mTask);
 
 		var iTaskId = this._iNextId++;
-
 		this._aList.push(Object.assign({}, mTask, {
 			id: iTaskId
 		}));
-
 		if (!this.getSuppressEvents()) {
 			this.fireAdd({
 				taskId: iTaskId
 			});
 		}
-
 		return iTaskId;
 	};
 
@@ -100,10 +97,35 @@ function(
 		this._aList = this._aList.filter(function (mTask) {
 			return mTask.id !== iTaskId;
 		});
-
 		if (!this.getSuppressEvents()) {
 			this.fireComplete({
-				taskId: iTaskId
+				taskId: [iTaskId]
+			});
+		}
+	};
+
+	/**
+	 * Completes the tasks by the task definition. It is also possible to filter
+	 * by parts of the existing task definitions.
+	 * @param {object} mTask - Task definition map
+	 * @param {object} mTask.type - Task type
+	 */
+	TaskManager.prototype.completeBy = function (mTask) {
+		this._validateTask(mTask);
+		var aCompledTaskIds = [];
+		this._aList = this._aList.filter(function (mLocalTask) {
+			var bCompleteTask = Object.keys(mTask).every(function(sKey) {
+				return mLocalTask[sKey] && mLocalTask[sKey] === mTask[sKey];
+			});
+			if (bCompleteTask) {
+				aCompledTaskIds.push(mLocalTask.id);
+				return false;
+			}
+			return true;
+		});
+		if (!this.getSuppressEvents()) {
+			this.fireComplete({
+				taskId: aCompledTaskIds
 			});
 		}
 	};
@@ -126,6 +148,7 @@ function(
 
 	/**
 	 * Returns amount of the tasks in the queue
+	 * @return {number} Amoutn of tasks
 	 */
 	TaskManager.prototype.count = function () {
 		return this._aList.length;
@@ -133,6 +156,7 @@ function(
 
 	/**
 	 * Returns list of pending tasks
+	 * @return {array} List copy of pending tasks
 	 */
 	TaskManager.prototype.getList = function () {
 		return this._aList.slice(0);

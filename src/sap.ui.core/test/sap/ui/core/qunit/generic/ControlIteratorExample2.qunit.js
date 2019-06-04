@@ -4,6 +4,15 @@ sap.ui.define([
 ], function(ControlIterator) {
 	"use strict";
 
+	// disable require.js to avoid issues with thirdparty
+	sap.ui.loader.config({
+		map: {
+			"*": {
+				"sap/ui/thirdparty/require": "test-resources/sap/ui/core/qunit/generic/helper/_emptyModule"
+			}
+		}
+	});
+
 	QUnit.test("Testing all controls", function(assert) { // one single QUnit test for all controls
 		var testDone = assert.async();                    // this test is asynchronous, hence need to tell QUnit later when done
 

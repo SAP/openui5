@@ -192,37 +192,6 @@ function(library, Control, coreLibrary, Device, HyphenationSupport, TextRenderer
 	};
 
 	/**
-	 * Sets the text.
-	 *
-	 * @public
-	 * @param {string} sText Text value.
-	 * @returns {sap.m.Text} this Text reference for chaining.
-	 */
-	Text.prototype.setText = function (sText) {
-		// suppress invalidation of text property setter
-		this.setProperty("text", sText, true);
-
-		// check text dom ref
-		var oDomRef = this.getTextDomRef();
-		if (oDomRef) {
-			// update the node value of the DOM text
-			Text.setNodeValue(oDomRef, HyphenationSupport.getTextForRender(this, "main"));
-
-			// toggles the sapMTextBreakWord class when the text value is changed
-			if (this.getWrapping()) {
-				// no space text must break
-				if (sText && !/\s/.test(sText)) {
-					this.$().addClass("sapMTextBreakWord");
-				} else {
-					this.$().removeClass("sapMTextBreakWord");
-				}
-			}
-		}
-
-		return this;
-	};
-
-	/**
 	 * Gets the text.
 	 *
 	 * @public

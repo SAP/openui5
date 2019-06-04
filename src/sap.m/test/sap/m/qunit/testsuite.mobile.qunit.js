@@ -1129,6 +1129,20 @@ sap.ui.define([
 					useFakeTimers: true
 				}
 			},
+			SuggestionsPopover: {
+				title: "QUnit Page for sap.m.SuggestionsPopover",
+				ui5: {
+					compatVersion: "1.65"
+				},
+				qunit: {
+					version: 2
+				},
+				coverage: {
+					only: [
+						"sap/m/SuggestionsPopover"
+					]
+				}
+			},
 			Support: {
 				title: "QUnit Page for sap.m.Support",
 				sinon: {

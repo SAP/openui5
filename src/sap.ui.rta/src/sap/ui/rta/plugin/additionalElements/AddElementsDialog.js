@@ -2,27 +2,24 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/base/ManagedObject',
-	'sap/m/Label',
-	'sap/m/Dialog',
-	'sap/ui/model/json/JSONModel',
-	'sap/m/SearchField',
-	'sap/m/Button',
-	'sap/m/Toolbar',
-	'sap/m/ToolbarSpacer',
-	'sap/ui/model/Filter',
-	'sap/ui/model/FilterOperator',
-	'sap/ui/rta/command/CommandFactory',
-	'sap/ui/rta/command/CompositeCommand',
-	'sap/m/List',
-	'sap/m/CustomListItem',
-	'sap/m/ScrollContainer',
-	'sap/ui/model/Sorter',
-	'sap/ui/dt/ElementUtil',
-	'sap/base/Log',
-	'sap/m/VBox',
-	'sap/ui/rta/Utils',
-	'sap/m/library'
+	"sap/ui/base/ManagedObject",
+	"sap/m/Label",
+	"sap/m/Dialog",
+	"sap/ui/model/json/JSONModel",
+	"sap/m/SearchField",
+	"sap/m/Button",
+	"sap/m/Toolbar",
+	"sap/m/ToolbarSpacer",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/m/List",
+	"sap/m/CustomListItem",
+	"sap/m/ScrollContainer",
+	"sap/ui/model/Sorter",
+	"sap/base/Log",
+	"sap/m/VBox",
+	"sap/ui/rta/Utils",
+	"sap/m/library"
 ], function(
 	ManagedObject,
 	Label,
@@ -34,13 +31,10 @@ sap.ui.define([
 	ToolbarSpacer,
 	Filter,
 	FilterOperator,
-	CommandFactory,
-	CompositeCommand,
 	List,
 	ListItem,
 	ScrollContainer,
 	Sorter,
-	ElementUtil,
 	Log,
 	VBox,
 	Utils,
@@ -72,17 +66,17 @@ sap.ui.define([
 		metadata : {
 			library : "sap.ui.rta",
 			properties : {
-				"customFieldEnabled" : {
+				customFieldEnabled : {
 					type: "boolean",
 					defaultValue: false
 				},
-				"title" : {
+				title : {
 					type: "string"
 				}
 			},
 			events : {
-				"opened" : {},
-				"openCustomField" : {}
+				opened : {},
+				openCustomField : {}
 			}
 		}
 	});
@@ -128,7 +122,7 @@ sap.ui.define([
 	 */
 	AddElementsDialog.prototype._createContent = function() {
 		// SearchField
-		this._oInput =  new SearchField({
+		this._oInput = new SearchField({
 			width : "100%",
 			liveChange : [this._updateModelFilter, this]
 		});
@@ -198,12 +192,12 @@ sap.ui.define([
 		// List
 		var oSorter = new Sorter("label", this._bAscendingSortOrder);
 		this._oList = new List(
-				{
-					mode : "MultiSelect",
-					includeItemInSelection : true,
-					growing : true,
-					growingScrollToLoad : true
-				}).setNoDataText(this._oTextResources.getText("MSG_NO_FIELDS", this._oTextResources.getText("MULTIPLE_CONTROL_NAME").toLowerCase()));
+			{
+				mode : "MultiSelect",
+				includeItemInSelection : true,
+				growing : true,
+				growingScrollToLoad : true
+			}).setNoDataText(this._oTextResources.getText("MSG_NO_FIELDS", this._oTextResources.getText("MULTIPLE_CONTROL_NAME").toLowerCase()));
 
 		var oListItem = new ListItem({
 			type: ListType.Active,
@@ -286,7 +280,7 @@ sap.ui.define([
 	};
 
 	AddElementsDialog.prototype.getSelectedElements = function() {
-		return this._oDialog.getModel().getObject("/elements").filter(function(oElement){
+		return this._oDialog.getModel().getObject("/elements").filter(function(oElement) {
 			return oElement.selected;
 		});
 	};
@@ -302,7 +296,7 @@ sap.ui.define([
 		return new Promise(function (resolve, reject) {
 			this._fnResolve = resolve;
 			this._fnReject = reject;
-			this._oDialog.attachAfterOpen(function (){
+			this._oDialog.attachAfterOpen(function () {
 				this.fireOpened();
 			}.bind(this));
 			// Makes sure the modal div element does not change the size of our application (which would result in
@@ -383,5 +377,4 @@ sap.ui.define([
 	};
 
 	return AddElementsDialog;
-
 }, /* bExport= */ true);

@@ -2,11 +2,16 @@
 * ${copyright}
 */
 
-sap.ui.define(["sap/ui/fl/registry/ChangeRegistry", "sap/ui/thirdparty/jquery"], function(ChangeRegistry, jQuery) {
+sap.ui.define([
+	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/thirdparty/jquery"
+], function(
+	ChangeRegistry,
+	jQuery
+) {
 	"use strict";
 
 	var ChangeHandlerRegistration = {
-
 		_mRegistrationPromises: {},
 
 		_addRegistrationPromise: function(sKey, oPromise) {
@@ -73,5 +78,4 @@ sap.ui.define(["sap/ui/fl/registry/ChangeRegistry", "sap/ui/thirdparty/jquery"],
 	};
 
 	return ChangeHandlerRegistration;
-
 }, true);

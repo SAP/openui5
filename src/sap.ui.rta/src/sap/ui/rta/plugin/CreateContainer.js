@@ -3,11 +3,11 @@
  */
 
 sap.ui.define([
-	'sap/ui/rta/plugin/Plugin',
-	'sap/ui/fl/Utils',
-	'sap/ui/rta/Utils',
-	'sap/ui/dt/Util',
-	'sap/base/util/uid'
+	"sap/ui/rta/plugin/Plugin",
+	"sap/ui/fl/Utils",
+	"sap/ui/rta/Utils",
+	"sap/ui/dt/Util",
+	"sap/base/util/uid"
 ], function(
 	Plugin,
 	FlexUtils,
@@ -32,12 +32,8 @@ sap.ui.define([
 	 * @alias sap.ui.rta.plugin.CreateContainer
 	 * @experimental Since 1.34. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
-	var CreateContainer = Plugin.extend("sap.ui.rta.plugin.CreateContainer", /** @lends sap.ui.rta.plugin.CreateContainer.prototype */
-	{
+	var CreateContainer = Plugin.extend("sap.ui.rta.plugin.CreateContainer", /** @lends sap.ui.rta.plugin.CreateContainer.prototype */ {
 		metadata: {
-			// ---- object ----
-
-			// ---- control specific ----
 			library: "sap.ui.rta",
 			properties: {},
 			associations: {},
@@ -63,12 +59,12 @@ sap.ui.define([
 		var	oParentOverlay = this._getParentOverlay(bOverlayIsSibling, oOverlay);
 		var sAggregationName;
 
-		if (!oParentOverlay || !oParentOverlay.getParentElementOverlay()){
+		if (!oParentOverlay || !oParentOverlay.getParentElementOverlay()) {
 			//root element is not editable as parent and as sibling
 			return false;
 		}
 
-		if (bOverlayIsSibling){
+		if (bOverlayIsSibling) {
 			sAggregationName = oOverlay.getParentAggregationOverlay().getAggregationName();
 		}
 
@@ -82,9 +78,9 @@ sap.ui.define([
 			// has to be stable, otherwise the new id will not be stable.
 			var oParentView = FlexUtils.getViewForControl(oParentOverlay.getElement());
 			return this.hasStableId(oOverlay) && FlexUtils.checkControlId(oParentView);
-		} else {
-			return false;
 		}
+
+		return false;
 	};
 
 	CreateContainer.prototype._getParentOverlay = function (bSibling, oOverlay) {
@@ -119,9 +115,9 @@ sap.ui.define([
 			var fnIsEnabled = vAction.isEnabled;
 			var oParentOverlay = this._getParentOverlay(bSibling, oElementOverlay);
 			return fnIsEnabled(oParentOverlay.getElement());
-		} else {
-			return true;
 		}
+
+		return true;
 	};
 
 	/**
@@ -136,7 +132,6 @@ sap.ui.define([
 		if (vAction.getCreatedContainerId && typeof vAction.getCreatedContainerId === "function") {
 			var fnMapToRelevantControlID = vAction.getCreatedContainerId;
 			sId = fnMapToRelevantControlID.call(null, sNewControlID);
-
 		}
 		return sId;
 	};
@@ -200,9 +195,9 @@ sap.ui.define([
 
 		.then(function(oCreateCommand) {
 			this.fireElementModified({
-				"command" : oCreateCommand,
-				"action" : vAction,
-				"newControlId" : sNewControlID
+				command : oCreateCommand,
+				action : vAction,
+				newControlId : sNewControlID
 			});
 		}.bind(this))
 
@@ -222,8 +217,8 @@ sap.ui.define([
 		var sPluginId = "CTX_CREATE_SIBLING_CONTAINER";
 		var iRank = 40;
 		var aMenuItems = [];
-		for (var i = 0; i < 2; i++){
-			if (this.isAvailable(bOverlayIsSibling, aElementOverlays)){
+		for (var i = 0; i < 2; i++) {
+			if (this.isAvailable(bOverlayIsSibling, aElementOverlays)) {
 				var sMenuItemText = this.getCreateContainerText.bind(this, bOverlayIsSibling);
 				aMenuItems.push({
 					id: sPluginId,

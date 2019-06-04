@@ -18,7 +18,7 @@ sap.ui.define([
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * A control used by <code>sap.f.cards.NumericHeader</code> to hold a set of side indicator attributes.
+		 * Holds a set of side indicator attributes used in the {@link sap.f.cards.NumericHeader} control.
 		 *
 		 * @extends sap.ui.core.Control
 		 *

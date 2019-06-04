@@ -5,80 +5,105 @@
       {
         "id": "c21a958a016724e55be5f05327e1b9966bedef58",
         "type": "FIX",
-        "text": " DateFormat: Use Gannen instead of Ichinen also in interval formats",
-        "references": []
+        "text": "DateFormat: Use Gannen instead of Ichinen also in interval formats",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980215734"
+          }
+        ]
       },
       {
         "id": "ff2cd56de36258707e61f8b96ac434bac0507466",
         "type": "FIX",
-        "text": " _getOdataQuerySelect method handling non-top-level result array",
+        "text": "_getOdataQuerySelect method handling non-top-level result array",
         "references": []
       },
       {
         "id": "05b63d58322774f4bc2a2147f962e1256db55b64",
         "type": "FIX",
-        "text": " v2.ODataListBinding: Initialize relative bindings",
-        "references": []
+        "text": "v2.ODataListBinding: Initialize relative bindings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970130260"
+          }
+        ]
       },
       {
         "id": "c2dc7de0fa122bf41d89c71094a83bc5cfc11f41",
         "type": "FEATURE",
-        "text": " Opa: Added keepfocus in EnterText",
+        "text": "Opa: Added keepfocus in EnterText",
         "references": []
       },
       {
         "id": "21046d21851542fa2460a406869a6a85931ac867",
         "type": "FIX",
-        "text": " DateFormat: Make date input field use Gregorian date",
+        "text": "DateFormat: Make date input field use Gregorian date",
         "references": []
       },
       {
         "id": "ce93ba74361bace0a3ad0615a163cfead4cf8915",
         "type": "FIX",
-        "text": " ODataMessageParser: FullTarget calc + message lifecycle",
-        "references": []
+        "text": "ODataMessageParser: FullTarget calc + message lifecycle",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980277602"
+          }
+        ]
       },
       {
         "id": "c781dd2eea2b4392d045d0f34212db8aa2dc4539",
         "type": "FIX",
-        "text": " _getOdataQuerySelect method handling non-top-level result array - Revert",
+        "text": "_getOdataQuerySelect method handling non-top-level result array - Revert",
         "references": []
       },
       {
         "id": "cc5e67dcb2ce8cabd0a6fad8f2a04981686867af",
         "type": "FIX",
-        "text": " sap.m.ObjectStatus: Inverted state is shown correctly now",
-        "references": []
+        "text": "sap.m.ObjectStatus: Inverted state is shown correctly now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980266326"
+          }
+        ]
       },
       {
         "id": "4a2fa1fc148254aa6b68648ced81f847d23e9474",
         "type": "FIX",
-        "text": " Cleanup Element and Component registry before test execution",
+        "text": "Cleanup Element and Component registry before test execution",
         "references": []
       },
       {
         "id": "82ab75be0d16672f76b67a9d728a2fddd746400a",
         "type": "FIX",
-        "text": " ODataMessageParser: Technical message lifecycle",
+        "text": "ODataMessageParser: Technical message lifecycle",
         "references": []
       },
       {
         "id": "1ac2f123499b7f4bb170246e660cb3071a867c44",
         "type": "FIX",
-        "text": " Set FESR state to inactive if content was set to false",
+        "text": "Set FESR state to inactive if content was set to false",
         "references": []
       },
       {
         "id": "fd3adb42bc98dcfa95d743b89ae2d58a3fe06012",
         "type": "FIX",
-        "text": " performance/trace/FESR: avoid sending duplicate Passport header",
+        "text": "performance/trace/FESR: avoid sending duplicate Passport header",
         "references": []
       },
       {
         "id": "611e3b29083e0308e90b95070a39a0dc7e225572",
         "type": "FIX",
-        "text": " v2.ODataContextBinding: Set context or null, to prevent parent context to be applied",
-        "references": []
+        "text": "v2.ODataContextBinding: Set context or null, to prevent parent context to be applied",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980166777"
+          }
+        ]
       }
     ]
   }

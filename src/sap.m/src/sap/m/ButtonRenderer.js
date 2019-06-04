@@ -81,6 +81,10 @@ sap.ui.define([
 			mAccProps["labelledby"] = {value: oButton.getId() + "-content", append: true };
 		}
 
+		// prevent rendering of aria-disabled attribute
+		// no matter what state we have in the control
+		mAccProps["disabled"] = null;
+
 		//descendants (e.g. ToggleButton) callback
 		if (this.renderAccessibilityAttributes) {
 			this.renderAccessibilityAttributes(oRm, oButton, mAccProps);

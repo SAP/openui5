@@ -112,6 +112,21 @@ sap.ui.define([
 		checkButtonAriaAttribute(assert, oMenuButton, "aria-checked", "true", "ARIA checked state should be true for the selected split button");
 	});
 
+	QUnit.test("aria-checked is set correctly in _computeNextSectionInfo", function (assert) {
+		//select button programatically
+		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
+			aAnchorBarContent = oAnchorBar.getContent(),
+			oFirstSectionButton = aAnchorBarContent[0],
+			oLastSectionButton = aAnchorBarContent[aAnchorBarContent.length - 1];
+
+		// act
+		oAnchorBar.setSelectedButton(oLastSectionButton);
+		oAnchorBar._computeBarSectionsInfo();
+
+		checkButtonAriaAttribute(assert, oFirstSectionButton, "aria-checked", "false", "ARIA checked state should be false for the unselected button");
+		checkButtonAriaAttribute(assert, oLastSectionButton, "aria-checked", "true", "ARIA checked state should be true for the selected button");
+	});
+
 	QUnit.test("Selected button always set correctly", function (assert) {
 		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
 			aAnchorBarContent = oAnchorBar.getContent(),
@@ -508,6 +523,12 @@ sap.ui.define([
 			this.anchorBarView.destroy();
 			this.oObjectPage = null;
 		}
+	});
+
+	QUnit.test("Menu container has the correct role", function (assert) {
+		var $oMenu = jQuery("#UxAP-69_anchorBarBinding--ObjectPageLayout-anchBar-scroll");
+
+		assert.strictEqual($oMenu.attr("role"), "menubar", "Menu container has the menubar role.");
 	});
 
 	QUnit.test("Tooltip set on HierarchicalSelect", function (assert) {

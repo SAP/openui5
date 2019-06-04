@@ -29,15 +29,15 @@ function(
 	"use strict";
 	//Stack of layers in the layered repository
 	var aLayers = [
-			"VENDOR",
-			"PARTNER",
-			"CUSTOMER_BASE",
-			"CUSTOMER",
-			"USER"
-		];
+		"VENDOR",
+		"PARTNER",
+		"CUSTOMER_BASE",
+		"CUSTOMER",
+		"USER"
+	];
 	//Precalculates index of layers
 	var mLayersIndex = {};
-	aLayers.forEach(function(sLayer, iIndex){
+	aLayers.forEach(function(sLayer, iIndex) {
 		mLayersIndex[sLayer] = iIndex;
 	});
 
@@ -261,14 +261,12 @@ function(
 
 				// determine siteId from ComponentData
 				if (oAppComponent) {
-
 					//Workaround for back-end check: isApplicationPermitted
 					//As long as FLP does not know about appDescriptorId we have to pass siteID and applicationID.
 					//With startUpParameter hcpApplicationId we will get a concatenation of “siteId:applicationId”
 
 					//sSiteId = this._getComponentStartUpParameter(oComponent, "scopeId");
 					sSiteId = this._getComponentStartUpParameter(oAppComponent, "hcpApplicationId");
-
 				}
 			}
 
@@ -409,9 +407,8 @@ function(
 				return -1;
 			} else if (this.getLayerIndex(sCurrent) === this.getLayerIndex(sLayer)) {
 				return 0;
-			} else {
-				return 1;
 			}
+			return 1;
 		},
 
 		/**
@@ -634,7 +631,6 @@ function(
 		 */
 		getViewForControl: function (oControl) {
 			return Utils.getFirstAncestorOfControlWithControlType(oControl, sap.ui.core.mvc.View);
-
 		},
 
 		getFirstAncestorOfControlWithControlType: function (oControl, controlType) {
@@ -657,7 +653,6 @@ function(
 
 			oControl = sap.ui.getCore().byId(sControlId);
 			while (oControl) {
-
 				if (oControl.getId() === sAncestorControlId) {
 					return true;
 				}
@@ -837,7 +832,6 @@ function(
 			});
 
 			return parsedString;
-
 		},
 
 		/**
@@ -891,7 +885,7 @@ function(
 		 * @param  {object} oComponent - Component instance used to get the technical parameters
 		 * @returns {object|undefined} Returns the requested technical parameter object or undefined if unavailable
 		 */
-		getTechnicalParametersForComponent : function(oComponent){
+		getTechnicalParametersForComponent : function(oComponent) {
 			return oComponent
 				&& oComponent.getComponentData
 				&& oComponent.getComponentData()
@@ -903,12 +897,12 @@ function(
 		 *
 		 * @returns {object} Returns the parsed URL hash object or an empty object if ushell container is not available
 		 */
-		getParsedURLHash : function(){
+		getParsedURLHash : function() {
 			var oUshellContainer = Utils.getUshellContainer();
 			if (oUshellContainer) {
 				var oURLParser = oUshellContainer.getService("URLParsing");
 				var oParsedHash = oURLParser.parseShellHash(hasher.getHash());
-				return oParsedHash ? oParsedHash : { };
+				return oParsedHash || {};
 			}
 			return { };
 		},
@@ -923,26 +917,26 @@ function(
 		 * @param {string[]} aValues Array of values for the technical parameter
 		 */
 		setTechnicalURLParameterValues: function (oComponent, sParameterName, aValues) {
-				var oParsedHash = Utils.getParsedURLHash(sParameterName);
+			var oParsedHash = Utils.getParsedURLHash(sParameterName);
 
-				if (oParsedHash.params) {
-					hasher.changed.active = false; //disable changed signal
+			if (oParsedHash.params) {
+				hasher.changed.active = false; //disable changed signal
 
-					var mTechnicalParameters = Utils.getTechnicalParametersForComponent(oComponent);
+				var mTechnicalParameters = Utils.getTechnicalParametersForComponent(oComponent);
 					// if mTechnicalParameters are not available we write a warning and continue updating the hash
-					if (!mTechnicalParameters) {
-						this.log.warning("Component instance not provided, so technical parameters in component data and browser history remain unchanged");
-					}
-					if (aValues.length === 0) {
-						delete oParsedHash.params[sParameterName];
-						mTechnicalParameters && delete mTechnicalParameters[sParameterName]; // Case when ControlVariantsAPI.clearVariantParameterInURL is called with a parameter
-					} else {
-						oParsedHash.params[sParameterName] = aValues;
-						mTechnicalParameters && (mTechnicalParameters[sParameterName] = aValues); // Technical parameters need to be in sync with the URL hash
-					}
-					hasher.replaceHash(Utils.getUshellContainer().getService("URLParsing").constructShellHash(oParsedHash)); // Set hash without dispatching changed signal nor writing history
-					hasher.changed.active = true; // Re-enable signal
+				if (!mTechnicalParameters) {
+					this.log.warning("Component instance not provided, so technical parameters in component data and browser history remain unchanged");
 				}
+				if (aValues.length === 0) {
+					delete oParsedHash.params[sParameterName];
+					mTechnicalParameters && delete mTechnicalParameters[sParameterName]; // Case when ControlVariantsAPI.clearVariantParameterInURL is called with a parameter
+				} else {
+					oParsedHash.params[sParameterName] = aValues;
+					mTechnicalParameters && (mTechnicalParameters[sParameterName] = aValues); // Technical parameters need to be in sync with the URL hash
+				}
+				hasher.replaceHash(Utils.getUshellContainer().getService("URLParsing").constructShellHash(oParsedHash)); // Set hash without dispatching changed signal nor writing history
+				hasher.changed.active = true; // Re-enable signal
+			}
 		},
 
 		/**
@@ -1135,20 +1129,20 @@ function(
 						return oManifest.getEntry("sap.ui5").appVariantId;
 					}
 					if (oManifest.getEntry("sap.ui5").componentName) {
-					    var sComponentName = oManifest.getEntry("sap.ui5").componentName;
-					    if (sComponentName.length > 0 && sComponentName.indexOf(".Component") < 0) {
-						sComponentName += ".Component";
-					    }
-					    return sComponentName;
+						var sComponentName = oManifest.getEntry("sap.ui5").componentName;
+						if (sComponentName.length > 0 && sComponentName.indexOf(".Component") < 0) {
+							sComponentName += ".Component";
+						}
+						return sComponentName;
 					}
 				}
 				if (oManifest.getEntry("sap.app") && oManifest.getEntry("sap.app").id) {
 					var sAppId = oManifest.getEntry("sap.app").id;
 					if (sAppId === Utils.APP_ID_AT_DESIGN_TIME && oManifest.getComponentName) {
-					    sAppId = oManifest.getComponentName();
+						sAppId = oManifest.getComponentName();
 					}
 					if (sAppId.length > 0 && sAppId.indexOf(".Component") < 0) {
-					    sAppId += ".Component";
+						sAppId += ".Component";
 					}
 					return sAppId;
 				}
@@ -1166,9 +1160,9 @@ function(
 		 */
 		getAppVersionFromManifest: function (oManifest) {
 			var sVersion = "";
-			if (oManifest){
+			if (oManifest) {
 				var oSapApp = (oManifest.getEntry) ? oManifest.getEntry("sap.app") : oManifest["sap.app"];
-				if (oSapApp && oSapApp.applicationVersion && oSapApp.applicationVersion.version){
+				if (oSapApp && oSapApp.applicationVersion && oSapApp.applicationVersion.version) {
 					sVersion = oSapApp.applicationVersion.version;
 				}
 			} else {
@@ -1186,9 +1180,9 @@ function(
 		 */
 		getODataServiceUriFromManifest: function (oManifest) {
 			var sUri = "";
-			if (oManifest){
+			if (oManifest) {
 				var oSapApp = (oManifest.getEntry) ? oManifest.getEntry("sap.app") : oManifest["sap.app"];
-				if (oSapApp && oSapApp.dataSources && oSapApp.dataSources.mainService && oSapApp.dataSources.mainService.uri){
+				if (oSapApp && oSapApp.dataSources && oSapApp.dataSources.mainService && oSapApp.dataSources.mainService.uri) {
 					sUri = oSapApp.dataSources.mainService.uri;
 				}
 			} else {
@@ -1215,27 +1209,27 @@ function(
 			var nLength = sVersion.match(oRegexp1) ? sVersion.match(oRegexp1)[0].length : 0;
 			var nLenghtWithDot = sVersion.match(oRegexp2) ? sVersion.match(oRegexp2)[0].length : 0;
 
-			if (nLenghtWithDot < 1 || nLenghtWithDot != nLength){
+			if (nLenghtWithDot < 1 || nLenghtWithDot !== nLength) {
 				return false;
 			}
 
 			//if the character after the version is also a number or a dot, it should also be a format error
-			if (nLenghtWithDot && sVersion != sVersion.substr(0,nLenghtWithDot)){
+			if (nLenghtWithDot && sVersion !== sVersion.substr(0, nLenghtWithDot)) {
 				var cNextCharacter = sVersion.substr(nLenghtWithDot, 1);
 				var oRegexp = /^[0-9.]$/;
-				if (oRegexp.test(cNextCharacter)){
+				if (oRegexp.test(cNextCharacter)) {
 					return false;
 				}
 			}
 
 			// split into number-parts and check if there are max. three parts
-			var aVersionParts = sVersion.substr(0,nLenghtWithDot).split(".");
-			if (aVersionParts.length > 3){
+			var aVersionParts = sVersion.substr(0, nLenghtWithDot).split(".");
+			if (aVersionParts.length > 3) {
 				return false;
 			}
 
 			// 5 digits maximum per part
-			if (!aVersionParts.every(function(sPart){return sPart.length <= 5;})){
+			if (!aVersionParts.every(function(sPart) {return sPart.length <= 5;})) {
 				return false;
 			}
 			return true;
@@ -1322,7 +1316,7 @@ function(
 
 				.catch(function(e) {
 					var sErrorMessage = "Error during execPromiseQueueSequentially processing occured";
-					sErrorMessage += e ?  ": " + e.message : "";
+					sErrorMessage += e ? ": " + e.message : "";
 					this.log.error(sErrorMessage);
 
 					if (bThrowError) {
@@ -1333,11 +1327,10 @@ function(
 				.then(function() {
 					return this.execPromiseQueueSequentially(aPromiseQueue, bThrowError, bAsync);
 				}.bind(this));
-
-			} else {
-				this.log.error("Changes could not be applied, promise not wrapped inside function.");
-				return this.execPromiseQueueSequentially(aPromiseQueue, bThrowError, bAsync);
 			}
+
+			this.log.error("Changes could not be applied, promise not wrapped inside function.");
+			return this.execPromiseQueueSequentially(aPromiseQueue, bThrowError, bAsync);
 		},
 
 		/**

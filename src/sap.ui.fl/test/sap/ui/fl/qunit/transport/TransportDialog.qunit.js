@@ -37,7 +37,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("setLrepObject", function (assert) {
-			this.oDialog.setLrepObject({"type": "variant", "name": "id_1414740501651_318", "namespace": ""});
+			this.oDialog.setLrepObject({type: "variant", name: "id_1414740501651_318", namespace: ""});
 			assert.equal(this.oDialog.getProperty("lrepObject").name, "id_1414740501651_318");
 		});
 
@@ -158,9 +158,9 @@ sap.ui.define([
 
 		QUnit.test("_createObjectInfo", function (assert) {
 			this.oDialog.setProperty("lrepObject", {
-				"type": "variant",
-				"name": "id_1414740501651_318",
-				"namespace": "test_name_space"
+				type: "variant",
+				name: "id_1414740501651_318",
+				namespace: "test_name_space"
 			});
 			var oInfo = this.oDialog._createObjectInfo();
 
@@ -345,7 +345,7 @@ sap.ui.define([
 				return {
 					getTransports: function () {
 						return {
-							then: function (fSuccess, fFailure) {
+							then: function () {
 								assert.ok("promise executed");
 							}
 						};

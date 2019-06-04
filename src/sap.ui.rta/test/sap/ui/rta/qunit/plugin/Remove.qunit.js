@@ -70,10 +70,10 @@ function (
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Button" : {
-					"hideControl" : "default"
+					hideControl : "default"
 				},
 				"sap.ui.layout.VerticalLayout" : {
-					"hideControl" : "default"
+					hideControl : "default"
 				}
 			})
 			.then(function() {
@@ -211,12 +211,11 @@ function (
 			this.oRemovePlugin.deregisterElementOverlay(this.oButtonOverlay);
 			this.oRemovePlugin.registerElementOverlay(this.oButtonOverlay);
 
-			sandbox.stub(this.oRemovePlugin, "hasStableId").callsFake(function(oOverlay){
-				if (oOverlay === this.oLayoutOverlay){
+			sandbox.stub(this.oRemovePlugin, "hasStableId").callsFake(function(oOverlay) {
+				if (oOverlay === this.oLayoutOverlay) {
 					return false;
-				} else {
-					return true;
 				}
+				return true;
 			}.bind(this));
 
 			sandbox.stub(this.oButtonOverlay, "getRelevantContainer").returns(this.oVerticalLayout);
@@ -400,10 +399,10 @@ function (
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Button" : {
-					"hideControl" : "default"
+					hideControl : "default"
 				},
 				"sap.ui.layout.VerticalLayout" : {
-					"hideControl" : "default"
+					hideControl : "default"
 				}
 			})
 			.then(function() {
@@ -458,5 +457,4 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

@@ -32,10 +32,8 @@ function (
 	var aMOVABLE_TYPES = ["sap.ui.layout.form.FormElement", "sap.ui.layout.form.FormContainer"];
 
 	function parameterizedTest(oSimpleFormLayout) {
-
 		QUnit.module("Given the SimpleForm using " + oSimpleFormLayout, {
 			beforeEach : function(assert) {
-
 				var done = assert.async();
 
 				XMLView.create({id: "testView", viewName: "dt.view.TestSimpleForm"})
@@ -75,14 +73,13 @@ function (
 				this.oDesignTime.destroy();
 			}
 		}, function() {
-
 			QUnit.test("When moving title1 to position of title2 using cut & paste", function(assert) {
 				var oElementGroup1 = sap.ui.getCore().byId("testView--Group1");
 				var oElementGroup2 = sap.ui.getCore().byId("testView--Group2");
 				var oSourceOverlay = OverlayRegistry.getOverlay(oElementGroup1.getParent());
 				var oTargetOverlay = OverlayRegistry.getOverlay(oElementGroup2.getParent());
 
-				return whenCutAndPaste.call(this, oSourceOverlay, oTargetOverlay).then(function(){
+				return whenCutAndPaste.call(this, oSourceOverlay, oTargetOverlay).then(function() {
 					var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form");
 					var aFormContainers = oSimpleFormForm.getFormContainers();
 					var iPosition = aFormContainers.indexOf(oElementGroup1.getParent());
@@ -96,7 +93,7 @@ function (
 				var oSourceOverlay = OverlayRegistry.getOverlay(oElementGroup1.getParent());
 				var oTargetOverlay = OverlayRegistry.getOverlay(oElementGroup2.getParent());
 
-				return whenCutAndPaste.call(this, oSourceOverlay, oTargetOverlay).then(function(){
+				return whenCutAndPaste.call(this, oSourceOverlay, oTargetOverlay).then(function() {
 					var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form");
 					var aFormContainers = oSimpleFormForm.getFormContainers();
 					var iPosition = aFormContainers.indexOf(oElementGroup1.getParent());
@@ -110,7 +107,7 @@ function (
 				var oSourceOverlay = OverlayRegistry.getOverlay(oElementBeforeInPosition0);
 				var oTargetOverlay = OverlayRegistry.getOverlay(oElementBeforeInPosition1);
 
-				return whenCutAndPaste.call(this, oSourceOverlay, oTargetOverlay).then(function(){
+				return whenCutAndPaste.call(this, oSourceOverlay, oTargetOverlay).then(function() {
 					var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form");
 					var oElementNowInPosition1 = oSimpleFormForm.getFormContainers()[1].getFormElements()[1];
 					assert.equal(oElementNowInPosition1, oElementBeforeInPosition0, "the element was moved properly");
@@ -125,7 +122,7 @@ function (
 				var oTargetOverlay = OverlayRegistry.getOverlay(oElement1);
 				oTargetOverlay = oTargetOverlay.getParentElementOverlay();
 
-				return whenCutAndPaste.call(this, oSourceOverlay, oTargetOverlay).then(function(){
+				return whenCutAndPaste.call(this, oSourceOverlay, oTargetOverlay).then(function() {
 					var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form");
 					var oElementNowInGroup0 = oSimpleFormForm.getFormContainers()[0].getFormElements()[0];
 					assert.equal(oElementNowInGroup0, oElement0, "the element was moved properly");
@@ -138,9 +135,9 @@ function (
 				var oSourceOverlay = OverlayRegistry.getOverlay(oSourceElement);
 				var oTargetOverlay = OverlayRegistry.getOverlay(oTargetElement);
 
-				return whenCutAndPaste.call(this, oSourceOverlay, oTargetOverlay).then(function(){
+				return whenCutAndPaste.call(this, oSourceOverlay, oTargetOverlay).then(function() {
 					var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form");
-					var oElementInGroup2Position2  = oSimpleFormForm.getFormContainers()[2].getFormElements()[2];
+					var oElementInGroup2Position2 = oSimpleFormForm.getFormContainers()[2].getFormElements()[2];
 					assert.equal(oElementInGroup2Position2, oSourceElement, "the element was moved properly");
 				});
 			});
@@ -151,9 +148,9 @@ function (
 				var oSourceOverlay = OverlayRegistry.getOverlay(oSourceElement);
 				var oTargetOverlay = OverlayRegistry.getOverlay(oTargetElement);
 
-				return whenCutAndPaste.call(this, oSourceOverlay, oTargetOverlay).then(function(){
+				return whenCutAndPaste.call(this, oSourceOverlay, oTargetOverlay).then(function() {
 					var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form");
-					var oElementInGroup2Position0  = oSimpleFormForm.getFormContainers()[2].getFormElements()[0];
+					var oElementInGroup2Position0 = oSimpleFormForm.getFormContainers()[2].getFormElements()[0];
 					assert.equal(oElementInGroup2Position0, oSourceElement, "the element was moved properly");
 				});
 			});
@@ -161,9 +158,9 @@ function (
 	}
 
 	function whenCutAndPaste(oSourceOverlay, oTargetOverlay) {
-		return new Promise(function(resolve){
+		return new Promise(function(resolve) {
 			//although cut and paste is more or less sync, SimpleForm might react async
-			this.oDesignTime.attachEventOnce("elementOverlayMoved", function(){
+			this.oDesignTime.attachEventOnce("elementOverlayMoved", function() {
 				resolve();
 			});
 
@@ -183,7 +180,4 @@ function (
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
-
-
 });

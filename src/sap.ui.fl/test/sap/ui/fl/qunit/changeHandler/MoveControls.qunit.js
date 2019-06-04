@@ -167,7 +167,6 @@ function(
 
 	QUnit.module("Given a Move Controls Change Handler on jsControlTree", {
 		beforeEach : function() {
-
 			// Test Setup:
 			// VerticalLayout
 			// -- content
@@ -183,10 +182,10 @@ function(
 			this.oButton = new Button(oComponent.createId(myButtonId));
 			this.oObjectAttribute = new ObjectAttribute(oComponent.createId(myObjectAttributeId));
 			this.oObjectAttribute2 = new ObjectAttribute(oComponent.createId(myObjectAttributeId2));
-			this.oObjectHeader = new ObjectHeader(oComponent.createId(myObjectHeaderId) ,{
+			this.oObjectHeader = new ObjectHeader(oComponent.createId(myObjectHeaderId), {
 				attributes : [this.oObjectAttribute, this.oObjectAttribute2]
 			});
-			this.oLayout = new VerticalLayout(oComponent.createId(myLayoutId) ,{
+			this.oLayout = new VerticalLayout(oComponent.createId(myLayoutId), {
 				content : [this.oObjectHeader, this.oButton]
 			});
 
@@ -638,7 +637,6 @@ function(
 
 	QUnit.module("Given a Move Controls Change Handler on xmlControlTree", {
 		beforeEach : function() {
-
 			// Test Setup:
 			// VerticalLayout
 			// -- content
@@ -651,8 +649,8 @@ function(
 			// define xml-structure for xmlView
 			var oXmlString =
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
-						  'xmlns:layout="sap.ui.layout" ' +
-						  'xmlns="sap.m">' +
+						'xmlns:layout="sap.ui.layout" ' +
+						'xmlns="sap.m">' +
 					'<layout:VerticalLayout id="' + myLayoutId + '">' +
 						'<layout:content>' +
 							'<ObjectHeader id="' + myObjectHeaderId + '">' +
@@ -669,17 +667,17 @@ function(
 				metadata: {
 					manifest : {
 						"sap.app": {
-							"id": "sap.ui.rta.control.enabling.comp",
-							"type": "application"
+							id: "sap.ui.rta.control.enabling.comp",
+							type: "application"
 						}
 					}
 				},
 				createContent : function() {
 					// store it in outer scope
 					var oView = sap.ui.xmlview({
-							id : this.createId("view"),
-							viewContent : oXmlString
-						});
+						id : this.createId("view"),
+						viewContent : oXmlString
+					});
 					return oView;
 				}
 

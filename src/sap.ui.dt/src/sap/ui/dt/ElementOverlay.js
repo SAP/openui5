@@ -3,14 +3,14 @@
  */
 
 sap.ui.define([
-	'sap/ui/dt/Overlay',
-	'sap/ui/dt/ControlObserver',
-	'sap/ui/dt/ManagedObjectObserver',
-	'sap/ui/dt/ElementDesignTimeMetadata',
-	'sap/ui/dt/ElementUtil',
-	'sap/ui/dt/DOMUtil',
-	'sap/ui/dt/Util',
-	'sap/ui/core/Control',
+	"sap/ui/dt/Overlay",
+	"sap/ui/dt/ControlObserver",
+	"sap/ui/dt/ManagedObjectObserver",
+	"sap/ui/dt/ElementDesignTimeMetadata",
+	"sap/ui/dt/ElementUtil",
+	"sap/ui/dt/DOMUtil",
+	"sap/ui/dt/Util",
+	"sap/ui/core/Control",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
 	"sap/base/util/isPlainObject",
@@ -267,7 +267,7 @@ function (
 			Overlay.prototype._getAttributes.apply(this, arguments),
 			{
 				"data-sap-ui-dt-for": this.getElement().getId(),
-				"draggable": this.getMovable()
+				draggable: this.getMovable()
 			}
 		);
 	};
@@ -408,9 +408,9 @@ function (
 							is shorter and is more to the left
 						 */
 						return 1;
-					} else {
-						return -1; // do not switch order
 					}
+
+					return -1; // do not switch order
 				} else if (oPosition1.top === oPosition2.top) {
 					if (oPosition1.left === oPosition2.left) {
 						// Give priority to smaller block by height or width
@@ -424,30 +424,27 @@ function (
 							|| oGeometry1.size.width > oGeometry2.size.width
 						) {
 							return 1;
-						} else {
-							return 0;
 						}
+						return 0;
 					} else if (oPosition1.left < oPosition2.left) {
 						return -1; // order is correct
-					} else {
-						return 1; // switch order
 					}
+					return 1; // switch order
 				} else if (iBottom1 <= iBottom2 && oPosition2.left > oPosition1.left) { // if (oPosition1.top > oPosition2.top)
 					/* see picture above, but switch 1 and 2 - order is correct */
 					return -1;
-				} else {
-					/*  Example:
-						            +--------------+
-						+------+    |       2      |
-						|  1   |    +--------------+
-						|      |
-						+------+
-
-						Since 1st overlay's both top and bottom coordinates are
-						bellow in dom, then top and bottom of 2nd, they should be switched
-					 */
-					return 1;
 				}
+				/*  Example:
+								+--------------+
+					+------+    |       2      |
+					|  1   |    +--------------+
+					|      |
+					+------+
+
+					Since 1st overlay's both top and bottom coordinates are
+					bellow in dom, then top and bottom of 2nd, they should be switched
+					*/
+				return 1;
 			}
 			return 0;
 		};
@@ -468,7 +465,6 @@ function (
 				DOMUtil.appendChild(oContainer, oChild);
 			});
 		}
-
 	};
 
 	/**
@@ -613,7 +609,6 @@ function (
 	ElementOverlay.prototype.setSelectable = function(bSelectable) {
 		bSelectable = !!bSelectable;
 		if (bSelectable !== this.isSelectable()) {
-
 			if (!bSelectable) {
 				this.setSelected(false);
 			}
@@ -862,10 +857,8 @@ function (
 		if (oElement) {
 			var oGeometry = this.getGeometry();
 			return oGeometry && oGeometry.visible;
-		} else {
-			return false;
 		}
-
+		return false;
 	};
 
 	/**

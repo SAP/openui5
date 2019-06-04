@@ -42,7 +42,7 @@ sap.ui.define([
 	function _createEntryMap(mChangesObject) {
 		return {
 			changes: {
-				changes: [ mChangesObject ]
+				changes: [mChangesObject]
 			}
 		};
 	}
@@ -77,7 +77,7 @@ sap.ui.define([
 
 			return Cache.getChangesFillingCache(this.oLrepConnector, {name: sComponentName}).then(function() {
 				var mSwitches = Cache.getSwitches();
-				var mSwitchesExp = {"bFunction1": true, "bFunction2": true};
+				var mSwitchesExp = {bFunction1: true, bFunction2: true};
 				assert.deepEqual(mSwitchesExp, mSwitches);
 			});
 		});
@@ -97,7 +97,7 @@ sap.ui.define([
 			var oEntry = Cache.getEntry("test", "1.2.3");
 			assert.deepEqual(oEntry, oInitEntry);
 			assert.deepEqual(Cache.getEntries(), {
-				"test" : {
+				test : {
 					"1.2.3": oInitEntry
 				}
 			});
@@ -111,10 +111,10 @@ sap.ui.define([
 				mockChanges1: {}
 			};
 			Cache._entries = {
-				"testComponent1": {
+				testComponent1: {
 					"1.2.3": oEntry1
 				},
-				"testComponent2": {
+				testComponent2: {
 					"1.2.3": oEntry2
 				}
 			};
@@ -129,7 +129,7 @@ sap.ui.define([
 				mockChanges1: {}
 			};
 			Cache._entries = {
-				"testComponent1": {
+				testComponent1: {
 					"1.2.3": oEntry1
 				}
 			};
@@ -180,7 +180,6 @@ sap.ui.define([
 				assert.strictEqual(changes.changes.changes.length, 2);
 				sinon.assert.calledOnce(this.oLrepConnector.loadChanges);
 			}.bind(this));
-
 		});
 
 		QUnit.test('addChange with a specific application version', function(assert) {
@@ -204,7 +203,6 @@ sap.ui.define([
 				assert.strictEqual(changes.changes.changes.length, 2);
 				sinon.assert.calledOnce(this.oLrepConnector.loadChanges);
 			}.bind(this));
-
 		});
 
 		QUnit.test('updateChange', function(assert) {
@@ -261,7 +259,6 @@ sap.ui.define([
 				assert.strictEqual(changes.changes.changes.length, 0);
 				sinon.assert.calledOnce(this.oLrepConnector.loadChanges);
 			}.bind(this));
-
 		});
 
 		QUnit.test('deleteChange with a specific version', function(assert) {
@@ -287,7 +284,7 @@ sap.ui.define([
 		QUnit.test('getCacheKey with invalid mComponent is called', function(assert) {
 			var mComponentMock = {};
 			var oAppComponentMock = {
-				getComponentData: function(){
+				getComponentData: function() {
 					return {
 						technicalParameters: {
 							"sap-ui-fl-control-variant-id" : ["control-variant-id-0"]
@@ -332,8 +329,8 @@ sap.ui.define([
 			var sControlVariantId2 = "id_1541412437845_186_Copy";
 			var sCacheKeyResult = "<NoTag-" + sControlVariantId1 + "-" + sControlVariantId2 + ">";
 			Cache._entries = {
-				"testComponent" : {
-					"oldVersion" : {
+				testComponent : {
+					oldVersion : {
 						file : "oldContent"
 					}
 				}
@@ -428,7 +425,7 @@ sap.ui.define([
 			var sComponentName = "testComponent",
 				sAppVersion = Utils.DEFAULT_APP_VERSION,
 				oVariantSectionContent = {
-					"variantManagement": {
+					variantManagement: {
 						variants: ["variant1"]
 					}
 				};
@@ -438,7 +435,6 @@ sap.ui.define([
 			Cache.setVariantManagementSection({name: sComponentName, appVersion: sAppVersion}, oVariantSectionContent);
 			assert.deepEqual(oCacheEntry.file.changes.variantSection, oVariantSectionContent, "then the passed variant controller file content was set in the cache entry");
 		});
-
 	});
 
 	QUnit.module("getChangesFillingCache and level0-changes", function (hooks) {
@@ -467,10 +463,10 @@ sap.ui.define([
 			sandbox.stub(sap.ui.loader._, "getModuleState").returns(bIsLoaded);
 			if (aBundledChanges) {
 				return sandbox.stub(LoaderExtensions, "loadResource").returns(aBundledChanges);
-			} else {
-				// if no bundle is specified the default error is thrown
-				return sandbox.spy(LoaderExtensions, "loadResource");
 			}
+
+			// if no bundle is specified the default error is thrown
+			return sandbox.spy(LoaderExtensions, "loadResource");
 		};
 
 		var fnStubBackend = function (bSuccessful, aChanges) {
@@ -606,14 +602,14 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("sap.ui.fl.Cache when cache of other application versions already exist", function (hooks){
+	QUnit.module("sap.ui.fl.Cache when cache of other application versions already exist", function (hooks) {
 		hooks.beforeEach(function() {
 			Cache._entries = {
-				"testComponent" : {
-					"DEFAULT_APP_VERSION" : {
+				testComponent : {
+					DEFAULT_APP_VERSION : {
 						file : "defaultContent"
 					},
-					"oldVersion" : {
+					oldVersion : {
 						file : "oldContent"
 					}
 				}
@@ -842,7 +838,7 @@ sap.ui.define([
 			var oEntry = _createEntriesMap(aChanges, oVariantSection);
 			var oDefaultEntry = Cache._entries[sTestComponentName][Utils.DEFAULT_APP_VERSION];
 			var oOldEntry = Cache._entries[sTestComponentName]["oldVersion"];
-			var aNamesToDeleted = ["A" ,"C", "controlChange1", "controlChange2", "controlChange3", "controlChange5"];
+			var aNamesToDeleted = ["A", "C", "controlChange1", "controlChange2", "controlChange3", "controlChange5"];
 
 			sandbox.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
 
@@ -967,7 +963,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("returns an empty list if no personalization is stored under the container key", function(assert) {
-
 			var oEntry = {
 				changes: {
 					changes: [
@@ -992,7 +987,7 @@ sap.ui.define([
 			var sItemName = "itemName";
 			var oExpectedItem = {itemName: sItemName};
 
-			var aEntries = [{itemName: "someOtherItemName"}, oExpectedItem,{itemName: "someCompletlyDifferentItemName"}];
+			var aEntries = [{itemName: "someOtherItemName"}, oExpectedItem, {itemName: "someCompletlyDifferentItemName"}];
 
 			var oEntry = {
 				changes: {
@@ -1015,7 +1010,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("returns all personalization items under the container key stored for the app if no item key is provided", function(assert) {
-			var aEntries = [{},{}];
+			var aEntries = [{}, {}];
 
 			var oEntry = {
 				changes: {
@@ -1202,23 +1197,23 @@ sap.ui.define([
 				itemName : this.sItemName2
 			};
 
-			return Promise.all(aGetPromises).then( function (aParams) {
+			return Promise.all(aGetPromises).then(function (aParams) {
 				this.oEntry = aParams[0];
 				this.oEntry2 = aParams[1];
 			}.bind(this))
 				.then(Cache._addPersonalizationToEntries.bind(Cache, this.oItem1))
 				.then(Cache._addPersonalizationToEntries.bind(Cache, this.oItem2))
 				.then(Cache.deletePersonalization.bind(Cache, this.sComponentName, this.sContainerKey, this.sItemName1))
-				.then( function () {
-						assert.equal(this.server.requests.length, 4, " four calls were sent to the backend (two setup, 1 token, 1 delete)");
-						assert.equal(this.server.requests[2].method, "HEAD", "a token was requested");
-						assert.equal(this.server.requests[3].method, "DELETE", "a delete was requested");
-						assert.equal(this.server.requests[3].url, this.sExpectedUrl, "the delete was sent to the correct url");
-						assert.equal(this.oEntry.changes.ui2personalization[this.sContainerKey].length, 1, "one entry is in first the container");
-						assert.equal(this.oEntry.changes.ui2personalization[this.sContainerKey][0], this.oItem2, "the 'other' item is still in the container");
-						assert.equal(this.oEntry2.changes.ui2personalization[this.sContainerKey].length, 1, "one entry is in the second container");
-						assert.equal(this.oEntry2.changes.ui2personalization[this.sContainerKey][0], this.oItem2, "the 'other' item is still in the container");
-					}.bind(this)
+				.then(function () {
+					assert.equal(this.server.requests.length, 4, " four calls were sent to the backend (two setup, 1 token, 1 delete)");
+					assert.equal(this.server.requests[2].method, "HEAD", "a token was requested");
+					assert.equal(this.server.requests[3].method, "DELETE", "a delete was requested");
+					assert.equal(this.server.requests[3].url, this.sExpectedUrl, "the delete was sent to the correct url");
+					assert.equal(this.oEntry.changes.ui2personalization[this.sContainerKey].length, 1, "one entry is in first the container");
+					assert.equal(this.oEntry.changes.ui2personalization[this.sContainerKey][0], this.oItem2, "the 'other' item is still in the container");
+					assert.equal(this.oEntry2.changes.ui2personalization[this.sContainerKey].length, 1, "one entry is in the second container");
+					assert.equal(this.oEntry2.changes.ui2personalization[this.sContainerKey][0], this.oItem2, "the 'other' item is still in the container");
+				}.bind(this)
 				);
 		});
 	});

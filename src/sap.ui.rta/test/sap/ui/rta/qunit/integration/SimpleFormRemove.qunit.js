@@ -24,7 +24,6 @@ function(
 	sinon,
 	layoutLibrary
 ) {
-
 	"use strict";
 
 	// shortcut for sap.ui.layout.form.SimpleFormLayout
@@ -42,7 +41,6 @@ function(
 
 		QUnit.module("Given the SimpleForm in RTA using " + oSimpleFormLayout, {
 			beforeEach : function(assert) {
-
 				oComponent = new UIComponent();
 				sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 
@@ -70,7 +68,6 @@ function(
 				oDesignTime.attachEventOnce("synced", function() {
 					done();
 				});
-
 			},
 
 			afterEach : function() {
@@ -121,7 +118,7 @@ function(
 			var aElements = [];
 			var aFormContainers = [];
 
-			for (var i = 0; i <= 3; i++){
+			for (var i = 0; i <= 3; i++) {
 				sID = "qunit-fixture--Group" + i;
 				oElementGroup = sap.ui.getCore().byId(oComponent.createId(sID));
 				oElementOverlay = OverlayRegistry.getOverlay(oElementGroup.getParent());
@@ -159,7 +156,6 @@ function(
 
 			oRemove.removeElement(aElements);
 		});
-
 	}
 
 	fnParamerizedTest(SimpleFormLayout.ResponsiveLayout);
@@ -169,5 +165,4 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

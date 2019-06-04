@@ -9,11 +9,12 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/fl/variants/VariantManagement",
-	"sap/ui/rta/plugin/ControlVariant",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/variants/VariantController",
 	"sap/ui/fl/FlexControllerFactory",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	// needs to be included so that the ElementOverlay prototype is enhanced
+	"sap/ui/rta/plugin/ControlVariant"
 ],
 function (
 	FlUtils,
@@ -24,7 +25,6 @@ function (
 	OverlayRegistry,
 	ElementOverlay,
 	VariantManagement,
-	ControlVariant,
 	VariantModel,
 	VariantController,
 	FlexControllerFactory,
@@ -37,15 +37,15 @@ function (
 	QUnit.module("Given a variant management control ...", {
 		before: function () {
 			var oData = {
-				"variantMgmtId1": {
-					"defaultVariant": "variantMgmtId1",
-					"variants": [
+				variantMgmtId1: {
+					defaultVariant: "variantMgmtId1",
+					variants: [
 						{
-							"author": "SAP",
-							"key": "variantMgmtId1",
-							"layer": "VENDOR",
-							"readOnly": true,
-							"title": "Standard"
+							author: "SAP",
+							key: "variantMgmtId1",
+							layer: "VENDOR",
+							readOnly: true,
+							title: "Standard"
 						}
 					]
 				}
@@ -54,8 +54,8 @@ function (
 			var oManifestObj = {
 				"sap.app": {
 					id: "MyComponent",
-					"applicationVersion": {
-						"version": "1.2.3"
+					applicationVersion: {
+						version: "1.2.3"
 					}
 				}
 			};
@@ -85,36 +85,36 @@ function (
 			this.oModel._bDesignTimeMode = true;
 
 			var oChange1 = new Change({
-				"fileName": "change44",
-				"layer":"CUSTOMER",
-				"selector": {
-					"id": "abc123"
+				fileName: "change44",
+				layer:"CUSTOMER",
+				selector: {
+					id: "abc123"
 				},
-				"reference": "Dummy.Component"
+				reference: "Dummy.Component"
 			});
 			var oChange2 = new Change({
-				"fileName": "change45",
-				"layer":"CUSTOMER",
-				"selector": {
-					"id": "abc123"
+				fileName: "change45",
+				layer:"CUSTOMER",
+				selector: {
+					id: "abc123"
 				},
-				"reference": "Dummy.Component"
+				reference: "Dummy.Component"
 			});
 
 			this.oVariant = {
-				"content": {
-					"fileName":"variant0",
-					"content": {
-						"title":"variant A"
+				content: {
+					fileName:"variant0",
+					content: {
+						title:"variant A"
 					},
-					"layer":"CUSTOMER",
-					"variantReference":"variant00",
-					"support":{
-						"user":"Me"
+					layer:"CUSTOMER",
+					variantReference:"variant00",
+					support:{
+						user:"Me"
 					},
-					"reference": "Dummy.Component"
+					reference: "Dummy.Component"
 				},
-				"controlChanges" : [oChange1, oChange2]
+				controlChanges : [oChange1, oChange2]
 			};
 
 			this.oGetCurrentLayerStub = sinon.stub(FlUtils, "getCurrentLayer").returns("CUSTOMER");
@@ -123,7 +123,6 @@ function (
 			sinon.stub(this.oModel.oVariantController, "getVariants").returns([this.oVariant]);
 			sinon.stub(this.oModel.oVariantController, "addVariantToVariantManagement").returns(1);
 			sinon.stub(this.oModel.oVariantController, "removeVariantFromVariantManagement").returns(1);
-
 		},
 		after: function () {
 			this.oManifest.destroy();
@@ -173,7 +172,7 @@ function (
 				assert.deepEqual(oControlVariantDuplicateCommand._oVariantChange, aPreparedChanges[0], "then _oVariantChange property was set for the command");
 				return oControlVariantDuplicateCommand.undo();
 			}.bind(this))
-			.then( function() {
+			.then(function() {
 				oDuplicateVariant = oControlVariantDuplicateCommand.getVariantChange();
 				aPreparedChanges = oControlVariantDuplicateCommand.getPreparedChange();
 				assert.notOk(aPreparedChanges, "then no prepared changes are available after undo");
@@ -182,7 +181,7 @@ function (
 				assert.notOk(oControlVariantDuplicateCommand._oVariantChange, "then _oVariantChange property was unset for the command");
 				return oControlVariantDuplicateCommand.undo();
 			})
-			.then( function () {
+			.then(function () {
 				assert.ok(true, "then by default a Promise.resolve() is returned on undo(), even if no changes exist for the command");
 			})
 			.catch(function (oError) {
@@ -194,5 +193,4 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

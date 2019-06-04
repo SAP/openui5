@@ -4,6 +4,9 @@
 @_sap_f_ShellBar_ChildMargin: 4;
 @_sap_f_ShellBar_CoPilotWidth: 48;
 
+@_sap_f_ShellBar_PrimaryTitle_FontSize: @sapMFontMediumSize;
+@_sap_f_ShellBar_SecondTitle_FontSize: @sapMFontSmallSize;
+
 .sapFShellBar {
 	height: 3rem;
 	padding-left: ~"@{_sap_f_ShellBar_PaddingDesktop}rem";
@@ -87,6 +90,32 @@
 		height: 2rem;
 	}
 
+	.sapFShellBarSearch {
+		display: flex;
+		max-width: 28rem; // max width of searchField + button width
+		min-width: 12rem; // min width of searchField + button width
+		width: 100%;
+
+		.sapMSF {
+			max-width: 25rem;
+			min-width: 9rem;
+			margin-right: 0.5rem;
+		}
+
+		.sapFShellBarSearchCancelButton {
+			margin-left: 0.5rem;
+		}
+		&.sapFShellBarSearchFullWidth {
+			max-width: 100%;
+			margin: 0;
+
+			.sapMSF {
+				max-width: 100%;
+			}
+		}
+
+	}
+
 	.CPImage {
 		width: ~"@{_sap_f_ShellBar_CoPilotWidth}px";
 		height: ~"@{_sap_f_ShellBar_CoPilotWidth}px";
@@ -155,6 +184,31 @@
 			margin-right: 0;
 		}
 	}
+
+	.sapFShellBarPrimaryTitle,
+	.sapFShellBarSecondTitle {
+		vertical-align: middle;
+	}
+
+	.sapFShellBarPrimaryTitle {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		background: transparent;
+		color: @sapUiShellTextColor;
+		font-size: @_sap_f_ShellBar_PrimaryTitle_FontSize;
+		line-height: 1rem;
+		vertical-align: middle;
+		font-weight: bold;
+	}
+
+	.sapFShellBarSecondTitle {
+		font-family: @sapUiFontFamily;
+		font-size: @_sap_f_ShellBar_SecondTitle_FontSize;
+		color: @sapUiShellTextColor;
+		line-height: 2rem;
+		vertical-align: middle;
+	}
+
 	.sapUiSizeCompact & {
 		&.sapMPageHeader .sapMIBar {
 			height: 3rem;
@@ -167,6 +221,24 @@
 			}
 			.sapMBtnInner {
 				height: 2.125rem;
+			}
+		}
+		.sapFShellBarSearch {
+			max-width: 27.5rem; // max width of searchField + button width
+			min-width: 11.5rem; // min width of searchField + button width
+			.sapMSF {
+				max-width: 25rem;
+				min-width: 9rem;
+				margin-right: 0.5rem;
+			}
+
+			&.sapFShellBarSearchFullWidth {
+				max-width: 100%;
+				margin: 0;
+
+				.sapMSF {
+					max-width: 100%;
+				}
 			}
 		}
 	}
@@ -202,6 +274,15 @@
 	}
 }
 
+.sapFShellBarSearchOverflowToolbar {
+	max-width: 100%;
+	width: 100%;
+
+	.sapMBtnContent {
+		text-align: left;
+	}
+}
+
 .sapFButtonNotifications ~ .sapFShellBarOverflowButton,
 .sapFButtonNotifications[data-notifications=""],
 .sapFShellBarOverflowButton[data-notifications=""] {
@@ -214,4 +295,11 @@
 	.sapFShellBarOverflowButton[data-notifications]:after {
 		display: none;
 	}
+}
+
+.sapFShellBarTitleCollapsed {
+	&>span {
+		display: none;
+	}
+
 }

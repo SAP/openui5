@@ -3,37 +3,37 @@
 sap.ui.require([
 	"sap/ui/test/opaQunit"
 ], function (opaTest) {
-		"use strict";
+	"use strict";
 
-		QUnit.module("DragDropJourney");
+	QUnit.module("DragDropJourney");
 
-		opaTest("Load the sample app", function (Given, When, Then) {
-			When.onTheAppView.iCollapseTheTree();
-			Then.onTheAppView.theHashWasChanged()
+	opaTest("Load the sample app", function (Given, When, Then) {
+		When.onTheAppView.iCollapseTheTree();
+		Then.onTheAppView.theHashWasChanged()
 				.and.theUndoStateShouldBeCorrect(false);
-			Then.onTheCodeView.theViewsXMLFileShouldBeDisplayed("Main.view.xml");
-		});
+		Then.onTheCodeView.theViewsXMLFileShouldBeDisplayed("Main.view.xml");
+	});
 
-		opaTest("Drag an item from the palette into the iframe", function (Given, When, Then) {
-			When.onTheAppView.iSelectAnItemFromThePalette(8)
+	opaTest("Drag an item from the palette into the iframe", function (Given, When, Then) {
+		When.onTheAppView.iSelectAnItemFromThePalette(8)
 				.and.iStartDragging();
-			Then.onTheAppView.theDraggedItemShouldBePartOfTheTargetGroup()
+		Then.onTheAppView.theDraggedItemShouldBePartOfTheTargetGroup()
 				.and.theUndoStateShouldBeCorrect(true);
-		});
+	});
 
-		opaTest("Display the new element in the outline and code editor", function (Given, When, Then) {
-			When.onTheAppView.iExpandTheOutlineByNLevels(6, [1, 2, 3, 4, 6, 7, 11], [0, 1, 2, 3, 4, 5])
+	opaTest("Display the new element in the outline and code editor", function (Given, When, Then) {
+		When.onTheAppView.iExpandTheOutlineByNLevels(6, [1, 2, 3, 4, 6, 7, 11], [0, 1, 2, 3, 4, 5])
 				.and.iSelectTheNthTreeItem(9);
-			Then.onTheAppView.theNewElementShouldBeDisplayedInTheOutline();
-			Then.onTheCodeView.theElementsDesigntimeShouldBeDisplayed("Button.designtime.js")
+		Then.onTheAppView.theNewElementShouldBeDisplayedInTheOutline();
+		Then.onTheCodeView.theElementsDesigntimeShouldBeDisplayed("Button.designtime.js")
 				.and.theElementsComputedPropertiesShouldBeDisplayed("sap.ui.rta.dttool.sample");
-		});
+	});
 
-		opaTest("Should move element inside frame", function (Given, When, Then) {
-			When.onTheAppView.iDragAnItemInsideFrame();
-			Then.onTheAppView.theElementPositionShouldChange()
+	opaTest("Should move element inside frame", function (Given, When, Then) {
+		When.onTheAppView.iDragAnItemInsideFrame();
+		Then.onTheAppView.theElementPositionShouldChange()
 				.and.theElementShouldBeInTheOutline(1);
-		});
+	});
 
 		// opaTest("Should remove an element", function (Given, When, Then) {
 		// 	//Select an element to remove and remove it by setting its visible attribute to false
@@ -48,16 +48,16 @@ sap.ui.require([
 		// 		.and.theRedoStateShouldBeCorrect(true);
 		// });
 
-		opaTest("Should save all changes (1/2)", function (Given, When, Then) {
-			When.onTheAppView.iStopRta();
-			Then.onTheAppView.theAppShouldContainNChanges(2)
+	opaTest("Should save all changes (1/2)", function (Given, When, Then) {
+		When.onTheAppView.iStopRta();
+		Then.onTheAppView.theAppShouldContainNChanges(2)
 				.and.and.theUndoStateShouldBeCorrect(false);
-		});
+	});
 
-		opaTest("Should save all changes (2/2)", function (Given, When, Then) {
-			Then.onTheAppView.anAddXMLChangeShouldExist()
+	opaTest("Should save all changes (2/2)", function (Given, When, Then) {
+		Then.onTheAppView.anAddXMLChangeShouldExist()
 				.and.aMoveControlsChangeShouldExist();
-		});
+	});
 
 		//FIXME: Currently commented out because the AddXML command cannot save the fragment in the Fake-LRep
 		// opaTest("Check the changes", function (Given, When, Then) {
@@ -69,9 +69,9 @@ sap.ui.require([
 		// 	Then.onTheAppView.theDraggedItemShouldBePartOfTheTargetGroup();
 		// });
 
-		opaTest("Cleanup the changes", function (Given, When, Then) {
-			When.onTheAppView.iCleanupLocalChanges();
-			Then.onTheAppView.theAppShouldBeClean();
-		});
-	}
+	opaTest("Cleanup the changes", function (Given, When, Then) {
+		When.onTheAppView.iCleanupLocalChanges();
+		Then.onTheAppView.theAppShouldBeClean();
+	});
+}
 );

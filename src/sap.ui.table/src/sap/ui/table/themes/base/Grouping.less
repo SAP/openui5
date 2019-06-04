@@ -150,7 +150,7 @@ html[dir=rtl] {
 	.sapUiTableGroupHeaderFading(@_sap_ui_table_Grouping_GroupHeaderBackground);
 }
 
-.sapUiTableRowSelectionCell.sapUiTableGroupHeader:focus .sapUiTableGroupIcon {
+.sapUiTableGroupHeader > .sapUiTableRowSelectionCell:focus .sapUiTableGroupIcon {
 	outline-width: @_sap_ui_table_Grouping_GroupOutlineWidth;
 	outline-style: dotted;
 	outline-offset: 0;
@@ -159,23 +159,23 @@ html[dir=rtl] {
 
 // Override row background and cell borders in group header rows.
 .sapUiTableGroupHeader {
-	&.sapUiTableTr,
-	&.sapUiTableRowSelectionCell,
-	&.sapUiTableRowActionCell {
+	&.sapUiTableRow {
 		background-color: @_sap_ui_table_Grouping_GroupHeaderBackground;
 	}
 
-	&.sapUiTableCell.sapUiTableRowSelectionCell,
-	.sapUiTableCell.sapUiTableDataCell {
-		border-right-color: transparent;
-	}
+	> .sapUiTableCell {
+		&.sapUiTableRowSelectionCell,
+		&.sapUiTableDataCell {
+			border-right-color: transparent;
+		}
 
-	&.sapUiTableCell.sapUiTableRowActionCell {
-		border-left-color: transparent;
+		&.sapUiTableRowActionCell {
+			border-left-color: transparent;
+		}
 	}
 }
 
-.sapUiTableGroupMode .sapUiTableRowSelectionCell.sapUiTableGroupHeader {
+.sapUiTableGroupMode .sapUiTableGroupHeader > .sapUiTableRowSelectionCell {
 	> .sapUiTableGroupIcon {
 		display: flex;
 		align-items: center;
@@ -223,7 +223,7 @@ html.sap-tablet:not(.sap-desktop), html.sap-phone {
 	}
 }
 
-.sapUiTableGroupMode .sapUiTableRowSelectionCell.sapUiTableRowFirstFixedBottom::before {
+.sapUiTableGroupMode .sapUiTableRowFirstFixedBottom > .sapUiTableRowSelectionCell::before {
 	border-top-color: @sapUiListTableFixedBorder;
 }
 
@@ -239,12 +239,12 @@ html.sap-tablet:not(.sap-desktop), html.sap-phone {
 	pointer-events: none;
 }
 
-.sapUiTableRowSelectionCell.sapUiTableGroupHeader:focus:not(*:root) {
+.sapUiTableGroupHeader > .sapUiTableRowSelectionCell:focus:not(*:root) {
 	outline: 0;
 }
 
 /*Separation needed from declaration above because of IE*/
-.sapUiTableRowSelectionCell.sapUiTableGroupHeader:focus {
+.sapUiTableGroupHeader > .sapUiTableRowSelectionCell:focus {
 	outline: 0;
 }
 
@@ -253,7 +253,7 @@ html.sap-tablet:not(.sap-desktop), html.sap-phone {
 	background-color: @_sap_ui_table_Grouping_GroupHeaderBackground;
 }
 
-.sapUiTableRowSelectionCell.sapUiTableGroupHeader.sapUiTableRowLastScrollable,
+.sapUiTableGroupHeader.sapUiTableRowLastScrollable > .sapUiTableRowSelectionCell,
 .sapUiTableGroupMode .sapUiTableTr.sapUiTableGroupHeader.sapUiTableRowLastScrollable > .sapUiTableCellDummy {
 	border-bottom-color: @sapUiListTableFixedBorder;
 }
@@ -262,7 +262,7 @@ html.sap-tablet:not(.sap-desktop), html.sap-phone {
 	display: none;
 }
 
-.sapUiTableGroupMode.sapUiAnalyticalTable .sapUiTableRowSelectionCell.sapUiTableGroupHeader .sapUiTableGroupMenuButton {
+.sapUiTableGroupMode.sapUiAnalyticalTable .sapUiTableGroupHeader > .sapUiTableRowSelectionCell .sapUiTableGroupMenuButton {
 	position: absolute;
 	width: 2.5rem;
 	text-align: center;

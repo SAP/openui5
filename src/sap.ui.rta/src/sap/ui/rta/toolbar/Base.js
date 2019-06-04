@@ -3,13 +3,11 @@
  */
 
 sap.ui.define([
-	'sap/ui/rta/library',
-	'sap/m/HBox',
-	'sap/ui/rta/util/Animation',
-	'sap/ui/dt/util/ZIndexManager'
+	"sap/m/HBox",
+	"sap/ui/rta/util/Animation",
+	"sap/ui/dt/util/ZIndexManager"
 ],
 function(
-	library,
 	HBox,
 	Animation,
 	ZIndexManager
@@ -38,18 +36,18 @@ function(
 			library: "sap.ui.rta",
 			properties: {
 				/** Color in the toolbar */
-				"color": {
+				color: {
 					type: "string",
 					defaultValue: "default"
 				},
 
 				/** z-index of the toolbar on the page. Please consider of using bringToFront() function */
-				"zIndex": {
+				zIndex: {
 					type: "int"
 				},
 
 				/** i18n bundle */
-				"textResources": "object"
+				textResources: "object"
 			}
 		},
 		constructor: function() {
@@ -214,5 +212,4 @@ function(
 	Base.prototype.setRestoreEnabled = function () {};
 
 	return Base;
-
 }, true);

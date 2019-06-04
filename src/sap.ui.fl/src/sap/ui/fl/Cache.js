@@ -5,7 +5,6 @@
 sap.ui.define([
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/variants/util/VariantUtil",
 	"sap/base/strings/formatMessage",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
@@ -15,7 +14,6 @@ sap.ui.define([
 function(
 	LrepConnector,
 	Utils,
-	VariantUtil,
 	formatMessage,
 	Log,
 	jQuery,
@@ -240,7 +238,7 @@ function(
 			return oResult;
 		}, function (oError) {
 			var sMessageText = "";
-			if (oError.messages && oError.messages.length != 0 && oError.messages[0].text) {
+			if (oError.messages && oError.messages.length !== 0 && oError.messages[0].text) {
 				sMessageText = oError.messages[0].text;
 			}
 			var sErrorMessage = formatMessage("Loading changes for {0} failed!\nError code: {1}\nMessage: {2}", mComponent.name, oError.code || "", sMessageText);
@@ -305,19 +303,19 @@ function(
 		var bChangesBundleLoaded = !!sap.ui.loader._.getModuleState(sResourcePath);
 		if (bChangesBundleLoaded) {
 			return Promise.resolve(LoaderExtensions.loadResource(sResourcePath));
-		} else {
-			var oConfiguration = sap.ui.getCore().getConfiguration();
-			if (oConfiguration.getDebug() || oConfiguration.isFlexBundleRequestForced()) {
-				// try to load the source in case a debugging takes place and the component could have no Component-preload
-				try {
-					return Promise.resolve(LoaderExtensions.loadResource(sResourcePath));
-				} catch (e) {
-					Log.warning("flexibility did not find a changesBundle.json  for the application");
-				}
-			}
-
-			return Promise.resolve([]);
 		}
+
+		var oConfiguration = sap.ui.getCore().getConfiguration();
+		if (oConfiguration.getDebug() || oConfiguration.isFlexBundleRequestForced()) {
+			// try to load the source in case a debugging takes place and the component could have no Component-preload
+			try {
+				return Promise.resolve(LoaderExtensions.loadResource(sResourcePath));
+			} catch (e) {
+				Log.warning("flexibility did not find a changesBundle.json  for the application");
+			}
+		}
+
+		return Promise.resolve([]);
 	};
 
 
@@ -358,9 +356,9 @@ function(
 			.then(function (oWrappedChangeFileContent) {
 				if (oWrappedChangeFileContent && oWrappedChangeFileContent.etag) {
 					return Cache._trimEtag(oWrappedChangeFileContent.etag);
-				} else {
-					return Cache.NOTAG;
 				}
+
+				return Cache.NOTAG;
 			})
 			.then(function(sCacheKey) {
 				// concat current control variant ids to cachekey if available
@@ -481,14 +479,14 @@ function(
 	 */
 	Cache.removeChanges = function (oComponent, aChangeNames) {
 		var oEntry = Cache.getEntry(oComponent.name, oComponent.appVersion);
-		oEntry.file.changes.changes = oEntry.file.changes.changes.filter( function( oChange ) {
-			return aChangeNames.indexOf( oChange.fileName ) === -1;
-		} );
+		oEntry.file.changes.changes = oEntry.file.changes.changes.filter(function(oChange) {
+			return aChangeNames.indexOf(oChange.fileName) === -1;
+		});
 		var oVariantSection = oEntry.file.changes.variantSection;
 		Object.keys(oVariantSection).forEach(function(sId) {
-			oVariantSection[sId].variants.forEach(function(oVariant){
-				oVariant.controlChanges = oVariant.controlChanges.filter(function( oChange){
-					return aChangeNames.indexOf( oChange.getFileName() ) === -1;
+			oVariantSection[sId].variants.forEach(function(oVariant) {
+				oVariant.controlChanges = oVariant.controlChanges.filter(function(oChange) {
+					return aChangeNames.indexOf(oChange.getFileName()) === -1;
 				});
 			});
 		});

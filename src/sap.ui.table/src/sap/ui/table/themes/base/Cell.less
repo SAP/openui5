@@ -40,20 +40,24 @@
 	}
 }
 
-.sapUiTableHeaderCell {
-	&:not(.sapUiTableRowActionHeaderCell) {
-		&:hover {
-			background-color: @sapUiListHoverBackground;
-		}
+/*
+ * Hover
+ */
+.sapUiTableHeaderCell:not(.sapUiTableRowActionHeaderCell) {
+	&:hover {
+		background-color: @sapUiListHoverBackground;
 	}
 }
 
+/*
+ * Borders
+ */
 .sapUiTableCell {
 	box-sizing: border-box;
 	border-right: @_sap_ui_table_BaseBorderWidth solid @sapUiListVerticalBorderColor;
 	border-bottom: @_sap_ui_table_BaseBorderWidth solid @sapUiListBorderColor;
 
-	&.sapUiTableRowIndented.sapUiTableRowSelectionCell {
+	.sapUiTableRowIndented > &.sapUiTableRowSelectionCell {
 		border-left: @_sap_ui_table_BaseBorderWidth solid @sapUiListVerticalBorderColor;
 	}
 
@@ -95,16 +99,13 @@
 	}
 
 	// Fixed rows borders
-	.sapUiTableRowLastFixedTop&, // For header and action cells, which are also rows (from CSS perspective).
-	.sapUiTableRowLastScrollable&, // For header and action cells, which are also rows (from CSS perspective).
 	.sapUiTableRowLastFixedTop > &,
 	.sapUiTableRowLastScrollable > & {
 		border-bottom-color: @sapUiListTableFixedBorder;
 	}
 
 	// Last row border
-	.sapUiTableLastRow > &,
-	.sapUiTableLastRow& {
+	.sapUiTableLastRow > & {
 		// The table has a border, so the last row doesn't need one.
 		border-bottom-color: transparent;
 	}

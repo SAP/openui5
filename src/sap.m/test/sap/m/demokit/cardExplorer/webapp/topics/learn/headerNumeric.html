@@ -43,60 +43,67 @@
 				<th>Version</th>
 			</tr>
 			<tr>
+				<td>type</td>
+				<td>string</td>
+				<td>Yes</td>
+				<td>Represents the type of the header</td>
+				<td>1.1.0</td>
+			</tr>
+			<tr>
 				<td>title</td>
 				<td>string</td>
 				<td>Yes</td>
-				<td>Defines the title.</td>
-				<td>1.1.1</td>
-			</tr>
-			<tr>
-				<td>number</td>
-				<td>string</td>
-				<td>No</td>
-				<td>The numeric value of the main number indicator. If the value contains more than five characters,
-					only the first five are displayed. Without rounding the number.
-				</td>
+				<td>Represents language-dependent title</td>
 				<td>1.1.0</td>
 			</tr>
 			<tr>
-				<td>scale</td>
+				<td>subTitle</td>
 				<td>string</td>
 				<td>No</td>
-				<td>Defines the unit of measurement (scaling prefix) for the main indicator. Financial characters can be
-					used for currencies and counters. The International System of Units (SI) prefixes can be used. If
-					the unit contains more than three characters, only the first three characters are displayed.
-				</td>
+				<td>Represents language-dependent additional information to the title</td>
 				<td>1.1.0</td>
 			</tr>
 			<tr>
-				<td>state</td>
-				<td>string</td>
+				<td>actions</td>
+				<td>array</td>
 				<td>No</td>
-				<td>The semantic color which represents the state of the main number indicator.<em>Experimental API
-					since 1.64 Disclaimer: this property is in a beta state - incompatible API changes may be done
-					before its official public release. Use at your own discretion.</em></td>
-				<td>1.1.0</td>
-			</tr>
-			<tr>
-				<td>subtitle</td>
-				<td>string</td>
-				<td>No</td>
-				<td>The subtitle of the card</td>
+				<td>Represents description of actions that can be applied on a part of a card</td>
 				<td></td>
-			</tr>
-			<tr>
-				<td>trend</td>
-				<td>string</td>
-				<td>No</td>
-				<td>The direction of the trend arrow. Shows deviation for the value of the main number indicator.</td>
-				<td>1.1.0</td>
 			</tr>
 			<tr>
 				<td>unitOfMeasurement</td>
 				<td>string</td>
 				<td>No</td>
-				<td>General unit of measurement for the header. Displayed as side information to the subtitle.</td>
+				<td>Represents unit of measurement for the whole numeric header</td>
 				<td>1.1.0</td>
+			</tr>
+			<tr>
+				<td>mainIndicator</td>
+				<td></td>
+				<td>No</td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>details</td>
+				<td>string</td>
+				<td>No</td>
+				<td>Represents additional information about the numeric header</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>sideIndicators</td>
+				<td>string</td>
+				<td>array</td>
+				<td>Multiple side indicators that relate to the main numeric indicator</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>status</td>
+				<td></td>
+				<td>No</td>
+				<td>Represents the status of the card</td>
+				<td></td>
 			</tr>
 		</table>
 

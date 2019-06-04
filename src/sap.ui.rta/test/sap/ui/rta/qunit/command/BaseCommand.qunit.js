@@ -102,14 +102,14 @@ function (
 	};
 
 	QUnit.module("Given a command factory", {
-		beforeEach : function(assert) {
+		beforeEach : function() {
 			this.oButton = new Button(oMockedAppComponent.createId("myButton"));
 			sandbox.stub(flUtils, "_getComponentForControl")
 				.callThrough()
 				.withArgs(this.oButton)
 				.returns(oMockedAppComponent);
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			sandbox.restore();
 			this.oButton.destroy();
 		}
@@ -124,7 +124,6 @@ function (
 			.then(function(oCommand) {
 				assert.ok(oCommand, "then command without flex settings is available");
 				assert.strictEqual(oCommand.getNewValue(), false, "and its settings are merged correctly");
-
 			})
 
 			.then(function() {
@@ -179,7 +178,7 @@ function (
 	});
 
 	QUnit.module("Given a flex command", {
-		beforeEach : function(assert) {
+		beforeEach : function() {
 			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 			this.oButton = new Button("mockButton");
 			this.fnApplyChangeSpy = sandbox.spy(HideControl, "applyChange");
@@ -188,7 +187,7 @@ function (
 				changeType : "hideControl"
 			});
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			sandbox.restore();
 			this.oFlexCommand.destroy();
 			this.oButton.destroy();
@@ -223,17 +222,17 @@ function (
 	});
 
 	QUnit.module("Given a command stack", {
-		beforeEach : function(assert) {
+		beforeEach : function() {
 			this.stack = new Stack();
 			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 			this.command = new BaseCommand();
 			this.failingCommand = this.command.clone();
-			this.failingCommand.execute = function(oElement) {
+			this.failingCommand.execute = function() {
 				return Promise.reject(ERROR_INTENTIONALLY);
 			};
 			this.command2 = new BaseCommand();
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			sandbox.restore();
 			this.command.destroy();
 			this.command2.destroy();
@@ -322,7 +321,7 @@ function (
 			assert.expect(5);
 			var fnStackModifiedSpy = sinon.spy();
 			this.stack.attachModified(fnStackModifiedSpy);
-			this.failingCommand.execute = function(oElement) {
+			this.failingCommand.execute = function() {
 				return Promise.reject();
 			};
 			var oStandardError = new Error("Executing of the change failed.");
@@ -414,7 +413,7 @@ function (
 	});
 
 	QUnit.module("Given a property command", {
-		beforeEach : function(assert) {
+		beforeEach : function() {
 			var oFlexSettings = {
 				developerMode: true,
 				layer: "VENDOR"
@@ -437,7 +436,7 @@ function (
 				this.fnApplyChangeSpy = sandbox.spy(FlexCommand.prototype, "_applyChange");
 			}.bind(this));
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			sandbox.restore();
 			this.oControl.destroy();
 			this.oPropertyCommand.destroy();
@@ -489,11 +488,11 @@ function (
 				value: this.OLD_VALUE_BINDING
 			});
 			var oModel = new JSONModel({
-					field1 : this.OLD_VALUE,
-					field2 : 15000
+				field1 : this.OLD_VALUE,
+				field2 : 15000
 			});
 			var oNamedModel = new JSONModel({
-					numberAsString : this.NEW_VALUE
+				numberAsString : this.NEW_VALUE
 			});
 			this.oInput.setModel(oModel);
 			this.oInput.setModel(oNamedModel, "namedModel");
@@ -537,7 +536,7 @@ function (
 				assert.ok(false, 'catch must never be called - Error: ' + oError);
 			});
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			sandbox.restore();
 			this.oInput.destroy();
 			this.oBindShowValueHelpCommandWithoutOldValueSet.destroy();
@@ -598,7 +597,7 @@ function (
 	});
 
 	QUnit.module("Given remove command", {
-		beforeEach : function(assert) {
+		beforeEach : function() {
 			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 			this.oButton = new Button(oMockedAppComponent.createId("button"));
 
@@ -618,7 +617,7 @@ function (
 				this.oCommand.prepare();
 			}.bind(this));
 		},
-		afterEach : function (assert) {
+		afterEach : function () {
 			sandbox.restore();
 			this.oCommand.destroy();
 			this.oButton.destroy();
@@ -636,7 +635,7 @@ function (
 	});
 
 	QUnit.module("Given variant model, variant management reference and flex settings for a rename command", {
-		beforeEach: function (assert) {
+		beforeEach: function () {
 			var sVariantManagementReference = "dummyVariantManagementReference";
 			this.sCurrentVariantReference = "dummyVariantReference";
 			this.oFLexSettings = {
@@ -681,7 +680,7 @@ function (
 					this.oCommand = oCommand;
 				}.bind(this));
 		},
-		afterEach: function (assert) {
+		afterEach: function () {
 			sandbox.restore();
 			this.oCommand.destroy();
 			this.oButton.destroy();
@@ -718,7 +717,7 @@ function (
 				assert.ok(false, 'catch must never be called - Error: ' + oError);
 			});
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			sandbox.restore();
 			this.command.destroy();
 			this.command2.destroy();
@@ -838,7 +837,7 @@ function (
 	});
 
 	QUnit.module("Given an empty command stack and commands", {
-		beforeEach : function(assert) {
+		beforeEach : function() {
 			this.stack = new Stack();
 			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 			this.command = new BaseCommand();
@@ -848,7 +847,7 @@ function (
 			this.command5 = new FlexCommand();
 			this.compositeCommand = new CompositeCommand();
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			sandbox.restore();
 			this.command.destroy();
 			this.command2.destroy();
@@ -920,26 +919,25 @@ function (
 			this.stack.pushExecutedCommand(this.rename);
 
 			assert.ok(!this.stack._getCommandToBeExecuted(), " no command to be executed by the stack");
-
 		});
 
 		QUnit.test("when inserting a command into a composite command, ", function(assert) {
 			var oChangeContent1 = {
-				"fileName": "fileName1",
-				"selector": {
-					"id": "field1",
-					"idIsLocal": true
+				fileName: "fileName1",
+				selector: {
+					id: "field1",
+					idIsLocal: true
 				},
 				support: {}
 			};
 			var oChangeContent2 = {
-					"fileName": "fileName2",
-					"selector": {
-						"id": "field2",
-						"idIsLocal": true
-					},
-					support: {}
-				};
+				fileName: "fileName2",
+				selector: {
+					id: "field2",
+					idIsLocal: true
+				},
+				support: {}
+			};
 			var oChange1 = new Change(oChangeContent1);
 			var oChange2 = new Change(oChangeContent2);
 			this.command4._oPreparedChange = oChange1;
@@ -955,18 +953,18 @@ function (
 
 		QUnit.test("when adding a command to a composite command, ", function(assert) {
 			var oChangeContent1 = {
-				"fileName": "fileName1",
-				"selector": {
-					"id": "field1",
-					"idIsLocal": true
+				fileName: "fileName1",
+				selector: {
+					id: "field1",
+					idIsLocal: true
 				},
 				support: {}
 			};
 			var oChangeContent2 = {
-				"fileName": "fileName2",
-				"selector": {
-					"id": "field2",
-					"idIsLocal": true
+				fileName: "fileName2",
+				selector: {
+					id: "field2",
+					idIsLocal: true
 				},
 				support: {}
 			};
@@ -1090,14 +1088,14 @@ function (
 				});
 			}.bind(this));
 		},
-		afterEach : function(){
+		afterEach : function() {
 			sandbox.restore();
 			this.oRootElement.destroy();
 			this.oSourceParentDesignTimeMetadata.destroy();
 			this.oOtherParentDesignTimeMetadata.destroy();
 		}
 	}, function() {
-		QUnit.test("when asking for a move command", function(assert){
+		QUnit.test("when asking for a move command", function(assert) {
 			return CommandFactory.getCommandFor(this.oSourceParent, "Move", {
 				movedElements : [{
 					id : this.oMovable.getId(),
@@ -1114,7 +1112,7 @@ function (
 					aggregation : "attributes",
 					publicAggregation : "attributes"
 				}
-			}, this.oSourceParentDesignTimeMetadata )
+			}, this.oSourceParentDesignTimeMetadata)
 
 			.then(function(oMoveCommand) {
 				assert.equal(oMoveCommand.getChangeType(), "moveControls", "then the command with corresponding changeType is returned");
@@ -1163,7 +1161,6 @@ function (
 					assert.ok(true, "then change handler's revertChange() called instead of undo");
 				}
 			};
-
 		},
 		afterEach : function () {
 			sandbox.restore();
@@ -1182,7 +1179,7 @@ function (
 			this.oCommandStack.push(this.oFlexCommand);
 
 			return this.oCommandStack.execute()
-				.then( function () {
+				.then(function () {
 					var oChange = this.oFlexCommand.getPreparedChange();
 					assert.ok(true, "then a Promise.resolve() is returned on Stack.execute()");
 					assert.equal(this.fnApplyChangeSpy.callCount, 1, "then Command._applyChange called once");
@@ -1191,7 +1188,7 @@ function (
 					}, "then revert data set correctly");
 
 					return this.oCommandStack.undo()
-						.then( function () {
+						.then(function () {
 							assert.ok(true, "then a Promise.resolve() is returned on Stack.undo()");
 							assert.ok(fnRevertChangesOnControlStub.calledWith([oChange], oMockedAppComponent), "then FlexController.revertChangesOnControl called with required parameters");
 							assert.equal(this.fnRtaStartRecordingStub.callCount, 0, "then recording of rta undo operations not started");
@@ -1210,13 +1207,13 @@ function (
 			this.oCommandStack.push(this.oFlexCommand);
 
 			return this.oCommandStack.execute()
-				.then( function () {
+				.then(function () {
 					var oChange = this.oFlexCommand.getPreparedChange();
 					assert.equal(this.fnApplyChangeSpy.callCount, 1, "then Command._applyChange called once");
 					assert.notOk(oChange.getRevertData(), "then no revert data set for change");
 
 					return this.oCommandStack.undo()
-						.then( function () {
+						.then(function () {
 							assert.ok(true, "then a Promise.resolve() is returned on Stack.undo()");
 							assert.equal(this.fnRtaStartRecordingStub.callCount, 1, "then recording of rta undo operations is started");
 							assert.equal(this.fnRtaStopRecordingStub.callCount, 1, "then recording of rta undo operations is stopped");
@@ -1300,18 +1297,18 @@ function (
 			oChangeRegistry.removeRegistryItem({controlType : "sap.m.List"});
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.VBox" : {
-					"moveControls": "default"
+					moveControls: "default"
 				},
 				"sap.m.Text" : {
-					"hideControl" : "default",
-					"rename" : sap.ui.fl.changeHandler.BaseRename.createRenameChangeHandler({
+					hideControl : "default",
+					rename : sap.ui.fl.changeHandler.BaseRename.createRenameChangeHandler({
 						propertyName: "text",
 						translationTextType: "XTXT"
 					})
 				}
 			});
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			sandbox.restore();
 			this.oList.destroy();
 			this.oItemTemplate.destroy();
@@ -1435,11 +1432,11 @@ function (
 			oChangeRegistry.removeRegistryItem({controlType : "sap.m.List"});
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.VBox" : {
-					"moveControls": "default"
+					moveControls: "default"
 				},
 				"sap.m.Text" : {
-					"hideControl" : "default",
-					"rename" : sap.ui.fl.changeHandler.BaseRename.createRenameChangeHandler({
+					hideControl : "default",
+					rename : sap.ui.fl.changeHandler.BaseRename.createRenameChangeHandler({
 						propertyName: "text",
 						translationTextType: "XTXT"
 					})
@@ -1456,7 +1453,7 @@ function (
 				}.bind(this));
 			}.bind(this));
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			sandbox.restore();
 			this.oList.destroy();
 			this.oItemTemplate.destroy();
@@ -1475,8 +1472,8 @@ function (
 			var oRenamedElement = this.oList.getItems()[2].getContent()[0].getItems()[1].getItems()[1];
 
 			return oCommandFactory.getCommandFor(oRenamedElement, "rename", {
-					renamedElement : oRenamedElement,
-					newValue : "new"
+				renamedElement : oRenamedElement,
+				newValue : "new"
 			}, new ElementDesignTimeMetadata())
 
 			.then(function() {
@@ -1493,5 +1490,4 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

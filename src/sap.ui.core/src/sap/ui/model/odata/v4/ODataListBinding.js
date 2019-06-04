@@ -1388,7 +1388,7 @@ sap.ui.define([
 				: oContext.getPath();
 		});
 
-		aDiff = jQuery.sap.arraySymbolDiff(this.aPreviousData, aNewData);
+		aDiff = this.diffData(this.aPreviousData, aNewData);
 		this.aPreviousData = aNewData;
 
 		return aDiff;

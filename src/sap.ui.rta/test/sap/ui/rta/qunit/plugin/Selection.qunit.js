@@ -194,15 +194,15 @@ sap.ui.define([
 			this.oVBox.destroy();
 			this.oDesignTime.destroy();
 		}
-	}, function(){
-		QUnit.test("when trying to select the first compatible control (removable/combinable)", function(assert){
+	}, function() {
+		QUnit.test("when trying to select the first compatible control (removable/combinable)", function(assert) {
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
 			oOverlay.setSelected(true);
 
 			assert.ok(oOverlay.isSelected(), "then single overlay is selected");
 		});
 
-		QUnit.test("when trying to select the 2. compatible (removable/combinable) control", function(assert){
+		QUnit.test("when trying to select the 2. compatible (removable/combinable) control", function(assert) {
 			var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
 			var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
 
@@ -212,7 +212,7 @@ sap.ui.define([
 			assert.ok(oOverlay2.isSelected(), "then innerBtn12 overlay is selected");
 		});
 
-		QUnit.test("when trying to select the 2. control not multiselection enabled control (removable/combinable)", function(assert){
+		QUnit.test("when trying to select the 2. control not multiselection enabled control (removable/combinable)", function(assert) {
 			var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("container1"));
 			var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("othercontainer3"));
 			oOverlay2.setSelectable(true);
@@ -224,7 +224,7 @@ sap.ui.define([
 			assert.notOk(oOverlay2.isSelected(), "then othercontainer3 overlay is not selected");
 		});
 
-		QUnit.test("when trying to select a single container which doesn't pass validator of Plugin", function(assert){
+		QUnit.test("when trying to select a single container which doesn't pass validator of Plugin", function(assert) {
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("othercontainer3"));
 			oOverlay.setSelectable(true);
 
@@ -233,7 +233,7 @@ sap.ui.define([
 			assert.ok(oOverlay.isSelected(), "then othercontainer3 overlay is not selected");
 		});
 
-		QUnit.test("when trying to select 3 overlays and the 2. control is multiselection enabled for a different action", function(assert){
+		QUnit.test("when trying to select 3 overlays and the 2. control is multiselection enabled for a different action", function(assert) {
 			var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
 			var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerTxt13"));
 			var oOverlay3 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
@@ -247,7 +247,7 @@ sap.ui.define([
 			assert.ok(oOverlay3.isSelected(), "then innerBtn11 overlay is selected");
 		});
 
-		QUnit.test("when trying to select the 2. control with different parent", function(assert){
+		QUnit.test("when trying to select the 2. control with different parent", function(assert) {
 			var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
 			var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("btnOutsideContainer"));
 			oOverlay2.setSelectable(true);
@@ -259,7 +259,7 @@ sap.ui.define([
 			assert.notOk(oOverlay2.isSelected(), "then btnOutsideContainer overlay from different parent is not selected");
 		});
 
-		QUnit.test("when trying to select innerVBox1Txt inside the innerVBox (both have HBox container4 as their relevant container, but innerVBox is parent of text)", function(assert){
+		QUnit.test("when trying to select innerVBox1Txt inside the innerVBox (both have HBox container4 as their relevant container, but innerVBox is parent of text)", function(assert) {
 			var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerVBox1Txt"));
 			var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerVBox1"));
 
@@ -270,7 +270,7 @@ sap.ui.define([
 			assert.notOk(oOverlay2.isSelected(), "then innerVBox1 overlay is not selected");
 		});
 
-		QUnit.test("when trying to select the texts inside the innerVBox1 & innerVBox2 (different parents, same control type and same relevant container)", function(assert){
+		QUnit.test("when trying to select the texts inside the innerVBox1 & innerVBox2 (different parents, same control type and same relevant container)", function(assert) {
 			var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerVBox1Txt"));
 			var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerVBox2Txt"));
 
@@ -281,7 +281,7 @@ sap.ui.define([
 			assert.ok(oOverlay2.isSelected(), "then innerVBox2Txt overlay is selected");
 		});
 
-		QUnit.test("when trying to select innerVBox1Txt in innerVBox1 and the container innerVBox2 (different control types and same relevant container)", function(assert){
+		QUnit.test("when trying to select innerVBox1Txt in innerVBox1 and the container innerVBox2 (different control types and same relevant container)", function(assert) {
 			var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerVBox1Txt"));
 			var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerVBox2"));
 
@@ -293,7 +293,7 @@ sap.ui.define([
 		});
 
 		//Note: we might support this case in the future
-		QUnit.test("when trying to select innerVBox1Txt in innerVBox1 and innerVBox2Btn in innerVBox2 (different control types, different parents and same relevant container)", function(assert){
+		QUnit.test("when trying to select innerVBox1Txt in innerVBox1 and innerVBox2Btn in innerVBox2 (different control types, different parents and same relevant container)", function(assert) {
 			var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerVBox1Txt"));
 			var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerVBox2Btn"));
 
@@ -304,7 +304,7 @@ sap.ui.define([
 			assert.notOk(oOverlay2.isSelected(), "then innerVBox2Btn overlay is not selected");
 		});
 
-		QUnit.test("When setSelected() is called on an Overlay with Developer Mode = false ", function(assert){
+		QUnit.test("When setSelected() is called on an Overlay with Developer Mode = false ", function(assert) {
 			var oElement = new Button("testbutton1");
 			var oOverlay = new ElementOverlay({
 				element: oElement,
@@ -322,7 +322,7 @@ sap.ui.define([
 			oElement.destroy();
 		});
 
-		QUnit.test("When setSelected() is called on an Overlay and markedAsNotAdaptable function returns true ", function(assert){
+		QUnit.test("When setSelected() is called on an Overlay and markedAsNotAdaptable function returns true ", function(assert) {
 			var oElement = new Button("testbutton2");
 			var oOverlay = new ElementOverlay({
 				element: oElement,
@@ -512,5 +512,4 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

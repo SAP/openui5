@@ -4,16 +4,16 @@
 
 // Provides class sap.ui.fl.support.Flexibility
 sap.ui.define([
-		"sap/ui/thirdparty/jquery",
-		"sap/ui/core/support/Plugin",
-		"sap/ui/core/support/Support",
-		"sap/ui/core/util/reflection/JsControlTreeModifier",
-		"sap/ui/model/json/JSONModel",
-		"sap/ui/fl/FlexController",
-		"sap/ui/fl/ChangePersistenceFactory",
-		"sap/ui/fl/Utils",
-		"sap/ui/fl/support/apps/uiFlexibilityDiagnostics/helper/Extractor"
-	],
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/support/Plugin",
+	"sap/ui/core/support/Support",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/fl/FlexController",
+	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/support/apps/uiFlexibilityDiagnostics/helper/Extractor"
+],
 	function (jQuery, Plugin, Support, JsControlTreeModifier, JSONModel, FlexController, ChangePersistenceFactory, Utils, Extractor) {
 		"use strict";
 
@@ -31,8 +31,8 @@ sap.ui.define([
 		 */
 		var Flexibility = Plugin.extend("sap.ui.fl.support.Flexibility", {
 			constructor: function (oSupportStub) {
-					Plugin.apply(this, ["sapUiSupportFlexibility", "Flexibility", oSupportStub]);
-					this._oStub = oSupportStub;
+				Plugin.apply(this, ["sapUiSupportFlexibility", "Flexibility", oSupportStub]);
+				this._oStub = oSupportStub;
 
 				if (this.runsAsToolPlugin()) {
 					this._aEventIds = [
@@ -136,8 +136,8 @@ sap.ui.define([
 		 * @private
 		 * @restricted sap.ui.fl.support
 		 */
-		 Flexibility.prototype.onRefresh = function () {
-			 Support.getStub().sendEvent(this.getId() + "GetApps", {});
+		Flexibility.prototype.onRefresh = function () {
+			Support.getStub().sendEvent(this.getId() + "GetApps", {});
 		};
 
 		/**
@@ -210,7 +210,7 @@ sap.ui.define([
 			this.oView.byId("Tree").expandToLevel(1000);
 		};
 
-		Flexibility.prototype.exit = function (oSupportStub) {
+		Flexibility.prototype.exit = function () {
 			Plugin.prototype.exit.apply(this, arguments);
 		};
 
@@ -308,11 +308,11 @@ sap.ui.define([
 					if (mDependencies[oChangeDetails.id] && mDependencies[oChangeDetails.id].dependencies) {
 						mDependencies[oChangeDetails.id].dependencies.forEach(function (sDependentChangeId) {
 							var oDependentChange = mChanges[sDependentChangeId];
-							var bDependentChangeNotApplied = oDependentChange.indexInAppliedChanges == undefined;
-							var oDependentChange = mChanges[sDependentChangeId];
+							var bDependentChangeNotApplied = oDependentChange.indexInAppliedChanges === undefined;
+							oDependentChange = mChanges[sDependentChangeId];
 							oChangeDetails.someDirectDependingChangesNotApplied =
 								oChangeDetails.someDirectDependingChangesNotApplied || bDependentChangeNotApplied;
-							var bDependentChangeFailed = oDependentChange.indexOfFirstFailing == undefined;
+							var bDependentChangeFailed = oDependentChange.indexOfFirstFailing === undefined;
 							var bDependentChangesUnsuccessfulApplied = bDependentChangeFailed && bDependentChangeNotApplied;
 
 							oChangeDetails.someDirectDependingChangesFailed = oChangeDetails.someDirectDependingChangesFailed
@@ -327,7 +327,7 @@ sap.ui.define([
 						oChangeDetails.controlPresent && oChangeDetails.allDependendingControlsPresent &&
 						!oChangeDetails.someDirectDependingChangesNotApplied;
 
-					oChangeDetails.isPossibleRootCause = oChangeDetails.isApplicable && oChangeDetails.indexInAppliedChanges == undefined;
+					oChangeDetails.isPossibleRootCause = oChangeDetails.isApplicable && oChangeDetails.indexInAppliedChanges === undefined;
 				});
 			}
 
@@ -335,7 +335,7 @@ sap.ui.define([
 				aChangesDetails = aChangesDetails.filter(function (oChange) {
 					return !aChangesDetails.some(function (oChangeInSameHierarchy) {
 						return oChangeInSameHierarchy.dependentChanges.some(function (oDependentChange) {
-							return oDependentChange.id == oChange.id;
+							return oDependentChange.id === oChange.id;
 						});
 					});
 				});

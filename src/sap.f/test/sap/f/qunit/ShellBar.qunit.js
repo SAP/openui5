@@ -36,6 +36,16 @@ function (
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
+	var _getVisibleControlsCount = function (oControl) {
+		var iVisibleControls = 0;
+
+		oControl._oOverflowToolbar.getContent().forEach(function (oItem) {
+			iVisibleControls += oItem.getVisible() ? 1 : 0;
+		});
+
+		return iVisibleControls;
+	};
+
 	QUnit.module("Init");
 
 	QUnit.test("Proper initialization", function (assert) {
@@ -131,6 +141,7 @@ function (
 			{name: "title", type: "string", defaultValue: ""},
 			{name: "secondTitle", type: "string", defaultValue: ""},
 			{name: "homeIcon", type: "sap.ui.core.URI", defaultValue: ""},
+			{name: "homeIconTooltip", type: "string", defaultValue: ""},
 			{name: "showMenuButton", type: "boolean", defaultValue: false},
 			{name: "showNavButton", type: "boolean", defaultValue: false},
 			{name: "showCopilot", type: "boolean", defaultValue: false},
@@ -153,6 +164,13 @@ function (
 					aggregation: "menu",
 					getter: "_getMenu"
 				}},
+			{
+				name: "searchManager",
+				type: "sap.f.SearchManager",
+				multiple: false,
+				singularName: undefined,
+				forwarding: undefined
+			},
 			{
 				name: "profile",
 				type: "sap.f.Avatar",
@@ -215,6 +233,7 @@ function (
 		this.oSB.setShowProductSwitcher(false);
 		this.oSB.setShowNavButton(false);
 		this.oSB.setShowMenuButton(false);
+		this.oSB.setSearchManager(null);
 
 		// Assert
 		[
@@ -226,7 +245,8 @@ function (
 			this.oSB._oNotifications,
 			this.oSB._oProductSwitcher,
 			this.oSB._oNavButton,
-			this.oSB._oMenuButton
+			this.oSB._oMenuButton,
+			this.oSB._oManagedSearch
 		].forEach(function (oInternalObject) {
 			assert.ok(oInternalObject === null, "Internal object is equal to 'null'");
 		});
@@ -282,6 +302,49 @@ function (
 		// Cleanup
 		oAdditionalButtonFirst.destroy();
 		oAdditionalButtonSecond.destroy();
+	});
+
+	QUnit.test("Configurations", function (assert) {
+
+		// Act
+		this.oSB.setTitle("Title");
+		this.oSB.setShowMenuButton(true);
+		this.oSB._assignControlsToOverflowToolbar();
+
+
+		// Assert
+		assert.strictEqual(this.oSB._oTitleControl, this.oSB._oPrimaryTitle,
+		"Configuration with MenuButton is correctly rendered");
+		assert.strictEqual(this.oSB._oMegaMenu !== null, true,  "MegaMenu element instance is hold by the control");
+		assert.strictEqual(this.oSB._oOverflowToolbar.getContent().indexOf(this.oSB._oMegaMenu ), -1,
+		"MegaMenu element is not part of the control Overflow Toolbar");
+
+		// Act
+		this.oSB.setMenu(new Menu({}));
+		this.oSB.setShowMenuButton(false);
+		this.oSB._assignControlsToOverflowToolbar();
+
+		// Assert
+		assert.strictEqual(this.oSB._oTitleControl, this.oSB._oMegaMenu,
+			"Configuration without MenuButton is correctly rendered");
+		assert.strictEqual(this.oSB._oPrimaryTitle !== null, true,  "PrimaryTitle element instance is hold by the control");
+		assert.strictEqual(this.oSB._oOverflowToolbar.getContent().indexOf(this.oSB._oPrimaryTitle ), -1,
+			"PrimaryTitle element is not part of the control Overflow Toolbar");
+
+		// Act
+		this.oSB.setTitle("");
+		this.oSB._assignControlsToOverflowToolbar();
+		// Assert
+		assert.strictEqual(this.oSB._oTitleControl,null,
+			"Configuration without MenuButton is correctly rendered");
+		assert.strictEqual(this.oSB._oPrimaryTitle === null && this.oSB._oMegaMenu === null, true,  "PrimaryTitle element instance is hold by the control");
+		assert.strictEqual(this.oSB._oOverflowToolbar.getContent().indexOf(this.oSB._oMegaMenu ), -1,
+			"PrimaryTitle element is not part of the control Overflow Toolbar");
+		assert.strictEqual(this.oSB._oOverflowToolbar.getContent().indexOf(this.oSB._oPrimaryTitle ), -1,
+			"PrimaryTitle element is not part of the control Overflow Toolbar");
+
+		// Cleanup
+
 	});
 
 	QUnit.module("Rendering", {
@@ -441,6 +504,7 @@ function (
 		this.oSB.setTitle("Test title");
 		this.oSB.setSecondTitle("Test second title");
 		this.oSB.setShowCopilot(true);
+		this.oSB.setSearchManager(new sap.f.SearchManager());
 		this.oSB.setShowSearch(true);
 		this.oSB.setShowNotifications(true);
 		this.oSB.setShowProductSwitcher(true);
@@ -457,35 +521,37 @@ function (
 		aContent = oOTB.getContent();
 
 		// Assert
-		assert.strictEqual(aContent.length, 14, "Expected number of controls added to OverflowToolbar");
+		assert.strictEqual(aContent.length, 15, "Expected number of controls added to OverflowToolbar");
 
 		// Assert - Order of controls in aggregation
 		assert.ok(aContent[0] === this.oSB._oNavButton, "Control at index 0 is NavButton");
 		assert.ok(aContent[1] === this.oSB._oMenuButton, "Control at index 1 is MenuButton");
 		assert.ok(aContent[2] === this.oSB._oHomeIcon, "Control at index 2 is HomeIcon");
-		assert.ok(aContent[3] === this.oSB._oMegaMenu, "Control at index 3 is MegaMenu");
+		assert.ok(aContent[3] === this.oSB._oPrimaryTitle, "Control at index 3 is PrimaryTitle");
 		assert.ok(aContent[4] === this.oSB._oSecondTitle, "Control at index 4 is SecondTitle");
 		assert.ok(aContent[5] === this.oSB._oControlSpacer, "Control at index 5 is ControlSpacer");
 		assert.ok(aContent[6] === this.oSB._oCopilot, "Control at index 6 is CoPilot");
 		assert.ok(aContent[7] === this.oSB._oToolbarSpacer, "Control at index 7 is ToolbarSpcer");
-		assert.ok(aContent[8] === this.oSB._oSearch, "Control at index 8 is Search");
-		assert.ok(aContent[9] === this.oSB._oNotifications, "Control at index 9 is Notifications");
-		assert.ok(aContent[10] === oAdditionalButton1, "Control at index 10 is AdditionalButton 1");
-		assert.ok(aContent[11] === oAdditionalButton2, "Control at index 11 is AdditionalButton 2");
-		assert.ok(aContent[12] === this.oSB._oAvatarButton, "Control at index 12 is AvatarButton");
-		assert.ok(aContent[13] === this.oSB._oProductSwitcher, "Control at index 13 is ProductSwitcher");
+		assert.ok(aContent[8] === this.oSB._oManagedSearch, "Control at index 8 is Managed Search");
+		assert.ok(aContent[9] === this.oSB._oSearch, "Control at index 8 is Search");
+		assert.ok(aContent[10] === this.oSB._oNotifications, "Control at index 9 is Notifications");
+		assert.ok(aContent[11] === oAdditionalButton1, "Control at index 10 is AdditionalButton 1");
+		assert.ok(aContent[12] === oAdditionalButton2, "Control at index 11 is AdditionalButton 2");
+		assert.ok(aContent[13] === this.oSB._oAvatarButton, "Control at index 12 is AvatarButton");
+		assert.ok(aContent[14] === this.oSB._oProductSwitcher, "Control at index 13 is ProductSwitcher");
 
 		// Assert - _aOverflowControls
-		assert.strictEqual(this.oSB._aOverflowControls.length, 5, "Array '_aOverflowControls' has 5 controls in it");
-		assert.ok(this.oSB._aOverflowControls[0] === this.oSB._oSearch, "Control at index 0 is Search");
-		assert.ok(this.oSB._aOverflowControls[1] === this.oSB._oNotifications, "Control at index 1 is Notifications");
-		assert.ok(this.oSB._aOverflowControls[2] === oAdditionalButton1, "Control at index 2 is AdditionalButton 1");
-		assert.ok(this.oSB._aOverflowControls[3] === oAdditionalButton2, "Control at index 3 is AdditionalButton 2");
-		assert.ok(this.oSB._aOverflowControls[4] === this.oSB._oProductSwitcher, "Control at index 4 is ProductSwitcher");
+		assert.strictEqual(this.oSB._aOverflowControls.length, 6, "Array '_aOverflowControls' has 5 controls in it");
+		assert.ok(this.oSB._aOverflowControls[0] === this.oSB._oManagedSearch, "Control at index 8 is Managed Search");
+		assert.ok(this.oSB._aOverflowControls[1] === this.oSB._oSearch, "Control at index 0 is Search");
+		assert.ok(this.oSB._aOverflowControls[2] === this.oSB._oNotifications, "Control at index 1 is Notifications");
+		assert.ok(this.oSB._aOverflowControls[3] === oAdditionalButton1, "Control at index 2 is AdditionalButton 1");
+		assert.ok(this.oSB._aOverflowControls[4] === oAdditionalButton2, "Control at index 3 is AdditionalButton 2");
+		assert.ok(this.oSB._aOverflowControls[5] === this.oSB._oProductSwitcher, "Control at index 4 is ProductSwitcher");
 	});
 
 	// Responsiveness
-	QUnit.module("Utility methods", {
+	QUnit.module("Responsiveness", {
 		beforeEach: function () {
 			this.oSB = new ShellBar();
 		},
@@ -535,7 +601,7 @@ function (
 			oControl._oResponsiveHandler._initResize();
 
 			// Assert
-			assert.strictEqual(oControl._oResponsiveHandler._iStaticWidth, oControl._oHomeIcon.$().outerWidth(true) /*logo*/ + 36 + 4 * 2 /*nav button*/ + 36 + 4 * 2 /*menu button*/,
+			assert.strictEqual(oControl._oResponsiveHandler._iStaticWidth, oControl._oHomeIcon.$().outerWidth(true) /*logo*/ + 36 + 4 * 2 /*nav button*/ + 36 + 4 * 1 /*menu button*/,
 			"We calculate size of the logo image " +
 			"side margins of the three elements + twice incrementing with 36 (size of the button)");
 
@@ -548,6 +614,7 @@ function (
 		var oControl = this.oSB;
 		oControl.setSecondTitle("Second title");
 		oControl.setHomeIcon(sap.ui.require.toUrl("sap/ui/documentation/sdk/images/logo_sap.png"));
+		oControl.setShowMenuButton(true);
 
 		oControl.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
@@ -559,7 +626,7 @@ function (
 		// Assert
 
 		assert.strictEqual(oControl._oSecondTitle.getVisible(), false, "phone mode requirements passed");
-		assert.strictEqual(oControl._oHomeIcon.getVisible(), false, "phone mode requirements passed");
+		assert.strictEqual(oControl._oHomeIcon.getVisible(), true, "phone mode requirements passed");
 
 		// Act
 		document.getElementById(DOM_RENDER_LOCATION).style.width = 1024 + "px";
@@ -571,6 +638,17 @@ function (
 		assert.strictEqual(oControl._oHomeIcon.getVisible(), true, "regular mode requirements passed");
 
 
+		// Act
+		document.getElementById(DOM_RENDER_LOCATION).style.width = 300 + "px";
+		oControl.setShowMenuButton(false);
+		this.oSB._oResponsiveHandler._handleResize();
+
+		// Assert
+
+		assert.strictEqual(oControl._oHomeIcon.getVisible(), true, "regular mode requirements passed");
+
+		//Cleanup
+		document.getElementById(DOM_RENDER_LOCATION).style.width = 1024 + "px";
 	});
 
 	// Accessibility related tests
@@ -629,10 +707,23 @@ function (
 
 	QUnit.test("Home icon tooltip", function (assert) {
 		var oHomeIcon = this.oSB._oHomeIcon,
-			sTooltip = this.oRb.getText("SHELLBAR_LOGO_TOOLTIP");
+			sTooltip = this.oRb.getText("SHELLBAR_LOGO_TOOLTIP"),
+			sNewTooltip = "Test";
 
 		// Assert
-		assert.strictEqual(oHomeIcon.getTooltip(), sTooltip, "Home icon tooltip is correct");
+		assert.strictEqual(oHomeIcon.getTooltip(), sTooltip, "Home icon tooltip is the default one");
+
+		// Act
+		this.oSB.setHomeIconTooltip(sNewTooltip);
+
+		// Assert
+		assert.strictEqual(oHomeIcon.getTooltip(), sNewTooltip, "Custom tooltip is set correctly");
+
+		// Act
+		this.oSB.setHomeIconTooltip(null);
+
+		// Assert
+		assert.strictEqual(oHomeIcon.getTooltip(), sTooltip, "Default tooltip is restored");
 	});
 
 	QUnit.test("CoPilot attributes", function (assert) {
@@ -748,5 +839,50 @@ function (
 
 		sNotificationsButtonNumber = null;
 		sOverflowToolbarButtonNumber = null;
+	});
+
+	QUnit.module("Managed Search", {
+		beforeEach: function () {
+			var oSearchManager = new sap.f.SearchManager();
+
+			oSearchManager._oSearch.setIsOpen(true);
+			oSearchManager._oSearch.setPhoneMode(true);
+
+			this.oSB = new ShellBar({
+				title: "Application title",
+				secondTitle: "Short description",
+				homeIcon: "./resources/sap/ui/documentation/sdk/images/logo_ui5.png",
+				searchManager: oSearchManager,
+				showNavButton: true,
+				showCopilot: true,
+				showSearch: true,
+				showNotifications: true,
+				showProductSwitcher: true,
+				showMenuButton: true
+			});
+			this.oSB.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oSB.destroy();
+			this.oRb = null;
+		}
+	});
+
+	QUnit.test("ResponsiveHandler with open search", function (assert) {
+		// Assert
+		assert.strictEqual(_getVisibleControlsCount(this.oSB), 12, "phone mode requirements passed");
+
+		// Act
+		this.oSB._oResponsiveHandler._transformToPhoneState();
+
+		// Assert
+		assert.strictEqual(_getVisibleControlsCount(this.oSB), 1, "phone mode requirements passed");
+
+		// Act
+		this.oSB._oResponsiveHandler._transformToRegularState();
+
+		// Assert
+		assert.strictEqual(_getVisibleControlsCount(this.oSB), 12, "phone mode requirements passed");
 	});
 });

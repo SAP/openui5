@@ -67,10 +67,10 @@ function (
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.StandardListItem" : {
-					"hideControl" : "default"
+					hideControl : "default"
 				},
 				"sap.m.Button" : {
-					"hideControl" : "default"
+					hideControl : "default"
 				}
 			})
 			.then(function() {
@@ -78,20 +78,20 @@ function (
 				var oData = [
 					{text: "item1-bound"},
 					{text: "item2-bound"}
-					];
+				];
 				var oModel = new JSONModel(oData);
 				this.oBoundList = new List("boundlist").setModel(oModel);
 				this.oBoundList.bindAggregation("items", "/", function(sId) {
-					return new CustomListItem(sId, {content: [new Button(sId + "-btn",{text:'{text}'})]});
+					return new CustomListItem(sId, {content: [new Button(sId + "-btn", {text:'{text}'})]});
 				});
 
 				//create list with unbound items
 				this.oUnBoundList = new List("unboundlist");
-				this.oUnBoundList.addItem(new CustomListItem("unboundlist-0", {content: [new Button("item1-btn",{text:'item1-unbound'})]}));
-				this.oUnBoundList.addItem(new CustomListItem("unboundlist-1", {content: [new Button("item2-btn",{text:'item2-unbound'})]}));
+				this.oUnBoundList.addItem(new CustomListItem("unboundlist-0", {content: [new Button("item1-btn", {text:'item1-unbound'})]}));
+				this.oUnBoundList.addItem(new CustomListItem("unboundlist-1", {content: [new Button("item2-btn", {text:'item2-unbound'})]}));
 
 				//create a HorizontalLayout containing the two lists
-				this.oHorizontalLayout = new HorizontalLayout("horLyout",{
+				this.oHorizontalLayout = new HorizontalLayout("horLyout", {
 					content: [this.oBoundList, this.oUnBoundList]
 				});
 				this.oHorizontalLayout.placeAt("qunit-fixture");
@@ -132,5 +132,4 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

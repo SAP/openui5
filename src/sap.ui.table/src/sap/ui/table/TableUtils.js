@@ -505,14 +505,7 @@ sap.ui.define([
 					&& ((oCellInfo.isOfType(TableUtils.CELLTYPE.DATACELL | TableUtils.CELLTYPE.ROWACTION) && bIsRowSelectionAllowed)
 						|| (oCellInfo.isOfType(TableUtils.CELLTYPE.ROWHEADER) && TableUtils.isRowSelectorSelectionAllowed(oTable)))) {
 
-					var iAbsoluteRowIndex;
-					if (oCellInfo.isOfType(TableUtils.CELLTYPE.DATACELL)) {
-						iAbsoluteRowIndex = oTable
-							.getRows()[parseInt($Cell.closest("tr", oTable.getDomRef()).attr("data-sap-ui-rowindex"))]
-							.getIndex();
-					} else { // CELLTYPES.ROWHEADER, CELLTYPES.ROWACTION
-						iAbsoluteRowIndex = oTable.getRows()[parseInt($Cell.attr("data-sap-ui-rowindex"))].getIndex();
-					}
+					var iAbsoluteRowIndex = oTable.getRows()[oCellInfo.rowIndex].getIndex();
 
 					return setSelectionState(iAbsoluteRowIndex);
 				}
@@ -760,13 +753,13 @@ sap.ui.define([
 
 			} else if ($Cell.hasClass("sapUiTableRowSelectionCell")) {
 				oCellInfo.type = TableUtils.CELLTYPE.ROWHEADER;
-				oCellInfo.rowIndex = parseInt($Cell.attr("data-sap-ui-rowindex"));
+				oCellInfo.rowIndex = parseInt($Cell.parent().attr("data-sap-ui-rowindex"));
 				oCellInfo.columnIndex = -1;
 				oCellInfo.columnSpan = 1;
 
 			} else if ($Cell.hasClass("sapUiTableRowActionCell")) {
 				oCellInfo.type = TableUtils.CELLTYPE.ROWACTION;
-				oCellInfo.rowIndex = parseInt($Cell.attr("data-sap-ui-rowindex"));
+				oCellInfo.rowIndex = parseInt($Cell.parent().attr("data-sap-ui-rowindex"));
 				oCellInfo.columnIndex = -2;
 				oCellInfo.columnSpan = 1;
 

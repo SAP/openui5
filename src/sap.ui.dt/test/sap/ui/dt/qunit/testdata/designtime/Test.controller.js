@@ -1,13 +1,12 @@
 sap.ui.define([
-	'sap/ui/core/mvc/Controller', 'sap/m/TextArea'
+	"sap/ui/core/mvc/Controller",
+	"sap/m/TextArea"
 ], function(Controller, TextArea) {
 	"use strict";
 
 	return Controller.extend("dt.view.Test", {
-
 		onInit: function () {
 		},
-
 		onAfterRendering: function() {
 			var oSimpleScrollControl = this.oView.byId("simpleScrollControl");
 

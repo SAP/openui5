@@ -4,29 +4,26 @@
 
 // Provides control sap.ui.rta.appVariant.AppVariantOverviewDialog.
 sap.ui.define([
-	'sap/ui/core/ComponentContainer',
-	'sap/m/Dialog',
-	'sap/m/DialogRenderer',
-	'sap/ui/rta/appVariant/manageApps/webapp/Component',
-	"sap/ui/fl/Utils",
+	"sap/ui/core/ComponentContainer",
+	"sap/m/Dialog",
+	"sap/m/DialogRenderer",
+	"sap/ui/rta/appVariant/manageApps/webapp/Component",
 	"sap/ui/rta/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils"
 ], function(
-		ComponentContainer,
-		Dialog,
-		DialogRenderer,
-		ManageAppsComponent,
-		FlexUtils,
-		RtaUtils,
-		AppVariantUtils
-	) {
-
+	ComponentContainer,
+	Dialog,
+	DialogRenderer,
+	ManageAppsComponent,
+	RtaUtils,
+	AppVariantUtils
+) {
 	"use strict";
 
 	var AppVariantOverviewDialog = Dialog.extend("sap.ui.rta.appVariant.AppVariantOverviewDialog", {
 		metadata : {
 			properties: {
-				"idRunningApp" : "string",
+				idRunningApp : "string",
 				isOverviewForKeyUser: {
 					type: "boolean"
 				}
@@ -82,5 +79,4 @@ sap.ui.define([
 	};
 
 	return AppVariantOverviewDialog;
-
 }, /* bExport= */ true);

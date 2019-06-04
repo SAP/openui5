@@ -175,8 +175,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when get() is called and and no parameter is passed for initial control id and depth", function (assert) {
 			var done = assert.async();
-			jQuery.getJSON("test-resources/sap/ui/rta/qunit/service/Outline.json", function(aExpectedOutlineData){
-
+			jQuery.getJSON("test-resources/sap/ui/rta/qunit/service/Outline.json", function(aExpectedOutlineData) {
 				var aRootElements = this.oRta._oDesignTime.getRootElements();
 				this.oOutline.get().then(function(aReceivedResponse) {
 					assert.ok(Array.isArray(aReceivedResponse), "then an array is received");
@@ -186,7 +185,6 @@ sap.ui.define([
 					assert.deepEqual(aReceivedResponse, aExpectedOutlineData, "then expected outline data received");
 					done();
 				});
-
 			}.bind(this));
 		});
 
@@ -204,7 +202,7 @@ sap.ui.define([
 						assert.ok(Array.isArray(oChild2.elements), "then third level children are returned");
 
 						return oChild2.elements.some(function (oChild3) {
-							if (oChild3.technicalName === "rootControl"){ // rootControl aggregation of Component
+							if (oChild3.technicalName === "rootControl") { // rootControl aggregation of Component
 								assert.notOk(oChild3.elements, "then fourth level children are not returned");
 								return true;
 							}
@@ -332,7 +330,7 @@ sap.ui.define([
 			this.oRta = new RuntimeAuthoring({
 				rootControl: this.oComponentContainer,
 				showToolbars: false,
-				plugins: { "testPlugin": oPlugin }
+				plugins: { testPlugin: oPlugin }
 			});
 
 			this.oRta.getService("outline").then(function (oService) {
@@ -378,24 +376,24 @@ sap.ui.define([
 			var done = assert.async();
 			assert.expect(2);
 			var oExpectedResponse1 = {
-				"type": "new",
-				"targetIndex": 1,
-				"targetId": "layout0",
-				"targetAggregation": "content",
-				"element": {
-					"id": "newButton",
-					"technicalName": "sap.m.Button",
-					"editable": false,
-					"icon": "sap/m/designtime/Button.icon.svg",
-					"type": "element",
-					"visible": true
+				type: "new",
+				targetIndex: 1,
+				targetId: "layout0",
+				targetAggregation: "content",
+				element: {
+					id: "newButton",
+					technicalName: "sap.m.Button",
+					editable: false,
+					icon: "sap/m/designtime/Button.icon.svg",
+					type: "element",
+					visible: true
 				}
 			};
 			var oExpectedResponse2 = {
-				"type": "editableChange",
-				"element": {
-					"id": "newButton",
-					"editable": true
+				type: "editableChange",
+				element: {
+					id: "newButton",
+					editable: true
 				}
 			};
 
@@ -418,7 +416,6 @@ sap.ui.define([
 							assert.notOk(true, "then ether 'new' or 'editableChange' type expected");
 					}
 				}.bind(this));
-
 			}, this);
 			this.oLayout.addContent(new Button("newButton")); //inserts new overlay
 			sap.ui.getCore().applyChanges();
@@ -430,10 +427,10 @@ sap.ui.define([
 			var bOriginalEditable = oButtonOverlay.getEditable();
 
 			var oExpectedResponse = {
-				"type": "editableChange",
-				"element": {
-					"id": "button1",
-					"editable": !bOriginalEditable
+				type: "editableChange",
+				element: {
+					id: "button1",
+					editable: !bOriginalEditable
 				}
 			};
 
@@ -450,18 +447,18 @@ sap.ui.define([
 			var oRelevantContainer = oButtonOverlay.getRelevantContainer();
 			var oParentAggregationOverlay = oButtonOverlay.getParentAggregationOverlay();
 			var oExpectedResponse = {
-				"type": "move",
-				"targetIndex": 1,
-				"targetId": "layout1",
-				"targetAggregation": "content",
-				"element": {
-					"id": "button",
-					"instanceName": "Button 1",
-					"technicalName": "sap.m.Button",
-					"editable": false,
-					"icon": "sap/m/designtime/Button.icon.svg",
-					"type": "element",
-					"visible": true
+				type: "move",
+				targetIndex: 1,
+				targetId: "layout1",
+				targetAggregation: "content",
+				element: {
+					id: "button",
+					instanceName: "Button 1",
+					technicalName: "sap.m.Button",
+					editable: false,
+					icon: "sap/m/designtime/Button.icon.svg",
+					type: "element",
+					visible: true
 				}
 			};
 			var oCommandFactory = new CommandFactory({
@@ -502,29 +499,29 @@ sap.ui.define([
 			var done = assert.async(2);
 
 			var oExpectedResponse = {
-				"element": {
-					"editable": false,
-					"icon": "sap/m/designtime/Button.icon.svg",
-					"id": "button",
-					"instanceName": "newText",
-					"technicalName": "sap.m.Button",
-					"type": "element",
-					"visible": true
+				element: {
+					editable: false,
+					icon: "sap/m/designtime/Button.icon.svg",
+					id: "button",
+					instanceName: "newText",
+					technicalName: "sap.m.Button",
+					type: "element",
+					visible: true
 				},
-				"name": "text",
-				"oldValue": "Button 1",
-				"type": "elementPropertyChange",
-				"value": "newText"
+				name: "text",
+				oldValue: "Button 1",
+				type: "elementPropertyChange",
+				value: "newText"
 			};
 
 			this.oOutline.attachEvent("update", function(aUpdates) {
 				assert.deepEqual(aUpdates[0], oExpectedResponse, "then expected response for elementPropertyChange update was received");
 				oExpectedResponse = {
-					"type": "elementPropertyChange",
-					"name": "type",
-					"value": "Back",
-					"oldValue": "Default",
-					"element": oExpectedResponse.element // unchanged
+					type: "elementPropertyChange",
+					name: "type",
+					value: "Back",
+					oldValue: "Default",
+					element: oExpectedResponse.element // unchanged
 				};
 				//property change operation #2
 				this.oButton.setType("Back");
@@ -533,7 +530,6 @@ sap.ui.define([
 
 			//property change operation #1
 			this.oButton.setText("newText");
-
 		});
 
 		QUnit.test("when a root element is added to the design time", function (assert) {
@@ -569,5 +565,4 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

@@ -129,7 +129,6 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test('When providing change data for a change with previous binding, Then', function(assert) {
-
 			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificValueChangeData);
 
 			assert.deepEqual(this.oChange.getSelector(), this.mExpectedSelector, "the change SELECTOR is filled correctly");
@@ -139,7 +138,6 @@ sap.ui.define([
 		});
 
 		QUnit.test('When providing change data for a change with previous set value, Then', function(assert) {
-
 			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificShowValueHelpChangeData);
 
 			assert.deepEqual(this.oChange.getSelector(), this.mExpectedSelector, "the change SELECTOR is filled correctly");

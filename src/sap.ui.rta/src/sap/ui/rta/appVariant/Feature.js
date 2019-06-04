@@ -15,7 +15,7 @@ sap.ui.define([
 	jQuery,
 	UriParameters
 ) {
-  "use strict";
+	"use strict";
 
 	var oAppVariantOverviewDialog,
 		oAppVariantManager,
@@ -46,9 +46,8 @@ sap.ui.define([
 			oDescriptorVariantSaveClosure = jQuery.extend({}, oDescriptorVariant);
 			// App variant descriptor is saved to the layered repository
 			return oAppVariantManager.saveAppVariantToLREP(oDescriptorVariant);
-		} else {
-			return Promise.reject();
 		}
+		return Promise.reject();
 	};
 
 	var fnTriggerCatalogAssignment = function() {
@@ -62,9 +61,8 @@ sap.ui.define([
 			oDescriptorVariantDeleteClosure = jQuery.extend({}, oDescriptorVariant);
 			// In case of S/4HANA Cloud, trigger automatic catalog unassignment
 			return oAppVariantManager.triggerCatalogUnAssignment(oDescriptorVariantDeleteClosure);
-		} else {
-			return Promise.reject();
 		}
+		return Promise.reject();
 	};
 
 	var fnTriggerS4HanaAsynchronousCall = function(oResult) {
@@ -132,13 +130,12 @@ sap.ui.define([
 			var oUriParams = new UriParameters(window.location.href);
 			if (!oUriParams.get("sap-ui-xx-app-variant-overview-extended")) {
 				return false;
-			} else {
-				var aMode = oUriParams.get("sap-ui-xx-app-variant-overview-extended", true);
+			}
 
-				if (aMode && aMode.length) {
-					var sMode = aMode[0].toLowerCase();
-					return sMode === 'true';
-				}
+			var aMode = oUriParams.get("sap-ui-xx-app-variant-overview-extended", true);
+			if (aMode && aMode.length) {
+				var sMode = aMode[0].toLowerCase();
+				return sMode === 'true';
 			}
 		},
 		isManifestSupported: function() {
@@ -304,7 +301,6 @@ sap.ui.define([
 		 */
 		onDeleteFromOverviewDialog : function(sAppVarId, bIsRunningAppVariant, bCurrentlyAdapting) {
 			return new Promise(function(resolve) {
-
 				sap.ui.require(["sap/ui/rta/appVariant/AppVariantManager"], function(AppVariantManager) {
 					if (!oAppVariantManager) {
 						oAppVariantManager = new AppVariantManager({

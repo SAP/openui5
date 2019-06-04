@@ -72,7 +72,6 @@ function (
 			this.oFlUtilsStub.restore();
 		},
 		beforeEach: function() {
-
 			this.oButton1 = new Button("button1");
 			this.oButton2 = new Button("button2");
 
@@ -87,13 +86,12 @@ function (
 
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Panel": {
-					"combineStuff" : {
+					combineStuff : {
 						completeChangeContent: this.fnCompleteChangeContentSpy,
 						applyChange: this.fnApplyChangeSpy
 					}
 				}
 			});
-
 		},
 		afterEach: function() {
 			this.oPanel.destroy();
@@ -225,14 +223,14 @@ function (
 
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Text": {
-					"combineStuff" : {
+					combineStuff : {
 						completeChangeContent: this.fnCompleteChangeContentSpy,
 						applyChange: this.fnApplyChangeSpy
 					}
 				}
 			});
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			sandbox.restore();
 			this.oFlUtilsStub.restore();
 			this.oList.destroy();
@@ -277,5 +275,4 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

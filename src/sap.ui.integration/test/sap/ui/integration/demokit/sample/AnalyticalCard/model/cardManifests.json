@@ -195,6 +195,9 @@
 				},
 				"title": "Project Cloud Transformation",
 				"subTitle": "Forecasted goal achievement depending on business logic and other important information",
+				"status": {
+					"text": "On Track"
+				},
 				"unitOfMeasurement": "EUR",
 				"mainIndicator": {
 					"number": "{n}",

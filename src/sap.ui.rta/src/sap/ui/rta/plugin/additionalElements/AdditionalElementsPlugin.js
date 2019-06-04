@@ -49,9 +49,9 @@ sap.ui.define([
 	}
 
 
-	function _getInvisibleElements (oParentOverlay, sAggregationName){
+	function _getInvisibleElements (oParentOverlay, sAggregationName) {
 		var oParentElement = oParentOverlay.getElement();
-		var aInvisibleElements = ElementUtil.getAggregation(oParentElement, sAggregationName).filter(function(oControl){
+		var aInvisibleElements = ElementUtil.getAggregation(oParentElement, sAggregationName).filter(function(oControl) {
 			var oOverlay = OverlayRegistry.getOverlay(oControl);
 
 			if (!this.hasStableId(oOverlay)) {
@@ -91,7 +91,7 @@ sap.ui.define([
 		var aNames = [];
 		var mControlType;
 		var sControlType;
-		if (mActions.addODataProperty || mActions.custom){
+		if (mActions.addODataProperty || mActions.custom) {
 			var sAggregationName = mActions.aggregation;
 			var oDesignTimeMetadata = mActions[mActions.addODataProperty ? "addODataProperty" : "custom"].designTimeMetadata;
 			mControlType = oDesignTimeMetadata.getAggregationDescription(sAggregationName, oParentElement);
@@ -100,13 +100,13 @@ sap.ui.define([
 				aNames.push(sControlType);
 			}
 		}
-		if (mActions.reveal){
-			mActions.reveal.controlTypeNames.forEach(function(mControlType){
+		if (mActions.reveal) {
+			mActions.reveal.controlTypeNames.forEach(function(mControlType) {
 				sControlType = bSingular ? mControlType.singular : mControlType.plural;
 				aNames.push(sControlType);
 			});
 		}
-		var aNonDuplicateNames = aNames.reduce(function(_aNames, sName){
+		var aNonDuplicateNames = aNames.reduce(function(_aNames, sName) {
 			if (_aNames.indexOf(sName) === -1) {
 				_aNames.push(sName);
 			}
@@ -132,10 +132,10 @@ sap.ui.define([
 				{
 					data : {
 						name : {
-							singular : function(){
+							singular : function() {
 								return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME");
 							},
-							plural : function(){
+							plural : function() {
 								return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME_PLURAL");
 							}
 						},
@@ -155,10 +155,10 @@ sap.ui.define([
 		};
 	}
 
-	function _getRevealDataFromActions(mActions, oRevealedElement){
+	function _getRevealDataFromActions(mActions, oRevealedElement) {
 		var mRevealData;
-		mActions.reveal.elements.some(function(mElement){
-			if ( mElement.element.getId() === oRevealedElement.getId()) {
+		mActions.reveal.elements.some(function(mElement) {
+			if (mElement.element.getId() === oRevealedElement.getId()) {
 				mRevealData = mElement;
 				return false;
 			}
@@ -201,7 +201,7 @@ sap.ui.define([
 			events: {}
 		},
 
-		getContextMenuTitle: function(bOverlayIsSibling, oOverlay){
+		getContextMenuTitle: function(bOverlayIsSibling, oOverlay) {
 			var mParents = _getParents(bOverlayIsSibling, oOverlay);
 			var mActions = this._getActions(bOverlayIsSibling, oOverlay);
 			return _getText("CTX_ADD_ELEMENTS", mActions, mParents.parent, SINGULAR);
@@ -230,7 +230,7 @@ sap.ui.define([
 				}
 			} else {
 				var mActions = this._getActions(bOverlayIsSibling, oOverlay);
-				if (mActions.reveal && mActions.reveal.elements.length === 0 && !mActions.addODataProperty){
+				if (mActions.reveal && mActions.reveal.elements.length === 0 && !mActions.addODataProperty) {
 					bIsEnabled = false;
 				} else {
 					bIsEnabled = true;
@@ -250,10 +250,10 @@ sap.ui.define([
 		 */
 		registerElementOverlay : function(oOverlay) {
 			var oModel = oOverlay.getElement().getModel();
-			if (oModel){
+			if (oModel) {
 				var oMetaModel = oModel.getMetaModel();
-				if (oMetaModel && oMetaModel.loaded){
-					oMetaModel.loaded().then(function(){
+				if (oMetaModel && oMetaModel.loaded) {
+					oMetaModel.loaded().then(function() {
 						this.evaluateEditable([oOverlay], {onRegistration: true});
 					}.bind(this));
 				}
@@ -265,9 +265,9 @@ sap.ui.define([
 			var mParents = _getParents(bSibling, oOverlay);
 
 			var aParents = [mParents.parentOverlay];
-			if (mParents.relevantContainer !== mParents.parent){
+			if (mParents.relevantContainer !== mParents.parent) {
 				aParents = ElementUtil.findAllSiblingsInContainer(mParents.parent, mParents.relevantContainer)
-					.map(function(oParent){
+					.map(function(oParent) {
 						return OverlayRegistry.getOverlay(oParent);
 					})
 					.filter(function (oOverlay) {
@@ -275,12 +275,12 @@ sap.ui.define([
 					});
 			}
 			var aAggregationNames;
-			if (bSibling){
+			if (bSibling) {
 				aAggregationNames = [oOverlay.getParentAggregationOverlay().getAggregationName()];
 			} else {
-				aAggregationNames = mParents.parentOverlay.getAggregationOverlays().filter(function(oAggregationOverlay){
+				aAggregationNames = mParents.parentOverlay.getAggregationOverlays().filter(function(oAggregationOverlay) {
 					return !oAggregationOverlay.getDesignTimeMetadata().isIgnored(mParents.parent);
-				}).map(function(oAggregationOverlay){
+				}).map(function(oAggregationOverlay) {
 					return oAggregationOverlay.getAggregationName();
 				});
 			}
@@ -288,8 +288,8 @@ sap.ui.define([
 			return mReveal;
 		},
 
-		_getRevealActionFromAggregations: function(aParents, _mReveal, sAggregationName){
-			var aInvisibleElements = aParents.reduce(function(aInvisibleChildren, oParentOverlay){
+		_getRevealActionFromAggregations: function(aParents, _mReveal, sAggregationName) {
+			var aInvisibleElements = aParents.reduce(function(aInvisibleChildren, oParentOverlay) {
 				return oParentOverlay ? aInvisibleChildren.concat(_getInvisibleElements.call(this, oParentOverlay, sAggregationName)) : aInvisibleChildren;
 			}.bind(this), []);
 
@@ -298,7 +298,7 @@ sap.ui.define([
 				controlTypeNames: []
 			});
 
-			if (mReveal.elements.length > 0){
+			if (mReveal.elements.length > 0) {
 				_mReveal[sAggregationName] = {
 					reveal : mReveal
 				};
@@ -306,12 +306,12 @@ sap.ui.define([
 			return _mReveal;
 		},
 
-		_invisibleToReveal: function(mReveal, oInvisibleElement){
+		_invisibleToReveal: function(mReveal, oInvisibleElement) {
 			var sType = oInvisibleElement.getMetadata().getName();
 			var oDesignTimeMetadata;
 			var mRevealAction;
 			var bRevealEnabled = false;
-			if (sType === "sap.ui.core._StashedControl"){
+			if (sType === "sap.ui.core._StashedControl") {
 				//TODO Fix if we have the stashed type info
 				var mStashedInfos = _fakeStashedControlInfos();
 				oDesignTimeMetadata = mStashedInfos.designTimeMetadata;
@@ -337,21 +337,21 @@ sap.ui.define([
 							} else {
 								bRevealEnabled = true;
 							}
-							if (!mRevealAction.getAggregationName){
+							if (!mRevealAction.getAggregationName) {
 								mRevealAction.getAggregationName = _defaultGetAggregationName;
 							}
 						}
 					}
 				}
 			}
-			if (bRevealEnabled){
+			if (bRevealEnabled) {
 				mReveal.elements.push({
 					element : oInvisibleElement,
 					designTimeMetadata : oDesignTimeMetadata,
 					action : mRevealAction
 				});
 				var mName = oDesignTimeMetadata.getName(oInvisibleElement);
-				if (mName){
+				if (mName) {
 					mReveal.controlTypeNames.push(mName);
 				}
 			}
@@ -366,9 +366,9 @@ sap.ui.define([
 
 			var oCheckElement = mParents.parent;
 
-			var fnCallback = function(_mAddODataProperty, mAction){
+			var fnCallback = function(_mAddODataProperty, mAction) {
 				if (mAction) {
-					if (mAction.changeOnRelevantContainer){
+					if (mAction.changeOnRelevantContainer) {
 						oCheckElement = mParents.relevantContainer;
 					}
 					var oCheckElementOverlay = OverlayRegistry.getOverlay(oCheckElement);
@@ -376,7 +376,7 @@ sap.ui.define([
 						mAction.changeType &&
 						this.hasChangeHandler(mAction.changeType, oCheckElement) &&
 						this.hasStableId(oCheckElementOverlay)
-					){
+					) {
 						_mAddODataProperty[mAction.aggregation] = {
 							addODataProperty : {
 								designTimeMetadata : oDesignTimeMetadata,
@@ -388,10 +388,9 @@ sap.ui.define([
 				}
 			};
 
-			if (aActions && aActions.length > 0){
+			if (aActions && aActions.length > 0) {
 				return aActions.reduce(fnCallback.bind(this), {});
 			}
-
 		},
 
 		_getCustomAddActions: function(bSibling, oOverlay) {
@@ -400,7 +399,7 @@ sap.ui.define([
 			var aActions = oDesignTimeMetadata.getActionDataFromAggregations("add", mParents.parent, undefined, "custom");
 			var oCheckElement = mParents.parent;
 
-			var fnCallback = function(_mCustom, mAction){
+			var fnCallback = function(_mCustom, mAction) {
 				if (mAction) {
 					var oCheckElementOverlay = OverlayRegistry.getOverlay(oCheckElement);
 					if (typeof mAction.getItems === "function" && this.hasStableId(oCheckElementOverlay)) {
@@ -429,10 +428,9 @@ sap.ui.define([
 				}
 			};
 
-			if (aActions && aActions.length > 0){
+			if (aActions && aActions.length > 0) {
 				return aActions.reduce(fnCallback.bind(this), {});
 			}
-
 		},
 
 		/**
@@ -475,9 +473,9 @@ sap.ui.define([
 			//join and condense both action data
 			var mOverall = jQuery.extend(true, mRevealActions, mAddODataPropertyActions, mCustomAddActions);
 			var aAggregationNames = Object.keys(mOverall);
-			if (aAggregationNames.length === 0){
+			if (aAggregationNames.length === 0) {
 				return {};
-			} else if (aAggregationNames.length > 1){
+			} else if (aAggregationNames.length > 1) {
 				Log.error("reveal or addODataProperty action defined for more than 1 aggregation, that is not yet possible");
 			}
 			var sAggregationName = aAggregationNames[0];
@@ -486,7 +484,7 @@ sap.ui.define([
 		},
 
 		// _getRevealActions for isEditable check
-		_hasRevealActionsOnChildren: function(oOverlay){
+		_hasRevealActionsOnChildren: function(oOverlay) {
 			var mRevealActions = this._getRevealActions(false, oOverlay);
 			return Object.keys(mRevealActions).length > 0;
 		},
@@ -529,19 +527,18 @@ sap.ui.define([
 				this._setDialogTitle(mActions, mParents.parent, sControlName);
 			}
 
-			return Promise.resolve().then(function(){
-				if (mActions.addODataProperty){
+			return Promise.resolve().then(function() {
+				if (mActions.addODataProperty) {
 					return Utils.isServiceUpToDate(mParents.parent);
 				}
 			})
 
 			.then(function() {
-				if (mActions.addODataProperty){
+				if (mActions.addODataProperty) {
 					this.getDialog()._oCustomFieldButton.setVisible(true);
 					return Utils.isCustomFieldAvailable(mParents.parent);
-				} else {
-					this.getDialog()._oCustomFieldButton.setVisible(false);
 				}
+				this.getDialog()._oCustomFieldButton.setVisible(false);
 			}.bind(this))
 
 			.then(function(oCurrentFieldExtInfo) {
@@ -555,7 +552,7 @@ sap.ui.define([
 
 			.then(_getAllElements.bind(this, aPromises))
 
-			.then(function(aAllElements){
+			.then(function(aAllElements) {
 				this.getDialog().setElements(aAllElements);
 
 				return this.getDialog().open()
@@ -564,16 +561,16 @@ sap.ui.define([
 					return this._createCommands(mParents, oSiblingElement, mActions, iIndex);
 				}.bind(this))
 
-				.catch(function(oError){
+				.catch(function(oError) {
 					//no error means canceled dialog
-					if (oError instanceof Error){
+					if (oError instanceof Error) {
 						throw oError;
 					}
 				});
 			}.bind(this))
 
-			.catch(function(oError){
-				if (oError instanceof Error){
+			.catch(function(oError) {
+				if (oError instanceof Error) {
 					throw oError;
 				} else {
 					Log.info("Service not up to date, skipping add dialog", "sap.ui.rta");
@@ -581,7 +578,7 @@ sap.ui.define([
 			});
 		},
 
-		_setDialogTitle : function(mActions, oParentElement, sControlName){
+		_setDialogTitle : function(mActions, oParentElement, sControlName) {
 			var sDialogTitle = _getText("HEADER_ADDITIONAL_ELEMENTS", mActions, oParentElement, PLURAL, sControlName);
 			this.getDialog().setTitle(sDialogTitle);
 			if (sControlName) {
@@ -595,7 +592,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event}
 		 *		  oEvent event object
 		 */
-		_onOpenCustomField : function (oEvent) {
+		_onOpenCustomField : function () {
 			// open field ext ui
 			var oUshellContainer = FlUtils.getUshellContainer();
 			var oCrossAppNav = oUshellContainer.getService("CrossApplicationNavigation");
@@ -605,7 +602,7 @@ sap.ui.define([
 					action : "develop"
 				},
 				params : {
-					businessContexts : this._oCurrentFieldExtInfo.BusinessContexts.map( function( oBusinessContext){
+					businessContexts : this._oCurrentFieldExtInfo.BusinessContexts.map(function(oBusinessContext) {
 						return oBusinessContext.BusinessContext;
 					}),
 					serviceName : this._oCurrentFieldExtInfo.ServiceName,
@@ -617,7 +614,6 @@ sap.ui.define([
 		},
 
 		_createCommands : function(mParents, oSiblingElement, mActions, iIndex) {
-
 			var aSelectedElements = this.getDialog().getSelectedElements();
 
 			// sort elements by label in descending order. When added the fields will be in ascending order on the UI
@@ -637,7 +633,7 @@ sap.ui.define([
 
 				.then(function(oCompositeCommand) {
 					var oPromise = Promise.resolve();
-					aSelectedElements.forEach(function(oSelectedElement){
+					aSelectedElements.forEach(function(oSelectedElement) {
 						switch (oSelectedElement.type) {
 							case "invisible":
 								oPromise = oPromise.then(
@@ -660,7 +656,7 @@ sap.ui.define([
 
 				.then(function(oCompositeCommand) {
 					this.fireElementModified({
-						"command" : oCompositeCommand
+						command : oCompositeCommand
 					});
 				}.bind(this))
 
@@ -677,7 +673,7 @@ sap.ui.define([
 		},
 
 		_createCommandsForInvisibleElement : function(oCompositeCommand, oSelectedElement, mParents, oSiblingElement, mActions, iIndex) {
-			return this._createRevealCommandForInvisible(oSelectedElement, mActions, mParents, oSiblingElement)
+			return this._createRevealCommandForInvisible(oSelectedElement, mActions, mParents)
 
 			.then(function(oRevealCommandForInvisible) {
 				oCompositeCommand.addCommand(oRevealCommandForInvisible);
@@ -688,7 +684,7 @@ sap.ui.define([
 				if (oMoveCommandForInvisible) {
 					oCompositeCommand.addCommand(oMoveCommandForInvisible);
 				} else {
-					Log.warning("No move action configured for " + mParents.parent.getMetadata().getName() + ", aggregation: " + mActions.aggregation , "sap.ui.rta");
+					Log.warning("No move action configured for " + mParents.parent.getMetadata().getName() + ", aggregation: " + mActions.aggregation, "sap.ui.rta");
 				}
 				return oCompositeCommand;
 			});
@@ -714,7 +710,7 @@ sap.ui.define([
 				var mRequiredLibraries = mChangeHandlerSettings
 					&& mChangeHandlerSettings.content
 					&& mChangeHandlerSettings.content.requiredLibraries;
-				if (mRequiredLibraries){
+				if (mRequiredLibraries) {
 					return this._createCommandForAddLibrary(mParents, mActions, mRequiredLibraries, oParentAggregationDTMetadata)
 					.then(function(oCommandForAddLibrary) {
 						oCompositeCommand.addCommand(oCommandForAddLibrary);
@@ -765,7 +761,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		_createCommandForAddLibrary: function(mParents, mActions, mRequiredLibraries, oParentAggregationDTMetadata){
+		_createCommandForAddLibrary: function(mParents, mActions, mRequiredLibraries, oParentAggregationDTMetadata) {
 			var oComponent = FlUtils.getAppComponentForControl(mParents.relevantContainer);
 			var mManifest = oComponent.getManifest();
 			var sReference = mManifest["sap.app"].id;
@@ -776,7 +772,7 @@ sap.ui.define([
 			}, oParentAggregationDTMetadata);
 		},
 
-		_createRevealCommandForInvisible: function(mSelectedElement, mActions, mParents, oSiblingElement) {
+		_createRevealCommandForInvisible: function(mSelectedElement, mActions, mParents) {
 			var oRevealedElement = ElementUtil.getElementInstance(mSelectedElement.elementId);
 			var oRevealedElementOverlay = OverlayRegistry.getOverlay(oRevealedElement);
 			var mRevealData = _getRevealDataFromActions(mActions, oRevealedElement);
@@ -827,7 +823,7 @@ sap.ui.define([
 
 			iRevealTargetIndex = iIndex !== undefined ? iIndex : ElementUtil.adjustIndexForMove(oSourceParent, oTargetParent, iRevealedSourceIndex, iRevealTargetIndex);
 
-			if (iRevealTargetIndex !== iRevealedSourceIndex || mParents.parent !== oRevealedElement.getParent()){
+			if (iRevealTargetIndex !== iRevealedSourceIndex || mParents.parent !== oRevealedElement.getParent()) {
 				var oSourceParentOverlay = OverlayRegistry.getOverlay(oRevealedElement) ? OverlayRegistry.getOverlay(oRevealedElement).getParentAggregationOverlay() : mParents.relevantContainerOverlay;
 				var SourceParentDesignTimeMetadata = oSourceParentOverlay.getDesignTimeMetadata();
 				var oMoveAction = SourceParentDesignTimeMetadata.getAction("move", oRevealedElement);
@@ -950,8 +946,8 @@ sap.ui.define([
 			var iRank = 20;
 			var sIcon = "sap-icon://add";
 			var aMenuItems = [];
-			for (var i = 0; i < 2; i++){
-				if (this.isAvailable(bOverlayIsSibling, aElementOverlays)){
+			for (var i = 0; i < 2; i++) {
+				if (this.isAvailable(bOverlayIsSibling, aElementOverlays)) {
 					var sMenuItemText = this.getContextMenuTitle.bind(this, bOverlayIsSibling);
 
 					aMenuItems.push({
@@ -982,12 +978,12 @@ sap.ui.define([
 		}.bind(this));
 	}
 
-	function _getSourceParent(oRevealedElement, mParents, oRevealedElementOverlay){
+	function _getSourceParent(oRevealedElement, mParents, oRevealedElementOverlay) {
 		var oParent;
 		if (oRevealedElementOverlay) {
 			oParent = oRevealedElementOverlay.getParentElementOverlay().getElement();
 		}
-		if (!oParent && oRevealedElement.sParentId){
+		if (!oParent && oRevealedElement.sParentId) {
 			//stashed control has no parent, but remembers its parent id
 			oParent = sap.ui.getCore().byId(oRevealedElement.sParentId);
 		} else if (!oParent) {

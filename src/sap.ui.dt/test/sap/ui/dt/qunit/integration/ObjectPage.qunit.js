@@ -87,5 +87,4 @@ function (
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

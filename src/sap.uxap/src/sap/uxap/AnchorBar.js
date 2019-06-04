@@ -736,6 +736,26 @@ sap.ui.define([
 	};
 
 	/**
+	 * Handles DOWN key, triggered on anchor bar level.
+	 *
+	 * @param {jQuery.Event} oEvent
+	 * @private
+	 */
+	AnchorBar.prototype.onsapdown = function (oEvent) {
+		oEvent.preventDefault();
+	};
+
+	/**
+	 * Handles UP key, triggered on anchor bar level.
+	 *
+	 * @param {jQuery.Event} oEvent
+	 * @private
+	 */
+	AnchorBar.prototype.onsapup = function (oEvent) {
+		oEvent.preventDefault();
+	};
+
+	/**
 	 * Handles HOME key, triggered on anchor bar level.
 	 *
 	 * @param {jQuery.Event} oEvent
@@ -980,14 +1000,15 @@ sap.ui.define([
 	};
 
 	AnchorBar.prototype._computeNextSectionInfo = function (oContent) {
-		var oButton = oContent.isA("sap.m.MenuButton") ? oContent._getButtonControl() : oContent;
+		var oButton = oContent.isA("sap.m.MenuButton") ? oContent._getButtonControl() : oContent,
+			bSelected = oContent.hasStyleClass("sapUxAPAnchorBarButtonSelected");
 
 		// set ARIA has-popup if button opens submenu
 		if (oContent.data("bHasSubMenu")) {
 			oButton.$().attr("aria-haspopup", "true");
 		}
 		// set ARIA attributes of main buttons
-		oButton.$().attr("aria-controls", oContent.data("sectionId")).attr("aria-checked", false);
+		oButton.$().attr("aria-controls", oContent.data("sectionId")).attr("aria-checked", bSelected);
 
 		var iWidth = oContent.$().outerWidth(true);
 
@@ -1051,7 +1072,6 @@ sap.ui.define([
 
 		if (iIndex !== -1) {
 			mAriaProps.role = "menuitemradio";
-			mAriaProps.type = "button";
 			mAriaProps.roledescription = this.oLibraryResourceBundleOP.getText("ANCHOR_BAR_MENUITEM");
 			mAriaProps.setsize = oContent.length;
 			mAriaProps.posinset = iIndex + 1; // we need "+ 1", since iIndex would start from 0 (due to indexOf)

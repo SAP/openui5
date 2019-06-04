@@ -226,7 +226,7 @@ sap.ui.define([
 
 		//Assert
 		assert.equal(oTB.$().attr("aria-disabled"), "true", "Toolbar has attribute aria-disabled='true'");
-		assert.equal(oBtn.$().attr("aria-disabled"), "true", "Toolbar's children have attribute aria-disabled='true'");
+		assert.equal(oBtn.$().attr("aria-disabled"), undefined, "Toolbar's children have attribute aria-disabled='true'");
 
 		//Cleanup
 		oBtn.destroy();

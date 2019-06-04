@@ -12,5 +12,4 @@ sap.ui.define([
 		oAppController.onInit();
 		assert.ok(oAppController);
 	});
-
 });

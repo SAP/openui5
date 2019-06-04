@@ -25,13 +25,13 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Element",
-	'sap/ui/model/json/JSONModel',
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/dt/Util",
 	"sap/f/DynamicPage",
 	"sap/f/DynamicPageTitle",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/thirdparty/sinon-4"
-	],
+],
 function(
 	jQuery,
 	ElementUtil,
@@ -68,22 +68,21 @@ function(
 
 	var sandbox = sinon.sandbox.create();
 
-	var fnCreateMinimumControls = function(){
+	var fnCreateMinimumControls = function() {
 		this.oButton = new Button("testButton1", {text : "Button"});
-		this.oIconTabFilter = new IconTabFilter("icontabfilter",{
+		this.oIconTabFilter = new IconTabFilter("icontabfilter", {
 			text : "Orders"
 		});
-		this.oIconTabBar = new IconTabBar({
-		});
+		this.oIconTabBar = new IconTabBar();
 	};
 
-	var fnDestroyMinimumControls = function(){
+	var fnDestroyMinimumControls = function() {
 		this.oButton.destroy();
 		this.oIconTabFilter.destroy();
 		this.oIconTabBar.destroy();
 	};
 
-	var fnCreateControls = function(){
+	var fnCreateControls = function() {
 		fnCreateMinimumControls.call(this);
 		this.oHorizontalLayoutChild = new HorizontalLayout({
 			content : [
@@ -91,7 +90,7 @@ function(
 				this.oButton
 			]
 		});
-		this.oVerticalLayout = new VerticalLayout("verticalLayout",{
+		this.oVerticalLayout = new VerticalLayout("verticalLayout", {
 			content : [
 				new Button({text : "Button"}),
 				new Button({text : "Button"}),
@@ -104,12 +103,12 @@ function(
 		sap.ui.getCore().applyChanges();
 	};
 
-	var fnDestroyControls = function(){
+	var fnDestroyControls = function() {
 		fnDestroyMinimumControls.call(this);
 		this.oVerticalLayout.destroy();
 	};
 
-	var fnCreateMoreControls = function(){
+	var fnCreateMoreControls = function() {
 		this.oHorizontalLayoutChild1 = new HorizontalLayout({
 			content : [
 				new Input({value : "11"}),
@@ -133,17 +132,17 @@ function(
 		});
 	};
 
-	var fnDestroyMoreControls = function(){
+	var fnDestroyMoreControls = function() {
 		this.oVerticalLayout2.destroy();
 	};
 
-	var fnCreateComponent = function(){
+	var fnCreateComponent = function() {
 		var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
 			createContent: function() {
-				return new VerticalLayout("Root",{
+				return new VerticalLayout("Root", {
 					content: [
 						new Button({ text: "Text" })
-						]
+					]
 				});
 			}
 		});
@@ -152,12 +151,12 @@ function(
 		this.oCompContainer = new ComponentContainer("CompCont1");
 	};
 
-	var fnDestroyComponent = function(){
+	var fnDestroyComponent = function() {
 		this.oComponent.destroy();
 		this.oCompContainer.destroy();
 	};
 
-	var fnCreateForm = function(){
+	var fnCreateForm = function() {
 		this.oForm = new Form("form1", {
 			formContainers : [
 				new FormContainer("group1"),
@@ -167,23 +166,23 @@ function(
 		this.oFormContainer1 = sap.ui.getCore().byId("group1");
 	};
 
-	var fnDestroyForm = function(){
+	var fnDestroyForm = function() {
 		this.oForm.destroy();
 		this.oFormContainer1.destroy();
 	};
 
-	var fnCreateCustomControl = function(){
+	var fnCreateCustomControl = function() {
 		var CustomControl = Element.extend("CustomControl", {
 			metadata: {
 				associations : {
-		      elements : { type: 'sap.ui.core.Control', multiple : true }
-		    }
+					elements : { type: 'sap.ui.core.Control', multiple : true }
+				}
 			}
 		});
 		this.oCustomControl = new CustomControl();
 	};
 
-	var fnDestroyCustomControl = function(){
+	var fnDestroyCustomControl = function() {
 		this.oCustomControl.destroy();
 	};
 
@@ -194,7 +193,7 @@ function(
 		afterEach : function() {
 			fnDestroyMinimumControls.call(this);
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when the hasInterface is called with an interface", function(assert) {
 			assert.equal(ElementUtil.hasInterface(this.oIconTabFilter, "sap.m.IconTab"), true, 'then the static method "hasInterface" returns true, if control implements this interface');
 			assert.equal(ElementUtil.hasInterface(this.oButton, "sap.m.IconTab"), false, 'then the static method "hasInterface" returns false, if control does not implement this interface');
@@ -218,7 +217,7 @@ function(
 			fnDestroyMinimumControls.call(this);
 			fnDestroyComponent.call(this);
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when getElementInstance() is called with a control-Id", function(assert) {
 			assert.equal(ElementUtil.getElementInstance(this.oButton.getId()), this.oButton, 'then the static method "getElementInstance" returns the control');
 		});
@@ -237,7 +236,7 @@ function(
 		afterEach : function() {
 			fnDestroyControls.call(this);
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when getClosestElementForNode() is called with the main DOM-node of the control", function(assert) {
 			var oNode = this.oButton.getDomRef();
 			assert.equal(ElementUtil.getClosestElementForNode(oNode), this.oButton, 'then the static method "getClosestElementForNode" returns the control');
@@ -262,7 +261,7 @@ function(
 			fnDestroyControls.call(this);
 			fnDestroyComponent.call(this);
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when fixComponentParent() is called with a Component within a container", function(assert) {
 			this.oCompContainer.setComponent(this.oComponent);
 			this.oVerticalLayout.addContent(this.oCompContainer);
@@ -285,7 +284,7 @@ function(
 			fnDestroyMinimumControls.call(this);
 			fnDestroyComponent.call(this);
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when fixComponentContainerElement() is called with a ComponentContainer with a Component", function(assert) {
 			this.oCompContainer.setComponent(this.oComponent);
 			var oRootControl = sap.ui.getCore().byId("Root");
@@ -309,7 +308,7 @@ function(
 			fnDestroyControls.call(this);
 			fnDestroyForm.call(this);
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when it is rendered and the DOM reference is available", function(assert) {
 			var oDomRef = this.oVerticalLayout.getDomRef();
 			var oDomRefTest = ElementUtil.getDomRef(this.oVerticalLayout);
@@ -335,7 +334,7 @@ function(
 			fnDestroyControls.call(this);
 			fnDestroyComponent.call(this);
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when a control is a successor of another control", function(assert) {
 			assert.equal(ElementUtil.hasAncestor(this.oButton, this.oVerticalLayout), true, 'then static method "hasAncestor" returns true');
 		});
@@ -367,7 +366,7 @@ function(
 			fnDestroyControls.call(this);
 			fnDestroyMoreControls.call(this);
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when asking for the siblings in a container, where the container is the direct parent", function(assert) {
 			var aSiblings = ElementUtil.findAllSiblingsInContainer(this.oButton, this.oHorizontalLayoutChild);
 			assert.equal(aSiblings.length, 2, " then both controls are found (including the original control)");
@@ -395,22 +394,22 @@ function(
 		afterEach : function() {
 			fnDestroyControls.call(this);
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when the control has aggregations", function(assert) {
 			var mAccessors = ElementUtil.getAggregationAccessors(this.oVerticalLayout, "content");
 			assert.deepEqual(mAccessors, {
-				"get":"getContent",
-				"add":"addContent",
-				"remove":"removeContent",
-				"insert":"insertContent",
-				"removeAll": "removeAllContent"
+				get:"getContent",
+				add:"addContent",
+				remove:"removeContent",
+				insert:"insertContent",
+				removeAll: "removeAllContent"
 			}, 'then the static method "getAggregationAccessors" returns all accessors of an aggregation');
 
 			var aFoundAggregations = [];
 			ElementUtil.iterateOverAllPublicAggregations(this.oVerticalLayout, function(oAggregation) {
 				aFoundAggregations.push(oAggregation.name);
 			});
-			assert.deepEqual(aFoundAggregations, ["tooltip","customData","layoutData","dependents","dragDropConfig","content"], 'then the static method "iterateOverAllPublicAggregations" finds all public aggregations');
+			assert.deepEqual(aFoundAggregations, ["tooltip", "customData", "layoutData", "dependents", "dragDropConfig", "content"], 'then the static method "iterateOverAllPublicAggregations" finds all public aggregations');
 		});
 	});
 
@@ -421,15 +420,15 @@ function(
 		afterEach : function() {
 			fnDestroyCustomControl.call(this);
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when the control has associations", function(assert) {
 			var mAccessors = ElementUtil.getAssociationAccessors(this.oCustomControl, "elements");
 			assert.deepEqual(mAccessors, {
-				"get":"getElements",
-				"add":"addElement",
-				"remove":"removeElement",
-				"insert": undefined,
-				"removeAll": "removeAllElements"
+				get:"getElements",
+				add:"addElement",
+				remove:"removeElement",
+				insert: undefined,
+				removeAll: "removeAllElements"
 			}, 'then the static method "getAssociationAccessors" returns all accessors of an existing association');
 		});
 
@@ -448,11 +447,11 @@ function(
 			fnDestroyMinimumControls.call(this);
 			fnDestroyCustomControl.call(this);
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when the control has associations", function(assert) {
 			this.oCustomControl.addElement(this.oButton);
 			this.oCustomControl.addElement(this.oIconTabFilter);
-			var mResult = [this.oButton.getId(),this.oIconTabFilter.getId()];
+			var mResult = [this.oButton.getId(), this.oIconTabFilter.getId()];
 			var mAssociationElements = ElementUtil.getAssociation(this.oCustomControl, "elements");
 			assert.deepEqual(mAssociationElements, mResult, 'then the static method "getAssociation" returns the ids of the association');
 		});
@@ -471,12 +470,12 @@ function(
 			fnDestroyMinimumControls.call(this);
 			fnDestroyCustomControl.call(this);
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when the control has association", function(assert) {
 			this.oCustomControl.addElement(this.oButton);
 			this.oCustomControl.addElement(this.oIconTabFilter);
 			var mAssociationElements = ElementUtil.getAssociationInstances(this.oCustomControl, "elements");
-			assert.deepEqual(mAssociationElements, [this.oButton,this.oIconTabFilter], 'then the static method "getAssociationInstances" returns an array of elements if more elements are associated');
+			assert.deepEqual(mAssociationElements, [this.oButton, this.oIconTabFilter], 'then the static method "getAssociationInstances" returns an array of elements if more elements are associated');
 		});
 		QUnit.test("when the control has association", function(assert) {
 			this.oCustomControl.addElement(this.oButton);
@@ -498,7 +497,7 @@ function(
 			fnDestroyMinimumControls.call(this);
 			fnDestroyCustomControl.call(this);
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when the control has association", function(assert) {
 			this.oCustomControl.addElement(this.oButton);
 			this.oCustomControl.addElement(this.oIconTabFilter);
@@ -528,7 +527,7 @@ function(
 		afterEach : function() {
 			fnDestroyControls.call(this);
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when a child control is added to an aggregation", function(assert) {
 			var oButton = new Button({text:"Button"});
 			var iLengthBefore = this.oVerticalLayout.getContent().length;
@@ -554,7 +553,7 @@ function(
 		QUnit.test("when there is no AggregationMutator", function(assert) {
 			var oStub = sandbox.stub(ElementUtil, "getAggregationAccessors").returns({});
 			ElementUtil.addAggregation(this.oHorizontalLayoutChild, "content", this.oButton);
-			assert.ok(this.oHorizontalLayoutChild.getContent().indexOf(this.oButton) !== -1 , "then Button is added to the content");
+			assert.ok(this.oHorizontalLayoutChild.getContent().indexOf(this.oButton) !== -1, "then Button is added to the content");
 			oStub.restore();
 		});
 	});
@@ -566,7 +565,7 @@ function(
 		afterEach : function() {
 			fnDestroyControls.call(this);
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when a child control is added to an aggregation at a certain position", function(assert) {
 			var oButton = new Button({text:"Button"});
 			var iLengthBefore = this.oVerticalLayout.getContent().length;
@@ -587,7 +586,7 @@ function(
 		QUnit.test("when the control is added into a child of itself at a certain position", function(assert) {
 			var that = this;
 			assert.throws(function() {
-				ElementUtil.insertAggregation(that.oHorizontalLayoutChild, "content", this.oVerticalLayout,1);
+				ElementUtil.insertAggregation(that.oHorizontalLayoutChild, "content", this.oVerticalLayout, 1);
 			}, /Trying to add an element to itself or its successors/, "then an Exception is thrown");
 		});
 
@@ -609,7 +608,7 @@ function(
 		QUnit.test("when there is no AggregationMutator", function(assert) {
 			var oStub = sandbox.stub(ElementUtil, "getAggregationAccessors").returns({});
 			ElementUtil.insertAggregation(this.oHorizontalLayoutChild, "content", this.oButton, 1);
-			assert.ok(this.oHorizontalLayoutChild.getContent().indexOf(this.oButton) !== -1 , "then Button is added to the content");
+			assert.ok(this.oHorizontalLayoutChild.getContent().indexOf(this.oButton) !== -1, "then Button is added to the content");
 			oStub.restore();
 		});
 	});
@@ -621,7 +620,7 @@ function(
 		afterEach : function() {
 			fnDestroyControls.call(this);
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when a child control is removed from an aggregation of the control", function(assert) {
 			var iLengthBefore = this.oVerticalLayout.getContent().length;
 			ElementUtil.removeAggregation(this.oVerticalLayout, "content", this.oHorizontalLayoutChild);
@@ -632,7 +631,7 @@ function(
 		QUnit.test("when there is no AggregationMutator", function(assert) {
 			var oStub = sandbox.stub(ElementUtil, "getAggregationAccessors").returns({});
 			ElementUtil.removeAggregation(this.oVerticalLayout, "content", this.oHorizontalLayoutChild);
-			assert.ok(this.oVerticalLayout.getContent().indexOf(this.oHorizontalLayoutChild) === -1 , "then HorizontalLayoutChild is removed from the content");
+			assert.ok(this.oVerticalLayout.getContent().indexOf(this.oHorizontalLayoutChild) === -1, "then HorizontalLayoutChild is removed from the content");
 			oStub.restore();
 			this.oHorizontalLayoutChild.destroy();
 		});
@@ -645,7 +644,7 @@ function(
 		afterEach : function() {
 			fnDestroyControls.call(this);
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when an element is checked if it is valid for an aggregation of a parent", function(assert) {
 			assert.equal(ElementUtil.isValidForAggregation(this.oVerticalLayout, "content", new Button({text:"Button"})), true, 'then the static method "isValidForAggregation" returns true');
 		});
@@ -686,7 +685,7 @@ function(
 			fnDestroyMinimumControls.call(this);
 			fnDestroyComponent.call(this);
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when getParent() is called for oButton", function(assert) {
 			assert.equal(ElementUtil.getParent(this.oButton), this.oHorizontalLayoutChild, 'then the right parent is returned');
 		});
@@ -703,7 +702,7 @@ function(
 				this.oObject.destroy();
 			}
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when isElementValid() is called for a Control", function(assert) {
 			this.oObject = new Button({
 				text: "Button"
@@ -761,7 +760,7 @@ function(
 			this.oLabelControl = new Button("id", {
 				text: "Button text"
 			});
-			this.oLabelControl.getLabelText = function(){
+			this.oLabelControl.getLabelText = function() {
 				return this.getText();
 			};
 			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "Button text", "then it returns the label (getLabelText())");
@@ -928,5 +927,4 @@ function(
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

@@ -3,12 +3,10 @@
  */
 
 sap.ui.define([
-	'sap/ui/base/ManagedObject',
-	'sap/ui/fl/registry/ChangeRegistry',
+	"sap/ui/base/ManagedObject",
 	"sap/base/util/ObjectPath"
 ], function (
 	ManagedObject,
-	ChangeRegistry,
 	ObjectPath
 ) {
 	"use strict";
@@ -50,11 +48,10 @@ sap.ui.define([
 	 */
 	ElementActionDefinitionTest.prototype.run = function() {
 		return this._setup().then(function(oData) {
-
 			var sActions;
 			this._mResult = {
-					name : this.getType(),
-					actions : undefined
+				name : this.getType(),
+				actions : undefined
 			};
 
 			if (!this._bError) {
@@ -67,7 +64,7 @@ sap.ui.define([
 
 			return this._mResult;
 		}.bind(this))
-		.catch(function(error) {
+		.catch(function() {
 			// do nothing
 		});
 	};
@@ -95,7 +92,6 @@ sap.ui.define([
 	 * @private
 	 */
 	ElementActionDefinitionTest.prototype._testActions = function(oData) {
-
 		var sActionsResult;
 		var sPropagate;
 		var mActions = [];
@@ -108,12 +104,12 @@ sap.ui.define([
 			this._bNotSupported = true;
 		} else {
 			if (oData.actions) {
-				for (var sAction in oData.actions) {
-					aActions[i] = sAction;
-						mActions[i] = {
-							action : sAction,
-							aggregation : "self"
-						};
+				for (var sDataAction in oData.actions) {
+					aActions[i] = sDataAction;
+					mActions[i] = {
+						action : sDataAction,
+						aggregation : "self"
+					};
 					i = i + 1;
 				}
 				bActions = true;
@@ -125,13 +121,13 @@ sap.ui.define([
 					if (oAggr.propagateMetadata) {
 						sPropagate = (sPropagate) ? sPropagate + ", " + sAggregation : "propagate (" + sAggregation;
 					}
-					for (var sAction in oAggr.actions) {
-						i = aActions.indexOf(sAction);
+					for (var sAggregationAction in oAggr.actions) {
+						i = aActions.indexOf(sAggregationAction);
 						if (i === -1) {
-							aActions.push(sAction);
-							i = aActions.indexOf(sAction);
+							aActions.push(sAggregationAction);
+							i = aActions.indexOf(sAggregationAction);
 							mActions[i] = {
-								action : sAction,
+								action : sAggregationAction,
 								aggregation : sAggregation
 							};
 						} else {

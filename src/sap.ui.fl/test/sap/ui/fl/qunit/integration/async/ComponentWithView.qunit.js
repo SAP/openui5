@@ -10,8 +10,7 @@ sap.ui.define([
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/layout/changeHandler/AddSimpleFormGroup",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/variants/util/VariantUtil"
+	"sap/ui/fl/Utils"
 ],
 function(
 	jQuery,
@@ -21,8 +20,7 @@ function(
 	CacheManager,
 	AddSimpleFormGroup,
 	sinon,
-	Utils,
-	VariantUtil
+	Utils
 ) {
 	"use strict";
 
@@ -35,60 +33,60 @@ function(
 	QUnit.module("Creation of the first change without a registered propagationListener", {
 		beforeEach: function() {
 			sandbox.stub(sap.ui.fl.LrepConnector.prototype, "loadChanges").resolves({
-				"changes": {
-					"changes" : [{
-						"fileName": "id_1504610195273_78_addSimpleFormGroup",
-						"fileType": "change",
-						"changeType": "addSimpleFormGroup",
-						"reference": "sap.ui.fl.qunit.integration.async.testComponentWithView.Component",
-						"packageName": "$TMP",
-						"content": {
-							"group": {
-								"selector": {
-									"id": sAddedSimpleFormGroupId,
-									"idIsLocal": true
+				changes: {
+					changes : [{
+						fileName: "id_1504610195273_78_addSimpleFormGroup",
+						fileType: "change",
+						changeType: "addSimpleFormGroup",
+						reference: "sap.ui.fl.qunit.integration.async.testComponentWithView.Component",
+						packageName: "$TMP",
+						content: {
+							group: {
+								selector: {
+									id: sAddedSimpleFormGroupId,
+									idIsLocal: true
 								},
-								"relativeIndex": 1
+								relativeIndex: 1
 							}
 						},
-						"selector": {
-							"id": "rootView--myForm",
-							"idIsLocal": true
+						selector: {
+							id: "rootView--myForm",
+							idIsLocal: true
 						},
-						"layer": "CUSTOMER",
-						"texts": {
-							"groupLabel": {
-								"value": "New Group",
-								"type": "XFLD"
+						layer: "CUSTOMER",
+						texts: {
+							groupLabel: {
+								value: "New Group",
+								type: "XFLD"
 							}
 						},
-						"namespace": "apps/sap.ui.demoapps.rta.freestyle/changes/",
-						"creation": "2017-09-05T11:16:46.701Z",
-						"originalLanguage": "EN",
-						"conditions": {},
-						"context": "",
-						"support": {
-							"generator": "Change.createInitialFileContent",
-							"service": "",
-							"user": "",
-							"sapui5Version": sap.ui.version
+						namespace: "apps/sap.ui.demoapps.rta.freestyle/changes/",
+						creation: "2017-09-05T11:16:46.701Z",
+						originalLanguage: "EN",
+						conditions: {},
+						context: "",
+						support: {
+							generator: "Change.createInitialFileContent",
+							service: "",
+							user: "",
+							sapui5Version: sap.ui.version
 						},
-						"dependentSelector": {},
-						"validAppVersions": {
-							"creation": "${project.version}",
-							"from": "${project.version}"
+						dependentSelector: {},
+						validAppVersions: {
+							creation: "${project.version}",
+							from: "${project.version}"
 						}
 					}]
 				},
-				"contexts": [],
-				"variantSection": {},
-				"settings": {
-					"isKeyUser": true,
-					"isAtoAvailable": false,
-					"isAtoEnabled": false,
-					"isProductiveSystem": false
+				contexts: [],
+				variantSection: {},
+				settings: {
+					isKeyUser: true,
+					isAtoAvailable: false,
+					isAtoEnabled: false,
+					isProductiveSystem: false
 				},
-				"etag": "MYETAG"
+				etag: "MYETAG"
 			});
 		},
 		afterEach: function() {
@@ -131,7 +129,7 @@ function(
 			});
 		});
 
-		if (!CacheManager._isSupportedEnvironment()){
+		if (!CacheManager._isSupportedEnvironment()) {
 			QUnit.test("All further tests are skipped, as the CacheManager is not supported on the underlying environment (see assert)", function (assert) {
 				assert.ok(true, "Environment: system [" + JSON.stringify(sap.ui.Device.system) + "],  browser: " + JSON.stringify(sap.ui.Device.browser));
 			});
@@ -180,7 +178,7 @@ function(
 				}).then(function(oComponent) {
 					that.oComponent = oComponent;
 					return that.oComponent.getRootControl().loaded();
-				}).then(function(oComponent) {
+				}).then(function() {
 					assert.equal(oXmlPrepossessSpy.callCount, 1, "the view was cached so no further xml processing took place");
 					oXmlPrepossessSpy.restore();
 				});
@@ -230,7 +228,7 @@ function(
 				}).then(function(oComponent) {
 					that.oComponent = oComponent;
 					return that.oComponent.getRootControl().loaded();
-				}).then(function(oComponent) {
+				}).then(function() {
 					assert.equal(oXmlPrepossessSpy.callCount, 2, "the view cache key changed and a new xml processing took place");
 					oXmlPrepossessSpy.restore();
 				});
@@ -372,7 +370,7 @@ function(
 				.then(function(oComponent) {
 					this.oComponent = oComponent;
 					return this.oComponent.getRootControl().loaded();
-				}.bind(this)).then(function(oComponent) {
+				}.bind(this)).then(function() {
 					assert.equal(oXmlPrepossessSpy.callCount, 2, "the view was processed once more");
 				});
 			});
@@ -418,7 +416,7 @@ function(
 					this.oComponent = oComponent;
 					return this.oComponent.getRootControl().loaded();
 				}.bind(this))
-				.then(function(oComponent) {
+				.then(function() {
 					assert.equal(oXmlPrepossessSpy.callCount, 2, "the view was processed once more");
 				});
 			});
@@ -428,5 +426,4 @@ function(
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

@@ -62,7 +62,7 @@ sap.ui.define([
 
 	QUnit.test("IconOnly Class Rendered", function(assert) {
 		// Assert
-		var $objectStatus = os2.$("icon");
+		var $objectStatus = os2.$("statusIcon");
 
 		assert.ok($objectStatus.hasClass("sapMObjStatusIconOnly"), "ObjectStatus that has only icon has the correct class set.");
 
@@ -608,8 +608,8 @@ sap.ui.define([
 		assert.ok(this.oActiveStat.$().hasClass("sapMObjStatusActive"), "Active status has sapMObjStatusActive class.");
 		assert.ok(this.oActiveStat.$().children(1).hasClass("sapMObjStatusLink"), "The span that holds Icon and Text has class sapMObjStatusLink.");
 		assert.strictEqual(this.oActiveStat.$().children().length, 2, "sapMObjStatusLink span has two children");
-		assert.strictEqual(this.oActiveStat.$().children().children(".sapMObjStatusIcon").length, 1, "The icon span has class sapMObjStatusIcon.");
-		assert.strictEqual(this.oActiveStat.$().children().children(".sapMObjStatusText").length, 1, "The text span has class sapMObjStatusText.");
+		assert.strictEqual(this.oActiveStat.$().find(".sapMObjStatusIcon").length, 1, "The icon span has class sapMObjStatusIcon.");
+		assert.strictEqual(this.oActiveStat.$().find(".sapMObjStatusText").length, 1, "The text span has class sapMObjStatusText.");
 	});
 
 	QUnit.test("Active status with empty icon and text", function(assert) {
@@ -648,7 +648,7 @@ sap.ui.define([
 		var oEvent = new jQuery.Event();
 
 		this.oStub.withArgs().returns(true);
-		oEvent.target = this.oActiveStat.$().children().children(".sapMObjStatusText")[0];
+		oEvent.target = this.oActiveStat.$().find(".sapMObjStatusText")[0];
 
 		// Act
 		assert.ok(this.oActiveStat._isClickable(oEvent), "The 'Status' is clickable");
@@ -659,7 +659,7 @@ sap.ui.define([
 		var oEvent = new jQuery.Event();
 
 		this.oStub.withArgs().returns(true);
-		oEvent.target = this.oActiveStat.$().children().children(".sapMObjStatusIcon")[0];
+		oEvent.target = this.oActiveStat.$().find(".sapMObjStatusIcon")[0];
 
 		// Act
 		assert.ok(this.oActiveStat._isClickable(oEvent), "The 'Status' is clickable");
@@ -681,7 +681,7 @@ sap.ui.define([
 		var oEvent = new jQuery.Event();
 
 		this.oStub.withArgs().returns(false);
-		oEvent.target = this.oActiveStat.$().children().children(".sapMObjStatusText")[0];
+		oEvent.target = this.oActiveStat.$().find(".sapMObjStatusText")[0];
 
 		// Act
 		assert.ok(!this.oActiveStat._isClickable(oEvent), "The 'Status' is not clickable");
@@ -710,8 +710,8 @@ sap.ui.define([
 
 		assert.expect(3);
 		qutils.triggerEvent("tap", this.oActiveStat.$().children()[1]); // click on a wrapper IconText span, should fire event
-		qutils.triggerEvent("tap", this.oActiveStat.$().children().children(".sapMObjStatusText")); //should fire event
-		qutils.triggerEvent("tap", this.oActiveStat.$().children().children(".sapMObjStatusIcon")); //should fire event
+		qutils.triggerEvent("tap", this.oActiveStat.$().find(".sapMObjStatusText")); //should fire event
+		qutils.triggerEvent("tap", this.oActiveStat.$().find(".sapMObjStatusIcon")); //should fire event
 		qutils.triggerEvent("tap", this.oActiveStat.$().children()[0]);//click on a title should not fire event
 	});
 
@@ -736,7 +736,7 @@ sap.ui.define([
 		this.oActiveStat.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		oEvent.target = this.oActiveStat.$().children().children(".sapMObjStatusText")[0];
+		oEvent.target = this.oActiveStat.$().find(".sapMObjStatusText")[0];
 		this.oActiveStat.ontouchstart(oEvent);
 
 		assert.strictEqual(oEvent.getMark(), true, "Event was marked so the parent control will know that it will be handled by the ObjectStatus");

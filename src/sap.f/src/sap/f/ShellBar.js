@@ -74,6 +74,11 @@ function(
 				 */
 				homeIcon: {type: "sap.ui.core.URI", group: "Appearance", defaultValue: ""},
 				/**
+				 * Defines a custom tooltip for the home icon. If not set, a default tooltip is used.
+				 * @since 1.67
+				 */
+				homeIconTooltip: {type: "string", group: "Appearance", defaultValue: ""},
+				/**
 				 * Determines whether a hamburger menu button is displayed (as an alternative
 				 * if the <code>menu</code> aggregation is not used).
 				 */
@@ -112,6 +117,13 @@ function(
 					getter: "_getMenu",
 					aggregation: "menu"
 				}},
+				/**
+				 * Configurable search.
+				 *
+				 * <b>Note:</b> If <code>showSearch</code> is set to <code>true</code>, two search buttons appear.
+				 * @since 1.67
+				 */
+				searchManager: { type: "sap.f.SearchManager", multiple: false },
 				/**
 				 * The profile avatar.
 				 */
@@ -274,21 +286,45 @@ function(
 		}
 
 		this._bOTBUpdateNeeded = true;
+
 		return this.setProperty("homeIcon", sSrc);
+	};
+
+	ShellBar.prototype.setHomeIconTooltip = function (sTooltip) {
+		var sDefaultTooltip = this._oAcc.getEntityTooltip("LOGO");
+
+		if (!this._oHomeIcon) {
+			this._oHomeIcon = this._oFactory.getHomeIcon();
+		}
+
+		if (sTooltip) {
+			this._oHomeIcon.setTooltip(sTooltip);
+		} else {
+			this._oHomeIcon.setTooltip(sDefaultTooltip);
+		}
+
+		this._bOTBUpdateNeeded = false;
+		return this.setProperty("homeIconTooltip", sTooltip, true);
 	};
 
 	ShellBar.prototype.setTitle = function (sTitle) {
 		this._sTitle = sTitle;
-		if (sTitle) {
+		if (!sTitle) {
+			this._oPrimaryTitle = null;
+			this._oMegaMenu = null;
+		} else {
 			if (!this._oMegaMenu) {
-				this._oMegaMenu = this._oMegaMenu = this._oFactory.getMegaMenu();
+				this._oMegaMenu = this._oFactory.getMegaMenu();
 			}
 			this._oMegaMenu.setText(sTitle);
-		} else {
-			this._oMegaMenu = null;
-		}
+			if (!this._oPrimaryTitle) {
+				this._oPrimaryTitle = this._oFactory.getPrimaryTitle();
+			}
+			this._oPrimaryTitle.setText(sTitle);
 
+		}
 		this._bOTBUpdateNeeded = true;
+
 		return this.setProperty("title", sTitle);
 	};
 
@@ -303,6 +339,7 @@ function(
 		}
 
 		this._bOTBUpdateNeeded = true;
+
 		return this.setProperty("secondTitle", sTitle);
 	};
 
@@ -316,6 +353,7 @@ function(
 		}
 
 		this._bOTBUpdateNeeded = true;
+
 		return this.setProperty("showCopilot", bShow);
 	};
 
@@ -329,7 +367,24 @@ function(
 		}
 
 		this._bOTBUpdateNeeded = true;
+
 		return this.setProperty("showSearch", bShow);
+	};
+
+	ShellBar.prototype.setSearchManager = function (oConfig) {
+		this.setAggregation("searchManager", oConfig);
+
+		if (oConfig) {
+			if (!this._oManagedSearch) {
+				this._oManagedSearch = this._oFactory.getManagedSearch();
+			}
+		} else {
+			this._oManagedSearch = null;
+		}
+
+		this._bOTBUpdateNeeded = true;
+
+		return this;
 	};
 
 	ShellBar.prototype.setShowNotifications = function (bShow) {
@@ -342,6 +397,7 @@ function(
 		}
 
 		this._bOTBUpdateNeeded = true;
+
 		return this.setProperty("showNotifications", bShow);
 	};
 
@@ -355,6 +411,7 @@ function(
 		}
 
 		this._bOTBUpdateNeeded = true;
+
 		return this.setProperty("showProductSwitcher", bShow);
 	};
 
@@ -368,6 +425,7 @@ function(
 		}
 
 		this._bOTBUpdateNeeded = true;
+
 		return this.setProperty("showNavButton", bShow);
 	};
 
@@ -381,6 +439,7 @@ function(
 		}
 
 		this._bOTBUpdateNeeded = true;
+
 		return this.setProperty("showMenuButton", bShow);
 	};
 
@@ -421,9 +480,20 @@ function(
 		if (this._oHomeIcon) {
 			this._oOverflowToolbar.addContent(this._oHomeIcon);
 		}
-		if (this._oMegaMenu) {
+
+
+		// we need to create and assign null to the title control reference,
+		// which we will later read in ResponsiveHandler
+		this._oTitleControl = null;
+		//depends on the given configuration we either show MenuButton with MegaMenu, or Title
+		if (this.getShowMenuButton() && this._oPrimaryTitle){
+			this._oOverflowToolbar.addContent(this._oPrimaryTitle);
+			this._oTitleControl = this._oPrimaryTitle;
+		} else if (this._oMegaMenu) {
 			this._oOverflowToolbar.addContent(this._oMegaMenu);
+			this._oTitleControl = this._oMegaMenu;
 		}
+
 		if (this._oSecondTitle) {
 			this._oOverflowToolbar.addContent(this._oSecondTitle);
 		}
@@ -436,10 +506,16 @@ function(
 
 		this._oOverflowToolbar.addContent(this._oToolbarSpacer);
 
+		if (this._oManagedSearch) {
+			this._oOverflowToolbar.addContent(this._oManagedSearch);
+			this._aOverflowControls.push(this._oManagedSearch);
+		}
+
 		if (this._oSearch) {
 			this._oOverflowToolbar.addContent(this._oSearch);
 			this._aOverflowControls.push(this._oSearch);
 		}
+
 		if (this._oNotifications) {
 			this._oOverflowToolbar.addContent(this._oNotifications);
 			this._aOverflowControls.push(this._oNotifications);
@@ -479,6 +555,7 @@ function(
 		if (!this._oMegaMenu) {
 			this._oMegaMenu = this._oFactory.getMegaMenu();
 		}
+
 		return this._oMegaMenu;
 	};
 

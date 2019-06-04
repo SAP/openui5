@@ -8,8 +8,6 @@ sap.ui.define([
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/plugin/Split",
-	"sap/m/Button",
-	"sap/m/Panel",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/thirdparty/sinon-4"
 ],
@@ -21,8 +19,6 @@ function (
 	ChangeRegistry,
 	Utils,
 	SplitPlugin,
-	Button,
-	Panel,
 	XMLView,
 	sinon
 ) {
@@ -84,7 +80,7 @@ function (
 
 			oChangeRegistry.registerControlsForChanges({
 				"sap.m.Panel": {
-					"splitStuff" : { completeChangeContent: function() {} }
+					splitStuff : { completeChangeContent: function() {} }
 				}
 			})
 			.then(function() {
@@ -198,12 +194,11 @@ function (
 			this.oSplitPlugin.deregisterElementOverlay(this.oButton1Overlay);
 			this.oSplitPlugin.registerElementOverlay(this.oButton1Overlay);
 
-			sandbox.stub(this.oSplitPlugin, "hasStableId").callsFake(function(oOverlay){
-				if (oOverlay === this.oPanelOverlay){
+			sandbox.stub(this.oSplitPlugin, "hasStableId").callsFake(function(oOverlay) {
+				if (oOverlay === this.oPanelOverlay) {
 					return false;
-				} else {
-					return true;
 				}
+				return true;
 			}.bind(this));
 
 			assert.strictEqual(
@@ -215,18 +210,18 @@ function (
 
 		QUnit.test("when isEnabled() is a function in designTime metadata and the specified element contains only one control", function (assert) {
 			var oDesignTimeMetadata2 = {
-					actions : {
-						split : {
-							changeType: "splitField",
-							changeOnRelevantContainer : true,
-							isEnabled : function() {
-								return true;
-							},
-							getControlsCount : function() {
-								return 1;
-							}
+				actions : {
+					split : {
+						changeType: "splitField",
+						changeOnRelevantContainer : true,
+						isEnabled : function() {
+							return true;
+						},
+						getControlsCount : function() {
+							return 1;
 						}
 					}
+				}
 			};
 
 			fnSetOverlayDesigntimeMetadata(this.oButton2Overlay, oDesignTimeMetadata2);
@@ -376,5 +371,4 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

@@ -77,14 +77,14 @@ function (
 			});
 		});
 
-		 QUnit.test("does propagate if there are changes for the component", function (assert) {
+		QUnit.test("does propagate if there are changes for the component", function (assert) {
 			assert.expect(0); // assert only the addPropagationListener to be called
 
 			var mDeterminedChanges = {
-				"someId": [{}]
+				someId: [{}]
 			};
 
-			 var oComponent = {
+			var oComponent = {
 				getManifestObject: function () {
 					return {};
 				},
@@ -92,7 +92,7 @@ function (
 				},
 				getManifest: function () {},
 				setModel: function () {}
-			 };
+			};
 
 			sandbox.stub(ChangePersistenceFactory, "_getChangesForComponentAfterInstantiation").returns(Promise.resolve(function() {return mDeterminedChanges;}));
 			sandbox.stub(Utils, "isApplicationComponent").returns(true);
@@ -102,7 +102,7 @@ function (
 			.returns("mockName");
 
 			return FlexControllerFactory.getChangesAndPropagate(oComponent, {});
-		 });
+		});
 
 		QUnit.test("when getChangesForPropagate() is called for an embedded component with a preexisting VariantModel on it's application component", function (assert) {
 			assert.expect(3);

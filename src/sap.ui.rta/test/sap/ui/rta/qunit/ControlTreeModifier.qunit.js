@@ -17,7 +17,7 @@ function(
 	TooltipBase,
 	JSONModel,
 	sinon
-){
+) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
@@ -55,7 +55,7 @@ function(
 				"then the visibility of the button is set back to true after the undo.");
 		});
 
-		QUnit.test("when the button's text property is set and bound to a path...", function(assert){
+		QUnit.test("when the button's text property is set and bound to a path...", function(assert) {
 			RtaControlTreeModifier.setProperty(this.oButton, "text", "first value");
 			RtaControlTreeModifier.startRecordingUndo();
 			RtaControlTreeModifier.bindProperty(this.oButton, "text", "/Binding");
@@ -67,7 +67,7 @@ function(
 				"then after the undo the text of the button goes back to the first value.");
 		});
 
-		QUnit.test("when the button's text property binding changes using bindProperty...", function(assert){
+		QUnit.test("when the button's text property binding changes using bindProperty...", function(assert) {
 			RtaControlTreeModifier.bindProperty(this.oButton, "text", "/Binding");
 			RtaControlTreeModifier.startRecordingUndo();
 			RtaControlTreeModifier.bindProperty(this.oButton, "text", "/NewBinding");
@@ -85,15 +85,15 @@ function(
 				);
 		});
 
-		QUnit.test("when the button's text property binding was done using a binding info object and is changed...", function(assert){
+		QUnit.test("when the button's text property binding was done using a binding info object and is changed...", function(assert) {
 			this.oButton.bindProperty("text", {
-					path: '/date',
-					type: 'sap.ui.model.type.Date',
-					formatOptions: {
-						relative: true,
-						relativeScale: 'auto'
-					}
-				});
+				path: '/date',
+				type: 'sap.ui.model.type.Date',
+				formatOptions: {
+					relative: true,
+					relativeScale: 'auto'
+				}
+			});
 			var mBindingInfo = this.oButton.getBindingInfo("text");
 			RtaControlTreeModifier.startRecordingUndo();
 			RtaControlTreeModifier.bindProperty(this.oButton, "text", "/NewBinding");
@@ -111,7 +111,7 @@ function(
 				);
 		});
 
-		QUnit.test("when the button's property binding is set with an expression and an undo is executed...", function(assert){
+		QUnit.test("when the button's property binding is set with an expression and an undo is executed...", function(assert) {
 			this.oButton = new Button({text : "{= ${/Items}.length > 0}"});
 			var mBindingInfo = this.oButton.getBindingInfo("text");
 			RtaControlTreeModifier.startRecordingUndo();
@@ -125,7 +125,7 @@ function(
 				);
 		});
 
-		QUnit.test("when a data model is present and a button's text property previously set as value is bound to a path...", function(assert){
+		QUnit.test("when a data model is present and a button's text property previously set as value is bound to a path...", function(assert) {
 			RtaControlTreeModifier.setProperty(this.oButton, "text", "first value");
 			this.oButton.setModel(this.oModel);
 			RtaControlTreeModifier.startRecordingUndo();
@@ -142,7 +142,7 @@ function(
 				"then after the undo the text of the button goes back to the first value.");
 		});
 
-		QUnit.test("when a data model is present and a button's text property bound to a path is bound to a different path...", function(assert){
+		QUnit.test("when a data model is present and a button's text property bound to a path is bound to a different path...", function(assert) {
 			this.oButton.setModel(this.oModel);
 			RtaControlTreeModifier.bindProperty(this.oButton, "text", "/text1");
 			RtaControlTreeModifier.startRecordingUndo();
@@ -159,15 +159,15 @@ function(
 				"then after the undo the text of the button goes back to the first value in the data model.");
 		});
 
-		QUnit.test("when a data model is present and a button's text property binding was done using a binding info object and is changed...", function(assert){
+		QUnit.test("when a data model is present and a button's text property binding was done using a binding info object and is changed...", function(assert) {
 			this.oButton.bindProperty("text", {
-					path: '/date',
-					type: 'sap.ui.model.type.Date',
-					formatOptions: {
-						relative: true,
-						relativeScale: 'auto'
-					}
-				});
+				path: '/date',
+				type: 'sap.ui.model.type.Date',
+				formatOptions: {
+					relative: true,
+					relativeScale: 'auto'
+				}
+			});
 			this.oButton.setModel(this.oModel);
 			var mBindingInfo = this.oButton.getBindingInfo("text");
 			RtaControlTreeModifier.startRecordingUndo();
@@ -186,15 +186,15 @@ function(
 				);
 		});
 
-		QUnit.test("when a button's text property is directly unbound (with unbindProperty())...", function(assert){
+		QUnit.test("when a button's text property is directly unbound (with unbindProperty())...", function(assert) {
 			this.oButton.bindProperty("text", {
-					path: '/date',
-					type: 'sap.ui.model.type.Date',
-					formatOptions: {
-						relative: true,
-						relativeScale: 'auto'
-					}
-				});
+				path: '/date',
+				type: 'sap.ui.model.type.Date',
+				formatOptions: {
+					relative: true,
+					relativeScale: 'auto'
+				}
+			});
 			this.oButton.setModel(this.oModel);
 			var mBindingInfo = this.oButton.getBindingInfo("text");
 			RtaControlTreeModifier.startRecordingUndo();
@@ -235,7 +235,6 @@ function(
 			this.aUndoStack = RtaControlTreeModifier.stopRecordingUndo();
 			RtaControlTreeModifier.performUndo(this.aUndoStack);
 			assert.strictEqual(oCreatedControl.getVisible(), false, "then after the undo the Page Section control is no longer visible");
-
 		});
 
 		QUnit.test("when visible section is stashed...", function(assert) {
@@ -261,16 +260,16 @@ function(
 
 	QUnit.module("Given an HorizontalLayout with two buttons...", {
 
-		beforeEach : function(assert) {
+		beforeEach : function() {
 			this.oHorizontalLayout = new HorizontalLayout(
 				{content : [new Button("firstButton"), new Button("secondButton")]}
 			);
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			this.oHorizontalLayout.destroy();
 		}
 	}, function() {
-		QUnit.test("when insertAggregation is called to add a button in the middle of the layout...", function(assert){
+		QUnit.test("when insertAggregation is called to add a button in the middle of the layout...", function(assert) {
 			var oButton = new Button("AddedMiddle");
 			RtaControlTreeModifier.startRecordingUndo();
 			RtaControlTreeModifier.insertAggregation(this.oHorizontalLayout, "content", oButton, 1);
@@ -280,7 +279,7 @@ function(
 			assert.strictEqual(this.oHorizontalLayout.getAggregation("content").length, 2, "then after the undo the button is removed");
 		});
 
-		QUnit.test("when removeAggregation on the second button is called...", function(assert){
+		QUnit.test("when removeAggregation on the second button is called...", function(assert) {
 			var oControl = sap.ui.getCore().byId("secondButton");
 			RtaControlTreeModifier.startRecordingUndo();
 			RtaControlTreeModifier.removeAggregation(this.oHorizontalLayout, "content", oControl);
@@ -294,7 +293,7 @@ function(
 			);
 		});
 
-		QUnit.test("when removeAllAggregation is called to remove all buttons...", function(assert){
+		QUnit.test("when removeAllAggregation is called to remove all buttons...", function(assert) {
 			RtaControlTreeModifier.startRecordingUndo();
 			RtaControlTreeModifier.removeAllAggregation(this.oHorizontalLayout, "content");
 			this.aUndoStack = RtaControlTreeModifier.stopRecordingUndo();
@@ -310,18 +309,18 @@ function(
 	});
 
 	QUnit.module("Given a button and a tooltip...", {
-		beforeEach : function(assert) {
+		beforeEach : function() {
 			this.oButton = new Button("TooltipButton");
 			this.oToolTip = new TooltipBase("ToolTip", { text : "first text" });
 			this.oNewToolTip = new TooltipBase("NewToolTip", { text : "new text"});
 		},
-		afterEach : function(assert) {
+		afterEach : function() {
 			this.oButton.destroy();
 			this.oToolTip.destroy();
 			this.oNewToolTip.destroy();
 		}
 	}, function() {
-		QUnit.test("when a tooltip aggregation is inserted in the button...", function(assert){
+		QUnit.test("when a tooltip aggregation is inserted in the button...", function(assert) {
 			RtaControlTreeModifier.startRecordingUndo();
 			RtaControlTreeModifier.insertAggregation(this.oButton, "tooltip", this.oToolTip);
 			this.aUndoStack = RtaControlTreeModifier.stopRecordingUndo();
@@ -330,7 +329,7 @@ function(
 			assert.strictEqual(this.oButton.getTooltip(), null, "then after the undo the tooltip is removed");
 		});
 
-		QUnit.test("when a tooltip aggregation is inserted in the button with a tooltip already...", function(assert){
+		QUnit.test("when a tooltip aggregation is inserted in the button with a tooltip already...", function(assert) {
 			RtaControlTreeModifier.insertAggregation(this.oButton, "tooltip", this.oToolTip);
 			RtaControlTreeModifier.startRecordingUndo();
 			RtaControlTreeModifier.insertAggregation(this.oButton, "tooltip", this.oNewToolTip);
@@ -340,7 +339,7 @@ function(
 			assert.strictEqual(this.oButton.getAggregation("tooltip").getText(), "first text", "then after the undo the first tooltip is restored");
 		});
 
-		QUnit.test("when a tooltip aggregation is removed from the button...", function(assert){
+		QUnit.test("when a tooltip aggregation is removed from the button...", function(assert) {
 			RtaControlTreeModifier.insertAggregation(this.oButton, "tooltip", this.oToolTip);
 			RtaControlTreeModifier.startRecordingUndo();
 			RtaControlTreeModifier.insertAggregation(this.oButton, "tooltip");
@@ -377,5 +376,4 @@ function(
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

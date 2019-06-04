@@ -14,7 +14,7 @@ sap.ui.define([
 	ErrorUtils,
 	jQuery,
 	sinon
-){
+) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
@@ -30,11 +30,11 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when a layer is selected", function (assert) {
 			var oEvent = {
-				getSource : function (){
+				getSource : function () {
 					return {
-						getBindingContextPath : function (){
+						getBindingContextPath : function () {
 							return {
-								substring : function (){
+								substring : function () {
 									return "layer";
 								}
 							};
@@ -69,7 +69,7 @@ sap.ui.define([
 
 		QUnit.test("when MessagePopover is press", function (assert) {
 			var oEvent = {
-				getSource : function (){
+				getSource : function () {
 					return "source";
 				}
 			};

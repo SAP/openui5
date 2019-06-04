@@ -30,8 +30,8 @@ sap.ui.define([
 			var oManifestObj = {
 				"sap.app": {
 					id: "MyComponent",
-					"applicationVersion": {
-						"version": "1.2.3"
+					applicationVersion: {
+						version: "1.2.3"
 					}
 				}
 			};
@@ -56,21 +56,21 @@ sap.ui.define([
 
 			var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent, this.oManifest);
 			var oData = {
-				"variantMgmtId1": {
-					"defaultVariant": "variant0",
-					"variants": [
+				variantMgmtId1: {
+					defaultVariant: "variant0",
+					variants: [
 						{
-							"author": "SAP",
-							"key": "variantMgmtId1",
-							"layer": "VENDOR",
-							"visible": true,
-							"title": "Standard"
+							author: "SAP",
+							key: "variantMgmtId1",
+							layer: "VENDOR",
+							visible: true,
+							title: "Standard"
 						}, {
-							"author": "Me",
-							"key": "variant0",
-							"layer": "CUSTOMER",
-							"visible": true,
-							"title": "variant A"
+							author: "Me",
+							key: "variant0",
+							layer: "CUSTOMER",
+							visible: true,
+							title: "variant A"
 						}
 					]
 				}
@@ -79,23 +79,23 @@ sap.ui.define([
 			this.oModel = new VariantModel(oData, oFlexController, oMockedAppComponent);
 
 			var oVariant = {
-				"content": {
-					"fileName":"variant0",
-					"content": {
-						"title": "variant A"
+				content: {
+					fileName:"variant0",
+					content: {
+						title: "variant A"
 					},
-					"layer":"CUSTOMER",
-					"variantReference":"variant00",
-					"reference": "Dummy.Component"
+					layer:"CUSTOMER",
+					variantReference:"variant00",
+					reference: "Dummy.Component"
 				},
-				"controlChanges" : [
+				controlChanges : [
 					{
-						"fileName":"change44",
-						"layer":"CUSTOMER"
+						fileName:"change44",
+						layer:"CUSTOMER"
 					},
 					{
-						"fileName":"change45",
-						"layer":"CUSTOMER"
+						fileName:"change45",
+						layer:"CUSTOMER"
 					}
 				]
 			};
@@ -123,7 +123,7 @@ sap.ui.define([
 			var done = assert.async();
 
 			var oDummyOverlay = {
-				getVariantManagement : function(){
+				getVariantManagement : function() {
 					return "idMain1--variantManagementOrdersTable";
 				}
 			};
@@ -174,5 +174,4 @@ sap.ui.define([
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

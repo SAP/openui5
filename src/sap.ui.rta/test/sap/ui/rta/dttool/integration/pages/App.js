@@ -1,11 +1,11 @@
 sap.ui.define([
-	'sap/ui/test/Opa5',
-	'sap/ui/test/actions/Press',
-	'sap/ui/test/actions/EnterText',
-	'sap/ui/test/matchers/Properties',
-	'sap/ui/test/matchers/AggregationLengthEquals',
-	'sap/ui/rta/dttool/integration/pages/Common',
-	'sap/ui/rta/dttool/integration/pages/Code',
+	"sap/ui/test/Opa5",
+	"sap/ui/test/actions/Press",
+	"sap/ui/test/actions/EnterText",
+	"sap/ui/test/matchers/Properties",
+	"sap/ui/test/matchers/AggregationLengthEquals",
+	"sap/ui/rta/dttool/integration/pages/Common",
+	"sap/ui/rta/dttool/integration/pages/Code",
 	"sap/ui/fl/FlexControllerFactory"
 ], function(
 	Opa5,
@@ -17,7 +17,7 @@ sap.ui.define([
 	Code,
 	FlexControllerFactory
 ) {
-	'use strict';
+	"use strict";
 
 	Opa5.createPageObjects({
 		onTheAppView : {
@@ -105,7 +105,7 @@ sap.ui.define([
 						errorMessage : "Couldn't find control with id addDialogInput"
 					});
 				},
-				iPressTheAddButton : function (sModulePath) {
+				iPressTheAddButton : function () {
 					return this.waitFor({
 						id : "addControlButton",
 						actions : new Press(),
@@ -153,9 +153,9 @@ sap.ui.define([
 						success: function (oTree) {
 							if (oTree.getAggregation("items").length > 1) {
 								return this.iSelectTheNthTreeItem(0);
-							} else {
-								Opa5.assert.ok(true, "Outline is already collapsed");
 							}
+
+							Opa5.assert.ok(true, "Outline is already collapsed");
 						}.bind(this)
 					});
 				},
@@ -290,7 +290,6 @@ sap.ui.define([
 							Opa5.assert.ok(true, "Was able to find " + oListItem + " with given Property: " + sProperty);
 						}
 					});
-
 				},
 				thePassedPropertyInPropertyPanelItemHasContent: function(sProperty) {
 					return this.waitFor({
@@ -310,7 +309,6 @@ sap.ui.define([
 							Opa5.assert.ok(true, "Was able to find " + oListItem + " with Property " + sProperty + " and has content");
 						}
 					});
-
 				},
 				theSampleSelectShouldBeShown : function () {
 					return this.waitFor({
@@ -325,7 +323,7 @@ sap.ui.define([
 				thePropertyPanelToolbarShouldDisplayTheCorrectLabel : function (sControlName) {
 					return this.waitFor({
 						id : "__title5",
-						matchers : function(oTitle){
+						matchers : function(oTitle) {
 							return oTitle.getText().indexOf(sControlName) >= 0;
 						},
 						success : function () {
@@ -339,8 +337,8 @@ sap.ui.define([
 						id : "palette",
 						viewName : "App",
 						matchers : new AggregationLengthEquals({
-								name : "items",
-								length : iNumberOfPaletteGroups
+							name : "items",
+							length : iNumberOfPaletteGroups
 						}),
 						success : function () {
 							Opa5.assert.ok(true, "Palette has " + iNumberOfPaletteGroups + " groups.");
@@ -357,10 +355,8 @@ sap.ui.define([
 							length : 8
 						}),
 						success : function (oPalette) {
-
 							var bControlAdded = oPalette.getItems().some(function (oItem) {
 								if (oItem.getContent()[0].getHeaderToolbar().getContent()[0].getText() === "action") {
-
 									return oItem.getContent()[0].getContent()[0].getItems().some(function (oItem) {
 										if (oItem.getCells()[1].getText() === "Custom Button") {
 											return true;
@@ -387,9 +383,9 @@ sap.ui.define([
 					return this.waitFor({
 						id: "theIFrame",
 						viewName: "App",
-						matchers : function(){
+						matchers : function() {
 							var oElement = jQuery("#__component0---app--theIFrame").contents().find("#" + sId);
-							return oElement.hasClass( "sapUiDtOverlaySelected" );
+							return oElement.hasClass("sapUiDtOverlaySelected");
 						},
 						success : function () {
 							Opa5.assert.ok(true, sId + " has Class sapUiDtOverlaySelected (is selected)");
@@ -425,7 +421,7 @@ sap.ui.define([
 							return oSavedChange;
 						},
 						success: function () {
-							var oFilteredChange = ["changeType"].reduce(function(oChangeProperties, sChangeKey){
+							var oFilteredChange = ["changeType"].reduce(function(oChangeProperties, sChangeKey) {
 								oChangeProperties[sChangeKey] = oSavedChange[sChangeKey];
 								return oChangeProperties;
 							}, {});
@@ -445,7 +441,7 @@ sap.ui.define([
 							return oSavedChange;
 						},
 						success: function () {
-							var oFilteredChange = ["changeType"].reduce(function(oChangeProperties, sChangeKey){
+							var oFilteredChange = ["changeType"].reduce(function(oChangeProperties, sChangeKey) {
 								oChangeProperties[sChangeKey] = oSavedChange[sChangeKey];
 								return oChangeProperties;
 							}, {});
@@ -476,7 +472,7 @@ sap.ui.define([
 						errorMessage: "The items position has not changed"
 					});
 				},
-				theElementShouldBeInTheOutline: function (nPosition) {
+				theElementShouldBeInTheOutline: function () {
 					return this;
 				},
 				theUndoStateShouldBeCorrect: function (bUndoShouldBeEnabled) {

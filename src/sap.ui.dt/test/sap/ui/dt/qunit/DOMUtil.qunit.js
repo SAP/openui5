@@ -6,7 +6,7 @@ sap.ui.define([
 ], function (
 	DOMUtil,
 	Button
-){
+) {
 	"use strict";
 
 	DOMUtil.insertStyles('\
@@ -40,7 +40,7 @@ sap.ui.define([
 		afterEach : function() {
 			this.oContainer.remove();
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when getSize is called for the container", function(assert) {
 			var mExpectedSize = {
 				width : 200,
@@ -63,7 +63,7 @@ sap.ui.define([
 		afterEach : function() {
 			this.oContainer.remove();
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when getOffsetFromParent is called for the content without scrolling", function(assert) {
 			var oContentGeometry = DOMUtil.getGeometry(this.oContent.get(0));
 			assert.strictEqual(
@@ -110,7 +110,7 @@ sap.ui.define([
 		afterEach : function() {
 			this.oButton.destroy();
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when the DOM reference is available", function(assert) {
 			var oButtonDomRef = this.oButton.getDomRef();
 			var mSize = DOMUtil.getSize(oButtonDomRef);
@@ -145,7 +145,7 @@ sap.ui.define([
 		afterEach : function() {
 			this.oDomElement.remove();
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when the getDomRefForCSSSelector is called for :sap-domref", function(assert) {
 			var oDomRef = DOMUtil.getDomRefForCSSSelector(this.oDomElement, ":sap-domref");
 			assert.strictEqual(oDomRef.length, 1, "one element found");
@@ -196,7 +196,7 @@ sap.ui.define([
 			this.oDomElement.remove();
 			jQuery("#qunit-fixture").empty();
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when this element, it's children and styling is copied", function(assert) {
 			DOMUtil.cloneDOMAndStyles(this.oDomElement, jQuery("#right-part"));
 
@@ -204,7 +204,7 @@ sap.ui.define([
 			assert.ok(oCopyDiv, "element is copied");
 			assert.strictEqual(oCopyDiv.css("width"), "200px", "styles for element are also copied");
 
-			var sBeforeDivContent = window.getComputedStyle( this.oDomElement.get(0), ':before' ).getPropertyValue('content').replace(/[\"\']/g, "");
+			var sBeforeDivContent = window.getComputedStyle(this.oDomElement.get(0), ':before').getPropertyValue('content').replace(/[\"\']/g, "");
 			var sBeforeCopyDivContent = oCopyDiv.children().first().html();
 			assert.strictEqual(sBeforeCopyDivContent, sBeforeDivContent, "and the pseudoElements are also copied");
 
@@ -212,7 +212,7 @@ sap.ui.define([
 			assert.ok(oCopySpan, "child elemen is copied");
 			assert.strictEqual(oCopySpan.css("color"), 'rgb(255, 0, 0)', "styles for child elemen are also copied");
 
-			var sAfterSpanContent = window.getComputedStyle( this.oDomElement.find(">span").get(0), ':after' ).getPropertyValue('content').replace(/[\"\']/g, "");
+			var sAfterSpanContent = window.getComputedStyle(this.oDomElement.find(">span").get(0), ':after').getPropertyValue('content').replace(/[\"\']/g, "");
 			var sAfterCopySpanContent = oCopySpan.children().last().html();
 			assert.strictEqual(sAfterCopySpanContent, sAfterSpanContent, "and the pseudoElements are also copied");
 		});
@@ -230,7 +230,7 @@ sap.ui.define([
 		afterEach : function() {
 			this.oContainer.remove();
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("when the content is higher but container has no overflow property set", function(assert) {
 			this.oContent.css({
 				height: 400
@@ -276,7 +276,7 @@ sap.ui.define([
 	}, function () {
 		QUnit.test("when copyComputedStyle is called and css-attribute display is set to none", function(assert) {
 			this.oSrcDomElement.css({
-				"display": "none"
+				display: "none"
 			});
 			DOMUtil.copyComputedStyle(this.oSrcDomElement, this.oDestDomElement);
 			var mSrcStyles = window.getComputedStyle(this.oSrcDomElement.get(0));
@@ -311,19 +311,19 @@ sap.ui.define([
 	QUnit.module("getScrollLeft()", {
 		beforeEach: function() {
 			this.$Panel = jQuery('<div/>').css({
-				'width': '100px',
-				'height': '100px',
-				'overflow': 'auto'
+				width: '100px',
+				height: '100px',
+				overflow: 'auto'
 			}).appendTo("#qunit-fixture");
 			jQuery('<div/>').css({
-				'width': '200px',
-				'height': '200px'
+				width: '200px',
+				height: '200px'
 			}).appendTo(this.$Panel);
 		},
 		afterEach: function() {
 			this.$Panel.remove();
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("initial position", function (assert) {
 			assert.strictEqual(DOMUtil.getScrollLeft(this.$Panel.get(0)), 0);
 		});
@@ -344,13 +344,13 @@ sap.ui.define([
 	QUnit.module("hasHorizontalScrollBar()", {
 		beforeEach: function () {
 			this.$OuterPanel = jQuery('<div/>').css({
-				'width': '100px',
-				'height': '100px',
-				'overflow': 'auto',
+				width: '100px',
+				height: '100px',
+				overflow: 'auto',
 				'background-color': 'red'
 			}).appendTo("#qunit-fixture");
 			this.$InnerPanel = jQuery('<div/>').css({
-				'width': '100px',
+				width: '100px',
 				'background-color': 'blue'
 			}).appendTo(this.$OuterPanel);
 		}
@@ -383,24 +383,24 @@ sap.ui.define([
 	QUnit.module("appendChild()", {
 		beforeEach: function() {
 			this.$Container = jQuery('<div/>').css({
-				'width': '500px',
-				'height': '500px',
-				'overflow': 'auto',
+				width: '500px',
+				height: '500px',
+				overflow: 'auto',
 				'background-color': 'red'
 			}).appendTo("#qunit-fixture");
 			this.$Child = jQuery('<div/>').css({
-				'width': '500px',
-				'height': '300px',
-				'overflow': 'auto',
+				width: '500px',
+				height: '300px',
+				overflow: 'auto',
 				'background-color': 'blue'
 			}).appendTo(this.$Container);
 			jQuery('<div/>').css({
-				'width': '1000px',
-				'height': '1000px',
+				width: '1000px',
+				height: '1000px',
 				'background-color': 'green'
 			}).appendTo(this.$Child);
 		}
-	}, function(){
+	}, function() {
 		QUnit.test("scrollTop/scrollLeft remain on the same positions", function (assert) {
 			this.$Child.scrollTop(300);
 			this.$Child.scrollLeft(200);
@@ -602,5 +602,4 @@ sap.ui.define([
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

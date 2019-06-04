@@ -100,7 +100,6 @@ sap.ui.define(["sap/ui/fl/Change"], function(Change) {
 		function StandardVariantChanges(oChange) {
 			return oChange.getChangeType() === 'standardVariant';
 		}
-
 	};
 
 	/**

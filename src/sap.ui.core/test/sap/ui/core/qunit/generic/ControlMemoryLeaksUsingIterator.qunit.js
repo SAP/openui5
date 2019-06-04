@@ -22,6 +22,15 @@ sap.ui.define([
 ], function(ControlIterator, MemoryLeakCheck, UriParameters, LoadingIndicator) {
 	"use strict";
 
+	// disable require.js to avoid issues with thirdparty
+	sap.ui.loader.config({
+		map: {
+			"*": {
+				"sap/ui/thirdparty/require": "test-resources/sap/ui/core/qunit/generic/helper/_emptyModule"
+			}
+		}
+	});
+
 	var loadingIndicator = new LoadingIndicator("Discovering and loading all libraries and controls... this will take a while... ",
 			"NOTE: you can select a specific library using the URL parameter 'library' (e.g. ...&library=sap.m) and/or a specific control using the URL parameter 'control' " +
 			"with the full name of the control (e.g. ...&control=sap.m.Button). Giving both reduces the scanning time.");

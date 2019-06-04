@@ -3,10 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/changeHandler/Base",
 	"sap/ui/fl/Utils"
 ], function(
-	Base,
 	FlexUtils
 ) {
 	"use strict";
@@ -117,7 +115,6 @@ sap.ui.define([
 	 * @name sap.ui.fl.changeHandler.MoveElements#getSpecificChangeInfo
 	 */
 	MoveElements.getSpecificChangeInfo = function(oModifier, mSpecificChangeInfo) {
-
 		var oSourceParent = mSpecificChangeInfo.source.parent || oModifier.bySelector(mSpecificChangeInfo.source.id);
 		var oTargetParent = mSpecificChangeInfo.target.parent || oModifier.bySelector(mSpecificChangeInfo.target.id);
 		var sSourceAggregation = mSpecificChangeInfo.source.aggregation;

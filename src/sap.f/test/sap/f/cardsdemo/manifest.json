@@ -183,6 +183,11 @@
 		  "target": "dnd2"
 		},
 		{
+		  "pattern": "dnd3",
+		  "name": "dnd3",
+		  "target": "dnd3"
+		},
+		{
 		  "pattern": "delayedLoading",
 		  "name": "delayedLoading",
 		  "target": "delayedLoading"
@@ -327,6 +332,11 @@
 			"dnd2": {
 				"viewId": "dnd2",
 				"viewName": "Dnd2",
+				"viewLevel": 1
+			},
+			"dnd3": {
+				"viewId": "dnd3",
+				"viewName": "Dnd3",
 				"viewLevel": 1
 			},
 			"noHeaderNoContent": {

@@ -54,5 +54,4 @@ sap.ui.define([
 	RegistrationDelegator.registerAll();
 
 	return sap.ui.fl;
-
 });

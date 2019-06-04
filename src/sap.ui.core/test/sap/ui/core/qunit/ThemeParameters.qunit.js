@@ -2,7 +2,7 @@
 sap.ui.define(["sap/ui/core/theming/Parameters", "sap/ui/core/Control", "sap/ui/core/Element"], function(Parameters, Control, Element) {
 	"use strict";
 
-	var sPath = new URI(sap.ui.require.toUrl("testdata/core"), document.baseURI).path();
+	var sPath = new URI(sap.ui.require.toUrl("testdata/core"), document.baseURI).toString();
 
 	QUnit.test("InitialCheck", function(assert) {
 		assert.ok(Parameters, "sap.ui.core.theming.Parameters must exist");
@@ -77,7 +77,7 @@ sap.ui.define(["sap/ui/core/theming/Parameters", "sap/ui/core/Control", "sap/ui/
 
 		// include 40 stylesheets to test IE9 stylesheet limit
 		var iNewStylesheets = 40;
-		var sStyleBaseUrl = "testdata/stylesheets/";
+		var sStyleBaseUrl = "test-resources/sap/ui/core/qunit/testdata/stylesheets/";
 		var i;
 		for (i = 0; i < iNewStylesheets; i++) {
 			var sStyleId = getStyleId(i);

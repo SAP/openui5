@@ -479,7 +479,7 @@
 			},
 			'sap/viz/libs/sap-viz': {
 				amd: true,
-				deps: ['sap/ui/thirdparty/jquery', 'sap/viz/libs/sap-viz-info-charts', 'sap/ui/thirdparty/d3', 'sap/viz/libs/canvg']
+				deps: ['sap/viz/library', 'sap/ui/thirdparty/jquery', 'sap/ui/thirdparty/d3', 'sap/viz/libs/canvg']
 			},
 			'sap/viz/libs/sap-viz-info-charts': {
 				amd: true,

@@ -75,7 +75,7 @@ function (
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.ui.layout.form.Form" : {
-					"addGroup": { completeChangeContent: function () {} }
+					addGroup: { completeChangeContent: function () {} }
 				}
 			})
 			.then(function() {
@@ -110,7 +110,6 @@ function (
 				var done = assert.async();
 
 				this.oDesignTime.attachEventOnce("synced", function() {
-
 					this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
 					this.oFormOverlay = OverlayRegistry.getOverlay(this.oForm);
 					this.oFormContainerOverlay = OverlayRegistry.getOverlay(this.oFormContainer);
@@ -126,7 +125,7 @@ function (
 			this.oDesignTime.destroy();
 		}
 
-	}, function(){
+	}, function() {
 		QUnit.test("when the designTimeMetadata has childNames for the container name", function(assert) {
 			assert.deepEqual(this.oCreateContainer.getCreateContainerText(false, this.oFormOverlay), "Create: Group", "then the correct message key is returned");
 		});
@@ -212,7 +211,7 @@ function (
 				bFirstCall = false;
 				return bIsAvailable;
 			}.bind(this));
-			sandbox.stub(this.oCreateContainer, "handleCreate").callsFake(function(bOverlayIsSibling, oElementOverlay){
+			sandbox.stub(this.oCreateContainer, "handleCreate").callsFake(function(bOverlayIsSibling, oElementOverlay) {
 				assert.equal(bOverlayIsSibling, bCheckValue, "the 'handleCreate' function is called with bOverlayIsSibling = " + bCheckValue);
 				assert.deepEqual(oElementOverlay.getId(), this.oFormOverlay.getId(), "the 'handleCreate' function is called with the correct overlay");
 			}.bind(this));
@@ -278,12 +277,11 @@ function (
 			this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
 			this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
 
-			sandbox.stub(this.oCreateContainer, "hasStableId").callsFake(function(oOverlay){
-				if (oOverlay === this.oFormOverlay){
+			sandbox.stub(this.oCreateContainer, "hasStableId").callsFake(function(oOverlay) {
+				if (oOverlay === this.oFormOverlay) {
 					return false;
-				} else {
-					return true;
 				}
+				return true;
 			}.bind(this));
 
 			sandbox.stub(this.oFormContainerOverlay, "getRelevantContainer").returns(this.oForm);
@@ -386,7 +384,7 @@ function (
 				var oCommand = oEvent.getParameter("command");
 				assert.ok(oCommand, "then command is available");
 				assert.strictEqual(oCommand.getMetadata().getName(), "sap.ui.rta.command.CreateContainer", "and command is of the correct type");
-				assert.strictEqual(oEvent.getParameter("action").changeType, "addGroup", "then the correct action is passed to the event" );
+				assert.strictEqual(oEvent.getParameter("action").changeType, "addGroup", "then the correct action is passed to the event");
 				fnDone();
 			});
 			assert.ok(true, "then plugin createContainer is called with this overlay");
@@ -401,7 +399,7 @@ function (
 				var oCommand = oEvent.getParameter("command");
 				assert.ok(oCommand, "then command is available");
 				assert.strictEqual(oCommand.getMetadata().getName(), "sap.ui.rta.command.CreateContainer", "and command is of the correct type");
-				assert.strictEqual(oEvent.getParameter("action").changeType, "addGroup", "then the correct action is passed to the event" );
+				assert.strictEqual(oEvent.getParameter("action").changeType, "addGroup", "then the correct action is passed to the event");
 				assert.ok(oCommand.getLabel(), "then the label is in the command");
 				assert.deepEqual(oCommand.getIndex(), 1, "then the correct index is in the command");
 				assert.deepEqual(oCommand.getParentId(), this.oForm.getId(), "then the correct parentId is in the command");
@@ -438,7 +436,7 @@ function (
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.ui.layout.form.SimpleForm": {
-					"addSimpleFormGroup": { completeChangeContent: function () {} }
+					addSimpleFormGroup: { completeChangeContent: function () {} }
 				}
 			})
 			.then(function() {
@@ -480,7 +478,7 @@ function (
 				var oCommand = oEvent.getParameter("command");
 				assert.ok(oCommand, "then command is available");
 				assert.strictEqual(oCommand.getMetadata().getName(), "sap.ui.rta.command.CreateContainer", "and command is of the correct type");
-				assert.strictEqual(oEvent.getParameter("action").changeType, "addSimpleFormGroup", "then the correct action is passed to the event" );
+				assert.strictEqual(oEvent.getParameter("action").changeType, "addSimpleFormGroup", "then the correct action is passed to the event");
 				assert.deepEqual(oCommand.getParentId(), this.oSimpleForm.getAggregation("form").getId(), "then the correct parentId is in the command");
 				fnDone();
 			}.bind(this));
@@ -496,7 +494,7 @@ function (
 				var oCommand = oEvent.getParameter("command");
 				assert.ok(oCommand, "then command is available");
 				assert.strictEqual(oCommand.getMetadata().getName(), "sap.ui.rta.command.CreateContainer", "and command is of the correct type");
-				assert.strictEqual(oEvent.getParameter("action").changeType, "addSimpleFormGroup", "then the correct action is passed to the event" );
+				assert.strictEqual(oEvent.getParameter("action").changeType, "addSimpleFormGroup", "then the correct action is passed to the event");
 				assert.deepEqual(oCommand.getParentId(), this.oSimpleForm.getAggregation("form").getId(), "then the correct parentId is in the command");
 				fnDone();
 			}.bind(this));

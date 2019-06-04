@@ -8,7 +8,7 @@ sap.ui.define([
 	AggregationDesignTimeMetadata,
 	DesignTimeMetadata,
 	sinon
-){
+) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
@@ -36,5 +36,4 @@ sap.ui.define([
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

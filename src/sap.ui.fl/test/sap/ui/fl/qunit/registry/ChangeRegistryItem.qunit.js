@@ -12,12 +12,7 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("sap.ui.fl.registry.ChangeRegistryItem", {
-		beforeEach: function() {
-		},
-		afterEach: function() {
-		}
 	}, function() {
-
 		QUnit.test("constructor - required params and their getter", function(assert) {
 			//Arrange
 			var oMetadataObject = {name: "myChangeTypeMetadata"};
@@ -32,7 +27,6 @@ sap.ui.define([
 			//Assert
 			assert.deepEqual(instance.getChangeTypeMetadata(), oMetadataObject);
 			assert.equal(instance.getControlType(), "sap.ui.fl.DummyControl");
-
 		});
 
 		QUnit.test("constructor - exception on required params missing", function(assert) {

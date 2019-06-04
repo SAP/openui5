@@ -30,15 +30,15 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 */
-	function FakeLrepConnector(sInitialComponentJsonPath){
+	function FakeLrepConnector(sInitialComponentJsonPath) {
 		this.sInitialComponentJsonPath = sInitialComponentJsonPath;
 		this.mSettings = {};
 	}
 
-	for (var prop in oLrepConnector){
-		if (typeof oLrepConnector[prop] === 'function'){
+	for (var prop in oLrepConnector) {
+		if (typeof oLrepConnector[prop] === 'function') {
 			/*eslint-disable noinspection, no-loop-func */
-			FakeLrepConnector.prototype[prop] = (function(prop){
+			FakeLrepConnector.prototype[prop] = (function(prop) {
 				return function() {
 					throw new Error('Method ' + prop + '() is not implemented in FakeLrepConnector.');
 				};
@@ -66,7 +66,7 @@ sap.ui.define([
 	 * @returns {Promise} Returns a Promise with a settings map
 	 * @public
 	 */
-	FakeLrepConnector.prototype.loadSettings  = function(){
+	FakeLrepConnector.prototype.loadSettings = function() {
 		this.setFlexServiceAvailability(true);
 		return Promise.resolve(this.mSettings);
 	};
@@ -80,7 +80,7 @@ sap.ui.define([
 	 * @param {boolean} [mSettings.isProductiveSystem] Indicates whether the running system is productive or not
 	 * @param {boolean} [mSettings.isVariantSharingEnabled] Indicates whether smart variant sharing is enable or not
 	 */
-	FakeLrepConnector.prototype.setSettings  = function(mSettings){
+	FakeLrepConnector.prototype.setSettings = function(mSettings) {
 		this.mSettings = mSettings;
 	};
 
@@ -90,34 +90,34 @@ sap.ui.define([
 	 *
 	 * @param {boolean} [bAvailability] Availability status
 	 */
-	FakeLrepConnector.prototype.setFlexServiceAvailability  = function(bAvailability){
+	FakeLrepConnector.prototype.setFlexServiceAvailability = function(bAvailability) {
 		LrepConnector._bServiceAvailability = bAvailability;
 	};
 
-	FakeLrepConnector.prototype.loadChanges = function(sComponentClassName){
+	FakeLrepConnector.prototype.loadChanges = function(sComponentClassName) {
 		var initialComponentJsonPath = this.sInitialComponentJsonPath;
 
-		return new Promise(function(resolve, reject){
-			jQuery.getJSON(initialComponentJsonPath).done(function(oResponse){
+		return new Promise(function(resolve, reject) {
+			jQuery.getJSON(initialComponentJsonPath).done(function(oResponse) {
 				var result = {
 					changes: oResponse,
 					componentClassName: sComponentClassName
 				};
 
 				resolve(result);
-			}).fail(function(error){
+			}).fail(function(error) {
 				reject(error);
 			});
 		});
 	};
 
-	FakeLrepConnector.prototype.create = function(payload, changeList, isVariant){
+	FakeLrepConnector.prototype.create = function(payload, changeList, isVariant) {
 		// REVISE ensure old behavior for now, but check again for changes
-		if (!isVariant){
+		if (!isVariant) {
 			return Promise.resolve();
 		}
 
-		if (!payload.creation){
+		if (!payload.creation) {
 			payload.creation = new Date().toISOString();
 		}
 
@@ -129,7 +129,7 @@ sap.ui.define([
 
 	FakeLrepConnector.prototype.update = function(payload, changeName, changelist, isVariant) {
 		// REVISE ensure old behavior for now, but check again for changes
-		if (!isVariant){
+		if (!isVariant) {
 			return Promise.resolve();
 		}
 
@@ -139,9 +139,9 @@ sap.ui.define([
 		});
 	};
 
-	FakeLrepConnector.prototype.deleteChange = function(params, isVariant){
+	FakeLrepConnector.prototype.deleteChange = function(params, isVariant) {
 		// REVISE ensure old behavior for now, but check again for changes
-		if (!isVariant){
+		if (!isVariant) {
 			return Promise.resolve();
 		}
 
@@ -151,8 +151,8 @@ sap.ui.define([
 		});
 	};
 
-	FakeLrepConnector.prototype.send = function(sUri, sMethod, oData, mOptions){
-		return new Promise(function(resolve, reject){
+	FakeLrepConnector.prototype.send = function(sUri, sMethod, oData, mOptions) {
+		return new Promise(function(resolve, reject) {
 			handleGetTransports(sUri, sMethod, oData, mOptions, resolve, reject);
 			handleMakeChangesTransportable(sUri, sMethod, oData, mOptions, resolve, reject);
 			handleManifirstSupport(sUri, sMethod, oData, mOptions, resolve, reject);
@@ -166,14 +166,14 @@ sap.ui.define([
 		var match = regExp.exec(sUri);
 		if (match && sMethod === 'GET') {
 			var oResponse = {
-				"content": [],
-				"fileName": "manifest",
-				"fileType": "appdescr_variant",
-				"id": match[1],
-				"layer": "CUSTOMER",
-				"namespace": "apps/sap.ui.test.application/appVariants/" + match[1],
-				"packageName": "$TMP",
-				"reference": "sap.ui.test.application"
+				content: [],
+				fileName: "manifest",
+				fileType: "appdescr_variant",
+				id: match[1],
+				layer: "CUSTOMER",
+				namespace: "apps/sap.ui.test.application/appVariants/" + match[1],
+				packageName: "$TMP",
+				reference: "sap.ui.test.application"
 			};
 			resolve({
 				response: JSON.stringify(oResponse)
@@ -190,7 +190,7 @@ sap.ui.define([
 			aUriParameters = sUri.match(regExp);
 			resolve({
 				response: {
-					"parameters": aUriParameters
+					parameters: aUriParameters
 				},
 				status: "success"
 			});
@@ -206,27 +206,27 @@ sap.ui.define([
 		}
 	}
 
-	function handleMakeChangesTransportable(sUri, sMethod, oData, mOptions, resolve){
-		if (sUri.match(/^\/sap\/bc\/lrep\/actions\/make_changes_transportable\//) && sMethod === 'POST'){
+	function handleMakeChangesTransportable(sUri, sMethod, oData, mOptions, resolve) {
+		if (sUri.match(/^\/sap\/bc\/lrep\/actions\/make_changes_transportable\//) && sMethod === 'POST') {
 			resolve();
 		}
 	}
 
 	//REVISE Make response configurable
-	function handleGetTransports(sUri, sMethod, oData, mOptions, resolve, reject){
-		if (sUri.match(/^\/sap\/bc\/lrep\/actions\/gettransports\//)){
+	function handleGetTransports(sUri, sMethod, oData, mOptions, resolve) {
+		if (sUri.match(/^\/sap\/bc\/lrep\/actions\/gettransports\//)) {
 			resolve({
 				response: {
-					"transports": [
+					transports: [
 						{
-							"transportId": "U31K008488",
-							"description": "The Ultimate Transport",
-							"owner": "Fantasy Owner",
-							"locked": true
+							transportId: "U31K008488",
+							description: "The Ultimate Transport",
+							owner: "Fantasy Owner",
+							locked: true
 						}
 					],
-					"localonly": false,
-					"errorCode": ""
+					localonly: false,
+					errorCode: ""
 				}
 			});
 		}
@@ -243,12 +243,11 @@ sap.ui.define([
 	 * @param {string} [sAppComponentName] Name of application component to overwrite the existing LRep connector
 	 * @param {string} [sAppVersion] Version of application to overwrite the existing LRep connector
 	 */
-	FakeLrepConnector.enableFakeConnector = function(sInitialComponentJsonPath, sAppComponentName, sAppVersion){
-
+	FakeLrepConnector.enableFakeConnector = function(sInitialComponentJsonPath, sAppComponentName, sAppVersion) {
 		function replaceConnectorFactory() {
 			FakeLrepConnector.enableFakeConnector.original = LrepConnector.createConnector;
-			LrepConnector.createConnector = function(){
-				if (!FakeLrepConnector._oFakeInstance){
+			LrepConnector.createConnector = function() {
+				if (!FakeLrepConnector._oFakeInstance) {
 					FakeLrepConnector._oFakeInstance = new FakeLrepConnector(sInitialComponentJsonPath);
 				}
 				return FakeLrepConnector._oFakeInstance;
@@ -257,9 +256,9 @@ sap.ui.define([
 
 		if (sAppComponentName && sAppVersion) {
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sAppComponentName, sAppVersion);
-			if (!(oChangePersistence._oConnector instanceof FakeLrepConnector)){
+			if (!(oChangePersistence._oConnector instanceof FakeLrepConnector)) {
 				FakeLrepConnector.clearCacheAndResetVariants(sAppComponentName, sAppVersion, oChangePersistence);
-				if (!FakeLrepConnector._oBackendInstances[sAppComponentName]){
+				if (!FakeLrepConnector._oBackendInstances[sAppComponentName]) {
 					FakeLrepConnector._oBackendInstances[sAppComponentName] = {};
 				}
 				FakeLrepConnector._oBackendInstances[sAppComponentName][sAppVersion] = oChangePersistence._oConnector;
@@ -271,7 +270,7 @@ sap.ui.define([
 
 		Cache.clearEntries();
 
-		if (FakeLrepConnector.enableFakeConnector.original){
+		if (FakeLrepConnector.enableFakeConnector.original) {
 			return;
 		}
 		replaceConnectorFactory();
@@ -284,10 +283,9 @@ sap.ui.define([
 	 * @param {string} [sAppComponentName] Name of application component to restore the original LRep connector
 	 * @param {string} [sAppVersion] Version of application to restore the original LRep connector
 	 */
-	FakeLrepConnector.disableFakeConnector = function(sAppComponentName, sAppVersion){
-
+	FakeLrepConnector.disableFakeConnector = function(sAppComponentName, sAppVersion) {
 		function restoreConnectorFactory() {
-			if (FakeLrepConnector.enableFakeConnector.original){
+			if (FakeLrepConnector.enableFakeConnector.original) {
 				LrepConnector.createConnector = FakeLrepConnector.enableFakeConnector.original;
 				FakeLrepConnector.enableFakeConnector.original = undefined;
 				FakeLrepConnector._oFakeInstance = undefined;
@@ -317,5 +315,4 @@ sap.ui.define([
 	};
 
 	return FakeLrepConnector;
-
 }, true);

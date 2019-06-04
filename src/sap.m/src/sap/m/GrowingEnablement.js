@@ -128,9 +128,13 @@ sap.ui.define([
 			this._oControl.$("triggerText").text(sText);
 		},
 
-		// reset paging
+		// reset paging on rebind
 		reset : function() {
 			this._iLimit = 0;
+
+			// if factory function is used we do not activate the replace option of the extended change detection
+			var oBindingInfo = this._oControl.getBindingInfo("items");
+			this._oControl.oExtendedChangeDetectionConfig = (!oBindingInfo || !oBindingInfo.template) ? null : {replace: true};
 		},
 
 		// determines growing reset with binding change reason
@@ -528,7 +532,7 @@ sap.ui.define([
 						var oDiff = aDiff[i],
 							oContext = aContexts[oDiff.index];
 
-						if (oDiff.type == "delete") {
+						if (oDiff.type == "delete" || oDiff.type == "replace") {
 							// group header may need to be deleted as well
 							bFromScratch = true;
 							break;
@@ -566,7 +570,7 @@ sap.ui.define([
 						}
 
 						this.deleteListItem(iDiffIndex);
-					} else {
+					} else if (oDiff.type == "insert") {
 						if (vInsertIndex == -1) {
 							// the subsequent of items needs to be inserted at this position
 							vInsertIndex = iDiffIndex;

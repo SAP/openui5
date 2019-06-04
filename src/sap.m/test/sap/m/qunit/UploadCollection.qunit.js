@@ -824,6 +824,7 @@ sap.ui.define([
 		var sText = "My own text for attachments";
 		this.oUploadCollection.setNumberOfAttachmentsText("My own text for attachments");
 		this.oUploadCollection._setNumberOfAttachmentsTitle();
+		sap.ui.getCore().applyChanges();
 		assert.strictEqual(this.oUploadCollection._oNumberOfAttachmentsTitle.getText(), sText, "Correct Title text for number of attachments.");
 		assert.strictEqual(jQuery(jQuery.sap.domById("uploadCollection-numberOfAttachmentsTitle")).text(), sText);
 	});

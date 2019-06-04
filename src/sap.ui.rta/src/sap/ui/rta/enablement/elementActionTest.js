@@ -34,7 +34,6 @@ function (
 	ControlTreeModifier,
 	sinon
 ) {
-
 	"use strict";
 
 	/**
@@ -76,7 +75,7 @@ function (
 		// Return if controlEnablingCheck.only() has been used to exclude this call
 		if (controlEnablingCheck._only && (sMsg.indexOf(controlEnablingCheck._only) < 0)) { return; }
 
-		if (typeof mOptions.xmlView === "string"){
+		if (typeof mOptions.xmlView === "string") {
 			mOptions.xmlView = {
 				viewContent : mOptions.xmlView
 			};
@@ -95,7 +94,7 @@ function (
 				assert.ok(mOptions.xmlView, "then you provide an XML view to test on: See the.xmlView parameter.");
 
 				var oXmlView = new DOMParser().parseFromString(mOptions.xmlView.viewContent, "application/xml").documentElement;
-				assert.ok(oXmlView.tagName.match("View$"),"then you use the sap.ui.core.mvc View tag as the first tag in your view");
+				assert.ok(oXmlView.tagName.match("View$"), "then you use the sap.ui.core.mvc View tag as the first tag in your view");
 
 				assert.ok(mOptions.action, "then you provide an action: See the action parameter.");
 				assert.ok(mOptions.action.name, "then you provide an action name: See the action.name parameter.");
@@ -111,10 +110,10 @@ function (
 			metadata: {
 				manifest : {
 					"sap.app": {
-						"id": UI_COMPONENT_NAME,
-						"type": "application"
+						id: UI_COMPONENT_NAME,
+						type: "application"
 					},
-					"getEntry": function () {
+					getEntry: function () {
 						return {
 							type: "application"
 						};
@@ -125,7 +124,7 @@ function (
 				var mViewSettings = Object.assign({}, mOptions.xmlView);
 				mViewSettings.id = this.createId("view");
 
-				if (mViewSettings.async === undefined){
+				if (mViewSettings.async === undefined) {
 					// async = true will trigger the xml preprocessors on the xml view, but if defined preprocessors need async, we will always trigger async
 					mViewSettings.async = this.getComponentData().async;
 				}
@@ -165,11 +164,11 @@ function (
 
 		function buildCommand(assert) {
 			this.oControl = this.oView.byId(mOptions.action.controlId);
-			return this.oControl.getMetadata().loadDesignTime(this.oControl).then(function(oDesignTimeMetadata) {
+			return this.oControl.getMetadata().loadDesignTime(this.oControl).then(function() {
 				var mParameter;
 				if (mOptions.action.parameter) {
 					if (typeof mOptions.action.parameter === "function") {
-						mParameter =  mOptions.action.parameter(this.oView);
+						mParameter = mOptions.action.parameter(this.oView);
 					} else {
 						mParameter = mOptions.action.parameter;
 					}
@@ -285,18 +284,18 @@ function (
 						}.bind(this));
 				});
 
-				QUnit.test("When executing on XML and reverting the change in JS (e.g. variant switch)", function(assert){
+				QUnit.test("When executing on XML and reverting the change in JS (e.g. variant switch)", function(assert) {
 					// Stub LREP access to have the command as UI change (needs the view to build the correct ids)
 					var aChanges = [];
 					sandbox.stub(ChangePersistence.prototype, "getChangesForComponent").resolves(aChanges);
 					sandbox.stub(ChangePersistence.prototype, "getCacheKey").resolves("etag-123");
 
 					return createViewInComponent.call(this, SYNC)
-						.then(function (){
+						.then(function () {
 							return buildCommand.call(this, assert);
 						}.bind(this))
 
-						.then(function (){
+						.then(function () {
 							var oChange = this.oCommand.getPreparedChange();
 							aChanges.push(oChange);
 
@@ -320,18 +319,18 @@ function (
 						}.bind(this));
 				});
 
-				QUnit.test("When executing on XML, reverting the change in JS (e.g. variant switch) and applying again", function(assert){
+				QUnit.test("When executing on XML, reverting the change in JS (e.g. variant switch) and applying again", function(assert) {
 					// Stub LREP access to have the command as UI change (needs the view to build the correct ids)
 					var aChanges = [];
 					sandbox.stub(ChangePersistence.prototype, "getChangesForComponent").resolves(aChanges);
 					sandbox.stub(ChangePersistence.prototype, "getCacheKey").resolves("etag-123");
 
 					return createViewInComponent.call(this, SYNC)
-						.then(function (){
+						.then(function () {
 							return buildCommand.call(this, assert);
 						}.bind(this))
 
-						.then(function (){
+						.then(function () {
 							var oChange = this.oCommand.getPreparedChange();
 							aChanges.push(oChange);
 
@@ -375,7 +374,7 @@ function (
 				sandbox.stub(ChangePersistence.prototype, "getCacheKey").returns(ChangePersistence.NOTAG); //no cache key => no xml view processing
 				sandbox.stub(Settings, "getInstance").returns(Promise.resolve({_oSettings: {recordUndo: false}}));
 
-				return createViewInComponent.call(this, SYNC).then(function(){
+				return createViewInComponent.call(this, SYNC).then(function() {
 					return buildCommand.call(this, assert);
 				}.bind(this));
 			},
@@ -403,7 +402,7 @@ function (
 					}.bind(this));
 			});
 
-			QUnit.test("When executing and undoing the command", function(assert){
+			QUnit.test("When executing and undoing the command", function(assert) {
 				return this.oCommand.execute()
 					.then(function () {
 						return this.oDesignTime.getStatus() !== DesignTimeStatus.SYNCED
@@ -427,7 +426,7 @@ function (
 					}.bind(this));
 			});
 
-			QUnit.test("When executing, undoing and redoing the command", function(assert){
+			QUnit.test("When executing, undoing and redoing the command", function(assert) {
 				return this.oCommand.execute()
 					.then(function () {
 						return this.oDesignTime.getStatus() !== DesignTimeStatus.SYNCED

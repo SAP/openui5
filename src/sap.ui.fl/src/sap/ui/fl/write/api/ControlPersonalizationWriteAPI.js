@@ -50,7 +50,7 @@ sap.ui.define([
 		 * @method sap.ui.fl.write.api.ControlPersonalizationWriteAPI.addPersonalizationChanges
 		 * @public
 		 */
-		addPersonalizationChanges: function(mPropertyBag) {
+		addPersonalizationChanges: function() {
 			return OldControlPersonalizationAPI.addPersonalizationChanges.apply(OldControlPersonalizationAPI, arguments);
 		},
 
@@ -67,7 +67,7 @@ sap.ui.define([
 		 * @method sap.ui.fl.write.api.ControlPersonalizationWriteAPI.resetChanges
 		 * @public
 		 */
-		resetChanges: function(aControls, aChangeTypes) {
+		resetChanges: function() {
 			return OldControlPersonalizationAPI.resetChanges.apply(OldControlPersonalizationAPI, arguments);
 		},
 
@@ -82,7 +82,7 @@ sap.ui.define([
 		 * @method sap.ui.fl.write.api.ControlPersonalizationWriteAPI.saveChanges
 		 * @public
 		 */
-		saveChanges: function(aChanges, oManagedObject) {
+		saveChanges: function() {
 			//TODO really manage object or Element|Component, also control equivalent?
 			//TODO make "control" first parameter
 			return OldControlPersonalizationAPI.saveChanges.apply(OldControlPersonalizationAPI, arguments);

@@ -149,55 +149,48 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/Context', './TableUtils', "s
 	 * @private
 	 */
 	Row.prototype.getDomRefs = function(bJQuery, bCollection) {
-		var byId = function(sId) {
-			return jQuery(document.getElementById(sId));
-		};
-		var domById = function(sId) {
-			return (sId ? window.document.getElementById(sId) : null);
-		};
-		var sKey = (bJQuery === true) ? "jQuery" : "dom", fnAccess = (bJQuery === true) ? byId : domById, mDomRefs = this._mDomRefs;
+		bJQuery = bJQuery === true;
+		bCollection = bCollection === true;
+
+		var sKey = bJQuery ? "jQuery" : "dom";
+		var mDomRefs = this._mDomRefs;
 
 		if (!mDomRefs[sKey]) {
-			mDomRefs[sKey] = {};
 			var oTable = this.getParent();
+			var fnGetElement = function(sId) {
+				var oElement = document.getElementById(sId);
+				if (oElement) {
+					return bJQuery ? jQuery(oElement) : oElement;
+				}
+				return null;
+			};
+			var fnGetParent = function(vElement) {
+				if (vElement) {
+					return bJQuery ? vElement.parent() : vElement.parentNode;
+				}
+				return null;
+			};
+
+			mDomRefs[sKey] = {};
+
 			if (oTable) {
 				var iRowIndex = oTable.indexOfRow(this);
-				// row selector domRef
-				mDomRefs[sKey].rowSelector = fnAccess(oTable.getId() + "-rowsel" + iRowIndex);
-				// row action domRef
-				mDomRefs[sKey].rowAction = fnAccess(oTable.getId() + "-rowact" + iRowIndex);
+				mDomRefs[sKey].rowSelector = fnGetElement(oTable.getId() + "-rowsel" + iRowIndex);
+				mDomRefs[sKey].rowAction = fnGetElement(oTable.getId() + "-rowact" + iRowIndex);
 			}
 
-			// row domRef
-			mDomRefs[sKey].rowScrollPart = fnAccess(this.getId());
-			// row domRef (the fixed part)
-			mDomRefs[sKey].rowFixedPart = fnAccess(this.getId() + "-fixed");
-			// row selector domRef
-			mDomRefs[sKey].rowSelectorText = fnAccess(this.getId() + "-rowselecttext");
+			mDomRefs[sKey].rowHeaderPart = fnGetParent(mDomRefs[sKey].rowSelector);
+			mDomRefs[sKey].rowFixedPart = fnGetElement(this.getId() + "-fixed");
+			mDomRefs[sKey].rowScrollPart = fnGetElement(this.getId());
+			mDomRefs[sKey].rowActionPart = fnGetParent(mDomRefs[sKey].rowAction);
+			mDomRefs[sKey].rowSelectorText = fnGetElement(this.getId() + "-rowselecttext");
 
-			if (bJQuery === true) {
-				mDomRefs[sKey].row = mDomRefs[sKey].rowScrollPart;
-
-				if (mDomRefs[sKey].rowFixedPart.length > 0) {
-					mDomRefs[sKey].row = mDomRefs[sKey].row.add(mDomRefs[sKey].rowFixedPart);
-				} else {
-					// since this won't be undefined in jQuery case
-					mDomRefs[sKey].rowFixedPart = undefined;
-				}
-
-				if (mDomRefs[sKey].rowSelector && mDomRefs[sKey].rowSelector.length > 0) {
-					mDomRefs[sKey].row = mDomRefs[sKey].row.add(mDomRefs[sKey].rowSelector);
-				} else {
-					// since this won't be undefined in jQuery case
-					mDomRefs[sKey].rowSelector = undefined;
-				}
-
-				if (mDomRefs[sKey].rowAction && mDomRefs[sKey].rowAction.length > 0) {
-					mDomRefs[sKey].row = mDomRefs[sKey].row.add(mDomRefs[sKey].rowAction);
-				} else {
-					// since this won't be undefined in jQuery case
-					mDomRefs[sKey].rowAction = undefined;
-				}
+			if (bJQuery) {
+				mDomRefs[sKey].row = jQuery()
+					.add(mDomRefs[sKey].rowHeaderPart)
+					.add(mDomRefs[sKey].rowFixedPart)
+					.add(mDomRefs[sKey].rowScrollPart)
+					.add(mDomRefs[sKey].rowActionPart);
 			}
 		}
 
@@ -228,6 +221,10 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/Context', './TableUtils', "s
 		var bIsSelected = oTable.isIndexSelected(this.getIndex());
 		var $DomRefs = this.getDomRefs(true);
 
+		if (!$DomRefs.rowScrollPart) {
+			return;
+		}
+
 		var sSelectReference = "rowSelect";
 		if (bIsSelected) {
 			// when the row is selected it must show texts how to deselect
@@ -247,10 +244,7 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/Context', './TableUtils', "s
 			$DomRefs.rowSelectorText.text(sText);
 		}
 
-		var $Row = $DomRefs.rowScrollPart;
-		if ($DomRefs.rowFixedPart) {
-			$Row = $Row.add($DomRefs.rowFixedPart);
-		}
+		var $Row = $DomRefs.rowScrollPart.add($DomRefs.rowFixedPart);
 
 		if (bSelectOnCellsAllowed && !this._bHidden) {
 			// the row requires a tooltip for selection if the cell selection is allowed
@@ -259,10 +253,8 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/Context', './TableUtils', "s
 			$Row.removeAttr("title");
 		}
 
-		if ($DomRefs.row) {
-			this._setSelected(bIsSelected);
-			oTable._getAccExtension().updateAriaStateOfRow(this, $DomRefs, bIsSelected);
-		}
+		this._setSelected(bIsSelected);
+		oTable._getAccExtension().updateAriaStateOfRow(this, $DomRefs, bIsSelected);
 	};
 
 	Row.prototype.setRowBindingContext = function(oContext, sModelName, oBinding) {

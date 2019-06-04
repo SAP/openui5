@@ -9,12 +9,33 @@
 	border: 1px dotted @sapUiContentFocusColor;
 }
 
-.sapMLIBActive .sapMRbB .sapMRbBOut {
-	border: 2px solid @sapUiListActiveTextColor;
+.sapMRb:not(.sapMRbErr):not(.sapMRbWarn):not(.sapMRbInfo) .sapMRbHoverable:hover .sapMRbBOut {
+	stroke: @sapUiFieldHoverBorderColor;
+	fill: @sapUiFieldHoverBackground;
 }
+.sapMLIBActive {
+	.sapMRb.sapMRbSel{
+		.sapMRbB.sapMRbHoverable {
+			&:hover > .sapMRbSvg > .sapMRbBOut,
+			.sapMRbSvg > .sapMRbBOut {
+				stroke: @sapUiListActiveTextColor;
+				fill: @sapUiListActiveBackground;
+			}
+		}
+	}
 
-.sapMLIBActive .sapMRbSel .sapMRbBOut {
-	background-color: @sapUiListActiveBackground;
+	.sapMRb {
+		.sapMRbB.sapMRbHoverable {
+			.sapMRbSvg > .sapMRbBOut {
+				stroke: @sapUiListActiveTextColor;
+				fill: #ffffff;
+			}
+
+			&:hover > .sapMRbSvg > .sapMRbBOut {
+				stroke: @sapUiListActiveTextColor;
+			}
+		}
+	}
 }
 
 .sapMRbDis {
@@ -22,47 +43,55 @@
 }
 
 /* Value states */
-
-.sapMRbErr.sapMRbSel .sapMRbBInn {
-	background-color: @sapUiFieldInvalidColor;
-}
-
-.sapMRbErr .sapMRbBOut,
-.sapMRbErr.sapMRbBTouched .sapMRbBOut {
-	border-color: @sapUiFieldInvalidColor;
-	background-color: @sapUiFieldInvalidBackground;
-}
-
-.sapMRbWarn.sapMRbSel .sapMRbBInn {
-	background-color: @_sap_m_RadioButton_SelectedWarningColor;
-}
-
-.sapMRbWarn .sapMRbBOut,
-.sapMRbWarn.sapMRbBTouched .sapMRbBOut {
-	border-color: @sapUiFieldWarningColor;
-	background-color: @sapUiFieldWarningBackground;
-}
-
-.sapMRbInfo.sapMRbSel .sapMRbBInn {
-	background-color: @sapUiHighlight;
-}
-
-.sapMRbInfo .sapMRbBOut,
-.sapMRbInfo.sapMRbBTouched .sapMRbBOut {
-	border-color: @sapUiHighlight;
-}
-
-/* When printing border is needed for the selection */
-@media only print {
-	.sapMLIBActive .sapMRbSel .sapMRbBOut {
-		border-color: @sapUiListActiveBackground;
+.sapMRbWarn {
+	&.sapMRbSel,
+	&.sapMRbSel.sapMRbRo {
+		.sapMRbBInn {
+			fill: @_sap_m_RadioButton_SelectedWarningColor;
+			stroke: none;
+		}
 	}
 
-	.sapMRbErr.sapMRbSel .sapMRbBInn {
-		border-color: @sapUiFieldInvalidColor;
+	.sapMRbB {
+		.sapMRbBOut {
+			stroke: @sapUiFieldWarningColor;
+			fill: none;
+		}
+	}
+}
+
+.sapMRbErr {
+	&.sapMRbSel,
+	&.sapMRbSel.sapMRbRo {
+		.sapMRbBInn {
+			fill: @sapUiFieldInvalidColor;
+			stroke: none;
+		}
 	}
 
-	.sapMRbWarn.sapMRbSel .sapMRbBInn {
-		border-color: @_sap_m_RadioButton_SelectedWarningColor;
+	.sapMRbB {
+		.sapMRbBOut {
+			stroke: @sapUiFieldInvalidColor;
+			fill: none;
+		}
+	}
+}
+
+.sapMRbInfo {
+	&.sapMRbSel,
+	&.sapMRbSel.sapMRbRo {
+		.sapMRbBInn {
+			fill: @sapUiHighlight;
+			stroke: none;
+		}
+	}
+	&.sapMRbRo .sapMRbBOut {
+		fill: @sapUiFieldReadOnlyBackground;
+	}
+	.sapMRbB {
+		.sapMRbBOut {
+			stroke: @sapUiHighlight;
+			fill: none;
+		}
 	}
 }

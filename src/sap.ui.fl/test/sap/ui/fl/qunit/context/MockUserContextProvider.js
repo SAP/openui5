@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/fl/context/BaseContextProvider'], function(BaseContextProvider) {
+sap.ui.define(["sap/ui/fl/context/BaseContextProvider"], function(BaseContextProvider) {
 	"use strict";
 
 	/**
@@ -33,47 +33,46 @@ sap.ui.define(['sap/ui/fl/context/BaseContextProvider'], function(BaseContextPro
 		}
 	});
 
-	MockUserContextProvider.prototype.loadData = function(){
-		return Promise.resolve( {
-			"settings" : {
-				"language" : "DE",
-				"TIME_ZONE" : "CEST"
+	MockUserContextProvider.prototype.loadData = function() {
+		return Promise.resolve({
+			settings : {
+				language : "DE",
+				TIME_ZONE : "CEST"
 			},
-			"role" : "admin"
+			role : "admin"
 		});
 	};
 
 	MockUserContextProvider.prototype.getValueHelp = function() {
 		return Promise.resolve({
-			"timezone" : {
-				"text" : "Time Zone",
-				"description" : "Time zones of a country the user lives in",
-				"values" : [{
-					"text" : "Central European Time ",
-					"description" : "UTC+01:00 (CET)",
-					"value" : "CET"
+			timezone : {
+				text : "Time Zone",
+				description : "Time zones of a country the user lives in",
+				values : [{
+					text : "Central European Time ",
+					description : "UTC+01:00 (CET)",
+					value : "CET"
 				}, {
-					"text" : "The Pacific Time Zone",
-					"description" : "The states on the Pacific coast, Nevada, and parts of Idaho",
-					"value" : "PT"
+					text : "The Pacific Time Zone",
+					description : "The states on the Pacific coast, Nevada, and parts of Idaho",
+					value : "PT"
 				}]
 			},
-			"language" : {
-				"text" : "Language",
-				"description" : "Preferred language of the user",
-				"values" : [{
-					"text" : "German",
-					"description" : "German language (Deutsch)",
-					"value" : "DE"
+			language : {
+				text : "Language",
+				description : "Preferred language of the user",
+				values : [{
+					text : "German",
+					description : "German language (Deutsch)",
+					value : "DE"
 				}, {
-					"text" : "English",
-					"description" : "American English",
-					"value" : "EN_US"
+					text : "English",
+					description : "American English",
+					value : "EN_US"
 				}]
 			}
 		});
 	};
 
 	return MockUserContextProvider;
-
 }, /* bExport= */true);

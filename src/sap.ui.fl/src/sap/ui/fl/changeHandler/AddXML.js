@@ -3,11 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/changeHandler/Base",
 	"sap/ui/fl/Utils",
 	"sap/base/util/LoaderExtensions"
 ], function(
-	Base,
 	Utils,
 	LoaderExtensions
 ) {
@@ -75,7 +73,7 @@ sap.ui.define([
 		}
 
 		aNewControls.forEach(function(oNewControl, iIterator) {
-			if (!oModifier.validateType(oNewControl, oAggregationDefinition, oControl, sFragment , iIterator)) {
+			if (!oModifier.validateType(oNewControl, oAggregationDefinition, oControl, sFragment, iIterator)) {
 				destroyArrayOfControls(aNewControls);
 				throw new Error("The content of the xml fragment does not match the type of the targetAggregation: " + oAggregationDefinition.type);
 			}

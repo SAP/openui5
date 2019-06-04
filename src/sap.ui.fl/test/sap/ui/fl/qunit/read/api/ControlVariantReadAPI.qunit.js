@@ -4,37 +4,21 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/ControlPersonalizationAPI",
-	"sap/ui/fl/read/api/ControlPersonalizationReadAPI",
 	"sap/ui/fl/read/api/ControlVariantReadAPI",
-	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
 	"sap/ui/fl/FlexControllerFactory",
-	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/core/Component",
 	"sap/ui/core/UIComponent",
-	"sap/ui/base/ManagedObject",
 	"sap/ui/core/ComponentContainer",
-	"sap/ui/core/Element",
-	"sap/ui/core/Control",
-	"sap/ui/fl/Cache",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	VariantModel,
 	VariantManagement,
 	Utils,
-	ControlPersonalizationAPI,
-	ControlPersonalizationReadAPI,
 	ControlVariantReadAPI,
-	ControlPersonalizationWriteAPI,
 	FlexControllerFactory,
-	ChangeRegistry,
 	Component,
 	UIComponent,
-	ManagedObject,
 	ComponentContainer,
-	Element,
-	Control,
-	Cache,
 	sinon
 ) {
 	"use strict";
@@ -48,7 +32,7 @@ sap.ui.define([
 		sandbox.stub(Utils, "getUshellContainer").returns(true);
 		sandbox.stub(Utils, "getParsedURLHash").returns({
 			params: {
-			'sap-ui-fl-control-variant-id' : aUrlTechnicalParameters
+				'sap-ui-fl-control-variant-id' : aUrlTechnicalParameters
 			}
 		});
 		sandbox.stub(Utils, "setTechnicalURLParameterValues");
@@ -71,25 +55,25 @@ sap.ui.define([
 	QUnit.module("Given an instance of VariantModel", {
 		beforeEach: function() {
 			this.oData = {
-				"variantMgmtId1": {
-					"defaultVariant": "variantMgmtId1",
-					"originalDefaultVariant": "variantMgmtId1",
-					"variants": [
+				variantMgmtId1: {
+					defaultVariant: "variantMgmtId1",
+					originalDefaultVariant: "variantMgmtId1",
+					variants: [
 						{
-							"author": "SAP",
-							"key": "variantMgmtId1",
-							"layer": "VENDOR",
-							"title": "Standard",
-							"favorite": true,
-							"visible": true
+							author: "SAP",
+							key: "variantMgmtId1",
+							layer: "VENDOR",
+							title: "Standard",
+							favorite: true,
+							visible: true
 						},
 						{
-							"author": "Me",
-							"key": "variant1",
-							"layer": "CUSTOMER",
-							"title": "variant B",
-							"favorite": false,
-							"visible": true
+							author: "Me",
+							key: "variant1",
+							layer: "CUSTOMER",
+							title: "variant B",
+							favorite: false,
+							visible: true
 						}
 					]
 				}
@@ -156,7 +140,7 @@ sap.ui.define([
 			fnStubUpdateCurrentVariant.call(this);
 
 			return ControlVariantReadAPI.activateVariant("dummyControl", "variant1")
-			.then( function () {
+			.then(function () {
 				fnCheckUpdateCurrentVariantCalled.call(this, assert, "variantMgmtId1", "variant1");
 			}.bind(this));
 		});
@@ -165,7 +149,7 @@ sap.ui.define([
 			fnStubUpdateCurrentVariant.call(this);
 
 			return ControlVariantReadAPI.activateVariant(this.oDummyControl, "variant1")
-			.then( function () {
+			.then(function () {
 				fnCheckUpdateCurrentVariantCalled.call(this, assert, "variantMgmtId1", "variant1");
 			}.bind(this));
 		});
@@ -174,7 +158,7 @@ sap.ui.define([
 			fnStubUpdateCurrentVariant.call(this);
 
 			return ControlVariantReadAPI.activateVariant(this.oComponent.getId(), "variant1")
-			.then( function () {
+			.then(function () {
 				fnCheckUpdateCurrentVariantCalled.call(this, assert, "variantMgmtId1", "variant1");
 			}.bind(this));
 		});

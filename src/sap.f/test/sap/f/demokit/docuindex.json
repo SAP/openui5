@@ -91,11 +91,13 @@
 		},
 		{
 		  "id": "sap.f.ShellBar",
-		  "name": "ShellBar",
+		  "name": "Shell Bar",
 		  "category": "Display",
 		  "since": "1.63",
 			"samples": [
-				"sap.f.sample.ShellBar"
+				"sap.f.sample.ShellBar",
+				"sap.f.sample.ShellBarWIthMenuButton",
+				"sap.f.sample.ShellBarWithSearch"
 			]
 		},
 		{
@@ -194,13 +196,18 @@
 		},
 		{
 		  "id": "sap.f.sample.ShellBar",
-		  "name": "ShellBar",
-		  "description": "Shellbar control with title mega menu."
+		  "name": "Shell Bar with title mega menu",
+		  "description": "Shell Bar example showing the control title as part of a mega menu, configurable by the app developer."
 		},
 		{
-		  "id": "sap.f.sample.ShellBarIconMenu",
-		  "name": "ShellBar",
-		  "description": "Shellbar control with navigation button."
+		  "id": "sap.f.sample.ShellBarWIthMenuButton",
+		  "name": "Shell Bar with menu button",
+		  "description": "Shell Bar example with a menu button and a plain title."
+		},
+		{
+		  "id": "sap.f.sample.ShellBarWithSearch",
+		  "name": "Shell Bar with search",
+		  "description": "Shell Bar example with configured search functionality."
 		},
 		{
 		  "id": "sap.f.sample.Card",

@@ -7,7 +7,12 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/context/Context",
 	"sap/base/Log"
-], function(LrepConnector, Utils, Context, Log) {
+], function(
+	LrepConnector,
+	Utils,
+	Context,
+	Log
+) {
 	"use strict";
 
 	/**
@@ -22,11 +27,10 @@ sap.ui.define([
 	var ContextManager;
 
 	ContextManager = {
-
 		_oContext: new Context({
 			configuration : {
-				"device" : "sap/ui/fl/context/DeviceContextProvider",
-				"switches" : "sap/ui/fl/context/SwitchContextProvider"
+				device : "sap/ui/fl/context/DeviceContextProvider",
+				switches : "sap/ui/fl/context/SwitchContextProvider"
 			}
 		}),
 		_oLrepConnector: LrepConnector.createConnector(),
@@ -63,10 +67,10 @@ sap.ui.define([
 				// [default: runtime] use runtime contexts
 				return this._getContextParametersFromAPI(aContextObjects)
 					.then(this._getActiveContextsByAPIParameters.bind(this, aContextObjects));
-			} else {
-				// [designtime] use url parameters to determine the current active context(s)
-				return Promise.resolve(this._getActiveContextsByUrlParameters(aContextObjects, aDesignTimeContextIdsByUrl));
 			}
+
+			// [designtime] use url parameters to determine the current active context(s)
+			return Promise.resolve(this._getActiveContextsByUrlParameters(aContextObjects, aDesignTimeContextIdsByUrl));
 		},
 
 		/**

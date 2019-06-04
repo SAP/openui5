@@ -3,11 +3,9 @@
  */
 
 sap.ui.define([
-	'sap/ui/core/Renderer',
 	'./BaseRenderer'
 ],
 function(
-	Renderer,
 	BaseRenderer
 ) {
 	"use strict";
@@ -19,7 +17,6 @@ function(
 
 		BaseRenderer.render(oRM, oControl);
 	};
-
 
 	return AdaptationRenderer;
 });

@@ -70,9 +70,9 @@ function(
 
 		QUnit.test("When a component id is provided and one code extension with two methods is present", function(assert) {
 			var sModuleName = "sap/ui/fl/qunit/PreprocessorImpl/1.0.0/codeExtensions/firstCodeExt";
-			sap.ui.predefine(sModuleName,['sap/ui/core/mvc/ControllerExtension'], function(ControllerExtension) {
+			sap.ui.predefine(sModuleName, ['sap/ui/core/mvc/ControllerExtension'], function(ControllerExtension) {
 				return ControllerExtension.extend('ui.s2p.mm.purchorder.approve.Extension1', {
-					extHookOnInit:function(){},
+					extHookOnInit:function() {},
 					onInit: function() {}
 				});
 			});
@@ -99,8 +99,8 @@ function(
 			};
 
 			var oFileContent = {
-				"changes": {
-					"changes": [oChange]
+				changes: {
+					changes: [oChange]
 				}
 			};
 
@@ -117,9 +117,9 @@ function(
 								version : "1.2.3"
 							}
 						},
-						"getEntry": function () {
+						getEntry: function () {
 							return {
-								"type": "application"
+								type: "application"
 							};
 						}
 					};
@@ -131,9 +131,9 @@ function(
 								version : "1.2.3"
 							}
 						},
-						"getEntry": function () {
+						getEntry: function () {
 							return {
-								"type": "application"
+								type: "application"
 							};
 						}
 					};
@@ -156,7 +156,7 @@ function(
 
 		QUnit.test("apply multiple changes on different controllers", function (assert) {
 			// expect both extensions to be called
-			assert.expect( 2 );
+			assert.expect(2);
 			var done1 = assert.async();
 			var done2 = assert.async();
 
@@ -187,7 +187,7 @@ function(
 					user: "VIOL"
 				}
 			};
-			sap.ui.predefine(sModuleName1,['sap/ui/core/mvc/ControllerExtension'], function(ControllerExtension) {
+			sap.ui.predefine(sModuleName1, ['sap/ui/core/mvc/ControllerExtension'], function(ControllerExtension) {
 				return ControllerExtension.extend('ui.s2p.mm.purchorder.approve.Extension2', {
 					override: {
 						onInit: function () {
@@ -198,7 +198,7 @@ function(
 			});
 
 			var sModuleName2 = "sap/ui/fl/qunit/PreprocessorImpl/1.0.0/codeExtensions/thirdCodeExt";
-			sap.ui.predefine(sModuleName2,['sap/ui/core/mvc/ControllerExtension'], function(ControllerExtension) {
+			sap.ui.predefine(sModuleName2, ['sap/ui/core/mvc/ControllerExtension'], function(ControllerExtension) {
 				return ControllerExtension.extend('ui.s2p.mm.purchorder.approve.Extension3', {
 					override: {
 						onInit: function () {
@@ -240,8 +240,8 @@ function(
 				changeType: "notCodeExt"
 			};
 			var oFileContent = {
-				"changes": {
-					"changes": [oOtherChange1, oCodingChange1, oOtherChange2, oCodingChange2]
+				changes: {
+					changes: [oOtherChange1, oCodingChange1, oOtherChange2, oCodingChange2]
 				}
 			};
 

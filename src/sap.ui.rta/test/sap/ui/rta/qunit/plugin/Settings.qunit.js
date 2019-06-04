@@ -82,7 +82,7 @@ function (
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Button" : {
-					"changeSettings" : "sap/ui/fl/changeHandler/PropertyChange"
+					changeSettings : "sap/ui/fl/changeHandler/PropertyChange"
 				}
 			})
 			.then(function() {
@@ -306,7 +306,7 @@ function (
 
 			this.oSettingsPlugin.attachEventOnce("elementModified", function (oEvent) {
 				var mPassedSettings = fnAssertSpy.getCall(1).args[0];
-				var bHasSelector = Object.keys(mPassedSettings).some(function(sKey){
+				var bHasSelector = Object.keys(mPassedSettings).some(function(sKey) {
 					return sKey === "selector";
 				});
 				assert.notOk(bHasSelector, "the selector is not part of the passed settings");
@@ -373,13 +373,12 @@ function (
 			var aSelectedOverlays = [oButtonOverlay];
 
 			assert.throws(
-				function(){
+				function() {
 					this.oSettingsPlugin.handler(aSelectedOverlays, { eventItem: {}, contextElement: this.oButton });
 				},
 				/Handler not found/,
 				"an error message is raised referring to the missing handler"
 			);
-
 		});
 
 		QUnit.test("when the handle settings function is called and the handler returns a rejected promise with error object,", function(assert) {
@@ -467,7 +466,7 @@ function (
 				return this.oCommandStack.pushAndExecute(oSettingsCommand);
 			}.bind(this))
 
-			.then(function(){
+			.then(function() {
 				var aUnsavedChanges = this.oSettingsPlugin._getUnsavedChanges("stableNavPopoverId", ["changeSettings"]);
 				assert.equal(aUnsavedChanges.length, 2, "these commands are returned by _getUnsavedChanges");
 			}.bind(this))
@@ -662,27 +661,28 @@ function (
 				element: this.oButton,
 				designTimeMetadata: new ElementDesignTimeMetadata({
 					data: {
-						actions:
-						{
+						actions: {
 							settings: function () {
-								return [{
-									name: "CTX_ACTION1",
-									handler: function () {
-										return new Promise(function (resolve) {
-											resolve([mAction1Change]);
-										});
-									}
-								},
-								{
-									name: function () {
-										return "Action 2 Name";
+								return [
+									{
+										name: "CTX_ACTION1",
+										handler: function () {
+											return new Promise(function (resolve) {
+												resolve([mAction1Change]);
+											});
+										}
 									},
-									handler: function () {
-										return new Promise(function (resolve) {
-											resolve([mAction2Change]);
-										});
+									{
+										name: function () {
+											return "Action 2 Name";
+										},
+										handler: function () {
+											return new Promise(function (resolve) {
+												resolve([mAction2Change]);
+											});
+										}
 									}
-								}];
+								];
 							}
 						}
 					}
@@ -694,7 +694,7 @@ function (
 			var bFirstChange = true;
 
 			this.oSettingsPlugin.attachEvent("elementModified", function(oEvent) {
-				if (bFirstChange){
+				if (bFirstChange) {
 					var oCompositeCommand1 = oEvent.getParameter("command");
 					var oFlexCommand1 = oCompositeCommand1.getCommands()[0];
 					assert.equal(oFlexCommand1.getSelector().appComponent, oMockedAppComponent, "with the correct app component");
@@ -710,7 +710,6 @@ function (
 					assert.equal(oFlexCommand2.getContent(), mAction2Change.changeSpecificData.content, "with the correct parameters");
 					done2();
 				}
-
 			});
 
 			var aMenuItems = this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
@@ -743,15 +742,15 @@ function (
 						actions : {
 							settings : function() {
 								return {
-									"CTX_ACTION1" : {
+									CTX_ACTION1 : {
 										name : "CTX_ACTION1",
 										handler: function() {
-											return new Promise(function(resolve){
+											return new Promise(function(resolve) {
 												resolve([mAction1Change]);
 											});
 										}
 									},
-									"AnotherId" : {
+									AnotherId : {
 										name : "CTX_ACTION2"
 									}
 								};
@@ -782,93 +781,89 @@ function (
 		QUnit.test(
 			"when retrieving the menu items for two 'settings', but one has changeOnRelevantContainer true and the relevant container doesn't have a stable id",
 			function(assert) {
-
-			var oButtonOverlay = new ElementOverlay({
-				element : this.oButton,
-				designTimeMetadata : new ElementDesignTimeMetadata({
-					data : {
-						actions : {
-							settings : function() {
-								return {
-									"Action1" : {
-										name : "CTX_ACTION1",
-										handler: function() {}
-									},
-									"Action2" : {
-										name : "CTX_ACTION2",
-										changeOnRelevantContainer: true,
-										handler: function() {}
-									}
-								};
+				var oButtonOverlay = new ElementOverlay({
+					element : this.oButton,
+					designTimeMetadata : new ElementDesignTimeMetadata({
+						data : {
+							actions : {
+								settings : function() {
+									return {
+										Action1 : {
+											name : "CTX_ACTION1",
+											handler: function() {}
+										},
+										Action2 : {
+											name : "CTX_ACTION2",
+											changeOnRelevantContainer: true,
+											handler: function() {}
+										}
+									};
+								}
 							}
 						}
+					})
+				});
+
+				var oVerticalLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
+
+				sandbox.stub(this.oSettingsPlugin, "hasStableId").callsFake(function(oOverlay) {
+					if (oOverlay === oVerticalLayoutOverlay) {
+						return false;
 					}
-				})
-			});
-
-			var oVerticalLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
-
-			sandbox.stub(this.oSettingsPlugin, "hasStableId").callsFake(function(oOverlay){
-				if (oOverlay === oVerticalLayoutOverlay){
-					return false;
-				} else {
 					return true;
-				}
+				});
+
+				sandbox.stub(oButtonOverlay, "getRelevantContainer").returns(oVerticalLayoutOverlay);
+
+				var aMenuItems = this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
+				assert.equal(aMenuItems[0].id, "CTX_SETTINGS0", "'getMenuItems' returns the context menu item for action 1");
+				assert.equal(aMenuItems[0].rank, 110, "'getMenuItems' returns the correct item rank for action 1");
+				assert.equal(aMenuItems.length, 1, "'getMenuItems' doesn't return the action where the relevant container has no stable id");
+				assert.equal(this.oSettingsPlugin._isEditable(oButtonOverlay), true, "and _isEditable() returns true because one action is valid");
 			});
-
-			sandbox.stub(oButtonOverlay, "getRelevantContainer").returns(oVerticalLayoutOverlay);
-
-			var aMenuItems = this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
-			assert.equal(aMenuItems[0].id, "CTX_SETTINGS0", "'getMenuItems' returns the context menu item for action 1");
-			assert.equal(aMenuItems[0].rank, 110, "'getMenuItems' returns the correct item rank for action 1");
-			assert.equal(aMenuItems.length, 1, "'getMenuItems' doesn't return the action where the relevant container has no stable id");
-			assert.equal(this.oSettingsPlugin._isEditable(oButtonOverlay), true, "and _isEditable() returns true because one action is valid");
-		});
 
 		QUnit.test(
 			"when retrieving the menu items for two 'settings', but both have changeOnRelevantContainer true and the relevant container doesn't have a stable id",
 			function(assert) {
-
-			var oButtonOverlay = new ElementOverlay({
-				element : this.oButton,
-				designTimeMetadata : new ElementDesignTimeMetadata({
-					data : {
-						actions : {
-							settings : function() {
-								return {
-									"Action1" : {
-										name : "CTX_ACTION1",
-										changeOnRelevantContainer: true,
-										handler: function() {}
-									},
-									"Action2" : {
-										name : "CTX_ACTION2",
-										changeOnRelevantContainer: true,
-										handler: function() {}
-									}
-								};
+				var oButtonOverlay = new ElementOverlay({
+					element : this.oButton,
+					designTimeMetadata : new ElementDesignTimeMetadata({
+						data : {
+							actions : {
+								settings : function() {
+									return {
+										Action1 : {
+											name : "CTX_ACTION1",
+											changeOnRelevantContainer: true,
+											handler: function() {}
+										},
+										Action2 : {
+											name : "CTX_ACTION2",
+											changeOnRelevantContainer: true,
+											handler: function() {}
+										}
+									};
+								}
 							}
 						}
+					})
+				});
+
+				var oVerticalLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
+
+				sandbox.stub(this.oSettingsPlugin, "hasStableId").callsFake(function(oOverlay) {
+					if (oOverlay === oVerticalLayoutOverlay) {
+						return false;
 					}
-				})
-			});
-
-			var oVerticalLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
-
-			sandbox.stub(this.oSettingsPlugin, "hasStableId").callsFake(function(oOverlay){
-				if (oOverlay === oVerticalLayoutOverlay){
-					return false;
-				} else {
 					return true;
-				}
+				});
+
+				sandbox.stub(oButtonOverlay, "getRelevantContainer").returns(oVerticalLayoutOverlay);
+
+				var aMenuItems = this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
+				assert.equal(aMenuItems.length, 0, "then no menu items are returned");
+				assert.equal(this.oSettingsPlugin._isEditable(oButtonOverlay), false, "and _isEditable() returns false because no actions are valid");
 			});
-
-			sandbox.stub(oButtonOverlay, "getRelevantContainer").returns(oVerticalLayoutOverlay);
-
-			var aMenuItems = this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
-			assert.equal(aMenuItems.length, 0, "then no menu items are returned");
-			assert.equal(this.oSettingsPlugin._isEditable(oButtonOverlay), false, "and _isEditable() returns false because no actions are valid");
-		});
 
 		QUnit.test("when retrieving the context menu items for two 'settings' actions, but one is disabled", function (assert) {
 			var oButton = this.oButton;
@@ -880,9 +875,9 @@ function (
 						actions: {
 							settings: {
 								"Button Settings 1": {
-									name: function(){ return "CTX_ACTION1"; },
+									name: function() { return "CTX_ACTION1"; },
 									handler: function () {
-										return new Promise(function (resolve){
+										return new Promise(function (resolve) {
 											resolve([]);
 										});
 									}
@@ -890,7 +885,7 @@ function (
 								"Another Button Settings Action" : {
 									name: function () { return "CTX_ACTION2"; },
 									handler: function () {
-										return new Promise(function(resolve){
+										return new Promise(function(resolve) {
 											resolve([]);
 										});
 									},
@@ -921,39 +916,40 @@ function (
 				element : this.oButton,
 				designTimeMetadata : new ElementDesignTimeMetadata({
 					data : {
-						actions :
-						{
-							settings : function(){
-								return [{
-									name : "CTX_ACTION1",
-									icon : sIconAction1,
-									handler: function() {
-										return new Promise(function(resolve){
-											resolve([]);
-										});
-									}
-								},
-								{
-									name : function(){
-										return "Action 2 Name";
+						actions : {
+							settings : function() {
+								return [
+									{
+										name : "CTX_ACTION1",
+										icon : sIconAction1,
+										handler: function() {
+											return new Promise(function(resolve) {
+												resolve([]);
+											});
+										}
 									},
-									handler: function() {
-										return new Promise(function(resolve){
-											resolve([]);
-										});
-									}
-								},
-								{
-									name : function(){
-										return "Action 3 Name";
+									{
+										name : function() {
+											return "Action 2 Name";
+										},
+										handler: function() {
+											return new Promise(function(resolve) {
+												resolve([]);
+											});
+										}
 									},
-									icon : { name: "icon should be a STRING not an Object" },
-									handler: function() {
-										return new Promise(function(resolve){
-											resolve([]);
-										});
+									{
+										name : function() {
+											return "Action 3 Name";
+										},
+										icon : { name: "icon should be a STRING not an Object" },
+										handler: function() {
+											return new Promise(function(resolve) {
+												resolve([]);
+											});
+										}
 									}
-								}];
+								];
 							}
 						}
 					}
@@ -985,5 +981,4 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

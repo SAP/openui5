@@ -5,15 +5,13 @@
 // Provides class sap.ui.dt.MutationObserver.
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	'sap/ui/dt/OverlayUtil',
-	'sap/ui/dt/ElementUtil',
-	'sap/ui/base/ManagedObject',
-	'sap/ui/dt/DOMUtil',
-	'sap/ui/dt/Util'
+	"sap/ui/dt/OverlayUtil",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/dt/DOMUtil",
+	"sap/ui/dt/Util"
 ], function(
 	jQuery,
 	OverlayUtil,
-	ElementUtil,
 	ManagedObject,
 	DOMUtil,
 	Util
@@ -35,14 +33,13 @@ sap.ui.define([
 	 * @alias sap.ui.dt.MutationObserver
 	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be modified in future.
 	 */
-	var MutationObserver = ManagedObject.extend("sap.ui.dt.MutationObserver", /** @lends sap.ui.dt.MutationObserver.prototype */
-	{
+	var MutationObserver = ManagedObject.extend("sap.ui.dt.MutationObserver", /** @lends sap.ui.dt.MutationObserver.prototype */ {
 		metadata: {
 			library: "sap.ui.dt",
 			events: {
-				/**
-				 * Event fired when the observed object is modified or some changes which might affect dom position and styling of overlays happens
-				 */
+			/**
+			 * Event fired when the observed object is modified or some changes which might affect dom position and styling of overlays happens
+			 */
 				domChanged: {
 					parameters: {
 						type: {

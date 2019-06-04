@@ -4,12 +4,12 @@
 
 // Provides control sap.ui.demokit.UI5EntityCueCard.
 sap.ui.define([
-    'jquery.sap.global',
-    'sap/ui/core/Control',
-    'sap/ui/commons/Link',
-    './EntityInfo',
-    './library',
-    "./UI5EntityCueCardRenderer"
+	'jquery.sap.global',
+	'sap/ui/core/Control',
+	'sap/ui/commons/Link',
+	'./EntityInfo',
+	'./library',
+	'./UI5EntityCueCardRenderer'
 ],
 	function(jQuery, Control, Link, EntityInfo, library, UI5EntityCueCardRenderer) {
 	"use strict";
@@ -99,6 +99,13 @@ sap.ui.define([
 		 * Active position in the history. Moved by back/forward and setEntityName
 		 */
 		this._iHistory = -1;
+	};
+
+	UI5EntityCueCard.prototype.exit = function() {
+		if ( this._oShowCueCardLink ) {
+			this._oShowCueCardLink.destroy();
+			this._oShowCueCardLink = null;
+		}
 	};
 
 	UI5EntityCueCard.prototype.setEntityName = function(sEntityName) {

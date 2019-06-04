@@ -26,6 +26,32 @@
 			max-width: 1140px;
 		}
 
+		/* start drag and drop poc */
+		.dndIndicatorBox {
+			background: rgba(0, 112, 177, 0.05) /* @sapUiDragAndDropActiveBackground */;
+			border: 0.125rem solid #0070b1/* @sapUiDragAndDropActiveBorderColor */;
+			box-sizing: border-box;
+		}
+
+		.dndDraggableItem {
+			cursor: grab;
+			cursor: -moz-grab;
+			cursor: -webkit-grab;
+		}
+
+		.dndDraggableItem:active {
+			cursor: grabbing;
+			cursor: -moz-grabbing;
+			cursor: -webkit-grabbing;
+		}
+
+		/* fixes for strange tile focus and hover */
+		.dndDraggableItem .sapMGT .sapMGTFocusDiv,
+		.dndDraggableItem .sapMGT .sapMGTWithoutImageHoverOverlay {
+			display: none !important;
+		}
+		/* end drag and drop poc */
+
 	</style>
 	<script type="text/javascript"
 			src="../../../../resources/sap-ui-core.js"

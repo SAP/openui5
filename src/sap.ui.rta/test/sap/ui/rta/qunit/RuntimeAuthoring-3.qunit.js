@@ -32,7 +32,7 @@ sap.ui.define([
 				metadata: {
 					manifest: {
 						"sap.app": {
-							"id": "fixture.application"
+							id: "fixture.application"
 						}
 					}
 				},
@@ -97,7 +97,7 @@ sap.ui.define([
 				metadata: {
 					manifest: {
 						"sap.app": {
-							"id": "fixture.application"
+							id: "fixture.application"
 						}
 					}
 				},
@@ -383,7 +383,7 @@ sap.ui.define([
 			return this.oRta
 				.startService(sServiceName)
 				.then(function () {
-						assert.ok(oServiceSpy.withArgs(this.oRta).calledOnce);
+					assert.ok(oServiceSpy.withArgs(this.oRta).calledOnce);
 				}.bind(this));
 		});
 
@@ -563,7 +563,7 @@ sap.ui.define([
 				metadata: {
 					manifest: {
 						"sap.app": {
-							"id": "fixture.application"
+							id: "fixture.application"
 						}
 					}
 				},
@@ -631,7 +631,7 @@ sap.ui.define([
 				metadata: {
 					manifest: {
 						"sap.app": {
-							"id": "fixture.application"
+							id: "fixture.application"
 						}
 					}
 				},
@@ -681,5 +681,4 @@ sap.ui.define([
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

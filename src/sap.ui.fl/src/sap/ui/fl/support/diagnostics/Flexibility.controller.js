@@ -4,11 +4,8 @@
 
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator",
-	"sap/ui/fl/support/Flexibility",
 	"sap/ui/fl/support/apps/uiFlexibilityDiagnostics/helper/Extractor"
-], function (Controller, Filter, FilterOperator, FlexibilityPlugin, Extractor) {
+], function (Controller, Extractor) {
 	"use strict";
 
 	/**

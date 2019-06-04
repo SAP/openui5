@@ -6,7 +6,6 @@
 sap.ui.define(function() {
 	"use strict";
 
-
 	/**
 	 * @author SAP SE
 	 * @version ${version}
@@ -38,5 +37,4 @@ sap.ui.define(function() {
 	};
 
 	return StatisticRenderer;
-
 });

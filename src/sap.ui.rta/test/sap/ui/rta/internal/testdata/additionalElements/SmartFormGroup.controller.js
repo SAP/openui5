@@ -12,9 +12,7 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.ui.rta.test.additionalElements.SmartFormGroup", {
-
 		onInit : function () {
-
 			var sURL = "/destinations/E91/sap/opu/odata/SAP/AdditionalElementsTest/?sap-documentation=all",
 				oModel, oView;
 
@@ -55,13 +53,13 @@ sap.ui.define([
 			this.byId("MainForm").bindElement("/EntityTypes(Property01='propValue01',Property02='propValue02',Property03='propValue03')");
 		},
 
-		_getUrlParameter : function(sParam){
+		_getUrlParameter : function(sParam) {
 			var sReturn = "";
 			var sPageURL = window.location.search.substring(1);
 			var sURLVariables = sPageURL.split('&');
 			for (var i = 0; i < sURLVariables.length; i++) {
 				var sParameterName = sURLVariables[i].split('=');
-				if (sParameterName[0] == sParam) {
+				if (sParameterName[0] === sParam) {
 					sReturn = sParameterName[1];
 				}
 			}
@@ -75,7 +73,7 @@ sap.ui.define([
 				var oRta = new RuntimeAuthoring({
 					rootControl : sap.ui.getCore().byId("Comp1---idMain1"),
 					customFieldUrl : this._sResourcePath + "/testdata/rta/CustomField.html",
-					showCreateCustomField : (this._getUrlParameter("sap-ui-xx-ccf") == "true")
+					showCreateCustomField : (this._getUrlParameter("sap-ui-xx-ccf") === "true")
 				});
 				oRta.attachEvent('stop', function() {
 					oRta.destroy();
@@ -84,5 +82,4 @@ sap.ui.define([
 			}.bind(this));
 		}
 	});
-
 });

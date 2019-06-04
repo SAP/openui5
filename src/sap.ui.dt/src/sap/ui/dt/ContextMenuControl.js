@@ -53,7 +53,7 @@ sap.ui.define([
 				 * Defines the maximum number of buttons displayed in the non-expanded version of the control.
 				 * If more than n buttons are added an overflow button will be displayed instead of the nth button (n = maxButtonsDisplayed).
 				 */
-				"maxButtonsDisplayed": {
+				maxButtonsDisplayed: {
 					type: "int",
 					defaultValue: 4
 				},
@@ -64,7 +64,7 @@ sap.ui.define([
 				 * icon - the url of the butons icon
 				 * handler - the function to call when the button is pressed
 				 */
-				"buttons": {
+				buttons: {
 					type: "object[]",
 					defaultValue: []
 				},
@@ -374,14 +374,11 @@ sap.ui.define([
 			// If the Menu has been closed by ESC-key and reopened again on the same Overlay, the Position of Menu should not change
 			var bIsSameOverlay = (this._oLastSourceOverlay ? this._oLastSourceOverlay === oSource : false);
 			var bIsSameRect = (this._oLastSourceClientRects ? DeepEqual(JSON.parse(JSON.stringify(this._oLastSourceClientRects)), JSON.parse(JSON.stringify(oSource.getDomRef().getClientRects()))) : false);
-			if (this._oContextMenuPosition.x === "not set" && this._oContextMenuPosition.y === "not set" && bIsSameOverlay && bIsSameRect){
-
+			if (this._oContextMenuPosition.x === "not set" && this._oContextMenuPosition.y === "not set" && bIsSameOverlay && bIsSameRect) {
 				// Get the last x/y Positions of the current Target
 				this._oContextMenuPosition.x = this._oLastPosition.x;
 				this._oContextMenuPosition.y = this._oLastPosition.y;
-
 			} else {
-
 				// get the given x/y Positions; if no Position is given, take the upper left corner of the Overlay + 20px (looks better)
 				this._oContextMenuPosition.x = this._oContextMenuPosition.x || parseInt(oOverlayDimensions.left + 20);
 				this._oContextMenuPosition.y = this._oContextMenuPosition.y || parseInt(oOverlayDimensions.top + 20);
@@ -517,9 +514,8 @@ sap.ui.define([
 		_getArrowHeight: function (bCompact) {
 			if (sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.edge) {
 				return bCompact ? 0.5 : 0.5;
-			} else {
-				return bCompact ? 0.5625 : 0.5625;
 			}
+			return bCompact ? 0.5625 : 0.5625;
 		},
 
 		/**
@@ -593,11 +589,11 @@ sap.ui.define([
 		 * @public
 		 */
 		addMenuButton: function(oButtonItem, fnContextMenuHandler, aElementOverlays) {
-			var fnHandler = function(oEvent) {
+			function handler() {
 				this.bOpen = false;
 				this.bOpenNew = false;
 				fnContextMenuHandler(this);
-			};
+			}
 
 			var sText = typeof oButtonItem.text === "function" ? oButtonItem.text(aElementOverlays[0]) : oButtonItem.text;
 			var bEnabled = typeof oButtonItem.enabled === "function" ? oButtonItem.enabled(aElementOverlays) : oButtonItem.enabled;
@@ -607,7 +603,7 @@ sap.ui.define([
 				tooltip: sText,
 				type: "Transparent",
 				enabled: bEnabled,
-				press: fnHandler,
+				press: handler,
 				layoutData: new FlexItemData({})
 			};
 			return this._addButton(oButtonItem.id, oButtonOptions);
@@ -734,14 +730,12 @@ sap.ui.define([
 			if (bExpanded === undefined) {
 				if (this._bUseExpPop) {
 					return this._oExpandedPopover;
-				} else {
-					return this._oPopover;
 				}
-			} else if (bExpanded) {
-				return  this._oExpandedPopover;
-			} else {
 				return this._oPopover;
+			} else if (bExpanded) {
+				return this._oExpandedPopover;
 			}
+			return this._oPopover;
 		},
 
 		/**
@@ -926,7 +920,7 @@ sap.ui.define([
 		 */
 		_handleAfterClose: function () {
 			// The Focus is set back to the original Overlay ONLY if it has not changed during closing
-			if (document.activeElement.localName != "body"){
+			if (document.activeElement.localName !== "body") {
 				return;
 			}
 			this.getPopover().detachAfterClose(this._handleAfterClose, this);

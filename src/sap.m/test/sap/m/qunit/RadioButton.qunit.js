@@ -316,6 +316,7 @@ sap.ui.define([
 
 		// act
 		oRadioButton1.setText("Bar");
+		sap.ui.getCore().applyChanges();
 
 		// assertions
 		assert.strictEqual(oRadioButton1.getText(), 'Bar', "The Radion Button should have text 'Bar'");

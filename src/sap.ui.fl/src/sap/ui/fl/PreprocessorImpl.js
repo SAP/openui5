@@ -4,9 +4,9 @@
 
 // Provides object sap.ui.fl.ProcessorImpl
 sap.ui.define([
-	'sap/ui/core/Component',
-	'sap/ui/fl/Utils',
-	'sap/ui/fl/ChangePersistenceFactory',
+	"sap/ui/core/Component",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/base/Log"
 ],
 function(
@@ -36,7 +36,7 @@ function(
 	 * @version ${version}
 	 * @experimental Since 1.27.0
 	 */
-	var PreprocessorImpl = function(){};
+	var PreprocessorImpl = function() {};
 
 	/**
 	 * Provides an array of extension providers. An extension provider is an object which were defined as controller extensions. These objects
@@ -77,10 +77,10 @@ function(
 
 				return PreprocessorImpl.getExtensionModules(aExtensionModules);
 			});
-		} else {
-			Log.warning("Synchronous extensions are not supported by sap.ui.fl.PreprocessorImpl");
-			return [];
 		}
+
+		Log.warning("Synchronous extensions are not supported by sap.ui.fl.PreprocessorImpl");
+		return [];
 	};
 
 	/**
@@ -112,5 +112,4 @@ function(
 	};
 
 	return PreprocessorImpl;
-
 }, /* bExport= */true);

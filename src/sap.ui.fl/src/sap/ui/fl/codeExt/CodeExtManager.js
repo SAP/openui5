@@ -3,8 +3,12 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/LrepConnector", "sap/ui/fl/Utils", "sap/ui/fl/Change"
-], function(LrepConnector, Utils, Change) {
+	"sap/ui/fl/LrepConnector",
+	"sap/ui/fl/Change"
+], function(
+	LrepConnector,
+	Change
+) {
 	"use strict";
 
 	/**
@@ -19,7 +23,6 @@ sap.ui.define([
 	var CodeExtManager;
 
 	CodeExtManager = {
-
 		_oLrepConnector: LrepConnector.createConnector(),
 
 		/**
@@ -31,7 +34,6 @@ sap.ui.define([
 		 * @param {string} mOptions.packageName - Name of ABAP Package which CodeExt change assigned to
 		 */
 		createOrUpdateCodeExtChange: function(oPropertyBag, mOptions) {
-
 			if (!oPropertyBag.content || !oPropertyBag.content.codeRef) {
 				throw new Error("no code reference passed for the code extension change");
 			}
@@ -49,11 +51,11 @@ sap.ui.define([
 
 			var sUri = "/sap/bc/lrep/content/" + oChange.namespace + oChange.fileName + ".change";
 			sUri += "?layer=" + oChange.layer;
-			if (mOptions){
-				if (mOptions.transportId){
+			if (mOptions) {
+				if (mOptions.transportId) {
 					sUri += "&changelist=" + mOptions.transportId;
 				}
-				if (mOptions.packageName){
+				if (mOptions.packageName) {
 					sUri += "&package=" + mOptions.packageName;
 				}
 			}
@@ -74,11 +76,11 @@ sap.ui.define([
 			}
 
 			var aPreparedChanges = [];
-			aChanges.forEach(function(oChange){
+			aChanges.forEach(function(oChange) {
 				oChange.changeType = oChange.changeType || "codeExt";
 				oChange.packageName = mOptions.packageName;
 				oChange.content = {
-						codeRef: mOptions.codeRef
+					codeRef: mOptions.codeRef
 				};
 				aPreparedChanges.push(Change.createInitialFileContent(oChange));
 			});
@@ -108,11 +110,11 @@ sap.ui.define([
 			if (oChange.layer) {
 				sUri += "&layer=" + oChange.layer;
 			}
-			if (mOptions){
-				if (mOptions.transportId){
+			if (mOptions) {
+				if (mOptions.transportId) {
 					sUri += "&changelist=" + mOptions.transportId;
 				}
-				if (mOptions.packageName){
+				if (mOptions.packageName) {
 					sUri += "&package=" + mOptions.packageName;
 				}
 			}
@@ -123,5 +125,4 @@ sap.ui.define([
 	};
 
 	return CodeExtManager;
-
 }, true);

@@ -9,41 +9,41 @@ sap.ui.define([
 	Element,
 	sinon
 ) {
-	'use strict';
+	"use strict";
 
 	var TestObject = Element.extend("sap.ui.dt.TestObject", {
 		metadata: {
 			properties: {
-				"myProperty": {
+				myProperty: {
 					type: "boolean"
 				}
 			},
 			associations: {
-				"myAssociation": {
-					"type": "sap.ui.core.Control",
-					"multiple": true
+				myAssociation: {
+					type: "sap.ui.core.Control",
+					multiple: true
 				},
-				"mySingleAssociation": {
-					"type": "sap.ui.core.Element"
+				mySingleAssociation: {
+					type: "sap.ui.core.Element"
 				},
-				"myOverwrittenAssociation": {
-					"type": "sap.ui.core.Element",
-					"multiple": true
+				myOverwrittenAssociation: {
+					type: "sap.ui.core.Element",
+					multiple: true
 				}
 			},
 			aggregations: {
-				"myAggregation": {
-					"type": "sap.ui.core.Element"
+				myAggregation: {
+					type: "sap.ui.core.Element"
 				},
-				"myInheritedAggregation": {
-					"type": "sap.ui.core.Element"
+				myInheritedAggregation: {
+					type: "sap.ui.core.Element"
 				},
-				"mySingleAggregation": {
-					"type": "sap.ui.core.Element",
-					"multiple": false
+				mySingleAggregation: {
+					type: "sap.ui.core.Element",
+					multiple: false
 				},
-				"myOverwrittenAggregation": {
-					"type": "sap.ui.core.Element"
+				myOverwrittenAggregation: {
+					type: "sap.ui.core.Element"
 				}
 			}
 		}
@@ -52,8 +52,8 @@ sap.ui.define([
 	var SmartTestObject = TestObject.extend("sap.ui.dt.SmartTestObject", {
 		metadata: {
 			aggregations: {
-				"myOriginalAggregation": {
-					"type": "sap.ui.core.Element"
+				myOriginalAggregation: {
+					type: "sap.ui.core.Element"
 				}
 			}
 		}
@@ -276,7 +276,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Aggregations filtering", {
-		beforeEach: function (assert) {
+		beforeEach: function () {
 			this.oManagedObject1 = new TestObject();
 			this.oManagedObject2 = new TestObject();
 			this.oSpy = sinon.spy();
@@ -305,5 +305,4 @@ sap.ui.define([
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

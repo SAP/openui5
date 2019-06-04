@@ -961,6 +961,13 @@ sap.ui.define([
 
 	QUnit.module("Aria");
 
+	QUnit.test("Role 'menu' is set to the unordered list html element", function(assert) {
+		// Act
+		openMenu(oRootMenu, undefined, assert);
+		// Assert
+		assert.equal(oRootMenu.$().find(".sapUiMnuLst").attr("role"), "menu", "The role menu is set correctly");
+	});
+
 	QUnit.test("Aria-level is not used anymore", function(assert) {
 		//Act
 		openMenu(oRootMenu, undefined, assert);

@@ -134,16 +134,16 @@ function(
 	}, function () {
 		QUnit.test("when using common methods of the plugin", function (assert) {
 			assert.expect(6);
-			this.oPlugin.getActionName = function(){
+			this.oPlugin.getActionName = function() {
 				return "dummyActionName";
 			};
 			var oOverlay = {
-				getElement: function(){
+				getElement: function() {
 					return "dummyElement";
 				},
-				getDesignTimeMetadata: function(){
+				getDesignTimeMetadata: function() {
 					return {
-						getAction: function(sActionName, oElement){
+						getAction: function(sActionName, oElement) {
 							assert.equal(sActionName, "dummyActionName", "getAction gets called with the plugin action name");
 							assert.equal(oElement, "dummyElement", "getAction gets called with the right element");
 						}
@@ -168,9 +168,9 @@ function(
 			this.oPlugin.getSelectedOverlays();
 		});
 
-		QUnit.test("when calling _getMenuItems", function(assert){
+		QUnit.test("when calling _getMenuItems", function(assert) {
 			var oOverlay = {
-				getDesignTimeMetadata: function(){
+				getDesignTimeMetadata: function() {
 					return;
 				}
 			};
@@ -180,17 +180,17 @@ function(
 				"if the overlay has no DesignTime Metadata, the method returns an empty array"
 			);
 			oOverlay = {
-				getElement: function(){
+				getElement: function() {
 					return "dummyElement";
 				},
-				getDesignTimeMetadata: function(){
+				getDesignTimeMetadata: function() {
 					return {
-						getAction: function(sActionName, oElement){
+						getAction: function() {
 							return {
 								name: "dummyActionName"
 							};
 						},
-						getLibraryText: function(oElement, sName){
+						getLibraryText: function(oElement, sName) {
 							return sName;
 						}
 					};
@@ -218,12 +218,12 @@ function(
 			assert.ok(mMenuItem.enabled(), "enabled function is properly returned");
 
 			oOverlay = {
-				getElement: function(){
+				getElement: function() {
 					return "dummyElement";
 				},
-				getDesignTimeMetadata: function(){
+				getDesignTimeMetadata: function() {
 					return {
-						getAction: function(sActionName, oElement){
+						getAction: function() {
 							return {};
 						}
 					};
@@ -237,14 +237,14 @@ function(
 			);
 
 			oOverlay = {
-				getElement: function(){
+				getElement: function() {
 					return "dummyElement";
 				},
-				getDesignTimeMetadata: function(){
+				getDesignTimeMetadata: function() {
 					return {
-						getAction: function(sActionName, oElement){
+						getAction: function() {
 							return {
-								name: function(oElement){
+								name: function(oElement) {
 									return oElement + "name";
 								}
 							};
@@ -271,5 +271,4 @@ function(
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

@@ -329,7 +329,7 @@ sap.ui.define([
 	FlexController.prototype.createAndApplyChange = function (oChangeSpecificData, oControl) {
 		var oChange;
 		return Promise.resolve()
-			.then( function() {
+			.then(function() {
 				oChange = this.addChange(oChangeSpecificData, oControl);
 				var mPropertyBag = {
 					modifier: JsControlTreeModifier,
@@ -339,7 +339,7 @@ sap.ui.define([
 				oChange.setQueuedForApply();
 				return this.checkTargetAndApplyChange(oChange, oControl, mPropertyBag);
 			}.bind(this))
-			.then( function(oReturn) {
+			.then(function(oReturn) {
 				if (!oReturn.success) {
 					var oException = oReturn.error || new Error("The change could not be applied.");
 					this._oChangePersistence.deleteChange(oChange, true);
@@ -547,7 +547,6 @@ sap.ui.define([
 						}
 					}.bind(this));
 				}.bind(this));
-
 			} catch (oException) {
 				this._logApplyChangeError(oException, oChange);
 			}
@@ -603,10 +602,10 @@ sap.ui.define([
 		var oSettings, oRtaControlTreeModifier, oResult;
 		var sLibraryName = oModifier.getLibraryName(mControl.control);
 		var oWaitForRegistration = new Utils.FakePromise();
-		if (ChangeHandlerRegistration.isChangeHandlerRegistrationInProgress(sLibraryName)){
+		if (ChangeHandlerRegistration.isChangeHandlerRegistrationInProgress(sLibraryName)) {
 			oWaitForRegistration = ChangeHandlerRegistration.waitForChangeHandlerRegistration(sLibraryName);
 		}
-		return oWaitForRegistration.then(function(){
+		return oWaitForRegistration.then(function() {
 			var oChangeHandler = this._getChangeHandler(oChange, mControl.controlType, mControl.control, oModifier);
 			if (!oChangeHandler) {
 				var sErrorMessage = "Change handler implementation for change not found or change type not enabled for current layer - Change ignored";
@@ -690,12 +689,12 @@ sap.ui.define([
 					}
 					return oResult;
 				}.bind(this));
-			} else {
-				// make sure that everything that goes with finishing the apply process is done, even though the change was already applied
-				oResult = {success: true};
-				oChange.markFinished(oResult);
-				return new Utils.FakePromise(oResult);
 			}
+
+			// make sure that everything that goes with finishing the apply process is done, even though the change was already applied
+			oResult = {success: true};
+			oChange.markFinished(oResult);
+			return new Utils.FakePromise(oResult);
 		}.bind(this));
 	};
 
@@ -719,7 +718,7 @@ sap.ui.define([
 
 		// The stashed control does not have custom data in Runtime,
 		// so we have to assume that it is stashed so we can perform the revert
-		if (oChange.getChangeType() === "stashControl" && sControlType === "sap.ui.core._StashedControl"){
+		if (oChange.getChangeType() === "stashControl" && sControlType === "sap.ui.core._StashedControl") {
 			bStashed = true;
 
 			// if we want to revert we also have to fake the revertData when it is not available
@@ -961,7 +960,7 @@ sap.ui.define([
 					return this.revertChangesOnControl(aChanges, oComponent);
 				}
 			}.bind(this))
-			.then( function() {
+			.then(function() {
 				if (oComponent) {
 					var oModel = oComponent.getModel(Utils.VARIANT_MODEL_NAME);
 					if (oModel) {
@@ -972,7 +971,7 @@ sap.ui.define([
 						});
 					}
 				}
-		});
+			});
 	};
 
 	/**
@@ -1071,7 +1070,6 @@ sap.ui.define([
 			view: Utils.getViewForControl(oControl)
 		};
 		aChangesForControl.forEach(function (oChange) {
-
 			var sControlType = JsControlTreeModifier.getControlType(oControl);
 			var mControl = this._getControlIfTemplateAffected(oChange, oControl, sControlType, mPropertyBag);
 			var bIsCurrentlyAppliedOnControl = this._isChangeCurrentlyApplied(mControl.control, oChange, mPropertyBag.modifier);
@@ -1273,7 +1271,7 @@ sap.ui.define([
 		this._updateControlsDependencies(mDependencies, oAppComponent);
 		Object.keys(mDependencies).forEach(function(sDependencyKey) {
 			var oDependency = mDependencies[sDependencyKey];
-			if (oDependency[FlexController.PENDING] && oDependency.dependencies.length === 0  &&
+			if (oDependency[FlexController.PENDING] && oDependency.dependencies.length === 0 &&
 				!(oDependency.controlsDependencies && oDependency.controlsDependencies.length > 0)
 			) {
 				aPromises.push(
@@ -1314,7 +1312,7 @@ sap.ui.define([
 	 * @private
 	 */
 	FlexController.prototype._processDependentQueue = function (mDependencies, mDependentChangesOnMe, oAppComponent) {
-		 return this._iterateDependentQueue(mDependencies, mDependentChangesOnMe, oAppComponent)
+		return this._iterateDependentQueue(mDependencies, mDependentChangesOnMe, oAppComponent)
 
 		.then(function(aCoveredChanges) {
 			if (aCoveredChanges.length > 0) {
@@ -1325,7 +1323,7 @@ sap.ui.define([
 
 	/**
 	 * Saves changes sequentially on the associated change persistence instance
-	 * @param {sap.ui.fl.Change[]} Array of dirty changes to be saved
+	 * @param {sap.ui.fl.Change[]} aDirtyChanges Array of dirty changes to be saved
 	 * @returns {Promise} A Promise which resolves when all changes have been saved
 	 * @public
 	 */

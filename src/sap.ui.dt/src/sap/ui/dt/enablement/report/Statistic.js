@@ -4,19 +4,17 @@
 
 // Provides control sap.ui.dt.test.report.Statistic.
 sap.ui.define([
-	'sap/ui/core/Control',
-	'sap/ui/model/json/JSONModel',
-	'sap/ui/layout/form/SimpleForm',
+	"sap/ui/core/Control",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/layout/form/SimpleForm",
 	"sap/m/Label",
-	"sap/m/Text",
-	"./StatisticRenderer"
+	"sap/m/Text"
 ], function (
 	Control,
 	JSONModel,
 	SimpleForm,
 	Label,
-	Text,
-	StatisticRenderer
+	Text
 ) {
 	"use strict";
 
@@ -48,7 +46,7 @@ sap.ui.define([
 				}
 			},
 			aggregations : {
-				"_form" : {
+				_form : {
 					type : "sap.ui.layout.form.SimpleForm",
 					hidden : true,
 					multiple : false
@@ -86,7 +84,7 @@ sap.ui.define([
 
 
 		_createForm : function() {
-			var oForm = new sap.ui.layout.form.SimpleForm(this.getId() + "--form", {
+			var oForm = new SimpleForm(this.getId() + "--form", {
 				editable : false,
 				title : "Statistics",
 				content : [

@@ -707,12 +707,20 @@ sap.ui.define([
 
 		_onHover: function(oTable, $Table, sArea, oElem) {
 			var iIndex = $Table.find(sArea).index(oElem);
-			oTable.getRows()[iIndex]._setHovered(true);
+			var oRow = oTable.getRows()[iIndex];
+
+			if (oRow) {
+				oRow._setHovered(true);
+			}
 		},
 
 		_onUnhover: function(oTable, $Table, sArea, oElem) {
 			var iIndex = $Table.find(sArea).index(oElem);
-			oTable.getRows()[iIndex]._setHovered(false);
+			var oRow = oTable.getRows()[iIndex];
+
+			if (oRow) {
+				oRow._setHovered(false);
+			}
 		}
 
 	};

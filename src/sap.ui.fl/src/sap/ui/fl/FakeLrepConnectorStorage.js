@@ -18,7 +18,6 @@ sap.ui.define([
 	"use strict";
 
 	return function (oFakeLrepStorage) {
-
 		FakeLrepConnectorStorage._oBackendInstances = {};
 
 		/**
@@ -37,9 +36,9 @@ sap.ui.define([
 		 */
 		function FakeLrepConnectorStorage(mSettings) {
 			this.mSettings = Object.assign({
-				"isKeyUser": true,
-				"isAtoAvailable": false,
-				"isProductiveSystem": false
+				isKeyUser: true,
+				isAtoAvailable: false,
+				isProductiveSystem: false
 			}, mSettings);
 			this._iChangeCounter = 0;
 		}
@@ -69,11 +68,11 @@ sap.ui.define([
 
 		FakeLrepConnectorStorage.prototype._saveChange = function(mChangeDefinition) {
 			var nCreationTimestamp;
-			if (!mChangeDefinition.creation){
+			if (!mChangeDefinition.creation) {
 				// safari browser uses only 1 ms intervals to create a timestamp. This
 				// generates creation timestamp duplicates. But creation timestamp is
 				// used to define the order of the changes and needs to be unique
-				nCreationTimestamp =  Date.now() + this._iChangeCounter++;
+				nCreationTimestamp = Date.now() + this._iChangeCounter++;
 				mChangeDefinition.creation = new Date(nCreationTimestamp).toISOString();
 			}
 			oFakeLrepStorage.saveChange(mChangeDefinition.fileName, mChangeDefinition);
@@ -81,14 +80,14 @@ sap.ui.define([
 		};
 
 
-		FakeLrepConnectorStorage.prototype.update = function(mChangeDefinition, sChangeName, aChangelist, bIsVariant) {
+		FakeLrepConnectorStorage.prototype.update = function(mChangeDefinition) {
 			return Promise.resolve({
 				response: this._saveChange(mChangeDefinition),
 				status: 'success'
 			});
 		};
 
-		FakeLrepConnectorStorage.prototype.send = function(sUri, sMethod, oData, mOptions) {
+		FakeLrepConnectorStorage.prototype.send = function() {
 			return FakeLrepConnector.prototype.send.apply(this, arguments);
 		};
 
@@ -150,7 +149,6 @@ sap.ui.define([
 		 * @returns {Promise} Returns a promise to the result of the request
 		 */
 		FakeLrepConnectorStorage.prototype.deleteChange = function(oChange) {
-
 			oFakeLrepStorage.deleteChange(oChange.sChangeName);
 
 			return Promise.resolve({
@@ -164,7 +162,6 @@ sap.ui.define([
 		 * @returns {Promise} Returns a promise to the result of the request
 		 */
 		FakeLrepConnectorStorage.prototype.deleteChanges = function() {
-
 			oFakeLrepStorage.deleteChanges();
 
 			return Promise.resolve({
@@ -245,7 +242,7 @@ sap.ui.define([
 		FakeLrepConnectorStorage.prototype._createChangesMap = function(mResult, aVariants) {
 			if (!mResult || !mResult.changes) {
 				mResult = {
-						changes: {}
+					changes: {}
 				};
 			}
 			if (!mResult.changes.changes) {
@@ -294,21 +291,21 @@ sap.ui.define([
 			};
 		};
 
-		function sortByLayerThenCreation(aArray){
+		function sortByLayerThenCreation(aArray) {
 			aArray.sort(byLayerThenCreation);
 		}
 
 		function byLayerThenCreation(oChangeA, oChangeB) {
 			var iLayerA = Utils.getLayerIndex(oChangeA.layer);
 			var iLayerB = Utils.getLayerIndex(oChangeB.layer);
-			if (iLayerA !== iLayerB){
+			if (iLayerA !== iLayerB) {
 				return iLayerA - iLayerB;
 			}
 			return new Date(oChangeA.creation) - new Date(oChangeB.creation);
 		}
 
 		FakeLrepConnectorStorage.prototype._sortChanges = function(mResult) {
-			if (mResult.changes.changes){
+			if (mResult.changes.changes) {
 				sortByLayerThenCreation(mResult.changes.changes);
 			}
 			forEachVariant(mResult, function (oVariant) {
@@ -317,8 +314,8 @@ sap.ui.define([
 			return mResult;
 		};
 
-		function forEachVariant(mResult, fnCallback){
-			Object.keys(mResult.changes.variantSection).forEach( function (sVariantManagementReference) {
+		function forEachVariant(mResult, fnCallback) {
+			Object.keys(mResult.changes.variantSection).forEach(function (sVariantManagementReference) {
 				var aVariants = mResult.changes.variantSection[sVariantManagementReference].variants;
 				aVariants.forEach(fnCallback);
 			});
@@ -349,7 +346,7 @@ sap.ui.define([
 		FakeLrepConnectorStorage.prototype._getReferencedChanges = function(mResult, oCurrentVariant) {
 			var aReferencedChanges = [];
 			withVariant(mResult, oCurrentVariant.content.variantManagementReference, oCurrentVariant.content.variantReference, function (oVariant) {
-				aReferencedChanges = oVariant.controlChanges.filter( function (oReferencedChange) {
+				aReferencedChanges = oVariant.controlChanges.filter(function (oReferencedChange) {
 					return Utils.compareAgainstCurrentLayer(oReferencedChange.layer, oCurrentVariant.layer) === -1;
 				});
 				if (oVariant.content.variantReference) {
@@ -360,7 +357,6 @@ sap.ui.define([
 		};
 
 		FakeLrepConnectorStorage.prototype._addChangesToMap = function(mResult, aChanges, aControlVariantChanges, aControlVariantManagementChanges) {
-
 			var fnAddChangeToVariant = function(mResult, sVariantManagementReference, oChange) {
 				withVariant(mResult, sVariantManagementReference, oChange.variantReference, function (oVariant) {
 					oVariant.controlChanges.push(oChange);
@@ -377,7 +373,7 @@ sap.ui.define([
 			};
 
 			function checkIfVariantExists(mResult, sVariantReference) {
-				return Object.keys(mResult.changes.variantSection).some( function (sVariantManagementReference) {
+				return Object.keys(mResult.changes.variantSection).some(function (sVariantManagementReference) {
 					var aVariants = mResult.changes.variantSection[sVariantManagementReference].variants;
 					return aVariants.some(function(oVariant) {
 						return oVariant.content.fileName === sVariantReference;
@@ -436,14 +432,14 @@ sap.ui.define([
 
 		FakeLrepConnectorStorage.prototype._fakeStandardVariant = function(sVariantManagementReference) {
 			return {
-					fileName: sVariantManagementReference,
-					fileType: "ctrl_variant",
-					variantManagementReference: sVariantManagementReference,
-					variantReference: "",
-					content: {
-						title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl").getText("STANDARD_VARIANT_TITLE")
-					}
-				};
+				fileName: sVariantManagementReference,
+				fileType: "ctrl_variant",
+				variantManagementReference: sVariantManagementReference,
+				variantReference: "",
+				content: {
+					title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl").getText("STANDARD_VARIANT_TITLE")
+				}
+			};
 		};
 
 		/**
@@ -458,13 +454,13 @@ sap.ui.define([
 		 * @param {string} [sAppVersion] Version of application to overwrite the existing LRep connector
 		 * @param {boolean} [bSuppressCacheInvalidation] If true the cache entry will not be deleted
 		 */
-		FakeLrepConnectorStorage.enableFakeConnector = function(mSettings, sAppComponentName, sAppVersion, bSuppressCacheInvalidation){
+		FakeLrepConnectorStorage.enableFakeConnector = function(mSettings, sAppComponentName, sAppVersion, bSuppressCacheInvalidation) {
 			mSettings = mSettings || {};
 
 			function replaceConnectorFactory() {
 				FakeLrepConnectorStorage.enableFakeConnector.original = LrepConnector.createConnector;
 				LrepConnector.createConnector = function() {
-					if (!FakeLrepConnectorStorage._oFakeInstance){
+					if (!FakeLrepConnectorStorage._oFakeInstance) {
 						FakeLrepConnectorStorage._oFakeInstance = new FakeLrepConnectorStorage(mSettings);
 					}
 					return FakeLrepConnectorStorage._oFakeInstance;
@@ -477,13 +473,12 @@ sap.ui.define([
 					if (!bSuppressCacheInvalidation) {
 						FakeLrepConnectorStorage.clearCacheAndResetVariants(sAppComponentName, sAppVersion, oChangePersistence);
 					}
-					if (!FakeLrepConnectorStorage._oBackendInstances[sAppComponentName]){
+					if (!FakeLrepConnectorStorage._oBackendInstances[sAppComponentName]) {
 						FakeLrepConnectorStorage._oBackendInstances[sAppComponentName] = {};
 					}
 					FakeLrepConnectorStorage._oBackendInstances[sAppComponentName][sAppVersion] = oChangePersistence._oConnector;
 
 					oChangePersistence._oConnector = new FakeLrepConnectorStorage(mSettings);
-
 				}
 				replaceConnectorFactory();
 				return;
@@ -493,7 +488,7 @@ sap.ui.define([
 				Cache.clearEntries();
 			}
 
-			if (FakeLrepConnectorStorage.enableFakeConnector.original){
+			if (FakeLrepConnectorStorage.enableFakeConnector.original) {
 				return;
 			}
 			replaceConnectorFactory();
@@ -506,10 +501,9 @@ sap.ui.define([
 		 * @param {string} [sAppComponentName] Name of application component to restore the original LRep connector
 		 * @param {string} [sAppVersion] Version of application to restore the original LRep connector
 		 */
-		FakeLrepConnectorStorage.disableFakeConnector = function(sAppComponentName, sAppVersion){
-
+		FakeLrepConnectorStorage.disableFakeConnector = function(sAppComponentName, sAppVersion) {
 			function restoreConnectorFactory() {
-				if (FakeLrepConnectorStorage.enableFakeConnector.original){
+				if (FakeLrepConnectorStorage.enableFakeConnector.original) {
 					LrepConnector.createConnector = FakeLrepConnectorStorage.enableFakeConnector.original;
 					FakeLrepConnectorStorage.enableFakeConnector.original = undefined;
 					FakeLrepConnectorStorage._oFakeInstance = undefined;
@@ -518,7 +512,7 @@ sap.ui.define([
 
 			if (sAppComponentName && sAppVersion) {
 				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sAppComponentName, sAppVersion);
-				if (!(oChangePersistence._oConnector instanceof LrepConnector)){
+				if (!(oChangePersistence._oConnector instanceof LrepConnector)) {
 					FakeLrepConnectorStorage.clearCacheAndResetVariants(sAppComponentName, sAppVersion, oChangePersistence);
 					if (FakeLrepConnectorStorage._oBackendInstances[sAppComponentName] && FakeLrepConnectorStorage._oBackendInstances[sAppComponentName][sAppVersion]) {
 						oChangePersistence._oConnector = FakeLrepConnectorStorage._oBackendInstances[sAppComponentName][sAppVersion];

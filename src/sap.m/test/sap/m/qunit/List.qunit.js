@@ -20,8 +20,9 @@ sap.ui.define([
 	"sap/m/InputListItem",
 	"sap/m/CustomListItem",
 	"sap/m/ActionListItem",
-	"sap/m/Input"
-], function(jQuery, EventExtension, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Button, Bar, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input) {
+	"sap/m/Input",
+	"sap/ui/events/KeyCodes"
+], function(jQuery, EventExtension, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Button, Bar, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, KeyCodes) {
 	"use strict";
 	createAndAppendDiv("content");
 	var styleElement = document.createElement("style");
@@ -1650,7 +1651,7 @@ sap.ui.define([
 		oList.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		var oTitle = oStdLI.$().find(".sapMSLITitleDiv").children(0);
+		var oTitle = oStdLI.$().find(".sapMSLITitleOnly");
 		// Assert
 		assert.equal(oTitle.attr("dir"), 'ltr', "Title has attribute dir equal to ltr");
 
@@ -1677,6 +1678,98 @@ sap.ui.define([
 		assert.equal(oInfo.attr("dir"), 'ltr', "Info has attribute dir equal to ltr");
 
 		// Clean up
+		oList.destroy();
+	});
+
+	QUnit.test("StandardListItem wrapping behavior (Desktop)", function(assert) {
+		this.clock = sinon.useFakeTimers();
+		var oStdLI = new StandardListItem({
+			title: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, seddiamnonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.",
+			description: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, seddiamnonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.",
+			wrapping: true
+		});
+
+		var oList = new List({
+			items : [oStdLI]
+		});
+
+		oList.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			fnToggleExpandCollapse = sinon.spy(oStdLI, "_toggleExpandCollapse");
+
+		// varialbles for title elements
+		var $titleText = oStdLI.getDomRef("titleText"),
+			$titleThreeDots = oStdLI.getDomRef("titleThreeDots"),
+			$titleButton = oStdLI.getDomRef("titleButton");
+
+		// variables for description elements
+		var $descText = oStdLI.getDomRef("descriptionText"),
+			$descThreeDots = oStdLI.getDomRef("descriptionThreeDots"),
+			$descButton = oStdLI.getDomRef("descriptionButton");
+
+		// title text test
+		assert.ok(oStdLI.$().hasClass("sapMSLIWrapping"), "Wrapping style class added");
+		assert.ok($titleText.innerText.length < oStdLI.getTitle().length, "Collapsed text is rendered which has less characters than the provided title text");
+		assert.equal($titleText.innerText.length, 300, "Desktop limit for collapsed text in wrapping behavior is set correctly to 300 characters");
+		assert.equal($titleThreeDots.innerText, " ... ", "three dots are rendered");
+		assert.equal($titleButton.innerText, oRb.getText("TEXT_SHOW_MORE"), "button rendered with the correct text");
+
+		// desciption text test
+		assert.ok($descText.innerText.length < oStdLI.getTitle().length, "Collapsed text is rendered which has less characters than the provided description text");
+		assert.equal($descText.innerText.length, 300, "Desktop limit for collapsed text in wrapping behavior is set correctly to 300 characters");
+		assert.equal($descThreeDots.innerText, " ... ", "three dots are rendered");
+		assert.equal($descButton.innerText, oRb.getText("TEXT_SHOW_MORE"), "button rendered with the correct text");
+
+		// trigger tap on tilte text
+		jQuery($titleButton).trigger("tap");
+		sap.ui.getCore().applyChanges();
+		assert.ok(fnToggleExpandCollapse.calledOnce, "_toggleExpandCollapse function called");
+		$titleText = oStdLI.getDomRef("titleText");
+		$titleThreeDots = oStdLI.getDomRef("titleThreeDots");
+		$titleButton = oStdLI.getDomRef("titleButton");
+		assert.equal($titleText.innerText.length, oStdLI.getTitle().length, "Full title text visible");
+		assert.equal($titleThreeDots.innerText, " ", "three dots are rendered");
+		assert.equal($titleButton.innerText, oRb.getText("TEXT_SHOW_LESS"), "button rendered with the correct text");
+
+		//trigger onsapspace on description text
+		$descButton.focus();
+		qutils.triggerKeyboardEvent($descButton.getAttribute("id"), KeyCodes.SPACE);
+		this.clock.tick(50);
+
+		sap.ui.getCore().applyChanges();
+		assert.ok(fnToggleExpandCollapse.calledTwice, "_toggleExpandCollapse function called");
+		$descText = oStdLI.getDomRef("descriptionText");
+		$descThreeDots = oStdLI.getDomRef("descriptionThreeDots");
+		$descButton = oStdLI.getDomRef("descriptionButton");
+		assert.equal($descText.innerText.length, oStdLI.getDescription().length, "Full desciption text visible");
+		assert.equal($descThreeDots.innerText, " ", "three dots are rendered");
+		assert.equal($descButton.innerText, oRb.getText("TEXT_SHOW_LESS"), "button rendered with the correct text");
+
+		oList.destroy();
+	});
+
+	QUnit.test("StandardListItem wrapping behavior (Phone)", function(assert) {
+		this.stub(Device.system, "phone", true);
+
+		var oStdLI = new StandardListItem({
+			title: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, seddiamnonumyeirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.",
+			wrapping: true
+		});
+
+		var oList = new List({
+			items : [oStdLI]
+		});
+
+		oList.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var $titleText = oStdLI.getDomRef("titleText");
+
+		assert.ok($titleText.innerText.length < oStdLI.getTitle().length, "Collapsed text is rendered which has less characters than the provided title text");
+		assert.equal($titleText.innerText.length, 100, "Desktop limit for collapsed text in wrapping behavior is set correctly to 100 characters");
+
 		oList.destroy();
 	});
 

@@ -3,34 +3,7 @@
 /* Base theme                                    */
 /* ============================================= */
 
-.sapUiAnalyticalTable .sapUiTableRowSelectionCell {
-	&.sapUiAnalyticalTableSum {
-		border-left: 0;
-		border-right: 0;
-	}
-
-	&.sapUiAnalyticalTableDummy {
-		font-size: 14px;
-		line-height: 28px;
-		color: @sapUiContentLabelColor;
-	}
-}
-
-.sapUiAnalyticalTable .sapUiTableTr.sapUiAnalyticalTableSum {
-	> .sapUiTableCell {
-		border-left: 0;
-		border-right: 0;
-	}
-}
-
-.sapUiAnalyticalTable .sapUiTableTr.sapUiAnalyticalTableSum > .sapUiTableCellLast {
-	border-right: @_sap_ui_table_BaseBorderWidth solid @sapUiListVerticalBorderColor;
-}
-
-.sapUiAnalyticalTable .sapUiTableTr.sapUiAnalyticalTableDummy .sapUiTableCell {
-	border-right-width: 0;
-}
-
-.sapUiAnalyticalTable .sapUiTableTr.sapUiAnalyticalTableDummy .sapUiTableCell:last-child {
-	border-right-width: @_sap_ui_table_BaseBorderWidth;
+.sapUiAnalyticalTable .sapUiAnalyticalTableSum > .sapUiTableCell {
+	border-left-color: transparent;
+	border-right-color: transparent;
 }

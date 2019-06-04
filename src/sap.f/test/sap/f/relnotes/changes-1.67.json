@@ -5,14 +5,24 @@
       {
         "id": "6eca79462beb26364802084f785d90bbdb6a850b",
         "type": "FIX",
-        "text": " sap.f.DynamicPage: Pin button visibility toggled correctly",
-        "references": []
+        "text": "sap.f.DynamicPage: Pin button visibility toggled correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980264288"
+          }
+        ]
       },
       {
         "id": "0a19c1796dccabd3733686feb9fe204535bd344f",
         "type": "FIX",
-        "text": " sap.f.GridList: Counters are correctly positioned",
-        "references": []
+        "text": "sap.f.GridList: Counters are correctly positioned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980255662"
+          }
+        ]
       }
     ]
   }

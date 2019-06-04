@@ -31,19 +31,19 @@ function (
 
 	function getChangeContent(sFileName, sSelectorId) {
 		return {
-			"fileType": "change",
-			"layer": "CUSTOMER",
-			"fileName": sFileName || "a",
-			"namespace": "b",
-			"packageName": "c",
-			"changeType": "labelChange",
-			"creation": "",
-			"reference": "",
-			"selector": {
-				"id": sSelectorId || "abc123"
+			fileType: "change",
+			layer: "CUSTOMER",
+			fileName: sFileName || "a",
+			namespace: "b",
+			packageName: "c",
+			changeType: "labelChange",
+			creation: "",
+			reference: "",
+			selector: {
+				id: sSelectorId || "abc123"
 			},
-			"content": {
-				"something": "createNewVariant"
+			content: {
+				something: "createNewVariant"
 			}
 		};
 	}
@@ -180,7 +180,7 @@ function (
 
 		QUnit.test("getParsedRevertDataFromCustomData", function(assert) {
 			var oParsedRevertData = FlexCustomData.getParsedRevertDataFromCustomData(this.oControl, this.oChange, this.mPropertyBag.modifier);
-			assert.deepEqual(oParsedRevertData, {"value": "revert"}, "the parsed data is correct");
+			assert.deepEqual(oParsedRevertData, {value: "revert"}, "the parsed data is correct");
 		});
 
 		QUnit.test("getParsedRevertDataFromCustomData without custom data", function(assert) {

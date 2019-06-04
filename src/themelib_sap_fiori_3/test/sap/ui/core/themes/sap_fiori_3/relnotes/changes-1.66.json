@@ -90,8 +90,13 @@
       {
         "id": "fc35e8f6fde59de2acc1559beecde9bd16b1191b",
         "type": "FIX",
-        "text": " sap.m.Tokenizer: Unnecessary padding removed",
-        "references": []
+        "text": "sap.m.Tokenizer: Unnecessary padding removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980211449"
+          }
+        ]
       }
     ]
   }

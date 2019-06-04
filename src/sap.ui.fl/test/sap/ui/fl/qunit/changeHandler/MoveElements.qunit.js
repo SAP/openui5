@@ -36,7 +36,6 @@ function(
 
 	QUnit.module("Given a Move Elements Change Handler", {
 		beforeEach : function() {
-
 			// Test Setup:
 			// VerticalLayout
 			// -- content
@@ -56,10 +55,10 @@ function(
 			this.oButton = new Button(oComponent.createId("myButton"));
 			this.oObjectAttribute = new ObjectAttribute(oComponent.createId(this.myObjectAttributeId));
 			this.oObjectAttribute2 = new ObjectAttribute(oComponent.createId(this.myObjectAttributeId2));
-			this.oObjectHeader = new ObjectHeader(oComponent.createId("myObjectHeader") ,{
+			this.oObjectHeader = new ObjectHeader(oComponent.createId("myObjectHeader"), {
 				attributes : [this.oObjectAttribute, this.oObjectAttribute2]
 			});
-			this.oLayout = new VerticalLayout(oComponent.createId(this.myLayoutId) ,{
+			this.oLayout = new VerticalLayout(oComponent.createId(this.myLayoutId), {
 				content : [this.oObjectHeader, this.oButton]
 			});
 

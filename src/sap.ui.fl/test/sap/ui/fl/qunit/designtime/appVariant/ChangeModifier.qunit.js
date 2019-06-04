@@ -3,9 +3,9 @@ var iOriginalMaxDepth = QUnit.dump.maxDepth;
 QUnit.dump.maxDepth = 10;
 
 sap.ui.define([
-		"sap/ui/thirdparty/sinon-4",
-		"sap/ui/fl/designtime/appVariant/ChangeModifier"
-	],
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/fl/designtime/appVariant/ChangeModifier"
+],
 	function (sinon, ChangeModifier) {
 		"use strict";
 
@@ -23,13 +23,13 @@ sap.ui.define([
 				var aFiles = [{
 					fileName: "/changes/id_1550588173383_10_changeLabel.change",
 					content: sFirstChangeContent
-				},{
+				}, {
 					fileName: "/changes/subfolder/ id_1550588173383_10_changeLabel.change",
 					content: "{}"
-				},{
+				}, {
 					fileName: "/changes/id_1550588173383_11_changeLabel.change",
 					content: sSecondChangeContent
-				},{
+				}, {
 					fileName: "/descriptorChanges/id_1550588173383_11_setTitle.change",
 					content: "{}"
 				}];
@@ -50,13 +50,13 @@ sap.ui.define([
 				var aFiles = [{
 					fileName: "/changes/coding/myCode.js",
 					content: "{}"
-				},{
+				}, {
 					fileName: "/changes/id_1550588173383_10_changeLabel.change",
 					content: sFirstChangeContent
-				},{
+				}, {
 					fileName: "/changes/id_1550588173383_11_changeLabel.change",
 					content: sSecondChangeContent
-				},{
+				}, {
 					fileName: "/changes/fragments/my.fragment.xml",
 					content: "<>"
 				}];
@@ -74,42 +74,42 @@ sap.ui.define([
 		QUnit.module("file modification", {
 			beforeEach: function () {
 				this.oChange = {
-					"fileName": "id_1550588173383_10_changeLabel",
-					"fileType": "change",
-					"changeType": "changeLabel",
-					"moduleName": "",
-					"reference": "sap.test.Component",
-					"packageName": "SOME_PACKAGE",
-					"content":{},
-					"selector": {
-						"id": "view--label",
-						"idIsLocal": true
+					fileName: "id_1550588173383_10_changeLabel",
+					fileType: "change",
+					changeType: "changeLabel",
+					moduleName: "",
+					reference: "sap.test.Component",
+					packageName: "SOME_PACKAGE",
+					content:{},
+					selector: {
+						id: "view--label",
+						idIsLocal: true
 					},
-					"layer": "VENDOR",
-					"texts":{},
-					"namespace": "apps/sap.test/changes/",
-					"projectId": "sap.test",
-					"creation": "2100-01-01T00:00:00.000000Z",
-					"originalLanguage": "EN",
-					"conditions":{},
-					"context": "",
-					"support":{
-						"generator": "Change.createInitialFileContent",
-						"service": "",
-						"user": "SOMEONE",
-						"sapui5Version": "1.214.5",
-						"sourceChangeFileName": "",
-						"compositeCommand": ""
+					layer: "VENDOR",
+					texts:{},
+					namespace: "apps/sap.test/changes/",
+					projectId: "sap.test",
+					creation: "2100-01-01T00:00:00.000000Z",
+					originalLanguage: "EN",
+					conditions:{},
+					context: "",
+					support:{
+						generator: "Change.createInitialFileContent",
+						service: "",
+						user: "SOMEONE",
+						sapui5Version: "1.214.5",
+						sourceChangeFileName: "",
+						compositeCommand: ""
 					},
-					"oDataInformation":{},
-					"dependentSelector":{},
-					"validAppVersions":{
-						"creation": "2.3.4",
-						"from": "2.3.4",
-						"to": "2.3.4"
+					oDataInformation:{},
+					dependentSelector:{},
+					validAppVersions:{
+						creation: "2.3.4",
+						from: "2.3.4",
+						to: "2.3.4"
 					},
-					"jsOnly": false,
-					"variantReference": ""
+					jsOnly: false,
+					variantReference: ""
 				};
 			},
 			afterEach: function () {

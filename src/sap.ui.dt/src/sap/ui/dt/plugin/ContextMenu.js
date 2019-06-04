@@ -188,9 +188,9 @@ sap.ui.define([
 				this.getDesignTime().getPlugins().forEach(function (oPlugin) {
 					var aPluginMenuItems = oPlugin.getMenuItems(aSelectedOverlays) || [];
 					aPluginMenuItems.forEach(function (mMenuItem) {
-						if (mMenuItem.group != undefined && !bContextMenu) {
+						if (mMenuItem.group !== undefined && !bContextMenu) {
 							this._addMenuItemToGroup(mMenuItem);
-						} else if (mMenuItem.submenu != undefined) {
+						} else if (mMenuItem.submenu !== undefined) {
 							this._addSubMenu(mMenuItem, mPosition, oOverlay);
 						} else {
 							this.addMenuItem(mMenuItem, true);
@@ -426,7 +426,6 @@ sap.ui.define([
 			(oEvent.shiftKey === false) &&
 			(oEvent.altKey === false) &&
 			(oEvent.ctrlKey === false)) {
-
 			if (oOverlay && oOverlay.isSelectable()) {
 				this._startOpening(oEvent, true);
 				oEvent.stopPropagation();
@@ -437,7 +436,6 @@ sap.ui.define([
 			(oEvent.shiftKey === true) &&
 			(oEvent.altKey === false) &&
 			(oEvent.ctrlKey === false)) {
-
 			if (oOverlay && oOverlay.isSelectable()) {
 				oEvent.preventDefault();
 
@@ -481,9 +479,8 @@ sap.ui.define([
 				this._oCurrentOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 			}
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	};
 
 	/**
@@ -501,7 +498,7 @@ sap.ui.define([
 		this.setFocusLock(true);
 	};
 
-	ContextMenu.prototype._openContextMenu = function(oEvent, oOverlay, mPosition){
+	ContextMenu.prototype._openContextMenu = function(oEvent, oOverlay, mPosition) {
 		if (oOverlay && oOverlay.isSelectable()) {
 			oEvent.preventDefault();
 			this._oCurrentOverlay = oOverlay;
@@ -612,7 +609,6 @@ sap.ui.define([
 	 */
 	ContextMenu.prototype._addMenuItemToGroup = function (mMenuItem) {
 		var bGroupExists = this._aGroupedItems.some(function (_oGroupedItem) {
-
 			if (_oGroupedItem.sGroupName === mMenuItem.group) {
 				_oGroupedItem.aGroupedItems.push(mMenuItem);
 				return true;
@@ -638,7 +634,7 @@ sap.ui.define([
 			oSubMenuItem.handler = mMenuItem.handler;
 		});
 
-		mMenuItem.handler = function (sMenuItemId, mPosition, oOverlay, aOverlays, mPropertiesBag) {
+		mMenuItem.handler = function (sMenuItemId, mPosition, oOverlay) {
 			this._aSubMenus.some(function (_oMenuItem) {
 				if (_oMenuItem.sSubMenuId === sMenuItemId) {
 					_oMenuItem.aSubMenuItems.forEach(function (oSubMenuItem) {
@@ -658,7 +654,6 @@ sap.ui.define([
 				this.open(mPosition, oOverlay, true, true);
 			}.bind(this), 0);
 			this.lockMenuOpening();
-
 		}.bind(this, mMenuItem.id, mPosition, oOverlay);
 
 		this._aSubMenus.push({
@@ -696,17 +691,16 @@ sap.ui.define([
 				};
 
 				this.addMenuItem({
-						id: oGroupedItem.sGroupName + "-groupButton",
-						enabled: true,
-						text: oGroupedItem.sGroupName,
-						icon: oGroupedItem.aGroupedItems[0].icon,
-						rank: oGroupedItem.aGroupedItems[0].rank,
-						handler: fHandlerForGroupedButton.bind(this, iIndex, mPosition, oOverlay)
+					id: oGroupedItem.sGroupName + "-groupButton",
+					enabled: true,
+					text: oGroupedItem.sGroupName,
+					icon: oGroupedItem.aGroupedItems[0].icon,
+					rank: oGroupedItem.aGroupedItems[0].rank,
+					handler: fHandlerForGroupedButton.bind(this, iIndex, mPosition, oOverlay)
 				}, true);
 			}
 		}.bind(this));
 	};
 
 	return ContextMenu;
-
 }, /* bExport= */ true);

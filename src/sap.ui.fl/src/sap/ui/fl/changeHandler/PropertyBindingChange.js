@@ -3,11 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/base/Log",
-	"sap/ui/fl/Utils"
+	"sap/base/Log"
 ], function(
-	Log,
-	FlexUtils
+	Log
 ) {
 	"use strict";
 

@@ -363,7 +363,11 @@ ODataMessageParser.prototype._createMessage = function(oMessageObject, mRequestI
 		processor: this._processor,
 		technical: bIsTechnical,
 		persistent: bPersistent,
-		fullTarget: oMessageObject.deepPath
+		fullTarget: oMessageObject.deepPath,
+		technicalDetails: {
+			statusCode: mRequestInfo.response.statusCode,
+			headers: mRequestInfo.response.headers
+		}
 	});
 };
 

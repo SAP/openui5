@@ -10,7 +10,7 @@ sap.ui.define([
 	ErrorUtils,
 	jQuery,
 	sinon
-){
+) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();

@@ -62,7 +62,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given that a AddElementsDialog is available...", {
-		beforeEach: function (assert) {},
+		beforeEach: function () {},
 		afterEach: function () {
 			this.oAddElementsDialog.destroy();
 			sandbox.restore();
@@ -215,5 +215,4 @@ sap.ui.define([
 			}]);
 		});
 	});
-
 });

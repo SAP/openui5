@@ -258,8 +258,8 @@ sap.ui.define([
 	});
 
 	//I build this one in because if you bind the tooltip of a label to a json model which is connected to an input,
-	//blur will be triggered on every keystroke
-	QUnit.test("Should suppress rerendering when tooltip is set", function(assert) {
+	//blur should not be triggered on every keystroke
+	QUnit.test("DOM must be patched when tooltip is changed", function(assert) {
 		// Arrange
 		var oRerenderingSpy = this.spy();
 
@@ -269,6 +269,7 @@ sap.ui.define([
 		});
 		oLabel.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
+		var oDomRef = oLabel.getDomRef();
 
 		oLabel.addEventDelegate({
 			onBeforeRendering : oRerenderingSpy
@@ -279,7 +280,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(oRerenderingSpy.callCount, 0, "Did not rerender");
+		assert.strictEqual(oRerenderingSpy.callCount, 1, "Label is rerendered");
+		assert.strictEqual(oLabel.getDomRef(), oDomRef, "...but DOM reference is not changed");
 		assert.strictEqual(oLabel.$().attr("title"), "bar", "Tooltip got updated");
 
 		// Cleanup
@@ -419,46 +421,17 @@ sap.ui.define([
 	QUnit.test("Setting the displayOnly property", function (assert) {
 		var afterRenderingSpy = sinon.spy(this.label, "onAfterRendering");
 
+		var domRef = this.label.getDomRef();
 		var result = this.label.setDisplayOnly(true);
+		sap.ui.getCore().applyChanges();
 
 		assert.strictEqual(this.label.getDisplayOnly(), true, "The property displayOnly should be set tot true");
 		assert.strictEqual(result, this.label, "Setter should return this for chaining");
 		assert.strictEqual(this.label.$().hasClass("sapMLabelDisplayOnly"), true, "The right class should be applied");
-		assert.strictEqual(afterRenderingSpy.callCount, 0, "The change should not cause rerendering");
+		assert.strictEqual(afterRenderingSpy.callCount, 1, "The change should cause rerendering");
+		assert.strictEqual(this.label.getDomRef(), domRef, "...but DOM reference is not changed");
 
 		this.label.onAfterRendering.restore();
-	});
-
-	QUnit.module("DisplayOnlyForm", {
-		beforeEach: function() {
-			var formLayout = new FormLayout("FL1");
-			this.form = new Form("F1", {
-				layout: formLayout
-			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-		},
-		afterEach: function() {
-			if (this.form) {
-				this.form.destroy();
-				this.form = undefined;
-			}
-		}
-	});
-
-	QUnit.test("Aria", function(assert) {
-		var formContainer1 = new FormContainer("FC1");
-		var formElement1 = new FormElement("FE1");
-		formElement1.setLabel("Test1");
-		var field1 = new Text("Text1", {
-			text: 'Display Value'
-		});
-		formElement1.addField(field1);
-
-		formContainer1.addFormElement(formElement1);
-		this.form.addFormContainer(formContainer1);
-		sap.ui.getCore().applyChanges();
-
-		assert.equal(this.form.$().find('.sapUiFormElement.sapUiFormElementLbl').text(), 'Test1:Display Value', '":" span is added.');
 	});
 
 	QUnit.module("Label in Overflow Toolbar", {

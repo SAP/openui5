@@ -3,11 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
-	'sap/ui/dt/enablement/Test',
-	'sap/ui/dt/enablement/ElementEnablementTest'
+	"sap/ui/dt/enablement/Test",
+	"sap/ui/dt/enablement/ElementEnablementTest"
 ], function (
-	jQuery,
 	Test,
 	ElementEnablementTest
 ) {
@@ -99,9 +97,9 @@ sap.ui.define([
 					oElementEnablementTest.destroy();
 					return fnIterate(mResult);
 				});
-			} else {
-				return Promise.resolve(aResults);
 			}
+
+			return Promise.resolve(aResults);
 		};
 
 
@@ -112,7 +110,7 @@ sap.ui.define([
 				var mChild = mElementTestResult.children[0];
 				var mPreviousChild = mResult.children[mResult.children.length - 1];
 
-				if (mPreviousChild && mChild.name == mPreviousChild.name) {
+				if (mPreviousChild && mChild.name === mPreviousChild.name) {
 					mPreviousChild.children = mPreviousChild.children.concat(mChild.children);
 				} else {
 					mResult.children.push(mChild);
@@ -123,8 +121,6 @@ sap.ui.define([
 
 			return mResult;
 		}.bind(this));
-
-
 	};
 
 	return LibraryReport;

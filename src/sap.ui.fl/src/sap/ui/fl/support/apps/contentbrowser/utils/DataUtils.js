@@ -21,7 +21,7 @@ sap.ui.define(["sap/m/GroupHeaderListItem", "sap/ui/thirdparty/jquery"],
 				category: "NS",
 				name: "LREP_HOME_CONTENT",
 				ns: "UIF/"
-			},{
+			}, {
 				category: "NS",
 				name: "virtual~",
 				ns: "/"
@@ -44,7 +44,7 @@ sap.ui.define(["sap/m/GroupHeaderListItem", "sap/ui/thirdparty/jquery"],
 				try {
 					oData = JSON.parse(oData);
 					return JSON.stringify(oData, null, '\t');
-				} catch (oError){
+				} catch (oError) {
 					var ErrorUtils = sap.ui.require("sap/ui/fl/support/apps/contentbrowser/utils/ErrorUtils");
 					ErrorUtils.displayError("Error", oError.name, oError.message);
 					return oData;

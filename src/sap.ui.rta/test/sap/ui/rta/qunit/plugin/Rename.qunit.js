@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/ui/rta/plugin/RenameHandler",
 	"sap/ui/core/Title",
 	"sap/m/Button",
-	"sap/ui/dt/Util",
 	"sap/m/Label",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/sinon-4"
@@ -31,7 +30,6 @@ function (
 	RenameHandler,
 	Title,
 	Button,
-	DtUtil,
 	Label,
 	KeyCodes,
 	sinon
@@ -47,14 +45,14 @@ function (
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.ui.layout.form.FormContainer" : {
-					"renameGroup": { completeChangeContent: function () {} }
+					renameGroup: { completeChangeContent: function () {} }
 				}
 			})
 			.then(function() {
 				this.oRenamePlugin = new RenamePlugin({
 					commandFactory : new CommandFactory()
 				});
-				this.oFormContainer = new FormContainer("formContainer",{
+				this.oFormContainer = new FormContainer("formContainer", {
 					title: new Title("title", {
 						text: "title"
 					})
@@ -133,12 +131,11 @@ function (
 			this.oRenamePlugin.deregisterElementOverlay(this.oFormContainerOverlay);
 			this.oRenamePlugin.registerElementOverlay(this.oFormContainerOverlay);
 
-			sandbox.stub(this.oRenamePlugin, "hasStableId").callsFake(function(oOverlay){
-				if (oOverlay === this.oFormOverlay){
+			sandbox.stub(this.oRenamePlugin, "hasStableId").callsFake(function(oOverlay) {
+				if (oOverlay === this.oFormOverlay) {
 					return false;
-				} else {
-					return true;
 				}
+				return true;
 			}.bind(this));
 
 			sandbox.stub(this.oFormContainerOverlay, "getRelevantContainer").returns(this.oForm);
@@ -249,7 +246,6 @@ function (
 
 				done();
 			}.bind(this));
-
 		},
 		afterEach: function () {
 			this.oVerticalLayout.destroy();
@@ -361,18 +357,18 @@ function (
 	});
 
 	QUnit.module("Given a Rename plugin...", {
-		beforeEach : function(){
+		beforeEach : function() {
 			this.oRenamePlugin = new RenamePlugin({
 				commandFactory : new CommandFactory()
 			});
 		},
-		afterEach : function(){
+		afterEach : function() {
 			delete this.oRenamePlugin;
 		}
 	}, function () {
-		QUnit.test('when the user tries to rename a field to empty string ("")', function(assert){
+		QUnit.test('when the user tries to rename a field to empty string ("")', function(assert) {
 			this.oRenamePlugin._$editableField = {
-				text : function(){
+				text : function() {
 					return "";
 				}
 			};
@@ -383,5 +379,4 @@ function (
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

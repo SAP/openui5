@@ -9,7 +9,7 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		 * Constructor for a new <code>sap.f.routing.Router</code>.
 		 *
 		 * @class
-		 * <code>sap.f.routing.Router</code> is intended to be used with
+		 * The <code>sap.f.routing.Router</code> class is intended to be used with
 		 * <code>{@link sap.f.FlexibleColumnLayout}</code> as a root control.
 		 *
 		 * The difference to the <code>{@link sap.ui.core.routing.Router}</code> are the

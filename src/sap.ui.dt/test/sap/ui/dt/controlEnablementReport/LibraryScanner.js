@@ -4,8 +4,8 @@
 
 // Provides class sap.ui.dt.test.LibraryEnablementTest.
 sap.ui.define([
-	'sap/ui/base/ManagedObject',
-	'controlEnablementReport/ElementActionDefinitionTest'
+	"sap/ui/base/ManagedObject",
+	"controlEnablementReport/ElementActionDefinitionTest"
 ], function(ManagedObject, ElementActionDefinitionTest) {
 	"use strict";
 
@@ -37,9 +37,9 @@ sap.ui.define([
 	LibraryEnablementTest2.prototype._fillElementArray = function(sType) {
 		var oElementTestData = {};
 		if (["sap.ui.richtexteditor.RichTextEditor",
-				 "sap.ui.ux3.QuickView",
-				 "sap.uiext.inbox.SubstitutionRulesManager",
-				 "sap.ui.codeeditor.CodeEditor"].indexOf(sType) === -1) {
+				"sap.ui.ux3.QuickView",
+				"sap.uiext.inbox.SubstitutionRulesManager",
+				"sap.ui.codeeditor.CodeEditor"].indexOf(sType) === -1) {
 			oElementTestData.type = sType;
 			this.aElementEnablementTest.push(new ElementActionDefinitionTest(oElementTestData));
 		}
@@ -66,12 +66,12 @@ sap.ui.define([
 						oLib.name.indexOf("sap.ui.demoapps") === -1 &&
 						oLib.name !== "sap.ui.core" &&
 						oLib.name !== "sap.ui.fl") {
-					aLoadLibraryPromises.push( sap.ui.getCore().loadLibrary(oLib.name, { async:true }) );
+					aLoadLibraryPromises.push(sap.ui.getCore().loadLibrary(oLib.name, { async:true }));
 				}
 			});
 		} else {
 			aLibraries.forEach(function(sLib) {
-				aLoadLibraryPromises.push( sap.ui.getCore().loadLibrary(sLib, { async:true }) );
+				aLoadLibraryPromises.push(sap.ui.getCore().loadLibrary(sLib, { async:true }));
 			});
 		}
 
@@ -101,9 +101,9 @@ sap.ui.define([
 						oElementEnablementTest.destroy();
 						return fnIterate(mResult);
 					});
-				} else {
-					return Promise.resolve(aResults);
 				}
+
+				return Promise.resolve(aResults);
 			}.bind(this);
 
 
@@ -119,7 +119,6 @@ sap.ui.define([
 
 				return mResult;
 			});
-
 		}.bind(this));
 	};
 
