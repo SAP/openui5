@@ -377,8 +377,8 @@ sap.ui.define([
 	 * Registered event handlers are called with the change reason as parameter.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
-	 * @param {object} oEvent.getParameters
-	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters.reason
+	 * @param {object} oEvent.getParameters()
+	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters().reason
 	 *   The reason for the 'change' event: {@link sap.ui.model.ChangeReason.Change} when the
 	 *   binding is initialized, {@link sap.ui.model.ChangeReason.Refresh} when the binding is
 	 *   refreshed, and {@link sap.ui.model.ChangeReason.Context} when the parent context is changed
@@ -410,10 +410,10 @@ sap.ui.define([
 	 * 'error' event parameter.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
-	 * @param {object} oEvent.getParameters
-	 * @param {object} [oEvent.getParameters.data]
+	 * @param {object} oEvent.getParameters()
+	 * @param {object} [oEvent.getParameters().data]
 	 *   An empty data object if a back-end request succeeds
-	 * @param {Error} [oEvent.getParameters.error] The error object if a back-end request failed.
+	 * @param {Error} [oEvent.getParameters().error] The error object if a back-end request failed.
 	 *   If there are multiple failed back-end requests, the error of the first one is provided.
 	 *
 	 * @event
@@ -866,6 +866,22 @@ sap.ui.define([
 
 		return aMetaSegments.length === 3
 			&& oMetaModel.getObject("/" + aMetaSegments[1]).$kind === "EntitySet"; // case 4b
+	};
+
+	/**
+	 * Initializes the OData context binding: Fires a 'change' event in case the binding has a
+	 * resolved path and its root binding is not suspended.
+	 *
+	 * @protected
+	 * @see sap.ui.model.Binding#initialize
+	 * @see #getRootBinding
+	 * @since 1.37.0
+	 */
+	// @override sap.ui.model.Binding#initialize
+	ODataContextBinding.prototype.initialize = function () {
+		if ((!this.bRelative || this.oContext) && !this.getRootBinding().isSuspended()) {
+			this._fireChange({reason : ChangeReason.Change});
+		}
 	};
 
 	/**
