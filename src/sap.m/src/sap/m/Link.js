@@ -411,6 +411,7 @@ function(
 				$this.attr("disabled", true);
 				$this.attr("aria-disabled", true);
 				$this.removeAttr("href");
+				$this.removeAttr("tabindex");
 			}
 		}
 		return this;
