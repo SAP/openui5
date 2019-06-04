@@ -179,6 +179,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Item[]} aHeaderFields List of header fields to be added to the GET request.
 	 * @param {boolean} bAskForLocation True if the location to where download the file should be first queried by a browser dialog.
 	 * @return {boolean} True if the download process successfully
+	 * @public
 	 */
 	Uploader.prototype.downloadItem = function (oItem, aHeaderFields, bAskForLocation) {
 		var sUrl = this.getDownloadUrl() || oItem.getUrl();
