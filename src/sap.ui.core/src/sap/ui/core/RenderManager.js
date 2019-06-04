@@ -52,7 +52,7 @@ sap.ui.define([
 	 * but should use the {@link sap.ui.core.Core#createRenderManager sap.ui.getCore().createRenderManager()}
 	 * method to create an instance for their exclusive use.
 	 *
-	 * @class RenderManager that will take care for rendering Controls.
+	 * @class A class that handles the rendering of controls.
 	 *
 	 * For the default rendering task of UI5, a shared RenderManager is created and owned by <code>sap.ui.core.Core</code>.
 	 * Controls or other code that want to render controls outside the default rendering task
@@ -73,6 +73,76 @@ sap.ui.define([
 	 * own namespace (static class) which matches the name of the control's class with the additional
 	 * suffix 'Renderer'. So for a control <code>sap.m.Input</code> the default renderer will be searched
 	 * for under the global name <code>sap.m.Input<i>Renderer</i></code>.
+	 *
+	 * <h3>In-place DOM patching</h3>
+	 * As of 1.67, <code>RenderManager</code> provides a set of new APIs to describe the structure of the DOM that can be used by the control renderers.
+	 *
+	 * <pre>
+	 *
+	 *   myButtonRenderer.render = function(rm, oButton) {
+	 *
+	 *       rm.openStart("button", oButton);
+	 *       rm.attr("tabindex", 1);
+	 *       rm.class("myButton");
+	 *       rm.style("width", oButton.getWidth());
+	 *       rm.openEnd();
+	 *           rm.text(oButton.getText());
+	 *       rm.close("button");
+	 *
+	 *   };
+	 *
+	 * </pre>
+	 *
+	 * By default, when the control is invalidated (e.g. a property is changed, an aggregation is removed, or an association is added), it will be registered for re-rendering.
+	 * During the (re)rendering, the <code>render</code> method of the control renderer is executed via a specified <code>RenderManager</code> interface and the control instance.
+	 * Traditional string-based rendering creates a new HTML structure of the control in every rendering cycle and removes the existing control DOM structure from the DOM tree.
+	 * The set of new semantic <code>RenderManager</code> APIs lets us understand the structure of the DOM, walk along the live DOM tree, and figure out changes as new APIs are called.
+	 * If there is a change, then <code>RenderManager</code> patches only the required parts of the live DOM tree. This allows control developers to remove their DOM-related custom setters.
+	 *
+	 * <b>Note:</b> To enable the new in-place rendering technology, the <code>apiVersion</code> property of the control renderer must be set to <code>2</code>.
+	 *
+	 * <pre>
+	 *
+	 *   var myButtonRenderer = {
+	 *       apiVersion: 2    // enable in-place DOM patching
+	 *   };
+	 *
+	 *   myButtonRenderer.render = function(rm, oButton) {
+	 *
+	 *       rm.openStart("button", oButton);
+	 *       ...
+	 *       ...
+	 *       rm.close("button");
+	 *
+	 *   };
+	 *
+	 * </pre>
+	 *
+	 * <h3>Renderer.apiVersion contract</h3>
+	 * To allow a more efficient in-place DOM patching and to ensure the compatibility of the control, the following prerequisites must be fulfilled for the controls using the new rendering technology.
+	 *
+	 * <ul>
+	 * <li>Legacy control renderers must be migrated to the new semantic renderer API:
+	 *     {@link sap.ui.core.RenderManager#openStart openStart},
+	 *     {@link sap.ui.core.RenderManager#voidStart voidStart},
+	 *     {@link sap.ui.core.RenderManager#style style},
+	 *     {@link sap.ui.core.RenderManager#class class},
+	 *     {@link sap.ui.core.RenderManager#attr attr},
+	 *     {@link sap.ui.core.RenderManager#openEnd openEnd},
+	 *     {@link sap.ui.core.RenderManager#voidEnd voidEnd},
+	 *     {@link sap.ui.core.RenderManager#text text},
+	 *     {@link sap.ui.core.RenderManager#unsafeHtml unsafeHtml},
+	 *     {@link sap.ui.core.RenderManager#icon icon},
+	 *     {@link sap.ui.core.RenderManager#accessibilityState accessibilityState},
+	 *     {@link sap.ui.core.RenderManager#cleanupControlWithoutRendering cleanupControlWithoutRendering}
+	 * <li>
+	 * <li>During the migration, restrictions that are defined in the API documentation must be taken into account, e.g. tag and attribute names must be set in their canonical form.<li>
+	 * <li>Fault tolerance of HTML5 markups are not applicable for the new semantic rendering API, e.g. except void tags, all tags must be closed; duplicate attributes within one HTML element must not exist.</li>
+	 * <li>Existing control DOM structure will not be removed from the DOM tree; therefore all custom events, including the ones that are registered with jQuery must be deregistered correctly at the <code>onBeforeRendering</code> and <code>exit</code> hooks.</li>
+	 * <li>Classes and attribute names should not be escaped. Styles should be validated via types but this might not be sufficient in all cases, e.g. validated URL values can contain harmful content; in this case {@link module:sap/base/security/encodeCSS} can be used.</li>
+	 * <li>To allow a more efficient DOM update, second parameter of the {@link sap.ui.core.RenderManager#openStart openStart} or {@link sap.ui.core.RenderManager#voidStart voidStart} must be used to identify elements instead of using <code>rm.attr("id", oControl.getId() + "-suffix")</code></li>
+	 * <li>Controls that listen to the <code>focusin</code> event must double check their focus handling. Since DOM nodes are not removed and they are only reused, the <code>focusin</code> event might not be fired because of re-rendering.</li>
+	 * </ul>
 	 *
 	 *
 	 * @see sap.ui.core.Core
@@ -344,8 +414,8 @@ sap.ui.define([
 	 	 * @param {sap.ui.core.Element|sap.ui.core.ID} [vControlOrId] Control instance or ID to identify the element
 		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 		 *
-		 * @private
-		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
+		 * @public
+		 * @since 1.67
 		 */
 		this.openStart = function(sTagName, vControlOrId) {
 			assertValidName(sTagName, "tag");
@@ -370,8 +440,8 @@ sap.ui.define([
 		 * This indicates that there are no more attributes to set to the open tag.
 		 *
 		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
-		 * @private
-		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
+		 * @public
+		 * @since 1.67
 		 */
 		this.openEnd = function(bExludeStyleClasses /* private */) {
 			assertOpenTagHasStarted("openEnd");
@@ -391,8 +461,8 @@ sap.ui.define([
 		 *
 		 * @param {string} sTagName Tag name of the HTML element
 		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
-		 * @private
-		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
+		 * @public
+		 * @since 1.67
 		 */
 		this.close = function(sTagName) {
 			assertValidName(sTagName, "tag");
@@ -413,8 +483,8 @@ sap.ui.define([
 		 * @param {string} sTagName Tag name of the HTML element
 		 * @param {sap.ui.core.Element|sap.ui.core.ID} [vControlOrId] Control instance or ID to identify the element
 		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
-		 * @private
-		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
+		 * @public
+		 * @since 1.67
 		 */
 		this.voidStart = function (sTagName, vControlOrId) {
 			this.openStart(sTagName, vControlOrId);
@@ -430,8 +500,8 @@ sap.ui.define([
 		 * For self-closing tags <code>close</code> must not be called.
 		 *
 		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
-		 * @private
-		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
+		 * @public
+		 * @since 1.67
 		 */
 		this.voidEnd = function (bExludeStyleClasses /* private */) {
 			assertOpenTagHasStarted("voidEnd");
@@ -446,12 +516,12 @@ sap.ui.define([
 		};
 
 		/**
-		 * Writes the given HTML without any encoding or sanitizing.
+		 * Sets the given HTML markup without any encoding or sanitizing.
 		 *
 		 * @param {string} sHtml HTML markup
 		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
-		 * @private
-		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
+		 * @public
+		 * @since 1.67
 		 * @SecSink {*|XSS}
 		 */
 		this.unsafeHtml = function(sHtml) {
@@ -462,12 +532,12 @@ sap.ui.define([
 		};
 
 		/**
-		 * Writes the given text.
+		 * Sets the text content with the given text.
 		 *
 		 * @param {string} sText The text to be written
 		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
-		 * @private
-		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
+		 * @public
+		 * @since 1.67
 		 */
 		this.text = function(sText) {
 			assertOpenTagHasEnded();
@@ -477,7 +547,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Writes an attribute name-value pair to the last open HTML element.
+		 * Adds an attribute name-value pair to the last open HTML element.
 		 *
 		 * This is only valid when called between <code>openStart/voidStart</code> and <code>openEnd/voidEnd</code>.
 		 * The attribute name must not be equal to <code>style</code> or <code>class</code>.
@@ -489,8 +559,8 @@ sap.ui.define([
 		 * @param {string} sName Name of the attribute
 		 * @param {*} vValue Value of the attribute
 		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
-		 * @private
-		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
+		 * @public
+		 * @since 1.67
 		 */
 		this.attr = function(sName, vValue) {
 			assertValidAttr(sName);
@@ -507,8 +577,8 @@ sap.ui.define([
 		 *
 		 * @param {string} sClass Class name to be written
 		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
-		 * @private
-		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
+		 * @public
+		 * @since 1.67
 		 */
 		this.class = function(sClass) {
 			if (sClass) {
@@ -527,8 +597,8 @@ sap.ui.define([
 		 * @param {string} sName Name of the style property
 		 * @param {string} sValue Value of the style property
 		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
-		 * @private
-		 * @ui5-restricted sap.ui.core sap.m sap.ui.unified sap.ui.layout
+		 * @public
+		 * @since 1.67
 		 */
 		this.style = function(sName, sValue) {
 			assertValidStyle(sName);
@@ -1957,8 +2027,7 @@ sap.ui.define([
 	/**
 	 * Determines the API version of a control renderer from the <code>apiVersion</code> marker.
 	 * If this marker does not exist on the renderer then the default value 1 is returned.
-	 * This value is retrieved at the first call and then cached as an own property of the renderer.
-	 * Inherited <code>apiVersion</code> is only valid if there is no additional method implemented by the subclass.
+	 * The inherited <code>apiVersion</code> value is not taken into account, <code>apiVersion</code> must be defined explicitly as an own property of the renderer.
 	 *
 	 * @param {sap.ui.core.Renderer} oRenderer The renderer of the control
 	 * @return {int} API version of the Renderer
@@ -1966,23 +2035,11 @@ sap.ui.define([
 	 * @static
 	 */
 	RenderManager.getApiVersion = function(oRenderer) {
-		// return the defined or cached apiVersion value of the Renderer, if any.
 		if (oRenderer.hasOwnProperty("apiVersion")) {
 			return oRenderer.apiVersion;
 		}
 
-		// inherited apiVersion value is only valid if there is no additional method implemented by subclasses.
-		if (oRenderer.apiVersion == 2) {
-			var iOwnMethodsCount = Object.keys(oRenderer).length;
-			if ((oRenderer.hasOwnProperty("_super") && iOwnMethodsCount == 2)    /* old Renderer.extend syntax */
-				|| (oRenderer.hasOwnProperty("extend") && iOwnMethodsCount == 1) /* new Renderer.extend syntax */
-				|| (iOwnMethodsCount == 0)) {                                    /* inheritance without Renderer.extend */
-				return (oRenderer.apiVersion = 2);
-			}
-		}
-
-		// default apiVersion
-		return (oRenderer.apiVersion = 1);
+		return 1;
 	};
 
 	//#################################################################################################

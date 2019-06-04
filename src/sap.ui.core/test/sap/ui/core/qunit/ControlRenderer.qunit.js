@@ -621,16 +621,7 @@ sap.ui.define([
 		assert.equal(RenderManager.getApiVersion(StringControlRenderer2), 2, "apiVersion is own property of the subclass");
 
 		var PatchingControlRenderer1 = Renderer.extend(PatchingControlRenderer);
-		assert.equal(RenderManager.getApiVersion(PatchingControlRenderer1), 2, "apiVersion is inherited from the base class because subclass has no additional methods");
-		assert.ok(PatchingControlRenderer1.hasOwnProperty("apiVersion"), "PatchingControlRenderer1.apiVersion is now cached and exists on the renderer");
-
-		var PatchingControlRenderer2 = Renderer.extend(PatchingControlRenderer);
-		PatchingControlRenderer2.renderSomething = function() {};
-		assert.equal(RenderManager.getApiVersion(PatchingControlRenderer2), 1, "apiVersion is not inherited from the base class because subclass has own methods");
-
-		var PatchingControlRenderer3 = Renderer.extend(PatchingControlRenderer);
-		PatchingControlRenderer3.apiVersion = 1;
-		assert.equal(RenderManager.getApiVersion(PatchingControlRenderer3), 1, "apiVersion is own property of the subclass");
+		assert.equal(RenderManager.getApiVersion(PatchingControlRenderer1), 1, "apiVersion is not inherited from the base class");
 	});
 
 	QUnit.test("apiVersion of Renderers - New Renderer.extend syntax", function(assert) {
@@ -658,14 +649,7 @@ sap.ui.define([
 		assert.equal(RenderManager.getApiVersion(StringControlRenderer2), 2, "apiVersion is own property of the subclass");
 
 		var PatchingControlRenderer1 = PatchingControlRenderer.extend("my.PatchingControlRenderer1");
-		assert.equal(RenderManager.getApiVersion(PatchingControlRenderer1), 2, "apiVersion is inherited from the base class because subclass has no additional methods");
-		assert.ok(PatchingControlRenderer1.hasOwnProperty("apiVersion"), "PatchingControlRenderer1.apiVersion is now cached and exists on the renderer");
-
-		var PatchingControlRenderer2 = PatchingControlRenderer.extend("my.PatchingControlRenderer2", {
-			renderSomething : function() {}
-		});
-		assert.equal(RenderManager.getApiVersion(PatchingControlRenderer2), 1, "apiVersion is not inherited from the base class because subclass has own methods");
-		assert.ok(PatchingControlRenderer2.hasOwnProperty("apiVersion"), "PatchingControlRenderer2.apiVersion is now cached and exists on the renderer");
+		assert.equal(RenderManager.getApiVersion(PatchingControlRenderer1), 1, "apiVersion is not inherited from the base class");
 	});
 
 	QUnit.test("apiVersion of Renderers - ElementMetadata inheritance", function(assert) {
@@ -686,10 +670,8 @@ sap.ui.define([
 		var NewestPatchingControlRenderer = NewestPatchingControl.getMetadata().getRenderer();
 
 		assert.equal(RenderManager.getApiVersion(NewStringControlRenderer), 1, "apiVersion does not exists on the Renderer, so default value is returned");
-		assert.equal(RenderManager.getApiVersion(NewPatchingControlRenderer), 2, "apiVersion is inherited from the base class because subclass has no additional methods");
-		assert.ok(NewPatchingControlRenderer.hasOwnProperty("apiVersion"), "NewPatchingControlRenderer.apiVersion is now cached and exists on the renderer");
-		assert.equal(RenderManager.getApiVersion(NewestPatchingControlRenderer), 1, "apiVersion is not inherited from the base class because subclass has own methods");
-		assert.ok(NewestPatchingControlRenderer.hasOwnProperty("apiVersion"), "NewestPatchingControlRenderer.apiVersion is now cached and exists on the renderer");
+		assert.equal(RenderManager.getApiVersion(NewPatchingControlRenderer), 1, "apiVersion is not inherited from the base class");
+		assert.equal(RenderManager.getApiVersion(NewestPatchingControlRenderer), 1, "apiVersion is not inherited from the base class");
 	});
 
 	QUnit.test("Focus Handler for Patching Controls", function(assert) {
