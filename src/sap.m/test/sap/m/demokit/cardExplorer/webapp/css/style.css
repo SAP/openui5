@@ -13,3 +13,11 @@
 	text-align: left;
 	padding-left: 2rem;
 }
+
+/* rotate icon of splitter orientation button to mimic correct position */
+.sapUiLoSplitterH .orientationBtn .sapUiIcon {
+	transform: rotate(180deg);
+}
+.sapUiLoSplitterV .orientationBtn .sapUiIcon {
+	transform: rotate(90deg);
+}

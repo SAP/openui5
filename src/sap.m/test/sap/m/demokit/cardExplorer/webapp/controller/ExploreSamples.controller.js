@@ -110,12 +110,14 @@ sap.ui.define([
 
 		_registerResize: function () {
 			Device.media.attachHandler(this._onResize, this);
+			this._onResize();
 		},
 
-		_onResize: function (oEvent) {
-			var isOrientationVertical = exploreSettingsModel.getProperty("/splitViewVertically");
+		_onResize: function () {
+			var isOrientationVertical = exploreSettingsModel.getProperty("/splitViewVertically"),
+				sRangeName = Device.media.getCurrentRange("StdExt").name;
 
-			if (oEvent.name == "Tablet" || oEvent.name == "Phone" && !isOrientationVertical) {
+			if (sRangeName == "Tablet" || sRangeName == "Phone" && !isOrientationVertical) {
 				exploreSettingsModel.setProperty("/splitViewVertically", true);
 				this.getView().byId("splitView").getRootPaneContainer().setOrientation("Vertical");
 			}

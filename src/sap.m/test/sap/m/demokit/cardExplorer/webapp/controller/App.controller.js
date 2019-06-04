@@ -23,11 +23,12 @@ sap.ui.define([
 
 				this.getRouter().attachRouteMatched(this.onRouteChange.bind(this));
 
-				Device.media.attachHandler(this.onDeviceSizeChange, this, Device.media.RANGESETS.SAP_STANDARD);
+				Device.media.attachHandler(this.onDeviceSizeChange, this);
+				this.onDeviceSizeChange();
 			},
 
 			onExit: function () {
-				Device.media.detachHandler(this.onDeviceSizeChange, this, Device.media.RANGESETS.SAP_STANDARD);
+				Device.media.detachHandler(this.onDeviceSizeChange, this);
 			},
 
 			onTabSelect: function (oEvent) {
@@ -99,9 +100,11 @@ sap.ui.define([
 				}
 			},
 
-			onDeviceSizeChange: function (mParams) {
-				var toolPage = this.byId('toolPage');
-				switch (mParams.name) {
+			onDeviceSizeChange: function () {
+				var toolPage = this.byId('toolPage'),
+					sRangeName = Device.media.getCurrentRange("StdExt").name;
+
+				switch (sRangeName) {
 					case "Phone":
 					case "Tablet":
 						toolPage.setSideExpanded(false);
