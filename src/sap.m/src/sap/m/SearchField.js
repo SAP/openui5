@@ -306,6 +306,7 @@ sap.ui.define([
 		if (inputElement) {
 			this.$().find(".sapMSFB").off();
 			this.$().off();
+			jQuery(this.getDomRef("F")).off();
 			jQuery(inputElement).off();
 		}
 	};
@@ -326,6 +327,9 @@ sap.ui.define([
 			.on("search", this.onSearch.bind(this))
 			.on("focus", this.onFocus.bind(this))
 			.on("blur", this.onBlur.bind(this));
+
+		jQuery(this.getDomRef("F"))
+			.on("click", this.onFormClick.bind(this));
 
 		if (Device.system.desktop || Device.system.combi) {
 			// Listen to native touchstart/mousedown.
@@ -457,12 +461,6 @@ sap.ui.define([
 	};
 
 	SearchField.prototype.onmouseup = function(oEvent) {
-
-		// focus if mouse-clicked on the form outside of the input
-		if (this.getEnabled() && oEvent.target.tagName == "FORM") {
-			this.getInputElement().focus();
-		}
-
 		// on phone if the input is on focus and user taps again on it
 		if (Device.system.phone &&
 			this.getEnabled() &&
@@ -470,6 +468,13 @@ sap.ui.define([
 			document.activeElement === oEvent.target &&
 			!suggestionsOn(this)) {
 			this.onFocus(oEvent);
+		}
+	};
+
+	SearchField.prototype.onFormClick = function(oEvent) {
+		// focus if mouse-clicked on the form outside of the input
+		if (this.getEnabled() && oEvent.target.tagName == "FORM") {
+			this.getInputElement().focus();
 		}
 	};
 
@@ -724,6 +729,17 @@ sap.ui.define([
 		this.setProperty("value", value, true);
 		this._setToolTips();
 		return this;
+	};
+
+	SearchField.prototype._unregisterEventListeners = function () {
+		var inputElement = this.getInputElement();
+
+		if (inputElement) {
+			this.$().find(".sapMSFB").off();
+			this.$().off();
+			jQuery(this.getDomRef("F")).off();
+			jQuery(inputElement).off();
+		}
 	};
 
 	/* =========================================================== */
