@@ -1530,9 +1530,9 @@ sap.ui.define([
 		}
 
 		if (aKeyFilters.length) {
-			sExclusiveFilter = "not(" + aKeyFilters.join(" or ") + ")";
+			sExclusiveFilter = "not (" + aKeyFilters.join(" or ") + ")";
 			if (sFilterOptions) {
-				mQueryOptions["$filter"] = "(" + sFilterOptions + ")and " + sExclusiveFilter;
+				mQueryOptions["$filter"] = "(" + sFilterOptions + ") and " + sExclusiveFilter;
 				sQueryString = this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions,
 					false, this.bSortExpandSelect);
 			} else {

@@ -218,21 +218,6 @@ sap.ui.define([
 			oEmployees.setBindingContext(oTeamContext);
 		},
 
-		onUpdateEmployee : function (oEvent) {
-//			var oEmployeeContext = oEvent.getSource().getBindingContext(),
-//				aItems = this.byId("Employees").getItems();
-//
-//			oEmployeeContext.getModel().read(oEmployeeContext.getPath(), true)
-//				.then(function (oEntityInstance) {
-//					oEntityInstance["@odata.etag"] = "W/\"19700000000000.0000000\"";
-//
-//					// have "ETag" column check for updates
-//					aItems.forEach(function (oItem) {
-//						oItem.getCells()[5].getBinding("text").checkUpdate();
-//					});
-//				});
-		},
-
 		openChangeTeamBudgetDialog : function (oEvent) {
 			var oUiModel = this.getView().getModel("ui");
 

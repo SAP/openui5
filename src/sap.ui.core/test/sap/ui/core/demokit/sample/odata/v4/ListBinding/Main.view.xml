@@ -145,9 +145,6 @@
 			<Column minScreenWidth="XXLarge" demandPopin="true">
 				<Text text="Delete"/>
 			</Column>
-			<Column minScreenWidth="XXLarge" demandPopin="true">
-				<Text text="Update" tooltip="Make ETag look outdated"/>
-			</Column>
 		</columns>
 		<ColumnListItem>
 			<Input value="{Name}"/>
@@ -160,8 +157,6 @@
 			  -->
 			<Text text="{path : '@odata.etag', type : 'sap.ui.model.odata.type.String'}"/>
 			<Button icon="sap-icon://delete" text="Delete" press="onDeleteEmployee"/>
-			<Button enabled="false" icon="sap-icon://edit" text="Update"
-				press="onUpdateEmployee" tooltip="Make ETag look outdated"/>
 		</ColumnListItem>
 	</Table>
 	<Table id="EmployeeEquipments" headerText="Employee Equipments"
