@@ -25,12 +25,6 @@ sap.ui.define([],
 		oRm.write("<span ");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMObjectMarker");
-		if (oControl._isIconVisible()) {
-			oRm.addClass("sapMObjectMarkerIcon");
-		}
-		if (oControl._isTextVisible()) {
-			oRm.addClass("sapMObjectMarkerText");
-		}
 		oRm.writeClasses();
 		oRm.write(">");
 		oRm.renderControl(oControl._getInnerControl());
