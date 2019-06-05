@@ -64,6 +64,12 @@
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: selected day border shown correctly now",
         "references": []
+      },
+      {
+        "id": "c9b007af7056e38807cc249165e3c7507994a7b4",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Disabled state is now correctly indicated",
+        "references": []
       }
     ]
   }

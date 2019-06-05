@@ -82,6 +82,12 @@
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: Hover behavior fixed",
         "references": []
+      },
+      {
+        "id": "5d6478566c01819552c52e36620a6552786a242e",
+        "type": "FIX",
+        "text": " sap.m.Select: Aligned with the visual specification",
+        "references": []
       }
     ]
   }

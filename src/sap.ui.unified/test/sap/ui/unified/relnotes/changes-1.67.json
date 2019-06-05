@@ -78,6 +78,18 @@
         "type": "FIX",
         "text": " sap.ui.unified.Menu: Role placement adjusted",
         "references": []
+      },
+      {
+        "id": "9b0cf23b9cb81e68587b43f02f0e9fd63aec9fb4",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: Support rule corrected",
+        "references": []
+      },
+      {
+        "id": "5ec6dc4600036a0a5d15f8a51caf0ef05cfed0c0",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: Tooltip and placeholder now get properly updated",
+        "references": []
       }
     ]
   }

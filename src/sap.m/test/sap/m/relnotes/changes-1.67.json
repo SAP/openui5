@@ -566,6 +566,54 @@
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: selected day border shown correctly now",
         "references": []
+      },
+      {
+        "id": "23cab5f35a603467e9c02f9aefc8ae7e83381fa0",
+        "type": "FIX",
+        "text": " m.DatePicker: Picker autocloses when the input is not visible",
+        "references": []
+      },
+      {
+        "id": "0610452e1bddb1ff235d577aac17245da4eb10ff",
+        "type": "FIX",
+        "text": " sap.m.Input: closeSuggestion endless loop is now fixed",
+        "references": []
+      },
+      {
+        "id": "6bf3b2349bdfc5789feb4b90920c1d89d1ea1dd2",
+        "type": "FIX",
+        "text": " sap.m.NotificationListItem: \u0027classList\u0027 exception is now fixed",
+        "references": []
+      },
+      {
+        "id": "d2e566b3128e655e7b46259f41d5bc3a4e6e2607",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: GenericTag is not truncated now",
+        "references": []
+      },
+      {
+        "id": "e5106f1ae73641753da2dc183bd92c05cf0799a0",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: headerContent aggregation binding fix",
+        "references": []
+      },
+      {
+        "id": "10447c9d4bebd54c7f9ffbe3ada2694c40688083",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Fire search from suggestion only once on phone",
+        "references": []
+      },
+      {
+        "id": "5d6478566c01819552c52e36620a6552786a242e",
+        "type": "FIX",
+        "text": " sap.m.Select: Aligned with the visual specification",
+        "references": []
+      },
+      {
+        "id": "cedc280d43a461c7104d30905b401f5396f692a8",
+        "type": "FIX",
+        "text": " sap.m.Select: Improved keyboard handling",
+        "references": []
       }
     ]
   }

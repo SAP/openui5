@@ -65,6 +65,12 @@
         "type": "FIX",
         "text": " sap.m.ShellBar: Tests now pass under Edge and IE11",
         "references": []
+      },
+      {
+        "id": "d2e566b3128e655e7b46259f41d5bc3a4e6e2607",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: GenericTag is not truncated now",
+        "references": []
       }
     ]
   }
