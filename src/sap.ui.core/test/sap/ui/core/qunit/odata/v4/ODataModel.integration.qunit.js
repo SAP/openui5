@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/m/CustomListItem",
 	"sap/m/Text",
+	"sap/ui/Device",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View",
 	"sap/ui/model/ChangeReason",
@@ -21,7 +22,7 @@ sap.ui.define([
 	"sap/ui/test/TestUtils",
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
-], function (jQuery, Log, uid, ColumnListItem, CustomListItem, Text, Controller, View, ChangeReason,
+], function (jQuery, Log, uid, ColumnListItem, CustomListItem, Text, Device, Controller, View, ChangeReason,
 		Filter, FilterOperator, Sorter, OperationMode, AnnotationHelper, ODataListBinding,
 		ODataModel, TestUtils) {
 	/*global QUnit, sinon */
@@ -219,6 +220,11 @@ sap.ui.define([
 			this.iPendingResponses = 0;
 			// A list of expected requests with the properties method, url, headers, response
 			this.aRequests = [];
+
+			// If the "VisibleRowCountMode" of the sap.ui.table.* is "Auto", the table uses the
+			// screen height (Device.resize.height) to compute the amount of contexts it requests
+			// initially. Make sure that this is stable across devices.
+			this._oSandbox.stub(Device.resize, "height").value(1000);
 		},
 
 		afterEach : function (assert) {
@@ -8870,7 +8876,7 @@ sap.ui.define([
 </t:Table>',
 			oModel = createTeaBusiModel({autoExpandSelect : true});
 
-		this.expectRequest("EMPLOYEES?$filter=AGE gt 42&$select=ID,Name&$skip=0&$top=105", {
+		this.expectRequest("EMPLOYEES?$filter=AGE gt 42&$select=ID,Name&$skip=0&$top=140", {
 				"value" : [
 					{"Name" : "Frederic Fall"},
 					{"Name" : "Jonathan Smith"}
