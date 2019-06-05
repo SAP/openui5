@@ -92,5 +92,22 @@
         "references": []
       }
     ]
+  },
+  "1.65.4": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "75468af5590989843853acfa4055c6b674ab5d85",
+        "type": "FIX",
+        "text": " sap.m.Button: revert overstyling inside Bar for Fiori 3 theme",
+        "references": []
+      },
+      {
+        "id": "444a63fd2ece49787fc7a9833d43de032c12e3f9",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Split button has corect focus in HCB and HCW",
+        "references": []
+      }
+    ]
   }
 }

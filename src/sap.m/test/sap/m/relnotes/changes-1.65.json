@@ -782,5 +782,46 @@
         "references": []
       }
     ]
+  },
+  "1.65.4": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "75468af5590989843853acfa4055c6b674ab5d85",
+        "type": "FIX",
+        "text": " sap.m.Button: revert overstyling inside Bar for Fiori 3 theme",
+        "references": []
+      },
+      {
+        "id": "d6305dc492483cd4229d46aec27babded1d3d104",
+        "type": "FIX",
+        "text": " sap.m.Input: closeSuggestion endless loop is now fixed",
+        "references": []
+      },
+      {
+        "id": "6a32c77401ac8747caa240cea0f9b5723eb278c1",
+        "type": "FIX",
+        "text": " sap.m.MultiInput, sap.m.SuggestionPopover: Newly added tokens are not removed on arrow right press",
+        "references": []
+      },
+      {
+        "id": "188d133ef80d36bec09c2db81c78f8c2313440fb",
+        "type": "FIX",
+        "text": " sap.m.NotificationListItem: \u0027classList\u0027 exception is now fixed",
+        "references": []
+      },
+      {
+        "id": "453569258a8a20ea367de8a4c9777f2da8ae1331",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: Pressing space is no globally prevented now",
+        "references": []
+      },
+      {
+        "id": "6c7bb80ba001bc73eb29f12e57cd732eed196833",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.DatesRow: showDayNamesLine\u003dfalse now works correctly in compact mode for all themes",
+        "references": []
+      }
+    ]
   }
 }

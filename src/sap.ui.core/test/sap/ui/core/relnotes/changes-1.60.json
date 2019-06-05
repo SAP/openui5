@@ -1081,5 +1081,22 @@
         "references": []
       }
     ]
+  },
+  "1.60.14": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "d108d868223b7066828ee6f42fae74e2f2372a39",
+        "type": "FIX",
+        "text": " sap/base/util/merge: Avoid Object.prototype pollution",
+        "references": []
+      },
+      {
+        "id": "f681345ec1399df1877031c084eddf74f4c5fe5e",
+        "type": "FIX",
+        "text": " sap/ui/thirdparty/jQuery: Prevent Object.prototype pollution",
+        "references": []
+      }
+    ]
   }
 }

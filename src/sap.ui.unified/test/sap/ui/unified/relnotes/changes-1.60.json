@@ -249,5 +249,16 @@
         "references": []
       }
     ]
+  },
+  "1.60.14": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "d21b5e15ec8217171afb29ff7bf2f0c60d9fc00b",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Two months displayed correctly in Compact mode",
+        "references": []
+      }
+    ]
   }
 }

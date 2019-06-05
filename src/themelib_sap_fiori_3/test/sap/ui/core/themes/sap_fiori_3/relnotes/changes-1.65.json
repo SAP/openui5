@@ -170,5 +170,22 @@
         "references": []
       }
     ]
+  },
+  "1.65.4": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "75468af5590989843853acfa4055c6b674ab5d85",
+        "type": "FIX",
+        "text": " sap.m.Button: revert overstyling inside Bar for Fiori 3 theme",
+        "references": []
+      },
+      {
+        "id": "6c7bb80ba001bc73eb29f12e57cd732eed196833",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.DatesRow: showDayNamesLine\u003dfalse now works correctly in compact mode for all themes",
+        "references": []
+      }
+    ]
   }
 }

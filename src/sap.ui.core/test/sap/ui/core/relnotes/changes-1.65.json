@@ -392,5 +392,28 @@
         "references": []
       }
     ]
+  },
+  "1.65.4": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "f55728f72f9e12f7e1c3af7aa87fd7892e447872",
+        "type": "FIX",
+        "text": " ODataMessageParser: Duplicate filtering",
+        "references": []
+      },
+      {
+        "id": "605c959d0800704b45a6bda859dc927767864257",
+        "type": "FIX",
+        "text": " ODataMessageParser: Technical message lifecycle",
+        "references": []
+      },
+      {
+        "id": "fde131a86cca2498a2f8b0e49baa4f357d0bffb6",
+        "type": "FIX",
+        "text": " v2.ODataContextBinding: Set context or null, to prevent parent context to be applied",
+        "references": []
+      }
+    ]
   }
 }

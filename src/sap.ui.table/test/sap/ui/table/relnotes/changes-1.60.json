@@ -304,5 +304,16 @@
         "references": []
       }
     ]
+  },
+  "1.60.14": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "6a8e0dca40cea2d68b3fa499bb22eb409bb3dc7f",
+        "type": "FIX",
+        "text": " Table: Set correct firstVisibleRow also if parent is invisible",
+        "references": []
+      }
+    ]
   }
 }

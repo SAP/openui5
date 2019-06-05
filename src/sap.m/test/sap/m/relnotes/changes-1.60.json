@@ -2785,5 +2785,46 @@
         "references": []
       }
     ]
+  },
+  "1.60.14": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "87b10bd01ce1149e00689b37814f309615a31190",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: range now covers all hours from last day",
+        "references": []
+      },
+      {
+        "id": "0330bc5a201502d2263c3443b7ab61094709e531",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: selected range includes all hours from the second date",
+        "references": []
+      },
+      {
+        "id": "cb4c759ec105c21d5570e74d065d842a626ce0d0",
+        "type": "FIX",
+        "text": " sap.m.Input: Selected key and value are now synchronized",
+        "references": []
+      },
+      {
+        "id": "c7af7063d2b9641fe3ce2bb055c338edfa039461",
+        "type": "FIX",
+        "text": " sap.m.Label: Color for displayOnly property is changed",
+        "references": []
+      },
+      {
+        "id": "d8d8998dc9318065fdadbd169c6424b68e4355dc",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Exception on reinit fixed",
+        "references": []
+      },
+      {
+        "id": "18e6c38412a6f6829f1df8b11ceb3f1fe8387631",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Read-only popover remains open, when focus is inside",
+        "references": []
+      }
+    ]
   }
 }

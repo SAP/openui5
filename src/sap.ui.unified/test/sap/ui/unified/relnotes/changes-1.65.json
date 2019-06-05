@@ -79,5 +79,22 @@
         "references": []
       }
     ]
+  },
+  "1.65.4": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "12780f4dd2c5c41912193788afa04622ad8c43a8",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Two months displayed correctly in Compact mode",
+        "references": []
+      },
+      {
+        "id": "6c7bb80ba001bc73eb29f12e57cd732eed196833",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.DatesRow: showDayNamesLine\u003dfalse now works correctly in compact mode for all themes",
+        "references": []
+      }
+    ]
   }
 }
