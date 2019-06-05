@@ -6710,6 +6710,7 @@ sap.ui.define([
 				} else if (oSelect.getType() === SelectType.IconOnly) {
 					assert.equal(oSelect.$().hasClass(CSS_CLASS + "MinWidth"), false, 'The select has not min-width when it`s of IconOnly type');
 					assert.ok(oSelect.$("icon").hasClass(CSS_CLASS + "Icon"), 'The select html span element must have the CSS class "' + CSS_CLASS + 'Icon"');
+					assert.equal(oSelect.$().attr("aria-readonly"), undefined, 'The IconOnly select should not have aria-readonly defined');
 				}
 
 				if (oSelect.getType() === SelectType.Default) {
@@ -9383,7 +9384,7 @@ sap.ui.define([
 			assert.strictEqual(oInfo.description, "Tooltip", "Description");
 			assert.strictEqual(oInfo.focusable, true, "Focusable");
 			assert.strictEqual(oInfo.enabled, true, "Enabled");
-			assert.strictEqual(oInfo.readonly, false, "Editable");
+			assert.strictEqual(oInfo.readonly, undefined, "IconOnly");
 
 			oSelect.setTooltip("");
 			var oIconInfo = IconPool.getIconInfo(oSelect.getIcon());
@@ -9397,6 +9398,7 @@ sap.ui.define([
 			assert.strictEqual(oInfo.role, "combobox", "AriaRole");
 			assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_COMBO"), "Type");
 			assert.strictEqual(oInfo.description, "Item1", "Description");
+			assert.strictEqual(oInfo.readonly, false, "Editable");
 
 			oSelect.setSelectedKey("Item2");
 			oInfo = oSelect.getAccessibilityInfo();

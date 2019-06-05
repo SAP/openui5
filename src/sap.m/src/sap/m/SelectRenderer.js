@@ -385,11 +385,11 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 			oRm.writeAccessibilityState(oSelect, {
 				role: this.getAriaRole(oSelect),
 				disabled: !oSelect.getEnabled(),
-				readonly: oSelect.getEnabled() && !oSelect.getEditable(),
+				readonly: bIconOnly ? undefined : oSelect.getEnabled() && !oSelect.getEditable(),
 				expanded: oSelect.isOpen(),
 				invalid: (oSelect.getValueState() === ValueState.Error) ? true : undefined,
 				labelledby: bIconOnly ? undefined : oAriaLabelledBy,
-				haspopup: (oSelect.getType() === SelectType.IconOnly) ? true : undefined
+				haspopup: bIconOnly ? true : undefined
 			});
 		};
 
