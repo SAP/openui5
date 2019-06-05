@@ -492,7 +492,7 @@ function(
 	Link.prototype.getAccessibilityInfo = function() {
 		return {
 			role: "link",
-			type: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_LINK"),
+			type: this.getText() ? sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_LINK") : undefined,
 			description: this.getText() || this.getHref() || "",
 			focusable: this.getEnabled(),
 			enabled: this.getEnabled()

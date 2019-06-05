@@ -412,6 +412,8 @@ sap.ui.define([
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
 		oControl.setText("");
+		oInfo = oControl.getAccessibilityInfo();
+		assert.strictEqual(oInfo.type, undefined, "No type, when no text");
 		oControl.setEnabled(false);
 		oInfo = oControl.getAccessibilityInfo();
 		assert.strictEqual(oInfo.description, "HRef", "Description");
