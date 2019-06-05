@@ -119,7 +119,7 @@ sap.ui.define([
 	 * </pre>
 	 *
 	 * <h3>Renderer.apiVersion contract</h3>
-	 * To allow a more efficient in-place DOM patching and to ensure the compatibility of the control, the following prerequisites must be fulfilled for the controls using the new rendering technology.
+	 * To allow a more efficient in-place DOM patching and to ensure the compatibility of the control, the following prerequisites must be fulfilled for the controls using the new rendering technology:
 	 *
 	 * <ul>
 	 * <li>Legacy control renderers must be migrated to the new semantic renderer API:
@@ -134,22 +134,23 @@ sap.ui.define([
 	 *     {@link sap.ui.core.RenderManager#unsafeHtml unsafeHtml},
 	 *     {@link sap.ui.core.RenderManager#icon icon},
 	 *     {@link sap.ui.core.RenderManager#accessibilityState accessibilityState},
+	 *     {@link sap.ui.core.RenderManager#renderControl renderControl},
 	 *     {@link sap.ui.core.RenderManager#cleanupControlWithoutRendering cleanupControlWithoutRendering}
-	 * <li>
-	 * <li>During the migration, restrictions that are defined in the API documentation must be taken into account, e.g. tag and attribute names must be set in their canonical form.<li>
-	 * <li>Fault tolerance of HTML5 markups are not applicable for the new semantic rendering API, e.g. except void tags, all tags must be closed; duplicate attributes within one HTML element must not exist.</li>
-	 * <li>Existing control DOM structure will not be removed from the DOM tree; therefore all custom events, including the ones that are registered with jQuery must be deregistered correctly at the <code>onBeforeRendering</code> and <code>exit</code> hooks.</li>
-	 * <li>Classes and attribute names should not be escaped. Styles should be validated via types but this might not be sufficient in all cases, e.g. validated URL values can contain harmful content; in this case {@link module:sap/base/security/encodeCSS} can be used.</li>
-	 * <li>To allow a more efficient DOM update, second parameter of the {@link sap.ui.core.RenderManager#openStart openStart} or {@link sap.ui.core.RenderManager#voidStart voidStart} must be used to identify elements instead of using <code>rm.attr("id", oControl.getId() + "-suffix")</code></li>
-	 * <li>Controls that listen to the <code>focusin</code> event must double check their focus handling. Since DOM nodes are not removed and they are only reused, the <code>focusin</code> event might not be fired because of re-rendering.</li>
+	 * </li>
+	 * <li>During the migration, restrictions that are defined in the API documentation must be taken into account, e.g. tag and attribute names must be set in their canonical form.</li>
+	 * <li>Fault tolerance of HTML5 markups is not applicable for the new semantic rendering API, e.g. except void tags, all tags must be closed; duplicate attributes within one HTML element must not exist.</li>
+	 * <li>Existing control DOM structure will not be removed from the DOM tree; therefore all custom events, including the ones that are registered with jQuery, must be deregistered correctly at the <code>onBeforeRendering</code> and <code>exit</code> hooks.</li>
+	 * <li>Classes and attribute names must not be escaped. Styles should be validated via types but this might not be sufficient in all cases, e.g. validated URL values can contain harmful content; in this case {@link module:sap/base/security/encodeCSS encodeCSS} can be used.</li>
+	 * <li>To allow a more efficient DOM update, second parameter of the {@link sap.ui.core.RenderManager#openStart openStart} or {@link sap.ui.core.RenderManager#voidStart voidStart} methods must be used to identify elements, e.g. use <code>rm.openStart("div", oControl.getId() + "-suffix");</code> instead of <code>rm.openStart("div").attr("id", oControl.getId() + "-suffix");</code></li>
+	 * <li>Controls that listen to the <code>focusin</code> event must double check their focus handling. Since DOM nodes are not removed and only reused, the <code>focusin</code> event might not be fired because of re-rendering.</li>
 	 * </ul>
 	 *
 	 *
 	 * @see sap.ui.core.Core
 	 * @see sap.ui.getCore
 	 *
-	 * @borrows sap.ui.core.RenderManager#writeAccessibilityState as accessibilityState
-	 * @borrows sap.ui.core.RenderManager#writeIcon as icon
+	 * @borrows sap.ui.core.RenderManager#writeAccessibilityState as #accessibilityState
+	 * @borrows sap.ui.core.RenderManager#writeIcon as #icon
 	 *
 	 * @extends Object
 	 * @author SAP SE
