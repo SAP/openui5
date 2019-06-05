@@ -37,6 +37,7 @@ sap.ui.define([
 			/* Bindings */
 			"ODataTreeBindingAdapter": {
 				group: "Binding",
+				sinon: false /*uses Mockserver*/,
 				coverage: {
 					only: null /*full report*/
 				}
@@ -115,6 +116,7 @@ sap.ui.define([
 				ui5: {
 					libs: ["sap.ui.table", "sap.m"]
 				},
+				sinon: false, /*uses Mockserver*/
 				coverage: {
 					only: null /*full report*/
 				}
@@ -152,7 +154,8 @@ sap.ui.define([
 				group: "Utils"
 			},
 			"TableBindingUtils": {
-				group: "Utils"
+				group: "Utils",
+				sinon: false /*uses Mockserver*/
 			},
 
 			// Extensions
@@ -196,7 +199,8 @@ sap.ui.define([
 
 			"MultiSelectionPlugin": {
 				group: "Plugins",
-				module: "./plugins/{name}.qunit"
+				module: "./plugins/{name}.qunit",
+				sinon: false /*uses Mockserver*/
 			}
 		}
 	};
