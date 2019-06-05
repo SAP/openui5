@@ -132,4 +132,13 @@ function (jQuery, Core, Configuration, XMLView, ObjectPageLayout) {
 		Core.getConfiguration().setAnimationMode(sOriginalMode);
 	});
 
+	QUnit.test("ObjectPage floating footer animation is forced to end in case of a sudden invalidate", function (assert) {
+		// Act
+		this.oObjectPage.invalidate();
+		this.oObjectPage.invalidate();
+
+		// Assert
+		assert.equal(!this.oObjectPage._bIsFooterAanimationGoing, true, "Footer is visible");
+	});
+
 });
