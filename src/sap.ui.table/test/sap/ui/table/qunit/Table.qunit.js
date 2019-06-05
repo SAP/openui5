@@ -18,13 +18,32 @@ sap.ui.define([
 	"sap/ui/table/plugins/MultiSelectionPlugin",
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
+	"sap/ui/core/util/MockServer",
 	"sap/ui/core/util/PasteHelper",
-	"sap/ui/Device", "sap/ui/model/json/JSONModel", "sap/ui/model/Sorter", "sap/ui/model/Filter", "sap/ui/model/type/Float",
-	"sap/m/Text", "sap/m/Input", "sap/m/Label", "sap/m/CheckBox", "sap/m/Button", "sap/m/Link", "sap/m/RatingIndicator", "sap/m/Image",
-	"sap/m/Toolbar", "sap/ui/unified/Menu", "sap/ui/unified/MenuItem", "sap/m/Menu", "sap/m/MenuItem", "sap/base/Log", "sap/m/library"
+	"sap/ui/Device",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/Filter",
+	"sap/ui/model/type/Float",
+	"sap/m/Text",
+	"sap/m/Input",
+	"sap/m/Label",
+	"sap/m/CheckBox",
+	"sap/m/Button",
+	"sap/m/Link",
+	"sap/m/RatingIndicator",
+	"sap/m/Image",
+	"sap/m/Toolbar",
+	"sap/ui/unified/Menu",
+	"sap/ui/unified/MenuItem",
+	"sap/m/Menu",
+	"sap/m/MenuItem",
+	"sap/base/Log",
+	"sap/m/library"
 ], function(qutils, TableQUnitUtils, Table, Column, ColumnMenu, ColumnMenuRenderer, AnalyticalColumnMenuRenderer, TablePersoController, RowAction,
-			RowActionItem, RowSettings, TableUtils, TableLibrary, SelectionPlugin, MultiSelectionPlugin, CoreLibrary, Control, PasteHelper,
-			Device, JSONModel, Sorter, Filter, FloatType,
+			RowActionItem, RowSettings, TableUtils, TableLibrary, SelectionPlugin, MultiSelectionPlugin,
+			CoreLibrary, Control, MockServer, PasteHelper, Device, JSONModel, ODataModel, Sorter, Filter, FloatType,
 			Text, Input, Label, CheckBox, Button, Link, RatingIndicator, Image, Toolbar, Menu, MenuItem, MenuM, MenuItemM, Log, library) {
 	"use strict";
 
@@ -44,6 +63,32 @@ sap.ui.define([
 	var getRowHeader = window.getRowHeader;
 	var getRowAction = window.getRowAction;
 	var getSelectAll = window.getSelectAll;
+
+	var sServiceURI = "/service/";
+	var iResponseTime = 10;
+
+	function createODataModel(sURL) {
+		sURL = sURL == null ? sServiceURI : sURL;
+		return new ODataModel(sURL, {
+			json: true
+		});
+	}
+
+	function startMockServer() {
+		MockServer.config({
+			autoRespond: true,
+			autoRespondAfter: iResponseTime
+		});
+
+		var oMockServer = new MockServer({
+			rootUri: sServiceURI
+		});
+
+		var sURLPrefix = sap.ui.require.toUrl("sap/ui/table/qunit");
+		oMockServer.simulate(sURLPrefix + "/mockdata/metadata.xml", sURLPrefix + "/mockdata/");
+		oMockServer.start();
+		return oMockServer;
+	}
 
 	var personImg = "../images/Person.png";
 	var jobPosImg = "../images/JobPosition.png";
@@ -1692,54 +1737,123 @@ sap.ui.define([
 			"NavigationMode defaulted to Scrollbar after explicitly setting it to Paginator");
 	});
 
-	QUnit.module("VisibleRowCountMode Auto", {
+	QUnit.module("VisibleRowCountMode Auto with client binding", {
+		before: function() {
+			this.iOriginalDeviceHeight = Device.resize.height;
+			Device.resize.height = 500;
+		},
 		beforeEach: function() {
-			sinon.spy(Table.prototype, "_computeRequestLength");
-			createTable({
-				visibleRowCountMode: VisibleRowCountMode.Auto
+			var that = this;
+
+			this.oTable = TableQUnitUtils.createTable({
+				visibleRowCountMode: VisibleRowCountMode.Auto,
+				rows: {path: "/"},
+				rowHeight: 50,
+				models: new JSONModel(new Array(100))
 			}, function(oTable) {
-				sinon.stub(oTable, "_getDefaultRowHeight", function() {
-					return 50;
-				});
+				that.oGetContextsSpy = sinon.spy(oTable.getBinding("rows"), "getContexts");
 			});
-			this.iExpectedVisibleRowCountInitial = 18;
-			this.iExpectedVisibleRowCountAfterResize = 13;
 		},
 		afterEach: function() {
-			destroyTable();
-			document.getElementById("qunit-fixture").removeAttribute("style");
-			Table.prototype._computeRequestLength.restore(); // Unwraps the spy
+			this.oTable.destroy();
+		},
+		after: function() {
+			Device.resize.height = this.iOriginalDeviceHeight;
 		}
 	});
 
-	QUnit.test("Check initialization and resize", function(assert) {
+	QUnit.test("Initialization and resize", function(assert) {
 		var done = assert.async();
+		var oTable = this.oTable;
+		var oGetContextsSpy = this.oGetContextsSpy;
 
-		oTable.attachEvent("_rowsUpdated", function(oEvent) {
-			var spy = Table.prototype._computeRequestLength;
+		oTable.qunit.whenInitialRenderingFinished().then(function() {
+			assert.strictEqual(oTable.getVisibleRowCount(), 18, "The visible row count after initialization is correct");
+			assert.ok(oGetContextsSpy.calledOnce, "Binding#getContexts was called once");
+			assert.ok(oGetContextsSpy.calledWithExactly(0, 18, 100),
+				"The first call to Binding#getContexts after binding the rows considers the visible row count");
+			oGetContextsSpy.reset();
 
-			if (oEvent.getParameter("reason") === TableUtils.RowsUpdateReason.Render) {
-				assert.strictEqual(oTable.getVisibleRowCount(), this.iExpectedVisibleRowCountInitial, "The visible row count after initialization is correct");
-				assert.equal(spy.args[0], this.iExpectedVisibleRowCountInitial, "The length in call getContexts after initialization is correct");
+		}).then(oTable.qunit.$resize({height: "756px"})).then(function() {
+			assert.strictEqual(oTable.getVisibleRowCount(), 13, "The visible row count after decreasing the height is correct");
+			assert.ok(oGetContextsSpy.calledOnce, "Binding#getContexts was called once");
+			assert.ok(oGetContextsSpy.calledWithExactly(0, 13, 100), "Subsequent calls to Binding#getContexts consider the visible row count");
+			oGetContextsSpy.reset();
 
-				if (Device.resize.height <= 25 * this.iExpectedVisibleRowCountInitial) {
-					assert.ok(spy.args[0] == spy.returnValues[0], "On first getContexts the estimate is equal to the given length on small screens: " + spy.args[0] + " == " + spy.returnValues[0] + " (" + Device.resize.height + ")");
-				} else {
-					assert.ok(spy.args[0] < spy.returnValues[0], "On first getContexts the estimate is larger than the given length on bigger screens: " + spy.args[0] + " < " + spy.returnValues[0] + " (" + Device.resize.height + ")");
-				}
+		}).then(oTable.qunit.resetSize).then(function() {
+			assert.strictEqual(oTable.getVisibleRowCount(), 18, "The visible row count after increasing the height is correct");
+			assert.ok(oGetContextsSpy.calledOnce, "Binding#getContexts was called once");
+			assert.ok(oGetContextsSpy.calledWithExactly(0, 18, 100), "Subsequent calls to Binding#getContexts consider the visible row count");
+			oGetContextsSpy.reset();
 
-				spy.reset();
-				document.getElementById("qunit-fixture").style.height = "756px";
-			}
+		}).then(done);
+	});
 
-			if (oEvent.getParameter("reason") === TableUtils.RowsUpdateReason.Resize) {
-				assert.strictEqual(oTable.getVisibleRowCount(), this.iExpectedVisibleRowCountAfterResize, " The visible row count after a resize is correct");
-				assert.equal(spy.args[0], this.iExpectedVisibleRowCountAfterResize, " The length in call getContexts after a resize is correct");
-				assert.ok(spy.args[0] == spy.returnValues[0], "On followup getContexts no estimate is performed: " + spy.args[0] + " == " + spy.returnValues[0]);
-				spy.reset();
-				done();
-			}
-		}.bind(this));
+	QUnit.module("VisibleRowCountMode Auto with OData binding", {
+		before: function() {
+			this.oMockServer = startMockServer();
+			this.iOriginalDeviceHeight = Device.resize.height;
+			Device.resize.height = 500;
+		},
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
+				visibleRowCountMode: VisibleRowCountMode.Auto,
+				rows: {path : "/Products"},
+				rowHeight: 50,
+				models: createODataModel()
+			}, function(oTable) {
+				this.oGetContextsSpy = sinon.spy(oTable.getBinding("rows"), "getContexts");
+			}.bind(this));
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		},
+		after: function() {
+			this.oMockServer.stop();
+			Device.resize.height = this.iOriginalDeviceHeight;
+		}
+	});
+
+	QUnit.test("Initialization and resize", function(assert) {
+		var done = assert.async();
+		var oTable = this.oTable;
+		var oGetContextsSpy = this.oGetContextsSpy;
+
+		oTable.qunit.whenInitialRenderingFinished().then(function() {
+			assert.strictEqual(oTable.getVisibleRowCount(), 18, "The visible row count after initialization is correct");
+			assert.ok(oGetContextsSpy.calledThrice, "Binding#getContexts was called 3 times");
+			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 20, 100),
+				"The first call to Binding#getContexts after rendering considers the device height for the length");
+			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 20, 100),
+				"The second call to Binding#getContexts on \"refreshRows\" considers the device height for the length");
+			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, 18, 100),
+				"The third call to Binding#getContexts on \"updateRows\" considers the visible row count");
+			oGetContextsSpy.reset();
+
+		}).then(oTable.qunit.$resize({height: "756px"})).then(function() {
+			assert.strictEqual(oTable.getVisibleRowCount(), 13, "The visible row count after decreasing the height is correct");
+			assert.ok(oGetContextsSpy.calledOnce, "Binding#getContexts was called once");
+			assert.ok(oGetContextsSpy.calledWithExactly(0, 13, 100), "Subsequent calls to Binding#getContexts consider the visible row count");
+			oGetContextsSpy.reset();
+
+		}).then(function() {
+			oTable.getBinding("rows").refresh();
+
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			assert.ok(oGetContextsSpy.calledTwice, "Binding#getContexts was called 2 times");
+			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 20, 100),
+				"The first call to Binding#getContexts on \"refreshRows\" considers the device height for the length");
+			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 13, 100),
+				"The second call to Binding#getContexts on \"updateRows\" considers the visible row count");
+			oGetContextsSpy.reset();
+
+		}).then(oTable.qunit.resetSize).then(function() {
+			assert.strictEqual(oTable.getVisibleRowCount(), 18, "The visible row count after increasing the height is correct");
+			assert.ok(oGetContextsSpy.calledOnce, "Binding#getContexts was called once");
+			assert.ok(oGetContextsSpy.calledWithExactly(0, 18, 100), "Subsequent calls to Binding#getContexts consider the visible row count");
+			oGetContextsSpy.reset();
+
+		}).then(done);
 	});
 
 	QUnit.module("Fixed columns", {
@@ -4093,6 +4207,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Compute request length", function(assert){
+		// Fixed
 		oTable.setVisibleRowCountMode(VisibleRowCountMode.Fixed);
 		oTable.bindRows({path: "/modelData"});
 		assert.equal(oTable._computeRequestLength(10), 10, "Default behavior: request length is equal to the visible row count");
@@ -4100,14 +4215,25 @@ sap.ui.define([
 		oTable.bindRows({path: "/modelData", length: 5});
 		assert.equal(oTable._computeRequestLength(10), 5, "Request length is equal to the binding length");
 
+		// Auto
 		oTable.setVisibleRowCountMode(VisibleRowCountMode.Auto);
 		var iHeight = Device.resize.height;
+
+		oTable._bContextsAvailable = false;
 		Device.resize.height = 500;
-		assert.equal(oTable._computeRequestLength(10), 20, "When visibleRowCountMode is Auto, the request length is calculated based on the height");
+		assert.equal(oTable._computeRequestLength(10), 20,
+			"When visibleRowCountMode is Auto and contexts are not already available, the request length is calculated based on the screen height");
 		Device.resize.height = 100;
-		assert.equal(oTable._computeRequestLength(10), 10, "Request length is calculated correctly");
+		assert.equal(oTable._computeRequestLength(10), 10, "The request length is at least the visible row count");
+
+		oTable._bContextsAvailable = true;
+		Device.resize.height = 500;
+		assert.equal(oTable._computeRequestLength(10), 10,
+			"When visibleRowCountMode is Auto and contexts are already available, the request length is equal to the visible row count");
+
 		Device.resize.height = iHeight;
 
+		// Interactive
 		oTable.setVisibleRowCountMode(VisibleRowCountMode.Interactive);
 		assert.equal(oTable._computeRequestLength(10), 10, "Request length is equal to the visible row count");
 	});
