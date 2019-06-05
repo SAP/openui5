@@ -2,16 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/core/util/MockServer",
-	"sap/ui/thirdparty/sinon-qunit", /*Sinon itself already part of MockServer*/
-	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/Table",
 	"sap/ui/table/TableUtils",
 	"sap/ui/model/odata/v2/ODataModel"
-], function(MockServer, SinonQUnit, TableQUnitUtils, Table, TableUtils, ODataModel) {
+], function(MockServer, Table, TableUtils, ODataModel) {
 	"use strict";
 
-	var oTable;
-	var oMockServer;
 	var sServiceURI = "/service/";
 	var iResponseTime = 10;
 
@@ -40,17 +36,19 @@ sap.ui.define([
 
 	QUnit.module("Events", {
 		beforeEach: function() {
-			oTable = new Table();
-			oMockServer = startMockServer();
+			this.oTable = new Table();
+			this.oMockServer = startMockServer();
 		},
 		afterEach: function() {
-			oTable.destroy();
-			oMockServer.stop();
+			this.oTable.destroy();
+			this.oMockServer.stop();
 		}
 	});
 
 	QUnit.test("metadataLoaded", function(assert) {
 		var done = assert.async();
+		var oTable = this.oTable;
+
 		assert.expect(4);
 
 		TableUtils.Binding
