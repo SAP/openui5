@@ -2852,7 +2852,6 @@ function(
 
 		oListItem = new StandardListItem({
 			type: ListType.Active,
-			info: sAdditionalText,
 			visible: oItem.getEnabled()
 		}).addStyleClass(sListItem + " " + sListItemSelected);
 
@@ -2860,6 +2859,7 @@ function(
 
 		oItem.data(oRenderer.CSS_CLASS_COMBOBOXBASE + "ListItem", oListItem);
 		oListItem.setTitle(oItem.getText());
+		oListItem.setInfo(sAdditionalText);
 
 		if (sListItemSelected) {
 			var oToken = new Token({
