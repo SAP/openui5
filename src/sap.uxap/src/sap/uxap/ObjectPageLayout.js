@@ -1095,7 +1095,7 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._toggleScrolling = function (bEnable) {
 		if (this._$opWrapper.length) {
-			this._$opWrapper.get(0).style.overflow = bEnable ? "hidden auto" : "hidden";
+			this._$opWrapper.get(0).style.overflowY = bEnable ? "auto" : "hidden";
 		}
 	};
 

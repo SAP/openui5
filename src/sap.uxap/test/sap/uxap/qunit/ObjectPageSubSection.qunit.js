@@ -1385,7 +1385,7 @@ function($, Core, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPa
 				// Assert
 				assert.strictEqual(oPage._bAllContentFitsContainer, true, "_bAllContentFitsContainer is 'true'");
 				assert.ok(oToggleScrollingSpy.calledWith(false), "oToggleScrollingSpy called with 'false' - scrolling is supressed");
-				assert.strictEqual(oPage._$opWrapper.css("overflow"), "hidden", "Wrapper's overflow property is 'hidden'");
+				assert.strictEqual(oPage._$opWrapper.css("overflow-x"), "hidden", "Wrapper's overflow property is 'hidden'");
 				assert.strictEqual(oComputerSpacerHeightSpy.args[0][2], false,
 					"oComputerSpacerHeightSpy called with bAllowScrollSectionToTop = false");
 				assert.ok(parseInt(oSubSection.$().css("height")) < oPage._getSectionsContainerHeight(false),
@@ -1395,23 +1395,17 @@ function($, Core, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPa
 	});
 
 	QUnit.module("Invalidation", {
-		beforeEach: function(assert) {
-			var done = assert.async();
+		beforeEach: function() {
 			this.oObjectPageLayout = new ObjectPageLayout("page", {
 				sections: new ObjectPageSection({
 					subSections: [
 						new ObjectPageSubSectionClass({
 							title: "Title",
-							blocks: [new Text({text: "test"})]
+							blocks: [new sap.m.Panel({ height: "100%" })]
 						})
 					]
 				})
 			});
-
-			this.oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", done);
-
-			this.oObjectPageLayout.placeAt('qunit-fixture');
-			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.oObjectPageLayout.destroy();
@@ -1422,13 +1416,21 @@ function($, Core, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPa
 
 		// Setup
 		var oSubSection = this.oObjectPageLayout.getSections()[0].getSubSections()[0],
-			oInvalidateSpy = sinon.spy(oSubSection, "invalidate");
+			oInvalidateSpy = sinon.spy(oSubSection, "invalidate"),
+			done = assert.async();
 
+		assert.expect(1);
+
+		this.oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
+			// Check
+			assert.equal(oInvalidateSpy.callCount, 0, "subSection is not invalidated");
+			done();
+		}, this);
+
+		this.oObjectPageLayout.placeAt('qunit-fixture');
+		Core.applyChanges();
 		// Act
 		this.oObjectPageLayout._applyUxRules(true);
-
-		// Check
-		assert.equal(oInvalidateSpy.callCount, 0, "subSection is not invalidated");
 	});
 
 });
