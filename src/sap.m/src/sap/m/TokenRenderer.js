@@ -27,15 +27,16 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleText"],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	TokenRenderer.render = function(oRm, oControl){
-		var sTooltip = oControl._getTooltip(oControl, oControl.getEditable());
+		var sTooltip = oControl._getTooltip(oControl, oControl.getEditable()),
+			aAccDescribebyValues = [], // additional accessibility attributes
+			oAccAttributes = {};
+
 		// write the HTML into the render manager
 		oRm.write("<div tabindex=\"-1\"");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMToken");
 
 		oRm.writeAttribute("role", "listitem");
-		oRm.writeAttribute("aria-readonly", !oControl.getEditable());
-		oRm.writeAttribute("aria-selected", oControl.getSelected());
 
 		if (oControl.getSelected()) {
 			oRm.addClass("sapMTokenSelected");
@@ -52,20 +53,18 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleText"],
 			oRm.writeAttributeEscaped('title', sTooltip);
 		}
 
-		var oAccAttributes = {}; // additional accessibility attributes
+		// ARIA attributes
+		aAccDescribebyValues.push(InvisibleText.getStaticId("sap.m", "TOKEN_ARIA_LABEL"));
+
+		if (oControl.getEditable()) {
+			aAccDescribebyValues.push(InvisibleText.getStaticId("sap.m", "TOKEN_ARIA_DELETABLE"));
+		}
 
 		//ARIA attributes
 		oAccAttributes.describedby = {
-			value: InvisibleText.getStaticId("sap.m", "TOKEN_ARIA_LABEL"),
+			value: aAccDescribebyValues.join(" "),
 			append: true
 		};
-
-		if (oControl.getEditable()) {
-			oAccAttributes.describedby = {
-				value: InvisibleText.getStaticId("sap.m", "TOKEN_ARIA_DELETABLE"),
-				append: true
-			};
-		}
 
 		oRm.writeAccessibilityState(oControl, oAccAttributes);
 

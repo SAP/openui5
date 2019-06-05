@@ -58,6 +58,8 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/core/InvisibleText'],
 			value: InvisibleText.getStaticId("sap.m", "TOKENIZER_ARIA_LABEL"),
 			append: true
 		};
+		// aria-readonly is not valid for the current role of the tokenizer.
+		oAccAttributes.readonly = null;
 
 		oRm.writeAccessibilityState(oControl, oAccAttributes);
 

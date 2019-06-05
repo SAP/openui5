@@ -5,9 +5,10 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/Token",
 	"sap/ui/core/library",
+	"sap/ui/core/InvisibleText",
 	"sap/m/Tokenizer",
 	"sap/ui/events/KeyCodes"
-], function(QUnitUtils, createAndAppendDiv, Token, coreLibrary, Tokenizer, KeyCodes) {
+], function(QUnitUtils, createAndAppendDiv, Token, coreLibrary, InvisibleText, Tokenizer, KeyCodes) {
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
@@ -198,4 +199,52 @@ sap.ui.define([
 		assert.equal(fnFireDeleteSpy.callCount, 1, "delete event was fired");
 		assert.ok(this.token1.bIsDestroyed, "Token1 is destroyed");
 	});
+
+	QUnit.module("ARIA attributes", {
+		beforeEach : function() {
+			this.token1 = new Token("t1");
+			this.token1.placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.token1.destroy();
+		}
+	});
+
+	QUnit.test("ARIA Read only attribyte is not present", function(assert) {
+		// aria-readonly is not valid for the current role of the token.
+		assert.ok(!this.token1.$().attr("aria-readonly"), "Token has no aria-readonly attribute set.");
+	});
+
+	QUnit.test("ARIA Token describe text is present", function(assert) {
+		var sId = InvisibleText.getStaticId("sap.m", "TOKEN_ARIA_LABEL");
+
+		assert.ok(this.token1.$().attr("aria-describedby").split(" ").indexOf(sId) > -1, "Token has correct invisible text ID added to aria-describedby attribute");
+	});
+
+	QUnit.test("ARIA Selection text", function(assert) {
+		var sId = InvisibleText.getStaticId("sap.m", "TOKEN_ARIA_SELECTED");
+
+		assert.ok(!this.token1.$().attr("aria-selected"), "aria-selected is not valid property for the current type of role - listitem");
+
+		this.token1.setSelected(true);
+		assert.ok(this.token1.$().attr("aria-describedby").split(" ").indexOf(sId) > -1, "Token has correct invisible text ID added to aria-describedby attribute");
+
+		this.token1.setSelected(false);
+		assert.ok(this.token1.$().attr("aria-describedby").split(" ").indexOf(sId) === -1, "Token has the invisible text ID removed from aria-describedby attribute");
+	});
+
+	QUnit.test("ARIA Editable (deletable) text", function(assert) {
+		var sId = InvisibleText.getStaticId("sap.m", "TOKEN_ARIA_DELETABLE");
+
+		assert.ok(this.token1.$().attr("aria-describedby").split(" ").indexOf(sId) > -1, "Token has correct invisible text ID added to aria-describedby attribute");
+
+		this.token1.setEditable(false);
+		this.token1.invalidate(); // simulate parent invalidation
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(this.token1.$().attr("aria-describedby").split(" ").indexOf(sId) === -1, "Token has the invisible text ID removed from aria-describedby attribute");
+	});
+
 });

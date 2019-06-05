@@ -10,7 +10,8 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/core/Icon',
 	'./TokenRenderer',
-	"sap/ui/events/KeyCodes",
+	'sap/ui/core/InvisibleText',
+	'sap/ui/events/KeyCodes',
 	'sap/ui/core/theming/Parameters',
 	'sap/ui/core/Core'
 ],
@@ -21,6 +22,7 @@ sap.ui.define([
 		coreLibrary,
 		Icon,
 		TokenRenderer,
+		InvisibleText,
 		KeyCodes,
 		Parameters,
 		Core
@@ -31,8 +33,6 @@ sap.ui.define([
 
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
-
-
 
 	/**
 	 * Constructor for a new Token.
@@ -191,6 +191,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Token.prototype.setSelected = function(bSelected) {
+		var sId, aDescribedBy, iDescribedByIndex;
 
 		if (this.getSelected() === bSelected) {
 			return this;
@@ -198,9 +199,20 @@ sap.ui.define([
 
 		var $this = this.$();
 
-		if ($this) {
+		if ($this && this.getDomRef()) {
 			$this.toggleClass("sapMTokenSelected", bSelected);
-			$this.attr('aria-selected', bSelected);
+
+			sId = InvisibleText.getStaticId("sap.m", "TOKEN_ARIA_SELECTED");
+			aDescribedBy = $this.attr("aria-describedby").split(" ");
+			iDescribedByIndex = aDescribedBy.indexOf(sId);
+
+			if (bSelected && iDescribedByIndex === -1) {
+				aDescribedBy.push(sId);
+			} else {
+				aDescribedBy.splice(iDescribedByIndex, 1);
+			}
+
+			$this.attr("aria-describedby", aDescribedBy.join(" "));
 		}
 
 		this.setProperty("selected", bSelected, true);

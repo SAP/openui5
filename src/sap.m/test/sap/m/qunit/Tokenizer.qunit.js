@@ -1137,4 +1137,39 @@ sap.ui.define([
 
 		oTokenizer.destroy();
 	});
+
+	QUnit.module("Tokenizer ARIA", {
+		beforeEach : function() {
+			this.tokenizer = new Tokenizer();
+
+			this.tokenizer.placeAt("content");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.tokenizer.destroy();
+		}
+	});
+
+	QUnit.test("ARIA Read only attribute is not present", function(assert) {
+		// aria-readonly is not valid for the current role of the tokenizer.
+		assert.ok(!this.tokenizer.$().attr("aria-readonly"), "Tokenizer has no aria-readonly attribute");
+	});
+
+	QUnit.test("posinset and setsize ARIA attributes are set on the Tokens", function(assert) {
+		var token1, token2;
+
+		this.tokenizer.addToken(token1 = new Token("t1"));
+		this.tokenizer.addToken(token2 = new Token("t2"));
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(token1.$().attr("aria-posinset"), "Token 1 has aria-posinset attribute");
+		assert.ok(token2.$().attr("aria-posinset"), "Token 2 has aria-posinset attribute");
+		assert.ok(token1.$().attr("aria-setsize"), "Token 1 has aria-setsize attribute");
+		assert.ok(token2.$().attr("aria-setsize"), "Token 2 has aria-setsize attribute");
+
+		assert.strictEqual(token1.$().attr("aria-posinset"), "1", "Token 1 has correct aria-posinset attribute");
+		assert.strictEqual(token2.$().attr("aria-posinset"), "2", "Token 2 has correct aria-posinset attribute");
+		assert.strictEqual(token1.$().attr("aria-setsize"), "2", "Token has correct aria-setsize attribute");
+		assert.strictEqual(token2.$().attr("aria-setsize"), "2", "Token has correct aria-setsize attribute");
+	});
 });
