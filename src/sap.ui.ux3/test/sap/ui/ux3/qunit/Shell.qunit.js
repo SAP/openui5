@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -115,6 +115,39 @@ sap.ui.define([
 		assert.equal(jQuery(document.getElementById("myShell-wsBar-list")).children().length, 2, "There should not be any workset items, just the arrow and the dummy");
 	});
 
+	QUnit.test("Timeout for _checkPaneBarOverflow cleared on destroy", function(assert) {
+		// Arrange
+		oShell.destroy();
+
+		var oClearTimeoutSpy,
+			iDelayCallId;
+
+		oShell = new Shell("myShell");
+		oShell.addPaneBarItem(new Item("pane_feed",{text:"Feed"}));
+		oShell.addPaneBarItem(new Item("pane_news",{text:"News"}));
+		oShell.placeAt("uiArea1");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oShell._checkPaneBarOverflow();
+
+		oClearTimeoutSpy = sinon.spy(window, "clearTimeout");
+
+		// Assert
+		iDelayCallId = oShell._checkPaneBarOverflowDelayId;
+		assert.ok(iDelayCallId, "Timeout for _checkPaneBarOverflow is created");
+
+		// Act
+		oShell.destroy();
+
+		// Assert
+		assert.equal(oClearTimeoutSpy.callCount, 1, "Cleared delayedCall count is correct.");
+		assert.equal(oClearTimeoutSpy.firstCall.args[0], iDelayCallId, "ClearTimeout is called with correct ID.");
+		assert.ok(!oShell._checkPaneBarOverflowDelayId, "Timeout for _checkPaneBarOverflow was cleared after destroy");
+
+		// Cleanup
+		oClearTimeoutSpy.restore();
+	});
 
 	QUnit.test("Destroy and remove control", function(assert) {
 		oShell.destroy();
