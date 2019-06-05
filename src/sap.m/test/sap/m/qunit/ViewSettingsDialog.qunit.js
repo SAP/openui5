@@ -1830,19 +1830,17 @@ sap.ui.define([
 
 		this.oVSD.open();
 		setTimeout(function () {
-			var list 						= that.oVSD._getPage1().getContent()[1];
-			var listOfSortItems 			= list.getItems()[2]; //get the "descending" item
-			var listOfSortDirectionItems	= that.oVSD._getPage1().getContent()[3]; //get the "Other" item
+			var listOfSortDirectionItems = that.oVSD._getPage1().getContent()[1];
+			var oListItemDescending = listOfSortDirectionItems.getItems()[1];
+			var listOfOtherItems = that.oVSD._getPage1().getContent()[3];
+			var oListItemOther = listOfOtherItems.getItems()[1];
+			var vsdSortItem = that.oVSD.getSortItems()[1];
+			var spySortItem = sinon.spy(vsdSortItem, "setProperty");
+			var spyVsd = sinon.spy(that.oVSD, "setProperty");
 
-			var vsdSortItem 				= that.oVSD.getSortItems()[1];
-			var vsdSortDirectionDesc 		= listOfSortDirectionItems.getItems()[2];
-			var spySortItem 				= sinon.spy(vsdSortItem, "setProperty");
-			var spyVsd 					    = sinon.spy(that.oVSD, "setProperty");
+			oListItemDescending._oSingleSelectControl.fireSelect({selected : true});
+			oListItemOther._oSingleSelectControl.fireSelect({selected : true});
 
-			listOfSortItems._oSingleSelectControl.fireSelect({selected : true});
-			vsdSortDirectionDesc._oSingleSelectControl.fireSelect({selected : true});
-
-			assert.ok(spySortItem.calledWithExactly('selected', true, true, false), "Set sort item as selected should be called with suppress Invalidation flag=true and bFireEvent=false");
 			assert.ok(spySortItem.calledOnce, "setSelected should be called only once");
 
 			assert.ok(spyVsd.calledWithExactly('sortDescending', true, true), "Set sort item as as selected should be called with suppress Invalidation flag=true");

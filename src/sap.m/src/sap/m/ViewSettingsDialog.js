@@ -491,13 +491,16 @@ function(
 	ViewSettingsDialog.prototype._createList = function(sType) {
 		var sListId = this.getId() + "-" + sType + "list",
 			oList = new List(sListId, this.mToList[sType].listOptions),
-			sTitleSortObject = this._rb.getText("VIEWSETTINGS_SORT_OBJECT"),
-			oGHI = new GroupHeaderListItem({title: sTitleSortObject});
+			oGHI = this._createGroupHeaderItem(sType);
 
 		oList.addItem(oGHI);
 		this[this.mToList[sType].listName] = oList;
 
 		return oList;
+	};
+
+	ViewSettingsDialog.prototype._createGroupHeaderItem = function(sListType) {
+		return new GroupHeaderListItem({ title: this._rb.getText("VIEWSETTINGS_" + sListType.toUpperCase() + "_OBJECT") });
 	};
 
 	ViewSettingsDialog.prototype._getList = function(sType) {
@@ -682,6 +685,8 @@ function(
 			var oList = this._getList(sType);
 			if (!oList) {
 				oList = this._createList(sType);
+			} else if (!oList.getItems().length) {
+				oList.addItem(this._createGroupHeaderItem(sType));
 			}
 
 			oList.addItem(oListItem);
@@ -711,8 +716,14 @@ function(
 			var oList = this._getList(sType);
 			if (!oList) {
 				oList = this._createList(sType);
+				oList.insertItem(oListItem, iIndex);
+			} else if (!oList.getItems().length) {
+				oList.addItem(this._createGroupHeaderItem(sType));
+				oList.insertItem(oListItem, iIndex + 1);
+			} else {
+				oList.insertItem(oListItem, iIndex);
 			}
-			oList.insertItem(oListItem, iIndex);
+
 			this._attachItemPropertyChange(sType, oObject);
 		} else {
 			this._attachItemEventHandlers(sAggregationName, oObject);
@@ -1857,8 +1868,7 @@ function(
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._initSortContent = function() {
-		var that = this,
-			sTitleSortBy = this._rb.getText("VIEWSETTINGS_SORT_BY");
+		var that = this;
 
 		if (this._sortContent) {
 			return;
@@ -1878,7 +1888,7 @@ function(
 			},
 			ariaLabelledBy: this._ariaSortOrderInvisibleText
 		});
-		this._sortOrderList.addItem(new GroupHeaderListItem({title: sTitleSortBy}));
+
 		this._sortOrderList.addItem(new StandardListItem({
 			title : this._rb.getText("VIEWSETTINGS_ASCENDING_ITEM")
 		}).data("item", false).setSelected(true));
