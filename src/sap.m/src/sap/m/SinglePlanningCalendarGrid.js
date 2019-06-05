@@ -1062,8 +1062,11 @@ sap.ui.define([
 					if ( (!oAppointment || aAppointments[i].getId() !== oAppointment.getId()) && aAppointments[i].getSelected()) {
 						aAppointments[i].setProperty("selected", false, true); // do not invalidate
 						aChangedApps.push(aAppointments[i]);
-						// get appointment element(s) (it might be rendered in several columns) and remove its selection class
-						jQuery('[data-sap-ui=' + aAppointments[i].getId() + ']').find(".sapUiCalendarApp").removeClass("sapUiCalendarAppSel");
+						// Get appointment element(s) (it might be rendered in several columns)
+						// remove its selection class and set aria-selected attribute to false
+						jQuery('[data-sap-ui=' + aAppointments[i].getId() + ']')
+							.attr("aria-selected", "false")
+							.find(".sapUiCalendarApp").removeClass("sapUiCalendarAppSel");
 					}
 				}
 			}
@@ -1072,8 +1075,10 @@ sap.ui.define([
 				oAppointment.setProperty("selected", !oAppointment.getSelected(), true); // do not invalidate
 				aChangedApps.push(oAppointment);
 
-				// get appointment element(s) and toggle its selection class
-				jQuery('[data-sap-ui=' + oAppointment.getId() + ']').find(".sapUiCalendarApp").toggleClass("sapUiCalendarAppSel", oAppointment.getSelected());
+				// Get appointment element(s) and toggle its selection class and aria-selected attribute
+				jQuery('[data-sap-ui=' + oAppointment.getId() + ']')
+					.attr("aria-selected", oAppointment.getSelected())
+					.find(".sapUiCalendarApp").toggleClass("sapUiCalendarAppSel", oAppointment.getSelected());
 			}
 
 			return aChangedApps;
