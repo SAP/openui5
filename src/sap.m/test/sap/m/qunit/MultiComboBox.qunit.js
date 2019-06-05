@@ -6641,6 +6641,37 @@ sap.ui.define([
 		assert.ok(groupHeader instanceof sap.m.GroupHeaderListItem, "The control used for the group name is instance of sap.m.GroupHeaderListItem");
 	});
 
+	QUnit.test("_mapItemToListItem() - Data Binding works correct ", function(assert) {
+
+		// JSON sample data
+		var aData = [
+				{
+					lastName:"Doe", gender:"Male{"
+				}, {
+					lastName:"Ali{", gender:"Female"
+				}
+		], oModel = new JSONModel(aData);
+
+		// arrange
+		this.multiComboBox = new MultiComboBox({
+			items: {
+				path: "/",
+				template: new ListItem({text: "{lastName}", additionalText: "{gender}"})
+			},
+			showSecondaryValues: true
+		}).setModel(oModel).placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		this.multiComboBox.open();
+
+		// assert
+		assert.ok(true, "If there's no exception so far, values ending with curly brackets could be used.");
+
+		// destroy
+		this.multiComboBox.destroy();
+		this.multiComboBox = null;
+	});
+
 	QUnit.module("Value State Error", {
 		beforeEach : function() {
 			var oItem1, oItem2, oItem3, oItem4;
