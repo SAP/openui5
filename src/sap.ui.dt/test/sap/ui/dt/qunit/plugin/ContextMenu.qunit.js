@@ -624,6 +624,22 @@ sap.ui.define([
 			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "keyup");
 		});
 
+		QUnit.test("Testing onKeyUp function (ENTER) with other plugin busy", function (assert) {
+			var oOpenStub = sandbox.stub(this.oContextMenuPlugin, "open");
+			var oCheckPluginLockStub = sandbox.stub(this.oContextMenuPlugin, "_checkForPluginLock").returns(true);
+			var _tempListener = function (oEvent) {
+				oEvent.keyCode = KeyCodes.ENTER;
+				oEvent.shiftKey = false;
+				oEvent.altKey = false;
+				oEvent.ctrlKey = false;
+				this.oContextMenuPlugin._onKeyUp(oEvent);
+				assert.equal(oOpenStub.callCount, 0, "the open function was not triggered");
+				oCheckPluginLockStub.reset();
+			}.bind(this);
+			this.oButton2Overlay.attachBrowserEvent("keyup", _tempListener, this);
+			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "keyup");
+		});
+
 		QUnit.test("Clicking on a button in the ContextMenu", function (assert) {
 			return openContextMenu.call(this, this.oButton2Overlay).then(function() {
 				var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
