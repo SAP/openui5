@@ -10509,21 +10509,96 @@ sap.ui.define([
 
 	QUnit.module("Integration");
 
-	QUnit.test("Object cloning", function (assert) {
+	QUnit.test("Propagate Items to the list", function (assert) {
 		// Setup
-		var oComboBoxClone,
-			oComboBox = new ComboBox({
-			items: [
-				new Item({key: "A", text: "Amount"}),
-				new Item({key: "C", text: "Checkbox"}),
-				new Item({key: "D", text: "Date"}),
+		var vTemp,
+			aItems = [
 				new Item({key: "E", text: "Email Address"}),
 				new Item({key: "L", text: "List"}),
 				new Item({key: "N", text: "Number"}),
 				new Item({key: "Q", text: "Quantity"}),
 				new Item({key: "T1", text: "Text"})
-			]
-		});
+			],
+			oComboBox = new ComboBox({
+				items: [
+					new Item({key: "A", text: "Amount"}),
+					new Item({key: "C", text: "Checkbox"}),
+					new Item({key: "D", text: "Date"})
+				]
+			});
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(!oComboBox._getList(), "No list available on init (lazy loading)");
+
+
+		// Act (init the SuggestionPopover with the List)
+		oComboBox.syncPickerContent();
+
+		// Assert
+		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "On init the List item should be the same as core items");
+
+		// Act
+		vTemp = oComboBox.removeAllItems();
+
+		// Assert
+		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
+		assert.strictEqual(oComboBox.getItems().length, 0, "The Items aggregation should be empty");
+		assert.strictEqual(vTemp.length, 3, "The items from the combobox should be returned by the removeAllItems method");
+
+		// Act
+		vTemp = aItems.pop();
+		oComboBox.addItem(vTemp);
+
+		// Assert
+		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
+		assert.strictEqual(oComboBox.getItems().length, 1, "The Items aggregation should have 1 item");
+
+		// Act
+		oComboBox.removeItem(vTemp);
+
+		// Assert
+		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
+		assert.strictEqual(oComboBox.getItems().length, 0, "The Items aggregation should be empty");
+
+		// Act
+		oComboBox.insertItem(aItems[0]);
+		oComboBox.insertItem(aItems[1]);
+		oComboBox.insertItem(aItems[2], 1);
+
+		// Assert
+		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
+		assert.strictEqual(oComboBox.getItems().length, 3, "The Items aggregation should have 3 items");
+		assert.strictEqual(oComboBox._getList().getItems()[0].getTitle(), "List", "Properly insert and position items in the list");
+
+		// Act
+		oComboBox.destroyItems();
+
+		// Assert
+		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
+		assert.strictEqual(oComboBox.getItems().length, 0, "The Items aggregation should be empty");
+
+		oComboBox.destroy();
+		oComboBox = null;
+		sap.ui.getCore().applyChanges();
+	});
+
+	QUnit.test("Object cloning", function (assert) {
+		// Setup
+		var oComboBoxClone,
+			oComboBox = new ComboBox({
+				items: [
+					new Item({key: "A", text: "Amount"}),
+					new Item({key: "C", text: "Checkbox"}),
+					new Item({key: "D", text: "Date"}),
+					new Item({key: "E", text: "Email Address"}),
+					new Item({key: "L", text: "List"}),
+					new Item({key: "N", text: "Number"}),
+					new Item({key: "Q", text: "Quantity"}),
+					new Item({key: "T1", text: "Text"})
+				]
+			});
 
 		assert.ok(!oComboBox._getList(), "The List is not yet loaded");
 
@@ -12170,6 +12245,41 @@ sap.ui.define([
 			this.oCombobox.destroy();
 			this.oCombobox = null;
 		}
+	});
+
+	QUnit.test("Should filter internal list properly", function (assert) {
+		// Setup
+		var oEvent = {
+				target: {value: "A Item"},
+				srcControl: this.oCombobox,
+				isMarked: function () {
+				}
+			},
+			fnFilterVisibleItems = function (aItems) {
+				return aItems.filter(function (oItem) {
+					return oItem.getVisible();
+				});
+			};
+
+		// Act
+		this.oCombobox.oninput(oEvent);
+		this.oCombobox.invalidate();
+		this.clock.tick(500);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oCombobox._getList().getItems().length, 5, "There should be 5 items in the list...");
+		assert.strictEqual(fnFilterVisibleItems(this.oCombobox._getList().getItems()).length, 2, "... but 2 should be visible");
+
+		// Act
+		oEvent.target.value = "";
+		this.oCombobox.oninput(oEvent);
+		this.oCombobox.invalidate();
+		this.clock.tick(500);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(fnFilterVisibleItems(this.oCombobox._getList().getItems()).length, 5, "All items should be visible");
 	});
 
 	QUnit.test("Should restore default filtering function", function (assert) {
