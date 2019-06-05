@@ -10406,6 +10406,102 @@ sap.ui.define([
 
 	QUnit.module("Integration");
 
+	QUnit.test("Propagate Items to the list", function (assert) {
+		// Setup
+		var vTemp,
+			aItems = [
+				new Item({key: "E", text: "Email Address"}),
+				new Item({key: "L", text: "List"}),
+				new Item({key: "N", text: "Number"}),
+				new Item({key: "Q", text: "Quantity"}),
+				new Item({key: "T1", text: "Text"})
+			],
+			oComboBox = new ComboBox({
+				items: [
+					new Item({key: "A", text: "Amount"}),
+					new Item({key: "C", text: "Checkbox"}),
+					new Item({key: "D", text: "Date"})
+				]
+			});
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "On init the List item should be the same as core items");
+
+		// Act
+		vTemp = oComboBox.removeAllItems();
+
+		// Assert
+		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
+		assert.strictEqual(oComboBox.getItems().length, 0, "The Items aggregation should be empty");
+		assert.strictEqual(vTemp.length, 3, "The items from the combobox should be returned by the removeAllItems method");
+
+		// Act
+		vTemp = aItems.pop();
+		oComboBox.addItem(vTemp);
+
+		// Assert
+		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
+		assert.strictEqual(oComboBox.getItems().length, 1, "The Items aggregation should have 1 item");
+
+		// Act
+		oComboBox.removeItem(vTemp);
+
+		// Assert
+		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
+		assert.strictEqual(oComboBox.getItems().length, 0, "The Items aggregation should be empty");
+
+		// Act
+		oComboBox.insertItem(aItems[0]);
+		oComboBox.insertItem(aItems[1]);
+		oComboBox.insertItem(aItems[2], 1);
+
+		// Assert
+		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
+		assert.strictEqual(oComboBox.getItems().length, 3, "The Items aggregation should have 3 items");
+		assert.strictEqual(oComboBox._getList().getItems()[0].getTitle(), "List", "Properly insert and position items in the list");
+
+		// Act
+		oComboBox.destroyItems();
+
+		// Assert
+		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
+		assert.strictEqual(oComboBox.getItems().length, 0, "The Items aggregation should be empty");
+
+		oComboBox.destroy();
+		oComboBox = null;
+		sap.ui.getCore().applyChanges();
+	});
+
+	QUnit.test("Object cloning", function (assert) {
+		// Setup
+		var oComboBoxClone,
+			oComboBox = new ComboBox({
+				items: [
+					new Item({key: "A", text: "Amount"}),
+					new Item({key: "C", text: "Checkbox"}),
+					new Item({key: "D", text: "Date"}),
+					new Item({key: "E", text: "Email Address"}),
+					new Item({key: "L", text: "List"}),
+					new Item({key: "N", text: "Number"}),
+					new Item({key: "Q", text: "Quantity"}),
+					new Item({key: "T1", text: "Text"})
+				]
+			});
+
+		// Act
+		oComboBoxClone = oComboBox.clone();
+
+		// Assert
+		assert.ok(oComboBoxClone._getList(), "The List got clonned");
+		assert.strictEqual(oComboBoxClone._getList().getItems().length, 8, "List items were clonned");
+
+		// Cleanup
+		oComboBoxClone.destroy();
+		oComboBox.destroy();
+	});
+
 	QUnit.test("Keep selected value on parent re-render", function (assert) {
 		var oComboBox = new ComboBox({
 			items: [
