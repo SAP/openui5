@@ -10,6 +10,8 @@ sap.ui.define([
 	'./List',
 	'./Toolbar',
 	'sap/ui/base/ManagedObject',
+	'sap/ui/base/ManagedObjectRegistry',
+	'sap/base/Log',
 	'sap/m/library',
 	'sap/ui/Device',
 	'sap/ui/model/Sorter',
@@ -28,6 +30,8 @@ sap.ui.define([
 		List,
 		Toolbar,
 		ManagedObject,
+		ManagedObjectRegistry,
+		Log,
 		library,
 		Device,
 		Sorter,
@@ -122,7 +126,24 @@ sap.ui.define([
 	});
 
 
-
+	// apply the registry mixin
+	ManagedObjectRegistry.apply(TablePersoDialog, {
+		onDuplicate: function(sId, oldDialog, newDialog) {
+			if ( oldDialog._sapui_candidateForDestroy ) {
+				Log.debug("destroying dangling template " + oldDialog + " when creating new object with same ID");
+				oldDialog.destroy();
+			} else {
+				var sMsg = "adding TablePersoDialog with duplicate id '" + sId + "'";
+				// duplicate ID detected => fail or at least log a warning
+				if (sap.ui.getCore().getConfiguration().getNoDuplicateIds()) {
+					Log.error(sMsg);
+					throw new Error("Error: " + sMsg);
+				} else {
+					Log.warning(sMsg);
+				}
+			}
+		}
+	});
 
 	/**
 	 * Initializes the TablePersoDialog instance after creation.

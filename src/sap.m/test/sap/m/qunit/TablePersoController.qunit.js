@@ -356,4 +356,24 @@ sap.ui.define([
 		assert.ok(oTable.aDelegates.length == (iDelegatesCount - 1), null, "Table delegate has been removed");
 	});
 
+	QUnit.test("Duplicate TablePersoController", function(assert) {
+
+		var oTPC1 = new TablePersoController("TPC");
+		var oTPC2;
+		var oException;
+
+		try {
+			oTPC2 = new TablePersoController("TPC");
+		} catch (oError) {
+			oException = oError;
+		}
+
+		assert.ok(oException, "Exception fired");
+		assert.equal(oException.message, "Error: adding TablePersoController with duplicate id 'TPC'");
+		assert.notOk(oTPC2, "No duplicate created");
+
+		oTPC1.destroy();
+
+	});
+
 });
