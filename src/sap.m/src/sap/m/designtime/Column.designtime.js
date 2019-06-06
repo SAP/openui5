@@ -12,7 +12,9 @@ sap.ui.define([
 			return oColumn.getVisible();
 		},
 		actions: {
-			remove: "hideControl",
+			remove: {
+				changeType: "hideControl"
+			},
 			reveal: {
 				changeType: "unhideControl",
 				getLabel: function(oControl) {
