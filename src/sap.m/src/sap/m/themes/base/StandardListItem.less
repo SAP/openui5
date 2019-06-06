@@ -22,21 +22,18 @@
 	align-items: center;
 }
 
-.sapMSLIDiv,
 .sapMSLIDescriptionAndInfo {
 	display: flex;
-	flex: 1 1 50%;
 	overflow: hidden;
 }
 
 .sapMSLIDiv {
+	display: flex;
+	flex: auto;
 	flex-direction: column;
-}
-
-/* flex-direction: column is not supported in IE11 */
-html[data-sap-ui-browser*='ie11'] .sapMSLIDiv {
-	width: 100%;
-	display: inline-block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .sapMSLINoTitleAdapt .sapMSLIDiv {
@@ -119,7 +116,7 @@ html[data-sap-ui-browser*='ie11'] .sapMSLIDiv {
 	text-overflow: ellipsis;
 	text-align: right;
 	margin: 0 0 0 1rem;
-	font-family: @sapUiFontFamily;
+	padding: 0.125rem 0;
 	font-size: @sapMFontMediumSize;
 }
 
