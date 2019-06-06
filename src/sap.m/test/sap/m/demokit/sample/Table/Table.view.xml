@@ -51,9 +51,9 @@
 			</OverflowToolbar>
 		</headerToolbar>
 		<infoToolbar>
-			<Toolbar active="ture">
+			<OverflowToolbar>
 				<Label text="Wide range of available products"/>
-			</Toolbar>
+			</OverflowToolbar>
 		</infoToolbar>
 		<columns>
 			<Column
