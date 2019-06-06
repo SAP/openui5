@@ -7,15 +7,20 @@
   The page has two modes. As a default ("full mode") it runs all tests. For 1Ring.qunit.html the
   test coverage is measured. A coverage of 100% is expected.
 
-  With "#integrationTestsOnly", only the OPA tests and ODataModel.integration.qunit.html (which is
+  With "integrationTestsOnly", only the OPA tests and ODataModel.integration.qunit.html (which is
   part of 1Ring in full mode) are run. Coverage is measured for all tests, but no specific coverage
   is expected. This mode can be used to see which code is actually tested via integration tests. It
-  can also be used to verify a POC.
+  can also be used to verify a POC (probably in combination with realOData=true to overcome
+  "No Mockdata found" errors)
 
-  Many of our tests can (and will) be run with "realOData=true" and perform tests against a
-  back-end server using the SimpleProxy servlet. Before running any tests, this page checks that
-  this server can be accessed and asks for basic authentication, so that the tests themselves later
-  run through without login popups. If this fails, the tests with "realOData=true" can be skipped.
+  Many of our tests can (and will) be run with "realOData=true" and perform tests against a back-end
+  server using the SimpleProxy servlet. If BeforePush is called w/o realOData URL parameter, this
+  page checks that this server can be accessed and asks for basic authentication, so that the tests
+  themselves later run through without login popups. If this fails, the tests with "realOData=true"
+  can be skipped.
+
+  With "realOData=true" run only tests having "realOData=true" in URL.
+  With "realOData=false" run all tests with stripped off "realOData=true".
 
   BeforePush expects all tests to use QUnit 2.
 */
@@ -29,7 +34,7 @@
 		'qunit/analytics/testsuite4analytics.qunit.html?hidepassed' : 'full',
 		'qunit/internal/AnnotationParser.qunit.html?hidepassed&coverage' : 'full',
 		'qunit/internal/1Ring.qunit.html?hidepassed&coverage&realOData=true' : 'full',
-		'qunit/internal/ODataV4.qunit.html?module=sap.ui.model.odata.v4.ODataModel.integration&hidepassed&coverage' : 'integration',
+		'qunit/internal/1Ring.qunit.html?hidepassed&coverage&realOData=true&module=sap.ui.model.odata.v4.ODataModel.integration' : 'integration',
 		'demokit/sample/odata/v4/ListBinding/Opa.qunit.html?supportAssistant=true' : 'both',
 		'demokit/sample/odata/v4/ListBinding/Opa.qunit.html?realOData=true' : 'both',
 		'demokit/sample/odata/v4/ListBindingTemplate/Opa.qunit.html?supportAssistant=true' : 'both',
@@ -66,7 +71,7 @@
 				return sUrl;
 			});
 		}
-		if (!bRealOData) {
+		if (bRealOData === false) {
 			// remove the query property "realOData" at each URL; remove duplicates
 			aTests.forEach(function (sUrl) {
 				var sTest = sUrl.replace(/\?.*$/, ""); // the URL w/o query parameters
@@ -78,10 +83,21 @@
 			aTests = Object.keys(mFilter).map(function (sTest) {
 				return mFilter[sTest];
 			});
+		} else if (bRealOData === true) {
+			aTests = aTests.filter(function (sTest) {
+				return /realOData=true/.test(sTest);
+			});
 		}
 		return aTests;
 	}
 
+	/**
+	 * Runs the tests.
+	 *
+	 * @param {boolean} bRealOData
+	 *   if undefined, run all tests; if true, run only tests with "realOData=true"; if false, run
+	 *   all tests without realOData (it is stripped off)
+	 */
 	function runTests(bRealOData) {
 		var oActiveFrame,
 			oFirstFailedTest,
@@ -248,7 +264,7 @@
 			+ "sap/zui5_epm_sample/0002/");
 		oLoginRequest.addEventListener("load", function () {
 			if (oLoginRequest.status === 200) {
-				runTests(true);
+				runTests();
 			} else {
 				setStatus("Could not access the real OData server: "
 					+ oLoginRequest.status + " " + oLoginRequest.statusText);
@@ -258,9 +274,17 @@
 	}
 
 	window.addEventListener("load", function () {
+		var aMatches, bRealOData;
+
 		document.getElementById("run").addEventListener("click", verifyConnectionAndRun);
 		document.getElementById("runWithoutRealOData")
 			.addEventListener("click", runTests.bind(null, false));
-		verifyConnectionAndRun();
+		aMatches = /realOData=(\w+)/.exec(location.search);
+		bRealOData = aMatches && aMatches[1] === "true";
+		if (bRealOData === null) { // no realOData given
+			verifyConnectionAndRun();
+		} else {
+			runTests(bRealOData);
+		}
 	});
 }());
