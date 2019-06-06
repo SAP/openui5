@@ -475,7 +475,8 @@
 			"category": "Action",
 			"since": "1.62",
 			"samples": [
-				"sap.m.sample.UploadSet"
+				"sap.m.sample.UploadSet",
+				"sap.m.sample.UploadSetCustomUploader"
 			]
 		},
 		{
@@ -2876,6 +2877,11 @@
 		  "id": "sap.m.sample.UploadSet",
 		  "name": "Upload Set",
 		  "description": "This sample shows an Upload Set control with a list of files to be uploaded and actions you can perform on them."
+		},
+		{
+		  "id": "sap.m.sample.UploadSetCustomUploader",
+		  "name": "Upload Set with Custom Uploader",
+		  "description": "Shows how to customize the Upload Set control using a custom uploader."
 		},
 		{
 		  "id": "sap.m.sample.StandardMarginsAll",
