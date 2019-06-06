@@ -676,13 +676,22 @@ function (
 		}
 	});
 
-	QUnit.test("Hidden title is rendered", function (assert) {
+	QUnit.test("Hidden title behavior", function (assert) {
 		var sHiddenTitleId = '#' + this.oSB.getId() + '-titleHidden',
 			$oHiddenTitle = jQuery(sHiddenTitleId),
 			sTitle = this.oSB.getTitle(),
 			sNewTitle = "Test title";
 
 		// Assert
+		assert.strictEqual($oHiddenTitle.length, 0, "Hidden title div should not be rendered when showMenuButton=true");
+
+		// Act
+		this.oSB.setShowMenuButton(false);
+		Core.applyChanges();
+		$oHiddenTitle = jQuery(sHiddenTitleId);
+
+		// Assert
+		assert.strictEqual($oHiddenTitle.length, 1, "Hidden title div should be rendered when showMenuButton=false");
 		assert.ok($oHiddenTitle.hasClass("sapFShellBarTitleHidden"), "Hidden title class is correct");
 		assert.strictEqual($oHiddenTitle.text(), sTitle, "Hidden title text is correct");
 		assert.strictEqual($oHiddenTitle.attr("role"), "heading", "Hidden title role is correct");

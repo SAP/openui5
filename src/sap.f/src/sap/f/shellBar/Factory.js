@@ -165,7 +165,8 @@ sap.ui.define([
 	Factory.prototype.getPrimaryTitle = function () {
 		if (!this._oControls.oPrimaryTitle) {
 			this._oControls.oPrimaryTitle = new Title({
-				titleStyle: TitleLevel.H6
+				titleStyle: TitleLevel.H6,
+				level: TitleLevel.H1
 			})
 				.setLayoutData(new OverflowToolbarLayoutData({
 					priority: OverflowToolbarPriority.NeverOverflow
