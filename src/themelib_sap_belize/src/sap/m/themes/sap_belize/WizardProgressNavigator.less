@@ -37,7 +37,6 @@
 }
 
 .sapMWizardProgressNavAnchorCircle {
-	color: @sapUiHighlight;
 	border-color: @sapUiHighlight;
 }
 
@@ -51,6 +50,10 @@
 
 .sapMWizard .sapMWizardStepContainer {
   background: @sapUiGroupContentBackground;
+}
+
+.sapMWizardProgressNavStep:hover .sapMWizardProgressNavAnchorCircle {
+	color:  @sapUiGroupTitleTextColor;
 }
 
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"] {
