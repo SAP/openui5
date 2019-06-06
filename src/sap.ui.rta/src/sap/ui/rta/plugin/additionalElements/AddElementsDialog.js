@@ -19,7 +19,9 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/m/VBox",
 	"sap/ui/rta/Utils",
-	"sap/m/library"
+	"sap/m/library",
+	"sap/ui/layout/VerticalLayout",
+	"sap/m/Text"
 ], function(
 	ManagedObject,
 	Label,
@@ -38,7 +40,9 @@ sap.ui.define([
 	Log,
 	VBox,
 	Utils,
-	mobileLibrary
+	mobileLibrary,
+	VerticalLayout,
+	Text
 ) {
 	"use strict";
 
@@ -67,6 +71,10 @@ sap.ui.define([
 			library : "sap.ui.rta",
 			properties : {
 				customFieldEnabled : {
+					type: "boolean",
+					defaultValue: false
+				},
+				businessContextVisible : {
 					type: "boolean",
 					defaultValue: false
 				},
@@ -148,6 +156,15 @@ sap.ui.define([
 		this.oInputFields = new Toolbar({
 			content: [this._oInput, oResortButton, this._oToolbarSpacer1, this._oCustomFieldButton]
 		});
+
+		//Business Context Display
+		this._oBCContainer = new VerticalLayout({
+			visible: this.getBusinessContextVisible(),
+			content: [new Text({
+				text: this._oTextResources.getText("BUSINESS_CONTEXT_TITLE")
+			})
+			]
+		}).addStyleClass("sapUIRtaBusinessContextContainer");
 
 		// Fields of the List
 		var oFieldName = new Label({
@@ -232,6 +249,7 @@ sap.ui.define([
 		}).addStyleClass("sapUIRtaCCDialogScrollContainer");
 
 		return [this.oInputFields,
+				this._oBCContainer,
 				oScrollContainer];
 	};
 
@@ -257,6 +275,8 @@ sap.ui.define([
 	 * Close the dialog.
 	 */
 	AddElementsDialog.prototype._submitDialog = function() {
+		// remove Business Contexts
+		this._removeBusinessContexts();
 		this._oDialog.close();
 		this._fnResolve();
 	};
@@ -265,6 +285,8 @@ sap.ui.define([
 	 * Close dialog and revert all change operations
 	 */
 	AddElementsDialog.prototype._cancelDialog = function() {
+		// remove Business Contexts
+		this._removeBusinessContexts();
 		// clear all variables
 		this._oList.removeSelections();
 		this._oDialog.close();
@@ -369,11 +391,58 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the visibility of the business context container
+	 *
+	 * @param {boolean} bBusinessContextVisible - Indicates whether the container is visible
+	 * @private
+	 */
+	AddElementsDialog.prototype._setBusinessContextVisible = function(bBusinessContextVisible) {
+		this.setProperty("businessContextVisible", bBusinessContextVisible, true);
+		this._oBCContainer.setVisible(this.getProperty("businessContextVisible"));
+	};
+
+	/**
 	 * Returns list control
 	 * @returns {sap.m.List}
 	 */
 	AddElementsDialog.prototype.getList = function () {
 		return this._oList;
+	};
+
+	/**
+	 * Adds available business contexts
+	 * @param (object[]} aBusinessContexts - Array containing business contexts
+	 * @public
+	 */
+	AddElementsDialog.prototype.addBusinessContext = function (aBusinessContexts) {
+		// Message "none" when no business contexts are available
+		var oBCDescription = new Text({
+			text: this._oTextResources.getText("MSG_NO_BUSINESS_CONTEXTS")
+		});
+		if (aBusinessContexts && aBusinessContexts.length > 0) {
+			aBusinessContexts.forEach(function (oContext) {
+				oBCDescription = new Text({
+					text: oContext.BusinessContextDescription
+				});
+				this._oBCContainer.addContent(oBCDescription);
+			}, this);
+		} else {
+			this._oBCContainer.addContent(oBCDescription);
+		}
+		// set the container visible
+		this._setBusinessContextVisible(true);
+	};
+
+	/**
+	 * Removes business contexts from the vertical layout
+	 * (except for the title)
+	 * @private
+	 */
+	AddElementsDialog.prototype._removeBusinessContexts = function () {
+		var nIndex;
+		for (nIndex = 0; nIndex < this._oBCContainer.getContent().length; nIndex++) {
+			this._oBCContainer.removeContent(1);
+		}
 	};
 
 	return AddElementsDialog;

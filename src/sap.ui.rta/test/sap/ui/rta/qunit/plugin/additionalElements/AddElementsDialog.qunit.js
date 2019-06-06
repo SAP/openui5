@@ -14,6 +14,7 @@ sap.ui.define([
 	jQuery("#qunit-fixture").hide();
 
 	var sandbox = sinon.sandbox.create();
+	var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 
 	function createDialog(bCFE) {
 		var aElements = [
@@ -130,6 +131,43 @@ sap.ui.define([
 				assert.equal(this._oCustomFieldButton.getEnabled(), true, "then the button is enabled");
 				this._oCustomFieldButton.firePress();
 			});
+			this.oAddElementsDialog.open();
+		});
+
+		QUnit.test("when AddElementsDialog gets initialized with customFieldsEnabled set and no Bussiness Contexts are available", function(assert) {
+			var done = assert.async();
+
+			this.oAddElementsDialog = createDialog(true);
+
+			this.oAddElementsDialog.attachOpened(function() {
+				assert.ok(this._oBCContainer.getVisible(), "then the Business Context Container is visible");
+				assert.equal(this._oBCContainer.getContent().length, 2, "and the Business Context Container has two entries");
+				assert.equal(this._oBCContainer.getContent()[0].getText(), oTextResources.getText("BUSINESS_CONTEXT_TITLE"), "and the first entry is the Title");
+				assert.equal(this._oBCContainer.getContent()[1].getText(), oTextResources.getText("MSG_NO_BUSINESS_CONTEXTS"), "and the second entry is the No-Context Message");
+				done();
+			});
+			this.oAddElementsDialog.addBusinessContext();
+			this.oAddElementsDialog.open();
+		});
+
+		QUnit.test("when AddElementsDialog gets initialized with customFieldsEnabled set and two Bussiness Contexts are available", function(assert) {
+			var done = assert.async();
+
+			this.oAddElementsDialog = createDialog(true);
+
+			this.oAddElementsDialog.attachOpened(function() {
+				assert.ok(this._oBCContainer.getVisible(), "then the Business Context Container is visible");
+				assert.equal(this._oBCContainer.getContent().length, 3, "and the Business Context Container has three entries");
+				assert.equal(this._oBCContainer.getContent()[0].getText(), oTextResources.getText("BUSINESS_CONTEXT_TITLE"), "and the first entry is the Title");
+				assert.equal(this._oBCContainer.getContent()[1].getText(), "Business Context 1", "and the second entry is the First Business Context");
+				assert.equal(this._oBCContainer.getContent()[2].getText(), "Business Context 2", "and the third entry is the Second Business Context");
+				done();
+			});
+			var aBusinessContexts = [
+				{BusinessContextDescription : "Business Context 1"},
+				{BusinessContextDescription : "Business Context 2"}
+			];
+			this.oAddElementsDialog.addBusinessContext(aBusinessContexts);
 			this.oAddElementsDialog.open();
 		});
 
