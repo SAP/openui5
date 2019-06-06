@@ -1079,6 +1079,9 @@ sap.ui.define([
 			},
 			SinglePlanningCalendarGrid: {
 				title: "QUnit Page for sap.m.SinglePlanningCalendarGrid",
+				sinon: {
+					useFakeTimers: true
+				},
 				ui5: {
 					language: "en"
 				}

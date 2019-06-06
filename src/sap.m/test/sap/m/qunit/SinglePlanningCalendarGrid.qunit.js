@@ -175,6 +175,49 @@ sap.ui.define([
 		assert.equal(sLineClamp, "8", "Eight lines of appointment text will be shown");
 	});
 
+	QUnit.test("applyFocusInfo", function(assert) {
+		// prepare
+		var oAppointment = new CalendarAppointment({
+				startDate: new Date(2018, 6, 14, 5),
+				endDate: new Date(2018, 6, 14, 6),
+				selected: false
+			}),
+			oGrid = new SinglePlanningCalendarGrid({
+				startDate: new Date(2018, 6, 8),
+				appointments: [oAppointment]
+			}),
+			oPopover = new sap.m.ResponsivePopover({
+				placement: sap.m.PlacementType.Auto
+			}),
+			fnApplyFocusInfoSpy = this.spy(oGrid, "applyFocusInfo");
+
+		oGrid.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oAppointment.getDomRef().focus();
+		oPopover.openBy(oAppointment);
+		this.clock.tick(500);
+
+		// assert
+		assert.ok(oPopover.isOpen(), "The popover is opened");
+		assert.strictEqual(oPopover.getDomRef().id, document.activeElement.id, "The popover is the active DOM element");
+
+		// act
+		oPopover.close();
+		this.clock.tick(500);
+
+		// assert
+		assert.ok(fnApplyFocusInfoSpy.calledOnce, "applyFocusInfo was called");
+		assert.ok(fnApplyFocusInfoSpy.calledWithExactly({
+			preventScroll: true,
+			id: oAppointment.getId()
+		}), "applyFocusInfo was called with the correct parameters");
+		assert.strictEqual(oAppointment.getDomRef().id, document.activeElement.id, "Focus is back on the appointment");
+
+		// cleanup
+		oGrid.destroy();
+	});
 
 	QUnit.module("Events");
 
