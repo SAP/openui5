@@ -10834,6 +10834,34 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
+	QUnit.test("The picker should open when icon is pressed", function (assert) {
+		this.stub(Device, "system", {
+			desktop: false,
+			tablet: true,
+			phone: false
+		});
+
+		var oComboBox = new ComboBox({
+			items: [
+				new SeparatorItem({text: "Group1"}),
+				new Item({text: "item11", key:"key11"}),
+				new Item({text: "item12", key:"key12"}),
+				new SeparatorItem({text: "Group2"}),
+				new Item({text: "item21", key:"key21"}),
+				new Item({text: "item22", key:"key22"})
+			]
+		});
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oComboBox._handlePopupOpenAndItemsLoad(false);
+
+		assert.ok(oComboBox.isOpen(), "ComboBox is open");
+		assert.ok(oComboBox.$().hasClass(InputBase.ICON_PRESSED_CSS_CLASS));
+
+		oComboBox.destroy();
+	});
+
 	QUnit.test("one visual focus should be shown in the control", function (assert) {
 		var oList,
 			oComboBox = new ComboBox({
