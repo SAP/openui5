@@ -7,17 +7,42 @@
 }
 
 #content.visible { /* Dock it to the top right corner */
+	position: fixed;
 	top: 0;
 	left: auto;
-	right: 0;
+	right: 100px;
 	background-color: white;
+	opacity: 0.6;
 }
 
-#qunit-fixture.visible { /* Dock it to the bottom left corner */
+#content.visible:hover {
+	opacity: 1;
+}
+
+#qunit-fixture.visible { /* Dock it to the bottom right corner */
+	position: fixed;
 	top: auto;
-	left: 0;
 	bottom: 0;
+	left: auto;
+	right: 100px;
 	background-color: white;
+	opacity: 0.6;
+}
+
+#qunit-fixture.visible:hover {
+	opacity: 1;
+}
+
+@media all and (max-width: 1100px) {
+	#content.visible {
+		left: 0;
+		right: auto;
+	}
+
+	#qunit-fixture.visible {
+		left: 0;
+		right: auto;
+	}
 }
 
 #content.visible:empty,
