@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/m/DateTimePicker",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/DateTime",
+	"sap/ui/model/odata/type/DateTime",
 	"sap/ui/Device",
 	"sap/m/TimePickerSliders",
 	"jquery.sap.keycodes",
@@ -17,6 +18,7 @@ sap.ui.define([
 	DateTimePicker,
 	JSONModel,
 	DateTime,
+	ODataDateTime,
 	Device,
 	TimePickerSliders,
 	jQuery,
@@ -545,6 +547,28 @@ sap.ui.define([
 			jQuery("html").removeClass("sapUiMedia-Std-Phone");
 			done();
 		}, 400);
+	});
+
+	QUnit.test("data binding with sap.ui.model.odata.type.DateTime", function(assert) {
+		var oDate = new Date(2019, 5, 6, 3, 40, 46),
+			oModel = new JSONModel({
+				myDate: undefined
+			}),
+			oDateTimeType = new ODataDateTime({
+				UTC: true
+			}, {
+				//Constraints
+			}),
+			oDateTimePicker = new DateTimePicker({
+				value: {
+					path: "/myDate",
+					type: oDateTimeType
+				}
+			}).setModel(oModel);
+
+		assert.equal(oDateTimePicker._parseValue("Jun 6, 2019, 3:40:46 AM").getTime(), oDate.getTime(), "Value successfully parsed");
+		assert.equal(oDateTimePicker._formatValue(oDate), "Jun 6, 2019, 3:40:46 AM", "Date successfully formatted");
+
 	});
 
 	QUnit.module("Private");
