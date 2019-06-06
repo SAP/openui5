@@ -267,7 +267,7 @@ sap.ui.define([
 				// ignore, ParseException to be handled in ManagedObject.updateModelProperty()
 			}
 
-			if (oDate && oBindingType.oConstraints && oBindingType.oConstraints.isDateOnly) {
+			if (oDate && ((oBindingType.oFormatOptions && oBindingType.oFormatOptions.UTC) || (oBindingType.oConstraints && oBindingType.oConstraints.isDateOnly))) {
 				// convert to local date because it was parsed as UTC date
 				oDateLocal = new Date(oDate.getUTCFullYear(), oDate.getUTCMonth(), oDate.getUTCDate(),
 					oDate.getUTCHours(), oDate.getUTCMinutes(), oDate.getUTCSeconds(), oDate.getUTCMilliseconds());
@@ -292,7 +292,7 @@ sap.ui.define([
 			oDateUTC;
 
 		if (oBindingType && this._isSupportedBindingType(oBindingType)) {
-			if (oBindingType.oConstraints && oBindingType.oConstraints.isDateOnly) {
+			if ((oBindingType.oFormatOptions && oBindingType.oFormatOptions.UTC) || (oBindingType.oConstraints && oBindingType.oConstraints.isDateOnly)) {
 				// convert to UTC date because it will be formatted as UTC date
 				oDateUTC = new Date(Date.UTC(oDate.getFullYear(), oDate.getMonth(), oDate.getDate(),
 					oDate.getHours(), oDate.getMinutes(), oDate.getSeconds(), oDate.getMilliseconds()));
