@@ -563,7 +563,9 @@ sap.ui.define([
 	 * @param {jQuery.Event} oEvent The SPACE keyboard key press event object
 	 */
 	DynamicPageTitle.prototype.onsapspace = function (oEvent) {
-		oEvent.preventDefault();
+		if (oEvent.srcControl === this) {
+			oEvent.preventDefault();
+		}
 	};
 
 	/**
