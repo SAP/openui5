@@ -124,6 +124,14 @@ sap.ui.define(['./library', 'sap/ui/core/Item'],
 			this.fireEvent("propertyChanged", {propertyKey: sPropertyKey, propertyValue: vPropertyValue });
 		};
 
+		MenuItem.prototype.setAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
+			Item.prototype.setAggregation.apply(this, arguments);
+
+			this.fireEvent("aggregationChanged", { aggregationName: sAggregationName, methodName: "set", methodParams: { item: oObject } });
+
+			return this;
+		};
+
 		MenuItem.prototype.addAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
 			Item.prototype.addAggregation.apply(this, arguments);
 

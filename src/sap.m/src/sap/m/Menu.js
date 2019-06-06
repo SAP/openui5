@@ -806,6 +806,34 @@ sap.ui.define([
 				case 'items':
 					this._onItemsAggregationChanged(oEvent);
 					break;
+				case 'tooltip':
+					this._onTooltipAggregationChanged(oEvent);
+					break;
+			}
+		};
+
+		/**
+		 * Handle the event of changing the "tooltip" aggregation of any menu items and sub-items.
+		 * @param {object} oEvent The event data object
+		 * @private
+		 */
+		Menu.prototype._onTooltipAggregationChanged = function(oEvent) {
+			var sVisualItemId = oEvent.getSource()._getVisualControl(),
+				methodName = oEvent.getParameter("methodName"),
+				methodParams = oEvent.getParameter("methodParams"),
+				oVisualItem;
+
+			if (!sVisualItemId) {
+				return;
+			}
+
+			oVisualItem = sap.ui.getCore().byId(sVisualItemId);
+
+			if (methodName === "set") {
+				oVisualItem.setTooltip(methodParams.item);
+			}
+			if (methodName === "destroy") {
+				oVisualItem.destroyTooltip();
 			}
 		};
 

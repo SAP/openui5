@@ -266,6 +266,21 @@ sap.ui.define([
 		assert.equal(oItemFridge.getTooltip(), "it's cold in here", "item has a tooltip");
 	});
 
+	QUnit.test("tooltip changed after setTooltip used", function(assert) {
+		this.sut.getItems()[1].setTooltip("new tooltip");
+
+		//Assert
+		assert.equal(this.sut.getItems()[1].getTooltip(), "new tooltip", "the item's tooltip has changed");
+	});
+
+	QUnit.test("tooltip changed after destroyTooltip used", function(assert) {
+		this.sut.getItems()[1].setTooltip("new tooltip");
+		this.sut.getItems()[1].destroyTooltip();
+
+		//Assert
+		assert.equal(this.sut.getItems()[1].getTooltip(), null, "the item's tooltip has changed");
+	});
+
 	QUnit.test("visible", function(assert) {
 		//Act
 		this.sut.getItems()[0].setVisible(false);
