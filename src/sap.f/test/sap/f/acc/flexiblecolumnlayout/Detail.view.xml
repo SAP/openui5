@@ -1,5 +1,5 @@
 <View xmlns="sap.m" displayBlock="true" controllerName="flexiblecolumnlayout.Detail" height="100%">
-	  <Page title="Detail page">
+	  <Page title="Detail page" titleLevel="H2">
         <headerContent>
             <Button icon="sap-icon://decline" press="handleClose" tooltip="Close column" visible="{= ${/actionButtonsInfo/midColumn/closeColumn} !== null }"/>
         </headerContent>

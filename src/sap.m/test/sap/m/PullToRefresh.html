@@ -74,6 +74,7 @@ function createSelect(oPullDown, iSelectedItem){
  */
 	var overviewPage = new sap.m.Page("overviewPage", {
 		title : "Pull to Refresh",
+		titleLevel: "H1"
 	});
 
 	overviewPage.addContent(new sap.m.List({
@@ -109,6 +110,7 @@ function createSelect(oPullDown, iSelectedItem){
 
 	var detailPage = new sap.m.Page("detailPage", {
 		title : "Detail Page",
+		titleLevel: "H1",
 		showNavButton : true,
 		navButtonText : "Back",
 		navButtonPress : function() {
@@ -147,6 +149,7 @@ function createSelect(oPullDown, iSelectedItem){
 
 	var standardPull2Refresh = new sap.m.Page("standardP2R", {
 		title : "Standard Pull to Refresh",
+		titleLevel: "H1",
 		enableScrolling: true,
 		showNavButton : true,
 		navButtonText : "Back",
@@ -195,6 +198,7 @@ function createSelect(oPullDown, iSelectedItem){
 
 	var simplePage = new sap.m.Page("simplePage", {
 		title : "Hide pull-down immediately",
+		titleLevel: "H1",
 		enableScrolling: true,
 		showNavButton : true,
 		navButtonText : "Back",
@@ -259,6 +263,7 @@ function createSelect(oPullDown, iSelectedItem){
 
 		var busyPage = new sap.m.Page("busyPage", {
 			title : "Show busy dialog",
+			titleLevel: "H1",
 			enableScrolling: true,
 			showNavButton : true,
 			navButtonText : "Back",

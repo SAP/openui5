@@ -232,7 +232,7 @@
 			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
-			"control": "sap.m.sap.m.NavContainer",
+			"control": "sap.m.NavContainer",
 			"url": "../NavContainer.html",
 			"appComponent" : "CA-UI5-CTR-PIR"
 		},

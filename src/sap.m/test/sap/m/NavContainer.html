@@ -24,7 +24,8 @@
             });
 
             var page1 = new sap.m.Page("page1", {
-                title:"Page 1",
+                title: "Page 1",
+                titleLevel: "H1",
                 content : [ new sap.m.Button({
                     text : "[default] to Page 2",
                     press : function() {
@@ -82,6 +83,7 @@
 
             var page2 = new sap.m.Page("page2", {
                 title:"Page 2",
+                titleLevel: "H1",
                 showNavButton: true,
                 navButtonText: "Page 1",
                 navButtonPress: function(){ app.back(); },
@@ -133,6 +135,7 @@
 
             var page3 = new sap.m.Page("page3", {
                 title:"Page 3",
+                titleLevel: "H1",
                 showNavButton: true,
                 navButtonText: "Home",
                 navButtonPress: function(){ app.backToTop(); },

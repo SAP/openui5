@@ -29,6 +29,7 @@
 
 		var oMaster = new sap.m.semantic.MasterPage("masterPage", {
 			title:"Master Test page",
+			titleLevel: "H1",
 			showNavButton: true,
 			addAction: new sap.m.semantic.AddAction(),
 			sort: new sap.m.semantic.SortAction(),
@@ -48,6 +49,7 @@
 
 		var oDetail = new sap.m.semantic.DetailPage("detailPage", {
 			title:"Detail Test page",
+			titleLevel: "H2",
 			editAction: new sap.m.semantic.EditAction(),
 			flagAction: new sap.m.semantic.FlagAction(),
 			favoriteAction: new sap.m.semantic.FavoriteAction(),
@@ -62,7 +64,7 @@
 						columnsL: 1,
 						columnsM: 1,
 						content: [
-							new sap.ui.core.Title({text:"Detailed Info"}),
+							new sap.ui.core.Title({text:"Detailed Info", level: "H3"}),
 							new sap.m.Label({text: "Name"}),
 							new sap.m.Text({text: "John Doe"}),
 							new sap.m.Label({text: "Job Title"}),
