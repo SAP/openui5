@@ -232,7 +232,7 @@ sap.ui.define([
 				type: ListType.Active,
 				content: new HTML({
 					content:	'<div class="sapMGrowingListTrigger">' +
-									'<div class="sapMSLITitleDiv sapMGrowingListTriggerText">' +
+									'<div class="sapMSLIDiv sapMGrowingListTriggerText">' +
 										'<span class="sapMSLITitle" id="' + sTriggerID + 'Text">' + encodeXML(sTriggerText) + '</span>' +
 									'</div>' +
 									'<div class="sapMGrowingListDescription sapMSLIDescription" id="' + sTriggerID + 'Info"></div>' +
