@@ -10,7 +10,8 @@ function(Renderer) {
 		render: function (oRm, oControl) {
 			var oAcc = oControl._oAcc,
 				oRootAttributes = oAcc.getRootAttributes(),
-				sTitle = oControl.getTitle();
+				sTitle = oControl.getTitle(),
+				bRenderHiddenTitle = sTitle && !oControl.getShowMenuButton();
 
 			oRm.write("<div");
 			oRm.addClass("sapFShellBar");
@@ -25,7 +26,7 @@ function(Renderer) {
 			oRm.writeClasses();
 			oRm.write(">");
 
-			if (sTitle) {
+			if (bRenderHiddenTitle) {
 				oRm.write('<div id="' + oControl.getId() + '-titleHidden" role="heading" aria-level="1" class="sapFShellBarTitleHidden">');
 				oRm.writeEscaped(sTitle);
 				oRm.write('</div>');
