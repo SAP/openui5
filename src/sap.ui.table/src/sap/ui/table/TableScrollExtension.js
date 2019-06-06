@@ -409,11 +409,11 @@ sap.ui.define([
 							oVSb.scrollTop = iNewScrollTop;
 							oVSb._scrollTop = oVSb.scrollTop;
 
-							if (iNewScrollTop === iVerticalScrollRange && iNewScrollTop !== oVSb.scrollTop) {
-								log("VerticalScrollingHelper#updateScrollPosition: (async) Adjusted from "
-									+ internal(oTable).nVerticalScrollPosition + " to " + oVSb.scrollTop, oTable);
-								internal(oTable).nVerticalScrollPosition = oVSb.scrollTop;
-							}
+							//if (iNewScrollTop === iVerticalScrollRange && iNewScrollTop !== oVSb.scrollTop) {
+							//	log("VerticalScrollingHelper#updateScrollPosition: (async) Adjusted from "
+							//		+ internal(oTable).nVerticalScrollPosition + " to " + oVSb.scrollTop, oTable);
+							//	internal(oTable).nVerticalScrollPosition = oVSb.scrollTop;
+							//}
 
 							VerticalScrollingHelper.updateFirstVisibleRow(oTable);
 						});
