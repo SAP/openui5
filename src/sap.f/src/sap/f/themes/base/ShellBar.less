@@ -1,6 +1,6 @@
-@_sap_f_ShellBar_PaddingDesktop: 3;
-@_sap_f_ShellBar_PaddingTablet: 2;
-@_sap_f_ShellBar_PaddingPhone: 1;
+@_sap_f_ShellBar_PaddingDesktop: 3rem;
+@_sap_f_ShellBar_PaddingTablet: 2rem;
+@_sap_f_ShellBar_PaddingPhone: 1rem;
 @_sap_f_ShellBar_ChildMargin: 4;
 @_sap_f_ShellBar_CoPilotWidth: 48;
 
@@ -9,8 +9,6 @@
 
 .sapFShellBar {
 	height: 3rem;
-	padding-left: ~"@{_sap_f_ShellBar_PaddingDesktop}rem";
-	padding-right: ~"@{_sap_f_ShellBar_PaddingDesktop}rem";
 	box-sizing: border-box;
 	overflow: hidden;
 
@@ -22,8 +20,7 @@
 
 	.sapFShellBarOTB {
 		height: 3rem;
-		padding-left: 0;
-		padding-right: 0;
+		padding: 0 @_sap_f_ShellBar_PaddingDesktop;
 
 		>:first-child {
 			margin-left: 0;
@@ -174,12 +171,14 @@
 		font-weight: bold;
 	}
 
-	&.sapFShellBarSizeTablet {
-		padding: 0 ~"@{_sap_f_ShellBar_PaddingTablet}rem";
+	&.sapFShellBarSizeTablet .sapFShellBarOTB {
+		padding: 0 @_sap_f_ShellBar_PaddingTablet;
 	}
 
 	&.sapFShellBarSizePhone {
-		padding: 0 ~"@{_sap_f_ShellBar_PaddingPhone}rem";
+		.sapFShellBarOTB {
+			padding: 0 @_sap_f_ShellBar_PaddingPhone;
+		}
 		.sapFShellBarProfile {
 			margin-right: 0;
 		}
