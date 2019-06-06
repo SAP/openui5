@@ -6361,8 +6361,8 @@ sap.ui.define([
 			}).length;
 			var iLastColumnIndex = iColumnCount + Math.max(0, iActionItemCount - 1); // Action items are treated as columns in this test.
 			var iRowCount = oTable._getTotalRowCount();
-			var iDelayAfterInRowTabbing = Device.browser.msie ? 50 : 0;
-			var iDelayAfterScrollTabbing = Device.browser.msie ? 300 : 100;
+			var iDelayAfterInRowTabbing = 100;
+			var iDelayAfterScrollTabbing = 300;
 			var oElem, i, j;
 
 			if (bShowInfo == null) {

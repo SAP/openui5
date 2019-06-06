@@ -8,7 +8,8 @@ sap.ui.define([
 		defaults: {
 			group: "Control",
 			qunit: {
-				version: 2					// Whether QUnit should be loaded and if so, what version
+				version: 2,					// Whether QUnit should be loaded and if so, what version
+				reorder: false
 			},
 			sinon: {
 				version: 1					// Whether Sinon should be loaded and if so, what version

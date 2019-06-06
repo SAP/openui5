@@ -140,7 +140,8 @@ sap.ui.define([
 		});
 
 		if (assert) {
-			var bCorrect = Math.abs(parseInt(oTable.$("rsz").css("left")) - 100 - oColumn.getDomRef().getBoundingClientRect().left) < 5;
+			var iDistance = oTable.getDomRef("rsz").getBoundingClientRect().left - oColumn.getDomRef().getBoundingClientRect().right;
+			var bCorrect = Math.abs(iDistance) < 5;
 			assert.ok(bExpect && bCorrect || !bExpect && !bCorrect, "Position of Resizer");
 			assert.equal(oTable._iLastHoveredColumnIndex, iIndex, "Index of last hovered resizable table");
 		}
@@ -150,10 +151,9 @@ sap.ui.define([
 		var aVisibleColumns = oTable._getVisibleColumns();
 		moveResizer(aVisibleColumns[0], assert, true, 0);
 		moveResizer(aVisibleColumns[1], assert, false, 0);
-		assert.ok(Math.abs(parseInt(oTable.$("rsz").css("left")) - 100 - aVisibleColumns[0].getDomRef().getBoundingClientRect().left) < 10,
+		assert.ok(Math.abs(oTable.getDomRef("rsz").getBoundingClientRect().left - aVisibleColumns[0].getDomRef().getBoundingClientRect().right) < 5,
 			"Position of Resizer still on column 0");
 		moveResizer(aVisibleColumns[2], assert, true, 2);
-
 	});
 
 	QUnit.test("Automatic Column Resize via Double Click", function(assert) {
