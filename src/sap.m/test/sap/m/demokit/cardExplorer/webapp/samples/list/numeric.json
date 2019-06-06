@@ -85,14 +85,8 @@
 				]
 			},
 			"item": {
-				"title": {
-					"label": "{{title_label}}",
-					"value": "{Name}"
-				},
-				"description": {
-					"label": "{{description_label}}",
-					"value": "{Description}"
-				},
+				"title": "{Name}",
+				"description": "{Description}",
 				"info": {
 					"value": "{Sales} K",
 					"state": "{State}"

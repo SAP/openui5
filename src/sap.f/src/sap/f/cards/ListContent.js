@@ -125,8 +125,8 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/m/List", "sap/m/StandardListItem"
 		 */
 		ListContent.prototype._setItem = function (mItem) {
 			/* eslint-disable no-unused-expressions */
-			mItem.title && this._bindItemProperty("title", mItem.title.value);
-			mItem.description && this._bindItemProperty("description", mItem.description.value);
+			mItem.title && this._bindObjectItemProperty("title", mItem.title);
+			mItem.description && this._bindObjectItemProperty("description", mItem.description);
 			mItem.icon && mItem.icon.src && this._bindItemProperty("icon", mItem.icon.src);
 			mItem.highlight && this._bindItemProperty("highlight", mItem.highlight);
 			mItem.info && this._bindItemProperty("info", mItem.info.value);
@@ -175,6 +175,33 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/m/List", "sap/m/StandardListItem"
 
 			//workaround until actions refactor
 			this.fireEvent("_actionContentReady");
+		};
+
+		/**
+		 * Directly bind the property when the value is of type string.
+		 * If the value is an object call bind property for both the value and the label properties.
+		 *
+		 * This allow the usage of both:
+		 *
+		 * "title": "Some item title"
+		 *
+		 * and
+		 *
+		 * "title": {
+		 * 		"label": "Some label for the title"
+		 * 		"value": "Some item title"
+		 * }
+		 *
+		 * @private
+		 * @param {string} sPropertyName The name of the property
+		 * @param {string|Object} vPropertyValue The value of the property
+		 */
+		ListContent.prototype._bindObjectItemProperty = function (sPropertyName, vPropertyValue) {
+			if (typeof vPropertyValue === "string") {
+				this._bindItemProperty(sPropertyName, vPropertyValue);
+			} else {
+				this._bindItemProperty(sPropertyName, vPropertyValue.value);
+			}
 		};
 
 		/**

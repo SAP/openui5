@@ -26,12 +26,8 @@
 				"icon": {
 					"src": "{day/condition/icon}"
 				},
-				"title": {
-					"value": "For {date}"
-				},
-				"description": {
-				"value": "{day/avgtemp_c}°C, {day/condition/text}"
-				}
+				"title": "For {date}",
+				"description": "{day/avgtemp_c}°C, {day/condition/text}"
 			}
 		}
 	}
