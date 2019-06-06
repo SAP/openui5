@@ -395,6 +395,8 @@ sap.ui.define([
 		this._oSearchField = null;
 
 		jQuery(window).unbind("resize", this._checkResizeClosure);
+		clearTimeout(this._checkPaneBarOverflowDelayId);
+		this._checkPaneBarOverflowDelayId = null;
 	};
 
 
@@ -691,8 +693,9 @@ sap.ui.define([
 
 			// Hide/show the main item
 			jQuery(oDomEntry).css("display", bItemInPane ? "inline-block" : "none");
-			// Hide/show the submenu item
-			sap.ui.getCore().byId(oDomEntry.id + "-overflow").setVisible(!bItemInPane);
+			// Hide/show the submenu item (check if it is in the DOM first)
+			var oSubmenuItem = sap.ui.getCore().byId(oDomEntry.id + "-overflow");
+			oSubmenuItem && oSubmenuItem.setVisible(!bItemInPane);
 
 			if (bItemInPane) {
 				// This item is inside the pane
