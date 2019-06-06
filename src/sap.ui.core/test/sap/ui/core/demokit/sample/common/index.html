@@ -5,15 +5,17 @@
 		<meta charset="UTF-8">
 		<title>Launcher for UI5 demokit sample components</title>
 
-		<script src="../../../../../../../test-resources/sap/ui/core/shared-config.js"></script>
-		<script id="sap-ui-bootstrap" src="../../../../../../../resources/sap-ui-core.js"
+		<!-- ensure that V2 MockServer can load mock data in the explored app and standalone -->
+		<base href="../../../../../../../">
+
+		<script src="test-resources/sap/ui/core/shared-config.js"></script>
+		<script id="sap-ui-bootstrap" src="resources/sap-ui-core.js"
 			data-sap-ui-async="true"
 			data-sap-ui-compatversion="edge"
 			data-sap-ui-libs="sap.m"
-			data-sap-ui-resourceroots='{"sap.ui.core.sample":"../../../../../../../test-resources/sap/ui/core/demokit/sample"}'>
+			data-sap-ui-resourceroots='{"sap.ui.core.sample":"test-resources/sap/ui/core/demokit/sample"}'>
 		</script>
-		<script src="../../../../../../../test-resources/sap/ui/core/demokit/sample/common/init.js">
-		</script>
+		<script src="test-resources/sap/ui/core/demokit/sample/common/init.js"></script>
 	</head>
 	<body class='sapUiBody'>
 		<div id='content'></div>
