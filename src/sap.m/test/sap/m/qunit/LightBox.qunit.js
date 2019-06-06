@@ -7,6 +7,7 @@ sap.ui.define(
 
 
 		var IMAGE_PATH = 'test-resources/sap/m/images/';
+		var LIGHTBOX_OPEN_TIME = 300;
 
 		//================================================================================
 		// LightBox Base API
@@ -95,6 +96,7 @@ sap.ui.define(
 
 		QUnit.test('Setting the lightbox\'s image source', function(assert) {
 			// arrange
+			var done = assert.async();
 			var oImageContent = this.LightBox.getImageContent()[0];
 			var sSource = IMAGE_PATH + 'demo/nature/elephant.jpg';
 			var image = new window.Image();
@@ -109,7 +111,10 @@ sap.ui.define(
 
 			this.LightBox.open();
 
-			assert.strictEqual(oImageContent._oImage.src, image.src, 'The native js image source should be set after the LightBox is open.');
+			setTimeout(function () {
+				assert.strictEqual(oImageContent._oImage.src, image.src, 'The native js image source should be set after the LightBox is open.');
+				done();
+			}, LIGHTBOX_OPEN_TIME);
 		});
 
 		//================================================================================
@@ -171,14 +176,15 @@ sap.ui.define(
 				assert.strictEqual(oLightBoxPopup.isOpen(), true, 'The lightbox should be open');
 				assert.strictEqual(iOnloadCount, 1, "image is loaded just once");
 				done();
-			}.bind(this), 100);
+			}.bind(this), 600);
 		});
 
 		QUnit.test('Closing a lightbox', function(assert) {
 			// arrange
 			var oImageContent = this.LightBox.getImageContent()[0],
 				sImageSource = IMAGE_PATH + 'demo/nature/elephant.jpg',
-				oLightBoxPopup = this.LightBox._oPopup;
+				oLightBoxPopup = this.LightBox._oPopup,
+				done = assert.async();
 
 			oImageContent.setImageSrc(sImageSource);
 			oLightBoxPopup.attachClosed(function() {
@@ -190,11 +196,16 @@ sap.ui.define(
 			// act
 			this.LightBox.open();
 
-			//assert
-			assert.strictEqual(this.LightBox.isOpen(), true, 'The lightbox should be open.');
+			setTimeout(function () {
+				//assert
+				assert.strictEqual(this.LightBox.isOpen(), true, 'The lightbox should be open.');
 
-			// act
-			this.LightBox.close();
+				// act
+				this.LightBox.close();
+
+				done();
+
+			}.bind(this), LIGHTBOX_OPEN_TIME);
 		});
 
 		//================================================================================
@@ -257,7 +268,8 @@ sap.ui.define(
 
 		QUnit.test('ACC state', function(assert) {
 			var oImageContent = this.LightBox.getImageContent()[0],
-				sImageSource = IMAGE_PATH + 'demo/nature/elephant.jpg';
+				sImageSource = IMAGE_PATH + 'demo/nature/elephant.jpg',
+				done = assert.async();
 
 			oImageContent.setImageSrc(sImageSource);
 
@@ -265,10 +277,14 @@ sap.ui.define(
 
 			this.LightBox.open();
 
-			var $popupContent = this.LightBox._oPopup.getContent().$();
+			setTimeout(function () {
+				var $popupContent = this.LightBox._oPopup.getContent().$();
 
-			assert.ok($popupContent.attr('aria-labelledby'), 'aria-labelledby attribute is set');
-			assert.strictEqual($popupContent.attr('role'), 'dialog', 'correct role is set');
+				assert.ok($popupContent.attr('aria-labelledby'), 'aria-labelledby attribute is set');
+				assert.strictEqual($popupContent.attr('role'), 'dialog', 'correct role is set');
+				done();
+
+			}.bind(this), LIGHTBOX_OPEN_TIME);
 		});
 
 		QUnit.test('ESC should close LightBox', function(assert) {
@@ -296,7 +312,8 @@ sap.ui.define(
 
 		QUnit.test('InvisibleText of LightBox', function(assert) {
 			var oImageContent = this.LightBox.getImageContent()[0],
-				sImageSource = IMAGE_PATH + 'demo/nature/elephant.jpg';
+				sImageSource = IMAGE_PATH + 'demo/nature/elephant.jpg',
+				done = assert.async();
 
 			oImageContent.setImageSrc(sImageSource);
 
@@ -304,12 +321,15 @@ sap.ui.define(
 
 			this.LightBox.open();
 
-			var oInvisibleText = this.LightBox.getAggregation("_invisiblePopupText"),
-				sInvisibleText = oInvisibleText.getText();
+			setTimeout(function () {
+				var oInvisibleText = this.LightBox.getAggregation("_invisiblePopupText"),
+					sInvisibleText = oInvisibleText.getText();
 
+				assert.ok(sInvisibleText.indexOf(oImageContent.getTitle()) > -1, 'The invisible text should contain the title of the LightBox');
+				assert.ok(sInvisibleText.indexOf(oImageContent.getSubtitle()) > -1, 'The invisible text should contain the subtitle of the LightBox');
 
-			assert.ok(sInvisibleText.indexOf(oImageContent.getTitle()) > -1, 'The invisible text should contain the title of the LightBox');
-			assert.ok(sInvisibleText.indexOf(oImageContent.getSubtitle()) > -1, 'The invisible text should contain the subtitle of the LightBox');
+				done();
+			}.bind(this), LIGHTBOX_OPEN_TIME);
 		});
 
 
