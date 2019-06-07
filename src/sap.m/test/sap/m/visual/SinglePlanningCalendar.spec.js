@@ -72,6 +72,18 @@ describe("sap.m.SinglePlanningCalendar", function() {
 		expect(takeScreenshot(oSPC)).toLookAs("closed_picker");
 	});
 
+	it("should focus the selected date after choosing it from calendar picker", function () {
+		var oSPC = element(by.id("SinglePlanningCalendar"));
+
+		_checkForOverflowButton();
+
+		element(by.id("overrideTime")).click();
+		element(by.id("SinglePlanningCalendar-Header-NavToolbar-PickerBtn")).click();
+		element(by.id("SinglePlanningCalendar-Header-Cal--Month0-20180711")).click();
+
+		expect(takeScreenshot(oSPC)).toLookAs("focused_date");
+	});
+
 	it("should select 2 appointments with Ctrl/Cmd + Click", function () {
 		var oSPC = element(by.id("SinglePlanningCalendar"));
 

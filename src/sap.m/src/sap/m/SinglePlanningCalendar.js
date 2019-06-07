@@ -965,12 +965,14 @@ function(
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype._handleCalendarPickerDateSelect = function () {
-		var oStartDate = this._getHeader().getStartDate();
+		var oStartDate = this._getHeader().getStartDate(),
+			oSPCStartDate;
 
-		oStartDate = this._getSelectedView().calculateStartDate(new Date(oStartDate.getTime()));
-		this.setStartDate(oStartDate);
+		oSPCStartDate = this._getSelectedView().calculateStartDate(new Date(oStartDate.getTime()));
+		this.setStartDate(oSPCStartDate);
+		this._getGrid()._getColumnHeaders().setDate(oStartDate);
 		this.fireStartDateChange({
-			date: oStartDate
+			date: oSPCStartDate
 		});
 		this._adjustColumnHeadersTopOffset();
 	};
