@@ -130,8 +130,7 @@ sap.ui.define([
 		var TEXT = "text",
 			KEY = "key",
 			token1 = new Token({text : TEXT, key : KEY}),
-			multiInputClone,
-			fnTokenizerDestroySpy = this.spy(Tokenizer.prototype, "destroy");
+			multiInputClone;
 
 		this.multiInput1.addToken(token1);
 
@@ -139,7 +138,6 @@ sap.ui.define([
 		multiInputClone = this.multiInput1.clone();
 
 		//assert
-		assert.strictEqual(fnTokenizerDestroySpy.callCount, 1, "The tokenizer was destroyed once during cloning");
 		assert.equal(multiInputClone.getTokens().length, 1, "Cloned MultiInput contains 1 token");
 		assert.equal(multiInputClone.getTokens()[0].getText(), TEXT, "Cloned token has correct text");
 

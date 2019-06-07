@@ -1267,43 +1267,6 @@ function(
 		}
 	);
 
-
-	/**
-	 * Function overwrites clone function to add tokens to MultiInput
-	 *
-	 * @public
-	 * @return {sap.ui.core.Element} reference to the newly created clone
-	 */
-	MultiInput.prototype.clone = function () {
-		var oClone,
-			oTokenizerClone;
-
-		this.detachSuggestionItemSelected(this._onSuggestionItemSelected, this);
-		this.detachLiveChange(this._onLiveChange, this);
-		this._tokenizer.detachTokenChange(this._onTokenChange, this);
-		this._tokenizer.detachTokenUpdate(this._onTokenUpdate, this);
-
-		oClone = Input.prototype.clone.apply(this, arguments);
-
-		oClone.destroyAggregation("tokenizer");
-		oClone._tokenizer = null;
-
-		oTokenizerClone = this._tokenizer.clone();
-		oClone._tokenizer = oTokenizerClone;
-		oClone.setAggregation("tokenizer", oTokenizerClone, true);
-
-		this._tokenizer.attachTokenChange(this._onTokenChange, this);
-		this._tokenizer.attachTokenUpdate(this._onTokenUpdate, this);
-		oClone._tokenizer.attachTokenChange(oClone._onTokenChange, oClone);
-		oClone._tokenizer.attachTokenUpdate(oClone._onTokenUpdate, oClone);
-		oClone._tokenizer._handleNMoreIndicatorPress(oClone._handleIndicatorPress.bind(oClone));
-
-		this.attachSuggestionItemSelected(this._onSuggestionItemSelected, this);
-		this.attachLiveChange(this._onLiveChange, this);
-
-		return oClone;
-	};
-
 	/**
 	 * Function returns domref which acts as reference point for the opening suggestion menu
 	 *
