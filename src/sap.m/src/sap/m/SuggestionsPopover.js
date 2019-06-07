@@ -410,7 +410,7 @@ sap.ui.define([
 			(new Popover(oInput.getId() + "-popup", {
 				showArrow: false,
 				showHeader: true,
-				placement: PlacementType.Vertical,
+				placement: PlacementType.VerticalPreferredBottom,
 				initialFocus: oInput,
 				horizontalScrolling: true
 			}))

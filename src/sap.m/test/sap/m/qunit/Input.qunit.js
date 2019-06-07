@@ -2677,6 +2677,32 @@ sap.ui.define([
 		oInput = null;
 	});
 
+	QUnit.test("Suggestions placement", function(assert) {
+		// arrange
+		var oInput = new Input({
+			showSuggestion: true,
+			suggestionItems: [new Item({text: "test"})]
+		});
+
+		var oSuggPopup = oInput._oSuggestionPopup;
+
+		var oDialog = new Dialog({
+			content: [oInput]
+		});
+
+		// act
+		oDialog.open();
+		this.clock.tick(300);
+		oInput._openSuggestionsPopover();
+
+		// assert
+		assert.ok(oInput.$().offset().top < oSuggPopup.$().offset().top, "SuggestionsPopover should be opened below the input");
+
+		// clean up
+		oDialog.destroy();
+		oDialog = null;
+	});
+
 	QUnit.module("Key and Value");
 
 	function createInputWithSuggestions () {
