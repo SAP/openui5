@@ -178,11 +178,11 @@
 							<!-- This form is bound to EntityTypeNav through navigation in the controller -->
 							<smartForm:SmartForm id="NavPropertyFormForAggrBinding" title="Smart Form bound to EntityTypeNav">
 									<smartForm:Group id="NavPropertyGroupForAggrBinding" label="Group" >
-										<smartForm:GroupElement id="EntityType01_Prop1" label="First bound element" binding="{path: &quot;/EntityTypes(Property01='propValue01',Property02='propValue02',Property03='propValue03')&quot;}">
-											<smartField:SmartField editable="true" contextEditable="true" value="{Property01}"/>
+										<smartForm:GroupElement id="EntityType01_Prop1" label="First bound element">
+											<smartField:SmartField editable="true" contextEditable="true" value="{EntityTypeNav_Property01}"/>
 										</smartForm:GroupElement>
-										<smartForm:GroupElement id="EntityType01_Prop2" label="Second bound element" binding="{path: &quot;/EntityTypes(Property01='propValue01',Property02='propValue02',Property03='propValue03')&quot;}">
-											<smartField:SmartField editable="true" contextEditable="true" value="{Property02}"/>
+										<smartForm:GroupElement id="EntityType01_Prop2" label="Second bound element">
+											<smartField:SmartField editable="true" contextEditable="true" value="{EntityTypeNav_Property02}"/>
 										</smartForm:GroupElement>
 									</smartForm:Group>
 							</smartForm:SmartForm>
