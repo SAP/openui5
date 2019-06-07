@@ -1222,7 +1222,11 @@ sap.ui.define([
 				new Page("master2Mobile", { title : "master2Mobile"})
 			]
 		});
-		this.sut.onBeforeRendering();
+		sap.ui.getCore().applyChanges();
+
+		// force invalidation of the detail page
+		this.sut.getDetailPages()[0].addContent(new Label({text:"test content"}));
+		sap.ui.getCore().applyChanges();
 
 		//assert
 		assert.strictEqual(this.sut._oMasterNav.getInitialPage(), "detailMobile", "First page should be detail");
