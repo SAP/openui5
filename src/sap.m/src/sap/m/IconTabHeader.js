@@ -379,7 +379,7 @@ function(
 		for (var i = 0; i < aTabFilters.length; i++) {
 			oTabFilter = aTabFilters[i];
 
-			oSelectItem = oTabFilter.clone();
+			oSelectItem = oTabFilter.clone(undefined, undefined, { bCloneChildren: false, bCloneBindings: true });
 			oSelectItem._tabFilter = oTabFilter;
 			oSelectList.addItem(oSelectItem);
 
