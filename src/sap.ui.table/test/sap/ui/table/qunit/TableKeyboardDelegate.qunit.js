@@ -5042,6 +5042,7 @@ sap.ui.define([
 			oTable.setSelectionMode(tableLibrary.SelectionMode.Single);
 			sap.ui.getCore().applyChanges();
 
+			oElem = getColumnHeader(0, true);
 			qutils.triggerKeydown(oElem, Key.A, false, false, true);
 			assert.strictEqual(TableUtils.areAllRowsSelected(oTable), bSelected,
 				"On Column Header: All rows still " + (bSelected ? "selected" : "deselected"));
@@ -5065,6 +5066,7 @@ sap.ui.define([
 			oTable.setSelectionMode(tableLibrary.SelectionMode.None);
 			sap.ui.getCore().applyChanges();
 
+			oElem = getCell(0, 0, true);
 			qutils.triggerKeydown(oElem, Key.A, false, false, true);
 			assert.strictEqual(TableUtils.areAllRowsSelected(oTable), bSelected,
 				"On Column Header: All rows still " + (bSelected ? "selected" : "deselected"));
@@ -5081,7 +5083,7 @@ sap.ui.define([
 			}
 		});
 
-		assert.expect(20);
+		assert.expect(22);
 
 		test(false);
 		test(true);
