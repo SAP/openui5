@@ -296,6 +296,29 @@ sap.ui.define([
 		oTabStrip.destroy();
 	});
 
+	QUnit.test("fireItemSelect not fired when select is not on item.", function (assert) {
+		//prepare
+		var fnFireItemSelectSpy = this.spy();
+		var oTabStrip = new TabStrip({
+				itemSelect: fnFireItemSelectSpy
+			}),
+			oItem = {key: "fake", value: "item"},
+			oEvent = { type: "onsapselect", srcControl: oItem, isDefaultPrevented: function() {return true;}, preventDefault: function() {return true;}, setMarked: function() {return true;} };
+
+		oTabStrip.placeAt("qunit-fixture");
+
+		//act
+		oTabStrip.onsapselect(oEvent);
+
+		//assert
+		assert.equal(fnFireItemSelectSpy.callCount, 0, 'fireItemSelect was not fiered if not on item');
+
+		//cleanup
+		fnFireItemSelectSpy.reset();
+		oTabStrip.destroy();
+	});
+
+
 	QUnit.test("TabStripSelectList rendering", function (assert) {
 		var oItem,
 			oCSList = new mobileLibrary.internal.TabStripSelectList({
