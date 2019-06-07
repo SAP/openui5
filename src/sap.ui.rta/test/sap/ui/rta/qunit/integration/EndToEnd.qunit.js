@@ -357,44 +357,46 @@ sap.ui.define([
 			var oCommandStack = this.oRta.getCommandStack();
 			oCommandStack.attachEventOnce("commandExecuted", function() {
 				setTimeout(function() {
-					// remove field is executed, reveal should be available
-					var oDialog = this.oRta.getPlugins()["additionalElements"].getDialog();
-					oFormContainer = oForm.getFormContainers()[0];
-					var oField = oFormContainer.getFormElements()[1];
-					var oFieldOverlay = OverlayRegistry.getOverlay(oField);
-					oFieldOverlay.focus();
-					oFieldOverlay.setSelected(true);
+					DtUtil.waitForSynced(this.oRta._oDesignTime)().then(function() {
+						// remove field is executed, reveal should be available
+						var oDialog = this.oRta.getPlugins()["additionalElements"].getDialog();
+						oFormContainer = oForm.getFormContainers()[0];
+						var oField = oFormContainer.getFormElements()[1];
+						var oFieldOverlay = OverlayRegistry.getOverlay(oField);
+						oFieldOverlay.focus();
+						oFieldOverlay.setSelected(true);
 
-					// open context menu (compact context menu)
-					RtaQunitUtils.openContextMenuWithKeyboard.call(this, oFieldOverlay).then(function() {
-						var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-						oContextMenuControl.attachOpened(function() {
-							var oContextMenuButton = oContextMenuControl.getButtons()[1];
-							assert.equal(oContextMenuButton.getText(), "Add: Field", "the the add field action button is available in the menu");
-							oContextMenuButton.firePress();
-							sap.ui.getCore().applyChanges();
-						});
+						// open context menu (compact context menu)
+						RtaQunitUtils.openContextMenuWithKeyboard.call(this, oFieldOverlay).then(function() {
+							var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+							oContextMenuControl.attachOpened(function() {
+								var oContextMenuButton = oContextMenuControl.getButtons()[1];
+								assert.equal(oContextMenuButton.getText(), "Add: Field", "the the add field action button is available in the menu");
+								oContextMenuButton.firePress();
+								sap.ui.getCore().applyChanges();
+							});
 
-						// wait for opening additional Elements dialog
-						oDialog.attachOpened(function() {
-							var oFieldToAdd = oDialog.getElements().filter(function(oField) {return oField.type === "invisible";})[0];
-							oCommandStack.attachModified(function() {
-								var aCommands = oCommandStack.getAllExecutedCommands();
-								if (aCommands &&
-									aCommands.length === 3) {
-									fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
-										sap.ui.getCore().applyChanges();
-										assert.equal(PersistenceWriteAPI.getDirtyChanges(oCompCont.getComponentInstance()).length, 3, "then there are 3 dirty change in the Flex Persistence");
-									})
-									.then(this.oRta.stop.bind(this.oRta))
-									.then(done);
-								}
+							// wait for opening additional Elements dialog
+							oDialog.attachOpened(function() {
+								var oFieldToAdd = oDialog.getElements().filter(function(oField) {return oField.type === "invisible";})[0];
+								oCommandStack.attachModified(function() {
+									var aCommands = oCommandStack.getAllExecutedCommands();
+									if (aCommands &&
+										aCommands.length === 3) {
+										fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
+											sap.ui.getCore().applyChanges();
+											assert.equal(PersistenceWriteAPI.getDirtyChanges(oCompCont.getComponentInstance()).length, 3, "then there are 3 dirty change in the Flex Persistence");
+										})
+										.then(this.oRta.stop.bind(this.oRta))
+										.then(done);
+									}
+								}.bind(this));
+
+								// select the field in the list and close the dialog with OK
+								oFieldToAdd.selected = true;
+								sap.ui.qunit.QUnitUtils.triggerEvent("tap", oDialog._oOKButton.getDomRef());
+								sap.ui.getCore().applyChanges();
 							}.bind(this));
-
-							// select the field in the list and close the dialog with OK
-							oFieldToAdd.selected = true;
-							sap.ui.qunit.QUnitUtils.triggerEvent("tap", oDialog._oOKButton.getDomRef());
-							sap.ui.getCore().applyChanges();
 						}.bind(this));
 					}.bind(this));
 				}.bind(this), 0);

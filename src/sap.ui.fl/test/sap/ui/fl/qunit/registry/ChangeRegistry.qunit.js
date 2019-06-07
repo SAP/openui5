@@ -786,10 +786,11 @@ function(
 			var oControl = {};
 			var oSimpleChangeObject = {};
 
-			var oChangeRegistryItem = this.instance._getInstanceSpecificChangeRegistryItem(oSimpleChangeObject, oControl, JsControlTreeModifier);
-
-			assert.equal(oGetChangeHandlerModuleStub.callCount, 1, "then getChangeHandlerModule function is called");
-			assert.equal(oChangeRegistryItem, undefined, "then no registry item is returned");
+			return this.instance._getInstanceSpecificChangeRegistryItem(oSimpleChangeObject, oControl, JsControlTreeModifier)
+				.then(function(oChangeRegistryItem) {
+					assert.equal(oGetChangeHandlerModuleStub.callCount, 1, "then getChangeHandlerModule function is called");
+					assert.equal(oChangeRegistryItem, undefined, "then no registry item is returned");
+				});
 		});
 
 		QUnit.test("when _getInstanceSpecificChangeRegistryItem is called with invalid flexibility path defined on given control", function (assert) {
@@ -805,11 +806,12 @@ function(
 				changeHandler: oExplicitRegisteredChangeHandlerStub
 			};
 
-			var oChangeRegistryItem = this.instance._getInstanceSpecificChangeRegistryItem(oSimpleChangeObject, oControl, JsControlTreeModifier);
-
-			assert.equal(oGetChangeHandlerModuleStub.callCount, 1, "then getChangeHandlerModule function is called");
-			assert.equal(oErrorLoggingStub.callCount, 1, "then the error was logged");
-			assert.equal(oChangeRegistryItem, undefined, "then no registry item is returned");
+			return this.instance._getInstanceSpecificChangeRegistryItem(oSimpleChangeObject, oControl, JsControlTreeModifier)
+				.then(function(oChangeRegistryItem) {
+					assert.equal(oGetChangeHandlerModuleStub.callCount, 1, "then getChangeHandlerModule function is called");
+					assert.equal(oErrorLoggingStub.callCount, 1, "then the error was logged");
+					assert.equal(oChangeRegistryItem, undefined, "then no registry item is returned");
+				});
 		});
 
 		QUnit.test("when _getInstanceSpecificChangeRegistryItem is called and passed parameter is a valid changeType", function (assert) {
@@ -820,12 +822,13 @@ function(
 
 			var sChangeType = "doSomething";
 
-			var oChangeRegistryItem = this.instance._getInstanceSpecificChangeRegistryItem(sChangeType, oControl, JsControlTreeModifier);
-
-			// assert.equal(oGetChangeHandlerModuleStub.callCount, 1, "then getChangeHandlerModule function is called");
-			assert.equal(oErrorLoggingStub.callCount, 0, "then no error was logged");
-			assert.ok(oChangeRegistryItem instanceof ChangeRegistryItem, "then registry item is returned");
-			assert.equal(oChangeRegistryItem.getChangeTypeName(), sChangeType, "then returned registry item has the correct changeType");
+			return this.instance._getInstanceSpecificChangeRegistryItem(sChangeType, oControl, JsControlTreeModifier)
+				.then(function(oChangeRegistryItem) {
+					// assert.equal(oGetChangeHandlerModuleStub.callCount, 1, "then getChangeHandlerModule function is called");
+					assert.equal(oErrorLoggingStub.callCount, 0, "then no error was logged");
+					assert.ok(oChangeRegistryItem instanceof ChangeRegistryItem, "then registry item is returned");
+					assert.equal(oChangeRegistryItem.getChangeTypeName(), sChangeType, "then returned registry item has the correct changeType");
+				});
 		});
 
 		QUnit.test("when _getInstanceSpecificChangeRegistryItem is called and passed parameter is a change with a valid changeType", function (assert) {
@@ -834,12 +837,13 @@ function(
 			sandbox.stub(JsControlTreeModifier, "getControlType").returns("controlType");
 			var oControl = {};
 			var sChangeType = "doSomethingElse";
-			var oChangeRegistryItem = this.instance._getInstanceSpecificChangeRegistryItem(sChangeType, oControl, JsControlTreeModifier);
-
-			assert.equal(oGetChangeHandlerModuleStub.callCount, 1, "then getChangeHandlerModule function is called");
-			assert.equal(oErrorLoggingStub.callCount, 0, "then no error was logged");
-			assert.ok(oChangeRegistryItem instanceof ChangeRegistryItem, "then registry item is returned");
-			assert.equal(oChangeRegistryItem.getChangeTypeName(), sChangeType, "then returned registry item has the correct changeType");
+			return this.instance._getInstanceSpecificChangeRegistryItem(sChangeType, oControl, JsControlTreeModifier)
+				.then(function(oChangeRegistryItem) {
+					assert.equal(oGetChangeHandlerModuleStub.callCount, 1, "then getChangeHandlerModule function is called");
+					assert.equal(oErrorLoggingStub.callCount, 0, "then no error was logged");
+					assert.ok(oChangeRegistryItem instanceof ChangeRegistryItem, "then registry item is returned");
+					assert.equal(oChangeRegistryItem.getChangeTypeName(), sChangeType, "then returned registry item has the correct changeType");
+				});
 		});
 
 		QUnit.test("when getChangeHandler is called for a control without instance specific changeHandler", function (assert) {
@@ -858,8 +862,8 @@ function(
 					oErrorLoggingStub = sandbox.stub(sap.ui.fl.Utils.log, "error");
 					oGetChangeHandlerModuleStub = sandbox.stub(JsControlTreeModifier, "getChangeHandlerModulePath").returns("sap/ui/fl/test/registry/TestChangeHandlers.flexibility");
 					sandbox.stub(JsControlTreeModifier, "getControlType").returns(sControlType);
-	
-					return this.instance.getChangeHandler(sChangeType, sControlType, oControl, JsControlTreeModifier, sLayer)
+
+					return this.instance.getChangeHandler(sChangeType, sControlType, oControl, JsControlTreeModifier, sLayer);
 				}.bind(this))
 				.then(function(oChangeHandler) {
 					assert.equal(oGetChangeHandlerModuleStub.callCount, 1, "then getChangeHandlerModule function is called");
@@ -881,7 +885,7 @@ function(
 				}
 			})
 				.then(function() {
-					return this.instance.getChangeHandler(sChangeType, sControlType, oControl, JsControlTreeModifier, sLayer)
+					return this.instance.getChangeHandler(sChangeType, sControlType, oControl, JsControlTreeModifier, sLayer);
 				}.bind(this))
 				.then(function(oChangeHandler) {
 					assert.equal(oChangeHandler.dummyId, "testChangeHandler-doSomething", "then instance specific changehandler is returned");
@@ -901,7 +905,7 @@ function(
 				}
 			})
 				.then(function() {
-					return this.instance.getChangeHandler(sChangeType, sControlType, oControl, JsControlTreeModifier, sLayer)
+					return this.instance.getChangeHandler(sChangeType, sControlType, oControl, JsControlTreeModifier, sLayer);
 				}.bind(this))
 				.then(function(oChangeHandler) {
 					assert.equal(oChangeHandler, MoveControlsChangeHandler, "then correct default changehandler is returned");

@@ -1614,7 +1614,7 @@ function(
 			})
 			.then(function(vResult) {
 				assert.strictEqual(vResult, 3, "then the parameter is passed to the 'then' method");
-			})
+			});
 		});
 	});
 

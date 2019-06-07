@@ -100,7 +100,10 @@ function (
 		}
 	}, function() {
 		QUnit.test("when the hasChangeHandler function is called", function(assert) {
-			assert.strictEqual(this.oPlugin.hasChangeHandler("moveControls", this.oLayout), true, "then the function returns true");
+			return this.oPlugin.hasChangeHandler("moveControls", this.oLayout)
+				.then(function(bHasChangeHandler) {
+					assert.strictEqual(bHasChangeHandler, true, "then the function returns true");
+				});
 		});
 
 		QUnit.test("when the hasChangeHandler function is called with 'async' = true", function(assert) {
@@ -490,7 +493,7 @@ function (
 			return this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, "changeType")
 				.then(function(bCheck) {
 					assert.ok(bCheck, "then it returns true");
-				})
+				});
 		});
 
 		QUnit.test("when DesignTimeMetadata has actions and checkAggregations method is called without the action name", function(assert) {
@@ -501,7 +504,7 @@ function (
 			return this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, undefined)
 				.then(function(bCheck) {
 					assert.notOk(bCheck, "then it returns false");
-				})
+				});
 		});
 
 		QUnit.test("when DesignTimeMetadata has no actions but aggregations with actions and checkAggregationsOnSelf method is called with the aggregation name", function(assert) {

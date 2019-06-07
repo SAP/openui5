@@ -347,7 +347,7 @@ sap.ui.define([
 								oRevealSelector = oOverlay.getRelevantContainer();
 							}
 
-							oHasChangeHandlerPromise = this.hasChangeHandler(mRevealAction.changeType, oRevealSelector, true).then(function(bHasChangeHandler) {
+							oHasChangeHandlerPromise = this.hasChangeHandler(mRevealAction.changeType, oRevealSelector).then(function(bHasChangeHandler) {
 								if (bHasChangeHandler) {
 									if (mRevealAction.changeOnRelevantContainer) {
 										//we have the child overlay, so we need the parents
@@ -394,7 +394,7 @@ sap.ui.define([
 						var oCheckElement = mAction.changeOnRelevantContainer ? mParents.relevantContainer : mParents.parent;
 						var oCheckElementOverlay = OverlayRegistry.getOverlay(oCheckElement);
 						if (mAction.changeType && this.hasStableId(oCheckElementOverlay)) {
-							return this.hasChangeHandler(mAction.changeType, oCheckElement, true)
+							return this.hasChangeHandler(mAction.changeType, oCheckElement)
 							.then(function(bHasChangeHandler) {
 								if (bHasChangeHandler) {
 									return {
@@ -445,7 +445,7 @@ sap.ui.define([
 										oCheckElement = mParents.relevantContainer;
 									}
 									if (oItem.changeSpecificData.changeType) {
-										aChangeHandlerPromises.push(this.hasChangeHandler.call(this, oItem.changeSpecificData.changeType, oCheckElement, true));
+										aChangeHandlerPromises.push(this.hasChangeHandler.call(this, oItem.changeSpecificData.changeType, oCheckElement));
 									}
 								}.bind(this));
 
@@ -1001,7 +1001,7 @@ sap.ui.define([
 										&& this.hasStableId(mParents.parentOverlay);
 								}
 								return bEditable;
-							}.bind(this))
+							}.bind(this));
 					}.bind(this));
 				}.bind(this))
 					.then(function(bEditable) {
@@ -1013,7 +1013,7 @@ sap.ui.define([
 		/**
 		 * Retrieve the context menu item for the actions.
 		 * Two items are returned here: one for when the overlay is sibling and one for when it is child.
-		 * @param  {sap.ui.dt.ElementOverlay} oOverlay Overlay for which the context menu was opened
+		 * @param  {sap.ui.dt.ElementOverlay} aElementOverlays - List of overlays for which the context menu was opened
 		 * @return {object[]} Returns array containing the items with required data
 		 */
 		getMenuItems: function (aElementOverlays) {

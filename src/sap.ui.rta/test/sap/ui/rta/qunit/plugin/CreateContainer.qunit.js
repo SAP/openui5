@@ -225,7 +225,7 @@ function (
 					return this.oCreateContainer._isEditableCheck(this.oFormOverlay, false)
 				.then(function(bIsEditable) {
 					assert.ok(bIsEditable, "then the overlay is editable");
-		
+
 					var bCheckValue = true;
 					var bFirstCall = true;
 					var bIsAvailable = true;
@@ -243,9 +243,9 @@ function (
 						assert.equal(bOverlayIsSibling, bCheckValue, "the 'enabled' function calls isEnabled with bOverlayIsSibling = " + bCheckValue);
 						assert.deepEqual(aElementOverlays[0].getId(), this.oFormOverlay.getId(), "the 'enabled' function calls isEnabled with the correct overlay");
 					}.bind(this));
-		
+
 					var aMenuItems = this.oCreateContainer.getMenuItems([this.oFormOverlay]);
-		
+
 					assert.equal(aMenuItems[0].id, "CTX_CREATE_SIBLING_CONTAINER", "there is an entry for create sibling container");
 					aMenuItems[0].handler([this.oFormOverlay]);
 					aMenuItems[0].enabled([this.oFormOverlay]);
@@ -253,7 +253,7 @@ function (
 					assert.equal(aMenuItems[1].id, "CTX_CREATE_CHILD_CONTAINER", "there is an entry for create child container");
 					aMenuItems[1].handler([this.oFormOverlay]);
 					aMenuItems[1].enabled([this.oFormOverlay]);
-		
+
 					bIsAvailable = false;
 					bFirstCall = true;
 					assert.equal(this.oCreateContainer.getMenuItems([this.oFormOverlay]).length, 0, "and if plugin is not available for the overlay, no menu items are returned");
@@ -289,7 +289,7 @@ function (
 					return this.oCreateContainer._isEditableCheck(this.oFormOverlay, false)
 				.then(function(bIsEditable) {
 					assert.notOk(bIsEditable, "then the overlay is not editable");
-				}.bind(this));
+				});
 				}.bind(this));
 		});
 
@@ -321,7 +321,7 @@ function (
 					return this.oCreateContainer._isEditableCheck(this.oFormContainerOverlay, true)
 				.then(function(bIsEditable) {
 					assert.notOk(bIsEditable, "then the overlay is not editable");
-				})
+				});
 				}.bind(this));
 		});
 
@@ -343,7 +343,7 @@ function (
 			return this.oCreateContainer._isEditableCheck(this.oFormOverlay, true)
 				.then(function(bIsEditable) {
 					assert.notOk(bIsEditable, "then the overlay is not editable");
-				})
+				});
 		});
 
 		QUnit.test("when the designTimeMetadata has a getContainerIndex property and a function _determineIndex() is called", function(assert) {

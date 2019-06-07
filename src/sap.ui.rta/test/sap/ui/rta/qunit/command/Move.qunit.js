@@ -149,7 +149,7 @@ sap.ui.define([
 					assert.notOk(oMoveCommand, "then no command is created");
 					assert.equal(oErrorLogSpy.callCount, 1, "and one error is thrown");
 				})
-	
+
 				.catch(function (oError) {
 					assert.ok(false, "catch must never be called - Error: " + oError);
 				});

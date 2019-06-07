@@ -46,7 +46,7 @@ sap.ui.define([
 		var oSplitAction = this.getAction(oOverlay);
 		if (oSplitAction && oSplitAction.changeType && oSplitAction.changeOnRelevantContainer) {
 			var oRelevantContainer = oOverlay.getRelevantContainer();
-			return this.hasChangeHandler(oSplitAction.changeType, oRelevantContainer, true)
+			return this.hasChangeHandler(oSplitAction.changeType, oRelevantContainer)
 				.then(function(bHasChangeHandler) {
 					return bHasChangeHandler
 						&& this.hasStableId(oOverlay)

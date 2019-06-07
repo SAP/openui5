@@ -163,7 +163,7 @@ function(
 			return Promise.resolve(false);
 		}
 		// moveChangeHandler information is always located on the relevant container
-		return this.oBasePlugin.hasChangeHandler(oMoveAction.changeType, oRelevantContainer, true);
+		return this.oBasePlugin.hasChangeHandler(oMoveAction.changeType, oRelevantContainer);
 	}
 
 	/**
@@ -263,7 +263,7 @@ function(
 			if (!this.oBasePlugin.hasStableId(oRelevantOverlay)) {
 				return Promise.resolve(false);
 			}
-			return this.oBasePlugin.hasChangeHandler(oMoveAction.changeType, oChangeHandlerRelevantElement, true);
+			return this.oBasePlugin.hasChangeHandler(oMoveAction.changeType, oChangeHandlerRelevantElement);
 		}
 		return Promise.resolve(false);
 	};

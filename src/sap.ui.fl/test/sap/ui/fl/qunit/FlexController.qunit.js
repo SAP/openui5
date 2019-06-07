@@ -1522,10 +1522,10 @@ function (
 				.then(function(oHandler) {
 					oFirstHandler = oHandler;
 					return oGetChangeHandlerSpy.returnValues[0];
-				}.bind(this))
+				})
 				.then(function(oReturn) {
 					oFirstTest = oReturn;
-					return this.oFlexController._getChangeHandler(this.oChange2, this.oText.getMetadata().getName(), this.oText, JsControlTreeModifier)
+					return this.oFlexController._getChangeHandler(this.oChange2, this.oText.getMetadata().getName(), this.oText, JsControlTreeModifier);
 				}.bind(this))
 				.then(function(oHandler) {
 					oSecondHandler = oHandler;

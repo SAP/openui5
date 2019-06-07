@@ -141,7 +141,7 @@ sap.ui.define([
 				}
 				return fnOriginalGetLibraryResourceBundle.apply(this, arguments);
 			});
-			sandbox.stub(RTAPlugin.prototype, "hasChangeHandler").callsFake(function (sChangeType, oElement, bAsync) {return bAsync ? Promise.resolve(true) : true;});
+			sandbox.stub(RTAPlugin.prototype, "hasChangeHandler").resolves(true);
 			givenSomeBoundControls.call(this, assert);
 
 			givenThePluginWithOKClosingDialog.call(this);
@@ -434,7 +434,7 @@ sap.ui.define([
 		},
 		beforeEach : function(assert) {
 			givenSomeBoundControls.call(this, assert);
-			sandbox.stub(RTAPlugin.prototype, "hasChangeHandler").callsFake(function (sChangeType, oElement, bAsync) {return bAsync ? Promise.resolve(true) : true;});
+			sandbox.stub(RTAPlugin.prototype, "hasChangeHandler").resolves(true);
 
 			givenThePluginWithOKClosingDialog.call(this);
 		},
