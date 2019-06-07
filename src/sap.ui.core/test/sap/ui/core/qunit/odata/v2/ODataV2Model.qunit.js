@@ -6802,7 +6802,7 @@ sap.ui.define([
 	QUnit.test("Annotation error: no cache", function(assert) {
 		assert.expect(6);
 		var done = assert.async();
-		var oSpy = sinon.spy(jQuery, "ajax");
+		var oSpy = sinon.spy(XMLHttpRequest.prototype, "open");
 		this.oModel = initModel(sURI, {
 			metadataUrlParams:{"sap-context-token": "test-token"},
 			annotationURI: "/error/~201801171629~/someAnnotation.xml"
