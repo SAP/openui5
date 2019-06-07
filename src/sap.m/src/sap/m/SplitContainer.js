@@ -595,11 +595,6 @@ function(
 			this._bMasterisOpen = false;
 		}
 
-		//BCP: 002028376500005408012018
-		if (this.getMode() === "HideMode" && Device.system.phone && this._aDetailPages) {
-			this._oMasterNav.setInitialPage(this.getInitialDetail() ? this.getInitialDetail() : (this.getInitialMaster() || this._aDetailPages[0]));
-		}
-
 		this._updateMasterButtonTooltip();
 	};
 
@@ -634,6 +629,13 @@ function(
 			this._oMasterNav.removeStyleClass("sapMSplitContainerNoTransition");
 		}.bind(this), 0);
 	};
+
+	SplitContainer.prototype.applySettings = function (mSettings, oScope) {
+		Control.prototype.applySettings.call(this, mSettings, oScope);
+
+		this._updateMasterInitialPage();
+	};
+
 	/**************************************************************
 	* END - Life Cycle Methods
 	**************************************************************/
@@ -1605,6 +1607,16 @@ function(
 	/**************************************************************
 	* START - Private methods
 	**************************************************************/
+
+	/**
+	 * @private
+	 */
+	SplitContainer.prototype._updateMasterInitialPage = function() {
+		//BCP: 002028376500005408012018
+		if (this.getMode() === "HideMode" && Device.system.phone && this._aDetailPages) {
+			this._oMasterNav.setInitialPage(this.getInitialDetail() ? this.getInitialDetail() : (this.getInitialMaster() || this._aDetailPages[0]));
+		}
+	};
 
 	/**
 	 * @private
