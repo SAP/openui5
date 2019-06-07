@@ -375,6 +375,7 @@ sap.ui.define([
 	Calendar.prototype._initilizeMonthPicker = function() {
 		var oMonthPicker = new MonthPicker(this.getId() + "--MP");
 		oMonthPicker.attachEvent("select", this._selectMonth, this);
+		oMonthPicker.attachEvent("pageChange", _handleMonthPickerPageChange, this);
 		oMonthPicker._bNoThemeChange = true;
 		this.setAggregation("monthPicker",oMonthPicker);
 	};
@@ -406,6 +407,18 @@ sap.ui.define([
 
 		return this;
 	};
+
+	function _handleMonthPickerPageChange(oEvent) {
+		var iOffset = oEvent.getParameter("offset");
+
+		if (iOffset > 0) {
+			this._handleNext(oEvent);
+		}
+
+		if (iOffset < 0) {
+			this._handlePrevious(oEvent);
+		}
+	}
 
 	Calendar.prototype._handleDateHovered = function(oEvent) {
 		var aMonths = this.getAggregation("month"),

@@ -1610,5 +1610,28 @@ QUnit.module("Misc");
 		oCalendar.destroy();
 	});
 
+	QUnit.test("calendar reacts on monthpicker's pagechange, the same way as with the arrow buttons", function(assert) {
+		// arrange
+		var oCalendar = new Calendar(),
+			oMonthPicker = oCalendar.getAggregation("monthPicker"),
+			oSpyHandleNext = this.spy(oCalendar, "_handleNext"),
+			oSpyHandlePrev = this.spy(oCalendar, "_handlePrevious");
+
+		// act
+		oMonthPicker.firePageChange({ offset: 1 });
+
+		// assert
+		assert.equal(oSpyHandleNext.callCount, 1, "_handleNext is called");
+
+		// act
+		oMonthPicker.firePageChange({ offset: -1 });
+
+		// assert
+		assert.equal(oSpyHandlePrev.callCount, 1, "_handlePrevious is called");
+
+		// clean
+		oCalendar.destroy();
+	});
+
 	return waitForThemeApplied();
 });

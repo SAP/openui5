@@ -1,4 +1,4 @@
-/*global QUnit, window */
+/*global QUnit, window, sinon */
 
 sap.ui.define([
 	"sap/ui/unified/calendar/MonthPicker"
@@ -61,6 +61,28 @@ sap.ui.define([
 			deviceStub.restore();
 			isValueInThresholdStub.restore();
 			itemNavigationStub.restore();
+		});
+
+		QUnit.test("fires pageChange on pageup/pagedown", function(assert) {
+			// arrange
+			var oFirePageChangeSpy = this.spy(this.oMP, "firePageChange");
+
+			// act
+			this.oMP._oItemNavigation.fireEvent("BorderReached", { event: { type: "sappagedown" } });
+
+			// assert
+			assert.equal(oFirePageChangeSpy.callCount, 1, "pageChange is fired once");
+			assert.ok(oFirePageChangeSpy.calledWith(sinon.match({ offset: 1 })), "pageChange is fired with the correct arguments");
+
+			// arrange
+			oFirePageChangeSpy.reset();
+
+			// act
+			this.oMP._oItemNavigation.fireEvent("BorderReached", { event: { type: "sappageup" } });
+
+			// assert
+			assert.equal(oFirePageChangeSpy.callCount, 1, "pageChange is fired once");
+			assert.ok(oFirePageChangeSpy.calledWith(sinon.match({ offset: -1 })), "pageChange is fired with the correct arguments");
 		});
 
 	})();
