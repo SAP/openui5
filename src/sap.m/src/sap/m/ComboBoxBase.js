@@ -1284,6 +1284,9 @@ sap.ui.define([
 			var that = this,
 				sIconURI = IconPool.getIconURI("decline");
 
+			// destroy customHeader if already created
+			this._oSuggestionPopover._oPopover.destroyCustomHeader(true);
+
 			return new Bar({
 				contentMiddle: new Title(),
 				contentRight: new Button({

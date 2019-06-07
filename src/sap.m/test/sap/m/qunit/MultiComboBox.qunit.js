@@ -6643,4 +6643,28 @@ sap.ui.define([
 		assert.strictEqual(this.oMultiComboBox._oList.getItems().length, 5, "All the items are available");
 		assert.strictEqual(fnGetVisisbleItems(this.oMultiComboBox._oList.getItems()).length, 1, "Only the matching items are visible");
 	});
+
+	QUnit.test("Destroy & reinit on mobile", function (assert) {
+		// Setup
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		// arrange
+		var oMultiComboBox = new MultiComboBox("test-combobox").placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oMultiComboBox.destroy();
+		oMultiComboBox = new MultiComboBox("test-combobox").placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(true, "If there's no exception so far, everything is ok");
+
+		// Cleanup
+		oMultiComboBox.destroy();
+	});
 });
