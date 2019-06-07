@@ -236,12 +236,14 @@ function(
 			 * <li>Firefox lower than version 59</li>
 			 * </ul>
 			 *
-			 * There are also some known limitations with respect to the scrolling behavior. A few are given below:
+			 * There are also some known limitations. A few are given below:
 			 * <ul>
 			 * <li>If the control is placed in layout containers that have the <code>overflow: hidden</code> or <code>overflow: auto</code> style definition, this can
 			 * prevent the sticky elements of the control from becoming fixed at the top of the viewport.</li>
 			 * <li>If sticky column headers are enabled in the <code>sap.m.Table</code> control, setting focus on the column headers will let the table scroll to the top.</li>
+			 * <li>A transparent toolbar design is not supported for sticky bars. The toolbar will automatically get an intransparent background color.</li>
 			 * </ul>
+			 *
 			 * @since 1.58
 			 */
 			sticky : {type : "sap.m.Sticky[]", group : "Appearance"}
