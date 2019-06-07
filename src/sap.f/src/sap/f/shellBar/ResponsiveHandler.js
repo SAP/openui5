@@ -354,14 +354,13 @@ sap.ui.define([
 	 * @private
 	 */
 	ResponsiveHandler.prototype._resizeOnPhone = function () {
-		var iWidth,
+		var iWidth = this._oControl._getOverflowToolbar().$().width(),
 			iAvailableWidth;
 
 		if  (this._oControl._oCopilot) {
-			iWidth = this._oControl.$().width() - this._iCoPilotWidth;
+			iWidth -= this._iCoPilotWidth;
 			iAvailableWidth = (iWidth / 2) - this._iStaticWidth;
 		} else {
-			iWidth = this._oControl.$().width();
 			iAvailableWidth = iWidth - this._iStaticWidth - this._getWidthOfAllNonManagedControls();
 		}
 
@@ -389,7 +388,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ResponsiveHandler.prototype._resize = function () {
-		var iWidth = this._oControl.$().width(),
+		var iWidth = this._oControl._getOverflowToolbar().$().width(),
 			iAvailableWidth,
 			iOTBControls,
 			// iNeededWidthForSearch,
@@ -493,6 +492,7 @@ sap.ui.define([
 			oSecondTitle = this._oControl._oSecondTitle,
 			oControlSpacer = this._oControl._oControlSpacer,
 			iSecondTitleWidth,
+			iMinTitleWidth = 80,
 			iMegaMenuWidth;
 
 		if (iAvailableWidth <= 0) {
@@ -500,7 +500,7 @@ sap.ui.define([
 			oSecondTitle && oSecondTitle.setWidth("0px");
 
 			// Applied width should be without margins
-			bHasTitle && this._oControl._oTitleControl.setWidth("80px");
+			bHasTitle && this._oControl._oTitleControl.setWidth(iMinTitleWidth + "px");
 			return;
 		}
 
@@ -511,14 +511,14 @@ sap.ui.define([
 			oControlSpacer && oControlSpacer.setWidth("0px");
 			oSecondTitle && oSecondTitle.setWidth("0px");
 
-			iMegaMenuWidth = iAvailableWidth - this._iDoubleChildControlMargin <= 80 ?
-				80 : iAvailableWidth - this._iDoubleChildControlMargin;
+			iMegaMenuWidth = iAvailableWidth - this._iDoubleChildControlMargin <= iMinTitleWidth ?
+				iMinTitleWidth : iAvailableWidth - this._iDoubleChildControlMargin;
 			// Applied width should be without margins
 			bHasTitle && this._oControl._oTitleControl.setWidth(iMegaMenuWidth + "px");
 			return;
 		} else {
-			iMegaMenuWidth = iMBWidth - this._iDoubleChildControlMargin <= 80 ?
-				80 : iMBWidth - this._iDoubleChildControlMargin;
+			iMegaMenuWidth = iMBWidth - this._iDoubleChildControlMargin <= iMinTitleWidth ?
+				iMinTitleWidth : iMBWidth - this._iDoubleChildControlMargin;
 			// Applied width should be without margins
 			bHasTitle && this._oControl._oTitleControl.setWidth(iMegaMenuWidth + "px");
 		}
