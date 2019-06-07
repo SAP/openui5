@@ -238,15 +238,6 @@ sap.ui.define([
 		assert.ok(spy.notCalled, "Function _toggleAnimation not called");
 	});
 
-	QUnit.test("Test sliding continues on focusout", function(assert) {
-		//Arrange
-		this.oSlideTile._bAnimationPause = true;
-		//Act
-		this.oSlideTile.$().blur();
-		//Assert
-		assert.ok(!this.oSlideTile._bAnimationPause, "Animation continues on focusout");
-	});
-
 	QUnit.test("Focus stays on SlideTile", function(assert) {
 		//Assert
 		assert.ok(this.oSlideTile.$().attr("tabindex"), "Focus stays on SlideTile");
