@@ -338,30 +338,31 @@ sap.ui.define([
 	QUnit.test("constructor, check selectedKeys - items:[Items]", function(assert) {
 
 		// system under test
-		var oItem0, oItem1, oItem2;
+		var oItem0, oItem1, oItem2, oItem3;
 		var oMultiComboBox = new MultiComboBox({
-			items : [
-			oItem0 = new Item({
-				key : "0",
-				text : "item 0"
-			}),
+			items: [
+				oItem0 = new Item({
+					key: "0",
+					text: "item 0"
+				}),
 
-			oItem1 = new Item({
-				key : "1",
-				text : "item 1"
-			}),
+				oItem1 = new Item({
+					key: "1",
+					text: "item 1"
+				}),
 
-			oItem2 = new Item({
-				key : "2",
-				text : "item 2"
-			}),
+				oItem2 = new Item({
+					key: "2",
+					text: "item 2"
+				}),
 
-			oItem3 = new Item({
-				key : "",
-				text : "item 3"
-			})
+				oItem3 = new Item({
+					key: "",
+					text: "item 3"
+				})
 			]
-		});
+		}).placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
@@ -1507,7 +1508,6 @@ sap.ui.define([
 		var oMultiComboBox = new MultiComboBox();
 
 		// arrange
-		var fnSetPropertySpy = this.spy(oMultiComboBox, "setProperty");
 		var fnSetAssociationSpy = this.spy(oMultiComboBox, "setAssociation");
 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
 		var fnSetSelectedKeysSpy = this.spy(oMultiComboBox, "setSelectedKeys");
@@ -1516,7 +1516,6 @@ sap.ui.define([
 		oMultiComboBox.setSelectedKeys(null);
 
 		// assertions
-		assert.strictEqual(fnSetPropertySpy.callCount, 0, "sap.m.MultiComboBox.prototype.setProperty() method was not called");
 		assert.strictEqual(fnSetAssociationSpy.callCount, 0,
 				"sap.m.MultiComboBox.prototype.setAssociation() method was not called");
 		assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
@@ -6970,5 +6969,182 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(this.oMultiComboBox._oList.getItems().length, 5, "All the items are available");
 		assert.strictEqual(fnGetVisisbleItems(this.oMultiComboBox._oList.getItems()).length, 1, "Only the matching items are visible");
+	});
+
+	QUnit.module("selectedKeys");
+
+	QUnit.test("Should select keys & items", function (assert) {
+		var oClone,
+			oMultiComboBox = new MultiComboBox({
+				selectedKeys: ["1", "3"],
+				items: [
+					new Item({key: "1", text: "1"}),
+					new Item({key: "2", text: "2"}),
+					new Item({key: "3", text: "3"}),
+					new Item({key: "4", text: "4"})
+				]
+			}).placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, oMultiComboBox.getSelectedItems().length, "Selection should be in sync");
+		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, oMultiComboBox._oTokenizer.getTokens().length, "Selection should be in sync");
+
+		// Act
+		oClone = oMultiComboBox.clone();
+
+		// Assert
+		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, oClone.getSelectedKeys().length, "Clones should inherit selections");
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, oClone.getSelectedItems().length, "Clones should inherit selections");
+		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens().length, oClone._oTokenizer.getTokens().length, "Clones should inherit selections");
+
+		oMultiComboBox.destroy();
+		oClone.destroy();
+	});
+
+	QUnit.test("Should be able to sync mixed properties", function (assert) {
+		var oItem = new Item({key: "1", text: "1"}),
+			oMultiComboBox = new MultiComboBox({
+				selectedKeys: ["2", "3"],
+				selectedItems: [oItem],
+				items: [
+					oItem,
+					new Item({key: "2", text: "2"}),
+					new Item({key: "3", text: "3"}),
+					new Item({key: "4", text: "4"})
+				]
+			}).placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, 3, "Selection should be in sync");
+		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, oMultiComboBox.getSelectedItems().length, "Selection should be in sync");
+
+		oMultiComboBox.destroy();
+	});
+
+	QUnit.test("Should be able to sync predefined selectedKey", function (assert) {
+		var oItem = new Item({key: "1", text: "1"}),
+			oMultiComboBox = new MultiComboBox({
+				selectedKeys: ["1"],
+				items: [
+					new Item({key: "2", text: "2"}),
+					new Item({key: "3", text: "3"}),
+					new Item({key: "4", text: "4"})
+				]
+			}).placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["1"], "There should be selected key defined");
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 0, "But ther should not be selectedItems as there's no match");
+
+		// Act
+		oMultiComboBox.addItem(oItem);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["1"], "There should be selected key defined");
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 1, "There should be selected item now");
+		assert.deepEqual(oMultiComboBox.getSelectedItems()[0], oItem, "Recent item shoud be selected");
+
+
+		// Act
+		oMultiComboBox.removeItem(oItem);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, 0, "Selected keys should be empty");
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 0, "Selected items should be empty");
+
+
+		oMultiComboBox.destroy();
+	});
+
+	QUnit.test("API use should sync with the token", function (assert) {
+		var oMultiComboBox = new MultiComboBox({
+			items: [
+				new Item({key: "2", text: "2"}),
+				new Item({key: "3", text: "3"}),
+				new Item({key: "4", text: "4"})
+			]
+		}).placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oMultiComboBox.addSelectedKeys(["2", "3"]);
+		sap.ui.getCore().applyChanges();
+
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["2", "3"], "SelectedKeys should be saved");
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 2, "selectedItems should be there");
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, oMultiComboBox._oTokenizer.getTokens().length, "Selected items should be visible as tokens");
+
+		// Act
+		oMultiComboBox.setSelectedKeys([]);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, 0, "SelectedKeys should be empty");
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 0, "selectedItems should be empty");
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, oMultiComboBox._oTokenizer.getTokens().length, "Selected items should be removed");
+
+		oMultiComboBox.destroy();
+	});
+
+	QUnit.test("Items without keys", function (assert) {
+		var oItem = new Item({key: "1", text: "1"}),
+			aItems = [
+				new Item({key: "2", text: "2"}),
+				new Item({key: "3", text: "3"}),
+				new Item({key: "4", text: "4"})
+			],
+			oMultiComboBox = new MultiComboBox({
+				selectedItems: aItems,
+				selectedKeys: ["1"],
+				items: aItems
+			}).placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oMultiComboBox.getItems().length, 3, "Items should be 3");
+		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, 4, "SelectedKeys should be 4");
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 3, "The available selectedItems should be 3");
+
+		// Act
+		oMultiComboBox.addItem(oItem);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oMultiComboBox.getItems().length, 4, "Items should be 4");
+		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, 4, "SelectedKeys should be 4");
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 4, "The available selectedItems should be 4");
+
+		// Act
+		oMultiComboBox.removeItem(aItems[0]);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oMultiComboBox.getItems().length, 3, "Items should be 3");
+		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, 3, "SelectedKeys should be 3");
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 3, "The available selectedItems should be 3");
+
+		// Act
+		oMultiComboBox.removeSelectedItem(aItems[0]); // This item has already been removed, but let's give it another try
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oMultiComboBox.getItems().length, 3, "Items should be 3");
+		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, 3, "SelectedKeys should be 3");
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 3, "The available selectedItems should be 3");
+
+		// Act
+		oMultiComboBox.removeSelectedItem(aItems[1]);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oMultiComboBox.getItems().length, 3, "Items should be 3");
+		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, 2, "SelectedKeys should be 2");
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 2, "The available selectedItems should be 2");
+
+		oMultiComboBox.destroy();
 	});
 });
