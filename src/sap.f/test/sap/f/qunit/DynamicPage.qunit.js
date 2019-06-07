@@ -263,6 +263,24 @@ function (
 		assert.ok(this.oDynamicPageNoTitle.getHeader()._getCollapseButton().$().hasClass("sapUiHidden"), "Header collapse button is hidden");
 	});
 
+	QUnit.test("DynamicPage with no Title is rendered without error", function (assert) {
+		var oDeviceStub = this.stub(Device, "system",  {
+					desktop: false,
+					phone: true,
+					tablet: false
+				}),
+			oHeaderExpandedStub = this.stub(this.oDynamicPageNoTitle, "getHeaderExpanded", function () {
+				return false;
+			});
+
+		this.oDynamicPageNoTitle.rerender();
+
+		assert.ok(true, "No error is thrown");
+
+		oDeviceStub.restore();
+		oHeaderExpandedStub.restore();
+	});
+
 	QUnit.test("DynamicPage pin button does not toggle collapse arrow visibility", function (assert) {
 		var oPinButton = this.oDynamicPageNoTitle.getHeader()._getPinButton();
 
