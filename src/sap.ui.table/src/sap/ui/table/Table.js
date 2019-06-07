@@ -861,7 +861,6 @@ sap.ui.define([
 		this._initSelectionPlugin();
 
 		this._bRowsBeingBound = false;
-		this._bContextsRequested = false;
 		this._bContextsAvailable = false;
 		this._aRowClones = [];
 		this._bRowAggregationInvalid = true;
@@ -1937,7 +1936,6 @@ sap.ui.define([
 	 */
 	Table.prototype.bindRows = function(oBindingInfo) {
 		this._bRowsBeingBound = true;
-		this._bContextsRequested = false;
 		this._bContextsAvailable = false;
 		if (this.getEnableBusyIndicator()) {
 			this.setBusy(false);
@@ -1957,7 +1955,6 @@ sap.ui.define([
 		if (sName === "rows") {
 			// If only the model has been changed, the ManagedObject only calls _bindAggregation while bindAggregation / bindRows is not called.
 			this._bRowsBeingBound = true;
-			this._bContextsRequested = false;
 			this._bContextsAvailable = false;
 
 			Table._addBindingListener(oBindingInfo, "change", this._onBindingChange.bind(this));
@@ -2227,7 +2224,7 @@ sap.ui.define([
 				return Math.min(iLength, oBindingInfo.length);
 			}
 		}
-		if (this.getVisibleRowCountMode() === VisibleRowCountMode.Auto && !this._bContextsRequested) {
+		if (this.getVisibleRowCountMode() === VisibleRowCountMode.Auto && !this._bContextsAvailable) {
 			var iEstimatedRowCount = Math.ceil(Device.resize.height / TableUtils.DefaultRowHeight.sapUiSizeCondensed);
 			return Math.max(iLength, iEstimatedRowCount);
 		}
@@ -2306,8 +2303,6 @@ sap.ui.define([
 		}
 
 		var iTotalRowCount = this._getTotalRowCount();
-
-		this._bContextsRequested = true;
 
 		// get the binding length after getContext call to make sure that for TreeBindings the client tree was correctly rebuilt
 		// this step can be moved to an earlier point when the TreeBindingAdapters all implement tree invalidation in case of getLength calls
