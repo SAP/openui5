@@ -206,25 +206,36 @@ sap.ui.define([
 		},
 
 		_checkChangeSpecificData: function(oChange, sLayer) {
-			if (!oChange.changeSpecificData) {
-				return "No changeSpecificData available";
-			}
-			if (!oChange.changeSpecificData.changeType) {
-				return "No valid changeType";
-			}
+			return Promise.resolve()
+				.then(function() {
+					if (!oChange.changeSpecificData) {
+						throw new Error("No changeSpecificData available");
+					}
+					if (!oChange.changeSpecificData.changeType) {
+						throw new Error("No valid changeType");
+					}
 
-			if (!(oChange.selectorControl instanceof Element)) {
-				return "No valid selectorControl";
-			}
+					if (!(oChange.selectorControl instanceof Element)) {
+						throw new Error("No valid selectorControl");
+					}
 
-			var sControlType = oChange.selectorControl.getMetadata().getName();
-			var oChangeHandler = ChangeRegistry.getInstance().getChangeHandler(oChange.changeSpecificData.changeType, sControlType, oChange.selectorControl, JsControlTreeModifier, sLayer);
-			if (!oChangeHandler) {
-				return "No valid ChangeHandler";
-			}
-			if (!oChangeHandler.revertChange) {
-				return "ChangeHandler has no revertChange function";
-			}
+					var sControlType = oChange.selectorControl.getMetadata().getName();
+					var oChangeRegistry = ChangeRegistry.getInstance();
+					return oChangeRegistry.getChangeHandler(
+						oChange.changeSpecificData.changeType,
+						sControlType,
+						oChange.selectorControl,
+						JsControlTreeModifier,
+						sLayer);
+				})
+				.then(function(oChangeHandler) {
+					if (!oChangeHandler) {
+						throw new Error("No valid ChangeHandler");
+					}
+					if (!oChangeHandler.revertChange) {
+						throw new Error("ChangeHandler has no revertChange function");
+					}
+				});
 		},
 
 		/**
@@ -246,50 +257,45 @@ sap.ui.define([
 			var aPromises = [];
 
 			mPropertyBag.controlChanges.forEach(function(oChange) {
-				try {
-					var mChangeSpecificData = {};
-					Object.assign(mChangeSpecificData, {
-						developerMode: false,
-						layer: sLayer
-					});
+				var mChangeSpecificData = {};
+				Object.assign(mChangeSpecificData, {
+					developerMode: false,
+					layer: sLayer
+				});
 
-					var sCheckResult = this._checkChangeSpecificData(oChange, sLayer);
-					if (sCheckResult) {
-						throw new Error(sCheckResult);
-					}
-
-					var mParams = this._determineParameters(oChange.selectorControl);
-					if (!mPropertyBag.ignoreVariantManagement) {
-						// check for preset variantReference
-						if (!oChange.changeSpecificData.variantReference) {
-							var sVariantManagementReference = this._getVariantManagement(oChange.selectorControl, mParams);
-							if (sVariantManagementReference) {
-								var sCurrentVariantReference = mParams.variantModel.oData[sVariantManagementReference].currentVariant;
-								oChange.changeSpecificData.variantReference = sCurrentVariantReference;
+				function fnCheckCreateApplyChange() {
+					return this._checkChangeSpecificData(oChange, sLayer)
+						.then(function() {
+							var mParams = this._determineParameters(oChange.selectorControl);
+							if (!mPropertyBag.ignoreVariantManagement) {
+								// check for preset variantReference
+								if (!oChange.changeSpecificData.variantReference) {
+									var sVariantManagementReference = this._getVariantManagement(oChange.selectorControl, mParams);
+									if (sVariantManagementReference) {
+										var sCurrentVariantReference = mParams.variantModel.oData[sVariantManagementReference].currentVariant;
+										oChange.changeSpecificData.variantReference = sCurrentVariantReference;
+									}
+								}
+							} else {
+								// delete preset variantReference
+								delete oChange.changeSpecificData.variantReference;
 							}
-						}
-					} else {
-						// delete preset variantReference
-						delete oChange.changeSpecificData.variantReference;
-					}
-					aPromises.push(
-						function () {
-							return mParams.flexController.createAndApplyChange(Object.assign(mChangeSpecificData, oChange.changeSpecificData), oChange.selectorControl)
-								.then(function (oAppliedChange) {
-									// FlexController.createAndApplyChanges will only resolve for successfully applied changes
-									aSuccessfulChanges.push(oAppliedChange);
-								});
-						}
-					);
-				} catch (oError) {
-					aPromises.push(function () {
-						return Promise.reject({
-							change: oChange,
-							message: oError.message
+							return mParams.flexController.createAndApplyChange(
+								Object.assign(mChangeSpecificData, oChange.changeSpecificData),
+								oChange.selectorControl);
+						}.bind(this))
+						.then(function (oAppliedChange) {
+							// FlexController.createAndApplyChanges will only resolve for successfully applied changes
+							aSuccessfulChanges.push(oAppliedChange);
+						})
+						.catch(function(oError) {
+							return Promise.reject({
+								change: oChange,
+								message: oError.message
+							});
 						});
-					});
-					return;
 				}
+				aPromises.push(fnCheckCreateApplyChange.bind(this));
 			}.bind(this));
 
 			// For any Promise.reject, an error is logged in console inside Utils.execPromiseQueueSequentially
