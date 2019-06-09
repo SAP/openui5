@@ -48,39 +48,41 @@ sap.ui.define([
 	 * @private
 	 */
 	CreateContainer.prototype._isEditable = function (oOverlay) {
-		return {
-			asSibling: this._isEditableCheck(oOverlay, true),
-			asChild: this._isEditableCheck(oOverlay, false)
-		};
+		return Promise.all([this._isEditableCheck.call(this, oOverlay, true), this._isEditableCheck.call(this, oOverlay, false)])
+		.then(function(aPromiseValues) {
+			return {
+				asSibling: aPromiseValues[0],
+				asChild: aPromiseValues[1]
+			};
+		});
 	};
 
 	CreateContainer.prototype._isEditableCheck = function (oOverlay, bOverlayIsSibling) {
-		var bEditable = false;
 		var	oParentOverlay = this._getParentOverlay(bOverlayIsSibling, oOverlay);
 		var sAggregationName;
 
 		if (!oParentOverlay || !oParentOverlay.getParentElementOverlay()) {
 			//root element is not editable as parent and as sibling
-			return false;
+			return Promise.resolve(false);
 		}
 
 		if (bOverlayIsSibling) {
 			sAggregationName = oOverlay.getParentAggregationOverlay().getAggregationName();
 		}
 
-		bEditable = this.checkAggregationsOnSelf(oParentOverlay, "createContainer", sAggregationName);
-
-		if (bEditable) {
-			// If ids are created within fragments or controller code,
-			// the id of the parent view might not be part of the control id.
-			// In these cases the control might have a stable id (this.hasStableId()), but the view doesn't.
-			// As the view is needed create the id for the newly created container it
-			// has to be stable, otherwise the new id will not be stable.
-			var oParentView = FlexUtils.getViewForControl(oParentOverlay.getElement());
-			return this.hasStableId(oOverlay) && FlexUtils.checkControlId(oParentView);
-		}
-
-		return false;
+		return this.checkAggregationsOnSelf(oParentOverlay, "createContainer", sAggregationName)
+			.then(function(bEditableCheck) {
+				if (bEditableCheck) {
+					// If ids are created within fragments or controller code,
+					// the id of the parent view might not be part of the control id.
+					// In these cases the control might have a stable id (this.hasStableId()), but the view doesn't.
+					// As the view is needed create the id for the newly created container it
+					// has to be stable, otherwise the new id will not be stable.
+					var oParentView = FlexUtils.getViewForControl(oParentOverlay.getElement());
+					return this.hasStableId(oOverlay) && FlexUtils.checkControlId(oParentView);
+				}
+				return false;
+			}.bind(this));
 	};
 
 	CreateContainer.prototype._getParentOverlay = function (bSibling, oOverlay) {
@@ -184,7 +186,7 @@ sap.ui.define([
 		var fnGetIndex = oDesignTimeMetadata.getAggregation(vAction.aggregation).getIndex;
 		var iIndex = this._determineIndex(oParent, oSiblingElement, vAction.aggregation, fnGetIndex);
 
-		var sVariantManagementReference = this.getVariantManagementReference(oParentOverlay, vAction);
+		var sVariantManagementReference = this.getVariantManagementReference(oParentOverlay);
 
 		return this.getCommandFactory().getCommandFor(oParent, "createContainer", {
 			newControlId : sNewControlID,

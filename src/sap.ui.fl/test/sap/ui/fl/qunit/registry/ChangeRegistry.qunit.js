@@ -846,23 +846,26 @@ function(
 			var oControl = {};
 			var sChangeType = "moveControls";
 			var sControlType = "VerticalLayout";
-			var sLayer, oErrorLoggingStub, oGetChangeHandlerModuleStub, oChangeHandler;
+			var sLayer;
+			var oErrorLoggingStub;
+			var oGetChangeHandlerModuleStub;
 			return this.instance.registerControlsForChanges({
 				VerticalLayout : {
 					moveControls: "default"
 				}
 			})
-			.then(function() {
-				oErrorLoggingStub = sandbox.stub(sap.ui.fl.Utils.log, "error");
-				oGetChangeHandlerModuleStub = sandbox.stub(JsControlTreeModifier, "getChangeHandlerModulePath").returns("sap/ui/fl/test/registry/TestChangeHandlers.flexibility");
-				sandbox.stub(JsControlTreeModifier, "getControlType").returns(sControlType);
-
-				oChangeHandler = this.instance.getChangeHandler(sChangeType, sControlType, oControl, JsControlTreeModifier, sLayer);
-
-				assert.equal(oGetChangeHandlerModuleStub.callCount, 1, "then getChangeHandlerModule function is called");
-				assert.equal(oErrorLoggingStub.callCount, 0, "then no error was logged");
-				assert.equal(oChangeHandler, MoveControlsChangeHandler, "then correct changehandler is returned");
-			}.bind(this));
+				.then(function() {
+					oErrorLoggingStub = sandbox.stub(sap.ui.fl.Utils.log, "error");
+					oGetChangeHandlerModuleStub = sandbox.stub(JsControlTreeModifier, "getChangeHandlerModulePath").returns("sap/ui/fl/test/registry/TestChangeHandlers.flexibility");
+					sandbox.stub(JsControlTreeModifier, "getControlType").returns(sControlType);
+	
+					return this.instance.getChangeHandler(sChangeType, sControlType, oControl, JsControlTreeModifier, sLayer)
+				}.bind(this))
+				.then(function(oChangeHandler) {
+					assert.equal(oGetChangeHandlerModuleStub.callCount, 1, "then getChangeHandlerModule function is called");
+					assert.equal(oErrorLoggingStub.callCount, 0, "then no error was logged");
+					assert.equal(oChangeHandler, MoveControlsChangeHandler, "then correct changehandler is returned");
+				});
 		});
 
 		QUnit.test("when getChangeHandler is called for a control with instance specific and default changeHandlers", function (assert) {
@@ -877,10 +880,12 @@ function(
 					doSomething: "default"
 				}
 			})
-			.then(function() {
-				var oChangeHandler = this.instance.getChangeHandler(sChangeType, sControlType, oControl, JsControlTreeModifier, sLayer);
-				assert.equal(oChangeHandler.dummyId, "testChangeHandler-doSomething", "then instance specific changehandler is returned");
-			}.bind(this));
+				.then(function() {
+					return this.instance.getChangeHandler(sChangeType, sControlType, oControl, JsControlTreeModifier, sLayer)
+				}.bind(this))
+				.then(function(oChangeHandler) {
+					assert.equal(oChangeHandler.dummyId, "testChangeHandler-doSomething", "then instance specific changehandler is returned");
+				});
 		});
 
 		QUnit.test("when getChangeHandler is called for previously existing changetype and existing instance specific changehandler for another changetype", function (assert) {
@@ -895,10 +900,12 @@ function(
 					moveControls: "default"
 				}
 			})
-			.then(function() {
-				var oChangeHandler = this.instance.getChangeHandler(sChangeType, sControlType, oControl, JsControlTreeModifier, sLayer);
-				assert.equal(oChangeHandler, MoveControlsChangeHandler, "then correct default changehandler is returned");
-			}.bind(this));
+				.then(function() {
+					return this.instance.getChangeHandler(sChangeType, sControlType, oControl, JsControlTreeModifier, sLayer)
+				}.bind(this))
+				.then(function(oChangeHandler) {
+					assert.equal(oChangeHandler, MoveControlsChangeHandler, "then correct default changehandler is returned");
+				});
 		});
 	});
 

@@ -198,8 +198,7 @@ sap.ui.define([
 			.then(function(oEditedOverlay) {
 				var oRenamedElement = oEditedOverlay.getElement();
 				var oDesignTimeMetadata = oEditedOverlay.getDesignTimeMetadata();
-				var oRenameAction = this.getAction(oEditedOverlay);
-				var sVariantManagementReference = this.getVariantManagementReference(oEditedOverlay, oRenameAction);
+				var sVariantManagementReference = this.getVariantManagementReference(oEditedOverlay);
 
 				return this.getCommandFactory().getCommandFor(oRenamedElement, "rename", {
 					renamedElement : oRenamedElement,

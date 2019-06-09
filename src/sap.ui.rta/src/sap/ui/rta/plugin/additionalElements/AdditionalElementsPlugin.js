@@ -813,22 +813,24 @@ sap.ui.define([
 					oRefControlForId = mParents.relevantContainer; //e.g. SimpleForm
 				}
 				var iAddTargetIndex = Utils.getIndex(mParents.parent, oSiblingElement, mActions.aggregation, oParentAggregationDTMetadata.getData().getIndex);
-				var oChangeHandler = this._getChangeHandler(mODataPropertyAction.changeType, oRefControlForId);
-				if (mParents.parentOverlay.getVariantManagement && oChangeHandler && oChangeHandler.revertChange) {
-					sVariantManagementReference = mParents.parentOverlay.getVariantManagement();
-				}
-				var oManifest = FlUtils.getAppComponentForControl(mParents.parent).getManifest();
-				var sServiceUri = FlUtils.getODataServiceUriFromManifest(oManifest);
-				return this.getCommandFactory().getCommandFor(mParents.parent, "addODataProperty", {
-					newControlId: Utils.createFieldLabelId(oRefControlForId, oSelectedElement.entityType, oSelectedElement.bindingPath),
-					index: iIndex !== undefined ? iIndex : iAddTargetIndex,
-					bindingString: oSelectedElement.bindingPath,
-					entityType: oSelectedElement.entityType,
-					parentId: mParents.parent.getId(),
-					oDataServiceVersion: sODataServiceVersion,
-					oDataServiceUri: sServiceUri,
-					propertyName: oSelectedElement.name
-				}, oParentAggregationDTMetadata, sVariantManagementReference);
+				return this._getChangeHandler(mODataPropertyAction.changeType, oRefControlForId)
+					.then(function(oChangeHandler) {
+						if (mParents.parentOverlay.getVariantManagement && oChangeHandler && oChangeHandler.revertChange) {
+							sVariantManagementReference = mParents.parentOverlay.getVariantManagement();
+						}
+						var oManifest = FlUtils.getAppComponentForControl(mParents.parent).getManifest();
+						var sServiceUri = FlUtils.getODataServiceUriFromManifest(oManifest);
+						return this.getCommandFactory().getCommandFor(mParents.parent, "addODataProperty", {
+							newControlId: Utils.createFieldLabelId(oRefControlForId, oSelectedElement.entityType, oSelectedElement.bindingPath),
+							index: iIndex !== undefined ? iIndex : iAddTargetIndex,
+							bindingString: oSelectedElement.bindingPath,
+							entityType: oSelectedElement.entityType,
+							parentId: mParents.parent.getId(),
+							oDataServiceVersion: sODataServiceVersion,
+							oDataServiceUri: sServiceUri,
+							propertyName: oSelectedElement.name
+						}, oParentAggregationDTMetadata, sVariantManagementReference);
+					}.bind(this));
 			}.bind(this));
 		},
 
@@ -858,13 +860,8 @@ sap.ui.define([
 			}
 
 			var sVariantManagementReference;
-			var oStashedElement;
-			var sType = oRevealedElement.getMetadata().getName();
-			if (sType === "sap.ui.core._StashedControl") {
-				oStashedElement = oRevealedElement;
-			}
 			if (oRevealedElementOverlay) {
-				sVariantManagementReference = this.getVariantManagementReference(oRevealedElementOverlay, oRevealAction, false, oStashedElement);
+				sVariantManagementReference = this.getVariantManagementReference(oRevealedElementOverlay);
 			}
 
 			if (oRevealAction.changeOnRelevantContainer) {
@@ -900,7 +897,7 @@ sap.ui.define([
 				var oMoveAction = SourceParentDesignTimeMetadata.getAction("move", oRevealedElement);
 				var sVariantManagementReference;
 				if (oMoveAction) {
-					sVariantManagementReference = this.getVariantManagementReference(OverlayRegistry.getOverlay(oRevealedElement), oMoveAction, true);
+					sVariantManagementReference = this.getVariantManagementReference(OverlayRegistry.getOverlay(oRevealedElement));
 				}
 				return this.getCommandFactory().getCommandFor(mParents.relevantContainer, "move", {
 					movedElements : [{
@@ -936,14 +933,8 @@ sap.ui.define([
 			);
 
 			var sVariantManagementReference;
-			var oStashedElement;
-			var sType = oElement.getMetadata().getName();
-
-			if (sType === "sap.ui.core._StashedControl") {
-				oStashedElement = oElement;
-			}
 			if (mParents.relevantContainerOverlay) {
-				sVariantManagementReference = this.getVariantManagementReference(mParents.relevantContainerOverlay, oActionSettings, false, oStashedElement);
+				sVariantManagementReference = this.getVariantManagementReference(mParents.relevantContainerOverlay);
 			}
 
 			return this.getCommandFactory().getCommandFor(oElement, "customAdd", oActionSettings, oParentAggregationDTMetadata, sVariantManagementReference)
@@ -981,7 +972,7 @@ sap.ui.define([
 				}
 
 				this._getActions(bOverlayIsSibling, oOverlay, true).then(function(mActions) {
-					Utils.doIfAllControlsAreAvailable([oOverlay, mParents.parentOverlay], function() {
+					return Utils.doIfAllControlsAreAvailable([oOverlay, mParents.parentOverlay], function() {
 						if (mActions.addODataProperty) {
 							var oAddODataPropertyAction = mActions.addODataProperty.action;
 							bEditable = oAddODataPropertyAction &&
@@ -996,19 +987,26 @@ sap.ui.define([
 							bEditable = true;
 						}
 
-						if (!bEditable && !bOverlayIsSibling) {
-							bEditable = this.checkAggregationsOnSelf(mParents.parentOverlay, "addODataProperty");
-						}
-
-						if (bEditable) {
-							bEditable =
-								this.hasStableId(oOverlay) //don't confuse the user/Web IDE by an editable overlay without stable ID
-								&& this.hasStableId(mParents.parentOverlay);
-						}
+						return Promise.resolve(bEditable)
+							.then(function(bEditable) {
+								if (!bEditable && !bOverlayIsSibling) {
+									return this.checkAggregationsOnSelf(mParents.parentOverlay, "addODataProperty");
+								}
+								return bEditable;
+							}.bind(this))
+							.then(function(bEditable) {
+								if (bEditable) {
+									bEditable =
+										this.hasStableId(oOverlay) //don't confuse the user/Web IDE by an editable overlay without stable ID
+										&& this.hasStableId(mParents.parentOverlay);
+								}
+								return bEditable;
+							}.bind(this))
 					}.bind(this));
-
-					resolve(bEditable);
-				}.bind(this));
+				}.bind(this))
+					.then(function(bEditable) {
+						resolve(bEditable);
+					});
 			}.bind(this));
 		},
 

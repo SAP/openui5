@@ -107,13 +107,16 @@ sap.ui.define([
 			};
 			this.setSelector(oSelector);
 		}
-		try {
-			this._oPreparedChange = this._createChange(mFlexSettings, sVariantManagementReference);
-		} catch (oError) {
-			Log.error(oError.message || oError.name);
-			return false;
-		}
-		return true;
+
+		return this._createChange(mFlexSettings, sVariantManagementReference)
+			.then(function(oChange) {
+				this._oPreparedChange = oChange;
+				return true;
+			}.bind(this))
+			.catch(function(oError) {
+				Log.error(oError.message || oError.name);
+				return false;
+			});
 	};
 
 	/**
@@ -164,10 +167,10 @@ sap.ui.define([
 	 * Create a Flex change from a given Change Specific Data.
 	 * (This method can be reused to retrieve an Undo Change)
 	 *
-	 * @param {object} mChangeSpecificData Map containing change specific data
-	 * @param {object} mFlexSettings Map containing flex settings
-	 * @param {string} sVariantManagementReference Reference to the variant management
-	 * @returns {object} Returns the change object
+	 * @param {object} mChangeSpecificData - Map containing change specific data
+	 * @param {object} mFlexSettings - Map containing flex settings
+	 * @param {string} sVariantManagementReference - Reference to the variant management
+	 * @returns {promise.<object>} Change object wrapped in a promise.
 	 * @private
 	 */
 	FlexCommand.prototype._createChangeFromData = function(mChangeSpecificData, mFlexSettings, sVariantManagementReference) {
@@ -187,13 +190,15 @@ sap.ui.define([
 		if (sVariantReference) {
 			mChangeSpecificData = Object.assign({}, mChangeSpecificData, mVariantObj);
 		}
-		var oChange = ChangesWriteAPI.create(mChangeSpecificData, this._validateControlForChange(mFlexSettings));
-		if (mFlexSettings && mFlexSettings.originalSelector) {
-			oChange.addDependentControl(mFlexSettings.originalSelector, "originalSelector", {modifier: JsControlTreeModifier, appComponent: this.getAppComponent()});
-			oChange.getDefinition().selector = JsControlTreeModifier.getSelector(this.getSelector().id, this.getSelector().appComponent);
-			oChange.setContent(Object.assign({}, oChange.getContent(), mFlexSettings.content));
-		}
-		return oChange;
+		return ChangesWriteAPI.create(mChangeSpecificData, this._validateControlForChange(mFlexSettings))
+			.then(function(oChange) {
+				if (mFlexSettings && mFlexSettings.originalSelector) {
+					oChange.addDependentControl(mFlexSettings.originalSelector, "originalSelector", {modifier: JsControlTreeModifier, appComponent: this.getAppComponent()});
+					oChange.getDefinition().selector = JsControlTreeModifier.getSelector(this.getSelector().id, this.getSelector().appComponent);
+					oChange.setContent(Object.assign({}, oChange.getContent(), mFlexSettings.content));
+				}
+				return oChange;
+			}.bind(this));
 	};
 
 	/**
@@ -212,12 +217,14 @@ sap.ui.define([
 			var oChange = this.getPreparedChange();
 
 			if (oChange.getRevertData()) {
-				var bRevertible = ChangesWriteAPI.isChangeHandlerRevertible(oChange, vControl);
-				if (!bRevertible) {
-					Log.error(enhanceErrorMessage("No revert change function available to handle revert data.", vControl));
-					return;
-				}
-				return PersistenceWriteAPI.remove(oChange, {appComponent: this.getAppComponent(true), revert: true});
+				return ChangesWriteAPI.isChangeHandlerRevertible(oChange, vControl)
+					.then(function(bRevertible) {
+						if (!bRevertible) {
+							Log.error(enhanceErrorMessage("No revert change function available to handle revert data.", vControl));
+							return undefined;
+						}
+						return PersistenceWriteAPI.remove(oChange, {appComponent: this.getAppComponent(true), revert: true});
+					}.bind(this));
 			} else if (this._aRecordedUndo) {
 				RtaControlTreeModifier.performUndo(this._aRecordedUndo);
 			} else {
@@ -242,36 +249,41 @@ sap.ui.define([
 			appComponent: oAppComponent,
 			change: oChange
 		});
-		var bRevertible = ChangesWriteAPI.isChangeHandlerRevertible(oChange, mControl.control);
-		var mPropertyBag = {
-			modifier: bRevertible ? JsControlTreeModifier : RtaControlTreeModifier,
-			appComponent: oAppComponent,
-			view: flUtils.getViewForControl(oSelectorElement)
-		};
+		var bRevertible;
+		var mPropertyBag;
+		return ChangesWriteAPI.isChangeHandlerRevertible(oChange, mControl.control)
+			.then(function(bRevertibleResult) {
+				bRevertible = bRevertibleResult;
+				mPropertyBag = {
+					modifier: bRevertible ? JsControlTreeModifier : RtaControlTreeModifier,
+					appComponent: oAppComponent,
+					view: flUtils.getViewForControl(oSelectorElement)
+				};
 
-		if (!bRevertible) {
-			RtaControlTreeModifier.startRecordingUndo();
-		}
-
-		return Promise.resolve()
-
-		.then(function() {
-			return ChangesWriteAPI.apply(oChange, oSelectorElement, mPropertyBag);
-		})
-
-		.then(function(oResult) {
-			if (!bRevertible) {
-				if (!oChange.getUndoOperations()) {
-					this._aRecordedUndo = RtaControlTreeModifier.stopRecordingUndo();
-				} else {
-					this._aRecordedUndo = oChange.getUndoOperations();
-					oChange.resetUndoOperations();
+				if (!bRevertible) {
+					RtaControlTreeModifier.startRecordingUndo();
 				}
-			}
-			if (!oResult.success) {
-				return Promise.reject(oResult.error);
-			}
-		}.bind(this));
+
+				return Promise.resolve();
+			})
+
+			.then(function() {
+				return ChangesWriteAPI.apply(oChange, oSelectorElement, mPropertyBag);
+			})
+
+			.then(function(oResult) {
+				if (!bRevertible) {
+					if (!oChange.getUndoOperations()) {
+						this._aRecordedUndo = RtaControlTreeModifier.stopRecordingUndo();
+					} else {
+						this._aRecordedUndo = oChange.getUndoOperations();
+						oChange.resetUndoOperations();
+					}
+				}
+				if (!oResult.success) {
+					return Promise.reject(oResult.error);
+				}
+			}.bind(this));
 	};
 
 	FlexCommand.prototype._validateControlForChange = function(mFlexSettings) {

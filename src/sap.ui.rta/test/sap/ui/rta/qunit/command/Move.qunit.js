@@ -136,7 +136,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when getting a move command with _createChange returning an error", function(assert) {
-			sandbox.stub(FlexCommand.prototype, "_createChange").throws("MyError");
+			sandbox.stub(FlexCommand.prototype, "_createChange").rejects("MyError");
 			var oErrorLogSpy = sandbox.spy(Log, "error");
 
 			return CommandFactory.getCommandFor(this.oButton, "move", {
@@ -145,14 +145,14 @@ sap.ui.define([
 				target : this.oTargetLayout
 			}, this.oButtonDesignTimeMetadata)
 
-			.then(function(oMoveCommand) {
-				assert.notOk(oMoveCommand, "then no command is created");
-				assert.equal(oErrorLogSpy.callCount, 1, "and one error is thrown");
-			})
-
-			.catch(function (oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
-			});
+				.then(function(oMoveCommand) {
+					assert.notOk(oMoveCommand, "then no command is created");
+					assert.equal(oErrorLogSpy.callCount, 1, "and one error is thrown");
+				})
+	
+				.catch(function (oError) {
+					assert.ok(false, "catch must never be called - Error: " + oError);
+				});
 		});
 	});
 
