@@ -746,6 +746,20 @@ sap.ui.define([
 		assert.strictEqual(fnEventSpy.callCount, 1, 'The _registerResize() method should be called on resize.');
 	});
 
+	QUnit.test('"setDescription" is called and resizing is called, before rendering the control', function(assert) {
+
+		this.NotificationListItem.setDescription('Donec felis sem, tincidunt vitae gravida eget, egestas sit amet dolor. ' +
+			'Duis mauris erat, eleifend sit amet dapibus vel, cursus quis ante. Pellentesque erat dui, aliquet id ' +
+			'fringilla eget, aliquam at odio. Interdum et malesuada fames ac ante ipsum primis in faucibus. ' +
+			'Donec tincidunt semper mattis. Nunc id convallis ex. Sed bibendum volutpat urna, vitae eleifend nisi ' +
+			'maximus id. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. ' +
+			'Nunc suscipit nulla ligula, ut faucibus ex pellentesque vel. Suspendisse id aliquet mauris. ');
+
+		this.NotificationListItem._showHideTruncateButton();
+
+		assert.ok(true, "there is no exception");
+	});
+
 	//================================================================================
 	// Notification List Item events
 	//================================================================================
