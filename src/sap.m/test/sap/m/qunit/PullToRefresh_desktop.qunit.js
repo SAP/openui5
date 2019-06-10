@@ -124,6 +124,7 @@ sap.ui.define([
 			qutils.triggerEvent("click", oP2R.getId());
 			assert.strictEqual(oSpy.callCount, 1, "Refresh event has been fired.");
 			assert.strictEqual($P2R.children(".sapMPullDownText").text(), sLoading, "Pull down text is set correctly");
+			sap.ui.getCore().applyChanges();
 			assert.strictEqual($P2R.children(".sapMPullDownInfo").text(), sRefresh, "Pull down description is set correctly");
 			setTimeout(function() {
 				oP2R.hide(); // Close

@@ -171,7 +171,7 @@ sap.ui.define([
 		if (_scroller.y > -this._iTopTrigger && this._iState < 1 ) {
 			this.setState(1);
 			_scroller.minScrollY = 0;
-		} else if (_scroller.y < -this._iTopTrigger && this._iState == 1) {
+		} else if (_scroller.y < -this._iTopTrigger && this._iState === 1) {
 			this.setState(0);
 			_scroller.minScrollY = -domRef.offsetHeight;
 		}
@@ -190,7 +190,7 @@ sap.ui.define([
 	};
 
 	PullToRefresh.prototype.doScrollEnd = function(){
-		if (this._iState == 1) { // if released when ready - load
+		if (this._iState === 1) { // if released when ready - load
 			this.setState(2);
 			this.fireRefresh();
 		}
@@ -202,7 +202,7 @@ sap.ui.define([
 	*/
 	PullToRefresh.prototype.setState = function(iState){
 
-		if (this._iState == iState) {
+		if (this._iState === iState) {
 			return;
 		}
 
@@ -239,17 +239,6 @@ sap.ui.define([
 	};
 
 	/*
-	* Override re-rendering for description
-	* @private
-	*/
-	PullToRefresh.prototype.setDescription = function(sDescription){
-		if (this._oDomRef) {
-			this.$().find(".sapMPullDownInfo").html(encodeXML(sDescription));
-		}
-		return this.setProperty("description", sDescription, true);
-	};
-
-	/*
 	* Return a private custom icon image control for internal rendering
 	* @private
 	*/
@@ -282,7 +271,7 @@ sap.ui.define([
 	 * @private
 	 */
 	PullToRefresh.prototype.onkeydown = function(event) {
-		if ( event.which == KeyCodes.F5) {
+		if (event.which === KeyCodes.F5) {
 			this.onclick();
 			// do not refresh browser window
 			event.stopPropagation();
@@ -334,7 +323,7 @@ sap.ui.define([
 	};
 
 	PullToRefresh.prototype.setVisible = function(bVisible){
-		if (this.getVisible() == bVisible) {
+		if (this.getVisible() === bVisible) {
 			return this;
 		}
 
