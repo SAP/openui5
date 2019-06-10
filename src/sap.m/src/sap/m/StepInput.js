@@ -422,12 +422,6 @@ function(
 
 			this._getInput().setValue(this._getFormatedValue(vValue));
 
-			if (this._isNumericLike(fMin) && (fMin > vValue)) {
-				this.setValue(fMin);
-			}
-			if (this._isNumericLike(fMax) && (fMax < vValue)) {
-				this.setValue(fMax);
-			}
 			this._disableButtons(vValue, fMax, fMin);
 			this.$().unbind(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
 		};
@@ -494,8 +488,6 @@ function(
 			oResult = this.setProperty("min", min, bSuppressInvalidate);
 			this._disableButtons(vValue, this.getMax(), min);
 
-			this._verifyValue();
-
 			return oResult;
 		};
 
@@ -520,7 +512,6 @@ function(
 			oResult =  this.setProperty("max", max, bSuppressInvalidate);
 			this._disableButtons(this.getValue(), max, this.getMin());
 
-			this._verifyValue();
 			return oResult;
 		};
 
@@ -697,6 +688,7 @@ function(
 			this.setValue(oNewValue.value);
 
 			if (this._sOldValue !== this.getValue()) {
+				this._verifyValue();
 				this.fireChange({value: this.getValue()});
 			}
 
@@ -748,17 +740,6 @@ function(
 		};
 
 		/**
-		 * Handles the <code>focusout</code> event.
-		 *
-		 */
-		StepInput.prototype.onfocusout = function () {
-			// when the value is set programaticaly (e.g. with setValue())
-			// and the user pass through the field and then leave it
-			// we have to verify the value inside since the Input does not fire change event
-			this._verifyValue();
-		};
-
-		/**
 		 * Sets the <code>valueState</code> if there is a value that is not within a given limit.
 		 */
 		StepInput.prototype._verifyValue = function () {
@@ -799,7 +780,6 @@ function(
 			}
 
 			this._getInput().setValue(this._getFormatedValue(oValue));
-			this._verifyValue();
 
 			this._disableButtons(oValue, this.getMax(), this.getMin());
 
@@ -1049,6 +1029,7 @@ function(
 
 
 			if (this._sOldValue !== this.getValue() && !this._isButtonFocused()) {
+				this._verifyValue();
 				this.fireChange({value: this.getValue()});
 			}
 		};
@@ -1267,14 +1248,15 @@ function(
 		 * @private
 		 */
 		StepInput.prototype._showWrongValueVisualEffect = function() {
-			var sOldValueState = this.getValueState();
+			var sOldValueState = this.getValueState(),
+				oInput = this._getInput();
 
 			if (sOldValueState === ValueState.Error) {
 				return;
 			}
 
-			this.setValueState(ValueState.Error);
-			setTimeout(this["setValueState"].bind(this, sOldValueState), 1000);
+			oInput.setValueState(ValueState.Error);
+			setTimeout(oInput["setValueState"].bind(oInput, sOldValueState), 1000);
 		};
 
 		/**
@@ -1436,6 +1418,7 @@ function(
 						var oNewValue = that._calculateNewValue(1, bIncrementButton);
 
 						that.setValue(oNewValue.value);
+						that._verifyValue();
 
 						if (!that._getIncrementButton().getEnabled() || !that._getDecrementButton().getEnabled()) {
 							_resetSpinValues.call(that);
