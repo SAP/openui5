@@ -1036,15 +1036,14 @@ sap.ui.define([
 
 	FlexController.prototype._checkIfDependencyIsStillValid = function(oAppComponent, oModifier, sChangeId) {
 		var oChange = Utils.getChangeFromChangesMap(this._oChangePersistence._mChanges.mChanges, sChangeId);
-		if (!oChange.hasApplyProcessStarted()) {
-			return true;
-		}
-
 		var oControl = oModifier.bySelector(oChange.getSelector(), oAppComponent);
-		if (!this._isChangeCurrentlyApplied(oControl, oChange, oModifier)) {
-			return true;
+
+		// if change is already applied OR if apply process has started,
+		// then dependency is no more valid
+		if (this._isChangeCurrentlyApplied(oControl, oChange, oModifier) || oChange.hasApplyProcessStarted()) {
+			return false;
 		}
-		return false;
+		return true;
 	};
 
 	/**
@@ -1246,7 +1245,9 @@ sap.ui.define([
 		if (mDependentChangesOnMe[sChangeKey]) {
 			mDependentChangesOnMe[sChangeKey].forEach(function (sKey) {
 				var oDependency = mDependencies[sKey];
-				var iIndex = oDependency.dependencies.indexOf(sChangeKey);
+
+				// oDependency might be undefined, since initial dependencies were not copied yet from _applyChangesOnControl() for change with ID sKey
+				var iIndex = oDependency ? oDependency.dependencies.indexOf(sChangeKey) : -1;
 				if (iIndex > -1) {
 					oDependency.dependencies.splice(iIndex, 1);
 				}
