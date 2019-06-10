@@ -218,6 +218,26 @@ sap.ui.define([
 		oLink1.destroy();
 	});
 
+	QUnit.test("setEnabled(false) removes the tabindex", function(assert) {
+		// arrange
+		var oLink1 = new Link({
+				text: 'linkwithtext'
+			}).placeAt("uiArea1"),
+			$Link1;
+
+		sap.ui.getCore().applyChanges();
+		$Link1 = oLink1.$();
+
+		// act
+		oLink1.setEnabled(false);
+
+		// assert
+		assert.strictEqual($Link1.attr("tabindex"), undefined, "disabled link has no tabindex attribute");
+
+		// clean
+		oLink1.destroy();
+	});
+
 	QUnit.test("_getTabindex should return -1 if the link has no text", function(assert) {
 		var oLink1 = new Link({
 			text : ""
