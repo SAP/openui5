@@ -263,6 +263,7 @@ sap.ui.define([
 			var oBlockSpan = document.createElement("span");
 
 			oBlockSpan.setAttribute("tabindex", 0);
+			oBlockSpan.classList.add("sapUiBlockLayerTabbable");
 			oBlockSpan.addEventListener('focusin', fnRedirectFocus);
 
 			return oBlockSpan;
