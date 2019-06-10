@@ -117,6 +117,8 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 		this.$("txt").attr("style", bHovered ? "white-space:nowrap;display:inline-block;padding:1px;color:red;" : "white-space:nowrap;display:inline-block;padding:1px;color:black;");
 	};
 
+	MenuItemBase.prototype.focus = function() {};
+
 	/**
 	 * Event handler which is called whenever the submenu of the item is opened or closed.
 	 *

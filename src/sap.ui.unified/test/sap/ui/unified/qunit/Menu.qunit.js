@@ -251,14 +251,33 @@ sap.ui.define([
 
 	QUnit.module("Keyboard");
 
-	/* if menu is opened from keyboard, the first enabled item sould be hovered */
+	/* if menu is opened from keyboard, the first enabled item sould be hovered and focused*/
 	QUnit.test("Check Hover State upon Menu.open", function(assert) {
+		// prepare
+		var clock = sinon.useFakeTimers(),
+			oMenuTextFiledItem = new MenuTextFieldItem("item14", {});
+
+		// act
+		// assert
 		openRootMenu(false, assert);
 		checkHoveredItem("item3", undefined, assert);
+		assert.strictEqual(oRootMenu.oHoveredItem.getId(), document.activeElement.id, "Correct item '" + document.activeElement.id + "' focused:");
+
+		// act
+		oSpecialMenu.insertItem(oMenuTextFiledItem, 0);
+
+		// assert
+		openMenu(oSpecialMenu, false, assert);
+		clock.tick(10);
+		assert.strictEqual(document.querySelector("#item14 input").id, document.activeElement.id, "Correct item '" + document.activeElement.id + "' focused:");
+
 		closeAllMenusAndCheck(assert);
 
+		// act
 		/* try on a menu with the first two items disabled */
 		qutils.triggerEvent("click", "button5", {});
+
+		// assert
 		assert.equal(oRootMenu.getEnabled(), true, "Custom 'enabled':");
 		assert.equal(oRootMenu.getItems()[0].getEnabled(), false, "Custom 'enabled':");
 		assert.equal(oRootMenu.getItems()[1].getEnabled(), false, "Custom 'enabled':");
@@ -267,6 +286,9 @@ sap.ui.define([
 		qutils.triggerEvent("click", "button5", {});
 		closeAllMenusAndCheck(assert);
 
+		// cleanup
+		oSpecialMenu.removeItem(oMenuTextFiledItem);
+		clock.restore();
 	});
 
 	/* ARROW_UP/ARROW_DOWN should hover one item up/down, skipping any disabled items */
@@ -952,6 +974,7 @@ sap.ui.define([
 
 		// Act
 		oMenuItem.hover(true, { checkEnabled: function () { return true; }, closeSubmenu: function () {} });
+		oMenuItem.focus(true);
 
 		// Cleanup
 		oMenu$Stub.restore();
@@ -1007,7 +1030,7 @@ sap.ui.define([
 		// Arrange
 		var oMenu = new Menu(),
 				oDomRef = { focus: this.spy() },
-				oHoveredItemStub = {},
+				oHoveredItemStub = { focus: function() {} },
 				oGetDomRefStub = this.stub(oMenu, "getDomRef", function () { return oDomRef; }),
 				oGetItemByDomRef = this.stub(oMenu, "getItemByDomRef", function () { return oHoveredItemStub; }),
 				oSetHoveredItemStub = this.stub(oMenu, "setHoveredItem", function () { }),

@@ -378,6 +378,9 @@ sap.ui.define([
 	 * @ui5-metamodel This method will also be described in the UI5 (legacy) design time meta model
 	 */
 	Menu.prototype.open = function(bWithKeyboard, oOpenerRef, my, at, of, offset, collision){
+		var oDomRef,
+			oNextSelectableItem;
+
 		if (this.bOpen) {
 			return;
 		}
@@ -407,12 +410,15 @@ sap.ui.define([
 		this._hasResizeListener = true;
 
 		// Set the tab index of the menu and focus
-		var oDomRef = this.getDomRef();
+		oDomRef = this.getDomRef();
+
 		jQuery(oDomRef).attr("tabindex", 0).focus();
 
 		// Mark the first item when using the keyboard
 		if (bWithKeyboard) {
-			this.setHoveredItem(this.getNextSelectableItem(-1));
+			oNextSelectableItem = this.getNextSelectableItem(-1);
+			this.setHoveredItem(oNextSelectableItem);
+			oNextSelectableItem && oNextSelectableItem.focus();
 		}
 
 		ControlEvents.bindAnyEvent(this.fAnyEventHandlerProxy);
@@ -588,6 +594,9 @@ sap.ui.define([
 
 
 	Menu.prototype.onsapnext = function(oEvent){
+		var iIdx = this.oHoveredItem ? this.indexOfAggregation("items", this.oHoveredItem) : -1,
+			oNextSelectableItem = this.getNextSelectableItem(iIdx);
+
 		//right or down (RTL: left or down)
 		if (oEvent.keyCode != KeyCodes.ARROW_DOWN) {
 			//Go to sub menu if available
@@ -598,8 +607,8 @@ sap.ui.define([
 		}
 
 		//Go to the next selectable item
-		var iIdx = this.oHoveredItem ? this.indexOfAggregation("items", this.oHoveredItem) : -1;
-		this.setHoveredItem(this.getNextSelectableItem(iIdx));
+		this.setHoveredItem(oNextSelectableItem);
+		oNextSelectableItem && oNextSelectableItem.focus();
 
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
@@ -608,6 +617,9 @@ sap.ui.define([
 	Menu.prototype.onsapnextmodifiers = Menu.prototype.onsapnext;
 
 	Menu.prototype.onsapprevious = function(oEvent){
+		var iIdx = this.oHoveredItem ? this.indexOfAggregation("items", this.oHoveredItem) : -1,
+			oPrevSelectableItem = this.getPreviousSelectableItem(iIdx);
+
 		//left or up (RTL: right or up)
 		if (oEvent.keyCode != KeyCodes.ARROW_UP) {
 			//Go to parent menu if this is a sub menu
@@ -620,8 +632,8 @@ sap.ui.define([
 		}
 
 		//Go to the previous selectable item
-		var iIdx = this.oHoveredItem ? this.indexOfAggregation("items", this.oHoveredItem) : -1;
-		this.setHoveredItem(this.getPreviousSelectableItem(iIdx));
+		this.setHoveredItem(oPrevSelectableItem);
+		oPrevSelectableItem && oPrevSelectableItem.focus();
 
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
@@ -630,52 +642,64 @@ sap.ui.define([
 	Menu.prototype.onsappreviousmodifiers = Menu.prototype.onsapprevious;
 
 	Menu.prototype.onsaphome = function(oEvent){
+		var oNextSelectableItem = this.getNextSelectableItem(-1);
 		//Go to the first selectable item
-		this.setHoveredItem(this.getNextSelectableItem(-1));
+		this.setHoveredItem(oNextSelectableItem);
+		oNextSelectableItem && oNextSelectableItem.focus();
 
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
 	};
 
 	Menu.prototype.onsapend = function(oEvent){
+		var oPrevSelectableItem = this.getPreviousSelectableItem(this.getItems().length);
+
 		//Go to the last selectable item
-		this.setHoveredItem(this.getPreviousSelectableItem(this.getItems().length));
+		this.setHoveredItem(oPrevSelectableItem);
+		oPrevSelectableItem && oPrevSelectableItem.focus();
 
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
 	};
 
 	Menu.prototype.onsappagedown = function(oEvent) {
+		var iIdx = this.oHoveredItem ? this.indexOfAggregation("items", this.oHoveredItem) : -1,
+			oNextSelectableItem;
+
 		if (this.getPageSize() < 1) {
 			this.onsapend(oEvent);
 			return;
 		}
-		var iIdx = this.oHoveredItem ? this.indexOfAggregation("items", this.oHoveredItem) : -1;
 		iIdx += this.getPageSize();
-
 		if (iIdx >= this.getItems().length) {
 			this.onsapend(oEvent);
 			return;
 		}
-		this.setHoveredItem(this.getNextSelectableItem(iIdx - 1)); //subtract 1 to preserve computed page offset because getNextSelectableItem already offsets 1 item down
+		oNextSelectableItem = this.getNextSelectableItem(iIdx - 1);
+		this.setHoveredItem(oNextSelectableItem); //subtract 1 to preserve computed page offset because getNextSelectableItem already offsets 1 item down
+		oNextSelectableItem && oNextSelectableItem.focus();
 
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
 	};
 
 	Menu.prototype.onsappageup = function(oEvent) {
+		var iIdx = this.oHoveredItem ? this.indexOfAggregation("items", this.oHoveredItem) : -1,
+			oPrevSelectableItem;
+
 		if (this.getPageSize() < 1) {
 			this.onsaphome(oEvent);
 			return;
 		}
-
-		var iIdx = this.oHoveredItem ? this.indexOfAggregation("items", this.oHoveredItem) : -1;
 		iIdx -= this.getPageSize();
 		if (iIdx < 0) {
 			this.onsaphome(oEvent);
 			return;
 		}
-		this.setHoveredItem(this.getPreviousSelectableItem(iIdx + 1)); //add 1 to preserve computed page offset because getPreviousSelectableItem already offsets one item up
+
+		oPrevSelectableItem = this.getPreviousSelectableItem(iIdx + 1);
+		this.setHoveredItem(oPrevSelectableItem); //add 1 to preserve computed page offset because getPreviousSelectableItem already offsets one item up
+		oPrevSelectableItem && oPrevSelectableItem.focus();
 
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
@@ -691,7 +715,7 @@ sap.ui.define([
 		// focus menuItems
 		if (this.oHoveredItem && (jQuery(oEvent.target).prop("tagName") != "INPUT")) {
 			var oDomRef = this.oHoveredItem.getDomRef();
-			jQuery(oDomRef).attr("tabindex", 0).focus();
+			jQuery(oDomRef).focus();
 		}
 
 		//like sapselect but on keyup:
@@ -730,6 +754,8 @@ sap.ui.define([
 	Menu.prototype.onsaptabprevious = Menu.prototype.onsapescape;
 
 	Menu.prototype.onmouseover = function(oEvent){
+		var bMouseEvent = true;
+
 		if (!Device.system.desktop) {
 			return;
 		}
@@ -743,6 +769,7 @@ sap.ui.define([
 		}
 
 		this.setHoveredItem(oItem);
+		oItem && oItem.focus(bMouseEvent);
 
 		if (checkMouseEnterOrLeave(oEvent, this.getDomRef())) {
 			/* TODO remove after 1.62 version */
@@ -756,11 +783,11 @@ sap.ui.define([
 			this.getDomRef().focus();
 		}
 
-		this._openSubMenuDelayed(oItem);
+		this._openSubMenuDelayed(oItem, bMouseEvent);
 
 	};
 
-	Menu.prototype._openSubMenuDelayed = function(oItem){
+	Menu.prototype._openSubMenuDelayed = function(oItem, bMouseEvent){
 		if (!oItem) {
 			return;
 		}
@@ -771,8 +798,9 @@ sap.ui.define([
 				return;
 			}
 			this.setHoveredItem(oItem);
+			oItem.focus(bMouseEvent);
 			this.openSubmenu(oItem, false, true);
-	}.bind(this), oItem.getSubmenu() && this.checkEnabled(oItem) ? Menu._DELAY_SUBMENU_TIMER : Menu._DELAY_SUBMENU_TIMER_EXT);
+		}.bind(this), oItem.getSubmenu() && this.checkEnabled(oItem) ? Menu._DELAY_SUBMENU_TIMER : Menu._DELAY_SUBMENU_TIMER_EXT);
 	};
 
 	Menu.prototype._discardOpenSubMenuDelayed = function(oItem){
