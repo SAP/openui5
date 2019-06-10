@@ -248,15 +248,77 @@ sap.ui.define([
 	};
 
 	DateTimeField.prototype._parseValue = function (sValue, bDisplayFormat) {
+		var oBinding = this.getBinding("value"),
+			oBindingType = oBinding && oBinding.getType && oBinding.getType(),
+			oFormatOptions,
+			oDateLocal,
+			oDate;
+
+		if (oBindingType && this._isSupportedBindingType(oBindingType)) {
+			try {
+				oDate = oBindingType.parseValue(sValue, "string");
+
+				oFormatOptions = oBindingType.oFormatOptions;
+				if (oFormatOptions && oFormatOptions.source && oFormatOptions.source.pattern == "timestamp") {
+					// convert timestamp back to Date
+					oDate = new Date(oDate);
+				}
+			} catch (e) {
+				// ignore, ParseException to be handled in ManagedObject.updateModelProperty()
+			}
+
+			if (oDate && ((oBindingType.oFormatOptions && oBindingType.oFormatOptions.UTC) || (oBindingType.oConstraints && oBindingType.oConstraints.isDateOnly))) {
+				// convert to local date because it was parsed as UTC date
+				oDateLocal = new Date(oDate.getUTCFullYear(), oDate.getUTCMonth(), oDate.getUTCDate(),
+					oDate.getUTCHours(), oDate.getUTCMinutes(), oDate.getUTCSeconds(), oDate.getUTCMilliseconds());
+
+				oDateLocal.setFullYear(oDate.getUTCFullYear());
+				oDate = oDateLocal;
+			}
+			return oDate;
+		}
+
 		return this._getFormatter(bDisplayFormat).parse(sValue);
 	};
 
 	DateTimeField.prototype._formatValue = function (oDate, bValueFormat) {
-		if (oDate) {
-			return this._getFormatter(!bValueFormat).format(oDate);
+		if (!oDate) {
+			return "";
 		}
 
-		return "";
+		var oBinding = this.getBinding("value"),
+			oBindingType = oBinding && oBinding.getType && oBinding.getType(),
+			oFormatOptions,
+			oDateUTC;
+
+		if (oBindingType && this._isSupportedBindingType(oBindingType)) {
+			if ((oBindingType.oFormatOptions && oBindingType.oFormatOptions.UTC) || (oBindingType.oConstraints && oBindingType.oConstraints.isDateOnly)) {
+				// convert to UTC date because it will be formatted as UTC date
+				oDateUTC = new Date(Date.UTC(oDate.getFullYear(), oDate.getMonth(), oDate.getDate(),
+					oDate.getHours(), oDate.getMinutes(), oDate.getSeconds(), oDate.getMilliseconds()));
+
+				oDateUTC.setUTCFullYear(oDate.getFullYear());
+				oDate = oDateUTC;
+			}
+
+			oFormatOptions = oBindingType.oFormatOptions;
+			if (oFormatOptions && oFormatOptions.source && oFormatOptions.source.pattern == "timestamp") {
+				// convert Date to timestamp
+				oDate = oDate.getTime();
+			}
+
+			return oBindingType.formatValue(oDate, "string");
+		}
+
+		return this._getFormatter(!bValueFormat).format(oDate);
+	};
+
+	DateTimeField.prototype._isSupportedBindingType = function (oBindingType) {
+		return oBindingType.isA([
+			"sap.ui.model.type.Date",
+			"sap.ui.model.odata.type.DateTime",
+			"sap.ui.model.odata.type.DateTimeOffset"
+		]);
 	};
 
 	DateTimeField.prototype._getDefaultDisplayStyle = function () {
