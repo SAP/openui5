@@ -1565,7 +1565,7 @@ function (
 			}.bind(this));
 		});
 
-		QUnit.test("updates the dependencies if the change was already processed", function(assert) {
+		QUnit.test("updates the dependencies if the change was already processed but not applied", function(assert) {
 			var oChange0 = new Change(labelChangeContent);
 			oChange0.markFinished();
 			var oChange1 = new Change(labelChangeContent);
@@ -1796,6 +1796,75 @@ function (
 				"aChanges": [oChange1, oChange2, oChange3, oChange4, oChange5]
 			};
 		}
+
+		QUnit.test("when _applyChangesOnControl is called for three re-created controls with dependent changes processed successfully and unsuccessfully", function (assert) {
+			var oAppliedControl = new Control("appliedControl"); // processed and applied on control
+			var oProcessedControl = new Control("processedControl"); // processed and not applied on control
+			var oNotProcessedControl = new Control("notProcessedControl"); // not processed and not applied on control
+			var oAppliedChange = new Change(getLabelChangeContent("appliedChange", "appliedControl"));
+			var oProcessedChange = new Change(getLabelChangeContent("processedChange", "processedControl"));
+			var oNotProcessedChange = new Change(getLabelChangeContent("notProcessedChange", "notProcessedControl"));
+
+			// mock previously processed changes, by marking them as finished
+			oAppliedChange.markFinished();
+			oProcessedChange.markFinished();
+			oNotProcessedChange.markFinished();
+
+			this.oFlexController._oChangePersistence._mChangesInitial = {
+				aChanges: [oAppliedChange, oProcessedChange, oNotProcessedChange],
+				mChanges: {
+					appliedControl: [oAppliedChange],
+					processedControl: [oProcessedChange],
+					notProcessedControl: [oNotProcessedChange]
+				},
+				mDependencies: {
+					processedChange: {
+						changeObject: oProcessedChange,
+						dependencies: ["appliedChange"]
+					},
+					notProcessedChange: {
+						changeObject: oNotProcessedChange,
+						dependencies: ["appliedChange", "processedChange"]
+					}
+				}, mDependentChangesOnMe: {
+					appliedChange: ["processedChange", "notProcessedChange"]
+				}};
+
+			this.oFlexController._oChangePersistence._mChanges = {
+				aChanges: [oAppliedChange, oProcessedChange, oNotProcessedChange],
+				mChanges: {
+					appliedControl: [oAppliedChange],
+					processedControl: [oProcessedChange],
+					notProcessedControl: [oNotProcessedChange]
+				},
+				mDependencies: {},
+				mDependentChangesOnMe: {}
+			};
+
+			var fnGetChangesMap = function() {
+				return this.oFlexController._oChangePersistence._mChanges;
+			};
+
+			return this.oFlexController._applyChangesOnControl(fnGetChangesMap.bind(this), {}, oAppliedControl)
+				.then(function() {
+					// mock oAppliedChange applied on oAppliedControl successfully
+					sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData")
+						.callThrough()
+						.withArgs(oAppliedControl, oAppliedChange, sinon.match.any)
+						.returns(true);
+				})
+				.then(this.oFlexController._applyChangesOnControl.bind(this.oFlexController, fnGetChangesMap.bind(this), {}, oProcessedControl))
+				.then(this.oFlexController._applyChangesOnControl.bind(this.oFlexController, fnGetChangesMap.bind(this), {}, oNotProcessedControl))
+				.then(function() {
+					assert.ok(this.oCheckTargetAndApplyChangeStub.calledTwice, "then two changes were processed");
+					assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0].getId(), "appliedChange", "then first change was processed");
+					assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0].getId(), "processedChange", "then second change was processed");
+					oAppliedControl.destroy();
+					oProcessedControl.destroy();
+					oNotProcessedControl.destroy();
+				}.bind(this));
+		});
+
 
 		QUnit.test("_applyChangesOnControl dependency test 3", function (assert) {
 			var oControlForm1 = new Control("mainform");
