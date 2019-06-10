@@ -10,7 +10,9 @@ sap.ui.define([],
 	 * ToolbarSpacer renderer.
 	 * @namespace
 	 */
-	var ToolbarSpacerRenderer = {};
+	var ToolbarSpacerRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Flexible Spacer Class Name
@@ -19,20 +21,17 @@ sap.ui.define([],
 	ToolbarSpacerRenderer.flexClass = "sapMTBSpacerFlex";
 
 	ToolbarSpacerRenderer.render = function(rm, oControl) {
-		rm.write("<div");
-		rm.writeControlData(oControl);
-		rm.addClass("sapMTBSpacer");
+		rm.openStart("div", oControl);
+		rm.class("sapMTBSpacer");
 
 		var sWidth = oControl.getWidth();
 		if (sWidth) {
-			rm.addStyle("width", sWidth);
+			rm.style("width", sWidth);
 		} else {
-			rm.addClass(ToolbarSpacerRenderer.flexClass);
+			rm.class(ToolbarSpacerRenderer.flexClass);
 		}
 
-		rm.writeStyles();
-		rm.writeClasses();
-		rm.write("></div>");
+		rm.openEnd().close("div");
 	};
 
 	return ToolbarSpacerRenderer;

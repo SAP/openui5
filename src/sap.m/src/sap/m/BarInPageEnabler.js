@@ -37,6 +37,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/m/library', "sap/base/Log"],
 	 * @alias sap.m.IBarInPageEnabler
 	 */
 	var BarInPageEnabler = Object.extend("sap.m.BarInPageEnabler", /** @lends sap.m.BarInPageEnabler.prototype */ {
+
 		/**
 		 * Determines whether the bar is sensitive to the container context.
 		 *
@@ -223,26 +224,22 @@ sap.ui.define(['sap/ui/base/Object', 'sap/m/library', "sap/base/Log"],
 		render : function(oRM, oControl) {
 			var sTag = oControl.getHTMLTag().toLowerCase();
 
-			oRM.write("<" + sTag);
-			oRM.addClass(IBAR_CSS_CLASS);
+			oRM.openStart(sTag, oControl);
+			oRM.class(IBAR_CSS_CLASS);
 
 			if (this.shouldAddIBarContext(oControl)) {
-				oRM.addClass(IBAR_CSS_CLASS + "-CTX");
+				oRM.class(IBAR_CSS_CLASS + "-CTX");
 			}
-
-			oRM.writeControlData(oControl);
 
 			// call the hooks
 			BarInPageEnabler.renderTooltip(oRM, oControl);
 			this.decorateRootElement(oRM, oControl);
 
-			oRM.writeClasses();
-			oRM.writeStyles();
-			oRM.write(">");
+			oRM.openEnd();
 
 			this.renderBarContent(oRM, oControl);
 
-			oRM.write("</" + sTag + ">");
+			oRM.close(sTag);
 		}
 
 	});
@@ -256,7 +253,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/m/library', "sap/base/Log"],
 	BarInPageEnabler.renderTooltip = function(oRM, oControl) {
 		var sTooltip = oControl.getTooltip_AsString();
 		if (sTooltip) {
-			oRM.writeAttributeEscaped("title", sTooltip);
+			oRM.attr("title", sTooltip);
 		}
 	};
 

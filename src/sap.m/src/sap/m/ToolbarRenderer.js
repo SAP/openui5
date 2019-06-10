@@ -11,7 +11,9 @@ sap.ui.define(['./BarInPageEnabler'],
 	 * Toolbar renderer.
 	 * @namespace
 	 */
-	var ToolbarRenderer = {};
+	var ToolbarRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -30,34 +32,32 @@ sap.ui.define(['./BarInPageEnabler'],
 	ToolbarRenderer.decorateRootElement = function (oRm, oToolbar) {
 		var sAriaLabelledBy;
 
-		oRm.addClass("sapMTB");
+		oRm.class("sapMTB");
 
 		// ARIA
 		if (!oToolbar.getAriaLabelledBy().length) {
 			sAriaLabelledBy = oToolbar.getTitleId();
 		}
 
-		oRm.writeAccessibilityState(oToolbar, {
+		oRm.accessibilityState(oToolbar, {
 			role: oToolbar._getAccessibilityRole(),
 			labelledby: sAriaLabelledBy
 		});
 
-		oRm.addClass("sapMTBNewFlex");
+		oRm.class("sapMTBNewFlex");
 
 		if (oToolbar.getActive()) {
-			oRm.addClass("sapMTBActive");
-			oRm.writeAttribute("tabindex", "0");
+			oRm.class("sapMTBActive");
+			oRm.attr("tabindex", "0");
 		} else {
-			oRm.addClass("sapMTBInactive");
+			oRm.class("sapMTBInactive");
 		}
 
-		oRm.addClass("sapMTB" + oToolbar.getStyle());
-		oRm.addClass("sapMTB-" + oToolbar.getActiveDesign() + "-CTX");
+		oRm.class("sapMTB" + oToolbar.getStyle());
+		oRm.class("sapMTB-" + oToolbar.getActiveDesign() + "-CTX");
 
-		var sWidth = oToolbar.getWidth();
-		var sHeight = oToolbar.getHeight();
-		sWidth && oRm.addStyle("width", sWidth);
-		sHeight && oRm.addStyle("height", sHeight);
+		oRm.style("width", oToolbar.getWidth());
+		oRm.style("height", oToolbar.getHeight());
 	};
 
 	ToolbarRenderer.renderBarContent = function(rm, oToolbar) {
