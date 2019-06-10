@@ -1,0 +1,19 @@
+{
+  "1.68.0": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "38faf63713a594cf922008de45b129ef2d86b0d9",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingDialog: select all checkbox now alligned in fiori 3",
+        "references": []
+      },
+      {
+        "id": "0b92ae279dedd349c558d538f76a07c04e7c7733",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Quartz visualization of buttons with icon is fixed",
+        "references": []
+      }
+    ]
+  }
+}

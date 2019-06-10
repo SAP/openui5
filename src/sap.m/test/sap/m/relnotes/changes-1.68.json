@@ -1,0 +1,85 @@
+{
+  "1.68.0": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "04612092e73c67c4df1aba887c5e98aa16d37edb",
+        "type": "FIX",
+        "text": " SlideTile - prevent scrolling on pause using space",
+        "references": []
+      },
+      {
+        "id": "c63c324629795b3f631f56dfdfad88adb09343f3",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Items are now properly aligned in Quartz",
+        "references": []
+      },
+      {
+        "id": "50eb3e439845dddf293d496e3b97ff69edc79914",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Align List items with Items aggregation",
+        "references": []
+      },
+      {
+        "id": "ed469b0960c2788b43a858ae4bfd457e850379cb",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: ComboBox is opening on tablet",
+        "references": []
+      },
+      {
+        "id": "c862d366cf31b3d6a4252d2cea4701514b617095",
+        "type": "FIX",
+        "text": " sap.m.DateTimeField: binding used in UTC mode now works correctly",
+        "references": []
+      },
+      {
+        "id": "3b61bf6c16687740c8759aa3c4ee4d6bbdb67da9",
+        "type": "FIX",
+        "text": " sap.m.Input: Suggestions are now always shown below if possible",
+        "references": []
+      },
+      {
+        "id": "4ba612a28673da370cd30450ac72469635758adc",
+        "type": "FIX",
+        "text": " sap.m.MenuItem: [set/destroy]Tooltip now changes the tooltip of the item",
+        "references": []
+      },
+      {
+        "id": "f0b770535d4382efedb2208db9b9c14c1afcbf38",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Cloning anomalies fixed",
+        "references": []
+      },
+      {
+        "id": "192f0b1f139334922d7a9a4b68e7dcdb183cf84f",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Now icon is correctly rendered in the row",
+        "references": []
+      },
+      {
+        "id": "035d674e765d24265e7efc0b75adc5e91ff0052d",
+        "type": "FIX",
+        "text": " sap.m.Select: Misaligned focus outline on IE and Edge is fixed",
+        "references": []
+      },
+      {
+        "id": "02714859b42e51354d9f6d08e7b20b5dbb04b8f3",
+        "type": "FIX",
+        "text": " sap.m.Shell: sap.m.SplitApp has padding when inside the Shell",
+        "references": []
+      },
+      {
+        "id": "14e005e256502e289468a4528d35ec020da56480",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: focus is set after selecting a date from picker",
+        "references": []
+      },
+      {
+        "id": "0a7d1685d825b4099a80c9725e71e1485fdd3f47",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Consistent visualization for the sort items",
+        "references": []
+      }
+    ]
+  }
+}
