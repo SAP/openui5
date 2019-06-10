@@ -1318,6 +1318,16 @@ sap.ui.define([
 			}
 		};
 
+		var oManifest_Today_Parameter = {
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "Default manifest parameters",
+					"subTitle": "{{parameters.TODAY_ISO}}"
+				}
+			}
+		};
+
 		function testContentInitialization(oManifest, assert) {
 
 			// Arrange
@@ -2346,6 +2356,23 @@ sap.ui.define([
 
 			}.bind(this));
 			this.oCard.setManifest(oManifest_DefaultParameters);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		});
+
+		QUnit.test("Only TODAY_ISO or NOW_ISO are used", function (assert) {
+
+			// Arrange
+			var done = assert.async();
+			this.oCard.attachEventOnce("_ready", function () {
+
+				// Act
+                var sSubtitle = this.oCard.getCardHeader()._getSubtitle().getText();
+                assert.ok(sSubtitle !== "", "Card should have a subtitle with the now Date");
+                done();
+			}.bind(this));
+
+			this.oCard.setManifest(oManifest_Today_Parameter);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		});
