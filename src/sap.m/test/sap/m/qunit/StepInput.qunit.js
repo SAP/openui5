@@ -272,13 +272,6 @@ sap.ui.define([
 		assert.equal(oSpyDisableButtons.callCount, 1, "setMin always calls _disableButtons so the buttons state is reflected");
 		assert.strictEqual(oSpyDisableButtons.getCall(0).args[2], 9,
 			"_disableButtons is called and argument 2 is 'min'");
-
-		//prepare
-		oSpyVerifyValue = sinon.spy(this.stepInput, "_verifyValue");
-		//act
-		this.stepInput.setMin(8);
-		//assert
-		assert.equal(oSpyVerifyValue.callCount, 1, "setMin always calls _verifyValue so the valueState is addressed");
 	});
 
 	QUnit.test("setMax", function (assert) {
@@ -305,13 +298,6 @@ sap.ui.define([
 			"setMax always calls _disableButtons so the buttons state is reflected");
 		assert.strictEqual(oSpyDisableButtons.getCall(0).args[1], 20,
 			"_disableButtons is called and argument 1 is 'max'");
-
-		//prepare
-		oSpyVerifyValue = sinon.spy(this.stepInput, "_verifyValue");
-		//Act
-		this.stepInput.setMax(21);
-		// Assert
-		assert.equal(oSpyVerifyValue.callCount, 1, "setMax always calls _verifyValue so the valueState is addressed");
 	});
 
 	QUnit.test("setValueState", function (assert) {
@@ -413,14 +399,12 @@ sap.ui.define([
 	QUnit.test("StepMode.MultiplicationAndDivision: value state when value does not fold by step", function (assert) {
 		//Prepare
 		this.stepInput.setStepMode(StepMode.Multiple);
-		this.stepInput.setValue(2);
 		this.stepInput.setStep(5);
+		this.stepInput.setValue(2);
 		sap.ui.getCore().applyChanges();
 
 		//Act
-		this.stepInput.focus();
-		this.stepInput.$().blur();
-		this.clock.tick(1000);
+		this.stepInput._verifyValue();
 
 		//Assert
 		assert.equal(this.stepInput.getValueState(), "Error", "..should be set to 'Error'");
@@ -490,14 +474,10 @@ sap.ui.define([
 
 		//act
 		this.stepInput.setMin(3);
-		this.stepInput.setValue(2);
-
-		//act
-		assert.strictEqual(this.stepInput.getValue(), 2, "The value is 2");
-
 		oInput.focus();
-		// move focus to some other control
+		oInput.setValue(2);
 		oInput.$().blur();
+		this.stepInput._change();
 
 		//assert
 		assert.strictEqual(this.stepInput._getInput().getValueState(), "Error",
@@ -1490,8 +1470,7 @@ sap.ui.define([
 		assert.ok($Input.is("[role]"), "Internal Input has 'role' attribute");
 		assert.strictEqual($Input.attr("role"), "spinbutton", "Internal input's 'role' attribute has correct value");
 		assert.ok($Input.is("[aria-valuenow]"), "Internal Input has 'aria-valuenow' attribute");
-		/** ToDo: This should be corrected when we apply the latest IxD specification */
-		assert.strictEqual($Input.attr("aria-valuenow"), "10", "Internal input's 'aria-valuenow' attribute has correct value");
+		assert.strictEqual($Input.attr("aria-valuenow"), "15", "Internal input's 'aria-valuenow' attribute has correct value");
 		assert.ok($Input.is("[aria-valuemin]"), "Internal Input has 'aria-valuemin' attribute");
 		assert.strictEqual($Input.attr("aria-valuemin"), "0", "Internal input's 'aria-valuemin' attribute has correct value");
 		assert.ok($Input.is("[aria-valuemax]"), "Internal Input has 'aria-valuemax' attribute");
@@ -1503,7 +1482,6 @@ sap.ui.define([
 		assert.strictEqual($Input.attr("name"), 'useful name', "Internal input's 'name' attribute has correct value");
 		assert.ok($Input.is("[placeholder]"), "Internal Input has 'placeholder' attribute");
 		assert.strictEqual($Input.attr("placeholder"), 'useful placeholder', "Internal input's 'placeholder' attribute has correct value");
-		/** ToDo: This should be corrected when we apply the latest IxD specification */
 		assert.notOk($Input.is("[aria-invalid]"), "Internal Input has 'aria-invalid' attribute");
 		assert.ok($Input.is("[aria-readonly]"), "Internal Input has 'aria-readonly' attribute");
 		assert.strictEqual($Input.attr("aria-readonly"), 'true', "Internal input's 'aria-readonly' attribute has correct value");
@@ -1556,7 +1534,7 @@ sap.ui.define([
 		//act - simulate changing the 'value' outside the possible range with typing
 		oInput.$(sInputSuffix).val(11);
 		// loose focus
-		oInput.$(sInputSuffix).blur();
+		this.stepInput._change();
 		oCore.applyChanges();
 		//assert - expect 'aria-invalid=true' to be rendered in the DOM
 		assert.ok(oInput.$(sInputSuffix).is('[aria-invalid]'), "'aria-invalid' is rendered in the DOM");
@@ -1718,8 +1696,8 @@ sap.ui.define([
 		this.stepInput.setModel(this.oModel);
 		oCore.applyChanges();
 
-		assert.strictEqual(this.stepInput.getValue(), 5, "Value is set correctly");
-		assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), "5", "The input is set correctly");
+		assert.strictEqual(this.stepInput.getValue(), 4, "Value is set correctly");
+		assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), "4", "The input is set correctly");
 	});
 
 	QUnit.test("value 0 Min value set via binding", function (assert) {
@@ -1730,8 +1708,8 @@ sap.ui.define([
 		this.stepInput.setModel(this.oModel);
 		oCore.applyChanges();
 
-		assert.strictEqual(this.stepInput.getValue(), 5, "Value is set correctly");
-		assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), "5", "The input is set correctly");
+		assert.strictEqual(this.stepInput.getValue(), 0, "Value is set correctly");
+		assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), "0", "The input is set correctly");
 	});
 
 
@@ -2226,13 +2204,14 @@ sap.ui.define([
 		this.stepInput._showWrongValueVisualEffect();
 
 		//assert
-		assert.strictEqual(this.stepInput.getValueState(), "Error", "setValueState is set to Error");
+		assert.strictEqual(this.stepInput._getInput().getValueState(), "Error", "input's valueState is set to Error");
+		assert.strictEqual(this.stepInput.getValueState(), "None", "it's only a visual effect");
 
 		//act
 		this.clock.tick(1000);
 
 		//assert
-		assert.strictEqual(this.stepInput.getValueState(), "None", "setValueState is back to None");
+		assert.strictEqual(this.stepInput._getInput().getValueState(), "None", "input's valueState is back to None");
 	});
 
 	QUnit.test("_iRealPrecision is updated on each value change", function (assert) {
@@ -2346,27 +2325,6 @@ sap.ui.define([
 		// assert
 		assert.strictEqual(oStepInput._getInput().getTextAlign(), oStepInput.getTextAlign(), "textAlign of the Input should be the same as the textAlign of the StepInput");
 
-		oStepInput.destroy();
-	});
-
-	QUnit.test("setValue validates the StepInput", function (assert) {
-		// arrange
-		var oStepInput = new StepInput({
-			value: 0,
-			min: 5,
-			max: 15
-		});
-
-		// assert
-		assert.equal(oStepInput.getValueState(), ValueState.Error, "valueState should be Error");
-
-		// act
-		oStepInput.setValue(6);
-
-		// assert
-		assert.equal(oStepInput.getValueState(), ValueState.None, "valueState should be reset to None, since the value is back in the range");
-
-		// cleanup
 		oStepInput.destroy();
 	});
 });
