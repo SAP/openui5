@@ -406,6 +406,8 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 		},
 
 		handleEditButton: function () {
+			// The sap.m.Popover has to be closed before the sap.m.Dialog gets opened
+			this._oDetailsPopover.close();
 			this.sPath = this._oDetailsPopover.getBindingContext().getPath();
 			this._arrangeDialogFragment("Edit appointment");
 		},

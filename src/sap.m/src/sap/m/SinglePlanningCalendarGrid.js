@@ -989,6 +989,37 @@ sap.ui.define([
 			return this.setProperty("startDate", oStartDate);
 		};
 
+		// This function gets called from CalendarAppointment.prototype.applyFocusInfo function
+		// and therefore its only concern is the appointments focus in the SinglePlanningCalendarGrid
+		SinglePlanningCalendarGrid.prototype.applyFocusInfo = function (oFocusInfo) {
+			var aVisibleBlockers = this._getVisibleBlockers(),
+				oVisibleAppointments = this._getVisibleAppointments(),
+				aVisibleAppsKeys = Object.keys(oVisibleAppointments),
+				aVisibleAppsInDay,
+				i, j;
+
+			// Search amongst the visible blockers
+			for (i = 0; i < aVisibleBlockers.length; ++i) {
+				if (aVisibleBlockers[i].getId() === oFocusInfo.id) {
+					aVisibleBlockers[i].focus();
+					return this;
+				}
+			}
+
+			// Search amongst the visible appointments
+			for (i = 0; i < aVisibleAppsKeys.length; ++i) {
+				aVisibleAppsInDay = oVisibleAppointments[aVisibleAppsKeys[i]];
+				for (j = 0; j < aVisibleAppsInDay.length; ++j) {
+					if (aVisibleAppsInDay[j].getId() === oFocusInfo.id) {
+						aVisibleAppsInDay[j].focus();
+						return this;
+					}
+				}
+			}
+
+			return this;
+		};
+
 		/**
 		 * Holds the selected appointments. If no appointments are selected, an empty array is returned.
 		 *
