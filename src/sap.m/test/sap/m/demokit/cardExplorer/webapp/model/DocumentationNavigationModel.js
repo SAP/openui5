@@ -119,6 +119,12 @@ sap.ui.define([
 						target: 'learnDetail',
 						key: 'featureDynamicParameters',
 						topicTitle: 'Features'
+					},
+					{
+						title: 'Dynamic Counter',
+						target: 'learnDetail',
+						key: 'featureDynamicCounter',
+						topicTitle: 'Features'
 					}
 				]
 			}

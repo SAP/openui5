@@ -208,7 +208,8 @@ sap.ui.define([
 					minRows: 1,
 					columns: 4
 				},
-				oCard = this.byId("cardSample");
+				oCard = this.byId("cardSample"),
+				bEditable = true;
 
 			this.oModel.setProperty("/sample", oSample);
 
@@ -231,13 +232,20 @@ sap.ui.define([
 				return;
 			}
 
+			sManifestUrl = jQuery.sap.getModulePath("sap.ui.demo.cardExplorer") + "/" + sManifestUrl;
+
+			if (oSample.disableEditor) {
+				oCard.setManifest(sManifestUrl);
+				bEditable = false;
+			}
+
+			this.getModel("settings").setProperty("/editable", bEditable);
+
 			this._loadManifest(sManifestUrl);
 		},
 
 		_loadManifest: function (sManifestUrl) {
-			var sUrl = jQuery.sap.getModulePath("sap.ui.demo.cardExplorer") + "/" + sManifestUrl;
-
-			jQuery.ajax(sUrl, {
+			jQuery.ajax(sManifestUrl, {
 				async: true,
 				dataType: "text",
 				success: function (sValue) {

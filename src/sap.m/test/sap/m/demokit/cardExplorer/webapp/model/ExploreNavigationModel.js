@@ -161,6 +161,20 @@ sap.ui.define([
 						target: 'exploreSamples',
 						title: 'Parameters',
 						manifestUrl: '/samples/parameters.json'
+					},
+					{
+						key: 'translation',
+						target: 'exploreSamples',
+						title: 'Translation',
+						manifestUrl: '/samples/translation/manifest.json',
+						disableEditor: true
+					},
+					{
+						key: 'dynamicCounter',
+						target: 'exploreSamples',
+						title: 'Dynamic Counter',
+						manifestUrl: '/samples/dynamicCounter/manifest.json',
+						disableEditor: true
 					}
 				]
 			}
