@@ -4,7 +4,8 @@
 		height="100%"
 		xmlns="sap.m"
 		xmlns:tnt="sap.tnt"
-		xmlns:mvc="sap.ui.core.mvc">
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:html="http://www.w3.org/1999/xhtml">
 	<tnt:ToolPage id="toolPage">
 		<tnt:header>
 			<tnt:ToolHeader>
@@ -16,8 +17,14 @@
 						<OverflowToolbarLayoutData priority="NeverOverflow" />
 					</layoutData>
 				</Button>
-				<Image width="2rem" height="2rem" src="images/theme.png" />
-				<Title text="UI Integration Cards" />
+				<Image width="2rem"
+						height="2rem"
+						src="../../../../../../../resources/sap/ui/documentation/sdk/images/logo_ui5.png"
+						densityAware="false"
+						press="navToHome"/>
+				<html:a href="../index.html" class="appTitle">
+					<Title text="UI Integration Cards" href="../index.html"/>
+				</html:a>
 				<IconTabHeader backgroundDesign="Transparent" id="iconTabHeader" select="onTabSelect">
 					<items>
 						<IconTabFilter key="learnDetail" text="Learn" />

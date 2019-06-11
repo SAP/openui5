@@ -1,4 +1,5 @@
 {
+	"_version": "1.14.0",
 	"sap.app": {
 		"type": "card"
 	},

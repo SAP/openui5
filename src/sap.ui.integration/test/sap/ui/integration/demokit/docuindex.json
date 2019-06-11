@@ -15,69 +15,21 @@
 				"since": "1.62",
 				"formFactors": "-",
 				"samples": [
-					"sap.ui.integration.sample.Playground",
-					"sap.ui.integration.sample.ListCard",
-					"sap.ui.integration.sample.AnalyticalCard",
-					"sap.ui.integration.sample.ObjectCard",
-					"sap.ui.integration.sample.TimelineCard",
-					"sap.ui.integration.sample.TableCard",
-					"sap.ui.integration.sample.Actions",
-					"sap.ui.integration.sample.ComponentCard",
-					"sap.ui.integration.sample.CardsLayout",
-					"sap.ui.integration.sample.CardParameters"
+					"sap.ui.integration.sample.CardExplorer",
+					"sap.ui.integration.sample.CardsLayout"
 				]
 			}
 		],
 		"samples": [
 			{
-				"id": "sap.ui.integration.sample.ListCard",
-				"name": "List Card",
-				"description": "The list card is used to display multiple list items of various types."
-			},
-			{
-				"id": "sap.ui.integration.sample.AnalyticalCard",
-				"name": "Analytical Card",
-				"description": "The analytical card is used for data visualization."
-			},
-			{
-				"id": "sap.ui.integration.sample.ObjectCard",
-				"name": "Object Card",
-				"description": "The object card is used to display the basic details for an object, for example, a person or a sales order."
-			},
-			{
-				"id": "sap.ui.integration.sample.TimelineCard",
-				"name": "Timeline Card",
-				"description": "The timeline card is used to show time-related content."
-			},
-			{
-				"id": "sap.ui.integration.sample.TableCard",
-				"name": "Table Card",
-				"description": "The table card is used to display multiple items in table view."
-			},
-			{
-				"id": "sap.ui.integration.sample.Actions",
-				"name": "Actions",
-				"description": "Actions are used to add functionality to the cards."
-			},
-			{
-				"id": "sap.ui.integration.sample.Playground",
-				"name": "Play and Explore Cards and Schema",
-				"description": "WYSIWYG editing of Card manifest"
-			},
-			{
-				"id": "sap.ui.integration.sample.ComponentCard",
-				"name": "Component Card",
-				"description": "The component card is used to display different types of content."
+				"id": "sap.ui.integration.sample.CardExplorer",
+				"name": "Card Explorer",
+				"description": "Card Explorer is the application where you can learn more about integration cards."
 			},
 			{
 				"id": "sap.ui.integration.sample.CardsLayout",
-				"name": "Cards in GridContainer",
-				"description": "Cards can be arranged using sap.f.GridContainer."
-			},
-			{
-				"id": "sap.ui.integration.sample.CardParameters",
-				"name": "Card Parameters",
-				"description": "This example demonstrates how to use standard parameters, or define and use additional card parameters."
+				"name": "Home page with cards",
+				"description": "Different types of cards types arranged in a sap.f.GridContainer."
 			}
 		]
 	}

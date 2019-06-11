@@ -21,3 +21,14 @@
 .sapUiLoSplitterV .orientationBtn .sapUiIcon {
 	transform: rotate(90deg);
 }
+
+a.appTitle {
+	display: flex;
+	align-items: center;
+	margin: 0 0.25rem;
+	text-decoration: none;
+}
+
+a.appTitle .sapMTitle {
+	cursor: pointer;
+}

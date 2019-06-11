@@ -1,0 +1,36 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"data": {
+				"json": {
+					"title": "Header with data comming from data as JSON",
+					"subTitle": "This card is using static JSON data",
+					"iconSrc": "sap-icon://desktop-mobile"
+				}
+			},
+			"title": "{title}",
+			"subTitle": "{subTitle}",
+			"icon": {
+				"src": "{iconSrc}"
+			}
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "./samples/data/items.json"
+				},
+				"path": "/staticData"
+			},
+			"item": {
+				"title": "{Name}",
+				"description": "{Description}",
+				"highlight": "{Highlight}"
+			}
+		}
+	}
+}

@@ -1,73 +1,32 @@
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/core/mvc/Controller',
-	'sap/ui/model/json/JSONModel'
-], function (jQuery, Controller, JSONModel) {
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/format/DateFormat",
+	"sap/m/MessageToast",
+	"sap/ui/integration/library"
+], function (Controller, JSONModel, DateFormat, MessageToast, integrationLibrary) {
 	"use strict";
 
 	var CardsLayoutController = Controller.extend("sap.ui.integration.sample.CardsLayout.CardsLayout", {
 		onInit: function () {
-			var cardManifests = new JSONModel();
+			var cardManifests = new JSONModel(),
+				componentCardUrl = sap.ui.require.toUrl("sap/ui/integration/sample/CardsLayout/componentCard/manifest.json"),
+				homeIconUrl = sap.ui.require.toUrl("sap/ui/integration/sample/CardsLayout/images/CompanyLogo.png"),
+				date = DateFormat.getDateInstance({style: "long"}).format(new Date());
 
-			cardManifests.loadData(sap.ui.require.toUrl("sap/ui/integration/sample/AnalyticalCard/model/cardManifests.json"));
+			cardManifests.loadData(sap.ui.require.toUrl("sap/ui/integration/sample/CardsLayout/model/cardManifests.json"));
+
 			this.getView().setModel(cardManifests, "manifests");
-
-			var oModel = new JSONModel({
-				"cities": [
-					{
-						"text": "Berlin",
-						"key": "BR"
-					},
-					{
-						"text": "London",
-						"key": "LN"
-					},
-					{
-						"text": "Madrid",
-						"key": "MD"
-					},
-					{
-						"text": "Prague",
-						"key": "PR"
-					},
-					{
-						"text": "Paris",
-						"key": "PS"
-					},
-					{
-						"text": "Sofia",
-						"key": "SF"
-					},
-					{
-						"text": "Vienna",
-						"key": "VN"
-					}
-				],
-				"productItems": [
-					{
-						"title": "Notebook HT",
-						"subtitle": "ID23452256-D44",
-						"revenue": "27.25K EUR",
-						"status": "success",
-						"statusSchema": 8
-					},
-					{
-						"title": "Notebook XT",
-						"subtitle": "ID27852256-D47",
-						"revenue": "7.35K EUR",
-						"status": "exceeded",
-						"statusSchema": 3
-					},
-					{
-						"title": "Notebook ST",
-						"subtitle": "ID123555587-I05",
-						"revenue": "22.89K EUR",
-						"status": "warning",
-						"statusSchema": 1
-					}
-				]
-			});
-			this.getView().setModel(oModel);
+			this.getView().setModel(new JSONModel({
+				componentCardUrl: componentCardUrl,
+				homeIconUrl: homeIconUrl,
+				date: date
+			}));
+		},
+		onAction: function (oEvent) {
+			if (oEvent.getParameter("type") === integrationLibrary.CardActionType.Navigation) {
+				MessageToast.show("URL: " + oEvent.getParameter("manifestParameters").url);
+			}
 		}
 	});
 
