@@ -1606,8 +1606,10 @@ sap.ui.define([
 	/**
 	 * Invalidate the model data.
 	 *
-	 * Mark all entries in the model cache as invalid. Next time a context binding or list binding is done,
-	 * the entry will be detected as invalid and will be refreshed from the server.
+	 * Mark all entries in the model cache as invalid. Next time a context or list is bound (binding),
+	 * the respective entries will be detected as invalid and will be refreshed from the server.
+	 *
+	 * To refresh all model data use @link sap.ui.model.odata.v2.ODatamModel#refresh
 	 *
 	 * @param {function} [fnCheckEntry] A function which can be used to restrict invalidation to specific entries,
 	 *     gets the entity key and object as parameters and should return true for entities to invalidate.
@@ -1673,7 +1675,10 @@ sap.ui.define([
 	/**
 	 * Refresh the model.
 	 *
+	 * This will reload all data stored in the model.
 	 * This will check all bindings for updated data and update the controls if data has been changed.
+	 *
+	 * Note: In contrast to an individual Binding refresh, the model refresh ignores Binding-specific parameters/queries.
 	 *
 	 * @param {boolean} [bForceUpdate=false] Force update of controls
 	 * @param {boolean} [bRemoveData=false] If set to <code>true</code> then the model data will be removed/cleared.
