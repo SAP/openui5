@@ -267,22 +267,6 @@ sap.ui.define([
 			return this;
 		};
 
-		MessagePage.prototype.setTextDirection = function(sTextDirection) {
-			this.setProperty("textDirection", sTextDirection, true); // no re-rendering
-
-			var oDomRef = this.getDomRef();
-
-			if (oDomRef) {
-				if (sTextDirection === TextDirection.Inherit) {
-					oDomRef.removeAttribute("dir");
-				} else {
-					oDomRef.dir = sTextDirection.toLowerCase();
-				}
-			}
-
-			return this;
-		};
-
 		MessagePage.prototype.setIcon = function(sIcon) {
 			var sValue = this.getIcon() || "";
 				sIcon = sIcon || "";

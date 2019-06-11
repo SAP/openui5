@@ -233,18 +233,21 @@ sap.ui.define([
 	QUnit.test("Set textDirection", function(assert) {
 		// Act
 		this.oMessagePage.setTextDirection(TextDirection.RTL);
+		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oMessagePage.getDomRef().dir, "rtl", "Text direction is rtl");
 
 		// Act
 		this.oMessagePage.setTextDirection(TextDirection.LTR);
+		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oMessagePage.getDomRef().dir, "ltr", "Text direction is ltr");
 
 		// Act
 		this.oMessagePage.setTextDirection(TextDirection.Inherit);
+		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oMessagePage.getDomRef().dir, "", "Text direction is not set explicitly");
