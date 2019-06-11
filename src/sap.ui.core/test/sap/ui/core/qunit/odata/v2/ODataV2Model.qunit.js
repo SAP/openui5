@@ -483,6 +483,26 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("invalid expand/select", function(assert) {
+		var done = assert.async();
+		var oModel = initModel(sURI);
+		var oSpy = sinon.spy(oModel, "read");
+		sap.ui.getCore().setModel(oModel);
+
+		var oFilter = new sap.ui.model.Filter("ProductName", "EQ", "Chai");
+		var oBinding = oModel.bindList("/Products", null, null, [oFilter], {expand : undefined, select: undefined }).initialize();
+		var handler1 = function() { // delay the following test
+			oBinding.detachChange(handler1);
+			assert.deepEqual(oSpy.args[1][1].urlParameters, ["$skip=0&$top=100", "$filter=ProductName%20eq%20%27Chai%27"]);
+			done();          // resume normal testing
+		};
+		oBinding.attachRefresh(function() {oBinding.getContexts();});
+		oBinding.attachChange(handler1);
+		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
+		oBinding.getContexts();
+	});
+
+
 	QUnit.test("test expand", function(assert) {
 		var done = assert.async();
 		var oModel = initModel(sURI);
