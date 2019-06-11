@@ -1327,6 +1327,25 @@ html:not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_belize_hcb) .sapUiJSD a
 	position:relative;
 }
 
+.sapUiDemokit .sapUiHomePage .headlineCell {
+	text-align: center;
+	padding-top: 2rem;
+	padding-bottom: 2rem;
+    border-bottom: none;
+    border-top: none;
+}
+
+.sapUiMedia-Std-Tablet .sapUiDemokit .sapUiHomePage .headlineCell,
+.sapUiMedia-Std-Phone .sapUiDemokit .sapUiHomePage .headlineCell {
+	padding-top: 1.625rem;
+	padding-bottom: 1.625rem;
+}
+
+.sapUiMedia-Std-Tablet .sapUiDemokit .sapUiHomePage .headlineCell .sapMTitleStyleH1,
+.sapUiMedia-Std-Phone .sapUiDemokit .sapUiHomePage .headlineCell .sapMTitleStyleH1 {
+	font-size: 1.25rem;
+}
+
 /*MEDIUM*/
 .sapUiDemokit .welcomeImageTextLayout {
 	position:absolute;
@@ -1560,12 +1579,29 @@ html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiDemoA
 }
 
 /* override default styles for panel headers */
-.sapUiDemoApps .headlineCell {
+.sapUiDemokit .sapUiDemoApps .headlineCell {
 	padding-top: 2rem;
 	padding-bottom: 2rem;
     padding-left: 2.65rem;
     border-bottom: none;
     border-top: none;
+}
+
+.sapUiMedia-Std-Tablet .sapUiDemokit .sapUiDemoApps .headlineCell {
+	padding-top: 1.625rem;
+	padding-bottom: 1.625rem;
+	padding-left: 1.625rem;
+}
+
+.sapUiMedia-Std-Phone .sapUiDemokit .sapUiDemoApps .headlineCell {
+	padding-top: 1.625rem;
+	padding-bottom: 1.625rem;
+	padding-left: 0.625rem;
+}
+
+.sapUiMedia-Std-Tablet .sapUiDemokit .sapUiDemoApps .headlineCell .sapMTitleStyleH1,
+.sapUiMedia-Std-Phone .sapUiDemokit .sapUiDemoApps .headlineCell .sapMTitleStyleH1 {
+	font-size: 1.25rem;
 }
 
 /* fix to remove the 5px space below title images */
