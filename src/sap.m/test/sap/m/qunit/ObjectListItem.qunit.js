@@ -476,26 +476,43 @@ sap.ui.define([
 	});
 
 	/******************************************************************/
-	var imageOLI1 = new ObjectListItem("imageOLI1", {
-		type: "Active",
-		icon : IMAGE_PATH + "action.png",
-		activeIcon: IMAGE_PATH + "action_pressed.png",
-		iconDensityAware: false,
-		intro : "On behalf of John Smith",
-		title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
-		number : "5.624",
-		numberUnit : "EUR"
-	});
-	list.addItem(imageOLI1);
-
 	QUnit.module("Active state");
 
 	QUnit.test("TestActiveIcon", function(assert) {
+		// Setup
+		var imageSrc,
+			imageOLI1 = new ObjectListItem("imageOLI1", {
+				type: "Active",
+				icon : IMAGE_PATH + "action.png",
+				activeIcon: IMAGE_PATH + "action_pressed.png",
+				iconDensityAware: false,
+				intro : "On behalf of John Smith",
+				title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
+				number : "5.624",
+				numberUnit : "EUR",
+				active: false
+			});
+
+		list.addItem(imageOLI1);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		imageSrc = imageOLI1.$('img').attr('src');
+		assert.strictEqual(imageSrc, imageOLI1.getIcon(), "The icon should be inactive");
+
+		// Act
 		imageOLI1.setActive(true);
-		var imageSrc = imageOLI1.$('img').attr('src');
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		imageSrc = imageOLI1.$('img').attr('src');
 		assert.strictEqual(imageSrc, imageOLI1.getActiveIcon(), "The icon should be active");
 
+		// Act
 		imageOLI1.setActive(false);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
 		imageSrc = imageOLI1.$('img').attr('src');
 		assert.strictEqual(imageSrc, imageOLI1.getIcon(), "The icon should be inactive");
 	});
