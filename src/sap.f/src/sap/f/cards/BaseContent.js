@@ -237,15 +237,14 @@ sap.ui.define([
 	 */
 	function _bind(sAggregation, oControl, oBindingInfo) {
 		var oBindingContext = this.getBindingContext(),
-			oModel = this.getModel("parameters"),
 			oAggregation = oControl.getAggregation(sAggregation);
 
 		if (oBindingContext) {
 			oBindingInfo.path = oBindingContext.getPath();
 			oControl.bindAggregation(sAggregation, oBindingInfo);
 
-			if (oModel && oAggregation) {
-				oModel.setProperty("/visibleItems", oAggregation.length);
+			if (this.getModel("parameters") && oAggregation) {
+				this.getModel("parameters").setProperty("/visibleItems", oAggregation.length);
 			}
 
 			if (!this._mObservers[sAggregation]) {
@@ -253,11 +252,11 @@ sap.ui.define([
 					if (oChanges.name === sAggregation && (oChanges.mutation === "insert" || oChanges.mutation === "remove")) {
 						var oAggregation = oControl.getAggregation(sAggregation);
 						var iLength = oAggregation ? oAggregation.length : 0;
-						if (oModel) {
-							oModel.setProperty("/visibleItems", iLength);
+						if (this.getModel("parameters")) {
+							this.getModel("parameters").setProperty("/visibleItems", iLength);
 						}
 					}
-				});
+				}.bind(this));
 				this._mObservers[sAggregation].observe(oControl, { aggregations: [sAggregation] });
 			}
 		}
