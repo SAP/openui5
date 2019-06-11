@@ -1885,5 +1885,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.30": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "d07d3b234433931887af289a4cb7ef0a6733a7d9",
+        "type": "FIX",
+        "text": " sap/ui/thirdparty/jQuery: Prevent Object.prototype pollution",
+        "references": []
+      }
+    ]
   }
 }

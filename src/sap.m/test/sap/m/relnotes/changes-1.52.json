@@ -4500,5 +4500,64 @@
         "references": []
       }
     ]
+  },
+  "1.52.30": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "e15ad002dd6bba9f598ed17e5746888ccf510f33",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Input field is focused after closing the picker",
+        "references": []
+      },
+      {
+        "id": "c1ccedeaf4e94d198804e0ebbcf8e8f7ea1d5fdf",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: selected range includes all hours from the second date",
+        "references": []
+      },
+      {
+        "id": "a156c60f2fd87ff556e5c4e299719e12c5162e9b",
+        "type": "FIX",
+        "text": " sap.m.Input: Selected key and value are now synchronized",
+        "references": []
+      },
+      {
+        "id": "86914ca877628b500a17232feadccaee0c53213d",
+        "type": "FIX",
+        "text": " sap.m.MessagePage: Icon location is now correct",
+        "references": []
+      },
+      {
+        "id": "5061a5b2e78fe32bdb791697860a30f19a2d63f0",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Fire search from suggestion only once on phone",
+        "references": []
+      },
+      {
+        "id": "cd36d209771f9d2f90074dc9776a2524bac416ac",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Improve handling of focus on iOS",
+        "references": []
+      },
+      {
+        "id": "528423d2df0aab2c221f18be24f7788110c1c25a",
+        "type": "FIX",
+        "text": " sap.m.Select: Select is focused before opening the dialog on mobile",
+        "references": []
+      },
+      {
+        "id": "c2ecf47fd1370fcebc28594781e73f1e38f233f8",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: Show detail page on phone",
+        "references": []
+      },
+      {
+        "id": "e66fe4c81839a790a7c5c49c1aef9b30b114d63d",
+        "type": "FIX",
+        "text": " sap.m.TimePickerSliders: sliders are now alligned when opened",
+        "references": []
+      }
+    ]
   }
 }
