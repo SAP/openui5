@@ -264,21 +264,22 @@ sap.ui.define([
 
 	/**
 	 * Retrieve the change handler for a certain change type and control
-	 * @param  {string} sChangeType The Change type of a <code>sap.ui.fl.Change</code> change
-	 * @param  {string} sControlType The name of the ui5 control type i.e. sap.m.Button
-	 * @param  {sap.ui.core.Control} oControl The Control instance for which the change handler will be retrieved
-	 * @param  {sap.ui.core.util.reflection.BaseTreeModifier} oModifier Control tree modifier
-	 * @param  {string} sLayer The layer to be considered when getting the change handlers
-	 * @return {object} Returns the change handler object
+	 * @param  {string} sChangeType - Change type of a <code>sap.ui.fl.Change</code> change
+	 * @param  {string} sControlType - Name of the ui5 control type i.e. <code>sap.m.Button</code>
+	 * @param  {sap.ui.core.Control} oControl - Control instance for which the change handler will be retrieved
+	 * @param  {sap.ui.core.util.reflection.BaseTreeModifier} oModifier - Control tree modifier
+	 * @param  {string} sLayer - Layer to be considered when getting the change handlers
+	 * @param  {boolean} bAsync - temporary solution for async restructuring. Get rid with the following change: 4161607
+	 * @return {promise.<object>|object} Change handler object wrapped in promise if bAsync is <code>true</code>
 	 */
-	ChangeRegistry.prototype.getChangeHandler = function (sChangeType, sControlType, oControl, oModifier, sLayer) {
+	ChangeRegistry.prototype.getChangeHandler = function (sChangeType, sControlType, oControl, oModifier, sLayer, bAsync) {
 		var oSpecificChangeRegistryItem, oChangeRegistryItem;
 
 		oSpecificChangeRegistryItem = this._getInstanceSpecificChangeRegistryItem(sChangeType, oControl, oModifier);
 		if (oSpecificChangeRegistryItem && oSpecificChangeRegistryItem.getChangeTypeMetadata) {
 			var oSpecificChangeHandler = oSpecificChangeRegistryItem.getChangeTypeMetadata().getChangeHandler();
 			if (oSpecificChangeHandler) {
-				return oSpecificChangeHandler;
+				return bAsync ? Promise.resolve(oSpecificChangeHandler) : oSpecificChangeHandler;
 			}
 		}
 
@@ -286,10 +287,10 @@ sap.ui.define([
 		if (oChangeRegistryItem && oChangeRegistryItem.getChangeTypeMetadata) {
 			var oOriginalChangeHandler = oChangeRegistryItem.getChangeTypeMetadata().getChangeHandler();
 			if (oOriginalChangeHandler) {
-				return oOriginalChangeHandler;
+				return bAsync ? Promise.resolve(oOriginalChangeHandler) : oOriginalChangeHandler;
 			}
 		}
-		return undefined;
+		return bAsync ? Promise.resolve(undefined) : undefined;
 	};
 
 	/**
