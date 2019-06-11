@@ -164,8 +164,10 @@ function (
 				resolve();
 			});
 
-			this.oCutPaste.cut(oSourceOverlay);
-			this.oCutPaste.paste(oTargetOverlay);
+			this.oCutPaste.cut(oSourceOverlay)
+				.then(function() {
+					this.oCutPaste.paste(oTargetOverlay);
+				}.bind(this));
 		}.bind(this));
 	}
 

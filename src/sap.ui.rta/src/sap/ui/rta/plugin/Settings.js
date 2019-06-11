@@ -290,6 +290,7 @@ sap.ui.define([
 			}, this);
 			return aMenuItems;
 		}
+		return [];
 	};
 
 	Settings.prototype._getActionIcon = function(oSettingsAction) {

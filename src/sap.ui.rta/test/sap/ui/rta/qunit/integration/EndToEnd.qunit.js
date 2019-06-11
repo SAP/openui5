@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/fl/FakeLrepSessionStorage",
 	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/Util",
 	"qunit/RtaQunitUtils",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/qunit/QUnitUtils",
@@ -18,6 +19,7 @@ sap.ui.define([
 	FakeLrepConnectorSessionStorage,
 	FakeLrepSessionStorage,
 	OverlayRegistry,
+	DtUtil,
 	RtaQunitUtils,
 	ChangePersistenceFactory,
 	QUnitUtils,
@@ -43,7 +45,7 @@ sap.ui.define([
 			this.oVictim = sap.ui.getCore().byId("Comp1---idMain1--Victim");
 			this.oCompanyCodeField = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
 			this.oBoundButton35Field = sap.ui.getCore().byId("Comp1---idMain1--Dates.BoundButton35");
-			this.oGroup = sap.ui.getCore().byId("Comp1---idMain1--Dates");
+			this.oDatesGroup = sap.ui.getCore().byId("Comp1---idMain1--Dates");
 			this.oGeneralGroup = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument");
 			this.oForm = sap.ui.getCore().byId("Comp1---idMain1--MainForm");
 
@@ -56,8 +58,7 @@ sap.ui.define([
 					this.oRta.attachStart(function () {
 						this.oVictimOverlay = OverlayRegistry.getOverlay(this.oVictim);
 						this.oCompanyCodeFieldOverlay = OverlayRegistry.getOverlay(this.oCompanyCodeField);
-						this.oGroupOverlay = OverlayRegistry.getOverlay(this.oGroup);
-						this.ooGeneralGroupOverlay = OverlayRegistry.getOverlay(this.oGeneralGroup);
+						this.oDatesGroupOverlay = OverlayRegistry.getOverlay(this.oDatesGroup);
 						this.oBoundButton35FieldOverlay = OverlayRegistry.getOverlay(this.oBoundButton35Field);
 						fnResolve();
 					}.bind(this));
@@ -274,29 +275,34 @@ sap.ui.define([
 					oFirstExecutedCommand.getName() === "move") {
 					fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
 						var iIndex = 0;
-						assert.equal(this.oGroup.getGroupElements()[iIndex].getId(), this.oCompanyCodeField.getId(), " then the field is moved to first place");
+						assert.equal(this.oDatesGroup.getGroupElements()[iIndex].getId(), this.oCompanyCodeField.getId(), " then the field is moved to first place");
 						assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
 						this.oRta.stop();
 					}.bind(this));
 				}
 			}.bind(this));
 
+			var oCutPastePlugin = this.oRta.getPlugins().cutPaste;
+
 			QUnitUtils.triggerKeydown(this.oCompanyCodeFieldOverlay.getDomRef(), KeyCodes.X, false, false, true);
-			QUnitUtils.triggerKeydown(this.oGroupOverlay.getDomRef(), KeyCodes.V, false, false, true);
+			// need to wait until the valid targetzones get marked by the cut action
+			oCutPastePlugin.getElementMover().attachEventOnce("validTargetZonesActivated", function() {
+				QUnitUtils.triggerKeydown(this.oDatesGroupOverlay.getDomRef(), KeyCodes.V, false, false, true);
+			}.bind(this), 0);
 		});
 
 		QUnit.test("when renaming a group (via double click) and setting a new title...", function(assert) {
 			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(this.oGroup);
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(this.oDatesGroup);
 			assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then there is no dirty change in the FL ChangePersistence");
 
-			this.oGroupOverlay.focus();
-			var $groupOverlay = this.oGroupOverlay.$();
+			this.oDatesGroupOverlay.focus();
+			var $groupOverlay = this.oDatesGroupOverlay.$();
 
 			var done = assert.async();
 
 			sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.startEdit', function (sChannel, sEvent, mParams) {
-				if (mParams.overlay === this.oGroupOverlay) {
+				if (mParams.overlay === this.oDatesGroupOverlay) {
 					var $editableField = $groupOverlay.find(".sapUiRtaEditableField");
 
 					assert.strictEqual($editableField.length, 1, " then the rename input field is rendered");
@@ -310,7 +316,7 @@ sap.ui.define([
 								if (oFirstExecutedCommand &&
 									oFirstExecutedCommand.getName() === "rename") {
 									fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
-										assert.strictEqual(this.oGroup.getLabel(), "Test", "then title of the group is Test");
+										assert.strictEqual(this.oDatesGroup.getLabel(), "Test", "then title of the group is Test");
 										assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
 										fnResolve();
 									}.bind(this));
@@ -319,8 +325,8 @@ sap.ui.define([
 						}.bind(this)),
 						new Promise(function (fnResolve) {
 							sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.stopEdit', function (sChannel, sEvent, mParams) {
-								if (mParams.overlay === this.oGroupOverlay) {
-									assert.strictEqual(this.oGroupOverlay.getDomRef(), document.activeElement, " and focus is on group overlay");
+								if (mParams.overlay === this.oDatesGroupOverlay) {
+									assert.strictEqual(this.oDatesGroupOverlay.getDomRef(), document.activeElement, " and focus is on group overlay");
 									$editableField = $groupOverlay.find(".sapUiRtaEditableField");
 									assert.strictEqual($editableField.length, 0, " and the editable field is removed from dom");
 									fnResolve();
@@ -385,7 +391,6 @@ sap.ui.define([
 										assert.equal(oChangePersistence.getDirtyChanges().length, 3, "then there are 3 dirty change in the FL ChangePersistence");
 									})
 									.then(this.oRta.stop.bind(this.oRta))
-
 									.then(done);
 								}
 							}.bind(this));
@@ -406,7 +411,7 @@ sap.ui.define([
 			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 			oContextMenuControl.attachEventOnce("Opened", function() {
 				var oContextMenuButton = oContextMenuControl.getButtons()[2];
-				assert.equal(oContextMenuButton.getText(), "Remove", "the the add field action button is available in the menu");
+				assert.equal(oContextMenuButton.getText(), "Remove", "the 'remove' action button is available in the menu");
 				oContextMenuButton.firePress();
 				sap.ui.getCore().applyChanges();
 			});

@@ -213,8 +213,11 @@ sap.ui.define([
 
 	QUnit.test("when DT is loaded and trying to move the section into the headerContent...", function(assert) {
 		this.oElementMover.setMovedOverlay(this.oMovedSectionOverlay);
-		assert.notOk(this.oElementMover.checkTargetZone(this.oHeaderContentAggregationOverlay),
-			"then the headerContent aggregation is not a possible target zone");
+		return this.oElementMover.checkTargetZone(this.oHeaderContentAggregationOverlay)
+			.then(function(bTargetZone) {
+				assert.notOk(bTargetZone,
+					"then the headerContent aggregation is not a possible target zone");
+			});
 	});
 
 

@@ -56,7 +56,7 @@ function(
 			});
 			sandbox.stub(this.CutPastePlugin, "_isPasteEditable").callsFake(function (oOverlay) {
 				assert.equal(oOverlay, "dummyOverlay", "the 'available' function calls _isEditable when isAvailable is false, with the correct overlay");
-				return false;
+				return Promise.resolve(false);
 			});
 
 			//Paste
@@ -67,21 +67,24 @@ function(
 				assert.equal(oOverlay, "dummyOverlay", "the 'enabled' function calls isElementPasteable with the correct overlay");
 			});
 
-			var aMenuItems = this.CutPastePlugin.getMenuItems(["dummyOverlay"]);
-			assert.equal(aMenuItems[0].id, "CTX_CUT", "'getMenuItems' returns a context menu item for 'cut'");
-			aMenuItems[0].handler(["dummyOverlay"]);
-			assert.equal(aMenuItems[0].enabled(["dummyOverlay"]), true, "the 'enabled' function returns true for single selection");
-
-			assert.equal(aMenuItems[1].id, "CTX_PASTE", "'getMenuItems' returns a context menu item for 'paste'");
-			aMenuItems[1].handler(["dummyOverlay"]);
-			aMenuItems[1].enabled(["dummyOverlay"]);
-
-			bIsAvailable = false;
-			assert.equal(
-				this.CutPastePlugin.getMenuItems(["dummyOverlay"]).length,
-				0,
-				"and if plugin is not available for the overlay, no menu items are returned"
-			);
+			return Promise.resolve(this.CutPastePlugin.getMenuItems(["dummyOverlay"]))
+				.then(function(aMenuItems) {
+					assert.equal(aMenuItems[0].id, "CTX_CUT", "'getMenuItems' returns a context menu item for 'cut'");
+					aMenuItems[0].handler(["dummyOverlay"]);
+					assert.equal(aMenuItems[0].enabled(["dummyOverlay"]), true, "the 'enabled' function returns true for single selection");
+					assert.equal(aMenuItems[1].id, "CTX_PASTE", "'getMenuItems' returns a context menu item for 'paste'");
+					aMenuItems[1].handler(["dummyOverlay"]);
+					aMenuItems[1].enabled(["dummyOverlay"]);
+					bIsAvailable = false;
+					return this.CutPastePlugin.getMenuItems(["dummyOverlay"]);
+				}.bind(this))
+				.then(function(aMenuItems) {
+					assert.equal(
+						aMenuItems.length,
+						0,
+						"and if plugin is not available for the overlay, no menu items are returned"
+					);
+				});
 		});
 	});
 
@@ -95,7 +98,7 @@ function(
 				commandFactory: oCommandFactory
 			});
 
-			sandbox.stub(Plugin.prototype, "hasChangeHandler").returns(true);
+			sandbox.stub(Plugin.prototype, "hasChangeHandler").resolves(true);
 
 			var oObjectStatus1 = new ObjectStatus("objectStatus1", {
 				text: "Text 1",
@@ -137,46 +140,52 @@ function(
 		}
 	}, function () {
 		QUnit.test('when retrieving the context menu items and checking if paste is available', function(assert) {
-			var fnMoveAvailableOnRelevantContainerStub = sandbox.stub(this.CutPastePlugin.getElementMover(), "isMoveAvailableOnRelevantContainer").returns(true);
+			var fnMoveAvailableOnRelevantContainerStub = sandbox.stub(this.CutPastePlugin.getElementMover(), "isMoveAvailableOnRelevantContainer").resolves(true);
 			var fnMoveAvailableOnChildrenStub = sandbox.stub(this.CutPastePlugin.getElementMover(), "isMoveAvailableForChildren").returns(true);
-			var aMenuItemsForLayout = this.CutPastePlugin.getMenuItems([this.oVericalLayoutOverlay]);
-
-			sandbox.stub(this.oVericalLayoutOverlay, "getMovable").returns(false);
-			sandbox.stub(this.oObjectStatusOverlay1, "getMovable").returns(true);
-			assert.equal(this.oVerticalLayout.getContent()[0].getId(), "objectStatus1", "then 'Object Status 1' initially at the first position in the layout");
-			assert.equal(aMenuItemsForLayout[0].id, "CTX_PASTE", "'getMenuItems' for formContainer returns a context menu item for 'paste'");
-			assert.notOk(aMenuItemsForLayout[0].enabled([this.oVericalLayoutOverlay]), "'paste' is disabled for the formContainer");
-			assert.ok(fnMoveAvailableOnRelevantContainerStub.calledOnce, "then RTAElementMover.isMoveAvailableOnRelevantContainer called once, when retrieving menu items for vertical layout");
-			assert.ok(fnMoveAvailableOnChildrenStub.calledOnce, "then RTAElementMover.fnMoveAvailableOnChildren called once, when retrieving menu items for vertical layout");
-			fnMoveAvailableOnRelevantContainerStub.restore();
-			fnMoveAvailableOnChildrenStub.restore();
-
-			var aMenuItemsForObjectStatus = this.CutPastePlugin.getMenuItems([this.oObjectStatusOverlay1]);
-			assert.equal(aMenuItemsForObjectStatus[0].id, "CTX_CUT", "'getMenuItems' for formElement returns a context menu item for 'cut'");
-			aMenuItemsForObjectStatus[0].handler([this.oObjectStatusOverlay1]);
-
-			aMenuItemsForLayout = this.CutPastePlugin.getMenuItems([this.oVericalLayoutOverlay]);
-			assert.ok(aMenuItemsForLayout[0].enabled([this.oVericalLayoutOverlay]), "'paste' is now enabled for the formContainer");
-			aMenuItemsForLayout[0].handler([this.oVericalLayoutOverlay]);
-			assert.equal(this.oVerticalLayout.getContent()[0].getId(), "objectStatus1", "then object status now pasted at the first position");
+			return this.CutPastePlugin.getMenuItems([this.oVericalLayoutOverlay])
+				.then(function(aMenuItemsForLayout) {
+					sandbox.stub(this.oVericalLayoutOverlay, "getMovable").returns(false);
+					sandbox.stub(this.oObjectStatusOverlay1, "getMovable").returns(true);
+					assert.equal(this.oVerticalLayout.getContent()[0].getId(), "objectStatus1", "then 'Object Status 1' initially at the first position in the layout");
+					assert.equal(aMenuItemsForLayout[0].id, "CTX_PASTE", "'getMenuItems' for formContainer returns a context menu item for 'paste'");
+					assert.notOk(aMenuItemsForLayout[0].enabled([this.oVericalLayoutOverlay]), "'paste' is disabled for the formContainer");
+					assert.ok(fnMoveAvailableOnRelevantContainerStub.calledOnce, "then RTAElementMover.isMoveAvailableOnRelevantContainer called once, when retrieving menu items for vertical layout");
+					assert.ok(fnMoveAvailableOnChildrenStub.calledOnce, "then RTAElementMover.fnMoveAvailableOnChildren called once, when retrieving menu items for vertical layout");
+					fnMoveAvailableOnRelevantContainerStub.restore();
+					fnMoveAvailableOnChildrenStub.restore();
+					return this.CutPastePlugin.getMenuItems([this.oObjectStatusOverlay1]);
+				}.bind(this))
+				.then(function(aMenuItemsForObjectStatus) {
+					assert.equal(aMenuItemsForObjectStatus[0].id, "CTX_CUT", "'getMenuItems' for formElement returns a context menu item for 'cut'");
+					aMenuItemsForObjectStatus[0].handler([this.oObjectStatusOverlay1]);
+					return this.CutPastePlugin.getMenuItems([this.oVericalLayoutOverlay]);
+				}.bind(this))
+				.then(function(aMenuItemsForLayout) {
+					assert.ok(aMenuItemsForLayout[0].enabled([this.oVericalLayoutOverlay]), "'paste' is now enabled for the formContainer");
+					aMenuItemsForLayout[0].handler([this.oVericalLayoutOverlay]);
+					assert.equal(this.oVerticalLayout.getContent()[0].getId(), "objectStatus1", "then object status now pasted at the first position");
+				}.bind(this));
 		});
 
 		QUnit.test('when retrieving the context menu items and checking if paste is unavailable', function(assert) {
-			var fnMoveAvailableOnRelevantContainerStub = sandbox.stub(this.CutPastePlugin.getElementMover(), "isMoveAvailableOnRelevantContainer").returns(true);
+			var fnMoveAvailableOnRelevantContainerStub = sandbox.stub(this.CutPastePlugin.getElementMover(), "isMoveAvailableOnRelevantContainer").resolves(true);
 			var fnMoveAvailableOnChildrenStub = sandbox.stub(this.CutPastePlugin.getElementMover(), "isMoveAvailableForChildren").returns(false);
-			var aMenuItemsForLayout = this.CutPastePlugin.getMenuItems([this.oVericalLayoutOverlay]);
+			return this.CutPastePlugin.getMenuItems([this.oVericalLayoutOverlay])
+				.then(function(aMenuItemsForLayout) {
+					sandbox.stub(this.oVericalLayoutOverlay, "getMovable").returns(false);
+					sandbox.stub(this.oObjectStatusOverlay1, "getMovable").returns(false);
+					assert.equal(this.oVerticalLayout.getContent()[0].getId(), "objectStatus1", "then 'Object Status 1' initially at the first position in the layout");
+					assert.equal(aMenuItemsForLayout.length, 0, "'getMenuItems' for formContainer returns no menu item for 'paste'");
+					assert.ok(fnMoveAvailableOnRelevantContainerStub.calledOnce, "then RTAElementMover.isMoveAvailableOnRelevantContainer called once, when retrieving menu items for vertical layout");
+					assert.ok(fnMoveAvailableOnChildrenStub.calledOnce, "then RTAElementMover.fnMoveAvailableOnChildren called once, when retrieving menu items for vertical layout");
+					fnMoveAvailableOnRelevantContainerStub.restore();
+					fnMoveAvailableOnChildrenStub.restore();
 
-			sandbox.stub(this.oVericalLayoutOverlay, "getMovable").returns(false);
-			sandbox.stub(this.oObjectStatusOverlay1, "getMovable").returns(false);
-			assert.equal(this.oVerticalLayout.getContent()[0].getId(), "objectStatus1", "then 'Object Status 1' initially at the first position in the layout");
-			assert.equal(aMenuItemsForLayout.length, 0, "'getMenuItems' for formContainer returns no menu item for 'paste'");
-			assert.ok(fnMoveAvailableOnRelevantContainerStub.calledOnce, "then RTAElementMover.isMoveAvailableOnRelevantContainer called once, when retrieving menu items for vertical layout");
-			assert.ok(fnMoveAvailableOnChildrenStub.calledOnce, "then RTAElementMover.fnMoveAvailableOnChildren called once, when retrieving menu items for vertical layout");
-			fnMoveAvailableOnRelevantContainerStub.restore();
-			fnMoveAvailableOnChildrenStub.restore();
-
-			var aMenuItemsForObjectStatus = this.CutPastePlugin.getMenuItems([this.oObjectStatusOverlay1]);
-			assert.equal(aMenuItemsForObjectStatus.length, 0, "'getMenuItems' for formElement returns no context menu item for 'cut'");
+					return this.CutPastePlugin.getMenuItems([this.oObjectStatusOverlay1]);
+				}.bind(this))
+				.then(function(aMenuItemsForObjectStatus) {
+					assert.equal(aMenuItemsForObjectStatus.length, 0, "'getMenuItems' for formElement returns no context menu item for 'cut'");
+				});
 		});
 	});
 
@@ -225,8 +234,10 @@ function(
 		}
 	}, function () {
 		QUnit.test('when retrieving the context menu items and checking if paste is available', function (assert) {
-			var aMenuItemsForLayout = this.CutPastePlugin.getMenuItems([this.oVericalLayoutOverlayWoStableId]);
-			assert.equal(aMenuItemsForLayout.length, 0, "'getMenuItems' for formContainer returns no menu item for layout without stableid");
+			return this.CutPastePlugin.getMenuItems([this.oVericalLayoutOverlayWoStableId])
+				.then(function(aMenuItemsForLayout) {
+					assert.equal(aMenuItemsForLayout.length, 0, "'getMenuItems' for formContainer returns no menu item for layout without stableid");
+				});
 		});
 	});
 

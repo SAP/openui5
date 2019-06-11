@@ -78,78 +78,92 @@ function(
 
 	RTAElementMover.prototype.isEditable = function(oOverlay, bOnRegistration) {
 		var oElement = oOverlay.getElement();
-		var bMovable = false;
-		if (
-			this.isMovableType(oElement)
-			&& this.checkMovable(oOverlay, bOnRegistration)
-		) {
-			bMovable = true;
+		if (!this.isMovableType(oElement)) {
+			return Promise.resolve(false);
 		}
-		oOverlay.setMovable(bMovable);
-		return bMovable;
+		return this.checkMovable(oOverlay, bOnRegistration)
+			.then(function(bMovable) {
+				oOverlay.setMovable(bMovable);
+				return bMovable;
+			});
 	};
 
 	/**
 	 * Check if the element is editable for the move
 	 * @param  {sap.ui.dt.Overlay}  oOverlay The overlay being moved or the aggregation overlay
 	 * @param  {boolean} bOnRegistration if embedded, false if not
-	 * @return {boolean} true if editable
+	 * @return {promise.<boolean>} promise with true value if editable
 	 */
 	function fnIsValidForMove(oOverlay, bOnRegistration) {
-		var bValid = false,
-			oDesignTimeMetadata = oOverlay.getDesignTimeMetadata(),
-			oParentElementOverlay = oOverlay.getParentElementOverlay();
+		var	oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
+		var oParentElementOverlay = oOverlay.getParentElementOverlay();
 
 		if (!oDesignTimeMetadata || !oParentElementOverlay) {
-			return false;
+			return Promise.resolve(false);
 		}
 
 		var oRelevantContainer = oOverlay.getRelevantContainer();
 		var oRelevantContainerOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
 		if (!oRelevantContainerOverlay) {
-			return false;
+			return Promise.resolve(false);
 		}
 
-		bValid = this.isMoveAvailableOnRelevantContainer(oOverlay);
-
-		if (bValid) {
-			bValid = this.oBasePlugin.hasStableId(oOverlay) &&
-			this.oBasePlugin.hasStableId(oParentElementOverlay) &&
-			this.oBasePlugin.hasStableId(oRelevantContainerOverlay);
-		}
-
-		// element is only valid for move if it can be moved to somewhere else
-		if (bValid) {
-			var aOverlays = OverlayUtil.findAllUniqueAggregationOverlaysInContainer(oOverlay, oRelevantContainerOverlay);
-
-			var aValidAggregationOverlays = aOverlays.filter(function(oAggregationOverlay) {
-				return this.checkTargetZone(oAggregationOverlay, oOverlay, bOnRegistration);
+		return this.isMoveAvailableOnRelevantContainer(oOverlay)
+			.then(function(bValid) {
+				if (bValid) {
+					bValid = this.oBasePlugin.hasStableId(oOverlay) &&
+					this.oBasePlugin.hasStableId(oParentElementOverlay) &&
+					this.oBasePlugin.hasStableId(oRelevantContainerOverlay);
+				}
+				return bValid;
+			}.bind(this))
+			.then(function(bValid) {
+				// element is only valid for move if it can be moved to somewhere else
+				if (bValid) {
+					return fnCheckForValidTargetZones.call(this, oOverlay, oRelevantContainerOverlay, bOnRegistration);
+				}
+				return bValid;
 			}.bind(this));
+	}
 
-			if (aValidAggregationOverlays.length < 1) {
-				bValid = false;
-			} else if (aValidAggregationOverlays.length === 1) {
-				var aVisibleOverlays = aValidAggregationOverlays[0].getChildren().filter(function(oChildOverlay) {
-					var oChildElement = oChildOverlay.getElement();
-					// At least one sibling has to be visible and still attached to the parent
-					// In some edge cases, the child element is not available anymore (element already got destroyed)
-					return (oChildElement && oChildElement.getVisible() && oChildElement.getParent());
+	function fnCheckForValidTargetZones(oOverlay, oRelevantContainerOverlay, bOnRegistration) {
+		var aOverlays = OverlayUtil.findAllUniqueAggregationOverlaysInContainer(oOverlay, oRelevantContainerOverlay);
+
+		var aValidAggregationOverlayPromises = aOverlays.map(function(oAggregationOverlay) {
+			return this.checkTargetZone(oAggregationOverlay, oOverlay, bOnRegistration)
+				.then(function(bValid) {
+					return bValid ? oAggregationOverlay : undefined;
 				});
-				bValid = aVisibleOverlays.length > 1;
-			}
-		}
+		}.bind(this));
 
-		return bValid;
+		return Promise.all(aValidAggregationOverlayPromises)
+			.then(function(aValidAggregationOverlays) {
+				aValidAggregationOverlays = aValidAggregationOverlays.filter(function(aValidAggregationOverlay) {
+					return !!aValidAggregationOverlay;
+				});
+				if (aValidAggregationOverlays.length < 1) {
+					return false;
+				} else if (aValidAggregationOverlays.length === 1) {
+					var aVisibleOverlays = aValidAggregationOverlays[0].getChildren().filter(function(oChildOverlay) {
+						var oChildElement = oChildOverlay.getElement();
+						// At least one sibling has to be visible and still attached to the parent
+						// In some edge cases, the child element is not available anymore (element already got destroyed)
+						return (oChildElement && oChildElement.getVisible() && oChildElement.getParent());
+					});
+					return aVisibleOverlays.length > 1;
+				}
+				return true;
+			});
 	}
 
 	function fnHasMoveAction(oAggregationOverlay, oElement, oRelevantContainer) {
 		var oAggregationDTMetadata = oAggregationOverlay.getDesignTimeMetadata();
 		var oMoveAction = oAggregationDTMetadata.getAction("move", oElement);
 		if (!oMoveAction) {
-			return false;
+			return Promise.resolve(false);
 		}
 		// moveChangeHandler information is always located on the relevant container
-		return this.oBasePlugin.hasChangeHandler(oMoveAction.changeType, oRelevantContainer);
+		return this.oBasePlugin.hasChangeHandler(oMoveAction.changeType, oRelevantContainer, true);
 	}
 
 	/**
@@ -189,87 +203,96 @@ function(
 	/**
 	 * Checks drop ability for aggregation overlays
 	 * @param  {sap.ui.dt.Overlay} oAggregationOverlay aggregation overlay object
-	 * @return {boolean} true if aggregation overlay is droppable, false if not
+	 * @return {promise.<boolean>} Promise with true value if aggregation overlay is droppable or false value if not.
 	 * @override
 	 */
 	RTAElementMover.prototype.checkTargetZone = function(oAggregationOverlay, oOverlay, bOverlayNotInDom) {
 		var oMovedOverlay = oOverlay || this.getMovedOverlay();
+		return ElementMover.prototype.checkTargetZone.call(this, oAggregationOverlay, oMovedOverlay, bOverlayNotInDom)
+			.then(function(bTargetZone) {
+				if (!bTargetZone) {
+					return false;
+				}
 
-		var bTargetZone = ElementMover.prototype.checkTargetZone.call(this, oAggregationOverlay, oMovedOverlay, bOverlayNotInDom);
-		if (!bTargetZone) {
-			return false;
-		}
+				var oMovedElement = oMovedOverlay.getElement();
+				var oTargetOverlay = oAggregationOverlay.getParent();
+				var oMovedRelevantContainer = oMovedOverlay.getRelevantContainer();
+				var oTargetElement = oTargetOverlay.getElement();
+				var oAggregationDtMetadata = oAggregationOverlay.getDesignTimeMetadata();
 
-		var oMovedElement = oMovedOverlay.getElement();
-		var oTargetOverlay = oAggregationOverlay.getParent();
-		var oMovedRelevantContainer = oMovedOverlay.getRelevantContainer();
-		var oTargetElement = oTargetOverlay.getElement();
-		var oAggregationDtMetadata = oAggregationOverlay.getDesignTimeMetadata();
+				// determine target relevantContainer
+				var vTargetRelevantContainerAfterMove = MetadataPropagationUtil.getRelevantContainerForPropagation(oAggregationDtMetadata.getData(), oMovedElement);
+				vTargetRelevantContainerAfterMove = vTargetRelevantContainerAfterMove || oTargetElement;
 
-		// determine target relevantContainer
-		var vTargetRelevantContainerAfterMove = MetadataPropagationUtil.getRelevantContainerForPropagation(oAggregationDtMetadata.getData(), oMovedElement);
-		vTargetRelevantContainerAfterMove = vTargetRelevantContainerAfterMove || oTargetElement;
+				// check for same relevantContainer
+				if (
+					!oMovedRelevantContainer
+					|| !vTargetRelevantContainerAfterMove
+					|| !this.oBasePlugin.hasStableId(oTargetOverlay)
+					|| oMovedRelevantContainer !== vTargetRelevantContainerAfterMove
+				) {
+					return false;
+				}
 
-		// check for same relevantContainer
-		if (
-			!oMovedRelevantContainer
-			|| !vTargetRelevantContainerAfterMove
-			|| !this.oBasePlugin.hasStableId(oTargetOverlay)
-			|| oMovedRelevantContainer !== vTargetRelevantContainerAfterMove
-		) {
-			return false;
-		}
+				// Binding context is not relevant if the element is being moved inside its parent
+				if (oMovedOverlay.getParent().getElement() !== oTargetElement) {
+					// check if binding context is the same
+					if (!Utils.checkSourceTargetBindingCompatibility(oMovedElement, oTargetElement)) {
+						return false;
+					}
+				}
 
-		// Binding context is not relevant if the element is being moved inside its parent
-		if (oMovedOverlay.getParent().getElement() !== oTargetElement) {
-			// check if binding context is the same
-			if (!Utils.checkSourceTargetBindingCompatibility(oMovedElement, oTargetElement)) {
-				return false;
-			}
-		}
-
-		// check if movedOverlay is movable into the target aggregation
-		return fnHasMoveAction.call(this, oAggregationOverlay, oMovedElement, vTargetRelevantContainerAfterMove);
+				// check if movedOverlay is movable into the target aggregation
+				return fnHasMoveAction.call(this, oAggregationOverlay, oMovedElement, vTargetRelevantContainerAfterMove);
+			}.bind(this));
 	};
 
 	/**
 	 * Checks if move is available on relevantcontainer
 	 * @param  {sap.ui.dt.Overlay} oOverlay overlay object
-	 * @return {boolean} true if move available on relevantContainer
+	 * @return {promise.<boolean>} Promise with true value if move available on relevantContainer.
 	 */
 	RTAElementMover.prototype.isMoveAvailableOnRelevantContainer = function(oOverlay) {
-		var oChangeHandlerRelevantElement,
-			oMoveAction = this._getMoveAction(oOverlay);
+		var oChangeHandlerRelevantElement;
+		var oMoveAction = this._getMoveAction(oOverlay);
 
 		if (oMoveAction && oMoveAction.changeType) {
 			// moveChangeHandler information is always located on the relevant container
 			oChangeHandlerRelevantElement = oOverlay.getRelevantContainer();
 			var oRelevantOverlay = OverlayRegistry.getOverlay(oChangeHandlerRelevantElement);
 			if (!this.oBasePlugin.hasStableId(oRelevantOverlay)) {
-				return false;
+				return Promise.resolve(false);
 			}
-			return this.oBasePlugin.hasChangeHandler(oMoveAction.changeType, oChangeHandlerRelevantElement);
+			return this.oBasePlugin.hasChangeHandler(oMoveAction.changeType, oChangeHandlerRelevantElement, true);
 		}
-		return false;
+		return Promise.resolve(false);
 	};
 
 	/**
 	 * Checks if move is available for child overlays
 	 * @param  {sap.ui.dt.ElementOverlay} oOverlay overlay object
-	 * @return {boolean} true if move available for at least one child overlay
+	 * @return {promise.<boolean>} Promise with true value if move available for at least one child overlay.
 	 */
 	RTAElementMover.prototype.isMoveAvailableForChildren = function(oOverlay) {
-		var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata(),
-			aAggregationsWithMoveAction = oDesignTimeMetadata.getAggregationNamesWithAction("move");
-
-		return aAggregationsWithMoveAction.some(function(oAggregationWithAction) {
+		var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
+		var aAggregationsWithMoveAction = oDesignTimeMetadata.getAggregationNamesWithAction("move");
+		var aAggregationWithMoveActionPromises = [];
+		aAggregationsWithMoveAction.forEach(function(oAggregationWithAction) {
 			var aAggregationOverlays = oOverlay.getAggregationOverlay(oAggregationWithAction);
 			if (aAggregationOverlays) {
 				var aChildren = aAggregationOverlays.getChildren();
-				return aChildren.some(this.checkMovable.bind(this));
+				var aChildrenMovablePromises = aChildren.map(this.checkMovable.bind(this));
+				aAggregationWithMoveActionPromises = aAggregationWithMoveActionPromises.concat(aChildrenMovablePromises);
+			} else {
+				aAggregationWithMoveActionPromises.push(Promise.resolve(false));
 			}
-			return false;
 		}.bind(this));
+		return Promise.all(aAggregationWithMoveActionPromises)
+			.then(function(aMoveAvailableResults) {
+				return aMoveAvailableResults.some(function(aMoveAvailable) {
+					return aMoveAvailable;
+				});
+			});
 	};
 
 	/**
