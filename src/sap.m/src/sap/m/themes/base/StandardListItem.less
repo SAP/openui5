@@ -30,10 +30,19 @@
 .sapMSLIDiv {
 	display: flex;
 	flex: auto;
-	flex-direction: column;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+.sapMSLIWithDescription > .sapMLIBContent > .sapMSLIDiv {
+	flex-direction: column;
+}
+
+/* flex-direction: column is not supported in IE11 */
+html[data-sap-ui-browser*='ie11'] .sapMSLIWithDescription > .sapMLIBContent > .sapMSLIDiv {
+	display: inline-block;
+	width: 100%;
 }
 
 .sapMSLINoTitleAdapt .sapMSLIDiv {
