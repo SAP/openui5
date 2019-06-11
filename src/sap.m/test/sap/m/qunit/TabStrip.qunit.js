@@ -340,6 +340,21 @@ sap.ui.define([
 		oCSList.destroy();
 	});
 
+	QUnit.test("TabStripSelectList _getValueIcon returns null", function (assert) {
+		var oCustomSelect = new mobileLibrary.internal.TabStripSelect({}),
+			oSpy = sinon.spy(oCustomSelect, "_getValueIcon");
+
+		// act
+		oCustomSelect.setValue("tab1");
+
+		//assert
+		assert.strictEqual(oSpy.callCount, 1, "overwritten function is called on set Value");
+
+		// clean up
+		oSpy.restore();
+		oCustomSelect.destroy();
+	});
+
 	QUnit.module("Keyboard Handling", {
 		beforeEach: function () {
 			this.items = [
