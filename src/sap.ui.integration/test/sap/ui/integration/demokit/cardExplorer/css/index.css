@@ -16,6 +16,11 @@
 	url(./fonts/72-Light.woff) format("woff");
 }
 
+html,
+body {
+	overflow-x: hidden;
+}
+
 body {
 	margin: 0;
 	font-family: "72-Regular", "72";
@@ -35,7 +40,7 @@ b {
 .center {
 	margin: 0 auto 0;
 	display: block;
-	width: fit-content;
+	width: auto;
 
 }
 
@@ -57,10 +62,10 @@ b {
 }
 
 .large-box-center {
-	max-width: 1100px;
+	max-width: 1000px;
 	margin: 0 auto;
 	box-sizing: border-box;
-	height: fit-content;
+	height: auto;
 }
 
 .flex-start {
@@ -97,10 +102,9 @@ b {
 
 .sub-header {
 	font-size: 18px;
-	width: 550px;
+	max-width: 550px;
 	font-weight: 100;
 	font-family: "72-Regular";
-
 }
 
 .dark {
@@ -117,11 +121,10 @@ b {
 
 .light-grey {
 	color: #687173;
-
 }
 
 .header-padding {
-	padding: 24px 0px 0px 0px;
+	padding: 24px 0 0 0;
 }
 
 .large-padding {
@@ -134,7 +137,6 @@ b {
 
 .dark-background {
 	background-color: #242424;
-
 }
 
 .cards-content {
@@ -159,6 +161,13 @@ b {
 	-webkit-animation: spin 40s linear infinite;
 	-moz-animation: spin 40s linear infinite;
 	animation: spin 40s linear infinite;
+}
+
+.blob-container {
+	transform: scale(0.7, 0.7);
+	position: relative;
+	top: -387px;
+	left: 213px;
 }
 
 .blob-container-small {
@@ -186,7 +195,6 @@ b {
 	top: -140px;
 	right: -13%;
 	transform: rotate(-10deg);
-
 }
 
 .buttons-wrapper {
@@ -226,6 +234,11 @@ b {
 .card-section {
 	position: relative;
 	background: #eff2f6;
+}
+
+.example-section ui-card {
+	width: 448px;
+	display: inline-block;
 }
 
 .example-section.bluegradient {
@@ -274,7 +287,6 @@ b {
 
 .emphasized:hover {
 	background: #136ac1;
-	background-color: #136ac1;
 	border-color: #136ac1;
 	transition: all 0.5s ease-out;
 }
@@ -286,7 +298,7 @@ b {
 	margin-bottom: 0.5rem;
 	border-radius: 5px;
 	padding: 30px;
-	height: 175px;
+
 	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
 }
 
@@ -380,11 +392,11 @@ b {
 }
 
 .grayshadow > * {
-	box-shadow: 0rem 0rem 5rem rgb(136, 136, 136);
+	box-shadow: 0 0 5rem rgb(136, 136, 136);
 }
 
 .blueshadow > * {
-	box-shadow: 0rem 0rem 10rem rgb(1, 43, 116)
+	box-shadow: 0 0 10rem rgb(1, 43, 116)
 }
 
 .blue {
@@ -454,7 +466,6 @@ b {
 	border: 1px solid #c0c0c0;
 	height: 300px;
 	width: 1000px;
-
 }
 
 .frameworks-wrapper {
@@ -506,8 +517,13 @@ b {
 	flex-direction: row;
 }
 
-.footer .margin-bottom {
-	margin: 0 0 2rem 0;
+.footer {
+	display: flex;
+}
+
+.footer-logo {
+	flex-basis: 300px;
+	padding-left: 100px;
 }
 
 .max-width {
@@ -606,8 +622,7 @@ b {
 	width: 439px;
 	padding: 1rem;
 	height: 250px;
-	overflow-y: auto;
-	overflow-x: hidden;
+	overflow: auto;
 	margin-top: -0.5rem;
 	line-height: 1.1;
 }
@@ -627,10 +642,6 @@ b {
 	background-color: #e0e0e0;
 	border-radius: 3px;
 	width: 8px;
-}
-
-.prettyprint.small xmp {
-	margin: 0px;
 }
 
 .page-wrapper {
@@ -660,8 +671,25 @@ b {
 	height: 110px;
 }
 
+.footer-content {
+	width: 120px;
+}
+
 /*Phone*/
-@media only screen and (max-width: 900px) and (min-width: 320px) {
+@media only screen and (max-width: 900px)  {
+
+	html[data-sap-ui-browser^="ie"] .cards-content {
+		margin-top: -25rem;
+	}
+
+	.cards-content {
+		margin-top: -10rem;
+	}
+
+	.blob-container {
+		display: none;
+	}
+
 	.large-box-center {
 		padding: 45px;
 	}
@@ -669,6 +697,17 @@ b {
 	.example-title {
 		padding: 30px;
 	}
+
+	.footer .flex-center {
+		display: block;
+	}
+
+	.footer-content {
+		display: inline-block;
+		width: 40%;
+		padding-bottom: 3rem;
+	}
+
 	section .flex-center,
 	.compatibility-flex-wrapper {
 		display: flex;
@@ -689,16 +728,11 @@ b {
 	}
 
 	.small-margin-right {
-		margin-right: 0rem;
+		margin-right: 0;
 	}
 
 	.cards > ui-card {
-		width: fit-content;
-
-	}
-
-	.blob-container {
-		display: none;
+		width: auto;
 	}
 
 	.icon-box {
@@ -721,14 +755,77 @@ b {
 	}
 
 	.h2-header {
-		max-width: none;
-		font-size: 60px;
+		font-size: 50px;
 	}
 
 	.header-padding {
-		padding: 0px;
+		padding: 0;
+	}
+}
+
+/*Very small screen*/
+@media only screen and (max-width: 500px) {
+	.icon-box {
+		height: auto;
 	}
 
+	.code-card {
+		width: 320px;
+		height: 320px;
+		box-sizing: border-box;
+	}
+
+	.prettyprint.small {
+		width: 320px;
+		box-sizing: border-box;
+	}
+
+	.example-section {
+		padding-top: 0;
+	}
+
+	.example-section ui-card {
+		width: 320px;
+	}
+
+	.center {
+		width: 100%;
+	}
+
+	.example-section {
+		height: 2500px;
+	}
+
+	.section-divider {
+		height: 160px;
+	}
+
+	.cards-content {
+		height: auto;
+	}
+
+	.footer {
+		display: block;
+	}
+
+	.footer .footer-logo,
+	.footer .flex-center {
+		margin: 0 auto;
+		width: 180px;
+	}
+
+	.footer .footer-logo {
+		margin-bottom: 2rem;
+	}
+
+	.footer-content {
+		display: block;
+		width: auto;
+	}
+
+	.footer-logo {
+		padding-left: 0;
+	}
 }
 
 /*Tablet*/
@@ -739,11 +836,17 @@ b {
 	}
 
 	.cards-content {
+		margin-top: -16rem;
 		display: flex;
 		flex-direction: row;
 		justify-content: center;
 		flex-wrap: wrap;
 		align-items: left;
+	}
+
+	.footer-logo {
+		flex-basis: 200px;
+		padding-left: 50px;
 	}
 
 	.section-divider {
@@ -774,56 +877,10 @@ b {
 	}
 }
 
-/*Desktop*/
-@media only screen and (max-width: 1100px) and (min-width: 1500px) {
-	.blob-container {
-		display: none;
-	}
-
-	section .flex-center,
-	.compatibility-flex-wrapper {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-	}
-
-	.cards {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		margin-top: 0;
-		margin-bottom: 4rem;
-		transform: scale3d(1, 1, 1);
-		margin-left: auto;
-	}
-
-	.cards > ui-card {
-		width: fit-content;
-
-	}
-
-	.large-box-center {
-		margin: 3rem;
-	}
-
-	.header-padding {
-		padding: 0px;
-	}
-}
-
 /*Large Desktop*/
-@media only screen and (max-width: 1500px) {
-	.blob-container {
-		transform: scale(0.7, 0.7);
-		position: relative;
-		top: -387px;
-		left: 213px;
-	}
-
+@media only screen and (min-width: 1500px) {
 	.large-box-center {
-		max-width: 1000px;
+		max-width: 1100px;
 	}
 }
 
