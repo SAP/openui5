@@ -9,7 +9,7 @@
 		xmlns:custom="sap.ui.documentation.sdk.controls">
 	<Page id="topicDetailPage"
 		  showHeader="false"
-		  class="sapUiNoContentPadding">
+		  class="sapUiNoContentPadding sapUiDemoApps">
 		<landmarkInfo>
 			<PageAccessibleLandmarkInfo
 				contentRole="Main"
@@ -105,7 +105,7 @@
 							width="2"
 							class="largeCell"
 							backgroundColorSet="ColorSet6"
-							backgroundColorShade="ShadeB">
+							backgroundColorShade="ShadeF">
 						<l:VerticalLayout width="100%">
 							<custom:TitleLink
 									width="100%"
@@ -125,7 +125,7 @@
 							width="2"
 							class="largeCell"
 							backgroundColorSet="ColorSet6"
-							backgroundColorShade="ShadeC">
+							backgroundColorShade="ShadeE">
 						<l:VerticalLayout width="100%">
 							<custom:TitleLink
 									width="100%"
@@ -205,7 +205,7 @@
 					<l:BlockLayoutCell
 							class="largeCell"
 							backgroundColorSet="ColorSet6"
-							backgroundColorShade="ShadeD">
+							backgroundColorShade="ShadeF">
 						<l:VerticalLayout width="100%">
 							<custom:TitleLink
 									width="100%"

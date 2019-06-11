@@ -2317,3 +2317,64 @@ html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
 }
 
 /* API Ref Tree - end */
+
+/* SAP Quartz Light theme - begin */
+.sapUiTheme-sap_fiori_3 .sapDemokitTreeItemTitle {
+	color: #32363a;
+}
+
+.sapUiTheme-sap_fiori_3 .sapUiDocLightTable .head {
+	background-color: #f2f2f2;
+}
+
+.sapUiTheme-sap_fiori_3 .sapUiDocLightTable .head,
+.sapUiTheme-sap_fiori_3 .sapUiDocLightTable .row {
+	border-style: solid;
+	border-color: #ededed;
+	border-width: 0 1px 1px 1px;
+}
+
+.sapUiTheme-sap_fiori_3 .sapUiDemoKitTreeItemIcon {
+	background: #346187;
+	color: #FFFFFF;
+}
+
+.sapUiTheme-sap_fiori_3 .sapDemokitTreeItemLabel {
+	color: #6a6d70;
+}
+
+.sapUiTheme-sap_fiori_3 .sapUiDemokit .sapUiHomePage {
+	background: #ffffff;
+}
+
+.sapUiTheme-sap_fiori_3 .sapUiDemokit .sapUiHomePage .sapMTitleStyleH1,
+.sapUiTheme-sap_fiori_3 .sapUiDemokit .sapUiDemoApps .sapMTitleStyleH1 {
+	font-size: 1.625rem;
+}
+
+.sapUiTheme-sap_fiori_3 .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect,
+.sapUiTheme-sap_fiori_3 .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect:hover,
+.sapUiTheme-sap_fiori_3 .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltArrow,
+.sapUiTheme-sap_fiori_3 .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSelectListItemText {
+	background: #354a5f;
+	color: #d1e8ff;
+}
+
+.sapUiTheme-sap_fiori_3 .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel:after {
+	content: "";
+	position: absolute;
+	bottom: 0;
+	left: 0.5rem;
+	right: 2.5rem;
+	padding-right: 1rem;
+	border-bottom: 0.188rem solid #d1e8ff;
+	border-radius: 0.125rem 0.125rem 0 0;
+}
+
+.sapUiTheme-sap_fiori_3 .actionButton .sapMBtnGhost:not(:hover) {
+	border-color: #d1e8ff;
+	color: #d1e8ff;
+	text-shadow: none;
+}
+
+/* SAP Quartz Light theme - end */

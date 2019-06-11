@@ -41,12 +41,12 @@ sap.ui.define([
 			_sStorageKey: "UI5_EXPLORED_LIST_SETTINGS_FROM_1_48",
 			_oViewSettings: {
 				densityMode: COMPACT,
-				themeActive: "sap_belize",
+				themeActive: "sap_fiori_3",
 				rtl: false
 			},
 			_oDefaultSettings: {
 				densityMode: COMPACT,
-				themeActive: "sap_belize",
+				themeActive: "sap_fiori_3",
 				rtl: false
 			},
 			_oListSettings: {
