@@ -493,33 +493,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the value of the <code>backgroundDesign</code> property.
-	 *
-	 * @param {sap.m.BackgroundDesign} sBackgroundDesign - new value of the <code>backgroundDesign</code>
-	 * @return {sap.f.DynamicPageTitle} <code>this</code> to allow method chaining
-	 * @public
-	 * @since 1.58
-	 */
-	DynamicPageTitle.prototype.setBackgroundDesign = function (sBackgroundDesign) {
-		var sCurrentBackgroundDesign = this.getBackgroundDesign(),
-			$domRef = this.$(),
-			sCssClassPrefix = "sapFDynamicPageTitle";
-
-		if (sCurrentBackgroundDesign === sBackgroundDesign) {
-			return this;
-		}
-
-		this.setProperty("backgroundDesign", sBackgroundDesign, true);
-
-		if ($domRef.length) {
-			$domRef.removeClass(sCssClassPrefix + sCurrentBackgroundDesign);
-			$domRef.addClass(sCssClassPrefix + sBackgroundDesign);
-		}
-
-		return this;
-	};
-
-	/**
 	 * Fires the <code>DynamicPageTitle</code> press event.
 	 * @param {jQuery.Event} oEvent The <code>tap</code> event object
 	 */
