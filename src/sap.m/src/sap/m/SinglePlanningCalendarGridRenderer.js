@@ -167,7 +167,9 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 					labelledby: {
 						value: InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT"),
 						append: true
-					}
+					},
+					// Setting aria-selected attribute to all blockers
+					selected: oBlocker.getSelected() ? true : false
 				},
 				aAriaLabels = oControl.getAriaLabelledBy(),
 				iLeftPosition = iStartDayDiff * (100 / iColumns),
@@ -188,10 +190,6 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 
 			if (sText) {
 				mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-Text";
-			}
-
-			if (oBlocker.getSelected()) {
-				mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED");
 			}
 
 			if (oBlocker.getTentative()) {
@@ -471,7 +469,9 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 					labelledby: {
 						value: InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT"),
 						append: true
-					}
+					},
+					// Setting aria-selected attribute to all appointments
+					selected: oAppointment.getSelected() ? true : false
 				},
 				aAriaLabels = oControl.getAriaLabelledBy(),
 				bAppStartIsOutsideVisibleStartHour = oColumnStartDateAndHour.getTime() > oAppStartDate.getTime(),
@@ -504,10 +504,6 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 
 			if (sText) {
 				mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-Text";
-			}
-
-			if (oAppointment.getSelected()) {
-				mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED");
 			}
 
 			if (oAppointment.getTentative()) {

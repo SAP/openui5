@@ -1191,24 +1191,41 @@ sap.ui.define([
 			oAppointment = new CalendarAppointment({
 				title: "Appointment",
 				startDate: new Date(2018, 11, 24, 15, 30, 0),
-				endDate: new Date(2018, 11, 24, 16, 30, 0)
+				endDate: new Date(2018, 11, 24, 16, 30, 0),
+				selected: false
+			}),
+			oBlocker = new CalendarAppointment({
+				title: "Blocker",
+				startDate: new Date(2018, 11, 24, 0, 0, 0),
+				endDate: new Date(2018, 11, 25, 0, 0, 0),
+				selected: true
 			}),
 			oSPC = new SinglePlanningCalendar({
 				startDate: oCalendarStartDate,
-				appointments: oAppointment
+				appointments: [oAppointment, oBlocker]
 			}),
 			sAppointmentLabelId = InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT"),
+			$oBlockerRef,
 			$oAppointmentRef;
 
 		oSPC.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		$oAppointmentRef = oAppointment.$();
+		$oBlockerRef = oBlocker.$();
 
 		// Assert
 		assert.strictEqual($oAppointmentRef.attr("role"), "gridcell", "Appointments have correct ARIA role");
+		assert.strictEqual($oAppointmentRef.attr("aria-selected"), "false", "Appointments have correct ARIA selected attribute value");
 		assert.ok($oAppointmentRef.attr("aria-labelledby").indexOf(sAppointmentLabelId) > -1,
 				"Appointments have an appropriate hidden label");
+
+		// Act
+		oSPC._getGrid()._toggleAppointmentSelection(oAppointment, true);
+
+		// Assert
+		assert.strictEqual($oAppointmentRef.attr("aria-selected"), "true", "Selected appointments have correct ARIA selected attribute value");
+		assert.strictEqual($oBlockerRef.attr("aria-selected"), "false", "Selected blockers have correct ARIA selected attribute value");
 
 		// Clean up
 		oSPC.destroy();
@@ -1217,27 +1234,44 @@ sap.ui.define([
 	QUnit.test("Blocker ARIA", function (assert) {
 		// Prepare
 		var oCalendarStartDate = new Date(2018, 11, 24),
+			oAppointment = new CalendarAppointment({
+				title: "Appointment",
+				startDate: new Date(2018, 11, 24, 15, 30, 0),
+				endDate: new Date(2018, 11, 24, 16, 30, 0),
+				selected: true
+			}),
 			oBlocker = new CalendarAppointment({
 				title: "Blocker",
 				startDate: new Date(2018, 11, 24, 0, 0, 0),
-				endDate: new Date(2018, 11, 25, 0, 0, 0)
+				endDate: new Date(2018, 11, 25, 0, 0, 0),
+				selected: false
 			}),
 			oSPC = new SinglePlanningCalendar({
 				startDate: oCalendarStartDate,
-				appointments: oBlocker
+				appointments: [oAppointment, oBlocker]
 			}),
 			sBlockerLabelId = InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT"),
-			$oBlockerRef;
+			$oBlockerRef,
+			$oAppointmentRef;
 
 		oSPC.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		$oBlockerRef = oBlocker.$();
+		$oAppointmentRef = oAppointment.$();
 
 		// Assert
 		assert.strictEqual($oBlockerRef.attr("role"), "gridcell", "Blockers have correct ARIA role");
+		assert.strictEqual($oBlockerRef.attr("aria-selected"), "false", "Blockers have correct ARIA selected attribute value");
 		assert.ok($oBlockerRef.attr("aria-labelledby").indexOf(sBlockerLabelId) > -1,
 			"Blockers have an appropriate hidden label");
+
+		// Act
+		oSPC._getGrid()._toggleAppointmentSelection(oBlocker, true);
+
+		// Assert
+		assert.strictEqual($oBlockerRef.attr("aria-selected"), "true", "Selected blockers have correct ARIA selected attribute value");
+		assert.strictEqual($oAppointmentRef.attr("aria-selected"), "false", "Selected appointments have correct ARIA selected attribute value");
 
 		// Clean up
 		oSPC.destroy();
