@@ -320,6 +320,7 @@ sap.ui.define([
 
 		//act
 		oCheckBox.setPartiallySelected(false);
+		Core.applyChanges();
 		assert.notOk(oCheckBox.$("CbBg").hasClass("sapMCbMarkPartiallyChecked"), "Should not have sapMCbMarkPartiallyChecked class");
 		assert.equal(oCheckBox.getPartiallySelected(), false, "Should have partiallySelected property = false");
 
@@ -814,16 +815,22 @@ sap.ui.define([
 		assert.strictEqual(oCheckBox.$().attr("aria-checked"), "false", "Property 'aria-checked': Default value should be 'false'");
 
 		QUtils.triggerEvent("tap", oCheckBox.getId());
+		Core.applyChanges();
+
 		assert.ok(oSpy.calledOnce, "Event 'select' should have been fired");
 		assert.equal(oCheckBox.getSelected(), true, "CheckBox should be selected");
 		assert.strictEqual(oCheckBox.$().attr("aria-checked"), "true", "Property 'aria-checked': Default value should be 'true'");
 
 		QUtils.triggerEvent("tap", oCheckBox.getId());
+		Core.applyChanges();
+
 		assert.ok(oSpy.calledTwice, "Event 'select' should have been fired");
 		assert.equal(oCheckBox.getSelected(), false, "CheckBox should not be selected");
 
 		oCheckBox.setEditable(false);
 		QUtils.triggerEvent("tap", oCheckBox.getId());
+		Core.applyChanges();
+
 		assert.ok(oSpy.calledTwice, "Event 'select' should have been fired");
 		assert.equal(oCheckBox.getSelected(), false, "CheckBox should not be selected");
 
@@ -844,7 +851,9 @@ sap.ui.define([
 			// arrange
 			oCheckBox.placeAt("content");
 			Core.applyChanges();
+
 			QUtils.triggerEvent("tap", oCheckBox.getId());
+			Core.applyChanges();
 
 			// assertions
 			assert.equal(oCheckBox.getSelected(), oAssertion.isSelected, "Selected should be: " + oAssertion.isSelected);
@@ -899,6 +908,8 @@ sap.ui.define([
 			oCheckBox.$().focus(); // set focus on checkbox
 
 			QUtils.triggerKeyup(oCheckBox.$(), KeyCodes.SPACE); // trigger Space up on checkbox
+			Core.applyChanges();
+
 			assert.strictEqual(oSpy.callCount, 1, "SPACE is pressed, select event was fired");
 			assert.equal(oCheckBox.getSelected(), oOptions.expectedSelection, oOptions.expectedMessage);
 			assert.strictEqual(oCheckBox.$().attr("aria-checked"), "" + oOptions.expectedSelection, oOptions.expectedMessageAria);
@@ -944,6 +955,8 @@ sap.ui.define([
 			oCheckBox.$().focus(); // set focus on checkbox
 
 			QUtils.triggerKeydown(oCheckBox.$(), KeyCodes.ENTER); // trigger Enter on checkbox
+			Core.applyChanges();
+
 			assert.strictEqual(oSpy.callCount, 1, "Enter is pressed, select event was fired");
 			assert.equal(oCheckBox.getSelected(), oOptions.expectedSelection, oOptions.expectedMessage);
 			assert.strictEqual(oCheckBox.$().attr("aria-checked"), "" + oOptions.expectedSelection, oOptions.expectedMessageAria);
@@ -1066,6 +1079,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		QUtils.triggerEvent("tap", oLabel.getId());
+		Core.applyChanges();
 
 		// assert
 		assert.ok(oSpyHandler.calledOnce, "Handler function is called");
