@@ -1902,13 +1902,14 @@ sap.ui.define([
 		 * @returns {string}
 		 * @private
 		 */
-		SinglePlanningCalendarGrid.prototype._getAppointmentStartEndInfo = function (oAppointment) {
+		SinglePlanningCalendarGrid.prototype._getAppointmentAnnouncementInfo = function (oAppointment) {
 			var sStartTime = this._oUnifiedRB.getText("CALENDAR_START_TIME"),
 				sEndTime = this._oUnifiedRB.getText("CALENDAR_END_TIME"),
 				sFormattedStartDate = this._oFormatAriaApp.format(oAppointment.getStartDate()),
-				sFormattedEndDate = this._oFormatAriaApp.format(oAppointment.getEndDate());
+				sFormattedEndDate = this._oFormatAriaApp.format(oAppointment.getEndDate()),
+				sAppInfo = sStartTime + ": " + sFormattedStartDate + "; " + sEndTime + ": " + sFormattedEndDate;
 
-			return sStartTime + ": " + sFormattedStartDate + "; " + sEndTime + ": " + sFormattedEndDate + "; ";
+			return sAppInfo + "; " + this._findCorrespondingLegendItem(this, oAppointment);
 		};
 
 		/**
