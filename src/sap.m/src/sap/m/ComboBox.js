@@ -12,6 +12,7 @@ sap.ui.define([
 	'sap/ui/core/Item',
 	'./StandardListItem',
 	'./ComboBoxRenderer',
+	'sap/ui/base/ManagedObjectObserver',
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/KeyCodes",
 	"./Toolbar",
@@ -29,6 +30,7 @@ sap.ui.define([
 		Item,
 		StandardListItem,
 		ComboBoxRenderer,
+		ManagedObjectObserver,
 		containsOrEquals,
 		KeyCodes,
 		Toolbar,
@@ -686,6 +688,8 @@ sap.ui.define([
 			// holds reference to the last focused GroupHeaderListItem if such exists
 			this._oLastFocusedListItem = null;
 			this._bIsLastFocusedItemHeader = null;
+
+			this._oItemObserver = new ManagedObjectObserver(this._forwardItemProperties.bind(this));
 		};
 
 		/**
@@ -762,6 +766,11 @@ sap.ui.define([
 				}
 				this._oSuggestionPopover.destroy();
 				this._oSuggestionPopover = null;
+			}
+
+			if (this._oItemObserver) {
+				this._oItemObserver.disconnect();
+				this._oItemObserver = null;
 			}
 		};
 
@@ -1849,7 +1858,35 @@ sap.ui.define([
 				oListItem.addCustomData(oCustomData.clone());
 			});
 
+			this._oItemObserver.observe(oItem, {properties: ["text", "additionalText", "enabled", "tooltip"]});
+
 			return oListItem;
+		};
+
+		ComboBox.prototype._forwardItemProperties = function(oPropertyInfo) {
+			var oItem = oPropertyInfo.object,
+				oListItem = oItem.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "ListItem"),
+				oDirectMapping = {
+					text: "title",
+					enabled: "visible",
+					tooltip: "tooltip"
+				},
+				sAdditionalText,
+				sProperty,
+				sSetter;
+
+
+			if (Object.keys(oDirectMapping).indexOf(oPropertyInfo.name) > -1) {
+				sProperty =  oDirectMapping[oPropertyInfo.name];
+				sSetter = "set" + sProperty.charAt(0).toUpperCase() + sProperty.slice(1);
+
+				oListItem[sSetter](oPropertyInfo.current);
+			}
+
+			if (oPropertyInfo.name === "additionalText") {
+				sAdditionalText = this.getShowSecondaryValues() ? oPropertyInfo.current : "";
+				oListItem.setInfo(sAdditionalText);
+			}
 		};
 
 		/**
@@ -2040,6 +2077,7 @@ sap.ui.define([
 					}, this);
 				}
 			}
+
 			this.synchronizeSelection();
 
 			return oPicker;
