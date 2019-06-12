@@ -2289,9 +2289,7 @@ sap.ui.define([
 		};
 		for (var sName in mParameters) {
 			if (sName in mSupportedParams) {
-				if (mParameters[sName]) {
-					aCustomParams.push("$" + sName + "=" + encodeURL(mParameters[sName]));
-				}
+				aCustomParams.push("$" + sName + "=" + encodeURL(mParameters[sName]));
 			}
 			if (sName === "custom") {
 				mCustomQueryOptions = mParameters[sName];
