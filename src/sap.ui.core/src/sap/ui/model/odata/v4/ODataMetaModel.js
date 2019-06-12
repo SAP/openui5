@@ -1538,10 +1538,10 @@ sap.ui.define([
 				sEntitySetName,  // The name of this entity set (decoded)
 				sFirstSegment,
 				sInstancePath,   // The absolute path to the instance currently in evaluation
-								 // (encoded; re-builds sResolvedPath)
+								// (encoded; re-builds sResolvedPath)
 				sNavigationPath, // The relative meta path starting from oEntitySet (decoded)
 				//sPropertyPath, // The relative path following sEntityPath (parameter re-used -
-								 // encoded)
+								// encoded)
 				aSegments,       // The resource path split in segments (encoded)
 				bTransient = false, // Whether there is a transient entity -> no edit URL available
 				oType;           // The type of the data at sInstancePath
