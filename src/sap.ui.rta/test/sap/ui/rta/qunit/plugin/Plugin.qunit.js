@@ -205,28 +205,28 @@ function (
 
 		QUnit.test("when evaluateEditable is called with getStableElements in DTMD returning a selector", function(assert) {
 			var oModifyPluginListSpy = sandbox.spy(this.oPlugin, "_modifyPluginList");
-			var oSetBusySpy = sandbox.spy(this.oPlugin, "setBusy");
+			var oSetProcessingStatusSpy = sandbox.spy(this.oPlugin, "setProcessingStatus");
 			sandbox.stub(this.oLayoutOverlay.getDesignTimeMetadata(), "getStableElements").returns([{id: "id"}]);
 
 			this.oPlugin.evaluateEditable([this.oLayoutOverlay], {onRegistration: false});
-			assert.equal(oSetBusySpy.firstCall.args[0], true, "the plugin switched to busy mode first");
+			assert.equal(oSetProcessingStatusSpy.firstCall.args[0], true, "the plugin switched to processing state on first");
 			assert.equal(oModifyPluginListSpy.lastCall.args[1], true, "the _modifyPluginList function is called");
-			assert.equal(oSetBusySpy.lastCall.args[0], false, "the plugin switched the busy mode off again");
+			assert.equal(oSetProcessingStatusSpy.lastCall.args[0], false, "the plugin switched the processing state off again");
 		});
 
 		QUnit.test("when evaluateEditable is called and _isEditable returns a promise", function(assert) {
 			sandbox.restore();
 			var fnDone = assert.async();
 			var oModifyPluginListSpy = sandbox.spy(this.oPlugin, "_modifyPluginList");
-			var oSetBusySpy = sandbox.spy(this.oPlugin, "setBusy");
+			var oSetProcessingStatusSpy = sandbox.spy(this.oPlugin, "setProcessingStatus");
 			sandbox.stub(this.oLayoutOverlay.getDesignTimeMetadata(), "getStableElements").returns([{id: "id"}]);
 			sandbox.stub(this.oPlugin, "_isEditable").resolves(true);
 
 			this.oPlugin.evaluateEditable([this.oLayoutOverlay], {onRegistration: false});
-			assert.equal(oSetBusySpy.firstCall.args[0], true, "the plugin switched to busy mode first");
-			this.oPlugin.attachEventOnce('busyChange', function() {
+			assert.equal(oSetProcessingStatusSpy.firstCall.args[0], true, "the plugin switched to processing state on first");
+			this.oPlugin.attachEventOnce('processingStatusChange', function() {
 				assert.equal(oModifyPluginListSpy.lastCall.args[1], true, "the _modifyPluginList function is called");
-				assert.equal(oSetBusySpy.lastCall.args[0], false, "the plugin switched the busy mode off again");
+				assert.equal(oSetProcessingStatusSpy.lastCall.args[0], false, "the plugin switched the processing state off again");
 				fnDone();
 			});
 		});

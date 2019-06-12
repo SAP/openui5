@@ -50,16 +50,16 @@ function(
 				}
 			},
 			events : {
-				busyChange : {
+				processingStatusChange : {
 					parameters : {
-						busy : {type : "boolean"}
+						processing : {type : "boolean"}
 					}
 				}
 			}
 		}
 	});
 
-	Plugin.prototype._bBusyCounter = 0;
+	Plugin.prototype._bProcessingCounter = 0;
 
 	/**
 	 * Called when the Plugin is initialized
@@ -143,9 +143,9 @@ function(
 	Plugin.prototype._registerOverlays = function(oDesignTime) {
 		if (this.registerElementOverlay || this.registerAggregationOverlay) {
 			var aElementOverlays = oDesignTime.getElementOverlays();
-			this.setBusy(true);
+			this.setProcessingStatus(true);
 			aElementOverlays.forEach(this.callElementOverlayRegistrationMethods.bind(this));
-			this.setBusy(false);
+			this.setProcessingStatus(false);
 		}
 	};
 
@@ -235,16 +235,16 @@ function(
 	Plugin.prototype.isBusy = Plugin.prototype.getBusy;
 
 	/**
-	 * @param {boolean} bBusy - busy state to set
+	 * @param {boolean} bProcessing - processing state to set
 	 */
-	Plugin.prototype.setBusy = function(bBusy) {
-		this._bBusyCounter = bBusy ? this._bBusyCounter + 1 : this._bBusyCounter - 1;
-		if ((bBusy === true && this._bBusyCounter === 1) ||
-			(bBusy === false && this._bBusyCounter === 0)
+	Plugin.prototype.setProcessingStatus = function(bProcessing) {
+		this._bProcessingCounter = bProcessing ? this._bProcessingCounter + 1 : this._bProcessingCounter - 1;
+		if (
+			(bProcessing === true && this._bProcessingCounter === 1)
+			|| (bProcessing === false && this._bProcessingCounter === 0)
 		) {
-			this.setProperty("busy", bBusy);
-			this.fireBusyChange({
-				busy: bBusy
+			this.fireProcessingStatusChange({
+				processing: bProcessing
 			});
 		}
 	};

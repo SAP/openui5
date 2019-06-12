@@ -290,15 +290,15 @@ function (
 				this._createOverlaysForRootElement(oEvent.getParameter('element'));
 			}, this);
 
-			// Attach busyChange to available plugins
+			// Attach processingStatusChange to available plugins
 			this.getPlugins().forEach(function(oPlugin) {
-				oPlugin.attachEvent("busyChange", this._onBusyChange, this);
+				oPlugin.attachEvent("processingStatusChange", this._onProcessingStatusChange, this);
 			}, this);
 
-			// Attach busyChange for future added plugins
+			// Attach processingStatusChange for future added plugins
 			this.attachEvent("addPlugin", function (oEvent) {
 				var oPlugin = oEvent.getParameter('plugin');
-				oPlugin.attachEvent("busyChange", this._onBusyChange, this);
+				oPlugin.attachEvent("processingStatusChange", this._onProcessingStatusChange, this);
 			}, this);
 
 			// Toggle root overlays visibility when property 'enabled' is changed
@@ -321,15 +321,15 @@ function (
 		}
 	});
 
-	DesignTime.prototype._onBusyChange = function (oEvent) {
-		if (oEvent.getParameter("busy")) {
+	DesignTime.prototype._onProcessingStatusChange = function (oEvent) {
+		if (oEvent.getParameter("processing")) {
 			this._oTaskManager.add({
-				type: "pluginBusy",
+				type: "pluginInProcess",
 				plugin: oEvent.getSource().getMetadata().getName()
 			});
 		} else {
 			this._oTaskManager.completeBy({
-				type: "pluginBusy",
+				type: "pluginInProcess",
 				plugin: oEvent.getSource().getMetadata().getName()
 			});
 		}
@@ -519,7 +519,7 @@ function (
 		this.getPlugins().forEach(function (oCurrentPlugin) {
 			if (oCurrentPlugin === oPlugin) {
 				oPlugin.setDesignTime(null);
-				oPlugin.detachEvent("busyChange", this._onBusyChange, this);
+				oPlugin.detachEvent("processingStatusChange", this._onProcessingStatusChange, this);
 			}
 		}.bind(this));
 
@@ -536,7 +536,7 @@ function (
 	DesignTime.prototype.removeAllPlugins = function () {
 		this.getPlugins().forEach(function (oPlugin) {
 			oPlugin.setDesignTime(null);
-			oPlugin.detachEvent("busyChange", this._onBusyChange, this);
+			oPlugin.detachEvent("processingStatusChange", this._onProcessingStatusChange, this);
 		}.bind(this));
 
 		this.removeAllAggregation("plugins");

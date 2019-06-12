@@ -600,14 +600,14 @@ function(
 				.then(function() {
 					assert.equal(oRegisterElementOverlay.callCount, 4,
 						"then the tabHandlingPlugin registration is called before designtime is synced");
-					assert.equal(oTaskManagerAddSpy.calledWith({ type: "pluginBusy", plugin: oTabHandlingPlugin.getMetadata().getName()}), true,
-						"then on addPlugin the taskManager is used with tasks from 'pluginBusy' type");
+					assert.equal(oTaskManagerAddSpy.calledWith({ type: "pluginInProcess", plugin: oTabHandlingPlugin.getMetadata().getName()}), true,
+						"then on addPlugin the taskManager is used with tasks from 'pluginInProcess' type");
 					this.oDesignTime.insertPlugin(oContextMenuPlugin, 0);
 					return DtUtil.waitForSynced(this.oDesignTime, done)();
 				}.bind(this))
 				.then(function() {
-					assert.equal(oTaskManagerAddSpy.calledWith({ type: "pluginBusy", plugin: oContextMenuPlugin.getMetadata().getName()}), true,
-						"then on insertPlugin the taskManager is used with tasks from 'pluginBusy' type");
+					assert.equal(oTaskManagerAddSpy.calledWith({ type: "pluginInProcess", plugin: oContextMenuPlugin.getMetadata().getName()}), true,
+						"then on insertPlugin the taskManager is used with tasks from 'pluginInProcess' type");
 					this.oDesignTime.insertPlugin(oDragDropPlugin, 1);
 					return DtUtil.waitForSynced(this.oDesignTime, done)();
 				}.bind(this))

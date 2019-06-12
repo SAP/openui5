@@ -152,7 +152,7 @@ function(
 			this.getDesignTime().getBusyPlugins().length) {
 			return;
 		}
-		this.setBusy(true);
+		this.setProcessingStatus(true);
 
 		aOverlays.forEach(function(oOverlay) {
 			// when a control gets destroyed it gets deregistered before it gets removed from the parent aggregation.
@@ -181,13 +181,13 @@ function(
 		if (aPromises.length) {
 			Promise.all(aPromises)
 			.then(function() {
-				this.setBusy(false);
+				this.setProcessingStatus(false);
 			}.bind(this))
 			.catch(function() {
-				this.setBusy(false);
+				this.setProcessingStatus(false);
 			});
 		} else {
-			this.setBusy(false);
+			this.setProcessingStatus(false);
 		}
 	};
 
