@@ -11,7 +11,7 @@
 					id="calendar"
 					months="2"
 					select="handleCalendarSelect" />
-			<l:HorizontalLayout>
+			<l:HorizontalLayout allowWrapping="true">
 				<Button
 						press="handleSelectToday"
 						text="Select Today" />
