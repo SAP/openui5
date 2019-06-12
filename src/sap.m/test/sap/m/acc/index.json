@@ -224,7 +224,7 @@
 		{
 			"control": "sap.m.MultiInput",
 			"url": "../MultiInput.html",
-			"appComponent": "CA-UI5-CTR-ROD"
+			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
 			"control": "sap.m.MultiComboBox",
@@ -470,7 +470,7 @@
 		{
 			"control": "sap.m.Tokenizer",
 			"url": "../Tokenizer.html",
-			"appComponent": "CA-UI5-CTR-ROD"
+			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
 			"control": "sap.m.TileContainer",
