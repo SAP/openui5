@@ -63,13 +63,15 @@ html[dir=rtl] .SmallPaddingBegin {
 	*/
 	var listOverview = new sap.m.Page("listOverview", {
 		title : "List Overview",
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
+				new sap.m.ToolbarSpacer(),
 				addFioriButton(),
 				new sap.m.Button({
 					text : "Embedded",
 					press : switchStyle
-				}) ]
+				}),
+				new sap.m.ToolbarSpacer() ]
 		})
 	});
 
@@ -182,8 +184,9 @@ html[dir=rtl] .SmallPaddingBegin {
 		navButtonPress : function() {
 			app.back();
 		},
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
+				new sap.m.ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
 				new sap.m.Button({
@@ -217,7 +220,8 @@ html[dir=rtl] .SmallPaddingBegin {
 				new sap.m.Button({
 					text : "Switch Mode Interaction",
 					press : function() {switchModeInteraction(oListStandardIcon) }
-				})
+				}),
+				new sap.m.ToolbarSpacer()
 			]
 		})
 	});
@@ -229,8 +233,9 @@ html[dir=rtl] .SmallPaddingBegin {
 		navButtonPress : function() {
 			app.back();
 		},
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
+				new sap.m.ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
 				new sap.m.Button({
@@ -264,7 +269,8 @@ html[dir=rtl] .SmallPaddingBegin {
 				new sap.m.Button({
 					text : "Switch Mode Interaction",
 					press : function() {switchModeInteraction(oListStandardIconA) }
-				})
+				}),
+				new sap.m.ToolbarSpacer()
 			]
 		})
 	});
@@ -276,8 +282,9 @@ html[dir=rtl] .SmallPaddingBegin {
 		navButtonPress : function() {
 			app.back();
 		},
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
+				new sap.m.ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
 				new sap.m.Button({
@@ -311,7 +318,8 @@ html[dir=rtl] .SmallPaddingBegin {
 				new sap.m.Button({
 					text : "Switch Mode Interaction",
 					press : function() {switchModeInteraction(oListStandardIconDA) }
-				})
+				}),
+				new sap.m.ToolbarSpacer()
 			]
 		})
 	});
@@ -323,8 +331,9 @@ html[dir=rtl] .SmallPaddingBegin {
 		navButtonPress : function() {
 			app.back();
 		},
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
+				new sap.m.ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
 				new sap.m.Button({
@@ -358,7 +367,8 @@ html[dir=rtl] .SmallPaddingBegin {
 				new sap.m.Button({
 					text : "Switch Mode Interaction",
 					press : function() {switchModeInteraction(oListStandardTitle) }
-				})
+				}),
+				new sap.m.ToolbarSpacer()
 			]
 		})
 	})
@@ -370,8 +380,9 @@ html[dir=rtl] .SmallPaddingBegin {
 		navButtonPress : function() {
 			app.back();
 		},
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
+				new sap.m.ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
 				new sap.m.Button({
@@ -405,7 +416,8 @@ html[dir=rtl] .SmallPaddingBegin {
 				new sap.m.Button({
 					text : "Switch Mode Interaction",
 					press : function() {switchModeInteraction(oListStandardNoImage) }
-				})
+				}),
+				new sap.m.ToolbarSpacer()
 			]
 		})
 	});
@@ -417,8 +429,9 @@ html[dir=rtl] .SmallPaddingBegin {
 		navButtonPress : function() {
 			app.back();
 		},
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
+				new sap.m.ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
 				new sap.m.Button({
@@ -452,7 +465,8 @@ html[dir=rtl] .SmallPaddingBegin {
 				new sap.m.Button({
 					text : "Switch Mode Interaction",
 					press : function() {switchModeInteraction(oListDisplay) }
-				})
+				}),
+				new sap.m.ToolbarSpacer()
 			]
 		})
 	});
@@ -464,8 +478,9 @@ html[dir=rtl] .SmallPaddingBegin {
 		navButtonPress : function() {
 			app.back();
 		},
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
+				new sap.m.ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
 				new sap.m.Button({
@@ -499,7 +514,8 @@ html[dir=rtl] .SmallPaddingBegin {
 				new sap.m.Button({
 					text : "Switch Mode Interaction",
 					press : function() {switchModeInteraction(oListInput) }
-				})
+				}),
+				new sap.m.ToolbarSpacer()
 			]
 		})
 	});
@@ -511,8 +527,9 @@ html[dir=rtl] .SmallPaddingBegin {
 		navButtonPress : function() {
 			app.back();
 		},
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
+				new sap.m.ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
 				new sap.m.Button({
@@ -546,7 +563,8 @@ html[dir=rtl] .SmallPaddingBegin {
 				new sap.m.Button({
 					text : "Switch Mode Interaction",
 					press : function() {switchModeInteraction(oListCustom) }
-				})
+				}),
+				new sap.m.ToolbarSpacer()
 			]
 		})
 	});
@@ -558,14 +576,16 @@ html[dir=rtl] .SmallPaddingBegin {
 		navButtonPress : function() {
 			app.back();
 		},
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
+				new sap.m.ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
 				new sap.m.Button({
 					text : "Embedded",
 					press : switchStyle
-				})
+				}),
+				new sap.m.ToolbarSpacer()
 			]
 		})
 	});
@@ -577,14 +597,16 @@ html[dir=rtl] .SmallPaddingBegin {
 		navButtonPress : function() {
 			app.back();
 		},
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
+				new sap.m.ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
 				new sap.m.Button({
 					text : "Embedded",
 					press : switchStyle
-				})
+				}),
+				new sap.m.ToolbarSpacer()
 			]
 		})
 	});
@@ -658,8 +680,9 @@ html[dir=rtl] .SmallPaddingBegin {
 		navButtonPress : function() {
 			app.back();
 		},
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
+				new sap.m.ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
 				new sap.m.Button({
@@ -689,7 +712,8 @@ html[dir=rtl] .SmallPaddingBegin {
 				new sap.m.Button({
 					text : "Switch Mode Interaction",
 					press : function() {switchModeInteraction(oListHtml) }
-				})
+				}),
+				new sap.m.ToolbarSpacer()
 			]
 		})
 	});
@@ -701,8 +725,9 @@ html[dir=rtl] .SmallPaddingBegin {
 		navButtonPress : function() {
 			app.back();
 		},
-		footer : new sap.m.Bar({
-			contentMiddle : [
+		footer : new sap.m.OverflowToolbar({
+			content : [
+				new sap.m.ToolbarSpacer(),
 				addFioriButton(),
 				addDialogButton(),
 				new sap.m.Button({
@@ -732,7 +757,8 @@ html[dir=rtl] .SmallPaddingBegin {
 				new sap.m.Button({
 					text : "Switch Mode Interaction",
 					press : function() {switchModeInteraction(oListNoData) }
-				})
+				}),
+				new sap.m.ToolbarSpacer()
 			]
 		})
 	});
