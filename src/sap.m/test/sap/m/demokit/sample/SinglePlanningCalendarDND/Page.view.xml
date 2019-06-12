@@ -5,7 +5,7 @@
 	xmlns:unified="sap.ui.unified"
 	xmlns="sap.m">
 	<VBox class="sapUiSmallMargin">
-		<HBox>
+		<HBox wrap="Wrap">
 			<VBox class="sapUiSmallMarginEnd">
 				<Label text="Drag and Drop" labelFor="enableAppointmentsDragAndDrop" />
 

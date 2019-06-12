@@ -5,7 +5,7 @@
 	xmlns:unified="sap.ui.unified"
 	xmlns="sap.m">
 	<VBox class="sapUiSmallMargin">
-		<HBox>
+		<HBox wrap="Wrap">
 			<VBox class="sapUiSmallMarginEnd">
 				<Label text="Select sticky mode" labelFor="stickyModeSelect" />
 
