@@ -130,7 +130,7 @@ sap.ui.define([
 			}
 
 			// try to identify fully built renderers
-			if ( typeof vRenderer === "object" ) {
+			if ( typeof vRenderer === "object" && typeof vRenderer.render === "function" ) {
 				var oRenderer = ObjectPath.get(this.getRendererName());
 				if ( oRenderer === vRenderer ) {
 					// the given renderer has been exported globally already, it can be used without further action
