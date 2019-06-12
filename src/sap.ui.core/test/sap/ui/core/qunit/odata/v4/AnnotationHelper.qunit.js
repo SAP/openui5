@@ -832,7 +832,7 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(AnnotationHelper.format(vRawValue, {context : oContext}),
 			"{path:'EQUIPMENT_2_PRODUCT/Name',type:'sap.ui.model.odata.type.String',"
-			+ "constraints:{'maxLength':10}}");
+			+ "constraints:{'maxLength':10},formatOptions:{'parseKeepsEmptyString':true}}");
 	});
 
 	//*********************************************************************************************
