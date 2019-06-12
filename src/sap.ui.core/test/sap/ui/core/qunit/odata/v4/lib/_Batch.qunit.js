@@ -805,7 +805,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// deserialization
 	[{
-		testTitle : "batch parts with preamble and epilogue",
+		testTitle : "batch parts with preamble and epilogue, and \r\n\r\n in batch body",
 		contentType : "multipart/mixed; boundary=batch_id-0123456789012-345",
 		body : "this is a preamble for the batch request\r\n\
 --batch_id-0123456789012-345\r\n\
@@ -832,6 +832,7 @@ header-with-colonValue: http://host:8080/sap/opu/MyService\r\n\
 header-with-space-before-colon : Headername with space before colon\r\n\
 \r\n\
 {\"foo1\":\"bar1\"}\r\n\
+\r\n\
 --batch_id-0123456789012-345--\r\n\
 this is a batch request epilogue",
 		expectedResponses : [{
@@ -853,7 +854,7 @@ this is a batch request epilogue",
 				"header-with-colonValue" : "http://host:8080/sap/opu/MyService",
 				"header-with-space-before-colon" : "Headername with space before colon"
 			},
-			responseText : "{\"foo1\":\"bar1\"}"
+			responseText : "{\"foo1\":\"bar1\"}\r\n"
 		}]
 	}, {
 		testTitle : "no final CRLF",
