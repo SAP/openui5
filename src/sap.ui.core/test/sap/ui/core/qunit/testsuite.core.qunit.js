@@ -301,7 +301,9 @@ sap.ui.define(function() {
 					// sap/base/util/*
 					"testdata/core/base/util/deepClone.qunit",
 					"testdata/core/base/util/deepEqual.qunit",
+					"testdata/core/base/util/deepExtend.qunit",
 					"testdata/core/base/util/each.qunit",
+					"testdata/core/base/util/extend.qunit",
 					"testdata/core/base/util/merge.qunit",
 					"testdata/core/base/util/includes.qunit",
 					"testdata/core/base/util/isEmptyObject.qunit",
