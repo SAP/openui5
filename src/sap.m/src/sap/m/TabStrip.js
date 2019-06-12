@@ -1359,6 +1359,11 @@ function(
 			return this;
 		};
 
+		CustomSelect.prototype._getValueIcon = function() {
+			// our select will not show neither image nor icon on the left of the text
+			return null;
+		};
+
 		/****************************************** CUSTOM SELECT LIST CONTROL *****************************************/
 
 		var CustomSelectListRenderer = Renderer.extend(SelectListRenderer);
