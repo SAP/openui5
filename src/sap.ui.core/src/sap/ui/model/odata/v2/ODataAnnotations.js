@@ -2,17 +2,16 @@
  * ${copyright}
  */
 
- /* global XMLHttpRequest */
-
 // Provides class sap.ui.model.odata.v2.ODataAnnotations
 sap.ui.define([
 	'sap/ui/model/odata/AnnotationParser',
 	'sap/ui/Device',
 	'sap/ui/base/EventProvider',
 	'sap/ui/core/cache/CacheManager',
-	"sap/base/assert"
+	"sap/base/assert",
+	"sap/ui/thirdparty/jquery"
 ],
-	function(AnnotationParser, Device, EventProvider, CacheManager, assert) {
+	function(AnnotationParser, Device, EventProvider, CacheManager, assert, jQuery) {
 	"use strict";
 
 	///////////////////////////////////////////////// Class Definition /////////////////////////////////////////////////
@@ -160,7 +159,7 @@ sap.ui.define([
 	 * @returns {map} A map of all custom headers.
 	 */
 	ODataAnnotations.prototype.getHeaders = function() {
-		return Object.assign({}, this._mCustomHeaders);
+		return jQuery.extend({}, this._mCustomHeaders);
 	};
 
 	/**
@@ -175,7 +174,7 @@ sap.ui.define([
 	 */
 	ODataAnnotations.prototype.setHeaders = function(mHeaders) {
 		// Copy headers (dont use reference to mHeaders map)
-		this._mCustomHeaders = Object.assign({}, mHeaders);
+		this._mCustomHeaders = jQuery.extend({}, mHeaders);
 	};
 
 	/**
@@ -634,10 +633,17 @@ sap.ui.define([
 		assert(mSource.type === "url", "Source type must be \"url\" in order to be loaded");
 
 		return new Promise(function(fnResolve, fnReject) {
-			var oXHR = new XMLHttpRequest(),
-				mHeaders = this._getHeaders();
+			var mAjaxOptions = {
+				url: mSource.data,
+				async: true,
+				headers: this._getHeaders(),
+				beforeSend: function(oXHR) {
+					// Force text/plain so the XML parser does not run twice
+					oXHR.overrideMimeType("text/plain");
+				}
+			};
 
-			var fnSuccess = function(oXHR) {
+			var fnSuccess = function(sData, sStatusText, oXHR) {
 				mSource.xml = oXHR.responseText;
 
 				if (oXHR.getResponseHeader("Last-Modified")) {
@@ -651,32 +657,13 @@ sap.ui.define([
 				fnResolve(mSource);
 			};
 
-			var fnFail = function() {
+			var fnFail = function(oXHR, sStatusText) {
 				var oError = new Error("Could not load annotation URL: \"" + mSource.data + "\"");
 				oError.source = mSource;
 				fnReject(oError);
 			};
-			oXHR.open('GET', mSource.data);
 
-			for (var sHeader in mHeaders) {
-				oXHR.setRequestHeader(sHeader, mHeaders[sHeader]);
-			}
-
-			// Force text/plain so the XML parser does not run twice
-			// Note: some older sinon fake XHR implementations does not support 'overrideMimeType'
-			if (oXHR.overrideMimeType) {
-				oXHR.overrideMimeType("text/plain");
-			}
-
-			oXHR.onload = function() {
-				if (oXHR.status === 200) {
-					fnSuccess(oXHR);
-				} else {
-					fnFail();
-				}
-			};
-			oXHR.send();
-
+			jQuery.ajax(mAjaxOptions).done(fnSuccess).fail(fnFail);
 		}.bind(this));
 	};
 
@@ -786,13 +773,9 @@ sap.ui.define([
 	 */
 	ODataAnnotations.prototype._getHeaders = function() {
 		//The 'sap-cancel-on-close' header marks the OData annotation request as cancelable. This helps to save resources at the back-end.
-		var mHeaders = Object.assign({}, this.getHeaders(), {
+		return jQuery.extend({"sap-cancel-on-close": true}, this.getHeaders(), {
 			"Accept-Language": sap.ui.getCore().getConfiguration().getLanguageTag() // Always overwrite
 		});
-		if (mHeaders["sap-cancel-on-close"] !== false) {
-			mHeaders["sap-cancel-on-close"] = true;
-		}
-		return mHeaders;
 	};
 
 	///////////////////////////////////////////////////// End Class ////////////////////////////////////////////////////

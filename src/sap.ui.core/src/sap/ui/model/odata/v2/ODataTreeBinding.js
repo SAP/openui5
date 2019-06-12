@@ -18,9 +18,7 @@ sap.ui.define([
 	'sap/ui/model/Context',
 	"sap/base/Log",
 	"sap/base/assert",
-	"sap/base/util/each",
-	"sap/base/util/isEmptyObject",
-	"sap/base/util/merge"
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		TreeBinding,
@@ -37,9 +35,7 @@ sap.ui.define([
 		Context,
 		Log,
 		assert,
-		each,
-		isEmptyObject,
-		merge
+		jQuery
 	) {
 	"use strict";
 
@@ -1348,9 +1344,9 @@ sap.ui.define([
 				that.oFinalLengths["null"] = true;
 			}
 
-			that.oAllKeys = merge({}, that.oKeys);
-			that.oAllLengths = merge({}, that.oLengths);
-			that.oAllFinalLengths = merge({}, that.oFinalLengths);
+			that.oAllKeys = jQuery.extend(true, {}, that.oKeys);
+			that.oAllLengths = jQuery.extend(true, {}, that.oLengths);
+			that.oAllFinalLengths = jQuery.extend(true, {}, that.oFinalLengths);
 
 			delete that.mRequestHandles[sRequestKey];
 			that.bNeedsUpdate = true;
@@ -1518,8 +1514,8 @@ sap.ui.define([
 				}
 			}
 			if (mChangedEntities && !bChangeDetected) {
-				each(this.oKeys, function(i, aNodeKeys) {
-					each(aNodeKeys, function(i, sKey) {
+				jQuery.each(this.oKeys, function(i, aNodeKeys) {
+					jQuery.each(aNodeKeys, function(i, sKey) {
 						if (sKey in mChangedEntities) {
 							bChangeDetected = true;
 							return false;
@@ -1606,9 +1602,9 @@ sap.ui.define([
 			if (this.bClientOperation && (sFilterType === FilterType.Control || (sFilterType === FilterType.Application && !this.bUseServersideApplicationFilters))) {
 
 				if (this.oAllKeys) {
-					this.oKeys = merge({}, this.oAllKeys);
-					this.oLengths = merge({}, this.oAllLengths);
-					this.oFinalLengths = merge({}, this.oAllFinalLengths);
+					this.oKeys = jQuery.extend(true, {}, this.oAllKeys);
+					this.oLengths = jQuery.extend(true, {}, this.oAllLengths);
+					this.oFinalLengths = jQuery.extend(true, {}, this.oAllFinalLengths);
 
 					this._applyFilter();
 					this._applySort();
@@ -1772,7 +1768,7 @@ sap.ui.define([
 			Log.warning("Cannot determine sort comparators, as entitytype of the collection is unkown!");
 			return;
 		}
-		each(aSorters, function(i, oSorter) {
+		jQuery.each(aSorters, function(i, oSorter) {
 			if (!oSorter.fnCompare) {
 				oPropertyMetadata = this.oModel.oMetadata._getPropertyMetadata(oEntityType, oSorter.sPath);
 				sType = oPropertyMetadata && oPropertyMetadata.type;
@@ -1819,8 +1815,8 @@ sap.ui.define([
 			if (this.bNeedsUpdate || !mChangedEntities) {
 				bChangeDetected = true;
 			} else {
-				each(this.oKeys, function(i, aNodeKeys) {
-					each(aNodeKeys, function(i, sKey) {
+				jQuery.each(this.oKeys, function(i, aNodeKeys) {
+					jQuery.each(aNodeKeys, function(i, sKey) {
 						if (sKey in mChangedEntities) {
 							bChangeDetected = true;
 							return false;
@@ -1941,7 +1937,7 @@ sap.ui.define([
 
 			var iFoundAnnotations = 0;
 			var iMaxAnnotationLength = 0;
-			each(that.oTreeProperties, function (sPropName, sPropValue) {
+			jQuery.each(that.oTreeProperties, function (sPropName, sPropValue) {
 				iMaxAnnotationLength++;
 
 				if (sPropValue) {
@@ -1981,11 +1977,11 @@ sap.ui.define([
 		}
 
 		//Check if all required properties are available
-		each(oEntityType.property, function(iIndex, oProperty) {
+		jQuery.each(oEntityType.property, function(iIndex, oProperty) {
 			if (!oProperty.extensions) {
 				return true;
 			}
-			each(oProperty.extensions, function(iIndex, oExtension) {
+			jQuery.each(oProperty.extensions, function(iIndex, oExtension) {
 				var sName = oExtension.name;
 				if (oExtension.namespace === sTreeAnnotationNamespace &&
 						sName in that.oTreeProperties &&
@@ -2061,7 +2057,7 @@ sap.ui.define([
 				this._fireChange({ reason: ChangeReason.Context });
 			} else {
 				// path could not be resolved, but some data was already available, so we fire a context-change
-				if (!isEmptyObject(this.oAllKeys) || !isEmptyObject(this.oKeys) || !isEmptyObject(this._aNodes)) {
+				if (!jQuery.isEmptyObject(this.oAllKeys) || !jQuery.isEmptyObject(this.oKeys) || !jQuery.isEmptyObject(this._aNodes)) {
 					this.resetData();
 					this._fireChange({ reason: ChangeReason.Context });
 				}
@@ -2136,11 +2132,11 @@ sap.ui.define([
 			var that = this;
 
 			//Check if all required properties are available
-			each(oEntityType.property, function(iIndex, oProperty) {
+			jQuery.each(oEntityType.property, function(iIndex, oProperty) {
 				if (!oProperty.extensions) {
 					return true;
 				}
-				each(oProperty.extensions, function(iIndex, oExtension) {
+				jQuery.each(oProperty.extensions, function(iIndex, oExtension) {
 					var sName = oExtension.name;
 					if (oExtension.namespace === that.oModel.oMetadata.mNamespaces["sap"] &&
 							(sName == sMagnitudeAnnotation || sName == sSiblingRankAnnotation || sName == sPreorderRankAnnotation)) {
@@ -2229,7 +2225,7 @@ sap.ui.define([
 				var aNewSelectParams = [];
 
 				if (this.oNavigationPaths) {
-					each(this.oNavigationPaths, function(sParamKey, sParamName){
+					jQuery.each(this.oNavigationPaths, function(sParamKey, sParamName){
 						if (aNewSelectParams.indexOf(sParamName) == -1) {
 							aNewSelectParams.push(sParamName);
 						}
@@ -2237,14 +2233,14 @@ sap.ui.define([
 				}
 
 				// add new select params to custom select params
-				each(aNewSelectParams, function(sParamKey, sParamName){
+				jQuery.each(aNewSelectParams, function(sParamKey, sParamName){
 					if (aSelectParams.indexOf(sParamName) == -1) {
 						aSelectParams.push(sParamName);
 					}
 				});
 				// add hierarchy annotation properties to select params if not there already
 				if (this.bHasTreeAnnotations) {
-					each(this.oTreeProperties, function(sAnnotationName, sTreePropName){
+					jQuery.each(this.oTreeProperties, function(sAnnotationName, sTreePropName){
 						if (sTreePropName) {
 							if (aSelectParams.indexOf(sTreePropName) == -1) {
 								aSelectParams.push(sTreePropName);
@@ -2422,7 +2418,7 @@ sap.ui.define([
 	*/
 	ODataTreeBinding.prototype._abortPendingRequest = function() {
 		// abort running request and clear the map afterwards
-		each(this.mRequestHandles, function (sRequestKey, oRequestHandle) {
+		jQuery.each(this.mRequestHandles, function (sRequestKey, oRequestHandle) {
 			if (oRequestHandle) {
 				oRequestHandle.abort();
 			}
