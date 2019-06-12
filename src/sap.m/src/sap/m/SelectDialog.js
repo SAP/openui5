@@ -766,6 +766,24 @@ function(
 		}
 	};
 
+	/**
+	 * Clears the selections in the <code>sap.m.SelectDialog</code> and its internally used <code>sap.m.List</code> control.
+	 *
+	 * Use this method whenever the application logic expects changes in the model providing data for
+	 * the SelectDialog that will modify the position of the items, or will change the set with completely new items.
+	 *
+	 * @public
+	 * @since 1.68
+	 * @returns {sap.m.SelectDialog} <code>this</code> to allow method chaining.
+	 */
+	SelectDialog.prototype.clearSelection = function () {
+		this._removeSelection();
+		this._updateSelectionIndicator();
+		this._oDialog.focus();
+
+		return this;
+	};
+
 	/* =========================================================== */
 	/*           begin: forward aggregation  methods to List       */
 	/* =========================================================== */
@@ -1014,11 +1032,7 @@ function(
 		if (!this._oClearButton) {
 			this._oClearButton = new Button(this.getId() + "-clear", {
 				text: this._oRb.getText("SELECTDIALOG_CLEARBUTTON"),
-				press: function() {
-					this._removeSelection();
-					this._updateSelectionIndicator();
-					this._oDialog.focus();
-				}.bind(this)
+				press: this.clearSelection.bind(this)
 			});
 		}
 		return this._oClearButton;

@@ -253,6 +253,42 @@ sap.ui.define([
 			assert.strictEqual(that.oSelectDialog._oList.getInfoToolbar().getVisible(), false, "The should be no toolbar shown");
 		});
 
+		QUnit.test("ClearSelection selection should clear the selection from the SelectDialog and the list", function (assert) {
+			var that = this,
+				done = assert.async(),
+				oRemoveSelectionSpy = new sinon.spy(this.oSelectDialog, "_removeSelection"),
+				oUpdateSelectionIndicatorSpy = new sinon.spy(this.oSelectDialog, "_updateSelectionIndicator");
+
+			// Arrange
+			bindItems(this.oSelectDialog, { oData: this.mockupData, path: "/items", template: createTemplateListItem() });
+			sap.ui.getCore().applyChanges();
+
+			this.oSelectDialog._oDialog.attachAfterOpen(function () {
+				// Reset call count of spy
+				oUpdateSelectionIndicatorSpy.reset();
+
+				// Assert
+				assert.strictEqual(that.oSelectDialog._aInitiallySelectedContextPaths.length, 1, "There is one selected item");
+
+				// Act
+				that.oSelectDialog.clearSelection();
+
+				// Assert
+				assert.strictEqual(oRemoveSelectionSpy.callCount, 1, "Selection was removed.");
+				assert.strictEqual(oUpdateSelectionIndicatorSpy.callCount, 1, "Indicator was updated.");
+				assert.strictEqual(that.oSelectDialog._oList.getSelectedContextPaths(true).length, 0, "There are no selected context paths in the list");
+
+				// Clean
+				that.oSelectDialog._oDialog.close();
+				that.clock.tick(350);
+				done();
+			});
+
+			this.oSelectDialog.open();
+			this.clock.tick(350);
+		});
+
+
 		QUnit.module("XML Rendering", {
 			beforeEach: function() {
 				this.oSelectDialog = null;
@@ -370,6 +406,8 @@ sap.ui.define([
 
 			assert.strictEqual(this.oSelectDialog._oList.getSelectedItems().length, 0, '0 items are selected after opening the dialog the third time');
 			this.oSelectDialog._oDialog.close();
+
+			this.clock.tick(350);
 		});
 
 
@@ -399,6 +437,8 @@ sap.ui.define([
 
 			assert.strictEqual(this.oSelectDialog._oList.getSelectedItems().length, 4, '4 items are selected after opening the dialog the third time');
 			this.oSelectDialog._oDialog.close();
+
+			this.clock.tick(350);
 		});
 
 		QUnit.module("Open and Close", {
@@ -751,6 +791,7 @@ sap.ui.define([
 			assert.ok(this.oSelectDialog.hasStyleClass(sCustomStyleClass), 'The SelectDialog has style class "' + sCustomStyleClass + '" after toggle');
 
 			this.oSelectDialog._oDialog.close();
+			this.clock.tick(350);
 		});
 
 		QUnit.test("Check getDomRef method", function (assert) {
@@ -760,6 +801,7 @@ sap.ui.define([
 			assert.ok(this.oSelectDialog.getDomRef() instanceof Element && this.oSelectDialog.getDomRef().id === this.oSelectDialog.getId() + "-dialog", "The inner dialogs DOM reference is returned");
 
 			this.oSelectDialog._oDialog.close();
+			this.clock.tick(350);
 		});
 
 		QUnit.test("Check height of content", function(assert) {
@@ -778,6 +820,10 @@ sap.ui.define([
 				var browserCalculatedHeight = Math.round(parseFloat(window.getComputedStyle(jQuery("#selectDialog-dialog-cont")[0]).height));
 				assert.strictEqual(browserCalculatedHeight, 286, "content in Dialog should have height of 286px.");
 				done();
+
+				// Clean
+				that.oSelectDialog._oDialog.close();
+				that.clock.tick(350);
 			});
 
 			this.oSelectDialog.open();
@@ -811,6 +857,9 @@ sap.ui.define([
 
 			jQuery.when(that.oSelectDialog.open(), that.oSelectDialog._updateFinished() ).then(function(){
 				assert.ok(jQuery('#selectDialog-searchField-I').is(":focus"), 'SearchField should be focused if there are no items in the list');
+
+				that.oSelectDialog._oDialog.close();
+				that.clock.tick(350);
 			});
 
 			this.oSelectDialog.open();
@@ -831,6 +880,10 @@ sap.ui.define([
 
 			jQuery.when(that.oSelectDialog.open(), that.oSelectDialog._updateFinished() ).then(function(){
 				assert.ok(that.oSelectDialog.getItems()[0].$().is(':focus'), 'The first item of the list should be focused');
+
+				// Clean
+				that.oSelectDialog._oDialog.close();
+				that.clock.tick(350);
 			});
 
 			this.oSelectDialog.open();
