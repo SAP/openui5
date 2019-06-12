@@ -353,6 +353,30 @@ function (
 				done();
 			}.bind(this), 50);
 		});
+
+		QUnit.test("When _onElementOverlayChanged is called for a destroyed overlay", function(assert) {
+			fnTestDestroyedOverlays.call(this, "elementOverlayAdded", assert);
+		});
+
+		QUnit.test("When _onElementPropertyChanged is called for a destroyed overlay", function(assert) {
+			fnTestDestroyedOverlays.call(this, "elementPropertyChanged", assert);
+		});
+
+		QUnit.test("When _onElementOverlayEditableChanged is called for a destroyed overlay", function(assert) {
+			fnTestDestroyedOverlays.call(this, "elementOverlayEditableChanged", assert);
+		});
+
+		function fnTestDestroyedOverlays(sEventName, assert) {
+			var done = assert.async();
+			sandbox.stub(this.oStretchPlugin, "_setStyleClassForAllStretchCandidates");
+
+			this.oStretchPlugin.getDesignTime().attachEventOnce(sEventName, function() {
+				assert.ok(this.oStretchPlugin._setStyleClassForAllStretchCandidates.notCalled, "then no style class was set for the destroyed overlay");
+				done();
+			}, this);
+
+			this.oStretchPlugin.getDesignTime().fireEvent(sEventName, {id: "destroyedOverlayId"});
+		}
 	});
 
 	QUnit.module("Given a designTime and stretch plugin are instantiated with nested editable containers (one invisible) of different sizes", {
@@ -396,7 +420,7 @@ function (
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when the size of the layout changes", function(assert) {
+		QUnit.test("when the size of the layosut changes", function(assert) {
 			var done = assert.async();
 			var oEvent = {
 				getParameters: function() {

@@ -183,21 +183,20 @@ function (
 	 * @param {sap.ui.base.Event} oEvent event object
 	 */
 	Stretch.prototype._onElementOverlayEditableChanged = function (oEvent) {
-		if (this.getDesignTime().getBusyPlugins().length) {
+		var oOverlay = OverlayRegistry.getOverlay(oEvent.getParameters().id);
+		if (this.getDesignTime().getBusyPlugins().length || !oOverlay) {
 			return;
 		}
 
-		var oOverlay = sap.ui.getCore().byId(oEvent.getParameters().id);
 		var aOverlaysToReevaluate = this._getRelevantOverlaysOnEditableChange(oOverlay);
 		this._setStyleClassForAllStretchCandidates(aOverlaysToReevaluate);
 	};
 
 	Stretch.prototype._onElementPropertyChanged = function (oEvent) {
-		if (this.getDesignTime().getBusyPlugins().length) {
+		var oOverlay = OverlayRegistry.getOverlay(oEvent.getParameters().id);
+		if (this.getDesignTime().getBusyPlugins().length || !oOverlay) {
 			return;
 		}
-
-		var oOverlay = OverlayRegistry.getOverlay(oEvent.getParameters().id);
 		var aRelevantOverlays = this._getRelevantOverlays(oOverlay);
 		var fnDebounced = DtUtil.debounce(function () {
 			if (!this.bIsDestroyed && !oOverlay.bIsDestroyed) {
@@ -215,13 +214,14 @@ function (
 	};
 
 	Stretch.prototype._onElementOverlayChanged = function (oEvent) {
-		if (this.getDesignTime().getBusyPlugins().length) {
+		// overlay might be destroyed until this event listener is called - BCP: 1980286428
+		var oOverlay = OverlayRegistry.getOverlay(oEvent.getParameters().id);
+		if (this.getDesignTime().getBusyPlugins().length || !oOverlay) {
 			return;
 		}
 
-		var aRelevantOverlays = this._getRelevantOverlays(sap.ui.getCore().byId(oEvent.getParameters().id));
+		var aRelevantOverlays = this._getRelevantOverlays(oOverlay);
 		var aNewStretchCandidates = this._getNewStretchCandidates(aRelevantOverlays);
-
 		this._setStyleClassForAllStretchCandidates(aNewStretchCandidates);
 	};
 
