@@ -115,14 +115,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a prepared change
-	 * @returns {object} prepared change object
+	 * Returns a prepared change if exists in the command
+	 * @returns {object} Prepared change object
 	 * @public
 	 */
 	FlexCommand.prototype.getPreparedChange = function() {
-		if (!this._oPreparedChange) {
-			this.prepare();
-		}
 		return this._oPreparedChange;
 	};
 
