@@ -20,8 +20,7 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
 	"sap/base/assert",
-	"sap/base/util/each",
-	"sap/base/util/isEmptyObject"
+	"sap/ui/thirdparty/jquery"
 ],
 		function(
 			Context,
@@ -40,8 +39,7 @@ sap.ui.define([
 			deepEqual,
 			Log,
 			assert,
-			each,
-			isEmptyObject
+			jQuery
 		) {
 	"use strict";
 
@@ -619,7 +617,7 @@ sap.ui.define([
 			if (that.useClientMode()) {
 				// For clients mode, store all keys separately and set length to final
 				that.aKeys = [];
-				each(oData.results, function(i, entry) {
+				jQuery.each(oData.results, function(i, entry) {
 					that.aKeys[i] = that.oModel._getKey(entry);
 				});
 				that.updateExpandedList(that.aKeys);
@@ -633,7 +631,7 @@ sap.ui.define([
 				if (oData.results.length > 0) {
 					// Collecting contexts, after the $inlinecount was evaluated, so we do not have to clear it again when
 					// the Auto modes initial threshold <> count check failed.
-					each(oData.results, function(i, entry) {
+					jQuery.each(oData.results, function(i, entry) {
 						that.aKeys[iStartIndex + i] = that.oModel._getKey(entry);
 					});
 
@@ -780,7 +778,7 @@ sap.ui.define([
 		// use only custom params for count and not expand,select params
 		if (this.mParameters && this.mParameters.custom) {
 			var oCust = { custom: {}};
-			each(this.mParameters.custom, function (sParam, oValue) {
+			jQuery.each(this.mParameters.custom, function (sParam, oValue) {
 				oCust.custom[sParam] = oValue;
 			});
 			aParams.push(this.oModel.createCustomParams(oCust));
@@ -877,7 +875,7 @@ sap.ui.define([
 				}
 			}
 			if (mChangedEntities && !bChangeDetected) {
-				each(this.aKeys, function(i, sKey) {
+				jQuery.each(this.aKeys, function(i, sKey) {
 					if (sKey in mChangedEntities) {
 						bChangeDetected = true;
 						return false;
@@ -1065,7 +1063,7 @@ sap.ui.define([
 				if (this.aLastContexts.length !== aContexts.length) {
 					bChangeDetected = true;
 				} else {
-					each(this.aLastContextData, function(iIndex, oLastData) {
+					jQuery.each(this.aLastContextData, function(iIndex, oLastData) {
 						oCurrentData = that.getContextData(aContexts[iIndex]);
 						// Compare whether last data is completely contained in current data
 						if (oLastData !== oCurrentData) {
@@ -1115,9 +1113,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.abortPendingRequest = function(bAbortCountRequest) {
-		if (!isEmptyObject(this.mRequestHandles)) {
+		if (!jQuery.isEmptyObject(this.mRequestHandles)) {
 			this.bSkipDataEvents = true;
-			each(this.mRequestHandles, function(sPath, oRequestHandle){
+			jQuery.each(this.mRequestHandles, function(sPath, oRequestHandle){
 				oRequestHandle.abort();
 			});
 			if (bAbortCountRequest && this.oCountHandle) {

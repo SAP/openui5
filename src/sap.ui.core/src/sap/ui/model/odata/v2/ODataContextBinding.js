@@ -7,9 +7,9 @@ sap.ui.define([
 	'sap/ui/model/Context',
 	'sap/ui/model/ContextBinding',
 	'sap/ui/model/ChangeReason',
-	'sap/base/util/merge'
+	"sap/ui/thirdparty/jquery"
 ],
-		function(Context, ContextBinding, ChangeReason, merge) {
+		function(Context, ContextBinding, ChangeReason, jQuery) {
 	"use strict";
 
 
@@ -39,7 +39,7 @@ sap.ui.define([
 			ContextBinding.call(this, oModel, sPath, oContext, mParameters, oEvents);
 			this.sRefreshGroupId = undefined;
 			this.bPendingRequest = false;
-			this.mParameters = merge({}, this.mParameters);
+			this.mParameters = jQuery.extend(true, {}, this.mParameters);
 			this.bCreatePreliminaryContext = this.mParameters.createPreliminaryContext || oModel.bPreliminaryContext;
 			this.bUsePreliminaryContext = this.mParameters.usePreliminaryContext || oModel.bPreliminaryContext;
 			this.mParameters.createPreliminaryContext = this.bCreatePreliminaryContext;
@@ -152,7 +152,7 @@ sap.ui.define([
 		// clone parameters and remove preliminaryContext flags as the preliminary context should never be created during #checkUpdate
 		// it should only be created during #initialize and #refresh
 		if (!this._mParameters && this.mParameters.createPreliminaryContext){
-			this._mParameters =  Object.assign({}, this.mParameters);
+			this._mParameters =  jQuery.extend({}, this.mParameters);
 			delete this._mParameters.usePreliminaryContext;
 			delete this._mParameters.createPreliminaryContext;
 		}
@@ -266,6 +266,7 @@ sap.ui.define([
 		var that = this,
 			oData,
 			sResolvedPath,
+			oData,
 			bCreated = oContext && oContext.bCreated,
 			bPreliminary = oContext && oContext.isPreliminary(),
 			bForceUpdate = oContext && oContext.isRefreshForced(),
