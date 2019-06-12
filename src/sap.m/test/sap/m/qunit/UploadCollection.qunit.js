@@ -2962,4 +2962,46 @@ sap.ui.define([
 		assert.strictEqual(!!this.oUploadCollection._oListEventDelegate, false, "Event delegation has been successfully deleted while exiting edit mode");
 	});
 
+	QUnit.module("Factory binding Tests", {
+		beforeEach: function () {
+			this.oUploadCollection = new UploadCollection("uploadCollection", {
+				items: {
+					path: "/items",
+					factory: function () {
+						return new UploadCollectionItem({
+							contributor: "{contributor}",
+							tooltip: "{tooltip}",
+							documentId: "{documentId}",
+							enableEdit: "{enableEdit}",
+							enableDelete: "{enableDelete}",
+							fileName: "{fileName}",
+							fileSize: "{fileSize}",
+							mimeType: "{mimeType}",
+							thumbnailUrl: "{thumbnailUrl}",
+							uploadedDate: "{uploadedDate}",
+							url: "{url}"
+						});
+					}
+				}
+			}).setModel(new JSONModel(oData));
+			this.oUploadCollection.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oUploadCollection.destroy();
+			this.oUploadCollection = null;
+		}
+	});
+
+	QUnit.test("Test for triggerLink method when factory binding is used.", function (assert) {
+		//Arrange
+		var oSpy = sinon.spy(this.oUploadCollection, "_triggerLink");
+		var oItem = this.oUploadCollection.getItems()[0];
+		oItem.setUrl("test.jpg");
+		//Act
+		var oFileName = this.oUploadCollection._getFileNameControl(oItem, this);
+		oFileName.firePress();
+		//Assert
+		assert.equal(oSpy.calledOnce,true, "Download Success");
+	});
 });
