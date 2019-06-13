@@ -365,12 +365,23 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 
 		handleAppointmentSelect: function (oEvent) {
 			var oAppointment = oEvent.getParameter("appointment"),
-				oStartDate = oAppointment.getStartDate(),
-				oEndDate = oAppointment.getEndDate(),
-				oTrimmedStartDate = new Date(oStartDate),
-				oTrimmedEndDate = new Date(oEndDate),
-				bAllDate = false,
-				oModel = this.getView().getModel("allDay");
+				oStartDate,
+				oEndDate,
+				oTrimmedStartDate,
+				oTrimmedEndDate,
+				bAllDate,
+				oModel;
+
+			if (oAppointment === undefined) {
+				return;
+			}
+
+			oStartDate = oAppointment.getStartDate();
+			oEndDate = oAppointment.getEndDate();
+			oTrimmedStartDate = new Date(oStartDate);
+			oTrimmedEndDate = new Date(oEndDate);
+			bAllDate = false;
+			oModel = this.getView().getModel("allDay");
 
 			if (!oAppointment.getSelected()) {
 				this._oDetailsPopover.close();
@@ -530,14 +541,16 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 		},
 
 		formatDate: function (oDate) {
-			var iHours = oDate.getHours(),
-				iMinutes = oDate.getMinutes(),
-				iSeconds = oDate.getSeconds();
+			if (oDate) {
+				var iHours = oDate.getHours(),
+					iMinutes = oDate.getMinutes(),
+					iSeconds = oDate.getSeconds();
 
-			if (iHours !== 0 || iMinutes !== 0 || iSeconds !== 0) {
-				return DateFormat.getDateTimeInstance({ style: "medium" }).format(oDate);
-			} else  {
-				return DateFormat.getDateInstance({ style: "medium" }).format(oDate);
+				if (iHours !== 0 || iMinutes !== 0 || iSeconds !== 0) {
+					return DateFormat.getDateTimeInstance({ style: "medium" }).format(oDate);
+				} else  {
+					return DateFormat.getDateInstance({ style: "medium" }).format(oDate);
+				}
 			}
 		},
 
