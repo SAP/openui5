@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/Util",
 	"sap/ui/rta/plugin/Remove",
 	"sap/m/List",
 	"sap/m/CustomListItem",
@@ -17,6 +18,7 @@ sap.ui.define([
 function (
 	DesignTime,
 	OverlayRegistry,
+	DtUtil,
 	RemovePlugin,
 	List,
 	CustomListItem,
@@ -123,10 +125,13 @@ function (
 			commandFactory : new CommandFactory()
 		});
 		this.oDesignTime.insertPlugin(this.oRemovePlugin);
-		assert.strictEqual(this.oBoundedOverlay.isEditable(), true, "... then the bound Item is editable");
-		assert.strictEqual(this.oBoundedChildOverlay.isEditable(), true, "... then the bound Item Content is editable");
-		assert.strictEqual(this.oUnBoundedOverlay.isEditable(), true, "... then the unbound Item is editable");
-		assert.strictEqual(this.oUnBoundedChildOverlay.isEditable(), true, "... then the unbound Item Content is editable");
+		return DtUtil.waitForSynced(this.oDesignTime)()
+			.then(function() {
+				assert.strictEqual(this.oBoundedOverlay.isEditable(), true, "... then the bound Item is editable");
+				assert.strictEqual(this.oBoundedChildOverlay.isEditable(), true, "... then the bound Item Content is editable");
+				assert.strictEqual(this.oUnBoundedOverlay.isEditable(), true, "... then the unbound Item is editable");
+				assert.strictEqual(this.oUnBoundedChildOverlay.isEditable(), true, "... then the unbound Item Content is editable");
+			}.bind(this));
 	});
 
 	QUnit.done(function () {

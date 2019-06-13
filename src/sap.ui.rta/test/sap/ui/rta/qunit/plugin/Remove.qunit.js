@@ -114,11 +114,15 @@ function (
 
 			assert.strictEqual(this.oRemovePlugin.isAvailable([this.oButtonOverlay]), false, "... then isAvailable is called, then it returns false");
 			assert.strictEqual(this.oRemovePlugin.isEnabled([this.oButtonOverlay]), false, "... then isEnabled is called, then it returns false");
-			assert.strictEqual(this.oRemovePlugin._isEditable(this.oButtonOverlay), false, "then the overlay is not editable");
+			return Promise.resolve()
+				.then(this.oRemovePlugin._isEditable.bind(this.oRemovePlugin, this.oButtonOverlay))
+				.then(function(bEditable) {
+					assert.strictEqual(bEditable, false, "then the overlay is not editable");
+				});
 		});
 
 		QUnit.test("when an overlay has remove action designTime metadata, but has no isEnabled property defined", function(assert) {
-			var done = assert.async();
+			var done = assert.async(2);
 
 			this.oButtonOverlay.setDesignTimeMetadata({
 				actions : {
@@ -127,12 +131,19 @@ function (
 					}
 				}
 			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				assert.strictEqual(this.oRemovePlugin.isAvailable([this.oButtonOverlay]), true, "... then isAvailable is called, then it returns true");
+				assert.strictEqual(this.oRemovePlugin.isEnabled([this.oButtonOverlay]), true, "... then isEnabled is called, then it returns true");
+				this.oRemovePlugin._isEditable(this.oButtonOverlay)
+					.then(function(bEditable) {
+						assert.strictEqual(bEditable, true, "then the overlay is editable");
+						done();
+					});
+			}.bind(this));
+
 			this.oRemovePlugin.deregisterElementOverlay(this.oButtonOverlay);
 			this.oRemovePlugin.registerElementOverlay(this.oButtonOverlay);
-
-			assert.strictEqual(this.oRemovePlugin.isAvailable([this.oButtonOverlay]), true, "... then isAvailable is called, then it returns true");
-			assert.strictEqual(this.oRemovePlugin.isEnabled([this.oButtonOverlay]), true, "... then isEnabled is called, then it returns true");
-			assert.strictEqual(this.oRemovePlugin._isEditable(this.oButtonOverlay), true, "then the overlay is editable");
 
 			this.oRemovePlugin.attachEventOnce("elementModified", function(oEvent) {
 				var oCompositeCommand = oEvent.getParameter("command");
@@ -219,8 +230,10 @@ function (
 			}.bind(this));
 
 			sandbox.stub(this.oButtonOverlay, "getRelevantContainer").returns(this.oVerticalLayout);
-
-			assert.strictEqual(this.oRemovePlugin._isEditable(this.oButtonOverlay), false, "... then _isEditable returns false");
+			return this.oRemovePlugin._isEditable(this.oButtonOverlay)
+				.then(function(bEditable) {
+					assert.strictEqual(bEditable, false, "... then _isEditable returns false");
+				});
 		});
 
 		QUnit.test("when an overlay has remove action designTime metadata with a confirmation text defined and is selected", function (assert) {
@@ -287,6 +300,7 @@ function (
 		});
 
 		QUnit.test("when an overlay has remove action designTime metadata, and isEnabled property is boolean", function(assert) {
+			var done = assert.async();
 			this.oButtonOverlay.setDesignTimeMetadata({
 				actions : {
 					remove : {
@@ -295,15 +309,23 @@ function (
 					}
 				}
 			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				assert.strictEqual(this.oRemovePlugin.isAvailable([this.oButtonOverlay]), true, "... then isAvailable is called, then it returns true");
+				assert.strictEqual(this.oRemovePlugin.isEnabled([this.oButtonOverlay]), false, "... then isEnabled is called, then it returns correct value");
+				this.oRemovePlugin._isEditable(this.oButtonOverlay)
+					.then(function(bEditable) {
+						assert.strictEqual(bEditable, true, "then the overlay is editable");
+						done();
+					});
+			}.bind(this));
+
 			this.oRemovePlugin.deregisterElementOverlay(this.oButtonOverlay);
 			this.oRemovePlugin.registerElementOverlay(this.oButtonOverlay);
-
-			assert.strictEqual(this.oRemovePlugin.isAvailable([this.oButtonOverlay]), true, "... then isAvailable is called, then it returns true");
-			assert.strictEqual(this.oRemovePlugin.isEnabled([this.oButtonOverlay]), false, "... then isEnabled is called, then it returns correct value");
-			assert.strictEqual(this.oRemovePlugin._isEditable(this.oButtonOverlay), true, "then the overlay is editable");
 		});
 
 		QUnit.test("when an overlay has remove action designTime metadata, and isEnabled is function", function(assert) {
+			var done = assert.async();
 			this.oButtonOverlay.setDesignTimeMetadata({
 				actions : {
 					remove : {
@@ -314,15 +336,22 @@ function (
 					}
 				}
 			});
+			this.oDesignTime.attachEventOnce("synced", function() {
+				assert.strictEqual(this.oRemovePlugin.isAvailable([this.oButtonOverlay]), true, "... then isAvailable is called, then it returns true");
+				assert.strictEqual(this.oRemovePlugin.isEnabled([this.oButtonOverlay]), false, "... then isEnabled is called, then it returns correct value from function call");
+				this.oRemovePlugin._isEditable(this.oButtonOverlay)
+					.then(function(bEditable) {
+						assert.strictEqual(bEditable, true, "then the overlay is editable");
+						done();
+					});
+			}.bind(this));
+
 			this.oRemovePlugin.deregisterElementOverlay(this.oButtonOverlay);
 			this.oRemovePlugin.registerElementOverlay(this.oButtonOverlay);
-
-			assert.strictEqual(this.oRemovePlugin.isAvailable([this.oButtonOverlay]), true, "... then isAvailable is called, then it returns true");
-			assert.strictEqual(this.oRemovePlugin.isEnabled([this.oButtonOverlay]), false, "... then isEnabled is called, then it returns correct value from function call");
-			assert.strictEqual(this.oRemovePlugin._isEditable(this.oButtonOverlay), true, "then the overlay is editable");
 		});
 
 		QUnit.test("when an overlay has remove action designTime metadata, and isEnabled property is boolean", function(assert) {
+			var done = assert.async(2);
 			this.oButtonOverlay.setDesignTimeMetadata({
 				actions : {
 					remove : {
@@ -330,34 +359,42 @@ function (
 					}
 				}
 			});
+			this.oDesignTime.attachEventOnce("synced", function() {
+				assert.strictEqual(this.oRemovePlugin.isAvailable([this.oButtonOverlay]), false, "... then isAvailable is called, then it returns false");
+				assert.strictEqual(this.oRemovePlugin.isEnabled([this.oButtonOverlay]), false, "... then isEnabled is called, then it returns correct value");
+				Promise.resolve()
+					.then(this.oRemovePlugin._isEditable.bind(this.oRemovePlugin, this.oButtonOverlay))
+					.then(function(bEditable) {
+						assert.strictEqual(bEditable, false, "then the overlay is not editable");
+						done();
+					});
+
+				var bIsAvailable = true;
+
+				sandbox.stub(this.oRemovePlugin, "isAvailable").callsFake(function (aElementOverlays) {
+					assert.equal(aElementOverlays[0].getId(), this.oButtonOverlay.getId(), "the 'available' function calls isAvailable with the correct overlay");
+					return bIsAvailable;
+				}.bind(this));
+				sandbox.stub(this.oRemovePlugin, "handler").callsFake(function (aElementOverlays) {
+					assert.deepEqual(aElementOverlays, [this.oButtonOverlay], "the 'handler' method is called with the right overlays");
+				}.bind(this));
+				sandbox.stub(this.oRemovePlugin, "isEnabled").callsFake(function (aElementOverlays) {
+					assert.equal(aElementOverlays[0].getId(), this.oButtonOverlay.getId(), "the 'enabled' function calls isEnabled with the correct overlay");
+				}.bind(this));
+
+				var aMenuItems = this.oRemovePlugin.getMenuItems([this.oButtonOverlay]);
+				assert.equal(aMenuItems[0].id, "CTX_REMOVE", "'getMenuItems' returns the context menu item for the plugin");
+
+				aMenuItems[0].handler([this.oButtonOverlay]);
+				aMenuItems[0].enabled([this.oButtonOverlay]);
+
+				bIsAvailable = false;
+				assert.equal(this.oRemovePlugin.getMenuItems([this.oButtonOverlay]).length, 0, "and if the plugin is not enabled, no menu entries are returned");
+				done();
+			}.bind(this));
+
 			this.oRemovePlugin.deregisterElementOverlay(this.oButtonOverlay);
 			this.oRemovePlugin.registerElementOverlay(this.oButtonOverlay);
-
-			assert.strictEqual(this.oRemovePlugin.isAvailable([this.oButtonOverlay]), false, "... then isAvailable is called, then it returns false");
-			assert.strictEqual(this.oRemovePlugin.isEnabled([this.oButtonOverlay]), false, "... then isEnabled is called, then it returns correct value");
-			assert.strictEqual(this.oRemovePlugin._isEditable(this.oButtonOverlay), false, "then the overlay is not editable");
-
-			var bIsAvailable = true;
-
-			sandbox.stub(this.oRemovePlugin, "isAvailable").callsFake(function (aElementOverlays) {
-				assert.equal(aElementOverlays[0].getId(), this.oButtonOverlay.getId(), "the 'available' function calls isAvailable with the correct overlay");
-				return bIsAvailable;
-			}.bind(this));
-			sandbox.stub(this.oRemovePlugin, "handler").callsFake(function (aElementOverlays) {
-				assert.deepEqual(aElementOverlays, [this.oButtonOverlay], "the 'handler' method is called with the right overlays");
-			}.bind(this));
-			sandbox.stub(this.oRemovePlugin, "isEnabled").callsFake(function (aElementOverlays) {
-				assert.equal(aElementOverlays[0].getId(), this.oButtonOverlay.getId(), "the 'enabled' function calls isEnabled with the correct overlay");
-			}.bind(this));
-
-			var aMenuItems = this.oRemovePlugin.getMenuItems([this.oButtonOverlay]);
-			assert.equal(aMenuItems[0].id, "CTX_REMOVE", "'getMenuItems' returns the context menu item for the plugin");
-
-			aMenuItems[0].handler([this.oButtonOverlay]);
-			aMenuItems[0].enabled([this.oButtonOverlay]);
-
-			bIsAvailable = false;
-			assert.equal(this.oRemovePlugin.getMenuItems([this.oButtonOverlay]).length, 0, "and if the plugin is not enabled, no menu entries are returned");
 		});
 
 		QUnit.test("when an overlay has no remove action designTime metadata and removeElement() is called (via delete button)", function(assert) {
