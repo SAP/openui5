@@ -20,27 +20,37 @@
 		<script>
 			var app = new sap.m.App("myApp", {
 				initialPage: "page1"
-			});
+			}),
+				busyImage = new sap.m.BusyIndicator({
+					text: 'Busy indicator with a custom icon',
+					customIcon: '../images/synchronise_48.png',
+					customIconRotationSpeed: 5000
+				}),
+				busyCSSText = new sap.m.BusyIndicator({
+					text: 'Medium sized busy indicator',
+				}),
+				bCompactMode = new sap.m.CheckBox("compactMode", {
+					text: "Compact Mode",
+					selected : false,
+					select : function() {
+						$("body").toggleClass("sapUiSizeCompact");
+					}
+				}),
+				oPage = new sap.m.Page("page1", {
+					title: "BusyIndicator Accessibility Test Page",
+					content:[
+						busyImage,
+						busyCSSText
+					],
+					footer: new sap.m.Toolbar({
+							content: [
+								new sap.m.ToolbarSpacer(),
+								bCompactMode
+							]
+					})
+				});
 
-			var busyImage = new sap.m.BusyIndicator({
-				text: 'this is an image busy indicator',
-				customIcon: '../images/synchronise_48.png',
-				customIconRotationSpeed: 5000
-			});
-
-			var busyCSSText = new sap.m.BusyIndicator({
-				text: 'default sized busy indicator',
-			});
-
-			var page1 = new sap.m.Page("page1", {
-				title: "Mobile Busy Indicator Controls",
-				content:[
-					busyImage,
-					busyCSSText
-				]
-			});
-
-			app.addPage(page1).placeAt("content");
+			app.addPage(oPage).placeAt("content");
 		</script>
 	</head>
 	<body class="sapUiBody" style="overflow: hidden">
