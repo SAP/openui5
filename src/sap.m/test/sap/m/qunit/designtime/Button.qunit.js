@@ -409,6 +409,100 @@ sap.ui.define([
 			afterRedo: fnTextInRTLAfterCombine
 		});
 
+		/* MenuButton enabled property is bound to the original Buttons enablement */
+		var fnEnableAfterCombine = function (oButton, oViewAfterAction, assert) {
+			var oCreatedMenuButton = oViewAfterAction.byId("bar0").getContentMiddle()[0];
+			assert.equal(oCreatedMenuButton.getEnabled(), false, "MenuButton is disabled when the combined buttons are disabled");
+		};
+
+		var fnEnableAfterUndo = function (oButton, oViewAfterAction, assert) {
+			// just return OK, since the tested MenuButton doesn't exist
+			assert.ok(true, "MenuButton enabled");
+		};
+
+		elementActionTest("MenuButton visibility is bound to the original Buttons enablement", {
+			jsOnly: true,
+			xmlView:
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
+					'<Page id="page0" >' +
+						'<customHeader>' +
+							'<Bar id="bar0">' +
+								'<contentMiddle>' +
+									'<Button id="btn0" text="button0" enabled="false" />' +
+									'<Button id="btn1" text="button1" enabled="false" />' +
+									'<Button id="btn2" text="button2" enabled="false" />' +
+								'</contentMiddle>' +
+							'</Bar>' +
+						'</customHeader>' +
+					'</Page>' +
+				'</mvc:View>',
+			action: {
+				name: "combine",
+				controlId: "btn0",
+				parameter: function(oView){
+					return {
+						source: oView.byId("btn0"),
+						combineElements: [
+							oView.byId("btn0"),
+							oView.byId("btn1"),
+							oView.byId("btn2")
+						]
+					};
+				}
+			},
+			layer: "VENDOR",
+			afterAction: fnEnableAfterCombine,
+			afterUndo: fnEnableAfterUndo,
+			afterRedo: fnEnableAfterCombine
+		});
+
+		/* MenuButton visible property is bound to the original Buttons visibility */
+		var fnVisibilityAfterCombine = function (oButton, oViewAfterAction, assert) {
+			var oCreatedMenuButton = oViewAfterAction.byId("bar0").getContentMiddle()[0];
+			assert.equal(oCreatedMenuButton.getVisible(), false, "MenuButton is not visible when the combined buttons are not visible");
+		};
+
+		var fnVisibilityAfterUndo = function (oButton, oViewAfterAction, assert) {
+			// just return OK, since the tested MenuButton doesn't exist
+			assert.ok(true, "MenuButton visibility");
+		};
+
+		elementActionTest("MenuButton visibility is bound to the original Buttons visibility", {
+			jsOnly: true,
+			xmlView:
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
+					'<Page id="page0" >' +
+						'<customHeader>' +
+							'<Bar id="bar0">' +
+								'<contentMiddle>' +
+									'<Button id="btn0" text="button0" visible="false" />' +
+									'<Button id="btn1" text="button1" visible="false" />' +
+									'<Button id="btn2" text="button2" visible="false" />' +
+								'</contentMiddle>' +
+							'</Bar>' +
+						'</customHeader>' +
+					'</Page>' +
+				'</mvc:View>',
+			action: {
+				name: "combine",
+				controlId: "btn0",
+				parameter: function(oView){
+					return {
+						source: oView.byId("btn0"),
+						combineElements: [
+							oView.byId("btn0"),
+							oView.byId("btn1"),
+							oView.byId("btn2")
+						]
+					};
+				}
+			},
+			layer: "VENDOR",
+			afterAction: fnVisibilityAfterCombine,
+			afterUndo: fnVisibilityAfterUndo,
+			afterRedo: fnVisibilityAfterCombine
+		});
+
 		/* Buttons are reverted in the initial order */
 		var fnButtonsOrderAfterCombine = function (oButton, oViewAfterAction, assert) {
 			assert.ok(true, "change applied");

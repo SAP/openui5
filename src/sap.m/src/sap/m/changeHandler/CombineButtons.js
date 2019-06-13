@@ -53,10 +53,14 @@ sap.ui.define([
 		var oMenu;
 		var oMenuButton;
 		var aMenuButtonName = [];
+		var sPropertyEnabled = "";
+		var sPropertyVisible = "";
+		var sOR = "";
 		var oRevertData = {
 			parentAggregation: "",
 			insertIndexes: []
 		};
+		var aMenuButtonModels = [];
 
 		aButtons = oChangeDefinition.content.combineButtonSelectors.map(function (oCombineButtonSelector) {
 			return oModifier.bySelector(oCombineButtonSelector, oAppComponent, oView);
@@ -148,13 +152,50 @@ sap.ui.define([
 			oModifier.insertAggregation(oParent, "dependents", oButton, 0, oView);
 
 			// Saving original ID to original button to avoid conflict with aggregation binding for customData aggregation.
-			// The new MenuItem will receive this data via ManagedObjectModel synchronisation.
+			// The new MenuItem will receive this data via ManagedObjectModel synchronization.
 			oModifier.insertAggregation(oButton, "customData", oIdToSave, 0, oView);
 
 			oModifier.insertAggregation(oMenu, "items", oMenuItem, iIndex, oView);
+
+			// Create ManagedObjectModel for every MenuItem
+			// later it will be placed in dependents aggregation of the MenuButton
+			// and enabled and visibility properties of each item will be bound to the enabled and visibility property of the MenuButton
+			var sModelName = "$sap.m.flexibility.MenuButtonModel" + iIndex;
+			aMenuButtonModels[iIndex] = oModifier.createControl(
+					"sap.ui.fl.util.ManagedObjectModel",
+					oAppComponent,
+					oView,
+					Object.assign({}, oSelector, {
+						id: oSelector.id + '-managedObjectModelMenuItem'
+					}),
+					{
+						object: oMenuItem,
+						name: sModelName
+					}
+				);
+
+			// create binding expression for the visibility and enabled property of the MenuButton
+			sPropertyEnabled = sPropertyEnabled + sOR + "${" + sModelName + ">/enabled}";
+			sPropertyVisible = sPropertyVisible + sOR + "${" + sModelName + ">/visible}";
+			sOR = " || ";
 		});
 
-		oMenuButton = oModifier.createControl("sap.m.MenuButton", oAppComponent, oView, oChangeDefinition.content.menuButtonIdSelector);
+		// Create MenuButton
+		oMenuButton = oModifier.createControl(
+				"sap.m.MenuButton",
+				oAppComponent,
+				oView,
+				oChangeDefinition.content.menuButtonIdSelector,
+				{
+					visible: "{= " + sPropertyVisible + "}",
+					enabled: "{= " + sPropertyEnabled + "}"
+				}
+		);
+
+		// ManagedObjectModel should be placed in `dependents` aggregation of the MenuButton
+		aMenuButtonModels.forEach(function (oModel) {
+			oModifier.insertAggregation(oMenuButton, "dependents", oModel, 0, oView);
+		});
 
 		oModifier.setProperty(oMenuButton, "text", aMenuButtonName.join("/"));
 		oModifier.insertAggregation(oMenuButton, "menu", oMenu, 0, oView);
