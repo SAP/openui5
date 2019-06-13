@@ -16,7 +16,7 @@ sap.ui.define([
 	QUnit.module("getTarget and target names", {
 		beforeEach: function () {
 			// System under test + Arrange
-			this.oViews = new Views();
+			this.oViews = new Views({async: true});
 			this.oTargets = new Targets({
 				targets: {
 					myTarget: {
@@ -29,6 +29,9 @@ sap.ui.define([
 						parent: "myParent",
 						viewName: "myChildView"
 					}
+				},
+				config: {
+					async: true
 				},
 				views: this.oViews
 			});
@@ -112,7 +115,8 @@ sap.ui.define([
 			var oTargetConfig = {
 				controlAggregation: "foo",
 				someThingCustom: "bar",
-				someThingToBeReplaced: "baz"
+				someThingToBeReplaced: "baz",
+				async: true
 			};
 			// System under test + Arrange
 			this.oTargets = new Targets({
@@ -322,7 +326,7 @@ sap.ui.define([
 				}
 			};
 
-			this.oViews = new Views();
+			this.oViews = new Views({async: true});
 			// System under test + Arrange
 			this.oTargets = new Targets({
 				targets: this.oTargetsConfig,
@@ -436,6 +440,83 @@ sap.ui.define([
 		});
 	});
 
+
+	QUnit.module("Component Targets parent/child", {
+		beforeEach: function () {
+			this.oShell = new ShellSubstitute();
+
+			// System under test + Arrange
+			this.oViews = new Views({async: true});
+			this.oTargets = new Targets({
+				targets: {
+					myTarget: {
+						path: "test.routing",
+						name: "target",
+						type: "Component",
+						parent: "myParent",
+						controlAggregation: "content",
+						controlId: "panel",
+						id: "baz",
+						options: {
+							manifest: false
+						}
+					},
+					myParent : {
+						path: "test.routing.target",
+						name: "parent",
+						controlAggregation: "content",
+						controlId: this.oShell.getId(),
+						type: "Component",
+						id: "parent",
+						options: {
+							manifest: false
+						}
+					}
+				},
+				config: {
+					async: true
+				},
+				views: this.oViews
+			});
+			this.sandbox = sinon.sandbox.create();
+		},
+		afterEach: function () {
+			this.oTargets.destroy();
+		}
+	});
+
+	QUnit.test("Display a component target which has a parent set with another component target", function(assert) {
+		var oTarget = this.oTargets.getTarget("myTarget"),
+			oParentTarget = this.oTargets.getTarget("myParent"),
+			oTargetDisplaySpy = this.sandbox.spy(oTarget, "_display"),
+			oParentTargetDisplaySpy = this.sandbox.spy(oParentTarget, "_display");
+
+		// act
+		var pDisplay = this.oTargets.display("myTarget");
+
+		return pDisplay.then(function() {
+			assert.ok(oParentTargetDisplaySpy.calledOnce, "The parent target is displayed");
+			assert.ok(oTargetDisplaySpy.calledOnce, "The target is displayed");
+
+			var oParentComponentContainer = this.oShell.getContent()[0];
+			assert.ok(oParentComponentContainer.isA("sap.ui.core.ComponentContainer"), "The parent target is added to the target control");
+
+			var oParentView = oParentComponentContainer.getComponentInstance().getRootControl();
+			assert.ok(oParentView.isA("sap.ui.core.mvc.View"), "The view from parent target is there");
+
+			var oPanel = oParentView.byId("panel");
+			assert.ok(oPanel.isA("sap.m.Panel"), "The target control for the child target can be found");
+
+			var aPanelContent = oPanel.getContent();
+			var oLastChildInPanel = aPanelContent[aPanelContent.length - 1];
+			assert.ok(oLastChildInPanel.isA("sap.ui.core.ComponentContainer"), "The child target's component container is added to the target control");
+
+			var oChildView = oLastChildInPanel.getComponentInstance().getRootControl();
+			assert.ok(oChildView.isA("sap.ui.core.mvc.View"), "The child view can be found");
+			assert.strictEqual(oChildView.getViewName(), "test.routing.target.Async1", "The correct view is loaded");
+		}.bind(this));
+	});
+
 	QUnit.module("titleChanged event", {
 		beforeEach: function () {
 			this.oApp = new App();
@@ -473,7 +554,7 @@ sap.ui.define([
 				}
 			};
 
-			this.oViews = new Views();
+			this.oViews = new Views({async: true});
 			// System under test + Arrange
 			this.oTargets = new Targets({
 				targets: this.oTargetsConfig,
@@ -731,7 +812,7 @@ sap.ui.define([
 
 	QUnit.test("Should destroy all dependencies", function (assert) {
 		// Arrange
-		var oViews = new Views(),
+		var oViews = new Views({async: true}),
 			oFirstTarget,
 			oSecondTarget;
 
@@ -743,6 +824,9 @@ sap.ui.define([
 					},
 					bar: {
 					}
+				},
+				config: {
+					async: true
 				},
 				views : oViews
 			}

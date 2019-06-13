@@ -142,8 +142,11 @@ sap.ui.define([
 							oControl = oViewInfo.parentInfo.control,
 							pContainerControl = Promise.resolve(oControl);
 
-						if (oViewContainingTheControl && oViewContainingTheControl.isA("sap.ui.core.UIComponent")) {
-							oViewContainingTheControl = oViewContainingTheControl.getRootControl();
+						// if the parent target loads a component, the oViewContainingTheControl is an instance of
+						// ComponentContainer. The root control of the component should be retrieved and set as
+						// oViewContainingTheControl
+						if (oViewContainingTheControl && oViewContainingTheControl.isA("sap.ui.core.ComponentContainer")) {
+							oViewContainingTheControl = oViewContainingTheControl.getComponentInstance().getRootControl();
 						}
 
 						//no parent view - see if there is a targetParent in the config
@@ -158,7 +161,10 @@ sap.ui.define([
 
 						// Find the control in the parent
 						if (oOptions.controlId) {
-							if (oViewContainingTheControl) {
+							// The root control of a component may be any kind of control
+							// A check of sap.ui.core.View is needed before calling the loaded method to wait
+							// for the loading of the view
+							if (oViewContainingTheControl && oViewContainingTheControl.isA("sap.ui.core.mvc.View")) {
 								// controlId was specified - ask the parents view for it
 								// wait for the parent view to be loaded in case it's loaded async
 								pContainerControl = oViewContainingTheControl.loaded().then(function(oContainerView) {
@@ -187,10 +193,6 @@ sap.ui.define([
 						var oComponent,
 							sComponentContainerId,
 							fnOriginalExit;
-						// if error already occured, forward the error
-						if (oContainerControl.error) {
-							return oContainerControl;
-						}
 
 						if (oObject.isA("sap.ui.core.UIComponent")) {
 							oComponent = oObject;
