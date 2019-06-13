@@ -139,14 +139,19 @@ function (
 				false,
 				"isEnabled is called and returns false"
 			);
-			assert.strictEqual(
-				this.oSplitPlugin._isEditable(this.oButton1Overlay),
-				false,
-				"then the overlay is not editable"
-			);
+			return Promise.resolve()
+				.then(this.oSplitPlugin._isEditable.bind(this.oSplitPlugin, this.oButton1Overlay))
+				.then(function(bEditable) {
+					assert.strictEqual(
+						bEditable,
+						false,
+						"then the overlay is not editable"
+					);
+				});
 		});
 
 		QUnit.test("when an overlay has a split action in designTime metadata and the specified element has more than one control", function (assert) {
+			var done = assert.async();
 			var oDesignTimeMetadata1 = {
 				actions : {
 					split : {
@@ -161,22 +166,26 @@ function (
 			};
 			fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, oDesignTimeMetadata1);
 
+			this.oDesignTime.attachEventOnce("synced", function() {
+				assert.strictEqual(
+					this.oSplitPlugin.isAvailable([this.oButton1Overlay]),
+					true,
+					"isAvailable is called and returns true"
+				);
+				assert.strictEqual(
+					this.oSplitPlugin.isEnabled([this.oButton1Overlay]),
+					true,
+					"isEnabled is called and returns true"
+				);
+				done();
+			}.bind(this));
+
 			this.oSplitPlugin.deregisterElementOverlay(this.oButton1Overlay);
 			this.oSplitPlugin.registerElementOverlay(this.oButton1Overlay);
-
-			assert.strictEqual(
-				this.oSplitPlugin.isAvailable([this.oButton1Overlay]),
-				true,
-				"isAvailable is called and returns true"
-			);
-			assert.strictEqual(
-				this.oSplitPlugin.isEnabled([this.oButton1Overlay]),
-				true,
-				"isEnabled is called and returns true"
-			);
 		});
 
 		QUnit.test("when an overlay has a split action in designTime metadata relevant container has no stable id", function (assert) {
+			var done = assert.async();
 			var oDesignTimeMetadata1 = {
 				actions : {
 					split : {
@@ -190,10 +199,6 @@ function (
 				}
 			};
 			fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, oDesignTimeMetadata1);
-
-			this.oSplitPlugin.deregisterElementOverlay(this.oButton1Overlay);
-			this.oSplitPlugin.registerElementOverlay(this.oButton1Overlay);
-
 			sandbox.stub(this.oSplitPlugin, "hasStableId").callsFake(function(oOverlay) {
 				if (oOverlay === this.oPanelOverlay) {
 					return false;
@@ -201,11 +206,20 @@ function (
 				return true;
 			}.bind(this));
 
-			assert.strictEqual(
-				this.oSplitPlugin._isEditable(this.oButton1Overlay),
-				false,
-				"_isEditable returns false"
-			);
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oSplitPlugin._isEditable(this.oButton1Overlay)
+					.then(function(bEditable) {
+						assert.strictEqual(
+							bEditable,
+							false,
+							"_isEditable returns false"
+						);
+						done();
+					});
+			}.bind(this));
+
+			this.oSplitPlugin.deregisterElementOverlay(this.oButton1Overlay);
+			this.oSplitPlugin.registerElementOverlay(this.oButton1Overlay);
 		});
 
 		QUnit.test("when isEnabled() is a function in designTime metadata and the specified element contains only one control", function (assert) {
@@ -318,7 +332,10 @@ function (
 
 		QUnit.test("when an overlay has a split action designTime metadata", function (assert) {
 			fnSetOverlayDesigntimeMetadata(this.oButton1Overlay, DEFAULT_DTM);
-			assert.strictEqual(this.oSplitPlugin._isEditable(this.oButton1Overlay), true, "then the overlay is editable");
+			return this.oSplitPlugin._isEditable(this.oButton1Overlay)
+				.then(function(bEditable) {
+					assert.strictEqual(bEditable, true, "then the overlay is editable");
+				});
 		});
 
 		QUnit.test("when an overlay has a split action designTime metadata which has no changeOnRelevantContainer", function(assert) {
@@ -332,8 +349,11 @@ function (
 					}
 				}
 			});
-
-			assert.strictEqual(this.oSplitPlugin._isEditable(this.oButton1Overlay), false, "then the overlay is not editable");
+			return Promise.resolve()
+				.then(this.oSplitPlugin._isEditable.bind(this.oSplitPlugin, this.oButton1Overlay))
+				.then(function(bEditable) {
+					assert.strictEqual(bEditable, false, "then the overlay is not editable");
+				});
 		});
 
 		QUnit.test("when retrieving the context menu item", function(assert) {
