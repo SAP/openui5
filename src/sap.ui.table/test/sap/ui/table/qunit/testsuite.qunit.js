@@ -142,9 +142,6 @@ sap.ui.define([
 			"TableUtils": {
 				group: "Utils"
 			},
-			"TableRendererUtils": {
-				group: "Utils"
-			},
 			"TableColumnUtils": {
 				group: "Utils"
 			},
