@@ -28,6 +28,11 @@ sap.ui.define(['sap/ui/core/Renderer'],
 		oRM.writeControlData(oControl);
 
 		oRM.addClass(SliderTooltipRenderer.CSS_CLASS);
+
+		if (!oControl.getEditable()) {
+			oRM.addClass(SliderTooltipRenderer.CSS_CLASS + "NonEditableWrapper");
+		}
+
 		oRM.writeClasses();
 
 		if (oControl.getWidth()) {
