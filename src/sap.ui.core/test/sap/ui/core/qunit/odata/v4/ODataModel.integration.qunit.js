@@ -7369,12 +7369,13 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Call a bound action on a collection and check that return value context has right
-	// path and messages are reported as expected. Refreshing the return value context updates also
+	// Scenario: Call an overloaded bound function to get defaults (CPOUI5UISERVICESV3-1873)
+	// then call a bound action on a collection and check that return value context has right path
+	// and messages are reported as expected. Refreshing the return value context updates also
 	// messages properly. (CPOUI5UISERVICESV3-1674)
 	// Return value context can be used with v4.Context#setProperty (CPOUI5UISERVICESV3-1874).
 	QUnit.test("Bound action on collection", function (assert) {
-		var oExecutePromise,
+		var oHeaderContext,
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			oReturnValueContext,
 			sView = '\
@@ -7401,14 +7402,32 @@ sap.ui.define([
 			.expectChange("nameCreated", false);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oHeaderContext = that.oView.byId("table").getBinding("items").getHeaderContext();
+			oHeaderContext = that.oView.byId("table").getBinding("items").getHeaderContext();
+			that.expectRequest("Artists/special.cases.GetDefaults()", {
+					"ArtistID" : "ABC",
+					"IsActiveEntity" : false,
+					"Name" : "DefaultName"
+				});
+
+			return Promise.all([
+				// code under test
+				that.oModel.bindContext("special.cases.GetDefaults(...)", oHeaderContext).execute(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function (aResults) {
+			var oAction,
+				oDefaults = aResults[0];
 
 			that.expectRequest({
 					method : "POST",
 					headers : {},
 					url : "Artists/special.cases.Create?"
 						+ "$select=ArtistID,IsActiveEntity,Messages,Name",
-					payload : {}
+					payload : {
+						"ArtistID" : "ABC",
+						"IsActiveEntity" : false,
+						"Name" : "DefaultName"
+					}
 				}, {
 					"@odata.etag" : "ETagAfterCreate",
 					"ArtistID" : "ABC",
@@ -7429,11 +7448,14 @@ sap.ui.define([
 					type : "Success"
 				}]);
 
-			oExecutePromise = that.oModel.bindContext("special.cases.Create(...)", oHeaderContext,
-				{$$inheritExpandSelect : true}).execute();
+			oAction = that.oModel.bindContext("special.cases.Create(...)", oHeaderContext,
+					{$$inheritExpandSelect : true})
+				.setParameter("ArtistID", oDefaults.getObject("ArtistID"))
+				.setParameter("IsActiveEntity", oDefaults.getObject("IsActiveEntity"))
+				.setParameter("Name", oDefaults.getObject("Name"));
 
 			return Promise.all([
-				oExecutePromise,
+				oAction.execute(),
 				that.waitForChanges(assert)
 			]);
 		}).then(function (aPromiseResults) {

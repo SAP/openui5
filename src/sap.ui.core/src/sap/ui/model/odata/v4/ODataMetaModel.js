@@ -1103,14 +1103,13 @@ sap.ui.define([
 			 * @param {object} oOverload
 			 *   A single operation overload
 			 * @returns {boolean}
-			 *   <code>true</code> iff the given overload is an action with the appropriate binding
-			 *   parameter (bound and unbound cases), or not an action at all.
+			 *   <code>true</code> iff the given overload is an operation with the appropriate
+			 *   binding parameter (bound and unbound cases).
 			 */
 			function isRightOverload(oOverload) {
-				return oOverload.$kind !== "Action"
-					|| (!oOverload.$IsBound && vBindingParameterType === UNBOUND
-						|| oOverload.$IsBound
-						&& vBindingParameterType === oOverload.$Parameter[0].$Type);
+				return !oOverload.$IsBound && vBindingParameterType === UNBOUND
+					|| oOverload.$IsBound
+					&& vBindingParameterType === oOverload.$Parameter[0].$Type;
 			}
 
 			/*
@@ -1278,6 +1277,7 @@ sap.ui.define([
 								if (!scopeLookup(vResult.$Function, "$Function")) {
 									return false;
 								}
+								vBindingParameterType = UNBOUND;
 							} else if (i === 0) {
 								// "17.2 SimpleIdentifier" (or placeholder):
 								// lookup inside schema child (which is determined lazily)
