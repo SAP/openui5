@@ -1159,8 +1159,8 @@ sap.ui.define([
 	 *   The array of already created contexts with the first entry containing the context for
 	 *   <code>iStart</code>
 	 * @throws {Error}
-	  *  If the binding's root binding is suspended, if extended change detection is enabled and
-	  *  <code>iMaximumPrefetchSize</code> is set or <code>iStart</code> is not 0
+	 *   If the binding's root binding is suspended, if extended change detection is enabled and
+	 *   <code>iMaximumPrefetchSize</code> is set or <code>iStart</code> is not 0
 	 *
 	 * @protected
 	 * @see sap.ui.model.ListBinding#getContexts
@@ -1555,7 +1555,7 @@ sap.ui.define([
 	 * @see sap.ui.model.ListBinding#getLength
 	 * @since 1.37.0
 	 */
-	 // @override
+	// @override
 	ODataListBinding.prototype.getLength = function () {
 		if (this.bLengthFinal) {
 			// Note: non-transient created entities exist twice

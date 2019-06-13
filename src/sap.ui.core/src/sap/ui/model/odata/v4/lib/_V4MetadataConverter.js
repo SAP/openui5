@@ -47,7 +47,7 @@ sap.ui.define([
 				$kind : sKind
 			};
 
-		 this.processAttributes(oElement, oAction, {
+		this.processAttributes(oElement, oAction, {
 			"IsBound" : this.setIfTrue,
 			"EntitySetPath" : this.setValue,
 			"IsComposable" : this.setIfTrue
@@ -120,7 +120,7 @@ sap.ui.define([
 			$Type :
 				this.resolveAlias(oElement.getAttribute("EntityType"))
 		};
-		 this.processAttributes(oElement, this.entitySet, {
+		this.processAttributes(oElement, this.entitySet, {
 			"IncludeInServiceDocument" : this.setIfFalse
 		});
 		this.annotatable(sName);
@@ -167,7 +167,7 @@ sap.ui.define([
 				"$kind" : "EnumType"
 			};
 
-		 this.processAttributes(oElement, oEnumType, {
+		this.processAttributes(oElement, oEnumType, {
 			"IsFlags" : this.setIfTrue,
 			"UnderlyingType" : function (sValue) {
 				return sValue !== "Edm.Int32" ? sValue : undefined;
@@ -275,7 +275,7 @@ sap.ui.define([
 			oParameter = {};
 
 		this.processTypedCollection(oElement.getAttribute("Type"), oParameter);
-		 this.processAttributes(oElement, oParameter, {
+		this.processAttributes(oElement, oParameter, {
 			"Name" : this.setValue,
 			"Nullable" : this.setIfFalse
 		});
@@ -367,7 +367,7 @@ sap.ui.define([
 		var sQualifiedName = this.namespace + oElement.getAttribute("Name"),
 			that = this;
 
-		 this.processAttributes(oElement, oType, {
+		this.processAttributes(oElement, oType, {
 			"OpenType" : that.setIfTrue,
 			"HasStream" : that.setIfTrue,
 			"Abstract" : that.setIfTrue,
@@ -426,7 +426,7 @@ sap.ui.define([
 			};
 
 		this.processTypedCollection(oElement.getAttribute("Type"), oProperty);
-		 this.processAttributes(oElement, oProperty, {
+		this.processAttributes(oElement, oProperty, {
 			"Nullable" : this.setIfFalse,
 			"Partner" : this.setValue,
 			"ContainsTarget" : this.setIfTrue

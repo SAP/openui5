@@ -657,7 +657,7 @@ sap.ui.define([
 	*
 	 * @private
 	 */
-	 Requestor.prototype.getOrCreateBatchQueue = function (sGroupId) {
+	Requestor.prototype.getOrCreateBatchQueue = function (sGroupId) {
 		var aChangeSet,
 			aRequests = this.mBatchQueue[sGroupId];
 
@@ -671,9 +671,9 @@ sap.ui.define([
 			}
 		}
 		return aRequests;
-	 };
+	};
 
-	 /**
+	/**
 	 * Returns the resource path relative to the service URL, including function arguments.
 	 *
 	 * @param {string} sPath

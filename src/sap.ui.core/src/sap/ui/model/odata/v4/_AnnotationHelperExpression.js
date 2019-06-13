@@ -531,7 +531,7 @@ sap.ui.define([
 		 * constants accordingly.
 		 *
 		 * @param {object} oResult
-	 	 *   a result object with category
+		 *   a result object with category
 		 * @param {boolean} bWrapExpression
 		 *   if true, wrap an expression in <code>oResult</code> with "()"
 		 * @returns {string}
