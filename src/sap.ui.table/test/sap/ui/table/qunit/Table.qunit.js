@@ -2403,13 +2403,23 @@ sap.ui.define([
 			if (aSortedColumns.length === 2) {
 				cell = aSortedColumns[0].$();
 				assert.ok(cell.hasClass("sapUiTableColSorted"), "Sort icon is shown");
-				assert.ok(!cell.hasClass("sapUiTableColSortedD"), "sort icon is ascending");
+				assert.ok(!cell.hasClass("sapUiTableColSortedD"), "Sort icon is ascending");
 
 				cell = aSortedColumns[1].$();
 				assert.ok(cell.hasClass("sapUiTableColSorted"), "Sort icon is shown");
-				assert.ok(cell.hasClass("sapUiTableColSortedD"), "sort icon is descending");
+				assert.ok(cell.hasClass("sapUiTableColSortedD"), "Sort icon is descending");
 
 				oTable.detachEvent("_rowsUpdated", fnHandler);
+
+				oTable.rerender();
+				cell = aSortedColumns[0].$();
+				assert.ok(cell.hasClass("sapUiTableColSorted"), "Sort icon is still shown after rendering");
+				assert.ok(!cell.hasClass("sapUiTableColSortedD"), "Sort icon is ascending");
+
+				cell = aSortedColumns[1].$();
+				assert.ok(cell.hasClass("sapUiTableColSorted"), "Sort icon is still shown after rendering");
+				assert.ok(cell.hasClass("sapUiTableColSortedD"), "Sort icon is descending");
+
 				done();
 			}
 		};
