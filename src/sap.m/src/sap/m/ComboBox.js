@@ -1845,6 +1845,10 @@ sap.ui.define([
 			oListItem.setTooltip(oItem.getTooltip());
 			oItem.data(oRenderer.CSS_CLASS_COMBOBOXBASE + "ListItem", oListItem);
 
+			oItem.getCustomData().forEach(function(oCustomData){
+				oListItem.addCustomData(oCustomData.clone());
+			});
+
 			return oListItem;
 		};
 
