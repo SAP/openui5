@@ -1876,7 +1876,9 @@ function(
 	 */
 	MultiInput.prototype._calculateSpaceForTokenizer = function () {
 		if (this.getDomRef()) {
-			var iControlWidth = this.getDomRef().offsetWidth,
+			var iSpace,
+				iControlWidth = this.getDomRef().offsetWidth,
+				iDescriptionWidth = this.$().find(".sapMInputDescriptionWrapper").width(),
 				iSummedIconsWidth = this._calculateIconsSpace(),
 				oInputRef = this.$().find(".sapMInputBaseInner"),
 				aInputRelevantCss = ["min-width", "padding-right", "padding-left"],
@@ -1885,7 +1887,10 @@ function(
 					return iAcc + (parseInt(oInputRef.css(sProperty), 10) || 0);
 				}, 0);
 
-			return iControlWidth - (iSummedIconsWidth + iInputWidth) + "px";
+			iSpace = iControlWidth - (iSummedIconsWidth + iInputWidth + iDescriptionWidth);
+			iSpace = iSpace < 0 ? 0 : iSpace;
+
+			return iSpace + "px";
 		} else {
 			return null;
 		}
