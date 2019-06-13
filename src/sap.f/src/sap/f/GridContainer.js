@@ -148,6 +148,9 @@ sap.ui.define([
 	var GridContainer = Control.extend("sap.f.GridContainer", /** @lends sap.f.GridContainer.prototype */ {
 		metadata: {
 			library: "sap.f",
+			interfaces: [
+				"sap.f.dnd.IGridDroppable"
+			],
 			properties: {
 
 				/**
