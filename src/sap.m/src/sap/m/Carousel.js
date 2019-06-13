@@ -84,6 +84,7 @@ function(
 	 *</ul>
 	 * Additionally, you can also change the location of the navigation arrows.
 	 * By setting <code>arrowsPlacement</code> to <code>sap.m.CarouselArrowsPlacement.PageIndicator</code>, the arrows will be located at the bottom by the paging indicator.
+	 * Note: When the content is of type <code>sap.m.Image</code> add "Image" text at the end of the <code>"alt"</code> description in order to provide accessibility info for the UI element.
 	 * <h3>Usage</h3>
 	 * <h4> When to use</h4>
 	 * <ul>
