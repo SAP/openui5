@@ -103,6 +103,12 @@ function (
 		}
 	};
 
+	function prepareAndExecute(oFlexCommand) {
+		return Promise.resolve()
+		.then(oFlexCommand.prepare.bind(oFlexCommand))
+		.then(oFlexCommand.execute.bind(oFlexCommand));
+	}
+
 	QUnit.module("Given a command factory", {
 		beforeEach : function() {
 			this.oButton = new Button(oMockedAppComponent.createId("myButton"));
@@ -197,29 +203,27 @@ function (
 	}, function() {
 		QUnit.test("when executing the command,", function(assert) {
 			assert.ok(this.oFlexCommand.isEnabled(), "then command is enabled");
-			return this.oFlexCommand.execute()
 
-			.then(function() {
-				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should do the work.");
-			}.bind(this))
-
-			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
-			});
+			return prepareAndExecute(this.oFlexCommand)
+				.then(function() {
+					assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should do the work.");
+				}.bind(this))
+				.catch(function (oError) {
+					assert.ok(false, 'catch must never be called - Error: ' + oError);
+				});
 		});
 
 		QUnit.test("when executing a command that fails because of dependencies", function(assert) {
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oMockedAppComponent);
 			sandbox.stub(oChangePersistence, "checkForOpenDependenciesForControl").returns(true);
-			return this.oFlexCommand.execute()
 
-			.then(function() {
-				assert.ok(false, 'then must never be called. An Exception should be thrown');
-			})
-
-			.catch(function(oError) {
-				assert.deepEqual(oError.message, "The following Change cannot be applied because of a dependency: " + this.oFlexCommand.getPreparedChange().getId(), "the execute promise got rejected with the correct error message");
-			}.bind(this));
+			return prepareAndExecute(this.oFlexCommand)
+				.then(function() {
+					assert.ok(false, 'then must never be called. An Exception should be thrown');
+				})
+				.catch(function(oError) {
+					assert.deepEqual(oError.message, "The following Change cannot be applied because of a dependency: " + this.oFlexCommand.getPreparedChange().getId(), "the execute promise got rejected with the correct error message");
+				}.bind(this));
 		});
 	});
 
@@ -1180,7 +1184,9 @@ function (
 
 			this.oCommandStack.push(this.oFlexCommand);
 
-			return this.oCommandStack.execute()
+			return Promise.resolve()
+				.then(this.oFlexCommand.prepare.bind(this.oFlexCommand))
+				.then(this.oCommandStack.execute.bind(this.oCommandStack))
 				.then(function () {
 					var oChange = this.oFlexCommand.getPreparedChange();
 					assert.ok(true, "then a Promise.resolve() is returned on Stack.execute()");
@@ -1208,7 +1214,9 @@ function (
 			sandbox.stub(ChangeRegistry.getInstance(), "getChangeHandler").returns(this.fnChangeHandler);
 			this.oCommandStack.push(this.oFlexCommand);
 
-			return this.oCommandStack.execute()
+			return Promise.resolve()
+				.then(this.oFlexCommand.prepare.bind(this.oFlexCommand))
+				.then(this.oCommandStack.execute.bind(this.oCommandStack))
 				.then(function () {
 					var oChange = this.oFlexCommand.getPreparedChange();
 					assert.equal(this.fnApplyChangeSpy.callCount, 1, "then Command._applyChange called once");
@@ -1445,7 +1453,7 @@ function (
 				assert.strictEqual(oRevealCommand.getPreparedChange().getContent().boundAggregation, "items", "and the bound aggegation is written to the change content");
 				assert.strictEqual(oRevealCommand._getChangeSpecificData().revealedElementId, oTextItem.getId(), "and the change specific content of the change is also adjusted");
 				return oRevealCommand.execute();
-			}.bind(this))
+			})
 
 			.then(function() {
 				assert.equal(oCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
