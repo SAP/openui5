@@ -19,6 +19,7 @@ sap.ui.define([
 
 	var oFrameWindow = null,
 		$Frame = null,
+		$FrameContainer = null,
 		oFramePlugin = null,
 		oFrameUtils = null,
 		oFrameJQuery = null,
@@ -45,6 +46,7 @@ sap.ui.define([
 		// user-defined dimensions should not be scaled
 		if (sWidth) {
 			$Frame.css("width", sWidth);
+			$FrameContainer.css("padding-left", sWidth);
 		} else {
 			$Frame.css("width", DEFAULT_WIDTH);
 			$Frame.addClass("default-scale-x");
@@ -318,6 +320,7 @@ sap.ui.define([
 			CollectGarbage(); // eslint-disable-line
 		}
 		$Frame.remove();
+		$FrameContainer.remove();
 		oFrameJQuery = null;
 		oFramePlugin = null;
 		oFrameUtils = null;
@@ -348,8 +351,10 @@ sap.ui.define([
 					Log.error("No source was given to launch the IFrame", this);
 				}
 				//invalidate other caches
+				$FrameContainer = jQueryDOM("<div class='opaFrameContainer'></div>");
 				$Frame = jQueryDOM('<IFrame id="' + options.frameId + '" class="opaFrame" src="' + options.source + '"></IFrame>');
-				jQueryDOM("body").append($Frame);
+				$FrameContainer.append($Frame);
+				jQueryDOM("body").append($FrameContainer);
 				setFrameSize(options.width, options.height);
 			}
 
