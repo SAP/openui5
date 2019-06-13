@@ -2,7 +2,7 @@
 	"tests" : [
 		{
 			"control": "sap.m.ActionSelect",
-			"url": "../ActionSelect.html",
+			"url": "ActionSelect.html",
 			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
