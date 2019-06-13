@@ -1609,11 +1609,9 @@ function(
 		}
 
 		var oListItem = new StandardListItem({
-			selected: true,
-			title: oToken.getText()
+			selected: true
 		});
-		oListItem.data("key", oToken.getKey());
-		oListItem.data("text", oToken.getText());
+		oListItem.setTitle(oToken.getText());
 		oListItem.data("tokenId", oToken.getId());
 		return oListItem;
 	};

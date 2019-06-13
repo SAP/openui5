@@ -427,6 +427,19 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("_mapTokenToListItem with not escaped strings does not throw an exception", function (assert) {
+		var sNotEscapedString = "asd{",
+			oToken = new Token();
+
+		oToken.setKey(sNotEscapedString);
+		oToken.setText(sNotEscapedString);
+		oToken.setTooltip(sNotEscapedString);
+
+		this.multiInput1._mapTokenToListItem(oToken);
+
+		assert.ok(true, "No exception is thrown");
+	});
+
 	QUnit.module("Validation", {
 		beforeEach: function() {
 			this.multiInput1 = new MultiInput();
@@ -1715,8 +1728,7 @@ sap.ui.define([
 
 		//assert
 		assert.strictEqual(oListItem.getTitle(), "text123", "The listItem's title is correct.");
-		assert.strictEqual(oListItem.data("key"), "key123", "The listItem's customData key is correct.");
-		assert.strictEqual(oListItem.data("text"), "text123", "The listItem's customData text is correct.");
+		assert.strictEqual(oListItem.data("tokenId"), oToken.getId(), "The listItem's customData tokenId is correct.");
 	});
 
 	QUnit.test("_handleNMoreItemDelete", function(assert) {
