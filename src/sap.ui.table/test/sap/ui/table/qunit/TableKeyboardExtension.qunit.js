@@ -82,7 +82,7 @@ sap.ui.define([
 
 	QUnit.test("invalidation", function(assert) {
 		var oExtension = oTable._getKeyboardExtension();
-		assert.ok(oExtension._itemNavigationInvalidated, "Item Navigation invalid due to intial rendering");
+		assert.ok(oExtension._itemNavigationInvalidated, "Item Navigation invalid due to initial rendering");
 		oExtension.initItemNavigation();
 		assert.ok(!oExtension._itemNavigationInvalidated, "Item Navigation not invalid after initItemNavigation");
 		oExtension.invalidateItemNavigation();
@@ -375,6 +375,11 @@ sap.ui.define([
 		];
 		var oInitItemNavigationSpy;
 		var oInvalidateItemNavigationSpy;
+		var oOnFocusInSpy = sinon.spy();
+
+		oTable.addEventDelegate({
+			onfocusin: oOnFocusInSpy
+		});
 
 		oKeyboardExtension._debug();
 		oInitItemNavigationSpy = sinon.spy(oKeyboardExtension._ExtensionHelper, "_initItemNavigation");
@@ -383,16 +388,22 @@ sap.ui.define([
 			document.getElementById(sId).focus();
 
 			oInitItemNavigationSpy.reset();
+			oOnFocusInSpy.reset();
 			oTable.rerender();
 
 			assert.ok(oInitItemNavigationSpy.calledOnce, "Re-rendered when focus was on " + sId + ": The item navigation was reinitialized");
 			assert.strictEqual(document.activeElement.id, sId, "Re-rendered when focus was on " + sId + ": The correct element is focused");
+			assert.ok(oOnFocusInSpy.callCount <= 1,
+				"Re-rendered when focus was on " + sId + ": The onfocusin event was not triggered more than once");
 
 			oInitItemNavigationSpy.reset();
+			oOnFocusInSpy.reset();
 			oTable._renderRows();
 
 			assert.ok(oInitItemNavigationSpy.calledOnce, "Re-rendered rows when focus was on " + sId + ": The item navigation was reinitialized");
 			assert.strictEqual(document.activeElement.id, sId, "Re-rendered rows when focus was on " + sId + ": The correct element is focused");
+			assert.ok(oOnFocusInSpy.callCount <= 1,
+				"Re-rendered rows when focus was on " + sId + ": The onfocusin event was not triggered more than once");
 		});
 
 		// Focus a cell in the TreeTable to check if the Table steals the focus.
@@ -400,6 +411,7 @@ sap.ui.define([
 
 		oInitItemNavigationSpy.reset();
 		oInvalidateItemNavigationSpy = sinon.spy(oKeyboardExtension, "invalidateItemNavigation");
+		oOnFocusInSpy.reset();
 		oTable.rerender();
 
 		assert.ok(oInitItemNavigationSpy.notCalled,
@@ -408,6 +420,8 @@ sap.ui.define([
 			"Re-rendered when focus was on an element outside the table: The item navigation was invalidated");
 		assert.strictEqual(document.activeElement.id, oFocusedElement.id,
 			"Re-rendered when focus was on an element outside the table: The correct element is focused");
+		assert.ok(oOnFocusInSpy.notCalled,
+			"Re-rendered when focus was on an element outside the table: The onfocusin event was not triggered");
 
 		oInitItemNavigationSpy.reset();
 		oInvalidateItemNavigationSpy.reset();
@@ -419,6 +433,8 @@ sap.ui.define([
 			"Re-rendered rows when focus was on an element outside the table: The item navigation was invalidated");
 		assert.strictEqual(document.activeElement.id, oFocusedElement.id,
 			"Re-rendered rows when focus was on an element outside the table: The correct element is focused");
+		assert.ok(oOnFocusInSpy.notCalled,
+			"Re-rendered when focus was on an element outside the table: The onfocusin event was not triggered");
 	});
 
 	QUnit.module("Destruction", {

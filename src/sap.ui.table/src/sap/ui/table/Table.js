@@ -1791,10 +1791,7 @@ sap.ui.define([
 	 */
 	Table.prototype.applyFocusInfo = function(mFocusInfo) {
 		if (mFocusInfo && mFocusInfo.customId) {
-			var oElement = document.getElementById(mFocusInfo.customId);
-			if (oElement) {
-				oElement.focus();
-			}
+			jQuery(document.getElementById(mFocusInfo.customId)).focus();
 		} else {
 			Element.prototype.applyFocusInfo.apply(this, arguments);
 		}
