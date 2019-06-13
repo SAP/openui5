@@ -203,7 +203,7 @@ sap.ui.define([
 
 		getContextMenuTitle: function(bOverlayIsSibling, oOverlay) {
 			var mParents = _getParents(bOverlayIsSibling, oOverlay);
-			var mActions = this._getActions(bOverlayIsSibling, oOverlay);
+			var mActions = this._getActionsOrUndef(bOverlayIsSibling, oOverlay);
 			return _getText("CTX_ADD_ELEMENTS", mActions, mParents.parent, SINGULAR);
 		},
 
@@ -229,7 +229,7 @@ sap.ui.define([
 					bIsEnabled = false;
 				}
 			} else {
-				var mActions = this._getActions(bOverlayIsSibling, oOverlay);
+				var mActions = this._getActionsOrUndef(bOverlayIsSibling, oOverlay);
 				if (mActions.reveal && mActions.reveal.elements.length === 0 && !mActions.addODataProperty) {
 					bIsEnabled = false;
 				} else {
@@ -284,8 +284,12 @@ sap.ui.define([
 					return oAggregationOverlay.getAggregationName();
 				});
 			}
-			var mReveal = aAggregationNames.reduce(this._getRevealActionFromAggregations.bind(this, aParents), {});
-			return mReveal;
+
+			return aAggregationNames.reduce(function(oPreviousPromise, sAggregationName) {
+				return oPreviousPromise.then(function(mReveal) {
+					return this._getRevealActionFromAggregations(aParents, mReveal, sAggregationName);
+				}.bind(this));
+			}.bind(this), Promise.resolve({}));
 		},
 
 		_getRevealActionFromAggregations: function(aParents, _mReveal, sAggregationName) {
@@ -293,144 +297,185 @@ sap.ui.define([
 				return oParentOverlay ? aInvisibleChildren.concat(_getInvisibleElements.call(this, oParentOverlay, sAggregationName)) : aInvisibleChildren;
 			}.bind(this), []);
 
-			var mReveal = aInvisibleElements.reduce(this._invisibleToReveal.bind(this), {
+			var oInitialRevealObject = {
 				elements : [],
 				controlTypeNames: []
-			});
+			};
+			var mRevealPromise = aInvisibleElements.reduce(function(oPreviousPromise, oInvisibleElement) {
+				return oPreviousPromise.then(function(mReveal) {
+					return this._invisibleToReveal(mReveal, oInvisibleElement);
+				}.bind(this));
+			}.bind(this), Promise.resolve(oInitialRevealObject));
 
-			if (mReveal.elements.length > 0) {
-				_mReveal[sAggregationName] = {
-					reveal : mReveal
-				};
-			}
-			return _mReveal;
+			return mRevealPromise.then(function(mReveal) {
+				if (mReveal.elements.length > 0) {
+					_mReveal[sAggregationName] = {
+						reveal : mReveal
+					};
+				}
+				return _mReveal;
+			});
 		},
 
 		_invisibleToReveal: function(mReveal, oInvisibleElement) {
-			var sType = oInvisibleElement.getMetadata().getName();
-			var oDesignTimeMetadata;
-			var mRevealAction;
-			var bRevealEnabled = false;
-			if (sType === "sap.ui.core._StashedControl") {
-				//TODO Fix if we have the stashed type info
-				var mStashedInfos = _fakeStashedControlInfos();
-				oDesignTimeMetadata = mStashedInfos.designTimeMetadata;
-				mRevealAction = mStashedInfos.action;
-				bRevealEnabled = true;
-			} else {
-				var oOverlay = OverlayRegistry.getOverlay(oInvisibleElement);
-				if (oOverlay) {
-					oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
+			return Promise.resolve().then(function() {
+				var sType = oInvisibleElement.getMetadata().getName();
+				var oDesignTimeMetadata;
+				var mRevealAction;
+				var bRevealEnabled = false;
+				var oHasChangeHandlerPromise = Promise.resolve();
 
-					mRevealAction = oDesignTimeMetadata && oDesignTimeMetadata.getAction("reveal", oInvisibleElement);
-					if (mRevealAction && mRevealAction.changeType) {
-						var oRevealSelector = oInvisibleElement;
-						if (mRevealAction.changeOnRelevantContainer) {
-							oRevealSelector = oOverlay.getRelevantContainer();
-						}
-						if (this.hasChangeHandler(mRevealAction.changeType, oRevealSelector)) {
+				if (sType === "sap.ui.core._StashedControl") {
+					//TODO Fix if we have the stashed type info
+					var mStashedInfos = _fakeStashedControlInfos();
+					oDesignTimeMetadata = mStashedInfos.designTimeMetadata;
+					mRevealAction = mStashedInfos.action;
+					bRevealEnabled = true;
+				} else {
+					var oOverlay = OverlayRegistry.getOverlay(oInvisibleElement);
+					if (oOverlay) {
+						oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
+
+						mRevealAction = oDesignTimeMetadata && oDesignTimeMetadata.getAction("reveal", oInvisibleElement);
+						if (mRevealAction && mRevealAction.changeType) {
+							var oRevealSelector = oInvisibleElement;
 							if (mRevealAction.changeOnRelevantContainer) {
-								//we have the child overlay, so we need the parents
-								var mParents = _getParents(true, oOverlay);
-								bRevealEnabled = this.hasStableId(mParents.relevantContainerOverlay)
-									&& this.hasStableId(mParents.parentOverlay);
-							} else {
-								bRevealEnabled = true;
+								oRevealSelector = oOverlay.getRelevantContainer();
 							}
-							if (!mRevealAction.getAggregationName) {
-								mRevealAction.getAggregationName = _defaultGetAggregationName;
-							}
+
+							oHasChangeHandlerPromise = this.hasChangeHandler(mRevealAction.changeType, oRevealSelector, true).then(function(bHasChangeHandler) {
+								if (bHasChangeHandler) {
+									if (mRevealAction.changeOnRelevantContainer) {
+										//we have the child overlay, so we need the parents
+										var mParents = _getParents(true, oOverlay);
+										bRevealEnabled = this.hasStableId(mParents.relevantContainerOverlay)
+											&& this.hasStableId(mParents.parentOverlay);
+									} else {
+										bRevealEnabled = true;
+									}
+									if (!mRevealAction.getAggregationName) {
+										mRevealAction.getAggregationName = _defaultGetAggregationName;
+									}
+								}
+							}.bind(this));
 						}
 					}
 				}
-			}
-			if (bRevealEnabled) {
-				mReveal.elements.push({
-					element : oInvisibleElement,
-					designTimeMetadata : oDesignTimeMetadata,
-					action : mRevealAction
+
+				return oHasChangeHandlerPromise.then(function() {
+					if (bRevealEnabled) {
+						mReveal.elements.push({
+							element : oInvisibleElement,
+							designTimeMetadata : oDesignTimeMetadata,
+							action : mRevealAction
+						});
+						var mName = oDesignTimeMetadata.getName(oInvisibleElement);
+						if (mName) {
+							mReveal.controlTypeNames.push(mName);
+						}
+					}
+					return mReveal;
 				});
-				var mName = oDesignTimeMetadata.getName(oInvisibleElement);
-				if (mName) {
-					mReveal.controlTypeNames.push(mName);
-				}
-			}
-			return mReveal;
+			}.bind(this));
 		},
 
 		_getAddODataPropertyActions: function(bSibling, oOverlay) {
 			var mParents = _getParents(bSibling, oOverlay);
-
 			var oDesignTimeMetadata = mParents.parentOverlay.getDesignTimeMetadata();
-			var aActions = oDesignTimeMetadata.getActionDataFromAggregations("addODataProperty", mParents.parent);
+			var aActions = oDesignTimeMetadata.getActionDataFromAggregations("addODataProperty", mParents.parent) || [];
 
-			var oCheckElement = mParents.parent;
-
-			var fnCallback = function(_mAddODataProperty, mAction) {
-				if (mAction) {
-					if (mAction.changeOnRelevantContainer) {
-						oCheckElement = mParents.relevantContainer;
+			function getAction(mAction) {
+				return Promise.resolve().then(function() {
+					if (mAction) {
+						var oCheckElement = mAction.changeOnRelevantContainer ? mParents.relevantContainer : mParents.parent;
+						var oCheckElementOverlay = OverlayRegistry.getOverlay(oCheckElement);
+						if (mAction.changeType && this.hasStableId(oCheckElementOverlay)) {
+							return this.hasChangeHandler(mAction.changeType, oCheckElement, true)
+							.then(function(bHasChangeHandler) {
+								if (bHasChangeHandler) {
+									return {
+										aggregationName: mAction.aggregation,
+										addODataProperty: {
+											designTimeMetadata: oDesignTimeMetadata,
+											action: mAction
+										}
+									};
+								}
+							});
+						}
 					}
-					var oCheckElementOverlay = OverlayRegistry.getOverlay(oCheckElement);
-					if (
-						mAction.changeType &&
-						this.hasChangeHandler(mAction.changeType, oCheckElement) &&
-						this.hasStableId(oCheckElementOverlay)
-					) {
-						_mAddODataProperty[mAction.aggregation] = {
-							addODataProperty : {
-								designTimeMetadata : oDesignTimeMetadata,
-								action : mAction
-							}
-						};
-					}
-					return _mAddODataProperty;
-				}
-			};
-
-			if (aActions && aActions.length > 0) {
-				return aActions.reduce(fnCallback.bind(this), {});
+				}.bind(this));
 			}
+
+			return aActions.reduce(function(oPreviousPromise, oAction) {
+				return oPreviousPromise.then(function(oReturn) {
+					return getAction.call(this, oAction).then(function(mAction) {
+						if (mAction) {
+							oReturn[mAction.aggregationName] = {
+								addODataProperty: mAction.addODataProperty
+							};
+						}
+						return oReturn;
+					});
+				}.bind(this));
+			}.bind(this), Promise.resolve({}));
 		},
 
 		_getCustomAddActions: function(bSibling, oOverlay) {
 			var mParents = _getParents(bSibling, oOverlay);
 			var oDesignTimeMetadata = mParents.parentOverlay.getDesignTimeMetadata();
 			var aActions = oDesignTimeMetadata.getActionDataFromAggregations("add", mParents.parent, undefined, "custom");
-			var oCheckElement = mParents.parent;
 
-			var fnCallback = function(_mCustom, mAction) {
-				if (mAction) {
-					var oCheckElementOverlay = OverlayRegistry.getOverlay(oCheckElement);
-					if (typeof mAction.getItems === "function" && this.hasStableId(oCheckElementOverlay)) {
-						var aItems = mAction.getItems(oCheckElement);
-						if (Array.isArray(aItems)) {
-							// check if all custom items are valid
-							var bValidItems = aItems.every(function(oItem) {
-								// adjust relevant container
-								if (oItem.changeSpecificData.changeOnRelevantContainer) {
-									oCheckElement = mParents.relevantContainer;
-								}
-								return oItem.changeSpecificData.changeType && this.hasChangeHandler(oItem.changeSpecificData.changeType, oCheckElement);
-							}.bind(this));
-							if (bValidItems) {
-								_mCustom[mAction.aggregation] = {
-									custom : {
-										designTimeMetadata : oDesignTimeMetadata,
-										action : mAction,
-										items: aItems
+			function getAction(mAction) {
+				return Promise.resolve().then(function() {
+					if (mAction) {
+						var oCheckElement = mParents.parent;
+						var oCheckElementOverlay = OverlayRegistry.getOverlay(oCheckElement);
+						if (typeof mAction.getItems === "function" && this.hasStableId(oCheckElementOverlay)) {
+							var aItems = mAction.getItems(oCheckElement);
+							if (Array.isArray(aItems)) {
+								var aChangeHandlerPromises = [];
+								aItems.forEach(function(oItem) {
+									// adjust relevant container
+									if (oItem.changeSpecificData.changeOnRelevantContainer) {
+										oCheckElement = mParents.relevantContainer;
 									}
-								};
+									if (oItem.changeSpecificData.changeType) {
+										aChangeHandlerPromises.push(this.hasChangeHandler.call(this, oItem.changeSpecificData.changeType, oCheckElement, true));
+									}
+								}.bind(this));
+
+								return Promise.all(aChangeHandlerPromises)
+								.then(function(aHasChangeHandler) {
+									if (aItems.length === aHasChangeHandler.length && aHasChangeHandler.indexOf(false) === -1) {
+										return {
+											aggregationName: mAction.aggregation,
+											custom : {
+												designTimeMetadata : oDesignTimeMetadata,
+												action : mAction,
+												items: aItems
+											}
+										};
+									}
+								});
 							}
 						}
 					}
-					return _mCustom;
-				}
-			};
-
-			if (aActions && aActions.length > 0) {
-				return aActions.reduce(fnCallback.bind(this), {});
+				}.bind(this));
 			}
+
+			return aActions.reduce(function(oPreviousPromise, oAction) {
+				return oPreviousPromise.then(function(oReturn) {
+					return getAction.call(this, oAction).then(function(mAction) {
+						if (mAction) {
+							oReturn[mAction.aggregationName] = {
+								custom: mAction.custom
+							};
+						}
+						return oReturn;
+					});
+				}.bind(this));
+			}.bind(this), Promise.resolve({}));
 		},
 
 		/**
@@ -465,28 +510,44 @@ sap.ui.define([
 		 * @return {Map} - returns a map with all "add/reveal" action relevant data collected
 		 * @private
 		 */
-		_getActions: function(bSibling, oOverlay) {
-			var mCustomAddActions = this._getCustomAddActions(bSibling, oOverlay);
-			var mRevealActions = this._getRevealActions(bSibling, oOverlay);
-			var mAddODataPropertyActions = this._getAddODataPropertyActions(bSibling, oOverlay);
+		_getActions: function(bSibling, oOverlay, bInvalidate) {
+			return new Promise(function(resolve) {
+				var sSiblingOrChild = bSibling ? "asSibling" : "asChild";
+				if (!bInvalidate && oOverlay._mAddActions) {
+					return resolve(oOverlay._mAddActions[sSiblingOrChild]);
+				}
 
-			//join and condense both action data
-			var mOverall = jQuery.extend(true, mRevealActions, mAddODataPropertyActions, mCustomAddActions);
-			var aAggregationNames = Object.keys(mOverall);
-			if (aAggregationNames.length === 0) {
-				return {};
-			} else if (aAggregationNames.length > 1) {
-				Log.error("reveal or addODataProperty action defined for more than 1 aggregation, that is not yet possible");
-			}
-			var sAggregationName = aAggregationNames[0];
-			mOverall[sAggregationName].aggregation = sAggregationName;
-			return mOverall[sAggregationName];
+				var oRevealActionsPromise = this._getRevealActions(bSibling, oOverlay);
+				var oAddODataPropertyActionsPromise = this._getAddODataPropertyActions(bSibling, oOverlay);
+				var oCustomAddActionsPromise = this._getCustomAddActions(bSibling, oOverlay);
+
+				return Promise.all([oRevealActionsPromise, oAddODataPropertyActionsPromise, oCustomAddActionsPromise])
+				.then(function(aAllActions) {
+					//join and condense both action data
+					var mOverall = jQuery.extend(true, aAllActions[0], aAllActions[1], aAllActions[2]);
+					var aAggregationNames = Object.keys(mOverall);
+
+					if (aAggregationNames.length === 0) {
+						mOverall = {};
+					} else if (aAggregationNames.length > 1) {
+						Log.error("reveal or addODataProperty action defined for more than 1 aggregation, that is not yet possible");
+					}
+					if (aAggregationNames.length > 0) {
+						var sAggregationName = aAggregationNames[0];
+						mOverall[sAggregationName].aggregation = sAggregationName;
+						mOverall = mOverall[sAggregationName];
+					}
+
+					oOverlay._mAddActions = oOverlay._mAddActions || {asSibling: {}, asChild: {}};
+					oOverlay._mAddActions[sSiblingOrChild] = mOverall;
+					resolve(mOverall);
+				});
+			}.bind(this));
 		},
 
-		// _getRevealActions for isEditable check
-		_hasRevealActionsOnChildren: function(oOverlay) {
-			var mRevealActions = this._getRevealActions(false, oOverlay);
-			return Object.keys(mRevealActions).length > 0;
+		_getActionsOrUndef: function(bSibling, oOverlay) {
+			var sSiblingOrChild = bSibling ? "asSibling" : "asChild";
+			return oOverlay._mAddActions && oOverlay._mAddActions[sSiblingOrChild];
 		},
 
 		_checkIfCreateFunctionIsAvailable: function(mChangeHandlerSettings) {
@@ -502,32 +563,37 @@ sap.ui.define([
 			var oElementOverlay = aElementOverlays[0],
 				mParents = _getParents(bOverlayIsSibling, oElementOverlay),
 				oSiblingElement = bOverlayIsSibling && oElementOverlay.getElement(),
-				mActions = this._getActions(bOverlayIsSibling, oElementOverlay),
-				aPromises = [],
-				oAddODataPropertyPromise = [];
+				mActions,
+				aPromises = [];
 
-			if (mActions.addODataProperty) {
-				mActions.addODataProperty.relevantContainer = oElementOverlay.getRelevantContainer(!bOverlayIsSibling);
+			return this._getActions(bOverlayIsSibling, oElementOverlay)
+			.then(function(mAllActions) {
+				mActions = mAllActions;
 
-				oAddODataPropertyPromise = this._waitForChangeHandlerSettings(mActions.addODataProperty.action)
-				.then(function(mChangeHandlerSettings) {
-					// No dialog elements for metadata with changeHandlerSettings and without createFunction
-					return this._checkIfCreateFunctionIsAvailable(mChangeHandlerSettings) ?
-						this.getAnalyzer().getUnboundODataProperties(mParents.parent, mActions.addODataProperty) : [];
-				}.bind(this));
-			}
+				var oAddODataPropertyPromise = Promise.resolve([]);
+				if (mActions.addODataProperty) {
+					mActions.addODataProperty.relevantContainer = oElementOverlay.getRelevantContainer(!bOverlayIsSibling);
 
-			aPromises.push(
-				mActions.reveal ? this.getAnalyzer().enhanceInvisibleElements(mParents.parent, mActions) : [],
-				oAddODataPropertyPromise,
-				mActions.custom ? this.getAnalyzer().getCustomAddItems(mParents.parent, mActions.custom, mActions.aggregation) : []
-			);
+					oAddODataPropertyPromise = this._waitForChangeHandlerSettings(mActions.addODataProperty.action)
+					.then(function(mChangeHandlerSettings) {
+						// No dialog elements for metadata with changeHandlerSettings and without createFunction
+						return this._checkIfCreateFunctionIsAvailable(mChangeHandlerSettings) ?
+							this.getAnalyzer().getUnboundODataProperties(mParents.parent, mActions.addODataProperty) : [];
+					}.bind(this));
+				}
 
-			if (mActions.aggregation || sControlName) {
-				this._setDialogTitle(mActions, mParents.parent, sControlName);
-			}
+				aPromises.push(
+					mActions.reveal ? this.getAnalyzer().enhanceInvisibleElements(mParents.parent, mActions) : Promise.resolve([]),
+					oAddODataPropertyPromise,
+					mActions.custom ? this.getAnalyzer().getCustomAddItems(mParents.parent, mActions.custom, mActions.aggregation) : Promise.resolve([])
+				);
 
-			return Promise.resolve().then(function() {
+				if (mActions.aggregation || sControlName) {
+					this._setDialogTitle(mActions, mParents.parent, sControlName);
+				}
+			}.bind(this))
+
+			.then(function() {
 				if (mActions.addODataProperty) {
 					return Utils.isServiceUpToDate(mParents.parent);
 				}
@@ -892,47 +958,51 @@ sap.ui.define([
 		 * @protected
 		 */
 		_isEditable: function(oOverlay) {
-			return {
-				asSibling: this._isEditableCheck.call(this, oOverlay, true),
-				asChild: this._isEditableCheck.call(this, oOverlay, false)
-			};
+			return Promise.all([this._isEditableCheck.call(this, oOverlay, true), this._isEditableCheck.call(this, oOverlay, false)])
+			.then(function(aPromiseValues) {
+				return {
+					asSibling: aPromiseValues[0],
+					asChild: aPromiseValues[1]
+				};
+			});
 		},
 
 		_isEditableCheck: function(oOverlay, bOverlayIsSibling) {
-			var bEditable = false;
-			var mParents = _getParents(bOverlayIsSibling, oOverlay);
+			return new Promise(function(resolve) {
+				var bEditable = false;
+				var mParents = _getParents(bOverlayIsSibling, oOverlay);
 
-			if (!mParents.relevantContainerOverlay) {
-				return false;
-			}
+				if (!mParents.relevantContainerOverlay) {
+					return resolve(false);
+				}
 
-			var mActions = this._getActions(bOverlayIsSibling, oOverlay);
+				this._getActions(bOverlayIsSibling, oOverlay, true).then(function(mActions) {
+					if (mActions.addODataProperty) {
+						var oAddODataPropertyAction = mActions.addODataProperty.action;
+						bEditable = oAddODataPropertyAction &&
+									oAddODataPropertyAction.aggregation === oOverlay.getParentAggregationOverlay().getAggregationName();
+					}
 
-			if (mActions.addODataProperty) {
-				var oAddODataPropertyAction = mActions.addODataProperty.action;
-				bEditable = oAddODataPropertyAction &&
-							oAddODataPropertyAction.aggregation === oOverlay.getParentAggregationOverlay().getAggregationName();
-			}
+					if (!bEditable && mActions.reveal) {
+						bEditable = true;
+					}
 
-			if (!bEditable && mActions.reveal) {
-				bEditable = true;
-			}
+					if (!bEditable && mActions.custom) {
+						bEditable = true;
+					}
 
-			if (!bEditable && mActions.custom) {
-				bEditable = true;
-			}
+					if (!bEditable && !bOverlayIsSibling) {
+						bEditable = this.checkAggregationsOnSelf(mParents.parentOverlay, "addODataProperty");
+					}
 
-			if (!bEditable && !bOverlayIsSibling) {
-				bEditable = this._hasRevealActionsOnChildren(oOverlay)
-					|| this.checkAggregationsOnSelf(mParents.parentOverlay, "addODataProperty");
-			}
-
-			if (bEditable) {
-				bEditable =
-					this.hasStableId(oOverlay) //don't confuse the user/Web IDE by an editable overlay without stable ID
-					&& this.hasStableId(mParents.parentOverlay);
-			}
-			return bEditable;
+					if (bEditable) {
+						bEditable =
+							this.hasStableId(oOverlay) //don't confuse the user/Web IDE by an editable overlay without stable ID
+							&& this.hasStableId(mParents.parentOverlay);
+					}
+					resolve(bEditable);
+				}.bind(this));
+			}.bind(this));
 		},
 
 		/**
