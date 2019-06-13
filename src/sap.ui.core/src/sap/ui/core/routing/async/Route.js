@@ -118,6 +118,16 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/ui/thirdparty/jquery"], fun
 			}
 
 			return oSequencePromise.then(function(oResult) {
+				var aResult, aViews, aControls;
+
+				// The legacy config uses single target to display which makes the promise resolve with an object
+				// However, the new config uses targets to display which makes the promise resolve with an array
+				// Both cases need to be handled here
+				if (Array.isArray(oResult)) {
+					aResult = oResult;
+					oResult = aResult[0];
+				}
+
 				oResult = oResult || {};
 
 				oView = oResult.view;
@@ -126,6 +136,19 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/ui/thirdparty/jquery"], fun
 				// Extend the event data with view and targetControl
 				oEventData.view = oView;
 				oEventData.targetControl = oTargetControl;
+
+				if (aResult) {
+					aViews = [];
+					aControls = [];
+
+					aResult.forEach(function(oResult) {
+						aViews.push(oResult.view);
+						aControls.push(oResult.control);
+					});
+
+					oEventData.views = aViews;
+					oEventData.targetControls = aControls;
+				}
 
 				if (oConfig.callback) {
 					//Targets don't pass TargetControl and view since there might be multiple

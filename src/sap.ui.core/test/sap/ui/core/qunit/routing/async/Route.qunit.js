@@ -5,15 +5,14 @@ sap.ui.define([
 	"sap/ui/core/routing/Route",
 	"sap/ui/core/routing/Views",
 	"sap/ui/core/routing/Targets",
-	"./AsyncViewModuleHook",
 	"sap/m/Panel"
-], function(UIComponent, JSView, Route, Views, Targets, ModuleHook, Panel) {
+], function(UIComponent, JSView, Route, Views, Targets, Panel) {
 	"use strict";
 
 	// use sap.m.Panel as a lightweight drop-in replacement for the ux3.Shell
 	var ShellSubstitute = Panel;
 
-	QUnit.module("async view loading", ModuleHook.create({
+	QUnit.module("async view loading", {
 		beforeEach: function() {
 			var oViews = new Views({async: true});
 			this.oShell = new ShellSubstitute();
@@ -75,7 +74,7 @@ sap.ui.define([
 			this.oRoute.destroy();
 			this.oRoute1.destroy();
 		}
-	}));
+	});
 
 	QUnit.test("Should fired beforeMatched before matched", function(assert) {
 		var fnBeforeMatchedSpy = this.spy(function() {
@@ -153,6 +152,21 @@ sap.ui.define([
 					assert.strictEqual(oActualData, oData, "the data is correct");
 					assert.strictEqual(oEvent.getParameters().name, sName, "the name is correct");
 					assert.strictEqual(this, oListener, "the this pointer is correct");
+
+					if (sEventName === "Matched" || sEventName === "PatternMatched") {
+						assert.ok(oEvent.getParameter("view").isA("sap.ui.core.mvc.View"), "view parameter is set");
+						assert.ok(oEvent.getParameter("targetControl").isA("sap.ui.core.Control"), "targetControl parameter is set");
+
+						assert.ok(Array.isArray(oEvent.getParameter("views")), "views parameter is set");
+						oEvent.getParameter("views").forEach(function(oView) {
+							assert.ok(oView.isA("sap.ui.core.mvc.View"), "Each element is a view instance");
+						});
+
+						assert.ok(Array.isArray(oEvent.getParameter("targetControls")), "targetControls parameter is set");
+						oEvent.getParameter("targetControls").forEach(function(oControl) {
+							assert.ok(oControl.isA("sap.ui.core.Control"), "Each element is a control instance");
+						});
+					}
 				}),
 				oAttachReturnValue = oRoute["attach" + sEventName](oData, fnEventSpy, oListener);
 

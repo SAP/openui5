@@ -24,7 +24,11 @@ sap.ui.define(["sap/base/Log", "sap/ui/thirdparty/jquery"], function(Log, jQuery
 				oEventData,
 				oView = null,
 				oTargetControl = null,
-				oTargetData;
+				oTargetData,
+				fnCollectDisplayedData,
+				aViews,
+				aTargetControls,
+				aTargets;
 
 			oRouter._matchedRoute = this;
 
@@ -78,7 +82,36 @@ sap.ui.define(["sap/base/Log", "sap/ui/thirdparty/jquery"], function(Log, jQuery
 				oEventData.targetControl = oTargetControl;
 			} else {
 				// let targets do the placement + the events
+				aViews = [];
+				aTargetControls = [];
+
+				// collect the view and control parameters from the "displayed"
+				// event of each target because the targets.display doesn't return
+				// this information in the sync version
+				fnCollectDisplayedData = function(oEvent) {
+					aViews.push(oEvent.getParameter("view"));
+					aTargetControls.push(oEvent.getParameter("control"));
+				};
+
+				if (Array.isArray(this._oConfig.target)) {
+					aTargets = this._oConfig.target;
+				} else {
+					aTargets = [this._oConfig.target];
+				}
+
+				aTargets.forEach(function(sTargetName) {
+					var oTarget = oRouter._oTargets.getTarget(sTargetName);
+					if (oTarget) {
+						oTarget.attachEventOnce("display", fnCollectDisplayedData);
+					}
+				});
+
 				oRouter._oTargets._display(this._oConfig.target, oTargetData, this._oConfig.titleTarget);
+
+				oEventData.view = aViews[0];
+				oEventData.targetControl = aTargetControls[0];
+				oEventData.views = aViews;
+				oEventData.targetControls = aTargetControls;
 			}
 
 			if (oConfig.callback) {

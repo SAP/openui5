@@ -691,6 +691,14 @@ sap.ui.define([
 			 *  is fired on this route because the pattern in the nested route is matched with the current URL hash. This parameter can be
 			 *  used to decide whether the current route is matched because of its nested child route. For more information about nested
 			 *  child route please refer to the documentation of oConfig.parent in {@link sap.ui.core.routing.Route#constructor}
+			 * @param {sap.ui.core.mvc.View|sap.ui.core.ComponentContainer} oEvent.getParameters.view The first View or ComponentContainer instance
+			 *  which is created out of the first target. If multiple targets are displayed, use oEvent.getParameters.views to get all instances
+			 * @param {Array<sap.ui.core.mvc.View|sap.ui.core.ComponentContainer>} oEvent.getParameters.views All View or ComponentContainer
+			 *  instances which are created out of the targets.
+			 * @param {sap.ui.core.Control} oEvent.getParameters.targetControl The container control to which the first View or ComponentContainer
+			 *  is added. If multiple targets are displayed, use oEvent.getParameters.targetControls to get all container controls
+			 * @param {Array<sap.ui.core.Control>} oEvent.getParameters.targetControls The container controls to which the View or
+			 *  ComponentContainer instances are added.
 			 * @public
 			 */
 
@@ -872,6 +880,14 @@ sap.ui.define([
 			 * @param {object} oEvent.getParameters.arguments A key-value pair object which contains the arguments defined in the route
 			 *  resolved with the corresponding information from the current URL hash
 			 * @param {object} oEvent.getParameters.config The configuration object of the route
+			 * @param {sap.ui.core.mvc.View|sap.ui.core.ComponentContainer} oEvent.getParameters.view The first View or ComponentContainer instance
+			 *  which is created out of the first target. If multiple targets are displayed, use oEvent.getParameters.views to get all instances
+			 * @param {Array<sap.ui.core.mvc.View|sap.ui.core.ComponentContainer>} oEvent.getParameters.views All View or ComponentContainer
+			 *  instances which are created out of the targets.
+			 * @param {sap.ui.core.Control} oEvent.getParameters.targetControl The container control to which the first View or ComponentContainer
+			 *  is added. If multiple targets are displayed, use oEvent.getParameters.targetControls to get all container controls
+			 * @param {Array<sap.ui.core.Control>} oEvent.getParameters.targetControls The container controls to which the View or
+			 *  ComponentContainer instances are added.
 			 * @public
 			 */
 
