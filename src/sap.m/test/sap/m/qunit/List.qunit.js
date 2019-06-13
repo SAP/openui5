@@ -1713,13 +1713,15 @@ sap.ui.define([
 		assert.ok(oStdLI.$().hasClass("sapMSLIWrapping"), "Wrapping style class added");
 		assert.ok($titleText.innerText.length < oStdLI.getTitle().length, "Collapsed text is rendered which has less characters than the provided title text");
 		assert.equal($titleText.innerText.length, 300, "Desktop limit for collapsed text in wrapping behavior is set correctly to 300 characters");
-		assert.equal($titleThreeDots.innerText, " ... ", "three dots are rendered");
+		// safari browser returns the inner text without spaces, hence trim()
+		assert.equal($titleThreeDots.innerText.trim(), "...", "three dots are rendered");
 		assert.equal($titleButton.innerText, oRb.getText("TEXT_SHOW_MORE"), "button rendered with the correct text");
 
 		// desciption text test
 		assert.ok($descText.innerText.length < oStdLI.getTitle().length, "Collapsed text is rendered which has less characters than the provided description text");
 		assert.equal($descText.innerText.length, 300, "Desktop limit for collapsed text in wrapping behavior is set correctly to 300 characters");
-		assert.equal($descThreeDots.innerText, " ... ", "three dots are rendered");
+		// safari browser returns the inner text without spaces, hence trim()
+		assert.equal($descThreeDots.innerText.trim(), "...", "three dots are rendered");
 		assert.equal($descButton.innerText, oRb.getText("TEXT_SHOW_MORE"), "button rendered with the correct text");
 
 		// trigger tap on tilte text
@@ -1730,7 +1732,7 @@ sap.ui.define([
 		$titleThreeDots = oStdLI.getDomRef("titleThreeDots");
 		$titleButton = oStdLI.getDomRef("titleButton");
 		assert.equal($titleText.innerText.length, oStdLI.getTitle().length, "Full title text visible");
-		assert.equal($titleThreeDots.innerText, " ", "three dots are rendered");
+		assert.equal($titleThreeDots.innerText, " ", "space rendered");
 		assert.equal($titleButton.innerText, oRb.getText("TEXT_SHOW_LESS"), "button rendered with the correct text");
 
 		//trigger onsapspace on description text
@@ -1744,7 +1746,7 @@ sap.ui.define([
 		$descThreeDots = oStdLI.getDomRef("descriptionThreeDots");
 		$descButton = oStdLI.getDomRef("descriptionButton");
 		assert.equal($descText.innerText.length, oStdLI.getDescription().length, "Full desciption text visible");
-		assert.equal($descThreeDots.innerText, " ", "three dots are rendered");
+		assert.equal($descThreeDots.innerText, " ", "space rendered");
 		assert.equal($descButton.innerText, oRb.getText("TEXT_SHOW_LESS"), "button rendered with the correct text");
 
 		oList.destroy();
