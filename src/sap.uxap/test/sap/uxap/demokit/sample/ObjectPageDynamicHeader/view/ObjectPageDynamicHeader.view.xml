@@ -24,8 +24,8 @@
 						<m:Title text="Denise Smith" wrapping="true" class="sapUiTinyMarginEnd sapUiTinyMarginTop"/>
 						<m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">
 							<m:ObjectMarker type="Favorite" class="sapUiTinyMarginEnd"/>
-							<m:ObjectMarker type="Flagged"/>
-							<m:Button icon="sap-icon://private" type="Transparent" tooltip="private"/>
+							<m:ObjectMarker type="Flagged" class="sapUiTinyMarginEnd"/>
+							<m:Button icon="sap-icon://private" type="Transparent" tooltip="private" class="sapUiTinyMarginEnd"/>
 							<m:Button icon="sap-icon://arrow-down" type="Transparent" tooltip="arrow-down"/>
 						</m:FlexBox>
 					</m:FlexBox>
@@ -40,8 +40,8 @@
 						</m:FlexBox>
 						<m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">
 							<m:ObjectMarker type="Favorite" class="sapUiTinyMarginEnd"/>
-							<m:ObjectMarker type="Flagged"/>
-							<m:Button icon="sap-icon://private" type="Transparent" tooltip="private"/>
+							<m:ObjectMarker type="Flagged" class="sapUiTinyMarginEnd"/>
+							<m:Button icon="sap-icon://private" type="Transparent" tooltip="private" class="sapUiTinyMarginEnd"/>
 							<m:Button icon="sap-icon://arrow-down" type="Transparent" tooltip="arrow-down"/>
 						</m:FlexBox>
 					</m:FlexBox>
