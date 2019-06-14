@@ -223,6 +223,20 @@ sap.ui.define([
 		multiInput.destroy();
 	});
 
+	QUnit.test("_calculateSpaceForTokenizer with negative tokenizer space", function(assert) {
+		var multiInput = new MultiInput({
+			width: "30px",
+			description: "Unit"
+		});
+
+		multiInput.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(multiInput._calculateSpaceForTokenizer(), "0px", "_calculateSpaceForTokenizer returns a non negative value");
+
+		multiInput.destroy();
+	});
+
 	QUnit.test("token data binding", function(assert) {
 		// JSON sample data
 		var data = {

@@ -1612,6 +1612,7 @@ function(
 			selected: true
 		});
 		oListItem.setTitle(oToken.getText());
+
 		oListItem.data("tokenId", oToken.getId());
 		return oListItem;
 	};
@@ -1776,7 +1777,8 @@ function(
 	 */
 	MultiInput.prototype._calculateSpaceForTokenizer = function () {
 		if (this.getDomRef()) {
-			var iControlWidth = this.getDomRef().offsetWidth,
+			var iSpace,
+				iControlWidth = this.getDomRef().offsetWidth,
 				iDescriptionWidth = this.$().find(".sapMInputDescriptionWrapper").width(),
 				iSummedIconsWidth = this._calculateIconsSpace(),
 				oInputRef = this.$().find(".sapMInputBaseInner"),
@@ -1786,7 +1788,10 @@ function(
 					return iAcc + (parseInt(oInputRef.css(sProperty)) || 0);
 				}, 0);
 
-			return iControlWidth - (iSummedIconsWidth + iInputWidth + iDescriptionWidth) + "px";
+			iSpace = iControlWidth - (iSummedIconsWidth + iInputWidth + iDescriptionWidth);
+			iSpace = iSpace < 0 ? 0 : iSpace;
+
+			return iSpace + "px";
 		} else {
 			return null;
 		}
