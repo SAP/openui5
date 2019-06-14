@@ -38,13 +38,13 @@
           "src/sap.ui.integration/package.json": "3",
           "src/sap.ui.dt/package.json": "2",
           "src/sap.ui.support/pom.xml": "1",
-          "src/sap.tnt/package.json": "3",
-          "src/sap.ui.documentation/package.json": "4",
           "src/sap.uxap/package.json": "4",
-          "src/sap.ui.layout/package.json": "2",
+          "src/sap.ui.documentation/package.json": "4",
+          "src/sap.tnt/package.json": "3",
           "src/themelib_sap_belize/package.json": "15",
-          "src/sap.ui.fl/pom.xml": "1",
+          "src/sap.ui.layout/package.json": "2",
           "src/themelib_sap_bluecrystal/pom.xml": "1",
+          "src/sap.ui.fl/pom.xml": "1",
           "src/sap.ui.dt/pom.xml": "1",
           "src/sap.ui.unified/package.json": "2",
           "src/sap.ui.suite/pom.xml": "1",
@@ -55,6 +55,10 @@
         }
       },
       "lastCommitId": "7ddee05a8f4ca7945b31c0aa24819a487d7b5889"
+    },
+    "rel-1.67": {
+      "changes": {},
+      "lastCommitId": "b3e3c8e2a735f26d08b7f4a5e1a5fadc7d08191b"
     }
   }
 }

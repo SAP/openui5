@@ -28,7 +28,7 @@
       {
         "id": "4e1b86a8c1a479e11467389251dc419427253533",
         "type": "FEATURE",
-        "text": "core.routing: use 'componentUsages' in component target",
+        "text": "core.routing: use \u0027componentUsages\u0027 in component target",
         "references": []
       },
       {
@@ -159,105 +159,80 @@
       {
         "id": "d01ea07aa8d57842d84d7aaef8ce06168d052cf4",
         "type": "FEATURE",
-        "text": "sap.m.ObjectStatus: now supports inverted state and indication colors",
+        "text": " sap.m.ObjectStatus: now supports inverted state and indication colors",
         "references": []
       },
       {
         "id": "da34e0e96183e4797d80c34812319f28a56f1bf3",
         "type": "FIX",
-        "text": "DateFormat: Fixed interval-format for dates within diferrent eras",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1980215932"
-          }
-        ]
+        "text": " DateFormat: Fixed interval-format for dates within diferrent eras",
+        "references": []
       },
       {
         "id": "7a8505654d15d473c8a40d0f76a0eff7124fccad",
         "type": "FIX",
-        "text": "DateFormat: Use Gannen instead of Ichinen for first year of era",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1980215734"
-          }
-        ]
+        "text": " DateFormat: Use Gannen instead of Ichinen for first year of era",
+        "references": []
       },
       {
         "id": "ebba6636b903f6bb126cfdd6687219052624d171",
         "type": "FIX",
-        "text": "Japanese: Fix unit test for current era",
+        "text": " Japanese: Fix unit test for current era",
         "references": []
       },
       {
         "id": "f7298c79678073c8476e09fe78c1b8a6b860a47e",
         "type": "FIX",
-        "text": "ManagedObject: Improve clone method documentation",
-        "references": [
-          {
-            "type": "GitHub",
-            "reference": "2496"
-          }
-        ]
+        "text": " ManagedObject: Improve clone method documentation",
+        "references": []
       },
       {
         "id": "d490ff5e1b5b8d6bcda07a3a14cf9aa91556a4ed",
         "type": "FIX",
-        "text": "Revert upgrade CLDR to 35.1 and add new Japanese era name",
+        "text": " Revert upgrade CLDR to 35.1 and add new Japanese era name",
         "references": []
       },
       {
         "id": "c2657c32ec51d8a2f4bbae2e8682f226df9478de",
         "type": "FIX",
-        "text": "mvc/View.Preprocessor: fixed getCacheKey documentation",
+        "text": " mvc/View.Preprocessor: fixed getCacheKey documentation",
         "references": []
       },
       {
         "id": "1b35ae17d66ecdf4718231204134d1c57ee2d903",
         "type": "FIX",
-        "text": "mvc/View: Deregister erroneous instances from the Core",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1980108149"
-          }
-        ]
+        "text": " mvc/View: Deregister erroneous instances from the Core",
+        "references": []
       },
       {
         "id": "32e9b2238f6cb2b18dda3b53b332c0d9e21482a9",
         "type": "FIX",
-        "text": "mvc/View: deprecate View.prototype.loaded",
+        "text": " mvc/View: deprecate View.prototype.loaded",
         "references": []
       },
       {
         "id": "1265536f6a38a8da0259f57bf49c945c4b02e3dd",
         "type": "FIX",
-        "text": "sap/base/util/deepClone: Do not clone __proto__",
+        "text": " sap/base/util/deepClone: Do not clone __proto__",
         "references": []
       },
       {
         "id": "825cd19d5d515d9ceb837664c8b96a3ea4276c22",
         "type": "FIX",
-        "text": "sap/base/util/merge: Avoid Object.prototype pollution",
+        "text": " sap/base/util/merge: Avoid Object.prototype pollution",
         "references": []
       },
       {
         "id": "8b320a8e89fb804ea06c297031d500cdc0d88863",
         "type": "FIX",
-        "text": "sap/ui/thirdparty/jQuery: Prevent Object.prototype pollution",
+        "text": " sap/ui/thirdparty/jQuery: Prevent Object.prototype pollution",
         "references": []
       },
       {
         "id": "51e97ec3b0b8609efbbf6c2126c1f6575066ef7b",
         "type": "FIX",
-        "text": "v2/ODataModel: Prevent unexpected error handler calls",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1980228703"
-          }
-        ]
+        "text": " v2/ODataModel: Prevent unexpected error handler calls",
+        "references": []
       }
     ]
   }

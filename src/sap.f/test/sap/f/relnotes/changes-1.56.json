@@ -67,30 +67,154 @@
       {
         "id": "d25d24f649d3e1fe801df2807bacd1c7aa92d992",
         "type": "FIX",
-        "text": "sap.f.DynamicPageTitle: aria-labelledby now properly updated",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870102287"
-          }
-        ]
+        "text": " sap.f.DynamicPageTitle: aria-labelledby now properly updated",
+        "references": []
       },
       {
         "id": "9656793fc72549dd07b3144ed27012ae2e1a79be",
         "type": "FEATURE",
-        "text": "f.DynamicPage, uxap.ObjectPageLayout: Collapse/Pin changed",
+        "text": " f.DynamicPage, uxap.ObjectPageLayout: Collapse/Pin changed",
         "references": []
       },
       {
         "id": "7ef3328e729a4f35b75b36ff6a3bc146cf14f058",
         "type": "FIX",
-        "text": "sap.f.DynamicPage: footer animation corrected",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880089543"
-          }
-        ]
+        "text": " sap.f.DynamicPage: footer animation corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.56.1": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "b23e0ef47c51df0d1a735f89d545f31711481896",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Pin button visibility corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.56.2": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "cd373e12a3c1b20c0d4876d6602510ed733192c3",
+        "type": "FIX",
+        "text": " f.DynamicPage: Header expanding in non-scrollable area changed",
+        "references": []
+      },
+      {
+        "id": "e9693730feae514daf59548768a0a3284a4aba25",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: toggleHeaderOnTitleClick initial state fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.56.3": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "48e119381daab7d64fc3533def607caf1574b207",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Initially snapped header behavior fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.56.4": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "ef4ae2fb627bde00570a583c30fb6e55d3b4329d",
+        "type": "FIX",
+        "text": " f.FlexibleColumnLayout: suspending/resuming of ResizeHander fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.56.5": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "0d02a157134d65120bbc0b89a5005a5ce8a17fb3",
+        "type": "FIX",
+        "text": " DynamicPage: Missing Expand Header icon is fixed",
+        "references": []
+      },
+      {
+        "id": "b0ce3ff4f7ea6aac26d0c38709b11a9d50e41048",
+        "type": "FIX",
+        "text": " FlexibleColumnLayout: Fixed suspend and resume resize handlers",
+        "references": []
+      },
+      {
+        "id": "ff1a03513c62e3a7b15e51ce232a5fb8d212fdd0",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Clone now includes actions",
+        "references": []
+      }
+    ]
+  },
+  "1.56.6": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "a01bb47bd48c73422ea2a3787fc5b4a35f3c8f57",
+        "type": "INETRNAL",
+        "text": "[FIX] tutorial.fiori2: Updated documentation link",
+        "references": []
+      }
+    ]
+  },
+  "1.56.8": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "226c7cc9f6eae3a58c5feea8ce0524c12ed39742",
+        "type": "FIX",
+        "text": " DynamicPage: Initially snapped header excluded from tab chain",
+        "references": []
+      }
+    ]
+  },
+  "1.56.9": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "8760c4d03f3a6aaad4604121a3dc7a18f30cf327",
+        "type": "FIX",
+        "text": " FlexibleColumnLayout: Fixed disappearing of navigation actions",
+        "references": []
+      }
+    ]
+  },
+  "1.56.15": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "252b65e9c664adc1facf46ceb28459fbb05221ec",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Fixed Fiori 2.0 tutorial",
+        "references": []
+      }
+    ]
+  },
+  "1.56.16": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "676aaadcd49d0388820da06f1061da05ae346d72",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Fixed CSS styles in snapped/expanded content",
+        "references": []
+      },
+      {
+        "id": "3aea47d4f30e9158dd787aa372f42cc8e72b5aec",
+        "type": "FIX",
+        "text": " tutorial.fiori2: Product parameter is now transmitted",
+        "references": []
       }
     ]
   }

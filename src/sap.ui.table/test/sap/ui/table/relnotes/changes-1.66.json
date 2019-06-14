@@ -38,13 +38,8 @@
       {
         "id": "516a62be18ccb13891f964dd5b7033095afa75b2",
         "type": "FIX",
-        "text": "Table: Set correct firstVisibleRow also if parent is invisible",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1980220195"
-          }
-        ]
+        "text": " Table: Set correct firstVisibleRow also if parent is invisible",
+        "references": []
       }
     ]
   }

@@ -198,5 +198,91 @@
         ]
       }
     ]
+  },
+  "1.58.1": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "4b75fb325b71ddf080be67d673cf83cfe9d1dd73",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Items' loading indicator returned back",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880494891"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.2": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "8df161e39f2358bc23e983ebd063b841b4faea10",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: visual fix of the DatesRow on hover",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880484945"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.3": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "d54056f36ed4919ac7c67ba92815fad60bcd27f9",
+        "type": "FIX",
+        "text": "Calendar: Picker's selected month/year style overriding focus in HC fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870394831"
+          }
+        ]
+      },
+      {
+        "id": "e9876542412b3e26d195e81713b6637d58147396",
+        "type": "FIX",
+        "text": "sap.m.StepInput: Focus is fixed in HCB and HCW themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870331616"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.4": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "3c1c5fe8bbe77904905f8fa186fec8a177da6b65",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Fixed header content transparency",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870428789"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.6": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "4e71e6a081b0ea3bcdb7cac7aa65a9cca429a8fb",
+        "type": "FIX",
+        "text": "sap.f.DynamicPageHeader: Fixed background in Shell",
+        "references": []
+      }
+    ]
   }
 }

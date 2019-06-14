@@ -5,261 +5,299 @@
       {
         "id": "6e5c4af6172369f245eebb535ec1fbf3a0ae2ff4",
         "type": "FIX",
-        "text": "QUnit Designtime Library tests in Firefox",
+        "text": " QUnit Designtime Library tests in Firefox",
         "references": []
       },
       {
         "id": "7ddf4cab9138f99a4033ec7181153398d7243647",
         "type": "FIX",
-        "text": "sap.ui.unified.ColorPicker: DemoKit sample improvement",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880129256"
-          }
-        ]
+        "text": " sap.ui.unified.ColorPicker: DemoKit sample improvement",
+        "references": []
       },
       {
         "id": "d77050250cd60be10c307176b0f949a0556af4df",
         "type": "FIX",
-        "text": "sap.m.PlanningCalendar: Custom appointments sorter",
+        "text": " sap.m.PlanningCalendar: Custom appointments sorter",
         "references": []
       },
       {
         "id": "30c0e987fcc55155f3d64b0462bc536eefc722ee",
         "type": "FIX",
-        "text": "sap.ui.unified.Calendar: Selecting day header or week number does not throw an error",
-        "references": [
-          {
-            "type": "GitHub",
-            "reference": "1885"
-          },
-          {
-            "type": "BCP",
-            "reference": "1880151681"
-          }
-        ]
+        "text": " sap.ui.unified.Calendar: Selecting day header or week number does not throw an error",
+        "references": []
       },
       {
         "id": "775bc74085a36133b7d6cc678fec077154e77157",
         "type": "FIX",
-        "text": "sap.ui.unified.Calendar: nonWorkingDays now can have another type when set using specialDates aggregation",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880072218"
-          }
-        ]
+        "text": " sap.ui.unified.Calendar: nonWorkingDays now can have another type when set using specialDates aggregation",
+        "references": []
       },
       {
         "id": "c576ff2eadee2c6129be4fb41f1cf28aa252191a",
         "type": "FIX",
-        "text": "sap.ui.unified.ColorPicker: Sample is now scrollable on mobile",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880197597"
-          }
-        ]
+        "text": " sap.ui.unified.ColorPicker: Sample is now scrollable on mobile",
+        "references": []
       },
       {
         "id": "97447e2d75b19c2db6ff4476f55e8b9e8fd3e00d",
         "type": "FEATURE",
-        "text": "sap.ui.unified.Calendar: Change header when two months are used",
+        "text": " sap.ui.unified.Calendar: Change header when two months are used",
         "references": []
       },
       {
         "id": "fe28125b3307fb60ccb790152e8f5573c88b261f",
         "type": "FIX",
-        "text": "sap.ui.unified.Calendar: No double focus outline on Belize on IE",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880240603"
-          }
-        ]
+        "text": " sap.ui.unified.Calendar: No double focus outline on Belize on IE",
+        "references": []
       },
       {
         "id": "bf7681e89ae1cd89b0fdd55d2e28697da8db2709",
         "type": "FIX",
-        "text": "sap.ui.unified.Calendar: Update aria-label for the year button",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780409322"
-          }
-        ]
+        "text": " sap.ui.unified.Calendar: Update aria-label for the year button",
+        "references": []
       },
       {
         "id": "06ac89fd56d0f2191fb8a75fd21510a0f9f1850b",
         "type": "FIX",
-        "text": "sap.ui.unified.Calendar: focus clearly visible in IE for HCB and HCW",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880222599"
-          }
-        ]
+        "text": " sap.ui.unified.Calendar: focus clearly visible in IE for HCB and HCW",
+        "references": []
       },
       {
         "id": "427664ce587dc07cdff9ada945e3a3a0a36d7049",
         "type": "FIX",
-        "text": "sap.m.PlanningCalendar: appointments' container has no tab stop anymore.",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770543368"
-          }
-        ]
+        "text": " sap.m.PlanningCalendar: appointments\u0027 container has no tab stop anymore.",
+        "references": []
       },
       {
         "id": "c71ae11fe2718cbb2043bfe9be8306314514b262",
         "type": "FIX",
-        "text": "sap.m.PlanningCalendar: 1 Month view navigation between months is fixed.",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770543942"
-          }
-        ]
+        "text": " sap.m.PlanningCalendar: 1 Month view navigation between months is fixed.",
+        "references": []
       },
       {
         "id": "7acf3a9857a3eea1afb23121d3ab85a3ee99d069",
         "type": "FIX",
-        "text": "sap.m.PlanningCalendar: customData for PlanningCalendarRow is fully supported.",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870027607"
-          }
-        ]
+        "text": " sap.m.PlanningCalendar: customData for PlanningCalendarRow is fully supported.",
+        "references": []
       },
       {
         "id": "5a64bc12a15e17be78f68dbe75f1000a9afe5a64",
         "type": "FIX",
-        "text": "sap.ui.unified.Menu: closes when switch from one submenu to another",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "002075129500003736822017"
-          },
-          {
-            "type": "BCP",
-            "reference": "002075129400000480702018"
-          }
-        ]
+        "text": " sap.ui.unified.Menu: closes when switch from one submenu to another",
+        "references": []
       },
       {
         "id": "9cd8366eed18a7fd482018de7010c3243d2c1ec7",
         "type": "FIX",
-        "text": "sap.ui.unified.Menu: resize handler is removed on exit.",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870035773"
-          }
-        ]
+        "text": " sap.ui.unified.Menu: resize handler is removed on exit.",
+        "references": []
       },
       {
         "id": "8a77a98a0a30d1d1821c66e283b83a1e8bff6cfb",
         "type": "FIX",
-        "text": "unified.FileUploader: accessing length of undefined fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870033998"
-          }
-        ]
+        "text": " unified.FileUploader: accessing length of undefined fixed",
+        "references": []
       },
       {
         "id": "b821aec01b05e103f812f63ab5fb8888c72dafb7",
         "type": "FIX",
-        "text": "Reverts commit c71ae11fe2718cbb2043bfe9be8306314514b262",
+        "text": " Reverts commit c71ae11fe2718cbb2043bfe9be8306314514b262",
         "references": []
       },
       {
         "id": "430f550fa90900630f39781a797b43ac4dee3b47",
         "type": "FIX",
-        "text": "sap.m.PlanningCalendar: Navigation in one month view works propperly",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770572211"
-          },
-          {
-            "type": "BCP",
-            "reference": "1770572146"
-          },
-          {
-            "type": "BCP",
-            "reference": "1770543942"
-          }
-        ]
+        "text": " sap.m.PlanningCalendar: Navigation in one month view works propperly",
+        "references": []
       },
       {
         "id": "307d93eda2af5adeef61ae860f4e6dd898f0593b",
         "type": "FIX",
-        "text": "sap.tnt, sap.ui.uinified.designtime: UUID added to the messagebundle files",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870055067"
-          },
-          {
-            "type": "BCP",
-            "reference": "1870059578"
-          }
-        ]
+        "text": " sap.tnt, sap.ui.uinified.designtime: UUID added to the messagebundle files",
+        "references": []
       },
       {
         "id": "a67e65ac5ebe57c76cb58c45e8a224e27ed489ce",
         "type": "FEATURE",
-        "text": "sap.m.PlanningCalendar: Resizing of appointments is now possible",
+        "text": " sap.m.PlanningCalendar: Resizing of appointments is now possible",
         "references": []
       },
       {
         "id": "f5791b7b8ba4214635d5e0a4c55e72ecfdd4aaab",
         "type": "FIX",
-        "text": "sap.ui.unified.MenuItem|ShellHeadUserItem: insert font face",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870107306"
-          }
-        ]
+        "text": " sap.ui.unified.MenuItem|ShellHeadUserItem: insert font face",
+        "references": []
       },
       {
         "id": "a9984e032f3fcd17e0bdd9d7c9cb2b0c5e00c4ba",
         "type": "FIX",
-        "text": "sap.ui.unified.Menu: tests no longer fail on IE",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870107305"
-          }
-        ]
+        "text": " sap.ui.unified.Menu: tests no longer fail on IE",
+        "references": []
       },
       {
         "id": "6c485f3bdcab487467812306845b859e9ca16a9e",
         "type": "FEATURE",
-        "text": "sap.m.PlanningCalendar: Creating appointments with dragging is now possible",
+        "text": " sap.m.PlanningCalendar: Creating appointments with dragging is now possible",
         "references": []
       },
       {
         "id": "9406a7cc268aafcbd450416a36c3f88afa6aadd3",
         "type": "FIX",
-        "text": "sap.m.PlanningCalendar: correct display of the Week with maxDate",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870161990"
-          }
-        ]
+        "text": " sap.m.PlanningCalendar: correct display of the Week with maxDate",
+        "references": []
       },
       {
         "id": "2c1c149631e66dd846e3c1b76ce02428cff7f15d",
         "type": "FEATURE",
-        "text": "sap.m.PlanningCalendarRow: introducing specialDates aggregation",
+        "text": " sap.m.PlanningCalendarRow: introducing specialDates aggregation",
+        "references": []
+      }
+    ]
+  },
+  "1.56.1": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "b92d6a8b67ac4dff77d9efe21589fbf9c5757e5a",
+        "type": "FIX",
+        "text": " sap.ui.commons.Menu: MenuTextFieldItem can now be focused on hover opened from IE",
+        "references": []
+      }
+    ]
+  },
+  "1.56.3": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "a7d4e06057275545441699d96ec83a1dd3dc68c0",
+        "type": "FIX",
+        "text": " FileUploader: Accessing upload iframe adjusted",
+        "references": []
+      },
+      {
+        "id": "8814ebdfa2caf9d82637b85320af0a5821da3f87",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar, CalendarLegend: contrast ratio is fixed",
+        "references": []
+      },
+      {
+        "id": "b96197cdf87d030e87101e0777cb97de4c54153b",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: weekNumberSelect event now works correctly in IE and Edge",
+        "references": []
+      },
+      {
+        "id": "d4a647abeb3449e4b3abe4e53198df0f3d4313f8",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: pressing of ESCAPE is now propagated to the parent",
+        "references": []
+      },
+      {
+        "id": "1d830a66948523fe98b6f160f65016abbb8139ef",
+        "type": "FIX",
+        "text": " sap.ui.unified.Month: Now select event is fired correctly",
+        "references": []
+      }
+    ]
+  },
+  "1.56.4": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "d5a71bdc319644109ca21716e7cccfe8c14b7510",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: CW selection behavior corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.56.6": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "c5d02e4a063e4938ff8cea5c2b9578b4c1490ec7",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarRow: Minimal width of appointments now corrected",
+        "references": []
+      },
+      {
+        "id": "577ee1428ae408674fbec1563665054e7fd60443",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: now has correct active state of semantic buttons",
+        "references": []
+      },
+      {
+        "id": "5f431a797ef570a3f1feba0c641dcd978a188f8b",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: returns empty string now when file has no extension",
+        "references": []
+      },
+      {
+        "id": "45e0089bd59dd12df29ceb3868350d225823eaba",
+        "type": "FIX",
+        "text": " ui.unified.FileUploader: Documentation improved",
+        "references": []
+      }
+    ]
+  },
+  "1.56.7": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "fe8d2122698444bef6af6aa8c6ed940b2f98e105",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: visual fix of the DatesRow on hover",
+        "references": []
+      },
+      {
+        "id": "5945e3adaacc9c9815bbe44d237ddb91d8dd7e5b",
+        "type": "FIX",
+        "text": " unified.ColorPicker: Hue value of 360 is the same as 0",
+        "references": []
+      }
+    ]
+  },
+  "1.56.9": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "ff36784485094eb65b50a83ff17a5ad3a75c74ce",
+        "type": "FIX",
+        "text": " PlanningCalendar: Spaces in internal aria-label are removed",
+        "references": []
+      },
+      {
+        "id": "66606550883058e95e4059a7149921c243b5121f",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: correct width of the input when invalidated",
+        "references": []
+      }
+    ]
+  },
+  "1.56.13": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "a0ad506ccb2e720a465824922611bb9020a5a3a7",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarTimeInterval: navigates to the correct date",
+        "references": []
+      }
+    ]
+  },
+  "1.56.16": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "862b8689fdb7126e35791cf43a1e388bbc1e25f6",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: aria-label is not encoded twice now",
+        "references": []
+      },
+      {
+        "id": "36e7227558bd1a5d20adae2d811d660ab9d4cdf5",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Menu works correctly on combi devices",
         "references": []
       }
     ]

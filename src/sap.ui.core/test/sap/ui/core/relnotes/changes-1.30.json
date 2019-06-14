@@ -1,1771 +1,2215 @@
 {
-	"1.30.0": {
-		"date": "April 2015",
-		"notes": [
-			{
-				"id": "7df530bfa797424e3fce62ba9a7d569314e98ee2",
-				"type": "FEATURE",
-				"text": "AnalyticalBinding.j: Upgraded to ODataModel v2",
-				"references": []
-			},
-			{
-				"id": "8732e6945d218efa0c818e22b13290061c403434",
-				"type": "FEATURE",
-				"text": "AnalyticalBinding: Simple auto-expand added",
-				"references": []
-			},
-			{
-				"id": "cc5fea349ef06df4e313a2b0b06ef5a9f343d865",
-				"type": "FEATURE",
-				"text": "Component: Automatic model creation via metadata implemented",
-				"references": []
-			},
-			{
-				"id": "cccfa8969843b518c745e352eafdfd9ea6f93d2a",
-				"type": "FEATURE",
-				"text": "Component: Automatic model creation via metadata",
-				"references": []
-			},
-			{
-				"id": "2a445c275c3e5e40ae06505901b6a0df97c6c229",
-				"type": "FEATURE",
-				"text": "ListBinding: Added getCurrentContexts method",
-				"references": []
-			},
-			{
-				"id": "02d430b3c4ce1dc0761ad2e04319cebd45df2d6c",
-				"type": "FEATURE",
-				"text": "OData Message Parser implemented",
-				"references": []
-			},
-			{
-				"id": "27b6907775bd125c08fd6d6b357272f632c13e96",
-				"type": "FEATURE",
-				"text": "Enabled Referencing jQuery without a concrete version",
-				"references": []
-			},
-			{
-				"id": "d2c647a4ffaf3004b892a03002f026cb3ffa2195",
-				"type": "FEATURE",
-				"text": "TreeTable.js: Sorting implemented",
-				"references": []
-			},
-			{
-				"id": "ba494cb58de41f7cad2808bc911abc076176df60",
-				"type": "FEATURE",
-				"text": "View: Promise aquired via loaded() method",
-				"references": []
-			},
-			{
-				"id": "5c84b053ce22983b130b3ad048809891ef7c526d",
-				"type": "FEATURE",
-				"text": "XMLView: Asynchronous Loading and Global Preprocessors",
-				"references": []
-			},
-			{
-				"id": "abe2afc409d5c787b492dfefab3e6a1f21c83257",
-				"type": "FEATURE",
-				"text": "core.Popup: Added function for initial Z-Index",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1472014487"
-					}
-				]
-			},
-			{
-				"id": "35f18bfb0858ee47dec06a0bd55c97dd51487570",
-				"type": "FEATURE",
-				"text": "sap.m.MessageStrip: New control added",
-				"references": []
-			},
-			{
-				"id": "038b14e1c9352a53fb6f92670f75ebba268b5f69",
-				"type": "FEATURE",
-				"text": "sap.ui.core.RenderManager: \"required\" property added",
-				"references": []
-			},
-			{
-				"id": "7dcee875db2837d43076b6569fcdd0c83e9d7092",
-				"type": "FEATURE",
-				"text": "sap.ui.core.sample.ViewTemplate.types implemented",
-				"references": []
-			},
-			{
-				"id": "76c29bc4e1e4437860c918971f9668c5f98a5b92",
-				"type": "FEATURE",
-				"text": "sap.ui.define: Improved integration of raw or AMD modules",
-				"references": []
-			},
-			{
-				"id": "3814ac526026e4b9a797a4148e66e6100df12fbb",
-				"type": "FEATURE",
-				"text": "sap.ui.model.odata.ODataMetaModel: Implemented getODataFunctionImport method",
-				"references": []
-			},
-			{
-				"id": "57a4bb520be8e6f0fd3b7d8cec7755cc3ba69824",
-				"type": "FEATURE",
-				"text": "sap.ui.model.odata.ODataModel: serviceUrl in parameter object allowed",
-				"references": []
-			},
-			{
-				"id": "b06f89a19eb60d5f38724a1fe905c4f32d0442c4",
-				"type": "FEATURE",
-				"text": "sap.ui.model.odata.type.Double: Is now writable",
-				"references": []
-			},
-			{
-				"id": "d2e71d32c317a8693ee19363815648c0dd56c14a",
-				"type": "FEATURE",
-				"text": "sap.ui.model.odata.type.Single: Is now writable",
-				"references": []
-			},
-			{
-				"id": "73097e6616a634d0a332a28407ab0a18eb52877d",
-				"type": "FEATURE",
-				"text": "sap.ui.routing.Targets can now be used with UIComponents",
-				"references": []
-			},
-			{
-				"id": "6caf3f66d2eef2923cafc5e2f8193885c16abf91",
-				"type": "FEATURE",
-				"text": "sap.ui.table.TreeTable: EnableBusyIndicator method implemented",
-				"references": []
-			},
-			{
-				"id": "fb63e04149a1318c3e291ada03c31e60bed06d2a",
-				"type": "FEATURE",
-				"text": "sap.ui.test.OPA5: Exception thrown if the OPA-iframe does aswell",
-				"references": []
-			},
-			{
-				"id": "c63709788d89f2b550a7757f8051a7f79b46996d",
-				"type": "FEATURE",
-				"text": "sap.ui.thirdparty.hasher: Updated from 1.1.3 to 1.2.0",
-				"references": []
-			},
-			{
-				"id": "dd0aecc2a259af7060716899ae9e839dae321e3d",
-				"type": "FEATURE",
-				"text": "sinon: Included the latest version 1.14.1",
-				"references": []
-			},
-			{
-				"id": "f93b354bf5a5af2fb142e4df496293d1bc87b81b",
-				"type": "FEATURE",
-				"text": "v2.ODataModel: Added promise for metadata loading",
-				"references": []
-			},
-			{
-				"id": "7638b38979dbb4b5397ca7850cfefa06e76c29d0",
-				"type": "FEATURE",
-				"text": "v2.ODataModel: Delayed annotation loading allowed",
-				"references": []
-			},
-			{
-				"id": "524fc043763690ed758b06e5730637c134764be2",
-				"type": "FIX",
-				"text": "ClientListBinding: Includeed 'null' values for filters",
-				"references": []
-			},
-			{
-				"id": "1bf6c1463cc42750a1fbf82a6c72be5585ffe375",
-				"type": "FIX",
-				"text": "Currency: Unitialized/empty bindings correctly handled",
-				"references": []
-			},
-			{
-				"id": "91ac79af572af3437dee7d5562c0624c9b9f125a",
-				"type": "FIX",
-				"text": "Databinding: Allowed usage of model types with custom property types",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570076832"
-					}
-				]
-			},
-			{
-				"id": "d797e16dbc23b0c80ccfc23c36d4e654c909a13c",
-				"type": "FIX",
-				"text": "DateFormat: Fixed relative date parsing for daylight saving time",
-				"references": []
-			},
-			{
-				"id": "3091a5245e3fa2097a56d577b9d8951c051a8ea9",
-				"type": "FIX",
-				"text": "Ensured existence of namespace during Core.initLibrary()",
-				"references": []
-			},
-			{
-				"id": "5d597019bd638d6e5cb2dc745f0a48d40efcc625",
-				"type": "FIX",
-				"text": "ExpressionBinding: Operator (-) fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580018779"
-					}
-				]
-			},
-			{
-				"id": "8744614740d7197de45dd32e45543abfb2f61b3c",
-				"type": "FIX",
-				"text": "HCB-Theme: Changed outline-color for focus",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570023279"
-					}
-				]
-			},
-			{
-				"id": "b9b28c2e82ba9d0e49afa4abf80f417f77e7ce9e",
-				"type": "FIX",
-				"text": "IE9: Loading theme-parameters when stylesheet limit reached",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "012002523100000945972015"
-					}
-				]
-			},
-			{
-				"id": "69e743552d43ff1f429349e2d1db1ef248b8bf64",
-				"type": "FIX",
-				"text": "JSONModel: Fixed issue with property binding on root",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580007131"
-					}
-				]
-			},
-			{
-				"id": "1e3aab5e0bfd87c3923ef3fcb3c5431f890d5b9e",
-				"type": "FIX",
-				"text": "JSONView: Exception thrown when composite controls fill an association with an object instance (e.g. a SearchField)",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570035901"
-					}
-				]
-			},
-			{
-				"id": "93ef7324c1bc5890bb6e7abf2bca659c09104453",
-				"type": "FIX",
-				"text": "Fixed layout issue in XMLView scenario in Explored app with Internet Explorer",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580018809"
-					}
-				]
-			},
-			{
-				"id": "23be6d6248779b79b514c775f816afb3777010bc",
-				"type": "FIX",
-				"text": "Enabled sap-ui-core-nojQuery.js to work with jQueryFilter",
-				"references": []
-			},
-			{
-				"id": "92e4c493b0842c3765b431e66ddf80bb2d7f72cb",
-				"type": "FIX",
-				"text": "ManagedObject: All binding listeners detached on \"unbind\"",
-				"references": []
-			},
-			{
-				"id": "ce48c29daaec77b92e33f949722b854fff682673",
-				"type": "FIX",
-				"text": "ManagedObject: Supports value 'true' for option 'bindable'",
-				"references": []
-			},
-			{
-				"id": "c2412dc97bf387f489126c2d835cfec8fef45901",
-				"type": "FIX",
-				"text": "MessageParser & ODataMessageParser: Public API",
-				"references": []
-			},
-			{
-				"id": "0709d7b070674e3b410d00c1d410faf032b0aed2",
-				"type": "FIX",
-				"text": "ODataMessageParser: Public API added",
-				"references": []
-			},
-			{
-				"id": "85be72d17eb7d76f5102552db27856c3e9fb000c",
-				"type": "FIX",
-				"text": "No change in the parameters order when Mock Server exits",
-				"references": []
-			},
-			{
-				"id": "fd6f0b4c427b8c49ed724470a3acd6756a3a6f27",
-				"type": "FIX",
-				"text": "MockServer: $expand applied before $filter",
-				"references": []
-			},
-			{
-				"id": "c015aa6fbe8ff6b7ca6ab925ae8e96a54bf50a2a",
-				"type": "FIX",
-				"text": "NumberFormat: Fixed issues with currency parsing",
-				"references": []
-			},
-			{
-				"id": "0fbab55655ac19702472334468615f46d9f34291",
-				"type": "FIX",
-				"text": "NumberFormat: Removed unnecessary leading zeros with parseAsString",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570142800"
-					}
-				]
-			},
-			{
-				"id": "d219ffedf6ee23e13dadf5e6617ed5d25130c00d",
-				"type": "FIX",
-				"text": "NumberFormat: new option 'parseAsString' added",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580018770"
-					}
-				]
-			},
-			{
-				"id": "f802796c6d2e1d84b0a2fad3b74eb900e536f7b3",
-				"type": "FIX",
-				"text": "ODataAnnotations: Alias replacement in AnnotationsPath Collections",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570056036"
-					}
-				]
-			},
-			{
-				"id": "bff3c43d5b2e68534fd67f7b1ecf69d53af28717",
-				"type": "FIX",
-				"text": "ODataAnnotations: Simple values in attributes allowed",
-				"references": []
-			},
-			{
-				"id": "78368b1528b6a63c9c1ed8e5e7f967217d0e02fe",
-				"type": "FIX",
-				"text": "ODataAnnotations: Compatible loaded-event implemented",
-				"references": []
-			},
-			{
-				"id": "064ddb7012ee0446b4c2ade7dfc7f16e97683460",
-				"type": "FIX",
-				"text": "ODataMessageParser: Correctly determine request-URI",
-				"references": []
-			},
-			{
-				"id": "bdd5da8f998394f3e7f5609010d1f22e515bef3b",
-				"type": "FIX",
-				"text": "ODataMessageParser: Public API implemented",
-				"references": []
-			},
-			{
-				"id": "3f89b89d25d034639646dc797726a24352072f91",
-				"type": "FIX",
-				"text": "ODataMessageParser: Message targets set to absolute paths",
-				"references": []
-			},
-			{
-				"id": "27cf1a2ba225938d9a5aa8dcbf10f4f01e7c0edc",
-				"type": "FIX",
-				"text": "ODataMessageParser: Added support for relative target and propertyref",
-				"references": []
-			},
-			{
-				"id": "09273f0b2195b78da74ed347b5ae5c4fc959592d",
-				"type": "FIX",
-				"text": "Metadata not destroyed when model is destroyed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570029528"
-					}
-				]
-			},
-			{
-				"id": "0fb2751533ed2ac90c182576367d92b396a3b26a",
-				"type": "FIX",
-				"text": "ODataModel: Fixed incorrect dataRequested/dataReceived events in bindElement",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570012309"
-					}
-				]
-			},
-			{
-				"id": "318e50e3994e1dd99c8f34c08d7d5f30e5cf9194",
-				"type": "FIX",
-				"text": "ODataModelAdapter: Correct prototype functions called",
-				"references": []
-			},
-			{
-				"id": "3201b0980015de9a2d8ed7b2637dd4fcaf31d01a",
-				"type": "FIX",
-				"text": "ODataModelV2: Fixed MERGE to send only modified properties",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1472007105"
-					}
-				]
-			},
-			{
-				"id": "d5aec701b834b6df28839fa20be9282e567260af",
-				"type": "FIX",
-				"text": "ODataModelV2: Fixed setProperty on complex types",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580024429"
-					}
-				]
-			},
-			{
-				"id": "6cdef70caffda4a4643a4fd2d4ad464af47ba445",
-				"type": "FIX",
-				"text": "Added UMD modules into shim config of module loader; Adopted LIBRARIES.txt",
-				"references": []
-			},
-			{
-				"id": "265f2e52f7efb5bbf1f97473d2b3d8f17cdf16a4",
-				"type": "FIX",
-				"text": "Parse error of first key-value pair in properties file fixed",
-				"references": [
-					{
-						"type": "GitHub",
-						"reference": "386"
-					},
-					{
-						"type": "BCP",
-						"reference": "1570132604"
-					}
-				]
-			},
-			{
-				"id": "1362440ef84d6fd34e1854ecc535f97cbc6ff6fb",
-				"type": "FIX",
-				"text": "Promise Polyfill: Invalid argument case for functions all and race fixed",
-				"references": []
-			},
-			{
-				"id": "795bf94c693d90c2323b383de78725dd7b384130",
-				"type": "FIX",
-				"text": "RenderManager: State reset before rendering",
-				"references": []
-			},
-			{
-				"id": "7e429289ba58c086fd7c017e5a59a005c2e719e8",
-				"type": "FIX",
-				"text": "Routing API Documentation: Missing or wrong @lends tags fixed",
-				"references": []
-			},
-			{
-				"id": "db54b921f2614363ad1bc5f25a4d1b6ae3f00e44",
-				"type": "FIX",
-				"text": "SorterProcesser: Order with undefined values corrected",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570136904"
-					}
-				]
-			},
-			{
-				"id": "e24030b94b3fb4f557d2c80775f66e87e982c7f0",
-				"type": "FIX",
-				"text": "TechnicalInfo: Display size of configuration limited, no re-opening",
-				"references": []
-			},
-			{
-				"id": "a2709bacb45a821ae1936eaeeea5ce7ddf6edfcb",
-				"type": "FIX",
-				"text": "V2.ODataModel: Error when trying to submit unknown batch group fixed",
-				"references": []
-			},
-			{
-				"id": "1a03def897ec807fa7a3f924c94398c0f40b050d",
-				"type": "FIX",
-				"text": "XMLView: Support declaration of binding events added",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570024732"
-					}
-				]
-			},
-			{
-				"id": "7667a4e990ed3ecf8f19a5322902f7078c963660",
-				"type": "FIX",
-				"text": "errorResponse property for error response added",
-				"references": []
-			},
-			{
-				"id": "40d2581c3105328f00e986733457f24522f5c87c",
-				"type": "FIX",
-				"text": "analytics.TreeBindingAdapter.js: Root contexts requested only once",
-				"references": []
-			},
-			{
-				"id": "9be365c157907d9f1747151a2aa7089492f6a5a8",
-				"type": "FIX",
-				"text": "core.Control: Events prevented  if control is set to 'busy'",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570020562"
-					}
-				]
-			},
-			{
-				"id": "954675e1ca32fee2c0f4c4307ceb6e1c84d9aba1",
-				"type": "FIX",
-				"text": "core.InvisibleText: Static UIArea no longer invalidated",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580014469"
-					}
-				]
-			},
-			{
-				"id": "a9837bc4978617ce970d5324bc4fcab3fa7f10b4",
-				"type": "FIX",
-				"text": "core.Popup: Saving of '_followOfHandler' fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570004618"
-					}
-				]
-			},
-			{
-				"id": "0420037d9e0f5ba31197c17d1ec01a90f65fb098",
-				"type": "FIX",
-				"text": "core.Popup: Setting focus in Internet Explorer after opening fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570034466"
-					}
-				]
-			},
-			{
-				"id": "49d3529654d39bc33d77bb5bc71fd92d56bb8bf6",
-				"type": "FIX",
-				"text": "core.Popup: Setting focus in Internet Explorer after opening fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570034466"
-					}
-				]
-			},
-			{
-				"id": "70464081eb74ca82ce7630eae0a38d787b688b95",
-				"type": "FIX",
-				"text": "core.ScrollEnablement: Growing is only triggered for the vertical scrolling",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570029641"
-					}
-				]
-			},
-			{
-				"id": "5bf2860496e65a0a902887a8c775637ba28eb753",
-				"type": "FIX",
-				"text": "datajs: withCredentials flag set after xhr.open call",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "0000126053"
-					}
-				]
-			},
-			{
-				"id": "8d110c41eba595d028c1bbc34bcf2554f3d018ed",
-				"type": "FIX",
-				"text": "Empty/false key values no longer being overriden",
-				"references": []
-			},
-			{
-				"id": "ebcb2ab12176367f966ae02b54d02f0f5eadd7a6",
-				"type": "FIX",
-				"text": "jQuery.sap.FrameOptions: blockLayer z-index implemented",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580023538"
-					}
-				]
-			},
-			{
-				"id": "98eb2e859cd2ca25ef6c5366c4d403c8bc46d31b",
-				"type": "FIX",
-				"text": "odata4analytics.js: Property name used for DimensionAttribute",
-				"references": []
-			},
-			{
-				"id": "cc03f87ee0daee4cf6313a5e140d5a06532850cb",
-				"type": "FIX",
-				"text": "Refreshing ODataContextBinding no longer refreshes dependant bindings",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1472014073"
-					}
-				]
-			},
-			{
-				"id": "33c4ea77551dd5950241276dab5392300346c186",
-				"type": "FIX",
-				"text": "sap.m.Popover: beforeClose event fired and control closes correctly",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580023284"
-					}
-				]
-			},
-			{
-				"id": "0780374eff0cefaccb01c454e55e666a001ded9d",
-				"type": "FIX",
-				"text": "sap.ui.core.Control.js: setBusy method returns 'this'",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580026272"
-					}
-				]
-			},
-			{
-				"id": "0bd6ee92e6a0fd83867893e21bdff96ebed4a9de",
-				"type": "FIX",
-				"text": "sap.ui.core.Icon: Fixed rendering issue with 'src' values without protocol",
-				"references": []
-			},
-			{
-				"id": "8ec0c4e79d384d3743a3b2dff0178c871892a266",
-				"type": "FIX",
-				"text": "sap.ui.core.Popup: Implemented preventScroll locally",
-				"references": []
-			},
-			{
-				"id": "f9db480c518f793df05bfa07aa12546d9acc8f14",
-				"type": "FIX",
-				"text": "sap.ui.core.RenderManager: Visible DOM elements in preserve area are now avoided",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580010393"
-					}
-				]
-			},
-			{
-				"id": "efc7a371488b2d301426f468fbd7fb34a22fcff4",
-				"type": "FIX",
-				"text": "sap.ui.core.format.NumberFormat: Added support for decimals, min/maxFractionDigits when set with a string value",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580002442"
-					}
-				]
-			},
-			{
-				"id": "f84948f9ffd5e1c0531b007bcd063c0ba58ee9ac",
-				"type": "FIX",
-				"text": "sap.ui.core.routing.HashChanger: Initialized flag marked before firing the hashchange event",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570142382"
-					}
-				]
-			},
-			{
-				"id": "dd8574a304516500bf2b4ad9d7133fb2dd7ab646",
-				"type": "FIX",
-				"text": "sap.ui.core.routing.History: Browser history checked earlier",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580028189"
-					}
-				]
-			},
-			{
-				"id": "139d543f2eceaaf086f7151aa806c87ddf78f72e",
-				"type": "FIX",
-				"text": "sap.ui.core.routing.Router: Do not try to parse  the hash if router is destroyed",
-				"references": []
-			},
-			{
-				"id": "7394b496c0f147260dbe45b6ddf5265a0a2e909f",
-				"type": "FIX",
-				"text": "sap.ui.define: Added support for 'export' flag for controllers and JSViews",
-				"references": []
-			},
-			{
-				"id": "eb0b6963b1550112462a701ef638edf3887059e3",
-				"type": "FIX",
-				"text": "sap.ui.model.odata.ODataMetaModel: Fixed errors before loading",
-				"references": []
-			},
-			{
-				"id": "9536c69210a80e4c73777cdc6d0fce93c5747b6e",
-				"type": "FIX",
-				"text": "sap.ui.table.AnalyticalTable: Issues with expand and collapse of group headers fixed",
-				"references": []
-			},
-			{
-				"id": "a1eb619470ff7450cb55be24e53944a4ca368fad",
-				"type": "FIX",
-				"text": "sap.ui.test.Opa5#waitFor.controlType now also works if the type is still a lazy stub of UI5",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580010114"
-					}
-				]
-			},
-			{
-				"id": "ef0aecdb5517ea77a077b88cb3a6803d3adcc495",
-				"type": "FIX",
-				"text": "commons.Dialog: Fixed focusable elements",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1482020238"
-					}
-				]
-			},
-			{
-				"id": "f2e06e046f424f552f4b82f28becf007d3fd5f37",
-				"type": "FIX",
-				"text": "v2.ODataModel: Original request given to ODataMessageParser",
-				"references": []
-			},
-			{
-				"id": "b5bf26656bab2bbe20c0cfa8ee1ef5d475b2349d",
-				"type": "FIX",
-				"text": "v2.ODataModel: URL parameters encoded in callFunction",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580026851"
-					}
-				]
-			},
-			{
-				"id": "2f3af112e6f7071b4fac4a6193ee1879d4e33ae8",
-				"type": "FIX",
-				"text": "v2.ODataModel: Refresh requests included in the same batch request",
-				"references": []
-			},
-			{
-				"id": "d18b6a9a5a7cb70b29914ed8e9f15423c9e2debb",
-				"type": "FIX",
-				"text": "v2.ODataModel: RequestCompleted sent for aborted requests",
-				"references": []
-			},
-			{
-				"id": "d0e2c8aa876018fa60ff81a941ef75d574ad3401",
-				"type": "FIX",
-				"text": "v2.ODataModel: callFunction parameter correctly recognized if mode not set in metadata",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570076514"
-					}
-				]
-			},
-			{
-				"id": "de8533f0bd08d8f27a3d9e307555d409dbbf4ec9",
-				"type": "FEATURE",
-				"text": "ClientTreeBindings: Added support for sorting",
-				"references": []
-			},
-			{
-				"id": "b546091f11957decaf2abcb3e029a39d9902acc3",
-				"type": "FEATURE",
-				"text": "Control: Added ARIA support for busy indication",
-				"references": []
-			},
-			{
-				"id": "cd26504697dca6b76b3afaa330bf84f08ef6907b",
-				"type": "FEATURE",
-				"text": "DataType: Improved support for enum types",
-				"references": []
-			},
-			{
-				"id": "717b01367c66b77984a609ea78150ad17e9d22b4",
-				"type": "FEATURE",
-				"text": "HTMLView: Implemented async resource loading and rendering",
-				"references": []
-			},
-			{
-				"id": "dab24caf0fb2d89441492c2b33083aea70098afb",
-				"type": "FEATURE",
-				"text": "JSONView: Implemented async resource loading and rendering",
-				"references": []
-			},
-			{
-				"id": "82f392a71e9218d336670fc3e57c9142eed134e5",
-				"type": "FEATURE",
-				"text": "JSView: Implemented async resource loading and rendering",
-				"references": []
-			},
-			{
-				"id": "6a2f9a4a3e5149d9fb244b29972c4def3054a06b",
-				"type": "FEATURE",
-				"text": "ManagedObject: Template clones reused in bound aggregations",
-				"references": []
-			},
-			{
-				"id": "e88bc0b6f90ba0b949ad7405d7c235b948c5fb59",
-				"type": "FEATURE",
-				"text": "MessagingConcept: Added support for longtextUrl",
-				"references": []
-			},
-			{
-				"id": "6d170ccd7f292118a3a6449627daf3a80db5bb91",
-				"type": "FEATURE",
-				"text": "ODataMetadata: Prepeared for partial metadata loading",
-				"references": []
-			},
-			{
-				"id": "dcb48e5c19aa940c7ad3354126f82822e59aaef7",
-				"type": "FEATURE",
-				"text": "OPA5: getContext now available as a static function",
-				"references": []
-			},
-			{
-				"id": "fa9c4ea7c4ff1e2446b49d6a96c57a1c8c924307",
-				"type": "FEATURE",
-				"text": "XMLTemplateProcessor: Declarative setting of \"async\" for Views implemented",
-				"references": []
-			},
-			{
-				"id": "17d7a6280708b3340f56d4c4b1c1ed52228e5c9a",
-				"type": "FEATURE",
-				"text": "sap.layout.Grid: Added new XL break point",
-				"references": []
-			},
-			{
-				"id": "2d582bd905f2042d0d91c92960b585ea353d0203",
-				"type": "FEATURE",
-				"text": "sap.ui.core.Configuration/LocaleData: Parameter and function added for calendar type",
-				"references": []
-			},
-			{
-				"id": "8bcbb2ed5afb92283224ebf38708b48eb3f46bb8",
-				"type": "FEATURE",
-				"text": "v2.ODataModel: Metadata for annotations automatically parsed",
-				"references": []
-			},
-			{
-				"id": "b3af3d1a4539cc29f5c7ae30ff2bedef07bea1be",
-				"type": "FIX",
-				"text": "AnalyticalBinding: Corrected KeyIndex array access",
-				"references": []
-			},
-			{
-				"id": "a0cdf597e38fd7c4f9cf391f8e1c5bb5bfd5bd71",
-				"type": "FIX",
-				"text": "AnalyticalBinding: Error-Handler object corrected",
-				"references": []
-			},
-			{
-				"id": "77917c57ec0072d205754dafa3f25c55b014f186",
-				"type": "FIX",
-				"text": "AnalyticalBinding.js: Negative $skip prevented",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570041982"
-					}
-				]
-			},
-			{
-				"id": "30671747fa70c4c9b05a3d478e812dd8303a1bc3",
-				"type": "FIX",
-				"text": "Component Manifest: sap.app/id no longer defaults to component namespace",
-				"references": []
-			},
-			{
-				"id": "a8d5eb014ed058d0858e53bcef6631217d518d5d",
-				"type": "FIX",
-				"text": "CompositeBinding: OneTime bindings now handled as expected",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570173547"
-					}
-				]
-			},
-			{
-				"id": "768a306eebe0a788966a6d2347d8957fa07558fd",
-				"type": "FIX",
-				"text": "Fixed JSdoc issue that breaks code completion in Eclipse",
-				"references": []
-			},
-			{
-				"id": "31ea8f7143313e1e96a777e7dc138725f8ed1c95",
-				"type": "FIX",
-				"text": "Renderer.extend fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "770032"
-					},
-					{
-						"type": "GitHub",
-						"reference": "45"
-					}
-				]
-			},
-			{
-				"id": "fe623262210bd71fb6da12aa75639ecffa0591b1",
-				"type": "FIX",
-				"text": "'& ' (Ampersand) handled correctly in Url parameters values",
-				"references": []
-			},
-			{
-				"id": "210872f8e5f214a552cb7a45065c316a31d1b40c",
-				"type": "FIX",
-				"text": "ManagedObject: Fixed binding degradation to OneWay if formatter is set",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570304608"
-					}
-				]
-			},
-			{
-				"id": "a54319ac299055b087e56992fb082b13b91a21ec",
-				"type": "FIX",
-				"text": "MockServer: Fix for sinon Internet Explorer 9 issue (check on FormData object)",
-				"references": []
-			},
-			{
-				"id": "a0933d19cb71f34ca5ee44059d0834d482b7018c",
-				"type": "FIX",
-				"text": "ODataAnnotations: Non-strings allowed in LabeledElement",
-				"references": []
-			},
-			{
-				"id": "4705c98f996164eea1dbdaa551c24f98ae368aea",
-				"type": "FIX",
-				"text": "ODataAnnotations: Fixed dynamic expressions in apply",
-				"references": []
-			},
-			{
-				"id": "0e5413085419d18421157361803a06f023f77c06",
-				"type": "FIX",
-				"text": "ODataAnnotations: Multiple parameters in dynamic expressions fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580027601"
-					}
-				]
-			},
-			{
-				"id": "2406df65007debe9c5e7e3c2cd3232eb6f0f717c",
-				"type": "FIX",
-				"text": "ODataAnnotations: Apply annotations parsed only once",
-				"references": []
-			},
-			{
-				"id": "0abaacc722b0a3001be3a05b16545df6740b8812",
-				"type": "FIX",
-				"text": "ODataAnnotations: Support Internet Explorer 11's changed parse-error handling",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570156249"
-					}
-				]
-			},
-			{
-				"id": "9e1240ab7ee2202d40dfac82a9594405d135c3c3",
-				"type": "FIX",
-				"text": "ODataListBinding: Negative skip value in paging prevented",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "0000363297"
-					}
-				]
-			},
-			{
-				"id": "110b373dbaf0495991b28122ce984e6062d71699",
-				"type": "FIX",
-				"text": "ODataMessageParser: Check RequestUrl and all messages for targets",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570150936"
-					}
-				]
-			},
-			{
-				"id": "46fafa363e1462f31a07b20990e33b8b6d673861",
-				"type": "FIX",
-				"text": "ODataMessagePaser: Relative request paths handled correctly",
-				"references": []
-			},
-			{
-				"id": "30b71226a996b2e548a2a7ade5d43a2f9de09dea",
-				"type": "FIX",
-				"text": "ODataModel: Metamodel bindings now work asynchronously",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580013965"
-					}
-				]
-			},
-			{
-				"id": "83221a8ccb27cd1248194d398b5349aece9077ef",
-				"type": "FIX",
-				"text": "ODataModel: Event request parameters in batchRequestCompleted fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570171475"
-					}
-				]
-			},
-			{
-				"id": "fbb60053e27f332fbedcc3a38cbab88a1b1b7eef",
-				"type": "FIX",
-				"text": "ODataTreeBindingAdapter: SelectionChanged event fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570034106"
-					}
-				]
-			},
-			{
-				"id": "52f1b3e41d3ccc7ea25977f34f51d4efdfde51f5",
-				"type": "FIX",
-				"text": "ODataUtils.js: Edm.Byte is 1*3DIGIT, not hexadecimal",
-				"references": []
-			},
-			{
-				"id": "010780932ae413405246552e67382bc54bfe2844",
-				"type": "FIX",
-				"text": "TreeTable/ODataTreeBinding: Respect application filter",
-				"references": []
-			},
-			{
-				"id": "0a1b05a566cb0999aec219eaa5e039529ca6f9b4",
-				"type": "FIX",
-				"text": "XMLTemplateProcessor: Fixed assert for unknown setting",
-				"references": []
-			},
-			{
-				"id": "62b356a19e32c0cd6839e7d51a75ab2af9c2b57c",
-				"type": "FIX",
-				"text": "core.Control: LocalBusyIndicatorDelay when used in 'AfterRendering' fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570152360"
-					}
-				]
-			},
-			{
-				"id": "6159e536710c2ba9cddff568d5220204dfc8b954",
-				"type": "FIX",
-				"text": "core.Control: Overwriting \"_busyIndicatorDelayedCallId\" in \"onAfterRendering\" prevented",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570293283"
-					}
-				]
-			},
-			{
-				"id": "40b4487105b70883ad4482a20d2d63aa1f0bfbb7",
-				"type": "FIX",
-				"text": "core.Popup: De-Registration of child popups fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580000848"
-					},
-					{
-						"type": "BCP",
-						"reference": "1570149997"
-					}
-				]
-			},
-			{
-				"id": "1c5dae008ad44a614a0b81d75afb392c9bf64968",
-				"type": "FIX",
-				"text": "core.Popup: DOM-reference renewed when used in \"checkDocking\"",
-				"references": []
-			},
-			{
-				"id": "cf00a762bdccea846b8bbbe2c280026ae82297c3",
-				"type": "FIX",
-				"text": "sap.ui.Device: Media queries in device API made independent from current media",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570327345"
-					}
-				]
-			},
-			{
-				"id": "66078742c0a42b7840580639cc8348c02063e817",
-				"type": "FIX",
-				"text": "sap.ui.core.FocusHandler: Focus information updated immediately before a control/element is destroyed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570029000"
-					}
-				]
-			},
-			{
-				"id": "23b0bab30388dd8359c071b535da71b077f86a20",
-				"type": "FIX",
-				"text": "sap.ui.core.Icon: Default \"title\" removed based on icon-font",
-				"references": []
-			},
-			{
-				"id": "458f89716d5e1a41dcba04e80b8fabe77a90bcfe",
-				"type": "FIX",
-				"text": "sap.ui.core.RenderManager: Duplicate references to Labels (due to labelFor and ariaLabelledBy) in aria-labelledby attributes avoided",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570303133"
-					}
-				]
-			},
-			{
-				"id": "597e91c3acedd371142969b8732807864f82eb45",
-				"type": "FIX",
-				"text": "sap.ui.core.UIArea: Avoid duplicate rendering when content is moved in rendering phase",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570149924"
-					}
-				]
-			},
-			{
-				"id": "6331c16a8c9e3758a3162753fc22bc0f7d4b3dde",
-				"type": "FIX",
-				"text": "sap.ui.core.format.NumberFormat: Empty string parsed as 0 instead of NaN",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570147963"
-					}
-				]
-			},
-			{
-				"id": "62910cf6bcb484fdb1d4661b138e3e025e25bdc5",
-				"type": "FIX",
-				"text": "sap.ui.core.format.NumberFormat: Parse function respects custom plus and minus signs",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570149625"
-					}
-				]
-			},
-			{
-				"id": "86c76251897d3700ac437d4586e4c97f26640eb7",
-				"type": "FIX",
-				"text": "sap.ui.core.routing.History: History length increase now correctly taken into account",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570443192"
-					}
-				]
-			},
-			{
-				"id": "723741dcd7428c351c836096fc19609a8be9b0ba",
-				"type": "FIX",
-				"text": "v2.ODataModel: Custom header correctly set in $metadata request",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570173039"
-					}
-				]
-			},
-			{
-				"id": "c861a61a31df4fe4a7840e50554b1062383425f9",
-				"type": "FIX",
-				"text": "v2.ODataModel: Correctly call success or error handler",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580014034"
-					}
-				]
-			},
-			{
-				"id": "363ca1d5935369a417a9f3a9c8af23ffe48d106b",
-				"type": "FIX",
-				"text": "v2.ODataModel: Fixed auto-refresh with GET parameters",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570155173"
-					}
-				]
-			},
-			{
-				"id": "ef89f8f95d3f8d6ce8189558113d65647d7d6653",
-				"type": "FIX",
-				"text": "v2.ODataModel: Added eTag if data is refreshed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570023381"
-					}
-				]
-			},
-			{
-				"id": "8535720a31c5952c7b90a0973c6a57a697995737",
-				"type": "FEATURE",
-				"text": "sap.ui.core.LocaleData: Locale-dependent era name added",
-				"references": []
-			},
-			{
-				"id": "4e5fe8a885dc494c007a27ae445e28611fdba09e",
-				"type": "FEATURE",
-				"text": "Added jQuery 2.1.4 but it is not the default version yet",
-				"references": []
-			},
-			{
-				"id": "e298a66679502376c2d0eb1e30b266a7bc530623",
-				"type": "FEATURE",
-				"text": "Enhanced sap.ui.core.CSSSize with support for calc()",
-				"references": [
-					{
-						"type": "GitHub",
-						"reference": "189"
-					}
-				]
-			},
-			{
-				"id": "efcc58e1ee1a6bf6665eaff1e28a180f48c06043",
-				"type": "FEATURE",
-				"text": "Added Explored sample for asynchronous views",
-				"references": []
-			},
-			{
-				"id": "f041ab8989f793ce1a76a17ed708e5dba183c8a7",
-				"type": "FEATURE",
-				"text": "Handlebars: Moved from version 2.0.0 to 3.0.3",
-				"references": []
-			},
-			{
-				"id": "fde44279537653e624ee22916b44f57686ec7ef2",
-				"type": "FEATURE",
-				"text": "ODataMessageParser: Added support for function imports",
-				"references": []
-			},
-			{
-				"id": "568eaed15a679bdefe266c196130b5d6834ededb",
-				"type": "FEATURE",
-				"text": "core.IconPool: Implemented support icons with multiple characters",
-				"references": []
-			},
-			{
-				"id": "6eea909072f435967184330a20fcdf77602d7439",
-				"type": "FEATURE",
-				"text": "sap.ui.Device: Detection for MS Edge implemented",
-				"references": []
-			},
-			{
-				"id": "b4179939314c3222ab3bf5a315fe372a83cabcbb",
-				"type": "FEATURE",
-				"text": "sap.ui.core.Icon: 'alt' property added for screen reader support",
-				"references": []
-			},
-			{
-				"id": "d9e70252127ea00b059a1f63965ae62436c62f3c",
-				"type": "FEATURE",
-				"text": "sap.ui.core.Icon: Added \"useIconTooltip\" property",
-				"references": []
-			},
-			{
-				"id": "1788379be7c21b2968b11aed5cbba14569b3ff21",
-				"type": "FEATURE",
-				"text": "sap.ui.core.Icon: I18n support",
-				"references": []
-			},
-			{
-				"id": "c014de1ffa40075b59160f8b0711bfa9d3ca2f32",
-				"type": "FIX",
-				"text": "AnalyticalBinding: Batch-Handle Abort",
-				"references": []
-			},
-			{
-				"id": "04b7bb4d578724096078394c3af4752b818da68e",
-				"type": "FIX",
-				"text": "AnalyticalBinding: updateAnalyticalInfo made asynchronous",
-				"references": []
-			},
-			{
-				"id": "95a033e8741a6881c29953a9f497ff06ee182939",
-				"type": "FIX",
-				"text": "BusyIndicator: BusyIndicator attached to Popup's open event",
-				"references": []
-			},
-			{
-				"id": "db1d2fc8a12b1dc0fbc319a99b77065fdbb06d5c",
-				"type": "FIX",
-				"text": "Element: Added additional documentation for Event delegates",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570042356"
-					}
-				]
-			},
-			{
-				"id": "8ec5f71832e2e7c58671a8600dd00e7c48ea50aa",
-				"type": "FIX",
-				"text": "HTML: This is returned in setSanitizeContent",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570446367"
-					}
-				]
-			},
-			{
-				"id": "9c3bbb08578181c5488b9dc59ef6bab5fcca44ce",
-				"type": "FIX",
-				"text": "ListBinding: Adapted visibility of getContexts",
-				"references": []
-			},
-			{
-				"id": "6f1600770f0996ae8755568503d0e8b5c7876bed",
-				"type": "FIX",
-				"text": "MockServer: Added missing 403 status code in $batch calls",
-				"references": []
-			},
-			{
-				"id": "fa5e69c2576ada621bd92d60ba973695bd8bec49",
-				"type": "FIX",
-				"text": "ODataAnnotations: Apply in dynamic expressions",
-				"references": []
-			},
-			{
-				"id": "40493c532230fa17670123b9dc96ff568febaced",
-				"type": "FIX",
-				"text": "ODataAnnotations: Removed name property in LabeledElement value",
-				"references": []
-			},
-			{
-				"id": "425897662a60d73f7fcf569c7e99ee87e49d7e05",
-				"type": "FIX",
-				"text": "ODataMetadata: Fixed merge function if no entityContainer is available",
-				"references": []
-			},
-			{
-				"id": "7bc0a41adc1ecdfdc1b4fd4711d4adf2fee24514",
-				"type": "FIX",
-				"text": "ODataModelV2: Fixed manual count requests with filter",
-				"references": [
-					{
-						"type": "GitHub",
-						"reference": "429"
-					},
-					{
-						"type": "BCP",
-						"reference": "1570328203"
-					}
-				]
-			},
-			{
-				"id": "b3b9157f8270a4d3408d150f1d4ad3e9d5ed3ed1",
-				"type": "FIX",
-				"text": "Promise:Synchronous then() execution in polyfill avoided",
-				"references": []
-			},
-			{
-				"id": "c09986d6540c7741d49c86e91a9c394b25b61922",
-				"type": "FIX",
-				"text": "Fixed relative URLs in less.js theming parameters",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570306267"
-					}
-				]
-			},
-			{
-				"id": "53d81629d46a96f5146eea6a8cc649a04b357a44",
-				"type": "FIX",
-				"text": "Support Tool: Fixed Control-Tree \"Binding\" tab",
-				"references": []
-			},
-			{
-				"id": "717425028ee8403e1c4113c465b73285855c1b07",
-				"type": "FIX",
-				"text": "core.Control: All focusable elements blocked by LocalBusyIndicator",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570449352"
-					},
-					{
-						"type": "BCP",
-						"reference": "1570447805"
-					}
-				]
-			},
-			{
-				"id": "10921f506fe967f6eb6d021e1fc86266970a6312",
-				"type": "FIX",
-				"text": "core.LibraryInfo: Added check for special cases",
-				"references": []
-			},
-			{
-				"id": "c2f188e978853bd6ea2f5cf83848f76a1ef811b0",
-				"type": "FIX",
-				"text": "sap.m.Popover: beforeClose event fires and correctly closes Popover",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570460654"
-					}
-				]
-			},
-			{
-				"id": "adb81027f37ae3ee88d8fd7438c20de51fbf9c59",
-				"type": "FIX",
-				"text": "sap.ui.core.Popup: Removed the shieldlayer from mobile browsers which fires mouse events without 300ms delay",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570410697"
-					}
-				]
-			},
-			{
-				"id": "b7db10c6969dd179ba292eb318947f67e79ceea2",
-				"type": "FIX",
-				"text": "sap.ui.core.routing.HashChanger.replaceHashChanger: Now copies all events",
-				"references": []
-			},
-			{
-				"id": "b7181ea0dc4b7f19eb86885cdd7174a902878630",
-				"type": "FIX",
-				"text": "sap.ui.core.routing.History: Now replaces the global hashchanger as well",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570182167"
-					}
-				]
-			},
-			{
-				"id": "defcb72fc7094b86593dad558022a06c650862a4",
-				"type": "FIX",
-				"text": "sap.ui.core.test.Opa5: iFrame loading works with defaults that search for controls",
-				"references": [
-					{
-						"type": "GitHub",
-						"reference": "441"
-					},
-					{
-						"type": "BCP",
-						"reference": "1570459849"
-					}
-				]
-			},
-			{
-				"id": "2d55f1cd9332a2ab91dcd01af46ad51feb66ea6f",
-				"type": "FIX",
-				"text": "v2.ODataListBinding: Fixed handling of aborted requests",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570419380"
-					}
-				]
-			},
-			{
-				"id": "18b25ba2617a48e2c8b0c8d973d1c2bd04c8915d",
-				"type": "FIX",
-				"text": "v2.ODataModel: Annotations-object instantiated  earlier",
-				"references": []
-			},
-			{
-				"id": "1b06ac18ba9d7fe51be3ade849f54ea9eee58779",
-				"type": "FEATURE",
-				"text": "Allow rebooting apps with alternative UI5 version from any URL",
-				"references": []
-			},
-			{
-				"id": "08e05f88a7e15f19a9066d6960a7c760147dd55c",
-				"type": "FEATURE",
-				"text": "Option to pass a batchGroupId  when refreshing a Binding implemented",
-				"references": []
-			},
-			{
-				"id": "3efd89464f5cf4123afb7968b23278edadc208ed",
-				"type": "FEATURE",
-				"text": "sap.ui.define: Relative module names supported using '../'",
-				"references": [
-					{
-						"type": "GitHub",
-						"reference": "396"
-					}
-				]
-			},
-			{
-				"id": "3f0c7801542c15c1dad83f921c1e241825861dde",
-				"type": "FEATURE",
-				"text": "v2.ODataModel: New getETag method implemented",
-				"references": []
-			},
-			{
-				"id": "b04fee8ea41b8bb037b74b57ba4a48a71f3e2b08",
-				"type": "FIX",
-				"text": "Removed document.write for compatibility with Cordova in WP8.1",
-				"references": []
-			},
-			{
-				"id": "1e159063af98c174f268e70d064aa1d21bc9bd63",
-				"type": "FIX",
-				"text": "sap.ui.Device: OS detection - support for future Windows versions added",
-				"references": []
-			},
-			{
-				"id": "d996184e0547457cbf37d0a473c574268617f1f0",
-				"type": "FIX",
-				"text": "sap.ui.model.odata.ODataMetaModel: Resolved loaded() promise at the correct point in time",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570296621"
-					}
-				]
-			},
-			{
-				"id": "6e0570beafd2e9603275f43626dd4fac82145673",
-				"type": "FIX",
-				"text": "sap.ui.model.odata.ODataModel: Stay synchronous if possible in getMetaModel() to be compatible to legacy applications",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570472662"
-					}
-				]
-			},
-			{
-				"id": "46817e98f016de4e924b8ea0f0bea67336c80e41",
-				"type": "FIX",
-				"text": "ODataMessageParser: Function imports with multiple keys",
-				"references": []
-			}
-		]
-	},
-	"1.30.1": {
-		"date": "June 2015",
-		"notes": [
-			{
-				"id": "22303d6f5c48b20d60cfdcfb6bbef3daccabc448",
-				"type": "FEATURE",
-				"text": "ODataModel: Automatically parse metadata for annotations",
-				"references": []
-			},
-			{
-				"id": "72b95c785c184438b36268404b82b0ecf34fb56a",
-				"type": "FEATURE",
-				"text": "sap.ui.core.Icon: noTabStop property for not adding tabindex to",
-				"references": []
-			},
-			{
-				"id": "d3f97c840215ec7c3a7ad1a052cfaddad3a2f7fe",
-				"type": "FIX",
-				"text": "AnalyticalBinding: Make \"getDownloadUrl\" method public",
-				"references": []
-			},
-			{
-				"id": "fde20127def2d85a67b2c2edf3cfea8b09ea2215",
-				"type": "FIX",
-				"text": "Anonymous define in URI.js breaks CVOM charts",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570447997"
-					}
-				]
-			},
-			{
-				"id": "40d979adb32bd366569727ab6c77af7361b0278a",
-				"type": "FIX",
-				"text": "Component: Support inheritance for models/dataSources metadata",
-				"references": []
-			},
-			{
-				"id": "38d87544e870c6b204b3b13918ba3e7523e2f3f2",
-				"type": "FIX",
-				"text": "Core: Don't boot before all tasks have been created",
-				"references": []
-			},
-			{
-				"id": "7613444a76e21fd9be1a326e8209b0e3c95d41ff",
-				"type": "FIX",
-				"text": "Device-API: Correctly identify Windows 7 vs. 8",
-				"references": []
-			},
-			{
-				"id": "c5b456367a98eefe3ddfffa87d2d9fb96266af7e",
-				"type": "FIX",
-				"text": "ODataListBinding: Make \"getDownloadUrl\" method public",
-				"references": []
-			},
-			{
-				"id": "bbf360f00278c620f565dfa9602f38845aedcd91",
-				"type": "FIX",
-				"text": "ODataMessageParser: Normalize message target paths",
-				"references": []
-			},
-			{
-				"id": "6f478ebc51b5b01af034eee1a1c745b9705cea17",
-				"type": "FIX",
-				"text": "ODataMessageParser: Action-for annotations and message deletion",
-				"references": []
-			},
-			{
-				"id": "10929c2a7d47215c43ec0fbc593689834ae17c56",
-				"type": "FIX",
-				"text": "ODataTreeBinding: Respect Edm Type in Filter-Statements",
-				"references": []
-			},
-			{
-				"id": "f121d0b10ed86b532f654985e73e6e3d32b1966e",
-				"type": "FIX",
-				"text": "OPA: Returns the correct hash when there is no change yet and running with ushell",
-				"references": []
-			},
-			{
-				"id": "e6c51dd8e97cc288bdbb05f82a9f4f7f28837e4e",
-				"type": "FIX",
-				"text": "RenderManager.writeIcon: Use icon text (i18n)",
-				"references": []
-			},
-			{
-				"id": "e15d215e8b64c35d4d50c7a7ed641bd287ad276b",
-				"type": "FIX",
-				"text": "Tree-/AnalyticalTable & *Adapter(s): Fixed selectAllMode Propagation",
-				"references": []
-			},
-			{
-				"id": "6860883f8a9417f5c67eafda64e878251c5c3f02",
-				"type": "FIX",
-				"text": "sap.ui.core.Icon: Prevent technical icon name as tooltip",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570484264"
-					}
-				]
-			},
-			{
-				"id": "c46b9c8986d00d076b6ff310046ed971ea54f536",
-				"type": "FIX",
-				"text": "sap.ui.core.util.Export: Add library metadata",
-				"references": []
-			},
-			{
-				"id": "fddf35cd8ac731b4c2a79bb7394fc9ed5fa43724",
-				"type": "FIX",
-				"text": "sap.ui.model.odata.ODataModel: Stay synchronous if possible in getMetaModel() to be compatible to legacy applications",
-				"references": []
-			},
-			{
-				"id": "0e5b10a0c9b196c057388196fe33cf9861f38c14",
-				"type": "FIX",
-				"text": "v2.ODataListBinding: OperationMode.Client + refresh()",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570524154"
-					}
-				]
-			},
-			{
-				"id": "3b80fc7549dabe941da81db8dfd0887167715303",
-				"type": "FIX",
-				"text": "v2.ODataModel: Joined annotation loading event fired twice",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570512202"
-					}
-				]
-			},
-			{
-				"id": "8d968c8be1ad81de7fb14242b156cf122de0aa2a",
-				"type": "FIX",
-				"text": "v2.ODataTreeBinding: Support CountMode \"Request\"",
-				"references": []
-			}
-		]
-	},
-	"1.30.2": {
-		"date": "June 2015",
-		"notes": [
-			{
-				"id": "75ddb9ede714bb5b45345a93335415fe52b688ce",
-				"type": "FIX",
-				"text": "DebugEnv: properly declare dependencies in ControlTree",
-				"references": []
-			},
-			{
-				"id": "f580719babe110681d6b93fa41ba2b29fd156640",
-				"type": "FIX",
-				"text": "ExtensionPoint: fixed non-working ExtensionPoints in Fragments",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "012002523100005473112015"
-					}
-				]
-			},
-			{
-				"id": "0472dbfef5f4e20b35a5a4d2882bb2ee5587e712",
-				"type": "FIX",
-				"text": "ODataAnnotations: Parse Empty Collection as Array",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570769564"
-					}
-				]
-			}
-		]
-	}
+  "1.30.0": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "7df530bfa797424e3fce62ba9a7d569314e98ee2",
+        "type": "FEATURE",
+        "text": "AnalyticalBinding.j: Upgraded to ODataModel v2",
+        "references": []
+      },
+      {
+        "id": "8732e6945d218efa0c818e22b13290061c403434",
+        "type": "FEATURE",
+        "text": "AnalyticalBinding: Simple auto-expand added",
+        "references": []
+      },
+      {
+        "id": "cc5fea349ef06df4e313a2b0b06ef5a9f343d865",
+        "type": "FEATURE",
+        "text": "Component: Automatic model creation via metadata implemented",
+        "references": []
+      },
+      {
+        "id": "cccfa8969843b518c745e352eafdfd9ea6f93d2a",
+        "type": "FEATURE",
+        "text": "Component: Automatic model creation via metadata",
+        "references": []
+      },
+      {
+        "id": "2a445c275c3e5e40ae06505901b6a0df97c6c229",
+        "type": "FEATURE",
+        "text": "ListBinding: Added getCurrentContexts method",
+        "references": []
+      },
+      {
+        "id": "02d430b3c4ce1dc0761ad2e04319cebd45df2d6c",
+        "type": "FEATURE",
+        "text": "OData Message Parser implemented",
+        "references": []
+      },
+      {
+        "id": "27b6907775bd125c08fd6d6b357272f632c13e96",
+        "type": "FEATURE",
+        "text": "Enabled Referencing jQuery without a concrete version",
+        "references": []
+      },
+      {
+        "id": "d2c647a4ffaf3004b892a03002f026cb3ffa2195",
+        "type": "FEATURE",
+        "text": "TreeTable.js: Sorting implemented",
+        "references": []
+      },
+      {
+        "id": "ba494cb58de41f7cad2808bc911abc076176df60",
+        "type": "FEATURE",
+        "text": "View: Promise aquired via loaded() method",
+        "references": []
+      },
+      {
+        "id": "5c84b053ce22983b130b3ad048809891ef7c526d",
+        "type": "FEATURE",
+        "text": "XMLView: Asynchronous Loading and Global Preprocessors",
+        "references": []
+      },
+      {
+        "id": "abe2afc409d5c787b492dfefab3e6a1f21c83257",
+        "type": "FEATURE",
+        "text": "core.Popup: Added function for initial Z-Index",
+        "references": []
+      },
+      {
+        "id": "35f18bfb0858ee47dec06a0bd55c97dd51487570",
+        "type": "FEATURE",
+        "text": "sap.m.MessageStrip: New control added",
+        "references": []
+      },
+      {
+        "id": "038b14e1c9352a53fb6f92670f75ebba268b5f69",
+        "type": "FEATURE",
+        "text": "sap.ui.core.RenderManager: \"required\" property added",
+        "references": []
+      },
+      {
+        "id": "7dcee875db2837d43076b6569fcdd0c83e9d7092",
+        "type": "FEATURE",
+        "text": "sap.ui.core.sample.ViewTemplate.types implemented",
+        "references": []
+      },
+      {
+        "id": "76c29bc4e1e4437860c918971f9668c5f98a5b92",
+        "type": "FEATURE",
+        "text": "sap.ui.define: Improved integration of raw or AMD modules",
+        "references": []
+      },
+      {
+        "id": "3814ac526026e4b9a797a4148e66e6100df12fbb",
+        "type": "FEATURE",
+        "text": "sap.ui.model.odata.ODataMetaModel: Implemented getODataFunctionImport method",
+        "references": []
+      },
+      {
+        "id": "57a4bb520be8e6f0fd3b7d8cec7755cc3ba69824",
+        "type": "FEATURE",
+        "text": "sap.ui.model.odata.ODataModel: serviceUrl in parameter object allowed",
+        "references": []
+      },
+      {
+        "id": "b06f89a19eb60d5f38724a1fe905c4f32d0442c4",
+        "type": "FEATURE",
+        "text": "sap.ui.model.odata.type.Double: Is now writable",
+        "references": []
+      },
+      {
+        "id": "d2e71d32c317a8693ee19363815648c0dd56c14a",
+        "type": "FEATURE",
+        "text": "sap.ui.model.odata.type.Single: Is now writable",
+        "references": []
+      },
+      {
+        "id": "73097e6616a634d0a332a28407ab0a18eb52877d",
+        "type": "FEATURE",
+        "text": "sap.ui.routing.Targets can now be used with UIComponents",
+        "references": []
+      },
+      {
+        "id": "6caf3f66d2eef2923cafc5e2f8193885c16abf91",
+        "type": "FEATURE",
+        "text": "sap.ui.table.TreeTable: EnableBusyIndicator method implemented",
+        "references": []
+      },
+      {
+        "id": "fb63e04149a1318c3e291ada03c31e60bed06d2a",
+        "type": "FEATURE",
+        "text": "sap.ui.test.OPA5: Exception thrown if the OPA-iframe does aswell",
+        "references": []
+      },
+      {
+        "id": "c63709788d89f2b550a7757f8051a7f79b46996d",
+        "type": "FEATURE",
+        "text": "sap.ui.thirdparty.hasher: Updated from 1.1.3 to 1.2.0",
+        "references": []
+      },
+      {
+        "id": "dd0aecc2a259af7060716899ae9e839dae321e3d",
+        "type": "FEATURE",
+        "text": "sinon: Included the latest version 1.14.1",
+        "references": []
+      },
+      {
+        "id": "f93b354bf5a5af2fb142e4df496293d1bc87b81b",
+        "type": "FEATURE",
+        "text": "v2.ODataModel: Added promise for metadata loading",
+        "references": []
+      },
+      {
+        "id": "7638b38979dbb4b5397ca7850cfefa06e76c29d0",
+        "type": "FEATURE",
+        "text": "v2.ODataModel: Delayed annotation loading allowed",
+        "references": []
+      },
+      {
+        "id": "524fc043763690ed758b06e5730637c134764be2",
+        "type": "FIX",
+        "text": "ClientListBinding: Includeed \u0027null\u0027 values for filters",
+        "references": []
+      },
+      {
+        "id": "1bf6c1463cc42750a1fbf82a6c72be5585ffe375",
+        "type": "FIX",
+        "text": "Currency: Unitialized/empty bindings correctly handled",
+        "references": []
+      },
+      {
+        "id": "91ac79af572af3437dee7d5562c0624c9b9f125a",
+        "type": "FIX",
+        "text": "Databinding: Allowed usage of model types with custom property types",
+        "references": []
+      },
+      {
+        "id": "d797e16dbc23b0c80ccfc23c36d4e654c909a13c",
+        "type": "FIX",
+        "text": "DateFormat: Fixed relative date parsing for daylight saving time",
+        "references": []
+      },
+      {
+        "id": "3091a5245e3fa2097a56d577b9d8951c051a8ea9",
+        "type": "FIX",
+        "text": "Ensured existence of namespace during Core.initLibrary()",
+        "references": []
+      },
+      {
+        "id": "5d597019bd638d6e5cb2dc745f0a48d40efcc625",
+        "type": "FIX",
+        "text": "ExpressionBinding: Operator (-) fixed",
+        "references": []
+      },
+      {
+        "id": "8744614740d7197de45dd32e45543abfb2f61b3c",
+        "type": "FIX",
+        "text": "HCB-Theme: Changed outline-color for focus",
+        "references": []
+      },
+      {
+        "id": "b9b28c2e82ba9d0e49afa4abf80f417f77e7ce9e",
+        "type": "FIX",
+        "text": "IE9: Loading theme-parameters when stylesheet limit reached",
+        "references": []
+      },
+      {
+        "id": "69e743552d43ff1f429349e2d1db1ef248b8bf64",
+        "type": "FIX",
+        "text": "JSONModel: Fixed issue with property binding on root",
+        "references": []
+      },
+      {
+        "id": "1e3aab5e0bfd87c3923ef3fcb3c5431f890d5b9e",
+        "type": "FIX",
+        "text": "JSONView: Exception thrown when composite controls fill an association with an object instance (e.g. a SearchField)",
+        "references": []
+      },
+      {
+        "id": "93ef7324c1bc5890bb6e7abf2bca659c09104453",
+        "type": "FIX",
+        "text": "Fixed layout issue in XMLView scenario in Explored app with Internet Explorer",
+        "references": []
+      },
+      {
+        "id": "23be6d6248779b79b514c775f816afb3777010bc",
+        "type": "FIX",
+        "text": "Enabled sap-ui-core-nojQuery.js to work with JQueryFilter",
+        "references": []
+      },
+      {
+        "id": "92e4c493b0842c3765b431e66ddf80bb2d7f72cb",
+        "type": "FIX",
+        "text": "ManagedObject: All binding listeners detached on \"unbind\"",
+        "references": []
+      },
+      {
+        "id": "ce48c29daaec77b92e33f949722b854fff682673",
+        "type": "FIX",
+        "text": "ManagedObject: Supports value \u0027true\u0027 for option \u0027bindable\u0027",
+        "references": []
+      },
+      {
+        "id": "c2412dc97bf387f489126c2d835cfec8fef45901",
+        "type": "FIX",
+        "text": "MessageParser \u0026 ODataMessageParser: Public API",
+        "references": []
+      },
+      {
+        "id": "0709d7b070674e3b410d00c1d410faf032b0aed2",
+        "type": "FIX",
+        "text": "ODataMessageParser: Public API added",
+        "references": []
+      },
+      {
+        "id": "85be72d17eb7d76f5102552db27856c3e9fb000c",
+        "type": "FIX",
+        "text": "No change in the parameters order when Mock Server exits",
+        "references": []
+      },
+      {
+        "id": "fd6f0b4c427b8c49ed724470a3acd6756a3a6f27",
+        "type": "FIX",
+        "text": "MockServer: $expand applied before $filter",
+        "references": []
+      },
+      {
+        "id": "c015aa6fbe8ff6b7ca6ab925ae8e96a54bf50a2a",
+        "type": "FIX",
+        "text": "NumberFormat: Fixed issues with currency parsing",
+        "references": []
+      },
+      {
+        "id": "0fbab55655ac19702472334468615f46d9f34291",
+        "type": "FIX",
+        "text": "NumberFormat: Removed unnecessary leading zeros with parseAsString",
+        "references": []
+      },
+      {
+        "id": "d219ffedf6ee23e13dadf5e6617ed5d25130c00d",
+        "type": "FIX",
+        "text": "NumberFormat: new option \u0027parseAsString\u0027 added",
+        "references": []
+      },
+      {
+        "id": "f802796c6d2e1d84b0a2fad3b74eb900e536f7b3",
+        "type": "FIX",
+        "text": "ODataAnnotations: Alias replacement in AnnotationsPath Collections",
+        "references": []
+      },
+      {
+        "id": "bff3c43d5b2e68534fd67f7b1ecf69d53af28717",
+        "type": "FIX",
+        "text": "ODataAnnotations: Simple values in attributes allowed",
+        "references": []
+      },
+      {
+        "id": "78368b1528b6a63c9c1ed8e5e7f967217d0e02fe",
+        "type": "FIX",
+        "text": "ODataAnnotations: Compatible loaded-event implemented",
+        "references": []
+      },
+      {
+        "id": "064ddb7012ee0446b4c2ade7dfc7f16e97683460",
+        "type": "FIX",
+        "text": "ODataMessageParser: Correctly determine request-URI",
+        "references": []
+      },
+      {
+        "id": "bdd5da8f998394f3e7f5609010d1f22e515bef3b",
+        "type": "FIX",
+        "text": "ODataMessageParser: Public API implemented",
+        "references": []
+      },
+      {
+        "id": "3f89b89d25d034639646dc797726a24352072f91",
+        "type": "FIX",
+        "text": "ODataMessageParser: Message targets set to absolute paths",
+        "references": []
+      },
+      {
+        "id": "27cf1a2ba225938d9a5aa8dcbf10f4f01e7c0edc",
+        "type": "FIX",
+        "text": "ODataMessageParser: Added support for relative target and propertyref",
+        "references": []
+      },
+      {
+        "id": "09273f0b2195b78da74ed347b5ae5c4fc959592d",
+        "type": "FIX",
+        "text": "Metadata not destroyed when model is destroyed",
+        "references": []
+      },
+      {
+        "id": "0fb2751533ed2ac90c182576367d92b396a3b26a",
+        "type": "FIX",
+        "text": "ODataModel: Fixed incorrect dataRequested/dataReceived events in bindElement",
+        "references": []
+      },
+      {
+        "id": "318e50e3994e1dd99c8f34c08d7d5f30e5cf9194",
+        "type": "FIX",
+        "text": "ODataModelAdapter: Correct prototype functions called",
+        "references": []
+      },
+      {
+        "id": "3201b0980015de9a2d8ed7b2637dd4fcaf31d01a",
+        "type": "FIX",
+        "text": "ODataModelV2: Fixed MERGE to send only modified properties",
+        "references": []
+      },
+      {
+        "id": "d5aec701b834b6df28839fa20be9282e567260af",
+        "type": "FIX",
+        "text": "ODataModelV2: Fixed setProperty on complex types",
+        "references": []
+      },
+      {
+        "id": "6cdef70caffda4a4643a4fd2d4ad464af47ba445",
+        "type": "FIX",
+        "text": "Added UMD modules into shim config of module loader; Adopted LIBRARIES.txt",
+        "references": []
+      },
+      {
+        "id": "265f2e52f7efb5bbf1f97473d2b3d8f17cdf16a4",
+        "type": "FIX",
+        "text": "Parse error of first key-value pair in properties file fixed",
+        "references": []
+      },
+      {
+        "id": "1362440ef84d6fd34e1854ecc535f97cbc6ff6fb",
+        "type": "FIX",
+        "text": "Promise Polyfill: Invalid argument case for functions all and race fixed",
+        "references": []
+      },
+      {
+        "id": "795bf94c693d90c2323b383de78725dd7b384130",
+        "type": "FIX",
+        "text": "RenderManager: State reset before rendering",
+        "references": []
+      },
+      {
+        "id": "7e429289ba58c086fd7c017e5a59a005c2e719e8",
+        "type": "FIX",
+        "text": "Routing API Documentation: Missing or wrong @lends tags fixed",
+        "references": []
+      },
+      {
+        "id": "db54b921f2614363ad1bc5f25a4d1b6ae3f00e44",
+        "type": "FIX",
+        "text": "SorterProcesser: Order with undefined values corrected",
+        "references": []
+      },
+      {
+        "id": "e24030b94b3fb4f557d2c80775f66e87e982c7f0",
+        "type": "FIX",
+        "text": "TechnicalInfo: Display size of configuration limited, no re-opening",
+        "references": []
+      },
+      {
+        "id": "a2709bacb45a821ae1936eaeeea5ce7ddf6edfcb",
+        "type": "FIX",
+        "text": "V2.ODataModel: Error when trying to submit unknown batch group fixed",
+        "references": []
+      },
+      {
+        "id": "1a03def897ec807fa7a3f924c94398c0f40b050d",
+        "type": "FIX",
+        "text": "XMLView: Support declaration of binding events added",
+        "references": []
+      },
+      {
+        "id": "7667a4e990ed3ecf8f19a5322902f7078c963660",
+        "type": "FIX",
+        "text": "errorResponse property for error response added",
+        "references": []
+      },
+      {
+        "id": "40d2581c3105328f00e986733457f24522f5c87c",
+        "type": "FIX",
+        "text": "analytics.TreeBindingAdapter.js: Root contexts requested only once",
+        "references": []
+      },
+      {
+        "id": "9be365c157907d9f1747151a2aa7089492f6a5a8",
+        "type": "FIX",
+        "text": "core.Control: Events prevented  if control is set to \u0027busy\u0027",
+        "references": []
+      },
+      {
+        "id": "954675e1ca32fee2c0f4c4307ceb6e1c84d9aba1",
+        "type": "FIX",
+        "text": "core.InvisibleText: Static UIArea no longer invalidated",
+        "references": []
+      },
+      {
+        "id": "a9837bc4978617ce970d5324bc4fcab3fa7f10b4",
+        "type": "FIX",
+        "text": "core.Popup: Saving of \u0027_followOfHandler\u0027 fixed",
+        "references": []
+      },
+      {
+        "id": "0420037d9e0f5ba31197c17d1ec01a90f65fb098",
+        "type": "FIX",
+        "text": "core.Popup: Setting focus in Internet Explorer after opening fixed",
+        "references": []
+      },
+      {
+        "id": "49d3529654d39bc33d77bb5bc71fd92d56bb8bf6",
+        "type": "FIX",
+        "text": "core.Popup: Setting focus in Internet Explorer after opening fixed",
+        "references": []
+      },
+      {
+        "id": "70464081eb74ca82ce7630eae0a38d787b688b95",
+        "type": "FIX",
+        "text": "core.ScrollEnablement: Growing is only triggered for the vertical scrolling",
+        "references": []
+      },
+      {
+        "id": "5bf2860496e65a0a902887a8c775637ba28eb753",
+        "type": "FIX",
+        "text": "datajs: withCredentials flag set after xhr.open call",
+        "references": []
+      },
+      {
+        "id": "8d110c41eba595d028c1bbc34bcf2554f3d018ed",
+        "type": "FIX",
+        "text": "Empty/false key values no longer being overriden",
+        "references": []
+      },
+      {
+        "id": "ebcb2ab12176367f966ae02b54d02f0f5eadd7a6",
+        "type": "FIX",
+        "text": "jQuery.sap.FrameOptions: blockLayer z-index implemented",
+        "references": []
+      },
+      {
+        "id": "98eb2e859cd2ca25ef6c5366c4d403c8bc46d31b",
+        "type": "FIX",
+        "text": "odata4analytics.js: Property name used for DimensionAttribute",
+        "references": []
+      },
+      {
+        "id": "cc03f87ee0daee4cf6313a5e140d5a06532850cb",
+        "type": "FIX",
+        "text": "Refreshing ODataContextBinding no longer refreshes dependant bindings",
+        "references": []
+      },
+      {
+        "id": "33c4ea77551dd5950241276dab5392300346c186",
+        "type": "FIX",
+        "text": "sap.m.Popover: beforeClose event fired and control closes correctly",
+        "references": []
+      },
+      {
+        "id": "0780374eff0cefaccb01c454e55e666a001ded9d",
+        "type": "FIX",
+        "text": "sap.ui.core.Control.js: setBusy method returns \u0027this\u0027",
+        "references": []
+      },
+      {
+        "id": "0bd6ee92e6a0fd83867893e21bdff96ebed4a9de",
+        "type": "FIX",
+        "text": "sap.ui.core.Icon: Fixed rendering issue with \u0027src\u0027 values without protocol",
+        "references": []
+      },
+      {
+        "id": "8ec0c4e79d384d3743a3b2dff0178c871892a266",
+        "type": "FIX",
+        "text": "sap.ui.core.Popup: Implemented preventScroll locally",
+        "references": []
+      },
+      {
+        "id": "f9db480c518f793df05bfa07aa12546d9acc8f14",
+        "type": "FIX",
+        "text": "sap.ui.core.RenderManager: Visible DOM elements in preserve area are now avoided",
+        "references": []
+      },
+      {
+        "id": "efc7a371488b2d301426f468fbd7fb34a22fcff4",
+        "type": "FIX",
+        "text": "sap.ui.core.format.NumberFormat: Added support for decimals, min/maxFractionDigits when set with a string value",
+        "references": []
+      },
+      {
+        "id": "f84948f9ffd5e1c0531b007bcd063c0ba58ee9ac",
+        "type": "FIX",
+        "text": "sap.ui.core.routing.HashChanger: Initialized flag marked before firing the the hashchange event",
+        "references": []
+      },
+      {
+        "id": "dd8574a304516500bf2b4ad9d7133fb2dd7ab646",
+        "type": "FIX",
+        "text": "sap.ui.core.routing.History: Browser history checked earlier",
+        "references": []
+      },
+      {
+        "id": "139d543f2eceaaf086f7151aa806c87ddf78f72e",
+        "type": "FIX",
+        "text": "sap.ui.core.routing.Router: Do not try to parse  the hash if router is destroyed",
+        "references": []
+      },
+      {
+        "id": "7394b496c0f147260dbe45b6ddf5265a0a2e909f",
+        "type": "FIX",
+        "text": "sap.ui.define: Added support for \u0027export\u0027 flag for controllers and JSViews",
+        "references": []
+      },
+      {
+        "id": "eb0b6963b1550112462a701ef638edf3887059e3",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.ODataMetaModel: Fixed errors before loading",
+        "references": []
+      },
+      {
+        "id": "9536c69210a80e4c73777cdc6d0fce93c5747b6e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: Issues with expand and collapse of group headers fixed",
+        "references": []
+      },
+      {
+        "id": "a1eb619470ff7450cb55be24e53944a4ca368fad",
+        "type": "FIX",
+        "text": "sap.ui.test.Opa5#waitFor.controlType now also works if the type is still a lazy stub of UI5",
+        "references": []
+      },
+      {
+        "id": "ef0aecdb5517ea77a077b88cb3a6803d3adcc495",
+        "type": "FIX",
+        "text": "commons.Dialog: Fixed focusable elements",
+        "references": []
+      },
+      {
+        "id": "f2e06e046f424f552f4b82f28becf007d3fd5f37",
+        "type": "FIX",
+        "text": "v2.ODataModel: Original request given to ODataMessageParser",
+        "references": []
+      },
+      {
+        "id": "b5bf26656bab2bbe20c0cfa8ee1ef5d475b2349d",
+        "type": "FIX",
+        "text": "v2.ODataModel: URL parameters encoded in callFunction",
+        "references": []
+      },
+      {
+        "id": "2f3af112e6f7071b4fac4a6193ee1879d4e33ae8",
+        "type": "FIX",
+        "text": "v2.ODataModel: Refresh requests included in the same batch request",
+        "references": []
+      },
+      {
+        "id": "d18b6a9a5a7cb70b29914ed8e9f15423c9e2debb",
+        "type": "FIX",
+        "text": "v2.ODataModel: RequestCompleted sent for aborted requests",
+        "references": []
+      },
+      {
+        "id": "d0e2c8aa876018fa60ff81a941ef75d574ad3401",
+        "type": "FIX",
+        "text": "v2.ODataModel: callFunction parameter correctly recognized if mode not set in metadata",
+        "references": []
+      },
+      {
+        "id": "de8533f0bd08d8f27a3d9e307555d409dbbf4ec9",
+        "type": "FEATURE",
+        "text": "ClientTreeBindings: Added support for sorting",
+        "references": []
+      },
+      {
+        "id": "b546091f11957decaf2abcb3e029a39d9902acc3",
+        "type": "FEATURE",
+        "text": "Control: Added ARIA support for busy indication",
+        "references": []
+      },
+      {
+        "id": "cd26504697dca6b76b3afaa330bf84f08ef6907b",
+        "type": "FEATURE",
+        "text": "DataType: Improved support for enum types",
+        "references": []
+      },
+      {
+        "id": "717b01367c66b77984a609ea78150ad17e9d22b4",
+        "type": "FEATURE",
+        "text": "HTMLView: Implemented async resource loading and rendering",
+        "references": []
+      },
+      {
+        "id": "dab24caf0fb2d89441492c2b33083aea70098afb",
+        "type": "FEATURE",
+        "text": "JSONView: Implemented async resource loading and rendering",
+        "references": []
+      },
+      {
+        "id": "82f392a71e9218d336670fc3e57c9142eed134e5",
+        "type": "FEATURE",
+        "text": "JSView: Implemented async resource loading and rendering",
+        "references": []
+      },
+      {
+        "id": "6a2f9a4a3e5149d9fb244b29972c4def3054a06b",
+        "type": "FEATURE",
+        "text": "ManagedObject: Template clones reused in bound aggregations",
+        "references": []
+      },
+      {
+        "id": "e88bc0b6f90ba0b949ad7405d7c235b948c5fb59",
+        "type": "FEATURE",
+        "text": "MessagingConcept: Added support for longtextUrl",
+        "references": []
+      },
+      {
+        "id": "6d170ccd7f292118a3a6449627daf3a80db5bb91",
+        "type": "FEATURE",
+        "text": "ODataMetadata: Prepeared for partial metadata loading",
+        "references": []
+      },
+      {
+        "id": "dcb48e5c19aa940c7ad3354126f82822e59aaef7",
+        "type": "FEATURE",
+        "text": "OPA5: getContext now available as a static function",
+        "references": []
+      },
+      {
+        "id": "fa9c4ea7c4ff1e2446b49d6a96c57a1c8c924307",
+        "type": "FEATURE",
+        "text": "XMLTemplateProcessor: Declarative setting of \"async\" for Views implemented",
+        "references": []
+      },
+      {
+        "id": "17d7a6280708b3340f56d4c4b1c1ed52228e5c9a",
+        "type": "FEATURE",
+        "text": "sap.layout.Grid: Added new XL break point",
+        "references": []
+      },
+      {
+        "id": "2d582bd905f2042d0d91c92960b585ea353d0203",
+        "type": "FEATURE",
+        "text": "sap.ui.core.Configuration/LocaleData: Parameter and function added for calendar type",
+        "references": []
+      },
+      {
+        "id": "8bcbb2ed5afb92283224ebf38708b48eb3f46bb8",
+        "type": "FEATURE",
+        "text": "v2.ODataModel: Metadata for annotations automatically parsed",
+        "references": []
+      },
+      {
+        "id": "b3af3d1a4539cc29f5c7ae30ff2bedef07bea1be",
+        "type": "FIX",
+        "text": "AnalyticalBinding: Corrected KeyIndex array access",
+        "references": []
+      },
+      {
+        "id": "a0cdf597e38fd7c4f9cf391f8e1c5bb5bfd5bd71",
+        "type": "FIX",
+        "text": "AnalyticalBinding: Error-Handler object corrected",
+        "references": []
+      },
+      {
+        "id": "77917c57ec0072d205754dafa3f25c55b014f186",
+        "type": "FIX",
+        "text": "AnalyticalBinding.js: Negative $skip prevented",
+        "references": []
+      },
+      {
+        "id": "30671747fa70c4c9b05a3d478e812dd8303a1bc3",
+        "type": "FIX",
+        "text": "Component Manifest: sap.app/id no longer defaults to component namespace",
+        "references": []
+      },
+      {
+        "id": "a8d5eb014ed058d0858e53bcef6631217d518d5d",
+        "type": "FIX",
+        "text": "CompositeBinding: OneTime bindings now handled as expected",
+        "references": []
+      },
+      {
+        "id": "768a306eebe0a788966a6d2347d8957fa07558fd",
+        "type": "FIX",
+        "text": "Fixed JSdoc issue that breaks code completion in Eclipse",
+        "references": []
+      },
+      {
+        "id": "31ea8f7143313e1e96a777e7dc138725f8ed1c95",
+        "type": "FIX",
+        "text": "Renderer.extend fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "770032"
+          }
+        ]
+      },
+      {
+        "id": "fe623262210bd71fb6da12aa75639ecffa0591b1",
+        "type": "FIX",
+        "text": "\u0027\u0026 \u0027 (Ampersand) handled correctly in Url parameters values",
+        "references": []
+      },
+      {
+        "id": "210872f8e5f214a552cb7a45065c316a31d1b40c",
+        "type": "FIX",
+        "text": "ManagedObject: Fixed binding degradation to OneWay if formatter is set",
+        "references": []
+      },
+      {
+        "id": "a54319ac299055b087e56992fb082b13b91a21ec",
+        "type": "FIX",
+        "text": "MockServer: Fix for sinon Internet Explorer 9 issue (check on FormData object)",
+        "references": []
+      },
+      {
+        "id": "a0933d19cb71f34ca5ee44059d0834d482b7018c",
+        "type": "FIX",
+        "text": "ODataAnnotations: Non-strings allowed in LabeledElement",
+        "references": []
+      },
+      {
+        "id": "4705c98f996164eea1dbdaa551c24f98ae368aea",
+        "type": "FIX",
+        "text": "ODataAnnotations: Fixed dynamic expressions in apply",
+        "references": []
+      },
+      {
+        "id": "0e5413085419d18421157361803a06f023f77c06",
+        "type": "FIX",
+        "text": "ODataAnnotations: Multiple parameters in dynamic expressions fixed",
+        "references": []
+      },
+      {
+        "id": "2406df65007debe9c5e7e3c2cd3232eb6f0f717c",
+        "type": "FIX",
+        "text": "ODataAnnotations: Apply annotations parsed only once",
+        "references": []
+      },
+      {
+        "id": "0abaacc722b0a3001be3a05b16545df6740b8812",
+        "type": "FIX",
+        "text": "ODataAnnotations: Support Internet Explorer 11\u0027s changed parse-error handling",
+        "references": []
+      },
+      {
+        "id": "9e1240ab7ee2202d40dfac82a9594405d135c3c3",
+        "type": "FIX",
+        "text": "ODataListBinding: Negative skip value in paging prevented",
+        "references": []
+      },
+      {
+        "id": "110b373dbaf0495991b28122ce984e6062d71699",
+        "type": "FIX",
+        "text": "ODataMessageParser: Check RequestUrl and all messages for targets",
+        "references": []
+      },
+      {
+        "id": "46fafa363e1462f31a07b20990e33b8b6d673861",
+        "type": "FIX",
+        "text": "ODataMessagePaser: Relative request paths handled correctly",
+        "references": []
+      },
+      {
+        "id": "30b71226a996b2e548a2a7ade5d43a2f9de09dea",
+        "type": "FIX",
+        "text": "ODataModel: Metamodel bindings now work asynchronously",
+        "references": []
+      },
+      {
+        "id": "83221a8ccb27cd1248194d398b5349aece9077ef",
+        "type": "FIX",
+        "text": "ODataModel: Event request parameters in batchRequestCompleted fixed",
+        "references": []
+      },
+      {
+        "id": "fbb60053e27f332fbedcc3a38cbab88a1b1b7eef",
+        "type": "FIX",
+        "text": "ODataTreeBindingAdapter: SelectionChanged event fixed",
+        "references": []
+      },
+      {
+        "id": "52f1b3e41d3ccc7ea25977f34f51d4efdfde51f5",
+        "type": "FIX",
+        "text": "ODataUtils.js: Edm.Byte is 1*3DIGIT, not hexadecimal",
+        "references": []
+      },
+      {
+        "id": "010780932ae413405246552e67382bc54bfe2844",
+        "type": "FIX",
+        "text": "TreeTable/ODataTreeBinding: Respect application filter",
+        "references": []
+      },
+      {
+        "id": "0a1b05a566cb0999aec219eaa5e039529ca6f9b4",
+        "type": "FIX",
+        "text": "XMLTemplateProcessor: Fixed assert for unknown setting",
+        "references": []
+      },
+      {
+        "id": "62b356a19e32c0cd6839e7d51a75ab2af9c2b57c",
+        "type": "FIX",
+        "text": "core.Control: LocalBusyIndicatorDelay when used in \u0027AfterRendering\u0027 fixed",
+        "references": []
+      },
+      {
+        "id": "6159e536710c2ba9cddff568d5220204dfc8b954",
+        "type": "FIX",
+        "text": "core.Control: Overwriting \"_busyIndicatorDelayedCallId\" in \"onAfterRendering\" prevented",
+        "references": []
+      },
+      {
+        "id": "40b4487105b70883ad4482a20d2d63aa1f0bfbb7",
+        "type": "FIX",
+        "text": "core.Popup: De-Registration of child popups fixed",
+        "references": []
+      },
+      {
+        "id": "1c5dae008ad44a614a0b81d75afb392c9bf64968",
+        "type": "FIX",
+        "text": "core.Popup: DOM-reference renewed when used in \"checkDocking\"",
+        "references": []
+      },
+      {
+        "id": "cf00a762bdccea846b8bbbe2c280026ae82297c3",
+        "type": "FIX",
+        "text": "sap.ui.Device: Media queries in device API made independent from current media",
+        "references": []
+      },
+      {
+        "id": "66078742c0a42b7840580639cc8348c02063e817",
+        "type": "FIX",
+        "text": "sap.ui.core.FocusHandler: Focus information updated immediately before a control/element is destroyed",
+        "references": []
+      },
+      {
+        "id": "23b0bab30388dd8359c071b535da71b077f86a20",
+        "type": "FIX",
+        "text": "sap.ui.core.Icon: Default \"title\" removed based on icon-font",
+        "references": []
+      },
+      {
+        "id": "458f89716d5e1a41dcba04e80b8fabe77a90bcfe",
+        "type": "FIX",
+        "text": "sap.ui.core.RenderManager: Duplicate references to Labels (due to labelFor and ariaLabelledBy) in aria-labelledby attributes avoided",
+        "references": []
+      },
+      {
+        "id": "597e91c3acedd371142969b8732807864f82eb45",
+        "type": "FIX",
+        "text": "sap.ui.core.UIArea: Avoid duplicate rendering when content is moved in rendering phase",
+        "references": []
+      },
+      {
+        "id": "6331c16a8c9e3758a3162753fc22bc0f7d4b3dde",
+        "type": "FIX",
+        "text": "sap.ui.core.format.NumberFormat: Empty string parsed as 0 instead of NaN",
+        "references": []
+      },
+      {
+        "id": "62910cf6bcb484fdb1d4661b138e3e025e25bdc5",
+        "type": "FIX",
+        "text": "sap.ui.core.format.NumberFormat: Parse function respects custom plus and minus signs",
+        "references": []
+      },
+      {
+        "id": "86c76251897d3700ac437d4586e4c97f26640eb7",
+        "type": "FIX",
+        "text": "sap.ui.core.routing.History: History length increase now correctly taken into account",
+        "references": []
+      },
+      {
+        "id": "723741dcd7428c351c836096fc19609a8be9b0ba",
+        "type": "FIX",
+        "text": "v2.ODataModel: Custom header correctly set in $metadata request",
+        "references": []
+      },
+      {
+        "id": "c861a61a31df4fe4a7840e50554b1062383425f9",
+        "type": "FIX",
+        "text": "v2.ODataModel: Correctly call success or error handler",
+        "references": []
+      },
+      {
+        "id": "363ca1d5935369a417a9f3a9c8af23ffe48d106b",
+        "type": "FIX",
+        "text": "v2.ODataModel: Fixed auto-refresh with GET parameters",
+        "references": []
+      },
+      {
+        "id": "ef89f8f95d3f8d6ce8189558113d65647d7d6653",
+        "type": "FIX",
+        "text": "v2.ODataModel: Added eTag if data is refreshed",
+        "references": []
+      },
+      {
+        "id": "8535720a31c5952c7b90a0973c6a57a697995737",
+        "type": "FEATURE",
+        "text": "sap.ui.core.LocaleData: Locale-dependent era name added",
+        "references": []
+      },
+      {
+        "id": "4e5fe8a885dc494c007a27ae445e28611fdba09e",
+        "type": "FEATURE",
+        "text": "Added jQuery 2.1.4 but it is not the default version yet",
+        "references": []
+      },
+      {
+        "id": "e298a66679502376c2d0eb1e30b266a7bc530623",
+        "type": "FEATURE",
+        "text": "Enhanced sap.ui.core.CSSSize with support for calc()",
+        "references": []
+      },
+      {
+        "id": "efcc58e1ee1a6bf6665eaff1e28a180f48c06043",
+        "type": "FEATURE",
+        "text": "Added Explored sample for asynchronous views",
+        "references": []
+      },
+      {
+        "id": "f041ab8989f793ce1a76a17ed708e5dba183c8a7",
+        "type": "FEATURE",
+        "text": "Handlebars: Moved from version 2.0.0 to 3.0.3",
+        "references": []
+      },
+      {
+        "id": "fde44279537653e624ee22916b44f57686ec7ef2",
+        "type": "FEATURE",
+        "text": "ODataMessageParser: Added support for function imports",
+        "references": []
+      },
+      {
+        "id": "568eaed15a679bdefe266c196130b5d6834ededb",
+        "type": "FEATURE",
+        "text": "core.IconPool: Implemented support icons with multiple characters",
+        "references": []
+      },
+      {
+        "id": "6eea909072f435967184330a20fcdf77602d7439",
+        "type": "FEATURE",
+        "text": "sap.ui.Device: Detection for MS Edge implemented",
+        "references": []
+      },
+      {
+        "id": "b4179939314c3222ab3bf5a315fe372a83cabcbb",
+        "type": "FEATURE",
+        "text": "sap.ui.core.Icon: \u0027alt\u0027 property added for screen reader support",
+        "references": []
+      },
+      {
+        "id": "d9e70252127ea00b059a1f63965ae62436c62f3c",
+        "type": "FEATURE",
+        "text": "sap.ui.core.Icon: Added \"useIconTooltip\" property",
+        "references": []
+      },
+      {
+        "id": "1788379be7c21b2968b11aed5cbba14569b3ff21",
+        "type": "FEATURE",
+        "text": "sap.ui.core.Icon: I18n support",
+        "references": []
+      },
+      {
+        "id": "c014de1ffa40075b59160f8b0711bfa9d3ca2f32",
+        "type": "FIX",
+        "text": "AnalyticalBinding: Batch-Handle Abort",
+        "references": []
+      },
+      {
+        "id": "04b7bb4d578724096078394c3af4752b818da68e",
+        "type": "FIX",
+        "text": "AnalyticalBinding: updateAnalyticalInfo made asynchronous",
+        "references": []
+      },
+      {
+        "id": "95a033e8741a6881c29953a9f497ff06ee182939",
+        "type": "FIX",
+        "text": "BusyIndicator: BusyIndicator attached to Popup\u0027s open event",
+        "references": []
+      },
+      {
+        "id": "db1d2fc8a12b1dc0fbc319a99b77065fdbb06d5c",
+        "type": "FIX",
+        "text": "Element: Added additional documentation for Event delegates",
+        "references": []
+      },
+      {
+        "id": "8ec5f71832e2e7c58671a8600dd00e7c48ea50aa",
+        "type": "FIX",
+        "text": "HTML: This is returned in setSanitizeContent",
+        "references": []
+      },
+      {
+        "id": "9c3bbb08578181c5488b9dc59ef6bab5fcca44ce",
+        "type": "FIX",
+        "text": "ListBinding: Adapted visibility of getContexts",
+        "references": []
+      },
+      {
+        "id": "6f1600770f0996ae8755568503d0e8b5c7876bed",
+        "type": "FIX",
+        "text": "MockServer: Added missing 403 status code in $batch calls",
+        "references": []
+      },
+      {
+        "id": "fa5e69c2576ada621bd92d60ba973695bd8bec49",
+        "type": "FIX",
+        "text": "ODataAnnotations: Apply in dynamic expressions",
+        "references": []
+      },
+      {
+        "id": "40493c532230fa17670123b9dc96ff568febaced",
+        "type": "FIX",
+        "text": "ODataAnnotations: Removed name property in LabeledElement value",
+        "references": []
+      },
+      {
+        "id": "425897662a60d73f7fcf569c7e99ee87e49d7e05",
+        "type": "FIX",
+        "text": "ODataMetadata: Fixed merge function if no entityContainer is available",
+        "references": []
+      },
+      {
+        "id": "7bc0a41adc1ecdfdc1b4fd4711d4adf2fee24514",
+        "type": "FIX",
+        "text": "ODataModelV2: Fixed manual count requests with filter",
+        "references": []
+      },
+      {
+        "id": "b3b9157f8270a4d3408d150f1d4ad3e9d5ed3ed1",
+        "type": "FIX",
+        "text": "Promise:Synchronous then() execution in polyfill avoided",
+        "references": []
+      },
+      {
+        "id": "c09986d6540c7741d49c86e91a9c394b25b61922",
+        "type": "FIX",
+        "text": "Fixed relative URLs in less.js theming parameters",
+        "references": []
+      },
+      {
+        "id": "53d81629d46a96f5146eea6a8cc649a04b357a44",
+        "type": "FIX",
+        "text": "Support Tool: Fixed Control-Tree \"Binding\" tab",
+        "references": []
+      },
+      {
+        "id": "717425028ee8403e1c4113c465b73285855c1b07",
+        "type": "FIX",
+        "text": "core.Control: All focusable elements blocked by LocalBusyIndicator",
+        "references": []
+      },
+      {
+        "id": "10921f506fe967f6eb6d021e1fc86266970a6312",
+        "type": "FIX",
+        "text": "core.LibraryInfo: Added check for special cases",
+        "references": []
+      },
+      {
+        "id": "c2f188e978853bd6ea2f5cf83848f76a1ef811b0",
+        "type": "FIX",
+        "text": "sap.m.Popover: beforeClose event fires and correctly closes Popover ",
+        "references": []
+      },
+      {
+        "id": "adb81027f37ae3ee88d8fd7438c20de51fbf9c59",
+        "type": "FIX",
+        "text": "sap.ui.core.Popup: Removed the shieldlayer from mobile browsers which fires mouse events without 300ms delay",
+        "references": []
+      },
+      {
+        "id": "b7db10c6969dd179ba292eb318947f67e79ceea2",
+        "type": "FIX",
+        "text": "sap.ui.core.routing.HashChanger.replaceHashChanger: Now copies all events",
+        "references": []
+      },
+      {
+        "id": "b7181ea0dc4b7f19eb86885cdd7174a902878630",
+        "type": "FIX",
+        "text": "sap.ui.core.routing.History: Now replaces the global hashchanger as well",
+        "references": []
+      },
+      {
+        "id": "defcb72fc7094b86593dad558022a06c650862a4",
+        "type": "FIX",
+        "text": "sap.ui.core.test.Opa5: iFrame loading works with defaults that search for controls",
+        "references": []
+      },
+      {
+        "id": "2d55f1cd9332a2ab91dcd01af46ad51feb66ea6f",
+        "type": "FIX",
+        "text": "v2.ODataListBinding: Fixed handling of aborted requests",
+        "references": []
+      },
+      {
+        "id": "18b25ba2617a48e2c8b0c8d973d1c2bd04c8915d",
+        "type": "FIX",
+        "text": "v2.ODataModel: Annotations-object instantiated  earlier",
+        "references": []
+      },
+      {
+        "id": "1b06ac18ba9d7fe51be3ade849f54ea9eee58779",
+        "type": "FEATURE",
+        "text": "Allow rebooting apps with alternative UI5 version from any URL",
+        "references": []
+      },
+      {
+        "id": "08e05f88a7e15f19a9066d6960a7c760147dd55c",
+        "type": "FEATURE",
+        "text": "Option to pass a batchGroupId  when refreshing a Binding implemented",
+        "references": []
+      },
+      {
+        "id": "3efd89464f5cf4123afb7968b23278edadc208ed",
+        "type": "FEATURE",
+        "text": "sap.ui.define: Relative module names supported using \u0027../\u0027",
+        "references": []
+      },
+      {
+        "id": "3f0c7801542c15c1dad83f921c1e241825861dde",
+        "type": "FEATURE",
+        "text": "v2.ODataModel: New getETag method implemented",
+        "references": []
+      },
+      {
+        "id": "b04fee8ea41b8bb037b74b57ba4a48a71f3e2b08",
+        "type": "FIX",
+        "text": "Removed document.write for compatibility with Cordova in WP8.1",
+        "references": []
+      },
+      {
+        "id": "1e159063af98c174f268e70d064aa1d21bc9bd63",
+        "type": "FIX",
+        "text": "sap.ui.Device: OS detection - support for future Windows versions added",
+        "references": []
+      },
+      {
+        "id": "d996184e0547457cbf37d0a473c574268617f1f0",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.ODataMetaModel: Resolved loaded() promise at the correct point in time",
+        "references": []
+      },
+      {
+        "id": "6e0570beafd2e9603275f43626dd4fac82145673",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.ODataModel: Stay synchronous if possible in getMetaModel() to be compatible to legacy applications",
+        "references": []
+      },
+      {
+        "id": "46817e98f016de4e924b8ea0f0bea67336c80e41",
+        "type": "FIX",
+        "text": "ODataMessageParser: Function imports with multiple keys",
+        "references": []
+      }
+    ]
+  },
+  "1.30.1": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "22303d6f5c48b20d60cfdcfb6bbef3daccabc448",
+        "type": "FEATURE",
+        "text": "ODataModel: Automatically parse metadata for annotations",
+        "references": []
+      },
+      {
+        "id": "72b95c785c184438b36268404b82b0ecf34fb56a",
+        "type": "FEATURE",
+        "text": "sap.ui.core.Icon: noTabStop property for not adding tabindex to",
+        "references": []
+      },
+      {
+        "id": "d3f97c840215ec7c3a7ad1a052cfaddad3a2f7fe",
+        "type": "FIX",
+        "text": "AnalyticalBinding: Make \"getDownloadUrl\" method public",
+        "references": []
+      },
+      {
+        "id": "fde20127def2d85a67b2c2edf3cfea8b09ea2215",
+        "type": "FIX",
+        "text": "Anonymous define in URI.js breaks CVOM charts",
+        "references": []
+      },
+      {
+        "id": "40d979adb32bd366569727ab6c77af7361b0278a",
+        "type": "FIX",
+        "text": "Component: Support inheritance for models/dataSources metadata",
+        "references": []
+      },
+      {
+        "id": "38d87544e870c6b204b3b13918ba3e7523e2f3f2",
+        "type": "FIX",
+        "text": "Core: Don\u0027t boot before all tasks have been created",
+        "references": []
+      },
+      {
+        "id": "7613444a76e21fd9be1a326e8209b0e3c95d41ff",
+        "type": "FIX",
+        "text": "Device-API: Correctly identify Windows 7 vs. 8",
+        "references": []
+      },
+      {
+        "id": "c5b456367a98eefe3ddfffa87d2d9fb96266af7e",
+        "type": "FIX",
+        "text": "ODataListBinding: Make \"getDownloadUrl\" method public",
+        "references": []
+      },
+      {
+        "id": "bbf360f00278c620f565dfa9602f38845aedcd91",
+        "type": "FIX",
+        "text": "ODataMessageParser: Normalize message target paths",
+        "references": []
+      },
+      {
+        "id": "6f478ebc51b5b01af034eee1a1c745b9705cea17",
+        "type": "FIX",
+        "text": "ODataMessageParser: Action-for annotations and message deletion",
+        "references": []
+      },
+      {
+        "id": "10929c2a7d47215c43ec0fbc593689834ae17c56",
+        "type": "FIX",
+        "text": "ODataTreeBinding: Respect Edm Type in Filter-Statements",
+        "references": []
+      },
+      {
+        "id": "f121d0b10ed86b532f654985e73e6e3d32b1966e",
+        "type": "FIX",
+        "text": "OPA: Returns the correct hash when there is no change yet and running with ushell",
+        "references": []
+      },
+      {
+        "id": "e6c51dd8e97cc288bdbb05f82a9f4f7f28837e4e",
+        "type": "FIX",
+        "text": "RenderManager.writeIcon: Use icon text (i18n)",
+        "references": []
+      },
+      {
+        "id": "e15d215e8b64c35d4d50c7a7ed641bd287ad276b",
+        "type": "FIX",
+        "text": "Tree-/AnalyticalTable \u0026 *Adapter(s): Fixed selectAllMode Propagation",
+        "references": []
+      },
+      {
+        "id": "6860883f8a9417f5c67eafda64e878251c5c3f02",
+        "type": "FIX",
+        "text": "sap.ui.core.Icon: Prevent technical icon name as tooltip",
+        "references": []
+      },
+      {
+        "id": "c46b9c8986d00d076b6ff310046ed971ea54f536",
+        "type": "FIX",
+        "text": "sap.ui.core.util.Export: Add library metadata",
+        "references": []
+      },
+      {
+        "id": "fddf35cd8ac731b4c2a79bb7394fc9ed5fa43724",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.ODataModel: Stay synchronous if possible in getMetaModel() to be compatible to legacy applications",
+        "references": []
+      },
+      {
+        "id": "0e5b10a0c9b196c057388196fe33cf9861f38c14",
+        "type": "FIX",
+        "text": "v2.ODataListBinding: OperationMode.Client + refresh()",
+        "references": []
+      },
+      {
+        "id": "3b80fc7549dabe941da81db8dfd0887167715303",
+        "type": "FIX",
+        "text": "v2.ODataModel: Joined annotation loading event fired twice",
+        "references": []
+      },
+      {
+        "id": "8d968c8be1ad81de7fb14242b156cf122de0aa2a",
+        "type": "FIX",
+        "text": "v2.ODataTreeBinding: Support CountMode \"Request\"",
+        "references": []
+      }
+    ]
+  },
+  "1.30.2": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "75ddb9ede714bb5b45345a93335415fe52b688ce",
+        "type": "FIX",
+        "text": "DebugEnv: Properly declare dependencies in ControlTree",
+        "references": []
+      },
+      {
+        "id": "f580719babe110681d6b93fa41ba2b29fd156640",
+        "type": "FIX",
+        "text": "ExtensionPoint: Fixed non-working ExtensionPoints in Fragments",
+        "references": []
+      }
+    ]
+  },
+  "1.30.3": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "482ded637aa82e7268b3a7790e8b66060f322713",
+        "type": "FEATURE",
+        "text": "Controller: Allow instance specific controller extensions",
+        "references": []
+      },
+      {
+        "id": "967e7a121de4d5fe868d28405dc55e475a4971f3",
+        "type": "FIX",
+        "text": "ManagedObject: RemoveAssociation corrected to return null when association does not exists or is never used",
+        "references": []
+      },
+      {
+        "id": "2ca19e60a663ce1e45f9281e9f4214de1d3960c5",
+        "type": "FIX",
+        "text": "ODataAnnotations: Handle Null Element correctly",
+        "references": []
+      },
+      {
+        "id": "2db5c25e0bbbd1529d6f2434a5d472f01ce637a9",
+        "type": "FIX",
+        "text": "ODataAnnotations: IE does not parse XML with namespace declaration",
+        "references": []
+      },
+      {
+        "id": "e3e2268b8f9f03c893d4d8308e1cc115f0c77ea0",
+        "type": "FIX",
+        "text": "ODataAnnotations: Parse Annotations in Record element correctly",
+        "references": []
+      },
+      {
+        "id": "f8532d14acf7c171fe3c357f3acbcf464f7b65e4",
+        "type": "FIX",
+        "text": "ODataAnnotations: v1 tests and synchronous metamodel",
+        "references": []
+      },
+      {
+        "id": "919bf54634b4273b03cd4a0cec4c52fa3e8d098a",
+        "type": "FIX",
+        "text": "ODataMessageParser: Legacy IE and EntitySet path resolution",
+        "references": []
+      },
+      {
+        "id": "4963d644605a9e52c630122cd7bdb1281442c0e3",
+        "type": "FIX",
+        "text": "ODataTreeBindingAdapter: ClearSelection removes selectAllMode from root node",
+        "references": []
+      },
+      {
+        "id": "d5fb6974901547bf25322a3400bf0bf795a72aa2",
+        "type": "FIX",
+        "text": "sap.ui.Device: Webkit Version Check fixed for system detection",
+        "references": []
+      },
+      {
+        "id": "5651ccdd326898f6e7f5a23b2be9080724c3d74e",
+        "type": "FIX",
+        "text": "sap.ui.core.ScrollBar: Correction for ScrollBar in FireFox in a case of invisible window content.",
+        "references": []
+      },
+      {
+        "id": "a43dc7fc15c16a88729148c9edad026d728ffa82",
+        "type": "FIX",
+        "text": "ux3.NotificationBar: Notifications are not shown",
+        "references": []
+      },
+      {
+        "id": "8c240094527061dbf519525a36424e0ec85198c2",
+        "type": "FIX",
+        "text": "v2.ODataModel: Wrong payload format in batch requests",
+        "references": []
+      }
+    ]
+  },
+  "1.30.4": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "3fd258edd3dc10c9130aec1ed3910a440b196b08",
+        "type": "FIX",
+        "text": "AnalyticalBinding - Support for Custom URL Parameters",
+        "references": []
+      },
+      {
+        "id": "98f2cccb63419ce474fe41a8a1326f495dfdf3d2",
+        "type": "FIX",
+        "text": "AnalyticalTable - Hide Grand-Total Row if no total sum was requested",
+        "references": []
+      },
+      {
+        "id": "7d38d2dd1897c67d6019f7c7bdd95f28848848ea",
+        "type": "FIX",
+        "text": "AnalyticalTreeBindingAdapter: corrects change reason for collapse event",
+        "references": []
+      },
+      {
+        "id": "0b192a36755dcef86c294dd2b464aff6f1cc6990",
+        "type": "FIX",
+        "text": "Component: relative URI inheritance (models/dataSources metadata)",
+        "references": []
+      },
+      {
+        "id": "a00912d05523111338c10ff972578b73899082c3",
+        "type": "FIX",
+        "text": "Core: Touch-To-Mouse Handling: Improve perfomance (esp. on Blackberry devices)",
+        "references": []
+      },
+      {
+        "id": "aa916b0303b7705bdb06131518e9534ba153638b",
+        "type": "FIX",
+        "text": "Destroy templates automatically in more cases.",
+        "references": []
+      },
+      {
+        "id": "867e548019cf353dcf72bde0787f31f28d9c11a7",
+        "type": "FIX",
+        "text": "LocalBusyIndicator: Remove of \"tabindex\" Fixed",
+        "references": []
+      },
+      {
+        "id": "52d3b7fbf4a976ece7983291e17efb4cdaff9184",
+        "type": "FIX",
+        "text": "ManagedObject: Fixed grouping for non-string properties",
+        "references": []
+      },
+      {
+        "id": "cc6fee8522570e682d1ebeaa83085783ed692a58",
+        "type": "FIX",
+        "text": "Popup: Resize Directly After Open",
+        "references": []
+      },
+      {
+        "id": "7aa441a7d19be9a9e7dc5e818a63d13e71d8bf66",
+        "type": "FIX",
+        "text": "sap.ui.core.util.XMLPreprocessor: Error when XML preprocessing removes null-valued attributes",
+        "references": []
+      },
+      {
+        "id": "c2fbe648bbfc3cb46714fff4c11a36a0eb1b4e7c",
+        "type": "FIX",
+        "text": "sap.ui.test.OPA - performance",
+        "references": []
+      },
+      {
+        "id": "076990c7bea2051a582a54962093806450e6a1d1",
+        "type": "FIX",
+        "text": "sap.ui.test.Opa - IE 9 fails when active element is called",
+        "references": []
+      },
+      {
+        "id": "e035f02dc77363903d3d9fac86bcd99f97af8950",
+        "type": "FIX",
+        "text": "sap.ui.test.OpaPlugin - now finds controls with an id as regex in a view",
+        "references": []
+      },
+      {
+        "id": "9b6384208a67b4c9f5160560806b6d9764d3f909",
+        "type": "FIX",
+        "text": "v2.ODataModel: recursive dataReceived calls",
+        "references": []
+      },
+      {
+        "id": "35896711bd3832c9eaa7aea92d984b2e45f09f2c",
+        "type": "FIX",
+        "text": "v2.ODataModel: unecessary \u0027;\u0027 in Content-Type header using xml",
+        "references": []
+      },
+      {
+        "id": "12dde88ae34bd26f7a66931a629eb81dfaca2aa6",
+        "type": "FIX",
+        "text": "v2.ODataTreeBinding.js - Abort pending requests in resetData()",
+        "references": []
+      }
+    ]
+  },
+  "1.30.5": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "b90724935cdd72ad38c9e52e0dd785ee1bc2a3e5",
+        "type": "FIX",
+        "text": "ManagedObject: cleanup object bindings on destroy",
+        "references": []
+      },
+      {
+        "id": "75320383c2f5fa840b6ff5b1757543fdc05010d6",
+        "type": "FIX",
+        "text": "sap.ui.core.format.DateFormat: check negative date and month in strict mode",
+        "references": []
+      },
+      {
+        "id": "37a3e50aa5e2073d6f3f07d8e0b462881b4a79b6",
+        "type": "FIX",
+        "text": "CompositeBinding: Forcing of checkUpdate does not work",
+        "references": []
+      },
+      {
+        "id": "d1ccbb898e45c4e1ee7d461c2ac9267d867f07a9",
+        "type": "FIX",
+        "text": "ODataAnnotations: Parse Empty Collection as Array",
+        "references": []
+      },
+      {
+        "id": "6d93b8039f73fcd8167530d8fedddea43762bb02",
+        "type": "FIX",
+        "text": "ODataAnnotations: Replace multiple EnumMember Aliases",
+        "references": []
+      },
+      {
+        "id": "664bf5ff133c862489ee97d3f567f6369a81ae6e",
+        "type": "FIX",
+        "text": "ODataMessageParser/ODataModel: Batch mode changed entities",
+        "references": []
+      },
+      {
+        "id": "f6fa46754bcd221642e679b2f92b51cff93e3853",
+        "type": "FIX",
+        "text": "ODataMessageParser: Correct Affected Targets in Batch Mode",
+        "references": []
+      },
+      {
+        "id": "93cdec7d23ddb7a9e30a608e1e5d0d1be9916df5",
+        "type": "FIX",
+        "text": "Scrolling performance on BlackBerry 10",
+        "references": []
+      },
+      {
+        "id": "86cad0d3350858880b6503def5c265a5f73c67d9",
+        "type": "FIX",
+        "text": "sap.ui.core.Device: Webview in Android 5 tablet is wrongly detected as a phone",
+        "references": []
+      },
+      {
+        "id": "0472dbfef5f4e20b35a5a4d2882bb2ee5587e712",
+        "type": "FIX",
+        "text": "ODataAnnotations: Parse Empty Collection as Array",
+        "references": []
+      }
+    ]
+  },
+  "1.30.7": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "92ed5d07ff460df31da88beaa4886b6ad48692b5",
+        "type": "FEATURE",
+        "text": "OPA: Provide \"assert\" object on Opa and Opa5 (qunit 2.0 prep)",
+        "references": []
+      },
+      {
+        "id": "e4b82e2dfa474639fad3ece2209ed7fac466e5d8",
+        "type": "FIX",
+        "text": "AnalyticalBinding.js: Delete Model-Entry in Multi-Unit Situations was wrong",
+        "references": []
+      },
+      {
+        "id": "d43ebc8d11adf7c2b048c23d3781e8d3198db057",
+        "type": "FIX",
+        "text": "AnalyticalBinding.js: Reloading Request of Measures on was of if Measure-Column was not totaled",
+        "references": []
+      },
+      {
+        "id": "c4e642cf8b697592d3fd2980c8116d22ba91b035",
+        "type": "FIX",
+        "text": "Click event not fired on touch devices",
+        "references": []
+      },
+      {
+        "id": "3ae6d53f7ab0c3d49f86e82443435a012d1b1f0f",
+        "type": "FIX",
+        "text": "FrameOptions: Whitelist service and no postmessage handler",
+        "references": []
+      },
+      {
+        "id": "5d7e5e93ce8f1c16a8da90036c5bdcd0a660d0ac",
+        "type": "FIX",
+        "text": "ManagedObject: Recreate children after ungrouping",
+        "references": []
+      },
+      {
+        "id": "71db401bb17f34721d06fc0307e6698107df28c2",
+        "type": "FIX",
+        "text": "ManagedObject: Support binding expressions with an empty path",
+        "references": []
+      },
+      {
+        "id": "dcc1ea6c53f50e9914258ace713460516c3c7ecc",
+        "type": "FIX",
+        "text": "MockServer: $expand evaluated before $orderby and $select",
+        "references": []
+      },
+      {
+        "id": "f4c875df7f8b10ae7b4a3b970ad810ea09a7cb92",
+        "type": "FIX",
+        "text": "ThemeCheck: Add null-checks to prevent exceptions",
+        "references": []
+      },
+      {
+        "id": "c94a5cbbfb82b0cba73646f055e4a7ac98204ad8",
+        "type": "FIX",
+        "text": "ThemeCheck: Additional null-checks to avoid console warnings",
+        "references": []
+      },
+      {
+        "id": "b6b89081ae4efc43710245b0c3652d29e81b41ec",
+        "type": "FIX",
+        "text": "sap.m.DateTimeInput: Keyboard handling fix for arrow up/down.",
+        "references": []
+      },
+      {
+        "id": "3f7384f4ea748188ab175385bb163dade50257aa",
+        "type": "FIX",
+        "text": "sap.ui.Device: Adapt system detection for Windows 10",
+        "references": []
+      },
+      {
+        "id": "4188049de1549c2da2f7e2a291a7440bc3b1be94",
+        "type": "FIX",
+        "text": "sap.ui.core.IconPool: Avoid unnecessary assertions when unknown property is given",
+        "references": []
+      },
+      {
+        "id": "0111caddd094095c2826f3b75de1462efceaca3b",
+        "type": "FIX",
+        "text": "sap.ui.core.Popup: Exception occurs when \u0027of\u0027 is set to a jQuery.Event object",
+        "references": []
+      },
+      {
+        "id": "8016b3ca54bf56005c28592628b0034ae0b74839",
+        "type": "FIX",
+        "text": "sap.ui.core.format.DateFormat: Properly handle invalid date formatting",
+        "references": []
+      },
+      {
+        "id": "db75567f50d30b7fa10c77775e1225b88cd4458f",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.ODataUtils.setOrigin",
+        "references": []
+      },
+      {
+        "id": "c08c143e862ace7f3849378c934472c6da0c8e7b",
+        "type": "FIX",
+        "text": "sap.ui.test.Opa5: IFrame navigation",
+        "references": []
+      }
+    ]
+  },
+  "1.30.8": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "fba144d6e7330860964b4d9b271eca08738ffdfb",
+        "type": "FEATURE",
+        "text": "sap.ui.core.tutorial.databinding: initial content",
+        "references": []
+      },
+      {
+        "id": "5b8a2612750f47bcc9c80127ec272cdf7a0ac5c0",
+        "type": "FIX",
+        "text": "AnnotationHelper qunit tests fail due to Blackberry 10 Bug - changing test parameters to work around",
+        "references": []
+      },
+      {
+        "id": "d784830192d257b94102b45df17c54e588966728",
+        "type": "FIX",
+        "text": "ClientTreeBinding.js - Missing null check",
+        "references": []
+      },
+      {
+        "id": "91673fac435e2231ce00288fa5515662a53f8e84",
+        "type": "FIX",
+        "text": "ComponentContainer: propagate properties when unbinding container",
+        "references": []
+      },
+      {
+        "id": "6dad0c9a25b02cddeccfcd79a935cf18c092fa96",
+        "type": "FIX",
+        "text": "Correctly Remove Invisible Control Placeholder on Destroy",
+        "references": []
+      },
+      {
+        "id": "155d3ab43ac0f00e13e360779fb0b611b79c2120",
+        "type": "FIX",
+        "text": "Deletion of obsolete and misplaced Device API Unit Test",
+        "references": []
+      },
+      {
+        "id": "97cecf10c6a5fb581e9ba4da54fbd9f5570caccc",
+        "type": "FIX",
+        "text": "ODataAnnotations: XML parsing in IE",
+        "references": []
+      },
+      {
+        "id": "0f6f70078e9d7dda91c6daed395b326c88ae8153",
+        "type": "FIX",
+        "text": "ODataModel: Cache Annotations with Service Metadata",
+        "references": []
+      },
+      {
+        "id": "f78df0704a87f185741cb0f0aeb2b66ab2a639fc",
+        "type": "FIX",
+        "text": "ODataModel: Don\u0027t cache annotations based on metadata URL",
+        "references": []
+      },
+      {
+        "id": "a880360b61c0e86a4ec372f5d250bfce8fbfbda1",
+        "type": "FIX",
+        "text": "On Windows 10 Mobile Browser (Edge) mouse and click events must be suppressed.",
+        "references": []
+      },
+      {
+        "id": "1f16a72434740b89851939c0b5c78fd44132be33",
+        "type": "FIX",
+        "text": "Respect \"themeroots\" when resolving img URLs in Controls",
+        "references": []
+      },
+      {
+        "id": "f51f9099281ce4a87312f90da3add98ec65c1503",
+        "type": "FIX",
+        "text": "XMLView: re-enable DOM preservation for synchronously loaded views",
+        "references": []
+      },
+      {
+        "id": "a82fc72a04b58f106bd2b42065e7dd9d7aa7cd6a",
+        "type": "FIX",
+        "text": "sap.ui.Device detection for MS Edge:  change since in APIDoc",
+        "references": []
+      },
+      {
+        "id": "f76adbf9dacc74c9b1370ebc3f80b68a1a7a30e3",
+        "type": "FIX",
+        "text": "sap.ui.core.Scrollbar: Scrolling in the table with millions of steps.",
+        "references": []
+      },
+      {
+        "id": "696b4a840d26598e446ed43cf830f2dec75d6b55",
+        "type": "FIX",
+        "text": "v2.ODataMetadata: duplicate entityTypes/entitySets",
+        "references": []
+      },
+      {
+        "id": "beaf625ee26b6e987120de88e8977bc9cc3743c5",
+        "type": "FIX",
+        "text": "v2.ODataModel documentation",
+        "references": []
+      },
+      {
+        "id": "e13f6ac82dc9772bfe974bd5f35430dfcc444145",
+        "type": "FIX",
+        "text": "v2.ODataTreeBinding - ApplicationFilters were not attached",
+        "references": []
+      },
+      {
+        "id": "af02b8141f5b85e43c9fa74effcbdbc128e239e4",
+        "type": "FIX",
+        "text": "v2.OdataModel: unnecessary assertion when accessing annotations",
+        "references": []
+      }
+    ]
+  },
+  "1.30.9": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "4646bd84bf6d7533d5d18c11eca15e8830e44963",
+        "type": "FEATURE",
+        "text": "sap.ui.core.tutorial.navigation - new navigation tutorial",
+        "references": []
+      },
+      {
+        "id": "07be91faa563cb953cbddafa18332ca6af09f31c",
+        "type": "FIX",
+        "text": "AnalyticalTable.js - Fixed Blocking BusyIndicator",
+        "references": []
+      },
+      {
+        "id": "d5df64869f24b3b985429a19db69f42be5288028",
+        "type": "FIX",
+        "text": "CLDR: Remove 1000-other for asian languages",
+        "references": []
+      },
+      {
+        "id": "f5a2b0caaaa9a9e4621afefc18da6a58e71013ca",
+        "type": "FIX",
+        "text": "Component: removed the extends.component detection for manifest",
+        "references": []
+      },
+      {
+        "id": "a6b94cceacc0bb13830b0d6b7f8dd8c7c908bacb",
+        "type": "FIX",
+        "text": "Core: Start Theme check before onInit hook is processed",
+        "references": []
+      },
+      {
+        "id": "52267fc643dbbeda0d26844c316efb5bc398ed66",
+        "type": "FIX",
+        "text": "ItemNavigation: adapt dokumentation",
+        "references": []
+      },
+      {
+        "id": "9fa02718288f8228f2cece78ef7cf8c31bd93a1f",
+        "type": "FIX",
+        "text": "MessageListBinding: filtering does not work",
+        "references": []
+      },
+      {
+        "id": "ee122423352d39978a604f264e9809d58a74fe2a",
+        "type": "FIX",
+        "text": "MockServer: add missing quotes for jQuery.find",
+        "references": []
+      },
+      {
+        "id": "05c79cfbcc4f0cfaa51474d95572fa44d62f2bd2",
+        "type": "FIX",
+        "text": "ODataAnnotations: Overwrite Annotations on Term Level",
+        "references": []
+      },
+      {
+        "id": "48f7a6c65855248679c13fca1fc3ec7e612e7d30",
+        "type": "FIX",
+        "text": "ODataModel: Only update metamodel bindings when metamodel is loaded",
+        "references": []
+      },
+      {
+        "id": "c6d88d0b9df3815d53bc71ab4669b604ad1bb295",
+        "type": "FIX",
+        "text": "ODataModel: Parse Annotation URLs After Metadata Was Loaded",
+        "references": []
+      },
+      {
+        "id": "84021d5835419d396de6b98a5b6417888d6f9405",
+        "type": "FIX",
+        "text": "ODataModel: createEntry works with complex types which have multi level namespaces",
+        "references": []
+      },
+      {
+        "id": "40a2baf1a97f1d0e10486bc0fd074b981799b559",
+        "type": "FIX",
+        "text": "ODataTreeBinding V1 is deprecated",
+        "references": []
+      },
+      {
+        "id": "4d5435eaa0cb176949a406494901634a19f9c17c",
+        "type": "FIX",
+        "text": "Popup: Using FocusInfo Fixed",
+        "references": []
+      },
+      {
+        "id": "501be7188f76536d8d6310d519575b49cd891990",
+        "type": "FIX",
+        "text": "RenderManager#writeIcon: Add \"title\" attr, option to prevent",
+        "references": []
+      },
+      {
+        "id": "d116a13abd79151a8e0cc4b540bf19061189b590",
+        "type": "FIX",
+        "text": "ResourceModel.qunit.html: Not stable in firefox",
+        "references": []
+      },
+      {
+        "id": "7f77ce5dfbd2c219e247788023ed438357ffa986",
+        "type": "FIX",
+        "text": "ResourceModel: React to Global Language Change",
+        "references": []
+      },
+      {
+        "id": "e0d9d16e986fa210d3cff4f73a6268a771eab344",
+        "type": "FIX",
+        "text": "XMLView: ensure that content is preserved during rendering",
+        "references": []
+      },
+      {
+        "id": "e00d8611da5b113722589cbd0df8eda4c1672fe2",
+        "type": "FIX",
+        "text": "getComputedStyle returns null when used in non-displayed iFrames in Firefox",
+        "references": []
+      },
+      {
+        "id": "2de1575e72452532af5b7e28aebf7fb2d3d73027",
+        "type": "FIX",
+        "text": "jQuery.sap.events: Avoid doubled events in Touch-to-Mouse handling",
+        "references": []
+      },
+      {
+        "id": "c770dcb5ead9cc7bbe090fcaa8fbaf300707f455",
+        "type": "FIX",
+        "text": "jQuery.sap.global: jQuery.sap.measure.setActive",
+        "references": []
+      },
+      {
+        "id": "1649982a0e4ca0566fc3f18951fbcf1e4504bdf5",
+        "type": "FIX",
+        "text": "sap.ui.core.Core: getMessageManager JSDOC",
+        "references": []
+      },
+      {
+        "id": "aa890771bf3ea48710e58c075d5916691ef86617",
+        "type": "FIX",
+        "text": "sap.ui.core.util.XMLPreprocessor: performance improvements",
+        "references": []
+      },
+      {
+        "id": "494ce4eab94f4b6df4c282baec6bf66f75dc88b9",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.AnnotationHelper: Avoid \"Expected object - undefined\"",
+        "references": []
+      },
+      {
+        "id": "052b5c83e1ebd45d2593f62c6366022f04ae07a4",
+        "type": "FIX",
+        "text": "v2.ODataModel: no content-type header for GET requests",
+        "references": []
+      }
+    ]
+  },
+  "1.30.10": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "974f9ee3ecb1c172c87c3d78afe692fa0340c82c",
+        "type": "FIX",
+        "text": "AnalyticalBinding - Missing dataReceived event",
+        "references": []
+      },
+      {
+        "id": "65e13c41c5020b72aee1b380ca8d3f01a33cfac4",
+        "type": "FIX",
+        "text": "ClientTreeBinding: Create Length Cache Map Before Filtering",
+        "references": []
+      },
+      {
+        "id": "1225b9f748caa03dd6c98b8f6887a4e5c6e2d169",
+        "type": "FIX",
+        "text": "ComponentMetadata: customizing lifecycle issue with instance count",
+        "references": []
+      },
+      {
+        "id": "ed00cc1beb3d6e6ee0e85d7b14f5d73fc9ca966b",
+        "type": "FIX",
+        "text": "Datajs: fix xhr.send when request body is empty for IE 11",
+        "references": []
+      },
+      {
+        "id": "e74e7c01ecac30fbaab2c6a892cb98721fc30023",
+        "type": "FIX",
+        "text": "DateFormat: Cache fallback formats per locale and calendarType",
+        "references": []
+      },
+      {
+        "id": "27d321070fcd1749438d018131209a5a55588f98",
+        "type": "FIX",
+        "text": "ODataMetadata: Catch Rejected Promise for Initial Metadata Load",
+        "references": []
+      },
+      {
+        "id": "391e2f515416bc4f9d4bcdc97e3471e483a2d2b5",
+        "type": "FIX",
+        "text": "Popup: Autoclose on Touch Enabled Devices",
+        "references": []
+      },
+      {
+        "id": "86ec7fdef3d65b67f9c1256e6c8995901bd2650b",
+        "type": "FIX",
+        "text": "Promise Polyfill Tests - correcly identify polyfill in IE",
+        "references": []
+      },
+      {
+        "id": "8b5fb949fdc77daa9accf4f07def7e340176a5c6",
+        "type": "FIX",
+        "text": "ScrollEnablement: Momentum scrolling for BlackBerry.",
+        "references": []
+      },
+      {
+        "id": "8824111ed66927348ba4ea122c34fa70d1982465",
+        "type": "FIX",
+        "text": "jQuery.sap.registerResourcePath: strip URI params/hash",
+        "references": []
+      },
+      {
+        "id": "37522c80ce128a4f0a73b5a9a4ee2a5ed6884bc5",
+        "type": "FIX",
+        "text": "sap.ui.core.Fragment: \u0027objectBinding\u0027 enabled",
+        "references": []
+      },
+      {
+        "id": "e5f23c1eecf8c8694d892bf7b57fbe8c33a6bda6",
+        "type": "FIX",
+        "text": "sap.ui.core.util.XMLPreprocessor: work around for crash of MS Edge and MS Internet Explorer on Windows 10",
+        "references": []
+      },
+      {
+        "id": "fa2a725ed979b0799e3482498aed3cf7ef5aef14",
+        "type": "FIX",
+        "text": "sap.ui.test.Opa5 - fixed a timing issue in IE when the sap.ui.Core was loaded but jQuery.sap was not",
+        "references": []
+      },
+      {
+        "id": "fab9eb74efcaf631bac2330812464fee4cfebad0",
+        "type": "FIX",
+        "text": "v2.ODataModel: createEntry - wrong request method after failing",
+        "references": []
+      },
+      {
+        "id": "926457a3ca93846ff0c8af125bbbcf22a6316412",
+        "type": "FIX",
+        "text": "v2.ODataModel: createEntry on Navigation Properties does not work",
+        "references": []
+      },
+      {
+        "id": "250469c1980a8d26da6fb25e5eb40aa1b875579e",
+        "type": "FIX",
+        "text": "v2.ODataModel: unecessary \u0027empty\u0027 merge request",
+        "references": []
+      }
+    ]
+  },
+  "1.30.11": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "30b3da548c9fdaba0e62f6940db9e370ef5ffed7",
+        "type": "FIX",
+        "text": "Popup: Autoclose on Touch Enabled Devices\"",
+        "references": []
+      },
+      {
+        "id": "7e024a3378453c143f85602c73df429a50f03d65",
+        "type": "FEATURE",
+        "text": "NumberFormat: Introduce shortLimit and precision",
+        "references": []
+      },
+      {
+        "id": "481dad3514dbdb6a6e7780d5480d571147a8dd72",
+        "type": "FIX",
+        "text": "ES6-Promise Polyfill replaced native implementation in Safari",
+        "references": []
+      },
+      {
+        "id": "2d4e934dc046619f709bdbde5a1387b9ecc7d02c",
+        "type": "FIX",
+        "text": "ODataAnnotations: Add Headers to Requests",
+        "references": []
+      },
+      {
+        "id": "18dba77adcc12388f475c26aabf2b9726a4dbc26",
+        "type": "FIX",
+        "text": "ODataMessageParser: Remove Double Errors",
+        "references": []
+      },
+      {
+        "id": "a8a509907443a8b1d45b3a2243e97b9632e6246b",
+        "type": "FIX",
+        "text": "ODataModel: fix 0 as payload result",
+        "references": []
+      },
+      {
+        "id": "0b56644e264e448dbae8c950c2e671564f697f91",
+        "type": "FIX",
+        "text": "SupportTool: Escaping issues",
+        "references": []
+      },
+      {
+        "id": "9de58e6b2c0024c4bc7ac71ab743105153756eb6",
+        "type": "FIX",
+        "text": "jQuery.sap.act: Register touch events only when supported",
+        "references": []
+      },
+      {
+        "id": "e3bc7ec7b40d977520ca6f9b930999bf07b699cb",
+        "type": "FIX",
+        "text": "jquery-mobile-custom: consider window.scrollY in detecting delayed mouse event",
+        "references": []
+      },
+      {
+        "id": "e09a77897af8e41baf2873ef03a485be912de8fb",
+        "type": "FIX",
+        "text": "odata4analytics.js - Refined Single-Value Filter Restriction",
+        "references": []
+      },
+      {
+        "id": "92f357d287617b0e7b6c71957eb78e25c7067ba5",
+        "type": "FIX",
+        "text": "sap.ui.core.Control: fixed busy indication of XMLView",
+        "references": []
+      },
+      {
+        "id": "4cce1c81b9310a4b02eec75b3d31217fd308fd34",
+        "type": "FIX",
+        "text": "sap.ui.core.Icon: Render correct \"tooltip\" when \"src\" changes",
+        "references": []
+      },
+      {
+        "id": "e80a559de1f691c2567c0e912e52513a4f5d20ab",
+        "type": "FIX",
+        "text": "sap.ui.core.Popup: fire \u0027opened\u0027 event after the entire \u0027open\u0027 method finishes when no animation is selected",
+        "references": []
+      },
+      {
+        "id": "f47b4d348b4011c02a0e2b2e50992409841598fb",
+        "type": "FIX",
+        "text": "sap.ui.core.UIArea: Except Popup Controls from Rendering Optimization",
+        "references": []
+      },
+      {
+        "id": "dda2c14ffbcb6555b975df48922154e0fdfb24b9",
+        "type": "FIX",
+        "text": "sap.ui.core.UIArea: Restore focus after full UIArea rendering",
+        "references": []
+      },
+      {
+        "id": "24f45116d53f00c007f18f029ab5ea11f6f36d2b",
+        "type": "FIX",
+        "text": "sap.ui.core.mvc.View: flat copy of preprocessor settings",
+        "references": []
+      },
+      {
+        "id": "61b332966a669453b37e00bcf1774cee19001869",
+        "type": "FIX",
+        "text": "sap.ui.core.util.File: Throw error when window was blocked (Safari 9)",
+        "references": []
+      },
+      {
+        "id": "4c847f52eedbbd97fcd37ac49a41dbbe5663605d",
+        "type": "FIX",
+        "text": "sap.ui.opaQunit - timeout was not increased to 90 sec it was 30 sec",
+        "references": []
+      },
+      {
+        "id": "b9d8b4e49661713af694eec4b50f07d222990edb",
+        "type": "FIX",
+        "text": "v2.ODataModel: Sucessfully submitted Entry: still pending changes",
+        "references": []
+      },
+      {
+        "id": "e4d84df9532ddc0ca0e52f64ab2e40554738ee78",
+        "type": "FIX",
+        "text": "v2.ODataModel: bindings trigger duplicate requests",
+        "references": []
+      }
+    ]
+  },
+  "1.30.12": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "55d18fe149dc76623ea62bb9bd66f06595c1d268",
+        "type": "FIX",
+        "text": "DataBinding: properly cleanup binding info when binding becomes invalid",
+        "references": []
+      },
+      {
+        "id": "19df8a8257224a8fe03bcb0eeecb594ed7548259",
+        "type": "FIX",
+        "text": "MessageManager:deregistration of Processors not working",
+        "references": []
+      },
+      {
+        "id": "c8aecabd8ddf94a58a9a2a9af35fd2584a653ffe",
+        "type": "FIX",
+        "text": "ODataAnnotations: Find Correct EDM Type for NavProp properties",
+        "references": []
+      },
+      {
+        "id": "a3f876b82bdde5f2bdf1fed59eae2eade2d5c35c",
+        "type": "FIX",
+        "text": "ODataMessageParser: Specification changes",
+        "references": []
+      },
+      {
+        "id": "3ab1ad5e4f17c5823655057a59eeee0c0773cc2f",
+        "type": "FIX",
+        "text": "core.Element: Remove duplicate delegates correctly",
+        "references": []
+      }
+    ]
+  }
 }

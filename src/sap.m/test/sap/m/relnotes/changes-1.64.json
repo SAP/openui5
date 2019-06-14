@@ -5,7 +5,7 @@
       {
         "id": "10eaf123c7ed68f1d2a6f69aca601d297f2c3cb9",
         "type": "FIX",
-        "text": "P13nFilterPanel : removes empty operations when maxLength==1",
+        "text": "P13nFilterPanel : removes empty operations when maxLength\u003d\u003d1",
         "references": [
           {
             "type": "BCP",
@@ -324,7 +324,7 @@
       {
         "id": "349af5e9ea2c2f5319ec631a3009015040aa43bb",
         "type": "FIX",
-        "text": "sap.m.ColorPalette: doesn't scroll on usage of the space key",
+        "text": "sap.m.ColorPalette: doesn\u0027t scroll on usage of the space key",
         "references": [
           {
             "type": "BCP",
@@ -502,7 +502,7 @@
       {
         "id": "9fe3c74d8fdb99f8078d6833a8530e9111d054ed",
         "type": "FIX",
-        "text": "sap.m.Select: Correct update on child item 'key' changes",
+        "text": "sap.m.Select: Correct update on child item \u0027key\u0027 changes",
         "references": [
           {
             "type": "BCP",
@@ -524,113 +524,68 @@
       {
         "id": "a4f9b0181a06a5a9b1089a12c073ff7275a4033e",
         "type": "FEATURE",
-        "text": "sap.m.SinglePlanningCalendar: Enable drag and drop of appointments",
+        "text": " sap.m.SinglePlanningCalendar: Enable drag and drop of appointments",
         "references": []
       },
       {
         "id": "1be226e71dacceb8b5fbd1d25ea5aafaf21f346d",
         "type": "FIX",
-        "text": "sap.m.CheckBox: Clicking on assigned label now sets the focus",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1980036097"
-          }
-        ]
+        "text": " sap.m.CheckBox: Clicking on assigned label now sets the focus",
+        "references": []
       },
       {
         "id": "1ffd45b373e36f0acfe481f1ef7447a069077a8d",
         "type": "FIX",
-        "text": "sap.m.ComboBox: Grouping after SuggestionsPopover adoption",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1980048235"
-          }
-        ]
+        "text": " sap.m.ComboBox: Grouping after SuggestionsPopover adoption",
+        "references": []
       },
       {
         "id": "8323aa0757e8bb2e6ab9a2e902e67b434207c8c3",
         "type": "FIX",
-        "text": "sap.m.GenericTag: Fixed vertical alignment in test pages",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1980042820"
-          }
-        ]
+        "text": " sap.m.GenericTag: Fixed vertical alignment in test pages",
+        "references": []
       },
       {
         "id": "90ffbeb037c59d27bc0711a2bf34f75982cc4611",
         "type": "FIX",
-        "text": "sap.m.MessageView: Items with long activeTitle are now navigation type",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1980047984"
-          }
-        ]
+        "text": " sap.m.MessageView: Items with long activeTitle are now navigation type",
+        "references": []
       },
       {
         "id": "2862b1d11ee81831f17d4c13385f43f7f1eee355",
         "type": "FIX",
-        "text": "sap.m.MultiComboBox: Keyboard navigation with group headers",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1980044725"
-          }
-        ]
+        "text": " sap.m.MultiComboBox: Keyboard navigation with group headers",
+        "references": []
       },
       {
         "id": "3885374677bcaa2d3b2dc482ee2390c42b9bb183",
         "type": "FIX",
-        "text": "sap.m.NotificationListItem: Close and Collaps button are read out correctly now",
+        "text": " sap.m.NotificationListItem: Close and Collaps button are read out correctly now",
         "references": []
       },
       {
         "id": "d05437d1d819935f421c370ac33291cea4fdc46d",
         "type": "FIX",
-        "text": "sap.m.ObjectHeader: all active elements react on key up when SPACE is pressed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1980040302"
-          }
-        ]
+        "text": " sap.m.ObjectHeader: all active elements react on key up when SPACE is pressed",
+        "references": []
       },
       {
         "id": "027aa73e2be3a0367a99140e21ebb22ca8ad44cc",
         "type": "FIX",
-        "text": "sap.m.SegmentedButton: prevent scrolling on 'SPACE'",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1980009647"
-          }
-        ]
+        "text": " sap.m.SegmentedButton: prevent scrolling on \u0027SPACE\u0027",
+        "references": []
       },
       {
         "id": "7de7e43f417e9d9bf8048d26717ae246c4090f11",
         "type": "FIX",
-        "text": "sap.m.Switch: React on key up when SPACE is pressed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1980055139"
-          }
-        ]
+        "text": " sap.m.Switch: React on key up when SPACE is pressed",
+        "references": []
       },
       {
         "id": "ad514af5f862a9fba364417cd8b960d0683d85c6",
         "type": "FIX",
-        "text": "sap.m.Tokenizer: Support rule enhancement",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1980053013"
-          }
-        ]
+        "text": " sap.m.Tokenizer: Support rule enhancement",
+        "references": []
       }
     ]
   }

@@ -1,0 +1,18 @@
+{
+  "1.52.16": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "30357e7ec91c01992b4c0f355cc15395e19478b5",
+        "type": "FIX",
+        "text": "sap.ui.ux3.DataSetSimpleView: fix failing unit tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770507954"
+          }
+        ]
+      }
+    ]
+  }
+}

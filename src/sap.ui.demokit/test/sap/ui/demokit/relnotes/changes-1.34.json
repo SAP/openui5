@@ -1,70 +1,66 @@
 {
-	"1.34.0": {
-		"date": "November 2015",
-		"notes": [
-			{
-				"id": "be1a665acf73bdd0c34cf13d0bf43dac6738107c",
-				"type": "FEATURE",
-				"text": "Demokit / HCP Feedback Service integration",
-				"references": []
-			},
-			{
-				"id": "7bbd40e7ea84bfdb4161044b8002df4b46aafc17",
-				"type": "FEATURE",
-				"text": "sap.ui.demokit.CodeViewer: Introduce line numbering",
-				"references": []
-			},
-			{
-				"id": "62684e83c2f9101d36c98a32e5ce3b9deeb9ef52",
-				"type": "FIX",
-				"text": "Api Reference Tree clipping issue",
-				"references": [
-					{
-						"type": "GitHub",
-						"reference": "585"
-					}
-				]
-			},
-			{
-				"id": "5d46c13e574b27c7c999d95cd42c664f5f506e86",
-				"type": "FIX",
-				"text": "Code samples in Explored app are now displayed with monospace font",
-				"references": [
-					{
-						"type": "GitHub",
-						"reference": "717"
-					}
-				]
-			},
-			{
-				"id": "6f6631379db0939d52d60be6d0a3490eec916852",
-				"type": "FIX",
-				"text": "Demokit About dialog is all visible now in small resolutions",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580049309"
-					}
-				]
-			},
-			{
-				"id": "b29b06a7d20daa4093688a613692ff35d9d3d3c4",
-				"type": "FIX",
-				"text": "Demokit missing tree due to node without ref",
-				"references": []
-			},
-			{
-				"id": "ea34023657b41034b5bce2973ac4c5be4e926092",
-				"type": "FIX",
-				"text": "Explored App IconTabBar should ignore hover event",
-				"references": []
-			},
-			{
-				"id": "8f1702651d7a76419afc276b79d9af0cacf50ac1",
-				"type": "FIX",
-				"text": "Navigating back does not update the demokit tree",
-				"references": []
-			}
-		]
-	}
+  "1.34.0": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "be1a665acf73bdd0c34cf13d0bf43dac6738107c",
+        "type": "FEATURE",
+        "text": "Demokit / HCP Feedback Service integration",
+        "references": []
+      },
+      {
+        "id": "7bbd40e7ea84bfdb4161044b8002df4b46aafc17",
+        "type": "FEATURE",
+        "text": "sap.ui.demokit.CodeViewer: Introduce line numbering",
+        "references": []
+      },
+      {
+        "id": "62684e83c2f9101d36c98a32e5ce3b9deeb9ef52",
+        "type": "FIX",
+        "text": "Api Reference Tree clipping issue",
+        "references": []
+      },
+      {
+        "id": "5d46c13e574b27c7c999d95cd42c664f5f506e86",
+        "type": "FIX",
+        "text": "Code samples in Explored app are now displayed with monospace font",
+        "references": []
+      },
+      {
+        "id": "6f6631379db0939d52d60be6d0a3490eec916852",
+        "type": "FIX",
+        "text": "Demokit About dialog is all visible now in small resolutions",
+        "references": []
+      },
+      {
+        "id": "b29b06a7d20daa4093688a613692ff35d9d3d3c4",
+        "type": "FIX",
+        "text": "Demokit missing tree due to node without ref",
+        "references": []
+      },
+      {
+        "id": "ea34023657b41034b5bce2973ac4c5be4e926092",
+        "type": "FIX",
+        "text": "Explored App IconTabBar should ignore hover event",
+        "references": []
+      },
+      {
+        "id": "8f1702651d7a76419afc276b79d9af0cacf50ac1",
+        "type": "FIX",
+        "text": "Navigating back does not update the demokit tree",
+        "references": []
+      }
+    ]
+  },
+  "1.34.2": {
+    "date": "January 2016",
+    "notes": [
+      {
+        "id": "edc9f1ea2d36b754d3f21812f03b01bfa2e9eba3",
+        "type": "FIX",
+        "text": "Demokit / Demo Apps: Remove unneeded scrollbar",
+        "references": []
+      }
+    ]
+  }
 }

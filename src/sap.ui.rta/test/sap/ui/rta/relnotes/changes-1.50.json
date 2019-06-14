@@ -5,19 +5,168 @@
       {
         "id": "bf6f94834cd17dd45f38bde03adc4483db5b112b",
         "type": "FIX",
-        "text": "command move test bug",
+        "text": " command move test bug",
         "references": []
       },
       {
         "id": "88d68c7de02ee9700c726435b443ebb3acf62a76",
         "type": "FIX",
-        "text": "sap.ui.fl: Correct reference for AddLibrary app descriptor change",
+        "text": " sap.ui.fl: Correct reference for AddLibrary app descriptor change",
         "references": []
       },
       {
         "id": "402697b5397859ef23eefdc9158890b5d8a6bed9",
         "type": "FIX",
-        "text": "sap.ui.rta: fixed Utils.getIndex for singular aggregations",
+        "text": " sap.ui.rta: fixed Utils.getIndex for singular aggregations",
+        "references": []
+      }
+    ]
+  },
+  "1.50.1": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "2dad12ef547d6f822f71861b92dc17f52dcc00f6",
+        "type": "FIX",
+        "text": " sap.ui.rta: Create Container + automatic rename activation",
+        "references": []
+      },
+      {
+        "id": "804ab73ff82d175e5ebb34c1a9c9be2c51c5f08c",
+        "type": "FIX",
+        "text": " sap.ui.rta: fixed index in EasyAdd Plugin",
+        "references": []
+      },
+      {
+        "id": "2bf07df48cc3c67a6f3566e789af714e7ef7b840",
+        "type": "FIX",
+        "text": "Remove test dependencies to sap.ui.comp",
+        "references": []
+      },
+      {
+        "id": "7036e108a222e193a6fdce52857a41fedf29a8a3",
+        "type": "FIX",
+        "text": " changes are applied on recreation in initial app startup",
+        "references": []
+      },
+      {
+        "id": "4b1343dabb8322c5d7e83798db65a017861a1193",
+        "type": "FIX",
+        "text": " sap.ui.rta: support \"redo\" for OSX - CMD+SHIFT+Z",
+        "references": []
+      }
+    ]
+  },
+  "1.50.2": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "8475f0963e2182448832c9575949689bc2f66437",
+        "type": "FIX",
+        "text": " sap.ui.rta - First rename with double-click not working",
+        "references": []
+      },
+      {
+        "id": "de0f0f2698eb53bfb750c49dac5394dafa02c412",
+        "type": "FIX",
+        "text": " sap.ui.rta: disable macintosh hotkeys in RtaIntegrationScenario",
+        "references": []
+      },
+      {
+        "id": "c648f05fb9308e09c2b55e6f383ae43d82e96b94",
+        "type": "FIX",
+        "text": " sap.ui.rta: do not show OData fields from another context",
+        "references": []
+      },
+      {
+        "id": "f06e4f5b9c5f213bba3cfc5b0f99246d160400a5",
+        "type": "FIX",
+        "text": " sap.ui.rta: prevent remove action when pressing DELETE button if it\u0027s unavailable",
+        "references": []
+      }
+    ]
+  },
+  "1.50.3": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "a55acd5381fab66d73d847d4c1525759240e174f",
+        "type": "FIX",
+        "text": " Cut \u0026 paste to new group causes error",
+        "references": []
+      },
+      {
+        "id": "95848291f67ec84dd4ab15205b40bf19c4c351e1",
+        "type": "FIX",
+        "text": " sap.ui.rta: Personalization reload not part of navigation history",
+        "references": []
+      }
+    ]
+  },
+  "1.50.4": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "3d89e78988c4d08261f31a82ebb920ffd2805d9b",
+        "type": "FIX",
+        "text": " Reveal doesn\u0027t work in ObjectPage Header",
+        "references": []
+      }
+    ]
+  },
+  "1.50.5": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "e50d7be395529a3de6f879e09bf8c47bb9b75b51",
+        "type": "FIX",
+        "text": " sap.ui.fl Correctly apply changes on xml views",
+        "references": []
+      },
+      {
+        "id": "37e1422df64b1a5aafa3409fbd5bcae4978ad112",
+        "type": "FIX",
+        "text": " sap.ui.rta: RTA StyleClass for mandatory field popup",
+        "references": []
+      }
+    ]
+  },
+  "1.50.6": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "a6b6cdf5120f35f23c0b92ad2170c2654eef494b",
+        "type": "FIX",
+        "text": " sap.ui.rta: error handling for command-creation",
+        "references": []
+      },
+      {
+        "id": "cd46e539c9dbb28fc2ad8b9d361912dc5d6df3e9",
+        "type": "FIX",
+        "text": "sap.ui.rta QUnit test fix - focus check on wrong element",
+        "references": []
+      }
+    ]
+  },
+  "1.50.9": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "cdd03b79323c64b5522d3bded8af30791e5080b8",
+        "type": "FIX",
+        "text": ": RTA - disable actions on binded aggregations",
+        "references": []
+      },
+      {
+        "id": "9e0711a6de87b428fad6bdabaf2c62aea554af94",
+        "type": "FIX",
+        "text": "sap.ui.rta: Local changes used when setting transports on reset",
+        "references": []
+      },
+      {
+        "id": "a09ac7381dc3d4e40ffd966dbb8e7a2b1aa82510",
+        "type": "FIX",
+        "text": "sap.ui.rta: Show BusyIndicator to block app during reset of changes",
         "references": []
       }
     ]
