@@ -18,7 +18,11 @@ sap.ui.define([
 				this._bTerminated = true;
 			},
 
-			doSomething: function() {
+			delayedInit: function () {
+				this._bDelayedInitialized = true;
+			},
+
+            doSomething: function() {
 				this._doSomething();
 			},
 
@@ -34,8 +38,17 @@ sap.ui.define([
 
 		return ServiceFactory.extend("my.ServiceFactory", {
 
-			createInstance: function(oServiceContext) {
-				return Promise.resolve(new MyService(oServiceContext));
+			createInstance: function (oServiceContext) {
+				return Promise.resolve(new MyService(oServiceContext))
+					.then(function (oService) {
+						// Introduced a delayed initialization that will be done later, through a setTimeout
+						return new Promise(function (resolve) {
+							setTimeout(function () {
+								oService.delayedInit();
+								resolve(oService);
+							}, 1);
+						});
+					});
 			}
 
 		});
@@ -773,7 +786,7 @@ sap.ui.define([
 								"ParentEagerService": {
 									"factoryName": "lazy.ServiceFactoryAlias",
 									"optional": true,
-									"lazy": false
+									"startup": "eager"
 								},
 								"ParentLazyService": {
 									"factoryName": "my.ServiceFactoryAlias"
@@ -797,7 +810,7 @@ sap.ui.define([
 						"ChildEagerService": {
 							"factoryName": "lazy.ServiceFactoryAlias",
 							"optional": true,
-							"lazy": false
+							"startup": "eager"
 						},
 						"ChildLazyService": {
 							"factoryName": "my.ServiceFactoryAlias"
@@ -814,6 +827,126 @@ sap.ui.define([
 			sinon.assert.calledOn(oSpy, oComponent);
 
 			oComponent.destroy();
+		});
+	});
+
+
+	// # Component service eager loading
+	QUnit.test("Eager service in config - services will not be started before the component is made available", function (assert) {
+		var oSpy = this.spy(Component.prototype, "getService");
+		// load the test component
+		return Component.create({
+			manifest: {
+				"sap.app": {
+					"id": "samples.components.button"
+				},
+				"sap.ui5": {
+					"services": {
+						"EagerService": {
+							"factoryName": "my.ServiceFactoryAlias",
+							"optional": true,
+                            "startup": "eager"
+						},
+						"LazyService": {
+							"factoryName": "lazy.ServiceFactoryAlias"
+						}
+					}
+				}
+			}
+		}).then(function (oComponent) {
+
+			sinon.assert.calledOnce(oSpy);
+			sinon.assert.calledWith(oSpy, "EagerService");
+			sinon.assert.neverCalledWith(oSpy, "LazyService");
+			sinon.assert.calledOn(oSpy, oComponent);
+			var oServiceInstance = oComponent._mServices["EagerService"].instance;
+			assert.ok(!oServiceInstance, "Service is not yet initialized !");
+
+			oComponent.destroy();
+		}).finally(function () {
+			ServiceFactoryRegistry.unregister("eager.ServiceFactoryAlias");
+		});
+	});
+
+	QUnit.test("WaitFor service in config - services will be started before the component is made available", function (assert) {
+		var oSpy = this.spy(Component.prototype, "getService");
+
+		// load the test component
+		return Component.create({
+			manifest: {
+                "sap.app": {
+                    "id": "samples.components.button"
+                },
+				"sap.ui5": {
+					"services": {
+						"WaitForService": {
+							"factoryName": "my.ServiceFactoryAlias",
+							"optional": true,
+                            "startup": "waitFor"
+						},
+						"LazyService": {
+							"factoryName": "lazy.ServiceFactoryAlias"
+						}
+					}
+				}
+			}
+		}).then(function (oComponent) {
+
+			sinon.assert.calledOnce(oSpy);
+			sinon.assert.calledWith(oSpy, "WaitForService");
+			sinon.assert.neverCalledWith(oSpy, "LazyService");
+			sinon.assert.calledOn(oSpy, oComponent);
+			var oServiceInstance = oComponent._mServices["WaitForService"].instance;
+			assert.ok(oServiceInstance._bDelayedInitialized, "Service is initialized !");
+
+			oComponent.destroy();
+		}).finally(function () {
+			ServiceFactoryRegistry.unregister("eager.ServiceFactoryAlias");
+		});
+	});
+
+	QUnit.test("WaitFor service in sync mode - component loading should fail if we are in sync mode with waitFor startup option", function (assert) {
+		// load the test component
+		try {
+			sap.ui.component({
+				async: false,
+				manifest: {
+					"sap.app": {
+						"id": "samples.components.button"
+					},
+					"sap.ui5": {
+						"services": {
+							"EagerService": {
+								"factoryName": "my.ServiceFactoryAlias",
+								"optional": true,
+                                "startup": "waitFor"
+							},
+							"LazyService": {
+								"factoryName": "lazy.ServiceFactoryAlias"
+							}
+						}
+					}
+				}
+			});
+			assert.ok(false, "Component.create should not succeed !");
+		} catch (oError) {
+			assert.ok(true, "Component.create should fail!");
+		}
+	});
+
+	QUnit.test("No Services - component loading should not fail if there is no service defined", function (assert) {
+		// load the test component
+		return Component.create({
+			manifest: {
+				"sap.app": {
+					"id": "samples.components.button"
+				},
+				"sap.ui5": {}
+			}
+		}).then(function () {
+			assert.ok(true, "Component create works fine without services !");
+		}).catch(function (oError) {
+			assert.ok(false, "Component.create must not be failing!", oError);
 		});
 	});
 });
