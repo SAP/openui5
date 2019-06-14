@@ -9,6 +9,7 @@
 
 @_sap_m_IconTabBar_TextColor: @sapUiGroupTitleTextColor;
 @_sap_m_IconTabBar_HeaderShadow: @sapUiShadowHeader;
+@_sap_m_IconTabBar_TextShadow: @sapUiShadowText;
 
 // ==================== Cozy size ====================
 
@@ -253,12 +254,12 @@
 		text-overflow: ellipsis;
 		width: 5rem;
 		color: @_sap_m_IconTabBar_TextColor;
-		text-shadow: @sapUiShadowText;
+		text-shadow: @_sap_m_IconTabBar_TextShadow;
 	}
 
 	.sapMITBCount {
 		color: @_sap_m_IconTabBar_TextColor;
-		text-shadow: @sapUiShadowText;
+		text-shadow: @_sap_m_IconTabBar_TextShadow;
 		max-width: 2rem;
 		overflow: hidden;
 		position: absolute;
@@ -300,7 +301,7 @@
 		vertical-align: middle;
 		width: auto;
 		color: @_sap_m_IconTabBar_TextColor;
-		text-shadow: @sapUiShadowText;
+		text-shadow: @_sap_m_IconTabBar_TextShadow;
 	}
 
 	.sapMITBText {
@@ -314,7 +315,7 @@
 		white-space: normal;
 		width: auto;
 		color: @_sap_m_IconTabBar_TextColor;
-		text-shadow: @sapUiShadowText;
+		text-shadow: @_sap_m_IconTabBar_TextShadow;
 	}
 
 }
@@ -374,7 +375,7 @@
 
 	.sapMITBFilterDefault > .sapMITBText {
 		color: @_sap_m_IconTabBar_TextColor;
-		text-shadow: @sapUiShadowText;
+		text-shadow: @_sap_m_IconTabBar_TextShadow;
 	}
 }
 
@@ -662,7 +663,7 @@
 }
 
 .sapMITBSepIcon::before {
-	text-shadow: @sapUiShadowText;
+	text-shadow: @_sap_m_IconTabBar_TextShadow;
 }
 
 .sapMITBTextUpperCase .sapMITBText {

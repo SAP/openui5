@@ -8,6 +8,7 @@
 // ==========================================================================
 
 @_sap_m_IconTabBar_TextColor: @sapUiContentLabelColor;
+@_sap_m_IconTabBar_TextShadow: none;
 
 // ==================== Cozy size ====================
 
@@ -253,7 +254,6 @@
 
 	.sapMITBFilterDefault.sapMITBSelected > .sapMITBText {
 		color: @_sap_m_IconTabBar_SelectedTextColor;
-		text-shadow: @sapUiShadowText;
 	}
 
 	.sapMITBFilterDefault.sapMITBSelected:hover > .sapMITBText {
@@ -291,10 +291,6 @@
 
 .sapMITBFilterIcon {
 	border: 1px solid @sapUiHighlight;
-
-	&::before {
-		text-shadow: @sapUiShadowText;
-	}
 }
 
 .sapMITBFilterDefault {
@@ -343,9 +339,6 @@
 		border-bottom-color: @sapUiCriticalElement;
 	}
 
-	.sapMITBFilterIcon::before {
-		text-shadow: none;
-	}
 	.sapMITBFilterDefault {
 		background: @_sap_m_IconTabBar_SelectedTextColor;
 		color: @sapUiContentContrastIconColor;
