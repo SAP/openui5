@@ -173,8 +173,8 @@
 			<Input value="{path: 'SByte', type: 'sap.ui.model.odata.type.SByte', constraints: {nullable: false}}" id="I48"/>
 
 			<core:Title text="sap.ui.model.odata.type.String" />
-			<Label text="maxLength: 40" labelFor="I49"/>
-			<Input value="{path: 'String40', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 40}}" id="I49"/>
+			<Label text="maxLength: 40, parseKeepsEmptyString: true" labelFor="I49"/>
+			<Input value="{path: 'String40', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 40}, formatOptions: {parseKeepsEmptyString: true}}" id="I49"/>
 			<Label text="nullable: false" labelFor="I50"/>
 			<Input value="{path: 'String', type: 'sap.ui.model.odata.type.String', constraints: {nullable: false}}" id="I50"/>
 			<Label text="isDigitSequence: true, no maxLength" labelFor="I51"/>
