@@ -1243,7 +1243,9 @@ sap.ui.define([
 			this._stopAnimation();
 			this._startDrag(iPageY);
 
-			oEvent.preventDefault();
+			if (!Device.system.desktop) {
+				oEvent.preventDefault();
+			}
 			this._mousedown = true;
 		};
 
