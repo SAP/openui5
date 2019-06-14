@@ -891,7 +891,7 @@ sap.ui.define([
 
 				sap.ui.require(["sap/ui/core/service/ServiceFactoryRegistry"], function(ServiceFactoryRegistry){
 
-					var oServiceManifestEntry = this.getManifestEntry("/sap.ui5/services/" + sLocalServiceAlias);
+					var oServiceManifestEntry = this._getManifestEntry("/sap.ui5/services/" + sLocalServiceAlias, true);
 
 					// lookup the factoryName in the manifest
 					var sServiceFactoryName = oServiceManifestEntry && oServiceManifestEntry.factoryName;
@@ -925,7 +925,7 @@ sap.ui.define([
 
 						// the Service Factory could not be found in the registry
 						var sErrorMessage = "The ServiceFactory " + sServiceFactoryName + " for Service " + sLocalServiceAlias + " not found in ServiceFactoryRegistry!";
-						var bOptional = this.getManifestEntry("/sap.ui5/services/" + sLocalServiceAlias + "/optional");
+						var bOptional = this._getManifestEntry("/sap.ui5/services/" + sLocalServiceAlias + "/optional", true);
 						if (!bOptional) {
 							// mandatory services will log an error into the console
 							Log.error(sErrorMessage);
@@ -947,7 +947,7 @@ sap.ui.define([
 	 * @private
 	*/
 	function activateServices(oComponent) {
-		var oServices = oComponent.getManifestEntry("/sap.ui5/services");
+		var oServices = oComponent._getManifestEntry("/sap.ui5/services", true);
 		for (var sService in oServices) {
 			if (oServices[sService].lazy === false) {
 				oComponent.getService(sService);
