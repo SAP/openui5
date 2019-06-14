@@ -174,18 +174,22 @@ sap.ui.define([
 	QUnit.test("Time sliders are updated right after popup is open", function(assert) {
 		var done = assert.async();
 		//Prepare
-		var oDTP = new DateTimePicker().placeAt("uiArea1");
+		var oDTP = new DateTimePicker().placeAt("uiArea1"),
+			oTPS,
+			oSpyUpdateSlidersFn;
 		sap.ui.getCore().applyChanges();
 
 		oDTP._createPopup();
 		oDTP._createPopupContent();
-		var oSpyUpdateSlidersFn = sinon.spy(oDTP._oPopup.getContent()[0].getTimeSliders(), "_updateSlidersValues");
+		oTPS = oDTP._oPopup.getContent()[0].getTimeSliders();
+		oSpyUpdateSlidersFn = sinon.spy(oTPS, "_updateSlidersValues");
 
 		//Act
 		oDTP._openPopup();
 		setTimeout(function() {
 			//Assert
 			assert.equal(oSpyUpdateSlidersFn.callCount, 1, "Once picker is opened, function updateSlidersValues should be called");
+			assert.ok(oTPS._getFirstSlider().getIsExpanded(), "Once picker is opened, the first slider is expanded");
 
 			//Cleanup
 			oSpyUpdateSlidersFn.restore();

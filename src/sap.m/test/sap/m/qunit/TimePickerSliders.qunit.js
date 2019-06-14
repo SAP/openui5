@@ -210,14 +210,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Call to collapseAll should close all sliders", function (assert) {
-		var aSliders = [];
-		aSliders = this.oTPS.getAggregation("_columns");
+		var aSliders = this.oTPS.getAggregation("_columns");
 		aSliders[0].setIsExpanded(true);
 
 		this.oTPS.collapseAll();
 		sap.ui.getCore().applyChanges();
-
-		aSliders = this.oTPS.getAggregation("_columns");
 
 		aSliders.forEach(function (oSlider, index) {
 			assert.equal(oSlider.getIsExpanded(), false, "slider " + index + " is not expanded");
