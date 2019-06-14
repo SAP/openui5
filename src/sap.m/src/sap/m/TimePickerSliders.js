@@ -197,7 +197,7 @@ sap.ui.define([
 
 			this.$().on('selectstart', fnFalse);
 
-			if (!Device.browser.msie && this._getShouldOpenSliderAfterRendering()) {
+			if (this._getShouldOpenSliderAfterRendering()) {
 				/* This method is called here prematurely to ensure slider loading on time.
 				 * Make sure _the browser native focus_ is not actually set on the early call (the "true" param)
 				 * because that fires events and results in unexpected behaviors */
