@@ -927,14 +927,13 @@ sap.ui.define([
 		//arrange
 		var fnCallback = sinon.spy(),
 			oBtn1 = new SegmentedButtonItem({
-				width: "300px",
 				text: "button 1"
 			}),
 			oBtn2 = new SegmentedButtonItem({
-				width: "300px",
 				text: "button 2"
 			}),
 			oSegmentedButton = new SegmentedButton({
+				width: "300px",
 				items : [oBtn1,oBtn2],
 				select: fnCallback
 			}),
