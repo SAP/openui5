@@ -228,7 +228,7 @@
 		},
 		{
 			"control": "sap.m.MultiComboBox",
-			"url": "../MultiComboBox.html",
+			"url": "MultiComboBox.html",
 			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
