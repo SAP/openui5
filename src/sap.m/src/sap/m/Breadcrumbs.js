@@ -555,15 +555,9 @@ sap.ui.define([
 	};
 
 	Breadcrumbs.prototype.setCurrentLocationText = function (sText) {
-		var oCurrentLocation = this._getCurrentLocation(),
-			vResult = this.setProperty("currentLocationText", sText, true);
+		this._getCurrentLocation().setText(sText);
 
-		if (oCurrentLocation.getText() !== sText) {
-			oCurrentLocation.setText(sText);
-			this._resetControl();
-		}
-
-		return vResult;
+		return this.setProperty("currentLocationText", sText);
 	};
 
 	/**
