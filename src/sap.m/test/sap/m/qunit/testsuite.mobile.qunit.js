@@ -11,7 +11,8 @@ sap.ui.define([
 				libs: "sap.m",
 				theme: "sap_belize",
 				noConflict: true,
-				preload: "auto"
+				preload: "auto",
+				"xx-waitForTheme": true
 			},
 			qunit: {
 				version: 1,
