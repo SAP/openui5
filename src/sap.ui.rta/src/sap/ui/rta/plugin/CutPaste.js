@@ -94,7 +94,9 @@ function(
 				if (!bMoveAvailable) {
 					return false;
 				}
-				return oElementMover.isMoveAvailableForChildren(oOverlay);
+				return Utils.doIfAllControlsAreAvailable([oOverlay], function() {
+					return oElementMover.isMoveAvailableForChildren(oOverlay);
+				});
 			});
 	};
 

@@ -1329,6 +1329,45 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Given a Plugin and a DT with one control", {
+		beforeEach: function() {
+			this.oButton = new Button("control1", {text: "foo"});
+			this.oButton.placeAt("qunit-fixture");
+			givenThePluginWithOKClosingDialog.call(this);
+			return new Promise(function(resolve) {
+				this.oDesignTime = new DesignTime({
+					rootElements : [this.oButton]
+				});
+
+				this.oDesignTime.attachEventOnce("synced", function() {
+					this.oOverlay = OverlayRegistry.getOverlay(this.oButton);
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		},
+		afterEach: function() {
+			sandbox.restore();
+			this.oButton.destroy();
+			this.oDesignTime.destroy();
+		}
+	}, function() {
+		QUnit.test("when the control gets destroyed during isEditable", function(assert) {
+			var oUtilsSpy = sandbox.spy(RTAUtils, "doIfAllControlsAreAvailable");
+			sandbox.stub(this.oPlugin, "_getActions").callsFake(function() {
+				if (!this.oButton._bIsBeingDestroyed) {
+					this.oButton.destroy();
+				}
+				return Promise.resolve();
+			}.bind(this));
+			return this.oPlugin._isEditableCheck(this.oOverlay)
+			.then(function(bEditable) {
+				assert.ok(true, "the function resolves");
+				assert.notOk(bEditable, "the overlay is not editable");
+				assert.equal(oUtilsSpy.callCount, 1, "doIfAllControlsAreAvailable was called once");
+				assert.notOk(oUtilsSpy.lastCall.returnValue, undefined, "and returned undefined");
+			});
+		});
+	});
 
 	function givenSomeBoundControls() {
 		sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);

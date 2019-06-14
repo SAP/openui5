@@ -679,5 +679,21 @@ function(
 		return false;
 	};
 
+	/**
+	 * Checks if every passed control is available and not currently being destroyed
+	 * If that is the case a callback function is called and the result returned.
+	 *
+	 * @param {sap.ui.core.Control[]} aControls - array of controls that should be available
+	 * @param {function} fnCallback - function that will be called and the result returned
+	 * @returns {any|undefined} Returns the result of the function or undefined
+	 */
+	Utils.doIfAllControlsAreAvailable = function(aControls, fnCallback) {
+		if (aControls.every(function(oControl) {
+			return oControl && !oControl._bIsBeingDestroyed;
+		})) {
+			return fnCallback();
+		}
+	};
+
 	return Utils;
 }, /* bExport= */true);

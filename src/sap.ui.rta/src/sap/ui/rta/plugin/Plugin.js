@@ -247,7 +247,7 @@ function(
 	 * @return {boolean} Returns true if the element has a stable ID
 	 */
 	BasePlugin.prototype.hasStableId = function(oOverlay) {
-		if (!oOverlay) {
+		if (!oOverlay || oOverlay._bIsBeingDestroyed) {
 			return false;
 		}
 

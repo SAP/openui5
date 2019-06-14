@@ -51,6 +51,10 @@ sap.ui.define([
 
 	function _getInvisibleElements (oParentOverlay, sAggregationName) {
 		var oParentElement = oParentOverlay.getElement();
+		if (!oParentElement) {
+			return [];
+		}
+
 		var aInvisibleElements = ElementUtil.getAggregation(oParentElement, sAggregationName).filter(function(oControl) {
 			var oOverlay = OverlayRegistry.getOverlay(oControl);
 
@@ -381,8 +385,8 @@ sap.ui.define([
 
 		_getAddODataPropertyActions: function(bSibling, oOverlay) {
 			var mParents = _getParents(bSibling, oOverlay);
-			var oDesignTimeMetadata = mParents.parentOverlay.getDesignTimeMetadata();
-			var aActions = oDesignTimeMetadata.getActionDataFromAggregations("addODataProperty", mParents.parent) || [];
+			var oDesignTimeMetadata = mParents.parentOverlay && mParents.parentOverlay.getDesignTimeMetadata();
+			var aActions = oDesignTimeMetadata && oDesignTimeMetadata.getActionDataFromAggregations("addODataProperty", mParents.parent) || [];
 
 			function getAction(mAction) {
 				return Promise.resolve().then(function() {
@@ -423,8 +427,8 @@ sap.ui.define([
 
 		_getCustomAddActions: function(bSibling, oOverlay) {
 			var mParents = _getParents(bSibling, oOverlay);
-			var oDesignTimeMetadata = mParents.parentOverlay.getDesignTimeMetadata();
-			var aActions = oDesignTimeMetadata.getActionDataFromAggregations("add", mParents.parent, undefined, "custom");
+			var oDesignTimeMetadata = mParents.parentOverlay && mParents.parentOverlay.getDesignTimeMetadata();
+			var aActions = oDesignTimeMetadata && oDesignTimeMetadata.getActionDataFromAggregations("add", mParents.parent, undefined, "custom") || [];
 
 			function getAction(mAction) {
 				return Promise.resolve().then(function() {
@@ -977,29 +981,32 @@ sap.ui.define([
 				}
 
 				this._getActions(bOverlayIsSibling, oOverlay, true).then(function(mActions) {
-					if (mActions.addODataProperty) {
-						var oAddODataPropertyAction = mActions.addODataProperty.action;
-						bEditable = oAddODataPropertyAction &&
-									oAddODataPropertyAction.aggregation === oOverlay.getParentAggregationOverlay().getAggregationName();
-					}
+					Utils.doIfAllControlsAreAvailable([oOverlay, mParents.parentOverlay], function() {
+						if (mActions.addODataProperty) {
+							var oAddODataPropertyAction = mActions.addODataProperty.action;
+							bEditable = oAddODataPropertyAction &&
+										oAddODataPropertyAction.aggregation === oOverlay.getParentAggregationOverlay().getAggregationName();
+						}
 
-					if (!bEditable && mActions.reveal) {
-						bEditable = true;
-					}
+						if (!bEditable && mActions.reveal) {
+							bEditable = true;
+						}
 
-					if (!bEditable && mActions.custom) {
-						bEditable = true;
-					}
+						if (!bEditable && mActions.custom) {
+							bEditable = true;
+						}
 
-					if (!bEditable && !bOverlayIsSibling) {
-						bEditable = this.checkAggregationsOnSelf(mParents.parentOverlay, "addODataProperty");
-					}
+						if (!bEditable && !bOverlayIsSibling) {
+							bEditable = this.checkAggregationsOnSelf(mParents.parentOverlay, "addODataProperty");
+						}
 
-					if (bEditable) {
-						bEditable =
-							this.hasStableId(oOverlay) //don't confuse the user/Web IDE by an editable overlay without stable ID
-							&& this.hasStableId(mParents.parentOverlay);
-					}
+						if (bEditable) {
+							bEditable =
+								this.hasStableId(oOverlay) //don't confuse the user/Web IDE by an editable overlay without stable ID
+								&& this.hasStableId(mParents.parentOverlay);
+						}
+					}.bind(this));
+
 					resolve(bEditable);
 				}.bind(this));
 			}.bind(this));
