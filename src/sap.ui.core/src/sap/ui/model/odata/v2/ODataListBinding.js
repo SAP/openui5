@@ -453,6 +453,9 @@ sap.ui.define([
 			this._initSortersFilters();
 
 			if (this.checkExpandedList() && !bForceUpdate) {
+				// if there are pending requests e.g. previous context requested data which returns null
+				// the pending requests need to be aborted such that the responded (previous) data doesn't overwrite the current one
+				this.abortPendingRequest();
 				this._fireChange({ reason: ChangeReason.Context });
 			} else {
 				this._refresh();
