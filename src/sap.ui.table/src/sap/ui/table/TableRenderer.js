@@ -503,7 +503,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			if (bSorted) {
 				rm.addClass("sapUiTableColSorted");
 
-				if (oColumn.getSortOrder() === SortOrder.Ascending) {
+				if (oColumn.getSortOrder() === SortOrder.Descending) {
 					rm.addClass("sapUiTableColSortedD");
 				}
 			}
