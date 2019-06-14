@@ -260,41 +260,11 @@ sap.ui.define([
 
 	// Public Methods
 
-	CheckBox.prototype.setSelected = function(bSelected) {
-		if (bSelected === this.getSelected()) {
-			return this;
-		}
-
-		this.$("CbBg").toggleClass("sapMCbMarkChecked", !!bSelected);
-		var oCheckBox = this.getDomRef("CB");
-		if (oCheckBox) {
-			bSelected ? oCheckBox.setAttribute('checked', 'checked') : oCheckBox.removeAttribute('checked');
-		}
-		this.setProperty("selected", bSelected, true);
-		this.$().attr("aria-checked", this._getAriaChecked());
-
-		return this;
-	};
-
-	CheckBox.prototype.setPartiallySelected = function(bPartiallySelected) {
-		if (bPartiallySelected === this.getPartiallySelected()) {
-			return this;
-		}
-
-		this.setProperty("partiallySelected", bPartiallySelected, true);
-		this.$("CbBg").toggleClass("sapMCbMarkPartiallyChecked", bPartiallySelected);
-		this.$().attr("aria-checked", this._getAriaChecked());
-
-		return this;
-	};
-
 	CheckBox.prototype.setText = function(sText) {
-		var oLabel = this._getLabel(),
-			bHasText = !!sText;
+		var oLabel = this._getLabel();
 
-		this.setProperty("text", sText, true);
+		this.setProperty("text", sText);
 		oLabel.setText(sText);
-		this.$().toggleClass("sapMCbHasLabel", bHasText);
 
 		return this;
 	};
@@ -316,7 +286,7 @@ sap.ui.define([
 	CheckBox.prototype.setTextDirection = function(sDirection) {
 		var oLabel = this._getLabel();
 
-		this.setProperty("textDirection", sDirection, true);
+		this.setProperty("textDirection", sDirection);
 		oLabel.setTextDirection(sDirection);
 
 		return this;
@@ -325,7 +295,7 @@ sap.ui.define([
 	CheckBox.prototype.setTextAlign = function(sAlign) {
 		var oLabel = this._getLabel();
 
-		this.setProperty("textAlign", sAlign, true);
+		this.setProperty("textAlign", sAlign);
 		oLabel.setTextAlign(sAlign);
 
 		return this;
@@ -334,9 +304,8 @@ sap.ui.define([
 	CheckBox.prototype.setWrapping = function(bWrap) {
 		var oLabel = this._getLabel();
 
-		this.setProperty("wrapping", bWrap, true);
+		this.setProperty("wrapping", bWrap);
 		oLabel.setWrapping(bWrap);
-		this.$().toggleClass("sapMCbWrapped", bWrap);
 
 		return this;
 	};
