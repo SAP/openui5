@@ -250,10 +250,12 @@ sap.ui.define([
 		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50%", "aria-valuetext should be 50%");
 
 		oProgIndicator.setPercentValue(15);
+		Core.applyChanges();
 		assert.strictEqual(parseInt(oProgIndicator.$().attr("aria-valuenow")), 15, "aria-valuenow should equal 15");
 		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "15%", "aria-valuetext should be 15%");
 
 		oProgIndicator.setPercentValue(95);
+		Core.applyChanges();
 		assert.strictEqual(parseInt(oProgIndicator.$().attr("aria-valuenow")), 95, "aria-valuenow should equal 95");
 		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "95%", "aria-valuetext should be 95%");
 
@@ -272,6 +274,7 @@ sap.ui.define([
 		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "50/100", "aria-valuetext should be '50/100'");
 
 		oProgIndicator.setDisplayValue("65/100");
+		Core.applyChanges();
 		assert.strictEqual(oProgIndicator.$().attr("aria-valuetext"), "65/100", "aria-valuetext should be '65/100'");
 
 		oProgIndicator.destroy();
