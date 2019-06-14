@@ -1,6 +1,7 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/core/CustomData",
 	"sap/m/ComboBoxBase",
 	"sap/m/ComboBox",
 	"sap/m/ComboBoxTextField",
@@ -35,6 +36,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-qunit"
 ], function(
 	qutils,
+	CustomData,
 	ComboBoxBase,
 	ComboBox,
 	ComboBoxTextField,
@@ -11530,6 +11532,25 @@ sap.ui.define([
 		assert.ok(oListItem.isA("sap.m.GroupHeaderListItem"), "The ListItem is of type 'sap.m.GroupHeaderListItem'.");
 		assert.ok(oListItem.aCustomStyleClasses.indexOf(sClass) > -1, "Class " + sClass + " was added to the ListItem");
 		assert.ok(oListItem.aCustomStyleClasses.indexOf(sAdditionalClass) > -1, "Class " + sAdditionalClass + " was added to the ListItem");
+	});
+
+	QUnit.test("forwards custom data to StandardListItem.", function (assert) {
+		// system under test
+		var oItem = new Item({
+				text: "text",
+				key: "key"
+			}).addCustomData(new CustomData({
+				key: "customInfo",
+				value: "first-item",
+				writeToDom: true
+			})),
+			oListItem = this.oComboBox._mapItemToListItem(oItem);
+
+		// assert
+		assert.strictEqual(oListItem.data("customInfo"), "first-item", "The custom data is forwarded.");
+
+		oItem.destroy();
+		oListItem.destroy();
 	});
 
 	QUnit.module("Input field text selection", {
