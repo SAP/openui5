@@ -6,7 +6,7 @@
 
 // Load synchronously to avoid QUnit issue where tests run before QUnit is loaded
 // Only load QUnit if it has not been loaded via script tag
-if (!window.QUnit) {
+if (!window.QUnit || !window.QUnit.test) {
   jQuery.sap.require("sap.ui.thirdparty.qunit");
 }
 
