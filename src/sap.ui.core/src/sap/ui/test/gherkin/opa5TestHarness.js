@@ -64,7 +64,7 @@ sap.ui.define([
       sFinalFunction = dataTableUtils.normalization.camelCase(sFinalFunction);
       var sToEval = sContext + "." + sFinalFunction + "();";
       var func;
-      if ( /^(Given|When|Then)(\.[a-zA-Z_$][a-zA-Z_$]*)*$/.test(sContext) && /^[a-zA-Z_$][a-zA-Z_$]*$/.test(sFinalFunction) ) {
+      if ( /^(Given|When|Then)(\.[a-zA-Z_$][a-zA-Z0-9_$]*)*$/.test(sContext) && /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(sFinalFunction) ) {
         func = function(Given, When, Then) {
           Log.info("[GHERKIN] Generated Step: " + sToEval);
           var oContext = ObjectPath.get(sContext, {Given: Given, When: When, Then: Then});
@@ -76,7 +76,7 @@ sap.ui.define([
         };
       } else {
         func = function(Given, When, Then) {
-          Log.info("[GHERKIN] Generated Step: " + sToEval);
+          Log.info("[GHERKIN] Generated Step (eval): " + sToEval);
           eval(sToEval);
         };
       }

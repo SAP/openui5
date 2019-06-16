@@ -20,7 +20,7 @@ sap.ui.require([
 
 	Opa5.extendConfig({
 		viewName : "Main",
-		viewNamespace : "view.",
+		viewNamespace : "appUnderTest.view.",
 		arrangements : new Common()
 	});
 
