@@ -482,12 +482,22 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("role gridcell", function (assert) {
-			//Act
+		QUnit.test("Day cells have role gridcell", function (assert) {
+			// Arrange
 			this.oSut.placeAt('qunit-fixture');
 			sap.ui.getCore().applyChanges();
 
+			// Assert
 			assert.equal(jQuery("#" + this.oSut.getId() + "-20160105").attr("role"), "gridcell", "The day cell has role gridcell");
+		});
+
+		QUnit.test("Wrapper of day cells has role row", function (assert) {
+			// Arrange
+			this.oSut.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.equal(jQuery("#" + this.oSut.getId() + "-days").attr("role"), "row", "The day cell's wrapper has role row");
 		});
 
 		QUnit.test("Special Dates with legend", function (assert) {

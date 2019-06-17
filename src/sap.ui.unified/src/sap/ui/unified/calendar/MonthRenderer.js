@@ -118,7 +118,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 		this.renderHeader(oRm, oMonth, oDate);
 
 		// days
-		oRm.write("<div id=\"" + sId + "-days\" class=\"sapUiCalItems\">"); // extra DIV around the days to allow rerendering only it's content
+		oRm.write("<div id=\"" + sId + "-days\" class=\"sapUiCalItems\" role=\"row\">"); // extra DIV around the days to allow rerendering only it's content
 		this.renderDays(oRm, oMonth, oDate);
 		oRm.write("</div>");
 
