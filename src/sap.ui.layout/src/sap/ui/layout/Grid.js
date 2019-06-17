@@ -354,7 +354,7 @@ sap.ui.define([
 				return undefined;
 			} else if (oLayoutData instanceof sap.ui.layout.GridData) {
 				return oLayoutData;
-			} else if (oLayoutData.getMetadata().getName() == "sap.ui.core.VariantLayoutData") {
+			} else if (oLayoutData.isA("sap.ui.core.VariantLayoutData")) {
 				// multiple LayoutData available - search here
 				var aLayoutData = oLayoutData.getMultipleLayoutData();
 				for ( var i = 0; i < aLayoutData.length; i++) {
