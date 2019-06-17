@@ -191,6 +191,23 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text) {
 		assert.strictEqual(oStandardBreadCrumbsControl.getCurrentLocationText(), sNewCurrentLocationVal, "current location value changed to sNewCurrentLocationVal");
 	});
 
+	QUnit.test("Instantiation", function (assert) {
+		var oStandardBreadCrumbsControl = oFactory.getBreadCrumbControlWithLinks(0, null),
+			$currentLocationText;
+
+		oStandardBreadCrumbsControl.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		$currentLocationText = oStandardBreadCrumbsControl.$("currentText");
+		assert.strictEqual($currentLocationText.length, 0, "has " + 0 + " links");
+
+		oStandardBreadCrumbsControl.setCurrentLocationText("Test");
+		sap.ui.getCore().applyChanges();
+
+		$currentLocationText = oStandardBreadCrumbsControl.$("currentText");
+		assert.strictEqual($currentLocationText.length, 1, "has " + 1 + " links");
+	});
+
 	QUnit.test("Current location not set", function (assert) {
 		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl;
 
