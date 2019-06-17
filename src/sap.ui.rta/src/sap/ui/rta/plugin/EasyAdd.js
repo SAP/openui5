@@ -117,19 +117,20 @@ sap.ui.define([
 	 * @override
 	 */
 	EasyAdd.prototype._isEditable = function(oOverlay) {
-		var bIsEditable = AdditionalElementsPlugin.prototype._isEditable.apply(this, arguments);
-		if (oOverlay._oAddButton) {
-			var bIsLayout = oOverlay.hasStyleClass("sapUiRtaPersAddTop");
-			var sOverlayIsSibling = bIsLayout ? "asChild" : "asSibling";
-			oOverlay._oAddButton.setEnabled(bIsEditable[sOverlayIsSibling]);
-			if (bIsLayout) {
-				var oLayout = oOverlay.getElement();
-				oLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
-					oLayout.$("sectionsContainer").addClass("sapUiRtaPaddingTop");
-				});
+		return AdditionalElementsPlugin.prototype._isEditable.apply(this, arguments).then(function(bIsEditable) {
+			if (oOverlay._oAddButton) {
+				var bIsLayout = oOverlay.hasStyleClass("sapUiRtaPersAddTop");
+				var sOverlayIsSibling = bIsLayout ? "asChild" : "asSibling";
+				oOverlay._oAddButton.setEnabled(bIsEditable[sOverlayIsSibling]);
+				if (bIsLayout) {
+					var oLayout = oOverlay.getElement();
+					oLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
+						oLayout.$("sectionsContainer").addClass("sapUiRtaPaddingTop");
+					});
+				}
 			}
-		}
-		return bIsEditable;
+			return bIsEditable;
+		});
 	};
 
 	/**
