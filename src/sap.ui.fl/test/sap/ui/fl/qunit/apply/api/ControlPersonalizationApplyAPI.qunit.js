@@ -2,14 +2,14 @@
 
 sap.ui.define([
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/read/api/ControlPersonalizationReadAPI",
+	"sap/ui/fl/apply/api/ControlPersonalizationApplyAPI",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/Control",
 	"sap/ui/fl/Cache",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Utils,
-	ControlPersonalizationReadAPI,
+	ControlPersonalizationApplyAPI,
 	UIComponent,
 	Control,
 	Cache,
@@ -37,7 +37,7 @@ sap.ui.define([
 			this.aChangeTypes = ["changeType1", "changeType2"];
 			this.oControl = new Control("controlId1");
 			var aControls = [this.oControl, {id: "controlId2", appComponent: this.oAppComponent}];
-			return ControlPersonalizationReadAPI.isPersonalized(aControls, this.aChangeTypes).then(function(bIsPersonalized) {
+			return ControlPersonalizationApplyAPI.isPersonalized(aControls, this.aChangeTypes).then(function(bIsPersonalized) {
 				assert.ok(!bIsPersonalized, "No personalization changes on control were found.");
 			});
 		});
@@ -46,7 +46,7 @@ sap.ui.define([
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({}));
 			this.aChangeTypes = ["changeType1", "changeType2"];
 			var aControls = [{id: "controlId1", appComponent: this.oAppComponent}];
-			return ControlPersonalizationReadAPI.isPersonalized(aControls, this.aChangeTypes).then(function(bIsPersonalized) {
+			return ControlPersonalizationApplyAPI.isPersonalized(aControls, this.aChangeTypes).then(function(bIsPersonalized) {
 				assert.ok(!bIsPersonalized, "No personalization changes on control were found.");
 			});
 		});
@@ -103,7 +103,7 @@ sap.ui.define([
 			};
 
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
-			return ControlPersonalizationReadAPI.isPersonalized(aControls, this.aChangeTypes).then(function(bIsPersonalized) {
+			return ControlPersonalizationApplyAPI.isPersonalized(aControls, this.aChangeTypes).then(function(bIsPersonalized) {
 				assert.ok(bIsPersonalized, "Personalization changes were found on control.");
 			});
 		});
@@ -111,7 +111,7 @@ sap.ui.define([
 		QUnit.test("When isPersonalized() is called with an empty control ids, non-empty change types", function(assert) {
 			this.aChangeTypes = ["changeType1", "changeType2"];
 			assert.throws(
-				ControlPersonalizationReadAPI.isPersonalized([], this.aChangeTypes),
+				ControlPersonalizationApplyAPI.isPersonalized([], this.aChangeTypes),
 				"a rejection takes place"
 			);
 		});
@@ -119,7 +119,7 @@ sap.ui.define([
 		QUnit.test("When isPersonalized() is called with an array of control maps, without an app component and empty changes", function(assert) {
 			var aControlIds = [{id: "controlId1"}];
 			assert.throws(
-				ControlPersonalizationReadAPI.isPersonalized(aControlIds, []),
+				ControlPersonalizationApplyAPI.isPersonalized(aControlIds, []),
 				"a rejection takes place"
 			);
 		});
@@ -133,7 +133,7 @@ sap.ui.define([
 				}
 			};
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
-			return ControlPersonalizationReadAPI.isPersonalized(aControls).then(function(bIsPersonalized) {
+			return ControlPersonalizationApplyAPI.isPersonalized(aControls).then(function(bIsPersonalized) {
 				assert.equal(!!bIsPersonalized, true, "Personalization changes were found on control.");
 			});
 		});
@@ -147,7 +147,7 @@ sap.ui.define([
 				}
 			};
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
-			return ControlPersonalizationReadAPI.isPersonalized(aControls, []).then(function(bIsPersonalized) {
+			return ControlPersonalizationApplyAPI.isPersonalized(aControls, []).then(function(bIsPersonalized) {
 				assert.equal(!!bIsPersonalized, true, "Personalization changes were found on control.");
 			});
 		});
@@ -194,7 +194,7 @@ sap.ui.define([
 				}
 			};
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
-			return ControlPersonalizationReadAPI.isPersonalized([this.oControl], this.aChangeTypes).then(function(bIsPersonalized) {
+			return ControlPersonalizationApplyAPI.isPersonalized([this.oControl], this.aChangeTypes).then(function(bIsPersonalized) {
 				assert.equal(bIsPersonalized, false, "Personalization changes were found on control.");
 			});
 		});

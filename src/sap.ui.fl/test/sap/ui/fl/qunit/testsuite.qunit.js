@@ -23,16 +23,16 @@ sap.ui.define(function () {
 		},
 		tests: {
 			// new tests
-			"read/api/ControlPersonalizationReadAPI": {
-				group: 'Read API',
+			"apply/api/ControlPersonalizationApplyAPI": {
+				group: 'Apply API',
 				coverage: {
-					only: ["sap/ui/fl/read/api/ControlPersonalizationReadAPI", "sap/ui/fl/ControlPersonalizationAPI"]
+					only: ["sap/ui/fl/apply/api/ControlPersonalizationApplyAPI", "sap/ui/fl/ControlPersonalizationAPI"]
 				}
 			},
-			"read/api/ControlVariantReadAPI": {
-				group: 'Read API',
+			"apply/api/ControlVariantApplyAPI": {
+				group: 'Apply API',
 				coverage: {
-					only: ["sap/ui/fl/read/api/ControlVariantReadAPI", "sap/ui/fl/ControlPersonalizationAPI"]
+					only: ["sap/ui/fl/apply/api/ControlVariantApplyAPI", "sap/ui/fl/ControlPersonalizationAPI"]
 				}
 			},
 			"write/api/ControlPersonalizationWriteAPI": {
@@ -41,7 +41,12 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/write/api/ControlPersonalizationWriteAPI", "sap/ui/fl/ControlPersonalizationAPI"]
 				}
 			},
-
+			"apply/api/SmartVariantManagementApplyAPI": {
+				group: 'Apply API',
+				coverage: {
+					only: ["sap/ui/fl/apply/api/SmartVariantManagementApplyAPI"]
+				}
+			},
 			// Team Gravity tests
 			"descriptorRelated/api/Api": {
 				group: 'Descriptor related APIs',

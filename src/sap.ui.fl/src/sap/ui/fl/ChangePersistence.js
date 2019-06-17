@@ -443,6 +443,15 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns internal change map of all SmartVariantManagement controls, such as SmartFilterBar or SmartTable.
+	 * @returns {object} A map of "persistencyKey" and belonging changes
+	 * @public
+	 */
+	ChangePersistence.prototype.getSmartVariantManagementChangeMap = function() {
+		return this._mVariantsChanges;
+	};
+
+	/**
 	 * Gets all changes which belong to a specific smart variant, such as filter bar or table.
 	 * @param {string} sStableIdPropertyName Property name of variant stable ID
 	 * @param {string} sStableId Value of variant stable ID

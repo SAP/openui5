@@ -13,14 +13,14 @@ sap.ui.define([
 	 * Provides an API to handle specific functionality for personalized changes.
 	 *
 	 * @namespace
-	 * @name sap.ui.fl.read.api.ControlVariantReadAPI
+	 * @name sap.ui.fl.apply.api.ControlVariantApplyAPI
 	 * @author SAP SE
 	 * @experimental Since 1.67
 	 * @since 1.67
 	 * @version ${version}
 	 * @public
 	 */
-	var ControlVariantReadAPI = {
+	var ControlVariantApplyAPI = {
 
 		/**
 		 *
@@ -32,7 +32,7 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.base.ManagedObject} [oVariantManagementControl] - The variant management control for which the URL technical parameter has to be cleared
 		 *
-		 * @method sap.ui.fl.read.api.ControlVariantReadAPI.clearVariantParameterInURL
+		 * @method sap.ui.fl.apply.api.ControlVariantApplyAPI.clearVariantParameterInURL
 		 * @public
 		 */
 		clearVariantParameterInURL : function () {
@@ -48,7 +48,7 @@ sap.ui.define([
 		 *
 		 * @returns {Promise} Returns Promise that resolves after the variant is updated or rejects when an error occurs
 		 *
-		 * @method sap.ui.fl.read.api.ControlVariantReadAPI.activateVariant
+		 * @method sap.ui.fl.apply.api.ControlVariantApplyAPI.activateVariant
 		 * @public
 		 */
 		activateVariant : function() {
@@ -63,12 +63,12 @@ sap.ui.define([
 		 *
 		 * @returns {boolean} Returns true if a variant management control is encompassing the given control, else false
 		 *
-		 * @method sap.ui.fl.read.api.ControlVariantReadAPI.hasVariantManagement
+		 * @method sap.ui.fl.apply.api.ControlVariantApplyAPI.hasVariantManagement
 		 * @public
 		 */
 		hasVariantManagement : function() {
 			return OldControlPersonalizationAPI.hasVariantManagement.apply(OldControlPersonalizationAPI, arguments);
 		}
 	};
-	return ControlVariantReadAPI;
+	return ControlVariantApplyAPI;
 }, true);
