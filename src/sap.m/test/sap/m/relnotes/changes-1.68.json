@@ -79,6 +79,114 @@
         "type": "FIX",
         "text": " sap.m.ViewSettingsDialog: Consistent visualization for the sort items",
         "references": []
+      },
+      {
+        "id": "5632452ded1699d8b2b6c0a9e70cf851017efa21",
+        "type": "FIX",
+        "text": " sap.m.Button: parameters fixed",
+        "references": []
+      },
+      {
+        "id": "04aad50df07bd1ec0f71cebf2a45e086ddda0854",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Custom data forwarding",
+        "references": []
+      },
+      {
+        "id": "aafd07c55c8af56f1bd551c6ba6982e890b2f0bd",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Text selection in Firefox is fixed",
+        "references": []
+      },
+      {
+        "id": "987ae844e374250594765e694fb1c2f9fe195d78",
+        "type": "FIX",
+        "text": " sap.m.Link: No tabindex on a disabled link",
+        "references": []
+      },
+      {
+        "id": "45f2ea3d92aafde65b0bde1d033b9f861b68cf92",
+        "type": "FIX",
+        "text": " sap.m.Link: Not read when in table and empty",
+        "references": []
+      },
+      {
+        "id": "882edd9f032ed366a55762f93d9dc74b29184f06",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Tokenizer space calculation fixed",
+        "references": []
+      },
+      {
+        "id": "54eb61f3c56ba9663d834e06a72f5415703c55c2",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: does not throw an exception if token text is not escaped",
+        "references": []
+      },
+      {
+        "id": "2a980fd388b0f425f67d770c61203957a8d5ab2e",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: has correct background parameter now",
+        "references": []
+      },
+      {
+        "id": "61be8dbca1d8e6e6336f2a84854e468908ac077a",
+        "type": "FIX",
+        "text": " sap.m.Select: aria-activedescendant is not set for IconOnly type",
+        "references": []
+      },
+      {
+        "id": "e45f1bbfb43377d3db497ca1fb2b2a171509e9fb",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Appointments color information is now read",
+        "references": []
+      },
+      {
+        "id": "34a78d9ededb9ed3d639c7d0a88c0edf9bc2cdab",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Demokit sample fix",
+        "references": []
+      },
+      {
+        "id": "bfc2c9cec05ea34cf47ca67bdbe655dddb75c61e",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Focus not lost now when popup is closed",
+        "references": []
+      },
+      {
+        "id": "eced268739a06416745f82d6e7fdfbdbd761eac4",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: all settings in samples are shown on mobile",
+        "references": []
+      },
+      {
+        "id": "6473fa8c4769877e5175c11f764dc44442ba992e",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: example doesn\u0027t throw error",
+        "references": []
+      },
+      {
+        "id": "0925d9a482848fab6a1ada86d8ca5d166f644ca3",
+        "type": "FIX",
+        "text": " sap.m.TabStrip: fires selectItem, only when an item is selected",
+        "references": []
+      },
+      {
+        "id": "a9e758df8c8ef2730fc53b70a2fd16aa900b085d",
+        "type": "FIX",
+        "text": " sap.m.Text: in HorizontalLayout is properly positioned",
+        "references": []
+      },
+      {
+        "id": "9cc0ed2f64a9c36a9f7905fb5178aeb3adc7f6f4",
+        "type": "FIX",
+        "text": " sap.m.TimePickerSlider: the focus is stored at the correct place",
+        "references": []
+      },
+      {
+        "id": "e6a3f05fd9e0f98e0fcdd6e81b3244a0bd7d8180",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection : Download of item not happening when factory binding is used.",
+        "references": []
       }
     ]
   }

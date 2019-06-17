@@ -1,0 +1,25 @@
+{
+  "1.68.0": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "b23f570d8f036f08f878a0768dc3fff9026f6354",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: In month picker PageUp goes to the previous year",
+        "references": []
+      },
+      {
+        "id": "99a8daa45589ca1b603a28829e57b87fbd9814a9",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: all settings in samples are shown on mobile",
+        "references": []
+      },
+      {
+        "id": "127eace0e2499e8698de5a5efd5edee1598fa580",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarRow: does not use deprecated CSS parameters",
+        "references": []
+      }
+    ]
+  }
+}

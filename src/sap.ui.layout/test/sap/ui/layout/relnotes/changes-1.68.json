@@ -1,0 +1,13 @@
+{
+  "1.68.0": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "79a1ff163c3141a97c9ec3403ec64f253f837daf",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: Toggle on mobile is now working",
+        "references": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "1.68.0": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "ffb6675736222dbe22da248a910e7d4f7634bc01",
+        "type": "FIX",
+        "text": " Do not preventDefault non-cancelable move events",
+        "references": []
+      },
+      {
+        "id": "b75437b4b33e238f646cb7d26a3d2c93b235f76c",
+        "type": "FIX",
+        "text": " ElementMetadata: a renderer w/o render function is incomplete",
+        "references": []
+      },
+      {
+        "id": "1534ed4b5b61c9f127cf8bc5f872f91a192e7e65",
+        "type": "FIX",
+        "text": " v2.ODataModel: createCustomParams throws uncaught exception",
+        "references": []
+      },
+      {
+        "id": "d1db32f73096fe81b48e0d1908d2da816cc50d2b",
+        "type": "FIX",
+        "text": " v2.ODataModel: createCustomParams throws uncaught exception",
+        "references": []
+      }
+    ]
+  }
+}

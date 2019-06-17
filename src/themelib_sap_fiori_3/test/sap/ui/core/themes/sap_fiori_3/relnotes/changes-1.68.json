@@ -13,6 +13,12 @@
         "type": "FIX",
         "text": " sap.uxap.AnchorBar: Quartz visualization of buttons with icon is fixed",
         "references": []
+      },
+      {
+        "id": "54e15af529603723c74a7e052ddaccc12a95d22e",
+        "type": "FIX",
+        "text": " sap.m.Shell: has correct background color now",
+        "references": []
       }
     ]
   }
