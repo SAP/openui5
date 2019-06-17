@@ -34,6 +34,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 			oRm.renderControl(oControl.getAggregation("_columnHeaders"));
 			this.renderBlockersContainer(oRm, oControl);
 			oRm.write("<div");
+			oRm.writeAttribute("role", "grid");
 			oRm.addClass("sapMSinglePCGridContent");
 			oRm.writeClasses();
 			oRm.write(">");
@@ -54,11 +55,13 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 
 
 			oRm.write("<div");
+			oRm.writeAttribute("role", "grid");
 			oRm.addClass("sapMSinglePCBlockersRow");
 			oRm.writeClasses();
 			oRm.write(">");
 
 			oRm.write("<div");
+			oRm.writeAttribute("role", "row");
 			oRm.addClass("sapMSinglePCBlockersColumns");
 
 			oRm.addStyle("height", iContainerHeight + "px");
@@ -72,6 +75,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 				var oColumnCalDate = new CalendarDate(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate() + i);
 
 				oRm.write("<div");
+				oRm.writeAttribute("role", "gridcell");
 				oRm.writeAttribute("data-sap-start-date", oFormat.format(oColumnCalDate.toLocalJSDate()));
 				oRm.writeAttribute("data-sap-end-date", oFormat.format(oColumnCalDate.toLocalJSDate()));
 				oRm.writeAttribute("aria-labelledby", InvisibleText.getStaticId("sap.m", "SPC_BLOCKERS") +
