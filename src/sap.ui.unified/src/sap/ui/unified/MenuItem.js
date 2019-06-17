@@ -58,7 +58,11 @@ sap.ui.define(['sap/ui/core/IconPool', './MenuItemBase', './library'],
 	MenuItem.prototype.render = function(oRenderManager, oItem, oMenu, oInfo){
 		var rm = oRenderManager;
 		var oSubMenu = oItem.getSubmenu();
-		rm.write("<li ");
+		rm.write("<li");
+
+		if (oItem.getVisible() && oItem.getEnabled()) {
+			rm.writeAttribute("tabindex", "0");
+		}
 
 		var sClass = "sapUiMnuItm";
 		if (oInfo.iItemNo == 1) {
@@ -127,6 +131,12 @@ sap.ui.define(['sap/ui/core/IconPool', './MenuItemBase', './library'],
 
 	MenuItem.prototype.hover = function(bHovered, oMenu){
 		this.$().toggleClass("sapUiMnuItmHov", bHovered);
+	};
+
+	MenuItem.prototype.focus = function(bMouseEvent){
+		if (this.getEnabled() && this.getVisible() && !bMouseEvent) {
+			this.$().focus();
+		}
 	};
 
 	return MenuItem;

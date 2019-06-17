@@ -157,6 +157,11 @@ sap.ui.define([
 
 		if (bHovered && oMenu.checkEnabled(this)) {
 			oMenu.closeSubmenu(false, true);
+		}
+	};
+
+	MenuTextFieldItem.prototype.focus = function(){
+		if (this.getEnabled() && this.getVisible()) {
 			/* TODO remove after 1.62 version */
 			if (Device.browser.msie) {
 				setTimeout(function () {
@@ -173,7 +178,6 @@ sap.ui.define([
 			}
 		}
 	};
-
 
 	MenuTextFieldItem.prototype.onAfterRendering = function(){
 		this._adaptSizes();
