@@ -469,7 +469,7 @@
 		},
 		{
 			"control": "sap.m.Tokenizer",
-			"url": "../Tokenizer.html",
+			"url": "Tokenizer.html",
 			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
