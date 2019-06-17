@@ -1025,6 +1025,7 @@ sap.ui.define([
 				mParam = this.getChangeEventParams(),
 				bSelectedItemChanged = (oItem !== this.getSelectedItem());
 
+			this.updateDomValue(oItem.getText());
 			this.setSelection(oItem);
 			this.fireSelectionChange({
 				selectedItem: this.getSelectedItem()
