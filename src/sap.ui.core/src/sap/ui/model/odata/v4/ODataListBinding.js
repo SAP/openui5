@@ -22,7 +22,8 @@ sap.ui.define([
 	"sap/ui/model/ListBinding",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/OperationMode",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"jquery.sap.script"
 ], function (Context, asODataParentBinding, _AggregationCache, _AggregationHelper, _Cache,
 		_GroupLock, _Helper, Log, uid, SyncPromise, Binding, ChangeReason, FilterOperator,
 		FilterProcessor, FilterType, ListBinding, Sorter, OperationMode, jQuery) {
