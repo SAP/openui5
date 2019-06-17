@@ -5,13 +5,13 @@
 
 .sapMCb {
 	height: 2.75rem;
-	line-height: 2.5rem;
+	line-height: 2.75rem;
 	padding: 0 0 0 2.75rem;
 }
 
 .sapMCbBg {
-	left: 0.575rem;
-	top: 0.575rem;
+	left: 0.6875rem;
+	top: 0.6875rem;
 	height: 1.375rem;
 	width: 1.375rem;
 	line-height: 1.125rem;
@@ -63,6 +63,10 @@
 
 .sapMCbBg.sapMCbMarkChecked:before {
 	color: @sapUiSelected;
+
+	&.sapMCbMarkPartiallyChecked {
+		border-width: 0.25rem;
+	}
 }
 
 /* CheckBox focus */
@@ -89,14 +93,14 @@ html.sap-desktop {
 			content: "";
 			display: block;
 			position: absolute;
-			top: 0.4375rem;
-			bottom: 0.6875rem;
-			left: 0.4375rem;
+			top: 0.5625rem;
+			bottom: 0.5625rem;
+			left: 0.5625rem;
 			right: 0;
 			border: 1px dotted @sapUiContentFocusColor;
 		}
 		&:not(.sapMCbErr):not(.sapMCbInfo):not(.sapMCbWarn):focus:before {
-			bottom: 0.6875rem;
+			bottom: 0.5625rem;
 		}
 	}
 
@@ -177,6 +181,10 @@ html.sap-desktop {
 			&:not(.sapMCbErr):not(.sapMCbInfo):not(.sapMCbWarn):focus:before {
 				bottom: 0.375rem;
 			}
+		}
+
+		.sapMCbBg.sapMCbMarkChecked.sapMCbMarkPartiallyChecked:before {
+			border-width: 0.1875rem;
 		}
 
 		.sapUiForm .sapMCb:not(.sapMCbBgDis):focus:before {
