@@ -105,7 +105,7 @@ span.sapMBtnInner.sapMBtnEmphasized {
 
 .sapMBtnGhost {
 	color: @sapUiButtonTextColor;
-	border: 1px solid @sapUiButtonBorderColor;
+	border: 0.0625rem solid @sapUiButtonBorderColor;
 	background: @sapUiButtonLiteBackground;
 }
 
@@ -183,8 +183,8 @@ span.sapMBtnInner.sapMBtnEmphasized {
 /* ---------------------------------------------------------------------*/
 
 html.sap-desktop .sapMBtn:focus > .sapMFocusable {
-	outline:          1px dotted @sapUiContentFocusColor;
-	outline-offset:   -3px;
+	outline:          0.0625rem dotted @sapUiContentFocusColor;
+	outline-offset:   -0.1875rem;
 }
 
 html.sap-desktop .sapMBtn:focus > .sapMBtnActive.sapMFocusable {
@@ -214,16 +214,16 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnActive.sapMBtnEmphasized.sapMFocusable
 .sapMBtnFocusDiv {
 	box-sizing:       border-box;
 	position:         absolute;
-	left:             1px;
-	top:              1px;
-	right:            1px;
-	bottom:           1px;
+	left:             0.0625rem;
+	top:              0.0625rem;
+	right:            0.0625rem;
+	bottom:           0.0625rem;
 	border-radius:    0;
 }
 
 html.sap-desktop .sapMFooter-CTX .sapMBtn:focus .sapMBtnFocusDiv,
 .sapMBtn:focus .sapMBtnFocusDiv {
-	border:           1px dashed @sapUiContentFocusColor;
+	border:           0.0625rem dashed @sapUiContentFocusColor;
 }
 
 html.sap-desktop .sapMFooter-CTX .sapMBtn:focus > .sapMBtnActive > .sapMBtnFocusDiv,
@@ -255,7 +255,7 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized > .sapMBtnFocusDiv {
 
 .sapUiSizeCompact .sapMBar-CTX .sapMBtnInner.sapMBtnGhost:not(.sapMBtnDisabled) {
 	background: @sapUiButtonLiteBackground;
-	border: 1px solid @sapUiButtonBorderColor;
+	border: 0.0625rem solid @sapUiButtonBorderColor;
 }
 
 .sapMIBar-CTX .sapMBtn:hover > .sapMBtnGhost.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed) {
@@ -273,7 +273,7 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner.sapMBtnReject {
 
 /* Background and text colors for different states */
 .sapMTB-Info-CTX > .sapUiIcon:focus {
-	outline: 1px dotted @sapUiContentContrastFocusColor;
+	outline: 0.0625rem dotted @sapUiContentContrastFocusColor;
 }
 
 .sapMBar-CTX,
