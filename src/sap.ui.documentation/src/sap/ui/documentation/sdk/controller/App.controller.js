@@ -16,7 +16,8 @@ sap.ui.define([
     "sap/m/library",
     "sap/base/Log",
     "sap/base/util/Version",
-    "sap/ui/core/syncStyleClass"
+	"sap/ui/core/syncStyleClass",
+	"sap/ui/documentation/sdk/controls/WebPageTitleUtil"
 ], function(
     jQuery,
 	BaseController,
@@ -31,12 +32,24 @@ sap.ui.define([
 	mobileLibrary,
 	Log,
 	Version,
-	syncStyleClass
+	syncStyleClass,
+	WebPageTitleUtil
 ) {
 		"use strict";
 
 		// shortcut for sap.m.SplitAppMode
 		var SplitAppMode = mobileLibrary.SplitAppMode;
+
+		var MAIN_WEB_PAGE_TITLE = "Demo Kit - SAPUI5 SDK";
+
+		var WEB_PAGE_TITLE = {
+			home: "Home - " + MAIN_WEB_PAGE_TITLE,
+			topic: "Documentation - " + MAIN_WEB_PAGE_TITLE,
+			api: "API Reference - " + MAIN_WEB_PAGE_TITLE,
+			controls: "Samples - " + MAIN_WEB_PAGE_TITLE,
+			demoapps: "Demo Apps - " + MAIN_WEB_PAGE_TITLE,
+			tools: "Tools - " + MAIN_WEB_PAGE_TITLE
+		};
 
 		// shortcut for sap.m.URLHelper
 		var URLHelper = mobileLibrary.URLHelper,
@@ -102,6 +115,8 @@ sap.ui.define([
 				this._selectHeader = this._oView.byId("selectHeader");
 				this._tabHeader = this._oView.byId("tabHeader");
 
+				this._oWebPageTitleUtil = new WebPageTitleUtil();
+
 				ResizeHandler.register(this.oHeader, this.onHeaderResize.bind(this));
 				this.oRouter.attachRouteMatched(this.onRouteChange.bind(this));
 				this.oRouter.attachBypassed(this.onRouteNotFound.bind(this));
@@ -153,6 +168,7 @@ sap.ui.define([
 					sMasterViewId;
 
 				this._setHeaderSelectedKey(sKey);
+				this._oWebPageTitleUtil.setTitle(WEB_PAGE_TITLE[sKey]);
 
 				oViewModel.setProperty("/bHasMaster", bHasMaster);
 
