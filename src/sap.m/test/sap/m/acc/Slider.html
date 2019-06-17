@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>Slider - sap.m.Slider</title>
+		<script src="shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-libs="sap.m">
+		</script>
+
+		<script>
+            var oCompactMode = new sap.m.CheckBox("compactMode", {
+					text: "Compact Mode",
+					selected : false,
+					select : function() {
+						$("body").toggleClass("sapUiSizeCompact");
+					}
+			}),
+			    oPage = new sap.m.Page("page1", {
+                    title: "Slider Accessibility Test Page",
+                    footer: new sap.m.Toolbar({
+                        content: [
+                            new sap.m.ToolbarSpacer(),
+                            oCompactMode
+                        ]
+                    })
+                }).addStyleClass("sapUiContentPadding"),
+
+				oApp = new sap.m.App("myApp", {initialPage: "page1", pages: [oPage]}).placeAt("body");
+
+                oDefaultTitle = new sap.ui.core.HTML({ content: "<h2>Default</h2>" }),
+                oDefaultSlider = new sap.m.Slider({
+                    value: 30,
+                    min: 0,
+                    max: 100
+                }),
+            
+                oDisabledTitle = new sap.ui.core.HTML({ content: "<h2>Disabled</h2>" }),
+                oDisabledSlider = new sap.m.Slider({
+                    value: 20,
+                    enabled: false
+                }),
+
+                oTooltipTitle = new sap.ui.core.HTML({ content: "<h2>Slider with tooltip</h2>" }),
+                oTooltipSlider = new sap.m.Slider({
+                    value: 10.3,
+                    step: 0.1,
+                    min: 0,
+                    max: 20,
+                    showAdvancedTooltip: true
+                }),
+
+                oInputTitle = new sap.ui.core.HTML({ content: "<h2>Slider with input</h2>" }),
+                oInputSlider = new sap.m.Slider({
+                    value: 160,
+                    step: 0.5,
+                    min: 0,
+                    max: 500,
+                    showAdvancedTooltip: true,
+                    inputsAsTooltips: true
+                }),
+
+                oTickMarksTitle = new sap.ui.core.HTML({ content: "<h2>Slider with tickmarks</h2>" }),
+			    oTickMarksSlider = new sap.m.Slider({enableTickmarks: true}),
+
+                oLabelsTitle = new sap.ui.core.HTML({ content: "<h2>Slider with tickmarks and labels</h2>" }),
+                oLabelsSlider = new sap.m.Slider({
+                    min: 0,
+                    max: 40,
+                    step: 5,
+                    enableTickmarks: true,
+                    showAdvancedTooltip: true,
+                    scale: new sap.m.ResponsiveScale({
+                        tickmarksBetweenLabels: 1
+                    })
+                });
+
+			// Wait for a tick, so the Page would be rendered and the Sliders could be resized properly on any browser
+			setTimeout(function () {
+                [oDefaultTitle, oDefaultSlider, oDisabledTitle, oDisabledSlider, 
+                    oTooltipTitle, oTooltipSlider, oInputTitle, oInputSlider, oTickMarksTitle, oTickMarksSlider, oLabelsTitle, oLabelsSlider].forEach(oPage.addContent, oPage);
+			});
+		</script>
+	</head>
+	<body id="body" class="sapUiBody"></body>
+</html>
