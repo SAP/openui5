@@ -2,8 +2,9 @@
 sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/Renderer',
-	'sap/base/util/ObjectPath'
-], function(Control, Renderer, ObjectPath) {
+	'sap/base/util/ObjectPath',
+	'sap/m/Text'
+], function(Control, Renderer, ObjectPath, Text) {
 	"use strict";
 
 	// renderers
@@ -68,6 +69,40 @@ sap.ui.define([
 		assert.deepEqual(Object.getPrototypeOf(this.oControlWithCustomRenderer.getMetadata().getRenderer()), Renderer, "Renderer is the prototype of this new object");
 		assert.deepEqual(Object.getPrototypeOf(this.oInheritedControlWithRendererFunction.getMetadata().getRenderer()), myExportedRenderer, "myExportedRenderer is the prototype of this new object");
 		assert.deepEqual(Object.getPrototypeOf(this.oControlWithInplaceRenderer.getMetadata().getRenderer()), Renderer, "Renderer is the prototype of this new object");
+	});
+
+	QUnit.test("'Multiple' inheritance", function(assert) {
+
+		// SETUP
+		// first create an incomplete renderer inheriting from the standard renderer
+		var oIncompleteRenderer = Renderer.extend("my.PatchworkFamilyRenderer", {
+			renderText: function (r, t) {
+				r.write(t.getText(true));
+			}
+		});
+
+		// check that the incomplete renderer has the expected qualities
+		assert.strictEqual(
+			oIncompleteRenderer.render,
+			undefined, "[precondition] incomplete renderer does not yet have a render function");
+		assert.strictEqual(
+			typeof oIncompleteRenderer.extend,
+			"function", "[precondition] incomplete renderer should have an 'extend' function");
+
+		// ACT
+		// then create a control class, specifying the incomplete renderer as "renderer" property
+		// the given renderer should be recognized as 'incomplete' and inherit from the renderer of the base class
+		var ControlClass = Text.extend("my.PatchworkFamily", {
+			renderer: oIncompleteRenderer
+		});
+
+		// ASSERT
+		var oFinalRenderer = ControlClass.getMetadata().getRenderer();
+		assert.ok(oIncompleteRenderer !== oFinalRenderer, "final renderer should not be the same as the incoplete renderer");
+		assert.strictEqual(
+			oFinalRenderer.render,
+			Text.getMetadata().getRenderer().render, "final renderer should inherit the render function from the base class");
+
 	});
 
 });
