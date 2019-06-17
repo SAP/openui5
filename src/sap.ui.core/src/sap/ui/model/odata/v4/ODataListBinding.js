@@ -233,7 +233,7 @@ sap.ui.define([
 
 				if (oContext.created()) {
 					// happens only for a created context that is not transient anymore
-					that.destroyCreated(oContext);
+					that.destroyCreated(oContext, true);
 				} else {
 					// prepare all contexts for deletion
 					for (i = iIndex; i < that.aContexts.length; i += 1) {
@@ -605,7 +605,7 @@ sap.ui.define([
 		oCreatePromise = this.createInCache(oGroupLock, oCreatePathPromise, "", sTransientPredicate,
 			oInitialData,
 			function () { // cancel callback
-				that.destroyCreated(oContext);
+				that.destroyCreated(oContext, true);
 				return Promise.resolve().then(function () {
 					// fire asynchronously so that _delete is finished before
 					that._fireChange({reason : ChangeReason.Remove});
@@ -802,10 +802,13 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Context} oContext
 	 *   The context instance for the created entity to be destroyed
+	 * @param {boolean} bDestroyLater
+	 *   Whether to destroy the context later so that the control has time to handle the context's
+	 *   dependent bindings before.
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.destroyCreated = function (oContext) {
+	ODataListBinding.prototype.destroyCreated = function (oContext, bDestroyLater) {
 		var i,
 			iIndex = oContext.getModelIndex();
 
@@ -817,11 +820,15 @@ sap.ui.define([
 			this.bCreatedAtEnd = undefined;
 		}
 		this.aContexts.splice(iIndex, 1);
-		// No need to use mPreviousContextsByPath like in #_delete. Contexts for created elements
-		// cannot be reused because of different $uid. The path of all contexts in aContexts
-		// after the destroyed one is untouched, still points to the same data, hence no checkUpdate
-		// is needed.
-		oContext.destroy();
+		if (bDestroyLater) {
+			// Add the context to mPreviousContextsByPath although it definitely won't be reused.
+			// Then it is destroyed later.
+			this.mPreviousContextsByPath[oContext.getPath()] = oContext;
+		} else {
+			oContext.destroy();
+		}
+		// The path of all contexts in aContexts after the removed one is untouched, still points to
+		// the same data, hence no checkUpdate is needed.
 	};
 
 	/**
@@ -1785,7 +1792,8 @@ sap.ui.define([
 
 		return this.withCache(function (oCache, sPath, oBinding) {
 			var bDataRequested = false,
-				aPromises = [];
+				aPromises = [],
+				bRemoved = false;
 
 			function fireDataReceived(oData) {
 				if (bDataRequested) {
@@ -1814,6 +1822,7 @@ sap.ui.define([
 					oContext.destroy();
 					that.iMaxLength -= 1; // this doesn't change Infinity
 				}
+				bRemoved = true;
 				that._fireChange({reason : ChangeReason.Remove});
 			}
 
@@ -1828,7 +1837,7 @@ sap.ui.define([
 					var aUpdatePromises = [];
 
 					fireDataReceived({data : {}});
-					if (oContext.oBinding) { // do not update destroyed context
+					if (!bRemoved) { // do not update removed context
 						aUpdatePromises.push(oContext.checkUpdate());
 						if (bAllowRemoval) {
 							aUpdatePromises.push(
