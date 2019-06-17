@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+		<title>Tokenizer - sap.m</title>
+
+		<script src="shared-config.js"></script>
+		<script src="../../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m">
+        </script>
+		<script>
+		jQuery.sap.require("sap.m.Tokenizer");
+		jQuery.sap.require("sap.m.Token");
+
+		var oTokenizer1 = new sap.m.Tokenizer("editableTokenizer", {
+			tokens: [
+			         new sap.m.Token({text: "Token 1", key: "0001"}),
+			         new sap.m.Token({text: "Token 2", key: "0002"}),
+			         new sap.m.Token({text: "Token 3", key: "0003"}),
+			         new sap.m.Token({text: "Token 4 - long text example", key: "0004"}),
+			         new sap.m.Token({text: "Token 5", key: "0005"}),
+			         new sap.m.Token({text: "Token 6", key: "0006"}),
+			         new sap.m.Token({text: "Token 7", key: "0007"}),
+			         new sap.m.Token({text: "Token 8", key: "0008"}),
+			         new sap.m.Token({text: "Token 9 - ABCDEF", key: "0009"}),
+			         new sap.m.Token({text: "Token 10 - ABCDEFGHIKL", key: "0010"}),
+			         new sap.m.Token({text: "Token 11", key: "0011"}),
+			         new sap.m.Token({text: "Token 12", key: "0012"})
+			         ]
+		}),
+		    oTokenizer2 = new sap.m.Tokenizer("notEditableTokenizer",{
+                tokens: [
+                        new sap.m.Token({text: "Token 1", key: "0001"}),
+                        new sap.m.Token({text: "Token 2", key: "0002"}),
+                        new sap.m.Token({text: "Token 3", key: "0003"}),
+                        new sap.m.Token({text: "Token 4 - long text example", key: "0004"}),
+                        new sap.m.Token({text: "Token 5", key: "0005"}),
+                        new sap.m.Token({text: "Token 6", key: "0006"}),
+                        new sap.m.Token({text: "Token 7", key: "0007"}),
+                        new sap.m.Token({text: "Token 8", key: "0008"}),
+                        new sap.m.Token({text: "Token 9 - ABCDEF", key: "0009"}),
+                        new sap.m.Token({text: "Token 10 - ABCDEFGHIKL", key: "0010"}),
+                        new sap.m.Token({text: "Token 11", key: "0011"}),
+                        new sap.m.Token({text: "Token 12", key: "0012"})
+                        ],
+                        editable: false
+            }),
+            oCompactMode = new sap.m.CheckBox("compactMode", {
+					text: "Compact Mode",
+					selected : false,
+					select : function() {
+						$("body").toggleClass("sapUiSizeCompact");
+					}
+				}),
+		    app = new sap.m.App("myApp"),
+
+		    oPage = new sap.m.Page("page1", {
+                title:"Tokenizer Accessibility Test Page",
+                content : [
+                        new sap.ui.core.HTML({ content: "<h2>Editable Tokenizer</h2>" }),
+                        oTokenizer1,
+                        new sap.ui.core.HTML({ content: "<h2>Non-editable Tokenizer</h2>" }),,
+                        oTokenizer2
+                ],
+                footer: new sap.m.Toolbar({
+                            content: [
+                                new sap.m.ToolbarSpacer(),
+                                oCompactMode
+                            ]
+                        })
+		    });
+
+		app.addPage(oPage);
+        app.placeAt("body");
+
+        </script>
+    </head>
+	<body id="body" class="sapUiBody">
+	</body>
+</html>
