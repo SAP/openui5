@@ -656,10 +656,13 @@ sap.ui.define([
 
 		// @see sap.ui.core.RenderManager#class
 		oDomInterface.class = function(sClass) {
-			assertValidClass.apply(this, arguments);
-			assertOpenTagHasStarted("class");
+			if (sClass) {
+				assertValidClass.apply(this, arguments);
+				assertOpenTagHasStarted("class");
 
-			Patcher.class(sClass);
+				Patcher.class(sClass);
+			}
+
 			return this;
 		};
 

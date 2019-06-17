@@ -47,9 +47,7 @@ sap.ui.define(["sap/m/Text"], function (Text) {
 		oRm.openStart("li");
 		oRm.attr("role", "presentation");
 		oRm.class("sapMBreadcrumbsItem");
-		if (sAdditionalItemClass) {
-			oRm.class(sAdditionalItemClass);
-		}
+		oRm.class(sAdditionalItemClass);
 		oRm.openEnd();
 		oRm.renderControl(oControl);
 		if (!bSkipSeparator) {
