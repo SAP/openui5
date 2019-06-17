@@ -353,7 +353,7 @@
 		},
 		{
 			"control": "sap.m.RangeSlider",
-			"url": "../RangeSlider.html",
+			"url": "RangeSlider.html",
 			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
