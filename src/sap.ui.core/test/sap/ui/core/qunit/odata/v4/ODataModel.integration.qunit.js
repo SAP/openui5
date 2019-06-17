@@ -392,6 +392,7 @@ sap.ui.define([
 							persistent : oMessage.getPersistent(),
 							target : sTarget,
 							technical : oMessage.getTechnical(),
+							technicalDetails : oMessage.getTechnicalDetails(),
 							type : oMessage.getType()
 						};
 					}).sort(compareMessages),
@@ -400,6 +401,13 @@ sap.ui.define([
 			function compareMessages(oMessage1, oMessage2) {
 				return oMessage1.message.localeCompare(oMessage2.message);
 			}
+
+			// in order to get a complete diff add technicalDetails only if needed
+			aExpectedMessages.forEach(function (oExpectedMessage, i) {
+				if (i < aCurrentMessages.length && !("technicalDetails" in oExpectedMessage)) {
+					delete aCurrentMessages[i].technicalDetails;
+				}
+			});
 
 			assert.deepEqual(aCurrentMessages, aExpectedMessages,
 				this.aMessages.length + " expected messages in message manager");
@@ -1419,6 +1427,15 @@ sap.ui.define([
 				"persistent" : true,
 				"target" : "/EMPLOYEES('42')/Name",
 				"technical" : true,
+				technicalDetails : {
+					originalMessage : {
+						"@.numericSeverity" : 4,
+						code : "CODE",
+						message : "Could not read",
+						target : "Name",
+						technical : true
+					}
+				},
 				"type" : "Error"
 			}]);
 
@@ -6065,12 +6082,38 @@ sap.ui.define([
 						"persistent" : true,
 						"target" : "",
 						"technical" : true,
+						technicalDetails : {
+							originalMessage : {
+								"@.numericSeverity" : 4,
+								code : "top",
+								details : [{
+									code : "bound",
+									message : "Value must be greater than 0",
+									"@Common.longtextUrl" : "../Messages(1)/LongText",
+									"@Common.numericSeverity" : 4,
+									target : "Quantity"
+								}, {
+									code : "unbound",
+									message : "Some unbound warning",
+									"@Common.numericSeverity" : 3
+								}],
+								message : "Error occurred while processing the request",
+								technical : true
+							}
+						},
 						"type" : "Error"
 					}, {
 						"code" : "unbound",
 						"message" : "Some unbound warning",
 						"persistent" : true,
 						"target" : "",
+						technicalDetails : {
+							originalMessage : {
+								"@Common.numericSeverity" : 3,
+								code : "unbound",
+								message : "Some unbound warning"
+							}
+						},
 						"type" : "Warning"
 					}, {
 						"code" : "bound",
@@ -6079,6 +6122,15 @@ sap.ui.define([
 						"persistent" : true,
 						"target" :
 							"/BusinessPartnerList('1')/BP_2_SO('42')/SO_2_SOITEM('0010')/Quantity",
+						technicalDetails : {
+							originalMessage : {
+								"@Common.longtextUrl" : "../Messages(1)/LongText",
+								"@Common.numericSeverity" : 4,
+								code : "bound",
+								message : "Value must be greater than 0",
+								target : "Quantity"
+							}
+						},
 						"type" : "Error"
 					}]);
 
@@ -6791,6 +6843,17 @@ sap.ui.define([
 						"persistent" : true,
 						"target" : "",
 						"technical" : true,
+						technicalDetails : {
+							originalMessage : {
+								"$reported" : true,
+								"@.numericSeverity" : 4,
+								requestUrl : "SalesOrderList('42')",
+								resourcePath : "SalesOrderList('42')",
+								status : 500,
+								statusText : "Internal Server Error",
+								technical : true
+							}
+						},
 						"type" : "Error"
 					}])
 					.expectChange("lifecycleStatus", "P")
