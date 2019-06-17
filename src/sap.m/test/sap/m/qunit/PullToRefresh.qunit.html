@@ -86,7 +86,7 @@
 			assert.expect(7);
 		}
 		assert.ok($P2R.length > 0, "Pull down control is rendered");
-		assert.ok($P2R.children(".sapMPullDownCI").length == 0, "No custom logo is rendered initially");
+		assert.ok($P2R.children(".sapMPullDownCI").length === 0, "No custom logo is rendered initially");
 		assert.ok(!$P2R.hasClass("sapMPullDownLogo"), "Standard logo is not shown");
 		assert.strictEqual($P2R.children(".sapMPullDownText").text(), sPullDwn, "Pull down text is set correctly");
 		assert.strictEqual($P2R.children(".sapMPullDownInfo").text(), sDescription, "Pull down description is set correctly");
@@ -126,7 +126,7 @@
 			// Check HTML
 			assert.strictEqual(oP2R._iState, 1, "New state after pull should be 1 - release to refresh");
 			var $P2R = oP2R.$();
-			assert.ok($P2R.children(".sapMPullDownText").text() == sRelease, "Release text is set correctly");
+			assert.ok($P2R.children(".sapMPullDownText").text() === sRelease, "Release text is set correctly");
 			assert.ok($P2R.position().top >= 0, "Control is visible");
 			assert.ok($P2R.hasClass("sapMFlip"), "Arrow is rotated");
 
@@ -142,7 +142,7 @@
 				setTimeout(function() {
 					assert.strictEqual(oSpy.callCount, 1, "Refresh event has been fired.");
 					assert.strictEqual(oP2R._iState, 2, "New state after release should be 2 - loading");
-					assert.ok($P2R.children(".sapMPullDownText").text() == sLoading, "Loading text is set");
+					assert.ok($P2R.children(".sapMPullDownText").text() === sLoading, "Loading text is set");
 					assert.strictEqual($P2R.children(".sapMPullDownInfo").text(), sRefresh, "Description is set");
 					assert.ok($P2R.hasClass("sapMLoading"), "Loading css is set");
 					oP2R.hide(); // Close
