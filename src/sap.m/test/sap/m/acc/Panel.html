@@ -13,78 +13,95 @@
 		<script>
 			var app = new sap.m.App("myApp", {
 				initialPage: "page1"
-			});
+			}),
 
-			var panel1 = new sap.m.Panel({
-				headerText : "This is an expandable Panel with landmark role region",
-				width: "auto",
-				expandable: true,
-				content : [
-					new sap.m.Text({ text : "This is a sap.m.Text control inside a sap.m.Panel. Can be read with virtual cursor (INS+Z)." })
-				],
-				accessibleRole: sap.m.PanelAccessibleRole.Region
-			}).addStyleClass("sapUiResponsiveMargin");
-
-			var label2 = new sap.m.Label({ text : "This is a non active infoToolbar" })
-			var panel2 = new sap.m.Panel({
-				headerText : "This is a non expandable Panel",
-				infoToolbar : new sap.m.Toolbar({
+				panel1 = new sap.m.Panel({
+					headerText : "This is an expandable Panel with landmark role region",
+					width: "auto",
+					expandable: true,
 					content : [
-						label2
-					]
-				}).addAriaLabelledBy(label2),
-				width: "auto",
-				content : [
-					new sap.m.Label({ text : "Name", labelFor: "nameInputId" }),
-					new sap.m.Input({id: "nameInputId"})
-				],
-				accessibleRole: sap.m.PanelAccessibleRole.Form
-			}).addStyleClass("sapUiResponsiveMargin");
+						new sap.m.Text({ text : "This is a sap.m.Text control inside a sap.m.Panel. Can be read with virtual cursor (INS+Z)." })
+					],
+					accessibleRole: sap.m.PanelAccessibleRole.Region
+				}).addStyleClass("sapUiResponsiveMargin"),
 
-			var label3 = new sap.m.Label({ text : "This is an active infoToolbar" });
-			var panel3 = new sap.m.Panel({
-				headerToolbar : new sap.m.Toolbar({
-					content: [
-						new sap.m.Title({ text: "This is a Panel with a headerToolbar" }),
-						new sap.m.ToolbarSpacer(),
-						new sap.m.Button({ icon: "sap-icon://drop-down-list", tooltip: "Do something with list" }),
-						new sap.m.Button({ icon: "sap-icon://person-placeholder", tooltip: "Do something with user" })
+				label2 = new sap.m.Label({ text : "This is a non active infoToolbar" }),
+
+				panel2 = new sap.m.Panel({
+					headerText : "This is a non expandable Panel",
+					infoToolbar : new sap.m.Toolbar({
+						content : [
+							label2
+						]
+					}).addAriaLabelledBy(label2),
+					width: "auto",
+					content : [
+						new sap.m.Label({ text : "Name", labelFor: "nameInputId" }),
+						new sap.m.Input({id: "nameInputId"})
+					],
+					accessibleRole: sap.m.PanelAccessibleRole.Form
+				}).addStyleClass("sapUiResponsiveMargin"),
+
+				label3 = new sap.m.Label({ text : "This is an active infoToolbar" }),
+
+				panel3 = new sap.m.Panel({
+					headerToolbar : new sap.m.Toolbar({
+						content: [
+							new sap.m.Title({ text: "This is a Panel with a headerToolbar" }),
+							new sap.m.ToolbarSpacer(),
+							new sap.m.Button({ icon: "sap-icon://drop-down-list", tooltip: "Do something with list" }),
+							new sap.m.Button({ icon: "sap-icon://person-placeholder", tooltip: "Do something with user" })
+						]
+					}),
+					infoToolbar : new sap.m.Toolbar({
+						active: true,
+						content : [
+							label3
+						]
+					}).addAriaLabelledBy(label3),
+					width: "auto",
+					expandable: true,
+					expanded: true,
+					content : [
+						new sap.m.Text({ text : "This is a sap.m.Text control inside a sap.m.Panel. Can be read with virtual cursor (INS+Z)." })
 					]
+				}).addStyleClass("sapUiResponsiveMargin"),
+
+				panel4 = new sap.m.Panel({
+					headerText : "This is an expandable Panel with landmark role complementary",
+					width: "auto",
+					expandable: true,
+					content : [
+						new sap.m.Text({ text : "This is a sap.m.Text control inside a sap.m.Panel. Can be read with virtual cursor (INS+Z)." })
+					],
+					accessibleRole: sap.m.PanelAccessibleRole.Complementary
+				}).addStyleClass("sapUiResponsiveMargin"),
+
+				oCompactMode = new sap.m.CheckBox("compactMode", {
+					text: "Compact Mode",
+					selected : false,
+					select : function() {
+						$("body").toggleClass("sapUiSizeCompact");
+					}
 				}),
-				infoToolbar : new sap.m.Toolbar({
-					active: true,
-					content : [
-						label3
-					]
-				}).addAriaLabelledBy(label3),
-				width: "auto",
-				expandable: true,
-				expanded: true,
-				content : [
-					new sap.m.Text({ text : "This is a sap.m.Text control inside a sap.m.Panel. Can be read with virtual cursor (INS+Z)." })
-				]
-			}).addStyleClass("sapUiResponsiveMargin");
-			var panel4 = new sap.m.Panel({
-				headerText : "This is an expandable Panel with landmark role complementary",
-				width: "auto",
-				expandable: true,
-				content : [
-					new sap.m.Text({ text : "This is a sap.m.Text control inside a sap.m.Panel. Can be read with virtual cursor (INS+Z)." })
-				],
-				accessibleRole: sap.m.PanelAccessibleRole.Complementary
-			}).addStyleClass("sapUiResponsiveMargin");
 
-			var page1 = new sap.m.Page("page1", {
-				title: "Panel Control",
-				content:[
-					panel1,
-					panel2,
-					panel3,
-					panel4
-				]
-			});
+				oPage = new sap.m.Page("page1", {
+					title: "Panel Accessibility Test Page",
+					content:[
+						panel1,
+						panel2,
+						panel3,
+						panel4
+					],
+					footer: new sap.m.Toolbar({
+							content: [
+								new sap.m.ToolbarSpacer(),
+								oCompactMode
+							]
+						})
+				});
 
-			app.addPage(page1).placeAt("content");
+			app.addPage(oPage).placeAt("content");
 		</script>
 	</head>
 	<body class="sapUiBody" style="overflow: hidden">
