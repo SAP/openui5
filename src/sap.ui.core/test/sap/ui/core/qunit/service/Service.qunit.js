@@ -758,5 +758,62 @@ sap.ui.define([
 		});
 
 	});
+	// Component Service Loading
 
+	// # Component service Inheritance
+	QUnit.test("Inheritance - services should be inherited from parent components", function (assert) {
+		var oSpy = this.spy(Component.prototype, "getService");
+
+		sap.ui.predefine("test/services/base/Component", ["sap/ui/core/Component"], function (Component) {
+			return Component.extend("test.services.base.Component", {
+				metadata: {
+					manifest: {
+						"sap.ui5": {
+							"services": {
+								"ParentEagerService": {
+									"factoryName": "lazy.ServiceFactoryAlias",
+									"optional": true,
+									"lazy": false
+								},
+								"ParentLazyService": {
+									"factoryName": "my.ServiceFactoryAlias"
+								}
+							}
+						}
+					}
+				}
+			});
+		});
+
+		sap.ui.predefine("test/services/child/Component", ["test/services/base/Component"], function (BaseComponent) {
+			return BaseComponent.extend("test.services.child.Component", {});
+		});
+		// load the test component
+		return Component.create({
+			manifest: {
+				"sap.ui5": {
+					"componentName": "test.services.child",
+					"services": {
+						"ChildEagerService": {
+							"factoryName": "lazy.ServiceFactoryAlias",
+							"optional": true,
+							"lazy": false
+						},
+						"ChildLazyService": {
+							"factoryName": "my.ServiceFactoryAlias"
+						}
+					}
+				}
+			}
+		}).then(function (oComponent) {
+			sinon.assert.calledTwice(oSpy);
+			sinon.assert.calledWith(oSpy, "ParentEagerService");
+			sinon.assert.calledWith(oSpy, "ChildEagerService");
+			sinon.assert.neverCalledWith(oSpy, "ChildLazyService");
+			sinon.assert.neverCalledWith(oSpy, "ParentLazyService");
+			sinon.assert.calledOn(oSpy, oComponent);
+
+			oComponent.destroy();
+		});
+	});
 });
