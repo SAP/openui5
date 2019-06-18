@@ -843,7 +843,7 @@ function(
 	MultiComboBox.prototype._showWrongValueVisualEffect = function() {
 		var oPickerTextField = this.getPickerTextField(),
 			sOldValueState = this.isPickerDialog() ? oPickerTextField.getValueState() : this.getValueState(),
-			sInvalidEntry = this._oRbC.getText("VALUE_STATE_ERROR");
+			sInvalidEntry = this._sOriginalValueStateText || this._oRbC.getText("VALUE_STATE_ERROR");
 
 		if (sOldValueState === ValueState.Error) {
 			return;
@@ -877,6 +877,7 @@ function(
 			}),
 			sAlreadySelected = this._oRbM.getText("VALUE_STATE_ERROR_ALREADY_SELECTED");
 		if (aText.indexOf(sValue) > -1 && sValueState !== ValueState.Error && !this.isComposingCharacter()) {
+
 			if (bIsPickerDialog) {
 				oPickerTextField.setValueState(ValueState.Error);
 				oPickerTextField.setValueStateText(sAlreadySelected);
@@ -1418,6 +1419,26 @@ function(
 				});
 			}
 		}
+	};
+
+	/**
+	 * Sets the value state text
+	 *
+	 * @param {string} [sValueStateText] The new value state text
+	 * @returns {sap.m.MultiComboBox} this for chaining
+	 *
+	 * @public
+	 */
+	MultiComboBox.prototype.setValueStateText = function (sValueStateText) {
+		var aPrivateValueStateTexts = [this._oRbC.getText("VALUE_STATE_ERROR"),
+			this._oRbM.getText("VALUE_STATE_ERROR_ALREADY_SELECTED")];
+
+		if (aPrivateValueStateTexts.indexOf(sValueStateText) === -1) {
+			this._sOriginalValueStateText = sValueStateText;
+		}
+
+		ComboBoxBase.prototype.setValueStateText.apply(this, arguments);
+		return this;
 	};
 
 	/**

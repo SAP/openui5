@@ -55,6 +55,17 @@ sap.ui.define([
 
 	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
+	function enterNewText (oMC, sText) {
+		oMC.setValue("");
+		sap.ui.test.qunit.triggerKeydown(oMC.getDomRef(), KeyCodes.ENTER);
+		sap.ui.getCore().applyChanges();
+
+		sap.ui.test.qunit.triggerCharacterInput(oMC.getFocusDomRef(), sText);
+		sap.ui.test.qunit.triggerKeydown(oMC.getDomRef(), KeyCodes.ENTER);
+
+		sap.ui.getCore().applyChanges();
+	}
+
 	// =========================================================== //
 	// Check UX requirements on                                    //
 	// =========================================================== //
@@ -6770,6 +6781,35 @@ sap.ui.define([
 		assert.strictEqual(this.oMultiComboBox.getValueState(), ValueState.Error, "The value state is error");
 		assert.strictEqual(this.oMultiComboBox.getValueStateText(), oResourceBundle.getText("VALUE_STATE_ERROR_ALREADY_SELECTED"), "Value State message is correct");
 		assert.strictEqual(this.oMultiComboBox.getValue(), "Brussel", "The invalid value is corrected");
+	});
+
+	QUnit.test("value state message for invalid input should be overwritten by the applications", function(assert) {
+		 var sCustomText = "This is application text.";
+
+		// act
+		this.oMultiComboBox.setValueStateText(sCustomText);
+		this.oMultiComboBox.focus();
+		this.oMultiComboBox.open();
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(500);
+		enterNewText(this.oMultiComboBox, "Roma");
+
+		// assert
+		assert.strictEqual(this.oMultiComboBox.getValueStateText(), sCustomText, "Value State message is correct.");
+
+		// act
+		enterNewText(this.oMultiComboBox, "Brussel");
+
+		// assert
+		assert.strictEqual(this.oMultiComboBox.getValueStateText(),
+			oResourceBundle.getText("VALUE_STATE_ERROR_ALREADY_SELECTED"),
+			"Already selected value message is correct.");
+
+		// act
+		enterNewText(this.oMultiComboBox, "Roma");
+
+		// assert
+		assert.strictEqual(this.oMultiComboBox.getValueStateText(), sCustomText, "Value State message is correct.");
 	});
 
 	QUnit.test("onfocusout value should be deleted", function(assert) {
