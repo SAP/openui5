@@ -50,7 +50,7 @@ sap.ui.define([
 					/**
 					 * The control to appear in the header area.
 					 */
-					header: {type: 'sap.tnt.ToolHeader', multiple: false},
+					header: {type: 'sap.tnt.IToolHeader', multiple: false},
 					/**
 					 * The side menu of the layout.
 					 */
