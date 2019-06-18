@@ -1,7 +1,7 @@
 /* global QUnit */
 
-sap.ui.require([
-	'sap/ui/fl/Change',
+sap.ui.define([
+	"sap/ui/fl/Change",
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/StandardVariant",
