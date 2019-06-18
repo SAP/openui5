@@ -45,7 +45,8 @@ sap.ui.define([
 	Split.prototype._isEditable = function (oOverlay) {
 		var oSplitAction = this.getAction(oOverlay);
 		if (oSplitAction && oSplitAction.changeType && oSplitAction.changeOnRelevantContainer) {
-			return this.hasChangeHandler(oSplitAction.changeType, oOverlay.getRelevantContainer(), true)
+			var oRelevantContainer = oOverlay.getRelevantContainer();
+			return this.hasChangeHandler(oSplitAction.changeType, oRelevantContainer, true)
 				.then(function(bHasChangeHandler) {
 					return bHasChangeHandler
 						&& this.hasStableId(oOverlay)
@@ -153,7 +154,7 @@ sap.ui.define([
 
 	/**
 	 * Retrieve the context menu item for the action.
-	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} aElementOverlays - overlays for which actions are requested
+	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - overlays for which actions are requested
 	 * @return {object[]} - array of the items with required data
 	 */
 	Split.prototype.getMenuItems = function (vElementOverlays) {

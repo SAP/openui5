@@ -185,6 +185,11 @@ function (
 			assert.strictEqual(this.oPlugin.hasStableId(), false, "then it returns false");
 		});
 
+		QUnit.test("when hasStableId method is called with an overlay whose element is being destroyed", function(assert) {
+			this.oButton.destroy();
+			assert.strictEqual(this.oPlugin.hasStableId(this.oButtonOverlay), false, "then it returns false");
+		});
+
 		QUnit.test("when evaluateEditable is called for elements", function(assert) {
 			var oModifyPluginListSpy = sandbox.spy(this.oPlugin, "_modifyPluginList");
 

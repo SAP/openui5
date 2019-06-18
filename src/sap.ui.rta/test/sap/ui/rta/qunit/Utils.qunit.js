@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Control",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
@@ -19,6 +20,7 @@ sap.ui.define([
 ],
 function(
 	jQuery,
+	Control,
 	DesignTime,
 	OverlayRegistry,
 	OverlayUtil,
@@ -676,6 +678,28 @@ function(
 			assert.strictEqual(
 				Utils.checkSourceTargetBindingCompatibility(this.oSource, this.oTarget), false,
 				"then bindings are not compatible");
+		});
+	});
+
+	QUnit.module("doIfAllControlsAreAvailable", function() {
+		QUnit.test("all controls are available", function(assert) {
+			var done = assert.async();
+			var oControl = new Control();
+			var oControl2 = new Control();
+			Utils.doIfAllControlsAreAvailable([oControl, oControl2], function() {
+				assert.ok(true, "the function is called");
+				done();
+			});
+		});
+
+		QUnit.test("one controls is not available", function(assert) {
+			var oControl = new Control();
+			var oControl2 = new Control();
+			oControl2.destroy();
+			var vResult = Utils.doIfAllControlsAreAvailable([oControl, oControl2], function() {
+				assert.ok(false, "should not go here");
+			});
+			assert.equal(vResult, undefined, "the function returns undefined");
 		});
 	});
 
