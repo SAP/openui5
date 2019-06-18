@@ -464,7 +464,7 @@
 		},
 		{
 			"control": "sap.m.TextArea",
-			"url": "../TextArea.html",
+			"url": "TextArea.html",
 			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
