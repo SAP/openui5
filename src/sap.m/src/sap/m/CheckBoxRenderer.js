@@ -82,8 +82,9 @@ sap.ui.define(['sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/D
 
 		var sTooltip = ValueStateSupport.enrichTooltip(oCheckBox, oCheckBox.getTooltip_AsString());
 
-		oRm.attr("title", sTooltip);
-
+		if (sTooltip) {
+			oRm.attr("title", sTooltip);
+		}
 
 		if (bInteractive) {
 			oRm.attr("tabindex", oCheckBox.getTabIndex());
@@ -136,7 +137,9 @@ sap.ui.define(['sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/D
 			oRm.attr("checked", "checked");
 		}
 
-		oRm.attr("name", oCheckBox.getName());
+		if (oCheckBox.getName()) {
+			oRm.attr("name", oCheckBox.getName());
+		}
 
 		if (!bEnabled) {
 			oRm.attr("disabled", "disabled");
