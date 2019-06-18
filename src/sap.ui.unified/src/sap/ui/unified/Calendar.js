@@ -643,7 +643,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Displays a date in the calendar but don't set the focus.
+	 * Displays a date in the calendar but doesn't set the focus.
 	 *
 	 * @param {Object} oDate
 	 *         JavaScript date object for focused date.
