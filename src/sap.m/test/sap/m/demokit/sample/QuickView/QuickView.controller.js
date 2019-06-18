@@ -247,6 +247,7 @@ sap.ui.define([
 		openQuickView: function (oEvent, oModel) {
 			this.createPopover();
 
+			this._oQuickView.close();
 			this._oQuickView.setModel(oModel);
 
 			// delay because addDependent will do a async rerendering and the actionSheet will immediately close without it.
@@ -273,11 +274,10 @@ sap.ui.define([
 		},
 
 		createPopover: function() {
-			if (this._oQuickView) {
-				this._oQuickView.destroy();
+			if (!this._oQuickView) {
+				this._oQuickView = sap.ui.xmlfragment("sap.m.sample.QuickView.QuickView", this);
 			}
 
-			this._oQuickView = sap.ui.xmlfragment("sap.m.sample.QuickView.QuickView", this);
 			this.getView().addDependent(this._oQuickView);
 		},
 

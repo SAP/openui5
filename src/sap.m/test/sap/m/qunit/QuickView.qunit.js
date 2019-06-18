@@ -722,6 +722,15 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Remove page", function (assert) {
+
+		assert.strictEqual(this.oQuickView.getPages().length, 1, 'page size is correct');
+
+		this.oQuickView.removeAggregation('pages', this.oQuickView.getPages()[0]);
+
+		assert.strictEqual(this.oQuickView.getPages().length, 0, 'page is removed');
+	});
+
 	QUnit.test("Invalidation", function (assert) {
 
 		var fnQuickViewInvalidate = sinon.spy(this.oQuickView, "invalidate");
