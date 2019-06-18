@@ -15,9 +15,21 @@
 	width: 2.75rem;
 }
 
-.sapMRb > .sapMLabel {
+.sapMRb > .sapMRbBLabel {
+	line-height: 2.75rem;
 	height: 2.75rem;
 	max-width: calc(~"100% - 2.75rem");
+}
+
+.sapMRbSvg {
+	margin: 0.6875rem;
+}
+
+.sapMRbHasLabel.sapMRb:focus:before {
+	bottom: .5rem;
+	top: 0.5rem;
+	left: 0.5rem;
+	right: -0.0625rem;
 }
 
 .sapMRbHasLabel .sapMRbB {
@@ -49,15 +61,17 @@
 	}
 }
 
-.sapMRbSel:not(.sapMRbErr):not(.sapMRbWarn):not(.sapMRbInfo):not(.sapMRbSucc) .sapMRbHoverable:hover {
-	.sapMRbBInn {
-		background-color: @sapUiSelected;
-	}
+.sapMRb:not(.sapMRbErr):not(.sapMRbWarn):not(.sapMRbInfo):not(.sapMRbSucc) .sapMRbHoverable:hover .sapMRbBOut {
+	stroke: @sapUiFieldHoverBorderColor;
+	fill: @sapUiFieldHoverBackground;
 }
 
 .sapMRb:focus:before {
 	border: 1px dotted @sapUiContentFocusColor;
-	bottom: .375rem;
+	bottom: 0.5rem;
+	top: 0.5rem;
+	left: 0.5rem;
+	right: 0.5rem;
 }
 
 .sapMLIBActive .sapMRbB .sapMRbBOut {
@@ -90,7 +104,7 @@
 .sapMRbErr.sapMRbBTouched {
 	.sapMRbB .sapMRbBOut {
 		stroke: @sapUiFieldInvalidColor;
-		fill: none;
+		fill: @sapUiFieldInvalidBackground;
 	}
 }
 
@@ -106,7 +120,7 @@
 .sapMRbWarn.sapMRbBTouched {
 	.sapMRbB .sapMRbBOut {
 		stroke: @sapUiFieldWarningColor;
-		fill: none;
+		fill: @sapUiFieldWarningBackground;
 	}
 }
 
@@ -122,17 +136,24 @@
 .sapMRbSucc.sapMRbBTouched {
 	.sapMRbB .sapMRbBOut {
 		stroke: @sapUiFieldSuccessColor;
-		fill: none;
+		fill: @sapUiFieldSuccessBackground;
 	}
 }
 
-.sapMRbInfo.sapMRbSel .sapMRbBInn {
-	background-color: @sapUiFieldInformationColor;
+.sapMRbInfo.sapMRbSel,
+.sapMRbInfo.sapMRbSel.sapMRbRo {
+	.sapMRbBInn {
+		fill: @sapUiFieldInformationColor;
+		stroke: none;
+	}
 }
 
-.sapMRbInfo .sapMRbBOut,
-.sapMRbInfo.sapMRbBTouched .sapMRbBOut {
-	background-color: @sapUiFieldInformationBackground;
+.sapMRbInfo,
+.sapMRbInfo.sapMRbBTouched {
+	.sapMRbB .sapMRbBOut {
+		stroke: @sapUiFieldInformationColor;
+		fill: @sapUiFieldInformationBackground;
+	}
 }
 
 .sapMRb:not(.sapMRbErr):not(.sapMRbWarn):not(.sapMRbInfo) > .sapMRbB .sapMRbBOut {
