@@ -116,22 +116,22 @@
 			"type": "object",
 			"properties": {
 				"type": {
-					"description": "Represents the type of the header",
+					"description": "Represents the type of the header.",
 					"type": "string",
 					"enum": [
 						"Default"
 					]
 				},
 				"title": {
-					"description": "Represents language-dependent title",
+					"description": "Represents language-dependent title.",
 					"type": "string"
 				},
 				"subTitle": {
-					"description": "Represents language-dependent additional information to the title",
+					"description": "Represents language-dependent additional information to the title.",
 					"type": "string"
 				},
 				"actions": {
-					"description": "Represents description of actions that can be applied on a part of a card",
+					"description": "Represents description of the actions that can be applied on a part of a card.",
 					"type": "array",
 					"items": {
 						"$ref": "#/definitions/action"
@@ -141,11 +141,11 @@
 					"$ref": "#/definitions/data"
 				},
 				"icon": {
-					"description": "Represents the icon of the card",
+					"description": "Represents the icon of the card.",
 					"$ref": "#/definitions/icon"
 				},
 				"status": {
-					"description": "Represents the status of the card",
+					"description": "Represents the status of the card.",
 					"$ref": "#/definitions/status"
 				}
 			}
@@ -159,22 +159,22 @@
 			"type": "object",
 			"properties": {
 				"type": {
-					"description": "Represents the type of the header",
+					"description": "Represents the type of the header.",
 					"type": "string",
 					"enum": [
 						"Numeric"
 					]
 				},
 				"title": {
-					"description": "Represents language-dependent title",
+					"description": "Represents language-dependent title.",
 					"type": "string"
 				},
 				"subTitle": {
-					"description": "Represents language-dependent additional information to the title",
+					"description": "Represents language-dependent additional information to the title.",
 					"type": "string"
 				},
 				"actions": {
-					"description": "Represents description of actions that can be applied on a part of a card",
+					"description": "Represents description of the actions that can be applied on a part of a card.",
 					"type": "array",
 					"items": {
 						"$ref": "#/definitions/action"
@@ -184,18 +184,18 @@
 					"$ref": "#/definitions/data"
 				},
 				"unitOfMeasurement": {
-					"description": "Represents unit of measurement for the whole numeric header",
+					"description": "Represents unit of measurement for the whole numeric header.",
 					"type": "string"
 				},
 				"mainIndicator": {
 					"$ref": "#/definitions/HeaderType.Numeric.MainIndicator"
 				},
 				"details": {
-					"description": "Represents additional information about the numeric header",
+					"description": "Represents additional information about the numeric header.",
 					"type": "string"
 				},
 				"sideIndicators": {
-					"description": "Multiple side indicators that relate to the main numeric indicator",
+					"description": "Multiple side indicators that relate to the main numeric indicator.",
 					"type": "array",
 					"maxItems": 2,
 					"items": {
@@ -316,11 +316,11 @@
 			"additionalProperties": false,
 			"properties": {
 				"title": {
-					"description": "The title of the item",
+					"description": "The title of the item.",
 					"$ref": "#/definitions/field"
 				},
 				"description": {
-					"description": "The description of the item",
+					"description": "The description of the item.",
 					"$ref": "#/definitions/field"
 				},
 				"info": {
@@ -341,7 +341,7 @@
 				},
 				"highlight": {
 					"type": "string",
-					"description": "The highlight of the item",
+					"description": "The highlight of the item.",
 					"oneOf": [
 						{ "$ref": "#/definitions/state" },
 						{ "$ref": "#/definitions/simpleBinding" }
@@ -351,7 +351,7 @@
 					"$ref": "#/definitions/icon"
 				},
 				"actions": {
-					"description": "Represents actions that can be applied on the item",
+					"description": "Defines actions that can be applied on the item.",
 					"type": "array",
 					"items": {
 						"$ref": "#/definitions/action"
@@ -649,23 +649,23 @@
 			"additionalProperties": false,
 			"properties": {
 				"title": {
-					"description": "The title of the timeline item",
+					"description": "The title of the timeline item.",
 					"$ref": "#/definitions/field"
 				},
 				"description": {
-					"description": "The description of the timeline item",
+					"description": "The description of the timeline item.",
 					"$ref": "#/definitions/field"
 				},
 				"dateTime": {
-					"description": "The dateTime value of the timeline item",
+					"description": "The dateTime value of the timeline item.",
 					"$ref": "#/definitions/field"
 				},
 				"owner": {
-					"description": "The owner of the timeline item",
+					"description": "The owner of the timeline item.",
 					"$ref": "#/definitions/field"
 				},
 				"ownerImage": {
-					"description": "The owner image of the timeline item",
+					"description": "The owner image of the timeline item.",
 					"properties": {
 						"value": {
 							"type": "string"
@@ -673,7 +673,7 @@
 					}
 				},
 				"icon": {
-					"description": "The icon of the timeline item",
+					"description": "The icon of the timeline item.",
 					"$ref": "#/definitions/icon"
 				}
 			}
@@ -732,11 +732,11 @@
 			"additionalProperties": false,
 			"properties": {
 				"title": {
-					"description": "Represents language-dependent title of the object group",
+					"description": "Defines language-dependent title of the object group.",
 					"type": "string"
 				},
 				"items": {
-					"description": "Represents items of information",
+					"description": "Represents items of information.",
 					"type": "array",
 					"items": {
 						"$ref": "#/definitions/ContentType.Object.Item"
@@ -750,19 +750,19 @@
 			"additionalProperties": false,
 			"properties": {
 				"icon": {
-					"description": "Represents the icon of the item",
+					"description": "Defines the icon of the item.",
 					"$ref": "#/definitions/icon"
 				},
 				"label": {
-					"description": "Represents the label of the item",
+					"description": "Defines the label of the item.",
 					"type": "string"
 				},
 				"value": {
-					"description": "Represents the text, which is associated with the label",
+					"description": "Represents the text, which is associated with the label.",
 					"type": "string"
 				},
 				"type": {
-					"description": "Represents the type of the displayed information.",
+					"description": "Defines the type of the displayed information.",
 					"type": "string",
 					"oneOf": [
 						{
@@ -780,18 +780,18 @@
 					]
 				},
 				"url": {
-					"description": "Represents a URL string. Works only with item of type 'link'",
+					"description": "Defines the URL string. Works only with items of type 'link'.",
 					"type": "string"
 				},
 				"target": {
-					"description": "Represents the target of the link - it works like the target property of the HTML <a> tag. Works only with item of type 'link'",
+					"description": "Specifies the target of the link - it works like the target property of the HTML 'a' tag. Works only with items of type 'link'.",
 					"oneOf": [
 						{ "$ref": "#/definitions/target" },
 						{ "$ref": "#/definitions/simpleBinding" }
 					]
 				},
 				"emailSubject": {
-					"description": "Represents the subject of the email. Works only with item of type 'email'",
+					"description": "Represents the subject of the email. Works only with item of type 'email'.",
 					"type": "string"
 				}
 			}
@@ -810,14 +810,14 @@
 					"additionalProperties": false,
 					"properties": {
 						"columns": {
-							"description": "Represents columns attributes",
+							"description": "Defines the columns attributes.",
 							"type": "array",
 							"items": {
 								"$ref": "#/definitions/ContentType.Table.Column"
 							}
 						},
 						"actions": {
-							"description": "Represents actions that can be applied on the item",
+							"description": "Defines actions that can be applied on the item.",
 							"type": "array",
 							"items": {
 								"$ref": "#/definitions/action"
@@ -840,30 +840,30 @@
 			"additionalProperties": false,
 			"properties": {
 				"title": {
-					"description": "Represents language-dependent title of the column",
+					"description": "Defines language-dependent title of the column.",
 					"type": "string"
 				},
 				"width": {
-					"description": "Defines the width of the column",
+					"description": "Defines the width of the column.",
 					"type": "string"
 				},
 				"value": {
-					"description": "Represents text value of the column",
+					"description": "Represents the text value of the column.",
 					"type": "string"
 				},
 				"icon": {
-					"description": "Represents column with icon",
+					"description": "Represents column with icon.",
 					"$ref": "#/definitions/icon"
 				},
 				"state": {
-					"description": "Represents the state of the column",
+					"description": "Defines the state of the column.",
 					"oneOf": [
 						{ "$ref": "#/definitions/state" },
 						{ "$ref": "#/definitions/simpleBinding" }
 					]
 				},
 				"url": {
-					"description": "Represents URL string",
+					"description": "Defines the URL string.",
 					"type": "string"
 				},
 				"target": {
