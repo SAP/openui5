@@ -79,7 +79,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Create the change for the app descriptor and add it to the ChangePersistence.
+	 * Create the change for the app descriptor and adds it to the Flex Persistence.
 	 * @return {Promise} Returns Promise resolving after change has been created and stored
 	 */
 	AppDescriptorCommand.prototype.createAndStoreChange = function() {

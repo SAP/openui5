@@ -2,19 +2,21 @@ sap.ui.define([
 	"sap/ui/rta/plugin/RTAElementMover",
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/rta/command/CommandFactory",
-	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/base/util/LoaderExtensions",
-	"sap/ui/util/XMLHelper"
+	"sap/ui/util/XMLHelper",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/write/api/PersistenceWriteAPI"
 ],
 function(
 	RTAElementMover,
 	OverlayUtil,
 	CommandFactory,
-	FlexControllerFactory,
 	ChangeRegistry,
 	LoaderExtensions,
-	XMLHelper
+	XMLHelper,
+	ChangesWriteAPI,
+	PersistenceWriteAPI
 ) {
 	"use strict";
 
@@ -123,10 +125,9 @@ function(
 				layer: "VENDOR"
 			};
 
-			var oFlexController = FlexControllerFactory.createForControl(oParentInfo.parent);
-			var oChange = oFlexController.createChange(oChangeContent, oParentInfo.parent);
-			oFlexController._oChangePersistence.addDirtyChange(oChange);
-			oFlexController._oChangePersistence.saveDirtyChanges();
+			var oChange = ChangesWriteAPI.create(oChangeContent, oParentInfo.parent);
+			PersistenceWriteAPI.add(oChange, oParentInfo.parent);
+			PersistenceWriteAPI.saveChanges(oParentInfo.parent);
 			return oChange;
 		});
 	};

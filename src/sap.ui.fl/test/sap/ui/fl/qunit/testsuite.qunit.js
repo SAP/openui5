@@ -47,6 +47,18 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/api/SmartVariantManagementApplyAPI"]
 				}
 			},
+			"write/api/ChangesWriteAPI": {
+				group: 'Write API',
+				coverage: {
+					only: ["sap/ui/fl/write/api/ChangesWriteAPI", "sap/ui/fl/write/ChangesController"]
+				}
+			},
+			"write/api/PersistenceWriteAPI": {
+				group: 'Write API',
+				coverage: {
+					only: ["sap/ui/fl/write/api/PersistenceWriteAPI", "sap/ui/fl/write/ChangesController"]
+				}
+			},
 			// Team Gravity tests
 			"descriptorRelated/api/Api": {
 				group: 'Descriptor related APIs',

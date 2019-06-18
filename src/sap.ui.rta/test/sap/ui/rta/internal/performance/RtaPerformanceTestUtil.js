@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/thirdparty/sinon"
 ], function(
 	RuntimeAuthoring,
@@ -11,6 +12,7 @@ sap.ui.define([
 	DesignTime,
 	FlexUtils,
 	FlexSettings,
+	PersistenceWriteAPI,
 	sinon
 ) {
 	"use strict";
@@ -57,14 +59,13 @@ sap.ui.define([
 			};
 		},
 
-		_defineTestStubs: function(oRuntimeAuthoring) {
+		_defineTestStubs: function() {
 			sinon.stub(FlexSettings, "getInstance").returns(Promise.resolve({
 				isProductiveSystem: function() { return false; },
 				hasMergeErrorOccured: function() { return false; }
 			}));
 			sinon.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
-			var oFlexController = oRuntimeAuthoring._getFlexController();
-			sinon.stub(oFlexController, "getComponentChanges").returns(Promise.resolve([]));
+			sinon.stub(PersistenceWriteAPI, "getUIChanges").returns(Promise.resolve([]));
 		},
 
 		startRta: function(oHorizontalLayout, aPlugins) {

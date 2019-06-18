@@ -12,29 +12,33 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/Remove",
 	"qunit/RtaQunitUtils",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	MessageToast,
 	ContextMenuPlugin,
 	DesignTime,
 	Settings,
-	Utils,
-	RtaUtils,
+	FlexUtils,
+	RtaFlexUtils,
 	FakeLrepSessionStorage,
 	RuntimeAuthoring,
 	CommandFactory,
 	Remove,
-	RtaQunitUtils,
+	RtaQunitFlexUtils,
+	ChangesWriteAPI,
+	PersistenceWriteAPI,
 	sinon
 ) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
-	var oCompCont = RtaQunitUtils.renderTestAppAt("qunit-fixture");
+	var oCompCont = RtaQunitFlexUtils.renderTestAppAt("qunit-fixture");
 	var oComp = oCompCont.getComponentInstance();
 
 	function givenAnFLP(fnFLPToExternalStub, mShellParams) {
-		sandbox.stub(Utils, "getUshellContainer").returns({
+		sandbox.stub(FlexUtils, "getUshellContainer").returns({
 			getService : function() {
 				return {
 					toExternal : fnFLPToExternalStub,
@@ -90,19 +94,14 @@ sap.ui.define([
 	function whenNoAppDescriptorChangesExist(oRta) {
 		appDescriptorChanges(oRta, false);
 	}
-	function personalizationChanges(oRta, bExist) {
-		var stubFlexController = {
-			hasHigherLayerChanges : function() {
-				return Promise.resolve(bExist);
-			}
-		};
-		sandbox.stub(oRta, "_getFlexController").returns(stubFlexController);
+	function personalizationChanges(bExist) {
+		sandbox.stub(ChangesWriteAPI, "hasHigherLayerChanges").resolves(bExist);
 	}
-	function whenHigherLayerChangesExist(oRta) {
-		personalizationChanges(oRta, true);
+	function whenHigherLayerChangesExist() {
+		personalizationChanges(true);
 	}
-	function whenNoHigherLayerChangesExist(oRta) {
-		personalizationChanges(oRta, false);
+	function whenNoHigherLayerChangesExist() {
+		personalizationChanges(false);
 	}
 
 	function isReloadedWithMaxLayerParameter(fnFLPToExternalStub) {
@@ -113,7 +112,7 @@ sap.ui.define([
 		return !!mFLPArgs.params["sap-ui-fl-max-layer"];
 	}
 	function whenUserConfirmsMessage(sExpectedMessageKey, assert) {
-		sandbox.stub(RtaUtils, "_showMessageBox").callsFake(
+		sandbox.stub(RtaFlexUtils, "_showMessageBox").callsFake(
 			function(oMessageType, sTitleKey, sMessageKey) {
 				assert.equal(sMessageKey, sExpectedMessageKey, "then expected message is shown");
 				return Promise.resolve();
@@ -133,12 +132,12 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when RTA starts", function(assert) {
-			this.oUtilsLogStub = sandbox.stub(Utils.log, "error");
+			this.oFlexUtilsLogStub = sandbox.stub(FlexUtils.log, "error");
 			var done = assert.async();
 
 			this.oRta.start().catch(function(vError) {
 				assert.ok(vError, "then the promise is rejected");
-				assert.strictEqual(this.oUtilsLogStub.callCount, 1, "and an error is logged");
+				assert.strictEqual(this.oFlexUtilsLogStub.callCount, 1, "and an error is logged");
 				done();
 			}.bind(this));
 		});
@@ -260,7 +259,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when there are higher layer (e.g personalization) changes during startup", function(assert) {
-			whenHigherLayerChangesExist(this.oRta);
+			whenHigherLayerChangesExist();
 
 			whenUserConfirmsMessage.call(this, "MSG_PERSONALIZATION_EXISTS", assert);
 
@@ -278,7 +277,7 @@ sap.ui.define([
 		});
 		QUnit.test("when there are customer changes and currentLayer is VENDOR during startup", function(assert) {
 			whenStartedWithLayer(this.oRta, "VENDOR");
-			whenHigherLayerChangesExist(this.oRta);
+			whenHigherLayerChangesExist();
 			whenUserConfirmsMessage.call(this, "MSG_HIGHER_LAYER_CHANGES_EXIST", assert);
 
 			return this.oRta._handleHigherLayerChangesOnStart().then(function() {
@@ -295,7 +294,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when no personalized changes and _handleHigherLayerChangesOnStart() is called", function(assert) {
-			whenNoHigherLayerChangesExist(this.oRta);
+			whenNoHigherLayerChangesExist();
 
 			return this.oRta._handleHigherLayerChangesOnStart().then(function() {
 				assert.strictEqual(this.fnEnableRestartSpy.callCount,
@@ -329,19 +328,8 @@ sap.ui.define([
 				return Promise.resolve(this.oRta._RESTART.NOT_NEEDED);
 			}.bind(this));
 
-			var stubFlexController = {
-				hasHigherLayerChanges : function() {
-					return Promise.resolve(false);
-				},
-				getComponentChanges : function() {
-					return Promise.resolve();
-				}
-			};
-
-			sandbox.stub(this.oRta, "_getFlexController").returns(stubFlexController);
-			sandbox.stub(this.oRta, "_checkChangesExist").callsFake(function() {
-				return Promise.resolve(true);
-			});
+			sandbox.stub(ChangesWriteAPI, "hasHigherLayerChanges").resolves(false);
+			sandbox.stub(PersistenceWriteAPI, "getUIChanges").resolves(true);
 			this.oRta.setShowToolbars(true);
 
 			this.oRta.start().then(function () {
@@ -407,7 +395,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when personalized changes exist and user exits and started in FLP reloading the personalization...", function(assert) {
 			givenMaxLayerParameterIsSetTo.call(this, "CUSTOMER", this.fnFLPToExternalStub);
-			whenHigherLayerChangesExist(this.oRta);
+			whenHigherLayerChangesExist();
 
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
 
@@ -423,7 +411,7 @@ sap.ui.define([
 		QUnit.test("when higher layer changes exist, RTA is started above CUSTOMER layer and user exits and started in FLP reloading the personalization...", function(assert) {
 			givenMaxLayerParameterIsSetTo.call(this, "VENDOR", this.fnFLPToExternalStub);
 			whenStartedWithLayer(this.oRta, "VENDOR");
-			whenHigherLayerChangesExist(this.oRta);
+			whenHigherLayerChangesExist();
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_ALL_CHANGES", assert);
 
 			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
@@ -438,7 +426,7 @@ sap.ui.define([
 		QUnit.test("when app descriptor and personalized changes exist and user exits reloading the personalization...", function(assert) {
 			givenMaxLayerParameterIsSetTo.call(this, "CUSTOMER", this.fnFLPToExternalStub);
 			whenAppDescriptorChangesExist(this.oRta);
-			whenHigherLayerChangesExist(this.oRta);
+			whenHigherLayerChangesExist();
 
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
 
@@ -453,7 +441,7 @@ sap.ui.define([
 
 		QUnit.test("when there are no personalized and appDescriptor changes and _handleReloadOnExit() is called", function(assert) {
 			givenMaxLayerParameterIsSetTo.call(this, "CUSTOMER", this.fnFLPToExternalStub);
-			whenNoHigherLayerChangesExist(this.oRta);
+			whenNoHigherLayerChangesExist();
 
 			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
 				assert.strictEqual(this.fnEnableRestartSpy.callCount,
@@ -467,7 +455,7 @@ sap.ui.define([
 		QUnit.test("when app descriptor and no personalized changes exist and user exits reloading the personalization...", function(assert) {
 			givenMaxLayerParameterIsSetTo.call(this, "CUSTOMER", this.fnFLPToExternalStub);
 			whenAppDescriptorChangesExist(this.oRta);
-			whenNoHigherLayerChangesExist(this.oRta);
+			whenNoHigherLayerChangesExist();
 
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_NEEDED", assert);
 
@@ -536,7 +524,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when _handleReloadOnExit() is called and personalized changes and user exits reloading the personalization...", function(assert) {
-			whenHigherLayerChangesExist(this.oRta);
+			whenHigherLayerChangesExist();
 			whenUserConfirmsMessage.call(this, "MSG_RELOAD_WITH_PERSONALIZATION", assert);
 
 			return this.oRta._handleReloadOnExit().then(function(sShouldReload) {
@@ -705,12 +693,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when _checkChangesExist is called without a componentName", function(assert) {
-			sandbox.stub(this.oRta, "_getFlexController").returns({
-				getComponentName: function() {
-					return [];
-				}
-			});
-
+			sandbox.stub(FlexUtils, "getComponentName").returns("");
 			return this.oRta._checkChangesExist().then(function(bPromiseValue) {
 				assert.equal(bPromiseValue, false, "then the promise resolved with false as parameter");
 			});

@@ -5,7 +5,6 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/dt/DOMUtil",
@@ -17,7 +16,6 @@ sap.ui.define([
 function(
 	jQuery,
 	FlexUtils,
-	FlexControllerFactory,
 	Settings,
 	OverlayUtil,
 	DOMUtil,
@@ -506,17 +504,6 @@ function(
 	 */
 	Utils.getEntityTypeByPath = function (oModel, sPath) {
 		return oModel.oMetadata && oModel.oMetadata._getEntityTypeByPath(sPath);
-	};
-
-	/**
-	 * Returns the FlexController of the App Component where the App Descriptor changes are saved
-	 *
-	 * @param {sap.ui.base.ManagedObject} oControl control or app component for which the flex controller should be instantiated
-	 * @returns {sap.ui.fl.FlexController} Returns FlexController Instance of Component for App Descriptor changes
-	 */
-	Utils.getAppDescriptorFlexController = function(oControl) {
-		var oAppDescriptorComponent = FlexUtils.getAppDescriptorComponentObjectForControl(oControl);
-		return FlexControllerFactory.create(oAppDescriptorComponent.name, oAppDescriptorComponent.version);
 	};
 
 	/**

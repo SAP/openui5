@@ -40,7 +40,7 @@ sap.ui.define([
 		metadata : {
 			library : "sap.ui.rta",
 			properties : {
-				/** The root control which is needed for the Flex Controller */
+				/** The root control which is needed for the Flex Persistence */
 				rootControl : {
 					type: "sap.ui.core.Control"
 				},

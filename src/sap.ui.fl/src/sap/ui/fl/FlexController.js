@@ -182,7 +182,7 @@ sap.ui.define([
 	 * @public
 	 */
 	FlexController.prototype.createChange = function (oChangeSpecificData, oControl) {
-		var oChange, ChangeHandler;
+		var oChange, oChangeHandler;
 
 		if (!oControl) {
 			throw new Error("A flexibility change cannot be created without a targeted control.");
@@ -210,9 +210,9 @@ sap.ui.define([
 			throw new Error("No control type found - the change handler can not be retrieved.");
 		}
 
-		ChangeHandler = this._getChangeHandler(oChange, sControlType, oControl, JsControlTreeModifier);
-		if (ChangeHandler) {
-			ChangeHandler.completeChangeContent(oChange, oChangeSpecificData, {
+		oChangeHandler = this._getChangeHandler(oChange, sControlType, oControl, JsControlTreeModifier);
+		if (oChangeHandler) {
+			oChangeHandler.completeChangeContent(oChange, oChangeSpecificData, {
 				modifier: JsControlTreeModifier,
 				appComponent: oAppComponent
 			});

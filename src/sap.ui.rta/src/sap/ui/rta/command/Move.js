@@ -1,7 +1,14 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
+sap.ui.define([
+	"sap/ui/rta/command/FlexCommand",
+	"sap/ui/fl/write/api/PersistenceWriteAPI"
+],
+function(
+	FlexCommand,
+	PersistenceWriteAPI
+) {
 	"use strict";
 
 	/**
@@ -81,7 +88,10 @@ sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 	};
 
 	Move.prototype.undo = function() {
-		return this._applyChange(this._oPreparedUndoChange, true);
+		return this._applyChange(this._oPreparedUndoChange)
+			.then(function() {
+				PersistenceWriteAPI.remove(this._oPreparedUndoChange, {appComponent: this.getAppComponent()});
+			}.bind(this));
 	};
 
 	return Move;

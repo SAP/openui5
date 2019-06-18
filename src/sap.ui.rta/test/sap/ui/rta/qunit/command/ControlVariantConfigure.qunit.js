@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
-	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -19,7 +19,7 @@ function(
 	OverlayRegistry,
 	VariantManagement,
 	VariantModel,
-	FlexControllerFactory,
+	PersistenceWriteAPI,
 	sinon
 ) {
 	'use strict';
@@ -55,7 +55,6 @@ function(
 			this.oGetAppComponentForControlStub = sinon.stub(flUtils, "getAppComponentForControl").returns(this.oMockedAppComponent);
 			this.oGetComponentClassNameStub = sinon.stub(flUtils, "getComponentClassName").returns("Dummy.Component");
 
-			var oFlexController = FlexControllerFactory.createForControl(this.oMockedAppComponent, this.oManifest);
 			this.oData = {
 				variantMgmtId1: {
 					defaultVariant: "variant0",
@@ -77,7 +76,7 @@ function(
 				}
 			};
 
-			this.oModel = new VariantModel(this.oData, oFlexController, this.oMockedAppComponent);
+			this.oModel = new VariantModel(this.oData, undefined, this.oMockedAppComponent);
 
 			this.oVariant = {
 				content: {
@@ -165,7 +164,7 @@ function(
 				assert.equal(this.oData["variantMgmtId1"].variants[1].title, oTitleChange.title, "then title is correctly set in model");
 				assert.equal(this.oData["variantMgmtId1"].variants[1].favorite, oFavoriteChange.favorite, "then favorite is correctly set in model");
 				assert.equal(this.oData["variantMgmtId1"].variants[1].visible, oVisibleChange.visible, "then visibility is correctly set in model");
-				assert.equal(oControlVariantConfigureCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 3, "then 3 dirty changes are present");
+				assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oMockedAppComponent).length, 3, "then 3 dirty changes are present");
 				return oControlVariantConfigureCommand.undo();
 			}.bind(this))
 			.then(function() {
@@ -174,7 +173,7 @@ function(
 				assert.equal(this.oData["variantMgmtId1"].variants[1].title, oTitleChange.originalTitle, "then title is correctly reverted in model");
 				assert.equal(this.oData["variantMgmtId1"].variants[1].favorite, oFavoriteChange.originalFavorite, "then favorite is correctly set in model");
 				assert.equal(this.oData["variantMgmtId1"].variants[1].visible, !oVisibleChange.visible, "then visibility is correctly reverted in model");
-				assert.equal(oControlVariantConfigureCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 0, "then the dirty changes are removed");
+				assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oMockedAppComponent).length, 0, "then the dirty changes are removed");
 			}.bind(this))
 			.catch(function (oError) {
 				assert.ok(false, 'catch must never be called - Error: ' + oError);
@@ -213,15 +212,15 @@ function(
 				assert.deepEqual(aConfigureChanges, aChanges, "then the changes are correctly set in change");
 				var oData = oControlVariantConfigureCommand.oModel.getData();
 				assert.equal(oData["variantMgmtId1"].defaultVariant, oDefaultChange.defaultVariant, "then default variant is correctly set in the model");
-				assert.equal(oControlVariantConfigureCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 1, "then 1 dirty change is present");
+				assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oMockedAppComponent).length, 1, "then 1 dirty change is present");
 
 				return oControlVariantConfigureCommand.undo();
-			})
+			}.bind(this))
 			.then(function() {
 				var oData = oControlVariantConfigureCommand.oModel.getData();
 				assert.equal(oData["variantMgmtId1"].defaultVariant, oDefaultChange.originalDefaultVariant, "then default variant is correctly reverted in the model");
-				assert.equal(oControlVariantConfigureCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 0, "then the dirty change is removed");
-			})
+				assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oMockedAppComponent).length, 0, "then the dirty change is removed");
+			}.bind(this))
 			.catch(function (oError) {
 				assert.ok(false, 'catch must never be called - Error: ' + oError);
 			});

@@ -8,11 +8,10 @@ sap.ui.define([
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Change",
-	"sap/ui/fl/ChangePersistence",
-	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/m/Input",
 	"sap/m/Panel",
 	"sap/ui/core/UIComponent",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	CommandFactory,
@@ -22,11 +21,10 @@ sap.ui.define([
 	ChangeRegistry,
 	FlUtils,
 	Change,
-	ChangePersistence,
-	ChangePersistenceFactory,
 	Input,
 	Panel,
 	UIComponent,
+	PersistenceWriteAPI,
 	sinon
 ) {
 	"use strict";
@@ -117,11 +115,6 @@ sap.ui.define([
 	QUnit.module("Given an array of dirty changes...", {
 		beforeEach: function () {
 			this.oComponent = new UIComponent("MyComponent");
-			var mComponentProperties = {
-				name: "MyComponent",
-				appVersion: "1.2.3"
-			};
-			this.oChangePersistence = new ChangePersistence(mComponentProperties);
 
 			this.oChangeDefinition1 = {
 				fileName: "fileName1",
@@ -181,7 +174,6 @@ sap.ui.define([
 			};
 
 			this.oControl = {id : "a Control"};
-			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl").returns(this.oChangePersistence);
 			sandbox.stub(FlUtils, "getComponentForControl").returns(this.oComponent);
 			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app" : {id: "someApp"}});
 		},
@@ -193,7 +185,7 @@ sap.ui.define([
 		QUnit.test("when calling function 'initializeWithChanges' with the array...", function(assert) {
 			var aChanges = [new Change(this.oChangeDefinition1), new Change(this.oChangeDefinition2)];
 			aChanges[1].setUndoOperations(["undoStack"]);
-			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve(aChanges));
+			sandbox.stub(PersistenceWriteAPI, "getUIChanges").resolves(aChanges);
 
 			return CommandStack.initializeWithChanges(this.oControl, ["fileName1", "fileName2"]).then(function(oStack) {
 				var aCommands = oStack.getCommands();
@@ -211,7 +203,7 @@ sap.ui.define([
 				new Change(this.oChangeDefinitionForComposite11), new Change(this.oChangeDefinitionForComposite12),
 				new Change(this.oChangeDefinitionForComposite21), new Change(this.oChangeDefinitionForComposite22)
 			];
-			sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve(aCompositeChanges));
+			sandbox.stub(PersistenceWriteAPI, "getUIChanges").resolves(aCompositeChanges);
 
 			return CommandStack.initializeWithChanges(this.oControl, ["fileName11", "fileName12", "fileName21", "fileName22"]).then(function(oStack) {
 				var aCommands = oStack.getCommands();

@@ -24,12 +24,12 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/UnhideControl",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/registry/SimpleChanges",
-	"sap/ui/fl/FlexControllerFactory",
-	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Change",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/ControlTreeModifier",
+	"sap/ui/fl/write/ChangesController",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -56,12 +56,12 @@ function (
 	UnhideControl,
 	ChangeRegistry,
 	SimpleChanges,
-	FlexControllerFactory,
-	ChangePersistenceFactory,
+	PersistenceWriteAPI,
 	Change,
 	JSONModel,
 	flUtils,
 	RtaControlTreeModifier,
+	ChangesController,
 	sinon
 ) {
 	"use strict";
@@ -214,9 +214,8 @@ function (
 		});
 
 		QUnit.test("when executing a command that fails because of dependencies", function(assert) {
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oMockedAppComponent);
-			sandbox.stub(oChangePersistence, "checkForOpenDependenciesForControl").returns(true);
-
+			var oFlexController = ChangesController.getFlexControllerInstance(oMockedAppComponent);
+			sandbox.stub(oFlexController, "checkForOpenDependenciesForControl").returns(true);
 			return prepareAndExecute(this.oFlexCommand)
 				.then(function() {
 					assert.ok(false, 'then must never be called. An Exception should be thrown');
@@ -1178,8 +1177,7 @@ function (
 	}, function() {
 		QUnit.test("when change handler is revertible and command is executed", function (assert) {
 			assert.expect(10);
-			var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent);
-			var fnRevertChangesOnControlStub = sandbox.spy(oFlexController, "revertChangesOnControl");
+			var fnRevertChangesOnControlStub = sandbox.spy(PersistenceWriteAPI, "remove");
 			sandbox.stub(ChangeRegistry.getInstance(), "getChangeHandler").returns(this.fnChangeHandler);
 
 			this.oCommandStack.push(this.oFlexCommand);
@@ -1198,7 +1196,7 @@ function (
 					return this.oCommandStack.undo()
 						.then(function () {
 							assert.ok(true, "then a Promise.resolve() is returned on Stack.undo()");
-							assert.ok(fnRevertChangesOnControlStub.calledWith([oChange], oMockedAppComponent), "then FlexController.revertChangesOnControl called with required parameters");
+							assert.ok(fnRevertChangesOnControlStub.calledWith(oChange, {appComponent: oMockedAppComponent, revert:true}), "then PersistenceWriteAPI.remove called with required parameters");
 							assert.equal(this.fnRtaStartRecordingStub.callCount, 0, "then recording of rta undo operations not started");
 							assert.equal(this.fnRtaStopRecordingStub.callCount, 0, "then recording of rta undo operations not stopped");
 						}.bind(this));

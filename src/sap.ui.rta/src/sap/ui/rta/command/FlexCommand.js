@@ -5,18 +5,20 @@ sap.ui.define([
 	"sap/ui/rta/command/BaseCommand",
 	"sap/ui/rta/ControlTreeModifier",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Utils",
 	"sap/base/Log",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/write/api/PersistenceWriteAPI"
 ], function(
 	BaseCommand,
 	RtaControlTreeModifier,
 	JsControlTreeModifier,
-	FlexControllerFactory,
 	flUtils,
 	Log,
-	merge
+	merge,
+	ChangesWriteAPI,
+	PersistenceWriteAPI
 ) {
 	"use strict";
 
@@ -178,7 +180,6 @@ sap.ui.define([
 		if (oModel && sVariantManagementReference) {
 			sVariantReference = oModel.getCurrentVariantReference(sVariantManagementReference);
 		}
-		var oFlexController = FlexControllerFactory.createForControl(this.getAppComponent());
 		var mVariantObj = {
 			variantManagementReference: sVariantManagementReference,
 			variantReference: sVariantReference
@@ -186,7 +187,7 @@ sap.ui.define([
 		if (sVariantReference) {
 			mChangeSpecificData = Object.assign({}, mChangeSpecificData, mVariantObj);
 		}
-		var oChange = oFlexController.createChange(mChangeSpecificData, this._validateControlForChange(mFlexSettings));
+		var oChange = ChangesWriteAPI.create(mChangeSpecificData, this._validateControlForChange(mFlexSettings));
 		if (mFlexSettings && mFlexSettings.originalSelector) {
 			oChange.addDependentControl(mFlexSettings.originalSelector, "originalSelector", {modifier: JsControlTreeModifier, appComponent: this.getAppComponent()});
 			oChange.getDefinition().selector = JsControlTreeModifier.getSelector(this.getSelector().id, this.getSelector().appComponent);
@@ -211,13 +212,12 @@ sap.ui.define([
 			var oChange = this.getPreparedChange();
 
 			if (oChange.getRevertData()) {
-				var oFlexController = FlexControllerFactory.createForControl(this.getAppComponent());
-				var bRevertible = oFlexController.isChangeHandlerRevertible(oChange, vControl, undefined);
+				var bRevertible = ChangesWriteAPI.isChangeHandlerRevertible(oChange, vControl);
 				if (!bRevertible) {
 					Log.error(enhanceErrorMessage("No revert change function available to handle revert data.", vControl));
 					return;
 				}
-				return oFlexController.revertChangesOnControl([oChange], this.getAppComponent(true));
+				return PersistenceWriteAPI.remove(oChange, {appComponent: this.getAppComponent(true), revert: true});
 			} else if (this._aRecordedUndo) {
 				RtaControlTreeModifier.performUndo(this._aRecordedUndo);
 			} else {
@@ -229,21 +229,20 @@ sap.ui.define([
 	/**
 	 * @private
 	 * @param {sap.ui.fl.Change|Object} vChange Change object or map containing the change object
-	 * @param {boolean} [bNotMarkAsAppliedChange] Apply the change without marking them as applied changes in the custom Data
 	 * @returns {Promise} Returns an empty promise
 	 */
-	FlexCommand.prototype._applyChange = function(vChange, bNotMarkAsAppliedChange) {
+	FlexCommand.prototype._applyChange = function(vChange) {
 		//TODO: remove the following compatibility code when concept is implemented
 		var oChange = vChange.change || vChange;
 
 		var oAppComponent = this.getAppComponent();
 		var oSelectorElement = RtaControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
-		var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
-		var mControl = oFlexController._getControlIfTemplateAffected(oChange, oSelectorElement, oSelectorElement.getMetadata().getName(), {
+		var mControl = ChangesWriteAPI.getControlIfTemplateAffected({
 			modifier: JsControlTreeModifier,
-			appComponent: oAppComponent
-		});
-		var bRevertible = oFlexController.isChangeHandlerRevertible(oChange, mControl.control);
+			appComponent: oAppComponent,
+			change: oChange
+		}, oSelectorElement);
+		var bRevertible = ChangesWriteAPI.isChangeHandlerRevertible(oChange, mControl.control);
 		var mPropertyBag = {
 			modifier: bRevertible ? JsControlTreeModifier : RtaControlTreeModifier,
 			appComponent: oAppComponent,
@@ -255,23 +254,9 @@ sap.ui.define([
 		}
 
 		return Promise.resolve()
-		.then(function() {
-			if (oFlexController.checkForOpenDependenciesForControl(oChange.getSelector(), mPropertyBag.modifier, oAppComponent)) {
-				throw Error("The following Change cannot be applied because of a dependency: " + oChange.getId());
-			}
-		})
 
 		.then(function() {
-			return oFlexController.checkTargetAndApplyChange(oChange, oSelectorElement, mPropertyBag);
-		})
-
-		.then(function(oResult) {
-			if (oResult.success) {
-				if (bNotMarkAsAppliedChange) {
-					oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oSelectorElement);
-				}
-			}
-			return oResult;
+			return ChangesWriteAPI.apply(oChange, oSelectorElement, mPropertyBag);
 		})
 
 		.then(function(oResult) {

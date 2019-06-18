@@ -8,9 +8,9 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
 	"qunit/RtaQunitUtils",
-	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/thirdparty/sinon-4"
 
 ], function (
@@ -21,9 +21,9 @@ sap.ui.define([
 	OverlayRegistry,
 	DtUtil,
 	RtaQunitUtils,
-	ChangePersistenceFactory,
 	QUnitUtils,
 	KeyCodes,
+	PersistenceWriteAPI,
 	sinon
 ) {
 	"use strict";
@@ -79,7 +79,7 @@ sap.ui.define([
 			return this.oRta.getCommandStack()._oLastCommand;
 		}
 
-		function fnPressRenameAndEnsureFunctionality(assert, oChangePersistence, oRenameButton, sText) {
+		function fnPressRenameAndEnsureFunctionality(assert, oControl, oRenameButton, sText) {
 			var $fieldOverlay = this.oCompanyCodeFieldOverlay.$();
 
 			return new Promise(function(fnResolve) {
@@ -100,7 +100,7 @@ sap.ui.define([
 									if (oFirstExecutedCommand && oFirstExecutedCommand.getName() === "rename") {
 										fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
 											assert.strictEqual(this.oCompanyCodeField._getLabel().getText(), sText, "then label of the group element is " + sText);
-											assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
+											assert.equal(PersistenceWriteAPI.getDirtyChanges(oControl).length, 1, "then there is 1 dirty change in the Flex Persistence");
 											fnResolve();
 										}.bind(this));
 									}
@@ -132,8 +132,7 @@ sap.ui.define([
 			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(3, assert);
 			var done = assert.async();
 
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(this.oCompanyCodeField);
-			assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then there is no dirty change in the FL ChangePersistence");
+			assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oCompanyCodeField).length, 0, "then there is no dirty change in the Flex Persistence");
 
 			var oCommandStack = this.oRta.getCommandStack();
 			oCommandStack.attachEventOnce("commandExecuted", function() {
@@ -163,7 +162,7 @@ sap.ui.define([
 										assert.equal(oGroupElements[iIndex].getLabelText(), oFieldToAdd.label, "the added element is at the correct position");
 										assert.ok(oGroupElements[iIndex].getVisible(), "the new field is visible");
 										assert.equal(this.oBoundButton35Field.fieldLabel, oFieldToAdd.label, "the new field is the one that got deleted");
-										assert.equal(oChangePersistence.getDirtyChanges().length, 3, "then there are 3 dirty change in the FL ChangePersistence");
+										assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oCompanyCodeField).length, 3, "then there are 3 dirty change in the Flex Peristence");
 									}.bind(this))
 
 									.then(this.oRta.stop.bind(this.oRta))
@@ -192,8 +191,7 @@ sap.ui.define([
 			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
 			var done = assert.async();
 
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(this.oCompanyCodeField);
-			assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then there is no dirty change in the FL ChangePersistence");
+			assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oCompanyCodeField).length, 0, "then there is no dirty change in the Flex Peristence");
 
 			var oDialog = this.oRta.getPlugins()["additionalElements"].getDialog();
 			this.oCompanyCodeFieldOverlay.focus();
@@ -219,7 +217,7 @@ sap.ui.define([
 						var iIndex = oGroupElements.indexOf(this.oCompanyCodeField) + 1;
 						assert.equal(oGroupElements[iIndex].getLabelText(), sFieldToAddText, "the added element is at the correct position");
 						assert.ok(oGroupElements[iIndex].getVisible(), "the new field is visible");
-						assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
+						assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oCompanyCodeField).length, 1, "then there is 1 dirty change in the Flex Persistence");
 
 						oObserver.disconnect();
 						this.oRta.stop().then(done);
@@ -242,8 +240,7 @@ sap.ui.define([
 
 			var oCommandStack = this.oRta.getCommandStack();
 
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(this.oVictim);
-			assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then there is no dirty change in the FL ChangePersistence");
+			assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oVictim).length, 0, "then there is no dirty change in the Flex Persistence");
 
 			oCommandStack.attachModified(function() {
 				var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
@@ -251,7 +248,7 @@ sap.ui.define([
 					//TODO fix timing as modified is called before serializer is triggered...
 					fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
 						assert.strictEqual(this.oVictim.getVisible(), false, " then field is not visible");
-						assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
+						assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oVictim).length, 1, "then there is 1 dirty change in the Flex Persistence");
 						this.oRta.stop().then(fnDone);
 					}.bind(this));
 				}
@@ -268,8 +265,7 @@ sap.ui.define([
 			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
 			var oCommandStack = this.oRta.getCommandStack();
 
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(this.oCompanyCodeField);
-			assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then there is no dirty change in the FL ChangePersistence");
+			assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oCompanyCodeField).length, 0, "then there is no dirty change in the Flex Persistence");
 
 			oCommandStack.attachModified(function() {
 				var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
@@ -278,7 +274,7 @@ sap.ui.define([
 					fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
 						var iIndex = 0;
 						assert.equal(this.oDatesGroup.getGroupElements()[iIndex].getId(), this.oCompanyCodeField.getId(), " then the field is moved to first place");
-						assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
+						assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oCompanyCodeField).length, 1, "then there is 1 dirty change in the Flex Persistence");
 						this.oRta.stop();
 					}.bind(this));
 				}
@@ -295,8 +291,7 @@ sap.ui.define([
 
 		QUnit.test("when renaming a group (via double click) and setting a new title...", function(assert) {
 			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(this.oDatesGroup);
-			assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then there is no dirty change in the FL ChangePersistence");
+			assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oDatesGroup).length, 0, "then there is no dirty change in the Flex Persistence");
 
 			this.oDatesGroupOverlay.focus();
 			var $groupOverlay = this.oDatesGroupOverlay.$();
@@ -319,7 +314,7 @@ sap.ui.define([
 									oFirstExecutedCommand.getName() === "rename") {
 									fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
 										assert.strictEqual(this.oDatesGroup.getLabel(), "Test", "then title of the group is Test");
-										assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
+										assert.equal(PersistenceWriteAPI.getDirtyChanges(oCompCont.getComponentInstance()).length, 1, "then there is 1 dirty change in the Flex Persistence");
 										fnResolve();
 									}.bind(this));
 								}
@@ -357,8 +352,7 @@ sap.ui.define([
 			var oFieldToHide = oFormContainer.getFormElements()[0];
 			var oFieldToHideOverlay = OverlayRegistry.getOverlay(oFieldToHide);
 
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(this.oCompanyCodeField);
-			assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then there is no dirty change in the FL ChangePersistence");
+			assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oCompanyCodeField).length, 0, "then there is no dirty change in the Flex Persistence");
 
 			var oCommandStack = this.oRta.getCommandStack();
 			oCommandStack.attachEventOnce("commandExecuted", function() {
@@ -390,7 +384,7 @@ sap.ui.define([
 									aCommands.length === 3) {
 									fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
 										sap.ui.getCore().applyChanges();
-										assert.equal(oChangePersistence.getDirtyChanges().length, 3, "then there are 3 dirty change in the FL ChangePersistence");
+										assert.equal(PersistenceWriteAPI.getDirtyChanges(oCompCont.getComponentInstance()).length, 3, "then there are 3 dirty change in the Flex Persistence");
 									})
 									.then(this.oRta.stop.bind(this.oRta))
 									.then(done);
@@ -422,15 +416,14 @@ sap.ui.define([
 		QUnit.test("when renaming a group element via context menu (expanded context menu) and setting a new label...", function(assert) {
 			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
 
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(this.oCompanyCodeField);
-			assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then there is no dirty change in the FL ChangePersistence");
+			assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oCompanyCodeField).length, 0, "then there is no dirty change in the Flex Persistence");
 			this.oCompanyCodeFieldOverlay.focus();
 			this.oCompanyCodeFieldOverlay.setSelected(true);
 
 			// open context menu (expanded menu) and press rename button
 			RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oCompanyCodeFieldOverlay).then(function() {
 				var oContextMenuButton = this.oRta.getPlugins()["contextMenu"].oContextMenuControl.getButtons()[0];
-				return fnPressRenameAndEnsureFunctionality.call(this, assert, oChangePersistence, oContextMenuButton, 'TestExpandedMenu');
+				return fnPressRenameAndEnsureFunctionality.call(this, assert, this.oCompanyCodeField, oContextMenuButton, 'TestExpandedMenu');
 			}.bind(this));
 		});
 
@@ -438,8 +431,7 @@ sap.ui.define([
 			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
 			var done = assert.async();
 
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(this.oCompanyCodeField);
-			assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then there is no dirty change in the FL ChangePersistence");
+			assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oCompanyCodeField).length, 0, "then there is no dirty change in the Flex Persistence");
 
 			this.oCompanyCodeFieldOverlay.focus();
 
@@ -448,7 +440,7 @@ sap.ui.define([
 				assert.ok(oContextMenuControl.bOpen, "ContextMenu should be opened");
 				// press rename button
 				var oRenameButton = oContextMenuControl.getButtons()[0];
-				fnPressRenameAndEnsureFunctionality.call(this, assert, oChangePersistence, oRenameButton, 'TestCompactMenu').then(done);
+				fnPressRenameAndEnsureFunctionality.call(this, assert, this.oCompanyCodeField, oRenameButton, 'TestCompactMenu').then(done);
 			}.bind(this));
 
 			// open context menu (compact menu)
@@ -462,15 +454,14 @@ sap.ui.define([
 			var oCombinedElement = sap.ui.getCore().byId("Comp1---idMain1--Dates.BoundButton35");
 			var oCombinedElementOverlay = OverlayRegistry.getOverlay(oCombinedElement);
 
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oCombinedElement);
-			assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then there is no dirty change in the FL ChangePersistence");
+			assert.equal(PersistenceWriteAPI.getDirtyChanges(oCombinedElement).length, 0, "then there is no dirty change in the Flex Persistence");
 
 			var oCommandStack = this.oRta.getCommandStack();
 			oCommandStack.attachCommandExecuted(function() {
 				fnWaitForExecutionAndSerializationBeingDone.call(this)
 					.then(function() {
 						sap.ui.getCore().applyChanges();
-						assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there ia a dirty change in the FL ChangePersistence");
+						assert.equal(PersistenceWriteAPI.getDirtyChanges(oCompCont.getComponentInstance()).length, 1, "then there ia a dirty change in the Flex Persistence");
 					})
 					.then(this.oRta.stop.bind(this.oRta))
 					.then(done);
