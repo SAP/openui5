@@ -2,7 +2,6 @@
 
 sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
-	"sap/ui/rta/command/Move",
 	"sap/ui/rta/command/FlexCommand",
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/fl/Utils",
@@ -11,14 +10,10 @@ sap.ui.define([
 	"sap/m/ObjectHeader",
 	"sap/m/ObjectAttribute",
 	"sap/ui/fl/registry/ChangeRegistry",
-	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/rta/ControlTreeModifier",
 	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	CommandFactory,
-	Move,
 	FlexCommand,
 	ElementDesignTimeMetadata,
 	FlUtils,
@@ -27,9 +22,6 @@ sap.ui.define([
 	ObjectHeader,
 	ObjectAttribute,
 	ChangeRegistry,
-	ChangesWriteAPI,
-	PersistenceWriteAPI,
-	ControlTreeModifier,
 	Log,
 	sinon
 ) {
@@ -134,12 +126,12 @@ sap.ui.define([
 			}.bind(this))
 
 			.then(function() {
-				assert.equal(this.fnCompleteChangeContentSpy.callCount, 2, "then completeChangeContent is called twice (1x SF, 1x undo preparation)");
+				assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
 				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
 			}.bind(this))
 
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 
@@ -159,7 +151,7 @@ sap.ui.define([
 			})
 
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 	});
@@ -239,19 +231,12 @@ sap.ui.define([
 
 			.then(this.oMoveCommand.undo.bind(this.oMoveCommand))
 
-			.then(function() {
-				var oChange = this.oMoveCommand.getPreparedChange();
-				if (this.oMoveCommand.getAppComponent) {
-					return PersistenceWriteAPI.remove(oChange, {appComponent: this.oMoveCommand.getAppComponent()});
-				}
-			}.bind(this))
-
 			.then(this.oMoveCommand.execute.bind(this.oMoveCommand))
 
 			.then(assertObjectAttributeMoved.bind(this, assert))
 
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 	});

@@ -1373,9 +1373,8 @@ function (
 
 			.then(function(oMoveCommand) {
 				assert.ok(oMoveCommand, "then command is available");
-				assert.equal(oCreateChangeFromDataSpy.callCount, 2, "and '_createChangeFromData' is called twice (once for prepare change and once for undo change");
+				assert.equal(oCreateChangeFromDataSpy.callCount, 1, "and '_createChangeFromData' is called once");
 				assert.deepEqual(oCreateChangeFromDataSpy.args[0][1], oExpectedFlexSettings, "and '_createChangeFromData' is called with the enriched set of flex settings");
-				assert.deepEqual(oCreateChangeFromDataSpy.args[1][1], oExpectedFlexSettings, "and '_createChangeFromData' is called with the enriched set of flex settings");
 				assert.strictEqual(oMoveCommand.getPreparedChange().getDefinition().dependentSelector.originalSelector.id, oExpectedFlexSettings.originalSelector, "and the prepared change contains the original selector as dependency");
 				assert.strictEqual(oMoveCommand.getPreparedChange().getContent().boundAggregation, "items", "and the bound aggegation is written to the change content");
 				assert.strictEqual(oMoveCommand.getPreparedChange().getContent().source.selector.id, oMoveCommand.getPreparedChange().getDefinition().dependentSelector.source.id, "and the content of the change is also adjusted");
@@ -1388,7 +1387,7 @@ function (
 			}.bind(this))
 
 			.then(function() {
-				assert.equal(oCompleteChangeContentSpy.callCount, 2, "then completeChangeContent is called twice (once for prepare change and once for undo change)");
+				assert.equal(oCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
 				assert.equal(oApplyChangeSpy.callCount, 1, "then applyChange is called once");
 				assert.equal(this.oList.getItems()[0].getContent()[0].getItems()[0].getItems()[0].getItems()[0].getText(), "More Text 1", "and text control in first item has been moved");
 				assert.equal(this.oList.getItems()[0].getContent()[0].getItems()[0].getItems()[0].getItems()[1].getText(), "Text 1", "and text control in first item has been moved");
