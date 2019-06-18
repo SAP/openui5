@@ -46,28 +46,28 @@
 				<th>Type</th>
 				<th>Required</th>
 				<th>Description</th>
-				<th>Version</th>
+				<th>Schema Version</th>
 			</tr>
 			<tr>
 				<td>type</td>
 				<td>string</td>
 				<td>Yes</td>
 				<td>The type of the action. Possible values: "Navigation".</td>
-				<td>1.2.0</td>
+				<td>1.15.0</td>
 			</tr>
 			<tr>
 				<td>enabled</td>
 				<td>boolean</td>
 				<td>No</td>
 				<td>If the action is enabled. Default value is true.</td>
-				<td>1.2.0</td>
+				<td>1.15.0</td>
 			</tr>
 			<tr>
 				<td>parameters</td>
 				<td>Object</td>
 				<td>No</td>
 				<td>The parameters of the action.</td>
-				<td>1.2.0</td>
+				<td>1.15.0</td>
 			</tr>
 		</table>
 
@@ -81,21 +81,14 @@
 				<th>Type</th>
 				<th>Required</th>
 				<th>Description</th>
-				<th>Version</th>
-			</tr>
-			<tr>
-				<td>service</td>
-				<td>string or Service</td>
-				<td>No</td>
-				<td>The service to handle the navigation.</td>
-				<td>1.2.0</td>
+				<th>Schema Version</th>
 			</tr>
 			<tr>
 				<td>url</td>
 				<td>string</td>
 				<td>No</td>
 				<td>The URL to navigate to.</td>
-				<td>1.2.0</td>
+				<td>1.15.0</td>
 			</tr>
 			<tr>
 				<td>target</td>
@@ -104,35 +97,7 @@
 				<td>If the browser should open a new window or use the same window. Possible values: "_blank", "_self".
 					Default value is "_blank".
 				</td>
-				<td>1.2.0</td>
-			</tr>
-		</table>
-
-		<p>
-			Service:
-		</p>
-
-		<table>
-			<tr>
-				<th>Property</th>
-				<th>Type</th>
-				<th>Required</th>
-				<th>Description</th>
-				<th>Version</th>
-			</tr>
-			<tr>
-				<td>name</td>
-				<td>string</td>
-				<td>Yes</td>
-				<td>The name of the service.</td>
-				<td>1.1.0</td>
-			</tr>
-			<tr>
-				<td>parameters</td>
-				<td>Object</td>
-				<td>No</td>
-				<td>The parameters of the service.</td>
-				<td>1.1.0</td>
+				<td>1.15.0</td>
 			</tr>
 		</table>
 
@@ -170,51 +135,6 @@
 			]
 		},
 		...
-	}
-}</pre>
-
-		<p>List item navigation action with service navigation. The service will decide if every item is a correct
-			navigation target or not:</p>
-		<pre class="prettyprint">{
-	"sap.ui5": {
-		"services": {
-			"Navigation": {
-				"factoryName": "demo.service.RecentItemsFactory"
-			}
-		}
-	},
-	"sap.card": {
-		"type": "List",
-		"content": {
-			"data": {
-				"json": [
-					{
-						"name": "Item 1",
-						"url": "some/url1"
-					},
-					{
-						"name": "Item 2",
-						"url": "some/url2"
-					},
-					{
-						"name": "Item 3",
-						"url": "some/url3"
-					}
-				]
-			},
-			"item": {
-				"title": "{name}",
-				"actions": [
-					{
-						"type": "Navigation",
-						"service": "Navigation",
-						"parameters": {
-							"url": {url}
-						}
-					}
-				]
-			}
-		}
 	}
 }</pre>
 
@@ -264,6 +184,7 @@
 		}
 	}
 }</pre>
+		<a class="try-button" href="../../index.html#/explore/actions" target="_parent">Try it Out</a>
 	</div>
 	<div class="navigation">
 		<h4>Table of Contents</h4>

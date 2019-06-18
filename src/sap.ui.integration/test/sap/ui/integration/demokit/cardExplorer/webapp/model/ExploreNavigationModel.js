@@ -7,7 +7,7 @@ sap.ui.define([
 		selectedKey: 'learnGettingStarted',
 		navigation: [
 			{
-				title: 'Types',
+				title: 'Integration Card Types',
 				icon: 'sap-icon://overview-chart',
 				key: 'types',
 				target: 'exploreOverview',
@@ -140,10 +140,10 @@ sap.ui.define([
 				]
 			},
 			{
+				title: 'Integration Card Features',
 				key: 'features',
 				target: 'exploreOverview',
 				targetKey: 'actions',
-				title: 'Features',
 				icon: 'sap-icon://activities',
 				hasExpander: false,
 				items: [
@@ -157,10 +157,10 @@ sap.ui.define([
 						manifestUrl: '/samples/actions.json'
 					},
 					{
-						key: 'parameters',
+						key: 'data',
 						target: 'exploreSamples',
-						title: 'Parameters',
-						manifestUrl: '/samples/parameters.json'
+						title: 'Data',
+						manifestUrl: '/samples/data/manifest.json'
 					},
 					{
 						key: 'translation',
@@ -168,6 +168,12 @@ sap.ui.define([
 						title: 'Translation',
 						manifestUrl: '/samples/translation/manifest.json',
 						disableEditor: true
+					},
+					{
+						key: 'parameters',
+						target: 'exploreSamples',
+						title: 'Parameters',
+						manifestUrl: '/samples/parameters.json'
 					},
 					{
 						key: 'dynamicCounter',

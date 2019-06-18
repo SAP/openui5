@@ -232,7 +232,7 @@ sap.ui.define([
 				return;
 			}
 
-			sManifestUrl = jQuery.sap.getModulePath("sap.ui.demo.cardExplorer") + "/" + sManifestUrl;
+			sManifestUrl = sap.ui.require.toUrl("sap/ui/demo/cardExplorer" + sManifestUrl);
 
 			if (oSample.disableEditor) {
 				oCard.setManifest(sManifestUrl);

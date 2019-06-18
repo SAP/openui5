@@ -122,6 +122,10 @@ sap.ui.define([
 				} else {
 					toggleButton.setTooltip('Small Size Navigation');
 				}
+			},
+
+			navToHome: function () {
+				window.open('../index.html', '_self');
 			}
 		});
 	}

@@ -1,4 +1,5 @@
 {
+	"_version": "1.15.0",
 	"sap.app": {
 		"type": "card",
 		"i18n": "i18n/i18n.properties"

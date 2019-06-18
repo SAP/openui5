@@ -21,7 +21,7 @@ sap.ui.define([
 				key: 'gettingStarted'
 			},
 			{
-				title: 'Headers',
+				title: 'Integration Card Headers',
 				icon: 'sap-icon://header',
 				target: 'learnDetail',
 				key: 'headers',
@@ -30,62 +30,62 @@ sap.ui.define([
 						title: 'Default',
 						target: 'learnDetail',
 						key: 'headerDefault',
-						topicTitle: 'Headers'
+						topicTitle: 'Integration Card Headers'
 					},
 					{
 						title: 'Numeric',
 						target: 'learnDetail',
 						key: 'headerNumeric',
-						topicTitle: 'Headers'
+						topicTitle: 'Integration Card Headers'
 					}
 				]
 			},
 			{
-				title: 'Types',
+				title: 'Integration Card Types',
 				icon: 'sap-icon://overview-chart',
 				target: 'learnDetail',
 				key: 'types',
 				items: [
 					{
 						title: 'List',
-						topicTitle: 'Types',
+						topicTitle: 'Integration Card Types',
 						target: 'learnDetail',
 						key: 'list'
 					},
 					{
 						title: 'Table',
-						topicTitle: 'Types',
+						topicTitle: 'Integration Card Types',
 						target: 'learnDetail',
 						key: 'table'
 					},
 					{
 						title: 'Object',
-						topicTitle: 'Types',
+						topicTitle: 'Integration Card Types',
 						target: 'learnDetail',
 						key: 'object'
 					},
 					{
 						title: 'Timeline',
-						topicTitle: 'Types',
+						topicTitle: 'Integration Card Types',
 						target: 'learnDetail',
 						key: 'timeline'
 					},
 					{
 						title: 'Analytical',
-						topicTitle: 'Types',
+						topicTitle: 'Integration Card Types',
 						target: 'learnDetail',
 						key: 'analytical'
 					},
 					{
 						title: 'Component',
-						topicTitle: 'Types',
+						topicTitle: 'Integration Card Types',
 						target: 'learnDetail',
 						key: 'component'
 					}
 				]
 			},
 			{
-				title: 'Features',
+				title: 'Integration Card Features',
 				icon: 'sap-icon://activities',
 				target: 'learnDetail',
 				key: 'features',
@@ -94,37 +94,37 @@ sap.ui.define([
 						title: 'Actions',
 						target: 'learnDetail',
 						key: 'featureActions',
-						topicTitle: 'Features'
+						topicTitle: 'Integration Card Features'
 					},
 					{
 						title: 'Data',
 						target: 'learnDetail',
 						key: 'featureData',
-						topicTitle: 'Features'
+						topicTitle: 'Integration Card Features'
 					},
 					{
 						title: 'Translation',
 						target: 'learnDetail',
 						key: 'featureTranslation',
-						topicTitle: 'Features'
+						topicTitle: 'Integration Card Features'
 					},
 					{
 						title: 'Manifest Parameters',
 						target: 'learnDetail',
 						key: 'featureManifestParameters',
-						topicTitle: 'Features'
+						topicTitle: 'Integration Card Features'
 					},
 					{
 						title: 'Dynamic Parameters',
 						target: 'learnDetail',
 						key: 'featureDynamicParameters',
-						topicTitle: 'Features'
+						topicTitle: 'Integration Card Features'
 					},
 					{
 						title: 'Dynamic Counter',
 						target: 'learnDetail',
 						key: 'featureDynamicCounter',
-						topicTitle: 'Features'
+						topicTitle: 'Integration Card Features'
 					}
 				]
 			}

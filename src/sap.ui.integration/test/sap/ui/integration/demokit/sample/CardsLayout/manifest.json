@@ -1,6 +1,6 @@
 {
 	"sap.app": {
-		"id": "sap.ui.integration.sample.ListCard",
+		"id": "sap.ui.integration.sample.CardsLayout",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
@@ -19,8 +19,22 @@
 		"config": {
 			"sample": {
 				"files": [
-					"ListCard.view.xml",
-					"model/cardManifest.json",
+					"CardsLayout.view.xml",
+					"CardsLayout.controller.js",
+					"model/cardManifests.json",
+					"images/Avatar_1.png",
+					"images/Avatar_2.png",
+					"images/Avatar_3.png",
+					"images/Avatar_4.png",
+					"images/Case1.png",
+					"images/Case2.png",
+					"images/Case3.png",
+					"images/CompanyLogo.png",
+					"componentCard/Component.js",
+					"componentCard/manifest.json",
+					"componentCard/View.view.xml",
+					"componentCard/ComponentCard.controller.js",
+					"componentCard/images/map.png",
 					"manifest.json"
 				]
 			}
