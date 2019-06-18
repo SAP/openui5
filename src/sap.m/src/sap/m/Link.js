@@ -299,61 +299,10 @@ function(
 	};
 
 
-	/* override standard setters with direct DOM manipulation */
-
-	Link.prototype.setText = function(sText){
-		var $this = this.$();
-		this.setProperty("text", sText, true);
-		sText = this.getProperty("text");
-		if (this.writeText) {
-			this.writeText(sText);
-		} else {
-			$this.text(sText);
-		}
-		if (sText) {
-			$this.attr("tabindex", "0");
-		} else {
-			$this.attr("tabindex", "-1");
-		}
-		return this;
-	};
-
-	Link.prototype.setHref = function(sUri){
-		var bIsValid = this._isHrefValid(sUri);
-
-		this.setProperty("href", sUri, true);
-
-		if (!bIsValid) {
-			this.$().removeAttr("href");
-			Log.warning(this + ": The href tag of the link was not set since it's not valid.");
-			return this;
-		}
-
-		if (this.getEnabled()) {
-			sUri = this.getProperty("href");
-			if (!sUri) {
-				this.$().removeAttr("href");
-			} else {
-				this.$().attr("href", sUri);
-			}
-		}
-
-		return this;
-	};
+	/* override standard setters */
 
 	Link.prototype.setSubtle = function(bSubtle){
-		this.setProperty("subtle", bSubtle, true);
-
-		var $this = this.$();
-		if ($this.length) { // only when actually rendered
-			$this.toggleClass("sapMLnkSubtle", bSubtle);
-
-			if (bSubtle) {
-				Link._addToDescribedBy($this, this._sAriaLinkSubtleId);
-			} else {
-				Link._removeFromDescribedBy($this, this._sAriaLinkSubtleId);
-			}
-		}
+		this.setProperty("subtle", bSubtle);
 
 		if (bSubtle && !Link.prototype._sAriaLinkSubtleId) {
 			Link.prototype._sAriaLinkSubtleId = InvisibleText.getStaticId("sap.m", "LINK_SUBTLE");
@@ -363,74 +312,12 @@ function(
 	};
 
 	Link.prototype.setEmphasized = function(bEmphasized){
-		this.setProperty("emphasized", bEmphasized, true);
-
-		var $this = this.$();
-		if ($this.length) { // only when actually rendered
-			$this.toggleClass("sapMLnkEmphasized", bEmphasized);
-
-			if (bEmphasized) {
-				Link._addToDescribedBy($this, this._sAriaLinkEmphasizedId);
-			} else {
-				Link._removeFromDescribedBy($this, this._sAriaLinkEmphasizedId);
-			}
-		}
+		this.setProperty("emphasized", bEmphasized);
 
 		if (bEmphasized && !Link.prototype._sAriaLinkEmphasizedId) {
 			Link.prototype._sAriaLinkEmphasizedId = InvisibleText.getStaticId("sap.m", "LINK_EMPHASIZED");
 		}
 
-		return this;
-	};
-
-	Link.prototype.setWrapping = function(bWrapping){
-		this.setProperty("wrapping", bWrapping, true);
-		this.$().toggleClass("sapMLnkWrapping", bWrapping);
-		return this;
-	};
-
-	Link.prototype.setEnabled = function(bEnabled){
-		bEnabled = this.validateProperty("enabled", bEnabled);
-
-		if (bEnabled !== this.getProperty("enabled")) { // do nothing when the same value is set again (virtual table scrolling!) - don't use this.getEnabled() because of EnabledPropagator
-			this.setProperty("enabled", bEnabled, true);
-			var $this = this.$();
-			$this.toggleClass("sapMLnkDsbl", !bEnabled);
-			if (bEnabled) {
-				$this.attr("disabled", false);
-				if (this.getText()) {
-					$this.attr("tabindex", "0");
-				} else {
-					$this.attr("tabindex", "-1");
-				}
-				$this.removeAttr("aria-disabled");
-				if (this.getHref()) {
-					$this.attr("href", this.getHref());
-				}
-			} else {
-				$this.attr("disabled", true);
-				$this.attr("aria-disabled", true);
-				$this.removeAttr("href");
-				$this.removeAttr("tabindex");
-			}
-		}
-		return this;
-	};
-
-	Link.prototype.setWidth = function(sWidth){
-		this.setProperty("width", sWidth, true);
-		this.$().toggleClass("sapMLnkMaxWidth", !sWidth);
-		this.$().css("width", sWidth);
-		return this;
-	};
-
-	Link.prototype.setTarget = function(sTarget){
-		this.setProperty("target", sTarget, true);
-		if (!sTarget) {
-			this.$().removeAttr("target");
-		} else {
-			this.$().attr("target", sTarget);
-		}
 		return this;
 	};
 
@@ -445,42 +332,6 @@ function(
 	 */
 	Link.prototype._isHrefValid = function (sUri) {
 		return this.getValidateUrl() ? URLWhitelist.validate(sUri) : true;
-	};
-
-	/**
-	 * Adds ARIA InvisibleText ID to aria-secribedby
-	 *
-	 * @param {Object} $oLink control DOM reference
-	 * @param {String} sInvisibleTextId  static Invisible Text ID to be added
-	 */
-	Link._addToDescribedBy = function ($oLink, sInvisibleTextId) {
-		var sAriaDescribedBy = $oLink.attr("aria-describedby");
-
-		if (sAriaDescribedBy) {
-			$oLink.attr("aria-describedby",  sAriaDescribedBy + " " +  sInvisibleTextId); // Add the ID at the end, separated with space
-		} else {
-			$oLink.attr("aria-describedby",  sInvisibleTextId);
-		}
-	};
-
-	/**
-	 * Removes ARIA InvisibleText ID from aria-secribedby or the attribute itself
-	 *
-	 * @param {Object} $oLink control DOM reference
-	 * @param {String} sInvisibleTextId  static Invisible Text ID to be removed
-	 */
-	Link._removeFromDescribedBy = function ($oLink, sInvisibleTextId) {
-		var sAriaDescribedBy = $oLink.attr("aria-describedby");
-
-		if (sAriaDescribedBy && sAriaDescribedBy.indexOf(sInvisibleTextId) !== -1) { // Remove only the static InvisibleText ID for Emphasized link
-			sAriaDescribedBy = sAriaDescribedBy.replace(sInvisibleTextId, '');
-
-			if (sAriaDescribedBy.length > 1) {
-				$oLink.attr("aria-describedby",  sAriaDescribedBy);
-			} else {
-				$oLink.removeAttr("aria-describedby"); //  Remove the aria-describedby attribute, as it`s not needed
-			}
-		}
 	};
 
 	/**
