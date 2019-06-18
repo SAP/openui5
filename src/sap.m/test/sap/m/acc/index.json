@@ -398,7 +398,7 @@
 		},
 		{
 			"control": "sap.m.Slider",
-			"url": "../Slider.html",
+			"url": "Slider.html",
 			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
