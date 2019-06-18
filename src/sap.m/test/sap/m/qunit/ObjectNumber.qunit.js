@@ -343,8 +343,7 @@ sap.ui.define([
 
 	QUnit.test("Value state Error set with setState when the state initialy was Warning", function(assert) {
 
-		var oRenderSpy,
-			oObjectNumber = new ObjectNumber({
+		var oObjectNumber = new ObjectNumber({
 			number: 256,
 			unit: "EUR",
 			state: ValueState.Warning
@@ -366,11 +365,9 @@ sap.ui.define([
 					sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_ERROR"),
 					"The text for value state \"Error\" is taken from the message bundle."
 		);
-		assert.strictEqual(oRenderSpy.callCount, 0, "ObjectNumber did not rerender");
 
 		// Clean up
 		oObjectNumber.destroy();
-		oRenderSpy.restore();
 	});
 
 	QUnit.test("Value state Error set with setState when the state initialy was None", function(assert) {
