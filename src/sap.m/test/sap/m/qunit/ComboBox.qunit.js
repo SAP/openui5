@@ -34,7 +34,7 @@ sap.ui.define([
 	"sap/ui/qunit/qunit-coverage",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/sinon-qunit"
-], function(
+], function (
 	qutils,
 	CustomData,
 	ComboBoxBase,
@@ -90,7 +90,6 @@ sap.ui.define([
 	jQuery.now = function () {
 		return Date.now();
 	};
-
 
 
 	var fnStartMockServer = function (sUri, iAutoRespondAfter) {
@@ -2263,8 +2262,8 @@ sap.ui.define([
 
 		var oData = {
 			"context": [
-				{ "value": "1" },
-				{ "value": "2" }
+				{"value": "1"},
+				{"value": "2"}
 			]
 		};
 		var oModel = new JSONModel(oData);
@@ -2296,8 +2295,8 @@ sap.ui.define([
 
 		var oData = {
 			"items": [
-				{ "value": "1" },
-				{ "value": "2" }
+				{"value": "1"},
+				{"value": "2"}
 			]
 		};
 		var oModel = new JSONModel(oData);
@@ -2960,21 +2959,21 @@ sap.ui.define([
 
 		// arrange
 		var aItems = [
-			new Item({
-				key: "0",
-				text: "Item 0"
-			}),
+				new Item({
+					key: "0",
+					text: "Item 0"
+				}),
 
-			new Item({
-				key: "1",
-				text: "Item 1"
-			}),
+				new Item({
+					key: "1",
+					text: "Item 1"
+				}),
 
-			new Item({
-				key: "2",
-				text: "Item 2"
-			})
-		],
+				new Item({
+					key: "2",
+					text: "Item 2"
+				})
+			],
 			oPickerTextField,
 			oPickerTextFieldDomRef,
 			fnChangeSpy,
@@ -3564,7 +3563,8 @@ sap.ui.define([
 		});
 
 		// arrange
-		oComboBox.aMessageQueue.push(function () { });
+		oComboBox.aMessageQueue.push(function () {
+		});
 
 		// act
 		oComboBox.destroy();
@@ -3682,8 +3682,8 @@ sap.ui.define([
 
 		var sText = "Error Message",
 			oComboBox = new ComboBox("comboBoxVS", {
-			valueStateText: sText
-		});
+				valueStateText: sText
+			});
 		// arrange
 		oComboBox.placeAt("content");
 		oComboBox.syncPickerContent();
@@ -5532,12 +5532,13 @@ sap.ui.define([
 	QUnit.test("it should open the dropdown list and preselect first item if there is such", function (assert) {
 		// arrange
 		var oItem = new Item({
-			text: "Example"
-		}),
+				text: "Example"
+			}),
 			oComboBox = new ComboBox({
 				items: [oItem]
 			}), oFakeEvent = {
-				setMarked: function () { },
+				setMarked: function () {
+				},
 				keyCode: 111 // dummy code (not F4 - 115)
 			},
 			oSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange"),
@@ -8690,7 +8691,7 @@ sap.ui.define([
 
 		// act (type something in the text field input)
 		oFocusDomRef.value = "lo";
-		sap.ui.qunit.QUnitUtils.triggerEvent("input", oFocusDomRef, { value: "lo" });
+		sap.ui.qunit.QUnitUtils.triggerEvent("input", oFocusDomRef, {value: "lo"});
 
 		// wait for the word completion feature
 		this.clock.tick(0);
@@ -8698,7 +8699,7 @@ sap.ui.define([
 		// remove the autocompleted text ("rem ipsum" by pressing the backspace keyboard key
 		sap.ui.qunit.QUnitUtils.triggerKeydown(oFocusDomRef, KeyCodes.BACKSPACE);
 		oFocusDomRef.value = "lo";
-		sap.ui.qunit.QUnitUtils.triggerEvent("input", oFocusDomRef, { value: "lo" });
+		sap.ui.qunit.QUnitUtils.triggerEvent("input", oFocusDomRef, {value: "lo"});
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -9197,7 +9198,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("it should set the focus to the body after fired onAfterClose event", function(assert) {
+	QUnit.test("it should set the focus to the body after fired onAfterClose event", function (assert) {
 
 		// system under test
 		this.stub(Device, "system", {
@@ -9258,6 +9259,37 @@ sap.ui.define([
 	});
 
 	QUnit.module("change");
+
+	QUnit.test("Should trigger change event only once", function (assert) {
+		// system under test
+		var oComboBox = new ComboBox({
+				items: [
+					new Item({key: 1, text: "desc1"}),
+					new Item({key: 2, text: "desc12"}),
+					new Item({key: 3, text: "desc13"}),
+					new Item({key: 4, text: "desc14"})
+				]
+			}).placeAt("content"),
+			oMockEvent = {
+				getParameter: function () {
+					return oComboBox._getList().getItems()[2];
+				}
+			},
+			fnFireChangeSpy = this.spy(oComboBox, "fireChange");
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oComboBox.syncPickerContent();
+		oComboBox.updateDomValue("desc1");
+		oComboBox.onSelectionChange(oMockEvent);
+		oComboBox.onItemPress(oMockEvent);
+
+		assert.strictEqual(fnFireChangeSpy.callCount, 1, "Change Event should be called just once");
+
+		// Cleanup
+		oComboBox.destroy();
+	});
 
 	QUnit.test("onChange is fired after the value changes by pressing arrow down key when the control loses the focus", function (assert) {
 
@@ -10204,7 +10236,7 @@ sap.ui.define([
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
 
 		var oListItem = oComboBox.getListItem(oComboBox.getItems()[0]);
-		oComboBox._oList.fireItemPress({ listItem: oListItem });
+		oComboBox._oList.fireItemPress({listItem: oListItem});
 
 		// assert
 		assert.strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired when the first filtered item is pressed');
@@ -10249,7 +10281,7 @@ sap.ui.define([
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
 
 		var oListItem = oComboBox.getListItem(oComboBox.getItems()[0]);
-		oComboBox._oList.fireItemPress({ listItem: oListItem });
+		oComboBox._oList.fireItemPress({listItem: oListItem});
 
 		// assert
 		assert.strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired when the first filtered item is pressed');
@@ -10469,7 +10501,7 @@ sap.ui.define([
 	});
 
 	if (Device.browser.internet_explorer) {
-		QUnit.test("AriaDescribedBy", function(assert) {
+		QUnit.test("AriaDescribedBy", function (assert) {
 			var oComboBox = new ComboBox(),
 				oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_COMBO");
 
@@ -10480,7 +10512,7 @@ sap.ui.define([
 
 			//Assert
 			assert.ok(oComboBox.$("inner").attr("aria-describedby").length > 0, "Property aria-describedby should exist");
-			assert.strictEqual(oInvisibleText.getText(), oResourceBundle , "'ComboBox' is announced.");
+			assert.strictEqual(oInvisibleText.getText(), oResourceBundle, "'ComboBox' is announced.");
 
 			//Cleanup
 			oComboBox.destroy();
@@ -10488,7 +10520,7 @@ sap.ui.define([
 	}
 
 	if (Device.browser.internet_explorer) {
-		QUnit.test("setTooltip()", function(assert) {
+		QUnit.test("setTooltip()", function (assert) {
 			var oComboBox = new ComboBox({
 				value: "Value",
 				tooltip: "Tooltip",
@@ -10626,14 +10658,14 @@ sap.ui.define([
 	QUnit.test("Keep selected value on parent re-render", function (assert) {
 		var oComboBox = new ComboBox({
 			items: [
-				new Item({ key: "A", text: "Amount" }),
-				new Item({ key: "C", text: "Checkbox" }),
-				new Item({ key: "D", text: "Date" }),
-				new Item({ key: "E", text: "Email Address" }),
-				new Item({ key: "L", text: "List" }),
-				new Item({ key: "N", text: "Number" }),
-				new Item({ key: "Q", text: "Quantity" }),
-				new Item({ key: "T1", text: "Text" })
+				new Item({key: "A", text: "Amount"}),
+				new Item({key: "C", text: "Checkbox"}),
+				new Item({key: "D", text: "Date"}),
+				new Item({key: "E", text: "Email Address"}),
+				new Item({key: "L", text: "List"}),
+				new Item({key: "N", text: "Number"}),
+				new Item({key: "Q", text: "Quantity"}),
+				new Item({key: "T1", text: "Text"})
 			],
 			selectionChange: function onSelectionChange() {
 				oForm.rerender();
@@ -10649,8 +10681,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		var oListItem = oComboBox.getListItem(oComboBox.getItems()[1]);
-		oComboBox._oList.fireItemPress({ listItem: oListItem });
-		oComboBox._oList.fireSelectionChange({ listItem: oListItem });
+		oComboBox._oList.fireItemPress({listItem: oListItem});
+		oComboBox._oList.fireSelectionChange({listItem: oListItem});
 
 		assert.ok(oComboBox.getValue(), "ComboBox value to be filled in");
 		assert.strictEqual(oComboBox.getValue(), oComboBox.getItems()[1].getText(), "ComboBox value to be the same as the selected element");
@@ -10695,9 +10727,9 @@ sap.ui.define([
 
 	QUnit.test("Changing models resets the selection if item is not there", function (assert) {
 		//Setup
-		var oData = { list: [{ id: "1", text: "1" }] },
+		var oData = {list: [{id: "1", text: "1"}]},
 			oModel = new JSONModel(oData),
-			oItemsTemplate = new Item({ key: "{id}", text: "{text}" }),
+			oItemsTemplate = new Item({key: "{id}", text: "{text}"}),
 			oComboBox = new ComboBox({
 				items: {
 					path: "/list",
@@ -10724,7 +10756,7 @@ sap.ui.define([
 		assert.strictEqual(oComboBox.getSelectedItem().getKey(), "1", "Item 1 is selected");
 
 		//Act
-		oComboBox.getModel().setProperty("/list", [{ id: "2", text: "2" }]);
+		oComboBox.getModel().setProperty("/list", [{id: "2", text: "2"}]);
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(100);
 
@@ -10738,9 +10770,9 @@ sap.ui.define([
 
 	QUnit.test("Changing models keeps the selection if item is there", function (assert) {
 		//Setup
-		var oData = { list: [{ id: "1", text: "1" }, { id: "2", text: "2" }] },
+		var oData = {list: [{id: "1", text: "1"}, {id: "2", text: "2"}]},
 			oModel = new JSONModel(oData),
-			oItemsTemplate = new Item({ key: "{id}", text: "{text}" }),
+			oItemsTemplate = new Item({key: "{id}", text: "{text}"}),
 			oComboBox = new ComboBox({
 				items: {
 					path: "/list",
@@ -10760,7 +10792,7 @@ sap.ui.define([
 		assert.strictEqual(oComboBox.getSelectedItem().getKey(), "2", "Item 2 is selected");
 
 		//Act
-		oComboBox.getModel().setProperty("/list", [{ id: "2", text: "2" }, { id: "33", text: "33" }]);
+		oComboBox.getModel().setProperty("/list", [{id: "2", text: "2"}, {id: "33", text: "33"}]);
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(100);
 
@@ -10775,11 +10807,11 @@ sap.ui.define([
 	QUnit.test("Changing models reflects on bound selectedKey property", function (assert) {
 		//Setup
 		var oData = {
-			list: [{ id: "1", text: "1" }, { id: "2", text: "2" }],
-			selectedKey: "2"
-		},
+				list: [{id: "1", text: "1"}, {id: "2", text: "2"}],
+				selectedKey: "2"
+			},
 			oModel = new JSONModel(oData),
-			oItemsTemplate = new Item({ key: "{id}", text: "{text}" }),
+			oItemsTemplate = new Item({key: "{id}", text: "{text}"}),
 			oComboBox = new ComboBox({
 				selectedKey: "{/selectedKey}",
 				items: {
@@ -10799,7 +10831,7 @@ sap.ui.define([
 		assert.strictEqual(oComboBox.getSelectedItem().getKey(), "2", "Item 2 is selected");
 
 		//Act
-		oComboBox.getModel().setProperty("/list", [{ id: "2", text: "2" }, { id: "3", text: "3" }]);
+		oComboBox.getModel().setProperty("/list", [{id: "2", text: "2"}, {id: "3", text: "3"}]);
 		oComboBox.getModel().setProperty("/selectedKey", "3");
 
 		sap.ui.getCore().applyChanges();
@@ -10856,7 +10888,7 @@ sap.ui.define([
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		oFakeEvent = { target: oComboBox.getDomRef("arrow") };
+		oFakeEvent = {target: oComboBox.getDomRef("arrow")};
 
 		oComboBox.onfocusin(oFakeEvent);
 
@@ -10921,11 +10953,11 @@ sap.ui.define([
 		var oComboBox = new ComboBox({
 			items: [
 				new SeparatorItem({text: "Group1"}),
-				new Item({text: "item11", key:"key11"}),
-				new Item({text: "item12", key:"key12"}),
+				new Item({text: "item11", key: "key11"}),
+				new Item({text: "item12", key: "key12"}),
 				new SeparatorItem({text: "Group2"}),
-				new Item({text: "item21", key:"key21"}),
-				new Item({text: "item22", key:"key22"})
+				new Item({text: "item21", key: "key21"}),
+				new Item({text: "item22", key: "key22"})
 			]
 		});
 		oComboBox.placeAt("content");
@@ -10943,9 +10975,9 @@ sap.ui.define([
 		var oList,
 			oComboBox = new ComboBox({
 				items: [
-					new Item({ text: "AAA", key: "AAA" }),
-					new Item({ text: "ABB", key: "ABB" }),
-					new Item({ text: "CCC", key: "CCC" })
+					new Item({text: "AAA", key: "AAA"}),
+					new Item({text: "ABB", key: "ABB"}),
+					new Item({text: "CCC", key: "CCC"})
 				]
 			});
 
@@ -10982,9 +11014,9 @@ sap.ui.define([
 		var oList,
 			oComboBox = new ComboBox({
 				items: [
-					new Item({ text: "AAA", key: "AAA" }),
-					new Item({ text: "ABB", key: "ABB" }),
-					new Item({ text: "CCC", key: "CCC" })
+					new Item({text: "AAA", key: "AAA"}),
+					new Item({text: "ABB", key: "ABB"}),
+					new Item({text: "CCC", key: "CCC"})
 				]
 			});
 
@@ -11068,8 +11100,8 @@ sap.ui.define([
 
 		// system under test
 		var oComboBox = new ComboBox({
-				enabled: false
-			});
+			enabled: false
+		});
 
 		// arrange
 		oComboBox.placeAt("content");
@@ -11180,7 +11212,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Setting a filter function should update the internal variable", function (assert) {
-		this.oComboBox.setFilterFunction(function () { return true; });
+		this.oComboBox.setFilterFunction(function () {
+			return true;
+		});
 
 		assert.ok(this.oComboBox.fnFilter, "Filter should not be falsy value");
 	});
@@ -11194,21 +11228,21 @@ sap.ui.define([
 		this.oComboBox.setFilterFunction(null);
 		assert.notOk(fnWarningSpy.called, "Warning should not be logged in the console when filter is null");
 
-		this.oComboBox.filterItems({ value: "", properties: this.oComboBox._getFilters() });
+		this.oComboBox.filterItems({value: "", properties: this.oComboBox._getFilters()});
 		assert.ok(fnDefaultFilterSpy.called, "Default text filter should be applied");
 
 		// undefined is passed for a filter
 		this.oComboBox.setFilterFunction(undefined);
 		assert.notOk(fnWarningSpy.called, "Warning should not be logged in the console when filter is undefined");
 
-		this.oComboBox.filterItems({ value: "", properties: this.oComboBox._getFilters() });
+		this.oComboBox.filterItems({value: "", properties: this.oComboBox._getFilters()});
 		assert.ok(ComboBoxBase.DEFAULT_TEXT_FILTER.called, "Default text filter should be applied");
 
 		// wrong filter type is passed
 		this.oComboBox.setFilterFunction({});
 		assert.ok(fnWarningSpy.called, "Warning should be logged in the console when filter is not a function");
 
-		this.oComboBox.filterItems({ value: "", properties: this.oComboBox._getFilters() });
+		this.oComboBox.filterItems({value: "", properties: this.oComboBox._getFilters()});
 		assert.ok(ComboBoxBase.DEFAULT_TEXT_FILTER.called, "Default text filter should be applied");
 	});
 
@@ -11219,7 +11253,7 @@ sap.ui.define([
 		this.oComboBox.setFilterFunction(fnFilterSpy);
 
 		// act
-		var aFilteredItems = this.oComboBox.filterItems({ value: "B", properties: this.oComboBox._getFilters() });
+		var aFilteredItems = this.oComboBox.filterItems({value: "B", properties: this.oComboBox._getFilters()});
 
 		assert.ok(fnFilterSpy.called, "Filter should be called");
 		assert.strictEqual(aFilteredItems.length, 0, "Zero items should be filtered");
@@ -11230,7 +11264,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// act
-		var aFilteredItems = this.oComboBox.filterItems({ value: "B", properties: this.oComboBox._getFilters() });
+		var aFilteredItems = this.oComboBox.filterItems({value: "B", properties: this.oComboBox._getFilters()});
 
 		// assert
 		assert.strictEqual(aFilteredItems.length, 2, "Two items should be filtered");
@@ -11239,7 +11273,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Default filtering should be per term", function (assert) {
-		var aFilteredItems = this.oComboBox.filterItems({ value: "K", properties: this.oComboBox._getFilters() });
+		var aFilteredItems = this.oComboBox.filterItems({value: "K", properties: this.oComboBox._getFilters()});
 
 		assert.strictEqual(aFilteredItems.length, 1, "One item should be filtered");
 		assert.strictEqual(aFilteredItems[0].getText(), "Hong Kong", "Hong Kong item is matched by 'K'");
@@ -11320,10 +11354,10 @@ sap.ui.define([
 		beforeEach: function () {
 			var oSpecialCharsModel = new JSONModel({
 				"special": [
-					{ "text": "product", "key": "productId" },
-					{ "text": "näme", "key": "name" },
-					{ "text": "näme1", "key": "name1" },
-					{ "text": "näme11", "key": "name11" }
+					{"text": "product", "key": "productId"},
+					{"text": "näme", "key": "name"},
+					{"text": "näme1", "key": "name1"},
+					{"text": "näme11", "key": "name11"}
 				]
 			});
 
@@ -11402,7 +11436,7 @@ sap.ui.define([
 
 		// act
 		var bMatched = ComboBoxBase.DEFAULT_TEXT_FILTER("서", this.comboBox.getItems()[0], "getText");
-		var aFilteredItems = this.comboBox.filterItems({ value: "서", properties: this.comboBox._getFilters() });
+		var aFilteredItems = this.comboBox.filterItems({value: "서", properties: this.comboBox._getFilters()});
 
 		// assert
 		assert.ok(bMatched, "'DEFAULT_TEXT_FILTER' should match composite characters");
@@ -11412,26 +11446,28 @@ sap.ui.define([
 
 	QUnit.test("Composititon events", function (assert) {
 		var oFakeEvent = {
-			isMarked: function () { },
-			setMarked: function () { },
-			srcControl: this.comboBox,
-			target: {
-				value: "서"
-			}
-		},
-		oHandleInputEventSpy = this.spy(this.comboBox, "handleInputValidation"),
-		oUpdateDomValueSpy = this.spy(this.comboBox, "updateDomValue");
+				isMarked: function () {
+				},
+				setMarked: function () {
+				},
+				srcControl: this.comboBox,
+				target: {
+					value: "서"
+				}
+			},
+			oHandleInputEventSpy = this.spy(this.comboBox, "handleInputValidation"),
+			oUpdateDomValueSpy = this.spy(this.comboBox, "updateDomValue");
 
-	this.comboBox._bDoTypeAhead = true;
+		this.comboBox._bDoTypeAhead = true;
 
-	// act
-	this.comboBox.oncompositionstart(oFakeEvent);
-	this.comboBox.oninput(oFakeEvent);
-	this.clock.tick(300);
+		// act
+		this.comboBox.oncompositionstart(oFakeEvent);
+		this.comboBox.oninput(oFakeEvent);
+		this.clock.tick(300);
 
-	// assert
-	assert.ok(oHandleInputEventSpy.called, "handleInputValidation should be called on input");
-	assert.notOk(oUpdateDomValueSpy.called, "Type ahead should not be called while composing");
+		// assert
+		assert.ok(oHandleInputEventSpy.called, "handleInputValidation should be called on input");
+		assert.notOk(oUpdateDomValueSpy.called, "Type ahead should not be called while composing");
 
 	});
 
@@ -11614,7 +11650,8 @@ sap.ui.define([
 				selectionStart: 0,
 				selectionEnd: 0,
 				value: {
-					substring: function () {}
+					substring: function () {
+					}
 				}
 			};
 			this.oFakeControl = {
@@ -11625,7 +11662,9 @@ sap.ui.define([
 					return true;
 				},
 				_bIsLastFocusedItemHeader: false,
-				getValue: function () {return "";},
+				getValue: function () {
+					return "";
+				},
 				_getSelectionRange: function (oComboBox) {
 					return oComboBox._getSelectionRange.call(this);
 				},
@@ -11736,7 +11775,9 @@ sap.ui.define([
 			msie: true
 		});
 		this.oFakeControl._bIsLastFocusedItemHeader = true;
-		this.oFakeControl.getValue = function () {return 'some';};
+		this.oFakeControl.getValue = function () {
+			return 'some';
+		};
 
 		// assert
 		assert.strictEqual(this.oFakeControl._getSelectionRange(this.oComboBox).start, 4, "Correct value returned");
@@ -11752,7 +11793,8 @@ sap.ui.define([
 				selectionStart: 0,
 				selectionEnd: 0,
 				value: {
-					substring: function () {}
+					substring: function () {
+					}
 				}
 			};
 			this.oFakeControl = {
@@ -11763,7 +11805,9 @@ sap.ui.define([
 					return true;
 				},
 				_bIsLastFocusedItemHeader: false,
-				getValue: function () {return "";},
+				getValue: function () {
+					return "";
+				},
 				_getSelectionRange: function () {
 					return {
 						start: this.getFocusDomRef().selectionStart,
@@ -11805,7 +11849,9 @@ sap.ui.define([
 
 	QUnit.test("shouldResetSelectionStart - scenario 4: No item that starts with the typed value.", function (assert) {
 		// System under test
-		this.oFakeControl._itemsTextStartsWithTypedValue = function () { return false; };
+		this.oFakeControl._itemsTextStartsWithTypedValue = function () {
+			return false;
+		};
 
 		// assert
 		assert.ok(this.oComboBox._shouldResetSelectionStart.call(this.oFakeControl), "Selection should be reset");
@@ -11853,11 +11899,11 @@ sap.ui.define([
 			this.oComboBox = new ComboBox({
 				items: [
 					new SeparatorItem({text: "Group1"}),
-					new Item({text: "item11", key:"key11"}),
-					new Item({text: "item12", key:"key12"}),
+					new Item({text: "item11", key: "key11"}),
+					new Item({text: "item12", key: "key12"}),
 					new SeparatorItem({text: "Group2"}),
-					new Item({text: "item21", key:"key21"}),
-					new Item({text: "item22", key:"key22"})
+					new Item({text: "item21", key: "key21"}),
+					new Item({text: "item22", key: "key22"})
 				]
 			});
 			this.oComboBox.syncPickerContent();
@@ -12132,8 +12178,10 @@ sap.ui.define([
 					value: "it"
 				},
 				srcControl: this.oComboBox,
-				setMarked: function () {},
-				isMarked: function () {}
+				setMarked: function () {
+				},
+				isMarked: function () {
+				}
 			};
 
 		// arrange
@@ -12159,8 +12207,10 @@ sap.ui.define([
 					value: "it"
 				},
 				srcControl: this.oComboBox,
-				setMarked: function () {},
-				isMarked: function () {}
+				setMarked: function () {
+				},
+				isMarked: function () {
+				}
 			};
 
 		// arrange
@@ -12228,7 +12278,7 @@ sap.ui.define([
 		var oComboBox = new ComboBox({
 			items: [
 				new SeparatorItem({text: "Group1"}),
-				new Item({text: "item11", key:"key11"})
+				new Item({text: "item11", key: "key11"})
 			]
 		});
 
@@ -12265,7 +12315,7 @@ sap.ui.define([
 		var oComboBox = new ComboBox({
 			items: [
 				new SeparatorItem({text: "Group1"}),
-				new Item({text: "item11", key:"key11"})
+				new Item({text: "item11", key: "key11"})
 			]
 		});
 
@@ -12296,9 +12346,9 @@ sap.ui.define([
 		// System under test
 		var oComboBox = new ComboBox({
 			items: [
-				new Item({text: "item1", key:"key1"}),
+				new Item({text: "item1", key: "key1"}),
 				new SeparatorItem(),
-				new Item({text: "item2", key:"key2"})
+				new Item({text: "item2", key: "key2"})
 			]
 		});
 		oComboBox.syncPickerContent();
