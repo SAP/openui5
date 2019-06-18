@@ -869,10 +869,10 @@ html.sap-phone  {
 		//This solves an issue when we are in compact mode on real device
 		//We remove the bottom padding and leave only top
 		:not(.sapMITBInLine).sapMITBTextOnly {
-				.sapMITBTab {
-					padding:0.25rem 0 0 0;
-				}
+			.sapMITBTab {
+				padding:0.25rem 0 0 0;
 			}
+		}
 
 		.sapMITBTextOnly > .sapMITBVertical.sapMITBFilter {
 			padding: 0;
@@ -1040,9 +1040,7 @@ html.sap-phone  {
 		.sapMITBFilter:not(.sapMITBDisabled) {
 			cursor: pointer;
 		}
-
 	}
-
 }
 
 /* ------------------------------------------------ */
@@ -1054,46 +1052,59 @@ html.sap-phone  {
 	/* ------------------------------------------------ */
 	/* Switch between full screen and split container   */
 	/* ------------------------------------------------ */
-	.sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMITB {
-		.sapMITHOverflowList .sapMITBScrollContainer {
-			margin: 0 4.25rem 0 1.75rem;
-		}
-		&.sapUiResponsiveContentPadding {
+	.sapMSplitContainer:not(.sapMSplitContainerHideMode) {
+		.sapMITB.sapUiResponsiveContentPadding,
+		.sapMITH.sapUiResponsiveContentPadding {
+
 			.sapMITBArrowScrollLeftTextOnly.sapMITBArrowScrollLeftInLine,
 			.sapMITBArrowScrollRightTextOnly.sapMITBArrowScrollRightInLine {
 				padding: @_sap_m_IconTabBar_SplitContainerArrowScrollPadding;
 			}
-		}
-		.sapMITBScrollContainer {
-			margin: 0 1.75rem;
+
+			.sapMITBScrollContainer {
+				margin: 0 1.75rem;
+			}
+
+			.sapMITBArrowScrollLeftTextOnly {
+				left: 0.25rem;
+				padding: 1.0625rem 0;
+			}
 		}
 
-		.sapMITBArrowScrollLeftTextOnly {
-			left: 0.25rem;
-			padding: 1.0625rem 0;
-		}
+		.sapMITB.sapUiResponsiveContentPadding .sapMITHOverflowList,
+		.sapMITH.sapUiResponsiveContentPadding.sapMITHOverflowList {
+			.sapMITBScrollContainer {
+				margin: 0 4.25rem 0 1.75rem;
+			}
 
+			.sapMITBArrowScrollRightTextOnly {
+				right: 2.5rem;
+			}
+		}
 	}
 
-	.sapMSplitContainer:not(.sapMSplitContainerShowHide) .sapMITB {
-		.sapMITHOverflowList .sapMITBScrollContainer {
-			margin: 0 4.25rem 0 2.75rem;
-		}
-		&.sapUiResponsiveContentPadding {
-			.sapMITHOverflowList .sapMITBScrollContainer {
-				margin: 0 5rem 0 2.75rem;
+	.sapMSplitContainer:not(.sapMSplitContainerShowHide) {
+		.sapMITB.sapUiResponsiveContentPadding,
+		.sapMITH.sapUiResponsiveContentPadding {
+
+			.sapMITBScrollContainer {
+				margin: 0 2.75rem;
 			}
-			.sapMITHOverflowList .sapMITBArrowScrollRightTextOnly {
-				right: 3.50rem;
+			.sapMITBArrowScrollLeftTextOnly {
+				left: 1.25rem;
+				padding: 1.0625rem 0;
 			}
 		}
 
-		.sapMITBScrollContainer {
-			margin: 0 2.75rem;
-		}
-		.sapMITBArrowScrollLeftTextOnly {
-			left: 1.25rem;
-			padding: 1.0625rem 0;
+		.sapMITB.sapUiResponsiveContentPadding .sapMITHOverflowList,
+		.sapMITH.sapUiResponsiveContentPadding.sapMITHOverflowList {
+			.sapMITBScrollContainer {
+				margin: 0 5rem 0 2.75rem;
+			}
+
+			.sapMITBArrowScrollRightTextOnly {
+				right: 3.5rem;
+			}
 		}
 	}
 	/* ------------------------------------------------ */
@@ -1112,7 +1123,8 @@ html.sap-phone  {
 		.sapMITBScrollContainer {
 			margin: 0 2.75rem;
 		}
-		.sapMITH .sapMBtn {
+
+		.sapMBtn {
 			padding-right: 0.5rem;
 		}
 
@@ -1126,10 +1138,6 @@ html.sap-phone  {
 			right: 1.25rem;
 		}
 
-		.sapMITHOverflowList .sapMITBArrowScrollRight {
-			right: 3.25rem;
-		}
-
 		.sapMITBArrowScrollLeftTextOnly {
 			left: 1.25rem;
 			padding: 0.75rem 0;
@@ -1140,17 +1148,25 @@ html.sap-phone  {
 			right: 1.25rem;
 		}
 
-		.sapMITHOverflowList .sapMITBArrowScrollRightTextOnly {
-			right: 2.75rem;
-		}
-
 		.sapMITBArrowScrollLeftTextOnly.sapMITBArrowScrollLeftInLine,
 		.sapMITBArrowScrollRightTextOnly.sapMITBArrowScrollRightInLine {
 			padding: @_sap_m_IconTabBar_ArrowScrollPadding;
 		}
 
-		.sapMITH .sapMBtn.sapMBtnTextOnly {
+		.sapMBtn.sapMBtnTextOnly {
 			top: 1.125rem;
+		}
+	}
+
+	.sapMITB.sapUiResponsiveContentPadding .sapMITHOverflowList,
+	.sapMITH.sapUiResponsiveContentPadding.sapMITHOverflowList {
+		.sapMITBScrollContainer {
+			margin: 0 4.25rem 0 2.75rem;
+		}
+
+		.sapMITBArrowScrollRightTextOnly,
+		.sapMITBArrowScrollRight {
+			right: 3.25rem;
 		}
 	}
 }
