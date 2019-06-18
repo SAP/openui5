@@ -221,86 +221,40 @@ function (
 			});
 		});
 
-		QUnit.test("When notifyKeyUserWhenTileIsReady() method is called on S4/Hana Cloud", function (assert) {
+		QUnit.test("When notifyKeyUserWhenPublishingIsReady() method is called during app creation", function (assert) {
 			var fnNotifyFlpCustomizingIsReadyStub = sandbox.stub(S4HanaCloudBackend.prototype, "notifyFlpCustomizingIsReady").resolves(true);
-			var fnShowMessageBoxStub = sandbox.stub(RtaUtils, "_showMessageBox").resolves(true);
-			return this.oAppVariantManager.notifyKeyUserWhenTileIsReady("IamID", "AppvarID").then(function() {
+			var fncatchErrorDialog = sandbox.stub(AppVariantUtils, "catchErrorDialog");
+			return this.oAppVariantManager.notifyKeyUserWhenPublishingIsReady("IamID", "AppvarID", true).then(function() {
 				assert.ok(fnNotifyFlpCustomizingIsReadyStub.calledOnceWith("IamID", true), "then the function notifyFlpCustomizingIsReady() is called once and with right parameters");
-				assert.ok(fnShowMessageBoxStub.calledOnce, "then the function _showMessageBox() is called once");
+				assert.ok(fncatchErrorDialog.notCalled, "then the function catchErrorDialog() is not called");
 			});
 		});
 
-		QUnit.test("When notifyWhenUnpublishingIsReady() method is called on S4/Hana Cloud", function (assert) {
+		QUnit.test("When notifyKeyUserWhenPublishingIsReady() method is called during app deletion", function (assert) {
 			var fnNotifyFlpCustomizingIsReadyStub = sandbox.stub(S4HanaCloudBackend.prototype, "notifyFlpCustomizingIsReady").resolves(true);
-
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:false,
-					isAtoEnabled:false,
-					isProductiveSystem:false
-				})
-			);
-
-			return DescriptorVariantFactory.createNew({
-				id: "customer.TestId",
-				reference: "TestIdBaseApp"
-			}).then(function(oDescriptor) {
-				return this.oAppVariantManager.notifyWhenUnpublishingIsReady("IamID", oDescriptor.getId()).then(function() {
-					assert.ok(fnNotifyFlpCustomizingIsReadyStub.calledOnceWith("IamID", false), "then the function notifyFlpCustomizingIsReady() is called once and with right parameters");
-				});
-			}.bind(this));
+			var fncatchErrorDialog = sandbox.stub(AppVariantUtils, "catchErrorDialog");
+			return this.oAppVariantManager.notifyKeyUserWhenPublishingIsReady("IamID", "AppvarID", false).then(function() {
+				assert.ok(fnNotifyFlpCustomizingIsReadyStub.calledOnceWith("IamID", false), "then the function notifyFlpCustomizingIsReady() is called once and with right parameters");
+				assert.ok(fncatchErrorDialog.notCalled, "then the function catchErrorDialog() is not called");
+			});
 		});
 
-		QUnit.test("When notifyKeyUserWhenTileIsReady() method is failed on S4/Hana Cloud", function (assert) {
-			var checkFlpCustomizingIsReadyStub = sandbox.stub(S4HanaCloudBackend.prototype, "notifyFlpCustomizingIsReady").callsFake(function(sIamAppId) {
-				return Promise.reject({
-					iamAppId : sIamAppId
-				});
+
+		QUnit.test("When notifyKeyUserWhenPublishingIsReady() method is failed on S4/Hana Cloud", function (assert) {
+			var checkFlpCustomizingIsReadyStub = sandbox.stub(S4HanaCloudBackend.prototype, "notifyFlpCustomizingIsReady").rejects();
+			var fncatchErrorDialog = sandbox.spy(AppVariantUtils, "catchErrorDialog");
+			//sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
+			sandbox.stub(MessageBox, "show").callsFake(function(sText, mParameters) {
+				mParameters.onClose("Close");
 			});
-
-			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "IAM App Id: IamID").returns();
-
-			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.reject(false));
-			return this.oAppVariantManager.notifyKeyUserWhenTileIsReady("IamID", "AppvarID").catch(
-				function(bSuccess) {
-					assert.equal(bSuccess, false, "Error: An unexpected exception occured");
-					assert.ok(checkFlpCustomizingIsReadyStub.calledOnceWith("IamID"), "then the method notifyFlpCustomizingIsReady is called once with correct parameters");
+			return this.oAppVariantManager.notifyKeyUserWhenPublishingIsReady("IamID", "AppvarID", true).then(
+				function() {
+					assert.ok(checkFlpCustomizingIsReadyStub.calledOnceWith("IamID", true), "then the method notifyFlpCustomizingIsReady is called once with correct parameters");
+					assert.ok(fncatchErrorDialog.calledOnce, "then the function catchErrorDialog() is called once");
+					assert.strictEqual(fncatchErrorDialog.getCall(0).args[1], "MSG_TILE_CREATION_FAILED", "then the function catchErrorDialog() is called with correct message key");
+					assert.strictEqual(fncatchErrorDialog.getCall(0).args[2], "AppvarID", "then the function catchErrorDialog() is called with correct app var id");
 				}
 			);
-		});
-
-		QUnit.test("When notifyWhenUnpublishingIsReady() method is failed on S4/Hana Cloud", function (assert) {
-			var checkFlpCustomizingIsReadyStub = sandbox.stub(S4HanaCloudBackend.prototype, "notifyFlpCustomizingIsReady").callsFake(function(sIamAppId) {
-				return Promise.reject({
-					iamAppId : sIamAppId
-				});
-			});
-
-			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "IAM App Id: IamID").returns();
-
-			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.reject(false));
-
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:false,
-					isAtoEnabled:false,
-					isProductiveSystem:false
-				})
-			);
-
-			return DescriptorVariantFactory.createNew({
-				id: "customer.TestId",
-				reference: "TestIdBaseApp"
-			}).then(function(oDescriptor) {
-				return this.oAppVariantManager.notifyWhenUnpublishingIsReady("IamID", oDescriptor.getId()).catch(
-					function(bSuccess) {
-						assert.equal(bSuccess, false, "Error: An unexpected exception occured");
-						assert.ok(checkFlpCustomizingIsReadyStub.calledOnceWith("IamID"), "then the method notifyFlpCustomizingIsReady is called once with correct parameters");
-					}
-				);
-			}.bind(this));
 		});
 
 		QUnit.test("When createDescriptor() method is failed on S4/Hana cloud", function (assert) {
@@ -350,41 +304,17 @@ function (
 					isProductiveSystem:false
 				})
 			);
-
-			oServer.respondWith("HEAD", /\/sap\/bc\/lrep\/actions\/getcsrftoken/, [
-				200,
-				{
-					"X-CSRF-Token": "0987654321"
-				},
-				""
-			]);
-
-			var oResponse = {
-				id: "AppVariantId",
-				reference:"ReferenceAppId",
-				content: []
-			};
-
-			oServer.respondWith("POST", /\/sap\/bc\/lrep\/appdescr_variants/, [
-				200,
-				{
-					"Content-Type": "application/json",
-					"X-CSRF-Token": "0987654321"
-				},
-				JSON.stringify(oResponse)
-			]);
-
-			oServer.autoRespond = true;
-
-			return DescriptorVariantFactory.createNew({
-				id: "customer.TestId",
-				reference: "TestIdBaseApp"
-			}).then(function(oDescriptor) {
-				return this.oAppVariantManager.saveAppVariantToLREP(oDescriptor).then(function(oResult) {
-					assert.strictEqual(oResult.response.id, "AppVariantId", "then the id of app variant descriptor is correct");
-					assert.strictEqual(oResult.response.reference, "ReferenceAppId", "then the id of reference app is correct");
+			var fnSubmit;
+			var fncatchErrorDialog = sandbox.stub(AppVariantUtils, "catchErrorDialog");
+			return DescriptorVariantFactory.createNew({id: "customer.TestId", reference: "TestIdBaseApp"})
+				.then(function(oDescriptor) {
+					fnSubmit = sandbox.stub(oDescriptor, "submit").resolves();
+					return this.oAppVariantManager.saveAppVariantToLREP(oDescriptor);
+				}.bind(this))
+				.then(function() {
+					assert.ok(fnSubmit.calledOnce, "then the function submit() is called once");
+					assert.ok(fncatchErrorDialog.notCalled, "then the function catchErrorDialog() is not called");
 				});
-			}.bind(this));
 		});
 
 		QUnit.test("When saveAppVariantToLREP() method is called and response is failed", function (assert) {
@@ -397,36 +327,26 @@ function (
 				})
 			);
 
-			oServer.respondWith("POST", /\/sap\/bc\/lrep\/appdescr_variants/, [
-				400,
-				{
-					"Content-Type": "application/json",
-					"X-CSRF-Token": "0987654321"
-				},
-				"Backend Error"
-			]);
-
-			oServer.autoRespond = true;
-
 			sandbox.stub(MessageBox, "show").callsFake(function(sText, mParameters) {
 				mParameters.onClose("Close");
 			});
 
 			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "error").returns();
 
-			var fnShowRelevantDialog = sandbox.spy(AppVariantUtils, "showRelevantDialog");
+			var fnSubmit;
+			var fncatchErrorDialog = sandbox.stub(AppVariantUtils, "catchErrorDialog");
 
-			return DescriptorVariantFactory.createNew({
-				id: "customer.TestId",
-				reference: "TestIdBaseApp"
-			}).then(function(oDescriptor) {
-				return this.oAppVariantManager.saveAppVariantToLREP(oDescriptor).catch(
-					function() {
-						assert.ok("then the promise got rejected");
-						assert.ok(fnShowRelevantDialog.calledOnce, "then the showRelevantDialog method is called once");
-					}
-				);
-			}.bind(this));
+			return DescriptorVariantFactory.createNew({id: "customer.TestId", reference: "TestIdBaseApp"})
+			.then(function(oDescriptor) {
+				fnSubmit = sandbox.stub(oDescriptor, "submit").rejects();
+				return this.oAppVariantManager.saveAppVariantToLREP(oDescriptor);
+			}.bind(this))
+			.then(function() {
+				assert.ok(fnSubmit.calledOnce, "then the function submit() is called once");
+				assert.ok(fncatchErrorDialog.calledOnce, "then the function catchErrorDialog() is called once");
+				assert.strictEqual(fncatchErrorDialog.getCall(0).args[1], "MSG_SAVE_APP_VARIANT_FAILED", "then the function catchErrorDialog() is called with correct message key");
+				assert.strictEqual(fncatchErrorDialog.getCall(0).args[2], "customer.TestId", "then the function catchErrorDialog() is called with correct app var id");
+			});
 		});
 
 		QUnit.test("When copyUnsavedChangesToLREP() method is called without any unsaved changes", function (assert) {
@@ -501,7 +421,7 @@ function (
 			}.bind(this));
 		});
 
-		QUnit.test("When triggerCatalogAssignment() method is called on S4/Hana Cloud", function (assert) {
+		QUnit.test("When triggerCatalogPublishing() method is called on S4/Hana Cloud for catalog assignment", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser:true,
@@ -518,21 +438,22 @@ function (
 			};
 
 			var oDescriptorUtilsStub = sandbox.stub(DescriptorUtils, "sendRequest").resolves(oResponse);
+			var fnTriggerCatalogAssignment = sandbox.spy(AppVariantUtils, "triggerCatalogAssignment");
 
-			return DescriptorVariantFactory.createNew({
-				id: "customer.TestId",
-				reference: "TestIdBaseApp"
-			}).then(function(oDescriptor) {
-				return this.oAppVariantManager.triggerCatalogAssignment(oDescriptor).then(function(oResult) {
-					assert.ok(oDescriptorUtilsStub.calledOnceWith("/sap/bc/lrep/appdescr_variants/customer.TestId?action=assignCatalogs&assignFromAppId=TestIdBaseApp", 'POST'), "then the sendRequest() method is called once and with right parameters");
-					assert.strictEqual(oResult.IAMId, "IAMId", "then the IAM id is correct");
-					assert.strictEqual(oResult.VariantId, "customer.TestId", "then the variant id is correct");
-					assert.strictEqual(oResult.CatalogIds[0], "TEST_CATALOG", "then the new app variant has been added to a correct catalog ");
-				});
-			}.bind(this));
+			return DescriptorVariantFactory.createNew({id: "customer.TestId", reference: "TestIdBaseApp"})
+			.then(function(oDescriptor) {
+				return this.oAppVariantManager.triggerCatalogPublishing(oDescriptor, true);
+			}.bind(this))
+			.then(function(oResult) {
+				assert.ok(fnTriggerCatalogAssignment.calledOnceWith("customer.TestId", "TestIdBaseApp"), "then the method triggerCatalogAssignment is called once with correct parameters");
+				assert.ok(oDescriptorUtilsStub.calledOnceWith("/sap/bc/lrep/appdescr_variants/customer.TestId?action=assignCatalogs&assignFromAppId=TestIdBaseApp", 'POST'), "then the sendRequest() method is called once and with right parameters");
+				assert.strictEqual(oResult.IAMId, "IAMId", "then the IAM id is correct");
+				assert.strictEqual(oResult.VariantId, "customer.TestId", "then the variant id is correct");
+				assert.strictEqual(oResult.CatalogIds[0], "TEST_CATALOG", "then the new app variant has been added to a correct catalog ");
+			});
 		});
 
-		QUnit.test("When triggerCatalogUnAssignment() method is called on S4/Hana Cloud", function (assert) {
+		QUnit.test("When triggerCatalogPublishing() method is called on S4/Hana Cloud for catalog unassignment", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser:true,
@@ -548,20 +469,21 @@ function (
 			};
 
 			var oDescriptorUtilsStub = sandbox.stub(DescriptorUtils, "sendRequest").resolves(oResponse);
+			var fnTriggerCatalogUnAssignment = sandbox.spy(AppVariantUtils, "triggerCatalogUnAssignment");
 
-			return DescriptorVariantFactory.createNew({
-				id: "customer.TestId",
-				reference: "TestIdBaseApp"
-			}).then(function(oDescriptor) {
-				return this.oAppVariantManager.triggerCatalogUnAssignment(oDescriptor).then(function(oResult) {
-					assert.ok(oDescriptorUtilsStub.calledOnceWith("/sap/bc/lrep/appdescr_variants/customer.TestId?action=unassignCatalogs", 'POST'), "then the sendRequest() method is called once and with right parameters");
-					assert.strictEqual(oResult.IAMId, "IAMId", "then the IAM id is correct");
-					assert.equal(oResult.inProgress, true, "then the inProgress property is true");
-				});
-			}.bind(this));
+			return DescriptorVariantFactory.createNew({id: "customer.TestId", reference: "TestIdBaseApp"})
+			.then(function(oDescriptor) {
+				return this.oAppVariantManager.triggerCatalogPublishing(oDescriptor, false);
+			}.bind(this))
+			.then(function(oResult) {
+				assert.ok(fnTriggerCatalogUnAssignment.calledOnceWith("customer.TestId", "TestIdBaseApp"), "then the method triggerCatalogUnAssignment is called once with correct parameters");
+				assert.ok(oDescriptorUtilsStub.calledOnceWith("/sap/bc/lrep/appdescr_variants/customer.TestId?action=unassignCatalogs", 'POST'), "then the sendRequest() method is called once and with right parameters");
+				assert.strictEqual(oResult.IAMId, "IAMId", "then the IAM id is correct");
+				assert.strictEqual(oResult.inProgress, true, "then the inProgress property is true");
+			});
 		});
 
-		QUnit.test("When triggerCatalogUnAssignment() method is called and response is failed", function (assert) {
+		QUnit.test("When triggerCatalogPublishing() method is called on S4/Hana Cloud for catalog assignment and response is failed", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser:true,
@@ -582,69 +504,25 @@ function (
 			var fnShowRelevantDialog = sandbox.spy(AppVariantUtils, "showRelevantDialog");
 			var oErrorInfo = {appVariantId:  "customer.TestId"};
 			var fnBuildErrorInfoStub = sandbox.stub(AppVariantUtils, "buildErrorInfo").returns(oErrorInfo);
+			var fncatchErrorDialog = sandbox.spy(AppVariantUtils, "catchErrorDialog");
+			var fnTriggerCatalogAssignment = sandbox.spy(AppVariantUtils, "triggerCatalogAssignment");
 
-			return DescriptorVariantFactory.createNew({
-				id: "customer.TestId",
-				reference: "TestIdBaseApp"
-			}).then(function(oDescriptor) {
-				return this.oAppVariantManager.triggerCatalogUnAssignment(oDescriptor).catch(
-					function() {
-						assert.ok(oDescriptorUtilsStub.calledOnceWith("/sap/bc/lrep/appdescr_variants/customer.TestId?action=unassignCatalogs", 'POST'), "then the sendRequest() method is called once and with right parameters");
-						assert.ok("then the promise got rejected");
-						assert.ok(fnBuildErrorInfoStub.calledOnce, "then the buildErrorInfo method is called once");
-						assert.ok(fnShowRelevantDialog.calledOnceWith(oErrorInfo, false), "then the showRelevantDialog method is called once and with correct parameters");
-					}
-				);
-			}.bind(this));
+			return DescriptorVariantFactory.createNew({id: "customer.TestId", reference: "TestIdBaseApp"})
+			.then(function(oDescriptor) {
+				return this.oAppVariantManager.triggerCatalogPublishing(oDescriptor, true);
+			}.bind(this))
+			.then(function() {
+				assert.ok(fnTriggerCatalogAssignment.calledOnceWith("customer.TestId", "TestIdBaseApp"), "then the method triggerCatalogAssignment is called once with correct parameters");
+				assert.ok(oDescriptorUtilsStub.calledOnceWith("/sap/bc/lrep/appdescr_variants/customer.TestId?action=assignCatalogs&assignFromAppId=TestIdBaseApp", 'POST'), "then the sendRequest() method is called once and with right parameters");
+				assert.ok(fncatchErrorDialog.calledOnce, "then the fncatchErrorDialog method is called once");
+				assert.strictEqual(fncatchErrorDialog.getCall(0).args[1], "MSG_CATALOG_ASSIGNMENT_FAILED", "then the fncatchErrorDialog method is called with correct message key");
+				assert.strictEqual(fncatchErrorDialog.getCall(0).args[2], "customer.TestId", "then the fncatchErrorDialog method is called with correct app var id");
+				assert.ok(fnBuildErrorInfoStub.calledOnce, "then the buildErrorInfo method is called once");
+				assert.ok(fnShowRelevantDialog.calledOnceWith(oErrorInfo, false), "then the showRelevantDialog method is called once and with correct parameters");
+			});
 		});
 
-		QUnit.test("When triggerCatalogAssignment() method is called on S4/Hana on premise", function (assert) {
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:false,
-					isAtoEnabled:false,
-					isProductiveSystem:false
-				})
-			);
-
-			var fnTriggerCatalogAssignmentSpy = sandbox.spy(AppVariantUtils, "triggerCatalogAssignment");
-
-			return DescriptorVariantFactory.createNew({
-				id: "customer.TestId",
-				reference: "TestIdBaseApp"
-			}).then(function(oDescriptor) {
-				return this.oAppVariantManager.triggerCatalogAssignment(oDescriptor).then(function() {
-					assert.ok(true, "then the promise is resolved");
-					assert.ok(fnTriggerCatalogAssignmentSpy.notCalled, "then the method triggerCatalogAssignment() is not called");
-				});
-			}.bind(this));
-		});
-
-		QUnit.test("When triggerCatalogUnAssignment() method is called on S4/Hana on premise", function (assert) {
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:false,
-					isAtoEnabled:false,
-					isProductiveSystem:false
-				})
-			);
-
-			var fnTriggerCatalogUnAssignmentSpy = sandbox.spy(AppVariantUtils, "triggerCatalogUnAssignment");
-
-			return DescriptorVariantFactory.createNew({
-				id: "customer.TestId",
-				reference: "TestIdBaseApp"
-			}).then(function(oDescriptor) {
-				return this.oAppVariantManager.triggerCatalogUnAssignment(oDescriptor).then(function() {
-					assert.ok(true, "then the promise is resolved");
-					assert.ok(fnTriggerCatalogUnAssignmentSpy.notCalled, "then the method triggerCatalogUnAssignment() is not called");
-				});
-			}.bind(this));
-		});
-
-		QUnit.test("When triggerCatalogAssignment() method is called and response is failed", function (assert) {
+		QUnit.test("When triggerCatalogPublishing() method is called on S4/Hana Cloud for catalog unassignment and response is failed", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser:true,
@@ -665,24 +543,26 @@ function (
 			var fnShowRelevantDialog = sandbox.spy(AppVariantUtils, "showRelevantDialog");
 			var oErrorInfo = {appVariantId:  "customer.TestId"};
 			var fnBuildErrorInfoStub = sandbox.stub(AppVariantUtils, "buildErrorInfo").returns(oErrorInfo);
+			var fncatchErrorDialog = sandbox.spy(AppVariantUtils, "catchErrorDialog");
+			var fnTriggerCatalogUnAssignment = sandbox.spy(AppVariantUtils, "triggerCatalogUnAssignment");
 
-			return DescriptorVariantFactory.createNew({
-				id: "customer.TestId",
-				reference: "TestIdBaseApp"
-			}).then(function(oDescriptor) {
-				return this.oAppVariantManager.triggerCatalogAssignment(oDescriptor).catch(
-					function() {
-						assert.ok(oDescriptorUtilsStub.calledOnceWith("/sap/bc/lrep/appdescr_variants/customer.TestId?action=assignCatalogs&assignFromAppId=TestIdBaseApp", 'POST'), "then the sendRequest() method is called once and with right parameters");
-						assert.ok("then the promise got rejected");
-						assert.ok(fnBuildErrorInfoStub.calledOnce, "then the buildErrorInfo method is called once");
-						assert.ok(fnShowRelevantDialog.calledOnceWith(oErrorInfo, false), "then the showRelevantDialog method is called once and with correct parameters");
-					}
-				);
-			}.bind(this));
+			return DescriptorVariantFactory.createNew({id: "customer.TestId", reference: "TestIdBaseApp"})
+			.then(function(oDescriptor) {
+				return this.oAppVariantManager.triggerCatalogPublishing(oDescriptor, false);
+			}.bind(this))
+			.then(function() {
+				assert.ok(fnTriggerCatalogUnAssignment.calledOnceWith("customer.TestId", "TestIdBaseApp"), "then the method triggerCatalogUnAssignment is called once with correct parameters");
+				assert.ok(oDescriptorUtilsStub.calledOnceWith("/sap/bc/lrep/appdescr_variants/customer.TestId?action=unassignCatalogs", 'POST'), "then the sendRequest() method is called once and with right parameters");
+				assert.ok(fncatchErrorDialog.calledOnce, "then the fncatchErrorDialog method is called once");
+				assert.strictEqual(fncatchErrorDialog.getCall(0).args[1], "MSG_DELETE_APP_VARIANT_FAILED", "then the fncatchErrorDialog method is called with correct message key");
+				assert.strictEqual(fncatchErrorDialog.getCall(0).args[2], "customer.TestId", "then the fncatchErrorDialog method is called with correct app var id");
+				assert.ok(fnBuildErrorInfoStub.calledOnce, "then the buildErrorInfo method is called once");
+				assert.ok(fnShowRelevantDialog.calledOnceWith(oErrorInfo, false), "then the showRelevantDialog method is called once and with correct parameters");
+			});
 		});
 
 
-		QUnit.test("When showSuccessMessageAndTriggerActionFlow() method is called on S4/Hana Cloud ('Save As' is triggered from RTA Toolbar)", function (assert) {
+		QUnit.test("When showSuccessMessage() method is called on S4/Hana Cloud ('Save As' is triggered from RTA Toolbar)", function (assert) {
 			window.bUShellNavigationTriggered = false;
 			var originalUShell = sap.ushell;
 
@@ -726,7 +606,7 @@ function (
 				id: "customer.TestId",
 				reference: "TestIdBaseApp"
 			}).then(function(oDescriptor) {
-				return this.oAppVariantManager.showSuccessMessageAndTriggerActionFlow(oDescriptor, true).then(function() {
+				return this.oAppVariantManager.showSuccessMessage(oDescriptor, true).then(function() {
 					assert.ok("then the promise is resolved and app is navigated to FLP Homepage");
 					sap.ushell = originalUShell;
 					delete window.bUShellNavigationTriggered;
@@ -734,7 +614,7 @@ function (
 			}.bind(this));
 		});
 
-		QUnit.test("When showSuccessMessageAndTriggerActionFlow() method is called on S4/Hana on premise ('Save As' is triggered from RTA Toolbar)", function (assert) {
+		QUnit.test("When showSuccessMessage() method is called on S4/Hana on premise ('Save As' is triggered from RTA Toolbar)", function (assert) {
 			window.bUShellNavigationTriggered = false;
 			var originalUShell = sap.ushell;
 
@@ -778,7 +658,7 @@ function (
 				id: "customer.TestId",
 				reference: "TestIdBaseApp"
 			}).then(function(oDescriptor) {
-				return this.oAppVariantManager.showSuccessMessageAndTriggerActionFlow(oDescriptor, true).then(function() {
+				return this.oAppVariantManager.showSuccessMessage(oDescriptor, true).then(function() {
 					assert.ok("then the promise is resolved and app is navigated to FLP Homepage");
 					sap.ushell = originalUShell;
 					delete window.bUShellNavigationTriggered;
@@ -786,7 +666,7 @@ function (
 			}.bind(this));
 		});
 
-		QUnit.test("When showSuccessMessageAndTriggerActionFlow() method is called on S4/Hana Cloud ('Save As' is triggered from app variant overview list)", function (assert) {
+		QUnit.test("When showSuccessMessage() method is called on S4/Hana Cloud ('Save As' is triggered from app variant overview list)", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser:true,
@@ -804,14 +684,13 @@ function (
 				id: "customer.TestId",
 				reference: "TestIdBaseApp"
 			}).then(function(oDescriptor) {
-				return this.oAppVariantManager.showSuccessMessageAndTriggerActionFlow(oDescriptor, false).then(function(bSuccess) {
-					assert.ok(bSuccess, "then the app variant overview list gets opened");
-					assert.ok(fnAppVariantFeatureSpy.calledOnce, "then the onGetOverview() method is called once");
+				return this.oAppVariantManager.showSuccessMessage(oDescriptor, false).then(function() {
+					assert.ok(fnAppVariantFeatureSpy.notCalled, "then the onGetOverview() method is called once");
 				});
 			}.bind(this));
 		});
 
-		QUnit.test("When showSuccessMessageAndTriggerActionFlow() method is called on S4/Hana on premise ('Save As' is triggered from app variant overview list)", function (assert) {
+		QUnit.test("When showSuccessMessage() method is called on S4/Hana on premise ('Save As' is triggered from app variant overview list)", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser:true,
@@ -829,9 +708,8 @@ function (
 				id: "customer.TestId",
 				reference: "TestIdBaseApp"
 			}).then(function(oDescriptor) {
-				return this.oAppVariantManager.showSuccessMessageAndTriggerActionFlow(oDescriptor, false).then(function(bSuccess) {
-					assert.ok(bSuccess, "then the app variant overview list gets opened");
-					assert.ok(fnAppVariantFeatureSpy.calledOnce, "then the onGetOverview() method is called once");
+				return this.oAppVariantManager.showSuccessMessage(oDescriptor, false).then(function() {
+					assert.ok(fnAppVariantFeatureSpy.notCalled, "then the onGetOverview() method is called once");
 				});
 			}.bind(this));
 		});

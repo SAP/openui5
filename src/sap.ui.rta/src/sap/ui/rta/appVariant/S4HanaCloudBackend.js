@@ -56,10 +56,11 @@ sap.ui.define([
 					} else {
 						setTimeout(checkForNotification.bind(that), iMsec);
 					}
-				// ... Reject if OData service to check customizing failed
+				// ... Reject if publishing return an error or is locked
 				}).catch(function(oError) {
-					jQuery.sap.log.error(oError);
-					reject({ iamAppId : sIamAppId });
+					var sText = bAppVarCreation ? "creation" : "deletion";
+					jQuery.sap.log.error("Catalog publishing failed for app variant " + sText + ". AppVarStatus is " + oError.message);
+					reject({ iamAppId : sIamAppId, error: oError.message});
 				});
 			}
 
@@ -69,10 +70,7 @@ sap.ui.define([
 	};
 
 	S4HanaCloudBackend._isAppReady = function(oAppStatusResponse, bAppVarCreation) {
-		// access catalog assignment information of APS_IAM_APP_SRV ODATA service
 		var aCatalogList = oAppStatusResponse.data.results;
-
-		// confirm an array has been retrieved
 		if (!Array.isArray(aCatalogList)) {
 			throw new Error(oAppStatusResponse.requestUri + " returned unexpected result: " + oAppStatusResponse);
 		}
@@ -88,13 +86,18 @@ sap.ui.define([
 		});
 
 		var bErrorsReported = aCatalogList.some(function(oCatalog) {
-			// ActualStatus === 5 : Error, ActualStatus === 4 : Locked
-			return oCatalog.ActualStatus === 5 || oCatalog.ActualStatus === 4;
+			// ActualStatus === 5 : Error
+			return oCatalog.ActualStatus === 5;
 		});
 
-		if (bErrorsReported) {
-			var sText = bAppVarCreation ? "creation" : "deletion";
-			throw new Error("Catalog failed for app variant " + sText);
+		var bIsLocked = aCatalogList.some(function(oCatalog) {
+			// ActualStatus === 4 : Locked
+			return oCatalog.ActualStatus === 4;
+		});
+
+		if (bErrorsReported || bIsLocked) {
+			var sText = bErrorsReported ? "error" : "locked";
+			throw new Error(sText);
 		}
 
 		return bAppVarCreation ? bIsPublished : bIsUnpublished;

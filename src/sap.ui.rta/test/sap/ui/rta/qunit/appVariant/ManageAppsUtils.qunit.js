@@ -3,12 +3,14 @@
 sap.ui.define([
 	"sap/ui/rta/appVariant/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils",
+	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	AppVariantOverviewUtils,
 	AppVariantUtils,
+	RtaFeature,
 	Settings,
 	jQuery,
 	sinon
@@ -514,7 +516,7 @@ sap.ui.define([
 			};
 
 			var sendRequestStub = sandbox.stub(AppVariantOverviewUtils, "sendRequest").resolves(oResult);
-			AppVariantUtils.setNewAppVariantId("id1");
+			RtaFeature.setNewAppVariantId("id1");
 
 			var oResourceBundlePromise = jQuery.sap.resources({
 				url: jQuery.sap.getModulePath("sap.ui.rta.appVariant.manageApps.webapp.i18n", "/i18n.properties"),
@@ -589,7 +591,7 @@ sap.ui.define([
 				async: true
 			});
 
-			AppVariantUtils.setNewAppVariantId(null);
+			RtaFeature.setNewAppVariantId(null);
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({

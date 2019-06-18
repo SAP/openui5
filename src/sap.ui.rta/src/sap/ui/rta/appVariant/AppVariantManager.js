@@ -5,19 +5,15 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/rta/appVariant/AppVariantDialog",
 	"sap/ui/rta/appVariant/AppVariantUtils",
-	"sap/m/MessageBox",
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/appVariant/S4HanaCloudBackend",
-	"sap/ui/rta/Utils",
 	"sap/ui/core/BusyIndicator"
 ], function(
 	ManagedObject,
 	AppVariantDialog,
 	AppVariantUtils,
-	MessageBox,
 	RtaAppVariantFeature,
 	S4HanaCloudBackend,
-	RtaUtils,
 	BusyIndicator
 ) {
 	"use strict";
@@ -229,9 +225,7 @@ sap.ui.define([
 	 */
 	AppVariantManager.prototype.saveAppVariantToLREP = function(oAppVariantDescriptor) {
 		return oAppVariantDescriptor.submit().catch(function(oError) {
-			BusyIndicator.hide();
-			var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_SAVE_APP_VARIANT_FAILED", oError, oAppVariantDescriptor.getId());
-			return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
+			return AppVariantUtils.catchErrorDialog(oError, "MSG_SAVE_APP_VARIANT_FAILED", oAppVariantDescriptor.getId());
 		});
 	};
 
@@ -263,13 +257,9 @@ sap.ui.define([
 		if (bCopyUnsavedChanges && oCommandStack.getAllExecutedCommands().length) {
 			return this._takeOverDirtyChangesByAppVariant(sAppVariantId).catch(function(oError) {
 				return this._deleteAppVariantFromLREP(sAppVariantId).catch(function(oError) {
-					BusyIndicator.hide();
-					var oErrorInfo = AppVariantUtils.buildErrorInfo("SAVE_AS_MSG_DELETE_APP_VARIANT", oError, sAppVariantId);
-					return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
+					return AppVariantUtils.catchErrorDialog(oError, "SAVE_AS_MSG_DELETE_APP_VARIANT", sAppVariantId);
 				}).then(function() {
-					BusyIndicator.hide();
-					var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_COPY_UNSAVED_CHANGES_FAILED", oError);
-					return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
+					return AppVariantUtils.catchErrorDialog(oError, "MSG_COPY_UNSAVED_CHANGES_FAILED");
 				});
 			}.bind(this));
 		}
@@ -280,110 +270,40 @@ sap.ui.define([
 	/**
 	 *
 	 * @param {Object} oAppVariantDescriptor - Contains the app variant descriptor information
+	 * @param {Boolean} bSaveAs - Indicates whether the app is currently being saved
 	 * @returns {Promise} Server response
-	 * @description Once the app variant is created, the app variant gets assigned to the same catalog(s) as of an original app.
+	 * @description In 'Save As' scenario: The app variant gets assigned to the same catalog(s) as the original app;
+	 * In 'Deletion' scenario: The app variant is unassigned from all catalogs.
 	 */
-	AppVariantManager.prototype.triggerCatalogAssignment = function(oAppVariantDescriptor) {
-		if (AppVariantUtils.isS4HanaCloud(oAppVariantDescriptor.getSettings())) {
-			return AppVariantUtils.triggerCatalogAssignment(oAppVariantDescriptor.getId(), oAppVariantDescriptor.getReference()).catch(function(oError) {
-				BusyIndicator.hide();
-				var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_CATALOG_ASSIGNMENT_FAILED", oError, oAppVariantDescriptor.getId());
-				return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
-			});
-		}
-
-		return Promise.resolve();
+	AppVariantManager.prototype.triggerCatalogPublishing = function(oAppVariantDescriptor, bSaveAs) {
+		var fnTriggerCatalogOperation = bSaveAs ? AppVariantUtils.triggerCatalogAssignment : AppVariantUtils.triggerCatalogUnAssignment;
+		return fnTriggerCatalogOperation(oAppVariantDescriptor.getId(), oAppVariantDescriptor.getReference())
+		.catch(function(oError) {
+			var sMessageKey = bSaveAs ? "MSG_CATALOG_ASSIGNMENT_FAILED" : "MSG_DELETE_APP_VARIANT_FAILED";
+			return AppVariantUtils.catchErrorDialog(oError, sMessageKey, oAppVariantDescriptor.getId());
+		});
 	};
 
-	/**
-	 *
-	 * @param {Object} oAppVariantDescriptor - Contains the app variant descriptor information
-	 * @returns {Promise} Server response
-	 * @description When the deletion of the app variant gets triggered, the assigned catalogs to the app variant get unpublished.
-	 */
-	AppVariantManager.prototype.triggerCatalogUnAssignment = function(oAppVariantDescriptor) {
-		if (AppVariantUtils.isS4HanaCloud(oAppVariantDescriptor.getSettings())) {
-			return AppVariantUtils.triggerCatalogUnAssignment(oAppVariantDescriptor.getId()).catch(function(oError) {
-				BusyIndicator.hide();
-				var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_DELETE_APP_VARIANT_FAILED", oError, oAppVariantDescriptor.getId());
-				return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
-			});
-		}
-
-		return Promise.resolve();
-	};
-
-	/**
+		/**
 	 *
 	 * @param {String} sIamId - Identity Access Management ID of SAP Fiori app
 	 * @param {String} sAppVariantId - Application variant ID
+	 * @param {Boolean} bCreation - Indicates that app is being created
 	 * @returns {Promise} Resolved promise
-	 * @description When the app variant creation/deletion and catalog assignment/unassignment are executed successfully, this asynchronous process gets triggered.
-	 * It talks to the server every 2.5 secs and checks respectively, whether the new FLP tile for the newly created app variant is available or if the catalogs bound to the app variant have been unpublished.
+	 * @description When the app variant creation/deletion and catalog assignment/unassignment are executed successfully, this asynchronous process gets triggered. It talks to the server every 2.5 secs.
+	 * In case of creation: It checks whether the new FLP tile is available.
+	 * In case of deletion: It checks whether the catalogs bound to the app variant have been unpublished and the deletion can be started.
 	 */
-	AppVariantManager.prototype.notifyKeyUserWhenTileIsReady = function(sIamId, sAppVariantId) {
+	AppVariantManager.prototype.notifyKeyUserWhenPublishingIsReady = function(sIamId, sAppVarId, bCreation) {
 		var oS4HanaCloudBackend = new S4HanaCloudBackend();
-
-		return oS4HanaCloudBackend.notifyFlpCustomizingIsReady(sIamId, true).then(function() {
-			return RtaUtils._showMessageBox(
-				MessageBox.Icon.INFORMATION,
-				"SAVE_APP_VARIANT_NEW_TILE_AVAILABLE_TITLE",
-				"MSG_SAVE_APP_VARIANT_NEW_TILE_AVAILABLE"
-			);
-		}).catch(function(oError) {
+		return oS4HanaCloudBackend.notifyFlpCustomizingIsReady(sIamId, bCreation).catch(function(oError) {
 			BusyIndicator.hide();
-			var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_TILE_CREATION_FAILED", oError, sAppVariantId);
-			oErrorInfo.copyId = true;
-			return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
-		});
-	};
-
-	/**
-	 *
-	 * @param {String} sIamId - Identity Access Management ID of SAP Fiori app
-	 * @param {String} sAppVariantId - Application variant ID
-	 * @returns {Promise} Server response
-	 * @description When the deletion of app variant gets triggered from the client, it starts the polling to check if the catalogs bound to the deleted app variant have been unpublished.
-	 * Once the polling is finished, it deletes the application variant and all corresponding changes from the layered repository.
-	 */
-	AppVariantManager.prototype.notifyWhenUnpublishingIsReady = function(sIamId, sAppVariantId) {
-		var oS4HanaCloudBackend = new S4HanaCloudBackend();
-
-		return oS4HanaCloudBackend.notifyFlpCustomizingIsReady(sIamId, false).catch(function(oError) {
-			BusyIndicator.hide();
-			var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_DELETE_APP_VARIANT_FAILED", oError, sAppVariantId);
-			oErrorInfo.copyId = true;
-			return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
-		});
-	};
-
-
-	/**
-	 * Builds the success message text based on different platforms (i.e. S/4HANA Cloud Platform and S/4HANA on Premise.
-	 */
-	AppVariantManager.prototype._buildSuccessInfo = function(oAppVariantDescriptor, bSaveAsTriggeredFromRtaToolbar) {
-		var bCopyId = false;
-		var sMessage = AppVariantUtils.getText("SAVE_APP_VARIANT_SUCCESS_MESSAGE") + "\n\n";
-
-		if (AppVariantUtils.isS4HanaCloud(oAppVariantDescriptor.getSettings())) {
-			if (bSaveAsTriggeredFromRtaToolbar) {
-				sMessage += AppVariantUtils.getText("SAVE_APP_VARIANT_SUCCESS_S4HANA_CLOUD_MESSAGE");
-			} else {
-				sMessage += AppVariantUtils.getText("SAVE_APP_VARIANT_SUCCESS_S4HANA_CLOUD_MESSAGE_OVERVIEW_LIST");
+			var sMessageKey = bCreation ? "MSG_TILE_CREATION_FAILED" : "MSG_DELETE_APP_VARIANT_FAILED";
+			if (!bCreation && oError.error === "locked") {
+				sMessageKey = "MSG_CATALOGS_LOCKED";
 			}
-		} else if (bSaveAsTriggeredFromRtaToolbar) {
-			sMessage += AppVariantUtils.getText("SAVE_APP_VARIANT_SUCCESS_S4HANA_ON_PREMISE_MESSAGE", oAppVariantDescriptor.getId());
-			bCopyId = true;
-		} else {
-			sMessage += AppVariantUtils.getText("SAVE_APP_VARIANT_SUCCESS_S4HANA_ON_PREMISE_MESSAGE_OVERVIEW_LIST", oAppVariantDescriptor.getId());
-			bCopyId = true;
-		}
-
-		return {
-			text: sMessage,
-			appVariantId: oAppVariantDescriptor.getId(),
-			copyId : bCopyId
-		};
+			return AppVariantUtils.catchErrorDialog(oError, sMessageKey, sAppVarId);
+		});
 	};
 
 	/**
@@ -395,12 +315,10 @@ sap.ui.define([
 	 * If a user chooses 'Save As' from the UI adaptation header bar, it closes the current running app and navigates to the SAP Fiori Launchpad.
 	 * If a user chooses 'Save As' from app variant overview dialog, it opens the app variant overview dialog again to show the 'Just Created' app variant.
 	 */
-	AppVariantManager.prototype.showSuccessMessageAndTriggerActionFlow = function(oAppVariantDescriptor, bSaveAsTriggeredFromRtaToolbar) {
-		var oSuccessInfo = this._buildSuccessInfo(oAppVariantDescriptor, bSaveAsTriggeredFromRtaToolbar);
+	AppVariantManager.prototype.showSuccessMessage = function(oAppVariantDescriptor, bSaveAsTriggeredFromRtaToolbar) {
+		var oSuccessInfo = AppVariantUtils.buildSuccessInfo(oAppVariantDescriptor, bSaveAsTriggeredFromRtaToolbar);
 		BusyIndicator.hide();
-		return AppVariantUtils.showRelevantDialog(oSuccessInfo, true).then(function() {
-			return bSaveAsTriggeredFromRtaToolbar ? AppVariantUtils.navigateToFLPHomepage() : RtaAppVariantFeature.onGetOverview(true);
-		});
+		return AppVariantUtils.showRelevantDialog(oSuccessInfo, true);
 	};
 
 	return AppVariantManager;

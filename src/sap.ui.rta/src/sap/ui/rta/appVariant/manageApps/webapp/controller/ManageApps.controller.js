@@ -92,7 +92,7 @@ sap.ui.define([
 			});
 
 			var oAdaptingAppAttributes = aAdaptingAppAttributes[0];
-			if (oAdaptingAppAttributes) {
+			if (oAdaptingAppAttributes && oAdaptingAppAttributes.appVarStatus !== "R") {
 				oAdaptingAppAttributes.currentStatus = oI18n.getText("MAA_CURRENTLY_ADAPTING");
 			}
 
@@ -132,6 +132,8 @@ sap.ui.define([
 				return "Success";
 			} else if (sValue === oI18n.getText("MAA_NEW_APP_VARIANT")) {
 				return "Information";
+			} else if (sValue === oI18n.getText("MAA_OPERATION_IN_PROGRESS")) {
+				return "Warning";
 			}
 
 			return "None";
@@ -231,15 +233,12 @@ sap.ui.define([
 			oInfo.deleteAppVariant = true;
 
 			var sAppVarId = this.getModelProperty("appId", oEvent.getSource().getBindingContext());
-			var bIsAppVariant = this.getModelProperty("isAppVariant", oEvent.getSource().getBindingContext());
 			var sCurrentStatus = this.getModelProperty("currentStatus", oEvent.getSource().getBindingContext());
 			var bCurrentlyAdapting = sCurrentStatus === oI18n.getText("MAA_CURRENTLY_ADAPTING");
 
-
 			return AppVariantUtils.showRelevantDialog(oInfo)
 				.then(function() {
-					// is this necessary? in which case is there no i18n?
-					return RtaAppVariantFeature.onDeleteFromOverviewDialog(sAppVarId, bIsAppVariant, bCurrentlyAdapting, false);
+					return RtaAppVariantFeature.onDeleteFromOverviewDialog(sAppVarId, bCurrentlyAdapting);
 				}).catch(function() {
 					return true;
 				});
