@@ -223,7 +223,7 @@
 		},
 		{
 			"control": "sap.m.MultiInput",
-			"url": "../MultiInput.html",
+			"url": "MultiInput.html",
 			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
