@@ -274,11 +274,33 @@ sap.ui.define([
 
 		// context not given
 		assert.equal(oModel.setProperty("value", "hello"), false, "Property not set, because it is not resolvable without a context");
+		// empty property context would point to property
+		assert.equal(oModel.setProperty("", {operator: "EQ", values: [1, 2]}), false,
+			"Property not set, because it is not resolvable without a context");
 
 		// context given
 		var oContext = oModel.getContext("/");
 		assert.equal(oModel.setProperty("value", "hello1", oContext), true, "Property set, because context is resolvable");
 		assert.equal(oModel.getProperty("value", oContext), "hello1", "Property has correct value, because context is resolvable");
+
+		//context to property
+		oContext = oModel.getContext("/objectArray/0/");
+		assert.equal(oModel.setProperty("", {operator: "EQ", values: [1, 2]}, oContext), true,
+			"Property set, because context is resolvable");
+	});
+
+
+	QUnit.test("Change of property shall only filter resolved bindings", function(assert) {
+		var oModel = this.oManagedObjectModel,
+			oBinding = oModel.bindProperty("objectArray");
+
+		oModel.addBinding(oBinding);
+
+		var oUpdateSpy = sinon.spy(oBinding, "checkUpdate");
+
+		// code under test
+		assert.equal(oModel.setProperty("/value", "hello"), true, "Property set");
+		assert.equal(oUpdateSpy.notCalled, true, "The update is not called");
 	});
 
 	QUnit.test("ManagedObject Model  - Property Binding - Registration and Housekeeping", function (assert) {
