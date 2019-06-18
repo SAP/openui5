@@ -1140,6 +1140,36 @@ function(
 				}
 			}
 		}
+
+		if (oEvent.srcControl !== this) {
+			return;
+		}
+
+		this.informList("KeyDown", oEvent);
+	};
+
+	ListItemBase.prototype.onkeyup = function(oEvent) {
+		if (oEvent.isMarked() || oEvent.srcControl !== this) {
+			return;
+		}
+
+		this.informList("KeyUp", oEvent);
+	};
+
+	ListItemBase.prototype.onsapupmodifiers = function(oEvent) {
+		if (oEvent.isMarked() || oEvent.srcControl !== this) {
+			return;
+		}
+
+		this.informList("UpDownModifiers", oEvent, -1);
+	};
+
+	ListItemBase.prototype.onsapdownmodifiers = function(oEvent) {
+		if (oEvent.isMarked() || oEvent.srcControl !== this) {
+			return;
+		}
+
+		this.informList("UpDownModifiers", oEvent, 1);
 	};
 
 	/**
