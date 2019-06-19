@@ -67,7 +67,7 @@
 			},
 			{
 			  "label": "{{website}}",
-			  "link": "{company/website}"
+			  "url": "{company/website}"
 			}
 		  ]
 		}

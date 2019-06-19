@@ -54,7 +54,7 @@
       "title": {
         "text": "Donut chart",
         "visible": true,
-        "alignment": "Bottom"
+        "alignment": "Center"
       },
       "measureAxis": "size",
       "dimensionAxis": "color",
