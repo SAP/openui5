@@ -75,9 +75,20 @@
 			</Action>
 			<Action Name="Create" EntitySetPath="_it" IsBound="true">
 				<Parameter Name="_it" Type="Collection(special.cases.ArtistsType)" Nullable="false"/>
+				<Parameter Name="ArtistID" Type="Edm.String" />
 				<Parameter Name="Countryoforigin" Type="Edm.String" />
+				<Parameter Name="IsActiveEntity" Type="Edm.Boolean" />
+				<Parameter Name="Name" Type="Edm.String" />
 				<ReturnType Type="special.cases.ArtistsType" Nullable="false"/>
 			</Action>
+			<Function Name="GetDefaults" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="Collection(special.cases.ArtistsType)" Nullable="false"/>
+				<ReturnType Type="special.cases.ArtistsType" Nullable="false"/>
+			</Function>
+			<Function Name="GetDefaults" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="Collection(special.cases.DraftAdministrativeDataType)" Nullable="false"/>
+				<ReturnType Type="special.cases.DraftAdministrativeDataType" Nullable="false"/>
+			</Function>
 			<Function Name="GetDraft" EntitySetPath="_it" IsBound="true">
 				<Parameter Name="_it" Type="special.cases.ArtistsType" Nullable="false"/>
 				<ReturnType Type="special.cases.ArtistsType" Nullable="true"/>

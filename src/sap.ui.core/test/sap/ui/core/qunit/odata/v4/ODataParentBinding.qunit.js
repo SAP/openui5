@@ -1535,37 +1535,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("checkUpdateInternal: error handling", function (assert) {
-		var oBinding = new ODataParentBinding({
-				oCachePromise : SyncPromise.resolve({}),
-				oContext : {
-					fetchCanonicalPath : function () {}
-				},
-				oModel : {
-					reportError : function () {}
-				},
-				sPath : "TEAM_2_EMPLOYEES",
-				bRelative : true,
-				toString : function () {
-					return "foo";
-				}
-			}),
-			oError = {},
-			oPathPromise = Promise.reject(oError);
-
-		this.mock(oBinding).expects("fetchResourcePath")
-			.withExactArgs(sinon.match.same(oBinding.oContext))
-			.returns(SyncPromise.resolve(oPathPromise));
-		this.mock(oBinding.oModel).expects("reportError")
-			.withExactArgs("Failed to update foo", sClassName, sinon.match.same(oError));
-
-		// code under test
-		oBinding.checkUpdateInternal();
-
-		return oPathPromise.then(undefined, function () {});
-	});
-
-	//*********************************************************************************************
 	[false, true].forEach(function (bCancel) {
 		QUnit.test("createInCache: with cache, canceled: " + bCancel, function (assert) {
 			var sCanonicalPath = "/TEAMS('1')/EMPLOYEES",

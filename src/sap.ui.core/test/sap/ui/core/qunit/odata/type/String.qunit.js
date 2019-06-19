@@ -207,6 +207,53 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	[{
+		bParseKeepsEmptyString : true,
+		vParsedEmptyString: ""
+	}, {
+		bParseKeepsEmptyString : false,
+		vParsedEmptyString: null
+	}].forEach(function(oFixture) {
+		var sTitle = "parseKeepsEmptyString: Valid value - " + oFixture.bParseKeepsEmptyString;
+
+		QUnit.test(sTitle, function (assert) {
+			var oType = new StringType({parseKeepsEmptyString : oFixture.bParseKeepsEmptyString});
+
+			// code under test
+			assert.strictEqual(oType.parseValue(null, "string"), null);
+			assert.strictEqual(oType.parseValue("", "string"), oFixture.vParsedEmptyString);
+			assert.strictEqual(oType.parseValue(undefined, "string"), undefined);
+		});
+	});
+
+	//*********************************************************************************************
+	["foo", 1, 0, null, "true", "false"].forEach(function (vParseKeepsEmptyString) {
+		var sTitle = "parseKeepsEmptyString: Invalid value - " + vParseKeepsEmptyString;
+
+		QUnit.test(sTitle, function (assert) {
+			var oType;
+
+			this.oLogMock.expects("warning").withExactArgs(
+				"Illegal parseKeepsEmptyString: " + vParseKeepsEmptyString, null,
+				"sap.ui.model.odata.type.String");
+
+			// code under test
+			oType = new StringType({parseKeepsEmptyString: vParseKeepsEmptyString});//expect log
+			assert.strictEqual(oType.parseValue(null, "string"), null);
+			assert.strictEqual(oType.parseValue("", "string"), null);
+			assert.strictEqual(oType.parseValue(undefined, "string"), undefined);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("parseKeepsEmptyString: parse (not-nullable)", function(assert) {
+		var oType = new StringType({parseKeepsEmptyString : true}, {nullable : "false"});
+
+		// code under test
+		assert.strictEqual(oType.parseValue("", "string"), "");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("isDigitSequence: constructor", function (assert) {
 		var oType,
 			that = this;

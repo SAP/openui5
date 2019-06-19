@@ -326,8 +326,11 @@ sap.ui.define([
 	 * parent context changed.
 	 *
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving without a defined result when the check is finished; never rejecting
+	 *   A promise resolving without a defined result when the check is finished, or rejecting in
+	 *   case of an error (e.g. thrown by the change event handler of a control)
 	 * @throws {Error} If called with parameters
+	 *
+	 * @private
 	 */
 	// @override
 	ODataParentBinding.prototype.checkUpdateInternal = function (bForceUpdate) {
@@ -352,8 +355,6 @@ sap.ui.define([
 						return updateDependents();
 					}
 					return that.refreshInternal(""); // entity of context changed
-				}).catch(function (oError) {
-					that.oModel.reportError("Failed to update " + that, sClassName, oError);
 				});
 			}
 			return updateDependents();

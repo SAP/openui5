@@ -334,7 +334,7 @@ sap.ui.define([
 			var vValue = oResult.value;
 
 			function binding(bAddType) {
-				var sConstraints, sResult;
+				var sConstraints, sFormatOptions, sResult;
 
 				bAddType = bAddType && !oResult.ignoreTypeInPath && oResult.type;
 				if (bAddType || rBadChars.test(vValue)) {
@@ -344,6 +344,10 @@ sap.ui.define([
 						sConstraints = Basics.toJSON(oResult.constraints);
 						if (sConstraints && sConstraints !== "{}") {
 							sResult += ",constraints:" + sConstraints;
+						}
+						sFormatOptions = Basics.toJSON(oResult.formatOptions);
+						if (sFormatOptions && sFormatOptions !== "{}") {
+							sResult += ",formatOptions:" + sFormatOptions;
 						}
 					}
 					return sResult + "}";

@@ -531,7 +531,7 @@ sap.ui.define([
 		 * constants accordingly.
 		 *
 		 * @param {object} oResult
-	 	 *   a result object with category
+		 *   a result object with category
 		 * @param {boolean} bWrapExpression
 		 *   if true, wrap an expression in <code>oResult</code> with "()"
 		 * @returns {string}
@@ -740,6 +740,9 @@ sap.ui.define([
 				}
 				return oCurrencyOrUnitPromise || {
 					constraints : mConstraints,
+					formatOptions : sType === "Edm.String"
+						? {parseKeepsEmptyString : true}
+						: undefined,
 					result : "binding",
 					type : sType,
 					value : oPathValue.prefix + oPathValue.value

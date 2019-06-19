@@ -288,6 +288,13 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("resultToString with type", function (assert) {
 		[{
+			value : {type : "Edm.String", formatOptions : {}},
+			binding: ",type:'sap.ui.model.odata.type.String'"
+		}, {
+			value : {type : "Edm.String", formatOptions : {parseKeepsEmptyString : true}},
+			binding: ",type:'sap.ui.model.odata.type.String'"
+				+ ",formatOptions:{'parseKeepsEmptyString':true}"
+		}, {
 			value : {type : "Edm.Boolean", constraints : {}},
 			binding: ",type:'sap.ui.model.odata.type.Boolean'"
 		}, {

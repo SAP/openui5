@@ -2,10 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/core/sample/common/Helper",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press"
-], function (Opa5, EnterText, Press) {
+], function (Helper, Opa5, EnterText, Press) {
 	"use strict";
 	var sViewName = "sap.ui.core.sample.ViewTemplate.types.Types";
 
@@ -25,93 +26,59 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
-				changeMinMaxField : function (sValue) {
+				enterInputValue : function (sId, sValue, sViewName0) {
 					return this.waitFor({
-						actions : new EnterText({ clearTextFirst : true, text : sValue }),
-						controlType : "sap.m.Input",
-						id : "decimalInput",
-						success : function (oControl) {
-							Opa5.assert.ok(true, "Value = " + sValue);
-							oControl.attachValidationError(function(oEvent) {
-								Opa5.assert.strictEqual(oEvent.getId(), "validationError",
-								"Validation error raised: " + oEvent.getParameter("message") +
-								" Entered value:" + oEvent.getParameter("newValue"));
-							});
+						actions: new EnterText({clearTextFirst: true, text: sValue}),
+						controlType: "sap.m.Input",
+						id: sId,
+						success: function (oControl) {
+							Opa5.assert.strictEqual(oControl.getValue(), sValue,
+								"Control: " + sId + " Value is: " + oControl.getValue());
+						},
+						viewName : sViewName0 || sViewName
+					});
+				},
+				enterStepInputValue : function (sId, nValue) {
+					return this.waitFor({
+						controlType: "sap.m.StepInput",
+						id: sId,
+						success: function (oControl) {
+							oControl.setValue(nValue);// StepInput does not support EnterText action
+							Opa5.assert.strictEqual(oControl.getValue(), nValue,
+								"Control: " + sId + " Value is: " + oControl.getValue());
 						},
 						viewName : sViewName
 					});
 				},
-				enterBoolean : function (sValue) {
-					return this.waitFor({
-						actions : new EnterText({ clearTextFirst : true, text : sValue }),
-						controlType : "sap.m.Input",
-						id : "booleanInput",
-						success : function (oControl) {
-							if (sValue !== true && sValue !== false) {
-								oControl.attachEventOnce("parseError", function(oEvent) {
-									Opa5.assert.strictEqual(oEvent.getId(), "parseError",
-										"Parse error is raised: " + oEvent.getParameter("message") +
-										" Entered value:" + oEvent.getParameter("newValue"));
-								});
-							}
-						},
-						viewName : sViewName
-					});
-				},
-				pressButton : function (sID) {
-					return this.waitFor({
-						actions : new Press(),
-						controlType : "sap.m.Button",
-						id : sID,
-						success : function () {
-							Opa5.assert.ok(true, "Button with ID: " + sID + " pressed");
-						},
-						viewName : sViewName
-					});
-				},
-				pressMessagePopoverCloseButton : function () {
-					return this.waitFor({
-						controlType : "sap.m.MessagePopover",
-						success : function (aMessagePopover) {
-							aMessagePopover[0].close();
-							Opa5.assert.ok(true, "MessagePopover closed");
-						}
-					});
-				},
-				pressV4Button : function () {
-					return this.waitFor({
-						actions : new Press(),
-						controlType : "sap.m.Button",
-						id : "toggleV4",
-						success : function () {
-							Opa5.assert.ok(true, "switched to V4 model");
-						},
-						viewName : sViewName
-					});
+				pressButton : function (sId) {
+					return Helper.pressButton(this, sViewName, sId);
 				}
 			},
 			assertions : {
-				checkBooleanValue : function (bValue) {
+				checkInputIsDirty : function (sId, bIsDirty, sViewName0) {
+					return Helper.checkInputIsDirty(this, sViewName0 || sViewName, sId, bIsDirty);
+				},
+				checkInputValue : function (sId, vValue, sViewName0) {
+					return Helper.checkInputValue(this, sViewName0 || sViewName, sId, vValue);
+				},
+				checkInputValueState : function (sId, sState, sViewName0) {
 					return this.waitFor({
 						controlType : "sap.m.Input",
-						id : "booleanInput",
-						success : function (oControl) {
-							Opa5.assert.strictEqual(
-								oControl.getBinding("value").getValue(), bValue,
-								"Value is: " + bValue);
+						id : sId,
+						success : function (oInput) {
+							Opa5.assert.strictEqual(oInput.getValueState(), sState,
+								"checkInputValueState('" + sId + "', '" + sState + "')");
 						},
-						viewName : sViewName
+						viewName : sViewName0 || sViewName
 					});
 				},
-				checkControlIsDirty : function (sID, bIsDirty) {
+				checkStepInputValueState : function (sId, sState) {
 					return this.waitFor({
-						controlType : "sap.m.Input",
-						id : sID,
-						success : function (oControl) {
-							Opa5.assert.strictEqual(
-								oControl.getBinding("value").getDataState().isControlDirty(),
-									bIsDirty, "Control: " + sID + " is " +
-									(bIsDirty ? "dirty" : "clean"));
+						controlType : "sap.m.StepInput",
+						id : sId,
+						success : function (oStepInput) {
+							Opa5.assert.strictEqual(oStepInput.getValueState(), sState,
+								"checkStepInputValueState('" + sId + "', '" + sState + "')");
 						},
 						viewName : sViewName
 					});
