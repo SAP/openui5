@@ -27,8 +27,8 @@ sap.ui.define([
 			];
 
 			var aBigNumberData = [
-				{ currency: "USD", price: 12345678901234567890123 },
-				{ currency: "USD", price: 123456789012345678901.23 }
+				{ currency: "USD", price: "12345678901234567890123" },
+				{ currency: "USD", price: "123456789012345678901.23" }
 			];
 
 			var oModel = new JSONModel({
