@@ -194,6 +194,35 @@ sap.ui.define([
 				"The number of items, should be equal to the number of items in the list");
 		});
 
+		QUnit.test("confirmButtonText", function(assert) {
+			// assert
+			assert.equal(this.oSelectDialog._oOkButton.getText(),
+				sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SELECT_CONFIRM_BUTTON"),
+				'The default confirmation text is set.');
+
+			// act
+			this.oSelectDialog.setConfirmButtonText("Save");
+			// assert
+			assert.equal(this.oSelectDialog._oOkButton.getText(), "Save", 'The confirm button text is changed.');
+		});
+
+		QUnit.test("initially set confirmButtonText", function(assert) {
+			// setup
+			var oSelectDialog = new SelectDialog({
+				confirmButtonText: "Custom Text",
+				multiSelect: true
+			});
+
+			this.oSelectDialog.open();
+			this.clock.tick(500);
+
+			// assert
+			assert.equal(oSelectDialog._oOkButton.getText(), "Custom Text", 'The confirm button text is set.');
+
+			// clean up
+			oSelectDialog.destroy();
+		});
+
 		QUnit.module("Rendering", {
 			beforeEach: function() {
 				this.oSelectDialog = new SelectDialog("selectDialog");

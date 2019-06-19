@@ -36,6 +36,10 @@ sap.ui.define([
 			var bRemember = !!oEvent.getSource().data("remember");
 			this._oDialog.setRememberSelections(bRemember);
 
+			// Set custom text for the confirmation button
+			var sCustomConfirmButtonText = oEvent.getSource().data("confirmButtonText");
+			this._oDialog.setConfirmButtonText(sCustomConfirmButtonText);
+
 			this.getView().addDependent(this._oDialog);
 
 			// toggle compact style
