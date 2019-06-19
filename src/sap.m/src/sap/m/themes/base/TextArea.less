@@ -61,7 +61,7 @@
 	overflow: hidden;
 	line-height: 1.4;
 	visibility: hidden;
-	word-break: break-all;
+	word-break: break-word;
 	font-size: 14px;
 	padding: @_sapMTextAreaPadding;
 }
@@ -107,11 +107,6 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapMInputBase.sapMTextArea {
 		min-height: 1.625rem;
 		margin: 0.1875rem 0;
-
-		.sapMTextAreaInner, .sapMTextAreaMirror {
-			line-height: 1.4;
-			padding: @_sapMTextAreaPadding_Compact;
-		}
 	}
 
 	.sapMTextAreaWithCounter {
@@ -123,4 +118,16 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 
 .sapUiSizeCompact .sapMInputBase.sapMTextArea .sapMInputBaseContentWrapperState .sapMTextAreaInner {
 	padding: 0.125rem 0.4375rem;
+}
+
+/**
+	Fix for iOS. When growing is enabled, the mirrored, hidden content should have pixel perfect proportions
+	as the textarea. Otherwise, words could break differently and this would lead to inconsistent height.
+	For some reason iOS devices need wider padding on left & right in order to have this consistency.
+ */
+html.sap-tablet, html.sap-phone {
+	&[data-sap-ui-os*="iOS"] .sapMInputBase.sapMTextArea .sapMTextAreaMirror {
+		padding-left: 15px;
+		padding-right: 15px;
+	}
 }
