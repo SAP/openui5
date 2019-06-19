@@ -78,8 +78,8 @@
 			<l:BlockLayout>
 				<l:BlockLayoutRow>
 					<l:BlockLayoutCell
-							backgroundColorSet="ColorSet5"
-							backgroundColorShade="ShadeD">
+							backgroundColorSet="ColorSet11"
+							backgroundColorShade="ShadeF">
 						<l:Grid
 								defaultSpan="L6 M12 S12"
 								hSpacing="0"
@@ -256,8 +256,8 @@
 				<l:BlockLayoutRow>
 					<l:BlockLayoutCell
 							class="welcomeBlock"
-							backgroundColorSet="ColorSet11"
-							backgroundColorShade="ShadeA"
+							backgroundColorSet="ColorSet6"
+							backgroundColorShade="ShadeC"
 							width="1">
 
 						<custom:TitleLink
@@ -268,8 +268,8 @@
 						<Text class="sapUiSmallMarginTop" text="Try the first example right here!"/>
 					</l:BlockLayoutCell>
 
-					<l:BlockLayoutCell backgroundColorSet="ColorSet11"
-									   backgroundColorShade="ShadeA">
+					<l:BlockLayoutCell backgroundColorSet="ColorSet6"
+									   backgroundColorShade="ShadeC">
 						<l:layoutData>
 							<l:BlockLayoutCellData sSize="1" mSize="2" lSize="3" xlSize="3"/>
 						</l:layoutData>
@@ -295,7 +295,7 @@
 				<l:BlockLayoutRow>
 					<l:BlockLayoutCell
 							backgroundColorSet="ColorSet11"
-							backgroundColorShade="ShadeB">
+							backgroundColorShade="ShadeA">
 						<l:VerticalLayout
 								width="100%">
 							<custom:TitleLink
@@ -313,7 +313,7 @@
 
 					<l:BlockLayoutCell
 							backgroundColorSet="ColorSet11"
-							backgroundColorShade="ShadeB">
+							backgroundColorShade="ShadeA">
 							<HBox alignItems="Center" justifyContent="Center" width="100%" height="100%">
 								<Image
 									src="./resources/sap/ui/documentation/sdk/images/Evolution_demokit_illustration_single.png"

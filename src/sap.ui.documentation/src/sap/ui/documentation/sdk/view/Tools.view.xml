@@ -8,7 +8,7 @@
 		xmlns:html="http://www.w3.org/1999/xhtml">
 
 	<Page showHeader="false"
-		  class="sapUiNoContentPadding">
+		  class="sapUiNoContentPadding sapUiDemoApps">
 		<landmarkInfo>
 			<PageAccessibleLandmarkInfo
 				contentRole="Main"
@@ -52,7 +52,7 @@
 					<l:BlockLayoutCell
 							class="largeCell"
 							backgroundColorSet="ColorSet6"
-							backgroundColorShade="ShadeB">
+							backgroundColorShade="ShadeE">
 						<FlexBox
 							alignItems="Start"
 							justifyContent="SpaceBetween"
@@ -119,7 +119,7 @@
 					<l:BlockLayoutCell
 							class="largeCell"
 							backgroundColorSet="ColorSet6"
-							backgroundColorShade="ShadeD" >
+							backgroundColorShade="ShadeF" >
 						<FlexBox
 							alignItems="Start"
 							justifyContent="SpaceBetween"
@@ -337,7 +337,7 @@
 					<l:BlockLayoutCell
 							class="largeCell"
 							backgroundColorSet="ColorSet6"
-							backgroundColorShade="ShadeD">
+							backgroundColorShade="ShadeF">
 						<FlexBox
 							alignItems="Start"
 							justifyContent="SpaceBetween"
@@ -390,7 +390,7 @@
 					<l:BlockLayoutCell
 							class="largeCell"
 							backgroundColorSet="ColorSet6"
-							backgroundColorShade="ShadeB">
+							backgroundColorShade="ShadeE">
 						<FlexBox
 							alignItems="Start"
 							justifyContent="SpaceBetween"
