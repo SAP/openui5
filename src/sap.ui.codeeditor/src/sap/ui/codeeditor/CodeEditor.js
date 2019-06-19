@@ -183,6 +183,10 @@ sap.ui.define([
 				oRm.addStyle("height", oControl.getHeight());
 				oRm.addClass("sapCEd");
 				oRm.writeAttributeEscaped("data-sap-ui-syntaxhints", oControl.getSyntaxHints());
+				var sTooltip = oControl.getTooltip_AsString();
+				if (sTooltip) {
+					oRm.writeAttributeEscaped('title', sTooltip);
+				}
 				oRm.writeStyles();
 				oRm.writeClasses();
 				oRm.write(">");
