@@ -392,7 +392,7 @@ sap.ui.define([
 						//update only property and sub properties
 						var fnFilter = function (oBinding) {
 							var sPath = this.resolve(oBinding.sPath, oBinding.oContext);
-							return sPath.startsWith(sResolvedPath);
+							return sPath ? sPath.startsWith(sResolvedPath) : false;
 						}.bind(this);
 						this.checkUpdate(false, bAsyncUpdate, fnFilter);
 						return true;
