@@ -29,7 +29,7 @@
 			headerText="Currency without decimals using maxPrecision"
 			items="{path: '/nonDecimalCurrencyDataModel'}">
 			<CustomListItem>
-				<u:Currency value="{price}" currency="{currency}" useSymbol="false"  maxPrecision="0"/>
+				<u:Currency value="{price}" currency="{currency}" useSymbol="false" maxPrecision="0"/>
 			</CustomListItem>
 		</List>
 
@@ -38,7 +38,7 @@
 			headerText="Currency with really big numbers"
 			items="{path: '/bigNumberDataModel'}">
 			<CustomListItem>
-				<u:Currency value="{price}" currency="{currency}" useSymbol="false"/>
+				<u:Currency stringValue="{price}" currency="{currency}" useSymbol="false"/>
 			</CustomListItem>
 		</List>
 	</l:Grid>
