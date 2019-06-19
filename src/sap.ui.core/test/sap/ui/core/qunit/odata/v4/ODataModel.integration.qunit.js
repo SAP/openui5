@@ -18694,4 +18694,364 @@ sap.ui.define([
 			oBinding.initialize();
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Reduce path by removing partner attributes SO_2_SOITEM and SOITEM_2_SO, so that
+	// "SOITEM_2_SO/CurrencyCode" is not expanded, but taken from the parent sales order in the same
+	// cache.
+	// JIRA: CPOUI5UISERVICESV3-1877
+	QUnit.test("Reduce path: property in same cache", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderList(\'1\')}">\
+	<Table id="table" items="{SO_2_SOITEM}">\
+		<columns><Column/></columns>\
+		<items>\
+			<ColumnListItem>\
+				<Text id="note" text="{Note}"/>\
+				<Text id="soCurrencyCode" text="{SOITEM_2_SO/CurrencyCode}"/>\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</FlexBox>';
+
+		this.expectRequest("SalesOrderList('1')?$select=CurrencyCode,SalesOrderID"
+					+ "&$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)", {
+				CurrencyCode : "EUR",
+				SalesOrderID : "1",
+				SO_2_SOITEM : [{
+					ItemPosition : "10",
+					Note : "Foo",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectChange("note", ["Foo"])
+			.expectChange("soCurrencyCode", ["EUR"]);
+
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Reduce path by removing partner attributes SO_2_SOITEM and SOITEM_2_SO. Simulate an
+	// In-Parameter of a value help for which the value is cached in the parent binding.
+	// JIRA: CPOUI5UISERVICESV3-1877
+	QUnit.test("Reduce path: property in parent cache", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderList(\'1\')}">\
+	<Text id="soCurrencyCode" text="{CurrencyCode}"/>\
+	<Table id="table" items="{path: \'SO_2_SOITEM\', parameters: {$$ownRequest: true}}">\
+		<columns><Column/></columns>\
+		<items>\
+			<ColumnListItem>\
+				<Text id="note" text="{Note}"/>\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</FlexBox>\
+<FlexBox id="valueHelp">\
+	<Text id="valueHelp::currencyCode" text="{SOITEM_2_SO/CurrencyCode}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')?$select=CurrencyCode,SalesOrderID", {
+				CurrencyCode : "EUR",
+				SalesOrderID : "1"
+			})
+			.expectRequest("SalesOrderList('1')/SO_2_SOITEM?$select=ItemPosition,Note,SalesOrderID"
+					+ "&$skip=0&$top=100", {
+				value : [{
+					ItemPosition : "10",
+					Note : "Foo",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectChange("note", ["Foo"])
+			.expectChange("soCurrencyCode", "EUR")
+			.expectChange("valueHelp::currencyCode");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("valueHelp::currencyCode", "EUR");
+
+			that.oView.byId("valueHelp").setBindingContext(
+				that.oView.byId("table").getItems()[0].getBindingContext());
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Reduce path by removing multiple pairs of partner attributes.
+	// JIRA: CPOUI5UISERVICESV3-1877
+	QUnit.test("Reduce path by removing multiple pairs of partner attributes", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/As(1)}">\
+	<FlexBox binding="{AtoB}">\
+		<Table id="table" items="{BtoDs}">\
+			<columns><Column/></columns>\
+			<items>\
+				<ColumnListItem>\
+					<Text id="aValue" text="{DtoB/BtoA/AValue}"/>\
+				</ColumnListItem>\
+			</items>\
+		</Table>\
+	</FlexBox>\
+</FlexBox>';
+
+		this.expectRequest("As(1)?$select=AID,AValue"
+			+ "&$expand=AtoB($select=BID;$expand=BtoDs($select=DID))", {
+				AID : 1,
+				AValue : 42,
+				AtoB : {
+					BID : 2,
+					BtoDs : [{
+						DID : 3
+					}]
+				}
+			})
+			.expectChange("aValue", ["42"]);
+
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Reduce path by removing multiple pairs of partner attributes. See that AValue is
+	// taken from two caches above.
+	// JIRA: CPOUI5UISERVICESV3-1877
+	QUnit.test("Reduce path and step up multiple caches", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/As(1)}">\
+	<FlexBox binding="{path : \'AtoB\', parameters : {$$ownRequest : true}}">\
+		<Text text="{BValue}"/>\
+		<Table id="table" items="{path : \'BtoDs\', parameters : {$$ownRequest : true}}">\
+			<columns><Column/></columns>\
+			<items>\
+				<ColumnListItem>\
+					<Text text="{DValue}"/>\
+					<Text id="aValue" text="{DtoB/BtoA/AValue}"/>\
+				</ColumnListItem>\
+			</items>\
+		</Table>\
+	</FlexBox>\
+</FlexBox>';
+
+		this.expectRequest("As(1)?$select=AID,AValue", {
+				AID : 1,
+				AValue : 42
+			})
+			.expectRequest("As(1)/AtoB?$select=BID,BValue", {
+				BID : 2,
+				BValue : 102
+			})
+			.expectRequest("As(1)/AtoB/BtoDs?$select=DID,DValue&$skip=0&$top=100", {
+				value : [
+					{DID : 3, DValue : 103},
+					{DID : 4, DValue : 104}
+				]
+			})
+			.expectChange("aValue", ["42", "42"]);
+
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Reduced path must not be shorter than root binding's path.
+	// JIRA: CPOUI5UISERVICESV3-1877
+	QUnit.test("Reduced path must not be shorter than root binding's path", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/As(1)/AtoB}">\
+	<Text id="aValue" text="{BtoA/AValue}"/>\
+	<Table id="table" items="{BtoDs}">\
+		<columns><Column/></columns>\
+		<items>\
+			<ColumnListItem>\
+				<Text id="table::aValue" text="{DtoB/BtoA/AValue}"/>\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</FlexBox>';
+
+		this.expectRequest("As(1)/AtoB?$select=BID"
+				+ "&$expand=BtoA($select=AID,AValue),BtoDs($select=DID)", {
+				BID : 2,
+				BtoA : {
+					AID : 1,
+					AValue : 42
+				},
+				BtoDs : [{
+					DID : 3
+				}]
+			})
+			.expectChange("aValue", "42")
+			.expectChange("table::aValue", ["42"]);
+
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Operation on reduceable path. The operation path will not be reduced, but the
+	// reduced path must be used to access the binding parameter.
+	// JIRA: CPOUI5UISERVICESV3-1877
+	QUnit.test("Operation on reduceable path", function (assert) {
+		var sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderList(\'1\')}">\
+	<Table id="table" items="{SO_2_SOITEM}">\
+		<columns><Column/></columns>\
+		<items>\
+			<ColumnListItem>\
+				<Text id="note" text="{Note}"/>\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</FlexBox>\
+<FlexBox id="form" binding="{SOITEM_2_SO/' + sAction + '(...)}">\
+	<Text id="status" text="{LifecycleStatus}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
+			+ "&$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)", {
+				"@odata.etag" : "ETag",
+				SalesOrderID : "1",
+				SO_2_SOITEM : [{
+					ItemPosition : "10",
+					Note : "Foo",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectChange("note", ["Foo"])
+			.expectChange("status");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oForm = that.oView.byId("form");
+
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='10')"
+						+ "/SOITEM_2_SO/" + sAction, // TODO reduce operation path
+					headers : {"If-Match" : "ETag"},
+					payload : {}
+				}, {
+					LifecycleStatus : "C",
+					SalesOrderID : "1"
+				})
+				.expectChange("status", "C");
+
+			oForm.setBindingContext(
+				that.oView.byId("table").getItems()[0].getBindingContext());
+			oForm.getElementBinding().execute();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Partner attributes are in the path to a collection. Ensure that the path is reduced
+	// and all properties including $count can be accessed. Check also that it does not clash with
+	// unreduced list bindings.
+	// JIRA: CPOUI5UISERVICESV3-1877
+	QUnit.test("Partner attributes in path to collection", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/Bs(1)}">\
+	<Table id="table" items="{BtoA/AtoB/BtoDs}">\
+		<columns><Column/></columns>\
+		<items>\
+			<ColumnListItem>\
+				<Text id="bValue" text="{DtoB/BValue}"/>\
+				<Text id="dValue" text="{DValue}"/>\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("Bs(1)?$select=BID,BValue&$expand=BtoA($select=AID"
+			+ ";$expand=AtoB($select=BID;$expand=BtoDs($select=DID,DValue)))", {
+				BID : 1,
+				BValue : 101,
+				BtoA : {
+					AtoB : {
+						BtoDs : [
+							{DID : 2, DValue : 99},
+							{DID : 3, DValue : 98}
+						]
+					}
+				}
+			})
+			.expectChange("bValue", ["101", "101"])
+			.expectChange("dValue", ["99", "98"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("Bs(1)/BtoA/AtoB/BtoDs?$select=DID,DValue&$orderby=DValue"
+				+ "&$skip=0&$top=100", {
+					value : [
+						{DID : 3, DValue : 98},
+						{DID : 2, DValue : 99}
+					],
+					"BtoDs@odata.count" : "2"
+				})
+				.expectChange("dValue", ["98", "99"]);
+
+			// code under test
+			that.oView.byId("table").getBinding("items").sort(new Sorter("DValue"));
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Partner attributes are in the path to a property, but reduction is impossible due
+	// to a changed update group ID.
+	// JIRA: CPOUI5UISERVICESV3-1877
+	QUnit.test("Partner attributes in path to collection, other updateGroupId", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/Bs(1)}">\
+	<Text id="bValue" text="{BValue}"/>\
+	<Table items="{BtoDs}">\
+		<columns><Column/></columns>\
+		<items>\
+			<ColumnListItem>\
+				<Text id="bValue::table1" text="{DtoB/BValue}"/>\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+	<Table items="{path : \'BtoDs\', parameters : {$$updateGroupId : \'update\'}}">\
+		<columns><Column/></columns>\
+		<items>\
+			<ColumnListItem>\
+				<Text id="bValue::table2" text="{DtoB/BValue}"/>\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</FlexBox>';
+
+		this.expectRequest("Bs(1)?$select=BID,BValue&$expand=BtoDs($select=DID)", {
+				BID : 1,
+				BValue : 101,
+				BtoDs : [
+					{DID : 2},
+					{DID : 3}
+				]
+			})
+			.expectRequest("Bs(1)/BtoDs?$select=DID&$expand=DtoB($select=BID,BValue)"
+				+ "&$skip=0&$top=100", {
+				value : [{
+					DID : 2,
+					DtoB : {BID : 1, BValue : 101}
+				}, {
+					DID : 3,
+					DtoB : {BID : 1, BValue : 101}
+				}]
+			})
+			.expectChange("bValue", "101")
+			.expectChange("bValue::table1", ["101", "101"])
+			.expectChange("bValue::table2", ["101", "101"]);
+
+		return this.createView(assert, sView, oModel);
+	});
 });

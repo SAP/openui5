@@ -54,6 +54,7 @@ sap.ui.define([
 		ODataMetaListBinding,
 		sODataMetaModel = "sap.ui.model.odata.v4.ODataMetaModel",
 		ODataMetaPropertyBinding,
+		rPredicate = /\(.*\)$/,
 		oRawType = new Raw(),
 		mSharedModelByUrl = new Map(),
 		mSupportedEvents = {
@@ -2029,6 +2030,57 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataMetaModel.prototype.getProperty = ODataMetaModel.prototype.getObject;
+
+	/**
+	 * Reduces the given path based on metadata. Removes adjacent partner navigation properties.
+	 *
+	 * Example: The reduced binding path for "/SalesOrderList(42)/SO_2_SOITEM(20)/SOITEM_2_SO/Note"
+	 * is "/SalesOrderList(42)/Note" iff "SO_2_SOITEM" and "SOITEM_2_SO" are marked as partners of
+	 * each other.
+	 *
+	 * The metadata for <code>sPath</code> must be available synchronously.
+	 *
+	 * @param {string} sPath
+	 *   The absolute data path to be reduced
+	 * @param {string} sRootPath
+	 *   The absolute data path to the root binding, must be a prefix of <code>sPath</code>
+	 * @returns {string}
+	 *   The reduced absolute data path; it will not be shorter than <code>sRootPath</code>
+	 *
+	 * @private
+	 */
+	ODataMetaModel.prototype.getReducedPath = function (sPath, sRootPath) {
+		var i,
+			aMetadataForPathPrefix,
+			iPotentialPartner,
+			iRootPathLength = sRootPath.split("/").length,
+			aSegments = sPath.split("/"),
+			that = this;
+
+		aMetadataForPathPrefix = aSegments.map(function (sSegment, j) {
+			return j < iRootPathLength || sSegment[0] === "#" || sSegment[0] === "@"
+					|| rNumber.test(sSegment)
+				? {} // simply an object w/o $Partner and $isCollection
+				: that.getObject(that.getMetaPath(aSegments.slice(0, j + 1).join("/"))) || {};
+		});
+		if (!aMetadataForPathPrefix[aSegments.length - 1].$isCollection) {
+			for (i = aSegments.length - 2; i >= iRootPathLength; i -= 1) {
+				// if i + 1 is an index segment, the potential partner is in i + 2
+				iPotentialPartner = rNumber.test(aSegments[i + 1]) ? i + 2 : i + 1;
+				if (iPotentialPartner < aSegments.length
+						&& aMetadataForPathPrefix[i].$Partner === aSegments[iPotentialPartner]
+						&& !aMetadataForPathPrefix[iPotentialPartner].$isCollection
+						&& aMetadataForPathPrefix[iPotentialPartner].$Partner
+							=== aSegments[i].replace(rPredicate, "")) {
+					aMetadataForPathPrefix.splice(i, iPotentialPartner - i + 1);
+					aSegments.splice(i, iPotentialPartner - i + 1);
+				} else if (aMetadataForPathPrefix[i].$isCollection) {
+					break;
+				}
+			}
+		}
+		return aSegments.join("/");
+	};
 
 	/**
 	 * Returns the UI5 type for the given property path that formats and parses corresponding to
