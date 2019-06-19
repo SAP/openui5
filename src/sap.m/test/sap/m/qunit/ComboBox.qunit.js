@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/core/ListItem",
 	"sap/ui/core/SeparatorItem",
 	"sap/ui/layout/form/SimpleForm",
+	"sap/ui/core/CustomData",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/base/Event",
@@ -45,6 +46,7 @@ sap.ui.define([
 	ListItem,
 	SeparatorItem,
 	SimpleForm,
+	CustomData,
 	JSONModel,
 	ODataModel,
 	Event,
@@ -11330,6 +11332,77 @@ sap.ui.define([
 		assert.ok(oListItem.isA("sap.m.GroupHeaderListItem"), "The ListItem is of type 'sap.m.GroupHeaderListItem'.");
 		assert.ok(oListItem.aCustomStyleClasses.indexOf(sClass) > -1, "Class " + sClass + " was added to the ListItem");
 		assert.ok(oListItem.aCustomStyleClasses.indexOf(sAdditionalClass) > -1, "Class " + sAdditionalClass + " was added to the ListItem");
+	});
+
+	QUnit.test("forwards custom data to StandardListItem.", function (assert) {
+		// system under test
+		var oItem = new Item({
+				text: "text",
+				key: "key"
+			}).addCustomData(new CustomData({
+				key: "customInfo",
+				value: "first-item",
+				writeToDom: true
+			})),
+			oListItem = this.oComboBox._mapItemToListItem(oItem);
+
+		// assert
+		assert.strictEqual(oListItem.data("customInfo"), "first-item", "The custom data is forwarded.");
+
+		oItem.destroy();
+		oListItem.destroy();
+	});
+
+	QUnit.module("Property forwarding from Item to ListItem", {
+		beforeEach: function () {
+			this.oComboBox = new ComboBox();
+		},
+		afterEach: function () {
+			this.oComboBox.destroy();
+		}
+	});
+
+	QUnit.test("Direct property forwarding", function (assert) {
+		// system under test
+		var oItem = new Item({
+				text: "Item Title",
+				enabled: true,
+				tooltip: "Tooltip Text"
+			}), oListItem;
+
+		this.oComboBox.addItem(oItem);
+		oListItem = this.oComboBox._mapItemToListItem(oItem);
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oItem.setText("New Item Title");
+		oItem.setTooltip("New Tooltip Text");
+		oItem.setEnabled(false);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(oListItem.getTitle(), "New Item Title", "The list item title is updated.");
+		assert.strictEqual(oListItem.getTooltip(), "Tooltip Text", "The tooltip is updated.");
+		assert.notOk(oListItem.getVisible(), "The list item is not visible.");
+	});
+
+	QUnit.test("Additional text forwarding", function (assert) {
+		// system under test
+		var oItem = new ListItem({
+			text: "Item Title"
+		}), oListItem;
+
+		this.oComboBox.addItem(oItem);
+		this.oComboBox.setShowSecondaryValues(true);
+		oListItem = this.oComboBox._mapItemToListItem(oItem);
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oItem.setAdditionalText("New additional text");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(oListItem.getInfo(), "New additional text", "The list item info is updated.");
 	});
 
 	QUnit.module("Input field text selection", {

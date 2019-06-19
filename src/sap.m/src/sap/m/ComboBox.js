@@ -12,6 +12,7 @@ sap.ui.define([
 	'sap/ui/core/Item',
 	'./StandardListItem',
 	'./ComboBoxRenderer',
+	'sap/ui/base/ManagedObjectObserver',
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/KeyCodes",
 	"./Toolbar",
@@ -29,6 +30,7 @@ sap.ui.define([
 		Item,
 		StandardListItem,
 		ComboBoxRenderer,
+		ManagedObjectObserver,
 		containsOrEquals,
 		KeyCodes,
 		Toolbar,
@@ -759,6 +761,8 @@ sap.ui.define([
 			// holds reference to the last focused GroupHeaderListItem if such exists
 			this._oLastFocusedListItem = null;
 			this._bIsLastFocusedItemHeader = null;
+
+			this._oItemObserver = new ManagedObjectObserver(this._forwardItemProperties.bind(this));
 		};
 
 		/**
@@ -831,6 +835,11 @@ sap.ui.define([
 			if (this._oSuggestionPopover) {
 				this._oSuggestionPopover.destroy();
 				this._oSuggestionPopover = null;
+			}
+
+			if (this._oItemObserver) {
+				this._oItemObserver.disconnect();
+				this._oItemObserver = null;
 			}
 		};
 
@@ -1898,7 +1907,39 @@ sap.ui.define([
 			oListItem.setTooltip(oItem.getTooltip());
 			oItem.data(oRenderer.CSS_CLASS_COMBOBOXBASE + "ListItem", oListItem);
 
+			oItem.getCustomData().forEach(function(oCustomData){
+				oListItem.addCustomData(oCustomData.clone());
+			});
+
+			this._oItemObserver.observe(oItem, {properties: ["text", "additionalText", "enabled", "tooltip"]});
+
 			return oListItem;
+		};
+
+		ComboBox.prototype._forwardItemProperties = function(oPropertyInfo) {
+			var oItem = oPropertyInfo.object,
+				oListItem = oItem.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "ListItem"),
+				oDirectMapping = {
+					text: "title",
+					enabled: "visible",
+					tooltip: "tooltip"
+				},
+				sAdditionalText,
+				sProperty,
+				sSetter;
+
+
+			if (Object.keys(oDirectMapping).indexOf(oPropertyInfo.name) > -1) {
+				sProperty =  oDirectMapping[oPropertyInfo.name];
+				sSetter = "set" + sProperty.charAt(0).toUpperCase() + sProperty.slice(1);
+
+				oListItem[sSetter](oPropertyInfo.current);
+			}
+
+			if (oPropertyInfo.name === "additionalText") {
+				sAdditionalText = this.getShowSecondaryValues() ? oPropertyInfo.current : "";
+				oListItem.setInfo(sAdditionalText);
+			}
 		};
 
 		/**
@@ -2041,6 +2082,47 @@ sap.ui.define([
 		};
 
 		/**
+<<<<<<< HEAD
+=======
+		 * Creates picker if doesn't exist yet and sync with Control items
+		 *
+		 * @protected
+		 * @returns {sap.m.Dialog|sap.m.Popover}
+		 */
+		ComboBox.prototype.syncPickerContent = function () {
+			var oPickerTextField,
+				oPicker = this.getPicker(),
+				aProperties = this.getInputForwardableProperties();
+
+			if (!oPicker) {
+				var sSetMutator, sGetMutator;
+
+				oPicker = this.createPicker(this.getPickerType());
+				oPickerTextField = this.getPickerTextField();
+				this._updateSuggestionsPopoverValueState();
+
+				this._fillList();
+				if (oPickerTextField) {
+					aProperties.forEach(function (sProp) {
+						sProp = sProp.charAt(0).toUpperCase() + sProp.slice(1);
+
+						sSetMutator = "set" + sProp;
+						sGetMutator = "get" + sProp;
+
+						if (oPickerTextField[sSetMutator]) {
+							oPickerTextField[sSetMutator](this[sGetMutator]());
+						}
+					}, this);
+				}
+			}
+
+			this.synchronizeSelection();
+
+			return oPicker;
+		};
+
+		/**
+>>>>>>> 80eb0c16f4... [FIX] sap.m.ComboBox: Item to ListItem property forwarding
 		 * Closes the control's picker popup and focus input field.
 		 *
 		 * @returns {sap.m.ComboBox} <code>this</code> to allow method chaining.
