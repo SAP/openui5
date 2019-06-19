@@ -13,20 +13,21 @@
 	vertical-align: top;
 	text-align: left;
 	padding: 0 0 0 3rem;
-	cursor: default;
 
-	&:not(.sapMCbBgDis).sapMCbHasLabel:focus:before {
-		pointer-events: none;
+	&:not(.sapMCbBgDis) {
+		&:hover,
+		.sapMCbLabel:hover {
+			cursor: pointer;
+		}
+		&.sapMCbHasLabel:focus:before {
+			pointer-events: none;
+		}
 	}
 }
 
 .sapMIBar.sapMTB .sapMCb.sapMBarChild:only-child {
 	padding-left: 3rem;
 	padding-right: 0rem;
-}
-
-.sapMCb:not(.sapMCbBgDis):hover {
-	cursor: pointer;
 }
 
 .sapUiForm .sapMCb {

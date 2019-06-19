@@ -63,10 +63,10 @@
 
 .sapMCbBg.sapMCbMarkChecked:before {
 	color: @sapUiSelected;
+}
 
-	&.sapMCbMarkPartiallyChecked {
-		border-width: 0.25rem;
-	}
+.sapMCbBg.sapMCbMarkChecked.sapMCbMarkPartiallyChecked:before {
+	border: 0.25rem solid transparent;
 }
 
 /* CheckBox focus */
