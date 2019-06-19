@@ -96,6 +96,24 @@ sap.ui.define([
 			assert.ok(oSpy2.notCalled, "Should not fire change event when readonly.");
 		});
 
+		QUnit.module("Properties", {
+			beforeEach: function () {
+				this.oCodeEditor = new CodeEditor({
+					tooltip: "Code editor control"
+				});
+
+				this.oCodeEditor.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.oCodeEditor.destroy();
+			}
+		});
+
+		QUnit.test("Tooltip", function (assert) {
+			assert.strictEqual(this.oCodeEditor.getDomRef().title, "Code editor control", "Tooltip is correctly set");
+		});
+
 		QUnit.module("Destroy");
 
 		QUnit.test("ACE Editor should be destroyed on exit", function (assert) {
