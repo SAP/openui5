@@ -265,6 +265,7 @@ sap.ui.define([
 				var oData = JSON.parse(sValue);
 				this.byId("cardSample").setManifest(oData);
 				this._errorMessageStrip.setVisible(false);
+				this.byId("cardSample").refresh();
 			} catch (oException) {
 				this.byId("cardSample").setManifest(null);
 			}
