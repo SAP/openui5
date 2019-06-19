@@ -1019,9 +1019,13 @@ function(
 	MultiComboBox.prototype.onBeforeRendering = function() {
 		ComboBoxBase.prototype.onBeforeRendering.apply(this, arguments);
 
+		this._bInitialSettersCompleted = true;
+
 		this.setEditable(this.getEditable());
 
 		this._deregisterResizeHandler();
+
+		this._synchronizeSelectedItemAndKey();
 	};
 
 	/**
@@ -1045,7 +1049,7 @@ function(
 			aItems = this.getItems();
 			oList = this._getList();
 
-			this._synchronizeSelectedItemAndKey(aItems);
+			this._synchronizeSelectedItemAndKey();
 
 			// prevent closing of popup on re-rendering
 			oList.destroyItems();
@@ -1133,7 +1137,7 @@ function(
 		this.addContent();
 		this._aInitiallySelectedItems = this.getSelectedItems();
 
-		this._synchronizeSelectedItemAndKey(this._aInitiallySelectedItems);
+		this._synchronizeSelectedItemAndKey();
 
 		if (fnPickerTypeBeforeOpen) {
 			fnPickerTypeBeforeOpen.call(this);
@@ -1340,8 +1344,14 @@ function(
 		this.setValue('');
 
 		this.addAssociation("selectedItems", mOptions.item, mOptions.suppressInvalidate);
-		var aSelectedKeys = this.getKeys(this.getSelectedItems());
-		this.setProperty("selectedKeys", aSelectedKeys, mOptions.suppressInvalidate);
+		var aSelectedKeys = this.getSelectedKeys();
+		var sKey = this.getKeys([mOptions.item])[0];
+		// Rather strange, but we need to keep it for backwards compatibility- when there are selectedItems with
+		// empty keys, we need to append empty string, but if there's a key, it should be unique
+		if (sKey === "" || aSelectedKeys.indexOf(sKey) === -1) {
+			aSelectedKeys.push(sKey);
+			this.setProperty("selectedKeys", aSelectedKeys, mOptions.suppressInvalidate);
+		}
 
 		if (mOptions.fireChangeEvent) {
 			this.fireSelectionChange({
@@ -1385,7 +1395,9 @@ function(
 		}
 
 		this.removeAssociation("selectedItems", mOptions.item, mOptions.suppressInvalidate);
-		var aSelectedKeys = this.getKeys(this.getSelectedItems());
+		var aSelectedKeys = this.getSelectedKeys();
+		var iItemSelectIndex = aSelectedKeys.indexOf(mOptions.item.getKey());
+		aSelectedKeys.splice(iItemSelectIndex, 1);
 		this.setProperty("selectedKeys", aSelectedKeys, mOptions.suppressInvalidate);
 
 		if (!mOptions.listItemUpdated && this.getListItem(mOptions.item)) {
@@ -1444,56 +1456,40 @@ function(
 	/**
 	 * Synchronize selected item and key.
 	 *
-	 * @param {array} [aItems] The items array
 	 * @private
 	 */
-	MultiComboBox.prototype._synchronizeSelectedItemAndKey = function(aItems) {
+	MultiComboBox.prototype._synchronizeSelectedItemAndKey = function () {
+		var aSelectedKeys = this.getSelectedKeys();
+		var aKeyOfSelectedItems = this.getKeys(this.getSelectedItems());
 
-		// no items
-		if (!aItems.length) {
+		// the "selectedKey" property is not synchronized
+		if (!aSelectedKeys.length) {
 			Log.info("Info: _synchronizeSelectedItemAndKey() the MultiComboBox control does not contain any item on ", this);
 			return;
 		}
 
-		var aSelectedKeys = this.getSelectedKeys() || this._aCustomerKeys;
-		var aKeyOfSelectedItems = this.getKeys(this.getSelectedItems());
+		for (var i = 0, sKey = null, oItem = null, iLength = aSelectedKeys.length; i < iLength; i++) {
+			sKey = aSelectedKeys[i];
 
-		// the "selectedKey" property is not synchronized
-		if (aSelectedKeys.length) {
-			for ( var i = 0, sKey = null, oItem = null, iIndex = null, iLength = aSelectedKeys.length; i < iLength; i++) {
-				sKey = aSelectedKeys[i];
-
-				if (aKeyOfSelectedItems.indexOf(sKey) > -1) {
-
-					if (this._aCustomerKeys.length && (iIndex = this._aCustomerKeys.indexOf(sKey)) > -1) {
-						this._aCustomerKeys.splice(iIndex, 1);
-					}
-
-					continue;
-				}
-
-				oItem = this.getItemByKey("" + sKey);
-
-				// if the "selectedKey" has no corresponding aggregated item, no
-				// changes will apply
-				if (oItem) {
-
-					if (this._aCustomerKeys.length && (iIndex = this._aCustomerKeys.indexOf(sKey)) > -1) {
-						this._aCustomerKeys.splice(iIndex, 1);
-					}
-
-					this.setSelection({
-						item: oItem,
-						id: oItem.getId(),
-						key: oItem.getKey(),
-						fireChangeEvent: false,
-						suppressInvalidate: true,
-						listItemUpdated: false
-					});
-				}
+			if (aKeyOfSelectedItems.indexOf(sKey) > -1) {
+				continue;
 			}
 
-			return;
+			oItem = this.getItemByKey("" + sKey);
+
+			// if the "selectedKey" has no corresponding aggregated item, no
+			// changes will apply
+			if (oItem) {
+
+				this.setSelection({
+					item: oItem,
+					id: oItem.getId(),
+					key: oItem.getKey(),
+					fireChangeEvent: false,
+					suppressInvalidate: true,
+					listItemUpdated: false
+				});
+			}
 		}
 	};
 
@@ -2661,15 +2657,14 @@ function(
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	MultiComboBox.prototype.removeSelectedKeys = function(aKeys) {
-		var aItems = [], iIndex;
+	MultiComboBox.prototype.removeSelectedKeys = function (aKeys) {
+		var oItem, aItems = [];
 
 		if (!aKeys || !aKeys.length || !Array.isArray(aKeys)) {
 			return aItems;
 		}
 
-		var oItem;
-		aKeys.forEach(function(sKey) {
+		aKeys.forEach(function (sKey) {
 			oItem = this.getItemByKey(sKey);
 
 			if (oItem) {
@@ -2682,11 +2677,8 @@ function(
 				});
 				aItems.push(oItem);
 			}
-
-			if (this._aCustomerKeys.length && (iIndex = this._aCustomerKeys.indexOf(sKey)) > -1) {
-				this._aCustomerKeys.splice(iIndex, 1);
-			}
 		}, this);
+
 		return aItems;
 	};
 
@@ -2700,9 +2692,11 @@ function(
 	 * @returns {sap.m.MultiComboBox} <code>this</code> to allow method chaining.
 	 * @override
 	 */
-	MultiComboBox.prototype.setSelectedKeys = function(aKeys) {
-		this.removeAllSelectedItems();
-		this._aCustomerKeys = [];
+	MultiComboBox.prototype.setSelectedKeys = function (aKeys) {
+		if (this._bInitialSettersCompleted) {
+			this.setProperty("selectedKeys", [], true);
+			this.removeAllSelectedItems();
+		}
 		this.addSelectedKeys(aKeys);
 		return this;
 	};
@@ -2715,10 +2709,13 @@ function(
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	MultiComboBox.prototype.addSelectedKeys = function(aKeys) {
+	MultiComboBox.prototype.addSelectedKeys = function (aKeys) {
+		var bUpdateSelectedKeys = false,
+			aSelectedKeys = this.getProperty("selectedKeys") || [];
+
 		aKeys = this.validateProperty("selectedKeys", aKeys);
 
-		aKeys.forEach(function(sKey) {
+		aKeys.forEach(function (sKey) {
 			var oItem = this.getItemByKey(sKey);
 
 			if (oItem) {
@@ -2727,31 +2724,16 @@ function(
 
 				// If at this point of time aggregation 'items' does not exist we
 				// have save provided key.
-				this._aCustomerKeys.push(sKey);
+				aSelectedKeys.push(sKey);
+				bUpdateSelectedKeys = true;
 			}
 		}, this);
-		return this;
-	};
 
-	/**
-	 * Gets current value of property <code>selectedKeys</code>.
-	 * Keys of the selected items. If the key has no corresponding item, no changes will apply. If duplicate keys exists the first item matching the key is used.
-	 * Default value is [].
-	 *
-	 * @returns {string[]} Array containing the keys of the selected items (might be empty)
-	 * @override
-	 */
-	MultiComboBox.prototype.getSelectedKeys = function() {
-		var aItems = this.getSelectedItems() || [], aKeys = [];
-		aItems.forEach(function(oItem) {
-			aKeys.push(oItem.getKey());
-		}, this);
-
-		if (this._aCustomerKeys.length) {
-			aKeys = aKeys.concat(this._aCustomerKeys);
+		if (bUpdateSelectedKeys) {
+			this.setProperty("selectedKeys", aSelectedKeys, true);
 		}
 
-		return aKeys;
+		return this;
 	};
 
 	/**
@@ -3085,6 +3067,10 @@ function(
 
 		ComboBoxBase.prototype.init.apply(this, arguments);
 
+		// Flag to mark that all the initial setters have completed.
+		// This would help with the synchronisation within dependent properties.
+		this._bInitialSettersCompleted = false;
+
 		// To detect whether the List's item navigation is inited
 		this._bListItemNavigationInvalidated = false;
 
@@ -3100,7 +3086,6 @@ function(
 		// determines if value of the combobox should be empty string after popup's close
 		this._bPreventValueRemove = false;
 		this._oTokenizer = this._createTokenizer();
-		this._aCustomerKeys = [];
 		this._aInitiallySelectedItems = [];
 
 		this._oRbM = core.getLibraryResourceBundle("sap.m");
@@ -3223,6 +3208,7 @@ function(
 	 */
 	MultiComboBox.prototype.destroyItems = function() {
 		this.destroyAggregation("items");
+		this.setProperty("selectedKeys", [], true);
 
 		if (this._getList()) {
 			this._getList().destroyItems();
