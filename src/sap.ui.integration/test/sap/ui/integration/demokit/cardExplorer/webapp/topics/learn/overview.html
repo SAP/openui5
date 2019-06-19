@@ -20,21 +20,20 @@
 <div class="topic">
 	<div class="content">
 
-		<h1 id="overview">Integration Card Overview</h1>
-		Integration Cards are a new way to expose application content in a unified way to the end user. <br>
-		Depending on the use cases Cards can be embedded in a host environment like application, dashboard or any HTML page, easily.
-		A variety of Card types can be configured by a simple JSON configuration (schema) without the need to write code for UI Rendering.
-		With that even users without programming skill can be enabled to create new Cards for their special needs.
+		<h1 id="overview">Integration Cards Overview</h1>
+		Integration cards present a new means to expose application content to the end user in a unified way. <br>
+		Depending on the use cases cards can be easily embedded in a host environment, such as application, dashboard, or any HTML page.
+		A variety of card types can be configured by a simple JSON configuration (schema) without the need to write code for UI rendering.
+		In this way, even users without programming skill are being enabled to create new cards according to their special needs.
 
 
 		<h2>Card Configuration</h2>
-		Based on a JSON schema definition, a card author defines either static card content or dynamic content from REST services.
-		The upcoming design-time capabilities of Cards will help the author in the future.
+		Based on a JSON schema definition,  the card author defines either static or dynamic card content from the REST services.
+		The upcoming design-time capabilities of the cards will help authors in the future.
 
 		<h2>Host Environment</h2>
-		The host environment is responsible to integrate a Card. Action events allow the host environment to react on user interactions
-		within the Card.
-		For HTML environments UI5 provides two ways of integration, as a Custom Element or as a UI5 control.
+		The host environment is responsible for the card’s integration. Action events allow the host environment to react on user interactions within the card.
+		For HTML environments UI5 provides two ways of integration: as a Custom Element or as a UI5 control.
 
 		<h2>Card Types</h2>
 
@@ -55,30 +54,30 @@
 		<img width="300px" src="../images/timeline.png" alt="Timeline card">
 
 		<h3>Component Card</h3>
-		For more flexible implementations of Card content, the Component Card allows to integrate UI5 Components as content.
-		Such Card could only be rendered within a HTML host environment.
+		For more flexible implementations of card content, the component card allows the integration of UI5 Components as content.
+		Such cards could only be rendered within an HTML host environment.
 
 		<h1 id="concept">
 			UX Concept
 		</h1>
 
 		<ul>
-			<li>Cards are representations of an app or page, and offer content to users in a specific context.</li>
+			<li>Cards are representations of an app or page and offer content to users in a specific context.</li>
 			<li>Cards contain a certain set of information from an app or page and can also offer functionality.</li>
 			<li>Cards can be a mash-up of multiple apps (such as a list card with links).</li>
 			<li>An app or page can be represented by one card, or by multiple cards that each expose different aspects.</li>
-			<li>Users get direct insights without leaving the current screen, but cards can still offer further navigation options.</li>
+			<li>Users get direct insights without leaving the current screen,  while cards can still offer further navigation options.</li>
 			<li>Cards are composite controls that follow a predefined structure.</li>
 		</ul>
 
 		<p>Cards consist of:</p>
 		<ul>
 			<li>
-				A card container - a background and a border which holds the header and the content.
+				A card container - includes a background and a border that hold the header and the content.
 			</li>
 			<li>
-				A header - it can have a title, a subtitle, an icon, and a status. If the header is of
-				type Numeric, it may have different attributes, describing numeric indicator, like KPI for example.
+				A header - it can have a title, a subtitle, an icon, and a status.
+				If the header is of type Numeric, it may have different attributes describing numeric indicator, such as KPI.
 			</li>
 			<li>
 				Content - depends on the card type.
@@ -91,15 +90,15 @@
 		<ul>
 			<li>Technology agnostic - Different technologies can easily parse the manifest.json file and render a card based on it.</li>
 			<li>Self-contained - Everything needed to render the card and make it actionable is described in the manifest.json (including data and functionality).</li>
-			<li>Reusable - The manifest.json can be easily parsed, processed and saved in different layers of an application. It is also easily sharable.</li>
+			<li>Reusable - The manifest.json can be easily parsed, processed, and saved in different layers of an application. It is also easily shareable.</li>
 		</ul>
 
 		<h1 id="developingCards">
 			Developing Cards
 		</h1>
 		<p>
-			To create a card you should create a manifest.json file which stores all configurations (card structure, data, functionality, etc...).
-			sap.card is the namespace responsible for the card configuration inside the manifest file.
+			To create a card you should create a manifest.json file that stores all configurations (card structure, data, functionality, etc...).
+			The sap.card is the namespace responsible for the card configuration inside the manifest file.
 		</p>
 
 	</div>

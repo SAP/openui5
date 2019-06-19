@@ -42,48 +42,48 @@
 				<td>title</td>
 				<td>string</td>
 				<td>Yes</td>
-				<td>The title of the timeline item</td>
+				<td>The title of the timeline item.</td>
 				<td>1.15.0</td>
 			</tr>
 			<tr>
 				<td>description</td>
 				<td>string</td>
 				<td>No</td>
-				<td>The description of the timeline item</td>
+				<td>The description of the timeline item.</td>
 				<td>1.15.0</td>
 			</tr>
 			<tr>
 				<td>dateTime</td>
 				<td>string</td>
 				<td>No</td>
-				<td>The dateTime value of the timeline item</td>
+				<td>The dateTime value of the timeline item.</td>
 				<td>1.15.0</td>
 			</tr>
 			<tr>
 				<td>owner</td>
 				<td>string</td>
 				<td>No</td>
-				<td>The owner of the timeline item</td>
+				<td>The owner of the timeline item.</td>
 				<td>1.15.0</td>
 			</tr>
 			<tr>
 				<td>ownerImage</td>
 				<td>string</td>
 				<td>No</td>
-				<td>The owner image of the timeline item</td>
+				<td>The owner image of the timeline item.</td>
 				<td>1.15.0</td>
 			</tr>
 			<tr>
 				<td>icon</td>
 				<td>icon</td>
 				<td>No</td>
-				<td>The icon of the timeline item</td>
+				<td>The icon of the timeline item.</td>
 				<td>1.15.0</td>
 			</tr>
 		</table>
 
 		<h2 id="example">Example</h2>
-		<p>Defining the type and data for the card:
+		<p>Define the type and data for the card:
 		</p>
 		<pre class="prettyprint">{
 	"sap.card": {
@@ -134,14 +134,14 @@
 	  "HireDate": "Date(1422777600000)"
 	}
 ]</pre>
-		<p>Defining the header:</p>
+		<p>Define the header:</p>
 		<pre class="prettyprint">"header": {
 	"title": "New Team Members",
 	"icon": {
 	  "src": "sap-icon://group"
 	}
 }</pre>
-		<p>Defining the time content:</p>
+		<p>Define the time content:</p>
 		<pre class="prettyprint">"content": {
 	"item": {
 	  "dateTime" : {
@@ -169,7 +169,7 @@
 	  }
 	}
 }</pre>
-		<p>Here is the final manifest definition here:</p>
+		<p>Here is the final manifest definition:</p>
 		<pre class="prettyprint">{
 "sap.card": {
 	  "type": "Timeline",
@@ -213,7 +213,7 @@
 	  }
 	}
 }</pre>
-		<p>Finally create an widget card that actually can use the manifest.json which we created:</p>
+		<p>Create the widget card that can actually use the manifest.json which we created:</p>
 		<pre class="prettyprint">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
 	&lt;w:Card manifest="./manifest.json" width="400px" height="auto"/&gt;

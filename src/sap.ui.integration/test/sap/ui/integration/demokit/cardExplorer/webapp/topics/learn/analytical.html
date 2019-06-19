@@ -28,9 +28,7 @@
 			<li>Analytical card contains a chart visualization configuration. Supported chart types are Line,
 				StackedBar, StackedColumn, Donut.
 			</li>
-			<li>The card itself will load the header content aways, but the chart itself will only be loaded if the used
-				distribution has sap.viz library.
-			</li>
+			<li>The card itself will always load the header content, but the chart will only be loaded if the used distribution has the sap.viz library.</li>
 		</ul>
 
 		<h2 id="properties">Properties</h2>
@@ -131,7 +129,7 @@
 		</table>
 
 		<h2 id="example">Example</h2>
-		<p>Defining the type and data for the card:
+		<p>Define the type and data for the card:
 		</p>
 		<pre class="prettyprint">{
 	"sap.card": {
@@ -141,7 +139,7 @@
 	}
 }</pre>
 		<p>
-			Defining the header of the card
+			Define the header of the card:
 		</p>
 		<pre class="prettyprint">{
 	"header": {
@@ -178,7 +176,7 @@
 		]
 	}
 }</pre>
-		<p>Defining the content of the card:
+		<p>Define the content of the card:
 		</p>
 		<pre class="prettyprint">"content": {
 	"chartType": "StackedColumn",
@@ -296,7 +294,7 @@
 	}
 ]</pre>
 
-		<p>Finally create an widget card that actually can use the manifest.json which we created:</p>
+		<p>Create the widget card that can actually use the manifest.json which we created:</p>
 		<pre class="prettyprint">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
 	&lt;w:Card manifest="./manifest.json" width="400px" height="auto"/&gt;

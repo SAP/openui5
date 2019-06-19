@@ -23,17 +23,14 @@
 			Component Card
 		</h1>
 		<p>
-			With this card type, the developer can display a whole UI5 Component as a content. The card itself will load
-			the specified component and display it. It allows a huge flexibility, so the developer is responsible to
-			follow the guidelines to achieve good and consistent user experience.
+			With this card type, the developer can display a whole UI5 Component as a content.
+			The card itself will load the specified component and display it.
+			It allows a huge flexibility and so the developer is responsible to follow the guidelines to achieve consistent user experience.
 		</p>
 		<h2 id="usage">Usage</h2>
 		<ul>
-			<li>Use this card type only if there is no other card type which can fulfill the requirements.
-			</li>
-			<li>The component in the card must be simple. The card should be used only to navigate you to an application
-				where the actual work can be done.
-			</li>
+			<li>Use this card type only if there is no other card type which can fulfill your requirements.</li>
+			<li>The component in the card must be simple. The card should be used only to navigate to an application where the actual work can be done.</li>
 		</ul>
 		<h2 id="example">Example</h2>
 		<p>Create a Card manifest and include the manifest for the component in the same file:
@@ -61,7 +58,7 @@
 		}
 	}
 }</pre>
-		<p>Create an widget card that actually can use the manifest.json which we created:</p>
+		<p>Create the widget card that can actually use the manifest.json which we created:</p>
 		<pre class="prettyprint">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
 	&lt;w:Card manifest="./manifest.json" width="400px" height="auto"/&gt;
