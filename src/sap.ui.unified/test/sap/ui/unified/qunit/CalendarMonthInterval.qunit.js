@@ -7,9 +7,10 @@ sap.ui.define([
 	"sap/ui/unified/CalendarLegendItem",
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/DateTypeRange",
+	"sap/m/Button",
 	"sap/ui/unified/library"
 ], function(qutils, CalendarMonthInterval, CalendarLegend, CalendarLegendItem,
-	DateRange, DateTypeRange, unifiedLibrary) {
+	DateRange, DateTypeRange, Button, unifiedLibrary) {
 	"use strict";
 
 	// set language to en-US, since we have specific language strings tested
@@ -218,20 +219,20 @@ sap.ui.define([
 	QUnit.test("After Rerendering, the focus is not stolen from an external control (i.e. a button)", function(assert) {
 		//Prepare
 		var oCalendarMonthInt = new CalendarMonthInterval(),
-				oExternalControl = new CalendarMonthInterval("extControl");
+				oExternalControl = new Button("extControl");
 
 		oCalendarMonthInt.placeAt("qunit-fixture");
 		oExternalControl.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		oExternalControl.$().focus();
-		_assertFocus(oExternalControl.getDomRef(), "Prerequisites check: 'extControl' (another MonthInterval) should be focused", assert);
+		_assertFocus(oExternalControl.getDomRef(), "Prerequisites check: 'extControl' should be focused", assert);
 
 		//Act
 		oCalendarMonthInt.rerender();
 
 		//Assert
-		_assertFocus(oExternalControl.getDomRef(), "After rerendering, the focus should stay on the 'extControl' (another MonthInterval)", assert);
+		_assertFocus(oExternalControl.getDomRef(), "After rerendering, the focus should stay on the 'extControl'", assert);
 		oCalendarMonthInt.destroy();
 		oExternalControl.destroy();
 	});
