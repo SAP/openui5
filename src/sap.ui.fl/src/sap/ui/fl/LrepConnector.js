@@ -327,7 +327,7 @@ sap.ui.define([
 				mOptions.headers["X-CSRF-Token"] = this._sXsrfToken;
 
 				// Re-send request after fetching token
-				jQuery.ajax(sUri, mOptions).done(handleValidRequest).fail(function(oXhr, sStatus, sErrorThrown) {
+				jQuery.ajax(sUri, mOptions).done(handleValidRequest.bind(this)).fail(function(oXhr, sStatus, sErrorThrown) {
 					var oError = new Error(sErrorThrown);
 					oError.status = "error";
 					oError.code = oXhr.statusCode().status;
@@ -339,7 +339,7 @@ sap.ui.define([
 			function refetchTokenAndRequestAgainOrHandleInvalidRequest(oXhr) {
 				if (oXhr.status === 403) {
 					// Token seems to be invalid, refetch and then resend
-					jQuery.ajax(sFetchXsrfTokenUrl, mFetchXsrfTokenOptions).done(fetchTokenAndHandleRequest).fail(function() {
+					jQuery.ajax(sFetchXsrfTokenUrl, mFetchXsrfTokenOptions).done(fetchTokenAndHandleRequest.bind(this)).fail(function() {
 						// Fetching XSRF Token failed
 						reject({
 							status: "error"

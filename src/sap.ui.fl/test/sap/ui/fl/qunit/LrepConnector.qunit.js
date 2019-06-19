@@ -1162,6 +1162,51 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("_sendAjaxRequest - refetch XSRF Token in case of http 403 (not authorised) and reuse of previous XSRF token;" +
+					"If the subsequence request fails, the promise is rejected but no error throws", function(assert) {
+			var requestCount = 0;
+			var bValidRequestReceived = false;
+			var bValidFetchXSRFReceived = false;
+			//Arrange
+			this.server = sinon.fakeServer.create();
+			//Invalid token
+			this.oLrepConnector._sXsrfToken = "789";
+
+			function responder(request) {
+				requestCount++;
+				if (request.method === "HEAD" && request.requestHeaders["X-CSRF-Token"] === "fetch") {  //fetch XSRF Token
+					if ((request.method === "HEAD") && (request.url === "/sap/bc/lrep/actions/getcsrftoken/")) {
+						bValidFetchXSRFReceived = true;
+					}
+					request.respond(200, {"X-CSRF-Token": "123"}); // valid token
+				} else {
+					if (request.requestHeaders["X-CSRF-Token"] === "123") {
+						bValidRequestReceived = true;
+					}
+					request.respond(403);
+				}
+			}
+
+			this.server.respondWith(responder);
+			this.server.autoRespond = true;
+
+			var sSampleUri = "http://www.abc.de/files/";
+			var mSampleOptions = {
+				type: "GET"
+			};
+			var oStubGetMessage = sandbox.stub(this.oLrepConnector, "_getMessagesFromXHR");
+			//Act
+			return this.oLrepConnector._sendAjaxRequest(sSampleUri, mSampleOptions).
+			then(undefined,
+				//Promise is rejected
+				function () {
+					assert.equal(requestCount, 3, "There shall be 3 roundtrips: 1) Failed due to missing XSFR token. 2) Fetch XSRF Token. 3) Repeat first roundtrip.");
+					assert.ok(oStubGetMessage.calledOnce, "the LRepConnector context is bind probably and there is no exception throw!!");
+					assert.ok(bValidRequestReceived, "The XSRF Token shall be fetched and the origin request shall be resent");
+					assert.ok(bValidFetchXSRFReceived, "The XSRF Token shall be fetched with a dedicated GET request");
+				});
+		});
+
 		QUnit.test("_sendAjaxRequest - shall reject Promise when backend returns error", function(assert) {
 			//Arrange
 			this.server = sinon.fakeServer.create();
