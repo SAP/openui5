@@ -112,6 +112,9 @@ sap.ui.define([
 				"name.space.OverloadedAction(tea_busi.TEAM)/parameter1" : {
 					"@Common.Label" : "My 1st label"
 				},
+				"name.space.OverloadedBoundFunction/_it" : {
+					"@Common.Label" : "_it's own label"
+				},
 				"name.space.OverloadedFunction/A" : {
 					"@Common.Label" : "A's own label"
 				},
@@ -345,6 +348,42 @@ sap.ui.define([
 					"$Type" : "tea_busi.Worker"
 				}
 			}],
+			"name.space.OverloadedBoundFunction" : [{
+				"$kind" : "Function",
+				"$IsBound" : true,
+				"$Parameter" : [{
+					"$Name" : "_it",
+					"$Type" : "tea_busi.Worker"
+				}, {
+					"$Name" : "A",
+					"$Type" : "Edm.Boolean"
+				}],
+				"$ReturnType" : {
+					"$Type" : "tea_busi.Worker"
+				}
+			}, {
+				"$kind" : "Function",
+				"$IsBound" : true,
+				"$Parameter" : [{
+					"$Name" : "_it",
+					"$Type" : "tea_busi.TEAM"
+				}, {
+					"$Name" : "B",
+					"$Type" : "Edm.Date"
+				}],
+				"$ReturnType" : {
+					"$Type": "tea_busi.TEAM"
+				}
+			}, {
+				"$kind" : "Function",
+				"$Parameter" : [{
+					"$Name" : "C",
+					"$Type" : "Edm.String"
+				}],
+				"$ReturnType" : {
+					"$Type" : "tea_busi.ComplexType_Salary"
+				}
+			}],
 			"name.space.OverloadedFunction" : [{
 				"$kind" : "Function",
 				"$Parameter" : [{
@@ -461,6 +500,10 @@ sap.ui.define([
 				"OverloadedAction" : {
 					"$kind" : "ActionImport",
 					"$Action" : "name.space.OverloadedAction"
+				},
+				"OverloadedFunctionImport" : {
+					"$kind" : "FunctionImport",
+					"$Function" : "name.space.OverloadedBoundFunction"
 				},
 				"ServiceGroups" : {
 					"$kind" : "EntitySet",
@@ -651,6 +694,7 @@ sap.ui.define([
 		},
 		oContainerData = mScope["tea_busi.DefaultContainer"],
 		aOverloadedAction = mScope["name.space.OverloadedAction"],
+		aOverloadedBoundFunction = mScope["name.space.OverloadedBoundFunction"],
 		mSupplierScope = {
 			"$Version" : "4.0",
 			"tea_busi_supplier.v0001." : {
@@ -1257,6 +1301,23 @@ sap.ui.define([
 		"/T€AMS/tea_busi.NewAction/Team_Id" : mScope["tea_busi.NewAction"][1].$Parameter[1],
 		"/T€AMS/tea_busi.NewAction/@$ui5.overload/0/$ReturnType/$Type/Team_Id" : oTeamData.Team_Id,
 		"/T€AMS/tea_busi.NewAction//Team_Id" : oTeamData.Team_Id,
+		// function overloads ---------------------------------------------------------------------
+		"/OverloadedFunctionImport/@$ui5.overload"
+			: sinon.match.array.deepEquals([aOverloadedBoundFunction[2]]),
+		"/OverloadedFunctionImport/@$ui5.overload/0" : aOverloadedBoundFunction[2],
+		"/OverloadedFunctionImport/" : mScope["tea_busi.ComplexType_Salary"],
+		"/OverloadedFunctionImport/@$ui5.overload/AMOUNT"
+			: mScope["tea_busi.ComplexType_Salary"].AMOUNT,
+		"/OverloadedFunctionImport/AMOUNT" : mScope["tea_busi.ComplexType_Salary"].AMOUNT,
+		"/T€AMS/name.space.OverloadedBoundFunction/Team_Id" : oTeamData.Team_Id,
+		"/EMPLOYEES/EMPLOYEE_2_TEAM/name.space.OverloadedBoundFunction/Team_Id" : oTeamData.Team_Id,
+		"/EMPLOYEES/name.space.OverloadedBoundFunction/_it"
+			: aOverloadedBoundFunction[0].$Parameter[0],
+		"/T€AMS/name.space.OverloadedBoundFunction/@$ui5.overload"
+			: sinon.match.array.deepEquals([aOverloadedBoundFunction[1]]),
+		"/T€AMS/name.space.OverloadedBoundFunction/_it@Common.Label"
+			: mScope.$Annotations["name.space.OverloadedBoundFunction/_it"]["@Common.Label"],
+		"/T€AMS/name.space.OverloadedBoundFunction/B" : aOverloadedBoundFunction[1].$Parameter[1],
 		// annotations ----------------------------------------------------------------------------
 		"/@DefaultContainer"
 			: mScope.$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
@@ -1580,8 +1641,6 @@ sap.ui.define([
 			"/name.space.OverloadedFunction/" : "Expected a single overload, but found 2",
 			"/ServiceGroups/name.space.OverloadedAction/parameter1@Common.Label"
 				: "Expected a single overload, but found 0", // wrong binding parameter
-			"/ServiceGroups/name.space.OverloadedFunction/"
-				: "Expected a single overload, but found 2", // no filtering for functions!
 			"/EMPLOYEES/tea_busi.NewAction/_it@Common.Label"
 				: "Expected a single overload, but found 2", // Collection(Worker) vs. Worker
 			// Unsupported path after $ -----------------------------------------------------------
@@ -3612,6 +3671,7 @@ sap.ui.define([
 			"/GetEmployeeMaxAge",
 			"/Me",
 			"/OverloadedAction",
+			"/OverloadedFunctionImport",
 			"/ServiceGroups",
 			"/TEAMS",
 			"/T€AMS",

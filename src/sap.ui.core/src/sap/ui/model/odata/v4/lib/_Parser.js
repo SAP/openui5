@@ -21,7 +21,7 @@ sap.ui.define([], function () {
 		rNot = new RegExp("^not" + sWhitespace + "+"),
 		// OData operators (only recognized when surrounded by spaces; aMatches[1] contains the
 		// leading spaces, aMatches[2] the operator if found)
-		sOperators = "(" + sWhitespace + "+)(and|eq|ge|gt|le|lt|ne|or)" + sWhitespace + "*",
+		sOperators = "(" + sWhitespace + "+)(and|eq|ge|gt|le|lt|ne|or)" + sWhitespace + "+",
 		// a GUID (has to be recognized before a path because it may start with a letter)
 		sGuid = "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}",
 		// '*' (poss. %-encoded)
@@ -709,9 +709,9 @@ sap.ui.define([], function () {
 					if (sValue === "false" || sValue === "true" || sValue === "null") {
 						sId = "VALUE";
 					} else if (sValue === "not") {
-						sId = "not";
 						aMatches = rNot.exec(sNext);
 						if (aMatches) {
+							sId = "not";
 							sValue = aMatches[0];
 						}
 					}

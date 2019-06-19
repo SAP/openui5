@@ -71,11 +71,11 @@ sap.ui.define([
 		}
 		this.oAnnotatable = {
 			parent : this.oAnnotatable, // The parent annotatable (note that <Annotation>
-		                                // is also annotatable, so in postProcessAnnotation
-		                                // the annotatable to modify is the parent)
+										// is also annotatable, so in postProcessAnnotation
+										// the annotatable to modify is the parent)
 			path : sPath, // the annotation path if externalized
 			prefix : sPrefix || "", // the prefix to put before the "@" and the term (used e.g.
-		                            // for annotated annotations)
+									// for annotated annotations)
 			qualifiedName : undefined, // the qualified name of the annotation
 			qualifier : sQualifier, // the annotation qualifier
 			target : vTarget // the target to add the annotation to or its name

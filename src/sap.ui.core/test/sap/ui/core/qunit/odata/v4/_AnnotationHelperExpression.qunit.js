@@ -166,6 +166,9 @@ sap.ui.define([
 
 			assert.deepEqual(oResult, {
 				constraints : bComplexBinding ? mConstraints : undefined,
+				formatOptions : {
+					parseKeepsEmptyString : true
+				},
 				result : "binding",
 				type : "Edm.String",
 				value : oPathValue.value
@@ -393,6 +396,7 @@ sap.ui.define([
 
 		assert.deepEqual(oResult, {
 			constraints : undefined,
+			formatOptions : undefined,
 			result : "binding",
 			type : undefined, // "foo" not yet available
 			value : oPathValue.value
@@ -424,6 +428,7 @@ sap.ui.define([
 			return oPromise.then(function (oResult) {
 				assert.deepEqual(oResult, {
 					constraints : undefined,
+					formatOptions : undefined,
 					result : "binding",
 					type : "Edm.Foo",
 					value : bWithPrefix ? "~prefix~/BusinessPartnerID" : "BusinessPartnerID"

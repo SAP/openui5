@@ -200,7 +200,8 @@ sap.ui.define([
 	 * @param {any} [vValue]
 	 *   The new value obtained from the cache, see {@link #onChange}
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving without a defined result when the check is finished; never rejecting
+	 *   A promise resolving without a defined result when the check is finished, or rejecting in
+	 *   case of an error (e.g. thrown by the change event handler of a control)
 	 *
 	 * @private
 	 * @see sap.ui.model.Binding#checkUpdate

@@ -113,22 +113,54 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("checkUpdate", function (assert) {
+	QUnit.test("checkUpdate: success", function (assert) {
 		var oBinding = new ODataBinding({
-				checkUpdateInternal : function () {}
+				checkUpdateInternal : function () {},
+				oModel : {
+					reportError : function () {}
+				}
 			}),
-			oBindingMock = this.mock(oBinding),
 			bForceUpdate = {/*false or true*/};
 
-		oBindingMock.expects("checkUpdateInternal")
-			.withExactArgs(sinon.match.same(bForceUpdate));
+		this.mock(oBinding).expects("checkUpdateInternal")
+			.withExactArgs(sinon.match.same(bForceUpdate))
+			.resolves();
+		this.mock(oBinding.oModel).expects("reportError").never();
+
+		// code under test
+		oBinding.checkUpdate(bForceUpdate);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkUpdate: illegal parameter", function (assert) {
+		assert.throws(function () {
+			new ODataBinding().checkUpdate({/*false or true*/}, {/*additional argument*/});
+		}, new Error("Only the parameter bForceUpdate is supported"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkUpdate: checkUpdateInternal rejects", function (assert) {
+		var oBinding = new ODataBinding({
+				checkUpdateInternal : function () {},
+				oModel : {
+					reportError : function () {}
+				},
+				toString : function () { return "~"; }
+			}),
+			oError = new Error(),
+			bForceUpdate = {/*false or true*/},
+			oPromise = Promise.reject(oError);
+
+		this.mock(oBinding).expects("checkUpdateInternal")
+			.withExactArgs(sinon.match.same(bForceUpdate))
+			.returns(oPromise);
+		this.mock(oBinding.oModel).expects("reportError")
+			.withExactArgs("Failed to update ~", sClassName, sinon.match.same(oError));
 
 		// code under test
 		oBinding.checkUpdate(bForceUpdate);
 
-		assert.throws(function () {
-			oBinding.checkUpdate(bForceUpdate, {/*additional argument*/});
-		}, new Error("Only the parameter bForceUpdate is supported"));
+		return oPromise.catch(function () {}); // wait for the error, but ignore it
 	});
 
 	//*********************************************************************************************

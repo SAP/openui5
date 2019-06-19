@@ -9,13 +9,23 @@ sap.ui.getCore().attachInit(function () {
 
 	sap.ui.require([
 		"sap/base/Log",
+		"sap/ui/core/library",
 		"sap/ui/core/sample/common/pages/Any",
 		"sap/ui/core/sample/ViewTemplate/types/pages/Main",
 		"sap/ui/test/opaQunit",
 		"sap/ui/test/TestUtils"
-	], function (Log, Any, Main, opaTest, TestUtils) {
+	], function (Log, library, Any, Main, opaTest, TestUtils) {
+		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+			MessageType = library.MessageType; // shortcut for sap.ui.core.MessageType
 
-		QUnit.module("sap.ui.core.sample.ViewTemplate.types");
+		QUnit.module("sap.ui.core.sample.ViewTemplate.types", {
+			before : function () {
+				sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			},
+			after : function () {
+				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			}
+		});
 
 		//*****************************************************************************
 		opaTest("OData Types", function (Given, When, Then) {
@@ -29,28 +39,73 @@ sap.ui.getCore().attachInit(function () {
 				}
 			});
 
-			When.onTheMainPage.changeMinMaxField("100");
-			Then.onTheMainPage.checkControlIsDirty("decimalInput", true);
 			When.onTheMainPage.pressButton("toggleV4Button");
+			Then.onTheMessagePopover.checkMessages([
+			/*TODO: The MessagesPopover is opened, in the details we see the
+			Message but not in the master list of the messages, hence we can't check it {
+				message : "Type 'sap.ui.model.odata.type.Raw' does not support formatting",
+				type : MessageType.Error
+			}*/]);
+			When.onTheMessagePopover.close();
+
 			if (TestUtils.isRealOData()) {
+				// reset data in order to have a predefined starting point
 				When.onTheMainPage.changeBoolean();
 				When.onTheMainPage.pressButton("saveButton");
 				When.onTheMainPage.pressButton("resetButton");
-				When.onTheMainPage.pressMessagePopoverCloseButton();
 			}
-			When.onTheMainPage.enterBoolean("XXX");
-			Then.onTheMainPage.checkControlIsDirty("booleanInput", true);
+
+			When.onTheMainPage.enterInputValue("decimalInput", "100");
+			Then.onTheMainPage.checkInputValueState("decimalInput", MessageType.Error);
+			When.onTheMainPage.enterInputValue("decimalInput", "101");
+			Then.onTheMainPage.checkInputValueState("decimalInput", MessageType.None);
+
+			// TODO: checks skipped because StepInput ValueState is not as expected
+			// When.onTheMainPage.enterStepInputValue("stepInput", 102);
+			// Then.onTheMainPage.checkStepInputValueState("stepInput", MessageType.Error);
+			// When.onTheMainPage.enterStepInputValue("stepInput", 99);
+			// Then.onTheMainPage.checkStepInputValueState("stepInput", MessageType.None);
+
+			When.onTheMainPage.enterInputValue("booleanInput", "XXX");
+			Then.onTheMainPage.checkInputIsDirty("booleanInput", true);
 			When.onTheMainPage.pressButton("resetModelButton");
-			Then.onTheMainPage.checkBooleanValue(true);
-			When.onTheMainPage.enterBoolean("YYY");
-			Then.onTheMainPage.checkControlIsDirty("booleanInput", true);
+			Then.onTheMainPage.checkInputValue("booleanInput", "Yes");
+			Then.onTheMainPage.checkInputIsDirty("booleanInput", false);
+			When.onTheMainPage.enterInputValue("booleanInput", "YYY");
+			Then.onTheMainPage.checkInputIsDirty("booleanInput", true);
 			When.onTheMainPage.pressButton("resetContextBindingButton");
-			Then.onTheMainPage.checkBooleanValue(true);
-			When.onTheMainPage.enterBoolean("");
-			Then.onTheMainPage.checkControlIsDirty("booleanInput", true);
+			Then.onTheMainPage.checkInputValue("booleanInput", "Yes");
+			Then.onTheMainPage.checkInputIsDirty("booleanInput", false);
+			When.onTheMainPage.enterInputValue("booleanInput", "");
+			Then.onTheMainPage.checkInputIsDirty("booleanInput", true);
 			When.onTheMainPage.pressButton("resetModelButton");
-			Then.onTheMainPage.checkBooleanValue(true);
-			Then.onTheMainPage.checkControlIsDirty("booleanInput", false);
+			Then.onTheMainPage.checkInputValue("booleanInput", "Yes");
+			Then.onTheMainPage.checkInputIsDirty("booleanInput", false);
+
+			When.onTheMainPage.enterInputValue("Identification::Duration", "10 sec",
+				"sap.ui.core.sample.ViewTemplate.types.TemplateV4");
+			Then.onTheMainPage.checkInputIsDirty("Identification::Duration", true,
+				"sap.ui.core.sample.ViewTemplate.types.TemplateV4");
+			When.onTheMainPage.pressButton("messagesButton");
+			Then.onTheMessagePopover.checkMessages([{
+				message : "Type 'sap.ui.model.odata.type.Raw' does not support parsing",
+				type : MessageType.Error
+			}]);
+			When.onTheMainPage.pressButton("resetModelButton");
+			Then.onTheMainPage.checkInputValue("Identification::Duration", "",
+				"sap.ui.core.sample.ViewTemplate.types.TemplateV4");
+			Then.onTheMainPage.checkInputIsDirty("Identification::Duration", false,
+				"sap.ui.core.sample.ViewTemplate.types.TemplateV4");
+
+			// parseKeepsEmptyString test
+			When.onTheMainPage.enterInputValue("Identification::String40", "",
+				"sap.ui.core.sample.ViewTemplate.types.TemplateV4");
+			Then.onTheMainPage.checkInputValue("Identification::String40", "",
+				"sap.ui.core.sample.ViewTemplate.types.TemplateV4");
+			Then.onTheMainPage.checkInputValueState("Identification::String40", MessageType.None,
+				"sap.ui.core.sample.ViewTemplate.types.TemplateV4");// no server error on input
+			Then.onTheMainPage.checkInputIsDirty("Identification::String40", false,
+				"sap.ui.core.sample.ViewTemplate.types.TemplateV4");
 
 			Then.onAnyPage.checkLog([{ component : "sap.ui.model.odata.v4.ODataMetaModel",
 				level : Log.Level.WARNING,

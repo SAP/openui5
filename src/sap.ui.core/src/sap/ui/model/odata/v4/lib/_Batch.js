@@ -141,6 +141,11 @@ sap.ui.define([
 		aBatchParts = aBatchParts.slice(1, -1);
 
 		aBatchParts.forEach(function (sBatchPart) {
+			// a batch part contains 3 elements separated by a double "\r\n"
+			// 0: general batch part headers
+			// 1: HTTP response headers and status line
+			// 2: HTTP response body
+
 			var sChangeSetContentType,
 				sCharset,
 				iColonIndex,
@@ -148,28 +153,28 @@ sap.ui.define([
 				sHeaderName,
 				sHeaderValue,
 				aHttpHeaders,
+				sHttpHeaders,
+				iHttpHeadersEnd,
 				aHttpStatusInfos,
 				i,
 				sMimeHeaders,
+				iMimeHeadersEnd,
 				oResponse = {},
-				iResponseIndex,
-				aResponseParts;
+				iResponseIndex;
 
-			// aResponseParts will take 3 elements:
-			// 0: general batch part headers
-			// 1: HTTP response headers and status line
-			// 2: HTTP response body
-			aResponseParts = sBatchPart.split("\r\n\r\n");
+			iMimeHeadersEnd = sBatchPart.indexOf("\r\n\r\n");
+			sMimeHeaders = sBatchPart.slice(0, iMimeHeadersEnd);
+			iHttpHeadersEnd = sBatchPart.indexOf("\r\n\r\n", iMimeHeadersEnd + 4);
+			sHttpHeaders = sBatchPart.slice(iMimeHeadersEnd + 4, iHttpHeadersEnd);
 
-			sMimeHeaders = aResponseParts[0];
 			sChangeSetContentType = getChangeSetContentType(sMimeHeaders);
 			if (sChangeSetContentType) {
 				aResponses.push(_deserializeBatchResponse(sChangeSetContentType,
-					aResponseParts.slice(1).join("\r\n\r\n"), true));
+					sBatchPart.slice(iMimeHeadersEnd + 4), true));
 				return;
 			}
 
-			aHttpHeaders = aResponseParts[1].split("\r\n");
+			aHttpHeaders = sHttpHeaders.split("\r\n");
 			// e.g. HTTP/1.1 200 OK
 			aHttpStatusInfos = aHttpHeaders[0].split(" ");
 
@@ -195,7 +200,7 @@ sap.ui.define([
 			}
 
 			// remove \r\n sequence from the end of the response body
-			oResponse.responseText = aResponseParts[2].slice(0, -2);
+			oResponse.responseText = sBatchPart.slice(iHttpHeadersEnd + 4, -2);
 
 			if (bIsChangeSet) {
 				iResponseIndex = getChangeSetResponseIndex(sMimeHeaders);
