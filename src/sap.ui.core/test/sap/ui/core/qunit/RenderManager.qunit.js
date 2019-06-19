@@ -827,8 +827,8 @@ sap.ui.define([
 	QUnit.test("Valid syntax No API assertion", function (assert) {
 		this.oRM.
 		openStart("div").attr("id", "x").style("width", "100%").class("x").openEnd().
-			voidStart("img").attr("id", "y").style("width", "100px").class("y").voidEnd().
-			openStart("so-me_Tag1").attr("some-3Attri_bute", "x").openEnd().close("so-me_Tag1").
+			voidStart("img").attr("id", "y").style("width", "100px").class("y").class().class(false).class(null).voidEnd().
+			openStart("so-me_Tag1").attr("some-3Attri_bute", "x").class(undefined).class("").openEnd().close("so-me_Tag1").
 			voidStart("so-me_Void5Tag").voidEnd().
 		close("div");
 
