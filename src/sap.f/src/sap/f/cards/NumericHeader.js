@@ -55,6 +55,7 @@ sap.ui.define([
 	 */
 	var NumericHeader = Control.extend("sap.f.cards.NumericHeader", {
 		metadata: {
+			library: "sap.f",
 			interfaces: ["sap.f.cards.IHeader"],
 			properties: {
 

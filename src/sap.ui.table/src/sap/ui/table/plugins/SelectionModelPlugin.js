@@ -26,6 +26,7 @@ sap.ui.define([
 	 * @alias sap.ui.table.plugins.SelectionModelPlugin
 	 */
 	var SelectionModelPlugin = SelectionPlugin.extend("sap.ui.table.plugins.SelectionModelPlugin", {metadata: {
+		library: "sap.ui.table",
 		events: {
 			/**
 			 * This event is fired when the selection is changed.

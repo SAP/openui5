@@ -16,6 +16,7 @@ sap.ui.define([
 	 */
 	return Control.extend("sap.ui.documentation.sdk.controls.BorrowedList", {
 		metadata: {
+			library: "sap.ui.documentation",
 			properties: {
 				/**
 				 * Array containing list of objects which have property name and link

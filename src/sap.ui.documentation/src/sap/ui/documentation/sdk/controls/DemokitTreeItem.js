@@ -14,6 +14,7 @@ sap.ui.define([
 	 */
 	return TreeItemBase.extend("sap.ui.documentation.sdk.controls.DemokitTreeItem", {
 		metadata : {
+			library: "sap.ui.documentation",
 			properties: {
 				title : {type : "string", defaultValue : ""},
 				deprecated: {type : "boolean", defaultValue : false},

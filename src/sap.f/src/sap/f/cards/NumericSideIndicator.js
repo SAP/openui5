@@ -33,6 +33,7 @@ sap.ui.define([
 		 */
 		var NumericSideIndicator = Control.extend("sap.f.cards.NumericSideIndicator", {
 			metadata: {
+				library: "sap.f",
 				properties: {
 
 					/**

@@ -11,6 +11,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/m/Button', 'sap/m/SearchField', 'sap/
 		 */
         var Search = Control.extend("sap.ui.documentation.sdk.controls.Search", {
             metadata : {
+                library : "sap.ui.documentation",
                 properties : {
                     isOpen : {type : "boolean", group : "Appearance", defaultValue : false},
                     width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null}
