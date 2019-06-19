@@ -16,9 +16,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/layout/library"],
 	 * ${version}
 	 * @namespace
 	 */
-	var GridRenderer = {
-		apiVersion: 2
-	};
+	var GridRenderer = {};
 
 	/**
 	 * Renders the HTML for the given control, using the provided
@@ -75,11 +73,11 @@ sap.ui.define(["sap/ui/Device", "sap/ui/layout/library"],
 		var sWidth = oControl.getWidth();
 		if (sWidth !== "100%" && sWidth !== "auto" && sWidth !== "inherit") {
 			if (fHSpacing === 0) {
-				sWidth = "width: " + sWidth;
+				oRm.style("width", sWidth);
 			} else {
-				sWidth = "width: -webkit-calc(" + sWidth + " - " + fHSpacing  + "rem); width: calc(" + sWidth + " - " + fHSpacing  + "rem); ";
+				oRm.style("width", "-webkit-calc(" + sWidth + " - " + fHSpacing  + "rem)");
+				oRm.style("width", "calc(" + sWidth + " - " + fHSpacing  + "rem)");
 			}
-			oRm.style("width", sWidth);
 		}
 
 		var sRole = oControl._getAccessibleRole();
