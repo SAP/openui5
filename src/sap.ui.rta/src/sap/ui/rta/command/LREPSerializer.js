@@ -5,27 +5,21 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/rta/command/FlexCommand",
 	"sap/ui/rta/command/AppDescriptorCommand",
-	"sap/ui/rta/ControlTreeModifier",
-	"sap/ui/rta/Utils",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/dt/ElementUtil",
 	"sap/base/Log",
-	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI"
 ], function(
 	ManagedObject,
 	FlexCommand,
 	AppDescriptorCommand,
-	RtaControlTreeModifier,
-	RtaUtils,
-	FlexUtils,
+	FlUtils,
 	Change,
 	Settings,
 	ElementUtil,
 	Log,
-	ChangesWriteAPI,
 	PersistenceWriteAPI
 ) {
 	"use strict";
@@ -174,14 +168,6 @@ sap.ui.define([
 		}.bind(this))
 
 		.then(function() {
-			var oRootControl = getRootControlInstance(this.getRootControl());
-			var bAppVariantRunning = FlexUtils.isApplicationVariant(oRootControl) || FlexUtils.isVariantByStartupParameter(oRootControl);
-			if (!bAppVariantRunning) {
-				return PersistenceWriteAPI.saveChanges(false, oRootControl);
-			}
-		}.bind(this))
-
-		.then(function() {
 			Log.info("UI adaptation successfully transfered changes to layered repository");
 			this.getCommandStack().removeAllCommands();
 		}.bind(this));
@@ -194,7 +180,7 @@ sap.ui.define([
 			var oPropertyBag = {
 				reference: sReferenceAppIdForChanges
 			};
-			var sNamespace = FlexUtils.createNamespace(oPropertyBag, "changes");
+			var sNamespace = FlUtils.createNamespace(oPropertyBag, "changes");
 
 			var aCommands = this.getCommandStack().getAllExecutedCommands();
 			aCommands.forEach(function(oCommand) {
@@ -233,7 +219,7 @@ sap.ui.define([
 		// The last command has to be undone first, therefore reversing is required
 		aPromises = aPromises.reverse();
 
-		return FlexUtils.execPromiseQueueSequentially(aPromises, false, true);
+		return FlUtils.execPromiseQueueSequentially(aPromises, false, true);
 	};
 
 	LREPSerializer.prototype._removeCommands = function() {
@@ -274,7 +260,7 @@ sap.ui.define([
 			throw new Error("Can't save commands without root control instance!");
 		}
 
-		var oRunningAppDescriptor = FlexUtils.getAppDescriptor(oRootControl);
+		var oRunningAppDescriptor = FlUtils.getAppDescriptor(oRootControl);
 		// In case the id of the current running app is equal to the app variant id
 		if (oRunningAppDescriptor["sap.app"].id === sReferenceAppIdForChanges) {
 			throw new Error("The id of the app variant should be different from the current app id");

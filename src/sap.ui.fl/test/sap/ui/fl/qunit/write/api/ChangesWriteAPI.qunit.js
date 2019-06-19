@@ -3,23 +3,23 @@
 sap.ui.define([
 	"sap/ui/fl/write/ChangesController",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/core/Component",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
-	"sap/ui/core/Element",
+	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
+	"sap/ui/core/Control",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ChangesController,
 	ChangesWriteAPI,
-	Change,
 	Utils,
 	Settings,
 	Component,
 	DescriptorInlineChangeFactory,
-	Element,
+	DescriptorChangeFactory,
+	Control,
 	jQuery,
 	sinon
 ) {
@@ -43,8 +43,12 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given ChangesWriteAPI", {
+		beforeEach: function () {
+			this.aObjectsToDestroy = [];
+		},
 		afterEach: function() {
 			sandbox.restore();
+			this.aObjectsToDestroy.forEach(function(oObject) {oObject.destroy();});
 		}
 	}, function() {
 		QUnit.test("when create is called for a descriptor change", function(assert) {
@@ -52,7 +56,7 @@ sap.ui.define([
 			var oAppComponent = {
 				getManifest: function() {}
 			};
-			var aArguments = [{
+			var oChangeSpecificData = {
 				changeType: sChangeType,
 				content: "content",
 				texts: {
@@ -60,51 +64,80 @@ sap.ui.define([
 				},
 				reference: "reference",
 				layer: "CUSTOMER"
-			}, oAppComponent];
+			};
 			sandbox.stub(Utils, "getAppVersionFromManifest").returns("1.2.3");
 			sandbox.stub(Settings, "getInstance").resolves({});
-			return ChangesWriteAPI.create.apply(null, aArguments)
+			return ChangesWriteAPI.create(oChangeSpecificData, oAppComponent)
 				.then(function (oChange) {
 					assert.strictEqual(oChange._oInlineChange._getChangeType(), sChangeType, "then the correct descriptor change type was created");
 				});
 		});
 
 		QUnit.test("when create is called with a control", function(assert) {
-			var aArguments = [{type: "changeSpecificData"}, {type: "control"}];
-			var fnPersistenceStub = getMethodStub(aArguments.slice(0, 1), sReturnValue);
-			mockFlexController(aArguments[1], { createChange : fnPersistenceStub });
+			var oChangeSpecificData = {type: "changeSpecificData"};
+			var vSelector = {type: "control"};
+			var fnPersistenceStub = getMethodStub(oChangeSpecificData, sReturnValue);
+			mockFlexController(vSelector, { createChange : fnPersistenceStub });
 
-			assert.strictEqual(ChangesWriteAPI.create.apply(null, aArguments), sReturnValue, "then the flex persistence was called with correct parameters");
+			assert.strictEqual(ChangesWriteAPI.create(oChangeSpecificData, vSelector), sReturnValue, "then the flex persistence was called with correct parameters");
 		});
 
 		QUnit.test("when create is called with a component", function(assert) {
+			var oChangeSpecificData = {type: "changeSpecificData"};
 			var oComponent = new Component();
-			var aArguments = [{type: "changeSpecificData"}, oComponent];
-			var fnPersistenceStub = getMethodStub(aArguments, sReturnValue);
-			mockFlexController(aArguments[1], { createBaseChange : fnPersistenceStub });
-			assert.strictEqual(ChangesWriteAPI.create.apply(null, aArguments), sReturnValue, "then the flex persistence was called with correct parameters");
-			oComponent.destroy();
+			this.aObjectsToDestroy.push(oComponent);
+			var fnPersistenceStub = getMethodStub([oChangeSpecificData, oComponent], sReturnValue);
+			mockFlexController(oComponent, { createBaseChange : fnPersistenceStub });
+			assert.strictEqual(ChangesWriteAPI.create(oChangeSpecificData, oComponent), sReturnValue, "then the flex persistence was called with correct parameters");
 		});
 
 		QUnit.test("when create is called with a selector object", function(assert) {
-			var aArguments = [{type: "changeSpecificData"}, {appComponent: "appComponent"}];
-			var fnPersistenceStub = getMethodStub(aArguments, sReturnValue);
-			mockFlexController(aArguments[1].appComponent, { createChange : fnPersistenceStub });
-			assert.strictEqual(ChangesWriteAPI.create.apply(null, aArguments), sReturnValue, "then the flex persistence was called with correct parameters");
+			var oChangeSpecificData = {type: "changeSpecificData"};
+			var oAppComponent = {appComponent: "appComponent"};
+			var fnPersistenceStub = getMethodStub([oChangeSpecificData, oAppComponent], sReturnValue);
+			mockFlexController(oAppComponent.appComponent, { createChange : fnPersistenceStub });
+			assert.strictEqual(ChangesWriteAPI.create(oChangeSpecificData, oAppComponent), sReturnValue, "then the flex persistence was called with correct parameters");
+		});
+
+		QUnit.test("when create is called for a descriptor change and the create promise is rejected", function(assert) {
+			var sChangeType = DescriptorInlineChangeFactory.getDescriptorChangeTypes()[0];
+			var oAppComponent = {
+				getManifest: function() {}
+			};
+			var oChangeSpecificData = {
+				changeType: sChangeType
+			};
+
+			var oCreateInlineChangeStub = sandbox.stub(DescriptorInlineChangeFactory, "createDescriptorInlineChange").rejects(new Error("myError"));
+			var oCreateChangeStub = sandbox.stub(DescriptorChangeFactory.prototype, "createNew");
+			var oErrorLogStub = sandbox.stub(Utils.log, "error");
+
+			return ChangesWriteAPI.create(oChangeSpecificData, oAppComponent)
+			.then(function() {
+				assert.ok(false, "should not go here");
+			})
+			.catch(function(oError) {
+				assert.equal(oCreateInlineChangeStub.callCount, 1, "the inline change create function was called");
+				assert.equal(oCreateChangeStub.callCount, 0, "the create new function was not called");
+				assert.equal(oError.message, "myError", "the function rejects with the error");
+				assert.equal(oErrorLogStub.callCount, 1, "the error was logged");
+			});
 		});
 
 		QUnit.test("when isChangeHandlerRevertible is called with a control instance", function(assert) {
-			var aArguments = [{type: "change"}, {type: "control"}];
-			var fnPersistenceStub = getMethodStub(aArguments, sReturnValue);
-			mockFlexController(aArguments[1], { isChangeHandlerRevertible : fnPersistenceStub });
-			assert.strictEqual(ChangesWriteAPI.isChangeHandlerRevertible.apply(null, aArguments), sReturnValue, "then the flex persistence was called with correct parameters");
+			var oChange = {type: "change"};
+			var vSelector = {type: "control"};
+			var fnPersistenceStub = getMethodStub([oChange, vSelector], sReturnValue);
+			mockFlexController(vSelector, { isChangeHandlerRevertible : fnPersistenceStub });
+			assert.strictEqual(ChangesWriteAPI.isChangeHandlerRevertible(oChange, vSelector), sReturnValue, "then the flex persistence was called with correct parameters");
 		});
 
 		QUnit.test("when isChangeHandlerRevertible is called with a selector object", function(assert) {
-			var aArguments = [{type: "change"}, {appComponent: "appComponent"}];
-			var fnPersistenceStub = getMethodStub(aArguments, sReturnValue);
-			mockFlexController(aArguments[1].appComponent, { isChangeHandlerRevertible : fnPersistenceStub });
-			assert.strictEqual(ChangesWriteAPI.isChangeHandlerRevertible.apply(null, aArguments), sReturnValue, "then the flex persistence was called with correct parameters");
+			var oChange = {type: "change"};
+			var vSelector = {appComponent: "appComponent"};
+			var fnPersistenceStub = getMethodStub([oChange, vSelector], sReturnValue);
+			mockFlexController(vSelector.appComponent, { isChangeHandlerRevertible : fnPersistenceStub });
+			assert.strictEqual(ChangesWriteAPI.isChangeHandlerRevertible(oChange, vSelector), sReturnValue, "then the flex persistence was called with correct parameters");
 		});
 
 		QUnit.test("when getControlIfTemplateAffected is called", function(assert) {
@@ -118,59 +151,47 @@ sap.ui.define([
 					};
 				}
 			};
-			var aArguments = [{change: "change", appComponent: "appComponent"}, oControl];
-			var fnPersistenceStub = getMethodStub([aArguments[0].change, oControl, sControlName, aArguments[0]], sReturnValue);
-			mockFlexController(aArguments[0].appComponent, { _getControlIfTemplateAffected : fnPersistenceStub });
-			assert.strictEqual(ChangesWriteAPI.getControlIfTemplateAffected.apply(null, aArguments), sReturnValue, "then the flex persistence was called with correct parameters");
+			var mPropertyBag = {change: "change", appComponent: "appComponent"};
+			var fnPersistenceStub = getMethodStub([mPropertyBag.change, oControl, sControlName, mPropertyBag], sReturnValue);
+			mockFlexController(mPropertyBag.appComponent, { _getControlIfTemplateAffected : fnPersistenceStub });
+			assert.strictEqual(ChangesWriteAPI.getControlIfTemplateAffected(oControl, mPropertyBag), sReturnValue, "then the flex persistence was called with correct parameters");
 		});
 
 		QUnit.test("when apply is called with no dependencies on control", function(assert) {
-			var oElement = new Element();
-			var aArguments = [
-				{ getSelector: function () { return "selector"; } },
-				oElement,
-				{ appComponent: "appComponent" }
-			];
-			var fnPersistenceStub = getMethodStub(aArguments, Promise.resolve(sReturnValue));
-			mockFlexController(aArguments[2].appComponent, {
+			var oChange = {
+				getSelector: function () { return "selector"; }
+			};
+			var oControl = new Control();
+			this.aObjectsToDestroy.push(oControl);
+			var mPropertyBag = { appComponent: "appComponent" };
+			var fnPersistenceStub = getMethodStub([oChange, oControl, mPropertyBag], Promise.resolve(sReturnValue));
+			mockFlexController(mPropertyBag.appComponent, {
 				checkTargetAndApplyChange: fnPersistenceStub,
 				checkForOpenDependenciesForControl: function() { return false; }
 			});
-			return ChangesWriteAPI.apply.apply(null, aArguments)
+			return ChangesWriteAPI.apply(oChange, oControl, mPropertyBag)
 				.then(function(sValue) {
 					assert.strictEqual(sValue, sReturnValue, "then the flex persistence was called with correct parameters");
-					oElement.destroy();
 				});
 		});
 
 		QUnit.test("when apply is called with dependencies on control", function(assert) {
-			var oElement = new Element();
-			var aArguments = [
-				{
-					getSelector: function() { return "selector"; },
-					getId: function() { return "changeId"; }
-				},
-				oElement,
-				{ appComponent: "appComponent" }
-			];
-			var fnPersistenceStub = getMethodStub(aArguments);
-			mockFlexController(aArguments[2].appComponent, {
+			var oChange = {
+				getSelector: function () { return "selector"; },
+				getId: function() { return "changeId"; }
+			};
+			var oControl = new Control();
+			this.aObjectsToDestroy.push(oControl);
+			var mPropertyBag = { appComponent: "appComponent" };
+			var fnPersistenceStub = getMethodStub([oChange, oControl, mPropertyBag]);
+			mockFlexController(mPropertyBag.appComponent, {
 				checkTargetAndApplyChange: fnPersistenceStub,
 				checkForOpenDependenciesForControl: function() { return true; }
 			});
-			return ChangesWriteAPI.apply.apply(null, aArguments)
+			return ChangesWriteAPI.apply(oChange, oControl, mPropertyBag)
 				.catch(function (oError) {
 					assert.strictEqual(oError.message, "The following Change cannot be applied because of a dependency: changeId", "then a rejected promise with an error was returned");
-					oElement.destroy();
 				});
-		});
-
-		QUnit.test("when hasHigherLayerChanges is called", function(assert) {
-			var aArguments = [{type: "propertyBag"}, {type: "managedObject"}];
-			var fnPersistenceStub = getMethodStub(aArguments.slice(0, 0), sReturnValue);
-			mockFlexController(aArguments[1], { hasHigherLayerChanges : fnPersistenceStub });
-
-			assert.strictEqual(ChangesWriteAPI.hasHigherLayerChanges.apply(null, aArguments), sReturnValue, "then the flex persistence was called with correct parameters");
 		});
 	});
 

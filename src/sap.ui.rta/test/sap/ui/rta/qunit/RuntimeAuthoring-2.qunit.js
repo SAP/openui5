@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/Remove",
 	"qunit/RtaQunitUtils",
-	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
@@ -27,7 +26,6 @@ sap.ui.define([
 	CommandFactory,
 	Remove,
 	RtaQunitFlexUtils,
-	ChangesWriteAPI,
 	PersistenceWriteAPI,
 	sinon
 ) {
@@ -95,7 +93,7 @@ sap.ui.define([
 		appDescriptorChanges(oRta, false);
 	}
 	function personalizationChanges(bExist) {
-		sandbox.stub(ChangesWriteAPI, "hasHigherLayerChanges").resolves(bExist);
+		sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(bExist);
 	}
 	function whenHigherLayerChangesExist() {
 		personalizationChanges(true);
@@ -328,7 +326,7 @@ sap.ui.define([
 				return Promise.resolve(this.oRta._RESTART.NOT_NEEDED);
 			}.bind(this));
 
-			sandbox.stub(ChangesWriteAPI, "hasHigherLayerChanges").resolves(false);
+			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
 			sandbox.stub(PersistenceWriteAPI, "getUIChanges").resolves(true);
 			this.oRta.setShowToolbars(true);
 
