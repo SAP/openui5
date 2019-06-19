@@ -1714,11 +1714,8 @@ function(
 		// focus and scroll handling for sticky elements
 		this._handleStickyItemFocus(oItem.getDomRef());
 
-		if (oItem !== oFocusedControl) {
-			return;
-		}
-
-		if (!sap.ui.getCore().getConfiguration().getAccessibility()) {
+		if (oItem !== oFocusedControl ||
+			!sap.ui.getCore().getConfiguration().getAccessibility()) {
 			return;
 		}
 
@@ -1736,7 +1733,13 @@ function(
 				oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 				sDescription = oAccInfo.type + " ";
 
-			sDescription += oBundle.getText("LIST_ITEM_POSITION", [mPosition.posInset, mPosition.setSize]) + " ";
+			if (!Device.browser.chrome || this.isA("sap.m.Table")) {
+				sDescription += oBundle.getText("LIST_ITEM_POSITION", [mPosition.posInset, mPosition.setSize]) + " ";
+			} else {
+				oItemDomRef.setAttribute("aria-posinset", mPosition.posInset);
+				oItemDomRef.setAttribute("aria-setsize", mPosition.setSize);
+			}
+
 			sDescription += oAccInfo.description;
 			this.updateInvisibleText(sDescription, oItemDomRef);
 			return sDescription;
@@ -1754,9 +1757,6 @@ function(
 
 		oInvisibleText.setText(sText.trim());
 		$FocusedItem.addAriaLabelledBy(oInvisibleText.getId(), bPrepend);
-		window.setTimeout(function() {
-			$FocusedItem.removeAriaLabelledBy(oInvisibleText.getId());
-		}, 0);
 	};
 
 	/* Keyboard Handling */

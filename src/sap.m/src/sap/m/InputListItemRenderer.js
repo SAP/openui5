@@ -56,14 +56,6 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "./ListItemBaseRen
 		rm.write('<div class="sapMILIDiv sapMILI-CTX">');
 
 		oLI.getContent().forEach(function(oContent) {
-
-			// if not already exists add the label as a labelledby association whenever possible
-			if (sLabelId &&
-				oContent.addAriaLabelledBy &&
-				oContent.getAriaLabelledBy().indexOf(sLabelId) == -1) {
-				oContent.addAssociation("ariaLabelledBy", sLabelId, true);
-			}
-
 			rm.renderControl(oContent);
 		});
 
