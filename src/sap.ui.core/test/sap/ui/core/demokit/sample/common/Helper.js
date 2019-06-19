@@ -63,6 +63,59 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		},
 
 		/**
+		 * Checks if a sap.m.Input is dirty or not.
+		 *
+		 * @param {sap.ui.test.Opa5} oOpa5
+		 *  An instance of Opa5 to access the current page object
+		 * @param {string} sViewName
+		 *  The name of the view which contains the searched control
+		 * @param {string} sId
+		 *  The ID of a "sap.m.Input" control inside the view sViewName
+		 * @param {string} bIsDirty
+		 *  Whether the control is expected dirty or not
+		 * @returns {jQuery.promise}
+		 *  A promise resolved by {@link sap.ui.test.Opa5#waitFor}
+		 */
+		checkInputIsDirty : function (oOpa5, sViewName, sId, bIsDirty) {
+			return oOpa5.waitFor({
+				controlType : "sap.m.Input",
+				id : sId,
+				success : function (oControl) {
+					Opa5.assert.strictEqual(
+						oControl.getBinding("value").getDataState().isControlDirty(),
+						bIsDirty, "Control: " + sId + " is " + (bIsDirty ? "dirty" : "clean"));
+				},
+				viewName : sViewName
+			});
+		},
+
+		/**
+		 * Checks whether a sap.m.Input control has an expected value.
+		 *
+		 * @param {sap.ui.test.Opa5} oOpa5
+		 *  An instance of Opa5 to access the current page object
+		 * @param {string} sViewName
+		 *  The name of the view which contains the searched control
+		 * @param {string} sId
+		 *  The ID of a "sap.m.Input" control inside the view sViewName
+		 * @param {string} vValue
+		 *  The expected value of the control
+		 * @returns {jQuery.promise}
+		 *  A promise resolved by {@link sap.ui.test.Opa5#waitFor}
+		 */
+		checkInputValue : function (oOpa5, sViewName, sId, vValue) {
+			return oOpa5.waitFor({
+				controlType : "sap.m.Input",
+				id : sId,
+				success : function (oControl) {
+					Opa5.assert.strictEqual(
+						oControl.getValue(), vValue, "Control: " + sId + " Value is: " + vValue);
+				},
+				viewName : sViewName
+			});
+		},
+
+		/**
 		 * Decides whether given log is related to OData V4 topic and has a log level which is at
 		 * least WARNING
 		 *

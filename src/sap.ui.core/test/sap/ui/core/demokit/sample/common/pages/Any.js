@@ -3,11 +3,12 @@
  */
 sap.ui.define([
 	"sap/ui/core/sample/common/Helper",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/support/RuleAnalyzer",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/TestUtils",
 	"sap/ui/test/matchers/Properties"
-], function (Helper, RuleAnalyzer, Opa5, TestUtils, Properties) {
+], function (Helper, QUnitUtils, RuleAnalyzer, Opa5, TestUtils, Properties) {
 	"use strict";
 
 	/*
@@ -204,10 +205,23 @@ sap.ui.define([
 			}
 		},
 		/*
-		 * Actions for the "Message" popover
+		 * Actions and Assertions for the "Message" popover
 		 */
 		onTheMessagePopover : {
 			actions : {
+				back : function (sMessage) {
+					return this.waitFor({
+						controlType : "sap.m.Page",
+						id : /-messageView-detailsPage/,
+						success : function (aPages) {
+							var oPage = aPages[0].getDomRef();
+
+							QUnitUtils.triggerEvent("tap",
+								oPage.getElementsByClassName("sapMMsgViewBackBtn")[0]);
+							Opa5.assert.ok(true, "Back to Messages button pressed");
+						}
+					});
+				},
 				close : function () {
 					return this.waitFor({
 						controlType : "sap.m.MessagePopover",
@@ -217,6 +231,57 @@ sap.ui.define([
 								oPopover.close();
 								Opa5.assert.ok(true, "Message Popover closed");
 							}
+						}
+					});
+				},
+				selectMessage : function (sMessage) {
+					return this.waitFor({
+						controlType : "sap.m.StandardListItem",
+						matchers : new Properties({title: sMessage}),
+						success : function (aItems) {
+							if (aItems.length === 1) {
+								QUnitUtils.triggerEvent("tap", aItems[0].getDomRef());
+								Opa5.assert.ok(true, "Message selected: " + sMessage);
+							} else {
+								Opa5.assert.ok(false, "Duplicate Message: " + sMessage);
+							}
+						}
+					});
+				}
+			},
+			assertions : {
+				checkMessages : function (aExpectedMessages) {
+					return this.waitFor({
+						controlType : "sap.m.MessagePopover",
+						success : function (aMessagePopover) {
+							var iExpectedCount = aExpectedMessages.length,
+								aItems = aMessagePopover[0].getItems();
+
+							Opa5.assert.ok(aMessagePopover.length === 1);
+							Opa5.assert.strictEqual(aItems.length, iExpectedCount,
+								"Check Messages: message count is as expected: " + iExpectedCount);
+							aExpectedMessages.forEach(function (oExpectedMessage, i) {
+								var bFound;
+
+								bFound = aItems.some(function (oItem) {
+									return oItem.getTitle() === oExpectedMessage.message
+										&& oItem.getType() === oExpectedMessage.type;
+								});
+								Opa5.assert.ok(bFound, "Check Messages: expected message[" + i
+									+ "]: " + oExpectedMessage.message + " type: "
+									+ oExpectedMessage.type);
+							});
+						}
+					});
+				},
+				checkMessageDetails : function (sMessage, sExpectedDetails) {
+					return this.waitFor({
+						id : /-messageViewMarkupDescription/,
+						success : function (aDetailsHtml) {
+							Opa5.assert.strictEqual(aDetailsHtml.length, 1);
+							Opa5.assert.ok(aDetailsHtml[0].getContent().includes(sExpectedDetails),
+								"Check Message Details: Details for message '" + sMessage
+								+ " as expected: " + sExpectedDetails);
 						}
 					});
 				}

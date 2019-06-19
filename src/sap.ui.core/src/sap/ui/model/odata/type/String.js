@@ -86,8 +86,10 @@ sap.ui.define([
 	 *
 	 * @alias sap.ui.model.odata.type.String
 	 * @param {object} [oFormatOptions]
-	 *   format options as defined in the interface of {@link sap.ui.model.SimpleType}; this
-	 *   type ignores them since it does not support any format options
+	 *   format options as defined in the interface of {@link sap.ui.model.SimpleType}
+	 * @param {boolean} [oFormatOptions.parseKeepsEmptyString=false]
+	 *   if <code>true</code>, the empty string <code>""</code> is parsed to <code>""</code>
+	 *   and otherwise to <code>null</code>
 	 * @param {object} [oConstraints]
 	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
 	 *   violated
@@ -109,12 +111,25 @@ sap.ui.define([
 	 * @since 1.27.0
 	 */
 	var EdmString = ODataType.extend("sap.ui.model.odata.type.String", {
-				constructor : function (oFormatOptions, oConstraints) {
-					ODataType.apply(this, arguments);
-					setConstraints(this, oConstraints);
+			constructor : function (oFormatOptions, oConstraints) {
+				var vParseKeepsEmptyString
+					= oFormatOptions ? oFormatOptions.parseKeepsEmptyString : undefined;
+
+				ODataType.apply(this, arguments);
+				setConstraints(this, oConstraints);
+
+				this._sParsedEmptyString = null;
+
+				if (vParseKeepsEmptyString !== undefined) {
+					if (vParseKeepsEmptyString === true) {
+						this._sParsedEmptyString = "";
+					} else if (vParseKeepsEmptyString !== false) {
+						Log.warning("Illegal parseKeepsEmptyString: " + vParseKeepsEmptyString,
+							null, this.getName());
+					}
 				}
 			}
-		);
+	});
 
 	/**
 	 * Formats the given value to the given target type.
@@ -153,9 +168,12 @@ sap.ui.define([
 	 * leading zeros, if <code>maxLength</code> constraint is given, or leading zeros are removed
 	 * from parsed string.
 	 *
-	 * Note: An empty input string (<code>""</code>) is parsed to <code>null</code>. This value will
-	 * be rejected with a {@link sap.ui.model.ValidateException ValidateException} by
-	 * {@link #validateValue} if the constraint <code>nullable</code> is <code>false</code>.
+	 * Note:
+	 * Depending on the format option <code>parseKeepsEmptyString</code>, an empty input
+	 * string (<code>""</code>) is either parsed to <code>""</code> or <code>null</code>.
+	 * If the constraint <code>nullable</code> is <code>false</code>, a <code>null</code>
+	 * value is rejected with a {@link sap.ui.model.ValidateException ValidateException} raised
+	 * in the {@link #validateValue} method.
 	 *
 	 * @param {string|number|boolean} vValue
 	 *   the value to be parsed
@@ -163,7 +181,7 @@ sap.ui.define([
 	 *   the source type (the expected type of <code>vValue</code>).
 	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {string}
-	 *   the parsed value or <code>null</code> if <code>vValue</code> is <code>""</code>
+	 *   the parsed value
 	 * @throws {sap.ui.model.ParseException}
 	 *   if <code>sSourceType</code> is unsupported
 	 * @public
@@ -171,7 +189,9 @@ sap.ui.define([
 	EdmString.prototype.parseValue = function (vValue, sSourceType) {
 		var sResult;
 
-		sResult = vValue === "" ? null : StringType.prototype.parseValue.apply(this, arguments);
+		sResult = vValue === ""
+			? this._sParsedEmptyString
+			: StringType.prototype.parseValue.apply(this, arguments);
 
 		if (isDigitSequence(sResult, this.oConstraints)) {
 			sResult = sResult.replace(rLeadingZeros, "");

@@ -34,11 +34,11 @@ sap.ui.define([
 			// ************************************************************************************
 			// Unbound/Bound Messages
 			When.onTheMainPage.firstSalesOrderIsVisible();
-			Then.onTheMainPage.checkMessageCount(2);
+			Then.onTheMainPage.checkMessagesButtonCount(2);
 			Then.onTheMainPage.checkNoteValueState(1, "Warning", sNoteBoundWarning);
 
 			When.onTheMainPage.pressMessagesButton();
-			Then.onTheMainPage.checkMessages([{
+			Then.onTheMessagePopover.checkMessages([{
 				message : sUnboundInfo,
 				type : MessageType.Information
 			}, {
@@ -46,31 +46,31 @@ sap.ui.define([
 				type : MessageType.Warning
 			}]);
 
-			When.onTheMainPage.selectMessage(sUnboundInfo);
-			Then.onTheMainPage.checkMessageDetails(sUnboundInfo,
+			When.onTheMessagePopover.selectMessage(sUnboundInfo);
+			Then.onTheMessagePopover.checkMessageDetails(sUnboundInfo,
 				"Details for \"Example for an unbound message\" (absolute longtext URL).");
 
-			When.onTheMainPage.pressBackToMessagesButton();
+			When.onTheMessagePopover.back();
 
-			When.onTheMainPage.selectMessage(sNoteBoundWarning);
-			Then.onTheMainPage.checkMessageDetails(sNoteBoundWarning,
+			When.onTheMessagePopover.selectMessage(sNoteBoundWarning);
+			Then.onTheMessagePopover.checkMessageDetails(sNoteBoundWarning,
 				"Details for \"Enter customer reference if available\" (relative longtext URL).");
 
-			When.onTheMainPage.pressBackToMessagesButton();
+			When.onTheMessagePopover.back();
 
-			When.onTheMainPage.pressMessagePopoverCloseButton();
-			Then.onTheMainPage.checkMessageCount(1);
+			When.onTheMessagePopover.close();
+			Then.onTheMainPage.checkMessagesButtonCount(1);
 			Then.onTheMainPage.checkNoteValueState(1, "Warning", sNoteBoundWarning);
 
 			When.onTheMainPage.pressMessagesButton();
-			Then.onTheMainPage.checkMessages([{
+			Then.onTheMessagePopover.checkMessages([{
 				message : sNoteBoundWarning,
 				type : MessageType.Warning
 			}]);
 
-			When.onTheMainPage.pressMessagePopoverCloseButton();
+			When.onTheMessagePopover.close();
 			When.onTheMainPage.selectSalesOrder(1);
-			Then.onTheMainPage.checkMessageCount(2);
+			Then.onTheMainPage.checkMessagesButtonCount(2);
 			Then.onTheMainPage.checkNoteValueState(1, "Warning", sNoteBoundWarning);
 			Then.onTheMainPage.checkInputValueState("Note::detail", "Warning",
 				sNoteBoundWarning);
@@ -78,7 +78,7 @@ sap.ui.define([
 				sQuantityBoundError);
 
 			When.onTheMainPage.pressMessagesButton();
-			Then.onTheMainPage.checkMessages([{
+			Then.onTheMessagePopover.checkMessages([{
 					message : sNoteBoundWarning,
 					type : MessageType.Warning
 				}, {
@@ -86,14 +86,14 @@ sap.ui.define([
 					type : MessageType.Error
 			}]);
 
-			When.onTheMainPage.selectMessage(sQuantityBoundError);
-			Then.onTheMainPage.checkMessageDetails(sQuantityBoundError,
+			When.onTheMessagePopover.selectMessage(sQuantityBoundError);
+			Then.onTheMessagePopover.checkMessageDetails(sQuantityBoundError,
 				"Details for \"Minimum order quantity is 2\" (absolute longtext URL).");
 
-			When.onTheMainPage.pressBackToMessagesButton();
+			When.onTheMessagePopover.back();
 
-			When.onTheMainPage.pressMessagePopoverCloseButton();
-			Then.onTheMainPage.checkMessageCount(2);
+			When.onTheMessagePopover.close();
+			Then.onTheMainPage.checkMessagesButtonCount(2);
 
 			Then.onTheMainPage.checkNoteValueState(1, "Warning", sNoteBoundWarning);
 			Then.onTheMainPage.checkInputValueState("Note::detail", "Warning", sNoteBoundWarning);
@@ -102,15 +102,15 @@ sap.ui.define([
 
 			When.onTheMainPage.selectSalesOrder(0);
 			Then.onTheMainPage.checkSalesOrderLineItemQuantityValueState(1, "None", "");
-			Then.onTheMainPage.checkMessageCount(2);
+			Then.onTheMainPage.checkMessagesButtonCount(2);
 
 			When.onTheMainPage.selectSalesOrder(1);
 			Then.onTheMainPage.checkSalesOrderLineItemQuantityValueState(1, "Error",
 				sQuantityBoundError);
-			Then.onTheMainPage.checkMessageCount(2);
+			Then.onTheMainPage.checkMessagesButtonCount(2);
 
 			When.onTheMainPage.pressMessagesButton();
-			Then.onTheMainPage.checkMessages([{
+			Then.onTheMessagePopover.checkMessages([{
 					message : sNoteBoundWarning,
 					type : MessageType.Warning
 				}, {
@@ -118,16 +118,16 @@ sap.ui.define([
 					type : MessageType.Error
 			}]);
 
-			When.onTheMainPage.pressMessagePopoverCloseButton();
+			When.onTheMessagePopover.close();
 
 			// ************************************************************************************
 			// Error Messages
 			// PATCH scenario
-			Then.onTheMainPage.checkMessageCount(2); // still two for 0500000001
+			Then.onTheMainPage.checkMessagesButtonCount(2); // still two for 0500000001
 			When.onTheMainPage.selectSalesOrder(4);
 			When.onTheMainPage.changeNoteInSalesOrders(4, "RAISE_ERROR");
 			When.onTheMainPage.pressSaveSalesOrdersButton();
-			Then.onTheMainPage.checkMessages([{
+			Then.onTheMessagePopover.checkMessages([{
 					message : sNoteBoundWarning,
 					type : MessageType.Warning
 				}, {
@@ -138,11 +138,11 @@ sap.ui.define([
 					type : MessageType.Error
 			}]);
 			Then.onTheMainPage.checkNoteValueState(4, "Error", sNoteFailure);
-			When.onTheMainPage.pressMessagePopoverCloseButton();
+			When.onTheMessagePopover.close();
 			When.onTheMainPage.changeNoteInSalesOrders(4, "any Note");
 			When.onTheMainPage.pressSaveSalesOrdersButton();
 			Then.onTheMainPage.checkNoteValueState(4, "None", "");
-			Then.onTheMainPage.checkMessageCount(2);
+			Then.onTheMainPage.checkMessagesButtonCount(2);
 
 			// POST scenario
 			When.onTheMainPage.pressCreateSalesOrderItemButton();
@@ -150,7 +150,7 @@ sap.ui.define([
 			When.onTheMainPage.pressSaveSalesOrderButton();
 			Then.onTheMainPage.checkSalesOrderLineItemQuantityValueState(6, "Error",
 				sQuantityFailure);
-			Then.onTheMainPage.checkMessages([{
+			Then.onTheMessagePopover.checkMessages([{
 					message : sNoteBoundWarning,
 					type : MessageType.Warning
 				}, {
@@ -160,11 +160,11 @@ sap.ui.define([
 					message : sQuantityFailure,
 					type : MessageType.Error
 			}]);
-			When.onTheMainPage.pressMessagePopoverCloseButton();
+			When.onTheMessagePopover.close();
 			When.onTheMainPage.changeQuantityInLineItem(6, "2.0");
 			When.onTheMainPage.pressSaveSalesOrderButton();
 			When.onTheSuccessInfo.confirm();
-			Then.onTheMainPage.checkMessageCount(2);
+			Then.onTheMainPage.checkMessagesButtonCount(2);
 
 			Then.onAnyPage.checkLog([{
 					component : "sap.ui.model.odata.v4.Context",
