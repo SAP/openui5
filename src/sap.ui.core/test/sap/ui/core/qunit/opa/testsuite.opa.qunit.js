@@ -17,9 +17,7 @@ sap.ui.define([
 			title: "QUnit Page for sap.ui.test.actions.EnterText",
 			qunit: {
 				testTimeout: 5000,
-				qunit: {
-					noglobals: !Device.browser.msie
-				}
+				noglobals: !Device.browser.msie
 			},
 			sinon: {
 				version: 1,
