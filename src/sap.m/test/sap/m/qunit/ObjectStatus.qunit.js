@@ -122,9 +122,9 @@ sap.ui.define([
 		assert.ok(os7.$().length == 0, "Object Status #7 is not rendered");
 	});
 
-	QUnit.module("Supressed invalidation");
+	QUnit.module("changing properties");
 
-	QUnit.test("Should not rerender the ObjectStatus if the text is changed", function(assert) {
+	QUnit.test("ObjectStatus if the text is changed", function(assert) {
 		// Arrange
 		var sTextToSet = "<script>alert(\"HAACKED\");<\/script>",
 			oRenderSpy,
@@ -135,15 +135,12 @@ sap.ui.define([
 		var oObjectStatus = new ObjectStatus(oConstructor).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		oRenderSpy = this.spy(oObjectStatus, "invalidate");
-
 		// Act
 		oResult = oObjectStatus.setText(sTextToSet);
 		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(oResult, oObjectStatus, "Should be able to chain");
-		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
 		assert.ok(!/.*<script>.*/.test(oObjectStatus.$().children(".sapMObjStatusText").html()), "Did not contain a unescaped script tag");
 		assert.strictEqual(oObjectStatus.getText(), sTextToSet, "Did set the non encoded string as value");
 
@@ -151,7 +148,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Should not rerender the ObjectStatus if the text is a number", function(assert) {
+	QUnit.test("ObjectStatus if the text is a number", function(assert) {
 		// Arrange
 		var iNumberToSet = 5,
 			sTextToExpect = "5",
@@ -163,25 +160,21 @@ sap.ui.define([
 		var oObjectStatus = new ObjectStatus(oConstructor).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		oRenderSpy = this.spy(oObjectStatus, "invalidate");
-
 		// Act
 		oResult = oObjectStatus.setText(iNumberToSet);
 		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(oResult, oObjectStatus, "Should be able to chain");
-		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
 		assert.strictEqual(oObjectStatus.getText(), sTextToExpect, "Did set the number as a string as a value");
 
 		//Cleanup
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Should not rerender the ObjectStatus if the title is changed", function(assert) {
+	QUnit.test("ObjectStatus title is changed", function(assert) {
 		// Arrange
 		var sTextToSet = "<script>alert(\"HAACKED\");<\/script>",
-			oRenderSpy,
 			oResult,
 			oConstructor = { title : "not empty text"};
 
@@ -189,15 +182,12 @@ sap.ui.define([
 		var oObjectStatus = new ObjectStatus(oConstructor).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		oRenderSpy = this.spy(oObjectStatus, "invalidate");
-
 		// Act
 		oResult = oObjectStatus.setTitle(sTextToSet);
 		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(oResult, oObjectStatus, "Should be able to chain");
-		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
 
 		assert.ok(!/.*<script>.*/.test(oObjectStatus.$().children(".sapMObjStatusTitle").html()), "Did not contain a unescaped script tag");
 
@@ -209,11 +199,10 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Should not rerender the ObjectStatus if the title is a number", function(assert) {
+	QUnit.test("ObjectStatus if the title is a number", function(assert) {
 		// Arrange
 		var iNumberToSet = 5,
 			sTitleToExpect = "5",
-			oRenderSpy,
 			oResult,
 			oConstructor = { title : "not empty text"};
 
@@ -221,15 +210,12 @@ sap.ui.define([
 		var oObjectStatus = new ObjectStatus(oConstructor).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		oRenderSpy = this.spy(oObjectStatus, "invalidate");
-
 		// Act
 		oResult = oObjectStatus.setTitle(iNumberToSet);
 		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(oResult, oObjectStatus, "Should be able to chain");
-		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
 		assert.ok(!/.*<script>.*/.test(oObjectStatus.$().children(".sapMObjStatusTitle").html()), "Did not contain a unescaped script tag");
 		assert.strictEqual(oObjectStatus.$().children(".sapMObjStatusTitle").text(), oObjectStatus.getTitle() + ":", "Did contain a :");
 		assert.strictEqual(oObjectStatus.getTitle(), sTitleToExpect, "Did set the number as a string as a value");
@@ -238,10 +224,9 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Should rerender if the new text is empty", function(assert) {
+	QUnit.test("if the new text is empty", function(assert) {
 		// Arrange
 		var sTextToSet = "  ",
-			oRenderSpy,
 			oResult,
 			oConstructor = { text : "not empty text"};
 
@@ -249,14 +234,11 @@ sap.ui.define([
 		var oObjectStatus = new ObjectStatus(oConstructor).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		oRenderSpy = this.spy(oObjectStatus, "invalidate");
-
 		// Act
 		oResult = oObjectStatus.setText(sTextToSet);
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(oRenderSpy.callCount, 1, "Did rerender");
 		assert.ok(!oObjectStatus.$().children(".sapMObjStatusText").length, "Did not render the text span");
 		assert.strictEqual(oObjectStatus.getText(), sTextToSet, "Did set the value");
 
@@ -264,10 +246,9 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Should rerender if the new title is empty", function(assert) {
+	QUnit.test("if the new title is empty", function(assert) {
 		// Arrange
 		var sTitleToSet = "  ",
-			oRenderSpy,
 			oResult,
 			oConstructor = { title : "not empty text"};
 
@@ -275,14 +256,11 @@ sap.ui.define([
 		var oObjectStatus = new ObjectStatus(oConstructor).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		oRenderSpy = this.spy(oObjectStatus, "invalidate");
-
 		// Act
 		oResult = oObjectStatus.setTitle(sTitleToSet);
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(oRenderSpy.callCount, 1, "Did rerender");
 		assert.ok(!oObjectStatus.$().children(".sapMObjStatusTitle").length, "Did not render the title span");
 		assert.strictEqual(oObjectStatus.getTitle(), sTitleToSet, "Did set the value");
 
@@ -290,10 +268,9 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Should rerender if the new text is undefined", function(assert) {
+	QUnit.test("if the new text is undefined", function(assert) {
 		// Arrange
 		var sTextToSet,
-			oRenderSpy,
 			oResult,
 			oConstructor = { text : "not empty text"};
 
@@ -301,14 +278,11 @@ sap.ui.define([
 		var oObjectStatus = new ObjectStatus(oConstructor).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		oRenderSpy = this.spy(oObjectStatus, "invalidate");
-
 		// Act
 		oResult = oObjectStatus.setText(sTextToSet);
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(oRenderSpy.callCount, 1, "Did rerender");
 		assert.ok(!oObjectStatus.$().children(".sapMObjStatusText").length, "Did not render the text span");
 		assert.strictEqual(oObjectStatus.getText(), "", "Did set the default value");
 
@@ -316,10 +290,9 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Should rerender if the new title is undefined", function(assert) {
+	QUnit.test("if the new title is undefined", function(assert) {
 		// Arrange
 		var sTitleToSet,
-			oRenderSpy,
 			oResult,
 			oConstructor = { title : "not empty text"};
 
@@ -327,14 +300,11 @@ sap.ui.define([
 		var oObjectStatus = new ObjectStatus(oConstructor).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		oRenderSpy = this.spy(oObjectStatus, "invalidate");
-
 		// Act
 		oResult = oObjectStatus.setTitle(sTitleToSet);
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(oRenderSpy.callCount, 1, "Did rerender");
 		assert.ok(!oObjectStatus.$().children(".sapMObjStatusTitle").length, "Did not render the title span");
 		assert.strictEqual(oObjectStatus.getTitle(), "", "Did set the default value");
 
@@ -345,7 +315,6 @@ sap.ui.define([
 	QUnit.test("Should rerender if the text was empty before", function(assert) {
 		// Arrange
 		var sTextToSet = "not empty text",
-			oRenderSpy,
 			oResult,
 			oConstructor = { text : ""};
 
@@ -353,14 +322,11 @@ sap.ui.define([
 		var oObjectStatus = new ObjectStatus(oConstructor).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		oRenderSpy = this.spy(oObjectStatus, "invalidate");
-
 		// Act
 		oResult = oObjectStatus.setText(sTextToSet);
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(oRenderSpy.callCount, 1, "Did rerender");
 		assert.ok(oObjectStatus.$().children(".sapMObjStatusText").length, "Did render the text span");
 		assert.strictEqual(oObjectStatus.getText(), sTextToSet, "Did set the value");
 
@@ -371,7 +337,6 @@ sap.ui.define([
 	QUnit.test("Should rerender if the title was empty before", function(assert) {
 		// Arrange
 		var sTitleToSet = "not empty text",
-			oRenderSpy,
 			oResult,
 			oConstructor = { title : ""};
 
@@ -379,14 +344,11 @@ sap.ui.define([
 		var oObjectStatus = new ObjectStatus(oConstructor).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		oRenderSpy = this.spy(oObjectStatus, "invalidate");
-
 		// Act
 		oResult = oObjectStatus.setTitle(sTitleToSet);
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(oRenderSpy.callCount, 1, "Did rerender");
 		assert.ok(oObjectStatus.$().children(".sapMObjStatusTitle").length, "Did render the title span");
 		assert.strictEqual(oObjectStatus.getTitle(), sTitleToSet, "Did set the value");
 
@@ -397,7 +359,6 @@ sap.ui.define([
 	QUnit.test("Should display titles with special characters correctly", function(assert) {
 		// Arrange
 		var sTitleToSet = "Account blocked - Blocked for payment",
-			oRenderSpy,
 			oResult,
 			oConstructor = { title : "not empty text"};
 
@@ -420,7 +381,6 @@ sap.ui.define([
 	QUnit.test("Should display texts with special characters correctly", function(assert) {
 		// Arrange
 		var sTextToSet = "Account blocked - Blocked for payment",
-			oRenderSpy,
 			oResult,
 			oConstructor = { text : "not empty text"};
 
@@ -443,7 +403,6 @@ sap.ui.define([
 	QUnit.test("Should display titles with special characters correctly", function(assert) {
 		// Arrange
 		var sTitleToSet = "Account blocked - Blocked for payment",
-			oRenderSpy,
 			oResult,
 			oConstructor = { title : "not empty text"};
 

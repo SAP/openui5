@@ -19,6 +19,7 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/IndicationColorSupp
 	 * @namespace
 	 */
 	var ObjectStatusRenderer = {
+			apiVersion: 2
 	};
 
 
@@ -29,13 +30,11 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/IndicationColorSupp
 	 * @param {sap.ui.core.Control} oObjStatus An object representation of the control that should be rendered
 	 */
 	ObjectStatusRenderer.render = function(oRm, oObjStatus){
-		oRm.write("<div");
+		oRm.openStart("div", oObjStatus);
 
 		if (oObjStatus._isEmpty()) {
-			oRm.writeControlData(oObjStatus);
-			oRm.addStyle("display", "none");
-			oRm.writeStyles();
-			oRm.write(">");
+			oRm.style("display", "none");
+			oRm.openEnd();
 		} else {
 
 			var sState = oObjStatus.getState();
@@ -49,33 +48,29 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/IndicationColorSupp
 				sTextDir = bPageRTL ? TextDirection.RTL : TextDirection.LTR;
 			}
 
-			oRm.writeControlData(oObjStatus);
-
 			var sTooltip = oObjStatus.getTooltip_AsString();
 			if (sTooltip) {
-				oRm.writeAttributeEscaped("title", sTooltip);
+				oRm.attr("title", sTooltip);
 			}
 
-			oRm.addClass("sapMObjStatus");
-			oRm.addClass("sapMObjStatus" + sState);
+			oRm.class("sapMObjStatus");
+			oRm.class("sapMObjStatus" + sState);
 			if (bInverted) {
-				oRm.addClass("sapMObjStatusInverted");
+				oRm.class("sapMObjStatusInverted");
 			}
 
 			if (oObjStatus._isActive()) {
-				oRm.addClass("sapMObjStatusActive");
-				oRm.writeAttribute("tabindex", "0");
-				oRm.writeAccessibilityState(oObjStatus, {
+				oRm.class("sapMObjStatusActive");
+				oRm.attr("tabindex", "0");
+				oRm.accessibilityState(oObjStatus, {
 					role: "link"
 				});
 			}
 
-			oRm.writeClasses();
-
 			/* ARIA region adding the aria-describedby to ObjectStatus */
 
 			if (sState != ValueState.None) {
-				oRm.writeAccessibilityState(oObjStatus, {
+				oRm.accessibilityState(oObjStatus, {
 					describedby: {
 						value: oObjStatus.getId() + "sapSRH",
 						append: true
@@ -83,61 +78,53 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/IndicationColorSupp
 				});
 			}
 
-			oRm.write(">");
+			oRm.openEnd();
 
 			if (oObjStatus.getTitle()) {
 
-				oRm.write("<span");
-				oRm.writeAttributeEscaped("id", oObjStatus.getId() + "-title");
-				oRm.addClass("sapMObjStatusTitle");
+				oRm.openStart("span", oObjStatus.getId() + "-title");
+				oRm.class("sapMObjStatusTitle");
 
 				if (sTextDir) {
-					oRm.writeAttribute("dir", sTextDir.toLowerCase());
+					oRm.attr("dir", sTextDir.toLowerCase());
 				}
-				oRm.writeClasses();
-				oRm.write(">");
-				oRm.writeEscaped(oObjStatus.getTitle() + ":");
-				oRm.write("</span>");
+				oRm.openEnd();
+				oRm.text(oObjStatus.getTitle() + ":");
+				oRm.close("span");
 			}
 
 			if (oObjStatus._isActive()) {
-				oRm.write("<span");
-				oRm.writeAttributeEscaped("id", oObjStatus.getId() + "-link");
-				oRm.addClass("sapMObjStatusLink");
-				oRm.writeClasses();
-				oRm.write(">");
+				oRm.openStart("span", oObjStatus.getId() + "-link");
+				oRm.class("sapMObjStatusLink");
+				oRm.openEnd();
 			}
 
 			if (oObjStatus.getIcon()) {
-				oRm.write("<span");
-				oRm.writeAttributeEscaped("id", oObjStatus.getId() + "-statusIcon");
-				oRm.addClass("sapMObjStatusIcon");
+				oRm.openStart("span", oObjStatus.getId() + "-statusIcon");
+				oRm.class("sapMObjStatusIcon");
 				if (!oObjStatus.getText()) {
-					oRm.addClass("sapMObjStatusIconOnly");
+					oRm.class("sapMObjStatusIconOnly");
 				}
-				oRm.writeClasses();
-				oRm.write(">");
+				oRm.openEnd();
 				oRm.renderControl(oObjStatus._getImageControl());
-				oRm.write("</span>");
+				oRm.close("span");
 			}
 
 			if (oObjStatus.getText()) {
-				oRm.write("<span");
-				oRm.writeAttributeEscaped("id", oObjStatus.getId() + "-text");
-				oRm.addClass("sapMObjStatusText");
+				oRm.openStart("span", oObjStatus.getId() + "-text");
+				oRm.class("sapMObjStatusText");
 
 				if (sTextDir) {
-					oRm.writeAttribute("dir", sTextDir.toLowerCase());
+					oRm.attr("dir", sTextDir.toLowerCase());
 				}
 
-				oRm.writeClasses();
-				oRm.write(">");
-				oRm.writeEscaped(oObjStatus.getText());
-				oRm.write("</span>");
+				oRm.openEnd();
+				oRm.text(oObjStatus.getText());
+				oRm.close("span");
 			}
 
 			if (oObjStatus._isActive()) {
-				oRm.write("</span>");
+				oRm.close("span");
 			}
 			/* ARIA adding hidden node in span element */
 			if (sState != ValueState.None) {
@@ -148,22 +135,20 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/IndicationColorSupp
 					accValueText = IndicationColorSupport.getAdditionalText(sState);
 				}
 				if (accValueText) {
-					oRm.write("<span");
-					oRm.writeAttributeEscaped("id", oObjStatus.getId() + "sapSRH");
-					oRm.addClass("sapUiInvisibleText");
-					oRm.writeClasses();
-					oRm.writeAccessibilityState({
+					oRm.openStart("span", oObjStatus.getId() + "sapSRH");
+					oRm.class("sapUiInvisibleText");
+					oRm.accessibilityState({
 						hidden: false
 					});
-					oRm.write(">");
-					oRm.writeEscaped(accValueText);
-					oRm.write("</span>");
+					oRm.openEnd();
+					oRm.text(accValueText);
+					oRm.close("span");
 				}
 			}
 
 		}
 
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	return ObjectStatusRenderer;
