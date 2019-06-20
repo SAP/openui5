@@ -6145,6 +6145,19 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("_calculateSpaceForTokenizer with negative tokenizer space", function(assert) {
+		var oMultiComboBox = new MultiComboBox({
+			width: "30px"
+		});
+
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oMultiComboBox._calculateSpaceForTokenizer(), "0px", "_calculateSpaceForTokenizer returns a non negative value");
+
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.test("N-more popover transition from read-only to edit mode", function (assert) {
 		//arrange
 		var oReadOnlyPopover,

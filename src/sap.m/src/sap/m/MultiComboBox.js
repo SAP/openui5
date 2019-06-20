@@ -3271,7 +3271,8 @@ function(
 	 */
 	MultiComboBox.prototype._calculateSpaceForTokenizer = function () {
 		if (this.getDomRef()) {
-			var iControlWidth = this.getDomRef().offsetWidth,
+			var iSpace,
+				iControlWidth = this.getDomRef().offsetWidth,
 				iSummedIconsWidth = this._calculateIconsSpace(),
 				oInputRef = this.$().find(".sapMInputBaseInner"),
 				aInputRelevantCss = ["min-width", "padding-right", "padding-left"],
@@ -3280,7 +3281,10 @@ function(
 					return iAcc + (parseInt(oInputRef.css(sProperty)) || 0);
 				}, 0);
 
-			return iControlWidth - (iSummedIconsWidth + iInputWidth) + "px";
+			iSpace = iControlWidth - (iSummedIconsWidth + iInputWidth);
+			iSpace = iSpace < 0 ? 0 : iSpace;
+
+			return iSpace + "px";
 		} else {
 			return null;
 		}
