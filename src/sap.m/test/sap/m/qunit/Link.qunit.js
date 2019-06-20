@@ -230,6 +230,7 @@ sap.ui.define([
 
 		// act
 		oLink1.setEnabled(false);
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.strictEqual($Link1.attr("tabindex"), undefined, "disabled link has no tabindex attribute");
@@ -296,26 +297,38 @@ sap.ui.define([
 
 		// ARIA disabled
 		oLink1.setEnabled(false);
+		sap.ui.getCore().applyChanges();
+
 		assert.strictEqual($oLink.attr("aria-disabled"), "true", "Property 'aria-disabled' should be 'true'");
 		oLink1.setEnabled(true);
+		sap.ui.getCore().applyChanges();
+
 		assert.strictEqual($oLink.attr("aria-disabled"), undefined, "Property 'aria-disabled' should not exist");
 
 		// ARIA describedby for Subtle link
 		oLink1.setSubtle(true);
+		sap.ui.getCore().applyChanges();
+
 		assert.strictEqual($oLink.attr("aria-describedby"). length > 0, true, "Property 'aria-describedby' should exist");
 		assert.strictEqual((($oLink.attr("aria-describedby").indexOf(oLink1._sAriaLinkSubtleId)) !== -1), true,
 			"Subtle ID: " + oLink1._sAriaLinkSubtleId + " should be included in aria-describedby");
 
 		oLink1.setSubtle(false);
+		sap.ui.getCore().applyChanges();
+
 		assert.strictEqual($oLink.attr("aria-describedby"), undefined, "Property 'aria-describedby' should not exist");
 
 		// ARIA describedby for Emphasized link
 		oLink1.setEmphasized(true);
+		sap.ui.getCore().applyChanges();
+
 		assert.strictEqual($oLink.attr("aria-describedby").length > 0, true, "Property 'aria-describedby' should exist");
 		assert.strictEqual((($oLink.attr("aria-describedby").indexOf(oLink1._sAriaLinkEmphasizedId)) !== -1), true,
 			"Emphasized ID: " + oLink1._sAriaLinkEmphasizedId + " should be included in aria-describedby");
 
 		oLink1.setEmphasized(false);
+		sap.ui.getCore().applyChanges();
+
 		assert.strictEqual($oLink.attr("aria-describedby"), undefined, "Property 'aria-describedby' should not exist");
 
 		oBrowserStub = this.stub(sap.ui.Device, "browser", { msie: false });
@@ -412,9 +425,13 @@ sap.ui.define([
 		assert.equal(oLink.$().attr("href"), undefined, "Link href should not exist if an invalid URL is provided");
 
 		oLink.setHref(sValidUrl);
+		sap.ui.getCore().applyChanges();
+
 		assert.equal(oLink.$().attr("href"), sValidUrl, "Link href should equal the valid URL");
 
 		oLink.setHref(sInvalidUrl);
+		sap.ui.getCore().applyChanges();
+
 		assert.equal(oLink.$().attr("href"), undefined, "Link href should not exist if an invalid URL is set");
 
 		oLink.destroy();
