@@ -277,17 +277,17 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		// setup: hide the first visible section so that the next visible is selected
 		oFirstSection.setVisible(false);
 
-		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+		setTimeout(function() {
 
 			oFirstSection.setVisible(true);
 			oScrollSpy.reset();
-			oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			setTimeout( function() {
 				iExpectedScrollTopAfterRendering = oObjectPage._computeScrollPosition(oSecondSection);
 				assert.ok(oScrollSpy.calledWithMatch(iExpectedScrollTopAfterRendering),
 					"scroll position of the selectedSection is preserved");
 				done();
-			});
-		});
+			}, 1000);
+		}, 1000);
 	});
 
 	QUnit.test("ScrollToSection in 0 time scrolls to correct the scroll position", function (assert) {
@@ -325,7 +325,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			setTimeout(function () {
 				oObjectPage.removeSection(oFirstSection);
 				setTimeout(function () {
-					iScrollPositionAfterRemove = oObjectPage._$opWrapper[0].scrollTop;
+					iScrollPositionAfterRemove = Math.ceil(oObjectPage._$opWrapper[0].scrollTop);
 					iExpectedPositionAfterRemove = Math.ceil(jQuery("#" + oThirdSection.getId() + " .sapUxAPObjectPageSectionContainer").position().top); // top of third section content
 					assert.ok(isPositionsMatch(iScrollPositionAfterRemove, iExpectedPositionAfterRemove), "scrollPosition is correct");
 					oFirstSection.destroy();
