@@ -894,4 +894,227 @@ function (
 		// Assert
 		assert.strictEqual(_getVisibleControlsCount(this.oSB), 12, "phone mode requirements passed");
 	});
+
+	QUnit.module("Events", {
+		beforeEach: function () {
+			this.oSB = new ShellBar({
+				title: "Application title",
+				secondTitle: "Short description",
+				homeIcon: "./resources/sap/ui/documentation/sdk/images/logo_ui5.png",
+				showNavButton: true,
+				showCopilot: true,
+				showSearch: true,
+				showNotifications: true,
+				showProductSwitcher: true,
+				showMenuButton: true,
+				profile: new Avatar({initials: "UI"})
+			});
+			this.oSB.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oSB.destroy();
+		}
+	});
+
+	QUnit.test("avatarPressed", function (assert) {
+		// Setup
+		var oEventParamters,
+			done = assert.async(),
+			fnTestEvent = function () {
+				// Assert
+				assert.ok(true, "Event was fired");
+				assert.strictEqual(this.oSB._oAvatarButton.getAvatar().getId(),
+					oEventParamters.avatar.getId(), "Correct parameter was passed");
+
+				// Clean up
+				done();
+			}.bind(this);
+
+		assert.expect(2);
+
+		this.oSB.attachAvatarPressed(function(oEvent) {
+			oEventParamters = oEvent.getParameters();
+			fnTestEvent(oEvent);
+		});
+
+		// Act
+		this.oSB._oAvatarButton.firePress();
+	});
+
+
+	QUnit.test("copilotPressed", function (assert) {
+		// Setup
+		var oEventParamters,
+			done = assert.async(),
+			fnTestEvent = function () {
+				// Assert
+				assert.ok(true, "Event was fired");
+				assert.strictEqual(this.oSB._oCopilot.getId(),
+					oEventParamters.image.getId(), "Correct parameter was passed");
+
+				// Clean up
+				done();
+			}.bind(this);
+
+		assert.expect(2);
+
+		this.oSB.attachCopilotPressed(function(oEvent) {
+			oEventParamters = oEvent.getParameters();
+			fnTestEvent(oEvent);
+		});
+
+		// Act
+		this.oSB._oCopilot.firePress();
+	});
+
+	QUnit.test("homeIconPressed", function (assert) {
+		// Setup
+		var oEventParamters,
+			done = assert.async(),
+			fnTestEvent = function () {
+				// Assert
+				assert.ok(true, "Event was fired");
+				assert.strictEqual(this.oSB._oHomeIcon.getId(),
+					oEventParamters.icon.getId(), "Correct parameter was passed");
+
+				// Clean up
+				done();
+			}.bind(this);
+
+		assert.expect(2);
+
+		this.oSB.attachHomeIconPressed(function(oEvent) {
+			oEventParamters = oEvent.getParameters();
+			fnTestEvent(oEvent);
+		});
+
+		// Act
+		this.oSB._oHomeIcon.firePress();
+	});
+
+	QUnit.test("menuButtonPressed", function (assert) {
+		// Setup
+		var oEventParamters,
+			done = assert.async(),
+			fnTestEvent = function () {
+				// Assert
+				assert.ok(true, "Event was fired");
+				assert.strictEqual(this.oSB._oMenuButton.getId(),
+					oEventParamters.button.getId(), "Correct parameter was passed");
+
+				// Clean up
+				done();
+			}.bind(this);
+
+		assert.expect(2);
+
+		this.oSB.attachMenuButtonPressed(function(oEvent) {
+			oEventParamters = oEvent.getParameters();
+			fnTestEvent(oEvent);
+		});
+
+		// Act
+		this.oSB._oMenuButton.firePress();
+	});
+
+	QUnit.test("navButtonPressed", function (assert) {
+		// Setup
+		var oEventParamters,
+			done = assert.async(),
+			fnTestEvent = function () {
+				// Assert
+				assert.ok(true, "Event was fired");
+				assert.strictEqual(this.oSB._oNavButton.getId(),
+					oEventParamters.button.getId(), "Correct parameter was passed");
+
+				// Clean up
+				done();
+			}.bind(this);
+
+		assert.expect(2);
+
+		this.oSB.attachNavButtonPressed(function(oEvent) {
+			oEventParamters = oEvent.getParameters();
+			fnTestEvent(oEvent);
+		});
+
+		// Act
+		this.oSB._oNavButton.firePress();
+	});
+
+	QUnit.test("notificationsPressed", function (assert) {
+		// Setup
+		var oEventParamters,
+			done = assert.async(),
+			fnTestEvent = function () {
+				// Assert
+				assert.ok(true, "Event was fired");
+				assert.strictEqual(this.oSB._oNotifications.getId(),
+					oEventParamters.button.getId(), "Correct parameter was passed");
+
+				// Clean up
+				done();
+			}.bind(this);
+
+		assert.expect(2);
+
+		this.oSB.attachNotificationsPressed(function(oEvent) {
+			oEventParamters = oEvent.getParameters();
+			fnTestEvent(oEvent);
+		});
+
+		// Act
+		this.oSB._oNotifications.firePress();
+	});
+
+	QUnit.test("productSwitcherPressed", function (assert) {
+		// Setup
+		var oEventParamters,
+			done = assert.async(),
+			fnTestEvent = function () {
+				// Assert
+				assert.ok(true, "Event was fired");
+				assert.strictEqual(this.oSB._oProductSwitcher.getId(),
+					oEventParamters.button.getId(), "Correct parameter was passed");
+
+				// Clean up
+				done();
+			}.bind(this);
+
+		assert.expect(2);
+
+		this.oSB.attachProductSwitcherPressed(function(oEvent) {
+			oEventParamters = oEvent.getParameters();
+			fnTestEvent(oEvent);
+		});
+
+		// Act
+		this.oSB._oProductSwitcher.firePress();
+	});
+
+	QUnit.test("searchButtonPressed", function (assert) {
+		// Setup
+		var oEventParamters,
+			done = assert.async(),
+			fnTestEvent = function () {
+				// Assert
+				assert.ok(true, "Event was fired");
+				assert.strictEqual(this.oSB._oSearch.getId(),
+					oEventParamters.button.getId(), "Correct parameter was passed");
+
+				// Clean up
+				done();
+			}.bind(this);
+
+		assert.expect(2);
+
+		this.oSB.attachSearchButtonPressed(function(oEvent) {
+			oEventParamters = oEvent.getParameters();
+			fnTestEvent(oEvent);
+		});
+
+		// Act
+		this.oSB._oSearch.firePress();
+	});
 });
