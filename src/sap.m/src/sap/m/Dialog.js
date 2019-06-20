@@ -984,10 +984,18 @@ function(
 		};
 
 		/**
+		 * Solves blurring issue that is coming from css transform translate when any of the
+		 * X or Y transform values is odd. The method just floors the value to an even number.
 		 *
 		 * @private
 		 */
 		Dialog.prototype._applyCustomTranslate = function() {
+
+			// Blurring is not appearing on IE. On the opposite - applying custom translation would break the positioning
+			if (Device.browser.msie) {
+				return;
+			}
+
 			var $dialog = this.$(),
 				sTranslateX,
 				sTranslateY,
