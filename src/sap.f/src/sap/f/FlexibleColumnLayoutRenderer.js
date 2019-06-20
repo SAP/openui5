@@ -6,44 +6,43 @@ sap.ui.define(["sap/ui/core/InvisibleText", "sap/ui/Device", "sap/m/library"],
 	function (InvisibleText, Device, mobileLibrary) {
 		"use strict";
 
-		var FCLRenderer = {};
+		var FCLRenderer = {
+			apiVersion: 2
+		};
 
 		FCLRenderer.render = function (oRm, oControl) {
 
 			var sBackgroundDesign = oControl.getBackgroundDesign();
 
-			oRm.write("<div");
-			oRm.writeControlData(oControl);
-			oRm.addClass("sapFFCL");
+			oRm.openStart("div", oControl);
+			oRm.class("sapFFCL");
 
 			if (sBackgroundDesign !== mobileLibrary.BackgroundDesign.Transparent) {
-				oRm.addClass("sapFFCLBackgroundDesign" + sBackgroundDesign);
+				oRm.class("sapFFCLBackgroundDesign" + sBackgroundDesign);
 			}
 
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openEnd();
 
 			FCLRenderer.renderBeginColumn(oRm, oControl);
 			FCLRenderer.renderMidColumn(oRm, oControl);
 			FCLRenderer.renderEndColumn(oRm, oControl);
 
-			oRm.write("</div>");
+			oRm.close("div");
 		};
 
 		FCLRenderer.renderBeginColumn = function (oRm, oControl) {
 			var oBeginColumnBackArrow = oControl.getAggregation("_beginColumnBackArrow");
 
 			// Begin column
-			oRm.write("<div");
-			oRm.writeAttribute("id", oControl.getId() + "-beginColumn");
-			oRm.writeAccessibilityState(oControl, {
+			oRm.openStart("div", oControl.getId() + "-beginColumn");
+			oRm.accessibilityState(oControl, {
 				role: "region",
 				labelledby: InvisibleText.getStaticId("sap.f", "FCL_BEGIN_COLUMN_REGION_TEXT")
 			});
-			oRm.addClass("sapFFCLColumn").addClass("sapFFCLColumnBegin").addClass("sapFFCLColumnActive");
-			oRm.writeClasses();
-			oRm.writeStyles();
-			oRm.write(">");
+			oRm.class("sapFFCLColumn");
+			oRm.class("sapFFCLColumnBegin");
+			oRm.class("sapFFCLColumnActive");
+			oRm.openEnd();
 
 			// Begin column content
 			FCLRenderer.renderColumnContentWrapper(oRm);
@@ -51,7 +50,7 @@ sap.ui.define(["sap/ui/core/InvisibleText", "sap/ui/Device", "sap/m/library"],
 			// Arrow - collapse begin
 			FCLRenderer.renderArrow(oRm, oBeginColumnBackArrow);
 
-			oRm.write("</div>");
+			oRm.close("div");
 		};
 
 		FCLRenderer.renderMidColumn = function (oRm, oControl) {
@@ -59,16 +58,14 @@ sap.ui.define(["sap/ui/core/InvisibleText", "sap/ui/Device", "sap/m/library"],
 				oMidColumnBackArrow = oControl.getAggregation("_midColumnBackArrow");
 
 			// Mid column
-			oRm.write("<div");
-			oRm.writeAttribute("id", oControl.getId() + "-midColumn");
-			oRm.writeAccessibilityState(oControl, {
+			oRm.openStart("div", oControl.getId() + "-midColumn");
+			oRm.accessibilityState(oControl, {
 				role: "region",
 				labelledby: InvisibleText.getStaticId("sap.f", "FCL_MID_COLUMN_REGION_TEXT")
 			});
-			oRm.addClass("sapFFCLColumn").addClass("sapFFCLColumnMid");
-			oRm.writeClasses();
-			oRm.writeStyles();
-			oRm.write(">");
+			oRm.class("sapFFCLColumn");
+			oRm.class("sapFFCLColumnMid");
+			oRm.openEnd();
 
 			// Arrow - expand begin
 			FCLRenderer.renderArrow(oRm, oMidColumnForwardArrow);
@@ -79,23 +76,21 @@ sap.ui.define(["sap/ui/core/InvisibleText", "sap/ui/Device", "sap/m/library"],
 			// Arrow - expand end
 			FCLRenderer.renderArrow(oRm, oMidColumnBackArrow);
 
-			oRm.write("</div>");
+			oRm.close("div");
 		};
 
 		FCLRenderer.renderEndColumn = function (oRm, oControl) {
 			var oEndColumnForwardArrow = oControl.getAggregation("_endColumnForwardArrow");
 
 			// End column
-			oRm.write("<div");
-			oRm.writeAttribute("id", oControl.getId() + "-endColumn");
-			oRm.writeAccessibilityState(oControl, {
+			oRm.openStart("div", oControl.getId() + "-endColumn");
+			oRm.accessibilityState(oControl, {
 				role: "region",
 				labelledby: InvisibleText.getStaticId("sap.f", "FCL_END_COLUMN_REGION_TEXT")
 			});
-			oRm.addClass("sapFFCLColumn").addClass("sapFFCLColumnEnd");
-			oRm.writeClasses();
-			oRm.writeStyles();
-			oRm.write(">");
+			oRm.class("sapFFCLColumn");
+			oRm.class("sapFFCLColumnEnd");
+			oRm.openEnd();
 
 			// Arrow - right
 			FCLRenderer.renderArrow(oRm, oEndColumnForwardArrow);
@@ -103,7 +98,7 @@ sap.ui.define(["sap/ui/core/InvisibleText", "sap/ui/Device", "sap/m/library"],
 			// End column content
 			FCLRenderer.renderColumnContentWrapper(oRm);
 
-			oRm.write("</div>");
+			oRm.close("div");
 		};
 
 		FCLRenderer.renderArrow = function (oRm, oArrow) {
@@ -114,10 +109,10 @@ sap.ui.define(["sap/ui/core/InvisibleText", "sap/ui/Device", "sap/m/library"],
 		};
 
 		FCLRenderer.renderColumnContentWrapper = function (oRm) {
-			oRm.write("<div");
-			oRm.addClass("sapFFCLColumnContent");
-			oRm.writeClasses();
-			oRm.write("></div>");
+			oRm.openStart("div");
+			oRm.class("sapFFCLColumnContent");
+			oRm.openEnd();
+			oRm.close("div");
 		};
 
 		return FCLRenderer;
