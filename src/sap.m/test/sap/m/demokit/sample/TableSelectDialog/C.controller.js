@@ -51,6 +51,11 @@ sap.ui.define([
 		},
 
 		handleClose: function(oEvent) {
+
+			// reset the filter
+			var oBinding = oEvent.getSource().getBinding("items");
+			oBinding.filter([]);
+
 			var aContexts = oEvent.getParameter("selectedContexts");
 			if (aContexts && aContexts.length) {
 				MessageToast.show("You have chosen " + aContexts.map(function(oContext) { return oContext.getObject().Name; }).join(", "));
