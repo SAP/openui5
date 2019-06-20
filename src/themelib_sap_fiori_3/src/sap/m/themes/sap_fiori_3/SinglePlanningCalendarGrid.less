@@ -72,6 +72,14 @@
 	.sapUiIcon {
 		color: @sapUiContentLabelColor;
 	}
+
+	.sapMSinglePCAppointmentWrap.sapUiCalendarRowApps {
+		&:focus {
+			.sapUiCalendarAppSel > .sapUiCalendarAppCont:after {
+				border: 0.0625rem dotted @sapUiContentContrastFocusColor;
+			}
+		}
+	}
 }
 
 .calendarRowTypeColorMixIn(sapUiCalendarAppType01, sapUiCalItemType01, @sapLegendColor1, lighten(@sapLegendColor1,49));
