@@ -27,7 +27,13 @@ sap.ui.define([],
 		},
 		scrollContainers : [{
 				domRef : "> .sapFDynamicPageContentWrapper",
-				aggregations : ["header", "content"]
+				aggregations : function(oElement) {
+					if (oElement._bPinned || oElement.getPreserveHeaderStateOnScroll()) {
+						return ["content"];
+					} else {
+						return ["header", "content"];
+					}
+				}
 			},
 			{
 				domRef : function(oElement) {
