@@ -73,6 +73,13 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	cursor: default;
 }
 
+.sapMRb,
+.sapMRbBLabel {
+	&:hover {
+		cursor: pointer;
+	}
+}
+
 .sapMRbB input {
 	margin: 0; /* FF puts margin */
 	-webkit-appearance: none;
@@ -86,7 +93,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	top: .625rem;
 	bottom: .625rem;
 	left: .625rem;
-	right: .625rem;
+	right: .6875rem;
 	pointer-events: none;
 }
 
@@ -147,10 +154,10 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	}
 
 	.sapMRb:focus:before {
-		top: .375rem;
-		bottom: .375rem;
-		left: .375rem;
-		right: .325rem;
+		top: .325rem;
+		bottom: .325rem;
+		left: .325rem;
+		right: .3875rem;
 	}
 
 	.sapMRbB {
