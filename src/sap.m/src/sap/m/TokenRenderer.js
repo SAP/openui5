@@ -17,6 +17,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleText"],
 	 * @namespace
 	 */
 	var TokenRenderer = {
+		apiVersion: 2
 	};
 
 
@@ -29,28 +30,24 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleText"],
 	TokenRenderer.render = function(oRm, oControl){
 		var sTooltip = oControl._getTooltip(oControl, oControl.getEditable()),
 			aAccDescribebyValues = [], // additional accessibility attributes
-			oAccAttributes = {};
+			oAccAttributes = {
+				role: "listitem"
+			};
 
 		// write the HTML into the render manager
-		oRm.write("<div tabindex=\"-1\"");
-		oRm.writeControlData(oControl);
-		oRm.addClass("sapMToken");
-
-		oRm.writeAttribute("role", "listitem");
+		oRm.openStart("div", oControl).attr("tabindex", "-1").class("sapMToken");
 
 		if (oControl.getSelected()) {
-			oRm.addClass("sapMTokenSelected");
+			oRm.class("sapMTokenSelected");
 		}
 
 		if (!oControl.getEditable()) {
-			oRm.addClass("sapMTokenReadOnly");
+			oRm.class("sapMTokenReadOnly");
 		}
-
-		oRm.writeClasses();
 
 		// add tooltip if available
 		if (sTooltip) {
-			oRm.writeAttributeEscaped('title', sTooltip);
+			oRm.attr("title", sTooltip);
 		}
 
 		// ARIA attributes
@@ -60,15 +57,19 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleText"],
 			aAccDescribebyValues.push(InvisibleText.getStaticId("sap.m", "TOKEN_ARIA_DELETABLE"));
 		}
 
+		if (oControl.getSelected()) {
+			aAccDescribebyValues.push(InvisibleText.getStaticId("sap.m", "TOKEN_ARIA_SELECTED"));
+		}
+
 		//ARIA attributes
 		oAccAttributes.describedby = {
 			value: aAccDescribebyValues.join(" "),
 			append: true
 		};
 
-		oRm.writeAccessibilityState(oControl, oAccAttributes);
+		oRm.accessibilityState(oControl, oAccAttributes);
 
-		oRm.write(">");
+		oRm.openEnd();
 
 		TokenRenderer._renderInnerControl(oRm, oControl);
 
@@ -76,7 +77,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleText"],
 			oRm.renderControl(oControl._deleteIcon);
 		}
 
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	/**
@@ -88,20 +89,18 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleText"],
 	TokenRenderer._renderInnerControl = function(oRm, oControl){
 		var sTextDir = oControl.getTextDirection();
 
-		oRm.write("<span");
-		oRm.addClass("sapMTokenText");
-		oRm.writeClasses();
+		oRm.openStart("span").class("sapMTokenText");
 		// set text direction
 		if (sTextDir !== TextDirection.Inherit) {
-			oRm.writeAttribute("dir", sTextDir.toLowerCase());
+			oRm.attr("dir", sTextDir.toLowerCase());
 		}
-		oRm.write(">");
+		oRm.openEnd();
 
 		var title = oControl.getText();
 		if (title) {
-			oRm.writeEscaped(title);
+			oRm.text(title);
 		}
-		oRm.write("</span>");
+		oRm.close("span");
 	};
 
 
