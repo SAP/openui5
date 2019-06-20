@@ -239,7 +239,10 @@ sap.ui.define([
 			this._oControls.oMenuButton = new OverflowToolbarButton({
 				icon: "sap-icon://menu2",
 				type: ButtonType.Transparent,
-				tooltip: this._oAcc.getEntityTooltip("MENU")
+				tooltip: this._oAcc.getEntityTooltip("MENU"),
+				press: function () {
+					this._oContext.fireEvent("menuButtonPressed", {button: this._oControls.oMenuButton});
+				}.bind(this)
 			}).setLayoutData(new OverflowToolbarLayoutData({
 				priority: OverflowToolbarPriority.NeverOverflow
 			}));
