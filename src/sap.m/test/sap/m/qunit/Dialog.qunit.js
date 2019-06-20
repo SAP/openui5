@@ -21,6 +21,10 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/StandardListItem",
 	"sap/m/List",
+	"sap/m/Table",
+	"sap/m/ColumnListItem",
+	"sap/m/Column",
+	"sap/ui/model/json/JSONModel",
 	"jquery.sap.keycodes"
 ], function(
 	qutils,
@@ -42,7 +46,11 @@ sap.ui.define([
 	Input,
 	coreLibrary,
 	StandardListItem,
-	List
+	List,
+	Table,
+	ColumnListItem,
+	Column,
+	JSONModel
 ) {
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
@@ -1729,5 +1737,106 @@ sap.ui.define([
 
 		// assert
 		assert.notEqual(this.oDialog.$('cont')[0].style.height, "auto", "Height is set when stretch=true");
+	});
+
+	QUnit.module("Dialog sizing", {
+		beforeEach: function() {
+			this.oDialog = new Dialog({
+				title: "Header",
+				buttons: [ new Button() ]
+			});
+
+			sinon.config.useFakeTimers = false;
+		},
+		afterEach: function() {
+			this.oDialog.destroy();
+			sinon.config.useFakeTimers = true;
+		}
+	});
+
+	QUnit.test("Dialog with lazy loaded content", function (assert) {
+		// arrange
+		var done = assert.async();
+		var oTable = new Table({
+			growing: true,
+			columns: [
+				new Column(),
+				new Column(),
+				new Column(),
+				new Column()
+			]
+		});
+
+		var oData = {
+			items: [
+				{firstName: "Peter", lastName: "Mueller"},
+				{firstName: "Petra", lastName: "Maier"},
+				{firstName: "Thomas", lastName: "Smith"},
+				{firstName: "John", lastName: "Williams"},
+				{firstName: "Maria", lastName: "Jones"},
+				{firstName: "Peter", lastName: "Mueller"},
+				{firstName: "Petra", lastName: "Maier"},
+				{firstName: "Thomas", lastName: "Smith"},
+				{firstName: "John", lastName: "Williams"},
+				{firstName: "Peter", lastName: "Mueller"},
+				{firstName: "Petra", lastName: "Maier"},
+				{firstName: "Thomas", lastName: "Smith"},
+				{firstName: "John", lastName: "Williams"},
+				{firstName: "Peter", lastName: "Mueller"},
+				{firstName: "Petra", lastName: "Maier"},
+				{firstName: "Thomas", lastName: "Smith"},
+				{firstName: "John", lastName: "Williams"},
+				{firstName: "Peter", lastName: "Mueller"},
+				{firstName: "Petra", lastName: "Maier"},
+				{firstName: "Thomas", lastName: "Smith"},
+				{firstName: "John", lastName: "Williams"},
+				{firstName: "Peter", lastName: "Mueller"},
+				{firstName: "Petra", lastName: "Maier"},
+				{firstName: "Thomas", lastName: "Smith"},
+				{firstName: "John", lastName: "Williams"},
+				{firstName: "Peter", lastName: "Mueller"},
+				{firstName: "Petra", lastName: "Maier"},
+				{firstName: "Thomas", lastName: "Smith"},
+				{firstName: "John", lastName: "Williams"}
+			]
+		};
+
+		var oModel = new JSONModel();
+
+		this.oDialog.addContent(oTable);
+		oTable.setModel(oModel);
+
+		var oBindingInfo = {
+			path: "/items",
+			template: new ColumnListItem({
+				cells: [
+					new Text({text: "{firstName}"}),
+					new Text({text: "{firstName}"}),
+					new Text({text: "{firstName}"}),
+					new Text({text: "{firstName}"})
+				]
+			})
+		};
+
+		oTable.bindAggregation("items", oBindingInfo);
+
+		this.oDialog.open();
+
+		setTimeout(function () {
+			// act
+			oModel.setData(oData);
+
+			setTimeout(function () {
+
+				var iWindowScrollTop = jQuery(window).scrollTop(),
+					oDialogOffset = this.oDialog.$().offset();
+
+				// assert
+				assert.ok(iWindowScrollTop < oDialogOffset.top, "Dialog should NOT be out of the viewport");
+				done();
+
+			}.bind(this), 1000);
+		}.bind(this), 1000);
+
 	});
 });
