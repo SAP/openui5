@@ -74,7 +74,8 @@ sap.ui.define(["sap/uxap/library"],
 			domRef : "> .sapUxAPObjectPageWrapper",
 			aggregations : function(oElement) {
 				if ((!oElement._hasDynamicTitle() && oElement.getAlwaysShowContentHeader()) ||
-					(oElement._hasDynamicTitle() && oElement.getPreserveHeaderStateOnScroll())) {
+					(oElement._hasDynamicTitle() && (oElement.getPreserveHeaderStateOnScroll() ||
+													 oElement._bPinned))) {
 					return ["sections"];
 				} else {
 					return ["sections", "headerContent"];
