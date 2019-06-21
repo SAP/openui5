@@ -364,13 +364,6 @@ sap.ui.define([
 		domRef.scrollLeft = scrollDiv.scrollWidth;
 	};
 
-
-	Tokenizer.prototype.setWidth = function(sWidth) {
-		this.setProperty("width", sWidth, true);
-		this.$().css("width", this.getWidth());
-		return this;
-	};
-
 	/**
 	 * Function sets the maximum width of the Tokenizer.
 	 *
@@ -1576,12 +1569,6 @@ sap.ui.define([
 		}
 
 		return oFocusedToken;
-	};
-
-	Tokenizer.prototype.setEditable = function(bEditable) {
-		this.$().toggleClass("sapMTokenizerReadonly", !bEditable);
-
-		return this.setProperty("editable", bEditable, true);
 	};
 
 	/**

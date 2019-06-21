@@ -420,17 +420,20 @@ sap.ui.define([
 
 		// act
 		this.tokenizer.setWidth(S_WIDTH);
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.equal(this.tokenizer.getDomRef().style.width, S_WIDTH, "Tokenizer width is set to " + S_WIDTH);
 
 		// act
 		this.tokenizer.setPixelWidth("400px");
+		sap.ui.getCore().applyChanges();
 
 		assert.equal(this.tokenizer.getDomRef().style.width, S_WIDTH, "Tokenizer width remains " + S_WIDTH);
 
 		// act
 		this.tokenizer.setPixelWidth(WIDTH);
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.equal(this.tokenizer.getDomRef().style.width, WIDTH + "px", "Tokenizer width is set to 300px");
