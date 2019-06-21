@@ -17,6 +17,8 @@ module.exports = [
 	"FacetFilter.spec.js",
 	"GenericTag.spec.js",
 	"IconTabBar.spec.js",
+	"IconTabBarResponsivePaddings.spec.js",
+	"IconTabHeaderResponsivePaddings.spec.js",
 	"Image.spec.js",
 	"InputVisualTests.spec.js",
 	"Label.spec.js",
