@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/assert",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/events/F6Navigation"
+	"sap/ui/events/F6Navigation",
+	"./RenderManager"
 ],
 	function(
 		DataType,
@@ -27,7 +28,8 @@ sap.ui.define([
 		Log,
 		assert,
 		jQuery,
-		F6Navigation
+		F6Navigation,
+		RenderManager
 	) {
 	"use strict";
 
@@ -491,31 +493,41 @@ sap.ui.define([
 
 		// determine whether parent exists or not
 		var bHasNoParent = !this.getParent();
-		var bKeepDom = (bSuppressInvalidate === "KeepDom");
 
-		// update the focus information (potentionally) stored by the central UI5 focus handling
+		// update the focus information (potentially) stored by the central UI5 focus handling
 		Element._updateFocusInfo(this);
 
 		ManagedObject.prototype.destroy.call(this, bSuppressInvalidate);
 
-		// determine whether to remove the control from the DOM or not
-		// controls that implement marker interface sap.ui.core.PopupInterface are by contract
-		// not rendered by their parent so we cannot keep the DOM of these controls
-		// if parent invalidation is not possible we need to remove the DOM synchronously
-		if (bSuppressInvalidate === true || this.isA("sap.ui.core.PopupInterface") || (!bKeepDom && bHasNoParent)) {
-			this.$().remove();
-		} else if (!bKeepDom) {
-			// On destroy we do not remove the control DOM synchronously and just let the invalidation happen.
-			// At the next tick of the RenderManager control DOM nodes will be removed anyway.
-			// To make this new behavior more compatible we are changing the id of
-			// the control's DOM and all child nodes that starts with the control id.
-			this.$().removeAttr("data-sap-ui-preserve").find('[id^="' + this.getId() + '-"]').andSelf().each(function(){
-				this.id = "sap-ui-destroyed-" + this.id;
-			});
-		}
-
 		// wrap custom data API to avoid creating new objects
 		this.data = noCustomDataAfterDestroy;
+
+		// exit early if there is no control DOM to remove
+		var oDomRef = this.getDomRef();
+		if (!oDomRef) {
+			return;
+		}
+
+		// Determine whether to remove the control DOM from the DOM Tree or not:
+		// If parent invalidation is not possible, either bSuppressInvalidate=true or there is no parent to invalidate then we must remove the control DOM synchronously.
+		// Controls that implement marker interface sap.ui.core.PopupInterface are by contract not rendered by their parent so we cannot keep the DOM of these controls.
+		// If the control is destroyed while its content is in the preserved area then we must remove DOM synchronously since we cannot invalidate the preserved area.
+		var bKeepDom = (bSuppressInvalidate === "KeepDom");
+		if (bSuppressInvalidate === true || (!bKeepDom && bHasNoParent) || this.isA("sap.ui.core.PopupInterface") || RenderManager.isPreservedContent(oDomRef)) {
+			jQuery(oDomRef).remove();
+		} else {
+			// Make sure that the control DOM won't get preserved after it is destroyed (even if bSuppressInvalidate="KeepDom")
+			oDomRef.removeAttribute("data-sap-ui-preserve");
+			if (!bKeepDom) {
+				// On destroy we do not remove the control DOM synchronously and just let the invalidation happen on the parent.
+				// At the next tick of the RenderManager, control DOM nodes will be removed via rerendering of the parent anyway.
+				// To make this new behavior more compatible we are changing the id of the control's DOM and all child nodes that start with the control id.
+				oDomRef.id = "sap-ui-destroyed-" + this.getId();
+				for (var i = 0, aDomRefs = oDomRef.querySelectorAll('[id^="' + this.getId() + '-"]'); i < aDomRefs.length; i++) {
+					aDomRefs[i].id = "sap-ui-destroyed-" + aDomRefs[i].id;
+				}
+			}
+		}
 	};
 
 	/*
