@@ -434,17 +434,20 @@ sap.ui.define([
 			var iIntervalMinutes = this.getIntervalMinutes();
 			var oLocaleData = this._getLocaleData();
 			var sPattern;
+			var sTimeFormatShort = oLocaleData.getTimePattern("short");
 			this._oFormatTimeAmPm = undefined;
 
+			// don't display minutes
 			if (iIntervalMinutes % 60 == 0) {
-				// don't display minutes
-				sPattern = oLocaleData.getPreferredHourSymbol();
-				if (oLocaleData.getTimePattern("short").search("a") >= 0) {
+				//sPattern determines whether the shown format will be 12 or 24 hrs
+				sPattern = _getPreferredHourSymbol(sTimeFormatShort);
+
+				if (sTimeFormatShort.search("a") >= 0) {
 					// AP/PM indicator used
 					this._oFormatTimeAmPm = DateFormat.getTimeInstance({pattern: "a"}, oLocale);
 				}
 			} else {
-				sPattern = oLocaleData.getTimePattern("short");
+				sPattern = sTimeFormatShort;
 				// no leading zeros
 				sPattern = sPattern.replace("HH", "H");
 				sPattern = sPattern.replace("hh", "h");
@@ -1478,6 +1481,23 @@ sap.ui.define([
 		jQuery(window.document).unbind('mousemove', this._mouseMoveProxy);
 		this._bMouseMove = undefined;
 
+	}
+
+	/*
+	 * Getter for the time's preferred hour symbol. Possible options are h|H|k|K.
+	 * @param {String} sTimeFormatShort Hours time format
+	 * @return {String} Hours pattern.
+	 * @private
+	 */
+	function _getPreferredHourSymbol(sTimeFormatShort){
+		var sPattern;
+		if (sTimeFormatShort.toUpperCase().indexOf("K") > -1) {
+			sPattern = sTimeFormatShort.indexOf("k") > -1 ? "k" : "K";
+		} else {
+			sPattern = sTimeFormatShort.indexOf("h") > -1 ? "h" : "H";
+		}
+
+		return sPattern;
 	}
 
 	return TimesRow;
