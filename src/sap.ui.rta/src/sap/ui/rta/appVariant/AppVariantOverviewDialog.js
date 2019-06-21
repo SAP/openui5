@@ -24,7 +24,8 @@ sap.ui.define([
 				idRunningApp : "string",
 				isOverviewForKeyUser: {
 					type: "boolean"
-				}
+				},
+				layer: "string"
 			},
 			events : {
 				cancel : {}
@@ -37,7 +38,8 @@ sap.ui.define([
 			// Create manage apps component
 			this.oManageAppsComponent = new ManageAppsComponent("sap.ui.rta.appVariant.manageApps", {
 				idRunningApp : this.getIdRunningApp(),
-				isOverviewForKeyUser: this.getIsOverviewForKeyUser()
+				isOverviewForKeyUser: this.getIsOverviewForKeyUser(),
+				layer: this.getLayer()
 			});
 
 			// Place component in container and display

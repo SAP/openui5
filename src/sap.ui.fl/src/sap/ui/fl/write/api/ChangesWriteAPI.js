@@ -47,14 +47,25 @@ sap.ui.define([
 		 * @public
 		 */
 		create: function(oChangeSpecificData, vSelector) {
+			var oFlexController;
 			// descriptor change
 			if (includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), oChangeSpecificData.changeType)) {
+				oFlexController = ChangesController.getDescriptorFlexControllerInstance(vSelector);
+				var sReference = oFlexController.getComponentName();
+				var sLayer;
+				if (oChangeSpecificData.layer) {
+					// Smart business must pass the layer as a part of ChangeSpecificData
+					// If not passed, layer CUSTOMER will be set
+					sLayer = oChangeSpecificData.layer;
+					delete oChangeSpecificData.layer;
+				}
+
 				return DescriptorInlineChangeFactory.createDescriptorInlineChange(
 					oChangeSpecificData.changeType, oChangeSpecificData.content, oChangeSpecificData.texts
 				)
 					.then(function (oAppDescriptorChangeContent) {
 						return new DescriptorChangeFactory().createNew(
-							oChangeSpecificData.reference, oAppDescriptorChangeContent, oChangeSpecificData.layer, vSelector
+							sReference, oAppDescriptorChangeContent, sLayer, vSelector
 						);
 					})
 					.catch(function(oError) {
@@ -64,7 +75,7 @@ sap.ui.define([
 			}
 
 			// flex change
-			var oFlexController = ChangesController.getFlexControllerInstance(vSelector);
+			oFlexController = ChangesController.getFlexControllerInstance(vSelector);
 			// if a component instance is passed only a base change is created
 			if (vSelector instanceof Component) {
 				return oFlexController.createBaseChange(oChangeSpecificData, vSelector);

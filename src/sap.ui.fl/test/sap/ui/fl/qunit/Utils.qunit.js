@@ -691,10 +691,9 @@ function(
 			var oComponent = new sap.ui.core.UIComponent();
 
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
-			sandbox.stub(Utils, "getComponentClassName").returns("sap.my.component.name.Component");
 			sandbox.stub(Utils, "getAppVersionFromManifest").returns("1.0.0");
 			var oAppDescriptorComponent = Utils.getAppDescriptorComponentObjectForControl(oComponent);
-			assert.equal(oAppDescriptorComponent.name, "sap.my.component.name", "the name was modified");
+			assert.equal(oAppDescriptorComponent.name, "sap.ui.core", "the component name is correct");
 			assert.equal(oAppDescriptorComponent.version, "1.0.0", "the version is the same as in the original component");
 		});
 

@@ -4,16 +4,16 @@
 
 sap.ui.define([
 	"sap/ui/fl/write/internal/ChangesController",
-	"sap/ui/fl/Cache",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
-	"sap/base/util/includes"
+	"sap/base/util/includes",
+	"sap/ui/fl/write/internal/SaveAs"
 ], function(
 	ChangesController,
-	Cache,
 	JsControlTreeModifier,
 	DescriptorInlineChangeFactory,
-	includes
+	includes,
+	SaveAs
 ) {
 	"use strict";
 
@@ -63,6 +63,44 @@ sap.ui.define([
 		},
 
 		/**
+		 * Saves the app variant to backend.
+		 *
+		 * @param {sap.ui.fl.Selector} vSelector - a selector
+		 * @param {object} mPropertyBag property bag
+		 * @param {string} mPropertyBag.id App Variant ID
+		 * @param {string} [mPropertyBag.package] the package info for the app variant - Smart Business must pass the package
+		 * @param {string} [mPropertyBag.transport] the transport request for the app variant - Smart Business must pass the package
+		 * @param {string} [mPropertyBag.version] version of the app variant (optional)
+		 * @param {string} [mPropertyBag.layer] the proposed layer (might be overwritten by the backend) when creating a new app variant. By default 'CUSTOMER' is set
+		 * @param {boolean} [mPropertyBag.skipIam=false] indicator whether the default IAM item creation and registration is skipped
+		 *
+		 * @returns {Promise} resolving with AppVariant save response
+		 * @public
+		 */
+		saveAs: function(vSelector, mPropertyBag) {
+			var oFlexController = ChangesController.getDescriptorFlexControllerInstance(vSelector);
+			mPropertyBag.reference = oFlexController.getComponentName();
+
+			return SaveAs.saveAs(vSelector, mPropertyBag);
+		},
+
+		/**
+		 * Deletes the app variant from the backend
+		 * @param {sap.ui.fl.Selector} vSelector - a selector
+		 * @param {object} [mPropertyBag] property bag
+		 * @param {string} [mPropertyBag.transport] the transport request for the app variant - Smart Business must pass the package
+		 *
+		 * @returns {Promise} resolving with AppVariant deletion response
+		 * @public
+		 */
+		deleteAppVariant: function(vSelector, mPropertyBag) {
+			var oFlexController = ChangesController.getDescriptorFlexControllerInstance(vSelector);
+			var sReferenceAppId = oFlexController.getComponentName();
+
+			return SaveAs.deleteAppVar(sReferenceAppId, mPropertyBag);
+		},
+
+		/**
 		 * Reset changes in the backend.
 		 * If the reset is performed for an entire component, a browser reload is required.
 		 * If the reset is performed for a control, this function also triggers a reversion of deleted UI changes.
@@ -103,6 +141,19 @@ sap.ui.define([
 				._oChangePersistence.transportAllUIChanges({}, mPropertyBag.styleClass, mPropertyBag.layer, mPropertyBag.appVariantDescriptors);
 		},
 
+			/**
+		 * Retrieves the changes from the flex persistence for the selector.
+		 *
+		 * @param {sap.ui.fl.Change} oChange - Change instance
+		 *
+		 * @returns {Boolean} Returns a boolean value if it is a descriptor change
+		 * @private
+		 */
+		_isDescriptorChange: function(oChange) {
+			return (oChange._getMap
+				&& includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), oChange._getMap().changeType))
+				|| (oChange.getChangeType && includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), oChange.getChangeType()));
+		},
 
 		/**
 		 * Adds a change to the flex persistence.
@@ -113,7 +164,7 @@ sap.ui.define([
 		 * @public
 		 */
 		add: function (oChange, vSelector) {
-			if (includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), oChange.getChangeType())) {
+			if (this._isDescriptorChange(oChange)) {
 				return oChange.store();
 			}
 			var oAppComponent = ChangesController.getAppComponentForSelector(vSelector);
@@ -131,7 +182,7 @@ sap.ui.define([
 		remove: function (oChange, vSelector) {
 			var oAppComponent = ChangesController.getAppComponentForSelector(vSelector);
 			// descriptor change
-			if (includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), oChange.getChangeType())) {
+			if (this._isDescriptorChange(oChange)) {
 				var oDescriptorFlexController = ChangesController.getDescriptorFlexControllerInstance(oAppComponent);
 				oDescriptorFlexController.deleteChange(oChange, oAppComponent);
 				return;

@@ -64,7 +64,8 @@ sap.ui.define([
 				"sap.app" : {
 					applicationVersion : {
 						version : "1.2.3"
-					}
+					},
+					id: COMPONENT_NAME
 				}
 			};
 		},
@@ -973,7 +974,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("when the LREPSerializer.saveAsCommands gets called with 2 remove commands created via CommandFactory and these are booked for a new app variant whose id is different from the id of the current running app", function(assert) {
+	QUnit.test("when the LREPSerializer.clearCommandStack gets called with 2 remove commands created via CommandFactory and these are booked for a new app variant whose id is different from the id of the current running app", function(assert) {
 		// then two changes are expected to be written in LREP
 		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(2, assert, "save"),
 			oRemoveCommand1, oRemoveCommand2;
@@ -992,12 +993,6 @@ sap.ui.define([
 
 		.then(function(oCommand) {
 			oRemoveCommand2 = oCommand;
-			sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns({
-				"sap.app": {
-					id: "sap.original.test"
-				}
-			});
-
 			return this.oCommandStack.pushAndExecute(oRemoveCommand1);
 		}.bind(this))
 
@@ -1006,11 +1001,24 @@ sap.ui.define([
 		}.bind(this))
 
 		.then(function() {
-			return this.oSerializer.saveAsCommands("customer.sap.test");
+			var aUIChanges = ChangesController.getFlexControllerInstance(oMockedAppComponent)
+				._oChangePersistence.getDirtyChanges();
+			aUIChanges.forEach(function(oChange) {
+				// Change the reference of UI changes
+				oChange.setNamespace("APP_VARIANT_NAMESPACE");
+				oChange.setComponent("APP_VARIANT_REFERENCE");
+			});
+
+			// Simulate that the UI changes are saved in the persistence with the new reference
+			return PersistenceWriteAPI.save(oMockedAppComponent, true);
+		})
+
+		.then(function() {
+			return this.oSerializer.clearCommandStack("customer.sap.test");
 		}.bind(this))
 
 		.then(function() {
-			assert.ok(true, "then the promise for LREPSerializer.saveAsCommands() gets resolved");
+			assert.ok(true, "then the promise for LREPSerializer.clearCommandStack() gets resolved");
 			assert.equal(this.oCommandStack.getCommands().length, 0, "and the command stack has been cleared");
 			fnCleanUp();
 		}.bind(this))
@@ -1070,7 +1078,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("when the LREPSerializer.saveAsCommands gets called with 4 different ctrl variant commands created containing one or more changes and this is booked for a new app variant with different id", function(assert) {
+	QUnit.test("when the LREPSerializer.clearCommandStack gets called with 4 different ctrl variant commands created containing one or more changes and this is booked for a new app variant with different id", function(assert) {
 		sandbox.stub(oModel.oVariantController, "getVariant").returns(oVariant);
 		var done = assert.async();
 		// then five changes are expected to be written in LREP, the switch command is ignored
@@ -1102,11 +1110,7 @@ sap.ui.define([
 			visible : false
 		};
 		var aChanges = [oTitleChange, oFavoriteChange, oVisibleChange];
-		sandbox.stub(sap.ui.fl.Utils, "getAppDescriptor").returns({
-			"sap.app": {
-				id: "sap.original.test"
-			}
-		});
+
 		return CommandFactory.getCommandFor(this.oVariantManagement, "configure", {
 			control : this.oVariantManagement,
 			changes : aChanges
@@ -1142,13 +1146,25 @@ sap.ui.define([
 			oControlVariantSetTitleCommand = oCommand;
 			this.oCommandStack.attachCommandExecuted(function(oEvent) {
 				if (oEvent.getParameters().command === oControlVariantSetTitleCommand) {
-					this.oSerializer.saveAsCommands("customer.sap.test")
-					.then(function() {
-						assert.ok(true, "then the promise for LREPSerializer.saveAsCommands() gets resolved");
-						assert.equal(this.oCommandStack.getCommands().length, 0, "and the command stack has been cleared");
-						fnCleanUp();
-						done();
-					}.bind(this));
+					var aUIChanges = ChangesController.getFlexControllerInstance(oMockedAppComponent)
+						._oChangePersistence.getDirtyChanges();
+					aUIChanges.forEach(function(oChange) {
+						// Change the reference of UI changes
+						oChange.setNamespace("APP_VARIANT_NAMESPACE");
+						oChange.setComponent("APP_VARIANT_REFERENCE");
+					});
+
+					// Simulate that the UI changes are saved in the persistence with the new reference
+					return PersistenceWriteAPI.save(oMockedAppComponent, true)
+						.then(function() {
+							return this.oSerializer.clearCommandStack("customer.sap.test")
+							.then(function() {
+								assert.ok(true, "then the promise for LREPSerializer.clearCommandStack() gets resolved");
+								assert.equal(this.oCommandStack.getCommands().length, 0, "and the command stack has been cleared");
+								fnCleanUp();
+								done();
+							}.bind(this));
+						}.bind(this));
 				}
 			}.bind(this));
 

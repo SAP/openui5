@@ -47,6 +47,9 @@ sap.ui.define([
 				},
 				getIsOverviewForKeyUser : function() {
 					return true;
+				},
+				getLayer: function() {
+					return "CUSTOMER";
 				}
 			};
 
@@ -110,6 +113,9 @@ sap.ui.define([
 				},
 				getIsOverviewForKeyUser : function() {
 					return true;
+				},
+				getLayer: function() {
+					return "CUSTOMER"
 				}
 			};
 
@@ -144,6 +150,9 @@ sap.ui.define([
 				},
 				getIsOverviewForKeyUser : function() {
 					return true;
+				},
+				getLayer: function() {
+					return "CUSTOMER"
 				}
 			};
 
@@ -198,7 +207,7 @@ sap.ui.define([
 
 			var getDescriptorSpy = sandbox.stub(AppVariantOverviewUtils, "sendRequest").resolves(oResult);
 
-			var onSaveAsSpy = sandbox.stub(RtaAppVariantFeature, "onSaveAsFromOverviewDialog").resolves();
+			var onSaveAsSpy = sandbox.stub(RtaAppVariantFeature, "onSaveAs").resolves();
 
 			return oManageAppsController.saveAsAppVariant(oEmptyEvent).then(function() {
 				assert.ok(getDescriptorSpy.calledOnce, "the getDescriptor is called once");

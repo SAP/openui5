@@ -205,7 +205,7 @@ function(
 	 * 			place for Icon in Fiori Toolbar
 	 * 		HBox
 	 * 			OverflowToolbar
-	 * 				Segmented Button, Buttons for Undo, Redo, manageApps, appVariantOverview, restore, publish
+	 * 				Segmented Button, Buttons for Undo, Redo, manageApps, appVariantOverview, restore, publish, saveAs
 	 * 			Save & Exit Button
 	 *
 	 * @returns {sap.ui.core.Control[]} Returns the controls in a structure described above.

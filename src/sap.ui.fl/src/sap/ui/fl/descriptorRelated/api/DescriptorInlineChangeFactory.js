@@ -43,6 +43,33 @@ sap.ui.define([
 		return this._mParameters;
 	};
 
+	DescriptorInlineChange.prototype.getContent = function() {
+		return this._mParameters.content;
+	};
+
+	DescriptorInlineChange.prototype.getTexts = function() {
+		return this._mParameters.texts;
+	};
+
+	DescriptorInlineChange.prototype.replaceHostingIdForTextKey = function(sNewHostingId, sOldHostingId, oContent, mTexts) {
+		var sContent = JSON.stringify(oContent);
+		if (mTexts) {
+			Object.keys(mTexts).forEach(function(sTextKey) {
+				var sTextKeyNew;
+
+				if (sTextKey.indexOf(sOldHostingId) === 0) {
+					sTextKeyNew = sNewHostingId + sTextKey.substring(sOldHostingId.length);
+					this._mParameters.texts[sTextKeyNew] = this._mParameters.texts[sTextKey];
+					delete this._mParameters.texts[sTextKey];
+
+					sContent = sContent.split("{{" + sTextKey + "}}").join("{{" + sTextKeyNew + "}}");
+				}
+			}, this);
+
+			this._mParameters.content = JSON.parse(sContent);
+		}
+	};
+
 
 	/**
 	 * Factory for Descriptor Inline Changes
@@ -95,13 +122,12 @@ sap.ui.define([
 	DescriptorInlineChangeFactory.createNew = function(sChangeType, mParameters, mTexts) {
 		var oDescriptorInlineChange = new DescriptorInlineChange(sChangeType, mParameters, mTexts);
 
+		//no check in backend at that point, check only after submitting in service provider
 		return new Promise(function(resolve, reject) {
-			//no check in backend at that point, check only after submitting in service provider
-
 			if (oDescriptorInlineChange) {
 				resolve(oDescriptorInlineChange);
 			} else {
-				var oError = {}; //TODO
+				var oError = {};
 				reject(oError);
 			}
 		});
@@ -123,7 +149,6 @@ sap.ui.define([
 		});
 	};
 
-
 //public static factory methods
 	/**
 	 * Creates an inline change
@@ -138,7 +163,9 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorInlineChangeFactory.createDescriptorInlineChange = function(sDescriptorChangeType, mParameters, mTexts) {
-		return this._createDescriptorInlineChange(sDescriptorChangeType, mParameters, mTexts);
+		var fnTriggerChangeTypeMethod = sDescriptorChangeType.replace("appdescr", "create");
+		// This will call the right changeType method and will be validated properly
+		return this[fnTriggerChangeTypeMethod](mParameters, mTexts);
 	};
 
 	/**
@@ -429,14 +456,16 @@ sap.ui.define([
 	 * @param {object} [mParameters.value] map of locale and text, "" represents the default title
 	 *
 	 * @return {Promise} resolving when creating the descriptor inline change was successful
-	 *
+	 * @param {object} [mTexts] the i18n properties file path
 	 * @private
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
-	DescriptorInlineChangeFactory.create_app_setTitle = function(mParameters) {
-		var mTexts = {
-			"" : mParameters //property name = text key set when adding to descriptor variant
-		};
+	DescriptorInlineChangeFactory.create_app_setTitle = function(mParameters, mTexts) {
+		if (!mTexts) {
+			mTexts = {
+				"" : mParameters //property name = text key set when adding to descriptor variant
+			};
+		}
 
 		return this._createDescriptorInlineChange('appdescr_app_setTitle', {}, mTexts).then(function(oDescriptorInlineChange) {
 			//TODO check how this can be done nicer, e.g. by sub classing
@@ -460,16 +489,18 @@ sap.ui.define([
 	 * @param {object} [mParameters.type='XTIT'] type of sub title
 	 * @param {object} [mParameters.comment] comment for additional information
 	 * @param {object} [mParameters.value] map of locale and text, "" represents the default sub title
-	 *
+	 * @param {object} [mTexts] the i18n properties file path
 	 * @return {Promise} resolving when creating the descriptor inline change was successful
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
-	DescriptorInlineChangeFactory.create_app_setSubTitle = function(mParameters) {
-		var mTexts = {
-			"" : mParameters //property name = text key set when adding to descriptor variant
-		};
+	DescriptorInlineChangeFactory.create_app_setSubTitle = function(mParameters, mTexts) {
+		if (!mTexts) {
+			mTexts = {
+				"" : mParameters //property name = text key set when adding to descriptor variant
+			};
+		}
 
 		return this._createDescriptorInlineChange('appdescr_app_setSubTitle', {}, mTexts).then(function(oDescriptorInlineChange) {
 			//TODO check how this can be done nicer, e.g. by sub classing
@@ -493,16 +524,19 @@ sap.ui.define([
 	 * @param {object} [mParameters.type='XTIT'] type of short title
 	 * @param {object} [mParameters.comment] comment for additional information
 	 * @param {object} [mParameters.value] map of locale and text, "" represents the default short title
+	  * @param {object} [mTexts] the i18n properties file path
 	 *
 	 * @return {Promise} resolving when creating the descriptor inline change was successful
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
-	DescriptorInlineChangeFactory.create_app_setShortTitle = function(mParameters) {
-		var mTexts = {
-			"" : mParameters //property name = text key set when adding to descriptor variant
-		};
+	DescriptorInlineChangeFactory.create_app_setShortTitle = function(mParameters, mTexts) {
+		if (!mTexts) {
+			mTexts = {
+				"" : mParameters //property name = text key set when adding to descriptor variant
+			};
+		}
 
 		return this._createDescriptorInlineChange('appdescr_app_setShortTitle', {}, mTexts).then(function(oDescriptorInlineChange) {
 			//TODO check how this can be done nicer, e.g. by sub classing
@@ -526,16 +560,19 @@ sap.ui.define([
 	 * @param {object} [mParameters.type='XTIT'] type of description
 	 * @param {object} [mParameters.comment] comment for additional information
 	 * @param {object} [mParameters.value] map of locale and text, "" represents the default description
+	 * @param {object} [mTexts] the i18n properties file path
 	 *
 	 * @return {Promise} resolving when creating the descriptor inline change was successful
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
-	DescriptorInlineChangeFactory.create_app_setDescription = function(mParameters) {
-		var mTexts = {
-			"" : mParameters //property name = text key set when adding to descriptor variant
-		};
+	DescriptorInlineChangeFactory.create_app_setDescription = function(mParameters, mTexts) {
+		if (!mTexts) {
+			mTexts = {
+				"" : mParameters //property name = text key set when adding to descriptor variant
+			};
+		}
 
 		return this._createDescriptorInlineChange('appdescr_app_setDescription', {}, mTexts).then(function(oDescriptorInlineChange) {
 			//TODO check how this can be done nicer, e.g. by sub classing

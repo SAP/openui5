@@ -11,12 +11,14 @@ sap.ui.define([
 	"sap/ui/fl/descriptorRelated/internal/Utils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils",
-	"sap/ui/rta/Utils",
 	"sap/ui/core/Control",
 	"sap/ui/rta/appVariant/S4HanaCloudBackend",
 	"sap/base/Log",
 	"sap/m/MessageBox",
 	"sap/ui/core/Manifest",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -30,12 +32,14 @@ function (
 	DescriptorUtils,
 	Settings,
 	FlUtils,
-	RtaUtils,
 	Control,
 	S4HanaCloudBackend,
 	Log,
 	MessageBox,
 	Manifest,
+	ChangesWriteAPI,
+	PersistenceWriteAPI,
+	DescriptorInlineChangeFactory,
 	sinon
 ) {
 	"use strict";
@@ -47,7 +51,7 @@ function (
 			var oRootControl = new Control();
 			var oRtaCommandStack = new Stack();
 			var oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: oRootControl});
-			this.oAppVariantManager = new AppVariantManager({rootControl: oRootControl, commandSerializer: oCommandSerializer});
+			this.oAppVariantManager = new AppVariantManager({rootControl: oRootControl, commandSerializer: oCommandSerializer, layer: "CUSTOMER"});
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -128,10 +132,26 @@ function (
 
 	QUnit.module("Given an AppVariantManager is instantiated for different platforms", {
 		beforeEach: function () {
-			var oRootControl = new Control();
+			var oDescriptor = {
+				"sap.app" : {
+					id : "TestId",
+					applicationVersion: {
+						version: "1.2.3"
+					}
+				}
+			};
+
+			var oManifest = new Manifest(oDescriptor);
+			this.oAppComponent = {
+				name: "testComponent",
+				getManifest : function() {
+					return oManifest;
+				}
+			};
+
 			var oRtaCommandStack = new Stack();
-			var oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: oRootControl});
-			this.oAppVariantManager = new AppVariantManager({rootControl: oRootControl, commandSerializer: oCommandSerializer});
+			var oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: this.oAppComponent});
+			this.oAppVariantManager = new AppVariantManager({rootControl: this.oAppComponent, commandSerializer: oCommandSerializer, layer: "CUSTOMER"});
 
 			oServer = sinon.fakeServer.create();
 
@@ -162,63 +182,20 @@ function (
 			oServer.restore();
 		}
 	}, function() {
-		QUnit.test("When createDescriptor() method is called on S4/Hana on premise", function (assert) {
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:false,
-					isAtoEnabled:false,
-					isProductiveSystem:false
-				})
-			);
+		QUnit.test("When createAllInlineChanges() method is called", function (assert) {
+			sandbox.stub(Settings, "getInstance").resolves({});
+			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(FlUtils, "getAppComponentForControl").returns(this.oAppComponent);
+			var fnCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
-			var fnGetTransportInputSpy = sandbox.stub(AppVariantUtils, "getTransportInput");
-			var fnOpenTransportSelection = sandbox.stub(AppVariantUtils, "openTransportSelection");
-
-			var oTransportInfo = {
-				packageName: "$TMP",
-				transport: ""
-			};
-
-			var fnOnTransportInDialogSelectedSpy = sandbox.spy(AppVariantUtils, "onTransportInDialogSelected");
-
-			return this.oAppVariantManager.createDescriptor(this.oAppVariantData).then(function(oAppVariantDescriptor) {
-				assert.ok(true, "then the promise has been resolved with an app variant descriptor");
-				assert.strictEqual(oAppVariantDescriptor._sTransportRequest, null, "then the transport is correct");
-				assert.strictEqual(oAppVariantDescriptor._getMap().packageName, "$TMP", "then the descriptor is created with local object");
-				assert.strictEqual(oAppVariantDescriptor.getReference(), "TestId", "then the reference is correct");
-				assert.equal(fnGetTransportInputSpy.callCount, 0, "then the getTransportInput() method is never called");
-				assert.equal(fnOpenTransportSelection.callCount, 0, "then the openTransportSelection() method is never called");
-				assert.ok(fnOnTransportInDialogSelectedSpy.calledOnceWith(oAppVariantDescriptor, oTransportInfo), "then the onTransportInDialogSelected() method is called once with correct parameters");
-			});
-		});
-
-		QUnit.test("When createDescriptor() method is called on S4/Hana Cloud", function (assert) {
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:true,
-					isAtoEnabled:true,
-					isProductiveSystem:false
-				})
-			);
-
-			var fnGetTransportInputSpy = sandbox.spy(AppVariantUtils, "getTransportInput");
-			var fnOnTransportInDialogSelectedSpy = sandbox.spy(AppVariantUtils, "onTransportInDialogSelected");
-
-			var oTransportInfo = {
-				fromDialog: false,
-				packageName: "",
-				transport: "ATO_NOTIFICATION"
-			};
-
-			return this.oAppVariantManager.createDescriptor(this.oAppVariantData).then(function(oAppVariantDescriptor) {
-				assert.ok(true, "then the promise has been resolved with an app variant descriptor");
-				assert.strictEqual(oAppVariantDescriptor._sTransportRequest, "ATO_NOTIFICATION", "then the transport is correctly set");
-				assert.strictEqual(oAppVariantDescriptor.getReference(), "TestId", "then the reference is correct");
-				assert.ok(fnGetTransportInputSpy.calledOnceWith("", oAppVariantDescriptor.getNamespace(), "manifest", "appdescr_variant"), "then the getTransportInput() method is called once with correct parameters");
-				assert.ok(fnOnTransportInDialogSelectedSpy.calledOnceWith(oAppVariantDescriptor, oTransportInfo), "then the onTransportInDialogSelected() method is called once with correct parameters");
-			});
+			return this.oAppVariantManager.createAllInlineChanges(this.oAppVariantData)
+				.then(function(aAllInlineChanges) {
+					assert.equal(fnCreateChangesSpy.callCount, aAllInlineChanges.length, "then ChangesWriteAPI.create method is called " + fnCreateChangesSpy.callCount + " times");
+					aAllInlineChanges.forEach(function(oInlineChange) {
+						var sChangeType = oInlineChange._oInlineChange.getMap().changeType;
+						assert.equal(DescriptorInlineChangeFactory.getDescriptorChangeTypes().includes(sChangeType), true, "then inline change " + sChangeType + " got successfully created");
+					});
+				});
 		});
 
 		QUnit.test("When notifyKeyUserWhenPublishingIsReady() method is called during app creation", function (assert) {
@@ -241,9 +218,8 @@ function (
 
 
 		QUnit.test("When notifyKeyUserWhenPublishingIsReady() method is failed on S4/Hana Cloud", function (assert) {
-			var checkFlpCustomizingIsReadyStub = sandbox.stub(S4HanaCloudBackend.prototype, "notifyFlpCustomizingIsReady").rejects();
+			var checkFlpCustomizingIsReadyStub = sandbox.stub(S4HanaCloudBackend.prototype, "notifyFlpCustomizingIsReady").returns(Promise.reject());
 			var fncatchErrorDialog = sandbox.spy(AppVariantUtils, "catchErrorDialog");
-			//sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
 			sandbox.stub(MessageBox, "show").callsFake(function(sText, mParameters) {
 				mParameters.onClose("Close");
 			});
@@ -256,38 +232,15 @@ function (
 				}
 			);
 		});
-
-		QUnit.test("When createDescriptor() method is failed on S4/Hana cloud", function (assert) {
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:true,
-					isAtoEnabled:true,
-					isProductiveSystem:false
-				})
-			);
-
-			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "Whatever!").returns();
-
-			sandbox.stub(AppVariantUtils, "openTransportSelection").returns(Promise.reject("Whatever!"));
-
-			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.reject(false));
-			return this.oAppVariantManager.createDescriptor(this.oAppVariantData).catch(
-				function(bSuccess) {
-					assert.equal(bSuccess, false, "Error: An unexpected exception occured");
-				}
-			);
-		});
 	});
 
 	QUnit.module("Given an AppVariantManager is instantiated for different platforms", {
 		beforeEach: function () {
-			var oRootControl = new Control();
+			this.oRootControl = new Control();
 			var oRtaCommandStack = new Stack();
-			var oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: oRootControl});
-			sandbox.stub(oRtaCommandStack, "getAllExecutedCommands").returns(["testCommand"]);
+			var oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: this.oRootControl});
 
-			this.oAppVariantManager = new AppVariantManager({rootControl: oRootControl, commandSerializer: oCommandSerializer});
+			this.oAppVariantManager = new AppVariantManager({rootControl: this.oRootControl, commandSerializer: oCommandSerializer, layer: "CUSTOMER"});
 			oServer = sinon.fakeServer.create();
 		},
 		afterEach: function () {
@@ -295,61 +248,67 @@ function (
 			oServer.restore();
 		}
 	}, function() {
-		QUnit.test("When saveAppVariantToLREP() method is called and response is successful", function (assert) {
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:false,
-					isAtoEnabled:false,
-					isProductiveSystem:false
-				})
-			);
-			var fnSubmit;
-			var fncatchErrorDialog = sandbox.stub(AppVariantUtils, "catchErrorDialog");
-			return DescriptorVariantFactory.createNew({id: "customer.TestId", reference: "TestIdBaseApp"})
-				.then(function(oDescriptor) {
-					fnSubmit = sandbox.stub(oDescriptor, "submit").resolves();
-					return this.oAppVariantManager.saveAppVariantToLREP(oDescriptor);
-				}.bind(this))
+		QUnit.test("When createAppVariant() method is called", function (assert) {
+			var fnSaveAsAppVariantStub = sandbox.stub(PersistenceWriteAPI, "saveAs").resolves();
+
+			return this.oAppVariantManager.createAppVariant("customer.appvar.id")
 				.then(function() {
-					assert.ok(fnSubmit.calledOnce, "then the function submit() is called once");
-					assert.ok(fncatchErrorDialog.notCalled, "then the function catchErrorDialog() is not called");
-				});
+					assert.ok(fnSaveAsAppVariantStub.calledWithExactly(this.oRootControl, {id: "customer.appvar.id", layer: "CUSTOMER", version: "1.0.0"}));
+				}.bind(this));
 		});
 
-		QUnit.test("When saveAppVariantToLREP() method is called and response is failed", function (assert) {
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:false,
-					isAtoEnabled:false,
-					isProductiveSystem:false
-				})
-			);
+		QUnit.test("When createAppVariant() method is called and failed", function (assert) {
+			var fnSaveAsAppVariantStub = sandbox.stub(PersistenceWriteAPI, "saveAs").returns(Promise.reject("Saving error"));
+			var fncatchErrorDialog = sandbox.spy(AppVariantUtils, "catchErrorDialog");
 
 			sandbox.stub(MessageBox, "show").callsFake(function(sText, mParameters) {
 				mParameters.onClose("Close");
 			});
 
-			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "error").returns();
+			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "Saving error").returns();
 
-			var fnSubmit;
-			var fncatchErrorDialog = sandbox.stub(AppVariantUtils, "catchErrorDialog");
-
-			return DescriptorVariantFactory.createNew({id: "customer.TestId", reference: "TestIdBaseApp"})
-			.then(function(oDescriptor) {
-				fnSubmit = sandbox.stub(oDescriptor, "submit").rejects();
-				return this.oAppVariantManager.saveAppVariantToLREP(oDescriptor);
-			}.bind(this))
-			.then(function() {
-				assert.ok(fnSubmit.calledOnce, "then the function submit() is called once");
-				assert.ok(fncatchErrorDialog.calledOnce, "then the function catchErrorDialog() is called once");
-				assert.strictEqual(fncatchErrorDialog.getCall(0).args[1], "MSG_SAVE_APP_VARIANT_FAILED", "then the function catchErrorDialog() is called with correct message key");
-				assert.strictEqual(fncatchErrorDialog.getCall(0).args[2], "customer.TestId", "then the function catchErrorDialog() is called with correct app var id");
-			});
+			return new Promise(function(resolve, reject) {
+				return this.oAppVariantManager.createAppVariant("customer.appvar.id").then(reject, function () {
+					assert.ok(true, "a rejection took place");
+					assert.ok(fnSaveAsAppVariantStub.calledWithExactly(this.oRootControl, {id: "customer.appvar.id", layer: "CUSTOMER", version: "1.0.0"}), "then PeristenceWriteApi.saveAs method is called with correct parameters");
+					assert.strictEqual(fncatchErrorDialog.getCall(0).args[1], "MSG_SAVE_APP_VARIANT_FAILED", "then the fncatchErrorDialog method is called with correct message key");
+					assert.strictEqual(fncatchErrorDialog.getCall(0).args[2], "customer.appvar.id", "then the fncatchErrorDialog method is called with correct app var id");
+					resolve();
+				}.bind(this));
+			}.bind(this));
 		});
 
-		QUnit.test("When copyUnsavedChangesToLREP() method is called without any unsaved changes", function (assert) {
+		QUnit.test("When deleteAppVariant() method is called", function (assert) {
+			var fnDeleteAppVariantStub = sandbox.stub(PersistenceWriteAPI, "deleteAppVariant").resolves();
+
+			return this.oAppVariantManager.deleteAppVariant("customer.appvar.id")
+				.then(function() {
+					assert.ok(fnDeleteAppVariantStub.calledWithExactly({appId: "customer.appvar.id"}), "then PeristenceWriteApi.deleteAppVariant method is called with correct parameters");
+				});
+		});
+
+		QUnit.test("When deleteAppVariant() method is called and failed", function (assert) {
+			var fnDeleteAppVariantStub = sandbox.stub(PersistenceWriteAPI, "deleteAppVariant").returns(Promise.reject("Delete Error"));
+			var fncatchErrorDialog = sandbox.spy(AppVariantUtils, "catchErrorDialog");
+
+			sandbox.stub(MessageBox, "show").callsFake(function(sText, mParameters) {
+				mParameters.onClose("Close");
+			});
+
+			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "Delete Error").returns();
+
+			return new Promise(function(resolve, reject) {
+				return this.oAppVariantManager.deleteAppVariant("customer.appvar.id").then(reject, function () {
+					assert.ok(true, "a rejection took place");
+					assert.ok(fnDeleteAppVariantStub.calledWithExactly({appId: "customer.appvar.id"}), "then PeristenceWriteApi.deleteAppVariant method is called with correct parameters");
+					assert.strictEqual(fncatchErrorDialog.getCall(0).args[1], "MSG_DELETE_APP_VARIANT_FAILED", "then the fncatchErrorDialog method is called with correct message key");
+					assert.strictEqual(fncatchErrorDialog.getCall(0).args[2], "customer.appvar.id", "then the fncatchErrorDialog method is called with correct app var id");
+					resolve();
+				});
+			}.bind(this));
+		});
+
+		QUnit.test("When clearRTACommandStack() method is called without any unsaved changes", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser:true,
@@ -380,45 +339,9 @@ function (
 
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oComponent);
 
-			return this.oAppVariantManager.copyUnsavedChangesToLREP("AppVariantId", false).then(function() {
+			return this.oAppVariantManager.clearRTACommandStack("AppVariantId", false).then(function() {
 				assert.ok("then the promise is resolved");
 			});
-		});
-
-		QUnit.test("When copyUnsavedChangesToLREP() method is called, taking over dirty changes failed", function (assert) {
-			var fnTakeOverDirtyChanges = sandbox.stub(this.oAppVariantManager, "_takeOverDirtyChangesByAppVariant").returns(Promise.reject("Saving error"));
-			var fnDeleteAppVariant = sandbox.stub(this.oAppVariantManager, "_deleteAppVariantFromLREP").resolves();
-			var fnShowRelevantDialog = sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.reject());
-
-			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "Saving error").returns();
-
-			return new Promise(function(resolve, reject) {
-				return this.oAppVariantManager.copyUnsavedChangesToLREP("AppVariantId", true).then(reject, function () {
-					assert.ok(true, "a rejection took place");
-					assert.equal(fnTakeOverDirtyChanges.callCount, 1, "then the _takeOverDirtyChangesByAppVariant() method is called once");
-					assert.equal(fnDeleteAppVariant.callCount, 1, "then the _deleteAppVariantFromLREP() method is called once");
-					assert.equal(fnShowRelevantDialog.callCount, 1, "then the showRelevantDialog() method is called once");
-					resolve();
-				});
-			}.bind(this));
-		});
-
-		QUnit.test("When copyUnsavedChangesToLREP() method is called, taking over dirty changes failed and then the deleting of app variants is also failed", function (assert) {
-			var fnTakeOverDirtyChanges = sandbox.stub(this.oAppVariantManager, "_takeOverDirtyChangesByAppVariant").returns(Promise.reject("Saving error"));
-			var fnDeleteAppVariant = sandbox.stub(this.oAppVariantManager, "_deleteAppVariantFromLREP").returns(Promise.reject("Delete Error"));
-			var fnShowRelevantDialog = sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.reject());
-
-			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "Delete Error").returns();
-
-			return new Promise(function(resolve, reject) {
-				return this.oAppVariantManager.copyUnsavedChangesToLREP("AppVariantId", true).then(reject, function () {
-					assert.ok(true, "a rejection took place");
-					assert.equal(fnTakeOverDirtyChanges.callCount, 1, "then the _takeOverDirtyChangesByAppVariant() method is called once");
-					assert.equal(fnDeleteAppVariant.callCount, 1, "then the _deleteAppVariantFromLREP() method is called once");
-					assert.equal(fnShowRelevantDialog.callCount, 1, "then the showRelevantDialog() method is called once");
-					resolve();
-				});
-			}.bind(this));
 		});
 
 		QUnit.test("When triggerCatalogPublishing() method is called on S4/Hana Cloud for catalog assignment", function (assert) {
@@ -442,7 +365,7 @@ function (
 
 			return DescriptorVariantFactory.createNew({id: "customer.TestId", reference: "TestIdBaseApp"})
 			.then(function(oDescriptor) {
-				return this.oAppVariantManager.triggerCatalogPublishing(oDescriptor, true);
+				return this.oAppVariantManager.triggerCatalogPublishing(oDescriptor.getId(), oDescriptor.getReference(), true);
 			}.bind(this))
 			.then(function(oResult) {
 				assert.ok(fnTriggerCatalogAssignment.calledOnceWith("customer.TestId", "TestIdBaseApp"), "then the method triggerCatalogAssignment is called once with correct parameters");
@@ -473,7 +396,7 @@ function (
 
 			return DescriptorVariantFactory.createNew({id: "customer.TestId", reference: "TestIdBaseApp"})
 			.then(function(oDescriptor) {
-				return this.oAppVariantManager.triggerCatalogPublishing(oDescriptor, false);
+				return this.oAppVariantManager.triggerCatalogPublishing(oDescriptor.getId(), oDescriptor.getReference(), false);
 			}.bind(this))
 			.then(function(oResult) {
 				assert.ok(fnTriggerCatalogUnAssignment.calledOnceWith("customer.TestId", "TestIdBaseApp"), "then the method triggerCatalogUnAssignment is called once with correct parameters");
@@ -509,7 +432,7 @@ function (
 
 			return DescriptorVariantFactory.createNew({id: "customer.TestId", reference: "TestIdBaseApp"})
 			.then(function(oDescriptor) {
-				return this.oAppVariantManager.triggerCatalogPublishing(oDescriptor, true);
+				return this.oAppVariantManager.triggerCatalogPublishing(oDescriptor.getId(), oDescriptor.getReference(), true);
 			}.bind(this))
 			.then(function() {
 				assert.ok(fnTriggerCatalogAssignment.calledOnceWith("customer.TestId", "TestIdBaseApp"), "then the method triggerCatalogAssignment is called once with correct parameters");
@@ -548,7 +471,7 @@ function (
 
 			return DescriptorVariantFactory.createNew({id: "customer.TestId", reference: "TestIdBaseApp"})
 			.then(function(oDescriptor) {
-				return this.oAppVariantManager.triggerCatalogPublishing(oDescriptor, false);
+				return this.oAppVariantManager.triggerCatalogPublishing(oDescriptor.getId(), oDescriptor.getReference(), false);
 			}.bind(this))
 			.then(function() {
 				assert.ok(fnTriggerCatalogUnAssignment.calledOnceWith("customer.TestId", "TestIdBaseApp"), "then the method triggerCatalogUnAssignment is called once with correct parameters");

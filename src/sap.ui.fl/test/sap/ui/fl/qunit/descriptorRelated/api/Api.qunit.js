@@ -170,6 +170,132 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("replaceHostingIdForTextKey - changeNewCard with text keys", function(assert) {
+			var mParameters = {
+				cardId: "ZDEMOOVP_card00",
+				entityPropertyChange: {
+					propertyPath: "customer.settings",
+					operation: "UPSERT",
+					propertyValue: {
+						defaultSpan: {
+							cols: 1,
+							rows: 5
+						},
+						tabs: [{
+							value: "{{ZDEMOOVP_RESIZE_sap.ovp.cards.ZDEMOOVP_card00.customer.settings.tabs.0.value}}",
+							annotationPath: "com.sap.vocabularies.UI.v1.LineItem#ordOverView2"
+						}, {
+							value: "{{ZDEMOOVP_RESIZE_sap.ovp.cards.ZDEMOOVP_card00.customer.settings.tabs.1.value}}",
+							annotationPath: "com.sap.vocabularies.UI.v1.LineItem#ordOverView2"
+						}]
+					}
+				}
+			};
+
+			var mTexts = {
+				"ZDEMOOVP_RESIZE_sap.ovp.cards.ZDEMOOVP_card00.customer.settings.tabs.0.value": {
+					type: "XTIT",
+					maxLength: 40,
+					value: {
+						"": "First View (Extended bar list deleted after save as)"
+					}
+				},
+				"ZDEMOOVP_RESIZE_sap.ovp.cards.ZDEMOOVP_card00.customer.settings.tabs.1.value": {
+					type: "XTIT",
+					maxLength: 40,
+					value: {
+						"": "Second View"
+					}
+				}
+			};
+
+			return DescriptorInlineChangeFactory.create_ovp_changeCard(mParameters, mTexts)
+				.then(function(oInlineChange) {
+					oInlineChange.replaceHostingIdForTextKey("customer.ZDEMOOVP_RESIZE.id_1559043616388_1827", "ZDEMOOVP_RESIZE", oInlineChange.getContent(), oInlineChange.getTexts());
+					Object.keys(oInlineChange.getTexts()).forEach(function(sTextKey, index) {
+						assert.strictEqual(sTextKey, "customer.ZDEMOOVP_RESIZE.id_1559043616388_1827_sap.ovp.cards.ZDEMOOVP_card00.customer.settings.tabs." + index + ".value", "then the text keys are properly set and are correct");
+					});
+					var aProperties = oInlineChange.getContent().entityPropertyChange.propertyValue.tabs;
+					aProperties.forEach(function(oProperty, index) {
+						assert.strictEqual(oProperty.value, "{{customer.ZDEMOOVP_RESIZE.id_1559043616388_1827_sap.ovp.cards.ZDEMOOVP_card00.customer.settings.tabs." + index + ".value}}", "then the property values are correctly set");
+					});
+				});
+		});
+
+		QUnit.test("replaceHostingIdForTextKey - changeNewCard without text keys", function(assert) {
+			var mParameters = {
+				cardId: "ZDEMOOVP_card00",
+				entityPropertyChange: {
+					propertyPath: "customer.settings",
+					operation: "UPSERT",
+					propertyValue: {
+						defaultSpan: {
+							cols: 1,
+							rows: 5
+						},
+						tabs: [{
+							value: "ZDEMOOVP_RESIZE_sap.ovp.cards.ZDEMOOVP_card00.customer.settings.tabs.0.value",
+							annotationPath: "com.sap.vocabularies.UI.v1.LineItem#ordOverView2"
+						}, {
+							value: "ZDEMOOVP_RESIZE_sap.ovp.cards.ZDEMOOVP_card00.customer.settings.tabs.1.value",
+							annotationPath: "com.sap.vocabularies.UI.v1.LineItem#ordOverView2"
+						}]
+					}
+				}
+			};
+
+			var mTexts = {
+				"ZDEMOOVP_RESIZE_sap.ovp.cards.ZDEMOOVP_card00.customer.settings.tabs.0.value": {
+					type: "XTIT",
+					maxLength: 40,
+					value: {
+						"": "First View (Extended bar list deleted after save as)"
+					}
+				},
+				"ZDEMOOVP_RESIZE_sap.ovp.cards.ZDEMOOVP_card00.customer.settings.tabs.1.value": {
+					type: "XTIT",
+					maxLength: 40,
+					value: {
+						"": "Second View"
+					}
+				}
+			};
+
+			return DescriptorInlineChangeFactory.create_ovp_changeCard(mParameters, mTexts)
+				.then(function(oInlineChange) {
+					oInlineChange.replaceHostingIdForTextKey("customer.ZDEMOOVP_RESIZE.id_1559043616388_1827", "ZDEMOOVP_RESIZE", oInlineChange.getContent(), oInlineChange.getTexts());
+					Object.keys(oInlineChange.getTexts()).forEach(function(sTextKey, index) {
+						assert.strictEqual(sTextKey, "customer.ZDEMOOVP_RESIZE.id_1559043616388_1827_sap.ovp.cards.ZDEMOOVP_card00.customer.settings.tabs." + index + ".value", "then the text keys are properly set and are correct");
+					});
+					var aProperties = oInlineChange.getContent().entityPropertyChange.propertyValue.tabs;
+					aProperties.forEach(function(oProperty, index) {
+						assert.strictEqual(oProperty.value, "ZDEMOOVP_RESIZE_sap.ovp.cards.ZDEMOOVP_card00.customer.settings.tabs." + index + ".value", "then the property values are correctly set");
+					});
+				});
+		});
+
+		QUnit.test("replaceHostingIdForTextKey - addTitle", function(assert) {
+			var mParameters = {
+				type: "XTIT",
+				maxLength: 50,
+				comment: "New title entered by a key user via RTA tool",
+				value: {
+					"": "E2E Test OVP Variant"
+				}
+			};
+
+			return DescriptorInlineChangeFactory.create_app_setTitle(mParameters)
+				.then(function(oInlineChange) {
+					if (oInlineChange["setHostingIdForTextKey"]) {
+						oInlineChange["setHostingIdForTextKey"]("ZDEMOOVP_RESIZE");
+					}
+					oInlineChange.replaceHostingIdForTextKey("customer.ZDEMOOVP_RESIZE.id_1559043616388_1827", "ZDEMOOVP_RESIZE", oInlineChange.getContent(), oInlineChange.getTexts());
+					Object.keys(oInlineChange.getTexts()).forEach(function(sTextKey) {
+						assert.strictEqual(sTextKey, "customer.ZDEMOOVP_RESIZE.id_1559043616388_1827_sap.app.title", "then the text keys are properly replaced and are correct");
+					});
+				});
+		});
+
 		QUnit.test("create_ovp_addNewCard", function(assert) {
 			return DescriptorInlineChangeFactory.create_ovp_addNewCard({
 				card : {

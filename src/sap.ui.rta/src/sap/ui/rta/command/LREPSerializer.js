@@ -175,38 +175,6 @@ sap.ui.define([
 		return this._lastPromise;
 	};
 
-	LREPSerializer.prototype._moveChangeToAppVariant = function(sReferenceAppIdForChanges, oRootControl) {
-		return Settings.getInstance().then(function(oSettings) {
-			var oPropertyBag = {
-				reference: sReferenceAppIdForChanges
-			};
-			var sNamespace = FlUtils.createNamespace(oPropertyBag, "changes");
-
-			var aCommands = this.getCommandStack().getAllExecutedCommands();
-			aCommands.forEach(function(oCommand) {
-				// only commands with 'getPreparedChange' function implemented (like FlexCommand and AppDescriptorCommand)
-				// get moved to the new app variant
-				// variant commands are not FlexCommands but some still have 'getPreparedChange'
-				if (oCommand.getPreparedChange && !oCommand.getRuntimeOnly()) {
-					var vChange = oCommand.getPreparedChange();
-					if (!Array.isArray(vChange)) {
-						vChange = [vChange];
-					}
-
-					vChange.forEach(function(oChange) {
-						if (oSettings.isAtoEnabled()) {
-							oChange.setRequest("ATO_NOTIFICATION");
-						}
-						oChange.setNamespace(sNamespace);
-						oChange.setComponent(sReferenceAppIdForChanges);
-					});
-				}
-			});
-
-			return PersistenceWriteAPI.save(oRootControl, true);
-		}.bind(this));
-	};
-
 	LREPSerializer.prototype._triggerUndoChanges = function() {
 		var oCommandStack = this.getCommandStack();
 		var aPromises = [];
@@ -239,46 +207,24 @@ sap.ui.define([
 	};
 
 	/**
-	 * @description Shall be used to persist the unsaved changes (in the current RTA session) for new app variant;
-	 * Once the unsaved changes has been saved for the app variant, the cache (See Cache#update) will not be updated for the current app
-	 * and the dirty changes will be spliced;
-	 * At this point command stack is not aware if the changes have been booked for the new app variant.
-	 * Therefore if there shall be some UI changes present in command stack, we undo all the changes till the beginning. Before undoing we detach the 'commandExecuted' event
-	 * Since we detached the commandExecuted event, therefore LRepSerializer would not talk with flex persistence.
+	 * @description
+	 * At this point command stack is not aware if the changes have been already booked for the new app variant.
+	 * Therefore if there shall be some UI changes present in command stack, we undo all the changes till the beginning.
 	 * In the last when user presses 'Save and Exit', there will be no change registered for the current app.
-	 * @param {string} sReferenceAppIdForChanges - ApplicationId
 	 * @returns {Promise} returns a promise with true or false
 	 */
-	LREPSerializer.prototype.saveAsCommands = function(sReferenceAppIdForChanges) {
-		if (!sReferenceAppIdForChanges) {
-			throw new Error("The id of the new app variant is required");
-		}
-
-		var oRootControl = getRootControlInstance(this.getRootControl());
-
-		if (!oRootControl) {
-			throw new Error("Can't save commands without root control instance!");
-		}
-
-		var oRunningAppDescriptor = FlUtils.getAppDescriptor(oRootControl);
-		// In case the id of the current running app is equal to the app variant id
-		if (oRunningAppDescriptor["sap.app"].id === sReferenceAppIdForChanges) {
-			throw new Error("The id of the app variant should be different from the current app id");
-		}
-
+	LREPSerializer.prototype.clearCommandStack = function() {
 		var oCommandStack = this.getCommandStack();
-		return this._moveChangeToAppVariant(sReferenceAppIdForChanges, oRootControl)
-			.then(function() {
-				// Detach the event 'commandExecuted' here to stop the communication of LREPSerializer with Flex
-				oCommandStack.detachCommandExecuted(this.handleCommandExecuted.bind(this));
-				return this._triggerUndoChanges();
-			}.bind(this))
-			.then(function() {
-				this._removeCommands();
-				// Attach the event 'commandExecuted' here to start the communication of LREPSerializer with Flex
-				oCommandStack.attachCommandExecuted(this.handleCommandExecuted.bind(this));
-				return true;
-			}.bind(this));
+
+		// Detach the event 'commandExecuted' here to stop the communication of LREPSerializer with Flex
+		oCommandStack.detachCommandExecuted(this.handleCommandExecuted.bind(this));
+		return this._triggerUndoChanges()
+		.then(function() {
+			this._removeCommands();
+			// Attach the event 'commandExecuted' here to start the communication of LREPSerializer with Flex
+			oCommandStack.attachCommandExecuted(this.handleCommandExecuted.bind(this));
+			return true;
+		}.bind(this));
 	};
 
 	return LREPSerializer;
