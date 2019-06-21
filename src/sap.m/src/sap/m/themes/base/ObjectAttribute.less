@@ -50,31 +50,22 @@
 	text-overflow: ellipsis;
 }
 
-.sapMListTblCell .sapMObjectAttributeActive {
-	white-space: normal;
-	word-break: break-word;
-}
-
 html[data-sap-ui-browser^='ie'], html[data-sap-ui-browser^='ed'] {
 	.sapMListTblCell .sapMObjectAttributeActive {
 		word-break: break-all;
 	}
 }
 
-.sapMObjectAttributeActive .sapMObjectAttributeTitle,
-.sapMObjectAttributeActive .sapMObjectAttributeText {
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	max-width: 50%;
-	vertical-align: top;
-	/* we need this otherwise the focus get broken when the link is on more lines */
-	display: inline-block;
-}
-
-.sapMListTblCell .sapMObjectAttributeActive .sapMObjectAttributeTitle,
-.sapMListTblCell .sapMObjectAttributeActive .sapMObjectAttributeText {
+.sapMObjectAttributeActive{
 	white-space: normal;
+	word-break: break-word;
+	.sapMObjectAttributeTitle,
+	.sapMObjectAttributeText {
+		white-space: normal;
+		vertical-align: top;
+		/* we need this otherwise the focus get broken when the link is on more lines */
+		display: inline-block;
+	}
 }
 
 .sapMObjectAttributeText > .sapMLnk {

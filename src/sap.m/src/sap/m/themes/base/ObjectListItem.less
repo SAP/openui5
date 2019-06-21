@@ -112,6 +112,15 @@ html[dir=rtl] .sapMObjLAttrDiv {
 	white-space: nowrap;
 	overflow: hidden;
 	width: 100%;
+	&.sapMObjectAttributeActive {
+		.sapMObjectAttributeTitle,
+		.sapMObjectAttributeText {
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			overflow: hidden;
+			max-width: 50%;
+		}
+	}
 }
 
 
