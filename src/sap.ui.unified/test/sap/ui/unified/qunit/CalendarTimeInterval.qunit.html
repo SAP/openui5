@@ -764,11 +764,37 @@
 					oSelectedStartDate = aSelectedDates[0].getStartDate();
 					oSelectedEndDate = aSelectedDates[0].getEndDate();
 					equal(oFormatYyyyMMddHHmm.format(oSelectedStartDate), "201508130900", "Item2 was selected");
-					ok(!oSelectedEndDate, "No end date")
+					ok(!oSelectedEndDate, "No end date");
 					ok($selectItem2.hasClass("sapUiCalItemSel"), "Item2 marked as selected");
 					ok(!$selectItem1.hasClass("sapUiCalItemSel"), "Item1 not marked as selected");
 					start();
 				}, 0);
+			});
+
+			module("Misc");
+			test("Custom data scenario", function() {
+				// arrange
+				var oCTI = new sap.ui.unified.CalendarTimeInterval("customDataCTI",{
+							intervalMinutes: 60
+						}),
+						oTimesRow = sap.ui.getCore().byId("customDataCTI").getAggregation("timesRow"),
+						oCustomData = sap.ui.getCore().getConfiguration().getFormatSettings().getCustomLocaleData();
+
+				oCustomData["timeFormats-short"] = "HHmm";
+				oTimesRow._oFormatTime = undefined;
+
+				// assert
+				strictEqual(oTimesRow._getFormatTime().oFormatOptions["pattern"], "H", "The custom data's format is respected - H");
+
+				// act
+				oCustomData["timeFormats-short"] = "stringWithAcceptableLetterAtTheEndk";
+				oTimesRow._oFormatTime = undefined;
+
+				// assert
+				strictEqual(oTimesRow._getFormatTime().oFormatOptions["pattern"], "k", "The custom data's format is respected - k");
+
+				// destroy
+				oCTI.destroy();
 			});
 
 		</script>
