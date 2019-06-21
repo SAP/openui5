@@ -237,6 +237,24 @@ sap.ui.require([
 		});
 	}
 
+	// BCP: 1970272412
+	QUnit.test("it should align the end item correctly", function(assert) {
+
+		// arrange
+		var oButton = new Button();
+		this.oAlignedFlowLayout.addEndContent(oButton);
+		this.oContentDomRef.style.width = "400px";
+		Core.applyChanges();
+		var oItemDomRef = oButton.getDomRef().parentElement;
+
+		// assert
+		if (Core.getConfiguration().getRTL()) {
+			assert.strictEqual(oItemDomRef.offsetLeft, 0, "the end item should be left aligned");
+		} else {
+			assert.strictEqual(oItemDomRef.offsetLeft + oItemDomRef.offsetWidth, 400, "the end item should be right aligned");
+		}
+	});
+
 	QUnit.test("it should set the maximum width of items", function(assert) {
 
 		// system under test

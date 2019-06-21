@@ -32,6 +32,11 @@ sap.ui.define(['./library'],
 			oRm.write("<div");
 			oRm.writeControlData(oControl);
 			oRm.addClass(AlignedFlowLayoutRenderer.CSS_CLASS);
+
+			if (aContent.length === 0) {
+				oRm.addClass(AlignedFlowLayoutRenderer.CSS_CLASS + "NoContent");
+			}
+
 			oRm.writeClasses();
 			oRm.write(">");
 
