@@ -43,7 +43,7 @@
 			"legend": {
 				"visible": true,
 				"position": "Bottom",
-				"alignment": "Left"
+				"alignment": "TopLeft"
 			},
 			"plotArea": {
 				"dataLabel": {

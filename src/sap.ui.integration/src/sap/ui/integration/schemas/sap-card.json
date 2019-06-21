@@ -14,7 +14,8 @@
 				"1.1.0",
 				"1.2.0",
 				"1.3.0",
-				"1.4.0"
+				"1.4.0",
+				"1.5.0"
 			]
 		},
 		"configuration": {
@@ -201,6 +202,10 @@
 					"items": {
 						"$ref": "#/definitions/HeaderType.Numeric.SideIndicator"
 					}
+				},
+				"status": {
+					"description": "Represents the status of the card.",
+					"$ref": "#/definitions/status"
 				}
 			}
 		},
@@ -501,6 +506,13 @@
 					"items": {
 						"$ref": "#/definitions/field"
 					}
+				},
+				"actions": {
+					"description": "Defines actions that can be applied on the content.",
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/action"
+					}
 				}
 			}
 		},
@@ -722,6 +734,13 @@
 					"type": "array",
 					"items": {
 						"$ref": "#/definitions/ContentType.Object.Group"
+					}
+				},
+				"actions": {
+					"description": "Defines actions that can be applied on the content.",
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/action"
 					}
 				}
 			}
@@ -1000,13 +1019,36 @@
 			}
 		},
 		"status": {
-			"description": "Represents status attributes",
+			"description": "Represents status attributes.",
 			"type": "object",
 			"additionalProperties": false,
 			"properties": {
 				"text": {
-					"type": "string",
-					"description": "Represents status text"
+					"description": "Represents status text.",
+					"oneOf": [
+						{ "type": "string" },
+						{ "$ref": "#/definitions/statusTextFormatter" }
+					]
+				}
+			}
+		},
+		"statusTextFormatter": {
+			"type": "object",
+			"description": "Defines fields for dynamic status formatting.",
+			"additionalProperties": false,
+			"properties": {
+				"format": {
+					"description": "Defines binding information.",
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"translationKey": {
+							"type": "string"
+						},
+						"parts": {
+							"type": "array"
+						}
+					}
 				}
 			}
 		},
