@@ -102,61 +102,62 @@ sap.ui.define([
 		};
 		var fnConfirmElement1IsOn1stPosition = function (oUiComponent, oViewAfterAction, assert) {
 			assert.strictEqual(oViewAfterAction.byId("formContainer1").getId(),
-				oViewAfterAction.byId("idForm").getFormContainers()[0].getId(),
+				oViewAfterAction.byId("idForm").getFormContainers()[2].getId(),
 				"then the control has been moved to the previous position");
 		};
 
 		elementActionTest("Checking the move action for Form control", {
-			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:m="sap.m">' +
+			xmlView:
+			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:m="sap.m">' +
 				'<f:Form id="idForm">' +
 					'<f:layout>' +
 						'<f:ResponsiveGridLayout/>' +
 					'</f:layout>' +
 					'<f:formContainers>' +
-					'<f:FormContainer id="element1">' +
-						'<f:formElements>' +
-							'<f:FormElement label="label">' +
-								'<f:fields>' +
+						'<f:FormContainer id="element1">' +
+							'<f:formElements>' +
+								'<f:FormElement label="label">' +
+									'<f:fields>' +
+										'<m:Input/>' +
+									'</f:fields>'	+
+								'</f:FormElement>' +
+								'<f:FormElement>' +
+									'<f:fields>' +
+										'<m:Input/>' +
+									'</f:fields>' +
+								'</f:FormElement>' +
+							'</f:formElements>' +
+						'</f:FormContainer>' +
+						'<f:FormContainer id="element2">' +
+							'<f:formElements>' +
+								'<f:FormElement>' +
+									'<f:fields>' +
+										'<m:Input/>' +
+									'</f:fields>'	+
+								'</f:FormElement>' +
+								'<f:FormElement>' +
+									'<f:fields>' +
+										'<m:Input/>' +
+									'</f:fields>' +
+								'</f:FormElement>' +
+							'</f:formElements>' +
+						'</f:FormContainer>' +
+						'<f:FormContainer id="formContainer1">' +
+							'<f:formElements>' +
+								'<f:FormElement >' +
+									'<f:fields>' +
+										'<m:Input/>' +
+									'</f:fields>'	+
+								'</f:FormElement>' +
+								'<f:FormElement>' +
+									'<f:fields>' +
 									'<m:Input/>' +
-								'</f:fields>'	+
-							'</f:FormElement>' +
-							'<f:FormElement>' +
-								'<f:fields>' +
-									'<m:Input/>' +
-								'</f:fields>' +
-							'</f:FormElement>' +
-						'</f:formElements>' +
-					'</f:FormContainer>' +
-					'<f:FormContainer id="element2">' +
-						'<f:formElements>' +
-							'<f:FormElement>' +
-								'<f:fields>' +
-									'<m:Input/>' +
-								'</f:fields>'	+
-							'</f:FormElement>' +
-							'<f:FormElement>' +
-								'<f:fields>' +
-									'<m:Input/>' +
-								'</f:fields>' +
-							'</f:FormElement>' +
-						'</f:formElements>' +
-					'</f:FormContainer>' +
-					'<f:FormContainer id="formContainer1">' +
-						'<f:formElements>' +
-							'<f:FormElement >' +
-								'<f:fields>' +
-									'<m:Input/>' +
-								'</f:fields>'	+
-							'</f:FormElement>' +
-							'<f:FormElement>' +
-								'<f:fields>' +
-								'<m:Input/>' +
-								'</f:fields>' +
-							'</f:FormElement>' +
-						'</f:formElements>' +
-					'</f:FormContainer>' +
-				'</f:formContainers>' +
-			'</f:Form>' +
+									'</f:fields>' +
+								'</f:FormElement>' +
+							'</f:formElements>' +
+						'</f:FormContainer>' +
+					'</f:formContainers>' +
+				'</f:Form>' +
 			'</mvc:View>'
 			,
 			action: {
@@ -166,7 +167,7 @@ sap.ui.define([
 					return {
 						movedElements: [{
 							element: oView.byId("formContainer1"),
-							sourceIndex: 0,
+							sourceIndex: 2,
 							targetIndex: 1
 						}],
 						source: {

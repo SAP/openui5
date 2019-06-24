@@ -67,13 +67,13 @@ sap.ui.define([
 					"then the input has moved as well");
 			}
 			function fnConfirmGroup1IsOn2ndPosition(oUiComponent, oViewAfterAction, assert) {
+				assert.strictEqual(oViewAfterAction.byId("simpleForm").getContent()[4].getId(),
+					oViewAfterAction.byId("title1").getId(),
+					"then the Group has been moved to the right position");
 				assert.strictEqual(oViewAfterAction.byId("simpleForm").getContent()[5].getId(),
-				oViewAfterAction.byId("title1").getId(),
-				"then the Group has been moved to the right position");
-				assert.strictEqual(oViewAfterAction.byId("simpleForm").getContent()[6].getId(),
 					oViewAfterAction.byId("label1").getId(),
 					"then the label has moved as well");
-				assert.strictEqual(oViewAfterAction.byId("simpleForm").getContent()[7].getId(),
+				assert.strictEqual(oViewAfterAction.byId("simpleForm").getContent()[6].getId(),
 					oViewAfterAction.byId("input1").getId(),
 					"then the input has moved as well");
 			}

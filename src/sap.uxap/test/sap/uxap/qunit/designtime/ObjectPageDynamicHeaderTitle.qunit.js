@@ -290,12 +290,12 @@ sap.ui.define([
 	// Check if the move action is working properly
 	var fnConfirmActionsContentElement1IsOn3rdPosition = function(oAppComponent, oViewAfterAction, assert) {
 		assert.strictEqual( oViewAfterAction.byId("action1").getId(),                   // Id of element at first position in original view
-							oViewAfterAction.byId("title").getActions() [2].getId(),   // Id of third element in group after change has been applied
+							oViewAfterAction.byId("title").getActions()[2].getId(),     // Id of third element in group after change has been applied
 							"then the control has been moved to the right position");
 	};
 	var fnConfirmActionsContentElement1IsOn1stPosition = function(oAppComponent, oViewAfterAction, assert) {
 		assert.strictEqual( oViewAfterAction.byId("action1").getId(),                   // Id of element at first position in original view
-							oViewAfterAction.byId("title").getActions() [0].getId(),   // Id of third element in group after change has been applied
+							oViewAfterAction.byId("title").getActions()[0].getId(),     // Id of third element in group after change has been applied
 							"then the control has been moved to the previous position");
 	};
 	// Use elementActionTest to check if a control is ready for the move action of UI adaptation

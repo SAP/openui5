@@ -49,7 +49,7 @@ function(
 		}
 	};
 
-	var fnAddTitleToFirstGroupIfNeeded = function(oModifier, aContent, oSimpleForm, mPropertyBag, aStopToken, sGroupId) {
+	var fnAddTitleToFirstGroupIfNeeded = function(oChange, oModifier, aContent, oSimpleForm, mPropertyBag, aStopToken, sGroupId) {
 		if (fnFirstGroupWithoutTitle(oModifier, aStopToken, aContent)) {
 			var oView = mPropertyBag.view;
 			var oAppComponent = mPropertyBag.appComponent;
@@ -57,6 +57,10 @@ function(
 			var oTitle = oModifier.createControl("sap.ui.core.Title", oAppComponent, oView, sGroupId);
 			oModifier.setProperty(oTitle, "text", "");
 			oModifier.insertAggregation(oSimpleForm, "content", oTitle, 0, oView);
+
+			var oNewRevertData = oChange.getRevertData();
+			oNewRevertData.createdTitleSelector = mPropertyBag.modifier.getSelector(oTitle, mPropertyBag.appComponent);
+			oChange.setRevertData(oNewRevertData);
 		}
 
 		return oModifier.getAggregation(oSimpleForm, "content");
@@ -290,7 +294,7 @@ function(
 
 			// If needed, insert a Title for the first group.
 			if (mMovedElement.target.groupIndex === 0 || !oMovedGroup) {
-				aContent = fnAddTitleToFirstGroupIfNeeded(oModifier, aContent, oSimpleForm, mPropertyBag, aStopGroupToken, oContent.newControlId);
+				aContent = fnAddTitleToFirstGroupIfNeeded(oChange, oModifier, aContent, oSimpleForm, mPropertyBag, aStopGroupToken, oContent.newControlId);
 			}
 
 			var iMovedGroupIndex = oMovedGroup ? aContent.indexOf(oMovedGroup) : 0;
@@ -394,12 +398,20 @@ function(
 		var oModifier = mPropertyBag.modifier;
 		var oAppComponent = mPropertyBag.appComponent;
 		var oView = mPropertyBag.view;
-		var aContentSelectors = oChange.getRevertData().content;
+		var oRevertData = oChange.getRevertData();
+		var aContentSelectors = oRevertData.content;
 
 		var aContent = aContentSelectors.map(function(oSelector) {
 			return oModifier.bySelector(oSelector, oAppComponent, oView);
 		});
 		fnRemoveAndInsertAggregation(oModifier, oSimpleForm, MoveSimpleForm, aContent, oView);
+		// destroy implicitly created title
+		var oCreatedTitleSelector = oRevertData.createdTitleSelector;
+		var oCreatedTitle = mPropertyBag.modifier.bySelector(oCreatedTitleSelector, mPropertyBag.appComponent);
+		if (oCreatedTitle) {
+			oCreatedTitle.destroy();
+		}
+
 		oChange.resetRevertData();
 
 		return true;

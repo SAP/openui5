@@ -1,4 +1,3 @@
-/*global QUnit*/
 sap.ui.define([
 	"sap/ui/dt/enablement/elementDesigntimeTest",
 	"sap/ui/rta/enablement/elementActionTest",
@@ -6,13 +5,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Title",
 	"sap/m/Button",
-	"sap/f/changeHandler/MoveDynamicPageTitleActions",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/fl/Change",
-	"sap/ui/core/Core",
-	"sap/ui/core/ComponentContainer",
-	"sap/ui/core/UIComponent",
-	"sap/ui/core/mvc/XMLView"
+	"sap/ui/core/Core"
 ],
 function (
 	elementDesigntimeTest,
@@ -21,13 +14,7 @@ function (
 	Text,
 	Title,
 	Button,
-	MoveDynamicPageTitleActions,
-	JSControlTreeModifier,
-	Change,
-	Core,
-	ComponentContainer,
-	UIComponent,
-	XMLView
+	Core
 ) {
 	"use strict";
 
@@ -463,143 +450,55 @@ function (
 			afterRedo : fnConfirmActionElementsAreSplit
 		});
 
-		 // --------- MOVING THE CONTROL'S ACTIONS CONTENT ---------
-		 // Check if the move action is working properly
-		 var fnConfirmActionsElement1IsOn3rdPosition = function(oAppComponent, oViewAfterAction, assert) {
+		// --------- MOVING THE CONTROL'S ACTIONS CONTENT ---------
+		// Check if the move action is working properly
+		var fnConfirmActionsElement1IsOn3rdPosition = function(oAppComponent, oViewAfterAction, assert) {
 
-		 assert.strictEqual( oViewAfterAction.byId("action1").getId(),                   // Id of element at first position in original view
-		 oViewAfterAction.byId("title").getActions()[2].getId(),   // Id of third element in group after change has been applied
-		 "then the control has been moved to the right position");
-		 };
-		 var fnConfirmActionsElement1IsOn1stPosition = function(oAppComponent, oViewAfterAction, assert) {
-		 assert.strictEqual( oViewAfterAction.byId("action1").getId(),                   // Id of element at first position in original view
-		 oViewAfterAction.byId("title").getActions()[0].getId(),   // Id of first element in group after change has been undone
-		 "then the control has been moved to the previous position");
-		 };
-		 // Use elementActionTest to check if a control is ready for the move action of UI adaptation
-		 elementActionTest("Checking the move action for a simple control in DynamicPageTitle's action aggregation", {
-		 xmlView : '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.f">' +
-			 '<DynamicPageTitle id="title">' +
-				 '<actions>' +
-				 '<m:Button id="action1" text="Action 1" />' +
-				 '<m:Button id="action2" text="Action 2" />' +
-				 '<m:Button id="action3" text="Action 3" />' +
-				 '</actions>' +
-			 '</DynamicPageTitle>' +
-		 '</mvc:View>'
-		 ,
-		 action : {
-		 name : "move",
-		 controlId : "title",
-		 parameter : function(oView){
-			 return {
-				 movedElements : [{
-					 element : oView.byId("action1"),
-					 sourceIndex : 0,
-					 targetIndex : 2
-				 }],
-				 source : {
-					 aggregation: "actions",
-					 parent: oView.byId("title")
-				 },
-				 target : {
-					 aggregation: "actions",
-					 parent: oView.byId("title")
-				 }
-			 };
-		 }
-		 },
-		 afterAction : fnConfirmActionsElement1IsOn3rdPosition,
-		 afterUndo : fnConfirmActionsElement1IsOn1stPosition,
-		 afterRedo : fnConfirmActionsElement1IsOn3rdPosition
-		 });
-
-		// --------- REVERT THE CHANGES ON CONTROL'S ACTIONS CONTENT ---------
-		// Check if the revert for actions' move is working properly
-		function createChangeDefinition() {
-			return jQuery.extend(true, {}, {
-				"changeType": "moveActions"
-			});
-		}
-
-		QUnit.module("Revert Actions on DynamicPageTitle's actions aggregation", {
-			beforeEach: function(assert) {
-
-				var oXmlString = [
-					'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.f" xmlns:m="sap.m">',
-					'<DynamicPageTitle id="title">',
-					'<actions>',
-					'<m:Button id="action1" text="Action 1" />',
-					'<m:Button id="action2" text="Action 2" />',
-					'<m:Button id="action3" text="Action 3" />',
+		assert.strictEqual(oViewAfterAction.byId("action1").getId(),                   // Id of element at first position in original view
+			oViewAfterAction.byId("title").getActions()[2].getId(),   // Id of third element in group after change has been applied
+			"then the control has been moved to the right position");
+		};
+		var fnConfirmActionsElement1IsOn1stPosition = function(oAppComponent, oViewAfterAction, assert) {
+		assert.strictEqual(oViewAfterAction.byId("action1").getId(),                   // Id of element at first position in original view
+			oViewAfterAction.byId("title").getActions()[0].getId(),   // Id of first element in group after change has been undone
+			"then the control has been moved to the previous position");
+		};
+		// Use elementActionTest to check if a control is ready for the move action of UI adaptation
+		elementActionTest("Checking the move action for a simple control in DynamicPageTitle's action aggregation", {
+			xmlView : '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.f">' +
+				'<DynamicPageTitle id="title">' +
+					'<actions>' +
+					'<m:Button id="action1" text="Action 1" />' +
+					'<m:Button id="action2" text="Action 2" />' +
+					'<m:Button id="action3" text="Action 3" />' +
 					'</actions>' +
-					'</DynamicPageTitle>' +
-					'</mvc:View>'
-				].join('');
-
-				var Comp,
-				done = assert.async();
-
-				XMLView.create({
-					id: "comp---view",
-					definition: oXmlString
-				}).then(function (oView) {
-					Comp = UIComponent.extend("test", {
-						metadata: {
-							manifest : {
-								"sap.app": {
-									"id": "test",
-									"type": "application"
-								}
-							}
+				'</DynamicPageTitle>' +
+			'</mvc:View>'
+			,
+			action : {
+				name : "move",
+				controlId : "title",
+				parameter : function(oView) {
+					return {
+						movedElements : [{
+							element : oView.byId("action1"),
+							sourceIndex : 0,
+							targetIndex : 2
+						}],
+						source : {
+							aggregation: "actions",
+							parent: oView.byId("title")
 						},
-						createContent : function() {
-							return oView;
+						target : {
+							aggregation: "actions",
+							parent: oView.byId("title")
 						}
-					});
-
-					this.oUiComponent = new Comp("comp");
-					this.oUiComponentContainer = new ComponentContainer({
-						component : this.oUiComponent
-					});
-
-					this.oUiComponentContainer.placeAt("qunit-fixture");
-					Core.applyChanges();
-					done();
-				}.bind(this));
+					};
+				}
 			},
-
-			afterEach: function() {
-				this.oUiComponentContainer.destroy();
-			}
-		});
-
-		QUnit.test("Revert move actions", function(assert) {
-
-			var oChange = new Change(createChangeDefinition()),
-				oChangeHandler = MoveDynamicPageTitleActions,
-				oView = this.oUiComponent.getRootControl();
-
-			var oDynamicPageTitle = oView.getContent()[0],
-				oPropertyBag = {
-					modifier: JSControlTreeModifier,
-					appComponent: this.oUiComponent,
-					view: oView
-				};
-
-			oChangeHandler.completeChangeContent(oChange, {
-				movedElements: [{
-					"id": "comp---view--action1",
-					"sourceIndex": 0,
-					"targetIndex": 2
-				}]
-			}, oPropertyBag);
-
-			oChangeHandler.applyChange(oChange, oDynamicPageTitle, oPropertyBag);
-			assert.strictEqual(oView.byId("action1").getId(), oDynamicPageTitle.getActions()[2].getId(), "The change was successfully executed.");
-
-			oChangeHandler.revertChange(oChange, oDynamicPageTitle, oPropertyBag);
-			assert.strictEqual(oView.byId("action1").getId(), oDynamicPageTitle.getActions()[0].getId(), "The change was successfully reverted.");
+			afterAction : fnConfirmActionsElement1IsOn3rdPosition,
+			afterUndo : fnConfirmActionsElement1IsOn1stPosition,
+			afterRedo : fnConfirmActionsElement1IsOn3rdPosition
 		});
 	});
 });
