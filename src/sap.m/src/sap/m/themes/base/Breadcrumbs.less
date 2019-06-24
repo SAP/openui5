@@ -4,14 +4,17 @@
 /* ================================== */
 
 .sapMBreadcrumbs {
-	margin: 0 0 0.5rem 0;
-	padding: 0;
 	white-space: nowrap;
-	list-style-type: none;
 	display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
 	display: -webkit-flex; /* NEW - Chrome */
 	display: flex;
 	outline: none;
+
+	> ol {
+		margin: 0 0 0.5rem 0;
+		padding: 0;
+		list-style-type: none;
+	}
 
 	.sapMSlt {
 		border: 0;

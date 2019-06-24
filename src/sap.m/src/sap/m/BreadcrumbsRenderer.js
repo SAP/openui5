@@ -26,10 +26,11 @@ sap.ui.define(["sap/m/Text"], function (Text) {
 		var aControls = oControl._getControlsForBreadcrumbTrail(),
 			oSelect = oControl._getSelect();
 
-		oRm.openStart("ul", oControl);
+		oRm.openStart("nav", oControl);
 		oRm.class("sapMBreadcrumbs");
-		oRm.attr("role", "navigation");
 		oRm.attr("aria-label", BreadcrumbsRenderer._getResourceBundleText("BREADCRUMB_LABEL"));
+		oRm.openEnd();
+		oRm.openStart("ol");
 		oRm.openEnd();
 
 		if (oSelect.getVisible()) {
@@ -40,12 +41,12 @@ sap.ui.define(["sap/m/Text"], function (Text) {
 			this._renderControlInListItem(oRm, oChildControl, oChildControl instanceof Text);
 		}, this);
 
-		oRm.close("ul");
+		oRm.close("ol");
+		oRm.close("nav");
 	};
 
 	BreadcrumbsRenderer._renderControlInListItem = function (oRm, oControl, bSkipSeparator, sAdditionalItemClass) {
 		oRm.openStart("li");
-		oRm.attr("role", "presentation");
 		oRm.class("sapMBreadcrumbsItem");
 		oRm.class(sAdditionalItemClass);
 		oRm.openEnd();
