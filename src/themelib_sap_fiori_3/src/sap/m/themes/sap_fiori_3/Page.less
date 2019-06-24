@@ -110,6 +110,15 @@
 	}
 }
 
+.sapMPageWithHeader {
+	&.sapFShellBar-CTX > section {
+		top: 2.75rem;
+	}
+	&.sapMPageWithSubHeader.sapFShellBar-CTX > section {
+		top: 5.5rem;
+	}
+}
+
 /* Compact size */
 .sapUiSizeCompact {
 	/* Header and footer have 2.5 rem */
@@ -128,5 +137,14 @@
 
 	.sapMPageWithHeader.sapMPageWithSubHeader > section {
 		top: 4.5rem;
+	}
+
+	.sapMPageWithHeader {
+		&.sapFShellBar-CTX > section {
+			top: 2.75rem;
+		}
+		&.sapMPageWithSubHeader.sapFShellBar-CTX > section {
+			top: 4.75rem;
+		}
 	}
 }
