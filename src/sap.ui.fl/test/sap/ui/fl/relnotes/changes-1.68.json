@@ -7,6 +7,12 @@
         "type": "FIX",
         "text": " sap.ui.fl.FlexController:",
         "references": []
+      },
+      {
+        "id": "40b95266ce58d6fcf3f41c525033a3a1dde73df0",
+        "type": "FIX",
+        "text": " fix tests for SmartVariantManagement apply API",
+        "references": []
       }
     ]
   }

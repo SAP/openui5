@@ -25,6 +25,24 @@
         "type": "FIX",
         "text": " v2.ODataModel: createCustomParams throws uncaught exception",
         "references": []
+      },
+      {
+        "id": "7f7e1bff64860cd4757572d64308b9cc151c0f20",
+        "type": "FIX",
+        "text": " ManagedObjectModel: Only checkUpdate for resolved bindings",
+        "references": []
+      },
+      {
+        "id": "6cf23096b4f8368f7bc01cb7f873a4a5d0e1f1bb",
+        "type": "FIX",
+        "text": " Opa: iframe size and position in Chrome 75",
+        "references": []
+      },
+      {
+        "id": "7e4e20af29232c7e202c7e8e91adb6edce6bb681",
+        "type": "FIX",
+        "text": " core.Component: Services shall be inherited by child components",
+        "references": []
       }
     ]
   }

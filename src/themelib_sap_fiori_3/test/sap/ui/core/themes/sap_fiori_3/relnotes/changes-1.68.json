@@ -19,6 +19,30 @@
         "type": "FIX",
         "text": " sap.m.Shell: has correct background color now",
         "references": []
+      },
+      {
+        "id": "014fc9b246b0eb491d96b1d5a865ed4fbcbf4f6d",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: appointment parameter colors in fiori 3 alligned",
+        "references": []
+      },
+      {
+        "id": "0590b526b47c03b4e7f0f2530615ad68245e8eb4",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Styles adjustments",
+        "references": []
+      },
+      {
+        "id": "1dbac1c01a4a26cdc74132e52b1bee796ccc0d91",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Success value state border corrected",
+        "references": []
+      },
+      {
+        "id": "16a32024bbf57fa92aa225f463b090d0f9aa438b",
+        "type": "FIX",
+        "text": " sap.tnt.ToolPage: Fiori 3 theme unnecessary spacing is now removed",
+        "references": []
       }
     ]
   }

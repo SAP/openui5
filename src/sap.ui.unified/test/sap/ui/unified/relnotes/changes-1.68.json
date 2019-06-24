@@ -19,6 +19,24 @@
         "type": "FIX",
         "text": " sap.ui.unified.CalendarRow: does not use deprecated CSS parameters",
         "references": []
+      },
+      {
+        "id": "1122f5ec9e4342eb636dfc1b1f96d53771f37eff",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Unnecessary readings now prevented",
+        "references": []
+      },
+      {
+        "id": "2be3c57d1897c23f1ac9e714ea9d5610b1936540",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarMonthInterval: Unnecessary readings now prevented",
+        "references": []
+      },
+      {
+        "id": "4eceae5a641b0c4032934488a3cf9d897acf9094",
+        "type": "FIX",
+        "text": " sap.ui.unified.Currency: Demokit sample fix",
+        "references": []
       }
     ]
   }

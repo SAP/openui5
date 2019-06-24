@@ -7,6 +7,12 @@
         "type": "FIX",
         "text": " sap.uxap.ObjectPageSection: Flickering in Mozilla Firefox fixed",
         "references": []
+      },
+      {
+        "id": "86e989bf16a0594251678f9b39908adc96c130a1",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Improved Runtime Adaptation (RTA) behavior",
+        "references": []
       }
     ]
   }

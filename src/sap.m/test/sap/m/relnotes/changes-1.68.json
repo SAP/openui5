@@ -187,6 +187,108 @@
         "type": "FIX",
         "text": " sap.m.UploadCollection : Download of item not happening when factory binding is used.",
         "references": []
+      },
+      {
+        "id": "7e137fd9346b33ec66ff59822a40a0f2fb6140e7",
+        "type": "FEATURE",
+        "text": " sap.m.SelectDialog: New API method that removes all selections",
+        "references": []
+      },
+      {
+        "id": "20c69a1d2c6dc8a00aa8a50cab9d95cb2dc9ed79",
+        "type": "FIX",
+        "text": " sap.m.App: Randomly failing QUnit is fixed",
+        "references": []
+      },
+      {
+        "id": "279dbf5cd6c549235d49b949c7d26226f6f43672",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumbs: Fixed current location rendering",
+        "references": []
+      },
+      {
+        "id": "b3535a6547b99e31f77ba1add5fc467a7743932f",
+        "type": "FIX",
+        "text": " sap.m.Button: CombineButtons - MenuButton visible and enable properties are bound to the menu items properties",
+        "references": []
+      },
+      {
+        "id": "cb750900e70ba80201316f587ac2e1daf150966d",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Change event fired properly",
+        "references": []
+      },
+      {
+        "id": "80eb0c16f42d4e8e25108f9f52b305a15477aa5a",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Item to ListItem property forwarding",
+        "references": []
+      },
+      {
+        "id": "4e8c61d9cfbc4f91547acd30a10db6fd3b4b1c01",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Now in IE the hour slider is initially opened",
+        "references": []
+      },
+      {
+        "id": "b48a794062796b77f38e79e6d837218579fb705f",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Position is now correct on IE browser",
+        "references": []
+      },
+      {
+        "id": "18745775bf2109dc473fd11a6973a7ff694fba97",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Allow custom value state texts",
+        "references": []
+      },
+      {
+        "id": "34d271c415484b9a110e36998fdd3e62c6736c35",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Better synchronisation between selected keys \u0026 items",
+        "references": []
+      },
+      {
+        "id": "c10358b28df580647d3e1750fe7ca0e52d6b0c0f",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Tokenizer space calculation fixed",
+        "references": []
+      },
+      {
+        "id": "c22cd43c7ae93613549a4df9faecb3740fbcfc8e",
+        "type": "FIX",
+        "text": " sap.m.QuickView: DemoKit sample memory leak is now fixed",
+        "references": []
+      },
+      {
+        "id": "0590b526b47c03b4e7f0f2530615ad68245e8eb4",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Styles adjustments",
+        "references": []
+      },
+      {
+        "id": "1122f5ec9e4342eb636dfc1b1f96d53771f37eff",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Unnecessary readings now prevented",
+        "references": []
+      },
+      {
+        "id": "ca85d4f33ef282eb494f2e9949c8f505dd91f8f4",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Do not auto-correct values without user interaction",
+        "references": []
+      },
+      {
+        "id": "84034ea98d411c851c19385708aaa1891119c044",
+        "type": "FIX",
+        "text": " sap.m.TableSelectDialog: DemoKit example now resets the filter",
+        "references": []
+      },
+      {
+        "id": "04436515e8d951f1f49d42baf54a059cef50a00f",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Proper growing of the ghost container",
+        "references": []
       }
     ]
   }

@@ -7,6 +7,12 @@
         "type": "FIX",
         "text": " sap.ui.layout.DynamicSideContent: Toggle on mobile is now working",
         "references": []
+      },
+      {
+        "id": "bdc6ed6a5871dc3156b299083b3699e07f5ad22d",
+        "type": "FIX",
+        "text": " AlignedFlowLayout: End content alignment fixed",
+        "references": []
       }
     ]
   }
