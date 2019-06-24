@@ -1996,25 +1996,30 @@ sap.ui.define([
 	 *   The (relative) $metadata URL, for example "../ValueListService/$metadata"
 	 * @param {string} [sGroupId]
 	 *   The group ID, for example "$direct"
+	 * @param {boolean} [bAutoExpandSelect=false]
+	 *   Whether the model is to be created with autoExpandSelect
 	 * @returns {sap.ui.model.odata.v4.ODataModel}
 	 *   The value list model
 	 *
 	 * @private
 	 */
-	ODataMetaModel.prototype.getOrCreateSharedModel = function (sUrl, sGroupId) {
-		var oSharedModel;
+	ODataMetaModel.prototype.getOrCreateSharedModel = function (sUrl, sGroupId, bAutoExpandSelect) {
+		var sCacheKey,
+			oSharedModel;
 
 		sUrl = this.getAbsoluteServiceUrl(sUrl);
-		oSharedModel = mSharedModelByUrl.get(sUrl);
+		sCacheKey = !!bAutoExpandSelect + sUrl;
+		oSharedModel = mSharedModelByUrl.get(sCacheKey);
 		if (!oSharedModel) {
 			oSharedModel = new this.oModel.constructor({
+				autoExpandSelect : bAutoExpandSelect,
 				groupId : sGroupId,
 				operationMode : OperationMode.Server,
 				serviceUrl : sUrl,
 				synchronizationMode : "None"
 			});
 			oSharedModel.setDefaultBindingMode(BindingMode.OneWay);
-			mSharedModelByUrl.set(sUrl, oSharedModel);
+			mSharedModelByUrl.set(sCacheKey, oSharedModel);
 			oSharedModel.oRequestor.mHeaders["X-CSRF-Token"]
 				= this.oModel.oRequestor.mHeaders["X-CSRF-Token"];
 		}
@@ -2678,6 +2683,10 @@ sap.ui.define([
 	 * @param {string} sPropertyPath
 	 *   An absolute path to an OData property within the OData data model or a (meta) path to an
 	 *   operation parameter, for example "/TEAMS(1)/acme.NewAction/Team_ID"
+	 * @param {boolean} [bAutoExpandSelect=false]
+	 *   The value of the parameter <code>autoExpandSelect</code> for value list models created by
+	 *   this method. If the value list model is the data model associated with this meta model,
+	 *   this flag has no effect. Supported since 1.68.0
 	 * @returns {Promise}
 	 *   A promise which is resolved with a map of qualifier to value list mapping objects
 	 *   structured as defined by <code>com.sap.vocabularies.Common.v1.ValueListType</code>;
@@ -2712,7 +2721,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.45.0
 	 */
-	ODataMetaModel.prototype.requestValueListInfo = function (sPropertyPath) {
+	ODataMetaModel.prototype.requestValueListInfo = function (sPropertyPath, bAutoExpandSelect) {
 		var sPropertyMetaPath = this.getMetaPath(sPropertyPath),
 			sParentMetaPath = sPropertyMetaPath.slice(0, sPropertyMetaPath.lastIndexOf("/")),
 			sQualifiedName = sParentMetaPath.slice(sParentMetaPath.lastIndexOf("/") + 1),
@@ -2754,7 +2763,8 @@ sap.ui.define([
 						+ "'com.sap.vocabularies.Common.v1.ValueListWithFixedValues'");
 				}
 				if ("CollectionRoot" in mValueListMapping) {
-					oModel = that.getOrCreateSharedModel(mValueListMapping.CollectionRoot);
+					oModel = that.getOrCreateSharedModel(mValueListMapping.CollectionRoot,
+						undefined, bAutoExpandSelect);
 					if (oValueListInfo[sQualifier]
 							&& oValueListInfo[sQualifier].$model === oModel) {
 						// same model -> allow overriding the qualifier
@@ -2789,7 +2799,8 @@ sap.ui.define([
 
 				// fetch mappings for each entry and wait for all
 				return Promise.all(aMappingUrls.map(function (sMappingUrl) {
-					var oValueListModel = that.getOrCreateSharedModel(sMappingUrl);
+					var oValueListModel = that.getOrCreateSharedModel(sMappingUrl, undefined,
+							bAutoExpandSelect);
 					// fetch the mappings for the given mapping URL
 					return that.fetchValueListMappings(
 						oValueListModel, sNamespace,

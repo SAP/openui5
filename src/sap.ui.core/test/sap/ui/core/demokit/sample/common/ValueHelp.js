@@ -139,7 +139,7 @@ sap.ui.define([
 				oComboBox = this.getAggregation("field"),
 				that = this;
 
-			oBinding.requestValueListInfo().then(function (mValueListInfo) {
+			oBinding.requestValueListInfo(true).then(function (mValueListInfo) {
 				var oItem = new Item(),
 					oValueListMapping = mValueListInfo[""],
 					aParameters = oValueListMapping.Parameters,
@@ -180,7 +180,7 @@ sap.ui.define([
 				oInput = this.getAggregation("field"),
 				that = this;
 
-			oBinding.requestValueListInfo().then(function (mValueListInfo) {
+			oBinding.requestValueListInfo(true).then(function (mValueListInfo) {
 				var oButton = new Button({
 						icon : "sap-icon://decline",
 						tooltip : "Close"
@@ -211,11 +211,6 @@ sap.ui.define([
 
 				oPopover.setTitle("Value Help: "
 					+ (oValueListMapping.Label || oValueListMapping.CollectionPath));
-				oTable.setModel(oValueListMapping.$model);
-				oTable.bindItems({
-					path : "/" + oValueListMapping.CollectionPath,
-					template : oColumnListItem
-				});
 				oValueListMapping.Parameters.forEach(function (oParameter) {
 					var sParameterPath = oParameter.ValueListProperty;
 
@@ -228,6 +223,11 @@ sap.ui.define([
 					}));
 					oColumnListItem.addCell(new Text({text : "{" + sParameterPath + "}"}));
 				});
+				oTable.bindItems({
+					path : "/" + oValueListMapping.CollectionPath,
+					template : oColumnListItem
+				});
+				oTable.setModel(oValueListMapping.$model);
 				oTable.attachSelectionChange(onSelectionChange);
 				oButton.attachPress(onClose);
 				oPopover.addContent(oTable);
