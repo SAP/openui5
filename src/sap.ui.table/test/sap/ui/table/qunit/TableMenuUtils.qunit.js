@@ -340,12 +340,12 @@ sap.ui.define([
 		// Open the context menu of column 1.
 		TableUtils.Menu.openColumnContextMenu(oTable, 0);
 		this.assertColumnContextMenuOpen(assert, 0, true);
-		this.assertFirstMenuItemHovered(assert, oColumnA.getMenu(), false);
+		this.assertFirstMenuItemHovered(assert, oColumnA.getMenu(), true);
 
 		// Trying to open the context menu of column 1 again will leave it open.
 		TableUtils.Menu.openColumnContextMenu(oTable, 0, true);
 		this.assertColumnContextMenuOpen(assert, 0, true);
-		this.assertFirstMenuItemHovered(assert, oColumnA.getMenu(), false);
+		this.assertFirstMenuItemHovered(assert, oColumnA.getMenu(), true);
 
 		// Open the context menu of column 2. The context menu of column 1 will be closed.
 		TableUtils.Menu.openColumnContextMenu(oTable, 1, true);
@@ -422,7 +422,7 @@ sap.ui.define([
 		assert.strictEqual(oTable._oCellContextMenu.getItems()[0].mEventRegistry.select.length, 1,
 			"One menu item select event handler has been attached");
 		this.assertDataCellContextMenuOpen(assert, 0, 0, true);
-		this.assertFirstMenuItemHovered(assert, oTable._oCellContextMenu, false);
+		this.assertFirstMenuItemHovered(assert, oTable._oCellContextMenu, true);
 		oTable._oCellContextMenu.__isOriginal = true;
 		oTable._oCellContextMenu.getItems()[0].__isOriginal = true;
 		oTable._oCellContextMenu.getItems()[0].mEventRegistry.select[0].fFunction.__isOriginal = true;

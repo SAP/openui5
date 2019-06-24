@@ -376,7 +376,7 @@ sap.ui.define([
 		qutils.triggerMouseEvent(oElem, "click");
 		assert.ok(oColumnMenu.bOpen, "Menu is opened");
 		bFirstItemHovered = oColumnMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
-		assert.strictEqual(!bFirstItemHovered, true, "The first item in the menu is not hovered");
+		assert.strictEqual(bFirstItemHovered, true, "The first item in the menu is hovered");
 
 		// Close the menu with the left mouse button.
 		this.triggerMouseDownEvent(oElem, 0);
@@ -389,7 +389,7 @@ sap.ui.define([
 		jQuery(oElem).trigger("contextmenu");
 		assert.ok(oColumnMenu.bOpen, "Menu is opened");
 		bFirstItemHovered = oColumnMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
-		assert.strictEqual(!bFirstItemHovered, true, "The first item in the menu is not hovered");
+		assert.strictEqual(bFirstItemHovered, true, "The first item in the menu is hovered");
 		oContextMenuEventArgument = oContextMenuEvent.args[0][0];
 		oContextMenuEvent.reset();
 		assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
@@ -408,7 +408,7 @@ sap.ui.define([
 		qutils.triggerMouseEvent(oElem, "click");
 		assert.ok(oColumnMenu.bOpen, "Menu is opened");
 		bFirstItemHovered = oColumnMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
-		assert.strictEqual(!bFirstItemHovered, true, "The first item in the menu is not hovered");
+		assert.strictEqual(bFirstItemHovered, true, "The first item in the menu is hovered");
 
 		// Close the menu with the right mouse button.
 		this.triggerMouseDownEvent(oElem, 2);
@@ -456,7 +456,7 @@ sap.ui.define([
 		jQuery(oElem).trigger("contextmenu");
 		assert.ok(oTable._oCellContextMenu.bOpen, "Menu is opened");
 		bFirstItemHovered = oTable._oCellContextMenu.$().find("li:first").hasClass("sapUiMnuItmHov");
-		assert.strictEqual(!bFirstItemHovered, true, "The first item in the menu is not hovered");
+		assert.strictEqual(bFirstItemHovered, true, "The first item in the menu is hovered");
 		oContextMenuEventArgument = oContextMenuEvent.args[0][0];
 		oContextMenuEvent.reset();
 		assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");

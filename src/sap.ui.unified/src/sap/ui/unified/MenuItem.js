@@ -133,9 +133,11 @@ sap.ui.define(['sap/ui/core/IconPool', './MenuItemBase', './library'],
 		this.$().toggleClass("sapUiMnuItmHov", bHovered);
 	};
 
-	MenuItem.prototype.focus = function(bMouseEvent){
-		if (this.getEnabled() && this.getVisible() && !bMouseEvent) {
+	MenuItem.prototype.focus = function(oMenu){
+		if (this.getEnabled() && this.getVisible()) {
 			this.$().focus();
+		} else {
+			oMenu.focus();
 		}
 	};
 
