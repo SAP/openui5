@@ -1283,7 +1283,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			}
 			oFileName = new sap.m.Link(sItemId + "-ta_filenameHL", {
 				enabled : bEnabled,
-				press : [that, this._triggerLink, this]
+				press : [function(oEvent) {this._triggerLink(oEvent, that ,oItem);}, this]
 			}).addStyleClass("sapMUCFileName");
 			oFileName.setModel(oItem.getModel());
 			oFileName.setText(sFileNameLong);
@@ -1402,7 +1402,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		}
 		if (this.sErrorState !== "Error" && jQuery.trim(oItem.getProperty("url"))) {
 			oItemIcon.attachPress(function(oEvent) {
-				sap.m.UploadCollection.prototype._triggerLink(oEvent, that);
+				sap.m.UploadCollection.prototype._triggerLink(oEvent, that, oItem);
 			});
 		}
 		return oItemIcon;
@@ -2609,10 +2609,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @returns {void}
 	 * @private
 	 */
-	UploadCollection.prototype._triggerLink = function(oEvent, oContext) {
-		var iLine = null;
-		var aId;
-
+	UploadCollection.prototype._triggerLink = function(oEvent, oContext, oItem) {
 		if (oContext.editModeItem) {
 			//In case there is a list item in edit mode, the edit mode has to be finished first.
 			sap.m.UploadCollection.prototype._handleOk(oEvent, oContext, oContext.editModeItem, true);
@@ -2622,9 +2619,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			}
 			oContext.sFocusId = oEvent.getParameter("id");
 		}
-		aId = oEvent.oSource.getId().split("-");
-		iLine = aId[aId.length - 2];
-		sap.m.URLHelper.redirect(oContext.aItems[iLine].getProperty("url"), true);
+		sap.m.URLHelper.redirect(oItem.getProperty("url"), true);
 	};
 
 	// ================================================================================
