@@ -10,7 +10,9 @@ sap.ui.define([],
 		 * @namespace
 		 */
 
-		var SearchRenderer = {};
+		var SearchRenderer = {
+			apiVersion: 2
+		};
 
 		SearchRenderer.render = function (oRm, oSearch) {
 			var oSearchField = oSearch._getSearchField(),
@@ -20,20 +22,18 @@ sap.ui.define([],
 				bPhoneMode = oSearch.getPhoneMode(),
 				iSearchWidth = oSearch.getWidth();
 
-			oRm.write("<div");
-			oRm.writeControlData(oSearch);
+			oRm.openStart("div", oSearch);
 			if (bIsOpen) {
-				oRm.addClass("sapFShellBarSearch");
+				oRm.class("sapFShellBarSearch");
 			}
 			if (bPhoneMode) {
-				oRm.addClass("sapFShellBarSearchFullWidth");
+				oRm.class("sapFShellBarSearchFullWidth");
 			}
 			if (iSearchWidth && bIsOpen && !bPhoneMode) {
-				oRm.addStyle("width", iSearchWidth);
+				oRm.style("width", iSearchWidth);
 			}
-			oRm.writeClasses();
-			oRm.writeStyles();
-			oRm.write(">");
+			oRm.openEnd();
+
 			if (bIsOpen) {
 				oRm.renderControl(oSearchField);
 			}
@@ -41,7 +41,8 @@ sap.ui.define([],
 			if (bIsOpen && bPhoneMode) {
 				oRm.renderControl(oCancelButton);
 			}
-			oRm.write("</div>");
+
+			oRm.close("div");
 		};
 
 		return SearchRenderer;

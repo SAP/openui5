@@ -400,27 +400,6 @@ function(
 		return this;
 	};
 
-	Toolbar.prototype.setStyle = function(sNewStyle) {
-		var sTbStyleClass, bEnable;
-
-		if (this.getStyle() === sNewStyle) {
-			return this;
-		}
-
-		this.setProperty("style", sNewStyle, true /* suppress invalidate */);
-
-		if (this.getDomRef()) {
-			Object.keys(ToolbarStyle).forEach(function(sStyleKey) {
-
-				sTbStyleClass = "sapMTB" + sStyleKey;
-				bEnable = (sStyleKey === sNewStyle);
-				this.$().toggleClass(sTbStyleClass, bEnable);
-			}, this);
-		}
-
-		return this;
-	};
-
 	/**
 	 * Returns the currently applied design property of the Toolbar.
 	 *
