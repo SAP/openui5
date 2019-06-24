@@ -32,6 +32,8 @@ sap.ui.define([
 	var setFocusOutsideOfTable = window.setFocusOutsideOfTable;
 	var fakeGroupRow = window.fakeGroupRow;
 
+	var VisibleRowCountMode = tableLibrary.VisibleRowCountMode;
+
 	//************************************************************************
 	// Helper Functions
 	//************************************************************************
@@ -3857,6 +3859,170 @@ sap.ui.define([
 				oKeystroke.trigger.apply(qutils, aArguments);
 			}
 		}
+	});
+
+	QUnit.module("TableKeyboardDelegate2 - Navigation > After changing the DOM structure", {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
+				visibleRowCountMode: VisibleRowCountMode.Fixed,
+				visibleRowCount: 3,
+				rows: {path: "/"},
+				models: new JSONModel(new Array(100))
+			}, function(oTable) {
+				oTable.addColumn(new Column({
+					label: new this.TestControl({text: "ColA"}),
+					template: new this.TestControl({text: "content"})
+				}));
+				oTable.addColumn(new Column({
+					label: new this.TestControl({text: "ColB"}),
+					template: new this.TestControl({text: "content"})
+				}));
+			}.bind(this));
+
+			return this.oTable.qunit.whenInitialRenderingFinished();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		},
+		TestControl: TableQUnitUtils.getTestControl()
+	});
+
+	QUnit.test("Add column", function(assert) {
+		var oTable = this.oTable;
+		var TestControl = this.TestControl;
+
+		oTable.qunit.getDataCell(1, 1).focus();
+		oTable.insertColumn(new Column({
+			template: new TestControl({text: "new"})
+		}), 0);
+		sap.ui.getCore().applyChanges();
+
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(1, 1), "The cell at the same position is focused");
+
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.LEFT, false, false, false);
+			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(1, 0), "ArrowLeft -> The cell to the left is focused");
+
+			oTable.qunit.getDataCell(1, 1).focus();
+			oTable.addColumn(new Column({
+				template: new TestControl({text: "new"})
+			}));
+			sap.ui.getCore().applyChanges();
+
+		}).then(oTable.qunit.whenRenderingFinished().then(function() {
+			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(1, 1), "The cell at the same position is focused");
+
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.RIGHT, false, false, false);
+			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(1, 2), "ArrowRight -> The cell to the right is focused");
+		}));
+	});
+
+	QUnit.test("Fix first column", function(assert) {
+		var oTable = this.oTable;
+
+		oTable.qunit.getDataCell(1, 1).focus();
+		oTable.setFixedColumnCount(1);
+		sap.ui.getCore().applyChanges();
+
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(1, 1), "The cell at the same position is focused");
+
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.LEFT, false, false, false);
+			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(1, 0), "ArrowLeft -> The cell to the left is focused");
+		});
+	});
+
+	QUnit.test("Add row", function(assert) {
+		var oTable = this.oTable;
+
+		oTable.qunit.getDataCell(2, 1).focus();
+		oTable.setVisibleRowCount(oTable.getVisibleRowCount() + 1);
+		sap.ui.getCore().applyChanges();
+
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(2, 1), "The cell at the same position is focused");
+
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.DOWN, false, false, false);
+			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(3, 1), "ArrowDown -> The cell below is focused");
+		});
+	});
+
+	QUnit.test("Fix first row", function(assert) {
+		var oTable = this.oTable;
+
+		oTable.qunit.getDataCell(1, 1).focus();
+		oTable.setFixedRowCount(1);
+		sap.ui.getCore().applyChanges();
+
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(1, 1), "The cell at the same position is focused");
+
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.UP, false, false, false);
+			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(0, 1), "ArrowUp -> The cell above is focused");
+		});
+	});
+
+	QUnit.test("Resize - VisibleRowCountMode = Auto", function(assert) {
+		var oTable = this.oTable;
+
+		oTable.setVisibleRowCountMode(VisibleRowCountMode.Auto);
+		sap.ui.getCore().applyChanges();
+
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			oTable.qunit.getDataCell(1, 1).focus();
+
+		}).then(oTable.qunit.$resize({height: "500px"})).then(function() {
+			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(1, 1),
+				"Height decreased: The data cell at the same position is focused");
+
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.UP, false, false, false);
+			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(0, 1), "ArrowUp -> The data cell above is focused");
+
+			oTable.qunit.getDataCell(1, 1).focus();
+
+		}).then(oTable.qunit.resetSize).then(function() {
+			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(1, 1),
+				"Height increased: The data cell at the same position is focused");
+
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.UP, false, false, false);
+			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(0, 1), "ArrowUp -> The data cell above is focused");
+
+			oTable.qunit.getDataCell(0, 1).focus();
+
+		}).then(oTable.qunit.$resize({height: "500px"})).then(function() {
+			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(0, 1),
+				"Height decreased: The data cell at the same position is focused");
+
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.UP, false, false, false);
+			assert.strictEqual(document.activeElement, oTable.qunit.getColumnHeaderCell(1), "ArrowUp -> The header cell above is focused");
+
+			oTable.qunit.getDataCell(0, 1).focus();
+
+		}).then(oTable.qunit.resetSize).then(function() {
+			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(0, 1),
+				"Height increased: The header cell at the same position is focused");
+
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.UP, false, false, false);
+			assert.strictEqual(document.activeElement, oTable.qunit.getColumnHeaderCell(1), "ArrowUp -> The header cell above is focused");
+
+			oTable.qunit.getColumnHeaderCell(1).focus();
+
+		}).then(oTable.qunit.$resize({height: "500px"})).then(function() {
+			assert.strictEqual(document.activeElement, oTable.qunit.getColumnHeaderCell(1),
+				"Height decreased: The header cell at the same position is focused");
+
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.DOWN, false, false, false);
+			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(0, 1), "ArrowDown -> The data cell below is focused");
+
+			oTable.qunit.getColumnHeaderCell(1).focus();
+
+		}).then(oTable.qunit.resetSize).then(function() {
+			assert.strictEqual(document.activeElement, oTable.qunit.getColumnHeaderCell(1),
+				"Height increased: The header cell at the same position is focused");
+
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.DOWN, false, false, false);
+			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(0, 1), "ArrowDown -> The data cell below is focused");
+		});
 	});
 
 	QUnit.module("TableKeyboardDelegate2 - Interaction > Shift+Up & Shift+Down (Range Selection)", {
