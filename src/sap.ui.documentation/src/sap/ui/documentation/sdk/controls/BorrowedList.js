@@ -23,26 +23,36 @@ sap.ui.define([
 				list: {type: "array"}
 			}
 		},
-		renderer: function (oRm, oControl) {
+		renderer: {
+			apiVersion: 2,
+
+			render: function (oRm, oControl) {
 			var aList = oControl.getList(),
 				oItem,
 				iLen,
 				i;
 
-			oRm.write("<div");
-			oRm.writeControlData(oControl);
-			oRm.write(">");
+			oRm.openStart("div", oControl);
+			oRm.openEnd();
 
 			// Render links
 			for (i = 0, iLen = aList.length; i < iLen; i++) {
 				oItem = aList[i];
-				oRm.write(['<a href="', oItem.link,
-					'" role="link" tabindex="0" class="sapMLnk sapMLnkMaxWidth sapUiTinyMargin">' , oItem.name,
-					'</a>'].join(""));
+
+				oRm.openStart("a");
+				oRm.attr("href", oItem.link)
+					.attr("role", "link")
+					.attr("tabindex", "0")
+					.class("sapMLnk")
+					.class("sapMLnkMaxWidth")
+					.class("sapUiTinyMargin")
+					.openEnd()
+					.text(oItem.name)
+					.close("a");
 			}
 
-			oRm.write("</div>");
+			oRm.close("div");
 		}
-	});
+	}});
 
 });

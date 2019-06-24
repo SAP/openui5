@@ -25,18 +25,19 @@ sap.ui.define([
 			}
 		},
 
-		renderer: function (oRm, oControl) {
-			oRm.write("<div");
-			oRm.writeControlData(oControl);
-			oRm.addClass("sapUiJSD");
-			oRm.writeClasses();
-			oRm.write(">");
+		renderer: {
+			apiVersion: 2,
+
+			render: function (oRm, oControl) {
+			oRm.openStart("div", oControl);
+			oRm.class("sapUiJSD");
+			oRm.openEnd();
 
 			// Sanitize HTML
-			oRm.write(sanitizeHTML(oControl.getText()));
+			oRm.unsafeHtml(sanitizeHTML(oControl.getText()));
 
-			oRm.write("</div>");
+			oRm.close("div");
 		}
-	});
+	}});
 
 });

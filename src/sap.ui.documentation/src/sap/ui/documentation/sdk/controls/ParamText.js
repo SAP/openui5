@@ -71,81 +71,76 @@ sap.ui.define([
 			return Device.system.phone && sPhoneText ? sPhoneText : this.getText();
 		},
 
-		renderer: function (oRm, oControl) {
+		renderer: {
+			apiVersion: 2,
+
+			render : function (oRm, oControl) {
 			var sHref = oControl.getHref();
 
 			if (sHref) {
-				oRm.write("<a");
-				oRm.writeAttributeEscaped("href", sHref);
-				oRm.addClass("sapMLnk");
+				oRm.openStart("a", oControl)
+					.attr("href", sHref)
+					.class("sapMLnk");
 			} else {
-				oRm.write("<div");
+				oRm.openStart("div", oControl);
 			}
-			oRm.addClass("depth-" + oControl.getDepth());
-			oRm.writeControlData(oControl);
-			oRm.addClass("sapUiParamText");
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.class("depth-" + oControl.getDepth())
+				.class("sapUiParamText")
+				.openEnd();
 
 			// text
-			oRm.writeEscaped(oControl._getText());
+			oRm.text(oControl._getText());
 			if (oControl.getOptional()) {
-				oRm.write("?");
+				oRm.text("?");
 			}
 			if (oControl.getDefaultFlag()) {
-				oRm.write("<span");
-				oRm.addClass("parameterDefault");
-				oRm.writeClasses();
-				oRm.write(">");
-				oRm.write("(default)");
-				oRm.write("</span>");
+				oRm.openStart("span")
+					.class("parameterDefault")
+					.openEnd()
+					.text("(default)")
+					.close("span");
 			}
 			if (sHref) {
-				oRm.write("</a>");
-				oRm.write("<div");
-				oRm.addClass("sapUiParamText");
-				oRm.writeClasses();
-				oRm.write(">");
+				oRm.close("a")
+					.openStart("div")
+					.class("sapUiParamText")
+					.openEnd();
 			}
 			if (oControl.getDeprecated()) {
 
-				oRm.write("<div");
-				oRm.addClass("deprecated");
-				oRm.writeClasses();
-				oRm.write(">");
+				oRm.openStart("div")
+					.class("deprecated")
+					.openEnd("");
 
-				oRm.writeIcon('sap-icon://message-error');
+				oRm.icon('sap-icon://message-error');
 
-				oRm.write("<span");
-				oRm.addClass("deprecatedText");
-				oRm.writeClasses();
-				oRm.write(">");
-				oRm.write("Deprecated");
-				oRm.write("</span>");
+				oRm.openStart("span")
+					.class("deprecatedText")
+					.openEnd()
+					.text("Deprecated")
+					.close("span");
 
-				oRm.write("</div>");
+				oRm.close("div");
 			}
 			if (oControl.getExperimental()) {
 
-				oRm.write("<div");
-				oRm.addClass("experimental");
-				oRm.writeClasses();
-				oRm.write(">");
+				oRm.openStart("div")
+					.class("experimental")
+					.openEnd();
 
-				oRm.writeIcon('sap-icon://message-warning');
+				oRm.icon('sap-icon://message-warning');
 
-				oRm.write("<span");
-				oRm.addClass("experimentalText");
-				oRm.writeClasses();
-				oRm.write(">");
-				oRm.write("Experimental");
-				oRm.write("</span>");
+				oRm.openStart("span")
+					.class("experimentalText")
+					.openEnd()
+					.text("Experimental")
+					.close("span");
 
-				oRm.write("</div>");
+				oRm.close("div");
 			}
-			oRm.write("</div>");
+			oRm.close("div");
 		}
-	});
+	}});
 
 	/**
 	 * Handler for the <code>press</code> event.

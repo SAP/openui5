@@ -54,20 +54,21 @@ sap.ui.define(['sap/ui/core/Control', 'sap/m/Button', 'sap/m/SearchField', 'sap/
                         }
                     }
                 }
-            },
-            renderer: function(rm, oControl) {
+			},
+            renderer: {
+				apiVersion: 2,
+
+				render: function(rm, oControl) {
 
                 var sWidth = oControl.getWidth(),
                     oOpeningBtn,
                     oClosingButton,
                     oSearchField;
 
-                rm.write("<div");
-                rm.writeControlData(oControl);
-                if (sWidth) { rm.writeAttribute("style", "width:" + sWidth + ";"); }
-                rm.addClass("sapUiDocumentationSearch");
-                rm.writeClasses();
-                rm.write(">");
+				rm.openStart("div", oControl);
+                rm.style("width", sWidth);
+                rm.class("sapUiDocumentationSearch");
+                rm.openEnd();
 
                 if (oControl.getIsOpen()) {
                     oSearchField = oControl._lazyLoadSearchField(true);
@@ -78,9 +79,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/m/Button', 'sap/m/SearchField', 'sap/
                     oOpeningBtn = oControl._lazyLoadOpeningButton(true);
                     rm.renderControl(oOpeningBtn);
                 }
-                rm.write("</div>");
+                rm.close("div");
             }
-        });
+        }});
 
         Search.prototype.onAfterRendering = function() {
             if (this.getIsOpen()) {

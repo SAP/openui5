@@ -33,7 +33,10 @@ sap.ui.define(['sap/ui/core/Control'],
 					rows: {type: "sap.ui.documentation.sdk.controls.Row", multiple: true}
 				}
 			},
-			renderer: function(oRm, oControl) {
+			renderer: {
+			apiVersion: 2,
+
+			render: function(oRm, oControl) {
 				var aRows = oControl.getRows(),
 					aControls,
 					aColumnTitles = oControl.getColumnTitles(),
@@ -42,46 +45,57 @@ sap.ui.define(['sap/ui/core/Control'],
 					iLen,
 					i;
 
-				oRm.write("<div");
-				oRm.writeControlData(oControl);
-				oRm.addClass("sapUiDocLightTable");
-				oRm.addClass("columns-" + oControl.getColumnCount());
-				oRm.writeClasses();
-				oRm.write(">");
+				oRm.openStart("div", oControl);
+				oRm.class("sapUiDocLightTable");
+				oRm.class("columns-" + oControl.getColumnCount());
+				oRm.openEnd();
 
 				// Column titles
-				oRm.write("<div class='head'>");
+				oRm.openStart("div")
+					.class("head")
+					.openEnd();
+
 				for (i = 0, iLen = aColumnTitles.length; i < iLen; i++) {
-					oRm.write("<div class='cell'>");
-					oRm.writeEscaped(aColumnTitles[i]);
-					oRm.write("</div>");
+					oRm.openStart("div")
+						.class("cell")
+						.openEnd();
+
+					oRm.text(aColumnTitles[i])
+						.close("div");
 				}
-				oRm.write("</div>");
+
+				oRm.close("div");
 
 				// Rows
 				for (i = 0, iLen = aRows.length; i < iLen; i++) {
-					oRm.write("<div class='row'>");
+					oRm.openStart("div")
+						.class("row")
+						.openEnd();
 
 					aControls = aRows[i].getContent();
 					for (a = 0, aLen = aControls.length; a < aLen; a++) {
-						oRm.write("<div class='cell'>");
+						oRm.openStart("div")
+							.class("cell")
+							.openEnd();
 
 						// Handle inline title
 						if (a > 0) {
-							oRm.write("<div class='inTitle'>");
-							oRm.writeEscaped(aColumnTitles[a]);
-							oRm.write(":</div>");
+							oRm.openStart("div")
+								.class("inTitle")
+								.openEnd()
+								.text(aColumnTitles[a] + ":")
+								.close("div");
 						}
 
 						oRm.renderControl(aControls[a]);
-						oRm.write("</div>");
+						oRm.close("div");
 					}
 
-					oRm.write("</div>");
+					oRm.close("div");
 				}
 
-				oRm.write("</div>");
+				oRm.close("div");
 			}
-		});
+		}});
 
 	});
