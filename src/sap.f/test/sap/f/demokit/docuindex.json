@@ -116,7 +116,8 @@
 			"formFactors" : "-",
 		  "since": "1.65",
 		  "samples": [
-				"sap.f.sample.GridContainer"
+				"sap.f.sample.GridContainer",
+				"sap.f.sample.GridContainerDragAndDrop"
 			]
 		}
 	  ],
@@ -230,7 +231,12 @@
 		  "id": "sap.f.sample.GridContainer",
 		  "name": "Grid Container (Experimental)",
 		  "description": "This sample represents the general usage of GridContainer."
-		}
+		},
+		{
+			"id": "sap.f.sample.GridContainerDragAndDrop",
+			"name": "Grid Container (Experimental) - Drag and Drop",
+			"description": "This sample represents GridContainer with enabled Drag and Drop functionality."
+		  }
 	  ]
 	}
 }

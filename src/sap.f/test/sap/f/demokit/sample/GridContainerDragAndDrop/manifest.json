@@ -1,13 +1,13 @@
 {
 	"sap.app": {
-		"id": "sap.f.sample.GridContainer",
+		"id": "sap.f.sample.GridContainerDragAndDrop",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.f.sample.GridContainer.V",
+			"viewName": "sap.f.sample.GridContainerDragAndDrop.V",
 			"type": "XML",
 			"async": true
 		},
@@ -22,7 +22,8 @@
 				"files": [
 					"V.view.xml",
 					"C.controller.js",
-					"manifest.json"
+					"manifest.json",
+					"cardManifests.json"
 				]
 			}
 		}
