@@ -203,6 +203,7 @@ function (
 
 		// act
 		oDynamicPageHeader.setBackgroundDesign("Solid");
+		Core.applyChanges();
 
 		// assert
 		assert.ok($oDomRef.hasClass("sapFDynamicPageHeaderSolid"), "Should have sapFDynamicPageHeaderSolid class");
@@ -210,6 +211,7 @@ function (
 
 		// act
 		oDynamicPageHeader.setBackgroundDesign("Transparent");
+		Core.applyChanges();
 
 		// assert
 		assert.notOk($oDomRef.hasClass("sapFDynamicPageHeaderSolid"), "Should not have sapFDynamicPageHeaderSolid class");
@@ -218,6 +220,7 @@ function (
 
 		// act
 		oDynamicPageHeader.setBackgroundDesign("Translucent");
+		Core.applyChanges();
 
 		// assert
 		assert.notOk($oDomRef.hasClass("sapFDynamicPageHeaderTransparent"), "Should not have sapFDynamicPageHeaderTransparent class");

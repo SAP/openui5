@@ -133,35 +133,6 @@ sap.ui.define([
 			this._initPinButtonARIAState();
 		};
 
-		/*************************************** Public members ******************************************/
-
-		/**
-		 * Sets the value of the <code>backgroundDesign</code> property.
-		 *
-		 * @param {sap.m.BackgroundDesign} sBackgroundDesign - new value of the <code>backgroundDesign</code>
-		 * @return {sap.f.DynamicPageHeader} <code>this</code> to allow method chaining
-		 * @public
-		 * @since 1.58
-		 */
-		DynamicPageHeader.prototype.setBackgroundDesign = function (sBackgroundDesign) {
-			var sCurrentBackgroundDesign = this.getBackgroundDesign(),
-				$domRef = this.$(),
-				sCssClassPrefix = "sapFDynamicPageHeader";
-
-			if (sCurrentBackgroundDesign === sBackgroundDesign) {
-				return this;
-			}
-
-			this.setProperty("backgroundDesign", sBackgroundDesign, true);
-
-			if ($domRef.length) {
-				$domRef.removeClass(sCssClassPrefix + sCurrentBackgroundDesign);
-				$domRef.addClass(sCssClassPrefix + sBackgroundDesign);
-			}
-
-			return this;
-		};
-
 		/*************************************** Private members ******************************************/
 
 		/**

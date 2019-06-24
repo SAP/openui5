@@ -847,6 +847,7 @@ function (
 
 		// act
 		this.oDynamicPageTitle.setBackgroundDesign("Solid");
+		Core.applyChanges();
 
 		// assert
 		assert.ok($oDomRef.hasClass("sapFDynamicPageTitleSolid"), "Should have sapFDynamicPageTitleSolid class");
@@ -854,6 +855,7 @@ function (
 
 		// act
 		this.oDynamicPageTitle.setBackgroundDesign("Transparent");
+		Core.applyChanges();
 
 		// assert
 		assert.notOk($oDomRef.hasClass("sapFDynamicPageTitleSolid"), "Should not have sapFDynamicPageTitleSolid class");
@@ -862,6 +864,7 @@ function (
 
 		// act
 		this.oDynamicPageTitle.setBackgroundDesign("Translucent");
+		Core.applyChanges();
 
 		// assert
 		assert.notOk($oDomRef.hasClass("sapFDynamicPageTitleTransparent"), "Should not have sapFDynamicPageTitleTransparent class");

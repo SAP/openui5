@@ -10,7 +10,9 @@ sap.ui.define([], function () {
 	 * oDynamicPage Header renderer.
 	 * @namespace
 	 */
-	var DynamicPageHeaderRenderer = {};
+	var DynamicPageHeaderRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -24,26 +26,24 @@ sap.ui.define([], function () {
 			sBackgroundDesign = oDynamicPageHeader.getBackgroundDesign();
 
 		// Dynamic Page Layout Header Root DOM Element.
-		oRm.write("<header");
-		oRm.writeControlData(oDynamicPageHeader);
-		oRm.writeAccessibilityState({
+		oRm.openStart("header", oDynamicPageHeader);
+		oRm.accessibilityState({
 			role: "region"
 		});
-		oRm.addClass("sapContrastPlus");
-		oRm.addClass(sSapFDynamicPageHeader);
+		oRm.class("sapContrastPlus");
+		oRm.class(sSapFDynamicPageHeader);
 		if (oDynamicPageHeaderState.headerHasContent) {
-			oRm.addClass("sapFDynamicPageHeaderWithContent");
+			oRm.class("sapFDynamicPageHeaderWithContent");
 		}
 		if (oDynamicPageHeaderState.headerPinnable) {
-			oRm.addClass("sapFDynamicPageHeaderPinnable");
+			oRm.class("sapFDynamicPageHeaderPinnable");
 		}
 
 		if (sBackgroundDesign) {
-			oRm.addClass(sSapFDynamicPageHeader + sBackgroundDesign);
+			oRm.class(sSapFDynamicPageHeader + sBackgroundDesign);
 		}
 
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openEnd();
 
 		// Header Content
 		this._renderHeaderContent(oRm, oDynamicPageHeaderState);
@@ -56,17 +56,16 @@ sap.ui.define([], function () {
 			oRm.renderControl(oDynamicPageHeaderState.pinButton);
 		}
 
-		oRm.write("</header>");
+		oRm.close("header");
 	};
 
 	DynamicPageHeaderRenderer._renderHeaderContent = function (oRm, oDynamicPageHeaderState) {
 		if (oDynamicPageHeaderState.headerHasContent) {
-			oRm.write("<div");
-			oRm.addClass("sapFDynamicPageHeaderContent");
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openStart("div");
+			oRm.class("sapFDynamicPageHeaderContent");
+			oRm.openEnd();
 			oDynamicPageHeaderState.content.forEach(oRm.renderControl, oRm);
-			oRm.write("</div>");
+			oRm.close("div");
 		}
 	};
 
