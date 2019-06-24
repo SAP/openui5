@@ -273,8 +273,9 @@ sap.ui.define([
 
 		QUnit.test("_sendAjaxRequest - reject", function(assert) {
 			//Arrange
+			var iCode = 404;
 			this.server = sinon.fakeServer.create();
-			this.server.respondWith([404, {"X-CSRF-Token": "0987654321"}, ""]);
+			this.server.respondWith([iCode, {"X-CSRF-Token": "0987654321"}, ""]);
 			this.server.autoRespond = true;
 
 			var sSampleUri = "http://www.abc.de/index.html?request=Value";
@@ -291,10 +292,13 @@ sap.ui.define([
 			};
 
 			//Act
-			return this.oLrepConnector._sendAjaxRequest(sSampleUri, mSampleOptions)["catch"](function(error) {
-				//Assert
-				assert.equal(error.status, "error");
-			});
+			return this.oLrepConnector._sendAjaxRequest(sSampleUri, mSampleOptions)
+				.catch(function (oError) {
+					assert.equal(oError.messages.length, 0, "then the error's messages property has no error objects");
+					assert.equal(oError.code, iCode, "then the correct error code was returned");
+					assert.equal(oError.status, "error", "then the correct error status was returned");
+					assert.ok(oError.message && typeof oError.message === "string", "then error's message property is a non-empty string");
+				});
 		});
 
 		QUnit.test("attachSentRequest adds a function listening to all connectors", function (assert) {
@@ -1277,16 +1281,21 @@ sap.ui.define([
 
 		QUnit.test("_sendAjaxRequest - shall reject Promise when backend returns error", function(assert) {
 			//Arrange
+			var iCode = 500;
 			this.server = sinon.fakeServer.create();
-			this.server.respondWith([500, {}, ""]);
+			this.server.respondWith([iCode, {}, ""]);
 			this.server.autoRespond = true;
 
 			var sSampleUri = "http://www.abc.de/files/";
 
 			//Act
-			return this.oLrepConnector._sendAjaxRequest(sSampleUri)["catch"](function() {
-				assert.ok(true, "The Promise shall reject");
-			});
+			return this.oLrepConnector._sendAjaxRequest(sSampleUri)
+				.catch(function (oError) {
+					assert.equal(oError.messages.length, 0, "then the error's messages property has no error objects");
+					assert.equal(oError.code, iCode, "then the correct error code was returned");
+					assert.equal(oError.status, "error", "then the correct error status was returned");
+					assert.ok(oError.message && typeof oError.message === "string", "then error's message property is a non-empty string");
+				});
 		});
 
 		QUnit.test("_sendAjaxRequest - shall reject Promise when no flexibility services url prefix is returned", function(assert) {
@@ -1323,9 +1332,10 @@ sap.ui.define([
 			var sSampleUri = "http://www.abc.de/files/";
 
 			//Act
-			return this.oLrepConnector._sendAjaxRequest(sSampleUri)["catch"](function() {
-				assert.equal(requestCount, 1, "There shall be 2 roundtrips: 1) Failed due to missing XSFR token. 2) Failing XSRF Token Fetch");
-			});
+			return this.oLrepConnector._sendAjaxRequest(sSampleUri)
+				.catch(function() {
+					assert.equal(requestCount, 1, "There shall be 2 roundtrips: 1) Failed due to missing XSFR token. 2) Failing XSRF Token Fetch");
+				});
 		});
 
 		QUnit.test("_getDefaultOptions shall delete the request body for http DELETE", function(assert) {

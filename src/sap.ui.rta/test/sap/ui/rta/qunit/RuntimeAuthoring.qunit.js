@@ -926,33 +926,62 @@ function(
 			});
 		});
 
-		QUnit.test("When transport function is called and transportChanges returns Promise.reject() with an array of error messages", function(assert) {
-			var oError = {
-				messages : [
+		[{
+			error: {
+				messages: [
 					{
-						severity : "Error",
-						text : "Error text 1"
+						severity: "Error",
+						text: "Error text 1"
 					},
 					{
-						severity : "Error",
-						text : "Error text 2"
+						severity: "Error",
+						text: "Error text 2"
 					}
 				]
-			};
-			var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-			var sErrorBoxText = oTextResources.getText("MSG_LREP_TRANSFER_ERROR") + "\n"
-					+ oTextResources.getText("MSG_ERROR_REASON", "Error text 1\nError text 2\n");
-			sandbox.stub(PersistenceWriteAPI, "_transportChanges").rejects(oError);
-			var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(false);
-			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
-			var oShowErrorStub = sandbox.stub(Log, "error");
-			var oErrorBoxStub = sandbox.stub(MessageBox, "error");
-			return this.oRta.transport().then(function() {
-				assert.equal(oMessageToastStub.callCount, 0, "then the messageToast was not shown");
-				assert.equal(oAppVariantRunningStub.callCount, 1, "then isAppVariantRunning() got called");
-				assert.equal(oShowErrorStub.callCount, 1, "then the error was logged");
-				assert.equal(oErrorBoxStub.callCount, 1, "and a MessageBox.error was shown");
-				assert.equal(oErrorBoxStub.args[0][0], sErrorBoxText, "and the shown error text is correct");
+			},
+			errorText: "Error text 1\nError text 2\n",
+			propertyName: "messages"
+		},
+		{
+			error: {
+				messages: [],
+				message: "messageText"
+			},
+			errorText: "messageText",
+			propertyName: "message"
+		},
+		{
+			error: {
+				messages: [],
+				stack: "messageText"
+			},
+			errorText: "messageText",
+			propertyName: "stack"
+		},
+		{
+			error: {
+				messages: [],
+				status: "messageText"
+			},
+			errorText: "messageText",
+			propertyName: "status"
+		}].forEach(function (oErrorResponse) {
+			QUnit.test("When transport function is called and transportChanges returns Promise.reject() with error in the property: " + oErrorResponse.propertyName, function (assert) {
+				var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+				var sErrorBoxText = oTextResources.getText("MSG_LREP_TRANSFER_ERROR") + "\n"
+					+ oTextResources.getText("MSG_ERROR_REASON", oErrorResponse.errorText);
+				sandbox.stub(PersistenceWriteAPI, "_transportChanges").rejects(oErrorResponse.error);
+				var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(false);
+				var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
+				var oShowErrorStub = sandbox.stub(Log, "error");
+				var oErrorBoxStub = sandbox.stub(MessageBox, "error");
+				return this.oRta.transport().then(function () {
+					assert.equal(oMessageToastStub.callCount, 0, "then the messageToast was not shown");
+					assert.equal(oAppVariantRunningStub.callCount, 1, "then isAppVariantRunning() got called");
+					assert.equal(oShowErrorStub.callCount, 1, "then the error was logged");
+					assert.equal(oErrorBoxStub.callCount, 1, "and a MessageBox.error was shown");
+					assert.equal(oErrorBoxStub.args[0][0], sErrorBoxText, "and the shown error text is correct");
+				});
 			});
 		});
 
