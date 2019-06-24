@@ -467,7 +467,8 @@ sap.ui.define([
 			aCustomData.forEach(function(oData) {
 				oUfdMenuItem.addCustomData(new CustomData({
 					key: oData.getKey(),
-					value: oData.getValue()
+					value: oData.getValue(),
+					writeToDom: oData.getWriteToDom()
 				}));
 			});
 
