@@ -42,10 +42,6 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
 
-		if (oMonthsRow._getShowHeader()) {
-			oAriaLabel.value = oAriaLabel.value + " " + sId + "-Head";
-		}
-
 		oRm.writeAccessibilityState(oMonthsRow, {
 			role: "grid",
 			readonly: "true",
@@ -81,7 +77,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 		this.renderHeader(oRm, oMonthsRow, oDate);
 
 		// months
-		oRm.write("<div id=\"" + sId + "-months\" class=\"sapUiCalItems\">"); // extra DIV around the months to allow rerendering only it's content
+		oRm.write("<div id=\"" + sId + "-months\" class=\"sapUiCalItems\" role=\"row\">"); // extra DIV around the months to allow rerendering only it's content
 		this.renderMonths(oRm, oMonthsRow, oDate);
 		oRm.write("</div>");
 
