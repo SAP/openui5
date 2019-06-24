@@ -16,7 +16,9 @@ sap.ui.define(["sap/ui/Device", "sap/ui/layout/library"],
 	 * ${version}
 	 * @namespace
 	 */
-	var GridRenderer = {};
+	var GridRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided
