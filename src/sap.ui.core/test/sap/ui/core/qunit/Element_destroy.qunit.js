@@ -105,4 +105,26 @@ sap.ui.define([
 		this.oControl.destroy("KeepDom");
 		assert.strictEqual(this.oControl.getDomRef(), oRootDomRef, "Control DOM is not touched after destroy");
 	});
+
+	QUnit.test("Destroy a control while it is in the preserved area", function(assert) {
+		var oRootDomRef = this.oControl.getDomRef();
+		oRootDomRef.setAttribute("data-sap-ui-preserve", oRootDomRef.id);
+		RenderManager.preserveContent(oRootDomRef, true);
+		this.oControl.rerender();
+
+		assert.ok(RenderManager.findPreservedContent(this.oControl.getId())[0] === this.oControl.getDomRef(), "Control DOM is in the preserved area");
+
+		this.oControl.destroy();
+		assert.notOk(RenderManager.findPreservedContent(this.oControl.getId())[0], "After destroy() call Control DOM is not in the preserved area");
+		RenderManager.findPreservedContent(this.oControl.getId()).remove();
+	});
+
+	QUnit.test("Destroy a control with KeepDom parameter while it is marked as preserved but not in the preserved area", function(assert) {
+		var oRootDomRef = this.oControl.getDomRef();
+		oRootDomRef.setAttribute("data-sap-ui-preserve", oRootDomRef.id);
+
+		this.oControl.destroy("KeepDom");
+		assert.ok(document.body.contains(oRootDomRef), "After destroy(KeepDom) call Control DOM is still in the DOM tree");
+		assert.notOk(oRootDomRef.hasAttribute("data-sap-ui-preserve"), "but preserve marker is removed from the Control DOM");
+	});
 });

@@ -602,7 +602,6 @@ sap.ui.define([
 
 		assert.equal(oPatchingControl.getDomRef().textContent, "PatchingControl", "PatchingControl control in the preserved area is not patched");
 
-		RenderManager.findPreservedContent(oPatchingControl.getId()).remove();
 		oPatchingControl.destroy();
 	});
 
