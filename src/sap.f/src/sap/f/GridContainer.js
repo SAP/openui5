@@ -129,9 +129,15 @@ sap.ui.define([
 	 * &lt;/f:GridContainer&gt;
 	 * </pre>
 	 *
+	 * <h3>Drag and drop:</h3>
+	 * The <code>items</code> aggregation of <code>sap.f.GridContainer</code> is valid drag and drop target.
+	 * This can be configured with either the default <code>{@link sap.ui.core.dnd.DropInfo}</code>, or with an extended version of it - <code>{@link sap.f.dnd.GridDropInfo}</code>.
+	 * <code>GridDropInfo</code> will provide a different visualization more suitable for grids during drag over.
+	 *
 	 * @see {@link topic:cca5ee5d63ca44c89318f8496a58f9f2 Grid Container (Experimental)}
 	 * @see {@link topic:32d4b9c2b981425dbc374d3e9d5d0c2e Grid Controls}
 	 * @see {@link topic:5b46b03f024542ba802d99d67bc1a3f4 Cards}
+	 * @see {@link sap.f.dnd.GridDropInfo}
 	 *
 	 * @author SAP SE
 	 * @version ${version}
