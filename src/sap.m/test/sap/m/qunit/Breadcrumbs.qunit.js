@@ -56,7 +56,7 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text) {
 			core.applyChanges();
 		},
 		countChildren: function (oControl){
-			return oControl.$().children().length;
+			return oControl.$().find("li").length;
 		},
 		renderObject: function (oSapUiObject) {
 			oSapUiObject.placeAt("qunit-fixture");
@@ -429,7 +429,13 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text) {
 			sExpectedText = oFactory.getResourceBundle().getText("BREADCRUMB_LABEL");
 
 		helpers.renderObject(oStandardBreadCrumbsControl);
+		assert.strictEqual(oStandardBreadCrumbsControl.$()[0].tagName, "NAV", "Breadcrumbs is rendered in nav HTML element");
 		assert.strictEqual(oStandardBreadCrumbsControl.$().attr("aria-label"), sExpectedText, "has correct 'aria-label'");
+		assert.strictEqual(oStandardBreadCrumbsControl.$().attr("role"), undefined, "Role shouldn't be defined for the nav element");
+
+		oStandardBreadCrumbsControl.$().find("li").each(function (index, item) {
+			assert.strictEqual(jQuery(item).attr("role"), undefined, "Role shouldn't be defined for the li element");
+		});
 	});
 
 	QUnit.test("Keyboard Handling", function (assert) {
