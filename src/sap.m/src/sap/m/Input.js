@@ -2049,6 +2049,7 @@ function(
 		InputBase.prototype.onfocusout.apply(this, arguments);
 		this.$().removeClass("sapMInputFocused");
 		this.closeValueStateMessage(this);
+		this.$("SuggDescr").text(""); // clear suggestion text, if any
 	};
 
 	/**
