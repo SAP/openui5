@@ -1952,17 +1952,6 @@ function (
 		}
 	});
 
-	QUnit.test("DynamicPage Title has the correct Aria state", function (assert) {
-		var $title = this.oDynamicPage.getTitle().$(),
-			sRole = "heading",
-			sLevel = "2";
-
-		assert.equal($title.attr("role"), sRole,
-			"DynamicPage Title role 'heading'");
-		assert.equal($title.attr("aria-level"), sLevel,
-			"DynamicPage Title is heading level 2");
-	});
-
 	QUnit.test("DynamicPage Header has the correct Aria state", function (assert) {
 		var $header = this.oDynamicPage.getHeader().$(),
 			sRole = "region",

@@ -26,10 +26,6 @@ sap.ui.define([
 
 		// DynamicPageTitle Root DOM Element.
 		oRm.openStart("div", oDynamicPageTitle);
-		oRm.accessibilityState({
-			role: "heading",
-			level: 2
-		});
 		oRm.class(sSapFDynamicPageTitle);
 
 		if (sBackgroundDesign) {
