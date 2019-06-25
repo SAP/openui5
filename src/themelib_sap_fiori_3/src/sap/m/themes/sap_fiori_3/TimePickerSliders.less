@@ -3,9 +3,9 @@
 /* Fiori 3 theme                            */
 /* ======================================== */
 
-@_sap_m_TimePicker_ItemColor: lighten(@sapUiContentForegroundColor, 5);
-@_sap_m_TimePicker_ItemHoverColor: darken(@sapUiContentForegroundColor, 5);
-@_sap_m_TimePicker_ItemBorderColor: lighten(@sapUiListBorderColor, 10);
+@_sap_m_TimePicker_ItemColor: darken(@sapUiListBackground, 3);
+@_sap_m_TimePicker_ItemHoverColor:  darken(@sapUiListBackground, 6);
+@_sap_m_TimePicker_ItemBorderColor: @sapUiListBackground;
 
 /* ======================================== */
 /* TimePicker Dropdown                      */
@@ -66,10 +66,10 @@
 		&.sapMTPSliderExpanded {
 			.sapMTimePickerSlider {
 				.sapMTimePickerItem {
-					background: darken(@sapUiListBackground, 3);
+					background: @_sap_m_TimePicker_ItemColor;
 					border: 1px solid @_sap_m_TimePicker_ItemBorderColor;
 					&:hover {
-						background: darken(@sapUiListBackground, 6);
+						background: @_sap_m_TimePicker_ItemHoverColor;
 					}
 					&:active {
 						background: @sapUiActive;
@@ -83,7 +83,7 @@
 					outline:none;
 					&:hover {
 						+ ul > li.sapMTimePickerItem.sapMTimePickerItemSelected {
-							background: darken(@sapUiListBackground, 6);
+							background: @_sap_m_TimePicker_ItemHoverColor;
 						}
 					}
 					&:active {
@@ -131,7 +131,7 @@
 			&.sapMTPSliderExpanded {
 				.sapMTimePickerSlider {
 					.sapMTimePickerItem {
-						background: darken(@sapUiListBackground, 3);
+						background: @_sap_m_TimePicker_ItemColor;
 						border: 1px solid @_sap_m_TimePicker_ItemBorderColor;
 						width: 3rem;
 					}
