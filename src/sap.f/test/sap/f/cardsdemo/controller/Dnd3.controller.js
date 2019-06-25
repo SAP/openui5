@@ -3,251 +3,178 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
 	'sap/ui/core/dnd/DragInfo',
-	'sap/ui/core/dnd/DropInfo'
-], function (Controller, JSONModel, jQuery, DragInfo, DropInfo) {
+	'sap/ui/core/dnd/DropInfo',
+	'sap/f/dnd/GridDropInfo',
+	'sap/ui/integration/widgets/Card'
+], function (Controller, JSONModel, jQuery, DragInfo, DropInfo, GridDropInfo, Card) {
 	"use strict";
 
 	return Controller.extend("sap.f.cardsdemo.controller.dnd3", {
+		onInit: function () {
+			this.initData();
 
-		$dragItem: null,
-		$indicator: jQuery("<div class='dndIndicatorBox'></div>"),
+			[
+				this.byId("grid1"),
+				this.byId("grid2"),
+				this.byId("grid3"),
+				this.byId("links1"),
+				this.byId("gridList1")
+			].forEach(function (oGrid) {
+				oGrid.addDragDropConfig(new DragInfo({
+					sourceAggregation: "items"
+				}));
+				oGrid.addDragDropConfig(new GridDropInfo({
+					targetAggregation: "items",
+					dropPosition: "Between",
+					dropLayout: oGrid.isA("sap.m.List") ? "Vertical" : "Horizontal",
+					drop: function (oInfo) {
+						var oDragged = oInfo.getParameter("draggedControl"),
+							oDropped = oInfo.getParameter("droppedControl"),
+							sInsertPosition = oInfo.getParameter("dropPosition"),
 
+							oDraggedParent = oDragged.getParent(),
+							oDroppedParent = oDropped.getParent(),
 
-		onAfterRendering: function () {
+							oDragModel = oDraggedParent.getModel(),
+							oDropModel = oDroppedParent.getModel(),
+							oDragModelData = oDragModel.getData(),
+							oDropModelData = oDropModel.getData(),
 
-			jQuery(".sapFGridContainer").on("dragover", this.onDragOver.bind(this));
+							iDragPosition = oDraggedParent.indexOfItem(oDragged),
+							iDropPosition = oDroppedParent.indexOfItem(oDropped);
 
-			jQuery(".sapFGridContainer .sapFGridContainerItemWrapper").each(function (iInd, oItem) {
-				var $item = jQuery(oItem);
+						// remove the item
+						var oItem = oDragModelData[iDragPosition];
+						oDragModelData.splice(iDragPosition, 1);
 
-				$item.attr("draggable", true);
-				$item.addClass("dndDraggableItem");
+						if (oDragModel === oDropModel && iDragPosition < iDropPosition) {
+							iDropPosition--;
+						}
 
-				$item
-					.on("dragstart", this.onDragStart.bind(this))
-					.on("dragend", this.onDragEnd.bind(this));
-					// if drag over item is enough - .on("dragover", this.onDragOver.bind(this));
+						// insert the control in target aggregation
+						if (sInsertPosition === "Before") {
+							oDropModelData.splice(iDropPosition, 0, oItem);
+						} else {
+							oDropModelData.splice(iDropPosition + 1, 0, oItem);
+						}
 
-			}.bind(this));
-
-			// if drag over item is enough, handle drag over indicator
-			//this.$indicator.on("dragover", this.onDragOverIndicator.bind(this));
-		},
-
-
-		onDragStart: function (oEvent) {
-			oEvent.originalEvent.dataTransfer.effectAllowed = "move";
-
-			this.$dragItem = jQuery(oEvent.currentTarget);
-			this.dragFromIndex = this.$dragItem.index();
-			this.dragItemWidth = this.$dragItem.width();
-			this.$dragItem.addClass("sapUiDnDDragging");
-		},
-
-		onDragOver: function (oEvent) {
-			oEvent.preventDefault();
-			oEvent.originalEvent.dataTransfer.dropEffect = "move";
-
-
-
-			// prevent infinite move of position, caused by rearanging
-			if (this.shouldFreeze(oEvent.pageX, oEvent.pageY)) {
-				return;
-			}
-
-			// propose a drop position
-			var mDropPosition = this.calculateDropPosition(oEvent);
-
-			if (!mDropPosition) {
-				// drop position is the indicator
-				return;
-			}
-
-			// no drag/drop on the same target
-			if (mDropPosition.target === this.$dragItem[0]) {
-				return;
-			}
-
-			// after some timeout - show the drop target
-			if (this.timeoutOnSamePosition(mDropPosition)) {
-				this.hideDraggedItem();
-				this.showIndicator(mDropPosition);
-
-				// prevent infinite move of position, caused by rearanging
-				this.freezeCurrentPosition(oEvent.pageX, oEvent.pageY);
-			}
-		},
-
-		onDragEnd: function () {
-			this.$dragItem.removeClass("sapUiDnDDragging");
-
-			if (this.$indicator.parents(".sapFGridContainer").length) {
-				this.$dragItem.insertAfter(this.$indicator);
-				this.$indicator.detach();
-			}
-		},
-
-
-		hideDraggedItem: function () {
-			this.$dragItem.detach();
-		},
-
-		showIndicator: function (mDropPosition) {
-			// indicator should be the same size as dragged item
-			this.$indicator.css({
-				"grid-column-start": this.$dragItem.css("grid-column-start"),
-				"grid-row-start": this.$dragItem.css("grid-row-start")
+						if (oDragModel !== oDropModel) {
+							oDragModel.setData(oDragModelData);
+							oDropModel.setData(oDropModelData);
+						} else {
+							oDropModel.setData(oDropModelData);
+						}
+					}
+				}));
 			});
+		},
 
-			if (mDropPosition.position == "before") {
-				this.$indicator.insertBefore(mDropPosition.target);
+		initData: function () {
+			this.byId("grid1").setModel(new JSONModel([
+				{ uniqueId: "item1", header: "Unified Ticketing", subheader: "Submit a new ticket", footer: "", numberValue: "11", icon: "sap-icon://check-availability" },
+				{ uniqueId: "item2", header: "Success Map", subheader: "", footer: "", numberValue: "3", icon: "sap-icon://message-success" },
+				{ uniqueId: "item3", header: "My Team Calendar", subheader: "", footer: "", numberValue: "6", icon: "sap-icon://appointment" },
+				{ uniqueId: "item4", header: "Leave requests", subheader: "Create or edit a leave request", footer: "paid, unpaid, sick leave", numberValue: "30", valueColor: "Error", icon: "sap-icon://general-leave-request" },
+				{ uniqueId: "item5", header: "Work from home", subheader: "Make a request for home office", footer: "", numberValue: "17", valueColor: "Good", icon: "sap-icon://addresses" },
+				{ uniqueId: "item6", header: "Collaboration", subheader: "Connect with colleagues", footer: "", numberValue: "240", icon: "sap-icon://collaborate" },
+				{ uniqueId: "item7", header: "Public Service", subheader: "", footer: "", numberValue: "1", icon: "sap-icon://e-care" },
+				{ uniqueId: "item8", header: "Invoices", subheader: "Personal invoices", footer: "", numberValue: "15", icon: "sap-icon://monitor-payments" },
+				{ uniqueId: "item10", header: "Corporate portal", subheader: "", footer: "", numberValue: "1500", icon: "sap-icon://group" },
+				{ uniqueId: "item11", header: "Ariba Guided Buying", subheader: "Buy Goods & Services", footer: "",  numberValue: "2", icon: "sap-icon://cart-5" },
+				{ uniqueId: "item12", header: "My IT Equipment", subheader: "Manage equipment", footer: "", numberValue: "5", valueColor: "Critical", icon: "sap-icon://add-equipment" }
+			]));
+
+			this.byId("grid2").setModel(new JSONModel([
+				{ uniqueId: "item1", header: "Unified Ticketing", subheader: "Submit a new ticket", footer: "", numberValue: "11", icon: "sap-icon://check-availability" },
+				{ uniqueId: "item2", header: "Success Map", subheader: "", footer: "", numberValue: "3", icon: "sap-icon://message-success" },
+				{ uniqueId: "item3", header: "My Team Calendar", subheader: "", footer: "", numberValue: "6", icon: "sap-icon://appointment" },
+				{ uniqueId: "item4", header: "Leave requests", subheader: "Create or edit a leave request", footer: "paid, unpaid, sick leave", numberValue: "30", valueColor: "Error", icon: "sap-icon://general-leave-request" },
+				{ uniqueId: "item5", header: "Work from home", subheader: "Make a request for home office", footer: "", numberValue: "17", valueColor: "Good", icon: "sap-icon://addresses" },
+				{ uniqueId: "item6", header: "Collaboration", subheader: "Connect with colleagues", footer: "", numberValue: "240", icon: "sap-icon://collaborate" },
+				{ uniqueId: "item7", header: "Public Service", subheader: "", footer: "", numberValue: "1", icon: "sap-icon://e-care" },
+				{ uniqueId: "item8", header: "Invoices", subheader: "Personal invoices", footer: "", numberValue: "15", icon: "sap-icon://monitor-payments" },
+				{ uniqueId: "item10", header: "Corporate portal", subheader: "", footer: "", numberValue: "1500", icon: "sap-icon://group" },
+				{ uniqueId: "item11", header: "Ariba Guided Buying", subheader: "Buy Goods & Services", footer: "",  numberValue: "2", icon: "sap-icon://cart-5" },
+				{ uniqueId: "item12", header: "My IT Equipment", subheader: "Manage equipment", footer: "", numberValue: "5", valueColor: "Critical", icon: "sap-icon://add-equipment" }
+			]));
+
+			this.byId("grid3").setModel(new JSONModel([
+				{ header: "Sales Fulfillment Application Title", subheader: "Subtitle", footer: "", numberValue: "3", icon: "sap-icon://home-share" },
+				{ header: "Manage Activity Master Data Type", subheader: "", footer: "", numberValue: "15", valueColor: "Critical", icon: "sap-icon://activities" },
+				{ type: "card", rows: 2, columns: 2, manifest: "manifests>/listContent/smallList" },
+				{ type: "card", rows: 4, columns: 4, manifest: "manifests>/analyticalContent/line" },
+				{ header: "Account", subheader: "Your personal information", footer: "", numberValue: "1", valueColor: "Good", icon: "sap-icon://account" },
+				{ type: "card", rows: 6, columns: 4, manifest: "manifests>/listContent/largeList" },
+				{ type: "card", rows: 4, columns: 2, manifest: "manifests>/listContent/mediumList" },
+				{ header: "Appointments management", subheader: "", footer: "Current Quarter", numberValue: "240", icon: "sap-icon://appointment" },
+				{ header: "Jessica D. Prince Senior Consultant", subheader: "Department", footer: "Current Quarter", numberValue: "1", icon: "sap-icon://activity-individual" },
+				{ type: "card", rows: 4, columns: 4, manifest: "manifests>/analyticalContent/stackedBar" }
+			]));
+
+			this.byId("links1").setModel(new JSONModel([
+				{ header: "Open SAP Homepage", href: "http://www.sap.com" },
+				{ header: "Your personal information", href: "http://www.sap.com" },
+				{ header: "Appointments management", href: "http://www.sap.com" }
+			]));
+
+			this.byId("gridList1").setModel(new JSONModel([
+				{ title: "Grid item title 1", subtitle: "Subtitle 1", group: "Group A" },
+				{ title: "Grid item title 2", subtitle: "Subtitle 2", group: "Group A" },
+				{ title: "Grid item title 3", subtitle: "Subtitle 3", group: "Group A" },
+				{ title: "Grid item title 4", subtitle: "Subtitle 4", group: "Group A" },
+				{ title: "Grid item title 5", subtitle: "Subtitle 5", group: "Group A" },
+				{ title: "Grid item title 6 Grid item title Grid item title Grid item title Grid item title Grid item title", subtitle: "Subtitle 6", group: "Group A" },
+				{ title: "Very long Grid item title that should wrap 7", subtitle: "This is a long subtitle 7" },
+				{ title: "Grid item title B 8", subtitle: "Subtitle 8", group: "Group B" },
+				{ title: "Grid item title B 9 Grid item title B  Grid item title B 9 Grid item title B 9Grid item title B 9title B 9 Grid item title B 9Grid item title B", subtitle: "Subtitle 9", group: "Group B" },
+				{ title: "Grid item title B 10", subtitle: "Subtitle 10", group: "Group B" },
+				{ title: "Grid item title B 11", subtitle: "Subtitle 11", group: "Group B" },
+				{ title: "Grid item title B 12", subtitle: "Subtitle 12", group: "Group B" },
+				{ title: "Grid item title 13", subtitle: "Subtitle 13", group: "Group A" },
+				{ title: "Grid item title 14", subtitle: "Subtitle 14", group: "Group A" },
+				{ title: "Grid item title 15", subtitle: "Subtitle 15", group: "Group A" },
+				{ title: "Grid item title 16", subtitle: "Subtitle 16", group: "Group A" },
+				{ title: "Grid item title 17", subtitle: "Subtitle 17", group: "Group A" },
+				{ title: "Grid item title 18", subtitle: "Subtitle 18", group: "Group A" },
+				{ title: "Very long Grid item title that should wrap 19", subtitle: "This is a long subtitle 19" },
+				{ title: "Grid item title B 20", subtitle: "Subtitle 20", group: "Group B" },
+				{ title: "Grid item title B 21", subtitle: "Subtitle 21", group: "Group B" },
+				{ title: "Grid item title B 22", subtitle: "Subtitle 22", group: "Group B" },
+				{ title: "Grid item title B 23", subtitle: "Subtitle 23", group: "Group B" },
+				{ title: "Grid item title B 24", subtitle: "Subtitle 24", group: "Group B" },
+				{ title: "Grid item title B 21", subtitle: "Subtitle 21", group: "Group B" },
+				{ title: "Grid item title B 22", subtitle: "Subtitle 22", group: "Group B" },
+				{ title: "Grid item title B 23", subtitle: "Subtitle 23", group: "Group B" }
+			]));
+
+		},
+
+		// todo why grids rerender with factory, is a unique key missing or something else?
+		createItem: function(sID, oBindingContext) {
+			var oItemData = oBindingContext.getProperty(oBindingContext.getPath());
+
+			if (oItemData.type === "card") {
+				var oCard = new Card(sID, {
+					layoutData: new sap.f.GridContainerItemLayoutData({rows: oItemData.rows, columns: oItemData.columns})
+				});
+				oCard.bindProperty("manifest", oItemData.manifest);
+				return oCard;
 			} else {
-				this.$indicator.insertAfter(mDropPosition.target);
+				return new sap.m.GenericTile(sID, {
+					layoutData: new sap.f.GridContainerItemLayoutData({rows: 2, columns: 2}),
+					header: oItemData.header,
+					subheader: oItemData.subheader,
+					tileContent: new sap.m.TileContent({
+						footer: oItemData.footer,
+						content: new sap.m.NumericContent({
+							animateTextChange: false,
+							value: oItemData.numberValue,
+							valueColor: oItemData.valueColor,
+							icon: oItemData.icon
+						})
+					})
+				});
 			}
-
-			// when drop indicator is shown, it is the new "drag from"
-			this.dragFromIndex = this.$indicator.index();
-		},
-
-		timeoutOnSamePosition: function (mDropPosition) {
-			if (!this.lastDropPosition
-				|| mDropPosition.target != this.lastDropPosition.target
-				|| mDropPosition.position != this.lastDropPosition.position) {
-
-				this.dropPositionHoldStart = Date.now();
-				this.lastDropPosition = mDropPosition;
-				return false;
-			}
-
-			// if the drop position is hold for 500ms
-			return Date.now() - this.dropPositionHoldStart > 500;
-		},
-
-		shouldFreeze: function (pageX, pageY) {
-			// prevent infinite move of position, caused by rearanging
-			var iTolerance = 40;
-
-			return this.freezePosition
-				&& Math.abs(this.freezePosition.pageX - pageX) < iTolerance
-				&& Math.abs(this.freezePosition.pageY - pageY) < iTolerance;
-		},
-
-		freezeCurrentPosition: function (pageX, pageY) {
-			this.freezePosition = {
-				pageX: pageX,
-				pageY: pageY
-			};
-		},
-
-
-		calculateDropPosition: function (oDragEvent) {
-
-			// if event is over items - this is enough
-			// var $target = oDragEvent.currentTarget;
-
-			// if event is over grid - calculate from point / experimenting
-			var $target = this.findItemFromPoint(oDragEvent.pageX, oDragEvent.pageY),
-				sBeforeOrAfter;
-
-			if (!$target) {
-				$target = this.findClosestItem(oDragEvent.pageX, oDragEvent.pageY);
-				sBeforeOrAfter = "after"; // todo if closest item is on top, shouldn't be always after
-			}
-
-			if (!$target) {
-				// fallback to last item in the grid
-				$target = jQuery(oDragEvent.currentTarget).children().last();
-				sBeforeOrAfter = "after";
-			}
-
-			if ($target.hasClass("dndIndicatorBox")) {
-				// the indicator is the target
-				return null;
-			}
-
-
-			if (!sBeforeOrAfter) {
-				sBeforeOrAfter = this.calculateDropBeforeOrAfter($target, oDragEvent);
-			}
-
-
-			return {
-				target:  $target[0],
-				position: sBeforeOrAfter
-			};
-		},
-
-		calculateDropBeforeOrAfter: function ($target, oDragEvent) {
-			// figure out should it drop before or after the target
-
-			// if small item is over big item - calculate relative position
-			if ((this.dragItemWidth * 1.5) < $target.width()) {
-				/* mostly copied from DragAndDrop.js */
-				var mClientRect = $target[0].getBoundingClientRect(),
-					iPageXOffset = window.pageXOffset,
-					mDropRect = {
-						left: mClientRect.left + iPageXOffset,
-						width: mClientRect.width
-					},
-					iCursorX = oDragEvent.pageX - mDropRect.left;
-
-				return iCursorX < mDropRect.width * 0.5 ? "before" : "after";
-			}
-
-			// for same size items - try to place the drag item on the position of the target item by comparing the indexes
-			// if items are from different containers, drag item will be new and should push other items
-			if (this.$dragItem[0].parentElement !== $target[0].parentElement) {
-				return "before";
-			}
-
-			// if drag item is originally after target item - push the target
-			if (this.dragFromIndex > $target.index()) {
-				return "before";
-			}
-
-			// fallback to after
-			return "after";
-		},
-
-
-		// experimenting
-		findItemFromPoint: function (iPageX, iPageY) {
-			var oOverElement = document.elementFromPoint(iPageX, iPageY),
-				$closestItem = jQuery(oOverElement).closest(".sapFGridContainerItemWrapper, .dndIndicatorBox");
-
-			if ($closestItem.hasClass("dndIndicatorBox")) {
-				// drag over the indicator
-				return $closestItem;
-			}
-
-			if ($closestItem.hasClass("sapFGridContainerItemWrapper")) {
-				return $closestItem;
-			}
-
-			return null;
-		},
-
-		findClosestItem: function (iPageX, iPageY, bSecondTry) {
-			// todo redo this method
-
-			// try around
-			var iStep = 80, // px
-				$found,
-				iTries = 0,
-				iX = iPageX - iStep;
-
-
-			while (!$found && iX > 0 && iTries < 4) { // try left
-				$found = this.findItemFromPoint(iX, iPageY);
-				iX -= iStep;
-				iTries++;
-			}
-
-			if (!$found && iPageY - 20 > 0) { // try up, only in close proximity (less than a gap)
-				$found = this.findItemFromPoint(iPageX, iPageY - 20);
-			}
-
-			return $found;
 		}
 	});
 });

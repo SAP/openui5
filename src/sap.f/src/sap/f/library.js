@@ -24,7 +24,8 @@ sap.ui.define(["sap/ui/base/DataType",
 			"sap.f.cards.IHeader",
 			"sap.f.ICard",
 			"sap.f.IShellBar",
-			"sap.f.IDynamicPageStickyContent"
+			"sap.f.IDynamicPageStickyContent",
+			"sap.f.dnd.IGridDroppable"
 		],
 		types: [
 			"sap.f.AvatarImageFitType",
@@ -499,6 +500,18 @@ sap.ui.define(["sap/ui/base/DataType",
 	 * @public
 	 * @interface
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+	 /**
+	 * Interface that should be implemented by grid controls, if they are working with the <code>sap.f.dnd.GridDropInfo</code>.
+	 *
+	 * It is highly recommended that those grid controls have optimized <code>removeItem</code> and <code>insertItem</code> methods (if "items" is target drop aggregation).
+	 * Meaning to override them in a way that they don't trigger invalidation.
+	 *
+	 * @since 1.68
+	 * @public
+	 * @interface
+	 * @name sap.f.dnd.IGridDroppable
 	 */
 
 	 /**
