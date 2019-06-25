@@ -726,28 +726,6 @@ sap.ui.define([
 		return vResult;
 	};
 
-	FlexibleColumnLayout.prototype.setBackgroundDesign = function (sNewBackgroundDesign) {
-		sNewBackgroundDesign = this.validateProperty("backgroundDesign", sNewBackgroundDesign);
-
-		var sCurrentBackgroundDesign = this.getBackgroundDesign();
-
-		if (sCurrentBackgroundDesign === sNewBackgroundDesign) {
-			return this;
-		}
-
-		var vResult = this.setProperty("backgroundDesign", sNewBackgroundDesign, true);
-
-		if (sCurrentBackgroundDesign !== mobileLibrary.BackgroundDesign.Transparent) {
-			this.$().removeClass("sapFFCLBackgroundDesign" + sCurrentBackgroundDesign);
-		}
-
-		if (sNewBackgroundDesign !== mobileLibrary.BackgroundDesign.Transparent) {
-			this.$().addClass("sapFFCLBackgroundDesign" + sNewBackgroundDesign);
-		}
-
-		return vResult;
-	};
-
 	FlexibleColumnLayout.prototype.onBeforeRendering = function () {
 		this._deregisterResizeHandler();
 	};
