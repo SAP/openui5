@@ -566,7 +566,7 @@ function(
 			sSelectedKey = this.getSelectedKey(),
 			i = 0,
 			oParent = this.getParent(),
-			bIsParentIconTabBar = oParent instanceof sap.m.IconTabBar,
+			bIsParentIconTabBar = this._isInsideIconTabBar(),
 			bIsParentToolHeader = oParent && oParent.getMetadata().getName() == 'sap.tnt.ToolHeader';
 			this._bRtl = sap.ui.getCore().getConfiguration().getRTL();
 			this._onOverflowButtonEventDelegate = {
@@ -635,8 +635,7 @@ function(
 	IconTabHeader.prototype.setSelectedKey = function (sKey) {
 		var aItems = this.getTabFilters(),
 			i = 0,
-			oParent = this.getParent(),
-			bIsParentIconTabBar = oParent instanceof sap.m.IconTabBar,
+			bIsParentIconTabBar = this._isInsideIconTabBar(),
 			bSelectedItemFound;
 
 		if (aItems.length > 0) {
@@ -694,7 +693,7 @@ function(
 		}
 
 		var oParent = this.getParent();
-		var bIsParentIconTabBar = oParent instanceof sap.m.IconTabBar;
+		var bIsParentIconTabBar = this._isInsideIconTabBar();
 
 		//if the old selected tab and the new selected tab both have no own content, which means they both use the same content from the icontabbar
 		//there is no need to rerender the content
@@ -898,7 +897,7 @@ function(
 		}
 
 		var oParent = this.getParent();
-		var bIsParentIconTabBar = oParent instanceof sap.m.IconTabBar;
+		var bIsParentIconTabBar = this._isInsideIconTabBar();
 
 		if (this.oSelectedItem &&
 			(!bIsParentIconTabBar || bIsParentIconTabBar && oParent.getExpanded())) {
@@ -947,6 +946,8 @@ function(
 			this._aTabKeys.push(sKey);
 		}
 		this.addAggregation("items", oItem);
+
+		this._invalidateParentIconTabBar();
 	};
 
 	IconTabHeader.prototype.insertItem = function(oItem, iIndex) {
@@ -959,11 +960,19 @@ function(
 			this._aTabKeys.push(sKey);
 		}
 		this.insertAggregation("items", oItem, iIndex);
+
+		this._invalidateParentIconTabBar();
 	};
 
 	IconTabHeader.prototype.removeAllItems = function() {
+		var oResult = this.removeAllAggregation("items");
+
 		this._aTabKeys = [];
-		return this.removeAllAggregation("items");
+		this.oSelectedItem = null;
+
+		this._invalidateParentIconTabBar();
+
+		return oResult;
 	};
 
 	IconTabHeader.prototype.removeItem = function(oItem) {
@@ -974,6 +983,12 @@ function(
 			var sKey = oItem.getKey();
 			this._aTabKeys.splice(this._aTabKeys.indexOf(sKey) , 1);
 		}
+
+		if (this.oSelectedItem === oItem) {
+			this.oSelectedItem = null;
+		}
+
+		this._invalidateParentIconTabBar();
 
 		// Return the original value from removeAggregation
 		return oItem;
@@ -1008,7 +1023,7 @@ function(
 				this.setSelectedItem(oSelectedItem, true);
 			} else {
 				var oIconTabBar = this.getParent();
-				if (oIconTabBar instanceof sap.m.IconTabBar && oIconTabBar.getExpanded()) {
+				if (this._isInsideIconTabBar() && oIconTabBar.getExpanded()) {
 					oIconTabBar.$("content").children().remove();
 				}
 			}
@@ -1021,7 +1036,7 @@ function(
 
 		if (sAggregationName == 'items') {
 			var oIconTabBar = this.getParent();
-			if (oIconTabBar instanceof sap.m.IconTabBar && oIconTabBar.getExpanded()) {
+			if (this._isInsideIconTabBar() && oIconTabBar.getExpanded()) {
 				oIconTabBar.$("content").children().remove();
 			}
 		}
@@ -1430,6 +1445,26 @@ function(
 		}
 
 		this._setTabsVisibility();
+	};
+
+	/**
+	 * Returns if the control is inside an IconTabBar.
+	 * @private
+	 */
+	IconTabHeader.prototype._isInsideIconTabBar = function() {
+		var oParent = this.getParent();
+
+		return oParent instanceof Control && oParent.isA('sap.m.IconTabBar');
+	};
+
+	/**
+	 * Invalidates the parent if it is an IconTabBar
+	 * @private
+	 */
+	IconTabHeader.prototype._invalidateParentIconTabBar = function() {
+		if (this._isInsideIconTabBar()) {
+			this.getParent().invalidate();
+		}
 	};
 
 	/**
