@@ -2602,6 +2602,67 @@ sap.ui.define([
 		oInput = null;
 	});
 
+	QUnit.test("Set showSuggestions", function (assert) {
+
+		// Arrange
+		var oInput = new Input({
+			startSuggestion: 0,
+			showSuggestion: true,
+			suggestionItems: [
+				new Item({ text: "test" })
+			]
+		});
+		var fnTriggerSuggestSpy = sinon.spy(oInput, "_triggerSuggest");
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput.onfocusin();
+		oInput._$input.focus().val("te").trigger("input");
+
+		this.clock.tick(300);
+
+		// Assert
+		assert.ok(fnTriggerSuggestSpy.called, "Should have triggered suggest.");
+		assert.ok(oInput._oSuggPopover._oPopover, "Should have suggestions popover.");
+		assert.ok(oInput._oSuggPopover._oPopover.isOpen(), "Should have opened suggestions popover.");
+		assert.ok(oInput._oSuggPopover._oList, "Should have created a list with suggestions.");
+
+		// Act
+		oInput._$input.val("");
+		oInput.onfocusout();
+		oInput.setShowSuggestion(false);
+		fnTriggerSuggestSpy.reset();
+		oInput.onfocusin();
+		oInput._$input.focus().val("te").trigger("input");
+
+		this.clock.tick(300);
+
+		// Assert
+		assert.notOk(fnTriggerSuggestSpy.called, "Should have NOT triggered suggest.");
+		assert.notOk(oInput._oSuggPopover._oPopover, "Should NOT have suggestions popover.");
+		assert.notOk(oInput._oSuggPopover._oList, "Should have NOT created a list with suggestions.");
+
+		// Act
+		oInput._$input.val("");
+		oInput.onfocusout();
+		oInput.setShowSuggestion(true);
+		fnTriggerSuggestSpy.reset();
+		oInput.onfocusin();
+		oInput._$input.focus().val("te").trigger("input");
+
+		this.clock.tick(300);
+
+		// Assert
+		assert.ok(fnTriggerSuggestSpy.called, "Should have triggered suggest.");
+		assert.ok(oInput._oSuggPopover._oPopover, "Should have suggestions popover.");
+		assert.ok(oInput._oSuggPopover._oPopover.isOpen(), "Should have opened suggestions popover.");
+		assert.ok(oInput._oSuggPopover._oList, "Should have created a list with suggestions.");
+
+		// Cleanup
+		fnTriggerSuggestSpy.restore();
+		oInput.destroy();
+	});
+
 	QUnit.module("Key and Value");
 
 	function createInputWithSuggestions () {
