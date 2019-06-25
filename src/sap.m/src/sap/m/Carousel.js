@@ -418,7 +418,7 @@ function(
 			}
 
 			if (iNextSlide > 0) {
-				this._changePage(iNextSlide);
+				this._changePage(iPreviousSlide, iNextSlide);
 			}
 		}, this));
 
@@ -491,19 +491,27 @@ function(
 	Carousel.prototype._moveToPage = function(iIndex) {
 		this._oMobifyCarousel.changeAnimation('sapMCrslNoTransition');
 		this._oMobifyCarousel.move(iIndex);
-		this._changePage(iIndex);
+		this._changePage(undefined, iIndex);
 	};
 
 	/**
 	 * Private method which adjusts the Hud visibility and fires a page change
 	 * event when the active page changes
 	 *
+	 * @param {int} [iOldPageIndex] Optional index of the old page. If not specified, the current active page index will be taken.
 	 * @param {int} iNewPageIndex index of new page in 'pages' aggregation.
 	 * @private
 	 */
-	Carousel.prototype._changePage = function(iNewPageIndex) {
+	Carousel.prototype._changePage = function(iOldPageIndex, iNewPageIndex) {
 		this._adjustHUDVisibility(iNewPageIndex);
 		var sOldActivePageId = this.getActivePage();
+
+		// If setActivePage is called through API, getActivePage will return the wrong page.
+		// In this case iOldPageIndex must be passed.
+		if (iOldPageIndex) {
+			sOldActivePageId = this.getPages()[iOldPageIndex - 1].getId();
+		}
+
 		var sNewActivePageId = this.getPages()[iNewPageIndex - 1].getId();
 		this.setAssociation("activePage", sNewActivePageId, true);
 		var sTextBetweenNumbers = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("CAROUSEL_PAGE_INDICATOR_TEXT", [iNewPageIndex, this.getPages().length]);
@@ -874,7 +882,7 @@ function(
 			lastActivePageNumber = this._lastActivePageNumber + 1;
 
 			this._oMobifyCarousel.move(lastActivePageNumber);
-			this._changePage(lastActivePageNumber);
+			this._changePage(undefined, lastActivePageNumber);
 		}
 	};
 
