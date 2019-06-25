@@ -132,3 +132,26 @@ pre.prettyprint {
 .prettyprint {
 	overflow: auto;
 }
+
+.tableWrapper {
+	overflow-x:auto;
+}
+
+/* on Phone */
+
+html.sap-phone .navigation {
+	display: none;
+}
+
+html.sap-phone .content {
+	width: 100%;
+	padding: 0 1rem;
+}
+
+html.sap-phone .content ul{
+	padding-inline-start: 16px;
+}
+
+html.sap-phone .cardHeadersImg {
+	width: 320px;
+}
