@@ -37,6 +37,12 @@ sap.ui.define([
 						}
 					}),
 					beginButton: new Button({
+						text: 'OK',
+						press: function () {
+							this.pressDialog.close();
+						}.bind(this)
+					}),
+					endButton: new Button({
 						text: 'Close',
 						press: function () {
 							this.pressDialog.close();
@@ -67,7 +73,7 @@ sap.ui.define([
 							})
 						}
 					}),
-					beginButton: new Button({
+					endButton: new Button({
 						text: 'Close',
 						press: function () {
 							this.resizableDialog.close();
@@ -98,7 +104,7 @@ sap.ui.define([
 							})
 						}
 					}),
-					beginButton: new Button({
+					endButton: new Button({
 						text: 'Close',
 						press: function () {
 							this.draggableDialog.close();
@@ -128,7 +134,7 @@ sap.ui.define([
 							})
 						}
 					}),
-					beginButton: new Button({
+					endButton: new Button({
 						text: 'Close',
 						press: function () {
 							this.fixedSizeDialog.close();
