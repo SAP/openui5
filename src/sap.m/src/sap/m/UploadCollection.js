@@ -1776,7 +1776,7 @@ sap.ui.define([
 		if (item.hasListeners("press")) {
 			item.firePress();
 		} else if (this.sErrorState !== "Error" && jQuery.trim(item.getProperty("url"))) {
-			this._triggerLink(event);
+			this._triggerLink(event, item);
 		}
 	};
 
@@ -2966,21 +2966,17 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} event The SAPUI5 event object
 	 * @private
 	 */
-	UploadCollection.prototype._triggerLink = function(event) {
-		var iLine, aId;
-
-		if (this.editModeItem) {
-			//In case there is a list item in edit mode, the edit mode has to be finished first.
-			this._handleOk(event, this.editModeItem, true);
-			if (this.sErrorState === "Error") {
-				//If there is an error, the link of the list item must not be triggered.
-				return;
-			}
-			this.sFocusId = event.getParameter("id");
+	UploadCollection.prototype._triggerLink = function(event, item) {
+	if (this.editModeItem) {
+		//In case there is a list item in edit mode, the edit mode has to be finished first.
+		this._handleOk(event, this.editModeItem, true);
+		 if (this.sErrorState === "Error") {
+			//If there is an error, the link of the list item must not be triggered.
+			return;
 		}
-		aId = event.oSource.getId().split("-");
-		iLine = aId[aId.length - 2];
-		MobileLibrary.URLHelper.redirect(this.aItems[iLine].getProperty("url"), true);
+		this.sFocusId = event.getParameter("id");
+	}
+	MobileLibrary.URLHelper.redirect(item.getProperty("url"),true);
 	};
 
 	// ================================================================================
