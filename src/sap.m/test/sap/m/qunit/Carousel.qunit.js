@@ -738,6 +738,37 @@ sap.ui.define([
 		}.bind(this), sinonClockTickValue);
 	});
 
+	QUnit.test("'pageChanged' event parameters when active page is set through API", function (assert) {
+		// Arrange
+		var bPageNewOK = false,
+			bPageOldOK = false,
+			bPagesNewIndexdOK = false,
+			done = assert.async();
+
+		assert.expect(3);
+
+		this.oCarousel.attachPageChanged(function (oControlEvent) {
+			bPageNewOK = oControlEvent.getParameters().oldActivePageId === "keyTestPage_2";
+			bPageOldOK = oControlEvent.getParameters().newActivePageId === "keyTestPage_4";
+			bPagesNewIndexdOK = oControlEvent.getParameters().activePages[0] === 3;
+		});
+
+		// Wait for CSS animation caused by activePage in constructor to complete
+		setTimeout(function () {
+			// Act
+			this.oCarousel.setActivePage("keyTestPage_4");
+
+			setTimeout(function () {
+				// Assert
+				assert.ok(bPageNewOK, "Old active page should be 'keyTestPage_2'");
+				assert.ok(bPageOldOK, "New active page should be 'keyTestPage_4'");
+				assert.ok(bPagesNewIndexdOK, "New page index should be 3");
+				done();
+			}, sinonClockTickValue);
+
+		}.bind(this), sinonClockTickValue);
+	});
+
 	QUnit.test("Listen to 'beforePageChanged' event", function (assert) {
 		// Arrange
 		var bPagesNewIndexdOK = false,
@@ -1517,7 +1548,7 @@ sap.ui.define([
 			oPopup.openBy(oButton);
 			assert.strictEqual(oCarousel.getActivePage(), "image2", "active page is with id 'image2'");
 			oCarousel.$().find('a.sapMCrslNext').focus();
-			oCarousel._changePage(3);
+			oCarousel._changePage(undefined, 3);
 			// Assert
 			assert.strictEqual(oCarousel.getActivePage(), "image3", "active page is with id 'image3'");
 
