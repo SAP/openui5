@@ -4,20 +4,18 @@
 
 sap.ui.define([
 	"sap/ui/fl/write/ChangesController",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/Change",
-	"sap/ui/core/Component",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
+	"sap/ui/fl/Utils",
+	"sap/ui/core/Component",
 	"sap/ui/core/Element",
 	"sap/base/util/includes"
 ], function(
 	ChangesController,
-	Utils,
-	Change,
-	Component,
 	DescriptorInlineChangeFactory,
 	DescriptorChangeFactory,
+	Utils,
+	Component,
 	Element,
 	includes
 ) {
@@ -59,6 +57,10 @@ sap.ui.define([
 						return new DescriptorChangeFactory().createNew(
 							oChangeSpecificData.reference, oAppDescriptorChangeContent, oChangeSpecificData.layer, vSelector
 						);
+					})
+					.catch(function(oError) {
+						Utils.log.error("the change could not be created.", oError.message);
+						throw oError;
 					});
 			}
 
@@ -88,40 +90,24 @@ sap.ui.define([
 				.isChangeHandlerRevertible(oChange, vSelector);
 		},
 
-
 		/**
 		 * Returns the control map containing control and control type
 		 *
 
+		 * @param {sap.ui.core.Control} oControl - Control which is the target of the passed change
 		 * @param {map} mPropertyBag - contains additional data that are needed for reading of changes
 		 * @param {sap.ui.fl.Change} mPropertyBag.change - Change to be evaluated if template is affected
 		 * @params {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - The control tree modifier
 		 * @params {sap.ui.core.Component} mPropertyBag.appComponent - app component instance that is currently loading
 		 * @param {string} [mPropertyBag.view] - For XML processing only: XML node of the view
-		 * @param {sap.ui.core.Control} oControl - Control which is the target of the passed change
 		 *
 		 * @returns {object} Returns an object containing control, control type and if template was affected
 		 * @public
 		 */
-		getControlIfTemplateAffected: function(mPropertyBag, oControl) {
+		getControlIfTemplateAffected: function(oControl, mPropertyBag) {
 			return ChangesController.getFlexControllerInstance(mPropertyBag.appComponent)
 			// TODO: parameters should be change internally
 				._getControlIfTemplateAffected(mPropertyBag.change, oControl, oControl.getMetadata().getName(), mPropertyBag);
-		},
-
-		/**
-		 * Determines if user specific changes or variants are present in the flex persistence.
-		 *
-		 * @param {map} [mPropertyBag] - Contains additional data needed for checking personalization, will be passed to FlexController.getComponentChanges
-		 * @param {string} [mPropertyBag.upToLayer] - layer to compare with
-		 * @param {boolean} [mPropertyBag.ignoreMaxLayerParameter] - Indicates that personalization shall be checked without max layer filtering
-		 * @param {sap.ui.base.ManagedObject} oManagedObject - To retrieve the associated flex persistence
-		 * @returns {Promise} Resolves with a boolean; true if a personalization change created during runtime is active in the application
-		 * @public
-		 */
-		hasHigherLayerChanges: function (mPropertyBag, oManagedObject) {
-			return ChangesController.getFlexControllerInstance(oManagedObject)
-				.hasHigherLayerChanges(mPropertyBag);
 		},
 
 		/**

@@ -5,7 +5,6 @@
 sap.ui.define([
 	"sap/ui/fl/write/ChangesController",
 	"sap/ui/fl/Cache",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/Utils",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
@@ -13,7 +12,6 @@ sap.ui.define([
 ], function(
 	ChangesController,
 	Cache,
-	Change,
 	Utils,
 	JsControlTreeModifier,
 	DescriptorInlineChangeFactory,
@@ -50,6 +48,21 @@ sap.ui.define([
 				appVersion: Utils.getAppVersionFromManifest(oAppComponent.getManifest())
 			};
 			return Cache.getCacheKey(mComponentProperties, oAppComponent);
+		},
+
+		/**
+		 * Determines if user specific changes or variants are present in the flex persistence.
+		 *
+		 * @param {sap.ui.base.ManagedObject} oManagedObject - To retrieve the associated flex persistence
+		 * @param {map} [mPropertyBag] - Contains additional data needed for checking personalization
+		 * @param {string} [mPropertyBag.upToLayer] - layer to compare with
+		 * @param {boolean} [mPropertyBag.ignoreMaxLayerParameter] - Indicates that personalization shall be checked without max layer filtering
+		 * @returns {Promise} Resolves with a boolean; true if a personalization change created during runtime is active in the application
+		 * @public
+		 */
+		hasHigherLayerChanges: function (oManagedObject, mPropertyBag) {
+			return ChangesController.getFlexControllerInstance(oManagedObject)
+				.hasHigherLayerChanges(mPropertyBag);
 		},
 
 		/**
@@ -126,7 +139,7 @@ sap.ui.define([
 		 * Removes a change from the flex persistence or from the applied changes on a control with revert.
 		 *
 		 * @param {sap.ui.fl.Change} oChange - Change to be removed
-		 * @param {Object} mPropertyBag
+		 * @param {Object} mPropertyBag - Contains additional Data
 		 * @param {sap.ui.core.Component} mPropertyBag.appComponent - Application component instance
 		 * @param {boolean} mPropertyBag.revert - If change should be reverted on control
 		 *
@@ -154,7 +167,7 @@ sap.ui.define([
 		/**
 		 * Retrieves the changes from the flex persistence for the passed managed object.
 		 *
-		 * @param {map} mPropertyBag Contains additional - Data needed for reading changes
+		 * @param {map} mPropertyBag Contains additional Data needed for reading changes
 		 * @param {object} [mPropertyBag.appDescriptor] - Manifest that belongs to the current running component
 		 * @param {string} [mPropertyBag.siteId] - ID of the site belonging to the current running component
 		 * @param {string} [mPropertyBag.currentLayer] - Specifies a single layer for loading changes. If this parameter is set, the max layer filtering is not applied
@@ -184,7 +197,6 @@ sap.ui.define([
 			return ChangesController.getFlexControllerInstance(oManagedObject)
 				._oChangePersistence.getDirtyChanges();
 		}
-
 	};
 	return PersistenceWriteAPI;
 }, true);

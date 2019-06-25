@@ -237,11 +237,11 @@ sap.ui.define([
 
 		var oAppComponent = this.getAppComponent();
 		var oSelectorElement = RtaControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
-		var mControl = ChangesWriteAPI.getControlIfTemplateAffected({
+		var mControl = ChangesWriteAPI.getControlIfTemplateAffected(oSelectorElement, {
 			modifier: JsControlTreeModifier,
 			appComponent: oAppComponent,
 			change: oChange
-		}, oSelectorElement);
+		});
 		var bRevertible = ChangesWriteAPI.isChangeHandlerRevertible(oChange, mControl.control);
 		var mPropertyBag = {
 			modifier: bRevertible ? JsControlTreeModifier : RtaControlTreeModifier,

@@ -53,7 +53,6 @@ sap.ui.define([
 	"sap/ui/performance/Measurement",
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI"
 ],
 function(
@@ -106,7 +105,6 @@ function(
 	Measurement,
 	Log,
 	KeyCodes,
-	ChangesWriteAPI,
 	PersistenceWriteAPI
 ) {
 	"use strict";
@@ -1114,15 +1112,9 @@ function(
 	 */
 	RuntimeAuthoring.prototype._deleteChanges = function() {
 		var oRootControl = this.getRootControlInstance();
-		var bAppVariantRunning = FlexUtils.isApplicationVariant(oRootControl) || FlexUtils.isVariantByStartupParameter(oRootControl);
 		var oAppComponent = FlexUtils.getAppComponentForControl(oRootControl);
 
 		return PersistenceWriteAPI.resetChanges(this.getLayer(), "Change.createInitialFileContent", oAppComponent)
-		.then(function() {
-			if (!bAppVariantRunning) {
-				return PersistenceWriteAPI.resetChanges(this.getLayer(), "Change.createInitialFileContent", oAppComponent);
-			}
-		}.bind(this))
 		.then(function() {
 			this._reloadPage();
 		}.bind(this))
@@ -1457,7 +1449,7 @@ function(
 		var oUshellContainer = FlexUtils.getUshellContainer();
 		if (oUshellContainer && this.getLayer() !== "USER") {
 			var mParsedHash = FlexUtils.getParsedURLHash();
-			return ChangesWriteAPI.hasHigherLayerChanges({ignoreMaxLayerParameter: false}, this.getRootControlInstance())
+			return PersistenceWriteAPI.hasHigherLayerChanges(this.getRootControlInstance(), {ignoreMaxLayerParameter: false})
 				.then(function (bHasHigherLayerChanges) {
 					if (bHasHigherLayerChanges) {
 						return this._handleReloadWithoutHigherLayerChangesMessageBoxOnStart().then(function () {
@@ -1482,7 +1474,7 @@ function(
 			this._oSerializer.needsReload(),
 			// When working with RTA, the MaxLayer parameter will be present in the URL and must
 			// be ignored in the decision to bring up the pop-up (ignoreMaxLayerParameter = true)
-			ChangesWriteAPI.hasHigherLayerChanges({ignoreMaxLayerParameter: true}, this.getRootControlInstance())
+			PersistenceWriteAPI.hasHigherLayerChanges(this.getRootControlInstance(), {ignoreMaxLayerParameter: true})
 		]).then(function (aArgs) {
 			var bChangesNeedRestart = aArgs[0],
 				bHasHigherLayerChanges = aArgs[1];

@@ -29,7 +29,6 @@ sap.ui.define([
 	"sap/base/util/UriParameters",
 	"qunit/RtaQunitUtils",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/thirdparty/sinon-4"
 ],
@@ -62,7 +61,6 @@ function(
 	UriParameters,
 	RtaQunitUtils,
 	QUnitUtils,
-	ChangesWriteAPI,
 	PersistenceWriteAPI,
 	sinon
 ) {
@@ -1049,9 +1047,8 @@ function(
 		});
 
 		QUnit.test("when calling '_deleteChanges' successfully", function(assert) {
-			assert.expect(7);
+			assert.expect(4);
 			this.oDeleteChangesStub.restore();
-			sandbox.stub(Utils, "isApplicationVariant").returns(false);
 			sandbox.stub(PersistenceWriteAPI, "resetChanges").callsFake(function() {
 				assert.strictEqual(arguments[0], this.oRta.getLayer(), "then correct layer parameter passed");
 				assert.strictEqual(arguments[1], "Change.createInitialFileContent", "then correct generator parameter passed");
