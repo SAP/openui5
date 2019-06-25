@@ -206,19 +206,14 @@ sap.ui.define([
 	};
 
 	ColumnListItemRenderer.applyAriaLabelledBy = function(oHeader, oCell) {
-		if (oCell && oCell.removeAriaLabelledBy) {
-			oCell.removeAriaLabelledBy(oCell.data("ariaLabelledBy") || undefined);
-		}
-
-		/* add the header as an aria-labelled by association for the cells */
-		/* only set the header text to the aria-labelled association if the header is a textual control and is visible */
+		/* add the header as an aria-labelled by association for the cells if it does not already exists */
+		/* only set the header text to the aria-labelledby association if the header is a textual control and visible */
 		if (oHeader &&
 			oHeader.getText &&
-			oCell.addAriaLabelledBy &&
-			oHeader.getVisible()) {
-
+			oHeader.getVisible() &&
+			oCell.getAriaLabelledBy &&
+			(oCell.getAriaLabelledBy() || []).indexOf(oHeader.getId()) == -1) {
 			oCell.addAriaLabelledBy(oHeader);
-			oCell.data("ariaLabelledBy", oHeader.getId());
 		}
 	};
 

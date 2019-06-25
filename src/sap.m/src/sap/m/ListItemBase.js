@@ -260,7 +260,6 @@ function(
 
 	// icon URI configuration
 	ListItemBase.prototype.DetailIconURI = IconPool.getIconURI("edit");
-	ListItemBase.prototype.DeleteIconURI = IconPool.getIconURI(ThemeParameters.get("_sap_m_ListItemBase_DeleteIcon"));
 	ListItemBase.prototype.NavigationIconURI = IconPool.getIconURI("slim-arrow-right");
 
 	// defines the root tag name for rendering purposes
@@ -494,6 +493,10 @@ function(
 	ListItemBase.prototype.getDeleteControl = function(bCreateIfNotExist) {
 		if (!bCreateIfNotExist || this._oDeleteControl) {
 			return this._oDeleteControl;
+		}
+
+		if (!this.DeleteIconURI) {
+			ListItemBase.prototype.DeleteIconURI = IconPool.getIconURI(ThemeParameters.get("_sap_m_ListItemBase_DeleteIcon"));
 		}
 
 		this._oDeleteControl = new Button({
