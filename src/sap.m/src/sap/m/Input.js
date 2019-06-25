@@ -1337,12 +1337,17 @@ function(
 		 * @param {boolean} bValue Show suggestions.
 		 * @return {sap.m.Input} this Input instance for chaining.
 	 	 */
-		Input.prototype.setShowSuggestion = function(bValue){
+		Input.prototype.setShowSuggestion = function(bValue) {
 			this.setProperty("showSuggestion", bValue, true);
 
 			if (bValue) {
 				this._oSuggPopover = this._getSuggestionsPopover();
 				this._oSuggPopover._iPopupListSelectedIndex = -1;
+				if (!this._oSuggPopover._oPopover) {
+					this._createSuggestionsPopoverPopup();
+					this._synchronizeSuggestions();
+					this._createSuggestionPopupContent();
+				}
 			} else {
 				if (this._oSuggPopover) {
 					this._oSuggPopover._destroySuggestionPopup();
@@ -1985,7 +1990,7 @@ function(
 		}
 
 		// fires suggest event when startSuggestion is set to 0 and input has no text
-		if (!this._bPopupHasFocus && !this.getStartSuggestion() && !this.getValue()) {
+		if (!this._bPopupHasFocus && !this.getStartSuggestion() && !this.getValue() && this.getShowSuggestion()) {
 			this._triggerSuggest(this.getValue());
 		}
 		this._bPopupHasFocus = undefined;
@@ -2403,7 +2408,7 @@ function(
 				this._oSuggPopover._oPopupInput = this._createPopupInput();
 			}
 
-			this._oSuggPopover._createSuggestionPopup(); // TODO move this call to SuggestionsPopover constructor
+			this._createSuggestionsPopoverPopup();
 
 			this._oSuggPopover._bAutocompleteEnabled = this.getAutocomplete();
 
@@ -2422,82 +2427,99 @@ function(
 			if (this.getShowTableSuggestionValueHelp()) {
 				this._addShowMoreButton();
 			}
-
-			if (this._bUseDialog) {
-				this._oSuggPopover._oPopover
-					.attachBeforeClose(function () {
-						// call _getInputValue to apply the maxLength to the typed value
-						this.setDOMValue(this
-							._getInputValue(this._oSuggPopover._oPopupInput
-								.getValue()));
-						this.onChange();
-
-						if (this instanceof sap.m.MultiInput && this._bUseDialog) {
-							this._onDialogClose();
-						}
-
-					}, this)
-					.attachAfterClose(function() {
-						var oList = this._oSuggPopover._oList;
-
-						if (Table && !(oList instanceof Table)) {
-							oList.destroyItems();
-						} else {
-							oList.removeSelections(true);
-						}
-					}.bind(this))
-					.attachAfterOpen(function () {
-						var sValue = this.getValue();
-
-						this._oSuggPopover._oPopupInput.setValue(sValue);
-						this._triggerSuggest(sValue);
-						this._refreshListItems();
-					}, this)
-					.attachBeforeOpen(function() {
-						// set the same placeholder and maxLength as the original input
-						this._oSuggPopover._oPopupInput.setPlaceholder(this.getPlaceholder());
-						this._oSuggPopover._oPopupInput.setMaxLength(this.getMaxLength());
-					}, this);
-
-				this._oSuggPopover._oPopover.getBeginButton()
-					.attachPress(function() {
-						this._closeSuggestionPopup();
-					}, this);
-			} else {
-				this._oSuggPopover._oPopover
-					.attachAfterClose(function() {
-
-						this._updateSelectionFromList();
-
-						var oList = this._oSuggPopover._oList;
-
-						// only destroy items in simple suggestion mode
-						if (oList instanceof Table) {
-							oList.removeSelections(true);
-						} else {
-							oList.destroyItems();
-						}
-
-						this._oSuggPopover._deregisterResize();
-					}.bind(this))
-					.attachBeforeOpen(function () {
-						this._oSuggPopover._sPopoverContentWidth = this.getMaxSuggestionWidth();
-						this._oSuggPopover._bEnableHighlighting = this.getEnableSuggestionsHighlighting();
-						this._oSuggPopover._bAutocompleteEnabled = this.getAutocomplete();
-						this._oSuggPopover._bIsInputIncrementalType = this._isIncrementalType();
-						this._sBeforeSuggest = this.getValue();
-						this._oSuggPopover._resizePopup();
-						this._oSuggPopover._registerResize();
-					}, this);
-			}
-
-			// add popup to a hidden aggregation to also propagate the model and bindings to the content of the popover
-			this.setAggregation("_suggestionPopup", this._oSuggPopover._oPopover);
-
-			this._oSuggestionPopup = this._oSuggPopover._oPopover; // for backward compatibility (used in some other controls)
 		}
 
 		return this._oSuggPopover;
+	};
+
+	/**
+	 * Creates a suggestion popover popup.
+	 *
+	 * @private
+	 */
+	Input.prototype._createSuggestionsPopoverPopup = function () {
+
+		if (!this._oSuggPopover) {
+			return;
+		}
+
+		var oSuggPopover = this._oSuggPopover;
+		oSuggPopover._createSuggestionPopup();
+
+		var oPopover = oSuggPopover._oPopover;
+
+		if (this._bUseDialog) {
+			oPopover
+				.attachBeforeClose(function () {
+					// call _getInputValue to apply the maxLength to the typed value
+					this.setDOMValue(this
+						._getInputValue(this._oSuggPopover._oPopupInput
+							.getValue()));
+					this.onChange();
+
+					if (this instanceof sap.m.MultiInput && this._bUseDialog) {
+						this._onDialogClose();
+					}
+
+				}, this)
+				.attachAfterClose(function() {
+					var oList = this._oSuggPopover._oList;
+
+					if (Table && !(oList instanceof Table)) {
+						oList.destroyItems();
+					} else {
+						oList.removeSelections(true);
+					}
+				}.bind(this))
+				.attachAfterOpen(function () {
+					var sValue = this.getValue();
+
+					this._oSuggPopover._oPopupInput.setValue(sValue);
+					this._triggerSuggest(sValue);
+					this._refreshListItems();
+				}, this)
+				.attachBeforeOpen(function() {
+					// set the same placeholder and maxLength as the original input
+					this._oSuggPopover._oPopupInput.setPlaceholder(this.getPlaceholder());
+					this._oSuggPopover._oPopupInput.setMaxLength(this.getMaxLength());
+				}, this);
+
+			oPopover.getBeginButton()
+				.attachPress(function() {
+					this._closeSuggestionPopup();
+				}, this);
+		} else {
+			oPopover
+				.attachAfterClose(function() {
+
+					this._updateSelectionFromList();
+
+					var oList = this._oSuggPopover._oList;
+
+					// only destroy items in simple suggestion mode
+					if (oList instanceof Table) {
+						oList.removeSelections(true);
+					} else {
+						oList.destroyItems();
+					}
+
+					this._oSuggPopover._deregisterResize();
+				}.bind(this))
+				.attachBeforeOpen(function () {
+					this._oSuggPopover._sPopoverContentWidth = this.getMaxSuggestionWidth();
+					this._oSuggPopover._bEnableHighlighting = this.getEnableSuggestionsHighlighting();
+					this._oSuggPopover._bAutocompleteEnabled = this.getAutocomplete();
+					this._oSuggPopover._bIsInputIncrementalType = this._isIncrementalType();
+					this._sBeforeSuggest = this.getValue();
+					this._oSuggPopover._resizePopup();
+					this._oSuggPopover._registerResize();
+				}, this);
+		}
+
+		// add popup to a hidden aggregation to also propagate the model and bindings to the content of the popover
+		this.setAggregation("_suggestionPopup", oPopover);
+
+		this._oSuggestionPopup = oPopover; // for backward compatibility (used in some other controls)
 	};
 
 	/**
