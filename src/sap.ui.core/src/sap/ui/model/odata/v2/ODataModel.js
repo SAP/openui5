@@ -1442,11 +1442,11 @@ sap.ui.define([
 						oEntry[sName] = { __ref: oResult };
 					}
 				} else if (!oProperty || !oProperty.__deferred) { //do not store deferred navprops
-					oEntry[sName] = oProperty;
 					//'null' is a valid value for navigation properties (e.g. if no entity is assigned). We need to invalidate the path cache
-					if (oProperty === null) {
+					if (oEntry[sName] && oProperty === null) {
 						that.mInvalidatedPaths[sPath.substr(sPath.lastIndexOf("(")) + "/" + sName] = null;
 					}
+					oEntry[sName] = oProperty;
 				}
 			});
 			// if we got new data we have to update changed entities
