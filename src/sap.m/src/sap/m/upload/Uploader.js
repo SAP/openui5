@@ -51,7 +51,7 @@ sap.ui.define([
 				uploadStarted: {
 					parameters: {
 						/**
-						 * The item that is going to be deleted.
+						 * The item that is going to be uploaded.
 						 */
 						item: {type: "sap.m.upload.UploadSetItem"}
 					}
@@ -62,7 +62,7 @@ sap.ui.define([
 				uploadProgressed: {
 					parameters: {
 						/**
-						 * The item that is going to be deleted.
+						 * The item that is being uploaded.
 						 */
 						item: {type: "sap.m.upload.UploadSetItem"},
 						/**
@@ -83,7 +83,7 @@ sap.ui.define([
 				uploadCompleted: {
 					parameters: {
 						/**
-						 * The item that is going to be deleted.
+						 * The item that was uploaded.
 						 */
 						item: {type: "sap.m.upload.UploadSetItem"}
 					}
@@ -108,10 +108,49 @@ sap.ui.define([
 	};
 
 	/**
+	 * Starts function for uploading one file object to given url. Returns promise that resolves when the upload is finished or rejects when the upload fails.
+	 *
+	 * @param {File|Blob} oFile File or Blob object to be uploaded.
+	 * @param {string} sUrl Upload Url.
+	 * @param {sap.ui.core.Item[]} [aHeaderFields] Collection of request header fields to be send along.
+	 * @returns {Promise} Promise that resolves when the upload is finished or rejects when the upload fails.
+	 * @public
+	 */
+	Uploader.uploadFile = function (oFile, sUrl, aHeaderFields) {
+		var oXhr = new window.XMLHttpRequest();
+
+		return new Promise(function(resolve, reject) {
+			oXhr.open("POST", sUrl, true);
+
+			if ((Device.browser.edge || Device.browser.internet_explorer) && oFile.type && oXhr.readyState === 1) {
+				oXhr.setRequestHeader("Content-Type", oFile.type);
+			}
+
+			if (aHeaderFields) {
+				aHeaderFields.forEach(function (oHeader) {
+					oXhr.setRequestHeader(oHeader.getKey(), oHeader.getText());
+				});
+			}
+
+			oXhr.onreadystatechange = function () {
+				if (this.readyState === window.XMLHttpRequest.DONE) {
+					if (this.status === 200) {
+						resolve(this);
+					} else {
+						reject(this);
+					}
+				}
+			};
+
+			oXhr.send(oFile);
+		});
+	};
+
+	/**
 	 * Starts the process of uploading the specified file.
 	 *
 	 * @param {sap.m.upload.UploadSetItem} oItem Item representing the file to be uploaded.
-	 * @param {sap.ui.core.Item[]} aHeaderFields Collection of request header fields to be send along.
+	 * @param {sap.ui.core.Item[]} [aHeaderFields] Collection of request header fields to be send along.
 	 * @public
 	 */
 	Uploader.prototype.uploadItem = function (oItem, aHeaderFields) {
@@ -129,9 +168,11 @@ sap.ui.define([
 			oXhr.setRequestHeader("Content-Type", oFile.type);
 		}
 
-		aHeaderFields.forEach(function (oHeader) {
-			oXhr.setRequestHeader(oHeader.getKey(), oHeader.getText());
-		});
+		if (aHeaderFields) {
+			aHeaderFields.forEach(function (oHeader) {
+				oXhr.setRequestHeader(oHeader.getKey(), oHeader.getText());
+			});
+		}
 
 		oXhr.upload.addEventListener("progress", function (oEvent) {
 			that.fireUploadProgressed({
