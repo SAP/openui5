@@ -5034,7 +5034,6 @@ sap.ui.define([
 	 * The changeResponses contain the actual response of that change set in the <code>response</code> property.
 	 * For each change set there is also a <code>__changeResponse</code> property.
 	 * @param {function} [mParameters.error] A callback function which is called when the request failed. The handler can have the parameter: <code>oError</code> which contains additional error information
-	 * @param {string} [mParameters.eTag] An ETag which can be used for concurrency control. If it is specified, it will be used in an <code>If-Match</code> header in the request to the server for this entry
 	 * @return {object} An object which has an <code>abort</code> function to abort the current request or requests
 	 *
 	 * @public
@@ -5103,7 +5102,7 @@ sap.ui.define([
 			if (bAborted) {
 				oRequestHandle.abort();
 			}
-			//call sucess handler even no changes were submitted
+			//call success handler even no changes were submitted
 			if (Array.isArray(vRequestHandleInternal) && vRequestHandleInternal.length == 0 && fnSuccess) {
 				fnSuccess({}, undefined);
 			}
