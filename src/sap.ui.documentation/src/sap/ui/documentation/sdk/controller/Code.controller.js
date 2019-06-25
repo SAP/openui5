@@ -189,12 +189,23 @@ sap.ui.define([
 
 					var sRef = sap.ui.require.toUrl((this._sId).replace(/\./g, "/")),
 						aExtraFiles = oData.includeInDownload || [],
-						that = this;
+						that = this,
+						bHasManifest;
 
 					// iframe examples have a separate index file and a component file to describe it
 					if (!oData.iframe) {
+						oData.files.forEach(function(oFile) {
+							bHasManifest = oFile.name === "manifest.json";
+
+							return;
+						});
+
 						oZipFile.file("Component.js", this.fetchSourceFile(sRef, "Component.js"));
-						oZipFile.file("index.html", this._changeIframeBootstrapToCloud(this._createIndexHtmlFile(oData)));
+						oZipFile.file("index.html", this._changeIframeBootstrapToCloud(this._createIndexHtmlFile(oData, bHasManifest)));
+
+						if (!bHasManifest) {
+							oZipFile.file("index.js", this._changeIframeBootstrapToCloud(this._createIndexJsFile(oData)));
+						}
 					}
 
 					// add extra download files
@@ -213,12 +224,26 @@ sap.ui.define([
 				}.bind(this));
 			},
 
-			_createIndexHtmlFile : function(oData) {
-				var sRef = sap.ui.require.toUrl("sap/ui/documentation/sdk/") + "tmpl",
-					sFile = this.fetchSourceFile(sRef, "index.html.tmpl");
+			_createIndexHtmlFile : function(oData, bHasManifest) {
+				var sRef = sap.ui.require.toUrl("sap/ui/documentation/sdk/tmpl"),
+					sFile;
 
-				sFile = sFile.replace(/{{TITLE}}/g, oData.name);
-				sFile = sFile.replace(/{{SAMPLE_ID}}/g, oData.id);
+				sFile = this.fetchSourceFile(sRef, bHasManifest ? "indexevo.html.tmpl" : "index.html.tmpl");
+
+				sFile = sFile.replace(/{{TITLE}}/g, oData.name)
+					.replace(/{{SAMPLE_ID}}/g, oData.id);
+
+				return sFile;
+			},
+
+			_createIndexJsFile : function(oData) {
+				var sRef = sap.ui.require.toUrl("sap/ui/documentation/sdk/tmpl"),
+					sFile = this.fetchSourceFile(sRef, "index.js.tmpl");
+
+				sFile = sFile.replace(/{{TITLE}}/g, oData.name)
+					.replace(/{{SAMPLE_ID}}/g, oData.id)
+					.replace(/{{HEIGHT}}/g, oData.stretch ? 'height : "100%", ' : "")
+					.replace(/{{SCROLLING}}/g, !oData.stretch);
 
 				return sFile;
 			},

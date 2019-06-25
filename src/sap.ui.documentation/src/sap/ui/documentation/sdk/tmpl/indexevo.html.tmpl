@@ -7,7 +7,6 @@
 
 	<script id="sap-ui-bootstrap"
 		src="https://openui5.hana.ondemand.com/resources/sap-ui-core.js"
-		data-sap-ui-libs="sap.m"
 		data-sap-ui-theme="sap_belize"
 		data-sap-ui-resourceroots='{
 			"{{SAMPLE_ID}}": "./",
@@ -15,11 +14,18 @@
 		}'
 		data-sap-ui-compatVersion="edge"
 		data-sap-ui-async="true"
-		data-sap-ui-frameOptions="trusted">
+		data-sap-ui-frameOptions="trusted"
+		data-sap-ui-oninit="module:sap/ui/core/ComponentSupport">
 	</script>
-	<script src="index.js"></script>
 </head>
 
 <body class="sapUiBody" id="content">
+	<div data-sap-ui-component
+		data-name="{{SAMPLE_ID}}"
+		data-height="100%"
+		data-id="container"
+		data-settings='{"id" : "{{SAMPLE_ID}}"}'
+		style="height: 100%">
+	</div>
 </body>
 </html>
