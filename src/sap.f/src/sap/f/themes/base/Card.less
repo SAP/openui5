@@ -308,22 +308,28 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 }
 
 .sapFCard {
-  .sapFCardClickable,
-  .sapFCardClickable svg {
-	cursor: pointer !important;
-
-	.sapMText {
-	  cursor: pointer;
+	&[data-sap-ui-draggable=true] {
+		.sapMText {
+			cursor: grab;
+		}
 	}
 
-	&.sapFCardClickable:hover{
-	  background: @_sap_f_Card_HeaderHoverColor;
-	}
+	.sapFCardClickable,
+	.sapFCardClickable svg {
+		cursor: pointer !important;
 
-	&.sapFCardClickable:active{
-	  background: @_sap_f_Card_HeaderActiveColor;
+		.sapMText {
+			cursor: pointer;
+		}
+
+		&.sapFCardClickable:hover{
+			background: @_sap_f_Card_HeaderHoverColor;
+		}
+
+		&.sapFCardClickable:active{
+			background: @_sap_f_Card_HeaderActiveColor;
+		}
 	}
-  }
 }
 
 .sapFCardHeader:focus::before,
