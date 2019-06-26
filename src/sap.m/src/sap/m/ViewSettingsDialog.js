@@ -1921,6 +1921,8 @@ function(
 			ariaLabelledBy: this._ariaSortOrderInvisibleText
 		});
 
+		this._sortOrderList.addItem(new GroupHeaderListItem({title: this._rb.getText("VIEWSETTINGS_SORT_BY")}));
+
 		this._sortOrderList.addItem(new StandardListItem({
 			title : this._rb.getText("VIEWSETTINGS_ASCENDING_ITEM")
 		}).data("item", false).setSelected(true));

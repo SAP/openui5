@@ -1830,7 +1830,7 @@ sap.ui.define([
 		this.oVSD.open();
 		setTimeout(function () {
 			var listOfSortDirectionItems = that.oVSD._getPage1().getContent()[1];
-			var oListItemDescending = listOfSortDirectionItems.getItems()[1];
+			var oListItemDescending = listOfSortDirectionItems.getItems()[2];
 			var listOfOtherItems = that.oVSD._getPage1().getContent()[3];
 			var oListItemOther = listOfOtherItems.getItems()[1];
 			var vsdSortItem = that.oVSD.getSortItems()[1];
