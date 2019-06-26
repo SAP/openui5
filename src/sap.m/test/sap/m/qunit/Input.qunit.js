@@ -3456,6 +3456,10 @@ sap.ui.define([
 		assert.strictEqual(oInput.getDomRef("SuggDescr").innerText,
 			oMessageBundle.getText("INPUT_SUGGESTIONS_MORE_HITS", 2), "The description has correct text.");
 
+		oInput.onfocusout();
+
+		assert.notOk(oInput.$("SuggDescr").text(), "The suggestion description is cleared");
+
 		// clean up
 		oInput.destroy();
 	});
