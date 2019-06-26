@@ -19,7 +19,7 @@
 							class="sapUiNoContentPadding sapUiDemokitLandingImageCell sapUiNoContentPadding">
 						<Image
 							id="phoneImage"
-							src="./resources/sap/ui/documentation/sdk/images/Explored_S_cropped.jpg"
+							src="./resources/sap/ui/documentation/sdk/images/Explored_S_cropped_1.jpg"
 							width="100%"
 							densityAware="false"
 							class="landingImage"
@@ -27,7 +27,7 @@
 							visible="{device>/system/phone}"/>
 
 						<Image
-							src="./resources/sap/ui/documentation/sdk/images/Explored_M_and_L_cropped.jpg"
+							src="./resources/sap/ui/documentation/sdk/images/Explored_M_and_L_cropped_1.jpg"
 							width="100%"
 							densityAware="false"
 							class="landingImage"
