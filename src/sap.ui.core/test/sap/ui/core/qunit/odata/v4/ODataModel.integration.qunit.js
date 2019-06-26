@@ -409,8 +409,14 @@ sap.ui.define([
 				}
 			});
 
-			assert.deepEqual(aCurrentMessages, aExpectedMessages,
-				this.aMessages.length + " expected messages in message manager");
+			if (this.aMessages.bHasMatcher) {
+				var oMatcher = sinon.match(aExpectedMessages);
+
+				assert.ok(oMatcher.test(aCurrentMessages), oMatcher.message);
+			} else {
+				assert.deepEqual(aCurrentMessages, aExpectedMessages,
+					this.aMessages.length + " expected messages in message manager");
+			}
 		},
 
 		/**
@@ -1032,14 +1038,16 @@ sap.ui.define([
 		 * @param {object[]} aExpectedMessages The expected messages (with properties code, message,
 		 *   target, persistent, technical and type corresponding the getters of
 		 *   sap.ui.core.message.Message)
+		 * @param [bHasMatcher] bHasMatcher Whether the expected messages have a Sinon.JS matcher
 		 * @returns {object} The test instance for chaining
 		 */
-		expectMessages : function (aExpectedMessages) {
+		expectMessages : function (aExpectedMessages, bHasMatcher) {
 			this.aMessages = aExpectedMessages.map(function (oMessage) {
 				oMessage.descriptionUrl = oMessage.descriptionUrl || undefined;
 				oMessage.technical = oMessage.technical || false;
 				return oMessage;
 			});
+			this.aMessages.bHasMatcher = bHasMatcher;
 
 			return this;
 		},
@@ -6843,17 +6851,6 @@ sap.ui.define([
 						"persistent" : true,
 						"target" : "",
 						"technical" : true,
-						technicalDetails : {
-							originalMessage : {
-								"$reported" : true,
-								"@.numericSeverity" : 4,
-								requestUrl : "SalesOrderList('42')",
-								resourcePath : "SalesOrderList('42')",
-								status : 500,
-								statusText : "Internal Server Error",
-								technical : true
-							}
-						},
 						"type" : "Error"
 					}])
 					.expectChange("lifecycleStatus", "P")
@@ -12310,13 +12307,33 @@ sap.ui.define([
 				.withExactArgs("Failed to update path /MANAGERS('1')/@$ui5.foo", oMatcher,
 					"sap.ui.model.odata.v4.ODataPropertyBinding");
 
+			that.expectMessages([{
+				code : undefined,
+				descriptionUrl : undefined,
+				message : "/MANAGERS('1')/@$ui5.foo: Not a (navigation) property: @$ui5.foo",
+				persistent : true,
+				target : "",
+				technical : true,
+				technicalDetails : {
+					// Note: we have to use sinon.match here because originalMessage in actual is an
+					// Error instance which differs from browser to browser
+					originalMessage : sinon.match({
+						$reported : true,
+						"@.numericSeverity" : 4
+					})
+				},
+				type : "Error"
+			}], true);
+
 			// code under test
 			oPropertyBinding.setValue(0);
 
-			// code under test
-			oContext.getObject()["@$ui5.foo"] = 1; // just changing a clone
+			return that.waitForChanges(assert).then(function () {
+				// code under test
+				oContext.getObject()["@$ui5.foo"] = 1; // just changing a clone
 
-			assert.strictEqual(oContext.getProperty("@$ui5.foo"), 42);
+				assert.strictEqual(oContext.getProperty("@$ui5.foo"), 42);
+			});
 		});
 	});
 
