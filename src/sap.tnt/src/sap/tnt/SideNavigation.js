@@ -141,15 +141,27 @@ sap.ui.define([
 				return this;
 			}
 
-			this.setProperty('expanded', isExpanded, true);
+			var that = this,
+				$this = this.$(),
+				itemAggregation = that.getAggregation('item'),
+				fixedItemAggregation = that.getAggregation('fixedItem'),
+				width;
 
 			if (!this.getDomRef()) {
+				this.setProperty('expanded', isExpanded);
+
+				if (itemAggregation) {
+					itemAggregation.setExpanded(isExpanded);
+				}
+
+				if (fixedItemAggregation) {
+					fixedItemAggregation.setExpanded(isExpanded);
+				}
+
 				return this;
 			}
 
-			var that = this,
-				$this = this.$(),
-				width;
+			this.setProperty('expanded', isExpanded, true);
 
 			if (that._hasActiveAnimation) {
 				that._finishAnimation(!isExpanded);
@@ -157,14 +169,14 @@ sap.ui.define([
 			}
 
 			if (isExpanded) {
-				that.$().toggleClass('sapTntSideNavigationNotExpanded', !isExpanded);
+				$this.toggleClass('sapTntSideNavigationNotExpanded', !isExpanded);
 
-				if (that.getAggregation('item')) {
-					that.getAggregation('item').setExpanded(isExpanded);
+				if (itemAggregation) {
+					itemAggregation.setExpanded(isExpanded);
 				}
 
-				if (that.getAggregation('fixedItem')) {
-					that.getAggregation('fixedItem').setExpanded(isExpanded);
+				if (fixedItemAggregation) {
+					fixedItemAggregation.setExpanded(isExpanded);
 				}
 			} else {
 				// hide scroller during collapsing animation

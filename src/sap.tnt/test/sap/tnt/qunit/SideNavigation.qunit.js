@@ -269,4 +269,103 @@ sap.ui.define([
 		assert.notOk(this.sideNavigation.getFixedItem()._selectedItem, 'selection is removed');
 		assert.strictEqual(this.sideNavigation.getItem()._selectedItem.getKey(), 'child2', 'selection is set');
 	});
+
+
+	QUnit.module('Changing properties', {
+		beforeEach: function () {
+
+			sinon.config.useFakeTimers = false;
+
+			this.sideNavigation = new SideNavigation({
+				selectedKey: 'root',
+				item: new NavigationList({
+					items: [
+						new NavigationListItem({
+							text: 'Root',
+							key: 'root',
+							items: [
+								new NavigationListItem({
+									text: 'Child 1',
+									key: 'child1'
+								}),
+								new NavigationListItem({
+									text: 'Child 2',
+									key: 'child2'
+								})
+							]
+						})
+					]
+				}),
+				fixedItem: new NavigationList({
+					items: [
+						new NavigationListItem({
+							text: 'Fixed 1',
+							key: 'fixed1'
+						}),
+						new NavigationListItem({
+							text: 'Fixed 2',
+							key: 'fixed2'
+						})
+					]
+				})
+			});
+			this.sideNavigation.placeAt(DOM_RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.sideNavigation.destroy();
+			this.sideNavigation = null;
+
+			sinon.config.useFakeTimers = true;
+		}
+	});
+
+	QUnit.test('collapsed - hidden - expanded - visible', function (assert) {
+
+		var done = assert.async();
+
+		assert.strictEqual(this.sideNavigation.$().find('.sapTntNavLI').attr('role'), 'tree', 'control should be initially expanded');
+
+		this.sideNavigation.setExpanded(false);
+		sap.ui.getCore().applyChanges();
+
+		setTimeout(function () {
+
+			this.sideNavigation.setVisible(false);
+			sap.ui.getCore().applyChanges();
+
+			this.sideNavigation.setExpanded(true);
+			sap.ui.getCore().applyChanges();
+
+			this.sideNavigation.setVisible(true);
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(this.sideNavigation.$().find('.sapTntNavLI').attr('role'), 'tree', 'control should be expanded');
+
+			done();
+
+		}.bind(this), 500);
+	});
+
+	QUnit.test('expanded - hidden - collapsed - visible', function (assert) {
+
+		var done = assert.async();
+
+		setTimeout(function () {
+
+			this.sideNavigation.setVisible(false);
+			sap.ui.getCore().applyChanges();
+
+			this.sideNavigation.setExpanded(false);
+			sap.ui.getCore().applyChanges();
+
+			this.sideNavigation.setVisible(true);
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(this.sideNavigation.$().find('.sapTntNavLI').attr('role'), 'menubar', 'control should be collapsed');
+
+			done();
+
+		}.bind(this), 500);
+	});
 });
