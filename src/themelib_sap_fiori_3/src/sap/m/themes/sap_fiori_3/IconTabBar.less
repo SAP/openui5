@@ -211,7 +211,7 @@
 		bottom: 0;
 		left: 0;
 		right: 0;
-		border-bottom: @_sap_m_IconTabBar_ContentArrowBorderWidth solid transparent;
+		height: @_sap_m_IconTabBar_ContentArrowBorderWidth;
 		border-radius: 0.125rem 0.125rem 0 0;
 	}
 }
@@ -320,23 +320,23 @@
 .sapMITBSelected {
 
 	> .sapMITBContentArrow::after {
-		border-bottom-color: @_sap_m_IconTabBar_SelectedTextColor;
+		background: @_sap_m_IconTabBar_SelectedTextColor;
 	}
 
 	&.sapMITBFilterNeutral > .sapMITBContentArrow::after {
-		border-bottom-color: @sapUiNeutralElement;
+		background: @sapUiNeutralElement;
 	}
 
 	&.sapMITBFilterPositive > .sapMITBContentArrow::after {
-		border-bottom-color: @sapUiPositiveElement;
+		background: @sapUiPositiveElement;
 	}
 
 	&.sapMITBFilterNegative > .sapMITBContentArrow::after {
-		border-bottom-color: @sapUiNegativeElement;
+		background: @sapUiNegativeElement;
 	}
 
 	&.sapMITBFilterCritical > .sapMITBContentArrow::after {
-		border-bottom-color: @sapUiCriticalElement;
+		background: @sapUiCriticalElement;
 	}
 
 	.sapMITBFilterDefault {
