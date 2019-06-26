@@ -385,6 +385,17 @@ function(
 			assert.equal(aSiblings.length, 4, " then all controls in the same aggregation at the lowest level found (including the original control)");
 			assert.deepEqual(aSiblings, aChildren1.concat(aChildren2), " and the controls are the same");
 		});
+
+		QUnit.test("when calling without an element", function(assert) {
+			var aSiblings = ElementUtil.findAllSiblingsInContainer(undefined, this.oHorizontalLayoutChild);
+			assert.equal(aSiblings.length, 0, " then the siblings array is empty");
+		});
+
+		QUnit.test("when calling with an element which has no parent", function(assert) {
+			sandbox.stub(this.oButton, "getParent").returns(undefined);
+			var aSiblings = ElementUtil.findAllSiblingsInContainer(this.oButton, this.oHorizontalLayoutChild);
+			assert.equal(aSiblings.length, 0, " then the siblings array is empty");
+		});
 	});
 
 	QUnit.module("getAggregationAccessors()", {
