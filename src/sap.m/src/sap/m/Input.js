@@ -1254,12 +1254,17 @@ function(
 		 * @public
 		 * @param {boolean} bValue Show suggestions.
 		 * @return {sap.m.Input} this Input instance for chaining.
-	 	 */
+		 */
 		Input.prototype.setShowSuggestion = function(bValue){
 			this.setProperty("showSuggestion", bValue, true);
 			this._iPopupListSelectedIndex = -1;
 			if (bValue) {
 				this._oSuggPopover = this._getSuggestionsPopover();
+				if (!this._oSuggPopover._oPopover){
+					this._oSuggPopover._createSuggestionPopup();
+					this._synchronizeSuggestions();
+					this._oSuggPopover._createSuggestionPopupContent();
+				}
 			} else {
 				this._oSuggPopover && this._oSuggPopover._destroySuggestionPopup();
 			}
@@ -1272,7 +1277,7 @@ function(
 		 * @public
 		 * @param {boolean} bValue Show suggestions.
 		 * @return {sap.m.Input} this Input instance for chaining.
-	 	 */
+		 */
 		Input.prototype.setShowTableSuggestionValueHelp = function(bValue) {
 			this.setProperty("showTableSuggestionValueHelp", bValue, true);
 
@@ -1576,7 +1581,7 @@ function(
 		}
 
 		// fires suggest event when startSuggestion is set to 0 and input has no text
-		if (!this._bPopupHasFocus && !this.getStartSuggestion() && !this.getValue()) {
+		if (!this._bPopupHasFocus && !this.getStartSuggestion() && !this.getValue() && this.getShowSuggestion()) {
 			this._triggerSuggest(this.getValue());
 		}
 		this._bPopupHasFocus = undefined;
