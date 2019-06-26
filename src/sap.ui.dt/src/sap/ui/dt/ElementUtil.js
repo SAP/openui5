@@ -136,7 +136,7 @@ function(
 	 *
 	 */
 	ElementUtil.findAllSiblingsInContainer = function(oElement, oContainer) {
-		var oParent = oElement.getParent();
+		var oParent = oElement && oElement.getParent();
 		if (!oParent) {
 			return [];
 		}
