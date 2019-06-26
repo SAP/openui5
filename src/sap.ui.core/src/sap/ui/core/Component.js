@@ -2849,7 +2849,7 @@ sap.ui.define([
 						try {
 							Component._fnLoadComponentCallback(oConfigCopy, oManifestCopy);
 						} catch (oError) {
-							Log.error("Callback for loading the component \"" + oManifest.getComponentName() +
+							Log.error("Callback for loading the component \"" + oLoadedManifest.getComponentName() +
 								"\" run into an error. The callback was skipped and the component loading resumed.",
 								oError, "sap.ui.core.Component");
 						}

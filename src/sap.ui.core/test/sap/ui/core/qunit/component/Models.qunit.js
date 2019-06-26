@@ -1647,7 +1647,7 @@ sap.ui.define([
 
 			// sap.ui.model.resource.ResourceModel
 			sinon.assert.callCount(this.modelSpy.resource, 2);
-		};
+		}.bind(this);
 
 		return Component.create({
 			manifest: "/anylocation/manifest.json",
