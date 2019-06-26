@@ -77,33 +77,33 @@ sap.ui.define([
 			sandbox.stub(Utils, "getSiteId").returns("sSiteId");
 			sandbox.stub(Utils, "getAppDescriptor").returns("{}");
 
-			var oChanges = {
+			var aChanges = [{
 				__change0: {
-					fileName: "sName",
+					fileName: "id_1561376510625_89_moveControls",
 					fileType: "fileType",
 					changeType: "changeType",
 					layer: "USER",
 					content: {}
 				}
-			};
+			}];
 
 			var getChangePersistenceForControlStub = sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl").withArgs(this.oControl).returns({
 				getChangesForVariant: function() {
-					return oChanges;
+					return aChanges;
 				}
 			});
 
-			var oVariantChange = SmartVariantManagementApplyAPI.loadChanges(this.oControl);
+			var aVariantChange = SmartVariantManagementApplyAPI.loadChanges(this.oControl);
 
 			assert.ok(getChangePersistenceForControlStub.calledWith(this.oControl));
-			assert.equal(oVariantChange, oChanges);
+			assert.equal(aVariantChange, aChanges);
 		});
 
-		QUnit.test("When getChange() is called all arguments are passed correctly and the return flow is correct", function (assert) {
+		QUnit.test("When getChangeById() is called all arguments are passed correctly and the return flow is correct", function (assert) {
 			this.oControl = new Control("controlId1");
 			var sId = "__change0";
 			var oChange = {
-				fileName : "__change0"
+				fileName : "id_1561376510625_89_moveControls"
 			};
 			sandbox.stub(Utils, "getSiteId").returns("sSiteId");
 			sandbox.stub(Utils, "getAppDescriptor").returns("{}");
@@ -115,7 +115,7 @@ sap.ui.define([
 					}
 				}
 			);
-			var oVariantChange = SmartVariantManagementApplyAPI.getChange(this.oControl, sId);
+			var oVariantChange = SmartVariantManagementApplyAPI.getChangeById(this.oControl, sId);
 
 			assert.deepEqual(oVariantChange, oChange);
 		});
@@ -125,8 +125,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("When isVariantSharingEnabled() is called it calls the Settings instance and returns true", function (assert) {
-			var done = assert.async();
-
 			var oSetting = {
 				isKeyUser: true,
 				isAtoAvailable: true
@@ -141,10 +139,9 @@ sap.ui.define([
 
 			assert.ok(Settings, "Settings loaded");
 			var isVariantSharingEnabledSpy = sandbox.spy(SmartVariantManagementApplyAPI, "isVariantSharingEnabled");
-			SmartVariantManagementApplyAPI.isVariantSharingEnabled().then(function(bFlag) {
+			return SmartVariantManagementApplyAPI.isVariantSharingEnabled().then(function(bFlag) {
 				assert.equal(bFlag, true);
 				assert.equal(isVariantSharingEnabledSpy.callCount, 1, "called once");
-				done();
 			});
 		});
 
@@ -187,10 +184,10 @@ sap.ui.define([
 			assert.equal(bVendorLayer, true);
 		});
 
-		QUnit.test("When getExecuteOnSelectSync() is called all arguments are passed correctly and the return flow is correct", function (assert) {
+		QUnit.test("When getExecuteOnSelect() is called all arguments are passed correctly and the return flow is correct", function (assert) {
 			this.oControl = new Control("controlId1");
 			var oChange = {
-				fileName : "__change0"
+				fileName : "id_1561376510625_89_moveControls"
 			};
 			var mChangeMap = {
 				filterBar1 : {
@@ -201,15 +198,15 @@ sap.ui.define([
 			sandbox.stub(SmartVariantManagementApplyAPI, "getStableId").returns("filterBar1");
 			sandbox.stub(ChangePersistence.prototype, "getSmartVariantManagementChangeMap").returns(mChangeMap);
 			sandbox.stub(StandardVariant, "getExecuteOnSelect").withArgs(mChangeMap["filterBar1"]).returns(true);
-			var bExecuteOnSelect = SmartVariantManagementApplyAPI.getExecuteOnSelectSync(this.oControl);
+			var bExecuteOnSelect = SmartVariantManagementApplyAPI.getExecuteOnSelect(this.oControl);
 
 			assert.equal(bExecuteOnSelect, true);
 		});
 
-		QUnit.test("When getDefaultVariantIdSync() is called all arguments are passed correctly and the return flow is correct", function (assert) {
+		QUnit.test("When getDefaultVariantId() is called all arguments are passed correctly and the return flow is correct", function (assert) {
 			this.oControl = new Control("controlId1");
 			var oChange = {
-				fileName : "__change0"
+				fileName : "id_1561376510625_89_moveControls"
 			};
 			var mChangeMap = {
 				filterBar1 : {
@@ -220,9 +217,51 @@ sap.ui.define([
 			sandbox.stub(SmartVariantManagementApplyAPI, "getStableId").returns("filterBar1");
 			sandbox.stub(ChangePersistence.prototype, "getSmartVariantManagementChangeMap").returns(mChangeMap);
 			sandbox.stub(DefaultVariant, "getDefaultVariantId").withArgs(mChangeMap["filterBar1"]).returns(true);
-			var bDefaultVariantId = SmartVariantManagementApplyAPI.getDefaultVariantIdSync(this.oControl);
+			var bDefaultVariantId = SmartVariantManagementApplyAPI.getDefaultVariantId(this.oControl);
 
 			assert.equal(bDefaultVariantId, true);
+		});
+
+		QUnit.test("When getStableId() is called it returns the stable id of the given control", function (assert) {
+			var oSmartVariantManagementControl = {
+				getPersistencyKey : function() {
+					return "filterBar1";
+				}
+			};
+			var sStableId = SmartVariantManagementApplyAPI.getStableId(oSmartVariantManagementControl);
+
+			assert.equal(sStableId, "filterBar1");
+		});
+
+		QUnit.test("When getStableId() is called it returns an empty string", function (assert) {
+			this.oControl = new Control("controlId1");
+			var sStableId = SmartVariantManagementApplyAPI.getStableId(this.oControl);
+
+			assert.equal(sStableId, "");
+		});
+
+		QUnit.test("When getChangeMap() is called it returns a map of persistencyKey and belonging changes", function (assert) {
+			var oSmartVariantManagementControl = {
+				getPersistencyKey : function() {
+					return "filterBar1";
+				}
+			};
+			var oChange = {
+				fileName : "id_1561376510625_89_moveControls"
+			};
+			var mChangeMap = {
+				filterBar1: {
+					__change0 : oChange
+				}
+			};
+			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl").returns({
+				getSmartVariantManagementChangeMap: function () {
+					return mChangeMap;
+				}
+			});
+			var mReturnedChangeMap = SmartVariantManagementApplyAPI.getChangeMap(oSmartVariantManagementControl);
+
+			assert.equal(mChangeMap.filterBar1, mReturnedChangeMap);
 		});
 	});
 

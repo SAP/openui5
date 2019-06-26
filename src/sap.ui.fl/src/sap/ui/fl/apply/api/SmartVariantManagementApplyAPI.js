@@ -32,7 +32,7 @@ sap.ui.define([
 		/**
 		 * Calls the back end asynchronously and fetches all changes and variants pointing to this control.
 		 *
-		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
+		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} oControl - SAPUI5 Smart Variant Management control
 		 * @see sap.ui.fl.Change
 		 * @returns {Promise} Result is a map with key changeId and value instance of sap.ui.fl.Change
 		 * @public
@@ -57,17 +57,17 @@ sap.ui.define([
 		 * Returns the change for the provided id.
 		 *
 		 * @see sap.ui.fl.Change
-		 * @param {object} oControl the SmartVariantManagement Control
+		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} oControl - SAPUI5 Smart Variant Management control
 		 * @param {string} sId of change or variant
 		 * @returns {sap.ui.fl.Change} change or variant object
 		 * @public
 		 */
-		getChange: function (oControl, sId) {
+		getChangeById: function (oControl, sId) {
 			if (!sId || !oControl) {
-				Utils.log.error("sap.ui.fl.apply.api.SmartVariantManagementApplyAPI.getChange(): sId or oControl is not defined");
+				Utils.log.error("sId or oControl is not defined");
 				return undefined;
 			}
-			var oChanges = this.getSmartVariantChangeMapFromChangePersistence(oControl);
+			var oChanges = this.getChangeMap(oControl);
 
 			return oChanges[sId];
 		},
@@ -87,7 +87,7 @@ sap.ui.define([
 		/**
 		 * Returns the class name of the component the given control belongs to.
 		 *
-		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
+		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} oControl - SAPUI5 Smart Variant Management control
 		 *
 		 * @returns {String} The component class name, ending with ".Component"
 		 * @see sap.ui.core.Component.getOwnerIdFor
@@ -101,7 +101,7 @@ sap.ui.define([
 		 * Returns the Component that belongs to given control. If the control has no component, it walks up the control tree in order to find a
 		 * control having one.
 		 *
-		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
+		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} oControl - SAPUI5 Smart Variant Management control
 		 * @returns {sap.ui.core.Component} found component
 		 * @public
 		 */
@@ -132,7 +132,7 @@ sap.ui.define([
 
 		/**
 		 * Returns a flag whether the variant downport scenario is enabled or not. This scenario is only enabled if the current layer is the vendor layer
-		 * and the url paramater hotfix is set to true.
+		 * and the url parameter hotfix is set to true.
 		 *
 		 * @returns {boolean} Flag whether the variant downport scenario is enabled
 		 * @public
@@ -146,12 +146,12 @@ sap.ui.define([
 		 * changes have already been retrieved with getChanges. It's recommended to use the async API getDefaultVariantId which works regardless of any
 		 * preconditions.
 		 *
-		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
+		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} oControl - SAPUI5 Smart Variant Management control
 		 * @returns {String} id of the default variant
 		 * @public
 		 */
-		getDefaultVariantIdSync: function(oControl) {
-			var oChanges = this.getSmartVariantChangeMapFromChangePersistence(oControl);
+		getDefaultVariantId: function(oControl) {
+			var oChanges = this.getChangeMap(oControl);
 
 			return DefaultVariant.getDefaultVariantId(oChanges);
 		},
@@ -161,12 +161,12 @@ sap.ui.define([
 		 * changes have already been retrieved with getChanges. It's recommended to use the async API getExecuteOnSelect which works regardless of any
 		 * preconditions.
 		 *
-		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
+		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} oControl - SAPUI5 Smart Variant Management control
 		 * @returns {boolean} execute on select flag
 		 * @public
 		 */
-		getExecuteOnSelectSync: function(oControl) {
-			var oChanges = this.getSmartVariantChangeMapFromChangePersistence(oControl);
+		getExecuteOnSelect: function(oControl) {
+			var oChanges = this.getChangeMap(oControl);
 
 			return StandardVariant.getExecuteOnSelect(oChanges);
 		},
@@ -174,7 +174,7 @@ sap.ui.define([
 		/**
 		 * Determines the value of the stable id property of the control
 		 *
-		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
+		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} oControl - SAPUI5 Smart Variant Management control
 		 * @returns {String | undefined} Stable Id. Empty string if stable id determination failed
 		 * @private
 		 */
@@ -193,13 +193,13 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the SmartVariant - ChangesMap from the Change Persistence
+		 * Returns the SmartVariant - ChangeMap from the Change Persistence
 		 *
-		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
-		 * @returns {object} A map of "persistencyKey" and belonging changes or and empty object
+		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} oControl - SAPUI5 Smart Variant Management control
+		 * @returns {object} A map of "persistencyKey" and belonging changes or an empty object
 		 * @public
 		 */
-		getSmartVariantChangeMapFromChangePersistence: function(oControl) {
+		getChangeMap: function(oControl) {
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oControl);
 			var sStableId = SmartVariantManagementApplyAPI.getStableId(oControl);
 
