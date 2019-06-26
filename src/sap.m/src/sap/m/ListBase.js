@@ -2151,7 +2151,7 @@ function(
 				oBindingInfo = this.getBindingInfo("items");
 			if (oBindingInfo) {
 				oBindingContext = oLI.getBindingContext(oBindingInfo.model);
-				oContextMenu.setBindingContext(oBindingContext);
+				oContextMenu.setBindingContext(oBindingContext, oBindingInfo.model);
 			}
 
 			oContextMenu.openAsContextMenu(oEvent, oLI);
