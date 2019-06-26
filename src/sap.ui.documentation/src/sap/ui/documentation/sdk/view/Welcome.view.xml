@@ -19,14 +19,14 @@
 					<l:BlockLayoutCell class="sapUiNoContentPadding sapUiDemokitLandingImageCell welcomeImageCell">
 						<Image
 							id="phoneImage"
-							src="./resources/sap/ui/documentation/sdk/images/Home_S_cropped.jpg"
+							src="./resources/sap/ui/documentation/sdk/images/Home_S_cropped_1.jpg"
 							width="100%"
 							class="welcomeImage"
 							densityAware="false"
 							load="handleLandingImageLoad"
 							visible="{device>/system/phone}"/>
 						<Image
-							src="./resources/sap/ui/documentation/sdk/images/Home_M_and_L_cropped.jpg"
+							src="./resources/sap/ui/documentation/sdk/images/Home_M_and_L_cropped_1.jpg"
 							width="100%"
 							densityAware="false"
 							class="welcomeImage"
