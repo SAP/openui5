@@ -41,7 +41,9 @@
 					<Button
 							id="toggleFullScreenBtn"
 							icon="sap-icon://full-screen"
-							visible="{device>/system/desktop}"
+							visible="{:= ${device>/system/desktop} ||
+										&#40; ${device>/system/tablet} &amp;&amp;
+										${device>/orientation/landscape} &#41; }"
 							tooltip="Show this sample in full screen mode"
 							press="onToggleFullScreen" />
 					<Button
