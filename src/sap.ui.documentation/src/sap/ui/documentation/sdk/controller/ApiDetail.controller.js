@@ -291,15 +291,15 @@ sap.ui.define([
 				};
 
 				if (oControlData.borrowed.properties.length) {
-					oUi5Metadata.properties =  (oUi5Metadata.properties || []).concat(oControlData.borrowed.properties).sort(fnSort);
+					oUi5Metadata.properties = (oUi5Metadata.properties || []).concat(oControlData.borrowed.properties).sort(fnSort);
 				}
 
 				if (oControlData.borrowed.aggregations.length) {
-					oUi5Metadata.aggregations =  (oUi5Metadata.aggregations || []).concat(oControlData.borrowed.aggregations).sort(fnSort);
+					oUi5Metadata.aggregations = (oUi5Metadata.aggregations || []).concat(oControlData.borrowed.aggregations).sort(fnSort);
 				}
 
 				if (oControlData.borrowed.associations.length) {
-					oUi5Metadata.associations =  (oUi5Metadata.associations || []).concat(oControlData.borrowed.associations).sort(fnSort);
+					oUi5Metadata.associations = (oUi5Metadata.associations || []).concat(oControlData.borrowed.associations).sort(fnSort);
 				}
 
 				// Filter and leave only visible elements
