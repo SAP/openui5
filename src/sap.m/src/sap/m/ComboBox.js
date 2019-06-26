@@ -2082,47 +2082,6 @@ sap.ui.define([
 		};
 
 		/**
-<<<<<<< HEAD
-=======
-		 * Creates picker if doesn't exist yet and sync with Control items
-		 *
-		 * @protected
-		 * @returns {sap.m.Dialog|sap.m.Popover}
-		 */
-		ComboBox.prototype.syncPickerContent = function () {
-			var oPickerTextField,
-				oPicker = this.getPicker(),
-				aProperties = this.getInputForwardableProperties();
-
-			if (!oPicker) {
-				var sSetMutator, sGetMutator;
-
-				oPicker = this.createPicker(this.getPickerType());
-				oPickerTextField = this.getPickerTextField();
-				this._updateSuggestionsPopoverValueState();
-
-				this._fillList();
-				if (oPickerTextField) {
-					aProperties.forEach(function (sProp) {
-						sProp = sProp.charAt(0).toUpperCase() + sProp.slice(1);
-
-						sSetMutator = "set" + sProp;
-						sGetMutator = "get" + sProp;
-
-						if (oPickerTextField[sSetMutator]) {
-							oPickerTextField[sSetMutator](this[sGetMutator]());
-						}
-					}, this);
-				}
-			}
-
-			this.synchronizeSelection();
-
-			return oPicker;
-		};
-
-		/**
->>>>>>> 80eb0c16f4... [FIX] sap.m.ComboBox: Item to ListItem property forwarding
 		 * Closes the control's picker popup and focus input field.
 		 *
 		 * @returns {sap.m.ComboBox} <code>this</code> to allow method chaining.
