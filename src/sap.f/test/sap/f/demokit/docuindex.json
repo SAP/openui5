@@ -97,7 +97,9 @@
 			"samples": [
 				"sap.f.sample.ShellBar",
 				"sap.f.sample.ShellBarWIthMenuButton",
-				"sap.f.sample.ShellBarWithSearch"
+				"sap.f.sample.ShellBarWithSearch",
+				"sap.f.sample.ShellBarWithFlexibleColumnLayout",
+				"sap.f.sample.ShellBarWithSplitApp"
 			]
 		},
 		{
@@ -208,6 +210,16 @@
 		  "id": "sap.f.sample.ShellBarWithSearch",
 		  "name": "Shell Bar with search",
 		  "description": "Shell Bar example with configured search functionality."
+		},
+		{
+		  "id": "sap.f.sample.ShellBarWithFlexibleColumnLayout",
+		  "name": "Shell Bar with Flexible Column Layout",
+		  "description": "Example of Shell Bar in combination with Flexible Column Layout."
+		},
+		{
+		  "id": "sap.f.sample.ShellBarWithSplitApp",
+		  "name": "Shell Bar with Split App",
+		  "description": "Example of Shell Bar in combination with Split App."
 		},
 		{
 		  "id": "sap.f.sample.Card",

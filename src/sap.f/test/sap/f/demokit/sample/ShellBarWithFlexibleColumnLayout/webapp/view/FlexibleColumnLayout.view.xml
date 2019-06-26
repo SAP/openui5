@@ -1,0 +1,22 @@
+<View xmlns="sap.f"
+	xmlns:m="sap.m"
+	displayBlock="true"
+	controllerName="sap.f.ShellBarWithFlexibleColumnLayout.controller.FlexibleColumnLayout"
+	height="100%">
+	<m:Page>
+		<m:customHeader>
+			<ShellBar title="Application Title" secondTitle="Short description" homeIcon="./../../../../../../../resources/sap/ui/documentation/sdk/images/logo_ui5.png" showCopilot="true" showSearch="true" showNotifications="true" showProductSwitcher="true" notificationsNumber="2">
+				<menu>
+					<m:Menu>
+						<m:MenuItem text="Flight booking" icon="sap-icon://flight" />
+						<m:MenuItem text="Car rental" icon="sap-icon://car-rental" />
+					</m:Menu>
+				</menu>
+				<profile>
+					<Avatar initials="UI"/>
+				</profile>
+			</ShellBar>
+		</m:customHeader>
+		<FlexibleColumnLayout id="fcl" stateChange="onStateChanged" layout="{/layout}" backgroundDesign="Solid"/>
+	</m:Page>
+</View>
