@@ -6,9 +6,11 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/LightBox",
 	"sap/m/Text",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/core/Core",
 	"sap/ui/Device"
-], function(Image, jQuery, mobileLibrary, LightBox, Text, Core, Device) {
+], function(Image, jQuery, mobileLibrary, LightBox, Text, KeyCodes, QUtils, Core, Device) {
 	// shortcut for sap.m.ImageMode
 	var ImageMode = mobileLibrary.ImageMode;
 
@@ -1046,5 +1048,25 @@ sap.ui.define([
 		// Act
 		oImage.setDetailBox(new LightBox());
 		oImage.placeAt("qunit-fixture");
+	});
+
+	QUnit.test("onsapspace event should be prevented - SPACE", function(assert){
+		//setup
+		var oImage = createImage({
+				src: sSrc
+			}),
+			oEvent = {
+				which: KeyCodes.SPACE,
+				preventDefault: function () {}
+			},
+			oSpy = this.spy(oEvent, "preventDefault");
+
+		Core.applyChanges();
+
+		//act
+		oImage.onsapspace(oEvent);
+
+		//assert
+		assert.ok(oSpy.calledOnce, "preventDefault is called on SPACE key");
 	});
 });

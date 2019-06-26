@@ -537,6 +537,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * Handles the keydown event for SPACE on which we have to prevent the browser scrolling.
+	 *
+	 * @param {jQuery.Event} oEvent The event object.
+	 * @private
+	 */
+	Image.prototype.onsapspace = function(oEvent) {
+		oEvent.preventDefault();
+	};
+
+	/**
 	* Update the source image either on the output DOM element (when in sap.m.ImageMode.Image mode) or on the window.Image object (when in sap.m.ImageMode.Background mode)
 	* @private
 	*/
