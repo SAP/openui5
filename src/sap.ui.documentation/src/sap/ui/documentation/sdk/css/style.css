@@ -1540,7 +1540,7 @@ html:not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_belize_hcb) .sapUiJSD a
 
 /*SMALL*/
 @media (max-width: 64rem) {
-	.sapUiDemokit .sapMText.sapUiDocumentationApiHeaderTitleText {
+	.sapUiDemokit  .sapUiBlockCellContent .sapMText.sapUiDocumentationApiHeaderTitleText {
 		top: 1.25rem;
 		font-size: 1.625rem;
 		padding-left: 1rem;
@@ -1556,7 +1556,7 @@ html:not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_belize_hcb) .sapUiJSD a
 
 /*XTRA LARGE*/
 @media (min-width: 90rem) {
-	.sapUiDemokit .sapMText.sapUiDocumentationApiHeaderTitleText {
+	.sapUiDemokit  .sapUiBlockCellContent .sapMText.sapUiDocumentationApiHeaderTitleText {
 		top: 2.5rem;
 		font-size: 4rem;
 		padding-left: 3rem;
@@ -2272,7 +2272,7 @@ html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
 		padding-top: 24.6%;
 	}
 
-	.sap-phone .sapUiDemokit .sapMText.sapUiDocumentationApiHeaderTitleText {
+	.sap-phone .sapUiDemokit .sapUiBlockCellContent .sapMText.sapUiDocumentationApiHeaderTitleText {
 		top: 1.25rem;
 		font-size: 1.625rem;
 		padding-left: 1rem;
