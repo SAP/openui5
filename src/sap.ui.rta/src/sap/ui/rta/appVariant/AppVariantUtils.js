@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/descriptorRelated/internal/Utils",
 	"sap/ui/fl/transport/TransportSelection",
 	"sap/ui/fl/transport/Transports",
+	"sap/ui/core/BusyIndicator",
 	"sap/base/util/uid",
 	"sap/base/Log"
 ],
@@ -22,6 +23,7 @@ function(
 	DescriptorUtils,
 	TransportSelection,
 	Transports,
+	BusyIndicator,
 	uid,
 	Log
 ) {
@@ -359,6 +361,27 @@ function(
 		};
 	};
 
+	/**
+	 * Builds the success message text based on different platforms (i.e. S/4HANA Cloud and S/4HANA on Premise)
+	 * and based on from where the 'Save As' is triggered.
+	 */
+	AppVariantUtils.buildSuccessInfo = function(oAppVariantDescriptor, bSaveAsTriggeredFromRtaToolbar) {
+		var bIsCloud = AppVariantUtils.isS4HanaCloud(oAppVariantDescriptor.getSettings());
+
+		var sSystemTag = bIsCloud ? "CLOUD" : "ON_PREMISE";
+		var sOverviewList = bSaveAsTriggeredFromRtaToolbar ? "" : "_OVERVIEW_LIST";
+		var sText = bIsCloud ? undefined : oAppVariantDescriptor.getId();
+
+		var sMessage = AppVariantUtils.getText("SAVE_APP_VARIANT_SUCCESS_MESSAGE") + "\n\n";
+		sMessage += AppVariantUtils.getText("SAVE_APP_VARIANT_SUCCESS_S4HANA_" + sSystemTag + "_MESSAGE" + sOverviewList, sText);
+
+		return {
+			text: sMessage,
+			appVariantId: oAppVariantDescriptor.getId(),
+			copyId : !bIsCloud
+		};
+	};
+
 	AppVariantUtils.showRelevantDialog = function(oInfo, bSuccessful) {
 		var sTitle,
 			sRightButtonText,
@@ -388,22 +411,25 @@ function(
 
 		return new Promise(function(resolve, reject) {
 			var fnCallback = function (sAction) {
-				if (bSuccessful && sAction === sRightButtonText) {
-					resolve();
-				} else if (bSuccessful && sAction === sCopyIdButtonText) {
+				if (sAction === sCopyIdButtonText) {
 					AppVariantUtils.copyId(oInfo.appVariantId);
+				}
+
+				if (bSuccessful) {
+					// The new app variant was saved... OK or CopyID & Close
 					resolve();
-				} else if (oInfo.overviewDialog && sAction === sRightButtonText) {
+				} else if (oInfo.overviewDialog) {
+					// ErrorInfo - Sorry, ... is temporarily not available. => Close
 					resolve(false);
 				} else if (oInfo.deleteAppVariant && sAction === sOKButtonText) {
+					// Do you really want to delete this app? => OK
 					resolve();
 				} else if (oInfo.deleteAppVariant && sAction === sRightButtonText) {
+					// Do you really want to delete this app? => Close
 					reject();
-				} else if (sAction === sRightButtonText) {
-					reject();
-				} else if (sAction === sCopyIdButtonText) {
-					AppVariantUtils.copyId(oInfo.appVariantId);
-					reject();
+				} else {
+					// Error: Deletion/Creation failed => Close or CopyID & Close
+					resolve();
 				}
 			};
 
@@ -454,6 +480,7 @@ function(
 	};
 
 	AppVariantUtils.openTransportSelection = function(oTransportInput) {
+		BusyIndicator.hide();
 		var oTransportSelection = new TransportSelection();
 		return oTransportSelection.openTransportSelection(oTransportInput, this, RtaUtils.getRtaStyleClassName());
 	};
@@ -467,21 +494,22 @@ function(
 				"DELETE_APP_VARIANT_NO_TRANSPORT",
 				"MSG_DELETE_APP_VARIANT_NOT_POSSIBLE");
 		}
+
 		return this.openTransportSelection(oTransportInput)
 			.then(function (oTransportInfo) {
+				BusyIndicator.show();
 				return this.onTransportInDialogSelected(oAppVariantDescriptor, oTransportInfo);
 			}.bind(this))
 			.then(function () {
 				return oAppVariantDescriptor.submit();
 			})
 			.then(function () {
-				this.closeOverviewDialog();
-
+				BusyIndicator.hide();
 				return RtaUtils._showMessageBox(
 					MessageBox.Icon.INFORMATION,
 					"DELETE_APP_VARIANT_NO_TRANSPORT",
 					"DELETE_APP_VARIANT_SUCCESS_MESSAGE");
-			}.bind(this));
+			});
 	};
 
 	AppVariantUtils.createDeletion = function(sAppVariantId) {
@@ -519,6 +547,24 @@ function(
 
 	AppVariantUtils.getDescriptorFromLREP = function(sAppVariantId) {
 		return DescriptorVariantFactory.createForExisting(sAppVariantId);
+	};
+
+	AppVariantUtils.handleBeforeUnloadEvent = function () {
+		// oEvent.preventDefault();
+		var sMessage = AppVariantUtils.getText("MSG_DO_NOT_CLOSE_BROWSER");
+		return sMessage;
+	};
+
+	AppVariantUtils.showMessage = function(sMessageKey) {
+		var sMessage = AppVariantUtils.getText(sMessageKey);
+		var oInfo = { text: sMessage, copyId : false};
+		return AppVariantUtils.showRelevantDialog(oInfo, true);
+	};
+
+	AppVariantUtils.catchErrorDialog = function(oError, sMessageKey, sIAMId) {
+		BusyIndicator.hide();
+		var oErrorInfo = AppVariantUtils.buildErrorInfo(sMessageKey, oError, sIAMId);
+		return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
 	};
 
 	return AppVariantUtils;

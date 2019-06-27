@@ -682,13 +682,14 @@ sap.ui.define([
 			};
 
 			var bSuccessful = true;
-
+			var fnCopyID = sandbox.stub(AppVariantUtils, "copyId");
 			sandbox.stub(sap.m.MessageBox, "show").callsFake(function(sText, mParameters) {
 				mParameters.onClose("OK");
 			});
 
 			return AppVariantUtils.showRelevantDialog(oInfo, bSuccessful).then(function() {
 				assert.ok("then the successful dialog pops up and OK button pressed");
+				assert.ok(fnCopyID.notCalled, "then the ID is not copied");
 			});
 		});
 
@@ -701,12 +702,14 @@ sap.ui.define([
 
 			var bSuccessful = true;
 
+			var fnCopyID = sandbox.stub(AppVariantUtils, "copyId");
 			sandbox.stub(sap.m.MessageBox, "show").callsFake(function(sText, mParameters) {
 				mParameters.onClose("Copy ID and Close");
 			});
 
 			return AppVariantUtils.showRelevantDialog(oInfo, bSuccessful).then(function() {
 				assert.ok("then the successful dialog pops up and Copy ID and Close button pressed");
+				assert.ok(fnCopyID.calledOnceWith("Whatever!"), "then the ID is copied successfully");
 			});
 		});
 
@@ -715,13 +718,15 @@ sap.ui.define([
 				text: "Text",
 				overviewDialog: true
 			};
-
+			var fnCopyID = sandbox.stub(AppVariantUtils, "copyId");
 			sandbox.stub(sap.m.MessageBox, "show").callsFake(function(sText, mParameters) {
 				mParameters.onClose("Close");
 			});
 
-			return AppVariantUtils.showRelevantDialog(oInfo).then(function() {
+			return AppVariantUtils.showRelevantDialog(oInfo).then(function(bResponse) {
 				assert.ok("then the failure dialog pops up and Close button pressed");
+				assert.strictEqual(bResponse, false);
+				assert.ok(fnCopyID.notCalled, "then the ID is not copied");
 			});
 		});
 
@@ -729,16 +734,15 @@ sap.ui.define([
 			var oInfo = {
 				text: "Text"
 			};
-
+			var fnCopyID = sandbox.stub(AppVariantUtils, "copyId");
 			sandbox.stub(sap.m.MessageBox, "show").callsFake(function(sText, mParameters) {
 				mParameters.onClose("Close");
 			});
 
-			return AppVariantUtils.showRelevantDialog(oInfo).catch(
-				function() {
-					assert.ok("then the failure dialog pops up and Ok button pressed");
-				}
-			);
+			return AppVariantUtils.showRelevantDialog(oInfo).then(function() {
+				assert.ok("then the failure dialog pops up and Close button pressed");
+				assert.ok(fnCopyID.notCalled, "then the ID is not copied");
+			});
 		});
 
 		QUnit.test("When showRelevantDialog() is called with failure message and Copy ID and close button is pressed", function (assert) {
@@ -752,11 +756,9 @@ sap.ui.define([
 				mParameters.onClose("Copy ID and Close");
 			});
 
-			return AppVariantUtils.showRelevantDialog(oInfo).catch(
-				function() {
-					assert.ok("then the failure dialog pops up and Copy ID and close button pressed");
-				}
-			);
+			return AppVariantUtils.showRelevantDialog(oInfo).then(function() {
+				assert.ok("then the failure dialog pops up and Copy ID and close button pressed");
+			});
 		});
 
 		QUnit.test("When showRelevantDialog() is called with info message (Delete an app variant) and Ok button is pressed", function (assert) {
@@ -791,7 +793,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("When navigateToFLPHomepage() method is called and navigation to launchad gets triggered", function (assert) {
+		QUnit.test("When navigateToFLPHomepage() method is called and navigation to launchpad gets triggered", function (assert) {
 			sandbox.restore();
 			window.bUShellNavigationTriggered = false;
 			if (!sap.ushell) {
@@ -907,6 +909,76 @@ sap.ui.define([
 			.then(function() {
 				assert.ok(fnGetTransportInformationStub.calledOnce, "then the _getTransportInformation is called once");
 				assert.ok(fnShowRelevantDialog.calledOnce, "then the showRelevantDialog is called once");
+			});
+		});
+
+
+		QUnit.test("When showMessage() method is called", function(assert) {
+			var sMessageKey = "SOME_KEY";
+			var fnGetText = sandbox.stub(AppVariantUtils, "getText");
+			var fnShowRelevantDialog = sandbox.stub(AppVariantUtils, "showRelevantDialog");
+
+			AppVariantUtils.showMessage(sMessageKey);
+
+			assert.ok(fnGetText.calledOnce, "then the getText() method is called once");
+			assert.ok(fnShowRelevantDialog.calledOnce, "then the info message toast pops up");
+		});
+
+		QUnit.test("When catchErrorDialog() method is called", function(assert) {
+			var oError = {};
+			var fnBuildErrorInfo = sandbox.stub(AppVariantUtils, "buildErrorInfo");
+			var fnShowRelevantDialog = sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
+			return AppVariantUtils.catchErrorDialog(oError, "SOME_KEY", "IAMId").then(function() {
+				assert.ok(fnBuildErrorInfo.calledOnce, "then the buildErrorInfo() method is called once");
+				assert.ok(fnShowRelevantDialog.calledOnce, "then the showRelevantDialog() method is called once");
+			});
+		});
+
+		QUnit.test("When buildSuccessInfo() method is called for S/4HANA on Premise", function(assert) {
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					isKeyUser:true,
+					isAtoAvailable:false,
+					isAtoEnabled:false,
+					isProductiveSystem:false
+				})
+			);
+			var fnGetText = sandbox.stub(AppVariantUtils, "getText");
+
+			return DescriptorVariantFactory.createNew({
+				id: "customer.TestId",
+				reference: "TestIdBaseApp"
+			})
+			.then(function(oDescriptorVariant) {
+				return AppVariantUtils.buildSuccessInfo(oDescriptorVariant, "SOME_KEY", "IAMId");
+			}).then(function(oInfo) {
+				assert.ok(fnGetText.calledTwice, "then the getText() method is called twice");
+				assert.strictEqual(oInfo.appVariantId, "customer.TestId", "then the app variant id is as expected");
+				assert.strictEqual(oInfo.copyId, true, "then the copyID value is as expected");
+			});
+		});
+
+		QUnit.test("When buildSuccessInfo() method is called for S/4HANA Cloud", function(assert) {
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					isKeyUser:true,
+					isAtoAvailable:true,
+					isAtoEnabled:true,
+					isProductiveSystem:false
+				})
+			);
+			var fnGetText = sandbox.stub(AppVariantUtils, "getText");
+
+			return DescriptorVariantFactory.createNew({
+				id: "customer.TestId",
+				reference: "TestIdBaseApp"
+			})
+			.then(function(oDescriptorVariant) {
+				return AppVariantUtils.buildSuccessInfo(oDescriptorVariant, "SOME_KEY", "IAMId");
+			}).then(function(oInfo) {
+				assert.ok(fnGetText.calledTwice, "then the getText() method is called twice");
+				assert.strictEqual(oInfo.appVariantId, "customer.TestId", "then the app variant id is as expected");
+				assert.strictEqual(oInfo.copyId, false, "then the copyID value is as expected");
 			});
 		});
 	});

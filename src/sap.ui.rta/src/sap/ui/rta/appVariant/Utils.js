@@ -4,12 +4,14 @@
 sap.ui.define([
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/rta/appVariant/AppVariantUtils",
+	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/fl/registry/Settings",
 	"sap/base/i18n/ResourceBundle"
 ],
 function(
 	LrepConnector,
 	AppVariantUtils,
+	RtaFeature,
 	Settings,
 	ResourceBundle
 ) {
@@ -46,12 +48,13 @@ function(
 
 	Utils._calculateCurrentStatus = function(sAppVariantInfoId, sAppVarStatus) {
 		// Get the id of a new created app variant
-		var sNewAppVariantId = AppVariantUtils.getNewAppVariantId();
+		var sNewAppVariantId = RtaFeature.getNewAppVariantId();
 
-		if (sNewAppVariantId === sAppVariantInfoId) {
-			return oI18n.getText("MAA_NEW_APP_VARIANT");
-		} else if (sAppVarStatus === 'R') {
+		if (sAppVarStatus === 'R') {
 			return oI18n.getText("MAA_OPERATION_IN_PROGRESS");
+		} else if (sNewAppVariantId === sAppVariantInfoId) {
+			RtaFeature.setNewAppVariantId(null);
+			return oI18n.getText("MAA_NEW_APP_VARIANT");
 		}
 
 		return undefined;
