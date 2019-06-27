@@ -3025,12 +3025,26 @@ sap.ui.define([
 
 	//*****************************************************************************************
 	QUnit.test("reportUnboundMessages", function (assert) {
-		var sMessages = '[{"code" : "42"}]',
+		var aMessages = [{code : "42", message : "Test"}, {code : "43", type : "Warning"}],
+			sMessages = JSON.stringify(aMessages),
 			oRequestor = _Requestor.create("/", oModelInterface),
 			sResourcePath = "Procduct(42)/to_bar";
 
 		this.mock(oModelInterface).expects("reportUnboundMessages")
-			.withExactArgs(sResourcePath, [{code : "42"}]);
+			.withExactArgs(sResourcePath, [{
+					code : "42",
+					message : "Test",
+					technicalDetails : {
+						originalMessage : aMessages[0]
+					}
+				}, {
+					code : "43",
+					technicalDetails : {
+						originalMessage : aMessages[1]
+					},
+					type : "Warning"
+				}
+			]);
 
 		// code under test
 		oRequestor.reportUnboundMessagesAsJSON(sResourcePath, sMessages);

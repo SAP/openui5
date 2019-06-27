@@ -284,6 +284,19 @@ sap.ui.define([
 								+ " as expected: " + sExpectedDetails);
 						}
 					});
+				},
+				checkMessageDetailsHasTechnicalDetails : function (oExpectedDetails) {
+					return this.waitFor({
+						id : /technicalDetailsLink-/,
+						controlType : "sap.m.Link",
+						success : function (aLinks) {
+							Opa5.assert.strictEqual(aLinks.length, 1);
+							TestUtils.deepContains(aLinks[0].data("technicalDetails"),
+								oExpectedDetails,
+								"checkMessageDetailsHasTechnicalDetails: "
+									+ JSON.stringify(oExpectedDetails));
+						}
+					});
 				}
 			}
 		},

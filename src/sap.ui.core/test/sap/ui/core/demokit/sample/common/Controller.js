@@ -2,15 +2,24 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/m/Button",
+	"sap/m/Link",
+	"sap/m/library",
 	"sap/m/MessageItem",
 	"sap/m/MessagePopover",
+	"sap/m/ResponsivePopover",
+	"sap/m/TextArea",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/util/XMLHelper"
-], function (MessageItem, MessagePopover, Controller, XMLHelper) {
+], function (Button, Link, library, MessageItem, MessagePopover, ResponsivePopover, TextArea,
+		Controller, XMLHelper) {
 	"use strict";
 
+	// shortcut for sap.m.PlacementType
+	var PlacementType = library.PlacementType;
+
 	return Controller.extend("sap.ui.core.sample.common.Controller", {
-		/**
+	/**
 		 * Function is called by <code>onSourceCode</code> to modify source code before it is pretty
 		 * printed.
 		 *
@@ -35,11 +44,49 @@ sap.ui.define([
 				items : {
 					path :"messages>/",
 					template : new MessageItem({
-						description : "{= JSON.stringify(${messages>technicalDetails}) }",
+						description : "{messages>description}",
 						longtextUrl : "{messages>descriptionUrl}",
 						title : "{messages>message}",
-						type : "{messages>type}"
-					})
+						type : "{messages>type}",
+						link : new Link({
+							customData : {
+								Type : "sap.ui.core.CustomData",
+								key : "technicalDetails",
+								value : "{messages>technicalDetails}" // bind custom data
+							},
+							id : "technicalDetailsLink",
+							press : function (oEvent) {
+								var oButton = new Button({
+										icon : "sap-icon://decline",
+										text : "Close",
+										tooltip : "Close Technical Details"
+									}),
+									oLink = oEvent.getSource(),
+									oPopover = new ResponsivePopover({
+										endButton : oButton,
+										modal : true,
+										placement : PlacementType.Auto,
+										title: "Technical Details"
+									}),
+									oTechnicalDetails = oLink.data("technicalDetails"),
+									oText = new TextArea({
+										editable : false,
+										growing : true,
+										width : "100%"
+									});
+
+								oButton.attachPress(function() {
+									oPopover.close();
+								});
+								oText.setValue(JSON.stringify(oTechnicalDetails, null, "\t"));
+								oPopover.addContent(oText);
+								oPopover.openBy(oLink);
+							},
+							text : "Technical Details",
+							visible : "{= !!${messages>technicalDetails} }"
+						})
+					}),
+					templateShareable : false
 				}
 			});
 			this.messagePopoverButtonId = sOpenButtonId;
