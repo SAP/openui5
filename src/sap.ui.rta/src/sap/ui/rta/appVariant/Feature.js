@@ -24,7 +24,6 @@ sap.ui.define([
 		oChosenAppVariantDescriptor,
 		oDescriptorVariantSaveClosure,
 		oDescriptorVariantDeleteClosure,
-		sNewAppVariantID,
 		_oldUnloadHandler;
 
 	var fnGetDescriptor = function() {
@@ -36,7 +35,6 @@ sap.ui.define([
 			if (oDescriptorVariant) {
 				oDescriptorVariantSaveClosure = null;
 				oDescriptorVariantSaveClosure = jQuery.extend({}, oDescriptorVariant);
-				sNewAppVariantID = oDescriptorVariantSaveClosure.getId();
 				return oDescriptorVariantSaveClosure;
 			}
 			return Promise.reject();
@@ -118,12 +116,6 @@ sap.ui.define([
 	});
 
 	return {
-		getNewAppVariantId : function() {
-			return sNewAppVariantID;
-		},
-		setNewAppVariantId : function(sNewValue) {
-			sNewAppVariantID = sNewValue;
-		},
 		// To see the overview of app variants, a key user has created from an app
 		onGetOverview : function(bAsKeyUser) {
 			var oDescriptor = fnGetDescriptor();
@@ -271,7 +263,13 @@ sap.ui.define([
 					fnResetDirtyFlag();
 					// Shows the success message and closes the current app (if 'Save As' triggered from UI adaptation toolbar)
 					// or opens the app variant overview list (if 'Save As' triggered from App variant overview List)
-					return oAppVariantManager.showSuccessMessage(oDescriptorVariantSaveClosure, bSaveAsTriggeredFromRtaToolbar);
+					var oSuccessInfo = AppVariantUtils.buildSuccessInfo(oDescriptorVariantSaveClosure, bSaveAsTriggeredFromRtaToolbar);
+					return oAppVariantManager.showSuccessMessage(oSuccessInfo);
+				};
+
+				var fnShowCatalogAssignmentSuccessMessage = function() {
+					var oSuccessInfo = AppVariantUtils.buildFinalSuccessInfoS4HANACloud();
+					return oAppVariantManager.showSuccessMessage(oSuccessInfo);
 				};
 
 
@@ -284,7 +282,8 @@ sap.ui.define([
 									BusyIndicator.hide();
 									return fnTriggerActionFlow.call(this, bSaveAsTriggeredFromRtaToolbar).then(function() {
 										bSaveAsTriggeredFromRtaToolbar = false;
-										return fnTriggerPollingTileCreation(oResult, oDescriptorVariantSaveClosure.getId());
+										return fnTriggerPollingTileCreation(oResult, oDescriptorVariantSaveClosure.getId())
+											.then(fnShowCatalogAssignmentSuccessMessage);
 									});
 								}.bind(this));
 					}
@@ -305,12 +304,9 @@ sap.ui.define([
 					.then(fnTriggerCopyUnsavedChangesToLREP)
 					.then(fnTriggerSuccessMessage)
 					.then(fnTriggerPlatformDependentFlow.bind(this))
-					.then(function() {
+					.finally(function() {
 						return fnTriggerActionFlow.call(this, bSaveAsTriggeredFromRtaToolbar, bIsS4HanaCloud).then(resolve);
-					}.bind(this))
-					.catch(function() {
-						return resolve(false);
-					});
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		},
@@ -388,10 +384,7 @@ sap.ui.define([
 					return fnTriggerCreateDescriptorForDeletion(sAppVarId)
 						.then(fnTriggerS4HanaPolling.bind(this))
 						.then(fnTriggerDeletion)
-						.then(fnTriggerS4HanaRefresh.bind(this))
-						.catch(function() {
-							return resolve(false);
-						});
+						.finally(fnTriggerS4HanaRefresh.bind(this));
 				}.bind(this));
 			}.bind(this));
 		}

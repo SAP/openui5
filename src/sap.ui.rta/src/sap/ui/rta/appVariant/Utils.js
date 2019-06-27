@@ -48,15 +48,17 @@ function(
 
 	Utils._calculateCurrentStatus = function(sAppVariantInfoId, sAppVarStatus) {
 		// Get the id of a new created app variant
-		var sNewAppVariantId = RtaFeature.getNewAppVariantId();
+		var sNewAppVariantId = AppVariantUtils.getNewAppVariantId();
 
 		if (sAppVarStatus === 'R') {
 			return oI18n.getText("MAA_OPERATION_IN_PROGRESS");
 		} else if (sNewAppVariantId === sAppVariantInfoId) {
-			RtaFeature.setNewAppVariantId(null);
-			return oI18n.getText("MAA_NEW_APP_VARIANT");
+			AppVariantUtils.setNewAppVariantId(null);
+			if (sAppVarStatus !== 'E') {
+				return oI18n.getText("MAA_NEW_APP_VARIANT");
+			}
+			return undefined;
 		}
-
 		return undefined;
 	};
 

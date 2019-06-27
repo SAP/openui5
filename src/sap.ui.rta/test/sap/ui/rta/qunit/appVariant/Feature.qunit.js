@@ -472,7 +472,7 @@ sap.ui.define([
 				assert.ok(fnCreateDescriptorSpy.calledOnce, "then the create descriptor method is called once");
 				assert.ok(fnSaveAppVariantToLREP.calledOnce, "then the saveAppVariantToLREP method is called once");
 				assert.ok(fnCopyUnsavedChangesToLREP.calledOnce, "then the copyUnsavedChangesToLREP method is called once");
-				assert.ok(fnshowSuccessMessage.calledOnce, "then the showSuccessMessage method is called once");
+				assert.ok(fnshowSuccessMessage.calledTwice, "then the showSuccessMessage method is called twice");
 				assert.ok(fnTriggerCatalogPublishing.calledOnce, "then the triggerCatalogPublishing method is not called once");
 				assert.ok(fnNotifyKeyUserWhenPublishingIsReady.calledOnce, "then the notifyKeyUserWhenPublishingIsReady method is not called once");
 				//assert.ok(onGetOverviewSpy.calledTwice, "then the overview opens once after the new app variant has been saved to LREP, and once after the publishing is finished");
@@ -521,7 +521,7 @@ sap.ui.define([
 			var fnSaveAppVariantToLREP = sandbox.stub(AppVariantManager.prototype, "saveAppVariantToLREP").resolves();
 			var fnCopyUnsavedChangesToLREP = sandbox.stub(AppVariantManager.prototype, "copyUnsavedChangesToLREP").resolves();
 			var fnshowSuccessMessage = sandbox.spy(AppVariantManager.prototype, "showSuccessMessage");
-			var fnNavigateToFLPHomepage = sandbox.stub(AppVariantUtils, "navigateToFLPHomepage"); //.resolves();
+			var fnNavigateToFLPHomepage = sandbox.stub(AppVariantUtils, "navigateToFLPHomepage").resolves();
 			var fnTriggerCatalogPublishing = sandbox.spy(AppVariantManager.prototype, "triggerCatalogPublishing");
 			var fnNotifyKeyUserWhenPublishingIsReadySpy = sandbox.spy(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady");
 			var onGetOverviewSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
@@ -590,7 +590,7 @@ sap.ui.define([
 				assert.ok(fnCreateDescriptorSpy.calledOnce, "then the create descriptor method is called once");
 				assert.ok(fnSaveAppVariantToLREP.calledOnce, "then the saveAppVariantToLREP method is called once");
 				assert.ok(fnCopyUnsavedChangesToLREP.calledOnce, "then the copyUnsavedChangesToLREP method is called once");
-				assert.ok(fnshowSuccessMessage.calledOnce, "then the showSuccessMessage method is called once");
+				assert.ok(fnshowSuccessMessage.calledTwice, "then the showSuccessMessage method is called twice");
 				assert.ok(fnTriggerCatalogPublishing.calledOnce, "then the triggerCatalogPublishing method is not called once");
 				assert.ok(fnNotifyKeyUserWhenPublishingIsReadySpy.calledOnce, "then the notifyKeyUserWhenPublishingIsReady method is not called once");
 				assert.ok(fnNavigateToFLPHomepage.calledOnce, "then the _navigateToFLPHomepage method is called once");

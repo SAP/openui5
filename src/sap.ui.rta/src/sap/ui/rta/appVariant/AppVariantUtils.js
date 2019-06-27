@@ -357,7 +357,8 @@ function(
 
 		return {
 			text: sMessage,
-			appVariantId: sAppVariantId
+			appVariantId: sAppVariantId,
+			error: true
 		};
 	};
 
@@ -380,6 +381,14 @@ function(
 			appVariantId: oAppVariantDescriptor.getId(),
 			copyId : !bIsCloud
 		};
+	};
+
+	/**
+	 * Builds the final success message on S/4HANA Cloud.
+	 */
+	AppVariantUtils.buildFinalSuccessInfoS4HANACloud = function() {
+		var sMessage = AppVariantUtils.getText("MSG_SAVE_APP_VARIANT_NEW_TILE_AVAILABLE");
+		return { text: sMessage	};
 	};
 
 	AppVariantUtils.showRelevantDialog = function(oInfo, bSuccessful) {
@@ -427,8 +436,10 @@ function(
 				} else if (oInfo.deleteAppVariant && sAction === sRightButtonText) {
 					// Do you really want to delete this app? => Close
 					reject();
-				} else {
+				} else if (oInfo.error) {
 					// Error: Deletion/Creation failed => Close or CopyID & Close
+					reject();
+				} else {
 					resolve();
 				}
 			};

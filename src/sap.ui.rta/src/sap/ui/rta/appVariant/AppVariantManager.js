@@ -310,13 +310,13 @@ sap.ui.define([
 	 *
 	 * @param {Object} oAppVariantDescriptor - Contains the app variant descriptor information
 	 * @param {Boolean} bSaveAsTriggeredFromRtaToolbar - Boolean value which tells if 'Save As' is triggered from UI adaptation header bar
+	 * @param {Boolean} bCatalogAssignmentSuccess - Indicates if success message is triggered after catalog assignment is succesful
 	 * @returns {Promise} Resolved promise
 	 * @description Frames the success message depending on different platforms (S/4HANA Cloud Platform or S/4HANA on Premise) and shows it on the dialog.
 	 * If a user chooses 'Save As' from the UI adaptation header bar, it closes the current running app and navigates to the SAP Fiori Launchpad.
 	 * If a user chooses 'Save As' from app variant overview dialog, it opens the app variant overview dialog again to show the 'Just Created' app variant.
 	 */
-	AppVariantManager.prototype.showSuccessMessage = function(oAppVariantDescriptor, bSaveAsTriggeredFromRtaToolbar) {
-		var oSuccessInfo = AppVariantUtils.buildSuccessInfo(oAppVariantDescriptor, bSaveAsTriggeredFromRtaToolbar);
+	AppVariantManager.prototype.showSuccessMessage = function(oSuccessInfo) {
 		BusyIndicator.hide();
 		return AppVariantUtils.showRelevantDialog(oSuccessInfo, true);
 	};
