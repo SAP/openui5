@@ -9,7 +9,9 @@ sap.ui.define(function () {
 	 * @class Section renderer.
 	 * @static
 	 */
-	var ObjectPageSectionRenderer = {};
+	var ObjectPageSectionRenderer = {
+		apiVersion: 2
+	};
 
 	ObjectPageSectionRenderer.render = function (oRm, oControl) {
 		var sTitle, bTitleVisible,
@@ -23,61 +25,59 @@ sap.ui.define(function () {
 		sTitle = oControl._getTitle();
 		bTitleVisible = oControl._isTitleVisible();
 
-		oRm.write("<section ");
-		oRm.addClass("sapUxAPObjectPageSection");
+		oRm.openStart("section", oControl)
+			.class("sapUxAPObjectPageSection");
 
 		if (!bTitleVisible) {
-			oRm.addClass("sapUxAPObjectPageSectionNoTitle");
+			oRm.class("sapUxAPObjectPageSectionNoTitle");
 		}
 
-		oRm.writeClasses();
-		oRm.writeAttribute("role", "region");
+		oRm.attr("role", "region");
 
 		if (bAccessibilityOn && oLabelledBy) {
-			oRm.writeAttribute("aria-labelledby", oLabelledBy.getId());
+			oRm.attr("aria-labelledby", oLabelledBy.getId());
 		}
 
-		oRm.writeControlData(oControl);
-		oRm.write(">");
+		oRm.openEnd();
 
 		if (bTitleVisible) {
-			oRm.write("<div");
-			oRm.writeAttribute("role", "heading");
-			oRm.writeAttribute("aria-level", oControl._getARIALevel());
-			oRm.writeAttributeEscaped("id", oControl.getId() + "-header");
-			oRm.addClass("sapUxAPObjectPageSectionHeader");
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openStart("div", oControl.getId() + "-header")
+				.attr("role", "heading")
+				.attr("aria-level", oControl._getARIALevel())
+				.class("sapUxAPObjectPageSectionHeader")
+				.openEnd();
 
-			oRm.write("<div");
-			oRm.writeAttributeEscaped("id", oControl.getId() + "-title");
-			oRm.addClass("sapUxAPObjectPageSectionTitle");
+			oRm.openStart("div", oControl.getId() + "-title")
+				.class("sapUxAPObjectPageSectionTitle");
+
 			if (oControl.getTitleUppercase()) {
-				oRm.addClass("sapUxAPObjectPageSectionTitleUppercase");
+				oRm.class("sapUxAPObjectPageSectionTitleUppercase");
 			}
-			oRm.writeClasses();
-			oRm.write(">");
-			oRm.writeEscaped(sTitle);
-			oRm.write("</div>");
+
+			oRm.openEnd();
+			oRm.text(sTitle);
+			oRm.close("div");
+
 			oRm.renderControl(oControl._getShowHideAllButton());
 			oRm.renderControl(oControl._getShowHideButton());
-			oRm.write("</div>");
+
+			oRm.close("div");
 		}
 
-		oRm.write("<div");
-		oRm.addClass("sapUxAPObjectPageSectionContainer");
-		oRm.writeClasses();
+		oRm.openStart("div")
+			.class("sapUxAPObjectPageSectionContainer");
+
 		if (oControl._isHidden){
-			oRm.addStyle("display", "none");
+			oRm.style("display", "none");
 		}
-		oRm.writeStyles();
-		oRm.write(">");
+
+		oRm.openEnd();
 
 		oControl.getSubSections().forEach(oRm.renderControl, oRm);
 
-		oRm.write("</div>");
+		oRm.close("div");
 
-		oRm.write("</section>");
+		oRm.close("section");
 	};
 
 	return ObjectPageSectionRenderer;

@@ -12,13 +12,11 @@ sap.ui.define(function () {
 	var BreadCrumbsRenderer = {};
 
 	BreadCrumbsRenderer.render = function (oRm, oControl) {
-		oRm.write("<div");
-		oRm.writeControlData(oControl);
-		oRm.addClass("sapUxAPBreadCrumbs");
-		oRm.writeClasses();
-		oRm.writeAttribute("role", "navigation");
-		oRm.writeAttributeEscaped("aria-labelledby", oControl._getAriaLabelledBy().getId());
-		oRm.write(">");
+		oRm.openStart("div", oControl)
+			.class("sapUxAPBreadCrumbs")
+			.attr("role", "navigation")
+			.attr("aria-labelledby", oControl._getAriaLabelledBy().getId())
+			.openEnd();
 
 		this._renderOverflowSelect(oRm, oControl);
 
@@ -26,7 +24,7 @@ sap.ui.define(function () {
 			this._renderBreadcrumbTrail(oRm, oControl);
 		}
 
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	BreadCrumbsRenderer._renderBreadcrumbTrail = function (oRm, oControl) {
@@ -35,33 +33,39 @@ sap.ui.define(function () {
 			oTubeIcon = oControl._getTubeIcon(),
 			bShowCurrentLocation = oControl.getShowCurrentLocation();
 
-		oRm.write("<ul id='" + oControl.getId() + "-breadcrumbs'");
-		oRm.write(">");
+		oRm.openStart("ul", oControl.getId() + "-breadcrumbs")
+			.openEnd();
+
 		aLinks.forEach(function (oLink) {
-			oRm.write("<li>");
+			oRm.openStart("li")
+				.openEnd();
 			oRm.renderControl(oLink);
 			oRm.renderControl(oTubeIcon);
-			oRm.write("</li>");
+			oRm.close("li");
 		});
 		if (bShowCurrentLocation) {
-			oRm.write("<li>");
+			oRm.openStart("li")
+				.openEnd();
 			oRm.renderControl(oCurrentLocation);
-			oRm.write("</li>");
+			oRm.close("li");
 		}
-		oRm.write("</ul>");
+		oRm.close("ul");
 	};
 
 	BreadCrumbsRenderer._renderOverflowSelect = function (oRm, oControl) {
 		var oTubeIcon = oControl._getTubeIcon();
 
-		oRm.write("<div id='" + oControl.getId() + "-select'");
-		oRm.addClass("sapUiHidden");
-		oRm.writeClasses();
-		oRm.write(">");
-		oRm.write('<span class="sapUxAPBreadCrumbsDots">...</span>');
+		oRm.openStart("div", oControl.getId() + "-select");
+		oRm.class("sapUiHidden");
+		oRm.openEnd();
+		oRm.openStart("span")
+			.class("sapUxAPBreadCrumbsDots")
+			.openEnd()
+			.text("...")
+			.close("span");
 		oRm.renderControl(oTubeIcon);
 		oRm.renderControl(oControl._getOverflowSelect());
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	return BreadCrumbsRenderer;

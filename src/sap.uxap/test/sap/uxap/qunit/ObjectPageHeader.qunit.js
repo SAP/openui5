@@ -156,8 +156,6 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 
 		assert.expect(2);
 
-		oHeader.setObjectTitle(sLongTitle);
-
 		oHeader.addEventDelegate({
 			onAfterRendering: function() {
 				$titleWrapper = oHeader.$().find(".sapUxAPObjectPageHeaderIdentifierTitle");
@@ -170,6 +168,9 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 				done();
 			}
 		}, this);
+
+		oHeader.setObjectTitle(sLongTitle);
+		Core.applyChanges();
 	});
 
 	QUnit.module("image rendering", {

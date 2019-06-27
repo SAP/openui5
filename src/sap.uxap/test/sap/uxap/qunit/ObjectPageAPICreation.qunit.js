@@ -1978,41 +1978,36 @@ function (
 	});
 
 	QUnit.test("ObjectPageLayout - backgroundDesignAnchorBar", function (assert) {
-		var $oAnchorBarDomRef = this.oObjectPageLayout.$("anchorBar"),
-			oAnchorBarMock = { setBackgroundDesign: function () {} },
-			oStub = this.stub(this.oObjectPageLayout._oABHelper, "_getAnchorBar", function () { return oAnchorBarMock; }),
-			oSpy = this.spy(oAnchorBarMock, "setBackgroundDesign");
+		var $oAnchorBarDomRef = this.oObjectPageLayout.$("anchorBar");
 
 		// assert
 		assert.equal(this.oObjectPageLayout.getBackgroundDesignAnchorBar(), null, "Default value of backgroundDesign property = null");
 
 		// act
 		this.oObjectPageLayout.setBackgroundDesignAnchorBar("Solid");
+		Core.applyChanges();
 
 		// assert
 		assert.ok($oAnchorBarDomRef.hasClass("sapUxAPObjectPageNavigationSolid"), "Should have sapUxAPObjectPageNavigationSolid class");
 		assert.strictEqual(this.oObjectPageLayout.getBackgroundDesignAnchorBar(), "Solid", "Should have backgroundDesign property = 'Solid'");
-		assert.ok(oSpy.calledWith("Solid"), "AnchorBar's backgroundDesign property setter called with 'Solid'");
 
 		// act
 		this.oObjectPageLayout.setBackgroundDesignAnchorBar("Transparent");
+		Core.applyChanges();
 
 		// assert
 		assert.notOk($oAnchorBarDomRef.hasClass("sapUxAPObjectPageNavigationSolid"), "Should not have sapUxAPObjectPageNavigationSolid class");
 		assert.ok($oAnchorBarDomRef.hasClass("sapUxAPObjectPageNavigationTransparent"), "Should have sapUxAPObjectPageNavigationTransparent class");
 		assert.strictEqual(this.oObjectPageLayout.getBackgroundDesignAnchorBar(), "Transparent", "Should have backgroundDesign property = 'Transparent'");
-		assert.ok(oSpy.calledWith("Transparent"), "AnchorBar's backgroundDesign property setter called with 'Transparent'");
 
 		// act
 		this.oObjectPageLayout.setBackgroundDesignAnchorBar("Translucent");
+		Core.applyChanges();
 
 		// assert
 		assert.notOk($oAnchorBarDomRef.hasClass("sapUxAPObjectPageNavigationTransparent"), "Should not have sapUxAPObjectPageNavigationTransparent class");
 		assert.ok($oAnchorBarDomRef.hasClass("sapUxAPObjectPageNavigationTranslucent"), "Should have sapUxAPObjectPageNavigationTranslucent class");
 		assert.strictEqual(this.oObjectPageLayout.getBackgroundDesignAnchorBar(), "Translucent", "Should have backgroundDesign property = 'Translucent'");
-		assert.ok(oSpy.calledWith("Translucent"), "AnchorBar's backgroundDesign property setter called with 'Translucent'");
-
-		oStub.restore();
 	});
 
 	QUnit.module("Object Page Private API", {

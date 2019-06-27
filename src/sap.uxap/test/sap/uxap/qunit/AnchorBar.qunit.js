@@ -313,6 +313,7 @@ sap.ui.define([
 
 		// act
 		this.oAnchorBar.setBackgroundDesign("Solid");
+		Core.applyChanges();
 
 		// assert
 		assert.ok($oDomRef.hasClass("sapUxAPAnchorBarSolid"), "Should have sapUxAPAnchorBarSolid class");
@@ -320,6 +321,7 @@ sap.ui.define([
 
 		// act
 		this.oAnchorBar.setBackgroundDesign("Transparent");
+		Core.applyChanges();
 
 		// assert
 		assert.notOk($oDomRef.hasClass("sapUxAPAnchorBarSolid"), "Should not have sapUxAPAnchorBarSolid class");
@@ -328,6 +330,7 @@ sap.ui.define([
 
 		// act
 		this.oAnchorBar.setBackgroundDesign("Translucent");
+		Core.applyChanges();
 
 		// assert
 		assert.notOk($oDomRef.hasClass("sapUxAPAnchorBarTransparent"), "Should not have sapUxAPAnchorBarTransparent class");
