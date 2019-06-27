@@ -23,11 +23,13 @@
 	"use strict";
 
 	//enforce complex binding syntax if using sap-ui-integration.js for local development
-	window["sap-ui-config"] = {
-		"bindingSyntax": "complex",
-		"compatVersion": "edge",
-		"async": true
-	};
+	window["sap-ui-config"] = window["sap-ui-config"] || {};
+	var config = window["sap-ui-config"];
+	config["bindingSyntax"] = "complex";
+	config["async"] = true;
+	config["compatVersion"] = "edge";
+	config["xx-waitForTheme"] = true;
+
 	//extract base URL from script tag
 	var oScriptTag, mMatch, sBaseUrl;
 	var coreInstance,
