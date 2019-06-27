@@ -65,6 +65,14 @@
 	background-color: fade(@sapUiListBackground, 90%);
 }
 
+.sapMSinglePCAppointmentWrap.sapUiCalendarRowApps {
+	&:focus {
+		.sapUiCalendarAppSel > .sapUiCalendarAppCont:after {
+			border: 0.0625rem dotted @sapUiContentContrastFocusColor;
+		}
+	}
+}
+
 // TODO: Consider refactoring the coloring logic of Appointments
 /* colors for types */
 .calendarRowTypeColorMixIn(@class, @iclass, @iitemtypeclass, @color, @bcolor){
