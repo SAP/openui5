@@ -1443,6 +1443,48 @@ sap.ui.define([
 		assert.ok(iInitialHeight === iAfterDragHeight, "The height of the dialog should not change after dragging it.");
 
 		// cleanup
+		jQuery(document).off("mouseup mousemove");
+		oDialog.destroy();
+	});
+
+	QUnit.test("Check if dialog is not dragged from a bar inside the content section", function(assert) {
+
+		var oBar = new Bar();
+
+		// arrange
+		var oDialog = new Dialog({
+			draggable: true,
+			title: "Some title",
+			beginButton: new Button({text: "button"}),
+			content: [
+				oBar
+			]
+		});
+
+		// act
+		oDialog.open();
+
+		this.clock.tick(500);
+
+		jQuery(document).off("mouseup mousemove");
+
+		var oMockEvent = {
+			pageX: 608,
+			pageY: 646,
+			offsetX: 177,
+			offsetY: 35,
+			preventDefault: function () {},
+			stopPropagation: function () {},
+			target: oBar.getDomRef()
+		};
+
+		oDialog.onmousedown(oMockEvent);
+
+		var docEvents = jQuery._data(document, 'events');
+		assert.notOk(docEvents.mousemove, 'document.mousemove is not attached');
+
+		// cleanup
+		jQuery(document).off("mouseup mousemove");
 		oDialog.destroy();
 	});
 
