@@ -1302,7 +1302,7 @@ function($, Core, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPa
 				iExpectedSubSectionHeight = Math.round(iViewportHeight - iOffsetTop);
 
 			function checkHeight() {
-				assert.ok(oSubSection.$().height(), iExpectedSubSectionHeight, "correct height");
+				assert.strictEqual(oSubSection.getDomRef().offsetHeight, iExpectedSubSectionHeight, "correct height");
 			}
 
 			function onTargetThemeApplied() {
@@ -1321,6 +1321,31 @@ function($, Core, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPa
 				Core.attachEvent("ThemeChanged", onTargetThemeApplied);
 				Core.applyTheme(sTargetTheme);
 			}
+
+		}, this);
+	});
+
+	QUnit.test("sapUxAPObjectPageSubSectionFitContainer expands the subSection with padding to fit the container any theme", function (assert) {
+		var oPage = this.oObjectPage,
+			oSection = this.oObjectPage.getSections()[0],
+			oSubSection = oSection.getSubSections()[0],
+			done = assert.async();
+
+		//act
+		oSubSection.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS);
+
+
+		oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			//check
+			var iViewportHeight = oPage._getScrollableViewportHeight(false),
+				iOffsetTop = oSubSection.$().position().top,
+				iExpectedSubSectionHeight = Math.round(iViewportHeight - iOffsetTop);
+
+			oSubSection.getDomRef().style.paddingTop = "20px";
+			oPage._requestAdjustLayout(true);
+			// check height
+			assert.strictEqual(oSubSection.getDomRef().offsetHeight, iExpectedSubSectionHeight, "correct height");
+			done();
 
 		}, this);
 	});
