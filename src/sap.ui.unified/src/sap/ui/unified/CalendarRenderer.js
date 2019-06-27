@@ -39,7 +39,8 @@ sap.ui.define([],
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
 		var mAccProps = {labelledby: {value: "", append: false}}; // render on Month
 		if (oCal._bPoupupMode) {
-			mAccProps["role"] = "dialog";
+			mAccProps.role = "dialog";
+			mAccProps.modal = true;
 		}
 		oRm.writeAccessibilityState(oCal, mAccProps);
 

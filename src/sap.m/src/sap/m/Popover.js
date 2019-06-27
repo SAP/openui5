@@ -218,7 +218,14 @@ sap.ui.define([
 					 * @since 1.36.4
 					 * @private
 					 */
-					resizable: {type: "boolean", group: "Dimension", defaultValue: false}
+					resizable: {type: "boolean", group: "Dimension", defaultValue: false},
+
+					/**
+					 * Specifies the aria-modal of the Popover.
+					 * @since 1.70
+					 * @private
+					 */
+					ariaModal: {type: "boolean", group: "Misc", defaultValue: true, visibility: "hidden"}
 				},
 				defaultAggregation: "content",
 				aggregations: {
@@ -2261,6 +2268,7 @@ sap.ui.define([
 			var aAriaLabels, mAccOptions = {};
 
 			mAccOptions.role = "dialog";
+			mAccOptions.modal = this.getProperty("ariaModal");
 			if (this.getShowHeader() && this._getAnyHeader()) {
 				// If we have a header/title, we add a reference to it in the beginning of the aria-labelledby attribute
 				aAriaLabels = Array.prototype.concat(this._getAnyHeader().getId(), this.getAssociation("ariaLabelledBy", []));
@@ -2525,6 +2533,9 @@ sap.ui.define([
 			return this.setProperty("resizable", bValue, true);
 		};
 
+		Popover.prototype._setAriaModal = function (bValue) {
+			return this.setProperty("ariaModal", bValue);
+		};
 
 		/**
 		 * Returns the sap.ui.core.ScrollEnablement delegate which is used with this control.

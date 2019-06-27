@@ -347,6 +347,25 @@ sap.ui.define(
 			}.bind(this), LIGHTBOX_OPEN_TIME);
 		});
 
+		QUnit.test("LightBox should have accessibility attribute aria-modal set to true", function(assert) {
+			// arrange
+			var oImageContent = this.LightBox.getImageContent()[0],
+				sImageSource = IMAGE_PATH + 'demo/nature/elephant.jpg',
+				done = assert.async();
+
+			oImageContent.setImageSrc(sImageSource);
+
+			sap.ui.getCore().applyChanges();
+
+			// act
+			this.LightBox.open();
+
+			// assert
+			setTimeout(function() {
+				assert.strictEqual(this.LightBox._oPopup.getContent().$().attr('aria-modal'), "true", 'aria-modal attribute is true');
+				done();
+			}.bind(this), LIGHTBOX_OPEN_TIME);
+		});
 
 		//================================================================================
 		// LightBox sapMLightBoxTopCornersRadius class
