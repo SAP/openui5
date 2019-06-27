@@ -1787,6 +1787,12 @@ function(
 		function isHeaderClicked(eventTarget) {
 			var $target = jQuery(eventTarget);
 			var oControl = $target.control(0);
+
+			// target is inside the content section
+			if ($target.parents('.sapMDialogSection').length) {
+				return false;
+			}
+
 			if (!oControl || oControl.getMetadata().getInterfaces().indexOf("sap.m.IBar") > -1) {
 				return true;
 			}
