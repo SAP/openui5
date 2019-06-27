@@ -56,13 +56,13 @@
 						if (property === "mainService") {
 							var oModel, oView;
 
-							oModel = new sap.ui.model.odata.ODataModel(dataSource.uri, {
+							oModel = new sap.ui.model.odata.v2.ODataModel(dataSource.uri, {
 								json: true,
 								loadMetadataAsync: true
 							});
 
 							oModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
-							oModel.setCountSupported(false);
+							oModel.setDefaultCountMode(sap.ui.model.odata.CountMode.None);
 							this._oModel = oModel;
 
 							oView = this.getView();
