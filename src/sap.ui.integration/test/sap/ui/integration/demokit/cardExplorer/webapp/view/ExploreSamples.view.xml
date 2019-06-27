@@ -7,7 +7,7 @@
 	xmlns:core="sap.ui.core"
 	xmlns:editor="sap.ui.codeeditor"
 	xmlns:w="sap.ui.integration.widgets">
-	<l:ResponsiveSplitter id="splitView" defaultPane="default">
+	<l:ResponsiveSplitter id="splitView">
 		<l:PaneContainer orientation="Horizontal">
 			<l:SplitPane id="cardPane" requiredParentWidth="1">
 				<Page>
@@ -28,12 +28,12 @@
 						</Bar>
 					</customHeader>
 					<f:GridContainer id="cardContainer">
-						<w:Card id="cardSample" class="sapUiLargeMargin">
+						<w:Card id="cardSample">
 						</w:Card>
 					</f:GridContainer>
 				</Page>
 			</l:SplitPane>
-			<l:SplitPane requiredParentWidth="1" >
+			<l:SplitPane requiredParentWidth="1">
 				<Page >
 					<customHeader>
 						<Bar>
@@ -45,12 +45,13 @@
 										press="onRunPressed"
 										enabled="{settings>/editable}">
 								</Button>
-								<CheckBox text="Auto Run" selected="{settings>/autoRun}"></CheckBox>
+								<CheckBox text="Auto Run" selected="{settings>/autoRun}" enabled="{settings>/editable}"></CheckBox>
 							</contentLeft>
 							<contentRight>
 								<Button class="orientationBtn"
 										press="onChangeSplitterOrientation"
 										icon="sap-icon://header"
+										enabled="{settings>/editable}"
 										type="Transparent">
 								</Button>
 							</contentRight>

@@ -32,3 +32,13 @@ a.appTitle {
 a.appTitle .sapMTitle {
 	cursor: pointer;
 }
+
+ .sapFGridContainer { /* in "Explore" section */
+	padding: 3rem;
+}
+
+/* on Phone */
+
+html.sap-phone .sapFGridContainer { /* in "Explore" section */
+	padding: 0.25rem;
+}

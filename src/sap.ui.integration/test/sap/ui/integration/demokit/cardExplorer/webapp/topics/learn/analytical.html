@@ -36,97 +36,101 @@
 
 		<h4>Configuration properties</h4>
 
-		<table>
-			<tr>
-				<th>Property</th>
-				<th>Type</th>
-				<th>Required</th>
-				<th>Description</th>
-				<th>Schema Version</th>
-			</tr>
-			<tr>
-				<td>chartType</td>
-				<td>string</td>
-				<td>Yes</td>
-				<td>Can be one of "Line", "StackedBar", "StackedColumn" or "Donut."</td>
-				<td>1.14.0</td>
-			</tr>
-			<tr>
-				<td>legend</td>
-				<td>object</td>
-				<td>No</td>
-				<td>Represents chart legend attributes.</td>
-				<td>1.14.0</td>
-			</tr>
-			<tr>
-				<td>plotArea</td>
-				<td>object</td>
-				<td>No</td>
-				<td>Describes the plotArea properties.</td>
-				<td>1.14.0</td>
-			</tr>
-			<tr>
-				<td>title</td>
-				<td>object</td>
-				<td>No</td>
-				<td>Represents the title attributes.</td>
-				<td>1.14.0</td>
-			</tr>
-			<tr>
-				<td>measureAxis</td>
-				<td>string</td>
-				<td>No</td>
-				<td>Represents the value set for the measure axis.</td>
-				<td>1.14.0</td>
-			</tr>
-			<tr>
-				<td>dimensionAxis</td>
-				<td>string</td>
-				<td>No</td>
-				<td>Represents the value set for the dimension axis.</td>
-				<td>1.14.0</td>
-			</tr>
-			<tr>
-				<td>measures</td>
-				<td>array</td>
-				<td>Yes</td>
-				<td>List of definitions of all measures in the dataset.</td>
-				<td>1.14.0</td>
-			</tr>
-			<tr>
-				<td>dimensions</td>
-				<td>array</td>
-				<td>Yes</td>
-				<td>List of definitions of all dimensions in this dataset.</td>
-				<td>1.14.0</td>
-			</tr>
-		</table>
+		<div class="tableWrapper">
+			<table>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Required</th>
+					<th>Description</th>
+					<th>Schema Version</th>
+				</tr>
+				<tr>
+					<td>chartType</td>
+					<td>string</td>
+					<td>Yes</td>
+					<td>Can be one of "Line", "StackedBar", "StackedColumn" or "Donut."</td>
+					<td>1.14.0</td>
+				</tr>
+				<tr>
+					<td>legend</td>
+					<td>object</td>
+					<td>No</td>
+					<td>Represents chart legend attributes.</td>
+					<td>1.14.0</td>
+				</tr>
+				<tr>
+					<td>plotArea</td>
+					<td>object</td>
+					<td>No</td>
+					<td>Describes the plotArea properties.</td>
+					<td>1.14.0</td>
+				</tr>
+				<tr>
+					<td>title</td>
+					<td>object</td>
+					<td>No</td>
+					<td>Represents the title attributes.</td>
+					<td>1.14.0</td>
+				</tr>
+				<tr>
+					<td>measureAxis</td>
+					<td>string</td>
+					<td>No</td>
+					<td>Represents the value set for the measure axis.</td>
+					<td>1.14.0</td>
+				</tr>
+				<tr>
+					<td>dimensionAxis</td>
+					<td>string</td>
+					<td>No</td>
+					<td>Represents the value set for the dimension axis.</td>
+					<td>1.14.0</td>
+				</tr>
+				<tr>
+					<td>measures</td>
+					<td>array</td>
+					<td>Yes</td>
+					<td>List of definitions of all measures in the dataset.</td>
+					<td>1.14.0</td>
+				</tr>
+				<tr>
+					<td>dimensions</td>
+					<td>array</td>
+					<td>Yes</td>
+					<td>List of definitions of all dimensions in this dataset.</td>
+					<td>1.14.0</td>
+				</tr>
+			</table>
+		</div>
 
 		<h4>Measures and dimensions properties</h4>
 
-		<table>
-			<tr>
-				<th>Property</th>
-				<th>Type</th>
-				<th>Required</th>
-				<th>Description</th>
-				<th>Schema Version</th>
-			</tr>
-			<tr>
-				<td>label</td>
-				<td>string</td>
-				<td>Yes</td>
-				<td>Name of the field as displayed in the chart.</td>
-				<td>1.14.0</td>
-			</tr>
-			<tr>
-				<td>value</td>
-				<td>string</td>
-				<td>Yes</td>
-				<td>Value for the field.</td>
-				<td>1.14.0</td>
-			</tr>
-		</table>
+		<div class="tableWrapper">
+			<table>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Required</th>
+					<th>Description</th>
+					<th>Schema Version</th>
+				</tr>
+				<tr>
+					<td>label</td>
+					<td>string</td>
+					<td>Yes</td>
+					<td>Name of the field as displayed in the chart.</td>
+					<td>1.14.0</td>
+				</tr>
+				<tr>
+					<td>value</td>
+					<td>string</td>
+					<td>Yes</td>
+					<td>Value for the field.</td>
+					<td>1.14.0</td>
+				</tr>
+			</table>
+		</div>
 
 		<h2 id="example">Example</h2>
 		<p>Define the type and data for the card:
