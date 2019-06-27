@@ -385,6 +385,35 @@ sap.ui.define([
 		assert.strictEqual(searchFieldEnabled, true, 'The SearchField should be enabled');
 	});
 
+	QUnit.test("confirmButtonText", function(assert) {
+		// assert
+		assert.equal(oTableSelectDialog._getOkButton().getText(),
+			sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SELECT_CONFIRM_BUTTON"),
+			'The default confirmation text is set.');
+
+		// act
+		oTableSelectDialog.setConfirmButtonText("Save");
+		// assert
+		assert.equal(oTableSelectDialog._oOkButton.getText(), "Save", 'The confirm button text is changed.');
+	});
+
+	QUnit.test("initially set confirmButtonText", function(assert) {
+		// setup
+		var oTableSelectDialog = new TableSelectDialog({
+			confirmButtonText: "Custom Text",
+			multiSelect: true
+		});
+
+		oTableSelectDialog.open();
+		this.clock.tick(500);
+
+		// assert
+		assert.equal(oTableSelectDialog._oOkButton.getText(), "Custom Text", 'The confirm button text is set.');
+
+		// clean up
+		oTableSelectDialog.destroy();
+	});
+
 	QUnit.module("Bindings Check");
 
 	QUnit.test("Bindings", function(assert) {

@@ -46,6 +46,19 @@
 						value="true" />
 				</customData>
 			</Button>
+			<Button
+				class="sapUiSmallMarginBottom"
+				text="Show Table Select Dialog (Custom confirmation button text)"
+				press="handleTableSelectDialogPress">
+				<customData>
+					<core:CustomData
+							key="multi"
+							value="true" />
+					<core:CustomData
+						key="confirmButtonText"
+						value="Save" />
+				</customData>
+			</Button>
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>

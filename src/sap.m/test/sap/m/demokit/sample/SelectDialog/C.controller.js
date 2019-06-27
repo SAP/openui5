@@ -32,6 +32,9 @@ sap.ui.define([
 			var bMultiSelect = !!oEvent.getSource().data("multi");
 			this._oDialog.setMultiSelect(bMultiSelect);
 
+			var sCustomConfirmButtonText = oEvent.getSource().data("confirmButtonText");
+			this._oDialog.setConfirmButtonText(sCustomConfirmButtonText);
+
 			// Remember selections if required
 			var bRemember = !!oEvent.getSource().data("remember");
 			this._oDialog.setRememberSelections(bRemember);

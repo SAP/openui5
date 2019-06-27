@@ -36,6 +36,9 @@
 					<core:CustomData
 						key="showClearButton"
 						value="true" />
+					<core:CustomData
+						key="confirmButtonText"
+						value="Remember Selection" />
 				</customData>
 			</Button>
 			<Button

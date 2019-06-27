@@ -175,7 +175,12 @@ function(
 			 * <b>Note:</b>When used with oData, only the loaded selections will be cleared.
 			 * @since 1.58
 			 */
-			showClearButton : {type : "boolean", group : "Behavior", defaultValue : false}
+			showClearButton : {type : "boolean", group : "Behavior", defaultValue : false},
+			/**
+			 * Overwrites the default text for the confirmation button.
+			 * @since 1.68
+			 */
+			confirmButtonText: {type : "string", group : "Appearance"}
 		},
 		defaultAggregation : "items",
 		aggregations : {
@@ -621,6 +626,20 @@ function(
 	};
 
 	/**
+	 * Sets the text of the confirmation button.
+	 * @override
+	 * @public
+	 * @param {string} sText The text for the confirm button
+	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
+	 */
+	SelectDialog.prototype.setConfirmButtonText = function (sText) {
+		this.setProperty("confirmButtonText", sText, true);
+		this._oOkButton && this._oOkButton.setText(sText || this._oRb.getText("SELECT_CONFIRM_BUTTON"));
+
+		return this;
+	};
+
+	/**
 	 * Set the internal List's no data text property
 	 * @override
 	 * @public
@@ -992,7 +1011,7 @@ function(
 
 		if (!this._oOkButton) {
 			this._oOkButton = new Button(this.getId() + "-ok", {
-				text: this._oRb.getText("MSGBOX_OK"),
+				text: this.getConfirmButtonText() || this._oRb.getText("SELECT_CONFIRM_BUTTON"),
 				press: function () {
 					// attach the reset function to afterClose to hide the dialog changes from the end user
 					that._oDialog.attachAfterClose(fnOKAfterClose);
