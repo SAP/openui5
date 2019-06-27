@@ -409,7 +409,10 @@ sap.ui.define([
 		// Add one item
 		oIconTabBar.addItem(
 			 new IconTabFilter({
-					icon: "sap-icon://task"
+					icon: "sap-icon://task",
+					content: new Text({
+						text: "Tab Content"
+					})
 				})
 		);
 		sap.ui.getCore().applyChanges();
@@ -417,6 +420,7 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oIconTabBar.getItems().length, 1, "The IconTabBar contains 1 item");
 		assert.ok(oIconTabBar.getItems()[0].$().hasClass("sapMITBFilter"), "Filter has class sapMITBFilter");
+		assert.strictEqual(oIconTabBar.$().find('.sapMITBContent').text(), "Tab Content", "content is rendered");
 
 		// Clean up
 		oIconTabBar.destroy();
