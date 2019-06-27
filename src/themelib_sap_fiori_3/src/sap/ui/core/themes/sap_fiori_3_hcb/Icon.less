@@ -1,0 +1,49 @@
+/* ================================= */
+/* CSS for control sap.ui/core/Icon  */
+/* Quartz High Contrast Black theme  */
+/* ================================= */
+
+html:not([data-sap-ui-browser^="ie"]):not([data-sap-ui-browser^="ed"]) .sapUiIcon:focus {
+	outline-color: @sapUiHcStandardForeground;
+}
+
+html[data-sap-ui-browser^="ie"] .sapUiIcon:focus::after,
+html[data-sap-ui-browser^="ed"] .sapUiIcon:focus::after {
+	border-color: @sapUiHcStandardForeground;
+}
+
+.sapUiIconColorNeutral {
+	color: @sapUiHcNeutralColor;
+}
+
+.sapUiIconColorCritical {
+	color: @sapUiHcCriticalColor;
+}
+
+.sapUiIconColorPositive {
+	color: @sapUiHcPositiveColor;
+}
+
+.sapUiIconColorNegative {
+	color: @sapUiHcNegativeColor;
+}
+
+.sapUiIconBGColorNeutral {
+	background-color: @sapUiHcNeutralColor;
+}
+
+.sapUiIconBGColorCritical {
+	background-color: @sapUiHcCriticalColor;
+}
+
+.sapUiIconBGColorPositive {
+	background-color: @sapUiHcPositiveColor;
+}
+
+.sapUiIconBGColorNegative {
+	background-color: @sapUiHcNegativeColor;
+}
+
+.sapUiIconBGColorContrast {
+	background-color: @sapUiHighlight;
+}
