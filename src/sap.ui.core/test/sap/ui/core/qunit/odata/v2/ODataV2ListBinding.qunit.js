@@ -440,6 +440,46 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("ListBinding relative with context and expanded list", function(assert){
+		var done = assert.async();
+		var oModel = initModel(false);
+		var oBinding = oModel.bindList("Supplier/Products");
+		var iCount = 0;
+
+		// Requests:
+		// /Products(3)?$expand=Supplier/Products
+		// /Products(7)?$expand=Supplier/Products
+		// /Products(7)/Supplier/Products
+
+		var changeHandler = function() {
+			iCount++;
+
+			// trigger data requests
+			oBinding.getContexts();
+
+			if (iCount === 1) {
+				assert.equal(oBinding.getLength(), 0, "0 entries retrieved (/Products(7))");
+			} else if (iCount === 2) {
+				assert.equal(oBinding.getLength(), 3, "3 entries retrieved (/Products(3))");
+				oBinding.detachChange(changeHandler);
+				done();
+			}
+		};
+
+		oBinding.attachChange(changeHandler);
+		oBinding.initialize();
+
+		// /Products(7)/Supplier --> null
+		oModel.createBindingContext("/Products(7)", undefined, {expand: "Supplier/Products"}, function(oContext7null) {
+
+			// /Products(3)/Supplier/Products --> [3,2,1]
+			oModel.createBindingContext("/Products(3)", undefined, {expand: "Supplier/Products"}, function(oContext3) {
+				oBinding.setContext(oContext7null);
+				oBinding.setContext(oContext3);
+			});
+		});
+	});
+
 	QUnit.test("ListBinding relative with context and client-side filters", function(assert){
 		var done = assert.async();
 		var oModel = initModel(sURI, false, "Categories");
