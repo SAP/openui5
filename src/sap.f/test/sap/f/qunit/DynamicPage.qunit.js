@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/Configuration",
 	"sap/m/OverflowToolbarButton",
+	"sap/m/library",
 	"sap/f/DynamicPageAccessibleLandmarkInfo",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/qunit/QUnitUtils",
@@ -28,6 +29,7 @@ function (
 	UIComponent,
 	Configuration,
 	OverflowToolbarButton,
+	mLibrary,
 	DynamicPageAccessibleLandmarkInfo,
 	XMLView,
 	QUnitUtils,
@@ -37,7 +39,8 @@ function (
 
 	var TESTS_DOM_CONTAINER = DynamicPageUtil.sTestsDomContainer,
 		oFactory = DynamicPageUtil.oFactory,
-		oUtil = DynamicPageUtil.oUtil;
+		oUtil = DynamicPageUtil.oUtil,
+		PageBackgroundDesign = mLibrary.PageBackgroundDesign;
 
 	/* --------------------------- DynamicPage API -------------------------------------- */
 	QUnit.module("DynamicPage - API ", {
@@ -105,6 +108,59 @@ function (
 		assert.strictEqual(this.oDynamicPage.$("header").attr("aria-label"), "Header", "Header label is set correctly.");
 		assert.strictEqual(this.oDynamicPage.$("footerWrapper").attr("role"), "region", "Footer role is set correctly.");
 		assert.strictEqual(this.oDynamicPage.$("footerWrapper").attr("aria-label"), "Footer", "Footer label is set correctly.");
+	});
+
+	QUnit.test("DynamicPage - backgroundDesign property", function(assert) {
+		var oDynamicPage = this.oDynamicPage,
+				$oDomRef = oDynamicPage.$wrapper;
+
+		// assert
+		assert.strictEqual(oDynamicPage.getBackgroundDesign(), PageBackgroundDesign.Standard, "Should have backgroundDesign property = 'Standard'");
+		assert.ok($oDomRef.hasClass("sapFDynamicPageContentWrapperStandard"), "Should have sapFDynamicPageContentWrapperStandard class");
+
+		// act
+		oDynamicPage.setBackgroundDesign("Solid");
+		Core.applyChanges();
+
+		// assert
+		assert.ok($oDomRef.hasClass("sapFDynamicPageContentWrapperSolid"), "Should have sapFDynamicPageContentWrapperSolid class");
+		assert.strictEqual(oDynamicPage.getBackgroundDesign(), PageBackgroundDesign.Solid, "Should have backgroundDesign property = 'Solid'");
+
+		// act
+		oDynamicPage.setBackgroundDesign("Standard");
+		Core.applyChanges();
+
+		// assert
+		assert.notOk($oDomRef.hasClass("sapFDynamicPageContentWrapperSolid"), "Should not have sapFDynamicPageContentWrapperSolid class");
+		assert.ok($oDomRef.hasClass("sapFDynamicPageContentWrapperStandard"), "Should have sapFDynamicPageContentWrapperStandard class");
+		assert.strictEqual(oDynamicPage.getBackgroundDesign(), PageBackgroundDesign.Standard, "Should have backgroundDesign property = 'Standard'");
+
+		// act
+		oDynamicPage.setBackgroundDesign("List");
+		Core.applyChanges();
+
+		// assert
+		assert.notOk($oDomRef.hasClass("sapFDynamicPageContentWrapperStandard"), "Should not have sapFDynamicPageContentWrapperStandard class");
+		assert.ok($oDomRef.hasClass("sapFDynamicPageContentWrapperList"), "Should have sapFDynamicPageContentWrapperList class");
+		assert.strictEqual(oDynamicPage.getBackgroundDesign(), PageBackgroundDesign.List, "Should have backgroundDesign property = 'List'");
+
+		// act
+		oDynamicPage.setBackgroundDesign("Transparent");
+		Core.applyChanges();
+
+		// assert
+		assert.notOk($oDomRef.hasClass("sapFDynamicPageContentWrapperList"), "Should not have sapFDynamicPageContentWrapperList class");
+		assert.ok($oDomRef.hasClass("sapFDynamicPageContentWrapperTransparent"), "Should have sapFDynamicPageContentWrapperTransparent class");
+		assert.strictEqual(oDynamicPage.getBackgroundDesign(), PageBackgroundDesign.Transparent, "Should have backgroundDesign property = 'Transparent'");
+
+		// act
+		oDynamicPage.setBackgroundDesign(null);
+		Core.applyChanges();
+
+		// assert
+		assert.notOk($oDomRef.hasClass("sapFDynamicPageContentWrapperTransparent"), "Should not have sapFDynamicPageContentWrapperTransparent class");
+		assert.ok($oDomRef.hasClass("sapFDynamicPageContentWrapperStandard"), "Should have sapFDynamicPageContentWrapperStandard class");
+		assert.strictEqual(oDynamicPage.getBackgroundDesign(), PageBackgroundDesign.Standard, "Should have backgroundDesign property = 'Standard', which is default");
 	});
 
 	QUnit.module("DynamicPage - API - header initially snapped", {
