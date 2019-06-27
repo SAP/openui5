@@ -12,6 +12,7 @@ sap.ui.define([],
 	 * @namespace
 	 */
 	var NavContainerRenderer = {
+		apiVersion: 2
 	};
 
 
@@ -30,42 +31,41 @@ sap.ui.define([],
 			return;
 		}
 
-		oRm.write("<div");
-		oRm.writeControlData(oControl);
+		var sHeight = oControl.getHeight(),
+			sTooltip = oControl.getTooltip_AsString(),
+			oContent = oControl.getCurrentPage();
 
-		oRm.addClass("sapMNav");
-		if (oControl.getWidth()) {
-			oRm.addStyle("width", oControl.getWidth());
-		}
-		var sHeight = oControl.getHeight();
+
+		oRm.openStart("div", oControl);
+
+		oRm.class("sapMNav");
+
+		oRm.style("width", oControl.getWidth());
+
 		if (sHeight && sHeight != "100%") {
-			oRm.addStyle("height", sHeight);
+			oRm.style("height", sHeight);
 		}
 
 		if (this.renderAttributes) {
 			this.renderAttributes(oRm, oControl); // may be used by inheriting renderers, but DO NOT write class or style attributes! Instead, call addClass/addStyle.
 		}
 
-		oRm.writeClasses();
-		oRm.writeStyles();
-
-		var sTooltip = oControl.getTooltip_AsString();
 		if (sTooltip) {
-			oRm.writeAttributeEscaped("title", sTooltip);
+			oRm.attr("title", sTooltip);
 		}
-		oRm.write(">"); // div element
+
+		oRm.openEnd(); // div element
 
 		if (this.renderBeforeContent) {
 			this.renderBeforeContent(oRm, oControl); // may be used by inheriting renderers
 		}
 
-		var oContent = oControl.getCurrentPage();
 		if (oContent) {
 			oContent.removeStyleClass("sapMNavItemHidden"); // In case the current page was hidden (the previous current page got removed)
 			oRm.renderControl(oContent);
 		}
 
-		oRm.write("</div>");
+		oRm.close("div");
 
 		oControl._bRenderingInProgress = false;
 	};
