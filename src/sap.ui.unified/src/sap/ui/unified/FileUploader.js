@@ -97,33 +97,45 @@ sap.ui.define([
 			width : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : ''},
 
 			/**
-			 * If set to "true", the upload immediately starts after file selection. With the default setting, the upload needs to be explicitly triggered.
+			 * If set to "true", the upload immediately starts after file selection.
+			 * With the default setting, the upload needs to be explicitly triggered.
 			 */
 			uploadOnChange : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
-			 * Additional data that is sent to the back end service. Data will be transmitted as value of a hidden input where the name is derived from the name property with suffix -data.
+			 * Additional data that is sent to the back end service.
+			 *
+			 * Data will be transmitted as value of a hidden input where the name is derived from the
+			 * <code>name</code> property with suffix "-data".
 			 */
 			additionalData : {type : "string", group : "Data", defaultValue : null},
 
 			/**
-			 * If the FileUploader is configured to upload the file directly after the file is selected it is not allowed to upload a file with the same name again. If a user should be allowed to upload a file with the same name again this parameter has to be "true". A typical use case would be if the files have different paths.
+			 * If the FileUploader is configured to upload the file directly after the file is selected,
+			 * it is not allowed to upload a file with the same name again. If a user should be allowed
+			 * to upload a file with the same name again this parameter has to be "true".
+			 *
+			 * A typical use case would be if the files have different paths.
 			 */
 			sameFilenameAllowed : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
-			 * The Button text can be overwritten using this property.
+			 * The button's text can be overwritten using this property.
 			 */
 			buttonText : {type : "string", group : "Misc", defaultValue : null},
 
 			/**
-			 * The chosen files will be checked against an array of file types. If at least one file does not fit the file type restriction the upload is prevented.
-			 * Example: ["jpg", "png", "bmp"].
+			 * The chosen files will be checked against an array of file types.
+			 *
+			 * If at least one file does not fit the file type restriction, the upload is prevented.
+			 *
+			 * Example: <code>["jpg", "png", "bmp"]</code>.
 			 */
 			fileType : {type : "string[]", group : "Data", defaultValue : null},
 
 			/**
 			 * Allows multiple files to be chosen and uploaded from the same folder.
+			 *
 			 * This property is not supported by Internet Explorer 9.
 			 *
 			 * <b>Note:</b> Keep in mind that the various operating systems for mobile devices
@@ -133,19 +145,26 @@ sap.ui.define([
 			multiple : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
-			 * A file size limit in megabytes which prevents the upload if at least one file exceeds it. This property is not supported by Internet Explorer 9.
+			 * A file size limit in megabytes which prevents the upload if at least one file exceeds it.
+			 *
+			 * This property is not supported by Internet Explorer 9.
 			 */
 			maximumFileSize : {type : "float", group : "Data", defaultValue : null},
 
 			/**
-			 * The chosen files will be checked against an array of mime types. If at least one file does not fit the mime type restriction the upload is prevented.
+			 * The chosen files will be checked against an array of mime types.
+			 *
+			 * If at least one file does not fit the mime type restriction, the upload is prevented.
 			 * <b>Note:</b> This property is not supported by Internet Explorer & Edge.
-			 * Example: mimeType ["image/png", "image/jpeg"].
+			 *
+			 * Example: <code>["image/png", "image/jpeg"]</code>.
 			 */
 			mimeType : {type : "string[]", group : "Data", defaultValue : null},
 
 			/**
-			 * If set to "true", the request will be sent as XHR request instead of a form submit. This property is not supported by Internet Explorer 9.
+			 * If set to "true", the request will be sent as XHR request instead of a form submit.
+			 *
+			 * This property is not supported by Internet Explorer 9.
 			 */
 			sendXHR : {type : "boolean", group : "Behavior", defaultValue : false},
 
@@ -155,28 +174,38 @@ sap.ui.define([
 			placeholder : {type : "string", group : "Appearance", defaultValue : null},
 
 			/**
-			 * Style of the button. "Transparent, "Accept", "Reject", or "Emphasized" is allowed.
+			 * Style of the button.
+			 *
+			 * Values "Transparent, "Accept", "Reject", or "Emphasized" are allowed.
 			 */
 			style : {type : "string", group : "Appearance", defaultValue : null},
 
 			/**
-			 * If set to "true", the FileUploader will be rendered as Button only, without showing the InputField.
+			 * If set to "true", the <code>FileUploader</code> will be rendered as Button only,
+			 * without showing the input field.
 			 */
 			buttonOnly : {type : "boolean", group : "Appearance", defaultValue : false},
 
 			/**
-			 * If set to "false", the request will be sent as file only request instead of a multipart/form-data request. Only one file could be uploaded using this type of request. Required for sending such a request is to set the property "sendXHR" to "true". This property is not supported by Internet Explorer 9.
+			 * If set to "false", the request will be sent as file only request instead of a multipart/form-data request.
+			 *
+			 * Only one file could be uploaded using this type of request. Required for sending such a request is
+			 * to set the property <code>sendXHR</code> to "true". This property is not supported by Internet Explorer 9.
 			 */
 			useMultipart : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * The maximum length of a filename which the FileUploader will accept. If the maximum filename length is exceeded, the corresponding Event 'filenameLengthExceed' is fired.
+			 * The maximum length of a filename which the <code>FileUploader</code> will accept.
+			 *
+			 * If the maximum filename length is exceeded, the corresponding event <code>filenameLengthExceed</code> is fired.
 			 * @since 1.24.0
 			 */
 			maximumFilenameLength : {type : "int", group : "Data", defaultValue : null},
 
 			/**
-			 * Visualizes warnings or errors related to the text field. Possible values: Warning, Error, Success, None.
+			 * Visualizes warnings or errors related to the text field.
+			 *
+			 * Possible values: Warning, Error, Success, None.
 			 * @since 1.24.0
 			 */
 			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : ValueState.None},
@@ -191,21 +220,24 @@ sap.ui.define([
 
 			/**
 			 * Icon to be displayed as graphical element within the button.
+			 *
 			 * This can be a URI to an image or an icon font URI.
 			 * @since 1.26.0
 			 */
 			icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : ''},
 
 			/**
-			 * Icon to be displayed as graphical element within the button when it is hovered (only if also a base icon was specified). If not specified the base icon is used.
-			 * If an icon font icon is used, this property is ignored.
+			 * Icon to be displayed as graphical element within the button when it is hovered (only if also a base icon was specified).
+			 *
+			 * If not specified, the base icon is used. If an icon font icon is used, this property is ignored.
 			 * @since 1.26.0
 			 */
 			iconHovered : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : ''},
 
 			/**
-			 * Icon to be displayed as graphical element within the button when it is selected (only if also a base icon was specified). If not specified the base or hovered icon is used.
-			 * If an icon font icon is used, this property is ignored.
+			 * Icon to be displayed as graphical element within the button when it is selected (only if also a base icon was specified).
+			 *
+			 * If not specified, the base or hovered icon is used. If an icon font icon is used, this property is ignored.
 			 * @since 1.26.0
 			 */
 			iconSelected : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : ''},
@@ -225,13 +257,14 @@ sap.ui.define([
 		aggregations : {
 
 			/**
-			 * The parameters for the FileUploader which are rendered as a hidden inputfield.
+			 * The parameters for the <code>FileUploader</code> which are rendered as a hidden input field.
 			 * @since 1.12.2
 			 */
 			parameters : {type : "sap.ui.unified.FileUploaderParameter", multiple : true, singularName : "parameter"},
 
 			/**
-			 * The header parameters for the FileUploader which are only submitted with XHR requests. Header parameters are not supported by Internet Explorer 9.
+			 * The header parameters for the <code>FileUploader</code> which are only submitted with XHR requests.
+			 * Header parameters are not supported by Internet Explorer 9.
 			 */
 			headerParameters : {type : "sap.ui.unified.FileUploaderParameter", multiple : true, singularName : "headerParameter"},
 
@@ -245,12 +278,12 @@ sap.ui.define([
 		associations : {
 
 			/**
-			 * Association to controls / IDs which describe this control (see WAI-ARIA attribute aria-describedby).
+			 * Association to controls / IDs which describe this control (see WAI-ARIA attribute <code>aria-describedby</code>).
 			 */
 			ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"},
 
 			/**
-			 * Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledby).
+			 * Association to controls / IDs which label this control (see WAI-ARIA attribute <code>aria-labelledby</code>).
 			 */
 			ariaLabelledBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
 		},
@@ -279,9 +312,12 @@ sap.ui.define([
 			},
 
 			/**
-			 * Event is fired as soon as the upload request is completed (either successful or unsuccessful). To see if the upload request was successful, check the 'state' parameter for a value 2xx.
-			 * The uploads actual progress can be retrieved via the 'uploadProgress' Event.
-			 * However this covers only the client side of the Upload process and does not give any success status from the server.
+			 * Event is fired as soon as the upload request is completed (either successful or unsuccessful).
+			 *
+			 * To see if the upload request was successful, check the <code>status</code> parameter for a value 2xx.
+			 * The actual progress of the upload can be monitored by listening to the <code>uploadProgress</code> event.
+			 * However, this covers only the client side of the upload process and does not give any success status
+			 * from the server.
 			 */
 			uploadComplete : {
 				parameters : {
@@ -292,42 +328,62 @@ sap.ui.define([
 					fileName : {type : "string"},
 
 					/**
-					 * Response message which comes from the server. On the server side this response has to be put within the &quot;body&quot; tags of the response document of the iFrame.
-					 * It can consist of a return code and an optional message. This does not work in cross-domain scenarios.
+					 * Response message which comes from the server.
+					 *
+					 * On the server side this response has to be put within the &quot;body&quot; tags of the response
+					 * document of the iFrame. It can consist of a return code and an optional message. This does not
+					 * work in cross-domain scenarios.
 					 */
 					response : {type : "string"},
 
 					/**
-					 * ReadyState of the XHR request. Required for receiving a readyState is to set the property "sendXHR" to "true". This property is not supported by Internet Explorer 9.
+					 * ReadyState of the XHR request.
+					 *
+					 * Required for receiving a <code>readyStateXHR</code> is to set the property <code>sendXHR</code>
+					 * to true. This property is not supported by Internet Explorer 9.
 					 */
 					readyStateXHR : {type : "string"},
 
 					/**
-					 * Status of the XHR request. Required for receiving a status is to set the property "sendXHR" to "true". This property is not supported by Internet Explorer 9.
+					 * Status of the XHR request.
+					 *
+					 * Required for receiving a <code>status</code> is to set the property <code>sendXHR</code> to true.
+					 * This property is not supported by Internet Explorer 9.
 					 */
 					status : {type : "string"},
 
 					/**
-					 * Http-Response which comes from the server. Required for receiving "responseRaw" is to set the property "sendXHR" to true. This property is not supported by Internet Explorer 9.
+					 * Http-Response which comes from the server.
+					 *
+					 * Required for receiving <code>responseRaw</code> is to set the property <code>sendXHR</code> to true.
+					 *
+					 * This property is not supported by Internet Explorer 9.
 					 */
 					responseRaw : {type : "string"},
 
 					/**
-					 * Http-Response-Headers which come from the server. provided as a JSON-map, i.e. each header-field is reflected by a property in the header-object, with the property value reflecting the header-field's content.
-					 * Required for receiving "header" is to set the property "sendXHR" to true.
+					 * Http-Response-Headers which come from the server.
+					 *
+					 * Provided as a JSON-map, i.e. each header-field is reflected by a property in the <code>headers</code>
+					 * object, with the property value reflecting the header-field's content.
+					 *
+					 * Required for receiving <code>headers</code> is to set the property <code>sendXHR</code> to true.
 					 * This property is not supported by Internet Explorer 9.
 					 */
 					headers : {type : "object"},
 
 					/**
-					 * Http-Request-Headers. Required for receiving "header" is to set the property "sendXHR" to true. This property is not supported by Internet Explorer 9.
+					 * Http-Request-Headers.
+					 *
+					 * Required for receiving <code>requestHeaders</code> is to set the property <code>sendXHR</code> to true.
+					 * This property is not supported by Internet Explorer 9.
 					 */
 					requestHeaders : {type : "object[]"}
 				}
 			},
 
 			/**
-			 * Event is fired when the type of a file does not match the mimeType or fileType property.
+			 * Event is fired when the type of a file does not match the <code>mimeType</code> or <code>fileType</code> property.
 			 */
 			typeMissmatch : {
 				parameters : {
@@ -350,8 +406,9 @@ sap.ui.define([
 			},
 
 			/**
-			 * Event is fired when the size of a file is above the maximumFileSize property.
-			 * This event is not supported by Internet Explorer 9 (same restriction as for the property maximumFileSize).
+			 * Event is fired when the size of a file is above the <code>maximumFileSize</code> property.
+			 * This event is not supported by Internet Explorer 9 (same restriction as for the property
+			 * <code>maximumFileSize</code>).
 			 */
 			fileSizeExceed : {
 				parameters : {
@@ -374,9 +431,14 @@ sap.ui.define([
 			fileAllowed : {},
 
 			/**
-			 * Event is fired after the upload has started and before the upload is completed and contains progress information related to the running upload.
-			 * Depending on file size, band width and used browser the event is fired once or multiple times.
-			 * This is event is only supported with property sendXHR set to true, i.e. the event is not supported in Internet Explorer 9.
+			 * Event is fired after the upload has started and before the upload is completed.
+			 *
+			 * It contains progress information related to the running upload. Depending on file size, band width
+			 * and used browser the event is fired once or multiple times.
+			 *
+			 * This event is only supported with property <code>sendXHR</code> set to true, i.e. the event is not
+			 * supported in Internet Explorer 9.
+			 *
 			 * @since 1.24.0
 			 */
 			uploadProgress : {
@@ -388,12 +450,12 @@ sap.ui.define([
 					lengthComputable : {type : "boolean"},
 
 					/**
-					 * The number of bytes of the file which have been uploaded by to the time the event was fired.
+					 * The number of bytes of the file which have been uploaded by the time the event was fired.
 					 */
 					loaded : {type : "float"},
 
 					/**
-					 * The total size of the file to be uploaded in byte.
+					 * The total size of the file to be uploaded in bytes.
 					 */
 					total : {type : "float"},
 
@@ -403,7 +465,9 @@ sap.ui.define([
 					fileName : {type : "string"},
 
 					/**
-					 * Http-Request-Headers. Required for receiving "header" is to set the property "sendXHR" to true.
+					 * Http-Request-Headers.
+					 *
+					 * Required for receiving <code>requestHeaders</code> is to set the property <code>sendXHR</code> to true.
 					 * This property is not supported by Internet Explorer 9.
 					 */
 					requestHeaders : {type : "object[]"}
@@ -412,7 +476,9 @@ sap.ui.define([
 
 			/**
 			 * Event is fired after the current upload has been aborted.
-			 * This is event is only supported with property sendXHR set to true, i.e. the event is not supported in Internet Explorer 9.
+			 *
+			 * This event is only supported with property <code>sendXHR</code> set to true, i.e. the event is not supported
+			 * in Internet Explorer 9.
 			 * @since 1.24.0
 			 */
 			uploadAborted : {
@@ -424,7 +490,9 @@ sap.ui.define([
 					fileName : {type : "string"},
 
 					/**
-					 * Http-Request-Headers. Required for receiving "header" is to set the property "sendXHR" to true.
+					 * Http-Request-Headers.
+					 *
+					 * Required for receiving <code>requestHeader</code> is to set the property <code>sendXHR</code> to true.
 					 * This property is not supported by Internet Explorer 9.
 					 */
 					requestHeaders : {type : "object[]"}
@@ -432,14 +500,15 @@ sap.ui.define([
 			},
 
 			/**
-			 * Event is fired, if the filename of a chosen file is longer than the value specified with the maximumFilenameLength property.
+			 * Event is fired, if the filename of a chosen file is longer than the value specified with the
+			 * <code>maximumFilenameLength</code> property.
 			 * @since 1.24.0
 			 */
 			filenameLengthExceed : {
 				parameters : {
 
 					/**
-					 * The filename, which is longer than specified by the value of the property maximumFilenameLength.
+					 * The filename, which is longer than specified by the value of the property <code>maximumFilenameLength</code>.
 					 */
 					fileName : {type : "string"}
 				}
@@ -458,8 +527,10 @@ sap.ui.define([
 					fileName : {type : "string"},
 
 					/**
-					 * Http-Request-Headers. Required for receiving "header" is to set the property "sendXHR" to true.
-					 * This property is not supported by Internet Explorer 9.
+					 * Http-Request-Headers.
+					 *
+					 * Required for receiving <code>requestHeaders</code> is to set the property <code>sendXHR</code>
+					 * to true. This property is not supported by Internet Explorer 9.
 					 */
 					requestHeaders : {type : "object[]"}
 				}
