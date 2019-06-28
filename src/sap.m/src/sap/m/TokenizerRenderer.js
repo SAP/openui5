@@ -11,6 +11,7 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/core/InvisibleText'],
 	 * @namespace
 	 */
 	var TokenizerRenderer = {
+		apiVersion: 2
 	};
 
 
@@ -23,35 +24,32 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/core/InvisibleText'],
 	TokenizerRenderer.render = function(oRm, oControl){
 		//write the HTML into the render manager
 		if (oControl.getParent() && (oControl.getParent() instanceof sap.m.MultiInput || oControl.getParent() instanceof sap.m.MultiComboBox)) {
-			oRm.write("<div ");
+			oRm.openStart("div", oControl);
 		} else {
-			oRm.write("<div tabindex=\"0\"");
+			oRm.openStart("div", oControl).attr("tabindex", "0");
 		}
 
-		oRm.writeControlData(oControl);
-		oRm.addClass("sapMTokenizer");
+		oRm.class("sapMTokenizer");
 
 		if (!oControl.getEditable()) {
-			oRm.addClass("sapMTokenizerReadonly");
+			oRm.class("sapMTokenizerReadonly");
 		}
 
 		var aTokens = oControl.getTokens();
 		if (!aTokens.length) {
-			oRm.addClass("sapMTokenizerEmpty");
+			oRm.class("sapMTokenizerEmpty");
 		}
 
-		oRm.addStyle("max-width", oControl.getMaxWidth());
+		oRm.style("max-width", oControl.getMaxWidth());
 		var sPixelWdth = oControl.getWidth();
 		if (sPixelWdth) {
-			oRm.addStyle("width", sPixelWdth);
+			oRm.style("width", sPixelWdth);
 		}
-		oRm.writeStyles();
 
-		oRm.writeClasses();
-
-		oRm.writeAttribute("role", "list");
-
-		var oAccAttributes = {}; // additional accessibility attributes
+		var oAccAttributes = {
+			role: "list",
+			readonly: null
+		}; // additional accessibility attributes
 
 		//ARIA attributes
 		oAccAttributes.labelledby = {
@@ -59,37 +57,37 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/core/InvisibleText'],
 			append: true
 		};
 		// aria-readonly is not valid for the current role of the tokenizer.
-		oAccAttributes.readonly = null;
 
-		oRm.writeAccessibilityState(oControl, oAccAttributes);
+		oRm.accessibilityState(oControl, oAccAttributes);
 
-		oRm.write(">"); // div element
+		oRm.openEnd(); // div element
 		oRm.renderControl(oControl.getAggregation("_tokensInfo"));
 
 		oControl._bCopyToClipboardSupport = false;
 
 		if ((Device.system.desktop || Device.system.combi) && aTokens.length) {
-			oRm.write("<div id='" + oControl.getId() + "-clip' class='sapMTokenizerClip'");
+			oRm.openStart("div", oControl.getId() + "-clip").class("sapMTokenizerClip");
 			if (window.clipboardData) { //IE
-				/* TODO remove after 1.62 version */
-				oRm.writeAttribute("contenteditable", "true");
-				oRm.writeAttribute("tabindex", "-1");
+				oRm.attr("contenteditable", "true");
+				oRm.attr("tabindex", "-1");
 			}
-			oRm.write(">&nbsp;</div>");
+			oRm.openEnd();
+			oRm.unsafeHtml("&nbsp");
+			oRm.close("div");
+
 			oControl._bCopyToClipboardSupport = true;
 		}
 
-		var sClass = "class=\"sapMTokenizerScrollContainer\">";
-		var sSpace = " ";
-
-		var sIdScrollContainer = "id=" + oControl.getId() + "-scrollContainer";
-		oRm.write("<div" + sSpace + sIdScrollContainer + sSpace + sClass);
+		oRm.openStart("div");
+		oRm.attr("id", oControl.getId() + "-scrollContainer");
+		oRm.class("sapMTokenizerScrollContainer");
+		oRm.openEnd();
 
 		TokenizerRenderer._renderTokens(oRm, oControl);
 
-		oRm.write("</div>");
+		oRm.close("div");
 		TokenizerRenderer._renderIndicator(oRm, oControl);
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	/**
@@ -121,12 +119,10 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/core/InvisibleText'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	TokenizerRenderer._renderIndicator = function(oRm, oControl){
-		oRm.write("<span");
-		oRm.addClass("sapMTokenizerIndicator");
-		oRm.addClass("sapUiHidden");
-		oRm.writeClasses();
-		oRm.write(">");
-		oRm.write("</span>");
+		oRm.openStart("span");
+		oRm.class("sapMTokenizerIndicator");
+		oRm.class("sapUiHidden");
+		oRm.openEnd().close("span");
 	};
 
 	return TokenizerRenderer;
