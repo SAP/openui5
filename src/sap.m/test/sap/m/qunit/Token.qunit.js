@@ -89,12 +89,17 @@ sap.ui.define([
 	});
 
 	QUnit.test("select/deselect token", function(assert) {
+
 		this.token1.setSelected(false);
+
 		sap.ui.test.qunit.triggerEvent("tap", this.token1.getDomRef());
+		sap.ui.getCore().applyChanges();
 		assert.ok(this.token1.$().hasClass("sapMTokenSelected"), "token is selected");
 
 		sap.ui.test.qunit.triggerEvent("tap", this.token1.getDomRef());
+		sap.ui.getCore().applyChanges();
 		assert.ok(this.token1.$().hasClass("sapMTokenSelected"), "token is selected");
+
 	});
 
 	QUnit.test("setter / getter textDirection", function(assert) {
@@ -229,10 +234,13 @@ sap.ui.define([
 		assert.ok(!this.token1.$().attr("aria-selected"), "aria-selected is not valid property for the current type of role - listitem");
 
 		this.token1.setSelected(true);
+		sap.ui.getCore().applyChanges();
 		assert.ok(this.token1.$().attr("aria-describedby").split(" ").indexOf(sId) > -1, "Token has correct invisible text ID added to aria-describedby attribute");
 
 		this.token1.setSelected(false);
+		sap.ui.getCore().applyChanges();
 		assert.ok(this.token1.$().attr("aria-describedby").split(" ").indexOf(sId) === -1, "Token has the invisible text ID removed from aria-describedby attribute");
+
 	});
 
 	QUnit.test("ARIA Editable (deletable) text", function(assert) {
