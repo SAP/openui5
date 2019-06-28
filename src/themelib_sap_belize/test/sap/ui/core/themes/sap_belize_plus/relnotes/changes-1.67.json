@@ -38,38 +38,62 @@
       {
         "id": "7048d5709022734c7cbfd91d2a14ef0fbc9a6ae1",
         "type": "FEATURE",
-        "text": " StandardListItem: enable wrapping of Title and Description",
+        "text": "StandardListItem: enable wrapping of Title and Description",
         "references": []
       },
       {
         "id": "4c68c49d8f2b0cfc7d1ba14ed8b170dc326e5945",
         "type": "FIX",
-        "text": " sap.f.Avatar/sap.m.Image: Focus aligned with specification",
-        "references": []
+        "text": "sap.f.Avatar/sap.m.Image: Focus aligned with specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980194630"
+          }
+        ]
       },
       {
         "id": "3c2482e523977caae90a0798ba1b30da3799ea19",
         "type": "FIX",
-        "text": " sap.m.Button: revert overstyling inside Bar for Fiori 3 theme",
+        "text": "sap.m.Button: revert overstyling inside Bar for Fiori 3 theme",
         "references": []
       },
       {
         "id": "cf0adbbcc0575d7f5d69c12d52b6e6f8c048094e",
         "type": "FIX",
-        "text": " sap.ui.unified.Calendar: Hover behavior fixed",
-        "references": []
+        "text": "sap.ui.unified.Calendar: Hover behavior fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980295429"
+          }
+        ]
       },
       {
         "id": "9fb27fae0390aa820fe357ce5a1e6754ab262ad2",
         "type": "FIX",
-        "text": " sap.ui.unified.Calendar: selected day border shown correctly now",
-        "references": []
+        "text": "sap.ui.unified.Calendar: selected day border shown correctly now",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2513"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980271814"
+          }
+        ]
       },
       {
         "id": "c9b007af7056e38807cc249165e3c7507994a7b4",
         "type": "FIX",
-        "text": " sap.m.SegmentedButton: Disabled state is now correctly indicated",
-        "references": []
+        "text": "sap.m.SegmentedButton: Disabled state is now correctly indicated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980269862"
+          }
+        ]
       }
     ]
   }

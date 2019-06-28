@@ -5,44 +5,79 @@
       {
         "id": "38faf63713a594cf922008de45b129ef2d86b0d9",
         "type": "FIX",
-        "text": " sap.m.ViewSettingDialog: select all checkbox now alligned in fiori 3",
-        "references": []
+        "text": "sap.m.ViewSettingDialog: select all checkbox now alligned in fiori 3",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980240595"
+          }
+        ]
       },
       {
         "id": "0b92ae279dedd349c558d538f76a07c04e7c7733",
         "type": "FIX",
-        "text": " sap.uxap.AnchorBar: Quartz visualization of buttons with icon is fixed",
-        "references": []
+        "text": "sap.uxap.AnchorBar: Quartz visualization of buttons with icon is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970204010"
+          }
+        ]
       },
       {
         "id": "54e15af529603723c74a7e052ddaccc12a95d22e",
         "type": "FIX",
-        "text": " sap.m.Shell: has correct background color now",
-        "references": []
+        "text": "sap.m.Shell: has correct background color now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970246755"
+          }
+        ]
       },
       {
         "id": "014fc9b246b0eb491d96b1d5a865ed4fbcbf4f6d",
         "type": "FIX",
-        "text": " sap.m.PlanningCalendar: appointment parameter colors in fiori 3 alligned",
-        "references": []
+        "text": "sap.m.PlanningCalendar: appointment parameter colors in fiori 3 alligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970263800"
+          }
+        ]
       },
       {
         "id": "0590b526b47c03b4e7f0f2530615ad68245e8eb4",
         "type": "FIX",
-        "text": " sap.m.RadioButton: Styles adjustments",
-        "references": []
+        "text": "sap.m.RadioButton: Styles adjustments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970235794"
+          }
+        ]
       },
       {
         "id": "1dbac1c01a4a26cdc74132e52b1bee796ccc0d91",
         "type": "FIX",
-        "text": " sap.m.RadioButton: Success value state border corrected",
-        "references": []
+        "text": "sap.m.RadioButton: Success value state border corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970245295"
+          }
+        ]
       },
       {
         "id": "16a32024bbf57fa92aa225f463b090d0f9aa438b",
         "type": "FIX",
-        "text": " sap.tnt.ToolPage: Fiori 3 theme unnecessary spacing is now removed",
-        "references": []
+        "text": "sap.tnt.ToolPage: Fiori 3 theme unnecessary spacing is now removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970259302"
+          }
+        ]
       }
     ]
   }

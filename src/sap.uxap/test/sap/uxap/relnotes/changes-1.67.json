@@ -55,20 +55,35 @@
       {
         "id": "e118086b5f0e82c51904fb507efb71fab36d051f",
         "type": "FIX",
-        "text": " sap.uxap.AnchorBar: selectedButton aria-checked setting fixed",
-        "references": []
+        "text": "sap.uxap.AnchorBar: selectedButton aria-checked setting fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980286141"
+          }
+        ]
       },
       {
         "id": "1db09fc1e1e1fdb397bf2150a3c77008533dd8f5",
         "type": "FIX",
-        "text": " sap.uxap.ObjectPageLayout: Animation completion ensured on invalidate",
-        "references": []
+        "text": "sap.uxap.ObjectPageLayout: Animation completion ensured on invalidate",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970193165"
+          }
+        ]
       },
       {
         "id": "61a42cb2870d99dce0547e10494e761fa73b5989",
         "type": "FIX",
-        "text": " sap.uxap.ObjectPageLayout: fixed test-set ObjectPageAPICreation",
-        "references": []
+        "text": "sap.uxap.ObjectPageLayout: fixed test-set ObjectPageAPICreation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980291096"
+          }
+        ]
       }
     ]
   }

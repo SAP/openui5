@@ -5,290 +5,532 @@
       {
         "id": "04612092e73c67c4df1aba887c5e98aa16d37edb",
         "type": "FIX",
-        "text": " SlideTile - prevent scrolling on pause using space",
-        "references": []
+        "text": "SlideTile - prevent scrolling on pause using space",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980003114"
+          }
+        ]
       },
       {
         "id": "c63c324629795b3f631f56dfdfad88adb09343f3",
         "type": "FIX",
-        "text": " sap.m.Carousel: Items are now properly aligned in Quartz",
-        "references": []
+        "text": "sap.m.Carousel: Items are now properly aligned in Quartz",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970211193"
+          }
+        ]
       },
       {
         "id": "50eb3e439845dddf293d496e3b97ff69edc79914",
         "type": "FIX",
-        "text": " sap.m.ComboBox: Align List items with Items aggregation",
-        "references": []
+        "text": "sap.m.ComboBox: Align List items with Items aggregation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970197424"
+          }
+        ]
       },
       {
         "id": "ed469b0960c2788b43a858ae4bfd457e850379cb",
         "type": "FIX",
-        "text": " sap.m.ComboBox: ComboBox is opening on tablet",
-        "references": []
+        "text": "sap.m.ComboBox: ComboBox is opening on tablet",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980270876"
+          }
+        ]
       },
       {
         "id": "c862d366cf31b3d6a4252d2cea4701514b617095",
         "type": "FIX",
-        "text": " sap.m.DateTimeField: binding used in UTC mode now works correctly",
-        "references": []
+        "text": "sap.m.DateTimeField: binding used in UTC mode now works correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980294287"
+          }
+        ]
       },
       {
         "id": "3b61bf6c16687740c8759aa3c4ee4d6bbdb67da9",
         "type": "FIX",
-        "text": " sap.m.Input: Suggestions are now always shown below if possible",
-        "references": []
+        "text": "sap.m.Input: Suggestions are now always shown below if possible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980226192"
+          }
+        ]
       },
       {
         "id": "4ba612a28673da370cd30450ac72469635758adc",
         "type": "FIX",
-        "text": " sap.m.MenuItem: [set/destroy]Tooltip now changes the tooltip of the item",
-        "references": []
+        "text": "sap.m.MenuItem: [set/destroy]Tooltip now changes the tooltip of the item",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980228630"
+          }
+        ]
       },
       {
         "id": "f0b770535d4382efedb2208db9b9c14c1afcbf38",
         "type": "FIX",
-        "text": " sap.m.MultiInput: Cloning anomalies fixed",
-        "references": []
+        "text": "sap.m.MultiInput: Cloning anomalies fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980231546"
+          }
+        ]
       },
       {
         "id": "192f0b1f139334922d7a9a4b68e7dcdb183cf84f",
         "type": "FIX",
-        "text": " sap.m.PlanningCalendar: Now icon is correctly rendered in the row",
-        "references": []
+        "text": "sap.m.PlanningCalendar: Now icon is correctly rendered in the row",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970225895"
+          }
+        ]
       },
       {
         "id": "035d674e765d24265e7efc0b75adc5e91ff0052d",
         "type": "FIX",
-        "text": " sap.m.Select: Misaligned focus outline on IE and Edge is fixed",
-        "references": []
+        "text": "sap.m.Select: Misaligned focus outline on IE and Edge is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980288296"
+          }
+        ]
       },
       {
         "id": "02714859b42e51354d9f6d08e7b20b5dbb04b8f3",
         "type": "FIX",
-        "text": " sap.m.Shell: sap.m.SplitApp has padding when inside the Shell",
-        "references": []
+        "text": "sap.m.Shell: sap.m.SplitApp has padding when inside the Shell",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970185825"
+          }
+        ]
       },
       {
         "id": "14e005e256502e289468a4528d35ec020da56480",
         "type": "FIX",
-        "text": " sap.m.SinglePlanningCalendar: focus is set after selecting a date from picker",
-        "references": []
+        "text": "sap.m.SinglePlanningCalendar: focus is set after selecting a date from picker",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980055277"
+          }
+        ]
       },
       {
         "id": "0a7d1685d825b4099a80c9725e71e1485fdd3f47",
         "type": "FIX",
-        "text": " sap.m.ViewSettingsDialog: Consistent visualization for the sort items",
-        "references": []
+        "text": "sap.m.ViewSettingsDialog: Consistent visualization for the sort items",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970201189"
+          }
+        ]
       },
       {
         "id": "5632452ded1699d8b2b6c0a9e70cf851017efa21",
         "type": "FIX",
-        "text": " sap.m.Button: parameters fixed",
-        "references": []
+        "text": "sap.m.Button: parameters fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970216772"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970226715"
+          }
+        ]
       },
       {
         "id": "04aad50df07bd1ec0f71cebf2a45e086ddda0854",
         "type": "FIX",
-        "text": " sap.m.ComboBox: Custom data forwarding",
-        "references": []
+        "text": "sap.m.ComboBox: Custom data forwarding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970231541"
+          }
+        ]
       },
       {
         "id": "aafd07c55c8af56f1bd551c6ba6982e890b2f0bd",
         "type": "FIX",
-        "text": " sap.m.InputBase: Text selection in Firefox is fixed",
-        "references": []
+        "text": "sap.m.InputBase: Text selection in Firefox is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003079562019"
+          }
+        ]
       },
       {
         "id": "987ae844e374250594765e694fb1c2f9fe195d78",
         "type": "FIX",
-        "text": " sap.m.Link: No tabindex on a disabled link",
-        "references": []
+        "text": "sap.m.Link: No tabindex on a disabled link",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980299524"
+          }
+        ]
       },
       {
         "id": "45f2ea3d92aafde65b0bde1d033b9f861b68cf92",
         "type": "FIX",
-        "text": " sap.m.Link: Not read when in table and empty",
-        "references": []
+        "text": "sap.m.Link: Not read when in table and empty",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970193026"
+          }
+        ]
       },
       {
         "id": "882edd9f032ed366a55762f93d9dc74b29184f06",
         "type": "FIX",
-        "text": " sap.m.MultiInput: Tokenizer space calculation fixed",
-        "references": []
+        "text": "sap.m.MultiInput: Tokenizer space calculation fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980195031"
+          }
+        ]
       },
       {
         "id": "54eb61f3c56ba9663d834e06a72f5415703c55c2",
         "type": "FIX",
-        "text": " sap.m.MultiInput: does not throw an exception if token text is not escaped",
-        "references": []
+        "text": "sap.m.MultiInput: does not throw an exception if token text is not escaped",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970202639"
+          }
+        ]
       },
       {
         "id": "2a980fd388b0f425f67d770c61203957a8d5ab2e",
         "type": "FIX",
-        "text": " sap.m.SegmentedButton: has correct background parameter now",
-        "references": []
+        "text": "sap.m.SegmentedButton: has correct background parameter now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970245134"
+          }
+        ]
       },
       {
         "id": "61be8dbca1d8e6e6336f2a84854e468908ac077a",
         "type": "FIX",
-        "text": " sap.m.Select: aria-activedescendant is not set for IconOnly type",
-        "references": []
+        "text": "sap.m.Select: aria-activedescendant is not set for IconOnly type",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970244156"
+          }
+        ]
       },
       {
         "id": "e45f1bbfb43377d3db497ca1fb2b2a171509e9fb",
         "type": "FIX",
-        "text": " sap.m.SinglePlanningCalendar: Appointments color information is now read",
-        "references": []
+        "text": "sap.m.SinglePlanningCalendar: Appointments color information is now read",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980097809"
+          }
+        ]
       },
       {
         "id": "34a78d9ededb9ed3d639c7d0a88c0edf9bc2cdab",
         "type": "FIX",
-        "text": " sap.m.SinglePlanningCalendar: Demokit sample fix",
-        "references": []
+        "text": "sap.m.SinglePlanningCalendar: Demokit sample fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970240862"
+          }
+        ]
       },
       {
         "id": "bfc2c9cec05ea34cf47ca67bdbe655dddb75c61e",
         "type": "FIX",
-        "text": " sap.m.SinglePlanningCalendar: Focus not lost now when popup is closed",
-        "references": []
+        "text": "sap.m.SinglePlanningCalendar: Focus not lost now when popup is closed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980054917"
+          }
+        ]
       },
       {
         "id": "eced268739a06416745f82d6e7fdfbdbd761eac4",
         "type": "FIX",
-        "text": " sap.m.SinglePlanningCalendar: all settings in samples are shown on mobile",
-        "references": []
+        "text": "sap.m.SinglePlanningCalendar: all settings in samples are shown on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970240311"
+          }
+        ]
       },
       {
         "id": "6473fa8c4769877e5175c11f764dc44442ba992e",
         "type": "FIX",
-        "text": " sap.m.TabContainer: example doesn\u0027t throw error",
-        "references": []
+        "text": "sap.m.TabContainer: example doesn't throw error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970226704"
+          }
+        ]
       },
       {
         "id": "0925d9a482848fab6a1ada86d8ca5d166f644ca3",
         "type": "FIX",
-        "text": " sap.m.TabStrip: fires selectItem, only when an item is selected",
-        "references": []
+        "text": "sap.m.TabStrip: fires selectItem, only when an item is selected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980097573"
+          }
+        ]
       },
       {
         "id": "a9e758df8c8ef2730fc53b70a2fd16aa900b085d",
         "type": "FIX",
-        "text": " sap.m.Text: in HorizontalLayout is properly positioned",
-        "references": []
+        "text": "sap.m.Text: in HorizontalLayout is properly positioned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970211306"
+          }
+        ]
       },
       {
         "id": "9cc0ed2f64a9c36a9f7905fb5178aeb3adc7f6f4",
         "type": "FIX",
-        "text": " sap.m.TimePickerSlider: the focus is stored at the correct place",
-        "references": []
+        "text": "sap.m.TimePickerSlider: the focus is stored at the correct place",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2542"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970233825"
+          }
+        ]
       },
       {
         "id": "e6a3f05fd9e0f98e0fcdd6e81b3244a0bd7d8180",
         "type": "FIX",
-        "text": " sap.m.UploadCollection : Download of item not happening when factory binding is used.",
-        "references": []
+        "text": "sap.m.UploadCollection : Download of item not happening when factory binding is used.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012005041000000451312019"
+          }
+        ]
       },
       {
         "id": "7e137fd9346b33ec66ff59822a40a0f2fb6140e7",
         "type": "FEATURE",
-        "text": " sap.m.SelectDialog: New API method that removes all selections",
-        "references": []
+        "text": "sap.m.SelectDialog: New API method that removes all selections",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980250478"
+          }
+        ]
       },
       {
         "id": "20c69a1d2c6dc8a00aa8a50cab9d95cb2dc9ed79",
         "type": "FIX",
-        "text": " sap.m.App: Randomly failing QUnit is fixed",
-        "references": []
+        "text": "sap.m.App: Randomly failing QUnit is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970249652"
+          }
+        ]
       },
       {
         "id": "279dbf5cd6c549235d49b949c7d26226f6f43672",
         "type": "FIX",
-        "text": " sap.m.Breadcrumbs: Fixed current location rendering",
-        "references": []
+        "text": "sap.m.Breadcrumbs: Fixed current location rendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970253529"
+          }
+        ]
       },
       {
         "id": "b3535a6547b99e31f77ba1add5fc467a7743932f",
         "type": "FIX",
-        "text": " sap.m.Button: CombineButtons - MenuButton visible and enable properties are bound to the menu items properties",
+        "text": "sap.m.Button: CombineButtons - MenuButton visible and enable properties are bound to the menu items properties",
         "references": []
       },
       {
         "id": "cb750900e70ba80201316f587ac2e1daf150966d",
         "type": "FIX",
-        "text": " sap.m.ComboBox: Change event fired properly",
-        "references": []
+        "text": "sap.m.ComboBox: Change event fired properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980302236"
+          }
+        ]
       },
       {
         "id": "80eb0c16f42d4e8e25108f9f52b305a15477aa5a",
         "type": "FIX",
-        "text": " sap.m.ComboBox: Item to ListItem property forwarding",
-        "references": []
+        "text": "sap.m.ComboBox: Item to ListItem property forwarding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980277548"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970242019"
+          }
+        ]
       },
       {
         "id": "4e8c61d9cfbc4f91547acd30a10db6fd3b4b1c01",
         "type": "FIX",
-        "text": " sap.m.DateTimePicker: Now in IE the hour slider is initially opened",
-        "references": []
+        "text": "sap.m.DateTimePicker: Now in IE the hour slider is initially opened",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970190995"
+          }
+        ]
       },
       {
         "id": "b48a794062796b77f38e79e6d837218579fb705f",
         "type": "FIX",
-        "text": " sap.m.Dialog: Position is now correct on IE browser",
-        "references": []
+        "text": "sap.m.Dialog: Position is now correct on IE browser",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980298808"
+          }
+        ]
       },
       {
         "id": "18745775bf2109dc473fd11a6973a7ff694fba97",
         "type": "FIX",
-        "text": " sap.m.MultiComboBox: Allow custom value state texts",
-        "references": []
+        "text": "sap.m.MultiComboBox: Allow custom value state texts",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970078216"
+          }
+        ]
       },
       {
         "id": "34d271c415484b9a110e36998fdd3e62c6736c35",
         "type": "FIX",
-        "text": " sap.m.MultiComboBox: Better synchronisation between selected keys \u0026 items",
-        "references": []
+        "text": "sap.m.MultiComboBox: Better synchronisation between selected keys & items",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980259759"
+          }
+        ]
       },
       {
         "id": "c10358b28df580647d3e1750fe7ca0e52d6b0c0f",
         "type": "FIX",
-        "text": " sap.m.MultiComboBox: Tokenizer space calculation fixed",
+        "text": "sap.m.MultiComboBox: Tokenizer space calculation fixed",
         "references": []
       },
       {
         "id": "c22cd43c7ae93613549a4df9faecb3740fbcfc8e",
         "type": "FIX",
-        "text": " sap.m.QuickView: DemoKit sample memory leak is now fixed",
-        "references": []
+        "text": "sap.m.QuickView: DemoKit sample memory leak is now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970194533"
+          }
+        ]
       },
       {
         "id": "0590b526b47c03b4e7f0f2530615ad68245e8eb4",
         "type": "FIX",
-        "text": " sap.m.RadioButton: Styles adjustments",
-        "references": []
+        "text": "sap.m.RadioButton: Styles adjustments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970235794"
+          }
+        ]
       },
       {
         "id": "1122f5ec9e4342eb636dfc1b1f96d53771f37eff",
         "type": "FIX",
-        "text": " sap.m.SinglePlanningCalendar: Unnecessary readings now prevented",
-        "references": []
+        "text": "sap.m.SinglePlanningCalendar: Unnecessary readings now prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980269863"
+          }
+        ]
       },
       {
         "id": "ca85d4f33ef282eb494f2e9949c8f505dd91f8f4",
         "type": "FIX",
-        "text": " sap.m.StepInput: Do not auto-correct values without user interaction",
-        "references": []
+        "text": "sap.m.StepInput: Do not auto-correct values without user interaction",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970227051"
+          }
+        ]
       },
       {
         "id": "84034ea98d411c851c19385708aaa1891119c044",
         "type": "FIX",
-        "text": " sap.m.TableSelectDialog: DemoKit example now resets the filter",
-        "references": []
+        "text": "sap.m.TableSelectDialog: DemoKit example now resets the filter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980287914"
+          }
+        ]
       },
       {
         "id": "04436515e8d951f1f49d42baf54a059cef50a00f",
         "type": "FIX",
-        "text": " sap.m.TextArea: Proper growing of the ghost container",
-        "references": []
+        "text": "sap.m.TextArea: Proper growing of the ghost container",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980266342"
+          }
+        ]
       }
     ]
   }

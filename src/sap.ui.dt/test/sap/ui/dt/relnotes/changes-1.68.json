@@ -5,7 +5,7 @@
       {
         "id": "3e983e882001533177b97c95ed061b2137af80d7",
         "type": "FIX",
-        "text": " sap.ui.dt - async new processing state in plugins",
+        "text": "sap.ui.dt - async new processing state in plugins",
         "references": []
       }
     ]

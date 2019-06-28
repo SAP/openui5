@@ -39,7 +39,7 @@
       {
         "id": "e8884dc9cdd78f1439d89bb70a1ade0a814ad066",
         "type": "FIX",
-        "text": "sap.ui.unified.calendar.DatesRow: showDayNamesLine\u003dfalse now works correctly in compact mode for all themes",
+        "text": "sap.ui.unified.calendar.DatesRow: showDayNamesLine=false now works correctly in compact mode for all themes",
         "references": [
           {
             "type": "BCP",
@@ -50,44 +50,59 @@
       {
         "id": "7048d5709022734c7cbfd91d2a14ef0fbc9a6ae1",
         "type": "FEATURE",
-        "text": " StandardListItem: enable wrapping of Title and Description",
+        "text": "StandardListItem: enable wrapping of Title and Description",
         "references": []
       },
       {
         "id": "77f1a81ae1986a9f77838a27a314d894d268d5b0",
         "type": "FEATURE",
-        "text": " sap.f.ShellBar: Added search functionality",
+        "text": "sap.f.ShellBar: Added search functionality",
         "references": []
       },
       {
         "id": "214a5f4b146a39016f69d125da4aacd226fa3df6",
         "type": "FEATURE",
-        "text": " sap.f.ShellBar: Two main types of behavior now supported",
+        "text": "sap.f.ShellBar: Two main types of behavior now supported",
         "references": []
       },
       {
         "id": "4c68c49d8f2b0cfc7d1ba14ed8b170dc326e5945",
         "type": "FIX",
-        "text": " sap.f.Avatar/sap.m.Image: Focus aligned with specification",
-        "references": []
+        "text": "sap.f.Avatar/sap.m.Image: Focus aligned with specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980194630"
+          }
+        ]
       },
       {
         "id": "3c2482e523977caae90a0798ba1b30da3799ea19",
         "type": "FIX",
-        "text": " sap.m.Button: revert overstyling inside Bar for Fiori 3 theme",
+        "text": "sap.m.Button: revert overstyling inside Bar for Fiori 3 theme",
         "references": []
       },
       {
         "id": "cf0adbbcc0575d7f5d69c12d52b6e6f8c048094e",
         "type": "FIX",
-        "text": " sap.ui.unified.Calendar: Hover behavior fixed",
-        "references": []
+        "text": "sap.ui.unified.Calendar: Hover behavior fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980295429"
+          }
+        ]
       },
       {
         "id": "5d6478566c01819552c52e36620a6552786a242e",
         "type": "FIX",
-        "text": " sap.m.Select: Aligned with the visual specification",
-        "references": []
+        "text": "sap.m.Select: Aligned with the visual specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970203977"
+          }
+        ]
       }
     ]
   }

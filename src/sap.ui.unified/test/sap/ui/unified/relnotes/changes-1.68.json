@@ -5,38 +5,67 @@
       {
         "id": "b23f570d8f036f08f878a0768dc3fff9026f6354",
         "type": "FIX",
-        "text": " sap.ui.unified.Calendar: In month picker PageUp goes to the previous year",
-        "references": []
+        "text": "sap.ui.unified.Calendar: In month picker PageUp goes to the previous year",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980108576"
+          }
+        ]
       },
       {
         "id": "99a8daa45589ca1b603a28829e57b87fbd9814a9",
         "type": "FIX",
-        "text": " sap.ui.unified.Calendar: all settings in samples are shown on mobile",
-        "references": []
+        "text": "sap.ui.unified.Calendar: all settings in samples are shown on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970240395"
+          }
+        ]
       },
       {
         "id": "127eace0e2499e8698de5a5efd5edee1598fa580",
         "type": "FIX",
-        "text": " sap.ui.unified.CalendarRow: does not use deprecated CSS parameters",
+        "text": "sap.ui.unified.CalendarRow: does not use deprecated CSS parameters",
         "references": []
       },
       {
         "id": "1122f5ec9e4342eb636dfc1b1f96d53771f37eff",
         "type": "FIX",
-        "text": " sap.m.SinglePlanningCalendar: Unnecessary readings now prevented",
-        "references": []
+        "text": "sap.m.SinglePlanningCalendar: Unnecessary readings now prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980269863"
+          }
+        ]
       },
       {
         "id": "2be3c57d1897c23f1ac9e714ea9d5610b1936540",
         "type": "FIX",
-        "text": " sap.ui.unified.CalendarMonthInterval: Unnecessary readings now prevented",
-        "references": []
+        "text": "sap.ui.unified.CalendarMonthInterval: Unnecessary readings now prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980269903"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980269902"
+          }
+        ]
       },
       {
         "id": "4eceae5a641b0c4032934488a3cf9d897acf9094",
         "type": "FIX",
-        "text": " sap.ui.unified.Currency: Demokit sample fix",
-        "references": []
+        "text": "sap.ui.unified.Currency: Demokit sample fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970250254"
+          }
+        ]
       }
     ]
   }

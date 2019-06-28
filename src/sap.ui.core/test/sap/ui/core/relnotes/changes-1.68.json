@@ -5,43 +5,53 @@
       {
         "id": "ffb6675736222dbe22da248a910e7d4f7634bc01",
         "type": "FIX",
-        "text": " Do not preventDefault non-cancelable move events",
-        "references": []
+        "text": "Do not preventDefault non-cancelable move events",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2461"
+          }
+        ]
       },
       {
         "id": "b75437b4b33e238f646cb7d26a3d2c93b235f76c",
         "type": "FIX",
-        "text": " ElementMetadata: a renderer w/o render function is incomplete",
-        "references": []
+        "text": "ElementMetadata: a renderer w/o render function is incomplete",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970204888"
+          }
+        ]
       },
       {
         "id": "1534ed4b5b61c9f127cf8bc5f872f91a192e7e65",
         "type": "FIX",
-        "text": " v2.ODataModel: createCustomParams throws uncaught exception",
+        "text": "v2.ODataModel: createCustomParams throws uncaught exception",
         "references": []
       },
       {
         "id": "d1db32f73096fe81b48e0d1908d2da816cc50d2b",
         "type": "FIX",
-        "text": " v2.ODataModel: createCustomParams throws uncaught exception",
+        "text": "v2.ODataModel: createCustomParams throws uncaught exception",
         "references": []
       },
       {
         "id": "7f7e1bff64860cd4757572d64308b9cc151c0f20",
         "type": "FIX",
-        "text": " ManagedObjectModel: Only checkUpdate for resolved bindings",
+        "text": "ManagedObjectModel: Only checkUpdate for resolved bindings",
         "references": []
       },
       {
         "id": "6cf23096b4f8368f7bc01cb7f873a4a5d0e1f1bb",
         "type": "FIX",
-        "text": " Opa: iframe size and position in Chrome 75",
+        "text": "Opa: iframe size and position in Chrome 75",
         "references": []
       },
       {
         "id": "7e4e20af29232c7e202c7e8e91adb6edce6bb681",
         "type": "FIX",
-        "text": " core.Component: Services shall be inherited by child components",
+        "text": "core.Component: Services shall be inherited by child components",
         "references": []
       }
     ]

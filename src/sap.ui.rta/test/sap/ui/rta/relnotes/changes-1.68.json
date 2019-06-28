@@ -5,13 +5,13 @@
       {
         "id": "3e983e882001533177b97c95ed061b2137af80d7",
         "type": "FIX",
-        "text": " sap.ui.dt - async new processing state in plugins",
+        "text": "sap.ui.dt - async new processing state in plugins",
         "references": []
       },
       {
         "id": "8968f5a44e69fccede3f5d9b1c391d64d9c2f8cb",
         "type": "FIX",
-        "text": " sap.ui.rta: Adjust some commands for binding template handling",
+        "text": "sap.ui.rta: Adjust some commands for binding template handling",
         "references": []
       }
     ]

@@ -5,14 +5,24 @@
       {
         "id": "c9e9ff9aae3175faa17ddf6523188642ec999aad",
         "type": "FIX",
-        "text": " sap.f.DynamicPage: Improved Runtime Adaptation (RTA) behavior",
-        "references": []
+        "text": "sap.f.DynamicPage: Improved Runtime Adaptation (RTA) behavior",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970246385"
+          }
+        ]
       },
       {
         "id": "064cdab9a6be34d9bf045d08eeccb16bd1194bd7",
         "type": "FIX",
-        "text": " sap.f.SemanticPage: Improved Runtime Adaptation (RTA) behavior",
-        "references": []
+        "text": "sap.f.SemanticPage: Improved Runtime Adaptation (RTA) behavior",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970246385"
+          }
+        ]
       }
     ]
   }

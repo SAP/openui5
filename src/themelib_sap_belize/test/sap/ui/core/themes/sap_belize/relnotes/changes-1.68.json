@@ -5,14 +5,24 @@
       {
         "id": "2630777d95d1e98dc224ffb86b5a9d3a64e6ff66",
         "type": "FIX",
-        "text": " sap.m.WizardStep: Text and icon color changed",
-        "references": []
+        "text": "sap.m.WizardStep: Text and icon color changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980231537"
+          }
+        ]
       },
       {
         "id": "aafd07c55c8af56f1bd551c6ba6982e890b2f0bd",
         "type": "FIX",
-        "text": " sap.m.InputBase: Text selection in Firefox is fixed",
-        "references": []
+        "text": "sap.m.InputBase: Text selection in Firefox is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003079562019"
+          }
+        ]
       }
     ]
   }

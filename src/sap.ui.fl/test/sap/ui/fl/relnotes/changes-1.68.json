@@ -5,13 +5,18 @@
       {
         "id": "dac2d0c4ab02128565603bccc3bee34f82affd49",
         "type": "FIX",
-        "text": " sap.ui.fl.FlexController:",
-        "references": []
+        "text": "sap.ui.fl.FlexController:",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002782942019"
+          }
+        ]
       },
       {
         "id": "40b95266ce58d6fcf3f41c525033a3a1dde73df0",
         "type": "FIX",
-        "text": " fix tests for SmartVariantManagement apply API",
+        "text": "fix tests for SmartVariantManagement apply API",
         "references": []
       }
     ]

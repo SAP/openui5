@@ -5,14 +5,24 @@
       {
         "id": "79a1ff163c3141a97c9ec3403ec64f253f837daf",
         "type": "FIX",
-        "text": " sap.ui.layout.DynamicSideContent: Toggle on mobile is now working",
-        "references": []
+        "text": "sap.ui.layout.DynamicSideContent: Toggle on mobile is now working",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970185680"
+          }
+        ]
       },
       {
         "id": "bdc6ed6a5871dc3156b299083b3699e07f5ad22d",
         "type": "FIX",
-        "text": " AlignedFlowLayout: End content alignment fixed",
-        "references": []
+        "text": "AlignedFlowLayout: End content alignment fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970272412"
+          }
+        ]
       }
     ]
   }
