@@ -282,11 +282,11 @@ sap.ui.define([
 		 */
 		XMLComposite.prototype.setProperty = function (sName, oValue, bSuppressInvalidate) {
 			var oMetadata = this.getMetadata(),
-				oProperty = oMetadata.getProperty(sName);
+				oProperty = oMetadata.getManagedProperty(sName);
 			if (!oProperty) {
 				return this;
 			}
-			bSuppressInvalidate = this.getMetadata()._suppressInvalidate(oProperty, bSuppressInvalidate);
+			bSuppressInvalidate = oMetadata._suppressInvalidate(oProperty, bSuppressInvalidate);
 			return Control.prototype.setProperty.apply(this, [sName, oValue, bSuppressInvalidate]);
 		};
 
