@@ -48,7 +48,7 @@
       {
         "id": "e8884dc9cdd78f1439d89bb70a1ade0a814ad066",
         "type": "FIX",
-        "text": "sap.ui.unified.calendar.DatesRow: showDayNamesLine\u003dfalse now works correctly in compact mode for all themes",
+        "text": "sap.ui.unified.calendar.DatesRow: showDayNamesLine=false now works correctly in compact mode for all themes",
         "references": [
           {
             "type": "BCP",
@@ -70,26 +70,50 @@
       {
         "id": "9fb27fae0390aa820fe357ce5a1e6754ab262ad2",
         "type": "FIX",
-        "text": " sap.ui.unified.Calendar: selected day border shown correctly now",
-        "references": []
+        "text": "sap.ui.unified.Calendar: selected day border shown correctly now",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2513"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980271814"
+          }
+        ]
       },
       {
         "id": "c3a8d26c04c9707c4723c629f871fcfe568dbd89",
         "type": "FIX",
-        "text": " sap.ui.unified.Menu: Role placement adjusted",
-        "references": []
+        "text": "sap.ui.unified.Menu: Role placement adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980184089"
+          }
+        ]
       },
       {
         "id": "9b0cf23b9cb81e68587b43f02f0e9fd63aec9fb4",
         "type": "FIX",
-        "text": " sap.ui.unified.FileUploader: Support rule corrected",
-        "references": []
+        "text": "sap.ui.unified.FileUploader: Support rule corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980250253"
+          }
+        ]
       },
       {
         "id": "5ec6dc4600036a0a5d15f8a51caf0ef05cfed0c0",
         "type": "FIX",
-        "text": " sap.ui.unified.FileUploader: Tooltip and placeholder now get properly updated",
-        "references": []
+        "text": "sap.ui.unified.FileUploader: Tooltip and placeholder now get properly updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980281750"
+          }
+        ]
       }
     ]
   }

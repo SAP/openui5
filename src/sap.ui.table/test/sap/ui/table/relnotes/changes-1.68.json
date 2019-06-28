@@ -5,7 +5,7 @@
       {
         "id": "eb71e101a82424d6e2a9f2f665ef92605b9847b6",
         "type": "FIX",
-        "text": " TablePersoController: use hasGrouping property",
+        "text": "TablePersoController: use hasGrouping property",
         "references": []
       }
     ]

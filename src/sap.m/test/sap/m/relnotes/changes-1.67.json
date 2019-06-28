@@ -427,7 +427,7 @@
       {
         "id": "e8884dc9cdd78f1439d89bb70a1ade0a814ad066",
         "type": "FIX",
-        "text": "sap.ui.unified.calendar.DatesRow: showDayNamesLine\u003dfalse now works correctly in compact mode for all themes",
+        "text": "sap.ui.unified.calendar.DatesRow: showDayNamesLine=false now works correctly in compact mode for all themes",
         "references": [
           {
             "type": "BCP",
@@ -438,182 +438,300 @@
       {
         "id": "7048d5709022734c7cbfd91d2a14ef0fbc9a6ae1",
         "type": "FEATURE",
-        "text": " StandardListItem: enable wrapping of Title and Description",
+        "text": "StandardListItem: enable wrapping of Title and Description",
         "references": []
       },
       {
         "id": "7b78326e4fb871f25f2f89ce69cb22a0f05db4e0",
         "type": "FEATURE",
-        "text": " sap.m.ComboBox: Enable word highlighting for unicode characters",
+        "text": "sap.m.ComboBox: Enable word highlighting for unicode characters",
         "references": []
       },
       {
         "id": "ae48874dfd2056b108bbbc8ad0d0a00145951562",
         "type": "FEATURE",
-        "text": " sap.m.OverflowToolbar: Async mode for layouting is introduced",
+        "text": "sap.m.OverflowToolbar: Async mode for layouting is introduced",
         "references": []
       },
       {
         "id": "05f933407f4e8c18b7bf99285ab9ca2520dbaf18",
         "type": "FEATURE",
-        "text": " sap.ui.integration.widgets.Card: Counter in Numeric Header is introduced",
+        "text": "sap.ui.integration.widgets.Card: Counter in Numeric Header is introduced",
         "references": []
       },
       {
         "id": "a2b968aa41d46d0146f2ee4bf45604da4539ef57",
         "type": "FIX",
-        "text": " Icon Explorer: typo \"templateSharable\"",
+        "text": "Icon Explorer: typo \"templateSharable\"",
         "references": []
       },
       {
         "id": "fb5819ca41ccbbe52cc532748a8bc2fb71d9e2cf",
         "type": "FIX",
-        "text": " MasterDetailPages: use ColumnLayout in SimpleForm",
-        "references": []
+        "text": "MasterDetailPages: use ColumnLayout in SimpleForm",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980288099"
+          }
+        ]
       },
       {
         "id": "4c68c49d8f2b0cfc7d1ba14ed8b170dc326e5945",
         "type": "FIX",
-        "text": " sap.f.Avatar/sap.m.Image: Focus aligned with specification",
-        "references": []
+        "text": "sap.f.Avatar/sap.m.Image: Focus aligned with specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980194630"
+          }
+        ]
       },
       {
         "id": "ee4ed95e8f35c7a6f672c78921ffc31106bb8c56",
         "type": "FIX",
-        "text": " sap.m.ActionSheet: Documentation clean-up",
-        "references": []
+        "text": "sap.m.ActionSheet: Documentation clean-up",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970196334"
+          }
+        ]
       },
       {
         "id": "2373598effe3a4a06c68b49a4d42edddeaebec73",
         "type": "FIX",
-        "text": " sap.m.Button: Does not render aria-disabled attribute",
-        "references": []
+        "text": "sap.m.Button: Does not render aria-disabled attribute",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980277545"
+          }
+        ]
       },
       {
         "id": "3c2482e523977caae90a0798ba1b30da3799ea19",
         "type": "FIX",
-        "text": " sap.m.Button: revert overstyling inside Bar for Fiori 3 theme",
+        "text": "sap.m.Button: revert overstyling inside Bar for Fiori 3 theme",
         "references": []
       },
       {
         "id": "709eef6772d1e776f0cbed43ae3e97267056cf10",
         "type": "FIX",
-        "text": " sap.m.Input: Improve documentation for suggetsionItems",
-        "references": []
+        "text": "sap.m.Input: Improve documentation for suggetsionItems",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002613762019"
+          }
+        ]
       },
       {
         "id": "b1d5766c6a039d15be1a0248d37c1d812852b567",
         "type": "FIX",
-        "text": " sap.m.MessageStrip: Bundle text moved to mobile library",
-        "references": []
+        "text": "sap.m.MessageStrip: Bundle text moved to mobile library",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970193979"
+          }
+        ]
       },
       {
         "id": "3574c6265598ab9b2e5e4a6e36d9703e005b911d",
         "type": "FIX",
-        "text": " sap.m.MultiComboBox: Clear typed value after close",
-        "references": []
+        "text": "sap.m.MultiComboBox: Clear typed value after close",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980197894"
+          }
+        ]
       },
       {
         "id": "dcb7b85551b37bedd86e9141f68e0e9878abd430",
         "type": "FIX",
-        "text": " sap.m.MultiComboBox: Value State handling for composition events",
+        "text": "sap.m.MultiComboBox: Value State handling for composition events",
         "references": []
       },
       {
         "id": "38f548146ea5750b2579d38bb00f06f9019f9af7",
         "type": "FIX",
-        "text": " sap.m.ObjectHeader: Pressing space is no globally prevented now",
-        "references": []
+        "text": "sap.m.ObjectHeader: Pressing space is no globally prevented now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002996842019"
+          }
+        ]
       },
       {
         "id": "07970ff61a408e99a5e370731ef7fc0682d5a5c2",
         "type": "FIX",
-        "text": " sap.m.ObjectStatus: Unique IDs are now generated",
-        "references": []
+        "text": "sap.m.ObjectStatus: Unique IDs are now generated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980231486"
+          }
+        ]
       },
       {
         "id": "129960886bc335504c463277109f656a55a44b26",
         "type": "FIX",
-        "text": " sap.m.OverflowToolbar: ToolbarSpacer width measurement is fixed",
-        "references": []
+        "text": "sap.m.OverflowToolbar: ToolbarSpacer width measurement is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980270564"
+          }
+        ]
       },
       {
         "id": "c7ddf3186539ae233b845fc3998ca719e8b83153",
         "type": "FIX",
-        "text": " sap.m.SearchField: Improve handling of focus on iOS",
-        "references": []
+        "text": "sap.m.SearchField: Improve handling of focus on iOS",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002240182019"
+          }
+        ]
       },
       {
         "id": "7aeaa53aa0f29b09ddec92cf9b8f70918736daaf",
         "type": "FIX",
-        "text": " sap.m.SegmentedButton: Hidden button info is now conveyed",
-        "references": []
+        "text": "sap.m.SegmentedButton: Hidden button info is now conveyed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980269901"
+          }
+        ]
       },
       {
         "id": "084c76857b58106bd9627155a2b4cf86b25339e4",
         "type": "FIX",
-        "text": " sap.m.SemanticPage: ToggleButton aria-pressed state is now set",
-        "references": []
+        "text": "sap.m.SemanticPage: ToggleButton aria-pressed state is now set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980289169"
+          }
+        ]
       },
       {
         "id": "74e3f7cccb318bbc2e56fa093a8d566b2488d89e",
         "type": "FIX",
-        "text": " sap.m.SplitContainer: Show detail page on phone",
-        "references": []
+        "text": "sap.m.SplitContainer: Show detail page on phone",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980297329"
+          },
+          {
+            "type": "BCP",
+            "reference": "002028376500005408012018"
+          }
+        ]
       },
       {
         "id": "9fb27fae0390aa820fe357ce5a1e6754ab262ad2",
         "type": "FIX",
-        "text": " sap.ui.unified.Calendar: selected day border shown correctly now",
-        "references": []
+        "text": "sap.ui.unified.Calendar: selected day border shown correctly now",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2513"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980271814"
+          }
+        ]
       },
       {
         "id": "23cab5f35a603467e9c02f9aefc8ae7e83381fa0",
         "type": "FIX",
-        "text": " m.DatePicker: Picker autocloses when the input is not visible",
-        "references": []
+        "text": "m.DatePicker: Picker autocloses when the input is not visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980271911"
+          }
+        ]
       },
       {
         "id": "0610452e1bddb1ff235d577aac17245da4eb10ff",
         "type": "FIX",
-        "text": " sap.m.Input: closeSuggestion endless loop is now fixed",
-        "references": []
+        "text": "sap.m.Input: closeSuggestion endless loop is now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970194781"
+          }
+        ]
       },
       {
         "id": "6bf3b2349bdfc5789feb4b90920c1d89d1ea1dd2",
         "type": "FIX",
-        "text": " sap.m.NotificationListItem: \u0027classList\u0027 exception is now fixed",
-        "references": []
+        "text": "sap.m.NotificationListItem: 'classList' exception is now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980115536"
+          }
+        ]
       },
       {
         "id": "d2e566b3128e655e7b46259f41d5bc3a4e6e2607",
         "type": "FIX",
-        "text": " sap.m.OverflowToolbar: GenericTag is not truncated now",
-        "references": []
+        "text": "sap.m.OverflowToolbar: GenericTag is not truncated now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980241288"
+          }
+        ]
       },
       {
         "id": "e5106f1ae73641753da2dc183bd92c05cf0799a0",
         "type": "FIX",
-        "text": " sap.m.PlanningCalendar: headerContent aggregation binding fix",
+        "text": "sap.m.PlanningCalendar: headerContent aggregation binding fix",
         "references": []
       },
       {
         "id": "10447c9d4bebd54c7f9ffbe3ada2694c40688083",
         "type": "FIX",
-        "text": " sap.m.SearchField: Fire search from suggestion only once on phone",
-        "references": []
+        "text": "sap.m.SearchField: Fire search from suggestion only once on phone",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002710892019"
+          }
+        ]
       },
       {
         "id": "5d6478566c01819552c52e36620a6552786a242e",
         "type": "FIX",
-        "text": " sap.m.Select: Aligned with the visual specification",
-        "references": []
+        "text": "sap.m.Select: Aligned with the visual specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970203977"
+          }
+        ]
       },
       {
         "id": "cedc280d43a461c7104d30905b401f5396f692a8",
         "type": "FIX",
-        "text": " sap.m.Select: Improved keyboard handling",
-        "references": []
+        "text": "sap.m.Select: Improved keyboard handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970187706"
+          }
+        ]
       }
     ]
   }

@@ -108,44 +108,73 @@
       {
         "id": "5321f4dfe2cd436823e49a9918e1e40c0fcb283c",
         "type": "FIX",
-        "text": " Theming Parameters: Fix urls when UI5 is loaded from other domain",
-        "references": []
+        "text": "Theming Parameters: Fix urls when UI5 is loaded from other domain",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970102993"
+          }
+        ]
       },
       {
         "id": "b1d5766c6a039d15be1a0248d37c1d812852b567",
         "type": "FIX",
-        "text": " sap.m.MessageStrip: Bundle text moved to mobile library",
-        "references": []
+        "text": "sap.m.MessageStrip: Bundle text moved to mobile library",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970193979"
+          }
+        ]
       },
       {
         "id": "cbdc95386f757b4a89814dc2e777a5941ad566d2",
         "type": "FEATURE",
-        "text": " RenderManager: New rendering with in-place DOM patching",
+        "text": "RenderManager: New rendering with in-place DOM patching",
         "references": []
       },
       {
         "id": "98c88ee342407d50f9643c80db68f4431e6ce593",
         "type": "FIX",
-        "text": " MessagePropertyBinding: no update for changing controlIDs",
+        "text": "MessagePropertyBinding: no update for changing controlIDs",
         "references": []
       },
       {
         "id": "6031a5c3f7c9e3811344495050a3087c74f31340",
         "type": "FIX",
-        "text": " XMLComposite: Only load resource model when needed",
-        "references": []
+        "text": "XMLComposite: Only load resource model when needed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002643072019"
+          }
+        ]
       },
       {
         "id": "581cdb7f669e98f258c0c58ef3b1f2c2eb126b91",
         "type": "FIX",
-        "text": " core.BusyIndicatorUtils: Fix Uncaught Error",
-        "references": []
+        "text": "core.BusyIndicatorUtils: Fix Uncaught Error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970184810"
+          }
+        ]
       },
       {
         "id": "c7541c14ea4dae772e950e19ed3eefd316c74875",
         "type": "FIX",
-        "text": " v2.ODataModel: PathCache invalidation",
-        "references": []
+        "text": "v2.ODataModel: PathCache invalidation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980206464"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970180931"
+          }
+        ]
       }
     ]
   }

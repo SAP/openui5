@@ -27,50 +27,74 @@
       {
         "id": "77f1a81ae1986a9f77838a27a314d894d268d5b0",
         "type": "FEATURE",
-        "text": " sap.f.ShellBar: Added search functionality",
+        "text": "sap.f.ShellBar: Added search functionality",
         "references": []
       },
       {
         "id": "50d45e01440440f22ec84d6577ad0d108b4049d7",
         "type": "FEATURE",
-        "text": " sap.f.ShellBar: Custom tooltip to the home icon is enabled",
+        "text": "sap.f.ShellBar: Custom tooltip to the home icon is enabled",
         "references": []
       },
       {
         "id": "214a5f4b146a39016f69d125da4aacd226fa3df6",
         "type": "FEATURE",
-        "text": " sap.f.ShellBar: Two main types of behavior now supported",
+        "text": "sap.f.ShellBar: Two main types of behavior now supported",
         "references": []
       },
       {
         "id": "05f933407f4e8c18b7bf99285ab9ca2520dbaf18",
         "type": "FEATURE",
-        "text": " sap.ui.integration.widgets.Card: Counter in Numeric Header is introduced",
+        "text": "sap.ui.integration.widgets.Card: Counter in Numeric Header is introduced",
         "references": []
       },
       {
         "id": "4c68c49d8f2b0cfc7d1ba14ed8b170dc326e5945",
         "type": "FIX",
-        "text": " sap.f.Avatar/sap.m.Image: Focus aligned with specification",
-        "references": []
+        "text": "sap.f.Avatar/sap.m.Image: Focus aligned with specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980194630"
+          }
+        ]
       },
       {
         "id": "1095472f91d20fe0ce944942836809c4f062205c",
         "type": "FIX",
-        "text": " sap.f.DynamicPage: DynamicPage without title is rendered correctly",
-        "references": []
+        "text": "sap.f.DynamicPage: DynamicPage without title is rendered correctly",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2503"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980303982"
+          }
+        ]
       },
       {
         "id": "82550a482644b4e2d6b9d26a29ec5a353abd36aa",
         "type": "FIX",
-        "text": " sap.m.ShellBar: Tests now pass under Edge and IE11",
-        "references": []
+        "text": "sap.m.ShellBar: Tests now pass under Edge and IE11",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970192407"
+          }
+        ]
       },
       {
         "id": "d2e566b3128e655e7b46259f41d5bc3a4e6e2607",
         "type": "FIX",
-        "text": " sap.m.OverflowToolbar: GenericTag is not truncated now",
-        "references": []
+        "text": "sap.m.OverflowToolbar: GenericTag is not truncated now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980241288"
+          }
+        ]
       }
     ]
   }

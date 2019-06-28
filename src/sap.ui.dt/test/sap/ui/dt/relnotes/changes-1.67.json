@@ -11,20 +11,30 @@
       {
         "id": "645f8c748d1503e148cdd0a67067e248fc332d16",
         "type": "FIX",
-        "text": " sap.ui.dt - designtime add or insert plugin handling",
+        "text": "sap.ui.dt - designtime add or insert plugin handling",
         "references": []
       },
       {
         "id": "00ed09a947d2222b5e19801d3b6f0a2f5c9fe1ad",
         "type": "FIX",
         "text": ": RTA fix focus without scrolling issue in Contextmenu",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970188036"
+          }
+        ]
       },
       {
         "id": "ed6b9d12ee69d1c76b0d8484d97e7e6ec30492e6",
         "type": "FIX",
         "text": ": RTA inserting space on renaming",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970187710"
+          }
+        ]
       }
     ]
   }
