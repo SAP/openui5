@@ -279,7 +279,7 @@ sap.ui.define([
 			},
 
 			/**
-			 * Event is fired as soon as the upload request is completed (either successful or unsuccessful). To see if the upload request was successful, check the 'state' parameter for a value 2xx.
+			 * Event is fired as soon as the upload request is completed (either successful or unsuccessful). To see if the upload request was successful, check the 'status' parameter for a value 2xx.
 			 * The uploads actual progress can be retrieved via the 'uploadProgress' Event.
 			 * However this covers only the client side of the Upload process and does not give any success status from the server.
 			 */
