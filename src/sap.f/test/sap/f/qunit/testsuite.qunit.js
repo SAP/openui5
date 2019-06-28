@@ -120,6 +120,21 @@ sap.ui.define(function () {
 					useFakeTimers: true
 				}
 			},
+			"GridDropInfo": {
+				coverage: {
+					only: [
+						"sap/f/dnd/GridDropInfo",
+						"sap/f/dnd/GridDragOver"
+					]
+				},
+				module: [
+					'./dnd/GridDropInfo.qunit',
+					'./dnd/GridDragOver.qunit'
+				],
+				sinon: {
+					useFakeTimers: false
+				}
+			},
 			"GridList": {
 				coverage: {
 					only: ["sap/f/GridList"]
