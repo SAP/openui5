@@ -264,6 +264,37 @@ sap.ui.define([
 	oModel.setData(mData);
 	oModelNoHeader.setData(mGenericDataNoHeader);
 
+	var mDataNoActiveElements = {
+		pages: [
+			{
+				pageId: "genericPageId",
+				title: "Inventarisation",
+				icon: "sap-icon://camera",
+				groups: [
+					{
+						elements: [
+							{
+								label: "Start Date",
+								value: "01/01/2015"
+							},
+							{
+								label: "End Date",
+								value: "31/12/2015"
+							},
+							{
+								label: "Occurrence",
+								value: "Weekly"
+							}
+						]
+					}
+				]
+			}
+		]
+	};
+	// set the data for the model
+	var oModelNoActiveElements = new JSONModel();
+	oModelNoActiveElements.setData(mDataNoActiveElements);
+
 	// create and add app
 	var oApp = new App("myApp", {initialPage: "quickViewPage"});
 	oApp.placeAt("qunit-fixture");
@@ -488,6 +519,29 @@ sap.ui.define([
 		var $container = oPopupControl.$().find('.sapMPopoverCont');
 
 		assert.ok($container[0].style.height, "Container height is set");
+	});
+
+	QUnit.test("test focus", function(assert) {
+		// act
+		this.oButton.firePress();
+		this.clock.tick(500);
+
+		var oPopupControl = this.oQuickView._oPopover.getAggregation("_popup");
+		var $container = oPopupControl.$().find('.sapMPageEnableScrolling');
+
+		assert.notEqual(document.activeElement, $container[0], "focus is not on the page scroller element");
+
+		this.oQuickView.close();
+		this.clock.tick(500);
+
+		this.oQuickView.setModel(oModelNoActiveElements);
+
+		this.oButton.firePress();
+		this.clock.tick(500);
+
+		$container = oPopupControl.$().find('.sapMPageEnableScrolling');
+
+		assert.strictEqual(document.activeElement, $container[0], "focus is on the page scroller element");
 	});
 
 	QUnit.module("Keyboard handling", {

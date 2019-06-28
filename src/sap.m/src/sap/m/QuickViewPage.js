@@ -321,6 +321,15 @@ sap.ui.define([
 			};
 
 			QuickViewPage.prototype.onAfterRenderingPage = function () {
+
+				var oParent = this.getParent(),
+					bIsInsideQuickView = oParent instanceof Control && oParent.isA('sap.m.QuickView');
+
+				// add tabindex=0, so the content can be scrolled with the keyboard
+				if (bIsInsideQuickView && !this._oPage.$().firstFocusableDomRef()) {
+					this._oPage.$('cont').attr('tabindex', 0);
+				}
+
 				if (this._bItemsChanged) {
 					var mNavContext = this.getNavContext();
 					if (mNavContext) {
