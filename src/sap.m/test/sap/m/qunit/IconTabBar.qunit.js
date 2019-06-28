@@ -2186,6 +2186,56 @@ sap.ui.define([
 		oIconTabBar.destroy();
 	});
 
+	QUnit.test("Selected tabs count shouldn't exceed 1", function (assert) {
+		// Arrange
+		var oIconTabBar = new IconTabBar({
+			items: {
+				path: "/items",
+				template: new IconTabFilter({
+					key: "{key}",
+					text: "{title}",
+					content: [
+						new Text({text: "{text}"})
+					]
+				}),
+				templateShareable: false
+			}
+		});
+
+		var oModel = new JSONModel({
+			items: [{
+				key: "T1",
+				title: "Test 1",
+				text: "text1"
+			}, {
+				key: "T2",
+				title: "Test 2",
+				text: "text2"
+			}]
+		});
+
+		oIconTabBar.setModel(oModel);
+		oIconTabBar.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var oSelectedItem = oIconTabBar._getIconTabHeader().oSelectedItem;
+		var oContext = oSelectedItem.getBindingContext();
+		var oItemCopy = Object.assign({}, oContext.getObject());
+		oItemCopy.text = "text1 - updated";
+
+		// Act
+		oModel.setProperty(oContext.getPath(), oItemCopy); // update the first tab content through binding
+		oIconTabBar.setSelectedItem(oIconTabBar.getItems()[1]); // select the second tab
+		this.clock.tick(500);
+
+		// Assert
+		var $selectedItem  = oIconTabBar.$().find('.sapMITBSelected');
+		assert.strictEqual($selectedItem.length, 1, "There should NOT be more than one tab selected.");
+
+		// Clean up
+		oIconTabBar.destroy();
+	});
+
 	QUnit.test("keep the current content when change IconTabFilter count property", function(assert) {
 
 		// create
