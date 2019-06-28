@@ -233,4 +233,24 @@ sap.ui.define([
 		assert.notOk(oItem._getEditButton().getVisible(), "Edit button should be invisible after parent is set.");
 		assert.notOk(oItem._getEditButton().getEnabled(), "Edit button should be disabled after parent is set.");
 	});
+
+	QUnit.test("Link is not clickable if url is not set", function (assert) {
+		assert.expect(2);
+
+		var oItemUrlUndefined = new UploadSetItem({
+			fileName: "fileName.txt",
+			url: undefined
+		});
+
+		var oItemUrlDefined = new UploadSetItem({
+			fileName: "fileName.txt",
+			url: "testingUrl"
+		});
+
+		this.oUploadSet.insertItem(oItemUrlUndefined);
+		this.oUploadSet.insertItem(oItemUrlDefined);
+
+		assert.notOk(oItemUrlUndefined._getFileNameLink().getEnabled(), "Link is not clickable");
+		assert.ok(oItemUrlDefined._getFileNameLink().getEnabled(), "Link is clicklable");
+	});
 });

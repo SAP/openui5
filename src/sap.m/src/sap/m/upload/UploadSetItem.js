@@ -493,6 +493,7 @@ sap.ui.define([
 			this._oFileNameLink.addStyleClass("sapMUSFileName");
 			this.addDependent(this._oFileNameLink);
 		}
+		this._oFileNameLink.setEnabled(!!this.getUrl());
 
 		return this._oFileNameLink;
 	};
