@@ -1,0 +1,6 @@
+{
+  "sEntity": "Theme",
+  "sId": "sap_fiori_3_hcw",
+  "oExtends": "base",
+  "sVendor": "SAP"
+}
