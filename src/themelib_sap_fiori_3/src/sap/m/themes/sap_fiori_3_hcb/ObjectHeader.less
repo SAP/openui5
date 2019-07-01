@@ -1,0 +1,236 @@
+/* =================================== */
+/* CSS for control sap.m/ObjectHeader  */
+/* Quartz High Contrast Black theme    */
+/* =================================== */
+
+.sapMOH.sapMOHBgTranslucent,
+.sapMOHC.sapMOHBgTranslucent,
+.sapMOH.sapMOHBgSolid,
+.sapMOHC.sapMOHBgSolid,
+.sapMOH.sapMOHBgTransparent,
+.sapMOHC.sapMOHBgTransparent {
+	background-color: @sapUiObjectHeaderBackground;
+	border-bottom: 0.125rem solid @sapUiObjectHeaderBorderColor;
+}
+
+.sapMOHC.sapMOHBgTranslucent,
+.sapMOHC.sapMOHBgSolid {
+	border: none;
+	box-shadow: none;
+}
+
+.sapMOH {
+	.sapMOHTitle.sapMOHTitleActive > h6 .sapMText,
+	.sapMOHTitle.sapMOHTitleActive > h5 .sapMText,
+	.sapMOHTitle.sapMOHTitleActive > h4 .sapMText,
+	.sapMOHTitle.sapMOHTitleActive > h3 .sapMText,
+	.sapMOHTitle.sapMOHTitleActive > h2 .sapMText,
+	.sapMOHTitle.sapMOHTitleActive > h1 .sapMText {
+		text-decoration: underline;
+		cursor: pointer;
+	}
+
+	a.sapMOHTitle.sapMOHTitleActive:hover > h6 .sapMText,
+	a.sapMOHTitle.sapMOHTitleActive:hover > h5 .sapMText,
+	a.sapMOHTitle.sapMOHTitleActive:hover > h4 .sapMText,
+	a.sapMOHTitle.sapMOHTitleActive:hover > h3 .sapMText,
+	a.sapMOHTitle.sapMOHTitleActive:hover > h2 .sapMText,
+	a.sapMOHTitle.sapMOHTitleActive:hover > h1 .sapMText {
+		text-decoration: none;
+	}
+
+	.sapMOHTitle.sapMOHTitleActive:focus > h6 .sapMText,
+	.sapMOHTitle.sapMOHTitleActive:focus > h5 .sapMText,
+	.sapMOHTitle.sapMOHTitleActive:focus > h4 .sapMText,
+	.sapMOHTitle.sapMOHTitleActive:focus > h3 .sapMText,
+	.sapMOHTitle.sapMOHTitleActive:focus > h2 .sapMText,
+	.sapMOHTitle.sapMOHTitleActive:focus > h1 .sapMText {
+		text-decoration: none;
+	}
+
+	.sapMOHTitle.sapMOHTitleActive > h6 .sapMText:hover,
+	.sapMOHTitle.sapMOHTitleActive > h5 .sapMText:hover,
+	.sapMOHTitle.sapMOHTitleActive > h4 .sapMText:hover,
+	.sapMOHTitle.sapMOHTitleActive > h3 .sapMText:hover,
+	.sapMOHTitle.sapMOHTitleActive > h2 .sapMText:hover,
+	.sapMOHTitle.sapMOHTitleActive > h1 .sapMText:hover {
+		text-decoration: none;
+	}
+
+	.sapMOHTitle.sapMOHTitleActive:focus > h6 span,
+	.sapMOHTitle.sapMOHTitleActive:focus > h5 span,
+	.sapMOHTitle.sapMOHTitleActive:focus > h4 span,
+	.sapMOHTitle.sapMOHTitleActive:focus > h3 span,
+	.sapMOHTitle.sapMOHTitleActive:focus > h2 span,
+	.sapMOHTitle.sapMOHTitleActive:focus > h1 span {
+		outline: 0.125rem dotted @sapUiContentFocusColor;
+		outline-offset: -0.125rem;
+		text-decoration: none;
+	}
+}
+
+.sapMOHTitleIcon > .sapMOHIcon:focus,
+.sapMOHTitleArrow .sapUiIcon:focus {
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+}
+
+/* Fix ie outlines */
+html[data-sap-ui-browser^="ie"] {
+	.sapMOH {
+		.sapMOHTitleActive, .sapMOHTitle {
+			border: 1px solid transparent;
+			padding-top: 0.125rem;
+			padding-left: 0.125rem;
+			padding-right: 0.125rem;
+		}
+
+		a.sapMOHTitleActive:focus {
+			border: 1px solid transparent;
+			outline: none;
+		}
+		a.sapMOHTitleActive:focus ~ .sapMOHTitle > h6 > span,
+		a.sapMOHTitleActive:focus ~ .sapMOHTitle > h5 > span,
+		a.sapMOHTitleActive:focus ~ .sapMOHTitle > h4 > span,
+		a.sapMOHTitleActive:focus ~ .sapMOHTitle > h3 > span,
+		a.sapMOHTitleActive:focus ~ .sapMOHTitle > h2 > span,
+		a.sapMOHTitleActive:focus ~ .sapMOHTitle > h1 > span {
+			outline: none;
+			border: 0.125rem dotted @sapUiContentFocusColor;
+		}
+
+		.sapMObjectAttributeActive {
+			padding: 0.125rem;
+		}
+
+		.sapMOHIntroActive {
+			padding: 0.125rem;
+		}
+	}
+}
+
+/* Styles for Responsive Object Header */
+.sapMOHR:not(.sapMOHRNoBorder) {
+	border-bottom: 0.125rem solid @sapUiObjectHeaderBorderColor;
+}
+
+.sapMOHR {
+	.sapMOHRTitleActive {
+		.sapMOHRTitleText {
+			text-decoration: underline;
+			cursor: pointer;
+			&:active,
+			&:focus {
+				outline: 0.125rem dotted @sapUiContentFocusColor;
+				outline-offset: -0.125rem;
+				text-decoration: none;
+			}
+			&:hover {
+				text-decoration: none;
+			}
+		}
+	}
+	.sapMOHRIntroActive {
+		padding-bottom: 0.125rem;
+	}
+	.sapMOHRTitleArrow .sapUiIcon {
+		&:active,
+		&:focus {
+			outline: 0.125rem dotted @sapUiContentFocusColor;
+			outline-offset: -0.125rem;
+		}
+	}
+	.sapMOHRIcon.sapMPointer .sapUiIcon.sapUiIconPointer {
+		&:active,
+		&:focus {
+			&:before {
+				outline: 0.125rem dotted @sapUiContentFocusColor;
+			}
+		}
+	}
+}
+
+// Internet explorer fixes
+html[data-sap-ui-browser^="ie"] {
+	.sapMOHR {
+		.sapMOHRIcon.sapMPointer {
+			margin-left: 0.125rem;
+		}
+		.sapMOHRTitleArrow .sapUiIcon {
+			margin-top: 0.125rem;
+		}
+		.sapMOHRTitleDiv {
+			padding-bottom: 0.125rem;
+		}
+		.sapMOHRTitleText {
+			margin-left: 0.125rem;
+		}
+		.sapMOHRIntro {
+			padding-top: 0.125rem;
+			padding-left: 0.125rem;
+		}
+		.sapMLnk {
+			padding-right: 0.125rem;
+		}
+		.sapMObjectAttributeActive {
+			padding: 0.125rem;
+		}
+
+		.sapMOHRIcon.sapMPointer .sapUiIcon.sapUiIconPointer {
+			&:active,
+			&:focus {
+				&:before {
+					outline: none;
+				}
+			}
+		}
+	}
+}
+
+// OSX fix
+html[data-sap-ui-os^="mac"][data-sap-ui-browser^="sf"] {
+	.sapMOHR {
+		.sapMOHRTitleTextContainer {
+			padding-left: 0.125rem;
+		}
+	}
+}
+
+// BlackBerry fix
+html[data-sap-ui-os^="bb"] {
+	.sapMOHR .sapMOHRTitle {
+		padding-left: 0.250rem;
+	}
+}
+
+// Windows mobile IE fix
+html[data-sap-ui-os^="winphone"][data-sap-ui-browser^="ie"] {
+	.sapMOHR .sapMOHRTitle {
+		padding-left: 0.125rem;
+	}
+}
+
+// Android fix
+html[data-sap-ui-os^="Android4"] {
+	.sapMOHRTitleTextContainer {
+		padding-bottom: 0.125rem;
+	}
+}
+
+// IOS fixes
+html[data-sap-ui-os^="iOS"] {
+	.sapMOHR {
+		.sapMOHRTitleDiv {
+			padding-bottom: 0.125rem;
+			padding-left: 0.125rem;
+		}
+		.sapMOHRTitleActive .sapMOHRTitleText {
+			&:focus,
+			&:active {
+				outline: none;
+				.sapMOHRTitleTextWrappable {
+					outline: 0.125rem dotted @sapUiContentFocusColor;
+				}
+			}
+		}
+	}
+}
