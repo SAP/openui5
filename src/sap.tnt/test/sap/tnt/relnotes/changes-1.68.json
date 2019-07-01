@@ -1,0 +1,13 @@
+{
+  "1.68.0": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "f1cd73e56035b669ad8a30cb578d1300cc49a10d",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Expanding hidden navigation is now correct",
+        "references": []
+      }
+    ]
+  }
+}

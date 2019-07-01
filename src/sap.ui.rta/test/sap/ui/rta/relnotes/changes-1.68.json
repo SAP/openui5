@@ -13,6 +13,12 @@
         "type": "FIX",
         "text": "sap.ui.rta: Adjust some commands for binding template handling",
         "references": []
+      },
+      {
+        "id": "d73a38f3dd52cbc757c7011bb3d177fb644b88ba",
+        "type": "FEATURE",
+        "text": " UX improvements for deletion/creation of app variants",
+        "references": []
       }
     ]
   }

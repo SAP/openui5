@@ -295,7 +295,7 @@
       {
         "id": "6473fa8c4769877e5175c11f764dc44442ba992e",
         "type": "FIX",
-        "text": "sap.m.TabContainer: example doesn't throw error",
+        "text": "sap.m.TabContainer: example doesn\u0027t throw error",
         "references": [
           {
             "type": "BCP",
@@ -452,7 +452,7 @@
       {
         "id": "34d271c415484b9a110e36998fdd3e62c6736c35",
         "type": "FIX",
-        "text": "sap.m.MultiComboBox: Better synchronisation between selected keys & items",
+        "text": "sap.m.MultiComboBox: Better synchronisation between selected keys \u0026 items",
         "references": [
           {
             "type": "BCP",
@@ -531,6 +531,66 @@
             "reference": "1980266342"
           }
         ]
+      },
+      {
+        "id": "57954336cfb6ca2c854be5ab7f1903b1e48dfc10",
+        "type": "FEATURE",
+        "text": " sap.m.SelectDialog, sap.m.TableSelect: Add confirmButtonText property",
+        "references": []
+      },
+      {
+        "id": "fd8977cd768e09c42341b641a8a2db4260493622",
+        "type": "FEATURE",
+        "text": " sap.m.Uploader: Added static function for File/Blob object uploading",
+        "references": []
+      },
+      {
+        "id": "823c429cbf260eebe3d5e07b696d99e41df36e41",
+        "type": "FIX",
+        "text": " sap.m.Carousel: pageChanged event parameters are now correct",
+        "references": []
+      },
+      {
+        "id": "1a936a3045655f7fd8178133df6d1ff1d30bbece",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Dragging now starts only from header",
+        "references": []
+      },
+      {
+        "id": "1ce6be63189e2a8870dfba0da53aa091a0e89506",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Content is now rendered, when adding tab",
+        "references": []
+      },
+      {
+        "id": "7a8a3892bc72cb84cc0c391969b9d84d95a65d67",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Ensure only one tab is selected at a time",
+        "references": []
+      },
+      {
+        "id": "6257fcbe77fdbb2b8cd239f02990c496e78a61cf",
+        "type": "FIX",
+        "text": " sap.m.Image: Fixed onkeydown with SPACE key",
+        "references": []
+      },
+      {
+        "id": "c58a37d3bb6da94a617ca6da86ca33ce1bce171b",
+        "type": "FIX",
+        "text": " sap.m.Input: No additional info is read, when no suggestions",
+        "references": []
+      },
+      {
+        "id": "e6d71d2a598a739645faae0d10249472f834186c",
+        "type": "FIX",
+        "text": " sap.m.MenuItem: CustomData propagation adjusted",
+        "references": []
+      },
+      {
+        "id": "87ca675ae0084ac81a26706faa5f6329ce3f8b76",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: minor allignments with specs",
+        "references": []
       }
     ]
   }

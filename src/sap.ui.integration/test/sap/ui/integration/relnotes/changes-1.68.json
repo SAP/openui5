@@ -1,0 +1,13 @@
+{
+  "1.68.0": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "d014b00f3e5e2109ea186eaae23431997805a6e4",
+        "type": "FIX",
+        "text": " Enhance the configuration for debug mode and wait for theme",
+        "references": []
+      }
+    ]
+  }
+}

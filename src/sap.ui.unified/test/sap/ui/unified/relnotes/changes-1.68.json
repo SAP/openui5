@@ -66,6 +66,18 @@
             "reference": "1970250254"
           }
         ]
+      },
+      {
+        "id": "43e592595ee37e9a80c96f0f987344f63de230be",
+        "type": "FIX",
+        "text": " FileUploader: The event parameter is called `status` not `state`",
+        "references": []
+      },
+      {
+        "id": "6f8d4fe9308f322ae24612b73c1417288d1fe855",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: JSDoc of change event adjusted",
+        "references": []
       }
     ]
   }

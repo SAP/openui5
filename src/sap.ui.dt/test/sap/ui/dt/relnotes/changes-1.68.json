@@ -7,6 +7,12 @@
         "type": "FIX",
         "text": "sap.ui.dt - async new processing state in plugins",
         "references": []
+      },
+      {
+        "id": "d8e41321d8cef867b8948bcaff8808738b1c283b",
+        "type": "FIX",
+        "text": " sap.ui.dt: validation for ElementUtil.findAllSiblingsInContainer",
+        "references": []
       }
     ]
   }
