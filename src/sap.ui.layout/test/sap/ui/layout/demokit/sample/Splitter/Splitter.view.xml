@@ -15,7 +15,7 @@
 			<layoutData><l:SplitterLayoutData size="30%" minSize="200px" /></layoutData>
 		</Button>
 	</l:Splitter>
-	<l:HorizontalLayout class="buttons">
+	<l:HorizontalLayout class="sapUiSmallMarginTop sapUiSmallMarginBegin">
 		<Button text="Add content area" press="btnAddContentArea"></Button>
 		<Button text="Remove content area" press="btnRemoveContentArea"></Button>
 		<Button text="Invalidate Splitter" press="btnInvalidateSplitter"></Button>

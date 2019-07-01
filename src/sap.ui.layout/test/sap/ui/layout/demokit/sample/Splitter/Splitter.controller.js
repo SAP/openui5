@@ -1,12 +1,12 @@
 sap.ui.define([
-		'sap/ui/commons/Button',
-		'sap/ui/commons/CheckBox',
-		'sap/ui/commons/TextField',
-		'sap/ui/commons/TextView',
+		'sap/m/Button',
+		'sap/m/CheckBox',
+		'sap/m/Input',
+		'sap/m/Text',
 		'sap/ui/core/mvc/Controller',
-		'sap/ui/layout/HorizontalLayout',
+		'sap/m/HBox',
 		'sap/ui/layout/SplitterLayoutData'
-	], function(Button, CheckBox, TextField, TextView, Controller, HorizontalLayout, SplitterLayoutData) {
+	], function(Button, CheckBox, Input, Text, Controller, HBox, SplitterLayoutData) {
 	"use strict";
 
 	var SplitterController = Controller.extend("sap.ui.layout.sample.Splitter.Splitter", {
@@ -62,40 +62,43 @@ sap.ui.define([
 				oContentArea.setLayoutData(oLD);
 			}
 
-			var oOptions = new HorizontalLayout();
-			oOptions.addContent(
-				new TextView({
+			var oOptions = new HBox({
+				alignItems: "Center"
+			});
+
+			oOptions.addItem(
+				new Text({
 					text : "ContentArea #" + (i + 1)
 				}).addStyleClass("optionTitle")
 			);
 
-			oOptions.addContent(new TextView({ text : "Resizable: "}));
-			oOptions.addContent(new CheckBox({
-				checked : oLD.getResizable(),
-				change : (function(oLayoutData) {
+			oOptions.addItem(new Text({ text : "Resizable: "}));
+			oOptions.addItem(new CheckBox({
+				selected : oLD.getResizable(),
+				select : (function(oLayoutData) {
 					return function(oEvent) {
-						oLayoutData.setResizable(oEvent.getParameter("checked"));
+						oLayoutData.setResizable(oEvent.getParameter("selected"));
 					};
 				})(oLD)
-			}));
+			}).addStyleClass("paddingRight"));
 
-			oOptions.addContent(new TextView({ text : "Size (CSS): " }));
-			oOptions.addContent(new TextField({
+			oOptions.addItem(new Text({ text : "Size (CSS): " }));
+			oOptions.addItem(new Input({
 				value : oLD.getSize(),
 				change : (function(oLayoutData) {
 					return function(oEvent) {
-						oLayoutData.setSize(oEvent.getParameter("newValue"));
+						oLayoutData.setSize(oEvent.getParameter("value"));
 					};
 				})(oLD)
-			}));
+			}).addStyleClass("paddingRight"));
 
 			/*eslint-disable no-loop-func */
-			oOptions.addContent(new TextView({ text : "Min-Size: (in px)" }));
-			oOptions.addContent(new TextField({
+			oOptions.addItem(new Text({ text : "Min-Size: (in px)" }));
+			oOptions.addItem(new Input({
 				value : oLD.getMinSize(),
 				change : (function(oLayoutData) {
 					return function(oEvent) {
-						oLayoutData.setMinSize(parseInt(oEvent.getParameter("newValue")));
+						oLayoutData.setMinSize(parseInt(oEvent.getParameter("value")));
 					};
 				})(oLD)
 			}));

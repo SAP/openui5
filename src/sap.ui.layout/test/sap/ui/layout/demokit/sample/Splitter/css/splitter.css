@@ -1,18 +1,9 @@
-.buttons, .options {
-	margin-top: 1rem;
-}
-
 .options {
 	margin: 1rem 2rem 1rem 2rem;
 }
 
-.options .sapuiVltCell {
-	margin-top: 0.5rem;
-}
-
-.options .sapUiTv {
-	margin-right: 0.5rem;
-	margin-left: 0.5rem;
+.options .paddingRight {
+	padding-right: 0.5rem;
 }
 
 .optionTitle {
