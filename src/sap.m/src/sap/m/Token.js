@@ -91,7 +91,12 @@ sap.ui.define([
 			 * This property specifies the text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 			 * @since 1.28.0
 			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit}
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
+
+			/**
+			 * Indicates the editable status of the token's parent (Tokenizer). If it is set to <code>true</code>, the ARIA attributes of the token are updated accordingly.
+			 */
+			editableParent : {type : "boolean", group : "Behavior", defaultValue : true, visibility: "hidden"}
 		},
 		aggregations : {
 
@@ -184,9 +189,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Helper function for synchronizing the tooltip of the token
+	 * Helper function for synchronizing the tooltip of the token.
 	 * @private
+	 * @param {sap.m.Token} oControl The control instance to get the tooltip for
 	 * @param {boolean} bEditable The editable value
+	 * @return {string} The tooltip text
 	 */
 	Token.prototype._getTooltip = function (oControl, bEditable) {
 		var sTooltip = oControl.getTooltip_AsString(),

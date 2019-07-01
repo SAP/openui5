@@ -397,7 +397,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//assert
-		assert.ok(aFirstToken.getDomRef('icon'), 'First token icon does not exist');
+		assert.strictEqual(aFirstToken.$('icon').css('display'), 'none', 'First token icon is invisible');
 		assert.ok(!aSecondToken.getDomRef('icon'), 'Second token icon does not exist');
 	});
 
@@ -412,6 +412,20 @@ sap.ui.define([
 		afterEach : function() {
 			this.tokenizer.destroy();
 		}
+	});
+
+	QUnit.test("setEditable", function () {
+		this.tokenizer.addToken(new Token({text: "Token 1", key: "0001"}));
+
+		oToken = this.tokenizer.getTokens()[0];
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oToken.getProperty("editableParent"), "Token's parent is editable");
+
+		this.tokenizer.setEditable(false);
+
+		assert.strictEqual(this.tokenizer.getEditable(), false, "The property of the Tokenizer was set.");
+		assert.strictEqual(oToken.getProperty("editableParent"), false, "The editableParent property of the Token was correctly set");
 	});
 
 	QUnit.test("setWidth and setPixelWidth", function(assert) {
