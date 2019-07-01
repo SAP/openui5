@@ -122,12 +122,6 @@ sap.ui.define([
 		assert.equal(oDRS3.getSecondDateValue().getTime(), dateTo2.getTime(), "DRS3: SecondDateValue set");
 	});
 
-	QUnit.test("Calendar and popup", function(assert) {
-		assert.ok(!sap.ui.require("sap/ui/unified/Calendar"), "sap.ui.unified.Calendar not loaded");
-		assert.ok(!sap.ui.getCore().byId("DRS1-cal"), "DRS1: no calender exists");
-		assert.ok(!oDRS1._oPopup, "DRS1: no popup exists");
-	});
-
 	QUnit.module("Rendering");
 
 	QUnit.test("Styling", function(assert) {

@@ -21,6 +21,8 @@ sap.ui.define([
 	"sap/ui/unified/CalendarLegend",
 	"sap/ui/unified/CalendarLegendItem",
 	"sap/ui/core/date/UniversalDate",
+	"sap/ui/unified/calendar/CustomYearPicker",
+	"sap/ui/unified/calendar/CustomMonthPicker",
 	"jquery.sap.global"
 ], function(
 	qutils,
@@ -42,7 +44,9 @@ sap.ui.define([
 	DateTypeRange,
 	CalendarLegend,
 	CalendarLegendItem,
-	UniversalDate
+	UniversalDate,
+	CustomYearPicker,
+	CustomMonthPicker
 ) {
 	// shortcut for sap.ui.unified.CalendarDayType
 	var CalendarDayType = unifiedLibrary.CalendarDayType;
@@ -201,12 +205,6 @@ sap.ui.define([
 		assert.equal(oDP6.getDateValue().getTime(), new Date("2015", "10", "23").getTime(), "DP6: DateValue set");
 		assert.equal(oDP7.getValue(), "2/10/1437 AH", "DP7: Value in format from binding set");
 		assert.equal(oDP7.getDateValue().getTime(), new Date("2015", "10", "23").getTime(), "DP7: DateValue set");
-	});
-
-	QUnit.test("calendar and popup", function(assert) {
-		assert.ok(!sap.ui.require("sap/ui/unified/Calendar"), "sap.ui.unified.Calendar not loaded");
-		assert.ok(!sap.ui.getCore().byId("DP1-cal"), "DP1: no calender exists");
-		assert.ok(!oDP1._oPopup, "DP1: no popup exists");
 	});
 
 	QUnit.module("Rendering");
@@ -1627,6 +1625,54 @@ sap.ui.define([
 		assert.notOk(InstanceManager.isPopoverOpen(oDatePicker._oPopup), "Closing popup detected");
 
 		oDatePicker.destroy();
+	});
+
+	QUnit.test("Open popup with CustomYaerPicker as content when datePicker display format contains only years", function(assert) {
+		// Prepare
+		var oDP = new DatePicker({
+				dateValue: new Date("2014", "02", "26"),
+				displayFormat: "---yyyy---",
+				change: handleChange
+			}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oDP.toggleOpen(oDP.isOpen());
+
+		// Assert
+		assert.ok(sap.ui.getCore().byId(oDP.getId() + "-cal"), oDP.getId() + ": calender exists");
+		assert.ok(oDP._oPopup, oDP.getId() + ": popup exists");
+		assert.ok(jQuery("#" + oDP.getId() + "-cal")[0], "calendar rendered");
+		assert.ok(jQuery("#" + oDP.getId() + "-cal").is(":visible"), "CustomYearPicker is visible");
+		assert.ok(oDP._oCalendar instanceof CustomYearPicker, "Calendar is of type CustomYearPicker");
+
+		// Clean
+		oDP.destroy();
+	});
+
+	QUnit.test("Open popup with CustomMonthPicker as content when datePicker display format contains only months and years", function(assert) {
+		// Prepare
+		var oDP = new DatePicker({
+				dateValue: new Date("2014", "02", "26"),
+				displayFormat: "yyyy+++++MM",
+				change: handleChange
+			}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oDP.toggleOpen(oDP.isOpen());
+
+		// Assert
+		assert.ok(sap.ui.getCore().byId(oDP.getId() + "-cal"), oDP.getId() + ": calender exists");
+		assert.ok(oDP._oPopup, oDP.getId() + ": popup exists");
+		assert.ok(jQuery("#" + oDP.getId() + "-cal")[0], "calendar rendered");
+		assert.ok(jQuery("#" + oDP.getId() + "-cal").is(":visible"), "CustomYearPicker is visible");
+		assert.ok(oDP._oCalendar instanceof CustomMonthPicker, "Calendar is of type CustomMonthPicker");
+
+		// Clean
+		oDP.destroy();
 	});
 
 	QUnit.module("ARIA");

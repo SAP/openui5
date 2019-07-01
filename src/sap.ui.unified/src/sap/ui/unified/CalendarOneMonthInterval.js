@@ -4,29 +4,21 @@
 
 //Provides control sap.ui.unified.CalendarOneMonthInterval.
 sap.ui.define([
+	'sap/ui/unified/calendar/CustomMonthPicker',
 	'sap/ui/unified/calendar/CalendarUtils',
 	'sap/ui/unified/calendar/CalendarDate',
+	'sap/ui/unified/Calendar',
 	'./library',
 	'sap/ui/unified/CalendarDateInterval',
-	'sap/ui/unified/CalendarDateIntervalRenderer',
-	'sap/ui/unified/calendar/OneMonthDatesRow',
-	'sap/ui/core/Renderer',
-	'sap/ui/unified/Calendar',
-	'sap/ui/unified/CalendarRenderer',
-	"./CalendarOneMonthIntervalRenderer",
-	"sap/ui/dom/containsOrEquals"
+	'sap/ui/unified/calendar/OneMonthDatesRow'
 ], function(
+	CustomMonthPicker,
 	CalendarUtils,
 	CalendarDate,
+	Calendar,
 	library,
 	CalendarDateInterval,
-	CalendarDateIntervalRenderer,
-	OneMonthDatesRow,
-	Renderer,
-	Calendar,
-	CalendarRenderer,
-	CalendarOneMonthIntervalRenderer,
-	containsOrEquals
+	OneMonthDatesRow
 ) {
 		"use strict";
 
@@ -336,63 +328,6 @@ sap.ui.define([
 
 		CalendarOneMonthInterval.prototype._setMinMaxDateExtend = function(oDate) {
 			return Calendar.prototype._setMinMaxDateExtend.apply(this, arguments);
-		};
-
-		/****************************************** CUSTOM MONTH PICKER CONTROL ****************************************/
-
-		var CustomMonthPicker = Calendar.extend("CustomMonthPicker", {
-			renderer: Renderer.extend(CalendarRenderer)
-		});
-
-		CustomMonthPicker.prototype._initializeHeader = function() {
-			var oHeader = new sap.ui.unified.calendar.Header(this.getId() + "--Head", {
-				visibleButton1: false
-			});
-
-			oHeader.attachEvent("pressPrevious", this._handlePrevious, this);
-			oHeader.attachEvent("pressNext", this._handleNext, this);
-			oHeader.attachEvent("pressButton2", this._handleButton2, this);
-			this.setAggregation("header",oHeader);
-		};
-
-		CustomMonthPicker.prototype._shouldFocusB2OnTabNext = function(oEvent) {
-			return containsOrEquals(this.getDomRef("content"), oEvent.target);
-		};
-
-		CustomMonthPicker.prototype.onAfterRendering = function () {
-			this._showMonthPicker();
-		};
-
-		CustomMonthPicker.prototype._selectYear = function () {
-			var oYearPicker = this.getAggregation("yearPicker");
-
-			var oFocusedDate = this._getFocusedDate();
-			oFocusedDate.setYear(oYearPicker.getYear());
-
-			this._focusDate(oFocusedDate, true);
-
-			this._showMonthPicker();
-		};
-
-		CustomMonthPicker.prototype._selectMonth = function () {
-			var oMonthPicker = this.getAggregation("monthPicker");
-			var oSelectedDate = this.getSelectedDates()[0];
-			var oFocusedDate = this._getFocusedDate();
-
-			oFocusedDate.setMonth(oMonthPicker.getMonth());
-
-			if (!oSelectedDate) {
-				oSelectedDate = new sap.ui.unified.DateRange();
-			}
-
-			oSelectedDate.setStartDate(oFocusedDate.toLocalJSDate());
-			this.addSelectedDate(oSelectedDate);
-
-			this.fireSelect();
-		};
-
-		CustomMonthPicker.prototype.onsapescape = function(oEvent) {
-			this.fireCancel();
 		};
 
 		return CalendarOneMonthInterval;
