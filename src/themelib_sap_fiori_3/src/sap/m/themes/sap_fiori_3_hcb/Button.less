@@ -1,0 +1,92 @@
+/* ================================= */
+/* CSS for control sap.m/Button      */
+/* Quartz High Contrast Black theme  */
+/* ================================= */
+
+.sapMBtn {
+	background-color: transparent;
+}
+
+.sapMBtnInner {
+	border-radius: 0.375rem;
+}
+
+.sapUiSizeCompact .sapMBar-CTX .sapMBtnInner:not(.sapMBtnDisabled) {
+	border-color: @sapUiButtonBorderColor;
+}
+
+span.sapMBtnInner.sapMBtnEmphasized {
+	border-width: 0.125rem;
+}
+
+/* --------------------------------------------------------------------- */
+/* Custom focus outline:                                                 */
+/* --------------------------------------------------------------------- */
+
+html.sap-desktop .sapMBtn:focus > .sapMFocusable {
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+	outline-offset: -0.125rem;
+	border-color: transparent;
+	border-radius: 0;
+}
+
+html.sap-desktop .sapMBtn:focus > .sapMFocusable:not(.sapMBtnActive) {
+	border-radius: 0;
+}
+
+/* ---------------------------------------------------------------------*/
+/* Custom focus outline for IE and Edge:                                */
+/* ---------------------------------------------------------------------*/
+.sapMBtn:focus > .sapMBtnInner.sapMFocusable.sapMIE {
+	outline: none;
+	position: relative;
+}
+
+.sapMBtnFocusDiv {
+	box-sizing: border-box;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	left: 0;
+	top: 0;
+	border-radius: 0;
+}
+
+/* dotted line appears blurry in IE and EDGE browsers. In these cases use dashed */
+.sapMBtn:focus .sapMBtnFocusDiv {
+	border: 0.125rem dashed @sapUiContentFocusColor;
+}
+
+/* ---------------------------------------------------------------------*/
+/* Disabled state                                                       */
+/* ---------------------------------------------------------------------*/
+
+.sapMBtnDisabled {
+	cursor: default;
+}
+
+.sapMBtnDisabled .sapMBtnInner,
+.sapUiSizeCompact .sapMBar-CTX .sapMBtnDisabled > .sapMBtnInner {
+	border-color: @sapUiHcReducedForeground;
+	color: @sapUiContentDisabledTextColor;
+}
+
+.sapMBar > .sapMBtnDisabled > span.sapMBtnInner.sapMBtnTransparent > .sapMBtnContent {
+	color: @sapUiContentDisabledTextColor;
+}
+
+.sapMBtnDisabled > span.sapMBtnInner.sapMBtnAccept,
+.sapMBtnDisabled > span.sapMBtnInner.sapMBtnReject,
+.sapMBtnDisabled > span.sapMBtnInner.sapMBtnEmphasized {
+	border-color: @sapUiHcReducedForeground;
+	color: @sapUiContentDisabledTextColor;
+}
+
+.sapMBtnDisabled > span.sapMBtnInner .sapMBtnIcon {
+	border-color: @sapUiHcReducedForeground;
+	color: @sapUiContentDisabledTextColor;
+}
+
+.sapMBtnDisabled .sapMBtnActive {
+	background-color: @sapUiButtonBackground;
+}

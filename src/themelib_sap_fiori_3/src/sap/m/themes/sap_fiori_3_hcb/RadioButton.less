@@ -1,0 +1,111 @@
+/* ================================== */
+/* CSS for control sap.m/RadioButton  */
+/* Quartz High Contrast Black theme   */
+/* ================================== */
+
+.sapMRbB {
+	padding: 1px; /* using padding here so that margin won't collide */
+}
+
+.sapMRbHasLabel:focus {
+	outline: none;
+}
+
+.sapMRb:focus:before {
+	border: .125rem dotted @sapUiContentFocusColor;
+}
+
+.sapMRb:not(.sapMRbErr) .sapMRbB.sapMRbHoverable:hover,
+.sapMRb.sapMRbBTouched,
+.sapMRbWarn.sapMRbBTouched .sapMRbB,
+.sapMRbInfo.sapMRbBTouched .sapMRbB,
+.sapMRbErr.sapMRbBTouched .sapMRbB {
+	.sapMRbSvg .sapMRbBOut {
+		fill: @sapUiSelected;
+	}
+}
+
+/* Selected */
+.sapMRbSel .sapMRbBInn {
+	fill: @sapUiContentIconColor;
+	stroke: none;
+}
+
+/* Value states */
+.sapMRbErr .sapMRbB .sapMRbBOut {
+	stroke: @sapUiFieldInvalidColor;
+	fill: @sapUiFieldInvalidBackground;
+	stroke-dasharray: 4;
+}
+
+.sapMRbRo.sapMRbErr .sapMRbBOut {
+	stroke: @sapUiFieldReadOnlyBorderColor;
+}
+
+.sapMRbRo.sapMRbWarn,
+.sapMRbRo.sapMRbInfo {
+	.sapMRbB .sapMRbBOut{
+		stroke: @sapUiFieldReadOnlyBorderColor;
+		fill: @sapUiFieldReadOnlyHelpBackground;
+	}
+}
+
+.sapMRbWarn, .sapMRbInfo {
+	.sapMRbB .sapMRbBOut {
+		stroke: @sapUiFieldWarningColor;
+		fill: @sapUiFieldWarningBackground;
+		stroke-dasharray: 4;
+	}
+}
+
+/* Disabled */
+.sapMRbDis.sapMRbSel,
+.sapMRbDis.sapMRbRo.sapMRbSel {
+	.sapMRbBInn {
+		fill: @sapUiHcReducedForeground;
+	}
+}
+
+.sapMRb.sapMRbDis .sapMRbBOut {
+	fill: @sapUiHcReducedBackground;
+	stroke: @sapUiHcReducedForeground;
+}
+
+.sapMRbDis .sapMLabel {
+	color: @sapUiContentDisabledTextColor;
+}
+
+/* Compact size */
+.sapUiSizeCompact {
+
+	.sapMRbB {
+		width: auto;
+	}
+
+	.sapMRbB .sapMRbBInn {
+		margin: 0.125rem;
+	}
+}
+
+/* When printing border is needed for the selection */
+@media only print {
+	.sapMRbB,
+	.sapMRbRo.sapMRbInfo .sapMRbB,
+	.sapMRbRo.sapMRbWarn .sapMRbB {
+
+		.sapMRbSvg .sapMRbBOut {
+			stroke: @sapUiHcStandardBackground;
+			fill: #ffffff
+		}
+	}
+
+	/* Selected */
+	.sapMRbSel .sapMRbBInn {
+		fill: @sapUiHcStandardBackground;
+	}
+
+	/* Disabled */
+	.sapMRbDis.sapMRbSel .sapMRbBInn {
+		fill: @sapUiHcReducedForeground;
+	}
+}
