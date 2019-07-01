@@ -1290,13 +1290,13 @@ sap.ui.define([
 			sUrl = this.sServiceUrl + sUrl;
 		}
 
-		var mUriParameters = new UriParameters(sUrl || window.location.href).mParams || {};
+		var oUriParameters = UriParameters.fromURL(sUrl || window.location.href);
 		//UriParameters returns an array of values - we use the first one as
 		//we assume only one per key should be passed
-		Object.keys(mUriParameters).forEach(function(sKey) {
-			mUriParameters[sKey] = mUriParameters[sKey][0];
+		var mAllParams = Object.assign({}, this.mMetadataUrlParams);
+		Array.from(oUriParameters.keys()).forEach(function(sKey) {
+			mAllParams[sKey] = oUriParameters.get(sKey);
 		});
-		var mAllParams = jQuery.extend({}, this.mMetadataUrlParams, mUriParameters);
 		var aMetadataUrlParams = ODataUtils._createUrlParamsArray(mAllParams);
 		var aUrlParts = sUrl.split("?");
 		if (aUrlParts.length > 1) {
