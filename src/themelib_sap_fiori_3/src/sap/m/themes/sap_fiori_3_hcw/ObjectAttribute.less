@@ -1,0 +1,59 @@
+/* ====================================== */
+/* CSS for control sap.m/ObjectAttribute  */
+/* Quartz High Contrast White theme       */
+/* ====================================== */
+
+.sapMObjectAttributeActive:focus .sapMObjectAttributeText {
+	position: relative;
+}
+
+html.sap-desktop .sapMObjectAttributeActive:focus .sapMObjectAttributeText::after {
+	pointer-events: none;
+	display: block;
+	content: "";
+	position: absolute;
+	top: 0.125rem;
+	left: 0.125rem;
+	bottom: 0.125rem;
+	right: 0.125rem;
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+}
+
+html.sap-desktop .sapMObjectAttributeActive:focus .sapMObjectAttributeText {
+	text-decoration: none;
+}
+
+.sapMObjectAttributeActive .sapMText {
+	color: @sapUiListActiveTextColor;
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+.sapMObjectAttributeActive .sapMText:hover {
+	text-decoration: none;
+}
+
+.sapMObjectAttributeActive .sapMObjectAttributeText:hover,
+.sapMObjectAttributeActive .sapMText:hover {
+	text-decoration: none;
+}
+
+.sapMObjectAttributeActive .sapMObjectAttributeText {
+	text-decoration: underline;
+}
+
+/*=========================================== */
+/* Custom design for Responsive Object Header */
+/*=========================================== */
+
+.sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText {
+	text-decoration: underline;
+}
+
+/*=========================================== */
+/* Custom design for Static Object Header     */
+/*=========================================== */
+
+.sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText {
+	text-decoration: underline;
+}

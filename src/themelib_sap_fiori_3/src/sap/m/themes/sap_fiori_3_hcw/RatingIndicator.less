@@ -1,0 +1,68 @@
+/* ====================================== */
+/* CSS for control sap.m/RatingIndicator  */
+/* Quartz High Contrast White theme       */
+/* ====================================== */
+
+.sapMRIIconSel,
+.sapMRIIconHov,
+.sapMPointer .sapMRIIconUnsel {
+	color: @sapUiContentIconColor;
+}
+
+.sapMRIIconUnsel {
+	color: @sapUiHcReducedAltForeground;
+}
+
+.sapMRI.sapMRIDisplayOnly {
+	.sapMRIIconSel{
+		color: @sapUiContentIconColor;
+	}
+	.sapMRIIconUnsel {
+		color: darken(@sapUiContentForegroundColor, 50);
+	}
+}
+
+.sapMRI.sapMRIReadOnly {
+  .sapMRIIconSel {
+	color: @sapUiContentIconColor;
+  }
+
+  .sapMRIIconReadOnly {
+	color: darken(@sapUiContentForegroundColor, 50);
+  }
+}
+
+.sapMRIDisabled {
+  .sapMRIIconSel {
+	color: @sapUiHcReducedForeground;
+  }
+
+  .sapMRIIconUnsel {
+	color: @sapUiContentDisabledTextColor;
+  }
+}
+
+/* Custom focus outline */
+html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly){
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+	outline-offset: -0.125rem;
+}
+
+/* TODO remove after 1.62 version */
+/* IE ignores outline-offset. Use an overlay: */
+html[data-sap-ui-browser^="ie"].sap-desktop {
+	.sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly) {
+		outline: none;
+		position: relative;
+	}
+	.sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly)::before {
+		content: " ";
+		box-sizing: border-box;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		left: 0;
+		top: 0;
+		border: 0.125rem dotted @sapUiContentFocusColor;;
+	}
+}

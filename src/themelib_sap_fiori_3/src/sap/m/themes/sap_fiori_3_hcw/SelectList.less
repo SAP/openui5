@@ -1,0 +1,87 @@
+/* ================================= */
+/* CSS for control sap.m/SelectList  */
+/* Quartz High Contrast White theme  */
+/* ================================= */
+
+@_sap_m_SelectList_ItemFiori3HCWFocus_Height: 7px; // 2 borders * 2px + 2 offsets (top and bottom) * 1px + 1px due to browser rendering issues
+
+/* ------------------------------ */
+/* item                           */
+/* ------------------------------ */
+
+.sapMSelectListItemBase {
+	border-bottom: 1px solid @sapUiListBorderColor;
+}
+
+/* selected */
+.sapMSelectListItemBaseSelected {
+	background: @sapUiListSelectionBackgroundColor;
+}
+
+.sapMSltPicker {
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+}
+
+.sapMSltPicker-CTX .sapMSelectListItemBaseSelected,
+.sapMComboBoxBasePicker-CTX .sapMSelectListFocus .sapMSelectListItemBaseSelected {
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+	outline-offset: -0.188rem;
+}
+
+/* disabled */
+.sapMSelectListItemBaseDisabled {
+	background: @sapUiHcReducedBackground;
+	color: @sapUiContentDisabledTextColor;
+}
+
+/* focus */
+html.sap-desktop li.sapMSelectListItemBase:focus {
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+	outline-offset: -0.188rem;
+}
+
+/* FIX: IE and Edge do not support css outline-offset */
+/* TODO remove after 1.62 version */
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+
+	.sapMSelectListItemBase:not(.sapMSelectListRow):focus::before {
+		border: 0.125rem dashed @sapUiContentFocusColor;
+	}
+
+	.sapMSltPicker-CTX,
+	.sapMComboBoxBasePicker-CTX {
+		.sapMSelectListItemBaseSelected:not(.sapMSelectListRow)::before {
+			border: 0.125rem dashed @sapUiContentFocusColor;
+		}
+	}
+
+	.sapMSelectListItemBase:focus,
+	.sapMSltPicker-CTX .sapMSelectListItemBaseSelected,
+	.sapMComboBoxBasePicker-CTX .sapMSelectListFocus .sapMSelectListItemBaseSelected {
+		.sapMSelectListCell::before {
+			border-top: 0.125rem dashed @sapUiContentFocusColor;
+			border-bottom: 0.125rem dashed @sapUiContentFocusColor;
+			height: calc(@_sap_m_SelectList_ItemHeight ~" - " @_sap_m_SelectList_ItemFiori3HCWFocus_Height);
+		}
+
+		.sapMSelectListFirstCell.sapMSelectListCell::before {
+			border-left: 0.125rem dashed @sapUiContentFocusColor;
+		}
+
+		.sapMSelectListLastCell.sapMSelectListCell::before {
+			border-right: 0.125rem dashed @sapUiContentFocusColor;
+		}
+	}
+
+	.sapUiSizeCompact {
+		.sapMSelectListItemBase:focus,
+		.sapMSltPicker-CTX .sapMSelectListItemBaseSelected,
+		.sapMComboBoxBasePicker-CTX .sapMSelectListFocus .sapMSelectListItemBaseSelected {
+			.sapMSelectListCell::before {
+				height: calc(@_sap_m_SelectList_ItemCompactHeight ~" - " @_sap_m_SelectList_ItemFiori3HCWFocus_Height);
+			}
+		}
+	}
+}

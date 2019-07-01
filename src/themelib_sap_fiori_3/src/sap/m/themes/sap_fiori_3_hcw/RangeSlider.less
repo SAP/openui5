@@ -1,0 +1,13 @@
+/* ================================== */
+/* CSS for control sap.m/RangeSlider  */
+/* Quartz High Contrast White theme   */
+/* ================================== */
+
+html.sap-desktop .sapMSliderProgress:focus:before {
+	border: 0.125rem dotted @sapUiContentFocusColor;
+}
+
+/* TODO remove after 1.62 version */
+html[data-sap-ui-browser^="ie"].sap-desktop .sapMSliderProgress:focus:before {
+	border-style: dashed;
+}

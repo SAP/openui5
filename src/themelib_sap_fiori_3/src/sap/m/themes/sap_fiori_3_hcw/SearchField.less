@@ -1,0 +1,91 @@
+/* ================================== */
+/* CSS for control sap.m/SearchField  */
+/* Quartz High Contrast White theme   */
+/* ================================== */
+
+.sapMSFDisabled > .sapMSFF {
+	background: @sapUiHcReducedBackground;
+	border-color: @sapUiHcReducedForeground;
+	color: @sapUiContentDisabledTextColor;
+	font-weight: normal;
+	-webkit-text-fill-color: @sapUiContentDisabledTextColor;
+}
+
+.sapMHeader-CTX .sapMBarChild > .sapMSFF {
+	border-color: @sapUiFieldBorderColor;
+}
+
+/* custom buttons */
+.sapMSFB {
+	box-sizing: border-box;
+	vertical-align: middle;
+	border-width: 1px;
+	border-left: 1px solid transparent;
+	cursor: pointer;
+}
+
+.sapMFocus>.sapMSFF>.sapMSFB {
+	color: @sapUiContentIconColor;
+}
+
+html.sap-desktop .sapMFocus > .sapMSFF::before {
+	border: 0.125rem dotted @sapUiContentFocusColor;
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMFocus > .sapMSFF::before  {
+		border: 0.125rem dashed @sapUiContentFocusColor;
+	}
+}
+
+/* button highlight on hover/press */
+html.sap-desktop .sapMSFB:hover,
+.sapMSFB:active {
+	/* Needs repeating statements because of IE interpretation of :focus */// TODO remove after 1.62 version
+	border-width: 0 0 0 1px;
+	background-color: @sapUiButtonHoverBackground;
+	border-left-color: @sapUiButtonHoverBorderColor;
+	border-left-style: solid;
+}
+
+.sapMFocus>.sapMSFF>.sapMSFB.sapMSFBA {
+	background-color: @sapUiButtonActiveBackground;
+	color: @sapUiContentIconColor;
+	border-left: 1px solid @sapUiButtonActiveBorderColor;
+}
+
+.sapMSFR {
+	border-right: 1px solid transparent;
+}
+
+.sapMFocus>.sapMSFF>.sapMSFR:active,
+.sapMSFR:active,
+.sapMSFB.sapMSFR:hover {
+	border-right: 1px solid @sapUiButtonActiveBorderColor;
+	border-left: 1px solid @sapUiButtonActiveBorderColor;
+	background-color: @sapUiButtonActiveBackground;
+}
+
+/* active state colors */
+.sapMSFI:focus {
+	color: @sapUiFieldTextColor;
+}
+
+/*grouping is not allowed here*/
+.sapMSFI::-webkit-input-placeholder {
+	font-style:	   normal;
+}
+
+.sapMSFI:-ms-input-placeholder {
+	font-style:	   normal;
+}
+
+.sapMSFI::-moz-placeholder {
+	font-style:	   normal;
+}
+
+/* custom placeholder if not natively supported (IE9) */// TODO remove after 1.62 version
+.sapMSF>.sapMSFF>.sapMSFPlaceholder {
+	font-style: normal;
+}

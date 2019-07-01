@@ -1,0 +1,26 @@
+/* ================================= */
+/* CSS for control sap.m/Panel       */
+/* Quartz High Contrast White theme  */
+/* ================================= */
+
+.sapMPanel {
+	border: 1px solid @sapUiGroupContentBorderColor;
+}
+
+.sapMPanelBGSolid,
+.sapMPanelBGTranslucent,
+.sapMPanelBGTransparent {
+	background-color: @sapUiGroupContentBackground;
+}
+
+.sapMPanelWrappingDivTb {
+	// border is 2px in this case because
+	// there is 1px border around the whole Panel
+	border-bottom: 1px solid @sapUiGroupTitleBorderColor;
+}
+
+.sapMPanelExpandableIcon {
+	&:focus::after {
+		border-width: 2px;
+	}
+}

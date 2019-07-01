@@ -1,0 +1,118 @@
+/* =================================== */
+/* CSS for control sap.m/ObjectStatus  */
+/* Quartz High Contrast White theme    */
+/* =================================== */
+
+/* HCB theme specific styles */
+.sapMLIBSelected, .sapMLIB:hover,
+.sapUiTableRowSel, .sapUiTableRowHvr {
+	.sapMObjStatusNone .sapMObjStatusText,
+	.sapMObjStatusNone .sapMObjStatusIcon,
+	.sapMObjStatusError .sapMObjStatusText,
+	.sapMObjStatusError .sapMObjStatusIcon,
+	.sapMObjStatusWarning .sapMObjStatusText,
+	.sapMObjStatusWarning .sapMObjStatusIcon,
+	.sapMObjStatusSuccess .sapMObjStatusText,
+	.sapMObjStatusSuccess .sapMObjStatusIcon
+	.sapMObjStatusInformation .sapMObjStatusText,
+	.sapMObjStatusInformation .sapMObjStatusIcon {
+		color: @sapUiListTextColor;
+	}
+}
+
+.sapMObjStatusActive .sapMObjStatusIcon:only-child > .sapUiIcon,
+.sapMObjStatusActive .sapMObjStatusLink .sapMObjStatusText {
+	text-decoration: underline;
+}
+
+.sapMObjStatusActive:hover .sapMObjStatusIcon:only-child > .sapUiIcon,
+.sapMObjStatusActive:hover .sapMObjStatusLink .sapMObjStatusText,
+.sapMObjStatusActive:focus .sapMObjStatusLink .sapMObjStatusText,
+.sapMObjStatusActive:focus .sapMObjStatusIcon:only-child > .sapUiIcon{
+	text-decoration: none;
+}
+
+.sapMListTbl .sapMObjStatusInverted .sapMObjStatusIcon > .sapUiIcon:not(.sapMLIBImgNav):not(.sapMBtnIcon),
+.sapMObjStatusInverted .sapMObjStatusIcon > .sapUiIcon {
+	font-size: 1rem;
+	vertical-align: top;
+}
+
+.sapMObjStatusInverted.sapMObjStatusIndication01,
+.sapMObjStatusInverted.sapMObjStatusIndication02,
+.sapMObjStatusInverted.sapMObjStatusIndication03,
+.sapMObjStatusInverted.sapMObjStatusIndication04,
+.sapMObjStatusInverted.sapMObjStatusIndication05,
+.sapMObjStatusInverted.sapMObjStatusNone,
+.sapMObjStatusInverted.sapMObjStatusError,
+.sapMObjStatusInverted.sapMObjStatusWarning,
+.sapMObjStatusInverted.sapMObjStatusSuccess,
+.sapMObjStatusInverted.sapMObjStatusInformation {
+	.sapMObjStatusText,
+	.sapMObjStatusIcon {
+		background: none;
+		font-size: @sapMFontMediumSize;
+		font-weight: normal;
+		padding: 0;
+	}
+	.sapMObjStatusIcon {
+		padding-right: .5rem;
+	}
+	.sapMObjStatusLink:active,
+	.sapMObjStatusLink:hover {
+		.sapMObjStatusText,
+		.sapMObjStatusIcon {
+			background: none;
+		}
+	}
+}
+
+.sapMObjStatusInverted.sapMObjStatusNone .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusNone .sapMObjStatusIcon {
+	color: @sapUiNeutralText;
+}
+
+.sapMObjStatusInverted.sapMObjStatusError .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusError .sapMObjStatusIcon {
+	color: @sapUiNegativeText;
+}
+
+.sapMObjStatusInverted.sapMObjStatusWarning .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusWarning .sapMObjStatusIcon {
+	color: @sapUiCriticalText;
+}
+
+.sapMObjStatusInverted.sapMObjStatusSuccess .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusSuccess .sapMObjStatusIcon {
+	color: @sapUiPositiveText;
+}
+
+.sapMObjStatusInverted.sapMObjStatusInformation .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusInformation .sapMObjStatusIcon {
+	color: @sapUiInformativeText;
+}
+
+.sapMObjStatusInverted.sapMObjStatusIndication01 .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusIndication01 .sapMObjStatusIcon {
+	color: @sapUiIndication1;
+}
+
+.sapMObjStatusInverted.sapMObjStatusIndication02 .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusIndication02 .sapMObjStatusIcon {
+	color: @sapUiIndication2;
+}
+
+.sapMObjStatusInverted.sapMObjStatusIndication03 .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusIndication03 .sapMObjStatusIcon {
+	color: @sapUiIndication3;
+}
+
+.sapMObjStatusInverted.sapMObjStatusIndication04 .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusIndication04 .sapMObjStatusIcon {
+	color: @sapUiIndication4;
+}
+
+.sapMObjStatusInverted.sapMObjStatusIndication05 .sapMObjStatusText,
+.sapMObjStatusInverted.sapMObjStatusIndication05 .sapMObjStatusIcon {
+	color: @sapUiIndication5;
+}
