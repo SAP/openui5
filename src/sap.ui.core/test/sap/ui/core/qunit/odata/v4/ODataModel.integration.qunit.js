@@ -22,9 +22,9 @@ sap.ui.define([
 	"sap/ui/test/TestUtils",
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
-], function (jQuery, Log, uid, ColumnListItem, CustomListItem, Text, Device, Controller, View, ChangeReason,
-		Filter, FilterOperator, Sorter, OperationMode, AnnotationHelper, ODataListBinding,
-		ODataModel, TestUtils) {
+], function (jQuery, Log, uid, ColumnListItem, CustomListItem, Text, Device, Controller, View,
+		ChangeReason, Filter, FilterOperator, Sorter, OperationMode, AnnotationHelper,
+		ODataListBinding, ODataModel, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, no-sparse-arrays: 0 */
 	"use strict";
@@ -2550,9 +2550,7 @@ sap.ui.define([
 					url : "SalesOrderList('0500000003')"
 				})
 				.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=1&$top=2", {
-					value : [
-						{SalesOrderID : "0500000004"}
-					]
+					value : [{SalesOrderID : "0500000004"}]
 				})
 				.expectChange("id", "0500000004", 1);
 
@@ -2599,9 +2597,7 @@ sap.ui.define([
 					url : "SalesOrderList('0500000002')"
 				})
 				.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=2&$top=4", {
-					value : [
-						{SalesOrderID : "0500000004"}
-					]
+					value : [{SalesOrderID : "0500000004"}]
 				})
 				.expectChange("id", "0500000004", 2);
 
@@ -2709,15 +2705,11 @@ sap.ui.define([
 					value : []
 				})
 				.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=3&$top=3", {
-					value : [
-						{SalesOrderID : "0500000004"}
-					]
+					value : [{SalesOrderID : "0500000004"}]
 				})
 				// this request is sent because the length is not yet known when the change event
 				// for the delete is fired (it wouldn't come with $count)
-				.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=5&$top=1", {
-					value : []
-				})
+				.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=5&$top=1", {value : []})
 				.expectChange("id", null) // from deleting the item '0500000002'
 				.expectChange("id", "0500000004", 2);
 
@@ -2932,9 +2924,7 @@ sap.ui.define([
 					url : "BusinessPartnerList('42')",
 					headers : {"If-Match" : "ETag"},
 					payload : {CompanyName : "Bar"}
-				}, {
-					CompanyName : "Bar"
-				})
+				}, {CompanyName : "Bar"})
 				.expectChange("item", "Bar", 0);
 
 			that.oView.byId("table").getItems()[0].getCells()[0].getBinding("value")
@@ -3002,9 +2992,7 @@ sap.ui.define([
 					url : "EntitiesWithComplexKey(Key1='foo',Key2=42)",
 					headers : {"If-Match" : "ETag"},
 					payload : {Value : "New"}
-				}, {
-					Value : "New"
-				})
+				}, {Value : "New"})
 				.expectChange("item", "New", 0);
 
 			that.oView.byId("table").getItems()[0].getCells()[0].getBinding("value")
@@ -3020,9 +3008,7 @@ sap.ui.define([
 	QUnit.test("createSent and createCompleted", function (assert) {
 		var oBinding,
 			oCreatedContext,
-			oModel = createSalesOrdersModel({
-				autoExpandSelect : true
-			}),
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			fnRejectPost,
 			fnResolvePost,
 			fnResolveCreateCompleted,
@@ -6028,9 +6014,7 @@ sap.ui.define([
 				technical : false,
 				type : "Warning"
 			},
-			oModel = createSalesOrdersModel({
-				autoExpandSelect : true
-			}),
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			that = this;
 
 		oError.error = {
@@ -6308,9 +6292,7 @@ sap.ui.define([
 			that = this;
 
 		oError.errorResponse = {
-			headers : {
-				"Content-Type" : "application/json;odata.metadata=minimal;charset=utf-8"
-			},
+			headers : {"Content-Type" : "application/json;odata.metadata=minimal;charset=utf-8"},
 			responseText : '{"error":{"code":"CODE","message":"Value 4.22 not allowed"}}',
 			status : 400,
 			statusText : "Bad Request"
@@ -6339,17 +6321,13 @@ sap.ui.define([
 					method : "PATCH",
 					url : "SalesOrderList('41')",
 					headers : {"If-Match" : "ETag0"},
-					payload : {
-						GrossAmount : "4.11"
-					}
+					payload : {GrossAmount : "4.11"}
 				}, /*not relevant as $batch uses oError.errorResponse for response*/undefined)
 				.expectRequest({
 					method : "PATCH",
 					url : "SalesOrderList('42')",
 					headers : {"If-Match" : "ETag1"},
-					payload : {
-						GrossAmount : "4.22"
-					}
+					payload : {GrossAmount : "4.22"}
 				}, oError)
 				.expectChange("amount", ["4.11", "4.22"])
 				.expectMessages([{
@@ -6517,9 +6495,8 @@ sap.ui.define([
 					headers : {"If-Match" : "ETag1"},
 					url : "EMPLOYEES('1')/" + sAction,
 					payload : {TeamID : "42"}
-				}, {
-					TEAM_ID : "42"
-				}).expectChange("teamId", "42");
+				}, {TEAM_ID : "42"})
+				.expectChange("teamId", "42");
 
 			return Promise.all([
 				that.oModel.submitBatch("update"),
@@ -6931,17 +6908,13 @@ sap.ui.define([
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES('2')?$select=AGE,ID,Name", {
-				Name : "Jonathan Smith"
-			})
+		this.expectRequest("EMPLOYEES('2')?$select=AGE,ID,Name", {Name : "Jonathan Smith"})
 			.expectChange("name", "Jonathan Smith");
 
 		return this.createView(
 			assert, sView, createTeaBusiModel({autoExpandSelect : true})
 		).then(function () {
-			that.expectRequest("EMPLOYEES('2')?$select=AGE,ID,Name", {
-					Name : "Jonathan Schmidt"
-				})
+			that.expectRequest("EMPLOYEES('2')?$select=AGE,ID,Name", {Name : "Jonathan Schmidt"})
 				.expectChange("name", "Jonathan Schmidt");
 
 			// code under test
@@ -7114,9 +7087,7 @@ sap.ui.define([
 				EMPLOYEE_2_TEAM : {
 					Name : "SAP NetWeaver Gateway Content",
 					Team_Id : "TEAM_03",
-					TEAM_2_MANAGER : {
-						TEAM_ID : "TEAM_03"
-					}
+					TEAM_2_MANAGER : {TEAM_ID : "TEAM_03"}
 				}
 			})
 			.expectChange("name", "SAP NetWeaver Gateway Content")
@@ -7148,12 +7119,8 @@ sap.ui.define([
 		this.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_MANAGER"
 				+ "($select=ID),EMPLOYEE_2_TEAM($select=Name,Team_Id)&$select=AGE,ID", {
 				AGE : 32,
-				EMPLOYEE_2_MANAGER : {
-					ID : "2"
-				},
-				EMPLOYEE_2_TEAM : {
-					Name : "SAP NetWeaver Gateway Content"
-				}
+				EMPLOYEE_2_MANAGER : {ID : "2"},
+				EMPLOYEE_2_TEAM : {Name : "SAP NetWeaver Gateway Content"}
 			})
 			.expectChange("name", "SAP NetWeaver Gateway Content");
 
@@ -7338,9 +7305,7 @@ sap.ui.define([
 					headers : {"If-Match" : "ETag"},
 					url : sUrl,
 					payload : {TeamID : "42"}
-				}, {
-					TEAM_ID : "42"
-				})
+				}, {TEAM_ID : "42"})
 				.expectChange("teamId", "42");
 
 			return Promise.all([
@@ -7612,9 +7577,7 @@ sap.ui.define([
 					url : "TEAMS('42')/TEAM_2_EMPLOYEES('2')/"
 						+ "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
 					payload : {TeamID : "TEAM_02"}
-				}, {
-					ID : "2"
-				});
+				}, {ID : "2"});
 			oAction.setParameter("TeamID", "TEAM_02");
 
 			return Promise.all([
@@ -7668,9 +7631,7 @@ sap.ui.define([
 					url : "EMPLOYEES('0')/com.sap.gateway.default.iwbep.tea_busi.v0001"
 						+ ".AcChangeTeamOfEmployee",
 					payload : {TeamID : "42"}
-				}, {
-					TEAM_ID : "42"
-				})
+				}, {TEAM_ID : "42"})
 				.expectRequest("EMPLOYEES?$filter=(TEAM_ID eq '77') and ID eq '0'"
 					+ "&$select=ID,Name,TEAM_ID", {value : []})
 				.expectChange("text", ["Jonathan Smith", "Peter Burke"]);
@@ -7719,9 +7680,7 @@ sap.ui.define([
 					url : "EMPLOYEES('1')/com.sap.gateway.default.iwbep.tea_busi.v0001"
 						+ ".__FAKE__AcOverload",
 					payload : {Message : "The quick brown fox jumps over the lazy dog"}
-				}, {
-					Is_Manager : true
-				})
+				}, {Is_Manager : true})
 				.expectChange("isManager", "Yes");
 
 			return Promise.all([
@@ -7748,9 +7707,7 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 //TODO the query options for the function import are not enhanced
 //			that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=ID,Name", {
-			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {
-					Name : "Jonathan Smith"
-				})
+			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {Name : "Jonathan Smith"})
 				.expectChange("name", "Jonathan Smith");
 
 			return Promise.all([
@@ -7774,9 +7731,7 @@ sap.ui.define([
 		type : \'sap.ui.model.odata.type.String\'}" />\
 </FlexBox>';
 
-		this.expectRequest("EMPLOYEES('2')", {
-				"@odata.etag" : "ETagValue"
-			})
+		this.expectRequest("EMPLOYEES('2')", {"@odata.etag" : "ETagValue"})
 			.expectChange("ETag", "ETagValue");
 
 		return this.createView(assert, sView, oModel);
@@ -7828,9 +7783,7 @@ sap.ui.define([
 			.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_MANAGER($select=ID),"
 				+ "EMPLOYEE_2_TEAM($expand=TEAM_2_EMPLOYEES($orderby=AGE))&$select=AGE,ID", {
 				AGE : 32,
-				EMPLOYEE_2_MANAGER : {
-					ID : "2"
-				},
+				EMPLOYEE_2_MANAGER : {ID : "2"},
 				EMPLOYEE_2_TEAM : {
 					TEAM_2_EMPLOYEES : [
 						{AGE : 29},
@@ -7995,9 +7948,7 @@ sap.ui.define([
 </Table>';
 
 		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100", {
-				value : [
-					{Team_Id : "TEAM_01"}
-				]
+				value : [{Team_Id : "TEAM_01"}]
 			})
 			.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$apply=filter(AGE lt 42)"
 				+ "&$select=ID,Name&$skip=0&$top=100", {
@@ -8029,9 +7980,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100", {
-				value : [{
-					Team_Id : "TEAM_01"
-				}]
+				value : [{Team_Id : "TEAM_01"}]
 			})
 			.expectChange("text0", ["TEAM_01"])
 			.expectChange("text1"); // expect a later change
@@ -8065,9 +8014,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100", {
-				value : [{
-					Team_Id : "TEAM_01"
-				}]
+				value : [{Team_Id : "TEAM_01"}]
 			})
 			.expectChange("text0", ["TEAM_01"])
 			.expectChange("text1"); // expect a later change
@@ -8108,13 +8055,9 @@ sap.ui.define([
 
 					sAge = oContext.getProperty("AGE");
 					if (sAge > 30) {
-						oListItem = new Text(sID, {
-							text : "{AGE}"
-						});
+						oListItem = new Text(sID, {text : "{AGE}"});
 					} else {
-						oListItem = new Text(sID, {
-							text : "{ID}"
-						});
+						oListItem = new Text(sID, {text : "{ID}"});
 					}
 					that.setFormatter(assert, oListItem, "text", true);
 
@@ -8206,9 +8149,7 @@ sap.ui.define([
 				that.expectRequest({
 						method : "GET",
 						url : sUrlPrefix + "$skip=0&$top=100"
-					}, {
-						value : [mFrederic, mJonathan]
-					})
+					}, {value : [mFrederic, mJonathan]})
 					.expectChange("text", ["Frederic Fall", "Jonathan Smith"]);
 
 				return Promise.all([
@@ -8221,14 +8162,10 @@ sap.ui.define([
 				that.expectRequest({
 						method : "GET",
 						url : sUrlPrefix + "$orderby=Name desc&$skip=0&$top=100"
-					}, {
-						value : [mJonathan, mFrederic]
-					})
+					}, {value : [mJonathan, mFrederic]})
 					.expectChange("text", ["Jonathan Smith", "Frederic Fall"]);
 
-				oListBinding.changeParameters({
-					$orderby : "Name desc"
-				});
+				oListBinding.changeParameters({$orderby : "Name desc"});
 
 				return Promise.all([
 					oModel.submitBatch("group"),
@@ -8582,9 +8519,7 @@ sap.ui.define([
 			"Equipments('1')/EQUIPMENT_2_PRODUCT?$select=ID,ProductPicture/Picture", {
 				"@odata.context" : "../$metadata#Equipments('1')/EQUIPMENT_2_PRODUCT",
 				ID : "42",
-				ProductPicture : {
-					"Picture@odata.mediaReadLink" : "ProductPicture('42')"
-				}
+				ProductPicture : {"Picture@odata.mediaReadLink" : "ProductPicture('42')"}
 			})
 			.expectChange("url",
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/ProductPicture('42')");
@@ -8706,25 +8641,17 @@ sap.ui.define([
 		this.expectRequest("SalesOrderSet('0500000001')?$expand=ToLineItems"
 				+ "&$select=ToLineItems/ItemPosition,SalesOrderID", {
 				d : {
-					__metadata : {
-						type : "GWSAMPLE_BASIC.SalesOrder"
-					},
+					__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 					SalesOrderID : "0500000001",
 					ToLineItems : {
 						results : [{
-							__metadata : {
-								type : "GWSAMPLE_BASIC.SalesOrderLineItem"
-							},
+							__metadata : {type : "GWSAMPLE_BASIC.SalesOrderLineItem"},
 							ItemPosition : "0000000010"
 						}, {
-							__metadata : {
-								type : "GWSAMPLE_BASIC.SalesOrderLineItem"
-							},
+							__metadata : {type : "GWSAMPLE_BASIC.SalesOrderLineItem"},
 							ItemPosition : "0000000020"
 						}, {
-							__metadata : {
-								type : "GWSAMPLE_BASIC.SalesOrderLineItem"
-							},
+							__metadata : {type : "GWSAMPLE_BASIC.SalesOrderLineItem"},
 							ItemPosition : "0000000030"
 						}]
 					}
@@ -8765,19 +8692,13 @@ sap.ui.define([
 				+ "&$skip=0&$top=100", {
 				d : {
 					results : [{
-						__metadata : {
-							type : "GWSAMPLE_BASIC.SalesOrder"
-						},
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 						SalesOrderID : "0500000001"
 					}, {
-						__metadata : {
-							type : "GWSAMPLE_BASIC.SalesOrder"
-						},
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 						SalesOrderID : "0500000002"
 					}, {
-						__metadata : {
-							type : "GWSAMPLE_BASIC.SalesOrder"
-						},
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 						SalesOrderID : "0500000003"
 					}]
 				}
@@ -8827,19 +8748,13 @@ sap.ui.define([
 					+ "&$skip=0&$top=100", {
 					d : {
 						results : [{
-							__metadata : {
-								type : "GWSAMPLE_BASIC.SalesOrder"
-							},
+							__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 							SalesOrderID : "0500000001"
 						}, {
-							__metadata : {
-								type : "GWSAMPLE_BASIC.SalesOrder"
-							},
+							__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 							SalesOrderID : "0500000002"
 						}, {
-							__metadata : {
-								type : "GWSAMPLE_BASIC.SalesOrder"
-							},
+							__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 							SalesOrderID : "0500000003"
 						}]
 					}
@@ -8866,15 +8781,11 @@ sap.ui.define([
 		this.expectRequest({
 				url : "EMPLOYEES('2')/Name",
 				method : "GET"
-			}, {
-				value : "Frederic Fall"
-			})
+			}, {value : "Frederic Fall"})
 			.expectRequest({
 				url : "EMPLOYEES('3')/Name",
 				method : "GET"
-			}, {
-				value : "Jonathan Smith"
-			})
+			}, {value : "Jonathan Smith"})
 			.expectChange("text1", "Frederic Fall")
 			.expectChange("text2", "Jonathan Smith");
 
@@ -8905,16 +8816,12 @@ sap.ui.define([
 				url : "EMPLOYEES('2')/Name",
 				method : "GET",
 				batchNo : 1
-			}, {
-				value : "Frederic Fall"
-			})
+			}, {value : "Frederic Fall"})
 			.expectRequest({
 				url : "EMPLOYEES('3')/Name",
 				method : "GET",
 				batchNo : 2
-			}, {
-				value : "Jonathan Smith"
-			})
+			}, {value : "Jonathan Smith"})
 			.expectChange("text1", "Frederic Fall")
 			.expectChange("text2", "Jonathan Smith");
 
@@ -9133,9 +9040,7 @@ sap.ui.define([
 
 		return this.createView(assert, sView).then(function () {
 			that.expectRequest("TEAMS('42')?$expand=TEAM_2_EMPLOYEES($filter=ID eq '2')", {
-					TEAM_2_EMPLOYEES : [{
-						ID : "2"
-					}]
+					TEAM_2_EMPLOYEES : [{ID : "2"}]
 				})
 				.expectChange("id", ["2"]);
 
@@ -9194,9 +9099,7 @@ sap.ui.define([
 
 			oFunctionBinding.refresh(); // MUST NOT trigger a request!
 
-			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {
-					Name : "Jonathan Smith"
-				})
+			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {Name : "Jonathan Smith"})
 				.expectChange("name", "Jonathan Smith");
 
 			return Promise.all([
@@ -9204,9 +9107,7 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {
-					Name : "Frederic Fall"
-				})
+			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {Name : "Frederic Fall"})
 				.expectChange("name", "Frederic Fall");
 			oFunctionBinding.refresh();
 
@@ -9216,9 +9117,7 @@ sap.ui.define([
 
 			oFunctionBinding.refresh(); // MUST NOT trigger a request!
 
-			that.expectRequest("GetEmployeeByID(EmployeeID='2')", {
-					Name : "Peter Burke"
-				})
+			that.expectRequest("GetEmployeeByID(EmployeeID='2')", {Name : "Peter Burke"})
 				.expectChange("name", "Peter Burke");
 
 			return Promise.all([
@@ -9226,9 +9125,7 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectRequest("GetEmployeeByID(EmployeeID='2')", {
-					Name : "Jonathan Smith"
-				})
+			that.expectRequest("GetEmployeeByID(EmployeeID='2')", {Name : "Jonathan Smith"})
 				.expectChange("name", "Jonathan Smith");
 			oFunctionBinding.refresh();
 
@@ -9314,18 +9211,14 @@ sap.ui.define([
 
 		this.expectRequest(sUrl, {
 				Team_Id : "42",
-				TEAM_2_MANAGER : {
-					ID : "1"
-				}
+				TEAM_2_MANAGER : {ID : "1"}
 			})
 			.expectChange("id", "1");
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest(sUrl, {
 					Team_Id : "42",
-					TEAM_2_MANAGER : {
-						ID : "2"
-					}
+					TEAM_2_MANAGER : {ID : "2"}
 				})
 				.expectChange("id", "2");
 
@@ -9386,9 +9279,7 @@ sap.ui.define([
 			var oText = new Text("id", {text : "{Team_Id}"});
 
 			that.setFormatter(assert, oText, "id", true);
-			that.expectRequest("TEAMS", {
-					value : aValues
-				})
+			that.expectRequest("TEAMS", {value : aValues})
 				.expectChange("id", aIDs);
 
 			that.oView.byId("list").bindItems({
@@ -9578,9 +9469,7 @@ sap.ui.define([
 		}).then(function () {
 			that.expectRequest({
 					method : "PATCH",
-					payload : {
-						Name : "Frederic Spring"
-					},
+					payload : {Name : "Frederic Spring"},
 					url : "EMPLOYEES('2')"
 				}, {
 					"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {
@@ -9603,9 +9492,7 @@ sap.ui.define([
 
 			that.expectRequest({
 					method : "POST",
-					payload : {
-						TeamID : "TEAM_02"
-					},
+					payload : {TeamID : "TEAM_02"},
 					url : "EMPLOYEES('2')/" + sActionName
 				}, {
 					"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {
@@ -9664,9 +9551,7 @@ sap.ui.define([
 		}).then(function () {
 			that.expectRequest({
 					method : "PATCH",
-					payload : {
-						Name : "Frederic Spring"
-					},
+					payload : {Name : "Frederic Spring"},
 					url : "EMPLOYEES('2')"
 				}, {
 					"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {}
@@ -9687,9 +9572,7 @@ sap.ui.define([
 
 			that.expectRequest({
 					method : "POST",
-					payload : {
-						TeamID : "TEAM_02"
-					},
+					payload : {TeamID : "TEAM_02"},
 					url : "EMPLOYEES('2')/" + sActionName
 				}, {
 					ID : "2",
@@ -9740,9 +9623,7 @@ sap.ui.define([
 					method : "POST",
 					payload : {},
 					url : "EMPLOYEES('2')/" + sActionName
-				}, {
-					ID : "2"
-				})
+				}, {ID : "2"})
 				.expectChange("enabled", 0)
 				.expectChange("title", null);
 
@@ -9792,9 +9673,7 @@ sap.ui.define([
 		this.expectRequest("FlightCollection?$select=carrid,connid,fldate&$skip=0&$top=100", {
 				d : {
 					results : [{
-						__metadata : {
-							type : "RMTSAMPLEFLIGHT.Flight"
-						},
+						__metadata : {type : "RMTSAMPLEFLIGHT.Flight"},
 						carrid : "AA",
 						connid : "0017",
 						fldate : "/Date(1502323200000)/"
@@ -9811,16 +9690,12 @@ sap.ui.define([
 			that.expectRequest("FlightCollection(carrid='AA',connid='0017',fldate=datetime"
 					+ "'2017-08-10T00%3A00%3A00')?$select=carrid,connid,fldate,flightDetails", {
 					d : {
-						__metadata : {
-							type : "RMTSAMPLEFLIGHT.Flight"
-						},
+						__metadata : {type : "RMTSAMPLEFLIGHT.Flight"},
 						carrid : "AA",
 						connid : "0017",
 						fldate : "/Date(1502323200000)/",
 						flightDetails : {
-							__metadata : {
-								type : "RMTSAMPLEFLIGHT.FlightDetails"
-							},
+							__metadata : {type : "RMTSAMPLEFLIGHT.FlightDetails"},
 							cityFrom : "New York",
 							cityTo : "Los Angeles"
 						}
@@ -9851,23 +9726,17 @@ sap.ui.define([
 					+ "&cityfrom='new york'&cityto='SAN FRANCISCO'", {
 					d : {
 						results : [{
-							__metadata : {
-								type : "RMTSAMPLEFLIGHT.Flight"
-							},
+							__metadata : {type : "RMTSAMPLEFLIGHT.Flight"},
 							carrid : "AA",
 							connid : "0017",
 							fldate : "/Date(1502323200000)/"
 						}, {
-							__metadata : {
-								type : "RMTSAMPLEFLIGHT.Flight"
-							},
+							__metadata : {type : "RMTSAMPLEFLIGHT.Flight"},
 							carrid : "DL",
 							connid : "1699",
 							fldate : "/Date(1502323200000)/"
 						}, {
-							__metadata : {
-								type : "RMTSAMPLEFLIGHT.Flight"
-							},
+							__metadata : {type : "RMTSAMPLEFLIGHT.Flight"},
 							carrid : "UA",
 							connid : "3517",
 							fldate : "/Date(1502323200000)/"
@@ -9913,9 +9782,7 @@ sap.ui.define([
 
 		this.expectRequest("NotificationCollection('foo')", {
 				d : {
-					__metadata : {
-						type : "RMTSAMPLEFLIGHT.Notification"
-					},
+					__metadata : {type : "RMTSAMPLEFLIGHT.Notification"},
 					ID : "foo",
 					updated : "/Date(1502323200000)/"
 				}
@@ -10001,15 +9868,11 @@ sap.ui.define([
 							arrivalTime : "PT14H00M00S",
 							departureTime : "PT11H00M00S"
 						}, {
-							__metadata : {
-								type : "RMTSAMPLEFLIGHT.FlightDetails"
-							},
+							__metadata : {type : "RMTSAMPLEFLIGHT.FlightDetails"},
 							arrivalTime : "PT14H00M01S",
 							departureTime : "PT11H00M01S"
 						}, {
-							__metadata : {
-								type : "RMTSAMPLEFLIGHT.FlightDetails"
-							},
+							__metadata : {type : "RMTSAMPLEFLIGHT.FlightDetails"},
 							arrivalTime : "PT14H00M02S",
 							departureTime : "PT11H00M02S"
 						}]
@@ -10055,9 +9918,7 @@ sap.ui.define([
 		this.expectRequest("FlightCollection(carrid='AA',connid='0017'"
 				+ ",fldate=datetime'2017-08-10T00%3A00%3A00')", {
 				d : {
-					__metadata : {
-						type : "RMTSAMPLEFLIGHT.Flight"
-					},
+					__metadata : {type : "RMTSAMPLEFLIGHT.Flight"},
 					carrid : "AA",
 					connid : "0017",
 					fldate : "/Date(1502323200000)/"
@@ -10072,9 +9933,7 @@ sap.ui.define([
 					+ "&fldate=datetime'2017-08-10T00:00:00'", {
 					d : {
 						GetFlightDetails : {
-							__metadata : {
-								type : "RMTSAMPLEFLIGHT.FlightDetails"
-							},
+							__metadata : {type : "RMTSAMPLEFLIGHT.FlightDetails"},
 							countryFrom : "US",
 							cityFrom : "new york",
 							airportFrom : "JFK",
@@ -10118,9 +9977,7 @@ sap.ui.define([
 						+ "&fldate=datetime'2017-08-10T00:00:00'&flightTime=42"
 				}, {
 					d : {
-						__metadata : {
-							type : "RMTSAMPLEFLIGHT.Flight"
-						},
+						__metadata : {type : "RMTSAMPLEFLIGHT.Flight"},
 						carrid : "AA",
 						connid : "0017",
 						fldate : "/Date(1502323200000)/",
@@ -10169,9 +10026,7 @@ sap.ui.define([
 
 		this.expectRequest("SalesOrderSet('0815')", {
 				d : {
-					__metadata : {
-						type : "GWSAMPLE_BASIC.SalesOrder"
-					},
+					__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 					SalesOrderID : "0815"
 				}
 			})
@@ -10187,9 +10042,7 @@ sap.ui.define([
 					url : "SalesOrder_Confirm?SalesOrderID='0815'"
 				}, {
 					d : {
-						__metadata : {
-							type : "GWSAMPLE_BASIC.SalesOrder"
-						},
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 						SalesOrderID : "08/15",
 						CreatedAt : "/Date(1502323200000)/"
 					}
@@ -10224,9 +10077,7 @@ sap.ui.define([
 			//TODO What about the ETag which might be got from this fresh request? Really use it?
 			that.expectRequest("SalesOrderLineItemSet(\'0815\',\'10\')/ToHeader", {
 					d : {
-						__metadata : {
-							type : "GWSAMPLE_BASIC.SalesOrder"
-						},
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 						SalesOrderID : "0815"
 					}
 				})
@@ -10235,9 +10086,7 @@ sap.ui.define([
 					url : "SalesOrder_Confirm?SalesOrderID='0815'"
 				}, {
 					d : {
-						__metadata : {
-							type : "GWSAMPLE_BASIC.SalesOrder"
-						},
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
 						SalesOrderID : "08/15"
 					}
 				});
@@ -10270,9 +10119,7 @@ sap.ui.define([
 
 		this.expectRequest("TravelAgencies('00000061')", {
 				d : {
-					__metadata : {
-						type : "RMTSAMPLEFLIGHT.Travelagency"
-					},
+					__metadata : {type : "RMTSAMPLEFLIGHT.Travelagency"},
 					agencynum : "00000061",
 					NAME : "Fly High",
 					TELEPHONE : "+49 2102 69555"
@@ -10291,9 +10138,7 @@ sap.ui.define([
 						+ "&telephone='%2B49 (0)2102 69555'"
 				}, {
 					d : {
-						__metadata : {
-							type : "RMTSAMPLEFLIGHT.Travelagency"
-						},
+						__metadata : {type : "RMTSAMPLEFLIGHT.Travelagency"},
 						agencynum : "00000061",
 						NAME : "Fly High",
 						TELEPHONE : "+49 (0)2102 69555"
@@ -10901,18 +10746,14 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("EMPLOYEES('2')", {
-				SALARY : {
-					YEARLY_BONUS_AMOUNT : 100
-				}
+				SALARY : {YEARLY_BONUS_AMOUNT : 100}
 			})
 			.expectChange("salary", "100")
 			.expectChange("forecastSalary", null);
 
 		return this.createView(assert, sView).then(function () {
 			that.expectRequest("EMPLOYEES('2')", {
-					SALARY : {
-						YEARLY_BONUS_AMOUNT : 100
-					}
+					SALARY : {YEARLY_BONUS_AMOUNT : 100}
 				});
 
 			oEmployeeBinding = that.oView.byId("employee").getObjectBinding();
@@ -10922,9 +10763,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("EMPLOYEES('2')/" + sFunctionName + "()", {
-					SALARY : {
-						YEARLY_BONUS_AMOUNT : 142
-					}
+					SALARY : {YEARLY_BONUS_AMOUNT : 142}
 				})
 				.expectChange("forecastSalary", "142");
 
@@ -10934,14 +10773,10 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			that.expectRequest("EMPLOYEES('2')", {
-					SALARY : {
-						YEARLY_BONUS_AMOUNT : 110
-					}
+					SALARY : {YEARLY_BONUS_AMOUNT : 110}
 				})
 				.expectRequest("EMPLOYEES('2')/" + sFunctionName + "()", {
-					SALARY : {
-						YEARLY_BONUS_AMOUNT : 150
-					}
+					SALARY : {YEARLY_BONUS_AMOUNT : 150}
 				})
 				.expectChange("salary", "110")
 				.expectChange("forecastSalary", "150");
@@ -11505,9 +11340,7 @@ sap.ui.define([
 					method : "POST",
 					url : sAction,
 					payload : {}
-				}, {
-					SalesOrderID : "0500000000"
-				});
+				}, {SalesOrderID : "0500000000"});
 
 			return Promise.all([
 				that.oView.byId("form").getElementBinding().execute("update"),
@@ -11637,9 +11470,7 @@ sap.ui.define([
 		}).then(function () {
 			that.expectRequest("Equipments?"
 					+ "$filter=EQUIPMENT_2_PRODUCT/ID eq 42&$skip=0&$top=100", {
-					value : [{
-						Name : "Bar"
-					}]
+					value : [{Name : "Bar"}]
 				})
 				.expectChange("name", ["Bar"]);
 
@@ -11655,9 +11486,7 @@ sap.ui.define([
 					{$$groupId : 'api'});
 
 			that.expectRequest("Equipments?$skip=0&$top=100", {
-					value : [{
-						Name : "Foo"
-					}]
+					value : [{Name : "Foo"}]
 				})
 				// The field is reset first, because the filter request is delayed until the next
 				// prerendering task
@@ -12389,9 +12218,7 @@ sap.ui.define([
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("MANAGERS('1')", {
-				ID : "1"
-			})
+		this.expectRequest("MANAGERS('1')", {ID : "1"})
 			.expectChange("predicate", undefined) // binding itself is "code under test"
 			.expectChange("id", "1");
 		this.oLogMock.expects("error").withExactArgs(
@@ -12852,9 +12679,7 @@ sap.ui.define([
 			return this.createView(assert, sView, oModel).then(function () {
 				that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?"
 						+ "$select=Address/City,ArtistID,IsActiveEntity,Name", {
-						Address : {
-							City : "Liverpool"
-						},
+						Address : {City : "Liverpool"},
 						ArtistID : "42",
 						IsActiveEntity : true,
 						Name : "Hour Frustrated"
@@ -12881,9 +12706,7 @@ sap.ui.define([
 						+ "?$select=Address/City,ArtistID,IsActiveEntity,Messages,Name",
 					payload : oFixture.method === "GET" ? undefined : {}
 				}, {
-					Address : {
-						City : "Liverpool"
-					},
+					Address : {City : "Liverpool"},
 					ArtistID : "42",
 					IsActiveEntity : false,
 					Name : "Hour Frustrated",
@@ -12923,9 +12746,7 @@ sap.ui.define([
 						url : "Artists(ArtistID='42',IsActiveEntity=false)",
 						headers : {},
 						payload : {Name : "foo"}
-					}, {
-						Name : "foo"
-					})
+					}, {Name : "foo"})
 					.expectChange("name", "foo");
 
 				// code under test: editing values is possible on the returned entity
@@ -12937,9 +12758,7 @@ sap.ui.define([
 
 				that.expectRequest("Artists(ArtistID='42',IsActiveEntity=false)"
 						+ "?$select=Address/City,Name", {
-						Address : {
-							City : "London"
-						},
+						Address : {City : "London"},
 						Name : "bar" // unrealistic side effect
 					})
 					.expectChange("city", "London")
@@ -13049,9 +12868,7 @@ sap.ui.define([
 				//   active entity. -> CPOUI5UISERVICESV3-1746
 				oEntityContext = oObjectPage.getObjectBinding().getContext(),
 				oAction = that.oModel.bindContext("special.cases." + sAction + "(...)",
-					oEntityContext, {
-						$$inheritExpandSelect : true
-					});
+					oEntityContext, {$$inheritExpandSelect : true});
 
 			that.expectRequest({
 					method : "POST",
@@ -13389,9 +13206,7 @@ sap.ui.define([
 			that.expectRequest("EMPLOYEES('42')?$select=ID&$expand=EMPLOYEE_2_MANAGER($select=ID)",
 				{
 					ID : "42",
-					EMPLOYEE_2_MANAGER : {
-						ID : "1"
-					}
+					EMPLOYEE_2_MANAGER : {ID : "1"}
 				})
 				.expectRequest("EMPLOYEES('42')/EMPLOYEE_2_EQUIPMENTS?$select=Category,ID"
 					+ "&$skip=0&$top=100", {
@@ -13419,9 +13234,7 @@ sap.ui.define([
 				.expectRequest("EMPLOYEES('43')?$select=ID&$expand=EMPLOYEE_2_MANAGER($select=ID)",
 				{
 					ID : "43",
-					EMPLOYEE_2_MANAGER : {
-						ID : "2"
-					}
+					EMPLOYEE_2_MANAGER : {ID : "2"}
 				})
 				.expectChange("managerId", "2")
 				.expectChange("equipmentId", ["97", "96"]);
@@ -13557,9 +13370,7 @@ sap.ui.define([
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=false)"
 				+ "?$select=DraftAdministrativeData"
 				+ "&$expand=DraftAdministrativeData($select=InProcessByUser)", {
-					DraftAdministrativeData : {
-						InProcessByUser : "bar"
-					}
+					DraftAdministrativeData : {InProcessByUser : "bar"}
 				})
 				.expectChange("inProcessByUser", "bar");
 				// no change in messages
@@ -13801,14 +13612,10 @@ sap.ui.define([
 					method : "POST",
 					url : "TEAMS",
 					payload : {Team_Id : "new"}
-				}, {
-					Team_Id : "newer"
-				})
+				}, {Team_Id : "newer"})
 				.expectChange("Team_Id", "new", 0)
 				.expectChange("Team_Id", ["newer", "42"])
-				.expectRequest("TEAMS('newer')?$select=Team_Id", {
-					Team_Id : "newer"
-				});
+				.expectRequest("TEAMS('newer')?$select=Team_Id", {Team_Id : "newer"});
 
 			oCreatedContext =  that.oView.byId("table").getBinding("items").create({
 				Team_Id : "new"
@@ -13858,9 +13665,7 @@ sap.ui.define([
 </FlexBox>';
 
 		this.expectRequest("TEAMS('42')?$expand=TEAM_2_EMPLOYEES($select=ID)", {
-				TEAM_2_EMPLOYEES : [
-					{ID : "2"}
-				]
+				TEAM_2_EMPLOYEES : [{ID : "2"}]
 			})
 			.expectChange("id", ["2"]);
 
@@ -13870,12 +13675,8 @@ sap.ui.define([
 					method : "POST",
 					url : "TEAMS('42')/TEAM_2_EMPLOYEES",
 					payload : {ID : null}
-				}, {
-					ID : "7"
-				})
-				.expectRequest("TEAMS('42')/TEAM_2_EMPLOYEES('7')?$select=ID", {
-					ID : "7"
-				})
+				}, {ID : "7"})
+				.expectRequest("TEAMS('42')/TEAM_2_EMPLOYEES('7')?$select=ID", {ID : "7"})
 				.expectChange("id", "", 0) // from setValue(null)
 				.expectChange("id", ["7", "2"]);
 			oTeam2EmployeesBinding = that.oView.byId("table").getBinding("items");
@@ -13894,9 +13695,7 @@ sap.ui.define([
 					url : "TEAMS('42')/TEAM_2_EMPLOYEES('7')/"
 						+ "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
 					payload : {TeamID : "TEAM_02"}
-				}, {
-					ID : "7"
-				});
+				}, {ID : "7"});
 			oAction.setParameter("TeamID", "TEAM_02");
 
 			return Promise.all([
@@ -13945,14 +13744,10 @@ sap.ui.define([
 					method : "POST",
 					url : "SalesOrderList",
 					payload : {SalesOrderID : "newID"}
-				}, {
-					SalesOrderID : "43"
-				})
+				}, {SalesOrderID : "43"})
 				.expectChange("SalesOrderID", "newID", 0) // from create()
 				.expectChange("SalesOrderID", ["43", "42"])
-				.expectRequest("SalesOrderList('43')?$select=SalesOrderID", {
-					SalesOrderID : "43"
-				});
+				.expectRequest("SalesOrderList('43')?$select=SalesOrderID", {SalesOrderID : "43"});
 
 			oCreatedSOContext = that.oView.byId("SalesOrders").getBinding("items").create({
 				SalesOrderID : "newID"
@@ -14007,9 +13802,7 @@ sap.ui.define([
 					url : "SalesOrderList('43')/com.sap.gateway.default.zui5_epm_sample"
 						+ ".v0002.SalesOrder_Confirm",
 					payload : {}
-				}, {
-					SalesOrderID : "43"
-				});
+				}, {SalesOrderID : "43"});
 
 			return Promise.all([
 				// code under test
@@ -14027,9 +13820,7 @@ sap.ui.define([
 					url : "SalesOrderList('43')/SO_2_SOITEM(SalesOrderID='43'"
 						+ ",ItemPosition='10')/com.sap.gateway.default.zui5_epm_"
 						+ "sample.v0002.SalesOrderLineItem_CheckAvailability()"
-				}, {
-					value : "5.0"
-				});
+				}, {value : "5.0"});
 
 			return Promise.all([
 				// code under test
@@ -15576,9 +15367,7 @@ sap.ui.define([
 						+ "?$select=DraftAdministrativeData"
 						+ "&$expand=DraftAdministrativeData($select=InProcessByUser)"
 				}, {
-					DraftAdministrativeData : {
-						InProcessByUser : "bar"
-					}
+					DraftAdministrativeData : {InProcessByUser : "bar"}
 				})
 				.expectChange("inProcessByUser", "bar")
 				.expectChange("inProcessByUser2", "bar");
@@ -16205,9 +15994,7 @@ sap.ui.define([
 				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/BestFriend"
 					+ "/_Publication('42-0')?$select=Price"
 					+ "&$expand=DraftAdministrativeData($select=InProcessByUser)", {
-					DraftAdministrativeData : {
-						InProcessByUser : "JANEDOE"
-					},
+					DraftAdministrativeData : {InProcessByUser : "JANEDOE"},
 					Price : "7.00"
 				})
 				.expectChange("priceDetail", "7.00")
@@ -16826,9 +16613,7 @@ sap.ui.define([
 						method : "PATCH",
 						url : "EMPLOYEES('3')",
 						headers : {"If-Match" : "ETag0"},
-						payload : {
-							ROOM_ID : "42"
-						}
+						payload : {ROOM_ID : "42"}
 					}, new Error())
 					.expectMessages([{
 						code : undefined,
@@ -16947,9 +16732,7 @@ sap.ui.define([
 						method : "PATCH",
 						url : "EMPLOYEES('3')",
 						headers : {"If-Match" : "ETag1"},
-						payload : {
-							STATUS : "Busy"
-						}
+						payload : {STATUS : "Busy"}
 					}, {/* don't care */});
 
 				oStatusBinding.setValue("Busy"); // a different field is changed
@@ -17093,9 +16876,7 @@ sap.ui.define([
 						method : "POST",
 						url : "TEAMS",
 						payload : {}
-					}, {
-						Team_Id : "23"
-					});
+					}, {Team_Id : "23"});
 
 				oTeamCreatedContext = oModel.bindList("/TEAMS").create({
 						// private annotation, not to be used unless explicitly adviced to do so
@@ -17227,9 +17008,7 @@ sap.ui.define([
 					BusinessPartnerID : "23"
 				})
 				.expectRequest(sEntityPath + "?$select=Address/Street,BusinessPartnerID", {
-					Address : {
-						Street : "Bakerstreet"
-					},
+					Address : {Street : "Bakerstreet"},
 					BusinessPartnerID : "23"
 				})
 				.expectRequest(sEntityPath + "/BP_2_PRODUCT?$select=Name,ProductID&$skip=0&"
@@ -17492,9 +17271,7 @@ sap.ui.define([
 		}
 
 		this.expectRequest("BusinessPartnerList?$select=BusinessPartnerID&$skip=0&$top=100", {
-				value : [{
-					BusinessPartnerID : "0500000000"
-				}]
+				value : [{BusinessPartnerID : "0500000000"}]
 			})
 			.expectChange("billingStatus")
 			.expectChange("businessPartnerID", ["0500000000"])
@@ -18117,9 +17894,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("EMPLOYEES?$skip=0&$top=100", new Promise(function (resolve, reject) {
-				fnRespond = resolve.bind(null, {
-					value : []
-				});
+				fnRespond = resolve.bind(null, {value : []});
 			}));
 
 		return this.createView(assert, sView).then(function () {
@@ -18283,9 +18058,7 @@ sap.ui.define([
 						+ "&$skip=2&$top=1"
 				}, {
 					"@odata.count" : "3",
-					value : [{
-						BusinessPartnerID : "4713"
-					}]
+					value : [{BusinessPartnerID : "4713"}]
 				});
 			// show more items before POST is even triggered
 			that.oView.byId("table-trigger").firePress();
@@ -18297,9 +18070,7 @@ sap.ui.define([
 					method : "POST",
 					payload : {},
 					url : "BusinessPartnerList"
-				}, {
-					BusinessPartnerID : "4710"
-				})
+				}, {BusinessPartnerID : "4710"})
 				.expectChange("id", ["4710",,, "4713"]);
 			oContext = oBinding.create({}, true);
 
@@ -18376,9 +18147,7 @@ sap.ui.define([
 					Messages : [],
 					Quantity : "7",
 					SalesOrderID : "1",
-					SOITEM_2_PRODUCT : {
-						ProductID : "2"
-					}
+					SOITEM_2_PRODUCT : {ProductID : "2"}
 				}]
 			})
 			.expectChange("count")
@@ -18424,9 +18193,7 @@ sap.ui.define([
 					}],
 					Quantity : "0",
 					SalesOrderID : "1",
-					SOITEM_2_PRODUCT : {
-						ProductID : "3"
-					}
+					SOITEM_2_PRODUCT : {ProductID : "3"}
 				})
 				.expectChange("count", "2")
 				// position becomes "" and product null, as _Cache#drillDown resolves with
@@ -18473,9 +18240,7 @@ sap.ui.define([
 					}],
 					Quantity : "2",
 					SalesOrderID : "1",
-					SOITEM_2_PRODUCT : {
-						ProductID : "42"
-					}
+					SOITEM_2_PRODUCT : {ProductID : "42"}
 				})
 				.expectChange("quantity", ["2.000"])
 				.expectChange("product", ["42"])
@@ -18514,9 +18279,7 @@ sap.ui.define([
 						}],
 						Quantity : "3",
 						SalesOrderID : "1",
-						SOITEM_2_PRODUCT : {
-							ProductID : "42"
-						}
+						SOITEM_2_PRODUCT : {ProductID : "42"}
 					}]
 				})
 				.expectChange("quantity", ["3.000"])
