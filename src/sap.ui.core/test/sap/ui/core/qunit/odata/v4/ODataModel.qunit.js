@@ -4,6 +4,7 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/base/Log",
+	"sap/base/util/deepEqual",
 	"sap/ui/core/message/Message",
 	"sap/ui/model/Binding",
 	"sap/ui/model/BindingMode",
@@ -26,7 +27,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/test/TestUtils",
 	"sap/ui/core/library"
-], function (jQuery, Log, Message, Binding, BindingMode, BaseContext, Model,
+], function (jQuery, Log, deepEqual, Message, Binding, BindingMode, BaseContext, Model,
 		ODataUtils, OperationMode, TypeString, Context, ODataContextBinding, ODataListBinding,
 		ODataMetaModel, ODataModel, ODataPropertyBinding, SubmitMode, _GroupLock, _Helper,
 		_MetadataRequestor, _Parser, _Requestor, TestUtils, library) {
@@ -888,6 +889,7 @@ sap.ui.define([
 					code : undefined,
 					message : oError.message,
 					technical : true,
+					technicalDetails : sinon.match.object,
 					numericSeverity : 4 // Error
 				}]);
 
@@ -928,8 +930,17 @@ sap.ui.define([
 				"requestUrl" : "/service/Product",
 				"resourcePath" : sResourcePath + "?foo=bar"
 			},
+			oExpectation,
 			oHelperMock = this.mock(_Helper),
 			sLogMessage = "Failed to read path /Product('1')/Unknown",
+			oOrginalMessage = {
+				"@Common.longtextUrl" : "top/longtext",
+				"@.numericSeverity" : 4,
+				code : oError.error.code,
+				details : oError.error.details,
+				message : oError.error.message,
+				technical : true
+			},
 			oModel = createModel();
 
 		this.oLogMock.expects("error").withExactArgs(sLogMessage, oError.message, sClassName);
@@ -945,36 +956,63 @@ sap.ui.define([
 				longtextUrl : "/service/Product/top/longtext",
 				message : oError.error.message,
 				numericSeverity : 4, // Error
-				technical : true
+				technical : true,
+				technicalDetails : {
+					originalMessage : "Main message"
+				}
 			}, {
 				code : "unbound",
 				message : "some unbound message",
 				numericSeverity : 3,
-				technical : undefined
+				technical : undefined,
+				technicalDetails : {
+					originalMessage : "Second Detail"
+				}
 			}]);
-		this.mock(oModel).expects("reportBoundMessages")
+		oExpectation = this.mock(oModel).expects("reportBoundMessages")
 			.withExactArgs(sResourcePath, {
 				"" : [{
-					"code" : "bound",
-					"longtextUrl" : "/service/Product/bound/longtext",
-					"message" : "Value must be greater than 0",
-					"numericSeverity" : 3,
-					"target" : "Quantity",
-					"technical" : undefined,
-					"transition" : true
+					code : "bound",
+					longtextUrl : "/service/Product/bound/longtext",
+					message : "Value must be greater than 0",
+					numericSeverity : 3,
+					target : "Quantity",
+					technical : undefined,
+					technicalDetails : {
+						originalMessage : "First Detail"
+					},
+					transition : true
 				}, {
-					"code" : "bound",
-					"message" : "some other Quantity message",
-					"numericSeverity" : 2,
-					"target" : "Quantity",
-					"technical" : undefined,
-					"transition" : true
+					code : "bound",
+					message : "some other Quantity message",
+					numericSeverity : 2,
+					target : "Quantity",
+					technical : undefined,
+					technicalDetails : {
+						originalMessage :"Last Detail"
+					},
+					transition : true
 				}]
 			}, []);
+		// _Helper.clone gets called from sinon object matcher which invokes defined property
+		oHelperMock.expects("clone")
+			.withExactArgs(oOrginalMessage)
+			.returns("Main message");
+		oHelperMock.expects("clone")
+			.withExactArgs(oOrginalMessage.details[0])
+			.returns("First Detail");
+		oHelperMock.expects("clone")
+			.withExactArgs(oOrginalMessage.details[1])
+			.returns("Second Detail");
+		oHelperMock.expects("clone")
+			.withExactArgs(oOrginalMessage.details[2])
+			.returns("Last Detail");
 
 		// code under test
 		oModel.reportError(sLogMessage, sClassName, oError);
 
+		// code under test - clone only called once per technical detail
+		oExpectation.args[0][1][""][0].technicalDetails.originalMessage; // invoke getter
 	});
 
 	//*********************************************************************************************
@@ -986,12 +1024,14 @@ sap.ui.define([
 			code :  "top",
 			message : "Error occurred while processing the request",
 			numericSeverity : 4,
-			technical : true
+			technical : true,
+			technicalDetails : sinon.match.object
 		}, {
 			code : "bound",
 			message : "Quantity: Value must be greater than 0",
 			numericSeverity : 3,
-			technical : undefined
+			technical : undefined,
+			technicalDetails : sinon.match.object
 		}]
 	}, {
 		requestUrl : undefined,
@@ -1002,13 +1042,15 @@ sap.ui.define([
 			numericSeverity : 3,
 			target : "Quantity",
 			technical : undefined,
+			technicalDetails : sinon.match.object,
 			transition : true
 		}],
 		unboundMessages : [{
 			code :  "top",
 			message : "Error occurred while processing the request",
 			numericSeverity : 4,
-			technical : true
+			technical : true,
+			technicalDetails : sinon.match.object
 		}]
 	}].forEach(function (oFixture, i) {
 		var sTitle = "reportError: JSON response, resourcePath=" + oFixture.resourcePath
@@ -1075,6 +1117,7 @@ sap.ui.define([
 				numericSeverity : 4, // Error
 				target : "Quantity",
 				technical : true,
+				technicalDetails : sinon.match.object,
 				transition : true
 			}]}, []);
 
@@ -1107,6 +1150,7 @@ sap.ui.define([
 				message : "$filter: Invalid token 'name' at position '1'",
 				longtextUrl : "/long/text",
 				numericSeverity : 4, // Error
+				technicalDetails : sinon.match.object,
 				technical : true
 			}]);
 
@@ -1913,6 +1957,8 @@ sap.ui.define([
 								&& oMessage.getPersistent() === true
 								&& oMessage.getTarget() === ""
 								&& oMessage.getTechnical() === (j === 2)
+								&& deepEqual(
+									oMessage.getTechnicalDetails(), aMessages[j].technicalDetails)
 								&& oMessage.getType() === oFixture.type;
 						});
 				}));
@@ -1985,6 +2031,8 @@ sap.ui.define([
 						assert.strictEqual(oMessage.getPersistent(), aMessages[j].transition);
 						assert.strictEqual(oMessage.getTarget(), "/Team('42')/foo/bar"
 							+ (aMessages[j].target ? "/" + aMessages[j].target : ""));
+						assert.deepEqual(
+							oMessage.getTechnicalDetails(), aMessages[j].technicalDetails);
 						assert.strictEqual(oMessage.getTechnical(), j === 0);
 						assert.strictEqual(oMessage.getType(), oFixture.type);
 					});
