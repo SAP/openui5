@@ -61,7 +61,14 @@ sap.ui.define([
 				items: {type : "sap.m.ColumnPopoverItem",  multiple : true, singularName : "item", bindable: true},
 				_popover: {type : "sap.m.ResponsivePopover", multiple : false, visibility : "hidden"}
 			},
-			defaultAggregation: "items"
+			defaultAggregation: "items",
+			associations: {
+				ariaLabelledBy: {
+					type: "sap.ui.core.Control",
+					multiple: true,
+					singularName: "ariaLabelledBy"
+				}
+			}
 		}
 	});
 
@@ -82,6 +89,7 @@ sap.ui.define([
 			placement: "Bottom",
 			verticalScrolling: true,
 			horizontalScrolling: false,
+			ariaLabelledBy: this.getAriaLabelledBy(),
 			beforeClose: function(oEvent) {
 				if (that._oShownCustomContent) {
 					that._oShownCustomContent.setVisible(false);
@@ -377,6 +385,36 @@ sap.ui.define([
 		}
 
 		return this;
+	};
+
+	ColumnHeaderPopover.prototype.addAssociation = function(sAssociationName, sId, bSuppressInvalidate) {
+		if (sAssociationName === "ariaLabelledBy") {
+			// get internal responsive popover control
+			var oRPopoverControl = this.getAggregation("_popover");
+			// forward the ariaLabelledBy association of the inner control to the ColumnHeaderPopover control
+			oRPopoverControl && oRPopoverControl.addAssociation(sAssociationName, sId, bSuppressInvalidate);
+		}
+		return Control.prototype.addAssociation.apply(this, arguments);
+	};
+
+	ColumnHeaderPopover.prototype.removeAssociation = function(sAssociationName, vObject, bSuppressInvalidate) {
+		if (sAssociationName === "ariaLabelledBy") {
+			// get internal responsive popover control
+			var oRPopoverControl = this.getAggregation("_popover");
+			// forward the ariaLabelledBy association of the inner control to the ColumnHeaderPopover control
+			oRPopoverControl && oRPopoverControl.removeAssociation(sAssociationName, vObject, bSuppressInvalidate);
+		}
+		return Control.prototype.removeAssociation.apply(this, arguments);
+	};
+
+	ColumnHeaderPopover.prototype.removeAllAssociation = function(sAssociationName, bSuppressInvalidate) {
+		if (sAssociationName === "ariaLabelledBy") {
+			// get internal responsive popover control
+			var oRPopoverControl = this.getAggregation("_popover");
+			// forward the ariaLabelledBy association of the inner control to the ColumnHeaderPopover control
+			oRPopoverControl && oRPopoverControl.removeAllAssociation(sAssociationName, bSuppressInvalidate);
+		}
+		return Control.prototype.removeAllAssociation.apply(this, arguments);
 	};
 
 	return ColumnHeaderPopover;
