@@ -1336,6 +1336,7 @@ sap.ui.define([
 					processor : that,
 					target : sTarget,
 					technical : oRawMessage.technical,
+					technicalDetails : oRawMessage.technicalDetails,
 					type : aMessageTypes[oRawMessage.numericSeverity] || MessageType.None
 				}));
 			});
@@ -1402,11 +1403,23 @@ sap.ui.define([
 		 * @param {object} oMessage The message
 		 */
 		function addMessage(oMessage) {
-			var oReportMessage = {
+			var oClonedMessage,
+				oReportMessage = {
 					code : oMessage.code,
 					message : oMessage.message,
-					technical : oMessage.technical
+					technical : oMessage.technical,
+					technicalDetails: {}
 				};
+
+			Object.defineProperty(oReportMessage.technicalDetails, "originalMessage", {
+				enumerable : true,
+				get : function () {
+					if (!oClonedMessage) {
+						oClonedMessage = _Helper.clone(oMessage);
+					}
+					return oClonedMessage;
+				}
+			});
 
 			Object.keys(oMessage).forEach(function (sProperty) {
 				if (sProperty[0] === '@') {
@@ -1513,6 +1526,7 @@ sap.ui.define([
 						processor : that,
 						target : "",
 						technical : oMessage.technical,
+						technicalDetails: oMessage.technicalDetails,
 						type : aMessageTypes[oMessage.numericSeverity] || MessageType.None
 					});
 				})

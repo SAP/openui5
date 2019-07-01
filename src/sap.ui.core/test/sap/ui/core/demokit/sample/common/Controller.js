@@ -35,10 +35,11 @@ sap.ui.define([
 				items : {
 					path :"messages>/",
 					template : new MessageItem({
-						description : "{messages>description}",
+						description : "{= JSON.stringify(${messages>technicalDetails}) }",
 						longtextUrl : "{messages>descriptionUrl}",
 						title : "{messages>message}",
-						type : "{messages>type}"})
+						type : "{messages>type}"
+					})
 				}
 			});
 			this.messagePopoverButtonId = sOpenButtonId;

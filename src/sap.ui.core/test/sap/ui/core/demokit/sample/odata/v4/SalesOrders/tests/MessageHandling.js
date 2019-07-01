@@ -160,6 +160,8 @@ sap.ui.define([
 					message : sQuantityFailure,
 					type : MessageType.Error
 			}]);
+			When.onTheMessagePopover.selectMessage(sQuantityFailure);
+			Then.onTheMessagePopover.checkMessageDetails(sQuantityFailure, "originalMessage");
 			When.onTheMessagePopover.close();
 			When.onTheMainPage.changeQuantityInLineItem(6, "2.0");
 			When.onTheMainPage.pressSaveSalesOrderButton();
