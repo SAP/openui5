@@ -154,6 +154,7 @@ sap.ui.define([
 					var oBinding = oParent.getBinding("rows");
 					if (oBinding) {
 						this._oBindingLabel = library.TableHelper.createLabel();
+						this.addDependent(this._oBindingLabel);
 						TableUtils.Binding.metadataLoaded(oParent).then(function() {
 							this._oBindingLabel.setText(oBinding.getPropertyLabel(this.getLeadingProperty()));
 						}.bind(this));
