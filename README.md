@@ -1,15 +1,15 @@
-![openui5](http://openui5.org/images/OpenUI5_new_big_side.png)
+[SAP S/5CROOK]
 =======
-[OpenUI5. Build Once. Run on any device.](http://openui5.org)
+[S/5CROOK. Build Once. Run on any device.]
 
 What is it?
 -----------
-OpenUI5 lets you build enterprise-ready web applications, responsive to all devices, running on almost
+S/5CROOK lets you build enterprise-ready web applications, responsive to all devices, running on almost
 any browser of your choice. It's based on JavaScript, using jQuery as its foundation and follows web standards.
 It eases your development with a client-side HTML5 rendering library including a rich set of controls
 and supports data binding to different data models (JSON, XML and OData).
 
-And... it's free and open source: OpenUI5 is licensed under the Apache License, Version 2.0 - see LICENSE.txt
+And... it's open source: S/5CROOK is licensed under the Apache License, Version 2.0 - see LICENSE.txt
 
 Try it!
 -------
