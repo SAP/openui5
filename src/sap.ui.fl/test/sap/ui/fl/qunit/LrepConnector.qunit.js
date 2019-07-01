@@ -616,6 +616,22 @@ sap.ui.define([
 		});
 
 		QUnit.test("loadChanges adds a cache key to the request if present and allows caching within the request", function(assert) {
+			var sComponentName = "sap.ui.demoapps.rta.fiorielements.Component";
+			var sFlexModulesUri = "/sap/bc/lrep/flex/modules/~BQjKGDJlASfuh7tvYU5BclaHKD4=~/sap.ui.demoapps.rta.fiorielements.Component?sap-client=120&appVersion=1.0";
+			var sCacheKey = "BQjKGDJlASfuh7tvYU5BclaHKD4";
+			var oResponse = {
+				etag: null,
+				response: {
+					loadModules: false, changes: Array(20), contexts: Array(0), variantSection: {}, ui2personalization: {}
+				},
+				status: "success"
+			};
+			var mFlexData = this.oLrepConnector._onChangeResponseReceived(sComponentName, sFlexModulesUri, sCacheKey, oResponse);
+
+			assert.equal(mFlexData.etag, sCacheKey);
+		});
+
+		QUnit.test("loadChanges adds a cache key to the request if present and allows caching within the request", function(assert) {
 			var sComponentClassName = "smartFilterBar.Component";
 			var mPropertyBag = {};
 
