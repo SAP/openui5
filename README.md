@@ -1,6 +1,6 @@
-[SAP S/5CROOK]
+SAP S/5CROOK
 =======
-[S/5CROOK. Build Once. Run on any device.]
+S/5CROOK. Build Once. Run on any device.
 
 What is it?
 -----------
