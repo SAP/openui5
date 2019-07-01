@@ -12517,4 +12517,25 @@ sap.ui.define([
 		// Cleanup
 		oComboBox.destroy();
 	});
+
+	QUnit.module("List configuration");
+
+	QUnit.test("List css classes", function (assert) {
+		// setup
+		var oComboBox = new ComboBox().placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oComboBox.open();
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oComboBox._getList().hasStyleClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "List"),
+			'The combobox list has the CSS class "' + oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "List");
+
+		assert.ok(oComboBox._getList().hasStyleClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOX + "List"),
+			'The combobox list has the CSS class "' + oComboBox.getRenderer().CSS_CLASS_COMBOBOX + "List");
+
+		// clean up
+		oComboBox.destroy();
+	});
 });
