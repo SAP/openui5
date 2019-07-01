@@ -203,6 +203,10 @@ sap.ui.define(['./Interface', './Metadata', "sap/base/Log"],
 	 * with type names (e.g. by introducing mixins), then this method might detect matches
 	 * for those names as well.
 	 *
+	 * @example
+	 * myObject.isA("sap.ui.core.Control"); // true if myObject is an instance of sap.ui.core.Control
+	 * myObject.isA(["sap.ui.core.Control", "sap.ui.core.Fragment"]); // true if myObject is an instance of sap.ui.core.Control or sap.ui.core.Fragment
+	 *
 	 * @param {string|string[]} vTypeName Type or types to check for
 	 * @returns {boolean} Whether this object is an instance of the given type or of any of the given types
 	 * @public
