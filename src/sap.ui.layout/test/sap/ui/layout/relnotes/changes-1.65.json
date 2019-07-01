@@ -110,5 +110,16 @@
         "references": []
       }
     ]
+  },
+  "1.65.5": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "15cddd6d6c7a6852276456839ae4a4a7b9d9d049",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: Toggle on mobile is now working",
+        "references": []
+      }
+    ]
   }
 }

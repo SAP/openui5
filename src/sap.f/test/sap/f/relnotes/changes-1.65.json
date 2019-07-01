@@ -159,5 +159,22 @@
         "references": []
       }
     ]
+  },
+  "1.65.5": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "3ccb4cfbd51ca1072177bd056baf933f45d2d2f6",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: DynamicPage without title is rendered correctly",
+        "references": []
+      },
+      {
+        "id": "030883eaa6662443f3492d69566bf02a383a024a",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Space key is now allowed in Input in the title",
+        "references": []
+      }
+    ]
   }
 }

@@ -823,5 +823,106 @@
         "references": []
       }
     ]
+  },
+  "1.65.5": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "172d2974a2d5728e59e53615e2103f91d07b7263",
+        "type": "FIX",
+        "text": " sap.m.Carousel: pageChanged event parameters are now correct",
+        "references": []
+      },
+      {
+        "id": "190186e088184993744fb7dcc672b6a20ad67047",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Apply proper list filters on rerendering",
+        "references": []
+      },
+      {
+        "id": "5cbcdcd5958b899ec687bfcab55042640dd66e42",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Item to ListItem property forwarding",
+        "references": []
+      },
+      {
+        "id": "b95e0513e34ab8946b31c2c49152cac9be9ae3d9",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Remove unneeded syncPickerContent function",
+        "references": []
+      },
+      {
+        "id": "339711bcbe8bdb3cad7a2b771f761af812baa29d",
+        "type": "FIX",
+        "text": " sap.m.ComboBoxBase: Dialog`s custom header is now destroyed",
+        "references": []
+      },
+      {
+        "id": "c60c84e36ea0f7d568951b95b141023bb34c9938",
+        "type": "FIX",
+        "text": " sap.m.DateTimeField: binding used in UTC mode now works correctly",
+        "references": []
+      },
+      {
+        "id": "5bd6512f360315df900cc37314ffe1b73d1dddc5",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Now in IE the hour slider is initially opened",
+        "references": []
+      },
+      {
+        "id": "e0f231a9e7a139b19542bc6b02928e5a99f6a86b",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Position is now correct on IE browser",
+        "references": []
+      },
+      {
+        "id": "766f3f818cab58abcfbe7f6631c0d1e332899619",
+        "type": "FIX",
+        "text": " sap.m.IconTabHeader: IconTabFilters content is no longer cloned",
+        "references": []
+      },
+      {
+        "id": "93fa8ec73d67cc8f3d87e24344b608bfcbb59832",
+        "type": "FIX",
+        "text": " sap.m.Input: No additional info is read, when no suggestions",
+        "references": []
+      },
+      {
+        "id": "23493e6a60d8e35c3454c849ce49b11b18489ef5",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Text selection in Firefox is fixed",
+        "references": []
+      },
+      {
+        "id": "cb27d118ef4306634a35f683f6427939f0a47192",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Fire search from suggestion only once on phone",
+        "references": []
+      },
+      {
+        "id": "6c9ef07cc9b50fed2e27e272b89d32cba4e12638",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Improve handling of focus on iOS",
+        "references": []
+      },
+      {
+        "id": "a4cd68211d037ea9e93461173e98ff18a18108a2",
+        "type": "FIX",
+        "text": " sap.m.Shell: sap.m.SplitApp has padding when inside the Shell",
+        "references": []
+      },
+      {
+        "id": "20c3e4c016efe1975572293d5e44bda6d758695b",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: Show detail page on phone",
+        "references": []
+      },
+      {
+        "id": "1e660d8d31189d7942da6b6e25008b934dbe292f",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection : Download of item not happening when factory binding is used.",
+        "references": []
+      }
+    ]
   }
 }

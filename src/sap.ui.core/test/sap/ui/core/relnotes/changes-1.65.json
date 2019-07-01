@@ -415,5 +415,22 @@
         "references": []
       }
     ]
+  },
+  "1.65.5": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "da44004ea0f1d1b76a1b3e1331cedd194ea048ea",
+        "type": "FIX",
+        "text": " ElementMetadata: a renderer w/o render function is incomplete",
+        "references": []
+      },
+      {
+        "id": "f56fbd258f367d10dee2981e96262e5b9bcc8e64",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/v2/ODataListBinding: ContextChange",
+        "references": []
+      }
+    ]
   }
 }

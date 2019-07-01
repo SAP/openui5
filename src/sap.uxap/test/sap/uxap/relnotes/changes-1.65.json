@@ -207,5 +207,22 @@
         "references": []
       }
     ]
+  },
+  "1.65.5": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "813d5be918615e028ecc9b2dab44702716081ada",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: selectedButton aria-checked setting fixed",
+        "references": []
+      },
+      {
+        "id": "c73eb1626e04a08546754a33360a927b5bcc3178",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fixed error on section destroy",
+        "references": []
+      }
+    ]
   }
 }

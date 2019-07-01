@@ -109,5 +109,22 @@
         "references": []
       }
     ]
+  },
+  "1.65.5": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "23493e6a60d8e35c3454c849ce49b11b18489ef5",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Text selection in Firefox is fixed",
+        "references": []
+      },
+      {
+        "id": "2e34e5a732430456a1012141cc639d41a4bc953f",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Hover behavior fixed",
+        "references": []
+      }
+    ]
   }
 }

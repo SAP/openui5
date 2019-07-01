@@ -27,5 +27,16 @@
         "references": []
       }
     ]
+  },
+  "1.65.5": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "954be735bf195756b0a2115787f9527de1881334",
+        "type": "FIX",
+        "text": " sap.ui.fl.FlexController:",
+        "references": []
+      }
+    ]
   }
 }
