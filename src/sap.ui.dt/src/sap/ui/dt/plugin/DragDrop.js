@@ -435,7 +435,7 @@ function(
 			oEvent.originalEvent.dataTransfer.effectAllowed = "move";
 			oEvent.originalEvent.dataTransfer.dropEffect = "move";
 			// IE and Edge do no support dataTransfer.setDragImage on D&D event
-			if (!sap.ui.Device.browser.internet_explorer && !sap.ui.Device.browser.edge
+			if (!sap.ui.Device.browser.msie && !sap.ui.Device.browser.edge
 				&& !sap.ui.Device.browser.msie && oEvent.originalEvent.dataTransfer.setDragImage) {
 				this._$ghost = this.createGhost(oOverlay, oEvent);
 
