@@ -561,9 +561,35 @@ sap.ui.define([
 
 		oLabel.placeAt("qunit-fixture");
 		oButton.placeAt("qunit-fixture");
+
+		var oLabel2 = new Label("L2", {
+			text: 'Label',
+			labelFor: "B2"
+		});
+		var oButton2 = new Button("B2", {
+			text: 'Hello World'
+		});
+
+		oLabel2.placeAt("qunit-fixture");
+		oButton2.placeAt("qunit-fixture");
+
+		var oLabel3 = new Label("L3", {
+			text: 'Label',
+			labelFor: "B3"
+		});
+		var oButton3 = new Button("B3", {
+			text: 'Hello World',
+			ariaLabelledBy: "B3"
+		});
+
+		oLabel3.placeAt("qunit-fixture");
+		oButton3.placeAt("qunit-fixture");
+
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(oButton.$().attr("aria-labelledby"), "L1 B1" + sTextSpanId, "Label id and Button content id are written inside aria-labelledby attribute");
+		assert.equal(oButton2.$().attr("aria-labelledby"), "L2 B2" + sTextSpanId, "Label id and Button content id are written inside aria-labelledby attribute");
+		assert.equal(oButton3.$().attr("aria-labelledby"), "L3 B3", "Label id and Button id are written inside aria-labelledby attribute");
 
 		oLabel.destroy();
 		oButton.destroy();

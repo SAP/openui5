@@ -76,9 +76,9 @@ sap.ui.define([
 		}
 
 		// add reference only to the text content of the button
-		// so it can be read otherwise it causes the issue reported in BCP: 1680223321
-		if (sText && oButton.getAriaLabelledBy() && oButton.getAriaLabelledBy().length > 0) {
-			mAccProps["labelledby"] = {value: oButton.getId() + "-content", append: true };
+		// so it can be read otherwise it causes the issue reported in BCP: 168022332, 1970225991
+		if (oButton._determineSelfReferencePresence()) {
+			mAccProps["labelledby"] = { value: oButton.getId() + "-content", append: true };
 		}
 
 		// prevent rendering of aria-disabled attribute
