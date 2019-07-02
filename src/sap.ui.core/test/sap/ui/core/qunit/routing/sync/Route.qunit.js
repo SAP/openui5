@@ -2,8 +2,11 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/mvc/JSView",
-	"sap/ui/core/routing/Route"
-], function (UIComponent, JSView, Route) {
+	"sap/ui/core/routing/Route",
+	"sap/ui/core/routing/Views",
+	"sap/ui/core/routing/Targets",
+	"sap/m/Panel"
+], function (UIComponent, JSView, Route, Views, Targets, Panel) {
 	"use strict";
 
 	function addClock() {
@@ -83,28 +86,95 @@ sap.ui.define([
 		assert.equal(fnSwitchedSpy.callCount, 1, "The switched event handler is called");
 	});
 
+	QUnit.module("Events", {
+		beforeEach: function() {
+			addClock.apply(this);
+			var oViews = new Views();
+			this.oPanel = new Panel();
+			this.oRouterStub = {
+				fireRouteMatched : function () {},
+				fireRoutePatternMatched : function () {},
+				fireBeforeRouteMatched : function () {},
+				_oTargets: new Targets({
+					targets: {
+						async1: {
+							// key: "async1",
+							viewName: "qunit.view.Async1",
+							controlAggregation: "content",
+							controlId: this.oPanel.getId(),
+							viewType: "XML"
+						},
+						async2: {
+							// key: "async2",
+							viewName: "qunit.view.Async2",
+							controlAggregation: "content",
+							controlId: this.oPanel.getId(),
+							viewType: "XML"
+						},
+						async3: {
+							// key: "async3",
+							viewName: "qunit.view.Async3",
+							controlAggregation: "content",
+							controlId: this.oPanel.getId(),
+							viewType: "XML"
+						}
+					},
+					views: oViews
+				}),
+				_oViews: oViews,
+				_isAsync: function() {
+					return false;
+				}
+			};
+
+			this.oRoute = new Route(this.oRouterStub, {
+				name: "testRoute",
+				target: [
+					"async1", "async2", "async3"
+				]
+			});
+		},
+		afterEach: function() {
+			this.oRoute.destroy();
+		}
+	});
+
 	function fnRouteEventsTestCase (sTestName, sEventName) {
 		QUnit.test(sTestName, function(assert) {
 			// Arrange
 			var sName = "testRoute",
 				oListener = {},
 				oData = {some: "data"},
-				oRoute = new Route(oRouterStub, { name : sName }),
 				fnEventSpy = this.spy(function(oEvent, oActualData) {
 					assert.strictEqual(oActualData, oData, "the data is correct");
 					assert.strictEqual(oEvent.getParameters().name, sName, "the name is correct");
 					assert.strictEqual(this, oListener, "the this pointer is correct");
+
+					if (sEventName === "Matched" || sEventName === "PatternMatched") {
+						assert.ok(oEvent.getParameter("view").isA("sap.ui.core.mvc.View"), "view parameter is set");
+						assert.ok(oEvent.getParameter("targetControl").isA("sap.ui.core.Control"), "targetControl parameter is set");
+
+						assert.ok(Array.isArray(oEvent.getParameter("views")), "views parameter is set");
+						oEvent.getParameter("views").forEach(function(oView) {
+							assert.ok(oView.isA("sap.ui.core.mvc.View"), "Each element is a view instance");
+						});
+
+						assert.ok(Array.isArray(oEvent.getParameter("targetControls")), "targetControls parameter is set");
+						oEvent.getParameter("targetControls").forEach(function(oControl) {
+							assert.ok(oControl.isA("sap.ui.core.Control"), "Each element is a control instance");
+						});
+					}
 				}),
-				oAttachReturnValue = oRoute["attach" + sEventName](oData, fnEventSpy, oListener);
+				oAttachReturnValue = this.oRoute["attach" + sEventName](oData, fnEventSpy, oListener);
 
 			// Act
-			oRoute._routeMatched({},
+			this.oRoute._routeMatched({},
 					true);
 			this.clock.tick(0);
 
 			// Assert
 			assert.strictEqual(fnEventSpy.callCount, 1, "did call the attach spy for the event " + sEventName);
-			assert.strictEqual(oAttachReturnValue, oRoute, "did return this for chaining for the event " + sEventName);
+			assert.strictEqual(oAttachReturnValue, this.oRoute, "did return this for chaining for the event " + sEventName);
 		});
 	}
 
@@ -115,26 +185,24 @@ sap.ui.define([
 	function fnDetachRouteEventTestCase(sTestName, sEventName) {
 		QUnit.test(sTestName, function(assert) {
 			// Arrange
-			var sName = "testRoute",
-				oRoute = new Route(oRouterStub, { name : sName }),
-				fnEventSpy = this.spy(),
+			var fnEventSpy = this.spy(),
 				oListener = {};
 
-			oRoute["attach" + sEventName](fnEventSpy, oListener);
-			oRoute["attach" + sEventName](fnEventSpy);
+			this.oRoute["attach" + sEventName](fnEventSpy, oListener);
+			this.oRoute["attach" + sEventName](fnEventSpy);
 
 			// Act
-			var oDetachedReturnValue = oRoute["detach" + sEventName](fnEventSpy, oListener);
-			oRoute["detach" + sEventName](fnEventSpy);
+			var oDetachedReturnValue = this.oRoute["detach" + sEventName](fnEventSpy, oListener);
+			this.oRoute["detach" + sEventName](fnEventSpy);
 
 			// FireEvent to make sure no spy is called
-			oRoute._routeMatched(
+			this.oRoute._routeMatched(
 					{},
 					true);
 
 			// Assert
 			assert.strictEqual(fnEventSpy.callCount, 0, "did not call the spy since it was detached");
-			assert.strictEqual(oDetachedReturnValue, oRoute, "did return this for chaining");
+			assert.strictEqual(oDetachedReturnValue, this.oRoute, "did return this for chaining");
 		});
 	}
 
