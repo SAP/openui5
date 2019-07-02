@@ -132,7 +132,7 @@ ODataMessageParser.prototype.setHeaderField = function(sFieldName) {
  * @param {map} mChangeEntities - A map containing the entities changed on the back-end as keys
  * @public
  */
-ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities, mChangeEntities) {
+ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities, mChangeEntities, bMessageScopeSupported) {
 	// TODO: Implement filter function
 	var aMessages = [];
 
@@ -157,7 +157,7 @@ ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities,
 	}
 
 	if (this._processor) {
-		this._propagateMessages(aMessages, mRequestInfo, mGetEntities, mChangeEntities);
+		this._propagateMessages(aMessages, mRequestInfo, mGetEntities, mChangeEntities, !bMessageScopeSupported /* use simple message lifecycle */);
 	} else {
 		// In case no message processor is attached, at least log to console.
 		// TODO: Maybe we should just output an error and do nothing, since this is not how messages are meant to be used like?
@@ -268,8 +268,9 @@ ODataMessageParser.prototype._getAffectedTargets = function(aMessages, mRequestI
  * @param {ODataMessageParser~RequestInfo} mRequestInfo - Info object about the request URL
  * @param {map} mGetEntities - A map containing the entities requested from the back-end as keys
  * @param {map} mChangeEntities - A map containing the entities changed on the back-end as keys
+ * @param {boolean} bSimpleMessageLifecycle - This flag is set to false, if the used OData Model v2 supports message scopes
  */
-ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestInfo, mGetEntities, mChangeEntities) {
+ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestInfo, mGetEntities, mChangeEntities, bSimpleMessageLifecycle) {
 	var i, sTarget;
 	var aRemovedMessages = [];
 	var mAffectedTargets = this._getAffectedTargets(aMessages, mRequestInfo, mGetEntities, mChangeEntities);
@@ -285,7 +286,7 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestIn
 			sTarget = sTarget.substr(0, iPropertyPos + 1);
 		}
 
-		if (mRequestInfo.response.statusCode >= 200 && mRequestInfo.response.statusCode < 300){
+		if ((mRequestInfo.response.statusCode >= 200 && mRequestInfo.response.statusCode < 300) || bSimpleMessageLifecycle){
 			if (mAffectedTargets[sTarget] && !this._lastMessages[i].getPersistent()){
 				// New non-technical message => remove old message
 				aRemovedMessages.push(this._lastMessages[i]);
