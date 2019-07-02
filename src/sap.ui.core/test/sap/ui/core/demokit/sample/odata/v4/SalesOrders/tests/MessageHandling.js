@@ -49,6 +49,15 @@ sap.ui.define([
 			When.onTheMessagePopover.selectMessage(sUnboundInfo);
 			Then.onTheMessagePopover.checkMessageDetails(sUnboundInfo,
 				"Details for \"Example for an unbound message\" (absolute longtext URL).");
+			Then.onTheMessagePopover.checkMessageDetailsHasTechnicalDetails({
+				originalMessage : {
+					code : "42",
+					longtextUrl : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002"
+						+ "/Messages(0)",
+					message : sUnboundInfo,
+					numericSeverity : 2
+				}
+			});
 
 			When.onTheMessagePopover.back();
 
@@ -161,7 +170,18 @@ sap.ui.define([
 					type : MessageType.Error
 			}]);
 			When.onTheMessagePopover.selectMessage(sQuantityFailure);
-			Then.onTheMessagePopover.checkMessageDetails(sQuantityFailure, "originalMessage");
+			Then.onTheMessagePopover.checkMessageDetailsHasTechnicalDetails({
+				originalMessage : {
+					"@.numericSeverity" : 4,
+					"@SAP__Common.longtextUrl" : "",
+					"@SAP__common.numericSeverity" : 4,
+					code : "SEPM_BO_COMMON/022",
+					details : [],
+					message : "Value must be greater than 0",
+					target : "Quantity",
+					technical : true
+				}
+			});
 			When.onTheMessagePopover.close();
 			When.onTheMainPage.changeQuantityInLineItem(6, "2.0");
 			When.onTheMainPage.pressSaveSalesOrderButton();
