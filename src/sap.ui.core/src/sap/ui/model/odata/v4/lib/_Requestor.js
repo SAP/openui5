@@ -1001,7 +1001,15 @@ sap.ui.define([
 	 * @private
 	 */
 	Requestor.prototype.reportUnboundMessagesAsJSON = function (sResourcePath, sMessages) {
-		this.oModelInterface.reportUnboundMessages(sResourcePath, JSON.parse(sMessages || null));
+		var aMessages = JSON.parse(sMessages || null);
+
+		if (aMessages) {
+			aMessages.forEach(function (oMessage) {
+				oMessage.technicalDetails = {originalMessage : Object.assign({}, oMessage)};
+			});
+		}
+
+		this.oModelInterface.reportUnboundMessages(sResourcePath, aMessages);
 	};
 
 	/**

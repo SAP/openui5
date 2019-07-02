@@ -1038,7 +1038,7 @@ sap.ui.define([
 		 * @param {object[]} aExpectedMessages The expected messages (with properties code, message,
 		 *   target, persistent, technical and type corresponding the getters of
 		 *   sap.ui.core.message.Message)
-		 * @param [bHasMatcher] bHasMatcher Whether the expected messages have a Sinon.JS matcher
+		 * @param {boolean} [bHasMatcher] Whether the expected messages have a Sinon.JS matcher
 		 * @returns {object} The test instance for chaining
 		 */
 		expectMessages : function (aExpectedMessages, bHasMatcher) {
@@ -14042,7 +14042,17 @@ sap.ui.define([
 	//*********************************************************************************************
 	["$direct", "$auto"].forEach(function (sGroupId){
 		QUnit.test("Unbound messages in response: " + sGroupId, function (assert) {
-			var oModel = createTeaBusiModel({"groupId" : sGroupId}),
+			var aMessages = [{
+						code : "foo-42",
+						longtextUrl : "../Messages(1)/LongText/$value",
+						message : "text0",
+						numericSeverity : 3
+					}, {
+						code : "foo-77",
+						message : "text1",
+						numericSeverity : 2
+				}],
+				oModel = createTeaBusiModel({"groupId" : sGroupId}),
 				sView = '\
 <FlexBox binding="{path : \'/TEAMS(\\\'42\\\')/TEAM_2_MANAGER\',\
 	parameters : {custom : \'foo\'}}">\
@@ -14050,11 +14060,7 @@ sap.ui.define([
 </FlexBox>';
 
 			this.expectRequest("TEAMS('42')/TEAM_2_MANAGER?custom=foo", {"ID" : "23"}, {
-					"sap-messages" : JSON.stringify([
-						{"code" : "foo-42", "message" : "text0", "numericSeverity" : 3,
-							"longtextUrl" : "../Messages(1)/LongText/$value"},
-						{"code" : "foo-77", "message" : "text1", "numericSeverity" : 2}
-					])
+					"sap-messages" : JSON.stringify(aMessages)
 				})
 				.expectMessages([{
 					"code" : "foo-42",
@@ -14062,12 +14068,18 @@ sap.ui.define([
 					"message" : "text0",
 					"persistent" : true,
 					"target" : "",
+					technicalDetails : {
+						originalMessage : aMessages[0]
+					},
 					"type" : "Warning"
 				}, {
 					"code" : "foo-77",
 					"message" : "text1",
 					"persistent" : true,
 					"target" : "",
+					technicalDetails : {
+						originalMessage : aMessages[1]
+					},
 					"type" : "Information"
 				}])
 				.expectChange("id", "23");

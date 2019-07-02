@@ -18,13 +18,30 @@ sap.ui.define([
 	"sap/ui/model/MetaModel",
 	"sap/ui/model/PropertyBinding",
 	"sap/ui/model/odata/OperationMode",
+	// load all modules for predefined OData types upfront so that ODataPropertyBinding#checkUpdate
+	// does not lead to a new task just because the module of the auto-detected type is not loaded
+	"sap/ui/model/odata/type/Boolean",
+	"sap/ui/model/odata/type/Byte",
+	"sap/ui/model/odata/type/Date",
+	"sap/ui/model/odata/type/DateTimeOffset",
+	"sap/ui/model/odata/type/Decimal",
+	"sap/ui/model/odata/type/Double",
+	"sap/ui/model/odata/type/Guid",
+	"sap/ui/model/odata/type/Int16",
+	"sap/ui/model/odata/type/Int32",
 	"sap/ui/model/odata/type/Int64",
 	"sap/ui/model/odata/type/Raw",
+	"sap/ui/model/odata/type/SByte",
+	"sap/ui/model/odata/type/Single",
+	"sap/ui/model/odata/type/Stream",
+	"sap/ui/model/odata/type/String",
+	"sap/ui/model/odata/type/TimeOfDay",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/URI"
 ], function (ValueListType, _Helper, assert, Log, ObjectPath, SyncPromise, BindingMode,
 		ChangeReason, ClientListBinding, BaseContext, ContextBinding, MetaModel, PropertyBinding,
-		OperationMode, Int64, Raw, jQuery, URI) {
+		OperationMode, Boolean, Byte, EdmDate, DateTimeOffset, Decimal, Double, Guid, Int16, Int32,
+		Int64, Raw, SByte, Single, Stream, String, TimeOfDay, jQuery, URI) {
 	"use strict";
 	/*global Map */
 	/*eslint max-nested-callbacks: 0 */
@@ -43,14 +60,14 @@ sap.ui.define([
 			messageChange : true
 		},
 		mUi5TypeForEdmType = {
-			"Edm.Boolean" : {type : "sap.ui.model.odata.type.Boolean"},
-			"Edm.Byte" : {type : "sap.ui.model.odata.type.Byte"},
-			"Edm.Date" : {type : "sap.ui.model.odata.type.Date"},
+			"Edm.Boolean" : {Type : Boolean},
+			"Edm.Byte" : {Type : Byte},
+			"Edm.Date" : {Type : EdmDate},
 			"Edm.DateTimeOffset" : {
 				constraints : {
 					"$Precision" : "precision"
 				},
-				type : "sap.ui.model.odata.type.DateTimeOffset"
+				Type : DateTimeOffset
 			},
 			"Edm.Decimal" : {
 				constraints : {
@@ -63,28 +80,28 @@ sap.ui.define([
 					"$Precision" : "precision",
 					"$Scale" : "scale"
 				},
-				type : "sap.ui.model.odata.type.Decimal"
+				Type : Decimal
 			},
-			"Edm.Double" : {type : "sap.ui.model.odata.type.Double"},
-			"Edm.Guid" : {type : "sap.ui.model.odata.type.Guid"},
-			"Edm.Int16" : {type : "sap.ui.model.odata.type.Int16"},
-			"Edm.Int32" : {type : "sap.ui.model.odata.type.Int32"},
-			"Edm.Int64" : {type : "sap.ui.model.odata.type.Int64"},
-			"Edm.SByte" : {type : "sap.ui.model.odata.type.SByte"},
-			"Edm.Single" : {type : "sap.ui.model.odata.type.Single"},
-			"Edm.Stream" : {type : "sap.ui.model.odata.type.Stream"},
+			"Edm.Double" : {Type : Double},
+			"Edm.Guid" : {Type : Guid},
+			"Edm.Int16" : {Type : Int16},
+			"Edm.Int32" : {Type : Int32},
+			"Edm.Int64" : {Type : Int64},
+			"Edm.SByte" : {Type : SByte},
+			"Edm.Single" : {Type : Single},
+			"Edm.Stream" : {Type : Stream},
 			"Edm.String" : {
 				constraints : {
 					"@com.sap.vocabularies.Common.v1.IsDigitSequence" : "isDigitSequence",
 					"$MaxLength" : "maxLength"
 				},
-				type : "sap.ui.model.odata.type.String"
+				Type : String
 			},
 			"Edm.TimeOfDay" : {
 				constraints : {
 					"$Precision" : "precision"
 				},
-				type : "sap.ui.model.odata.type.TimeOfDay"
+				Type : TimeOfDay
 			}
 		},
 		UNBOUND = {},
@@ -894,30 +911,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Requests a module for the given <code>sModuleName</code>.
-	 *
-	 * @param {string} sModuleName
-	 *   The name of the module to fetch (e.g. sap.ui.model.odata.type.Int16)
-	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise which is resolved with the requested module as soon as it is available
-	 *
-	 * @private
-	 */
-	ODataMetaModel.prototype.fetchModule = function (sModuleName) {
-		var vModule;
-
-		sModuleName = sModuleName.replace(/\./g, "/");
-		vModule = sap.ui.require(sModuleName);
-
-		if (vModule) {
-			return SyncPromise.resolve(vModule);
-		}
-		return SyncPromise.resolve(new Promise(function (resolve, reject) {
-			sap.ui.require([sModuleName], resolve);
-		}));
-	};
-
-	/**
 	 * @param {string} sPath
 	 *   A relative or absolute path within the metadata model, for example "/EMPLOYEES/ENTRYDATE"
 	 * @param {sap.ui.model.Context} [oContext]
@@ -1448,46 +1441,34 @@ sap.ui.define([
 		return this.fetchObject(undefined, oMetaContext).catch(function () {
 			// do not log, we log a warning "No metadata for path..." afterwards
 		}).then(function (oProperty) {
-			var mConstraints,
-				oType,
-				oTypeInfo,
-				sTypeName = oRawType.getName();
+			var oType = oRawType,
+				oTypeInfo;
 
 			if (!oProperty) {
-				Log.warning("No metadata for path '" + sPath + "', using " + sTypeName, undefined,
-					sODataMetaModel);
-				return oRawType;
-			}
-
-			oType = oProperty["$ui5.type"];
-			if (oType) {
+				Log.warning("No metadata for path '" + sPath + "', using " + oType.getName(),
+					undefined, sODataMetaModel);
 				return oType;
 			}
 
+			if (oProperty["$ui5.type"]) {
+				return oProperty["$ui5.type"];
+			}
+
 			if (oProperty.$isCollection) {
-				Log.warning("Unsupported collection type, using " + sTypeName, sPath,
+				Log.warning("Unsupported collection type, using " + oType.getName(), sPath,
 					sODataMetaModel);
 			} else {
 				oTypeInfo = mUi5TypeForEdmType[oProperty.$Type];
 				if (oTypeInfo) {
-					sTypeName = oTypeInfo.type;
-					mConstraints = that.getConstraints(oProperty, oMetaContext.getPath());
+					oType = new oTypeInfo.Type(undefined,
+						that.getConstraints(oProperty, oMetaContext.getPath()));
 				} else {
-					Log.warning("Unsupported type '" + oProperty.$Type + "', using " + sTypeName,
-						sPath, sODataMetaModel);
+					Log.warning("Unsupported type '" + oProperty.$Type + "', using "
+						+ oType.getName(), sPath, sODataMetaModel);
 				}
 			}
-
-			if (sTypeName === oRawType.getName()) {
-				oProperty["$ui5.type"] = oRawType;
-			} else {
-				oProperty["$ui5.type"] = that.fetchModule(sTypeName).then(function (Type) {
-					oType = new Type(undefined, mConstraints);
-					oProperty["$ui5.type"] = oType;
-					return oType;
-				});
-			}
-			return oProperty["$ui5.type"];
+			oProperty["$ui5.type"] = oType;
+			return oType;
 		});
 	};
 
@@ -1996,25 +1977,30 @@ sap.ui.define([
 	 *   The (relative) $metadata URL, for example "../ValueListService/$metadata"
 	 * @param {string} [sGroupId]
 	 *   The group ID, for example "$direct"
+	 * @param {boolean} [bAutoExpandSelect=false]
+	 *   Whether the model is to be created with autoExpandSelect
 	 * @returns {sap.ui.model.odata.v4.ODataModel}
 	 *   The value list model
 	 *
 	 * @private
 	 */
-	ODataMetaModel.prototype.getOrCreateSharedModel = function (sUrl, sGroupId) {
-		var oSharedModel;
+	ODataMetaModel.prototype.getOrCreateSharedModel = function (sUrl, sGroupId, bAutoExpandSelect) {
+		var sCacheKey,
+			oSharedModel;
 
 		sUrl = this.getAbsoluteServiceUrl(sUrl);
-		oSharedModel = mSharedModelByUrl.get(sUrl);
+		sCacheKey = !!bAutoExpandSelect + sUrl;
+		oSharedModel = mSharedModelByUrl.get(sCacheKey);
 		if (!oSharedModel) {
 			oSharedModel = new this.oModel.constructor({
+				autoExpandSelect : bAutoExpandSelect,
 				groupId : sGroupId,
 				operationMode : OperationMode.Server,
 				serviceUrl : sUrl,
 				synchronizationMode : "None"
 			});
 			oSharedModel.setDefaultBindingMode(BindingMode.OneWay);
-			mSharedModelByUrl.set(sUrl, oSharedModel);
+			mSharedModelByUrl.set(sCacheKey, oSharedModel);
 			oSharedModel.oRequestor.mHeaders["X-CSRF-Token"]
 				= this.oModel.oRequestor.mHeaders["X-CSRF-Token"];
 		}
@@ -2678,6 +2664,10 @@ sap.ui.define([
 	 * @param {string} sPropertyPath
 	 *   An absolute path to an OData property within the OData data model or a (meta) path to an
 	 *   operation parameter, for example "/TEAMS(1)/acme.NewAction/Team_ID"
+	 * @param {boolean} [bAutoExpandSelect=false]
+	 *   The value of the parameter <code>autoExpandSelect</code> for value list models created by
+	 *   this method. If the value list model is the data model associated with this meta model,
+	 *   this flag has no effect. Supported since 1.68.0
 	 * @returns {Promise}
 	 *   A promise which is resolved with a map of qualifier to value list mapping objects
 	 *   structured as defined by <code>com.sap.vocabularies.Common.v1.ValueListType</code>;
@@ -2712,7 +2702,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.45.0
 	 */
-	ODataMetaModel.prototype.requestValueListInfo = function (sPropertyPath) {
+	ODataMetaModel.prototype.requestValueListInfo = function (sPropertyPath, bAutoExpandSelect) {
 		var sPropertyMetaPath = this.getMetaPath(sPropertyPath),
 			sParentMetaPath = sPropertyMetaPath.slice(0, sPropertyMetaPath.lastIndexOf("/")),
 			sQualifiedName = sParentMetaPath.slice(sParentMetaPath.lastIndexOf("/") + 1),
@@ -2754,7 +2744,8 @@ sap.ui.define([
 						+ "'com.sap.vocabularies.Common.v1.ValueListWithFixedValues'");
 				}
 				if ("CollectionRoot" in mValueListMapping) {
-					oModel = that.getOrCreateSharedModel(mValueListMapping.CollectionRoot);
+					oModel = that.getOrCreateSharedModel(mValueListMapping.CollectionRoot,
+						undefined, bAutoExpandSelect);
 					if (oValueListInfo[sQualifier]
 							&& oValueListInfo[sQualifier].$model === oModel) {
 						// same model -> allow overriding the qualifier
@@ -2789,7 +2780,8 @@ sap.ui.define([
 
 				// fetch mappings for each entry and wait for all
 				return Promise.all(aMappingUrls.map(function (sMappingUrl) {
-					var oValueListModel = that.getOrCreateSharedModel(sMappingUrl);
+					var oValueListModel = that.getOrCreateSharedModel(sMappingUrl, undefined,
+							bAutoExpandSelect);
 					// fetch the mappings for the given mapping URL
 					return that.fetchValueListMappings(
 						oValueListModel, sNamespace,
