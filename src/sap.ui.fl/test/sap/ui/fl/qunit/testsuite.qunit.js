@@ -23,22 +23,16 @@ sap.ui.define(function () {
 		},
 		tests: {
 			// new tests
-			"apply/api/ControlPersonalizationApplyAPI": {
+			"apply/api/FlexRuntimeInfoAPI": {
 				group: 'Apply API',
 				coverage: {
-					only: ["sap/ui/fl/apply/api/ControlPersonalizationApplyAPI", "sap/ui/fl/ControlPersonalizationAPI"]
+					only: ["sap/ui/fl/apply/api/FlexRuntimeInfoAPI", "sap/ui/fl/ControlPersonalizationAPI"]
 				}
 			},
 			"apply/api/ControlVariantApplyAPI": {
 				group: 'Apply API',
 				coverage: {
 					only: ["sap/ui/fl/apply/api/ControlVariantApplyAPI", "sap/ui/fl/ControlPersonalizationAPI"]
-				}
-			},
-			"write/api/ControlPersonalizationWriteAPI": {
-				group: 'Write API',
-				coverage: {
-					only: ["sap/ui/fl/write/api/ControlPersonalizationWriteAPI", "sap/ui/fl/ControlPersonalizationAPI"]
 				}
 			},
 			"apply/api/SmartVariantManagementApplyAPI": {
@@ -51,6 +45,12 @@ sap.ui.define(function () {
 				group: 'Write API',
 				coverage: {
 					only: ["sap/ui/fl/write/api/ChangesWriteAPI", "sap/ui/fl/write/ChangesController"]
+				}
+			},
+			"write/api/ControlPersonalizationWriteAPI": {
+				group: 'Write API',
+				coverage: {
+					only: ["sap/ui/fl/write/api/ControlPersonalizationWriteAPI", "sap/ui/fl/ControlPersonalizationAPI"]
 				}
 			},
 			"write/api/PersistenceWriteAPI": {

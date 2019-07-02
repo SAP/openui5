@@ -218,62 +218,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Given an instance of VariantModel", {
-		beforeEach : function(assert) {
-			var done = assert.async();
-
-			jQuery.get("test-resources/sap/ui/fl/qunit/testResources/VariantManagementTestApp.view.xml", null,
-			function(viewContent) {
-				var MockComponent = UIComponent.extend("MockController", {
-					metadata: {
-						manifest: 	{
-							"sap.app" : {
-								applicationVersion : {
-									version : "1.2.3"
-								}
-							}
-						}
-					},
-					createContent : function() {
-						var oApp = new sap.m.App(this.createId("mockapp"));
-						var oView = sap.ui.xmlview({
-							id: this.createId("mockview"),
-							viewContent: viewContent
-						});
-						oApp.addPage(oView);
-						return oApp;
-					}
-				});
-				this.oComp = new MockComponent("testComponent");
-				this.oFlexController = FlexControllerFactory.createForControl(this.oComp);
-				var oVariantModel = new VariantModel({}, this.oFlexController, this.oComp);
-				this.oComp.setModel(oVariantModel, Utils.VARIANT_MODEL_NAME);
-				this.oCompContainer = new ComponentContainer("sap-ui-static", {
-					component: this.oComp
-				}).placeAt("qunit-fixture");
-
-				done();
-			}.bind(this));
-		},
-		afterEach: function() {
-			sandbox.restore();
-			this.oCompContainer.destroy();
-			this.oComp.destroy();
-		}
-	}, function() {
-		QUnit.test("when calling 'hasVariantManagement' with a control that belong to a variant management control", function(assert) {
-			var bVariantManagementReference1 = ControlVariantApplyAPI.hasVariantManagement(sap.ui.getCore().byId("testComponent---mockview--ObjectPageLayout"));
-			var bVariantManagementReference2 = ControlVariantApplyAPI.hasVariantManagement(sap.ui.getCore().byId("testComponent---mockview--TextTitle1"));
-			assert.ok(bVariantManagementReference1, "true is returned for the first variant management control");
-			assert.ok(bVariantManagementReference2, "true is returned for the second variant management control");
-		});
-
-		QUnit.test("when calling 'hasVariantManagement' with a control that doesn't belong to a variant management control", function(assert) {
-			var bVariantManagementReference = ControlVariantApplyAPI.hasVariantManagement(sap.ui.getCore().byId("testComponent---mockview--Button"));
-			assert.notOk(bVariantManagementReference, "false is returned");
-		});
-	});
-
 	QUnit.done(function () {
 		jQuery('#qunit-fixture').hide();
 	});

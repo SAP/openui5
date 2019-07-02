@@ -1,23 +1,37 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/apply/api/ControlPersonalizationApplyAPI",
-	"sap/ui/core/UIComponent",
+	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Control",
+	"sap/ui/core/UIComponent",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/Cache",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
+	"sap/ui/fl/variants/VariantModel",
+	"sap/ui/fl/write/ChangesController",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	Utils,
-	ControlPersonalizationApplyAPI,
-	UIComponent,
+	ComponentContainer,
 	Control,
+	UIComponent,
+	JsControlTreeModifier,
 	Cache,
+	Utils,
+	FlexRuntimeInfoAPI,
+	VariantModel,
+	ChangesController,
 	sinon
 ) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
+
+	function mockFlexController(oControl, oReturn) {
+		sandbox.stub(ChangesController, "getFlexControllerInstance")
+			.withArgs(oControl)
+			.returns(oReturn);
+	}
 
 	QUnit.module("isPersonalized", {
 		beforeEach : function() {
@@ -37,7 +51,7 @@ sap.ui.define([
 			this.aChangeTypes = ["changeType1", "changeType2"];
 			this.oControl = new Control("controlId1");
 			var aControls = [this.oControl, {id: "controlId2", appComponent: this.oAppComponent}];
-			return ControlPersonalizationApplyAPI.isPersonalized(aControls, this.aChangeTypes).then(function(bIsPersonalized) {
+			return FlexRuntimeInfoAPI.isPersonalized(aControls, this.aChangeTypes).then(function(bIsPersonalized) {
 				assert.ok(!bIsPersonalized, "No personalization changes on control were found.");
 			});
 		});
@@ -46,7 +60,7 @@ sap.ui.define([
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({}));
 			this.aChangeTypes = ["changeType1", "changeType2"];
 			var aControls = [{id: "controlId1", appComponent: this.oAppComponent}];
-			return ControlPersonalizationApplyAPI.isPersonalized(aControls, this.aChangeTypes).then(function(bIsPersonalized) {
+			return FlexRuntimeInfoAPI.isPersonalized(aControls, this.aChangeTypes).then(function(bIsPersonalized) {
 				assert.ok(!bIsPersonalized, "No personalization changes on control were found.");
 			});
 		});
@@ -103,7 +117,7 @@ sap.ui.define([
 			};
 
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
-			return ControlPersonalizationApplyAPI.isPersonalized(aControls, this.aChangeTypes).then(function(bIsPersonalized) {
+			return FlexRuntimeInfoAPI.isPersonalized(aControls, this.aChangeTypes).then(function(bIsPersonalized) {
 				assert.ok(bIsPersonalized, "Personalization changes were found on control.");
 			});
 		});
@@ -111,7 +125,7 @@ sap.ui.define([
 		QUnit.test("When isPersonalized() is called with an empty control ids, non-empty change types", function(assert) {
 			this.aChangeTypes = ["changeType1", "changeType2"];
 			assert.throws(
-				ControlPersonalizationApplyAPI.isPersonalized([], this.aChangeTypes),
+				FlexRuntimeInfoAPI.isPersonalized([], this.aChangeTypes),
 				"a rejection takes place"
 			);
 		});
@@ -119,7 +133,7 @@ sap.ui.define([
 		QUnit.test("When isPersonalized() is called with an array of control maps, without an app component and empty changes", function(assert) {
 			var aControlIds = [{id: "controlId1"}];
 			assert.throws(
-				ControlPersonalizationApplyAPI.isPersonalized(aControlIds, []),
+				FlexRuntimeInfoAPI.isPersonalized(aControlIds, []),
 				"a rejection takes place"
 			);
 		});
@@ -133,7 +147,7 @@ sap.ui.define([
 				}
 			};
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
-			return ControlPersonalizationApplyAPI.isPersonalized(aControls).then(function(bIsPersonalized) {
+			return FlexRuntimeInfoAPI.isPersonalized(aControls).then(function(bIsPersonalized) {
 				assert.equal(!!bIsPersonalized, true, "Personalization changes were found on control.");
 			});
 		});
@@ -147,7 +161,7 @@ sap.ui.define([
 				}
 			};
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
-			return ControlPersonalizationApplyAPI.isPersonalized(aControls, []).then(function(bIsPersonalized) {
+			return FlexRuntimeInfoAPI.isPersonalized(aControls, []).then(function(bIsPersonalized) {
 				assert.equal(!!bIsPersonalized, true, "Personalization changes were found on control.");
 			});
 		});
@@ -194,12 +208,124 @@ sap.ui.define([
 				}
 			};
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
-			return ControlPersonalizationApplyAPI.isPersonalized([this.oControl], this.aChangeTypes).then(function(bIsPersonalized) {
+			return FlexRuntimeInfoAPI.isPersonalized([this.oControl], this.aChangeTypes).then(function(bIsPersonalized) {
 				assert.equal(bIsPersonalized, false, "Personalization changes were found on control.");
 			});
 		});
 	});
 
+	QUnit.module("waitForChanges", {
+		beforeEach: function () {
+			this.aObjectsToDestroy = [];
+		},
+		afterEach: function() {
+			sandbox.restore();
+			this.aObjectsToDestroy.forEach(function(oObject) {oObject.destroy();});
+		}
+	}, function() {
+		QUnit.test("PersistenceApplyAPI.waitForChanges", function(assert) {
+			var oControl = new Control();
+			this.aObjectsToDestroy.push(oControl);
+			var oWaitForChangesStub = sandbox.stub().resolves();
+			mockFlexController(oControl, {waitForChangesToBeApplied: oWaitForChangesStub});
+
+			return FlexRuntimeInfoAPI.waitForChanges(oControl).then(function() {
+				assert.equal(oWaitForChangesStub.callCount, 1, "the waitForChanges method was called");
+			});
+		});
+	});
+
+	QUnit.module("isFlexSupported", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when there is an app component associated with the control", function(assert) {
+			sandbox.stub(Utils, "getAppComponentForControl").returns({});
+			assert.equal(FlexRuntimeInfoAPI.isFlexSupported({}), true, "the function returns true");
+		});
+
+		QUnit.test("when there is no app component associated with the control", function(assert) {
+			sandbox.stub(Utils, "getAppComponentForControl").returns();
+			assert.equal(FlexRuntimeInfoAPI.isFlexSupported({}), false, "the function returns false");
+		});
+	});
+
+	QUnit.module("Given an instance of VariantModel", {
+		beforeEach : function(assert) {
+			var done = assert.async();
+
+			jQuery.get("test-resources/sap/ui/fl/qunit/testResources/VariantManagementTestApp.view.xml", null,
+			function(viewContent) {
+				var MockComponent = UIComponent.extend("MockController", {
+					metadata: {
+						manifest: 	{
+							"sap.app" : {
+								applicationVersion : {
+									version : "1.2.3"
+								}
+							}
+						}
+					},
+					createContent : function() {
+						var oApp = new sap.m.App(this.createId("mockapp"));
+						var oView = sap.ui.xmlview({
+							id: this.createId("mockview"),
+							viewContent: viewContent
+						});
+						oApp.addPage(oView);
+						return oApp;
+					}
+				});
+				this.oComp = new MockComponent("testComponent");
+				this.oFlexController = ChangesController.getFlexControllerInstance(this.oComp);
+				var oVariantModel = new VariantModel({}, this.oFlexController, this.oComp);
+				this.oComp.setModel(oVariantModel, Utils.VARIANT_MODEL_NAME);
+				this.oCompContainer = new ComponentContainer("sap-ui-static", {
+					component: this.oComp
+				}).placeAt("qunit-fixture");
+
+				done();
+			}.bind(this));
+		},
+		afterEach: function() {
+			sandbox.restore();
+			this.oCompContainer.destroy();
+			this.oComp.destroy();
+		}
+	}, function() {
+		QUnit.test("when calling 'hasVariantManagement' with a control that belong to a variant management control", function(assert) {
+			var bVariantManagementReference1 = FlexRuntimeInfoAPI.hasVariantManagement(sap.ui.getCore().byId("testComponent---mockview--ObjectPageLayout"));
+			var bVariantManagementReference2 = FlexRuntimeInfoAPI.hasVariantManagement(sap.ui.getCore().byId("testComponent---mockview--TextTitle1"));
+			assert.ok(bVariantManagementReference1, "true is returned for the first variant management control");
+			assert.ok(bVariantManagementReference2, "true is returned for the second variant management control");
+		});
+
+		QUnit.test("when calling 'hasVariantManagement' with a control that doesn't belong to a variant management control", function(assert) {
+			var bVariantManagementReference = FlexRuntimeInfoAPI.hasVariantManagement(sap.ui.getCore().byId("testComponent---mockview--Button"));
+			assert.notOk(bVariantManagementReference, "false is returned");
+		});
+	});
+
+	/*
+	QUnit.module("getChangeSelector", {
+		beforeEach: function() {
+			this.oGetSelectorStub = sandbox.stub(JsControlTreeModifier, "getSelector");
+			sandbox.stub(Utils, "getAppComponentForControl").returns("appComponent");
+			this.oControl = new Control();
+		},
+		afterEach: function() {
+			sandbox.restore();
+			this.oControl.destroy();
+		}
+	}, function() {
+		QUnit.test("when called with a control", function(assert) {
+			this.oGetSelectorStub.returns("selector");
+			assert.equal(FlexRuntimeInfoAPI.getChangeSelector("id", this.oControl, {}), "selector", "the function returns the value of getSelector");
+			assert.ok(this.oGetSelectorStub.calledWith("id", "appComponent", {}), "the function was called with the correct parameters");
+		});
+	});
+*/
 	QUnit.done(function () {
 		jQuery('#qunit-fixture').hide();
 	});

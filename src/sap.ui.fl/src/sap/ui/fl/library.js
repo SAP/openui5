@@ -19,6 +19,28 @@ sap.ui.define([
 	 * @sap-restricted
 	 */
 
+	/**
+	 * Element or Component instance or object containing information about the element or component
+	 *
+	 * @typedef {sap.ui.core.Element|sap.ui.core.Component|object} sap.ui.fl.Selector
+	 * @since 1.69
+	 * @private
+	 * @ui5-restricted
+	 * can be either
+	 * 	- element or component instance
+	 * 	- object with information about an element
+	 * 		{
+	 * 			elementId
+	 * 			elementType
+	 * 			appComponent
+	 * 		}
+	 * - object with information about component
+	 * 		{
+	 * 			appId
+	 * 			appVersion
+	 * 		}
+	 */
+
 	sap.ui.getCore().initLibrary({
 		name: "sap.ui.fl",
 		version: "${version}",
