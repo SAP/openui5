@@ -1333,6 +1333,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oButton = new Button("control1", {text: "foo"});
 			this.oButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 			givenThePluginWithOKClosingDialog.call(this);
 			return new Promise(function(resolve) {
 				this.oDesignTime = new DesignTime({
