@@ -11,8 +11,13 @@
       {
         "id": "d8e41321d8cef867b8948bcaff8808738b1c283b",
         "type": "FIX",
-        "text": " sap.ui.dt: validation for ElementUtil.findAllSiblingsInContainer",
-        "references": []
+        "text": "sap.ui.dt: validation for ElementUtil.findAllSiblingsInContainer",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970280816"
+          }
+        ]
       }
     ]
   }
