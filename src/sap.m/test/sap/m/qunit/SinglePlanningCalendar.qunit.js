@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/unified/CalendarLegendItem",
 	"sap/ui/core/InvisibleText",
 	'sap/ui/events/KeyCodes',
+	"sap/ui/model/json/JSONModel",
 	"sap/base/Log",
 	"sap/ui/core/library"
 ], function(
@@ -27,6 +28,7 @@ sap.ui.define([
 	CalendarLegendItem,
 	InvisibleText,
 	KeyCodes,
+	JSONModel,
 	Log,
 	coreLibrary
 ) {
@@ -789,6 +791,29 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
+	QUnit.test("addView using binding", function (assert) {
+		// prepare
+		var oSPC = new SinglePlanningCalendar(),
+			oModel = new JSONModel();
+
+		oModel.setData({
+			DayTitle: "Day View"
+		});
+		sap.ui.getCore().setModel(oModel);
+
+		// act
+		oSPC.addView(new SinglePlanningCalendarDayView({
+			key: "DayKey",
+			title: '{/DayTitle}'
+		})).placeAt('qunit-fixture');
+
+		//assert
+		assert.strictEqual(oSPC.getViews()[0].getTitle(), oSPC._getHeader()._getOrCreateViewSwitch().getItems()[0].getText(), "The title set to the view is transferred to the text property of one of the items in the views switch.");
+
+		//clean up
+		oSPC.destroy();
+	});
+
 	QUnit.test("addView with duplicate key", function (assert) {
 		var oDayView = new SinglePlanningCalendarDayView({
 				key: "DayView",
@@ -845,6 +870,29 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
+	QUnit.test("insertView using binding", function (assert) {
+		// prepare
+		var oSPC = new SinglePlanningCalendar(),
+			oModel = new JSONModel();
+
+		oModel.setData({
+			DayTitle: "Day View"
+		});
+		sap.ui.getCore().setModel(oModel);
+
+		// act
+		oSPC.insertView(new SinglePlanningCalendarDayView({
+			key: "DayKey",
+			title: '{/DayTitle}'
+		})).placeAt('qunit-fixture');
+
+		//assert
+		assert.strictEqual(oSPC.getViews()[0].getTitle(), oSPC._getHeader()._getOrCreateViewSwitch().getItems()[0].getText(), "The title set to the view is transferred to the text property of one of the items in the views switch.");
+
+		//clean up
+		oSPC.destroy();
+	});
+
 	QUnit.test("removeView", function (assert) {
 		var oDayView = new SinglePlanningCalendarDayView({
 				key: "DayView",
@@ -860,6 +908,64 @@ sap.ui.define([
 		//assert
 		assert.strictEqual(oSPC.getAggregation("views").length, 0, "Day view is removed");
 		assert.strictEqual(oSPC._oDefaultView.getId(), oSPC.getAssociation("selectedView"), "selectedView is the default view");
+
+		//clean up
+		oSPC.destroy();
+	});
+
+	QUnit.test("removeView using binding from one currently existing", function (assert) {
+		// prepare
+		var oSPC = new SinglePlanningCalendar(),
+			oView = new SinglePlanningCalendarDayView({
+				key: "DayKey",
+				title: '{/DayTitle}'
+			}),
+			oModel = new JSONModel();
+
+		oModel.setData({
+			DayTitle: "Day View"
+		});
+		sap.ui.getCore().setModel(oModel);
+
+		oSPC.addView(oView).placeAt('qunit-fixture');
+
+		// act
+		oSPC.removeView(oView);
+
+		//assert
+		assert.notOk(oSPC._oViewsObserver, "The ManagedObjectObserver does not exist, because there are no views.");
+
+		//clean up
+		oSPC.destroy();
+	});
+
+	QUnit.test("removeView using binding from two currently existing", function (assert) {
+		// prepare
+		var oSPC = new SinglePlanningCalendar(),
+			oDayView = new SinglePlanningCalendarDayView({
+				key: "DayKey",
+				title: '{/DayTitle}'
+			}),
+			oWeekView = new SinglePlanningCalendarWeekView({
+				key: "WeekKey",
+				title: '{/WeekTitle}'
+			}),
+			oModel = new JSONModel();
+
+		oModel.setData({
+			DayTitle: "Day View",
+			WeekTitle: "Week View"
+		});
+		sap.ui.getCore().setModel(oModel);
+
+		oSPC.addView(oDayView);
+		oSPC.addView(oWeekView).placeAt('qunit-fixture');
+
+		// act
+		oSPC.removeView(oDayView);
+
+		//assert
+		assert.ok(oSPC._oViewsObserver, "The ManagedObjectObserver exists, because there is still one view.");
 
 		//clean up
 		oSPC.destroy();
@@ -887,6 +993,38 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
+	QUnit.test("removeAllViews using binding", function (assert) {
+		// prepare
+		var oSPC = new SinglePlanningCalendar(),
+			oDayView = new SinglePlanningCalendarDayView({
+				key: "DayKey",
+				title: '{/DayTitle}'
+			}),
+			oWeekView = new SinglePlanningCalendarWeekView({
+				key: "WeekKey",
+				title: '{/WeekTitle}'
+			}),
+			oModel = new JSONModel();
+
+		oModel.setData({
+			DayTitle: "Day View",
+			WeekTitle: "Week View"
+		});
+		sap.ui.getCore().setModel(oModel);
+
+		oSPC.addView(oDayView);
+		oSPC.addView(oWeekView).placeAt('qunit-fixture');
+
+		// act
+		oSPC.removeAllViews();
+
+		//assert
+		assert.notOk(oSPC._oViewsObserver, "The ManagedObjectObserver does not exist, because there are no views.");
+
+		//clean up
+		oSPC.destroy();
+	});
+
 	QUnit.test("destroyViews", function (assert) {
 		var oDayView = new SinglePlanningCalendarDayView({
 				key: "DayView",
@@ -902,6 +1040,38 @@ sap.ui.define([
 		//assert
 		assert.strictEqual(oSPC.getAggregation("views"), null, "All views are destroyed");
 		assert.strictEqual(oSPC._oDefaultView.getId(), oSPC.getAssociation("selectedView"), "selectedView is the default view");
+
+		//clean up
+		oSPC.destroy();
+	});
+
+	QUnit.test("destroyViews using binding", function (assert) {
+		// prepare
+		var oSPC = new SinglePlanningCalendar(),
+			oDayView = new SinglePlanningCalendarDayView({
+				key: "DayKey",
+				title: '{/DayTitle}'
+			}),
+			oWeekView = new SinglePlanningCalendarWeekView({
+				key: "WeekKey",
+				title: '{/WeekTitle}'
+			}),
+			oModel = new JSONModel();
+
+		oModel.setData({
+			DayTitle: "Day View",
+			WeekTitle: "Week View"
+		});
+		sap.ui.getCore().setModel(oModel);
+
+		oSPC.addView(oDayView);
+		oSPC.addView(oWeekView).placeAt('qunit-fixture');
+
+		// act
+		oSPC.destroyViews();
+
+		//assert
+		assert.notOk(oSPC._oViewsObserver, "The ManagedObjectObserver does not exist, because there are no views.");
 
 		//clean up
 		oSPC.destroy();
