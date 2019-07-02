@@ -56,6 +56,24 @@
 		<Text id="textResult" text="Change event result" class="sapUiSmallMargin"/>
 	</Panel>
 	<Panel
+		id="dataPanelPickerFormat"
+		headerText="DatePickers types based on display format">
+		<Label text='DatePicker with display format for months and years' labelFor="DP10"/>
+		<DatePicker
+			id="DP10"
+			value="2015-11-23"
+			displayFormat="MM-y"
+			change="handleChange"
+			class="sapUiSmallMarginBottom"/>
+		<Label text="DatePicker with display format for years" labelFor="DP11"/>
+		<DatePicker
+			id="DP11"
+			value="2015-11-23"
+			displayFormat="yyyy"
+			change="handleChange"
+			class="sapUiSmallMarginBottom"/>
+	</Panel>
+	<Panel
 		id="dataBindingDatePanel"
 		headerText="DatePicker using data binding">
 		<Label text="DatePicker using DataBinding" labelFor="DP4"/>

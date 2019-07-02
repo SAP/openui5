@@ -11,13 +11,12 @@ sap.ui.define([
 	'sap/ui/core/Renderer',
 	'sap/ui/core/format/DateFormat',
 	'./calendar/CalendarUtils',
+	'./calendar/CustomYearPicker',
 	'./calendar/Header',
 	'./calendar/MonthsRow',
 	'./calendar/YearPicker',
 	'./calendar/CalendarDate',
-	'./Calendar',
-	'./CalendarRenderer',
-	"./CalendarMonthIntervalRenderer",
+	'./CalendarMonthIntervalRenderer',
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/util/deepEqual",
 	"sap/ui/core/Popup",
@@ -31,12 +30,11 @@ sap.ui.define([
 	Renderer,
 	DateFormat,
 	CalendarUtils,
+	CustomYearPicker,
 	Header,
 	MonthsRow,
 	YearPicker,
 	CalendarDate,
-	Calendar,
-	CalendarRenderer,
 	CalendarMonthIntervalRenderer,
 	containsOrEquals,
 	deepEqual,
@@ -1417,70 +1415,6 @@ sap.ui.define([
 		_togglePrevNexYearPicker.call(this);
 
 	}
-
-	/****************************************** CUSTOM YEAR PICKER CONTROL *********************************************/
-
-	var CustomYearPicker = Calendar.extend("CustomYearPicker", {
-		renderer: Renderer.extend(CalendarRenderer)
-	});
-
-	CustomYearPicker.prototype._initializeHeader = function() {
-		var oHeader = new Header(this.getId() + "--Head", {
-			visibleButton1: false
-		});
-
-		oHeader.attachEvent("pressPrevious", this._handlePrevious, this);
-		oHeader.attachEvent("pressNext", this._handleNext, this);
-		oHeader.attachEvent("pressButton2", this._handleButton2, this);
-		this.setAggregation("header",oHeader);
-	};
-
-	CustomYearPicker.prototype.onAfterRendering = function () {
-		Calendar.prototype.onAfterRendering.apply(this, arguments);
-		var oHeader = this.getAggregation("header");
-
-		oHeader.$("B2")
-			.css("background-color", "inherit")
-			.css("color", "inherit")
-			.css("cursor", "inherit")
-			.css("pointer-events", "none");
-
-		this._showYearPicker(); //Opens the calendar picker always at the Year Picker page instead of the default one
-	};
-
-	CustomYearPicker.prototype.onThemeChanged = function () {
-		Calendar.prototype.onThemeChanged.apply(this, arguments);
-
-		var oHeader = this.getAggregation("header");
-
-		oHeader.$("B2")
-			.css("background-color", "inherit")
-			.css("color", "inherit")
-			.css("cursor", "inherit")
-			.css("pointer-events", "none");
-	};
-
-	CustomYearPicker.prototype._selectYear = function () {
-		var oYearPicker = this.getAggregation("yearPicker");
-		var oDateRange = this.getSelectedDates()[0];
-
-		if (!oDateRange) {
-			oDateRange = new sap.ui.unified.DateRange();
-		}
-
-		oDateRange.setStartDate(oYearPicker.getDate());
-		this.addSelectedDate(oDateRange);
-
-		this.fireSelect();
-	};
-
-	CustomYearPicker.prototype.onsapescape = function(oEvent) {
-		this.fireCancel();
-	};
-
-	CustomYearPicker.prototype._shouldFocusB2OnTabPrevious = function(oEvent) {
-		return false; //in Months view, the year picker button is not focusable
-	};
 
 	return CalendarMonthInterval;
 

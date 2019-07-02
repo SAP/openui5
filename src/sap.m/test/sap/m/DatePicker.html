@@ -203,6 +203,18 @@
 						// Give feedback
 						sap.m.MessageToast.show(sFeedback);
 					}
+				}),
+				new sap.m.Label({text: "DatePicker with Formatter for month and year:", labelFor: "DP12"}),
+				new sap.m.DatePicker("DP12", {
+					dateValue: new Date("2014", "02", "26"),
+					displayFormat: "yyyy+++++MM",
+					change: handleChange
+				}),
+				new sap.m.Label({text: "DatePicker with Formatter for year:", labelFor: "DP13"}),
+				new sap.m.DatePicker("DP13", {
+					dateValue: new Date("2014", "02", "26"),
+					displayFormat: "----------------yyyyyyyyyy------------",
+					change: handleChange
 				})
 			],
 			footer: createFooter()
