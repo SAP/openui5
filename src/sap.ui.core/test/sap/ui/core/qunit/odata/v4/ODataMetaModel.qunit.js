@@ -2339,8 +2339,7 @@ sap.ui.define([
 			QUnit.test("fetchUI5Type: " + JSON.stringify(oProperty), function (assert) {
 				// Note: just spy on fetchModule() to make sure that the real types are used
 				// which check correctness of constraints
-				var fnFetchModuleSpy = this.spy(this.oMetaModel, "fetchModule"),
-					sMetaPath = "/EMPLOYEES/ENTRYDATE",
+				var sMetaPath = "/EMPLOYEES/ENTRYDATE",
 					oMetaContext = {
 						getPath : function () {}
 					},
@@ -2363,10 +2362,6 @@ sap.ui.define([
 					var sExpectedTypeName = "sap.ui.model.odata.type."
 							+ oProperty.$Type.slice(4)/*cut off "Edm."*/;
 
-					assert.strictEqual(fnFetchModuleSpy.callCount, 1);
-					assert.ok(fnFetchModuleSpy.calledOn(that.oMetaModel));
-					assert.ok(fnFetchModuleSpy.calledWithExactly(sExpectedTypeName),
-						fnFetchModuleSpy.printf("%C"));
 					assert.strictEqual(oType.getName(), sExpectedTypeName);
 					if (oConstraints && oConstraints.scale === "variable") {
 						// the type converts "variable" to Infinity
@@ -5571,39 +5566,6 @@ sap.ui.define([
 			assert.strictEqual(oError.message, "Must not set 'SearchSupported' in annotation "
 				+ "'com.sap.vocabularies.Common.v1.ValueList' and annotation "
 				+ "'com.sap.vocabularies.Common.v1.ValueListWithFixedValues'");
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("fetchModule: synchronously", function (assert) {
-		var vModule = {};
-
-		this.mock(sap.ui).expects("require")
-			.withExactArgs("sap/ui/model/odata/type/Int")
-			.returns(vModule);  // requested module already loaded
-
-		// code under test
-		assert.strictEqual(this.oMetaModel.fetchModule("sap.ui.model.odata.type.Int").getResult(),
-			vModule);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("fetchModule, asynchronous", function (assert) {
-		var vModule = {},
-			sModuleName = "sap/ui/model/odata/type/Int64",
-			oSapUiMock = this.mock(sap.ui);
-
-		oSapUiMock.expects("require")
-			.withExactArgs(sModuleName)
-			.returns(undefined); // requested module not yet loaded
-		oSapUiMock.expects("require")
-			.withExactArgs([sModuleName], sinon.match.func)
-			.callsArgWithAsync(1, vModule);
-
-		// code under test
-		return this.oMetaModel.fetchModule("sap.ui.model.odata.type.Int64")
-			.then(function (oResult) {
-				assert.strictEqual(oResult, vModule);
 		});
 	});
 

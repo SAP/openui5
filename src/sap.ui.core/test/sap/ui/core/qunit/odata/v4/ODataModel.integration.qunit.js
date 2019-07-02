@@ -1038,7 +1038,7 @@ sap.ui.define([
 		 * @param {object[]} aExpectedMessages The expected messages (with properties code, message,
 		 *   target, persistent, technical and type corresponding the getters of
 		 *   sap.ui.core.message.Message)
-		 * @param [bHasMatcher] bHasMatcher Whether the expected messages have a Sinon.JS matcher
+		 * @param {boolean} [bHasMatcher] Whether the expected messages have a Sinon.JS matcher
 		 * @returns {object} The test instance for chaining
 		 */
 		expectMessages : function (aExpectedMessages, bHasMatcher) {
