@@ -247,7 +247,7 @@ function (
 			sandbox.stub(MessageBox, "show").callsFake(function(sText, mParameters) {
 				mParameters.onClose("Close");
 			});
-			return this.oAppVariantManager.notifyKeyUserWhenPublishingIsReady("IamID", "AppvarID", true).then(
+			return this.oAppVariantManager.notifyKeyUserWhenPublishingIsReady("IamID", "AppvarID", true).catch(
 				function() {
 					assert.ok(checkFlpCustomizingIsReadyStub.calledOnceWith("IamID", true), "then the method notifyFlpCustomizingIsReady is called once with correct parameters");
 					assert.ok(fncatchErrorDialog.calledOnce, "then the function catchErrorDialog() is called once");

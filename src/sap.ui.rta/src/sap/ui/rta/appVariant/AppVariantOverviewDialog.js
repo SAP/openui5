@@ -8,15 +8,13 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/m/DialogRenderer",
 	"sap/ui/rta/appVariant/manageApps/webapp/Component",
-	"sap/ui/rta/Utils",
-	"sap/ui/rta/appVariant/AppVariantUtils"
+	"sap/ui/rta/Utils"
 ], function(
 	ComponentContainer,
 	Dialog,
 	DialogRenderer,
 	ManageAppsComponent,
-	RtaUtils,
-	AppVariantUtils
+	RtaUtils
 ) {
 	"use strict";
 
@@ -59,10 +57,6 @@ sap.ui.define([
 			this.addStyleClass(RtaUtils.getRtaStyleClassName());
 		},
 		destroy: function() {
-			var sNewAppVarianId = AppVariantUtils.getNewAppVariantId();
-			if (sNewAppVarianId) {
-				AppVariantUtils.setNewAppVariantId(null);
-			}
 			Dialog.prototype.destroy.apply(this, arguments);
 		},
 		renderer: DialogRenderer.render

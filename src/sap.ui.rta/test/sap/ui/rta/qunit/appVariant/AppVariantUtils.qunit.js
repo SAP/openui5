@@ -950,7 +950,7 @@ sap.ui.define([
 				reference: "TestIdBaseApp"
 			})
 			.then(function(oDescriptorVariant) {
-				return AppVariantUtils.buildSuccessInfo(oDescriptorVariant, "SOME_KEY", "IAMId");
+				return AppVariantUtils.buildSuccessInfo(oDescriptorVariant, "SOME_KEY");
 			}).then(function(oInfo) {
 				assert.ok(fnGetText.calledTwice, "then the getText() method is called twice");
 				assert.strictEqual(oInfo.appVariantId, "customer.TestId", "then the app variant id is as expected");
@@ -974,12 +974,26 @@ sap.ui.define([
 				reference: "TestIdBaseApp"
 			})
 			.then(function(oDescriptorVariant) {
-				return AppVariantUtils.buildSuccessInfo(oDescriptorVariant, "SOME_KEY", "IAMId");
+				return AppVariantUtils.buildSuccessInfo(oDescriptorVariant, "SOME_KEY");
 			}).then(function(oInfo) {
 				assert.ok(fnGetText.calledTwice, "then the getText() method is called twice");
 				assert.strictEqual(oInfo.appVariantId, "customer.TestId", "then the app variant id is as expected");
 				assert.strictEqual(oInfo.copyId, false, "then the copyID value is as expected");
 			});
+		});
+
+		QUnit.test("When buildFinalSuccessInfoS4HANACloud() method is called for S/4HANA Cloud after catalog assignment finished succesfully", function(assert) {
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					isKeyUser:true,
+					isAtoAvailable:true,
+					isAtoEnabled:true,
+					isProductiveSystem:false
+				})
+			);
+			var fnGetText = sandbox.stub(AppVariantUtils, "getText");
+			AppVariantUtils.buildFinalSuccessInfoS4HANACloud();
+			assert.ok(fnGetText.calledOnce, "then the getText() method is called once");
 		});
 	});
 

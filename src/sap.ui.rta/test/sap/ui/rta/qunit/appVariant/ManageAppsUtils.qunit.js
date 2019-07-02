@@ -516,7 +516,7 @@ sap.ui.define([
 			};
 
 			var sendRequestStub = sandbox.stub(AppVariantOverviewUtils, "sendRequest").resolves(oResult);
-			RtaFeature.setNewAppVariantId("id1");
+			AppVariantUtils.setNewAppVariantId("id1");
 
 			var oResourceBundlePromise = jQuery.sap.resources({
 				url: jQuery.sap.getModulePath("sap.ui.rta.appVariant.manageApps.webapp.i18n", "/i18n.properties"),
@@ -591,7 +591,7 @@ sap.ui.define([
 				async: true
 			});
 
-			RtaFeature.setNewAppVariantId(null);
+			AppVariantUtils.setNewAppVariantId(null);
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
