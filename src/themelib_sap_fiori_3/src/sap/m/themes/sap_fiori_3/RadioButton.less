@@ -48,6 +48,7 @@
 
 	.sapMRb > .sapMLabel {
 		height: 2rem;
+		line-height: 2rem;
 		max-width: calc(~"100% - 2rem");
 	}
 
@@ -58,6 +59,13 @@
 	.sapMRbInfo .sapMRbBOut,
 	.sapMRbInfo.sapMRbBTouched .sapMRbBOut {
 		border-width: 0.125rem;
+	}
+
+	.sapMRb:focus:before {
+		bottom: 0.325rem;
+		top: 0.325rem;
+		left: 0.325rem;
+		right: 0.325rem;
 	}
 }
 
