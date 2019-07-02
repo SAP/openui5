@@ -123,7 +123,7 @@ function(library, Control, coreLibrary, Text, KeyCodes, ObjectAttributeRenderer,
 			sTextDir = this.getTextDirection(),
 			oParent = this.getParent(),
 			bPageRTL = sap.ui.getCore().getConfiguration().getRTL(),
-			iMaxLines = ObjectAttributeRenderer.MAX_LINES.MULTI_LINE,
+			iMaxLines,
 			bWrap = true,
 			oppositeDirectionMarker = '';
 

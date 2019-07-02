@@ -217,6 +217,26 @@ sap.ui.define([
 			done();
 		}, 500);
 	});
+
+	QUnit.test("Text aggregation has multiLine set to undefined", function(assert) {
+
+		// Prepare
+		var oAttr = new ObjectAttribute({
+			title: "Title",
+			text: "text",
+			active: false
+		});
+
+		oAttr.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.notOk(oAttr.getAggregation("_textControl").getMaxLines(), "multiLine property is corretly set to undefined.");
+
+		// Clean up
+		oAttr.destroy();
+
+	});
 	/******************************************************************/
 
 	QUnit.module("Aggregation customContent");
@@ -563,7 +583,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.equal(oAttr.$().find(".sapMTextMaxLine").text(), ".*+: text", "Title is correct");
+		assert.equal(oAttr.$().find(".sapMText").text(), ".*+: text", "Title is correct");
 
 		// Clean up
 		oAttr.destroy();
