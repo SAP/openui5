@@ -27,7 +27,7 @@
       {
         "id": "921258e92299ab614dc3ce2735765096d284b854",
         "type": "FEATURE",
-        "text": " sap.f.DynamicPage: Added new backgroundDesign property",
+        "text": "sap.f.DynamicPage: Added new backgroundDesign property",
         "references": []
       }
     ]

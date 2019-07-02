@@ -57,14 +57,24 @@
       {
         "id": "7f50ce16e7e2e788d381c59928180a40402be50d",
         "type": "FIX",
-        "text": " sap/ui/model/odata/v2/ODataListBinding: ContextChange",
-        "references": []
+        "text": "sap/ui/model/odata/v2/ODataListBinding: ContextChange",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003178992019"
+          }
+        ]
       },
       {
         "id": "8b1910dd4a97ab0544ad52833e3f10fce95603b1",
         "type": "FIX",
-        "text": " v2.ODataModel: Path cache invalidates too often",
-        "references": []
+        "text": "v2.ODataModel: Path cache invalidates too often",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970259015"
+          }
+        ]
       }
     ]
   }

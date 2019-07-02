@@ -27,14 +27,24 @@
       {
         "id": "3d64334e6bc7e0cbd40b8a9c31b791c79daaa65a",
         "type": "FIX",
-        "text": " sap.m.NotificationListBase: Focus contrast ratio is now sufficient",
-        "references": []
+        "text": "sap.m.NotificationListBase: Focus contrast ratio is now sufficient",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970268292"
+          }
+        ]
       },
       {
         "id": "d7b7f94339a9d0e50e075424995baf77ca51fbe5",
         "type": "FIX",
-        "text": " sap.m.SinglePlanningCalendar: focus outline color adjusted",
-        "references": []
+        "text": "sap.m.SinglePlanningCalendar: focus outline color adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970268417"
+          }
+        ]
       }
     ]
   }

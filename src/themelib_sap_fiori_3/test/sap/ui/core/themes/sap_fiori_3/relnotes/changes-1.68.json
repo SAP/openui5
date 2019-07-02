@@ -82,38 +82,53 @@
       {
         "id": "921258e92299ab614dc3ce2735765096d284b854",
         "type": "FEATURE",
-        "text": " sap.f.DynamicPage: Added new backgroundDesign property",
+        "text": "sap.f.DynamicPage: Added new backgroundDesign property",
         "references": []
       },
       {
         "id": "ba89a088437a86b582944243ef433f8370c463f1",
         "type": "FEATURE",
-        "text": " sap.ui.core: new sap_fiori_3_hcb theme",
+        "text": "sap.ui.core: new sap_fiori_3_hcb theme",
         "references": []
       },
       {
         "id": "b494910fadf584c0b7942468478b0146a7564d53",
         "type": "FEATURE",
-        "text": " sap.ui.core: new sap_fiori_3_hcw theme",
+        "text": "sap.ui.core: new sap_fiori_3_hcw theme",
         "references": []
       },
       {
         "id": "7abdd76f273fa7dd34aa431bd3ac35f91c9b4982",
         "type": "FIX",
-        "text": " sap.m.IconTabBar: Quartz light theme visual improvements",
-        "references": []
+        "text": "sap.m.IconTabBar: Quartz light theme visual improvements",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970225320"
+          }
+        ]
       },
       {
         "id": "d7b7f94339a9d0e50e075424995baf77ca51fbe5",
         "type": "FIX",
-        "text": " sap.m.SinglePlanningCalendar: focus outline color adjusted",
-        "references": []
+        "text": "sap.m.SinglePlanningCalendar: focus outline color adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970268417"
+          }
+        ]
       },
       {
         "id": "7d9d80e6e675bc6bee8416d9a31c1d8ff76c77eb",
         "type": "FIX",
-        "text": " sap.m.TimePicker: slider parameter colors adjusted in fiori 3",
-        "references": []
+        "text": "sap.m.TimePicker: slider parameter colors adjusted in fiori 3",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970276528"
+          }
+        ]
       }
     ]
   }

@@ -5,8 +5,17 @@
       {
         "id": "f1cd73e56035b669ad8a30cb578d1300cc49a10d",
         "type": "FIX",
-        "text": " sap.tnt.SideNavigation: Expanding hidden navigation is now correct",
-        "references": []
+        "text": "sap.tnt.SideNavigation: Expanding hidden navigation is now correct",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2516"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980304042"
+          }
+        ]
       }
     ]
   }
