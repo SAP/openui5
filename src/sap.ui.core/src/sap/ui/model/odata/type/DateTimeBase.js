@@ -248,6 +248,9 @@ sap.ui.define([
 			}
 			return;
 		} else if (oValue instanceof Date) {
+			if (oValue.getFullYear() === 0) {
+				throw new ValidateException(getErrorMessage(this));
+			}
 			return;
 		}
 		throw new ValidateException("Illegal " + this.getName() + " value: " + oValue);

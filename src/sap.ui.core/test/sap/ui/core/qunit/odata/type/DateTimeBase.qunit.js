@@ -25,6 +25,7 @@ sap.ui.define([
 	var oDateOnly = new Date(Date.UTC(2014, 10, 27, 0, 0, 0, 0)),
 		oDateTime = new Date(2014, 10, 27, 13, 47, 26),
 		sDateTimeOffset = "2014-11-27T13:47:26" + getTimezoneOffset(oDateTime),
+		sDateTimeOffsetYear0 = "0000-11-27T13:47:26" + getTimezoneOffset(oDateTime),
 		oDateTimeWithMS = new Date(2014, 10, 27, 13, 47, 26, 456),
 		sFormattedDateOnly = "Nov 27, 2014",
 		sFormattedDateTime = "Nov 27, 2014, 1:47:26 PM",
@@ -129,7 +130,8 @@ sap.ui.define([
 	 * Tests the validation for a DateTime with the given constraints.
 	 */
 	function validate(assert, sTypeName, oConstraints, sExpectedErrorKey) {
-		var oType = createInstance(sTypeName, undefined, oConstraints);
+		var oDate = new Date(),
+			oType = createInstance(sTypeName, undefined, oConstraints);
 
 		oType.validateValue(null);
 
@@ -146,6 +148,8 @@ sap.ui.define([
 				assert.strictEqual(e.message, "Illegal " + sTypeName + " value: " + vValue, vValue);
 			}
 		});
+		oDate.setFullYear(0);
+		validateError(assert, oType, oDate, sExpectedErrorKey, "year 0");
 		oType.validateValue(new Date());
 	}
 
@@ -509,6 +513,8 @@ sap.ui.define([
 		assert.strictEqual(oControl.getTooltip(), sFormattedDateTime);
 
 		oDateTimeOffsetV4.validateValue(sDateTimeOffset);
+		oDateTimeOffsetV4.validateValue(sDateTimeOffsetYear0);
+
 		oControl.getBinding("tooltip").getType().validateValue(sDateTimeOffset);
 	});
 
