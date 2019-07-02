@@ -16,6 +16,7 @@ sap.ui.define([
 	var bFesrActive = false,
 		sBeaconURL,
 		oBeaconRequest,
+		iBeaconTimeoutID,
 		ROOT_ID = Passport.getRootId(), // static per session
 		HOST = window.location.host, // static per session
 		CLIENT_OS = Device.os.name + "_" + Device.os.version,
@@ -60,6 +61,11 @@ sap.ui.define([
 		// only use Passport for non CORS requests
 		if (!isCORSRequest(arguments[1])) {
 
+			// use the first request of an interaction as FESR TransactionID
+			if (!sFESRTransactionId) {
+				sFESRTransactionId = Passport.getTransactionId();
+			}
+
 			// set passport with Root Context ID, Transaction ID, Component Info, Action
 			this.setRequestHeader("SAP-PASSPORT", Passport.header(
 				Passport.traceFlags(),
@@ -71,15 +77,14 @@ sap.ui.define([
 		}
 	}
 
+	/**
+	 * Sends the FESR header when using the piggyback aproach
+	 * @private
+	 */
 	function fesrHeaderOverride() {
 
 		// only use FESR for non CORS requests
 		if (!isCORSRequest(arguments[1])) {
-
-			// remember the TransactionId of the first request when FESR is active
-			if (!sFESRTransactionId) {
-				sFESRTransactionId = Passport.getTransactionId();
-			}
 
 			if (sFESR && sFESRopt) {
 				this.setRequestHeader("SAP-Perf-FESRec", sFESR);
@@ -100,7 +105,7 @@ sap.ui.define([
 			format(oInteraction.roundtrip, 16), // client_round_trip_time
 			format(oFESRHandle.timeToInteractive, 16), // end_to_end_time
 			format(oInteraction.completeRoundtrips, 8), // completed network_round_trips
-			format(sPassportAction, 40), // passport_action
+			format(sPassportAction, 40, true), // passport_action
 			format(oInteraction.networkTime, 16), // network_time
 			format(oInteraction.requestTime, 16), // request_time
 			format(CLIENT_OS, 20), // client_os
@@ -171,15 +176,21 @@ sap.ui.define([
 			timeToInteractive: oFinishedInteraction.duration
 		}, oFinishedInteraction);
 
-		// only send FESR when requests have occured
-		if (oFinishedInteraction.requests.length > 0 || bForced) {
+		// do not send UI-only FESR with piggyback approach
+		if (oBeaconRequest || oFinishedInteraction.requests.length > 0 || bForced) {
 			createHeader(oFinishedInteraction, oFESRHandle);
+			if (oBeaconRequest) {
+				// reset the transactionId for Beacon approach
+				sFESRTransactionId = null;
+			}
 		}
 
 		// use the sendBeacon API instead of the piggyback approach
 		if (oBeaconRequest && sFESR && sFESRopt) {
-			oBeaconRequest.append("SAP-Perf-FESRec", sFESR);
-			oBeaconRequest.append("SAP-Perf-FESRec-opt", sFESRopt);
+			oBeaconRequest.append("SAP-Perf-FESRec", sFESR + "SAP-Perf-FESRec-opt" + sFESRopt);
+			// set a timeout to send in case of no Interactions
+			clearTimeout(iBeaconTimeoutID);
+			iBeaconTimeoutID = setTimeout(sendBeaconRequest, 60000);
 		}
 
 		var oPendingInteraction = Interaction.getPending();
@@ -198,6 +209,11 @@ sap.ui.define([
 
 		// increase the step count for Passport and FESR
 		iStepCounter++;
+	}
+
+	function sendBeaconRequest() {
+		oBeaconRequest.send();
+		iBeaconTimeoutID = setTimeout(sendBeaconRequest, 60000);
 	}
 
 	/**
@@ -237,9 +253,9 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.core
 	 */
 	FESR.setActive = function (bActive, sUrl) {
-		oBeaconRequest = sUrl ? BeaconRequest.isSupported() && new BeaconRequest({url: sUrl}) : null;
-		sBeaconURL = sUrl;
 		if (bActive && !bFesrActive) {
+			oBeaconRequest = sUrl ? BeaconRequest.isSupported() && new BeaconRequest({url: sUrl}) : null;
+			sBeaconURL = sUrl;
 			bFesrActive = true;
 			Passport.setActive(true);
 			Interaction.setActive(true);
@@ -259,6 +275,12 @@ sap.ui.define([
 					// set passport with Root Context ID, Transaction ID for Trace
 					this.setRequestHeader("SAP-PASSPORT", Passport.header(Passport.traceFlags(), ROOT_ID, Passport.getTransactionId()));
 				});
+			}
+			if (oBeaconRequest && iBeaconTimeoutID) {
+				clearTimeout(iBeaconTimeoutID);
+				oBeaconRequest.send();
+				oBeaconRequest = null;
+				sBeaconURL = null;
 			}
 			Interaction.onInteractionFinished = null;
 		}

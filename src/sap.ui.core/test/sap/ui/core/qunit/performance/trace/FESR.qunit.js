@@ -81,7 +81,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 
 		var oHeaderSpy = sinon.spy(XMLHttpRequest.prototype, "setRequestHeader");
 		var oPassportHeaderSpy = sinon.spy(Passport, "header");
-		assert.expect(2);
+		assert.expect(4);
 
 		FESR.setActive(true);
 
@@ -103,7 +103,12 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		assert.ok(oHeaderSpy.args.some(function(args) {
 			if (args[0] === "SAP-Perf-FESRec") {
 				// duration - end_to_end_time
-				return args[1].split(",")[6] === sPassportAction;
+				var sAction = args[1].split(",")[6];
+				var bStepCountAvailable = sAction.match("^.*\\d$");
+				assert.ok(bStepCountAvailable, "count was properly added");
+				var bEquals = sAction === sPassportAction;
+				assert.ok(bEquals, "action string matches");
+				return bEquals && bStepCountAvailable;
 			}
 		}), "Found the FESR header field values.");
 
@@ -134,7 +139,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 			var done = assert.async();
 
 			FESR.setActive(true, "example.url");
-			for (var index = 0; index < 5; index++) {
+			for (var index = 0; index < 10; index++) {
 				Interaction.start();
 				Interaction.notifyStepStart(null, true);
 			}
@@ -150,15 +155,51 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 
 			fileReader.onloadend = function(e) {
 				var data = e.target.result;
+				assert.ok(data.startsWith("sap-fesr-only=1"), "Send blob contains fesr-only header");
+				var nSAPPerfFESRecOpt = data.match(/SAP-Perf-FESRec-opt/g).length;
 				var nSAPPerfFESRec = data.match(/SAP-Perf-FESRec=/g).length;
-				var nSAPPerfFESRecOpt = data.match(/SAP-Perf-FESRec-opt=/g).length;
-				assert.equal(nSAPPerfFESRec, 5, "Send blob contains SAP-Perf-FESRec entries");
-				assert.equal(nSAPPerfFESRecOpt, 5, "SSend blob contains SAP-Perf-FESRec entries");
+				assert.equal(nSAPPerfFESRec, 10, "Send blob contains SAP-Perf-FESRec entries");
+				assert.equal(nSAPPerfFESRecOpt, 10, "Send blob contains SAP-Perf-FESRec-opt entries");
 				done();
 			};
 
 			fileReader.readAsText(blobToSend);
 			sendBeaconStub.restore();
+		});
+
+		QUnit.test("Beacon timeout", function(assert) {
+			assert.expect(5);
+			this.clock = sinon.useFakeTimers();
+			var sendBeaconStub = sinon.stub(window.navigator, "sendBeacon").returns(true);
+			window.performance.getEntriesByType = function() { return []; };
+
+			FESR.setActive(true, "example.url");
+			Interaction.start();
+			Interaction.notifyStepStart(null, true);
+			this.clock.tick(60000);
+			assert.ok(sendBeaconStub.calledOnce, "Beacon called once after 60s");
+			sendBeaconStub.reset();
+
+			this.clock.tick(30000);
+			Interaction.start();
+			Interaction.notifyStepStart(null, true);
+			this.clock.tick(30000);
+			assert.ok(sendBeaconStub.notCalled, "Beacon not called when Interaction occured");
+			this.clock.tick(30000);
+			assert.ok(sendBeaconStub.calledOnce, "Beacon immediately called 60s after Interaction");
+			sendBeaconStub.reset();
+
+			FESR.setActive(false);
+			assert.ok(sendBeaconStub.calledOnce, "Beacon immediately called after deactivation");
+			sendBeaconStub.reset();
+
+			this.clock.tick(60000);
+			assert.ok(sendBeaconStub.notCalled, "Beacon not called after deactivation");
+
+			// cleanup
+			delete window.performance.getEntriesByType;
+			sendBeaconStub.restore();
+			this.clock.restore();
 		});
 	}
 
