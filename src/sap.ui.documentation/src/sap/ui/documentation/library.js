@@ -34,7 +34,8 @@ sap.ui.define([
 			"sap.ui.documentation.sdk.controls.TitleLink"
 		],
 		elements: [
-			"sap.ui.documentation.sdk.controls.Row"
+			"sap.ui.documentation.sdk.controls.Row",
+			"sap.ui.documentation.sdk.controls.WebPageTitleUtil"
 		],
 		noLibraryCSS: true
 	});
