@@ -10,7 +10,9 @@ sap.ui.define(["./MessageStripUtilities"],
 	 * MessageStrip renderer.
 	 * @namespace
 	 */
-	var MessageStripRenderer = {};
+	var MessageStripRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -36,35 +38,39 @@ sap.ui.define(["./MessageStripUtilities"],
 	};
 
 	MessageStripRenderer.startMessageStrip = function (oRm, oControl) {
-		oRm.write("<div");
-		oRm.addClass(MSUtils.CLASSES.ROOT);
-		oRm.addClass(MSUtils.CLASSES.ROOT + oControl.getType());
+		oRm.openStart("div", oControl);
+		oRm.class(MSUtils.CLASSES.ROOT);
+		oRm.class(MSUtils.CLASSES.ROOT + oControl.getType());
 
-		oRm.writeControlData(oControl);
-		oRm.writeClasses();
-		oRm.writeAttribute(MSUtils.ATTRIBUTES.CLOSABLE, oControl.getShowCloseButton());
-		oRm.writeAccessibilityState(oControl, MSUtils.getAccessibilityState.call(oControl));
-		oRm.write(">");
+		oRm.attr(MSUtils.ATTRIBUTES.CLOSABLE, oControl.getShowCloseButton());
+		oRm.accessibilityState(oControl, MSUtils.getAccessibilityState.call(oControl));
+		oRm.openEnd();
 	};
 
 	MessageStripRenderer.renderAriaTypeText = function (oRm, oControl) {
-		oRm.write("<span class='sapUiPseudoInvisibleText'>");
-		oRm.write(MSUtils.getAriaTypeText.call(oControl));
-		oRm.write("</span>");
+		oRm.openStart("span");
+		oRm.class("sapUiPseudoInvisibleText");
+		oRm.openEnd();
+		oRm.text(MSUtils.getAriaTypeText.call(oControl));
+		oRm.close("span");
 	};
 
 	MessageStripRenderer.renderIcon = function (oRm, oControl) {
-		oRm.write("<div class='" + MSUtils.CLASSES.ICON + "'>");
-		oRm.writeIcon(MSUtils.getIconURI.call(oControl), null, {
+		oRm.openStart("div");
+		oRm.class(MSUtils.CLASSES.ICON);
+		oRm.openEnd();
+		oRm.icon(MSUtils.getIconURI.call(oControl), null, {
 			"title": null // prevent the icon title (icon is only decorative)
 		});
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	MessageStripRenderer.renderTextAndLink = function (oRm, oControl) {
 		var oFormattedText = oControl.getAggregation("_formattedText");
 
-		oRm.write("<div class='" + MSUtils.CLASSES.MESSAGE + "'>");
+		oRm.openStart("div");
+		oRm.class(MSUtils.CLASSES.MESSAGE);
+		oRm.openEnd();
 
 		// Determine if Formatted text control should be rendered or plain text control on "enableFormattedText" property
 		if (oControl.getEnableFormattedText() && oFormattedText) {
@@ -74,19 +80,20 @@ sap.ui.define(["./MessageStripUtilities"],
 		}
 
 		oRm.renderControl(oControl.getLink());
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	MessageStripRenderer.renderCloseButton = function (oRm) {
-		oRm.write("<button");
-		oRm.writeAttribute("class", MSUtils.CLASSES.CLOSE_BUTTON);
-		oRm.writeAttribute("title",
+		oRm.openStart("button");
+		oRm.class(MSUtils.CLASSES.CLOSE_BUTTON);
+		oRm.attr("title",
 			sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("MESSAGE_STRIP_CLOSE_BUTTON"));
-		oRm.write("></button>");
+		oRm.openEnd();
+		oRm.close("button");
 	};
 
 	MessageStripRenderer.endMessageStrip = function (oRm) {
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	return MessageStripRenderer;
