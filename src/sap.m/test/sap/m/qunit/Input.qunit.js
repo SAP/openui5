@@ -4034,10 +4034,12 @@ sap.ui.define([
 
 	QUnit.test("Force closing suggestions popover on 'change' event", function(assert) {
 
-		var oInput = this.oInput;
+		var oInput = this.oInput,
+			iSuggestionItemSelectedCount = 0;
 
 		oInput.attachSuggestionItemSelected(function () {
 			oInput.closeSuggestions();
+			iSuggestionItemSelectedCount++;
 		});
 
 		oInput.onfocusin();
@@ -4049,6 +4051,8 @@ sap.ui.define([
 		sap.ui.test.qunit.triggerKeydown(oInput.getDomRef("inner"), jQuery.sap.KeyCodes.ENTER);
 
 		assert.ok(true, 'there is no endless loop');
+
+		assert.strictEqual(iSuggestionItemSelectedCount,  1, 'attachSuggestionItemSelected is fired only once');
 	});
 
 	QUnit.module("Suggestions grouping", {

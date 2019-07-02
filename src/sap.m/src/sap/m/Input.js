@@ -651,6 +651,7 @@ function(
 			return;
 		}
 
+		this._oSuggPopover._iPopupListSelectedIndex = -1;
 
 		var iCount = this._iSetCount,
 			sNewValue;
@@ -681,8 +682,6 @@ function(
 		if (this.bIsDestroyed) {
 			return;
 		}
-
-		this._oSuggPopover._iPopupListSelectedIndex = -1;
 
 		if (!(this._bUseDialog && this instanceof sap.m.MultiInput && this._isMultiLineMode)) {
 			this._closeSuggestionPopup();
@@ -825,6 +824,8 @@ function(
 			return;
 		}
 
+		this._oSuggPopover._iPopupListSelectedIndex = -1;
+
 		this._bSelectingItem = true;
 
 		var oItem,
@@ -877,8 +878,6 @@ function(
 		if (this.bIsDestroyed) {
 			return;
 		}
-
-		this._oSuggPopover._iPopupListSelectedIndex = -1;
 
 		if (!(this._bUseDialog && this instanceof sap.m.MultiInput && this._isMultiLineMode)) {
 			this._closeSuggestionPopup();
