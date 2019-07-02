@@ -177,7 +177,7 @@ sap.ui.define([
 					Log.warning("[Deprecated] UriParameters.mParams must not be accessed.");
 					bParamWarning = true;
 				}
-				return mParams;
+				return Object.assign({}, mParams);
 			},
 			configurable: false
 		});
