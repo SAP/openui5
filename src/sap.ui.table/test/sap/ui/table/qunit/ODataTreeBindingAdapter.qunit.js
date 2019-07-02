@@ -1149,6 +1149,30 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Deselect All after SelectAll with specific isNodeSelectable implementation", function(assert) {
+		var done = assert.async();
+
+		prebuildTree(function() {
+			sinon.stub(oBinding, "_isNodeSelectable", function(oNode) {
+				if (!oNode) {
+					return false;
+				}
+				return oNode.isLeaf && !oNode.isArtificial;
+			});
+
+			oBinding.selectAll();
+			oBinding.clearSelection();
+
+			var i, iLength = oBinding.getLength();
+			// after selection is cleared, all node should leave the selectAllMode
+			for (i = 0; i < iLength; i++) {
+				assert.ok(!oBinding.getNodeByIndex(i).nodeState.selectAllMode);
+			}
+
+			done();
+		});
+	});
+
 	/**
 	 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
 	 * Data should already be present, since prebuildTree already requested a big set
