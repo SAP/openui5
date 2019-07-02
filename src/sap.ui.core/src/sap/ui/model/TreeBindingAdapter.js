@@ -1534,14 +1534,23 @@ sap.ui.define([
 		TreeBindingAdapter.prototype._clearSelection = function () {
 			var iNodeCounter = -1;
 			var iOldLeadIndex = -1;
-			var iMaxNumberOfMatches = 0;
+			var iMaxNumberOfMatches;
 
 			var aChangedIndices = [];
 
-			// Optimisation: find out how many nodes we have to check for deselection
-			for (var sGroupID in this._mTreeState.selected) {
-				if (sGroupID) {
-					iMaxNumberOfMatches++;
+			// The following optimization is not used when selectAllMode was activated.
+			//
+			// In selectAllMode, a traverse through all nodes are needed because the
+			// this._mTreeState.selected only contains the selectable (isNodeSelectable)
+			// nodes but non-selectable nodes may also have the selectAllMode set with
+			// true
+			if (this._oRootNode && !this._oRootNode.nodeState.selectAllMode) {
+				iMaxNumberOfMatches = 0;
+				// Optimisation: find out how many nodes we have to check for deselection
+				for (var sGroupID in this._mTreeState.selected) {
+					if (sGroupID) {
+						iMaxNumberOfMatches++;
+					}
 				}
 			}
 
