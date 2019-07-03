@@ -1,0 +1,30 @@
+/* ================================= */
+/* CSS for control sap.m/TabStrip    */
+/* Quartz High Contrast White theme  */
+/* ================================= */
+
+.sapMTabStrip {
+	.sapMTSTabsContainer {
+		.sapMTSTabs {
+			.sapMTabStripItem {
+				&.sapMTabStripItemSelected {
+					border-bottom: solid 0.25rem @sapUiGroupTitleBorderColor;
+				}
+				&:focus::before {
+					pointer-events: none;
+					content: "";
+					position: absolute;
+					top: 0.0625rem;
+					left: 0.0625rem;
+					right: 0.0625rem;
+					bottom: 0.0625rem;
+					border: 0.125rem dotted @sapUiContentFocusColor;
+				}
+			}
+		}
+	}
+}
+
+.sapMTabContIcon.sapUiIcon {
+	color: @sapUiContentFocusColor;
+}
