@@ -185,7 +185,7 @@ sap.ui.define([
 	QUnit.module("Given a group element, overlays, RTAElementMover", {
 		beforeEach : function(assert) {
 			this.oSmartGroupElement = new GroupElement("stableField", {
-				elements: [new Button("button1")]
+				elements: [new Button("button1", {text: "mybutton"})]
 			});
 
 			this.oSmartForm1 = new SmartForm("form1", {
@@ -261,6 +261,17 @@ sap.ui.define([
 				.then(function(bMovable) {
 					assert.notOk(bMovable, "but the element is not movable as there are no more elements in this group");
 				});
+		});
+
+		QUnit.test("and a group with stable id, when checking the target zone, during navigation mode", function(assert) {
+			// switch the navigation mode on
+			this.oDesignTime.setEnabled(false);
+			return DtUtil.waitForSynced(this.oDesignTime)()
+				.then(this.oElementMover.checkTargetZone.bind(this.oElementMover, this.oGroup1AggrOverlay, this.oSmartGroupElementOverlay, false))
+				.then(function(bCheckTargetZone) {
+					assert.ok(bCheckTargetZone, "then the group is a possible target zone");
+					return this.oElementMover.checkMovable(this.oSmartGroupElementOverlay);
+				}.bind(this));
 		});
 
 		QUnit.test("and a group from another smart form, when checking the target zone,", function(assert) {
