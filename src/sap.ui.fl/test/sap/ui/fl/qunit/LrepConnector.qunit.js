@@ -43,9 +43,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("isFlexServiceAvailable send flex settings request if availability flag is undefined", function (assert) {
-			var oLoadSettingsStub = sandbox.stub(LrepConnector.prototype, "loadSettings").returns(Promise.resolve().then(function () {
+			var oLoadSettingsStub = sandbox.stub(LrepConnector.prototype, "loadSettings").callsFake(function () {
 				LrepConnector._bServiceAvailability = true;
-			}));
+				return Promise.resolve();
+			});
 			return LrepConnector.isFlexServiceAvailable().then(function (bStatus) {
 				assert.ok(oLoadSettingsStub.calledOnce);
 				assert.equal(bStatus, true);
@@ -298,6 +299,7 @@ sap.ui.define([
 					assert.equal(oError.code, iCode, "then the correct error code was returned");
 					assert.equal(oError.status, "error", "then the correct error status was returned");
 					assert.ok(oError.message && typeof oError.message === "string", "then error's message property is a non-empty string");
+					assert.ok(oError.stack && typeof oError.stack === "string", "then error's stack property is a non-empty string");
 				});
 		});
 
@@ -366,7 +368,7 @@ sap.ui.define([
 				response: {}
 			};
 			LrepConnector._oLoadSettingsPromise = undefined;
-			var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
+			var oSendStub = sandbox.stub(this.oLrepConnector, "send").resolves(oFakeResponse);
 
 			return this.oLrepConnector.loadSettings().then(function() {
 				assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
@@ -382,7 +384,7 @@ sap.ui.define([
 				code: 404
 			};
 			LrepConnector._oLoadSettingsPromise = undefined;
-			var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.reject(oError));
+			var oSendStub = sandbox.stub(this.oLrepConnector, "send").rejects(oError);
 
 			return this.oLrepConnector.loadSettings().then(function() {
 				assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
@@ -395,7 +397,7 @@ sap.ui.define([
 				code: 403
 			};
 			LrepConnector._oLoadSettingsPromise = undefined;
-			var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.reject(oError));
+			var oSendStub = sandbox.stub(this.oLrepConnector, "send").rejects(oError);
 
 			return this.oLrepConnector.loadSettings().then(function() {
 				assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
@@ -408,12 +410,13 @@ sap.ui.define([
 				code : 404
 			};
 
-			var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.reject(oError));
+			var oSendStub = sandbox.stub(this.oLrepConnector, "send").rejects(oError);
 
-			return this.oLrepConnector.loadChanges({name: 'something'}, {}).catch(function() {
-				assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
-				assert.equal(LrepConnector._bServiceAvailability, false, "service availability flag is set to false");
-			});
+			return this.oLrepConnector.loadChanges({name: 'something'}, {})
+				.catch(function () {
+					assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
+					assert.equal(LrepConnector._bServiceAvailability, false, "service availability flag is set to false");
+				});
 		});
 
 		QUnit.test("loadSettings request is cached", function(assert) {
@@ -424,7 +427,7 @@ sap.ui.define([
 				response : oSetting
 			};
 			LrepConnector._oLoadSettingsPromise = undefined;
-			var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.resolve(oResponse));
+			var oSendStub = sandbox.stub(this.oLrepConnector, "send").resolves(oResponse);
 
 			return Promise.all([this.oLrepConnector.loadSettings(), this.oLrepConnector.loadSettings(), this.oLrepConnector.loadSettings()]).then(function(oSettings) {
 				assert.equal(oSendStub.callCount, 1, "the backend request was triggered only one");
@@ -440,12 +443,13 @@ sap.ui.define([
 				code: 404
 			};
 
-			var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.reject(oError));
+			var oSendStub = sandbox.stub(this.oLrepConnector, "send").rejects(oError);
 
-			return this.oLrepConnector.loadChanges({name: 'something'}, {}).catch(function() {
-				assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
-				assert.equal(LrepConnector._bServiceAvailability, false, "service availability flag is set to false");
-			});
+			return this.oLrepConnector.loadChanges({name: 'something'}, {})
+				.catch(function () {
+					assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
+					assert.equal(LrepConnector._bServiceAvailability, false, "service availability flag is set to false");
+				});
 		});
 
 		QUnit.test("loadChanges failed with error code differs from 404", function(assert) {
@@ -453,12 +457,13 @@ sap.ui.define([
 				code: 403
 			};
 
-			var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.reject(oError));
+			var oSendStub = sandbox.stub(this.oLrepConnector, "send").rejects(oError);
 
-			return this.oLrepConnector.loadChanges({name: 'something'}, {}).catch(function() {
-				assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
-				assert.equal(LrepConnector._bServiceAvailability, undefined, "service availability flag is undefined");
-			});
+			return this.oLrepConnector.loadChanges({name: 'something'}, {})
+				.catch(function () {
+					assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
+					assert.equal(LrepConnector._bServiceAvailability, undefined, "service availability flag is undefined");
+				});
 		});
 
 		QUnit.test("loadChanges", function(assert) {
@@ -473,14 +478,15 @@ sap.ui.define([
 			var oEnableTrialStub = sandbox.stub(this.oLrepConnector, "enableFakeConnectorForTrial");
 
 			sComponentClassName = "smartFilterBar.Component";
-			return this.oLrepConnector.loadChanges({name: sComponentClassName}, {}).then(function(oResult) {
-				assert.equal(oResult.changes.changes.length, 0);
-				assert.equal(oResult.changes.settings.isKeyUser, true);
-				assert.equal(oResult.changes.componentClassName, this.sComponentClassName);
-				assert.equal(oResult.etag, sEtag);
-				assert.deepEqual(oResult.changes.messagebundle, {i_123: "translatedKey"}, "returns the responded messagebundle within the result");
-				assert.equal(oEnableTrialStub.callCount, 0, "the fakeLrep was not enabled because isTrial was not set");
-			}.bind(this));
+			return this.oLrepConnector.loadChanges({name: sComponentClassName}, {})
+				.then(function (oResult) {
+					assert.equal(oResult.changes.changes.length, 0);
+					assert.equal(oResult.changes.settings.isKeyUser, true);
+					assert.equal(oResult.changes.componentClassName, this.sComponentClassName);
+					assert.equal(oResult.etag, sEtag);
+					assert.deepEqual(oResult.changes.messagebundle, {i_123: "translatedKey"}, "returns the responded messagebundle within the result");
+					assert.equal(oEnableTrialStub.callCount, 0, "the fakeLrep was not enabled because isTrial was not set");
+				}.bind(this));
 		});
 
 		QUnit.test("loadChanges with 'isTrial' set to true", function(assert) {
@@ -583,7 +589,7 @@ sap.ui.define([
 				response: {}
 			};
 
-			var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
+			var oSendStub = sandbox.stub(this.oLrepConnector, "send").resolves(oFakeResponse);
 
 			return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function() {
 				assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
@@ -606,7 +612,7 @@ sap.ui.define([
 				response: {}
 			};
 
-			var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
+			var oSendStub = sandbox.stub(this.oLrepConnector, "send").resolves(oFakeResponse);
 
 			return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function() {
 				assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
@@ -628,7 +634,7 @@ sap.ui.define([
 				response: {}
 			};
 
-			var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
+			var oSendStub = sandbox.stub(this.oLrepConnector, "send").resolves(oFakeResponse);
 
 			return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function() {
 				assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
@@ -650,7 +656,7 @@ sap.ui.define([
 				response: {}
 			};
 
-			var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
+			var oSendStub = sandbox.stub(this.oLrepConnector, "send").resolves(oFakeResponse);
 
 			return this.oLrepConnector.loadChanges({name: sComponentClassName, appVersion : sAppVersion}, {}).then(function() {
 				assert.equal(oSendStub.callCount, 1, "the back-end request was triggered");
@@ -671,7 +677,7 @@ sap.ui.define([
 				response: {}
 			};
 
-			var oSendStub = sandbox.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
+			var oSendStub = sandbox.stub(this.oLrepConnector, "send").resolves(oFakeResponse);
 
 			return this.oLrepConnector.loadChanges({name: sComponentClassName, appVersion : sAppVersion}, {}).then(function() {
 				assert.equal(oSendStub.callCount, 1, "the back-end request was triggered");
@@ -823,7 +829,7 @@ sap.ui.define([
 			var expectedResult = {abc: 123};
 			var payload = {testVariant: "Foo"};
 			var expectedUrl = "/sap/bc/lrep/changes/?changelist=myChangelist";
-			var sendStub = sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve({abc: 123}));
+			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
 
 			//Act
 			return this.oLrepConnector.create(payload, "myChangelist").then(function(result) {
@@ -838,7 +844,7 @@ sap.ui.define([
 			var payload = {testVariant: "Foo"};
 			var expectedResult = {abc: 123};
 			var expectedUrl = "/sap/bc/lrep/changes/?changelist=myChangelist";
-			var sendStub = sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve({abc: 123}));
+			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
 
 			//Act
 			return this.oLrepConnector.create(payload, "myChangelist").then(function(result) {
@@ -853,7 +859,7 @@ sap.ui.define([
 			var payload = {testVariant: "Foo"};
 			var expectedResult = {abc: 123};
 			var expectedUrl = "/sap/bc/lrep/changes/";
-			var sendStub = sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve({abc: 123}));
+			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
 
 			//Act
 			return this.oLrepConnector.create(payload).then(function(result) {
@@ -867,7 +873,7 @@ sap.ui.define([
 			//Arrange
 			var expectedResult = {abc: 123};
 			var expectedUrl = "/sap/bc/lrep/changes/myChangeName?changelist=myChangelist";
-			var sendStub = sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve({abc: 123}));
+			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
 
 			//Act
 			return this.oLrepConnector.update({}, "myChangeName", "myChangelist").then(function(result) {
@@ -881,7 +887,7 @@ sap.ui.define([
 			//Arrange
 			var expectedResult = {abc: 123};
 			var expectedUrl = "/sap/bc/lrep/changes/myChangeName";
-			var sendStub = sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve({abc: 123}));
+			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
 
 			//Act
 			return this.oLrepConnector.update({}, "myChangeName").then(function(result) {
@@ -895,7 +901,7 @@ sap.ui.define([
 			//Arrange
 			var expectedResult = {abc: 123};
 			var expectedUrl = "/sap/bc/lrep/changes/myChangeName?changelist=myChangelist";
-			var sendStub = sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve({abc: 123}));
+			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
 
 			//Act
 			return this.oLrepConnector.update({}, "myChangeName", "myChangelist").then(function(result) {
@@ -909,7 +915,7 @@ sap.ui.define([
 			//Arrange
 			var expectedResult = {abc: 123};
 			var expectedUrl = "/sap/bc/lrep/variants/myChangeName?layer=myLayer&namespace=myNamespace&changelist=myChangelist";
-			var sendStub = sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve({abc: 123}));
+			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
 
 			//Act
 			var mParameter = {
@@ -929,7 +935,7 @@ sap.ui.define([
 			//Arrange
 			var expectedResult = {abc: 123};
 			var expectedUrl = "/sap/bc/lrep/changes/myChangeName";
-			var sendStub = sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve({abc: 123}));
+			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
 
 			//Act
 			var mParameter = {sChangeName: "myChangeName"};
@@ -944,7 +950,7 @@ sap.ui.define([
 			//Arrange
 			var expectedResult = {abc: 123};
 			var expectedUrl = "/sap/bc/lrep/changes/myChangeName?layer=myLayer";
-			var sendStub = sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve({abc: 123}));
+			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
 
 			//Act
 			var mParameter = {sChangeName: "myChangeName", sLayer: "myLayer"};
@@ -959,7 +965,7 @@ sap.ui.define([
 			//Arrange
 			var expectedResult = {abc: 123};
 			var expectedUrl = "/sap/bc/lrep/changes/myChangeName?namespace=myNamespace&changelist=myChangelist";
-			var sendStub = sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve({abc: 123}));
+			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
 
 			//Act
 			var mParameter = {
@@ -979,7 +985,7 @@ sap.ui.define([
 			//Arrange
 			var expectedResult = {abc: 123};
 			var expectedUrl = "/sap/bc/lrep/content/myNamespace/mySubNamespace/myName.myType";
-			var sendStub = sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve({abc: 123}));
+			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
 
 			//Act
 			return this.oLrepConnector.getStaticResource("myNamespace/mySubNamespace", "myName", "myType", true).then(function(result) {
@@ -993,7 +999,7 @@ sap.ui.define([
 			//Arrange
 			var expectedResult = {abc: 123};
 			var expectedUrl = "/sap/bc/lrep/content/myNamespace/mySubNamespace/myName.myType?dt=true";
-			var sendStub = sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve({abc: 123}));
+			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
 
 			//Act
 			return this.oLrepConnector.getStaticResource("myNamespace/mySubNamespace", "myName", "myType").then(function(result) {
@@ -1007,7 +1013,7 @@ sap.ui.define([
 			//Arrange
 			var expectedResult = {abc: 123};
 			var expectedUrl = "/sap/bc/lrep/content/myNamespace/mySubNamespace/myName.myType?dt=true";
-			var sendStub = sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve({abc: 123}));
+			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
 
 			//Act
 			return this.oLrepConnector.getStaticResource("myNamespace/mySubNamespace", "myName", "myType", false).then(function(result) {
@@ -1021,7 +1027,7 @@ sap.ui.define([
 			//Arrange
 			var expectedResult = {abc: 123};
 			var expectedUrl = "/sap/bc/lrep/content/myNamespace/mySubNamespace/myName.myType?metadata=true&layer=myLayer";
-			var sendStub = sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve({abc: 123}));
+			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
 
 			//Act
 			return this.oLrepConnector.getFileAttributes("myNamespace/mySubNamespace", "myName", "myType", "myLayer").then(function(result) {
@@ -1035,7 +1041,7 @@ sap.ui.define([
 			//Arrange
 			var expectedResult = {abc: 123};
 			var expectedUrl = "/sap/bc/lrep/content/myNamespace/mySubNamespace/myName.myType?metadata=true";
-			var sendStub = sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve({abc: 123}));
+			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
 
 			//Act
 			return this.oLrepConnector.getFileAttributes("myNamespace/mySubNamespace", "myName", "myType").then(function(result) {
@@ -1048,7 +1054,7 @@ sap.ui.define([
 		QUnit.test("upsert - all params", function(assert) {
 			//Arrange
 			var expectedResult = {abc: 123};
-			sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve(expectedResult));
+			sinon.stub(this.oLrepConnector, "send").resolves(expectedResult);
 
 			//Act
 			return this.oLrepConnector.upsert("myNamespace/mySubNamespace/", "myName", "myType", "myLayer", "testcontent", "text/plain", "myChangelist").then(function(result) {
@@ -1060,7 +1066,7 @@ sap.ui.define([
 		QUnit.test("upsert - required only", function(assert) {
 			//Arrange
 			var expectedResult = {abc: 123};
-			sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve(expectedResult));
+			sinon.stub(this.oLrepConnector, "send").resolves(expectedResult);
 
 			//Act
 			return this.oLrepConnector.upsert("myNamespace/mySubNamespace/", "myName", "myType", "myLayer", "{}").then(function(result) {
@@ -1072,7 +1078,7 @@ sap.ui.define([
 		QUnit.test("deleteFile - all params", function(assert) {
 			//Arrange
 			var expectedResult = {abc: 123};
-			sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve({abc: 123}));
+			sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
 
 			//Act
 			return this.oLrepConnector.deleteFile("myNamespace/mySubNamespace", "myName", "myType", "myLayer", "myChangelist").then(function(result) {
@@ -1084,7 +1090,7 @@ sap.ui.define([
 		QUnit.test("deleteFile - required only", function(assert) {
 			//Arrange
 			var expectedResult = {abc: 123};
-			sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve({abc: 123}));
+			sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
 
 			//Act
 			return this.oLrepConnector.deleteFile("myNamespace/mySubNamespace", "myName", "myType", "myLayer").then(function(result) {
@@ -1097,7 +1103,7 @@ sap.ui.define([
 			//Arrange
 			var expectedResult = {abc: 123};
 			var expectedUrl = "/sap/bc/lrep/actions/publish/myNamespace/mySubNamespace/myName.myType?layer=myLayer&target-layer=myTargetLayer&target-namespace=myTargetNamespace&changelist=myChangelist";
-			var sendStub = sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve({abc: 123}));
+			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
 
 			//Act
 			return this.oLrepConnector.publish("myNamespace/mySubNamespace", "myName", "myType", "myLayer", "myTargetLayer", "myTargetNamespace", "myChangelist").then(function(result) {
@@ -1111,7 +1117,7 @@ sap.ui.define([
 			//Arrange
 			var expectedResult = {abc: 123};
 			var expectedUrl = "/sap/bc/lrep/actions/publish/myNamespace/mySubNamespace/myName.myType?layer=myLayer&target-layer=myTargetLayer";
-			var sendStub = sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve({abc: 123}));
+			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
 
 			//Act
 			return this.oLrepConnector.publish("myNamespace/mySubNamespace", "myName", "myType", "myLayer", "myTargetLayer").then(function(result) {
@@ -1125,7 +1131,7 @@ sap.ui.define([
 			//Arrange
 			var expectedResult = {abc: 123};
 			var expectedUrl = "/sap/bc/lrep/content/myNamespace/mySubNamespace?layer=myLayer";
-			var sendStub = sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve({abc: 123}));
+			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
 
 			//Act
 			return this.oLrepConnector.listContent("myNamespace/mySubNamespace", "myLayer").then(function(result) {
@@ -1138,7 +1144,7 @@ sap.ui.define([
 		QUnit.test("listContent - required only", function(assert) {
 			var expectedResult = {abc: 123};
 			var expectedUrl = "/sap/bc/lrep/content/myNamespace/mySubNamespace";
-			var sendStub = sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve({abc: 123}));
+			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
 
 			return this.oLrepConnector.listContent("myNamespace/mySubNamespace").then(function(result) {
 				assert.ok(sendStub.calledWith(expectedUrl, "GET", null, null));
@@ -1295,6 +1301,7 @@ sap.ui.define([
 					assert.equal(oError.code, iCode, "then the correct error code was returned");
 					assert.equal(oError.status, "error", "then the correct error status was returned");
 					assert.ok(oError.message && typeof oError.message === "string", "then error's message property is a non-empty string");
+					assert.ok(oError.stack && typeof oError.stack === "string", "then error's stack property is a non-empty string");
 				});
 		});
 
@@ -1349,28 +1356,36 @@ sap.ui.define([
 
 		QUnit.test("_sendAjaxRequest - shall read error messages from backend and reject Promise", function(assert) {
 			//Arrange
+			var iCode = 500;
 			this.server = sinon.fakeServer.create();
-			this.server.respondWith([500, {}, JSON.stringify({
-				messages: [
-					{
-						severity: "Error",
-						text: "content id must be non-initial"
-					}
-				]
-			})]);
+			this.server.respondWith([
+				iCode, {}, JSON.stringify({
+					messages: [
+						{
+							severity: "Error",
+							text: "content id must be non-initial"
+						}
+					]
+				})
+			]);
 			this.server.autoRespond = true;
 
 			var sSampleUri = "http://www.abc.de/files/";
 			this.oLrepConnector._sXsrfToken = "abc";
 
 			//Act
-			return this.oLrepConnector._sendAjaxRequest(sSampleUri)["catch"](function(error) {
-				assert.ok(error, "The promise shall reject");
-				assert.ok(error.messages);
-				assert.equal(error.messages.length, 1);
-				assert.equal(error.messages[0].text, "content id must be non-initial");
-				assert.equal(error.messages[0].severity, "Error");
-			});
+			return this.oLrepConnector._sendAjaxRequest(sSampleUri)
+				.catch(function (oError) {
+					assert.ok(oError, "The promise shall reject");
+					assert.ok(oError.messages);
+					assert.equal(oError.messages.length, 1);
+					assert.equal(oError.messages[0].text, "content id must be non-initial");
+					assert.equal(oError.messages[0].severity, "Error");
+					assert.equal(oError.code, iCode, "then the correct error code was returned");
+					assert.equal(oError.status, "error", "then the correct error status was returned");
+					assert.ok(oError.message && typeof oError.message === "string", "then error's message property is a non-empty string");
+					assert.ok(oError.stack && typeof oError.stack === "string", "then error's stack property is a non-empty string");
+				});
 		});
 	});
 
@@ -1383,7 +1398,7 @@ sap.ui.define([
 				return [];
 			});
 
-			this.oLoadModulesStub = sandbox.stub(this.oLrepConnector, "_loadModules").returns(Promise.resolve());
+			this.oLoadModulesStub = sandbox.stub(this.oLrepConnector, "_loadModules").resolves();
 		},
 		afterEach: function () {
 			this.server.restore();
