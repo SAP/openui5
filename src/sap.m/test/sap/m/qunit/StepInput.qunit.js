@@ -1578,8 +1578,31 @@ sap.ui.define([
 
 		// Assert
 		assert.notOk($label.attr("aria-labelledby"), "Root element doesn't have aria-labelledby");
-		assert.strictEqual($innerInput.attr("aria-labelledby"), "__text0" + " " + oLabel.getId(),
+		assert.strictEqual($innerInput.attr("aria-labelledby"), oLabel.getId() + " __text0",
 			"Internal input has reference to the label and the default ariaLabelledBy");
+
+		// Cleanup
+		oLabel.destroy();
+	});
+
+	QUnit.test("Labels, default ariaLabelledBy and description are all added in aria-labelledby", function () {
+		// Prepare
+		var $innerInput,
+			sExpectedReferences,
+			oLabel = new sap.m.Label("the-label", {
+				labelFor: this.stepInput,
+				text: "Doesn't matter"
+			});
+
+		// Act
+		this.stepInput.setDescription("Some description");
+		oCore.applyChanges();
+
+		$innerInput = this.stepInput.$().find(".sapMInputBaseInner");
+		sExpectedReferences = "the-label __text0 " + this.stepInput._getInput().getId() + "-descr";
+
+		//Assert
+		assert.strictEqual($innerInput.attr("aria-labelledby"), sExpectedReferences, "All references are set");
 
 		// Cleanup
 		oLabel.destroy();

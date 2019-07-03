@@ -353,16 +353,24 @@ function(
 				fMin = oStepInput.getMin(),
 				fMax = oStepInput.getMax(),
 				fNow = oStepInput.getValue(),
+				sDescription = oStepInput.getDescription(),
 				aAriaLabelledByRefs = oStepInput.getAriaLabelledBy(),
 				// If we don't check this manually, we won't have the labels, which were referencing SI,
 				// in aria-labelledby (which normally comes out of the box). This is because writeAccessibilityState
 				// is called for NumericInput, while any labels will be for the parent StepInput.
 				aReferencingLabels = LabelEnablement.getReferencingLabels(oStepInput),
-				sLabeledBy = aAriaLabelledByRefs.concat(aReferencingLabels).join(" "),
-				sDescribedBy = oStepInput.getAriaDescribedBy().join(" ");
+				sDescribedBy = oStepInput.getAriaDescribedBy().join(" "),
+				sResultingLabelledBy;
 
 			mAccAttributes["role"] = "spinbutton";
 			mAccAttributes["valuenow"] = fNow;
+
+			if (sDescription) {
+				// If there is a description, we should add a reference to it in the aria-labelledby
+				aAriaLabelledByRefs.push(oStepInput._getInput().getId() + "-descr");
+			}
+
+			sResultingLabelledBy = aReferencingLabels.concat(aAriaLabelledByRefs).join(" ");
 
 			if (typeof fMin === "number") {
 				mAccAttributes["valuemin"] = fMin;
@@ -376,8 +384,8 @@ function(
 				mAccAttributes["describedby"] = sDescribedBy;
 			}
 
-			if (sLabeledBy){
-				mAccAttributes["labelledby"] = sLabeledBy;
+			if (sResultingLabelledBy){
+				mAccAttributes["labelledby"] = sResultingLabelledBy;
 			}
 
 			return mAccAttributes;
