@@ -49,7 +49,7 @@ sap.ui.define([
 			When.onTheMessagePopover.selectMessage(sUnboundInfo);
 			Then.onTheMessagePopover.checkMessageDetails(sUnboundInfo,
 				"Details for \"Example for an unbound message\" (absolute longtext URL).");
-			Then.onTheMessagePopover.checkMessageDetailsHasTechnicalDetails({
+			Then.onTheMessagePopover.checkMessageHasTechnicalDetails({
 				originalMessage : {
 					code : "42",
 					longtextUrl : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002"
@@ -170,7 +170,7 @@ sap.ui.define([
 					type : MessageType.Error
 			}]);
 			When.onTheMessagePopover.selectMessage(sQuantityFailure);
-			Then.onTheMessagePopover.checkMessageDetailsHasTechnicalDetails({
+			Then.onTheMessagePopover.checkMessageHasTechnicalDetails({
 				originalMessage : {
 					"@.numericSeverity" : 4,
 					"@SAP__Common.longtextUrl" : "",

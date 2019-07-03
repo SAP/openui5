@@ -3024,7 +3024,7 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
-	QUnit.test("reportUnboundMessages", function (assert) {
+	QUnit.test("reportUnboundMessagesAsJSON", function (assert) {
 		var aMessages = [{code : "42", message : "Test"}, {code : "43", type : "Warning"}],
 			sMessages = JSON.stringify(aMessages),
 			oRequestor = _Requestor.create("/", oModelInterface),
@@ -3051,7 +3051,7 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
-	QUnit.test("reportUnboundMessages without messages", function (assert) {
+	QUnit.test("reportUnboundMessagesAsJSON without messages", function (assert) {
 		var oRequestor = _Requestor.create("/", oModelInterface);
 
 		this.mock(oModelInterface).expects("reportUnboundMessages")

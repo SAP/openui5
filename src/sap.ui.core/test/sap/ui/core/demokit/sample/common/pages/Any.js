@@ -280,12 +280,11 @@ sap.ui.define([
 						success : function (aDetailsHtml) {
 							Opa5.assert.strictEqual(aDetailsHtml.length, 1);
 							Opa5.assert.ok(aDetailsHtml[0].getContent().includes(sExpectedDetails),
-								"Check Message Details: Details for message '" + sMessage
-								+ " as expected: " + sExpectedDetails);
+								"Check Message Details: includes '" + sExpectedDetails + "'");
 						}
 					});
 				},
-				checkMessageDetailsHasTechnicalDetails : function (oExpectedDetails) {
+				checkMessageHasTechnicalDetails : function (oExpectedDetails) {
 					return this.waitFor({
 						id : /technicalDetailsLink-/,
 						controlType : "sap.m.Link",
@@ -293,7 +292,7 @@ sap.ui.define([
 							Opa5.assert.strictEqual(aLinks.length, 1);
 							TestUtils.deepContains(aLinks[0].data("technicalDetails"),
 								oExpectedDetails,
-								"checkMessageDetailsHasTechnicalDetails: "
+								"Check Message has Technical Details: "
 									+ JSON.stringify(oExpectedDetails));
 						}
 					});
