@@ -1784,12 +1784,16 @@ sap.ui.define([
 		 * @protected
 		 */
 		ComboBox.prototype._configureList = function (oList) {
+			var oRenderer = this.getRenderer();
+
 			if (!oList) {
 				return;
 			}
 
 			// configure the list
-			oList.setMode(ListMode.SingleSelectMaster);
+			oList.setMode(ListMode.SingleSelectMaster)
+				.addStyleClass(oRenderer.CSS_CLASS_COMBOBOXBASE + "List")
+				.addStyleClass(oRenderer.CSS_CLASS_COMBOBOX + "List");
 
 			// attach event handlers
 			oList
