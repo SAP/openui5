@@ -6,12 +6,14 @@ sap.ui.define([
 	"sap/ui/fl/DefaultVariant",
 	"sap/ui/fl/StandardVariant",
 	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
-	"sap/ui/fl/ChangePersistenceFactory"
+	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/transport/TransportSelection"
 ], function(
 	DefaultVariant,
 	StandardVariant,
 	SmartVariantManagementApplyAPI,
-	ChangePersistenceFactory
+	ChangePersistenceFactory,
+	TransportSelection
 ) {
 	"use strict";
 
@@ -42,11 +44,11 @@ sap.ui.define([
 		 * @returns {string} the ID of the newly created change
 		 * @public
 		 */
-		addChange: function(oControl, mParameters) {
-			var sStableId = SmartVariantManagementApplyAPI.getStableId(oControl);
+		add: function(oControl, mParameters) {
+			var sStableId = SmartVariantManagementApplyAPI._getStableId(oControl);
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oControl);
 
-			return oChangePersistence.addChangeForVariant(SmartVariantManagementApplyAPI.PERSISTENCY_KEY, sStableId, mParameters);
+			return oChangePersistence.addChangeForVariant(SmartVariantManagementApplyAPI._PERSISTENCY_KEY, sStableId, mParameters);
 		},
 
 		/**
@@ -57,7 +59,7 @@ sap.ui.define([
 		 * @public
 		 */
 		save: function(oControl) {
-			var sStableId = SmartVariantManagementApplyAPI.getStableId(oControl);
+			var sStableId = SmartVariantManagementApplyAPI._getStableId(oControl);
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oControl);
 
 			return oChangePersistence.saveAllChangesForVariant(sStableId);
@@ -75,10 +77,10 @@ sap.ui.define([
 		 */
 		setDefaultVariantId: function(oControl, sDefaultVariantId) {
 			var mParameters, oChange;
-			var sStableId = SmartVariantManagementApplyAPI.getStableId(oControl);
+			var sStableId = SmartVariantManagementApplyAPI._getStableId(oControl);
 			var mSelector = {};
 
-			mSelector[SmartVariantManagementApplyAPI.PERSISTENCY_KEY] = sStableId;
+			mSelector[SmartVariantManagementApplyAPI._PERSISTENCY_KEY] = sStableId;
 
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oControl);
 
@@ -92,7 +94,7 @@ sap.ui.define([
 				}
 			};
 
-			var oChanges = SmartVariantManagementApplyAPI.getChangeMap(oControl);
+			var oChanges = SmartVariantManagementApplyAPI._getChangeMap(oControl);
 			oChange = DefaultVariant.updateDefaultVariantId(oChanges, sDefaultVariantId);
 
 			if (oChange) {
@@ -116,10 +118,10 @@ sap.ui.define([
 		 */
 		setExecuteOnSelect: function(oControl, bExecuteOnSelect) {
 			var mParameters, oChange;
-			var sStableId = SmartVariantManagementApplyAPI.getStableId(oControl);
+			var sStableId = SmartVariantManagementApplyAPI._getStableId(oControl);
 
 			var mSelector = {};
-			mSelector[SmartVariantManagementApplyAPI.PERSISTENCY_KEY] = sStableId;
+			mSelector[SmartVariantManagementApplyAPI._PERSISTENCY_KEY] = sStableId;
 
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oControl);
 
@@ -129,7 +131,7 @@ sap.ui.define([
 				selector: mSelector
 			};
 
-			var oChanges = SmartVariantManagementApplyAPI.getChangeMap(oControl);
+			var oChanges = SmartVariantManagementApplyAPI._getChangeMap(oControl);
 			oChange = StandardVariant.updateExecuteOnSelect(oChanges, bExecuteOnSelect);
 
 			if (oChange) {
@@ -140,6 +142,15 @@ sap.ui.define([
 			var sChangeId = oChange.getId();
 			oChanges[sChangeId] = oChange;
 			return oChange;
+		},
+
+		/**
+		 * Opens Transport Dialog for transport selection.
+		 * @private
+		 * @returns {sap.ui.fl.transport.TransportSelection} TransportSelection dialog.
+		 */
+		_getTransportSelection: function() {
+			return new TransportSelection();
 		}
 	};
 

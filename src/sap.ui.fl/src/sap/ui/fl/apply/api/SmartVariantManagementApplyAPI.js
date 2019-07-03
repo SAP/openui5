@@ -27,7 +27,7 @@ sap.ui.define([
 	 */
 	var SmartVariantManagementApplyAPI = {
 
-		PERSISTENCY_KEY: "persistencyKey",
+		_PERSISTENCY_KEY: "persistencyKey",
 
 		/**
 		 * Calls the back end asynchronously and fetches all changes and variants pointing to this control.
@@ -40,7 +40,7 @@ sap.ui.define([
 		loadChanges: function(oControl) {
 			var oAppDescriptor = Utils.getAppDescriptor(oControl);
 			var sSiteId = Utils.getSiteId(oControl);
-			var sStableId = this.getStableId(oControl);
+			var sStableId = this._getStableId(oControl);
 
 			var mPropertyBag = {
 				appDescriptor: oAppDescriptor,
@@ -50,7 +50,7 @@ sap.ui.define([
 
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oControl);
 
-			return oChangePersistence.getChangesForVariant(this.PERSISTENCY_KEY, sStableId, mPropertyBag);
+			return oChangePersistence.getChangesForVariant(this._PERSISTENCY_KEY, sStableId, mPropertyBag);
 		},
 
 		/**
@@ -67,7 +67,7 @@ sap.ui.define([
 				Utils.log.error("sId or oControl is not defined");
 				return undefined;
 			}
-			var oChanges = this.getChangeMap(oControl);
+			var oChanges = this._getChangeMap(oControl);
 
 			return oChanges[sId];
 		},
@@ -85,39 +85,29 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the class name of the component the given control belongs to.
-		 *
-		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} oControl - SAPUI5 Smart Variant Management control
-		 *
-		 * @returns {String} The component class name, ending with ".Component"
-		 * @see sap.ui.core.Component.getOwnerIdFor
-		 * @public
-		 */
-		getComponentClassName: function(oControl) {
-			return Utils.getComponentClassName(oControl);
-		},
-
-		/**
-		 * Returns the Component that belongs to given control. If the control has no component, it walks up the control tree in order to find a
-		 * control having one.
-		 *
-		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} oControl - SAPUI5 Smart Variant Management control
-		 * @returns {sap.ui.core.Component} found component
-		 * @public
-		 */
-		getComponentForControl: function(oControl) {
-			return Utils.getComponentForControl(oControl);
-		},
-
-		/**
 		 * Indicates if the current application is a variant of an existing one
 		 *
-		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
+		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} oControl - SAPUI5 Smart Variant Management control
 		 * @returns {boolean} true if it's an application variant
 		 * @public
 		 */
 		isApplicationVariant: function(oControl) {
-			return Utils.isApplicationVariant(oControl);
+			if (Utils.isApplicationVariant(oControl)) {
+				return true;
+			}
+
+			var oComponent = Utils.getComponentForControl(oControl);
+
+			// special case for SmartTemplating to reach the real appComponent
+			if (oComponent && oComponent.getAppComponent) {
+				oComponent = oComponent.getAppComponent();
+
+				if (oComponent) {
+					return true;
+				}
+			}
+
+			return false;
 		},
 
 		/**
@@ -151,7 +141,7 @@ sap.ui.define([
 		 * @public
 		 */
 		getDefaultVariantId: function(oControl) {
-			var oChanges = this.getChangeMap(oControl);
+			var oChanges = this._getChangeMap(oControl);
 
 			return DefaultVariant.getDefaultVariantId(oChanges);
 		},
@@ -166,7 +156,7 @@ sap.ui.define([
 		 * @public
 		 */
 		getExecuteOnSelect: function(oControl) {
-			var oChanges = this.getChangeMap(oControl);
+			var oChanges = this._getChangeMap(oControl);
 
 			return StandardVariant.getExecuteOnSelect(oChanges);
 		},
@@ -178,7 +168,7 @@ sap.ui.define([
 		 * @returns {String | undefined} Stable Id. Empty string if stable id determination failed
 		 * @private
 		 */
-		getStableId: function(oControl) {
+		_getStableId: function(oControl) {
 			if (!oControl) {
 				return undefined;
 			}
@@ -197,11 +187,11 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} oControl - SAPUI5 Smart Variant Management control
 		 * @returns {object} A map of "persistencyKey" and belonging changes or an empty object
-		 * @public
+		 * @private
 		 */
-		getChangeMap: function(oControl) {
+		_getChangeMap: function(oControl) {
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oControl);
-			var sStableId = SmartVariantManagementApplyAPI.getStableId(oControl);
+			var sStableId = SmartVariantManagementApplyAPI._getStableId(oControl);
 
 			return oChangePersistence.getSmartVariantManagementChangeMap()[sStableId] || {};
 		}
