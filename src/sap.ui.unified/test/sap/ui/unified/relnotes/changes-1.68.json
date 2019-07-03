@@ -88,6 +88,12 @@
             "reference": "1970253137"
           }
         ]
+      },
+      {
+        "id": "2bc1d196eb373f90352a218960bdd12fec450a1d",
+        "type": "FEATURE",
+        "text": " sap.m.DatePicker: Picker type now depends on display format",
+        "references": []
       }
     ]
   }
