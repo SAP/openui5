@@ -331,6 +331,9 @@ function(
 		}
 		this._sFullText = oFormattedText._getDisplayHtml().replace(/\n/g, "<br>");
 		this._sShortText = this._getCollapsedText();
+		if (this._sShortText) {
+			this._sShortText = this._sShortText.replace(/<br>/g, " ");
+		}
 		this._bEmptyTagsInShortTextCleared = false;
 	};
 
