@@ -1274,4 +1274,83 @@ sap.ui.define([
 		sinon.assert.calledOn(this.oSpy, this.oContext);
 	});
 
+	QUnit.module("Invisible");
+
+	QUnit.test("Render visible control", function(assert) {
+		var oControl = new TestControl("testVisible");
+		oControl.placeAt("testArea");
+		sap.ui.getCore().applyChanges();
+
+		var oDomRef = document.getElementById("testVisible"),
+			oInvisbleRef = document.getElementById("sap-ui-invisible-testVisible");
+		assert.ok(oDomRef, "DOM reference exists");
+		assert.ok(oDomRef instanceof HTMLElement, "DOM reference is an HTML element");
+
+		assert.ok(!oInvisbleRef, "Invisible DOM reference doesn't exist");
+
+		oControl.destroy();
+		sap.ui.getCore().applyChanges();
+	});
+
+	QUnit.test("Render invisible control", function(assert) {
+		var oControl = new TestControl("testVisible", {visible: false});
+		oControl.placeAt("testArea");
+		sap.ui.getCore().applyChanges();
+
+		var oDomRef = document.getElementById("testVisible"),
+			oInvisbleRef = document.getElementById("sap-ui-invisible-testVisible");
+		assert.ok(!oDomRef, "DOM reference does not exist");
+
+		assert.ok(oInvisbleRef, "Invisible DOM reference exists");
+		assert.ok(oInvisbleRef instanceof HTMLElement, "Invisible DOM reference is an HTML element");
+
+		oControl.destroy();
+		sap.ui.getCore().applyChanges();
+	});
+
+	QUnit.test("Render control made visible in onBeforeRendering", function(assert) {
+		var oControl = new TestControl("testVisible", {visible: false});
+		oControl.placeAt("testArea");
+		sap.ui.getCore().applyChanges();
+
+		oControl.doBeforeRendering = function() {
+			this.setVisible(true);
+		};
+		oControl.rerender();
+		sap.ui.getCore().applyChanges();
+
+		var oDomRef = document.getElementById("testVisible"),
+			oInvisbleRef = document.getElementById("sap-ui-invisible-testVisible");
+		assert.ok(oDomRef, "DOM reference exists");
+		assert.ok(oDomRef instanceof HTMLElement, "DOM reference is an HTML element");
+
+		assert.ok(!oInvisbleRef, "Invisible DOM reference doesn't exist");
+
+		oControl.destroy();
+		sap.ui.getCore().applyChanges();
+	});
+
+	QUnit.test("Render control made invisible in onBeforeRendering", function(assert) {
+		var oControl = new TestControl("testVisible", {visible: true});
+		oControl.placeAt("testArea");
+		sap.ui.getCore().applyChanges();
+
+		oControl.doBeforeRendering = function() {
+			this.setVisible(false);
+		};
+		oControl.rerender();
+		sap.ui.getCore().applyChanges();
+
+		var oDomRef = document.getElementById("testVisible"),
+			oInvisbleRef = document.getElementById("sap-ui-invisible-testVisible");
+		assert.ok(!oDomRef, "DOM reference does not exist");
+
+		assert.ok(oInvisbleRef, "Invisible DOM reference exists");
+		assert.ok(oInvisbleRef instanceof HTMLElement, "Invisible DOM reference is an HTML element");
+
+		oControl.destroy();
+		sap.ui.getCore().applyChanges();
+	});
+
+
 });

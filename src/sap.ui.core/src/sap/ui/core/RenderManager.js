@@ -859,6 +859,15 @@ sap.ui.define([
 			}
 			aRenderStack.unshift(oControl.getId());
 
+			// start performance measurement
+			Measurement.start(oControl.getId() + "---renderControl", "Rendering of " + oControl.getMetadata().getName(), ["rendering","control"]);
+
+			// Trigger onBeforeRendering before checking visibility, as visible property might be changed in handler
+			triggerBeforeRendering(oControl);
+
+			Measurement.pause(oControl.getId() + "---renderControl");
+			// don't measure getRenderer because if Load needed its measured in Ajax call
+
 			// Either render the control normally, or invoke the InvisibleRenderer in case the control
 			// uses the default visible property
 			var oRenderer;
@@ -886,10 +895,7 @@ sap.ui.define([
 					: oMetadata.getRenderer();
 			}
 
-			// start performance measurement
-			Measurement.start(oControl.getId() + "---renderControl","Rendering of " + oControl.getMetadata().getName(), ["rendering","control"]);
-
-			triggerBeforeRendering(oControl);
+			Measurement.resume(oControl.getId() + "---renderControl");
 
 			// unbind any generically bound browser event handlers
 			var aBindings = oControl.aBindParameters;
