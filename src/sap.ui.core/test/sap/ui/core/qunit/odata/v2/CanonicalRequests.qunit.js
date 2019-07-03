@@ -578,6 +578,21 @@ sap.ui.define([
         });
 
     });
+
+    QUnit.test("ODataModel._invalidatePathCache - Ensure correct invalidation", function(assert){
+
+        this.oModel.mPathCache["/myEntity('1')/toStatus"] = {canonicalPath: "/myStatus('A')", updateKey: "/myStatus('A')"};
+        this.oModel.mPathCache["/myEntity('1')/toStatus/LongText"] = {canonicalPath: "/myStatus('A')/LongText", updateKey: "/myStatus('A')/LongText"};
+
+        this.oModel.mInvalidatedPaths["('1')/toStatus"] = "/myStatus('C')";
+
+        this.oModel._invalidatePathCache();
+
+        assert.equal(this.oModel.mPathCache["/myEntity('1')/toStatus"].canonicalPath, "/myStatus('C')", "Status updated of cache entry with nav property");
+        assert.equal(this.oModel.mPathCache["/myEntity('1')/toStatus/LongText"].canonicalPath, "/myStatus('C')/LongText", "Status text updated of cache entry with nav property");
+
+    });
+
 /*
     QUnit.module("Message Scope supported", {
         beforeEach: function () {

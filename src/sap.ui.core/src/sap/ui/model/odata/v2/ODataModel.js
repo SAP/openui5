@@ -3250,7 +3250,7 @@ sap.ui.define([
 				for (var sUpdateKey in that.mInvalidatedPaths) {
 					iIndex = sKey.indexOf(sUpdateKey);
 					if (iIndex > -1) {
-						if (that.mPathCache[sKey].canonicalPath !== null && iIndex + sUpdateKey.length !== that.mPathCache[sKey].canonicalPath.length) {
+						if (that.mPathCache[sKey].canonicalPath !== null && iIndex + sUpdateKey.length !== sKey.length) {
 							var sEnd = sKey.substr(iIndex + sUpdateKey.length);
 							that.mPathCache[sKey].canonicalPath = that.mInvalidatedPaths[sUpdateKey] === null ? null : that.mInvalidatedPaths[sUpdateKey] + sEnd;
 						} else {
