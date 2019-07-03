@@ -373,6 +373,14 @@ function (
 			this.oButtonOverlay.getGeometry().visible = true;
 			this.oButtonOverlay.fireGeometryChanged();
 			assert.equal(oEvaluateSpy.callCount, 1, "the evaluate function was called");
+
+			this.oButtonOverlay.getGeometry().visible = false;
+			this.oButtonOverlay.fireGeometryChanged();
+			assert.equal(oEvaluateSpy.callCount, 1, "the evaluate function was not called again");
+
+			this.oButtonOverlay.getGeometry().visible = true;
+			this.oButtonOverlay.fireGeometryChanged();
+			assert.equal(oEvaluateSpy.callCount, 1, "the evaluate function was not called again");
 		});
 
 		QUnit.test("when the event elementModified is thrown with aggregation change", function(assert) {
