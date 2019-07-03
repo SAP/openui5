@@ -324,7 +324,7 @@ sap.ui.define([
 			function prepareErrorAndReject(fnReject, oXhr, sStatus, sErrorThrown) {
 				// Fetching XSRF Token failed
 				var oError = new Error(sErrorThrown);
-				oError.status = "error";
+				oError.status = sStatus;
 				oError.code = oXhr.statusCode().status;
 				oError.messages = this._getMessagesFromXHR(oXhr);
 				fnReject(oError);
