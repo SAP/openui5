@@ -111,9 +111,22 @@ function(
 					this.evaluateEditable([oOverlay], {onRegistration: false});
 				}, this);
 			}
-		} else if (oParams.type === "insertAggregation" || oParams.type === "removeAggregation") {
+		} else if (
+			oParams.type === "insertAggregation"
+			|| oParams.type === "removeAggregation"
+		) {
 			aRelevantOverlays = this._getRelevantOverlays(oOverlay, oParams.name);
 			this.evaluateEditable(aRelevantOverlays, {onRegistration: false});
+		} else if (oParams.type === "addOrSetAggregation") {
+			if (this.getDesignTime().getStatus() === 'synced') {
+				aRelevantOverlays = this._getRelevantOverlays(oOverlay, oParams.name);
+				this.evaluateEditable(aRelevantOverlays, {onRegistration: false});
+			} else {
+				this.getDesignTime().attachEventOnce("synced", function () {
+					aRelevantOverlays = this._getRelevantOverlays(oOverlay, oParams.name);
+					this.evaluateEditable(aRelevantOverlays, {onRegistration: false});
+				}, this);
+			}
 		}
 	};
 
@@ -124,7 +137,8 @@ function(
 
 			// if an aggregation name is given, those overlays are added without checking the relevant container
 			if (sAggregationName) {
-				var aAggregationChildren = oOverlay.getAggregationOverlay(sAggregationName).getChildren();
+				var oAggregationOverlay = oOverlay.getAggregationOverlay(sAggregationName);
+				var aAggregationChildren = oAggregationOverlay ? oAggregationOverlay.getChildren() : [];
 				aAggregationChildren = aAggregationChildren.filter(function(oChildOverlay) {
 					return aRelevantOverlays.indexOf(oChildOverlay) === -1;
 				});
