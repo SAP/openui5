@@ -1,11 +1,17 @@
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/qunit/QUnitUtils", "sap/ui/core/Core", "sap/ui/core/util/XMLPreprocessor", "sap/ui/core/XMLComposite", "sap/ui/core/mvc/Controller",
-	"sap/ui/model/json/JSONModel", "sap/ui/core/Item", "sap/m/Text", "composites/SimpleText", "composites/TextButton", "composites/TextList", "composites/ForwardText", "composites/Field",
-	"composites/TemplateTest", "composites/ChildOfAbstract", "composites/TextToggleButton", "composites/TextToggleButtonNested", "composites/TextToggleButtonForwarded",
-	"composites/WrapperLayouter", "composites/TranslatableText", "composites/TranslatableTextLib", "composites/TranslatableTextBundle"
-], function (jQuery, QUnitUtils, Core, XMLPreprocessor, XMLComposite, Controller, JSONModel, Item, Text, SimpleText, TextButton, TextList, ForwardText, Field,
-		TemplateTest, ChildOfAbstract, TextToggleButton, TextToggleButtonNested, TextToggleButtonForwarded, WrapperLayouter, TranslatableText,
-		TranslatableTextLib, TranslatableTextBundle) {
+	"jquery.sap.global", "sap/ui/qunit/QUnitUtils", "sap/ui/core/Core",
+	"sap/ui/core/util/XMLPreprocessor", "sap/ui/core/XMLComposite", "sap/ui/core/mvc/Controller",
+	"sap/ui/model/json/JSONModel", "sap/ui/core/Item", "sap/m/Text", "composites/SimpleText",
+	"composites/TextButton", "composites/TextList", "composites/ForwardText", "composites/Field",
+	"composites/HiddenMetadata", "composites/TemplateTest", "composites/ChildOfAbstract",
+	"composites/TextToggleButton", "composites/TextToggleButtonNested",
+	"composites/TextToggleButtonForwarded", "composites/WrapperLayouter",
+	"composites/TranslatableText", "composites/TranslatableTextLib", "composites/TranslatableTextBundle"
+], function (jQuery, QUnitUtils, Core, XMLPreprocessor, XMLComposite, Controller, JSONModel, Item,
+			 Text, SimpleText, TextButton, TextList, ForwardText, Field, HiddenMetadata,
+			 TemplateTest, ChildOfAbstract, TextToggleButton, TextToggleButtonNested,
+			 TextToggleButtonForwarded, WrapperLayouter, TranslatableText, TranslatableTextLib,
+			 TranslatableTextBundle) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -124,6 +130,28 @@ sap.ui.define([
 		//set the global model again
 		Core.setModel(oGlobalModel, "model");
 		assert.strictEqual(oInnerText.getText(), "SetModelTextGlobal", "Text is now propagated from oGlobalModel");
+	});
+
+	QUnit.module("sap.ui.core.XMLComposite: Hidden properties & aggregations", {
+		beforeEach: function() {
+			this.oXMLComposite = new HiddenMetadata();
+			this.oXMLComposite.placeAt("qunit-fixture");
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oXMLComposite.destroy();
+		}
+	});
+
+	//*********************************************************************************************
+	QUnit.test("properties", function (assert) {
+		assert.strictEqual(this.oXMLComposite.getProperty("_text"),
+			"The hidden text", "Default Text is set");
+		assert.strictEqual(HiddenMetadata.getMetadata().getManagedProperty("_text").defaultValue,
+			"The hidden text", "Default Text is set");
+		assert.strictEqual(this.oXMLComposite.setProperty("_text", "Hello"),
+			this.oXMLComposite, "Instance returned");
+		assert.strictEqual(this.oXMLComposite.getProperty("_text"), "Hello", "Text is set");
 	});
 
 	//*********************************************************************************************
