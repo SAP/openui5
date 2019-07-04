@@ -191,10 +191,10 @@ sap.ui.define([
 
 		Wizard.prototype.onAfterRendering = function () {
 			if (!this.getCurrentStep()) {
-				this.setAssociation("currentStep", this.getSteps()[0], true);
+				this.setAssociation("currentStep", this._getStartingStep(), true);
 			}
 
-			var step = sap.ui.getCore().byId(this.getCurrentStep());
+			var step = this._getCurrentStepInstance();
 
 			this._activateAllPreceedingSteps(step);
 			this._attachScrollHandler();
@@ -539,7 +539,7 @@ sap.ui.define([
 			return true;
 		}
 
-		step = step || sap.ui.getCore().byId(this.getCurrentStep());
+		step = step || this._getCurrentStepInstance();
 
 		return this._getNextStep(step, progress) !== null;
 	};
@@ -857,10 +857,10 @@ sap.ui.define([
 				stepCount = this._getStepCount(),
 				nextButton = this._getNextButton(),
 				progressAchieved = this.getProgress(),
-				isStepValidated = this._stepPath[progressAchieved - 1].getValidated();
+				isStepValidated = this._getCurrentStepInstance().getValidated();
 
 			if (this.getEnableBranching()) {
-				isStepFinal = this._stepPath[progressAchieved - 1]._isLeaf();
+				isStepFinal = this._getCurrentStepInstance()._isLeaf();
 			} else {
 				isStepFinal = progressAchieved === stepCount;
 			}
@@ -879,7 +879,7 @@ sap.ui.define([
 		 * @private
 		 */
 		Wizard.prototype._getNextButton = function () {
-			var step = this._stepPath[this._stepPath.length - 1];
+			var step = this._getCurrentStepInstance();
 			if (step) {
 				return step.getAggregation("_nextButton");
 			} else {
@@ -982,6 +982,15 @@ sap.ui.define([
 
 				stepOffset = currentStepDOM.offsetTop;
 			}
+		};
+
+		/**
+		 * Returns a reference to the current step
+		 * @returns {sap.m.Button} The step reference
+		 * @private
+		 */
+		Wizard.prototype._getCurrentStepInstance = function () {
+			return sap.ui.getCore().byId(this.getCurrentStep());
 		};
 
 		Wizard.prototype._containsStep = function (step) {
