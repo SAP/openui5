@@ -15,7 +15,8 @@
 				"1.2.0",
 				"1.3.0",
 				"1.4.0",
-				"1.5.0"
+				"1.5.0",
+				"1.6.0"
 			]
 		},
 		"configuration": {
@@ -322,11 +323,17 @@
 			"properties": {
 				"title": {
 					"description": "The title of the item.",
-					"$ref": "#/definitions/field"
+					"oneOf": [
+						{ "$ref": "#/definitions/field" },
+						{ "$ref": "#/definitions/simpleBinding" }
+					]
 				},
 				"description": {
 					"description": "The description of the item.",
-					"$ref": "#/definitions/field"
+					"oneOf": [
+						{ "$ref": "#/definitions/field" },
+						{ "$ref": "#/definitions/simpleBinding" }
+					]
 				},
 				"info": {
 					"type": "object",
