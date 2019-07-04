@@ -1348,45 +1348,43 @@ function(
 			this.vValue = vInitialValue;
 			this.vError = vError;
 			this.bContinueWithFakePromise = arguments.length < 3 || (sInitialPromiseIdentifier === Utils.FakePromise.fakePromiseIdentifier);
+
+			var fnResolveOrReject = function(vParam, fn) {
+				try {
+					var vResolve = fn(vParam, Utils.FakePromise.fakePromiseIdentifier);
+					if (vResolve instanceof Promise ||
+							vResolve instanceof Utils.FakePromise) {
+						return vResolve;
+					}
+					return new Utils.FakePromise(vResolve);
+				} catch (oError) {
+					var vReject = oError;
+					return new Utils.FakePromise(vResolve, vReject);
+				}
+			};
+
 			Utils.FakePromise.prototype.then = function(fn) {
 				if (!this.bContinueWithFakePromise) {
 					return Promise.resolve(fn(this.vValue));
 				}
+
 				if (!this.vError) {
-					try {
-						this.vValue = fn(this.vValue, Utils.FakePromise.fakePromiseIdentifier);
-					} catch (oError) {
-						this.vError = oError;
-						this.vValue = null;
-						return this;
-					}
-					if (this.vValue instanceof Promise ||
-						this.vValue instanceof Utils.FakePromise) {
-						return this.vValue;
-					}
+					return fnResolveOrReject(this.vValue, fn);
 				}
 				return this;
 			};
+
 			Utils.FakePromise.prototype.catch = function(fn) {
 				if (!this.bContinueWithFakePromise) {
 					return Promise.reject(fn(this.vError));
 				}
+
 				if (this.vError) {
-					try {
-						this.vValue = fn(this.vError, Utils.FakePromise.fakePromiseIdentifier);
-					} catch (oError) {
-						this.vError = oError;
-						this.vValue = null;
-						return this;
-					}
-					this.vError = null;
-					if (this.vValue instanceof Promise ||
-						this.vValue instanceof Utils.FakePromise) {
-						return this.vValue;
-					}
+					return fnResolveOrReject(this.vError, fn);
 				}
 				return this;
 			};
+
 			if (this.vValue instanceof Promise ||
 				this.vValue instanceof Utils.FakePromise) {
 				return this.vValue;

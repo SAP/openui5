@@ -1128,7 +1128,7 @@ sap.ui.define([
 
 			this.oFlexController = FlexControllerFactory.createForControl(this.oComponent, oManifest);
 
-			sandbox.stub(this.oFlexController, "_getChangeHandler").returns({
+			sandbox.stub(this.oFlexController, "_getChangeHandler").resolves({
 				applyChange: sandbox.stub(),
 				revertChange: sandbox.stub()
 			});

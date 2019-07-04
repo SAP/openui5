@@ -115,15 +115,18 @@ jQuery.sap.require('sap.ui.fl.registry.ChangeRegistry');
 			isUserDependent: false
 		};
 		var oFlexController = createFlexController();
-		var oChange = oFlexController.addChange(oChangeParameters, this.oControl);
-		assert.ok(oChange);
-
-		oFlexController.saveAll(this.oControl).then(function() {
-			QUnit.start();
-		})['catch'](function(err) {
-			assert.ok(false, err);
-			done();
-		});
+		return oFlexController.addChange(oChangeParameters, this.oControl)
+			.then(function(oChange) {
+				assert.ok(oChange);
+				return oFlexController.saveAll(this.oControl);
+			}.bind(this))
+			.then(function() {
+				QUnit.start();
+			})
+			.catch(function(err) {
+				assert.ok(false, err);
+				done();
+			});
 	});
 
 	// FIXME processView has currently the issue, that it will automatically be called when the view is instantiated, this should be fixed, as soon as the real hook is inplace

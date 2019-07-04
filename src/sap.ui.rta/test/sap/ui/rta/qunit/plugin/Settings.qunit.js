@@ -435,8 +435,10 @@ function (
 			)
 
 			.then(function(oSettingsCommand) {
-				oSettingsCommand.prepare();
-				return this.oCommandStack.pushAndExecute(oSettingsCommand);
+				return oSettingsCommand.prepare()
+					.then(function() {
+						return this.oCommandStack.pushAndExecute(oSettingsCommand);
+					}.bind(this));
 			}.bind(this))
 
 			.then(function() {
@@ -462,8 +464,10 @@ function (
 			}.bind(this))
 
 			.then(function(oSettingsCommand) {
-				oSettingsCommand.prepare();
-				return this.oCommandStack.pushAndExecute(oSettingsCommand);
+				return oSettingsCommand.prepare()
+					.then(function() {
+						return this.oCommandStack.pushAndExecute(oSettingsCommand);
+					}.bind(this));
 			}.bind(this))
 
 			.then(function() {

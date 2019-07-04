@@ -317,8 +317,7 @@ function(
 		delete oSource.index;
 		delete oTarget.index;
 
-		var oMoveAction = this._getMoveAction(oMovedOverlay);
-		var sVariantManagementReference = this.oBasePlugin.getVariantManagementReference(oMovedOverlay, oMoveAction, true);
+		var sVariantManagementReference = this.oBasePlugin.getVariantManagementReference(oMovedOverlay);
 
 		return this.getCommandFactory().getCommandFor(oRelevantContainer, "Move", {
 			movedElements : [{

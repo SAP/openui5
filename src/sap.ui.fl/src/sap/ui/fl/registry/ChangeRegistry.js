@@ -272,14 +272,14 @@ sap.ui.define([
 	 * @param  {boolean} bAsync - temporary solution for async restructuring. Get rid with the following change: 4161607
 	 * @return {promise.<object>|object} Change handler object wrapped in promise if bAsync is <code>true</code>
 	 */
-	ChangeRegistry.prototype.getChangeHandler = function (sChangeType, sControlType, oControl, oModifier, sLayer, bAsync) {
+	ChangeRegistry.prototype.getChangeHandler = function (sChangeType, sControlType, oControl, oModifier, sLayer) {
 		var oSpecificChangeRegistryItem, oChangeRegistryItem;
 
 		oSpecificChangeRegistryItem = this._getInstanceSpecificChangeRegistryItem(sChangeType, oControl, oModifier);
 		if (oSpecificChangeRegistryItem && oSpecificChangeRegistryItem.getChangeTypeMetadata) {
 			var oSpecificChangeHandler = oSpecificChangeRegistryItem.getChangeTypeMetadata().getChangeHandler();
 			if (oSpecificChangeHandler) {
-				return bAsync ? Promise.resolve(oSpecificChangeHandler) : oSpecificChangeHandler;
+				return new Utils.FakePromise(oSpecificChangeHandler);
 			}
 		}
 
@@ -287,10 +287,10 @@ sap.ui.define([
 		if (oChangeRegistryItem && oChangeRegistryItem.getChangeTypeMetadata) {
 			var oOriginalChangeHandler = oChangeRegistryItem.getChangeTypeMetadata().getChangeHandler();
 			if (oOriginalChangeHandler) {
-				return bAsync ? Promise.resolve(oOriginalChangeHandler) : oOriginalChangeHandler;
+				return new Utils.FakePromise(oOriginalChangeHandler);
 			}
 		}
-		return bAsync ? Promise.resolve(undefined) : undefined;
+		return new Utils.FakePromise(undefined);
 	};
 
 	/**

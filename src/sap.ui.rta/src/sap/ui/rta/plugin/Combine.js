@@ -164,8 +164,7 @@ sap.ui.define([
 			return oElementOverlay.getElement();
 		});
 		var oDesignTimeMetadata = oCombineElementOverlay.getDesignTimeMetadata();
-		var oCombineAction = this.getAction(oCombineElementOverlay);
-		var sVariantManagementReference = this.getVariantManagementReference(oCombineElementOverlay, oCombineAction);
+		var sVariantManagementReference = this.getVariantManagementReference(oCombineElementOverlay);
 
 		return this.getCommandFactory().getCommandFor(
 			oCombineElement,

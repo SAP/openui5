@@ -619,7 +619,7 @@ function (
 			}))
 			.then(function(oCommand) {
 				this.oCommand = oCommand;
-				this.oCommand.prepare();
+				return this.oCommand.prepare();
 			}.bind(this));
 		},
 		afterEach : function () {
@@ -629,13 +629,15 @@ function (
 		}
 	}, function() {
 		QUnit.test("when prepare() of remove command is called", function(assert) {
-			this.oCommand.prepare();
-			assert.deepEqual(this.oCommand.getSelector(), {
-				appComponent: oMockedAppComponent,
-				controlType: "sap.m.Button",
-				id: "testcomponent---button"
-			}, "then selector is properly set for remove command");
-			assert.ok(this.oCommand.getPreparedChange(), "then change is successfully prepared");
+			return this.oCommand.prepare()
+				.then(function() {
+					assert.deepEqual(this.oCommand.getSelector(), {
+						appComponent: oMockedAppComponent,
+						controlType: "sap.m.Button",
+						id: "testcomponent---button"
+					}, "then selector is properly set for remove command");
+					assert.ok(this.oCommand.getPreparedChange(), "then change is successfully prepared");
+				}.bind(this));
 		});
 	});
 
@@ -1178,7 +1180,7 @@ function (
 		QUnit.test("when change handler is revertible and command is executed", function (assert) {
 			assert.expect(10);
 			var fnRevertChangesOnControlStub = sandbox.spy(PersistenceWriteAPI, "remove");
-			sandbox.stub(ChangeRegistry.getInstance(), "getChangeHandler").returns(this.fnChangeHandler);
+			sandbox.stub(ChangeRegistry.getInstance(), "getChangeHandler").resolves(this.fnChangeHandler);
 
 			this.oCommandStack.push(this.oFlexCommand);
 

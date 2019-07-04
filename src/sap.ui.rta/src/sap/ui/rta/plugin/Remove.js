@@ -222,8 +222,7 @@ sap.ui.define([
 		aElementOverlays.forEach(function(oOverlay) {
 			var oRemovedElement = oOverlay.getElement();
 			var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
-			var oRemoveAction = this.getAction(oOverlay);
-			var sVariantManagementReference = this.getVariantManagementReference(oOverlay, oRemoveAction);
+			var sVariantManagementReference = this.getVariantManagementReference(oOverlay);
 			var sConfirmationText = this._getConfirmationText(oOverlay);
 
 			aPromises.push(

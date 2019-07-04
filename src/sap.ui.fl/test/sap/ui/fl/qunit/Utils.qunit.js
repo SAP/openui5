@@ -315,21 +315,21 @@ function(
 			//Commented out since method getComponentName is always called from getComponentClassName and this method already includes the check for smart templates.
 			// 3. check that in case of a smart templating component the app component is retrieved
 			/*var oAppCompMetadata = {
-			 _sComponentName: 'app.testcomponent.Component',
-			 getName: function() {
-			 return this._sComponentName;
-			 }
-			 };
-			 var oAppComponent = {
-			 getMetadata: function() {
-			 return oAppCompMetadata;
-			 }
-			 };
-			 oComponent.getAppComponent = function() {
-			 return oAppComponent;
-			 };
-			 sComponentName = Utils.getComponentName(oComponent);
-			 assert.equal(sComponentName, 'app.testcomponent.Component');*/
+				_sComponentName: 'app.testcomponent.Component',
+				getName: function() {
+				return this._sComponentName;
+				}
+				};
+				var oAppComponent = {
+				getMetadata: function() {
+				return oAppCompMetadata;
+				}
+				};
+				oComponent.getAppComponent = function() {
+				return oAppComponent;
+				};
+				sComponentName = Utils.getComponentName(oComponent);
+				assert.equal(sComponentName, 'app.testcomponent.Component');*/
 		});
 
 		QUnit.test("getXSRFTokenFromControl shall return an empty string if retrieval failes", function (assert) {
@@ -1588,6 +1588,33 @@ function(
 				sinon.assert.callOrder(this.fnPromise1);
 				assert.strictEqual(sandbox.spyLog.callCount, 1, "then error log called once, as the promise execution throwed an error");
 			}.bind(this));
+		});
+	});
+
+	QUnit.module("Given a Utils.FakePromise", {
+		beforeEach: function () {},
+		afterEach: function () {}
+	}, function() {
+		QUnit.test("when chaining 'then' and 'catch' functions", function(assert) {
+			new Utils.FakePromise(1)
+			.then(function(vResult) {
+				assert.strictEqual(vResult, 1, "then the parameter is passed to the 'then' method");
+				return vResult + 1;
+			})
+			.then(function(vResult) {
+				assert.strictEqual(vResult, 2, "then the parameter is passed to the 'then' method");
+				return Utils.notAvailable(vResult);
+			})
+			.then(function() {
+				assert.notOk(true, "then the 'then' method shouldn't be called");
+			})
+			.catch(function(oError) {
+				assert.strictEqual(oError.message, "Utils.notAvailable is not a function", "then the error object is passed to the 'catch' method");
+				return 3;
+			})
+			.then(function(vResult) {
+				assert.strictEqual(vResult, 3, "then the parameter is passed to the 'then' method");
+			})
 		});
 	});
 

@@ -119,21 +119,21 @@ sap.ui.define([
 			oControl = vSelectorControl;
 		}
 
-		var oChangeHandler = this._getChangeHandler(mChangeSpecificData.changeType, oControl, sControlType);
-		if (aSelectedOverlays[0].getVariantManagement && oChangeHandler && oChangeHandler.revertChange) {
-			sVariantManagementReference = aSelectedOverlays[0].getVariantManagement();
-		}
-
-		return this.getCommandFactory().getCommandFor(
-			vSelectorControl,
-			"settings",
-			mChangeSpecificData,
-			undefined,
-			sVariantManagementReference)
-
-		.then(function(oSettingsCommand) {
-			return oCompositeCommand.addCommand(oSettingsCommand);
-		});
+		return this._getChangeHandler(mChangeSpecificData.changeType, oControl, sControlType)
+			.then(function(oChangeHandler) {
+				if (aSelectedOverlays[0].getVariantManagement && oChangeHandler && oChangeHandler.revertChange) {
+					sVariantManagementReference = aSelectedOverlays[0].getVariantManagement();
+				}
+				return this.getCommandFactory().getCommandFor(
+					vSelectorControl,
+					"settings",
+					mChangeSpecificData,
+					undefined,
+					sVariantManagementReference);
+			}.bind(this))
+			.then(function(oSettingsCommand) {
+				return oCompositeCommand.addCommand(oSettingsCommand);
+			});
 	};
 
 	Settings.prototype._handleAppDescriptorChangeCommand = function(mChange, oElement, oCompositeCommand) {

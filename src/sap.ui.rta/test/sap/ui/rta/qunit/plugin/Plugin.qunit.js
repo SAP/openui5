@@ -487,7 +487,10 @@ function (
 				}
 			});
 
-			assert.ok(this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, "changeType"), "then it returns true");
+			return this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, "changeType")
+				.then(function(bCheck) {
+					assert.ok(bCheck, "then it returns true");
+				})
 		});
 
 		QUnit.test("when DesignTimeMetadata has actions and checkAggregations method is called without the action name", function(assert) {
@@ -495,7 +498,10 @@ function (
 				actions : {}
 			});
 
-			assert.notOk(this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, undefined), "then it returns false");
+			return this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, undefined)
+				.then(function(bCheck) {
+					assert.notOk(bCheck, "then it returns false");
+				})
 		});
 
 		QUnit.test("when DesignTimeMetadata has no actions but aggregations with actions and checkAggregationsOnSelf method is called with the aggregation name", function(assert) {
@@ -509,8 +515,14 @@ function (
 				}
 			});
 
-			assert.ok(this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, "changeType", "formContainers"), "then it returns true for the correct aggregation");
-			assert.notOk(this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, "changeType", "dummyAggregation"), "then it returns false for another aggregation");
+			return this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, "changeType", "formContainers")
+				.then(function(bCheck) {
+					assert.ok(bCheck, "then it returns true for the correct aggregation");
+					return this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, "changeType", "dummyAggregation")
+				.then(function(bCheck) {
+					assert.notOk(bCheck, "then it returns false for another aggregation");
+				});
+				}.bind(this));
 		});
 	});
 
@@ -784,13 +796,6 @@ function (
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when the control is checked for a variant change handler", function(assert) {
-			var bVariantChangeHandlerForSectionRename = this.oPlugin._hasVariantChangeHandler("rename", this.oObjectPageSection);
-			var bVariantChangeHandlerForButtonRemove = this.oPlugin._hasVariantChangeHandler("removeButton", this.oButton);
-			assert.ok(bVariantChangeHandlerForSectionRename, "then the control has a variant ChangeHandler");
-			assert.notOk(bVariantChangeHandlerForButtonRemove, "then the control has no variant ChangeHandler");
-		});
-
 		QUnit.test("when calling 'getVariantManagementReference'", function(assert) {
 			this.oButtonOverlay.setDesignTimeMetadata({
 				actions: {
@@ -802,11 +807,9 @@ function (
 
 			sandbox.stub(this.oObjectPageSectionOverlay, "getVariantManagement").returns("variant-test");
 			sandbox.stub(this.oButtonOverlay, "getVariantManagement").returns(undefined);
-			var oObjectPageSectionAction = this.oObjectPageSectionOverlay.getDesignTimeMetadata().getAction("rename", this.oObjectPageSectionOverlay.getElement());
-			var oButtonAction = this.oButtonOverlay.getDesignTimeMetadata().getAction("remove", this.oButtonOverlay.getElement());
 
-			var sVarMgmtRefForObjectPageSection = this.oPlugin.getVariantManagementReference(this.oObjectPageSectionOverlay, oObjectPageSectionAction);
-			var sVarMgmtRefForButton = this.oPlugin.getVariantManagementReference(this.oButtonOverlay, oButtonAction);
+			var sVarMgmtRefForObjectPageSection = this.oPlugin.getVariantManagementReference(this.oObjectPageSectionOverlay);
+			var sVarMgmtRefForButton = this.oPlugin.getVariantManagementReference(this.oButtonOverlay);
 			assert.equal(sVarMgmtRefForObjectPageSection, "variant-test", "then for the control with variant ChangeHandler the variant management reference is returned");
 			assert.equal(sVarMgmtRefForButton, undefined, "then for the control without variant ChangeHandler undefined is returned");
 		});
@@ -814,28 +817,11 @@ function (
 		QUnit.test("when calling 'getVariantManagementReference' with a stashed control", function(assert) {
 			var mSettings = {};
 			mSettings.sParentId = this.oObjectPageSection.getId();
-			var oStashedControl = new sap.ui.core._StashedControl("stashedControl", mSettings);
-
-			var oDesignTimeMetadata = new ElementDesignTimeMetadata(
-				{
-					data: {
-						actions: {
-							reveal: {
-								changeType: "unstashControl"
-							}
-						}
-					}
-				}
-			);
-
-			//Faked in AdditionalElementsPlugin
-			var oRevealAction = oDesignTimeMetadata.getAction("reveal");
-			var oObjectPageSectionAction = this.oObjectPageSectionOverlay.getDesignTimeMetadata().getAction("rename", this.oObjectPageSectionOverlay.getElement());
 
 			sandbox.stub(this.oObjectPageSectionOverlay, "getVariantManagement").returns("variant-test");
 
-			var sVarMgmtRefForObjectPageSection = this.oPlugin.getVariantManagementReference(this.oObjectPageSectionOverlay, oObjectPageSectionAction);
-			var sVarMgmtRefForStashedControl = this.oPlugin.getVariantManagementReference(this.oObjectPageSectionOverlay, oRevealAction, false, oStashedControl);
+			var sVarMgmtRefForObjectPageSection = this.oPlugin.getVariantManagementReference(this.oObjectPageSectionOverlay);
+			var sVarMgmtRefForStashedControl = this.oPlugin.getVariantManagementReference(this.oObjectPageSectionOverlay);
 
 			assert.equal(sVarMgmtRefForObjectPageSection, "variant-test", "then for the control with variant ChangeHandler the variant management reference is returned");
 			assert.equal(sVarMgmtRefForStashedControl, "variant-test", "then for the stashed control with variant ChangeHandler variant management reference from parent is returned, as no overlay exists");
@@ -887,7 +873,10 @@ function (
 		}
 	}, function() {
 		QUnit.test("when '_getChangeHandler' is called with a control that has the default change handler registered for 'moveControls'", function(assert) {
-			assert.strictEqual(this.oPlugin._getChangeHandler("moveControls", this.oLayout), MoveControlsChangeHandler, "then the function returns the correct change handler");
+			return this.oPlugin._getChangeHandler("moveControls", this.oLayout)
+				.then(function(oResultChangeHandler) {
+					assert.strictEqual(oResultChangeHandler, MoveControlsChangeHandler, "then the function returns the correct change handler");
+				});
 		});
 	});
 

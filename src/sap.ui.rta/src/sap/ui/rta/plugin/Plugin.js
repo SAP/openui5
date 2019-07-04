@@ -293,31 +293,12 @@ function(
 		return !FlexUtils.checkControlId(mAggregationInfo.templateId, vStableElement.appComponent);
 	}
 
-	BasePlugin.prototype.getVariantManagementReference = function (oOverlay, oAction, bForceRelevantContainer, oStashedElement) {
-		var oElement;
-		if (!oStashedElement) {
-			oElement = oOverlay.getElement();
-		} else {
-			oElement = oStashedElement;
-		}
-
-		var oRelevantElement;
-		if ((oAction.changeOnRelevantContainer || bForceRelevantContainer) && !oStashedElement) {
-			oRelevantElement = oOverlay.getRelevantContainer();
-		} else {
-			oRelevantElement = oElement;
-		}
-
+	BasePlugin.prototype.getVariantManagementReference = function (oOverlay) {
 		var sVariantManagementReference;
-		if (oOverlay.getVariantManagement && this._hasVariantChangeHandler(oAction.changeType, oRelevantElement)) {
+		if (oOverlay.getVariantManagement) {
 			sVariantManagementReference = oOverlay.getVariantManagement();
 		}
 		return sVariantManagementReference;
-	};
-
-	BasePlugin.prototype._hasVariantChangeHandler = function (sChangeType, oElement) {
-		var oChangeHandler = this._getChangeHandler(sChangeType, oElement);
-		return (oChangeHandler && oChangeHandler.revertChange);
 	};
 
 	/**
@@ -331,7 +312,6 @@ function(
 	BasePlugin.prototype.checkAggregationsOnSelf = function (oOverlay, sAction, sParentAggregationName) {
 		var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
 		var oElement = oOverlay.getElement();
-		var bIsEditable = false;
 
 		var aActionData = oDesignTimeMetadata.getActionDataFromAggregations(sAction, oOverlay.getElement());
 		var oAction = aActionData.filter(function(oActionData) {
@@ -346,15 +326,17 @@ function(
 			oElement = oOverlay.getRelevantContainer();
 			var oRelevantOverlay = OverlayRegistry.getOverlay(oElement);
 			if (!this.hasStableId(oRelevantOverlay)) {
-				return false;
+				return Promise.resolve(false);
 			}
 		}
 
-		if (sChangeType && this.hasChangeHandler(sChangeType, oElement)) {
-			bIsEditable = true;
+		if (sChangeType) {
+			return this.hasChangeHandler(sChangeType, oElement, true)
+				.then(function(bHasChangeHandler) {
+					return bHasChangeHandler;
+				});
 		}
-
-		return bIsEditable;
+		return Promise.resolve(false);
 	};
 
 	BasePlugin.prototype.removeFromPluginsList = function(oOverlay, bSibling) {
@@ -390,6 +372,7 @@ function(
 			sControlType = oElement.getMetadata().getName();
 		}
 		var sLayer = this.getCommandFactory().getFlexSettings().layer;
+
 		return ChangeRegistry.getInstance().getChangeHandler(sChangeType, sControlType, oElement, JsControlTreeModifier, sLayer);
 	};
 
