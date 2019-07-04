@@ -42,6 +42,14 @@ sap.ui.define([
 
 				// Test: update of SalesOrder note -> error, restart after note corrected
 				When.onTheMainPage.changeNoteInSalesOrders(0, "RAISE_ERROR");
+				When.onTheMessagePopover.selectMessage(
+					"Property `Note` value `RAISE_ERROR` not allowed!");
+				Then.onTheMessagePopover.checkMessageHasTechnicalDetails({
+					originalMessage : {
+						code : "OO/000",
+						message : "Property `Note` value `RAISE_ERROR` not allowed!"
+					}
+				});
 				When.onTheMessagePopover.close();
 				When.onTheMainPage.changeNoteInSalesOrders(0, "My patched Note");
 				Then.onTheMainPage.checkNote(0, "My patched Note");

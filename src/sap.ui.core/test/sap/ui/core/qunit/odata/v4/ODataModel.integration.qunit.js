@@ -1437,11 +1437,9 @@ sap.ui.define([
 				technical : true,
 				technicalDetails : {
 					originalMessage : {
-						"@.numericSeverity" : 4,
 						code : "CODE",
 						message : "Could not read",
-						target : "Name",
-						technical : true
+						target : "Name"
 					}
 				},
 				type : "Error"
@@ -1677,6 +1675,9 @@ sap.ui.define([
 				message : "Text",
 				persistent : false,
 				target : "/EMPLOYEES('0')/ID",
+				technicalDetails : {
+					originalMessage : oResponseMessage0
+				},
 				type : "Warning"
 			}, oMessage1]);
 
@@ -6076,7 +6077,6 @@ sap.ui.define([
 						technical : true,
 						technicalDetails : {
 							originalMessage : {
-								"@.numericSeverity" : 4,
 								code : "top",
 								details : [{
 									code : "bound",
@@ -6089,8 +6089,7 @@ sap.ui.define([
 									message : "Some unbound warning",
 									"@Common.numericSeverity" : 3
 								}],
-								message : "Error occurred while processing the request",
-								technical : true
+								message : "Error occurred while processing the request"
 							}
 						},
 						type : "Error"
@@ -12143,16 +12142,9 @@ sap.ui.define([
 				persistent : true,
 				target : "",
 				technical : true,
-				technicalDetails : {
-					// Note: we have to use sinon.match here because originalMessage in actual is an
-					// Error instance which differs from browser to browser
-					originalMessage : sinon.match({
-						$reported : true,
-						"@.numericSeverity" : 4
-					})
-				},
+				technicalDetails : {}, // we do NOT expect technicalDetails for JS Errors
 				type : "Error"
-			}], true);
+			}]);
 
 			// code under test
 			oPropertyBinding.setValue(0);

@@ -64,6 +64,23 @@ sap.ui.define([
 			When.onTheMessagePopover.selectMessage(sNoteBoundWarning);
 			Then.onTheMessagePopover.checkMessageDetails(sNoteBoundWarning,
 				"Details for \"Enter customer reference if available\" (relative longtext URL).");
+			Then.onTheMessagePopover.checkMessageHasTechnicalDetails({
+				originalMessage : {
+					code : "CODE/1234",
+					"@Common.Application" : {
+						ComponentId : "OPU-GW-COR",
+						ServiceRepository : "DEFAULT"
+					},
+					"@Common.TransactionId" : "A9DFB82A2D7B0240E0058CB109CEBFBC",
+					"@Common.Timestamp" : "20170320071538.918157",
+					longtextUrl : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample"
+						+ "/0002/SalesOrderList('0500000001')/Messages(1)",
+					message : "Enter customer reference if available",
+					numericSeverity : 3,
+					target : "Note",
+					transition : false
+				}
+			});
 
 			When.onTheMessagePopover.back();
 
@@ -77,6 +94,9 @@ sap.ui.define([
 				type : MessageType.Warning
 			}]);
 
+			// due to a feature of the message popover for exactly one message we are in this case
+			// on the details screen
+			// TODO: clarify why back did not work
 			When.onTheMessagePopover.close();
 			When.onTheMainPage.selectSalesOrder(1);
 			Then.onTheMainPage.checkMessagesButtonCount(2);
@@ -87,6 +107,8 @@ sap.ui.define([
 				sQuantityBoundError);
 
 			When.onTheMainPage.pressMessagesButton();
+			// because of the TODO above we navigate back in order to be able to check messages
+			When.onTheMessagePopover.back();
 			Then.onTheMessagePopover.checkMessages([{
 					message : sNoteBoundWarning,
 					type : MessageType.Warning
@@ -98,6 +120,17 @@ sap.ui.define([
 			When.onTheMessagePopover.selectMessage(sQuantityBoundError);
 			Then.onTheMessagePopover.checkMessageDetails(sQuantityBoundError,
 				"Details for \"Minimum order quantity is 2\" (absolute longtext URL).");
+			Then.onTheMessagePopover.checkMessageHasTechnicalDetails({
+				originalMessage : {
+					code : "STATE/4713",
+					longtextUrl : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample"
+						+ "/0002/Messages(2)",
+					message : "Minimum order quantity is 2",
+					numericSeverity : 4,
+					target : "Quantity",
+					transition : false
+				}
+			});
 
 			When.onTheMessagePopover.back();
 
@@ -172,14 +205,12 @@ sap.ui.define([
 			When.onTheMessagePopover.selectMessage(sQuantityFailure);
 			Then.onTheMessagePopover.checkMessageHasTechnicalDetails({
 				originalMessage : {
-					"@.numericSeverity" : 4,
 					"@SAP__Common.longtextUrl" : "",
 					"@SAP__common.numericSeverity" : 4,
 					code : "SEPM_BO_COMMON/022",
 					details : [],
 					message : "Value must be greater than 0",
-					target : "Quantity",
-					technical : true
+					target : "Quantity"
 				}
 			});
 			When.onTheMessagePopover.close();

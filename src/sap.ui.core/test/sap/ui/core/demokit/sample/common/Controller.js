@@ -44,7 +44,10 @@ sap.ui.define([
 				items : {
 					path :"messages>/",
 					template : new MessageItem({
-						description : "{messages>description}",
+						// Note: We need the details page in order to show a technical details link.
+						// The message popover only shows the details page if at least description
+						// or longtextUrl exists. Hence we here set description to ' '.
+						description : " ",
 						longtextUrl : "{messages>descriptionUrl}",
 						title : "{messages>message}",
 						type : "{messages>type}",

@@ -1297,20 +1297,29 @@ sap.ui.define([
 	 *   The resource path of the cache that saw the messages
 	 * @param {object} mPathToODataMessages
 	 *   Maps a cache-relative path with key predicates or indices to an array of messages with the
-	 *   following properties:
-	 *   {string} code - The error code
-	 *   {string} [longtextUrl] - The absolute URL for the message's long text
-	 *   {string} message - The message text
+	 *   following properties. Each message is passed to the "technicalDetails" (see
+	 *   _Helper.createTechnicalDetails). Currently the "technicalDetails" only contain an attribute
+	 *   named "originalMessage" that contains the message that is received from back-end.
+	 *   {string} code
+	 *     The error code
+	 *   {string} [longtextUrl]
+	 *     The absolute URL for the message's long text
+	 *   {string} message
+	 *     The message text
 	 *   {number} numericSeverity
-	 *      The numeric message severity (1 for "success", 2 for "info", 3 for "warning" and 4 for
-	 *      "error")
-	 *   {boolean} [technical]
-	 *      Whether the message is reported as <code>technical</code> (used by reportError)
+	 *     The numeric message severity (1 for "success", 2 for "info", 3 for "warning" and 4 for
+	 *     "error")
 	 *   {string} target
-	 *      The relative target for the message; the reported target path is a concatenation of the
-	 *      resource path, the cache-relative path and this property
-	 *   {boolean} [transition] - Whether the message is reported as <code>persistent=true</code>
-	 *      and therefore needs to be managed by the application
+	 *     The relative target for the message; the reported target path is a concatenation of the
+	 *     resource path, the cache-relative path and this property
+	 *   {boolean} [technical]
+	 *     Whether the message is reported as <code>technical</code> (supplied by #reportError)
+	 *   {boolean} [transition]
+	 *     Whether the message is reported as <code>persistent=true</code> and therefore needs to be
+	 *     managed by the application
+	 *   {object} [@$ui5.originalMessage]
+	 *     The original message object supplied by #reportError. In case this is supplied it is used
+	 *     in _Helper.createTechnicalDetails to create the "originalMessage" property
 	 * @param {string[]} [aCachePaths]
 	 *    An array of cache-relative paths of the entities for which non-persistent messages have to
 	 *    be removed; if the array is not given, all entities are affected
@@ -1336,7 +1345,7 @@ sap.ui.define([
 					processor : that,
 					target : sTarget,
 					technical : oRawMessage.technical,
-					technicalDetails : oRawMessage.technicalDetails,
+					technicalDetails : _Helper.createTechnicalDetails(oRawMessage),
 					type : aMessageTypes[oRawMessage.numericSeverity] || MessageType.None
 				}));
 			});
@@ -1401,25 +1410,19 @@ sap.ui.define([
 		 * numeric severity and longtext to the corresponding properties and adds it to one of the
 		 * arrays to be reported later.
 		 * @param {object} oMessage The message
+		 * @param {number} [iNumericSeverity] The numeric severity
+		 * @param {boolean} [bTechnical] Whether the message is reported as technical
 		 */
-		function addMessage(oMessage) {
-			var oClonedMessage,
-				oReportMessage = {
+		function addMessage(oMessage, iNumericSeverity, bTechnical) {
+			var oReportMessage = {
 					code : oMessage.code,
 					message : oMessage.message,
-					technical : oMessage.technical,
-					technicalDetails: {}
+					numericSeverity : iNumericSeverity,
+					technical : bTechnical || oMessage.technical,
+					// use "@$ui5." prefix to overcome name collisions with instance annotations
+					// returned from back-end.
+					"@$ui5.originalMessage" : oMessage
 				};
-
-			Object.defineProperty(oReportMessage.technicalDetails, "originalMessage", {
-				enumerable : true,
-				get : function () {
-					if (!oClonedMessage) {
-						oClonedMessage = _Helper.clone(oMessage);
-					}
-					return oClonedMessage;
-				}
-			});
 
 			Object.keys(oMessage).forEach(function (sProperty) {
 				if (sProperty[0] === '@') {
@@ -1468,19 +1471,17 @@ sap.ui.define([
 
 		if (oError.error) {
 			sResourcePath = oError.resourcePath && oError.resourcePath.split("?")[0];
-			oError.error["@.numericSeverity"] = 4; //"Error"
-			oError.error.technical = true;
-			addMessage(oError.error);
+			addMessage(oError.error, 4 /* Error */, true);
 			if (oError.error.details) {
-				oError.error.details.forEach(addMessage);
+				oError.error.details.forEach(function (oMessage) {
+					addMessage(oMessage);
+				});
 			}
 			if (aBoundMessages.length) {
 				this.reportBoundMessages(sResourcePath, {"" : aBoundMessages}, []);
 			}
 		} else {
-			oError["@.numericSeverity"] = 4; //"Error"
-			oError.technical = true;
-			addMessage(oError);
+			addMessage(oError, 4 /* Error */, true);
 		}
 
 		this.reportUnboundMessages(sResourcePath, aUnboundMessages);
@@ -1495,15 +1496,23 @@ sap.ui.define([
 	 *   <code>undefined</code> the message's long text URL cannot be determined.
 	 * @param {object[]} [aMessages]
 	 *   The array of messages as contained in the <code>sap-messages</code> response header with
-	 *   the following properties:
-	 *   {string} code - The error code
-	 *   {string} [longtextUrl] - The absolute URL for the message's long text
-	 *   {string} message - The message text
+	 *   the following properties. Each message is passed to the "technicalDetails" (see
+	 *   _Helper.createTechnicalDetails). Currently the "technicalDetails" only contain an attribute
+	 *   named "originalMessage" that contains the message that is received from back-end.
+	 *   {string} code
+	 *     The error code
+	 *   {string} [longtextUrl]
+	 *     The absolute URL for the message's long text
+	 *   {string} message
+	 *     The message text
 	 *   {number} numericSeverity
-	 *      The numeric message severity (1 for "success", 2 for "info", 3 for "warning" and 4 for
-	 *      "error")
+	 *     The numeric message severity (1 for "success", 2 for "info", 3 for "warning" and 4 for
+	 *     "error")
 	 *   {boolean} [technical]
-	 *      Whether the message is reported as <code>technical</code> (used by reportError)
+	 *     Whether the message is reported as <code>technical</code> (supplied by #reportError)
+	 *   {object} [@$ui5.originalMessage]
+	 *     The original message object supplied by #reportError. In case this is supplied it is used
+	 *     in _Helper.createTechnicalDetails to create the "originalMessage" property
 	 *
 	 * @private
 	 */
@@ -1526,7 +1535,7 @@ sap.ui.define([
 						processor : that,
 						target : "",
 						technical : oMessage.technical,
-						technicalDetails: oMessage.technicalDetails,
+						technicalDetails : _Helper.createTechnicalDetails(oMessage),
 						type : aMessageTypes[oMessage.numericSeverity] || MessageType.None
 					});
 				})
