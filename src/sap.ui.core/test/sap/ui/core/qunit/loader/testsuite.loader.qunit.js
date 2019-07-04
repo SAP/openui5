@@ -78,6 +78,18 @@ sap.ui.define(function() {
 				page: "test-resources/sap/ui/core/qunit/loader/config.qunit.html",
 				title: "QUnit tests: Multiple AMD loaders"
 			},
+			conflictWithRequire: {
+				title: "QUnit tests: conflict between require.js and ui5loader",
+				bootCore: false,
+				qunit: {
+					reorder: false
+				},
+				sinon: false
+			},
+			conflictWithRequire_unavoidablySync: {
+				page: "test-resources/sap/ui/core/qunit/loader/conflictWithRequire_unavoidablySync.qunit.html",
+				title: "QUnit tests: conflict between require.js and ui5loader (sync)"
+			},
 			exposeAsAMDLoaderByURL: {
 				page: "test-resources/sap/ui/core/qunit/loader/exposeAsAMDLoader.qunit.html?sap-ui-amd=true&sap-ui-debug=true",
 				title: "Test Page for ui5loader config option 'amd' with activated debug mode"

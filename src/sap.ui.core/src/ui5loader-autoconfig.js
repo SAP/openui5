@@ -256,7 +256,7 @@
 	}
 
 	// support legacy switch 'noLoaderConflict', but 'amdLoader' has higher precedence
-	var bExposeAsAMDLoader = _getBooleanOption("amd", !_getBooleanOption("noLoaderConflict", true));
+	bExposeAsAMDLoader = _getBooleanOption("amd", !_getBooleanOption("noLoaderConflict", true));
 
 	ui5loader.config({
 		baseUrl: sBaseUrl,
@@ -471,38 +471,29 @@
 				exports: 'esprima'
 			},
 			'sap/viz/libs/canvg': {
-				amd: true,
 				deps: ['sap/viz/libs/rgbcolor']
 			},
 			'sap/viz/libs/rgbcolor': {
-				amd: true
 			},
 			'sap/viz/libs/sap-viz': {
-				amd: true,
 				deps: ['sap/viz/library', 'sap/ui/thirdparty/jquery', 'sap/ui/thirdparty/d3', 'sap/viz/libs/canvg']
 			},
 			'sap/viz/libs/sap-viz-info-charts': {
-				amd: true,
 				deps: ['sap/viz/libs/sap-viz-info-framework']
 			},
 			'sap/viz/libs/sap-viz-info-framework': {
-				amd: true,
 				deps: ['sap/ui/thirdparty/jquery', 'sap/ui/thirdparty/d3']
 			},
 			'sap/viz/ui5/container/libs/sap-viz-controls-vizcontainer': {
-				amd: true,
 				deps: ['sap/viz/libs/sap-viz', 'sap/viz/ui5/container/libs/common/libs/rgbcolor/rgbcolor_static']
 			},
 			'sap/viz/ui5/controls/libs/sap-viz-vizframe/sap-viz-vizframe': {
-				amd: true,
 				deps: ['sap/viz/libs/sap-viz-info-charts']
 			},
 			'sap/viz/ui5/controls/libs/sap-viz-vizservices/sap-viz-vizservices': {
-				amd: true,
 				deps: ['sap/viz/libs/sap-viz-info-charts']
 			},
 			'sap/viz/resources/chart/templates/standard_fiori/template': {
-				amd: true,
 				deps: ['sap/viz/libs/sap-viz-info-charts']
 			}
 		}
