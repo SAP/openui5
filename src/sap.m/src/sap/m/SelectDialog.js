@@ -605,7 +605,8 @@ function(
 			this._oDialog.setBeginButton(this._getOkButton());
 		} else {
 			this._oList.setMode(ListMode.SingleSelectMaster);
-			this._oDialog.setBeginButton(this._getCancelButton());
+			this._oDialog.setEndButton(this._getCancelButton());
+			this._oDialog.destroyBeginButton();
 		}
 
 		return this;
