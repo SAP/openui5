@@ -1473,7 +1473,34 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getRelativePath", function (assert) {
+	QUnit.test("getRelativePath: relative", function (assert) {
+		var oBinding = new ODataBinding();
+
+		// code under test
+		assert.strictEqual(oBinding.getRelativePath("baz"), "baz");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getRelativePath: relative to resolved path", function (assert) {
+		var oBinding = new ODataBinding({
+				oContext : {},
+				oModel : {resolve : function () {}},
+				sPath : "bar",
+				bRelative : true,
+				oReturnValueContext : {}
+			});
+
+		this.mock(oBinding.oModel).expects("resolve")
+			.withExactArgs("bar", sinon.match.same(oBinding.oContext)).returns("/foo/bar");
+		this.mock(_Helper).expects("getRelativePath").withExactArgs("/foo/bar", "/foo/bar")
+			.returns("");
+
+		// code under test
+		assert.strictEqual(oBinding.getRelativePath("/foo/bar"), "");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getRelativePath: not relative to resolved path", function (assert) {
 		var oBinding = new ODataBinding({
 				oContext : {},
 				oModel : {resolve : function () {}},
@@ -1481,36 +1508,38 @@ sap.ui.define([
 				bRelative : true
 			});
 
-		assert.strictEqual(oBinding.getRelativePath("baz"), "baz");
-
-		this.mock(oBinding.oModel).expects("resolve").exactly(4)
+		this.mock(oBinding.oModel).expects("resolve")
 			.withExactArgs("bar", sinon.match.same(oBinding.oContext)).returns("/foo/bar");
+		this.mock(_Helper).expects("getRelativePath").withExactArgs("/foo", "/foo/bar")
+			.returns(undefined);
 
-		assert.strictEqual(oBinding.getRelativePath("/foo/bar/baz"), "baz");
-		assert.strictEqual(oBinding.getRelativePath("/foo/bar('baz')"), "('baz')");
+		// code under test
 		assert.strictEqual(oBinding.getRelativePath("/foo"), undefined);
-		assert.strictEqual(oBinding.getRelativePath("/wrong/foo/bar"), undefined);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getRelativePath, operation binding with return value context", function (assert) {
+	QUnit.test("getRelativePath: return value context", function (assert) {
 		var oBinding = new ODataBinding({
-			oContext : {},
-			oModel : {resolve : function () {}},
-			sPath : "special.cases.EditAction(...)",
-			bRelative : true,
-			oReturnValueContext : {
-				getPath : function () { return "/Artists(ArtistID='42',IsActiveEntity=false)"; }
-			}
-		});
+				oContext : {},
+				oModel : {resolve : function () {}},
+				sPath : "bar",
+				bRelative : true,
+				oReturnValueContext : {getPath : function () {}}
+			}),
+			oHelperMock = this.mock(_Helper),
+			sResult = {/*don't care*/};
 
 		this.mock(oBinding.oModel).expects("resolve")
-			.withExactArgs("special.cases.EditAction(...)", sinon.match.same(oBinding.oContext))
-			.returns("/Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction(...)");
+			.withExactArgs("bar", sinon.match.same(oBinding.oContext)).returns("/foo/bar");
+		oHelperMock.expects("getRelativePath").withExactArgs("/foo/baz", "/foo/bar")
+			.returns(undefined);
+		this.mock(oBinding.oReturnValueContext).expects("getPath").withExactArgs()
+			.returns("/return");
+		oHelperMock.expects("getRelativePath").withExactArgs("/foo/baz", "/return")
+			.returns(sResult);
 
 		// code under test
-		assert.strictEqual(
-			oBinding.getRelativePath("/Artists(ArtistID='42',IsActiveEntity=false)/Name"), "Name");
+		assert.strictEqual(oBinding.getRelativePath("/foo/baz"), sResult);
 	});
 
 	//*********************************************************************************************
