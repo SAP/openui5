@@ -1511,6 +1511,28 @@ sap.ui.define([
 		oOverflowTB.destroy();
 	});
 
+	QUnit.test("Changing visible property of control, before the OFT is rendered, moves control in suitable collection", function (assert) {
+		// Arrange
+		var aContent = getDefaultContent(),
+			oOverflowTB = new OverflowToolbar({content: aContent, width: "auto"});
+
+		// Assert
+		assert.ok(oOverflowTB._aMovableControls.indexOf(aContent[5]) > -1,
+			"The button with visible = true is in movables controls collection before its property is changed to false");
+
+		//Act
+		aContent[5].setVisible(false);
+		oOverflowTB.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oOverflowTB._aMovableControls.indexOf(aContent[5]) === -1,
+			"The button with visible = false is moved out from the movables controls collection");
+
+		// Clean up
+		oOverflowTB.destroy();
+	});
+
 	QUnit.test("Changing selected item of sap.m.Select, which has autoAdjustWidth: true (affects control size), forces recalculation of the layout", function (assert) {
 		var aContent = getDefaultContent(),
 				oOverflowTB,
