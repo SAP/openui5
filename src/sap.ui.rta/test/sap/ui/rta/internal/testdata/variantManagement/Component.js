@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/ui/fl/FakeLrepConnectorLocalStorage",
 	"sap/ui/rta/util/UrlParser",
 	"sap/ui/fl/FakeLrepConnector",
+	"sap/ui/rta/test/variantManagement/SmartLinkUtil",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/json/JSONModel",
@@ -12,6 +13,7 @@ sap.ui.define([
 	FakeLrepConnectorLocalStorage,
 	UrlParser,
 	FakeLrepConnector,
+	SmartLinkUtil,
 	MockServer,
 	ODataModel,
 	JSONModel,
@@ -31,6 +33,7 @@ sap.ui.define([
 
 		init : function() {
 			this._adaptButtonConfiguration();
+			SmartLinkUtil.mockUShellServices();
 			this._setModels(this._startMockServer());
 			//this._bShowAdaptButton = this.getComponentData().showAdaptButton ? this.getComponentData().showAdaptButton : false;
 			UIComponent.prototype.init.apply(this, arguments);
