@@ -293,17 +293,18 @@ sap.ui.define([
 			oBrowserStub;
 
 		// ARIA role
-		assert.strictEqual($oLink.attr("role"), "link", "Property 'role' should be 'link'");
+		assert.notOk($oLink.attr("role"), "Attribute 'role' is redundant on an anchor tag");
 
 		// ARIA disabled
 		oLink1.setEnabled(false);
 		sap.ui.getCore().applyChanges();
 
-		assert.strictEqual($oLink.attr("aria-disabled"), "true", "Property 'aria-disabled' should be 'true'");
+		assert.ok($oLink.attr("disabled"), "Attribute 'disabled' should be placed on disabled links");
+		assert.notOk($oLink.attr("aria-disabled"), "Attribute 'aria-disabled' is redundant if 'disabled' is also there");
 		oLink1.setEnabled(true);
 		sap.ui.getCore().applyChanges();
 
-		assert.strictEqual($oLink.attr("aria-disabled"), undefined, "Property 'aria-disabled' should not exist");
+		assert.notOk($oLink.attr("disabled"), "Attribute 'disabled' should not exist for non-disabled links");
 
 		// ARIA describedby for Subtle link
 		oLink1.setSubtle(true);
