@@ -316,7 +316,7 @@ sap.ui.define([
 			var sLabel = "";
 			if (oCountChangeInfo.initial) {
 				var oTable = oExtension.getTable();
-				sLabel = oTable.getAriaLabelledBy().join(" ") + " " + oTable.getId() + "-ariacount";
+				sLabel = oTable.getAriaLabelledBy().join(" ") + " " + oTable.getId() + "-ariadesc " + oTable.getId() + "-ariacount";
 				if (oTable.getSelectionMode() !== SelectionMode.None) {
 					sLabel = sLabel + " " + oTable.getId() + "-ariaselection";
 				}
@@ -735,11 +735,6 @@ sap.ui.define([
 
 				case TableAccExtension.ELEMENTTYPES.CONTENT: //The content area of the table which contains all the table elements, rowheaders, columnheaders, etc
 					mAttributes["role"] = TableUtils.Grouping.isGroupMode(oTable) || TableUtils.Grouping.isTreeMode(oTable) ? "treegrid" : "grid";
-
-					mAttributes["aria-labelledby"] = [].concat(oTable.getAriaLabelledBy());
-					if (oTable.getTitle()) {
-						mAttributes["aria-labelledby"].push(oTable.getTitle().getId());
-					}
 
 					if (oTable.getSelectionMode() === SelectionMode.MultiToggle) {
 						mAttributes["aria-multiselectable"] = "true";
