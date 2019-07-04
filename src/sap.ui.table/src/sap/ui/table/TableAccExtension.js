@@ -493,8 +493,10 @@ sap.ui.define([
 				aLabels.push(oTable.getId() + "-cellacc");
 			}
 
-			if (iSpan <= 1 && oColumn && oColumn.getSorted()) {
-				aLabels.push(oTable.getId() + (oColumn.getSortOrder() === "Ascending" ? "-ariacolsortedasc" : "-ariacolsorteddes"));
+			if (Device.browser.msie) {
+				if (iSpan <= 1 && oColumn && oColumn.getSorted()) {
+					aLabels.push(oTable.getId() + (oColumn.getSortOrder() === "Ascending" ? "-ariacolsortedasc" : "-ariacolsorteddes"));
+				}
 			}
 			if (iSpan <= 1 && oColumn && oColumn.getFiltered()) {
 				aLabels.push(oTable.getId() + "-ariacolfiltered");

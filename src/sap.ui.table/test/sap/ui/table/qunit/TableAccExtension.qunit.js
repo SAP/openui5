@@ -588,7 +588,9 @@ sap.ui.define([
 		}
 
 		if (bFocus && iCol == 1) {
-			aLabels.push(oTable.getId() + "-ariacolsortedasc");
+			if (Device.browser.msie) {
+				aLabels.push(oTable.getId() + "-ariacolsortedasc");
+			}
 			aLabels.push(oTable.getId() + "-ariacolfiltered");
 		}
 
