@@ -185,22 +185,50 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype._delete = function (oGroupLock, sEditUrl) {
-		var that = this;
+		// In case the context binding has an empty path, the respective context in the parent
+		// needs to be removed as well. As there could be more levels of bindings pointing to the
+		// same entity, first go up the binding hierarchy and find the context pointing to the same
+		// entity in the highest level binding.
+		// In case that top binding is a list binding, perform the deletion from there but use the
+		// ETag of this binding.
+		// In case the top binding is a context binding, perform the deletion from here but destroy
+		// the context(s) in that uppermost binding. Note that no data may be available in the
+		// uppermost context binding and hence the deletion would not work there, BCP 1980308439.
+		var oEmptyPathParentContext = this._findEmptyPathParentContext(this.oElementContext),
+			oEmptyPathParentBinding = oEmptyPathParentContext.getBinding();
 
-		// a context binding without path can simply delegate to its parent context.
-		if (this.sPath === "" && this.oContext.delete) {
-			return this.oContext._delete(oGroupLock);
+		// In case the uppermost parent reached with empty paths is a list binding, delete there.
+		if (!oEmptyPathParentBinding.execute) {
+			return this.fetchValue("", undefined, true).then(function (oEntity) {
+				// In the Cache, the request is generated with a reference to the entity data
+				// first. So, hand over the complete entity to have the ETag of the correct binding
+				// in the request.
+				return oEmptyPathParentContext._delete(oGroupLock, oEntity);
+			});
+			// fetchValue will fail if the entity has not been read. The same happens with the
+			// deleteFromCache call below. In Context#delete the error is reported.
 		}
 
-		return this.deleteFromCache(oGroupLock, sEditUrl, "", function () {
-			that.oElementContext.destroy();
-			that.oElementContext = null;
-			if (that.oReturnValueContext) {
-				that.oReturnValueContext.destroy();
-				that.oReturnValueContext = null;
-			}
-			that._fireChange({reason : ChangeReason.Remove});
+		return this.deleteFromCache(oGroupLock, sEditUrl, "", undefined, function () {
+			oEmptyPathParentBinding._destroyContextAfterDelete();
 		});
+	};
+
+	/**
+	 * Destroys the element context and, if available, the return value context, and fires a
+	 * change. The method is called by #_delete, possibly at another context binding for the same
+	 * entity, after the successful deletion in the back-end.
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype._destroyContextAfterDelete = function () {
+		this.oElementContext.destroy();
+		this.oElementContext = null;
+		if (this.oReturnValueContext) {
+			this.oReturnValueContext.destroy();
+			this.oReturnValueContext = null;
+		}
+		this._fireChange({reason : ChangeReason.Remove});
 	};
 
 	/**
@@ -423,7 +451,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * The 'dataRequested' event is fired directly after data has been requested from a backend.
+	 * The 'dataRequested' event is fired directly after data has been requested from a back-end.
 	 * It is only fired for GET requests. The 'dataRequested' event is to be used by
 	 * applications, for example to switch on a busy indicator. Registered event handlers are
 	 * called without parameters. In case of a deferred operation binding, 'dataRequested' is not
@@ -439,10 +467,10 @@ sap.ui.define([
 	 */
 
 	/**
-	 * The 'patchCompleted' event is fired when the backend has responded to the last PATCH request
-	 * for this binding. If there is more than one PATCH request in a $batch, the event is fired
-	 * only once. Only bindings using an own data service request fire a 'patchCompleted' event.
-	 * For each 'patchSent' event, a 'patchCompleted' event is fired.
+	 * The 'patchCompleted' event is fired when the back-end has responded to the last PATCH
+	 * request for this binding. If there is more than one PATCH request in a $batch, the event is
+	 * fired only once. Only bindings using an own data service request fire a 'patchCompleted'
+	 * event. For each 'patchSent' event, a 'patchCompleted' event is fired.
 	 *
 	 * @param {sap.ui.base.Event} oEvent The event object
 	 * @param {sap.ui.model.odata.v4.ODataContextBinding} oEvent.getSource() This binding
@@ -458,7 +486,7 @@ sap.ui.define([
 
 	/**
 	 * The 'patchSent' event is fired when the first PATCH request for this binding is sent to the
-	 * backend. If there is more than one PATCH request in a $batch, the event is fired only once.
+	 * back-end. If there is more than one PATCH request in a $batch, the event is fired only once.
 	 * Only bindings using an own data service request fire a 'patchSent' event. For each
 	 * 'patchSent' event, a 'patchCompleted' event is fired.
 	 *

@@ -910,6 +910,7 @@ sap.ui.define([
 		var oBinding = {
 				_delete : function () {}
 			},
+			oETagEntity = {},
 			oGroupLock = {},
 			oModel = {},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
@@ -918,11 +919,11 @@ sap.ui.define([
 			.withExactArgs().returns(SyncPromise.resolve("/EMPLOYEES('1')"));
 		this.mock(oBinding).expects("_delete")
 			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES('1')",
-				sinon.match.same(oContext))
+				sinon.match.same(oContext), sinon.match.same(oETagEntity))
 			.returns(Promise.resolve());
 
 		// code under test
-		return oContext._delete(oGroupLock).then(function (oResult) {
+		return oContext._delete(oGroupLock, oETagEntity).then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
 			assert.strictEqual(oContext.oBinding, oBinding);
 			assert.strictEqual(oContext.oModel, oModel);
@@ -944,7 +945,7 @@ sap.ui.define([
 			.returns(Promise.resolve());
 
 		// code under test
-		return oContext._delete(oGroupLock).then(function (oResult) {
+		return oContext._delete(oGroupLock, {}).then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
 			assert.strictEqual(oContext.oBinding, oBinding);
 			assert.strictEqual(oContext.oModel, oModel);
@@ -967,7 +968,7 @@ sap.ui.define([
 			.withExactArgs().returns(SyncPromise.resolve("/EMPLOYEES('1')"));
 		this.mock(oBinding).expects("_delete")
 			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES('1')",
-				sinon.match.same(oContext))
+				sinon.match.same(oContext), undefined)
 			.returns(Promise.reject(oError));
 
 		// code under test

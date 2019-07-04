@@ -1127,7 +1127,7 @@ sap.ui.define([
 					"after successful POST");
 				assert.strictEqual(oBinding.isLengthFinal(), bExpectedLengthFinal);
 
-				oCacheMock.expects("_delete").callsArgWith(3, 0, oData.value)
+				oCacheMock.expects("_delete").callsArgWith(4, 0, oData.value)
 					.returns(SyncPromise.resolve());
 				that.mock(oBinding).expects("destroyCreated")
 					.withExactArgs(sinon.match.same(oContext), true)
@@ -3307,6 +3307,7 @@ sap.ui.define([
 					getModelIndex : function () { return 0; }
 				},
 				aData = createData(6, 0, true, undefined, bKeyPredicates),
+				oETagEntity = {},
 				aPreviousContexts,
 				that = this;
 
@@ -3323,8 +3324,9 @@ sap.ui.define([
 
 			assert.strictEqual(oBinding.getLength(), 7);
 			this.mock(oBinding).expects("deleteFromCache")
-				.withExactArgs("myGroup", "EMPLOYEES('2')", "2", sinon.match.func)
-				.callsArgWith(3, 2, aData)
+				.withExactArgs("myGroup", "EMPLOYEES('2')", "2", sinon.match.same(oETagEntity),
+					sinon.match.func)
+				.callsArgWith(4, 2, aData)
 				.resolves();
 			oBinding.aContexts.forEach(function (oContext) {
 				// #destroy would only be called for created context
@@ -3338,7 +3340,8 @@ sap.ui.define([
 				.withExactArgs({reason : ChangeReason.Remove});
 
 			// code under test
-			return oBinding._delete("myGroup", "EMPLOYEES('2')", oBinding.aContexts[3])
+			return oBinding._delete("myGroup", "EMPLOYEES('2')", oBinding.aContexts[3],
+					oETagEntity)
 				.then(function () {
 					assert.strictEqual(oBinding.iCreatedContexts, 1);
 					assert.strictEqual(oBinding.getLength(), 6);
@@ -3379,7 +3382,8 @@ sap.ui.define([
 			oContext0 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-23)", -1,
 				Promise.resolve()),
 			oContext1 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-24)", -2,
-				Promise.resolve());
+				Promise.resolve()),
+			oETagEntity = {};
 
 		// simulate created entities which are already persisted
 		oBinding.aContexts.unshift(oContext1, oContext0);
@@ -3388,8 +3392,8 @@ sap.ui.define([
 
 		oBindingMock.expects("deleteFromCache")
 			.withExactArgs("myGroup", "EMPLOYEES('1')", "-1"/*TODO transientPredicate*/,
-				sinon.match.func)
-			.callsArgWith(3)
+				sinon.match.same(oETagEntity), sinon.match.func)
+			.callsArgWith(4)
 			.resolves();
 		oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Remove});
 		this.stub(oContext0, "toString"); // called by SinonJS, would call #isTransient
@@ -3397,9 +3401,10 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oContext0), true);
 
 		// code under test
-		return oBinding._delete("myGroup", "EMPLOYEES('1')", oContext0).then(function () {
-			assert.strictEqual(oBinding.iMaxLength, 42, "iMaxLength has not been reduced");
-		});
+		return oBinding._delete("myGroup", "EMPLOYEES('1')", oContext0, oETagEntity)
+			.then(function () {
+				assert.strictEqual(oBinding.iMaxLength, 42, "iMaxLength has not been reduced");
+			});
 	});
 
 	//*********************************************************************************************
@@ -3989,7 +3994,7 @@ sap.ui.define([
 		oContext2 = oBinding.create(undefined, true);
 
 		oBindingMock.expects("deleteFromCache")
-			.callsFake(function (oGroupLock, sEditUrl, sPath, fnCallback) {
+			.callsFake(function (oGroupLock, sEditUrl, sPath, oETagEntity, fnCallback) {
 				fnCallback(0);
 				return SyncPromise.resolve();
 			});
@@ -4003,7 +4008,7 @@ sap.ui.define([
 		}, new Error("Creating entities at the start and at the end is not supported."));
 
 		oBindingMock.expects("deleteFromCache")
-			.callsFake(function (oGroupLock, sEditUrl, sPath, fnCallback) {
+			.callsFake(function (oGroupLock, sEditUrl, sPath, oETagEntity, fnCallback) {
 				fnCallback(0);
 				return SyncPromise.resolve();
 			});
