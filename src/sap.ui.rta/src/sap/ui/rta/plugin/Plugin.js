@@ -75,7 +75,7 @@ function(
 	 */
 	BasePlugin.prototype._isEditable = function () {};
 
-	var executeWhenVisible = function (oElementOverlay, fnCallback) {
+	BasePlugin.prototype.executeWhenVisible = function (oElementOverlay, fnCallback) {
 		var fnGeometryChangedCallback = function (oEvent) {
 			if (oEvent.getSource().getGeometry() && oEvent.getSource().getGeometry().visible) {
 				oElementOverlay.detachEvent('geometryChanged', fnGeometryChangedCallback, this);
@@ -97,7 +97,7 @@ function(
 		if (oParams.type === "propertyChanged" && oParams.name === "visible") {
 			aRelevantOverlays = this._getRelevantOverlays(oOverlay);
 			if (oParams.value === true) {
-				executeWhenVisible(oOverlay, function () {
+				this.executeWhenVisible(oOverlay, function () {
 					this.evaluateEditable(aRelevantOverlays, {onRegistration: false});
 				}.bind(this));
 			} else {
@@ -241,7 +241,7 @@ function(
 	};
 
 	BasePlugin.prototype.registerElementOverlay = function(oOverlay) {
-		executeWhenVisible(oOverlay, function () {
+		this.executeWhenVisible(oOverlay, function () {
 			this.evaluateEditable([oOverlay], {onRegistration: true});
 			oOverlay.attachElementModified(_onElementModified, this);
 		}.bind(this));
