@@ -288,81 +288,90 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[200, 404, 500].forEach(function (iStatus) {
-		QUnit.test("_Cache#_delete: from collection, status: " + iStatus, function (assert) {
-			var that = this,
-				mQueryOptions = {foo : "bar"},
-				oCache = new _Cache(this.oRequestor, "EMPLOYEES('42')", mQueryOptions),
-				sEtag = 'W/"19770724000000.0000000"',
-				aCacheData = [{}, {
-					"@$ui5._" : {"predicate" : "('1')"},
-					"@odata.etag" : sEtag
-				}, {}],
-				fnCallback = this.spy(),
-				oError = new Error(""),
-				oGroupLock = new _GroupLock("groupId"),
-				oPromise,
-				oRequestPromise = iStatus === 200
-					? Promise.resolve().then(function () {
-						that.oModelInterfaceMock.expects("reportBoundMessages")
-							.withExactArgs(oCache.sResourcePath, [],
-								["EMPLOYEE_2_EQUIPMENTS('1')"]);
-					})
-					: Promise.reject(oError);
+[{
+	oEntity : undefined, iStatus : 200
+}, {
+	oEntity : undefined, iStatus : 404
+}, {
+	oEntity : undefined, iStatus : 500
+}, {
+	oEntity : {"@odata.etag" : "AnotherETag"}, iStatus : 200
+}].forEach(function (oFixture) {
+	QUnit.test("_Cache#_delete: from collection, status: " + oFixture.iStatus
+			+ (oFixture.oEntity ? " (ETagEntity)" : ""), function (assert) {
+		var that = this,
+			mQueryOptions = {foo : "bar"},
+			oCache = new _Cache(this.oRequestor, "EMPLOYEES('42')", mQueryOptions),
+			sEtag = 'W/"19770724000000.0000000"',
+			aCacheData = [{}, {
+				"@$ui5._" : {"predicate" : "('1')"},
+				"@odata.etag" : sEtag
+			}, {}],
+			fnCallback = this.spy(),
+			oError = new Error(""),
+			oGroupLock = new _GroupLock("groupId"),
+			oPromise,
+			oRequestPromise = oFixture.iStatus === 200
+				? Promise.resolve().then(function () {
+					that.oModelInterfaceMock.expects("reportBoundMessages")
+						.withExactArgs(oCache.sResourcePath, [],
+							["EMPLOYEE_2_EQUIPMENTS('1')"]);
+				})
+				: Promise.reject(oError);
 
-			this.mock(oCache).expects("addPendingRequest").withExactArgs();
-			oRequestPromise = oRequestPromise.finally(function () {
-				that.mock(oCache).expects("removePendingRequest").withExactArgs();
-			});
-			oCache.fetchValue = function () {};
-			// no need for different tests for top level or nested collections because
-			// fetchValue takes care to deliver corresponding elements
-			this.mock(oCache).expects("fetchValue")
-				.withExactArgs(sinon.match.same(_GroupLock.$cached), "EMPLOYEE_2_EQUIPMENTS")
-				.returns(SyncPromise.resolve(aCacheData));
-			this.mock(oCache).expects("getOriginalResourcePath")
-				.withExactArgs(sinon.match.same(aCacheData[1]))
-				.returns("~");
-			this.mock(_Cache).expects("from$skip")
-				.withExactArgs("1", sinon.match.same(aCacheData))
-				.returns(1);
-			oError.status = iStatus;
-			this.oRequestorMock.expects("buildQueryString")
-				.withExactArgs("/EMPLOYEES", sinon.match.same(mQueryOptions), true)
-				.returns("?foo=bar");
-			this.oRequestorMock.expects("request")
-				.withExactArgs("DELETE", "Equipments('1')?foo=bar",
-					sinon.match.same(oGroupLock),
-					{"If-Match" : sinon.match.same(aCacheData[1])},
-					undefined, undefined, undefined, undefined,
-					"~/EMPLOYEE_2_EQUIPMENTS('1')")
-				.returns(oRequestPromise);
-			this.mock(oCache).expects("removeElement").exactly(iStatus === 500 ? 0 : 1)
-				.withExactArgs(sinon.match.same(aCacheData), 1, "('1')",
-					"EMPLOYEE_2_EQUIPMENTS")
-				.returns(1);
-
-			// code under test
-			oPromise = oCache._delete(oGroupLock, "Equipments('1')", "EMPLOYEE_2_EQUIPMENTS/1",
-					fnCallback)
-				.then(function (oResult) {
-					assert.notStrictEqual(iStatus, 500, "unexpected success");
-					assert.strictEqual(oResult, undefined);
-					sinon.assert.calledOnce(fnCallback);
-					sinon.assert.calledWithExactly(fnCallback, 1, sinon.match.same(aCacheData));
-				}, function (oError0) {
-					assert.strictEqual(iStatus, 500, JSON.stringify(oError0));
-					assert.strictEqual(oError0, oError);
-					assert.strictEqual(aCacheData[1]["@odata.etag"], sEtag);
-					assert.notOk("$ui5.deleting" in aCacheData[1]);
-					sinon.assert.notCalled(fnCallback);
-				});
-
-			assert.strictEqual(aCacheData[1]["$ui5.deleting"], true);
-
-			return oPromise;
+		this.mock(oCache).expects("addPendingRequest").withExactArgs();
+		oRequestPromise = oRequestPromise.finally(function () {
+			that.mock(oCache).expects("removePendingRequest").withExactArgs();
 		});
+		oCache.fetchValue = function () {};
+		// no need for different tests for top level or nested collections because
+		// fetchValue takes care to deliver corresponding elements
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "EMPLOYEE_2_EQUIPMENTS")
+			.returns(SyncPromise.resolve(aCacheData));
+		this.mock(oCache).expects("getOriginalResourcePath")
+			.withExactArgs(sinon.match.same(aCacheData[1]))
+			.returns("~");
+		this.mock(_Cache).expects("from$skip")
+			.withExactArgs("1", sinon.match.same(aCacheData))
+			.returns(1);
+		oError.status = oFixture.iStatus;
+		this.oRequestorMock.expects("buildQueryString")
+			.withExactArgs("/EMPLOYEES", sinon.match.same(mQueryOptions), true)
+			.returns("?foo=bar");
+		this.oRequestorMock.expects("request")
+			.withExactArgs("DELETE", "Equipments('1')?foo=bar",
+				sinon.match.same(oGroupLock),
+				{"If-Match" : sinon.match.same(oFixture.oEntity || aCacheData[1])},
+				undefined, undefined, undefined, undefined,
+				"~/EMPLOYEE_2_EQUIPMENTS('1')")
+			.returns(oRequestPromise);
+		this.mock(oCache).expects("removeElement").exactly(oFixture.iStatus === 500 ? 0 : 1)
+			.withExactArgs(sinon.match.same(aCacheData), 1, "('1')",
+				"EMPLOYEE_2_EQUIPMENTS")
+			.returns(1);
+
+		// code under test
+		oPromise = oCache._delete(oGroupLock, "Equipments('1')", "EMPLOYEE_2_EQUIPMENTS/1",
+				oFixture.oEntity, fnCallback)
+			.then(function (oResult) {
+				assert.notStrictEqual(oFixture.iStatus, 500, "unexpected success");
+				assert.strictEqual(oResult, undefined);
+				sinon.assert.calledOnce(fnCallback);
+				sinon.assert.calledWithExactly(fnCallback, 1, sinon.match.same(aCacheData));
+			}, function (oError0) {
+				assert.strictEqual(oFixture.iStatus, 500, JSON.stringify(oError0));
+				assert.strictEqual(oError0, oError);
+				assert.notOk("$ui5.deleting" in aCacheData[1]);
+				sinon.assert.notCalled(fnCallback);
+			});
+
+		assert.strictEqual(aCacheData[1]["$ui5.deleting"], true);
+
+		return oPromise;
 	});
+});
+
 	//TODO adjust paths in mPatchRequests?
 	//TODO trigger update in case of isConcurrentModification?!
 	//TODO do it anyway? what and when to return, result of remove vs. re-read?
@@ -429,7 +438,7 @@ sap.ui.define([
 
 		// code under test
 		return oCache._delete(oGroupLock, "TEAMS('23')", "EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM",
-				fnCallback)
+				undefined, fnCallback)
 			.then(function (oResult) {
 				assert.strictEqual(oResult, undefined);
 				sinon.assert.calledOnce(fnCallback);
@@ -3210,9 +3219,9 @@ sap.ui.define([
 
 			// code under test
 			return Promise.all([
-				oCache._delete(oGroupLock, "Employees('b')", "1", function () {}),
-				oCache._delete(oGroupLock, "Employees('c')", "2", function () {}),
-				oCache._delete(oGroupLock, "Employees('d')", "3", function () {})
+				oCache._delete(oGroupLock, "Employees('b')", "1", undefined, function () {}),
+				oCache._delete(oGroupLock, "Employees('c')", "2", undefined, function () {}),
+				oCache._delete(oGroupLock, "Employees('d')", "3", undefined, function () {})
 					.catch(function () {}),
 				oCache.read(3, 6, 0, oGroupLock)
 			]);
@@ -4380,7 +4389,8 @@ sap.ui.define([
 		return oCache.read(0, 5, 0, new _GroupLock("group")).then(function (oResult) {
 			that.oRequestorMock.expects("request").withArgs("DELETE").resolves();
 			that.spy(_Helper, "updateExisting");
-			return oCache._delete(new _GroupLock(), "Employees('42')", "3", function () {})
+			return oCache._delete(new _GroupLock(), "Employees('42')", "3", undefined,
+					function () {})
 				.then(function () {
 					assert.strictEqual(
 						oCache.read(0, 4, 0, new _GroupLock("group")).getResult().value.$count, 25);
@@ -4409,7 +4419,8 @@ sap.ui.define([
 		return oCache.read(0, 5, 0, new _GroupLock("group")).then(function (oResult) {
 			that.oRequestorMock.expects("request").withArgs("DELETE").resolves();
 			that.spy(_Helper, "updateExisting");
-			return oCache._delete(new _GroupLock(), "Employees('b')", "0/list/1", function () {})
+			return oCache._delete(new _GroupLock(), "Employees('b')", "0/list/1", undefined,
+					function () {})
 				.then(function () {
 					assert.strictEqual(
 						oCache.fetchValue(new _GroupLock("group"), "0/list").getResult().$count,
@@ -4649,7 +4660,7 @@ sap.ui.define([
 		// code under test
 		oCache._delete(oGroupLock, "TEAMS('0')/TEAM_2_EMPLOYEES",
 			sPathInCache + "/-1", //TODO sPathInCache + sTransientPredicate
-			fnDeleteCallback);
+			undefined, fnDeleteCallback);
 
 		assert.strictEqual(aCollection.$count, 41);
 		assert.strictEqual(aCollection.$created, 1);
@@ -5367,7 +5378,7 @@ sap.ui.define([
 
 			// code under test
 			return oCache._delete(new _GroupLock("$auto"), sEditUrl,
-					/*TODO sTransientPredicate*/"-1", fnCallback)
+					/*TODO sTransientPredicate*/"-1", undefined, fnCallback)
 				.then(function () {
 					sinon.assert.calledOnce(fnCallback);
 					assert.strictEqual(oCache.aElements.length, 0);
@@ -6356,7 +6367,7 @@ sap.ui.define([
 				}));
 
 			// code under test
-			return oCache._delete(oDeleteGroupLock, "Employees('42')", "", fnCallback)
+			return oCache._delete(oDeleteGroupLock, "Employees('42')", "", undefined, fnCallback)
 				.then(function (oResult) {
 					assert.strictEqual(oResult, undefined);
 					sinon.assert.calledOnce(fnCallback);

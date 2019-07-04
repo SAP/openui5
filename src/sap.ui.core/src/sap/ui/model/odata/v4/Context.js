@@ -123,6 +123,10 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group ID to be used for the DELETE request; if no group ID is specified, it
 	 *   defaults to the binding's <code>getUpdateGroupId()</code>
+	 * @param {object} [oETagEntity]
+	 *   An entity with the ETag of the binding for which the deletion was requested. This is
+	 *   provided if the deletion is delegated from a context binding with empty path to a list
+	 *   binding.
 	 * @returns {Promise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure
@@ -130,14 +134,14 @@ sap.ui.define([
 	 * @private
 	 * @see sap.ui.model.odata.v4.Context#delete
 	 */
-	Context.prototype._delete = function (oGroupLock) {
+	Context.prototype._delete = function (oGroupLock, oETagEntity) {
 		var that = this;
 
 		if (this.isTransient()) {
 			return this.oBinding._delete(oGroupLock, "n/a", this);
 		}
 		return this.fetchCanonicalPath().then(function (sCanonicalPath) {
-			return that.oBinding._delete(oGroupLock, sCanonicalPath.slice(1), that);
+			return that.oBinding._delete(oGroupLock, sCanonicalPath.slice(1), that, oETagEntity);
 		});
 	};
 

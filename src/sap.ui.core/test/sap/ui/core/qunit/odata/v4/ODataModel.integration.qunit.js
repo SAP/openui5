@@ -11199,11 +11199,11 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'0500000000\')}" id="form">\
-	<FlexBox id="businessPartner" binding="{SO_2_BP}">\
+	<FlexBox binding="{SO_2_BP}" id="businessPartner">\
 		<layoutData><FlexItemData/></layoutData>\
-		<Text id="phoneNumber" text="{PhoneNumber}" />\
+		<Text id="phoneNumber" text="{PhoneNumber}"/>\
 	</FlexBox>\
-	<Text id="companyName" text="{SO_2_BP/CompanyName}" />\
+	<Text id="companyName" text="{SO_2_BP/CompanyName}"/>\
 </FlexBox>',
 			that = this;
 
@@ -11236,6 +11236,140 @@ sap.ui.define([
 			return Promise.all([
 				// code under test
 				oContext.delete(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Delete an entity via a context binding with an empty path and $$ownRequest. The
+	// binding hierarchy is ODCB - ODCB. The top binding may or may not have read data on its own.
+	// BCP 1980308439
+	// JIRA CPOUI5UISERVICESV3-1917
+[true, false].forEach(function (bParentHasData) {
+	QUnit.test("delete context of binding with empty path and $$ownRequest (" + bParentHasData
+			+ ")", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderList(\'0500000000\')}" id="form">' +
+	(bParentHasData ? '<Text id="netAmount" text="{NetAmount}" />' : '') +
+'	<FlexBox binding="{path : \'\', parameters: {$$ownRequest : true}}" id="blackBinding">\
+		<Text id="note" text="{Note}" />\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		if (bParentHasData) {
+			this.expectRequest("SalesOrderList('0500000000')?$select=NetAmount,SalesOrderID", {
+					"@odata.etag" : "n/a",
+					NetAmount : "10",
+					SalesOrderID : "0500000000"
+				})
+				.expectChange("netAmount", "10.00");
+		}
+		this.expectRequest("SalesOrderList('0500000000')?$select=Note,SalesOrderID", {
+				"@odata.etag" : "ETag",
+				Note : "Test",
+				SalesOrderID : "0500000000"
+			})
+			.expectChange("note", "Test");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("blackBinding").getBindingContext();
+
+			that.expectRequest({
+					headers : {"If-Match" : "ETag"},
+					method : "DELETE",
+					url : "SalesOrderList('0500000000')"
+				})
+			// Note: The value of the property binding is undefined because there is no
+			// explicit cache value for it, but the type's formatValue converts this to null.
+				.expectChange("note", null);
+			if (bParentHasData) {
+				that.expectChange("netAmount", null);
+			}
+
+			return Promise.all([
+				// code under test
+				oContext.delete(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Delete an entity via a context binding with an empty path and $$ownRequest. The
+	// hierarchy is ODLB - ODCB - ODCB both ODCB with empty path. The deletion has to use the ETag
+	// of the context for which Context#delete is called.
+	// JIRA CPOUI5UISERVICESV3-1917
+	QUnit.test("delete context of binding with empty path, delegate to ODLB", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<t:Table id="table" rows="{/SalesOrderList}">\
+	<t:Column>\
+		<t:template>\
+			<Text id="note" text="{Note}" />\
+		</t:template>\
+	</t:Column>\
+</t:Table>\
+<FlexBox binding="{path : \'\', parameters: {$$ownRequest : true}}" id="form">\
+	<Text id="netAmount" text="{NetAmount}" />\
+	<FlexBox binding="{path : \'\', parameters: {$$ownRequest : true}}" id="form2">\
+		<Text id="salesOrderID" text="{SalesOrderID}" />\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=110", {
+				value : [{
+					"@odata.etag" : "ETag1",
+					SalesOrderID : "0500000000",
+					Note : "Row1"
+				}, {
+					"@odata.etag" : "ETag2",
+					SalesOrderID : "0500000001",
+					Note : "Row2"
+				}]
+			})
+			.expectChange("note", ["Row1", "Row2"])
+			.expectChange("netAmount", false)
+			.expectChange("salesOrderID", false);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContextBinding = that.oView.byId("form").getElementBinding(),
+				oListBinding = that.oView.byId("table").getBinding("rows");
+
+			that.expectRequest("SalesOrderList('0500000000')?$select=NetAmount,SalesOrderID", {
+					"@odata.etag" : "ETag3",
+					SalesOrderID : "0500000000",
+					NetAmount : "10"
+				})
+				.expectRequest("SalesOrderList('0500000000')?$select=SalesOrderID", {
+					"@odata.etag" : "ETag4",
+					SalesOrderID : "0500000000"
+				})
+				.expectChange("netAmount", "10.00")
+				.expectChange("salesOrderID", "0500000000");
+
+			oContextBinding.setContext(oListBinding.getCurrentContexts()[0]);
+
+			return that.waitForChanges(assert);
+		}).then(function (){
+			that.expectRequest({
+					headers : {"If-Match" : "ETag4"},
+					method : "DELETE",
+					url : "SalesOrderList('0500000000')"
+				})
+				// "note" temporarily loses its binding context and thus fires a change event
+				.expectChange("note", null, null)
+				.expectChange("note", ["Row2"])
+				.expectChange("netAmount", null, null)
+				.expectChange("salesOrderID", null, null);
+
+			return Promise.all([
+				// code under test
+				that.oView.byId("form2").getBindingContext().delete(),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -11405,8 +11539,8 @@ sap.ui.define([
 
 		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
 				value : [{
-					SalesOrderID : "0500000000",
-					Note : "Note"
+					Note : "Note",
+					SalesOrderID : "0500000000"
 				}]
 			})
 			.expectChange("note", ["Note"]);
@@ -11416,8 +11550,8 @@ sap.ui.define([
 
 			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
 					value : [{
-						SalesOrderID : "0500000000",
-						Note : "Note updated"
+						Note : "Note updated",
+						SalesOrderID : "0500000000"
 					}]
 				})
 				.expectChange("note", ["Note updated"]);

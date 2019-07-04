@@ -1264,6 +1264,7 @@ sap.ui.define([
 				oModel : {isAutoGroup : function () {return true;}}
 			}),
 			fnCallback = {},
+			oETagEntity = {},
 			oGroupLock = new _GroupLock("groupId"),
 			oResult = {};
 
@@ -1271,12 +1272,13 @@ sap.ui.define([
 		this.mock(oGroupLock).expects("setGroupId").withExactArgs("updateGroup");
 		this.mock(oCache).expects("_delete")
 			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES('1')",
-				"1/EMPLOYEE_2_EQUIPMENTS/3", sinon.match.same(fnCallback))
+				"1/EMPLOYEE_2_EQUIPMENTS/3", sinon.match.same(oETagEntity),
+				sinon.match.same(fnCallback))
 			.returns(SyncPromise.resolve(oResult));
 
 		assert.strictEqual(
 			oBinding.deleteFromCache(oGroupLock, "EMPLOYEES('1')", "1/EMPLOYEE_2_EQUIPMENTS/3",
-				fnCallback).getResult(),
+					oETagEntity, fnCallback).getResult(),
 			oResult);
 	});
 
@@ -1299,6 +1301,7 @@ sap.ui.define([
 				sPath : "TEAM_2_EMPLOYEES"
 			}),
 			fnCallback = {},
+			oETagEntity = {},
 			oGroupLock = new _GroupLock("$auto"),
 			oResult = {};
 
@@ -1307,12 +1310,12 @@ sap.ui.define([
 			.returns("~");
 		this.mock(oParentBinding).expects("deleteFromCache")
 			.withExactArgs(sinon.match.same(oGroupLock), "EQUIPMENTS('3')", "~",
-				sinon.match.same(fnCallback))
+				sinon.match.same(oETagEntity), sinon.match.same(fnCallback))
 			.returns(SyncPromise.resolve(oResult));
 
 		assert.strictEqual(
 			oBinding.deleteFromCache(oGroupLock, "EQUIPMENTS('3')", "1/EMPLOYEE_2_EQUIPMENTS/3",
-				fnCallback).getResult(),
+					oETagEntity, fnCallback).getResult(),
 			oResult);
 	});
 
@@ -1323,6 +1326,7 @@ sap.ui.define([
 				getUpdateGroupId : function () {},
 				oModel : {isAutoGroup : function () {}, isDirectGroup : function () {}}
 			}),
+			oETagEntity,
 			oGroupLock = new _GroupLock("$direct"),
 			oModelMock = this.mock(oBinding.oModel),
 			fnCallback = {};
@@ -1334,12 +1338,13 @@ sap.ui.define([
 
 		this.mock(oBinding.oCachePromise.getResult()).expects("_delete")
 			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES('1')", "42",
-				sinon.match.same(fnCallback))
+				sinon.match.same(oETagEntity), sinon.match.same(fnCallback))
 			.returns(SyncPromise.resolve());
 		oModelMock.expects("isAutoGroup").withExactArgs("$direct").returns(false);
 		oModelMock.expects("isDirectGroup").withExactArgs("$direct").returns(true);
 
-		return oBinding.deleteFromCache(oGroupLock, "EMPLOYEES('1')", "42", fnCallback).then();
+		return oBinding.deleteFromCache(oGroupLock, "EMPLOYEES('1')", "42", oETagEntity,
+			fnCallback).then();
 	});
 
 	//*********************************************************************************************
@@ -2633,6 +2638,42 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(oBinding.getResumePromise(), oResumePromise);
+	});
+
+	//*********************************************************************************************
+[{path : "test"}, {path : "", context : {}}].forEach(function (oFixture, i) {
+	QUnit.test("_findEmptyPathParentContext: Return element context " + i, function (assert) {
+		var oBinding = new ODataParentBinding(),
+			oContext;
+
+		oBinding.sPath = oFixture.path;
+		oBinding.oContext = {};
+		oBinding.oElementContext = {};
+		oContext = oFixture.context || oBinding.oElementContext;
+
+		// code under test
+		assert.strictEqual(oBinding._findEmptyPathParentContext(oContext), oContext);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_findEmptyPathParentContext: Delegate to parent", function (assert) {
+		var oBinding = new ODataParentBinding(),
+			oContext = {},
+			oParentBinding = {
+				_findEmptyPathParentContext : function (oMyContext) {
+					assert.strictEqual(oMyContext, oContext);
+					return oContext;
+				}
+			};
+
+		oContext.getBinding = function () { return oParentBinding; };
+		oBinding.sPath = "";
+		oBinding.oContext = oContext;
+
+		// code under test
+		assert.strictEqual(oBinding._findEmptyPathParentContext(oBinding.oElementContext),
+			oContext);
 	});
 });
 //TODO Fix issue with ODataModel.integration.qunit
