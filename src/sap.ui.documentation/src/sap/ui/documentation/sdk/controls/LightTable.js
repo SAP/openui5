@@ -14,6 +14,7 @@ sap.ui.define(['sap/ui/core/Control'],
 		 */
 		return Control.extend("sap.ui.documentation.sdk.controls.LightTable", {
 			metadata : {
+				library: "sap.ui.documentation",
 				properties: {
 					/**
 					 * Determines the list of names for the table columns. For example, <code>["Name", "Cardinality", "Type", "Description"]</code>.

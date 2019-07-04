@@ -17,6 +17,7 @@ sap.ui.define([
 	 */
 	var ParamText = Control.extend("sap.ui.documentation.sdk.controls.ParamText", {
 		metadata: {
+			library: "sap.ui.documentation",
 			properties: {
 				/**
 				 * Text to be displayed by the control

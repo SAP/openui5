@@ -24,6 +24,7 @@ sap.ui.define([
 	 * @alias sap.ui.table.plugins.BindingSelectionPlugin
 	 */
 	var BindingSelectionPlugin = SelectionPlugin.extend("sap.ui.table.plugins.BindingSelectionPlugin", {metadata: {
+		library: "sap.ui.table",
 		events: {
 			/**
 			 * This event is fired when the selection is changed.

@@ -59,6 +59,7 @@ sap.ui.define([
 	 */
 	var Header = Control.extend("sap.f.cards.Header", {
 		metadata: {
+			library: "sap.f",
 			interfaces: ["sap.f.cards.IHeader"],
 			properties: {
 

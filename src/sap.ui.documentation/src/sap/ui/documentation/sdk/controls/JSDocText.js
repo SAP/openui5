@@ -16,6 +16,7 @@ sap.ui.define([
 	 */
 	return Control.extend("sap.ui.documentation.sdk.controls.JSDocText", {
 		metadata: {
+			library: "sap.ui.documentation",
 			properties: {
 				/**
 				 * JSDoc Text to be displayed by the control. This text can contain basic HTML markup needed to display

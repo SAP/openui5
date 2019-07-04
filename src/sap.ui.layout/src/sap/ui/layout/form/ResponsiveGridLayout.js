@@ -206,6 +206,7 @@ sap.ui.define([
 	var Panel = Control.extend("sap.ui.layout.form.ResponsiveGridLayoutPanel", {
 
 		metadata : {
+			library: "sap.ui.layout",
 			aggregations: {
 				"content"   : {type: "sap.ui.layout.Grid", multiple: false}
 			},

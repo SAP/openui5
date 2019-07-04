@@ -24,6 +24,7 @@ sap.ui.define([
 	 */
 	var TitleLink = Title.extend("sap.ui.documentation.sdk.controls.TitleLink", {
 		metadata: {
+			library: "sap.ui.documentation",
 			properties: {
 				/**
 				 * Options are the standard values for window.open() supported by browsers: _self, _top, _blank, _parent, _search. Alternatively, a frame name can be entered. This property is only used when the href property is set.

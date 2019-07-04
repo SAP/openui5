@@ -14,6 +14,7 @@ sap.ui.define(['sap/ui/core/Element'],
 		 */
 		return Element.extend("sap.ui.documentation.sdk.controls.Row", {
 			metadata : {
+				library: "sap.ui.documentation",
 				properties: {
 					/**
 					 * Determines whether the row is visible.

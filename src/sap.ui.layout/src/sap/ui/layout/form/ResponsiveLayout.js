@@ -101,6 +101,7 @@ sap.ui.define([
 	var Panel = Control.extend("sap.ui.layout.form.ResponsiveLayoutPanel", {
 
 		metadata : {
+			library: "sap.ui.layout",
 			aggregations: {
 				"content"   : {type: "sap.ui.layout.ResponsiveFlowLayout", multiple: false}
 			},

@@ -142,6 +142,7 @@ sap.ui.define([
 
 	var DynamicItemContent = HTML.extend("sap.m.upload.DynamicItemContent", {
 		metadata: {
+			library: "sap.m",
 			properties: {
 				item: {type: "sap.m.upload.UploadSetItem"}
 			}

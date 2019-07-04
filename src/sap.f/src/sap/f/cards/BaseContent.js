@@ -31,6 +31,7 @@ sap.ui.define([
 	 */
 	var BaseContent = Control.extend("sap.f.cards.BaseContent", {
 		metadata: {
+			library: "sap.f",
 			aggregations: {
 
 				/**
