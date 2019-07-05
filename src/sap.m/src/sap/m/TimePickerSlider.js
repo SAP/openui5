@@ -178,6 +178,8 @@ sap.ui.define([
 					sItemText = jQuery(oScrElement).text();
 					sItemKey  = fnFindKeyByText.call(this, sItemText);
 
+					this._iClickedIndex =
+						Array.prototype.slice.call(oScrElement.parentElement.children).indexOf(oScrElement);
 					this._bOneTimeValueSelectionAnimation = true;
 					this.setSelectedValue(sItemKey);
 					this._fireSelectedValueChange(sItemKey);
@@ -224,6 +226,7 @@ sap.ui.define([
 				}
 
 				if (this._bOneTimeValueSelectionAnimation) {
+					$Slider.scrollTop((iIndex - this._iClickedIndex + this._iSelectedItemIndex) * iItemHeightInPx - this._selectionOffset);
 					this._animatingSnap = true;
 					$Slider.animate({scrollTop: iIndex * iItemHeightInPx - this._selectionOffset}, SCROLL_ANIMATION_DURATION, 'linear', function () {
 						$Slider.clearQueue();
