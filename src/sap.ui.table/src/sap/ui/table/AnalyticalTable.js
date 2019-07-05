@@ -18,7 +18,8 @@ sap.ui.define([
 	"./plugins/BindingSelectionPlugin",
 	"sap/base/Log",
 	"sap/base/assert",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/UriParameters"
 ],
 	function(
 		AnalyticalColumn,
@@ -35,7 +36,8 @@ sap.ui.define([
 		BindingSelectionPlugin,
 		Log,
 		assert,
-		jQuery
+		jQuery,
+		UriParameters
 	) {
 	"use strict";
 
@@ -621,6 +623,54 @@ sap.ui.define([
 					that.clearSelection();
 				}
 			}));
+			if (UriParameters.fromQuery(window.location.search).get("sap-ui-xx-table-expand-menu")) {
+				this._oGroupHeaderMenu.addItem(new MenuItem({
+					text: "Expand Level (#expandToLevel)",
+					select: function() {
+						that.getBinding("rows").expandToLevel(that._iGroupedLevel);
+						that.setFirstVisibleRow(0);
+						that.clearSelection();
+					}
+				}));
+				this._oGroupHeaderMenu.addItem(new MenuItem({
+					text: "Expand All (#expandToLevel)",
+					select: function() {
+						that.getBinding("rows").expandToLevel(that._aGroupedColumns.length);
+						that.setFirstVisibleRow(0);
+						that.clearSelection();
+					}
+				}));
+				this._oGroupHeaderMenu.addItem(new MenuItem({
+					text: "Expand Level (#setNumberOfExpandedLevels)",
+					select: function() {
+						that.getBinding("rows").setNumberOfExpandedLevels(that._iGroupedLevel);
+
+						// setNumberOfExpandedLevels does not trigger an update. The table has to request contexts.
+						var iFirstVisibleRow = that.getFirstVisibleRow();
+						if (iFirstVisibleRow > 0) {
+							that.setFirstVisibleRow(0);
+						} else {
+							that._getRowContexts();
+						}
+						that.clearSelection();
+					}
+				}));
+				this._oGroupHeaderMenu.addItem(new MenuItem({
+					text: "Expand All (#setNumberOfExpandedLevels)",
+					select: function() {
+						that.getBinding("rows").setNumberOfExpandedLevels(that._aGroupedColumns.length);
+
+						// setNumberOfExpandedLevels does not trigger an update. The table has to request contexts.
+						var iFirstVisibleRow = that.getFirstVisibleRow();
+						if (iFirstVisibleRow > 0) {
+							that.setFirstVisibleRow(0);
+						} else {
+							that._getRowContexts();
+						}
+						that.clearSelection();
+					}
+				}));
+			}
 		}
 
 		var oGroupColumnInfo = getGroupColumnInfo();
