@@ -35,7 +35,7 @@ sap.ui.define([
 		 * @method sap.ui.fl.apply.api.ControlVariantApplyAPI.clearVariantParameterInURL
 		 * @public
 		 */
-		clearVariantParameterInURL : function () {
+		clearVariantParameterInURL: function () {
 			OldControlPersonalizationAPI.clearVariantParameterInURL.apply(OldControlPersonalizationAPI, arguments);
 		},
 
@@ -51,24 +51,10 @@ sap.ui.define([
 		 * @method sap.ui.fl.apply.api.ControlVariantApplyAPI.activateVariant
 		 * @public
 		 */
-		activateVariant : function() {
+		activateVariant: function() {
 			return OldControlPersonalizationAPI.activateVariant.apply(OldControlPersonalizationAPI, arguments);
-		},
-
-
-		/**
-		 * Determines the availability of an encompassing variant management control.
-		 *
-		 * @param {sap.ui.core.Element} oControl - The control which should be tested for an encompassing variant management control
-		 *
-		 * @returns {boolean} Returns true if a variant management control is encompassing the given control, else false
-		 *
-		 * @method sap.ui.fl.apply.api.ControlVariantApplyAPI.hasVariantManagement
-		 * @public
-		 */
-		hasVariantManagement : function() {
-			return OldControlPersonalizationAPI.hasVariantManagement.apply(OldControlPersonalizationAPI, arguments);
 		}
+
 	};
 	return ControlVariantApplyAPI;
 }, true);

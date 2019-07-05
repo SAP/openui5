@@ -67,12 +67,10 @@ sap.ui.define([
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
 			var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
 			var oRootControl = oAppComponent.getRootControl();
-			var oView = Utils.getViewForControl(oControl);
 			var oVariantModel = oAppComponent.getModel(Utils.VARIANT_MODEL_NAME);
 
 			var mParams = {
 				rootControl : oRootControl,
-				view : oView,
 				variantModel : oVariantModel,
 				variantManagement : {},
 				flexController: oFlexController
