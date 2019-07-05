@@ -5,6 +5,7 @@ var oop = require("../lib/oop");
 var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 
 var DiffHighlightRules = function() {
+
     this.$rules = {
         "start" : [{
                 regex: "^(?:\\*{15}|={67}|-{3}|\\+{3})$",
@@ -107,7 +108,7 @@ oop.inherits(FoldMode, BaseFoldMode);
         }
         if (row == start.row + 1)
             return;
-        return  Range.fromPoints(start, {row: row - 1, column: line.length});
+        return new Range(start.row, start.column, row - 1, line.length);
     };
 
 }).call(FoldMode.prototype);
@@ -124,7 +125,7 @@ var FoldMode = require("./folding/diff").FoldMode;
 
 var Mode = function() {
     this.HighlightRules = HighlightRules;
-    this.foldingRules = new FoldMode(["diff", "index", "\\+{3}", "@@|\\*{5}"], "i");
+    this.foldingRules = new FoldMode(["diff", "@@|\\*{5}"], "i");
 };
 oop.inherits(Mode, TextMode);
 
@@ -135,8 +136,7 @@ oop.inherits(Mode, TextMode);
 
 exports.Mode = Mode;
 
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/mode/diff"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;

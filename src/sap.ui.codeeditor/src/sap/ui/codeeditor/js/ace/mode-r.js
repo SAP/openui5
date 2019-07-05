@@ -9,6 +9,7 @@ var TexHighlightRules = function(textClass) {
 
     if (!textClass)
         textClass = "text";
+
     this.$rules = {
         "start" : [
             {
@@ -96,6 +97,7 @@ ace.define("ace/mode/r_highlight_rules",["require","exports","module","ace/lib/o
             ("NULL|NA|TRUE|FALSE|T|F|Inf|NaN|NA_integer_|NA_real_|NA_character_|" +
              "NA_complex_").split("|")
             );
+
       this.$rules = {
          "start" : [
             {
@@ -299,8 +301,7 @@ ace.define("ace/mode/r",["require","exports","module","ace/unicode","ace/range",
        this.$id = "ace/mode/r";
    }).call(Mode.prototype);
    exports.Mode = Mode;
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/mode/r"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;

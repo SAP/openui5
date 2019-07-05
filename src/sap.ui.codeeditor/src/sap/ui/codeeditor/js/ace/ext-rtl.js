@@ -24,17 +24,31 @@ require("../config").defineOptions(Editor.prototype, "editor", {
     rtlText: {
         set: function(val) {
             if (val) {
-                this.on("session", onChange);
+                this.on("change", onChange);
                 this.on("changeSelection", onChangeSelection);
                 this.renderer.on("afterRender", updateLineDirection);
                 this.commands.on("exec", onCommandEmitted);
                 this.commands.addCommands(commands);
             } else {
-                this.off("session", onChange);
+                this.off("change", onChange);
                 this.off("changeSelection", onChangeSelection);
                 this.renderer.off("afterRender", updateLineDirection);
                 this.commands.off("exec", onCommandEmitted);
                 this.commands.removeCommands(commands);
+                clearTextLayer(this.renderer);
+            }
+            this.renderer.updateFull();
+        }
+    },
+    rtl: {
+        set: function(val) {
+            this.session.$bidiHandler.$isRtl = val;
+            if (val) {
+                this.setOption("rtlText", false);
+                this.renderer.on("afterRender", updateLineDirection);
+                this.session.$bidiHandler.seenBidi = true;
+            } else {
+                this.renderer.off("afterRender", updateLineDirection);
                 clearTextLayer(this.renderer);
             }
             this.renderer.updateFull();
@@ -60,12 +74,13 @@ function onChangeSelection(e, editor) {
 function onCommandEmitted(commadEvent) {
     commadEvent.editor.session.$bidiHandler.isMoveLeftOperation = /gotoleft|selectleft|backspace|removewordleft/.test(commadEvent.command.name);
 }
-function onChange(delta, session) {
+function onChange(delta, editor) {
+    var session = editor.session;
     session.$bidiHandler.currentRow = null;
     if (session.$bidiHandler.isRtlLine(delta.start.row) && delta.action === 'insert' && delta.lines.length > 1) {
         for (var row = delta.start.row; row < delta.end.row; row++) {
             if (session.getLine(row + 1).charAt(0) !== session.$bidiHandler.RLE)
-                session.getDocument().$lines[row + 1] = session.$bidiHandler.RLE + session.getLine(row + 1);
+                session.doc.$lines[row + 1] = session.$bidiHandler.RLE + session.getLine(row + 1);
         }
     }
 }
@@ -99,8 +114,7 @@ function clearTextLayer(renderer) {
     }
 }
 
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/ext/rtl"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;

@@ -30,6 +30,7 @@ var ShHighlightRules = function() {
     }, "identifier");
 
     var integer = "(?:(?:[1-9]\\d*)|(?:0))";
+
     var fraction = "(?:\\.\\d+)";
     var intPart = "(?:\\d+)";
     var pointFloat = "(?:(?:" + intPart + "?" + fraction + ")|(?:" + intPart + "\\.))";
@@ -225,6 +226,7 @@ var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 var ShHighlightFile = require("./sh_highlight_rules");
 
 var MakefileHighlightRules = function() {
+
     var keywordMapper = this.createKeywordMapper({
         "keyword": ShHighlightFile.reservedKeywords,
         "support.function.builtin": ShHighlightFile.languageConstructs,
@@ -399,8 +401,7 @@ oop.inherits(Mode, TextMode);
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/mode/makefile"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;

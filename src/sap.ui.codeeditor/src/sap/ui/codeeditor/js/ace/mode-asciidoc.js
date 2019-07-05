@@ -155,6 +155,7 @@ var AsciidocHighlightRules = function() {
         var prefix = /\w/.test(ch) ? "\\b" : "(?:\\B|^)";
         return prefix + ch + "[^" + ch + "].*?" + ch + "(?![\\w*])";
     }
+
     var tokenMap = {
         macro: "constant.character",
         tableBlock: "doc.comment",
@@ -338,8 +339,7 @@ oop.inherits(Mode, TextMode);
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/mode/asciidoc"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;

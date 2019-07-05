@@ -46,8 +46,7 @@ var StatusBar = function(editor, parentNode) {
 
 exports.StatusBar = StatusBar;
 
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/ext/statusbar"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;

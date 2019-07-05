@@ -411,8 +411,7 @@ var indenter = /(?:[({[=:]|[-=]>|\b(?:else|try|with))\s*$/;
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/mode/ocaml"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;

@@ -93,6 +93,7 @@ var PraatHighlightRules = function() {
         "TableOfReal|TextGrid|TextInterval|TextPoint|TextTier|Tier|"         +
         "Transition|VocalTract|Weight|WordList"
     );
+
     this.$rules = {
         "start" : [
             {
@@ -467,8 +468,7 @@ oop.inherits(Mode, TextMode);
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/mode/praat"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;

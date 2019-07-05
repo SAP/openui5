@@ -30,6 +30,7 @@ var ShHighlightRules = function() {
     }, "identifier");
 
     var integer = "(?:(?:[1-9]\\d*)|(?:0))";
+
     var fraction = "(?:\\.\\d+)";
     var intPart = "(?:\\d+)";
     var pointFloat = "(?:(?:" + intPart + "?" + fraction + ")|(?:" + intPart + "\\.))";
@@ -425,6 +426,7 @@ oop.inherits(Mode, TextMode);
     };
 
     this.autoOutdent = function(state, doc, row) {
+
         row += 1;
         var indent = this.$getIndent(doc.getLine(row));
         var tab = doc.getTabString();
@@ -487,8 +489,7 @@ oop.inherits(Mode, ShMode);
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/mode/dockerfile"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;

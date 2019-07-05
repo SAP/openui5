@@ -215,7 +215,7 @@ OpenUI5 includes the following subcomponents that are subject to separate licens
 Your use of these subcomponents is subject to the separate license terms applicable to
 each subcomponent.
 
-Component: ace 1.4.1
+Component: ace 1.4.4
 Licensor: Ajax.org B.V.
 Website: https://ace.c9.io/
 License: BSD 3-clause "New" or "Revised" License

@@ -103,6 +103,7 @@ var c_cppHighlightRules = function() {
           + /(\.((-?\d+)|\*(-?\d+\$)?)?)?/.source // precision
           + /(hh|h|ll|l|j|t|z|q|L|vh|vl|v|hv|hl)?/.source // length modifier
           + /(\[[^"\]]+\]|[diouxXDOUeEfFgGaACcSspn%])/.source; // conversion type
+
     this.$rules = { 
         "start" : [
             {
@@ -250,6 +251,7 @@ var C_Highlight_File = require("./c_cpp_highlight_rules");
 var CHighlightRules = C_Highlight_File.c_cppHighlightRules;
 
 var ObjectiveCHighlightRules = function() {
+
     var escapedConstRe = "\\\\(?:[abefnrtv'\"?\\\\]|" + 
                          "[0-3]\\d{1,2}|" +
                          "[4-7]\\d?|" +
@@ -728,8 +730,7 @@ oop.inherits(Mode, TextMode);
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/mode/objectivec"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;

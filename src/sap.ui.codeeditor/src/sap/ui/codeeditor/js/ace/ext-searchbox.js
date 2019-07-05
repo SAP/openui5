@@ -4,7 +4,8 @@ ace.define("ace/ext/searchbox",["require","exports","module","ace/lib/dom","ace/
 var dom = require("../lib/dom");
 var lang = require("../lib/lang");
 var event = require("../lib/event");
-var searchboxCss = ".ace_search {\
+var searchboxCss = "\
+.ace_search {\
 background-color: #ddd;\
 color: #666;\
 border: 1px solid #cbcbcb;\
@@ -161,33 +162,31 @@ var MAX_COUNT = 999;
 
 dom.importCssString(searchboxCss, "ace_searchbox");
 
-var html = '<div class="ace_search right">\
-    <span action="hide" class="ace_searchbtn_close"></span>\
-    <div class="ace_search_form">\
-        <input class="ace_search_field" placeholder="Search for" spellcheck="false"></input>\
-        <span action="findPrev" class="ace_searchbtn prev"></span>\
-        <span action="findNext" class="ace_searchbtn next"></span>\
-        <span action="findAll" class="ace_searchbtn" title="Alt-Enter">All</span>\
-    </div>\
-    <div class="ace_replace_form">\
-        <input class="ace_search_field" placeholder="Replace with" spellcheck="false"></input>\
-        <span action="replaceAndFindNext" class="ace_searchbtn">Replace</span>\
-        <span action="replaceAll" class="ace_searchbtn">All</span>\
-    </div>\
-    <div class="ace_search_options">\
-        <span action="toggleReplace" class="ace_button" title="Toggle Replace mode"\
-            style="float:left;margin-top:-2px;padding:0 5px;">+</span>\
-        <span class="ace_search_counter"></span>\
-        <span action="toggleRegexpMode" class="ace_button" title="RegExp Search">.*</span>\
-        <span action="toggleCaseSensitive" class="ace_button" title="CaseSensitive Search">Aa</span>\
-        <span action="toggleWholeWords" class="ace_button" title="Whole Word Search">\\b</span>\
-        <span action="searchInSelection" class="ace_button" title="Search In Selection">S</span>\
-    </div>\
-</div>'.replace(/> +/g, ">");
-
 var SearchBox = function(editor, range, showReplaceForm) {
     var div = dom.createElement("div");
-    div.innerHTML = html;
+    dom.buildDom(["div", {class:"ace_search right"},
+        ["span", {action: "hide", class: "ace_searchbtn_close"}],
+        ["div", {class: "ace_search_form"},
+            ["input", {class: "ace_search_field", placeholder: "Search for", spellcheck: "false"}],
+            ["span", {action: "findPrev", class: "ace_searchbtn prev"}, "\u200b"],
+            ["span", {action: "findNext", class: "ace_searchbtn next"}, "\u200b"],
+            ["span", {action: "findAll", class: "ace_searchbtn", title: "Alt-Enter"}, "All"]
+        ],
+        ["div", {class: "ace_replace_form"},
+            ["input", {class: "ace_search_field", placeholder: "Replace with", spellcheck: "false"}],
+            ["span", {action: "replaceAndFindNext", class: "ace_searchbtn"}, "Replace"],
+            ["span", {action: "replaceAll", class: "ace_searchbtn"}, "All"]
+        ],
+        ["div", {class: "ace_search_options"},
+            ["span", {action: "toggleReplace", class: "ace_button", title: "Toggle Replace mode",
+                style: "float:left;margin-top:-2px;padding:0 5px;"}, "+"],
+            ["span", {class: "ace_search_counter"}],
+            ["span", {action: "toggleRegexpMode", class: "ace_button", title: "RegExp Search"}, ".*"],
+            ["span", {action: "toggleCaseSensitive", class: "ace_button", title: "CaseSensitive Search"}, "Aa"],
+            ["span", {action: "toggleWholeWords", class: "ace_button", title: "Whole Word Search"}, "\\b"],
+            ["span", {action: "searchInSelection", class: "ace_button", title: "Search In Selection"}, "S"]
+        ]
+    ], div);
     this.element = div.firstChild;
     
     this.setSession = this.setSession.bind(this);
@@ -286,6 +285,8 @@ var SearchBox = function(editor, range, showReplaceForm) {
             sb.searchInput.focus();
         },
         "Ctrl-H|Command-Option-F": function(sb) {
+            if (sb.editor.getReadOnly())
+                return;
             sb.replaceOption.checked = true;
             sb.$syncOptions();
             sb.replaceInput.focus();
@@ -372,7 +373,9 @@ var SearchBox = function(editor, range, showReplaceForm) {
         dom.setCssClass(this.regExpOption, "checked", this.regExpOption.checked);
         dom.setCssClass(this.wholeWordOption, "checked", this.wholeWordOption.checked);
         dom.setCssClass(this.caseSensitiveOption, "checked", this.caseSensitiveOption.checked);
-        this.replaceBox.style.display = this.replaceOption.checked ? "" : "none";
+        var readOnly = this.editor.getReadOnly();
+        this.replaceOption.style.display = readOnly ? "none" : "";
+        this.replaceBox.style.display = this.replaceOption.checked && !readOnly ? "" : "none";
         this.find(false, false, preventScroll);
     };
 
@@ -501,8 +504,7 @@ exports.Search = function(editor, isReplace) {
     sb.show(editor.session.getTextRange(), isReplace);
 };
 
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/ext/searchbox"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;
