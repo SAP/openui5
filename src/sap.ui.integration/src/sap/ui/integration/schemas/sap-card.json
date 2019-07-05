@@ -325,14 +325,14 @@
 					"description": "The title of the item.",
 					"oneOf": [
 						{ "$ref": "#/definitions/field" },
-						{ "$ref": "#/definitions/simpleBinding" }
+						{ "type": "string" }
 					]
 				},
 				"description": {
 					"description": "The description of the item.",
 					"oneOf": [
 						{ "$ref": "#/definitions/field" },
-						{ "$ref": "#/definitions/simpleBinding" }
+						{ "type": "string" }
 					]
 				},
 				"info": {
