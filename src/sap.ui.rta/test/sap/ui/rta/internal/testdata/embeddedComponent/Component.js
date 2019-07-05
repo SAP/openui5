@@ -27,7 +27,7 @@ sap.ui.define([
 
 		constructor: function () {
 			UIComponent.prototype.constructor.apply(this, arguments);
-			this.oUriParametersUtil = new UriParameters(window.location.href);
+			this.oUriParametersUtil = UriParameters.fromQuery(window.location.search);
 			this._createFakeLrep();
 		},
 

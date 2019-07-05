@@ -474,7 +474,7 @@ function(
 	 */
 	RuntimeAuthoring.prototype.setFlexSettings = function(mFlexSettings) {
 		// Check URI-parameters for sap-ui-layer
-		var oUriParams = new UriParameters(window.location.href);
+		var oUriParams = UriParameters.fromQuery(window.location.search);
 		var sUriLayer = oUriParams.get("sap-ui-layer");
 
 		mFlexSettings = jQuery.extend({}, this.getFlexSettings(), mFlexSettings);

@@ -659,7 +659,7 @@ sap.ui.define([
 				setTimeout(function () {
 					var oAppSettings = this._oCore.getConfiguration(),
 						oThemeSelect = this._oCore.byId("ThemeSelect"),
-						sUriParamTheme = new UriParameters(window.location.href).get("sap-theme"),
+						sUriParamTheme = UriParameters.fromQuery(window.location.search).get("sap-theme"),
 						bDensityMode = this._oViewSettings.densityMode;
 
 					// Theme select

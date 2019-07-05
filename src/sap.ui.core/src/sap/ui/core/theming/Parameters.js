@@ -47,7 +47,7 @@ sap.ui.define([
 		// match a CSS url
 		var rCssUrl = /url[\s]*\('?"?([^\'")]*)'?"?\)/;
 
-		var bUseInlineParameters = new UriParameters(window.location.href).get("sap-ui-xx-no-inline-theming-parameters") !== "true";
+		var bUseInlineParameters = UriParameters.fromQuery(window.location.search).get("sap-ui-xx-no-inline-theming-parameters") !== "true";
 
 		function resetParameters() {
 			mParameters = null;

@@ -747,7 +747,7 @@ function(
 		},
 
 		_getUriParameters: function () {
-			return new UriParameters(window.location.href);
+			return UriParameters.fromQuery(window.location.search);
 		},
 		/**
 		 * Returns whether the hot fix mode is active (url parameter hotfix=true)
@@ -966,7 +966,7 @@ function(
 		 * @private
 		 */
 		getUrlParameter: function (sParameterName) {
-			return new UriParameters(window.location.href).get(sParameterName);
+			return UriParameters.fromQuery(window.location.search).get(sParameterName);
 		},
 
 		/**

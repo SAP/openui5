@@ -75,7 +75,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 					break;
 				case mTypes.IFRAME:
 					this._oRemoteWindow = window.parent;
-					this._sRemoteOrigin = new UriParameters(window.location.href).get("sap-ui-xx-support-origin");
+					this._sRemoteOrigin = UriParameters.fromQuery(window.location.search).get("sap-ui-xx-support-origin");
 					this.openSupportTool();
 					jQuery(window).bind("unload", function(oEvent){
 						close(that._oOpenedWindow);
@@ -83,7 +83,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 					break;
 				case mTypes.TOOL:
 					this._oRemoteWindow = window.opener;
-					this._sRemoteOrigin = new UriParameters(window.location.href).get("sap-ui-xx-support-origin");
+					this._sRemoteOrigin = UriParameters.fromQuery(window.location.search).get("sap-ui-xx-support-origin");
 					jQuery(window).bind("unload", function(oEvent){
 						that.sendEvent(mEvents.TEAR_DOWN);
 						Support.exitPlugins(that, true);
@@ -335,7 +335,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 			}
 		} else if (this._sType === mTypes.IFRAME) {
 			// use script name from URI parameter to hand it over to the tool
-			sBootstrapScript = new UriParameters(window.location.href).get("sap-ui-xx-support-bootstrap");
+			sBootstrapScript = UriParameters.fromQuery(window.location.search).get("sap-ui-xx-support-bootstrap");
 		}
 
 		// sap-ui-core.js is the default. no need for passing it to the support window

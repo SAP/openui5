@@ -37,7 +37,7 @@ sap.ui.require([
 
 	QUnit.test("Test responsive margin classes", function(assert) {
 		// Test Responsive Margins: resize the containing page and check how the elements respond.
-		var oUriParams = new UriParameters(location.search),
+		var oUriParams = UriParameters.fromQuery(location.search),
 			sExpectedMarginValue = oUriParams.get('sap-ui-expect');
 
 		if (!sExpectedMarginValue) {

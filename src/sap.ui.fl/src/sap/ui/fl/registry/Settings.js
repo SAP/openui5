@@ -221,7 +221,7 @@ sap.ui.define([
 	 */
 	Settings._isFlexChangeModeFromUrl = function() {
 		var bFlexChangeMode;
-		var oUriParams = new UriParameters(window.location.href);
+		var oUriParams = UriParameters.fromQuery(window.location.search);
 		if (oUriParams.get('sap-ui-fl-changeMode') === 'true') {
 			bFlexChangeMode = true;
 		} else if (oUriParams.get('sap-ui-fl-changeMode') === 'false') {

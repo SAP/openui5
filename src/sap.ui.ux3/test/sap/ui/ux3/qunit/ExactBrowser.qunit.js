@@ -325,7 +325,7 @@ sap.ui.define([
 			);
 			setTimeout(function(){
 				if (navigator.userAgent.indexOf("Windows") >= 0 && Device.browser.safari){
-					if (new UriParameters(window.location.href).get("runExpandCheck") != "X"){
+					if (UriParameters.fromQuery(window.location.search).get("runExpandCheck") != "X"){
 						done();
 						return;
 					}

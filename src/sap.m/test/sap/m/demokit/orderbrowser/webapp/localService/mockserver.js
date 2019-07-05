@@ -27,7 +27,7 @@ sap.ui.define([
 					oManifestModel = new JSONModel(sManifestUrl);
 
 				oManifestModel.attachRequestCompleted(function ()  {
-					var oUriParameters = new UriParameters(window.location.href),
+					var oUriParameters = UriParameters.fromQuery(window.location.search),
 						// parse manifest for local metadata URI
 						sJsonFilesUrl = sap.ui.require.toUrl(_sJsonFilesPath),
 						oMainDataSource = oManifestModel.getProperty("/sap.app/dataSources/mainService"),

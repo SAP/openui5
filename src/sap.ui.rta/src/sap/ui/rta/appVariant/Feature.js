@@ -151,16 +151,13 @@ sap.ui.define([
 		 * When this method returns <code>false</code>, an app variant overview is shown only for a key user.
 		 */
 		isOverviewExtended: function() {
-			var oUriParams = new UriParameters(window.location.href);
-			if (!oUriParams.get("sap-ui-xx-app-variant-overview-extended")) {
+			var oUriParams = UriParameters.fromQuery(window.location.search);
+			var sMode = oUriParams.get("sap-ui-xx-app-variant-overview-extended");
+			if (!sMode) {
 				return false;
 			}
 
-			var aMode = oUriParams.get("sap-ui-xx-app-variant-overview-extended", true);
-			if (aMode && aMode.length) {
-				var sMode = aMode[0].toLowerCase();
-				return sMode === 'true';
-			}
+			return sMode.toLowerCase() === 'true';
 		},
 		isManifestSupported: function() {
 			var oDescriptor = fnGetDescriptor();

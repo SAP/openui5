@@ -44,7 +44,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 		var bLegacySupport = !(parseFloat(QUnit.version) >= 2.0);
 
 		// extract the URL parameters
-		var mParams = new UriParameters(window.location.href);
+		var mParams = UriParameters.fromQuery(window.location.search);
 
 		if ( bLegacySupport ) {
 		// TODO: Remove deprecated code once all projects adapted

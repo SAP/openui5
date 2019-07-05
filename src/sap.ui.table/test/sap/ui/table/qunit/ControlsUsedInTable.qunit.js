@@ -30,7 +30,7 @@ sap.ui.define([
 			MultiComboBox, CheckBox, Link, Currency, ProgressIndicator, RatingIndicator, HBox, Table, Column, TreeTable, waitForThemeApplied) {
 	"use strict";
 
-	var bExecuteAllTests = (new UriParameters()).get("sap-ui-xx-table-testall") === "true";
+	var bExecuteAllTests = UriParameters.fromQuery(window.location.search).get("sap-ui-xx-table-testall") === "true";
 	var oTable;
 	var oTreeTable;
 	var sSomeVeryLargeTextWhichMightCauseWrapping = "Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test";

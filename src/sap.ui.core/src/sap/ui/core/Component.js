@@ -1786,10 +1786,10 @@ sap.ui.define([
 		// Read internal URI parameter to enable model preload for testing purposes
 		// Specify comma separated list of model names. Use an empty segment for the "default" model
 		// Examples:
-		//   sap-ui-xx-preload-component-models-<componentName>=, => prelaod default model (empty string key)
-		//   sap-ui-xx-preload-component-models-<componentName>=foo, => prelaod "foo" + default model (empty string key)
-		//   sap-ui-xx-preload-component-models-<componentName>=foo,bar => prelaod "foo" + "bar" models
-		var sPreloadModels = new UriParameters(window.location.href).get("sap-ui-xx-preload-component-models-" + oManifest.getComponentName());
+		//   sap-ui-xx-preload-component-models-<componentName>=, => preload default model (empty string key)
+		//   sap-ui-xx-preload-component-models-<componentName>=foo, => preload "foo" + default model (empty string key)
+		//   sap-ui-xx-preload-component-models-<componentName>=foo,bar => preload "foo" + "bar" models
+		var sPreloadModels = UriParameters.fromQuery(window.location.search).get("sap-ui-xx-preload-component-models-" + oManifest.getComponentName());
 		var aPreloadModels = sPreloadModels && sPreloadModels.split(",");
 
 		for (var sModelName in mAllModelConfigurations) {

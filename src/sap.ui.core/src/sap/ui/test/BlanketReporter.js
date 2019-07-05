@@ -481,7 +481,7 @@ sap.ui.define([
 				aTestedModules && aTestedModules.map(convertToFile));
 			oDiv = getDiv();
 
-			if (new UriParameters(window.location.href).get("testId")
+			if (UriParameters.fromQuery(window.location.search).get("testId")
 				|| aTestedModules && !aTestedModules.every(isSingleClass)) {
 				// do not fail due to coverage
 				createViewAndPlaceAt(oModel, oDiv);

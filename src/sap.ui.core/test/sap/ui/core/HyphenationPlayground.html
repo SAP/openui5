@@ -191,9 +191,9 @@
 				};
 
 				var getFilteredLangs = function () {
-					var langsParam = new UriParameters(window.location.href).mParams["filter-langs"];
-					if (langsParam && langsParam[0]) {
-						return langsParam[0].split(",");
+					var langsParam = UriParameters.fromQuery(window.location.search).get("filter-langs");
+					if (langsParam != null) {
+						return langsParam.split(",");
 					}
 				};
 

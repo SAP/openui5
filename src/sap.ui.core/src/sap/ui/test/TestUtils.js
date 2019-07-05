@@ -22,7 +22,7 @@ sap.ui.define([
 		sMimeHeaders = "\r\nContent-Type: application/http\r\n"
 			+ "Content-Transfer-Encoding: binary\r\n",
 		rMultipartHeader = /^Content-Type:\s*multipart\/mixed;\s*boundary=/i,
-		oUriParameters = new UriParameters(window.location.href),
+		oUriParameters = UriParameters.fromQuery(window.location.search),
 		sAutoRespondAfter = oUriParameters.get("autoRespondAfter"),
 		sRealOData = oUriParameters.get("realOData"),
 		rRequestKey = /^(\S+) (\S+)$/,
