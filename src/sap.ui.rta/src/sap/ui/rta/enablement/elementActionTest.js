@@ -17,6 +17,7 @@ sap.ui.define([
 	"sap/ui/rta/ControlTreeModifier",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/Cache",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/library" //we have to ensure to load fl, so that change handler gets registered
 ],
@@ -34,6 +35,7 @@ function (
 	ControlTreeModifier,
 	ChangesWriteAPI,
 	PersistenceWriteAPI,
+	Cache,
 	sinon
 ) {
 	"use strict";
@@ -232,7 +234,7 @@ function (
 		function cleanUpAfterUndo(oCommand) {
 			var oChange = oCommand.getPreparedChange();
 			if (oCommand.getAppComponent) {
-				return PersistenceWriteAPI.remove(oChange, {appComponent: oCommand.getAppComponent()});
+				return PersistenceWriteAPI.remove(oChange, oCommand.getAppComponent());
 			}
 		}
 
@@ -370,7 +372,7 @@ function (
 			beforeEach: function (assert) {
 				//no LREP response needed
 				sandbox.stub(ChangePersistence.prototype, "getChangesForComponent").returns(Promise.resolve([]));
-				sandbox.stub(ChangePersistence.prototype, "getCacheKey").returns(ChangePersistence.NOTAG); //no cache key => no xml view processing
+				sandbox.stub(ChangePersistence.prototype, "getCacheKey").returns(Cache.NOTAG); //no cache key => no xml view processing
 				sandbox.stub(Settings, "getInstance").returns(Promise.resolve({_oSettings: {recordUndo: false}}));
 
 				return createViewInComponent.call(this, SYNC).then(function() {

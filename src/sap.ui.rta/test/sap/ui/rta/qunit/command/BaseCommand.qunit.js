@@ -25,11 +25,12 @@ sap.ui.define([
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/registry/SimpleChanges",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Change",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/ControlTreeModifier",
-	"sap/ui/fl/write/ChangesController",
+	"sap/ui/fl/write/internal/ChangesController",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -57,6 +58,7 @@ function (
 	ChangeRegistry,
 	SimpleChanges,
 	PersistenceWriteAPI,
+	ChangesWriteAPI,
 	Change,
 	JSONModel,
 	flUtils,
@@ -1136,13 +1138,13 @@ function (
 		beforeEach : function(assert) {
 			this.oCommandStack = new Stack();
 			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
-			var oButton = new Button(oMockedAppComponent.createId("button"));
+			this.oButton = new Button(oMockedAppComponent.createId("button"));
 			this.oLayout = new VerticalLayout(oMockedAppComponent.createId("layout"), {
-				content : [oButton]
+				content : [this.oButton]
 			});
 			this.oCompositeCommand = new CompositeCommand();
 			this.oFlexCommand = new FlexCommand({
-				element: oButton,
+				element: this.oButton,
 				changeType: "hideControl"
 			});
 			this.fnApplyChangeSpy = sandbox.spy(FlexCommand.prototype, "_applyChange");
@@ -1179,7 +1181,7 @@ function (
 	}, function() {
 		QUnit.test("when change handler is revertible and command is executed", function (assert) {
 			assert.expect(10);
-			var fnRevertChangesOnControlStub = sandbox.spy(PersistenceWriteAPI, "remove");
+			var fnRevertChangesOnControlStub = sandbox.spy(ChangesWriteAPI, "revert");
 			sandbox.stub(ChangeRegistry.getInstance(), "getChangeHandler").resolves(this.fnChangeHandler);
 
 			this.oCommandStack.push(this.oFlexCommand);
@@ -1198,7 +1200,7 @@ function (
 					return this.oCommandStack.undo()
 						.then(function () {
 							assert.ok(true, "then a Promise.resolve() is returned on Stack.undo()");
-							assert.ok(fnRevertChangesOnControlStub.calledWith(oChange, {appComponent: oMockedAppComponent, revert:true}), "then PersistenceWriteAPI.remove called with required parameters");
+							assert.ok(fnRevertChangesOnControlStub.calledWith(oChange, this.oButton), "then PersistenceWriteAPI.remove called with required parameters");
 							assert.equal(this.fnRtaStartRecordingStub.callCount, 0, "then recording of rta undo operations not started");
 							assert.equal(this.fnRtaStopRecordingStub.callCount, 0, "then recording of rta undo operations not stopped");
 						}.bind(this));

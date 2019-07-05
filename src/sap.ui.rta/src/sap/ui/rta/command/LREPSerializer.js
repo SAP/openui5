@@ -98,7 +98,7 @@ sap.ui.define([
 						var oChange = oCommand.getPreparedChange();
 						var oAppComponent = oCommand.getAppComponent();
 						if (oAppComponent) {
-							PersistenceWriteAPI.remove(oChange, {appComponent: oAppComponent});
+							PersistenceWriteAPI.remove(oChange, oAppComponent);
 						}
 					});
 				} else {
@@ -164,7 +164,7 @@ sap.ui.define([
 			if (!oRootControl) {
 				throw new Error("Can't save commands without root control instance!");
 			}
-			return PersistenceWriteAPI.saveChanges(false, oRootControl);
+			return PersistenceWriteAPI.save(oRootControl, false);
 		}.bind(this))
 
 		.then(function() {
@@ -203,7 +203,7 @@ sap.ui.define([
 				}
 			});
 
-			return PersistenceWriteAPI.saveChanges(true, oRootControl);
+			return PersistenceWriteAPI.save(oRootControl, true);
 		}.bind(this));
 	};
 
@@ -230,7 +230,7 @@ sap.ui.define([
 			if (oCommand instanceof FlexCommand) {
 				var oChange = oCommand.getPreparedChange();
 				var oAppComponent = oCommand.getAppComponent();
-				PersistenceWriteAPI.remove(oChange, {appComponent: oAppComponent});
+				PersistenceWriteAPI.remove(oChange, oAppComponent);
 			}
 		});
 

@@ -127,7 +127,7 @@ function(
 
 			var oChange = ChangesWriteAPI.create(oChangeContent, oParentInfo.parent);
 			PersistenceWriteAPI.add(oChange, oParentInfo.parent);
-			PersistenceWriteAPI.saveChanges(oParentInfo.parent);
+			PersistenceWriteAPI.save(oParentInfo.parent, false);
 			return oChange;
 		});
 	};

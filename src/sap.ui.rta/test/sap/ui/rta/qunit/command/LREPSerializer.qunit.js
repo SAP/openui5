@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Panel",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/write/ChangesController",
+	"sap/ui/fl/write/internal/ChangesController",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	CommandFactory,
@@ -641,7 +641,7 @@ sap.ui.define([
 
 	QUnit.test("Execute 1 'remove' command and 1 App Descriptor 'add library' command," +
 				"undo the 'add library' command and call saveCommands which rejects", function(assert) {
-		var oSaveChangesStub = sandbox.stub(PersistenceWriteAPI, "saveChanges").rejects();
+		var oSaveChangesStub = sandbox.stub(PersistenceWriteAPI, "save").rejects();
 		var oRemoveCommand;
 		var oAddLibraryCommand;
 

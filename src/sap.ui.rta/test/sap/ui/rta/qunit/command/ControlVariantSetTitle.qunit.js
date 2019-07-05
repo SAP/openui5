@@ -128,45 +128,48 @@ sap.ui.define([
 			};
 			sandbox.stub(OverlayRegistry, "getOverlay").returns(oDummyOverlay);
 
-			var oDesignTimeMetadata = new ElementDesignTimeMetadata({ data : {} });
+			var oDesignTimeMetadata = new ElementDesignTimeMetadata({data: {}});
 			var mFlexSettings = {layer: "CUSTOMER"};
 			var sNewText = "Test";
 			var oControlVariantSetTitleCommand;
 
 			return CommandFactory.getCommandFor(this.oVariantManagement, "setTitle", {
-				newText : sNewText
+				newText: sNewText
 			}, oDesignTimeMetadata, mFlexSettings)
-			.then(function(oCommand) {
-				oControlVariantSetTitleCommand = oCommand;
-				assert.ok(oControlVariantSetTitleCommand, "control variant setTitle command exists for element");
-				return oControlVariantSetTitleCommand.execute();
-			})
-			.then(function() {
-				var oTitleChange = oControlVariantSetTitleCommand.getVariantChange();
-				var oPreparedChange = oControlVariantSetTitleCommand.getPreparedChange();
-				assert.equal(oPreparedChange, oTitleChange, "then the prepared change is available");
-				assert.equal(oTitleChange.getText("title"), sNewText, "then title is correctly set in change");
-				var oData = oControlVariantSetTitleCommand.oModel.getData();
-				assert.equal(oData["variantMgmtId1"].variants[1].title, sNewText, "then title is correctly set in model");
-				assert.equal(this.oVariantManagement.getTitle().getText(), sNewText, "then title is correctly set in variant management control");
-				assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oMockedAppComponent).length, 1, "then 1 dirty change is present");
-
-				return oControlVariantSetTitleCommand.undo();
-			}.bind(this))
-			.then(function() {
-				var oTitleChange = oControlVariantSetTitleCommand.getVariantChange();
-				var oPreparedChange = oControlVariantSetTitleCommand.getPreparedChange();
-				assert.notOk(oPreparedChange, "then no prepared change is available after undo");
-				var oData = oControlVariantSetTitleCommand.oModel.getData();
-				assert.equal(oData["variantMgmtId1"].variants[1].title, "variant A", "then title is correctly reverted in model");
-				assert.equal(this.oVariantManagement.getTitle().getText(), "variant A", "then title is correctly set in variant management control");
-				assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oMockedAppComponent).length, 0, "then the dirty change is removed");
-				assert.notOk(oTitleChange, "then title change from command unset");
-				done();
-			}.bind(this))
-			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
-			});
+				.then(function (oCommand) {
+					oControlVariantSetTitleCommand = oCommand;
+					assert.ok(oControlVariantSetTitleCommand, "control variant setTitle command exists for element");
+					return oControlVariantSetTitleCommand.execute();
+				})
+				.then(function () {
+					var oTitleChange = oControlVariantSetTitleCommand.getVariantChange();
+					var oPreparedChange = oControlVariantSetTitleCommand.getPreparedChange();
+					assert.equal(oPreparedChange, oTitleChange, "then the prepared change is available");
+					assert.equal(oTitleChange.getText("title"), sNewText, "then title is correctly set in change");
+					var oData = oControlVariantSetTitleCommand.oModel.getData();
+					assert.equal(oData["variantMgmtId1"].variants[1].title, sNewText, "then title is correctly set in model");
+					assert.equal(this.oVariantManagement.getTitle().getText(), sNewText, "then title is correctly set in variant management control");
+					return PersistenceWriteAPI.hasChangesToPublish(this.oMockedAppComponent);
+				}.bind(this))
+				.then(function(bPublishChangesExist) {
+					assert.ok(bPublishChangesExist, "then there are changes to publish");
+					return oControlVariantSetTitleCommand.undo();
+				})
+				.then(function () {
+					var oPreparedChange = oControlVariantSetTitleCommand.getPreparedChange();
+					assert.notOk(oPreparedChange, "then no prepared change is available after undo");
+					var oData = oControlVariantSetTitleCommand.oModel.getData();
+					assert.equal(oData["variantMgmtId1"].variants[1].title, "variant A", "then title is correctly reverted in model");
+					assert.equal(this.oVariantManagement.getTitle().getText(), "variant A", "then title is correctly set in variant management control");
+					return PersistenceWriteAPI.hasChangesToPublish(this.oMockedAppComponent);
+				}.bind(this))
+				.then(function () {
+					assert.notOk(oControlVariantSetTitleCommand.getVariantChange(), "then title change from command unset");
+					done();
+				})
+				.catch(function (oError) {
+					assert.ok(false, 'catch must never be called - Error: ' + oError);
+				});
 		});
 	});
 

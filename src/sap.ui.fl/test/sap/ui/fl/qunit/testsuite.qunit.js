@@ -44,7 +44,7 @@ sap.ui.define(function () {
 			"write/api/ChangesWriteAPI": {
 				group: 'Write API',
 				coverage: {
-					only: ["sap/ui/fl/write/api/ChangesWriteAPI", "sap/ui/fl/write/ChangesController"]
+					only: ["sap/ui/fl/write/api/ChangesWriteAPI", "sap/ui/fl/write/internal/ChangesController"]
 				}
 			},
 			"write/api/ControlPersonalizationWriteAPI": {
@@ -56,13 +56,19 @@ sap.ui.define(function () {
 			"write/api/PersistenceWriteAPI": {
 				group: 'Write API',
 				coverage: {
-					only: ["sap/ui/fl/write/api/PersistenceWriteAPI", "sap/ui/fl/write/ChangesController"]
+					only: ["sap/ui/fl/write/api/PersistenceWriteAPI", "sap/ui/fl/write/internal/ChangesController"]
 				}
 			},
 			"write/api/SmartVariantManagementWriteAPI": {
 				group: 'Write API',
 				coverage: {
 					only: ["sap/ui/fl/write/api/SmartVariantManagementWriteAPI"]
+				}
+			},
+			"write/internal/ChangesController": {
+				group: 'Write API',
+				coverage: {
+					only: ["sap/ui/fl/write/internal/ChangesController"]
 				}
 			},
 			// Team Gravity tests

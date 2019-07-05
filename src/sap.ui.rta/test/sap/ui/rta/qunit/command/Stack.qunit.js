@@ -185,7 +185,7 @@ sap.ui.define([
 		QUnit.test("when calling function 'initializeWithChanges' with the array...", function(assert) {
 			var aChanges = [new Change(this.oChangeDefinition1), new Change(this.oChangeDefinition2)];
 			aChanges[1].setUndoOperations(["undoStack"]);
-			sandbox.stub(PersistenceWriteAPI, "getUIChanges").resolves(aChanges);
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves(aChanges);
 
 			return CommandStack.initializeWithChanges(this.oControl, ["fileName1", "fileName2"]).then(function(oStack) {
 				var aCommands = oStack.getCommands();
@@ -203,7 +203,7 @@ sap.ui.define([
 				new Change(this.oChangeDefinitionForComposite11), new Change(this.oChangeDefinitionForComposite12),
 				new Change(this.oChangeDefinitionForComposite21), new Change(this.oChangeDefinitionForComposite22)
 			];
-			sandbox.stub(PersistenceWriteAPI, "getUIChanges").resolves(aCompositeChanges);
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves(aCompositeChanges);
 
 			return CommandStack.initializeWithChanges(this.oControl, ["fileName11", "fileName12", "fileName21", "fileName22"]).then(function(oStack) {
 				var aCommands = oStack.getCommands();

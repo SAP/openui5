@@ -217,14 +217,11 @@ sap.ui.define([
 			var oChange = this.getPreparedChange();
 
 			if (oChange.getRevertData()) {
-				return ChangesWriteAPI.isChangeHandlerRevertible(oChange, vControl)
-					.then(function(bRevertible) {
-						if (!bRevertible) {
-							Log.error(enhanceErrorMessage("No revert change function available to handle revert data.", vControl));
-							return undefined;
-						}
-						return PersistenceWriteAPI.remove(oChange, {appComponent: this.getAppComponent(true), revert: true});
-					}.bind(this));
+				var oAppComponent = this.getAppComponent(true);
+				return ChangesWriteAPI.revert(oChange, vControl)
+					.then(function() {
+						PersistenceWriteAPI.remove(oChange, oAppComponent);
+					});
 			} else if (this._aRecordedUndo) {
 				RtaControlTreeModifier.performUndo(this._aRecordedUndo);
 			} else {
@@ -244,14 +241,12 @@ sap.ui.define([
 
 		var oAppComponent = this.getAppComponent();
 		var oSelectorElement = RtaControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
-		var mControl = ChangesWriteAPI.getControlIfTemplateAffected(oSelectorElement, {
-			modifier: JsControlTreeModifier,
-			appComponent: oAppComponent,
-			change: oChange
-		});
+
+
 		var bRevertible;
 		var mPropertyBag;
-		return ChangesWriteAPI.isChangeHandlerRevertible(oChange, mControl.control)
+		// TODO: Remove this function while removing RTA Undo logic
+		return ChangesWriteAPI._isChangeHandlerRevertible(oSelectorElement, oChange)
 			.then(function(bRevertibleResult) {
 				bRevertible = bRevertibleResult;
 				mPropertyBag = {
@@ -261,6 +256,7 @@ sap.ui.define([
 				};
 
 				if (!bRevertible) {
+					// TODO: Remove RTA undo logic
 					RtaControlTreeModifier.startRecordingUndo();
 				}
 

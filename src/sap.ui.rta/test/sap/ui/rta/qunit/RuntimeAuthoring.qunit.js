@@ -214,6 +214,7 @@ function(
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oComp
 			});
+			sandbox.stub(PersistenceWriteAPI, "hasChangesToPublish").resolves(true);
 		},
 		afterEach : function() {
 			this.oRta.destroy();
@@ -223,7 +224,6 @@ function(
 	}, function() {
 		QUnit.test("when RTA is started and stopped in the user layer", function(assert) {
 			var done = assert.async();
-			sandbox.stub(PersistenceWriteAPI, "getUIChanges").resolves([this.oUserChange]);
 			this.oRta.setFlexSettings({layer: "USER"});
 			var oReloadSpy = sandbox.spy(this.oRta, "_handleReloadOnExit");
 
@@ -245,7 +245,6 @@ function(
 		});
 
 		QUnit.test("when RTA is started in the customer layer, app variant feature is available for a (key user) but the manifest of an app is not supported", function(assert) {
-			sandbox.stub(PersistenceWriteAPI, "getUIChanges").resolves([]);
 			sandbox.stub(this.oRta, '_getPublishAndAppVariantSupportVisibility').returns(Promise.resolve([true, true]));
 			sandbox.stub(AppVariantUtils, "getManifirstSupport").returns(Promise.resolve({response: false}));
 			sandbox.stub(Utils, "getAppDescriptor").returns({"sap.app": {id: "1"}});
@@ -262,8 +261,6 @@ function(
 		});
 
 		QUnit.test("when RTA is started in the customer layer, app variant feature is available for an (SAP developer) but the manifest of an app is not supported", function(assert) {
-			sandbox.stub(PersistenceWriteAPI, "getUIChanges").resolves([]);
-
 			sandbox.stub(this.oRta, '_getPublishAndAppVariantSupportVisibility').returns(Promise.resolve([true, true]));
 			sandbox.stub(RtaAppVariantFeature, "isOverviewExtended").returns(true);
 
@@ -870,19 +867,22 @@ function(
 		}
 	}, function() {
 		QUnit.test("When transport function is called and transportChanges returns Promise.resolve() when the running application is not an application variant", function(assert) {
-			var fnTransportAllUIChangesStub = sandbox.stub(PersistenceWriteAPI, "_transportChanges").resolves();
+			var fnPublishStub = sandbox.stub(PersistenceWriteAPI, "publish").resolves();
 			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
 			var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(false);
 			return this.oRta.transport().then(function() {
 				assert.equal(oMessageToastStub.callCount, 1, "then the messageToast was shown");
 				assert.equal(oAppVariantRunningStub.callCount, 1, "then isApplicationVariant() got called");
-				assert.equal(fnTransportAllUIChangesStub.firstCall.args[1], RtaUtils.getRtaStyleClassName(), "the styleClass was passed correctly");
-				assert.equal(fnTransportAllUIChangesStub.firstCall.args[2], "CUSTOMER", "the layer was passed correctly");
+				assert.deepEqual(fnPublishStub.firstCall.args[1], {
+					styleClass: RtaUtils.getRtaStyleClassName(),
+					layer: "CUSTOMER",
+					appVariantDescriptors: []
+				}, "then style class and layer was passed correctly");
 			});
 		});
 
 		QUnit.test("When transport function is called and transportChanges returns Promise.resolve() when the running application is an application variant by navigation parameters", function(assert) {
-			sandbox.stub(PersistenceWriteAPI, "_transportChanges").resolves();
+			sandbox.stub(PersistenceWriteAPI, "publish").resolves();
 			sandbox.stub(this.oRta, "_showMessageToast");
 			sandbox.stub(Utils, "isApplicationVariant").returns(true);
 			sandbox.stub(Utils, "isVariantByStartupParameter").returns(true);
@@ -893,7 +893,7 @@ function(
 		});
 
 		QUnit.test("When transport function is called and transportChanges returns Promise.resolve() when the running application is an application variant", function(assert) {
-			var fnTransportAllUIChangesStub = sandbox.stub(PersistenceWriteAPI, "_transportChanges").resolves();
+			var fnPublishStub = sandbox.stub(PersistenceWriteAPI, "publish").resolves();
 			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
 			var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(true);
 			var oDummyObject = {
@@ -904,14 +904,16 @@ function(
 			return this.oRta.transport().then(function() {
 				assert.equal(oMessageToastStub.callCount, 1, "then the messageToast was shown");
 				assert.equal(oAppVariantRunningStub.callCount, 1, "then isAppVariantRunning() got called");
-				assert.equal(fnTransportAllUIChangesStub.firstCall.args[1], RtaUtils.getRtaStyleClassName(), "the styleClass was passed correctly");
-				assert.equal(fnTransportAllUIChangesStub.firstCall.args[2], "CUSTOMER", "the layer was passed correctly");
-				assert.deepEqual(fnTransportAllUIChangesStub.firstCall.args[3], aAppVariantDescriptors, "then the array of app variant descriptors is correctly passed");
+				assert.deepEqual(fnPublishStub.firstCall.args[1], {
+					appVariantDescriptors: aAppVariantDescriptors,
+					layer: "CUSTOMER",
+					styleClass: "sapContrast sapContrastPlus"
+				}, "then appVariantDescriptors, layer and styleClass parameters were passed correctly");
 			});
 		});
 
-		QUnit.test("When transport function is called and transportChanges returns Promise.reject()", function(assert) {
-			sandbox.stub(PersistenceWriteAPI, "_transportChanges").rejects(new Error("Error"));
+		QUnit.test("When transport function is called and Promise.reject() is returned from the flex persistence", function(assert) {
+			sandbox.stub(PersistenceWriteAPI, "publish").rejects(new Error("Error"));
 			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
 			var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(false);
 			var oShowErrorStub = sandbox.stub(Log, "error");
@@ -968,7 +970,7 @@ function(
 				var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 				var sErrorBoxText = oTextResources.getText("MSG_LREP_TRANSFER_ERROR") + "\n"
 					+ oTextResources.getText("MSG_ERROR_REASON", oErrorResponse.errorText);
-				sandbox.stub(PersistenceWriteAPI, "_transportChanges").rejects(oErrorResponse.error);
+				sandbox.stub(PersistenceWriteAPI, "publish").rejects(oErrorResponse.error);
 				var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(false);
 				var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
 				var oShowErrorStub = sandbox.stub(Log, "error");
@@ -984,7 +986,7 @@ function(
 		});
 
 		QUnit.test("When transport function is called and transportChanges returns Promise.resolve() with 'Error' as parameter", function(assert) {
-			sandbox.stub(PersistenceWriteAPI, "_transportChanges").resolves('Error');
+			sandbox.stub(PersistenceWriteAPI, "publish").resolves('Error');
 			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
 			var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(false);
 			return this.oRta.transport().then(function() {
@@ -994,7 +996,7 @@ function(
 		});
 
 		QUnit.test("When transport function is called and transportChanges returns Promise.resolve() with 'Cancel' as parameter", function(assert) {
-			sandbox.stub(PersistenceWriteAPI, "_transportChanges").resolves('Cancel');
+			sandbox.stub(PersistenceWriteAPI, "publish").resolves('Cancel');
 			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
 			var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(false);
 			return this.oRta.transport().then(function() {
@@ -1047,40 +1049,44 @@ function(
 		});
 
 		QUnit.test("when calling '_deleteChanges' successfully", function(assert) {
-			assert.expect(4);
+			assert.expect(3);
 			this.oDeleteChangesStub.restore();
-			sandbox.stub(PersistenceWriteAPI, "resetChanges").callsFake(function() {
-				assert.strictEqual(arguments[0], this.oRta.getLayer(), "then correct layer parameter passed");
-				assert.strictEqual(arguments[1], "Change.createInitialFileContent", "then correct generator parameter passed");
-				assert.deepEqual(arguments[2], Utils.getAppComponentForControl(this.oRootControl), "then correct component parameter passed");
+			sandbox.stub(PersistenceWriteAPI, "reset").callsFake(function() {
+				assert.deepEqual(arguments[0], Utils.getAppComponentForControl(this.oRootControl), "then correct component parameter passed");
+				assert.deepEqual(arguments[1], {
+					generator: "Change.createInitialFileContent",
+					layer: "CUSTOMER"
+				}, "then the correct generator and layer was passed");
 				return Promise.resolve();
 			}.bind(this));
 
 			return this.oRta._deleteChanges().then(function() {
-				assert.ok(this.oReloadPageStub.callCount, 1, "then page reload is triggered");
+				assert.equal(this.oReloadPageStub.callCount, 1, "then page reload is triggered");
 			}.bind(this));
 		});
 
 		QUnit.test("when calling '_deleteChanges' successfully in AppVariant", function(assert) {
-			assert.expect(4);
+			assert.expect(3);
 			this.oDeleteChangesStub.restore();
 			sandbox.stub(Utils, "isApplicationVariant").returns(true);
-			sandbox.stub(PersistenceWriteAPI, "resetChanges").callsFake(function() {
-				assert.strictEqual(arguments[0], this.oRta.getLayer(), "then correct layer parameter passed");
-				assert.strictEqual(arguments[1], "Change.createInitialFileContent", "then correct generator parameter passed");
-				assert.deepEqual(arguments[2], Utils.getAppComponentForControl(this.oRootControl), "then correct component parameter passed");
+			sandbox.stub(PersistenceWriteAPI, "reset").callsFake(function() {
+				assert.deepEqual(arguments[0], Utils.getAppComponentForControl(this.oRootControl), "then correct component parameter passed");
+				assert.deepEqual(arguments[1], {
+					generator: "Change.createInitialFileContent",
+					layer: "CUSTOMER"
+				}, "then the correct generator and layer was passed");
 				return Promise.resolve();
 			}.bind(this));
 
 			return this.oRta._deleteChanges().then(function() {
-				assert.ok(this.oReloadPageStub.callCount, 1, "then page reload is triggered");
+				assert.equal(this.oReloadPageStub.callCount, 1, "then page reload is triggered");
 			}.bind(this));
 		});
 
 		QUnit.test("when calling '_deleteChanges and there is an error', ", function(assert) {
 			this.oDeleteChangesStub.restore();
 
-			sandbox.stub(PersistenceWriteAPI, "resetChanges").rejects("Error");
+			sandbox.stub(PersistenceWriteAPI, "reset").rejects("Error");
 
 			sandbox.stub(RtaUtils, "_showMessageBox").callsFake(function(sIconType, sHeader, sMessage, sError) {
 				assert.equal(sError, "Error", "and a message box shows the error to the user");

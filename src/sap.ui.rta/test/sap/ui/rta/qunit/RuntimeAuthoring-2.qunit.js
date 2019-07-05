@@ -327,7 +327,7 @@ sap.ui.define([
 			}.bind(this));
 
 			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
-			sandbox.stub(PersistenceWriteAPI, "getUIChanges").resolves(true);
+			sandbox.stub(PersistenceWriteAPI, "hasChangesToPublish").resolves(true);
 			this.oRta.setShowToolbars(true);
 
 			this.oRta.start().then(function () {

@@ -1,25 +1,29 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/write/ChangesController",
+	"sap/ui/fl/write/internal/ChangesController",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/core/Component",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
-	"sap/ui/core/Control",
+	"sap/ui/core/Element",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ChangesController,
 	ChangesWriteAPI,
-	Utils,
+	FlexUtils,
 	Settings,
 	Component,
 	DescriptorInlineChangeFactory,
 	DescriptorChangeFactory,
-	Control,
+	Element,
+	JsControlTreeModifier,
+	Log,
 	jQuery,
 	sinon
 ) {
@@ -44,18 +48,24 @@ sap.ui.define([
 
 	QUnit.module("Given ChangesWriteAPI", {
 		beforeEach: function () {
+			this.vSelector = {
+				elementId: "selector",
+				elementType: "sap.ui.core.Control",
+				appComponent: {
+					id: "appComponent"
+				}
+			};
 			this.aObjectsToDestroy = [];
 		},
 		afterEach: function() {
+			delete this.vSelector;
 			sandbox.restore();
 			this.aObjectsToDestroy.forEach(function(oObject) {oObject.destroy();});
 		}
 	}, function() {
 		QUnit.test("when create is called for a descriptor change", function(assert) {
 			var sChangeType = DescriptorInlineChangeFactory.getDescriptorChangeTypes()[0];
-			var oAppComponent = {
-				getManifest: function() {}
-			};
+			this.vSelector.getManifest = function() {};
 			var oChangeSpecificData = {
 				changeType: sChangeType,
 				content: "content",
@@ -65,15 +75,15 @@ sap.ui.define([
 				reference: "reference",
 				layer: "CUSTOMER"
 			};
-			sandbox.stub(Utils, "getAppVersionFromManifest").returns("1.2.3");
+			sandbox.stub(FlexUtils, "getAppVersionFromManifest").returns("1.2.3");
 			sandbox.stub(Settings, "getInstance").resolves({});
-			return ChangesWriteAPI.create(oChangeSpecificData, oAppComponent)
+			return ChangesWriteAPI.create(oChangeSpecificData, this.vSelector)
 				.then(function (oChange) {
 					assert.strictEqual(oChange._oInlineChange._getChangeType(), sChangeType, "then the correct descriptor change type was created");
 				});
 		});
 
-		QUnit.test("when create is called with a control", function(assert) {
+		QUnit.test("when create is called with a control or selector object", function(assert) {
 			var oChangeSpecificData = {type: "changeSpecificData"};
 			var vSelector = {type: "control"};
 			var fnPersistenceStub = getMethodStub(oChangeSpecificData, sReturnValue);
@@ -91,14 +101,6 @@ sap.ui.define([
 			assert.strictEqual(ChangesWriteAPI.create(oChangeSpecificData, oComponent), sReturnValue, "then the flex persistence was called with correct parameters");
 		});
 
-		QUnit.test("when create is called with a selector object", function(assert) {
-			var oChangeSpecificData = {type: "changeSpecificData"};
-			var oAppComponent = {appComponent: "appComponent"};
-			var fnPersistenceStub = getMethodStub([oChangeSpecificData, oAppComponent], sReturnValue);
-			mockFlexController(oAppComponent.appComponent, { createChange : fnPersistenceStub });
-			assert.strictEqual(ChangesWriteAPI.create(oChangeSpecificData, oAppComponent), sReturnValue, "then the flex persistence was called with correct parameters");
-		});
-
 		QUnit.test("when create is called for a descriptor change and the create promise is rejected", function(assert) {
 			var sChangeType = DescriptorInlineChangeFactory.getDescriptorChangeTypes()[0];
 			var oAppComponent = {
@@ -110,7 +112,7 @@ sap.ui.define([
 
 			var oCreateInlineChangeStub = sandbox.stub(DescriptorInlineChangeFactory, "createDescriptorInlineChange").rejects(new Error("myError"));
 			var oCreateChangeStub = sandbox.stub(DescriptorChangeFactory.prototype, "createNew");
-			var oErrorLogStub = sandbox.stub(Utils.log, "error");
+			var oErrorLogStub = sandbox.stub(Log, "error");
 
 			return ChangesWriteAPI.create(oChangeSpecificData, oAppComponent)
 			.then(function() {
@@ -124,52 +126,53 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when isChangeHandlerRevertible is called with a control instance", function(assert) {
+		QUnit.test("when _isChangeHandlerRevertible is called", function(assert) {
 			var oChange = {type: "change"};
-			var vSelector = {type: "control"};
-			var fnPersistenceStub = getMethodStub([oChange, vSelector], sReturnValue);
-			mockFlexController(vSelector, { isChangeHandlerRevertible : fnPersistenceStub });
-			assert.strictEqual(ChangesWriteAPI.isChangeHandlerRevertible(oChange, vSelector), sReturnValue, "then the flex persistence was called with correct parameters");
-		});
+			var sControlType = "controlType";
+			var oAppComponent = {id: "appComponent"};
+			var oTemplateControl = {id: "templateControl"};
 
-		QUnit.test("when isChangeHandlerRevertible is called with a selector object", function(assert) {
-			var oChange = {type: "change"};
-			var vSelector = {appComponent: "appComponent"};
-			var fnPersistenceStub = getMethodStub([oChange, vSelector], sReturnValue);
-			mockFlexController(vSelector.appComponent, { isChangeHandlerRevertible : fnPersistenceStub });
-			assert.strictEqual(ChangesWriteAPI.isChangeHandlerRevertible(oChange, vSelector), sReturnValue, "then the flex persistence was called with correct parameters");
-		});
+			sandbox.stub(JsControlTreeModifier, "getControlType")
+				.withArgs(this.vSelector)
+				.returns(sControlType);
 
-		QUnit.test("when getControlIfTemplateAffected is called", function(assert) {
-			var sControlName = "controlName";
-			var oControl = {
-				getMetadata: function() {
-					return {
-						getName: function () {
-							return sControlName;
-						}
-					};
-				}
-			};
-			var mPropertyBag = {change: "change", appComponent: "appComponent"};
-			var fnPersistenceStub = getMethodStub([mPropertyBag.change, oControl, sControlName, mPropertyBag], sReturnValue);
-			mockFlexController(mPropertyBag.appComponent, { _getControlIfTemplateAffected : fnPersistenceStub });
-			assert.strictEqual(ChangesWriteAPI.getControlIfTemplateAffected(oControl, mPropertyBag), sReturnValue, "then the flex persistence was called with correct parameters");
+			sandbox.stub(ChangesController, "getAppComponentForSelector")
+				.withArgs(this.vSelector)
+				.returns(oAppComponent);
+
+			var fnGetControlIfTemplateAffectedStub = getMethodStub([oChange, this.vSelector, sControlType, {
+				modifier: JsControlTreeModifier,
+				appComponent: oAppComponent
+			}], {control: oTemplateControl});
+
+			var fnIsChangeHandlerRevertibleStub = getMethodStub([oChange, oTemplateControl], sReturnValue);
+
+			mockFlexController(this.vSelector, { isChangeHandlerRevertible : fnIsChangeHandlerRevertibleStub, _getControlIfTemplateAffected: fnGetControlIfTemplateAffectedStub });
+
+			assert.strictEqual(ChangesWriteAPI._isChangeHandlerRevertible(this.vSelector, oChange), sReturnValue, "then the flex persistence was called with correct parameters");
 		});
 
 		QUnit.test("when apply is called with no dependencies on control", function(assert) {
 			var oChange = {
 				getSelector: function () { return "selector"; }
 			};
-			var oControl = new Control();
-			this.aObjectsToDestroy.push(oControl);
-			var mPropertyBag = { appComponent: "appComponent" };
-			var fnPersistenceStub = getMethodStub([oChange, oControl, mPropertyBag], Promise.resolve(sReturnValue));
-			mockFlexController(mPropertyBag.appComponent, {
+			var oElement = new Element();
+			this.aObjectsToDestroy.push(oElement);
+			var mPropertyBag = { modifier: {} };
+			var oAppComponent = {id: "appComponent"};
+
+			sandbox.stub(ChangesController, "getAppComponentForSelector")
+				.withArgs(oElement)
+				.returns(oAppComponent);
+
+			var fnPersistenceStub = getMethodStub([oChange, oElement, Object.assign({}, mPropertyBag, {appComponent: oAppComponent})], Promise.resolve(sReturnValue));
+
+			mockFlexController(oElement, {
 				checkTargetAndApplyChange: fnPersistenceStub,
 				checkForOpenDependenciesForControl: function() { return false; }
 			});
-			return ChangesWriteAPI.apply(oChange, oControl, mPropertyBag)
+
+			return ChangesWriteAPI.apply(oChange, oElement, mPropertyBag)
 				.then(function(sValue) {
 					assert.strictEqual(sValue, sReturnValue, "then the flex persistence was called with correct parameters");
 				});
@@ -180,17 +183,42 @@ sap.ui.define([
 				getSelector: function () { return "selector"; },
 				getId: function() { return "changeId"; }
 			};
-			var oControl = new Control();
-			this.aObjectsToDestroy.push(oControl);
-			var mPropertyBag = { appComponent: "appComponent" };
-			var fnPersistenceStub = getMethodStub([oChange, oControl, mPropertyBag]);
-			mockFlexController(mPropertyBag.appComponent, {
-				checkTargetAndApplyChange: fnPersistenceStub,
+			var oElement = new Element();
+			this.aObjectsToDestroy.push(oElement);
+			var mPropertyBag = {};
+
+			mockFlexController(oElement, {
+				checkTargetAndApplyChange: function () {
+					assert.notOk(true, "the change should not be applied");
+				},
 				checkForOpenDependenciesForControl: function() { return true; }
 			});
-			return ChangesWriteAPI.apply(oChange, oControl, mPropertyBag)
+
+			return ChangesWriteAPI.apply(oChange, oElement, mPropertyBag)
 				.catch(function (oError) {
 					assert.strictEqual(oError.message, "The following Change cannot be applied because of a dependency: changeId", "then a rejected promise with an error was returned");
+				});
+		});
+
+		QUnit.test("when revert is called", function(assert) {
+			var oChange = {type: "change"};
+			var oElement = {type: "element"};
+			var oAppComponent = {type: "appComponent"};
+
+			sandbox.stub(ChangesController, "getAppComponentForSelector")
+				.withArgs(oElement)
+				.returns(oAppComponent);
+
+			var mPropertyBag = {
+				modifier: JsControlTreeModifier,
+				appComponent: oAppComponent
+			};
+			var fnPersistenceStub = getMethodStub([oChange, oElement, mPropertyBag], Promise.resolve(sReturnValue));
+			mockFlexController(oElement, {_revertChange: fnPersistenceStub});
+
+			return ChangesWriteAPI.revert(oChange, oElement)
+				.then(function (sValue) {
+					assert.strictEqual(sValue, sReturnValue, "then the flex persistence was called with correct parameters");
 				});
 		});
 	});

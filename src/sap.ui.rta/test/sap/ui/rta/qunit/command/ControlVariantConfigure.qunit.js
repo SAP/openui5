@@ -151,33 +151,39 @@ function(
 				control : this.oVariantManagement,
 				changes : aChanges
 			}, oDesignTimeMetadata, mFlexSettings)
-			.then(function(oCommand) {
-				oControlVariantConfigureCommand = oCommand;
-				assert.ok(oControlVariantConfigureCommand, "control variant configure command exists for element");
-				return oControlVariantConfigureCommand.execute();
-			})
-			.then(function() {
-				var aConfigureChanges = oControlVariantConfigureCommand.getChanges();
-				aPreparedChanges = oControlVariantConfigureCommand.getPreparedChange();
-				assert.equal(aPreparedChanges.length, 3, "then the prepared changes are available");
-				assert.deepEqual(aConfigureChanges, aChanges, "then the changes are correctly set in change");
-				assert.equal(this.oData["variantMgmtId1"].variants[1].title, oTitleChange.title, "then title is correctly set in model");
-				assert.equal(this.oData["variantMgmtId1"].variants[1].favorite, oFavoriteChange.favorite, "then favorite is correctly set in model");
-				assert.equal(this.oData["variantMgmtId1"].variants[1].visible, oVisibleChange.visible, "then visibility is correctly set in model");
-				assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oMockedAppComponent).length, 3, "then 3 dirty changes are present");
-				return oControlVariantConfigureCommand.undo();
-			}.bind(this))
-			.then(function() {
-				aPreparedChanges = oControlVariantConfigureCommand.getPreparedChange();
-				assert.notOk(aPreparedChanges, "then no prepared changes are available after undo");
-				assert.equal(this.oData["variantMgmtId1"].variants[1].title, oTitleChange.originalTitle, "then title is correctly reverted in model");
-				assert.equal(this.oData["variantMgmtId1"].variants[1].favorite, oFavoriteChange.originalFavorite, "then favorite is correctly set in model");
-				assert.equal(this.oData["variantMgmtId1"].variants[1].visible, !oVisibleChange.visible, "then visibility is correctly reverted in model");
-				assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oMockedAppComponent).length, 0, "then the dirty changes are removed");
-			}.bind(this))
-			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
-			});
+				.then(function (oCommand) {
+					oControlVariantConfigureCommand = oCommand;
+					assert.ok(oControlVariantConfigureCommand, "control variant configure command exists for element");
+					return oControlVariantConfigureCommand.execute();
+				})
+				.then(function () {
+					var aConfigureChanges = oControlVariantConfigureCommand.getChanges();
+					aPreparedChanges = oControlVariantConfigureCommand.getPreparedChange();
+					assert.equal(aPreparedChanges.length, 3, "then the prepared changes are available");
+					assert.deepEqual(aConfigureChanges, aChanges, "then the changes are correctly set in change");
+					assert.equal(this.oData["variantMgmtId1"].variants[1].title, oTitleChange.title, "then title is correctly set in model");
+					assert.equal(this.oData["variantMgmtId1"].variants[1].favorite, oFavoriteChange.favorite, "then favorite is correctly set in model");
+					assert.equal(this.oData["variantMgmtId1"].variants[1].visible, oVisibleChange.visible, "then visibility is correctly set in model");
+					return PersistenceWriteAPI.hasChangesToPublish(this.oMockedAppComponent);
+				}.bind(this))
+				.then(function (bPublishChangesExist) {
+					assert.ok(bPublishChangesExist, "then there are changes to publish");
+					return oControlVariantConfigureCommand.undo();
+				})
+				.then(function () {
+					aPreparedChanges = oControlVariantConfigureCommand.getPreparedChange();
+					assert.notOk(aPreparedChanges, "then no prepared changes are available after undo");
+					assert.equal(this.oData["variantMgmtId1"].variants[1].title, oTitleChange.originalTitle, "then title is correctly reverted in model");
+					assert.equal(this.oData["variantMgmtId1"].variants[1].favorite, oFavoriteChange.originalFavorite, "then favorite is correctly set in model");
+					assert.equal(this.oData["variantMgmtId1"].variants[1].visible, !oVisibleChange.visible, "then visibility is correctly reverted in model");
+					return PersistenceWriteAPI.hasChangesToPublish(this.oMockedAppComponent);
+				}.bind(this))
+				.then(function (bPublishChangesExist) {
+					assert.notOk(bPublishChangesExist, "then changes to publish are removed");
+				})
+				.catch(function (oError) {
+					assert.ok(false, 'catch must never be called - Error: ' + oError);
+				});
 		});
 
 		QUnit.test("when calling command factory for configure and undo with setDefault change", function(assert) {
@@ -190,40 +196,45 @@ function(
 			var mFlexSettings = {layer: "CUSTOMER"};
 			var oDefaultChange = {
 				appComponent : this.oMockedAppComponent,
-				changeType : "setDefault",
-				defaultVariant : "variantMgmtId1",
-				layer : "CUSTOMER",
-				originalDefaultVariant : "variant0",
-				variantManagementReference : "variantMgmtId1"
+				changeType: "setDefault",
+				defaultVariant: "variantMgmtId1",
+				layer: "CUSTOMER",
+				originalDefaultVariant: "variant0",
+				variantManagementReference: "variantMgmtId1"
 			};
 			var aChanges = [oDefaultChange],
 				oControlVariantConfigureCommand;
 			return CommandFactory.getCommandFor(this.oVariantManagement, "configure", {
-				control : this.oVariantManagement,
-				changes : aChanges
+				control: this.oVariantManagement,
+				changes: aChanges
 			}, oDesignTimeMetadata, mFlexSettings)
-			.then(function(oCommand) {
-				oControlVariantConfigureCommand = oCommand;
-				assert.ok(oControlVariantConfigureCommand, "control variant configure command exists for element");
-				return oControlVariantConfigureCommand.execute();
-			})
-			.then(function() {
-				var aConfigureChanges = oControlVariantConfigureCommand.getChanges();
-				assert.deepEqual(aConfigureChanges, aChanges, "then the changes are correctly set in change");
-				var oData = oControlVariantConfigureCommand.oModel.getData();
-				assert.equal(oData["variantMgmtId1"].defaultVariant, oDefaultChange.defaultVariant, "then default variant is correctly set in the model");
-				assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oMockedAppComponent).length, 1, "then 1 dirty change is present");
-
-				return oControlVariantConfigureCommand.undo();
-			}.bind(this))
-			.then(function() {
-				var oData = oControlVariantConfigureCommand.oModel.getData();
-				assert.equal(oData["variantMgmtId1"].defaultVariant, oDefaultChange.originalDefaultVariant, "then default variant is correctly reverted in the model");
-				assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oMockedAppComponent).length, 0, "then the dirty change is removed");
-			}.bind(this))
-			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
-			});
+				.then(function (oCommand) {
+					oControlVariantConfigureCommand = oCommand;
+					assert.ok(oControlVariantConfigureCommand, "control variant configure command exists for element");
+					return oControlVariantConfigureCommand.execute();
+				})
+				.then(function () {
+					var aConfigureChanges = oControlVariantConfigureCommand.getChanges();
+					assert.deepEqual(aConfigureChanges, aChanges, "then the changes are correctly set in change");
+					var oData = oControlVariantConfigureCommand.oModel.getData();
+					assert.equal(oData["variantMgmtId1"].defaultVariant, oDefaultChange.defaultVariant, "then default variant is correctly set in the model");
+					return PersistenceWriteAPI.hasChangesToPublish(this.oMockedAppComponent);
+				}.bind(this))
+				.then(function (bPublishChangesExist) {
+					assert.ok(bPublishChangesExist, "then there are changes to publish");
+					return oControlVariantConfigureCommand.undo();
+				})
+				.then(function () {
+					var oData = oControlVariantConfigureCommand.oModel.getData();
+					assert.equal(oData["variantMgmtId1"].defaultVariant, oDefaultChange.originalDefaultVariant, "then default variant is correctly reverted in the model");
+					return PersistenceWriteAPI.hasChangesToPublish(this.oMockedAppComponent);
+				}.bind(this))
+				.then(function (bPublishChangesExist) {
+					assert.notOk(bPublishChangesExist, "then changes to publish are removed");
+				})
+				.catch(function (oError) {
+					assert.ok(false, 'catch must never be called - Error: ' + oError);
+				});
 		});
 	});
 

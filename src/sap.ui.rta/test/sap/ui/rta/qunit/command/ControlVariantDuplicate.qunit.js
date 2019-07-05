@@ -149,43 +149,48 @@ function (
 			var oControlVariantDuplicateCommand, oDuplicateVariant, aPreparedChanges;
 
 			return CommandFactory.getCommandFor(this.oVariantManagement, "duplicate", {
-				sourceVariantReference : this.oVariant.content.variantReference,
+				sourceVariantReference: this.oVariant.content.variantReference,
 				newVariantTitle: "variant A Copy"
 			}, oDesignTimeMetadata, mFlexSettings)
-			.then(function(oCommand) {
-				oControlVariantDuplicateCommand = oCommand;
-				assert.ok(oControlVariantDuplicateCommand, "control variant duplicate command exists for element");
-				return oControlVariantDuplicateCommand.execute();
-			})
-			.then(function() {
-				oDuplicateVariant = oControlVariantDuplicateCommand.getVariantChange();
-				aPreparedChanges = oControlVariantDuplicateCommand.getPreparedChange();
-				assert.equal(aPreparedChanges.length, 3, "then the prepared changes are available");
-				assert.strictEqual(fnCreateDefaultFileNameSpy.callCount, 3, "then sap.ui.fl.Utils.createDefaultFileName() called thrice; once for variant duplicate and twice for the copied changes");
-				assert.strictEqual(fnCreateDefaultFileNameSpy.returnValues[0], oDuplicateVariant.getId(), "then the duplicated variant has the correct ID");
-				assert.equal(oDuplicateVariant.getVariantReference(), this.oVariant.content.variantReference, "then variant reference correctly duplicated");
-				assert.equal(oDuplicateVariant.getTitle(), "variant A" + " Copy", "then variant reference correctly duplicated");
-				assert.equal(oDuplicateVariant.getControlChanges().length, 2, "then 2 changes duplicated");
-				assert.equal(oDuplicateVariant.getControlChanges()[0].getDefinition().support.sourceChangeFileName, this.oVariant.controlChanges[0].getDefinition().fileName, "then changes duplicated with source filenames in Change.support.sourceChangeFileName");
-				assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oMockedAppComponent).length, 3, "then 3 dirty changes present - variant and 2 changes");
-				assert.deepEqual(oControlVariantDuplicateCommand._oVariantChange, aPreparedChanges[0], "then _oVariantChange property was set for the command");
-				return oControlVariantDuplicateCommand.undo();
-			}.bind(this))
-			.then(function() {
-				oDuplicateVariant = oControlVariantDuplicateCommand.getVariantChange();
-				aPreparedChanges = oControlVariantDuplicateCommand.getPreparedChange();
-				assert.notOk(aPreparedChanges, "then no prepared changes are available after undo");
-				assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oMockedAppComponent).length, 0, "then all dirty changes removed");
-				assert.notOk(oDuplicateVariant, "then duplicate variant from command unset");
-				assert.notOk(oControlVariantDuplicateCommand._oVariantChange, "then _oVariantChange property was unset for the command");
-				return oControlVariantDuplicateCommand.undo();
-			}.bind(this))
-			.then(function () {
-				assert.ok(true, "then by default a Promise.resolve() is returned on undo(), even if no changes exist for the command");
-			})
-			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
-			});
+				.then(function (oCommand) {
+					oControlVariantDuplicateCommand = oCommand;
+					assert.ok(oControlVariantDuplicateCommand, "control variant duplicate command exists for element");
+					return oControlVariantDuplicateCommand.execute();
+				})
+				.then(function () {
+					oDuplicateVariant = oControlVariantDuplicateCommand.getVariantChange();
+					aPreparedChanges = oControlVariantDuplicateCommand.getPreparedChange();
+					assert.equal(aPreparedChanges.length, 3, "then the prepared changes are available");
+					assert.strictEqual(fnCreateDefaultFileNameSpy.callCount, 3, "then sap.ui.fl.Utils.createDefaultFileName() called thrice; once for variant duplicate and twice for the copied changes");
+					assert.strictEqual(fnCreateDefaultFileNameSpy.returnValues[0], oDuplicateVariant.getId(), "then the duplicated variant has the correct ID");
+					assert.equal(oDuplicateVariant.getVariantReference(), this.oVariant.content.variantReference, "then variant reference correctly duplicated");
+					assert.equal(oDuplicateVariant.getTitle(), "variant A" + " Copy", "then variant reference correctly duplicated");
+					assert.equal(oDuplicateVariant.getControlChanges().length, 2, "then 2 changes duplicated");
+					assert.equal(oDuplicateVariant.getControlChanges()[0].getDefinition().support.sourceChangeFileName, this.oVariant.controlChanges[0].getDefinition().fileName, "then changes duplicated with source filenames in Change.support.sourceChangeFileName");
+					return PersistenceWriteAPI.hasChangesToPublish(this.oMockedAppComponent);
+				}.bind(this))
+				.then(function (bPublishChangesExist) {
+					assert.ok(bPublishChangesExist, "then there are changes to publish");
+					return oControlVariantDuplicateCommand.undo();
+				})
+				.then(function () {
+					oDuplicateVariant = oControlVariantDuplicateCommand.getVariantChange();
+					aPreparedChanges = oControlVariantDuplicateCommand.getPreparedChange();
+					assert.notOk(aPreparedChanges, "then no prepared changes are available after undo");
+					return PersistenceWriteAPI.hasChangesToPublish(this.oMockedAppComponent);
+				}.bind(this))
+				.then(function (bPublishChangesExist) {
+					assert.notOk(bPublishChangesExist, "then there are no changes to publish");
+					assert.notOk(oDuplicateVariant, "then duplicate variant from command unset");
+					assert.notOk(oControlVariantDuplicateCommand._oVariantChange, "then _oVariantChange property was unset for the command");
+					return oControlVariantDuplicateCommand.undo();
+				})
+				.then(function () {
+					assert.ok(true, "then by default a Promise.resolve() is returned on undo(), even if no changes exist for the command");
+				})
+				.catch(function (oError) {
+					assert.ok(false, 'catch must never be called - Error: ' + oError);
+				});
 		});
 	});
 

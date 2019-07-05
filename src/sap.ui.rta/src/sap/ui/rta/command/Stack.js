@@ -72,7 +72,7 @@ sap.ui.define([
 				oComponent : oComponent,
 				appName : sAppName
 			};
-			return PersistenceWriteAPI.getUIChanges(Object.assign({}, mPropertyBag, {invalidateCache: false, managedObject: oControl}))
+			return PersistenceWriteAPI._getUIChanges(oControl, Object.assign({}, mPropertyBag, {invalidateCache: false}))
 			.then(function(aChanges) {
 				var mChanges = {};
 				aChanges.forEach(function(oChange) {

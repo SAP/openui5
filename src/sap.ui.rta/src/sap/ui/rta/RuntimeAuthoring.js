@@ -924,15 +924,7 @@ function(
 	};
 
 	RuntimeAuthoring.prototype._serializeToLrep = function() {
-		return this._oSerializer.saveCommands()
-		.then(this._invalidateCache.bind(this));
-	};
-
-	RuntimeAuthoring.prototype._invalidateCache = function() {
-		return PersistenceWriteAPI.getUIChanges({
-			invalidateCache: true,
-			managedObject: this.getRootControlInstance()
-		});
+		return this._oSerializer.saveCommands();
 	};
 
 	RuntimeAuthoring.prototype._onUndo = function() {
@@ -1093,7 +1085,11 @@ function(
 					if (oAppVariantDescriptor) {
 						aAppVariantDescriptor.push(oAppVariantDescriptor);
 					}
-					return PersistenceWriteAPI._transportChanges(this._oRootControl, Utils.getRtaStyleClassName(), this.getLayer(), aAppVariantDescriptor)
+					return PersistenceWriteAPI.publish(this._oRootControl, {
+						styleClass: Utils.getRtaStyleClassName(),
+						layer: this.getLayer(),
+						appVariantDescriptors: aAppVariantDescriptor
+					})
 						.then(function(sResponse) {
 							if (sResponse !== "Error" && sResponse !== "Cancel") {
 								this._showMessageToast("MSG_TRANSPORT_SUCCESS");
@@ -1114,13 +1110,16 @@ function(
 		var oRootControl = this.getRootControlInstance();
 		var oAppComponent = FlexUtils.getAppComponentForControl(oRootControl);
 
-		return PersistenceWriteAPI.resetChanges(this.getLayer(), "Change.createInitialFileContent", oAppComponent)
-		.then(function() {
-			this._reloadPage();
-		}.bind(this))
-		.catch(function(oError) {
-			return Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_RESTORE_FAILED", "MSG_RESTORE_FAILED", oError);
-		});
+		return PersistenceWriteAPI.reset(oAppComponent, {
+			layer: this.getLayer(),
+			generator: "Change.createInitialFileContent"
+		})
+			.then(function () {
+				this._reloadPage();
+			}.bind(this))
+			.catch(function (oError) {
+				return Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_RESTORE_FAILED", "MSG_RESTORE_FAILED", oError);
+			});
 	};
 
 	/**
@@ -1325,15 +1324,9 @@ function(
 		var oRootControl = this.getRootControlInstance();
 		var oAppComponent = FlexUtils.getAppComponentForControl(oRootControl);
 		if (FlexUtils.getComponentName(oAppComponent).length > 0) {
-			return PersistenceWriteAPI.getUIChanges({
-				currentLayer: this.getLayer(),
-				includeCtrlVariants: true,
-				invalidateCache: false,
-				managedObject: oAppComponent
-			})
-				.then(function (aAllLocalChanges) {
-					return aAllLocalChanges.length > 0;
-				});
+			return PersistenceWriteAPI.hasChangesToPublish(oAppComponent, {
+				currentLayer: this.getLayer()
+			});
 		}
 		return Promise.resolve(false);
 	};

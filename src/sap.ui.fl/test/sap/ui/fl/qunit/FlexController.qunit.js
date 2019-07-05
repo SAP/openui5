@@ -119,7 +119,7 @@ function (
 
 		QUnit.test('createAndApplyChange shall not crash if no change handler can be found', function (assert) {
 			assert.expect(4);
-			var oUtilsLogStub = sandbox.stub(Utils.log, "warning");
+			var oUtilsLogStub = sandbox.stub(Log, "warning");
 			var oChangeSpecificData = {};
 			var oControlType = {};
 			var oControl = new Control();
@@ -188,7 +188,7 @@ function (
 			var mPropertyBagStub = {
 				unmergedChangesOnly: true
 			};
-			var oUtilsLogStub = sandbox.stub(Utils.log, "error");
+			var oUtilsLogStub = sandbox.stub(Log, "error");
 
 			var aResolveArray = this.oFlexController._resolveGetChangesForView(mPropertyBagStub, "thisIsNoArray");
 			assert.ok(oUtilsLogStub.calledOnce, "a error was logged");

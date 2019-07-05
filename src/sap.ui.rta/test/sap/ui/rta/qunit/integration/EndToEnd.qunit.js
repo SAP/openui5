@@ -34,15 +34,14 @@ sap.ui.define([
 
 	QUnit.module("Given RTA is started...", {
 		before: function () {
-			FakeLrepConnectorSessionStorage.enableFakeConnector();
 			QUnit.config.fixture = null;
 		},
 		after: function () {
-			FakeLrepConnectorSessionStorage.disableFakeConnector();
 			QUnit.config.fixture = '';
 		},
 		beforeEach : function(assert) {
 			FakeLrepSessionStorage.deleteChanges();
+			FakeLrepConnectorSessionStorage.enableFakeConnector();
 			assert.equal(FakeLrepSessionStorage.getNumChanges(), 0, "Session storage based LREP is empty");
 			this.oVictim = sap.ui.getCore().byId("Comp1---idMain1--Victim");
 			this.oCompanyCodeField = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
@@ -70,7 +69,7 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			this.oRta.destroy();
-			FakeLrepSessionStorage.deleteChanges();
+			FakeLrepConnectorSessionStorage.disableFakeConnector();
 			sandbox.restore();
 		}
 	}, function () {
@@ -100,8 +99,11 @@ sap.ui.define([
 									if (oFirstExecutedCommand && oFirstExecutedCommand.getName() === "rename") {
 										fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
 											assert.strictEqual(this.oCompanyCodeField._getLabel().getText(), sText, "then label of the group element is " + sText);
-											assert.equal(PersistenceWriteAPI.getDirtyChanges(oControl).length, 1, "then there is 1 dirty change in the Flex Persistence");
-											fnResolve();
+											return PersistenceWriteAPI.hasChangesToPublish(oControl)
+												.then(function (bChangesToPublish) {
+													assert.ok(bChangesToPublish, "then there are changes to publish");
+													fnResolve();
+												});
 										}.bind(this));
 									}
 								}.bind(this));
@@ -129,109 +131,115 @@ sap.ui.define([
 		}
 
 		QUnit.test("when adding a group element via context menu (expanded context menu - reveal)", function(assert) {
+			var fnDone = assert.async();
 			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(3, assert);
-			var done = assert.async();
+			PersistenceWriteAPI.hasChangesToPublish(this.oCompanyCodeField)
+				.then(function(bChangesToPublish) {
+					assert.notOk(bChangesToPublish, "then there are no changes to publish in the Flex Persistence");
+					var oCommandStack = this.oRta.getCommandStack();
+					oCommandStack.attachEventOnce("commandExecuted", function() {
+						setTimeout(function() {
+							// remove field is executed, reveal should be available
+							var oDialog = this.oRta.getPlugins()["additionalElements"].getDialog();
+							this.oCompanyCodeFieldOverlay.focus();
 
-			assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oCompanyCodeField).length, 0, "then there is no dirty change in the Flex Persistence");
+							// open context menu dialog
+							this.oCompanyCodeFieldOverlay.setSelected(true);
+							RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oCompanyCodeFieldOverlay).then(function() {
+								var oContextMenuButton = this.oRta.getPlugins()["contextMenu"].oContextMenuControl.getButtons()[1];
+								oContextMenuButton.firePress();
+								sap.ui.getCore().applyChanges();
 
-			var oCommandStack = this.oRta.getCommandStack();
-			oCommandStack.attachEventOnce("commandExecuted", function() {
-				setTimeout(function() {
-					// remove field is executed, reveal should be available
-					var oDialog = this.oRta.getPlugins()["additionalElements"].getDialog();
-					this.oCompanyCodeFieldOverlay.focus();
+								oDialog.attachOpened(function() {
+									var oFieldToAdd = oDialog.getElements().filter(function(oField) {return oField.type === "invisible";})[0];
+									oCommandStack.attachModified(function() {
+										var aCommands = oCommandStack.getAllExecutedCommands();
+										if (aCommands &&
+											aCommands.length === 3) {
+											sap.ui.getCore().applyChanges();
 
-					// open context menu dialog
-					this.oCompanyCodeFieldOverlay.setSelected(true);
-					RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oCompanyCodeFieldOverlay).then(function() {
-						var oContextMenuButton = this.oRta.getPlugins()["contextMenu"].oContextMenuControl.getButtons()[1];
-						oContextMenuButton.firePress();
-						sap.ui.getCore().applyChanges();
+											fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
+												var oGroupElements = this.oGeneralGroup.getGroupElements();
+												var iIndex = oGroupElements.indexOf(this.oCompanyCodeField) + 1;
+												assert.equal(oGroupElements[iIndex].getLabelText(), oFieldToAdd.label, "the added element is at the correct position");
+												assert.ok(oGroupElements[iIndex].getVisible(), "the new field is visible");
+												assert.equal(this.oBoundButton35Field.fieldLabel, oFieldToAdd.label, "the new field is the one that got deleted");
+												return PersistenceWriteAPI.hasChangesToPublish(this.oCompanyCodeField);
+											}.bind(this))
+												.then(function(bChangesToPublish) {
+													assert.ok(bChangesToPublish, "then there are changes to publish in the Flex Persistence");
+												})
+												.then(this.oRta.stop.bind(this.oRta))
+												.then(fnDone);
+										}
+									}.bind(this));
 
-						oDialog.attachOpened(function() {
-							var oFieldToAdd = oDialog.getElements().filter(function(oField) {return oField.type === "invisible";})[0];
-							oCommandStack.attachModified(function() {
-								var aCommands = oCommandStack.getAllExecutedCommands();
-								if (aCommands &&
-									aCommands.length === 3) {
+									// select the field in the list and close the dialog with OK
+									oFieldToAdd.selected = true;
+									sap.ui.qunit.QUnitUtils.triggerEvent("tap", oDialog._oOKButton.getDomRef());
 									sap.ui.getCore().applyChanges();
-
-									fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
-										var oGroupElements = this.oGeneralGroup.getGroupElements();
-										var iIndex = oGroupElements.indexOf(this.oCompanyCodeField) + 1;
-										assert.equal(oGroupElements[iIndex].getLabelText(), oFieldToAdd.label, "the added element is at the correct position");
-										assert.ok(oGroupElements[iIndex].getVisible(), "the new field is visible");
-										assert.equal(this.oBoundButton35Field.fieldLabel, oFieldToAdd.label, "the new field is the one that got deleted");
-										assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oCompanyCodeField).length, 3, "then there are 3 dirty change in the Flex Peristence");
-									}.bind(this))
-
-									.then(this.oRta.stop.bind(this.oRta))
-
-									.then(done);
-								}
+								}.bind(this));
 							}.bind(this));
-
-							// select the field in the list and close the dialog with OK
-							oFieldToAdd.selected = true;
-							sap.ui.qunit.QUnitUtils.triggerEvent("tap", oDialog._oOKButton.getDomRef());
-							sap.ui.getCore().applyChanges();
-						}.bind(this));
+						}.bind(this), 0);
 					}.bind(this));
-				}.bind(this), 0);
-			}.bind(this));
 
-			// to reveal we have to remove the field first (otherwise it would be addODataProperty)
-			this.oBoundButton35FieldOverlay.focus();
-			QUnitUtils.triggerKeydown(this.oBoundButton35FieldOverlay.getDomRef(), KeyCodes.ENTER, false, false, false);
-			this.oBoundButton35FieldOverlay.focus();
-			QUnitUtils.triggerKeydown(this.oBoundButton35FieldOverlay.getDomRef(), KeyCodes.DELETE);
+					// to reveal we have to remove the field first (otherwise it would be addODataProperty)
+					this.oBoundButton35FieldOverlay.focus();
+					QUnitUtils.triggerKeydown(this.oBoundButton35FieldOverlay.getDomRef(), KeyCodes.ENTER, false, false, false);
+					this.oBoundButton35FieldOverlay.focus();
+					QUnitUtils.triggerKeydown(this.oBoundButton35FieldOverlay.getDomRef(), KeyCodes.DELETE);
+				}.bind(this));
 		});
 
 		QUnit.test("when adding a group element via context menu (expanded context menu - addODataProperty)", function(assert) {
 			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
-			var done = assert.async();
+			var fnDone = assert.async();
+			PersistenceWriteAPI.hasChangesToPublish(this.oCompanyCodeField)
+				.then(function (bChangesToPublish) {
+					assert.notOk(bChangesToPublish, "then there are no changes to publish in the Flex Persistence");
+					var oDialog = this.oRta.getPlugins()["additionalElements"].getDialog();
+					this.oCompanyCodeFieldOverlay.focus();
+					this.oCompanyCodeFieldOverlay.setSelected(true);
 
-			assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oCompanyCodeField).length, 0, "then there is no dirty change in the Flex Peristence");
+					// open context menu (context menu) and select add field
+					RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oCompanyCodeFieldOverlay).then(function () {
+						var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+						oContextMenuControl.attachEventOnce("Opened", function () {
+							var oContextMenuButton = oContextMenuControl.getButtons()[1];
+							assert.equal(oContextMenuButton.getText(), "Add: Field", "then the add field action button is available in the menu");
+							oContextMenuButton.firePress();
+							sap.ui.getCore().applyChanges();
+						});
 
-			var oDialog = this.oRta.getPlugins()["additionalElements"].getDialog();
-			this.oCompanyCodeFieldOverlay.focus();
-			this.oCompanyCodeFieldOverlay.setSelected(true);
+						oDialog.attachOpened(function () {
+							var oFieldToAdd = oDialog._oList.getItems()[1];
+							var sFieldToAddText = oFieldToAdd.getContent()[0].getItems()[0].getText();
 
-			// open context menu (context menu) and select add field
-			RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oCompanyCodeFieldOverlay).then(function() {
-				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-				oContextMenuControl.attachEventOnce("Opened", function() {
-					var oContextMenuButton = oContextMenuControl.getButtons()[1];
-					assert.equal(oContextMenuButton.getText(), "Add: Field", "then the add field action button is available in the menu");
-					oContextMenuButton.firePress();
-					sap.ui.getCore().applyChanges();
-				});
+							// observer gets called when the Group changes. Then the new field is on the UI.
+							var oObserver = new MutationObserver(function () {
+								var oGroupElements = this.oGeneralGroup.getGroupElements();
+								var iIndex = oGroupElements.indexOf(this.oCompanyCodeField) + 1;
+								assert.equal(oGroupElements[iIndex].getLabelText(), sFieldToAddText, "the added element is at the correct position");
+								assert.ok(oGroupElements[iIndex].getVisible(), "the new field is visible");
+								PersistenceWriteAPI.hasChangesToPublish(this.oCompanyCodeField)
+									.then(function(bChangesToPublish) {
+										assert.ok(bChangesToPublish, "then there are changes to publish in the Flex Persistence");
+										oObserver.disconnect();
+									})
+									.then(this.oRta.stop.bind(this.oRta))
+									.then(fnDone);
+							}.bind(this));
+							var oConfig = {attributes: false, childList: true, characterData: false, subtree: true};
+							oObserver.observe(this.oForm.getDomRef(), oConfig);
 
-				oDialog.attachOpened(function() {
-					var oFieldToAdd = oDialog._oList.getItems()[1];
-					var sFieldToAddText = oFieldToAdd.getContent()[0].getItems()[0].getText();
-
-					// observer gets called when the Group changes. Then the new field is on the UI.
-					var oObserver = new MutationObserver(function() {
-						var oGroupElements = this.oGeneralGroup.getGroupElements();
-						var iIndex = oGroupElements.indexOf(this.oCompanyCodeField) + 1;
-						assert.equal(oGroupElements[iIndex].getLabelText(), sFieldToAddText, "the added element is at the correct position");
-						assert.ok(oGroupElements[iIndex].getVisible(), "the new field is visible");
-						assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oCompanyCodeField).length, 1, "then there is 1 dirty change in the Flex Persistence");
-
-						oObserver.disconnect();
-						this.oRta.stop().then(done);
+							// select the field in the list and close the dialog with OK
+							oFieldToAdd.focus();
+							QUnitUtils.triggerKeydown(oFieldToAdd.getDomRef(), KeyCodes.ENTER, false, false, false);
+							sap.ui.qunit.QUnitUtils.triggerEvent("tap", oDialog._oOKButton.getDomRef());
+							sap.ui.getCore().applyChanges();
+						}.bind(this));
 					}.bind(this));
-					var oConfig = { attributes: false, childList: true, characterData: false, subtree : true};
-					oObserver.observe(this.oForm.getDomRef(), oConfig);
-
-					// select the field in the list and close the dialog with OK
-					oFieldToAdd.focus();
-					QUnitUtils.triggerKeydown(oFieldToAdd.getDomRef(), KeyCodes.ENTER, false, false, false);
-					sap.ui.qunit.QUnitUtils.triggerEvent("tap", oDialog._oOKButton.getDomRef());
-					sap.ui.getCore().applyChanges();
 				}.bind(this));
-			}.bind(this));
 		});
 
 		QUnit.test("when removing a field,", function(assert) {
@@ -240,249 +248,292 @@ sap.ui.define([
 
 			var oCommandStack = this.oRta.getCommandStack();
 
-			assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oVictim).length, 0, "then there is no dirty change in the Flex Persistence");
+			PersistenceWriteAPI.hasChangesToPublish(this.oVictim)
+				.then(function (bChangesToPublish) {
+					assert.notOk(bChangesToPublish, "then there are no changes to publish in the Flex Persistence");
 
-			oCommandStack.attachModified(function() {
-				var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
-				if (oFirstExecutedCommand && oFirstExecutedCommand.getName() === 'remove') {
-					//TODO fix timing as modified is called before serializer is triggered...
-					fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
-						assert.strictEqual(this.oVictim.getVisible(), false, " then field is not visible");
-						assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oVictim).length, 1, "then there is 1 dirty change in the Flex Persistence");
-						this.oRta.stop().then(fnDone);
+					oCommandStack.attachModified(function () {
+						var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
+						if (oFirstExecutedCommand && oFirstExecutedCommand.getName() === 'remove') {
+							//TODO fix timing as modified is called before serializer is triggered...
+							fnWaitForExecutionAndSerializationBeingDone.call(this).then(function () {
+								assert.strictEqual(this.oVictim.getVisible(), false, " then field is not visible");
+								PersistenceWriteAPI.hasChangesToPublish(this.oVictim)
+									.then(function (bChangesToPublish) {
+										assert.ok(bChangesToPublish, "then there are changes to publish in the Flex Persistence");
+									})
+									.then(this.oRta.stop.bind(this.oRta))
+									.then(fnDone);
+							}.bind(this));
+						}
 					}.bind(this));
-				}
-			}.bind(this));
 
-			this.oVictimOverlay.focus();
-			QUnitUtils.triggerKeydown(this.oVictimOverlay.getDomRef(), KeyCodes.ENTER, false, false, false);
+					this.oVictimOverlay.focus();
+					QUnitUtils.triggerKeydown(this.oVictimOverlay.getDomRef(), KeyCodes.ENTER, false, false, false);
 
-			this.oVictimOverlay.focus();
-			QUnitUtils.triggerKeydown(this.oVictimOverlay.getDomRef(), KeyCodes.DELETE);
+					this.oVictimOverlay.focus();
+					QUnitUtils.triggerKeydown(this.oVictimOverlay.getDomRef(), KeyCodes.DELETE);
+				}.bind(this));
 		});
 
 		QUnit.test("when moving a field (via cut and paste),", function(assert) {
+			var fnDone = assert.async();
 			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
 			var oCommandStack = this.oRta.getCommandStack();
 
-			assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oCompanyCodeField).length, 0, "then there is no dirty change in the Flex Persistence");
+			PersistenceWriteAPI.hasChangesToPublish(this.oCompanyCodeField)
+				.then(function (bChangesToPublish) {
+					assert.notOk(bChangesToPublish, "then there are no changes to publish in the Flex Persistence");
 
-			oCommandStack.attachModified(function() {
-				var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
-				if (oFirstExecutedCommand &&
-					oFirstExecutedCommand.getName() === "move") {
-					fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
-						var iIndex = 0;
-						assert.equal(this.oDatesGroup.getGroupElements()[iIndex].getId(), this.oCompanyCodeField.getId(), " then the field is moved to first place");
-						assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oCompanyCodeField).length, 1, "then there is 1 dirty change in the Flex Persistence");
-						this.oRta.stop();
+					oCommandStack.attachModified(function () {
+						var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
+						if (oFirstExecutedCommand &&
+							oFirstExecutedCommand.getName() === "move") {
+							fnWaitForExecutionAndSerializationBeingDone.call(this).then(function () {
+								var iIndex = 0;
+								assert.equal(this.oDatesGroup.getGroupElements()[iIndex].getId(), this.oCompanyCodeField.getId(), " then the field is moved to first place");
+								PersistenceWriteAPI.hasChangesToPublish(this.oCompanyCodeField)
+									.then(function (bChangesToPublish) {
+										assert.ok(bChangesToPublish, "then there are changes to publish in the Flex Persistence");
+									})
+									.then(this.oRta.stop.bind(this.oRta))
+									.then(fnDone);
+							}.bind(this));
+						}
 					}.bind(this));
-				}
-			}.bind(this));
 
-			var oCutPastePlugin = this.oRta.getPlugins().cutPaste;
+					var oCutPastePlugin = this.oRta.getPlugins().cutPaste;
 
-			QUnitUtils.triggerKeydown(this.oCompanyCodeFieldOverlay.getDomRef(), KeyCodes.X, false, false, true);
-			// need to wait until the valid targetzones get marked by the cut action
-			oCutPastePlugin.getElementMover().attachEventOnce("validTargetZonesActivated", function() {
-				QUnitUtils.triggerKeydown(this.oDatesGroupOverlay.getDomRef(), KeyCodes.V, false, false, true);
-			}.bind(this), 0);
+					QUnitUtils.triggerKeydown(this.oCompanyCodeFieldOverlay.getDomRef(), KeyCodes.X, false, false, true);
+					// need to wait until the valid targetzones get marked by the cut action
+					oCutPastePlugin.getElementMover().attachEventOnce("validTargetZonesActivated", function () {
+						QUnitUtils.triggerKeydown(this.oDatesGroupOverlay.getDomRef(), KeyCodes.V, false, false, true);
+					}.bind(this), 0);
+				}.bind(this));
 		});
 
 		QUnit.test("when renaming a group (via double click) and setting a new title...", function(assert) {
 			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
-			assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oDatesGroup).length, 0, "then there is no dirty change in the Flex Persistence");
+			PersistenceWriteAPI.hasChangesToPublish(this.oDatesGroup)
+				.then(function (bChangesToPublish) {
+					assert.notOk(bChangesToPublish, "then there are no changes to publish in the Flex Persistence");
 
-			this.oDatesGroupOverlay.focus();
-			var $groupOverlay = this.oDatesGroupOverlay.$();
+					this.oDatesGroupOverlay.focus();
+					var $groupOverlay = this.oDatesGroupOverlay.$();
 
-			var done = assert.async();
+					var fnDone = assert.async();
 
-			sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.startEdit', function (sChannel, sEvent, mParams) {
-				if (mParams.overlay === this.oDatesGroupOverlay) {
-					var $editableField = $groupOverlay.find(".sapUiRtaEditableField");
+					sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.startEdit', function (sChannel, sEvent, mParams) {
+						if (mParams.overlay === this.oDatesGroupOverlay) {
+							var $editableField = $groupOverlay.find(".sapUiRtaEditableField");
 
-					assert.strictEqual($editableField.length, 1, " then the rename input field is rendered");
-					assert.strictEqual($editableField.find(document.activeElement).length, 1, " and focus is in it");
+							assert.strictEqual($editableField.length, 1, " then the rename input field is rendered");
+							assert.strictEqual($editableField.find(document.activeElement).length, 1, " and focus is in it");
 
-					Promise.all([
-						new Promise(function (fnResolve) {
-							var oCommandStack = this.oRta.getCommandStack();
-							oCommandStack.attachModified(function() {
-								var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
-								if (oFirstExecutedCommand &&
-									oFirstExecutedCommand.getName() === "rename") {
-									fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
-										assert.strictEqual(this.oDatesGroup.getLabel(), "Test", "then title of the group is Test");
-										assert.equal(PersistenceWriteAPI.getDirtyChanges(oCompCont.getComponentInstance()).length, 1, "then there is 1 dirty change in the Flex Persistence");
-										fnResolve();
+							Promise.all([
+								new Promise(function (fnResolve) {
+									var oCommandStack = this.oRta.getCommandStack();
+									oCommandStack.attachModified(function () {
+										var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
+										if (oFirstExecutedCommand &&
+											oFirstExecutedCommand.getName() === "rename") {
+											fnWaitForExecutionAndSerializationBeingDone.call(this).then(function () {
+												assert.strictEqual(this.oDatesGroup.getLabel(), "Test", "then title of the group is Test");
+												PersistenceWriteAPI.hasChangesToPublish(oCompCont.getComponentInstance())
+													.then(function (bChangesToPublish) {
+														assert.ok(bChangesToPublish, "then there are changes to publish in the Flex Persistence");
+														fnResolve();
+													});
+											}.bind(this));
+										}
 									}.bind(this));
-								}
+								}.bind(this)),
+								new Promise(function (fnResolve) {
+									sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.stopEdit', function (sChannel, sEvent, mParams) {
+										if (mParams.overlay === this.oDatesGroupOverlay) {
+											assert.strictEqual(this.oDatesGroupOverlay.getDomRef(), document.activeElement, " and focus is on group overlay");
+											$editableField = $groupOverlay.find(".sapUiRtaEditableField");
+											assert.strictEqual($editableField.length, 0, " and the editable field is removed from dom");
+											fnResolve();
+										}
+									}, this);
+								}.bind(this))
+							]).then(function () {
+								this.oRta.stop().then(fnDone);
 							}.bind(this));
-						}.bind(this)),
-						new Promise(function (fnResolve) {
-							sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.stopEdit', function (sChannel, sEvent, mParams) {
-								if (mParams.overlay === this.oDatesGroupOverlay) {
-									assert.strictEqual(this.oDatesGroupOverlay.getDomRef(), document.activeElement, " and focus is on group overlay");
-									$editableField = $groupOverlay.find(".sapUiRtaEditableField");
-									assert.strictEqual($editableField.length, 0, " and the editable field is removed from dom");
-									fnResolve();
-								}
-							}, this);
-						}.bind(this))
-					]).then(function () {
-						this.oRta.stop().then(done);
-					}.bind(this));
 
-					document.activeElement.innerHTML = "Test";
-					QUnitUtils.triggerKeydown(document.activeElement, KeyCodes.ENTER, false, false, false);
-				}
-			}, this);
+							document.activeElement.innerHTML = "Test";
+							QUnitUtils.triggerKeydown(document.activeElement, KeyCodes.ENTER, false, false, false);
+						}
+					}, this);
 
-			$groupOverlay.click();
-			$groupOverlay.click();
+					$groupOverlay.click();
+					$groupOverlay.click();
+				}.bind(this));
 		});
 
 		QUnit.test("when adding a SimpleForm Field via context menu (expanded context menu) - reveal", function(assert) {
 			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(3, assert);
-			var done = assert.async();
+			var fnDone = assert.async();
 
 			var oForm = sap.ui.getCore().byId("Comp1---idMain1--SimpleForm--Form");
 			var oFormContainer = oForm.getFormContainers()[0];
 			var oFieldToHide = oFormContainer.getFormElements()[0];
 			var oFieldToHideOverlay = OverlayRegistry.getOverlay(oFieldToHide);
 
-			assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oCompanyCodeField).length, 0, "then there is no dirty change in the Flex Persistence");
+			PersistenceWriteAPI.hasChangesToPublish(this.oCompanyCodeField)
+				.then(function (bChangesToPublish) {
+					assert.notOk(bChangesToPublish, "then there are no changes to publish in the Flex Persistence");
 
-			var oCommandStack = this.oRta.getCommandStack();
-			oCommandStack.attachEventOnce("commandExecuted", function() {
-				setTimeout(function() {
-					DtUtil.waitForSynced(this.oRta._oDesignTime)().then(function() {
-						// remove field is executed, reveal should be available
-						var oDialog = this.oRta.getPlugins()["additionalElements"].getDialog();
-						oFormContainer = oForm.getFormContainers()[0];
-						var oField = oFormContainer.getFormElements()[1];
-						var oFieldOverlay = OverlayRegistry.getOverlay(oField);
-						oFieldOverlay.focus();
-						oFieldOverlay.setSelected(true);
+					var oCommandStack = this.oRta.getCommandStack();
+					oCommandStack.attachEventOnce("commandExecuted", function () {
+						setTimeout(function () {
+							DtUtil.waitForSynced(this.oRta._oDesignTime)().then(function() {
+								// remove field is executed, reveal should be available
+								var oDialog = this.oRta.getPlugins()["additionalElements"].getDialog();
+								oFormContainer = oForm.getFormContainers()[0];
+								var oField = oFormContainer.getFormElements()[1];
+								var oFieldOverlay = OverlayRegistry.getOverlay(oField);
+								oFieldOverlay.focus();
+								oFieldOverlay.setSelected(true);
 
-						// open context menu (compact context menu)
-						RtaQunitUtils.openContextMenuWithKeyboard.call(this, oFieldOverlay).then(function() {
-							var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-							oContextMenuControl.attachOpened(function() {
-								var oContextMenuButton = oContextMenuControl.getButtons()[1];
-								assert.equal(oContextMenuButton.getText(), "Add: Field", "the the add field action button is available in the menu");
-								oContextMenuButton.firePress();
-								sap.ui.getCore().applyChanges();
-							});
+								// open context menu (compact context menu)
+								RtaQunitUtils.openContextMenuWithKeyboard.call(this, oFieldOverlay).then(function () {
+									var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+									oContextMenuControl.attachOpened(function () {
+										var oContextMenuButton = oContextMenuControl.getButtons()[1];
+										assert.equal(oContextMenuButton.getText(), "Add: Field", "the the add field action button is available in the menu");
+										oContextMenuButton.firePress();
+										sap.ui.getCore().applyChanges();
+									});
 
-							// wait for opening additional Elements dialog
-							oDialog.attachOpened(function() {
-								var oFieldToAdd = oDialog.getElements().filter(function(oField) {return oField.type === "invisible";})[0];
-								oCommandStack.attachModified(function() {
-									var aCommands = oCommandStack.getAllExecutedCommands();
-									if (aCommands &&
-										aCommands.length === 3) {
-										fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
-											sap.ui.getCore().applyChanges();
-											assert.equal(PersistenceWriteAPI.getDirtyChanges(oCompCont.getComponentInstance()).length, 3, "then there are 3 dirty change in the Flex Persistence");
-										})
-										.then(this.oRta.stop.bind(this.oRta))
-										.then(done);
-									}
+									// wait for opening additional Elements dialog
+									oDialog.attachOpened(function () {
+										var oFieldToAdd = oDialog.getElements().filter(function (oField) {
+											return oField.type === "invisible";
+										})[0];
+										oCommandStack.attachModified(function () {
+											var aCommands = oCommandStack.getAllExecutedCommands();
+											if (aCommands &&
+												aCommands.length === 3) {
+												fnWaitForExecutionAndSerializationBeingDone.call(this)
+													.then(function () {
+														sap.ui.getCore().applyChanges();
+													})
+													.then(PersistenceWriteAPI.hasChangesToPublish.bind(null, oCompCont.getComponentInstance()))
+													.then(function (bChangesToPublish) {
+														assert.ok(bChangesToPublish, "then there are changes to publish in the Flex Persistence");
+													})
+													.then(this.oRta.stop.bind(this.oRta))
+													.then(fnDone);
+											}
+										}.bind(this));
+
+										// select the field in the list and close the dialog with OK
+										oFieldToAdd.selected = true;
+										sap.ui.qunit.QUnitUtils.triggerEvent("tap", oDialog._oOKButton.getDomRef());
+										sap.ui.getCore().applyChanges();
+									}.bind(this));
 								}.bind(this));
-
-								// select the field in the list and close the dialog with OK
-								oFieldToAdd.selected = true;
-								sap.ui.qunit.QUnitUtils.triggerEvent("tap", oDialog._oOKButton.getDomRef());
-								sap.ui.getCore().applyChanges();
 							}.bind(this));
-						}.bind(this));
+						}.bind(this), 0);
 					}.bind(this));
-				}.bind(this), 0);
-			}.bind(this));
 
-			// to reveal we have to remove the field first (otherwise it would be addODataProperty)
-			oFieldToHideOverlay.focus();
-			oFieldToHideOverlay.setSelected(true);
-			QUnitUtils.triggerKeyup(oFieldToHideOverlay.getDomRef(), KeyCodes.F10, true, false, false);
-			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-			oContextMenuControl.attachEventOnce("Opened", function() {
-				var oContextMenuButton = oContextMenuControl.getButtons()[2];
-				assert.equal(oContextMenuButton.getText(), "Remove", "the 'remove' action button is available in the menu");
-				oContextMenuButton.firePress();
-				sap.ui.getCore().applyChanges();
-			});
+					// to reveal we have to remove the field first (otherwise it would be addODataProperty)
+					oFieldToHideOverlay.focus();
+					oFieldToHideOverlay.setSelected(true);
+					QUnitUtils.triggerKeyup(oFieldToHideOverlay.getDomRef(), KeyCodes.F10, true, false, false);
+					var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+					oContextMenuControl.attachEventOnce("Opened", function () {
+						var oContextMenuButton = oContextMenuControl.getButtons()[2];
+						assert.equal(oContextMenuButton.getText(), "Remove", "the 'remove' action button is available in the menu");
+						oContextMenuButton.firePress();
+						sap.ui.getCore().applyChanges();
+					});
+				}.bind(this));
 		});
 
 		QUnit.test("when renaming a group element via context menu (expanded context menu) and setting a new label...", function(assert) {
 			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
 
-			assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oCompanyCodeField).length, 0, "then there is no dirty change in the Flex Persistence");
-			this.oCompanyCodeFieldOverlay.focus();
-			this.oCompanyCodeFieldOverlay.setSelected(true);
+			PersistenceWriteAPI.hasChangesToPublish(this.oCompanyCodeField)
+				.then(function (bChangesToPublish) {
+					assert.notOk(bChangesToPublish, "then there are no changes to publish in the Flex Persistence");
 
-			// open context menu (expanded menu) and press rename button
-			RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oCompanyCodeFieldOverlay).then(function() {
-				var oContextMenuButton = this.oRta.getPlugins()["contextMenu"].oContextMenuControl.getButtons()[0];
-				return fnPressRenameAndEnsureFunctionality.call(this, assert, this.oCompanyCodeField, oContextMenuButton, 'TestExpandedMenu');
-			}.bind(this));
+					this.oCompanyCodeFieldOverlay.focus();
+					this.oCompanyCodeFieldOverlay.setSelected(true);
+
+					// open context menu (expanded menu) and press rename button
+					RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oCompanyCodeFieldOverlay).then(function () {
+						var oContextMenuButton = this.oRta.getPlugins()["contextMenu"].oContextMenuControl.getButtons()[0];
+						return fnPressRenameAndEnsureFunctionality.call(this, assert, this.oCompanyCodeField, oContextMenuButton, 'TestExpandedMenu');
+					}.bind(this));
+				}.bind(this));
 		});
 
 		QUnit.test("when renaming a group element via Context menu (compact context menu) and setting a new label...", function(assert) {
 			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
-			var done = assert.async();
+			var fnDone = assert.async();
 
-			assert.equal(PersistenceWriteAPI.getDirtyChanges(this.oCompanyCodeField).length, 0, "then there is no dirty change in the Flex Persistence");
+			PersistenceWriteAPI.hasChangesToPublish(this.oCompanyCodeField)
+				.then(function (bChangesToPublish) {
+					assert.notOk(bChangesToPublish, "then there are no changes to publish in the Flex Persistence");
 
-			this.oCompanyCodeFieldOverlay.focus();
+					this.oCompanyCodeFieldOverlay.focus();
 
-			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-			oContextMenuControl.attachOpened(function() {
-				assert.ok(oContextMenuControl.bOpen, "ContextMenu should be opened");
-				// press rename button
-				var oRenameButton = oContextMenuControl.getButtons()[0];
-				fnPressRenameAndEnsureFunctionality.call(this, assert, this.oCompanyCodeField, oRenameButton, 'TestCompactMenu').then(done);
-			}.bind(this));
+					var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+					oContextMenuControl.attachOpened(function () {
+						assert.ok(oContextMenuControl.bOpen, "ContextMenu should be opened");
+						// press rename button
+						var oRenameButton = oContextMenuControl.getButtons()[0];
+						fnPressRenameAndEnsureFunctionality.call(this, assert, this.oCompanyCodeField, oRenameButton, 'TestCompactMenu').then(fnDone);
+					}.bind(this));
 
-			// open context menu (compact menu)
-			QUnitUtils.triggerMouseEvent(this.oCompanyCodeFieldOverlay.getDomRef(), "click");
+					// open context menu (compact menu)
+					QUnitUtils.triggerMouseEvent(this.oCompanyCodeFieldOverlay.getDomRef(), "click");
+				}.bind(this));
 		});
 
 		QUnit.test("when splitting a combined SmartForm GroupElement via context menu (expanded context menu) - split", function(assert) {
 			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
-			var done = assert.async();
+			var fnDone = assert.async();
 
 			var oCombinedElement = sap.ui.getCore().byId("Comp1---idMain1--Dates.BoundButton35");
 			var oCombinedElementOverlay = OverlayRegistry.getOverlay(oCombinedElement);
 
-			assert.equal(PersistenceWriteAPI.getDirtyChanges(oCombinedElement).length, 0, "then there is no dirty change in the Flex Persistence");
+			PersistenceWriteAPI.hasChangesToPublish(oCombinedElement)
+				.then(function (bChangesToPublish) {
+					assert.notOk(bChangesToPublish, "then there are no changes to publish in the Flex Persistence");
 
-			var oCommandStack = this.oRta.getCommandStack();
-			oCommandStack.attachCommandExecuted(function() {
-				fnWaitForExecutionAndSerializationBeingDone.call(this)
-					.then(function() {
+					var oCommandStack = this.oRta.getCommandStack();
+					oCommandStack.attachCommandExecuted(function () {
+						fnWaitForExecutionAndSerializationBeingDone.call(this)
+							.then(function () {
+								sap.ui.getCore().applyChanges();
+								return PersistenceWriteAPI.hasChangesToPublish(oCompCont.getComponentInstance());
+							})
+							.then(function(bChangesToPublish) {
+								assert.ok(bChangesToPublish, "then there are changes to publish in the Flex Persistence");
+							})
+							.then(this.oRta.stop.bind(this.oRta))
+							.then(fnDone);
+					}, this);
+
+					// open context menu (expanded context menu) on fucused overlay
+					oCombinedElementOverlay.focus();
+					oCombinedElementOverlay.setSelected(true);
+
+					var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+					oContextMenuControl.attachEventOnce("Opened", function () {
+						var oContextMenuButton = oContextMenuControl.getButtons().filter(function (oButton) {
+							return oButton.getText() === 'Split';
+						})[0];
+						assert.ok(oContextMenuButton, "the the split action button is available in the menu");
+						oContextMenuButton.firePress();
 						sap.ui.getCore().applyChanges();
-						assert.equal(PersistenceWriteAPI.getDirtyChanges(oCompCont.getComponentInstance()).length, 1, "then there ia a dirty change in the Flex Persistence");
-					})
-					.then(this.oRta.stop.bind(this.oRta))
-					.then(done);
-			}, this);
-
-			// open context menu (expanded context menu) on fucused overlay
-			oCombinedElementOverlay.focus();
-			oCombinedElementOverlay.setSelected(true);
-
-			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-			oContextMenuControl.attachEventOnce("Opened", function() {
-				var oContextMenuButton = oContextMenuControl.getButtons().filter(function (oButton) {
-					return oButton.getText() === 'Split';
-				})[0];
-				assert.ok(oContextMenuButton, "the the split action button is available in the menu");
-				oContextMenuButton.firePress();
-				sap.ui.getCore().applyChanges();
-			});
-			QUnitUtils.triggerKeyup(oCombinedElementOverlay.getDomRef(), KeyCodes.F10, true, false, false);
+					});
+					QUnitUtils.triggerKeyup(oCombinedElementOverlay.getDomRef(), KeyCodes.F10, true, false, false);
+				}.bind(this));
 		});
 	});
 

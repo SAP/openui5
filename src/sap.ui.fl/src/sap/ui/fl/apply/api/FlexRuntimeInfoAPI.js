@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/ControlPersonalizationAPI",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/write/ChangesController"
+	"sap/ui/fl/write/internal/ChangesController"
 ], function(
 	JsControlTreeModifier,
 	OldControlPersonalizationAPI,
@@ -36,7 +36,7 @@ sap.ui.define([
 		 * @param {string} aSelectors.id - ID of the control in case a map has been used to specify the control
 		 * @param {array} [aChangeTypes] - Types of changes that have existing personalization.
 		 *
-		 * @returns {Promise} Promise resolving with true if personalization changes exists, otherwise false.
+		 * @returns {Promise<boolean>} Promise resolving to a boolean indicating if personalization changes exist
 		 *
 		 * @method sap.ui.fl.apply.api.FlexRuntimeInfoAPI.isPersonalized
 		 * @public

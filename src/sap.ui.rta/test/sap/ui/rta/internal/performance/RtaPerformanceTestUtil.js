@@ -65,7 +65,7 @@ sap.ui.define([
 				hasMergeErrorOccured: function() { return false; }
 			}));
 			sinon.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
-			sinon.stub(PersistenceWriteAPI, "getUIChanges").returns(Promise.resolve([]));
+			sinon.stub(PersistenceWriteAPI, "hasChangesToPublish").resolves([]);
 		},
 
 		startRta: function(oHorizontalLayout, aPlugins) {
