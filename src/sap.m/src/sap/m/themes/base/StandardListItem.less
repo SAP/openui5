@@ -56,8 +56,13 @@ html[data-sap-ui-browser='ie11'] .sapMSLIWithDescription > .sapMLIBContent > .sa
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	flex: 1 1 50%;
+	flex: 1 1 auto;
 	padding: 0.125rem 0;
+}
+
+/* flex does not work in IE11 as expected, hence adding width 100% when only title is displayed */
+.sapMSLIDiv:not(.sapMSLIInfoMiddle) > .sapMSLITitleOnly {
+	width: 100%;
 }
 
 .sapMSLITitle,
