@@ -1379,7 +1379,7 @@ sap.ui.define([
 		 */
 		_init: function(oTable, sTableType, mSettings) {
 			this._delegate = ExtensionDelegate;
-			oTable.addEventDelegate(this._delegate, oTable);
+			TableUtils.addDelegate(this._delegate, oTable, true);
 
 			return "ScrollExtension";
 		},

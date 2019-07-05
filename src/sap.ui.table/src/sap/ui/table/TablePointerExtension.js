@@ -938,7 +938,7 @@ sap.ui.define([
 			this._delegate = ExtensionDelegate;
 
 			// Register the delegate
-			oTable.addEventDelegate(this._delegate, oTable);
+			TableUtils.addDelegate(this._delegate, oTable, true);
 
 			oTable._iLastHoveredColumnIndex = 0;
 			oTable._bIsColumnResizerMoving = false;
