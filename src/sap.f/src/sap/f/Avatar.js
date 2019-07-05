@@ -319,7 +319,7 @@ sap.ui.define([
 	Avatar.prototype._validateSrc = function (sSrc) {
 		if (IconPool.isIconURI(sSrc)) {
 			this._sActualType = AvatarType.Icon;
-			this._bIsDefaultIcon = false;
+			this._bIsDefaultIcon = IconPool.getIconInfo(sSrc) ? false : true;
 		} else {
 			this._bIsDefaultIcon = true;
 			this._sActualType = AvatarType.Image;

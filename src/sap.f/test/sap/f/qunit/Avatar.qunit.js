@@ -146,6 +146,25 @@ function(oCore, Device, URI, Avatar, LightBox) {
 		assert.ok($oAvatar.hasClass("sapFAvatarSquare"), sPreAvatarShape + "Square");
 	});
 
+	QUnit.module("Rendering fallback icon", {
+		beforeEach: setupFunction,
+		afterEach: teardownFunction
+	});
+
+	QUnit.test("Avatar with valid icon src should not use default icon", function (assert) {
+		this.oAvatar.setSrc("sap-icon://touch");
+		oCore.applyChanges();
+
+		assert.notOk(this.oAvatar._bIsDefaultIcon, "Icon source is valid");
+	});
+
+	QUnit.test("Avatar with invalid icon src should use default icon", function (assert) {
+		this.oAvatar.setSrc("sap-icon://qwertyu");
+		oCore.applyChanges();
+
+		assert.ok(this.oAvatar._bIsDefaultIcon, "Icon source is invalid and fallback icon will be shown");
+	});
+
 	QUnit.module("Rendering different types", {
 		beforeEach: setupFunction,
 		afterEach: teardownFunction
