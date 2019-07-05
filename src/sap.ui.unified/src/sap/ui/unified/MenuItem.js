@@ -56,11 +56,13 @@ sap.ui.define(['sap/ui/core/IconPool', './MenuItemBase', './library'],
 	IconPool.insertFontFaceStyle(); //Ensure Icon Font is loaded
 
 	MenuItem.prototype.render = function(oRenderManager, oItem, oMenu, oInfo){
-		var rm = oRenderManager;
-		var oSubMenu = oItem.getSubmenu();
+		var rm = oRenderManager,
+			oSubMenu = oItem.getSubmenu(),
+			bIsEnabled = oItem.getEnabled();
+
 		rm.write("<li");
 
-		if (oItem.getVisible() && oItem.getEnabled()) {
+		if (oItem.getVisible() && bIsEnabled) {
 			rm.writeAttribute("tabindex", "0");
 		}
 
@@ -78,6 +80,10 @@ sap.ui.define(['sap/ui/core/IconPool', './MenuItemBase', './library'],
 		}
 
 		rm.writeAttribute("class", sClass);
+		if (!bIsEnabled) {
+			rm.writeAttribute("disabled", "disabled");
+		}
+
 		if (oItem.getTooltip_AsString()) {
 			rm.writeAttributeEscaped("title", oItem.getTooltip_AsString());
 		}
@@ -87,7 +93,7 @@ sap.ui.define(['sap/ui/core/IconPool', './MenuItemBase', './library'],
 		if (oInfo.bAccessible) {
 			rm.writeAccessibilityState(oItem, {
 				role: "menuitem",
-				disabled: !oMenu.checkEnabled(oItem),
+				disabled: null, // Prevent aria-disabled as a disabled attribute is enough
 				posinset: oInfo.iItemNo,
 				setsize: oInfo.iTotalItems,
 				labelledby: {value: /*oMenu.getId() + "-label " + */this.getId() + "-txt " + this.getId() + "-scuttxt", append: true}
