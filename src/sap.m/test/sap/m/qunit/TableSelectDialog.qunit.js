@@ -877,6 +877,19 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Closing without filtering doesn't re-filter the model", function(assert) {
+		oTableSelectDialog1.open();
+
+		var oTable = sap.ui.getCore().byId("oTableSelectDialog1-table");
+		var oBindings = oTable.getBinding("items");
+
+		var fnFilter = sinon.spy(oBindings, "filter");
+
+		oTableSelectDialog1._onCancel();
+
+		assert.notOk(fnFilter.called, "model is not re-filtered");
+	});
+
 	QUnit.test("LiveSearchUpdates", function(assert) {
 		oTableSelectDialog1.open();
 

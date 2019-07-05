@@ -1165,7 +1165,7 @@ sap.ui.define([
 		// due to the delayed call (dialog onAfterClose) the control could be already destroyed
 		if (!this.bIsDestroyed) {
 			var oBindings = this._oTable.getBinding("items");
-			if (oBindings) {
+			if (oBindings && oBindings.aFilters && oBindings.aFilters.length) {
 				oBindings.filter([]);
 			}
 			this._oTable.removeSelections();
