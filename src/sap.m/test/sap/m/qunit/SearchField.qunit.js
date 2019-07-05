@@ -454,8 +454,11 @@ sap.ui.define([
 		fnClearSpy.restore();
 	});
 
-	QUnit.module("Suggestions", {
+	QUnit.module("Suggestions on mobile phone", {
 		beforeEach: function () {
+			this.isPhone = Device.system.phone;
+			Device.system.phone = true;
+
 			this.oSearchField = new SearchField("sf8", {
 				enableSuggestions: true,
 				suggestionItems: [
@@ -471,6 +474,8 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oSearchField.destroy();
+
+			Device.system.phone = this.isPhone;
 		}
 	});
 
@@ -478,12 +483,6 @@ sap.ui.define([
 		// Arrange
 		var done = assert.async(),
 			fnSearchSpy = this.stub();
-
-		this.stub(Device, "system", {
-			desktop: false,
-			phone: true, // test on phone
-			tablet: false
-		});
 
 		this.oSearchField.attachEvent("search", function () {
 			fnSearchSpy();
@@ -503,5 +502,91 @@ sap.ui.define([
 				done();
 			}, 500);
 		}.bind(this), 300); // requires that timeout to work on IE
+	});
+
+	QUnit.test("Search is fired once when 'magnifier' button is pressed", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			fnSearchSpy = this.stub();
+
+		this.oSearchField.attachEvent("search", function () {
+			fnSearchSpy();
+		});
+
+		// Act
+		this.oSearchField.focus();
+		sap.ui.getCore().applyChanges();
+
+
+		setTimeout(function () {
+			// tap on the 'magnifier' button
+			var searchFieldInDialog = jQuery(".sapMDialog .sapMSF").control()[0];
+			var searchIconInDialog = jQuery(".sapMDialog .sapMSFS")[0];
+
+			searchFieldInDialog.ontouchend({
+				originalEvent: {
+					button: 1
+				},
+				target: searchIconInDialog
+			});
+
+			// Asert
+			setTimeout(function () {
+				assert.ok(fnSearchSpy.calledOnce, "Search is fired once");
+				done();
+			}, 500);
+		}, 300); // requires that timeout to work on IE
+	});
+
+	QUnit.test("Search is fired once when 'OK' button is pressed", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			fnSearchSpy = this.stub();
+
+		this.oSearchField.attachEvent("search", function () {
+			fnSearchSpy();
+		});
+
+		// Act
+		this.oSearchField.focus();
+		sap.ui.getCore().applyChanges();
+
+
+		setTimeout(function () {
+			// tap on the 'OK' button
+			qutils.triggerTouchEvent("tap", jQuery(".sapMDialog .sapMDialogFooter .sapMBtn")[0]);
+
+			// Asert
+			setTimeout(function () {
+				assert.ok(fnSearchSpy.calledOnce, "Search is fired once");
+				done();
+			}, 500);
+		}, 300); // requires that timeout to work on IE
+	});
+
+	QUnit.test("Search is NOT fired when 'X' button is pressed", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			fnSearchSpy = this.stub();
+
+		this.oSearchField.attachEvent("search", function () {
+			fnSearchSpy();
+		});
+
+		// Act
+		this.oSearchField.focus();
+		sap.ui.getCore().applyChanges();
+
+
+		setTimeout(function () {
+			// tap on the 'X' button
+			qutils.triggerTouchEvent("tap", jQuery(".sapMDialog .sapMDialogTitle .sapMBtn")[0]);
+
+			// Asert
+			setTimeout(function () {
+				assert.ok(fnSearchSpy.notCalled, "Search is not fired");
+				done();
+			}, 500);
+		}, 300); // requires that timeout to work on IE
 	});
 });

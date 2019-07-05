@@ -58,6 +58,7 @@ module.exports = [
 	"RatingIndicator.spec.js",
 	"ResponsivePopover.spec.js",
 	"SearchField.spec.js",
+	"SearchField_Suggestions.spec.js",
 	"SegmentedButton.spec.js",
 	"Select.spec.js",
 	"SelectDialog.spec.js",
