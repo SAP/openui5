@@ -115,7 +115,9 @@ sap.ui.define([
 		{i : "foo", t : "any", o : "foo"},
 		{i : "2014-11-27", t : "string", o : "Nov 27, 2014"},
 		{i : "2014-11-34", t : "string", o : "2014-11-34"},
-		{i : new Date(Date.UTC(2014, 10, 27)), t : "string", o : "Nov 27, 2014"}
+		{i : new Date(Date.UTC(2014, 10, 27)), t : "string", o : "Nov 27, 2014"},
+		{i : "2014-11-27", t : "object", o : new Date(2014, 10, 27)},
+		{i : new Date(Date.UTC(2014, 10, 27)), t : "object", o : new Date(2014, 10, 27)}
 	].forEach(function (oFixture) {
 		QUnit.test("format value", function (assert) {
 			var oType = new DateType();
@@ -188,12 +190,13 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("parse Date", function (assert) {
+	QUnit.test("parse value", function (assert) {
 		var oType = new DateType();
 
 		assert.strictEqual(oType.parseValue(null, "foo"), null, "null is always accepted");
 		assert.strictEqual(oType.parseValue("", "string"), null, "empty string becomes null");
 		assert.deepEqual(oType.parseValue("Nov 1, 715", "string"), "0715-11-01", "valid date");
+		assert.deepEqual(oType.parseValue(new Date(2014, 9, 27), "object"), "2014-10-27");
 
 		["int", "float", "boolean"].forEach(function (sType) {
 			try {

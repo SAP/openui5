@@ -41,8 +41,10 @@
 			<Input value="{parts: [{path: 'Date'}, {path: 'DateTimeOffset'}], type: 'sap.ui.model.type.DateInterval'}" id="I2"/>
 			<DateRangeSelection value="{parts: [{path: 'Date'}, {path: 'DateTimeOffset'}], type: 'sap.ui.model.type.DateInterval'}"/>
 			<Label text="Date" visible="{ui>/v4}" labelFor="I3"/>
-			<Input value="{path: 'v4>Date'}" visible="{ui>/v4}" id="I3"/>
-			<DatePicker value="{path: 'v4>Date'}" visible="{ui>/v4}"/>
+			<Input value="{v4>Date}" visible="{ui>/v4}" id="I3"/>
+			<DatePicker value="{v4>Date}" visible="{ui>/v4}"/>
+			<Label text="Date, bound property dateValue" visible="{ui>/v4}" labelFor="I54"/>
+			<DatePicker dateValue="{v4>Date}" visible="{ui>/v4}" id="I54"/>
 			<Label text="Date, nullable: false" visible="{ui>/v4}" labelFor="I4"/>
 			<Input value="{path: 'v4>Date', type: 'sap.ui.model.odata.type.Date', constraints: {nullable: false}}" visible="{ui>/v4}" id="I4"/>
 			<DatePicker value="{path: 'v4>Date', type: 'sap.ui.model.odata.type.Date', constraints: {nullable: false}}" visible="{ui>/v4}"/>
@@ -71,8 +73,12 @@
 			<Label text="DateTime, displayFormat: &quot;Date&quot;, nullable: false" visible="{ui>/v2}" labelFor="I12"/>
 			<Input value="{path: 'v2>Date', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date', nullable: false}}" visible="{ui>/v2}"  id="I12"/>
 			<DatePicker value="{path: 'v2>Date', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date', nullable: false}}" visible="{ui>/v2}"/>
-			<Label text="DateTime, style: &quot;short&quot;, wrong type: sap.ui.model.odata.type.Date" visible="{ui>/v2}" labelFor="I13"/>
-			<Input value="{path: 'v2>Date', type: 'sap.ui.model.odata.type.Date', formatOptions: {style: 'short'}}" visible="{ui>/v2}" id="I13"/>
+			<Label text="Date (wrong type, read-only), style: &quot;short&quot;" visible="{ui>/v2}" labelFor="I13"/>
+			<Input value="{path: 'v2>Date', type: 'sap.ui.model.odata.type.Date', formatOptions: {style: 'short'}}" visible="{ui>/v2}" id="I13"
+				tooltip="If using the V4 type sap.ui.model.odata.type.Date for a V2 service, it is only possible to display the value"/>
+			<Label text="Date (wrong type, read-only), bound property dateValue" visible="{ui>/v2}" labelFor="I55"/>
+			<DatePicker dateValue="{path: 'v2>Date', type: 'sap.ui.model.odata.type.Date'}" visible="{ui>/v2}" id="I55"
+				tooltip="If using the V4 type sap.ui.model.odata.type.Date for a V2 service, it is only possible to display the value"/>
 
 			<Label text="DateTimeOffset" labelFor="I14"/>
 			<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset'}" id="I14"/>
