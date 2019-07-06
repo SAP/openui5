@@ -1,6 +1,6 @@
 <mvc:View
 		controllerName="sap.f.sample.Avatar.controller.Avatar"
-		xmlns:mvc="sap.ui.mvc"
+		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:f="sap.f"
 		xmlns:m="sap.m"
 		xmlns:l="sap.ui.layout"

@@ -1,0 +1,32 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.ComparisonPattern",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"iframe": "ComparisonPattern.html",
+				"stretch": true,
+				"files": [
+					"app/Component.js",
+					"app/view/Main.view.xml",
+					"app/controller/Main.controller.js",
+					"app/view/Comparison.view.xml",
+					"app/controller/Comparison.controller.js",
+					"app/view/App.view.xml",
+					"app/view/App.view.xml",
+					"ComparisonPattern.html",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

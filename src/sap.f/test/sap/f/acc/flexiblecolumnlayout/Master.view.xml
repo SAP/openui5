@@ -1,7 +1,7 @@
-<View xmlns="sap.m" displayBlock="true" controllerName="flexiblecolumnlayout.Master" height="100%">
+<nvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" displayBlock="true" controllerName="flexiblecolumnlayout.Master" height="100%">
 	<Page id="masterPage" title="Master page" titleLevel="H1">
 		<Button text="To Detail" press="handleMasterPress"/>
 	</Page>
-</View>
+</mvc:View>
 
 

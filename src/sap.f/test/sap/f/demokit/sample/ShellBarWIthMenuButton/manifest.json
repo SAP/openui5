@@ -1,0 +1,32 @@
+{
+	"sap.app": {
+		"id": "sap.f.sample.ShellBarWIthMenuButton",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.f.sample.ShellBarWIthMenuButton.ShellBarWIthMenuButton",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.f": {},
+				"sap.m": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"ShellBarWIthMenuButton.view.xml",
+					"ShellBarWIthMenuButton.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

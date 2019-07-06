@@ -7,7 +7,7 @@ sap.ui.define([
 	return UIComponent.extend("sap.ui.core.internal.samples.composite.xmlcomposite.ex.Component", {
 		metadata:
 		{
-			rootView: "sap.ui.core.internal.samples.composite.xmlcomposite.ex.Test"
+			manifest: "json"
 		},
 		init: function() {
 

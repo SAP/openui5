@@ -6,44 +6,7 @@ function (UIComponent, JSONModel) {
 	return UIComponent.extend("sap.m.sample.ComparisonPattern.app", {
 
 		metadata: {
-			rootView: {
-				"viewName": "sap.m.sample.ComparisonPattern.app.view.App",
-				"type": "XML",
-				"async": true
-			},
-			routing: {
-				config: {
-					routerClass: "sap.m.routing.Router",
-					viewPath: "sap.m.sample.ComparisonPattern.app.view",
-					controlId: "rootControl",
-					controlAggregation: "pages",
-					viewType: "XML",
-					async: true
-				},
-				routes: [
-					{
-						name: "page1",
-						// empty hash - normally the start page
-						pattern: "",
-						target: "page1"
-					},
-					{
-						name: "page2",
-						pattern: "Page2",
-						target: "page2"
-					}
-				],
-				targets: {
-					page1: {
-						viewName: "Main",
-						viewLevel: 0
-					},
-					page2: {
-						viewName: "Comparison",
-						viewLevel: 1
-					}
-				}
-			}
+		    manifest: "json"
 		},
 
 		init : function () {

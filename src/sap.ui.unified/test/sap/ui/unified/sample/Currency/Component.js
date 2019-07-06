@@ -5,25 +5,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.ui.unified.sample.Currency.Component", {
 
 		metadata : {
-			rootView : {
-				"viewName": "sap.ui.unified.sample.Currency.View",
-				"type": "XML",
-				"async": true
-			},
-			dependencies : {
-				libs : [
-					"sap.ui.unified"
-				]
-			},
-
-			config : {
-				sample : {
-					files : [
-						"View.view.xml",
-						"Controller.controller.js"
-					]
-				}
-			}
+		    manifest: "json"
 		}
 	});
 

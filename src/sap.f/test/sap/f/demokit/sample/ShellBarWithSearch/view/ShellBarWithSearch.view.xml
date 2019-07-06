@@ -1,5 +1,5 @@
 <mvc:View controllerName="sap.f.sample.ShellBarWithSearch.controller.ShellBarWithSearch"
-	xmlns:mvc="sap.ui.mvc"
+	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.f"
 	xmlns:m="sap.m" height="100%">
 	<ShellBar title="Application Title"

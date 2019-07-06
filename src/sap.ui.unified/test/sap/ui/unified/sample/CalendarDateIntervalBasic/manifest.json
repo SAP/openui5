@@ -1,0 +1,38 @@
+{
+	"sap.app": {
+		"id": "sap.ui.unified.sample.CalendarDateIntervalBasic",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.unified.sample.CalendarDateIntervalBasic.CalendarDateIntervalBasic",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.unified": {},
+				"sap.m": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "../style.css"
+				}
+			]
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"CalendarDateIntervalBasic.view.xml",
+					"CalendarDateIntervalBasic.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

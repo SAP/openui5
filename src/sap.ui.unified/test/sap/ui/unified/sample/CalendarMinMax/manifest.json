@@ -1,0 +1,36 @@
+{
+	"sap.app": {
+		"id": "sap.ui.unified.sample.CalendarMinMax",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.unified.sample.CalendarMinMax.CalendarMinMax",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.unified": {}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "../style.css"
+				}
+			]
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"CalendarMinMax.view.xml",
+					"CalendarMinMax.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

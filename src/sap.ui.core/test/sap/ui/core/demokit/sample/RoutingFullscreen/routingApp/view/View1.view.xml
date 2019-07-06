@@ -1,6 +1,7 @@
-<View
+<mvc:View
 	xmlns="sap.m"
 	xmlns:layout="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
 	controllerName="sap.ui.core.sample.RoutingFullscreen.routingApp.controller.View1">
 	<Page
 		title="First Page">
@@ -11,4 +12,4 @@
 			</layout:VerticalLayout>
 		</content>
 	</Page>
-</View>
+</mvc:View>

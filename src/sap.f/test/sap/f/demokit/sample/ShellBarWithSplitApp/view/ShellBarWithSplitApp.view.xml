@@ -1,5 +1,5 @@
-<core:View height="100%"
-	xmlns:core="sap.ui.core"
+<mvc:View height="100%"
+	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
 	xmlns:f="sap.f"
 	xmlns:tnt="sap.tnt" controllerName="sap.f.sample.ShellBarWithSplitApp.controller.ShellBarWithSplitApp">
@@ -175,4 +175,4 @@
 			</NavContainer>
 		</tnt:mainContents>
 	</tnt:ToolPage>
-</core:View>
+</mvc:View>
