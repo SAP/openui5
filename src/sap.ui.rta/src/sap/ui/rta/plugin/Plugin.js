@@ -181,7 +181,7 @@ function(
 				this._isEditable(oOverlay, mPropertyBag);
 
 			// handle promise return value by _isEditable function
-			if (vEditable instanceof Promise) {
+			if (vEditable && typeof vEditable.then === "function") {
 				// intentional interruption of the promise chain
 				vEditable.then(function(vEditablePromiseValue) {
 					this._handleModifyPluginList(oOverlay, vEditablePromiseValue);
@@ -199,7 +199,7 @@ function(
 			}.bind(this))
 			.catch(function() {
 				this.setProcessingStatus(false);
-			});
+			}.bind(this));
 		} else {
 			this.setProcessingStatus(false);
 		}
@@ -331,7 +331,7 @@ function(
 		}
 
 		if (sChangeType) {
-			return this.hasChangeHandler(sChangeType, oElement, true)
+			return this.hasChangeHandler(sChangeType, oElement)
 				.then(function(bHasChangeHandler) {
 					return bHasChangeHandler;
 				});
@@ -356,15 +356,11 @@ function(
 		}
 	};
 
-	BasePlugin.prototype.hasChangeHandler = function(sChangeType, oElement, bAsync) {
-		if (bAsync === true) {
-			return Promise.resolve()
-			.then(this._getChangeHandler.bind(this, sChangeType, oElement))
+	BasePlugin.prototype.hasChangeHandler = function(sChangeType, oElement) {
+		return this._getChangeHandler(sChangeType, oElement)
 			.then(function(oChangeHandler) {
 				return !!oChangeHandler;
 			});
-		}
-		return !!this._getChangeHandler(sChangeType, oElement);
 	};
 
 	BasePlugin.prototype._getChangeHandler = function(sChangeType, oElement, sControlType) {

@@ -706,7 +706,7 @@ sap.ui.define([
 				// make sure that everything that goes with finishing the apply process is done, even though the change was already applied
 				oResult = {success: true};
 				oChange.markFinished(oResult);
-				return new Utils.FakePromise(oResult);
+				return oResult;
 			}.bind(this));
 	};
 

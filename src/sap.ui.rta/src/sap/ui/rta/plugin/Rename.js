@@ -164,7 +164,7 @@ sap.ui.define([
 			if (oRenameAction.changeOnRelevantContainer) {
 				oElement = oOverlay.getRelevantContainer();
 			}
-			return this.hasChangeHandler(oRenameAction.changeType, oElement, true)
+			return this.hasChangeHandler(oRenameAction.changeType, oElement)
 				.then(function(bHasChangeHandler) {
 					return bHasChangeHandler
 						&& this._checkRelevantContainerStableID(oRenameAction, oOverlay)

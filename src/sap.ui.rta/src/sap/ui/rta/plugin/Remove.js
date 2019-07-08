@@ -69,7 +69,7 @@ sap.ui.define([
 			if (oRemoveAction.changeOnRelevantContainer) {
 				oElement = oElementOverlay.getRelevantContainer();
 			}
-			return this.hasChangeHandler(oRemoveAction.changeType, oElement, true)
+			return this.hasChangeHandler(oRemoveAction.changeType, oElement)
 				.then(function(bHasChangeHandler) {
 					return bHasChangeHandler
 						&& this._checkRelevantContainerStableID(oRemoveAction, oElementOverlay)

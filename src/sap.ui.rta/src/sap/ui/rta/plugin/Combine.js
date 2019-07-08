@@ -45,7 +45,7 @@ sap.ui.define([
 		var oCombineAction = this.getAction(oOverlay);
 		if (!oOverlay.isRoot() && oCombineAction && oCombineAction.changeType && oCombineAction.changeOnRelevantContainer) {
 			var oRelevantContainer = oOverlay.getRelevantContainer();
-			return this.hasChangeHandler(oCombineAction.changeType, oRelevantContainer, true)
+			return this.hasChangeHandler(oCombineAction.changeType, oRelevantContainer)
 				.then(function(bHasChangeHandler) {
 					return bHasChangeHandler &&
 						this.hasStableId(oOverlay) &&

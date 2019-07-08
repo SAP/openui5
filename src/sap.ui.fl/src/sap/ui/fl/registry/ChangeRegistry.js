@@ -162,42 +162,38 @@ sap.ui.define([
 
 	/**
 	 * Returns the Change Registry Item for a specific control instance (if available)
-	 * @param  {string} sChangeType Change type of a <code>sap.ui.fl.Change</code> change
-	 * @param  {sap.ui.core.Control} oControl  The control instance for which the registry item will be retrieved
-	 * @param  {sap.ui.core.util.reflection.BaseTreeModifier} oModifier Control tree modifier
-	 * @return {sap.ui.fl.registry.ChangeRegistryItem|undefined} Returns the registry item or undefined if not found
+	 * @param  {string} sChangeType - Change type of a <code>sap.ui.fl.Change</code> change
+	 * @param  {sap.ui.core.Control} oControl - Control instance for which the registry item will be retrieved
+	 * @param  {sap.ui.core.util.reflection.BaseTreeModifier} oModifier - Control tree modifier
+	 * @return {promise.<sap.ui.fl.registry.ChangeRegistryItem>|sap.ui.fl.Utils.FakePromise.<undefined>} Registry item wrapped in a promise or undefined wrapped in a FakePromise if not found
 	 * @private
 	 */
 	ChangeRegistry.prototype._getInstanceSpecificChangeRegistryItem = function (sChangeType, oControl, oModifier) {
 		var sChangeHandlerModulePath = oModifier.getChangeHandlerModulePath(oControl);
-		var oChangeHandlers = {}, vChangeHandler, oChangeHandler,
-			oSimpleChange, sControlType, oChangeRegistryItem;
 		if (typeof sChangeHandlerModulePath !== "string") {
-			return undefined; // continue without a registration
+			return new Utils.FakePromise(undefined); // continue without a registration
 		}
-
-		try {
-			oChangeHandlers = sap.ui.requireSync(sChangeHandlerModulePath);
-		} catch (error) {
-			Utils.log.error("Flexibility registration for control " + oModifier.getId(oControl) +
-				" failed to load module " + sChangeHandlerModulePath + "\n" + error.message);
-			return undefined; // continue without a registration
-		}
-
-		vChangeHandler = oChangeHandlers[sChangeType];
-		if (!vChangeHandler) {
-			return undefined;
-		}
-
-		oChangeHandler = this._getChangeHandlerEntry(sChangeType, vChangeHandler);
-		oSimpleChange = {
-			changeType: sChangeType,
-			changeHandler: oChangeHandler.changeHandler,
-			layers:oChangeHandler.layers
-		};
-		sControlType = oModifier.getControlType(oControl);
-		oChangeRegistryItem = this._createChangeRegistryItemForSimpleChange(sControlType, oSimpleChange);
-		return oChangeRegistryItem;
+		return Utils.requireAsync(sChangeHandlerModulePath)
+			.then(function(oChangeHandlers) {
+				var vChangeHandler = oChangeHandlers[sChangeType];
+				if (!vChangeHandler) {
+					return undefined;
+				}
+				var oChangeHandler = this._getChangeHandlerEntry(sChangeType, vChangeHandler);
+				var oSimpleChange = {
+					changeType: sChangeType,
+					changeHandler: oChangeHandler.changeHandler,
+					layers:oChangeHandler.layers
+				};
+				var sControlType = oModifier.getControlType(oControl);
+				var oChangeRegistryItem = this._createChangeRegistryItemForSimpleChange(sControlType, oSimpleChange);
+				return oChangeRegistryItem;
+			}.bind(this))
+			.catch(function(oError) {
+				Utils.log.error("Flexibility registration for control " + oModifier.getId(oControl) +
+					" failed to load module " + sChangeHandlerModulePath + "\n" + oError.message);
+				return undefined; // continue without a registration
+			});
 	};
 
 	/**
@@ -265,32 +261,30 @@ sap.ui.define([
 	/**
 	 * Retrieve the change handler for a certain change type and control
 	 * @param  {string} sChangeType - Change type of a <code>sap.ui.fl.Change</code> change
-	 * @param  {string} sControlType - Name of the ui5 control type i.e. <code>sap.m.Button</code>
+	 * @param  {string} sControlType - Name of the ui5 control type i.e. sap.m.Button
 	 * @param  {sap.ui.core.Control} oControl - Control instance for which the change handler will be retrieved
 	 * @param  {sap.ui.core.util.reflection.BaseTreeModifier} oModifier - Control tree modifier
 	 * @param  {string} sLayer - Layer to be considered when getting the change handlers
-	 * @param  {boolean} bAsync - temporary solution for async restructuring. Get rid with the following change: 4161607
-	 * @return {promise.<object>|object} Change handler object wrapped in promise if bAsync is <code>true</code>
+	 * @return {promise.<object>|sap.ui.fl.Utils.FakePromise.<object>} Change handler object wrapped in a promise or FakePromise
 	 */
 	ChangeRegistry.prototype.getChangeHandler = function (sChangeType, sControlType, oControl, oModifier, sLayer) {
-		var oSpecificChangeRegistryItem, oChangeRegistryItem;
-
-		oSpecificChangeRegistryItem = this._getInstanceSpecificChangeRegistryItem(sChangeType, oControl, oModifier);
-		if (oSpecificChangeRegistryItem && oSpecificChangeRegistryItem.getChangeTypeMetadata) {
-			var oSpecificChangeHandler = oSpecificChangeRegistryItem.getChangeTypeMetadata().getChangeHandler();
-			if (oSpecificChangeHandler) {
-				return new Utils.FakePromise(oSpecificChangeHandler);
-			}
-		}
-
-		oChangeRegistryItem = this._getChangeRegistryItem(sChangeType, sControlType, sLayer);
-		if (oChangeRegistryItem && oChangeRegistryItem.getChangeTypeMetadata) {
-			var oOriginalChangeHandler = oChangeRegistryItem.getChangeTypeMetadata().getChangeHandler();
-			if (oOriginalChangeHandler) {
-				return new Utils.FakePromise(oOriginalChangeHandler);
-			}
-		}
-		return new Utils.FakePromise(undefined);
+		return this._getInstanceSpecificChangeRegistryItem(sChangeType, oControl, oModifier)
+			.then(function(oSpecificChangeRegistryItem) {
+				if (oSpecificChangeRegistryItem && oSpecificChangeRegistryItem.getChangeTypeMetadata) {
+					var oSpecificChangeHandler = oSpecificChangeRegistryItem.getChangeTypeMetadata().getChangeHandler();
+					if (oSpecificChangeHandler) {
+						return oSpecificChangeHandler;
+					}
+				}
+				var oChangeRegistryItem = this._getChangeRegistryItem(sChangeType, sControlType, sLayer);
+				if (oChangeRegistryItem && oChangeRegistryItem.getChangeTypeMetadata) {
+					var oOriginalChangeHandler = oChangeRegistryItem.getChangeTypeMetadata().getChangeHandler();
+					if (oOriginalChangeHandler) {
+						return oOriginalChangeHandler;
+					}
+				}
+				return undefined;
+			}.bind(this));
 	};
 
 	/**

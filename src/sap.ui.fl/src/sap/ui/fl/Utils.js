@@ -1359,7 +1359,7 @@ function(
 					return new Utils.FakePromise(vResolve);
 				} catch (oError) {
 					var vReject = oError;
-					return new Utils.FakePromise(vResolve, vReject);
+					return new Utils.FakePromise(undefined, vReject);
 				}
 			};
 
