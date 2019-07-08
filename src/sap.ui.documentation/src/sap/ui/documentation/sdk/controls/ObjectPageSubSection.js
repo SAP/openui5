@@ -29,20 +29,23 @@ sap.ui.define([
 			}
 		},
 
-		renderer: function (oRm, oControl) {
+		renderer: {
+			apiVersion: 2,
+
+			render: function (oRm, oControl) {
 			var aContent = oControl.getContent(),
 				iLen,
 				i;
 
-			oRm.write("<div>");
+			oRm.openStart("div").openEnd();
 
 			for (i = 0, iLen = aContent.length; i < iLen; i++) {
 				oRm.renderControl(aContent[i]);
 			}
 
-			oRm.write("</div>");
+			oRm.close("div");
 		}
-	});
+	}});
 
 	SDKObjectPageSubSection.prototype._getGrid = function () {
 		if (!this.getAggregation("_grid")) {

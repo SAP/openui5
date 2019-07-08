@@ -133,80 +133,81 @@ sap.ui.define([
 		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
 		 * @param {sap.ui.core.Control} oTitle an object representation of the control that should be rendered
 		 */
-		renderer: function (oRm, oTitle) {
+		renderer: {
+			apiVersion: 2,
+
+			render: function (oRm, oTitle) {
 			var oAssoTitle = oTitle._getTitle(),
 				sLevel = (oAssoTitle ? oAssoTitle.getLevel() : oTitle.getLevel()) || coreLibrary.TitleLevel.Auto,
 				bAutoLevel = sLevel == TitleLevel.Auto,
 				sTag = bAutoLevel ? "div" : sLevel;
 
-			oRm.write("<", sTag);
-			oRm.writeControlData(oTitle);
-			oRm.addClass("sapUiDocTitleLink");
-			oRm.addClass("sapMTitle");
-			oRm.addClass("sapMTitleStyle" + (oTitle.getTitleStyle() || coreLibrary.TitleLevel.Auto));
-			oRm.addClass("sapUiSelectable");
+			oRm.openStart(sTag.toLowerCase(), oTitle)
+				.class("sapUiDocTitleLink")
+				.class("sapMTitle")
+				.class("sapMTitleStyle" + (oTitle.getTitleStyle() || coreLibrary.TitleLevel.Auto))
+				.class("sapUiSelectable");
 
 			// adding wrap functionality begin
 			if (oTitle.getWrap()) {
-				oRm.addClass("wrap");
+				oRm.class("wrap");
 			} else {
-				oRm.addClass("sapMTitleNoWrap");
+				oRm.class("sapMTitleNoWrap");
 			}
 			// adding wrap functionality end
 
 			var sWidth = oTitle.getWidth();
 			if (!sWidth) {
-				oRm.addClass("sapMTitleMaxWidth");
+				oRm.class("sapMTitleMaxWidth");
 			} else {
-				oRm.addStyle("width", sWidth);
+				oRm.style("width", sWidth);
 			}
 
 			var sTextAlign = oTitle.getTextAlign();
 			if (sTextAlign && sTextAlign != TextAlign.Initial) {
-				oRm.addClass("sapMTitleAlign" + sTextAlign);
+				oRm.class("sapMTitleAlign" + sTextAlign);
 			}
 
-			if (oTitle.getParent() instanceof Toolbar) {
-				oRm.addClass("sapMTitleTB");
+			if (oTitle.getParent().isA("sap.m.Toolbar")) {
+				oRm.class("sapMTitleTB");
 			}
 
 			var sTooltip = oAssoTitle ? oAssoTitle.getTooltip_AsString() : oTitle.getTooltip_AsString();
 			if (sTooltip) {
-				oRm.writeAttributeEscaped("title", sTooltip);
+				oRm.attr("title", sTooltip);
 			}
 
 			if (bAutoLevel) {
-				oRm.writeAttribute("role", "heading");
+				oRm.attr("role", "heading");
 			}
 
-			oRm.writeClasses();
-			oRm.writeStyles();
-
-			oRm.write(">");
+			oRm.openEnd();
 
 			// adding link functionality begin
-			oRm.write("<a");
-			oRm.addClass("sapMLnk");
+			oRm.openStart("a")
+				.class("sapMLnk");
+
 			if (oTitle.getText()) {
-				oRm.writeAttribute("tabindex", "0");
+				oRm.attr("tabindex", "0");
 			} else {
-				oRm.writeAttribute("tabindex", "-1");
+				oRm.attr("tabindex", "-1");
 			}
-			oRm.writeAttributeEscaped("href", oTitle.getHref());
+			oRm.attr("href", oTitle.getHref());
 			if (oTitle.getTarget()) {
-				oRm.writeAttributeEscaped("target", oTitle.getTarget());
+				oRm.attr("target", oTitle.getTarget());
 			}
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openEnd();
 			// adding link functionality end
 
-			oRm.write("<span");
-			oRm.writeAttribute("id", oTitle.getId() + "-inner");
-			oRm.write(">");
-			oRm.writeEscaped(oAssoTitle ? oAssoTitle.getText() : oTitle.getText());
-			oRm.write("</span></a></", sTag, ">");
+			oRm.openStart("span", oTitle.getId() + "-inner")
+				.openEnd()
+				.text(oAssoTitle ? oAssoTitle.getText() : oTitle.getText());
+
+			oRm.close("span")
+				.close("a")
+				.close(sTag.toLowerCase());
 		}
-	});
+	}});
 
 	return TitleLink;
 });
