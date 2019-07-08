@@ -9,6 +9,7 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/m/Input",
 	"sap/m/Button",
+	"sap/m/Panel",
 	"sap/ui/model/type/String",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Text",
@@ -25,6 +26,7 @@ sap.ui.define([
 	jQuery,
 	Input,
 	Button,
+	Panel,
 	TypeString,
 	JSONModel,
 	Text,
@@ -1981,59 +1983,6 @@ sap.ui.define([
 		delete window.CustomInput;
 	});
 
-	if (sap.ui.Device.browser.msie) {
-		QUnit.test("iE11 should mark event invalid when it is rendered with a non ASCII symbol", function (assert) {// TODO remove after 1.62 version
-
-			var done = assert.async();
-			var oninputOverride = function (event) {
-				InputBase.prototype.oninput.call(this, event);
-
-				assert.ok(event.isMarked("invalid"), "input event is marked as invalid");
-
-				this.destroy();
-
-				done();
-			};
-
-			var oInput = new InputBase({
-				value: 'ä'
-			}).placeAt("content");
-
-			oInput.oninput = oninputOverride;
-			sap.ui.getCore().applyChanges();
-		});
-
-		QUnit.test("iE11 should mark event invalid when is fired with the same value", function (assert) {// TODO remove after 1.62 version
-
-			var done = assert.async();
-			var oninputOverride = function (event) {
-				InputBase.prototype.oninput.call(this, event);
-
-				assert.ok(event.isMarked("invalid"), "input event is marked as invalid");
-
-				this.destroy();
-
-				done();
-			};
-
-			var oInput = new InputBase({
-				value: ''
-			}).placeAt("content");
-
-			oInput.oninput = oninputOverride;
-			sap.ui.getCore().applyChanges();
-
-			oInput.oninput({
-				setMarked: function (vl) {
-					this.invalid = vl === "invalid";
-				},
-				isMarked: function () {
-					return this.invalid;
-				}
-			});
-		});
-	}
-
 	QUnit.test("Renderer Hooks", function(assert) {
 		InputBase.extend("my.TextField", {
 			metadata: {
@@ -2176,6 +2125,186 @@ sap.ui.define([
 		// cleanup
 		oInput.destroy();
 	});
+
+	QUnit.test("IE should mark event invalid when is fired with the same value", function (assert) {// TODO remove after 1.62 version
+		this.stub(Device, "browser", {
+			msie: true,
+			version: 11
+		});
+
+		var done = assert.async();
+		var oninputOverride = function (event) {
+			InputBase.prototype.oninput.call(this, event);
+
+			assert.ok(event.isMarked("invalid"), "input event is marked as invalid");
+
+			this.destroy();
+
+			done();
+		};
+
+		var oInput = new InputBase({
+			value: ''
+		}).placeAt("content");
+
+		oInput.oninput = oninputOverride;
+		sap.ui.getCore().applyChanges();
+
+		oInput.oninput({
+			setMarked: function (vl) {
+				this.invalid = vl === "invalid";
+			},
+			isMarked: function () {
+				return this.invalid;
+			}
+		});
+	});
+
+
+	QUnit.module("invalid input event when rendered with non-ASCII symbols", {
+		beforeEach: function () {
+			sinon.config.useFakeTimers = false;
+		},
+		afterEach: function () {
+			sinon.config.useFakeTimers = true;
+		}
+	});
+
+	QUnit.test("In IE an Input with a non ASCII symbol should mark 'oninput' event invalid when it is rendered", function (assert) {// TODO remove after 1.62 version
+
+		var done = assert.async();
+		var callCount = 0;
+		var isInvalid = false;
+
+		var oninputOverride = function (event) {
+			InputBase.prototype.oninput.call(this, event);
+			callCount++;
+			isInvalid = event.isMarked("invalid");
+		};
+
+		var oInput = new InputBase({
+			value: 'ä'
+		}).placeAt("content");
+
+		oInput.oninput = oninputOverride;
+		sap.ui.getCore().applyChanges();
+
+		setTimeout(function () {
+			if (callCount) {
+				assert.ok(isInvalid, "if the oninput event is called, it should be is marked as invalid");
+			} else {
+				assert.ok(true, "the oninput event is not called");
+			}
+
+			callCount = 0;
+			oInput._$input.focus().val("ab").trigger("input");
+
+			setTimeout(function () {
+				assert.strictEqual(callCount, 1, "the oninput event is fired");
+				assert.notOk(isInvalid, "the oninput event is valid");
+
+				oInput.destroy();
+				done();
+
+			}, 100);
+		}, 100);
+	});
+
+	QUnit.test("In IE an Input with a non ASCII symbol should mark 'oninput' event invalid when it is invalidated", function (assert) {// TODO remove after 1.62 version
+
+		var done = assert.async();
+		var callCount = 0;
+		var isInvalid = false;
+
+		var oninputOverride = function (event) {
+			InputBase.prototype.oninput.call(this, event);
+			callCount++;
+			isInvalid = event.isMarked("invalid");
+		};
+
+		var oInput = new InputBase({
+			value: 'ä'
+		}).placeAt("content");
+
+		sap.ui.getCore().applyChanges();
+
+		setTimeout(function () {
+			oInput.oninput = oninputOverride;
+
+			oInput.invalidate();
+			sap.ui.getCore().applyChanges();
+
+			setTimeout(function () {
+				if (callCount) {
+					assert.ok(isInvalid, "if the oninput event is called, it should be is marked as invalid");
+				} else {
+					assert.ok(true, "the oninput event is not called");
+				}
+
+				callCount = 0;
+				oInput._$input.focus().val("ab").trigger("input");
+
+				setTimeout(function () {
+					assert.strictEqual(callCount, 1, "the oninput event is fired");
+					assert.notOk(isInvalid, "the oninput event is valid");
+
+					oInput.destroy();
+					done();
+
+				}, 100);
+			}, 100);
+		}, 100);
+	});
+
+	QUnit.test("In IE an Input with a non ASCII symbol should mark 'oninput' event invalid when its parent is invalidated", function (assert) {// TODO remove after 1.62 version
+
+		var done = assert.async();
+		var callCount = 0;
+		var isInvalid = false;
+
+		var oninputOverride = function (event) {
+			InputBase.prototype.oninput.call(this, event);
+			callCount++;
+			isInvalid = event.isMarked("invalid");
+		};
+
+		var oInput = new InputBase({
+			value: 'ä'
+		});
+
+		var oPanel = new Panel({
+			content: oInput
+		}).placeAt('content');
+		sap.ui.getCore().applyChanges();
+
+		setTimeout(function () {
+			oInput.oninput = oninputOverride;
+
+			oPanel.invalidate();
+			sap.ui.getCore().applyChanges();
+
+			setTimeout(function () {
+				if (callCount) {
+					assert.ok(isInvalid, "if the oninput event is called, it should be is marked as invalid");
+				} else {
+					assert.ok(true, "the oninput event is not called");
+				}
+
+				callCount = 0;
+				oInput._$input.focus().val("ab").trigger("input");
+
+				setTimeout(function () {
+					assert.strictEqual(callCount, 1, "the oninput event is fired");
+					assert.notOk(isInvalid, "the oninput event is valid");
+
+					oInput.destroy();
+					done();
+
+				}, 100);
+			}, 100);
+		}, 100);
+	});
+
 
 	QUnit.module("Width calculations");
 
