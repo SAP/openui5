@@ -2603,7 +2603,6 @@ function(
 	 *
 	 * @param {sap.ui.core.Item | sap.ui.core.ID | string} oItem The item to be removed
 	 * @returns {sap.ui.core.ID | null} The removed selectedItem or null
-	 * @override
 	 * @public
 	 */
 	MultiComboBox.prototype.removeSelectedItem = function(oItem) {
@@ -2634,7 +2633,6 @@ function(
 	 * Removes all the controls in the association named selectedItems.
 	 *
 	 * @returns {sap.ui.core.ID[]} An array of the removed elements (might be empty)
-	 * @override
 	 * @public
 	 */
 	MultiComboBox.prototype.removeAllSelectedItems = function() {
@@ -2690,7 +2688,7 @@ function(
 	 *
 	 * @param {string[]} aKeys Keys of items to be set as selected
 	 * @returns {sap.m.MultiComboBox} <code>this</code> to allow method chaining.
-	 * @override
+	 * @public
 	 */
 	MultiComboBox.prototype.setSelectedKeys = function (aKeys) {
 		if (this._bInitialSettersCompleted) {
