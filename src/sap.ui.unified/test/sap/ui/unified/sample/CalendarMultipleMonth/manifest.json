@@ -1,0 +1,36 @@
+{
+	"sap.app": {
+		"id": "sap.ui.unified.sample.CalendarMultipleMonth",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.unified.sample.CalendarMultipleMonth.CalendarMultipleMonth",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.unified": {}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "../style.css"
+				}
+			]
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"CalendarMultipleMonth.view.xml",
+					"CalendarMultipleMonth.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

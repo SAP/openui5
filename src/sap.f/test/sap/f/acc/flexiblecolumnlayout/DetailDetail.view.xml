@@ -1,4 +1,4 @@
-<View xmlns="sap.m" displayBlock="true" controllerName="flexiblecolumnlayout.DetailDetail" height="100%">
+<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" displayBlock="true" controllerName="flexiblecolumnlayout.DetailDetail" height="100%">
 	<Page title="Detail detail page" titleLevel="H3">
         <headerContent>
             <Button icon="sap-icon://decline" press="handleClose" tooltip="Close column" visible="{= ${/actionButtonsInfo/endColumn/closeColumn} !== null }"/>
@@ -7,4 +7,4 @@
             <Button text="Button"/>
         </content>
     </Page>
-</View>
+</mvc:View>

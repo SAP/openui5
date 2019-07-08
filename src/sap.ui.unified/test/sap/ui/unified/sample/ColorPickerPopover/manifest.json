@@ -1,0 +1,29 @@
+{
+	"sap.app": {
+		"id": "sap.ui.unified.sample.ColorPickerPopover",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.unified.sample.ColorPickerPopover.ColorPickerPopover",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.unified": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"ColorPickerPopover.view.xml",
+					"ColorPickerPopover.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

@@ -1,4 +1,4 @@
-<m:View xmlns="sap.uxap" xmlns:m="sap.m" xmlns:layout="sap.ui.layout" displayBlock="true" controllerName="flexiblecolumnlayout.DetailDetail"
+<mvc:View xmlns="sap.uxap" xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:layout="sap.ui.layout" displayBlock="true" controllerName="flexiblecolumnlayout.DetailDetail"
 		height="100%">
 
 	<ObjectPageLayout id="ObjectPageLayout"
@@ -232,4 +232,4 @@
 
 		</sections>
 	</ObjectPageLayout>
-</m:View>
+</mvc:View>

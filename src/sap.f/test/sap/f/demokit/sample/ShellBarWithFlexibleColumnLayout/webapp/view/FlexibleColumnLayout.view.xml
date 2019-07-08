@@ -1,4 +1,5 @@
-<View xmlns="sap.f"
+<mvc:View xmlns="sap.f"
+	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:m="sap.m"
 	displayBlock="true"
 	controllerName="sap.f.ShellBarWithFlexibleColumnLayout.controller.FlexibleColumnLayout"
@@ -19,4 +20,4 @@
 		</m:customHeader>
 		<FlexibleColumnLayout id="fcl" stateChange="onStateChanged" layout="{/layout}" backgroundDesign="Solid"/>
 	</m:Page>
-</View>
+</mvc:View>

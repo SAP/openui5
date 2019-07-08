@@ -1,0 +1,30 @@
+{
+	"sap.app": {
+		"id": "sap.ui.unified.sample.MenuItemEventing",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.unified.sample.MenuItemEventing.MenuItemEventing",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.unified": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"MenuItemEventing.view.xml",
+					"MenuItemEventing.fragment.xml",
+					"MenuItemEventing.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

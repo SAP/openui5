@@ -1,4 +1,4 @@
-<View xmlns="sap.m" xmlns:widgets="sap.ui.integration.widgets" xmlns:host="sap.ui.integration.host" xmlns:mvc="sap.ui.core.mvc" 
+<mvc:View xmlns="sap.m" xmlns:widgets="sap.ui.integration.widgets" xmlns:host="sap.ui.integration.host" xmlns:mvc="sap.ui.core.mvc"
 	displayBlock="true"
 	controllerName="sap.ui.integration.sample.HostConfigurationUsage.Main" 
 	height="100%">
@@ -88,6 +88,6 @@
 			</FlexBox>
 		</Panel>
 	</ScrollContainer>
-</View>
+</mvc:View>
 
 

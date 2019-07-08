@@ -1,4 +1,4 @@
-<View
+<mvc:View
 	xmlns="sap.f"
 	xmlns:mvc="sap.ui.core.mvc"
 	displayBlock="true"
@@ -9,4 +9,4 @@
 		stateChange="onStateChanged"
 		layout="{/layout}"
 		backgroundDesign="Solid" />
-</View>
+</mvc:View>

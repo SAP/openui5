@@ -1,6 +1,7 @@
-<View
+<mvc:View
 	xmlns="sap.m"
 	xmlns:layout="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
 	controllerName="sap.m.sample.ComparisonPattern.app.controller.Main">
 	<Page title="First Page">
 		<content>
@@ -69,4 +70,4 @@
 			</Table>
 		</content>
 	</Page>
-</View>
+</mvc:View>

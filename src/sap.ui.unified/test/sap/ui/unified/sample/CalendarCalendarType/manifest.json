@@ -1,0 +1,36 @@
+{
+	"sap.app": {
+		"id": "sap.ui.unified.sample.CalendarCalendarType",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.unified.sample.CalendarCalendarType.CalendarCalendarType",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.unified": {}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "../style.css"
+				}
+			]
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"CalendarCalendarType.view.xml",
+					"CalendarCalendarType.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

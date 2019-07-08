@@ -1,0 +1,36 @@
+{
+	"sap.app": {
+		"id": "sap.ui.unified.sample.CalendarSingleDaySelection",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.unified.sample.CalendarSingleDaySelection.CalendarSingleDaySelection",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.unified": {}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "../style.css"
+				}
+			]
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"CalendarSingleDaySelection.view.xml",
+					"CalendarSingleDaySelection.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

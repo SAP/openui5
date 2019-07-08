@@ -1,0 +1,36 @@
+{
+	"sap.app": {
+		"id": "sap.ui.unified.sample.CalendarSingleIntervalSelection",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.unified.sample.CalendarSingleIntervalSelection.CalendarSingleIntervalSelection",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.unified": {}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "../style.css"
+				}
+			]
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"CalendarSingleIntervalSelection.view.xml",
+					"CalendarSingleIntervalSelection.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

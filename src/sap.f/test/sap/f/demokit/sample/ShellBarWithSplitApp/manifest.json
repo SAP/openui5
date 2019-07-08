@@ -13,6 +13,8 @@
 		},
 		"dependencies": {
 			"libs": {
+				"sap.f": {},
+				"sap.m": {},
 				"sap.tnt": {}
 			}
 		},
@@ -20,8 +22,9 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"view/ShellBarWithSplitApp.view.xml",
 					"controller/ShellBarWithSplitApp.controller.js",
+					"model/model.json",
+					"view/ShellBarWithSplitApp.view.xml",
 					"manifest.json"
 				]
 			}

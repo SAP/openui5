@@ -8,7 +8,7 @@ sap.ui.define([
 	{
 		metadata:
 		{
-			rootView: "sap.ui.core.internal.samples.composite.xmlcomposite.exTable.Test"
+			manifest: "json"
 		},
 		init: function() {
 

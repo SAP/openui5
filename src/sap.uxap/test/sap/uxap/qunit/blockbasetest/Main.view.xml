@@ -1,4 +1,4 @@
-<m:View xmlns="sap.uxap" xmlns:m="sap.m" xmlns:b="sap.uxap.testblocks.objectpageblock" displayBlock="true" controllerName="blockbasetest.Main"
+<mvc:View xmlns="sap.uxap" xmlns:m="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:b="sap.uxap.testblocks.objectpageblock" displayBlock="true" controllerName="blockbasetest.Main"
         height="100%">
 
     <ObjectPageLayout id="ObjectPageLayout">
@@ -24,4 +24,4 @@
 
         </sections>
     </ObjectPageLayout>
-</m:View>
+</mvc:View>

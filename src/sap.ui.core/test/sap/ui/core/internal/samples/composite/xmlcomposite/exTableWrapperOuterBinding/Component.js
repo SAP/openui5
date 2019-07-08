@@ -8,7 +8,7 @@ sap.ui.define([
 	{
 		metadata:
 		{
-			rootView: "sap.ui.core.internal.samples.composite.xmlcomposite.exTableWrapperOuterBinding.Test"
+			manifest: "json"
 		},
 		init: function() {
 

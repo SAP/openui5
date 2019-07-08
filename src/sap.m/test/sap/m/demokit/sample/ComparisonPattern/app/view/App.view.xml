@@ -1,4 +1,4 @@
-<View xmlns="sap.m" height="100%">
+<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" height="100%">
 	<App id="rootControl">
 	</App>
-</View>
+</mvc:View>

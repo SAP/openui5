@@ -5,26 +5,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.ui.unified.sample.ColorPicker.Component", {
 
 		metadata : {
-			rootView : {
-				"viewName": "sap.ui.unified.sample.ColorPickerSimplified.View",
-				"type": "XML",
-				"async": true
-			},
-			dependencies : {
-				libs : [
-					"sap.ui.unified",
-					"sap.m"
-				]
-			},
-			config : {
-				sample : {
-					stretch : true,
-					files : [
-						"View.view.xml",
-						"Controller.controller.js"
-					]
-				}
-			}
+		    manifest: "json"
 		}
 	});
 

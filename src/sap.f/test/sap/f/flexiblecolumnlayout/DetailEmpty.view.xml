@@ -1,4 +1,4 @@
-<m:View xmlns="sap.uxap" xmlns:m="sap.m" xmlns:layout="sap.ui.layout" displayBlock="true" controllerName="flexiblecolumnlayout.DetailEmpty"
+<mvc:View xmlns="sap.uxap" xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:layout="sap.ui.layout" displayBlock="true" controllerName="flexiblecolumnlayout.DetailEmpty"
         height="100%">
 
     <m:Page title="Empty page">
@@ -13,4 +13,4 @@
     </m:Page>
 
 
-</m:View>
+</mvc:View>

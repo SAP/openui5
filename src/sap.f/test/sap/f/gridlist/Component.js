@@ -6,12 +6,7 @@ sap.ui.define([
 	return UIComponent.extend("sap.f.gridlist.Component", {
 
 		metadata : {
-			"rootView": {
-				"viewName": "sap.f.gridlist.view.Main",
-				"type": "XML",
-				"async": true,
-				"id": "app"
-			}
+			manifest: "json"
 		}
 	});
 

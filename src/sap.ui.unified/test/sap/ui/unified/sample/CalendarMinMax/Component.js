@@ -5,25 +5,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.ui.unified.sample.CalendarMinMax.Component", {
 
 		metadata : {
-			rootView : {
-				"viewName": "sap.ui.unified.sample.CalendarMinMax.CalendarMinMax",
-				"type": "XML",
-				"async": true
-			},
-			dependencies : {
-				libs : [
-					"sap.ui.unified"
-				]
-			},
-			includes: ["../style.css"],
-			config : {
-				sample : {
-					files : [
-						"CalendarMinMax.view.xml",
-						"CalendarMinMax.controller.js"
-					]
-				}
-			}
+		    manifest: "json"
 		}
 	});
 
