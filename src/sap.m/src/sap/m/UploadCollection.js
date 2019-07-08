@@ -2684,6 +2684,7 @@ sap.ui.define([
 			var i,
 				sRequestId = this._getRequestId(event),
 				sUploadedFile = event.getParameter("fileName"),
+				sUploaderId = event.getParameter("id"),
 				cItems,
 				oItemToDestroy,
 				aInProgressStates,
@@ -2705,6 +2706,12 @@ sap.ui.define([
 						oItemToDestroy.destroy();
 					}
 					this._oItemToUpdate = null;
+					break;
+				}
+			}
+			for (i = 0; i < this._aFileUploadersForPendingUpload.length; i++) {
+				if (this._aFileUploadersForPendingUpload[i].getId() === sUploaderId) {
+					this._aFileUploadersForPendingUpload[i].clear();
 					break;
 				}
 			}

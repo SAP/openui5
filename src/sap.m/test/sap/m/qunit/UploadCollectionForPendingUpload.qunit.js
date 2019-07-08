@@ -591,6 +591,39 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		assert.ok(fnFUUpload2.calledOnce, true, "'Upload' method of FileUploader should be called for each FU instance just once");
 	});
 
+	QUnit.test("Test Upload done only once", function(assert) {
+		var oFileUploader1 = this.oUploadCollection._getFileUploader();
+		var fnFUUpload1 = this.spy(oFileUploader1, "upload");
+		var that = this;
+		oFileUploader1.fireChange({
+			files: this.aFiles,
+			newValue: "file1"// needed to enable IE9 support and non failing tests
+		});
+		oFileUploader1.setValue("file1.txt");
+		this.oUploadCollection.upload();
+		this.oUploadCollection._onUploadComplete({
+			getParameter: function (name) {
+				switch (name) {
+					case "fileName":
+						return "file1.txt";
+					case "id":
+						return that.oUploadCollection._aFileUploadersForPendingUpload[0].getId();
+					case "status":
+						return 200;
+					default:
+						return null;
+				}
+			},
+			getParameters: function () {
+				return {};
+			}
+		});
+		assert.ok(fnFUUpload1.calledOnce, true, "'Upload' method of FileUploader should be called for each FU instance just once");
+		fnFUUpload1.reset();
+		this.oUploadCollection.upload();
+		assert.equal(fnFUUpload1.calledOnce, false, "'Upload' method shouldn't retrigger upload on uploaded files.");
+	});
+
 	QUnit.test("Test Upload with checks for file uploader visibility", function(assert) {
 		var oFileUploader1 = this.oUploadCollection._getFileUploader();
 		oFileUploader1.fireChange({
