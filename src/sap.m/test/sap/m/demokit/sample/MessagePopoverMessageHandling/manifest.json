@@ -7,22 +7,24 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.MessagePopoverMessageHandling.MessageHandling",
+			"viewName": "sap.m.sample.MessagePopoverMessageHandling.view.MessagePopoverMessageHandling",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
-				"sap.ui.core": {}
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"stretch": true,
 				"files": [
-					"MessageHandling.view.xml",
-					"MessageHandling.controller.js",
-					"FormsModel.json",
+					"view/MessagePopoverMessageHandling.view.xml",
+					"controller/MessagePopoverMessageHandling.controller.js",
+					"localService/mockdata/FormsModel.json",
 					"manifest.json"
 				]
 			}

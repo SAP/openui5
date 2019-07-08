@@ -1,7 +1,6 @@
 <mvc:View
-		controllerName="sap.m.sample.MessagePopoverMessageHandling.MessageHandling"
+		controllerName="sap.m.sample.MessagePopoverMessageHandling.controller.MessagePopoverMessageHandling"
 		height="100%"
-		xmlns:l="sap.ui.layout"
 		xmlns:f="sap.ui.layout.form"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:core="sap.ui.core"
@@ -111,7 +110,7 @@
 			</VBox>
 		</content>
 		<footer>
-			<Toolbar>
+			<OverflowToolbar>
 				<Button id="messagePopoverBtn" icon="sap-icon://message-popup" type="Emphasized"
 						text="{=${message>/}.length}"
 						visible="{=!!${message>/}.length}"
@@ -119,7 +118,7 @@
 				<ToolbarSpacer/>
 				<Button type="Emphasized" text="Save" press="_generateInvalidUserInput" />
 				<Button text="Cancel" />
-			</Toolbar>
+			</OverflowToolbar>
 		</footer>
 	</Page>
 </mvc:View>

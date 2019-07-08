@@ -1,7 +1,6 @@
 <mvc:View
-		controllerName="sap.m.sample.MessagePopover.C"
+		controllerName="sap.m.sample.MessagePopover.controller.MessagePopover"
 		height="100%"
-		xmlns:l="sap.ui.layout"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m">
 	<Page
@@ -10,11 +9,11 @@
 
 		</content>
 		<footer>
-			<Toolbar>
+			<OverflowToolbar>
 				<Button icon="sap-icon://message-popup" text="{/messagesLength}" type="Emphasized"
 						press="handleMessagePopoverPress"/>
 				<ToolbarSpacer/>
-			</Toolbar>
+			</OverflowToolbar>
 		</footer>
 	</Page>
 </mvc:View>

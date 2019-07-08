@@ -1,18 +1,22 @@
 sap.ui.define([
 	'sap/m/MessagePopover',
 	'sap/m/MessageItem',
-	'sap/m/Link',
 	'sap/m/MessageToast',
+	'sap/ui/core/message/Message',
+	'sap/ui/core/MessageType',
+	'sap/ui/core/Core',
 	'sap/ui/core/mvc/Controller',
-	'sap/ui/model/json/JSONModel'
-], function(MessagePopover, MessageItem, Link, MessageToast, Controller, JSONModel) {
+	'sap/ui/model/json/JSONModel',
+	'sap/ui/core/Element'
+], function(MessagePopover, MessageItem, MessageToast, Message, MessageType, Core, Controller, JSONModel, Element) {
 	"use strict";
-	return Controller.extend("sap.m.sample.MessagePopoverMessageHandling.MessageHandling", {
+
+	return Controller.extend("sap.m.sample.MessagePopoverMessageHandling.controller.MessagePopoverMessageHandling", {
 		onInit: function () {
-			var oModel = new JSONModel("./test-resources/sap/m/demokit/sample/MessagePopoverMessageHandling/FormsModel.json");
+			var oModel = new JSONModel("./test-resources/sap/m/demokit/sample/MessagePopoverMessageHandling/localService/mockdata/FormsModel.json");
 
 			this.oView = this.getView();
-			this._MessageManager = sap.ui.getCore().getMessageManager();
+			this._MessageManager = Core.getMessageManager();
 			this.oView.setModel(oModel);
 
 			this._MessageManager.registerObject(this.oView.byId("formContainer"), true);
@@ -31,12 +35,13 @@ sap.ui.define([
 
 		createMessagePopover: function () {
 			var that = this;
-			this.oMP = new sap.m.MessagePopover({
+
+			this.oMP = new MessagePopover({
 				activeTitlePress: function (oEvent) {
 					var oItem = oEvent.getParameter("item"),
 						oPage = that.oView.byId("messageHandlingPage"),
 						oMessage = oItem.getBindingContext("message").getObject(),
-						oControl = sap.ui.getCore().byId(oMessage.getControlId());
+						oControl = Element.registry.get(oMessage.getControlId());
 
 					if (oControl) {
 						oPage.scrollToElement(oControl.getDomRef(), 200, [0, -100]);
@@ -47,7 +52,7 @@ sap.ui.define([
 				},
 				items: {
 					path:"message>/",
-					template: new sap.m.MessageItem(
+					template: new MessageItem(
 						{
 							title: "{message>message}",
 							subtitle: "{message>additionalText}",
@@ -66,7 +71,7 @@ sap.ui.define([
 		getGroupName : function (sControlId) {
 			// the group name is generated based on the current layout
 			// and is specific for each use case
-			var oControl = sap.ui.getCore().byId(sControlId);
+			var oControl = Element.registry.get(sControlId);
 
 			if (oControl) {
 				var sFormSubtitle = oControl.getParent().getParent().getTitle().getText(),
@@ -100,9 +105,9 @@ sap.ui.define([
 
 			if (!oInput.getValue()) {
 				this._MessageManager.addMessages(
-					new sap.ui.core.message.Message({
+					new Message({
 						message: "A mandatory field is required",
-						type: sap.ui.core.MessageType.Error,
+						type: MessageType.Error,
 						additionalText: oInput.getLabels()[0].getText(),
 						target: sTarget,
 						processor: this.getView().getModel()
@@ -123,9 +128,9 @@ sap.ui.define([
 			} catch (oException) {
 				sValueState = "Warning";
 				this._MessageManager.addMessages(
-					new sap.ui.core.message.Message({
+					new Message({
 						message: "The value should not exceed 40",
-						type: sap.ui.core.MessageType.Warning,
+						type: MessageType.Warning,
 						additionalText: oInput.getLabels()[0].getText(),
 						description: "The value of the working hours field should not exceed 40 hours.",
 						target: sTarget,
