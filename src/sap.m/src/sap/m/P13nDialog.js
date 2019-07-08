@@ -638,6 +638,7 @@ sap.ui.define([
 			visible: this.getShowReset(),
 			enabled: this.getShowResetEnabled(),
 			press: function() {
+				sap.ui.getCore().byId(that.getId() + "-ok").focus();//set focus back to 'Ok' button after 'Restore' has been pressed
 				that.setShowResetEnabled(false);
 				var oPayload = {};
 				that.getPanels().forEach(function(oPanel) {
