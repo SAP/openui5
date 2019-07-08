@@ -1,6 +1,6 @@
 <mvc:View
 	height="100%"
-	controllerName="sap.m.sample.ComboBoxValueState.Page"
+	controllerName="sap.m.sample.ComboBoxValueState.controller.ComboBoxValueState"
 	xmlns:core="sap.ui.core"
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
@@ -30,6 +30,16 @@
 				</ComboBox>
 				<Label text="ComboBox in a Success state"></Label>
 				<ComboBox valueState="Success"
+						  items="{
+						path: '/CountriesCollection',
+						sorter: { path: 'text' },
+						suspended: true
+					}"
+						  loadItems="handleLoadItems">
+					<core:ListItem key="{key}" text="{text}"/>
+				</ComboBox>
+				<Label text="ComboBox in an Information state"></Label>
+				<ComboBox valueState="Information"
 						  items="{
 						path: '/CountriesCollection',
 						sorter: { path: 'text' },

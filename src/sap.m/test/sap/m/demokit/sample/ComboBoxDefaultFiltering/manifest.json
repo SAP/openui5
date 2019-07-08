@@ -7,21 +7,22 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.ComboBoxDefaultFiltering.Page",
+			"viewName": "sap.m.sample.ComboBoxDefaultFiltering.view.ComboBoxDefaultFiltering",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
-				"sap.m": {}
+				"sap.m": {},
+				"sap.ui.core": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"stretch": true,
 				"files": [
-					"Page.view.xml",
-					"Page.controller.js",
+					"view/ComboBoxDefaultFiltering.view.xml",
+					"controller/ComboBoxDefaultFiltering.controller.js",
 					"manifest.json"
 				]
 			}

@@ -1,6 +1,6 @@
 <mvc:View
 	height="100%"
-	controllerName="sap.m.sample.ComboBoxSearchBoth.Page"
+	controllerName="sap.m.sample.ComboBoxSearchBoth.controller.ComboBoxSearchBoth"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:l="sap.ui.layout"

@@ -1,21 +1,20 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Controller, JSONModel) {
+	], function(Controller, JSONModel) {
 	"use strict";
 
-	var PageController = Controller.extend("sap.m.sample.ComboBox2Columns.Page", {
+	return Controller.extend("sap.m.sample.ComboBoxLazyLoading.controller.ComboBoxLazyLoading", {
 
-		onInit: function () {
+		onInit: function() {
 
 			// set explored app's demo model on this sample
 			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/countriesExtendedCollection.json");
 			this.getView().setModel(oModel);
+		},
+
+		handleLoadItems: function(oControlEvent) {
+			oControlEvent.getSource().getBinding("items").resume();
 		}
 	});
-
-
-	return PageController;
-
 });

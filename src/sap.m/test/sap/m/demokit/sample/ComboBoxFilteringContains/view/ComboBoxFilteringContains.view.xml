@@ -1,20 +1,20 @@
 <mvc:View
-		height="100%"
-		controllerName="sap.m.sample.ComboBoxFilteringStartsWith.Page"
-		xmlns:core="sap.ui.core"
-		xmlns:mvc="sap.ui.core.mvc"
-		xmlns="sap.m">
+	height="100%"
+	controllerName="sap.m.sample.ComboBoxFilteringContains.controller.ComboBoxFilteringContains"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
 	<Page showHeader="false" class="sapUiContentPadding">
 		<content>
 			<VBox>
 				<items>
-					<Label text="Enter a search term, e.g. &quot;A&quot;, and see filtered list."/>
+					<Label text="Enter a search term, e.g. &quot;Ge&quot;, and see filtered list."/>
 					<ComboBox
 						id="combobox1"
 						showSecondaryValues= "true"
 						items="{
-						path: '/CountriesCollection',
-						sorter: { path: 'text' }
+							path: '/CountriesCollection',
+							sorter: { path: 'text' }
 						}">
 						<core:ListItem key="{key}" text="{text}" additionalText = "{key}"/>
 					</ComboBox>

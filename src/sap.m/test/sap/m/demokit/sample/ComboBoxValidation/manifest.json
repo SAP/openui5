@@ -7,22 +7,23 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.ComboBoxValidation.Page",
+			"viewName": "sap.m.sample.ComboBoxValidation.view.ComboBoxValidation",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
 				"sap.m": {},
-				"sap.ui.layout": {}
+				"sap.ui.layout": {},
+				"sap.ui.core": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"stretch": true,
 				"files": [
-					"Page.view.xml",
-					"Page.controller.js",
+					"view/ComboBoxValidation.view.xml",
+					"controller/ComboBoxValidation.controller.js",
 					"manifest.json"
 				]
 			}

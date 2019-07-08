@@ -7,21 +7,23 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.ComboBoxSearchBoth.Page",
+			"viewName": "sap.m.sample.ComboBoxSearchBoth.view.ComboBoxSearchBoth",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
-				"sap.m": {}
+				"sap.m": {},
+				"sap.ui.layout": {},
+				"sap.ui.core": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"stretch": true,
 				"files": [
-					"Page.view.xml",
-					"Page.controller.js",
+					"view/ComboBoxSearchBoth.view.xml",
+					"controller/ComboBoxSearchBoth.controller.js",
 					"manifest.json"
 				]
 			}

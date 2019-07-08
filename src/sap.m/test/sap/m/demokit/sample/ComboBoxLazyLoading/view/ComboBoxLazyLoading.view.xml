@@ -1,6 +1,6 @@
 <mvc:View
 	height="100%"
-	controllerName="sap.m.sample.ComboBoxLazyLoading.Page"
+	controllerName="sap.m.sample.ComboBoxLazyLoading.controller.ComboBoxLazyLoading"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
