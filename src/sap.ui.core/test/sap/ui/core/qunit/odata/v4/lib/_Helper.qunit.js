@@ -2356,4 +2356,18 @@ sap.ui.define([
 			oFixture.mQueryOptionsForPath);
 	});
 });
+
+	//*********************************************************************************************
+[
+	{sPath : "/foo/bar/baz", sResult : "baz"},
+	{sPath : "/foo/bar('baz')", sResult : "('baz')"},
+	{sPath : "/foo/bar", sResult : ""},
+	{sPath : "/foo", sResult : undefined},
+	{sPath : "/foo/barolo", sResult : undefined}
+].forEach(function (oFixture) {
+	QUnit.test("getRelativePath: " + oFixture.sPath, function (assert) {
+		// code under test
+		assert.strictEqual(_Helper.getRelativePath(oFixture.sPath, "/foo/bar"), oFixture.sResult);
+	});
+});
 });
