@@ -1,0 +1,13 @@
+{
+  "1.69.0": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "c88b7d1a1a97e230cf7cc80227fe1d08965fb6a2",
+        "type": "FIX",
+        "text": " Add missing library definition for elements in sub-namespace",
+        "references": []
+      }
+    ]
+  }
+}

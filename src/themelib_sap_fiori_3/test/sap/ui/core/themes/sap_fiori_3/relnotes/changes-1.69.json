@@ -1,0 +1,13 @@
+{
+  "1.69.0": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "344ff6c027330e4897c9e25ffd921350f4dbdd4a",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Active toolbar focus outline corrected",
+        "references": []
+      }
+    ]
+  }
+}

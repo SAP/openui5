@@ -1,0 +1,25 @@
+{
+  "1.69.0": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "eb4e9b62eb1c581f3c89a4e16f75376c7c5fa805",
+        "type": "FIX",
+        "text": " sap.ui.dt - fixed checkTargetZone bug in navigation mode",
+        "references": []
+      },
+      {
+        "id": "c7b3692d63729b8549cba5c1a86d4d57b162f144",
+        "type": "FIX",
+        "text": " sap.ui.rta - added smartlink mock in vm app",
+        "references": []
+      },
+      {
+        "id": "b7acefebd527192a6712880afe14fa2358792af3",
+        "type": "FIX",
+        "text": " sap.ui.rta - onElementModified handle addOrSetAggregation events",
+        "references": []
+      }
+    ]
+  }
+}

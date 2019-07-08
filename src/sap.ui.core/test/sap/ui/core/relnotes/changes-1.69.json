@@ -1,0 +1,19 @@
+{
+  "1.69.0": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "77577a877e328cd9a0bb5ceec9bf00f1f6a1aedd",
+        "type": "FEATURE",
+        "text": " ui5loader: support UMD shim also in async mode",
+        "references": []
+      },
+      {
+        "id": "aa3660ae51c08206fe7f22ddde93d986fddee90e",
+        "type": "FIX",
+        "text": " v2/ODataModel: Path cache invalidation",
+        "references": []
+      }
+    ]
+  }
+}

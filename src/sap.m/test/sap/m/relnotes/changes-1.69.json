@@ -1,0 +1,37 @@
+{
+  "1.69.0": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "c88b7d1a1a97e230cf7cc80227fe1d08965fb6a2",
+        "type": "FIX",
+        "text": " Add missing library definition for elements in sub-namespace",
+        "references": []
+      },
+      {
+        "id": "24455d06c957eb0b07c492a46419ac562c471a32",
+        "type": "FIX",
+        "text": " TimePickerSlider: Animation does not skip on item click",
+        "references": []
+      },
+      {
+        "id": "cf461695ec79954ba118102aa0ec9470182231f1",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: CSS styles reapplied",
+        "references": []
+      },
+      {
+        "id": "eaf62ae4e16f26d70def5564f0b671f4326aeab5",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: View\u0027s title is now always propagated to the view switch",
+        "references": []
+      },
+      {
+        "id": "d9903d9b2e585bb216e5dd98519f39bf3706872e",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Description reference added",
+        "references": []
+      }
+    ]
+  }
+}
