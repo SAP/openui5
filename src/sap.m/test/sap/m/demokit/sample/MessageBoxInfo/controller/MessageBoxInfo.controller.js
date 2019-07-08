@@ -4,7 +4,7 @@ sap.ui.define([
 	], function(MessageBox, Controller) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.MessageBoxInfo.C", {
+	return Controller.extend("sap.m.sample.MessageBoxInfo.controller.MessageBoxInfo", {
 
 		showTextInfo: function(oEvent) {
 			var bCompact = !!this.getView().$().closest(".sapUiSizeCompact").length;
@@ -56,10 +56,5 @@ sap.ui.define([
 
 			});
 		}
-
 	});
-
-
-	return CController;
-
 });

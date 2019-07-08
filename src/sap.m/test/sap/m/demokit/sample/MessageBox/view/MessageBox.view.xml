@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.m.sample.MessageBox.C"
+	controllerName="sap.m.sample.MessageBox.controller.MessageBox"
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">

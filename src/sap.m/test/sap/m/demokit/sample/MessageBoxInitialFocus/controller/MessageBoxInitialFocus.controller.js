@@ -1,12 +1,11 @@
 sap.ui.define([
 		'sap/m/MessageBox',
-		'sap/ui/core/Fragment',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function(MessageBox, Fragment, Controller, JSONModel) {
+	], function(MessageBox, Controller, JSONModel) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.MessageBoxInitialFocus.C", {
+	return Controller.extend("sap.m.sample.MessageBoxInitialFocus.controller.MessageBoxInitialFocus", {
 
 		onInit : function() {
 			// create any data and a model and set it to the view
@@ -47,8 +46,4 @@ sap.ui.define([
 			);
 		}
 	});
-
-
-	return CController;
-
 });
