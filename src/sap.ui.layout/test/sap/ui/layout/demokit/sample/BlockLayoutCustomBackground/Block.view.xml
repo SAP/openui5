@@ -12,36 +12,47 @@
                                title="Select Cells' Custom Color"
                                backgroundColorSet="{/colorSet}"
                                backgroundColorShade="{/shades/0}">
-                <f:SimpleForm editable="true" backgroundDesign="Transparent">
-                    <f:content>
-                        <Label text="Enable Custom Colors"/>
-                        <CheckBox selected="true" select="handleChecked"/>
+                <FlexBox height="100%"
+                         alignItems="Center"
+                         justifyContent="End">
+                    <items>
 
-                        <Label text="Select Color Set"/>
-                        <Select selectedKey="{/colorSet}" enabled="{/selectEnabled}">
-                            <core:Item key="ColorSet1" text="ColorSet1"/>
-                            <core:Item key="ColorSet2" text="ColorSet2"/>
-                            <core:Item key="ColorSet3" text="ColorSet3"/>
-                            <core:Item key="ColorSet4" text="ColorSet4"/>
-                            <core:Item key="ColorSet5" text="ColorSet5"/>
-                            <core:Item key="ColorSet6" text="ColorSet6"/>
-                            <core:Item key="ColorSet7" text="ColorSet7"/>
-                            <core:Item key="ColorSet8" text="ColorSet8"/>
-                            <core:Item key="ColorSet9" text="ColorSet9"/>
-                            <core:Item key="ColorSet10" text="ColorSet10"/>
-                            <core:Item key="ColorSet11" text="ColorSet11"/>
-                        </Select>
+                        <VBox>
+                            <layoutData>
+                                <FlexItemData growFactor="3" />
+                            </layoutData>
+                            <items>
+                                <Label text="Enable Custom Colors"/>
+                                <CheckBox selected="true" select="handleChecked"/>
 
-                        <Label text="Select Contrast Cells"/>
-                        <MultiComboBox selectionChange="handleContrastCellSelection"
-                                       selectedKeys="{/contrastCells}" enabled="{/selectEnabled}">
-                            <core:Item key="cell-1" text="Cell 1"/>
-                            <core:Item key="cell-2" text="Cell 2"/>
-                            <core:Item key="cell-3" text="Cell 3"/>
-                            <core:Item key="cell-4" text="Cell 4"/>
-                        </MultiComboBox>
-                    </f:content>
-                </f:SimpleForm>
+                                <Label text="Select Color Set"/>
+                                <Select selectedKey="{/colorSet}" enabled="{/selectEnabled}">
+                                    <core:Item key="ColorSet1" text="ColorSet1"/>
+                                    <core:Item key="ColorSet2" text="ColorSet2"/>
+                                    <core:Item key="ColorSet3" text="ColorSet3"/>
+                                    <core:Item key="ColorSet4" text="ColorSet4"/>
+                                    <core:Item key="ColorSet5" text="ColorSet5"/>
+                                    <core:Item key="ColorSet6" text="ColorSet6"/>
+                                    <core:Item key="ColorSet7" text="ColorSet7"/>
+                                    <core:Item key="ColorSet8" text="ColorSet8"/>
+                                    <core:Item key="ColorSet9" text="ColorSet9"/>
+                                    <core:Item key="ColorSet10" text="ColorSet10"/>
+                                    <core:Item key="ColorSet11" text="ColorSet11"/>
+                                </Select>
+
+                                <Label text="Select Contrast Cells"/>
+                                <MultiComboBox selectionChange="handleContrastCellSelection"
+                                               selectedKeys="{/contrastCells}" enabled="{/selectEnabled}">
+                                    <core:Item key="cell-1" text="Cell 1"/>
+                                    <core:Item key="cell-2" text="Cell 2"/>
+                                    <core:Item key="cell-3" text="Cell 3"/>
+                                    <core:Item key="cell-4" text="Cell 4"/>
+                                </MultiComboBox>
+                            </items>
+                        </VBox>
+
+                    </items>
+                </FlexBox>
             </l:BlockLayoutCell>
         </l:BlockLayoutRow>
         <l:BlockLayoutRow>
