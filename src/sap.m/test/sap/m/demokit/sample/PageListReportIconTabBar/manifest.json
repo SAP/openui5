@@ -7,20 +7,23 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.PageListReportIconTabBar.Page",
+			"viewName": "sap.m.sample.PageListReportIconTabBar.view.PageListReportIconTabBar",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
-				"sap.ui.table": {}
+				"sap.m": {},
+				"sap.ui.table": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"stretch": true,
 				"files": [
-					"Page.view.xml",
+					"view/PageListReportIconTabBar.view.xml",
 					"manifest.json"
 				]
 			}

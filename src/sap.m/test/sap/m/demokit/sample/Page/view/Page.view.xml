@@ -10,9 +10,9 @@
 			<Button icon="sap-icon://action" tooltip="Share" />
 		</headerContent>
 		<subHeader>
-			<Toolbar>
+			<OverflowToolbar>
 				<SearchField />
-			</Toolbar>
+			</OverflowToolbar>
 		</subHeader>
 		<content>
 			<VBox>
@@ -20,13 +20,13 @@
 			</VBox>
 		</content>
 		<footer>
-			<Toolbar>
+			<OverflowToolbar>
 				<ToolbarSpacer/>
 				<Button text="Accept" type="Accept" />
 				<Button text="Reject" type="Reject" />
 				<Button text="Edit" />
 				<Button text="Delete" />
-			</Toolbar>
+			</OverflowToolbar>
 		</footer>
 	</Page>
 </mvc:View>

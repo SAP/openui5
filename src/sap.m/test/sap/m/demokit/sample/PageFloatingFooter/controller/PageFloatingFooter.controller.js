@@ -5,7 +5,7 @@ sap.ui.define([
 ], function (Controller, Panel, Text) {
     "use strict";
 
-    var PageController = Controller.extend("sap.m.sample.PageFloatingFooter.Page", {
+    return Controller.extend("sap.m.sample.PageFloatingFooter.controller.PageFloatingFooter", {
         onInit: function () {
             this._Page = this.byId("floatingFooterPage");
             for (var i = 0; i < 15; i++) {
@@ -29,9 +29,5 @@ sap.ui.define([
         removePanel: function () {
             this._Page.removeContent(4);
         }
-
     });
-
-    return PageController;
-
 });

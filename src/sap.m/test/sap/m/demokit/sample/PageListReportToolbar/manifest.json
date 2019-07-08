@@ -7,20 +7,23 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.PageListReportToolbar.Page",
+			"viewName": "sap.m.sample.PageListReportToolbar.view.PageListReportToolbar",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
-				"sap.ui.table": {}
+				"sap.m": {},
+				"sap.ui.table": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"stretch": true,
 				"files": [
-					"Page.view.xml",
+					"view/PageListReportToolbar.view.xml",
 					"manifest.json"
 				]
 			}
