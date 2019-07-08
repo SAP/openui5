@@ -12,7 +12,7 @@ sap.ui.define([
 				theme: "sap_belize",
 				noConflict: true,
 				preload: "auto",
-				"xx-waitForTheme": true
+				"xx-waitForTheme": "init"
 			},
 			qunit: {
 				version: 1,
@@ -949,7 +949,9 @@ sap.ui.define([
 				},
 				ui5: {
 					libs: "sap.m, sap.ui.support",
-					support: "silent"
+					support: "silent",
+					// TO BE FIXED: support lib fails when waiting for Core#init
+					"xx-waitForTheme": true
 				},
 				module: [
 					"./rules/Button.qunit",
