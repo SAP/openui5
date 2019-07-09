@@ -1,5 +1,5 @@
 <mvc:View
-		controllerName="sap.m.sample.MessageViewWithGrouping.C"
+		controllerName="sap.m.sample.MessageViewWithGrouping.controller.MessageViewWithGrouping"
 		height="100%"
 		xmlns:l="sap.ui.layout"
 		xmlns:mvc="sap.ui.core.mvc"
@@ -10,11 +10,11 @@
 
 		</content>
 		<footer>
-			<Toolbar>
+			<OverflowToolbar>
 				<Button icon="sap-icon://message-popup" text="{/messagesLength}" type="Emphasized"
 						press="handleMessageViewPress"/>
 				<ToolbarSpacer/>
-			</Toolbar>
+			</OverflowToolbar>
 		</footer>
 	</Page>
 </mvc:View>

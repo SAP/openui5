@@ -1,29 +1,34 @@
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/mvc/Controller',
-	'sap/ui/model/json/JSONModel'
-], function(jQuery, Controller, JSONModel) {
+	'sap/ui/model/json/JSONModel',
+	'sap/m/Link',
+	'sap/m/MessageItem',
+	'sap/m/MessageView',
+	'sap/m/Button',
+	'sap/m/Dialog',
+	'sap/m/Bar',
+	'sap/m/Text'
+], function(Controller, JSONModel, Link, MessageItem, MessageView, Button, Dialog, Bar, Text) {
 	"use strict";
 
-
-	return Controller.extend("sap.m.sample.MessageViewInsidePopover.MessageView", {
+	return Controller.extend("sap.m.sample.MessageViewInsideDialog.controller.MessageViewInsideDialog", {
 
 		onInit: function () {
-
 			var that = this;
-			var	oLink = new sap.m.Link({
+
+			var	oLink = new Link({
 				text: "Show more information",
 				href: "http://sap.com",
 				target: "_blank"
 			});
 
-			var oMessageTemplate = new sap.m.MessageItem({
+			var oMessageTemplate = new MessageItem({
 				type: '{type}',
 				title: '{title}',
 				description: '{description}',
 				subtitle: '{subtitle}',
 				counter: '{counter}',
-				markupDescription: "{markupDescription}",
+				markupDescription: '{markupDescription}',
 				link: oLink
 			});
 
@@ -58,22 +63,22 @@ sap.ui.define([
 				counter: 1
 			}];
 
-			var oModel = new JSONModel(),
-				that = this;
+			var oModel = new JSONModel();
 
 			oModel.setData(aMockMessages);
 
-			this.oMessageView = new sap.m.MessageView({
-					showDetailsPageHeader: false,
-					itemSelect: function () {
-						oBackButton.setVisible(true);
-					},
-					items: {
-						path: "/",
-						template: oMessageTemplate
-					}
-				});
-			var oBackButton = new sap.m.Button({
+			this.oMessageView = new MessageView({
+				showDetailsPageHeader: false,
+				itemSelect: function () {
+					oBackButton.setVisible(true);
+				},
+				items: {
+					path: "/",
+					template: oMessageTemplate
+				}
+			});
+
+			var oBackButton = new Button({
 					icon: sap.ui.core.IconPool.getIconURI("nav-back"),
 					visible: false,
 					press: function () {
@@ -82,45 +87,35 @@ sap.ui.define([
 					}
 				});
 
+
+
 			this.oMessageView.setModel(oModel);
 
-			var oCloseButton =  new sap.m.Button({
-					text: "Close",
+			this.oDialog = new Dialog({
+				resizable: true,
+				content: this.oMessageView,
+				state: 'Error',
+				beginButton: new Button({
 					press: function () {
-						that._oPopover.close();
-					}
+						this.getParent().close();
+					},
+					text: "Close"
 				}),
-				oPopoverFooter = new sap.m.Bar({
-					contentRight: oCloseButton
-				}),
-				oPopoverBar = new sap.m.Bar({
-					contentLeft: [oBackButton],
+				customHeader: new Bar({
 					contentMiddle: [
-						new sap.ui.core.Icon({
-							color: "#bb0000",
-							src: "sap-icon://message-error"}),
-						new sap.m.Text({
-							text: "Messages"
-						})
-					]
-				});
-
-			this._oPopover = new sap.m.Popover({
-				customHeader: oPopoverBar,
-				contentWidth: "440px",
-				contentHeight: "440px",
-				verticalScrolling: false,
-				modal: true,
-				content: [this.oMessageView],
-				footer: oPopoverFooter
+						new Text({ text: "Error"})
+					],
+					contentLeft: [oBackButton]
+				}),
+				contentHeight: "300px",
+				contentWidth: "500px",
+				verticalScrolling: false
 			});
 		},
 
-		handlePopoverPress: function (oEvent) {
+		handleDialogPress: function (oEvent) {
 			this.oMessageView.navigateBack();
-			this._oPopover.openBy(oEvent.getSource());
+			this.oDialog.open();
 		}
-
 	});
-
 });
