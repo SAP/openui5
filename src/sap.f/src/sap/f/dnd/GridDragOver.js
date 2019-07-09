@@ -428,7 +428,9 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery"],
 		// note: this method can be improved, currently it handles most of the cases, but not all of them
 
 		// try around
-		var iStepX = 80, // px
+		var bIsRtl = sap.ui.getCore().getConfiguration().getRTL(),
+			iIsRtlModifier = bIsRtl ? -1 : 1,
+			iStepX = 80 * iIsRtlModifier, // px
 			iStepY = 20, // px
 			$found,
 			sDirection,
