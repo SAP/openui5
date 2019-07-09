@@ -7,20 +7,22 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.MessageStripWithEnableFormattedText.V",
+			"viewName": "sap.m.sample.MessageStripWithEnableFormattedText.view.MessageStripWithEnableFormattedText",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
 				"sap.ui.layout": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"files": [
-					"V.view.xml",
-					"C.controller.js",
+					"view/MessageStripWithEnableFormattedText.view.xml",
+					"controller/MessageStripWithEnableFormattedText.controller.js",
 					"manifest.json"
 				]
 			}

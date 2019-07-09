@@ -4,7 +4,7 @@ sap.ui.define([
 ], function(Controller, JSONModel) {
 	"use strict";
 
-	return Controller.extend("sap.m.sample.MessageStripWithEnableFormattedText.C", {
+	return Controller.extend("sap.m.sample.MessageStripWithEnableFormattedText.controller.MessageStripWithEnableFormattedText", {
 		onInit: function () {
 			this.getView().setModel(new JSONModel({
 				"default": "Default <em>(Information)</em> with default icon and <strong>close button</strong>:",

@@ -2,7 +2,7 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
-	controllerName="sap.m.sample.MessageStripWithEnableFormattedText.C">
+	controllerName="sap.m.sample.MessageStripWithEnableFormattedText.controller.MessageStripWithEnableFormattedText">
 	<l:VerticalLayout
 		class="sapUiContentPadding"
 		width="100%">
