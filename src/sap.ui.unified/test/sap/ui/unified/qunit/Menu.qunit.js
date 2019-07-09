@@ -1064,6 +1064,41 @@ sap.ui.define([
 		assert.equal(oRootMenu.$().attr("aria-level"), undefined, "There must be no any aria-level attribute");
 	});
 
+	QUnit.test("The 'disabled' attribute makes 'aria-disabled' redundant", function(assert) {
+		// Prepare
+		var oMenuItem = new MenuItem({
+				enabled: false
+			}),
+			oMenuTextFieldItem = new MenuTextFieldItem({
+				enabled: false
+			}),
+			oMenu = new Menu({
+				items: [
+					oMenuItem,
+					oMenuTextFieldItem
+				]
+			}).placeAt("qunit-fixture");
+
+		// act
+		oMenu.open();
+		var $menuItem = oMenuItem.$(),
+			$menuTextFieldItem = oMenuTextFieldItem.$(),
+			$menuTextFieldItemInput = oMenuTextFieldItem.$("tf");
+
+		// assert
+		assert.ok($menuItem.attr("disabled"), "Disabled MenuItem has a disabled attribute");
+		assert.notOk($menuItem.attr("aria-disabled"), "Disabled MenuItem doesn't have aria-disabled");
+
+		assert.ok($menuTextFieldItem.attr("disabled"), "Disabled MenuItemTextField has a disabled attribute");
+		assert.notOk($menuTextFieldItem.attr("aria-disabled"), "Disabled MenuItemTextField doesn't have aria-disabled");
+
+		assert.ok($menuTextFieldItemInput.attr("disabled"), "Disabled MenuItemTextField's input has a disabled attribute");
+		assert.notOk($menuTextFieldItemInput.attr("aria-disabled"), "Disabled MenuItemTextField's input doesn't have aria-disabled");
+
+		// clean up
+		oMenu.destroy();
+	});
+
 	QUnit.test("aria-posinset and aria-setsize", function(assert) {
 		// Prepare
 		var oItem1 = new MenuItem(),
@@ -1075,13 +1110,13 @@ sap.ui.define([
 		// act
 		oMenu.open();
 		var $item1 = oItem1.$(),
-			$item2TF = oItem2.$("tf");
+			$item2TF = oItem2.$();
 
 		// assert
-		assert.equal($item1.attr("aria-posinset"), 1, "Correct posinset information is set");
-		assert.equal($item1.attr("aria-setsize"), 2, "Correct setsize information is set");
-		assert.equal($item2TF.attr("aria-posinset"), 2, "Correct posinset information is propagated to the inner input");
-		assert.equal($item2TF.attr("aria-setsize"), 2, "Correct setsize information is propagated to the inner input");
+		assert.equal($item1.attr("aria-posinset"), 1, "Correct posinset information is set on the MenuItem");
+		assert.equal($item1.attr("aria-setsize"), 2, "Correct setsize information is set on the MenuItem");
+		assert.equal($item2TF.attr("aria-posinset"), 2, "Correct posinset information is set on the MenuTextFieldItem");
+		assert.equal($item2TF.attr("aria-setsize"), 2, "Correct setsize information is set on the MenuTextFieldItem");
 
 		// clean up
 		oMenu.destroy();
