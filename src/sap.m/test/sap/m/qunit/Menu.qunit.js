@@ -1192,25 +1192,4 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oUfdMenu.enhanceAccessibilityState(oButton, oAriaProps).controls, "sControlId", "Should return also the additional mAriaProps if a custom function is set");
 	});
-
-	QUnit.test("Custom data is propagated properly", function (oAssert) {
-		var oItem = new MenuItem(),
-			oUfdItem,
-			oUfdItemCustomData;
-
-		// Arrange
-		oItem.addCustomData(new CustomData({
-			key: "customKey",
-			value: "customValue",
-			writeToDom: true
-		}));
-
-		oUfdItem = this.oMenu._createVisualMenuItemFromItem(oItem);
-		oUfdItemCustomData = oUfdItem.getCustomData()[0];
-
-		// Assert
-		assert.strictEqual(oUfdItemCustomData.getKey(), "customKey", "Custom data's key is propagated properly to the Unified menu item");
-		assert.strictEqual(oUfdItemCustomData.getValue(), "customValue", "Custom data's value is propagated properly to the Unified menu item");
-		assert.strictEqual(oUfdItemCustomData.getWriteToDom(), true, "Custom data's writeToDom is propagated properly to the Unified menu item");
-	});
 });
