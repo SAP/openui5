@@ -5,7 +5,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.TitleWrapping.Component", {
 
 		metadata : {
-		    manifest: "json"
+			manifest: "json"
 		}
 	});
 

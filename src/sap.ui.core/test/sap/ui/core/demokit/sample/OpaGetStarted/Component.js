@@ -5,7 +5,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.ui.core.sample.OpaGetStarted.Component", {
 
 		metadata : {
-		    manifest: "json"
+			manifest: "json"
 		}
 
 	});

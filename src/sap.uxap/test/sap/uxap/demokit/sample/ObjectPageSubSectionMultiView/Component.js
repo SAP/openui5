@@ -3,7 +3,7 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 
 	return UIComponent.extend("sap.uxap.sample.ObjectPageSubSectionMultiView.Component", {
 		metadata: {
-		    manifest: "json"
+			manifest: "json"
 		}
 	});
 });

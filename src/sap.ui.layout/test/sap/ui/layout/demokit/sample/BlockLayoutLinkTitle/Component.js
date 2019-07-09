@@ -5,7 +5,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.ui.layout.sample.BlockLayoutLinkTitle.Component", {
 
 		metadata : {
-		    manifest: "json"
+			manifest: "json"
 		}
 	});
 

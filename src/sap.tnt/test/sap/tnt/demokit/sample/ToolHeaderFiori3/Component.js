@@ -4,7 +4,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 
 	var Component = UIComponent.extend('sap.tnt.sample.ToolHeaderFiori3.Component', {
 		metadata : {
-		    manifest: "json"
+			manifest: "json"
 		}
 	});
 

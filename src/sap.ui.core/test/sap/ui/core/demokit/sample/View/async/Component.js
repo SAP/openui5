@@ -9,7 +9,7 @@ sap.ui.define([
 		return UIComponent.extend("sap.ui.core.sample.View.async.Component", {
 
 			metadata: {
-			    manifest: "json"
+				manifest: "json"
 			},
 			createContent: function(oController) {
 				//Add jsview when async loading of resources via sap.ui.require is established

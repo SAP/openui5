@@ -5,7 +5,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.IconTabBarStretchContent.Component", {
 
 		metadata : {
-		    manifest: "json"
+			manifest: "json"
 		}
 	});
 

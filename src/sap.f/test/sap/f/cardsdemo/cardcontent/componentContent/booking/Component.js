@@ -5,7 +5,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.f.cardsdemo.cardcontent.componentContent.booking.Component", {
 
 		metadata : {
-		    manifest: "json"
+			manifest: "json"
 		}
 	});
 

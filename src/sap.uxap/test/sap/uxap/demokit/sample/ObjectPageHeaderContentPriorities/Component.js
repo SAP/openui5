@@ -4,7 +4,7 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 	return UIComponent.extend("sap.uxap.sample.ObjectPageHeaderContentPriorities.Component", {
 
 		metadata: {
-		    manifest: "json"
+			manifest: "json"
 		}
 	});
 });

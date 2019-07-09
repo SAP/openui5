@@ -5,7 +5,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.ui.unified.sample.CalendarMultipleDaySelection.Component", {
 
 		metadata : {
-		    manifest: "json"
+			manifest: "json"
 		}
 	});
 

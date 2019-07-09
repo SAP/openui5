@@ -4,7 +4,7 @@ function (UIComponent) {
 
 	return UIComponent.extend('sap.ui.core.sample.OpaWithSupportAssistant.Component', {
 		metadata: {
-		    manifest: "json"
+			manifest: "json"
 		}
 	});
 });

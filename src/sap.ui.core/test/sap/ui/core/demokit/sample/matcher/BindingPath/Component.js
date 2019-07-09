@@ -5,7 +5,7 @@ sap.ui.define([
 
 	return UIComponent.extend("sap.ui.core.sample.matcher.BindingPath.Component", {
 		metadata: {
-		    manifest: "json"
+			manifest: "json"
 		}
 	});
 });

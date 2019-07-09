@@ -5,7 +5,7 @@ sap.ui.define([
 
 	return UIComponent.extend("sap.ui.table.sample.DnD.Component", {
 		metadata : {
-		    manifest: "json"
+			manifest: "json"
 		}
 	});
 

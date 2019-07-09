@@ -7,7 +7,7 @@ sap.ui.define([
 
     return UIComponent.extend("sap.ui.table.sample.TreeTable.BasicODataTreeBinding.Component", {
         metadata: {
-		    manifest: "json"
+			manifest: "json"
 		},
         init : function(){
             // call the init function of the parent

@@ -4,7 +4,7 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 	var Component = UIComponent.extend("sap.uxap.sample.SingleView.Component", {
 
 		metadata: {
-		    manifest: "json"
+			manifest: "json"
 		}
 	});
 	return Component;

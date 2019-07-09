@@ -4,7 +4,7 @@ function (UIComponent) {
 
 	return UIComponent.extend("sap.f.sample.FlexibleColumnLayoutSimple.Component", {
 		metadata: {
-		    manifest: "json"
+			manifest: "json"
 		}
 	});
 }, true);
