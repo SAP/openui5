@@ -1,13 +1,11 @@
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/m/MessageToast',
 		'sap/m/GroupHeaderListItem',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, MessageToast, GroupHeaderListItem, Controller, JSONModel) {
+	], function(GroupHeaderListItem, Controller, JSONModel) {
 	"use strict";
 
-	var PageController = Controller.extend("sap.m.sample.MultiComboBoxGrouping.Page", {
+	return Controller.extend("sap.m.sample.MultiComboBoxGrouping.controller.MultiComboBoxGrouping", {
 
 		onInit: function () {
 			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
@@ -21,8 +19,4 @@ sap.ui.define([
 			});
 		}
 	});
-
-
-	return PageController;
-
 });

@@ -2,13 +2,10 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	function(UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.m.sample.MultiComboBox.Component", {
+	return UIComponent.extend("sap.m.sample.MultiComboBox.Component", {
 
 		metadata : {
 		    manifest: "json"
 		}
 	});
-
-	return Component;
-
 });
