@@ -1223,16 +1223,18 @@ sap.ui.define([
 	 * @private
 	 */
 	OverflowToolbar.prototype._onContentPropertyChangedOverflowToolbar = function (oEvent) {
-		var oSourceControl,
+		var oSourceControl = oEvent.getSource(),
 			oControlConfig,
 			sParameterName;
+
+		// Move control in suitable collections if one of its properties has changed between the init and doLayout functions execution
+		this._updateContentInfoInControlsCollections(oSourceControl);
 
 		// Listening for property changes is turned off during layout recalculation to avoid infinite loops
 		if (!this._bListenForControlPropertyChanges) {
 			return;
 		}
 
-		oSourceControl = oEvent.getSource();
 		oControlConfig = OverflowToolbarAssociativePopoverControls.getControlConfig(oSourceControl);
 		sParameterName = oEvent.getParameter("name");
 
@@ -1241,8 +1243,6 @@ sap.ui.define([
 			oControlConfig.noInvalidationProps.indexOf(sParameterName) !== -1) {
 			return;
 		}
-
-		this._updateContentInfoInControlsCollections(oEvent.getSource());
 
 		// Trigger a recalculation
 		this._resetAndInvalidateToolbar(true);
