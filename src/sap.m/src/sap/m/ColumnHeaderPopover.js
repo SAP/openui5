@@ -366,10 +366,9 @@ sap.ui.define([
 		var oOpenerDomRef = oControl.getFocusDomRef();
 		if (oOpenerDomRef) {
 			oPopover.setOffsetY(-oOpenerDomRef.clientHeight);
+			oPopover.setContentWidth(oOpenerDomRef.clientWidth > 128 ? oOpenerDomRef.clientWidth + "px" : "128px");
 		}
-		if (oControl.$().width()) {
-			oPopover.setContentWidth(oControl.$().width() + "px");
-		}
+
 		oPopover.openBy(oControl);
 	};
 
