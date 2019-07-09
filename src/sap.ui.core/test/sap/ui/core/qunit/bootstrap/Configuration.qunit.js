@@ -747,4 +747,32 @@ sap.ui.define([
 		assert.equal(getHtmlAttribute("data-sap-ui-animation-mode"), AnimationMode.full, "Default animation mode should stay the same.");
 	});
 
+	QUnit.module("Flexibility Services & Connectors", {});
+
+	QUnit.test("Get the Flexibility Services", function(assert) {
+		var oCfg = new Configuration();
+		var sFlexibilityService = oCfg.getFlexibilityServices();
+		assert.equal(sFlexibilityService, "/sap/bc/lrep");
+	});
+
+	QUnit.test("Get the Flexibility Services", function(assert) {
+		var oCfg = new Configuration();
+		var oFlexibilityServicesConfiguration = oCfg.getFlexibilityConnectors();
+		assert.equal(oFlexibilityServicesConfiguration.length, 1);
+		var mDefaultFlexibilityService = oFlexibilityServicesConfiguration[0];
+		assert.equal(mDefaultFlexibilityService.connectorName, "LrepConnector", "the connector name is set correct");
+		assert.equal(mDefaultFlexibilityService.url, "/sap/bc/lrep", "the url prefix is set correct");
+		assert.equal(mDefaultFlexibilityService.layerFilter.length, 0, "no filtering set");
+	});
+
+	QUnit.test("setting the Flexibility Connectors at runtime results in an error", function(assert) {
+		var oCfg = new Configuration();
+		assert.throws(
+			function () {oCfg.setFlexibilityConnectors();},
+			new Error("flexibilityConnectors must not be set after bootstrapping"),
+			"raised an error on the setter call"
+		);
+
+	});
+
 });

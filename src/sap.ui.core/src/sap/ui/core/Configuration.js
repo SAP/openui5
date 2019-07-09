@@ -129,11 +129,12 @@ sap.ui.define([
 					"bindingSyntax"         : { type : "string",   defaultValue : "default", noUrl:true }, // default|simple|complex
 					"versionedLibCss"       : { type : "boolean",  defaultValue : false },
 					"manifestFirst"         : { type : "boolean",  defaultValue : false },
-					"flexibilityServices"   : { type : "string",  defaultValue : "/sap/bc/lrep" },
+					"flexibilityServices"   : { type : "string",   defaultValue : "/sap/bc/lrep"},
 					"whitelistService"      : { type : "string",   defaultValue : null,      noUrl: true }, // url/to/service
 					"frameOptions"          : { type : "string",   defaultValue : "default", noUrl: true }, // default/allow/deny/trusted (default => allow)
 					"frameOptionsConfig"    : { type : "object",   defaultValue : undefined, noUrl:true },  // advanced frame options configuration
 					"support"               : { type : "string[]",  defaultValue : null },
+					"xx-flexibilityConnectors"   : { type : "object",   defaultValue : [{layerFilter: [], url: "/sap/bc/lrep", connectorName: "LrepConnector"}], noUrl:true }, // determining the end points for requesting flexibility content; must not be changed at run time
 					"xx-rootComponentNode"  : { type : "string",   defaultValue : "",        noUrl:true },
 					"xx-appCacheBusterMode" : { type : "string",   defaultValue : "sync" },
 					"xx-appCacheBusterHooks": { type : "object",   defaultValue : undefined, noUrl:true }, // e.g.: { handleURL: fn, onIndexLoad: fn, onIndexLoaded: fn }
@@ -1306,6 +1307,30 @@ sap.ui.define([
 		 */
 		getFlexibilityServices : function() {
 			return this.flexibilityServices;
+		},
+
+		/**
+		 * Returns the URL from where the UI5 flexibility conenctors are called;
+		 * if empty, the flexibility services are not called.
+		 *
+		 * @returns {string} URL from where the flexibility services are requested
+		 * @public
+		 * @experimental
+		 * @since 1.67
+		 */
+		getFlexibilityConnectors : function() {
+			return this["xx-flexibilityConnectors"];
+		},
+
+		/**
+		 * Setter implementation for flexibilityConnectors to throw an error in case it is called at run time.
+		 *
+		 * @throws Error
+		 * @experimental
+		 * @since 1.67.0
+		 */
+		setFlexibilityConnectors: function () {
+			throw new Error("flexibilityConnectors must not be set after bootstrapping");
 		},
 
 		/**

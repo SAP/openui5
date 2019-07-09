@@ -41,6 +41,12 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/api/SmartVariantManagementApplyAPI"]
 				}
 			},
+			"apply/internal/Connector": {
+				group: 'Apply Internal',
+				coverage: {
+					only: ["sap/ui/fl/apply/internal/Connector"]
+				}
+			},
 			"write/api/ChangesWriteAPI": {
 				group: 'Write API',
 				coverage: {
