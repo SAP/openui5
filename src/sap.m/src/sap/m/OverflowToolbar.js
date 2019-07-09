@@ -161,6 +161,9 @@ sap.ui.define([
 
 		}
 
+		// When set to true, the control is reset and rerendered on resize
+		this._bForceRerenderOnResize = false;
+
 		this._aControlSizes = {}; // A map of control id -> control *optimal* size in pixels; the optimal size is outerWidth for most controls and min-width for spacers
 	};
 
@@ -191,7 +194,7 @@ sap.ui.define([
 		this._getOverflowButton().$().attr("aria-haspopup", "true");
 
 		// Unlike toolbar, we don't set flexbox classes here, we rather set them on a later stage only if needed
-		this._doLayout();
+		this._doLayout(true);
 	};
 
 
@@ -201,11 +204,18 @@ sap.ui.define([
 	/**
 	 * For the OverflowToolbar, we need to register resize listeners always, regardless of Flexbox support
 	 * @override
+	 *  @param {boolean} bCalledFromOnAfterRendering - Whether or not "_doLayout" is called from "onAfterRendering" lifecycle
 	 * @private
 	 */
+	OverflowToolbar.prototype._doLayout = function (bCalledFromOnAfterRendering) {
+		// Check if we need to force reset and rerender on the control
+		// If so we omit the rest of the method to increase performance
+		if (this._bForceRerenderOnResize && !bCalledFromOnAfterRendering) {
+			this._resetToolbar();
+			this.rerender();
+			return;
+		}
 
-
-	OverflowToolbar.prototype._doLayout = function () {
 		var oCore = sap.ui.getCore();
 
 		// If the theme is not applied, control widths should not be measured and cached

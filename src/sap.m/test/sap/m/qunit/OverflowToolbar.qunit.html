@@ -1788,6 +1788,31 @@
 			assert.strictEqual(oPopover, null, "Popover is destroyed");
 		});
 
+		QUnit.module("Forcing rerender on resize");
+
+		QUnit.test("The OverflowToolbar is reset and rerendered on resize, if _bForceReRenderOnResize is true", function (assert) {
+
+			var oOTB = new sap.m.OverflowToolbar();
+
+			// Arrange
+			oOTB._bForceRerenderOnResize = true;
+			oOTB.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var oResetToolbarSpy = this.spy(sap.m.OverflowToolbar.prototype, "_resetToolbar"),
+				oRerenderSpy = this.spy(sap.m.OverflowToolbar.prototype, "rerender");
+
+			// Act
+			oOTB._handleResize();
+
+			// Assert
+			assert.ok(oResetToolbarSpy.calledOnce, "_resetToolbar is called once.");
+			assert.ok(oRerenderSpy.calledOnce, "rerender is called once.");
+
+			// Cleanup
+			oOTB.destroy();
+		});
+
 	})();
 	</script>
 </head>

@@ -30,6 +30,7 @@
 
 		<!-- use the sinon faketimers for this test -->
 		<script>
+			var realTimeout = setTimeout;
 			sinon.config.useFakeTimers = true;
 		</script>
 
@@ -236,6 +237,86 @@
 				assert.equal(this.dialog.$('cont').scrollTop(), this.SCROLL_TOP, "Content's scroll position should be preserved");
 
 			});
+
+			QUnit.module("Resizing on mobile while using OverflowToolbar", {
+				beforeEach: function() {
+					// noop
+				},
+				afterEach: function() {
+					this.oDialog.destroy();
+				}
+			});
+
+			QUnit.test("OverflowToolbar expected to rerender on mobile", function (assert) {
+				var oSystem = {
+					desktop: false,
+					tablet: false,
+					phone: true
+				};
+
+				this.stub(sap.ui.Device, "system", oSystem);
+
+				this.oDialog = new sap.m.Dialog({
+					content: [
+						new sap.m.Text({
+							text: 'Dialog content'
+						})
+					],
+
+					contentWidth: '800px',
+
+					buttons: [
+						new sap.m.Button({ text: 'Go'}),
+						new sap.m.Button({ text: 'Cancel'}),
+						new sap.m.Button({ text: 'Restore'}),
+						new sap.m.Button({ text: 'Save'})
+					]
+				});
+
+				var oRerenderSpy = this.spy(sap.m.OverflowToolbar.prototype, "rerender");
+
+				this.oDialog.open();
+
+				this.oDialog._oToolbar._handleResize();
+
+				assert.ok(oRerenderSpy.calledOnce, "OverflowToolbar is rerendered when on mobile in Dialog");
+			});
+
+			QUnit.test("OverflowToolbar expected to not rerender on desktop", function (assert) {
+				var oSystem = {
+					desktop: true,
+					tablet: false,
+					phone: false
+				};
+
+				this.stub(sap.ui.Device, "system", oSystem);
+
+				this.oDialog = new sap.m.Dialog({
+					content: [
+						new sap.m.Text({
+							text: 'Dialog content'
+						})
+					],
+
+					contentWidth: '800px',
+
+					buttons: [
+						new sap.m.Button({ text: 'Go'}),
+						new sap.m.Button({ text: 'Cancel'}),
+						new sap.m.Button({ text: 'Restore'}),
+						new sap.m.Button({ text: 'Save'})
+					]
+				});
+
+				var oRerenderSpy = this.spy(sap.m.OverflowToolbar.prototype, "rerender");
+
+				this.oDialog.open();
+
+				this.oDialog._oToolbar._handleResize();
+
+				assert.notOk(oRerenderSpy.called, "OverflowToolbar is not rerendered when on desktop in Dialog");
+			});
+
 
 			QUnit.module("Open and Close");
 

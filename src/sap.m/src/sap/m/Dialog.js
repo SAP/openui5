@@ -1370,6 +1370,15 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		Dialog.prototype._getToolbar = function () {
 			if (!this._oToolbar) {
 				this._oToolbar = new AssociativeOverflowToolbar(this.getId() + "-footer").addStyleClass("sapMTBNoBorders");
+
+
+				// When using phone we set _bForceRerenderOnResize property of
+				// the toolbar to true, in order to reset and rerender it on resize.
+				// BCP: 1870031078
+				if (Device.system.phone) {
+					this._oToolbar._bForceRerenderOnResize = true;
+				}
+
 				this._oToolbar._isControlsInfoCached = function () {
 					return false;
 				};
