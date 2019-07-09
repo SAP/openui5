@@ -743,7 +743,8 @@
 		  "since": "1.30",
 		  "samples": [
 			"sap.m.sample.QuickView",
-			"sap.m.sample.QuickViewNavOrigin"
+			"sap.m.sample.QuickViewNavOrigin",
+			"sap.m.sample.QuickViewFallbackIcon"
 		  ]
 		},
 		{
@@ -1594,6 +1595,11 @@
 		  "id": "sap.m.sample.QuickViewNavOrigin",
 		  "name": "QuickView with navigation and data binding",
 		  "description": "QuickView using navOrigin parameter when navigating"
+		},
+		{
+		  "id": "sap.m.sample.QuickViewFallbackIcon",
+		  "name": "QuickView with fallback icon",
+		  "description": "QuickView using a fallback icon when there are problems with loading."
 		},
 		{
 		  "id": "sap.m.sample.QuickViewCard",

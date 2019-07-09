@@ -73,7 +73,7 @@ html.sap-phone .sapMQuickViewPage.sapMNavItem.sapMPage {
 html.sap-desktop .sapMQuickViewPage.sapMPage > header,
 html.sap-tablet .sapMQuickViewPage.sapMPage > header {
 	position: absolute;
-	height: 3rem;
+	height: @_sap_m_QuickView_PagePaddingTop;
 	top: 0;
 	left: 0;
 	right: 0;
@@ -165,8 +165,20 @@ html.sap-phone .sapMQuickViewPage .sapUiHLayout {
 	margin: 1rem 0 0 0.75rem;
 }
 
-.sapMQuickViewPage .sapUiHLayoutChildWrapper + .sapUiHLayoutChildWrapper {
+.sapMQuickViewPage .sapUiHLayoutChildWrapper + .sapUiHLayoutChildWrapper:last-child {
 	width: ~'calc(100% - 3.75rem)';
+}
+
+.sapMQuickViewPage {
+
+	.sapMQuickViewPageImage {
+		display: block;
+	}
+
+	.sapMQuickViewPageFailedImage,
+	.sapMQuickViewPageFallbackIconHidden {
+		display: none;
+	}
 }
 
 .sapMQuickViewPage .sapUiVltCell {
@@ -279,4 +291,11 @@ html.sap-tablet.sap-ios .sapMPanel .sapMQuickViewCard {
 
 .sapMQuickViewPage .sapMPageEnableScrolling {
 	outline: none;
+}
+
+/* Compact size */
+.sapUiSizeCompact {
+	.sapMQuickViewPage.sapMPage > header.sapMPageHeader {
+		height: @_sap_m_QuickView_Compact_PagePaddingTop;
+	}
 }

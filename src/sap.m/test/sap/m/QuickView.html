@@ -9,14 +9,6 @@
 			data-sap-ui-libs="sap.m">
 	</script>
 
-	<style>
-		.label {
-			font-weight:bold;
-			padding: 3rem 1rem 1rem;
-			width: auto;
-			white-space: normal;
-		}
-	</style>
 	<script>
 
 		// create JSON model instance
@@ -367,6 +359,180 @@
 			]
 		});
 
+		var oQuickView3 = new sap.m.QuickView("QV3", {
+			placement : sap.m.PlacementType.VerticalPreferredBottom,
+			tooltip: "Employee QuickView",
+			pages : {
+				path : '/pages',
+				template : new sap.m.QuickViewPage({
+					pageId : "{pageId}",
+					header: "{header}",
+					icon: "{icon}",
+					fallbackIcon: "{fallbackIcon}",
+					title: "{title}",
+					titleUrl: "{titleUrl}",
+					description: "{description}",
+					groups : {
+						path : 'groups',
+						template : new sap.m.QuickViewGroup({
+							heading : '{heading}',
+							elements : {
+								path : 'elements',
+								template : new sap.m.QuickViewGroupElement({
+									label: "{label}",
+									value: "{value}",
+									url: "{url}",
+									type: "{elementType}",
+									pageLinkId: "{pageLinkId}"
+								})
+							}
+						})
+					}
+				})
+			}
+		});
+
+		var oModel3 = new sap.ui.model.json.JSONModel();
+
+		// JSON sample data
+		var mData3 = {
+			"pages": [
+				{
+					pageId	: "customPageId",
+					header	: "Fallback icon should be shown",
+					title	: "John Doe",
+					icon	: "path/to/invalid/icon",
+					fallbackIcon: "sap-icon://error",
+					description: "Department Manager1",
+					groups: [
+						{
+							heading: "Job",
+							elements: [
+								{
+									label: "Company address",
+									value: "Sofia, Boris III, 136A"
+								},
+								{
+									label: "Company",
+									value: "SAP AG",
+									url: "http://sap.com",
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId4"
+								}
+							]
+						},
+						{
+							heading: "Other",
+							elements: [
+								{
+									label: "Email",
+									value: "john.dow@sap.com",
+									elementType: sap.m.QuickViewGroupElementType.email
+								},
+								{
+									label: "Best Friend",
+									value: "Michael Muller",
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId2"
+								}
+							]
+						}
+					]
+				},
+				{
+					pageId	: "customPageId2",
+					header	: "Page 2",
+					icon	: "some/invalid/icon",
+					fallbackIcon: "sap-icon://person-placeholder",
+					title	: "Michael Muller",
+					description: "Account Manager",
+					groups: [
+						{
+							heading: "Job",
+							elements: [
+								{
+									label: "Company",
+									value: "SAP AG"
+								},
+								{
+									label: "Company address",
+									value: "Sofia, Boris III, 136A"
+								}
+							]
+						},
+						{
+							heading: "Hobby",
+							elements: [
+								{
+									label: "Name",
+									value: "Jaga",
+									elementType: "text"
+								},
+								{
+									label: "Level",
+									value: "Beginner"
+								}
+
+							]
+						}
+
+					]
+				},
+				{
+					pageId	: "customPageId4",
+					header	: "Company View",
+					icon	: "sap-icon://building",
+					title	: "SAP AG",
+					titleUrl: "http://sap.com",
+					description: "Run it simple",
+					groups: [
+						{
+							heading: "Contact Information",
+							elements: [
+								{
+									label: "Address",
+									value: "Waldorf, Germany",
+									url: "http://sap.com",
+									elementType: "link"
+								},
+								{
+									label: "Email",
+									value: "office@sap.com",
+									elementType: "email"
+								}
+							]
+						},
+						{
+							heading: "Main Contact",
+							elements: [
+								{
+									label: "Name",
+									value: "Michael Muller",
+									elementType: sap.m.QuickViewGroupElementType.pageLink,
+									pageLinkId: "customPageId2"
+								},
+								{
+									label: "E-mail",
+									value: "michael.muller@sap.com",
+									elementType: "email"
+								},
+							]
+						}
+					]
+				}
+			]
+
+		};
+
+		oModel3.setData(mData3);
+		oQuickView3.setModel(oModel3)
+
+		var oButton3 = new sap.m.Button({
+			text: "Open Quick View with binding and fallback images",
+			press: function() {
+				oQuickView3.openBy(this);
+			}
+		});
 		// create and add a page with icon tab bar
 		var page = new sap.m.Page("quickViewPage", {
 			title : "Quick View",
@@ -374,6 +540,7 @@
 				oButton,
 				//oModifyJsonButton,
 				oSinglePageQuickViewButton,
+				oButton3,
 				oPanel
 			]
 		});
