@@ -16,7 +16,6 @@ sap.ui.define([
 	'sap/ui/unified/MenuItem',
 	'sap/ui/Device',
 	'sap/ui/core/EnabledPropagator',
-	'sap/ui/core/CustomData',
 	"sap/ui/thirdparty/jquery"
 ],
 	function(
@@ -32,7 +31,6 @@ sap.ui.define([
 		UfdMenuItem,
 		Device,
 		EnabledPropagator,
-		CustomData,
 		jQuery
 	) {
 		"use strict";
@@ -453,26 +451,15 @@ sap.ui.define([
 		};
 
 		Menu.prototype._createVisualMenuItemFromItem = function(oItem) {
-			var oUfdMenuItem = new UfdMenuItem({
-				id  : this._generateUnifiedMenuItemId(oItem.getId()),
+			return new UfdMenuItem({
+				id: this._generateUnifiedMenuItemId(oItem.getId()),
 				icon: oItem.getIcon(),
 				text: oItem.getText(),
 				startsSection: oItem.getStartsSection(),
 				tooltip: oItem.getTooltip(),
 				visible: oItem.getVisible(),
 				enabled: oItem.getEnabled()
-			}),
-			aCustomData = oItem.getCustomData();
-
-			aCustomData.forEach(function(oData) {
-				oUfdMenuItem.addCustomData(new CustomData({
-					key: oData.getKey(),
-					value: oData.getValue(),
-					writeToDom: oData.getWriteToDom()
-				}));
 			});
-
-			return oUfdMenuItem;
 		};
 
 		Menu.prototype._addVisualMenuItemFromItem = function(oItem, oMenu, iIndex) {
