@@ -3,7 +3,7 @@ sap.ui.define(['sap/ui/core/UIComponent'], function(UIComponent) {
 
 	var Component = UIComponent.extend("sap.m.sample.GenericTag.Component", {
 		metadata : {
-		    manifest: "json"
+			manifest: "json"
 		}
 	});
 	return Component;

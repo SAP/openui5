@@ -4,7 +4,7 @@ sap.ui.define( ["sap/ui/core/UIComponent"], function (UIComponent) {
 	return UIComponent.extend("sap.ui.core.sample.RoutingFullscreen.Component", {
 
 		metadata : {
-		    manifest: "json"
+			manifest: "json"
 		}
 
 	});

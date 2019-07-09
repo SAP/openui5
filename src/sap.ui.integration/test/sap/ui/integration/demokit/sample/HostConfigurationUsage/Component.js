@@ -6,7 +6,7 @@ sap.ui.define([
 
 	var Component = UIComponent.extend("sap.ui.integration.sample.HostConfigurationUsage.Component", {
 		metadata: {
-		    manifest: "json"
+			manifest: "json"
 		}
 	});
 	return Component;

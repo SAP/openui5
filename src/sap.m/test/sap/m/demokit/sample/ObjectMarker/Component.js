@@ -9,7 +9,7 @@ sap.ui.define(['sap/ui/core/UIComponent','sap/ui/core/mvc/XMLView'],
 				"getTable"
 			],
 
-		    manifest: "json"
+			manifest: "json"
 		},
 
 		getTable : function () {

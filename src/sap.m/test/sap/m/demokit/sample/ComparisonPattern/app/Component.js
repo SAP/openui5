@@ -6,7 +6,7 @@ function (UIComponent, JSONModel) {
 	return UIComponent.extend("sap.m.sample.ComparisonPattern.app", {
 
 		metadata: {
-		    manifest: "json"
+			manifest: "json"
 		},
 
 		init : function () {

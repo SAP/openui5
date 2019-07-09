@@ -9,7 +9,7 @@ function(jQuery, UIComponent, sinon) {
 	return UIComponent.extend("sap.ui.core.sample.View.preprocessor.Component", {
 
 		metadata: {
-		    manifest: "json"
+			manifest: "json"
 		},
 		createContent: function(oController) {
 			return sap.ui.jsview("sap.ui.core.sample.View.preprocessor.Sample", true);

@@ -10,7 +10,7 @@ sap.ui.define([
 
 	return UIComponent.extend("sap.ui.core.sample.ControllerExtension.Component", {
 		metadata: {
-		    manifest: "json"
+			manifest: "json"
 		},
 		constructor: function () {
 			//Only needed to simulate changes

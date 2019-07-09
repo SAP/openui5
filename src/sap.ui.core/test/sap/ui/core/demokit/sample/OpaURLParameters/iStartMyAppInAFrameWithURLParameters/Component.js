@@ -6,7 +6,7 @@ sap.ui.define([
 	return UIComponent.extend("sap.ui.core.sample.OpaURLParameters.iStartMyAppInAFrameWithURLParameters.Component", {
 
 		metadata: {
-		    manifest: "json"
+			manifest: "json"
 		}
 
 	});

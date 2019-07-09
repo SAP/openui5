@@ -5,7 +5,7 @@ function(UIComponent) {
 	var Component = UIComponent.extend("sap.m.sample.NotificationListGroupLazyLoading.Component", {
 
 		metadata: {
-		    manifest: "json"
+			manifest: "json"
 		}
 	});
 

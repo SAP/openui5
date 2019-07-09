@@ -6,7 +6,7 @@ sap.ui.define([
 	var Component = UIComponent.extend("sap.m.sample.P13nDialog.Component", {
 
 		metadata: {
-		    manifest: "json"
+			manifest: "json"
 		}
 	});
 

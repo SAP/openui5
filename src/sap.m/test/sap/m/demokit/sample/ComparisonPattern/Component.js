@@ -4,7 +4,7 @@ sap.ui.define( ["sap/ui/core/UIComponent"], function (UIComponent) {
 	return UIComponent.extend("sap.m.sample.ComparisonPattern.Component", {
 
 		metadata : {
-		    manifest: "json"
+			manifest: "json"
 		}
 
 	});

@@ -5,11 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.ui.unified.sample.CurrencyInTable.Component", {
 
 		metadata : {
-		    publicMethods : [
+			publicMethods : [
 				"getTable"
 			],
 
-		    manifest: "json"
+			manifest: "json"
 		},
 
 		getTable : function () {

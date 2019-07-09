@@ -5,7 +5,7 @@ sap.ui.define([
 
 	return UIComponent.extend("sap.m.sample.TimePickerSliders.Component", {
 		metadata: {
-		    manifest: "json"
+			manifest: "json"
 		}
 	});
 });

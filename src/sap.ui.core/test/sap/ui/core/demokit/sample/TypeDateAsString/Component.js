@@ -5,7 +5,7 @@ sap.ui.define(["sap/ui/core/UIComponent"],
 	return UIComponent.extend("sap.ui.core.sample.TypeDateAsString.Component", {
 
 		metadata: {
-		    manifest: "json"
+			manifest: "json"
 		}
 	});
 });

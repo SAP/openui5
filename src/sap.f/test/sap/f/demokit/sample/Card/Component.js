@@ -4,7 +4,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 
 		return UIComponent.extend("sap.f.sample.Card.Component", {
 			metadata: {
-			    manifest: "json"
+				manifest: "json"
 			}
 		});
 	});

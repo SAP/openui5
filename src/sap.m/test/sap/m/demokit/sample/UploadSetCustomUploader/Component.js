@@ -5,7 +5,7 @@ sap.ui.define([
 
 	var Component = UIComponent.extend("sap.m.sample.UploadSetCustomUploader.Component", {
 		metadata: {
-		    manifest: "json"
+			manifest: "json"
 		}
 	});
 

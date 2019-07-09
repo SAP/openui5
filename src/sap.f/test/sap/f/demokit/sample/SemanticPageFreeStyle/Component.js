@@ -5,7 +5,7 @@ function (UIComponent) {
 	return UIComponent.extend("sap.f.sample.SemanticPageFreeStyle.Component", {
 
 		metadata: {
-		    manifest: "json"
+			manifest: "json"
 		}
 	});
 });

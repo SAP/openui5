@@ -5,7 +5,7 @@ function(UIComponent) {
 	var Component = UIComponent.extend("sap.m.sample.MaxNumberOfNotificationsReached.Component", {
 
 		metadata: {
-		    manifest: "json"
+			manifest: "json"
 		}
 	});
 

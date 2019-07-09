@@ -1,10 +1,10 @@
 sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
-    "use strict";
+	"use strict";
 
-    return UIComponent.extend("sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Parent.Component", {
-        metadata: {
-            manifest: "json"
-        }
-    });
+	return UIComponent.extend("sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Parent.Component", {
+		metadata: {
+			manifest: "json"
+		}
+	});
 
 });

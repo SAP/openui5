@@ -4,7 +4,7 @@ function (UIComponent) {
 
 	return UIComponent.extend('sap.ui.layout.sample.GridProperties.Component', {
 		metadata: {
-		    manifest: "json"
+			manifest: "json"
 		}
 	});
 });

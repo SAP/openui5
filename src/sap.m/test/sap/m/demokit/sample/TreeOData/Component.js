@@ -7,7 +7,7 @@ sap.ui.define([
 
     return UIComponent.extend("sap.m.sample.TreeOData.Component", {
         metadata: {
-		    manifest: "json"
+			manifest: "json"
 		},
         init : function (){
             // call the init function of the parent

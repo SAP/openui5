@@ -5,7 +5,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	return UIComponent.extend("sap.m.sample.Feed.Component", {
 
 		metadata : {
-		    manifest: "json"
+			manifest: "json"
 		}
 	});
 });
