@@ -108,6 +108,21 @@ sap.ui.define(["sap/ui/performance/BeaconRequest", "sap/ui/Device"], function (B
 			window.addEventListener("message", arranged);
 		});
 
+		QUnit.test("Do not send beacon if the buffer is empty", function(assert) {
+			var sendBeaconSpy = sinon.stub(window.navigator, "sendBeacon").returns(true);
+
+			var beaconRequest = new BeaconRequest({
+				url: "example.url"
+			});
+
+			// do not add anything
+			beaconRequest.send();
+
+			assert.ok(sendBeaconSpy.notCalled, "example.url", "sendBeacon has not been called");
+
+			sendBeaconSpy.restore();
+		});
+
 		QUnit.module("BeaconRequest API (sad path)");
 
 		QUnit.test("Fail if sendBeacon is not supported", function (assert) {
