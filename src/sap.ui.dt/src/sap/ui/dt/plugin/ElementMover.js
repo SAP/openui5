@@ -175,7 +175,7 @@ sap.ui.define([
 		if (
 			(bOverlayNotInDom && !bGeometryVisible)
 			|| !bOverlayNotInDom && !this._checkAggregationOverlayVisibility(oAggregationOverlay, oParentElement)
-			|| !(oParentElement.getVisible && oParentElement.getVisible())
+			|| !(oParentElement && oParentElement.getVisible && oParentElement.getVisible())
 		) {
 			return Promise.resolve(false);
 		}
@@ -188,7 +188,7 @@ sap.ui.define([
 		var oMovedOverlay = oOverlay || this.getMovedOverlay();
 		var oMovedElement = oMovedOverlay.getElement();
 		var sAggregationName = oAggregationOverlay.getAggregationName();
-		if (ElementUtil.isValidForAggregation(oParentElement, sAggregationName, oMovedElement)) {
+		if (oMovedElement && ElementUtil.isValidForAggregation(oParentElement, sAggregationName, oMovedElement)) {
 			return Promise.resolve(true);
 		}
 		return Promise.resolve(false);
