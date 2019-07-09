@@ -737,38 +737,50 @@ sap.ui.define([
 		});
 
 		var i,
+			k,
 			item,
-			virtualGridItem,
+			$item,
 			columns,
-			rows;
+			rows,
+			aFittedElements = [];
 
-		for (i = 0; i < items.length; i++) {
+		for (i = 0, k = 0; i < items.length; i++) {
 			item = items[i];
+			$item = item.$();
+
+			if (!$item.is(":visible")) {
+				continue;
+			}
+
 			columns = getItemColumnCount(item);
 
 			if (hasItemAutoHeight(item)) {
-				rows = oSettings.calculateRowsForItem(item.$().height());
+				rows = oSettings.calculateRowsForItem($item.height());
 			} else {
 				rows = getItemRowCount(item);
 			}
 
-			virtualGrid.fitElement(i + '', columns, rows);
+			virtualGrid.fitElement(k + '', columns, rows);
+			aFittedElements.push({
+				id: k + '',
+				domRef: $item.parent()
+			});
+			k++;
 		}
 
 		virtualGrid.calculatePositions();
 
-		for (i = 0; i < items.length; i++) {
-			item = items[i];
-			virtualGridItem = virtualGrid.getItems()[i];
+		aFittedElements.forEach(function (oFittedElement) {
+			var virtualGridItem = virtualGrid.getItems()[oFittedElement.id];
 
-			item.$().parent().css({
+			oFittedElement.domRef.css({
 				position: 'absolute',
 				top: virtualGridItem.top,
 				left: virtualGridItem.left,
 				width: virtualGridItem.width,
 				height: virtualGridItem.height
 			});
-		}
+		});
 
 		$that.css("height", virtualGrid.getHeight() + "px");
 	};

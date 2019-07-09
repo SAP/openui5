@@ -29,7 +29,7 @@ sap.ui.define([
 	 * @returns {boolean} If it is zero
 	 */
 	function isZero(currentValue) {
-		return currentValue == 0;
+		return currentValue === 0;
 	}
 
 	/**
@@ -154,7 +154,11 @@ sap.ui.define([
 		for (var row = 0; row < this.virtualGridMatrix.length; row++) {
 			for (var col = 0; col < this.virtualGridMatrix[row].length; col++) {
 
-				if (!this.items[parseInt(this.virtualGridMatrix[row][col])].calculatedCoords) {
+				if (!this.virtualGridMatrix[row][col]) {
+					continue;
+				}
+
+				if (!this.items[this.virtualGridMatrix[row][col]].calculatedCoords) {
 
 					var item = this.items[this.virtualGridMatrix[row][col]];
 
