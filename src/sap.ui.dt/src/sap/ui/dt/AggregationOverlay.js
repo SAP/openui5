@@ -164,7 +164,9 @@ function(
 			}
 
 			this.fireChildAdded();
+			return true;
 		}
+		return false;
 	};
 
 	/**

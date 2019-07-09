@@ -1149,7 +1149,11 @@ function (
 			var oParentAggregationOverlay = oParentOverlay.getAggregationOverlay(sAggregationName);
 			var oElementOverlay = OverlayRegistry.getOverlay(oElement);
 
-			if (!oElementOverlay) {
+			if (
+				!oElementOverlay
+				&& oParentAggregationOverlay
+				&& oParentAggregationOverlay.getElement()
+			) {
 				var iTaskId = this._oTaskManager.add({
 					type: 'createChildOverlay',
 					element: oElement
@@ -1160,22 +1164,24 @@ function (
 					parentMetadata: oParentAggregationOverlay.getDesignTimeMetadata().getData()
 				})
 					.then(function (oElementOverlay) {
-						oParentAggregationOverlay.insertChild(null, oElementOverlay);
-						oElementOverlay.applyStyles(); // TODO: remove after Task Manager implementation
+						var vInsertChildReply = oParentAggregationOverlay.insertChild(null, oElementOverlay);
+						if (vInsertChildReply === true) {
+							oElementOverlay.applyStyles(); // TODO: remove after Task Manager implementation
 
-						var iOverlayPosition = oParentAggregationOverlay.indexOfAggregation('children', oElementOverlay);
+							var iOverlayPosition = oParentAggregationOverlay.indexOfAggregation('children', oElementOverlay);
 
 							// `ElementOverlayAdded` event should be emitted only when overlays are ready to prevent
 							// an access to still syncing overlays (e.g. the overlay is still not available in overlay registry
 							// at this point and not registered in the plugins).
-						this.attachEventOnce("synced", function () {
-							this.fireElementOverlayAdded({
-								id: oElementOverlay.getId(),
-								targetIndex: iOverlayPosition,
-								targetId: oParentAggregationOverlay.getId(),
-								targetAggregation: oParentAggregationOverlay.getAggregationName()
-							});
-						}, this);
+							this.attachEventOnce("synced", function () {
+								this.fireElementOverlayAdded({
+									id: oElementOverlay.getId(),
+									targetIndex: iOverlayPosition,
+									targetId: oParentAggregationOverlay.getId(),
+									targetAggregation: oParentAggregationOverlay.getAggregationName()
+								});
+							}, this);
+						}
 						this._oTaskManager.complete(iTaskId);
 					}.bind(this),
 						function (vError) {
