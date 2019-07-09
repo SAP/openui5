@@ -1741,7 +1741,7 @@ sap.ui.define([
 		$Input = jQuery(oDP.getFocusDomRef());
 		$DescribedByReference = jQuery.sap.byId($Input.attr("aria-describedby"));
 
-		assert.strictEqual($DescribedByReference.text(), sDateAnnouncement + " ", "Date announcement is added into aria-describedby");
+		assert.strictEqual($DescribedByReference.text().trim(), sDateAnnouncement, "Date announcement is added into aria-describedby");
 
 		oDP.destroy();
 	});

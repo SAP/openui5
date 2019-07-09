@@ -2007,7 +2007,7 @@ function(
 	 */
 	Input.prototype.onfocusin = function(oEvent) {
 		InputBase.prototype.onfocusin.apply(this, arguments);
-		this.$().addClass("sapMInputFocused");
+		this.addStyleClass("sapMInputFocused");
 
 		// Close the ValueStateMessage when the suggestion popup is being opened.
 		// Only do this in case a popup is used.
@@ -2061,7 +2061,7 @@ function(
 	 */
 	Input.prototype.onfocusout = function(oEvent) {
 		InputBase.prototype.onfocusout.apply(this, arguments);
-		this.$().removeClass("sapMInputFocused");
+		this.removeStyleClass("sapMInputFocused");
 		this.closeValueStateMessage(this);
 		this.$("SuggDescr").text(""); // clear suggestion text, if any
 	};
