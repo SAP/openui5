@@ -917,7 +917,7 @@ sap.ui.define([
 			this._accMode = sap.ui.getCore().getConfiguration().getAccessibility();
 			this._busyCells = [];
 
-			oTable.addEventDelegate(this);
+			TableUtils.addDelegate(this, oTable, false);
 
 			// Initialize Render extension
 			TableExtension.enrich(oTable, TableAccRenderExtension);
