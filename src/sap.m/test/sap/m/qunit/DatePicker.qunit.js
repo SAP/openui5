@@ -1387,8 +1387,7 @@ sap.ui.define([
 				"fireChange is fired everytime when needed and _lastValue is in sync with the selected date");
 	});
 
-	//TODO skip is temporary until we find out why it's failing - for now the assumption is that it's because of the timeout
-	QUnit.skip("specialDates", function(assert) {
+	QUnit.test("specialDates", function(assert) {
 		var done = assert.async();
 		var oDate = new Date(2016, 5, 29);
 		oDP3.setDateValue(oDate);
@@ -1447,8 +1446,7 @@ sap.ui.define([
 
 	});
 
-	//TODO skip is temporary until we find out why it's failing - for now the assumption is that it's because of the timeout
-	QUnit.skip("specialDates2", function(assert) {
+	QUnit.test("specialDates2", function(assert) {
 		var done = assert.async();
 		oDP3.focus();
 		qutils.triggerEvent("mousedown", "DP3-icon");
@@ -1474,8 +1472,7 @@ sap.ui.define([
 
 	});
 
-	//TODO skip is temporary until we find out why it's failing - for now the assumption is that it's because of the timeout
-	QUnit.skip("specialDates3", function(assert) {
+	QUnit.test("specialDates3", function(assert) {
 		var done = assert.async();
 		var oDate = new Date(2016, 5, 5);
 		var oSpecialDate = new DateTypeRange("SD1", {startDate: oDate, type: "Type04"});
