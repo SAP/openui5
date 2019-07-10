@@ -1,12 +1,11 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel',
 		'sap/m/Token'
-	], function(jQuery, Controller, JSONModel, Token) {
+	], function(Controller, JSONModel, Token) {
 	"use strict";
 
-	var PageController = Controller.extend("sap.m.sample.MultiInput.Page", {
+	return Controller.extend("sap.m.sample.MultiInput.controller.MultiInput", {
 
 		onInit: function () {
 			var oView = this.getView();
@@ -32,8 +31,4 @@ sap.ui.define([
 			});
 		}
 	});
-
-
-	return PageController;
-
 });

@@ -1,8 +1,14 @@
-sap.ui.define(['sap/m/Tokenizer','sap/ui/core/mvc/Controller', "sap/m/MessageToast", "sap/m/Token", "sap/base/Log"],
-	function(Tokenizer, Controller, MessageToast, Token, Log) {
+sap.ui.define([
+		'sap/m/Tokenizer',
+		'sap/ui/core/mvc/Controller',
+		"sap/m/MessageToast",
+		"sap/m/Token",
+		"sap/base/Log",
+		"sap/m/MultiInput"
+	], function(Tokenizer, Controller, MessageToast, Token, Log, MultiInput) {
 	"use strict";
 
-	return Controller.extend("sap.m.sample.MultiInputTokenUpdate.Page", {
+	return Controller.extend("sap.m.sample.MultiInputTokenUpdate.controller.MultiInputTokenUpdate", {
 
 		onInit: function() {
 			var oMultiInput = this.byId('tokenUpdateMI');
@@ -30,14 +36,14 @@ sap.ui.define(['sap/m/Tokenizer','sap/ui/core/mvc/Controller', "sap/m/MessageToa
 					break;
 				case "f":
 					setTimeout(function() {
-						var oToken = new sap.m.Token({key: "f", text: "f"});
+						var oToken = new Token({key: "f", text: "f"});
 						args.asyncCallback(oToken);
 					}, 10000);
 					break;
 				default:
 			}
 
-			return sap.m.MultiInput.WaitForAsyncValidation;
+			return MultiInput.WaitForAsyncValidation;
 		},
 
 		_onTokenChange: function() {

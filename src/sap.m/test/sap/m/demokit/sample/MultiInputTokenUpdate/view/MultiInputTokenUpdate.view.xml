@@ -1,4 +1,4 @@
-<mvc:View height="100%" controllerName="sap.m.sample.MultiInputTokenUpdate.Page"
+<mvc:View height="100%" controllerName="sap.m.sample.MultiInputTokenUpdate.controller.MultiInputTokenUpdate"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m">
 	<VBox class="sapUiSmallMargin">

@@ -7,21 +7,23 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.MultiInputMaxTokens.Page",
+			"viewName": "sap.m.sample.MultiInputMaxTokens.view.MultiInputMaxTokens",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
-				"sap.m": {}
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"stretch": true,
 				"files": [
-					"Page.view.xml",
-					"Page.controller.js",
+					"view/MultiInputMaxTokens.view.xml",
+					"controller/MultiInputMaxTokens.controller.js",
 					"manifest.json"
 				]
 			}
