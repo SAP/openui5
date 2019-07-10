@@ -27,7 +27,24 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery"],
 		/**
 		 * @type {jQuery} The indicator to show in the grid
 		 */
-		_$indicator: jQuery("<div class='sapUiDnDGridIndicator'></div>")
+		_$indicator: jQuery("<div class='sapUiDnDGridIndicator'></div>"),
+
+		/**
+		 * Constructor.
+		 */
+		constructor: function() {
+			// prepare drag end delegate for later use
+			this._oDragEndDelegate = {
+				ondragend: this.endDrag.bind(this)
+			};
+		},
+
+		/**
+		 * Destroyer.
+		 */
+		destroy: function () {
+			this._oDragEndDelegate = null;
+		}
 	});
 
 	/**
@@ -67,6 +84,8 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery"],
 		oDropContainer.getAggregation(sTargetAggregation).forEach(function (oControl) {
 			oControl.addStyleClass("sapUiDnDGridControl"); // helps with locating the controls later
 		});
+
+		this._attachDragEndDelegate();
 
 		return this;
 	};
@@ -128,6 +147,12 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery"],
 
 		// this._oDragControl.setVisible(true); // todo
 		this._showDraggedItem();
+
+		this._removeDragEndDelegate();
+
+		this._oDragControl = null;
+		this._oDropContainer = null;
+		this._sTargetAggregation = null;
 
 		this._iDragFromIndex = null;
 		this._iDropPositionHoldStart = null;
@@ -456,6 +481,23 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery"],
 			target: $found,
 			direction: sDirection
 		};
+	};
+
+	/**
+	 * Removes drag end delegate from drop container.
+	 */
+	GridDragOver.prototype._removeDragEndDelegate = function() {
+		if (this._oDropContainer) {
+			this._oDropContainer.removeEventDelegate(this._oDragEndDelegate);
+		}
+	};
+
+	/**
+	 * Attaches drag end delegate to the container over which we currently drag.
+	 */
+	GridDragOver.prototype._attachDragEndDelegate = function() {
+		this._removeDragEndDelegate(); // make sure we attach only once
+		this._oDropContainer.addEventDelegate(this._oDragEndDelegate);
 	};
 
 	/**
