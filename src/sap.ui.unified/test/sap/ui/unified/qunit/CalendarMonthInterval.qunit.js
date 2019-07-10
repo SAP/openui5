@@ -380,7 +380,7 @@ sap.ui.define([
 		// open year picker
 		qutils.triggerEvent("click", "CalP--Head-B2");
 		assert.equal(jQuery("#CalP--Cal--Head").children().length, 3, "Only arrows and year picker button are rendered");
-		assert.equal(jQuery("#CalP--Cal--Head-B2").get(0).innerHTML, "2015", "Correct year is shown on the button");
+		assert.equal(jQuery("#CalP--Cal--Head-B2").get(0).innerHTML, "2005 - 2024", "Correct year range is shown on the button");
 
 		sap.ui.test.qunit.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), jQuery.sap.KeyCodes.ESCAPE);
 

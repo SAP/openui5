@@ -318,28 +318,64 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("primaryCalendarType", function(assert) {
+	QUnit.test("YearPicker primaryCalendarType", function(assert) {
+
+		var aDays, aMonths, aYears, $Date;
+
 		assert.equal(oCal2.getPrimaryCalendarType(), sap.ui.getCore().getConfiguration().getCalendarType(), "Calendar2: PrimaryCalendarType default");
 		oCal2.focusDate(new Date(2011, 0, 1)); // to be sure where focus is
 		oCal2.setPrimaryCalendarType(sap.ui.core.CalendarType.Islamic);
 		sap.ui.getCore().applyChanges();
 
-		var aDays = jQuery("#Cal2--Month0-days").find(".sapUiCalItem");
+		aDays = jQuery("#Cal2--Month0-days").find(".sapUiCalItem");
 		assert.equal(aDays.length, 35, "Calendar2: number of displayed days");
 		assert.equal(jQuery(aDays[0]).attr("data-sap-day"), "20101206", "Calendar2: first displayed day");
 		assert.equal(jQuery(aDays[aDays.length - 1]).attr("data-sap-day"), "20110109", "Calendar2: last displayed day");
 		assert.equal(jQuery("#Cal2--Head-B1").text(), "Muharram", "Muharram shown");
 		assert.equal(jQuery("#Cal2--Head-B2").text(), "1432 AH", "year 1432 shown");
 		qutils.triggerEvent("click", "Cal2--Head-B1");
-		var aMonths = jQuery("#Cal2--MP").find(".sapUiCalItem");
+		aMonths = jQuery("#Cal2--MP").find(".sapUiCalItem");
 		assert.equal(jQuery(aMonths[0]).text(), "Muharram", "Calendar2: first displayed month");
 		qutils.triggerEvent("click", "Cal2--Head-B2");
-		var aYears = jQuery("#Cal2--YP").find(".sapUiCalItem");
+		aYears = jQuery("#Cal2--YP").find(".sapUiCalItem");
 		assert.equal(jQuery(aYears[0]).text(), "1422 AH", "Calendar2: first displayed year");
-		qutils.triggerEvent("click", "Cal2--Head-B2");
+
+		$Date = jQuery("#Cal2--YP-y20101208");
+		$Date.focus();
+		qutils.triggerKeyboardEvent($Date.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
 
 		oCal2.setPrimaryCalendarType(sap.ui.getCore().getConfiguration().getCalendarType());
 		sap.ui.getCore().applyChanges();
+	});
+
+	QUnit.test("YearRangePicker correct text is displayed for the year ranges based on the calendar type", function(assert) {
+		// Prepare
+		var oCal = new Calendar({
+				primaryCalendarType: sap.ui.core.CalendarType.Japanese,
+				selectedDates: [new DateRange({startDate: new Date("3015", "0", "1")})]
+			}).placeAt("qunit-fixture"),
+			oHeaderButton2,
+			$yearRanges;
+
+		sap.ui.getCore().applyChanges();
+		oHeaderButton2 = document.querySelector("#__calendar0--Head-B2");
+
+		// Act
+		qutils.triggerEvent("click", oHeaderButton2.id);
+		// Assert
+		assert.strictEqual(oHeaderButton2.innerText, "987 Reiwa - 1006 Reiwa", "Header button two has correct text displayed");
+
+		// Act
+		qutils.triggerEvent("click", oHeaderButton2.id);
+		$yearRanges = jQuery("#__calendar0--YRP").find(".sapUiCalItem");
+
+		// Assert
+		assert.strictEqual($yearRanges.length, 4, "Correct number of year ranges are displayed");
+		assert.strictEqual($yearRanges[0].innerText, "947 Reiwa - 966 Reiwa", "Correct first year range is displayed");
+		assert.strictEqual(document.activeElement.innerText, "987 Reiwa - 1006 Reiwa", "Correct year range is displayed and focused");
+
+		// Clean
+		oCal.destroy();
 	});
 
 	QUnit.test("secondaryCalendarType", function(assert) {
@@ -410,6 +446,108 @@ sap.ui.define([
 			oInvalidateMonthSpy.restore();
 			done();
 		}, 100);
+	});
+
+	QUnit.test("YearRangePicker has three columns and 9 year ranges when the calendar type is Gregorian", function (assert) {
+		// Prepare
+		var oCal = new Calendar({
+				primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+			}).placeAt("qunit-fixture"),
+			oYearRangePicker = oCal.getAggregation("yearRangePicker"),
+			oAdjustYearRangeDisplaySpy = this.spy(oCal, "_adjustYearRangeDisplay");
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		// Assert
+		assert.ok(oAdjustYearRangeDisplaySpy.calledOnce, "_adjustYearRangeDisplay is called");
+		assert.ok(oYearRangePicker.getColumns(), 3, "YearRangePicker has three columns");
+		assert.ok(oYearRangePicker.getYears(), 9, "YearRangePicker has display nine year ranges");
+
+		// Clean
+		oCal.destroy();
+		oAdjustYearRangeDisplaySpy.restore();
+	});
+
+	QUnit.test("YearRangePicker has two columns and 8 year ranges when the calendar type is Islamic", function (assert) {
+		// Prepare
+		var oCal = new Calendar({
+				primaryCalendarType: sap.ui.core.CalendarType.Islamic
+			}).placeAt("qunit-fixture"),
+			oYearRangePicker = oCal.getAggregation("yearRangePicker"),
+			oAdjustYearRangeDisplaySpy = this.spy(oCal, "_adjustYearRangeDisplay");
+
+		sap.ui.getCore().applyChanges();
+		// Act
+		// Assert
+		assert.ok(oAdjustYearRangeDisplaySpy.calledOnce, "_adjustYearRangeDisplay is called once");
+		assert.ok(oYearRangePicker.getColumns(), 2, "YearRangePicker has two columns");
+		assert.ok(oYearRangePicker.getYears(), 8, "YearRangePicker has display eight year ranges");
+
+		// Clean
+		oCal.destroy();
+		oAdjustYearRangeDisplaySpy.restore();
+	});
+
+	QUnit.test("YearRangePicker has one column and four year ranges when the calendar type is Japanese", function (assert) {
+		// Prepare
+		var oCal = new Calendar({
+				primaryCalendarType: sap.ui.core.CalendarType.Japanese
+			}).placeAt("qunit-fixture"),
+			oYearRangePicker = oCal.getAggregation("yearRangePicker"),
+			oAdjustYearRangeDisplaySpy = this.spy(oCal, "_adjustYearRangeDisplay");
+
+		sap.ui.getCore().applyChanges();
+		// Act
+		// Assert
+		assert.ok(oAdjustYearRangeDisplaySpy.calledOnce, "_adjustYearRangeDisplay is called once");
+		assert.ok(oYearRangePicker.getColumns(), 1, "YearRangePicker has one column");
+		assert.ok(oYearRangePicker.getYears(), 4, "YearRangePicker has display four year ranges");
+
+		// Clean
+		oCal.destroy();
+		oAdjustYearRangeDisplaySpy.restore();
+	});
+
+	QUnit.test("Calendar type affects YearRangePicker rendering", function (assert) {
+		// Prepare
+		var oCal = new Calendar({
+				primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+			}).placeAt("qunit-fixture"),
+			oYearRangePicker = oCal.getAggregation("yearRangePicker"),
+			oAdjustYearRangeDisplaySpy = this.spy(oCal, "_adjustYearRangeDisplay");
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oCal.setPrimaryCalendarType(sap.ui.core.CalendarType.Buddhist);
+
+		// Assert
+		assert.ok(oAdjustYearRangeDisplaySpy.called, "_adjustYearRangeDisplay is called once");
+		assert.ok(oYearRangePicker.getColumns(), 2, "YearRangePicker has two columns");
+		assert.ok(oYearRangePicker.getYears(), 8, "YearRangePicker has display eight year ranges");
+
+		// Clean
+		oCal.destroy();
+		oAdjustYearRangeDisplaySpy.restore();
+	});
+
+	QUnit.module("initialize");
+
+	QUnit.test("YearRangePicker aggregation is instantiated correctly", function (assert) {
+		// Prepare
+		var oCal = new Calendar({
+				primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+			}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+		// Act
+		// Assert
+		assert.strictEqual(oCal.getAggregation("yearRangePicker").getPrimaryCalendarType(), oCal.getPrimaryCalendarType(),
+			"YearRangePicker instance has the same primary calendar type as the calendar instance");
+
+		// Clean
+		oCal.destroy();
 	});
 
 	QUnit.module("Interaction");
@@ -579,7 +717,10 @@ sap.ui.define([
 		qutils.triggerEvent("click", "Cal1--Head-B2");
 		var aYears = jQuery("#Cal1--YP").find(".sapUiCalItem");
 		assert.equal(jQuery(aYears[aYears.length - 1]).text(), "9999", "Max Year is last rendered year");
-		qutils.triggerEvent("click", "Cal1--Head-B2");
+
+		var $Date = jQuery("#Cal1--YP-y99990101");
+		$Date.focus();
+		qutils.triggerKeyboardEvent($Date.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
 
 		var oDate = new Date(1,1,1);
 		oDate.setFullYear(1);
@@ -592,7 +733,10 @@ sap.ui.define([
 		qutils.triggerEvent("click", "Cal1--Head-B2");
 		aYears = jQuery("#Cal1--YP").find(".sapUiCalItem");
 		assert.equal(jQuery(aYears[0]).text(), "0001", "Min Year is first rendered year");
-		qutils.triggerEvent("click", "Cal1--Head-B2");
+
+		$Date = jQuery("#Cal1--YP-y00010101");
+		$Date.focus();
+		qutils.triggerKeyboardEvent($Date.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
 
 		oCal1.focusDate(new Date());
 
@@ -638,13 +782,70 @@ sap.ui.define([
 		assert.equal(jQuery(aYears[4]).text(), "2000", "Calendar3: 4. displayed year");
 		assert.ok(!jQuery(aYears[4]).hasClass("sapUiCalItemDsbl"), "Calendar3: 2000 is enabled");
 		assert.ok(!jQuery(aYears[4]).attr("aria-disabled"), "Calendar3: 2000 has no aria-disabled");
-		qutils.triggerEvent("click", "Cal3--Head-B2");
+
+		$Date = jQuery("#Cal3--YP-y20140101");
+		$Date.focus();
+		qutils.triggerKeyboardEvent($Date.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
 
 		oCal3.focusDate(new Date(2000, 0, 10));
 		assert.ok(jQuery("#Cal3--Head-prev").hasClass("sapUiCalDsbl"), "Calendar3: Previous Button disabled");
 		assert.ok(!jQuery("#Cal3--Head-next").hasClass("sapUiCalDsbl"), "Calendar3: Next Button enabled");
 
 		oCal3.focusDate(new Date(2015, 0, 5));
+	});
+
+
+	QUnit.test("YearRangePicker correct max range is displayed when next header arrow button is pressed", function(assert) {
+		// Prepare
+		var oCal = new Calendar({
+				primaryCalendarType: sap.ui.core.CalendarType.Gregorian,
+				selectedDates: [new DateRange({startDate: new Date("9900", "0", "1")})]
+			}).placeAt("qunit-fixture"),
+			$NextArrowButton,
+			$yearRanges;
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oCal._showYearPicker();
+		oCal._showYearRangePicker();
+		$NextArrowButton = jQuery("#" + oCal.getId() + "--Head-next");
+		qutils.triggerEvent("click", $NextArrowButton.attr("id"));
+		$yearRanges = jQuery("#" + oCal.getId() + "--YRP").find(".sapUiCalItem");
+
+		// Assert
+		assert.ok($NextArrowButton.hasClass("sapUiCalDsbl"), "Header next button is disabled");
+		assert.strictEqual($yearRanges[$yearRanges.length - 1].innerText, "9980 - 9999", "Correct year range is displayed and focused");
+
+		// Clean
+		oCal.destroy();
+	});
+
+	QUnit.test("YearRangePicker correct min range is displayed when previous header arrow button is pressed", function(assert) {
+		// Prepare
+		var oStartDate = new CalendarDate(1, 0, 1),
+			oCal = new Calendar({
+				primaryCalendarType: sap.ui.core.CalendarType.Gregorian,
+				selectedDates: [new DateRange({startDate: oStartDate.toLocalJSDate()})]
+			}).placeAt("qunit-fixture"),
+			$prevArrowButton,
+			$yearRanges;
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oCal._showYearPicker();
+		oCal._showYearRangePicker();
+		$prevArrowButton = jQuery("#" + oCal.getId() + "--Head-prev");
+		qutils.triggerEvent("click", $prevArrowButton.attr("id"));
+		$yearRanges = jQuery("#" + oCal.getId() + "--YRP").find(".sapUiCalItem");
+
+		// Assert
+		assert.ok($prevArrowButton.hasClass("sapUiCalDsbl"), "Header previous button is disabled");
+		assert.strictEqual($yearRanges[0].innerText, "0001 - 0020", "Correct year range is displayed and focused");
+
+		// Clean
+		oCal.destroy();
 	});
 
 	QUnit.test("select event", function(assert) {
@@ -701,6 +902,211 @@ sap.ui.define([
 		assert.ok(!$otherSelectedDateFromTheOtherMonth.hasClass("sapUiCalItemSel"),
 				"Both selected 29th of November are deselected successfully");
 
+	});
+
+	QUnit.test("YearRangePicker min/max dates are set correctly", function (assert) {
+		// Prepare
+		var oCal = new Calendar({
+				primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+			}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oCal.setMinDate(new Date(2000, 10, 10));
+
+		// Assert
+		assert.deepEqual(oCal.getAggregation("yearPicker")._oMinDate, oCal.getAggregation("yearRangePicker")._oMinDate,
+			"YearRangePicker instance has correct minDate set");
+
+		// Act
+		oCal.setMaxDate(new Date(2020, 10, 10));
+
+		// Assert
+		assert.deepEqual(oCal.getAggregation("yearPicker")._oMaxDate, oCal.getAggregation("yearRangePicker")._oMaxDate,
+					"YearRangePicker instance has correct maxDate set");
+
+		// Clean
+		oCal.destroy();
+	});
+
+	QUnit.test("Header buttons visibility and text is correctly managed when displaying YearPicker and YearRangePicker instances", function (assert) {
+		// Prepare
+		var oCal = new Calendar({
+				primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+			}).placeAt("qunit-fixture"),
+			oHeader = oCal.getAggregation("header"),
+			oUpdateHeadersYearPrimaryTextSpy = this.spy(oCal, "_updateHeadersYearPrimaryText"),
+			oShowYearPickerSpy = this.spy(oCal, "_showYearPicker");
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oCal._showYearPicker();
+
+		// Assert
+		assert.ok(oUpdateHeadersYearPrimaryTextSpy.calledAfter(oShowYearPickerSpy), "button2 text is updated");
+		assert.notOk(oHeader.getVisibleButton1(), "Button one (for opening MonthPicker) is invisible");
+
+		// Act
+		oCal._showYearRangePicker();
+
+		// Assert
+		assert.notOk(oHeader.getVisibleButton2(), "Button two (for opening MonthPicker) is invisible");
+
+		// Clean
+		oCal.destroy();
+		oUpdateHeadersYearPrimaryTextSpy.restore();
+		oShowYearPickerSpy.restore();
+	});
+
+	QUnit.test("Header buttons visibility and text is corretly managed when selecting a year range", function (assert) {
+		// Prepare
+		var oCal = new Calendar({
+				primaryCalendarType: sap.ui.core.CalendarType.Gregorian,
+				selectedDates: [new DateRange({startDate: new Date("2015", "0", "1")})]
+			}).placeAt("qunit-fixture"),
+			oHeader = oCal.getAggregation("header"),
+			oUpdateHeadersYearPrimaryTextSpy = this.spy(oCal, "_updateHeadersYearPrimaryText"),
+			oSelectYearRangeSpy = this.spy(oCal, "_selectYearRange");
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oCal._showYearPicker();
+		oCal._showYearRangePicker();
+
+		// Assert
+		assert.notOk(oHeader.getVisibleButton2(), "Button two (for opening MonthPicker) is invisible");
+
+		// Act
+		oCal._selectYearRange();
+
+		// Assert
+		assert.ok(oUpdateHeadersYearPrimaryTextSpy.calledAfter(oSelectYearRangeSpy), "Header button2 is correctly updated");
+		assert.ok(oHeader.getVisibleButton2(), "Button two (for opening MonthPicker) is visible");
+
+		// Clean
+		oCal.destroy();
+		oUpdateHeadersYearPrimaryTextSpy.restore();
+		oSelectYearRangeSpy.restore();
+	});
+
+	QUnit.test("The right year range is selected in the YearRangePicker when caledar type min date is selected", function (assert) {
+		// Prepare
+		var oStartDate = new CalendarDate(1, 0, 1),
+			oCal = new Calendar({
+				primaryCalendarType: sap.ui.core.CalendarType.Gregorian,
+				selectedDates: [new DateRange({startDate: oStartDate.toLocalJSDate()})]
+			}).placeAt("qunit-fixture"),
+			oTogglePrevNexYearPicker = this.spy(oCal, "_togglePrevNexYearPicker");
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oCal._showYearPicker();
+		oCal._showYearRangePicker();
+
+		// Assert
+		assert.strictEqual(oCal.getAggregation("yearRangePicker")._oItemNavigation.getFocusedIndex(), 0,
+			"Correct element is selected in the YearRangePicker");
+		assert.ok(oTogglePrevNexYearPicker.called, "_togglePrevNexYearPicker was called");
+		assert.notOk(oCal.getAggregation("header").getEnabledPrevious(), "Header previous button is disabled");
+
+		// Clean
+		oCal.destroy();
+		oTogglePrevNexYearPicker.restore();
+	});
+
+	QUnit.test("The right year range is selected in the YearRangePicker when caledar type max date is selected", function (assert) {
+		// Prepare
+		var oStartDate = new CalendarDate(9999, 0, 1),
+			oCal = new Calendar({
+				primaryCalendarType: sap.ui.core.CalendarType.Gregorian,
+				selectedDates: [new DateRange({startDate: oStartDate.toLocalJSDate()})]
+			}).placeAt("qunit-fixture"),
+			oTogglePrevNexYearPicker = this.spy(oCal, "_togglePrevNexYearPicker"),
+			oItemNavigation;
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oCal._showYearPicker();
+		oCal._showYearRangePicker();
+		oItemNavigation = oCal.getAggregation("yearRangePicker")._oItemNavigation;
+
+		// Assert
+		assert.strictEqual(oItemNavigation.getFocusedIndex(),
+			oItemNavigation.getItemDomRefs().length - 1,
+			"Correct element is selected in the YearRangePicker");
+		assert.ok(oTogglePrevNexYearPicker.called, "_togglePrevNexYearPicker was called");
+		assert.notOk(oCal.getAggregation("header").getEnabledNext(), "Header next button is disabled");
+
+		// Clean
+		oCal.destroy();
+		oTogglePrevNexYearPicker.restore();
+	});
+
+	QUnit.test("Header next button handler works correct for YearRangePicker", function (assert) {
+		// Prepare
+		var oCal = new Calendar({
+				primaryCalendarType: sap.ui.core.CalendarType.Gregorian,
+				selectedDates: [new DateRange({startDate:new Date(2000, 0, 1)})]
+			}).placeAt("qunit-fixture"),
+			oYearRangePicker = oCal.getAggregation("yearRangePicker"),
+			oNextPageSpy = this.spy(oYearRangePicker, "nextPage"),
+			oUpdateYearsSpy = this.spy(oYearRangePicker, "_updateYears"),
+			oTogglePrevNexYearPicker = this.spy(oCal, "_togglePrevNexYearPicker");
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oCal._showYearPicker();
+		oCal._showYearRangePicker();
+		oCal._handleNext();
+
+		// Assert
+		assert.ok(oNextPageSpy.calledOnce, "YearRangePicker nextPage is called");
+		assert.ok(oUpdateYearsSpy.called, "YearRangePicker _updateYears is called");
+		assert.ok(oTogglePrevNexYearPicker.called, "Calendar _togglePrevNexYearPicker is called");
+		assert.deepEqual(oYearRangePicker.getFirstRenderedDate(), new Date(2090, 0, 1), "Year picker page is updated correctly");
+
+		// Clean
+		oCal.destroy();
+		oNextPageSpy.restore();
+		oUpdateYearsSpy.restore();
+		oTogglePrevNexYearPicker.restore();
+	});
+
+	QUnit.test("Header previous button handler works correct for YearRangePicker", function (assert) {
+		// Prepare
+		var oCal = new Calendar({
+				primaryCalendarType: sap.ui.core.CalendarType.Gregorian,
+				selectedDates: [new DateRange({startDate:new Date(2000, 0, 1)})]
+			}).placeAt("qunit-fixture"),
+			oYearRangePicker = oCal.getAggregation("yearRangePicker"),
+			oPreviousPageSpy = this.spy(oYearRangePicker, "previousPage"),
+			oUpdateYearsSpy = this.spy(oYearRangePicker, "_updateYears"),
+			oTogglePrevNexYearPicker = this.spy(oCal, "_togglePrevNexYearPicker");
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oCal._showYearPicker();
+		oCal._showYearRangePicker();
+		oCal._handlePrevious();
+
+		// Assert
+		assert.ok(oPreviousPageSpy.calledOnce, "YearRangePicker previousPage is called");
+		assert.ok(oUpdateYearsSpy.called, "YearRangePicker _updateYears is called");
+		assert.ok(oTogglePrevNexYearPicker.called, "Calendar _togglePrevNexYearPicker is called");
+		assert.deepEqual(oYearRangePicker.getFirstRenderedDate(), new Date(1730, 0, 1), "Year picker page is updated correctly");
+
+		// Clean
+		oCal.destroy();
+		oPreviousPageSpy.restore();
+		oUpdateYearsSpy.restore();
+		oTogglePrevNexYearPicker.restore();
 	});
 
 QUnit.module("Misc");

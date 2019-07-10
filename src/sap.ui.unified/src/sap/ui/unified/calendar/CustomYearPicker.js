@@ -34,40 +34,30 @@ sap.ui.define([
 		this.setAggregation("header",oHeader);
 	};
 
+	CustomYearPicker.prototype.onBeforeRendering = function () {
+		var oHeader = this.getAggregation("header");
+		Calendar.prototype.onBeforeRendering.call(this, arguments);
+		oHeader.setVisibleButton1(false);
+		oHeader.setVisibleButton2(true);
+	};
+
 	CustomYearPicker.prototype.onAfterRendering = function () {
 		Calendar.prototype.onAfterRendering.apply(this, arguments);
-		var oHeader = this.getAggregation("header");
-
-		oHeader.$("B2")
-			.css("background-color", "inherit")
-			.css("color", "inherit")
-			.css("cursor", "inherit")
-			.css("pointer-events", "none");
-
 		this._showYearPicker(); //Opens the calendar picker always at the Year Picker page instead of the default one
 	};
 
 	CustomYearPicker.prototype.onThemeChanged = function () {
 		Calendar.prototype.onThemeChanged.apply(this, arguments);
-
-		var oHeader = this.getAggregation("header");
-
-		oHeader.$("B2")
-			.css("background-color", "inherit")
-			.css("color", "inherit")
-			.css("cursor", "inherit")
-			.css("pointer-events", "none");
 	};
 
 	CustomYearPicker.prototype._selectYear = function () {
-		var oYearPicker = this.getAggregation("yearPicker");
 		var oDateRange = this.getSelectedDates()[0];
 
 		if (!oDateRange) {
 			oDateRange = new DateRange();
 		}
 
-		oDateRange.setStartDate(oYearPicker.getDate());
+		oDateRange.setStartDate(this.getAggregation("yearPicker").getDate());
 		this.addSelectedDate(oDateRange);
 
 		this.fireSelect();

@@ -134,7 +134,6 @@ sap.ui.define([
 	YearPicker.prototype.onAfterRendering = function(){
 
 		_initItemNavigation.call(this);
-
 	};
 
 	YearPicker.prototype.setYear = function(iYear){
@@ -142,11 +141,7 @@ sap.ui.define([
 		// no rerendering needed, just select new year or update years
 		this.setProperty("year", iYear, true);
 		iYear = this.getProperty("year"); // to have type conversion, validation....
-
-		var oDate = CalendarDate.fromLocalJSDate(new Date(),  this.getPrimaryCalendarType());
-		oDate.setDate(1);
-		oDate.setMonth(0);
-		oDate.setYear(iYear);
+		var oDate = new CalendarDate(iYear, 0, 1, this.getPrimaryCalendarType());
 
 		this.setDate(oDate.toLocalJSDate());
 
@@ -169,8 +164,8 @@ sap.ui.define([
 		CalendarUtils._checkYearInValidRange(iYear);
 
 		oCalDate = CalendarDate.fromLocalJSDate(oDate, this.getPrimaryCalendarType());
-		oCalDate.setMonth(0);
-		oCalDate.setDate(1); // start of year
+		oCalDate.setMonth(0, 1);
+
 		// no rerendering needed, just select new year or update years
 		this.setProperty("date", oDate, true);
 		this.setProperty("year", oCalDate.getYear(), true);
@@ -180,7 +175,7 @@ sap.ui.define([
 			iYears = this.getYears();
 			oFirstDate = new CalendarDate(this._oDate, this.getPrimaryCalendarType());
 			oFirstDate.setYear(oFirstDate.getYear() - Math.floor(iYears / 2));
-			_updateYears.call(this, oFirstDate, Math.floor(iYears / 2));
+			this._updateYears(oFirstDate, Math.floor(iYears / 2));
 		}
 
 		return this;
@@ -210,8 +205,7 @@ sap.ui.define([
 
 		if (this._oDate) {
 			this._oDate = new CalendarDate(this._oDate, sCalendarType);
-			this._oDate.setMonth(0);
-			this._oDate.setDate(1); // start of year
+			this._oDate.setMonth(0, 1);
 		}
 		//The min and max dates are given in gregorian values, but when getters are called they are calendar relevant -
 		//i.e. maxdate date for islamic corresponds to 9666/3/30.
@@ -232,7 +226,7 @@ sap.ui.define([
 	 */
 	YearPicker.prototype.nextPage = function(){
 
-		_updatePage.call(this, true, this._oItemNavigation.getFocusedIndex());
+		this._updatePage(true, this._oItemNavigation.getFocusedIndex());
 
 		return this;
 
@@ -247,7 +241,7 @@ sap.ui.define([
 	 */
 	YearPicker.prototype.previousPage = function(){
 
-		_updatePage.call(this, false, this._oItemNavigation.getFocusedIndex());
+		this._updatePage(false, this._oItemNavigation.getFocusedIndex());
 
 		return this;
 
@@ -262,7 +256,7 @@ sap.ui.define([
 		// focused item must be selected
 		var iIndex = this._oItemNavigation.getFocusedIndex();
 
-		var bSelected = _selectYear.call(this, iIndex);
+		var bSelected = this._selectYear(iIndex);
 		if (bSelected) {
 			this.fireSelect();
 		}
@@ -288,7 +282,7 @@ sap.ui.define([
 			&& this._isValueInThreshold(this._oMousedownPosition.clientY, oEvent.clientY, 10)
 		) {
 			var iIndex = this._oItemNavigation.getFocusedIndex();
-			_selectYear.call(this, iIndex);
+			this._selectYear(iIndex);
 			this.fireSelect();
 		}
 
@@ -336,17 +330,16 @@ sap.ui.define([
 	YearPicker.prototype._checkFirstDate = function(oDate){
 
 		// check if first date is outside of min and max date
-		var iYears = this.getYears();
-		var oMaxStartYear = new CalendarDate(this._oMaxDate, this.getPrimaryCalendarType());
+		var iYears = this.getYears(),
+			oMaxStartYear = new CalendarDate(this._oMaxDate, this.getPrimaryCalendarType());
+
 		oMaxStartYear.setYear(oMaxStartYear.getYear() - iYears + 1);
 		if (oDate.isAfter(oMaxStartYear) && oDate.getYear() != oMaxStartYear.getYear()) {
 			oDate = new CalendarDate(oMaxStartYear, this.getPrimaryCalendarType());
-			oDate.setMonth(0);
-			oDate.setDate(1);
+			oDate.setMonth(0, 1);
 		} else if (oDate.isBefore(this._oMinDate) && oDate.getYear() != this._oMinDate.getYear()) {
 			oDate = new CalendarDate(this._oMinDate, this.getPrimaryCalendarType());
-			oDate.setMonth(0);
-			oDate.setDate(1);
+			oDate.setMonth(0, 1);
 		}
 
 		return oDate;
@@ -368,6 +361,142 @@ sap.ui.define([
 		}
 
 		return bEnabled;
+
+	};
+
+	YearPicker.prototype._updatePage = function (bForward, iSelectedIndex, bFireEvent){
+
+		var aDomRefs = this._oItemNavigation.getItemDomRefs();
+		var oFirstDate =  CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(jQuery(aDomRefs[0]).attr("data-sap-year-start")), this.getPrimaryCalendarType());
+		var iYears = this.getYears();
+
+		if (bForward) {
+			var oMaxDate = new CalendarDate(this._oMaxDate, this.getPrimaryCalendarType());
+			oMaxDate.setYear(oMaxDate.getYear() - iYears + 1);
+			if (oFirstDate.isBefore(oMaxDate)) {
+				oFirstDate.setYear(oFirstDate.getYear() + iYears);
+				if (oFirstDate.isAfter(oMaxDate)){
+					iSelectedIndex = iSelectedIndex + (oFirstDate.getYear() - oMaxDate.getYear());
+					if (iSelectedIndex > iYears - 1) {
+						iSelectedIndex = iYears - 1;
+					}
+					oFirstDate = this._oMaxDate;
+					this._oDate.setMonth(0, 1);
+				}
+			} else {
+				return;
+			}
+		} else {
+			if (oFirstDate.isAfter(this._oMinDate)) {
+				oFirstDate.setYear(oFirstDate.getYear() - iYears);
+				if (oFirstDate.isBefore(this._oMinDate)) {
+					iSelectedIndex = iSelectedIndex - (this._oMinDate.getYear() - oFirstDate.getYear());
+					if (iSelectedIndex < 0) {
+						iSelectedIndex = 0;
+					}
+					oFirstDate = new CalendarDate(this._oMinDate, this.getPrimaryCalendarType());
+				}
+			} else {
+				return;
+			}
+		}
+
+		this._updateYears(oFirstDate, iSelectedIndex);
+
+		if (bFireEvent) {
+			this.firePageChange();
+		}
+
+	};
+
+	/**
+	* @param {sap.ui.unified.calendar.CalendarDate} oFirstDate
+	* @param {int} iSelectedIndex
+	* @private
+	*/
+	YearPicker.prototype._updateYears = function(oFirstDate, iSelectedIndex){
+
+		var sCurrentYyyymmdd = this._oFormatYyyymmdd.format(this._getDate().toUTCJSDate(), true);
+		var bEnabledCheck = false; // check for disabled years only needed if borders touched
+		var oFirstDate2 = this._checkFirstDate(oFirstDate);
+		var oSelectedDate;
+		if (!oFirstDate2.isSame(oFirstDate)) {
+			oSelectedDate = new CalendarDate(oFirstDate, this.getPrimaryCalendarType());
+			oSelectedDate.setYear(oSelectedDate.getYear() + iSelectedIndex);
+			oFirstDate = oFirstDate2;
+			bEnabledCheck = true;
+		}
+
+		var aDomRefs = this._oItemNavigation.getItemDomRefs();
+		var oDate = new CalendarDate(oFirstDate, this.getPrimaryCalendarType());
+		for ( var i = 0; i < aDomRefs.length; i++) {
+			var sYyyymmdd = this._oFormatYyyymmdd.format(oDate.toUTCJSDate(), true);
+			var $DomRef = jQuery(aDomRefs[i]);
+			$DomRef.attr("id", this.getId() + "-y" + sYyyymmdd);
+			// to render era in Japanese, UniversalDate is used, since CalendarDate.toUTCJSDate() will convert the date in Gregorian
+			$DomRef.text(this._oYearFormat.format(UniversalDate.getInstance(oDate.toUTCJSDate(), oDate.getCalendarType()), true));
+			$DomRef.attr("data-sap-year-start", sYyyymmdd);
+			if ($DomRef.hasClass("sapUiCalItemSel") && sYyyymmdd != sCurrentYyyymmdd) {
+				$DomRef.removeClass("sapUiCalItemSel");
+				$DomRef.attr("aria-selected", "false");
+			} else if (!$DomRef.hasClass("sapUiCalItemSel") && sYyyymmdd == sCurrentYyyymmdd) {
+				$DomRef.addClass("sapUiCalItemSel");
+				$DomRef.attr("aria-selected", "true");
+			}
+
+			var bEnabled = true;
+			if (bEnabledCheck) {
+				bEnabled = this._checkDateEnabled(oDate);
+				if (oDate.isSame(oSelectedDate)) {
+					iSelectedIndex = i;
+				}
+			}
+
+			if (bEnabled) {
+				$DomRef.removeClass("sapUiCalItemDsbl");
+				$DomRef.removeAttr("aria-disabled");
+			} else {
+				$DomRef.addClass("sapUiCalItemDsbl");
+				$DomRef.attr("aria-disabled", true);
+			}
+
+			oDate.setYear(oDate.getYear() + 1);
+		}
+
+		this._oItemNavigation.focusItem(iSelectedIndex);
+
+	};
+
+	YearPicker.prototype._selectYear = function (iIndex) {
+
+		var aDomRefs = this._oItemNavigation.getItemDomRefs(),
+			$DomRef = jQuery(aDomRefs[iIndex]),
+			sYyyymmdd,
+			oDate,
+			sId;
+
+		if ($DomRef.hasClass("sapUiCalItemDsbl")) {
+			return false; // don't select disabled items
+		}
+		sYyyymmdd = $DomRef.attr("data-sap-year-start");
+		oDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this.getPrimaryCalendarType());
+		sId = this.getId() + "-y" + sYyyymmdd;
+
+		for ( var i = 0; i < aDomRefs.length; i++) {
+			$DomRef = jQuery(aDomRefs[i]);
+			if ($DomRef.attr("id") == sId) {
+				$DomRef.addClass("sapUiCalItemSel");
+				$DomRef.attr("aria-selected", "true");
+			} else {
+				$DomRef.removeClass("sapUiCalItemSel");
+				$DomRef.attr("aria-selected", "false");
+			}
+		}
+
+		this.setProperty("date", oDate.toLocalJSDate(), true);
+		this.setProperty("year", oDate.getYear(), true);
+
+		return true;
 
 	};
 
@@ -449,7 +578,7 @@ sap.ui.define([
 			return;
 		}
 
-		var bSelected = _selectYear.call(this, iIndex);
+		var bSelected = this._selectYear(iIndex);
 		if (bSelected) {
 			this._bMousedownChange = true;
 		}
@@ -475,10 +604,10 @@ sap.ui.define([
 			case "sapnextmodifiers":
 				if (oEvent.keyCode == KeyCodes.ARROW_DOWN && iColumns < iYears) {
 					//same column in first row of next group (only if more than one row)
-					_updatePage.call(this, true, this._oItemNavigation.getFocusedIndex() - iYears + iColumns, true);
+					this._updatePage(true, this._oItemNavigation.getFocusedIndex() - iYears + iColumns, true);
 				} else {
 					// first year in next group
-					_updatePage.call(this, true, 0, true);
+					this._updatePage(true, 0, true);
 				}
 				break;
 
@@ -486,161 +615,27 @@ sap.ui.define([
 			case "sappreviousmodifiers":
 				if (oEvent.keyCode == KeyCodes.ARROW_UP && iColumns < iYears) {
 					//same column in last row of previous group (only if more than one row)
-					_updatePage.call(this, false, iYears - iColumns + this._oItemNavigation.getFocusedIndex(), true);
+					this._updatePage(false, iYears - iColumns + this._oItemNavigation.getFocusedIndex(), true);
 				} else {
 					// last year in previous group
-					_updatePage.call(this, false, iYears - 1, true);
+					this._updatePage(false, iYears - 1, true);
 				}
 				break;
 
 			case "sappagedown":
 				// same index in next group
-				_updatePage.call(this, true, this._oItemNavigation.getFocusedIndex(), true);
+				this._updatePage(true, this._oItemNavigation.getFocusedIndex(), true);
 				break;
 
 			case "sappageup":
 				// same index in previous group
-				_updatePage.call(this, false, this._oItemNavigation.getFocusedIndex(), true);
+				this._updatePage(false, this._oItemNavigation.getFocusedIndex(), true);
 				break;
 
 			default:
 				break;
 			}
 		}
-
-	}
-
-	function _selectYear(iIndex){
-
-		var aDomRefs = this._oItemNavigation.getItemDomRefs();
-		var $DomRef = jQuery(aDomRefs[iIndex]);
-
-		if ($DomRef.hasClass("sapUiCalItemDsbl")) {
-			return false; // don't select disabled items
-		}
-
-		var sYyyymmdd = $DomRef.attr("data-sap-year-start");
-		var oDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd));
-		var sId = this.getId() + "-y" + sYyyymmdd;
-		for ( var i = 0; i < aDomRefs.length; i++) {
-			$DomRef = jQuery(aDomRefs[i]);
-			if ($DomRef.attr("id") == sId) {
-				$DomRef.addClass("sapUiCalItemSel");
-				$DomRef.attr("aria-selected", "true");
-			}else {
-				$DomRef.removeClass("sapUiCalItemSel");
-				$DomRef.attr("aria-selected", "false");
-			}
-		}
-
-		this.setProperty("date", oDate.toLocalJSDate(), true);
-		this.setProperty("year", oDate.getYear(), true);
-
-		return true;
-
-	}
-
-	function _updatePage(bForward, iSelectedIndex, bFireEvent){
-
-		var aDomRefs = this._oItemNavigation.getItemDomRefs();
-		var oFirstDate =  CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(jQuery(aDomRefs[0]).attr("data-sap-year-start")), this.getPrimaryCalendarType());
-		var iYears = this.getYears();
-
-		if (bForward) {
-			var oMaxDate = new CalendarDate(this._oMaxDate, this.getPrimaryCalendarType());
-			oMaxDate.setYear(oMaxDate.getYear() - iYears + 1);
-			if (oFirstDate.isBefore(oMaxDate)) {
-				oFirstDate.setYear(oFirstDate.getYear() + iYears);
-				if (oFirstDate.isAfter(oMaxDate)){
-					iSelectedIndex = iSelectedIndex + (oFirstDate.getYear() - oMaxDate.getYear());
-					if (iSelectedIndex > iYears - 1) {
-						iSelectedIndex = iYears - 1;
-					}
-					oFirstDate = this._oMaxDate;
-					oFirstDate.setMonth(0);
-					oFirstDate.setDate(1);
-				}
-			} else {
-				return;
-			}
-		} else {
-			if (oFirstDate.isAfter(this._oMinDate)) {
-				oFirstDate.setYear(oFirstDate.getYear() - iYears);
-				if (oFirstDate.isBefore(this._oMinDate)) {
-					iSelectedIndex = iSelectedIndex - (this._oMinDate.getYear() - oFirstDate.getYear());
-					if (iSelectedIndex < 0) {
-						iSelectedIndex = 0;
-					}
-					oFirstDate = new CalendarDate(this._oMinDate, this.getPrimaryCalendarType());
-				}
-			} else {
-				return;
-			}
-		}
-
-		_updateYears.call(this, oFirstDate, iSelectedIndex);
-
-		if (bFireEvent) {
-			this.firePageChange();
-		}
-
-	}
-
-	/**
-	* @param {sap.ui.unified.calendar.CalendarDate} oFirstDate
-	* @param {int} iSelectedIndex
-	* @private
-	*/
-	function _updateYears(oFirstDate, iSelectedIndex){
-
-		var sCurrentYyyymmdd = this._oFormatYyyymmdd.format(this._getDate().toUTCJSDate(), true);
-		var bEnabledCheck = false; // check for disabled years only needed if borders touched
-		var oFirstDate2 = this._checkFirstDate(oFirstDate);
-		var oSelectedDate;
-		if (!oFirstDate2.isSame(oFirstDate)) {
-			oSelectedDate = new CalendarDate(oFirstDate, this.getPrimaryCalendarType());
-			oSelectedDate.setYear(oSelectedDate.getYear() + iSelectedIndex);
-			oFirstDate = oFirstDate2;
-			bEnabledCheck = true;
-		}
-
-		var aDomRefs = this._oItemNavigation.getItemDomRefs();
-		var oDate = new CalendarDate(oFirstDate, this.getPrimaryCalendarType());
-		for ( var i = 0; i < aDomRefs.length; i++) {
-			var sYyyymmdd = this._oFormatYyyymmdd.format(oDate.toUTCJSDate(), true);
-			var $DomRef = jQuery(aDomRefs[i]);
-			$DomRef.attr("id", this.getId() + "-y" + sYyyymmdd);
-			// to render era in Japanese, UniversalDate is used, since CalendarDate.toUTCJSDate() will convert the date in Gregorian
-			$DomRef.text(this._oYearFormat.format(UniversalDate.getInstance(oDate.toUTCJSDate(), oDate.getCalendarType()), true));
-			$DomRef.attr("data-sap-year-start", sYyyymmdd);
-			if ($DomRef.hasClass("sapUiCalItemSel") && sYyyymmdd != sCurrentYyyymmdd) {
-				$DomRef.removeClass("sapUiCalItemSel");
-				$DomRef.attr("aria-selected", "false");
-			} else if (!$DomRef.hasClass("sapUiCalItemSel") && sYyyymmdd == sCurrentYyyymmdd) {
-				$DomRef.addClass("sapUiCalItemSel");
-				$DomRef.attr("aria-selected", "true");
-			}
-
-			var bEnabled = true;
-			if (bEnabledCheck) {
-				bEnabled = this._checkDateEnabled(oDate);
-				if (oDate.isSame(oSelectedDate)) {
-					iSelectedIndex = i;
-				}
-			}
-
-			if (bEnabled) {
-				$DomRef.removeClass("sapUiCalItemDsbl");
-				$DomRef.removeAttr("aria-disabled");
-			} else {
-				$DomRef.addClass("sapUiCalItemDsbl");
-				$DomRef.attr("aria-disabled", true);
-			}
-
-			oDate.setYear(oDate.getYear() + 1);
-		}
-
-		this._oItemNavigation.focusItem(iSelectedIndex);
 
 	}
 

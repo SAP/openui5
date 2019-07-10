@@ -434,6 +434,25 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 	width: 5.75rem;
 }
 
+.sapUiCal {
+	.sapUiCalHead {
+		.sapUiCalHeadPrev + .sapUiCalHeadB2 {
+			width: 12.5rem;
+		}
+	}
+}
+
+.sapUiCal.sapUiCalTwoMonthsTwoColumns {
+	.sapUiCalHeadB2 + .sapUiCalHeadB4,
+	.sapUiCalHeadPrev + .sapUiCalHeadB2 {
+		width: 12.5rem;
+	}
+	.sapUiCalHeadPrev + .sapUiCalHeadB2 {
+		margin-left: calc(~"25% - 5.75rem");
+		margin-right: 6.25rem;
+	}
+}
+
 .sapUiCalTwoMonthsTwoColumnsJaZh .sapUiCalHeadB2,
 .sapUiCalTwoMonthsTwoColumns .sapUiCalHeadB1 {
 	margin-left: calc(~"25% - 5.75rem");
