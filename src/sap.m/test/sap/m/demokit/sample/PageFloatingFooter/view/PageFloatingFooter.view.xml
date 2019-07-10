@@ -2,7 +2,7 @@
 	height="100%"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
-	controllerName="sap.m.sample.PageFloatingFooter.Page">
+	controllerName="sap.m.sample.PageFloatingFooter.controller.PageFloatingFooter">
 	<Page id="floatingFooterPage" title="Floating Footer Example" floatingFooter="true">
 		<Button text="Toggle floating footer" press="toggleFooter"/>
 		<Button text="Toggle footer visibility" press="toggleVisibility"/>

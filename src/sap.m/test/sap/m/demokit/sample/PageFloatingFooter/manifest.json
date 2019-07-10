@@ -7,21 +7,22 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.PageFloatingFooter.Page",
+			"viewName": "sap.m.sample.PageFloatingFooter.view.PageFloatingFooter",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
-				"sap.m": {}
+				"sap.m": {},
+				"sap.ui.core": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"stretch": true,
 				"files": [
-					"Page.view.xml",
-					"Page.controller.js",
+					"view/PageFloatingFooter.view.xml",
+					"controller/PageFloatingFooter.controller.js",
 					"manifest.json"
 				]
 			}

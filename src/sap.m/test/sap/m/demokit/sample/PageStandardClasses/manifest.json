@@ -7,21 +7,23 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.PageStandardClasses.Page",
+			"viewName": "sap.m.sample.PageStandardClasses.view.PageStandardClasses",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
-				"sap.ui.layout": {}
+				"sap.m": {},
+				"sap.ui.layout": {},
+				"sap.ui.core": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"stretch": true,
 				"files": [
-					"Page.view.xml",
-					"Page.controller.js",
+					"view/PageStandardClasses.view.xml",
+					"controller/PageStandardClasses.controller.js",
 					"manifest.json"
 				]
 			}
