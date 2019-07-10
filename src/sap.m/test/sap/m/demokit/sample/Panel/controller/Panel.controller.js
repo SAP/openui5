@@ -1,11 +1,10 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Controller, JSONModel) {
+	], function(Controller, JSONModel) {
 	"use strict";
 
-	var PanelController = Controller.extend("sap.m.sample.Panel.Panel", {
+	return Controller.extend("sap.m.sample.Panel.controller.Panel", {
 
 		onInit : function (evt) {
 			// set explored app's demo model on this sample
@@ -13,8 +12,4 @@ sap.ui.define([
 			this.getView().setModel(oImgModel, "img");
 		}
 	});
-
-
-	return PanelController;
-
 });

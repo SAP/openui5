@@ -7,20 +7,22 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.Panel.Panel",
+			"viewName": "sap.m.sample.Panel.view.Panel",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
 				"sap.ui.layout": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"files": [
-					"Panel.view.xml",
-					"Panel.controller.js",
+					"view/Panel.view.xml",
+					"controller/Panel.controller.js",
 					"manifest.json"
 				]
 			}
