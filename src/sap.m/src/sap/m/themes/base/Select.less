@@ -7,6 +7,92 @@
 /* commons styles                 */
 /* ------------------------------ */
 
+.sapMSltPicker-CTX {
+	max-width: 600px;
+
+	.sapMSelectList {
+		.sapMSelectListRow {
+			max-width: 600px;
+			height: auto;
+			display: flex;
+			box-sizing: border-box;
+
+			.sapMSelectListFirstCell {
+				height: auto;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				width: 60%;
+				display: block;
+				box-sizing: border-box
+			}
+
+			.sapMSelectListLastCell {
+				width: 40%;
+				display: block;
+				box-sizing: border-box
+			}
+
+			.sapMSelectListFirstCell,
+			.sapMSelectListLastCell {
+				padding-top: 0.75rem;
+				padding-bottom: 0.75rem;
+			}
+		}
+
+		&.sapMSelectListWrappedItems {
+			.sapMSelectListItem.sapMSelectListItemWithIcon,
+			.sapMSelectListRow.sapMSelectListItemWithIcon .sapMSelectListFirstCell {
+				position: relative;
+				padding-left: 2.25rem;
+				.sapMSelectListItemIcon {
+					position: absolute;
+					left: 1rem;
+				}
+			}
+
+			.sapMSelectListItem {
+				white-space: normal;
+				padding-top: 0.75rem;
+				padding-bottom: 0.75rem;
+				line-height: 1rem;
+				height: auto;
+			}
+
+			.sapMSelectListRow {
+				.sapMSelectListFirstCell {
+					white-space: normal;
+				}
+
+				.sapMSelectListLastCell {
+					vertical-align: top;
+				}
+			}
+		}
+	}
+}
+
+.sapUiSizeCompact .sapMSltPicker-CTX .sapMSelectList {
+	.sapMSelectListRow {
+		.sapMSelectListFirstCell,
+		.sapMSelectListLastCell {
+			padding-top: 0.5rem;
+			padding-bottom: 0.5rem;
+		}
+	}
+	&.sapMSelectListWrappedItems .sapMSelectListItem {
+		padding-top: 0.5rem;
+		padding-bottom: 0.5rem;
+	}
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMSltPicker-CTX .sapMSelectList.sapMSelectListWrappedItems .sapMSelectListItemBaseSelected .sapMSelectListCell::before {
+		height: auto;
+	}
+}
+
 .sapMSlt,
 .sapMSlt > .sapMSltLabel {
 	box-sizing: border-box;
