@@ -1,13 +1,12 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/m/Button',
 		'sap/m/MessageToast',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Button, MessageToast, Controller, JSONModel) {
+	], function(Button, MessageToast, Controller, JSONModel) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.ActionSelect.C", {
+	return Controller.extend("sap.m.sample.ActionSelect.controller.ActionSelect", {
 
 		onInit: function () {
 
@@ -41,8 +40,4 @@ sap.ui.define([
 			);
 		}
 	});
-
-
-	return CController;
-
 });

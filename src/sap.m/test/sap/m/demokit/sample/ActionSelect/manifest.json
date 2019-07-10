@@ -7,20 +7,22 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.ActionSelect.V",
+			"viewName": "sap.m.sample.ActionSelect.view.ActionSelect",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
 				"sap.ui.layout": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"files": [
-					"V.view.xml",
-					"C.controller.js",
+					"view/ActionSelect.view.xml",
+					"controller/ActionSelect.controller.js",
 					"manifest.json"
 				]
 			}

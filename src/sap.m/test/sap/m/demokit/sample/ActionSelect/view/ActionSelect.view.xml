@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.m.sample.ActionSelect.C"
+	controllerName="sap.m.sample.ActionSelect.controller.ActionSelect"
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"
