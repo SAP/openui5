@@ -148,9 +148,9 @@ sap.ui.define([
 				customMetrics: {}
 			};
 
-			var aStack = [],
-				iCountCall = 0,
-				bMeasurementDone = false;
+			var aStack = [];
+			var iCountCall = 0;
+			var bMeasurementDone = false;
 
 			var fnDebouncedFn = DtUtil.debounce(function () {
 				if (!bMeasurementDone) {

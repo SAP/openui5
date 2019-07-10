@@ -40,14 +40,14 @@
 			oPool = IconPool;
 			sap.ui.getCore().loadLibraries([sTestLibrary, "sap.m", "sap.ui.codeeditor"]).then(
 			function() {
-				var oLibrary = sap.ui.getCore().getLoadedLibraries()[sTestLibrary],
-					aElements = [].concat(oLibrary.controls.concat(oLibrary.elements));
+				var oLibrary = sap.ui.getCore().getLoadedLibraries()[sTestLibrary];
+				var aElements = [].concat(oLibrary.controls.concat(oLibrary.elements));
 				oDTElementModel = new JSONModel();
 				oDTElementModel.iSizeLimit = 10000;
 				createUI();
 				try {
-					var oRuntimeResourceModel = new ResourceModel({bundleUrl: sap.ui.resource(sTestLibrary, "messagebundle.properties"), bundleLocale:"en"}),
-						oDesigntimeResourceModel = new ResourceModel({bundleUrl: sap.ui.resource(sTestLibrary + ".designtime", "messagebundle.properties"), bundleLocale:"en"});
+					var oRuntimeResourceModel = new ResourceModel({bundleUrl: sap.ui.resource(sTestLibrary, "messagebundle.properties"), bundleLocale:"en"});
+					var oDesigntimeResourceModel = new ResourceModel({bundleUrl: sap.ui.resource(sTestLibrary + ".designtime", "messagebundle.properties"), bundleLocale:"en"});
 					oLibrary.dependencies.forEach(function(sDependantLib) {
 						oRuntimeResourceModel.enhance({bundleUrl: sap.ui.resource(sDependantLib, "messagebundle.properties"), bundleLocale:"en"});
 						oDesigntimeResourceModel.enhance({bundleUrl: sap.ui.resource(sDependantLib + ".designtime", "messagebundle.properties"), bundleLocale:"en"});
@@ -61,8 +61,8 @@
 				sap.ui.require(aElements.map(function(s) {
 					return jQuery.sap.getResourceName(s, "");
 				}), function() {
-					var aDesigntimePromises = [],
-						aControlMetadata = [];
+					var aDesigntimePromises = [];
+					var aControlMetadata = [];
 					for (var i = 0; i < arguments.length; i++) {
 						aDesigntimePromises.push(arguments[i].getMetadata().loadDesignTime());
 						var oMetadata = arguments[i].getMetadata();
@@ -87,8 +87,8 @@
 						if (oLibrary.extensions && oLibrary.extensions.flChangeHandlers) {
 							oFlex = oLibrary.extensions.flChangeHandlers;
 						}
-						var aFlexHandlers = [],
-							aFlexName = [];
+						var aFlexHandlers = [];
+						var aFlexName = [];
 						for (var n in oFlex) {
 							if (typeof oFlex[n] === "string") {
 								aFlexHandlers.push(oFlex[n] + ".flexibility");
@@ -116,8 +116,8 @@
 
 							//handle virtual dt controls here
 							loadVirtualDTControls(oLibrary).then(function (oDTLibrary) {
-								var aDTElements = oDTLibrary.controls || [],
-									oVDTElement;
+								var aDTElements = oDTLibrary.controls || [];
+								var oVDTElement;
 								function processBase(oBaseElement) {
 									var oMetadata = oBaseElement.getMetadata();
 									oBaseElement.getMetadata().loadDesignTime().then(function(oBaseDT) {
@@ -162,8 +162,8 @@
 			path : "/elements",
 			sorter: [new sap.ui.model.Sorter("_name", false)],
 			factory: function(sId, oBindingContext) {
-				var bValid = true,
-					oDTContext = oBindingContext.getProperty("");
+				var bValid = true;
+				var oDTContext = oBindingContext.getProperty("");
 				var aDTContext = flattenData(oDTContext);
 				for (var i = 0; i < aDTContext.length; i++) {
 					var n = aDTContext[i].path;
@@ -273,12 +273,12 @@
 				}
 			},
 			getContent : function() {
-				var oContext = this.getBindingContext(),
-					oContextData = oContext.getProperty("");
+				var oContext = this.getBindingContext();
+				var oContextData = oContext.getProperty("");
 				this.sValid = "unchecked";
-				var sPath = this.getPath(),
-					vValue = this.getValue(),
-					sCheckPath = sPath;
+				var sPath = this.getPath();
+				var vValue = this.getValue();
+				var sCheckPath = sPath;
 				if (sPath.indexOf("aggregations/") === 0) {
 					sCheckPath = "aggregations/";
 				}
@@ -463,8 +463,8 @@
 			mandatory: false,
 			validate: function(vValue, sPath, oContextData) {
 				try {
-					var sName = oContextData.palette.icons.font.name,
-						oInfo = oPool.getIconInfo(sName);
+					var sName = oContextData.palette.icons.font.name;
+					var oInfo = oPool.getIconInfo(sName);
 					return typeof vValue === "number" && vValue === parseInt(oInfo.content.charCodeAt(0).toString(16), 16) ? "valid" : "invalid (char needs to match name)";
 				} catch (ex) {
 					return "invalid";
@@ -481,8 +481,8 @@
 			mandatory: false,
 			validate: function(vValue, sPath, oContextData) {
 				try {
-					var iChar = oContextData.palette.icons.font.char,
-						oInfo = oPool.getIconInfo(vValue);
+					var iChar = oContextData.palette.icons.font.char;
+					var oInfo = oPool.getIconInfo(vValue);
 					return typeof oPool.getIconInfo(vValue) === "object" && iChar === parseInt(oInfo.content.charCodeAt(0).toString(16), 16) ? "valid" : "invalid (char needs to match name)";
 				} catch (ex) {
 					return "invalid";
@@ -514,9 +514,9 @@
 		"aggregations/" : {
 			mandatory: false,
 			validate: function(vValue, sPath, oDataContext) {
-				var aParts = sPath.split("/"),
-					sAggregationName = aParts[1],
-					sEntry = aParts[2];
+				var aParts = sPath.split("/");
+				var sAggregationName = aParts[1];
+				var sEntry = aParts[2];
 				if (oDataContext._members[sAggregationName]._iKind === 2 ||
 					oDataContext._members[sAggregationName]._iKind === 1) {
 				//validateAggregationSettings(vValue, sPath, oDataContext);

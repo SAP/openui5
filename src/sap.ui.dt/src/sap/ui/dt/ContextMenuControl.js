@@ -569,14 +569,14 @@ sap.ui.define([
 		 * @public
 		 */
 		addOverflowButton: function() {
-			var sOverflowButtonId = "OVERFLOW_BUTTON",
-				oButtonOptions = {
-					icon: "sap-icon://overflow",
-					type: "Transparent",
-					enabled: true,
-					press: this._onOverflowPress.bind(this),
-					layoutData: new FlexItemData({})
-				};
+			var sOverflowButtonId = "OVERFLOW_BUTTON";
+			var oButtonOptions = {
+				icon: "sap-icon://overflow",
+				type: "Transparent",
+				enabled: true,
+				press: this._onOverflowPress.bind(this),
+				layoutData: new FlexItemData({})
+			};
 			return this._addButton(sOverflowButtonId, oButtonOptions);
 		},
 

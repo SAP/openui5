@@ -14,10 +14,10 @@ sap.ui.define([
 	jQuery
 ) {
 	"use strict";
-	var aDesigntimeElements = [],
-		aModels = [],
-		mBundles = {},
-		sLibrary;
+	var aDesigntimeElements = [];
+	var aModels = [];
+	var mBundles = {};
+	var sLibrary;
 	function hasText(sKey, oBundle) {
 		return oBundle.hasText(sKey) || oBundle.getText(sKey, [], true) !== undefined;
 	}
@@ -52,8 +52,8 @@ sap.ui.define([
 	var LibraryTest = function(sTestLibrary) {
 		return new Promise(function(resolve) {
 			sap.ui.getCore().loadLibraries([sTestLibrary]).then(function() {
-				var oLibrary = sap.ui.getCore().getLoadedLibraries()[sTestLibrary],
-					aElements = oLibrary.controls.concat(oLibrary.elements);
+				var oLibrary = sap.ui.getCore().getLoadedLibraries()[sTestLibrary];
+				var aElements = oLibrary.controls.concat(oLibrary.elements);
 				sLibrary = sTestLibrary;
 				sap.ui.require(aElements.map(function(s) {
 					//TODO: global jquery call found
@@ -63,13 +63,13 @@ sap.ui.define([
 					var mLazyLibraries = sap.ui.getCore().getLoadedLibraries();
 					try {
 						var oRuntimeResourceModel = new ResourceModel({
-								bundleUrl: sap.ui.resource(sTestLibrary, "messagebundle.properties"),
-								bundleLocale:"en"
-							}),
-							oDesigntimeResourceModel = new ResourceModel({
-								bundleUrl: sap.ui.resource(sTestLibrary + ".designtime", "messagebundle.properties"),
-								bundleLocale:"en"
-							});
+							bundleUrl: sap.ui.resource(sTestLibrary, "messagebundle.properties"),
+							bundleLocale:"en"
+						});
+						var oDesigntimeResourceModel = new ResourceModel({
+							bundleUrl: sap.ui.resource(sTestLibrary + ".designtime", "messagebundle.properties"),
+							bundleLocale:"en"
+						});
 						mBundles.runtime = oRuntimeResourceModel.getResourceBundle();
 						mBundles.designtime = oDesigntimeResourceModel.getResourceBundle();
 						Object.keys(mLazyLibraries).forEach(function(sLib) {
@@ -87,8 +87,8 @@ sap.ui.define([
 					} catch (e) {
 						/*eslint-disable no-empty*/
 					}
-					var aDesigntimePromises = [],
-						aControlMetadata = [];
+					var aDesigntimePromises = [];
+					var aControlMetadata = [];
 					for (var i = 0; i < arguments.length; i++) {
 						if (arguments[i].getMetadata()._oDesignTime) {
 							aDesigntimePromises.push(arguments[i].getMetadata().loadDesignTime());
@@ -250,8 +250,8 @@ sap.ui.define([
 			});
 		});
 		aModels.forEach(function(oModel) {
-			var oControlMetadata = oModel._oControlMetadata,
-				sControlName = oControlMetadata.getName();
+			var oControlMetadata = oModel._oControlMetadata;
+			var sControlName = oControlMetadata.getName();
 			QUnit.test(sControlName + ": Checking entries in designtime data", function(assert) {
 				Object.keys(mModelChecks).forEach(function(sPath) {
 					var oCheck = mModelChecks[sPath];

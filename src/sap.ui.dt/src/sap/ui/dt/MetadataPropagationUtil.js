@@ -102,8 +102,10 @@ function(
 	 * @return {object} Returns extended data part of the element designtime metadata.
 	 */
 	MetadataPropagationUtil.propagateMetadataToAggregationOverlay = function(mOriginalMetadata, oElement, mParentAggregationMetadata) {
-		var mNewPropagationInfo, mMetadataFunctionPropagation, mRelevantContainerPropagation,
-			mMetadata = Object.assign({}, mOriginalMetadata);
+		var mNewPropagationInfo;
+		var mMetadataFunctionPropagation;
+		var mRelevantContainerPropagation;
+		var mMetadata = Object.assign({}, mOriginalMetadata);
 
 		var aPropagatedRelevantContainersFromParent = MetadataPropagationUtil._getParentPropagationInfo(mParentAggregationMetadata);
 
