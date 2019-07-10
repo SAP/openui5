@@ -9,222 +9,206 @@
 				src="../../../resources/sap-ui-core.js"
 				data-sap-ui-libs="sap.m">
 		</script>
+		<style>
+			.sapMSliderOffset {
+				margin-top: 3rem;
+			}
+		</style>
 
 		<script>
 			var oPage1 = new sap.m.Page("page1", {
 						title: "Mobile Slider Control"
 					}),
-					oApp = new sap.m.App("myApp", {initialPage: "page1", pages: [oPage1]}).placeAt("body");
+				oApp = new sap.m.App("myApp", {initialPage: "page1", pages: [oPage1]}).placeAt("body");
 
+			var oDefaultTitle = new sap.ui.core.HTML({ content: "<h2>Default</h2>" }),
+				oSlider0 = new sap.m.Slider({
+					value: 30,
+					liveChange: function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					},
+					change : function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					}
+				}),
 
-			var oSlider0 = new sap.m.Slider({
-				value: 30,
-				liveChange: function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				},
-				change : function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				}
-			}),
+				oSlider1 = new sap.m.Slider({
+					name: "custom-name",
+					value: 25,
+					width: "100px",
+					step: 1,
+					progress : false,
+					visible: true,
+					enabled: true,
+					liveChange: function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					},
+					change : function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					}
+				}),
 
-			oSlider1 = new sap.m.Slider({
-				name: "custom-name",
-				value: 25,
-				width: "100px",
-				step: 1,
-				progress : false,
-				visible: true,
-				enabled: true,
-				liveChange: function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				},
-				change : function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				}
-			}),
+				oSlider2 = new sap.m.Slider({
+					value: 69,
+					min: 10,
+					max: 100,
+					width: "150px",
+					step: 10,
+					progress : true,
+					visible: true,
+					enabled: true,
+					liveChange: function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					},
+					change : function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					}
+				}),
 
-			oSlider2 = new sap.m.Slider({
-				value: 69,
-				min: 10,
-				max: 100,
-				width: "150px",
-				step: 10,
-				progress : true,
-				visible: true,
-				enabled: true,
-				liveChange: function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				},
-				change : function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				}
-			}),
+				oSlider3 = new sap.m.Slider({
+					value: 70,
+					min: 10,
+					max: 100,
+					width: "150px",
+					step: 5,
+					progress : true,
+					visible: true,
+					enabled: true,
+					liveChange: function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					},
+					change : function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					}
+				}),
 
-			oSlider3 = new sap.m.Slider({
-				value: 70,
-				min: 10,
-				max: 100,
-				width: "150px",
-				step: 5,
-				progress : true,
-				visible: true,
-				enabled: true,
-				liveChange: function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				},
-				change : function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				}
-			}),
+				oSlider4 = new sap.m.Slider({
+					value: 27,
+					width: "10em",
+					liveChange: function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					},
+					change : function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					}
+				}),
 
-			oSlider4 = new sap.m.Slider({
-				value: 27,
-				width: "10em",
-				liveChange: function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				},
-				change : function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				}
-			}),
+				oSlider5 = new sap.m.Slider({
+					value: 20,
+					width: "15em",
+					enabled: false,
+					liveChange: function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					},
+					change : function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					}
+				}),
 
-			oSlider5 = new sap.m.Slider({
-				value: 20,
-				width: "15em",
-				enabled: false,
-				liveChange: function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				},
-				change : function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				}
-			}),
+				oSlider6 = new sap.m.Slider({
+					value: 10.34,
+					step: 0.1,
+					liveChange: function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					},
+					change : function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					}
+				}),
 
-			oSlider6 = new sap.m.Slider({
-				value: 10.34,
-				step: 0.1,
-				liveChange: function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				},
-				change : function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				}
-			}),
+				oSlider7 = new sap.m.Slider({
+					value: 10.35,
+					step: 0.01,
+					min: 0,
+					max: 500,
+					liveChange: function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					},
+					change : function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					}
+				}),
 
-			oSlider7 = new sap.m.Slider({
-				value: 50.34,
-				step: 0.1,
-				min: 50,
-				liveChange: function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				},
-				change : function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				},
-				showAdvancedTooltip: true
-			}),
+				oTooltipTitle = new sap.ui.core.HTML({ content: "<h2>Slider with tooltip</h2>" }),
+				oSlider8 = new sap.m.Slider({
+					value: 50.34,
+					step: 0.1,
+					min: 50,
+					liveChange: function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					},
+					change : function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					},
+					showAdvancedTooltip: true
+				}),
 
-			oSlider8 = new sap.m.Slider({
-				value: 150,
-				step: 50,
-				min: 0,
-				max: 500,
-				liveChange: function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				},
-				change : function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				}
-			}),
+				oInputTitle = new sap.ui.core.HTML({ content: "<h2>Slider with input</h2>" }),
+				oSlider9 = new sap.m.Slider({
+					value: 160,
+					step: 0.5,
+					min: 0,
+					max: 500,
+					liveChange: function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					},
+					change : function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					},
+					showAdvancedTooltip: true,
+					inputsAsTooltips: true
+				}),
 
-			oSlider9 = new sap.m.Slider({
-				value: 160,
-				step: 0.5,
-				min: 0,
-				max: 500,
-				liveChange: function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				},
-				change : function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				},
-				showAdvancedTooltip: true,
-				inputsAsTooltips: true
-			}),
+				oTickMarksTitle = new sap.ui.core.HTML({ content: "<h2>Slider with tickmarks</h2>" }),
+				oSlider10 = new sap.m.Slider({enableTickmarks: true}),
 
-			oSlider10 = new sap.m.Slider({
-				value: 10.35,
-				step: 0.01,
-				min: 0,
-				max: 500,
-				liveChange: function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				},
-				change : function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				}
-			}),
-
-			oSlider11 = new sap.m.Slider({
-				value: 66,
-				step: 0.01,
-				min: 10.4,
-				max: 500.5,
-				liveChange: function (oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				},
-				change: function (oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				}
-			}),
-
-			oSlider12 = new sap.m.Slider({enableTickmarks: true}),
-
-			oSlider13 = new sap.m.Slider({
+				oLabelsTitle = new sap.ui.core.HTML({ content: "<h2>Slider with tickmarks and labels</h2>" }),
+				oSlider11 = new sap.m.Slider({
 				enableTickmarks: true,
 				scale: new sap.m.ResponsiveScale({tickmarksBetweenLabels: 5})
-			}),
+				}),
 
-			oSlider14 = new sap.m.Slider({
-				min: 1,
-				max: 48,
-				step: 1,
-				width: "70%",
-				enableTickmarks: true,
-				liveChange: function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				},
-				change : function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				},
-				scale: new sap.m.ResponsiveScale({
-					tickmarksBetweenLabels: 2
-				})
-			}),
+				oSlider12 = new sap.m.Slider({
+					min: 1,
+					max: 48,
+					step: 1,
+					width: "70%",
+					enableTickmarks: true,
+					liveChange: function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					},
+					change : function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					},
+					scale: new sap.m.ResponsiveScale({
+						tickmarksBetweenLabels: 2
+					})
+				}).addStyleClass("sapMSliderOffset"),
 
-			oSlider15 = new sap.m.Slider({
-				min: 1,
-				max: 48,
-				step: 1,
-				width: "300px",
-				enableTickmarks: true,
-				liveChange: function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				},
-				change : function(oControlEvent) {
-					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				},
-				scale: new sap.m.ResponsiveScale({
-					tickmarksBetweenLabels: 2
-				})
-			});
+				oSlider13 = new sap.m.Slider({
+					min: 1,
+					max: 48,
+					step: 1,
+					width: "300px",
+					enableTickmarks: true,
+					liveChange: function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					},
+					change : function(oControlEvent) {
+						jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					},
+					scale: new sap.m.ResponsiveScale({
+						tickmarksBetweenLabels: 2
+					})
+				}).addStyleClass("sapMSliderOffset");
 
 			// Wait for a tick, so the Page would be rendered and the Sliders could be resized properly on any browser
 			setTimeout(function () {
-				[oSlider0, oSlider1, oSlider2, oSlider3, oSlider4, oSlider5, oSlider6, oSlider7, oSlider8,
-					oSlider9, oSlider10, oSlider11, oSlider12, oSlider13, oSlider14, oSlider15].forEach(oPage1.addContent, oPage1);
+				[oDefaultTitle, oSlider0, oSlider1, oSlider2, oSlider3, oSlider4, oSlider5, oSlider6, oSlider7,
+				oTooltipTitle, oSlider8, oInputTitle, oSlider9, oTickMarksTitle, oSlider10, oLabelsTitle, oSlider11, oSlider12, oSlider13].forEach(oPage1.addContent, oPage1);
 			});
 		</script>
 	</head>
-	<body id="body" class="sapUiBody"></body>
+	<body id="body" class="sapUiBody">
+	</body>
 </html>
