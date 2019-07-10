@@ -9,7 +9,7 @@ sap.ui.define([
 	"./shellBar/AdditionalContentSupport",
 	"./shellBar/ResponsiveHandler",
 	"./shellBar/Accessibility",
-	'/sap/m/BarInPageEnabler',
+	"sap/m/BarInPageEnabler",
 	"./ShellBarRenderer"
 ],
 function(
