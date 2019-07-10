@@ -7,21 +7,23 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.Popover.V",
+			"viewName": "sap.m.sample.Popover.view.Popover",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
 				"sap.ui.layout": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"files": [
-					"V.view.xml",
-					"C.controller.js",
-					"Popover.fragment.xml",
+					"view/Popover.view.xml",
+					"controller/Popover.controller.js",
+					"view/Popover.fragment.xml",
 					"manifest.json"
 				]
 			}

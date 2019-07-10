@@ -1,13 +1,12 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/m/MessageToast',
 		'sap/ui/core/Fragment',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, MessageToast, Fragment, Controller, JSONModel) {
+	], function(MessageToast, Fragment, Controller, JSONModel) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.Popover.C", {
+	return Controller.extend("sap.m.sample.Popover.controller.Popover", {
 
 		onInit : function (evt) {
 			// set explored app's demo model on this sample
@@ -22,15 +21,22 @@ sap.ui.define([
 		},
 
 		handlePopoverPress: function (oEvent) {
+			var oButton = oEvent.getSource();
 
 			// create popover
 			if (!this._oPopover) {
-				this._oPopover = sap.ui.xmlfragment("sap.m.sample.Popover.Popover", this);
-				this.getView().addDependent(this._oPopover);
-				this._oPopover.bindElement("/ProductCollection/0");
+				Fragment.load({
+					name: "sap.m.sample.Popover.view.Popover",
+					controller: this
+				}).then(function(pPopover) {
+					this._oPopover = pPopover;
+					this.getView().addDependent(this._oPopover);
+					this._oPopover.bindElement("/ProductCollection/0");
+					this._oPopover.openBy(oButton);
+				}.bind(this));
+			} else {
+				this._oPopover.openBy(oButton);
 			}
-
-			this._oPopover.openBy(oEvent.getSource());
 		},
 
 		handleEmailPress: function (oEvent) {
@@ -38,8 +44,4 @@ sap.ui.define([
 			MessageToast.show("E-Mail has been sent");
 		}
 	});
-
-
-	return CController;
-
 });

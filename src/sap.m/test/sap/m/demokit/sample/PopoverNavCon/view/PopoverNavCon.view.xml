@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.m.sample.PopoverNavCon.C"
+	controllerName="sap.m.sample.PopoverNavCon.controller.PopoverNavCon"
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">

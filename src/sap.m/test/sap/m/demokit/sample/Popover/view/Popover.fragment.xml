@@ -7,13 +7,13 @@
 		placement="Bottom"
 			initialFocus="email">
 		<footer>
-			<Toolbar>
+			<OverflowToolbar>
 				<ToolbarSpacer/>
 				<Button
 					id="email"
 					text="Email"
 					press="handleEmailPress" />
-			</Toolbar>
+			</OverflowToolbar>
 		</footer>
 		<Image src="{ProductPicUrl}" width="15em" densityAware="false" />
 	</Popover>
