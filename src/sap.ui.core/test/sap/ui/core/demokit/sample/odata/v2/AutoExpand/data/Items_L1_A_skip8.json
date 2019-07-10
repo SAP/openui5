@@ -1,6 +1,6 @@
 {
 	"d":{
-		"__count":"230",
+		"__count":"12",
 		"results":[{
 			"__metadata":{
 				"id":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~8~EUR.53~0000000085')",
@@ -110,6 +110,28 @@
 			"CompanyCode":"A",
 			"CompanyCodeCurrency":"EUR",
 			"Customer":"207",
+			"CustomerName":"Bayer Group Chemicalss"
+		}, {
+			"__metadata":{
+				"id":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~17~EUR.53~0000000208')",
+				"uri":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~17~EUR.53~0000000208')",
+				"type":"FAR_CUSTOMER_LINE_ITEMS.Item"
+			},
+			"AmountInCompanyCodeCurrency":"17.00",
+			"CompanyCode":"A",
+			"CompanyCodeCurrency":"EUR",
+			"Customer":"208",
+			"CustomerName":"Bayer Group Chemicalss"
+		}, {
+			"__metadata":{
+				"id":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~17~EUR.53~0000000209')",
+				"uri":"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items('.47~17~EUR.53~0000000209')",
+				"type":"FAR_CUSTOMER_LINE_ITEMS.Item"
+			},
+			"AmountInCompanyCodeCurrency":"17.00",
+			"CompanyCode":"A",
+			"CompanyCodeCurrency":"EUR",
+			"Customer":"209",
 			"CustomerName":"Bayer Group Chemicalss"
 		}]
 	}

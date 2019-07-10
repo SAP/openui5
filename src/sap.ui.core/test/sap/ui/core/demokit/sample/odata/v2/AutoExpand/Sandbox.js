@@ -30,14 +30,14 @@ sap.ui.define([
 			"Items?$select=CompanyCode,Customer,CustomerName,CompanyCodeCurrency,AmountInCompanyCodeCurrency&$orderby=CompanyCode%20asc&$top=8" : {
 				source : "Items_L1_top8.json"
 			},
-			"Items?$select=CompanyCode,Customer,CustomerName,CompanyCodeCurrency,AmountInCompanyCodeCurrency&$filter=(CompanyCode%20eq%20%27A%27)&$orderby=CompanyCode%20asc&$skip=8&$top=10&$inlinecount=allpages" : {
-				source : "Items_L1_A_skip8_top10.json"
+			"Items?$select=CompanyCode,Customer,CustomerName,CompanyCodeCurrency,AmountInCompanyCodeCurrency&$filter=(CompanyCode%20eq%20%27A%27)&$orderby=CompanyCode%20asc&$skip=8&$top=10005&$inlinecount=allpages" : {
+				source : "Items_L1_A_skip8.json"
 			},
-			"Items?$select=CompanyCode,Customer,CustomerName,CompanyCodeCurrency,AmountInCompanyCodeCurrency&$filter=(CompanyCode%20eq%20%27B%27)&$orderby=CompanyCode%20asc&$top=10&$inlinecount=allpages" : {
-				source : "Items_L1_B_top10.json"
+			"Items?$select=CompanyCode,Customer,CustomerName,CompanyCodeCurrency,AmountInCompanyCodeCurrency&$filter=(CompanyCode%20eq%20%27B%27)&$orderby=CompanyCode%20asc&$top=10005&$inlinecount=allpages" : {
+				source : "Items_L1_B.json"
 			},
-			"Items?$select=CompanyCode,Customer,CustomerName,CompanyCodeCurrency,AmountInCompanyCodeCurrency&$filter=(CompanyCode%20eq%20%27C%27)&$orderby=CompanyCode%20asc&$top=10&$inlinecount=allpages" : {
-				source : "Items_L1_C_top10.json"
+			"Items?$select=CompanyCode,Customer,CustomerName,CompanyCodeCurrency,AmountInCompanyCodeCurrency&$filter=(CompanyCode%20eq%20%27C%27)&$orderby=CompanyCode%20asc&$top=10005&$inlinecount=allpages" : {
+				source : "Items_L1_C.json"
 			}
 		}, "sap/ui/core/sample/odata/v2/AutoExpand/data",
 		"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/");
