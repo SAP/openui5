@@ -777,5 +777,64 @@ sap.ui.define([
 			// cleanup
 			oP13nConditionPanel.destroy();
 		});
+
+		QUnit.module("Date Format Options BCP: 0020751294 0000389830 2019", {
+			beforeEach: function () {
+				this.oCP = new P13nConditionPanel();
+			},
+			afterEach: function () {
+				this.oCP.destroy();
+			},
+			getFirstDatePicker: function () {
+				return this.oCP.findAggregatedObjects(true, function (oControl) {
+					return oControl.isA("sap.m.DatePicker");
+				})[0];
+			}
+		});
+
+		QUnit.test("style property", function(assert) {
+			// Arrange
+			var oTypeInstance = new modelTypeDate(),
+				oDateFieldObject,
+				oDatePicker;
+
+			oTypeInstance.setFormatOptions({style: "short"});
+			oDateFieldObject = {key: "Date", text: "Date", type: "date", typeInstance: oTypeInstance};
+
+			// Act
+			this.oCP.setKeyFields([oDateFieldObject]);
+
+			// Assert
+			oDatePicker = this.getFirstDatePicker();
+			assert.strictEqual(oDatePicker.getDisplayFormat(), "short", "Display format should equal 'short'.");
+
+			// Act
+			oTypeInstance.setFormatOptions({style: "long", pattern: "YYYY-MM-DD"});
+			this.oCP.setKeyFields([oDateFieldObject]);
+
+			// Assert
+			oDatePicker = this.getFirstDatePicker();
+			assert.strictEqual(oDatePicker.getDisplayFormat(), "long",
+				"Display format should equal 'long' and 'style' should take precedence over 'pattern'.");
+		});
+
+		QUnit.test("pattern property", function (assert) {
+			// Arrange
+			var oTypeInstance = new modelTypeDate(),
+				oDateFieldObject,
+				oDatePicker;
+
+			oTypeInstance.setFormatOptions({pattern: "YYYY-MM-DD"});
+			oDateFieldObject = {key: "Date", text: "Date", type: "date", typeInstance: oTypeInstance};
+
+			// Act
+			this.oCP.setKeyFields([oDateFieldObject]);
+
+			// Assert
+			oDatePicker = this.getFirstDatePicker();
+			assert.strictEqual(oDatePicker.getDisplayFormat(), "YYYY-MM-DD",
+				"Display format should equal 'YYYY-MM-DD'.");
+		});
+
 	}());
 });
