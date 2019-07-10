@@ -731,6 +731,46 @@ sap.ui.define([
 		oTokenizer.destroy();
 	});
 
+	QUnit.test("RIGHT_ARROW + invisible token", function(assert) {
+		// arrange
+		var oTokenizer = new Tokenizer({
+			tokens: [
+				new Token({text: "Token1", visible: true}),
+				new Token({text: "Token2", visible: false}),
+				new Token({text: "Token3", visible: true})
+			]
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oTokenizer.getTokens()[0].focus();
+		sap.ui.test.qunit.triggerKeydown(oTokenizer.getTokens()[0].getDomRef(), KeyCodes.ARROW_RIGHT);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(oTokenizer.getTokens()[2].getDomRef(), document.activeElement, "The navigation was successful.");
+	});
+
+	QUnit.test("LEFT_ARROW + invisible token", function(assert) {
+		// arrange
+		var oTokenizer = new Tokenizer({
+			tokens: [
+				new Token({text: "Token1", visible: true}),
+				new Token({text: "Token2", visible: false}),
+				new Token({text: "Token3", visible: true})
+			]
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oTokenizer.getTokens()[2].focus();
+		sap.ui.test.qunit.triggerKeydown(oTokenizer.getTokens()[2].getDomRef(), KeyCodes.ARROW_LEFT);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(oTokenizer.getTokens()[0].getDomRef(), document.activeElement, "The navigation was successful.");
+	});
+
 	QUnit.test("_selectRange(false)", function() {
 		var oTokenizer = new Tokenizer().placeAt("content"),
 			aSelectedTokens,
