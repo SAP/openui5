@@ -130,8 +130,8 @@ function (
 		});
 
 		QUnit.test("when getBindingContextPath is called for element with bindingContext", function(assert) {
-			var oElementWithContext = this.oView.byId("EntityType02.CompProp1"),
-				sBindingContextPath = BindingsExtractor.getBindingContextPath(oElementWithContext);
+			var oElementWithContext = this.oView.byId("EntityType02.CompProp1");
+			var sBindingContextPath = BindingsExtractor.getBindingContextPath(oElementWithContext);
 			assert.strictEqual(typeof sBindingContextPath, 'string',
 				"then the return value is a string");
 		});

@@ -1469,11 +1469,12 @@ function(
 			// be ignored in the decision to bring up the pop-up (ignoreMaxLayerParameter = true)
 			PersistenceWriteAPI.hasHigherLayerChanges(this.getRootControlInstance(), {ignoreMaxLayerParameter: true})
 		]).then(function (aArgs) {
-			var bChangesNeedRestart = aArgs[0],
-				bHasHigherLayerChanges = aArgs[1];
+			var bChangesNeedRestart = aArgs[0];
+			var bHasHigherLayerChanges = aArgs[1];
 			if (bChangesNeedRestart || bHasHigherLayerChanges) {
 				var sRestart = this._RESTART.RELOAD_PAGE;
-				var sRestartReason, oUshellContainer;
+				var sRestartReason;
+				var oUshellContainer;
 				if (bHasHigherLayerChanges) {
 					//Loading the app with personalization means the visualization might change,
 					//therefore this message takes precedence

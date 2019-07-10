@@ -627,11 +627,11 @@ function(
 		}
 	}, function () {
 		QUnit.test("Given checkSourceTargetBindingCompatibility is called with source control without bindings", function(assert) {
-			var sBindingContextPath = "/fakeBindingContext",
-				mBindingsCollection = {
-					bindingPaths: [],
-					bindingContextPaths: [sBindingContextPath]
-				};
+			var sBindingContextPath = "/fakeBindingContext";
+			var mBindingsCollection = {
+				bindingPaths: [],
+				bindingContextPaths: [sBindingContextPath]
+			};
 			sandbox.stub(BindingsExtractor, "collectBindingPaths")
 				.callThrough()
 				.withArgs(this.oSource, undefined)
@@ -645,11 +645,11 @@ function(
 		});
 
 		QUnit.test("Given checkSourceTargetBindingCompatibility is called with compatible controls", function(assert) {
-			var sBindingContextPath = "/fakeBindingContext",
-				mBindingsCollection = {
-					bindingPaths: ["fakeBindingProperty"],
-					bindingContextPaths: [sBindingContextPath]
-				};
+			var sBindingContextPath = "/fakeBindingContext";
+			var mBindingsCollection = {
+				bindingPaths: ["fakeBindingProperty"],
+				bindingContextPaths: [sBindingContextPath]
+			};
 			sandbox.stub(BindingsExtractor, "collectBindingPaths")
 				.callThrough()
 				.withArgs(this.oSource, undefined)
@@ -663,11 +663,11 @@ function(
 		});
 
 		QUnit.test("Given checkSourceTargetBindingCompatibility is called with incompatible controls", function(assert) {
-			var	sBindingContextPath = "/fakeBindingContext",
-				mBindingsCollection = {
-					bindingPaths: ["fakeBindingProperty"],
-					bindingContextPaths: [sBindingContextPath]
-				};
+			var	sBindingContextPath = "/fakeBindingContext";
+			var mBindingsCollection = {
+				bindingPaths: ["fakeBindingProperty"],
+				bindingContextPaths: [sBindingContextPath]
+			};
 			sandbox.stub(BindingsExtractor, "collectBindingPaths")
 				.callThrough()
 				.withArgs(this.oSource, undefined)

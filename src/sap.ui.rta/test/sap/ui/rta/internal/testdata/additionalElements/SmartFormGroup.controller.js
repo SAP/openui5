@@ -13,8 +13,9 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.rta.test.additionalElements.SmartFormGroup", {
 		onInit : function () {
-			var sURL = "/destinations/E91/sap/opu/odata/SAP/AdditionalElementsTest/?sap-documentation=all",
-				oModel, oView;
+			var sURL = "/destinations/E91/sap/opu/odata/SAP/AdditionalElementsTest/?sap-documentation=all";
+			var oModel;
+			var oView;
 
 			var oMockServer = new MockServer({
 				rootUri : sURL

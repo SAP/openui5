@@ -10,9 +10,9 @@ sap.ui.define([
 	"use strict";
 	var DTMetadata = function() {
 	};
-	var oCore = sap.ui.getCore(),
-		mLibraryData = {},
-		mLibraryRuntimeData = {};
+	var oCore = sap.ui.getCore();
+	var mLibraryData = {};
+	var mLibraryRuntimeData = {};
 		/**
 		 * Loads designtime metadata for the given libraries
 		 * The core needs to be loaded before this call
@@ -21,20 +21,20 @@ sap.ui.define([
 		 * @private
 		 */
 	DTMetadata.loadLibraries = function(aLibraryNames) {
-		var that = this,
-			oPromise = new Promise(function(resolve) {
-					//load all core libs async
-				oCore.loadLibraries(aLibraryNames).then(function() {
-					Promise.all(
-							//array of promises for the libs
-							aLibraryNames.map(function(sLibraryName) {
-								return that.loadLibrary(sLibraryName);
-							})
-						).then(function() {
-							resolve(mLibraryData);
-						});
-				});
+		var that = this;
+		var oPromise = new Promise(function(resolve) {
+				//load all core libs async
+			oCore.loadLibraries(aLibraryNames).then(function() {
+				Promise.all(
+						//array of promises for the libs
+						aLibraryNames.map(function(sLibraryName) {
+							return that.loadLibrary(sLibraryName);
+						})
+					).then(function() {
+						resolve(mLibraryData);
+					});
 			});
+		});
 		return oPromise;
 	};
 		/**
@@ -44,85 +44,85 @@ sap.ui.define([
 		 * @protected
 		 */
 	DTMetadata.loadLibrary = function(sLibraryName) {
-		var that = this,
-			oLibraryPromise = new Promise(function(fnResolve) {
-				var sURL = sap.ui.resource(sLibraryName + ".designtime", 'messagebundle.properties'),
-					oLib = oCore.getLoadedLibraries()[sLibraryName];
-				if (mLibraryData[sLibraryName]) {
-					return fnResolve(mLibraryData[sLibraryName]);
-				}
+		var that = this;
+		var oLibraryPromise = new Promise(function(fnResolve) {
+			var sURL = sap.ui.resource(sLibraryName + ".designtime", 'messagebundle.properties');
+			var oLib = oCore.getLoadedLibraries()[sLibraryName];
+			if (mLibraryData[sLibraryName]) {
+				return fnResolve(mLibraryData[sLibraryName]);
+			}
 
-				jQuery.sap.resources({url : sURL, async: true})
+			jQuery.sap.resources({url : sURL, async: true})
 
-					.then(function(oResourceBundle) {
-						var aPromises = [];
-						mLibraryData[sLibraryName] = {
-							resourceBundle : oResourceBundle,
-							name: sLibraryName
-						};
+				.then(function(oResourceBundle) {
+					var aPromises = [];
+					mLibraryData[sLibraryName] = {
+						resourceBundle : oResourceBundle,
+						name: sLibraryName
+					};
 
-						var sControlName;
+					var sControlName;
 
-						for (var i0 = 0; i0 < oLib.controls.length; i0++) {
-							sControlName = oLib.controls[i0];
-							if (mLibraryData[sLibraryName][sControlName]) {
-								continue;
-							}
-							aPromises.push(that.loadElement(sControlName, sLibraryName));
+					for (var i0 = 0; i0 < oLib.controls.length; i0++) {
+						sControlName = oLib.controls[i0];
+						if (mLibraryData[sLibraryName][sControlName]) {
+							continue;
 						}
-						for (var i1 = 0; i1 < oLib.elements.length; i1++) {
-							sControlName = oLib.elements[i1];
-							if (mLibraryData[sLibraryName][sControlName]) {
-								continue;
-							}
-							aPromises.push(that.loadElement(sControlName, sLibraryName));
+						aPromises.push(that.loadElement(sControlName, sLibraryName));
+					}
+					for (var i1 = 0; i1 < oLib.elements.length; i1++) {
+						sControlName = oLib.elements[i1];
+						if (mLibraryData[sLibraryName][sControlName]) {
+							continue;
 						}
-						return aPromises;
-					})
+						aPromises.push(that.loadElement(sControlName, sLibraryName));
+					}
+					return aPromises;
+				})
 
-					.then(function(aPromises) {
-						return Promise.all(aPromises).then(function(aData) {
-							//enhance and register all control design time data
-							aData.forEach(function (oData) {
-								if (oData) {
-									registerDTData(sLibraryName, oData);
-								}
-							});
-							//after all designtime data for real controls is created the virtual controls can be processed
-							if (oLib.designtime) {
-								sap.ui.require([oLib.designtime], function(oLibData) {
-									//pure design time interfaces for existing controls
-									if (oLibData.controls) {
-										oLibData.controls.forEach(function (oData) {
-											if (oData) {
-												oData = jQuery.extend(true, {}, mLibraryData[sLibraryName][oData.is], oData);
-												oData.designtimeModule = jQuery.sap.getResourceName(oData.className, ".designtime");
-												registerDTData(sLibraryName, oData);
-											}
-										});
-									}
-									if (oLibData.elements) {
-										oLibData.elements.forEach(function (oData) {
-											if (oData) {
-												oData = jQuery.extend(true, {}, mLibraryData[sLibraryName][oData.is], oData);
-												oData.designtimeModule = jQuery.sap.getResourceName(oData.className, ".designtime");
-												registerDTData(sLibraryName, oData);
-											}
-										});
-									}
-									that.enrichAPIDoc(mLibraryData[sLibraryName]);
-									fnResolve(mLibraryData[sLibraryName]);
-								}, function(ex) {
-									Log.error("Designtime data for cannot be loaded", ex);
-									fnResolve(null);
-								});
-							} else {
-								that.enrichAPIDoc(mLibraryData[sLibraryName]);
-								fnResolve(mLibraryData[sLibraryName]);
+				.then(function(aPromises) {
+					return Promise.all(aPromises).then(function(aData) {
+						//enhance and register all control design time data
+						aData.forEach(function (oData) {
+							if (oData) {
+								registerDTData(sLibraryName, oData);
 							}
 						});
+						//after all designtime data for real controls is created the virtual controls can be processed
+						if (oLib.designtime) {
+							sap.ui.require([oLib.designtime], function(oLibData) {
+								//pure design time interfaces for existing controls
+								if (oLibData.controls) {
+									oLibData.controls.forEach(function (oData) {
+										if (oData) {
+											oData = jQuery.extend(true, {}, mLibraryData[sLibraryName][oData.is], oData);
+											oData.designtimeModule = jQuery.sap.getResourceName(oData.className, ".designtime");
+											registerDTData(sLibraryName, oData);
+										}
+									});
+								}
+								if (oLibData.elements) {
+									oLibData.elements.forEach(function (oData) {
+										if (oData) {
+											oData = jQuery.extend(true, {}, mLibraryData[sLibraryName][oData.is], oData);
+											oData.designtimeModule = jQuery.sap.getResourceName(oData.className, ".designtime");
+											registerDTData(sLibraryName, oData);
+										}
+									});
+								}
+								that.enrichAPIDoc(mLibraryData[sLibraryName]);
+								fnResolve(mLibraryData[sLibraryName]);
+							}, function(ex) {
+								Log.error("Designtime data for cannot be loaded", ex);
+								fnResolve(null);
+							});
+						} else {
+							that.enrichAPIDoc(mLibraryData[sLibraryName]);
+							fnResolve(mLibraryData[sLibraryName]);
+						}
 					});
-			});
+				});
+		});
 		return oLibraryPromise;
 	};
 	DTMetadata.enrichAPIDoc = function (oLibData) {
@@ -131,8 +131,8 @@ sap.ui.define([
 			return;
 		}
 			//create a map for the classes, enums
-		var mControlAPIJson = {},
-			mEnumsAPIJson = {};
+		var mControlAPIJson = {};
+		var mEnumsAPIJson = {};
 		oAPI.symbols.filter(function(oEntry) {
 			if (oEntry.kind === "class" && oLibData[oEntry.name]) {
 				mControlAPIJson[oEntry.name] = oEntry;
@@ -142,8 +142,8 @@ sap.ui.define([
 			}
 		});
 		for (var n in oLibData) {
-			var oEntry = mControlAPIJson[n],
-				oDTEntry = this.getRuntimeData(oLibData.name, n);
+			var oEntry = mControlAPIJson[n];
+			var oDTEntry = this.getRuntimeData(oLibData.name, n);
 			if (oEntry && oDTEntry) {
 					//description
 				if (oEntry.description) {
@@ -167,39 +167,39 @@ sap.ui.define([
 		 * Loads the elements design time data
 		 */
 	DTMetadata.loadElement = function(sName) {
-		var that = this,
-			oPromise = new Promise(function(resolve) {
-				sap.ui.require([sName.replace(/\./g, "/")], function(oControlClass) {
-					//module path from name
-					if (oControlClass && oControlClass.getMetadata() && (oControlClass.getMetadata().getStereotype() === "control" || oControlClass.getMetadata().getStereotype() === "element")) {
-						var oMetadata = oControlClass.getMetadata();
-						if (oMetadata.isAbstract()) {
-							jQuery.sap.log.debug("Abstract class not available in design time " + oMetadata.getName());
-							resolve(null);
-						}
-						// load the library designtime.json
-						oMetadata.loadDesignTime().then(function(oDTData) {
-							var oData = that.exportDTRuntimeData(oMetadata);
-							mLibraryRuntimeData[oData.library] = mLibraryRuntimeData[oData.library] || {};
-							mLibraryRuntimeData[oData.library][sName] = jQuery.extend(true, {}, oData);
-							//do not extent the class name and displayName for derived classes
-							if (oDTData.className !== oData.className) {
-								oDTData.className = oData.className;
-								oDTData.displayName = oData.displayName;
-							}
-							resolve(jQuery.extend(true, oData, oDTData));
-						});
+		var that = this;
+		var oPromise = new Promise(function(resolve) {
+			sap.ui.require([sName.replace(/\./g, "/")], function(oControlClass) {
+				//module path from name
+				if (oControlClass && oControlClass.getMetadata() && (oControlClass.getMetadata().getStereotype() === "control" || oControlClass.getMetadata().getStereotype() === "element")) {
+					var oMetadata = oControlClass.getMetadata();
+					if (oMetadata.isAbstract()) {
+						jQuery.sap.log.debug("Abstract class not available in design time " + oMetadata.getName());
+						resolve(null);
 					}
-				}, function() {
-					jQuery.sap.log.debug("Designtime data for " + sName + " cannot be loaded");
-					resolve(null);
-				});
+					// load the library designtime.json
+					oMetadata.loadDesignTime().then(function(oDTData) {
+						var oData = that.exportDTRuntimeData(oMetadata);
+						mLibraryRuntimeData[oData.library] = mLibraryRuntimeData[oData.library] || {};
+						mLibraryRuntimeData[oData.library][sName] = jQuery.extend(true, {}, oData);
+						//do not extent the class name and displayName for derived classes
+						if (oDTData.className !== oData.className) {
+							oDTData.className = oData.className;
+							oDTData.displayName = oData.displayName;
+						}
+						resolve(jQuery.extend(true, oData, oDTData));
+					});
+				}
+			}, function() {
+				jQuery.sap.log.debug("Designtime data for " + sName + " cannot be loaded");
+				resolve(null);
 			});
+		});
 		return oPromise;
 	};
 	DTMetadata.exportDTRuntimeData = function(oMetadata) {
-		var sClassName = oMetadata.getName(),
-			sName = splitCamelCase(sClassName.substring(sClassName.lastIndexOf(".") + 1));
+		var sClassName = oMetadata.getName();
+		var sName = splitCamelCase(sClassName.substring(sClassName.lastIndexOf(".") + 1));
 		var oData = {
 			className: sClassName,
 			"abstract": oMetadata.isAbstract(),

@@ -27,7 +27,6 @@ sap.ui.define([
 	var oCommandSerializer;
 	var _oldUnloadHandler;
 
-
 	var fnGetDescriptor = function() {
 		return FlexUtils.getAppDescriptor(oRootControlRunningApp);
 	};
@@ -89,7 +88,7 @@ sap.ui.define([
 
 	return {
 		// To see the overview of app variants, a key user has created from an app
-		onGetOverview : function(bAsKeyUser, sLayer) {
+		onGetOverview: function(bAsKeyUser, sLayer) {
 			var oDescriptor = fnGetDescriptor();
 
 			return new Promise(function(resolve) {
@@ -154,7 +153,7 @@ sap.ui.define([
 		 * When the current layer is 'CUSTOMER'.
 		 * When it is not a standalone app runing on Neo Cloud.
 		 */
-		isPlatFormEnabled : function(oRootControl, sCurrentLayer, oLrepSerializer) {
+		isPlatFormEnabled: function(oRootControl, sCurrentLayer, oLrepSerializer) {
 			oRootControlRunningApp = oRootControl;
 			oCommandSerializer = oLrepSerializer;
 
@@ -183,7 +182,7 @@ sap.ui.define([
 		 * @returns {Promise} Resolved promise with an app variant descriptor
 		 * @description Getting here an app variant descriptor from the layered repository.
 		 */
-		getAppVariantDescriptor : function(oRootControl) {
+		getAppVariantDescriptor: function(oRootControl) {
 			oRootControlRunningApp = oRootControl;
 			var oDescriptor = fnGetDescriptor();
 			if (oDescriptor["sap.app"] && oDescriptor["sap.app"].id) {
@@ -200,11 +199,10 @@ sap.ui.define([
 		 * When 'Save As' triggered from the UI adaptation header bar, we set both flags <code>bSaveAsTriggeredFromRtaToolbar</code> and <code>bCopyUnsavedChanges</code> equal to <code>true</code>.
 		 * The flag <code>bCopyUnsavedChanges</code> is <code>true</code> if a key user presses 'Save As' from the running app entry in the app variant overview dialog.
 		 */
-		onSaveAs : function(bSaveAsTriggeredFromRtaToolbar, sCurrentLayer, oSelectedAppVariant) {
+		onSaveAs: function(bSaveAsTriggeredFromRtaToolbar, sCurrentLayer, oSelectedAppVariant) {
 			var bIsS4HanaCloud;
 			var bCopyUnsavedChanges = false;
 			var oAppVariantSaveClosure;
-
 			var oDescriptor = fnGetDescriptor();
 
 			if (oSelectedAppVariant && oSelectedAppVariant["sap.app"].id === oDescriptor["sap.app"].id) {
@@ -283,8 +281,8 @@ sap.ui.define([
 				sap.ui.require(["sap/ui/rta/appVariant/AppVariantManager"], function(AppVariantManager) {
 					if (!oAppVariantManager) {
 						oAppVariantManager = new AppVariantManager({
-							rootControl : oRootControlRunningApp,
-							commandSerializer : oCommandSerializer,
+							rootControl: oRootControlRunningApp,
+							commandSerializer: oCommandSerializer,
 							layer: sCurrentLayer
 						});
 					}
@@ -314,14 +312,14 @@ sap.ui.define([
 		 * @returns {Promise} Resolved promise
 		 * @description Triggers a delete operation of the app variant.
 		 */
-		onDeleteFromOverviewDialog : function(sAppVariantId, bCurrentlyAdapting, sCurrentLayer) {
+		onDeleteFromOverviewDialog: function(sAppVariantId, bCurrentlyAdapting, sCurrentLayer) {
 			var bIsS4HanaCloud;
 			return new Promise(function(resolve) {
 				sap.ui.require(["sap/ui/rta/appVariant/AppVariantManager"], function(AppVariantManager) {
 					if (!oAppVariantManager) {
 						oAppVariantManager = new AppVariantManager({
-							rootControl : oRootControlRunningApp,
-							commandSerializer : oCommandSerializer,
+							rootControl: oRootControlRunningApp,
+							commandSerializer: oCommandSerializer,
 							layer: sCurrentLayer
 						});
 					}

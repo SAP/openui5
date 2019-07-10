@@ -329,8 +329,8 @@ sap.ui.define([
 	};
 
 	Preview.loadOutline = function (oEvent) {
-		var sId = oEvent.data.id,
-			iDepth = oEvent.depth;
+		var sId = oEvent.data.id;
+		var iDepth = oEvent.depth;
 
 		if (!this.oOutlineProvider) {
 			this.oRta.getService("outline").then(function (oOutline) {

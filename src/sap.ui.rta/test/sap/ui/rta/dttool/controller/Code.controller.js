@@ -240,8 +240,8 @@ sap.ui.define([
 				var sDTFileName = sName ? sName.match(/^.*\.(.*?)$/)[1] + ".designtime.js" : null;
 
 				var fnNoDT = function () {
-					var sDisplayName = "",
-						sLib = "";
+					var sDisplayName = "";
+					var sLib = "";
 
 					if (sName) {
 						sDisplayName = sName.match(/^.*\.(.*?)$/)[1];
@@ -466,8 +466,8 @@ sap.ui.define([
 		 * @returns {string} the code
 		 */
 		_getCode : function (sFileName) {
-			var aFiles = this.getView().getModel().getData().files,
-				sCode = "";
+			var aFiles = this.getView().getModel().getData().files;
+			var sCode = "";
 
 			aFiles.some(function(oFile) {
 				if (oFile.name === sFileName) {

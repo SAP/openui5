@@ -74,9 +74,9 @@ sap.ui.define([
 	};
 
 	Rename.prototype.startEdit = function (oOverlay) {
-		var oElement = oOverlay.getElement(),
-			oDesignTimeMetadata = oOverlay.getDesignTimeMetadata(),
-			vDomRef = oDesignTimeMetadata.getAction("rename", oElement).domRef;
+		var oElement = oOverlay.getElement();
+		var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
+		var vDomRef = oDesignTimeMetadata.getAction("rename", oElement).domRef;
 		RenameHandler.startEdit.call(this, {
 			overlay: oOverlay,
 			domRef: vDomRef,

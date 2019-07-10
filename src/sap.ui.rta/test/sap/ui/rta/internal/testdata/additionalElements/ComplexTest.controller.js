@@ -17,7 +17,9 @@ sap.ui.define([
 		_data: [],
 
 		onInit: function () {
-			var sURL, oModel, oView;
+			var sURL;
+			var oModel;
+			var oView;
 
 			sURL = "/destinations/E91/sap/opu/odata/SAP/AdditionalElementsTest/";
 

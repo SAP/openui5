@@ -154,7 +154,9 @@ function (
 
 		QUnit.test("when the controls get rerendered", function(assert) {
 			var done = assert.async();
-			var bLayout, bVBox1, bVBox2;
+			var bLayout;
+			var bVBox1;
+			var bVBox2;
 
 			var oObserver = new MutationObserver(function(aMutations) {
 				aMutations.forEach(function(oMutation) {

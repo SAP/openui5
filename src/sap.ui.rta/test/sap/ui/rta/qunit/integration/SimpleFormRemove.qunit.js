@@ -114,7 +114,9 @@ function(
 		QUnit.test("When removing all groups and undoing the action", function(assert) {
 			var done = assert.async();
 			var sID;
-			var oElementGroup, oElementOverlay, oSimpleFormForm;
+			var oElementGroup;
+			var oElementOverlay;
+			var oSimpleFormForm;
 			var aElements = [];
 			var aFormContainers = [];
 

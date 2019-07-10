@@ -650,9 +650,9 @@ function(
 	 */
 	Utils.checkSourceTargetBindingCompatibility = function(oSource, oTarget, oModel) {
 		oModel = oModel || oSource.getModel();
-		var mSourceBindings = BindingsExtractor.collectBindingPaths(oSource, oModel),
-			sSourceContextBindingPath,
-			sTargetContextBindingPath;
+		var mSourceBindings = BindingsExtractor.collectBindingPaths(oSource, oModel);
+		var sSourceContextBindingPath;
+		var sTargetContextBindingPath;
 		// check source control for property binding
 		if (mSourceBindings.bindingPaths.length === 0) {
 			return true;

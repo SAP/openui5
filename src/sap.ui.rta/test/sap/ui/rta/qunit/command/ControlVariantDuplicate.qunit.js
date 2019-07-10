@@ -146,7 +146,9 @@ function (
 
 			var oDesignTimeMetadata = new ElementDesignTimeMetadata({ data : {} });
 			var mFlexSettings = {layer: "CUSTOMER"};
-			var oControlVariantDuplicateCommand, oDuplicateVariant, aPreparedChanges;
+			var oControlVariantDuplicateCommand;
+			var oDuplicateVariant;
+			var aPreparedChanges;
 
 			return CommandFactory.getCommandFor(this.oVariantManagement, "duplicate", {
 				sourceVariantReference: this.oVariant.content.variantReference,

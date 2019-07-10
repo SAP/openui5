@@ -5,14 +5,18 @@
 		onInit : function () {
 			jQuery.sap.require("sap.ui.core.util.MockServer");
 			this._sResourcePath = jQuery.sap.getResourcePath("sap/ui/rta/qunitrta/");
-			var sManifestUrl = this._sResourcePath + "/manifest.json",
-				oManifest = jQuery.sap.syncGetJSON(sManifestUrl).data,
-				oUriParameters = jQuery.sap.getUriParameters();
+			var sManifestUrl = this._sResourcePath + "/manifest.json";
+			var oManifest = jQuery.sap.syncGetJSON(sManifestUrl).data;
+			var oUriParameters = jQuery.sap.getUriParameters();
 
-			var iAutoRespond = (oUriParameters.get("serverDelay") || 1000),
-				oMockServer, dataSource, sMockServerPath, sMetadataUrl, aEntities = [],
-				oDataSources = oManifest["sap.app"]["dataSources"],
-				MockServer = sap.ui.core.util.MockServer;
+			var iAutoRespond = (oUriParameters.get("serverDelay") || 1000);
+			var oMockServer;
+			var dataSource;
+			var sMockServerPath;
+			var sMetadataUrl;
+			var aEntities = [];
+			var oDataSources = oManifest["sap.app"]["dataSources"];
+			var MockServer = sap.ui.core.util.MockServer;
 
 			sap.ui.core.util.MockServer.config({
 				autoRespond: true,
@@ -54,7 +58,8 @@
 						jQuery.sap.log.info("Running the app with mock data for " + property);
 
 						if (property === "mainService") {
-							var oModel, oView;
+							var oModel;
+							var oView;
 
 							oModel = new sap.ui.model.odata.v2.ODataModel(dataSource.uri, {
 								json: true,

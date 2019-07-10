@@ -144,8 +144,9 @@ function(
 				variantReference : "variant0",
 				visible : false
 			};
-			var aChanges = [oTitleChange, oFavoriteChange, oVisibleChange],
-				oControlVariantConfigureCommand, aPreparedChanges;
+			var aChanges = [oTitleChange, oFavoriteChange, oVisibleChange];
+			var oControlVariantConfigureCommand;
+			var aPreparedChanges;
 
 			return CommandFactory.getCommandFor(this.oVariantManagement, "configure", {
 				control : this.oVariantManagement,
@@ -202,8 +203,8 @@ function(
 				originalDefaultVariant: "variant0",
 				variantManagementReference: "variantMgmtId1"
 			};
-			var aChanges = [oDefaultChange],
-				oControlVariantConfigureCommand;
+			var aChanges = [oDefaultChange];
+			var oControlVariantConfigureCommand;
 			return CommandFactory.getCommandFor(this.oVariantManagement, "configure", {
 				control: this.oVariantManagement,
 				changes: aChanges
