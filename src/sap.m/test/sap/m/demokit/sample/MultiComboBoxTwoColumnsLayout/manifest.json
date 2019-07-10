@@ -7,12 +7,14 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.MultiComboBoxTwoColumnsLayout.Page",
+			"viewName": "sap.m.sample.MultiComboBoxTwoColumnsLayout.view.MultiComboBoxTwoColumnsLayout",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
 				"sap.ui.layout": {}
 			}
 		},
@@ -20,8 +22,8 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"Page.view.xml",
-					"Page.controller.js",
+					"view/MultiComboBoxTwoColumnsLayout.view.xml",
+					"controller/MultiComboBoxTwoColumnsLayout.controller.js",
 					"manifest.json"
 				]
 			}

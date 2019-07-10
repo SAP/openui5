@@ -1,12 +1,11 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/m/MessageToast',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, MessageToast, Controller, JSONModel) {
+	], function(MessageToast, Controller, JSONModel) {
 	"use strict";
 
-	var PageController = Controller.extend("sap.m.sample.MultiComboBox.Page", {
+	return Controller.extend("sap.m.sample.MultiComboBox.controller.MultiComboBox", {
 
 		onInit: function () {
 			// set explored app's demo model on this sample
@@ -47,8 +46,4 @@ sap.ui.define([
 			});
 		}
 	});
-
-
-	return PageController;
-
 });

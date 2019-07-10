@@ -1,12 +1,10 @@
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/m/MessageToast',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, MessageToast, Controller, JSONModel) {
+	], function(Controller, JSONModel) {
 	"use strict";
 
-	var PageController = Controller.extend("sap.m.sample.MultiComboBoxDefaultFiltering.Page", {
+	return Controller.extend("sap.m.sample.MultiComboBoxDefaultFiltering.controller.MultiComboBoxDefaultFiltering", {
 
 		onInit: function () {
 			// set explored app's demo model on this sample
@@ -14,8 +12,4 @@ sap.ui.define([
 			this.getView().setModel(oModel);
 		}
 	});
-
-
-	return PageController;
-
 });

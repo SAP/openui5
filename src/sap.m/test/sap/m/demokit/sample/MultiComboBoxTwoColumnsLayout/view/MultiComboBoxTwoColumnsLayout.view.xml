@@ -1,6 +1,6 @@
 <mvc:View
 	height="100%"
-	controllerName="sap.m.sample.MultiComboBox.Page"
+	controllerName="sap.m.sample.MultiComboBoxTwoColumnsLayout.controller.MultiComboBoxTwoColumnsLayout"
 	xmlns:l="sap.ui.layout"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
@@ -9,14 +9,13 @@
 		class="sapUiContentPadding"
 		width="100%">
 		<MultiComboBox
-			selectionChange="handleSelectionChange"
-			selectionFinish="handleSelectionFinish"
+			showSecondaryValues= "true"
 			width="500px"
 			items="{
 				path: '/ProductCollection',
 				sorter: { path: 'Name' }
 			}">
-			<core:Item key="{ProductId}" text="{Name}"/>
+			<core:ListItem key="{ProductId}" text="{Name}" additionalText="{ProductId}"/>
 		</MultiComboBox>
 	</l:VerticalLayout>
 </mvc:View>

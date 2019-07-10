@@ -4,7 +4,7 @@ sap.ui.define([
 	], function(Controller, JSONModel) {
 	"use strict";
 
-	var PageController = Controller.extend("sap.m.sample.MultiComboBoxTwoColumnsLayout.Page", {
+	return Controller.extend("sap.m.sample.MultiComboBoxTwoColumnsLayout.controller.MultiComboBoxTwoColumnsLayout", {
 
 		onInit: function () {
 			// set explored app's demo model on this sample
@@ -12,6 +12,4 @@ sap.ui.define([
 			this.getView().setModel(oModel);
 		}
 	});
-
-	return PageController;
 });

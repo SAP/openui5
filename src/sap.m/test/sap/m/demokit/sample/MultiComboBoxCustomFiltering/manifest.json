@@ -7,12 +7,14 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.MultiComboBoxCustomFiltering.Page",
+			"viewName": "sap.m.sample.MultiComboBoxCustomFiltering.view.MultiComboBoxCustomFiltering",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
 				"sap.ui.layout": {}
 			}
 		},
@@ -20,8 +22,8 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"Page.view.xml",
-					"Page.controller.js",
+					"view/MultiComboBoxCustomFiltering.view.xml",
+					"controller/MultiComboBoxCustomFiltering.controller.js",
 					"manifest.json"
 				]
 			}
