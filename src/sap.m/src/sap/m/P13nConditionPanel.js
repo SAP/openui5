@@ -1755,17 +1755,15 @@ sap.ui.define([
 					params.displayFormat = oType.oFormatOptions.style;
 				}
 				oControl = new DateTimePicker(params);
-			} else if (sCtrlType == "DatePicker") {
-				if (oType.oFormatOptions && oType.oFormatOptions.style) {
-					params.displayFormat = oType.oFormatOptions.style;
+			} else if (sCtrlType === "DatePicker") {
+				if (oType.oFormatOptions) {
+					params.displayFormat = oType.oFormatOptions.style || oType.oFormatOptions.pattern;
+
+					if (oType.isA("sap.ui.comp.odata.type.StringDate")) {
+						params.valueFormat = "yyyyMMdd";
+					}
 				}
 				oControl = new DatePicker(params);
-
-				if (oType && oType.getName() === "sap.ui.comp.odata.type.StringDate") {
-					oControl.setValueFormat("yyyyMMdd");
-					oControl.setDisplayFormat(oType.oFormatOptions.style || oType.oFormatOptions.pattern);
-				}
-
 			} else {
 				oControl = new Input(params);
 
