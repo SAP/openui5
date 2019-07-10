@@ -252,7 +252,10 @@ sap.ui.define([
 	 * @private
 	 */
 	LrepConnector.prototype._getMessagesFromXHR = function(oXHR) {
-		var errorResponse, aMessages, length, i;
+		var errorResponse;
+		var aMessages;
+		var length;
+		var i;
 		aMessages = [];
 		try {
 			errorResponse = JSON.parse(oXHR.responseText);

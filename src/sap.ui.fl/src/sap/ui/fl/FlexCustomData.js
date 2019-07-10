@@ -225,9 +225,9 @@ sap.ui.define([
 	};
 
 	FlexCustomData._createAndAddCustomDataControl = function(oControl, mPropertyBag, sCustomDataKey, sValue) {
-		var oModifier = mPropertyBag.modifier,
-			oView = mPropertyBag.view,
-			oComponent = mPropertyBag.appComponent;
+		var oModifier = mPropertyBag.modifier;
+		var oView = mPropertyBag.view;
+		var oComponent = mPropertyBag.appComponent;
 
 		var oCustomData = oModifier.createControl("sap.ui.core.CustomData", oComponent, oView, undefined, undefined, false);
 		oModifier.setProperty(oCustomData, "key", sCustomDataKey);

@@ -76,7 +76,8 @@ sap.ui.define([
 		 * @public
 		 */
 		setDefaultVariantId: function(oControl, sDefaultVariantId) {
-			var mParameters, oChange;
+			var mParameters;
+			var oChange;
 			var sStableId = SmartVariantManagementApplyAPI._getStableId(oControl);
 			var mSelector = {};
 
@@ -117,7 +118,8 @@ sap.ui.define([
 		 * @returns {object} the default variant change
 		 */
 		setExecuteOnSelect: function(oControl, bExecuteOnSelect) {
-			var mParameters, oChange;
+			var mParameters;
+			var oChange;
 			var sStableId = SmartVariantManagementApplyAPI._getStableId(oControl);
 
 			var mSelector = {};

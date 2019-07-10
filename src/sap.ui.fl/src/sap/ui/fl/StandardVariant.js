@@ -163,7 +163,8 @@ sap.ui.define(["sap/ui/fl/Change"], function(Change) {
 	 * @public
 	 */
 	StandardVariant.prototype.createChangeObject = function(mParameters) {
-		var oFileContent, oChange;
+		var oFileContent;
+		var oChange;
 
 		oFileContent = this._createChangeFile(mParameters);
 		oChange = new Change(oFileContent);

@@ -107,7 +107,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("createChangeFile shall return a new change", function(assert) {
-		var mParameterBag, oChangeContent;
+		var mParameterBag;
+		var oChangeContent;
 		mParameterBag = {defaultVariantId: "dominka", reference: "ribukombu"};
 
 		oChangeContent = this.oDefaultVariant._createChangeFile(mParameterBag);
@@ -116,7 +117,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("createChangeFile shall write the component name into the change file", function(assert) {
-		var mParameterBag, oChangeContent;
+		var mParameterBag;
+		var oChangeContent;
 		mParameterBag = {reference: "ribukombu"};
 
 		oChangeContent = this.oDefaultVariant._createChangeFile(mParameterBag);
@@ -124,8 +126,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("createChangeObject with all possible default variant change specific options", function(assert) {
-		var mParameterBag, oChange;
-		mParameterBag = {
+		var mParameterBag = {
 			reference: "Glennkadiko",
 			componentName: "Glennkadiko",
 			defaultVariantId: "Grendalin",
@@ -139,7 +140,7 @@ sap.ui.define([
 		};
 
 		//Call CUT
-		oChange = this.oDefaultVariant.createChangeObject(mParameterBag);
+		var oChange = this.oDefaultVariant.createChangeObject(mParameterBag);
 
 		assert.ok(oChange);
 		assert.ok(oChange instanceof Change);

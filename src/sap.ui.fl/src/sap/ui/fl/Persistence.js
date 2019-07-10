@@ -165,7 +165,8 @@ sap.ui.define([
 	 * @public
 	 */
 	Persistence.prototype.setExecuteOnSelectSync = function(bExecuteOnSelect) {
-		var mParameters, oChange;
+		var mParameters;
+		var oChange;
 
 		var selector = {};
 		selector[this._sStableIdPropertyName] = this._sStableId;
@@ -222,7 +223,8 @@ sap.ui.define([
 	 * @public
 	 */
 	Persistence.prototype.setDefaultVariantIdSync = function(sDefaultVariantId) {
-		var mParameters, oChange;
+		var mParameters;
+		var oChange;
 
 		var selector = {};
 		selector[this._sStableIdPropertyName] = this._sStableId;
@@ -267,7 +269,8 @@ sap.ui.define([
 	 * @public
 	 */
 	Persistence.prototype.isVariantDownport = function() {
-		var sLayer, bIsHotfix;
+		var sLayer;
+		var bIsHotfix;
 		sLayer = Utils.getCurrentLayer();
 		bIsHotfix = Utils.isHotfixMode();
 

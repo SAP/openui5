@@ -15,7 +15,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var bPresetFlexChangeMode, bFlexibilityAdaptationButtonAllowed;
+	var bPresetFlexChangeMode;
+	var bFlexibilityAdaptationButtonAllowed;
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("sapbyDefault.ui.fl.registry.Settings", {

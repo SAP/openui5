@@ -100,62 +100,62 @@ sap.ui.define([
 
 		QUnit.test("when preparing and checking changes for transport", function(assert) {
 			var oMockTransportInfo = {
-					packageName : "PackageName",
-					transport : "transportId"
+				packageName : "PackageName",
+				transport : "transportId"
+			};
+			var oMockTransportInfoInvalid = {
+				packageName : "$TMP",
+				transport : "transportId"
+			};
+			var oMockTransportedChange = {
+				packageName : "aPackage",
+				fileType : "change",
+				id : "changeId1",
+				namespace : "namespace",
+				getDefinition : function() {
+					return {
+						packageName : this.packageName,
+						fileType : this.fileType
+					};
 				},
-				oMockTransportInfoInvalid = {
-					packageName : "$TMP",
-					transport : "transportId"
+				getId : function() {
+					return this.id;
 				},
-				oMockTransportedChange = {
-					packageName : "aPackage",
-					fileType : "change",
-					id : "changeId1",
-					namespace : "namespace",
-					getDefinition : function() {
-						return {
-							packageName : this.packageName,
-							fileType : this.fileType
-						};
-					},
-					getId : function() {
-						return this.id;
-					},
-					getNamespace : function() {
-						return this.namespace;
-					},
-					setResponse : function(oDefinition) {
-						this.packageName = oDefinition.packageName;
-					},
-					getPackage : function() {
-						return this.packageName;
-					}
+				getNamespace : function() {
+					return this.namespace;
 				},
-				oMockNewChange = {
-					packageName : "$TMP",
-					fileType : "change",
-					id : "changeId2",
-					namespace : "namespace",
-					getDefinition : function() {
-						return {
-							packageName : this.packageName,
-							fileType : this.fileType
-						};
-					},
-					getId : function() {
-						return this.id;
-					},
-					getNamespace : function() {
-						return this.namespace;
-					},
-					setResponse : function(oDefinition) {
-						this.packageName = oDefinition.packageName;
-					},
-					getPackage : function() {
-						return this.packageName;
-					}
+				setResponse : function(oDefinition) {
+					this.packageName = oDefinition.packageName;
 				},
-				aMockLocalChanges = [oMockTransportedChange, oMockNewChange];
+				getPackage : function() {
+					return this.packageName;
+				}
+			};
+			var oMockNewChange = {
+				packageName : "$TMP",
+				fileType : "change",
+				id : "changeId2",
+				namespace : "namespace",
+				getDefinition : function() {
+					return {
+						packageName : this.packageName,
+						fileType : this.fileType
+					};
+				},
+				getId : function() {
+					return this.id;
+				},
+				getNamespace : function() {
+					return this.namespace;
+				},
+				setResponse : function(oDefinition) {
+					this.packageName = oDefinition.packageName;
+				},
+				getPackage : function() {
+					return this.packageName;
+				}
+			};
+			var aMockLocalChanges = [oMockTransportedChange, oMockNewChange];
 			sandbox.stub(Utils, "getClient").returns('');
 			sandbox.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
 
@@ -170,54 +170,54 @@ sap.ui.define([
 
 		QUnit.test("when preparing and checking changes for transport with local UI changes and app variant descriptor", function(assert) {
 			var oMockTransportInfo = {
-					packageName : "PackageName",
-					transport : "transportId"
+				packageName : "PackageName",
+				transport : "transportId"
+			};
+			var oAppVariantDescriptor = {
+				packageName : "$TMP",
+				fileType : "appdescr_variant",
+				fileName : "manifest",
+				id : "customer.app.var.id",
+				namespace : "namespace1",
+				getDefinition : function() {
+					return {
+						fileType : this.fileType,
+						fileName : this.fileName
+					};
 				},
-				oAppVariantDescriptor = {
-					packageName : "$TMP",
-					fileType : "appdescr_variant",
-					fileName : "manifest",
-					id : "customer.app.var.id",
-					namespace : "namespace1",
-					getDefinition : function() {
-						return {
-							fileType : this.fileType,
-							fileName : this.fileName
-						};
-					},
-					getNamespace : function() {
-						return this.namespace;
-					},
-					getPackage : function() {
-						return this.packageName;
-					}
+				getNamespace : function() {
+					return this.namespace;
 				},
-				oMockNewChange = {
-					packageName : "$TMP",
-					fileType : "change",
-					id : "changeId2",
-					namespace : "namespace2",
-					getDefinition : function() {
-						return {
-							packageName : this.packageName,
-							fileType : this.fileType
-						};
-					},
-					getId : function() {
-						return this.id;
-					},
-					getNamespace : function() {
-						return this.namespace;
-					},
-					setResponse : function(oDefinition) {
-						this.packageName = oDefinition.packageName;
-					},
-					getPackage : function() {
-						return this.packageName;
-					}
+				getPackage : function() {
+					return this.packageName;
+				}
+			};
+			var oMockNewChange = {
+				packageName : "$TMP",
+				fileType : "change",
+				id : "changeId2",
+				namespace : "namespace2",
+				getDefinition : function() {
+					return {
+						packageName : this.packageName,
+						fileType : this.fileType
+					};
 				},
-				aMockLocalChanges = [oMockNewChange],
-				aAppVariantDescriptors = [oAppVariantDescriptor];
+				getId : function() {
+					return this.id;
+				},
+				getNamespace : function() {
+					return this.namespace;
+				},
+				setResponse : function(oDefinition) {
+					this.packageName = oDefinition.packageName;
+				},
+				getPackage : function() {
+					return this.packageName;
+				}
+			};
+			var aMockLocalChanges = [oMockNewChange];
+			var aAppVariantDescriptors = [oAppVariantDescriptor];
 
 			sandbox.stub(Utils, "getClient").returns('');
 			sandbox.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
@@ -287,25 +287,21 @@ sap.ui.define([
 		});
 
 		QUnit.test("_openDialog", function (assert) {
-			var oEvent, fSuccess, fError;
-
-			fSuccess = function () {
+			var fSuccess = function () {
 			};
-			fError = function () {
+			var fError = function () {
 			};
-			oEvent = this.oTransportSelection._openDialog({}, fSuccess, fError, false, "dummyStyleClass");
+			var oEvent = this.oTransportSelection._openDialog({}, fSuccess, fError, false, "dummyStyleClass");
 			assert.ok(oEvent);
 			oEvent.close();
 		});
 
 		QUnit.test("_openDialog with compact mode", function (assert) {
-			var oEvent, fSuccess, fError;
-
-			fSuccess = function () {
+			var fSuccess = function () {
 			};
-			fError = function () {
+			var fError = function () {
 			};
-			oEvent = this.oTransportSelection._openDialog({}, fSuccess, fError, true, "dummyStyleClass");
+			var oEvent = this.oTransportSelection._openDialog({}, fSuccess, fError, true, "dummyStyleClass");
 			assert.ok(oEvent);
 			oEvent.close();
 		});

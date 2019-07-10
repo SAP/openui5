@@ -135,7 +135,8 @@ sap.ui.define([
 	 * @private
 	 */
 	VariantModel.prototype.updateCurrentVariant = function(sVariantManagementReference, sNewVariantReference, oAppComponent) {
-		var sCurrentVariantReference, mChangesToBeSwitched;
+		var sCurrentVariantReference;
+		var mChangesToBeSwitched;
 
 		sCurrentVariantReference = this.oData[sVariantManagementReference].originalCurrentVariant;
 
@@ -332,10 +333,10 @@ sap.ui.define([
 	};
 
 	VariantModel.prototype._duplicateVariant = function(mPropertyBag) {
-		var sNewVariantReference = mPropertyBag.newVariantReference,
-			sSourceVariantReference = mPropertyBag.sourceVariantReference,
-			sVariantManagementReference = mPropertyBag.variantManagementReference,
-			oSourceVariant = this.getVariant(sSourceVariantReference);
+		var sNewVariantReference = mPropertyBag.newVariantReference;
+		var sSourceVariantReference = mPropertyBag.sourceVariantReference;
+		var sVariantManagementReference = mPropertyBag.variantManagementReference;
+		var oSourceVariant = this.getVariant(sSourceVariantReference);
 
 		var aVariantChanges =
 			this.oVariantController.getVariantChanges(sVariantManagementReference, sSourceVariantReference, true)

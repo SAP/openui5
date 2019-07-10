@@ -97,8 +97,8 @@ sap.ui.define([
 	 * @return {promise.<Object>} Returns a Promise with ChangeHandlerSettings included.
 	 */
 	ChangeHandlerMediator.getChangeHandlerSettings = function(mKey, bSkipInitialization) {
-		var aKeys = Object.keys(mKey),
-			mFoundChangeHandlerSettings;
+		var aKeys = Object.keys(mKey);
+		var mFoundChangeHandlerSettings;
 
 		if (aKeys.length > 0) {
 			mFoundChangeHandlerSettings = this._aChangeHandlerSettings.filter(function(oEntry) {

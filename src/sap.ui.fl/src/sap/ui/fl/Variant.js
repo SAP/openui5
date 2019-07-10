@@ -391,7 +391,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Variant.prototype._isReadOnlyDueToOriginalLanguage = function () {
-		var sCurrentLanguage, sOriginalLanguage;
+		var sCurrentLanguage;
+		var sOriginalLanguage;
 
 		sOriginalLanguage = this.getOriginalLanguage();
 		if (!sOriginalLanguage) {

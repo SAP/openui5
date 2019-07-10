@@ -108,7 +108,9 @@ function(
 		}};
 		var sComponentName = Utils.getFlexReference(oManifest);
 		var sAppVersion = Utils.getAppVersionFromManifest(oManifest);
-		var sMaxLayer, oStartupParameters, oTechnicalParameters;
+		var sMaxLayer;
+		var oStartupParameters;
+		var oTechnicalParameters;
 
 		oStartupParameters = oConfig && oConfig.componentData && oConfig.componentData.startupParameters || {};
 		oTechnicalParameters = oConfig && oConfig.componentData && oConfig.componentData.technicalParameters;

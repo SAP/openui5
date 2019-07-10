@@ -342,7 +342,8 @@ function(
 		});
 
 		QUnit.test("Change.getComponent", function(assert) {
-			var oChange, sComponent;
+			var oChange;
+			var sComponent;
 			oChange = new Change(this.oChangeDef);
 			sComponent = oChange.getComponent();
 			assert.equal(sComponent, "smartFilterBar");
@@ -470,7 +471,8 @@ function(
 		});
 
 		QUnit.test("_isReadOnlyDueToOriginalLanguage shall compare the original language with the current language", function(assert) {
-			var oChange, bIsReadOnly;
+			var oChange;
+			var bIsReadOnly;
 			oChange = new Change(this.oChangeDef);
 			sandbox.stub(Utils, "getCurrentLanguage").returns("DE");
 
@@ -519,7 +521,8 @@ function(
 		});
 
 		QUnit.test("_isReadOnlyDueToOriginalLanguage shall be true if the original language is initial", function(assert) {
-			var oChange, bIsReadOnly;
+			var oChange;
+			var bIsReadOnly;
 			this.oChangeDef.originalLanguage = "";
 			oChange = new Change(this.oChangeDef);
 			//Call CUT

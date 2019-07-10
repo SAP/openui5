@@ -254,22 +254,21 @@ function(
 		});
 
 		QUnit.test("_getComponentIdForControl shall walk up the control tree until it finds a component id", function (assert) {
-			var sComponentId, oControl1, oControl2, oControl3, fnGetOwnerIdForControl;
-			oControl1 = {};
-			oControl2 = {
+			var oControl1 = {};
+			var oControl2 = {
 				getParent: sandbox.stub().returns(oControl1)
 			};
-			oControl3 = {
+			var oControl3 = {
 				getParent: sandbox.stub().returns(oControl2)
 			};
 
-			fnGetOwnerIdForControl = sandbox.stub(Utils, "_getOwnerIdForControl");
+			var fnGetOwnerIdForControl = sandbox.stub(Utils, "_getOwnerIdForControl");
 			fnGetOwnerIdForControl.withArgs(oControl3).returns("");
 			fnGetOwnerIdForControl.withArgs(oControl2).returns("");
 			fnGetOwnerIdForControl.withArgs(oControl1).returns("sodimunk");
 
 			// Call CUT
-			sComponentId = Utils._getComponentIdForControl(oControl3);
+			var sComponentId = Utils._getComponentIdForControl(oControl3);
 
 			assert.equal(sComponentId, 'sodimunk');
 			assert.equal(fnGetOwnerIdForControl.callCount, 3);
@@ -333,42 +332,38 @@ function(
 		});
 
 		QUnit.test("getXSRFTokenFromControl shall return an empty string if retrieval failes", function (assert) {
-			var oControl, sXSRFToken;
-			oControl = {};
+			var oControl = {};
 
 			// Call CUT
-			sXSRFToken = Utils.getXSRFTokenFromControl(oControl);
+			var sXSRFToken = Utils.getXSRFTokenFromControl(oControl);
 
 			assert.strictEqual(sXSRFToken, '');
 		});
 
 		QUnit.test("getXSRFTokenFromControl shall return the XSRF Token from the Control's OData model", function (assert) {
-			var oControl, sXSRFToken;
-			oControl = {
+			var oControl = {
 				getModel: function () {
 				}
 			};
 			sandbox.stub(Utils, "_getXSRFTokenFromModel").returns("abc");
 
 			// Call CUT
-			sXSRFToken = Utils.getXSRFTokenFromControl(oControl);
+			var sXSRFToken = Utils.getXSRFTokenFromControl(oControl);
 
 			assert.strictEqual(sXSRFToken, 'abc');
 		});
 
 		QUnit.test("_getXSRFTokenFromModel shall return an empty string if the retrieval failed", function (assert) {
-			var oModel, sXSRFToken;
-			oModel = {};
+			var oModel = {};
 
 			// Call CUT
-			sXSRFToken = Utils._getXSRFTokenFromModel(oModel);
+			var sXSRFToken = Utils._getXSRFTokenFromModel(oModel);
 
 			assert.strictEqual(sXSRFToken, '');
 		});
 
 		QUnit.test("_getXSRFTokenFromModel shall return the XSRF Token from the OData model", function (assert) {
-			var oModel, sXSRFToken;
-			oModel = {
+			var oModel = {
 				getHeaders: function () {
 					return {
 						"x-csrf-token": "gungalord"
@@ -377,7 +372,7 @@ function(
 			};
 
 			// Call CUT
-			sXSRFToken = Utils._getXSRFTokenFromModel(oModel);
+			var sXSRFToken = Utils._getXSRFTokenFromModel(oModel);
 
 			assert.strictEqual(sXSRFToken, 'gungalord');
 		});
@@ -495,45 +490,42 @@ function(
 		});
 
 		QUnit.test('hasControlAncestorWithId shall return true if the control itself is the ancestor', function (assert) {
-			var button = new Button('button1'), bHasAncestor;
+			var button = new Button('button1');
 			aControls.push(button);
 
-			bHasAncestor = Utils.hasControlAncestorWithId('button1', 'button1');
+			var bHasAncestor = Utils.hasControlAncestorWithId('button1', 'button1');
 			assert.strictEqual(bHasAncestor, true);
 		});
 
 		QUnit.test("hasControlAncestorWithId shall return true if the control's parent is the ancestor", function (assert) {
-			var hLayout, button, bHasAncestor;
-			hLayout = new HorizontalLayout('hLayout');
-			button = new Button('button1');
+			var hLayout = new HorizontalLayout('hLayout');
+			var button = new Button('button1');
 			hLayout.addContent(button);
 			aControls.push(hLayout);
 
-			bHasAncestor = Utils.hasControlAncestorWithId('button1', 'hLayout');
+			var bHasAncestor = Utils.hasControlAncestorWithId('button1', 'hLayout');
 			assert.strictEqual(bHasAncestor, true);
 		});
 
 		QUnit.test("hasControlAncestorWithId shall return true if the control has the specified ancestor", function (assert) {
-			var hLayout1, hLayout2, button, bHasAncestor;
-			hLayout1 = new HorizontalLayout('hLayout1');
-			hLayout2 = new HorizontalLayout('hLayout2');
-			button = new Button('button');
+			var hLayout1 = new HorizontalLayout('hLayout1');
+			var hLayout2 = new HorizontalLayout('hLayout2');
+			var button = new Button('button');
 			hLayout1.addContent(button);
 			hLayout2.addContent(hLayout1);
 			aControls.push(hLayout2);
 
-			bHasAncestor = Utils.hasControlAncestorWithId('button', 'hLayout2');
+			var bHasAncestor = Utils.hasControlAncestorWithId('button', 'hLayout2');
 
 			assert.strictEqual(bHasAncestor, true);
 		});
 
 		QUnit.test("hasControlAncestorWithId shall return false if the control does not have the specified ancestor", function (assert) {
-			var hLayout, button, bHasAncestor;
-			hLayout = new HorizontalLayout('hLayout');
-			button = new Button('button');
+			var hLayout = new HorizontalLayout('hLayout');
+			var button = new Button('button');
 			aControls.push(hLayout, button);
 
-			bHasAncestor = Utils.hasControlAncestorWithId('button', 'hLayout');
+			var bHasAncestor = Utils.hasControlAncestorWithId('button', 'hLayout');
 			assert.strictEqual(bHasAncestor, false);
 		});
 

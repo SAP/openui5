@@ -30,11 +30,11 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("on LRep content received", function(assert) {
 			var oPage = {
-					setBusy : function () {}
-				},
-				oData = {},
-				oStubbedFilterList = sandbox.stub(oController, "filterListByQuery"),
-				oStubbedSetBusy = sandbox.stub(oPage, "setBusy");
+				setBusy : function () {}
+			};
+			var oData = {};
+			var oStubbedFilterList = sandbox.stub(oController, "filterListByQuery");
+			var oStubbedSetBusy = sandbox.stub(oPage, "setBusy");
 			sandbox.stub(oController, "getView").returns({
 				getModel: function () {
 					return {

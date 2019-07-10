@@ -42,7 +42,8 @@ function (
 		});
 
 		QUnit.test("shall cache and reuse the created FlexController instances", function (assert) {
-			var oFlexController1, oFlexController2;
+			var oFlexController1;
+			var oFlexController2;
 
 			//Call CUT
 			oFlexController1 = FlexControllerFactory.create("myComponent");

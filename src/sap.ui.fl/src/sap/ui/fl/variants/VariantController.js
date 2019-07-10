@@ -329,7 +329,8 @@ sap.ui.define([
 	 */
 	VariantController.prototype.getChangesForVariantSwitch = function(mPropertyBag) {
 		var aCurrentVariantChanges = this.getVariantChanges(mPropertyBag.variantManagementReference, mPropertyBag.currentVariantReference, true);
-		var aMapChanges = [], aChangeKeysFromMap = [];
+		var aMapChanges = [];
+		var aChangeKeysFromMap = [];
 		Object.keys(mPropertyBag.changesMap).forEach(function(sControlId) {
 			mPropertyBag.changesMap[sControlId].forEach(function(oMapChange) {
 				aMapChanges = aMapChanges.concat(oMapChange);
@@ -371,8 +372,8 @@ sap.ui.define([
 	};
 
 	VariantController.prototype._applyChangesOnVariant = function(oVariant) {
-		var mVariantChanges = oVariant.variantChanges,
-			oActiveChange;
+		var mVariantChanges = oVariant.variantChanges;
+		var oActiveChange;
 		Object.keys(mVariantChanges).forEach(function(sChangeType) {
 			switch (sChangeType) {
 				case "setTitle":
@@ -400,8 +401,8 @@ sap.ui.define([
 	};
 
 	VariantController.prototype._applyChangesOnVariantManagement = function(oVariantManagement) {
-		var mVariantManagementChanges = oVariantManagement.variantManagementChanges,
-			oActiveChange;
+		var mVariantManagementChanges = oVariantManagement.variantManagementChanges;
+		var oActiveChange;
 		if (Object.keys(mVariantManagementChanges).length > 0) {
 			oActiveChange = this._getActiveChange("setDefault", mVariantManagementChanges);
 			if (oActiveChange) {

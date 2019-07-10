@@ -57,9 +57,9 @@ sap.ui.define([
 		}],
 		async: true,
 		check: function (issueManager, oCoreFacade, oScope, resolve) {
-			var aElements = oScope.getElements(),
-				oElement,
-				oAppComponent;
+			var aElements = oScope.getElements();
+			var oElement;
+			var oAppComponent;
 
 			for (var i = 0; i < aElements.length; i++) {
 				oElement = aElements[i];
