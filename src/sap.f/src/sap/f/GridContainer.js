@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/core/Control",
+	"sap/ui/core/Core",
 	"sap/ui/base/ManagedObjectObserver",
 	'sap/ui/core/ResizeHandler',
 	"sap/ui/core/delegate/ItemNavigation",
@@ -12,13 +13,14 @@ sap.ui.define([
 	"sap/f/GridContainerSettings"
 
 ], function (Control,
-             ManagedObjectObserver,
-             ResizeHandler,
-             ItemNavigation,
-             GridContainerRenderer,
-             Device,
-			 VirtualGrid,
-			 GridContainerSettings) {
+			Core,
+            ManagedObjectObserver,
+            ResizeHandler,
+            ItemNavigation,
+            GridContainerRenderer,
+            Device,
+			VirtualGrid,
+			GridContainerSettings) {
 	"use strict";
 
 	/**
@@ -257,6 +259,14 @@ sap.ui.define([
 	});
 
 	/**
+	 * Allow detection of changes in items, in order to optimize (avoid re-rendering) when items are rearranged.
+	 * @see {@link topic:7cdff73f308b4b10bdf7d83b7aba72e7 Extended Change Detection}
+	 * @type {boolean}
+	 * @private
+	 */
+	GridContainer.prototype.bUseExtendedChangeDetection = true;
+
+	/**
 	 * Gets the <code>GridContainerSettings</code> for the current layout breakpoint.
 	 * @public
 	 * @returns {sap.f.GridContainerSettings} The settings for the current layout
@@ -420,6 +430,64 @@ sap.ui.define([
 	};
 
 	/**
+	 * Inserts an item into the aggregation named <code>items</code>.
+	 *
+	 * @param {sap.ui.core.Item} oItem The item to be inserted; if empty, nothing is inserted.
+	 * @param {int} iIndex The <code>0</code>-based index the item should be inserted at; for
+	 *             a negative value of <code>iIndex</code>, the item is inserted at position 0; for a value
+	 *             greater than the current size of the aggregation, the item is inserted at the last position.
+	 * @returns {sap.f.GridContainer} <code>this</code> to allow method chaining.
+	 * @public
+	 */
+	GridContainer.prototype.insertItem = function (oItem, iIndex) {
+		if (!this.getDomRef() || !isGridSupportedByBrowser()) {
+			// if not rendered or not supported - insert aggregation and invalidate
+			return this.insertAggregation("items", oItem, iIndex);
+		}
+
+		var oRm = Core.createRenderManager(),
+			oWrapper = this._createItemWrapper(oItem),
+			oTarget = this._getItemAt(iIndex),
+			oGridRef = this.getDomRef();
+
+		if (oTarget) {
+			oGridRef.insertBefore(oWrapper, oTarget.getDomRef().parentElement);
+		} else {
+			oGridRef.appendChild(oWrapper);
+		}
+
+		this.insertAggregation("items", oItem, iIndex, true);
+
+		oRm.render(oItem, oWrapper);
+		oRm.destroy();
+
+		return this;
+	};
+
+	/**
+	 * Removes an item from the aggregation named <code>items</code>.
+	 *
+	 * @param {int | string | sap.ui.core.Item} vItem The item to remove or its index or ID.
+	 * @returns {sap.ui.core.Control} The removed item or null.
+	 * @public
+	 */
+	GridContainer.prototype.removeItem = function (vItem) {
+		var oRemovedItem = this.removeAggregation("items", vItem, true),
+			oGridRef = this.getDomRef(),
+			oItemRef = oRemovedItem.getDomRef();
+
+		if (!oGridRef || !oItemRef || !isGridSupportedByBrowser()) {
+			this.invalidate();
+			return oRemovedItem;
+		}
+
+		// remove the item's wrapper from DOM
+		oGridRef.removeChild(oItemRef.parentElement);
+
+		return oRemovedItem;
+	};
+
+	/**
 	 * Before rendering hook.
 	 * @protected
 	 */
@@ -567,6 +635,48 @@ sap.ui.define([
 			// if item has more columns than total columns, it brakes the whole layout
 			oItem.$().parent().css("grid-column", "span " + Math.min(getItemColumnCount(oItem), iMaxColumns));
 		});
+	};
+
+	/**
+	 * Gets the item at specified index.
+	 * @param {int} iIndex Which item to get
+	 * @return {sap.ui.core.Control|null} The item at the specified index. <code>null</code> if index is out of range.
+	 */
+	GridContainer.prototype._getItemAt = function (iIndex) {
+		var aItems = this.getItems(),
+			oTarget;
+
+		if (iIndex < 0) {
+			iIndex = 0;
+		}
+
+		if (aItems.length && aItems[iIndex]) {
+			oTarget = aItems[iIndex];
+		}
+
+		return oTarget;
+	};
+
+	/**
+	 * Creates a wrapper div for the given item.
+	 * @param {sap.ui.core.Control} oItem The item
+	 * @return {HTMLElement} The created wrapper
+	 */
+	GridContainer.prototype._createItemWrapper = function (oItem) {
+		var mStylesInfo = GridContainerRenderer.getStylesForItemWrapper(oItem, this),
+			mStyles = mStylesInfo.styles,
+			aClasses = mStylesInfo.classes,
+			oWrapper = document.createElement("div");
+
+		mStyles.forEach(function (sValue, sKey) {
+			oWrapper.style.setProperty(sKey, sValue);
+		});
+
+		aClasses.forEach(function (sValue) {
+			oWrapper.classList.add(sValue);
+		});
+
+		return oWrapper;
 	};
 
 	/**
