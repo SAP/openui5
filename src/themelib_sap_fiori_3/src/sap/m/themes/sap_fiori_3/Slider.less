@@ -40,6 +40,7 @@
 }
 
 .sapMSliderTickLabel .sapMSliderLabel {
+	padding-top: 0.4375rem;
 	height: 1rem;
 	width: 2rem;
 	left: -1rem;
@@ -66,8 +67,13 @@
 	border: 0.125rem solid @sapUiActive;
 }
 
-.sapUiSizeCompact .sapMSliderHandle {
-	width: 1.25rem;
-	height: 1.25rem;
-	top: -0.6rem;
+.sapUiSizeCompact {
+	.sapMSliderHandle {
+		width: 1.25rem;
+		height: 1.25rem;
+		top: -0.6rem;
+	}
+	.sapMSliderTickLabel .sapMSliderLabel {
+		padding-top: 0.375rem;
+	}
 }
