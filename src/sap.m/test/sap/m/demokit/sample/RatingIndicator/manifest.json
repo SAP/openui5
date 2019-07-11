@@ -7,19 +7,21 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.RatingIndicator.V",
+			"viewName": "sap.m.sample.RatingIndicator.view.RatingIndicator",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
 				"sap.ui.layout": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"files": [
-					"V.view.xml",
+					"view/RatingIndicator.view.xml",
 					"manifest.json"
 				]
 			}
