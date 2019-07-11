@@ -7,19 +7,21 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.TextArea.V",
+			"viewName": "sap.m.sample.TextArea.view.TextArea",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
 				"sap.ui.layout": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"files": [
-					"V.view.xml",
+					"view/TextArea.view.xml",
 					"manifest.json"
 				]
 			}

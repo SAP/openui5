@@ -7,19 +7,21 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.TextAreaGrowing.V",
+			"viewName": "sap.m.sample.TextAreaGrowing.view.TextAreaGrowing",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
 				"sap.ui.layout": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"files": [
-					"V.view.xml",
+					"view/TextAreaGrowing.view.xml",
 					"manifest.json"
 				]
 			}

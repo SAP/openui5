@@ -7,20 +7,22 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.TextAreaValueUpdate.V",
+			"viewName": "sap.m.sample.TextAreaValueUpdate.view.TextAreaValueUpdate",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
-				"sap.m": {}
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"files": [
-					"V.view.xml",
-					"C.controller.js",
+					"view/TextAreaValueUpdate.view.xml",
+					"controller/TextAreaValueUpdate.controller.js",
 					"manifest.json"
 				]
 			}
