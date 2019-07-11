@@ -12,7 +12,7 @@
 			<Button text="Action-B" press="handleCloseButton" />
 		</endButton>
 		<content>
-			<Image src="{ProductPicUrl}" width="15em" densityAware="false" />
+			<Image src="{ProductPicUrl}" width="15em" />
 		</content>
 	</ResponsivePopover>
 </core:FragmentDefinition>
