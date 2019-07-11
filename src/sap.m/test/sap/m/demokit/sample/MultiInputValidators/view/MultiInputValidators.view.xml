@@ -1,4 +1,4 @@
-<mvc:View height="100%" controllerName="sap.m.sample.MultiInputValidators.Page"
+<mvc:View height="100%" controllerName="sap.m.sample.MultiInputValidators.controller.MultiInputValidators"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m">
 	<VBox class="sapUiSmallMargin">

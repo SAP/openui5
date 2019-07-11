@@ -1,6 +1,6 @@
 <mvc:View
 	height="100%"
-	controllerName="sap.m.sample.MultiInputDatabinding.Page"
+	controllerName="sap.m.sample.MultiInputDatabinding.controller.MultiInputDatabinding"
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">

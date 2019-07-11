@@ -1,6 +1,6 @@
 <mvc:View
 	height="100%"
-	controllerName="sap.m.sample.MultiInputMaxTokens.Page"
+	controllerName="sap.m.sample.MultiInputMaxTokens.controller.MultiInputMaxTokens"
 	xmlns:l="sap.ui.layout"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"

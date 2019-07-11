@@ -5,7 +5,7 @@ sap.ui.define([
 	], function(Token, Controller, JSONModel) {
 	"use strict";
 
-	return Controller.extend("sap.m.sample.MultiInputGrouping.C", {
+	return Controller.extend("sap.m.sample.MultiInputGrouping.controller.MultiInputGrouping", {
 
 		/**
 		 * Lifecycle hook that is called when the controller is instantiated

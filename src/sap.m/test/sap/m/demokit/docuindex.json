@@ -1124,7 +1124,8 @@
 			"sap.m.sample.MultiInputDatabinding",
 			"sap.m.sample.MultiInputMaxTokens",
 			"sap.m.sample.MultiInputTokenUpdate",
-			"sap.m.sample.MultiInputGrouping"
+			"sap.m.sample.MultiInputGrouping",
+			"sap.m.sample.MultiInputValueHelp"
 		  ]
 		},
 		{
@@ -2260,6 +2261,11 @@
 		  "id": "sap.m.sample.MultiInputGrouping",
 		  "name": "MultiInput - Grouping of items",
 		  "description": "Items in the MultiInput could be grouped by a property"
+		},
+		{
+		  "id": "sap.m.sample.MultiInputValueHelp",
+		  "name": "MultiInput with Value Help",
+		  "description": "MultiInput that includes a SelectDialog as a value help dialog"
 		},
 		{
 			"id": "sap.m.sample.NumericContentDifColors",

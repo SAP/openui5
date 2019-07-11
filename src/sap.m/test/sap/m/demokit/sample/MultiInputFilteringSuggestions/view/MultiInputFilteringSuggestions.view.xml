@@ -1,4 +1,4 @@
-<mvc:View height="100%" controllerName="sap.m.sample.MultiInputFilteringSuggestions.Page"
+<mvc:View height="100%" controllerName="sap.m.sample.MultiInputFilteringSuggestions.controller.MultiInputFilteringSuggestions"
 		xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m">
 	<VBox class="sapUiSmallMargin">

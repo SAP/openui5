@@ -2,7 +2,7 @@ sap.ui.define(['sap/m/Token','sap/ui/core/mvc/Controller','sap/ui/model/json/JSO
 	function(Token, Controller, JSONModel) {
 	"use strict";
 
-	var PageController = Controller.extend("sap.m.sample.MultiInputFilteringSuggestions.Page", {
+	return Controller.extend("sap.m.sample.MultiInputFilteringSuggestions.controller.MultiInputFilteringSuggestions", {
 
 		onInit: function () {
 			// set explored app's demo model on this sample
@@ -23,7 +23,4 @@ sap.ui.define(['sap/m/Token','sap/ui/core/mvc/Controller','sap/ui/model/json/JSO
 			});
 		}
 	});
-
-	return PageController;
-
 });

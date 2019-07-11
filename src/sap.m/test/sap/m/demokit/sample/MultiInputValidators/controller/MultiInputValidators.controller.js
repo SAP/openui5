@@ -1,8 +1,12 @@
-sap.ui.define(['sap/m/MessageBox','sap/m/Token','sap/ui/core/mvc/Controller'],
-	function(MessageBox, Token, Controller) {
+sap.ui.define([
+		'sap/m/MessageBox',
+		'sap/m/Token',
+		'sap/ui/core/mvc/Controller',
+		'sap/m/MultiInput'
+	], function(MessageBox, Token, Controller, MultiInput) {
 	"use strict";
 
-	var PageController = Controller.extend("sap.m.sample.MultiInputValidators.Page", {
+	return Controller.extend("sap.m.sample.MultiInputValidators.controller.MultiInputValidators", {
 
 		onInit: function () {
 			var oView = this.getView();
@@ -39,7 +43,7 @@ sap.ui.define(['sap/m/MessageBox','sap/m/Token','sap/ui/core/mvc/Controller'],
 					},
 					title: "add Token"
 					});
-				  return sap.m.MultiInput.WaitForAsyncValidation;
+				  return MultiInput.WaitForAsyncValidation;
 			});
 
 			var oMultiInput3 = oView.byId("multiInput3");
@@ -47,13 +51,10 @@ sap.ui.define(['sap/m/MessageBox','sap/m/Token','sap/ui/core/mvc/Controller'],
 				window.setTimeout(function(){
 					args.asyncCallback(new Token({text: args.text}));
 				},500);
-				return sap.m.MultiInput.WaitForAsyncValidation;
+				return MultiInput.WaitForAsyncValidation;
 			};
 
 			oMultiInput3.addValidator(fValidator);
 		}
 	});
-
-	return PageController;
-
 });

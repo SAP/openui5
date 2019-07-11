@@ -7,12 +7,14 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.MultiInputValueHelp.Page",
+			"viewName": "sap.m.sample.MultiInputValueHelp.view.MultiInputValueHelp",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
 				"sap.ui.layout": {}
 			}
 		},
@@ -20,9 +22,9 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"Page.view.xml",
-					"Page.controller.js",
-					"Dialog.fragment.xml",
+					"view/MultiInputValueHelp.view.xml",
+					"controller/MultiInputValueHelp.controller.js",
+					"view/Dialog.fragment.xml",
 					"manifest.json"
 				]
 			}
