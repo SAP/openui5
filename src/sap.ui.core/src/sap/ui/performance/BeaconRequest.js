@@ -71,18 +71,20 @@ sap.ui.define(["sap/base/Log"], function (Log) {
 	 * Send all data stored in buffer and clear the buffer afterwards
 	 */
 	BeaconRequest.prototype.send = function() {
-		// prepare the content to be x-www-form-urlencoded
-		var sBody = this._aBuffer.reduce(function(sResult, oEntry) {
-			sResult +=  "&" + oEntry.key + "=" + oEntry.value;
-			return sResult;
-		}, "sap-fesr-only=1");
+		if (this.getBufferLength()) {
+			// prepare the content to be x-www-form-urlencoded
+			var sBody = this._aBuffer.reduce(function(sResult, oEntry) {
+				sResult +=  "&" + oEntry.key + "=" + oEntry.value;
+				return sResult;
+			}, "sap-fesr-only=1");
 
-		//blobs are supported in all browsers using sendBeacon
-		var oBeaconDataToSend = new Blob([sBody], {
-			type: "application/x-www-form-urlencoded;charset=UTF-8"
-		});
-		window.navigator.sendBeacon(this._sUrl, oBeaconDataToSend);
-		this.clear();
+			//blobs are supported in all browsers using sendBeacon
+			var oBeaconDataToSend = new Blob([sBody], {
+				type: "application/x-www-form-urlencoded;charset=UTF-8"
+			});
+			window.navigator.sendBeacon(this._sUrl, oBeaconDataToSend);
+			this.clear();
+		}
 	};
 
 	/**

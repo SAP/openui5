@@ -3,9 +3,17 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 	function (FESR, Interaction, XHRInterceptor, Passport, Device) {
 	"use strict";
 
-	QUnit.module("FESR");
+	QUnit.module("FESR", {
+		before: function(assert) {
+			assert.notOk(FESR.getActive(), "FESR is deactivated");
+		},
+		afterEach: function(assert) {
+			assert.notOk(FESR.getActive(), "FESR is deactivated");
+		}
+	});
 
 	QUnit.test("activation", function(assert) {
+		assert.expect(9);
 		assert.notOk(XHRInterceptor.isRegistered("FESR", "open"), "FESR must not be registered");
 		FESR.setActive(true);
 		assert.ok(FESR.getActive(), "FESR should must be active");
@@ -42,7 +50,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 			};
 		};
 
-		assert.expect(5);
+		assert.expect(6);
 
 		FESR.setActive(true);
 		Interaction.start();
@@ -81,7 +89,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 
 		var oHeaderSpy = sinon.spy(XMLHttpRequest.prototype, "setRequestHeader");
 		var oPassportHeaderSpy = sinon.spy(Passport, "header");
-		assert.expect(4);
+		assert.expect(5);
 
 		FESR.setActive(true);
 
@@ -126,6 +134,8 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 	if (!Device.browser.msie) {
 
 		QUnit.test("Beacon URL", function(assert) {
+			assert.expect(3);
+
 			FESR.setActive(true, "example.url");
 			assert.equal(FESR.getBeaconURL(), "example.url", "Returns beacon url");
 
@@ -134,6 +144,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		});
 
 		QUnit.test("Beacon strategy", function(assert) {
+			assert.expect(8);
 			var sendBeaconStub = sinon.stub(window.navigator, "sendBeacon").returns(true);
 			var fileReader = new FileReader();
 			var done = assert.async();
@@ -164,11 +175,13 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 			};
 
 			fileReader.readAsText(blobToSend);
+
+			FESR.setActive(false);
 			sendBeaconStub.restore();
 		});
 
 		QUnit.test("Beacon timeout", function(assert) {
-			assert.expect(5);
+			assert.expect(6);
 			this.clock = sinon.useFakeTimers();
 			var sendBeaconStub = sinon.stub(window.navigator, "sendBeacon").returns(true);
 			window.performance.getEntriesByType = function() { return []; };
@@ -189,6 +202,8 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 			assert.ok(sendBeaconStub.calledOnce, "Beacon immediately called 60s after Interaction");
 			sendBeaconStub.reset();
 
+			Interaction.start();
+			Interaction.notifyStepStart(null, true);
 			FESR.setActive(false);
 			assert.ok(sendBeaconStub.calledOnce, "Beacon immediately called after deactivation");
 			sendBeaconStub.reset();
