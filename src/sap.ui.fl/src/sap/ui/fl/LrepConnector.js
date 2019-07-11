@@ -327,7 +327,17 @@ sap.ui.define([
 				oError.status = sStatus;
 				oError.code = oXhr.statusCode().status;
 				oError.messages = this._getMessagesFromXHR(oXhr);
-				fnReject(oError);
+				// for IE11 - Error.prototype.stack is not set until error is caught
+				if (!oError.stack) {
+					try {
+						throw oError;
+					} catch (oErrorCaught) {
+						fnReject(oErrorCaught);
+					}
+				} else {
+					// for other browsers
+					fnReject(oError);
+				}
 			}
 
 			function fetchTokenAndHandleRequest(oResponse, sStatus, oXhr) {
