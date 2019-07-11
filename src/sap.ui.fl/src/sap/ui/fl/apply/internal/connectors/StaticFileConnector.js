@@ -4,10 +4,14 @@
 
 sap.ui.define([
 	"sap/base/util/merge",
-	"sap/ui/fl/apply/connectors/BaseConnector"
+	"sap/ui/fl/apply/connectors/BaseConnector",
+	"sap/base/Log",
+	"sap/base/util/LoaderExtensions"
 ], function(
 	merge,
-	BaseConnector
+	BaseConnector,
+	Log,
+	LoaderExtensions
 ) {
 	"use strict";
 
@@ -29,6 +33,29 @@ sap.ui.define([
 		CONFIGURATION: {
 			layerFilter: [],
 			connectorName: "StaticFileConnector"
+		},
+
+		/**
+		 * Provides the flex data stored in the build changes-bundle JSON file;
+		 * The sAppVersion is not used due to the lack of app version differentiating module names.
+		 *
+		 * @param {string} sFlexReference reference of the application
+		 * @returns {Promise<Object>} resolving with an object containing a data contained in the changes-bundle
+		 */
+		loadFlexData: function (sFlexReference/*, sAppVersion*/) {
+			var sResourcePath = sFlexReference.replace(/\./g, "/") + "/changes/changes-bundle.json";
+			var bChangesBundleLoaded = !!sap.ui.loader._.getModuleState(sResourcePath);
+			var oConfiguration = sap.ui.getCore().getConfiguration();
+			if (bChangesBundleLoaded || oConfiguration.getDebug() || oConfiguration.isFlexBundleRequestForced()) {
+				try {
+					var oResponse = merge({}, this._RESPONSES.FLEX_DATA, {changes: LoaderExtensions.loadResource(sResourcePath)});
+					return Promise.resolve(oResponse);
+				} catch (e) {
+					Log.warning("flexibility did not find a changes-bundle.json for the application: " + sFlexReference);
+				}
+			}
+
+			return Promise.resolve(this._RESPONSES.FLEX_DATA);
 		}
 	});
 

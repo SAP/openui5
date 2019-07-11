@@ -43,6 +43,29 @@ sap.ui.define(function () {
 			},
 			"apply/internal/Connector": {
 				group: 'Apply Internal',
+				ui5: {
+					resourceroots: {"test.app": "./test-resources/sap/ui/fl/qunit/apply/internal/"}
+				},
+				coverage: {
+					only: ["sap/ui/fl/write/internal/Connector"]
+				}
+			},
+			"apply/internal/ConnectorWithDebugEnabled": {
+				group: 'Apply Internal',
+				ui5: {
+					debug: true,
+					resourceroots: {"test.app": "./test-resources/sap/ui/fl/qunit/apply/internal/"}
+				},
+				coverage: {
+					only: ["sap/ui/fl/write/internal/Connector"]
+				}
+			},
+			"apply/internal/ConnectorWithForcedFlexBundle": {
+				group: 'Apply Internal',
+				ui5: {
+					"xx-flexBundleRequestForced": true,
+					resourceroots: {"test.app": "./test-resources/sap/ui/fl/qunit/apply/internal/"}
+				},
 				coverage: {
 					only: ["sap/ui/fl/apply/internal/Connector"]
 				}

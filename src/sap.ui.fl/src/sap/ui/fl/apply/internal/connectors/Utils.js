@@ -53,7 +53,7 @@ sap.ui.define([
 
 	return {
 		/**
-		 * Provides all mandatory connectors; these are the static file connector as well as all connectors
+		 * Provides all mandatory connectors required to read data for the apply case; these are the static file connector as well as all connectors
 		 * mentioned in the core-Configuration.
 		 *
 		 * @returns {Promise map[]} Resolving with a list of maps for all configured connectors and their requested modules
@@ -67,7 +67,7 @@ sap.ui.define([
 
 
 		/**
-		 * Provides all mandatory connectors; these are the connector mentioned in the core-Configuration.
+		 * Provides all mandatory connectors to write data; these are the connector mentioned in the core-Configuration.
 		 *
 		 * @returns {Promise map[]} Resolving with a list of maps for all configured connectors and their requested modules
 		 */

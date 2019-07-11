@@ -27,7 +27,7 @@ sap.ui.define([
 		_RESPONSES: {
 			FLEX_DATA : {
 				changes : [],
-				variantSection : []
+				variantSection : {}
 			},
 			FEATURES : {}
 		},
