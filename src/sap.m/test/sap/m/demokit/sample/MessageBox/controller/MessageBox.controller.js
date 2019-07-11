@@ -1,13 +1,12 @@
 sap.ui.define([
 		'sap/m/MessageBox',
-		'sap/ui/core/Fragment',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel',
 		'sap/m/MessageToast'
-	], function(MessageBox, Fragment, Controller, JSONModel, MessageToast) {
+	], function(MessageBox, Controller, JSONModel, MessageToast) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.MessageBox.C", {
+	return Controller.extend("sap.m.sample.MessageBox.controller.MessageBox", {
 
 		onInit : function() {
 			// create any data and a model and set it to the view
@@ -106,10 +105,5 @@ sap.ui.define([
 				}
 			);
 		}
-
 	});
-
-
-	return CController;
-
 });
