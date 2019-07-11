@@ -332,16 +332,22 @@ sap.ui.define([
 	};
 
 	/**
-	 * The 'change' event is fired when new contexts are created or its parent context is changed.
-	 * Controls use the event to get notified about changes to the binding contexts of this
-	 * list binding. Registered event handlers are called with the change reason as parameter.
+	 * The 'change' event is fired when new contexts are created or removed, or the binding's parent
+	 * context is changed. Controls use the event to get notified about changes to the binding
+	 * contexts of this list binding. Registered event handlers are called with the reason and
+	 * detailed reason as parameters.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {object} oEvent.getParameters()
 	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters().reason
-	 *   The reason for the 'change' event: {@link sap.ui.model.ChangeReason.Change} when a new
-	 *   context is created, or {@link sap.ui.model.ChangeReason.Context} when the parent context is
-	 *   changed
+	 *   The reason for the 'change' event: {@link sap.ui.model.ChangeReason.Add} when a new
+	 *   context is created, {@link sap.ui.model.ChangeReason.Remove} when a context is removed,
+	 *   {@link sap.ui.model.ChangeReason.Context} when the parent context is changed, or
+	 *   {@link sap.ui.model.ChangeReason.Change} for other changes
+	 * @param {string} oEvent.getParameters().detailedReason
+	 *   During automatic determination of $expand and $select, a "virtual" context is first added
+	 *   with detailed reason "AddVirtualContext" and then removed with detailed reason
+	 *   "RemoveVirtualContext" (since 1.69.0); <code>undefined</code> is used in all other cases
 	 *
 	 * @event
 	 * @name sap.ui.model.odata.v4.ODataListBinding#change
@@ -1216,7 +1222,10 @@ sap.ui.define([
 			sap.ui.getCore().addPrerenderingTask(function () {
 				// Note: first result of getContexts after refresh is ignored
 				that.sChangeReason = "RemoveVirtualContext";
-				that._fireChange({reason : ChangeReason.Change});
+				that._fireChange({
+					detailedReason : that.sChangeReason,
+					reason : ChangeReason.Change
+				});
 				that.reset(ChangeReason.Refresh);
 			}, true);
 			oVirtualContext = Context.create(this.oModel, this,
@@ -1689,7 +1698,10 @@ sap.ui.define([
 	ODataListBinding.prototype.initialize = function () {
 		if ((!this.bRelative || this.oContext) && !this.getRootBinding().isSuspended()) {
 			if (this.oModel.bAutoExpandSelect) {
-				this._fireChange({reason : ChangeReason.Change});
+				this._fireChange({
+					detailedReason : this.sChangeReason,
+					reason : ChangeReason.Change
+				});
 			} else {
 				this._fireRefresh({reason : ChangeReason.Refresh});
 			}
@@ -1998,7 +2010,10 @@ sap.ui.define([
 			// In a refresh event the table would ignore the result -> no virtual context -> no
 			// auto-$expand/$select. The refresh event is sent later after the change event with
 			// reason "RemoveVirtualContext".
-			this._fireChange({reason : sChangeReason});
+			this._fireChange({
+				detailedReason : this.sChangeReason,
+				reason : sChangeReason
+			});
 		} else {
 			this._fireRefresh({reason : sChangeReason});
 		}

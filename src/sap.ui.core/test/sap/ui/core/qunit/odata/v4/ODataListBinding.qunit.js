@@ -323,7 +323,10 @@ sap.ui.define([
 		this.mock(ODataListBinding.prototype).expects("fetchCache").withExactArgs(undefined);
 		oBinding = this.bindList("/absolute");
 
-		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
+		this.mock(oBinding).expects("_fireChange").withExactArgs({
+			detailedReason : "AddVirtualContext",
+			reason : ChangeReason.Change
+		});
 
 		// code under test
 		oBinding.initialize();
@@ -1045,6 +1048,7 @@ sap.ui.define([
 		oBinding.attachEventOnce("change", function (oEvent) {
 			bChangeFired = true;
 			assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Change);
+			assert.strictEqual(oEvent.getParameter("detailedReason"), "RemoveVirtualContext");
 			assert.strictEqual(oBinding.sChangeReason, "RemoveVirtualContext");
 			assert.strictEqual(oResetSpy.callCount, 0, "not yet!");
 
@@ -5963,8 +5967,16 @@ sap.ui.define([
 				.returns([oDependent0, oDependent1]);
 			this.mock(oDependent0).expects("resumeInternal").withExactArgs(false);
 			this.mock(oDependent1).expects("resumeInternal").withExactArgs(false);
-			oFireExpectation = oBindingMock.expects(bInitial ? "_fireChange" : "_fireRefresh")
-				.withExactArgs({reason : sinon.match.same(sChangeReason)});
+			if (bInitial) {
+				oFireExpectation = oBindingMock.expects("_fireChange")
+					.withExactArgs({
+						detailedReason : "AddVirtualContext",
+						reason : sinon.match.same(sChangeReason)
+					});
+			} else {
+				oFireExpectation = oBindingMock.expects("_fireRefresh")
+					.withExactArgs({reason : sinon.match.same(sChangeReason)});
+			}
 			oGetDependentBindingsExpectation2 = this.mock(this.oModel)
 				.expects("getDependentBindings")
 				.withExactArgs(sinon.match.same(oBinding.oHeaderContext))

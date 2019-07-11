@@ -18467,4 +18467,40 @@ sap.ui.define([
 			that.oView.byId("table").getItems()[0].getCells()[0].firePress();
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Use list binding programmatically.
+	// JIRA: CPOUI5UISERVICESV3-1871
+	QUnit.test("Use list binding programmatically", function (assert) {
+		var done = assert.async(),
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			that = this;
+
+		this.createView(assert, "", oModel).then(function () {
+			var oBinding = oModel.bindList("/SalesOrderList");
+
+			that.expectRequest("SalesOrderList?$skip=0&$top=10", {
+				value : [{
+					SalesOrderID : "4711"
+				}, {
+					SalesOrderID : "4712"
+				}]
+			});
+
+			oBinding.attachChange(function (oEvent) {
+				var aContexts = oBinding.getContexts(0, 10);
+
+				if (!oEvent.getParameter("detailedReason")) {
+					assert.strictEqual(aContexts.length, 2);
+					assert.strictEqual(aContexts[0].getProperty("SalesOrderID"), "4711");
+					assert.strictEqual(aContexts[1].getProperty("SalesOrderID"), "4712");
+					done();
+				}
+			});
+			oBinding.attachRefresh(function () {
+				oBinding.getContexts(0, 10);
+			});
+			oBinding.initialize();
+		});
+	});
 });
