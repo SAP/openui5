@@ -1,12 +1,11 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/ui/Device',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Device, Controller, JSONModel) {
+	], function(Device, Controller, JSONModel) {
 	"use strict";
 
-	var ScrollContainerController = Controller.extend("sap.m.sample.ScrollContainer.ScrollContainer", {
+	return Controller.extend("sap.m.sample.ScrollContainer.controller.ScrollContainer", {
 
 		onInit: function() {
 			this.getView().setModel(new JSONModel({
@@ -18,8 +17,4 @@ sap.ui.define([
 			this.getView().setModel(oImgModel, "img");
 		}
 	});
-
-
-	return ScrollContainerController;
-
 });
