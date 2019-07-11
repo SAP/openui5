@@ -7,21 +7,22 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.ScrollContainer.ScrollContainer",
+			"viewName": "sap.m.sample.ScrollContainer.view.ScrollContainer",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
-				"sap.m": {}
+				"sap.m": {},
+				"sap.ui.core": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"stretch": true,
 				"files": [
-					"ScrollContainer.view.xml",
-					"ScrollContainer.controller.js",
+					"view/ScrollContainer.view.xml",
+					"controller/ScrollContainer.controller.js",
 					"manifest.json"
 				]
 			}

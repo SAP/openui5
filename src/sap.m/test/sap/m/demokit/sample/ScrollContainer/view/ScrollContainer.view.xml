@@ -1,15 +1,14 @@
 <mvc:View
 	height="100%"
 	width="100%"
-	controllerName="sap.m.sample.ScrollContainer.ScrollContainer"
+	controllerName="sap.m.sample.ScrollContainer.controller.ScrollContainer"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<ScrollContainer
 		height="100%"
 		width="100%"
-		horizontal="true"
 		vertical="true"
 		focusable="true">
-		<Image src="{img>/products/pic1}" densityAware="false" width="{/width}" />
+		<Image src="{img>/products/pic1}" width="{/width}" />
 	</ScrollContainer>
 </mvc:View>
