@@ -7,21 +7,23 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.ActionSheet.V",
+			"viewName": "sap.m.sample.ActionSheet.view.ActionSheet",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
 				"sap.ui.layout": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"files": [
-					"V.view.xml",
-					"C.controller.js",
-					"ActionSheet.fragment.xml",
+					"view/ActionSheet.view.xml",
+					"controller/ActionSheet.controller.js",
+					"view/ActionSheet.fragment.xml",
 					"manifest.json"
 				]
 			}
