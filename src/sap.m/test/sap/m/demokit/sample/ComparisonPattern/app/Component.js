@@ -3,14 +3,14 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel"],
 function (UIComponent, JSONModel) {
 	"use strict";
-	return UIComponent.extend("sap.m.sample.ComparisonPattern.app", {
+	return UIComponent.extend("sap.m.sample.ComparisonPattern.app.Component", {
 
 		metadata: {
 			manifest: "json"
 		},
 
 		init : function () {
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			this.setModel(oModel);
 
 			UIComponent.prototype.init.apply(this, arguments);
@@ -22,4 +22,4 @@ function (UIComponent, JSONModel) {
 		}
 
 	});
-}, /* bExport= */ true);
+});

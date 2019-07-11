@@ -1,6 +1,6 @@
 sap.ui.define( ["sap/ui/core/UIComponent"], function (UIComponent) {
 	"use strict";
-	return UIComponent.extend("sap.ui.core.sample.RoutingFullscreen.routingApp", {
+	return UIComponent.extend("sap.ui.core.sample.RoutingFullscreen.routingApp.Component", {
 
 		metadata: {
 			manifest: "json"
@@ -14,4 +14,4 @@ sap.ui.define( ["sap/ui/core/UIComponent"], function (UIComponent) {
 		}
 
 	});
-}, /* bExport= */ true);
+});

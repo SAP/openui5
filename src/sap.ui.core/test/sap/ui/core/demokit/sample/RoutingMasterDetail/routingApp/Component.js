@@ -1,6 +1,6 @@
 sap.ui.define( ["sap/ui/core/UIComponent", "sap/ui/model/json/JSONModel", "sap/ui/Device"], function (UIComponent, JSONModel, Device) {
 	"use strict";
-	return UIComponent.extend("sap.ui.core.sample.RoutingMasterDetail.routingApp", {
+	return UIComponent.extend("sap.ui.core.sample.RoutingMasterDetail.routingApp.Component", {
 
 		metadata: {
 			manifest: "json"
@@ -29,4 +29,4 @@ sap.ui.define( ["sap/ui/core/UIComponent", "sap/ui/model/json/JSONModel", "sap/u
 		}
 
 	});
-}, /* bExport= */ true);
+});
