@@ -18429,4 +18429,42 @@ sap.ui.define([
 			assert.strictEqual(iNoPatchSent, 1);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Declarative event handlers can refer to property bindings.
+	// JIRA: CPOUI5UISERVICESV3-1912
+	QUnit.test("Declarative event handlers", function (assert) {
+		var done = assert.async(),
+			oController = {
+				onPress : function (sNetAmount) {
+					assert.strictEqual(sNetAmount, "2,000.00");
+					done();
+				}
+			},
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{/SalesOrderList}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Button id="button" press=".onPress(${path : \'NetAmount\', targetType : \'string\'})"\
+			text="{NetAmount}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=NetAmount,SalesOrderID&$skip=0&$top=100", {
+				value : [{
+					NetAmount : "2000",
+					SalesOrderID : "4711"
+				}, {
+					NetAmount : "4000",
+					SalesOrderID : "4712"
+				}]
+			})
+			.expectChange("button", ["2,000.00", "4,000.00"]);
+
+		this.createView(assert, sView, oModel, oController).then(function () {
+			that.oView.byId("table").getItems()[0].getCells()[0].firePress();
+		});
+	});
 });
