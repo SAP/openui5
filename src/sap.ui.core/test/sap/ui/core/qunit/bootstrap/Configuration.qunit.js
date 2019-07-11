@@ -761,8 +761,8 @@ sap.ui.define([
 		assert.equal(oFlexibilityServicesConfiguration.length, 1);
 		var mDefaultFlexibilityService = oFlexibilityServicesConfiguration[0];
 		assert.equal(mDefaultFlexibilityService.connectorName, "LrepConnector", "the connector name is set correct");
-		assert.equal(mDefaultFlexibilityService.url, "/sap/bc/lrep", "the url prefix is set correct");
-		assert.equal(mDefaultFlexibilityService.layerFilter.length, 0, "no filtering set");
+		assert.equal(mDefaultFlexibilityService.layerFilter.length, 1, "a filtering set");
+		assert.equal(mDefaultFlexibilityService.layerFilter[0], "ALL", "per default the filtering is set to 'ALL'");
 	});
 
 	QUnit.test("setting the Flexibility Connectors at runtime results in an error", function(assert) {

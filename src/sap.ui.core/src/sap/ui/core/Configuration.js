@@ -134,7 +134,7 @@ sap.ui.define([
 					"frameOptions"          : { type : "string",   defaultValue : "default", noUrl: true }, // default/allow/deny/trusted (default => allow)
 					"frameOptionsConfig"    : { type : "object",   defaultValue : undefined, noUrl:true },  // advanced frame options configuration
 					"support"               : { type : "string[]",  defaultValue : null },
-					"xx-flexibilityConnectors"   : { type : "object",   defaultValue : [{layerFilter: [], url: "/sap/bc/lrep", connectorName: "LrepConnector"}], noUrl:true }, // determining the end points for requesting flexibility content; must not be changed at run time
+					"xx-flexibilityConnectors"   : { type : "object",   defaultValue : [{layerFilter: ["ALL"], connectorName: "LrepConnector"}], noUrl:true }, // determining the end points for requesting flexibility content; must not be changed at run time
 					"xx-rootComponentNode"  : { type : "string",   defaultValue : "",        noUrl:true },
 					"xx-appCacheBusterMode" : { type : "string",   defaultValue : "sync" },
 					"xx-appCacheBusterHooks": { type : "object",   defaultValue : undefined, noUrl:true }, // e.g.: { handleURL: fn, onIndexLoad: fn, onIndexLoaded: fn }

@@ -3,9 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/internal/connectors/StaticFileConnector"
+	"sap/ui/fl/apply/internal/connectors/Utils"
 ], function(
-	StaticFileConnector
+	ConnectorUtils
 ) {
 	"use strict";
 
@@ -20,39 +20,6 @@ sap.ui.define([
 	 * @version ${version}
 	 * @private
 	 */
-
-	var _mConnectors;
-	var _CONNECTOR_NAME_SPACE = "sap/ui/fl/apply/internal/connectors/";
-
-	/**
-	 * Provides all mandatory connectors; these are the static file connector as well as all connectors
-	 * mentioned in the core-Configuration.
-	 *
-	 * @returns {Promise map[]} Resolving with a list of maps for all configured connectors and their requested modules.
-	 * @private
-	 */
-	function _getConnectors() {
-		if (_mConnectors) {
-			return Promise.resolve(_mConnectors);
-		}
-
-		var aConfiguredConnectors = sap.ui.getCore().getConfiguration().getFlexibilityConnectors();
-		_mConnectors = [StaticFileConnector.CONFIGURATION].concat(aConfiguredConnectors);
-
-		return new Promise(function (resolve) {
-			var aConnectorNames = _mConnectors.map(function (mServices) {
-				return _CONNECTOR_NAME_SPACE + mServices.connectorName;
-			});
-
-			sap.ui.require(aConnectorNames, function () {
-				Array.from(arguments).forEach(function (oConnector, iIndex) {
-					_mConnectors[iIndex].connector = oConnector;
-				});
-
-				resolve(_mConnectors);
-			});
-		});
-	}
 
 	/**
 	 * Adds entities of one object into another; depending of the type and presence of entries the behaviour differs:
@@ -117,7 +84,7 @@ sap.ui.define([
 	 * @returns {Promise<Object>}
 	 */
 	Connector.loadFlexData = function (sReference, sAppVersion) {
-		return _getConnectors()
+		return ConnectorUtils.getApplyConnectors()
 			.then(_loadFlexData.bind(this, sReference, sAppVersion))
 			.then(_mergeResults);
 	};
@@ -136,7 +103,7 @@ sap.ui.define([
 	 * @returns {Promise<Object>} map feature flags and additional provided information form the connectors
 	 */
 	Connector.loadFeatures = function () {
-		return _getConnectors()
+		return ConnectorUtils.getApplyConnectors()
 			.then(_loadFeatures)
 			.then(_mergeResults);
 	};
