@@ -4,7 +4,7 @@ sap.ui.define([
 ], function(Controller, JSONModel) {
     "use strict";
 
-    var RangeSliderController = Controller.extend("sap.m.sample.RangeSlider.RangeSlider", {
+    return Controller.extend("sap.m.sample.RangeSlider.controller.RangeSlider", {
         onInit : function () {
             var oData = {
                 RS1: [0,100],
@@ -18,7 +18,4 @@ sap.ui.define([
             this.getView().setModel(oModel);
         }
     });
-
-    return RangeSliderController;
-
 });
