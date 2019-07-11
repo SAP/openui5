@@ -1,0 +1,28 @@
+/* ================================= */
+/* CSS for control sap.f/ShellBar    */
+/* Quartz High Contrast Black theme  */
+/* ================================= */
+
+.sapFButtonNotifications[data-notifications],
+.sapFShellBarOverflowButton[data-notifications] {
+	&:after {
+        line-height: 1rem;
+        background: @sapUiGroupContentBackground;
+        border: solid 1px @sapUiGroupContentBorderColor;
+        color: @sapUiContentForegroundTextColor;
+    }
+}.sapFShellBar .CPImage {
+	.color1 {
+		stop-color: @sapUiContentIconColor;
+	}
+	.color2 {
+		stop-color: @sapUiContentIconColor;
+	}
+	&:focus {
+		outline-width: 0.125rem;
+		outline-offset: -0.375rem;
+	}
+	html[data-sap-ui-browser^="ie"] &:focus:before {
+		border-width: 0.125rem;
+	}
+}
