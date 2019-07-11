@@ -489,7 +489,7 @@ sap.ui.define([
 		var mUrls = _createUrls.call(this, oComponent, mPropertyBag, this._sClient);
 
 		return this.send(mUrls.flexDataUrl, undefined, undefined, mOptions)
-		.then(this._onChangeResponseReceived.bind(this, oComponent.name, mUrls.flexModulesUrl))
+		.then(this._onChangeResponseReceived.bind(this, oComponent.name, mUrls.flexModulesUrl, mPropertyBag.cacheKey))
 		.then(function(mFlexData) {
 			if (mPropertyBag.isTrial) {
 				return this.enableFakeConnectorForTrial(oComponent, mFlexData);
@@ -527,8 +527,14 @@ sap.ui.define([
 		});
 	};
 
-	LrepConnector.prototype._onChangeResponseReceived = function (sComponentName, sFlexModulesUri, oResponse) {
+	LrepConnector.prototype._onChangeResponseReceived = function (sComponentName, sFlexModulesUri, sCacheKey, oResponse) {
 		LrepConnector._bServiceAvailability = true;
+		// If a cachebuster token is used, we provide no etag in the response.
+		// For the view cache feature, we must provide a etag, that's why we set the value from the
+		// cachebuster token as etag
+		if (oResponse.etag === null) {
+			oResponse.etag = sCacheKey;
+		}
 		var mFlexData = {
 			changes : oResponse.response,
 			loadModules : oResponse.response.loadModules,
