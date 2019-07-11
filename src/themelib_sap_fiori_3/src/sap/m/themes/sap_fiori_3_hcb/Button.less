@@ -11,6 +11,7 @@
 	border-radius: 0.375rem;
 }
 
+.sapUiSizeCompact .sapMBar-CTX .sapMBtnDefault.sapMBtnInner:not(.sapMBtnDisabled),
 .sapUiSizeCompact .sapMBar-CTX .sapMBtnInner:not(.sapMBtnDisabled) {
 	border-color: @sapUiButtonBorderColor;
 }
@@ -66,6 +67,7 @@ html.sap-desktop .sapMBtn:focus > .sapMFocusable:not(.sapMBtnActive) {
 }
 
 .sapMBtnDisabled .sapMBtnInner,
+.sapUiSizeCompact .sapMBar-CTX .sapMBtnDisabled > .sapMBtnDefault.sapMBtnInner,
 .sapUiSizeCompact .sapMBar-CTX .sapMBtnDisabled > .sapMBtnInner {
 	border-color: @sapUiHcReducedForeground;
 	color: @sapUiContentDisabledTextColor;
