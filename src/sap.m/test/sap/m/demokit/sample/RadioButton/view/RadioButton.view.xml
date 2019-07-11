@@ -1,5 +1,4 @@
 <mvc:View
-	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 		<VBox binding="{/ProductCollection}" class="sapUiSmallMargin">
