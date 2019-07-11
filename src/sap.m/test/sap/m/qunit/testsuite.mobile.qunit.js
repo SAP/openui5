@@ -894,6 +894,9 @@ sap.ui.define([
 				title: "QUnit page for sap.m.QuickViewPage",
 				sinon: {
 					useFakeTimers: true
+				},
+				coverage: {
+					only: [ "sap/m/QuickViewPage" ]
 				}
 			},
 			RadioButton: {

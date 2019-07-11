@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Core",
 	"sap/m/App",
 	"sap/m/Page",
 	"sap/m/QuickViewPage",
@@ -11,12 +12,15 @@ sap.ui.define([
 ], function(
 	qutils,
 	JSONModel,
+	Core,
 	App,
 	Page,
 	QuickViewPage,
 	QuickViewGroup,
 	QuickViewGroupElement
 ) {
+	"use strict";
+
 	//create JSON model instance
 	var oModel = new JSONModel();
 
@@ -105,7 +109,8 @@ sap.ui.define([
 							type: "{elementType}",
 							emailSubject: '{emailSubject}',
 							visible: '{visible}'
-						})
+						}),
+						templateShareable: false
 					}
 				})
 			}
@@ -186,5 +191,99 @@ sap.ui.define([
 
 	QUnit.test("Testing if the QuickView is created", function (assert) {
 		assert.strictEqual(this.oQuickViewPage.$().length, 1, "should render");
+	});
+
+	QUnit.module("Fallback icon", {
+		beforeEach: function () {
+			this.oQuickViewPage = getQuickViewPage();
+			this.oQuickViewPage.setModel(oModel);
+		},
+		afterEach: function () {
+			this.oQuickViewPage.destroy();
+			this.oQuickViewPage = null;
+		}
+	});
+
+	QUnit.test("Fallback icon when the real icon failed to load", function (assert) {
+		// Arrange
+		var FALLBACK_ICON_INDEX = 0,
+			IMAGE_INDEX = 1,
+			aHeaderContent,
+			oImage,
+			oFallbackIcon,
+			done = assert.async();
+
+		this.oQuickViewPage.setIcon("some/invalid/path");
+		this.oQuickViewPage.setFallbackIcon("sap-icon://error");
+		this.oQuickViewPage.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		aHeaderContent = this.oQuickViewPage._mPageContent.header.getContent();
+		oFallbackIcon = aHeaderContent[FALLBACK_ICON_INDEX];
+		oImage = aHeaderContent[IMAGE_INDEX];
+
+		oImage.$().on("error", function () {
+			// Assert
+			assert.notStrictEqual(oFallbackIcon.$().css("display"), "none", "The fallback icon should be displayed.");
+			assert.strictEqual(oImage.$().css("display"), "none", "The image should NOT be displayed.");
+
+			done();
+		});
+	});
+
+	QUnit.test("Fallback icon when the real icon is successfully loaded", function (assert) {
+		// Arrange
+		var FALLBACK_ICON_INDEX = 0,
+			IMAGE_INDEX = 1,
+			aHeaderContent,
+			oImage,
+			oFallbackIcon,
+			done = assert.async();
+
+		this.oQuickViewPage.setIcon("test-resources/sap/m/images/SAPLogo.jpg");
+		this.oQuickViewPage.setFallbackIcon("sap-icon://error");
+		this.oQuickViewPage.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		aHeaderContent = this.oQuickViewPage._mPageContent.header.getContent();
+		oFallbackIcon = aHeaderContent[FALLBACK_ICON_INDEX];
+		oImage = aHeaderContent[IMAGE_INDEX];
+
+		oImage.$().on("load", function () {
+			// Assert
+			assert.strictEqual(oFallbackIcon.$().css("display"), "none", "The fallback icon should NOT be displayed.");
+			assert.notStrictEqual(oImage.$().css("display"), "none", "The image should be displayed.");
+
+			done();
+		});
+	});
+
+	QUnit.module("Private API", {
+		beforeEach: function () {
+			this.oQuickViewPage = new QuickViewPage();
+		},
+		afterEach: function () {
+			this.oQuickViewPage.destroy();
+			this.oQuickViewPage = null;
+		}
+	});
+
+	QUnit.test("_createIcon", function (assert) {
+		// Arrange
+		var bDecorative = false,
+			sTooltip = "test tooltip",
+			sIconSrc = "sap-icon://error",
+			oIcon = this.oQuickViewPage._createIcon(sIconSrc, bDecorative, sTooltip);
+
+		// Assert
+		assert.ok(oIcon.isA("sap.ui.core.Icon"), "The method should return new Icon instance");
+		assert.strictEqual(oIcon.getDecorative(), bDecorative, "The 'decorative' property should be set");
+		assert.strictEqual(oIcon.getTooltip(), sTooltip, "The 'tooltip' property should be set");
+		assert.strictEqual(oIcon.getSrc(), sIconSrc, "The 'src' property should be set");
+		assert.strictEqual(oIcon.getUseIconTooltip(), false, "The 'useIconTooltip' should be 'false'");
+
+		// Clean up
+		oIcon.destroy();
+		oIcon = null;
 	});
 });
