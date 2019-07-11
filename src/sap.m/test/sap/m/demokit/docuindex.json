@@ -258,6 +258,7 @@
 		  "formFactors": "SML",
 		  "samples": [
 			"sap.m.sample.ComboBox",
+			"sap.m.sample.ComboBoxValueState",
 			"sap.m.sample.ComboBox2Columns",
 			"sap.m.sample.ComboBoxLazyLoading",
 			"sap.m.sample.ComboBoxSearchBoth",
@@ -1535,6 +1536,11 @@
 		  "id": "sap.m.sample.ComboBox",
 		  "name": "Combo box",
 		  "description": "The combo box control provides a list box with items and a text field allowing the user to either type a value directly into the control or choose from the list of existing items."
+		},
+		{
+		  "id": "sap.m.sample.ComboBoxValueState",
+		  "name": "Combo box with value state",
+		  "description": "The combo box can show different value states."
 		},
 		{
 		  "id": "sap.m.sample.ComboBox2Columns",

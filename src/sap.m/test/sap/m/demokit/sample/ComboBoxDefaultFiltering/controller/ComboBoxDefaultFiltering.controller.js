@@ -1,11 +1,10 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Controller, JSONModel) {
+	], function(Controller, JSONModel) {
 	"use strict";
 
-	var PageController = Controller.extend("sap.m.sample.ComboBox.Page", {
+	return Controller.extend("sap.m.sample.ComboBoxDefaultFiltering.controller.ComboBoxDefaultFiltering", {
 
 		onInit: function () {
 
@@ -14,7 +13,4 @@ sap.ui.define([
 			this.getView().setModel(oModel);
 		}
 	});
-
-	return PageController;
-
 });

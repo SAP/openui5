@@ -7,21 +7,22 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.ComboBoxLazyLoading.Page",
+			"viewName": "sap.m.sample.ComboBoxLazyLoading.view.ComboBoxLazyLoading",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
-				"sap.m": {}
+				"sap.m": {},
+				"sap.ui.core": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"stretch": true,
 				"files": [
-					"Page.view.xml",
-					"Page.controller.js",
+					"view/ComboBoxLazyLoading.view.xml",
+					"controller/ComboBoxLazyLoading.controller.js",
 					"manifest.json"
 				]
 			}

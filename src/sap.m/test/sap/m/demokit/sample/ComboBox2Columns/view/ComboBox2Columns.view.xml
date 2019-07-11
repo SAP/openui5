@@ -1,17 +1,18 @@
 <mvc:View
 	height="100%"
-	controllerName="sap.m.sample.ComboBox.Page"
+	controllerName="sap.m.sample.ComboBox2Columns.controller.ComboBox2Columns"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<Page showHeader="false" class="sapUiContentPadding">
 		<content>
 			<ComboBox
+				showSecondaryValues= "true"
 				items="{
 					path: '/CountriesCollection',
 					sorter: { path: 'text' }
 				}">
-				<core:Item key="{key}" text="{text}" />
+				<core:ListItem key="{key}" text="{text}" additionalText = "{key}"/>
 			</ComboBox>
 		</content>
 	</Page>
