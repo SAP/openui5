@@ -343,6 +343,10 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapMOHAttr {
 	overflow: hidden;
 	float: right;
 	white-space: nowrap;
+
+	.sapMObjStatusText {
+		word-break: normal;
+	}
 }
 
 .sapMOHStatusFixedWidth {
@@ -1176,6 +1180,12 @@ html.sap-desktop .sapMOHRTitleArrow .sapUiIcon:hover {
 .sapMOHR .sapMOHRAttr,
 .sapMOHR .sapMOHRStatus {
 	padding-bottom: 0.5rem;
+}
+
+.sapMOHR .sapMOHRStatus {
+	.sapMObjStatusText {
+		word-break: normal;
+	}
 }
 
 .sapMOHRStatus .sapMObjStatusNone .sapMObjStatusText {
