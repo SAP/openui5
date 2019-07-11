@@ -2040,6 +2040,21 @@ sap.ui.define([
 		};
 
 		/**
+		 * Removes all the controls in the aggregation named <code>items</code>.
+		 * Additionally unregisters them from the hosting UIArea and clears the selection.
+		 *
+		 * @returns {sap.ui.core.Item[]} An array of the removed items (might be empty).
+		 * @public
+		 */
+		ComboBox.prototype.removeAllItems = function () {
+			var aItems = ComboBoxBase.prototype.removeAllItems.apply(this, arguments);
+
+			this._fillList();
+
+			return aItems;
+		};
+
+		/**
 		 * Clones the <code>sap.m.ComboBox</code> control.
 		 *
 		 * @param {string} sIdSuffix Suffix to be added to the ids of the new control and its internal objects.
