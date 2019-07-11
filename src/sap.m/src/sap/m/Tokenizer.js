@@ -499,6 +499,13 @@ sap.ui.define([
 				oTokenDomRef.setAttribute("aria-setsize", iTokensSize);
 			}
 		}
+
+		if (this._getAdjustable()) {
+			// refresh the expanded/collapsed mode based on whether a indicator should be shown
+			// to ensure that the N-more label is rendered correctly
+			this._useCollapsedMode(this._hasMoreIndicator(), true);
+		}
+
 	};
 
 	/**
@@ -524,10 +531,11 @@ sap.ui.define([
 	/**
 	 * Handles the setting of collapsed state
 	 *
-	 * @param {boolean} If true collapses the tokenizer's content
+	 * @param {boolean} bCollapse If true collapses the tokenizer's content
+	 * @param {boolean} bSkipSizeAdjustment If true the tokenizer won't trigger input width adjustment
 	 * @private
 	 */
-	Tokenizer.prototype._useCollapsedMode = function(bCollapse) {
+	Tokenizer.prototype._useCollapsedMode = function(bCollapse, bSkipSizeAdjustment) {
 		var oParent = this.getParent(),
 			aTokens = this.getTokens();
 
@@ -541,7 +549,9 @@ sap.ui.define([
 			this._showAllTokens();
 		}
 
-		oParent._syncInputWidth && setTimeout(oParent["_syncInputWidth"].bind(oParent, this), 0);
+		if (!bSkipSizeAdjustment) {
+			oParent._syncInputWidth && setTimeout(oParent["_syncInputWidth"].bind(oParent, this), 0);
+		}
 	};
 
 	Tokenizer.prototype.invalidate = function(oOrigin) {
