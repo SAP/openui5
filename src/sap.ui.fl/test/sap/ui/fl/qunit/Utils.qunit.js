@@ -1609,7 +1609,7 @@ function(
 				assert.notOk(true, "then the 'then' method shouldn't be called");
 			})
 			.catch(function(oError) {
-				assert.strictEqual(oError.message, "Utils.notAvailable is not a function", "then the error object is passed to the 'catch' method");
+				assert.notEqual(oError.message.indexOf("notAvailable"), -1, "then the error object is passed to the 'catch' method");
 				return 3;
 			})
 			.then(function(vResult) {
