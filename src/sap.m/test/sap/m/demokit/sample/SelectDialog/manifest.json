@@ -7,22 +7,24 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.SelectDialog.V",
+			"viewName": "sap.m.sample.SelectDialog.view.SelectDialog",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
 				"sap.ui.layout": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"files": [
-					"V.view.xml",
-					"C.controller.js",
-					"Dialog.fragment.xml",
-					"ValueHelp.fragment.xml",
+					"view/SelectDialog.view.xml",
+					"controller/SelectDialog.controller.js",
+					"view/Dialog.fragment.xml",
+					"view/ValueHelp.fragment.xml",
 					"manifest.json"
 				]
 			}
