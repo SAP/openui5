@@ -1058,7 +1058,45 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("Blockers area ARIA", function (assert) {
+	QUnit.test("Blocker cells' wrapper ARIA", function (assert) {
+		var oSPC = new SinglePlanningCalendar(),
+			$oBlockersColumnsWrapper,
+			$oBlockersColumnsWrapperParent;
+
+		oSPC.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		$oBlockersColumnsWrapper = oSPC.$().find(".sapMSinglePCBlockersColumns");
+		$oBlockersColumnsWrapperParent = $oBlockersColumnsWrapper.parent();
+
+		// Assert
+		assert.strictEqual($oBlockersColumnsWrapper.attr("role"), "row", "The blocker cells are wrapped in an element with role=row");
+		assert.strictEqual($oBlockersColumnsWrapperParent.attr("role"), "grid", "It's wrapper has role=grid");
+
+		// Cleanup
+		oSPC.destroy();
+	});
+
+	QUnit.test("Blocker cells ARIA", function (assert) {
+		// TODO: Add tests for the cell's content after ACC refactoring
+		var oSPC = new SinglePlanningCalendar(),
+			oBlockerCells;
+
+		oSPC.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oBlockerCells = oSPC.$().find(".sapMSinglePCBlockersColumn");
+
+		// Assert
+		jQuery.each(oBlockerCells, function(iKey, oRef) {
+			assert.strictEqual(jQuery(oRef).attr("role"), "gridcell", "Column " + iKey + " has role=gridcell.");
+		});
+
+		// Cleanup
+		oSPC.destroy();
+	});
+
+	QUnit.test("Appointments area ARIA", function (assert) {
 		var oSPC = new SinglePlanningCalendar(),
 			sAppointmentsAreaLabelId = InvisibleText.getStaticId("sap.m", "SPC_APPOINTMENTS"),
 			$oAppointmentsAreaRef;
