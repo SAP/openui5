@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.m.sample.RangeSlider.RangeSlider"
+	controllerName="sap.m.sample.RangeSlider.controller.RangeSlider"
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">

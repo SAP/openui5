@@ -7,20 +7,22 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.RangeSlider.V",
+			"viewName": "sap.m.sample.RangeSlider.view.RangeSlider",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
 				"sap.ui.layout": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"files": [
-					"V.view.xml",
-					"RangeSlider.controller.js",
+					"view/RangeSlider.view.xml",
+					"controller/RangeSlider.controller.js",
 					"manifest.json"
 				]
 			}
