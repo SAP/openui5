@@ -1,9 +1,7 @@
 <mvc:View
-		controllerName="sap.m.sample.TextAreaMaxLength.C"
+		controllerName="sap.m.sample.TextAreaMaxLength.controller.TextAreaMaxLength"
 		xmlns:l="sap.ui.layout"
 		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:f="sap.ui.layout.form"
-		xmlns:core="sap.ui.core"
 		xmlns="sap.m">
 	<l:VerticalLayout class="sapUiContentPadding" width="100%">
 		<Text text="showExceededText = true; with data binding" class="sapUiTinyMarginTop"/>
@@ -11,6 +9,6 @@
 		<Text text="showExceededText = true; without data binding" class="sapUiTinyMarginTop"/>
 		<TextArea id="textAreaWithoutBinding" value="Lorem ipsum dolor sit amet, consectetur el" showExceededText="true" maxLength="40" width="100%" liveChange="handleLiveChange" valueState="Warning" valueLiveUpdate="true"/>
 		<Text text="showExceededText = false;" class="sapUiTinyMarginTop"/>
-		<TextArea value="Lorem ipsum dolor sit amet, consectetur el" maxLength="40" width="100%" showExceededText="false"/>
+		<TextArea value="Lorem ipsum dolor sit amet, consectetur el" maxLength="40" width="100%"/>
 	</l:VerticalLayout>
 </mvc:View>

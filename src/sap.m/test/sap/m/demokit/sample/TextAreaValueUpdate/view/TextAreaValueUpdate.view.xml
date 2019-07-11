@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.m.sample.TextAreaValueUpdate.C"
+	controllerName="sap.m.sample.TextAreaValueUpdate.controller.TextAreaValueUpdate"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
