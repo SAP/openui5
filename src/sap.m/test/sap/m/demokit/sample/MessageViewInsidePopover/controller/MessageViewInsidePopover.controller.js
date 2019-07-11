@@ -1,23 +1,29 @@
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/mvc/Controller',
-	'sap/ui/model/json/JSONModel'
-], function(jQuery, Controller, JSONModel) {
+	'sap/ui/model/json/JSONModel',
+	'sap/ui/core/Icon',
+	'sap/m/Link',
+	'sap/m/MessageItem',
+	'sap/m/MessageView',
+	'sap/m/Button',
+	'sap/m/Bar',
+	'sap/m/Text',
+	'sap/m/Popover'
+], function(Controller, JSONModel, Icon, Link, MessageItem, MessageView, Button, Bar, Text, Popover) {
 	"use strict";
 
-
-	return Controller.extend("sap.m.sample.MessageViewInsideResponsivePopover.MessageView", {
+	return Controller.extend("sap.m.sample.MessageViewInsidePopover.controller.MessageViewInsidePopover", {
 
 		onInit: function () {
 
 			var that = this;
-			var	oLink = new sap.m.Link({
+			var	oLink = new Link({
 				text: "Show more information",
 				href: "http://sap.com",
 				target: "_blank"
 			});
 
-			var oMessageTemplate = new sap.m.MessageItem({
+			var oMessageTemplate = new MessageItem({
 				type: '{type}',
 				title: '{title}',
 				description: '{description}',
@@ -63,7 +69,7 @@ sap.ui.define([
 
 			oModel.setData(aMockMessages);
 
-			this.oMessageView = new sap.m.MessageView({
+			this.oMessageView = new MessageView({
 					showDetailsPageHeader: false,
 					itemSelect: function () {
 						oBackButton.setVisible(true);
@@ -73,7 +79,7 @@ sap.ui.define([
 						template: oMessageTemplate
 					}
 				});
-			var	oBackButton = new sap.m.Button({
+			var oBackButton = new Button({
 					icon: sap.ui.core.IconPool.getIconURI("nav-back"),
 					visible: false,
 					press: function () {
@@ -84,32 +90,35 @@ sap.ui.define([
 
 			this.oMessageView.setModel(oModel);
 
-			var oCloseButton =  new sap.m.Button({
+			var oCloseButton =  new Button({
 					text: "Close",
 					press: function () {
 						that._oPopover.close();
 					}
 				}),
-				oPopoverBar = new sap.m.Bar({
-						contentLeft: [oBackButton],
-						contentMiddle: [
-							new sap.ui.core.Icon({
-								color: "#bb0000",
-								src: "sap-icon://message-error"}),
-							new sap.m.Text({
-								text: "Messages"
-							})
-						]
+				oPopoverFooter = new Bar({
+					contentRight: oCloseButton
+				}),
+				oPopoverBar = new Bar({
+					contentLeft: [oBackButton],
+					contentMiddle: [
+						new Icon({
+							color: "#bb0000",
+							src: "sap-icon://message-error"}),
+						new Text({
+							text: "Messages"
+						})
+					]
 				});
 
-			this._oPopover = new sap.m.ResponsivePopover({
+			this._oPopover = new Popover({
 				customHeader: oPopoverBar,
 				contentWidth: "440px",
 				contentHeight: "440px",
 				verticalScrolling: false,
 				modal: true,
 				content: [this.oMessageView],
-				endButton:oCloseButton
+				footer: oPopoverFooter
 			});
 		},
 
@@ -117,7 +126,5 @@ sap.ui.define([
 			this.oMessageView.navigateBack();
 			this._oPopover.openBy(oEvent.getSource());
 		}
-
 	});
-
 });

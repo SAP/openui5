@@ -1,4 +1,4 @@
-<mvc:View height="100%" controllerName="sap.m.sample.MessageViewInsideResponsivePopover.MessageView"
+<mvc:View height="100%" controllerName="sap.m.sample.MessageViewInsideResponsivePopover.controller.MessageViewInsideResponsivePopover"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m">
 	<Page showHeader="false">

@@ -4,8 +4,11 @@ sap.ui.define([
 	'sap/m/Link',
 	'sap/m/Dialog',
 	'sap/ui/core/mvc/Controller',
-	'sap/ui/model/json/JSONModel'
-], function(MessageView, MessagePopoverItem, Link, Dialog, Controller, JSONModel) {
+	'sap/ui/model/json/JSONModel',
+	'sap/m/Button',
+	'sap/m/Bar',
+	'sap/m/Text'
+], function(MessageView, MessagePopoverItem, Link, Dialog, Controller, JSONModel, Button, Bar, Text) {
 	"use strict";
 
 	var oLink = new Link({
@@ -24,7 +27,7 @@ sap.ui.define([
 		link: oLink
 	});
 
-	var CController = Controller.extend("sap.m.sample.MessageViewWithGrouping.C", {
+	return Controller.extend("sap.m.sample.MessageViewWithGrouping.controller.MessageViewWithGrouping", {
 		onInit: function () {
 			var that = this;
 			// create any data and a model and set it to the view
@@ -113,7 +116,7 @@ sap.ui.define([
 					},
 					groupItems: true
 				});
-			var oBackButton = new sap.m.Button({
+			var oBackButton = new Button({
 					icon: sap.ui.core.IconPool.getIconURI("nav-back"),
 					visible: false,
 					press: function () {
@@ -128,15 +131,15 @@ sap.ui.define([
 				content: this.oMessageView,
 				contentHeight: "440px",
 				contentWidth: "640px",
-				endButton: new sap.m.Button({
+				endButton: new Button({
 					text: "Close",
 					press: function() {
 						this.getParent().close();
 					}
 				}),
-				customHeader: new sap.m.Bar({
+				customHeader: new Bar({
 					contentMiddle: [
-						new sap.m.Text({ text: "Publish order"})
+						new Text({ text: "Publish order"})
 					],
 					contentLeft: [oBackButton]
 				}),
@@ -149,6 +152,4 @@ sap.ui.define([
 			this.oDialog.open();
 		}
 	});
-
-	return CController;
 });

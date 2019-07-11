@@ -7,12 +7,14 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.MessageViewWithGrouping.V",
+			"viewName": "sap.m.sample.MessageViewWithGrouping.view.MessageViewWithGrouping",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
 				"sap.ui.layout": {}
 			}
 		},
@@ -20,8 +22,8 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"V.view.xml",
-					"C.controller.js",
+					"view/MessageViewWithGrouping.view.xml",
+					"controller/MessageViewWithGrouping.controller.js",
 					"manifest.json"
 				]
 			}

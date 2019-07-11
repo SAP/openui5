@@ -1,29 +1,35 @@
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/mvc/Controller',
-	'sap/ui/model/json/JSONModel'
-], function(jQuery, Controller, JSONModel) {
+	'sap/ui/model/json/JSONModel',
+	'sap/ui/core/Icon',
+	'sap/m/Link',
+	'sap/m/MessageItem',
+	'sap/m/MessageView',
+	'sap/m/Button',
+	'sap/m/Bar',
+	'sap/m/Text',
+	'sap/m/ResponsivePopover'
+], function(Controller, JSONModel, Icon, Link, MessageItem, MessageView, Button, Bar, Text, ResponsivePopover) {
 	"use strict";
 
-
-	return Controller.extend("sap.m.sample.MessageViewInsideDialog.MessageView", {
+	return Controller.extend("sap.m.sample.MessageViewInsideResponsivePopover.controller.MessageViewInsideResponsivePopover", {
 
 		onInit: function () {
-			var that = this;
 
-			var	oLink = new sap.m.Link({
+			var that = this;
+			var	oLink = new Link({
 				text: "Show more information",
 				href: "http://sap.com",
 				target: "_blank"
 			});
 
-			var oMessageTemplate = new sap.m.MessageItem({
+			var oMessageTemplate = new MessageItem({
 				type: '{type}',
 				title: '{title}',
 				description: '{description}',
 				subtitle: '{subtitle}',
 				counter: '{counter}',
-				markupDescription: '{markupDescription}',
+				markupDescription: "{markupDescription}",
 				link: oLink
 			});
 
@@ -58,22 +64,22 @@ sap.ui.define([
 				counter: 1
 			}];
 
-			var oModel = new JSONModel();
+			var oModel = new JSONModel(),
+				that = this;
 
 			oModel.setData(aMockMessages);
 
-			this.oMessageView = new sap.m.MessageView({
-				showDetailsPageHeader: false,
-				itemSelect: function () {
-					oBackButton.setVisible(true);
-				},
-				items: {
-					path: "/",
-					template: oMessageTemplate
-				}
-			});
-
-			var oBackButton = new sap.m.Button({
+			this.oMessageView = new MessageView({
+					showDetailsPageHeader: false,
+					itemSelect: function () {
+						oBackButton.setVisible(true);
+					},
+					items: {
+						path: "/",
+						template: oMessageTemplate
+					}
+				});
+			var	oBackButton = new Button({
 					icon: sap.ui.core.IconPool.getIconURI("nav-back"),
 					visible: false,
 					press: function () {
@@ -82,37 +88,40 @@ sap.ui.define([
 					}
 				});
 
-
-
 			this.oMessageView.setModel(oModel);
 
-			this.oDialog = new sap.m.Dialog({
-				resizable: true,
-				content: this.oMessageView,
-				state: 'Error',
-				beginButton: new sap.m.Button({
+			var oCloseButton =  new Button({
+					text: "Close",
 					press: function () {
-						this.getParent().close();
-					},
-					text: "Close"
+						that._oPopover.close();
+					}
 				}),
-				customHeader: new sap.m.Bar({
-					contentMiddle: [
-						new sap.m.Text({ text: "Error"})
-					],
-					contentLeft: [oBackButton]
-				}),
-				contentHeight: "300px",
-				contentWidth: "500px",
-				verticalScrolling: false
+				oPopoverBar = new Bar({
+						contentLeft: [oBackButton],
+						contentMiddle: [
+							new Icon({
+								color: "#bb0000",
+								src: "sap-icon://message-error"}),
+							new Text({
+								text: "Messages"
+							})
+						]
+				});
+
+			this._oPopover = new ResponsivePopover({
+				customHeader: oPopoverBar,
+				contentWidth: "440px",
+				contentHeight: "440px",
+				verticalScrolling: false,
+				modal: true,
+				content: [this.oMessageView],
+				endButton:oCloseButton
 			});
 		},
 
-		handleDialogPress: function (oEvent) {
+		handlePopoverPress: function (oEvent) {
 			this.oMessageView.navigateBack();
-			this.oDialog.open();
+			this._oPopover.openBy(oEvent.getSource());
 		}
-
 	});
-
 });

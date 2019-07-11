@@ -2,12 +2,10 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	function(UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.m.sample.MessageViewWithGrouping.Component", {
+	return UIComponent.extend("sap.m.sample.MessageViewWithGrouping.Component", {
 
 		metadata : {
 			manifest: "json"
 		}
 	});
-
-	return Component;
 });

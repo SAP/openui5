@@ -1,5 +1,5 @@
-<mvc:View height="100%" controllerName="sap.m.sample.MessageViewInsideDialog.MessageView"
-					 xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core"
+<mvc:View height="100%" controllerName="sap.m.sample.MessageViewInsideDialog.controller.MessageViewInsideDialog"
+					 xmlns:l="sap.ui.layout"
 					 xmlns:mvc="sap.ui.core.mvc"
 					 xmlns="sap.m">
 <Page showHeader="false">
