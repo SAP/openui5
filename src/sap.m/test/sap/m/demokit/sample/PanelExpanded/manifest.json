@@ -7,19 +7,21 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.PanelExpanded.PanelExpanded",
+			"viewName": "sap.m.sample.PanelExpanded.view.PanelExpanded",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
 				"sap.ui.layout": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"files": [
-					"PanelExpanded.view.xml",
+					"view/PanelExpanded.view.xml",
 					"manifest.json"
 				]
 			}
