@@ -230,6 +230,52 @@ function (
 		oItem.destroy();
 	});
 
+	QUnit.test("Insert items when not rendered", function (assert) {
+		// Arrange
+		var oItem = new GenericTile({id: "tile1", header: "Comulative Tools"});
+
+		// Act
+		this.oGrid.insertItem(oItem, 0);
+
+		// Assert
+		assert.strictEqual(this.oGrid.getItems().length, 1, "There is 1 item");
+
+		// Act
+		this.oGrid.removeItem(oItem);
+
+		// Assert
+		assert.strictEqual(this.oGrid.getItems().length, 0, "There are 0 items");
+
+		oItem.destroy();
+	});
+
+	QUnit.test("Insert items when rendered", function (assert) {
+		// Arrange
+		Core.applyChanges(); // render the grid
+
+		var $grid,
+			oItem1 = new GenericTile({id: "tile1", header: "Comulative Tools"}),
+			oItem2 = new GenericTile({id: "tile2", header: "Travel and Expenses"}),
+			oItem3 = new GenericTile({id: "tile3", header: "Tools", layoutData: new GridContainerItemLayoutData({ minRows: 2, columns: 2 })});
+
+		// Act
+		this.oGrid.insertItem(oItem1, -1);
+		this.oGrid.insertItem(oItem2, 5000);
+		this.oGrid.insertItem(oItem3, 1);
+		Core.applyChanges();
+
+		// Assert
+		$grid = this.oGrid.$();
+		assert.strictEqual($grid.find("#tile1").length, 1, "Item 1 is inserted with index which is out of range");
+		assert.strictEqual($grid.find("#tile2").length, 1, "Item 2 is inserted with index which is out of range");
+		assert.strictEqual($grid.find("#tile3").length, 1, "Item 3 is inserted with index 1");
+		assert.strictEqual($grid.find("#tile3").parent().index(), 1, "Item 3 is inserted on correct location");
+
+		oItem1.destroy();
+		oItem2.destroy();
+		oItem3.destroy();
+	});
+
 	QUnit.test("Items positioning", function (assert) {
 		// Arrange
 		var aExamples = [
