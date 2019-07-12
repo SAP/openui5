@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.ui.layout.sample.VerticalLayout.C"
+	controllerName="sap.ui.layout.sample.VerticalLayout.controller.VerticalLayout"
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">

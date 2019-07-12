@@ -1,12 +1,11 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/ui/Device',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Device, Controller, JSONModel) {
+	], function(Device, Controller, JSONModel) {
 	"use strict";
 
-	var CController = Controller.extend("sap.ui.layout.sample.VerticalLayout.C", {
+	return Controller.extend("sap.ui.layout.sample.VerticalLayout.controller.VerticalLayout", {
 
 		onInit: function () {
 			this.getView().setModel(new JSONModel({
@@ -20,8 +19,4 @@ sap.ui.define([
 			this.getView().setModel(oImgModel, "img");
 		}
 	});
-
-
-	return CController;
-
 });
