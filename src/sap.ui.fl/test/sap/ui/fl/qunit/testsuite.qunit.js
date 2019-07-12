@@ -77,6 +77,12 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/write/internal/ChangesController"]
 				}
 			},
+			"write/internal/Connector": {
+				group: 'Write Internal',
+				coverage: {
+					only: ["sap/ui/fl/write/api/internal/Connector"]
+				}
+			},
 			// Team Gravity tests
 			"descriptorRelated/api/Api": {
 				group: 'Descriptor related APIs',
