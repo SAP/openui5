@@ -46,6 +46,8 @@
 	var app = new sap.m.App("searchSuggestionsApp", {initialPage:"searchPage"});
 
 	function onSearch(event) {
+		sap.m.MessageToast.show("Search event is fired!");
+
 		jQuery.sap.log.debug("searchField: search for: " + event.getParameter("query"));
 		if(event.getParameter("refreshButtonPressed")){
 			jQuery.sap.log.debug("searchField: refresh button was pressed");
