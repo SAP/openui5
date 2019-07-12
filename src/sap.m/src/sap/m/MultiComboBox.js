@@ -1317,6 +1317,8 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.setSelection = function(mOptions) {
+		var oList = this._getList();
+
 		if (mOptions.item && this.isItemSelected(mOptions.item)) {
 			return;
 		}
@@ -1326,9 +1328,9 @@ function(
 		}
 
 
-		if (!mOptions.listItemUpdated && this.getListItem(mOptions.item)) {
+		if (!mOptions.listItemUpdated && this.getListItem(mOptions.item) && oList) {
 			// set the selected item in the List
-			this._getList().setSelectedItem(this.getListItem(mOptions.item), true);
+			oList.setSelectedItem(this.getListItem(mOptions.item), true);
 		}
 
 		// Fill Tokenizer

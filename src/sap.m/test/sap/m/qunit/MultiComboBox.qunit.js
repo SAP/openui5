@@ -5650,6 +5650,44 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("Object cloning + selectedKeys", function (assert) {
+		// Setup
+		var oMultiComboBoxClone,
+			oMultiComboBox = new MultiComboBox({
+				selectedKeys: ["A"],
+				items: [
+					new Item({key: "A", text: "Amount"}),
+					new Item({key: "C", text: "Checkbox"}),
+					new Item({key: "D", text: "Date"}),
+					new Item({key: "E", text: "Email Address"}),
+					new Item({key: "L", text: "List"}),
+					new Item({key: "N", text: "Number"}),
+					new Item({key: "Q", text: "Quantity"}),
+					new Item({key: "T1", text: "Text"})
+				]
+			});
+
+		assert.ok(!oMultiComboBox._getList(), "The List is not yet loaded");
+
+		// Act
+		oMultiComboBox.open();
+		oMultiComboBox.close();
+
+		// Assert
+		assert.ok(oMultiComboBox._getList(), "The List got loaded");
+
+		// Act
+		oMultiComboBoxClone = oMultiComboBox.clone();
+
+		// Assert
+		assert.ok(oMultiComboBoxClone._getList(), "The List got clonned");
+		assert.strictEqual(oMultiComboBoxClone._getList().getItems().length, 8, "List items were clonned");
+
+		// Cleanup
+		oMultiComboBoxClone.destroy();
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.test("Data binding: update model data", function (assert) {
 		var oData = {
 				"ProductCollection": [
