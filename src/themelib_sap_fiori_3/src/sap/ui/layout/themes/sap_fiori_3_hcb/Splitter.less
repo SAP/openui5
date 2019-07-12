@@ -1,0 +1,42 @@
+/* ======================================= */
+/* CSS for control sap.ui.layout/Splitter  */
+/* Quartz High Contrast Black theme        */
+/* ======================================= */
+
+.sapUiLoSplitter {
+	background-color: @sapUiHcStandardBackground;
+}
+
+.sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
+	background-color: @sapUiGlobalBackgroundColor;
+}
+
+
+.sapUiLoSplitterH > .sapUiLoSplitterBar > .sapUiIcon.sapUiLoSplitterBarIcon::before,
+.sapUiLoSplitterH > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar > .sapUiIcon.sapUiLoSplitterBarIcon::before,
+.sapUiLoSplitterV > .sapUiLoSplitterBar > .sapUiIcon.sapUiLoSplitterBarIcon::before,
+.sapUiLoSplitterV > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar > .sapUiIcon.sapUiLoSplitterBarIcon::before,
+.sapUiLoSplitterV > .sapUiLoSplitterBar > .sapUiIcon.sapUiLoSplitterBarIcon::after,
+.sapUiLoSplitterV > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar > .sapUiIcon.sapUiLoSplitterBarIcon::after {
+	content: "";
+}
+
+.sapUiLoSplitter > .sapUiLoSplitterBar,
+.sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
+  background-color: @sapUiHcReducedAltForeground;
+}
+
+.sapUiLoSplitter > .sapUiLoSplitterBar:hover,
+.sapUiLoSplitter > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
+	background-color: @sapUiHcStandardForeground;
+}
+
+/*********************************** Focus outline**********************************/
+
+.sapUiLoSplitter > .sapUiLoSplitterBar:focus::before {
+	border-width: 2px;
+	top: -1px;
+	bottom: -1px;
+	left: -1px;
+	right: -1px;
+}

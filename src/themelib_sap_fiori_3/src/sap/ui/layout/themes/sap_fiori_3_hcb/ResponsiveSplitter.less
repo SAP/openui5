@@ -1,0 +1,50 @@
+/* ================================================= */
+/* CSS for control sap.ui.layout/ResponsiveSplitter  */
+/* Quartz High Contrast Black theme                  */
+/* ================================================= */
+
+.sapUiResponsiveSplitterPaginatorButton {
+	background-color: transparent;
+
+	&:after {
+		background-color: @sapUiHcReducedAltForeground;
+	}
+
+	&:hover {
+		background-color: @sapUiHcHighlightBackground;
+
+		&:after {
+			background-color: @sapUiHcStandardForeground;
+		}
+	}
+
+	&:focus {
+
+		&:before {
+			border: 1px dotted @sapUiContentFocusColor;
+		}
+	}
+}
+
+.sapUiResponsiveSplitterPaginatorSelectedButton {
+	&:after {
+		background-color: @sapUiHcStandardForeground;
+	}
+}
+
+html.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar,
+html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar,
+html.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar,
+html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar {
+	& .sapUiLoSplitterBarIcon:after {
+		background-color: @sapUiHcStandardBackground;
+		border-color: @sapUiHcStandardForeground;
+	}
+}
+
+html.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar,
+html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar {
+	& .sapUiLoSplitterBarIcon:after {
+		background-color: @sapUiHcHighlightBackground;
+	}
+}
