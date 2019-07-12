@@ -1,6 +1,6 @@
 <mvc:View
 		height="100%"
-		controllerName="sap.m.sample.Wizard.C"
+		controllerName="sap.m.sample.Wizard.controller.Wizard"
 		xmlns:form="sap.ui.layout.form"
 		xmlns:core="sap.ui.core"
 		xmlns:u="sap.ui.unified"
@@ -27,11 +27,13 @@
 										justifyContent="Center"
 										width="100%">
 									<SegmentedButton
-											width="320px"
-											select="setProductTypeFromSegmented">
-										<Button icon="sap-icon://iphone" text="Mobile"/>
-										<Button icon="sap-icon://sys-monitor" text="Desktop"/>
-										<Button icon="sap-icon://database" text="Other"/>
+										width="320px"
+										selectionChange="setProductTypeFromSegmented">
+										<items>
+											<SegmentedButtonItem icon="sap-icon://iphone" text="Mobile"/>
+											<SegmentedButtonItem icon="sap-icon://sys-monitor" text="Desktop"/>
+											<SegmentedButtonItem icon="sap-icon://database" text="Other"/>
+										</items>
 									</SegmentedButton>
 								</HBox>
 							</WizardStep>
@@ -89,7 +91,7 @@
 											displayFormat="short"
 											change="handleChange"/>
 									<Label text="Availability"/>
-									<SegmentedButton selectedButton="inStock">
+									<SegmentedButton selectedItem="inStock">
 										<Button text="In store" id="inStock"/>
 										<Button text="In depot"/>
 										<Button text="In repository"/>

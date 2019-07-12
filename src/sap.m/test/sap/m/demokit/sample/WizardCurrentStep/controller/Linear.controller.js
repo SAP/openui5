@@ -1,15 +1,15 @@
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/core/ValueState'
-], function (jQuery, Controller, ValueState) {
+], function (Controller, ValueState) {
 	"use strict";
 
-	var WizardController = Controller.extend("sap.m.sample.WizardCurrentStep.Linear", {
+	return Controller.extend("sap.m.sample.WizardCurrentStep.controller.Linear", {
 		_syncSelect: function (sStepId) {
 			var oModel = this.getView().getModel();
 			oModel.setProperty('/linearWizardSelectedStep', sStepId);
 		},
+
 		validateProdInfoStep: function () {
 			var oModel = this.getView().getModel(),
 				oProdInfoStep = this.getView().byId("ProductInfoStep"),
@@ -22,6 +22,7 @@ sap.ui.define([
 
 			oProdInfoStep.setValidated(bIsValidProdName && bIsValidProductWeight);
 		},
+
 		onActivate: function (oEvent) {
 			var sCurrentStepId = oEvent.getParameter("id");
 			sCurrentStepId = sCurrentStepId.split('-').pop();
@@ -33,6 +34,4 @@ sap.ui.define([
 			}
 		}
 	});
-
-	return WizardController;
 });

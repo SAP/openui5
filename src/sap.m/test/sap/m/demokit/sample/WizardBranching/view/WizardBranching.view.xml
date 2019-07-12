@@ -1,6 +1,6 @@
 <mvc:View
 		height="100%"
-		controllerName="sap.m.sample.WizardBranching.C"
+		controllerName="sap.m.sample.WizardBranching.controller.WizardBranching"
 		xmlns:layout="sap.ui.layout"
 		xmlns:form="sap.ui.layout.form"
 		xmlns:mvc="sap.ui.core.mvc"
@@ -54,7 +54,7 @@
 									alignItems="Center"
 									justifyContent="Center"
 									width="100%">
-								<SegmentedButton select="setPaymentMethod" id="paymentMethodSelection" selectedKey="{/selectedPayment}">
+								<SegmentedButton selectionChange="setPaymentMethod" id="paymentMethodSelection" selectedKey="{/selectedPayment}">
 									<items>
 										<SegmentedButtonItem key="Credit Card" icon="sap-icon://credit-card" text="Credit card" />
 										<SegmentedButtonItem key="Bank Transfer" icon="sap-icon://official-service" text="Bank transfer" />

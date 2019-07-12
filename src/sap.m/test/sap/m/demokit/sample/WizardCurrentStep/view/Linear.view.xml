@@ -1,6 +1,6 @@
 <mvc:View
 	height="100%"
-	controllerName="sap.m.sample.WizardCurrentStep.Linear"
+	controllerName="sap.m.sample.WizardCurrentStep.controller.Linear"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:core="sap.ui.core"
 	xmlns:u="sap.ui.unified"

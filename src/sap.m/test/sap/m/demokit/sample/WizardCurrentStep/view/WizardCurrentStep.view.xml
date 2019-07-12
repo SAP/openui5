@@ -1,6 +1,6 @@
 <mvc:View
 		height="100%"
-		controllerName="sap.m.sample.WizardCurrentStep.C"
+		controllerName="sap.m.sample.WizardCurrentStep.controller.WizardCurrentStep"
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m">
@@ -45,11 +45,11 @@
 						<mvc:XMLView
 							id="wizardViewLinear"
 							visible="{= ${/selectedShowCase} === 'linear' }"
-							viewName="sap.m.sample.WizardCurrentStep.Linear" />
+							viewName="sap.m.sample.WizardCurrentStep.view.Linear" />
 						<mvc:XMLView
 							id="wizardViewBranching"
 							visible="{= ${/selectedShowCase} === 'branching' }"
-							viewName="sap.m.sample.WizardCurrentStep.Branching" />
+							viewName="sap.m.sample.WizardCurrentStep.view.Branching" />
 					</content>
 				</Page>
 			</pages>
