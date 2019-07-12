@@ -1680,6 +1680,285 @@ sap.ui.define([
 
 		});
 
+		QUnit.test("Keyboard range selection", function (assert) {
+
+			var oListItemTemplate = createListItem(),
+				oList = new List({
+					mode: library.ListMode.MultiSelect,
+					includeItemInSelection: true,
+					items: [
+						oListItemTemplate
+					]
+				}),
+				fnFireSelectionChangeEvent = this.spy(oList, "_fireSelectionChangeEvent");
+
+			bindListData(oList, data3, "/items", createTemplateListItem());
+
+			oList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			oList.getVisibleItems()[0].focus();
+			// select the item
+			qutils.triggerKeydown(document.activeElement, "SPACE", false, false, false);
+			sap.ui.getCore().applyChanges();
+			assert.equal(fnFireSelectionChangeEvent.callCount, 1, "selectionChange event fired");
+
+			// trigger shift keydown so that oList._mRangeSelectionIndex object is available
+			qutils.triggerKeydown(document.activeElement, "", true, false, false);
+			assert.ok(oList._mRangeSelection, "Range selection mode enabled");
+			// trigger SHIFT + Arrow Down to perform range selection
+			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
+			sap.ui.getCore().applyChanges();
+			assert.ok(oList.getVisibleItems()[1].getSelected(), "Item at position 1 is selected via keyboard range selection");
+			assert.equal(fnFireSelectionChangeEvent.callCount, 2, "selectionChange event fired");
+			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
+			sap.ui.getCore().applyChanges();
+			assert.ok(oList.getVisibleItems()[2].getSelected(), "Item at position 2 is selected via keyboard range selection");
+			assert.equal(fnFireSelectionChangeEvent.callCount, 3, "selectionChange event fired");
+
+			// item should be deselected with range selection mode is enabled and direction changes
+			qutils.triggerKeydown(document.activeElement, "ARROW_UP", true, false, false);
+			assert.ok(!oList.getVisibleItems()[2].getSelected(), "Item at position 2 is deselected via keyboard range selection");
+			assert.equal(fnFireSelectionChangeEvent.callCount, 4, "selectionChange event fired");
+
+			// delete oList._mRangeSelectionIndex object
+			qutils.triggerKeyup(document.activeElement, "SHIFT", false, false, false);
+			assert.ok(!oList._mRangeSelection, "Range selection mode cleared");
+			// reset the spy
+			fnFireSelectionChangeEvent.reset();
+
+			oList.getVisibleItems()[5].focus();
+			// select the item
+			qutils.triggerKeydown(document.activeElement, "SPACE", false, false, false);
+			sap.ui.getCore().applyChanges();
+			assert.equal(fnFireSelectionChangeEvent.callCount, 1, "selectionChange event fired");
+
+			// trigger shift keydown so that oList._mRangeSelection object is available
+			qutils.triggerKeydown(document.activeElement, "", true, false, false);
+			assert.ok(oList._mRangeSelection, "Range selection mode enabled");
+			// trigger SHIFT + Arrow Up to perform range selection
+			qutils.triggerKeydown(document.activeElement, "ARROW_UP", true, false, false);
+			assert.ok(oList.getVisibleItems()[4], "Item at position 4 is selected via keyboard range selection");
+			assert.equal(fnFireSelectionChangeEvent.callCount, 2, "selectionChange event fired");
+			qutils.triggerKeydown(document.activeElement, "ARROW_UP", true, false, false);
+			assert.ok(oList.getVisibleItems()[3], "Item at position 3 is selected via keyboard range selection");
+			assert.equal(fnFireSelectionChangeEvent.callCount, 3, "selectionChange event fired");
+
+			// item should be deselected with range selection mode is enabled and direction changes
+			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
+			assert.ok(!oList.getVisibleItems()[3].getSelected(), "Item at position 3 is deselected via keyboard range selection");
+			assert.equal(fnFireSelectionChangeEvent.callCount, 4, "selectionChange event fired");
+
+			// clear oList._mRangeSelection object
+			qutils.triggerKeyup(document.activeElement, "SHIFT", false, false, false);
+			assert.ok(!oList._mRangeSelection, "Range selection mode cleared");
+			// reset the spy
+			fnFireSelectionChangeEvent.reset();
+
+			// selectionChange event should not be fired when the item is already selected and range selection occurs on this item
+			assert.ok(oList.getVisibleItems()[4].getSelected(), "item is already selected");
+			assert.ok(oList.getVisibleItems()[5].getSelected(), "item is already selected");
+			oList.getVisibleItems()[4].focus();
+			// trigger shift keydown so that oList._mRangeSelection object is available
+			qutils.triggerKeydown(document.activeElement, "", true, false, false);
+			assert.ok(oList._mRangeSelection, "Range selection mode enabled");
+			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
+			assert.ok(fnFireSelectionChangeEvent.notCalled, "selectionChange event is not fired for already selected items");
+
+			// clear oList._mRangeSelection object
+			qutils.triggerKeyup(document.activeElement, "SHIFT", false, false, false);
+			assert.ok(!oList._mRangeSelection, "Range selection mode cleared");
+
+			// test for invisible items
+			var oListItem = oList.getVisibleItems()[5];
+			oListItem.setSelected(false);
+			oListItem.setVisible(false);
+			sap.ui.getCore().applyChanges();
+
+			oList.getVisibleItems()[4].focus();
+			// trigger shift keydown so that oList._mRangeSelection object is available
+			qutils.triggerKeydown(document.activeElement, "", true, false, false);
+
+			assert.ok(oList._mRangeSelection, "Range selection mode enabled");
+			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
+
+			assert.ok(oList.getVisibleItems()[5].getSelected(), "Visible item at position 5 is selected");
+			assert.ok(oList.getVisibleItems()[5] !== oListItem, "Invisible item is not selected via keyboard rangeSelection");
+
+			oList.destroy();
+		});
+
+		QUnit.test("Keyboard range selection for non-selectable items", function (assert) {
+			var oListItemTemplate = createListItem(),
+				oList = new List({
+					mode: library.ListMode.MultiSelect,
+					includeItemInSelection: true,
+					items: [
+						oListItemTemplate
+					]
+				}),
+				fnFireSelectionChangeEvent = this.spy(oList, "_fireSelectionChangeEvent"),
+				oGroupHeaderListItem = new GroupHeaderListItem({title: "Grouped"});
+
+			bindListData(oList, data3, "/items", createTemplateListItem());
+
+			oList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			oList.insertItem(oGroupHeaderListItem, 3);
+			sap.ui.getCore().applyChanges();
+
+			oList.getVisibleItems()[1].focus();
+			// select the item
+			qutils.triggerKeydown(document.activeElement, "SPACE", false, false, false);
+			sap.ui.getCore().applyChanges();
+			assert.equal(fnFireSelectionChangeEvent.callCount, 1, "selectionChange event fired");
+
+			// trigger shift keydown so that oList._mRangeSelectionIndex object is available
+			qutils.triggerKeydown(document.activeElement, "", true, false, false);
+			assert.ok(oList._mRangeSelection, "Range selection mode enabled");
+			// trigger SHIFT + Arrow Down to perform range selection
+			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
+			sap.ui.getCore().applyChanges();
+			assert.ok(oList.getVisibleItems()[2].getSelected(), "Item at position 2 is selected via keyboard range selection");
+			assert.equal(fnFireSelectionChangeEvent.callCount, 2, "selectionChange event fired");
+
+			// trigger SHIFT + Arrow Down to perform range selection
+			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
+			sap.ui.getCore().applyChanges();
+			assert.ok(!oList.getVisibleItems()[3].getSelected(), "Item at position 3 is not selected via keyboard range selection as it is a sap.m.GroupHeaderListItem control");
+			assert.equal(fnFireSelectionChangeEvent.callCount, 2, "selectionChange event not fired");
+
+			// trigger SHIFT + Arrow Down to perform range selection
+			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
+			sap.ui.getCore().applyChanges();
+			assert.ok(oList.getVisibleItems()[4].getSelected(), "Item at position 4 is selected via keyboard range selection");
+			assert.equal(fnFireSelectionChangeEvent.callCount, 3, "selectionChange event fired");
+
+			oList.destroy();
+		});
+
+		QUnit.test("Keyboard range selection - when range selection starts from a selected item, deselection should happen when direction changes", function (assert) {
+			var oListItemTemplate = createListItem(),
+				oList = new List({
+					mode: library.ListMode.MultiSelect,
+					includeItemInSelection: true,
+					items: [
+						oListItemTemplate
+					]
+				}),
+				fnFireSelectionChangeEvent = this.spy(oList, "_fireSelectionChangeEvent");
+
+			bindListData(oList, data3, "/items", createTemplateListItem());
+
+			oList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			oList.getVisibleItems()[1].focus();
+			// select the item
+			qutils.triggerKeydown(document.activeElement, "SPACE", false, false, false);
+
+			oList.getVisibleItems()[2].focus();
+			// select the item
+			qutils.triggerKeydown(document.activeElement, "SPACE", false, false, false);
+
+			oList.getVisibleItems()[3].focus();
+			// select the item
+			qutils.triggerKeydown(document.activeElement, "SPACE", false, false, false);
+
+			oList.getVisibleItems()[4].focus();
+			// select the item
+			qutils.triggerKeydown(document.activeElement, "SPACE", false, false, false);
+
+			sap.ui.getCore().applyChanges();
+			assert.equal(oList.getSelectedItems().length, 4, "4 items are selected");
+
+			fnFireSelectionChangeEvent.reset();
+
+			// focus an already selected item
+			oList.getVisibleItems()[2].focus();
+			// trigger shift keydown so that oList._mRangeSelectionIndex object is available
+			qutils.triggerKeydown(document.activeElement, "", true, false, false);
+			assert.ok(oList._mRangeSelection, "Range selection mode enabled");
+
+			// range seletion item index
+			assert.equal(oList._mRangeSelection.index, 2, "RangeSelection item index = 2");
+
+			// trigger SHIFT + Arrow Down to perform range selection
+			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
+			sap.ui.getCore().applyChanges();
+			assert.ok(fnFireSelectionChangeEvent.notCalled, "action is selection and the item is already selected, then selectionChange event should not be fired");
+			assert.equal(oList._mRangeSelection.direction, 1, "Direction of index stored in _mRangeSelection object");
+
+			// trigger SHIFT + Arrow Down to perform range selection
+			qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
+			sap.ui.getCore().applyChanges();
+			assert.ok(fnFireSelectionChangeEvent.notCalled, "action is selection and the item is already selected, then selectionChange event should not be fired");
+
+			// trigger SHIFT + Arrow Up to perform range selection
+			qutils.triggerKeydown(document.activeElement, "ARROW_UP", true, false, false);
+			sap.ui.getCore().applyChanges();
+			assert.equal(fnFireSelectionChangeEvent.callCount, 1, "direction changed, so selectionChange event should be fired");
+			assert.ok(!oList.getVisibleItems()[4].getSelected(), "Item at position 4 is deselected");
+
+			// trigger SHIFT + Arrow Up to perform range selection
+			qutils.triggerKeydown(document.activeElement, "ARROW_UP", true, false, false);
+			sap.ui.getCore().applyChanges();
+			assert.equal(fnFireSelectionChangeEvent.callCount, 2, "direction changed, so selectionChange event should be fired");
+			assert.ok(!oList.getVisibleItems()[3].getSelected(), "Item at position 3 is deselected");
+
+			// trigger SHIFT + Arrow Up to perform range selection
+			qutils.triggerKeydown(document.activeElement, "ARROW_UP", true, false, false);
+			sap.ui.getCore().applyChanges();
+			assert.equal(fnFireSelectionChangeEvent.callCount, 2, "index of item and range selection item index matched, selection Cange no fired, item is already selected");
+			assert.equal(oList._mRangeSelection.direction, -1, "Direction change updated in _mRangeSelection object");
+
+			assert.equal(oList.getSelectedItems().length, 2, "2 items are selected in the list");
+
+			oList.destroy();
+		});
+
+		QUnit.test("Mouse range selection", function (assert) {
+			var oListItemTemplate = createListItem(),
+				oList = new List({
+					mode: library.ListMode.MultiSelect,
+					includeItemInSelection: true,
+					items: [
+						oListItemTemplate
+					]
+				}),
+				fnFireSelectionChangeEvent = this.spy(oList, "_fireSelectionChangeEvent");
+
+			bindListData(oList, data3, "/items", createTemplateListItem());
+
+			oList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			oList.getVisibleItems()[0].focus();
+			// select the item
+			qutils.triggerKeydown(document.activeElement, "SPACE", false, false, false);
+			sap.ui.getCore().applyChanges();
+			assert.equal(fnFireSelectionChangeEvent.callCount, 1, "selectionChange event fired");
+
+			// trigger shift keydown so that oList._mRangeSelection object is available
+			qutils.triggerKeydown(document.activeElement, "", true, false, false);
+			assert.ok(oList._mRangeSelection, "Range selection mode enabled");
+
+			var oCheckboxDomRef = oList.getVisibleItems()[9].getDomRef("selectMulti");
+			qutils.triggerMouseEvent(oCheckboxDomRef, "tap");
+			assert.equal(fnFireSelectionChangeEvent.callCount, 2, "selectionChange event fired");
+			assert.equal(oList.getSelectedItems().length, 10, "10 items are selected using mouse range selection");
+
+			// range deselection should be prevented and selection change should not be fired if the item is already selected
+			fnFireSelectionChangeEvent.reset();
+			assert.ok(oList.getVisibleItems()[5].getSelected(), "item is already selected");
+			oCheckboxDomRef = oList.getVisibleItems()[5].getDomRef("selectMulti");
+			qutils.triggerMouseEvent(oCheckboxDomRef, "tap");
+			assert.ok(oList.getVisibleItems()[5].getSelected(), "item is not deselected");
+
+			oList.destroy();
+		});
+
 		QUnit.module("Highlight");
 		QUnit.test("Highlight should be rendered", function (assert) {
 			var oLI = new StandardListItem({
