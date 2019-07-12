@@ -1,6 +1,7 @@
 /* global module*/
 
 module.exports = [
-	"ToolPage.spec.js",
-	"InfoLabel.spec.js"
+	"InfoLabel.spec.js",
+	"NavigationList.spec.js",
+	"ToolPage.spec.js"
 ];
