@@ -1,0 +1,44 @@
+/* ========================================== */
+/* CSS for control sap.uxap/ObjectPageHeader  */
+/* Quartz High Contrast White theme           */
+/* ========================================== */
+
+.sapUxAPObjectPageHeaderIdentifierSubTitleInContent {
+	font-size: @sapMFontMediumSize;
+}
+
+.sapUxAPObjectPageLayout-Std-Phone .sapUiSizeCompact.sapUxAPObjectPageHeaderLockBtn .sapMBtn,
+.sapUxAPObjectPageLayout-Std-Phone .sapUiSizeCompact.sapUxAPObjectPageHeaderChangesBtn .sapMBtn {
+	margin-top: -0.3rem;
+}
+
+.sapUiSizeCompact.sapUxAPObjectPageHeaderLockBtn .sapMBtn,
+.sapUiSizeCompact.sapUxAPObjectPageHeaderChangesBtn .sapMBtn {
+	margin-top: -0.125rem;
+}
+
+/* header container */
+.sapUiSizeCompact .sapUxAPObjectPageHeaderIdentifierContainer /* desktop-specific padding */{
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+}
+
+html .sapUiSizeCompact .sapUiContainer-ExtraWide .sapUxAPObjectPageHeaderIdentifier { /* Fullscreen, Large Desktop - specific padding */
+	.sapUxAPObjectPageHeaderIdentifierActions {
+		&.sapUxAPObjectPageHeaderIdentifierActionsForce, .sapUxAPObjectPageHeaderStickied & {
+			right: 2.25rem;
+		}
+	}
+}
+
+.sapUxAPObjectPageHeaderTitleArrow .sapMBtn {
+	margin-top: -0.175rem;
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageHeaderTitleArrow .sapMBtn {
+	margin-top: -0.1rem;
+}
+
+.sapUxAPObjectPageHeaderTitle.sapUxAPObjectPageHeaderSnappedTitleOnMobile > .sapFDynamicPageTitle {
+	border-bottom: 1px solid @sapUiObjectHeaderBorderColor;
+}

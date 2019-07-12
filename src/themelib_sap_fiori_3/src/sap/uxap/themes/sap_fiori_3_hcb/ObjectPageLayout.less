@@ -1,0 +1,59 @@
+/* ========================================== */
+/* CSS for control sap.uxap/ObjectPageLayout  */
+/* Quartz High Contrast Black theme           */
+/* ========================================== */
+
+.sapUxAPObjectChildPage {
+	width: 0.25rem;
+}
+
+.sapUxAPObjectPageNavigation .sapUxAPObjectChildPage {
+	height: 3rem;
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageNavigation .sapUxAPObjectChildPage {
+	height: 2rem;
+}
+
+.sapUxAPObjectPageNavigation .sapUxAPITBar.sapUxAPObjectChildPage {
+	height: 3.125rem;
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageNavigation .sapUxAPITBar.sapUxAPObjectChildPage {
+	height: 2.125rem;
+}
+
+/* Overriding the width inherited from BrowserScrollbar.less */
+.sap-desktop .sapUxAPObjectPageWrapper ::-webkit-scrollbar {
+	width: auto;
+}
+
+// title hover
+.sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutTitleClickEnabled .sapFDynamicPageTitle:hover {
+	background: @sapUiHighlight;
+	box-shadow: @sapUiShadowHeader;
+}
+
+// toggle header visual indicator
+.sapUxAPObjectPageLayout {
+  &.sapUxAPObjectPageLayoutTitleClickEnabled {
+    .sapFDynamicPageTitle:hover,
+    &.sapUxAPObjectPageLayoutTitleForceHovered .sapFDynamicPageTitle {
+      background: @sapUiHighlight;
+      box-shadow: @sapUiShadowHeader;
+    }
+    &.sapUxAPObjectPageLayoutTitleForceHovered {
+      .sapFDynamicPageToggleHeaderIndicator {
+        .sapMBtnInner {
+          background-color: @sapUiHighlight;
+        }
+      }
+    }
+  }
+}
+
+// footer
+.sapUxAPObjectPageFooter .sapUxAPObjectPageFloatingFooter {
+	border: 1px solid @sapUiGroupTitleBorderColor;
+	box-shadow: @sapUiShadowLevel2;
+}
