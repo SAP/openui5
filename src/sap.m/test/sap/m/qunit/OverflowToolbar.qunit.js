@@ -3,6 +3,7 @@
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 
 sap.ui.define([
+	"sap/ui/dom/units/Rem",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/OverflowToolbar",
 	"sap/m/OverflowToolbarLayoutData",
@@ -25,6 +26,7 @@ sap.ui.define([
 	"sap/m/MenuButton",
 	"sap/m/FlexItemData"
 ], function(
+	DomUnitsRem,
 	createAndAppendDiv,
 	OverflowToolbar,
 	OverflowToolbarLayoutData,
@@ -2370,41 +2372,53 @@ sap.ui.define([
 	QUnit.module("Control size measurement");
 
 	QUnit.test("Size of a visible control reported correctly", function (assert) {
-		var oTestButton = new Button({width: "200px"});
+		// Arrange
+		var oTestButton = new Button({width: "200px"}),
+			oOTB = createOverflowToolbar({}, [oTestButton]);
+
 		oTestButton.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		var sSize = OverflowToolbar._getOptimalControlWidth(oTestButton);
-		assert.strictEqual(sSize, 200);
+		// Assert
+		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), 200);
 	});
 
 	QUnit.test("Size of an invisible control reported correctly", function (assert) {
-		var oTestButton = new Button({width: "200px", visible: false});
+		// Arrange
+		var oTestButton = new Button({width: "200px", visible: false}),
+			oOTB = createOverflowToolbar({}, [oTestButton]);
+
 		oTestButton.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		var sSize = OverflowToolbar._getOptimalControlWidth(oTestButton);
-		assert.strictEqual(sSize, 0);
+		// Assert
+		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), 0);
 	});
 
 	QUnit.test("Size of a control that was measured before, but now not in the DOM, reported correctly", function (assert) {
-		var oTestButton = new Button();
+		// Arrange
+		var oTestButton = new Button(),
+			oOTB = createOverflowToolbar({}, [oTestButton]);
+			oOTB.destroy();
 
-		var sSize = OverflowToolbar._getOptimalControlWidth(oTestButton, 333);
-		assert.strictEqual(sSize, 333);
+		// Assert
+		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton, 333), 333);
 	});
 
 	QUnit.test("Size of a ToolbarSpacer with specified witdh is reported correctly", function (assert) {
-		var oTestToolbarSpacer = new ToolbarSpacer({ width: "20px" });
+		// Arrange
+		var oTestToolbarSpacer = new ToolbarSpacer({ width: "20px" }),
+			oOTB = createOverflowToolbar({}, [oTestToolbarSpacer]);
 
 		oTestToolbarSpacer.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		var sSize = OverflowToolbar._getOptimalControlWidth(oTestToolbarSpacer);
-		assert.strictEqual(sSize, 20);
+		// Assert
+		assert.strictEqual(oOTB._getOptimalControlWidth(oTestToolbarSpacer), 20);
 	});
 
 	QUnit.test("Size of a control with LayoutData, shrinkable = true and minWidth, is reported correctly", function (assert) {
+		// Arrange
 		var oTestButton = new Button(
 							{
 								text: "This is text",
@@ -2412,16 +2426,19 @@ sap.ui.define([
 									shrinkable: true,
 									minWidth: "50px"
 								})
-							});
-		oTestButton.placeAt("qunit-fixture");
+							}),
+			oOTB = createOverflowToolbar({}, [oTestButton]);
+
+		oOTB.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		// assert
-		var sSize = OverflowToolbar._getOptimalControlWidth(oTestButton);
-		assert.strictEqual(sSize, 50, "Size is equal to minWidth + margins");
+		// Assert
+		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), 50,
+			"Size is equal to minWidth + margins");
 	});
 
 	QUnit.test("Size of a control with LayoutData, shrinkable = true and minWidth and visible = false, is reported correctly", function (assert) {
+		// Arrange
 		var oTestButton = new Button(
 							{
 								text: "This is text",
@@ -2430,16 +2447,19 @@ sap.ui.define([
 									shrinkable: true,
 									minWidth: "50px"
 								})
-							});
-		oTestButton.placeAt("qunit-fixture");
+							}),
+			oOTB = createOverflowToolbar({}, [oTestButton]);
+
+		oOTB.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		// assert
-		var sSize = OverflowToolbar._getOptimalControlWidth(oTestButton);
-		assert.strictEqual(sSize, 0, "Size is equal to 0");
+		// Assert
+		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), 0,
+			"Size is equal to 0");
 	});
 
 	QUnit.test("Size of a control with LayoutData, shrinkable = false and minWidth, is reported correctly", function (assert) {
+		// Arrange
 		var oTestButton = new Button(
 							{
 								text: "This is text",
@@ -2449,13 +2469,47 @@ sap.ui.define([
 									shrinkable: false,
 									minWidth: "50px"
 								})
-							});
-		oTestButton.placeAt("qunit-fixture");
+							}),
+			oOTB = createOverflowToolbar({}, [oTestButton]);
+
+		oOTB.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		// assert
-		var sSize = OverflowToolbar._getOptimalControlWidth(oTestButton);
-		assert.strictEqual(sSize, 200, "Size is equal to outer width");
+		// Assert
+		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), 200,
+			"Size is equal to outer width");
+	});
+
+	QUnit.test("Size of a control with LayoutData, shrinkable = true and minWidth in rems, is reported correctly", function (assert) {
+		// Arrange
+		var oTestButton = new Button(
+							{
+								text: "This is text",
+								layoutData: new OverflowToolbarLayoutData({
+									shrinkable: true,
+									minWidth: "3rem"
+								})
+							}),
+			oTestButton2 = new Button(
+				{
+					text: "This is text",
+					layoutData: new OverflowToolbarLayoutData({
+						shrinkable: true,
+						minWidth: "50%"
+					})
+				}),
+			oOTB = createOverflowToolbar({ width: "300px" }, [oTestButton, oTestButton2]),
+			iRemInPx = DomUnitsRem.toPx("1rem");
+
+		oOTB.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), (3 * iRemInPx) + (2 * 0.25 * iRemInPx),
+			"Size is equal to minWidth (3rem) + margins (2x0.25 rem)");
+
+		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton2), (50 * 300) / 100 + (2 * 0.25 * iRemInPx),
+			"Size is equal to minWidth (150px) + margins (2x0.25 rem)");
 	});
 
 	QUnit.module("Content size measurement");
