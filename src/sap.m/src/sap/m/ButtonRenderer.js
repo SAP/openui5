@@ -70,9 +70,15 @@ sap.ui.define([
 		//ARIA attributes
 		var mAccProps = {};
 
+		var sTooltipId = oButton.getId() + "-tooltip";
+
 		var sTextId = ButtonRenderer.getButtonTypeAriaLabelId(sType);
-		if (sTextId) {
+		if (sTextId && sTooltip) {
+			mAccProps["describedby"] = {value: sTooltipId + " " + sTextId, append: true};
+		} else if (sTextId) {
 			mAccProps["describedby"] = {value: sTextId, append: true};
+		} else if (sTooltip) {
+			mAccProps["describedby"] = {value: sTooltipId, append: true};
 		}
 
 		// add reference only to the text content of the button
@@ -226,6 +232,17 @@ sap.ui.define([
 
 		// end inner button tag
 		oRm.write("</span>");
+
+		// add tooltip if available
+		if (sTooltip) {
+			oRm.write("<span");
+			oRm.writeAttributeEscaped("id", sTooltipId);
+			oRm.addClass("sapUiInvisibleText");
+			oRm.writeClasses();
+			oRm.write(">");
+			oRm.writeEscaped(sTooltip);
+			oRm.write("</span>");
+		}
 
 		// end button tag
 		oRm.write("</button>");

@@ -595,7 +595,7 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-	// in case of icon only button we souldn't have self reference otherwise
+	// in case of icon only button we shouldn't have self reference otherwise
 	// it causes issue reported in BCP: 1780428239
 	QUnit.test("AriaLabeledBy when the Button is associated with Label and the button has icon only", function(assert) {
 		var oLabel = new Label("L1", {
@@ -613,6 +613,25 @@ sap.ui.define([
 		assert.equal(oButton.$().attr("aria-labelledby"), "L1", "Only Label id is written inside aria-labelledby attribute");
 
 		oLabel.destroy();
+		oButton.destroy();
+	});
+
+	QUnit.test("AriaDescribedBy when the Button has tooltip and special type", function(assert) {
+		var oButton = new Button("B1",{
+			text: "my button",
+			tooltip: "tooltip",
+			type: sButtonTypeAccept
+		}),
+		sTextId,
+		sTooltipId;
+
+		oButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		sTextId = sap.m.ButtonRenderer.getButtonTypeAriaLabelId(sButtonTypeAccept);
+		sTooltipId = "B1-tooltip";
+		assert.equal(oButton.$().attr("aria-describedby"), sTooltipId + " " + sTextId, "Both type and tooltip are added in aria-describedby");
+
 		oButton.destroy();
 	});
 
