@@ -3,26 +3,24 @@
  */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/Utils",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/changeHandler/Base",
 	"sap/ui/core/BusyIndicator",
-	"sap/ui/fl/variants/util/VariantUtil",
+	"sap/ui/fl/variants/util/URLHandler",
 	"sap/base/util/merge",
 	"sap/base/util/includes",
 	"sap/base/util/ObjectPath"
 ], function(
-	jQuery,
 	JSONModel,
 	Utils,
 	JsControlTreeModifier,
 	Change,
 	BaseChangeHandler,
 	BusyIndicator,
-	VariantUtil,
+	URLHandler,
 	fnBaseMerge,
 	includes,
 	ObjectPath
@@ -53,9 +51,10 @@ sap.ui.define([
 				}.bind(this));
 		}.bind(this));
 		//re-initialize hash register and remove existing parameters
-		VariantUtil.initializeHashRegister.call(this);
-		this.updateHasherEntry({
-			parameters: []
+		URLHandler.initialize.call(this);
+		this.updateEntry({
+			parameters: [],
+			updateHashEntry: true
 		});
 		return this._oVariantSwitchPromise;
 	};
@@ -103,7 +102,7 @@ sap.ui.define([
 			this.oVariantController.assignResetMapListener(fnResetMapListener.bind(this));
 
 			//initialize hash register
-			VariantUtil.initializeHashRegister.call(this);
+			URLHandler.initialize.call(this);
 
 			if (oData && typeof oData === "object") {
 				Object.keys(oData).forEach(function (sKey) {
@@ -162,6 +161,7 @@ sap.ui.define([
 				this.oData[sVariantManagementReference].currentVariant = sNewVariantReference;
 				if (this.oData[sVariantManagementReference].updateVariantInURL) {
 					this._updateVariantInURL(sVariantManagementReference, sNewVariantReference);
+					// update current variant in controller map
 					this.oVariantController.updateCurrentVariantInMap(sVariantManagementReference, sNewVariantReference);
 				}
 				this.checkUpdate();
@@ -181,6 +181,12 @@ sap.ui.define([
 		return this._oVariantSwitchPromise;
 	};
 
+	/**
+	 * Updates the variant reference in URL at the correct index.
+	 * @param {string} sVariantManagementReference - Variant management reference
+	 * @param {string} sNewVariantReference - the new variant reference
+	 * @private
+	 */
 	VariantModel.prototype._updateVariantInURL = function (sVariantManagementReference, sNewVariantReference) {
 		var mTechnicalParametersWithIndex = this.getVariantIndexInURL(sVariantManagementReference);
 
@@ -207,46 +213,48 @@ sap.ui.define([
 				: (aParameterValues[iIndex] = sNewVariantReference);
 		}
 
-		this.updateHasherEntry({
+		this.updateEntry({
 			parameters: aParameterValues,
-			updateURL: !this._bDesignTimeMode
+			updateURL: !this._bDesignTimeMode,
+			updateHashEntry: true
 		});
 	};
 
-	VariantModel.prototype.updateHasherEntry = function() {
-		VariantUtil.updateHasherEntry.apply(this, arguments);
+	VariantModel.prototype.updateEntry = function() {
+		URLHandler.update.apply(this, arguments);
 	};
 
+	/**
+	 * Returns the index at which the passed variant management reference is present.
+	 * @param {string} sVariantManagementReference - Variant management reference
+	 * @returns {object} oParametersWithIndex
+	 * @returns {index} oParametersWithIndex.index - The index in the array of variant URL parameters
+	 * @returns {undefined | string[]} [oParametersWithIndex.parameters] - Array of variant URL parameters or undefined when no shell is present
+	 * @public
+	 */
 	VariantModel.prototype.getVariantIndexInURL = function (sVariantManagementReference) {
-		// if ushell container is not present an empty object is returned
-		var mHashParameters = Utils.getParsedURLHash().params;
-		var iParamIndex = -1;
-
-		if (mHashParameters) {
-			// in UI Adaptation the parameters are empty, so the current URL parameters are retrieved from hash register
+		var mReturnObject = {index: -1};
+		// if ushell container is not present an empty object is returned -> .params will be undefined
+		var mURLParameters = Utils.getParsedURLHash().params;
+		if (mURLParameters) {
+			mReturnObject.parameters = {};
 			if (this._bDesignTimeMode) {
-				mHashParameters = {};
-				mHashParameters[this.sVariantTechnicalParameterName] = VariantUtil.getCurrentHashParamsFromRegister.call(this);
+				// in UI Adaptation the parameters are empty, so the current URL parameters are retrieved from hash register
+				mURLParameters[this.sVariantTechnicalParameterName] = URLHandler.getCurrentHashParamsFromRegister.call(this);
 			}
-
-			if (!jQuery.isEmptyObject(mHashParameters) && Array.isArray(mHashParameters[this.sVariantTechnicalParameterName])) {
-				mHashParameters[this.sVariantTechnicalParameterName] = mHashParameters[this.sVariantTechnicalParameterName].reduce(function (aVariantParameters, sParam, iIndex) {
-					var sParamDecoded = decodeURIComponent(sParam);
-					// if parameter index has not been found and a variant exists for the combination of variant reference and variant parameter
-					if (iParamIndex === -1
-						&& !!this.oVariantController.getVariant(sVariantManagementReference, sParamDecoded)) {
-						iParamIndex = iIndex;
-					}
-					// return decoded parameter values
-					return aVariantParameters.concat(sParamDecoded);
-				}.bind(this), []);
+			if (Array.isArray(mURLParameters[this.sVariantTechnicalParameterName])) {
+				mReturnObject.parameters[this.sVariantTechnicalParameterName] = mURLParameters[this.sVariantTechnicalParameterName].map(decodeURIComponent);
+				mReturnObject.parameters[this.sVariantTechnicalParameterName]
+					.some(function (sParamDecoded, iIndex) {
+						// if parameter index has not been found and a variant exists for the combination of variant reference and variant parameter
+						if (this.oVariantController.getVariant(sVariantManagementReference, sParamDecoded)) {
+							mReturnObject.index = iIndex;
+							return true;
+						}
+					}.bind(this));
 			}
 		}
-
-		return {
-			parameters: mHashParameters,
-			index: iParamIndex
-		};
+		return mReturnObject;
 	};
 
 	/**
@@ -589,16 +597,17 @@ sap.ui.define([
 				oData[sVariantManagementReference].defaultVariant = mPropertyBag.defaultVariant;
 				oData[sVariantManagementReference].originalDefaultVariant = oData[sVariantManagementReference].defaultVariant;
 				//Update hash register
-				var aHashParameters = VariantUtil.getCurrentHashParamsFromRegister.call(this);
+				var aHashParameters = URLHandler.getCurrentHashParamsFromRegister.call(this);
 				if (aHashParameters) {
 					if (
 						oData[sVariantManagementReference].defaultVariant !== oData[sVariantManagementReference].currentVariant
 						&& aHashParameters.indexOf(oData[sVariantManagementReference].currentVariant) === -1
 					) {
 						// if default variant is changed from the current variant, then add the current variant id as a variant URI parameter
-						this.updateHasherEntry({
+						this.updateEntry({
 							parameters: aHashParameters.concat(oData[sVariantManagementReference].currentVariant),
-							updateURL: !this._bDesignTimeMode
+							updateURL: !this._bDesignTimeMode,
+							updateHashEntry: true
 						});
 					} else if (
 						oData[sVariantManagementReference].defaultVariant === oData[sVariantManagementReference].currentVariant
@@ -606,9 +615,10 @@ sap.ui.define([
 					) {
 						// if current variant is now the default variant, then remove the current variant id as a variant URI parameter
 						aHashParameters.splice(aHashParameters.indexOf(oData[sVariantManagementReference].currentVariant), 1);
-						this.updateHasherEntry({
+						this.updateEntry({
 							parameters: aHashParameters,
-							updateURL: !this._bDesignTimeMode
+							updateURL: !this._bDesignTimeMode,
+							updateHashEntry: true
 						});
 					}
 				}
@@ -738,17 +748,20 @@ sap.ui.define([
 				mPropertyBag = {
 					parameters: [],
 					updateURL: true,
-					ignoreRegisterUpdate: true
+					updateHashEntry: false
 				};
 			} else if (this._bDesignTimeMode) { // initially this._bDesignTimeMode is undefined
 				mPropertyBag = {
-					parameters: VariantUtil.getCurrentHashParamsFromRegister.call(this),
+					parameters: URLHandler.getCurrentHashParamsFromRegister.call(this),
 					updateURL: true,
-					ignoreRegisterUpdate: true
+					updateHashEntry: false
 				};
+
+				// restart case e.g. USER -> CUSTOMER layer, hash register is empty
 			}
-			this.updateHasherEntry(mPropertyBag);
 			this._bDesignTimeMode = bDesignTimeMode;
+			// updateEntry should be called in the end, since it triggers navigation handling
+			this.updateEntry(mPropertyBag);
 		}
 
 		if (!(typeof this.fnManageClick === "function" && typeof this.fnManageClickRta === "function")) {
@@ -909,11 +922,13 @@ sap.ui.define([
 	};
 
 	VariantModel.prototype.switchToDefaultForVariantManagement = function (sVariantManagementReference) {
-		BusyIndicator.show(200);
-		this.updateCurrentVariant(sVariantManagementReference, this.oData[sVariantManagementReference].defaultVariant)
-			.then(function () {
-				BusyIndicator.hide();
-			});
+		if (this.oData[sVariantManagementReference].currentVariant !== this.oData[sVariantManagementReference].defaultVariant) {
+			BusyIndicator.show(200);
+			this.updateCurrentVariant(sVariantManagementReference, this.oData[sVariantManagementReference].defaultVariant)
+				.then(function () {
+					BusyIndicator.hide();
+				});
+		}
 	};
 
 	VariantModel.prototype.switchToDefaultForVariant = function(sVariantId) {
@@ -928,24 +943,28 @@ sap.ui.define([
 
 	VariantModel.prototype.registerToModel = function(oVariantManagementControl) {
 		var sVariantManagementReference = this.getVariantManagementReferenceForControl(oVariantManagementControl);
+
+		// ensure standard variants are mocked, if no variants are present in the changes.variantSection response from the backend
 		this._ensureStandardVariantExists(sVariantManagementReference);
 
-		if (oVariantManagementControl) {
-			//original setting of control parameter 'editable' is needed
-			this.oData[sVariantManagementReference]._isEditable = oVariantManagementControl.getEditable();
+		// original setting of control parameter 'editable' is needed
+		this.oData[sVariantManagementReference]._isEditable = oVariantManagementControl.getEditable();
 
-			//attach binding change event on VariantManagement control title
-			oVariantManagementControl.getTitle().getBinding("text").attachEvent("change", oVariantManagementControl, this._handleCurrentVariantChange, this);
+		// attach/detach events on control
+		// title
+		oVariantManagementControl.getTitle().getBinding("text").attachEvent("change", oVariantManagementControl, this._handleCurrentVariantChange, this);
 
-			this.setModelPropertiesForControl(sVariantManagementReference, false, oVariantManagementControl);
+		// save / saveAs
+		oVariantManagementControl.attachSave(this._handleSave, this);
 
-			oVariantManagementControl.attachSave(this._handleSave, this);
+		// set model's properties specific to control's appearance
+		this.setModelPropertiesForControl(sVariantManagementReference, false, oVariantManagementControl);
 
-			//control property updateVariantInURL set initially
-			var sUpdateURL = oVariantManagementControl.getUpdateVariantInURL(); // default false
-			this.oData[sVariantManagementReference].updateVariantInURL = sUpdateURL;
-			VariantUtil.attachHashHandlers.call(this, sVariantManagementReference, !!sUpdateURL);
-		}
+		//control property updateVariantInURL set initially
+		var sUpdateURL = oVariantManagementControl.getUpdateVariantInURL(); // default false
+		this.oData[sVariantManagementReference].updateVariantInURL = sUpdateURL;
+		URLHandler.attachHandlers.call(this, sVariantManagementReference, !!sUpdateURL);
+		URLHandler.handleModelContextChange.call(this, oVariantManagementControl);
 	};
 
 	/**

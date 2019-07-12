@@ -25,6 +25,7 @@ sap.ui.define([
 	"sap/m/CustomListItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/Log",
+	"sap/ui/fl/variants/util/URLHandler",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ],
@@ -53,6 +54,7 @@ function (
 	CustomListItem,
 	JSONModel,
 	Log,
+	URLHandler,
 	jQuery,
 	sinon
 ) {
@@ -738,7 +740,7 @@ function (
 				name: "testComp",
 				getModel: function() {
 					return {
-						updateHasherEntry: fnUpdateHasherStub
+						updateEntry: fnUpdateHasherStub
 					};
 				}
 			};
@@ -747,7 +749,7 @@ function (
 			var sSelectorString = "abc123";
 			var sChangeTypeString = "labelChange";
 			var aDeletedChanges = [{fileName : "change1"}, {fileName : "change2"}];
-			sandbox.stub(Utils, "setTechnicalURLParameterValues");
+			sandbox.stub(URLHandler, "_setTechnicalURLParameterValues");
 			sandbox.stub(this.oFlexController._oChangePersistence, "resetChanges").callsFake(function() {
 				assert.strictEqual(arguments[0], sLayer, "then correct layer passed");
 				assert.strictEqual(arguments[1], sGenerator, "then correct generator passed");
@@ -763,8 +765,8 @@ function (
 					assert.deepEqual(fnUpdateHasherStub.getCall(0).args[0], {
 						parameters: [],
 						updateURL: true,
-						component: oComp
-					}, "then Utils.setTechnicalURLParameterValues with the correct parameters");
+						updateHashEntry: true
+					}, "then URLHandler._setTechnicalURLParameterValues with the correct parameters");
 				});
 		});
 
@@ -774,13 +776,13 @@ function (
 				name: "testComp",
 				getModel: function() {
 					return {
-						updateHasherEntry: fnUpdateHasherStub
+						updateEntry: fnUpdateHasherStub
 					};
 				}
 			};
 			var sLayer = "testLayer";
 			var sGenerator = "test.Generator";
-			sandbox.stub(Utils, "setTechnicalURLParameterValues");
+			sandbox.stub(URLHandler, "_setTechnicalURLParameterValues");
 			sandbox.stub(this.oFlexController._oChangePersistence, "resetChanges").callsFake(function() {
 				assert.strictEqual(arguments[0], sLayer, "then correct layer passed");
 				assert.strictEqual(arguments[1], sGenerator, "then correct generator passed");
@@ -793,8 +795,8 @@ function (
 					assert.deepEqual(fnUpdateHasherStub.getCall(0).args[0], {
 						parameters: [],
 						updateURL: true,
-						component: oComp
-					}, "then Utils.setTechnicalURLParameterValues with the correct parameters");
+						updateHashEntry: true
+					}, "then URLHandler._setTechnicalURLParameterValues with the correct parameters");
 				});
 		});
 

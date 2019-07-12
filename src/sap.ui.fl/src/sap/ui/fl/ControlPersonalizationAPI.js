@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/base/util/includes",
 	"sap/ui/fl/variants/VariantManagement",
+	"sap/ui/fl/variants/util/URLHandler",
 	"sap/ui/core/Component",
 	"sap/ui/thirdparty/jquery"
 ], function(
@@ -22,6 +23,7 @@ sap.ui.define([
 	ManagedObject,
 	includes,
 	VariantManagement,
+	URLHandler,
 	Component,
 	jQuery
 ) {
@@ -128,7 +130,7 @@ sap.ui.define([
 			var oVariantModel = oAppComponent instanceof Component ? oAppComponent.getModel(Utils.VARIANT_MODEL_NAME) : undefined;
 			if (!oVariantModel) {
 				//technical parameters are not updated, only URL hash is updated
-				Utils.setTechnicalURLParameterValues(undefined, VARIANT_TECHNICAL_PARAMETER_NAME, aUrlParameters);
+				URLHandler._setTechnicalURLParameterValues(undefined, aUrlParameters, /*bSilent*/ true);
 				return Utils.log.warning("Variant model could not be found on the provided control");
 			}
 
@@ -144,10 +146,10 @@ sap.ui.define([
 			}
 
 			//both technical parameters and URL hash updated
-			oVariantModel.updateHasherEntry({
+			oVariantModel.updateEntry({
 				parameters: aUrlParameters,
 				updateURL: true,
-				component: oAppComponent
+				updateHashEntry: true
 			});
 		},
 
