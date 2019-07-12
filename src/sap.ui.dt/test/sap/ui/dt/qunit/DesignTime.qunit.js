@@ -105,8 +105,10 @@ function(
 		});
 
 		QUnit.test("when empty composite control is added to root followed by a button which is added to the composite control", function(assert) {
-			var fnDone = assert.async(),
-				oOuterLayout, oInnerLayout, oButton;
+			var fnDone = assert.async();
+			var oOuterLayout;
+			var oInnerLayout;
+			var oButton;
 
 			oOuterLayout = new VerticalLayout("outer-layout");
 			oOuterLayout.placeAt("qunit-fixture");
@@ -1456,7 +1458,8 @@ function(
 
 		QUnit.test("when called second time for the same control while the first creation is still in the progress", function (assert) {
 			var fnDone = assert.async(2);
-			var oButton1, oButton2;
+			var oButton1;
+			var oButton2;
 			var oLayout = new VerticalLayout({
 				content: [
 					oButton1 = new Button('button1'),

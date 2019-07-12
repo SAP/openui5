@@ -294,9 +294,9 @@ sap.ui.define([
 		this._ensureSelection(this._oCurrentOverlay);
 		this.setFocusLock(true);
 
-		var aSelection = [],
-			oContextElement = this.getContextElement(),
-			sSelectedButtonId = oEventItem.data("id");
+		var aSelection = [];
+		var oContextElement = this.getContextElement();
+		var sSelectedButtonId = oEventItem.data("id");
 
 		this._aMenuItems.some(function (mMenuItemEntry) {
 			if (sSelectedButtonId === mMenuItemEntry.menuItem.id) {

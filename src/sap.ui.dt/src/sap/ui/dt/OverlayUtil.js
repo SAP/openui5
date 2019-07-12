@@ -100,7 +100,10 @@ function(
 	 * @private
 	 */
 	OverlayUtil.getGeometry = function(aGeometry) {
-		var minLeft, maxRight, minTop, maxBottom;
+		var minLeft;
+		var maxRight;
+		var minTop;
+		var maxBottom;
 		aGeometry.forEach(function(oElementGeometry) {
 			if (oElementGeometry) {
 				if (!minLeft || oElementGeometry.position.left < minLeft) {
@@ -198,7 +201,8 @@ function(
 	 * @private
 	 */
 	OverlayUtil.getAllChildOverlays = function(oElementOverlay) {
-		var aChildElementOverlays = [], aChildren = [];
+		var aChildElementOverlays = [];
+		var aChildren = [];
 		if (!oElementOverlay) {
 			return aChildElementOverlays;
 		}
