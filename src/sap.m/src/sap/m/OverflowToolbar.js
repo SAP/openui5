@@ -471,7 +471,7 @@ sap.ui.define([
 	 * @private
 	 */
 	OverflowToolbar.prototype._calculateControlSize = function (oControl) {
-		return OverflowToolbar._getOptimalControlWidth(oControl, this._aControlSizes[oControl.getId()]);
+		return this._getOptimalControlWidth(oControl, this._aControlSizes[oControl.getId()]);
 	};
 
 	/**
@@ -1326,11 +1326,11 @@ sap.ui.define([
 	 * @returns {*}
 	 * @private
 	 */
-	OverflowToolbar._getOptimalControlWidth = function (oControl, iOldSize) {
+	OverflowToolbar.prototype._getOptimalControlWidth = function (oControl, iOldSize) {
 		var iOptimalWidth,
 			oLayoutData = oControl.getLayoutData(),
 			bShrinkable = oLayoutData && oLayoutData.isA("sap.m.ToolbarLayoutData") ? oLayoutData.getShrinkable() : false,
-			iMinWidth = bShrinkable ? parseInt(oLayoutData.getMinWidth()) : 0,
+			iMinWidth = bShrinkable ? this._getMinWidthOfShrinkableControl(oControl) : 0,
 			bVisible = oControl.getVisible(),
 			iSpacerWidth;
 
@@ -1353,6 +1353,24 @@ sap.ui.define([
 		}
 
 		return iOptimalWidth;
+	};
+
+	/**
+	 * Returns the minimum width of a Control with shrinkable LayoutData
+	 * @param oControl
+	 * @returns {int} iMinWidth of the Control
+	 * @private
+	 */
+	OverflowToolbar.prototype._getMinWidthOfShrinkableControl = function (oControl) {
+		var sMinWidth = oControl.$().css("min-width"),
+			iMinWidth = parseInt(sMinWidth),
+			bRelativeWidth = Toolbar.isRelativeWidth(sMinWidth);
+
+		if (bRelativeWidth) {
+			return (iMinWidth * this.$().width()) / 100;
+		} else {
+			return iMinWidth;
+		}
 	};
 
 	/**
