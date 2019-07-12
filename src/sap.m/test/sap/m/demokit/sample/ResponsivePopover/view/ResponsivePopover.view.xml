@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.m.sample.ResponsivePopover.C"
+	controllerName="sap.m.sample.ResponsivePopover.controller.ResponsivePopover"
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
