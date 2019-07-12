@@ -1,0 +1,19 @@
+/* ============================================== */
+/* CSS for control sap.uxap/ObjectPageSubSection  */
+/* Quartz High Contrast Black theme               */
+/* ============================================== */
+
+.sapUxAPObjectPageSubSection:focus {
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+	outline-offset: -0.125rem;
+	border-color: transparent;
+	border-radius: 0;
+}
+
+/* IE ignores outline-offset. Use an overlay: */
+/* TODO remove after 1.62 version */
+html[data-sap-ui-browser^="ie"].sap-desktop {
+	.sapUxAPObjectPageSubSection:focus:before {
+		border-width: 0.125rem;
+	}
+}
