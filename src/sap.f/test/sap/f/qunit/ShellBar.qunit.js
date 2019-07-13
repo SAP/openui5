@@ -563,8 +563,7 @@ function (
 	QUnit.test("ResponsiveHandler _handleResize on size changed", function (assert) {
 
 		// Arrange
-		var fnDone = assert.async(),
-			oControl = this.oSB,
+		var oControl = this.oSB,
 			oStub;
 
 		oControl.placeAt(DOM_RENDER_LOCATION);
@@ -572,18 +571,14 @@ function (
 		oStub = sinon.stub(oControl._oResponsiveHandler, "_handleResize").callsFake( function() {
 			//Assert
 			assert.ok(true, "Responsivehandler delegated event called");
-			fnDone();
 		});
 		// Act
 		oControl._oOverflowToolbar.attachEvent("_controlWidthChanged", oStub, this);
 		oControl._oOverflowToolbar.fireEvent("_controlWidthChanged");
 
-		// Assert
-		assert.expect(1);
-
 		//Cleanup
 		oControl._oResponsiveHandler._handleResize.restore();
-		fnDone = null; oControl = null; oStub = null;
+		oControl = null; oStub = null;
 	});
 
 	QUnit.test("ResponsiveHandler _initSizes method", function (assert) {
