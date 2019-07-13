@@ -38,6 +38,8 @@ sap.ui.define([
 
 	QUnit.module("SimpleFixFlex: Rendering", {
 		beforeEach: function() {
+
+			// Arrange
 			this.oSimpleFixFlex = new SimpleFixFlex({
 				id: "simpleFixFlex",
 				fixContent: new Text({
@@ -48,10 +50,13 @@ sap.ui.define([
 				})
 			});
 
+			// Act
 			this.oSimpleFixFlex.placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
 		afterEach: function() {
+
+			// Clean up
 			this.oSimpleFixFlex.destroy();
 			this.oSimpleFixFlex = null;
 		}
@@ -59,29 +64,45 @@ sap.ui.define([
 
 	QUnit.test("Fix/Flex content is rendered", function(assert) {
 
-		assert.strictEqual(this.oSimpleFixFlex.$().hasClass("sapUiSimpleFixFlex"), true,
+		// Assert
+		assert.ok(this.oSimpleFixFlex.$().hasClass("sapUiSimpleFixFlex"),
 						"SimpleFixFlex should be rendered.");
-		assert.strictEqual(this.oSimpleFixFlex.getFixContent().$().hasClass("sapUiSimpleFixFlexFixed"), true,
+		assert.ok(this.oSimpleFixFlex.getFixContent().$().hasClass("sapUiSimpleFixFlexFixed"),
 						"FixContent should be rendered.");
-		assert.strictEqual(this.oSimpleFixFlex.getFlexContent().$().hasClass("sapUiSimpleFixFlexFlexContent"), true,
-						"FlexContent should be renedered");
+
+		// Act
+		this.oSimpleFixFlex.addFlexContent(new sap.m.Button({ text: "test"}));
+		oCore.applyChanges();
+
+		this.oSimpleFixFlex.getFlexContent().forEach(function (oControl) {
+
+			// Assert
+			assert.ok(oControl.getDomRef().parentNode.classList.contains("sapUiSimpleFixFlexFlexContent"),
+					"The FlexContent aggregation " + oControl.getMetadata().getName() +
+					" is rendered inside the FlexContent wrapper div.");
+		});
 	});
 
 	QUnit.test("FixContent wraps when 'fitParent' is 'true'", function(assert) {
+
+		// Assert
 		assert.strictEqual(this.oSimpleFixFlex.$().css("padding-top"),
 							this.oSimpleFixFlex.getFixContent().$().outerHeight() + "px",
 							"SimpleFixFlex should have the correct padding-top.");
-		assert.strictEqual(this.oSimpleFixFlex.getFixContent().$().hasClass("sapUiSimpleFixFlexFixedWrap"), true,
+		assert.ok(this.oSimpleFixFlex.getFixContent().$().hasClass("sapUiSimpleFixFlexFixedWrap"),
 						"FixContent should wrap.");
 	});
 
 	QUnit.test("FixContent does not wrap when 'fitParent' is 'false'", function(assert) {
+
+		// Arrange
 		this.oSimpleFixFlex.setFitParent(false);
 		oCore.applyChanges();
 
+		// Assert
 		assert.strictEqual(this.oSimpleFixFlex.$().css("padding-top"), "0px",
 							"SimpleFixFlex should have the correct padding-top.");
-		assert.strictEqual(!this.oSimpleFixFlex.getFixContent().$().hasClass("sapUiSimpleFixFlexFixedWrap"), true,
+		assert.notOk(this.oSimpleFixFlex.getFixContent().$().hasClass("sapUiSimpleFixFlexFixedWrap"),
 						"FixContent should not wrap.");
 	});
 });

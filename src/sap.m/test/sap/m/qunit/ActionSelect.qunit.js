@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/m/ActionSelect",
 	"sap/m/Button",
 	"sap/ui/core/Item",
+	"sap/ui/core/Core",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -21,6 +22,7 @@ sap.ui.define([
 	ActionSelect,
 	Button,
 	Item,
+	Core,
 	KeyCodes,
 	qutils,
 	createAndAppendDiv
@@ -71,11 +73,11 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oActionSelect);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oActionSelect.open();
 		this.clock.tick(1000);
 
-		var aPopupButtons = oActionSelect.getPicker().getContent().filter(function (oControl) {
+		var aPopupButtons = oActionSelect.getSimpleFixFlex().getFlexContent().filter(function (oControl) {
 			return oControl.getMetadata().getName() === "sap.m.Button";
 		});
 
@@ -99,15 +101,15 @@ sap.ui.define([
 
 			// arrange + act
 			oPage.addContent(oActionSelect);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			mOptions.removeButtons.forEach(function (vButton) {
 				oActionSelect.removeButton(vButton);
 			});
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oActionSelect.open();
 			this.clock.tick(1000);
 
-			var aPopupButtons = oActionSelect.getPicker().getContent().filter(function (oControl) {
+			var aPopupButtons = oActionSelect.getSimpleFixFlex().getFlexContent().filter(function (oControl) {
 				return oControl.getMetadata().getName() === "sap.m.Button";
 			});
 
@@ -201,13 +203,13 @@ sap.ui.define([
 
 			// arrange + act
 			oPage.addContent(oActionSelect);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oActionSelect.removeAllButtons();
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oActionSelect.open();
 			this.clock.tick(1000);
 
-			var aPopupButtons = oActionSelect.getPicker().getContent().filter(function (oControl) {
+			var aPopupButtons = oActionSelect.getSimpleFixFlex().getFlexContent().filter(function (oControl) {
 				return oControl.getMetadata().getName() === "sap.m.Button";
 			});
 
@@ -280,7 +282,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oActionSelect);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oActionSelect.open();
 		this.clock.tick(500);
 
@@ -288,7 +290,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// assert
-		assert.ok(sap.ui.getCore().byId('firstEnabledButton').$().is(":focus"), 'The first enabled button should be focused');
+		assert.ok(Core.byId('firstEnabledButton').$().is(":focus"), 'The first enabled button should be focused');
 
 		// cleanup
 		oActionSelect.destroy();
@@ -337,7 +339,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oActionSelect);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oActionSelect.open();
 		this.clock.tick(500);
 
@@ -345,7 +347,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// assert
-		assert.ok(sap.ui.getCore().byId('lastEnabledButton').$().is(":focus"), 'The last enabled button should be focused');
+		assert.ok(Core.byId('lastEnabledButton').$().is(":focus"), 'The last enabled button should be focused');
 
 		// cleanup
 		oActionSelect.destroy();
@@ -362,7 +364,7 @@ sap.ui.define([
 				]
 			});
 			this.oActionSelect.placeAt("actionselect-content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oActionSelect.destroy();
@@ -383,7 +385,7 @@ sap.ui.define([
 
 	QUnit.module("Accessibility", {
 		beforeEach: function () {
-			this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			this._oRb = Core.getLibraryResourceBundle("sap.m");
 			this.oActionSelect = new ActionSelect({
 				items: [
 					new Item()
@@ -394,7 +396,7 @@ sap.ui.define([
 			});
 			this.oActionSelect.placeAt("actionselect-content");
 			this.oPicker = this.oActionSelect.getPicker();
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oActionSelect.destroy();
@@ -403,7 +405,7 @@ sap.ui.define([
 			return this.oPicker.getAriaLabelledBy().indexOf(this.oActionSelect._getTutorMessageId());
 		},
 		getTutorMessageText: function(iTutorMessageIndex) {
-			return sap.ui.getCore().byId(this.oPicker.getAriaLabelledBy()[iTutorMessageIndex]).getText();
+			return Core.byId(this.oPicker.getAriaLabelledBy()[iTutorMessageIndex]).getText();
 		},
 		assertTutorMessageIndexValue: function(assert, iTutorMessageIndex) {
 			assert.strictEqual(iTutorMessageIndex, this.oPicker.getAriaLabelledBy().length - 1, "Tutor message id should be at the end of ariaLabelledBy");
@@ -416,7 +418,7 @@ sap.ui.define([
 
 		// act
 		this.oActionSelect.open();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		var iTutorMessageIndex = this.getTutorMessageIndex();
@@ -438,7 +440,7 @@ sap.ui.define([
 	QUnit.test("A tutor message should be added and removed accordingly if buttons are programmatically added/removed", function (assert) {
 		this.oActionSelect.removeAllButtons();
 		this.oActionSelect.open();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		var iTutorMessageIndex =  this.getTutorMessageIndex();
@@ -448,7 +450,8 @@ sap.ui.define([
 
 		this.oActionSelect.addButton(new Button({ text: "text" }));
 		this.oActionSelect.open();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
+		this.clock.tick(500);
 
 		// assert
 		iTutorMessageIndex =  this.getTutorMessageIndex();

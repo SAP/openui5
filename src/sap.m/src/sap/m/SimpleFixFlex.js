@@ -53,7 +53,7 @@ function (Control, ResizeHandler /**, SimpleFixFlexRenderer */) {
 				*/
 				flexContent: {
 					type: "sap.ui.core.Control",
-					multiple: false
+					multiple: true
 				}
 			},
 			properties: {
