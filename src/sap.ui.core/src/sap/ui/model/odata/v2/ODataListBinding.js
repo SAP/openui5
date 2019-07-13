@@ -20,7 +20,8 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
 	"sap/base/assert",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/isEmptyObject"
 ],
 		function(
 			Context,
@@ -39,7 +40,8 @@ sap.ui.define([
 			deepEqual,
 			Log,
 			assert,
-			jQuery
+			jQuery,
+			isEmptyObject
 		) {
 	"use strict";
 
@@ -1116,7 +1118,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.abortPendingRequest = function(bAbortCountRequest) {
-		if (!jQuery.isEmptyObject(this.mRequestHandles)) {
+		if (!isEmptyObject(this.mRequestHandles)) {
 			this.bSkipDataEvents = true;
 			jQuery.each(this.mRequestHandles, function(sPath, oRequestHandle){
 				oRequestHandle.abort();

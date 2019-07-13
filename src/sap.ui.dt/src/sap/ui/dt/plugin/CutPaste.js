@@ -8,14 +8,16 @@ sap.ui.define([
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/dt/Util",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/Device"
 ], function(
 	Plugin,
 	ElementMover,
 	OverlayUtil,
 	DtUtil,
 	OverlayRegistry,
-	KeyCodes
+	KeyCodes,
+	Device
 ) {
 	"use strict";
 
@@ -123,7 +125,7 @@ sap.ui.define([
 		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 
 		// on macintosh os cmd-key is used instead of ctrl-key
-		var bCtrlKey = sap.ui.Device.os.macintosh ? oEvent.metaKey : oEvent.ctrlKey;
+		var bCtrlKey = Device.os.macintosh ? oEvent.metaKey : oEvent.ctrlKey;
 
 		if ((oEvent.keyCode === KeyCodes.X) && (oEvent.shiftKey === false) && (oEvent.altKey === false) && (bCtrlKey === true)) {
 			// CTRL+X
@@ -233,4 +235,4 @@ sap.ui.define([
 	};
 
 	return CutPaste;
-}, /* bExport= */true);
+});

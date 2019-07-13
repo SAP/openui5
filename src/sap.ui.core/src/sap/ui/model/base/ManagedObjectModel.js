@@ -966,7 +966,7 @@ sap.ui.define([
 			this.sUpdateTimer = null;
 		}
 		var aBindings = this.aBindings.slice(0);
-		jQuery.each(aBindings, function (iIndex, oBinding) {
+		aBindings.forEach(function (oBinding) {
 			if (!fnFilter || fnFilter(oBinding)) {
 				oBinding.checkUpdate(bForceUpdate);
 			}

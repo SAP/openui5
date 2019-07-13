@@ -5,8 +5,9 @@
 sap.ui.define([
 	"sap/ui/layout/cssgrid/GridLayoutBase",
 	"sap/ui/layout/cssgrid/GridSettings",
-	"sap/ui/Device"
-], function (GridLayoutBase, GridSettings, Device) {
+	"sap/ui/Device",
+	"sap/ui/thirdparty/jquery"
+], function (GridLayoutBase, GridSettings, Device, jQuery) {
 	"use strict";
 
 	var SPAN_PATTERN = /^([X][L](?:[1-9]|1[0-2]))? ?([L](?:[1-9]|1[0-2]))? ?([M](?:[1-9]|1[0-2]))? ?([S](?:[1-9]|1[0-2]))?$/i;

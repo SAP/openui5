@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/util/Storage",
 	"sap/ui/core/syncStyleClass",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	moduleTreeHelper,
 	Device,
@@ -35,7 +36,8 @@ sap.ui.define([
 	mobileLibrary,
 	Storage,
 	syncStyleClass,
-	Log
+	Log,
+	jQuery
 ) {
 	"use strict";
 
@@ -714,7 +716,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_generateLocalizedBuildDate: function (sBuildTimestamp) {
-			var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern: "dd.MM.yyyy HH:mm:ss"}),
+			var oDateFormat = DateFormat.getDateInstance({pattern: "dd.MM.yyyy HH:mm:ss"}),
 				sBuildDate = oDateFormat.format(this._convertBuildDate(sBuildTimestamp));
 
 			return this._getText("TechInfo.VersionBuildTime.Text", sBuildDate);

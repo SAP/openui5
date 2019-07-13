@@ -542,7 +542,7 @@ function(
 			oButton.attachEvent("_change", oParent._syncSelect, oParent);
 			oButton.attachEvent("_change", oParent._fireChangeEvent, oParent);
 
-			var fnOriginalSetEnabled = sap.m.Button.prototype.setEnabled;
+			var fnOriginalSetEnabled = Button.prototype.setEnabled;
 			oButton.setEnabled = function (bEnabled) {
 				oButton.$().toggleClass("sapMSegBBtnDis", !bEnabled)
 					.toggleClass("sapMFocusable", bEnabled);
@@ -551,7 +551,7 @@ function(
 			};
 
 			oButton.setVisible = function (bVisible) {
-				sap.m.Button.prototype.setVisible.apply(this, arguments);
+				Button.prototype.setVisible.apply(this, arguments);
 				oParent.invalidate();
 			};
 		}

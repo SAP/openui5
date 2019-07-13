@@ -730,4 +730,4 @@ sap.ui.define([
 	};
 
 	return ContextMenu;
-}, /* bExport= */ true);
+});

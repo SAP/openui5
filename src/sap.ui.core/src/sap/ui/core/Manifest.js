@@ -13,7 +13,8 @@ sap.ui.define([
 	'sap/base/i18n/ResourceBundle',
 	'sap/base/util/uid',
 	'sap/base/util/isPlainObject',
-	'sap/base/util/LoaderExtensions'
+	'sap/base/util/LoaderExtensions',
+	"sap/base/util/isEmptyObject"
 ],
 	function(
 		jQuery,
@@ -25,7 +26,8 @@ sap.ui.define([
 		ResourceBundle,
 		uid,
 		isPlainObject,
-		LoaderExtensions
+		LoaderExtensions,
+		isEmptyObject
 	) {
 	"use strict";
 
@@ -695,7 +697,7 @@ sap.ui.define([
 			// activate the customizing configuration
 			var oUI5Manifest = this.getEntry("sap.ui5", true),
 				mExtensions = oUI5Manifest && oUI5Manifest["extends"] && oUI5Manifest["extends"].extensions;
-			if (!jQuery.isEmptyObject(mExtensions)) {
+			if (!isEmptyObject(mExtensions)) {
 				var CustomizingConfiguration = sap.ui.requireSync('sap/ui/core/CustomizingConfiguration');
 				if (!oInstance) {
 					CustomizingConfiguration.activateForComponent(this.getComponentName());

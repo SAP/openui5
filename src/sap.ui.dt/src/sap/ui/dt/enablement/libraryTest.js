@@ -7,7 +7,8 @@
 sap.ui.define([
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/jquery"
+	"jquery.sap.global",
+	"jquery.sap.sjax"
 ], function (
 	ResourceModel,
 	JSONModel,
@@ -56,7 +57,7 @@ sap.ui.define([
 				var aElements = oLibrary.controls.concat(oLibrary.elements);
 				sLibrary = sTestLibrary;
 				sap.ui.require(aElements.map(function(s) {
-					//TODO: global jquery call found
+					// TODO: migration not possible. jQuery.sap.getResourceName is deprecated and private.
 					return jQuery.sap.getResourceName(s, "");
 				}), function() {
 					//all controls are loaded, now all libs are loaded
@@ -197,7 +198,7 @@ sap.ui.define([
 					Object.keys(mEntry.icons).forEach(function(sKey) {
 						var sIcon = mEntry.icons[sKey];
 						assert.strictEqual(typeof sIcon, "string", "palette/icons/" + sKey + " entry defines icon path " + sIcon);
-						//TODO: global jquery call found
+						// TODO: migration not possible. jQuery.sap.sjax is deprecated. Please use native <code>XMLHttpRequest</code>
 						var oResult = jQuery.sap.sjax({
 							url: sap.ui.require.toUrl(sIcon) + ""
 						});
@@ -215,7 +216,7 @@ sap.ui.define([
 				if (mEntry.create) { //icons in palette optional
 					var sCreateTemplate = mEntry.create;
 					assert.strictEqual(typeof sCreateTemplate, "string", "templates/create entry defines fragment path to " + sCreateTemplate);
-					//TODO: global jquery call found
+					// TODO: migration not possible. jQuery.sap.sjax is deprecated. Please use native <code>XMLHttpRequest</code>
 					var oData = jQuery.sap.sjax({url: sap.ui.require.toUrl(sCreateTemplate) + ""});
 					assert.ok(oData.data.documentElement && oData.data.documentElement.localName === "FragmentDefinition", "File " + sCreateTemplate + " exists and starts with a FragmentDefinition node");
 					/*

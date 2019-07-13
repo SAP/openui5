@@ -8,16 +8,24 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/m/OverflowToolbar',
 	'sap/m/OverflowToolbarAssociativePopover',
-	"./ToolHeaderRenderer"
+	"./ToolHeaderRenderer",
+	"sap/ui/Device",
+	"sap/m/library"
 ],
 	function(
 		library,
 		Control,
 		OverflowToolbar,
 		OverflowToolbarAssociativePopover,
-		ToolHeaderRenderer
+		ToolHeaderRenderer,
+		Device,
+		mobileLibrary
 	) {
 		"use strict";
+
+
+		// shortcut for sap.m.PlacementType
+		var PlacementType = mobileLibrary.PlacementType;
 
 
 		/**
@@ -103,13 +111,13 @@ sap.ui.define([
 				// Create the Popover
 				popover = new OverflowToolbarAssociativePopover(this.getId() + "-popover", {
 					showHeader: false,
-					showArrow: sap.ui.Device.system.phone ? false : true,
+					showArrow: Device.system.phone ? false : true,
 					modal: false,
-					horizontalScrolling: sap.ui.Device.system.phone ? false : true,
-					contentWidth: sap.ui.Device.system.phone ? "100%" : "auto"
+					horizontalScrolling: Device.system.phone ? false : true,
+					contentWidth: Device.system.phone ? "100%" : "auto"
 				}).addStyleClass('sapTntToolHeaderPopover sapContrast sapContrastPlus');
 
-				if (sap.ui.Device.system.phone) {
+				if (Device.system.phone) {
 					// This will trigger when the toolbar is in the header/footer, because the position is known in advance (strictly top/bottom)
 					popover.attachBeforeOpen(this._shiftPopupShadow, this);
 
@@ -133,9 +141,9 @@ sap.ui.define([
 		 * @override
 		 */
 		ToolHeader.prototype._getBestActionSheetPlacement = function() {
-			return sap.m.PlacementType.Bottom;
+			return PlacementType.Bottom;
 		};
 
 		return ToolHeader;
 
-	}, /* bExport= */ true);
+	});

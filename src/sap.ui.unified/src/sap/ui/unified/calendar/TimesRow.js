@@ -16,7 +16,8 @@ sap.ui.define([
 	"./TimesRowRenderer",
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/util/deepEqual",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/unified/DateRange"
 ], function(
 	Control,
 	LocaleData,
@@ -30,7 +31,8 @@ sap.ui.define([
 	TimesRowRenderer,
 	containsOrEquals,
 	deepEqual,
-	jQuery
+	jQuery,
+	DateRange
 ) {
 	"use strict";
 
@@ -226,7 +228,7 @@ sap.ui.define([
 	// overwrite invalidate to recognize changes on selectedDates
 	TimesRow.prototype.invalidate = function(oOrigin) {
 
-		if (!this._bDateRangeChanged && (!oOrigin || !(oOrigin instanceof sap.ui.unified.DateRange))) {
+		if (!this._bDateRangeChanged && (!oOrigin || !(oOrigin instanceof DateRange))) {
 			Control.prototype.invalidate.apply(this, arguments);
 		} else if (this.getDomRef() && !this._sInvalidateTimes) {
 			// DateRange changed -> only rerender months
@@ -1232,7 +1234,7 @@ sap.ui.define([
 					oStartDate = this._getIntervalStart(oStartDate);
 				}
 			} else {
-				oDateRange = new sap.ui.unified.DateRange();
+				oDateRange = new DateRange();
 				oAggOwner.addAggregation("selectedDates", oDateRange, true); // no re-rendering
 			}
 
@@ -1284,7 +1286,7 @@ sap.ui.define([
 					}
 				} else {
 					// not selected -> select
-					oDateRange = new sap.ui.unified.DateRange({startDate: CalendarUtils._createLocalDate(new Date(oDate.getTime()), true)});
+					oDateRange = new DateRange({startDate: CalendarUtils._createLocalDate(new Date(oDate.getTime()), true)});
 					oAggOwner.addAggregation("selectedDates", oDateRange, true); // no re-rendering
 				}
 				sYyyyMMddHHmm = this._oFormatYyyyMMddHHmm.format(oDate.getJSDate(), true);

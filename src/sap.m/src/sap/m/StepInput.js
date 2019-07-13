@@ -463,10 +463,10 @@ function(
 		StepInput.prototype.setValidationMode = function (sValidationMode) {
 			if (this.getValidationMode() !== sValidationMode) {
 				switch (sValidationMode) {
-					case sap.m.StepInputValidationMode.FocusOut:
+					case StepInputValidationMode.FocusOut:
 						this._detachLiveChange();
 						break;
-					case sap.m.StepInputValidationMode.LiveChange:
+					case StepInputValidationMode.LiveChange:
 						this._attachLiveChange();
 						break;
 				}

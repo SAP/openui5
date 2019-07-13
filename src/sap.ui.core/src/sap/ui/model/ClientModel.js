@@ -10,14 +10,16 @@ sap.ui.define([
 	'./ClientListBinding',
 	'./ClientPropertyBinding',
 	'./ClientTreeBinding',
-	'./Model'
+	'./Model',
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		ClientContextBinding,
 		ClientListBinding,
 		ClientPropertyBinding,
 		ClientTreeBinding,
-		Model
+		Model,
+		jQuery
 	) {
 	"use strict";
 

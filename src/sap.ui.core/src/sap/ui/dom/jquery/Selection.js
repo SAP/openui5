@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define([], function() {
+sap.ui.define(["sap/ui/thirdparty/jquery"], function(jQuery) {
 	"use strict";
 
 	/**

@@ -47,6 +47,9 @@ sap.ui.define([
 
 
 
+	// shortcut for sap.m.ButtonType
+	var ButtonType = library.ButtonType;
+
 	// shortcut for sap.m.ToolbarDesign
 	var ToolbarDesign = library.ToolbarDesign;
 
@@ -415,7 +418,7 @@ sap.ui.define([
 					Device.resize.detachHandler(that._fnHandleResize);
 					that.fireConfirm();
 				},
-				type : sap.m.ButtonType.Emphasized
+				type : ButtonType.Emphasized
 			}),
 			rightButton : new Button(this.getId() + "-buttonCancel", {
 				text: this._oRb.getText("PERSODIALOG_CANCEL"),

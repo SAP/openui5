@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/SearchField",
 	"sap/m/Text",
-	"sap/m/RatingIndicator"
+	"sap/m/RatingIndicator",
+	"./TableRenderer"
 ],
 function(
 	Control,

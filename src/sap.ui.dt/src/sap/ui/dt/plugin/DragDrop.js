@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/Device",
 	"sap/ui/qunit/QUnitUtils"
 ],
 function(
@@ -17,7 +18,8 @@ function(
 	DOMUtil,
 	OverlayUtil,
 	OverlayRegistry,
-	jQuery
+	jQuery,
+	Device
 ) {
 	"use strict";
 
@@ -120,7 +122,7 @@ function(
 	DragDrop.prototype.registerAggregationOverlay = function(oAggregationOverlay) {
 		oAggregationOverlay.attachTargetZoneChange(this._onAggregationTargetZoneChange, this);
 
-		if (!sap.ui.Device.browser.webkit) {
+		if (!Device.browser.webkit) {
 			this._attachDragScrollHandler(oAggregationOverlay);
 		}
 	};
@@ -144,7 +146,7 @@ function(
 	DragDrop.prototype.deregisterAggregationOverlay = function(oAggregationOverlay) {
 		oAggregationOverlay.detachTargetZoneChange(this._onAggregationTargetZoneChange, this);
 
-		if (!sap.ui.Device.browser.webkit) {
+		if (!Device.browser.webkit) {
 			this._removeDragScrollHandler(oAggregationOverlay);
 			this._clearScrollIntervalFor(oAggregationOverlay.$().attr("id"));
 		}
@@ -273,7 +275,7 @@ function(
 		oEvent.stopPropagation();
 
 		// Fix for Firfox - Firefox only fires drag events when data is set
-		if (sap.ui.Device.browser.firefox && oEvent && oEvent.originalEvent && oEvent.originalEvent.dataTransfer && oEvent.originalEvent.dataTransfer.setData) {
+		if (Device.browser.firefox && oEvent && oEvent.originalEvent && oEvent.originalEvent.dataTransfer && oEvent.originalEvent.dataTransfer.setData) {
 			oEvent.originalEvent.dataTransfer.setData('text/plain', '');
 		}
 
@@ -435,8 +437,8 @@ function(
 			oEvent.originalEvent.dataTransfer.effectAllowed = "move";
 			oEvent.originalEvent.dataTransfer.dropEffect = "move";
 			// IE and Edge do no support dataTransfer.setDragImage on D&D event
-			if (!sap.ui.Device.browser.msie && !sap.ui.Device.browser.edge
-				&& !sap.ui.Device.browser.msie && oEvent.originalEvent.dataTransfer.setDragImage) {
+			if (!Device.browser.msie && !Device.browser.edge
+				&& !Device.browser.msie && oEvent.originalEvent.dataTransfer.setDragImage) {
 				this._$ghost = this.createGhost(oOverlay, oEvent);
 
 				// ghost should be visible to set it as dragImage
@@ -817,4 +819,4 @@ function(
 	};
 
 	return DragDrop;
-}, /* bExport= */ true);
+});

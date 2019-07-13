@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([],
-	function () {
+sap.ui.define(["sap/ui/Device"],
+	function (Device) {
 		'use strict';
 
 		/**
@@ -49,7 +49,7 @@ sap.ui.define([],
 		};
 
 		ToolPageRenderer.renderContentWrapper = function (rm, control) {
-			var isDesktop = sap.ui.Device.system.desktop;
+			var isDesktop = Device.system.desktop;
 
 			rm.write('<div class="sapTntToolPageContentWrapper');
 
@@ -68,7 +68,7 @@ sap.ui.define([],
 				return;
 			}
 
-			var isDesktop = sap.ui.Device.system.desktop;
+			var isDesktop = Device.system.desktop;
 			var sideContentAggregation = control.getAggregation('sideContent');
 			var isSideExpanded = control.getSideExpanded();
 

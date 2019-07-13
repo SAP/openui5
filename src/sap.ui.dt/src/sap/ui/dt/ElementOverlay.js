@@ -947,4 +947,4 @@ function (
 	};
 
 	return ElementOverlay;
-}, /* bExport= */ true);
+});

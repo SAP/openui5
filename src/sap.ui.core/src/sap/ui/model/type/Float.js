@@ -9,7 +9,8 @@ sap.ui.define([
 	'sap/ui/model/FormatException',
 	'sap/ui/model/ParseException',
 	'sap/ui/model/ValidateException',
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/isEmptyObject"
 ],
 	function(
 		NumberFormat,
@@ -17,7 +18,8 @@ sap.ui.define([
 		FormatException,
 		ParseException,
 		ValidateException,
-		jQuery
+		jQuery,
+		isEmptyObject
 	) {
 	"use strict";
 
@@ -149,7 +151,7 @@ sap.ui.define([
 		var oSourceOptions = this.oFormatOptions.source;
 		this.oOutputFormat = NumberFormat.getFloatInstance(this.oFormatOptions);
 		if (oSourceOptions) {
-			if (jQuery.isEmptyObject(oSourceOptions)) {
+			if (isEmptyObject(oSourceOptions)) {
 				oSourceOptions = {
 					groupingEnabled: false,
 					groupingSeparator: ",",

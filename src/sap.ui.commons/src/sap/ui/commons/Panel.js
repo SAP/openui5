@@ -3,7 +3,7 @@
  */
 
 // Provides control sap.ui.commons.Panel.
-sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/assert', './library', 'sap/ui/core/Control', './PanelRenderer', 'sap/ui/core/ResizeHandler', 'sap/ui/core/Title'],
+sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/assert', './library', 'sap/ui/core/Control', './PanelRenderer', 'sap/ui/core/ResizeHandler', 'sap/ui/core/Title', "sap/ui/dom/jquery/scrollLeftRTL" ], // jQuery Plugin "scrollLeftRTL"
 	function(jQuery, assert, library, Control, PanelRenderer, ResizeHandler, Title) {
 	"use strict";
 
@@ -568,6 +568,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/assert', './library', 'sap/
 		var scrollLeft = 0;
 		if (this._oScrollDomRef) {
 			if (sap.ui.getCore().getConfiguration().getRTL()) {
+				// jQuery Plugin "scrollLeftRTL"
 				scrollLeft = jQuery(this._oScrollDomRef).scrollLeftRTL();
 			} else {
 				scrollLeft = jQuery(this._oScrollDomRef).scrollLeft();
@@ -591,6 +592,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/assert', './library', 'sap/
 		this.setProperty("scrollLeft", iPosition, true);
 		if (this._oScrollDomRef) {
 			if (sap.ui.getCore().getConfiguration().getRTL()) {
+				// jQuery Plugin "scrollLeftRTL"
 				jQuery(this._oScrollDomRef).scrollLeftRTL(iPosition);
 			} else {
 				jQuery(this._oScrollDomRef).scrollLeft(iPosition);

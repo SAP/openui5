@@ -9,9 +9,10 @@ sap.ui.define([
 	'sap/ui/Device',
 	'./CalendarLegendRenderer',
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/unified/CalendarLegendItem"
 ],
-	function(Control, library, Device, CalendarLegendRenderer, Log, jQuery) {
+	function(Control, library, Device, CalendarLegendRenderer, Log, jQuery, CalendarLegendItem) {
 	"use strict";
 
 	// shortcut for sap.ui.unified.CalendarDayType
@@ -125,7 +126,7 @@ sap.ui.define([
 		}
 
 		for (i = 0; i < aStandardItems.length; i++) {
-			var oItem = new sap.ui.unified.CalendarLegendItem(sId + "-" + aStandardItems[i], {
+			var oItem = new CalendarLegendItem(sId + "-" + aStandardItems[i], {
 				text: rb.getText(CalendarLegend._Standard_Items_TextKeys[aStandardItems[i]])
 			});
 			this.addAggregation("_standardItems", oItem);

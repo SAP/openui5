@@ -4,8 +4,8 @@
 /**
  * Defines miscellaneous support rules.
  */
-sap.ui.define(["sap/ui/support/library", "./CoreHelper.support"],
-	function(SupportLib, CoreHelper) {
+sap.ui.define(["sap/ui/support/library", "./CoreHelper.support", "sap/ui/thirdparty/jquery", "sap/ui/dom/jquery/control"], // jQuery Plugin "control"
+	function(SupportLib, CoreHelper, jQuery) {
 	"use strict";
 
 	// support rules can get loaded within a ui5 version which does not have module "sap/base/Log" yet
@@ -152,6 +152,7 @@ sap.ui.define(["sap/ui/support/library", "./CoreHelper.support"],
 					matchedNodes.forEach(function (node) {
 						var hasUI5Parent = CoreHelper.nodeHasUI5ParentControl(node, oScope);
 						if (hasUI5Parent) {
+							// jQuery Plugin "control"
 							var ui5Control = jQuery(node).control()[0];
 
 							if (!controlCustomCssHashMap.hasOwnProperty(ui5Control.getId())) {

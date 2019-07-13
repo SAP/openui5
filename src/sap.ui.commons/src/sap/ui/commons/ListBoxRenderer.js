@@ -3,7 +3,7 @@
  */
 
 // Provides default renderer for control sap.ui.commons.ListBox
-sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/security/encodeXML', 'sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/ui/Device', 'jquery.sap.strings'],
+sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/security/encodeXML', 'sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/ui/Device'],
 	function(jQuery, encodeXML, Renderer, IconPool, Device) {
 	"use strict";
 

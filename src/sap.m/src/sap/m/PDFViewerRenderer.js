@@ -4,8 +4,8 @@
 
  /* global ActiveXObject:false */
 
-sap.ui.define(['sap/ui/Device'],
-	function (Device) {
+sap.ui.define(['sap/ui/Device', "sap/base/Log"],
+	function (Device, Log) {
 		"use strict";
 
 		function shouldShowToolbar(oControl) {
@@ -116,7 +116,7 @@ sap.ui.define(['sap/ui/Device'],
 			} else {
 				this.renderErrorContent(oRm, oControl);
 				if (!PDFViewerRenderer._isPdfPluginEnabled()) {
-					jQuery.sap.log.warning("The PDF plug-in is not available on this device.");
+					Log.warning("The PDF plug-in is not available on this device.");
 					oControl.fireEvent("error", {}, true);
 				}
 			}

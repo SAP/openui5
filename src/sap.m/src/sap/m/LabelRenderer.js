@@ -3,12 +3,15 @@
  */
 
 // Provides the default renderer for control sap.m.Label
-sap.ui.define(['sap/ui/core/Renderer', 'sap/m/library', 'sap/ui/core/library', 'sap/m/HyphenationSupport'],
-	function(Renderer, library, coreLibrary, HyphenationSupport) {
+sap.ui.define(['sap/ui/core/Renderer', 'sap/m/library', 'sap/ui/core/library', 'sap/m/HyphenationSupport', "sap/ui/core/LabelEnablement"],
+	function(Renderer, library, coreLibrary, HyphenationSupport, LabelEnablement) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
+
+	// shortcut for sap.ui.core.VerticalAlign
+	var VerticalAlign = coreLibrary.VerticalAlign;
 
 	// shortcut for sap.m.LabelDesign
 	var LabelDesign = library.LabelDesign;
@@ -63,7 +66,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/m/library', 'sap/ui/core/library', '
 		}
 
 		if (sLabelForRendering) {
-			sap.ui.core.LabelEnablement.writeLabelForAttribute(rm, oLabel);
+			LabelEnablement.writeLabelForAttribute(rm, oLabel);
 		} else if (oLabel.getParent() instanceof sap.m.Toolbar) {
 			rm.class("sapMLabelTBHeader");
 		}
@@ -100,7 +103,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/m/library', 'sap/ui/core/library', '
 			rm.class("sapMLabelDisplayOnly");
 		}
 
-		if (sVerticalAlign != sap.ui.core.VerticalAlign.Inherit) {
+		if (sVerticalAlign != VerticalAlign.Inherit) {
 			rm.style("vertical-align", sVerticalAlign.toLowerCase());
 		}
 

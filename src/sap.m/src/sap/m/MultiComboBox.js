@@ -1996,11 +1996,11 @@ function(
 		var oToken = oEvent.getParameter("token");
 		var oItem = null;
 
-		if (sType !== sap.m.Tokenizer.TokenChangeType.Removed && sType !== sap.m.Tokenizer.TokenChangeType.Added) {
+		if (sType !== Tokenizer.TokenChangeType.Removed && sType !== Tokenizer.TokenChangeType.Added) {
 			return;
 		}
 
-		if (sType === sap.m.Tokenizer.TokenChangeType.Removed) {
+		if (sType === Tokenizer.TokenChangeType.Removed) {
 
 			oItem = (oToken && this._getItemByToken(oToken));
 
@@ -2225,7 +2225,7 @@ function(
 		if (this.getCursorPosition() === 0 && !this._isCompleteTextSelected()) {
 
 			if (oEvent.srcControl === this) {
-				sap.m.Tokenizer.prototype.onsapprevious.apply(this._oTokenizer, arguments);
+				Tokenizer.prototype.onsapprevious.apply(this._oTokenizer, arguments);
 			}
 		}
 	};

@@ -4,7 +4,7 @@
 
 // Provides class sap.ui.core.support.Plugin
 sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/util/uid"],
-	function(BaseObject, jQueryDOM, uid) {
+	function(BaseObject, jQuery, uid) {
 	"use strict";
 
 
@@ -166,7 +166,7 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/util/
 	 */
 	Plugin.prototype.$ = function(sSuffix){
 		if (this.isToolPlugin()) {
-			var jRef = jQueryDOM(document.getElementById(sSuffix ? this.getId() + "-" + sSuffix : this.getId()));
+			var jRef = jQuery(document.getElementById(sSuffix ? this.getId() + "-" + sSuffix : this.getId()));
 			if (jRef.length == 0 && !sSuffix) {
 				jRef = jQuery("<DIV/>", {id:this.getId()});
 				jRef.appendTo(jQuery(".sapUiSupportCntnt"));

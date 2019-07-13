@@ -4,7 +4,7 @@
 
 // Provides control sap.m.PullToRefresh.
 sap.ui.define([
-	'jquery.sap.global',
+	"sap/ui/thirdparty/jquery",
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/Device',
@@ -82,7 +82,7 @@ sap.ui.define([
 	}});
 
 	PullToRefresh.prototype.init = function(){
-		//TODO: global jquery call found
+		// TODO: migration not possible. jQuery.sap.simulateMobileOnDesktop is a testing flag which should not be used.
 		this._bTouchMode = Device.support.touch && !Device.system.combi || jQuery.sap.simulateMobileOnDesktop;
 		this._iState = 0; // 0 - normal; 1 - release to refresh; 2 - loading
 	};

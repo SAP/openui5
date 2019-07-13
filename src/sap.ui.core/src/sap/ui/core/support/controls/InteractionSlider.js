@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/base/ManagedObject', "sap/ui/events/KeyCodes"],
-    function(ManagedObject, KeyCodes) {
+sap.ui.define(['sap/ui/base/ManagedObject', "sap/ui/events/KeyCodes", "sap/ui/thirdparty/jquery"],
+    function(ManagedObject, KeyCodes, jQuery) {
         'use strict';
         var InteractionSlider = ManagedObject.extend("sap.ui.core.support.controls.InteractionSlider", {
             constructor: function () {

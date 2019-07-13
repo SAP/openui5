@@ -4,8 +4,8 @@
 /**
  * Defines support rules related to the view.
  */
-sap.ui.define(["sap/ui/support/library", "sap/ui/core/Element"],
-	function(SupportLib, Element) {
+sap.ui.define(["sap/ui/support/library", "sap/ui/core/Element", "sap/ui/thirdparty/jquery", "sap/base/util/isEmptyObject"],
+	function(SupportLib, Element, jQuery, isEmptyObject) {
 	"use strict";
 
 	// shortcuts
@@ -266,7 +266,7 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/core/Element"],
 				for (var sAggregation in mAggregations) {
 					// if aggregation is deprecated and contains elements
 					if (mAggregations[sAggregation].deprecated
-						&& !jQuery.isEmptyObject(oElement.getAggregation(sAggregation))) {
+						&& !isEmptyObject(oElement.getAggregation(sAggregation))) {
 
 						oIssueManager.addIssue({
 							severity: Severity.Medium,
@@ -306,7 +306,7 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/core/Element"],
 				for (var sAssociation in mAssociations) {
 					// if association is deprecated and set by developer
 					if (mAssociations[sAssociation].deprecated
-						&& !jQuery.isEmptyObject(oElement.getAssociation(sAssociation))) {
+						&& !isEmptyObject(oElement.getAssociation(sAssociation))) {
 
 						oIssueManager.addIssue({
 							severity: Severity.Medium,

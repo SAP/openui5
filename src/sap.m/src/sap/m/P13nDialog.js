@@ -4,8 +4,8 @@
 
 // Provides control sap.m.P13nDialog.
 sap.ui.define([
-	'./Dialog', './library', 'sap/ui/core/EnabledPropagator', './DialogRenderer', 'sap/ui/core/library', 'sap/ui/Device', './Bar', './Button', './Title', 'sap/m/OverflowToolbarLayoutData', 'sap/ui/base/ManagedObjectObserver', "sap/ui/thirdparty/jquery", "sap/base/Log"
-], function(Dialog, library, EnabledPropagator, DialogRenderer, coreLibrary, Device, Bar, Button, Title, OverflowToolbarLayoutData, ManagedObjectObserver, jQuery, Log) {
+	'./Dialog', './library', 'sap/ui/core/EnabledPropagator', './DialogRenderer', 'sap/ui/core/library', 'sap/ui/Device', './Bar', './Button', './Title', 'sap/m/OverflowToolbarLayoutData', 'sap/ui/base/ManagedObjectObserver', "sap/ui/thirdparty/jquery", "sap/base/Log", "sap/base/util/isEmptyObject"
+], function(Dialog, library, EnabledPropagator, DialogRenderer, coreLibrary, Device, Bar, Button, Title, OverflowToolbarLayoutData, ManagedObjectObserver, jQuery, Log, isEmptyObject) {
 	"use strict";
 
 	// shortcut for sap.m.OverflowToolbarPriority
@@ -504,7 +504,7 @@ sap.ui.define([
 	 */
 	P13nDialog.prototype._callValidationExecutor = function() {
 		var fValidate = this.getValidationExecutor();
-		if (fValidate && !jQuery.isEmptyObject(this._mValidationListener)) {
+		if (fValidate && !isEmptyObject(this._mValidationListener)) {
 			var that = this;
 			fValidate(this._getPayloadOfPanels()).then(function(aValidationResult) {
 				var oResult = that._distributeValidationResult(aValidationResult);

@@ -14,7 +14,11 @@ sap.ui.define([
     'sap/ui/core/delegate/ItemNavigation',
     './CarouselRenderer',
     'sap/ui/Device',
-    'sap/ui/events/KeyCodes'
+    'sap/ui/events/KeyCodes',
+    // jQuery custom selectors ":sapFocusable"
+    "sap/ui/dom/jquery/Selectors",
+    // jQuery Plugin "firstFocusableDomRef"
+    "sap/ui/dom/jquery/Focusable"
 ],
 	function(jQuery, Log, capitalize, containsOrEquals, library, Control, ResizeHandler, ItemNavigation, CarouselRenderer, Device, KeyCodes) {
 	"use strict";
@@ -282,7 +286,9 @@ sap.ui.define([
 	Carousel.prototype.onsaptabnext = function(oEvent) {
 		var $this = this.$();
 		if (this._bActionMode) {
+			// jQuery Plugin "lastFocusableDomRef"
 			if ($this.find(".sapUiCrslScl").lastFocusableDomRef() === oEvent.target) {
+				// jQuery Plugin "firstFocusableDomRef"
 				$this.find(".sapUiCrslScl").firstFocusableDomRef().focus();
 				oEvent.preventDefault();
 				oEvent.stopPropagation();
@@ -305,7 +311,9 @@ sap.ui.define([
 	Carousel.prototype.onsaptabprevious = function(oEvent) {
 		var $this = this.$();
 		if (this._bActionMode) {
+			// jQuery Plugin "firstFocusableDomRef"
 			if ($this.find(".sapUiCrslScl").firstFocusableDomRef() === oEvent.target) {
+				// jQuery Plugin "lastFocusableDomRef"
 				$this.find(".sapUiCrslScl").lastFocusableDomRef().focus();
 				oEvent.preventDefault();
 				oEvent.stopPropagation();
@@ -371,6 +379,7 @@ sap.ui.define([
 			oEvent.keyCode == KeyCodes.F2 ||
 			oEvent.keyCode == KeyCodes.ENTER) {
 			if ($this.find(".sapUiCrslScl li:focus").length > 0) {
+				// jQuery custom selectors ":sapFocusable"
 				this._enterActionMode($this.find(".sapUiCrslScl li:focus :sapFocusable").get(0));
 				oEvent.preventDefault();
 				oEvent.stopPropagation();

@@ -13,7 +13,6 @@
  *
  */
 sap.ui.define([
-	'sap/ui/thirdparty/jquery',
 	'sap/ui/core/Control',
 	'sap/ui/core/XMLCompositeMetadata',
 	'sap/ui/model/base/ManagedObjectModel',
@@ -26,7 +25,6 @@ sap.ui.define([
 	'sap/ui/performance/Measurement'
 ],
 	function(
-		jQuery,
 		Control,
 		XMLCompositeMetadata,
 		ManagedObjectModel,

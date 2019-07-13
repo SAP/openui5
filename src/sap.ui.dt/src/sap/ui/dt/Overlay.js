@@ -927,4 +927,4 @@ function (
 	};
 
 	return Overlay;
-}, /* bExport= */ true);
+});

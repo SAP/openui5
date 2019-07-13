@@ -8,16 +8,14 @@ sap.ui.define([
 	"sap/ui/unified/Calendar",
 	"sap/ui/unified/CalendarRenderer",
 	"sap/ui/unified/calendar/Header",
-	"sap/ui/unified/DateRange",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/unified/DateRange"
 ],
 	function(
 		Renderer,
 		Calendar,
 		CalendarRenderer,
 		Header,
-		DateRange,
-		jQuery
+		DateRange
 	) {
 	"use strict";
 
@@ -85,5 +83,5 @@ sap.ui.define([
 
 	return CustomYearPicker;
 
-}, /* bExport= */ true);
+});
 

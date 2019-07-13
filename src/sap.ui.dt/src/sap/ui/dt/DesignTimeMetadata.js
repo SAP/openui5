@@ -234,4 +234,4 @@ function(
 	};
 
 	return DesignTimeMetadata;
-}, /* bExport= */ true);
+});

@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/thirdparty/jquery", "sap/base/assert"], function(jQuery, assert) {
+sap.ui.define(["sap/ui/thirdparty/jquery", "sap/base/assert", "sap/ui/dom/jquery/rect"], function(jQuery, assert) { // jQuery Plugin "rect"
 	"use strict";
 
 	/**
@@ -30,6 +30,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/base/assert"], function(jQuery, 
 		assert(!isNaN(iPosX), "iPosX must be a number");
 		assert(!isNaN(iPosY), "iPosY must be a number");
 
+		// jQuery Plugin "rect"
 		var oRect = this.rect();
 
 		if (oRect) {

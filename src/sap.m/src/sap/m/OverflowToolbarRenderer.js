@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Renderer', './ToolbarRenderer'],
-	function(Renderer, ToolbarRenderer) {
+sap.ui.define(['sap/ui/core/Renderer', './ToolbarRenderer', "sap/m/BarInPageEnabler"],
+	function(Renderer, ToolbarRenderer, BarInPageEnabler) {
 		"use strict";
 
 
@@ -16,7 +16,7 @@ sap.ui.define(['sap/ui/core/Renderer', './ToolbarRenderer'],
 		OverflowToolbarRenderer.renderBarContent = function(rm, oToolbar) {
 
 			oToolbar._getVisibleContent().forEach(function(oControl) {
-				sap.m.BarInPageEnabler.addChildClassTo(oControl,oToolbar);
+				BarInPageEnabler.addChildClassTo(oControl,oToolbar);
 				rm.renderControl(oControl);
 			});
 
@@ -27,7 +27,7 @@ sap.ui.define(['sap/ui/core/Renderer', './ToolbarRenderer'],
 
 		OverflowToolbarRenderer.renderOverflowButton = function(rm,oToolbar) {
 			var oOverflowButton = oToolbar._getOverflowButton();
-			sap.m.BarInPageEnabler.addChildClassTo(oOverflowButton,oToolbar);
+			BarInPageEnabler.addChildClassTo(oOverflowButton,oToolbar);
 			rm.renderControl(oOverflowButton);
 		};
 

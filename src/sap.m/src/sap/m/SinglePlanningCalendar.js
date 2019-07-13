@@ -21,7 +21,8 @@ sap.ui.define([
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/unified/calendar/CalendarUtils',
 	'sap/ui/unified/DateRange',
-	'sap/ui/base/ManagedObjectObserver'
+	'sap/ui/base/ManagedObjectObserver',
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	library,
@@ -41,7 +42,8 @@ function(
 	CalendarDate,
 	CalendarUtils,
 	DateRange,
-	ManagedObjectObserver
+	ManagedObjectObserver,
+	jQuery
 ) {
 	"use strict";
 

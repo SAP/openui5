@@ -4,7 +4,7 @@
 
 // Provides control sap.tnt.NavigationList
 sap.ui.define([
-	'jquery.sap.global',
+	"sap/ui/thirdparty/jquery",
 	'./library',
 	'sap/ui/core/Element',
 	'sap/ui/core/Control',
@@ -370,4 +370,4 @@ sap.ui.define([
 
 		return NavigationList;
 
-	}, /* bExport= */ true);
+	});

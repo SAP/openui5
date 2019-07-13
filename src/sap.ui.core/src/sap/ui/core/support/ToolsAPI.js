@@ -8,7 +8,8 @@ sap.ui.define([
 	'sap/ui/core/Core',
 	'sap/ui/core/ElementMetadata',
 	"sap/base/util/LoaderExtensions",
-	"sap/base/util/UriParameters"
+	"sap/base/util/UriParameters",
+	"jquery.sap.global"
 ],
 	function(
 		library,
@@ -16,7 +17,8 @@ sap.ui.define([
 		Core,
 		ElementMetadata,
 		LoaderExtensions,
-		UriParameters
+		UriParameters,
+		jQuery
 	) {
 		'use strict';
 

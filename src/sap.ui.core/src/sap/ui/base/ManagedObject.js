@@ -25,7 +25,8 @@ sap.ui.define([
 	"sap/base/util/deepClone",
 	"sap/base/util/deepEqual",
 	"sap/base/util/uid",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/isEmptyObject"
 ], function(
 	BindingParser,
 	DataType,
@@ -48,7 +49,8 @@ sap.ui.define([
 	deepClone,
 	deepEqual,
 	uid,
-	jQuery
+	jQuery,
+	isEmptyObject
 ) {
 
 	"use strict";
@@ -1066,7 +1068,7 @@ sap.ui.define([
 	ManagedObject.prototype.applySettings = function(mSettings, oScope) {
 
 		// PERFOPT: don't retrieve (expensive) JSONKeys if no settings are given
-		if ( !mSettings || jQuery.isEmptyObject(mSettings) ) {
+		if ( !mSettings || isEmptyObject(mSettings) ) {
 			return this;
 		}
 
@@ -4746,10 +4748,10 @@ sap.ui.define([
 	 * @private
 	 */
 	ManagedObject.prototype._getPropertiesToPropagate = function() {
-		var bNoOwnModels = jQuery.isEmptyObject(this.oModels),
-			bNoOwnContexts = jQuery.isEmptyObject(this.oBindingContexts),
+		var bNoOwnModels = isEmptyObject(this.oModels),
+			bNoOwnContexts = isEmptyObject(this.oBindingContexts),
 			bNoOwnListeners = this.aPropagationListeners.length === 0,
-			bNoOwnElementContexts = jQuery.isEmptyObject(this.mElementBindingContexts);
+			bNoOwnElementContexts = isEmptyObject(this.mElementBindingContexts);
 
 		function merge(empty,o1,o2,o3) {
 			// jQuery.extend ignores 'undefined' values but not 'null' values.
@@ -4809,7 +4811,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ManagedObject.prototype.hasModel = function() {
-		return !(jQuery.isEmptyObject(this.oModels) && jQuery.isEmptyObject(this.oPropagatedProperties.oModels));
+		return !(isEmptyObject(this.oModels) && isEmptyObject(this.oPropagatedProperties.oModels));
 	};
 
 	/**

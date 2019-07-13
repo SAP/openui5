@@ -498,7 +498,7 @@ sap.ui.define([
 				assert(false, "The PDF file cannot be opened with the given source. Given source: " + this.getSource());
 				return;
 			} else if (!PDFViewerRenderer._isPdfPluginEnabled()) {
-				jQuery.sap.log.warning("The PDF plug-in is not available on this device.");
+				Log.warning("The PDF plug-in is not available on this device.");
 			}
 
 			if (this._isEmbeddedModeAllowed()) {

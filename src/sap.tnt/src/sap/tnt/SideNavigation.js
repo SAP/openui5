@@ -125,7 +125,7 @@ sap.ui.define([
 				object.attachItemSelect(this._itemSelectionHandler.bind(this));
 			}
 
-			return sap.ui.base.ManagedObject.prototype.setAggregation.apply(this, arguments);
+			return Control.prototype.setAggregation.apply(this, arguments);
 		};
 
 		/**
@@ -464,5 +464,5 @@ sap.ui.define([
 
 		return SideNavigation;
 
-	}, /* bExport= */ true
+	}
 );

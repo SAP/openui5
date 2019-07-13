@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/ui/core/Popup",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/unified/DateRange"
 ], function(
 	CalendarUtils,
 	Calendar,
@@ -30,7 +31,8 @@ sap.ui.define([
 	deepEqual,
 	Popup,
 	Log,
-	jQuery
+	jQuery,
+	DateRange
 ) {
 	"use strict";
 
@@ -260,7 +262,7 @@ sap.ui.define([
 	CalendarDateInterval.prototype._showCalendarPicker = function() {
 		var oStartDate = this.getStartDate(),
 			oCalPicker = this._getCalendarPicker(),
-			oSelectedRange = new sap.ui.unified.DateRange(),
+			oSelectedRange = new DateRange(),
 			oEndDate = new Date(oStartDate.getTime());
 
 		oEndDate.setDate(oEndDate.getDate() + this._getDays() - 1);

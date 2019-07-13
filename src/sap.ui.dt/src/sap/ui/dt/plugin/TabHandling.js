@@ -111,4 +111,4 @@ sap.ui.define([
 	};
 
 	return TabHandling;
-}, /* bExport= */true);
+});

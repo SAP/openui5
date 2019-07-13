@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/ui/model/ValidateException',
 	'sap/ui/core/LocaleData',
 	"sap/base/strings/hash",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/isEmptyObject"
 ],
 	function(
 		NumberFormat,
@@ -21,7 +22,8 @@ sap.ui.define([
 		ValidateException,
 		LocaleData,
 		hash,
-		jQuery
+		jQuery,
+		isEmptyObject
 	) {
 	"use strict";
 
@@ -312,7 +314,7 @@ sap.ui.define([
 	Unit.prototype._createInputFormat = function() {
 		var oSourceOptions = this.oFormatOptions.source;
 		if (oSourceOptions) {
-			if (jQuery.isEmptyObject(oSourceOptions)) {
+			if (isEmptyObject(oSourceOptions)) {
 				oSourceOptions = {
 					groupingEnabled: false,
 					groupingSeparator: ",",

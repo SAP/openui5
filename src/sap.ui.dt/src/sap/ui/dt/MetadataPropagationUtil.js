@@ -4,14 +4,14 @@
 
 // Provides object sap.ui.dt.MetadataPropagationUtil.
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/dt/Util",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/base/util/isEmptyObject"
 ],
 function(
-	jQuery,
 	Util,
-	merge
+	merge,
+	isEmptyObject
 ) {
 	"use strict";
 
@@ -81,13 +81,13 @@ function(
 
 	MetadataPropagationUtil._setPropagationInfo = function(mMetadata, mNewPropagationInfo, aPropagationInfoListFromParent) {
 		if (!aPropagationInfoListFromParent &&
-			jQuery.isEmptyObject(mNewPropagationInfo)) {
+			isEmptyObject(mNewPropagationInfo)) {
 			return false;
 		}
 
 		// add propagation array to current aggregation designtime-metadata
 		mMetadata.propagationInfos = aPropagationInfoListFromParent || [];
-		if (!jQuery.isEmptyObject(mNewPropagationInfo)) {
+		if (!isEmptyObject(mNewPropagationInfo)) {
 			mMetadata.propagationInfos.push(mNewPropagationInfo);
 		}
 		return mMetadata;
@@ -109,12 +109,12 @@ function(
 
 		var aPropagatedRelevantContainersFromParent = MetadataPropagationUtil._getParentPropagationInfo(mParentAggregationMetadata);
 
-		if (mMetadata && !jQuery.isEmptyObject(mMetadata)) {
+		if (mMetadata && !isEmptyObject(mMetadata)) {
 			mRelevantContainerPropagation = MetadataPropagationUtil._getCurrentRelevantContainerPropagation(mMetadata, oElement);
 			mMetadataFunctionPropagation = MetadataPropagationUtil._getCurrentDesigntimePropagation(mMetadata, oElement);
 		}
 
-		if (aPropagatedRelevantContainersFromParent || !jQuery.isEmptyObject(mRelevantContainerPropagation) || !jQuery.isEmptyObject(mMetadataFunctionPropagation)) {
+		if (aPropagatedRelevantContainersFromParent || !isEmptyObject(mRelevantContainerPropagation) || !isEmptyObject(mMetadataFunctionPropagation)) {
 			mNewPropagationInfo = Object.assign({}, mRelevantContainerPropagation, mMetadataFunctionPropagation);
 			return MetadataPropagationUtil._setPropagationInfo(mMetadata, mNewPropagationInfo, aPropagatedRelevantContainersFromParent);
 		}
@@ -174,7 +174,7 @@ function(
 			return vReturnMetadata;
 		}, vReturnMetadata);
 
-		return jQuery.isEmptyObject(vReturnMetadata) ? false : vReturnMetadata;
+		return isEmptyObject(vReturnMetadata) ? false : vReturnMetadata;
 	};
 
 	/**

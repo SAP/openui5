@@ -9,7 +9,7 @@ sap.ui.define([
 	'sap/ui/model/FormatException',
 	'sap/ui/model/ParseException',
 	'sap/ui/model/ValidateException',
-	"sap/ui/thirdparty/jquery"
+	"sap/base/util/isEmptyObject"
 ],
 	function(
 		DateFormat,
@@ -17,7 +17,7 @@ sap.ui.define([
 		FormatException,
 		ParseException,
 		ValidateException,
-		jQuery
+		isEmptyObject
 	) {
 	"use strict";
 
@@ -247,7 +247,7 @@ sap.ui.define([
 		this.oFormatOptions.interval = true;
 		this.oOutputFormat = DateFormat.getDateInstance(this.oFormatOptions);
 		if (oSourceOptions) {
-			if (jQuery.isEmptyObject(oSourceOptions)) {
+			if (isEmptyObject(oSourceOptions)) {
 				// set the default pattern if oSourceOptions is given as an empty object
 				oSourceOptions = {pattern: "yyyy-MM-dd"};
 			}

@@ -21,7 +21,8 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/ui/core/Popup",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/unified/DateRange"
 ], function(
 	Device,
 	Control,
@@ -40,7 +41,8 @@ sap.ui.define([
 	deepEqual,
 	Popup,
 	Log,
-	jQuery
+	jQuery,
+	DateRange
 ) {
 		"use strict";
 
@@ -349,7 +351,7 @@ sap.ui.define([
 	// overwrite invalidate to recognize changes on selectedDates
 	CalendarMonthInterval.prototype.invalidate = function(oOrigin) {
 
-		if (!this._bDateRangeChanged && (!oOrigin || !(oOrigin instanceof sap.ui.unified.DateRange))) {
+		if (!this._bDateRangeChanged && (!oOrigin || !(oOrigin instanceof DateRange))) {
 			Control.prototype.invalidate.apply(this, arguments);
 		} else if (this.getDomRef() && this._iMode == 0 && !this._sInvalidateContent) {
 			// DateRange changed -> only rerender days
@@ -1275,7 +1277,7 @@ sap.ui.define([
 	CalendarMonthInterval.prototype._showCalendarPicker = function() {
 		var oDate = this._getFocusedDate(true).toLocalJSDate();
 		var oCalPicker = this._getCalendarPicker();
-		var oSelectedDate = new sap.ui.unified.DateRange({ startDate: oDate });
+		var oSelectedDate = new DateRange({ startDate: oDate });
 
 		oCalPicker.displayDate(oDate, false);
 		oCalPicker.removeAllSelectedDates();

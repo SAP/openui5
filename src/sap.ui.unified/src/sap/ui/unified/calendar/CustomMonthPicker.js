@@ -9,8 +9,7 @@ sap.ui.define([
 	'sap/ui/unified/CalendarRenderer',
 	"sap/ui/unified/calendar/Header",
 	"sap/ui/unified/DateRange",
-	"sap/ui/dom/containsOrEquals",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/dom/containsOrEquals"
 ],
 	function(
 		Renderer,
@@ -18,8 +17,7 @@ sap.ui.define([
 		CalendarRenderer,
 		Header,
 		DateRange,
-		containsOrEquals,
-		jQuery
+		containsOrEquals
 	) {
 	"use strict";
 
@@ -80,5 +78,5 @@ sap.ui.define([
 
 	return CustomMonthPicker;
 
-}, /* bExport= */ true);
+});
 

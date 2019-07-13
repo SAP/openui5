@@ -9,7 +9,9 @@ sap.ui.define([
     'sap/ui/core/Control',
     './RadioButtonRenderer',
     'sap/ui/core/library',
-    'sap/ui/Device'
+    'sap/ui/Device',
+    // jQuery custom selectors ":sapFocusable"
+    "sap/ui/dom/jquery/Selectors"
 ],
 	function(jQuery, library, Control, RadioButtonRenderer, coreLibrary, Device) {
 	"use strict";
@@ -204,6 +206,7 @@ sap.ui.define([
 		if (this.getEnabled() && oEvent.target.id == (this.getId() + "-RB")) {
 			if (this.bTabPressed) {
 				// this only occurs in IE in HCB mode // TODO remove after 1.62 version
+				// jQuery custom selectors ":sapFocusable"
 				var aFocusableElements = jQuery(":sapFocusable"),
 					bFound = false;
 				for (var i = 0; i < aFocusableElements.length; i++) {

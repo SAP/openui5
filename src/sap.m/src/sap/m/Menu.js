@@ -16,7 +16,8 @@ sap.ui.define([
 	'sap/ui/unified/MenuItem',
 	'sap/ui/Device',
 	'sap/ui/core/EnabledPropagator',
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Popup"
 ],
 	function(
 		library,
@@ -31,9 +32,13 @@ sap.ui.define([
 		UfdMenuItem,
 		Device,
 		EnabledPropagator,
-		jQuery
+		jQuery,
+		Popup
 	) {
 		"use strict";
+
+		// shortcut for sap.ui.core.Popup.Dock
+		var Dock = Popup.Dock;
 
 		// shortcut for sap.m.ListType
 		var ListType = library.ListType;
@@ -215,12 +220,11 @@ sap.ui.define([
 					this._bIsInitialized = true;
 				}
 
-				var eDock = sap.ui.core.Popup.Dock;
 				if (!sDockMy) {
-					sDockMy = eDock.BeginTop;
+					sDockMy = Dock.BeginTop;
 				}
 				if (!sDockAt) {
-					sDockAt = eDock.BeginBottom;
+					sDockAt = Dock.BeginBottom;
 				}
 				if (!sOffset) {
 					sOffset = "0 -2";

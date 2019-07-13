@@ -185,6 +185,7 @@ sap.ui.define([
 				if (LoaderExtensions) {
 					aDeclaredModules = LoaderExtensions.getAllRequiredModules();
 				} else {
+					// TODO: migration not possible. jQuery.sap.getAllDeclaredModules is deprecated.
 					aDeclaredModules = jQuery.sap.getAllDeclaredModules();
 				}
 				Object.keys(mLibraries).forEach(function(sLibrary) {

@@ -266,4 +266,4 @@ function(
 	};
 
 	return AggregationOverlay;
-}, /* bExport= */ true);
+});

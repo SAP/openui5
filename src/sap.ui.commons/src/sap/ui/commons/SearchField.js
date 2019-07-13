@@ -4,28 +4,30 @@
 
 // Provides control sap.ui.commons.SearchField.
 sap.ui.define([
-    'sap/ui/thirdparty/jquery',
-    './ComboBox',
-    './ComboBoxRenderer',
-    './ListBox',
-    './TextField',
-    './TextFieldRenderer',
-    './library',
-    'sap/ui/core/Control',
-    'sap/ui/core/History',
-    'sap/ui/core/Renderer',
-    './SearchFieldRenderer',
-    'sap/ui/core/library',
-    './Button',
-    'sap/ui/Device',
-    'sap/ui/core/SeparatorItem',
-    'sap/ui/core/ListItem',
-    'sap/ui/events/KeyCodes',
-    'sap/ui/dom/containsOrEquals',
-    'sap/ui/dom/jquery/getSelectedText' // jQuery.fn.getSElectedText
+	'sap/ui/thirdparty/jquery',
+	'./ComboBox',
+	'./ComboBoxRenderer',
+	'./ListBox',
+	'./TextField',
+	'./TextFieldRenderer',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/History',
+	'sap/ui/core/Renderer',
+	'./SearchFieldRenderer',
+	'sap/ui/core/library',
+	'./Button',
+	'sap/ui/Device',
+	'sap/ui/core/SeparatorItem',
+	'sap/ui/core/ListItem',
+	'sap/ui/events/KeyCodes',
+	'sap/ui/dom/containsOrEquals',
+	'sap/ui/dom/jquery/rect', // jQuery Plugin "rect"
+	'sap/ui/dom/jquery/getSelectedText' // jQuery.fn.getSelectedText
+
 ],
 	function(
-	    jQuery,
+		jQuery,
 		ComboBox,
 		ComboBoxRenderer,
 		ListBox,
@@ -951,6 +953,7 @@ sap.ui.define([
 			var iMaxPopupItems = this.getMaxPopupItems();
 			oLb.setVisibleItems(iMaxPopupItems < iItemsLength ? iMaxPopupItems : iItemsLength);
 			oLb.setSelectedIndex(-1);
+			// jQuery Plugin "rect"
 			oLb.setMinWidth(jQuery(this.getDomRef()).rect().width + "px");
 			oLb.rerender();
 			return bEmpty;

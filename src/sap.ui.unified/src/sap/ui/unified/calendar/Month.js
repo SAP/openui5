@@ -1816,7 +1816,7 @@ sap.ui.define([
 					oStartDate = CalendarDate.fromLocalJSDate(oStartDate, sCalendarType);
 				}
 			} else {
-				oDateRange = new sap.ui.unified.DateRange();
+				oDateRange = new DateRange();
 				oAggOwner.addAggregation("selectedDates", oDateRange, true); // no re-rendering
 			}
 
@@ -1864,7 +1864,7 @@ sap.ui.define([
 					}
 				} else {
 					// not selected -> select
-					oDateRange = new sap.ui.unified.DateRange({startDate: oDate.toLocalJSDate()});
+					oDateRange = new DateRange({startDate: oDate.toLocalJSDate()});
 					oAggOwner.addAggregation("selectedDates", oDateRange, true); // no re-rendering
 				}
 				sYyyymmdd = this._oFormatYyyymmdd.format(oDate.toUTCJSDate(), true);

@@ -11,8 +11,7 @@ sap.ui.define([
     'sap/ui/core/ResizeHandler',
     'sap/ui/core/delegate/ItemNavigation',
     './SplitterRenderer',
-    'sap/ui/core/library',
-    'jquery.sap.events'
+    'sap/ui/core/library'
 ],
 	function(
 	    jQuery,

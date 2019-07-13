@@ -181,4 +181,4 @@ function(
 	};
 
 	return ScrollbarSynchronizer;
-}, true);
+});

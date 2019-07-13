@@ -22,7 +22,8 @@ sap.ui.define([
 		'sap/ui/events/KeyCodes',
 		'./SinglePlanningCalendarGridRenderer',
 		'sap/ui/Device',
-		'sap/ui/core/delegate/ItemNavigation'
+		'sap/ui/core/delegate/ItemNavigation',
+		"sap/ui/thirdparty/jquery"
 	],
 	function (
 		SinglePlanningCalendarUtilities,
@@ -43,7 +44,8 @@ sap.ui.define([
 		KeyCodes,
 		SinglePlanningCalendarGridRenderer,
 		Device,
-		ItemNavigation
+		ItemNavigation,
+		jQuery
 	) {
 		"use strict";
 

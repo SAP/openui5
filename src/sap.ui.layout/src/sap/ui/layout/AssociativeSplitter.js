@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.layout.AssociativeSplitter.
-sap.ui.define(['./Splitter', './SplitterRenderer', "sap/base/Log", "sap/ui/thirdparty/jquery"],
-	function(Splitter, SplitterRenderer, Log, jQuery) {
+sap.ui.define(['./Splitter', './SplitterRenderer', "sap/base/Log", "sap/ui/thirdparty/jquery", "sap/ui/layout/SplitterLayoutData"],
+	function(Splitter, SplitterRenderer, Log, jQuery, SplitterLayoutData) {
 	"use strict";
 
 	/**
@@ -497,7 +497,7 @@ sap.ui.define(['./Splitter', './SplitterRenderer', "sap/base/Log", "sap/ui/third
 				bAllCollapsed = true;
 				continue;
 			} else if (i === (aAreas.length - 1) && bAllCollapsed) {
-				this._getContentAreas()[iBar + 1].setLayoutData(new sap.ui.layout.SplitterLayoutData({ size: "100%" }));
+				this._getContentAreas()[iBar + 1].setLayoutData(new SplitterLayoutData({ size: "100%" }));
 			}
 		}
 	};
@@ -514,7 +514,7 @@ sap.ui.define(['./Splitter', './SplitterRenderer', "sap/base/Log", "sap/ui/third
 			oLd = null;
 		}
 		if (!oLd) {
-			oContent.setLayoutData(new sap.ui.layout.SplitterLayoutData());
+			oContent.setLayoutData(new SplitterLayoutData());
 		}
 	}
 

@@ -2,8 +2,8 @@
 * ${copyright}
 */
 
-sap.ui.define(["jquery.sap.global", "sap/ui/base/ManagedObject", "sap/base/Log", "sap/ui/core/Locale", "sap/ui/core/LocaleData"],
-function (jQuery, ManagedObject, Log, Locale, LocaleData) {
+sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/ui/core/Locale", "sap/ui/core/LocaleData"],
+function (ManagedObject, Log, Locale, LocaleData) {
 	"use strict";
 
 	/**
@@ -197,7 +197,7 @@ function (jQuery, ManagedObject, Log, Locale, LocaleData) {
 			"leftmin": 3, // The minimum of chars to remain on the old line.
 			"rightmin": 3,// The minimum of chars to go on the new line
 			"compound": "all", // factory-made -> fac-tory-[ZWSP]made
-			"path": jQuery.sap.getResourcePath("sap/ui/thirdparty/hyphenopoly")
+			"path": sap.ui.require.toUrl("sap/ui/thirdparty/hyphenopoly")
 		};
 
 		// we are passing only 3 properties to hyphenopoly: hyphen, exceptions and minWordLength

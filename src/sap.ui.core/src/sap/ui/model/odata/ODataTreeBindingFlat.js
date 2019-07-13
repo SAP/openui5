@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/base/util/uid",
 	"sap/base/Log",
 	"sap/base/assert",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/isEmptyObject"
 ],
 	function(
 		Filter,
@@ -23,7 +24,8 @@ sap.ui.define([
 		uid,
 		Log,
 		assert,
-		jQuery
+		jQuery,
+		isEmptyObject
 	) {
 	"use strict";
 
@@ -1997,7 +1999,7 @@ sap.ui.define([
 
 	ODataTreeBindingFlat.prototype._indexGetSelectedIndex = function () {
 		//if we have no nodes selected, the lead selection index is -1
-		if (!this._sLeadSelectionKey || jQuery.isEmptyObject(this._mSelected)) {
+		if (!this._sLeadSelectionKey || isEmptyObject(this._mSelected)) {
 			return -1;
 		}
 
@@ -2012,7 +2014,7 @@ sap.ui.define([
 
 	ODataTreeBindingFlat.prototype._mapGetSelectedIndex = function () {
 		//if we have no nodes selected, the lead selection index is -1
-		if (!this._sLeadSelectionKey || jQuery.isEmptyObject(this._mSelected)) {
+		if (!this._sLeadSelectionKey || isEmptyObject(this._mSelected)) {
 			return -1;
 		}
 
@@ -2051,7 +2053,7 @@ sap.ui.define([
 		var aResultIndices = [];
 
 		//if we have no nodes selected, the selection indices are empty
-		if (jQuery.isEmptyObject(this._mSelected)) {
+		if (isEmptyObject(this._mSelected)) {
 			return aResultIndices;
 		}
 
@@ -2209,7 +2211,7 @@ sap.ui.define([
 		var aResultContexts = [];
 
 		//if we have no nodes selected, the selection indices are empty
-		if (jQuery.isEmptyObject(this._mSelected)) {
+		if (isEmptyObject(this._mSelected)) {
 			return aResultContexts;
 		}
 
@@ -4026,7 +4028,7 @@ sap.ui.define([
 		var aNodesInfo = [];
 
 		//if we have no nodes selected, the selection info are empty
-		if (jQuery.isEmptyObject(this._mSelected)) {
+		if (isEmptyObject(this._mSelected)) {
 			return aNodesInfo;
 		}
 

@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/util/Version",
 	"sap/base/Log",
-	"sap/base/assert"
+	"sap/base/assert",
+	"sap/base/util/isEmptyObject"
 ],
 	function(
 		jQuery,
@@ -29,7 +30,8 @@ sap.ui.define([
 		deepEqual,
 		Version,
 		Log,
-		assert
+		assert,
+		isEmptyObject
 	) {
 	"use strict";
 
@@ -1675,7 +1677,7 @@ sap.ui.define([
 			function fallback(that) {
 				var oLocale = that.oConfiguration.language;
 				// if any user settings have been defined, add the private use subtag "sapufmt"
-				if ( !jQuery.isEmptyObject(that.mSettings) ) {
+				if ( !isEmptyObject(that.mSettings) ) {
 					// TODO move to Locale/LocaleData
 					var l = oLocale.toString();
 					if ( l.indexOf("-x-") < 0 ) {

@@ -9,7 +9,8 @@ sap.ui.define([
   './library',
   'sap/ui/core/Control',
   './MessageRenderer',
-  './Button'
+  './Button',
+  'sap/ui/dom/jquery/rect' // jQuery Plugin "rect"
 ],
 	function(jQuery, Dialog, library, Control, MessageRenderer, Button) {
 	"use strict";
@@ -169,6 +170,7 @@ sap.ui.define([
 		var jContainer = this.oContainer.$();
 
 	  // Starting a new Stack in the default Dialog's location:
+	  // jQuery Plugin "rect"
 	  var jContainerRect = jContainer.rect(); // For Height and Width...
 		if (oOtherOpenDialogs.length == 0) {
 			// "offsets.right" & "offsets.left" should be identical as plain Dialogs are centered,
@@ -204,6 +206,7 @@ sap.ui.define([
 	  }
 
 	  // Figuring what should the next coordinates be:
+	  // jQuery Plugin "rect"
 	  var jContainerRect = jContainer.rect(); // For Height and Width...
 	  var scrollTop   = jQuery(window).scrollTop();
 	  var scrollLeft  = jQuery(window).scrollLeft(); // Negative in RTL

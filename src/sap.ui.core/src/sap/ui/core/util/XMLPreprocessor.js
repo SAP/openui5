@@ -4,7 +4,7 @@
 
 // Provides object sap.ui.core.util.XMLPreprocessor
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
 	"sap/base/util/JSTokenizer",
 	"sap/base/util/ObjectPath",

@@ -11,7 +11,8 @@ sap.ui.define([
   'sap/ui/core/Popup',
   './MessageToast',
   './MessageList',
-  './MessageBarRenderer'
+  './MessageBarRenderer',
+  'sap/ui/dom/jquery/rect' // jQuery Plugin "rect"
 ],
 	function(
 	  jQuery,
@@ -179,6 +180,7 @@ sap.ui.define([
 
 
 	  // MessageBar start position:
+		// jQuery Plugin "rect"
 		this.oMsgBarDragStartPosition       = this.$().rect();
 		this.oMsgBarDragStartPosition.right = Number(this.$().css('right').replace("px", ""));
 

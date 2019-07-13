@@ -207,7 +207,7 @@ sap.ui.define(['./Filter', 'sap/base/Log', 'sap/ui/Device'],
 			}
 			if (!bCaseSensitive) {
 				// Internet Explorer and Edge cannot uppercase properly on composed characters
-				if (String.prototype.normalize && (sap.ui.Device.browser.msie || sap.ui.Device.browser.edge)) {
+				if (String.prototype.normalize && (Device.browser.msie || Device.browser.edge)) {
 					oValue = oValue.normalize("NFKD");
 				}
 				oValue = oValue.toUpperCase();

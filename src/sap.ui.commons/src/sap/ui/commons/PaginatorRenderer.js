@@ -3,8 +3,8 @@
  */
 
 //Provides default renderer for control sap.ui.commons.Paginator
-sap.ui.define(["sap/base/security/encodeXML"],
-	function(encodeXML) {
+sap.ui.define(["sap/base/security/encodeXML", "sap/ui/thirdparty/jquery"],
+	function(encodeXML, jQuery) {
 	"use strict";
 
 

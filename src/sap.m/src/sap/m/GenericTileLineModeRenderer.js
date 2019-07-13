@@ -223,7 +223,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 				height: oLine.height
 			});
 
-			sHelpers += jQuery.trim($Rect.get(0).outerHTML);
+			sHelpers += $Rect.get(0).outerHTML.trim();
 		}
 
 		$StyleHelper.html(sHelpers);

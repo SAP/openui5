@@ -92,6 +92,9 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	// shortcut for sap.m.Sticky
+	var Sticky = library.Sticky;
+
 	// shortcut for sap.ui.unified.CalendarDayType
 	var CalendarDayType = unifiedLibrary.CalendarDayType;
 
@@ -1524,10 +1527,10 @@ sap.ui.define([
 			bStickyInfoToolbar = bStick && !(Device.system.phone && Device.orientation.landscape) && !bMobile1MonthView;
 
 		if (bStickyToolbar) {
-			aStickyParts.push(sap.m.Sticky.HeaderToolbar);
+			aStickyParts.push(Sticky.HeaderToolbar);
 		}
 		if (this._oInfoToolbar && bStickyInfoToolbar) {
-			aStickyParts.push(sap.m.Sticky.InfoToolbar);
+			aStickyParts.push(Sticky.InfoToolbar);
 		}
 
 		this.getAggregation("table").setSticky(aStickyParts);

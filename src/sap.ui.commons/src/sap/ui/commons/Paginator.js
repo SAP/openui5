@@ -7,7 +7,9 @@ sap.ui.define([
     'sap/ui/thirdparty/jquery',
     './library',
     'sap/ui/core/Control',
-    './PaginatorRenderer'
+    './PaginatorRenderer',
+    // jQuery custom selectors ":sapFocusable"
+    "sap/ui/dom/jquery/Selectors"
 ],
 	function(jQuery, library, Control, PaginatorRenderer) {
 	"use strict";
@@ -293,6 +295,7 @@ sap.ui.define([
 	 */
 	Paginator.prototype.triggerInternalNavigation = function(oEvent,sDirection){
 
+		// jQuery custom selectors ":sapFocusable"
 		var aFocusableElements = this.$().find(":sapFocusable");
 		var iCurrentIndex = jQuery(aFocusableElements).index(oEvent.target);
 		var iNextIndex, oNextElement;
@@ -334,6 +337,7 @@ sap.ui.define([
 	Paginator.prototype.triggerTabbingNavigation = function(oEvent,shiftKeyPressed){
 
 		//Get all focusable elements
+		// jQuery custom selectors ":sapFocusable"
 		var aFocusableElements = this.$().find(":sapFocusable");
 
 		//Tabbing --> Focus the last active element then let the browser focus the next active element

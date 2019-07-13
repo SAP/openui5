@@ -16,7 +16,8 @@ sap.ui.define([
 	'sap/ui/core/Locale',
 	"./CalendarRowRenderer",
 	"sap/ui/dom/containsOrEquals",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/unified/CalendarAppointment"
 ], function(
 	Control,
 	Device,
@@ -30,7 +31,8 @@ sap.ui.define([
 	Locale,
 	CalendarRowRenderer,
 	containsOrEquals,
-	jQuery
+	jQuery,
+	CalendarAppointment
 ) {
 	"use strict";
 
@@ -384,7 +386,7 @@ sap.ui.define([
 	};
 
 	CalendarRow.prototype.invalidate = function(oOrigin) {
-		if (oOrigin && oOrigin instanceof sap.ui.unified.CalendarAppointment) {
+		if (oOrigin && oOrigin instanceof CalendarAppointment) {
 			// as position could change -> delete visible appointments to recalculate positions
 			var bFound = false;
 			for (var i = 0; i < this._aVisibleAppointments.length; i++) {
@@ -760,7 +762,7 @@ sap.ui.define([
 	 */
 	CalendarRow.prototype.focusAppointment = function(oAppointment) {
 
-		if (!oAppointment || !(oAppointment instanceof sap.ui.unified.CalendarAppointment)) {
+		if (!oAppointment || !(oAppointment instanceof CalendarAppointment)) {
 			throw new Error("Appointment must be a CalendarAppointment; " + this);
 		}
 
@@ -1293,7 +1295,7 @@ sap.ui.define([
 			var oGroupEndDate = new UniversalDate(oGroupStartDate.getTime());
 			oGroupEndDate.setDate(oGroupEndDate.getDate() + 7);
 			oGroupEndDate.setMilliseconds(-1);
-			oGroupAppointment = new sap.ui.unified.CalendarAppointment(this.getId() + "-Group" + aGroupAppointments.length, {
+			oGroupAppointment = new CalendarAppointment(this.getId() + "-Group" + aGroupAppointments.length, {
 				type: oAppointment.getType(),
 				startDate: CalendarUtils._createLocalDate(new Date(oGroupStartDate.getTime()), true),
 				endDate: CalendarUtils._createLocalDate(new Date(oGroupEndDate.getTime()), true)

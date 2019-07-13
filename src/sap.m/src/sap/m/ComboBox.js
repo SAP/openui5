@@ -18,7 +18,8 @@ sap.ui.define([
 	"./Toolbar",
 	"sap/base/assert",
 	"sap/base/security/encodeXML",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
 ],
 	function(
 		InputBase,
@@ -36,7 +37,8 @@ sap.ui.define([
 		Toolbar,
 		assert,
 		encodeXML,
-		core
+		core,
+		jQuery
 	) {
 		"use strict";
 
@@ -1254,6 +1256,7 @@ sap.ui.define([
 		 * @private
 		 */
 		ComboBox.prototype._handleItemTap = function(oControlEvent) {
+			// jQuery Plugin "control"
 			var oTappedControl = jQuery(oControlEvent.target).control(0);
 
 			if (!oTappedControl.isA("sap.m.GroupHeaderListItem")) {

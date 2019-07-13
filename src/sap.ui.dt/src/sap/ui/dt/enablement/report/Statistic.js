@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/m/Label",
-	"sap/m/Text"
+	"sap/m/Text",
+	"./StatisticRenderer"
 ], function (
 	Control,
 	JSONModel,

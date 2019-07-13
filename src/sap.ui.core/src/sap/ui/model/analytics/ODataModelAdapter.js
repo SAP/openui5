@@ -125,6 +125,7 @@ sap.ui.define(['./AnalyticalBinding', "./AnalyticalTreeBindingAdapter", './odata
 			// defined in a JSON format
 			var sAnnotationDocURI = arguments[0];
 
+			// TODO: migration not possible. jQuery.sap.syncGetText is deprecated. Please use native <code>XMLHttpRequest</code>
 			var oResult = jQuery.sap.syncGetText(sAnnotationDocURI);
 			if (oResult.success) {
 				sAnnotationDoc = oResult.data;

@@ -9,7 +9,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 		Plugin,
 		Device,
 		UriParameters,
-		jQueryDOM,
+		jQuery,
 		Log,
 		encodeURL
 	) {
@@ -53,7 +53,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 					this.attachEvent(mEvents.TEAR_DOWN, function(oEvent){
 						that._isOpen = false;
 						if ( Device.browser.msie ) {// TODO remove after 1.62 version
-							jQueryDOM(document.getElementById(ID_SUPPORT_AREA + "-frame")).remove();
+							jQuery(document.getElementById(ID_SUPPORT_AREA + "-frame")).remove();
 						} else {
 							close(that._oRemoteWindow);
 						}
@@ -376,7 +376,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 	 * @private
 	 */
 	Support._onSupportIFrameLoaded = function(){
-		_oStubInstance._oRemoteWindow = jQueryDOM(document.getElementById(ID_SUPPORT_AREA + "-frame"))[0].contentWindow;
+		_oStubInstance._oRemoteWindow = jQuery(document.getElementById(ID_SUPPORT_AREA + "-frame"))[0].contentWindow;
 	};
 
 
@@ -432,7 +432,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 
 
 	function getSupportArea() {
-		var $support = jQueryDOM(document.getElementById(ID_SUPPORT_AREA));
+		var $support = jQuery(document.getElementById(ID_SUPPORT_AREA));
 		if ($support.length === 0) {
 			$support = jQuery("<DIV/>", {id:ID_SUPPORT_AREA}).
 				addClass("sapUiHidden").
@@ -446,7 +446,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 		var oFrame = document.createElement("iframe");
 		oFrame.id = ID_SUPPORT_AREA + "-frame";
 		oFrame.src = sIFrameUrl + sParams;
-		oFrame.onload = sap.ui.core.support.Support._onSupportIFrameLoaded;
+		oFrame.onload = Support._onSupportIFrameLoaded;
 
 		return oFrame;
 	}
