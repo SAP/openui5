@@ -1884,7 +1884,7 @@ sap.ui.define([
 	 * @public
 	 * @static
 	 */
-	RenderManager.preserveContent = function(oRootNode, bPreserveRoot, bPreserveNodesWithId) {
+	RenderManager.preserveContent = function(oRootNode, bPreserveRoot, bPreserveNodesWithId, bCalledBeforeRerender /* private */) {
 		assert(typeof oRootNode === "object" && oRootNode.ownerDocument == document, "oRootNode must be a DOM element");
 
 		aPreserveContentListeners.forEach(function(oListener) {
@@ -1913,7 +1913,20 @@ sap.ui.define([
 				return;
 			}
 
-			if ( candidate.hasAttribute(ATTR_PRESERVE_MARKER) )  { // node is marked with the preserve marker
+			var sPreserveMarker = candidate.getAttribute(ATTR_PRESERVE_MARKER);
+			if ( sPreserveMarker )  { // node is marked with the preserve marker
+
+				// before the re-rendering, UIArea moves all "to-be-preserved" nodes to the preserved area
+				// except the control dom nodes which must be moved to preserved area via control rendering cycle
+				if ( bCalledBeforeRerender && candidate.hasAttribute("data-sap-ui") ) {
+					var oControl = sap.ui.getCore().byId(sPreserveMarker);
+
+					// rendering cycle of a control will not be executed when it is removed from the control tree
+					if ( oControl && oControl.getUIArea() ) {
+						return;
+					}
+				}
+
 				// always create a placeholder
 				// - when the current node is the root node then we're doing a single control rerendering and need to know where to rerender
 				// - when the parent DOM belongs to the preserved DOM of another control, that control needs a placeholder as well
