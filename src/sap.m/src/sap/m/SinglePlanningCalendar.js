@@ -47,6 +47,7 @@ function(
 
 	var PlanningCalendarStickyMode = library.PlanningCalendarStickyMode;
 	var HEADER_RESIZE_HANDLER_ID = "_sHeaderResizeHandlerId";
+	var SEGMENTEDBUTTONITEM__SUFFIX = "--item";
 
 	/**
 	 * Constructor for a new <code>SinglePlanningCalendar</code>.
@@ -548,7 +549,10 @@ function(
 	};
 
 	SinglePlanningCalendar.prototype.addView = function (oView) {
-		var oViewsButton;
+		var oViewsButton,
+			oHeader = this._getHeader(),
+			sSegmentedButtonItemId = oView.getId() + SEGMENTEDBUTTONITEM__SUFFIX,
+			oSegmentedButtonItem;
 
 		if (!oView) {
 			return this;
@@ -561,11 +565,16 @@ function(
 
 		this.addAggregation("views", oView);
 
-		oViewsButton = this._getHeader()._getOrCreateViewSwitch();
-		oViewsButton.addItem(new SegmentedButtonItem({
+		oViewsButton = oHeader._getOrCreateViewSwitch();
+
+		oSegmentedButtonItem = new SegmentedButtonItem(sSegmentedButtonItemId, {
 			key: oView.getKey(),
 			text: oView.getTitle()
-		}));
+		});
+		oViewsButton.addItem(oSegmentedButtonItem);
+
+		this._observeViewTitle(oView);
+
 		if (this._getSelectedView().getKey() === this._oDefaultView.getKey()) {
 			this.setAssociation("selectedView", oView);
 		}
@@ -575,7 +584,10 @@ function(
 	};
 
 	SinglePlanningCalendar.prototype.insertView = function (oView, iPos) {
-		var oViewsButton;
+		var oViewsButton,
+			oHeader = this._getHeader(),
+			sSegmentedButtonItemId = oView.getId() + SEGMENTEDBUTTONITEM__SUFFIX,
+			oSegmentedButtonItem;
 
 		if (!oView) {
 			return this;
@@ -588,11 +600,16 @@ function(
 
 		this.insertAggregation("views", oView, iPos);
 
-		oViewsButton = this._getHeader()._getOrCreateViewSwitch();
-		oViewsButton.insertItem(new SegmentedButtonItem({
+		oViewsButton = oHeader._getOrCreateViewSwitch();
+
+		oSegmentedButtonItem = new SegmentedButtonItem(sSegmentedButtonItemId, {
 			key: oView.getKey(),
 			text: oView.getTitle()
-		}), iPos);
+		});
+		oViewsButton.insertItem(oSegmentedButtonItem, iPos);
+
+		this._observeViewTitle(oView);
+
 		if (this._getSelectedView().getKey() === this._oDefaultView.getKey()) {
 			this.setAssociation("selectedView", oView);
 		}
@@ -613,6 +630,14 @@ function(
 			oViewToRemoveKey = oView.getKey(),
 			oCurrentItem,
 			i;
+
+		if (this.getViews().length === 1) {
+			this._disconnectAndDestroyViewsObserver();
+		} else {
+			this._oViewsObserver.unobserve(oView, {
+				properties: ["title"]
+			});
+		}
 
 		for (i = 0; i < oViewsButtonItems.length; i++) {
 			oCurrentItem = oViewsButtonItems[i];
@@ -638,6 +663,8 @@ function(
 	SinglePlanningCalendar.prototype.removeAllViews = function () {
 		var oViewsButton = this._getHeader()._getOrCreateViewSwitch();
 
+		this._disconnectAndDestroyViewsObserver();
+
 		oViewsButton.removeAllItems();
 		this.setAssociation("selectedView", this._oDefaultView);
 		this._alignView();
@@ -648,11 +675,61 @@ function(
 	SinglePlanningCalendar.prototype.destroyViews = function () {
 		var oViewsButton = this._getHeader()._getOrCreateViewSwitch();
 
+		this._disconnectAndDestroyViewsObserver();
+
 		oViewsButton.destroyItems();
 		this.setAssociation("selectedView", this._oDefaultView);
 		this._alignView();
 
 		return this.destroyAggregation("views");
+	};
+
+	/**
+	 * Sets the text property of the SegmentedButton view item
+	 *
+	 * @param {object} oChanges the detected from the ManagedObjectObserver changes
+	 * @private
+	 */
+	SinglePlanningCalendar.prototype._viewsObserverCallbackFunction = function (oChanges) {
+		sap.ui.getCore().byId(oChanges.object.getId() + SEGMENTEDBUTTONITEM__SUFFIX).setText(oChanges.current);
+	};
+
+	/**
+	 * Returns the ManagedObjectObserver for the views
+	 *
+	 * @return {sap.ui.base.ManagedObjectObserver} the views observer object
+	 * @private
+	 */
+	SinglePlanningCalendar.prototype._getViewsObserver = function () {
+		if (!this._oViewsObserver) {
+			this._oViewsObserver = new ManagedObjectObserver(this._viewsObserverCallbackFunction);
+		}
+		return this._oViewsObserver;
+	};
+
+	/**
+	 * Observes the title property of the passed view
+	 *
+	 * @param {sap.m.SinglePlanningCalendarView} oView the view, which property will be observed
+	 * @private
+	 */
+	SinglePlanningCalendar.prototype._observeViewTitle = function (oView) {
+		this._getViewsObserver().observe(oView, {
+			properties: ["title"]
+		});
+	};
+
+	/**
+	 * Disconnects and destroys the ManagedObjectObserver observing the used views
+	 *
+	 * @private
+	 */
+	SinglePlanningCalendar.prototype._disconnectAndDestroyViewsObserver = function () {
+		if (this._oViewsObserver) {
+			this._oViewsObserver.disconnect();
+			this._oViewsObserver.destroy();
+			this._oViewsObserver = null;
+		}
 	};
 
 	/**
