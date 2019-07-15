@@ -1323,17 +1323,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Setter implementation for flexibilityConnectors to throw an error in case it is called at run time.
-		 *
-		 * @throws Error
-		 * @experimental
-		 * @since 1.67.0
-		 */
-		setFlexibilityConnectors: function () {
-			throw new Error("flexibilityConnectors must not be set after bootstrapping");
-		},
-
-		/**
 		 * Currently active preload mode for components or falsy value.
 		 *
 		 * @returns {string} component preload mode
