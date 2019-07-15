@@ -50,6 +50,16 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/write/internal/Connector"]
 				}
 			},
+			"apply/internal/ConnectorWithCustomBrokenConnector": {
+				group: 'Apply Internal',
+				ui5: {
+					resourceroots: {"my.lib": "./test-resources/sap/ui/fl/qunit/apply/internal/"},
+					"xx-flexibilityConnectors": [{connectorName: "my/lib/BrokenConnector", custom: true, layerFilter: []}]
+				},
+				coverage: {
+					only: ["sap/ui/fl/write/internal/Connector"]
+				}
+			},
 			"apply/internal/ConnectorWithDebugEnabled": {
 				group: 'Apply Internal',
 				ui5: {

@@ -37,8 +37,9 @@ sap.ui.define([
 		mConnectors = mConnectors.concat(aConfiguredConnectors);
 
 		return new Promise(function (resolve) {
-			var aConnectorNames = mConnectors.map(function (mServices) {
-				return sNameSpace + mServices.connectorName;
+			var aConnectorNames = mConnectors.map(function (mConnectorConfiguration) {
+				var sConnectorName = mConnectorConfiguration.connectorName;
+				return mConnectorConfiguration.custom ? sConnectorName : sNameSpace + sConnectorName;
 			});
 
 			sap.ui.require(aConnectorNames, function () {
@@ -56,7 +57,7 @@ sap.ui.define([
 		 * Provides all mandatory connectors required to read data for the apply case; these are the static file connector as well as all connectors
 		 * mentioned in the core-Configuration.
 		 *
-		 * @returns {Promise map[]} Resolving with a list of maps for all configured connectors and their requested modules
+		 * @returns {Promise<map[]>} Resolving with a list of maps for all configured connectors and their requested modules
 		 */
 		getApplyConnectors: function () {
 			if (!_mApplyConnectors) {
@@ -69,7 +70,7 @@ sap.ui.define([
 		/**
 		 * Provides all mandatory connectors to write data; these are the connector mentioned in the core-Configuration.
 		 *
-		 * @returns {Promise map[]} Resolving with a list of maps for all configured connectors and their requested modules
+		 * @returns {Promise<map[]>} Resolving with a list of maps for all configured connectors and their requested modules
 		 */
 		getWriteConnectors: function () {
 			if (!_mWriteConnectors) {
