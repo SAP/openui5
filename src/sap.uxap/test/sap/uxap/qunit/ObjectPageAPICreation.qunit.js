@@ -2342,6 +2342,45 @@ function (
 		});
 	});
 
+	QUnit.test("ObjectPage obtains correct anchorBar height", function (assert) {
+		// arrange
+		var oObjectPage = this.oObjectPage,
+			done = assert.async();
+
+		assert.expect(2);
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			assert.strictEqual(oObjectPage.iAnchorBarHeight, document.getElementById(this.getId() + "-anchorBar").offsetHeight, "correct anchorBar height");
+
+			oObjectPage._snapHeader(true);
+			assert.strictEqual(oObjectPage.iAnchorBarHeight, document.getElementById(this.getId() + "-stickyAnchorBar").offsetHeight, "correct sticky anchorBar height");
+			done();
+		});
+	});
+
+	QUnit.test("AnchorBar height includes paddings", function (assert) {
+		// arrange
+		var oObjectPage = this.oObjectPage,
+			done = assert.async();
+
+		assert.expect(1);
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			var oAnchorBarDOM = document.getElementById(this.getId() + "-anchorBar"),
+				iPadding = parseInt(getComputedStyle(oAnchorBarDOM).paddingTop) || 0,
+				iABHeight = oObjectPage.iAnchorBarHeight,
+				iDiff = 10;
+
+			// Act: increase padding
+			oAnchorBarDOM.style.paddingTop = (iPadding + iDiff) + "px";
+			oObjectPage._adjustHeaderHeights(); // call the function that recalculates anchorBar height
+
+			//Check: the new padding is included
+			assert.ok(isTolerableDifference(oObjectPage.iAnchorBarHeight, iABHeight + iDiff, ["msie", "edge"], 1), "anchorBar height is also augmented");
+			done();
+		});
+	});
+
 	QUnit.test("unset selected section when preserveHeaderStateOnScroll enabled", function (assert) {
 		var oObjectPage = this.oObjectPage,
 			oSecondSection = this.oObjectPage.getSections()[1],
