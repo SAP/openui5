@@ -9,6 +9,7 @@
 		<content>
 			<l:VerticalLayout>
 				<ComboBox
+					id="idComboBox"
 					showSecondaryValues= "true"
 					filterSecondaryValues= "true"
 					value="{/comboBoxValue}"
@@ -19,7 +20,7 @@
 					}">
 					<core:ListItem key="{key}" text="{text}" additionalText="{key}"/>
 				</ComboBox>
-				<Label text="Formatted value (text and key):" />
+				<Label text="Formatted value (text and key):" labelFor="idComboBox"/>
 				<Text text="{parts: [{path: '/comboBoxValue'}, {path: '/comboBoxKey'}], formatter: '.fnFormatter'}" />
 			</l:VerticalLayout>
 		</content>

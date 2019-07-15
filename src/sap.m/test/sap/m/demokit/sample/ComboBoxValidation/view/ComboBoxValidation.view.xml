@@ -6,8 +6,9 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<l:VerticalLayout class="sapUiContentPadding" width="100%">
-		<Label text="Choose a country:" />
+		<Label text="Choose a country:" labelFor="idComboBox"/>
 		<ComboBox
+			id="idComboBox"
 			items="{
 				path: '/CountriesCollection',
 				sorter: { path: 'text' }
