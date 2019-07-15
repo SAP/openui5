@@ -8,9 +8,8 @@ sap.ui.define([
 	"sap/ui/table/library",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/table/plugins/MultiSelectionPlugin",
-	"sap/ui/thirdparty/jquery"
-], function(MockServer, Table, TableUtils, ODataModel, tableLibrary, qutils, KeyCodes, MultiSelectionPlugin, jQuery) {
+	"sap/ui/table/plugins/MultiSelectionPlugin"
+], function(MockServer, Table, TableUtils, ODataModel, tableLibrary, qutils, KeyCodes, MultiSelectionPlugin) {
 	"use strict";
 
 	var sServiceURI = "/service/";
@@ -159,9 +158,9 @@ sap.ui.define([
 			});
 
 			fnGetContexts.reset();
-			that.oTable.addSelectionInterval(5, 9);
+			that.oTable._oSelectionPlugin.addSelectionInterval(9, 5);
 		});
-		this.oTable.addSelectionInterval(0, 4);
+		this.oTable._oSelectionPlugin.addSelectionInterval(0, 4);
 	});
 
 	QUnit.test("Selection: number of items in range above limit", function(assert) {
@@ -180,7 +179,7 @@ sap.ui.define([
 			assert.deepEqual(aSelectedIndices, [0], "First row is selected");
 
 			that.oTable._oSelectionPlugin.attachSelectionChange(function(oEvent) {
-				assert.ok(fnGetContexts.calledWithExactly(1, 5), "getContexts is called with the correct parameters");
+				assert.ok(fnGetContexts.calledWithExactly(1, 6), "getContexts is called with the correct parameters");
 				assert.ok(fnGetContexts.calledOnce, "getContexts called once");
 				assert.deepEqual(oEvent.getParameters().rowIndices, [1, 2, 3, 4, 5], "rowIndices parameter is correct");
 				assert.ok(oEvent.getParameters().limitReached, "limitReached parameter is correct");
@@ -190,9 +189,9 @@ sap.ui.define([
 			});
 
 			fnGetContexts.reset();
-			that.oTable.addSelectionInterval(0, 10);
+			that.oTable._oSelectionPlugin.addSelectionInterval(0, 10);
 		});
-		this.oTable.setSelectedIndex(0);
+		this.oTable._oSelectionPlugin.setSelectedIndex(0);
 	});
 
 	QUnit.test("Selection using setSelectionInterval: number of items in range above limit", function(assert) {
@@ -200,32 +199,30 @@ sap.ui.define([
 		var that = this;
 		var aSelectedIndices = [];
 
-		this.oTable.setVisibleRowCount(3);
 		this.oTable._oSelectionPlugin.setLimit(5);
 		assert.equal(this.oTable._getSelectedIndicesCount(), 0, "no items are selected");
 		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
 
 		this.oTable._oSelectionPlugin.attachEventOnce("selectionChange", function() {
-			assert.ok(fnGetContexts.calledWithExactly(16, 5), "getContexts is called with the correct parameters");
+			assert.ok(fnGetContexts.calledWithExactly(0, 6), "getContexts is called with the correct parameters");
 			assert.ok(fnGetContexts.calledOnce, "getContexts called once");
 			aSelectedIndices = that.oTable.getSelectedIndices();
-			assert.deepEqual(aSelectedIndices, [16, 17, 18, 19, 20], "The correct indices are selected");
+			assert.deepEqual(aSelectedIndices, [0, 1, 2, 3, 4], "Selection is cut down to the possible limit");
 
 			that.oTable._oSelectionPlugin.attachSelectionChange(function(oEvent) {
-				assert.ok(fnGetContexts.calledWithExactly(0, 5), "getContexts is called with the correct parameters");
+				assert.ok(fnGetContexts.calledWithExactly(5, 6), "getContexts is called with the correct parameters");
 				assert.ok(fnGetContexts.calledOnce, "getContexts called once");
-				assert.ok(that.oTable._oSelectionPlugin.isLimitReached(), "Selection limit is reached");
-				assert.deepEqual(oEvent.getParameters().rowIndices, [0, 1, 2, 3, 4, 16, 17, 18, 19, 20], "rowIndices parameter is correct (indices that are being selected and deselected)");
+				assert.deepEqual(oEvent.getParameters().rowIndices, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "rowIndices parameter is correct");
 				assert.ok(oEvent.getParameters().limitReached, "limitReached parameter is correct");
 				aSelectedIndices = that.oTable.getSelectedIndices();
-				assert.deepEqual(aSelectedIndices, [0, 1, 2, 3, 4], "Selection is cut down to the possible limit. The previously selected indices are removed");
+				assert.deepEqual(aSelectedIndices, [5, 6, 7, 8, 9], "Selection is cut down to the possible limit");
 				done();
 			});
 
 			fnGetContexts.reset();
-			that.oTable.setSelectionInterval(0, 10);
+			that.oTable._oSelectionPlugin.setSelectionInterval(5, 15);
 		});
-		this.oTable.setSelectionInterval(16, 20);
+		this.oTable._oSelectionPlugin.setSelectionInterval(0, 10);
 	});
 
 	QUnit.test("Mouse interaction", function(assert) {
@@ -244,7 +241,7 @@ sap.ui.define([
 			});
 			that.oTable._oSelectionPlugin.onHeaderSelectorPress(false);
 		});
-		this.oTable.addSelectionInterval(0, 9);
+		this.oTable._oSelectionPlugin.addSelectionInterval(0, 9);
 	});
 
 	QUnit.test("Keyboard interaction", function(assert) {
@@ -263,7 +260,7 @@ sap.ui.define([
 			});
 			that.oTable._oSelectionPlugin.onKeyboardShortcut("toggle");
 		});
-		this.oTable.addSelectionInterval(0, 9);
+		this.oTable._oSelectionPlugin.addSelectionInterval(0, 9);
 	});
 
 	QUnit.test("Select All", function(assert) {
@@ -321,6 +318,64 @@ sap.ui.define([
 		});
 
 		that.oTable._oSelectionPlugin.addSelectionInterval(0, 9);
+	});
+
+	QUnit.test("Scroll position", function(assert) {
+		var done = assert.async();
+		var oSelectionSpy = sinon.spy(this.oTable._oSelectionPlugin, "addSelectionInterval");
+
+		this.oTable.setVisibleRowCountMode(tableLibrary.VisibleRowCountMode.Fixed);
+		this.oTable.setVisibleRowCount(3);
+		this.oTable._oSelectionPlugin.setLimit(5);
+		sap.ui.getCore().applyChanges();
+		var that = this;
+
+		setTimeout(function() {
+			that.oTable._oSelectionPlugin.attachEventOnce("selectionChange", function() {
+
+				that.oTable.attachEventOnce("_rowsUpdated", function () {
+					assert.ok(oSelectionSpy.calledTwice, "The selection was added and then the table was scrolled");
+					assert.equal(that.oTable.getFirstVisibleRow(), 4, "Table is scrolled at the correct position");
+					done();
+				});
+				that.oTable.setFirstVisibleRow(7);
+				$Cell = that.oTable.$("rowsel1");
+				qutils.triggerEvent("click", $Cell, {shiftKey: true});
+			});
+
+			var $Cell = that.oTable.$("rowsel0");
+			qutils.triggerEvent("click", $Cell);
+		}, 100);
+	});
+
+	QUnit.test("Scroll position (reverse range selection)", function(assert) {
+		var done = assert.async();
+		var oSelectionSpy = sinon.spy(this.oTable._oSelectionPlugin, "addSelectionInterval");
+
+		this.oTable.setVisibleRowCountMode(tableLibrary.VisibleRowCountMode.Fixed);
+		this.oTable.setVisibleRowCount(3);
+		this.oTable._oSelectionPlugin.setLimit(5);
+		sap.ui.getCore().applyChanges();
+		var that = this;
+
+		setTimeout(function() {
+			that.oTable._oSelectionPlugin.attachEventOnce("selectionChange", function() {
+
+				that.oTable.attachEventOnce("_rowsUpdated", function () {
+					assert.ok(oSelectionSpy.calledTwice, "The selection was added and then the table was scrolled");
+					assert.equal(that.oTable.getFirstVisibleRow(), 3, "Table is scrolled at the correct position");
+					done();
+				});
+
+				that.oTable.setFirstVisibleRow(0);
+				$Cell = that.oTable.$("rowsel0");
+				qutils.triggerEvent("click", $Cell, {shiftKey: true});
+			});
+
+			that.oTable.setFirstVisibleRow(7);
+			var $Cell = that.oTable.$("rowsel2");
+			qutils.triggerEvent("click", $Cell);
+		}, 100);
 	});
 
 	QUnit.test("Selection (selectionMode = Single)", function(assert) {

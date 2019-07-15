@@ -411,20 +411,6 @@ sap.ui.define([
 		assert.strictEqual($SelectAll.attr("title"), sDeselectAllTitleText, "Selected the first row again: The SelectAll title text is correct");
 	});
 
-	QUnit.test("Selection with MultiSelectionPlugin", function(assert){
-		var done = assert.async();
-		oTable.addPlugin(new MultiSelectionPlugin({limit: 5}));
-		assert.ok(oTable._oSelectionPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin"), "MultiSelectionPlugin is initialized");
-		oTable._oSelectionPlugin.setSelectionMode(SelectionMode.MultiToggle);
-		oTable.setVisibleRowCount(3);
-		oTable._oSelectionPlugin.attachEvent("selectionChange", function(oEvent){
-			assert.ok(oEvent.mParameters.limitReached, "The selection limit was reached");
-			assert.strictEqual(oTable.getFirstVisibleRow(), 2, "The first visible row is properly set");
-			done();
-		});
-		oTable._oSelectionPlugin.addSelectionInterval(0,10);
-	});
-
 	QUnit.test("VisibleRowCount", function(assert) {
 		var fnError = sinon.spy(Log, "error");
 		oTable.setVisibleRowCount(8);
