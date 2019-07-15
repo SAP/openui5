@@ -19,6 +19,12 @@
         "type": "FIX",
         "text": " sap.ui.rta - onElementModified handle addOrSetAggregation events",
         "references": []
+      },
+      {
+        "id": "495ee8d1bdb968c056b10d6f24632c7ec32cbaf7",
+        "type": "FIX",
+        "text": " sap.ui.rta - fixed simple form ElementMover",
+        "references": []
       }
     ]
   }

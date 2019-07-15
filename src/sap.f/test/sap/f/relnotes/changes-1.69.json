@@ -13,6 +13,18 @@
         "type": "FIX",
         "text": " sap.f.Avatar: Improved fallback logic",
         "references": []
+      },
+      {
+        "id": "42a4d59a29426e820ee1a514004a8f4798790e23",
+        "type": "FIX",
+        "text": " sap.f.ShellBar: Randomly failing QUnit on Firefox is fixed",
+        "references": []
+      },
+      {
+        "id": "68a318cc0e7bd4cca064cfec33937df3017d1776",
+        "type": "FIX",
+        "text": " sap.f.cards.BaseContent: Content of \"parameters\" model now updated",
+        "references": []
       }
     ]
   }

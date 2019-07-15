@@ -13,6 +13,24 @@
         "type": "FIX",
         "text": " v2/ODataModel: Path cache invalidation",
         "references": []
+      },
+      {
+        "id": "c903c6f8e72a448035aaf33b9f5491665b9e8289",
+        "type": "FIX",
+        "text": " Improve jQuery.parseHTML implementation",
+        "references": []
+      },
+      {
+        "id": "4e78cd2485f46a4b17c101c580e953495886148f",
+        "type": "FIX",
+        "text": " core.routing: fix fullscreen and master detail samples",
+        "references": []
+      },
+      {
+        "id": "c74719f5c8f30de9570212b6f2ed4ce5db2027d9",
+        "type": "FIX",
+        "text": " performance/trace/BeaconRequest: do not send empty beacon",
+        "references": []
       }
     ]
   }

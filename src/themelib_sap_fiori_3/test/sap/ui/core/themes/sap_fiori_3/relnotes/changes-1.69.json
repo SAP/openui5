@@ -7,6 +7,42 @@
         "type": "FIX",
         "text": " sap.m.Toolbar: Active toolbar focus outline corrected",
         "references": []
+      },
+      {
+        "id": "95c3b0bd53d82a7fc58808dddb2ae57d3da55b35",
+        "type": "FEATURE",
+        "text": " sap.f: new sap_fiori_3_hcb and sap_fiori_3_hcw themes",
+        "references": []
+      },
+      {
+        "id": "440613e82d0ce9a1c477502b914e3d525de9c907",
+        "type": "FEATURE",
+        "text": " sap.m.QuickViewPage: Fallback icon property introduced",
+        "references": []
+      },
+      {
+        "id": "2cd81489ddc6371a6b6d0393f2c0d092d5a2b520",
+        "type": "FEATURE",
+        "text": " sap.tnt: new sap_fiori_3_hcb and sap_fiori_3_hcw themes",
+        "references": []
+      },
+      {
+        "id": "096cce908c69bf4edd9c5c3b1c56351c561d2ff3",
+        "type": "FEATURE",
+        "text": " sap.ui.layout: new sap_fiori_3_hcb and sap_fiori_3_hcw themes",
+        "references": []
+      },
+      {
+        "id": "c06f46120ca41a6d880bb78847d28f8080b9c8b1",
+        "type": "FEATURE",
+        "text": " sap.uxap: new sap_fiori_3_hcb and sap_fiori_3_hcw themes",
+        "references": []
+      },
+      {
+        "id": "9812b0fe8c882f56215fdabb704cfbbf6660fd3a",
+        "type": "FIX",
+        "text": " sap.m.Slider: Labels offset adjusted",
+        "references": []
       }
     ]
   }

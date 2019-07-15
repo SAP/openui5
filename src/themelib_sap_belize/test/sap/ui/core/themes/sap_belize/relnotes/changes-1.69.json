@@ -7,6 +7,12 @@
         "type": "FIX",
         "text": " sap.m.Toolbar: Active toolbar focus outline corrected",
         "references": []
+      },
+      {
+        "id": "95c3b0bd53d82a7fc58808dddb2ae57d3da55b35",
+        "type": "FEATURE",
+        "text": " sap.f: new sap_fiori_3_hcb and sap_fiori_3_hcw themes",
+        "references": []
       }
     ]
   }

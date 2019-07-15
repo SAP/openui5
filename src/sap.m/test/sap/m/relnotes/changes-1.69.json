@@ -31,6 +31,108 @@
         "type": "FIX",
         "text": " sap.m.StepInput: Description reference added",
         "references": []
+      },
+      {
+        "id": "4b5d590c8d478565c8b7467a0f262a1456bb445c",
+        "type": "FEATURE",
+        "text": " ListBase: range selection",
+        "references": []
+      },
+      {
+        "id": "440613e82d0ce9a1c477502b914e3d525de9c907",
+        "type": "FEATURE",
+        "text": " sap.m.QuickViewPage: Fallback icon property introduced",
+        "references": []
+      },
+      {
+        "id": "f993d8e50fc27d63caad9d9b43be563ac516e35b",
+        "type": "FEATURE",
+        "text": " sap.m.SearchField: Suggestion dialog on mobile is adjusted",
+        "references": []
+      },
+      {
+        "id": "6478939c8d4a89b3197647d6bcb99e3cb54f3047",
+        "type": "FIX",
+        "text": " FeedInput: Fixed growing",
+        "references": []
+      },
+      {
+        "id": "a02ff48e20b52c32be11aa390366cc212423a9e7",
+        "type": "FIX",
+        "text": " P13nConditionPanel: Proper date format settings handling",
+        "references": []
+      },
+      {
+        "id": "5137df43059fbb7c01b1b1468ebfd070eae7581d",
+        "type": "FIX",
+        "text": " UploadCollection: Uploaded files will not be re-uploaded",
+        "references": []
+      },
+      {
+        "id": "4e78cd2485f46a4b17c101c580e953495886148f",
+        "type": "FIX",
+        "text": " core.routing: fix fullscreen and master detail samples",
+        "references": []
+      },
+      {
+        "id": "d56b4eba324a16c2b2626337ef877f8b1b4b704f",
+        "type": "FIX",
+        "text": " sap.m.ColumnListItem: pop-in alignment for MultiSelection mode",
+        "references": []
+      },
+      {
+        "id": "f46c0b5219b028aca8c44f8665dd08a2e51179c8",
+        "type": "FIX",
+        "text": " sap.m.Menu: Custom data is not propagated to the visual items",
+        "references": []
+      },
+      {
+        "id": "f041c113c1cb11d470269846478fd625275501e6",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: long text wraps on more lines",
+        "references": []
+      },
+      {
+        "id": "803687e5d897fceb58f8334f15fcb30e2244aeb8",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Empty Popover is not shown",
+        "references": []
+      },
+      {
+        "id": "7b9f0d8ff574d8de860d750b6b42fd59da3b624e",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Srinkable Controls overflow correctly",
+        "references": []
+      },
+      {
+        "id": "9812b0fe8c882f56215fdabb704cfbbf6660fd3a",
+        "type": "FIX",
+        "text": " sap.m.Slider: Labels offset adjusted",
+        "references": []
+      },
+      {
+        "id": "c504b344890876f324c8c4f26b8ed03342b41174",
+        "type": "FIX",
+        "text": " sap.m.TableSelectDialog: Batch call on cancel is not triggered",
+        "references": []
+      },
+      {
+        "id": "c4ba885c294307c790e8da173851acfa021886f2",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Fixes invisible token navigation",
+        "references": []
+      },
+      {
+        "id": "e0f42ade3bd702f5d671c3be786b3af6be4f6548",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Focus outline of icon is fixed",
+        "references": []
+      },
+      {
+        "id": "b2a88760e479a99cc23136e4c57d81ef92a41a28",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: checkbox aligned correctly",
+        "references": []
       }
     ]
   }
