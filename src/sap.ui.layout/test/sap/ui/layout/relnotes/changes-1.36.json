@@ -1,155 +1,161 @@
 {
-	"1.36.0": {
-		"date": "January 2016",
-		"notes": [
-			{
-				"id": "d2249203a73896b871ece61ab4639a72833f0b44",
-				"type": "FEATURE",
-				"text": "sap.ui.layout.DynamicSideContent: New property sideContentPosition added",
-				"references": []
-			},
-			{
-				"id": "1664b1ab8269d14e0ffe11332b073ef579b3c4b1",
-				"type": "FEATURE",
-				"text": "sap.ui.layout.form.Form: allow Toolbars as Title",
-				"references": []
-			},
-			{
-				"id": "881d75b8a3eb298a4cc10be7fac68bb0ceee3dd2",
-				"type": "FEATURE",
-				"text": "sap.ui.layout.form.Form: new backgroundDesign property",
-				"references": []
-			},
-			{
-				"id": "d87bd654bd8791b515329937f3268ddd104675c4",
-				"type": "FIX",
-				"text": "sap.m.BlockLayout: add flex prefixes for IE 10",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570850712"
-					}
-				]
-			},
-			{
-				"id": "662ff98ab20ea1b7713a0f061e6e72b5c70fafb8",
-				"type": "FIX",
-				"text": "sap.m.ScrollContainer, sap.ui.layout.FixFlex: A tweak, causing issues in Internet Explorer is now removed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570902084"
-					}
-				]
-			},
-			{
-				"id": "690963771ea5f3a12e2e7c59d3382a8c7bd6b83c",
-				"type": "FIX",
-				"text": "sap.ui.layout.DynamicSideContent: Side content visibility on invalidation solved",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570868474"
-					}
-				]
-			},
-			{
-				"id": "bbbc6db0bd74f293154ccb36e15dd3b0e256e2e9",
-				"type": "FIX",
-				"text": "sap.ui.layout.Form: default behaviour of linebreak if linebreakXL is not defined",
-				"references": []
-			},
-			{
-				"id": "fd6e463c48a8d60ed9a57dc3e54c36087059e7a0",
-				"type": "FIX",
-				"text": "sap.ui.layout.Form: linebreakXL support correction in Grid.",
-				"references": []
-			}
-		]
-	},
-	"1.36.1": {
-		"date": "February 2016",
-		"notes": [
-			{
-				"id": "59820b0e7bec030368dfebaa56c56fadd98f7e8c",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.Form: No padding between FormContainer if no Title",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670021664"
-					}
-				]
-			}
-		]
-	},
-	"1.36.2": {
-		"date": "February 2016",
-		"notes": [
-			{
-				"id": "8fa8b026b035f364b3d68125036a8aad3dfe24c3",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.SimpleForm: improve documentation",
-				"references": []
-			}
-		]
-	},
-	"1.36.4": {
-		"date": "March 2016",
-		"notes": [
-			{
-				"id": "abc1f1737390a8a9a373af5dff21de6156466577",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.ResponsiveGridLayout: 1st container invisible",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670108114"
-					}
-				]
-			}
-		]
-	},
-	"1.36.5": {
-		"date": "March 2016",
-		"notes": [
-			{
-				"id": "38552c9488c143c2160027c836a87ea31fef1594",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.ResponsiveLayout: Labels wrong aligned in Edge",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670153084"
-					}
-				]
-			}
-		]
-	},
-	"1.36.6": {
-		"date": "April 2016",
-		"notes": [
-			{
-				"id": "1e451b43fd13a76a3917ea1b8e52ee1fea7a1035",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.Form: double role \"form\" if only one container",
-				"references": [
-					{
-						"type": "GitHub",
-						"reference": "908"
-					},
-					{
-						"type": "BCP",
-						"reference": "1670177663"
-					}
-				]
-			},
-			{
-				"id": "67733be6001f221fcc4ab8d11cfe75746b27c651",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.Form: too much padding if only 1 container",
-				"references": []
-			}
-		]
-	}
+  "1.36.0": {
+    "date": "January 2016",
+    "notes": [
+      {
+        "id": "d2249203a73896b871ece61ab4639a72833f0b44",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.DynamicSideContent: New property sideContentPosition added",
+        "references": []
+      },
+      {
+        "id": "1664b1ab8269d14e0ffe11332b073ef579b3c4b1",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.form.Form: allow Toolbars as Title",
+        "references": []
+      },
+      {
+        "id": "881d75b8a3eb298a4cc10be7fac68bb0ceee3dd2",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.form.Form: new backgroundDesign property",
+        "references": []
+      },
+      {
+        "id": "d87bd654bd8791b515329937f3268ddd104675c4",
+        "type": "FIX",
+        "text": "sap.m.BlockLayout: add flex prefixes for IE 10",
+        "references": []
+      },
+      {
+        "id": "662ff98ab20ea1b7713a0f061e6e72b5c70fafb8",
+        "type": "FIX",
+        "text": "sap.m.ScrollContainer, sap.ui.layout.FixFlex: A tweak, causing issues in Internet Explorer is now removed",
+        "references": []
+      },
+      {
+        "id": "690963771ea5f3a12e2e7c59d3382a8c7bd6b83c",
+        "type": "FIX",
+        "text": "sap.ui.layout.DynamicSideContent: Side content visibility on invalidation solved",
+        "references": []
+      },
+      {
+        "id": "bbbc6db0bd74f293154ccb36e15dd3b0e256e2e9",
+        "type": "FIX",
+        "text": "sap.ui.layout.Form: default behaviour of linebreak if linebreakXL is not defined",
+        "references": []
+      },
+      {
+        "id": "fd6e463c48a8d60ed9a57dc3e54c36087059e7a0",
+        "type": "FIX",
+        "text": "sap.ui.layout.Form: linebreakXL support correction in Grid.",
+        "references": []
+      }
+    ]
+  },
+  "1.36.1": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "59820b0e7bec030368dfebaa56c56fadd98f7e8c",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: No padding between FormContainer if no Title",
+        "references": []
+      }
+    ]
+  },
+  "1.36.2": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "8fa8b026b035f364b3d68125036a8aad3dfe24c3",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm: improve documentation",
+        "references": []
+      }
+    ]
+  },
+  "1.36.4": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "abc1f1737390a8a9a373af5dff21de6156466577",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.ResponsiveGridLayout: 1st container invisible",
+        "references": []
+      }
+    ]
+  },
+  "1.36.5": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "38552c9488c143c2160027c836a87ea31fef1594",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.ResponsiveLayout: Labels wrong aligned in Edge",
+        "references": []
+      }
+    ]
+  },
+  "1.36.6": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "1e451b43fd13a76a3917ea1b8e52ee1fea7a1035",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: double role \"form\" if only one container",
+        "references": []
+      },
+      {
+        "id": "67733be6001f221fcc4ab8d11cfe75746b27c651",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: too much padding if only 1 container",
+        "references": []
+      }
+    ]
+  },
+  "1.36.7": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "8ff20e7cab228bd50d78e6c711149a1992b23012",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.GridLayout: labels not aligned in Firefox",
+        "references": []
+      },
+      {
+        "id": "b4ea281908d1b13902bd77aab9b066b89830e0dc",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.GridLayout: padding ar bottom missing in IE",
+        "references": []
+      },
+      {
+        "id": "fd035cf682fbb24be7b1f4d8c1ce7878758c06af",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm: errors by changing content",
+        "references": []
+      }
+    ]
+  },
+  "1.36.10": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "30c0f970f2a0dbc009acf7b9478aa7f570a65a96",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.ResponsiveLayout: change order of FormElement",
+        "references": []
+      }
+    ]
+  },
+  "1.36.12": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "8f9d8d36e87fe4b3eb22ce1a3e45b366af8b423c",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveFlowLayout: when used in SimpleForm items\u0027 height is calculated consistent for all browsers.",
+        "references": []
+      }
+    ]
+  }
 }

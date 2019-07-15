@@ -5,380 +5,499 @@
       {
         "id": "fbcaab19adcf7dce453cc0852ff543b2be3ae52f",
         "type": "FEATURE",
-        "text": "sap.f: new sap_belize_hcb and sap_belize_hcw themes",
+        "text": " sap.f: new sap_belize_hcb and sap_belize_hcw themes",
         "references": []
       },
       {
         "id": "0da47530237a9120abfd94ca1a3969f94b82d358",
         "type": "FEATURE",
-        "text": "sap.m.BrowserShcrollbar: HCB and HCW scroll corner color",
+        "text": " sap.m.BrowserShcrollbar: HCB and HCW scroll corner color",
         "references": []
       },
       {
         "id": "2e26b80756a08d5e57bf9d051b57d8152b4f50e1",
         "type": "FEATURE",
-        "text": "sap.m.GenericTile: New overflow concept for GenericTile in line mode implemented",
+        "text": " sap.m.GenericTile: New overflow concept for GenericTile in line mode implemented",
         "references": []
       },
       {
         "id": "9d7f78d66bd0241895c6e071a44bdf252c677377",
         "type": "FEATURE",
-        "text": "sap.m.MessageView - generic control implementation",
+        "text": " sap.m.MessageView - generic control implementation",
         "references": []
       },
       {
         "id": "2634f200f510c88dc9616aee9b581c462d1566e1",
         "type": "FEATURE",
-        "text": "sap.m.ObjectAttribute: When active, only the value is clickable",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1680367718"
-          }
-        ]
+        "text": " sap.m.ObjectAttribute: When active, only the value is clickable",
+        "references": []
       },
       {
         "id": "51f6234400ef60ce6bd64dbcfbe360a0d710389e",
         "type": "FEATURE",
-        "text": "sap.m.PlanningCalendar: 1 month view for S and M sizes",
+        "text": " sap.m.PlanningCalendar: 1 month view for S and M sizes",
         "references": []
       },
       {
         "id": "7979b89aa5a367d818b0b8a2af7e0bb89830c0dd",
         "type": "FEATURE",
-        "text": "sap.m.Popover: HCW and HCB arrow styling based on Belize",
+        "text": " sap.m.Popover: HCW and HCB arrow styling based on Belize",
         "references": []
       },
       {
         "id": "601e422ff678503da9530011dfe71a0eea717c68",
         "type": "FEATURE",
-        "text": "sap.tnt.IconTabHeader: sap.m.IconTabHeader is now correctly displayed inside sap.tnt.ToolHeader",
+        "text": " sap.tnt.IconTabHeader: sap.m.IconTabHeader is now correctly displayed inside sap.tnt.ToolHeader",
         "references": []
       },
       {
         "id": "1de2632714ff53a550433deb00a612a6361b10ad",
         "type": "FEATURE",
-        "text": "sap.tnt: new sap_belize_hcb and sap_belize_hcw themes",
+        "text": " sap.tnt: new sap_belize_hcb and sap_belize_hcw themes",
         "references": []
       },
       {
         "id": "4e33c9f62ba2af9daa3112516d7a348eb8eefe86",
         "type": "FEATURE",
-        "text": "sap.ui.dt: add support for sap_belize_hcw theme",
+        "text": " sap.ui.dt: add support for sap_belize_hcw theme",
         "references": []
       },
       {
         "id": "e06e0e7e8431ceba99d74dfed2c714483c326dea",
         "type": "FEATURE",
-        "text": "sap.uxap: new sap_belize_hcb and sap_belize_hcw themes",
+        "text": " sap.uxap: new sap_belize_hcb and sap_belize_hcw themes",
         "references": []
       },
       {
         "id": "c4161244e82e6da3b26993a5f72986cfac0375f7",
         "type": "FIX",
-        "text": "@sapUiShadowHeader less parameter alignment",
+        "text": " @sapUiShadowHeader less parameter alignment",
         "references": []
       },
       {
         "id": "f12935381ab8ca96b9a843f118dbd937e6d8b0fc",
         "type": "FIX",
-        "text": "ActionListItem: hover and active bugs fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770076968"
-          }
-        ]
+        "text": " ActionListItem: hover and active bugs fixed",
+        "references": []
       },
       {
         "id": "bda0428c1b078c1a06d3dfa418940b0433a6e59c",
         "type": "FIX",
-        "text": "sap.m.Button: Correct color on press when inside OverflowToolbar",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770186589"
-          }
-        ]
+        "text": " sap.m.Button: Correct color on press when inside OverflowToolbar",
+        "references": []
       },
       {
         "id": "399e222145dda29e67eba27b7a39c63a16f6048a",
         "type": "FIX",
-        "text": "sap.m.Button: Focus outline visible for IE",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780096731"
-          }
-        ]
+        "text": " sap.m.Button: Focus outline visible for IE",
+        "references": []
       },
       {
         "id": "a98d2508ebf55a2c24641bb756e0fdbc990874c9",
         "type": "FIX",
-        "text": "sap.m.Button: Text styling fixes for buttons in bars",
+        "text": " sap.m.Button: Text styling fixes for buttons in bars",
         "references": []
       },
       {
         "id": "dc635f4e78da2e250cb6b71b00b747c460f6b399",
         "type": "FIX",
-        "text": "sap.m.Button: Text styling fixes for buttons in bars",
+        "text": " sap.m.Button: Text styling fixes for buttons in bars",
         "references": []
       },
       {
         "id": "abde60a9e48b07930074e6b76e0828ec115e2e9f",
         "type": "FIX",
-        "text": "sap.m.FeedInput: Border issue in belize_plus theme fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780102175"
-          }
-        ]
+        "text": " sap.m.FeedInput: Border issue in belize_plus theme fixed",
+        "references": []
       },
       {
         "id": "9e44a4e6dc6bd80442cf598c6abe2e17fe2ed4f6",
         "type": "FIX",
-        "text": "sap.m.FeedInput: For Belize Plus theme, border added for images",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780102175"
-          }
-        ]
+        "text": " sap.m.FeedInput: For Belize Plus theme, border added for images",
+        "references": []
       },
       {
         "id": "e3144d9161610b7bb7c5e84128a68f0e4933b5b1",
         "type": "FIX",
-        "text": "sap.m.IconTabBar: focus on IconTab items is now fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780133244"
-          }
-        ]
+        "text": " sap.m.IconTabBar: focus on IconTab items is now fixed",
+        "references": []
       },
       {
         "id": "9546ddb19f19282f3e1025b9618215537d369155",
         "type": "FIX",
-        "text": "sap.m.Input: disabled, read-only and value states fixed",
+        "text": " sap.m.Input: disabled, read-only and value states fixed",
         "references": []
       },
       {
         "id": "d658e7d146d56eca7b151fd520eb9d5ff95b3447",
         "type": "FIX",
-        "text": "sap.m.InputBase: Focus in InputBase for Belize and HCB Fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1670528641"
-          }
-        ]
+        "text": " sap.m.InputBase: Focus in InputBase for Belize and HCB Fixed",
+        "references": []
       },
       {
         "id": "557499dc9ccac068b0d92f66f53d331dbb926c0b",
         "type": "FIX",
-        "text": "sap.m.InputBase: focus on readonly is now fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770002882"
-          }
-        ]
+        "text": " sap.m.InputBase: focus on readonly is now fixed",
+        "references": []
       },
       {
         "id": "aa6651ddee5b6640cc0fee843db6c44299987c36",
         "type": "FIX",
-        "text": "sap.m.List: Focus on pressed state in Belize default design should be white (not black)",
+        "text": " sap.m.List: Focus on pressed state in Belize default design should be white (not black)",
         "references": []
       },
       {
         "id": "aba143815aac5f332cf98fd4d2a72001c27f4c82",
         "type": "FIX",
-        "text": "sap.m.List: Object Status in HC themes",
+        "text": " sap.m.List: Object Status in HC themes",
         "references": []
       },
       {
         "id": "1bfd7c9afb778c11ff6be433c5461a38d1729c70",
         "type": "FIX",
-        "text": "sap.m.MenuButton: Focus fixed for Belize",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1680343825"
-          }
-        ]
+        "text": " sap.m.MenuButton: Focus fixed for Belize",
+        "references": []
       },
       {
         "id": "48df8e7fe6eee9daef1ebc2e591d42172c739b84",
         "type": "FIX",
-        "text": "sap.m.MessageView: High contrast styles on hover adjusted",
+        "text": " sap.m.MessageView: High contrast styles on hover adjusted",
         "references": []
       },
       {
         "id": "efba118a28b8a34b65c975fb7871d9f2a49a6655",
         "type": "FIX",
-        "text": "sap.m.NotificationListBase: sap_belize_plus background fixed",
+        "text": " sap.m.NotificationListBase: sap_belize_plus background fixed",
         "references": []
       },
       {
         "id": "eb73f170f88d17616777a1fd60b6887d384f14db",
         "type": "FIX",
-        "text": "sap.m.ObjectAttribute: Focus clear visible on IE",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780009120"
-          }
-        ]
+        "text": " sap.m.ObjectAttribute: Focus clear visible on IE",
+        "references": []
       },
       {
         "id": "7495b384859ebe5d1d8b3f1f61aac06a31dacb6f",
         "type": "FIX",
-        "text": "sap.m.ObjectListItem: ObjectNumber has correct styling",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770022229"
-          }
-        ]
+        "text": " sap.m.ObjectListItem: ObjectNumber has correct styling",
+        "references": []
       },
       {
         "id": "82ba5943e169234fabf3535f2366b4c90d026577",
         "type": "FIX",
-        "text": "sap.m.Page: Belize, HCB, HCW border style fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1670533393"
-          }
-        ]
+        "text": " sap.m.Page: Belize, HCB, HCW border style fixed",
+        "references": []
       },
       {
         "id": "8d5c3bbf29028905a85c745872a959e446e50a65",
         "type": "FIX",
-        "text": "sap.m.Page: Footer visual design corrected",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770144290"
-          }
-        ]
+        "text": " sap.m.Page: Footer visual design corrected",
+        "references": []
       },
       {
         "id": "9dd3681db067b949bc0b6b8522ca38c37200e173",
         "type": "FIX",
-        "text": "sap.m.PlanningCalendar-tap on appointment on mobile should not fire rowSelectionChange.",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "002075129500004765332016"
-          }
-        ]
+        "text": " sap.m.PlanningCalendar-tap on appointment on mobile should not fire rowSelectionChange.",
+        "references": []
       },
       {
         "id": "2ce428e2cffcdc74c88d33c936b32599e72059ca",
         "type": "FIX",
-        "text": "sap.m.RadioButton: the css alignment is fixed in compact mode",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780097211"
-          },
-          {
-            "type": "BCP",
-            "reference": "1680301495"
-          }
-        ]
+        "text": " sap.m.RadioButton: the css alignment is fixed in compact mode",
+        "references": []
       },
       {
         "id": "6fad4665a3962e82232a25c7011a54203e224807",
         "type": "FIX",
-        "text": "sap.m.RangeSlider: Belize HCW / HCB contrast ratio update for focus on range handle",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770075885"
-          }
-        ]
+        "text": " sap.m.RangeSlider: Belize HCW / HCB contrast ratio update for focus on range handle",
+        "references": []
       },
       {
         "id": "2e11da947cdf3e3624686f9182a24a545249805e",
         "type": "FIX",
-        "text": "sap.m.SearchField: Focus on IE is now fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770107296"
-          }
-        ]
+        "text": " sap.m.SearchField: Focus on IE is now fixed",
+        "references": []
       },
       {
         "id": "6cd20571058fb08dd214d038637558eb4525eb23",
         "type": "FIX",
-        "text": "sap.m.ToggleButton: disabled hc colors fixed",
+        "text": " sap.m.ToggleButton: disabled hc colors fixed",
         "references": []
       },
       {
         "id": "ead6da0cdcb80322b1d6bc9569992a95332d7569",
         "type": "FIX",
-        "text": "sap.m.WizardProgressNavigator - css border parameter for Belize fixed",
+        "text": " sap.m.WizardProgressNavigator - css border parameter for Belize fixed",
         "references": []
       },
       {
         "id": "35be8b05bf74ca8b385810eab8de72ad499f1a88",
         "type": "FIX",
-        "text": "sap.tnt: import statements for sap_belize_hcw fixed",
+        "text": " sap.tnt: import statements for sap_belize_hcw fixed",
         "references": []
       },
       {
         "id": "f5657a4a19a7affcdf92273521c949d36d1658e9",
         "type": "FIX",
-        "text": "sap.ui.layout.Splitter: Cursor over separator grip fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780128463"
-          }
-        ]
+        "text": " sap.ui.layout.Splitter: Cursor over separator grip fixed",
+        "references": []
       },
       {
         "id": "2ed8279b2c839158504daff133d79cbbe5ba7477",
         "type": "FIX",
-        "text": "sap.ui.layout.Splitter: HCB and HCW styles fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770002704"
-          }
-        ]
+        "text": " sap.ui.layout.Splitter: HCB and HCW styles fixed",
+        "references": []
       },
       {
         "id": "8493be88db25f845c16a86bcb025b9bbc5b2beb2",
         "type": "FIX",
-        "text": "sap.uxap.AnchorBar: AnchorBar Button hover fixed",
+        "text": " sap.uxap.AnchorBar: AnchorBar Button hover fixed",
         "references": []
       },
       {
         "id": "02d2612e08545f5366a3225b9d35f5a0d08e7929",
         "type": "FIX",
-        "text": "shared.less: missing font sizes for HC themes",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770089122"
-          }
-        ]
+        "text": " shared.less: missing font sizes for HC themes",
+        "references": []
       },
       {
         "id": "3bccdbfc799f4083cb57655c50769d97f697c0ee",
         "type": "FIX",
-        "text": "sap.m.SegmentedButton: Focus corrected for IE",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1680335652"
-          }
-        ]
+        "text": " sap.m.SegmentedButton: Focus corrected for IE",
+        "references": []
+      }
+    ]
+  },
+  "1.48.1": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "77ca030a28e989af5f5231cb9b9b6431a77ae1d0",
+        "type": "FEATURE",
+        "text": " sap.ui.layout.BlockLayoutCell - added 2 new properties for predefined themable colors also added contrast container capabilities",
+        "references": []
+      },
+      {
+        "id": "14c4dd876b42b7ae53ba11d41a038ff3505a25c8",
+        "type": "FIX",
+        "text": " sap.m.Menu: Item separator position and height corrected",
+        "references": []
+      },
+      {
+        "id": "b615ffc8a614b483ed716dcf2bcaddba86927d62",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Fixes MessageViewItems Icons in HCB/HCW",
+        "references": []
+      },
+      {
+        "id": "0518fdbb10272ba696a6f275dc53e70a3bf93c72",
+        "type": "FIX",
+        "text": " unified.Calendar: On IE selected days focus outline is dashed",
+        "references": []
+      }
+    ]
+  },
+  "1.48.2": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "f9951b351bc287263bad3195cc3f0edb43a6ad36",
+        "type": "FIX",
+        "text": " core.Icon: make the focus outline stay within the DOM area",
+        "references": []
+      },
+      {
+        "id": "0fde5566416adc756c8fda8216503b8c09ad5e74",
+        "type": "FIX",
+        "text": " sap.m.Menu: Items have borders in hcw and hcb themes on phone",
+        "references": []
+      },
+      {
+        "id": "6011c9203cb498d0ce676d4e3e364bd12f80f23a",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingDialog: \"Select all\" style fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.48.3": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "fbba637d5207a158f3d51126821c60326798e8bd",
+        "type": "FIX",
+        "text": " sap.m.Input: HCB/W focus is now ok",
+        "references": []
+      },
+      {
+        "id": "058dc2e36684a5a61184e73ca70f90aa6e4b37eb",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Value help icon is now rendered correctly in compact mode",
+        "references": []
+      },
+      {
+        "id": "a4606fb529d6a8498079b4572d902110f07e5765",
+        "type": "FIX",
+        "text": " sap.m.SelectList: Corrected SelectList focus",
+        "references": []
+      }
+    ]
+  },
+  "1.48.4": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "1295cecb31d9fd3c183bcb473f52617c8581ae28",
+        "type": "FIX",
+        "text": " sap.m.ActionListItem: Fix double focus issue in IE.",
+        "references": []
+      },
+      {
+        "id": "bb8ec83dbb70d6638852071e9b58d773866fe5c5",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Focus outline handled correctly for empty text value",
+        "references": []
+      }
+    ]
+  },
+  "1.48.5": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "f67ad34ecfeb55f13bf50a756844d56978425462",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Focus is now correct in IE",
+        "references": []
+      },
+      {
+        "id": "19e51be36b4ea49e632e1b1432eab922c9dd0c96",
+        "type": "FIX",
+        "text": " sap.m.TileContent: Semantic color of footer corrected",
+        "references": []
+      },
+      {
+        "id": "aebdad1db9149f761e3c223c80ab5f5530550f23",
+        "type": "FIX",
+        "text": " sap.ui.commons.Checkbox: the check is visible in belize plus now",
+        "references": []
+      },
+      {
+        "id": "d9100f7a04b5aefaf5c9f6886f7073ef3a17ced3",
+        "type": "FIX",
+        "text": " sap.ui.layout.BlockLayout: Add missing sapContrast for Light background",
+        "references": []
+      }
+    ]
+  },
+  "1.48.6": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "586acf428239e88d5ddb9e8862573e3e2dbe959e",
+        "type": "FIX",
+        "text": " core.Icon: simulate focus outline with negative offset for IE and Edge",
+        "references": []
+      }
+    ]
+  },
+  "1.48.7": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "ba878bb257ff4ab289787fbdb98c2c8d4e6e1964",
+        "type": "FIX",
+        "text": " ShellHeader Layout fixed",
+        "references": []
+      },
+      {
+        "id": "7753f98dfab1dc5771a629a9c152733158d9697c",
+        "type": "FIX",
+        "text": " ShellHeader Layout fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.48.8": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "e1e78d28f76fa139143f67f908b51b66237ba338",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: correct different height of the ObjectAttributeDiv between IE and Chrome",
+        "references": []
+      },
+      {
+        "id": "486746bbc9ed65c23d6f2f334a548ecd46ec7db4",
+        "type": "FIX",
+        "text": " transparent toolbar in contrast mode fixed for sap_belize_plus",
+        "references": []
+      }
+    ]
+  },
+  "1.48.9": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "91a216ab33dea62a6893008f21bbbc05185187d0",
+        "type": "FIX",
+        "text": " transparent icontabheader in contrast mode for sap_belize_plus",
+        "references": []
+      }
+    ]
+  },
+  "1.48.10": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "6d3d49a9c6807fd9651728641d4f07d37ff7915b",
+        "type": "FIX",
+        "text": " sap.m.Page: properly show floatingFooter when PageAccessibleLandmark info is used",
+        "references": []
+      }
+    ]
+  },
+  "1.48.11": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "cc3a58bcd56350dddc5706c80ba1d53351316297",
+        "type": "FIX",
+        "text": " sap.m.Input: Value state icon is now correctly shown",
+        "references": []
+      },
+      {
+        "id": "2818e51ba47a52c71b138cb2ef3df5d1e0c153cd",
+        "type": "FIX",
+        "text": " sap.ui.layout.Splitter: Focus in HCB under IE is now correct",
+        "references": []
+      },
+      {
+        "id": "b332cfde344e88283354e3a2a637594473e75cb2",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: minor visual fix in the header",
+        "references": []
+      }
+    ]
+  },
+  "1.48.17": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "4b5f3cf568f6829109b4c23593be75a0ea3db81e",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: focus fixed for HCB",
+        "references": []
+      }
+    ]
+  },
+  "1.48.19": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "7ffa8f34c285e2189cc3052818c938e952366f36",
+        "type": "FIX",
+        "text": " sap.m.Dialog: correct header, subheader and footer DOM structure",
+        "references": []
       }
     ]
   }
