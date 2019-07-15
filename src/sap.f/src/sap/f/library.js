@@ -32,6 +32,7 @@ sap.ui.define(["sap/ui/base/DataType",
 			"sap.f.AvatarShape",
 			"sap.f.AvatarSize",
 			"sap.f.AvatarType",
+			"sap.f.AvatarColor",
 			"sap.f.cards.HeaderPosition",
 			"sap.f.DynamicPageTitleArea",
 			"sap.f.DynamicPageTitleShrinkRatio",
@@ -419,6 +420,86 @@ sap.ui.define(["sap/ui/base/DataType",
 		 * @public
 		 */
 		Initials: "Initials"
+	};
+
+	/**
+	 * Possible background color options for the {@link sap.f.Avatar} control.
+	 *
+	 * <b>Note:</b> If the <code>Random</code> value is assigned, a random color is
+	 * chosen from the other options (Accent1 to Accent10).
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.69
+	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.AvatarColor = {
+		/**
+		 * Accent 1
+		 *
+		 * @public
+		 */
+		Accent1: "Accent1",
+		/**
+		 * Accent 2
+		 *
+		 * @public
+		 */
+		Accent2: "Accent2",
+		/**
+		 * Accent 3
+		 *
+		 * @public
+		 */
+		Accent3: "Accent3",
+		/**
+		 * Accent 4
+		 *
+		 * @public
+		 */
+		Accent4: "Accent4",
+		/**
+		 * Accent 5
+		 *
+		 * @public
+		 */
+		Accent5: "Accent5",
+		/**
+		 * Accent 6
+		 *
+		 * @public
+		 */
+		Accent6: "Accent6",
+		/**
+		 * Accent 7
+		 *
+		 * @public
+		 */
+		Accent7: "Accent7",
+		/**
+		 * Accent 8
+		 *
+		 * @public
+		 */
+		Accent8: "Accent8",
+		/**
+		 * Accent 9
+		 *
+		 * @public
+		 */
+		Accent9: "Accent9",
+		/**
+		 * Accent 10
+		 *
+		 * @public
+		 */
+		Accent10: "Accent10",
+		/**
+		 * Random color, chosen from the other options (Accent1 to Accent10)
+		 *
+		 * @public
+		 */
+		Random: "Random"
 	};
 
 	/**

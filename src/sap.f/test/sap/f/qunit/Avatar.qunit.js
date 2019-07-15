@@ -1,6 +1,19 @@
 /*global QUnit, sinon*/
-sap.ui.define(["sap/ui/core/Core", "sap/ui/Device", "sap/ui/thirdparty/URI", "sap/f/Avatar", "sap/m/LightBox"],
-function(oCore, Device, URI, Avatar, LightBox) {
+sap.ui.define([
+	"sap/ui/core/Core",
+	"sap/ui/Device",
+	"sap/ui/thirdparty/URI",
+	"sap/f/Avatar",
+	"sap/m/LightBox",
+	"sap/f/library"
+], function(
+	oCore,
+	Device,
+	URI,
+	Avatar,
+	LightBox,
+	library
+) {
 	"use strict";
 
 	var sControlId = "AvatarId",
@@ -11,7 +24,9 @@ function(oCore, Device, URI, Avatar, LightBox) {
 		sPreAvatarShape = "Avatar's shape is ",
 		sPreAvatarType = "Avatar's type is ",
 		sDefaultIconRendered = "Avatar is a default icon",
-		sPreAvatarFitType = "Avatar's image fit type is ";
+		sPreAvatarFitType = "Avatar's image fit type is ",
+		// shortcut for sap.f.AvatarColor
+		AvatarColor = library.AvatarColor;
 
 	function createAvatar(oProps, sId) {
 		var oAvatarProps = {};
@@ -562,5 +577,51 @@ function(oCore, Device, URI, Avatar, LightBox) {
 
 		//assert
 		assert.strictEqual($oAvatar.attr("role"), "img", "Aria role should be 'img'");
+	});
+
+	QUnit.module("Avatar backgroundColor API", {
+		beforeEach: function () {
+			this.oAvatar = createAvatar({ tooltip: "sampleTooltip" });
+			this.oAvatar.placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: teardownFunction
+	});
+
+	QUnit.test("Check default backgroundColor property value", function (assert) {
+		// Arrange
+		var oAvatar = this.oAvatar,
+			$oAvatar = oAvatar.$(),
+			sDefaultAccent = AvatarColor.Accent6;
+
+		// Assert
+		assert.strictEqual(oAvatar.getBackgroundColor(), sDefaultAccent,
+				"Avatar has the default backgroundProperty value.");
+		assert.ok($oAvatar.hasClass("sapFAvatarColor" + sDefaultAccent),
+				"Avatar is with the default CSS class for " + sDefaultAccent + " background color.");
+	});
+
+	QUnit.test("Iterate over all possible Color Sets and set them", function (assert) {
+		// Arrange
+		var oAvatar = this.oAvatar,
+			$oAvatar = oAvatar.$(),
+			sCurrentAccent,
+			aKeys = Object.keys(AvatarColor);
+
+		// Iterating over all of the properties of AvatarColor enum,
+		// without the last one which is "Random".
+		for (var i = 0; i < aKeys.length - 1; i++) {
+			sCurrentAccent = aKeys[i];
+
+			// Act
+			oAvatar.setBackgroundColor(sCurrentAccent);
+			oCore.applyChanges();
+
+			// Assert
+			assert.strictEqual(oAvatar.getBackgroundColor(), sCurrentAccent,
+					"Avatar has the correct backgroundProperty value " + sCurrentAccent + ".");
+			assert.ok($oAvatar.hasClass("sapFAvatarColor" + sCurrentAccent),
+					"Avatar is with the correct CSS class for " + sCurrentAccent + " background color.");
+		}
 	});
 });

@@ -19,6 +19,9 @@ sap.ui.define([
 	// shortcut for sap.f.AvatarImageFitType
 	var AvatarImageFitType = library.AvatarImageFitType;
 
+	// shortcut for sap.f.AvatarColor
+	var AvatarColor = library.AvatarColor;
+
 	// shortcut for sap.f.AvatarSize
 	var AvatarSize = library.AvatarSize;
 
@@ -120,7 +123,16 @@ sap.ui.define([
 				 *
 				 * @since 1.65
 				 */
-				fallbackIcon: {type: "string", group: "Data", defaultValue: null}
+				fallbackIcon: {type: "string", group: "Data", defaultValue: null},
+				/**
+				 * Determines the background color of the control.
+				 *
+				 * <b>Note:</b> By using background colors from the predefined sets,
+				 * your colors can later be customized from the Theme Designer.
+				 *
+				 * @since 1.69
+				 */
+				backgroundColor: {type: "sap.f.AvatarColor", group: "Appearance", defaultValue: AvatarColor.Accent6}
 			},
 			aggregations : {
 				/**
