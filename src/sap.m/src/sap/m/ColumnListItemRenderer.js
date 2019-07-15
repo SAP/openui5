@@ -5,14 +5,13 @@
 sap.ui.define([
 	"sap/ui/core/Renderer",
 	"sap/ui/core/library",
+	"sap/ui/core/Core",
 	"sap/ui/Device",
-	"./library",
-	"./ListItemBaseRenderer",
-	"./Label",
 	"sap/base/Log",
-	"sap/base/security/encodeXML"
+	"./library",
+	"./ListItemBaseRenderer"
 ],
-	function(Renderer, coreLibrary, Device, library, ListItemBaseRenderer, Label, Log, encodeXML) {
+	function(Renderer, coreLibrary, Core, Device, Log, library, ListItemBaseRenderer) {
 	"use strict";
 
 	// shortcut for sap.m.PopinDisplay
@@ -29,6 +28,7 @@ sap.ui.define([
 	 * @namespace
 	 */
 	var ColumnListItemRenderer = Renderer.extend(ListItemBaseRenderer);
+	ColumnListItemRenderer.apiVersion = 2;
 
 	ColumnListItemRenderer.render = function(rm, oLI) {
 		var oTable = oLI.getTable();
@@ -45,32 +45,44 @@ sap.ui.define([
 
 	// render type highlight always within a cell
 	ColumnListItemRenderer.renderHighlight = function(rm, oLI) {
-		rm.write('<td class="sapMListTblHighlightCell" aria-hidden="true" role="presentation">');
+		rm.openStart("td");
+		rm.class("sapMListTblHighlightCell");
+		rm.attr("role", "presentation");
+		rm.attr("aria-hidden", "true");
+		rm.openEnd();
 
 		// let the list item base render the highlight
 		ListItemBaseRenderer.renderHighlight.apply(this, arguments);
 
-		rm.write('</td>');
+		rm.close("td");
 	};
 
 	// render type content always within a cell
 	ColumnListItemRenderer.renderType = function(rm, oLI) {
-		rm.write('<td class="sapMListTblNavCol" aria-hidden="true" role="presentation">');
+		rm.openStart("td");
+		rm.class("sapMListTblNavCol");
+		rm.attr("role", "presentation");
+		rm.attr("aria-hidden", "true");
+		rm.openEnd();
 
 		// let the list item base render the type
 		ListItemBaseRenderer.renderType.apply(this, arguments);
 
-		rm.write('</td>');
+		rm.close("td");
 	};
 
 	// wrap mode content with a cell
 	ColumnListItemRenderer.renderModeContent = function(rm, oLI) {
-		rm.write('<td class="sapMListTblSelCol" aria-hidden="true" role="presentation">');
+		rm.openStart("td");
+		rm.class("sapMListTblSelCol");
+		rm.attr("role", "presentation");
+		rm.attr("aria-hidden", "true");
+		rm.openEnd();
 
 		// let the list item base render the mode control
 		ListItemBaseRenderer.renderModeContent.apply(this, arguments);
 
-		rm.write('</td>');
+		rm.close("td");
 	};
 
 	// ColumnListItem does not respect counter property of the LIB
@@ -94,17 +106,17 @@ sap.ui.define([
 	 *            rendered
 	 */
 	ColumnListItemRenderer.renderLIAttributes = function(rm, oLI) {
-		rm.addClass("sapMListTblRow");
+		rm.class("sapMListTblRow");
 		var vAlign = oLI.getVAlign();
 		if (vAlign != VerticalAlign.Inherit) {
-			rm.addClass("sapMListTblRow" + vAlign);
+			rm.class("sapMListTblRow" + vAlign);
 		}
 
 		var oTable = oLI.getTable();
 		if (oTable && oTable.getAlternateRowColors()) {
 			var iPos = oTable.indexOfItem(oLI);
 			if (iPos % 2 == 0) {
-				rm.addClass("sapMListTblRowAlternate");
+				rm.class("sapMListTblRowAlternate");
 			}
 		}
 	};
@@ -131,8 +143,7 @@ sap.ui.define([
 		oLI._destroyClonedHeaders();
 
 		aColumns.forEach(function(oColumn, i) {
-			var cls,
-				oHeader,
+			var oHeader,
 				bRenderCell = true,
 				oCell = aCells[oColumn.getInitialOrder()];
 
@@ -142,20 +153,18 @@ sap.ui.define([
 				return;
 			}
 
-			rm.write("<td");
-			rm.addClass("sapMListTblCell");
-			rm.writeAttribute("id", oLI.getId() + "_cell" + i);
-			rm.writeAttribute("data-sap-ui-column", oColumn.getId());
+			rm.openStart("td", oLI.getId() + "_cell" + i);
+			rm.class("sapMListTblCell");
+			rm.attr("data-sap-ui-column", oColumn.getId());
 
 			// check column properties
 			if (oColumn) {
-				cls = oColumn.getStyleClass(true);
-				cls && rm.addClass(encodeXML(cls));
+				rm.class(oColumn.getStyleClass(true));
 
 				// aria for virtual keyboard mode
 				oHeader = oColumn.getHeader();
 				if (oHeader) {
-					rm.writeAttribute("headers", oHeader.getId());
+					rm.attr("headers", oHeader.getId());
 				}
 
 				// merge duplicate cells
@@ -173,35 +182,29 @@ sap.ui.define([
 
 						if (lastColumnValue === cellValue) {
 							// it is not necessary to render the cell content but screen readers need the content to announce it
-							bRenderCell = sap.ui.getCore().getConfiguration().getAccessibility();
+							bRenderCell = Core.getConfiguration().getAccessibility();
 							oCell.addStyleClass("sapMListTblCellDupCnt");
-							rm.addClass("sapMListTblCellDup");
+							rm.class("sapMListTblCellDup");
 						} else {
 							oColumn.setLastValue(cellValue);
 						}
 					} else if (oCell.hasStyleClass("sapMListTblCellDupCnt")) {
-						rm.addClass("sapMListTblCellDup");
+						rm.class("sapMListTblCellDup");
 					}
 				}
 
-				oColumn.getVAlign() != "Inherit" && rm.addStyle("vertical-align", oColumn.getVAlign().toLowerCase());
-				var sAlign = oColumn.getCssAlign();
-				if (sAlign) {
-					rm.addStyle("text-align", sAlign);
-				}
-
-				rm.writeStyles();
+				oColumn.getVAlign() != "Inherit" && rm.style("vertical-align", oColumn.getVAlign().toLowerCase());
+				rm.style("text-align", oColumn.getCssAlign());
 			}
 
-			rm.writeClasses();
-			rm.write(">");
+			rm.openEnd();
 
 			if (bRenderCell) {
 				this.applyAriaLabelledBy(oHeader, oCell);
 				rm.renderControl(oCell);
 			}
 
-			rm.write("</td>");
+			rm.close("td");
 		}, this);
 	};
 
@@ -231,24 +234,21 @@ sap.ui.define([
 		oLI.removePopin();
 
 		// popin row
-		rm.write("<tr");
-		rm.addClass("sapMListTblSubRow");
-		rm.writeElementData(oLI.getPopin());
-		rm.writeAttribute("tabindex", "-1");
+		rm.openStart("tr", oLI.getPopin());
+		rm.class("sapMListTblSubRow");
+		rm.attr("tabindex", "-1");
 
 		if (oLI.isSelectable()) {
-			rm.writeAttribute("aria-selected", oLI.getSelected());
+			rm.attr("aria-selected", oLI.getSelected());
 		}
 
-		rm.writeClasses();
-		rm.write(">");
+		rm.openEnd();
 
 		this.renderHighlight(rm, oLI);
 
 		// cell
-		rm.write("<td");
-		rm.writeAttribute("id", oLI.getId() + "-subcell");
-		rm.writeAttribute("colspan", oTable.getColSpan());
+		rm.openStart("td", oLI.getId() + "-subcell");
+		rm.attr("colspan", oTable.getColSpan());
 
 		var sPopinLayout = oTable.getPopinLayout();
 		// overwrite sPopinLayout=Block to avoid additional margin-top in IE and Edge
@@ -256,13 +256,13 @@ sap.ui.define([
 			sPopinLayout = PopinLayout.Block;
 		}
 
-		rm.writeAttribute("aria-labelledby", this.getAriaAnnouncement(null, "TABLE_POPIN_ROLE_DESCRIPTION"));
+		rm.attr("aria-labelledby", this.getAriaAnnouncement(null, "TABLE_POPIN_ROLE_DESCRIPTION"));
+		rm.openEnd();
 
-		rm.write("><div");
-		rm.addClass("sapMListTblSubCnt");
-		rm.addClass("sapMListTblSubCnt" + sPopinLayout);
-		rm.writeClasses();
-		rm.write(">");
+		rm.openStart("div");
+		rm.class("sapMListTblSubCnt");
+		rm.class("sapMListTblSubCnt" + sPopinLayout);
+		rm.openEnd();
 
 		var aCells = oLI.getCells(),
 			aColumns = oTable.getColumns(true);
@@ -283,53 +283,43 @@ sap.ui.define([
 				sPopinDisplay = oColumn.getPopinDisplay();
 
 			/* row start */
-			rm.write("<div");
-			rm.addClass("sapMListTblSubCntRow");
-			sStyleClass && rm.addClass(encodeXML(sStyleClass));
-			rm.writeClasses();
-			rm.write(">");
+			rm.openStart("div");
+			rm.class("sapMListTblSubCntRow");
+			sStyleClass && rm.class(sStyleClass);
+			rm.openEnd();
 
 			/* header cell */
 			if (oHeader && sPopinDisplay != PopinDisplay.WithoutHeader) {
-				rm.write("<div");
-				rm.addClass("sapMListTblSubCntHdr");
-				rm.writeClasses();
-				rm.write(">");
-
-				var fnColumnHeaderClass = sap.ui.require("sap/m/ColumnHeader");
-				if (typeof fnColumnHeaderClass == "function" && oHeader instanceof fnColumnHeaderClass) {
-					var sColumnHeaderTitle = oHeader.getText();
-					oHeader = new Label({text: sColumnHeaderTitle});
-				} else {
-					oHeader = oHeader.clone();
-				}
-
+				rm.openStart("div").class("sapMListTblSubCntHdr").openEnd();
+				oHeader = oHeader.clone();
 				oColumn.addDependent(oHeader);
 				oLI._addClonedHeader(oHeader);
 				rm.renderControl(oHeader);
-				rm.write("</div>");
+				rm.close("div");
 
-				/* separator cell */
-				rm.write("<div class='sapMListTblSubCntSpr'>:</div>");
+				rm.openStart("div").class("sapMListTblSubCntSpr").openEnd();
+				rm.text(":");
+				rm.close("div");
 			}
 
 			/* value cell */
 			if (oCell) {
-				rm.write("<div");
-				rm.addClass("sapMListTblSubCntVal");
-				rm.addClass("sapMListTblSubCntVal" + sPopinDisplay);
-				rm.writeClasses();
-				rm.write(">");
+				rm.openStart("div");
+				rm.class("sapMListTblSubCntVal");
+				rm.class("sapMListTblSubCntVal" + sPopinDisplay);
+				rm.openEnd();
 				this.applyAriaLabelledBy(oHeader, oCell);
 				rm.renderControl(oCell);
-				rm.write("</div>");
+				rm.close("div");
 			}
 
 			/* row end */
-			rm.write("</div>");
+			rm.close("div");
 		}, this);
 
-		rm.write("</div></td></tr>");
+		rm.close("div");
+		rm.close("td");
+		rm.close("tr");
 	};
 
 	/**

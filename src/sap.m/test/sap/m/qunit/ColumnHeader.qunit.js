@@ -301,7 +301,6 @@ sap.ui.define([
 		var oColumnHeader = sut.getColumns()[0].getHeader();
 		var oClonedHeader = sut.getItems()[0]._aClonedHeaders[0];
 		assert.ok(sut.getColumns()[0].isPopin(), "Column rendered as popin");
-		assert.ok(oClonedHeader instanceof Label, "ColumnHeader is rendered as sap.m.Label in popin");
 		assert.equal(oColumnHeader.getText(), oClonedHeader.getText(), "ColumnHeader text is correctly set to sap.m.Label");
 
 		sut.destroy();

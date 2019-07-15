@@ -12,6 +12,7 @@ sap.ui.define(['sap/ui/core/Renderer', './ListBaseRenderer'],
 	 *
 	 */
 	var TreeRenderer = Renderer.extend(ListBaseRenderer);
+	TreeRenderer.apiVersion = 2;
 
 	/**
 	 * Returns the ARIA accessibility role.

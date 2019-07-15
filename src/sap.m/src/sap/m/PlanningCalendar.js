@@ -2757,19 +2757,12 @@ sap.ui.define([
 	 */
 	var PlanningCalendarRowHeader = StandardListItem.extend("PlanningCalendarRowHeader", {
 
-		renderer: Renderer.extend(StandardListItemRenderer)
+		renderer: Renderer.extend(StandardListItemRenderer),
+		TagName: "div"
 
 	});
 
 	/*global PlanningCalendarRowHeaderRenderer:true*/
-	PlanningCalendarRowHeaderRenderer.openItemTag = function(oRm, oLI) {
-		oRm.write("<div");
-	};
-
-	PlanningCalendarRowHeaderRenderer.closeItemTag = function(oRm, oLI) {
-		oRm.write("</div>");
-	};
-
 	PlanningCalendarRowHeaderRenderer.renderTabIndex = function(oRm, oLI) {
 	};
 

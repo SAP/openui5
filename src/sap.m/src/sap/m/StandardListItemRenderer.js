@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "sap/ui/core/IconPool", "sap/ui/Device", "./library", "./ListItemBaseRenderer"],
-	function(coreLibrary, Renderer, IconPool, Device, library, ListItemBaseRenderer ) {
+sap.ui.define(["sap/ui/core/library", "sap/ui/core/Core", "sap/ui/core/Renderer", "sap/ui/core/IconPool", "sap/ui/Device", "./library", "./ListItemBaseRenderer"],
+	function(coreLibrary, Core, Renderer, IconPool, Device, library, ListItemBaseRenderer ) {
 	"use strict";
 
 
@@ -16,6 +16,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "sap/ui/core/IconP
 	 * @namespace
 	 */
 	var StandardListItemRenderer = Renderer.extend(ListItemBaseRenderer);
+	StandardListItemRenderer.apiVersion = 2;
 
 	/**
 	 * Renders the HTML for the given control, using the provided
@@ -28,26 +29,26 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "sap/ui/core/IconP
 		var sIconURI = oLI.getIcon(),
 			sTitle = oLI.getTitle();
 
-		rm.addClass("sapMSLI");
+		rm.class("sapMSLI");
 
 		if (sIconURI && !IconPool.isIconURI(sIconURI)) {
-			rm.addClass("sapMSLIThumbnail");
+			rm.class("sapMSLIThumbnail");
 		}
 
 		if (!oLI.getIconInset()) {
-			rm.addClass("sapMSLINoIconInset");
+			rm.class("sapMSLINoIconInset");
 		}
 
 		if (sTitle && oLI.getDescription()) {
-			rm.addClass("sapMSLIWithDescription");
+			rm.class("sapMSLIWithDescription");
 		}
 
 		if (sTitle && !oLI.getAdaptTitleSize()) {
-			rm.addClass("sapMSLINoTitleAdapt");
+			rm.class("sapMSLINoTitleAdapt");
 		}
 
 		if (sTitle && oLI.getWrapping()) {
-			rm.addClass("sapMSLIWrapping");
+			rm.class("sapMSLIWrapping");
 		}
 	};
 
@@ -69,15 +70,14 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "sap/ui/core/IconP
 			rm.renderControl(oLI._getImage());
 		}
 
-		rm.write("<div");
-		rm.addClass("sapMSLIDiv");
+		rm.openStart("div").class("sapMSLIDiv");
 
 		// if bShouldRenderInfoWithoutTitle=ture then adapt the style class according to have flex-direction: row
 		if ((!sDescription && bAdaptTitleSize && sInfo) || bShouldRenderInfoWithoutTitle) {
-			rm.addClass("sapMSLIInfoMiddle");
+			rm.class("sapMSLIInfoMiddle");
 		}
-		rm.writeClasses();
-		rm.write(">");
+
+		rm.openEnd();
 
 		this.renderTitleWrapper(rm, oLI);
 
@@ -89,8 +89,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "sap/ui/core/IconP
 			this.renderInfo(rm, oLI);
 		}
 
-		rm.write("</div>");
-
+		rm.close("div");
 	};
 
 	/**
@@ -107,25 +106,22 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "sap/ui/core/IconP
 			bWrapping = oLI.getWrapping(),
 			bShouldRenderInfoWithoutTitle = !sTitle && sInfo;
 
-		rm.write("<div");
+		rm.openStart("div");
 
 		if (!bShouldRenderInfoWithoutTitle && sDescription) {
-			rm.addClass("sapMSLITitle");
+			rm.class("sapMSLITitle");
 		} else {
-			rm.addClass("sapMSLITitleOnly");
+			rm.class("sapMSLITitleOnly");
 		}
-
-		rm.writeClasses();
 
 		if (sTextDir !== TextDirection.Inherit) {
-			rm.writeAttribute("dir", sTextDir.toLowerCase());
+			rm.attr("dir", sTextDir.toLowerCase());
 		}
 
-		rm.write(">");
+		rm.openEnd();
 
 		if (bWrapping) {
 			this.renderWrapping(rm, oLI, "title");
-
 			if (sTitle && sInfo && !sDescription) {
 				this.renderInfo(rm, oLI);
 			}
@@ -133,7 +129,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "sap/ui/core/IconP
 			this.renderTitle(rm, oLI);
 		}
 
-		rm.write("</div>");
+		rm.close("div");
 
 		if (sInfo && !sDescription && !bWrapping && !bShouldRenderInfoWithoutTitle) {
 			this.renderInfo(rm, oLI);
@@ -147,7 +143,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "sap/ui/core/IconP
 	 * @protected
 	 */
 	StandardListItemRenderer.renderTitle = function(rm, oLI) {
-		rm.writeEscaped(oLI.getTitle());
+		rm.text(oLI.getTitle());
 	};
 
 	/**
@@ -161,31 +157,26 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "sap/ui/core/IconP
 			sDescription = oLI.getDescription(),
 			sInfo = oLI.getInfo();
 
-		rm.write("<div");
-		rm.addClass("sapMSLIDescription");
+		rm.openStart("div").class("sapMSLIDescription");
 
 		if (sInfo) {
-			rm.addClass("sapMSLIDescriptionAndInfo");
+			rm.class("sapMSLIDescriptionAndInfo");
 		}
 
-		rm.writeClasses();
-		rm.write(">");
+		rm.openEnd();
 
 		// render info text within the description div to apply the relevant flex layout
 		if (sInfo) {
-			rm.write("<div");
-			rm.addClass("sapMSLIDescriptionText");
-			rm.writeClasses();
-			rm.write(">");
+			rm.openStart("div").class("sapMSLIDescriptionText").openEnd();
 
 			if (bWrapping) {
 				this.renderWrapping(rm, oLI, "description");
 				this.renderInfo(rm, oLI);
 			} else {
-				rm.writeEscaped(sDescription);
+				rm.text(sDescription);
 			}
 
-			rm.write("</div>");
+			rm.close("div");
 
 			if (!bWrapping) {
 				this.renderInfo(rm, oLI);
@@ -193,10 +184,10 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "sap/ui/core/IconP
 		} else if (bWrapping) {
 			this.renderWrapping(rm, oLI, "description");
 		} else {
-			rm.writeEscaped(sDescription);
+			rm.text(sDescription);
 		}
 
-		rm.write("</div>");
+		rm.close("div");
 	};
 
 	/**
@@ -208,19 +199,15 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "sap/ui/core/IconP
 	StandardListItemRenderer.renderInfo = function (rm, oLI) {
 		var sInfoDir = oLI.getInfoTextDirection();
 
-		rm.write("<div");
-		rm.writeAttribute("id", oLI.getId() + "-info");
-
+		rm.openStart("div", oLI.getId() + "-info");
 		if (sInfoDir !== TextDirection.Inherit) {
-			rm.writeAttribute("dir", sInfoDir.toLowerCase());
+			rm.attr("dir", sInfoDir.toLowerCase());
 		}
-
-		rm.addClass("sapMSLIInfo");
-		rm.addClass("sapMSLIInfo" + oLI.getInfoState());
-		rm.writeClasses();
-		rm.write(">");
-		rm.writeEscaped(oLI.getInfo());
-		rm.write("</div>");
+		rm.class("sapMSLIInfo");
+		rm.class("sapMSLIInfo" + oLI.getInfoState());
+		rm.openEnd();
+		rm.text(oLI.getInfo());
+		rm.close("div");
 	};
 
 	/**
@@ -232,38 +219,19 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "sap/ui/core/IconP
 	 */
 	StandardListItemRenderer.renderExpandCollapse = function (rm, oLI, sWrapArea) {
 		var sId = oLI.getId(),
-			bTitle = sWrapArea === "title" ? true : false,
+			bTitle = sWrapArea == "title" ? true : false,
 			bTextExpanded = bTitle ? oLI._bTitleTextExpanded : oLI._bDescriptionTextExpanded,
-			oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			oRb = Core.getLibraryResourceBundle("sap.m");
 
-		rm.write("<span");
-		rm.writeAttribute("id", sId + "-" + sWrapArea + "ThreeDots");
-		rm.write(">");
+		rm.openStart("span", sId + "-" + sWrapArea + "ThreeDots").openEnd();
+		rm.text(bTextExpanded ? " " : " ... ");
+		rm.close("span");
 
-		if (!bTextExpanded) {
-			rm.write(" ... ");
-		} else {
-			rm.write(" ");
-		}
-
-		rm.write("</span>");
-
-		rm.write("<span");
-		rm.writeAttribute("id", bTitle ? sId + "-titleButton" : sId + "-descriptionButton");
-		rm.addClass("sapMSLIExpandCollapse");
-		rm.writeClasses();
-		rm.writeAttribute("tabindex", "0");
-		rm.writeAttribute("role", "button");
-		rm.writeAttribute("aria-live", "polite");
-		rm.write(">");
-
-		if (!bTextExpanded) {
-			rm.writeEscaped(oRb.getText("TEXT_SHOW_MORE"));
-		} else {
-			rm.writeEscaped(oRb.getText("TEXT_SHOW_LESS"));
-		}
-
-		rm.write("</span>");
+		rm.openStart("span", bTitle ? sId + "-titleButton" : sId + "-descriptionButton").class("sapMSLIExpandCollapse");
+		rm.attr("tabindex", "0").attr("role", "button").attr("aria-live", "polite");
+		rm.openEnd();
+		rm.text(oRb.getText(bTextExpanded ? "TEXT_SHOW_LESS" : "TEXT_SHOW_MORE"));
+		rm.close("span");
 	};
 
 	/**
@@ -275,26 +243,23 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "sap/ui/core/IconP
 	 */
 	StandardListItemRenderer.renderWrapping = function(rm, oLI, sWrapArea) {
 		var sId = oLI.getId(),
-			bTitle = sWrapArea === "title" ? true : false,
+			bTitle = sWrapArea == "title" ? true : false,
 			sText = bTitle ? oLI.getTitle() : oLI.getDescription(),
 			bTextExpanded = bTitle ? oLI._bTitleTextExpanded : oLI._bDescriptionTextExpanded,
 			iMaxCharacters = Device.system.phone ? 100 : 300;
 
-		rm.write("<span");
-		rm.writeAttribute("id", sId + "-" + sWrapArea + "Text");
-		rm.writeAttribute("aria-live", "polite");
-		rm.write(">");
+		rm.openStart("span", sId + "-" + sWrapArea + "Text").attr("aria-live", "polite").openEnd();
 
 		if (!bTextExpanded) {
 			var sCollapsedText = oLI._getCollapsedText(sText);
-			rm.writeEscaped(sCollapsedText);
+			rm.text(sCollapsedText);
 		} else if (bTitle) {
 			this.renderTitle(rm, oLI);
 		} else {
-			rm.writeEscaped(oLI.getDescription());
+			rm.text(oLI.getDescription());
 		}
 
-		rm.write("</span>");
+		rm.close("span");
 
 		if (sText.length > iMaxCharacters) {
 			this.renderExpandCollapse(rm, oLI, sWrapArea);

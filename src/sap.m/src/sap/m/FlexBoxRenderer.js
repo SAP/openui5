@@ -80,12 +80,8 @@ sap.ui.define([
 		}
 
 		// Add inline styles
-		if (oControl.getHeight()) {
-			oRm.style("height", oControl.getHeight());
-		}
-		if (oControl.getWidth()) {
-			oRm.style("width", oControl.getWidth());
-		}
+		oRm.style("height", oControl.getHeight());
+		oRm.style("width", oControl.getWidth());
 
 		// Add tooltip
 		var sTooltip = oControl.getTooltip_AsString();
