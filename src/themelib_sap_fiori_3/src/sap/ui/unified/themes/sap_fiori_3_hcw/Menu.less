@@ -1,0 +1,40 @@
+/* ==================================== */
+/* CSS for control sap.ui.unified/Menu  */
+/* Quartz High Contrast White theme     */
+/* ==================================== */
+
+.sapUiMnuItm {
+	border-top: 1px solid @sapUiListBorderColor;
+}
+
+.sapUiMnuItm.sapUiMnuItmSepBefore, .sapUiMnuItm.sapUiMnuItmFirst {
+	border-top-width: 0;
+}
+
+.sapUiMnuDiv > hr {
+	left: 0;
+	right: 0;
+	border-top-width: 0.125rem;
+  	height: 0;
+  	margin: 0;
+}
+
+.sapUiMnuItm.sapUiMnuTfItm .sapUiMnuTfItemTf.sapUiMnuTfItemTfDsbl {
+	background-color: @sapUiHcReducedBackground;
+	color: @sapUiContentDisabledTextColor;
+}
+
+.sapUiSizeCompact .sapUiMnuDiv {
+  	height: 0.125rem;
+}
+
+.sapUiMnuItm:focus {
+	outline: 2px dotted @sapUiContentFocusColor;
+}
+
+/* TODO remove after 1.62 version */
+html[data-sap-ui-browser*='ie'] {
+	.sapUiMnuItm:focus::before {
+		border: 2px dashed @sapUiContentFocusColor;
+	}
+}

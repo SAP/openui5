@@ -1,0 +1,103 @@
+/* =========================================== */
+/* CSS for control sap.ui.unified/CalendarRow  */
+/* Quartz High Contrast Black theme            */
+/* =========================================== */
+
+.sapUiCalendarApp.sapUiCalendarAppTent > .sapUiCalendarAppCont{
+	border-color: @sapUiContentForegroundBorderColor;
+}
+
+.sapUiCalendarRowAppsNoWork{
+	background-color: @sapUiHcReducedBackground;
+}
+
+/* Appointments */
+.sapUiCalendarApp{
+	border-left-color: @sapUiContentForegroundBorderColor;
+}
+
+.sapUiCalendarAppCont{
+	border-color: @sapUiContentForegroundBorderColor;
+}
+
+/* as outlines can't have different offsets on one side (no left border) and don't work in IE just use a inner border */
+html.sap-desktop .sapUiCalendarApp:focus > .sapUiCalendarAppCont:after{
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	content: "";
+	border: 0.125rem dotted @sapUiContentFocusColor;
+	pointer-events: none;
+}
+
+html.sap-desktop .sapUiCalendarApp:hover:not(:active) > .sapUiCalendarAppCont{
+	border-color: @sapUiContentForegroundBorderColor;
+}
+
+/* colors for types */
+.calendarRowTypeColorMixIn(@class, @color){
+	.@{class}.sapUiCalendarApp,
+	.@{class}.sapUiCalendarApp:active{
+	border-left-color: @color;
+	}
+}
+
+.calendarRowTypeColorIntervalMixIn(@class, @color){
+	.@{class}.sapUiCalendarRowAppsIntHead{
+		background-color: fade(@color, 15);
+	}
+
+	.@{class}.sapUiCalendarRowAppsIntHeadFirst{
+		border-left-color: @color;
+	}
+}
+
+.calendarRowTypeColorMixIn(sapUiCalendarAppType01, @sapUiAccent1);
+.calendarRowTypeColorMixIn(sapUiCalendarAppType02, @sapUiAccent2);
+.calendarRowTypeColorMixIn(sapUiCalendarAppType03, @sapUiAccent3);
+.calendarRowTypeColorMixIn(sapUiCalendarAppType04, darken(saturate(@sapUiAccent2, 70), 5));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType05, @sapUiAccent4);
+.calendarRowTypeColorMixIn(sapUiCalendarAppType06, @sapUiAccent6);
+.calendarRowTypeColorMixIn(sapUiCalendarAppType07, @sapUiAccent7);
+.calendarRowTypeColorMixIn(sapUiCalendarAppType08, @sapUiAccent8);
+.calendarRowTypeColorMixIn(sapUiCalendarAppType09, darken(@sapUiAccent6, 15));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType10, darken(desaturate(@sapUiAccent4, 40), 2));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType11, lighten(saturate(@sapUiAccent1,15),20));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType12, lighten(desaturate(@sapUiAccent2,50),10));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType13, lighten(saturate(@sapUiAccent3,50),5));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType14, lighten(saturate(@sapUiAccent2,30),15));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType15, lighten(saturate(@sapUiAccent4,50),20));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType16, desaturate(@sapUiAccent1,20));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType17, lighten(saturate(@sapUiAccent7,30),15));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType18, darken(desaturate(@sapUiAccent8,50),15));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType19, lighten(desaturate(@sapUiAccent6,30),10));
+.calendarRowTypeColorMixIn(sapUiCalendarAppType20, saturate(@sapUiAccent5,70));
+
+.calendarRowTypeColorIntervalMixIn(sapUiCalendarRowAppsIntHeadType01, @sapUiAccent1);
+.calendarRowTypeColorIntervalMixIn(sapUiCalendarRowAppsIntHeadType02, @sapUiAccent2);
+.calendarRowTypeColorIntervalMixIn(sapUiCalendarRowAppsIntHeadType03, @sapUiAccent3);
+.calendarRowTypeColorIntervalMixIn(sapUiCalendarRowAppsIntHeadType04, darken(saturate(@sapUiAccent2, 70), 5));
+.calendarRowTypeColorIntervalMixIn(sapUiCalendarRowAppsIntHeadType05, @sapUiAccent4);
+.calendarRowTypeColorIntervalMixIn(sapUiCalendarRowAppsIntHeadType06, @sapUiAccent6);
+.calendarRowTypeColorIntervalMixIn(sapUiCalendarRowAppsIntHeadType07, @sapUiAccent7);
+.calendarRowTypeColorIntervalMixIn(sapUiCalendarRowAppsIntHeadType08, @sapUiAccent8);
+.calendarRowTypeColorIntervalMixIn(sapUiCalendarRowAppsIntHeadType09, darken(@sapUiAccent6, 15));
+.calendarRowTypeColorIntervalMixIn(sapUiCalendarRowAppsIntHeadType10, darken(desaturate(@sapUiAccent4, 40), 2));
+.calendarRowTypeColorIntervalMixIn(sapUiCalendarRowAppsIntHeadType11, lighten(saturate(@sapUiAccent1,15),20));
+.calendarRowTypeColorIntervalMixIn(sapUiCalendarRowAppsIntHeadType12, lighten(desaturate(@sapUiAccent2,50),10));
+.calendarRowTypeColorIntervalMixIn(sapUiCalendarRowAppsIntHeadType13, lighten(saturate(@sapUiAccent3,50),5));
+.calendarRowTypeColorIntervalMixIn(sapUiCalendarRowAppsIntHeadType14, lighten(saturate(@sapUiAccent2,30),15));
+.calendarRowTypeColorIntervalMixIn(sapUiCalendarRowAppsIntHeadType15, lighten(saturate(@sapUiAccent4,50),20));
+.calendarRowTypeColorIntervalMixIn(sapUiCalendarRowAppsIntHeadType16, desaturate(@sapUiAccent1,20));
+.calendarRowTypeColorIntervalMixIn(sapUiCalendarRowAppsIntHeadType17, lighten(saturate(@sapUiAccent7,30),15));
+.calendarRowTypeColorIntervalMixIn(sapUiCalendarRowAppsIntHeadType18, darken(desaturate(@sapUiAccent8,50),15));
+.calendarRowTypeColorIntervalMixIn(sapUiCalendarRowAppsIntHeadType19, lighten(desaturate(@sapUiAccent6,30),10));
+.calendarRowTypeColorIntervalMixIn(sapUiCalendarRowAppsIntHeadType20, saturate(@sapUiAccent5,70));
+
+.sapUiAppCreate.sapUiCalendarApp.sapUiCalendarAppType01 {
+	border-top-color: @sapUiContentForegroundBorderColor;
+	border-right-color: @sapUiContentForegroundBorderColor;
+	border-bottom-color: @sapUiContentForegroundBorderColor;
+}
