@@ -4,6 +4,8 @@
 /* ======================================= */
 
 @_sap_tnt_NavigationList_ItemHeight: 3rem;
+@_sap_tnt_NavigationList_NoIconsGroupPadding: 1rem;
+@_sap_tnt_NavigationList_NoIconsNestedItemPadding: 1rem;
 
 .sapTntNavLI {
 	margin: 0;
@@ -60,10 +62,6 @@
 	display: block;
 }
 
-.sapTntNavLIGroupItem > .sapMText {
-	padding-left: 3rem;
-}
-
 .sapTntNavLIPopup .sapTntNavLIGroupItem > .sapMText {
 	padding: 0 1rem;
 }
@@ -74,9 +72,6 @@
 
 .sapTntNavLI {
   span.sapTntNavLIGroupIcon {
-	min-width: 3rem;
-	padding: 0.6875rem 0;
-
 	outline: none;
 	-webkit-user-select: none; /* Chrome all / Safari all */
 	-moz-user-select: none; /* Firefox all */
@@ -194,6 +189,32 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	}
 }
 
+// NavigationList with icons
+.sapTntNavLI:not(.sapTntNavLINoIcons) {
+
+	span.sapTntNavLIGroupIcon {
+		min-width: 3rem;
+		padding: 0.6875rem 0;
+	}
+
+	.sapTntNavLIGroupItem > .sapMText {
+		padding-left: 3rem;
+	}
+}
+
+// NavigationList without icons
+.sapTntNavLI.sapTntNavLINoIcons:not(.sapTntNavLIPopup) {
+
+	.sapTntNavLIGroup {
+		padding-left: @_sap_tnt_NavigationList_NoIconsGroupPadding;
+	}
+
+	// nested items
+	.sapTntNavLIGroupItem > .sapMText {
+		padding-left: @_sap_tnt_NavigationList_NoIconsNestedItemPadding;
+	}
+}
+
 /* Compact size */
 .sapUiSizeCompact {
 
@@ -209,11 +230,6 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 		margin: 0 0.5rem 0 0;
 	}
 
-	.sapTntNavLI span.sapTntNavLIGroupIcon {
-		min-width: 2rem;
-		padding: 0.5rem;
-	}
-
 	.sapTntNavLI.sapTntNavLIPopup span.sapTntNavLIGroupIcon {
 		padding: 0.5rem 0;
 	}
@@ -225,5 +241,14 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapTntNavLIPopup span.sapTntNavLIGroupIcon {
 		width: 0.5rem;
 	  	min-width: 0.5rem;
+	}
+
+	// NavigationList with icons
+	.sapTntNavLI:not(.sapTntNavLINoIcons) {
+
+		span.sapTntNavLIGroupIcon {
+			min-width: 2rem;
+			padding: 0.5rem;
+		}
 	}
 }
