@@ -23,7 +23,7 @@
 						showEmptyIntervalHeaders="false"
 						viewChange="handleViewChange"
 						legend="PlanningCalendarLegend"
-						specialDates="{path: '/specialDates', templateShareable: 'true'}">
+						specialDates="{path: '/specialDates', templateShareable: true}">
 					<toolbarContent>
 						<ToolbarSpacer/>
 						<ToggleButton pressed="{path: 'stateModel>/legendShown'}" icon="sap-icon://legend"/>
@@ -33,9 +33,9 @@
 								icon="{pic}"
 								title="{name}"
 								text="{role}"
-								specialDates="{path : 'specialDates', templateShareable: 'true'}"
-								appointments="{path : 'appointments', templateShareable: 'true'}"
-								intervalHeaders="{path: 'headers', templateShareable: 'true'}">
+								specialDates="{path : 'specialDates', templateShareable: true}"
+								appointments="{path : 'appointments', templateShareable: true}"
+								intervalHeaders="{path: 'headers', templateShareable: true}">
 							<specialDates>
 								<unified:DateTypeRange
 									startDate="{start}"
@@ -76,8 +76,8 @@
 		</l:mainContent>
 		<l:sideContent width="200px">
 			<PlanningCalendarLegend id="PlanningCalendarLegend"
-				items="{path : '/legendItems', templateShareable: 'true'}"
-				appointmentItems="{path : '/legendAppointmentItems', templateShareable: 'true'}"
+				items="{path : '/legendItems', templateShareable: true}"
+				appointmentItems="{path : '/legendAppointmentItems', templateShareable: true}"
 				standardItems="Today,Selected,NonWorkingDay">
 				<items>
 					<unified:CalendarLegendItem text="{text}" type="{type}" tooltip="{text}" />

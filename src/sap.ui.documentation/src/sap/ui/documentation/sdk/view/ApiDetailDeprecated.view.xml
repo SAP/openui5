@@ -20,7 +20,7 @@
 				titleUppercase="false"
 				title="{parts: [{ path : 'name'}], formatter : '.formatter.formatVersionTitle' }">
 			<ObjectPageSubSection>
-				<m:List items="{path: 'apis', templateShareable: 'false'}"
+				<m:List items="{path: 'apis', templateShareable: false}"
 						updateFinished="._modifyLinks"
 						showSeparators="Inner"
 						class="sapUxAPObjectPageSubSectionAlignContent"
