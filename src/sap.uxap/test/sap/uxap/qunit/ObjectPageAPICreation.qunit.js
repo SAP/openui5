@@ -1799,6 +1799,53 @@ function (
 		}, 0);
 	});
 
+	QUnit.test("adding section does invalidate the objectPage", function (assert) {
+
+		var oObjectPage = new ObjectPageLayout({
+				useIconTabBar: true,
+				selectedSection: "section1",
+				sections: [
+					new ObjectPageSection("section1", {
+						subSections: [
+							new ObjectPageSubSection({
+								blocks: [
+									new Link("section1Link", {})
+								]
+							})
+						]
+					})
+				]
+			}),
+			section2 = new ObjectPageSection("section2", {
+				subSections: [
+					new ObjectPageSubSection({
+						blocks: [
+							new Link("section2Link", {})
+						]
+					})
+				]
+			}),
+			oObjectPageRenderSpy = this.spy(),
+			done = assert.async();
+
+		helpers.renderObject(oObjectPage);
+
+		oObjectPage.addEventDelegate({
+			onBeforeRendering: oObjectPageRenderSpy
+		});
+
+		//act
+		oObjectPage.addSection(section2);
+
+		//check
+		setTimeout(function() {
+			assert.equal(oObjectPageRenderSpy.callCount, 1,
+				"OP is rerendered");
+			oObjectPage.destroy();
+			done();
+		}, 0);
+	});
+
 	QUnit.test("browser events not attached twice on rerender", function (assert) {
 
 		var oButton = new Button("btn1", {text: "test"}),
