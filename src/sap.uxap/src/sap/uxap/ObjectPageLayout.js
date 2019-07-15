@@ -815,9 +815,10 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._handleExpandButtonPressEventLifeCycle = function (bAttach) {
 		var oHeaderTitle = this.getHeaderTitle(),
+			bHasDynamicTitle = this._hasDynamicTitle(),
 			oExpandButton;
 
-		if (oHeaderTitle) {
+		if (oHeaderTitle && !bHasDynamicTitle) {
 			oExpandButton = oHeaderTitle.getAggregation("_expandButton");
 			if (oExpandButton) {
 				oExpandButton[bAttach ? "attachPress" : "detachPress"](this._handleExpandButtonPress, this);
