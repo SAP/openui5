@@ -146,7 +146,7 @@
 								alignItems="Start"
 								backgroundDesign="Solid"
 								items="{
-									path: 'products>values', templateShareable : 'true'
+									path: 'products>values', templateShareable : true
 								}">
 							<items>
 								<VBox class="sapUiTinyMarginTopBottom sapUiComparisonItem">

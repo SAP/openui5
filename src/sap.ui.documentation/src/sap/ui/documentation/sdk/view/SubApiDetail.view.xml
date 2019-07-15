@@ -211,7 +211,7 @@
 											<custom:JSDocText text="{/constructor/description}"/>
 
 											<layout:VerticalLayout visible="{= ${/constructor/examples} !== undefined}"
-																   content="{path : '/constructor/examples', templateShareable: 'false'}">
+																   content="{path : '/constructor/examples', templateShareable: false}">
 												<custom:JSDocText text="{data}"/>
 											</layout:VerticalLayout>
 
@@ -538,7 +538,7 @@
 											</template:if>
 											<template:if test="{= ${data>/borrowed/methods/}.length > 0 }">
 												<m:Title text="Borrowed from:" class="sapUiSmallMarginTop sapUiDocumentationBorrowedTitle"/>
-												<layout:VerticalLayout width="100%" content="{path: '/borrowed/methods/', templateShareable: 'false'}">
+												<layout:VerticalLayout width="100%" content="{path: '/borrowed/methods/', templateShareable: false}">
 														<m:Panel class="borrowedListPanel"
 																expandable="true"
 																expanded="true"
