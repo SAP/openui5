@@ -1,7 +1,7 @@
 {
   "name": "@openui5/testsuite",
   "private": true,
-  "version": "1.68.0-SNAPSHOT",
+  "version": "1.68.0",
   "description": "OpenUI5 Testsuite Application",
   "author": "SAP SE (https://www.sap.com)",
   "license": "Apache-2.0",
