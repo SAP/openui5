@@ -1098,5 +1098,16 @@
         "references": []
       }
     ]
+  },
+  "1.60.15": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "f48033133b9331a5e9fc322c28ae45f3ca38f51e",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/v2/ODataListBinding: ContextChange",
+        "references": []
+      }
+    ]
   }
 }

@@ -134,5 +134,16 @@
         "references": []
       }
     ]
+  },
+  "1.60.15": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "78206b8892248e465a4cd26fb57e2b30d9d9a1e1",
+        "type": "FIX",
+        "text": " sap.ui.rta - onElementModified handle addOrSetAggregation events",
+        "references": []
+      }
+    ]
   }
 }

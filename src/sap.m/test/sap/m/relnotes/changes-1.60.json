@@ -2826,5 +2826,70 @@
         "references": []
       }
     ]
+  },
+  "1.60.15": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "f6bb6e5266036d20bdde9a4c482c5fe3dc4c29e7",
+        "type": "FIX",
+        "text": " ObjectIdentifier:Top row is hidden if there are no title or badges",
+        "references": []
+      },
+      {
+        "id": "d1ba54551181086fcd40887322fe7eee34a8ecb9",
+        "type": "FIX",
+        "text": " P13nConditionPanel: Proper date format settings handling",
+        "references": []
+      },
+      {
+        "id": "15cf613a33295fb2497068bd7c4c299a1dceb2a1",
+        "type": "FIX",
+        "text": " sap.m.Carousel: pageChanged event parameters are now correct",
+        "references": []
+      },
+      {
+        "id": "ff9958f5b9aa5157ebef4b8b0a0d763ad36539c8",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Text selection in Firefox is fixed",
+        "references": []
+      },
+      {
+        "id": "5d3eb6349e1eae0edac178d8beda812a93a95502",
+        "type": "FIX",
+        "text": " sap.m.NavContainer: autoFocus false negative fixed",
+        "references": []
+      },
+      {
+        "id": "038926cde31a4c6919938051e71486641c648738",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Fire search from suggestion only once on phone",
+        "references": []
+      },
+      {
+        "id": "4556abf1b6b3774eccb9cd3ce57de890f39ab144",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Improve handling of focus on iOS",
+        "references": []
+      },
+      {
+        "id": "7407385441eab6c1d8878dd33da2cb264cb734d0",
+        "type": "FIX",
+        "text": " sap.m.Shell: sap.m.SplitApp has padding when inside the Shell",
+        "references": []
+      },
+      {
+        "id": "ca83d56a38fb295db4e12c57bbac1d06439ef1ea",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: Show detail page on phone",
+        "references": []
+      },
+      {
+        "id": "68afe9415513c1532b31d9e8ec86c5ab0079968b",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection : Download of item not happening when factory binding is used.",
+        "references": []
+      }
+    ]
   }
 }

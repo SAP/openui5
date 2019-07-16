@@ -29,7 +29,7 @@
       {
         "id": "a4274d35eb749eb57ddb303f392b4fef6c80cfa9",
         "type": "FIX",
-        "text": "Form: don't close FormContainer if focus on Input field",
+        "text": "Form: don\u0027t close FormContainer if focus on Input field",
         "references": [
           {
             "type": "BCP",
@@ -40,7 +40,7 @@
       {
         "id": "248a51aa9ea83f771f5ba242a9e518e6e5e77196",
         "type": "FIX",
-        "text": "FormContainer: render role=\"form\" only if title exist",
+        "text": "FormContainer: render role\u003d\"form\" only if title exist",
         "references": [
           {
             "type": "BCP",
@@ -258,6 +258,17 @@
             "reference": "1870416296"
           }
         ]
+      }
+    ]
+  },
+  "1.52.30": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "f444280449dfc482c66a8446aa92106586ee3c56",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: shows side content on small screen",
+        "references": []
       }
     ]
   }

@@ -186,5 +186,16 @@
         "references": []
       }
     ]
+  },
+  "1.60.15": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "ff9958f5b9aa5157ebef4b8b0a0d763ad36539c8",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Text selection in Firefox is fixed",
+        "references": []
+      }
+    ]
   }
 }
