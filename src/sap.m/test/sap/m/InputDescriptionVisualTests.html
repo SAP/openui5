@@ -1,0 +1,176 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+		<title>sap.m.Input - page for Visual tests</title>
+
+		<script src="shared-config.js"></script>
+		<script src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-oninit="module:local/InputVisualTests"
+			data-sap-ui-libs="sap.m, sap.ui.layout"
+			data-sap-ui-resourceroots='{"local" : "./"}'>
+		</script>
+
+	<style>
+		.border {
+			border: 1px solid darkblue;
+		}
+
+		#title {
+			padding: 10px;
+		}
+	</style>
+
+	<script>
+		// Test page is added due to issue reported in this ticket - 1970315739
+		var title = new sap.m.Title({
+			text: "Samples with Input, MultiInput (extends Input), StepInput (extends Input) and ComboBox (extends InputBase) in the different Content Densities"
+		});
+		title.placeAt('contentCozy');
+
+		var btn11 = new sap.m.HBox({
+			items: [
+				new sap.m.Input({}),
+				new sap.m.Input({description: "description (Cozy)"})
+			]
+		}).addStyleClass("border");
+		btn11.placeAt('contentCozy');
+
+		var btn12 = new sap.m.HBox({
+			items: [
+				new sap.m.MultiInput({}),
+				new sap.m.MultiInput({description: "description (Cozy)"})
+			]
+		}).addStyleClass("border");
+		btn12.placeAt('contentCozy');
+
+		var btn13 = new sap.m.HBox({
+			items: [
+				new sap.m.StepInput({}),
+				new sap.m.StepInput({description: "description (Cozy)"})
+			]
+		}).addStyleClass("border");
+		btn13.placeAt('contentCozy');
+
+		var btn14 = new sap.m.HBox({
+			items: [
+				new sap.m.ComboBox({}),
+				new sap.m.ComboBox({description: "description (Cozy)"})
+			]
+		}).addStyleClass("border");
+		btn14.placeAt('contentCozy');
+
+		var btn21 = new sap.m.HBox({
+			items: [
+				new sap.m.Input({}),
+				new sap.m.Input({description: "description (Compact)"})
+			]
+		}).addStyleClass("border");
+		btn21.placeAt('contentCompact');
+
+		var btn22 = new sap.m.HBox({
+			items: [
+				new sap.m.MultiInput({}),
+				new sap.m.MultiInput({description: "description (Compact)"})
+			]
+		}).addStyleClass("border");
+		btn22.placeAt('contentCompact');
+
+		var btn23 = new sap.m.HBox({
+			items: [
+				new sap.m.StepInput({}),
+				new sap.m.StepInput({description: "description (Compact)"})
+			]
+		}).addStyleClass("border");
+		btn23.placeAt('contentCompact');
+
+		var btn24 = new sap.m.HBox({
+			items: [
+				new sap.m.ComboBox({}),
+				new sap.m.ComboBox({description: "description (Compact)"})
+			]
+		}).addStyleClass("border");
+		btn24.placeAt('contentCompact');
+
+		var btn31 = new sap.m.HBox({
+			items: [
+				new sap.m.Input({}),
+				new sap.m.Input({description: "description (Condesed)"})
+			]
+		}).addStyleClass("border");
+		btn31.placeAt('contentCondesed');
+
+		var btn32 = new sap.m.HBox({
+			items: [
+				new sap.m.MultiInput({}),
+				new sap.m.MultiInput({description: "description (Condesed)"})
+			]
+		}).addStyleClass("border");
+		btn32.placeAt('contentCondesed');
+
+		var btn33 = new sap.m.HBox({
+			items: [
+				new sap.m.StepInput({}),
+				new sap.m.StepInput({description: "description (Condesed)"})
+			]
+		}).addStyleClass("border");
+		btn33.placeAt('contentCondesed');
+
+		var btn34 = new sap.m.HBox({
+			items: [
+				new sap.m.ComboBox({}),
+				new sap.m.ComboBox({description: "description (Condesed)"})
+			]
+		}).addStyleClass("border");
+		btn34.placeAt('contentCondesed');
+
+		// Same samples without HBox containers
+		new sap.m.Input({width: "150px"}).placeAt('contentCozy');
+		new sap.m.Input({width: "150px", description: "description (Cozy)"}).placeAt('contentCozy');
+
+		new sap.m.MultiInput({width: "150px"}).placeAt('contentCozy');
+		new sap.m.MultiInput({width: "150px", description: "description (Cozy)"}).placeAt('contentCozy');
+
+		new sap.m.StepInput({width: "150px"}).placeAt('contentCozy');
+		new sap.m.StepInput({width: "150px", description: "description (Cozy)"}).placeAt('contentCozy');
+
+		new sap.m.ComboBox({width: "150px"}).placeAt('contentCozy');
+		new sap.m.ComboBox({width: "150px", description: "description (Cozy)"}).placeAt('contentCozy');
+
+		new sap.m.Input({width: "150px"}).placeAt('contentCompact');
+		new sap.m.Input({width: "150px", description: "description (Compact)"}).placeAt('contentCompact');
+
+		new sap.m.MultiInput({width: "150px"}).placeAt('contentCompact');
+		new sap.m.MultiInput({width: "150px", description: "description (Compact)"}).placeAt('contentCompact');
+
+		new sap.m.StepInput({width: "150px"}).placeAt('contentCompact');
+		new sap.m.StepInput({width: "150px", description: "description (Compact)"}).placeAt('contentCompact');
+
+		new sap.m.ComboBox({}).placeAt('contentCompact');
+		new sap.m.ComboBox({description: "description (Compact)"}).placeAt('contentCompact');
+
+		new sap.m.Input({width: "150px"}).placeAt('contentCondesed');
+		new sap.m.Input({width: "150px", description: "description (Condesed)"}).placeAt('contentCondesed');
+
+		new sap.m.MultiInput({width: "150px"}).placeAt('contentCondesed');
+		new sap.m.MultiInput({width: "150px", description: "description (Condesed)"}).placeAt('contentCondesed');
+
+		new sap.m.StepInput({width: "150px"}).placeAt('contentCondesed');
+		new sap.m.StepInput({width: "150px", description: "description (Condesed)"}).placeAt('contentCondesed');
+
+		new sap.m.ComboBox({width: "150px"}).placeAt('contentCondesed');
+		new sap.m.ComboBox("last", {width: "150px", description: "description (Condesed)"}).placeAt('contentCondesed');
+	</script>
+
+	</head>
+	<body class="sapUiBody">
+		<div id="title"></div>
+		<div id="contentCozy" class="sapUiSizeCozy"></div>
+		<div id="contentCompact" class="sapUiSizeCompact"></div>
+		<div class="sapUiSizeCompact sapUiSizeCondensed">
+			<div id="contentCondesed" class="sapUiTableCell"></div>
+		</div>
+	</body>
+</html>
