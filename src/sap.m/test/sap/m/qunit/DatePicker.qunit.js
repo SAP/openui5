@@ -303,6 +303,30 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("passing a date from a model with a string notation as pattern", function (assert) {
+		// Prepare
+		var oModel = new sap.ui.model.json.JSONModel({
+				date: "20190618000000"
+			}),
+			oDatePicker = new sap.m.DatePicker("datePicker", {
+				value: {path:'model>/date',
+					type:'sap.ui.model.type.Date',
+					formatOptions: {source: {pattern: 'yyyyMMddHHmmss'}, style:'medium'}}
+			});
+
+		// Act
+		oDatePicker.setModel(oModel, "model");
+		oDatePicker.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.equal(oDatePicker.$().find("input").val(), "Jun 18, 2019", "DOM value should equal the date passed from the model");
+
+		// Clean
+		oModel.destroy();
+		oDatePicker.destroy();
+	});
+
 	QUnit.module("API");
 
 	QUnit.test("setDateValue(time part cut) when mindate/maxdate is the same date, but with time part", function (assert) {
