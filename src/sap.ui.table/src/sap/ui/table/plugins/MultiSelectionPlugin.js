@@ -38,6 +38,7 @@ sap.ui.define([
 	 * <li>Multiple consecutive selections are possible</li>
 	 * </ul>
 	 *
+	 * This plugin is intended for the multi-selection mode, but also supports single selection for ease of use.
 	 * When this plugin is applied to the table, the table's selection mode is automatically set to MultiToggle and cannot be changed.
 	 *
 	 * @extends sap.ui.table.plugins.SelectionPlugin
@@ -47,8 +48,8 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @alias sap.ui.table.plugins.MultiSelectionPlugin
 	 */
-	var MultiSelectionPlugin = SelectionPlugin.extend("sap.ui.table.plugins.MultiSelectionPlugin", {metadata: {
-		properties: {
+	var MultiSelectionPlugin = SelectionPlugin.extend("sap.ui.table.plugins.MultiSelectionPlugin", {metadata : {
+		properties : {
 			/**
 			 * Number of items which can be selected in a range.
 			 * Accepts positive integer values. If set to 0, the limit is disabled, and the Select All checkbox appears instead of the Deselect All button. The plugin loads all selected items.
@@ -59,28 +60,33 @@ sap.ui.define([
 			 * <li>If the entity set is small</li>
 			 * </ul>
 			 */
-			limit: {type: "int", group: "Behavior", defaultValue: 200},
+			limit : {type : "int", group : "Behavior", defaultValue : 200},
 			/**
 			 * Show header selector
 			 */
-			showHeaderSelector: {type: "boolean", group: "Appearance", defaultValue: true}
+			showHeaderSelector : {type : "boolean", group : "Appearance", defaultValue : true},
+			/**
+			 * Selection mode of the plugin. This property controls whether single or multiple rows can be selected. It also influences the visual appearance.
+			 * When the selection mode is changed, the current selection is removed.
+			 */
+			selectionMode : {type : "sap.ui.table.SelectionMode", group : "Behavior", defaultValue : SelectionMode.MultiToggle}
 		},
-		events: {
+		events : {
 			/**
 			 * This event is fired when the selection is changed.
 			 */
-			selectionChange: {
-				parameters: {
+			selectionChange : {
+				parameters : {
 
 					/**
 					 * Array of indices whose selection has been changed (either selected or deselected).
 					 */
-					indices: {type: "int[]"},
+					indices : {type : "int[]"},
 
 					/**
 					 * Indicates whether the selection limit has been reached.
 					 */
-					limitReached: {type: "boolean"}
+					limitReached : {type : "boolean"}
 				}
 			}
 		}
@@ -120,7 +126,7 @@ sap.ui.define([
 			headerSelector: {
 				type: this._bLimitDisabled ? "toggle" : "clear",
 				icon: this.oDeselectAllIcon,
-				visible: this.getShowHeaderSelector()
+				visible: this.getSelectionMode() === SelectionMode.MultiToggle ? this.getShowHeaderSelector() : false
 			}
 		};
 	};
@@ -131,7 +137,7 @@ sap.ui.define([
 	 * @return {boolean}
 	 */
 	MultiSelectionPlugin.prototype.onHeaderSelectorPress = function() {
-		if (this.getShowHeaderSelector()) {
+		if (this.getSelectionMode() === SelectionMode.MultiToggle && this.getShowHeaderSelector()) {
 			if (this._bLimitDisabled && this.getSelectableCount() > this.getSelectedCount()) {
 				this.selectAll();
 			} else {
@@ -152,6 +158,22 @@ sap.ui.define([
 		if (sType === "toggle") {
 			return true;
 		}
+	};
+
+	MultiSelectionPlugin.prototype.setSelectionMode = function(sSelectionMode) {
+		var sOldSelectionMode = this.getSelectionMode();
+		var oTable = this.getParent();
+
+		if (oTable) {
+			oTable.setProperty("selectionMode", sSelectionMode, true);
+		}
+
+		this.setProperty("selectionMode", sSelectionMode);
+		if (this.getSelectionMode() !== sOldSelectionMode) {
+			this.clearSelection();
+		}
+
+		return this;
 	};
 
 	MultiSelectionPlugin.prototype.setLimit = function(iLimit) {
@@ -225,12 +247,20 @@ sap.ui.define([
 
 	/**
 	 * Loads the contexts of the selected range and sets the given selection interval as the selection.
+	 * In single-selection mode it loads the context and sets the selected index to <code>iIndexTo</code>.
 	 *
 	 * @param {int} iIndexFrom Index from which the selection starts
 	 * @param {int} iIndexTo Index up to which to select
 	 * @public
 	 */
 	MultiSelectionPlugin.prototype.setSelectionInterval = function(iIndexFrom, iIndexTo) {
+		var sSelectionMode = this.getSelectionMode();
+		if (sSelectionMode === SelectionMode.None) {
+			return;
+		} else if (sSelectionMode === SelectionMode.Single) {
+			iIndexFrom = iIndexTo;
+		}
+
 		prepareSelection(this, iIndexFrom, iIndexTo).then(function(mIndices) {
 			if (mIndices) {
 				this.oSelectionPlugin.setSelectionInterval(mIndices.indexFrom, mIndices.indexTo);
@@ -240,12 +270,22 @@ sap.ui.define([
 
 	/**
 	 * Loads the context of the selected range and adds the given selection interval to the selection.
+	 * In single-selection mode it loads the context and sets the selected index to <code>iIndexTo</code>.
 	 *
 	 * @param {int} iIndexFrom Index from which the selection starts
 	 * @param {int} iIndexTo Index up to which to select
 	 * @public
 	 */
 	MultiSelectionPlugin.prototype.addSelectionInterval = function(iIndexFrom, iIndexTo) {
+		var sSelectionMode = this.getSelectionMode();
+		if (sSelectionMode === SelectionMode.None) {
+			return;
+		} else if (sSelectionMode === SelectionMode.Single) {
+			iIndexFrom = iIndexTo;
+			this.setSelectionInterval(iIndexFrom, iIndexTo);
+			return;
+		}
+
 		prepareSelection(this, iIndexFrom, iIndexTo).then(function(mIndices) {
 			if (mIndices) {
 				this.oSelectionPlugin.addSelectionInterval(mIndices.indexFrom, mIndices.indexTo);
@@ -386,6 +426,10 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	MultiSelectionPlugin.prototype.setSelectedIndex = function(iIndex) {
+		if (this.getSelectionMode() === SelectionMode.None) {
+			return;
+		}
+
 		if (this.oSelectionPlugin) {
 			var that = this;
 			this.setLimitReached(false);
@@ -412,7 +456,7 @@ sap.ui.define([
 		if (oParent) {
 			this.oSelectionPlugin = new oParent._SelectionAdapterClass();
 			this.oSelectionPlugin.attachSelectionChange(this._onSelectionChange, this);
-			oParent.setSelectionMode(SelectionMode.MultiToggle);
+			oParent.setSelectionMode(this.getSelectionMode());
 		}
 
 		return vReturn;

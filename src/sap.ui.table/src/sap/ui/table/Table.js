@@ -162,8 +162,7 @@ sap.ui.define([
 			 * When the selection mode is changed, the current selection is removed.
 			 * <b>Note:</b> Since the group header visualization relies on the row selectors, the row selectors are always shown if the grouping
 			 * functionality (depends on table type) is enabled, even if <code>sap.ui.table.SelectionMode.None</code> is set.
-			 * <b>Note:</b> When a selection plugin is applied to the table, the selection mode is controlled by the plugin and cannot be
-			 * changed manually.
+			 * <b>Note:</b> When a selection plugin is applied to the table, the selection mode is controlled by the plugin.
 			 */
 			selectionMode : {type : "sap.ui.table.SelectionMode", group : "Behavior", defaultValue : SelectionMode.MultiToggle},
 
@@ -1650,8 +1649,7 @@ sap.ui.define([
 			this.setProperty("selectionMode", sSelectionMode);
 			this._oSelectionPlugin.setSelectionMode(sSelectionMode);
 		} else {
-			Log.warning("When the MultiSelectionPlugin is applied to the table, the selection mode is controlled by the plugin and cannot be"
-						+ " changed manually.", this);
+			Log.warning("When the MultiSelectionPlugin is applied to the table, the selection mode is controlled by the plugin.", this);
 		}
 
 		return this;
