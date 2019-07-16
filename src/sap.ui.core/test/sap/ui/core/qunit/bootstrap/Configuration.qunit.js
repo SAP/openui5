@@ -765,14 +765,4 @@ sap.ui.define([
 		assert.equal(mDefaultFlexibilityService.layerFilter[0], "ALL", "per default the filtering is set to 'ALL'");
 	});
 
-	QUnit.test("setting the Flexibility Connectors at runtime results in an error", function(assert) {
-		var oCfg = new Configuration();
-		assert.throws(
-			function () {oCfg.setFlexibilityConnectors();},
-			new Error("flexibilityConnectors must not be set after bootstrapping"),
-			"raised an error on the setter call"
-		);
-
-	});
-
 });
