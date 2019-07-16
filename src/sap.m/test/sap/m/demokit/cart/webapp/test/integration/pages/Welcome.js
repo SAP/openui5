@@ -85,6 +85,7 @@ sap.ui.define([
 
 				iShouldSeeTheWelcomePage: function () {
 					return this.waitFor({
+						timeout: 30,
 						success: function () {
 							Opa5.assert.ok(true, "The welcome page was successfully displayed");
 						},
