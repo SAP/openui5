@@ -171,6 +171,23 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			},
 			Export: {},
 			ExportTypeCSV: {},
+			LibraryInfo: {
+				ui5: {
+					libs: "sap.ui.testlib",
+					theme: "customcss",
+					resourceRoots: {
+						"sap.ui.testlib": "test-resources/sap/ui/core/qunit/testdata/uilib/"
+					},
+					themeRoots: {
+						"customcss": {
+							"sap.ui.core": "test-resources/sap/ui/core/qunit/testdata/customcss/"
+						}
+					}
+				},
+				coverage: {
+					only: "sap/ui/core/util/LibraryInfo"
+				}
+			},
 			PasteHelper: {},
 			"reflection/BaseTreeModifier": {
 				sinon: {
