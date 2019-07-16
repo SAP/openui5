@@ -270,6 +270,7 @@ sap.ui.define([
 				iShouldSeeTheProductList: function () {
 					return this.waitFor({
 						id: "productList",
+						timeout: 30,
 						success: function (oList) {
 							Opa5.assert.ok(
 								oList,
