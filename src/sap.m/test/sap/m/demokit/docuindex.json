@@ -723,7 +723,8 @@
 			  "sap.m.sample.MessageViewInsidePopover",
 			  "sap.m.sample.MessageViewInsideResponsivePopover",
 			  "sap.m.sample.MessageViewInsideDialog",
-			  "sap.m.sample.MessageViewWithGrouping"
+			  "sap.m.sample.MessageViewWithGrouping",
+			  "sap.m.sample.MessageViewMessageHandling"
 		  ]
 		 },
 		{
@@ -2745,6 +2746,11 @@
 		  "id": "sap.m.sample.MessageViewInsideResponsivePopover",
 		  "name": "Message View inside ResponsivePopover",
 		  "description": "A sample with Message View inside a ResponsivePopover."
+		 },
+		 {
+		  "id": "sap.m.sample.MessageViewMessageHandling",
+		  "name": "Message View with Message Handling",
+		  "description": "A sample showing how you can connect and visualize external messages (such as a warning) as an item in the Message View."
 		 },
 		{
 		 "id": "sap.m.sample.MessageViewWithGrouping",
