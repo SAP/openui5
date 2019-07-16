@@ -381,11 +381,22 @@ sap.ui.define([
 			var oFieldToHide = oFormContainer.getFormElements()[0];
 			var oFieldToHideOverlay = OverlayRegistry.getOverlay(oFieldToHide);
 
+			function checkOverlay(oEvent, oData) {
+				var oOverlayCreated = oEvent.getParameters().elementOverlay;
+				if (oOverlayCreated.getElement().getId() === oData.controlId) {
+					this.oRta._oDesignTime.detachEvent("elementOverlayCreated", checkOverlay, this);
+					oOverlayCreated.attachEventOnce("geometryChanged", function() {
+						oData.resolve(oOverlayCreated);
+					});
+				}
+			}
+
 			PersistenceWriteAPI.hasChangesToPublish(this.oCompanyCodeField)
 				.then(function (bChangesToPublish) {
 					assert.notOk(bChangesToPublish, "then there are no changes to publish in the Flex Persistence");
 
 					var oCommandStack = this.oRta.getCommandStack();
+					var oFieldOverlay;
 					oCommandStack.attachEventOnce("commandExecuted", function () {
 						setTimeout(function () {
 							DtUtil.waitForSynced(this.oRta._oDesignTime)().then(function() {
@@ -393,48 +404,60 @@ sap.ui.define([
 								var oDialog = this.oRta.getPlugins()["additionalElements"].getDialog();
 								oFormContainer = oForm.getFormContainers()[0];
 								var oField = oFormContainer.getFormElements()[1];
-								var oFieldOverlay = OverlayRegistry.getOverlay(oField);
-								oFieldOverlay.focus();
-								oFieldOverlay.setSelected(true);
+								oFieldOverlay = OverlayRegistry.getOverlay(oField);
 
-								// open context menu (compact context menu)
-								RtaQunitUtils.openContextMenuWithKeyboard.call(this, oFieldOverlay).then(function () {
-									var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-									oContextMenuControl.attachOpened(function () {
-										var oContextMenuButton = oContextMenuControl.getButtons()[1];
-										assert.equal(oContextMenuButton.getText(), "Add: Field", "the the add field action button is available in the menu");
-										oContextMenuButton.firePress();
-										sap.ui.getCore().applyChanges();
-									});
+								// BCP: 1970331115 - Simple form destroys and re-created all content async, when aggregation content is either added or remoeved.
+								// TODO: Remove this promise, when this issue is fixed.
+								new Promise(function(fnResolve) {
+									if (!oFieldOverlay) {
+										this.oRta._oDesignTime.attachEvent("elementOverlayCreated", {resolve: fnResolve, controlId: oField.getId()}, checkOverlay, this);
+									} else {
+										fnResolve(oFieldOverlay);
+									}
+								}.bind(this))
+									.then(function(oCreatedOverlay) {
+										oFieldOverlay = oCreatedOverlay;
+										oFieldOverlay.focus();
+										oFieldOverlay.setSelected(true);
+										// open context menu (compact context menu)
+										RtaQunitUtils.openContextMenuWithKeyboard.call(this, oFieldOverlay).then(function () {
+											var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+											oContextMenuControl.attachEventOnce("Opened", function () {
+												var oContextMenuButton = oContextMenuControl.getButtons()[1];
+												assert.equal(oContextMenuButton.getText(), "Add: Field", "the the add field action button is available in the menu");
+												oContextMenuButton.firePress();
+												sap.ui.getCore().applyChanges();
+											});
 
-									// wait for opening additional Elements dialog
-									oDialog.attachOpened(function () {
-										var oFieldToAdd = oDialog.getElements().filter(function (oField) {
-											return oField.type === "invisible";
-										})[0];
-										oCommandStack.attachModified(function () {
-											var aCommands = oCommandStack.getAllExecutedCommands();
-											if (aCommands &&
-												aCommands.length === 3) {
-												fnWaitForExecutionAndSerializationBeingDone.call(this)
-													.then(function () {
-														sap.ui.getCore().applyChanges();
-													})
-													.then(PersistenceWriteAPI.hasChangesToPublish.bind(null, oCompCont.getComponentInstance()))
-													.then(function (bChangesToPublish) {
-														assert.ok(bChangesToPublish, "then there are changes to publish in the Flex Persistence");
-													})
-													.then(this.oRta.stop.bind(this.oRta))
-													.then(fnDone);
-											}
+											// wait for opening additional Elements dialog
+											oDialog.attachOpened(function () {
+												var oFieldToAdd = oDialog.getElements().filter(function (oField) {
+													return oField.type === "invisible";
+												})[0];
+												oCommandStack.attachModified(function () {
+													var aCommands = oCommandStack.getAllExecutedCommands();
+													if (aCommands &&
+														aCommands.length === 3) {
+														fnWaitForExecutionAndSerializationBeingDone.call(this)
+															.then(function () {
+																sap.ui.getCore().applyChanges();
+															})
+															.then(PersistenceWriteAPI.hasChangesToPublish.bind(null, oCompCont.getComponentInstance()))
+															.then(function (bChangesToPublish) {
+																assert.ok(bChangesToPublish, "then there are changes to publish in the Flex Persistence");
+															})
+															.then(this.oRta.stop.bind(this.oRta))
+															.then(fnDone);
+													}
+												}.bind(this));
+
+												// select the field in the list and close the dialog with OK
+												oFieldToAdd.selected = true;
+												sap.ui.qunit.QUnitUtils.triggerEvent("tap", oDialog._oOKButton.getDomRef());
+												sap.ui.getCore().applyChanges();
+											}.bind(this));
 										}.bind(this));
-
-										// select the field in the list and close the dialog with OK
-										oFieldToAdd.selected = true;
-										sap.ui.qunit.QUnitUtils.triggerEvent("tap", oDialog._oOKButton.getDomRef());
-										sap.ui.getCore().applyChanges();
 									}.bind(this));
-								}.bind(this));
 							}.bind(this));
 						}.bind(this), 0);
 					}.bind(this));
@@ -442,7 +465,6 @@ sap.ui.define([
 					// to reveal we have to remove the field first (otherwise it would be addODataProperty)
 					oFieldToHideOverlay.focus();
 					oFieldToHideOverlay.setSelected(true);
-					QUnitUtils.triggerKeyup(oFieldToHideOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 					var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 					oContextMenuControl.attachEventOnce("Opened", function () {
 						var oContextMenuButton = oContextMenuControl.getButtons()[2];
@@ -450,6 +472,7 @@ sap.ui.define([
 						oContextMenuButton.firePress();
 						sap.ui.getCore().applyChanges();
 					});
+					QUnitUtils.triggerKeyup(oFieldToHideOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 				}.bind(this));
 		});
 
