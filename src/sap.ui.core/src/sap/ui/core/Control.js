@@ -87,8 +87,9 @@ sap.ui.define([
 			properties : {
 				/**
 				 * Whether the control is currently in blocked state.
+				 * @ui5-restricted sap.ui.core, sap.m, sap.viz
 				 */
-				"blocked" : {type: "boolean", defaultValue: false, hidden: true},
+				"blocked" : {type: "boolean", defaultValue: false, visibility : "hidden"},
 				/**
 				 * Whether the control is currently in busy state.
 				 */
@@ -902,8 +903,10 @@ sap.ui.define([
 	 * @return {boolean} <code>true</code> when blocked
 	 * @private
 	 * @ui5-restricted sap.ui.core, sap.m, sap.viz
-	 * @name sap.ui.core.Control#getBlocked
 	 */
+	Control.prototype.getBlocked = function() {
+		return this.getProperty("blocked");
+	};
 
 	/**
 	 * Set the controls block state.
