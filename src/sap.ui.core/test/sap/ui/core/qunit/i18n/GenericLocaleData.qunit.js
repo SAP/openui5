@@ -390,6 +390,8 @@ sap.ui.define([
 			// skeleton "yMMMd" has pattern "y年M月d日"
 			// "yMMMdd"'s best match should be "yMMMd" and the "day" should be expanded which results in "y年M月dd日"
 			assert.equal(oLocaleData.getCustomDateTimePattern("yMMMdd"), "y年M月dd日", "datetime format \"yMMMdd\"");
+			// "yMMMMd"'s best match should be "yMMMd" and the "month" shouldn't be expanded which results in "y年M月d日"
+			assert.equal(oLocaleData.getCustomDateTimePattern("yMMMMd"), "y年M月d日", "datetime format \"yMMMMd\"");
 			assert.equal(oLocaleData.getCustomIntervalPattern("y", "y"), "y年～y年", "interval format \"y\", \"y\"");
 			assert.equal(oLocaleData.getCustomIntervalPattern("yMd", "d"), "y/MM/dd～y/MM/dd", "interval format \"yMd\", \"d\"");
 			assert.equal(oLocaleData.getCustomIntervalPattern("MMMd", "d"), "M月d日～d日", "interval format \"MMMd\", \"d\"");
