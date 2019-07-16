@@ -3033,15 +3033,9 @@ sap.ui.define([
 		this.mock(oModelInterface).expects("reportUnboundMessages")
 			.withExactArgs(sResourcePath, [{
 					code : "42",
-					message : "Test",
-					technicalDetails : {
-						originalMessage : aMessages[0]
-					}
+					message : "Test"
 				}, {
 					code : "43",
-					technicalDetails : {
-						originalMessage : aMessages[1]
-					},
 					type : "Warning"
 				}
 			]);
