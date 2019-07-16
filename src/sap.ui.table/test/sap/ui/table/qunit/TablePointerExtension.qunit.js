@@ -94,7 +94,8 @@ sap.ui.define([
 		qutils.triggerMouseEvent($Table, "mouseup", 0, 0, 10, iY + 10, 0);
 		// resized table by 110px, in cozy mode this allows 2 rows to be added
 		assert.equal(oTable.getVisibleRowCount(), 7, "Visible rows after resize");
-		assert.ok(iInitialHeight < $Table.height(), "Height of the table increased");
+		sap.ui.getCore().applyChanges();
+		assert.ok(iInitialHeight < oTable.$().height(), "Height of the table increased");
 		testAdaptations(false);
 	});
 
@@ -1137,7 +1138,6 @@ sap.ui.define([
 		var oExtension = oTable._getPointerExtension();
 		assert.ok(!oExtension._ExtensionHelper, "_ExtensionHelper: No debug mode");
 		assert.ok(!oExtension._ColumnResizeHelper, "_ColumnResizeHelper: No debug mode");
-		assert.ok(!oExtension._InteractiveResizeHelper, "_InteractiveResizeHelper: No debug mode");
 		assert.ok(!oExtension._ReorderHelper, "_ReorderHelper: No debug mode");
 		assert.ok(!oExtension._ExtensionDelegate, "_ExtensionDelegate: No debug mode");
 		assert.ok(!oExtension._RowHoverHandler, "_RowHoverHandler: No debug mode");
@@ -1146,7 +1146,6 @@ sap.ui.define([
 		oExtension._debug();
 		assert.ok(!!oExtension._ExtensionHelper, "_ExtensionHelper: Debug mode");
 		assert.ok(!!oExtension._ColumnResizeHelper, "_ColumnResizeHelper: Debug mode");
-		assert.ok(!!oExtension._InteractiveResizeHelper, "_InteractiveResizeHelper: Debug mode");
 		assert.ok(!!oExtension._ReorderHelper, "_ReorderHelper: Debug mode");
 		assert.ok(!!oExtension._ExtensionDelegate, "_ExtensionDelegate: Debug mode");
 		assert.ok(!!oExtension._RowHoverHandler, "_RowHoverHandler: Debug mode");

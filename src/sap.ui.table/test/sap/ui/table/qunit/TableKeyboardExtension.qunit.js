@@ -398,7 +398,7 @@ sap.ui.define([
 
 			oInitItemNavigationSpy.reset();
 			oOnFocusInSpy.reset();
-			oTable._renderRows();
+			oTable._getRowMode().renderTableRows();
 
 			assert.ok(oInitItemNavigationSpy.calledOnce, "Re-rendered rows when focus was on " + sId + ": The item navigation was reinitialized");
 			assert.strictEqual(document.activeElement.id, sId, "Re-rendered rows when focus was on " + sId + ": The correct element is focused");
@@ -425,7 +425,7 @@ sap.ui.define([
 
 		oInitItemNavigationSpy.reset();
 		oInvalidateItemNavigationSpy.reset();
-		oTable._renderRows();
+		oTable._getRowMode().renderTableRows();
 
 		assert.ok(oInitItemNavigationSpy.notCalled,
 			"Re-rendered rows when focus was on an element outside the table: The item navigation was not reinitialized");

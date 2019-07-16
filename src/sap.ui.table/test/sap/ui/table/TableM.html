@@ -48,8 +48,8 @@ function pressHandler(oEvent) {
 var oTable = new sap.ui.table.Table({
 	title: "Title of the Table",
 	footer: "Footer of the Table",
-	selectionMode: sap.ui.table.SelectionMode.MultiToggle,
-	visibleRowCountMode: "Auto"
+	visibleRowCountMode: "Auto",
+	firstVisibleRow: 1
 });
 
 oTable.setToolbar(new sap.m.Toolbar({content: [
@@ -101,7 +101,7 @@ oTable.addColumn(oColumn);
 // sap.m.Input
 oControl = new sap.m.Input({value: "{name}"});
 oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "m.Input"}), template: oControl, width: "200px"});
-oColumn.setCreationTemplate(new sap.m.Text({value: "{name}"}));
+oColumn.setCreationTemplate(new sap.m.Text({text: "{name}"}));
 oTable.addColumn(oColumn);
 
 // sap.m.DatePicker

@@ -65,7 +65,6 @@ sap.ui.define([
 	var getSelectAll = window.getSelectAll;
 
 	var sServiceURI = "/service/";
-	var iResponseTime = 10;
 
 	function createODataModel(sURL) {
 		sURL = sURL == null ? sServiceURI : sURL;
@@ -74,10 +73,10 @@ sap.ui.define([
 		});
 	}
 
-	function startMockServer() {
+	function startMockServer(iResponseTime) {
 		MockServer.config({
 			autoRespond: true,
-			autoRespondAfter: iResponseTime
+			autoRespondAfter: iResponseTime == null ? 10 : iResponseTime
 		});
 
 		var oMockServer = new MockServer({
@@ -127,33 +126,7 @@ sap.ui.define([
 		aData[i].lastName += " - " + i;
 	}
 
-	var DummyControl = Control.extend("sap.ui.table.test.DummyControl", {
-		metadata: {
-			properties: {
-				height: "string"
-			}
-		},
-		renderer: function(oRm, oControl) {
-			oRm.write("<div");
-			oRm.addStyle("height", oControl.getHeight() || "10px");
-			oRm.addStyle("width", "100px");
-			oRm.addStyle("background-color", "orange");
-			oRm.addStyle("box-sizing", "border-box");
-			oRm.addStyle("border-top", "2px solid blue");
-			oRm.addStyle("border-bottom", "2px solid blue");
-			oRm.writeStyles();
-			oRm.writeControlData(oControl);
-			oRm.write("></div>");
-		},
-		setHeight: function(sHeight) {
-			this.setProperty("height", sHeight, true);
-
-			var oDomRef = this.getDomRef();
-			if (oDomRef != null) {
-				oDomRef.style.height = sHeight;
-			}
-		}
-	});
+	var HeightTestControl = TableQUnitUtils.getHeightTestControl();
 
 	function createTable(oConfig, fnCreateColumns, sModelName) {
 		var sBindingPrefix = (sModelName ? sModelName + ">" : "");
@@ -242,8 +215,10 @@ sap.ui.define([
 	}
 
 	function destroyTable() {
-		oTable.destroy();
-		oTable = null;
+		if (oTable) {
+			oTable.destroy();
+			oTable = null;
+		}
 	}
 
 	function creatSortingTableData() {
@@ -297,7 +272,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Properties", function(assert) {
-		assert.expect(9);
 		assert.equal(oTable.$().find(".sapUiTableHdr").text(), "TABLEHEADER", "Title of Table is correct!");
 		assert.equal(jQuery("#__toolbar0").find("button").text(), "Modify Table Properties...", "Toolbar and toolbar button are correct!");
 		assert.equal(oTable.$().find(".sapUiTableFtr").text(), "Footer", "Title of Table is correct!");
@@ -391,17 +365,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("SelectedIndex", function(assert) {
-		assert.expect(1);
 		oTable.setSelectedIndex(8);
 		assert.equal(oTable.getSelectedIndex(), 8, "Selected Index is 8!");
 	});
 
 	QUnit.test("Check Selection of Last fixedBottomRow", function(assert) {
-		assert.expect(1);
 		oTable.setFixedBottomRowCount(3);
+		//sap.ui.getCore().applyChanges();
+
 		var aRows = oTable.getRows();
 		var oLastRow = aRows[aRows.length - 1];
 		var $LastRow = oLastRow.getDomRefs(true);
+
 		if ($LastRow.rowSelector) {
 			$LastRow.rowSelector.click();
 			assert.equal(oTable.getSelectedIndex(), 199, "Selected Index is 199");
@@ -450,7 +425,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("VisibleRowCount", function(assert) {
-		assert.expect(6);
 		var fnError = sinon.spy(Log, "error");
 		oTable.setVisibleRowCount(8);
 		assert.equal(oTable.getVisibleRowCount(), 8, "Visible Row Count is set correct!");
@@ -487,13 +461,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("EnableColumnReordering", function(assert) {
-		assert.expect(1);
 		oTable.setEnableColumnReordering(true);
 		assert.equal(oTable.getEnableColumnReordering(), true, "Reordering is allowed");
 	});
 
 	QUnit.test("FirstVisibleRow", function(assert) {
-		assert.expect(4);
 		assert.equal(oTable.getFirstVisibleRow(), 5, "FirstVisibleRow row is: 5");
 
 		oTable.setFirstVisibleRow(4, false);
@@ -511,7 +483,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("ColumnHeaderVisible", function(assert) {
-		assert.expect(2);
 		oTable.setColumnHeaderVisible(false);
 		sap.ui.getCore().applyChanges();
 		assert.equal(oTable.$().find(".sapUiTableColHdrCnt").is(":visible"), false, "ColumnHeaderVisible ok");
@@ -547,7 +518,6 @@ sap.ui.define([
 		var oBody = document.body;
 		var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
 		var sequence = Promise.resolve();
-		var done = assert.async();
 
 		/* BCP: 1880420532 (IE), 1880455493 (Edge) */
 		if (Device.browser.msie || Device.browser.edge) {
@@ -577,8 +547,8 @@ sap.ui.define([
 		}
 
 		oTable.removeAllColumns();
-		oTable.addColumn(new Column({template: new DummyControl({height: "1px"})}));
-		oTable.addColumn(new Column({template: new DummyControl({height: "1px"})}));
+		oTable.addColumn(new Column({template: new HeightTestControl({height: "1px"})}));
+		oTable.addColumn(new Column({template: new HeightTestControl({height: "1px"})}));
 		oTable.setFixedColumnCount(1);
 		oTable.setRowActionCount(1);
 		oTable.setRowActionTemplate(new RowAction());
@@ -587,7 +557,7 @@ sap.ui.define([
 			sequence = sequence.then(function() {
 				oTable.setVisibleRowCountMode(mTestSettings.visibleRowCountMode);
 				oTable.setRowHeight(mTestSettings.rowHeight || 0);
-				oTable.getColumns()[1].setTemplate(new DummyControl({height: (mTestSettings.templateHeight || 1) + "px"}));
+				oTable.getColumns()[1].setTemplate(new HeightTestControl({height: (mTestSettings.templateHeight || 1) + "px"}));
 				oBody.classList.remove("sapUiSizeCozy");
 				oBody.classList.remove("sapUiSizeCompact");
 				oTable.removeStyleClass("sapUiSizeCondensed");
@@ -689,205 +659,13 @@ sap.ui.define([
 			});
 		});
 
-		sequence.then(function() {
+		return sequence.then(function() {
 			oBody.classList.remove("sapUiSizeCompact");
 			oBody.classList.add("sapUiSizeCozy");
 			/* BCP: 1880420532 (IE), 1880455493 (Edge) */
 			if (Device.browser.msie || Device.browser.edge) {
 				document.getElementById("qunit-fixture").classList.add("visible");
 			}
-			done();
-		});
-	});
-
-	QUnit.test("Row Height with sapUiTableFixedRowHeights CSS class", function(assert) {
-		var oBody = document.body;
-		var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
-		var sequence = Promise.resolve();
-		var done = assert.async();
-
-		/* BCP: 1880420532 (IE), 1880455493 (Edge) */
-		if (Device.browser.msie || Device.browser.edge) {
-			document.getElementById("qunit-fixture").classList.remove("visible");
-		}
-
-		function wait() {
-			return new Promise(function(resolve) {
-				setTimeout(resolve, 0);
-			});
-		}
-
-		var aPromiseResolvers = [];
-		oTable.addEventDelegate({
-			onAfterRendering: function() {
-				aPromiseResolvers.forEach(function(fnPromiseResolver) {
-					fnPromiseResolver();
-				});
-				aPromiseResolvers = [];
-			}
-		});
-
-		function afterRendering() {
-			return new Promise(function(resolve) {
-				aPromiseResolvers.push(resolve);
-			});
-		}
-
-		oTable.removeAllColumns();
-		oTable.addColumn(new Column({template: new DummyControl({height: "1px"})}));
-		oTable.addColumn(new Column({template: new DummyControl({height: "1px"})}));
-		oTable.setFixedColumnCount(1);
-		oTable.setRowActionCount(1);
-		oTable.setRowActionTemplate(new RowAction());
-		oTable.addStyleClass("sapUiTableFixedRowHeights");
-
-		function test(mTestSettings) {
-			sequence = sequence.then(function() {
-				oTable.setVisibleRowCountMode(mTestSettings.visibleRowCountMode);
-				oTable.setRowHeight(mTestSettings.rowHeight || 0);
-				oTable.getColumns()[1].setTemplate(new DummyControl({height: (mTestSettings.templateHeight || 1) + "px"}));
-				oBody.classList.remove("sapUiSizeCozy");
-				oBody.classList.remove("sapUiSizeCompact");
-				oTable.removeStyleClass("sapUiSizeCondensed");
-
-				if (mTestSettings.density != null) {
-					if (mTestSettings.density === "sapUiSizeCondensed") {
-						oBody.classList.add("sapUiSizeCompact");
-						oTable.addStyleClass("sapUiSizeCondensed");
-					} else {
-						oBody.classList.add(mTestSettings.density);
-					}
-				}
-
-				var pAfterRendering = afterRendering();
-				sap.ui.getCore().applyChanges();
-				return pAfterRendering;
-
-			}).then(wait).then(function() {
-				var sDensity = mTestSettings.density ? mTestSettings.density.replace("sapUiSize", "") : "undefined";
-				mTestSettings.title += " (VisibleRowCountMode=\"" + mTestSettings.visibleRowCountMode + "\""
-									   + ", Density=\"" + sDensity + "\")";
-
-				var aRowDomRefs = oTable.getRows()[0].getDomRefs();
-				assert.strictEqual(aRowDomRefs.rowSelector.getBoundingClientRect().height, mTestSettings.expectedHeight,
-					mTestSettings.title + ": Selector height is ok");
-				assert.strictEqual(aRowDomRefs.rowFixedPart.getBoundingClientRect().height, mTestSettings.expectedHeight,
-					mTestSettings.title + ": Fixed part height is ok");
-				assert.strictEqual(aRowDomRefs.rowScrollPart.getBoundingClientRect().height, mTestSettings.expectedHeight,
-					mTestSettings.title + ": Scrollable part height is ok");
-				assert.strictEqual(aRowDomRefs.rowAction.getBoundingClientRect().height, mTestSettings.expectedHeight,
-					mTestSettings.title + ": Action height is ok");
-			});
-		}
-
-		[VisibleRowCountMode.Fixed, VisibleRowCountMode.Interactive, VisibleRowCountMode.Auto].forEach(function(sVisibleRowCountMode) {
-			test({
-				title: "Row height should be fixed to default height",
-				visibleRowCountMode: sVisibleRowCountMode,
-				density: "sapUiSizeCozy",
-				templateHeight: TableUtils.DefaultRowHeight.sapUiSizeCozy * 2,
-				expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCozy
-			});
-
-			test({
-				title: "Row height should be fixed to default height",
-				visibleRowCountMode: sVisibleRowCountMode,
-				density: "sapUiSizeCozy",
-				expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCozy
-			});
-
-			test({
-				title: "Row height should be fixed to default height",
-				visibleRowCountMode: sVisibleRowCountMode,
-				density: "sapUiSizeCompact",
-				templateHeight: TableUtils.DefaultRowHeight.sapUiSizeCompact * 2,
-				expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCompact
-			});
-
-			test({
-				title: "Row height should be fixed to default height",
-				visibleRowCountMode: sVisibleRowCountMode,
-				density: "sapUiSizeCompact",
-				expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCompact
-			});
-
-			test({
-				title: "Row height should be fixed to default height",
-				visibleRowCountMode: sVisibleRowCountMode,
-				density: "sapUiSizeCondensed",
-				templateHeight: TableUtils.DefaultRowHeight.sapUiSizeCondensed * 2,
-				expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCondensed
-			});
-
-			test({
-				title: "Row height should be fixed to default height",
-				visibleRowCountMode: sVisibleRowCountMode,
-				density: "sapUiSizeCondensed",
-				expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCondensed
-			});
-
-			test({
-				title: "Row height should be fixed to default height",
-				visibleRowCountMode: sVisibleRowCountMode,
-				density: undefined,
-				templateHeight: TableUtils.DefaultRowHeight.undefined * 2,
-				expectedHeight: TableUtils.DefaultRowHeight.undefined
-			});
-
-			test({
-				title: "Row height should be fixed to default height",
-				visibleRowCountMode: sVisibleRowCountMode,
-				density: undefined,
-				expectedHeight: TableUtils.DefaultRowHeight.undefined
-			});
-		});
-
-		[VisibleRowCountMode.Fixed, VisibleRowCountMode.Interactive, VisibleRowCountMode.Auto].forEach(function(sVisibleRowCountMode) {
-			aDensities.forEach(function(sDensity) {
-				test({
-					title: "Application defined height should override default height",
-					visibleRowCountMode: sVisibleRowCountMode,
-					density: sDensity,
-					rowHeight: 20,
-					expectedHeight: 21
-				});
-
-				test({
-					title: "Application defined height should override default height",
-					visibleRowCountMode: sVisibleRowCountMode,
-					density: sDensity,
-					rowHeight: 20,
-					templateHeight: 100,
-					expectedHeight: 21
-				});
-
-				test({
-					title: "Application defined height should override default height",
-					visibleRowCountMode: sVisibleRowCountMode,
-					density: sDensity,
-					rowHeight: 100,
-					expectedHeight: 101
-				});
-
-				test({
-					title: "Application defined height should override default height",
-					visibleRowCountMode: sVisibleRowCountMode,
-					density: sDensity,
-					rowHeight: 100,
-					templateHeight: 120,
-					expectedHeight: 101
-				});
-			});
-		});
-
-		sequence.then(function() {
-			oBody.classList.remove("sapUiSizeCompact");
-			oBody.classList.add("sapUiSizeCozy");
-			/* BCP: 1880420532 (IE), 1880455493 (Edge) */
-			if (Device.browser.msie || Device.browser.edge) {
-				document.getElementById("qunit-fixture").classList.add("visible");
-			}
-			done();
 		});
 	});
 
@@ -895,7 +673,6 @@ sap.ui.define([
 		var oBody = document.body;
 		var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
 		var sequence = Promise.resolve();
-		var done = assert.async();
 		var iPadding = 14;
 
 		/* BCP: 1880420532 (IE), 1880455493 (Edge) */
@@ -926,8 +703,8 @@ sap.ui.define([
 		}
 
 		oTable.removeAllColumns();
-		oTable.addColumn(new Column({label: new DummyControl({height: "1px"}), template: new DummyControl()}));
-		oTable.addColumn(new Column({label: new DummyControl({height: "1px"}), template: new DummyControl()}));
+		oTable.addColumn(new Column({label: new HeightTestControl({height: "1px"}), template: new HeightTestControl()}));
+		oTable.addColumn(new Column({label: new HeightTestControl({height: "1px"}), template: new HeightTestControl()}));
 		oTable.setFixedColumnCount(1);
 		oTable.setRowActionCount(1);
 		oTable.setRowActionTemplate(new RowAction());
@@ -937,7 +714,7 @@ sap.ui.define([
 				oTable.setVisibleRowCountMode(mTestSettings.visibleRowCountMode);
 				oTable.setColumnHeaderHeight(mTestSettings.columnHeaderHeight || 0);
 				oTable.setRowHeight(mTestSettings.rowHeight || 0);
-				oTable.getColumns()[1].setLabel(new DummyControl({height: (mTestSettings.labelHeight || 1) + "px"}));
+				oTable.getColumns()[1].setLabel(new HeightTestControl({height: (mTestSettings.labelHeight || 1) + "px"}));
 				oBody.classList.remove("sapUiSizeCozy");
 				oBody.classList.remove("sapUiSizeCompact");
 				oTable.removeStyleClass("sapUiSizeCondensed");
@@ -1148,7 +925,7 @@ sap.ui.define([
 		sequence = sequence.then(function() {
 			oTable.insertColumn(new Column({
 				label: new Text({text: "a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a"}),
-				template: new DummyControl(),
+				template: new HeightTestControl(),
 				width: "100px"
 			}), 1);
 			var pAfterRendering = afterRendering();
@@ -1180,137 +957,9 @@ sap.ui.define([
 			if (Device.browser.msie || Device.browser.edge) {
 				document.getElementById("qunit-fixture").classList.add("visible");
 			}
-			done();
-		});
-	});
-
-	QUnit.test("Column Header Height with sapUiTableFixedRowHeights CSS class", function(assert) {
-		var oBody = document.body;
-		var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
-		var sequence = Promise.resolve();
-		var done = assert.async();
-		var iPadding = 14;
-
-		/* BCP: 1880420532 (IE), 1880455493 (Edge) */
-		if (Device.browser.msie || Device.browser.edge) {
-			document.getElementById("qunit-fixture").classList.remove("visible");
-		}
-
-		function wait() {
-			return new Promise(function(resolve) {
-				setTimeout(resolve, 0);
-			});
-		}
-
-		var aPromiseResolvers = [];
-		oTable.addEventDelegate({
-			onAfterRendering: function() {
-				aPromiseResolvers.forEach(function(fnPromiseResolver) {
-					fnPromiseResolver();
-				});
-				aPromiseResolvers = [];
-			}
 		});
 
-		function afterRendering() {
-			return new Promise(function(resolve) {
-				aPromiseResolvers.push(resolve);
-			});
-		}
-
-		oTable.removeAllColumns();
-		oTable.addColumn(new Column({label: new DummyControl({height: "1px"}), template: new DummyControl()}));
-		oTable.addColumn(new Column({label: new DummyControl({height: "1px"}), template: new DummyControl()}));
-		oTable.setFixedColumnCount(1);
-		oTable.setRowActionCount(1);
-		oTable.setRowActionTemplate(new RowAction());
-		oTable.addStyleClass("sapUiTableFixedRowHeights");
-
-		function test(mTestSettings) {
-			sequence = sequence.then(function() {
-				oTable.setVisibleRowCountMode(mTestSettings.visibleRowCountMode);
-				oTable.setColumnHeaderHeight(mTestSettings.columnHeaderHeight || 0);
-				oTable.setRowHeight(mTestSettings.rowHeight || 0);
-				oTable.getColumns()[1].setLabel(new DummyControl({height: (mTestSettings.labelHeight || 1) + "px"}));
-				oBody.classList.remove("sapUiSizeCozy");
-				oBody.classList.remove("sapUiSizeCompact");
-				oTable.removeStyleClass("sapUiSizeCondensed");
-
-				if (mTestSettings.density != null) {
-					if (mTestSettings.density === "sapUiSizeCondensed") {
-						oBody.classList.add("sapUiSizeCompact");
-						oTable.addStyleClass("sapUiSizeCondensed");
-					} else {
-						oBody.classList.add(mTestSettings.density);
-					}
-				}
-
-				var pAfterRendering = afterRendering();
-				sap.ui.getCore().applyChanges();
-				return pAfterRendering;
-
-			}).then(wait).then(function() {
-				var sDensity = mTestSettings.density ? mTestSettings.density.replace("sapUiSize", "") : "undefined";
-				mTestSettings.title += " (VisibleRowCountMode=\"" + mTestSettings.visibleRowCountMode + "\""
-									   + ", Density=\"" + sDensity + "\")";
-
-				var aRowDomRefs = oTable.getDomRef().querySelectorAll(".sapUiTableColHdrTr");
-				var oColumnHeaderCnt = oTable.getDomRef().querySelector(".sapUiTableColHdrCnt");
-
-				assert.strictEqual(aRowDomRefs[0].getBoundingClientRect().height, mTestSettings.expectedHeight,
-					mTestSettings.title + ": Fixed part height is ok");
-				assert.strictEqual(aRowDomRefs[1].getBoundingClientRect().height, mTestSettings.expectedHeight,
-					mTestSettings.title + ": Scrollable part height is ok");
-				assert.strictEqual(oColumnHeaderCnt.getBoundingClientRect().height, mTestSettings.expectedHeight + 1 /* border */,
-					mTestSettings.title + ": Column header container height is ok");
-			});
-		}
-
-		[VisibleRowCountMode.Fixed, VisibleRowCountMode.Interactive, VisibleRowCountMode.Auto].forEach(function(sVisibleRowCountMode) {
-			aDensities.forEach(function(sDensity) {
-				test({
-					title: "CSS height should not apply to header rows with default height",
-					visibleRowCountMode: sVisibleRowCountMode,
-					density: sDensity,
-					labelHeight: 87,
-					expectedHeight: 87 + iPadding
-				});
-			});
-		});
-
-		[VisibleRowCountMode.Fixed, VisibleRowCountMode.Interactive, VisibleRowCountMode.Auto].forEach(function(sVisibleRowCountMode) {
-			aDensities.forEach(function(sDensity) {
-				test({
-					title: "CSS height should not apply to header rows with rowHeight",
-					visibleRowCountMode: sVisibleRowCountMode,
-					density: sDensity,
-					rowHeight: 55,
-					expectedHeight: 56
-				});
-			});
-		});
-
-		[VisibleRowCountMode.Fixed, VisibleRowCountMode.Interactive, VisibleRowCountMode.Auto].forEach(function(sVisibleRowCountMode) {
-			aDensities.forEach(function(sDensity) {
-				test({
-					title: "CSS height should not apply to header rows with columnHeaderHeight",
-					visibleRowCountMode: sVisibleRowCountMode,
-					density: sDensity,
-					columnHeaderHeight: 55,
-					expectedHeight: 55
-				});
-			});
-		});
-
-		sequence = sequence.then(function() {
-			oBody.classList.remove("sapUiSizeCompact");
-			oBody.classList.add("sapUiSizeCozy");
-			/* BCP: 1880420532 (IE), 1880455493 (Edge) */
-			if (Device.browser.msie || Device.browser.edge) {
-				document.getElementById("qunit-fixture").classList.add("visible");
-			}
-			done();
-		});
+		return sequence;
 	});
 
 	QUnit.test("Skip _updateTableSizes if table has no width", function(assert) {
@@ -1505,7 +1154,7 @@ sap.ui.define([
 			oTable.onlocalizationChanged(mChanges);
 
 			var pAssert = new Promise(function(resolve) {
-				window.setTimeout(function() {
+				setTimeout(function() {
 					assertLocalizationUpdates(bChangeTextDirection, bChangeLanguage);
 					resolve();
 				}, 0);
@@ -1603,7 +1252,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("ColumnMenu", function(assert) {
-		assert.expect(5);
 		var oColumn = oTable.getColumns()[1];
 		var oMenu = oColumn.getMenu();
 		assert.ok(oMenu !== null, "Column menu is not null");
@@ -1685,11 +1333,9 @@ sap.ui.define([
 		qutils.triggerMouseEvent(sVisibilityMenuItemId + "-menu-item-1", "click");
 
 		assert.equal(oColumn1.getVisible(), false, "firstName column is invisible (no preventDefault)");
-
 	});
 
 	QUnit.test("CustomColumnMenu", function(assert) {
-		assert.expect(1);
 		var oCustomMenu = new Menu("custom-menu");
 		var oColumn = oTable.getColumns()[1];
 		oCustomMenu.addItem(new MenuItem({
@@ -1721,7 +1367,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Menu & initial filter: references", function(assert) {
-		assert.expect(4);
 		var oColumn = oTable.getColumns()[0];
 		var oMenu = oColumn.getMenu();
 		assert.ok(oMenu !== null, "Column menu is not null");
@@ -1737,123 +1382,260 @@ sap.ui.define([
 			"NavigationMode defaulted to Scrollbar after explicitly setting it to Paginator");
 	});
 
-	QUnit.module("VisibleRowCountMode Auto with client binding", {
+	QUnit.module("Get contexts from client binding", {
 		before: function() {
+			this.oGetContextsSpy = sinon.spy(sap.ui.table.Table.prototype, "_getContexts");
 			this.iOriginalDeviceHeight = Device.resize.height;
 			Device.resize.height = 500;
 		},
 		beforeEach: function() {
-			var that = this;
-
+			this.oGetContextsSpy.reset();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		},
+		after: function() {
+			this.oGetContextsSpy.restore();
+			Device.resize.height = this.iOriginalDeviceHeight;
+		},
+		createTable: function(sVisibleRowCountMode) {
 			this.oTable = TableQUnitUtils.createTable({
-				visibleRowCountMode: VisibleRowCountMode.Auto,
+				visibleRowCountMode: sVisibleRowCountMode,
 				rows: {path: "/"},
 				rowHeight: 50,
 				models: new JSONModel(new Array(100))
-			}, function(oTable) {
-				that.oGetContextsSpy = sinon.spy(oTable.getBinding("rows"), "getContexts");
 			});
-		},
-		afterEach: function() {
-			this.oTable.destroy();
-		},
-		after: function() {
-			Device.resize.height = this.iOriginalDeviceHeight;
+
+			return this.oTable;
 		}
 	});
 
-	QUnit.test("Initialization and resize", function(assert) {
-		var done = assert.async();
-		var oTable = this.oTable;
+	QUnit.test("VisibleRowCountMode = Fixed: Initialization", function(assert) {
+		var oTable = this.createTable(VisibleRowCountMode.Fixed);
 		var oGetContextsSpy = this.oGetContextsSpy;
 
-		oTable.qunit.whenInitialRenderingFinished().then(function() {
-			assert.strictEqual(oTable.getVisibleRowCount(), 18, "The visible row count after initialization is correct");
-			assert.ok(oGetContextsSpy.calledOnce, "Binding#getContexts was called once");
-			assert.ok(oGetContextsSpy.calledWithExactly(0, 18, 100),
-				"The first call to Binding#getContexts after binding the rows considers the visible row count");
-			oGetContextsSpy.reset();
+		return oTable.qunit.whenInitialRenderingFinished().then(function() {
+			assert.ok(oGetContextsSpy.calledOnce, "Binding#getContexts was called once");  // render
+			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
+				"All calls to Binding#getContexts consider the visible row count");
+		});
+	});
 
-		}).then(oTable.qunit.$resize({height: "756px"})).then(function() {
-			assert.strictEqual(oTable.getVisibleRowCount(), 13, "The visible row count after decreasing the height is correct");
+	QUnit.test("VisibleRowCountMode = Interactive: Initialization", function(assert) {
+		var oTable = this.createTable(VisibleRowCountMode.Interactive);
+		var oGetContextsSpy = this.oGetContextsSpy;
+
+		return oTable.qunit.whenInitialRenderingFinished().then(function() {
+			assert.ok(oGetContextsSpy.calledOnce, "Binding#getContexts was called once");  // render
+			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
+				"All calls to Binding#getContexts consider the visible row count");
+		});
+	});
+
+	QUnit.test("VisibleRowCountMode = Auto: Initialization", function(assert) {
+		var oTable = this.createTable(VisibleRowCountMode.Auto);
+		var oGetContextsSpy = this.oGetContextsSpy;
+
+		return oTable.qunit.whenInitialRenderingFinished().then(function() {
 			assert.ok(oGetContextsSpy.calledOnce, "Binding#getContexts was called once");
-			assert.ok(oGetContextsSpy.calledWithExactly(0, 13, 100), "Subsequent calls to Binding#getContexts consider the visible row count");
+			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getVisibleRowCount(), 100),
+				"The call to Binding#getContexts considers the visible row count");
+		});
+	});
+
+	QUnit.test("VisibleRowCountMode = Auto: Resize", function(assert) {
+		var oTable = this.createTable(VisibleRowCountMode.Auto);
+		var oGetContextsSpy = this.oGetContextsSpy;
+
+		return oTable.qunit.whenInitialRenderingFinished().then(function() {
+			oGetContextsSpy.reset();
+		}).then(oTable.qunit.$resize({height: "756px"})).then(function() {
+			assert.ok(oGetContextsSpy.calledOnce, "Binding#getContexts was called once");
+			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getVisibleRowCount(), 100),
+				"The call to Binding#getContexts considers the visible row count");
 			oGetContextsSpy.reset();
 
 		}).then(oTable.qunit.resetSize).then(function() {
-			assert.strictEqual(oTable.getVisibleRowCount(), 18, "The visible row count after increasing the height is correct");
 			assert.ok(oGetContextsSpy.calledOnce, "Binding#getContexts was called once");
-			assert.ok(oGetContextsSpy.calledWithExactly(0, 18, 100), "Subsequent calls to Binding#getContexts consider the visible row count");
+			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getVisibleRowCount(), 100),
+				"The call to Binding#getContexts considers the visible row count");
 			oGetContextsSpy.reset();
-
-		}).then(done);
+		});
 	});
 
-	QUnit.module("VisibleRowCountMode Auto with OData binding", {
+	QUnit.module("Get contexts from OData binding", {
 		before: function() {
+			sinon.stub(ODataModel, "_getSharedData", function() {return {};}); // Avoid caching of metadata across tests.
 			this.oMockServer = startMockServer();
+			this.oDataModel = createODataModel();
+			this.oGetContextsSpy = sinon.spy(sap.ui.table.Table.prototype, "_getContexts");
 			this.iOriginalDeviceHeight = Device.resize.height;
 			Device.resize.height = 500;
+
+			return this.oDataModel.metadataLoaded();
 		},
 		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
-				visibleRowCountMode: VisibleRowCountMode.Auto,
-				rows: {path : "/Products"},
-				rowHeight: 50,
-				models: createODataModel()
-			}, function(oTable) {
-				this.oGetContextsSpy = sinon.spy(oTable.getBinding("rows"), "getContexts");
-			}.bind(this));
+			this.oGetContextsSpy.reset();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
 		},
 		after: function() {
-			this.oMockServer.stop();
+			ODataModel._getSharedData.restore();
+			this.oMockServer.destroy();
+			this.oGetContextsSpy.restore();
 			Device.resize.height = this.iOriginalDeviceHeight;
+		},
+		createTable: function(sVisibleRowCountMode, oModel) {
+			this.oTable = TableQUnitUtils.createTable({
+				visibleRowCountMode: sVisibleRowCountMode,
+				rows: {path : "/Products"},
+				rowHeight: 50,
+				models: oModel ? oModel : this.oDataModel
+			});
+
+			return this.oTable;
 		}
 	});
 
-	QUnit.test("Initialization and resize", function(assert) {
-		var done = assert.async();
-		var oTable = this.oTable;
+	QUnit.test("VisibleRowCountMode = Fixed: Initialization", function(assert) {
+		var oTable = this.createTable(VisibleRowCountMode.Fixed, createODataModel());
 		var oGetContextsSpy = this.oGetContextsSpy;
+		var pReady = oTable.qunit.whenBindingChange()
+						   .then(oTable.qunit.whenRenderingFinished);
 
-		oTable.qunit.whenInitialRenderingFinished().then(function() {
-			assert.strictEqual(oTable.getVisibleRowCount(), 18, "The visible row count after initialization is correct");
+		// render, refreshRows, updateRows
+		return pReady.then(function() {
+			assert.ok(oGetContextsSpy.calledThrice, "Binding#getContexts was called 3 times");
+			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
+				"All calls to Binding#getContexts consider the visible row count");
+		});
+	});
+
+	QUnit.test("VisibleRowCountMode = Fixed: Initialization", function(assert) {
+		var oTable = this.createTable(VisibleRowCountMode.Fixed);
+		var oGetContextsSpy = this.oGetContextsSpy;
+		var pReady = oTable.qunit.whenBindingChange()
+						   .then(oTable.qunit.whenRenderingFinished);
+
+		// refreshRows, render, updateRows
+		return pReady.then(function() {
+			assert.ok(oGetContextsSpy.calledThrice, "Binding#getContexts was called 3 times");
+			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
+				"All calls to Binding#getContexts consider the visible row count");
+		});
+	});
+
+	QUnit.test("VisibleRowCountMode = Interactive: Initialization", function(assert) {
+		var oTable = this.createTable(VisibleRowCountMode.Interactive, createODataModel());
+		var oGetContextsSpy = this.oGetContextsSpy;
+		var pReady = oTable.qunit.whenBindingChange()
+						   .then(oTable.qunit.whenRenderingFinished);
+
+		// render, refreshRows, updateRows
+		return pReady.then(function() {
+			assert.ok(oGetContextsSpy.calledThrice, "Binding#getContexts was called 3 times");
+			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
+				"All calls to Binding#getContexts consider the visible row count");
+		});
+	});
+
+	QUnit.test("VisibleRowCountMode = Interactive: Initialization", function(assert) {
+		var oTable = this.createTable(VisibleRowCountMode.Interactive);
+		var oGetContextsSpy = this.oGetContextsSpy;
+		var pReady = oTable.qunit.whenBindingChange()
+						   .then(oTable.qunit.whenRenderingFinished);
+
+		// refreshRows, render, updateRows
+		return pReady.then(function() {
+			assert.ok(oGetContextsSpy.calledThrice, "Binding#getContexts was called 3 times");
+			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
+				"All calls to Binding#getContexts consider the visible row count");
+		});
+	});
+
+	QUnit.test("VisibleRowCountMode = Auto: Initialization", function(assert) {
+		var oTable = this.createTable(VisibleRowCountMode.Auto, createODataModel());
+		var oGetContextsSpy = this.oGetContextsSpy;
+		var pReady = oTable.qunit.whenBindingChange()
+						   .then(oTable.qunit.whenRenderingFinished);
+
+		// render, refreshRows, updateRows
+		return pReady.then(function() {
 			assert.ok(oGetContextsSpy.calledThrice, "Binding#getContexts was called 3 times");
 			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 20, 100),
-				"The first call to Binding#getContexts after rendering considers the device height for the length");
+				"The first call to Binding#getContexts considers the device height for the length");
 			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 20, 100),
-				"The second call to Binding#getContexts on \"refreshRows\" considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, 18, 100),
-				"The third call to Binding#getContexts on \"updateRows\" considers the visible row count");
-			oGetContextsSpy.reset();
+				"The second call to Binding#getContexts considers the device height for the length");
+			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, oTable.getVisibleRowCount(), 100),
+				"The third call to Binding#getContexts considers the visible row count");
+			assert.notEqual(oTable.getVisibleRowCount(), 20,
+				"The computed request length and the visible row count should not be equal in this test");
+		});
+	});
 
-		}).then(oTable.qunit.$resize({height: "756px"})).then(function() {
-			assert.strictEqual(oTable.getVisibleRowCount(), 13, "The visible row count after decreasing the height is correct");
-			assert.ok(oGetContextsSpy.calledOnce, "Binding#getContexts was called once");
-			assert.ok(oGetContextsSpy.calledWithExactly(0, 13, 100), "Subsequent calls to Binding#getContexts consider the visible row count");
-			oGetContextsSpy.reset();
+	QUnit.test("VisibleRowCountMode = Auto: Initialization", function(assert) {
+		var oTable = this.createTable(VisibleRowCountMode.Auto);
+		var oGetContextsSpy = this.oGetContextsSpy;
+		var pReady = oTable.qunit.whenBindingChange()
+						   .then(oTable.qunit.whenRenderingFinished);
 
-		}).then(function() {
-			oTable.getBinding("rows").refresh();
-
-		}).then(oTable.qunit.whenRenderingFinished).then(function() {
-			assert.ok(oGetContextsSpy.calledTwice, "Binding#getContexts was called 2 times");
+		// refreshRows, render, updateRows
+		return pReady.then(function() {
+			assert.ok(oGetContextsSpy.calledThrice, "Binding#getContexts was called 3 times");
 			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 20, 100),
-				"The first call to Binding#getContexts on \"refreshRows\" considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 13, 100),
-				"The second call to Binding#getContexts on \"updateRows\" considers the visible row count");
+				"The first call to Binding#getContexts considers the device height for the length");
+			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 20, 100),
+				"The second call to Binding#getContexts considers the device height for the length");
+			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, oTable.getVisibleRowCount(), 100),
+				"The third call to Binding#getContexts considers the visible row count");
+			assert.notEqual(oTable.getVisibleRowCount(), 20,
+				"The computed request length and the visible row count should not be equal in this test");
+		});
+	});
+
+	QUnit.test("VisibleRowCountMode = Auto: Resize", function(assert) {
+		var oTable = this.createTable(VisibleRowCountMode.Auto);
+		var oGetContextsSpy = this.oGetContextsSpy;
+		var pReady = oTable.qunit.whenBindingChange()
+						   .then(oTable.qunit.whenRenderingFinished)
+						   .then(function() {
+							   oGetContextsSpy.reset();
+						   });
+
+		return pReady.then(oTable.qunit.$resize({height: "756px"})).then(function() {
+			assert.ok(oGetContextsSpy.calledOnce, "Binding#getContexts was called once");
+			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getVisibleRowCount(), 100),
+				"The call to Binding#getContexts considers the visible row count");
 			oGetContextsSpy.reset();
 
 		}).then(oTable.qunit.resetSize).then(function() {
-			assert.strictEqual(oTable.getVisibleRowCount(), 18, "The visible row count after increasing the height is correct");
 			assert.ok(oGetContextsSpy.calledOnce, "Binding#getContexts was called once");
-			assert.ok(oGetContextsSpy.calledWithExactly(0, 18, 100), "Subsequent calls to Binding#getContexts consider the visible row count");
-			oGetContextsSpy.reset();
+			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getVisibleRowCount(), 100),
+				"The call to Binding#getContexts considers the visible row count");
+		});
+	});
 
-		}).then(done);
+	QUnit.test("VisibleRowCountMode = Auto: Refresh", function(assert) {
+		var oTable = this.createTable(VisibleRowCountMode.Auto);
+		var oGetContextsSpy = this.oGetContextsSpy;
+		var pReady = oTable.qunit.whenBindingChange()
+						   .then(oTable.qunit.whenRenderingFinished)
+						   .then(function() {
+							   oGetContextsSpy.reset();
+						   });
+
+		return pReady.then(function() {
+			oTable.getBinding("rows").refresh();
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			assert.ok(oGetContextsSpy.calledTwice, "Binding#getContexts was called 2 times"); // refreshRows, updateRows
+			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 20, 100),
+				"The first call to Binding#getContexts considers the device height for the length");
+			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, oTable.getVisibleRowCount(), 100),
+				"The second call to Binding#getContexts considers the visible row count");
+			assert.notEqual(oTable.getVisibleRowCount(), 20,
+				"The computed request length and the visible row count should not be equal in this test");
+		});
 	});
 
 	QUnit.module("Fixed columns", {
@@ -1954,8 +1736,8 @@ sap.ui.define([
 
 		oHSb.scrollLeft = 5;
 
-		window.setTimeout(function() {
-			assert.equal(oVSb.scrollTop, oTable._getDefaultRowHeight(), "ScrollTop can be set and read.");
+		setTimeout(function() {
+			assert.equal(oVSb.scrollTop, oTable._getBaseRowHeight(), "ScrollTop can be set and read.");
 			assert.equal(oHSb.scrollLeft, 5, "ScrollLeft can be set and read.");
 			done();
 		}, 100);
@@ -1994,7 +1776,7 @@ sap.ui.define([
 		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScroll.sapUiTableCtrlRowScroll tbody tr").length, 6,
 			"Bottom right table has 6 rows");
 		assert.equal($table.find(".sapUiTableVSb").css("top"),
-			((oTable.getFixedRowCount() * oTable._getDefaultRowHeight()) + $table.find(".sapUiTableCCnt")[0].offsetTop - 1) + "px",
+			((oTable.getFixedRowCount() * oTable._getBaseRowHeight()) + $table.find(".sapUiTableCCnt")[0].offsetTop - 1) + "px",
 			"Vertical scrollbar has correct top padding");
 	});
 
@@ -2048,7 +1830,7 @@ sap.ui.define([
 		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScr .sapUiTableCtrlRowFixedBottom tbody tr").length, 2,
 			"Right fixed bottom table has 2 rows");
 		assert.equal($table.find(".sapUiTableVSb").css("top"),
-			((oTable.getFixedRowCount() * oTable._getDefaultRowHeight()) + $table.find(".sapUiTableCCnt")[0].offsetTop - 1) + "px",
+			((oTable.getFixedRowCount() * oTable._getBaseRowHeight()) + $table.find(".sapUiTableCCnt")[0].offsetTop - 1) + "px",
 			"Vertical scrollbar has correct top padding");
 		assert.equal($table.find(".sapUiTableVSb").css("height"), (oTable.getDomRef("table").offsetHeight) + "px",
 			"Vertical scrollbar has correct height");
@@ -2196,12 +1978,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Headers", function(assert) {
-		assert.expect(1);
 		assert.equal(oTable.$().find(".sapUiTableColHdrTr .sapUiTableHeaderCell").length, 6, "Total count of headers");
 	});
 
 	QUnit.test("Equal widths", function(assert) {
-		assert.expect(3);
 		var $Table = oTable.$();
 		var $Head1 = $Table.find(".sapUiTableColHdrTr:eq(0)");
 		var $Head2 = $Table.find(".sapUiTableColHdrTr:eq(1)");
@@ -2810,20 +2590,6 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			destroyTable();
-		},
-		checkRowsUpdated: function(assert, aActualReasons, aExpectedReasons, iDelay) {
-			return new Promise(function(resolve) {
-				window.setTimeout(function() {
-					assert.deepEqual(aActualReasons, aExpectedReasons,
-						"VisibleRowCountMode: " + oTable.getVisibleRowCountMode() + " - "
-						+ (aExpectedReasons.length > 0
-						? "The event _rowsUpdated has been fired in order with reasons: " + aExpectedReasons.join(", ")
-						: "The event _rowsUpdated has not been fired")
-					);
-
-					resolve();
-				}, iDelay == null ? 100 : iDelay);
-			});
 		}
 	});
 
@@ -2918,7 +2684,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Select All on Binding Change", function(assert) {
-		assert.expect(4);
 		var done = assert.async();
 		var oModel;
 		oTable.attachRowSelectionChange(function() {
@@ -2945,97 +2710,203 @@ sap.ui.define([
 		oTable.$("selall").click();
 	});
 
+	QUnit.module("Event: _rowsUpdated", {
+		afterEach: function() {
+			if (this.oTable) {
+				this.oTable.destroy();
+			}
+		},
+		/**
+		 * Creates a table with a JSON model.
+		 *
+		 * @param {sap.ui.table.VisibleRowCountMode} sVisibleRowCountMode The visible row count mode.
+		 * @param {boolean} [bWithBinding=true] Whether the rows aggregation should be bound.
+		 * @param {function(sap.ui.table.Table)} [fnBeforePlaceAt] Before place at callback.
+		 * @returns {sap.ui.table.Table} The created table.
+		 */
+		createTableWithJSONModel: function(sVisibleRowCountMode, bWithBinding, fnBeforePlaceAt) {
+			if (this.oTable) {
+				this.oTable.destroy();
+			}
+
+			this.oTable = TableQUnitUtils.createTable({
+				rows: bWithBinding !== false ? "{/}" : "",
+				visibleRowCountMode: sVisibleRowCountMode,
+				models: new JSONModel(new Array(100)),
+				columns: [
+					new Column({
+						label: new Label({text: "Last Name"}),
+						template: new Text({text: "{lastName}"}),
+						sortProperty: "lastName",
+						filterProperty: "lastName"
+					})
+				]
+			}, fnBeforePlaceAt);
+
+			return this.oTable;
+		},
+		/**
+		 * Creates a table with an OData model.
+		 *
+		 * @param {sap.ui.table.VisibleRowCountMode} sVisibleRowCountMode The visible row count mode.
+		 * @param {boolean} [bWithBinding=true] Whether the rows aggregation should be bound.
+		 * @param {function(sap.ui.table.Table)} [fnBeforePlaceAt] Before place at callback.
+		 * @returns {sap.ui.table.Table} The created table.
+		 */
+		createTableWithODataModel: function(sVisibleRowCountMode, bWithBinding, fnBeforePlaceAt) {
+			if (this.oTable) {
+				this.oTable.destroy();
+			}
+
+			this.oTable = TableQUnitUtils.createTable({
+				rows: bWithBinding !== false ? "{/Products}" : "",
+				visibleRowCountMode: sVisibleRowCountMode,
+				models: createODataModel(),
+				columns: [
+					new Column({
+						label: new Label({text: "Name"}),
+						template: new Text({text: "{Name}"}),
+						sortProperty: "Name",
+						filterProperty: "Name"
+					})
+				]
+			}, fnBeforePlaceAt);
+
+			return this.oTable;
+		},
+		checkRowsUpdated: function(assert, aActualReasons, aExpectedReasons, iDelay) {
+			var that = this;
+
+			return new Promise(function(resolve) {
+				setTimeout(function() {
+					assert.deepEqual(aActualReasons, aExpectedReasons,
+						"VisibleRowCountMode: " + that.oTable.getVisibleRowCountMode() + " - "
+						+ (aExpectedReasons.length > 0
+						   ? "The event _rowsUpdated has been fired in order with reasons: " + aExpectedReasons.join(", ")
+						   : "The event _rowsUpdated has not been fired")
+					);
+
+					resolve();
+				}, iDelay == null ? 250 : iDelay);
+			});
+		}
+	});
+
 	QUnit.test("_fireRowsUpdated", function(assert) {
 		var done = assert.async();
+		var oTable = new Table();
 		var sTestReason = "test_reason";
 
 		oTable.attachEventOnce("_rowsUpdated", function(oEvent) {
-			assert.strictEqual(sTestReason, oEvent.getParameter("reason"), "The event has been fired with the correct reason");
+			assert.strictEqual(oEvent.getParameter("reason"), sTestReason, "The event has been fired with the correct reason");
+			oTable.destroy();
 			done();
 		});
 
 		oTable._fireRowsUpdated(sTestReason);
 	});
 
-	QUnit.test("_rowsUpdated - Initial rendering", function(assert) {
-		var done = assert.async();
+	QUnit.test("Initial rendering with client binding", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
 
 		function _createTable(sVisibleRowCountMode, bWithBinding, iRowHeight) {
-			bWithBinding = bWithBinding !== false;
-
-			oTable = new Table({
-				rows: bWithBinding ? "{/modelData}" : "",
-				visibleRowCountMode: sVisibleRowCountMode,
-				rowHeight: iRowHeight
+			oTable = that.createTableWithJSONModel(sVisibleRowCountMode, bWithBinding, function(oTable) {
+				aFiredReasons = [];
+				oTable.setRowHeight(iRowHeight);
+				oTable.attachEvent("_rowsUpdated", function(oEvent) {
+					aFiredReasons.push(oEvent.getParameter("reason"));
+				});
 			});
-
-			aFiredReasons = [];
-			oTable.attachEvent("_rowsUpdated", function(oEvent) {
-				aFiredReasons.push(oEvent.getParameter("reason"));
-			});
-
-			oTable.addColumn(new Column({
-				label: new Label({text: "Last Name"}),
-				template: new Text({text: "{lastName}"})
-			}));
-
-			var oModel = new JSONModel();
-			oModel.setData({modelData: aData});
-			oTable.setModel(oModel);
-
-			oTable.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
 		}
 
-		function _destroyTable() {
-			destroyTable();
-			sap.ui.getCore().applyChanges();
-		}
-
-		_destroyTable();
 		_createTable(VisibleRowCountMode.Fixed);
-		this.checkRowsUpdated(assert, aFiredReasons, [
+		return this.checkRowsUpdated(assert, aFiredReasons, [
 			TableUtils.RowsUpdateReason.Render
 		]).then(function() {
-			_destroyTable();
 			_createTable(VisibleRowCountMode.Fixed, false);
 			return that.checkRowsUpdated(assert, aFiredReasons, []);
 		}).then(function() {
-			_destroyTable();
 			_createTable(VisibleRowCountMode.Interactive);
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Render
 			]);
 		}).then(function() {
-			_destroyTable();
 			_createTable(VisibleRowCountMode.Interactive, false);
 			return that.checkRowsUpdated(assert, aFiredReasons, []);
 		}).then(function() {
-			_destroyTable();
 			_createTable(VisibleRowCountMode.Auto);
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Render
-			], 250);
+			]);
 		}).then(function() {
-			_destroyTable();
 			_createTable(VisibleRowCountMode.Auto, false);
-			return that.checkRowsUpdated(assert, aFiredReasons, [], 250);
+			return that.checkRowsUpdated(assert, aFiredReasons, []);
 		}).then(function() {
-			_destroyTable();
 			// No need to adjust row count after rendering. The table starts with 10 rows, and only 10 rows with a height of 90px fit.
 			_createTable(VisibleRowCountMode.Auto, true, 90);
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Render
-			], 250);
-		}).then(done);
+			]);
+		});
 	});
 
-	QUnit.test("_rowsUpdated - Re-render", function(assert) {
-		var done = assert.async();
+	QUnit.test("Initial rendering with OData binding", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
+		var oMockServer = startMockServer();
+
+		function _createTable(sVisibleRowCountMode, bWithBinding, iRowHeight) {
+			oTable = that.createTableWithODataModel(sVisibleRowCountMode, bWithBinding, function(oTable) {
+				aFiredReasons = [];
+				oTable.setRowHeight(iRowHeight);
+				oTable.attachEvent("_rowsUpdated", function(oEvent) {
+					aFiredReasons.push(oEvent.getParameter("reason"));
+				});
+			});
+
+			return TableUtils.Binding.metadataLoaded(oTable);
+		}
+
+		_createTable(VisibleRowCountMode.Fixed);
+		return this.checkRowsUpdated(assert, aFiredReasons, [
+			TableUtils.RowsUpdateReason.Render,
+			TableUtils.RowsUpdateReason.Change
+		]).then(function() {
+			_createTable(VisibleRowCountMode.Fixed, false);
+			return that.checkRowsUpdated(assert, aFiredReasons, []);
+		}).then(function() {
+			_createTable(VisibleRowCountMode.Interactive);
+			return that.checkRowsUpdated(assert, aFiredReasons, [
+				TableUtils.RowsUpdateReason.Render,
+				TableUtils.RowsUpdateReason.Change
+			]);
+		}).then(function() {
+			_createTable(VisibleRowCountMode.Interactive, false);
+			return that.checkRowsUpdated(assert, aFiredReasons, []);
+		}).then(function() {
+			_createTable(VisibleRowCountMode.Auto);
+			return that.checkRowsUpdated(assert, aFiredReasons, [
+				TableUtils.RowsUpdateReason.Change
+			]);
+		}).then(function() {
+			_createTable(VisibleRowCountMode.Auto, false);
+			return that.checkRowsUpdated(assert, aFiredReasons, []);
+		}).then(function() {
+			// No need to adjust row count after rendering. The table starts with 10 rows, and only 10 rows with a height of 90px fit.
+			_createTable(VisibleRowCountMode.Auto, true, 90);
+			return that.checkRowsUpdated(assert, aFiredReasons, [
+				TableUtils.RowsUpdateReason.Change
+			]);
+		}).then(function() {
+			oMockServer.destroy();
+		});
+	});
+
+	QUnit.test("Re-render", function(assert) {
+		var aFiredReasons = [];
+		var that = this;
+		var oTable = this.createTableWithJSONModel(VisibleRowCountMode.Fixed);
 
 		oTable.attachEvent("_rowsUpdated", function(oEvent) {
 			aFiredReasons.push(oEvent.getParameter("reason"));
@@ -3044,74 +2915,62 @@ sap.ui.define([
 		function setVisibleRowCountMode(sNewVisibleRowCountMode) {
 			return new Promise(function(resolve) {
 				oTable.setVisibleRowCountMode(sNewVisibleRowCountMode);
-				oTable.attachEventOnce("_rowsUpdated", function() {
-					aFiredReasons = [];
-					resolve();
-				});
+				oTable.attachEventOnce("_rowsUpdated", resolve);
 				sap.ui.getCore().applyChanges();
 			});
 		}
 
-		Promise.resolve().then(function() {
+		return this.oTable.qunit.whenInitialRenderingFinished().then(function() {
+			aFiredReasons = [];
 			oTable.invalidate();
+			sap.ui.getCore().applyChanges();
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Render
 			]);
 		}).then(function() {
 			return setVisibleRowCountMode(VisibleRowCountMode.Interactive);
 		}).then(function() {
+			aFiredReasons = [];
 			oTable.invalidate();
+			sap.ui.getCore().applyChanges();
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Render
 			]);
 		}).then(function() {
 			return setVisibleRowCountMode(VisibleRowCountMode.Auto);
 		}).then(function() {
+			aFiredReasons = [];
 			oTable.invalidate();
+			sap.ui.getCore().applyChanges();
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Render
 			]);
 		}).then(function() {
-			done();
+			aFiredReasons = [];
+			oTable.setRowHeight(oTable._getDefaultRowHeight() + 20); // The table will show less rows.
+			sap.ui.getCore().applyChanges();
+			return that.checkRowsUpdated(assert, aFiredReasons, [
+				TableUtils.RowsUpdateReason.Render
+			]);
 		});
 	});
 
-	QUnit.test("_rowsUpdated - Changing VisibleRowCountMode (VisibleRowCount stays unchanged)", function(assert) {
-		var done = assert.async();
+	QUnit.test("Changing VisibleRowCountMode (VisibleRowCount stays unchanged)", function(assert) {
 		var aFiredReasons = [];
 		var iVisibleRowCount = null;
 		var that = this;
+		var oTable = this.createTableWithJSONModel(VisibleRowCountMode.Fixed);
 
 		function _createTable(sVisibleRowCountMode) {
-			return new Promise(function(resolve) {
-				oTable = new Table({
-					rows: "{/modelData}",
-					visibleRowCountMode: sVisibleRowCountMode,
-					columns: [
-						new Column({
-							label: new Label({text: "Last Name"}),
-							template: new Text({text: "{lastName}"})
-						})
-					],
-					models: new JSONModel({modelData: aData}),
-					visibleRowCount: iVisibleRowCount
-				});
-
-				oTable.attachEventOnce("_rowsUpdated", function() {
-					if (iVisibleRowCount == null) {
-						iVisibleRowCount = oTable.getVisibleRowCount();
-					}
-					resolve();
-				});
-
-				oTable.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+			oTable = that.createTableWithJSONModel(sVisibleRowCountMode, null, function(oTable) {
+				oTable.setVisibleRowCount(iVisibleRowCount);
 			});
-		}
 
-		function _destroyTable() {
-			destroyTable();
-			sap.ui.getCore().applyChanges();
+			return oTable.qunit.whenInitialRenderingFinished().then(function() {
+				if (iVisibleRowCount == null) {
+					iVisibleRowCount = oTable.getVisibleRowCount();
+				}
+			});
 		}
 
 		function test(sInitialVisibleRowCountMode, sNewVisibleRowCountMode) {
@@ -3123,270 +2982,386 @@ sap.ui.define([
 
 				oTable.setVisibleRowCountMode(sNewVisibleRowCountMode);
 				sap.ui.getCore().applyChanges();
-			}).then(function() {
+
 				return that.checkRowsUpdated(assert, aFiredReasons, [
 					TableUtils.RowsUpdateReason.Render
 				]);
 			});
 		}
 
-		Promise.resolve().then(function() {
-			_destroyTable();
-			return test(VisibleRowCountMode.Auto, VisibleRowCountMode.Fixed);
-		}).then(function() {
-			_destroyTable();
+		return test(VisibleRowCountMode.Auto, VisibleRowCountMode.Fixed).then(function() {
 			return test(VisibleRowCountMode.Auto, VisibleRowCountMode.Interactive);
 		}).then(function() {
-			_destroyTable();
 			return test(VisibleRowCountMode.Fixed, VisibleRowCountMode.Interactive);
 		}).then(function() {
-			_destroyTable();
 			return test(VisibleRowCountMode.Fixed, VisibleRowCountMode.Auto);
 		}).then(function() {
-			_destroyTable();
 			return test(VisibleRowCountMode.Interactive, VisibleRowCountMode.Fixed);
 		}).then(function() {
-			_destroyTable();
 			return test(VisibleRowCountMode.Interactive, VisibleRowCountMode.Auto);
-		}).then(done);
+		});
 	});
 
-	QUnit.test("_rowsUpdated - Refresh", function(assert) {
-		var done = assert.async();
+	QUnit.test("Refresh", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
+		var oMockServer = startMockServer();
 
-		oTable.attachEvent("_rowsUpdated", function(oEvent) {
-			aFiredReasons.push(oEvent.getParameter("reason"));
-		});
+		function test(sVisibleRowCountMode) {
+			var oTable = that.createTableWithODataModel(sVisibleRowCountMode);
 
-		window.setTimeout(function() {
-			aFiredReasons = [];
-			oTable.getBinding("rows").refresh(true);
-
-			that.checkRowsUpdated(assert, aFiredReasons, [
-				TableUtils.RowsUpdateReason.Change
-			]).then(function() {
-				done();
+			oTable.attachEvent("_rowsUpdated", function(oEvent) {
+				aFiredReasons.push(oEvent.getParameter("reason"));
 			});
-		}, 0);
-	});
 
-	QUnit.test("_rowsUpdated - Sort", function(assert) {
-		var done = assert.async();
-		var aFiredReasons = [];
-		var that = this;
+			return new Promise(function(resolve) {
+				oTable.getBinding("rows").attachEventOnce("change", function() {
+					oTable.attachEventOnce("_rowsUpdated", resolve);
+				});
+			}).then(function() {
+				aFiredReasons = [];
+				oTable.getBinding("rows").refresh(true);
 
-		oTable.attachEvent("_rowsUpdated", function(oEvent) {
-			aFiredReasons.push(oEvent.getParameter("reason"));
-		});
-
-		window.setTimeout(function() {
-			aFiredReasons = [];
-			oTable.sort(oTable.getColumns()[0], "Ascending");
-
-			that.checkRowsUpdated(assert, aFiredReasons, [
-				TableUtils.RowsUpdateReason.Sort
-			]).then(function() {
-				done();
+				return that.checkRowsUpdated(assert, aFiredReasons, [
+					TableUtils.RowsUpdateReason.Change
+				]);
 			});
-		}, 0);
+		}
+
+		return test(VisibleRowCountMode.Fixed).then(function() {
+			return test(VisibleRowCountMode.Interactive);
+		}).then(function() {
+			return test(VisibleRowCountMode.Auto);
+		}).then(function() {
+			oMockServer.destroy();
+		});
 	});
 
-	QUnit.test("_rowsUpdated - Filter", function(assert) {
-		var done = assert.async();
+	QUnit.test("Sort with client binding", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
 
-		oTable.attachEvent("_rowsUpdated", function(oEvent) {
-			aFiredReasons.push(oEvent.getParameter("reason"));
-		});
+		function test(sVisibleRowCountMode) {
+			var oTable = that.createTableWithJSONModel(sVisibleRowCountMode);
 
-		window.setTimeout(function() {
-			aFiredReasons = [];
-			oTable.filter(oTable.getColumns()[0], "test");
-
-			that.checkRowsUpdated(assert, aFiredReasons, [
-				TableUtils.RowsUpdateReason.Filter
-			]).then(function() {
-				done();
+			oTable.attachEvent("_rowsUpdated", function(oEvent) {
+				aFiredReasons.push(oEvent.getParameter("reason"));
 			});
-		}, 0);
+
+			return oTable.qunit.whenInitialRenderingFinished().then(function() {
+				aFiredReasons = [];
+				oTable.sort(oTable.getColumns()[0], "Ascending");
+
+				return that.checkRowsUpdated(assert, aFiredReasons, [
+					TableUtils.RowsUpdateReason.Sort
+				]);
+			});
+		}
+
+		return test(VisibleRowCountMode.Fixed).then(function() {
+			return test(VisibleRowCountMode.Interactive);
+		}).then(function() {
+			return test(VisibleRowCountMode.Auto);
+		});
 	});
 
-	QUnit.test("_rowsUpdated - Expand", function(assert) {
-		var done = assert.async();
+	QUnit.test("Sort with OData binding", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
+		var oMockServer = startMockServer();
+
+		function test(sVisibleRowCountMode) {
+			var oTable = that.createTableWithODataModel(sVisibleRowCountMode);
+
+			oTable.attachEvent("_rowsUpdated", function(oEvent) {
+				aFiredReasons.push(oEvent.getParameter("reason"));
+			});
+
+			return new Promise(function(resolve) {
+				oTable.getBinding("rows").attachEventOnce("change", function() {
+					oTable.attachEventOnce("_rowsUpdated", resolve);
+				});
+			}).then(function() {
+				aFiredReasons = [];
+				oTable.sort(oTable.getColumns()[0], "Ascending");
+
+				return that.checkRowsUpdated(assert, aFiredReasons, [
+					TableUtils.RowsUpdateReason.Sort
+				]);
+			});
+		}
+
+		return test(VisibleRowCountMode.Fixed).then(function() {
+			return test(VisibleRowCountMode.Interactive);
+		}).then(function() {
+			return test(VisibleRowCountMode.Auto);
+		}).then(function() {
+			oMockServer.destroy();
+		});
+	});
+
+	QUnit.test("Filter with client binding", function(assert) {
+		var aFiredReasons = [];
+		var that = this;
+
+		function test(sVisibleRowCountMode) {
+			var oTable = that.createTableWithJSONModel(sVisibleRowCountMode);
+
+			oTable.attachEvent("_rowsUpdated", function(oEvent) {
+				aFiredReasons.push(oEvent.getParameter("reason"));
+			});
+
+			return oTable.qunit.whenInitialRenderingFinished().then(function() {
+				aFiredReasons = [];
+				oTable.filter(oTable.getColumns()[0], "test");
+
+				return that.checkRowsUpdated(assert, aFiredReasons, [
+					TableUtils.RowsUpdateReason.Filter
+				]);
+			});
+		}
+
+		return test(VisibleRowCountMode.Fixed).then(function() {
+			return test(VisibleRowCountMode.Interactive);
+		}).then(function() {
+			return test(VisibleRowCountMode.Auto);
+		});
+	});
+
+	QUnit.test("Filter with OData binding", function(assert) {
+		var aFiredReasons = [];
+		var that = this;
+		var oMockServer = startMockServer();
+
+		function test(sVisibleRowCountMode) {
+			var oTable = that.createTableWithODataModel(sVisibleRowCountMode);
+
+			oTable.attachEvent("_rowsUpdated", function(oEvent) {
+				aFiredReasons.push(oEvent.getParameter("reason"));
+			});
+
+			return new Promise(function(resolve) {
+				oTable.getBinding("rows").attachEventOnce("change", function() {
+					oTable.attachEventOnce("_rowsUpdated", resolve);
+				});
+			}).then(function() {
+				aFiredReasons = [];
+				oTable.filter(oTable.getColumns()[0], "test");
+
+				return that.checkRowsUpdated(assert, aFiredReasons, [
+					TableUtils.RowsUpdateReason.Filter
+				]);
+			});
+		}
+
+		return test(VisibleRowCountMode.Fixed).then(function() {
+			return test(VisibleRowCountMode.Interactive);
+		}).then(function() {
+			return test(VisibleRowCountMode.Auto);
+		}).then(function() {
+			oMockServer.destroy();
+		});
+	});
+
+	QUnit.test("Expand", function(assert) {
+		var aFiredReasons = [];
+		var that = this;
+		var oTable = this.createTableWithJSONModel(VisibleRowCountMode.Fixed, null, function(oTable) {
+			oTable.setEnableGrouping(true);
+			oTable.setGroupBy(oTable.getColumns()[0]);
+			TableUtils.Grouping.setupExperimentalGrouping(oTable);
+		});
 
 		oTable.attachEvent("_rowsUpdated", function(oEvent) {
 			aFiredReasons.push(oEvent.getParameter("reason"));
 		});
 
-		oTable.setEnableGrouping(true);
-		oTable.setGroupBy(oTable.getColumns()[0]);
-		TableUtils.Grouping.toggleGroupHeader(oTable, 0, false);
-
-		window.setTimeout(function() {
+		return oTable.qunit.whenInitialRenderingFinished().then(function() {
+			TableUtils.Grouping.toggleGroupHeader(oTable, 0, false);
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			aFiredReasons = [];
 			TableUtils.Grouping.toggleGroupHeader(oTable, 0, true);
 
-			that.checkRowsUpdated(assert, aFiredReasons, [
+			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Unknown
-			]).then(function() {
-				done();
-			});
-		}, 0);
+			]);
+		});
 	});
 
-	QUnit.test("_rowsUpdated - Collapse", function(assert) {
-		var done = assert.async();
+	QUnit.test("Collapse", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
+		var oTable = this.createTableWithJSONModel(VisibleRowCountMode.Fixed, null, function(oTable) {
+			oTable.setEnableGrouping(true);
+			oTable.setGroupBy(oTable.getColumns()[0]);
+			TableUtils.Grouping.setupExperimentalGrouping(oTable);
+		});
 
 		oTable.attachEvent("_rowsUpdated", function(oEvent) {
 			aFiredReasons.push(oEvent.getParameter("reason"));
 		});
 
-		oTable.setEnableGrouping(true);
-		oTable.setGroupBy(oTable.getColumns()[0]);
-		TableUtils.Grouping.toggleGroupHeader(oTable, 0, true);
-
-		window.setTimeout(function() {
+		return oTable.qunit.whenInitialRenderingFinished().then(function() {
 			aFiredReasons = [];
 			TableUtils.Grouping.toggleGroupHeader(oTable, 0, false);
 
-			that.checkRowsUpdated(assert, aFiredReasons, [
+			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Unknown
-			]).then(function() {
-				done();
-			});
-		}, 0);
+			]);
+		});
 	});
 
-	QUnit.test("_rowsUpdated - Unbind", function(assert) {
-		var done = assert.async();
+	QUnit.test("Unbind", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
+		var oTable = this.createTableWithJSONModel(VisibleRowCountMode.Fixed);
 
 		oTable.attachEvent("_rowsUpdated", function(oEvent) {
 			aFiredReasons.push(oEvent.getParameter("reason"));
 		});
 
-		window.setTimeout(function() {
+		return oTable.qunit.whenInitialRenderingFinished().then(function() {
 			aFiredReasons = [];
 			oTable.unbindRows();
 
-			that.checkRowsUpdated(assert, aFiredReasons, [
+			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Unbind
-			]).then(function() {
-				done();
-			});
-		}, 0);
+			]);
+		});
 	});
 
-	QUnit.test("_rowsUpdated - Bind", function(assert) {
-		var done = assert.async();
+	QUnit.test("Bind with client binding", function(assert) {
 		var aFiredReasons = [];
-		var oBindingInfo = oTable.getBindingInfo("rows");
 		var that = this;
-
-		oTable.unbindRows();
+		var oTable = this.createTableWithJSONModel(VisibleRowCountMode.Fixed);
+		var oBindingInfo = oTable.getBindingInfo("rows");
 
 		oTable.attachEvent("_rowsUpdated", function(oEvent) {
 			aFiredReasons.push(oEvent.getParameter("reason"));
 		});
 
-		window.setTimeout(function() {
+		return oTable.qunit.whenInitialRenderingFinished().then(function() {
+			oTable.unbindRows();
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			aFiredReasons = [];
 			oTable.bindRows(oBindingInfo);
 
-			that.checkRowsUpdated(assert, aFiredReasons, [
+			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Change
-			]).then(function() {
-				done();
-			});
-		}, 0);
+			]);
+		});
 	});
 
-	QUnit.test("_rowsUpdated - Vertical scrolling", function(assert) {
-		var done = assert.async();
+	QUnit.test("Bind with OData binding", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
+		var oMockServer = startMockServer();
+
+		function test(sVisibleRowCountMode) {
+			var oTable = that.createTableWithODataModel(sVisibleRowCountMode);
+
+			oTable.attachEvent("_rowsUpdated", function(oEvent) {
+				aFiredReasons.push(oEvent.getParameter("reason"));
+			});
+
+			return oTable.qunit.whenBindingChange().then(oTable.qunit.whenRenderingFinished).then(function() {
+				oTable.unbindRows();
+			}).then(oTable.qunit.whenRenderingFinished).then(function() {
+				aFiredReasons = [];
+				oTable.bindRows({
+					path: "/Products"
+				});
+
+				return that.checkRowsUpdated(assert, aFiredReasons, [
+					TableUtils.RowsUpdateReason.Change
+				]);
+			});
+		}
+
+		return test(VisibleRowCountMode.Fixed).then(function() {
+			return test(VisibleRowCountMode.Interactive);
+		}).then(function() {
+			return test(VisibleRowCountMode.Auto);
+		}).then(function() {
+			oMockServer.destroy();
+		});
+	});
+
+	QUnit.test("Vertical scrolling", function(assert) {
+		var aFiredReasons = [];
+		var that = this;
+		var oTable = this.createTableWithJSONModel(VisibleRowCountMode.Fixed);
 
 		oTable.attachEvent("_rowsUpdated", function(oEvent) {
 			aFiredReasons.push(oEvent.getParameter("reason"));
 		});
 
-		window.setTimeout(function() {
+		return oTable.qunit.whenInitialRenderingFinished().then(function() {
 			aFiredReasons = [];
 			oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 100;
 
-			that.checkRowsUpdated(assert, aFiredReasons, [
+			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.VerticalScroll
-			]).then(function() {
-				done();
-			});
-		}, 0);
+			]);
+		});
 	});
 
-	QUnit.test("_rowsUpdated - Change first visible row by API call (setFirstVisibleRow)", function(assert) {
-		var done = assert.async();
+	QUnit.test("Change first visible row by API call (setFirstVisibleRow)", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
+		var oTable = this.createTableWithJSONModel(VisibleRowCountMode.Fixed);
 
 		oTable.attachEvent("_rowsUpdated", function(oEvent) {
 			aFiredReasons.push(oEvent.getParameter("reason"));
 		});
 
-		window.setTimeout(function() {
+		return oTable.qunit.whenInitialRenderingFinished().then(function() {
 			aFiredReasons = [];
 			oTable.setFirstVisibleRow(1);
 
-			that.checkRowsUpdated(assert, aFiredReasons, [
+			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.FirstVisibleRowChange
-			]).then(function() {
-				done();
-			});
-		}, 0);
+			]);
+		});
 	});
 
-	QUnit.test("_rowsUpdated - Resize", function(assert) {
-		var done = assert.async();
+	QUnit.test("Resize", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
+		var oTable = this.createTableWithJSONModel(VisibleRowCountMode.Auto);
 		var sOriginalTableParentHeight = oTable.getDomRef().parentElement.style.height;
 
 		oTable.attachEvent("_rowsUpdated", function(oEvent) {
 			aFiredReasons.push(oEvent.getParameter("reason"));
 		});
 
-		oTable.setVisibleRowCountMode(VisibleRowCountMode.Auto);
-
-		window.setTimeout(function() {
+		return oTable.qunit.whenInitialRenderingFinished().then(function() {
 			aFiredReasons = [];
 			oTable.getDomRef().parentElement.style.height = "500px";
-			oTable._onTableResize();
 
-			that.checkRowsUpdated(assert, aFiredReasons, [
-				TableUtils.RowsUpdateReason.Resize
-			]).then(function() {
-				oTable.getDomRef().parentElement.style.height = sOriginalTableParentHeight;
-				done();
+			return new Promise(function(resolve) {
+				window.requestAnimationFrame(function() {
+					that.checkRowsUpdated(assert, aFiredReasons, [
+						TableUtils.RowsUpdateReason.Resize
+					], 500).then(function() {
+						oTable.getDomRef().parentElement.style.height = sOriginalTableParentHeight;
+						resolve();
+					});
+				});
 			});
-		}, 0);
+		});
 	});
 
-	QUnit.test("_rowsUpdated - Personalization", function(assert) {
-		var done = assert.async();
+	QUnit.test("Personalization", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
+		var oTable = this.createTableWithJSONModel(VisibleRowCountMode.Fixed);
 
 		oTable.attachEvent("_rowsUpdated", function(oEvent) {
 			aFiredReasons.push(oEvent.getParameter("reason"));
 		});
 
-		window.setTimeout(function() {
+		return oTable.qunit.whenInitialRenderingFinished().then(function() {
 			aFiredReasons = [];
 			var oPersoController = new TablePersoController({
 				persoService: {
@@ -3413,17 +3388,21 @@ sap.ui.define([
 			oPersoController.refresh();
 			oTable.getBinding("rows").fireEvent("dataRequested");
 
-			that.checkRowsUpdated(assert, aFiredReasons, []).then(function() {
-				oPersoController.destroy();
-				done();
+			return new Promise(function(resolve) {
+				window.requestAnimationFrame(function() {
+					that.checkRowsUpdated(assert, aFiredReasons, []).then(function() {
+						oPersoController.destroy();
+						resolve();
+					});
+				});
 			});
-		}, 0);
+		});
 	});
 
-	QUnit.test("_rowsUpdated - Animation", function(assert) {
-		var done = assert.async();
+	QUnit.test("Animation", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
+		var oTable = this.createTableWithJSONModel(VisibleRowCountMode.Auto);
 
 		function fireTransitionEndEvent() {
 			var oEvent;
@@ -3442,19 +3421,21 @@ sap.ui.define([
 			aFiredReasons.push(oEvent.getParameter("reason"));
 		});
 
-		oTable.setVisibleRowCountMode(VisibleRowCountMode.Auto);
-
-		window.setTimeout(function() {
+		return oTable.qunit.whenInitialRenderingFinished().then(function() {
 			aFiredReasons = [];
-			oTable.setProperty("minAutoRowCount", 30, true);
+			oTable.setProperty("rowHeight", 30, true);
 			fireTransitionEndEvent();
 
-			that.checkRowsUpdated(assert, aFiredReasons, [
-				TableUtils.RowsUpdateReason.Animation
-			]).then(function() {
-				done();
+			return new Promise(function(resolve) {
+				window.requestAnimationFrame(function() {
+					that.checkRowsUpdated(assert, aFiredReasons, [
+						TableUtils.RowsUpdateReason.Animation
+					], 500).then(function() {
+						resolve();
+					});
+				});
 			});
-		}, 0);
+		});
 	});
 
 	QUnit.module("Paste", {
@@ -3657,19 +3638,18 @@ sap.ui.define([
 		assert.ok(fnInvalidate.called, "invalidate() called from onThemeChanged()");
 	});
 
-	QUnit.test("test _updateTableContent and cleanupTableRowForGrouping function via onAfterRendering", function(assert) {
+	QUnit.test("test _updateTableContent and cleanupTableRowForGrouping after _rowsUpdated", function(assert) {
 		var fnCleanupTableRowForGrouping = sinon.spy(TableUtils.Grouping, "cleanupTableRowForGrouping");
 		var fnUpdateTableContent = sinon.spy(oTable, "_updateTableContent");
-		/*eslint-disable new-cap */
-		var oEvent = jQuery.Event();
-		/*eslint-enable new-cap */
+
 		oTable._mode = "Group"; // return true for TableUtils.Grouping.isGroupMode(oTable)
 		oTable.setEnableGrouping(true); // for testing _updateTableContent()
 		oTable.setGroupBy(oTable.getColumns()[5]); // Enabling grouping on "gender" for enhancing row binding
-		oTable.onAfterRendering(oEvent);
+		oTable._fireRowsUpdated();
 		assert.ok(fnUpdateTableContent.called);
+
 		oTable.unbindRows();
-		oTable.onAfterRendering(oEvent);
+		oTable._fireRowsUpdated();
 		assert.ok(fnCleanupTableRowForGrouping.notCalled,
 			"Row binding was destroyed, hence no rows exist for which cleanupTableRowForGrouping needs to be called");
 	});
@@ -3715,7 +3695,7 @@ sap.ui.define([
 		assert.equal(oTable._getFixedRowContexts().length, 0, "fixedRowContexts returned an empty array");
 		oTable.setFixedRowCount(5);
 		assert.equal(oTable.getFixedRowCount(), 5, "fixedRowCount is set to 5");
-		assert.equal(oTable._getFixedRowContexts(oTable.getFixedRowCount()).length, 5,
+		assert.equal(oTable._getFixedRowContexts().length, 5,
 			"fixedRowContexts returned non empty array when fixedRowCount is set");
 		assert.equal(fnError.callCount, 0, "Error was not logged so far");
 		oTable.setFixedRowCount(-1);
@@ -3726,7 +3706,7 @@ sap.ui.define([
 		assert.equal(oTable._getFixedBottomRowContexts().length, 0, "FixedBottomRowContexts returned an empty array");
 		oTable.setFixedBottomRowCount(3);
 		assert.equal(oTable.getFixedBottomRowCount(), 3, "FixedBottomRowCount is set to 3");
-		assert.equal(oTable._getFixedBottomRowContexts(oTable.getFixedBottomRowCount(), oTable._adjustToTotalRowCount()).length, 3,
+		assert.equal(oTable._getFixedBottomRowContexts().length, 3,
 			"fixedBottomRowContexts returned non empty array when fixedBottomRowCount and bindingLength is set");
 		oTable._updateFixedBottomRows();
 		assert.equal(oTable.getFirstVisibleRow(), 0, "_updateFixedBottomRows() called with the updated fixedBottomRowCount");
@@ -3776,7 +3756,7 @@ sap.ui.define([
 			}
 		};
 		oTable.bOutput = true;
-		oTable._mTimeouts.refreshRowsAdjustRows = true;
+		oTable._mTimeouts.refreshRowsCreateRows = true;
 		oTable.refreshRows(oEvent);
 		assert.equal(oTable.getFirstVisibleRow(), 0, "refreshRows() executed with ChangeReason.Filter");
 	});
@@ -4100,11 +4080,11 @@ sap.ui.define([
 		var done = assert.async();
 		var $TableParent = oTable.$().parent();
 
-		window.setTimeout(function() {
+		setTimeout(function() {
 			var iOldTableContentHeight = oTable._collectTableSizes().tableCntHeight;
 			$TableParent.height(500);
 
-			window.setTimeout(function() {
+			setTimeout(function() {
 				var iNewTableContentHeight = oTable._collectTableSizes().tableCntHeight;
 
 				assert.notStrictEqual(iOldTableContentHeight, iNewTableContentHeight,
@@ -4135,7 +4115,7 @@ sap.ui.define([
 
 				window.dispatchEvent(oEvent);
 
-				window.setTimeout(function() {
+				setTimeout(function() {
 					resolve();
 				}, 150);
 			});
@@ -4172,97 +4152,59 @@ sap.ui.define([
 		assert.ok(!oTable._bLargeDataScrolling, "Large data scrolling disabled");
 	});
 
-	QUnit.test("test _getContexts, _getRowContexts and _getFixedBottomRowContexts functions", function(assert) {
+	QUnit.test("test _getContexts, _getRowContexts functions", function(assert) {
 		assert.equal(oTable._getContexts(1, 4, 4).length, 4, "Correct contexts must have been returned");
-		oTable.setFixedRowCount(6);
-		oTable.setFirstVisibleRow(2);
 		assert.equal(oTable._getRowContexts().length, 10, "Correct row contexts must have been returned");
 		oTable.unbindRows();
 		assert.equal(oTable._getContexts(1, 4, 4).length, 0, "Empty contexts returned as row binding was destoryed");
-		assert.equal(oTable._getFixedBottomRowContexts().length, 0, "Binding does not exist, hence empty context returned");
 	});
 
 	QUnit.test("test _getColumnsWidth function", function(assert) {
 		assert.ok(oTable._getColumnsWidth() > 600 && oTable._getColumnsWidth() < 900, "Columns width returned");
 	});
 
-	QUnit.test("_getDefaultRowHeight", function(assert) {
+	QUnit.test("_getBaseRowHeight", function(assert) {
 		var oBody = document.body;
 
 		oTable.setRowHeight(98);
-		assert.strictEqual(oTable._getDefaultRowHeight(), 99, "The default row height is application defined (99)");
+		assert.strictEqual(oTable._getBaseRowHeight(), 99, "The base row height is application defined (99)");
 
 		oTable.setRowHeight(9);
-		assert.strictEqual(oTable._getDefaultRowHeight(), 10, "The default row height is application defined (10)");
+		assert.strictEqual(oTable._getBaseRowHeight(), 10, "The base row height is application defined (10)");
 
 		oTable.setRowHeight(0);
-		assert.strictEqual(oTable._getDefaultRowHeight(), TableUtils.DefaultRowHeight.sapUiSizeCozy,
-			"The default row height is correct in cozy size (49)");
+		assert.strictEqual(oTable._getBaseRowHeight(), TableUtils.DefaultRowHeight.sapUiSizeCozy,
+			"The base row height is correct in cozy size (49)");
 
 		oBody.classList.remove("sapUiSizeCozy");
 		oBody.classList.add("sapUiSizeCompact");
-		assert.strictEqual(oTable._getDefaultRowHeight(), TableUtils.DefaultRowHeight.sapUiSizeCompact,
-			"The default row height is correct in compact size (33)");
+		assert.strictEqual(oTable._getBaseRowHeight(), TableUtils.DefaultRowHeight.sapUiSizeCompact,
+			"The base row height is correct in compact size (33)");
 
 		oBody.classList.remove("sapUiSizeCompact");
 		oBody.classList.add("sapUiSizeCondensed");
-		assert.strictEqual(oTable._getDefaultRowHeight(), TableUtils.DefaultRowHeight.sapUiSizeCondensed,
-			"The default row height is correct in condensed size (25)");
+		assert.strictEqual(oTable._getBaseRowHeight(), TableUtils.DefaultRowHeight.sapUiSizeCondensed,
+			"The base row height is correct in condensed size (25)");
 
 		oBody.classList.remove("sapUiSizeCondensed");
-		assert.strictEqual(oTable._getDefaultRowHeight(), TableUtils.DefaultRowHeight.undefined,
-			"The default row height is correct in undefined size (33)");
+		assert.strictEqual(oTable._getBaseRowHeight(), TableUtils.DefaultRowHeight.undefined,
+			"The base row height is correct in undefined size (33)");
 
 		oBody.classList.add("sapUiSizeCozy");
 	});
 
-	QUnit.test("Compute request length", function(assert){
-		// Fixed
-		oTable.setVisibleRowCountMode(VisibleRowCountMode.Fixed);
+	QUnit.test("_getTotalRowCount", function(assert){
 		oTable.bindRows({path: "/modelData"});
-		assert.equal(oTable._computeRequestLength(10), 10, "Default behavior: request length is equal to the visible row count");
+		assert.strictEqual(oTable._getTotalRowCount(), 200, "Binding#getLength defines the total row count in the table");
 
 		oTable.bindRows({path: "/modelData", length: 5});
-		assert.equal(oTable._computeRequestLength(10), 5, "Request length is equal to the binding length");
+		assert.strictEqual(oTable._getTotalRowCount(), 5, "The \"length\" parameter in the binding info overrides Binding#getLength");
 
-		// Auto
-		oTable.setVisibleRowCountMode(VisibleRowCountMode.Auto);
-		var iHeight = Device.resize.height;
+		oTable.setModel(null);
+		assert.strictEqual(oTable._getTotalRowCount(), 0, "Without a binding the total row count is 0, regardless of the binding info");
 
-		oTable._bContextsAvailable = false;
-		Device.resize.height = 500;
-		assert.equal(oTable._computeRequestLength(10), 20,
-			"When visibleRowCountMode is Auto and contexts are not already available, the request length is calculated based on the screen height");
-		Device.resize.height = 100;
-		assert.equal(oTable._computeRequestLength(10), 10, "The request length is at least the visible row count");
-
-		oTable._bContextsAvailable = true;
-		Device.resize.height = 500;
-		assert.equal(oTable._computeRequestLength(10), 10,
-			"When visibleRowCountMode is Auto and contexts are already available, the request length is equal to the visible row count");
-
-		Device.resize.height = iHeight;
-
-		// Interactive
-		oTable.setVisibleRowCountMode(VisibleRowCountMode.Interactive);
-		assert.equal(oTable._computeRequestLength(10), 10, "Request length is equal to the visible row count");
-	});
-
-	QUnit.test("Get total row count", function(assert){
-		oTable.setVisibleRowCountMode(VisibleRowCountMode.Fixed);
-		oTable.bindRows({path: "/modelData"});
-		assert.equal(oTable._getTotalRowCount(), 200, "Default behavior: binding length parameter is not set");
-
-		oTable.bindRows({path: "/modelData", length: 5});
-		assert.equal(oTable._getTotalRowCount(), 5, "The binding length parameter sets the total row count in the table");
-
-		oTable.setVisibleRowCountMode(VisibleRowCountMode.Auto);
-		oTable.bindRows({path: "/modelData", length: 5});
-		assert.equal(oTable._getTotalRowCount(), 200, "The binding length parameter works only when visibleRowCountMode is Fixed");
-
-		oTable.setVisibleRowCountMode(VisibleRowCountMode.Interactive);
-		oTable.bindRows({path: "/modelData", length: 5});
-		assert.equal(oTable._getTotalRowCount(), 200, "The binding length parameter works only when visibleRowCountMode is Fixed");
+		oTable.unbindRows();
+		assert.strictEqual(oTable._getTotalRowCount(), 0, "Without a binding or binding info the total row count is 0");
 	});
 
 	QUnit.module("Performance", {
@@ -4279,7 +4221,6 @@ sap.ui.define([
 		var oLastRow = aRows[aRows.length - 1];
 		var oLastRowFirstCell = oLastRow.getCells()[0];
 		var iInitialVisibleRowCount = oTable.getVisibleRowCount();
-		var oBindingInfo = oTable.getBindingInfo("rows");
 
 		oTable.setVisibleRowCount(iInitialVisibleRowCount - 1);
 		sap.ui.getCore().applyChanges();
@@ -4302,11 +4243,9 @@ sap.ui.define([
 
 		oTable.setVisibleRowCount(iInitialVisibleRowCount - 1);
 		sap.ui.getCore().applyChanges();
-		oTable.unbindRows();
 		oTable.invalidateRowsAggregation();
 		oTable.setVisibleRowCount(iInitialVisibleRowCount);
 		sap.ui.getCore().applyChanges();
-		oTable.bindRows(oBindingInfo);
 
 		aRows = oTable.getRows();
 		oLastRowAfterRowsUpdate = aRows[aRows.length - 1];
@@ -4359,94 +4298,104 @@ sap.ui.define([
 		assert.strictEqual(oTable.getRows().length, 0, "The rows aggregation has been cleared");
 	});
 
-	QUnit.test("Lazy row creation - VisibleRowCountMode = Fixed|Interactive", function(assert) {
-		var oBindingInfo = oTable.getBindingInfo("rows");
-		var oModel = oTable.getModel();
-
+	QUnit.test("Lazy row creation with client binding - VisibleRowCountMode = Fixed|Interactive", function(assert) {
 		destroyTable();
 
 		function test(sVisibleRowCountMode) {
-			oTable = new Table({
-				visibleRowCountMode: sVisibleRowCountMode,
-				visibleRowCount: 5,
-				rows: oBindingInfo,
-				models: oModel
-			});
-			assert.strictEqual(oTable.getRows().length, 5, "Before rendering with binding: The table has the correct amount of rows");
-
-			oTable.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-			assert.strictEqual(oTable.getRows().length, 5, "After rendering with binding: The table has the correct amount of rows");
-
-			oTable.unbindRows();
-			assert.strictEqual(oTable.getRows().length, 0, "After unbind: The table has no rows");
-
-			oTable.bindRows(oBindingInfo);
-			assert.strictEqual(oTable.getRows().length, 5, "After binding: The table has the correct amount of rows");
-
-			oTable.destroy();
-
-			oTable = new Table({
+			var oTable = TableQUnitUtils.createTable({
 				visibleRowCountMode: sVisibleRowCountMode,
 				visibleRowCount: 5
+			}, function(oTable) {
+				assert.strictEqual(oTable.getRows().length, 0, "Before rendering without binding: The table has no rows");
 			});
-			assert.strictEqual(oTable.getRows().length, 0, "Before rendering without binding: The table has no rows");
 
-			oTable.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-			assert.strictEqual(oTable.getRows().length, 0, "After rendering without binding: The table has no rows");
+			return oTable.qunit.whenInitialRenderingFinished().then(function() {
+				assert.strictEqual(oTable.getRows().length, 0, "After rendering without binding: The table has no rows");
 
-			oTable.destroy();
+				oTable.destroy();
+
+				oTable = TableQUnitUtils.createTable({
+					visibleRowCountMode: sVisibleRowCountMode,
+					visibleRowCount: 5,
+					rows: {path: "/"},
+					models: new JSONModel(new Array(100))
+				}, function(oTable) {
+					assert.strictEqual(oTable.getRows().length, 0, "Before rendering with binding: The table has no rows");
+				});
+			}).then(oTable.qunit.whenInitialRenderingFinished).then(function() {
+				assert.strictEqual(oTable.getRows().length, 5, "After rendering with binding: The table has the correct number of rows");
+
+				oTable.unbindRows();
+				assert.strictEqual(oTable.getRows().length, 0, "After unbind: The table has no rows");
+
+				oTable.bindRows({path: "/"});
+				assert.strictEqual(oTable.getRows().length, 0, "After binding: The table has no rows. Rows will be created asynchronously");
+			}).then(oTable.qunit.whenRenderingFinished).then(function() {
+				assert.strictEqual(oTable.getRows().length, 5, "After asynchronous row update: The table has the correct number of rows");
+
+				oTable.destroy();
+
+				oTable = TableQUnitUtils.createTable({
+					visibleRowCountMode: sVisibleRowCountMode,
+					visibleRowCount: 5,
+					rows: {path: "/"},
+					models: new JSONModel(new Array(100)),
+					placeAt: false
+				});
+			}).then(oTable.qunit.whenBindingChange).then(TableQUnitUtils.$wait(100)).then(function() {
+				assert.strictEqual(oTable.getRows().length, 5,
+					"If the table is not rendered but bound, the table has the correct number of rows after an asynchronous row update");
+			});
 		}
 
-		test(VisibleRowCountMode.Fixed);
-		test(VisibleRowCountMode.Interactive);
+		return test(VisibleRowCountMode.Fixed).then(function() {
+			return test(VisibleRowCountMode.Interactive);
+		});
 	});
 
-	QUnit.test("Lazy row creation - VisibleRowCountMode = Auto", function(assert) {
-		var done = assert.async();
-		var oBindingInfo = oTable.getBindingInfo("rows");
-		var oModel = oTable.getModel();
-
+	QUnit.test("Lazy row creation client binding - VisibleRowCountMode = Auto", function(assert) {
 		destroyTable();
 
-		oTable = new Table({
-			visibleRowCountMode: VisibleRowCountMode.Auto,
-			rows: oBindingInfo,
-			models: oModel
+		oTable = TableQUnitUtils.createTable({
+			visibleRowCountMode: VisibleRowCountMode.Auto
+		}, function(oTable) {
+			assert.strictEqual(oTable.getRows().length, 0, "Before rendering without binding: The table has no rows");
 		});
-		assert.strictEqual(oTable.getRows().length, 0, "Before rendering with binding: The table has no rows");
 
-		oTable.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-		assert.strictEqual(oTable.getRows().length, 0, "After rendering with binding: The table has no rows");
+		return oTable.qunit.whenInitialRenderingFinished().then(function() {
+			assert.strictEqual(oTable.getRows().length, 0, "After rendering without binding: The table has no rows");
 
-		oTable.attachEventOnce("_rowsUpdated", function() {
-			assert.ok(oTable.getRows().length > 0, "After asynchronous row update: The table has rows");
+		}).then(function() {
+			oTable.destroy();
 
+			oTable = TableQUnitUtils.createTable({
+				visibleRowCountMode: VisibleRowCountMode.Auto,
+				rows: {path: "/"},
+				models: new JSONModel(new Array(100))
+			}, function(oTable) {
+				assert.strictEqual(oTable.getRows().length, 0, "Before rendering with binding: The table has no rows");
+			});
+		}).then(oTable.qunit.whenInitialRenderingFinished).then(function() {
+			assert.ok(oTable.getRows().length > 0, "After rendering with binding: The table has rows");
+		}).then(function() {
 			oTable.unbindRows();
 			assert.strictEqual(oTable.getRows().length, 0, "After unbind: The table has no rows");
 
-			oTable.bindRows(oBindingInfo);
-			assert.ok(oTable.getRows().length > 0, "After binding: The table has rows");
+			oTable.bindRows({path: "/"});
+			assert.strictEqual(oTable.getRows().length, 0, "After binding: The table has no rows. Rows will be created asynchronously");
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			assert.ok(oTable.getRows().length > 0, "After asynchronous row update: The table has rows");
 
 			oTable.destroy();
 
-			oTable = new Table({
-				visibleRowCountMode: VisibleRowCountMode.Auto
+			oTable = TableQUnitUtils.createTable({
+				visibleRowCountMode: VisibleRowCountMode.Auto,
+				rows: {path: "/"},
+				models: new JSONModel(new Array(100)),
+				placeAt: false
 			});
-			assert.strictEqual(oTable.getRows().length, 0, "Before rendering without binding: The table has no rows");
-
-			oTable.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-			assert.strictEqual(oTable.getRows().length, 0, "After rendering without binding: The table has no rows");
-
-			setTimeout(function() {
-				assert.strictEqual(oTable.getRows().length, 0, "After 200ms: The table has no rows");
-
-				oTable.destroy();
-				done();
-			}, 200);
+		}).then(oTable.qunit.whenBindingChange).then(TableQUnitUtils.$wait(100)).then(function() {
+			assert.strictEqual(oTable.getRows().length, 0, "If the table is not rendered and only bound, the table has no rows");
 		});
 	});
 

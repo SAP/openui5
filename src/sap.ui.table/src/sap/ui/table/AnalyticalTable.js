@@ -75,8 +75,8 @@ sap.ui.define([
 			/**
 			 * Specifies if the total values should be displayed in the group headers or on bottom of the row. Does not affect the total sum.
 			 *
-			 * The value of the property is only taken into account if no parameter is given in the binding information. Changes to this property after
-			 * the table is bound do not have any effect unless an explicit (re-)bind of the <code>rows</code> aggregation is done.
+			 * The value of the property is only taken into account if no parameter is given in the binding information. Changes to this property
+			 * after the table is bound do not have any effect unless an explicit (re-)bind of the <code>rows</code> aggregation is done.
 			 *
 			 * Example:
 			 * <pre>
@@ -95,8 +95,8 @@ sap.ui.define([
 			/**
 			 * Number of levels, which should be opened initially (on first load of data).
 			 *
-			 * The value of the property is only taken into account if no parameter is given in the binding information. Changes to this property after
-			 * the table is bound do not have any effect unless an explicit (re-)bind of the <code>rows</code> aggregation is done.
+			 * The value of the property is only taken into account if no parameter is given in the binding information. Changes to this property
+			 * after the table is bound do not have any effect unless an explicit (re-)bind of the <code>rows</code> aggregation is done.
 			 *
 			 * Example:
 			 * <pre>
@@ -116,8 +116,8 @@ sap.ui.define([
 			 * The kind of auto expansion algorithm, e.g. optimized filter conditions, per level requests, ...
 			 * Must be a value of <code>sap.ui.table.TreeAutoExpandMode</code>.
 			 *
-			 * The value of the property is only taken into account if no parameter is given in the binding information. Changes to this property after
-			 * the table is bound do not have any effect unless an explicit (re-)bind of the <code>rows</code> aggregation is done.
+			 * The value of the property is only taken into account if no parameter is given in the binding information. Changes to this property
+			 * after the table is bound do not have any effect unless an explicit (re-)bind of the <code>rows</code> aggregation is done.
 			 *
 			 * Example:
 			 * <pre>
@@ -134,7 +134,8 @@ sap.ui.define([
 			autoExpandMode: {type: "string", group: "Misc", defaultValue: "Bundled", deprecated: true},
 
 			/**
-			 * Functions which is used to sort the column visibility menu entries e.g.: function(ColumnA, ColumnB) { return 0 = equals, <0 lower, >0 greater }; Other values than functions will be ignored.
+			 * Functions which is used to sort the column visibility menu entries e.g.: function(ColumnA, ColumnB) { return 0 = equals, <0 lower, >0
+			 * greater }; Other values than functions will be ignored.
 			 */
 			columnVisibilityMenuSorter : {type : "any", group : "Appearance", defaultValue : null},
 
@@ -404,15 +405,15 @@ sap.ui.define([
 	};
 
 	AnalyticalTable.prototype._updateTableContent = function() {
-		var oBinding = this.getBinding("rows"),
-			iFixedBottomRowCount = this.getFixedBottomRowCount(),
-			iCount = this.getVisibleRowCount();
-
+		var oBinding = this.getBinding("rows");
+		var mRowCounts = this._getRowCounts();
 		var aRows = this.getRows();
+		var i;
+
 		//check if the table has rows (data to display)
 		if (!oBinding) {
 			// restore initial table state, remove group headers and total row formatting
-			for (var i = 0; i < aRows.length; i++) {
+			for (i = 0; i < aRows.length; i++) {
 				TableUtils.Grouping.cleanupTableRowForGrouping(this, aRows[i]);
 			}
 			return;
@@ -420,9 +421,9 @@ sap.ui.define([
 
 		var oBindingInfo = this.getBindingInfo("rows");
 
-		for (var iRow = 0, l = Math.min(iCount, aRows.length); iRow < l; iRow++) {
-			var bIsFixedRow = iRow > (iCount - iFixedBottomRowCount - 1) && this._getTotalRowCount() > iCount;
-			var oRow = aRows[iRow];
+		for (i = 0; i < aRows.length; i++) {
+			var bIsFixedRow = i > (mRowCounts.count - mRowCounts.fixedBottom - 1) && this._getTotalRowCount() > mRowCounts.count;
+			var oRow = aRows[i];
 			var iRowIndex = oRow.getIndex();
 
 			var oContextInfo;
@@ -453,9 +454,11 @@ sap.ui.define([
 			// be cleared in the model - and the binding has no control over the
 			// value mapping - this happens directly via the context!
 			var aCells = oRow.getCells();
-			for (var i = 0, lc = aCells.length; i < lc; i++) {
-				var oAnalyticalColumn = AnalyticalColumn.ofCell(aCells[i]);
-				var $td = jQuery(aCells[i].$().closest("td"));
+			var iCellCount = aCells.length;
+
+			for (var j = 0; j < iCellCount; j++) {
+				var oAnalyticalColumn = AnalyticalColumn.ofCell(aCells[j]);
+				var $td = jQuery(aCells[j].$().closest("td"));
 				if (oBinding.isMeasure(oAnalyticalColumn.getLeadingProperty())) {
 					$td.addClass("sapUiTableMeasureCell");
 					$td.toggleClass("sapUiTableCellHidden", oContextInfo.nodeState.sum && !oAnalyticalColumn.getSummed());
@@ -856,18 +859,18 @@ sap.ui.define([
 
 	AnalyticalTable.prototype._updateTotalRow = function(bSuppressInvalidate) {
 		var oBinding = this.getBinding("rows");
+		var iNewFixedBottomRowCount = 0;
+		var oRowMode = this.getRowMode();
 
-		var iFixedBottomRowCount = this.getFixedBottomRowCount();
 		if (oBinding && (oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures())) {
-			if (iFixedBottomRowCount !== 1) {
-				this.setProperty("fixedBottomRowCount", 1, bSuppressInvalidate);
-			}
-		} else {
-			if (iFixedBottomRowCount !== 0) {
-				this.setProperty("fixedBottomRowCount", 0, bSuppressInvalidate);
-			}
+			iNewFixedBottomRowCount = 1;
 		}
 
+		if (oRowMode) {
+			oRowMode.setProperty("fixedBottomRowCount", iNewFixedBottomRowCount, bSuppressInvalidate);
+		} else {
+			this.setProperty("fixedBottomRowCount", iNewFixedBottomRowCount, bSuppressInvalidate);
+		}
 	};
 
 	AnalyticalTable.prototype._updateTableColumnDetails = function() {
@@ -1268,6 +1271,19 @@ sap.ui.define([
 			context: oContext, // The row binding context
 			groupedColumns: aGroupedColumns // relevant columns (ids) for grouping (group and groupTotal only)
 		};
+	};
+
+	/*
+	 * @see JSDoc generated by SAPUI5 control API generator
+	 */
+	AnalyticalTable.prototype.setRowMode = function(oRowMode) {
+		Table.prototype.setRowMode.apply(this, arguments);
+		this._getRowMode().disableFixedRows(); // The AnalyticalTable does not support fixed top rows and manages the fixed bottom rows itself.
+	};
+
+	AnalyticalTable.prototype._initLegacyRowMode = function(oRowMode) {
+		Table.prototype._initLegacyRowMode.apply(this, arguments);
+		this._getRowMode().disableFixedRows(); // The AnalyticalTable does not support fixed top rows and manages the fixed bottom rows itself.
 	};
 
 	return AnalyticalTable;

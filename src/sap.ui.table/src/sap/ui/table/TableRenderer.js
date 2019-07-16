@@ -107,11 +107,12 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			rm.addStyle("width", oTable.getWidth());
 		}
 
-		if (oTable.getVisibleRowCountMode() == VisibleRowCountMode.Auto) {
-			rm.addStyle("height", "0px");
-			if (oTable._bFirstRendering) {
-				rm.addClass("sapUiTableNoOpacity");
-			}
+		oTable._getRowMode().applyTableStyles(rm);
+
+		if (oTable._bFirstRendering) {
+			// This class hides the table by setting opacity to 0. It will be removed in Table#_updateTableSizes.
+			// Makes initial asynchronous renderings a bit nicer, because the table only shows up after everything is done.
+			rm.addClass("sapUiTableNoOpacity");
 		}
 
 		rm.writeClasses();
@@ -176,12 +177,16 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			this.renderFooter(rm, oTable, oTable.getFooter());
 		}
 
+		// TODO: Move to "renderTableChildAtBottom" hook in row modes
 		if (oTable.getVisibleRowCountMode() == VisibleRowCountMode.Interactive) {
 			this.renderVariableHeight(rm ,oTable);
 		}
 
-		this.renderTabElement(rm, "sapUiTableOuterAfter");
+		// TODO: Move to "renderTableChildAtBottom" hook in row modes
+		this.renderBottomPlaceholder(rm, oTable);
 
+		//oTable._getRowMode().renderTableChildAtBottom(rm);
+		this.renderTabElement(rm, "sapUiTableOuterAfter");
 		rm.write("</div>");
 	};
 
@@ -250,6 +255,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		this.renderTabElement(rm, "sapUiTableCtrlBefore");
 		rm.write("<div");
 		rm.writeAttribute("id", oTable.getId() + "-tableCCnt");
+
+		oTable._getRowMode().applyRowContainerStyles(rm);
+		rm.writeStyles();
+
 		rm.addClass("sapUiTableCCnt");
 		rm.writeClasses();
 		rm.write(">");
@@ -312,6 +321,23 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.write('<div id="' + oTable.getId() + '-sb" tabindex="-1"');
 		rm.addClass("sapUiTableHeightResizer");
 		rm.addStyle("height", "5px");
+		rm.writeClasses();
+		rm.writeStyles();
+		rm.write(">");
+		rm.write("</div>");
+	};
+
+	TableRenderer.renderBottomPlaceholder = function(rm, oTable) {
+		var mPlaceholderHeight = oTable._getRowMode().getTableBottomPlaceholderStyles();
+
+		if (mPlaceholderHeight === undefined) {
+			return;
+		}
+
+		rm.write("<div");
+		rm.writeAttribute("id", oTable.getId() + "-placeholder-bottom");
+		rm.addClass("sapUiTablePlaceholder");
+		oTable._getRowMode().applyTableBottomPlaceholderStyles(rm);
 		rm.writeClasses();
 		rm.writeStyles();
 		rm.write(">");
@@ -619,7 +645,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	};
 
 	TableRenderer.addRowCSSClasses = function(rm, oTable, iIndex) {
-		var iFixedRowCount = oTable.getFixedRowCount();
+		var mRowCounts = oTable._getRowCounts();
 		var iFirstFixedBottomRowIndex = TableUtils.getFirstFixedBottomRowIndex(oTable);
 
 		if (iIndex === 0) {
@@ -628,8 +654,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			rm.addClass("sapUiTableLastRow");
 		}
 
-		if (iFixedRowCount > 0) {
-			if (iIndex == iFixedRowCount - 1) {
+		if (mRowCounts.fixedTop > 0) {
+			if (iIndex == mRowCounts.fixedTop - 1) {
 				rm.addClass("sapUiTableRowLastFixedTop");
 			}
 		}
@@ -674,9 +700,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.addClass(bHeader ? "sapUiTableRowSelectionCell" : "sapUiTableRowActionCell");
 		rm.writeClasses();
 
-		if (oTable.getRowHeight() > 0) {
-			rm.addStyle("height", oTable._getDefaultRowHeight() + "px");
-		}
+		oTable._getRowMode().renderRowStyles(rm);
 
 		rm.writeAttribute("tabindex", "-1");
 
@@ -730,17 +754,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.writeAttribute("id", oTable.getId() + "-tableCtrlCnt");
 		rm.addClass("sapUiTableCtrlCnt");
 		rm.writeClasses();
-		if (!TableUtils.isVariableRowHeightEnabled(oTable)) {
-			var sVisibleRowCountMode = oTable.getVisibleRowCountMode();
-			if (oTable._iTableRowContentHeight && (sVisibleRowCountMode == VisibleRowCountMode.Fixed || sVisibleRowCountMode == VisibleRowCountMode.Interactive)) {
-				var sStyle = "height";
-				if (oTable.getVisibleRowCountMode() == VisibleRowCountMode.Fixed) {
-					sStyle = "min-height";
-				}
-				rm.addStyle(sStyle, oTable._iTableRowContentHeight + "px");
-				rm.writeStyles();
-			}
-		}
 		rm.write(">");
 
 		this.renderTableControl(rm, oTable, false);
@@ -751,6 +764,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 	TableRenderer.renderTableControl = function(rm, oTable, bFixedTable) {
 		var iStartColumn, iEndColumn;
+
 		if (bFixedTable) {
 			iStartColumn = 0;
 			iEndColumn = oTable.getComputedFixedColumnCount();
@@ -758,16 +772,16 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			iStartColumn = oTable.getComputedFixedColumnCount();
 			iEndColumn = oTable.getColumns().length;
 		}
-		var iFixedRows = oTable.getFixedRowCount();
-		var iFixedBottomRows = oTable.getFixedBottomRowCount();
+
+		var mRowCounts = oTable._getRowCounts();
 		var aRows = oTable.getRows();
 
-		if (iFixedRows > 0) {
-			this.renderTableControlCnt(rm, oTable, bFixedTable, iStartColumn, iEndColumn, true, false, 0, iFixedRows);
+		if (mRowCounts.fixedTop > 0) {
+			this.renderTableControlCnt(rm, oTable, bFixedTable, iStartColumn, iEndColumn, true, false, 0, mRowCounts.fixedTop);
 		}
-		this.renderTableControlCnt(rm, oTable, bFixedTable, iStartColumn, iEndColumn, false, false, iFixedRows, aRows.length - iFixedBottomRows);
-		if (iFixedBottomRows > 0 && aRows.length > 0) {
-			this.renderTableControlCnt(rm, oTable, bFixedTable, iStartColumn, iEndColumn, false, true, aRows.length - iFixedBottomRows, aRows.length);
+		this.renderTableControlCnt(rm, oTable, bFixedTable, iStartColumn, iEndColumn, false, false, mRowCounts.fixedTop, aRows.length - mRowCounts.fixedBottom);
+		if (mRowCounts.fixedBottom > 0 && aRows.length > 0) {
+			this.renderTableControlCnt(rm, oTable, bFixedTable, iStartColumn, iEndColumn, false, true, aRows.length - mRowCounts.fixedBottom, aRows.length);
 		}
 	};
 
@@ -1078,9 +1092,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 		rm.writeClasses();
 		rm.writeAttribute("data-sap-ui-rowindex", iRowIndex);
-		if (oTable.getRowHeight() > 0) {
-			rm.addStyle("height", oTable._getDefaultRowHeight() + "px");
-		}
+		oTable._getRowMode().renderRowStyles(rm);
 		rm.writeStyles();
 
 		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TR", {index: iRowIndex, rowHidden: oRow._bHidden});
@@ -1160,12 +1172,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 			rm.writeClasses();
 
-			if (oTable.getRowHeight() > 0
-				&& (oTable.getVisibleRowCountMode() == VisibleRowCountMode.Auto
-					|| oTable.hasStyleClass("sapUiTableFixedRowHeights"))) {
-
-				rm.addStyle("max-height", oTable.getRowHeight() + "px");
-			}
+			oTable._getRowMode().renderCellContentStyles(rm);
 			rm.writeStyles();
 
 			rm.write(">");
@@ -1206,8 +1213,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		}
 		rm.addStyle("max-height", oScrollExtension.getVerticalScrollbarHeight() + "px");
 
-		if (oTable.getFixedRowCount() > 0) {
-			oTable._iVsbTop = (oTable.getFixedRowCount() * oTable._getDefaultRowHeight()) - 1;
+		var mRowCounts = oTable._getRowCounts();
+		if (mRowCounts.fixedTop > 0) {
+			oTable._iVsbTop = mRowCounts.fixedTop * oTable._getBaseRowHeight() - 1;
 			rm.addStyle("top", oTable._iVsbTop  + 'px');
 		}
 

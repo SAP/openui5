@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/ui/table/library",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/table/plugins/MultiSelectionPlugin"
-], function(MockServer, Table, ODataModel, tableLibrary, qutils, KeyCodes, MultiSelectionPlugin) {
+	"sap/ui/table/plugins/MultiSelectionPlugin",
+	"sap/ui/thirdparty/jquery"
+], function(MockServer, Table, ODataModel, tableLibrary, qutils, KeyCodes, MultiSelectionPlugin, jQuery) {
 	"use strict";
 
 	var sServiceURI = "/service/";
@@ -88,7 +89,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oTable.destroy();
-			this.oMockServer.stop();
+			this.oMockServer.destroy();
 		}
 	});
 
@@ -283,24 +284,27 @@ sap.ui.define([
 
 	QUnit.test("showHeaderSelector is false", function(assert) {
 		var done = assert.async();
+		var that = this;
 
 		this.oTable._oSelectionPlugin.setShowHeaderSelector(false);
 		sap.ui.getCore().applyChanges();
-		var $Cell = this.oTable.$("selall");
-		var that = this;
 
-		assert.ok(!$Cell.attr("role"), "role is not set");
-		assert.ok(!$Cell.attr("title"), "title is not set");
-		assert.ok(!$Cell[0].hasChildNodes(), "No icon");
+		var oCell = this.oTable.getDomRef("selall");
+
+		assert.ok(!oCell.hasAttribute("role"), "role is not set");
+		assert.ok(!oCell.hasAttribute("title"), "title is not set");
+		assert.ok(!oCell.hasChildNodes(), "No icon");
 
 		that.oTable._oSelectionPlugin.attachEventOnce("selectionChange", function(){
-			$Cell.trigger("click");
+			jQuery(oCell).trigger("click");
 			assert.equal(that.oTable._oSelectionPlugin.getSelectedCount(), 10, "the selection is not cleared");
 
-			qutils.triggerKeydown($Cell, KeyCodes.A, false, false, true);
+			qutils.triggerKeydown(oCell, KeyCodes.A, false, false, true);
 			assert.equal(that.oTable._oSelectionPlugin.getSelectedCount(), 0, "the selection is cleared");
+
 			done();
 		});
+
 		that.oTable._oSelectionPlugin.addSelectionInterval(0, 9);
 	});
 });

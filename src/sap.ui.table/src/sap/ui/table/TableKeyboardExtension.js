@@ -159,11 +159,12 @@ sap.ui.define([
 		_initItemNavigation: function(oExtension) {
 			var oTable = oExtension.getTable();
 			var $Table = oTable.$();
+			var iRowCount = oTable.getRows().length;
 			var iColumnCount = TableUtils.getVisibleColumnCount(oTable);
-			var iTotalColumnCount = iColumnCount;
 			var bHasRowHeader = TableUtils.hasRowHeader(oTable);
 			var bHasRowActions = TableUtils.hasRowActions(oTable);
 			var bHasFixedColumns = TableUtils.hasFixedColumns(oTable);
+			var i;
 
 			// create the list of item dom refs
 			var aItemDomRefs = [],
@@ -181,15 +182,15 @@ sap.ui.define([
 
 			if (bHasRowHeader) {
 				aRowHdrDomRefs = $Table.find(".sapUiTableRowSelectionCell").get();
-				iTotalColumnCount++;
+				iColumnCount++;
 			}
 
 			if (bHasRowActions) {
 				aRowActionDomRefs = $Table.find(".sapUiTableRowActionCell").get();
-				iTotalColumnCount++;
+				iColumnCount++;
 			}
 
-			for (var i = 0; i < oTable.getVisibleRowCount(); i++) {
+			for (i = 0; i < iRowCount; i++) {
 				if (bHasRowHeader) {
 					aItemDomRefs.push(aRowHdrDomRefs[i]);
 				}
@@ -218,8 +219,9 @@ sap.ui.define([
 				var $FixedHeaders = $Table.find(".sapUiTableCHT.sapUiTableCtrlFixed>tbody>tr");
 				// Returns the .sapUiTableColHdr elements (.sapUiTableColHdrCnt .sapUiTableCtrlScr .sapUiTableColHdrTr)
 				var $ScrollHeaders = $Table.find(".sapUiTableCHT.sapUiTableCtrlScroll>tbody>tr");
+				var iHeaderRowCount = TableUtils.getHeaderRowCount(oTable);
 
-				for (var i = 0; i < TableUtils.getHeaderRowCount(oTable); i++) {
+				for (i = 0; i < iHeaderRowCount; i++) {
 					if (bHasRowHeader) {
 						aHeaderDomRefs.push(oTable.getDomRef("selall"));
 					}
@@ -257,7 +259,7 @@ sap.ui.define([
 			}
 
 			// configure the item navigation
-			oExtension._itemNavigation.setColumns(iTotalColumnCount);
+			oExtension._itemNavigation.setColumns(iColumnCount);
 			oExtension._itemNavigation.setRootDomRef($Table.find(".sapUiTableCnt").get(0));
 			oExtension._itemNavigation.setItemDomRefs(aItemDomRefs);
 			oExtension._itemNavigation.setFocusedIndex(ExtensionHelper.getInitialItemNavigationIndex(oExtension));
@@ -303,9 +305,9 @@ sap.ui.define([
 			this._actionMode = false;
 
 			// Register the delegates in correct order
-			TableUtils.addDelegate(ExtensionDelegate, oTable, true);
-			TableUtils.addDelegate(this._delegate, oTable, true);
-			TableUtils.addDelegate(ItemNavigationDelegate, oTable, true);
+			TableUtils.addDelegate(oTable, ExtensionDelegate, oTable);
+			TableUtils.addDelegate(oTable, this._delegate, oTable);
+			TableUtils.addDelegate(oTable, ItemNavigationDelegate, oTable);
 
 			/**
 			 * Gets the item navigation.

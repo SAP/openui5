@@ -740,9 +740,10 @@ sap.ui.define([
 						mAttributes["aria-multiselectable"] = "true";
 					}
 
+					var mRowCounts = oTable._getRowCounts();
 					var bHasFixedColumns = TableUtils.hasFixedColumns(oTable);
-					var bHasFixedTopRows = oTable.getFixedRowCount() > 0;
-					var bHasFixedBottomRows = oTable.getFixedBottomRowCount() > 0;
+					var bHasFixedTopRows = mRowCounts.fixedTop > 0;
+					var bHasFixedBottomRows = mRowCounts.fixedBottom > 0;
 					var bHasRowHeader = TableUtils.hasRowHeader(oTable);
 					var bHasRowActions = TableUtils.hasRowActions(oTable);
 
@@ -917,7 +918,7 @@ sap.ui.define([
 			this._accMode = sap.ui.getCore().getConfiguration().getAccessibility();
 			this._busyCells = [];
 
-			TableUtils.addDelegate(this, oTable, false);
+			TableUtils.addDelegate(oTable, this);
 
 			// Initialize Render extension
 			TableExtension.enrich(oTable, TableAccRenderExtension);
@@ -1336,7 +1337,8 @@ sap.ui.define([
 	 */
 	TableAccExtension.prototype.setSelectAllState = function(bSelectAll) {
 		var oTable = this.getTable();
-		if (oTable) {
+
+		if (this._accMode && oTable) {
 			oTable.$("selall").attr("aria-pressed", bSelectAll ? "true" : "false");
 		}
 	};

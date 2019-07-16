@@ -1476,7 +1476,6 @@ sap.ui.define([
 			oTable._bHideStandardTooltips = !bEnable;
 			oTable.setSelectionBehavior(sSelectionBehavior);
 			oTable.setSelectionMode(sSelectionMode);
-			oTable.invalidate();
 			sap.ui.getCore().applyChanges();
 			assert.equal(oTable.$().find("[title]").length, iExpected,
 				"Tooltip enabled:" + bEnable + ", " + sSelectionBehavior + ", " + sSelectionMode);
@@ -1544,10 +1543,6 @@ sap.ui.define([
 		}
 
 		assert.strictEqual(oTable.$().find(".sapUiTableHiddenTexts").length, 0, "No Hidden Texts");
-
-		oTable._getAccExtension()._accMode = true;
-		oTable.invalidate();
-		sap.ui.getCore().applyChanges();
 	});
 
 	QUnit.module("Destruction", {

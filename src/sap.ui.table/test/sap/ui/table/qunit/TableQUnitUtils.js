@@ -83,6 +83,34 @@ sap.ui.define([
 		}
 	});
 
+	var HeightTestControl = Control.extend("sap.ui.table.test.HeightTestControl", {
+		metadata: {
+			properties: {
+				height: "string"
+			}
+		},
+		renderer: function(oRm, oControl) {
+			oRm.write("<div");
+			oRm.addStyle("height", oControl.getHeight() || "10px");
+			oRm.addStyle("width", "100px");
+			oRm.addStyle("background-color", "orange");
+			oRm.addStyle("box-sizing", "border-box");
+			oRm.addStyle("border-top", "2px solid blue");
+			oRm.addStyle("border-bottom", "2px solid blue");
+			oRm.writeStyles();
+			oRm.writeControlData(oControl);
+			oRm.write("></div>");
+		},
+		setHeight: function(sHeight) {
+			this.setProperty("height", sHeight, true);
+
+			var oDomRef = this.getDomRef();
+			if (oDomRef != null) {
+				oDomRef.style.height = sHeight;
+			}
+		}
+	});
+
 	var oTableHelper = sap.ui.table.TableHelper = {
 		createLabel: function(mConfig) {
 			return new TestControl(mConfig);
@@ -139,11 +167,11 @@ sap.ui.define([
 	}
 
 	function addAsyncHelpers(oTable) {
-		var fnResolveInitialRenderingFinished = null;
-		var pInitialRenderingFinished = new Promise(function(resolve) {
-			fnResolveInitialRenderingFinished = resolve;
+		oTable.qunit.fnResolveInitialRenderingFinished = null;
+		oTable.qunit.pInitialRenderingFinished = new Promise(function(resolve) {
+			oTable.qunit.fnResolveInitialRenderingFinished = resolve;
 		});
-		var pRenderingFinished = null;
+		oTable.qunit.pRenderingFinished = null;
 
 		function waitForUnpredictableEvents() {
 			return new Promise(function(resolve) {
@@ -189,9 +217,20 @@ sap.ui.define([
 		 * @returns {Promise} A promise.
 		 */
 		oTable.qunit.whenInitialRenderingFinished = function() {
-			return pInitialRenderingFinished;
+			return oTable.qunit.pInitialRenderingFinished;
 		};
-		oTable.qunit.whenNextRenderingFinished().then(fnResolveInitialRenderingFinished);
+		if (oTable.getBinding("rows")) {
+			oTable.qunit.whenNextRenderingFinished().then(oTable.qunit.fnResolveInitialRenderingFinished);
+		} else {
+			// A table without binding does not fire _rowsUpdated events.
+			TableQUnitUtils.addEventDelegateOnce(oTable, "onAfterRendering", function() {
+				if (!oTable.getBinding("rows")) {
+					waitForUnpredictableEvents().then(oTable.qunit.fnResolveInitialRenderingFinished);
+				} else {
+					oTable.qunit.whenNextRenderingFinished().then(oTable.qunit.fnResolveInitialRenderingFinished);
+				}
+			});
+		}
 
 		/**
 		 * Returns a promise that resolves when no rendering is to be expected or when an ongoing rendering is finished. Includes row updates.
@@ -199,8 +238,8 @@ sap.ui.define([
 		 * @returns {Promise} A promise.
 		 */
 		oTable.qunit.whenRenderingFinished = function() {
-			if (pRenderingFinished != null) {
-				return pRenderingFinished;
+			if (oTable.qunit.pRenderingFinished != null) {
+				return oTable.qunit.pRenderingFinished;
 			} else if (oTable._getFirstRenderedRowIndex() !== oTable._iRenderedFirstVisibleRow) {
 				return oTable.qunit.whenNextRenderingFinished();
 			} else {
@@ -210,9 +249,11 @@ sap.ui.define([
 		function wrapForRenderingDetection(oObject, sFunctionName) {
 			var fnOriginalFunction = oObject[sFunctionName];
 			oObject[sFunctionName] = function() {
-				pRenderingFinished = oTable.qunit.whenNextRenderingFinished().then(function() {
-					pRenderingFinished = null;
-				});
+				if (oTable.qunit.pRenderingFinished == null) {
+					oTable.qunit.pRenderingFinished = oTable.qunit.whenNextRenderingFinished().then(function() {
+						oTable.qunit.pRenderingFinished = null;
+					});
+				}
 				fnOriginalFunction.apply(oObject, arguments);
 			};
 		}
@@ -220,6 +261,41 @@ sap.ui.define([
 		wrapForRenderingDetection(oTable, "invalidate");
 		wrapForRenderingDetection(oTable, "refreshRows");
 		wrapForRenderingDetection(oTable, "updateRows");
+		wrapForRenderingDetection(oTable, "unbindRows");
+
+		/**
+		 * Returns a promise that resolves when the next binding refresh event is fired.
+		 *
+		 * @returns {Promise} A promise.
+		 */
+		oTable.qunit.whenBindingRefresh = function() {
+			var oBinding = oTable.getBinding("rows");
+
+			if (!oBinding) {
+				return Promise.resolve();
+			}
+
+			return new Promise(function(resolve) {
+				oBinding.attachEventOnce("refresh", resolve);
+			});
+		};
+
+		/**
+		 * Returns a promise that resolves when the next binding change event is fired.
+		 *
+		 * @returns {Promise} A promise.
+		 */
+		oTable.qunit.whenBindingChange = function() {
+			var oBinding = oTable.getBinding("rows");
+
+			if (!oBinding) {
+				return Promise.resolve();
+			}
+
+			return new Promise(function(resolve) {
+				oBinding.attachEventOnce("change", resolve);
+			});
+		};
 
 		/**
 		 * Returns a promise that resolves when the next vertical scroll event is fired.
@@ -451,6 +527,10 @@ sap.ui.define([
 		return TestInputControl;
 	};
 
+	TableQUnitUtils.getHeightTestControl = function() {
+		return HeightTestControl;
+	};
+
 	TableQUnitUtils.setDefaultOptions = function(mOptions) {
 		mOptions = Object.assign({}, mOptions);
 		mDefaultOptions = mOptions;
@@ -561,7 +641,7 @@ sap.ui.define([
 			fnHandler.call(this, oEvent);
 		};
 
-		oTable.addEventDelegate(oDelegate);
+		oTable.addEventDelegate(oDelegate, oTable);
 	};
 
 	TableQUnitUtils.addEventListenerOnce = function(oElement, sEventName, fnHandler) {

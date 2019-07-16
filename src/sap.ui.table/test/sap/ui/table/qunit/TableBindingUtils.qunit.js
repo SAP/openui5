@@ -41,7 +41,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oTable.destroy();
-			this.oMockServer.stop();
+			this.oMockServer.destroy();
 		}
 	});
 

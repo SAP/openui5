@@ -458,24 +458,30 @@ sap.ui.define([
 
 	QUnit.test("getNonEmptyVisibleRowCount", function(assert) {
 		var oTableDummy1 = {
-			getVisibleRowCount: function() {
-				return 10;
+			_getRowCounts: function() {
+				return {
+					count: 10
+				};
 			},
 			_getTotalRowCount: function() {
 				return 5;
 			}
 		};
 		var oTableDummy2 = {
-			getVisibleRowCount: function() {
-				return 10;
+			_getRowCounts: function() {
+				return {
+					count: 10
+				};
 			},
 			_getTotalRowCount: function() {
 				return 15;
 			}
 		};
 		var oTableDummy3 = {
-			getVisibleRowCount: function() {
-				return 10;
+			_getRowCounts: function() {
+				return {
+					count: 10
+				};
 			},
 			_getTotalRowCount: function() {
 				return 10;
@@ -483,9 +489,9 @@ sap.ui.define([
 		};
 		assert.equal(TableUtils.getNonEmptyVisibleRowCount(oTableDummy1), oTableDummy1._getTotalRowCount(),
 			"Number of data rows (#data < #visiblerows)");
-		assert.equal(TableUtils.getNonEmptyVisibleRowCount(oTableDummy2), oTableDummy2.getVisibleRowCount(),
+		assert.equal(TableUtils.getNonEmptyVisibleRowCount(oTableDummy2), oTableDummy2._getRowCounts().count,
 			"Number of visible rows (#data > #visiblerows)");
-		assert.equal(TableUtils.getNonEmptyVisibleRowCount(oTableDummy3), oTableDummy3.getVisibleRowCount(),
+		assert.equal(TableUtils.getNonEmptyVisibleRowCount(oTableDummy3), oTableDummy3._getRowCounts().count,
 			"Number of visible and data rows (#data = #visiblerows)");
 	});
 
@@ -1209,10 +1215,21 @@ sap.ui.define([
 
 	QUnit.test("addDelegate", function(assert) {
 		var oDelegateSpy = sinon.spy(oTable, "addDelegate");
-		TableUtils.addDelegate(1, oTable, true);
-		assert.ok(oDelegateSpy.calledWith(1, false, oTable, false), "addDelegate is called with the correct parameters");
-		TableUtils.addDelegate(1, oTable, false);
-		assert.ok(oDelegateSpy.calledWith(1, false, undefined, false), "addDelegate is called with the correct parameters");
+		var oDelegateDummy = {prop: 1};
+		var oThisDummy = {otherProp: 1};
+
+		TableUtils.addDelegate();
+		assert.ok(oDelegateSpy.notCalled, "No parameters passed: Element#addDelegate was not called");
+
+		TableUtils.addDelegate(oTable);
+		assert.ok(oDelegateSpy.notCalled, "No delegate passed: Element#addDelegate was not called");
+
+		TableUtils.addDelegate(oTable, oDelegateDummy);
+		assert.ok(oDelegateSpy.calledWith(oDelegateDummy, false, oDelegateDummy, false), "Element#addDelegate is called with the correct parameters");
+
+		TableUtils.addDelegate(oTable, oDelegateDummy, oThisDummy);
+		assert.ok(oDelegateSpy.calledWith(oDelegateDummy, false, oThisDummy, false), "Element#addDelegate is called with the correct parameters");
+
 		oDelegateSpy.restore();
 	});
 
@@ -1261,13 +1278,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Register/Deregister", function(assert) {
-		assert.expect(17);
 		var done = assert.async();
 		var sResizeHandlerId;
+
 		var fnTestOuter = function(oEvent) {
 			assert.equal(oEvent.currentTarget.getAttribute("id"), this.oTable.getId("outer"), "ResizeHandler triggered for 'outer' element");
 			jQuery("#" + this.oTable.getId("inner")).height("250px");
-		};
+		}.bind(this);
 
 		var fnTestCenterParent = function(oEvent) {
 			assert.equal(oEvent.currentTarget.getAttribute("id"), this.oTable.getId("inner"),
@@ -1282,10 +1299,8 @@ sap.ui.define([
 			jQuery("#" + this.oTable.getId("inner")).height("200px");
 
 			// register new handlers for further testings
-			TableUtils.registerResizeHandler(this.oTable, "inner", function() {
-			});
-			TableUtils.registerResizeHandler(this.oTable, "center", function() {
-			});
+			TableUtils.registerResizeHandler(this.oTable, "inner", function() {}, "inner");
+			TableUtils.registerResizeHandler(this.oTable, "center", function() {}, "center");
 
 			assert.deepEqual(this.oTable.getResizeHandlerIdKeys(), ["center", "inner", "outer"],
 				"All ResizeHandler IDs correctly stored at table instance");
@@ -1295,41 +1310,42 @@ sap.ui.define([
 				"All ResizeHandler IDs correctly stored after remove 'center', 'outer'");
 
 			// register new handlers for further testings
-			TableUtils.registerResizeHandler(this.oTable, "outer", function() {
-			});
-			TableUtils.registerResizeHandler(this.oTable, "center", function() {
-			});
+			TableUtils.registerResizeHandler(this.oTable, "outer", function() {}, "outer");
+			TableUtils.registerResizeHandler(this.oTable, "center", function() {}, "center");
 
 			TableUtils.deregisterResizeHandler(this.oTable);
 
 			assert.deepEqual(this.oTable.getResizeHandlerIdKeys(), [], "All ResizeHandler IDs correctly removed");
 
 			// test type errors
-			sResizeHandlerId = TableUtils.registerResizeHandler(this.oTable, {}, function() {
-			});
-			assert.strictEqual(sResizeHandlerId, undefined, "No ResizeHandler ID returned because of wrong type for sIdSuffix");
-			sResizeHandlerId = TableUtils.registerResizeHandler(this.oTable, "", "");
-			assert.strictEqual(sResizeHandlerId, undefined, "No ResizeHandler ID returned because of wrong type for handler function");
+			assert.strictEqual(TableUtils.registerResizeHandler(), undefined,
+				"No ResizeHandler ID returned because no parameters passed");
+			assert.strictEqual(TableUtils.registerResizeHandler(this.oTable, {}, function() {}), undefined,
+				"No ResizeHandler ID returned because of wrong type for handler id");
+			assert.strictEqual(TableUtils.registerResizeHandler(this.oTable, "id", ""), undefined,
+				"No ResizeHandler ID returned because of wrong type for handler function");
+			assert.strictEqual(TableUtils.registerResizeHandler(this.oTable, "id", function() {}, {}), undefined,
+				"No ResizeHandler ID returned because of wrong type for DOM id suffix");
 			assert.deepEqual(this.oTable.getResizeHandlerIdKeys(), [], "No ResizeHandler IDs stored at table instance");
 
 			done();
-		};
+		}.bind(this);
 
 		assert.strictEqual(this.oTable._mResizeHandlerIds, undefined, "No ResizeHandler registered, therefore no ResizeHandlerIds map");
 		TableUtils.deregisterResizeHandler(this.oTable);
 		assert.strictEqual(this.oTable._mResizeHandlerIds, undefined, "Deregister does not create ResizeHandlerIds map");
 
-		sResizeHandlerId = TableUtils.registerResizeHandler(this.oTable, "outer", fnTestOuter.bind(this));
+		sResizeHandlerId = TableUtils.registerResizeHandler(this.oTable, "outer", fnTestOuter, "outer");
 		assert.notStrictEqual(sResizeHandlerId, undefined, "ResizeHandler ID was returned for 'outer': '" + sResizeHandlerId + "'");
 		assert.equal(this.oTable._mResizeHandlerIds.outer, sResizeHandlerId, "ResizeHandler ID correctly stored at table instance (outer)");
 
-		sResizeHandlerId = TableUtils.registerResizeHandler(this.oTable, "center", fnTestCenterParent.bind(this), true);
+		sResizeHandlerId = TableUtils.registerResizeHandler(this.oTable, "center", fnTestCenterParent, "center", true);
 		assert.notStrictEqual(sResizeHandlerId, undefined,
 			"ResizeHandler ID was returned for 'inner', registered by parent of 'center': '" + sResizeHandlerId + "'");
 		assert.equal(this.oTable._mResizeHandlerIds.center, sResizeHandlerId,
 			"ResizeHandler ID correctly stored at table instance (parent of center)");
 
-		sResizeHandlerId = TableUtils.registerResizeHandler(this.oTable, "doesNotExist", fnTestCenterParent.bind(this), true);
+		sResizeHandlerId = TableUtils.registerResizeHandler(this.oTable, "doesNotExist", fnTestCenterParent, "doesNotExist", true);
 		assert.strictEqual(sResizeHandlerId, undefined, "No ResizeHandler ID returned for unknown DOM");
 
 		jQuery("#" + this.oTable.getId("outer")).height("550px");

@@ -352,7 +352,7 @@ sap.ui.define([
 
 		};
 
-		attachEventHandler(this.oTable, 1, fnHandler1, this);
+		attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
 		this.oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
 	});
 
@@ -511,7 +511,7 @@ sap.ui.define([
 			done();
 		};
 
-		attachEventHandler(this.oTable, 1, fnHandler1, this);
+		attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
 		this.oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
 	});
 
@@ -541,7 +541,7 @@ sap.ui.define([
 			this.oTable.setFirstVisibleRow(i);
 		};
 
-		attachEventHandler(this.oTable, 1, fnHandler1, this);
+		attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
 		this.oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
 	});
 

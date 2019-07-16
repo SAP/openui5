@@ -769,6 +769,10 @@ sap.ui.define([
 		},
 		testAsync: function(mTestConfig) {
 			return new Promise(function(resolve) {
+				var oOnAfterRenderingDelegate = {
+					onAfterRendering: onAfterRendering
+				};
+
 				function onRowsUpdated() {
 					if (Device.browser.msie) {
 						/* BCP: 1780405070 */
@@ -782,15 +786,13 @@ sap.ui.define([
 					}
 				}
 
-				var fnOnAfterRendering = function() {
-					oTable.removeEventDelegate(fnOnAfterRendering);
+				function onAfterRendering() {
+					oTable.removeEventDelegate(oOnAfterRenderingDelegate);
 					oTable.attachEventOnce("_rowsUpdated", onRowsUpdated);
-				};
+				}
 
 				if (mTestConfig.onAfterRendering) {
-					oTable.addEventDelegate({
-						onAfterRendering: fnOnAfterRendering
-					});
+					oTable.addEventDelegate(oOnAfterRenderingDelegate);
 				} else {
 					oTable.attachEventOnce("_rowsUpdated", onRowsUpdated);
 				}

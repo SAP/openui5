@@ -147,7 +147,7 @@ sap.ui.define([
 				renderHorizontalScrollbar: ExtensionHelper.renderHorizontalScrollbar.bind(this)
 			};
 
-			TableUtils.addDelegate(this._delegate, oTable, true);
+			TableUtils.addDelegate(oTable, this._delegate, oTable);
 
 			return "SyncExtension";
 		},

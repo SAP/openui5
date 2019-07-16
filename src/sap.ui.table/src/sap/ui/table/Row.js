@@ -107,31 +107,31 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/Context', './TableUtils', "s
 	 */
 	Row.prototype.getIndex = function() {
 		var oTable = this.getParent();
-		if (oTable) {
-			// get the index of the row in the aggregation
-			var iRowIndex = oTable.indexOfRow(this);
 
-			// check for fixed rows. In this case the index of the context is the same like the index of the row in the aggregation
-			var iNumberOfFixedRows = oTable.getFixedRowCount();
-			if (iNumberOfFixedRows > 0 && iRowIndex < iNumberOfFixedRows) {
+		if (!oTable) {
+			return -1;
+		}
+
+		// get the index of the row in the aggregation
+		var iRowIndex = oTable.indexOfRow(this);
+		var mRowCount = oTable._getRowCounts();
+
+		// check for fixed rows. In this case the index of the context is the same like the index of the row in the aggregation
+		if (mRowCount.fixedTop > 0 && iRowIndex < mRowCount.fixedTop) {
+			return iRowIndex;
+		}
+
+		// check for fixed bottom rows
+		if (mRowCount.fixedBottom > 0 && iRowIndex >= mRowCount.count - mRowCount.fixedBottom) {
+			var iTotalRowCount = oTable._getTotalRowCount();
+			if (iTotalRowCount >= mRowCount.count) {
+				return iTotalRowCount - (mRowCount.count - iRowIndex);
+			} else {
 				return iRowIndex;
 			}
-
-			// check for fixed bottom rows
-			var iNumberOfFixedBottomRows = oTable.getFixedBottomRowCount();
-			var iVisibleRowCount = oTable.getVisibleRowCount();
-			if (iNumberOfFixedBottomRows > 0 && iRowIndex >= iVisibleRowCount - iNumberOfFixedBottomRows) {
-				var iTotalRowCount = oTable._getTotalRowCount();
-				if (iTotalRowCount >= iVisibleRowCount) {
-					return iTotalRowCount - (iVisibleRowCount - iRowIndex);
-				} else {
-					return iRowIndex;
-				}
-			}
-
-			return oTable._getFirstRenderedRowIndex() + iRowIndex;
 		}
-		return -1;
+
+		return oTable._getFirstRenderedRowIndex() + iRowIndex;
 	};
 
 	/**
@@ -214,10 +214,9 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/Context', './TableUtils', "s
 	 * @param {Object} mTooltipTexts.keyboard texts for aria descriptions
 	 * @param {String} mTooltipTexts.keyboard.rowSelect text for row select aria description (if row is unselected)
 	 * @param {String} mTooltipTexts.keyboard.rowDeselect text for row de-select aria description (if row is selected)
-	 * @param {Boolean} bSelectOnCellsAllowed set to true when the entire row may be clicked for selecting it
 	 * @private
 	 */
-	Row.prototype._updateSelection = function(oTable, mTooltipTexts, bSelectOnCellsAllowed) {
+	Row.prototype._updateSelection = function(oTable, mTooltipTexts) {
 		var bIsSelected = oTable.isIndexSelected(this.getIndex());
 		var $DomRefs = this.getDomRefs(true);
 
@@ -232,8 +231,8 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/Context', './TableUtils', "s
 		}
 
 		// update tooltips
-		if ($DomRefs.rowSelector) {
-			$DomRefs.rowSelector.attr("title", !this._bHidden ? mTooltipTexts.mouse[sSelectReference] : "");
+		if ($DomRefs.rowSelector && !this._bHidden && oTable._getShowStandardTooltips() && TableUtils.isRowSelectorSelectionAllowed(oTable)) {
+			$DomRefs.rowSelector.attr("title", mTooltipTexts.mouse[sSelectReference]);
 		}
 
 		if ($DomRefs.rowSelectorText) {
@@ -246,7 +245,7 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/Context', './TableUtils', "s
 
 		var $Row = $DomRefs.rowScrollPart.add($DomRefs.rowFixedPart);
 
-		if (bSelectOnCellsAllowed && !this._bHidden) {
+		if (!this._bHidden && oTable._getShowStandardTooltips() && TableUtils.isRowSelectionAllowed(oTable)) {
 			// the row requires a tooltip for selection if the cell selection is allowed
 			$Row.attr("title", mTooltipTexts.mouse[sSelectReference]);
 		} else {

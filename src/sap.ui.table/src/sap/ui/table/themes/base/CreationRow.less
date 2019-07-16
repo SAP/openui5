@@ -65,14 +65,13 @@
 			// The height is fixed to the default row height (or the application defined height, see TableRenderer) until variable row heights are
 			// generally supported.
 			> .sapUiTableCellInner {
-				max-height: @_sap_ui_table_RowHeight;
+				max-height: @_sap_ui_table_BaseSize;
 
 				.sapUiSizeCozy & {
-					max-height: @_sap_ui_table_RowHeightCozy;
+					max-height: @_sap_ui_table_BaseSizeCozy;
 				}
-
 				.sapUiSizeCondensed & {
-					max-height: @_sap_ui_table_RowHeightCondensed;
+					max-height: @_sap_ui_table_BaseSizeCondensed;
 				}
 			}
 		}

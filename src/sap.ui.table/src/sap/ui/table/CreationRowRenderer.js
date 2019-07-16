@@ -231,15 +231,8 @@ sap.ui.define([
 
 				if (oCell) {
 					oRm.write("<div");
-
 					oRm.addClass("sapUiTableCellInner");
 					oRm.writeClasses();
-
-					if (oTable.getRowHeight() > 0) {
-						oRm.addStyle("max-height", oTable.getRowHeight() + "px");
-					}
-					oRm.writeStyles();
-
 					oRm.write(">");
 					TableRenderer.renderTableCellControl(oRm, oTable, oCell, bIsFirstColumn);
 					oRm.write("</div>");

@@ -52,12 +52,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("_debug", function(assert) {
-		var done = assert.async();
-
-		oTable._enableSynchronization().then(function() {
+		return oTable._enableSynchronization().then(function() {
 			var oSyncExtension = oTable._getSyncExtension();
 			assert.strictEqual(oSyncExtension._debug, undefined, "The SyncExtension has no _debug method");
-			done();
 		});
 	});
 
@@ -71,14 +68,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("destroy", function(assert) {
-		var done = assert.async();
-
-		oTable._enableSynchronization().then(function() {
+		return oTable._enableSynchronization().then(function() {
 			var oExtension = oTable._getSyncExtension();
 			oTable.destroy();
 			assert.equal(oExtension.getTable(), null, "Table cleared");
 			assert.equal(oExtension._delegate, null, "Delegate cleared");
-			done();
 		});
 	});
 
@@ -99,9 +93,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("No sync when initializing synchronization", function(assert) {
-		var done = assert.async();
-
-		oTable._enableSynchronization().then(function(oSyncInterface) {
+		return oTable._enableSynchronization().then(function(oSyncInterface) {
 			oSyncInterface.rowCount = sinon.spy();
 			oSyncInterface.rowSelection = sinon.spy();
 			oSyncInterface.rowHover = sinon.spy();
@@ -115,19 +107,16 @@ sap.ui.define([
 			assert.ok(oSyncInterface.rowHeights.notCalled, "The row heights were not synced");
 			assert.ok(oSyncInterface.innerVerticalScrollPosition.notCalled, "The inner vertical scroll position was not synced");
 			assert.ok(oSyncInterface.layout.notCalled, "The layout was not synced");
-
-			done();
 		});
 	});
 
 	QUnit.test("Sync row count", function(assert) {
-		var done = assert.async();
 		var whenRowsUpdated = null;
 		var oSyncInterface;
 		var iAutoModeRowCount;
 		var that = this;
 
-		oTable._enableSynchronization().then(function(_oSyncInterface) {
+		return oTable._enableSynchronization().then(function(_oSyncInterface) {
 			oSyncInterface = _oSyncInterface;
 			oSyncInterface.rowCount = sinon.spy();
 
@@ -167,32 +156,26 @@ sap.ui.define([
 		}).then(function() {
 			whenRowsUpdated = that.whenRowsUpdated(oTable);
 			oTable.unbindRows();
-			if (oSyncInterface.rowCount.callCount === 2) {
-				assert.ok(true, "Unbind rows: The row count was synced 2 times");
-				assert.ok(oSyncInterface.rowCount.getCall(0).calledWithExactly(0), "Unbind rows: The correct row count was synced");
-				assert.ok(oSyncInterface.rowCount.getCall(1).calledWithExactly(0), "Unbind rows: The correct row count was synced");
-			} else {
-				assert.ok(false, "Unbind rows: It is expected that the row count is synced 2 times");
-			}
+			assert.ok(oSyncInterface.rowCount.getCall(0).calledWithExactly(0), "Unbind rows: The correct row count was synced");
+			assert.strictEqual(oSyncInterface.rowCount.callCount, 1, "Unbind rows: The row count was synced once");
 			oSyncInterface.rowCount.reset();
 
 		}).then(whenRowsUpdated).then(function() {
 			oTable.bindRows({path: "/rows"});
+		}).then(whenRowsUpdated).then(function() {
 			assert.ok(oSyncInterface.rowCount.calledWithExactly(iAutoModeRowCount + 1), "Bind rows: The correct row count was synced");
 			assert.strictEqual(oSyncInterface.rowCount.callCount, 1, "The row count was synced once");
-
-		}).then(done);
+		});
 	});
 
 	QUnit.test("Sync row selection", function(assert) {
-		var done = assert.async();
 		var whenRowsUpdated = null;
 		var oSyncInterface;
 		var that = this;
 
 		oTable.clearSelection();
 
-		oTable._enableSynchronization().then(function(_oSyncInterface) {
+		return oTable._enableSynchronization().then(function(_oSyncInterface) {
 			oSyncInterface = _oSyncInterface;
 			oSyncInterface.rowSelection = sinon.spy();
 
@@ -222,6 +205,7 @@ sap.ui.define([
 			oTable.bindRows({path: "/rows"});
 			oTable.setSelectedIndex(0);
 
+		}).then(whenRowsUpdated).then(function() {
 			if (oSyncInterface.rowSelection.callCount === 3) {
 				assert.ok(true, "Selection changed: The selection of all 3 rows was synced");
 				assert.ok(oSyncInterface.rowSelection.getCall(0).calledWithExactly(0, true), "The correct selection state of row 1 was synced");
@@ -232,10 +216,24 @@ sap.ui.define([
 			}
 			oSyncInterface.rowSelection.reset();
 
-		}).then(whenRowsUpdated).then(function() {
+		}).then(function() {
+			whenRowsUpdated = that.whenRowsUpdated(oTable);
 			oTable.setFirstVisibleRow(1);
 			oTable.setSelectedIndex(2);
 
+			// After the selection update triggered by #setSelectedIndex.
+			if (oSyncInterface.rowSelection.callCount === 3) {
+				assert.ok(true, "Selection changed: The selection of all 3 rows was synced");
+				assert.ok(oSyncInterface.rowSelection.getCall(0).calledWithExactly(0, false), "The correct selection state of row 1 was synced");
+				assert.ok(oSyncInterface.rowSelection.getCall(1).calledWithExactly(1, true), "The correct selection state of row 2 was synced");
+				assert.ok(oSyncInterface.rowSelection.getCall(2).calledWithExactly(2, false), "The correct selection state of row 3 was synced");
+			} else {
+				assert.ok(false, "Selection changed: The selection of all 3 rows should have been synced");
+			}
+			oSyncInterface.rowSelection.reset();
+
+		}).then(whenRowsUpdated).then(function() {
+			// After the rows update triggered by #setFirstVisibleRow.
 			if (oSyncInterface.rowSelection.callCount === 3) {
 				assert.ok(true, "Selection changed: The selection of all 3 rows was synced");
 				assert.ok(oSyncInterface.rowSelection.getCall(0).calledWithExactly(0, false), "The correct selection state of row 1 was synced");
@@ -267,14 +265,11 @@ sap.ui.define([
 			} else {
 				assert.ok(false, "The row selection should have been synced 2 times for all 3 rows");
 			}
-
-		}).then(done);
+		});
 	});
 
 	QUnit.test("Sync row hover", function(assert) {
-		var done = assert.async();
-
-		oTable._enableSynchronization().then(function(oSyncInterface) {
+		return oTable._enableSynchronization().then(function(oSyncInterface) {
 			oSyncInterface.rowHover = sinon.spy();
 
 			oTable.setFirstVisibleRow(1);
@@ -288,16 +283,15 @@ sap.ui.define([
 			} else {
 				assert.ok(false, "The row hover state should have been synced 2 times");
 			}
-		}).then(done);
+		});
 	});
 
 	QUnit.test("Sync row heights", function(assert) {
-		var done = assert.async();
 		var whenRowsUpdated = null;
 		var oSyncInterface;
 		var that = this;
 
-		oTable._enableSynchronization().then(function(_oSyncInterface) {
+		return oTable._enableSynchronization().then(function(_oSyncInterface) {
 			oSyncInterface = _oSyncInterface;
 			oSyncInterface.rowHeights = sinon.spy();
 
@@ -307,19 +301,24 @@ sap.ui.define([
 
 		}).then(whenRowsUpdated).then(function() {
 			var iHeight = TableUtils.DefaultRowHeight.sapUiSizeCozy;
-			assert.ok(oSyncInterface.rowHeights.calledWithExactly([iHeight, iHeight, iHeight]), "The row heights were correctly synced");
-			assert.strictEqual(oSyncInterface.rowHeights.callCount, 1, "The row heights were synced once");
-
-		}).then(done);
+			if (oSyncInterface.rowHeights.callCount === 2) {
+				assert.ok(true, "The row heights were synced 2 times");
+				assert.ok(oSyncInterface.rowHeights.getCall(0).calledWithExactly([iHeight, iHeight, iHeight]),
+					"The row heights were correctly synced");
+				assert.ok(oSyncInterface.rowHeights.getCall(1).calledWithExactly([iHeight, iHeight, iHeight]),
+					"The row heights were correctly synced");
+			} else {
+				assert.ok(false, "The row heights should have been synced 2 times");
+			}
+		});
 	});
 
 	QUnit.test("Sync inner vertical scroll position", function(assert) {
-		var done = assert.async();
 		var whenRowsUpdated = null;
 		var oSyncInterface;
 		var that = this;
 
-		oTable._enableSynchronization().then(function(_oSyncInterface) {
+		return oTable._enableSynchronization().then(function(_oSyncInterface) {
 			oSyncInterface = _oSyncInterface;
 			oSyncInterface.innerVerticalScrollPosition = sinon.spy();
 
@@ -337,16 +336,14 @@ sap.ui.define([
 		}).then(function() {
 			assert.ok(oSyncInterface.innerVerticalScrollPosition.calledWithExactly(23), "The inner vertical scroll position was correctly synced");
 			assert.strictEqual(oSyncInterface.innerVerticalScrollPosition.callCount, 1, "The inner vertical scroll position was synced once");
-
-		}).then(done);
+		});
 	});
 
 	QUnit.test("Sync layout", function(assert) {
-		var done = assert.async();
 		var afterRendering = null;
 		var oSyncInterface;
 
-		oTable._enableSynchronization().then(function(_oSyncInterface) {
+		return oTable._enableSynchronization().then(function(_oSyncInterface) {
 			oSyncInterface = _oSyncInterface;
 			oSyncInterface.layout = sinon.spy();
 
@@ -369,8 +366,7 @@ sap.ui.define([
 				contentHeight: oTable.getDomRef("tableCCnt").getBoundingClientRect().height
 			}), "The layout information was correctly synced");
 			assert.strictEqual(oSyncInterface.layout.callCount, 1, "The layout information was synced once");
-
-		}).then(done);
+		});
 	});
 
 	QUnit.module("Synchronization methods", {
@@ -383,11 +379,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Sync row selection", function(assert) {
-		var done = assert.async();
-
 		oTable.clearSelection();
 
-		oTable._enableSynchronization().then(function(oSyncInterface) {
+		return oTable._enableSynchronization().then(function(oSyncInterface) {
 			oTable.setFirstVisibleRow(1);
 			oSyncInterface.syncRowSelection(1, true);
 			assert.deepEqual(oTable.getSelectedIndices(), [2], "The correct index was selected");
@@ -402,18 +396,15 @@ sap.ui.define([
 			oTable.setSelectionMode(tableLibrary.SelectionMode.None);
 			oSyncInterface.syncRowSelection(0, true);
 			assert.deepEqual(oTable.getSelectedIndices(), [], "SelectionMode=None: No selection was performed");
-
-		}).then(done);
+		});
 	});
 
 	QUnit.test("Sync row hover", function(assert) {
-		var done = assert.async();
-
 		function isRowHovered(iIndex) {
 			return oTable.getRows()[iIndex].getDomRef().classList.contains("sapUiTableRowHvr");
 		}
 
-		oTable._enableSynchronization().then(function(oSyncInterface) {
+		return oTable._enableSynchronization().then(function(oSyncInterface) {
 			oTable.setFirstVisibleRow(1);
 			oSyncInterface.syncRowHover(1, true);
 			assert.ok(!isRowHovered(0), "The first rendered row is not hovered");
@@ -429,15 +420,14 @@ sap.ui.define([
 			assert.ok(!isRowHovered(0), "The first rendered row is not hovered");
 			assert.ok(!isRowHovered(1), "The second rendered row is not hovered");
 			assert.ok(isRowHovered(2), "The third rendered row is hovered");
-		}).then(done);
+		});
 	});
 
 	QUnit.test("Register vertical scrolling", function(assert) {
-		var done = assert.async();
 		var Div1 = document.createElement("div");
 		var Div2 = document.createElement("div");
 		var Div3 = document.createElement("div");
-		var iDefaultRowHeight = oTable._getDefaultRowHeight();
+		var iBaseRowHeight = oTable._getBaseRowHeight();
 		var bOriginalPointerSupport = Device.support.pointer;
 		var bOriginalTouchSupport = Device.support.touch;
 
@@ -544,7 +534,7 @@ sap.ui.define([
 
 		function wait() {
 			return new Promise(function(resolve) {
-				window.setTimeout(resolve, Device.browser.msie ? 100 : 50);
+				setTimeout(resolve, 100);
 			});
 		}
 
@@ -566,7 +556,9 @@ sap.ui.define([
 
 		oTable.setFirstVisibleRow(0);
 
-		Promise.resolve().then(function() {
+		return new Promise(function(resolve) {
+			oTable.attachEventOnce("_rowsUpdated", resolve);
+		}).then(function() {
 			return oTable._enableSynchronization();
 		}).then(function(oSyncInterface) {
 			oSyncInterface.registerVerticalScrolling({
@@ -574,40 +566,37 @@ sap.ui.define([
 				touchAreas: [Div1, Div3]
 			});
 		}).then(function() {
-			scrollWithMouseWheel(Div1, iDefaultRowHeight);
+			scrollWithMouseWheel(Div1, iBaseRowHeight);
 		}).then(wait).then(function() {
-			assertScrollPositions(iDefaultRowHeight);
+			assertScrollPositions(iBaseRowHeight);
 		}).then(resetScrollPositions).then(wait).then(function() {
-			scrollWithMouseWheel(Div2, iDefaultRowHeight);
+			scrollWithMouseWheel(Div2, iBaseRowHeight);
 		}).then(wait).then(function() {
-			assertScrollPositions(iDefaultRowHeight);
+			assertScrollPositions(iBaseRowHeight);
 		}).then(resetScrollPositions).then(wait).then(function() {
-			scrollWithMouseWheel(Div3, iDefaultRowHeight);
+			scrollWithMouseWheel(Div3, iBaseRowHeight);
 		}).then(wait).then(function() {
 			assertScrollPositions(0);
 		}).then(resetScrollPositions).then(wait).then(function() {
-			scrollWithTouch(Div1, iDefaultRowHeight);
+			scrollWithTouch(Div1, iBaseRowHeight);
 		}).then(wait).then(function() {
-			assertScrollPositions(iDefaultRowHeight);
+			assertScrollPositions(iBaseRowHeight);
 		}).then(resetScrollPositions).then(wait).then(function() {
-			scrollWithTouch(Div2, iDefaultRowHeight);
+			scrollWithTouch(Div2, iBaseRowHeight);
 		}).then(wait).then(function() {
 			assertScrollPositions(0);
 		}).then(resetScrollPositions).then(wait).then(function() {
-			scrollWithTouch(Div3, iDefaultRowHeight);
+			scrollWithTouch(Div3, iBaseRowHeight);
 		}).then(wait).then(function() {
-			assertScrollPositions(iDefaultRowHeight);
+			assertScrollPositions(iBaseRowHeight);
 		}).then(function() {
 			Device.support.pointer = bOriginalPointerSupport;
 			Device.support.touch = bOriginalTouchSupport;
-			done();
 		});
 	});
 
 	QUnit.test("Place vertical scrollbar at", function(assert) {
-		var done = assert.async();
 		var Div = document.createElement("div");
-		var afterRendering = null;
 		var oInternalVSb = oTable._getScrollExtension().getVerticalScrollbar();
 		var sInternalVSbId = oInternalVSb.getAttribute("id");
 		var oTableInvalidate = sinon.spy(oTable, "invalidate");
@@ -617,17 +606,8 @@ sap.ui.define([
 		Div.appendChild(document.createElement("div"));
 		document.getElementById("qunit-fixture").appendChild(Div);
 
-		Promise.resolve().then(function() {
-			return oTable._enableSynchronization();
-		}).then(function(_oSyncInterface) {
+		return oTable._enableSynchronization().then(function(_oSyncInterface) {
 			oSyncInterface = _oSyncInterface;
-			afterRendering = function() {
-				return new Promise(function(resolve) {
-					oTable.addEventDelegate({
-						onAfterRendering: resolve
-					});
-				});
-			};
 
 			// The table will be invalidated.
 			oSyncInterface.placeVerticalScrollbarAt(Div);
@@ -638,7 +618,10 @@ sap.ui.define([
 
 			sap.ui.getCore().applyChanges();
 
-		}).then(afterRendering).then(function() {
+			return new Promise(function(resolve) {
+				oTable.attachEventOnce("_rowsUpdated", resolve);
+			});
+		}).then(function() {
 			var oExternalVSb = oTable._getScrollExtension().getVerticalScrollbar();
 			var sExternalVSbId = oExternalVSb.getAttribute("id");
 			var oDomRef = oTable.getDomRef();
@@ -649,14 +632,6 @@ sap.ui.define([
 			assert.equal(oDomRef.querySelector(sInternalVSbId), null, "The table's DOM does not contain the vertical scrollbar");
 			assert.ok(!oDomRef.classList.contains("sapUiTableVScr"), "The table's element does not contain the 'sapUiTableVScr' CSS class");
 
-			afterRendering = function() {
-				return new Promise(function(resolve) {
-					oTable.addEventDelegate({
-						onAfterRendering: resolve
-					});
-				});
-			};
-
 			// Invalidate the table and remove the external scrollbar from DOM. This simulates the situation where the parent of the table was
 			// invalidated. The user of the synchronization is supposed to call placeVerticalScrollbarAt again in onAfterRendering. The table should
 			// still have the reference to the external scrollbar in this situation and insert it back into the DOM.
@@ -666,7 +641,11 @@ sap.ui.define([
 
 			sap.ui.getCore().applyChanges();
 
-		}).then(afterRendering).then(function() {
+			return new Promise(function(resolve) {
+				oTable.attachEventOnce("_rowsUpdated", resolve);
+			});
+
+		}).then(function() {
 			var oExternalVSb = oTable._getScrollExtension().getVerticalScrollbar();
 			oSyncInterface.placeVerticalScrollbarAt(Div);
 
@@ -674,7 +653,7 @@ sap.ui.define([
 			assert.equal(Div.firstElementChild, oExternalVSb, "The external scrollbar is placed in the correct container");
 
 			// Scroll the external scrollbar.
-			oExternalVSb.scrollTop = oTable._getDefaultRowHeight() * 2;
+			oExternalVSb.scrollTop = oTable._getBaseRowHeight() * 2;
 			return new Promise(function(resolve) {
 				window.setTimeout(resolve, 100);
 			});
@@ -695,21 +674,19 @@ sap.ui.define([
 
 		}).then(function() {
 			var oVSb = oTable._getScrollExtension().getVerticalScrollbar();
-			assert.strictEqual(oVSb.scrollTop, oTable._getDefaultRowHeight() * 2, "The scrollbar has the correct scroll position");
+			assert.strictEqual(oVSb.scrollTop, oTable._getBaseRowHeight() * 2, "The scrollbar has the correct scroll position");
 
 			document.getElementById("qunit-fixture").removeChild(Div);
-
-		}).then(done);
+		});
 	});
 
 	QUnit.test("Render horizontal scrollbar", function(assert) {
-		var done = assert.async();
 		var Div = document.createElement("div");
 
 		Div.style.width = "0px";
 		document.getElementById("qunit-fixture").appendChild(Div);
 
-		oTable._enableSynchronization().then(function(oSyncInterface) {
+		return oTable._enableSynchronization().then(function(oSyncInterface) {
 			var oRenderManager = sap.ui.getCore().createRenderManager();
 			oSyncInterface.renderHorizontalScrollbar(oRenderManager, "hsbid", 100);
 			oRenderManager.flush(Div);
@@ -720,7 +697,6 @@ sap.ui.define([
 			assert.strictEqual(oHSb.scrollWidth - oHSb.clientWidth, 100, "The rendered element has the correct scroll range");
 
 			document.getElementById("qunit-fixture").removeChild(Div);
-
-		}).then(done);
+		});
 	});
 });

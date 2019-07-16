@@ -195,6 +195,29 @@ sap.ui.define([
 				module: "./designtime/Library.qunit"
 			},
 
+			// Row modes
+			"RowMode": {
+				group: "Row Mode",
+				module: "./rowmodes/{name}.qunit"
+			},
+			"FixedRowMode": {
+				group: "Row Mode",
+				module: "./rowmodes/{name}.qunit"
+			},
+			"InteractiveRowMode": {
+				group: "Row Mode",
+				module: "./rowmodes/{name}.qunit"
+			},
+			"AutoRowMode": {
+				group: "Row Mode",
+				module: "./rowmodes/{name}.qunit"
+			},
+			"VariableRowMode": {
+				group: "Row Mode",
+				module: "./rowmodes/{name}.qunit"
+			},
+
+			// Plugins
 			"MultiSelectionPlugin": {
 				group: "Plugins",
 				module: "./plugins/{name}.qunit",
