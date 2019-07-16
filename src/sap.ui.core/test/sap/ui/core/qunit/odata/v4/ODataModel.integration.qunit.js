@@ -16476,6 +16476,71 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Request side effects in a different batch group, and show the danger of pending
+	// changes.
+	// JIRA: CPOUI5UISERVICESV3-1921
+	QUnit.test("Request side effects in a different batch group", function (assert) {
+		var oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			oPromise,
+			sView = '\
+<FlexBox id="form" binding="{/SalesOrderList(\'42\')}">\
+	<Input id="note" value="{Note}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID", {
+				"@odata.etag" : "ETag",
+				Note : "Note",
+				SalesOrderID : "42"
+			})
+			.expectChange("note", "Note");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oInput = that.oView.byId("note");
+
+			that.expectChange("note", "User input");
+
+			oInput.getBinding("value").setValue("User input");
+
+			oPromise = oInput.getBindingContext().requestSideEffects([{
+					$PropertyPath : "Note"
+				}], "differentBatchGroup");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('42')?$select=Note", {
+					Note : "Side effect"
+				})
+				.expectChange("note", "Side effect"); // side effect wins over user input!
+
+			return Promise.all([
+				oPromise,
+				oModel.submitBatch("differentBatchGroup"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest({
+					headers : {"If-Match" : "ETag"},
+					method : "PATCH",
+					payload : {Note : "User input"},
+					url : "SalesOrderList('42')"
+				}, {
+					Note : "Server response",
+					SalesOrderID : "42"
+				})
+				.expectChange("note", "Server response");
+
+			return Promise.all([
+				oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Automatic retry of failed PATCHes, along the lines of
 	// MIT.SalesOrderCreateRelative.html, but with $auto group
 	[function () {
