@@ -229,6 +229,8 @@ sap.ui.define([
 			"sap.tnt.NavigationList",
 			"sap.ui.demokit.IndexLayout._Tile",
 			"sap.ui.layout.BlockLayoutRow",
+			"sap.ui.layout.form.ResponsiveGridLayoutPanel", // control not for stand alone usage. Only inside ResponsiveGridLayout
+			"sap.ui.layout.form.ResponsiveLayoutPanel", // control not for stand alone usage. Only inside ResponsiveLayout
 			"sap.ui.suite.TaskCircle",
 			"sap.ui.unified.calendar.TimesRow",
 			"sap.ui.unified.CalendarTimeInterval",
