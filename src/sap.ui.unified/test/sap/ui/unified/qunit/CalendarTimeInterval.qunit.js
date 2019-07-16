@@ -967,5 +967,30 @@ sap.ui.define([
 		oCalP.destroy();
 	});
 
+	QUnit.test("Custom data scenario", function(assert) {
+		// arrange
+		var oCTI = new CalendarTimeInterval("customDataCTI",{
+			intervalMinutes: 60
+		}),
+		oTimesRow = sap.ui.getCore().byId("customDataCTI").getAggregation("timesRow"),
+		oCustomData = sap.ui.getCore().getConfiguration().getFormatSettings().getCustomLocaleData();
+
+		oCustomData["timeFormats-short"] = "HHmm";
+		oTimesRow._oFormatTime = undefined;
+
+		// assert
+		assert.strictEqual(oTimesRow._getFormatTime().oFormatOptions["pattern"], "H", "The custom data's format is respected - H");
+
+		// act
+		oCustomData["timeFormats-short"] = "stringWithAcceptableLetterAtTheEndk";
+		oTimesRow._oFormatTime = undefined;
+
+		// assert
+		assert.strictEqual(oTimesRow._getFormatTime().oFormatOptions["pattern"], "k", "The custom data's format is respected - k");
+
+		// destroy
+		oCTI.destroy();
+	});
+
 	return waitForThemeApplied();
 });
