@@ -7,22 +7,25 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.Wizard.V",
+			"viewName": "sap.m.sample.Wizard.view.Wizard",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
-				"sap.ui.layout": {}
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
+				"sap.ui.unified": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"stretch": true,
 				"files": [
-					"V.view.xml",
-					"C.controller.js",
-					"ReviewPage.fragment.xml",
+					"view/Wizard.view.xml",
+					"controller/Wizard.controller.js",
+					"view/ReviewPage.fragment.xml",
 					"manifest.json"
 				]
 			}

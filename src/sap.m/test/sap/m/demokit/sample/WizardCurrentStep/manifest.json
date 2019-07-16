@@ -7,25 +7,28 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.WizardCurrentStep.V",
+			"viewName": "sap.m.sample.WizardCurrentStep.view.WizardCurrentStep",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
-				"sap.ui.layout": {}
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
+				"sap.ui.unified": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"stretch": true,
 				"files": [
-					"V.view.xml",
-					"Linear.view.xml",
-					"Linear.controller.js",
-					"Branching.view.xml",
-					"Branching.controller.js",
-					"C.controller.js",
+					"view/WizardCurrentStep.view.xml",
+					"view/Branching.view.xml",
+					"view/Linear.view.xml",
+					"controller/WizardCurrentStep.controller.js",
+					"controller/Branching.controller.js",
+					"controller/Linear.controller.js",
 					"manifest.json"
 				]
 			}

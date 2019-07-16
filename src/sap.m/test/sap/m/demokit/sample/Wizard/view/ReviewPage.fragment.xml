@@ -1,6 +1,5 @@
 <core:FragmentDefinition
 		height="100%"
-		xmlns:layout="sap.ui.layout"
 		xmlns:form="sap.ui.layout.form"
 		xmlns:core="sap.ui.core"
 		xmlns="sap.m">

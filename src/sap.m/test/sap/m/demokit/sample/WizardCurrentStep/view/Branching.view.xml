@@ -1,6 +1,6 @@
 <mvc:View
 	height="100%"
-	controllerName="sap.m.sample.WizardCurrentStep.Branching"
+	controllerName="sap.m.sample.WizardCurrentStep.controller.Branching"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<Wizard

@@ -7,12 +7,14 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.WizardBranching.V",
+			"viewName": "sap.m.sample.WizardBranching.view.WizardBranching",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
 				"sap.ui.layout": {}
 			}
 		},
@@ -20,9 +22,9 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"V.view.xml",
-					"C.controller.js",
-					"ReviewPage.fragment.xml",
+					"view/WizardBranching.view.xml",
+					"controller/WizardBranching.controller.js",
+					"view/ReviewPage.fragment.xml",
 					"manifest.json"
 				]
 			}

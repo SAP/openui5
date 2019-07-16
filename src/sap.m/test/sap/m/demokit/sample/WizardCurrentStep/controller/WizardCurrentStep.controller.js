@@ -1,13 +1,12 @@
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel',
 	"sap/m/MessageToast",
 	"sap/base/Log"
-], function(jQuery, Controller, JSONModel, MessageToast, Log) {
+], function (Controller, JSONModel, MessageToast, Log) {
 	"use strict";
 
-	var WizardController = Controller.extend("sap.m.sample.WizardCurrentStep.C", {
+	return Controller.extend("sap.m.sample.WizardCurrentStep.controller.WizardCurrentStep", {
 		onInit: function () {
 			this.linearWizard = this.byId("wizardViewLinear").byId("CreateProductWizard");
 			this.branchingWizard = this.byId("wizardViewBranching").byId("BranchingWizard");
@@ -17,9 +16,11 @@ sap.ui.define([
 			});
 			this.getView().setModel(this.model);
 		},
+
 		onCurrentStepChangeLinear: function (event) {
 			this.linearWizard.setCurrentStep(this.byId("wizardViewLinear").byId(event.getParameter("selectedItem").getKey()));
 		},
+
 		onCurrentStepChangeBranching: function (event) {
 			try {
 				this.branchingWizard.setCurrentStep(this.byId("wizardViewBranching").byId(event.getParameter("selectedItem").getKey()));
@@ -32,6 +33,4 @@ sap.ui.define([
 			}
 		}
 	});
-
-	return WizardController;
 });

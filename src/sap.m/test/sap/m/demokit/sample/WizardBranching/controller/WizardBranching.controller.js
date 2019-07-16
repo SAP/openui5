@@ -1,10 +1,9 @@
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel',
-	"sap/m/MessageToast",
-	"sap/m/MessageBox"
-], function(jQuery, Controller, JSONModel, MessageToast, MessageBox) {
+	"sap/m/MessageBox",
+	"sap/ui/core/Fragment"
+], function (Controller, JSONModel, MessageBox, Fragment) {
 	"use strict";
 
 	var history = {
@@ -12,17 +11,23 @@ sap.ui.define([
 		prevDiffDeliverySelect: null
 	};
 
-	var WizardController = Controller.extend("sap.m.sample.WizardBranching.C", {
+	return Controller.extend("sap.m.sample.WizardBranching.controller.WizardBranching", {
 		onInit: function () {
 			this._wizard = this.byId("ShoppingCartWizard");
 			this._oNavContainer = this.byId("wizardNavContainer");
 			this._oWizardContentPage = this.byId("wizardContentPage");
-			this._oWizardReviewPage = sap.ui.xmlfragment("sap.m.sample.WizardBranching.ReviewPage", this);
 
-			this._oNavContainer.addPage(this._oWizardReviewPage);
-			this.model = new sap.ui.model.json.JSONModel();
+			Fragment.load({
+				name: "sap.m.sample.WizardBranching.view.ReviewPage",
+				controller: this
+			}).then(function (oWizardReviewPage) {
+				this._oWizardReviewPage = oWizardReviewPage;
+				this._oNavContainer.addPage(this._oWizardReviewPage);
+			}.bind(this));
+
+			this.model = new JSONModel();
 			this.model.attachRequestCompleted(null, function () {
-				this.model.getData().ProductCollection.splice(5,this.model.getData().ProductCollection.length);
+				this.model.getData().ProductCollection.splice(5, this.model.getData().ProductCollection.length);
 				this.model.setProperty("/selectedPayment", "Credit Card");
 				this.model.setProperty("/selectedDeliveryMethod", "Standard Delivery");
 				this.model.setProperty("/differentDeliveryAddress", false);
@@ -36,6 +41,7 @@ sap.ui.define([
 			this.model.loadData(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
 			this.getView().setModel(this.model);
 		},
+
 		calcTotal: function () {
 			var data = this.model.getData().ProductCollection;
 			if (data) {
@@ -48,6 +54,7 @@ sap.ui.define([
 				this.model.setProperty("/ProductsTotalPrice", 0);
 			}
 		},
+
 		handleDelete: function (listItemBase) {
 			var listItem = listItemBase.mParameters.listItem;
 			var data = this.model.getData().ProductCollection;
@@ -64,42 +71,46 @@ sap.ui.define([
 				}
 			}
 		},
+
 		goToPaymentStep: function () {
 			var selectedKey = this.model.getProperty("/selectedPayment");
 
 			switch (selectedKey) {
-				case "Credit Card" :
+				case "Credit Card":
 					this.byId("PaymentTypeStep").setNextStep(this.getView().byId("CreditCardStep"));
 					break;
-				case "Bank Transfer" :
+				case "Bank Transfer":
 					this.byId("PaymentTypeStep").setNextStep(this.getView().byId("BankAccountStep"));
 					break;
-				case "Cash on Delivery" :
-					default:
+				case "Cash on Delivery":
+				default:
 					this.byId("PaymentTypeStep").setNextStep(this.getView().byId("CashOnDeliveryStep"));
 					break;
 			}
 		},
+
 		setPaymentMethod: function () {
 			this.setDiscardableProperty({
 				message: "Are you sure you want to change the payment type ? This will discard your progress.",
-				discardStep:this.byId("PaymentTypeStep"),
+				discardStep: this.byId("PaymentTypeStep"),
 				modelPath: "/selectedPayment",
 				historyPath: "prevPaymentSelect"
 			});
 		},
+
 		setDifferentDeliveryAddress: function () {
 			this.setDiscardableProperty({
 				message: "Are you sure you want to change the delivery address ? This will discard your progress",
-				discardStep:this.byId("BillingStep"),
+				discardStep: this.byId("BillingStep"),
 				modelPath: "/differentDeliveryAddress",
 				historyPath: "prevDiffDeliverySelect"
 			});
 		},
-		setDiscardableProperty : function (params) {
+
+		setDiscardableProperty: function (params) {
 			if (this._wizard.getProgressStep() !== params.discardStep) {
 				MessageBox.warning(params.message, {
-					actions:[MessageBox.Action.YES, MessageBox.Action.NO],
+					actions: [MessageBox.Action.YES, MessageBox.Action.NO],
 					onClose: function (oAction) {
 						if (oAction === MessageBox.Action.YES) {
 							this._wizard.discardProgress(params.discardStep);
@@ -113,6 +124,7 @@ sap.ui.define([
 				history[params.historyPath] = this.model.getProperty(params.modelPath);
 			}
 		},
+
 		billingAddressComplete: function () {
 			if (this.model.getProperty("/differentDeliveryAddress")) {
 				this.byId("BillingStep").setNextStep(this.getView().byId("DeliveryAddressStep"));
@@ -120,15 +132,19 @@ sap.ui.define([
 				this.byId("BillingStep").setNextStep(this.getView().byId("DeliveryTypeStep"));
 			}
 		},
-		handleWizardCancel : function () {
+
+		handleWizardCancel: function () {
 			this._handleMessageBoxOpen("Are you sure you want to cancel your purchase?", "warning");
 		},
-		handleWizardSubmit : function () {
+
+		handleWizardSubmit: function () {
 			this._handleMessageBoxOpen("Are you sure you want to submit your report?", "confirm");
 		},
+
 		backToWizardContent: function () {
 			this._oNavContainer.backToPage(this._oWizardContentPage.getId());
 		},
+
 		checkCreditCardStep: function () {
 			var cardName = this.model.getProperty("/CreditCard/Name") || "";
 			if (cardName.length < 3) {
@@ -137,6 +153,7 @@ sap.ui.define([
 				this._wizard.validateStep(this.byId("CreditCardStep"));
 			}
 		},
+
 		checkCashOnDeliveryStep: function () {
 			var firstName = this.model.getProperty("/CashOnDelivery/FirstName") || "";
 			if (firstName.length < 3) {
@@ -145,6 +162,7 @@ sap.ui.define([
 				this._wizard.validateStep(this.byId("CashOnDeliveryStep"));
 			}
 		},
+
 		checkBillingStep: function () {
 			var address = this.model.getProperty("/BillingAddress/Address") || "";
 			var city = this.model.getProperty("/BillingAddress/City") || "";
@@ -157,10 +175,12 @@ sap.ui.define([
 				this._wizard.validateStep(this.byId("BillingStep"));
 			}
 		},
+
 		completedHandler: function () {
 			this._oNavContainer.to(this._oWizardReviewPage);
 		},
-		_handleMessageBoxOpen : function (sMessage, sMessageBoxType) {
+
+		_handleMessageBoxOpen: function (sMessage, sMessageBoxType) {
 			MessageBox[sMessageBoxType](sMessage, {
 				actions: [MessageBox.Action.YES, MessageBox.Action.NO],
 				onClose: function (oAction) {
@@ -171,24 +191,31 @@ sap.ui.define([
 				}.bind(this)
 			});
 		},
+
 		_navBackToList: function () {
 			this._navBackToStep(this.byId("ContentsStep"));
 		},
+
 		_navBackToPaymentType: function () {
 			this._navBackToStep(this.byId("PaymentTypeStep"));
 		},
+
 		_navBackToCreditCard: function () {
 			this._navBackToStep(this.byId("CreditCardStep"));
 		},
+
 		_navBackToCashOnDelivery: function () {
 			this._navBackToStep(this.byId("CashOnDeliveryStep"));
 		},
+
 		_navBackToBillingAddress: function () {
 			this._navBackToStep(this.byId("BillingStep"));
 		},
+
 		_navBackToDeliveryType: function () {
 			this._navBackToStep(this.byId("DeliveryTypeStep"));
 		},
+
 		_navBackToStep: function (step) {
 			var fnAfterNavigate = function () {
 				this._wizard.goToStep(step);
@@ -199,6 +226,4 @@ sap.ui.define([
 			this._oNavContainer.to(this._oWizardContentPage);
 		}
 	});
-
-	return WizardController;
 });
