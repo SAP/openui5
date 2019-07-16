@@ -287,6 +287,21 @@ sap.ui.define(
 			}.bind(this), LIGHTBOX_OPEN_TIME);
 		});
 
+		QUnit.test('ACC error state', function(assert) {
+			var oImageContent = this.LightBox.getImageContent()[0],
+				done = assert.async();
+
+			oImageContent.setImageSrc("/");
+
+			sap.ui.getCore().applyChanges();
+			this.LightBox.open();
+
+			setTimeout(function () {
+				assert.ok(this.LightBox.getAggregation("_invisiblePopupText").getText().indexOf(this._oRB.getText('LIGHTBOX_IMAGE_ERROR_DETAILS')) > 0, "Error message is added to ACC info.");
+				done();
+			}.bind(this), 600);
+		});
+
 		QUnit.test('ESC should close LightBox', function(assert) {
 			// arrange
 			var done = assert.async();
