@@ -262,6 +262,8 @@ sap.ui.define([
 				if (oFormatOptions && oFormatOptions.source && oFormatOptions.source.pattern == "timestamp") {
 					// convert timestamp back to Date
 					oDate = new Date(oDate);
+				} else if (oFormatOptions && oFormatOptions.source && typeof oFormatOptions.source.pattern === "string") {
+					oDate = oBindingType.oInputFormat.parse(sValue);
 				}
 			} catch (e) {
 				// ignore, ParseException to be handled in ManagedObject.updateModelProperty()
@@ -305,6 +307,8 @@ sap.ui.define([
 			if (oFormatOptions && oFormatOptions.source && oFormatOptions.source.pattern == "timestamp") {
 				// convert Date to timestamp
 				oDate = oDate.getTime();
+			} else if (oBindingType.oOutputFormat) {
+				return oBindingType.oOutputFormat.format(oDate);
 			}
 
 			return oBindingType.formatValue(oDate, "string");
