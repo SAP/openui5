@@ -8,7 +8,7 @@
 		<content>
 			<VBox>
 				<items>
-					<Label text="Enter a search term, e.g. &quot;A&quot;, and see filtered list."/>
+					<Label text="Enter a search term, e.g. &quot;A&quot;, and see filtered list." labelFor="combobox1"/>
 					<ComboBox
 						id="combobox1"
 						showSecondaryValues= "true"

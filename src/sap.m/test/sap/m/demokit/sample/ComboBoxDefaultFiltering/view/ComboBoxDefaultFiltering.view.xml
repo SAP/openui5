@@ -8,8 +8,9 @@
 		<content>
 			<VBox>
 				<items>
-					<Label text="Enter a search term, e.g. &quot;A&quot;, and see filtered list."/>
+					<Label text="Enter a search term, e.g. &quot;A&quot;, and see filtered list." labelFor="idComboBox"/>
 					<ComboBox
+						id="idComboBox"
 						showSecondaryValues= "true"
 						items="{
 							path: '/CountriesCollection',
