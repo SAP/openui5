@@ -97,6 +97,8 @@ sap.ui.define(['sap/ui/core/Core', "sap/base/util/ObjectPath", "sap/base/Log", "
 		"sap.ui.documentation.sdk.controls.BorrowedList",
 		"sap.ui.documentation.sdk.controls.LightTable",
 		"sap.ui.layout.BlockLayoutRow",
+		"sap.ui.layout.form.ResponsiveGridLayoutPanel", // control not for stand alone usage. Only inside ResponsiveGridLayout
+		"sap.ui.layout.form.ResponsiveLayoutPanel", // control not for stand alone usage. Only inside ResponsiveLayout
 		"sap.ui.richtexteditor.RichTextEditor",
 		"sap.ui.richtexteditor.ToolbarWrapper",
 		"sap.ui.rta.AddElementsDialog",
