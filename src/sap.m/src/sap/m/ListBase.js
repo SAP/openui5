@@ -533,7 +533,7 @@ function(
 
 		// invalidate item navigation for desktop
 		if (Device.system.desktop) {
-			this._bItemNavigationInvalidated = true;
+			this._startItemNavigation(true);
 		}
 	};
 
@@ -1867,7 +1867,7 @@ function(
 		// if focus is not on the navigation items then only invalidate the item navigation
 		var oNavigationRoot = this.getNavigationRoot();
 		var iTabIndex = (sKeyboardMode == mKeyboardMode.Edit) ? -1 : 0;
-		if (bIfNeeded && !oNavigationRoot.contains(document.activeElement)) {
+		if (bIfNeeded && oNavigationRoot && !oNavigationRoot.contains(document.activeElement)) {
 			this._bItemNavigationInvalidated = true;
 			if (!oNavigationRoot.getAttribute("tabindex")) {
 				oNavigationRoot.tabIndex = iTabIndex;
@@ -1879,7 +1879,7 @@ function(
 		if (!this._oItemNavigation) {
 			this._oItemNavigation = new ItemNavigation();
 			this._oItemNavigation.setCycling(false);
-			this.addEventDelegate(this._oItemNavigation);
+			this.addDelegate(this._oItemNavigation);
 
 			// set the tab index of active items
 			this._setItemNavigationTabIndex(iTabIndex);

@@ -141,7 +141,7 @@ sap.ui.define([
 		if (!this._oPopin) {
 			this._oPopin = new TablePopin({
 				id: this.getId() + "-sub"
-			}).addEventDelegate({
+			}).addDelegate({
 				// handle the events of pop-in
 				ontouchstart: this.ontouchstart,
 				ontouchmove: this.ontouchmove,

@@ -15,6 +15,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ListBaseRenderer"],
 	 * @alias sap.m.ListRenderer
 	 */
 	var ListRenderer = Renderer.extend(ListBaseRenderer);
+	ListRenderer.apiVersion = 2;
 
 	return ListRenderer;
 

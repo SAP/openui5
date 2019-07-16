@@ -16,6 +16,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "./ListItemBaseRen
 	 * @namespace
 	 */
 	var DisplayListItemRenderer = Renderer.extend(ListItemBaseRenderer);
+	DisplayListItemRenderer.apiVersion = 2;
 
 	/**
 	 * Renders the HTML for the given control, using the provided
@@ -29,34 +30,36 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "./ListItemBaseRen
 	 *          rendered
 	 */
 	DisplayListItemRenderer.renderLIAttributes = function(rm, oLI) {
-		rm.addClass("sapMDLI");
+		rm.class("sapMDLI");
 	};
 
 	DisplayListItemRenderer.renderLIContent = function(rm, oLI) {
 
-		var isLabel = oLI.getLabel();
-
 		// List item label
-		if (isLabel) {
-			rm.write("<label for='" + oLI.getId() + "-value' class='sapMDLILabel'>");
-			rm.writeEscaped(oLI.getLabel());
-			rm.write("</label>");
+		var sLabel = oLI.getLabel();
+		if (sLabel) {
+			rm.openStart("label");
+			rm.attr("for", oLI.getId() + "-value");
+			rm.class("sapMDLILabel");
+			rm.openEnd();
+			rm.text(sLabel);
+			rm.close("label");
 		}
 
-		var isValue = oLI.getValue();
-		var sValueTextDir = oLI.getValueTextDirection();
-
 		// List item value
-		if (isValue) {
-			rm.write("<div id='" + oLI.getId() + "-value' class='sapMDLIValue'");
+		var sValue = oLI.getValue();
+		if (sValue) {
+			rm.openStart("div", oLI.getId() + "-value");
+			rm.class("sapMDLIValue");
 
+			var sValueTextDir = oLI.getValueTextDirection();
 			if (sValueTextDir != TextDirection.Inherit) {
-				rm.writeAttribute("dir", sValueTextDir.toLowerCase());
+				rm.attr("dir", sValueTextDir.toLowerCase());
 			}
 
-			rm.write(">");
-			rm.writeEscaped(oLI.getValue());
-			rm.write("</div>");
+			rm.openEnd();
+			rm.text(sValue);
+			rm.close("div");
 		}
 	};
 

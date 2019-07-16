@@ -16,6 +16,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "./ListItemBaseRen
 	 * @namespace
 	 */
 	var InputListItemRenderer = Renderer.extend(ListItemBaseRenderer);
+	InputListItemRenderer.apiVersion = 2;
 
 	/**
 	 * Renders the HTML for the given control, using the provided
@@ -29,37 +30,30 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "./ListItemBaseRen
 	 *          rendered
 	 */
 	InputListItemRenderer.renderLIAttributes = function(rm, oLI) {
-		rm.addClass("sapMILI");
+		rm.class("sapMILI");
 	};
 
 	InputListItemRenderer.renderLIContent = function(rm, oLI) {
 
-		var sLabel = oLI.getLabel();
-
 		// List item label
+		var sLabel = oLI.getLabel();
 		if (sLabel) {
-			var sLabelId = oLI.getId() + "-label",
-				sLabelDir = oLI.getLabelTextDirection();
+			rm.openStart("span", oLI.getId() + "-label");
+			rm.class("sapMILILabel");
 
-			rm.write('<span id="' + sLabelId + '" class="sapMILILabel"');
-
+			var sLabelDir = oLI.getLabelTextDirection();
 			if (sLabelDir !== TextDirection.Inherit) {
-				rm.writeAttribute("dir", sLabelDir.toLowerCase());
+				rm.attr("dir", sLabelDir.toLowerCase());
 			}
 
-			rm.write('>');
-			rm.writeEscaped(sLabel);
-			rm.write('</span>');
+			rm.openEnd();
+			rm.text(sLabel);
+			rm.close("span");
 		}
 
-		// List item input content
-		rm.write('<div class="sapMILIDiv sapMILI-CTX">');
-
-		oLI.getContent().forEach(function(oContent) {
-			rm.renderControl(oContent);
-		});
-
-		rm.write('</div>');
+		rm.openStart("div").class("sapMILIDiv").class("sapMILI-CTX").openEnd();
+		oLI.getContent().forEach(rm.renderControl, rm);
+		rm.close("div");
 	};
 
 
