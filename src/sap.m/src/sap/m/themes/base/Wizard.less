@@ -4,6 +4,7 @@
 /* ============================= */
 
 @_sap_m_Wizard_NavHeight: 4rem;
+@_sap_m_WizardStep_Animation_Duration: 0.4s;
 
 .sapMWizard {
 	height: 100%;
@@ -38,14 +39,16 @@
 		content: counter(steps-counter) ". ";
 	}
 
-	.sapMWizardNextButton {
+	.sapMWizardNextButtonHidden {
 		bottom: -3rem;
 		opacity: 0;
+		animation-name: hideWizardButton
 	}
 
 	.sapMWizardNextButtonVisible {
 		bottom: 0rem;
 		opacity: 1;
+		animation-name: showWizardButton
 	}
 
 	.sapMDialogSection {
@@ -53,24 +56,33 @@
 	}
 }
 
-html[data-sap-ui-animation='on'] .sapMWizardNextButton {
-	transition: 0.4s linear;
+html[data-sap-ui-animation='on'] .sapMWizardNextButtonVisible,
+html[data-sap-ui-animation='on'] .sapMWizardNextButtonVisible {
+	animation-timing-function: linear;
+	animation-duration: @_sap_m_WizardStep_Animation_Duration;
 }
 
-html.sap-desktop .sapMWizard .sapMWizardNextButton,
-html.sap-tablet .sapMWizard .sapMWizardNextButton {
+@keyframes showWizardButton {
+	from {opacity: 0; bottom: -3rem}
+	to {opacity: 1; bottom: 0rem}
+}
+
+@keyframes hideWizardButton {
+	from {opacity: 1; bottom: 0rem}
+	to {opacity: 0; bottom: -3rem}
+}
+
+html.sap-desktop .sapMWizard .sapMWizardNextButtonVisible,
+html.sap-tablet .sapMWizard .sapMWizardNextButtonVisible {
 	display: block;
 }
 
 html.sap-phone .sapMWizard {
-	.sapMWizardNextButton {
+	.sapMWizardNextButtonVisible {
 		position: fixed;
 		left: 50%;
 		-webkit-transform: translate(-50%, 0);
 		transform: translate(-50%, 0);
-	}
-
-	.sapMWizardNextButtonVisible {
 		bottom: 3rem;
 	}
 }

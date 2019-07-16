@@ -2,10 +2,11 @@
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/core/Core",
 	"sap/m/Wizard",
 	"sap/m/WizardStep",
 	"sap/ui/base/ObjectPool"
-], function(QUnitUtils, Wizard, WizardStep, ObjectPool) {
+], function(QUnitUtils, Core, Wizard, WizardStep, ObjectPool) {
 	var Log = sap.ui.require("sap/base/Log");
 
 
@@ -61,12 +62,12 @@ sap.ui.define([
 
 			this.oWizardSecondStep = this.oWizard.getSteps()[1];
 			this.oWizard.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			sinon.stub(ObjectPool.prototype, "returnObject", function () {
 			});
 
-			this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			this.oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 
 		},
 		afterEach: function () {
@@ -86,8 +87,8 @@ sap.ui.define([
 	QUnit.test("default text of finish button", function (assert) {
 		this.oWizard.nextStep();
 		this.oWizard.nextStep();
-		var text = this.oWizard._getNextButton().getText();
-		var sText = this.oResourceBundle.getText("WIZARD_FINISH");
+		var text = this.oWizard._getNextButtonText(),
+			sText = this.oResourceBundle.getText("WIZARD_FINISH");
 		assert.strictEqual(text, sText, "Default text of finish button should be equal to '" + sText + "'");
 	});
 
@@ -127,7 +128,7 @@ sap.ui.define([
 		});
 
 		tempWiz.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		var stepContainer = tempWiz.getDomRef("step-container");
 		tempWiz.nextStep();
 		tempWiz.destroy();
@@ -145,7 +146,7 @@ sap.ui.define([
 		oWizard._getNextStep();
 		oWizard.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oWizard.goToStep(oWizard.getSteps()[0]);
 
 		assert.ok(oSpy.returned(oWizard), "goToStep is executed");
@@ -157,7 +158,8 @@ sap.ui.define([
 		this.oWizard.setFinishButtonText("changed_finish");
 		this.oWizard.nextStep();
 		this.oWizard.nextStep();
-		var text = this.oWizard._getNextButton().getText();
+		var text = this.oWizard._getNextButtonText();
+
 		assert.strictEqual(text, "changed_finish", "Text of finish button should be equal to 'changed_finish'");
 	});
 
@@ -196,6 +198,9 @@ sap.ui.define([
 		this.oWizard._getNextButton().firePress();
 		this.oWizard.invalidateStep(this.oWizard._getStartingStep());
 		assert.ok(!this.oWizard.getSteps()[0].getValidated(), "Step should not be validated");
+		this.oWizard.invalidateStep(new WizardStep({}));
+
+		assert.strictEqual(this.oSpies.error.calledOnce, true, "Wizard should log an error if step does not exist in wizard");
 	});
 
 	QUnit.test("validateStep(step) should change the enablement of the button", function (assert) {
@@ -226,16 +231,21 @@ sap.ui.define([
 
 	QUnit.test("Click on next button should change the enable state of the button", function (assert) {
 		this.oWizard.invalidateStep(this.oWizard._getStartingStep());
-		var firstStepEnablement = this.oWizard._getNextButton().getEnabled();
+		this.clock.tick(500);
+
+		var firstStepVisibility = this.oWizard._getNextButton().getVisible();
 		this.oWizard._getNextButton().firePress();
-		assert.strictEqual(firstStepEnablement, false, "On the first step button should not be enabled");
-		assert.strictEqual(this.oWizard._getNextButton().getEnabled(), true, "On the second step button should be enabled");
+		this.clock.tick(500);
+
+		assert.strictEqual(firstStepVisibility, false, "On the first step button should not be visible");
+		assert.strictEqual(this.oWizard._getNextButton().getVisible(), true, "On the second step button should be visible");
 	});
 
 	QUnit.test("Click on next on lastStep should call complete", function (assert) {
 		this.oWizard._getNextButton().firePress();	//step2
 		this.oWizard._getNextButton().firePress();	//step3
 		this.oWizard._getNextButton().firePress(); //complete
+
 		assert.strictEqual(this.oSpies.onComplete.calledOnce, true, "OnComplete should be called");
 	});
 
@@ -243,7 +253,8 @@ sap.ui.define([
 		this.oWizard._getNextButton().firePress();	//step2
 		this.oWizard._getNextButton().firePress();	//step3
 		var sText = this.oResourceBundle.getText("WIZARD_FINISH");
-		assert.strictEqual(this.oWizard._getNextButton().getText(), sText, "Text should be changed to " + sText);
+
+		assert.strictEqual(this.oWizard._getNextButtonText(), sText, "Text should be changed to " + sText);
 	});
 
 	QUnit.test("Click on next button should change WizardStep visibility", function (assert) {
@@ -261,10 +272,12 @@ sap.ui.define([
 		assert.strictEqual(this.oParams.index, 2, "StepActivated() should be called with parameter=2");
 	});
 
-	QUnit.test("Next button should not be enabled on non validated step", function (assert) {
+	QUnit.test("Next button should not be visible on non validated step", function (assert) {
 		var oButton = this.oWizard._getNextButton();
 		this.oWizard.getSteps()[0].setValidated(false);
-		assert.ok(!oButton.getEnabled(), "Button should not be enabled");
+		this.clock.tick(500);
+
+		assert.ok(!oButton.getVisible(), "Button should not be visible");
 	});
 
 	QUnit.test("GetProgress() should return the progress of the wizard", function (assert) {
@@ -334,7 +347,7 @@ sap.ui.define([
 		var step0 = this.oWizard.getSteps()[0];
 		var domRefInit = step0.$()[0];
 		step0.setVisible(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.equal(step0.$()[0], domRefInit, "setVisible(false) of the wizardStep should not hide the step");
 	});
 
@@ -369,7 +382,7 @@ sap.ui.define([
 
 		// arrange
 		oWizard.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oNavigator = oWizard._getProgressNavigator();
 		oFirstStepRef = jQuery(oNavigator.$().find("li")[0]);
@@ -390,12 +403,12 @@ sap.ui.define([
 			steps: [oStep1]
 		});
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oWizard.removeAllSteps();
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oWizard.addStep(oStep1);
 
 		// assert
@@ -415,7 +428,7 @@ sap.ui.define([
 			steps: [oStep1]
 		});
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oWizard.removeAllSteps();
@@ -476,7 +489,7 @@ sap.ui.define([
 			});
 
 			this.oWizard.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			sinon.stub(ObjectPool.prototype, "returnObject", function () {
 			});
@@ -504,6 +517,10 @@ sap.ui.define([
 		var stepsAfterStep1 = progressNavigator.getStepCount();
 		assert.strictEqual(stepsAtStart, 1, "should be equal to 1 at start.");
 		assert.strictEqual(stepsAfterStep1, 3 , "should be equal to 3 after step1.");
+		this.oWizard.setCurrentStep(this.step3);
+		assert.strictEqual(progressNavigator.getStepCount(), 3 , "should be equal to 3.");
+		this.oWizard.setCurrentStep(this.step5);
+		assert.strictEqual(progressNavigator.getStepCount(), 3 , "should be equal to 3.");
 	});
 
 	QUnit.test("Discard after branching should reset progress navigator steps count", function (assert) {
@@ -536,7 +553,7 @@ sap.ui.define([
 		});
 
 		wizard.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(step1.getNextStep(), step2.getId(), "Step1's nextStep is not overwritten");
@@ -598,7 +615,7 @@ sap.ui.define([
 		});
 
 		oWiz.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var sectionWrapper = oWiz.$().find(".sapMWizardStepContainer")[0],
 			aChildren = Array.prototype.slice.call(sectionWrapper.children),
@@ -625,7 +642,7 @@ sap.ui.define([
 		});
 
 		oWiz.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(s3.getDomRef(), "Step3 is rendered.");
 		assert.ok(s2.getDomRef(), "Step2 is rendered.");
@@ -639,6 +656,13 @@ sap.ui.define([
 			that.step1.setNextStep(that.externalStep);
 			that.oWizard.nextStep();
 		}, "Should raise an error.");
+	});
+
+	QUnit.test("_getNextStep()", function (assert) {
+		var oProgressStep = this.oWizard._getNextStep(this.step1, -1);
+
+		// assert
+		assert.ok(oProgressStep === this.step1, "Reference to the starting step is returned.");
 	});
 
 	QUnit.module("Wizard ACC", {
@@ -661,9 +685,9 @@ sap.ui.define([
 			});
 
 			this.oWizard.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
-			this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			this.oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 
 		},
 		afterEach: function () {
@@ -677,28 +701,6 @@ sap.ui.define([
 		var sAriaLabel = jQuery(this.oWizard.getDomRef()).attr("aria-label");
 		var sWizardLabel = this.oResourceBundle.getText("WIZARD_LABEL");
 		assert.strictEqual(sAriaLabel, sWizardLabel, "Aria-label attribute of the wizard should be set to '" + sWizardLabel + "'");
-	});
-
-	QUnit.test("Wizard aria-label attribute", function (assert) {
-		var oWizardStep = this.oWizard.getSteps()[0],
-			oNextButton = this.oWizard._getNextButton();
-
-		this.oWizard.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-		this.clock.tick(0);
-
-		// assert
-		assert.ok(oWizardStep.getValidated(), "The step is validated.");
-		assert.strictEqual(oNextButton.$().attr("aria-hidden"), undefined, "The next button has no aria-hidden attribute for validated steps.");
-
-		// set-up
-		oWizardStep.setValidated(false);
-		sap.ui.getCore().applyChanges();
-		this.clock.tick(0);
-
-		// assert
-		assert.notOk(oWizardStep.getValidated(), "The step is not validated.");
-		assert.strictEqual(oNextButton.$().attr("aria-hidden"), "true", "The next button has aria-hidden=true for not validated steps.");
 	});
 
 	QUnit.test("WizardStep labelled-by reference number step and title", function (assert) {
@@ -717,14 +719,14 @@ sap.ui.define([
 		});
 
 		oWizard.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.ok(oSpy.calledWith(1), "The correct step position is forwarded to the wizard step.");
 
 		// set-up
 		oWizard.nextStep();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.ok(oSpy.calledWith(2), "The correct step position is forwarded to the wizard step.");
@@ -753,9 +755,9 @@ sap.ui.define([
 			});
 
 			this.oWizard.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
-			this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			this.oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 
 		},
 		afterEach: function () {
@@ -769,15 +771,15 @@ sap.ui.define([
 		var oNextButton = this.oWizard._getNextButton();
 
 		// assert
-		assert.strictEqual(oNextButton.getText(), this.oResourceBundle.getText("WIZARD_STEP") + " " + 2, "The next button's text is correct.");
+		assert.strictEqual(this.oWizard._getNextButtonText(), this.oResourceBundle.getText("WIZARD_STEP") + " " + 2, "The next button's text is correct.");
 
 		// act
 		oNextButton.$().tap();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		// assert
 		oNextButton = this.oWizard._getNextButton();
 		assert.strictEqual(this.oWizard.getProgressStep().getId(), this.oWizard.getSteps()[1].getId(), "The wizard has navigated to the next step on next button click.");
-		assert.strictEqual(oNextButton.getText(), this.oResourceBundle.getText("WIZARD_STEP") + " " + 3, "The next button's text is correct.");
+		assert.strictEqual(this.oWizard._getNextButtonText(), this.oResourceBundle.getText("WIZARD_STEP") + " " + 3, "The next button's text is correct.");
 	});
 
 	QUnit.test("Step rerendering on navigation", function (assert) {
@@ -786,19 +788,22 @@ sap.ui.define([
 		var oRenderingSpy =  sinon.spy(WizardStep.prototype, "onBeforeRendering");
 		// act
 		oNextButton.$().tap();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		// assert
 		assert.notOk(oRenderingSpy.called, "The wizard step should not be rerendered on navigation.");
 	});
 
 	QUnit.test("setShowNextButton(false)", function (assert) {
 		this.oWizard.setShowNextButton(false);
+		this.clock.tick(500);
+
 		var oNextButton = this.oWizard._getNextButton();
 
 		assert.notOk(oNextButton.getVisible(), "The next button for step 1 should be hidden.");
 		// act
 		this.oWizard.nextStep();
-		sap.ui.getCore().applyChanges();
+		this.clock.tick(500);
+
 		// assert
 		oNextButton = this.oWizard._getNextButton();
 		assert.notOk(oNextButton.getVisible(), "The next button for step 2 should be hidden.");
@@ -809,13 +814,14 @@ sap.ui.define([
 
 		// act
 		this.oWizard.setShowNextButton(false);
-		sap.ui.getCore().applyChanges();
+		this.clock.tick(500);
 
 		// assert
 		assert.notOk(this.oWizard._getNextButton().getVisible(), "The next button for step 1 should be hidden.");
 
 		// act
 		this.oWizard.nextStep();
+		this.clock.tick(500);
 		// assert
 		assert.notOk(this.oWizard._getNextButton().getVisible(), "The next button for step 2 should be hidden.");
 
@@ -829,7 +835,7 @@ sap.ui.define([
 
 		// act
 		oWizard.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		this.clock.tick(500);
 
 		// assert
 		assert.notOk(oWizard._getNextButton().getVisible(), "The next button for step 1 should be hidden.");
@@ -847,7 +853,7 @@ sap.ui.define([
 		// assert
 		this.oWizard.getSteps().forEach(function(oStep, iIndex){
 			if (iIndex === 0) {
-				assert.ok(oStep.getAggregation("_nextButton").$().hasClass("sapMWizardNextButtonVisible"), "The current step next button is visible.");
+				assert.ok(oStep.getAggregation("_nextButton").getVisible(), "The current step next button is visible.");
 			} else {
 				assert.notOk(oStep.$().hasClass("sapMWizardStepActivated"), "The discarded steps are hidden.");
 			}
@@ -870,12 +876,21 @@ sap.ui.define([
 		// assert
 		aWizardSteps.forEach(function(oStep, iIndex){
 			if (iIndex === 0) {
-				assert.ok(oStep.getAggregation("_nextButton").$().hasClass("sapMWizardNextButtonVisible"), "The current step next button is visible.");
+				assert.ok(oStep.getAggregation("_nextButton").getVisible(), "The current step next button is visible.");
 			} else {
 				assert.notOk(oStep.$().hasClass("sapMWizardStepActivated"), "The discarded steps are hidden.");
 			}
 		}, this);
 
 		assert.strictEqual(iInitialHeight, iHeightAfterDiscard, "Discarding progress doesn't change the height of the steps.");
+	});
+
+	QUnit.test("isStepFinal", function (assert) {
+
+		assert.strictEqual(this.oWizard.isStepFinal(), false, "The first step is not the final one");
+		this.oWizard.nextStep();
+		assert.strictEqual(this.oWizard.isStepFinal(), false, "The second step is not the final one");
+		this.oWizard.nextStep();
+		assert.strictEqual(this.oWizard.isStepFinal(), true, "The third step is the final one");
 	});
 });
