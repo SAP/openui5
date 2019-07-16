@@ -416,6 +416,15 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 			}
 		},
 
+		handleMoreLinkPress: function(oEvent) {
+			var oDate = oEvent.getParameter("date"),
+				oSinglePlanningCalendar = this.getView().byId("SPC1");
+
+			oSinglePlanningCalendar.setSelectedView(oSinglePlanningCalendar.getViews()[2]); // DayView
+
+			this.getView().getModel().setData({ startDate: oDate }, true);
+		},
+
 		handleEditButton: function () {
 			// The sap.m.Popover has to be closed before the sap.m.Dialog gets opened
 			this._oDetailsPopover.close();

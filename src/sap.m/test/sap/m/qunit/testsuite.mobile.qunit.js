@@ -1092,6 +1092,15 @@ sap.ui.define([
 					language: "en"
 				}
 			},
+			SinglePlanningCalendarMonthGrid: {
+				title: "QUnit Page for sap.m.SinglePlanningCalendarMonthGrid",
+				sinon: {
+					useFakeTimers: true
+				},
+				ui5: {
+					language: "en_GB"
+				}
+			},
 			SlideTile: {
 				title: "Test Page for sap.m.SlideTile",
 				qunit: {

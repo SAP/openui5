@@ -23,7 +23,8 @@ sap.ui.define([
 		'./SinglePlanningCalendarGridRenderer',
 		'sap/ui/Device',
 		'sap/ui/core/delegate/ItemNavigation',
-		"sap/ui/thirdparty/jquery"
+		"sap/ui/thirdparty/jquery",
+		'./PlanningCalendarLegend'
 	],
 	function (
 		SinglePlanningCalendarUtilities,
@@ -45,7 +46,8 @@ sap.ui.define([
 		SinglePlanningCalendarGridRenderer,
 		Device,
 		ItemNavigation,
-		jQuery
+		jQuery,
+		PlanningCalendarLegend
 	) {
 		"use strict";
 
@@ -1916,7 +1918,7 @@ sap.ui.define([
 				sFormattedEndDate = this._oFormatAriaApp.format(oAppointment.getEndDate()),
 				sAppInfo = sStartTime + ": " + sFormattedStartDate + "; " + sEndTime + ": " + sFormattedEndDate;
 
-			return sAppInfo + "; " + this._findCorrespondingLegendItem(this, oAppointment);
+			return sAppInfo + "; " + PlanningCalendarLegend.findLegendItemForItem(sap.ui.getCore().byId(this._sLegendId), oAppointment);
 		};
 
 		/**
@@ -2060,42 +2062,6 @@ sap.ui.define([
 				oRm.write("></div>");
 			}
 		});
-
-		/*
-		 * Finds the corresponding legend item to a given appointment.
-		 * @param {oControl}
-		 * @param {oSpecialItem} An appointment or a legend type
-		 * @returns {string} The matching legend item's default text.
-		 * @private
-		 */
-		SinglePlanningCalendarGrid.prototype._findCorrespondingLegendItem = function(oControl, oSpecialItem) {
-			var sLegendId = oControl._sLegendId,
-				oLegend = sap.ui.getCore().byId(sLegendId),
-				aLegendAppointments = oLegend ? oLegend.getAppointmentItems() : null,
-				aLegendItems = oLegend ? oLegend.getItems() : null,
-				bAppointmentItem = oSpecialItem instanceof CalendarAppointment,
-				aItems = bAppointmentItem ? aLegendAppointments : aLegendItems,
-				oItemType = bAppointmentItem ? oSpecialItem.getType() : oSpecialItem.type,
-				oItem,
-				sLegendItemText;
-
-			if (aItems && aItems.length) {
-				for (var i = 0; i < aItems.length; i++) {
-					oItem = aItems[i];
-					if (oItem.getType() === oItemType) {
-						sLegendItemText = oItem.getText();
-						break;
-					}
-				}
-			}
-
-			//if the special item's type is not present in the legend's items,
-			// the screen reader has to read it's type
-			if (!sLegendItemText) {
-				sLegendItemText = oItemType;
-			}
-			return sLegendItemText;
-		};
 
 		function _initItemNavigation(){
 			// Collect the dom references of the items

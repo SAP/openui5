@@ -46,6 +46,7 @@
 			appointmentDrop="handleAppointmentDrop"
 			appointmentResize="handleAppointmentResize"
 			appointmentCreate="handleAppointmentCreateDnD"
+			moreLinkPress="handleMoreLinkPress"
 			startDate="{path: '/startDate'}"
 			enableAppointmentsDragAndDrop="{settings>/enableAppointmentsDragAndDrop}"
 			enableAppointmentsResize="{settings>/enableAppointmentsResize}"
@@ -60,6 +61,7 @@
 				<SinglePlanningCalendarWeekView key="WeekView" title="Week" />
 				<SinglePlanningCalendarWorkWeekView key="WorkWeekView" title="Work Week" />
 				<SinglePlanningCalendarDayView key="DayView" title="Day" />
+				<SinglePlanningCalendarMonthView key="MonthView" title="Month" />
 			</views>
 			<appointments>
 				<unified:CalendarAppointment
