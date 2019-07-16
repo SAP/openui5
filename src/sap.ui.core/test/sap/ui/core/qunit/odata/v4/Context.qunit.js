@@ -813,44 +813,85 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bFailure) {
-		QUnit.test("delete: " + (bFailure ? "failure" : "success"), function (assert) {
-			var oBinding = {
-					checkSuspended : function () {}
-				},
-				oGroupLock = new _GroupLock(),
-				oModel = {
-					checkGroupId : function () {},
-					lockGroup : function () {},
-					reportError : function () {}
-				},
-				oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42),
-				oError = new Error();
+	QUnit.test("delete: success", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			aBindings = [
+				{removeCachesAndMessages : function () {}},
+				{removeCachesAndMessages : function () {}},
+				{removeCachesAndMessages : function () {}}
+			],
+			oGroupLock = new _GroupLock(),
+			oModel = {
+				checkGroupId : function () {},
+				getAllBindings : function () {},
+				lockGroup : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/Foo/Bar('42')", 42),
+			oPromise = Promise.resolve(),
+			that = this;
 
-			this.mock(oBinding).expects("checkSuspended").withExactArgs();
-			this.mock(oModel).expects("checkGroupId").withExactArgs("myGroup");
-			this.mock(oContext).expects("isTransient").withExactArgs()
-				// check before deletion and twice while reporting the error
-				.exactly(bFailure ? 3 : 1)
-				.returns(true);
-			this.mock(oModel).expects("lockGroup").withExactArgs("myGroup", true, oContext)
-				.returns(oGroupLock);
-			this.mock(oContext).expects("_delete").withExactArgs(sinon.match.same(oGroupLock))
-				.returns(bFailure ? Promise.reject(oError) : Promise.resolve());
-			if (bFailure) {
-				this.mock(oGroupLock).expects("unlock").withExactArgs(true);
-				this.mock(oModel).expects("reportError")
-					.withExactArgs("Failed to delete " + oContext, "sap.ui.model.odata.v4.Context",
-						oError);
-			}
+		this.mock(oModel).expects("checkGroupId").withExactArgs("myGroup");
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(true);
+		this.mock(oModel).expects("lockGroup").withExactArgs("myGroup", true, oContext)
+			.returns(oGroupLock);
+		this.mock(oContext).expects("_delete").withExactArgs(sinon.match.same(oGroupLock))
+			.returns(oPromise);
+		oPromise.then(function () {
+			that.mock(oModel).expects("getAllBindings").withExactArgs().returns(aBindings);
+			that.mock(aBindings[0]).expects("removeCachesAndMessages")
+				.withExactArgs("Foo/Bar('42')", true);
+			that.mock(aBindings[1]).expects("removeCachesAndMessages")
+				.withExactArgs("Foo/Bar('42')", true);
+			that.mock(aBindings[2]).expects("removeCachesAndMessages")
+				.withExactArgs("Foo/Bar('42')", true);
+		});
 
-			// code under test
-			return oContext.delete("myGroup").then(function () {
-				assert.notOk(bFailure);
-			}, function (oError0) {
-				assert.ok(bFailure);
-				assert.strictEqual(oError0, oError);
-			});
+		// code under test
+		return oContext.delete("myGroup").then(function () {
+			assert.ok(true);
+		}, function (oError0) {
+			assert.notOk(true);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("delete: failure", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			oError = new Error(),
+			oGroupLock = new _GroupLock(),
+			oModel = {
+				checkGroupId : function () {},
+				lockGroup : function () {},
+				reportError : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
+
+		this.mock(oModel).expects("checkGroupId").withExactArgs("myGroup");
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oContext).expects("isTransient").withExactArgs()
+			// check before deletion and twice while reporting the error
+			.exactly(3)
+			.returns(true);
+		this.mock(oModel).expects("lockGroup").withExactArgs("myGroup", true, oContext)
+			.returns(oGroupLock);
+		this.mock(oContext).expects("_delete").withExactArgs(sinon.match.same(oGroupLock))
+			.returns(Promise.reject(oError));
+		this.mock(oGroupLock).expects("unlock").withExactArgs(true);
+		this.mock(oModel).expects("reportError")
+			.withExactArgs("Failed to delete " + oContext, "sap.ui.model.odata.v4.Context",
+				oError);
+
+		// code under test
+		return oContext.delete("myGroup").then(function () {
+			assert.notOk(true);
+		}, function (oError0) {
+			assert.ok(true);
+			assert.strictEqual(oError0, oError);
 		});
 	});
 

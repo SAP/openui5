@@ -1980,97 +1980,106 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[undefined, "/~"].forEach(function (sResolvedPath) {
-		QUnit.test("removeCachesAndMessages: resolved path is " + sResolvedPath, function (assert) {
-			var oBinding = new ODataBinding({
-					oContext : {},
-					oModel : {
-						reportBoundMessages : function () {},
-						resolve : function () {}
-					},
-					sPath : "TEAM_2_EMPLOYEES"
-				});
+[{
+	mExpectedCacheByResourcePath : {},
+	aDeepPathsForReportBoundMessages : ["A/B(42)/C", "A/B(42)/CD", "A/B(43)/D"],
+	sPrefix : "A"
+}, {
+	mExpectedCacheByResourcePath : {
+		"A/B(42)/CD" : {
+			$deepResourcePath : "A/B(42)/CD"
+		},
+		"B(43)/D" : {
+			$deepResourcePath : "A/B(43)/D"
+		}
+	},
+	aDeepPathsForReportBoundMessages : ["A/B(42)/C"],
+	sPrefix : "A/B(42)/C"
+}, {
+	mExpectedCacheByResourcePath : {
+		"B(43)/D" : {
+			$deepResourcePath : "A/B(43)/D"
+		}
+	},
+	aDeepPathsForReportBoundMessages : ["A/B(42)/C", "A/B(42)/CD"],
+	sPrefix : "A/B(42)"
+}, {
+	mExpectedCacheByResourcePath : {},
+	aDeepPathsForReportBoundMessages : ["A/B(42)/C", "A/B(42)/CD", "A/B(43)/D"],
+	sPrefix : "A/B"
+}, {
+	mExpectedCacheByResourcePath : {},
+	aDeepPathsForReportBoundMessages : ["A/B(42)/C", "A/B(42)/CD", "A/B(43)/D"],
+	sPrefix : ""
+}].forEach(function (oFixture) {
+	[true, false, undefined].forEach(function (bCachesOnly) {
+	var sTitle = "removeCachesAndMessages: sPrefix=" + oFixture.sPrefix + ", bCachesOnly="
+			+ bCachesOnly;
 
-			this.mock(oBinding.oModel).expects("resolve")
-				.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
-				.returns(sResolvedPath);
-			if (sResolvedPath) {
-				this.mock(oBinding.oModel).expects("reportBoundMessages").withExactArgs("~", {});
-			}
-
-			// code under test
-			oBinding.removeCachesAndMessages();
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("removeCachesAndMessages: mCacheByResourcePath", function (assert) {
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = new ODataBinding({
-				mCacheByResourcePath : {
-					"bar" : {$deepResourcePath : "bar"},
-					"foo" : {$deepResourcePath : "foo"}
-				},
 				oContext : {},
 				oModel : {
 					reportBoundMessages : function () {},
 					resolve : function () {}
 				},
-				sPath : "TEAM_2_EMPLOYEES",
-				bRelative : true
+				sPath : {/*string*/}
 			}),
+			mCacheByResourcePath = {
+				"A/B(42)/C" : {
+					$deepResourcePath : "A/B(42)/C"
+				},
+				"A/B(42)/CD" : {
+					$deepResourcePath : "A/B(42)/CD"
+				},
+				"B(43)/D" : {
+					$deepResourcePath : "A/B(43)/D"
+				}
+			},
 			oModelMock = this.mock(oBinding.oModel);
 
-		oModelMock.expects("resolve")
-			.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext)).returns("/~");
-		oModelMock.expects("reportBoundMessages").withExactArgs("~", {});
-		oModelMock.expects("reportBoundMessages").withExactArgs("foo", {});
-		oModelMock.expects("reportBoundMessages").withExactArgs("bar", {});
+		oBinding.mCacheByResourcePath = undefined;
+		this.mock(oBinding.oModel).expects("resolve").exactly(bCachesOnly !== true ? 2 : 0)
+			.withExactArgs(sinon.match.same(oBinding.sPath), sinon.match.same(oBinding.oContext))
+			.returns("/~");
+		oModelMock.expects("reportBoundMessages").exactly(bCachesOnly !== true ? 2 : 0)
+			.withExactArgs("~", {});
 
 		// code under test
-		oBinding.removeCachesAndMessages("");
+		oBinding.removeCachesAndMessages(oFixture.sPrefix, bCachesOnly);
 
-		assert.deepEqual(oBinding.mCacheByResourcePath, {});
+		oBinding.mCacheByResourcePath = mCacheByResourcePath;
+		oFixture.aDeepPathsForReportBoundMessages.forEach(function (sDeepPath) {
+			oModelMock.expects("reportBoundMessages").exactly(bCachesOnly !== true ? 1 : 0)
+				.withExactArgs(sDeepPath, {});
+		});
+
+		// code under test
+		oBinding.removeCachesAndMessages(oFixture.sPrefix, bCachesOnly);
+
+		assert.deepEqual(oBinding.mCacheByResourcePath, oFixture.mExpectedCacheByResourcePath);
 	});
+	});
+});
 
 	//*********************************************************************************************
-	QUnit.test("removeCachesAndMessages: mCacheByResourcePath with dependent caches",
-			function (assert) {
+	QUnit.test("removeCachesAndMessages: with unresolved path", function (assert) {
 		var oBinding = new ODataBinding({
-				mCacheByResourcePath : {
-					"SalesOrderList('42')/SO_2_SOITEM" : {
-						$deepResourcePath : "SalesOrderList('42')/SO_2_SOITEM"
-					},
-					"SalesOrderList('23')/SO_2_SOITEM" : {
-						$deepResourcePath : "SalesOrderList('23')/SO_2_SOITEM"
-					},
-					"BusinessPartnerList('42')/BP_2_PRODUCT" : {
-						$deepResourcePath : "SalesOrderList('42')/SO_2_BP/BP_2_PRODUCT"
-					}
-				},
+				oContext : {},
 				oModel : {
 					reportBoundMessages : function () {},
 					resolve : function () {}
 				},
-				sPath : "SO_2_SOITEM"
-			}),
-			oModelMock = this.mock(oBinding.oModel);
+				sPath : "TEAM_2_EMPLOYEES"
+			});
 
-		oModelMock.expects("resolve")
+		this.mock(oBinding.oModel).expects("resolve")
 			.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
 			.returns(undefined);
-		oModelMock.expects("reportBoundMessages")
-			.withExactArgs("SalesOrderList('42')/SO_2_SOITEM", {});
-		oModelMock.expects("reportBoundMessages")
-			.withExactArgs("SalesOrderList('42')/SO_2_BP/BP_2_PRODUCT", {});
+		this.mock(oBinding.oModel).expects("reportBoundMessages").never();
 
 		// code under test
-		oBinding.removeCachesAndMessages("SalesOrderList('42')");
-
-		assert.deepEqual(oBinding.mCacheByResourcePath, {
-			"SalesOrderList('23')/SO_2_SOITEM" : {
-				$deepResourcePath : "SalesOrderList('23')/SO_2_SOITEM"
-			}
-		});
+		oBinding.removeCachesAndMessages("");
 	});
 
 	//*********************************************************************************************
