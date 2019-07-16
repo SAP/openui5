@@ -308,8 +308,22 @@ sap.ui.define([
 		assert(typeof aItemDomRefs === "object" && typeof aItemDomRefs.length === "number", "aItemDomRefs must be an array of DOM elements");
 		this.aItemDomRefs = aItemDomRefs;
 
-		if (this.iFocusedIndex > aItemDomRefs.length - 1) {
-			this.iFocusedIndex = aItemDomRefs.length - 1;
+		// recalculate focused index
+		if (this.iFocusedIndex > -1) {
+			var iItemsLength = aItemDomRefs.length;
+			if (this.iFocusedIndex > iItemsLength - 1) {
+				this.iFocusedIndex = iItemsLength - 1;
+			}
+
+			var oActiveElement = document.activeElement;
+			if (oActiveElement && oActiveElement != this.aItemDomRefs[this.iFocusedIndex]) {
+				for (var i = 0; i < iItemsLength; i++) {
+					if (oActiveElement == this.aItemDomRefs[i]) {
+						this.iFocusedIndex = i;
+						break;
+					}
+				}
+			}
 		}
 
 		// in nested ItemNavigation the tabindex must only be set if it's the focused item of the parent ItemNavigation
