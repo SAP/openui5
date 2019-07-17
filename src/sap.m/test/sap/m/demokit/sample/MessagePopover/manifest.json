@@ -7,21 +7,22 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.MessagePopover.V",
+			"viewName": "sap.m.sample.MessagePopover.view.MessagePopover",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
-				"sap.ui.layout": {}
+				"sap.m": {},
+				"sap.ui.core": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"stretch": true,
 				"files": [
-					"V.view.xml",
-					"C.controller.js",
+					"view/MessagePopover.view.xml",
+					"controller/MessagePopover.controller.js",
 					"manifest.json"
 				]
 			}

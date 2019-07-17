@@ -35,7 +35,7 @@ sap.ui.define([
 	});
 
 
-	return Controller.extend("sap.m.sample.MessagePopover.C", {
+	return Controller.extend("sap.m.sample.MessagePopover.controller.MessagePopover", {
 		onInit: function () {
 			// create any data and a model and set it to the view
 
