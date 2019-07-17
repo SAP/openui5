@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/util/MockServer",
 	"sap/m/Select",
+	"sap/ui/core/Core",
 	"sap/ui/core/Item",
 	"sap/ui/core/library",
 	"sap/ui/model/json/JSONModel",
@@ -36,6 +37,7 @@ sap.ui.define([
 		KeyCodes,
 		MockServer,
 		Select,
+		Core,
 		Item,
 		coreLibrary,
 		JSONModel,
@@ -500,7 +502,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(oSelect.getName(), "", 'Default name is ""');
@@ -899,7 +901,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
@@ -942,7 +944,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
@@ -1005,7 +1007,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
@@ -1048,7 +1050,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
@@ -1078,7 +1080,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(oSelect.getSelectedItem() === null);
@@ -1123,7 +1125,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
@@ -1166,7 +1168,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
@@ -1197,7 +1199,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
@@ -1245,7 +1247,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
@@ -1293,7 +1295,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
@@ -1336,7 +1338,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
@@ -1399,7 +1401,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
@@ -1442,7 +1444,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
@@ -1487,7 +1489,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
@@ -1518,7 +1520,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
@@ -1566,7 +1568,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
@@ -1614,7 +1616,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
@@ -1657,7 +1659,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
@@ -1681,7 +1683,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(oSelect.getSelectedItem() === null);
@@ -1724,7 +1726,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
@@ -1767,7 +1769,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
@@ -1810,7 +1812,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
@@ -1853,7 +1855,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
@@ -1900,7 +1902,7 @@ sap.ui.define([
 			oModel.setData(mData);
 			oSelect.setModel(oModel);
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(oSelect.getSelectedKey(), "GER");
@@ -1931,7 +1933,7 @@ sap.ui.define([
 			var oModel = new ODataModel(sUri, true);
 			oSelect.setModel(oModel);
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			this.clock.tick(100);
 
 			// assert
@@ -1965,7 +1967,7 @@ sap.ui.define([
 			var oModel = new ODataModel(sUri, true);
 			oSelect.setModel(oModel);
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			this.clock.tick(100);
 
 			// assert
@@ -2040,7 +2042,7 @@ sap.ui.define([
 			this.clock.tick(iAutoRespondAfter + 1);
 
 			// enforces an immediate update of the visible UI (aka "rendering")
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			oSelect.getBinding("items").filter(new Filter([
 				new Filter({
@@ -2096,7 +2098,7 @@ sap.ui.define([
 			oModel.setData(mData);
 			oSelect.setModel(oModel);
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(oSelect.getSelectedKey(), "CU");
@@ -2141,10 +2143,10 @@ sap.ui.define([
 			oModel.setData(mData);
 			oSelect.setModel(oModel);
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			mData.contries.shift();	// remove the first item of the model
 			oModel.setData(mData);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(oSelect.getSelectedKey(), "CU");
@@ -2192,7 +2194,7 @@ sap.ui.define([
 			var oModel = new JSONModel();
 
 			oModel.setData(mTestModelData);
-			sap.ui.getCore().setModel(oModel);
+			Core.setModel(oModel);
 
 			var oItemTemplate = new Item({
 				key: "{key}",
@@ -2210,7 +2212,7 @@ sap.ui.define([
 			oSelect.placeAt("content");
 			var oScrollToItemSpy = this.spy(oSelect, "scrollToItem");
 			oSelect.setSelectedKey("YE");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			oSelect.open();
 			this.clock.tick(1000);	// wait 1s after the open animation is completed
@@ -2231,7 +2233,7 @@ sap.ui.define([
 			var oModel = new JSONModel();
 
 			oModel.setData(mTestModelData);
-			sap.ui.getCore().setModel(oModel);
+			Core.setModel(oModel);
 
 			var oItemTemplate = new Item({
 				key: "{key}",
@@ -2251,7 +2253,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 			oSelect.focus();
 			oSelect.open();
@@ -2405,7 +2407,7 @@ sap.ui.define([
 			// Act - insert oItem3 at index 0 of the aggregation
 			oSelect.insertItem(oItem3, 0);
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// Current items list status should be
 			// oItem3.key = two [selected]
@@ -2439,7 +2441,7 @@ sap.ui.define([
 			// Act - insert oItem3 as last item in the aggregation
 			oSelect.insertItem(oItem3, 2);
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// Current items list status should be
 			// oItem1.key = one
@@ -2471,7 +2473,7 @@ sap.ui.define([
 				key: "two"
 			}), 2);
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// Current items list status should be
 			// oItem1.key = one
@@ -2504,7 +2506,7 @@ sap.ui.define([
 			// Act - insert oItem3 at index 0 of the aggregation
 			oSelect.addItem(oItem3);
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// Current items list status should be
 			// oItem1.key = one
@@ -2536,7 +2538,7 @@ sap.ui.define([
 				key: "two"
 			}));
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// Current items list status should be
 			// oItem1.key = one
@@ -2574,7 +2576,7 @@ sap.ui.define([
 			// Act - remove oItem1 from the aggregation
 			oSelect.removeItem(oItem1);
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// Current items list status should be
 			// oItem2.key = two [selected]
@@ -2612,7 +2614,7 @@ sap.ui.define([
 			// Act - insert oItem3 at index 0 of the aggregation
 			oSelect.removeItem(oItem1);
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// Current items list status should be
 			// oItem2.key = two [selected]
@@ -2641,11 +2643,11 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			oSelect.setName("select-name0");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(oSelect.$("input").attr("name"), "select-name0", 'The attribute name is "select-name0"');
@@ -2671,11 +2673,11 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			oSelect.setWidth("400px");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(oSelect.$().outerWidth() + "px", "400px");
@@ -2700,11 +2702,11 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			oSelect.setEnabled(false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(oSelect.$().hasClass(SelectRenderer.CSS_CLASS + "Disabled"), 'If the select control is disabled, it should have the CSS class "' + SelectRenderer.CSS_CLASS + "Disabled");
@@ -2725,7 +2727,7 @@ sap.ui.define([
 				});
 
 				this.oSelect.placeAt("content");
-				sap.ui.getCore().applyChanges();
+				Core.applyChanges();
 			},
 			afterEach: function () {
 				this.oSelect.destroy();
@@ -2737,7 +2739,7 @@ sap.ui.define([
 
 			// act
 			this.oSelect.setEditable(false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(this.oSelect.$().hasClass(SelectRenderer.CSS_CLASS + "Readonly"), 'If the select control is not editable, it should have the CSS class "' + SelectRenderer.CSS_CLASS + 'Readonly".');
@@ -2748,7 +2750,7 @@ sap.ui.define([
 			// act
 			this.oSelect.setEditable(false);
 			this.oSelect.setEnabled(false);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.notOk(this.oSelect.$().hasClass(SelectRenderer.CSS_CLASS + "Readonly"), 'If the select control is not editable and it is disabled, it should not have the CSS class "' + SelectRenderer.CSS_CLASS + 'Readonly".');
@@ -2821,14 +2823,14 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			var sWidth = oSelect.getDomRef().offsetWidth;
 
 			// act
 			oSelect.open();
 			this.clock.tick(1000);	// wait 1s after the open animation is completed
 			oSelect.setShowSecondaryValues(true);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(oSelect.getDomRef().offsetWidth > sWidth);
@@ -3131,7 +3133,7 @@ sap.ui.define([
 			assert.strictEqual(oSelect.getList().getSelectedKey(), "1");
 			assert.ok(fnSetSelectedItemSpy.returned(oSelect), 'sap.m.Select.prototype.setSelectedItem() returns this to allow method chaining');
 			assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.strictEqual(oSelect.$("label").text(), "");
 			assert.strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
@@ -3165,7 +3167,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			oSelect.setSelectedItem(oExpectedItem);
@@ -3213,7 +3215,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			oSelect.setSelectedItem(null);
@@ -3260,7 +3262,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			oSelect.open();
 			this.clock.tick(500);
@@ -3326,7 +3328,7 @@ sap.ui.define([
 			assert.ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			assert.strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
 			assert.strictEqual(oSelect.getList().getSelectedKey(), "1");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.strictEqual(oSelect.$("label").text(), "");
 			assert.strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
@@ -3360,7 +3362,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			oSelect.setSelectedItemId("item-id");
@@ -3408,7 +3410,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			oSelect.setSelectedItemId("");
@@ -3455,7 +3457,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			oSelect.open();
 			this.clock.tick(500);
@@ -3487,7 +3489,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assertions
 			assert.ok(oSelect.getSelectedItem() === null);
@@ -3533,7 +3535,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
@@ -3585,7 +3587,7 @@ sap.ui.define([
 			assert.strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
 			assert.strictEqual(oSelect.getList().getSelectedKey(), "1");
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.strictEqual(oSelect.$("label").text(), "item 1");
 			assert.strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
@@ -3619,7 +3621,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			var fnSetPropertySpy = this.spy(SelectList.prototype, "setProperty"),
 				fnSetAssociationSpy = this.spy(SelectList.prototype, "setAssociation"),
@@ -3677,7 +3679,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			oSelect.setSelectedKey("");
@@ -3724,7 +3726,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			oSelect.open();
 			this.clock.tick(500);
@@ -3787,12 +3789,12 @@ sap.ui.define([
 					new ListItem({
 						key: "2",
 						text: "Second item",
-						icon: "sap-icon//competitor"
+						icon: "sap-icon://competitor"
 					})
 				]
 			});
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			oSelect.setSelectedItem(null);
@@ -3811,7 +3813,7 @@ sap.ui.define([
 			this.clock.tick();
 			assert.strictEqual(oSelect.$("label").find(".sapMSelectListItemText").text(), "Second item", "text placeholder was filled right");
 			assert.strictEqual(oSelect.$("label").find("[id*=-labelIcon]").hasClass("sapMSelectListItemIcon"), true, "icon placeholder was filled right");
-			assert.strictEqual(oSelect._getValueIcon().getSrc(), "sap-icon//competitor", "icon was set right");
+			assert.strictEqual(oSelect._getValueIcon().getSrc(), "sap-icon://competitor", "icon was set right");
 
 			oSelect.setSelectedKey("1");
 			this.clock.tick();
@@ -3840,13 +3842,13 @@ sap.ui.define([
 					new ListItem({
 						key: "2",
 						text: "Second item",
-						icon: "sap-icon//competitor"
+						icon: "sap-icon://competitor"
 					})
 				]
 			});
 
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			oSelect.destroy();
@@ -3892,9 +3894,9 @@ sap.ui.define([
 			};
 
 			oModel.setData(mData);
-			sap.ui.getCore().setModel(oModel);
+			Core.setModel(oModel);
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(oSelect.getSelectedKey(), "AR");
@@ -3943,9 +3945,9 @@ sap.ui.define([
 			};
 
 			oModel.setData(mData);
-			sap.ui.getCore().setModel(oModel);
+			Core.setModel(oModel);
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act - focus, change the selection while focused, then blur
 			oSelect.focus();
@@ -3975,7 +3977,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			oModel = new JSONModel();
 			oModel.setData("text");
@@ -4005,7 +4007,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			var CSS_CLASS = oSelect.getRenderer().CSS_CLASS;
 
 			// assert
@@ -4027,7 +4029,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			var CSS_CLASS = oSelect.getRenderer().CSS_CLASS;
 
 			// act
@@ -4054,7 +4056,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			var CSS_CLASS = oSelect.getRenderer().CSS_CLASS;
 
 			// act
@@ -4084,7 +4086,7 @@ sap.ui.define([
 			oWarningSelect.placeAt("content");
 			oErrorSelect.placeAt("content");
 			oInformationSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(oSuccessSelect.$().attr("aria-labelledby").split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_SUCCESS")) > -1, "success select is labelled by invisible text");
@@ -4132,7 +4134,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(oSelect.$().attr("title"), "lorem ipsum");
@@ -4167,7 +4169,7 @@ sap.ui.define([
 			oWarningSelect.placeAt("content");
 			oErrorSelect.placeAt("content");
 			oInformationSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(oSuccessSelect.$().attr("title"), sSampleText, "select title attribute is correct");
@@ -4280,10 +4282,10 @@ sap.ui.define([
 			};
 
 			oModel.setData(mData);
-			sap.ui.getCore().setModel(oModel);
+			Core.setModel(oModel);
 			oSelect.placeAt("content");
 			var oSelectedItem = oSelect.getItemByKey("8");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			oSelect.removeItem(8);
@@ -4352,14 +4354,14 @@ sap.ui.define([
 			};
 
 			oModel.setData(mData);
-			sap.ui.getCore().setModel(oModel);
+			Core.setModel(oModel);
 
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			oSelect.removeItem(0);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(oSelect.getSelectedItem().getId(), oSelect.getSelectedItemId());
@@ -4390,11 +4392,11 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			oSelect.removeItem(0);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(oSelect.getSelectedKey(), "");
@@ -4439,7 +4441,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			var fnRemoveAllItemsSpy = this.spy(oSelect, "removeAllItems");
 			var fnRemoveAllAggregationSpy = this.spy(oSelect.getList(), "removeAllAggregation");
 			var fnListRemoveAllItemsSpy = this.spy(oSelect.getList(), "removeAllItems");
@@ -4478,12 +4480,12 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			oSelect.removeAllItems();
 			oSelect.invalidate();
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(oSelect.$("label").text(), "");
@@ -4521,7 +4523,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			var fnDestroyItemsSpy = this.spy(oSelect, "destroyItems");
 
 			// act
@@ -4575,7 +4577,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			oSelect.open();
@@ -4620,7 +4622,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			document.documentElement.style.overflow = "hidden"; // hide scrollbar during test
 
 			// act
@@ -4666,7 +4668,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			oSelect.open();
@@ -4705,14 +4707,14 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			oSelect.open();
 			this.clock.tick(500);
 
 			// act
 			oSelect.rerender();
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(oSelect.hasStyleClass(SelectRenderer.CSS_CLASS + "Pressed"));
@@ -4741,7 +4743,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			oSelect.open();
@@ -4788,7 +4790,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			document.documentElement.style.overflow = "hidden"; // hide scrollbar during test
 
 			// act
@@ -4844,7 +4846,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			var oFirstEnabledItem = oSelect.findFirstEnabledItem(aItems);
@@ -4885,7 +4887,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			var oFirstEnabledItem = oSelect.findFirstEnabledItem(aItems);
@@ -4904,7 +4906,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			var oFirstEnabledItem = oSelect.findFirstEnabledItem([]);
@@ -4947,7 +4949,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			var oLastEnabledItem = oSelect.findLastEnabledItem(aItems);
@@ -4988,7 +4990,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			var oLastEnabledItem = oSelect.findLastEnabledItem(aItems);
@@ -5007,7 +5009,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			var oLastEnabledItem = oSelect.findLastEnabledItem([]);
@@ -5365,7 +5367,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			var oItem = oSelect.getItemAt(2),
@@ -5408,7 +5410,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			var oItem = oSelect.getFirstItem();
@@ -5427,7 +5429,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			var oExpectedItem = oSelect.getFirstItem();
@@ -5468,7 +5470,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			var oItem = oSelect.getLastItem();
@@ -5487,7 +5489,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			var oItem = oSelect.getLastItem();
@@ -5530,7 +5532,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			var oItem0 = oSelect.getItemByKey("0"),
@@ -5604,12 +5606,12 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			var fnDestroySpy = this.spy(oSelect.getValueStateMessage(), "destroy");
 
 			// act
 			oSelect.destroy();
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(oSelect.getItems().length, 0);
@@ -5647,14 +5649,14 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			oSelect.open();
 			this.clock.tick(1000);
 
 			// act
 			oSelect.destroy();
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(oSelect.getItems().length, 0);
@@ -5682,7 +5684,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			var fnAddAggregationSpy = this.spy(oSelect, "addAggregation");
 			var fnInvalidateSpy = this.spy(oSelect, "invalidate");
 
@@ -5709,7 +5711,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			var fnAddAggregationSpy = this.spy(oSelect, "addAggregation");
 			var fnInvalidateSpy = this.spy(oSelect, "invalidate");
 
@@ -5826,7 +5828,7 @@ sap.ui.define([
 			oModel.setData(mData);
 			oSelect.setModel(oModel);
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			oSelect.updateItems("change");
 
@@ -5861,7 +5863,7 @@ sap.ui.define([
 			// arrange
 			oLabel.placeAt("content");
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			aActualAriaLabelledByIDs = oSelect.$().attr("aria-labelledby").split(" ");
@@ -6359,11 +6361,11 @@ sap.ui.define([
 			oModel.setData(mData);
 			oSelect.setModel(oModel);
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			oSelect.updateAggregation("items");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(oSelect.getSelectedKey(), "CU");
@@ -6671,7 +6673,7 @@ sap.ui.define([
 			oSelect6.placeAt("content");
 			oSelect7.placeAt("content");
 			oSelect8.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			aSelects.forEach(function (oSelect) {
@@ -6757,7 +6759,7 @@ sap.ui.define([
 			oSel4.placeAt("content");
 			oSel5.placeAt("content");
 			oSel6.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// Assert
 			assert.equal(oSel1.$().hasClass("sapMSltMinWidth"), true, 'The select has min-width');
@@ -6804,7 +6806,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			qutils.triggerTouchEvent("touchstart", oSelect.getDomRef(), {
@@ -6860,7 +6862,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			qutils.triggerTouchEvent("touchstart", oSelect.getDomRef(), {
@@ -6931,7 +6933,7 @@ sap.ui.define([
 				fnOpenSpy;
 
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			qutils.triggerTouchEvent("touchstart", oSelect.getDomRef(), {
 				touches: {
@@ -6997,7 +6999,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			oSelect.open();
 
@@ -7024,7 +7026,7 @@ sap.ui.define([
 
 				// arrange
 				oSelect.placeAt("content");
-				sap.ui.getCore().applyChanges();
+				Core.applyChanges();
 				oSelect.focus();
 
 				// act
@@ -7121,7 +7123,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 
@@ -7158,7 +7160,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 
 			// act
@@ -7197,7 +7199,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 
 			// act
@@ -7233,7 +7235,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 
 			// act
@@ -7275,7 +7277,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 
 			// act
@@ -7327,7 +7329,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 
 			// act
@@ -7372,7 +7374,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 
 			// act
@@ -7410,7 +7412,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 
 			// act
@@ -7451,7 +7453,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 
 			// act
@@ -7493,7 +7495,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 
 			// act
@@ -7528,7 +7530,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			var fnShowSpy = this.spy(oSelect, "onsapshow");
 			var sOpenState = !jQuery.support.cssAnimations ? OpenState.OPEN : OpenState.OPENING;	// no animation on ie9
@@ -7564,7 +7566,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			var fnShowSpy = this.spy(oSelect, "onsapshow");
 			var sOpenState = !jQuery.support.cssAnimations ? OpenState.OPEN : OpenState.OPENING;	// no animation on ie9
@@ -7600,7 +7602,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			var fnShowSpy = this.spy(oSelect, "onsapshow");
 			var sOpenState = !jQuery.support.cssAnimations ? OpenState.CLOSED : OpenState.CLOSING;	// no animation on ie9
@@ -7636,7 +7638,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			var fnShowSpy = this.spy(oSelect, "onsapshow");
 			var sOpenState = !jQuery.support.cssAnimations ? OpenState.CLOSED : OpenState.CLOSING;	// no animation on ie9
@@ -7674,7 +7676,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			var fnHideSpy = this.spy(oSelect, "onsaphide");
 			var sOpenState = !jQuery.support.cssAnimations ? OpenState.OPEN : OpenState.OPENING;	// no animation on ie9
@@ -7710,7 +7712,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			var fnHideSpy = this.spy(oSelect, "onsaphide");
 			var sOpenState = !jQuery.support.cssAnimations ? OpenState.CLOSED : OpenState.CLOSING;	// no animation on ie9
@@ -7748,7 +7750,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 
@@ -7783,7 +7785,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			oSelect.open();
 			this.clock.tick(1000);
@@ -7818,7 +7820,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			oSelect.open();
 			this.clock.tick(1000);	// wait 1s after the open animation is completed
@@ -7854,7 +7856,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 
 			// act
@@ -7889,7 +7891,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			var fnEscapeSpy = this.spy(oSelect, "onsapescape");
 			var fnCloseSpy = this.spy(oSelect, "close");
@@ -7924,7 +7926,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			oSelect.open();
 			this.clock.tick(1000);
@@ -7962,7 +7964,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			oSelect.open();
 			this.clock.tick(1000);	// wait 1s after the open animation is completed
@@ -8000,7 +8002,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			var fnEnterSpy = this.spy(oSelect, "onsapenter");
 			var fnCloseSpy = this.spy(oSelect, "close");
@@ -8035,7 +8037,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);	// change the selection
 			var fnFireChangeSpy = this.spy(oSelect, "fireChange");
@@ -8079,7 +8081,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			var fnKeyDownSpy = this.spy(oSelect, "onsapdown");
 			var fnFireChangeSpy = this.spy(oSelect, "fireChange");
@@ -8130,7 +8132,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			var fnKeyDownSpy = this.stub(oSelect, "onsapdown");
 			var fnFireChangeSpy = this.spy(oSelect, "fireChange");
@@ -8182,7 +8184,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			var fnKeyDownSpy = this.spy(oSelect, "onsapdown");
 			var fnFireChangeSpy = this.spy(oSelect, "fireChange");
@@ -8221,7 +8223,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			oSelect.open();
 			this.clock.tick(1000);	// wait after the open animation is completed and the list is rendered
@@ -8285,7 +8287,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 
@@ -8313,7 +8315,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 
@@ -8340,12 +8342,12 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			oSelect.getFocusDomRef().blur();
 			oSelect.removeAllItems();
 			oSelect.addItem(new Item());
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 
@@ -8414,12 +8416,12 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
 			oSelect.rerender();
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			oSelect.getFocusDomRef().blur();
@@ -8442,7 +8444,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			var fnFireChangeSpy = this.spy(oSelect, "fireChange");
 
@@ -8480,7 +8482,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			oSelect.open();
 			this.clock.tick(1000); // wait after the open animation is completed and the list is rendered
@@ -8541,7 +8543,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			var fnKeyUpSpy = this.spy(oSelect, "onsapup");
 			var fnFireChangeSpy = this.spy(oSelect, "fireChange");
@@ -8592,7 +8594,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			var fnKeyUpSpy = this.spy(oSelect, "onsapup");
 			var fnFireChangeSpy = this.spy(oSelect, "fireChange");
@@ -8646,7 +8648,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			var fnKeyUpSpy = this.stub(oSelect, "onsapup");
 			var fnFireChangeSpy = this.spy(oSelect, "fireChange");
@@ -8689,7 +8691,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			oSelect.open();
 			this.clock.tick(1000);	// wait after the open animation is completed and the list is rendered
@@ -8747,7 +8749,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			var fnKeyHomeSpy = this.spy(oSelect, "onsaphome");
 			var fnFireChangeSpy = this.spy(oSelect, "fireChange");
@@ -8811,7 +8813,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			var fnKeyHomeSpy = this.spy(oSelect, "onsaphome");
 			var fnFireChangeSpy = this.spy(oSelect, "fireChange");
@@ -8875,7 +8877,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			var fnKeyHomeSpy = this.spy(oSelect, "onsaphome");
 			var fnFireChangeSpy = this.spy(oSelect, "fireChange");
@@ -8926,7 +8928,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			oSelect.open();
 			this.clock.tick(1000);	// wait after the open animation is completed
@@ -8980,7 +8982,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			var fnKeyEndSpy = this.spy(oSelect, "onsapend");
 			var fnFireChangeSpy = this.spy(oSelect, "fireChange");
@@ -9041,7 +9043,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			var fnKeyEndSpy = this.spy(oSelect, "onsapend");
 			var fnFireChangeSpy = this.spy(oSelect, "fireChange");
@@ -9082,7 +9084,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			oSelect.open();
 			this.clock.tick(1000);	// wait after the open animation is completed
@@ -9113,7 +9115,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 
 			// act
@@ -9143,7 +9145,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 
 			// act
@@ -9172,7 +9174,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			oSelect.open();
 
@@ -9210,7 +9212,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			oSelect.open();
 
@@ -9260,7 +9262,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(oSelect.$("label").attr("dir"), "rtl", "Dir attribute is rendered and is set to 'rtl'");
@@ -9287,7 +9289,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(oSelect.$("label").attr("dir"), "ltr", "Dir attribute is rendered and is set to 'ltr'");
@@ -9315,7 +9317,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			var $SelectLabel = oSelect.$("label");
@@ -9346,7 +9348,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			var $SelectLabel = oSelect.$("label");
@@ -9371,7 +9373,7 @@ sap.ui.define([
 			];
 
 			var oIconOnlySelect = new Select("iconOnlySelect", {
-				icon: "sap-icon//search",
+				icon: "sap-icon://search",
 				type: "IconOnly",
 				items: aItems
 			});
@@ -9382,7 +9384,7 @@ sap.ui.define([
 
 			oIconOnlySelect.placeAt("content");
 			oStandardSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			assert.strictEqual(document.getElementById("iconOnlySelect-label").innerHTML, "", "No label text is rendered for IconOnly select");
 			assert.strictEqual(oIconOnlySelect.$().attr("aria-labelledby"), undefined, "IconOnly select should not have aria-labelledby attribute");
@@ -9390,7 +9392,7 @@ sap.ui.define([
 			assert.strictEqual(oStandardSelect.$().attr("aria-labelledby"), "standardSelect-label", "Standard select should be labelled by its label");
 
 			oStandardSelect.setType("IconOnly");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.strictEqual(oStandardSelect.$().attr("aria-labelledby"), undefined, "Select set to IconOnly should not have aria-labelledby attribute");
 
 			oIconOnlySelect.destroy();
@@ -9413,7 +9415,7 @@ sap.ui.define([
 			assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 
 			assert.strictEqual(oInfo.role, "button", "AriaRole");
-			assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
+			assert.strictEqual(oInfo.type, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
 			assert.strictEqual(oInfo.description, "Tooltip", "Description");
 			assert.strictEqual(oInfo.focusable, true, "Focusable");
 			assert.strictEqual(oInfo.enabled, true, "Enabled");
@@ -9423,20 +9425,20 @@ sap.ui.define([
 			var oIconInfo = IconPool.getIconInfo(oSelect.getIcon());
 			oInfo = oSelect.getAccessibilityInfo();
 			assert.strictEqual(oInfo.role, "button", "AriaRole");
-			assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
+			assert.strictEqual(oInfo.type, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
 			assert.strictEqual(oInfo.description, oIconInfo && oIconInfo.text ? oIconInfo.text : "", "Description");
 
 			oSelect.setType("Default");
 			oInfo = oSelect.getAccessibilityInfo();
 			assert.strictEqual(oInfo.role, "combobox", "AriaRole");
-			assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_COMBO"), "Type");
+			assert.strictEqual(oInfo.type, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_COMBO"), "Type");
 			assert.strictEqual(oInfo.description, "Item1", "Description");
 			assert.strictEqual(oInfo.readonly, false, "Editable");
 
 			oSelect.setSelectedKey("Item2");
 			oInfo = oSelect.getAccessibilityInfo();
 			assert.strictEqual(oInfo.role, "combobox", "AriaRole");
-			assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_COMBO"), "Type");
+			assert.strictEqual(oInfo.type, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_COMBO"), "Type");
 			assert.strictEqual(oInfo.description, "Item2", "Description");
 
 			oSelect.setEditable(false);
@@ -9452,7 +9454,7 @@ sap.ui.define([
 
 			oEnabledSelect.placeAt("content");
 			oDisabledSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// Assertion
 			assert.strictEqual(oEnabledSelect.$().attr("aria-disabled"), "false", "Enabled Select isn't indicated as disabled");
@@ -9480,7 +9482,7 @@ sap.ui.define([
 			});
 
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			$oLabel = oSelect.$("label");
 			assert.strictEqual($oLabel.attr("aria-live"), "polite", "aria-live is correctly set before opening the popover");
@@ -9513,7 +9515,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			oSelect.focus();
@@ -9548,7 +9550,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			this.clock.tick(101);
 			oSelect.open();
@@ -9577,7 +9579,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			oSelect.openValueStateMessage();
@@ -9610,7 +9612,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			this.clock.tick(101);
 
@@ -9645,7 +9647,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oSelect.focus();
 			this.clock.tick(101);
 
@@ -9671,7 +9673,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			oSelect.openValueStateMessage();
@@ -9707,7 +9709,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			oSelect.focus();
@@ -9738,7 +9740,7 @@ sap.ui.define([
 
 			// arrange
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			oSelect.focus();
@@ -9766,7 +9768,7 @@ sap.ui.define([
 			// arrange
 			oSelect._bValueStateMessageOpened = true;
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			bShouldOpenValueStateMessage = oSelect.shouldValueStateMessageBeOpened();
@@ -9815,7 +9817,7 @@ sap.ui.define([
 					]
 				}).placeAt("content");
 
-				sap.ui.getCore().applyChanges();
+				Core.applyChanges();
 			},
 			afterEach: function () {
 				this.oSelect.destroy();
@@ -9845,7 +9847,7 @@ sap.ui.define([
 		QUnit.module("Hidden input element", {
 			beforeEach: function () {
 				this.oSelect = new Select().placeAt("content");
-				sap.ui.getCore().applyChanges();
+				Core.applyChanges();
 
 				this.$oHiddenInputRef = this.oSelect.$("hiddenInput");
 			},
@@ -9903,7 +9905,7 @@ sap.ui.define([
 			});
 
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			var oValueIcon = oSelect._getValueIcon();
 
@@ -9942,7 +9944,7 @@ sap.ui.define([
 					]
 				}).placeAt("content");
 
-				sap.ui.getCore().applyChanges();
+				Core.applyChanges();
 			},
 			afterEach: function () {
 				this.oSelect.destroy();
@@ -10086,7 +10088,7 @@ sap.ui.define([
 			this.clock.tick(1000);
 
 			oWarningSelect.setValueStateText(sChangedWarningText);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			oWarningSelect.open();
 			this.clock.tick(1000);

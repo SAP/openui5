@@ -19,7 +19,9 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 		 * Select renderer.
 		 * @namespace
 		 */
-		var SelectRenderer = {};
+		var SelectRenderer = {
+			apiVersion: 2
+		};
 
 		/**
 		 * CSS class to be applied to the HTML root element of the Select control.
@@ -45,62 +47,59 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				bSelectWithFlexibleWidth = bAutoAdjustWidth || sCSSWidth === "auto" || bWidthPercentage,
 				CSS_CLASS = SelectRenderer.CSS_CLASS;
 
-			oRm.write("<div");
+			oRm.openStart("div", oSelect);
 			this.addClass(oRm, oSelect);
-			oRm.addClass(CSS_CLASS);
-			oRm.addClass(CSS_CLASS + oSelect.getType());
+			oRm.class(CSS_CLASS);
+			oRm.class(CSS_CLASS + oSelect.getType());
 
 			if (!bEnabled) {
-				oRm.addClass(CSS_CLASS + "Disabled");
+				oRm.class(CSS_CLASS + "Disabled");
 			} else if (!bEditable) {
-				oRm.addClass(CSS_CLASS + "Readonly");
+				oRm.class(CSS_CLASS + "Readonly");
 			}
 
 			if (bSelectWithFlexibleWidth && (sType === SelectType.Default)) {
-				oRm.addClass(CSS_CLASS + "MinWidth");
+				oRm.class(CSS_CLASS + "MinWidth");
 			}
 
 			if (bAutoAdjustWidth) {
-				oRm.addClass(CSS_CLASS + "AutoAdjustedWidth");
+				oRm.class(CSS_CLASS + "AutoAdjustedWidth");
 			} else {
-				oRm.addStyle("width", sCSSWidth);
+				oRm.style("width", sCSSWidth);
 			}
 
 			if (oSelect.getIcon()) {
-				oRm.addClass(CSS_CLASS + "WithIcon");
+				oRm.class(CSS_CLASS + "WithIcon");
 			}
 
 			if (bEnabled && bEditable && Device.system.desktop) {
-				oRm.addClass(CSS_CLASS + "Hoverable");
+				oRm.class(CSS_CLASS + "Hoverable");
 			}
 
-			oRm.addClass(CSS_CLASS + "WithArrow");
+			oRm.class(CSS_CLASS + "WithArrow");
 
 			if (oSelect.getValueState() !== ValueState.None) {
 				this.addValueStateClasses(oRm, oSelect);
 			}
 
-			oRm.addStyle("max-width", oSelect.getMaxWidth());
-			oRm.writeControlData(oSelect);
-			oRm.writeStyles();
-			oRm.writeClasses();
+			oRm.style("max-width", oSelect.getMaxWidth());
 			this.writeAccessibilityState(oRm, oSelect);
 
 			if (sTooltip) {
-				oRm.writeAttributeEscaped("title", sTooltip);
+				oRm.attr("title", sTooltip);
 			} else if (sType === SelectType.IconOnly) {
 				var oIconInfo = IconPool.getIconInfo(oSelect.getIcon());
 
 				if (oIconInfo) {
-					oRm.writeAttributeEscaped("title", oIconInfo.text);
+					oRm.attr("title", oIconInfo.text);
 				}
 			}
 
 			if (bEnabled) {
-				oRm.writeAttribute("tabindex", "0");
+				oRm.attr("tabindex", "0");
 			}
 
-			oRm.write(">");
+			oRm.openEnd();
 			this.renderHiddenInput(oRm, oSelect);
 			this.renderLabel(oRm, oSelect);
 
@@ -126,22 +125,20 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				this.renderInput(oRm, oSelect);
 			}
 
-			oRm.write("</div>");
+			oRm.close("div");
 		};
 
 		SelectRenderer.renderHiddenInput = function (oRm, oSelect) {
-			oRm.write("<input");
+			oRm.voidStart("input", oSelect.getId() + "-hiddenInput");
 
 			// Attributes
-			oRm.writeAttribute("id", oSelect.getId() + "-hiddenInput");
-			oRm.writeAttribute("aria-readonly", "true");
-			oRm.writeAttribute("tabindex", "-1");
+			oRm.attr("aria-readonly", "true");
+			oRm.attr("tabindex", "-1");
 
 			// Classes
-			oRm.addClass("sapUiPseudoInvisibleText");
-			oRm.writeClasses();
+			oRm.class("sapUiPseudoInvisibleText");
 
-			oRm.write(" />");
+			oRm.voidEnd();
 		};
 
 		/**
@@ -157,49 +154,42 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				sTextAlign = Renderer.getTextAlign(oSelect.getTextAlign(), sTextDir),
 				CSS_CLASS = SelectRenderer.CSS_CLASS;
 
-			oRm.write("<label");
-			oRm.writeAttribute("id", oSelect.getId() + "-label");
-			oRm.writeAttribute("for", oSelect.getId());
-			oRm.writeAttribute("aria-live", "polite");
-			oRm.addClass(CSS_CLASS + "Label");
+			oRm.openStart("label", oSelect.getId() + "-label");
+			oRm.attr("for", oSelect.getId());
+			oRm.attr("aria-live", "polite");
+			oRm.class(CSS_CLASS + "Label");
 
 			if (oSelect.getValueState() !== ValueState.None) {
-				oRm.addClass(CSS_CLASS + "LabelState");
-				oRm.addClass(CSS_CLASS + "Label" + oSelect.getValueState());
+				oRm.class(CSS_CLASS + "LabelState");
+				oRm.class(CSS_CLASS + "Label" + oSelect.getValueState());
 			}
 
 			if (oSelect.getType() === SelectType.IconOnly) {
-				oRm.addClass("sapUiPseudoInvisibleText");
+				oRm.class("sapUiPseudoInvisibleText");
 			}
 
 			if (sTextDir !== TextDirection.Inherit) {
-				oRm.writeAttribute("dir", sTextDir.toLowerCase());
+				oRm.attr("dir", sTextDir.toLowerCase());
 			}
 
-			if (sTextAlign) {
-				oRm.addStyle("text-align", sTextAlign);
-			}
+			oRm.style("text-align", sTextAlign);
 
-			oRm.writeStyles();
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openEnd();
 
 			// write the text of the selected item only if it has not been removed or destroyed
 			// and when the Select isn't in IconOnly mode - BCP 1780431688
 
 			if (oSelect.getType() !== SelectType.IconOnly) {
 				oRm.renderControl(oSelect._getValueIcon());
-				oRm.write("<span");
-				oRm.addClass("sapMSelectListItemText");
-				oRm.writeAttribute("id", oSelect.getId() + "-labelText");
-				oRm.writeClasses();
-				oRm.write(">");
+				oRm.openStart("span", oSelect.getId() + "-labelText");
+				oRm.class("sapMSelectListItemText");
+				oRm.openEnd();
 
-				oSelectedItem && oSelectedItem.getParent() ? oRm.writeEscaped(oSelectedItem.getText()) : "";
+				oRm.text(oSelectedItem && oSelectedItem.getParent() ? oSelectedItem.getText() : null);
 
-				oRm.write("</span>");
+				oRm.close("span");
 			}
-			oRm.write("</label>");
+			oRm.close("label");
 		};
 
 		/**
@@ -212,16 +202,14 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 		SelectRenderer.renderArrow = function(oRm, oSelect) {
 			var CSS_CLASS = SelectRenderer.CSS_CLASS;
 
-			oRm.write("<span");
-			oRm.addClass(CSS_CLASS + "Arrow");
+			oRm.openStart("span", oSelect.getId() + "-arrow");
+			oRm.class(CSS_CLASS + "Arrow");
 
 			if (oSelect.getValueState() !== ValueState.None) {
-				oRm.addClass(CSS_CLASS + "ArrowState");
+				oRm.class(CSS_CLASS + "ArrowState");
 			}
 
-			oRm.writeAttribute("id", oSelect.getId() + "-arrow");
-			oRm.writeClasses();
-			oRm.write("></span>");
+			oRm.openEnd().close("span");
 		};
 
 		/**
@@ -232,27 +220,26 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 		 * @private
 		 */
 		SelectRenderer.renderIcon = function(oRm, oSelect) {
-			oRm.writeIcon(oSelect.getIcon(), SelectRenderer.CSS_CLASS + "Icon", {
+			oRm.icon(oSelect.getIcon(), SelectRenderer.CSS_CLASS + "Icon", {
 				id: oSelect.getId() + "-icon",
 				title: null
 			});
 		};
 
 		SelectRenderer.renderInput = function(oRm, oSelect) {
-			oRm.write("<input hidden");
-			oRm.writeAttribute("id", oSelect.getId() + "-input");
-			oRm.addClass(SelectRenderer.CSS_CLASS + "Input");
-			oRm.writeAttribute("aria-hidden", "true");
-			oRm.writeAttribute("tabindex", "-1");
+			oRm.voidStart("input", oSelect.getId() + "-input");
+			oRm.attr("type", "hidden");
+			oRm.class(SelectRenderer.CSS_CLASS + "Input");
+			oRm.attr("aria-hidden", "true");
+			oRm.attr("tabindex", "-1");
 
 			if (!oSelect.getEnabled()) {
-				oRm.write("disabled");
+				oRm.attr("disabled", "disabled");
 			}
 
-			oRm.writeClasses();
-			oRm.writeAttributeEscaped("name", oSelect.getName());
-			oRm.writeAttributeEscaped("value", oSelect.getSelectedKey());
-			oRm.write("/>");
+			oRm.attr("name", oSelect.getName());
+			oRm.attr("value", oSelect.getSelectedKey());
+			oRm.voidEnd();
 		};
 
 		/**
@@ -308,8 +295,8 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 		 * @param {sap.ui.core.Control} oSelect An object representation of the control that should be rendered.
 		 */
 		SelectRenderer.addValueStateClasses = function(oRm, oSelect) {
-			oRm.addClass(SelectRenderer.CSS_CLASS + "State");
-			oRm.addClass(SelectRenderer.CSS_CLASS + oSelect.getValueState());
+			oRm.class(SelectRenderer.CSS_CLASS + "State");
+			oRm.class(SelectRenderer.CSS_CLASS + oSelect.getValueState());
 		};
 
 		/**
@@ -382,7 +369,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				append: true
 			};
 
-			oRm.writeAccessibilityState(oSelect, {
+			oRm.accessibilityState(oSelect, {
 				role: this.getAriaRole(oSelect),
 				disabled: !oSelect.getEnabled(),
 				readonly: bIconOnly ? undefined : oSelect.getEnabled() && !oSelect.getEditable(),

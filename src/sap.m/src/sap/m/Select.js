@@ -7,6 +7,7 @@ sap.ui.define([
 	'./Popover',
 	'./SelectList',
 	'./library',
+	'sap/ui/core/Core',
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/Icon',
@@ -31,6 +32,7 @@ function(
 	Popover,
 	SelectList,
 	library,
+	Core,
 	Control,
 	EnabledPropagator,
 	Icon,
@@ -944,7 +946,7 @@ function(
 			if (sValueState === ValueState.None) {
 				sText = "";
 			} else {
-				oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
+				oResourceBundle = Core.getLibraryResourceBundle("sap.ui.core");
 				sText = oResourceBundle.getText("VALUE_STATE_" + sValueState.toUpperCase());
 			}
 
@@ -1114,7 +1116,7 @@ function(
 				oResourceBundle;
 
 			if (!this.getAggregation("_pickerHeader")) {
-				oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+				oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 				this.setAggregation("_pickerHeader", new Bar({
 					contentMiddle: new Title({
 						text: oResourceBundle.getText("SELECT_PICKER_TITLE_TEXT")
@@ -1747,7 +1749,7 @@ function(
 				return;
 			}
 
-			var oControl = sap.ui.getCore().byId(oEvent.relatedControlId),
+			var oControl = Core.byId(oEvent.relatedControlId),
 				oFocusDomRef = oControl && oControl.getFocusDomRef();
 
 			if (Device.system.desktop && containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef)) {
@@ -1782,7 +1784,7 @@ function(
 			this.setProperty("selectedItemId", (vItem instanceof Item) ? vItem.getId() : vItem, true);
 
 			if (typeof vItem === "string") {
-				vItem = sap.ui.getCore().byId(vItem);
+				vItem = Core.byId(vItem);
 			}
 
 			sKey = vItem ? vItem.getKey() : "";
@@ -2269,14 +2271,14 @@ function(
 		 */
 		Select.prototype.getLabels = function() {
 			var aLabelIDs = this.getAriaLabelledBy().map(function(sLabelID) {
-				return sap.ui.getCore().byId(sLabelID);
+				return Core.byId(sLabelID);
 			});
 
 			var oLabelEnablement = sap.ui.require("sap/ui/core/LabelEnablement");
 
 			if (oLabelEnablement) {
 				aLabelIDs = aLabelIDs.concat(oLabelEnablement.getReferencingLabels(this).map(function(sLabelID) {
-					return sap.ui.getCore().byId(sLabelID);
+					return Core.byId(sLabelID);
 				}));
 			}
 
@@ -2450,7 +2452,7 @@ function(
 
 			if (typeof vItem === "string") {
 				this.setAssociation("selectedItem", vItem, true);
-				vItem = sap.ui.getCore().byId(vItem);
+				vItem = Core.byId(vItem);
 			}
 
 			if (!(vItem instanceof Item) && vItem !== null) {
@@ -2488,7 +2490,7 @@ function(
 
 			this.setSelection(vItem);
 			this.setValue(this._getSelectedItemText());
-			this._oSelectionOnFocus = sap.ui.getCore().byId(vItem);
+			this._oSelectionOnFocus = this.getSelectedItem();
 			return this;
 		};
 
@@ -2607,7 +2609,7 @@ function(
 		 */
 		Select.prototype.getSelectedItem = function() {
 			var vSelectedItem = this.getAssociation("selectedItem");
-			return (vSelectedItem === null) ? null : sap.ui.getCore().byId(vSelectedItem) || null;
+			return (vSelectedItem === null) ? null : Core.byId(vSelectedItem) || null;
 		};
 
 		/**
@@ -2795,10 +2797,10 @@ function(
 					sDesc = oIconInfo && oIconInfo.text ? oIconInfo.text : "";
 				}
 
-				oInfo.type = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON");
+				oInfo.type = Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON");
 				oInfo.description = sDesc;
 			} else if (this.getType() === "Default") {
-				oInfo.type = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_COMBO");
+				oInfo.type = Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_COMBO");
 				oInfo.description = this._getSelectedItemText();
 			}
 
