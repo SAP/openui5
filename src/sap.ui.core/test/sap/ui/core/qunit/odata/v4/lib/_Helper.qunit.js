@@ -292,6 +292,44 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[
+	{message : {/* any original message */}},
+	{"@$ui5.originalMessage" : {message : {/* any original message */}}}
+].forEach(function (oFixture, i) {
+	QUnit.test("createTechnicalDetails," + i, function (assert) {
+		var oClone = {foo : "bar"},
+			oResult;
+
+		this.mock(_Helper).expects("publicClone")
+			.withExactArgs(sinon.match.same(i === 0 ? oFixture : oFixture["@$ui5.originalMessage"]))
+			.returns(oClone);
+
+		// code under test
+		oResult = _Helper.createTechnicalDetails(oFixture);
+
+		assert.deepEqual(oResult, {originalMessage : oClone});
+
+		// code under test
+		assert.strictEqual(oResult.originalMessage, oClone);
+
+		// code under test (take care that further accesses point to the same object)
+		assert.strictEqual(oResult.originalMessage, oClone);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("createTechnicalDetails with a JS Error instance", function (assert) {
+		this.mock(_Helper).expects("publicClone").never();
+
+		// code under test
+		assert.deepEqual(_Helper.createTechnicalDetails(new Error()), {});
+
+		// code under test
+		assert.deepEqual(_Helper.createTechnicalDetails({"@$ui5.originalMessage" : new Error()}),
+			{});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("encode", function (assert) {
 		var sUnchanged = "foo$,/:?@();";
 
@@ -2354,6 +2392,20 @@ sap.ui.define([
 		assert.deepEqual(
 			_Helper.getQueryOptionsForPath(oFixture.mQueryOptions, oFixture.sPath),
 			oFixture.mQueryOptionsForPath);
+	});
+});
+
+	//*********************************************************************************************
+[
+	{sPath : "/foo/bar/baz", sResult : "baz"},
+	{sPath : "/foo/bar('baz')", sResult : "('baz')"},
+	{sPath : "/foo/bar", sResult : ""},
+	{sPath : "/foo", sResult : undefined},
+	{sPath : "/foo/barolo", sResult : undefined}
+].forEach(function (oFixture) {
+	QUnit.test("getRelativePath: " + oFixture.sPath, function (assert) {
+		// code under test
+		assert.strictEqual(_Helper.getRelativePath(oFixture.sPath, "/foo/bar"), oFixture.sResult);
 	});
 });
 });

@@ -1267,12 +1267,15 @@ sap.ui.define([
 			},
 			oBinding = {
 				oCachePromise : SyncPromise.resolve(oCache),
-				oContext : {},
 				checkSuspended : function () {},
+				oContext : {},
 				bRelative : true,
 				requestSideEffects : function () {}
 			},
-			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')"),
+			oModel = {
+				checkGroupId : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')"),
 			sUpdateGroupId = "update";
 
 		assert.throws(function () {
@@ -1301,6 +1304,7 @@ sap.ui.define([
 			}, new Error("Not an edm:(Navigation)PropertyPath expression: " + sJSON), sJSON);
 		});
 
+		this.mock(oModel).expects("checkGroupId").withExactArgs(undefined);
 		this.mock(oContext).expects("getUpdateGroupId").withExactArgs().returns(sUpdateGroupId);
 		this.mock(oBinding).expects("requestSideEffects")
 			// Note: $select not yet sorted
@@ -1320,6 +1324,57 @@ sap.ui.define([
 			}]).then(function (oResult) {
 				assert.strictEqual(oResult, undefined);
 			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects: different group ID", function (assert) {
+		var oBinding = {
+				oCachePromise : SyncPromise.resolve({/*oCache*/}),
+				checkSuspended : function () {},
+				oContext : {},
+				bRelative : true,
+				requestSideEffects : function () {}
+			},
+			sGroupId = "different",
+			oModel = {
+				checkGroupId : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')");
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oModel).expects("checkGroupId").withExactArgs(sGroupId);
+		this.mock(oContext).expects("getUpdateGroupId").never();
+		this.mock(oBinding).expects("requestSideEffects")
+			.withExactArgs(sGroupId, ["TEAM_ID"], sinon.match.same(oContext))
+			.returns(SyncPromise.resolve({}));
+
+		// code under test
+		return oContext.requestSideEffects([{$PropertyPath : "TEAM_ID"}], sGroupId)
+			.then(function (oResult) {
+				assert.strictEqual(oResult, undefined);
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects: invalid different group ID", function (assert) {
+		var oBinding = {
+				oCachePromise : SyncPromise.resolve({/*oCache*/}),
+				checkSuspended : function () {}
+			},
+			sGroupId = "$invalid",
+			oError = new Error("Invalid group ID: " + sGroupId),
+			oModel = {
+				checkGroupId : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')");
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oModel).expects("checkGroupId").withExactArgs(sGroupId).throws(oError);
+
+		assert.throws(function () {
+			// code under test
+			oContext.requestSideEffects([{$PropertyPath : "TEAM_ID"}], sGroupId);
+		}, oError);
 	});
 
 	//*********************************************************************************************
@@ -1350,12 +1405,16 @@ sap.ui.define([
 				checkSuspended : function () {},
 				requestSideEffects : function () {}
 			},
-			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')"),
+			oModel = {
+				checkGroupId : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')"),
 			oError = new Error("Failed intentionally"),
 			oResult,
 			sUpdateGroupId = "update";
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oModel).expects("checkGroupId").withExactArgs(undefined);
 		this.mock(oContext).expects("getUpdateGroupId").withExactArgs().returns(sUpdateGroupId);
 		this.mock(oBinding).expects("requestSideEffects")
 			.withExactArgs(sUpdateGroupId, ["TEAM_ID"], sinon.match.same(oContext))
@@ -1379,7 +1438,10 @@ sap.ui.define([
 				oCachePromise : SyncPromise.resolve(),
 				checkSuspended : function () {}
 			},
-			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')");
+			oModel = {
+				checkGroupId : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')");
 
 		assert.throws(function () {
 			// code under test
@@ -1393,7 +1455,10 @@ sap.ui.define([
 				oCachePromise : SyncPromise.resolve({/*no requestSideEffects*/}),
 				checkSuspended : function () {}
 			},
-			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')");
+			oModel = {
+				checkGroupId : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')");
 
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(true);
 
@@ -1412,7 +1477,10 @@ sap.ui.define([
 				checkSuspended : function () {},
 				bRelative : true
 			},
-			oHeaderContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES");
+			oModel = {
+				checkGroupId : function () {}
+			},
+			oHeaderContext = Context.create(oModel, oBinding, "/EMPLOYEES");
 
 		assert.throws(function () {
 			// code under test

@@ -2,14 +2,21 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.ui.table">
 
-	<!-- TODO even with useBatchRequests : false, $batch is used (just via different code?!) -->
-	<AnalyticalTable id="analyticalTable" rows="{path : '/Items', parameters : {
+	<AnalyticalTable rows="{
+		filters : [{
+			operator : 'EQ', path : 'DueItemCategory', value1 : 'N'
+		}, {
+			operator : 'EQ', path : 'IsCleared', value1 : ' '
+		}, {
+			operator : 'EQ', path : 'KeyDate', value1 : '2019-07-01T00:00:00Z'
+		}],
+		path : '/Items',
+		parameters : {
 			numberOfExpandedLevels : 1,
 			provideGrandTotals : false,
 			provideTotalResultSize : false,
-			reloadSingleUnitMeasures : false,
-			useBatchRequests : false
-		}}" threshold="5" title="Analytical Table with AutoExpand to level 1" visibleRowCount="5" >
+			reloadSingleUnitMeasures : false
+		}}" threshold="5" title="Auto-Expanded Analytical Table" visibleRowCount="5" >
 		<columns>
 			<AnalyticalColumn leadingProperty="CustomerName" template="CustomerName" />
 			<AnalyticalColumn grouped="true" leadingProperty="CompanyCode" template="CompanyCode" />

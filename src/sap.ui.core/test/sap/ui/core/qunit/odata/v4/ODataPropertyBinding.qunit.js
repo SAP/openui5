@@ -366,6 +366,50 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("checkUpdateInternal(true): provide value synchronously", function (assert) {
+		var oContext = Context.create(this.oModel, {/*list binding*/}, "/...", 0),
+			oBinding = this.oModel.bindProperty("relative", oContext),
+			oPromise,
+			oType = {
+				formatValue : function () {},
+				getName : function () {}
+			};
+
+		this.mock(oContext).expects("fetchValue").withExactArgs("relative", oBinding)
+			.returns(SyncPromise.resolve("foo"));
+		this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type").withExactArgs("/.../relative")
+			.returns(SyncPromise.resolve(oType));
+		this.mock(oType).expects("formatValue").withExactArgs("foo", undefined).returns("*foo*");
+
+		// code under test
+		oPromise = oBinding.checkUpdateInternal(true);
+
+		assert.strictEqual(oBinding.getValue(), "foo");
+		assert.strictEqual(oBinding.getExternalValue(), "*foo*");
+		assert.strictEqual(oBinding.getType(), oType);
+
+		return oPromise;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkUpdateInternal(true): type not yet available", function (assert) {
+		var oContext = Context.create(this.oModel, {/*list binding*/}, "/...", 0),
+			oBinding = this.oModel.bindProperty("relative", oContext);
+
+		this.mock(oContext).expects("fetchValue").withExactArgs("relative", oBinding)
+			.returns(SyncPromise.resolve("foo"));
+		this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
+			.withExactArgs("/.../relative")
+			.returns(new SyncPromise(function () {})); // does not resolve
+
+		// code under test
+		oBinding.checkUpdateInternal(true);
+
+		assert.strictEqual(oBinding.getValue(), "foo");
+		assert.strictEqual(oBinding.getType(), undefined);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("checkUpdateInternal with object value, success", function (assert) {
 		var oContext = Context.create(this.oModel, {}, "/EntitySet('foo')"),
 			sPath = "nonPrimitive",

@@ -808,10 +808,11 @@ sap.ui.define([
 	 * navigation properties as part of a binding's $select system query option as they may trigger
 	 * pointless requests.
 	 *
-	 * The request always uses the update group ID for this context's binding, see "$$updateGroupId"
-	 * at {@link sap.ui.model.odata.v4.ODataModel#bindContext}; this way, it can easily be part of
-	 * the same batch request as the corresponding update. <b>Caution:</b> If a dependent binding
-	 * uses a different update group ID, it may lose its pending changes.
+	 * By default, the request uses the update group ID for this context's binding; this way, it can
+	 * easily be part of the same batch request as the corresponding update. <b>Caution:</b> If a
+	 * dependent binding uses a different update group ID, it may lose its pending changes. The same
+	 * will happen if a different group ID is provided, and the side effects affect properties for
+	 * which there are pending changes.
 	 *
 	 * The events 'dataRequested' and 'dataReceived' are not fired. Whatever should happen in the
 	 * event handler attached to...
@@ -828,6 +829,14 @@ sap.ui.define([
 	 *   loaded because they may have changed due to side effects of a previous update, for example
 	 *   <code>[{$PropertyPath : "TEAM_ID"}, {$NavigationPropertyPath : "EMPLOYEE_2_MANAGER"},
 	 *   {$PropertyPath : "EMPLOYEE_2_TEAM/Team_Id"}]</code>
+	 * @param {string} [sGroupId]
+	 *   The group ID to be used (since 1.69.0); if not specified, the update group ID for the
+	 *   context's binding is used, see "$$updateGroupId" at
+	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList} and
+	 *   {@link sap.ui.model.odata.v4.ODataModel#bindContext}. If a different group ID is specified,
+	 *   make sure that {@link #requestSideEffects} is called after the corresponding updates have
+	 *   been successfully processed by the server and that there are no pending changes for the
+	 *   affected properties.
 	 * @returns {Promise}
 	 *   Promise resolved with <code>undefined</code>, or rejected with an error if loading of side
 	 *   effects fails. Use it to set fields affected by side effects to read-only before
@@ -839,7 +848,7 @@ sap.ui.define([
 	 *   or if this context is neither the return value context of an operation binding nor belongs
 	 *   to a binding which uses own data service requests, or if the root binding of this context's
 	 *   binding is suspended, or if the context is transient, or if the binding of this context is
-	 *   unresolved
+	 *   unresolved, or for invalid group IDs
 	 *
 	 * @public
 	 * @see sap.ui.model.odata.v4.ODataContextBinding#execute
@@ -848,11 +857,12 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataModel#bindContext
 	 * @since 1.61.0
 	 */
-	Context.prototype.requestSideEffects = function (aPathExpressions) {
+	Context.prototype.requestSideEffects = function (aPathExpressions, sGroupId) {
 		var oCache = this.oBinding.oCachePromise.getResult(),
 			aPaths;
 
 		this.oBinding.checkSuspended();
+		this.oModel.checkGroupId(sGroupId);
 		if (!oCache || this.isTransient()) {
 			throw new Error("Unsupported context: " + this);
 		}
@@ -878,7 +888,7 @@ sap.ui.define([
 		});
 
 		return Promise.resolve(
-				this.oBinding.requestSideEffects(this.getUpdateGroupId(), aPaths, this)
+				this.oBinding.requestSideEffects(sGroupId || this.getUpdateGroupId(), aPaths, this)
 			).then(function () {
 				// return undefined;
 			});

@@ -52,6 +52,12 @@
 	}],
 	"Messages" : [{
 		"code" : "CODE/1234",
+		"@Common.Application" : {
+			"ComponentId" : "OPU-GW-COR",
+			"ServiceRepository" : "DEFAULT"
+		},
+		"@Common.TransactionId" : "A9DFB82A2D7B0240E0058CB109CEBFBC",
+		"@Common.Timestamp" : "20170320071538.918157",
 		"longtextUrl" : "SalesOrderList('0500000001')/Messages(1)",
 		"message" : "Enter customer reference if available",
 		"numericSeverity" : 3,

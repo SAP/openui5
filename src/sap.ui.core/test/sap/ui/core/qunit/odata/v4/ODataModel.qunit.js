@@ -4,7 +4,6 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/base/Log",
-	"sap/base/util/deepEqual",
 	"sap/ui/core/message/Message",
 	"sap/ui/model/Binding",
 	"sap/ui/model/BindingMode",
@@ -27,10 +26,10 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/test/TestUtils",
 	"sap/ui/core/library"
-], function (jQuery, Log, deepEqual, Message, Binding, BindingMode, BaseContext, Model,
-		ODataUtils, OperationMode, TypeString, Context, ODataContextBinding, ODataListBinding,
-		ODataMetaModel, ODataModel, ODataPropertyBinding, SubmitMode, _GroupLock, _Helper,
-		_MetadataRequestor, _Parser, _Requestor, TestUtils, library) {
+], function (jQuery, Log, Message, Binding, BindingMode, BaseContext, Model, ODataUtils,
+		OperationMode, TypeString, Context, ODataContextBinding, ODataListBinding, ODataMetaModel,
+		ODataModel, ODataPropertyBinding, SubmitMode, _GroupLock, _Helper, _MetadataRequestor,
+		_Parser, _Requestor, TestUtils, library) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -889,7 +888,7 @@ sap.ui.define([
 					code : undefined,
 					message : oError.message,
 					technical : true,
-					technicalDetails : sinon.match.object,
+					"@$ui5.originalMessage" : sinon.match.same(oError),
 					numericSeverity : 4 // Error
 				}]);
 
@@ -930,17 +929,8 @@ sap.ui.define([
 				"requestUrl" : "/service/Product",
 				"resourcePath" : sResourcePath + "?foo=bar"
 			},
-			oExpectation,
 			oHelperMock = this.mock(_Helper),
 			sLogMessage = "Failed to read path /Product('1')/Unknown",
-			oOrginalMessage = {
-				"@Common.longtextUrl" : "top/longtext",
-				"@.numericSeverity" : 4,
-				code : oError.error.code,
-				details : oError.error.details,
-				message : oError.error.message,
-				technical : true
-			},
 			oModel = createModel();
 
 		this.oLogMock.expects("error").withExactArgs(sLogMessage, oError.message, sClassName);
@@ -957,19 +947,15 @@ sap.ui.define([
 				message : oError.error.message,
 				numericSeverity : 4, // Error
 				technical : true,
-				technicalDetails : {
-					originalMessage : "Main message"
-				}
+				"@$ui5.originalMessage" : sinon.match.same(oError.error)
 			}, {
 				code : "unbound",
 				message : "some unbound message",
 				numericSeverity : 3,
 				technical : undefined,
-				technicalDetails : {
-					originalMessage : "Second Detail"
-				}
+				"@$ui5.originalMessage" : sinon.match.same(oError.error.details[1])
 			}]);
-		oExpectation = this.mock(oModel).expects("reportBoundMessages")
+		this.mock(oModel).expects("reportBoundMessages")
 			.withExactArgs(sResourcePath, {
 				"" : [{
 					code : "bound",
@@ -978,41 +964,21 @@ sap.ui.define([
 					numericSeverity : 3,
 					target : "Quantity",
 					technical : undefined,
-					technicalDetails : {
-						originalMessage : "First Detail"
-					},
-					transition : true
+					transition : true,
+					"@$ui5.originalMessage" : sinon.match.same(oError.error.details[0])
 				}, {
 					code : "bound",
 					message : "some other Quantity message",
 					numericSeverity : 2,
 					target : "Quantity",
 					technical : undefined,
-					technicalDetails : {
-						originalMessage :"Last Detail"
-					},
-					transition : true
+					transition : true,
+					"@$ui5.originalMessage" : sinon.match.same(oError.error.details[2])
 				}]
 			}, []);
-		// _Helper.clone gets called from sinon object matcher which invokes defined property
-		oHelperMock.expects("clone")
-			.withExactArgs(oOrginalMessage)
-			.returns("Main message");
-		oHelperMock.expects("clone")
-			.withExactArgs(oOrginalMessage.details[0])
-			.returns("First Detail");
-		oHelperMock.expects("clone")
-			.withExactArgs(oOrginalMessage.details[1])
-			.returns("Second Detail");
-		oHelperMock.expects("clone")
-			.withExactArgs(oOrginalMessage.details[2])
-			.returns("Last Detail");
 
 		// code under test
 		oModel.reportError(sLogMessage, sClassName, oError);
-
-		// code under test - clone only called once per technical detail
-		oExpectation.args[0][1][""][0].technicalDetails.originalMessage; // invoke getter
 	});
 
 	//*********************************************************************************************
@@ -1024,14 +990,12 @@ sap.ui.define([
 			code :  "top",
 			message : "Error occurred while processing the request",
 			numericSeverity : 4,
-			technical : true,
-			technicalDetails : sinon.match.object
+			technical : true
 		}, {
 			code : "bound",
 			message : "Quantity: Value must be greater than 0",
 			numericSeverity : 3,
-			technical : undefined,
-			technicalDetails : sinon.match.object
+			technical : undefined
 		}]
 	}, {
 		requestUrl : undefined,
@@ -1042,15 +1006,13 @@ sap.ui.define([
 			numericSeverity : 3,
 			target : "Quantity",
 			technical : undefined,
-			technicalDetails : sinon.match.object,
 			transition : true
 		}],
 		unboundMessages : [{
 			code :  "top",
 			message : "Error occurred while processing the request",
 			numericSeverity : 4,
-			technical : true,
-			technicalDetails : sinon.match.object
+			technical : true
 		}]
 	}].forEach(function (oFixture, i) {
 		var sTitle = "reportError: JSON response, resourcePath=" + oFixture.resourcePath
@@ -1078,6 +1040,15 @@ sap.ui.define([
 				oHelperMock = this.mock(_Helper),
 				sLogMessage = "Failed to read path /Product('1')/Unknown",
 				oModel = createModel();
+
+			oFixture.unboundMessages[0]["@$ui5.originalMessage"] = sinon.match.same(oError.error);
+			if (i === 0) {
+				oFixture.unboundMessages[1]["@$ui5.originalMessage"]
+					= sinon.match.same(oError.error.details[0]);
+			} else {
+				oFixture.boundMessages[0]["@$ui5.originalMessage"]
+					= sinon.match.same(oError.error.details[0]);
+			}
 
 			this.oLogMock.expects("error").withExactArgs(sLogMessage, oError.message, sClassName);
 			oHelperMock.expects("makeAbsolute").never();
@@ -1117,8 +1088,8 @@ sap.ui.define([
 				numericSeverity : 4, // Error
 				target : "Quantity",
 				technical : true,
-				technicalDetails : sinon.match.object,
-				transition : true
+				transition : true,
+				"@$ui5.originalMessage" : sinon.match.same(oError.error)
 			}]}, []);
 
 		// code under test
@@ -1150,8 +1121,8 @@ sap.ui.define([
 				message : "$filter: Invalid token 'name' at position '1'",
 				longtextUrl : "/long/text",
 				numericSeverity : 4, // Error
-				technicalDetails : sinon.match.object,
-				technical : true
+				technical : true,
+				"@$ui5.originalMessage" : sinon.match.same(oError.error)
 			}]);
 
 		// code under test
@@ -1918,7 +1889,8 @@ sap.ui.define([
 		{numericSeverity : undefined, type : MessageType.None}
 	].forEach(function (oFixture, i) {
 		QUnit.test("reportUnboundMessages, " + i, function (assert) {
-			var aMessages = [{
+			var oHelperMock = this.mock(_Helper),
+				aMessages = [{
 					code : 42,
 					message : "foo0",
 					longtextUrl : "foo/bar0",
@@ -1935,11 +1907,18 @@ sap.ui.define([
 					technical : true
 				}],
 				oModel = createModel(),
-				sResourcePath = "Foo('42')/to_Bar";
+				sResourcePath = "Foo('42')/to_Bar",
+				aTechnicalDetails = [{}, {}, {}];
 
-			this.mock(_Helper).expects("makeAbsolute")
+			oHelperMock.expects("makeAbsolute")
 				.withExactArgs(aMessages[0].longtextUrl, oModel.sServiceUrl + sResourcePath)
 				.returns("URL");
+			oHelperMock.expects("createTechnicalDetails").withExactArgs(aMessages[0]).twice()
+				.returns(aTechnicalDetails[0]);
+			oHelperMock.expects("createTechnicalDetails").withExactArgs(aMessages[1]).twice()
+				.returns(aTechnicalDetails[1]);
+			oHelperMock.expects("createTechnicalDetails").withExactArgs(aMessages[2]).twice()
+				.returns(aTechnicalDetails[2]);
 			this.mock(oModel).expects("fireMessageChange").twice()
 				.withExactArgs(sinon.match(function (mArguments) {
 					var aMessages0 = mArguments.newMessages;
@@ -1957,8 +1936,7 @@ sap.ui.define([
 								&& oMessage.getPersistent() === true
 								&& oMessage.getTarget() === ""
 								&& oMessage.getTechnical() === (j === 2)
-								&& deepEqual(
-									oMessage.getTechnicalDetails(), aMessages[j].technicalDetails)
+								&& oMessage.getTechnicalDetails() === aTechnicalDetails[j]
 								&& oMessage.getType() === oFixture.type;
 						});
 				}));
@@ -1995,7 +1973,8 @@ sap.ui.define([
 		{numericSeverity : undefined, type : MessageType.None}
 	].forEach(function (oFixture, i) {
 		QUnit.test("reportBoundMessages #" + i, function (assert) {
-			var aMessages = [{
+			var oHelperlMock = this.mock(_Helper),
+				aMessages = [{
 					"code" : "F42",
 					"longtextUrl" : "/service/Messages(3)/LongText/$value",
 					"message" : "foo0",
@@ -2012,8 +1991,13 @@ sap.ui.define([
 					"transition" : true
 				}],
 				oModel = createModel(),
-				oModelMock = this.mock(oModel);
+				oModelMock = this.mock(oModel),
+				aTechnicalDetails = [{}, {}];
 
+			oHelperlMock.expects("createTechnicalDetails").withExactArgs(aMessages[0])
+				.returns(aTechnicalDetails[0]);
+			oHelperlMock.expects("createTechnicalDetails").withExactArgs(aMessages[1])
+				.returns(aTechnicalDetails[1]);
 			oModelMock.expects("fireMessageChange").withExactArgs(sinon.match.object)
 				.callsFake(function (mArguments) {
 					var aNewMessages = mArguments.newMessages,
@@ -2031,8 +2015,7 @@ sap.ui.define([
 						assert.strictEqual(oMessage.getPersistent(), aMessages[j].transition);
 						assert.strictEqual(oMessage.getTarget(), "/Team('42')/foo/bar"
 							+ (aMessages[j].target ? "/" + aMessages[j].target : ""));
-						assert.deepEqual(
-							oMessage.getTechnicalDetails(), aMessages[j].technicalDetails);
+						assert.strictEqual(oMessage.getTechnicalDetails(), aTechnicalDetails[j]);
 						assert.strictEqual(oMessage.getTechnical(), j === 0);
 						assert.strictEqual(oMessage.getType(), oFixture.type);
 					});
