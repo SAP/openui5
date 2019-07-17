@@ -2280,6 +2280,27 @@ function (
 		assert.strictEqual(oStateChangeListener.callCount, 2, "stateChange event was fired twice");
 	});
 
+	QUnit.test("ObjectPage Header - expanding/collapsing by clicking the expand/collapse arrow", function (assert) {
+		// arrange
+		var oObjectPage = this.oObjectPage,
+			oObjectPageTitle = oObjectPage.getHeaderTitle(),
+			oStateChangeListener = this.spy();
+
+		oObjectPageTitle.attachEvent("stateChange", oStateChangeListener);
+
+		// act
+		oObjectPage.getAggregation("_headerContent").getAggregation("_collapseButton").firePress();
+
+		// assert
+		assert.ok(oStateChangeListener.calledOnce, "stateChange event was fired once");
+
+		// act
+		oObjectPage.getAggregation("headerTitle").getAggregation("_expandButton").firePress();
+
+		// assert
+		assert.strictEqual(oStateChangeListener.callCount, 2, "stateChange event was fired twice");
+	});
+
 	QUnit.test("ObjectPage header is preserved in title on screen resize", function (assert) {
 		// arrange
 		var oObjectPage = this.oObjectPage,
