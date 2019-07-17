@@ -24,19 +24,19 @@ sap.ui.define([
 			"$metadata?sap-language=EN" : {
 				source : "metadata.xml"
 			},
-			"Items?$select=CompanyCode,AmountInCompanyCodeCurrency,CompanyCodeCurrency&$orderby=CompanyCode%20asc&$top=5" : {
+			"Items?$select=CompanyCode,AmountInCompanyCodeCurrency,CompanyCodeCurrency&$filter=(DueItemCategory%20eq%20%27N%27)%20and%20(IsCleared%20eq%20%27%20%27)%20and%20(KeyDate%20eq%20datetime%272019-07-01T00%3a00%3a00%27)&$orderby=CompanyCode%20asc&$top=5" : {
 				source : "Items_L0_top5.json"
 			},
-			"Items?$select=CompanyCode,Customer,CustomerName,CompanyCodeCurrency,AmountInCompanyCodeCurrency&$orderby=CompanyCode%20asc&$top=8" : {
+			"Items?$select=CompanyCode,Customer,CustomerName,CompanyCodeCurrency,AmountInCompanyCodeCurrency&$filter=(DueItemCategory%20eq%20%27N%27)%20and%20(IsCleared%20eq%20%27%20%27)%20and%20(KeyDate%20eq%20datetime%272019-07-01T00%3a00%3a00%27)&$orderby=CompanyCode%20asc&$top=8" : {
 				source : "Items_L1_top8.json"
 			},
-			"Items?$select=CompanyCode,Customer,CustomerName,CompanyCodeCurrency,AmountInCompanyCodeCurrency&$filter=(CompanyCode%20eq%20%27A%27)&$orderby=CompanyCode%20asc&$skip=8&$top=10005&$inlinecount=allpages" : {
+			"Items?$select=CompanyCode,Customer,CustomerName,CompanyCodeCurrency,AmountInCompanyCodeCurrency&$filter=(CompanyCode%20eq%20%27A%27)%20and%20(DueItemCategory%20eq%20%27N%27)%20and%20(IsCleared%20eq%20%27%20%27)%20and%20(KeyDate%20eq%20datetime%272019-07-01T00%3a00%3a00%27)&$orderby=CompanyCode%20asc&$skip=8&$top=10005&$inlinecount=allpages" : {
 				source : "Items_L1_A_skip8.json"
 			},
-			"Items?$select=CompanyCode,Customer,CustomerName,CompanyCodeCurrency,AmountInCompanyCodeCurrency&$filter=(CompanyCode%20eq%20%27B%27)&$orderby=CompanyCode%20asc&$top=10005&$inlinecount=allpages" : {
+			"Items?$select=CompanyCode,Customer,CustomerName,CompanyCodeCurrency,AmountInCompanyCodeCurrency&$filter=(CompanyCode%20eq%20%27B%27)%20and%20(DueItemCategory%20eq%20%27N%27)%20and%20(IsCleared%20eq%20%27%20%27)%20and%20(KeyDate%20eq%20datetime%272019-07-01T00%3a00%3a00%27)&$orderby=CompanyCode%20asc&$top=10005&$inlinecount=allpages" : {
 				source : "Items_L1_B.json"
 			},
-			"Items?$select=CompanyCode,Customer,CustomerName,CompanyCodeCurrency,AmountInCompanyCodeCurrency&$filter=(CompanyCode%20eq%20%27C%27)&$orderby=CompanyCode%20asc&$top=10005&$inlinecount=allpages" : {
+			"Items?$select=CompanyCode,Customer,CustomerName,CompanyCodeCurrency,AmountInCompanyCodeCurrency&$filter=(CompanyCode%20eq%20%27C%27)%20and%20(DueItemCategory%20eq%20%27N%27)%20and%20(IsCleared%20eq%20%27%20%27)%20and%20(KeyDate%20eq%20datetime%272019-07-01T00%3a00%3a00%27)&$orderby=CompanyCode%20asc&$top=10005&$inlinecount=allpages" : {
 				source : "Items_L1_C.json"
 			}
 		}, "sap/ui/core/sample/odata/v2/AutoExpand/data",

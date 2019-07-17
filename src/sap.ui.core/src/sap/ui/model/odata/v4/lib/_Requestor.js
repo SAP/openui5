@@ -996,20 +996,12 @@ sap.ui.define([
 	 * @param {string} sResourcePath
 	 *   The resource path of the request whose response contained the messages
 	 * @param {string} [sMessages]
-	 *   The messages in the serialized form as contained in the sap-messages response header
+	 *   The messages in the serialized form as contained in the "sap-messages" response header
 	 *
 	 * @private
 	 */
 	Requestor.prototype.reportUnboundMessagesAsJSON = function (sResourcePath, sMessages) {
-		var aMessages = JSON.parse(sMessages || null);
-
-		if (aMessages) {
-			aMessages.forEach(function (oMessage) {
-				oMessage.technicalDetails = {originalMessage : Object.assign({}, oMessage)};
-			});
-		}
-
-		this.oModelInterface.reportUnboundMessages(sResourcePath, aMessages);
+		this.oModelInterface.reportUnboundMessages(sResourcePath, JSON.parse(sMessages || null));
 	};
 
 	/**
@@ -1168,9 +1160,10 @@ sap.ui.define([
 	 * @param {string} [sOriginalResourcePath]
 	 *  The path by which the resource has originally been requested
 	 * @returns {Promise}
-	 *   A promise that is resolved with an object having the properties body and contentType. The
-	 *   body is already an object if the Content-Type is "application/json". The promise is
-	 *   rejected with an error if the request failed.
+	 *   A promise that is resolved with an object having the properties body, contentType, messages
+	 *   and resourcePath. The body is already an object if the contentType is "application/json".
+	 *   The messages are retrieved from the "sap-messages" response header. The promise is rejected
+	 *   with an error if the request failed.
 	 *
 	 * @private
 	 */

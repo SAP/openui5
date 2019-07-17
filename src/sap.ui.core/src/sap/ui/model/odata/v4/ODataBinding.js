@@ -444,45 +444,39 @@ sap.ui.define([
 	/**
 	 * Returns the relative path for a given absolute path by stripping off the binding's resolved
 	 * path or the path of the binding's return value context. Returns relative paths unchanged.
+	 * The binding must be resolved to call this function.
+	 *
 	 * Note that the resulting path may start with a key predicate.
 	 *
 	 * Example: (The binding's resolved path is "/foo/bar"):
-	 * baz -> baz
-	 * /foo/bar/baz -> baz
-	 * /foo/bar('baz') -> ('baz')
-	 * /foo -> undefined if the binding is relative
+	 * "baz" -> "baz"
+	 * "/foo/bar/baz" -> "baz"
+	 * "/foo/bar('baz')" -> "('baz')"
+	 * "/foo" -> undefined
 	 *
 	 * @param {string} sPath
 	 *   A path
 	 * @returns {string}
-	 *   The path relative to the binding's path or <code>undefined</code> if the path is not a sub
-	 *   path and the binding is relative
+	 *   The given path, if it is already relative; otherwise the path relative to the binding's
+	 *   resolved path or return value context path; <code>undefined</code> if the path does not
+	 *   start with either of these paths.
 	 *
 	 * @private
 	 */
 	ODataBinding.prototype.getRelativePath = function (sPath) {
-		var sPathPrefix,
-			sResolvedPath;
+		var sRelativePath;
 
 		if (sPath[0] === "/") {
-			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
-			if (sPath.indexOf(sResolvedPath) === 0) {
-				sPathPrefix = sResolvedPath;
-			} else if (this.oReturnValueContext
-					&& sPath.indexOf(this.oReturnValueContext.getPath()) === 0) {
-				sPathPrefix = this.oReturnValueContext.getPath();
-			} else {
-				// A mismatch can only happen when a list binding's context has been parked and is
-				// destroyed later. Such a context does no longer have a subpath of the binding's
-				// path. The only caller in this case is ODataPropertyBinding#deregisterChange
-				// which can safely be ignored.
-				return undefined;
+			sRelativePath = _Helper.getRelativePath(sPath,
+				this.oModel.resolve(this.sPath, this.oContext));
+			if (sRelativePath === undefined && this.oReturnValueContext) {
+				sRelativePath = _Helper.getRelativePath(sPath, this.oReturnValueContext.getPath());
 			}
-			sPath = sPath.slice(sPathPrefix.length);
-
-			if (sPath[0] === "/") {
-				sPath = sPath.slice(1);
-			}
+			// Can only become undefined when a list binding's context has been parked and is
+			// destroyed later. Such a context does no longer have a subpath of the binding's
+			// path. The only caller in this case is ODataPropertyBinding#deregisterChange
+			// which can safely be ignored.
+			return sRelativePath;
 		}
 		return sPath;
 	};

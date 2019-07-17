@@ -233,9 +233,7 @@ sap.ui.define([
 			this.bHasDeclaredType = !!vType;
 		}
 		if (arguments.length < 4) {
-			// Use Promise to become async so that only the latest sync call to checkUpdateInternal
-			// wins
-			vValue = Promise.resolve(this.oCachePromise.then(function (oCache) {
+			vValue = this.oCachePromise.then(function (oCache) {
 				var sDataPath, sMetaPath;
 
 				if (oCache) {
@@ -286,11 +284,20 @@ sap.ui.define([
 					return that.vValue;
 				}
 				mParametersForDataReceived = {error : oError};
-			}));
+			});
 			if (sResolvedPath && !this.bHasDeclaredType && this.sInternalType !== "any"
 					&& !bIsMeta) {
 				vType = oMetaModel.fetchUI5Type(sResolvedPath);
 			}
+			if (oCallToken.forceUpdate && vValue.isFulfilled()) {
+				if (vType && vType.isFulfilled && vType.isFulfilled()) {
+					this.setType(vType.getResult(), this.sInternalType);
+				}
+				this.vValue = vValue.getResult();
+			}
+			// Use Promise to become async so that only the latest sync call to checkUpdateInternal
+			// wins
+			vValue = Promise.resolve(vValue);
 		}
 		return SyncPromise.all([vValue, vType]).then(function (aResults) {
 			var oType = aResults[1],
