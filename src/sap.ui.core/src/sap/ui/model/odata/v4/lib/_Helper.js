@@ -316,6 +316,43 @@ sap.ui.define([
 		},
 
 		/**
+		 * Creates a technical details object that contains a property <code>originalMessage</code>.
+		 *
+		 * @param {object} oMessage
+		 *   The message for which to get technical details
+		 * @returns {object|undefined}
+		 *    An object with a property <code>originalMessage</code> that contains a clone of either
+		 *    the given message itself or if supplied, the "@$ui5.originalMessage" property.
+		 *    If one of these is an <code>Error</code> instance, then <code>{}</code> is returned.
+		 *    The clone is created lazily.
+		 *
+		 * @private
+		 */
+		createTechnicalDetails : function (oMessage) {
+			var oClonedMessage,
+				oOriginalMessage = oMessage["@$ui5.originalMessage"] || oMessage,
+				oTechnicalDetails = {};
+
+			// We don't need the original message for internal errors (errors NOT returned from the
+			// back-end, but raised within our framework)
+			if (!(oOriginalMessage instanceof Error)) {
+				Object.defineProperty(oTechnicalDetails, "originalMessage", {
+					enumerable : true,
+					get : function () {
+						if (!oClonedMessage) {
+							// use publicClone to ensure that private "@$ui5._" instance annotations
+							// never become public
+							oClonedMessage = _Helper.publicClone(oOriginalMessage);
+						}
+						return oClonedMessage;
+					}
+				});
+			}
+
+			return oTechnicalDetails;
+		},
+
+		/**
 		 * Deletes the private client-side instance annotation with the given unqualified name at
 		 * the given object.
 		 *
@@ -634,6 +671,43 @@ sap.ui.define([
 			var oPrivateNamespace = oObject["@$ui5._"];
 
 			return oPrivateNamespace && oPrivateNamespace[sAnnotation];
+		},
+
+		/**
+		 * Returns the relative path for a given absolute path by stripping off the base path. Note
+		 * that the resulting path may start with a key predicate.
+		 *
+		 * Examples: (The base path is "/foo/bar"):
+		 * "/foo/bar/baz" -> "baz"
+		 * "/foo/bar('baz')" -> "('baz')"
+		 * "/foo/bar" -> ""
+		 * "/foo/barolo" -> undefined
+		 * "/foo" -> undefined
+		 *
+		 * @param {string} sPath
+		 *   An absolute path
+		 * @param {string} sBasePath
+		 *   The absolute base path to strip off
+		 * @returns {string}
+		 *   The path relative to the base path or <code>undefined</code> if the path does not start
+		 *   with the base path
+		 *
+		 * @private
+		 */
+		getRelativePath : function (sPath, sBasePath) {
+			if (!sPath.startsWith(sBasePath)) {
+				return undefined;
+			}
+			sPath = sPath.slice(sBasePath.length);
+			if (sPath) {
+				if (sPath[0] === "/") {
+					return sPath.slice(1);
+				}
+				if (sPath[0] !== "(") {
+					return undefined;
+				}
+			}
+			return sPath;
 		},
 
 		/**

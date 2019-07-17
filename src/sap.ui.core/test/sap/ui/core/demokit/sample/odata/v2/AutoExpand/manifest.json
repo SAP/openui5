@@ -52,7 +52,6 @@
 		"models" : {
 			"" : {
 				"dataSource" : "default",
-				"preload" : true,
 				"settings" : {}
 			}
 		},
