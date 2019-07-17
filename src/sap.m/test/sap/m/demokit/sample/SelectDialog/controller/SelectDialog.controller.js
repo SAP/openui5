@@ -4,11 +4,12 @@ sap.ui.define([
 		'sap/ui/core/Fragment',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/Filter',
+		'sap/ui/model/FilterOperator',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, MessageToast, Fragment, Controller, Filter, JSONModel) {
+	], function(jQuery, MessageToast, Fragment, Controller, Filter, FilterOperator, JSONModel) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.SelectDialog.C", {
+	return Controller.extend("sap.m.sample.SelectDialog.controller.SelectDialog", {
 
 		onInit : function () {
 			// set explored app's demo model on this sample
@@ -23,32 +24,45 @@ sap.ui.define([
 		},
 
 		handleSelectDialogPress: function (oEvent) {
+			var oButton = oEvent.getSource();
 			if (!this._oDialog) {
-				this._oDialog = sap.ui.xmlfragment("sap.m.sample.SelectDialog.Dialog", this);
-				this._oDialog.setModel(this.getView().getModel());
+				Fragment.load({
+					name: "sap.m.sample.SelectDialog.view.Dialog",
+					controller: this
+				}).then(function(oDialog){
+					this._oDialog = oDialog;
+					this._oDialog.setModel(this.getView().getModel());
+					this._configDialog(oButton);
+					this._oDialog.open();
+				}.bind(this));
+			} else {
+				this._configDialog(oButton);
+				this._oDialog.open();
 			}
+		},
 
+		_configDialog: function(oButton) {
 			// Multi-select if required
-			var bMultiSelect = !!oEvent.getSource().data("multi");
+			var bMultiSelect = !!oButton.data("multi");
 			this._oDialog.setMultiSelect(bMultiSelect);
 
-			var sCustomConfirmButtonText = oEvent.getSource().data("confirmButtonText");
+			var sCustomConfirmButtonText = oButton.data("confirmButtonText");
 			this._oDialog.setConfirmButtonText(sCustomConfirmButtonText);
 
 			// Remember selections if required
-			var bRemember = !!oEvent.getSource().data("remember");
+			var bRemember = !!oButton.data("remember");
 			this._oDialog.setRememberSelections(bRemember);
 
 			//add Clear button if needed
-			var bShowClearButton = !!oEvent.getSource().data("showClearButton");
+			var bShowClearButton = !!oButton.data("showClearButton");
 			this._oDialog.setShowClearButton(bShowClearButton);
 
 			// Set growing property
-			var bGrowing = oEvent.getSource().data("growing");
+			var bGrowing = oButton.data("growing");
 			this._oDialog.setGrowing(bGrowing == "true");
 
 			// Set growing threshold
-			var sGrowingThreshold = oEvent.getSource().data("threshold");
+			var sGrowingThreshold = oButton.data("threshold");
 			if (sGrowingThreshold) {
 				this._oDialog.setGrowingThreshold(parseInt(sGrowingThreshold));
 			}
@@ -58,12 +72,11 @@ sap.ui.define([
 
 			// toggle compact style
 			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this._oDialog);
-			this._oDialog.open();
 		},
 
 		handleSearch: function(oEvent) {
 			var sValue = oEvent.getParameter("value");
-			var oFilter = new Filter("Name", sap.ui.model.FilterOperator.Contains, sValue);
+			var oFilter = new Filter("Name", FilterOperator.Contains, sValue);
 			var oBinding = oEvent.getSource().getBinding("items");
 			oBinding.filter([oFilter]);
 		},
@@ -78,22 +91,32 @@ sap.ui.define([
 			oEvent.getSource().getBinding("items").filter([]);
 		},
 
-		handleValueHelp : function() {
+		handleValueHelp: function() {
+			if (!this._oValueHelpDialog) {
+				Fragment.load({
+					name: "sap.m.sample.SelectDialog.view.ValueHelp",
+					controller: this
+				}).then(function(oValueHelpDialog){
+					this._oValueHelpDialog = oValueHelpDialog;
+					this.getView().addDependent(this._oValueHelpDialog);
+					this._configValueHelpDialog();
+					this._oValueHelpDialog.open();
+				}.bind(this));
+			} else {
+				this._configValueHelpDialog();
+				this._oValueHelpDialog.open();
+			}
+		},
+
+		_configValueHelpDialog: function() {
 			var sInputValue = this.byId("productInput").getValue(),
 				oModel = this.getView().getModel(),
 				aProducts = oModel.getProperty("/ProductCollection");
-
-			if (!this._oValueHelpDialog) {
-				this._oValueHelpDialog = sap.ui.xmlfragment("sap.m.sample.SelectDialog.ValueHelp",this);
-				this.getView().addDependent(this._oValueHelpDialog);
-			}
 
 			aProducts.forEach(function (oProduct) {
 				oProduct.selected = (oProduct.Name === sInputValue);
 			});
 			oModel.setProperty("/ProductCollection", aProducts);
-
-			this._oValueHelpDialog.open();
 		},
 
 		handleValueHelpClose : function (oEvent) {
@@ -109,7 +132,4 @@ sap.ui.define([
 			}
 		}
 	});
-
-	return CController;
-
 });
