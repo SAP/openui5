@@ -1195,6 +1195,39 @@ sap.ui.define([
 		oTokenizer.destroy();
 	});
 
+	QUnit.test("N-More label + Invalidation", function() {
+		var oTokenizer = new Tokenizer({
+			maxWidth: "100px",
+			tokens: [
+				new Token({text: "XXXXXXXXXXXX"}),
+				new Token({text: "XXXXXXXXXXXX"})
+			]
+		});
+
+		oTokenizer._setAdjustable(true);
+		oTokenizer.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oTokenizer._useCollapsedMode(true);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.notOk(oTokenizer._oIndicator.hasClass("sapUiHidden"), "The indicator label is shown.");
+
+		// act
+		oTokenizer.invalidate();
+		oTokenizer.rerender();
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.notOk(oTokenizer._oIndicator.hasClass("sapUiHidden"), "The indicator label is still shown.");
+
+		// clean up
+		oTokenizer.destroy();
+		oTokenizer = null;
+	});
+
 	QUnit.module("Tokenizer ARIA", {
 		beforeEach : function() {
 			this.tokenizer = new Tokenizer();
