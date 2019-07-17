@@ -989,7 +989,7 @@ sap.ui.define([
 		 */
 		TimePickerSlider.prototype._removeSelectionStyle = function() {
 			var $aItems = this.$("content").find("li:not(.TPSliderItemHidden)");
-			$aItems.eq(this._iSelectedItemIndex).removeClass("sapMTimePickerItemSelected").attr("aria-selected", "false");
+			$aItems.eq(this._iSelectedItemIndex).removeClass("sapMTimePickerItemSelected");
 		};
 
 		/**

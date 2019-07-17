@@ -62,7 +62,6 @@ sap.ui.define([],
 			oRm.writeAttribute("id", oControl.getId() + "-label");
 			oRm.addClass("sapMTimePickerLabel");
 			oRm.writeClasses();
-			oRm.writeAttribute('aria-expanded', oControl.getIsExpanded());
 			oRm.write(">");
 			oRm.writeEscaped(sControlLabel);
 			oRm.write("</div>");
@@ -108,9 +107,7 @@ sap.ui.define([],
 					oRm.writeClasses();
 
 					//WAI-ARIA region
-					oRm.writeAccessibilityState(oControl, {
-						role: "listitem"
-					});
+					oRm.writeAccessibilityState(oControl);
 					oRm.writeAttribute("unselectable", "on");
 
 					oRm.write(">");
