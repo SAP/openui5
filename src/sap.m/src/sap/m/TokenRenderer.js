@@ -53,7 +53,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleText"],
 		// ARIA attributes
 		aAccDescribebyValues.push(InvisibleText.getStaticId("sap.m", "TOKEN_ARIA_LABEL"));
 
-		if (oControl.getEditable()) {
+		if (oControl.getEditable() && oControl.getProperty("editableParent")) {
 			aAccDescribebyValues.push(InvisibleText.getStaticId("sap.m", "TOKEN_ARIA_DELETABLE"));
 		}
 

@@ -60,6 +60,45 @@ sap.ui.define([
 		assert.strictEqual(this.token1._getTooltip(this.token1, this.token1.getEditable()), sTooltipText, "Token has a tooltip");
 	});
 
+	QUnit.test("setter / getter editableParent", function(assert) {
+		var isEditableParent = true,
+			aAriaDescibedByTextIds, aUniqueTextIds;
+
+		function fnDistinct(value, index, array) {
+			return array.indexOf(value) === index;
+		}
+
+		// Assert
+		aAriaDescibedByTextIds = this.token1.getDomRef().attributes["aria-describedby"].value.split(" ");
+		aUniqueTextIds = aAriaDescibedByTextIds.filter(fnDistinct);
+		assert.strictEqual(this.token1.getProperty("editableParent"), isEditableParent, "Token's parent is editable");
+		assert.strictEqual(aAriaDescibedByTextIds.length, 2, "Token's aria-describedby attribute contains two invisible text ids");
+		assert.strictEqual(aUniqueTextIds.length, aAriaDescibedByTextIds.length, "Only unique text ids were added");
+
+		// Act
+		isEditableParent = false;
+		this.token1.setProperty("editableParent", isEditableParent);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		aAriaDescibedByTextIds = this.token1.getDomRef().attributes["aria-describedby"].value.split(" ");
+		aUniqueTextIds = aAriaDescibedByTextIds.filter(fnDistinct);
+		assert.strictEqual(this.token1.getProperty("editableParent"), isEditableParent, "Token's parent is not editable");
+		assert.strictEqual(aUniqueTextIds.length, 1, "Token's aria-describedby attribute contains 1 invisible text id");
+
+		// Act
+		isEditableParent = true;
+		this.token1.setProperty("editableParent", isEditableParent);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		aAriaDescibedByTextIds = this.token1.getDomRef().attributes["aria-describedby"].value.split(" ");
+		aUniqueTextIds = aAriaDescibedByTextIds.filter(fnDistinct);
+		assert.strictEqual(this.token1.getProperty("editableParent"), isEditableParent, "Token's parent is editable");
+		assert.strictEqual(aUniqueTextIds.length, 2, "Token's aria-describedby attribute contains two invisible text ids");
+		assert.strictEqual(aUniqueTextIds.length, aAriaDescibedByTextIds.length, "Only unique text ids were added");
+	});
+
 	QUnit.test("setter / getter isSelected", function(assert) {
 		var isSelected = false;
 		assert.equal(this.token1.getSelected(), isSelected, "Token is not selected");
@@ -249,6 +288,18 @@ sap.ui.define([
 		assert.ok(this.token1.$().attr("aria-describedby").split(" ").indexOf(sId) > -1, "Token has correct invisible text ID added to aria-describedby attribute");
 
 		this.token1.setEditable(false);
+		this.token1.invalidate(); // simulate parent invalidation
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(this.token1.$().attr("aria-describedby").split(" ").indexOf(sId) === -1, "Token has the invisible text ID removed from aria-describedby attribute");
+	});
+
+	QUnit.test("ARIA editableParent (deletable) text", function(assert) {
+		var sId = InvisibleText.getStaticId("sap.m", "TOKEN_ARIA_DELETABLE");
+
+		assert.ok(this.token1.$().attr("aria-describedby").split(" ").indexOf(sId) > -1, "Token has correct invisible text ID added to aria-describedby attribute");
+
+		this.token1.setProperty("editableParent", false);
 		this.token1.invalidate(); // simulate parent invalidation
 		sap.ui.getCore().applyChanges();
 

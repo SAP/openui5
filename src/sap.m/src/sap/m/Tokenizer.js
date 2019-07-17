@@ -218,9 +218,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function determines if the N-more state is active
+	 * Function determines if the N-more state is active.
 	 *
 	 * @private
+	 * @returns {boolean} true if there are hidden tokens.
 	 */
 	Tokenizer.prototype._hasMoreIndicator = function () {
 		var domRef = this.$();
@@ -369,6 +370,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {string} sWidth The new maximal width
+	 * @returns {sap.m.Tokenizer} this instance for method chaining
 	 */
 	Tokenizer.prototype.setMaxWidth = function(sWidth) {
 		this.setProperty("maxWidth", sWidth, true);
@@ -384,7 +386,7 @@ sap.ui.define([
 	 * Function returns whether the n-more indicator is visible
 	 *
 	 * @protected
-	 * @param {boolean} If true the indicator is visible
+	 * @returns {boolean} If true the indicator is visible
 	 */
 	Tokenizer.prototype._getIndicatorVisibility = function() {
 		return this._oIndicator && !this._oIndicator.hasClass("sapUiHidden");
@@ -1735,6 +1737,27 @@ sap.ui.define([
 	 */
 	Tokenizer.prototype.setReverseTokens = function(bReverseTokens) {
 		this._reverseTokens = bReverseTokens;
+	};
+
+	/**
+	 * Sets the editable property of the <code>sap.m.Tokenizer</code> and propagates it to its internal <code>sap.m.Token</code> controls.
+	 * The value should be set to true, if tokens shall be editable; otherwise it should be set as false.
+	 * When called with a value of null or undefined, the default value of the property will be restored.
+	 * Default value is true.
+	 *
+	 * @param {boolean} bEditable Whether the control should be editable
+	 * @returns {sap.m.Tokenizer} this instance for method chaining
+	 * @public
+	 */
+	Tokenizer.prototype.setEditable = function(bEditable) {
+		var aTokens = this.getTokens();
+
+		aTokens.forEach(function (oToken) {
+			oToken.setProperty("editableParent", bEditable);
+		});
+		this.setProperty("editable", bEditable);
+
+		return this;
 	};
 
 	/**
