@@ -2,6 +2,7 @@
 /* CSS for control sap.m/MessagePopover  */
 /* Base theme                            */
 /* ===================================== */
+@_sap_m_MessageView_DescIcon_Width: 3rem;
 
 .sapMMsgView {
 	height: 100%;
@@ -75,12 +76,16 @@
 	.sapMSLIInfo {
 		margin: 0;
 	}
+
+	.sapMTextMaxWidth {
+		max-width: ~"calc(100% - @{_sap_m_MessageView_DescIcon_Width})";
+	}
 }
 
 .sapMMsgViewDescIcon {
 	position: absolute;
 	left: 0;
-	width: 3rem;
+	width: @_sap_m_MessageView_DescIcon_Width;
 	top: .7rem;
 	font-size: 1.35rem;
 }
@@ -152,7 +157,7 @@
 	}
 
 	.sapMMsgViewDescIcon {
-		width: 3rem;
+		width: @_sap_m_MessageView_DescIcon_Width;
 		height: 1.626rem;
 		line-height: 1.626rem;
 		font-size: 1rem;
