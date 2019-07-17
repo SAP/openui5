@@ -3213,6 +3213,24 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("createContexts, prerendering task called on destroyed binding", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES", {/*oContext*/}),
+			oExpectation = this.mock(sap.ui.getCore()).expects("addPrerenderingTask");
+
+		oBinding.mPreviousContextsByPath = {"/EMPLOYEES/0" : {}};
+
+		// code under test
+		oBinding.createContexts(1, 0, []);
+
+		oBinding.destroy();
+
+		assert.strictEqual(oBinding.mPreviousContextsByPath, undefined);
+
+		// code under test - prerendering task does not fail if binding is already destroyed
+		oExpectation.args[0][0]();
+	});
+
+	//*********************************************************************************************
 	[false, true].forEach(function (bCreated) {
 		var sTitle = "createContexts w/ keyPredicates, reuse previous contexts, bCreated="
 				+ bCreated;

@@ -737,10 +737,12 @@ sap.ui.define([
 		// destroy previous contexts which are not reused
 		if (Object.keys(this.mPreviousContextsByPath).length) {
 			sap.ui.getCore().addPrerenderingTask(function () {
-				Object.keys(that.mPreviousContextsByPath).forEach(function (sPath) {
-					that.mPreviousContextsByPath[sPath].destroy();
-					delete that.mPreviousContextsByPath[sPath];
-				});
+				if (that.mPreviousContextsByPath) { // binding might be destroyed already
+					Object.keys(that.mPreviousContextsByPath).forEach(function (sPath) {
+						that.mPreviousContextsByPath[sPath].destroy();
+						delete that.mPreviousContextsByPath[sPath];
+					});
+				}
 			});
 		}
 		if (iCount !== undefined) {
