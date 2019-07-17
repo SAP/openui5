@@ -3304,7 +3304,7 @@ sap.ui.define([
 			this.iStickyHeaderContentHeight = this._$stickyHeaderContent.height();
 
 			//figure out the anchorBarHeight  ------------------------
-			this.iAnchorBarHeight = this._bStickyAnchorBar ? this._$stickyAnchorBar.height() : this._$anchorBar.height();
+			this.iAnchorBarHeight = this._bStickyAnchorBar ? this._$stickyAnchorBar.outerHeight() : this._$anchorBar.outerHeight();
 
 			//in sticky mode, we need to calculate the size of original header
 			if (!this._bHeaderExpanded) {
