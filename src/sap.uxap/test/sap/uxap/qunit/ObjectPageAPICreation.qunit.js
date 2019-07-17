@@ -2048,6 +2048,22 @@ function (
 		assert.ok(oSpy.calledWith("Transparent"), "setBackgroundDesign is called on headerContent with correct param");
 	});
 
+	QUnit.test("_getStickyAreaHeight calculation while header expanded in the title-area", function (assert) {
+		var iStickyAreaHeight,
+			done = assert.async();
+		this.oObjectPageLayout.setHeaderTitle(oFactory.getHeaderTitle());
+		this.oObjectPageLayout.addHeaderContent(oFactory.getHeaderContent());
+
+		this.oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
+			// pre-calculate the height of the sticky area in snapped mode
+			iStickyAreaHeight = this.oObjectPageLayout._getStickyAreaHeight(true /*snapped header*/);
+			this.oObjectPageLayout._expandHeader(true);
+			assert.strictEqual(this.oObjectPageLayout._getStickyAreaHeight(true /*snapped header*/), iStickyAreaHeight, "sticky area correctly calculated while header expanded");
+			done();
+		}.bind(this));
+		helpers.renderObject(this.oObjectPageLayout);
+	});
+
 	QUnit.module("ObjectPage with ObjectPageDynamicHeaderTitle without header content", {
 		beforeEach: function () {
 			this.NUMBER_OF_SECTIONS = 2;
@@ -2701,6 +2717,7 @@ function (
 		var oObjectPage = oFactory.getObjectPageLayoutWithIconTabBar(),
 			oCSSSpy;
 
+		oObjectPage.setHeaderTitle(oFactory.getHeaderTitle());
 		oObjectPage.placeAt("qunit-fixture");
 		Core.applyChanges();
 		oCSSSpy = sinon.spy(oObjectPage._$opWrapper, "css");
@@ -2734,6 +2751,7 @@ function (
 		var oObjectPage = oFactory.getObjectPageLayoutWithIconTabBar(),
 			oCSSSpy;
 
+		oObjectPage.setHeaderTitle(oFactory.getObjectPageDynamicHeaderTitle());
 		oObjectPage.placeAt("qunit-fixture");
 		Core.applyChanges();
 		oCSSSpy = sinon.spy(oObjectPage._$opWrapper, "css");
