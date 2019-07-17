@@ -61,6 +61,8 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer'],
 		mAccessibilityState["autocomplete"] = "none";
 		mAccessibilityState["haspopup"] = true;
 		mAccessibilityState["expanded"] = false;
+		// aria-disabled is not necessary if we already have a native 'disabled' attribute
+		mAccessibilityState["disabled"] = null;
 
 		if (oDP._bMobile && oDP.getEnabled() && oDP.getEditable()) {
 			// if on mobile device readonly property is set, but should not be announced
