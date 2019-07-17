@@ -174,21 +174,16 @@ sap.ui.define([
 			RadioButtonGroup.prototype.onBeforeRendering = function() {
 				var aButtons = this.getButtons();
 				var iButtonCount = aButtons.length;
-				var aVisibleRBs = aButtons.filter(function (oRadioButton) {
-						oRadioButton._setEditableParent(this.getEditable());
+				var bEditable = this.getEditable();
 
-						return oRadioButton.getVisible();
-					}, this);
+				aButtons.forEach(function (oRadioButton) {
+					oRadioButton._setEditableParent(bEditable);
+				});
 
 				if (this.getSelectedIndex() > iButtonCount) {
 					Log.warning("Invalid index, set to 0");
 					this.setSelectedIndex(0);
 				}
-
-				aVisibleRBs.forEach(function (oRadioButton, iIndex) {
-					oRadioButton._setPosinset(iIndex);
-					oRadioButton._setSetsize(aVisibleRBs.length);
-				}, this);
 			};
 
 			/**

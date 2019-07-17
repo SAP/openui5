@@ -69,8 +69,6 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library', 'sap/ui/D
 		// ARIA
 		oRm.writeAccessibilityState(oRadioButton, {
 			role: "radio",
-			posinset: oRadioButton.getProperty("posinset"),
-			setsize: oRadioButton.getProperty("setsize"),
 			readonly: bNonEditableParent || undefined,
 			selected: null, // Avoid output aria-selected
 			checked: oRadioButton.getSelected() === true ? true : undefined, // aria-checked=false is default value and must not be set explicitly
