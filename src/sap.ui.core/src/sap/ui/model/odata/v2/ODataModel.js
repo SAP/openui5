@@ -1366,7 +1366,7 @@ sap.ui.define([
 	 */
 	ODataModel.prototype._importData = function(oData, mChangedEntities, oResponse, sPath, sDeepPath, sKey) {
 		var that = this,
-			aList, oResult, oEntry;
+			aList, oResult, oEntry, oCurrentEntry;
 			sPath = sPath || "";
 			sKey = sKey || "";
 
@@ -1394,7 +1394,11 @@ sap.ui.define([
 
 			// If entry does not exist yet or existing entry is invalid, set received data as new entry
 			oEntry = this._getEntity(sKey);
+			oCurrentEntry = oEntry;
 			if (!oEntry || (oEntry.__metadata && oEntry.__metadata.invalid)) {
+				if (!oCurrentEntry){
+					oCurrentEntry = oData;
+				}
 				oEntry = oData;
 				sKey = this._addEntity(oEntry);
 			}
@@ -1427,8 +1431,8 @@ sap.ui.define([
 					if (Array.isArray(oResult)) {
 						oEntry[sName] = { __list: oResult };
 					} else {
-						if (oEntry[sName] && oEntry[sName].__ref) {
-							if (oEntry[sName].__ref !== oResult) {
+						if (oCurrentEntry[sName] && oCurrentEntry[sName].__ref) {
+							if (oCurrentEntry[sName].__ref !== oResult) {
 								that.mInvalidatedPaths[sPath.substr(sPath.lastIndexOf("(")) + "/" + sName] = "/" + oResult;
 							}
 						}
@@ -1436,7 +1440,7 @@ sap.ui.define([
 					}
 				} else if (!oProperty || !oProperty.__deferred) { //do not store deferred navprops
 					//'null' is a valid value for navigation properties (e.g. if no entity is assigned). We need to invalidate the path cache
-					if (oEntry[sName] && oProperty === null) {
+					if (oCurrentEntry[sName] && oProperty === null) {
 						that.mInvalidatedPaths[sPath.substr(sPath.lastIndexOf("(")) + "/" + sName] = null;
 					}
 					oEntry[sName] = oProperty;
@@ -3250,7 +3254,7 @@ sap.ui.define([
 				for (var sUpdateKey in that.mInvalidatedPaths) {
 					iIndex = sKey.indexOf(sUpdateKey);
 					if (iIndex > -1) {
-						if (that.mPathCache[sKey].canonicalPath !== null && iIndex + sUpdateKey.length !== sKey.length) {
+						if (iIndex + sUpdateKey.length !== sKey.length) {
 							var sEnd = sKey.substr(iIndex + sUpdateKey.length);
 							that.mPathCache[sKey].canonicalPath = that.mInvalidatedPaths[sUpdateKey] === null ? null : that.mInvalidatedPaths[sUpdateKey] + sEnd;
 						} else {
