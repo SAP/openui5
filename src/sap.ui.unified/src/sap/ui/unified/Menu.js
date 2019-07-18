@@ -967,28 +967,13 @@ sap.ui.define([
 
 		if (!oItem) {
 			this.oHoveredItem = null;
-			jQuery(this.getDomRef()).removeAttr("aria-activedescendant");
 			return;
 		}
 
 		this.oHoveredItem = oItem;
 		oItem.hover(true, this);
-		this._setActiveDescendant(this.oHoveredItem);
 
 		this.scrollToItem(this.oHoveredItem);
-	};
-
-	Menu.prototype._setActiveDescendant = function(oItem){
-		if (sap.ui.getCore().getConfiguration().getAccessibility() && oItem) {
-			var that = this;
-			that.$().removeAttr("aria-activedescendant");
-			setTimeout(function(){
-				//Setting active descendant must be a bit delayed. Otherwise the screenreader does not announce it.
-				if (that.oHoveredItem === oItem) {
-					that.$().attr("aria-activedescendant", that.oHoveredItem.getId());
-				}
-			}, 10);
-		}
 	};
 
 	/**
@@ -1164,7 +1149,6 @@ sap.ui.define([
 	Menu.prototype.focus = function(){
 		if (this.bOpen) {
 			Control.prototype.focus.apply(this, arguments);
-			this._setActiveDescendant(this.oHoveredItem);
 		}
 	};
 

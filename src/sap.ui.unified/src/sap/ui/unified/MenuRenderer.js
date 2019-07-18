@@ -51,9 +51,6 @@ sap.ui.define([],
 				disabled: null,
 				labelledby: {value: oMenu.getId() + "-label", append: true}
 			});
-			if (oMenu.oHoveredItem) {
-				oRm.writeAttribute("aria-activedescendant", oMenu.oHoveredItem.getId());
-			}
 		}
 
 		oRm.addClass("sapUiMnu");
