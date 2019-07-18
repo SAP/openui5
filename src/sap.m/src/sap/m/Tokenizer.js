@@ -1147,11 +1147,11 @@ sap.ui.define([
 	 * Function validates the given text and adds a new token if validation was successful
 	 *
 	 * @public
-	 * @param {object} oParameters - parameter bag containing following fields:
-	 *          {sap.m.String} text - the source text {sap.m.Token}
-	 *          [optional] token - a suggested token
-	 *          {object} [optional] suggestionObject - any object used to find the suggested token
-	 *          {function} [optional] validationCallback - callback which gets called after validation has finished
+	 * @param {object} oParameters Parameter bag containing the following fields:
+	 * @param {string} oParameters.text The source text {sap.m.Token}
+	 * @param {object} [oParameters.token] Suggested token
+	 * @param {object} [oParameters.suggestionObject] Any object used to find the suggested token
+	 * @param {function} [oParameters.validationCallback] Callback which gets called after validation has finished
 	 */
 	Tokenizer.prototype.addValidateToken = function(oParameters) {
 		var oToken = this._validateToken(oParameters);
@@ -1162,12 +1162,11 @@ sap.ui.define([
 	 * Private function used by MultiInput which validates the given text and adds a new token if validation was successful
 	 *
 	 * @private
-	 * @param {object}
-	 *          oParameters - parameter bag containing following fields:
-	 *          {sap.m.String} text - the source text
-	 *          {sap.m.Token} [optional] token - a suggested token
-	 *          {object} [optional] suggestionObject - any object used to find the suggested token
-	 *          {function} [optional] validationCallback - callback which gets called after validation has finished
+	 * @param {object} oParameters Parameter bag containing the following fields:
+	 * @param {string} oParameters.text The source text {sap.m.Token}
+	 * @param {object} [oParameters.token] Suggested token
+	 * @param {object} [oParameters.suggestionObject] Any object used to find the suggested token
+	 * @param {function} [oParameters.validationCallback] Callback which gets called after validation has finished
 	 */
 	Tokenizer.prototype._addValidateToken = function(oParameters) {
 		var oToken = this._validateToken(oParameters),

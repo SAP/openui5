@@ -548,8 +548,12 @@ function(
 	/**
 	 * Function adds a validation callback called before any new token gets added to the tokens aggregation
 	 *
-	 * @param {function} fValidator The validation callback
 	 * @public
+	 * @param {function} fValidator The validation callback whose parameter contains the following properties:
+	 * @param {string} fValidator.text The source text
+	 * @param {sap.m.Token} [fValidator.suggestedToken] Suggested token
+	 * @param {object} [fValidator.suggestionObject] Any object used to find the suggested token, this property is available when the multiInput has a list or tabular suggestions
+	 * @param {function} [fValidator.asyncCallback] Callback which accepts {sap.m.Token} as a parameter and gets called after validation has finished
 	 */
 	MultiInput.prototype.addValidator = function (fValidator) {
 		this._tokenizer.addValidator(fValidator);

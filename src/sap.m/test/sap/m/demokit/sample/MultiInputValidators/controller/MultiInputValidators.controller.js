@@ -15,6 +15,7 @@ sap.ui.define([
 			var oCheckBox = oView.byId("checkbox1");
 
 			//*** add checkbox validator
+			// args is an object containing text, suggestedToken, suggestionObject, asyncCallback fields
 			oMultiInput1.addValidator(function(args){
 				if (oCheckBox.getSelected()){
 					var text = args.text;
@@ -23,6 +24,7 @@ sap.ui.define([
 			});
 
 			//*** add text change validator
+			// args is an object containing text, suggestedToken, suggestionObject, asyncCallback fields
 			oMultiInput1.addValidator(function(args){
 				if (args.suggestedToken){
 					var text = args.suggestedToken.getText();
@@ -31,6 +33,7 @@ sap.ui.define([
 			});
 
 			//******* MultiInput 2 - add asynchronous validator
+			// args is an object containing text, suggestedToken, suggestionObject, asyncCallback fields
 			oMultiInput2.addValidator(function(args){
 				MessageBox.confirm("Do you really want to add token \"" + args.text + "\"?", {
 					onClose: function(oAction) {
