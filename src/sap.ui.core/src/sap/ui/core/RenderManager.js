@@ -519,7 +519,9 @@ sap.ui.define([
 		/**
 		 * Sets the given HTML markup without any encoding or sanitizing.
 		 *
-		 * @param {string} sHtml HTML markup
+		 * This must not be used for plain texts; use the <code>text</code> method instead.
+		 *
+		 * @param {string} sHtml Well-formed, valid HTML markup
 		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @since 1.67
