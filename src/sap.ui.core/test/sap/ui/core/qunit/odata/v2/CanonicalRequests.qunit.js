@@ -38,11 +38,11 @@ sap.ui.define([
                         if (bRemoveProductOnly){
                             oC.d.ToProduct = null;
                         } else {
-                            if (oC.d.ToLineItems) {
+                            if (oC.d.ToLineItems && sProductId) {
                                 oC.d.ToLineItems.results[0].ProductID = sProductId;
                                 oC.d.ToLineItems.results[0].ToProduct.ProductID = sProductId;
                                 oC.d.ToLineItems.results[0].ToProduct.__metadata.uri = "/SalesOrderSrv/ProductSet('" + sProductId + "')";
-                            } else if (oC.d.ToProduct) {
+                            } else if (oC.d.ToProduct && sProductId && sBusinessPartnerID) {
                                 oC.d.ProductID = sProductId;
                                 oC.d.ToProduct.ProductID = sProductId;
                                 oC.d.ToProduct.__metadata.uri = "/SalesOrderSrv/ProductSet('" + sProductId + "')";
@@ -580,16 +580,65 @@ sap.ui.define([
 
     QUnit.test("ODataModel._invalidatePathCache - Ensure correct invalidation", function(assert){
 
-        this.oModel.mPathCache["/myEntity('1')/toStatus"] = {canonicalPath: "/myStatus('A')", updateKey: "/myStatus('A')"};
-        this.oModel.mPathCache["/myEntity('1')/toStatus/LongText"] = {canonicalPath: "/myStatus('A')/LongText", updateKey: "/myStatus('A')/LongText"};
+        this.oModel.mPathCache["/myEntity('1')/toStatus"] = {canonicalPath: "/myStatus('A')", updateKey: "('1')/toStatus"};
+        this.oModel.mPathCache["/myEntity('1')/toStatus/LongText"] = {canonicalPath: "/myStatus('A')/LongText", updateKey: "('1')/toStatus/LongText"};
+        this.oModel.mPathCache["/myEntity('1')/toStatus/Description"] = {canonicalPath: null, updateKey: "('1')/toStatus/Description"};
+
 
         this.oModel.mInvalidatedPaths["('1')/toStatus"] = "/myStatus('C')";
 
         this.oModel._invalidatePathCache();
 
-        assert.equal(this.oModel.mPathCache["/myEntity('1')/toStatus"].canonicalPath, "/myStatus('C')", "Status updated of cache entry with nav property");
-        assert.equal(this.oModel.mPathCache["/myEntity('1')/toStatus/LongText"].canonicalPath, "/myStatus('C')/LongText", "Status text updated of cache entry with nav property");
+        assert.equal(this.oModel.mPathCache["/myEntity('1')/toStatus"].canonicalPath, "/myStatus('C')", "Correctly updated.");
+        assert.equal(this.oModel.mPathCache["/myEntity('1')/toStatus/LongText"].canonicalPath, "/myStatus('C')/LongText", "Correctly updated.");
+        assert.equal(this.oModel.mPathCache["/myEntity('1')/toStatus/Description"].canonicalPath, "/myStatus('C')/Description", "Correctly updated.");
 
+    });
+
+
+
+    QUnit.test("ODataModel._invalidatePathCache - Handle invalided data entries correctly", function(assert){
+        var that = this;
+        var done = assert.async();
+        var oOriginalInvalidateFunction = this.oModel._invalidatePathCache;
+        var mInvalidatedPaths;
+        this.oModel._invalidatePathCache = function(){
+            mInvalidatedPaths = {};
+            Object.assign(mInvalidatedPaths, this.mInvalidatedPaths);
+            oOriginalInvalidateFunction.apply(that.oModel, arguments);
+        };
+
+        this.oModel.metadataLoaded().then(function(){
+            // Scenario 1
+            that.oModel.read("/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')", {urlParameters: {$expand:"ToProduct"}});
+                var fnBatchCompleted1 = function(){
+                    that.oModel.detachBatchRequestCompleted(fnBatchCompleted1);
+                    assert.deepEqual(mInvalidatedPaths, {}, "No path invalidation happend.");
+                    // Scenario 2
+                    that.oModel.resolve("/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct/Description", undefined, true);
+                    that.oModel.invalidateEntry("/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')");
+                    changeNavigationTargets(that.oMockServer, undefined, undefined, true);
+                    that.oModel.read("/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')", {urlParameters: {$expand:"ToProduct"}});
+                    var fnBatchCompleted2 = function(){
+                        that.oModel.detachBatchRequestCompleted(fnBatchCompleted2);
+                        assert.deepEqual(mInvalidatedPaths, {"(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct": null}, "Set nav prop to null - Path invalidation necessary.");
+                        // Scenario 3
+                        that.oModel.invalidateEntry("/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')");
+                        changeNavigationTargets(that.oMockServer, undefined, undefined, false);
+                        that.oModel.read("/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')", {urlParameters: {$expand:"ToProduct"}});
+                        var fnBatchCompleted3 = function(){
+                            that.oModel.detachBatchRequestCompleted(fnBatchCompleted3);
+                            assert.deepEqual(mInvalidatedPaths, {}, "Set from null to new nav prop - No path invalidation necessary.");
+                            //restore
+                            that.oModel._invalidatePathCache = oOriginalInvalidateFunction;
+                            done();
+                        };
+                        that.oModel.attachBatchRequestCompleted(fnBatchCompleted3);
+                    };
+                    that.oModel.attachBatchRequestCompleted(fnBatchCompleted2);
+                };
+                that.oModel.attachBatchRequestCompleted(fnBatchCompleted1);
+        });
     });
 
 
