@@ -655,6 +655,15 @@ sap.ui.define([
 
 	QUnit.test("Patching unsafeHtml", function(assert) {
 
+		this.html("<div>Here can be any content from outside</div>").patch(function() {
+			Patcher.openStart("div").openEnd().
+				unsafeHtml("Plain text actually not supported with unsafeHtml").
+			close("div");
+		}, function(aMutations, oElement) {
+			assert.equal(aMutations.length, 2, "Two changes for plain text");
+			assert.equal(oElement.textContent, "Plain text actually not supported with unsafeHtml");
+		});
+
 		this.html("<ul></ul>").patch(function() {
 			Patcher.openStart("ul").openEnd().
 				unsafeHtml("<li id='x'><input><b>Test</b></li>").

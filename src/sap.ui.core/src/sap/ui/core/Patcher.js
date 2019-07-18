@@ -516,7 +516,15 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			if (sHtml) {
 				this._iTagOpenState = 0;
 				this._oCurrent.insertAdjacentHTML("afterbegin", sHtml);
-				this._oCurrent = oReference ? oReference.previousSibling : this._oCurrent.lastChild;
+				if (oReference) {
+					this._oCurrent = oReference.previousSibling;
+					if (!this._oCurrent) { // IE & Edge normalize text nodes
+						oReference.data = sHtml;
+						this._oCurrent = oReference;
+					}
+				} else {
+					this._oCurrent = this._oCurrent.lastChild;
+				}
 			}
 		} else {
 			oReference = this._oCurrent.nextSibling;
