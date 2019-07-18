@@ -25,7 +25,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("given only a static changes bundle with dummy data placed for test.app resource roots, when loading flex data", function(assert) {
-			return Connector.loadFlexData("test.app", "1.0.0").then(function (oResult) {
+			return Connector.loadFlexData({reference: "test.app", appVersion: "1.0.0"}).then(function (oResult) {
 				assert.equal(oResult.changes.length, 1, "one change was loaded");
 				var oChange = oResult.changes[0];
 				assert.equal(oChange.dummy, true, "the change dummy data is correctly loaded");

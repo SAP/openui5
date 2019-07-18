@@ -4,22 +4,22 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/internal/connectors/Utils"
-], function(ConnectorUtils) {
+], function(
+	ConnectorUtils
+) {
 	"use strict";
 
 	/**
 	 * Abstraction providing an API to handle communication with persistencies like back ends, local & session storage or work spaces.
 	 *
-	 * @namespace
-	 * @name sap.ui.fl.write.internal.Connector
-	 * @author SAP SE
+	 * @namespace sap.ui.fl.write.internal.Connector
 	 * @experimental Since 1.67
 	 * @since 1.67
 	 * @version ${version}
-	 * @private
+	 * @ui5-restricted sap.ui.fl
 	 */
 
-	function _findConnectorForLayer(sLayer, aConnectors) {
+	function findConnectorForLayer(sLayer, aConnectors) {
 		var aFilteredConnectors = aConnectors.filter(function (oConnector) {
 			return oConnector.layerFilter.indexOf("ALL") !== -1 || oConnector.layerFilter.indexOf(sLayer) !== -1;
 		});
@@ -37,6 +37,22 @@ sap.ui.define([
 		}
 	}
 
+	function sendLoadFeaturesToConnector (mPropertyBag, aConnectors) {
+		mPropertyBag.urls = {};
+		var aConnectorPromises = aConnectors.map(function (oConnectorConfig) {
+			if (oConnectorConfig.url) {
+				mPropertyBag.urls[oConnectorConfig.connectorName] = oConnectorConfig.url;
+			}
+
+			return new Promise(function (resolve) {
+				return oConnectorConfig.connector.loadFeatures(mPropertyBag)
+					.then(resolve, ConnectorUtils.logAndResolveDefault.bind(null, resolve, {}, oConnectorConfig, "loadFeatures"));
+			});
+		});
+
+		return Promise.all(aConnectorPromises);
+	}
+
 	/**
 	 * Determines the connector in charge for a given layer.
 	 *
@@ -44,9 +60,13 @@ sap.ui.define([
 	 * @returns {Promise<sap.ui.fl.write.connectors.BaseConnector>} Returns the connector in charge for the layer or rejects in case no connector can be determined
 	 * @private
 	 */
-	function _getConnectorByLayer(sLayer) {
+	function getConnectorByLayer(sLayer) {
 		return ConnectorUtils.getWriteConnectors()
-			.then(_findConnectorForLayer.bind(this, sLayer));
+			.then(findConnectorForLayer.bind(this, sLayer));
+	}
+
+	function sendWriteChangesToConnector (mPropertyBag, oConnector) {
+		return oConnector.writeChanges(mPropertyBag);
 	}
 
 	var Connector = {};
@@ -55,18 +75,25 @@ sap.ui.define([
 	 * Stores the flex data by calling the according write of the connector in charge of the passed layer;
 	 * The promise is rejected in case the writing failed or no connector is configured to handle the layer.
 	 *
-	 * @param {string} sLayer Layer on which the file should be stored
-	 * @param {sap.ui.fl.Change|sap.ui.fl.Change[]} vPayload Data to be stored
+	 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer on which the file should be stored
+	 * @param {sap.ui.fl.Change|sap.ui.fl.Change[]} mPropertyBag.payload Data to be stored
 	 * @returns {Promise} Promise resolving as soon as the writing was completed or rejects in case of an error
 	 */
-	Connector.writeChanges = function (sLayer, vPayload) {
-		return _getConnectorByLayer(sLayer)
-			.then(_writeChanges.bind(this, vPayload));
+	Connector.writeChanges = function (mPropertyBag) {
+		return getConnectorByLayer(mPropertyBag.layer)
+			.then(sendWriteChangesToConnector.bind(this, mPropertyBag));
 	};
 
-	function _writeChanges (vPayload, oConnector) {
-		return oConnector.writeChanges(vPayload);
-	}
+	/**
+	 * Provides the information which features are provided based on the responses of the involved connectors.
+	 *
+	 * @returns {Promise<Object>} map feature flags and additional provided information form the connectors
+	 */
+	Connector.loadFeatures = function () {
+		return ConnectorUtils.getApplyConnectors()
+			.then(sendLoadFeaturesToConnector)
+			.then(ConnectorUtils.mergeResults);
+	};
 
 	return Connector;
 }, true);

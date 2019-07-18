@@ -14,18 +14,13 @@ sap.ui.define([
 	/**
 	 * Connector for requesting data from an LRep-based back end.
 	 *
-	 * @namespace
-	 * @name sap.ui.fl.write.internal.connectors.LrepConnector
-	 * @author SAP SE
+	 * @namespace sap.ui.fl.write.internal.connectors.LrepConnector
 	 * @experimental Since 1.67
 	 * @since 1.67
 	 * @version ${version}
-	 * @private
+	 * @ui5-restricted sap.ui.fl.write.internal.Connector
 	 */
-	var LrepConnector = merge(BaseConnector, {
-
-		_URL_PREFIX: "/sap/bc/lrep"
-	});
+	var LrepConnector = merge({}, BaseConnector,  /** @lends sap.ui.fl.write.internal.connectors.LrepConnector */ {});
 
 	return LrepConnector;
 }, true);

@@ -44,10 +44,18 @@ sap.ui.define(function () {
 			"apply/internal/Connector": {
 				group: 'Apply Internal',
 				ui5: {
-					resourceroots: {"test.app": "./test-resources/sap/ui/fl/qunit/apply/internal/"}
+					resourceroots: {
+						"test.app": "./test-resources/sap/ui/fl/qunit/apply/internal/"
+					}
 				},
 				coverage: {
 					only: ["sap/ui/fl/write/internal/Connector"]
+				}
+			},
+			"apply/internal/connectors/LrepConnector": {
+				group: 'Apply Internal',
+				coverage: {
+					only: ["sap/ui/fl/write/internal/connectors/LrepConnector"]
 				}
 			},
 			"apply/internal/ConnectorWithCustomBrokenConnector": {
