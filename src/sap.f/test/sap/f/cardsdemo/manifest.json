@@ -153,6 +153,11 @@
 		  "target": "gridContainer"
 		},
 		{
+		  "pattern": "gridContainerQuery",
+		  "name": "gridContainerQuery",
+		  "target": "gridContainerQuery"
+		},
+		{
 		  "pattern": "timelineContent",
 		  "name": "timelineContent",
 		  "target": "timelineContent"
@@ -297,6 +302,11 @@
 			"gridContainer": {
 				"viewId": "GridContainer",
 				"viewName": "GridContainer",
+				"viewLevel": 1
+			},
+			"gridContainerQuery": {
+				"viewId": "GridContainerQuery",
+				"viewName": "GridContainerQuery",
 				"viewLevel": 1
 			},
 			"navigationService": {

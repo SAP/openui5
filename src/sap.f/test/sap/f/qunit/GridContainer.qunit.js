@@ -38,18 +38,42 @@ function (
 	 */
 	function assertGridSettings(oGrid, oSettings, sLayout, assert) {
 		var oGridStyle = oGrid.getDomRef().style,
-			expectedColumnsTemplate = "repeat(" + (oSettings.getColumns() || "auto-fill") + ", " + oSettings.getColumnSize() + ")";
+			sColumnsTemplate,
+			sExpectedColumnsTemplate,
+			sColumnSize = oSettings.getColumnSize(),
+			sMinColumnSize = oSettings.getMinColumnSize(),
+			sMaxColumnSize = oSettings.getMaxColumnSize(),
+			bColumnsDoMatch;
 
-		if (bIsGridSupported) {
-			assert.strictEqual(oGridStyle.getPropertyValue("grid-template-columns"), expectedColumnsTemplate, "Grid has expected column template settings for layout '" + sLayout + "'");
-			assert.strictEqual(oGridStyle.getPropertyValue("grid-auto-rows"), oSettings.getRowSize(), "Grid has expected row size for '" + sLayout + "'");
-
-			// test row-gap and column-gap, because grid-gap can not be tested directly
-			assert.strictEqual(oGridStyle.getPropertyValue("grid-row-gap") || oGridStyle.getPropertyValue("row-gap"), oSettings.getGap(), "Grid has expected row gap for '" + sLayout + "'");
-			assert.strictEqual(oGridStyle.getPropertyValue("grid-column-gap") || oGridStyle.getPropertyValue("column-gap"), oSettings.getGap(), "Grid has expected column gap for '" + sLayout + "'");
-		} else {
+		if (!bIsGridSupported) {
+			// simplified test for IE
 			assert.strictEqual(oGrid.getActiveLayoutSettings(), oSettings, "Grid has expected settings for '" + sLayout + "'");
+			return;
 		}
+
+		// compare columns template
+		sColumnsTemplate = oGridStyle.getPropertyValue("grid-template-columns");
+
+		if (sMinColumnSize && sMaxColumnSize) {
+			sColumnSize = "minmax(" + sMinColumnSize + ", " + sMaxColumnSize + ")";
+		}
+		sExpectedColumnsTemplate = "repeat(" + (oSettings.getColumns() || "auto-fill") + ", " + sColumnSize + ")";
+
+		bColumnsDoMatch = sColumnsTemplate === sExpectedColumnsTemplate;
+
+		if (!bColumnsDoMatch && oSettings.getColumns()) {
+			// try with computed css which looks like "80px 80px 80px ..."
+			sExpectedColumnsTemplate = (sColumnSize + " ").repeat(oSettings.getColumns()).trim();
+			bColumnsDoMatch = sColumnsTemplate === sExpectedColumnsTemplate;
+		}
+		assert.ok(bColumnsDoMatch, "Grid has expected column template settings for layout '" + sLayout + "'");
+
+		// compare rows
+		assert.strictEqual(oGridStyle.getPropertyValue("grid-auto-rows"), oSettings.getRowSize(), "Grid has expected row size for '" + sLayout + "'");
+
+		// test row-gap and column-gap, because grid-gap can not be tested directly
+		assert.strictEqual(oGridStyle.getPropertyValue("grid-row-gap") || oGridStyle.getPropertyValue("row-gap"), oSettings.getGap(), "Grid has expected row gap for '" + sLayout + "'");
+		assert.strictEqual(oGridStyle.getPropertyValue("grid-column-gap") || oGridStyle.getPropertyValue("column-gap"), oSettings.getGap(), "Grid has expected column gap for '" + sLayout + "'");
 	}
 
 	/**
@@ -459,6 +483,18 @@ function (
 		assertGridSettings(this.oGrid, oSettings, "layout", assert);
 	});
 
+	QUnit.test("Layout settings with breathing", function (assert) {
+		// Arrange
+		var oSettings = new GridContainerSettings({columns: 10, rowSize: "90px", minColumnSize: "90px", maxColumnSize: "150px", gap: "20px"});
+		this.oGrid.setAggregation("layout", oSettings);
+
+		// Act
+		Core.applyChanges();
+
+		// Assert
+		assertGridSettings(this.oGrid, oSettings, "layout", assert);
+	});
+
 	QUnit.module("Layout breakpoints", {
 		beforeEach: function () {
 			this.oGrid = new GridContainer();
@@ -488,6 +524,7 @@ function (
 	QUnit.test("Breakpoints", function (assert) {
 		// Arrange
 		var oGetCurrentRangeStub = sinon.stub(Device.media, 'getCurrentRange');
+
 		this.oGrid.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
 
@@ -496,8 +533,10 @@ function (
 
 			// Act
 			oGetCurrentRangeStub.returns({name: sRangeName});
-			this.oGrid._resize(); // TODO fire resize or fire Device.media sizeChanged
-			Core.applyChanges();
+
+			// simulate resize, since we can not resize the window itself
+			Device.resize.width -= 1;
+			this.oGrid._resize();
 
 			// Assert
 			var sLayoutName = GridContainer.mSizeLayouts[sRangeName];
@@ -507,6 +546,7 @@ function (
 		}.bind(this));
 
 		oGetCurrentRangeStub.restore();
+		Device.resize._update(); // restore actual device size
 	});
 
 	QUnit.test("Breakpoints when containerQuery is true", function (assert) {
@@ -529,7 +569,8 @@ function (
 
 			// Act
 			oContainer.$().width(sWidth);
-			this.oGrid._resize(); // TODO fire resize or fire Device.media sizeChanged
+			Core.applyChanges();
+			this.clock.tick(500);
 
 			// Assert
 			sLayoutName = mLayouts[sWidth];
