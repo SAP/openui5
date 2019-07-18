@@ -217,17 +217,21 @@ sap.ui.define([
 	 *   The edit URL to be used for the DELETE request
 	 * @param {number} oContext
 	 *   The context to be deleted
+	 * @param {object} [oETagEntity]
+	 *   An entity with the ETag of the binding for which the deletion was requested. This is
+	 *   provided if the deletion is delegated from a context binding with empty path to a list
+	 *   binding.
 	 * @returns {Promise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure.
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype._delete = function (oGroupLock, sEditUrl, oContext) {
+	ODataListBinding.prototype._delete = function (oGroupLock, sEditUrl, oContext, oETagEntity) {
 		var bFireChange = false,
 			that = this;
 
-		return this.deleteFromCache(oGroupLock, sEditUrl, String(oContext.iIndex),
+		return this.deleteFromCache(oGroupLock, sEditUrl, String(oContext.iIndex), oETagEntity,
 			function (iIndex, aEntities) {
 				var sContextPath, i, sPredicate, sResolvedPath, i$skipIndex;
 
