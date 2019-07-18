@@ -105,10 +105,7 @@ sap.ui.define([
 					this._oData.fileName = sFileName;
 				}
 
-				// we need this property to navigate to API reference
-				this.entityId = oSample.entityId;
-
-				this.getAPIReferenceCheckPromise(oSample.entityId).then(function (bHasAPIReference) {
+				this.getAPIReferenceCheckPromise(this._sEntityId).then(function (bHasAPIReference) {
 					this.getView().byId("apiRefButton").setVisible(bHasAPIReference);
 				}.bind(this));
 
