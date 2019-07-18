@@ -124,6 +124,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * Find the context in the uppermost binding in the hierarchy that can be reached with an empty
+	 * path.
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oContext
+	 *   The context of the caller
+	 * @returns {sap.ui.model.odata.v4.Context}
+	 *   The context that can be reached through empty paths
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype._findEmptyPathParentContext = function (oContext) {
+		if (this.sPath === "" && this.oContext.getBinding) {
+			return this.oContext.getBinding()._findEmptyPathParentContext(this.oContext);
+		}
+		return oContext;
+	};
+
+	/**
 	 * Merges the given query options into this binding's aggregated query options. The merge does
 	 * not take place in the following cases
 	 * <ol>
@@ -489,6 +507,10 @@ sap.ui.define([
 	 *   The edit URL to be used for the DELETE request
 	 * @param {string} sPath
 	 *   The path of the entity relative to this binding
+	 * @param {object} [oETagEntity]
+	 *   An entity with the ETag of the binding for which the deletion was requested. This is
+	 *   provided if the deletion is delegated from a context binding with empty path to a list
+	 *   binding.
 	 * @param {function} fnCallback
 	 *   A function which is called after the entity has been deleted from the server and from the
 	 *   cache; the index of the entity is passed as parameter
@@ -502,7 +524,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataParentBinding.prototype.deleteFromCache = function (oGroupLock, sEditUrl, sPath,
-			fnCallback) {
+			oETagEntity, fnCallback) {
 		var oCache = this.oCachePromise.getResult(),
 			sGroupId;
 
@@ -516,10 +538,10 @@ sap.ui.define([
 			if (!this.oModel.isAutoGroup(sGroupId) && !this.oModel.isDirectGroup(sGroupId)) {
 				throw new Error("Illegal update group ID: " + sGroupId);
 			}
-			return oCache._delete(oGroupLock, sEditUrl, sPath, fnCallback);
+			return oCache._delete(oGroupLock, sEditUrl, sPath, oETagEntity, fnCallback);
 		}
 		return this.oContext.getBinding().deleteFromCache(oGroupLock, sEditUrl,
-			_Helper.buildPath(this.oContext.iIndex, this.sPath, sPath), fnCallback);
+			_Helper.buildPath(this.oContext.iIndex, this.sPath, sPath), oETagEntity, fnCallback);
 	};
 
 	/**

@@ -2089,28 +2089,100 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_delete: empty path -> delegate to parent context", function (assert) {
+[null, {destroy : function () {}}].forEach(function (oReturnValueContext, i) {
+	QUnit.test("_destroyContextAfterDelete " + i, function (assert) {
+		var oBinding = this.bindContext("/SalesOrders('42')"),
+			oElementContext = oBinding.getBoundContext();
+
+		oBinding.oReturnValueContext = oReturnValueContext;
+		this.mock(oElementContext).expects("destroy").withExactArgs();
+		if (oReturnValueContext) {
+			this.mock(oReturnValueContext).expects("destroy").withExactArgs();
+		}
+		this.mock(oBinding).expects("_fireChange")
+			.withExactArgs(sinon.match({reason : ChangeReason.Remove}));
+
+		// code under test
+		oBinding._destroyContextAfterDelete();
+
+		assert.strictEqual(oBinding.oElementContext, null);
+		if (oReturnValueContext) {
+			assert.strictEqual(oBinding.oReturnValueContext, null);
+		}
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_delete: empty path, ODCB - call deleteFromCache", function (assert) {
 		var oBinding = this.bindContext(""),
-			oContext = Context.create(this.oModel, null, "/SalesOrders/7"),
+			oContext = Context.create(this.oModel, null, "/SalesOrders('42')"),
 			oGroupLock = new _GroupLock("myGroup"),
+			oParent = {execute : {}, _destroyContextAfterDelete : function () {}},
 			oResult = {};
 
+		this.mock(oBinding).expects("fetchCache");
 		oBinding.setContext(oContext);
-		this.mock(oContext).expects("_delete").withExactArgs(sinon.match.same(oGroupLock))
-			.returns(oResult);
 
+		this.mock(oBinding).expects("_findEmptyPathParentContext")
+			.withExactArgs(sinon.match.same(oBinding.oElementContext))
+			.returns(oContext);
+		this.mock(oBinding).expects("deleteFromCache")
+			.withExactArgs(sinon.match.same(oGroupLock), "SalesOrders('42')", "", undefined,
+				sinon.match.func)
+			.callsArg(4).returns(oResult);
+		this.mock(oContext).expects("getBinding").withExactArgs().returns(oParent);
+		this.mock(oParent).expects("_destroyContextAfterDelete").withExactArgs();
+
+		// code under test
 		assert.strictEqual(oBinding._delete(oGroupLock, "SalesOrders('42')"), oResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_delete: empty path, ODLB - delegate to ODLB", function (assert) {
+		var oBinding = this.bindContext(""),
+			oContext = Context.create(this.oModel, null, "/SalesOrders('42')"),
+			oETagEntity = {},
+			oGroupLock = new _GroupLock("myGroup"),
+			oParent = {},
+			oResult = {};
+
+		this.mock(oBinding).expects("fetchCache");
+		oBinding.setContext(oContext);
+
+		this.mock(oBinding).expects("_findEmptyPathParentContext")
+			.withExactArgs(sinon.match.same(oBinding.oElementContext))
+			.returns(oContext);
+		this.mock(oContext).expects("getBinding").withExactArgs().returns(oParent);
+		this.mock(oBinding).expects("fetchValue").withExactArgs("", undefined, true)
+			.returns(SyncPromise.resolve(oETagEntity));
+		this.mock(oContext).expects("_delete")
+			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(oETagEntity))
+			.returns(SyncPromise.resolve(oResult));
+
+		// code under test
+		oBinding._delete(oGroupLock, "SalesOrders('42')").then(function (oDeleteResult) {
+			assert.strictEqual(oDeleteResult, oResult);
+		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("_delete: empty path, base context", function (assert) {
 		var oContext = this.oModel.createBindingContext("/SalesOrders('42')"),
-			oBinding = this.bindContext("", oContext);
+			oBinding = this.bindContext("", oContext),
+			oGroupLock = new _GroupLock("myGroup"),
+			oResult = {};
 
-		this.mock(oBinding).expects("deleteFromCache");
+		this.mock(oBinding).expects("_findEmptyPathParentContext")
+			.withExactArgs(sinon.match.same(oBinding.oElementContext))
+			.returns(oBinding.oElementContext);
+		this.mock(oBinding).expects("deleteFromCache")
+			.withExactArgs(sinon.match.same(oGroupLock), "SalesOrders('42')", "", undefined,
+				sinon.match.func)
+			.callsArg(4).returns(oResult);
+		this.mock(oBinding).expects("_destroyContextAfterDelete");
 
 		// code under test
-		oBinding._delete("myGroup", "SalesOrders('42')");
+		assert.strictEqual(oBinding._delete(oGroupLock, "SalesOrders('42')"), oResult);
 	});
 
 	//*********************************************************************************************
@@ -2139,9 +2211,12 @@ sap.ui.define([
 				oPromise = {};
 
 			oBinding.oReturnValueContext = oReturnValueContext;
+			this.mock(oBinding).expects("_findEmptyPathParentContext")
+				.withExactArgs(sinon.match.same(oBinding.oElementContext))
+				.returns(oBinding.oElementContext);
 			this.mock(oBinding).expects("deleteFromCache")
-				.withExactArgs("myGroup", "EMPLOYEES('42')", "", sinon.match.func)
-				.callsArg(3).returns(oPromise);
+				.withExactArgs("myGroup", "EMPLOYEES('42')", "", undefined, sinon.match.func)
+				.callsArg(4).returns(oPromise);
 			oBinding.attachChange(fnOnRemove);
 			this.spy(oElementContext, "destroy");
 			if (oReturnValueContext) {
