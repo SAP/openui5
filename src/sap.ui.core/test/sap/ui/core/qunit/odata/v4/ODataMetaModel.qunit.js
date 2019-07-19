@@ -106,14 +106,33 @@ sap.ui.define([
 				"name.space.OverloadedAction/_it" : {
 					"@Common.Label" : "_it's own label"
 				},
+				"name.space.OverloadedAction()" : {
+					"@Core.OperationAvailable" : {
+						"$Path" : "parameter0/-1" // Note: parameter0 is a collection
+					},
+					"@Core.OperationAvailable#1" : {
+						"$Path" : "$ReturnType"
+					}
+				},
 				"name.space.OverloadedAction()/parameter0" : {
 					"@Common.Label" : "Zero"
 				},
+				"name.space.OverloadedAction(tea_busi.TEAM)" : {
+					"@Core.OperationAvailable" : {
+						"$Path" : "_it/Name"
+					}
+				},
 				"name.space.OverloadedAction(tea_busi.TEAM)/parameter1" : {
-					"@Common.Label" : "My 1st label"
+					"@Common.Label" : "My 1st label",
+					"@Core.OperationAvailable" : {
+						"$Path" : "_it/TEAM_2_CONTAINED_S/Id"
+					}
 				},
 				"name.space.OverloadedBoundFunction/_it" : {
 					"@Common.Label" : "_it's own label"
+				},
+				"name.space.OverloadedFunction" : {
+					"@Common.Label" : "OverloadedFunction's label across all overloads"
 				},
 				"name.space.OverloadedFunction/A" : {
 					"@Common.Label" : "A's own label"
@@ -121,33 +140,74 @@ sap.ui.define([
 				"name.space.OverloadedFunction/B" : {
 					"@Common.Label" : "B's own label",
 					"@Common.Text" : {
-						"$Path" : "Road_2_Nowhere"
+						"$Path" : "A/Road_2_Nowhere"
 					},
 					"@Common.Text@UI.TextArrangement" : {
 						"$EnumMember" : "UI.TextArrangementType/TextLast"
 					}
 				},
+				"name.space.VoidAction" : {
+					"@Core.OperationAvailable" : {
+						"$Path" : "$ReturnType"
+					}
+				},
+				"name.space.VoidAction/$ReturnType" : {
+					"@Common.Label" : "invalid annotation, there is no return type!"
+				},
 				"tea_busi.AcChangeManagerOfTeam()/ManagerID" : {
 					"@Common.Label" : "New Manager ID"
+				},
+				"tea_busi.AcChangeManagerOfTeam()/$ReturnType" : {
+					"@Common.Label" : "Hail to the Chief"
+				},
+				"tea_busi.ComplexType_Salary" : {
+					"@Common.Label" : "Salary"
 				},
 				"tea_busi.DefaultContainer" : {
 					"@DefaultContainer" : {}
 				},
+				"tea_busi.DefaultContainer/OverloadedAction" : {
+					"@Common.Label" : "OverloadAction import's label"
+				},
 				"tea_busi.DefaultContainer/T€AMS" : {
 					"@T€AMS" : {}
+				},
+				"tea_busi.NewAction" : {
+					"@Common.Label" : "n/a",
+					"@Common.QuickInfo" : "Hello, world!",
+					"@Core.OperationAvailable" : {
+						"$PropertyPath" : "n/a"
+					}
 				},
 				"tea_busi.NewAction/Team_Id" : {
 					"@Common.Label" : "n/a",
 					"@Common.Text" : {
-						"$Path" : "Name"
+						"$Path" : "_it/Name"
 					},
 					"@Common.ValueListWithFixedValues" : true
+				},
+				"tea_busi.NewAction/$ReturnType" : {
+					"@Common.Label" : "Return type's label across all overloads"
+				},
+				"tea_busi.NewAction(Collection(tea_busi.TEAM))" : {
+					"@Common.Label" : "Create New Team",
+					"@Core.OperationAvailable" : {
+						"$Path" : "_it/Name"
+					}
 				},
 				"tea_busi.NewAction(Collection(tea_busi.TEAM))/Team_Id" : {
 					"@Common.Label" : "New Team ID",
 					"@Common.Text" : {
-						"$AnnotationPath" : "Name@Common.Label"
+						"$AnnotationPath" : "_it/Name@Common.Label"
 					}
+				},
+				"tea_busi.NewAction(Collection(tea_busi.TEAM))/$ReturnType" : {
+					"@Common.Label" : "Return type's label for individual overload"
+				},
+				"tea_busi.NewAction(tea_busi.Worker)" : {
+					// Note: this is required to make "/EMPLOYEES/tea_busi.NewAction@Common.Label"
+					// fail as expected instead of finding this value
+					"@Common.Label" : "Create New Employee"
 				},
 				"tea_busi.TEAM" : {
 					"@Common.Text" : {
@@ -416,8 +476,7 @@ sap.ui.define([
 					"$Type" : "Edm.String"
 				}],
 				"$ReturnType" : {
-					"$Type" : "tea_busi.TEAM",
-					"@Common.Label" : "Hail to the Chief"
+					"$Type" : "tea_busi.TEAM"
 				}
 			}],
 			"tea_busi.ComplexType_Salary" : {
@@ -1362,6 +1421,7 @@ sap.ui.define([
 			: mScope["tea_busi.FuGetEmployeeMaxAge"][0].$ReturnType,
 		// Note: "value" is a symbolic name for the whole return type iff it is primitive
 		"/GetEmployeeMaxAge/value" : mScope["tea_busi.FuGetEmployeeMaxAge"][0].$ReturnType,
+		"/GetEmployeeMaxAge/$ReturnType" : mScope["tea_busi.FuGetEmployeeMaxAge"][0].$ReturnType,
 		"/GetEmployeeMaxAge/@$ui5.overload/0/$ReturnType"
 			: mScope["tea_busi.FuGetEmployeeMaxAge"][0].$ReturnType,
 		"/GetEmployeeMaxAge/value/$Type" : "Edm.Int16", // path may continue!
@@ -1372,7 +1432,6 @@ sap.ui.define([
 			: mScope["name.space.DerivedPrimitiveFunction"][0].$ReturnType,
 		"/ChangeManagerOfTeam/value" : oTeamData.value,
 		// action overloads -----------------------------------------------------------------------
-		//TODO @$ui5.overload: support for split segments? etc.
 		"/OverloadedAction/@$ui5.overload" : sinon.match.array.deepEquals([aOverloadedAction[2]]),
 		"/OverloadedAction/@$ui5.overload/0" : aOverloadedAction[2],
 		// Note: trailing slash does not make a difference in "JSON" drill-down
@@ -1399,12 +1458,13 @@ sap.ui.define([
 		"/T€AMS/name.space.OverloadedAction/_it" : aOverloadedAction[1].$Parameter[0],
 		"/T€AMS/name.space.OverloadedAction/parameter1" : aOverloadedAction[1].$Parameter[1],
 		"/T€AMS/name.space.OverloadedAction/parameter2" : aOverloadedAction[1].$Parameter[2],
-		// parameters take precedence, empty segment disambiguates
+		// parameters take precedence, empty segment disambiguates - - - - - - - - - - - - - - - - -
 		"/T€AMS/tea_busi.NewAction/Name" : oTeamData.Name, // "Name" is not a parameter
 		"/T€AMS/tea_busi.NewAction/_it" : mScope["tea_busi.NewAction"][1].$Parameter[0],
 		"/T€AMS/tea_busi.NewAction/Team_Id" : mScope["tea_busi.NewAction"][1].$Parameter[1],
 		"/T€AMS/tea_busi.NewAction/@$ui5.overload/0/$ReturnType/$Type/Team_Id" : oTeamData.Team_Id,
 		"/T€AMS/tea_busi.NewAction//Team_Id" : oTeamData.Team_Id,
+		"/T€AMS/tea_busi.NewAction/$ReturnType/Team_Id" : oTeamData.Team_Id,
 		// function overloads ---------------------------------------------------------------------
 		"/OverloadedFunctionImport/@$ui5.overload"
 			: sinon.match.array.deepEquals([aOverloadedBoundFunction[2]]),
@@ -1433,6 +1493,10 @@ sap.ui.define([
 			: mScope.$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
 		"/$EntityContainer/@DefaultContainer" // w/o $Type, slash makes no difference!
 			: mScope.$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
+		"/OverloadedAction@Common.Label"
+			: mScope.$Annotations["tea_busi.DefaultContainer/OverloadedAction"]["@Common.Label"],
+		"/OverloadedAction/@Common.Label" // annotation at import's return type
+			: mScope.$Annotations["tea_busi.ComplexType_Salary"]["@Common.Label"],
 		"/T€AMS/$Type/@UI.LineItem" : oTeamLineItem,
 		"/T€AMS/@UI.LineItem" : oTeamLineItem,
 		"/T€AMS/@UI.LineItem/0/Label" : oTeamLineItem[0].Label,
@@ -1448,21 +1512,20 @@ sap.ui.define([
 		"/T€AMS/Team_Id@Common.Text@UI.TextArrangement"
 			: mScope.$Annotations["tea_busi.TEAM/Team_Id"]["@Common.Text@UI.TextArrangement"],
 		"/tea_busi./@Schema" : mScope["tea_busi."]["@Schema"],
-		// annotations at parameters apply across all overloads
+		// annotations at parameters across all overloads - - - - - - - - - - - - - - - - - - - - -
 		"/name.space.OverloadedAction/_it@Common.Label"
 			: mScope.$Annotations["name.space.OverloadedAction/_it"]["@Common.Label"],
-		"/name.space.OverloadedAction/_it@sapui.name" : "_it",
 		"/name.space.OverloadedFunction/A@Common.Label"
 			: mScope.$Annotations["name.space.OverloadedFunction/A"]["@Common.Label"],
 		"/name.space.OverloadedFunction/B@Common.Label"
 			: mScope.$Annotations["name.space.OverloadedFunction/B"]["@Common.Label"],
-		"/name.space.OverloadedFunction/B@Common.Text/$Path" : "Road_2_Nowhere",
+		"/name.space.OverloadedFunction/B@Common.Text/$Path" : "A/Road_2_Nowhere",
 		"/name.space.OverloadedFunction/B@Common.Text@UI.TextArrangement"
 			: mScope.$Annotations["name.space.OverloadedFunction/B"]
 				["@Common.Text@UI.TextArrangement"],
 		"/tea_busi.NewAction/Team_Id@" : mScope.$Annotations["tea_busi.NewAction/Team_Id"],
 		"/T€AMS/tea_busi.NewAction/Team_Id@Common.ValueListWithFixedValues" : true,
-		// annotations at parameters of specific overload
+		// annotations at parameters of specific overload - - - - - - - - - - - - - - - - - - - - -
 		"/ChangeManagerOfTeam/ManagerID@Common.Label" : "New Manager ID",
 		"/OverloadedAction/parameter0@Common.Label" : "Zero",
 		"/T€AMS/name.space.OverloadedAction/parameter1@Common.Label" : "My 1st label",
@@ -1476,30 +1539,65 @@ sap.ui.define([
 				// - "tea_busi.NewAction(Collection(tea_busi.TEAM))/Team_Id"
 				"@Common.Label" : "New Team ID",
 				"@Common.Text" : {
-					"$AnnotationPath" : "Name@Common.Label"
-					// Note: "$Path" : "Name" must not appear here! PUT semantics, not PATCH
+					"$AnnotationPath" : "_it/Name@Common.Label"
+					// Note: "$Path" : "_it/Name" must not appear here! PUT semantics, not PATCH
 				},
 				"@Common.ValueListWithFixedValues" : true
 			});
 			return true; // caller's assert.ok() should not fail
 		}),
-		// annotations at properties of return type
+		// annotations at operations across all overloads - - - - - - - - - - - - - - - - - - - - -
+		"/name.space.OverloadedFunction@Common.Label"
+			: mScope.$Annotations["name.space.OverloadedFunction"]["@Common.Label"],
+		"/name.space.OverloadedFunction@" : mScope.$Annotations["name.space.OverloadedFunction"],
+		"/T€AMS/tea_busi.NewAction@Common.QuickInfo" : "Hello, world!",
+		// annotations at specific operation overload - - - - - - - - - - - - - - - - - - - - - - -
+		"/T€AMS/name.space.OverloadedAction@Core.OperationAvailable"
+			: mScope.$Annotations["name.space.OverloadedAction(tea_busi.TEAM)"]
+				["@Core.OperationAvailable"],
+		"/T€AMS/name.space.OverloadedAction@" // Note: strictEqual!
+			: mScope.$Annotations["name.space.OverloadedAction(tea_busi.TEAM)"],
+		"/T€AMS/tea_busi.NewAction@Common.Label" : "Create New Team",
+		"/T€AMS/tea_busi.NewAction/@$ui5.overload@Common.Label" : "Create New Team", // "explicit"
+		"/T€AMS/tea_busi.NewAction@" : sinon.match(function (oActual) {
+			QUnit.assert.deepEqual(oActual, {
+				// merged result from mScope.$Annotations["..."]:
+				// - "tea_busi.NewAction"
+				// - "tea_busi.NewAction(Collection(tea_busi.TEAM))"
+				"@Common.Label" : "Create New Team",
+				"@Common.QuickInfo" : "Hello, world!",
+				"@Core.OperationAvailable" : {
+					"$Path" : "_it/Name"
+					// Note: "$PropertyPath" : "n/a" must not appear here! PUT semantics, not PATCH
+				}
+			});
+			return true; // caller's assert.ok() should not fail
+		}),
+		"/OverloadedAction/@$ui5.overload@Core.OperationAvailable" // at unbound overload
+			: mScope.$Annotations["name.space.OverloadedAction()"]["@Core.OperationAvailable"],
+		// annotations at $ReturnType of specific overload or across all overloads (ODATA-1178) - -
+		"/ChangeManagerOfTeam/$ReturnType@Common.Label" : "Hail to the Chief",
+		// Note: there are two overloads with (Collection of) Worker, avoid these!
+		"/EMPLOYEES/EMPLOYEE_2_EQUIPM€NTS/tea_busi.NewAction/$ReturnType@Common.Label"
+			: mScope.$Annotations["tea_busi.NewAction/$ReturnType"]["@Common.Label"],
+		"/T€AMS/tea_busi.NewAction/$ReturnType@Common.Label" : mScope.$Annotations
+			["tea_busi.NewAction(Collection(tea_busi.TEAM))/$ReturnType"]["@Common.Label"],
+		// annotations at properties of return type - - - - - - - - - - - - - - - - - - - - - - - -
 		"/T€AMS/tea_busi.NewAction/Name@" : mScope.$Annotations["tea_busi.TEAM/Name"],
 		"/T€AMS/tea_busi.NewAction//Team_Id@" : mScope.$Annotations["tea_busi.TEAM/Team_Id"],
-		// inline annotations
-		"/ChangeManagerOfTeam/$Action/0/$ReturnType/@Common.Label" : "Hail to the Chief",
+		// inline annotations  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 		"/T€AMS/TEAM_2_EMPLOYEES/$OnDelete@Common.Label" : "None of my business",
 		"/T€AMS/TEAM_2_EMPLOYEES/$ReferentialConstraint/foo@Common.Label" : "Just a Gigolo",
 		"/T€AMS/@UI.LineItem/0/Label@Common.Label" : "Team ID's Label",
 		"/T€AMS/@UI.Badge@Common.Label" : "Best Badge Ever!", // annotation of annotation
 		"/T€AMS/@UI.Badge/@Common.Label" : "Label inside", // annotation of record
-		// "@" to access to all annotations, e.g. for iteration
+		// "@" to access to all annotations, e.g. for iteration - - - - - - - - - - - - - - - - - -
 		"/T€AMS@" : mScope.$Annotations["tea_busi.DefaultContainer/T€AMS"],
 		"/T€AMS/@" : mScope.$Annotations["tea_busi.TEAM"],
 		"/T€AMS/Team_Id@" : mScope.$Annotations["tea_busi.TEAM/Team_Id"],
 		"/name.space.OverloadedAction/_it@"
 			: mScope.$Annotations["name.space.OverloadedAction/_it"],
-		// "14.5.12 Expression edm:Path"
+		// "14.5.12 Expression edm:Path" - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 		// Note: see integration test "{field>Value/$Path@com.sap.vocabularies.Common.v1.Label}"
 		"/T€AMS/@UI.LineItem/0/Value/$Path@Common.Text"
 			: mScope.$Annotations["tea_busi.TEAM/Team_Id"]["@Common.Text"],
@@ -1507,6 +1605,8 @@ sap.ui.define([
 			: mScope.$Annotations["name.space.Id"]["@Common.Label"],
 		"/EMPLOYEES/@UI.LineItem/0/Value/$Path@Common.Text"
 			: mScope.$Annotations["tea_busi.TEAM/Team_Id"]["@Common.Text"],
+		"/OverloadedAction/@$ui5.overload@Core.OperationAvailable#1/$Path/$"
+			: aOverloadedAction[2].$ReturnType,
 		// "14.5.2 Expression edm:AnnotationPath"
 		"/EMPLOYEES/@UI.Facets/0/Target/$AnnotationPath/"
 			: mScope.$Annotations["tea_busi.Worker"]["@UI.LineItem"],
@@ -1538,6 +1638,8 @@ sap.ui.define([
 		"/T€AMS/tea_busi.NewAction//Name@sapui.name" : "Name", // property at return type
 		"/T€AMS/tea_busi.NewAction/Team_Id@sapui.name" : "Team_Id", // parameter
 		"/T€AMS/tea_busi.NewAction/Team_Id/@sapui.name" : "name.space.Id", // due to $Type insertion
+		"/name.space.OverloadedAction@sapui.name" : "name.space.OverloadedAction",
+		"/name.space.OverloadedAction/_it@sapui.name" : "_it",
 		// .../$ ----------------------------------------------------------------------------------
 		"/$" : mScope, // @see #fetchData, but no clone
 		// "/$@sapui.name" --> "Unsupported path before @sapui.name"
@@ -1548,8 +1650,12 @@ sap.ui.define([
 		"/T€AMS/@UI.LineItem/0/Value/$Path/$" : oTeamData.Team_Id, // no $Type insertion here!
 		"/T€AMS/@UI.LineItem/0/Value/$Path/$@sapui.name" : "Team_Id",
 		"/T€AMS/TEAM_2_EMPLOYEES@Common.MinOccurs" : 1,
-		"/T€AMS/@UI.LineItem/0/Target/$NavigationPropertyPath@Common.MinOccurs" : 1 // OK
+		"/T€AMS/@UI.LineItem/0/Target/$NavigationPropertyPath@Common.MinOccurs" : 1, // OK
 		// "/T€AMS/@UI.LineItem/0/Target/$NavigationPropertyPath/$@Common.MinOccurs" : undefined
+		"/T€AMS/name.space.OverloadedAction@Core.OperationAvailable/$Path/$" : oTeamData.Name,
+		"/T€AMS/name.space.OverloadedAction/parameter1@Core.OperationAvailable/$Path/$"
+			: mScope["tea_busi.ContainedS"].Id,
+		"/T€AMS/name.space.OverloadedAction/_it/@Common.Text/$Path/$" : oTeamData.Name
 	}, function (sPath, vResult) {
 		QUnit.test("fetchObject: " + sPath, function (assert) {
 			var oSyncPromise;
@@ -1562,6 +1668,7 @@ sap.ui.define([
 
 			assert.strictEqual(oSyncPromise.isFulfilled(), true);
 			if (vResult && typeof vResult === "object" && "test" in vResult) {
+				assert.notStrictEqual(oSyncPromise.getResult(), undefined);
 				// Sinon.JS matcher
 				assert.ok(vResult.test(oSyncPromise.getResult()));
 			} else {
@@ -1592,6 +1699,8 @@ sap.ui.define([
 		"/tea_busi.FuGetEmployeeMaxAge/0/tea_busi.FuGetEmployeeMaxAge", // "0" switches to JSON
 		"/tea_busi.TEAM/$Key/this.is.missing",
 		"/tea_busi.Worker/missing", // entity container (see above) treated like any schema child
+		"/OverloadedAction/@$ui5.overload/0/@Core.OperationAvailable", // no external targeting here
+		"/ChangeManagerOfTeam/$Action/0/$ReturnType/@Common.Label", // no external targeting here
 		// scope lookup ("17.3 QualifiedName") ----------------------------------------------------
 		"/$EntityContainer/$missing",
 		"/$EntityContainer/missing",
@@ -1605,6 +1714,7 @@ sap.ui.define([
 		"/tea_busi.Worker/@missing/foo",
 		"/tea_busi.AcChangeManagerOfTeam/0/$ReturnType/@missing/foo",
 		"/tea_busi.Worker/@Common.Text/$If/2/$Path",
+		"/EMPLOYEES/name.space.OverloadedAction@missing", // no annotations for operation overload
 		// "@" to access to all annotations, e.g. for iteration
 		"/tea_busi.Worker/@/@missing",
 		// operations -----------------------------------------------------------------------------
@@ -1690,6 +1800,9 @@ sap.ui.define([
 			"/Foo" : "Unknown child Foo of tea_busi.DefaultContainer",
 			"/$EntityContainer/$kind/" : "Unknown child EntityContainer"
 				+ " of tea_busi.DefaultContainer at /$EntityContainer/$kind",
+			"/name.space.VoidAction@Core.OperationAvailable/$Path/$" : "Unknown child $ReturnType"
+				+ " of name.space.VoidAction"
+				+ " at /name.space.VoidAction@Core.OperationAvailable/$Path",
 			// implicit $Action, $Function, $Type insertion
 			"/name.space.BadContainer/DanglingActionImport/" : "Unknown qualified name not.Found"
 				+ " at /name.space.BadContainer/DanglingActionImport/$Action",
@@ -1710,6 +1823,9 @@ sap.ui.define([
 				"Unknown qualified name not.Found at /name.space.Broken/$Type",
 			"/tea_busi.DefaultContainer/$kind/@sapui.name" : "Unknown child EntityContainer"
 				+ " of tea_busi.DefaultContainer at /tea_busi.DefaultContainer/$kind",
+			"/tea_busi.NewAction@Core.OperationAvailable/$PropertyPath/$" : "Unknown child n"
+				+ " of tea_busi.NewAction"
+				+ " at /tea_busi.NewAction@Core.OperationAvailable/$PropertyPath",
 			// Unsupported path before @sapui.name ------------------------------------------------
 			"/$EntityContainer@sapui.name" : "Unsupported path before @sapui.name",
 			"/tea_busi.FuGetEmployeeMaxAge/0@sapui.name" : "Unsupported path before @sapui.name",
@@ -1746,7 +1862,11 @@ sap.ui.define([
 			"/ServiceGroups/name.space.OverloadedAction/parameter1@Common.Label"
 				: "Expected a single overload, but found 0", // wrong binding parameter
 			"/EMPLOYEES/tea_busi.NewAction/_it@Common.Label"
-				: "Expected a single overload, but found 2", // Collection(Worker) vs. Worker
+				: "Expected a single overload, but found 2", // Collection(Worker) or Worker?
+			"/ServiceGroups/name.space.OverloadedAction@Core.OperationAvailable"
+				: "Expected a single overload, but found 0", // wrong binding parameter
+			"/EMPLOYEES/tea_busi.NewAction@Common.Label"
+				: "Expected a single overload, but found 2", // Collection(Worker) or Worker?
 			// Unsupported path after $ -----------------------------------------------------------
 			"/T€AMS/@UI.LineItem/0/$/Value" : "Unsupported path after $", // in "JSON" mode
 			"/T€AMS/$/$Type" : "Unsupported path after $", // in OData mode
@@ -1781,7 +1901,8 @@ sap.ui.define([
 			"/$EntityContainer/T€AMS/Team_Id/$MaxLength/." : "Invalid segment: .",
 			"/$EntityContainer/T€AMS/Team_Id/$Nullable/." : "Invalid segment: .",
 			"/$EntityContainer/T€AMS/Team_Id/NotFound/Invalid" : "Invalid segment: Invalid",
-			"/T€AMS/@Common.Text/$Path/$Foo/$Bar" : "Invalid segment: $Bar"
+			"/T€AMS/@Common.Text/$Path/$Foo/$Bar" : "Invalid segment: $Bar",
+			"/name.space.VoidAction/$ReturnType@Common.Label" : "Invalid segment: $ReturnType"
 		}, function (sPath, sMessage) {
 			QUnit.test("fetchObject fails: " + sPath + ", debug = " + bDebug, function (assert) {
 				var oSyncPromise;
@@ -1902,7 +2023,10 @@ sap.ui.define([
 			mPathPrefix2SchemaChildName = {
 				"/EMPLOYEES/@UI.Facets/1/Target/$AnnotationPath" : "tea_busi.Worker",
 				"/T€AMS/@UI.LineItem/0/Value/$Path@Common.Label" : "tea_busi.TEAM",
-				"/T€AMS/@UI.LineItem/0/Value/$Path/@Common.Label" : "name.space.Id"
+				"/T€AMS/@UI.LineItem/0/Value/$Path/@Common.Label" : "name.space.Id",
+				"/T€AMS/name.space.OverloadedAction" : "name.space.OverloadedAction",
+				"/T€AMS/name.space.OverloadedAction/@$ui5.overload" : "name.space.OverloadedAction",
+				"/OverloadedAction/@$ui5.overload" : "name.space.OverloadedAction"
 			},
 			sSchemaChildName;
 
@@ -1915,6 +2039,7 @@ sap.ui.define([
 					fnComputedAnnotation,
 					oContext,
 					oInput,
+					oObject,
 					oResult = {},
 					oScope = {
 						computedAnnotation : function () {}
@@ -1944,7 +2069,13 @@ sap.ui.define([
 				assert.ok(oContext instanceof BaseContext);
 				assert.strictEqual(oContext.getModel(), this.oMetaModel);
 				assert.strictEqual(oContext.getPath(), sPathPrefix);
-				assert.strictEqual(oContext.getObject(), oInput);
+				oObject = oContext.getObject();
+				if (Array.isArray(oInput)) { // operation overloads
+					assert.deepEqual(oObject, oInput);
+					assert.strictEqual(oObject[0], oInput[0]);
+				} else {
+					assert.strictEqual(oObject, oInput);
+				}
 			});
 		}
 	});
@@ -1973,6 +2104,28 @@ sap.ui.define([
 			assert.strictEqual(oSyncPromise.getResult(), undefined);
 		});
 	});
+
+	//*********************************************************************************************
+["", "/"].forEach(function (sSeparator, i) {
+	QUnit.test("AnnotationHelper.format and operation overloads, " + i, function (assert) {
+		var oSyncPromise;
+
+		this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
+			.returns(SyncPromise.resolve(mScope));
+
+		// code under test
+		oSyncPromise = this.oMetaModel.fetchObject(
+			"/T€AMS/name.space.OverloadedAction@Core.OperationAvailable"
+			+ sSeparator // optional
+			+ "@@sap.ui.model.odata.v4.AnnotationHelper.format");
+
+		assert.strictEqual(oSyncPromise.isFulfilled(), true);
+		assert.strictEqual(oSyncPromise.getResult(), "{path:'_it/Name'"
+			+ ",type:'sap.ui.model.odata.type.String'"
+			+ ",constraints:{'maxLength':40,'nullable':false}"
+			+ ",formatOptions:{'parseKeepsEmptyString':true}}");
+	});
+});
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bDebug) {
@@ -3813,6 +3966,26 @@ sap.ui.define([
 		metaPath : "/Unknown",
 		result : [],
 		warning : ["Unknown child Unknown of tea_busi.DefaultContainer", "/Unknown/"]
+	}, {
+		// <template:repeat list="{operation>@}" ...>
+		// Iterate all annotations for an operation overload, specific ones and "across all"
+		contextPath : "/T€AMS/tea_busi.NewAction",
+		metaPath : "@",
+		result : [
+			"/T€AMS/tea_busi.NewAction@Common.Label",
+			"/T€AMS/tea_busi.NewAction@Common.QuickInfo",
+			"/T€AMS/tea_busi.NewAction@Core.OperationAvailable"
+		]
+	}, {
+		// <template:repeat list="{operation>@}" ...>
+		// Iterate all annotations for an operation overload, specific ones and "across all"
+		contextPath : "/T€AMS/tea_busi.NewAction/@$ui5.overload", // "explicit" syntax
+		metaPath : "@",
+		result : [
+			"/T€AMS/tea_busi.NewAction/@$ui5.overload@Common.Label",
+			"/T€AMS/tea_busi.NewAction/@$ui5.overload@Common.QuickInfo",
+			"/T€AMS/tea_busi.NewAction/@$ui5.overload@Core.OperationAvailable"
+			]
 	}].forEach(function (oFixture) {
 		var sPath = oFixture.contextPath
 			? oFixture.contextPath + "|"/*make cut more visible*/ + oFixture.metaPath
