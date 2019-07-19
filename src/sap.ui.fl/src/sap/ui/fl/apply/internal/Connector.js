@@ -3,9 +3,13 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/internal/connectors/Utils"
+	"sap/ui/fl/apply/internal/connectors/Utils",
+	"sap/ui/fl/apply/connectors/BaseConnector",
+	"sap/base/Log"
 ], function(
-	ConnectorUtils
+	ConnectorUtils,
+	BaseConnector,
+	Log
 ) {
 	"use strict";
 
@@ -74,6 +78,33 @@ sap.ui.define([
 		return oResult;
 	}
 
+	function _loadFlexData (sReference, sAppVersion, aConnectors) {
+		var aConnectorPromises = aConnectors.map(function (oConnectorConfig) {
+			return new Promise(function (resolve) {
+				oConnectorConfig.connector.loadFlexData(sReference, sAppVersion)
+					.then(resolve, _logAndResolveDefault.bind(null, resolve, BaseConnector._RESPONSES.FLEX_DATA, oConnectorConfig, "loadFlexData"));
+			});
+		});
+
+		return Promise.all(aConnectorPromises);
+	}
+
+	function _loadFeatures (aConnectors) {
+		var aConnectorPromises = aConnectors.map(function (oConnectorConfig) {
+			return new Promise(function (resolve) {
+				return oConnectorConfig.connector.loadFeatures()
+					.then(resolve, _logAndResolveDefault.bind(null, resolve, BaseConnector._RESPONSES.FEATURES, oConnectorConfig, "loadFeatures"));
+			});
+		});
+
+		return Promise.all(aConnectorPromises);
+	}
+
+	function _logAndResolveDefault(resolve, oResponse, oConnectorConfig, sFunctionName, sErrorMessage) {
+		Log.error("Connector (" + oConnectorConfig.connectorName + ") failed call '" + sFunctionName + "': " + sErrorMessage);
+		resolve(oResponse);
+	}
+
 	var Connector = {};
 
 	/**
@@ -89,14 +120,6 @@ sap.ui.define([
 			.then(_mergeResults);
 	};
 
-	function _loadFlexData (sReference, sAppVersion, aConnectors) {
-		var aConnectorPromises = aConnectors.map(function (oConnectorConfig) {
-			return oConnectorConfig.connector.loadFlexData(sReference, sAppVersion);
-		});
-
-		return Promise.all(aConnectorPromises);
-	}
-
 	/**
 	 * Provides the information which features are provided based on the responses of the involved connectors.
 	 *
@@ -107,14 +130,6 @@ sap.ui.define([
 			.then(_loadFeatures)
 			.then(_mergeResults);
 	};
-
-	function _loadFeatures (aConnectors) {
-		var aConnectorPromises = aConnectors.map(function (oConnectorConfig) {
-			return oConnectorConfig.connector.loadFeatures();
-		});
-
-		return Promise.all(aConnectorPromises);
-	}
 
 	return Connector;
 }, true);

@@ -53,7 +53,11 @@ sap.ui.define(function () {
 			"apply/internal/ConnectorWithCustomBrokenConnector": {
 				group: 'Apply Internal',
 				ui5: {
-					resourceroots: {"my.lib": "./test-resources/sap/ui/fl/qunit/apply/internal/"},
+					resourceroots: {
+						"my.lib": "./test-resources/sap/ui/fl/qunit/apply/internal/",
+						"test.app": "./test-resources/sap/ui/fl/qunit/apply/internal/"
+					},
+					"xx-flexBundleRequestForced": true,
 					"xx-flexibilityConnectors": [{connectorName: "my/lib/BrokenConnector", custom: true, layerFilter: []}]
 				},
 				coverage: {
