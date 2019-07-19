@@ -544,7 +544,7 @@ sap.ui.define([
 	 */
 	VariantController.prototype.resetMap = function (bResetAtRuntime) {
 		if (bResetAtRuntime) {
-			return Promise.resolve(_fnResetMapListener.call(null));
+			return Promise.resolve(_fnResetMapListener());
 		}
 		this._mVariantManagement = {};
 		return Promise.resolve();

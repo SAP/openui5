@@ -15,6 +15,7 @@
 		"indent": [2, "tab", {
 			"SwitchCase": 1
 		}],
-		"one-var": [2, "never"]
+		"one-var": [2, "never"],
+		"no-useless-call": 2
 	}
 }
