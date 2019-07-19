@@ -696,6 +696,21 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Snaps the header
+	 * and toggles the state of the title and the anchorBar accordingly
+	 *
+	 * @param bAppendHeaderToContent, determines if the header should be snapped
+	 * with or without scroll:
+	 *
+	 * (1) If the <code>bAppendHeaderToContent</code> is <code>true</code>, then the
+	 * snapping is done by ensuring the header content is visible but scrolled-out of view
+	 *
+	 * (2) If the <code>bAppendHeaderToContent</code> is <code>false</code>, then the
+	 * snapping is done by ensuring the header content is not visible using <code>display:none</code>
+	 *
+	 * @private
+	 */
 	ObjectPageLayout.prototype._snapHeader = function (bAppendHeaderToContent) {
 
 		var bIsPageTop,
@@ -708,6 +723,7 @@ sap.ui.define([
 		}
 
 		this._toggleHeaderTitle(false /* not expand */, true /* user interaction */);
+		this._toggleHeaderVisibility(bAppendHeaderToContent);
 		this._moveAnchorBarToTitleArea();
 
 		if (bAppendHeaderToContent) {
@@ -727,7 +743,6 @@ sap.ui.define([
 			return;
 		}
 
-		this._toggleHeaderVisibility(false);
 		this._bHeaderExpanded = false;
 
 		this._updateToggleHeaderVisualIndicators();
@@ -737,6 +752,15 @@ sap.ui.define([
 		this._requestAdjustLayout();
 	};
 
+	/**
+	 * Expands the header
+	 * and toggles the state of the title and the anchorBar accordingly
+	 *
+	 * @param bAppendHeaderToTitle, determines if the header should be in the
+	 * scrollable content-area or in the non-scrollable title-area
+	 *
+	 * @private
+	 */
 	ObjectPageLayout.prototype._expandHeader = function (bAppendHeaderToTitle) {
 
 		this._toggleHeaderTitle(true /* expand */, true /* user interaction */);
@@ -1041,6 +1065,9 @@ sap.ui.define([
 			if (this.getUseIconTabBar()) {
 				this._setSelectedSectionId(sSectionToSelectID);
 				this._setCurrentTabSection(oSectionToSelect);
+				// in iconTabBar mode, only the subSections of the current section are shown
+				// => update the <code>this._bAllContentFitsContainer</code> value
+				this._bAllContentFitsContainer = this._hasSingleVisibleFullscreenSubSection(oSectionToSelect);
 			} else {
 				this.scrollToSection(sSectionToSelectID, 0);
 			}
@@ -1346,10 +1373,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._handleExpandButtonPress = function (oEvent) {
-		if (this._bStickyAnchorBar) {
-			this._moveHeaderToTitleArea();
-			this._toggleHeaderTitle(true /* expand */);
-		}
+		this._expandHeader(true);
 	};
 
 	/**
@@ -1853,6 +1877,22 @@ sap.ui.define([
 		if (this.getUseIconTabBar()) {
 			var oToSelect = ObjectPageSection._getClosestSection(oSection);
 
+			var bWasFullscreenMode = this._bAllContentFitsContainer,
+				bFullscreenModeChanged;
+
+			// the current tab changed => update the <code>this._bAllContentFitsContainer</code> accordingly
+			this._bAllContentFitsContainer = this._hasSingleVisibleFullscreenSubSection(oToSelect);
+			this._toggleScrolling(!this._bAllContentFitsContainer);
+
+			bFullscreenModeChanged = this._bAllContentFitsContainer !== bWasFullscreenMode;
+			if (bFullscreenModeChanged && !this._bHeaderExpanded) {
+				// call the snapping function again with the *latest* parameter value
+				// to properly switch between the two ways of snapping the header
+				// (snap *with* scroll VS snap *without* scroll)
+				this._snapHeader(!this._bAllContentFitsContainer);
+				this._bSupressModifyOnScrollOnce = true;
+			}
+
 			/* exclude the previously selected tab from propagation chain for performance reasons */
 			if (this._oCurrentTabSection) {
 				this._oCurrentTabSection._allowPropagationToLoadedViews(false);
@@ -1871,7 +1911,7 @@ sap.ui.define([
 			});
 		}
 
-		if (this._bHeaderInTitleArea && !this._shouldPreserveHeaderInTitleArea()) {
+		if (this._bHeaderInTitleArea && !this._shouldPreserveHeaderInTitleArea() && !this._bAllContentFitsContainer) {
 			this._moveHeaderToContentArea();
 			this._toggleHeaderTitle(false /* snap */);
 			this._bHeaderExpanded = false;
@@ -1922,6 +1962,13 @@ sap.ui.define([
 
 			this._scrollTo(iScrollTo, iDuration);
 		}
+	};
+
+	ObjectPageLayout.prototype._hasSingleVisibleFullscreenSubSection = function (oSection) {
+		var aVisibleSubSections = oSection.getSubSections().filter(function(oSubSection) {
+			return oSubSection.getVisible() && oSubSection._getInternalVisible() && (oSubSection.getBlocks().length > 0);
+		});
+		return (aVisibleSubSections.length === 1) && aVisibleSubSections[0].hasStyleClass(ObjectPageSubSection.FIT_CONTAINER_CLASS);
 	};
 
 	ObjectPageLayout.prototype._computeScrollDuration = function (iAppSpecifiedDuration, oTargetSection) {

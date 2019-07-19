@@ -1419,6 +1419,79 @@ function($, Core, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPa
 		}, this);
 	});
 
+	QUnit.test("sapUxAPObjectPageSubSectionFitContainer with tabs - snap without scroll when only one SubSection",
+		function (assert) {
+			// Set-up
+			var oPage = this.oObjectPage,
+				oSection1 = this.oObjectPage.getSections()[0],
+				oSection1SubSection1 = oSection1.getSubSections()[0],
+				oSection2SubSection1 = new ObjectPageSubSectionClass({ blocks: [ new sap.m.Panel({ height: "100px" })]}),
+				oSection2SubSection2 = new ObjectPageSubSectionClass({ blocks: [ new sap.m.Panel({ height: "100px" })]}),
+				oSection2 = new ObjectPageSection({ subSections: [oSection2SubSection1, oSection2SubSection2]}),
+				oToggleScrollingSpy = sinon.spy(oPage, "_toggleScrolling"),
+				iSnapPosition,
+				done = assert.async();
+
+			assert.expect(5);
+
+			oPage.setUseIconTabBar(true);
+			oPage.addSection(oSection2);
+			oPage.setSelectedSection(oSection2.getId());
+			oSection1SubSection1.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS);
+
+			oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+				iSnapPosition = oPage._getSnapPosition();
+				oPage._$opWrapper.scrollTop(iSnapPosition + 1); // snap the header with scroll
+				oPage._onScroll({ target : { scrollTop: iSnapPosition + 1}}); // process the scroll synchronously
+				assert.strictEqual(oPage._bHeaderExpanded, false, "header is snapped");
+
+				// Act: select the section with non-scrollable content
+				oPage.setSelectedSection(oSection1.getId());
+
+				// Assert
+				assert.strictEqual(oPage._bAllContentFitsContainer, true, "_bAllContentFitsContainer is 'true'");
+				assert.strictEqual(oPage._bHeaderExpanded, false, "header is still snapped");
+				assert.ok(oToggleScrollingSpy.calledWith(false), "oToggleScrollingSpy called with 'false' - scrolling is supressed");
+				assert.strictEqual(oPage._$opWrapper.css("overflow-x"), "hidden", "Wrapper's overflow property is 'hidden'");
+				done();
+			}, this);
+	});
+
+	QUnit.test("sapUxAPObjectPageSubSectionFitContainer with tabs - switch to snap with scroll",
+		function (assert) {
+			// Set-up
+			var oPage = this.oObjectPage,
+				oSection1 = this.oObjectPage.getSections()[0],
+				oSection1SubSection1 = oSection1.getSubSections()[0],
+				oSection2SubSection1 = new ObjectPageSubSectionClass({ blocks: [ new sap.m.Panel({ height: "100px" })]}),
+				oSection2SubSection2 = new ObjectPageSubSectionClass({ blocks: [ new sap.m.Panel({ height: "100px" })]}),
+				oSection2 = new ObjectPageSection({ subSections: [oSection2SubSection1, oSection2SubSection2]}),
+				oToggleScrollingSpy = sinon.spy(oPage, "_toggleScrolling"),
+				done = assert.async();
+
+			assert.expect(5);
+
+			oPage.setUseIconTabBar(true);
+			oPage.addSection(oSection2);
+			oSection1SubSection1.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS);
+
+			oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+				oPage._snapHeader(false);
+				assert.strictEqual(oPage._bHeaderExpanded, false, "header is snapped");
+
+				// Act: select the section with scrollable content
+				oPage.setSelectedSection(oSection2.getId());
+
+				// Assert
+				assert.strictEqual(oPage._bAllContentFitsContainer, false, "_bAllContentFitsContainer is 'true'");
+				assert.strictEqual(oPage._bHeaderExpanded, false, "header is still snapped");
+				assert.ok(oToggleScrollingSpy.calledWith(true), "oToggleScrollingSpy called with 'true' - scrolling is supressed");
+				assert.ok(oPage._$opWrapper.scrollTop() >= oPage._getSnapPosition(), "header is snapped with scroll");
+				done();
+			}, this);
+	});
+
 	QUnit.module("Invalidation", {
 		beforeEach: function() {
 			this.oObjectPageLayout = new ObjectPageLayout("page", {

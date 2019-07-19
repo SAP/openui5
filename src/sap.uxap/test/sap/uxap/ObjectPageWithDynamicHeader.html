@@ -5,7 +5,7 @@
 	<title>sap.uxap.ObjectPage</title>
 	<script src="shared-config.js"></script>
 	<script src="../../../resources/sap-ui-core.js"
-		id="sap-ui-bootstrap" data-sap-ui-libs="sap.m,sap.uxap,sap.ui.layout">
+		id="sap-ui-bootstrap" data-sap-ui-libs="sap.m,sap.uxap,sap.ui.layout,sap.ui.table">
 	</script>
 	<script id="view1" type="sapui5/xmlview">
 	<m:View xmlns="sap.uxap" xmlns:m="sap.m" xmlns:f="sap.f" xmlns:layout="sap.ui.layout" displayBlock="true" height="100%">
@@ -14,6 +14,7 @@
 					showTitleInHeaderContent="true"
 					alwaysShowContentHeader="false"
 					showHeaderContent="true"
+					useIconTabBar="true"
 					isChildPage="true">
 			<headerTitle>
 				<ObjectPageDynamicHeaderTitle>
@@ -53,17 +54,32 @@
 						<actions>
 							<m:ToggleButton
 									id="toggleHeaderOnTitleClick"
-									text="ToggleOnTitleClick"/>
+									text="ToggleOnTitleClick">
+									<m:layoutData>
+										<m:OverflowToolbarLayoutData priority="NeverOverflow"/>
+								</m:layoutData>
+							</m:ToggleButton>
+							<m:ToggleButton
+									id="toggleUseIconTabBar"
+									text="ToggleUseIconTabBar">
+									<m:layoutData>
+										<m:OverflowToolbarLayoutData priority="NeverOverflow"/>
+								</m:layoutData>
+							</m:ToggleButton>
+							<m:ToggleButton
+									id="toggleFooter"
+									text="Toggle Footer"
+									type="Transparent">
+									<m:layoutData>
+										<m:OverflowToolbarLayoutData priority="NeverOverflow"/>
+									</m:layoutData>
+							</m:ToggleButton>
 							<m:Button
 									text="Delete"
 									type="Transparent"/>
 							<m:Button
 									text="Copy"
 									type="Transparent"/>
-							<m:Button
-									text="Toggle Footer"
-									type="Transparent"
-									press="onToggleFooter"/>
 							<m:Button
 									icon="sap-icon://action"
 									type="Transparent"/>
@@ -123,11 +139,10 @@
 					</layout:HorizontalLayout>
 				</headerContent>
 				<sections>
-					<ObjectPageSection id="goalsSection" title="2014 Goals Plan">
+					<ObjectPageSection id="goalsSection" title="Table">
 						<subSections>
-							<ObjectPageSubSection id="goalsSubSection" title=" ">
+							<ObjectPageSubSection id="goalsSubSection" title=" " class="sapUxAPObjectPageSubSectionFitContainer">
 								<blocks>
-									<m:Button text="To detail detail" press="handleDetailPress" />
 								</blocks>
 							</ObjectPageSubSection>
 						</subSections>
@@ -157,14 +172,9 @@
 
 					<ObjectPageSection title="Section3">
 						<subSections>
-							<ObjectPageSubSection title="Subsection3.1">
+							<ObjectPageSubSection id="section3subSection" title="Another Table" class="sapUxAPObjectPageSubSectionFitContainer">
 								<blocks>
-									<m:Button text="To detail detail" press="handleDetailPress" />
-								</blocks>
-							</ObjectPageSubSection>
-							<ObjectPageSubSection title="Subsection3.2">
-								<blocks>
-									<m:Button text="To detail detail" press="handleDetailPress" />
+
 								</blocks>
 							</ObjectPageSubSection>
 						</subSections>
@@ -306,6 +316,13 @@
 					</ObjectPageSection>
 
 				</sections>
+				<footer>
+					<m:OverflowToolbar>
+						<m:ToolbarSpacer />
+						<m:Button type="Accept" text="Accept"/>
+						<m:Button type="Reject" text="Reject"/>
+					</m:OverflowToolbar>
+				</footer>
 			</ObjectPageLayout>
 		</m:View>
 	</script>
@@ -319,12 +336,74 @@
 			var oApp = new App(),
 					myView = sap.ui.xmlview({viewContent:jQuery('#view1').html()}),
 					oToggleHeaderOnTitleClickBtn = myView.byId("toggleHeaderOnTitleClick"),
-					oObjectPage = myView.byId("ObjectPageLayout");
+					oToggleUseIconTabBarBtn = myView.byId("toggleUseIconTabBar"),
+					oToggleFooterBtn = myView.byId("toggleFooter"),
+					oObjectPage = myView.byId("ObjectPageLayout"),
+					aData = [],
+					o,
+					oModel;
 
 			oToggleHeaderOnTitleClickBtn.setPressed(oObjectPage.getToggleHeaderOnTitleClick());
 			oToggleHeaderOnTitleClickBtn.attachPress(function(oEvent) {
 				oObjectPage.setToggleHeaderOnTitleClick(oEvent.getParameter("pressed"));
 			});
+
+			oToggleUseIconTabBarBtn.setPressed(oObjectPage.getUseIconTabBar());
+			oToggleUseIconTabBarBtn.attachPress(function(oEvent) {
+				oObjectPage.setUseIconTabBar(oEvent.getParameter("pressed"));
+			});
+
+			oToggleFooterBtn.setPressed(oObjectPage.getShowFooter());
+			oToggleFooterBtn.attachPress(function(oEvent) {
+				oObjectPage.setShowFooter(oEvent.getParameter("pressed"));
+			});
+
+			for (var i = 1; i < 20; i++) {
+				o = {};
+				for (var b = 1; b < 6; b++) {
+					o["text" + b] = "test" + i;
+				}
+				aData.push(o);
+			}
+			oModel = new sap.ui.model.json.JSONModel();
+			oModel.setProperty("/rows", aData);
+
+			var oTable1 = new sap.ui.table.Table("testUITable",{
+				rows:"{model>/rows}",
+				visibleRowCountMode: "Auto",
+				minAutoRowCount: 2,
+
+			});
+			oTable1.setModel(oModel,"model");
+
+			oTable1.addColumn(new sap.ui.table.Column({
+				label: "col01",
+				autoResizable: true,
+				template: new sap.m.Text({
+					text:"{model>text1}"
+				})
+			}));
+
+			oTable1.addColumn(new sap.ui.table.Column({
+				label: "col02",
+				autoResizable: true,
+				template: new sap.m.Text({
+					text:"{model>text2}"
+				})
+			}));
+			oTable1.addColumn(new sap.ui.table.Column({
+				label: "col03",
+				autoResizable: true,
+				template: new sap.m.Text({
+					text:"{model>text3}"
+				})
+			}));
+
+			var oTable2 = oTable1.clone();
+			oTable2.removeColumn(2);
+			myView.byId("goalsSubSection").addBlock(oTable1);
+			myView.byId("section3subSection").addBlock(oTable2);
+
 			oApp.addPage(new Page({
 				title: "ObjectPage",
 				content: [myView]
