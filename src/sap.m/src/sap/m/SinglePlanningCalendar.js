@@ -60,20 +60,15 @@ function(
 	 *
 	 * @class
 	 *
-	 * <h3>Overview</h3>
-	 *
 	 * Displays a calendar of a single entity (such as person, resource) for the selected time interval.
+	 *
+	 * <h3>Overview</h3>
 	 *
 	 * <b>Note:</b> The <code>SinglePlanningCalendar</code> uses parts of the <code>sap.ui.unified</code> library.
 	 * This library will be loaded after the <code>SinglePlanningCalendar</code>, if it wasn't previously loaded.
 	 * This could lead to a waiting time when a <code>SinglePlanningCalendar</code> is used for the first time.
 	 * To prevent this, apps using the <code>SinglePlanningCalendar</code> must also load the
 	 * <code>sap.ui.unified</code> library.
-	 *
-	 * <b>Disclaimer</b>: This control is in a beta state - incompatible API changes may be done before its official public
-	 * release. Use at your own discretion.
-	 *
-	 * <h3>Usage</h3>
 	 *
 	 * The <code>SinglePlanningCalendar</code> has the following structure:
 	 *
