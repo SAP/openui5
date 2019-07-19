@@ -351,8 +351,13 @@ sap.ui.define(["sap/ui/Device", "sap/ui/layout/library"],
 					}
 				}
 
-				// Internal additional classes
-				oRm.class(oLay._sStylesInternal);
+				if (typeof oLay._sStylesInternal === "string") {
+					var aStylesInternal = oLay._sStylesInternal.split(" ");
+
+					for (var iStylesIterator = 0; iStylesIterator < aStylesInternal.length; iStylesIterator++) {
+						oRm.class(aStylesInternal[iStylesIterator]);
+					}
+				}
 			}
 
 			// No layoutData - apply default values. it could be
