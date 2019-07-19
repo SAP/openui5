@@ -240,11 +240,7 @@ sap.ui.define([
 					bIsEnabled = true;
 				}
 			}
-			var bElementsAvailable = false;
-			if (this._aAllElements) {
-				bElementsAvailable = this._aAllElements[0].length > 0 || this._aAllElements[1].length > 0;
-			}
-			bIsEnabled = bIsEnabled && (bElementsAvailable || this.getDialog().getCustomFieldEnabled());
+
 			return bIsEnabled;
 		},
 
@@ -572,20 +568,61 @@ sap.ui.define([
 			var oElementOverlay = aElementOverlays[0],
 				mParents = _getParents(bOverlayIsSibling, oElementOverlay),
 				oSiblingElement = bOverlayIsSibling && oElementOverlay.getElement(),
-				mActions;
+				mActions,
+				aPromises = [];
 
 			return this._getActions(bOverlayIsSibling, oElementOverlay)
 			.then(function(mAllActions) {
 				mActions = mAllActions;
+
+				var oAddODataPropertyPromise = Promise.resolve([]);
+				if (mActions.addODataProperty) {
+					mActions.addODataProperty.relevantContainer = oElementOverlay.getRelevantContainer(!bOverlayIsSibling);
+
+					oAddODataPropertyPromise = this._waitForChangeHandlerSettings(mActions.addODataProperty.action)
+					.then(function(mChangeHandlerSettings) {
+						// No dialog elements for metadata with changeHandlerSettings and without createFunction
+						return this._checkIfCreateFunctionIsAvailable(mChangeHandlerSettings) ?
+							this.getAnalyzer().getUnboundODataProperties(mParents.parent, mActions.addODataProperty) : [];
+					}.bind(this));
+				}
+
+				aPromises.push(
+					mActions.reveal ? this.getAnalyzer().enhanceInvisibleElements(mParents.parent, mActions) : Promise.resolve([]),
+					oAddODataPropertyPromise,
+					mActions.custom ? this.getAnalyzer().getCustomAddItems(mParents.parent, mActions.custom, mActions.aggregation) : Promise.resolve([])
+				);
+
+				if (mActions.aggregation || sControlName) {
+					this._setDialogTitle(mActions, mParents.parent, sControlName);
+				}
+			}.bind(this))
+
+			.then(function() {
+				if (mActions.addODataProperty) {
+					return Utils.isServiceUpToDate(mParents.parent);
+				}
 			})
 
 			.then(function() {
-				var nIndex = bOverlayIsSibling ? 0 : 1;
-				if (this._aAllElements && this._aAllElements[nIndex]) {
-					return this._aAllElements[nIndex];
+				if (mActions.addODataProperty) {
+					this.getDialog()._oCustomFieldButton.setVisible(true);
+					return Utils.isCustomFieldAvailable(mParents.parent);
 				}
-				return this.getAllElements(bOverlayIsSibling, aElementOverlays, iIndex, sControlName);
+				this.getDialog()._oCustomFieldButton.setVisible(false);
 			}.bind(this))
+
+			.then(function(oCurrentFieldExtInfo) {
+				if (oCurrentFieldExtInfo) {
+					this._oCurrentFieldExtInfo = oCurrentFieldExtInfo;
+					this.getDialog().setCustomFieldEnabled(true);
+					this.getDialog().addBusinessContext(this._oCurrentFieldExtInfo.BusinessContexts);
+					this.getDialog().detachEvent('openCustomField', this._onOpenCustomField, this);
+					this.getDialog().attachEvent('openCustomField', null, this._onOpenCustomField, this);
+				}
+			}.bind(this))
+
+			.then(_getAllElements.bind(this, aPromises))
 
 			.then(function(aAllElements) {
 				this.getDialog().setElements(aAllElements);
@@ -593,19 +630,15 @@ sap.ui.define([
 				return this.getDialog().open()
 
 				.then(function() {
-					//clear elements
-					this._aAllElements = null;
 					return this._createCommands(mParents, oSiblingElement, mActions, iIndex);
 				}.bind(this))
 
 				.catch(function(oError) {
-					//clear elements
-					this._aAllElements = null;
 					//no error means canceled dialog
 					if (oError instanceof Error) {
 						throw oError;
 					}
-				}.bind(this));
+				});
 			}.bind(this))
 
 			.catch(function(oError) {
@@ -628,6 +661,8 @@ sap.ui.define([
 		/**
 		 * Function called when custom field button was pressed
 		 *
+		 * @param {sap.ui.base.Event}
+		 *		  oEvent event object
 		 */
 		_onOpenCustomField : function () {
 			// open field ext ui
@@ -976,81 +1011,6 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		getAllElements: function(bOverlayIsSibling, aElementOverlays, iIndex, sControlName) {
-			var oElementOverlay = aElementOverlays[0];
-			var mParents = _getParents(bOverlayIsSibling, oElementOverlay);
-			var mActions;
-			var aPromises = [];
-
-			return this._getActions(bOverlayIsSibling, oElementOverlay)
-			.then(function(mAllActions) {
-				mActions = mAllActions;
-
-				var oAddODataPropertyPromise = Promise.resolve([]);
-				if (mActions.addODataProperty) {
-					mActions.addODataProperty.relevantContainer = oElementOverlay.getRelevantContainer(!bOverlayIsSibling);
-
-					oAddODataPropertyPromise = this._waitForChangeHandlerSettings(mActions.addODataProperty.action)
-						.then(function(mChangeHandlerSettings) {
-							// No dialog elements for metadata with changeHandlerSettings and without createFunction
-							return this._checkIfCreateFunctionIsAvailable(mChangeHandlerSettings) ?
-								this.getAnalyzer().getUnboundODataProperties(mParents.parent, mActions.addODataProperty) : [];
-						}.bind(this));
-				}
-
-				aPromises.push(
-					mActions.reveal ? this.getAnalyzer().enhanceInvisibleElements(mParents.parent, mActions) : Promise.resolve([]),
-					oAddODataPropertyPromise,
-					mActions.custom ? this.getAnalyzer().getCustomAddItems(mParents.parent, mActions.custom, mActions.aggregation) : Promise.resolve([])
-				);
-
-				if (mActions.aggregation || sControlName) {
-					this._setDialogTitle(mActions, mParents.parent, sControlName);
-				}
-			}.bind(this))
-
-			.then(function() {
-				if (mActions.addODataProperty) {
-					return Utils.isServiceUpToDate(mParents.parent);
-				}
-			})
-
-			.then(function() {
-				if (mActions.addODataProperty) {
-					return Utils.isExtensibilityEnabledInSystem(mParents.parent);
-				}
-				this.getDialog()._oCustomFieldButton.setVisible(false);
-			}.bind(this))
-
-			.then(function(bExtensibilityEnabled) {
-				if (mActions.addODataProperty) {
-					this.getDialog()._oCustomFieldButton.setVisible(bExtensibilityEnabled);
-					this.getDialog().setCustomFieldEnabled(false);
-					return Utils.isCustomFieldAvailable(mParents.parent);
-				}
-			}.bind(this))
-
-			.then(function(oCurrentFieldExtInfo) {
-				if (oCurrentFieldExtInfo) {
-					this._oCurrentFieldExtInfo = oCurrentFieldExtInfo;
-					this.getDialog().setCustomFieldEnabled(true);
-					this.getDialog().addBusinessContext(this._oCurrentFieldExtInfo.BusinessContexts);
-					this.getDialog().detachEvent('openCustomField', this._onOpenCustomField, this);
-					this.getDialog().attachEvent('openCustomField', null, this._onOpenCustomField, this);
-				}
-			}.bind(this))
-
-			.then(_getAllElements.bind(this, aPromises))
-
-			.then(function(aAllElements) {
-				return aAllElements;
-			})
-
-			.catch(function(oError) {
-				throw oError;
-			});
-		},
-
 		/**
 		 * Retrieve the context menu item for the actions.
 		 * Two items are returned here: one for when the overlay is sibling and one for when it is child.
@@ -1063,32 +1023,29 @@ sap.ui.define([
 			var iRank = 20;
 			var sIcon = "sap-icon://add";
 			var aMenuItems = [];
-			return Promise.all([this.getAllElements(true, aElementOverlays), this.getAllElements(false, aElementOverlays)]).then(function(aAllElements) {
-				// store the Elements for using them later
-				this._aAllElements = aAllElements;
-				for (var i = 0; i < 2; i++) {
-					if (this.isAvailable(bOverlayIsSibling, aElementOverlays)) {
-						var sMenuItemText = this.getContextMenuTitle.bind(this, bOverlayIsSibling);
-						aMenuItems.push({
-							id: sPluginId,
-							text: sMenuItemText,
-							handler: function (bOverlayIsSibling, aElementOverlays) { // eslint-disable-line no-loop-func
-								// showAvailableElements has optional parameters, so currying is not possible here
-								return this.showAvailableElements(bOverlayIsSibling, aElementOverlays);
-							}.bind(this, bOverlayIsSibling),
-							enabled: this.isEnabled.bind(this, bOverlayIsSibling),
-							rank: iRank,
-							icon: sIcon,
-							group: "Add"
-						});
-					}
+			for (var i = 0; i < 2; i++) {
+				if (this.isAvailable(bOverlayIsSibling, aElementOverlays)) {
+					var sMenuItemText = this.getContextMenuTitle.bind(this, bOverlayIsSibling);
 
-					bOverlayIsSibling = false;
-					sPluginId = "CTX_ADD_ELEMENTS_AS_CHILD";
-					iRank = 30;
+					aMenuItems.push({
+						id: sPluginId,
+						text: sMenuItemText,
+						handler: function (bOverlayIsSibling, aElementOverlays) { // eslint-disable-line no-loop-func
+							// showAvailableElements has optional parameters, so currying is not possible here
+							return this.showAvailableElements(bOverlayIsSibling, aElementOverlays);
+						}.bind(this, bOverlayIsSibling),
+						enabled: this.isEnabled.bind(this, bOverlayIsSibling),
+						rank: iRank,
+						icon: sIcon,
+						group: "Add"
+					});
 				}
-				return aMenuItems;
-			}.bind(this));
+
+				bOverlayIsSibling = false;
+				sPluginId = "CTX_ADD_ELEMENTS_AS_CHILD";
+				iRank = 30;
+			}
+			return aMenuItems;
 		}
 	});
 
