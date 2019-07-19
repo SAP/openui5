@@ -1,0 +1,42 @@
+{
+    "controls": [
+        "src/sap.f/**/*",
+        "src/sap.m/**/*",
+        "src/sap.tnt/**/*",
+        "src/sap.ui.codeeditor/**/*",
+        "src/sap.ui.commons/**/*",
+        "src/sap.ui.documentation/**/*",
+        "src/sap.ui.integration/**/*",
+        "src/sap.ui.layout/**/*",
+        "src/sap.ui.support/**/*",
+        "src/sap.ui.unified/**/*",
+        "src/sap.ui.ux3/**/*",
+        "src/sap.uxap/**/*"
+    ],
+    "core": [
+        "/*",
+        "src/sap.ui.core/**/*",
+        "docs/**/*",
+        "grunt/**/*",
+        "lib/cldr-openui5/**/*",
+        "lib/jsdoc/**/*",
+        "lib/server/**/*",
+        "src/testsuite-utils/**/*",
+        "src/testsuite/**/*",
+        "src/themelib_*/**/*"
+    ],
+    "demokit": [
+        "src/sap.ui.demokit/**/*"
+    ],
+    "suite-controls": [
+        "src/sap.ui.suite/**/*"
+    ],
+    "tables": [
+        "src/sap.ui.table/**/*"
+    ],
+    "team42": [
+        "src/sap.ui.dt/**/*",
+        "src/sap.ui.fl/**/*",
+        "src/sap.ui.rta/**/*"
+    ]
+}
