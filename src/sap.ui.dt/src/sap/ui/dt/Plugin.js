@@ -281,7 +281,7 @@ function(
 		var oElement = oOverlay.getElement();
 		if (vName) {
 			if (typeof vName === "function") {
-				return vName.call(null, oElement);
+				return vName(oElement);
 			}
 			return oOverlay.getDesignTimeMetadata() ? oOverlay.getDesignTimeMetadata().getLibraryText(oElement, vName) : "";
 		}

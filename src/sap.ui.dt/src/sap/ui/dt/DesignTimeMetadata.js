@@ -148,7 +148,7 @@ function(
 		if (mData.actions && mData.actions[sAction]) {
 			var vAction = mData.actions[sAction];
 			if (typeof (vAction) === "function") {
-				vAction = vAction.call(null, oElement);
+				vAction = vAction(oElement);
 			}
 
 			if (typeof (vAction) === "string") {
