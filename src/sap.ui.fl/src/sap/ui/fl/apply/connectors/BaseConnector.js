@@ -17,12 +17,12 @@ sap.ui.define([
 	 * @since 1.67
 	 * @version ${version}
 	 * @private
+	 * @restricted sap.ui.fl.apply.connectors, sap.ui.fl.apply.internal.Connector, sap.ui.fl.write.internal.Connector
 	 */
 	var BaseConnector = {
 		/**
 		 * Default responses for not implemented functions / needed response on error handling.
 		 *
-	  	 * @restricted sap.ui.fl.apply.connectors
 		 */
 		_RESPONSES: {
 			FLEX_DATA : {

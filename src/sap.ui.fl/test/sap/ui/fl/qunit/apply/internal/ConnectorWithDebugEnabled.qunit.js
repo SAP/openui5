@@ -1,5 +1,11 @@
 /* global QUnit */
 
+/*
+ This qunit test is targeting
+ sap/ui/fl/apply/internal/Connector.js
+ since the test setup requires a specific ui5 bootstrapping the testsuite.qunit.js contains specific parameters for these tests.
+*/
+
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/apply/internal/Connector"
