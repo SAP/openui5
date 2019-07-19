@@ -843,6 +843,44 @@ sap.ui.define([
 		oRadioButton.destroy();
 	});
 
+	QUnit.test("Aria-checked must be set explicitely", function(assert) {
+
+		// arrange
+		var oRadioButton1 = new RadioButton({selected: true}),
+			oRadioButton2 = new RadioButton({}),
+			oRadioButton3 = new RadioButton({groupName:"Group1", selected: true}),
+			oRadioButton4 = new RadioButton({groupName:"Group1"}),
+			$oRadio1, $oRadio2, $oRadio3, $oRadio4;
+
+		oRadioButton1.placeAt("qunit-fixture");
+		oRadioButton2.placeAt("qunit-fixture");
+		oRadioButton3.placeAt("qunit-fixture");
+		oRadioButton4.placeAt("qunit-fixture");
+
+		// act
+		oRadioButton3.setSelected(false);
+		oRadioButton4.setSelected(true);
+		sap.ui.getCore().applyChanges();
+
+		$oRadio1 = oRadioButton1.$();
+		$oRadio2 = oRadioButton2.$();
+		$oRadio3 = oRadioButton3.$();
+		$oRadio4 = oRadioButton4.$();
+
+		// assertions
+		assert.strictEqual($oRadio1.attr("aria-checked"), "true", "The aria-checked attribure should be true");
+		assert.strictEqual($oRadio2.attr("aria-checked"), "false", "The aria-checked attribure should be false");
+		assert.strictEqual($oRadio3.attr("aria-checked"), "false", "The aria-checked attribure should be false");
+		assert.strictEqual($oRadio4.attr("aria-checked"), "true", "The aria-checked attribure should be true");
+
+
+		// cleanup
+		oRadioButton1.destroy();
+		oRadioButton2.destroy();
+		oRadioButton3.destroy();
+		oRadioButton4.destroy();
+	});
+
 	QUnit.test("getAccessibilityInfo", function(assert) {
 		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 				oRadioButton = new RadioButton({ text: "testLabel", selected: true }),
