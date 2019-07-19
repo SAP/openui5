@@ -5,10 +5,12 @@
 // Module provides access to functionality related to an S4HANA Cloud backend
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
-	"sap/ui/model/odata/v2/ODataModel"
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/base/Log"
 ], function(
 	ManagedObject,
-	ODataModel
+	ODataModel,
+	Log
 ) {
 	"use strict";
 	var oModelPromise;
@@ -59,7 +61,7 @@ sap.ui.define([
 				// ... Reject if publishing return an error or is locked
 				}).catch(function(oError) {
 					var sText = bAppVarCreation ? "creation" : "deletion";
-					jQuery.sap.log.error("Catalog publishing failed for app variant " + sText + ". AppVarStatus is " + oError.message);
+					Log.error("Catalog publishing failed for app variant " + sText + ". AppVarStatus is " + oError.message);
 					reject({ iamAppId : sIamAppId, error: oError.message});
 				});
 			}

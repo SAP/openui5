@@ -195,7 +195,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sReference the descriptor id for which the change is created
 	 * @param {object} oInlineChange the inline change instance
-	 * @param {string} sLayer layer of the descriptor change
+	 * @param {string} [sLayer] layer of the descriptor change, when nothing passed, will set it to CUSTOMER
 	 * @param {object} oAppComponent application component to get the version from
 	 * @param {string} sTool tool which creates the descriptor change (e.g. RTA, DTA, FCC ...)
 	 *
@@ -216,8 +216,12 @@ sap.ui.define([
 
 		var sAppVersion;
 		if (oAppComponent) {
-			var mManifest = oAppComponent.getManifest();
-			sAppVersion = FlexUtils.getAppVersionFromManifest(mManifest);
+			sAppVersion = oAppComponent.appVersion;
+
+			if (!oAppComponent.appId && !sAppVersion) {
+				var mManifest = oAppComponent.getManifest();
+				sAppVersion = FlexUtils.getAppVersionFromManifest(mManifest);
+			}
 		}
 
 		var mPropertyBag = {};

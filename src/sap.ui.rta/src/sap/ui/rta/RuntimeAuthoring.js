@@ -968,9 +968,9 @@ function(
 					undo: this._onUndo.bind(this),
 					redo: this._onRedo.bind(this),
 					modeChange: this._onModeChange.bind(this),
-					manageApps: RtaAppVariantFeature.onGetOverview.bind(null, true),
+					manageApps: RtaAppVariantFeature.onGetOverview.bind(null, true, this.getLayer()),
 					appVariantOverview: this._onGetAppVariantOverview.bind(this),
-					saveAs: RtaAppVariantFeature.onSaveAsFromRtaToolbar.bind(null, true, true)
+					saveAs: RtaAppVariantFeature.onSaveAs.bind(null, true, this.getLayer(), null)
 				}), 'toolbar');
 			}
 
@@ -1015,7 +1015,7 @@ function(
 		var oItem = oEvent.getParameter("item");
 
 		var bTriggeredForKeyUser = oItem.getId() === 'keyUser';
-		return RtaAppVariantFeature.onGetOverview(bTriggeredForKeyUser);
+		return RtaAppVariantFeature.onGetOverview(bTriggeredForKeyUser, this.getLayer());
 	};
 
 	/**

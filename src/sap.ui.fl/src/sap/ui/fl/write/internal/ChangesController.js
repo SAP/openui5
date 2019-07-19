@@ -34,6 +34,9 @@ sap.ui.define([
 		 * @returns {sap.ui.fl.FlexController} Returns FlexController Instance of Component for app descriptor changes
 		 */
 		getDescriptorFlexControllerInstance: function(vSelector) {
+			if (typeof vSelector.appId === "string") {
+				return OldFlexControllerFactory.create(vSelector.appId, vSelector.appVersion);
+			}
 			var oAppComponent = vSelector.appComponent || vSelector;
 			var oAppDescriptorComponent = FlexUtils.getAppDescriptorComponentObjectForControl(oAppComponent);
 			return OldFlexControllerFactory.create(oAppDescriptorComponent.name, oAppDescriptorComponent.version);

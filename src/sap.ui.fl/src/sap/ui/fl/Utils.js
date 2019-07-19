@@ -553,9 +553,10 @@ function(
 		 */
 		getAppDescriptorComponentObjectForControl: function(oControl) {
 			var oAppComponent = this.getAppComponentForControl(oControl);
+			var oManifest = oAppComponent.getManifest();
 			return {
-				name: this.getComponentClassName(oAppComponent).replace(".Component", ""),
-				version: this.getAppVersionFromManifest(oAppComponent.getManifest())
+				name: this.getAppIdFromManifest(oManifest),
+				version: this.getAppVersionFromManifest(oManifest)
 			};
 		},
 
@@ -1149,6 +1150,23 @@ function(
 			}
 			this.log.warning("No Manifest received.");
 			return "";
+		},
+
+
+		/**
+		 * Returns the descriptor Id, which is alwas the reference for descriptor changes
+		 *
+		 * @param {object} oManifest - Manifest of the component
+		 * @returns {string} Version of application if it is available in the manifest, otherwise an empty string
+		 * @public
+		 */
+		getAppIdFromManifest: function (oManifest) {
+			if (oManifest) {
+				var oSapApp = (oManifest.getEntry) ? oManifest.getEntry("sap.app") : oManifest["sap.app"];
+				return oSapApp && oSapApp.id;
+			}
+
+			throw new Error("No Manifest received, descriptor changes are not possible");
 		},
 
 		/**

@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/base/Log",
+	"sap/ui/core/Manifest",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -24,6 +25,7 @@ sap.ui.define([
 	Element,
 	JsControlTreeModifier,
 	Log,
+	Manifest,
 	jQuery,
 	sinon
 ) {
@@ -46,14 +48,39 @@ sap.ui.define([
 		return fnPersistenceStub;
 	}
 
+	function createAppComponent() {
+		var oDescriptor = {
+			"sap.app" : {
+				id : "reference.app",
+				applicationVersion: {
+					version: "1.2.3"
+				}
+			}
+		};
+
+		var oManifest = new Manifest(oDescriptor);
+		var oAppComponent = {
+			name: "testComponent",
+			getManifest : function() {
+				return oManifest;
+			},
+			getId: function() {
+				return "Control---demo--test";
+			},
+			getLocalId: function() {
+				return;
+			}
+		};
+
+		return oAppComponent;
+	}
+
 	QUnit.module("Given ChangesWriteAPI", {
 		beforeEach: function () {
 			this.vSelector = {
 				elementId: "selector",
 				elementType: "sap.ui.core.Control",
-				appComponent: {
-					id: "appComponent"
-				}
+				appComponent: createAppComponent()
 			};
 			this.aObjectsToDestroy = [];
 		},
@@ -68,15 +95,21 @@ sap.ui.define([
 			this.vSelector.getManifest = function() {};
 			var oChangeSpecificData = {
 				changeType: sChangeType,
-				content: "content",
+				content: {
+					card : {
+						"customer.acard" : {}
+					}
+				},
 				texts: {
 					text1: "text1"
 				},
 				reference: "reference",
 				layer: "CUSTOMER"
 			};
-			sandbox.stub(FlexUtils, "getAppVersionFromManifest").returns("1.2.3");
 			sandbox.stub(Settings, "getInstance").resolves({});
+
+			sandbox.stub(FlexUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(this.vSelector.appComponent);
 			return ChangesWriteAPI.create(oChangeSpecificData, this.vSelector)
 				.then(function (oChange) {
 					assert.strictEqual(oChange._oInlineChange._getChangeType(), sChangeType, "then the correct descriptor change type was created");
@@ -103,18 +136,19 @@ sap.ui.define([
 
 		QUnit.test("when create is called for a descriptor change and the create promise is rejected", function(assert) {
 			var sChangeType = DescriptorInlineChangeFactory.getDescriptorChangeTypes()[0];
-			var oAppComponent = {
-				getManifest: function() {}
-			};
+
 			var oChangeSpecificData = {
 				changeType: sChangeType
 			};
+
+			sandbox.stub(FlexUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(this.vSelector.appComponent);
 
 			var oCreateInlineChangeStub = sandbox.stub(DescriptorInlineChangeFactory, "createDescriptorInlineChange").rejects(new Error("myError"));
 			var oCreateChangeStub = sandbox.stub(DescriptorChangeFactory.prototype, "createNew");
 			var oErrorLogStub = sandbox.stub(Log, "error");
 
-			return ChangesWriteAPI.create(oChangeSpecificData, oAppComponent)
+			return ChangesWriteAPI.create(oChangeSpecificData, this.vSelector)
 			.then(function() {
 				assert.ok(false, "should not go here");
 			})
@@ -219,6 +253,131 @@ sap.ui.define([
 			return ChangesWriteAPI.revert(oChange, oElement)
 				.then(function (sValue) {
 					assert.strictEqual(sValue, sReturnValue, "then the flex persistence was called with correct parameters");
+				});
+		});
+	});
+
+	QUnit.module("Given ChangesWriteAPI for smart business", {
+		beforeEach: function () {
+			this.vSelector = {
+				appId: "reference.app"
+			};
+		},
+		afterEach: function() {
+			delete this.vSelector;
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when create is called for a descriptor change without app version as a part of selector", function(assert) {
+			var sChangeType = DescriptorInlineChangeFactory.getDescriptorChangeTypes()[0];
+
+			var oChangeSpecificData = {
+				changeType: 'appdescr_ovp_addNewCard',
+				content: {
+					card : {
+						"customer.acard" : {
+							model : "customer.boring_model",
+							template : "sap.ovp.cards.list",
+							settings : {
+								category : "{{reference.app_sap.app.ovp.cards.customer.acard.category}}",
+								title : "{{reference.app_sap.app.ovp.cards.customer.acard.title}}",
+								description : "extended",
+								entitySet : "Zme_Overdue",
+								sortBy : "OverdueTime",
+								sortOrder : "desc",
+								listType : "extended"
+							}
+						}
+					}
+				},
+				texts: {
+					"reference.app_sap.app.ovp.cards.customer.acard.category": {
+						type: "XTIT",
+						maxLength: 20,
+						comment: "example",
+						value: {
+							"": "Category example default text",
+							en: "Category example text in en",
+							de: "Kategorie Beispieltext in de",
+							en_US: "Category example text in en_US"
+						}
+					},
+					"reference.app_sap.app.ovp.cards.customer.acard.title": {
+						type: "XTIT",
+						maxLength: 20,
+						comment: "example",
+						value: {
+							"": "Title example default text",
+							en: "Title example text in en",
+							de: "Titel Beispieltext in de",
+							en_US: "Title example text in en_US"
+						}
+					}
+				}
+			};
+
+			sandbox.stub(Settings, "getInstance").resolves({});
+
+			return ChangesWriteAPI.create(oChangeSpecificData, this.vSelector)
+				.then(function (oChange) {
+					assert.strictEqual(oChange._oInlineChange._getChangeType(), sChangeType, "then the correct descriptor change type was created");
+				});
+		});
+
+		QUnit.test("when create is called for a descriptor change with app version as a part of selector", function(assert) {
+			var sChangeType = DescriptorInlineChangeFactory.getDescriptorChangeTypes()[0];
+			this.vSelector.appVersion = "1.0.0";
+
+			var oChangeSpecificData = {
+				changeType: 'appdescr_ovp_addNewCard',
+				content: {
+					card : {
+						"customer.acard" : {
+							model : "customer.boring_model",
+							template : "sap.ovp.cards.list",
+							settings : {
+								category : "{{reference.app_sap.app.ovp.cards.customer.acard.category}}",
+								title : "{{reference.app_sap.app.ovp.cards.customer.acard.title}}",
+								description : "extended",
+								entitySet : "Zme_Overdue",
+								sortBy : "OverdueTime",
+								sortOrder : "desc",
+								listType : "extended"
+							}
+						}
+					}
+				},
+				texts: {
+					"reference.app_sap.app.ovp.cards.customer.acard.category": {
+						type: "XTIT",
+						maxLength: 20,
+						comment: "example",
+						value: {
+							"": "Category example default text",
+							en: "Category example text in en",
+							de: "Kategorie Beispieltext in de",
+							en_US: "Category example text in en_US"
+						}
+					},
+					"reference.app_sap.app.ovp.cards.customer.acard.title": {
+						type: "XTIT",
+						maxLength: 20,
+						comment: "example",
+						value: {
+							"": "Title example default text",
+							en: "Title example text in en",
+							de: "Titel Beispieltext in de",
+							en_US: "Title example text in en_US"
+						}
+					}
+				}
+			};
+
+			sandbox.stub(Settings, "getInstance").resolves({});
+
+			return ChangesWriteAPI.create(oChangeSpecificData, this.vSelector)
+				.then(function (oChange) {
+					assert.strictEqual(oChange._oInlineChange._getChangeType(), sChangeType, "then the correct descriptor change type was created");
 				});
 		});
 	});

@@ -7,16 +7,16 @@ sap.ui.define([
 	"sap/ui/rta/appVariant/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/rta/appVariant/AppVariantManager",
-	"sap/ui/rta/appVariant/S4HanaCloudBackend",
-	"sap/ui/rta/appVariant/AppVariantOverviewDialog",
 	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/command/Stack",
 	"sap/ui/core/Control",
-	"sap/ui/core/Manifest",
 	"sap/base/Log",
-	"sap/base/util/UriParameters"
+	"sap/base/util/UriParameters",
+	"sap/ui/core/Manifest",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/write/api/ChangesWriteAPI"
 ], function (
 	jQuery,
 	sinon,
@@ -24,16 +24,16 @@ sap.ui.define([
 	AppVariantOverviewUtils,
 	AppVariantUtils,
 	AppVariantManager,
-	S4HanaCloudBackend,
-	AppVariantOverviewDialog,
 	DescriptorVariantFactory,
 	Settings,
 	FlUtils,
 	Stack,
 	Control,
-	Manifest,
 	Log,
-	UriParameters
+	UriParameters,
+	Manifest,
+	PersistenceWriteAPI,
+	ChangesWriteAPI
 ) {
 	"use strict";
 
@@ -94,11 +94,11 @@ sap.ui.define([
 			var oDummyAppVarDescr = {
 				hugo: "foo"
 			};
-			var oAppVarDescrStub = sandbox.stub(AppVariantUtils, "getDescriptorFromLREP").resolves(oDummyAppVarDescr);
+			var oLoadAppVariantStub = sandbox.stub(DescriptorVariantFactory, "loadAppVariant").resolves(oDummyAppVarDescr);
 
 			return RtaAppVariantFeature.getAppVariantDescriptor(oRootControl).then(function() {
-				assert.ok(oAppVarDescrStub.calledOnce, "then the getDescriptorFromLREP is called once");
-				assert.equal(oAppVarDescrStub.firstCall.args[0], "customer.app.var.id", "the application id was passed correctly");
+				assert.ok(oLoadAppVariantStub.calledOnce, "then the loadAppVariant is called once");
+				assert.equal(oLoadAppVariantStub.firstCall.args[0], "customer.app.var.id", "the application id was passed correctly");
 			});
 		});
 
@@ -113,10 +113,10 @@ sap.ui.define([
 			var oDummyAppVarDescr = {
 				hugo: "foo"
 			};
-			var oAppVarDescrStub = sandbox.stub(AppVariantUtils, "getDescriptorFromLREP").resolves(oDummyAppVarDescr);
+			var oLoadAppVariantStub = sandbox.stub(DescriptorVariantFactory, "loadAppVariant").resolves(oDummyAppVarDescr);
 
 			return RtaAppVariantFeature.getAppVariantDescriptor(oRootControl).then(function(oAppVarDescr) {
-				assert.ok(oAppVarDescrStub.notCalled, "then the getDescriptorFromLREP is not called");
+				assert.ok(oLoadAppVariantStub.notCalled, "then the getDescriptorFromLREP is not called");
 				assert.equal(oAppVarDescr, false, "then the app variant descriptor is false");
 			});
 		});
@@ -165,7 +165,7 @@ sap.ui.define([
 
 			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").resolves(aAppVariantOverviewAttributes);
 
-			return RtaAppVariantFeature.onGetOverview(true).then(function(oAppVariantOverviewDialog) {
+			return RtaAppVariantFeature.onGetOverview(true, "CUSTOMER").then(function(oAppVariantOverviewDialog) {
 				assert.ok(true, "the the promise got resolved and AppVariant Overview Dialog is opened");
 				oAppVariantOverviewDialog.fireCancel();
 			});
@@ -371,8 +371,29 @@ sap.ui.define([
 			jQuery("#sapUiBusyIndicator").hide();
 		}
 	}, function() {
-		QUnit.test("when onSaveAsFromOverviewDialog() method is called on S/4HANA on Premise", function(assert) {
+		var fnCreateAppComponent = function() {
 			var oDescriptor = {
+				"sap.app" : {
+					id : "TestId",
+					applicationVersion: {
+						version: "1.2.3"
+					}
+				}
+			};
+
+			var oManifest = new Manifest(oDescriptor);
+			var oAppComponent = {
+				name: "testComponent",
+				getManifest : function() {
+					return oManifest;
+				}
+			};
+
+			return oAppComponent;
+		};
+
+		QUnit.test("when onSaveAs() method is called on S/4HANA on Premise from Overview dialog", function(assert) {
+			var oSelectedAppVariant = {
 				"sap.app" : {
 					id : "TestId",
 					crossNavigation: {
@@ -382,8 +403,7 @@ sap.ui.define([
 			};
 
 			var oAppVariantData = {
-				idBaseApp: "BaseAppId",
-				idRunningApp: "RunningAppId",
+				idRunningApp: "TestId",
 				title: "Title",
 				subTitle: "Subtitle",
 				description: "Description",
@@ -403,21 +423,30 @@ sap.ui.define([
 			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
 
+			var oAppComponent = fnCreateAppComponent();
+			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
+			var fnCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
+
+			sandbox.stub(AppVariantManager.prototype, "getRootControl").returns(oAppComponent);
 			var fnProcessSaveAsDialog = sandbox.stub(AppVariantManager.prototype, "processSaveAsDialog").resolves(oAppVariantData);
-			var fnCreateDescriptorSpy = sandbox.spy(AppVariantManager.prototype, "createDescriptor");
-			var fnSaveAppVariantToLREP = sandbox.stub(AppVariantManager.prototype, "saveAppVariantToLREP").resolves();
-			var fnCopyUnsavedChangesToLREP = sandbox.stub(AppVariantManager.prototype, "copyUnsavedChangesToLREP").resolves();
+			var fnSaveAsAppVariantStub = sandbox.stub(PersistenceWriteAPI, "saveAs").resolves({
+				response: {
+					id: "customer.TestId.id_123456"
+				}
+			});
+			var fnClearRTACommandStack = sandbox.stub(AppVariantManager.prototype, "clearRTACommandStack").resolves();
 			var fnshowSuccessMessage = sandbox.stub(AppVariantManager.prototype, "showSuccessMessage").resolves();
 			var fnOnGetOverviewSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
 			var fnTriggerCatalogPublishing = sandbox.spy(AppVariantManager.prototype, "triggerCatalogPublishing");
 			var fnNotifyKeyUserWhenPublishingIsReadySpy = sandbox.spy(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady");
 			var fnNavigateToFLPHomepage = sandbox.stub(AppVariantUtils, "navigateToFLPHomepage").resolves();
 
-			return RtaAppVariantFeature.onSaveAsFromOverviewDialog(oDescriptor, false).then(function() {
+			return RtaAppVariantFeature.onSaveAs(false, "CUSTOMER", oSelectedAppVariant).then(function() {
 				assert.ok(fnProcessSaveAsDialog.calledOnce, "then the processSaveAsDialog method is called once");
-				assert.ok(fnCreateDescriptorSpy.calledOnce, "then the create descriptor method is called once");
-				assert.ok(fnSaveAppVariantToLREP.calledOnce, "then the saveAppVariantToLREP method is called once");
-				assert.ok(fnCopyUnsavedChangesToLREP.calledOnce, "then the copyUnsavedChangesToLREP method is called once");
+				assert.equal(fnCreateChangesSpy.callCount, 10, "then ChangesWriteAPI.create method is called " + fnCreateChangesSpy.callCount + " times");
+				assert.ok(fnSaveAsAppVariantStub.calledOnce, "then the PersistenceWriteAPI.save method is called once");
+				assert.ok(fnClearRTACommandStack.calledOnce, "then the clearRTACommandStack method is called once");
 				assert.ok(fnshowSuccessMessage.calledOnce, "then the showSuccessMessage method is called once");
 				assert.ok(fnOnGetOverviewSpy.calledOnce, "then the overview opens only once after the new app variant has been saved to LREP");
 				assert.ok(fnNavigateToFLPHomepage.notCalled, "then the navigateToFLPHomepage method is not called once");
@@ -426,8 +455,8 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when onSaveAsFromOverviewDialog() method is called on S/4HANA Cloud", function(assert) {
-			var oDescriptor = {
+		QUnit.test("when onSaveAs() method is called on S/4HANA Cloud from Overview dialog", function(assert) {
+			var oSelectedAppVariant = {
 				"sap.app" : {
 					id : "TestId",
 					crossNavigation: {
@@ -437,8 +466,7 @@ sap.ui.define([
 			};
 
 			var oAppVariantData = {
-				idBaseApp: "BaseAppId",
-				idRunningApp: "RunningAppId",
+				idRunningApp: "TestId",
 				title: "Title",
 				subTitle: "Subtitle",
 				description: "Description",
@@ -458,29 +486,39 @@ sap.ui.define([
 			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
 
+			var oAppComponent = fnCreateAppComponent();
+			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
+			var fnCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
+
+			sandbox.stub(AppVariantManager.prototype, "getRootControl").returns(oAppComponent);
+
 			var fnProcessSaveAsDialog = sandbox.stub(AppVariantManager.prototype, "processSaveAsDialog").resolves(oAppVariantData);
-			var fnCreateDescriptorSpy = sandbox.spy(AppVariantManager.prototype, "createDescriptor");
-			var fnSaveAppVariantToLREP = sandbox.stub(AppVariantManager.prototype, "saveAppVariantToLREP").resolves();
-			var fnCopyUnsavedChangesToLREP = sandbox.stub(AppVariantManager.prototype, "copyUnsavedChangesToLREP").resolves();
+			var fnSaveAsAppVariantStub = sandbox.stub(PersistenceWriteAPI, "saveAs").resolves({
+				response: {
+					id: "customer.TestId.id_123456"
+				}
+			});
+			var fnClearRTACommandStack = sandbox.stub(AppVariantManager.prototype, "clearRTACommandStack").resolves();
 			var fnshowSuccessMessage = sandbox.spy(AppVariantManager.prototype, "showSuccessMessage");
-			//var onGetOverviewSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
+			var fnOnGetOverviewSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
 			var fnTriggerCatalogPublishing = sandbox.stub(AppVariantManager.prototype, "triggerCatalogPublishing").resolves({response : {IAMId : "IAMId"}});
 			var fnNotifyKeyUserWhenPublishingIsReady = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady").resolves();
 
-			return RtaAppVariantFeature.onSaveAsFromOverviewDialog(oDescriptor, false).then(function() {
+			return RtaAppVariantFeature.onSaveAs(false, "CUSTOMER", oSelectedAppVariant).then(function() {
 				assert.ok(fnProcessSaveAsDialog.calledOnce, "then the processSaveAsDialog method is called once");
-				assert.ok(fnCreateDescriptorSpy.calledOnce, "then the create descriptor method is called once");
-				assert.ok(fnSaveAppVariantToLREP.calledOnce, "then the saveAppVariantToLREP method is called once");
-				assert.ok(fnCopyUnsavedChangesToLREP.calledOnce, "then the copyUnsavedChangesToLREP method is called once");
+				assert.equal(fnCreateChangesSpy.callCount, 10, "then ChangesWriteAPI.create method is called " + fnCreateChangesSpy.callCount + " times");
+				assert.ok(fnSaveAsAppVariantStub.calledOnce, "then the PersistenceWriteAPI.saveAs method is called once");
+				assert.ok(fnOnGetOverviewSpy.calledOnce, "then the overview opens only once after the new app variant has been saved to LREP");
+				assert.ok(fnClearRTACommandStack.calledOnce, "then the clearRTACommandStack method is called once");
 				assert.ok(fnshowSuccessMessage.calledTwice, "then the showSuccessMessage method is called twice");
 				assert.ok(fnTriggerCatalogPublishing.calledOnce, "then the triggerCatalogPublishing method is not called once");
 				assert.ok(fnNotifyKeyUserWhenPublishingIsReady.calledOnce, "then the notifyKeyUserWhenPublishingIsReady method is not called once");
-				//assert.ok(onGetOverviewSpy.calledTwice, "then the overview opens once after the new app variant has been saved to LREP, and once after the publishing is finished");
 			});
 		});
 
 		QUnit.test("when onSaveAs() is triggered from RTA toolbar on S/4HANA on Premise", function(assert) {
-			var oDescriptor = {
+			var oSelectedAppVariant = {
 				"sap.app" : {
 					id : "TestId",
 					crossNavigation: {
@@ -493,7 +531,6 @@ sap.ui.define([
 			};
 
 			var oAppVariantData = {
-				idBaseApp: "BaseAppId",
 				idRunningApp: "RunningAppId",
 				title: "Title",
 				subTitle: "Subtitle",
@@ -502,7 +539,7 @@ sap.ui.define([
 				inbounds: {}
 			};
 
-			sandbox.stub(FlUtils, "getAppDescriptor").returns(oDescriptor);
+			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
@@ -513,26 +550,37 @@ sap.ui.define([
 				})
 			);
 
-			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
+			sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
 			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "IAM App Id: IAMId").returns();
 
+			var oAppComponent = fnCreateAppComponent();
+			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
+			var fnCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
+
+			sandbox.stub(AppVariantManager.prototype, "getRootControl").returns(oAppComponent);
+
 			var fnProcessSaveAsDialog = sandbox.stub(AppVariantManager.prototype, "processSaveAsDialog").resolves(oAppVariantData);
-			var fnCreateDescriptorSpy = sandbox.spy(AppVariantManager.prototype, "createDescriptor");
-			var fnSaveAppVariantToLREP = sandbox.stub(AppVariantManager.prototype, "saveAppVariantToLREP").resolves();
-			var fnCopyUnsavedChangesToLREP = sandbox.stub(AppVariantManager.prototype, "copyUnsavedChangesToLREP").resolves();
+			var fnSaveAsAppVariantStub = sandbox.stub(PersistenceWriteAPI, "saveAs").resolves({
+				response: {
+					id: "customer.TestId.id_123456"
+				}
+			});
+
+			var fnClearRTACommandStack = sandbox.stub(AppVariantManager.prototype, "clearRTACommandStack").resolves();
 			var fnshowSuccessMessage = sandbox.spy(AppVariantManager.prototype, "showSuccessMessage");
 			var fnNavigateToFLPHomepage = sandbox.stub(AppVariantUtils, "navigateToFLPHomepage").resolves();
 			var fnTriggerCatalogPublishing = sandbox.spy(AppVariantManager.prototype, "triggerCatalogPublishing");
 			var fnNotifyKeyUserWhenPublishingIsReadySpy = sandbox.spy(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady");
-			var onGetOverviewSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
+			var fnOnGetOverviewStub = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
 
-			return RtaAppVariantFeature.onSaveAsFromRtaToolbar(true, true).then(function() {
+			return RtaAppVariantFeature.onSaveAs(true, "CUSTOMER", oSelectedAppVariant).then(function() {
 				assert.ok(fnProcessSaveAsDialog.calledOnce, "then the processSaveAsDialog method is called once");
-				assert.ok(fnCreateDescriptorSpy.calledOnce, "then the create descriptor method is called once");
-				assert.ok(fnSaveAppVariantToLREP.calledOnce, "then the saveAppVariantToLREP method is called once");
-				assert.ok(fnCopyUnsavedChangesToLREP.calledOnce, "then the copyUnsavedChangesToLREP method is called once");
+				assert.equal(fnCreateChangesSpy.callCount, 10, "then ChangesWriteAPI.create method is called " + fnCreateChangesSpy.callCount + " times");
+				assert.ok(fnSaveAsAppVariantStub.calledOnce, "then the PersistenceWriteAPI.saveAs method is called once");
+				assert.ok(fnClearRTACommandStack.calledOnce, "then the clearRTACommandStack method is called once");
 				assert.ok(fnshowSuccessMessage.calledOnce, "then the showSuccessMessage method is called once");
-				assert.ok(onGetOverviewSpy.notCalled, "then the overview is not opened");
+				assert.ok(fnOnGetOverviewStub.notCalled, "then the overview is not opened");
 				assert.ok(fnNavigateToFLPHomepage.calledOnce, "then the _navigateToFLPHomepage method is called once");
 				assert.ok(fnTriggerCatalogPublishing.notCalled, "then the triggerCatalogPublishing method is not called once");
 				assert.ok(fnNotifyKeyUserWhenPublishingIsReadySpy.notCalled, "then the notifyKeyUserWhenPublishingIsReady method is not called once");
@@ -540,21 +588,17 @@ sap.ui.define([
 		});
 
 		QUnit.test("when onSaveAs() is triggered from RTA toolbar on S/4HANA Cloud", function(assert) {
-			var oDescriptor = {
+			var oSelectedAppVariant = {
 				"sap.app" : {
 					id : "TestId",
 					crossNavigation: {
 						inbounds: {}
 					}
-				},
-				"sap.ui5" : {
-					componentName: "TestIdBaseApp"
 				}
 			};
 
 			var oAppVariantData = {
-				idBaseApp: "BaseAppId",
-				idRunningApp: "RunningAppId",
+				idRunningApp: "TestId",
 				title: "Title",
 				subTitle: "Subtitle",
 				description: "Description",
@@ -562,7 +606,7 @@ sap.ui.define([
 				inbounds: {}
 			};
 
-			sandbox.stub(FlUtils, "getAppDescriptor").returns(oDescriptor);
+			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
@@ -576,21 +620,32 @@ sap.ui.define([
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
 			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "IAM App Id: IAMId").returns();
 
+			var oAppComponent = fnCreateAppComponent();
+			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
+			var fnCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
+
+			sandbox.stub(AppVariantManager.prototype, "getRootControl").returns(oAppComponent);
+
 			var fnProcessSaveAsDialog = sandbox.stub(AppVariantManager.prototype, "processSaveAsDialog").resolves(oAppVariantData);
-			var fnCreateDescriptorSpy = sandbox.spy(AppVariantManager.prototype, "createDescriptor");
-			var fnSaveAppVariantToLREP = sandbox.stub(AppVariantManager.prototype, "saveAppVariantToLREP").resolves();
-			var fnCopyUnsavedChangesToLREP = sandbox.stub(AppVariantManager.prototype, "copyUnsavedChangesToLREP").resolves();
-			var fnshowSuccessMessage = sandbox.spy(AppVariantManager.prototype, "showSuccessMessage");
+			var fnSaveAsAppVariantStub = sandbox.stub(PersistenceWriteAPI, "saveAs").resolves({
+				response: {
+					id: "customer.TestId.id_123456"
+				}
+			});
+
+			var fnClearRTACommandStack = sandbox.stub(AppVariantManager.prototype, "clearRTACommandStack").resolves();
+			var fnShowSuccessMessageStub = sandbox.spy(AppVariantManager.prototype, "showSuccessMessage");
 			var fnTriggerCatalogPublishing = sandbox.stub(AppVariantManager.prototype, "triggerCatalogPublishing").resolves({response : {IAMId : "IAMId"}});
 			var fnNotifyKeyUserWhenPublishingIsReadySpy = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady").resolves();
 			var fnNavigateToFLPHomepage = sandbox.stub(AppVariantUtils, "navigateToFLPHomepage").resolves();
 
-			return RtaAppVariantFeature.onSaveAsFromRtaToolbar(true, true).then(function() {
+			return RtaAppVariantFeature.onSaveAs(true, "CUSTOMER", oSelectedAppVariant).then(function() {
 				assert.ok(fnProcessSaveAsDialog.calledOnce, "then the processSaveAsDialog method is called once");
-				assert.ok(fnCreateDescriptorSpy.calledOnce, "then the create descriptor method is called once");
-				assert.ok(fnSaveAppVariantToLREP.calledOnce, "then the saveAppVariantToLREP method is called once");
-				assert.ok(fnCopyUnsavedChangesToLREP.calledOnce, "then the copyUnsavedChangesToLREP method is called once");
-				assert.ok(fnshowSuccessMessage.calledTwice, "then the showSuccessMessage method is called twice");
+				assert.equal(fnCreateChangesSpy.callCount, 10, "then ChangesWriteAPI.create method is called " + fnCreateChangesSpy.callCount + " times");
+				assert.ok(fnSaveAsAppVariantStub.calledOnce, "then the PersistenceWriteAPI.saveAs method is called once");
+				assert.ok(fnClearRTACommandStack.calledOnce, "then the clearRTACommandStack method is called once");
+				assert.ok(fnShowSuccessMessageStub.calledTwice, "then the showSuccessMessage method is called twice");
 				assert.ok(fnTriggerCatalogPublishing.calledOnce, "then the triggerCatalogPublishing method is not called once");
 				assert.ok(fnNotifyKeyUserWhenPublishingIsReadySpy.calledOnce, "then the notifyKeyUserWhenPublishingIsReady method is not called once");
 				assert.ok(fnNavigateToFLPHomepage.calledOnce, "then the _navigateToFLPHomepage method is called once");
@@ -619,20 +674,17 @@ sap.ui.define([
 			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "testId"}});
 			sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
 			var fnShowMessageStub = sandbox.stub(AppVariantUtils, "showMessage").resolves();
-			var fnCreateDeletionSpy = sandbox.spy(AppVariantUtils, "createDeletion");
+			var fnShowSuccessMessageStub = sandbox.stub(AppVariantManager.prototype, "showSuccessMessage").resolves();
 			var fnTriggerCatalogPublishing = sandbox.stub(AppVariantManager.prototype, "triggerCatalogPublishing").resolves(oPublishingResponse);
 			var fnNotifyKeyUserWhenPublishingIsReady = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady").resolves();
-			var fnTriggerDeleteAppVariantFromLREP = sandbox.stub(AppVariantUtils, "triggerDeleteAppVariantFromLREP").resolves();
+			var fnDeleteAppVariantStub = sandbox.stub(PersistenceWriteAPI, "deleteAppVariant").resolves();
 
-
-
-			return RtaAppVariantFeature.onDeleteFromOverviewDialog("AppVarId", false).then(function() {
-				//assert.ok(onGetOverviewSpy.calledOnce, "then the App variant dialog gets opened when the polling starts");
-				assert.ok(fnCreateDeletionSpy.calledOnce, "then the create deletion method is called once");
+			return RtaAppVariantFeature.onDeleteFromOverviewDialog("AppVarId", false, "CUSTOMER").then(function() {
+				assert.ok(fnDeleteAppVariantStub.calledOnce, "then the PersistenceWriteApi.deleteAppVariant method is called once");
 				assert.ok(fnShowMessageStub.calledOnce, "then the showMessage method is called once");
+				assert.ok(fnShowSuccessMessageStub.calledOnce, "then the showSuccessMessage method is called once");
 				assert.ok(fnTriggerCatalogPublishing.calledOnce, "then the triggerCatalogPublishing method is called once");
 				assert.ok(fnNotifyKeyUserWhenPublishingIsReady.calledOnce, "then the notifyKeyUserWhenPublishingIsReady method is called once");
-				assert.ok(fnTriggerDeleteAppVariantFromLREP.calledOnce, "then the triggerDeleteAppVariantFromLREP method is called once");
 			});
 		});
 
@@ -657,18 +709,17 @@ sap.ui.define([
 			};
 			sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
 			var fnShowMessageStub = sandbox.stub(AppVariantUtils, "showMessage").resolves();
-			var fnCreateDeletionSpy = sandbox.spy(AppVariantUtils, "createDeletion");
+			var fnShowSuccessMessageStub = sandbox.stub(AppVariantManager.prototype, "showSuccessMessage").resolves();
+			var fnDeleteAppVariantStub = sandbox.stub(PersistenceWriteAPI, "deleteAppVariant").resolves();
 			var fnTriggerCatalogPublishing = sandbox.stub(AppVariantManager.prototype, "triggerCatalogPublishing").resolves(oPublishingResponse);
 			var fnNotifyKeyUserWhenPublishingIsReady = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady").resolves();
-			var fnTriggerDeleteAppVariantFromLREP = sandbox.stub(AppVariantUtils, "triggerDeleteAppVariantFromLREP").resolves();
 
-			return RtaAppVariantFeature.onDeleteFromOverviewDialog("AppVarId", false).then(function() {
-				//assert.ok(onGetOverviewSpy.calledOnce, "then the App variant dialog gets opened when the polling starts");
-				assert.ok(fnCreateDeletionSpy.calledOnce, "then the create deletion method is called once");
+			return RtaAppVariantFeature.onDeleteFromOverviewDialog("AppVarId", false, "CUSTOMER").then(function() {
+				assert.ok(fnDeleteAppVariantStub.calledOnce, "then the PersistenceWriteApi.deleteAppVariant method is called once");
 				assert.ok(fnShowMessageStub.calledOnce, "then the showMessage method is called once");
+				assert.ok(fnShowSuccessMessageStub.calledOnce, "then the showSuccessMessage method is called once");
 				assert.ok(fnTriggerCatalogPublishing.calledOnce, "then the triggerCatalogPublishing method is called once");
 				assert.ok(fnNotifyKeyUserWhenPublishingIsReady.notCalled, "then the notifyKeyUserWhenPublishingIsReady method is not called");
-				assert.ok(fnTriggerDeleteAppVariantFromLREP.calledOnce, "then the triggerDeleteAppVariantFromLREP method is called once");
 			});
 		});
 
@@ -687,18 +738,17 @@ sap.ui.define([
 
 			sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
 			var fnShowMessageStub = sandbox.stub(AppVariantUtils, "showMessage").resolves();
-			var fnCreateDeletionSpy = sandbox.spy(AppVariantUtils, "createDeletion");
+			var fnShowSuccessMessageStub = sandbox.stub(AppVariantManager.prototype, "showSuccessMessage").resolves();
+			var fnDeleteAppVariantStub = sandbox.stub(PersistenceWriteAPI, "deleteAppVariant").resolves();
 			var fnTriggerCatalogPublishing = sandbox.spy(AppVariantManager.prototype, "triggerCatalogPublishing");
 			var fnNotifyKeyUserWhenPublishingIsReady = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady");
-			var fnTriggerDeleteAppVariantFromLREP = sandbox.stub(AppVariantUtils, "triggerDeleteAppVariantFromLREP").resolves();
 
-			return RtaAppVariantFeature.onDeleteFromOverviewDialog("AppVarId", false).then(function() {
-				//assert.ok(onGetOverviewSpy.calledOnce, "then the App variant dialog gets opened when the polling starts");
-				assert.ok(fnCreateDeletionSpy.calledOnce, "then the create deletion method is called once");
+			return RtaAppVariantFeature.onDeleteFromOverviewDialog("AppVarId", false, "CUSTOMER").then(function() {
+				assert.ok(fnDeleteAppVariantStub.calledOnce, "then the PersistenceWriteApi.deleteAppVariant method is called once");
 				assert.ok(fnShowMessageStub.notCalled, "then the showMessage method is called once");
+				assert.ok(fnShowSuccessMessageStub.calledOnce, "then the showSuccessMessage method is called once");
 				assert.ok(fnTriggerCatalogPublishing.notCalled, "then the triggerCatalogPublishing method is called once");
 				assert.ok(fnNotifyKeyUserWhenPublishingIsReady.notCalled, "then the notifyKeyUserWhenPublishingIsReady method is not called");
-				assert.ok(fnTriggerDeleteAppVariantFromLREP.calledOnce, "then the triggerDeleteAppVariantFromLREP method is called once");
 			});
 		});
 
@@ -717,19 +767,18 @@ sap.ui.define([
 
 			sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
 			var fnShowMessageStub = sandbox.stub(AppVariantUtils, "showMessage");
-			var fnCreateDeletionSpy = sandbox.spy(AppVariantUtils, "createDeletion");
+			var fnShowSuccessMessageStub = sandbox.stub(AppVariantManager.prototype, "showSuccessMessage").resolves();
+			var fnDeleteAppVariantStub = sandbox.stub(PersistenceWriteAPI, "deleteAppVariant").resolves();
 			var fnTriggerCatalogPublishing = sandbox.spy(AppVariantManager.prototype, "triggerCatalogPublishing");
 			var fnNotifyKeyUserWhenPublishingIsReady = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady");
-			var fnTriggerDeleteAppVariantFromLREP = sandbox.stub(AppVariantUtils, "triggerDeleteAppVariantFromLREP").resolves();
 			var fnNavigateToFLPHomepage = sandbox.stub(AppVariantUtils, "navigateToFLPHomepage").resolves();
 
-			return RtaAppVariantFeature.onDeleteFromOverviewDialog("AppVarId", true).then(function() {
-				//assert.ok(onGetOverviewSpy.calledOnce, "then the App variant dialog gets opened when the polling starts");
-				assert.ok(fnCreateDeletionSpy.calledOnce, "then the create deletion method is called once");
+			return RtaAppVariantFeature.onDeleteFromOverviewDialog("AppVarId", true, "CUSTOMER").then(function() {
+				assert.ok(fnDeleteAppVariantStub.calledOnce, "then the PersistenceWriteApi.deleteAppVariant method is called once");
 				assert.ok(fnShowMessageStub.notCalled, "then the showMessage method is called once");
+				assert.ok(fnShowSuccessMessageStub.calledOnce, "then the showSuccessMessage method is called once");
 				assert.ok(fnTriggerCatalogPublishing.notCalled, "then the triggerCatalogPublishing method is called once");
 				assert.ok(fnNotifyKeyUserWhenPublishingIsReady.notCalled, "then the notifyKeyUserWhenPublishingIsReady method is not called");
-				assert.ok(fnTriggerDeleteAppVariantFromLREP.calledOnce, "then the triggerDeleteAppVariantFromLREP method is called once");
 				assert.ok(fnNavigateToFLPHomepage.calledOnce, "then the navigateToFLPHomepage() method is called once");
 			});
 		});
