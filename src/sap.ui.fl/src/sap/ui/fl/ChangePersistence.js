@@ -532,7 +532,11 @@ sap.ui.define([
 	 * @public
 	 */
 	ChangePersistence.prototype.addChangeForVariant = function(sStableIdPropertyName, sStableId, mParameters) {
-		var oFile, oInfo, mInternalTexts, oChange, sId;
+		var oFile;
+		var oInfo;
+		var mInternalTexts;
+		var oChange;
+		var sId;
 
 		if (!mParameters) {
 			return undefined;

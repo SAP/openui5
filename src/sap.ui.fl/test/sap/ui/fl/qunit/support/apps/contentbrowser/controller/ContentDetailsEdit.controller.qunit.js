@@ -77,16 +77,16 @@ sap.ui.define([
 
 		QUnit.test("on LRep content received", function(assert) {
 			var oModelData = {
-					fileType : "json"
-				},
-				oData = {},
-				oPage = {
-					setBusy : function () {}
-				},
-				sContentSuffix = "pathtothefile",
-				oStubbedFormatData = sandbox.stub(DataUtils, "formatData"),
-				oStubbedGetContent = sandbox.stub(LRepConnector, "getContent").returns(Promise.resolve()),
-				oStubbedSetBusy = sandbox.stub(oPage, "setBusy");
+				fileType : "json"
+			};
+			var oData = {};
+			var oPage = {
+				setBusy : function () {}
+			};
+			var sContentSuffix = "pathtothefile";
+			var oStubbedFormatData = sandbox.stub(DataUtils, "formatData");
+			var oStubbedGetContent = sandbox.stub(LRepConnector, "getContent").returns(Promise.resolve());
+			var oStubbedSetBusy = sandbox.stub(oPage, "setBusy");
 			oController.oSelectedContentModel = {
 				setData : function() {}
 			};

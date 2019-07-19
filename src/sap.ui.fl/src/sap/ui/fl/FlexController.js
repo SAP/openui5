@@ -138,7 +138,8 @@ sap.ui.define([
 	 * @public
 	 */
 	FlexController.prototype.createBaseChange = function (oChangeSpecificData, oAppComponent) {
-		var oChangeFileContent, oChange;
+		var oChangeFileContent;
+		var oChange;
 
 		var aCurrentDesignTimeContext = ContextManager._getContextIdsFromUrl();
 
@@ -238,7 +239,8 @@ sap.ui.define([
 	 * @public
 	 */
 	FlexController.prototype.createVariant = function (oVariantSpecificData, oAppComponent) {
-		var oVariant, oVariantFileContent;
+		var oVariant;
+		var oVariantFileContent;
 
 		if (!oAppComponent) {
 			throw new Error("No Application Component found - to offer flexibility the variant has to have a valid relation to its owning application component.");
@@ -609,7 +611,9 @@ sap.ui.define([
 		var oModifier = mPropertyBag.modifier;
 		var sControlType = oModifier.getControlType(oControl);
 		var mControl = this._getControlIfTemplateAffected(oChange, oControl, sControlType, mPropertyBag);
-		var oSettings, oRtaControlTreeModifier, oResult;
+		var oSettings;
+		var oRtaControlTreeModifier;
+		var oResult;
 		var sLibraryName = oModifier.getLibraryName(mControl.control);
 		var oWaitForRegistration = new Utils.FakePromise();
 		if (ChangeHandlerRegistration.isChangeHandlerRegistrationInProgress(sLibraryName)) {
@@ -845,10 +849,10 @@ sap.ui.define([
 	};
 
 	FlexController.prototype._logErrorAndWriteCustomData = function(oRejectionReason, oChange, mPropertyBag, oControl, bXmlModifier) {
-		var sChangeId = oChange.getId(),
-			sLogMessage = "Change ''{0}'' could not be applied.",
-			bErrorOccured = oRejectionReason instanceof Error,
-			sCustomDataIdentifier = FlexCustomData.getCustomDataIdentifier(false, bErrorOccured, bXmlModifier);
+		var sChangeId = oChange.getId();
+		var sLogMessage = "Change ''{0}'' could not be applied.";
+		var bErrorOccured = oRejectionReason instanceof Error;
+		var sCustomDataIdentifier = FlexCustomData.getCustomDataIdentifier(false, bErrorOccured, bXmlModifier);
 		switch (sCustomDataIdentifier) {
 			case FlexCustomData.notApplicableChangesCustomDataKey:
 				Utils.formatAndLogMessage("info", [sLogMessage, oRejectionReason.message], [sChangeId]);
@@ -1333,9 +1337,9 @@ sap.ui.define([
 	 * @private
 	 */
 	FlexController.prototype._iterateDependentQueue = function(mDependencies, mDependentChangesOnMe, oAppComponent) {
-		var aCoveredChanges = [],
-			aDependenciesToBeDeleted = [],
-			aPromises = [];
+		var aCoveredChanges = [];
+		var aDependenciesToBeDeleted = [];
+		var aPromises = [];
 		this._updateControlsDependencies(mDependencies, oAppComponent);
 		Object.keys(mDependencies).forEach(function(sDependencyKey) {
 			var oDependency = mDependencies[sDependencyKey];

@@ -24,7 +24,8 @@ sap.ui.define([
 	var oModel;
 
 	function fGetGrid(oDialog) {
-		var oGrid = null, aContent = oDialog.getContent();
+		var oGrid = null;
+		var aContent = oDialog.getContent();
 		aContent.some(function(oContent) {
 			if (oContent instanceof Grid) {
 				oGrid = oContent;
@@ -509,7 +510,8 @@ sap.ui.define([
 			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
 
 			this.oVariantManagement.attachManage(function() {
-				var aDelItems = [], aRenamedItems = [];
+				var aDelItems = [];
+				var aRenamedItems = [];
 				var oData = this.oVariantManagement.getBindingContext(flUtils.VARIANT_MODEL_NAME).getObject();
 
 				oData["variants"].forEach(function(oItem) {
@@ -560,7 +562,9 @@ sap.ui.define([
 			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
 
 			this.oVariantManagement.attachManage(function() {
-				var aDelItems = [], aRenamedItems = [], aFavItems = [];
+				var aDelItems = [];
+				var aRenamedItems = [];
+				var aFavItems = [];
 
 				var oData = this.oVariantManagement.getBindingContext(flUtils.VARIANT_MODEL_NAME).getObject();
 
@@ -670,7 +674,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("Checking handleOpenCloseVariantPopover ", function(assert) {
-			var bListClosed = false, bErrorListClosed = false;
+			var bListClosed = false;
+			var bErrorListClosed = false;
 
 			sinon.stub(this.oVariantManagement, "_openVariantList");
 

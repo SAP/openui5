@@ -54,7 +54,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("The XSRF Token can be injected in the constructor", function(assert) {
-			var oConnector, mParams;
+			var oConnector;
+			var mParams;
 			mParams = {XsrfToken: "jingabuhr"};
 			oConnector = new LrepConnector(mParams);
 

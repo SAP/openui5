@@ -64,8 +64,8 @@ sap.ui.define([
 
 		_handleLibraryRegistrationAfterFlexLibraryIsLoaded: function (oLibraryChangedEvent) {
 			if (oLibraryChangedEvent.getParameter("operation") === "add") {
-				var oLibMetadata = oLibraryChangedEvent.getParameter("metadata"),
-					oLibName = oLibMetadata.sName;
+				var oLibMetadata = oLibraryChangedEvent.getParameter("metadata");
+				var oLibName = oLibMetadata.sName;
 				if (oLibMetadata && oLibMetadata.extensions && oLibMetadata.extensions.flChangeHandlers) {
 					var oFlChangeHandlers = oLibMetadata.extensions.flChangeHandlers;
 					var oRegistrationPromise = this._registerFlexChangeHandlers(oFlChangeHandlers);

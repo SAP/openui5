@@ -43,7 +43,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("shall create a new ChangePersistence for a given control", function(assert) {
-			var oControl, oChangePersistence, sComponentName, sAppVersion;
+			var oControl;
+			var oChangePersistence;
+			var sComponentName;
+			var sAppVersion;
 			sComponentName = "AComponentForAControl";
 			sAppVersion = "1.2.3";
 			oControl = new Control();

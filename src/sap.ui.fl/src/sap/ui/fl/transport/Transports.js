@@ -37,7 +37,10 @@ sap.ui.define([
 	 * @public
 	 */
 	Transports.prototype.getTransports = function(mParameters) {
-		var sUri, sClient, oLrepConnector, oPromise;
+		var sUri;
+		var sClient;
+		var oLrepConnector;
+		var oPromise;
 		sUri = '/sap/bc/lrep/actions/gettransports/';
 		if (mParameters['package']) {
 			sUri += '&package=' + mParameters['package'];
@@ -86,7 +89,9 @@ sap.ui.define([
 	 * @public
 	 */
 	Transports.prototype.makeChangesTransportable = function(mParameters) {
-		var sUri, sClient, oLrepConnector;
+		var sUri;
+		var sClient;
+		var oLrepConnector;
 		sUri = '/sap/bc/lrep/actions/make_changes_transportable/';
 		sClient = FlexUtils.getClient();
 		if (sClient) {

@@ -128,7 +128,10 @@ sap.ui.define([
 			var oSelectedContentModel = this.getView().getModel("selectedContent");
 			var oContentData = oSelectedContentModel.getData();
 			var sLayer;
-			var sTransportIdFromContent, sPackageFromContent, sTransportId, sPackageName;
+			var sTransportIdFromContent;
+			var sPackageFromContent;
+			var sTransportId;
+			var sPackageName;
 			oContentData.metadata.some(function (oMetadata) {
 				if (oMetadata.name === "layer") {
 					sLayer = oMetadata.value;

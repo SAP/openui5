@@ -225,7 +225,9 @@ function(
 		 * @name sap.ui.fl.Utils.getAppDescriptor
 		 */
 		getAppDescriptor: function (oControl) {
-			var oManifest = null, oComponent = null, oComponentMetaData = null;
+			var oManifest = null;
+			var oComponent = null;
+			var oComponentMetaData = null;
 
 			// determine UI5 component out of given control
 			if (oControl) {
@@ -253,7 +255,8 @@ function(
 		 * @name sap.ui.fl.Utils.getSiteId
 		 */
 		getSiteId: function (oControl) {
-			var sSiteId = null, oAppComponent = null;
+			var sSiteId = null;
+			var oAppComponent = null;
 
 			// determine UI5 component out of given control
 			if (oControl) {
@@ -702,7 +705,8 @@ function(
 		 * @name sap.ui.fl.Utils.getCurrentLayer
 		 */
 		getCurrentLayer: function (bIsEndUser) {
-			var oUriParams, sLayer;
+			var oUriParams;
+			var sLayer;
 			if (bIsEndUser) {
 				return "USER";
 			}
@@ -741,7 +745,8 @@ function(
 		 * @name sap.ui.fl.Utils.getClient
 		 */
 		getClient: function () {
-			var oUriParams, sClient;
+			var oUriParams;
+			var sClient;
 			oUriParams = this._getUriParameters();
 			sClient = oUriParams.get("sap-client");
 			return sClient || undefined;
@@ -757,7 +762,8 @@ function(
 		 * @returns {boolean} is hotfix mode active, or not
 		 */
 		isHotfixMode: function () {
-			var oUriParams, sIsHotfixMode;
+			var oUriParams;
+			var sIsHotfixMode;
 			oUriParams = this._getUriParameters();
 			sIsHotfixMode = oUriParams.get("hotfix");
 			return (sIsHotfixMode === "true");
@@ -1275,7 +1281,8 @@ function(
 		indexOfObject: function(aArray, oObject) {
 			var iObjectIndex = -1;
 			aArray.some(function(oArrayObject, iIndex) {
-				var aKeysArray, aKeysObject;
+				var aKeysArray;
+				var aKeysObject;
 				if (!oArrayObject) {
 					aKeysArray = [];
 				} else {

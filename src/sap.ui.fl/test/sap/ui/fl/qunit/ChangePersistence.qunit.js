@@ -3021,7 +3021,10 @@ function (
 		}
 	}, function() {
 		QUnit.test("When call addChange 3 times, 4 new changes are returned and the dependencies map also got updated", function (assert) {
-			var oChangeContent1, oChangeContent2, oChangeContent3, aChanges;
+			var oChangeContent1;
+			var oChangeContent2;
+			var oChangeContent3;
+			var aChanges;
 
 			oChangeContent1 = {
 				fileName: "Gizorillus1",
@@ -3108,7 +3111,8 @@ function (
 
 		QUnit.test("Shall not add the same change twice", function (assert) {
 			// possible scenario: change gets saved, then without reload undo and redo gets called. both would add a dirty change
-			var oChangeContent, aChanges;
+			var oChangeContent;
+			var aChanges;
 
 			oChangeContent = {
 				fileName: "Gizorillus",
@@ -3330,7 +3334,8 @@ function (
 		});
 
 		QUnit.test("Shall save the dirty changes when deleting a change and return a promise", function (assert) {
-			var oChangeContent, oChange;
+			var oChangeContent;
+			var oChange;
 
 			oChangeContent = {
 				fileName: "Gizorillus",
@@ -3355,7 +3360,9 @@ function (
 		QUnit.test("Shall save the dirty changes in a bulk", function (assert) {
 			assert.expect(3);
 			// REVISE There might be more elegant implementation
-			var oChangeContent1, oChangeContent2, oCreateStub;
+			var oChangeContent1;
+			var oChangeContent2;
+			var oCreateStub;
 
 			oCreateStub = this.lrepConnectorMock.create;
 
@@ -3391,7 +3398,9 @@ function (
 
 		QUnit.test("(Save As scenario) Shall save the dirty changes for the new created app variant in a bulk when pressing a 'Save As' button", function (assert) {
 			assert.expect(3);
-			var oChangeContent1, oChangeContent2, oCreateStub;
+			var oChangeContent1;
+			var oChangeContent2;
+			var oCreateStub;
 
 			oCreateStub = this.lrepConnectorMock.create;
 
@@ -3741,7 +3750,10 @@ function (
 		QUnit.test("saveSequenceOfDirtyChanges shall save a sequence of the dirty changes in a bulk", function (assert) {
 			assert.expect(3);
 			// REVISE There might be more elegant implementation
-			var oChangeContent1, oChangeContent2, oChangeContent3, oCreateStub;
+			var oChangeContent1;
+			var oChangeContent2;
+			var oChangeContent3;
+			var oCreateStub;
 
 			oCreateStub = this.lrepConnectorMock.create;
 
@@ -3910,7 +3922,8 @@ function (
 			};
 			this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
 			Utils.setMaxLayerParameter("USER");
-			var mDependencies = {}, mDependentChangesOnMe = {};
+			var mDependencies = {};
+			var mDependentChangesOnMe = {};
 
 			var oChangeContent1 = {
 				fileName: "Gizorillus1",

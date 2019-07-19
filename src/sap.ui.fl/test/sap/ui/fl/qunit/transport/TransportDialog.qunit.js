@@ -170,7 +170,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("local object button-pressed event", function (assert) {
-			var sPackage, sTransport;
+			var sPackage;
+			var sTransport;
 			this.oDialog.attachOk(function (oParam) {
 				sPackage = oParam.mParameters.selectedPackage;
 				sTransport = oParam.mParameters.selectedTransport;
@@ -182,7 +183,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("_onLocal", function (assert) {
-			var sPackage, sTransport;
+			var sPackage;
+			var sTransport;
 			this.oDialog.attachOk(function (oParam) {
 				sPackage = oParam.mParameters.selectedPackage;
 				sTransport = oParam.mParameters.selectedTransport;

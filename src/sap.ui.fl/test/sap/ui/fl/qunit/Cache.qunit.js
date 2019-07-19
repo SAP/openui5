@@ -403,11 +403,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("getChangesFillingCache should load changes even if cache entry with promise exist", function(assert) {
-			var sComponentName = "testComponent",
-				sAppVersion = Utils.DEFAULT_APP_VERSION,
-				bInvalidateCache = true,
-				oCacheEntry = Cache.getEntry(sComponentName, sAppVersion),
-				oLoadChangesSpy = sandbox.spy(this.oLrepConnector, 'loadChanges');
+			var sComponentName = "testComponent";
+			var sAppVersion = Utils.DEFAULT_APP_VERSION;
+			var bInvalidateCache = true;
+			var oCacheEntry = Cache.getEntry(sComponentName, sAppVersion);
+			var oLoadChangesSpy = sandbox.spy(this.oLrepConnector, 'loadChanges');
 
 			oCacheEntry.promise = Promise.resolve();
 			sandbox.stub(Cache, "getEntry").returns(oCacheEntry);
@@ -422,13 +422,13 @@ sap.ui.define([
 		});
 
 		QUnit.test("when setVariantManagementSection() is called with a variant controller file content", function(assert) {
-			var sComponentName = "testComponent",
-				sAppVersion = Utils.DEFAULT_APP_VERSION,
-				oVariantSectionContent = {
-					variantManagement: {
-						variants: ["variant1"]
-					}
-				};
+			var sComponentName = "testComponent";
+			var sAppVersion = Utils.DEFAULT_APP_VERSION;
+			var oVariantSectionContent = {
+				variantManagement: {
+					variants: ["variant1"]
+				}
+			};
 
 			var oCacheEntry = Cache.getEntry(sComponentName, sAppVersion); // creates entry
 			assert.ok(jQuery.isEmptyObject(oCacheEntry.file.changes.variantSection), "then initially variantSection is empty in the cache entry");

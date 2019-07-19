@@ -134,8 +134,8 @@ sap.ui.define([
 	};
 
 	ChangeRegistry.prototype._registerChangeHandlersForControl = function (sControlType, oChangeHandlers) {
-		var oPromise = Promise.resolve(oChangeHandlers),
-			sSkipNext = "ChangeRegistry._registerChangeHandlersForControl.skip_next_then";
+		var oPromise = Promise.resolve(oChangeHandlers);
+		var sSkipNext = "ChangeRegistry._registerChangeHandlersForControl.skip_next_then";
 
 		if (typeof oChangeHandlers === "string") {
 			oPromise = Utils.requireAsync(oChangeHandlers + ".flexibility")
@@ -319,7 +319,10 @@ sap.ui.define([
 	 * @public
 	 */
 	ChangeRegistry.prototype._createChangeRegistryItemForSimpleChange = function(sControlType, oSimpleChange) {
-		var mParam, oChangeTypeMetadata, oChangeRegistryItem, mLayerPermissions;
+		var mParam;
+		var oChangeTypeMetadata;
+		var oChangeRegistryItem;
+		var mLayerPermissions;
 
 		mLayerPermissions = Object.assign({}, this._oSettings.getDefaultLayerPermissions());
 		var oLayers = oSimpleChange.layers;
@@ -357,7 +360,8 @@ sap.ui.define([
 	 * @public
 	 */
 	ChangeRegistry.prototype.addRegistryItem = function(oRegistryItem) {
-		var sChangeType, sControlType;
+		var sChangeType;
+		var sControlType;
 		if (!oRegistryItem) {
 			return;
 		}

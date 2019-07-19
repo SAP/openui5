@@ -477,7 +477,9 @@ sap.ui.define([
 	 * Sets the popover title.
 	 */
 	VariantManagement.prototype._assignPopoverTitle = function() {
-		var sTitle, oInnerModel, oModel = this.getModel(this._sModelName);
+		var sTitle;
+		var oInnerModel;
+		var oModel = this.getModel(this._sModelName);
 		if (oModel && this.oContext) {
 			sTitle = oModel.getProperty(this.oContext + "/popoverTitle");
 		}
@@ -569,7 +571,8 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype._getItemByKey = function(sKey) {
-		var oItem = null, aItems = this._getItems();
+		var oItem = null;
+		var aItems = this._getItems();
 		aItems.some(function(oEntry) {
 			if (oEntry.key === sKey) {
 				oItem = oEntry;
@@ -640,7 +643,8 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype._setBindingContext = function() {
-		var oModel, sLocalId;
+		var oModel;
+		var sLocalId;
 
 		if (!this.oContext) {
 			oModel = this.getModel(this._sModelName);
@@ -679,7 +683,8 @@ sap.ui.define([
 		var oBinding = new PropertyBinding(oModel, this.oContext + "/variantsEditable");
 		oBinding.attachChange(function(oData) {
 			if (oData && oData.oSource && oData.oSource.oModel && oData.oSource.sPath) {
-				var oInnerModel, bFlag = oData.oSource.oModel.getProperty(oData.oSource.sPath);
+				var oInnerModel;
+				var bFlag = oData.oSource.oModel.getProperty(oData.oSource.sPath);
 				oInnerModel = this.getModel(VariantManagement.INNER_MODEL_NAME);
 				if (oInnerModel) {
 					oInnerModel.setProperty("/editable", bFlag);
@@ -1132,7 +1137,9 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype._handleVariantSaveAs = function(sNewVariantName) {
-		var sKey = null, sName = sNewVariantName.trim(), sManualKey = this.oInputManualKey.getValue().trim();
+		var sKey = null;
+		var sName = sNewVariantName.trim();
+		var sManualKey = this.oInputManualKey.getValue().trim();
 
 		if (sName === "") {
 			this.oInputName.setValueState(ValueState.Error);
@@ -1373,7 +1380,11 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype._templateFactoryManagementDialog = function(sId, oContext) {
-		var sTooltip = null, oDeleteButton, sBindingPath, oNameControl, oItem = oContext.getObject();
+		var sTooltip = null;
+		var oDeleteButton;
+		var sBindingPath;
+		var oNameControl;
+		var oItem = oContext.getObject();
 		if (!oItem) {
 			return undefined;
 		}
@@ -1550,7 +1561,8 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype._handleManageCancelPressed = function() {
-		var sDefaultVariantKey, oModel;
+		var sDefaultVariantKey;
+		var oModel;
 		this._getDeletedItems().forEach(function(oItem) {
 			oItem.visible = true;
 		});
@@ -1586,7 +1598,8 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype._handleManageDeletePressed = function(oItem) {
-		var oModel, sKey = oItem.key;
+		var oModel;
+		var sKey = oItem.key;
 
 		// do not allow the deletion of the last entry
 		if (this.oManagementTable.getItems().length === 1) {
@@ -1647,7 +1660,9 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype._anyInErrorState = function(oManagementTable) {
-		var aItems, oInput, bInError = false;
+		var aItems;
+		var oInput;
+		var bInError = false;
 
 		if (oManagementTable) {
 			aItems = oManagementTable.getItems();
@@ -1739,7 +1754,9 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype._checkIsDuplicate = function(sValue, sKey) {
-		var bDublicate = false, aItems = this._getItems(), sLowerCaseValue = sValue.toLowerCase();
+		var bDublicate = false;
+		var aItems = this._getItems();
+		var sLowerCaseValue = sValue.toLowerCase();
 		aItems.some(function(oItem) {
 			if (oItem.title.toLowerCase() === sLowerCaseValue) {
 				if (sKey && (sKey === oItem.key)) {

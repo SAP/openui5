@@ -133,7 +133,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("createChangeFile shall return a new change", function(assert) {
-		var mParameterBag, oChangeContent;
+		var mParameterBag;
+		var oChangeContent;
 		mParameterBag = {executeOnSelect: true, reference: "ribukombu"};
 
 		oChangeContent = this.oStandardVariant._createChangeFile(mParameterBag);
@@ -142,7 +143,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("createChangeFile shall write the component name into the change file", function(assert) {
-		var mParameterBag, oChangeContent;
+		var mParameterBag;
+		var oChangeContent;
 		mParameterBag = {reference: "ribukombu"};
 
 		oChangeContent = this.oStandardVariant._createChangeFile(mParameterBag);
@@ -150,8 +152,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("createChangeObject with all possible standard variant change specific options", function(assert) {
-		var mParameterBag, oChange;
-		mParameterBag = {
+		var mParameterBag = {
 			reference: "Glennkadiko",
 			componentName: "Glennkadiko",
 			executeOnSelect: true,
@@ -161,7 +162,7 @@ sap.ui.define([
 		};
 
 		//Call CUT
-		oChange = this.oStandardVariant.createChangeObject(mParameterBag);
+		var oChange = this.oStandardVariant.createChangeObject(mParameterBag);
 
 		assert.ok(oChange);
 		assert.ok(oChange instanceof Change);

@@ -40,9 +40,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("when I want to prefix change and variant IDs", function(assert) {
-			var sChangeId = "id_1445501120486_25",
-				sPrefixedChangeId = "sap.ui.fl.change.id_1445501120486_25",
-				sPrefixedVariantId = "sap.ui.fl.variant.id_1445501120486_25";
+			var sChangeId = "id_1445501120486_25";
+			var sPrefixedChangeId = "sap.ui.fl.change.id_1445501120486_25";
+			var sPrefixedVariantId = "sap.ui.fl.variant.id_1445501120486_25";
 
 			assert.equal(FakeLrepSessionStorage.createChangeKey(sChangeId), sPrefixedChangeId, "the change ID was prefixed");
 			assert.equal(FakeLrepSessionStorage.createVariantKey(sChangeId), sPrefixedVariantId, "the variant ID was prefixed");
