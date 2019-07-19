@@ -954,6 +954,7 @@ function (
 
 	//BCP: 1980006195
 	QUnit.test("Columns with width 0 should have the sapFFCLColumnHidden class applied", function(assert){
+		// arrange
 		var fnDone = assert.async(),
 			iAnimationDelay = COLUMN_RESIZING_ANIMATION_DURATION + 100;
 
@@ -968,6 +969,14 @@ function (
 			assert.ok(this.oFCL._$columns["begin"].hasClass('sapFFCLColumnHidden'));
 			assert.notOk(this.oFCL._$columns["mid"].hasClass('sapFFCLColumnHidden'));
 			assert.ok(this.oFCL._$columns["end"].hasClass('sapFFCLColumnHidden'));
+
+			// act
+			this.oFCL._adjustColumnDisplay(this.oFCL._$columns["end"], 100);
+
+			// assert
+			assert.notOk(this.oFCL._$columns["end"].hasClass('sapFFCLColumnHidden'),
+				"When width is updated, 'sapFFCLColumnHidden' class should be removed");
+
 			fnDone();
 		}.bind(this), iAnimationDelay);
 	});

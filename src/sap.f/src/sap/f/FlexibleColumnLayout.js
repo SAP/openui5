@@ -1022,6 +1022,8 @@ sap.ui.define([
 		//BCP: 1980006195
 		if (iNewWidth === 0) {
 			oColumn.addClass("sapFFCLColumnHidden");
+		} else {
+			oColumn.removeClass("sapFFCLColumnHidden");
 		}
 	};
 
