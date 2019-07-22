@@ -1578,6 +1578,153 @@ sap.ui.define([
 	);
 
 	//*********************************************************************************************
+	// Scenario: Request contexts from an ODataListBinding not bound to any control
+	// JIRA: CPOUI5UISERVICESV3-1396
+	QUnit.test("OLDB#requestContexts standalone", function (assert) {
+		var that = this;
+
+		return this.createView(assert, "", createSalesOrdersModel()).then(function () {
+			var oBinding = that.oModel.bindList("/SalesOrderList");
+
+			that.expectRequest("SalesOrderList?$skip=0&$top=3", {
+				value : [
+					{SalesOrderID : "01", Note : "Note 1"},
+					{SalesOrderID : "02", Note : "Note 2"},
+					{SalesOrderID : "03", Note : "Note 3"}
+				]
+			});
+
+			// code under test
+			return oBinding.requestContexts(0, 3).then(function (aContexts) {
+				assert.deepEqual(aContexts.map(function (oContext) {
+					return oContext.getPath();
+				}), [
+					"/SalesOrderList('01')",
+					"/SalesOrderList('02')",
+					"/SalesOrderList('03')"
+				]);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Request contexts from an ODataListBinding bound to a growing sap.m.Table
+	// JIRA: CPOUI5UISERVICESV3-1396
+[false, true].forEach(function (bGrowing) {
+	QUnit.test("OLDB#requestContexts w/ sap.m.Table, growing=" + bGrowing, function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" growing="' + bGrowing + '" growingThreshold="3" items="{/SalesOrderList}">\
+	<columns><Column /></columns>\
+	<ColumnListItem>\
+		<Text id="note" text="{Note}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		if (!bGrowing) {
+			oModel.setSizeLimit(3);
+		}
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=3", {
+				value : [
+					{SalesOrderID : "01", Note : "Note 1"},
+					{SalesOrderID : "02", Note : "Note 2"},
+					{SalesOrderID : "03", Note : "Note 3"}
+				]
+			})
+			.expectChange("note", ["Note 1", "Note 2", "Note 3"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oBinding = that.oView.byId("table").getBinding("items");
+
+			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=3&$top=9", {
+				value : [
+					{SalesOrderID : "04", Note : "Note 4"},
+					{SalesOrderID : "05", Note : "Note 5"}
+				]
+			});
+
+			return Promise.all([
+				oBinding.requestContexts(2, 10).then(function (aContexts) {
+					assert.deepEqual(aContexts.map(function (oContext) {
+						return oContext.getPath();
+					}), [
+						"/SalesOrderList('03')",
+						"/SalesOrderList('04')",
+						"/SalesOrderList('05')"
+					]);
+				}),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			if (bGrowing) {
+				that.expectChange("note", [,,, "Note 4", "Note 5"]);
+
+				// show more items
+				that.oView.byId("table-trigger").firePress();
+			}
+
+			return that.waitForChanges(assert);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Request contexts from an ODataListBinding bound to a non-growing sap.ui.table.Table
+	// JIRA: CPOUI5UISERVICESV3-1396
+	QUnit.test("OLDB#requestContexts w/ sap.ui.table.Table", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<t:Table id="table" rows="{/SalesOrderList}" threshold="0" visibleRowCount="3">\
+	<t:Column>\
+		<t:template><Text id="note" text="{Note}" /></t:template>\
+	</t:Column>\
+</t:Table>',
+			that = this;
+
+		oModel.setSizeLimit(3);
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=3", {
+				value : [
+					{SalesOrderID : "01", Note : "Note 1"},
+					{SalesOrderID : "02", Note : "Note 2"},
+					{SalesOrderID : "03", Note : "Note 3"}
+				]
+			})
+			.expectChange("note", ["Note 1", "Note 2", "Note 3"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oBinding = that.oView.byId("table").getBinding("rows");
+
+			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=3&$top=9", {
+				value : [
+					{SalesOrderID : "04", Note : "Note 4"},
+					{SalesOrderID : "05", Note : "Note 5"}
+				]
+			});
+
+			return Promise.all([
+				oBinding.requestContexts(2, 10).then(function (aContexts) {
+					assert.deepEqual(aContexts.map(function (oContext) {
+						return oContext.getPath();
+					}), [
+						"/SalesOrderList('03')",
+						"/SalesOrderList('04')",
+						"/SalesOrderList('05')"
+					]);
+				}),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectChange("note", [,, "Note 3", "Note 4", "Note 5"]);
+
+			// scroll down
+			that.oView.byId("table").setFirstVisibleRow(2);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Failure to read from an ODataContextBinding returning a bound message
 	QUnit.test("ODCB: read failure & message", function (assert) {
 		var oError = createError({
