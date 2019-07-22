@@ -87,7 +87,8 @@
 			"sap.f.sample.GridListBreakPoints",
 			"sap.f.sample.GridListBoxContainer",
 			"sap.f.sample.GridListBoxContainerGrouping",
-			"sap.f.sample.GridListBoxContainerReal"
+			"sap.f.sample.GridListBoxContainerReal",
+			"sap.f.sample.GridListDragAndDrop"
 		  ]
 		},
 		{
@@ -202,6 +203,11 @@
 		  "id": "sap.f.sample.GridListBoxContainerReal",
 		  "name": "Grid List - Item Designs",
 		  "description": "This is a sample for GridList item templates representing a typical tools page dashboard style."
+		},
+		{
+			"id": "sap.f.sample.GridListDragAndDrop",
+			"name": "Grid List - Drag and Drop",
+			"description": "This sample represents GridList with enabled Drag and Drop functionality."
 		},
 		{
 		  "id": "sap.f.sample.ShellBar",
