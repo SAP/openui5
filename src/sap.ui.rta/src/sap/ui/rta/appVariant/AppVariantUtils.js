@@ -381,11 +381,11 @@ function(
 	};
 
 	AppVariantUtils.showRelevantDialog = function(oInfo, bSuccessful) {
-		var sTitle,
-			sRightButtonText,
-			sOKButtonText,
-			sCopyIdButtonText,
-			aActions = [];
+		var sTitle;
+		var sRightButtonText;
+		var sOKButtonText;
+		var sCopyIdButtonText;
+		var aActions = [];
 
 		if (bSuccessful) {
 			sTitle = this.getText("SAVE_APP_VARIANT_SUCCESS_MESSAGE_TITLE");

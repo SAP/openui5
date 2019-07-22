@@ -340,10 +340,10 @@ function (
 				})
 			});
 
-			var oCommandFactory = this.oSettingsPlugin.getCommandFactory(),
-				oGetCommandForSpy = sinon.spy(oCommandFactory, 'getCommandFor'),
-				oFireEventSpy = sinon.spy(this.oSettingsPlugin, 'fireElementModified'),
-				aSelectedOverlays = [oButtonOverlay];
+			var oCommandFactory = this.oSettingsPlugin.getCommandFactory();
+			var oGetCommandForSpy = sinon.spy(oCommandFactory, 'getCommandFor');
+			var oFireEventSpy = sinon.spy(this.oSettingsPlugin, 'fireElementModified');
+			var aSelectedOverlays = [oButtonOverlay];
 
 			return this.oSettingsPlugin.handler(aSelectedOverlays, { eventItem: {}, contextElement: this.oButton })
 

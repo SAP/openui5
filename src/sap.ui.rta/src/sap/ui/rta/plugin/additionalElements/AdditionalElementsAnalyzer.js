@@ -398,9 +398,9 @@ sap.ui.define([
 	 * @private
 	 */
 	function _checkAndEnhanceODataProperty(oInvisibleElement, aODataProperties, aNavigationProperties, aNavigationEntityNames, mBindingPaths) {
-		var aBindingPaths = mBindingPaths.bindingPaths,
-			aBindingContextPaths = mBindingPaths.bindingContextPaths,
-			mODataProperty;
+		var aBindingPaths = mBindingPaths.bindingPaths;
+		var aBindingContextPaths = mBindingPaths.bindingContextPaths;
+		var mODataProperty;
 
 		return (
 			// include it if the field has no bindings (bindings can be added in runtime)

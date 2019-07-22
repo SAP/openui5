@@ -28,9 +28,10 @@ sap.ui.define([
 	"use strict";
 
 	function _getParents(bSibling, oOverlay) {
-		var oParentOverlay,
-			oRelevantContainer = oOverlay.getRelevantContainer(!bSibling),
-			oRelevantContainerOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
+		var oParentOverlay;
+		var oRelevantContainer = oOverlay.getRelevantContainer(!bSibling);
+		var oRelevantContainerOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
+
 		if (bSibling) {
 			oParentOverlay = oOverlay.getParentElementOverlay();
 		} else {
@@ -90,7 +91,8 @@ sap.ui.define([
 		return aInvisibleElements.concat(aStashedControls);
 	}
 
-	var SINGULAR = true, PLURAL = false;
+	var SINGULAR = true;
+	var PLURAL = false;
 	function _getText (sRtaTextKey, mActions, oParentElement, bSingular, sControlName) {
 		var aNames = [];
 		var mControlType;
@@ -565,11 +567,11 @@ sap.ui.define([
 		},
 
 		showAvailableElements: function(bOverlayIsSibling, aElementOverlays, iIndex, sControlName) {
-			var oElementOverlay = aElementOverlays[0],
-				mParents = _getParents(bOverlayIsSibling, oElementOverlay),
-				oSiblingElement = bOverlayIsSibling && oElementOverlay.getElement(),
-				mActions,
-				aPromises = [];
+			var oElementOverlay = aElementOverlays[0];
+			var mParents = _getParents(bOverlayIsSibling, oElementOverlay);
+			var oSiblingElement = bOverlayIsSibling && oElementOverlay.getElement();
+			var mActions;
+			var aPromises = [];
 
 			return this._getActions(bOverlayIsSibling, oElementOverlay)
 			.then(function(mAllActions) {
@@ -805,8 +807,8 @@ sap.ui.define([
 			return this._waitForChangeHandlerSettings(mODataPropertyAction)
 
 			.then(function(mChangeHandlerSettings) {
-				var sVariantManagementReference,
-					sODataServiceVersion = mChangeHandlerSettings
+				var sVariantManagementReference;
+				var sODataServiceVersion = mChangeHandlerSettings
 					&& mChangeHandlerSettings.key
 					&& mChangeHandlerSettings.key.oDataServiceVersion;
 				var oRefControlForId = mParents.parent; //e.g. SmartForm

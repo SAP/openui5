@@ -6,7 +6,9 @@ sap.ui.define([
 ], function(UIComponent) {
 	"use strict";
 
-	var _sIdRunningApp, _bKeyUser, _sLayer;
+	var _sIdRunningApp;
+	var _bKeyUser;
+	var _sLayer;
 
 	return UIComponent.extend("sap.ui.rta.appVariant.manageApps.webapp.Component", {
 

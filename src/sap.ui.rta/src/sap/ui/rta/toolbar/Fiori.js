@@ -63,7 +63,8 @@ function(
 		if (this._oFioriHeader.getShowLogo() && sLogoPath) {
 			// Unstable: if FLP changes ID of <img/> element, logo could be not found
 			var $logo = this._oFioriHeader.$().find('#shell-header-icon');
-			var iWidth, iHeight;
+			var iWidth;
+			var iHeight;
 
 			if ($logo.length) {
 				iWidth = $logo.width();

@@ -624,9 +624,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("when variant is RENAMED and DUPLICATED with an EXISTING VARIANT TITLE, after which _handlePostRename is called", function (assert) {
-			var sNewVariantTitle = "Existing Variant Title",
-				fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve()),
-				fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
+			var sNewVariantTitle = "Existing Variant Title";
+			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve());
+			var fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
 
 			sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
 			sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand");
@@ -688,9 +688,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("when variant is RENAMED with a BLANK TITLE", function(assert) {
-			var sExistingVariantTitle = "Existing Variant Title",
-				fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve()),
-				fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
+			var sExistingVariantTitle = "Existing Variant Title";
+			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve());
+			var fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
 
 			sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
 			sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand");
@@ -720,8 +720,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when variant is RENAMED with the SAME TEXT AS SOURCE, after which _handlePostRename is called", function(assert) {
-			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve()),
-				fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
+			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve());
+			var fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
 
 			sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
 			sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand");
@@ -738,8 +738,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when variant is DUPLICATED and RENAMED with the SAME TEXT AS SOURCE, after which _handlePostRename is called", function(assert) {
-			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve()),
-				fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
+			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve());
+			var fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
 
 			sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
 			sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand");
@@ -757,9 +757,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("when variant RENAMED with the an EXISTING VARIANT TITLE, after which _handlePostRename is called", function(assert) {
-			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve()),
-				fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open"),
-				sExistingVariantTitle = "Existing Variant Title";
+			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve());
+			var fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
+			var sExistingVariantTitle = "Existing Variant Title";
 
 			sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
 			sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand");
@@ -787,10 +787,10 @@ sap.ui.define([
 
 		QUnit.test("when variant is RENAMED with a new variant title and NO PREVIOUS EXISTENCE, after which _handlePostRename is called", function(assert) {
 			assert.expect(9);
-			var sExistingVariantTitle = "Existing Variant Title",
-				fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve()),
-				fnCreateSetTitleCommandSpy = sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand"),
-				fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
+			var sExistingVariantTitle = "Existing Variant Title";
+			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve());
+			var fnCreateSetTitleCommandSpy = sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
+			var fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
 
 			this.oModel.setData({
 				varMgtKey : {
@@ -828,10 +828,10 @@ sap.ui.define([
 		QUnit.test("when variant is RENAMED and DUPLICATED with an UNCHANGED TITLE, after which _handlePostRename is called", function(assert) {
 			assert.expect(12);
 
-			var sExistingVariantTitle = "Existing Variant Title",
-				fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve()),
-				fnCreateDuplicateCommandSpy = sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand"),
-				fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
+			var sExistingVariantTitle = "Existing Variant Title";
+			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve());
+			var fnCreateDuplicateCommandSpy = sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand");
+			var fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
 
 			this.oModel.setData({
 				varMgtKey : {
@@ -878,11 +878,11 @@ sap.ui.define([
 		QUnit.test("when variant is RENAMED and DUPLICATED with a CHANGED TITLE, after which _handlePostRename is called", function(assert) {
 			assert.expect(16);
 
-			var sExistingVariantTitle = "Source Variant Title",
-				fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve()),
-				fnCreateDuplicateCommandSpy = sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand"),
-				fnCreateSetTitleCommandSpy = sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand"),
-				fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
+			var sExistingVariantTitle = "Source Variant Title";
+			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve());
+			var fnCreateDuplicateCommandSpy = sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand");
+			var fnCreateSetTitleCommandSpy = sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
+			var fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
 
 			this.oModel.setData({
 				varMgtKey : {

@@ -172,8 +172,8 @@ function(
 	 * @private
 	 */
 	ElementMover.prototype._getMoveAction = function(oOverlay) {
-		var oParentAggregationDtMetadata,
-			oParentAggregationOverlay = oOverlay.getParentAggregationOverlay();
+		var oParentAggregationDtMetadata;
+		var oParentAggregationOverlay = oOverlay.getParentAggregationOverlay();
 		if (oParentAggregationOverlay) {
 			oParentAggregationDtMetadata = oParentAggregationOverlay.getDesignTimeMetadata();
 		}

@@ -58,8 +58,8 @@ sap.ui.define([
 	 * @returns {Promise} Returns resolve after execution
 	 */
 	ControlVariantSetTitle.prototype.execute = function() {
-		var oVariantManagementControl = this.getElement(),
-			oVariantManagementControlBinding = oVariantManagementControl.getTitle().getBinding("text");
+		var oVariantManagementControl = this.getElement();
+		var oVariantManagementControlBinding = oVariantManagementControl.getTitle().getBinding("text");
 
 		this.oAppComponent = flUtils.getAppComponentForControl(oVariantManagementControl);
 		this.oModel = this.oAppComponent.getModel(flUtils.VARIANT_MODEL_NAME);
@@ -90,13 +90,13 @@ sap.ui.define([
 	 * @returns {Promise} Returns resolve after undo
 	 */
 	ControlVariantSetTitle.prototype.undo = function() {
-		var oVariantManagementControlBinding = this.getElement().getTitle().getBinding("text"),
-			mPropertyBag = {
-				variantReference : this.sCurrentVariant,
-				changeType : "setTitle",
-				title : this.getOldText(),
-				change: this._oVariantChange
-			};
+		var oVariantManagementControlBinding = this.getElement().getTitle().getBinding("text");
+		var mPropertyBag = {
+			variantReference : this.sCurrentVariant,
+			changeType : "setTitle",
+			title : this.getOldText(),
+			change: this._oVariantChange
+		};
 
 		return Promise.resolve(this.oModel.setVariantProperties(this.sVariantManagementReference, mPropertyBag, false))
 						.then(function(oChange) {

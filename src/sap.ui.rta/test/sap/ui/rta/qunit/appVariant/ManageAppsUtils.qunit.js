@@ -533,7 +533,8 @@ sap.ui.define([
 			);
 
 			return Promise.all([AppVariantOverviewUtils.getAppVariantOverview("testId", true), oResourceBundlePromise]).then(function(aParams) {
-				var aAppVariantOverviewAttributes = aParams[0], oResourceBundle = aParams[1];
+				var aAppVariantOverviewAttributes = aParams[0];
+				var oResourceBundle = aParams[1];
 
 				assert.ok(aAppVariantOverviewAttributes, "then the result contains app variant overview properties");
 
@@ -603,7 +604,8 @@ sap.ui.define([
 			);
 
 			return Promise.all([AppVariantOverviewUtils.getAppVariantOverview("testId", true), oResourceBundlePromise]).then(function(aParams) {
-				var aAppVariantOverviewAttributes = aParams[0], oResourceBundle = aParams[1];
+				var aAppVariantOverviewAttributes = aParams[0];
+				var oResourceBundle = aParams[1];
 
 				assert.ok(aAppVariantOverviewAttributes, "then the result contains app variant overview properties");
 

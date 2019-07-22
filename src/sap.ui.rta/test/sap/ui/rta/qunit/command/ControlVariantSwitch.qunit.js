@@ -61,11 +61,11 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("when getting a switch command for VariantManagement...", function(assert) {
-			var oSwitchCommand,
-				oSwitchCommandData = {
-					targetVariantReference : "newVariantReference",
-					sourceVariantReference : "oldVariantReference"
-				};
+			var oSwitchCommand;
+			var oSwitchCommandData = {
+				targetVariantReference : "newVariantReference",
+				sourceVariantReference : "oldVariantReference"
+			};
 
 			return CommandFactory.getCommandFor(this.oVariantManagement, "switch", oSwitchCommandData)
 				.then(function(oCommand) {
@@ -92,11 +92,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("when getting a switch command for VariantManagement with equal source and target variantId ...", function(assert) {
-			var oSwitchCommand,
-				oSwitchCommandData = {
-					targetVariantReference : "variantReference",
-					sourceVariantReference : "variantReference"
-				};
+			var oSwitchCommand;
+			var oSwitchCommandData = {
+				targetVariantReference : "variantReference",
+				sourceVariantReference : "variantReference"
+			};
 
 			return CommandFactory.getCommandFor(this.oVariantManagement, "switch", oSwitchCommandData)
 				.then(function(oCommand) {

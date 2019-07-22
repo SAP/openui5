@@ -26,7 +26,12 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var _sIdRunningApp, _bKeyUser, _sLayer, sModulePath, oI18n;
+	var _sIdRunningApp;
+	var _bKeyUser;
+	var _sLayer;
+	var sModulePath;
+	var oI18n;
+
 	return Controller.extend("sap.ui.rta.appVariant.manageApps.webapp.controller.ManageApps", {
 		onInit: function() {
 			_sIdRunningApp = this.getOwnerComponent().getIdRunningApp();
@@ -152,8 +157,8 @@ sap.ui.define([
 		},
 
 		onMenuAction: function(oEvent) {
-			var oItem = oEvent.getParameter("item"),
-				sItemPath = "";
+			var oItem = oEvent.getParameter("item");
+			var sItemPath = "";
 
 			while (oItem instanceof sap.m.MenuItem) {
 				sItemPath = oItem.getText() + " > " + sItemPath;

@@ -294,8 +294,8 @@ sap.ui.define([
 	};
 
 	Settings.prototype._getActionIcon = function(oSettingsAction) {
-		var sDefaultSettingIcon = "sap-icon://key-user-settings",
-			sActionIcon = oSettingsAction.icon;
+		var sDefaultSettingIcon = "sap-icon://key-user-settings";
+		var sActionIcon = oSettingsAction.icon;
 		if (!sActionIcon) {
 			return sDefaultSettingIcon;
 		}

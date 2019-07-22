@@ -76,14 +76,14 @@ sap.ui.define([
 	 * @override
 	 */
 	ControlVariant.prototype.registerElementOverlay = function(oOverlay) {
-		var oControl = oOverlay.getElement(),
-			sVariantManagementReference;
+		var oControl = oOverlay.getElement();
+		var sVariantManagementReference;
 
 		Plugin.prototype.registerElementOverlay.apply(this, arguments);
 
 		if (oControl instanceof VariantManagement) {
-			var vAssociationElement = oControl.getFor(),
-				aVariantManagementTargetElements;
+			var vAssociationElement = oControl.getFor();
+			var aVariantManagementTargetElements;
 			var oAppComponent = flUtils.getAppComponentForControl(oControl);
 			var sControlId = oControl.getId();
 			sVariantManagementReference = oAppComponent.getLocalId(sControlId) || sControlId;
@@ -101,8 +101,8 @@ sap.ui.define([
 
 			// Propagate variant management reference to all children overlays starting from the "for" association element as the root
 			aVariantManagementTargetElements.forEach(function(sVariantManagementTargetElement) {
-				var oVariantManagementTargetElement = sVariantManagementTargetElement instanceof ManagedObject ? sVariantManagementTargetElement : sap.ui.getCore().byId(sVariantManagementTargetElement),
-					oVariantManagementTargetOverlay = OverlayRegistry.getOverlay(oVariantManagementTargetElement);
+				var oVariantManagementTargetElement = sVariantManagementTargetElement instanceof ManagedObject ? sVariantManagementTargetElement : sap.ui.getCore().byId(sVariantManagementTargetElement);
+				var oVariantManagementTargetOverlay = OverlayRegistry.getOverlay(oVariantManagementTargetElement);
 				this._propagateVariantManagement(oVariantManagementTargetOverlay, sVariantManagementReference);
 			}.bind(this));
 			oOverlay.attachEvent("editableChange", RenameHandler._manageClickEvent, this);
@@ -211,8 +211,8 @@ sap.ui.define([
 		var oElementOverlay = aElementOverlays[0];
 		var aVariants = [];
 		if (this._isVariantManagementControl(oElementOverlay)) {
-			var oElement = oElementOverlay.getElement(),
-				sVariantManagementReference = oElementOverlay.getVariantManagement ? oElementOverlay.getVariantManagement() : undefined;
+			var oElement = oElementOverlay.getElement();
+			var sVariantManagementReference = oElementOverlay.getVariantManagement ? oElementOverlay.getVariantManagement() : undefined;
 			if (!sVariantManagementReference) {
 				return false;
 			}
@@ -313,8 +313,8 @@ sap.ui.define([
 	 * @public
 	 */
 	ControlVariant.prototype.switchVariant = function(oTargetOverlay, sNewVariantReference, sCurrentVariantReference) {
-		var oDesignTimeMetadata = oTargetOverlay.getDesignTimeMetadata(),
-			oTargetElement = oTargetOverlay.getElement();
+		var oDesignTimeMetadata = oTargetOverlay.getDesignTimeMetadata();
+		var oTargetElement = oTargetOverlay.getElement();
 
 		this.getCommandFactory().getCommandFor(oTargetElement, "switch", {
 			targetVariantReference: sNewVariantReference,
@@ -344,8 +344,8 @@ sap.ui.define([
 	};
 
 	ControlVariant.prototype.startEdit = function(oVariantManagementOverlay) {
-		var oVariantManagementControl = oVariantManagementOverlay.getElement(),
-			vDomRef = oVariantManagementOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
+		var oVariantManagementControl = oVariantManagementOverlay.getElement();
+		var vDomRef = oVariantManagementOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
 		var oVariantTitleElement = oVariantManagementControl.getTitle();
 		var sPreviousText = oVariantTitleElement.getText();
 		var fnHandleStartEdit = RenameHandler.startEdit.bind(this, {
@@ -394,20 +394,18 @@ sap.ui.define([
 	 * @private
 	 */
 	ControlVariant.prototype._emitLabelChangeEvent = function() {
-		var sText = RenameHandler._getCurrentEditableFieldText.call(this),
-			oOverlay = this._oEditedOverlay,
-			oDesignTimeMetadata = oOverlay.getDesignTimeMetadata(),
-			oRenamedElement = oOverlay.getElement(),
-			oModel = this._getVariantModel(oRenamedElement),
-			sErrorText,
-			sVariantManagementReference = oOverlay.getVariantManagement(),
-			bTextChanged = this.getOldValue() !== sText,
-			bNewEntry = bTextChanged || oOverlay._triggerDuplicate,
-			iDuplicateCount = bNewEntry
-				? oModel._getVariantTitleCount(sText, sVariantManagementReference)
-				: 0,
-			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta"),
-			sCurrentVariantReference = oModel.getCurrentVariantReference(sVariantManagementReference);
+		var sText = RenameHandler._getCurrentEditableFieldText.call(this);
+		var oOverlay = this._oEditedOverlay;
+		var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
+		var oRenamedElement = oOverlay.getElement();
+		var oModel = this._getVariantModel(oRenamedElement);
+		var sErrorText;
+		var sVariantManagementReference = oOverlay.getVariantManagement();
+		var bTextChanged = this.getOldValue() !== sText;
+		var bNewEntry = bTextChanged || oOverlay._triggerDuplicate;
+		var iDuplicateCount = bNewEntry ? oModel._getVariantTitleCount(sText, sVariantManagementReference) : 0;
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+		var sCurrentVariantReference = oModel.getCurrentVariantReference(sVariantManagementReference);
 
 		//Remove border
 		oOverlay.removeStyleClass("sapUiRtaErrorBg");

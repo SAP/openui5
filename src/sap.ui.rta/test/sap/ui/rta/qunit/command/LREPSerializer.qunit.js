@@ -178,10 +178,11 @@ sap.ui.define([
 		// then two changes are expected to be written in LREP
 		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(2, assert, "save");
 
-		var oInput3 = new Input("input3"),
-			oDeleteChangeSpy = sandbox.spy(PersistenceWriteAPI, "remove"),
-			oAddChangeSpy = sandbox.spy(PersistenceWriteAPI, "add"),
-			oSettingsCommand1, oSettingsCommand2;
+		var oInput3 = new Input("input3");
+		var oDeleteChangeSpy = sandbox.spy(PersistenceWriteAPI, "remove");
+		var oAddChangeSpy = sandbox.spy(PersistenceWriteAPI, "add");
+		var oSettingsCommand1;
+		var oSettingsCommand2;
 
 		// Create commands
 		return CommandFactory.getCommandFor(this.oInput1, "Settings", {
@@ -247,8 +248,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("when a command with an already persisted change gets executed and saved", function(assert) {
-		var oInput = new Input("input"),
-			oAddChangeSpy = sandbox.spy(PersistenceWriteAPI, "add");
+		var oInput = new Input("input");
+		var oAddChangeSpy = sandbox.spy(PersistenceWriteAPI, "add");
 
 		// Create command
 		return CommandFactory.getCommandFor(oInput, "Settings", {
@@ -278,8 +279,9 @@ sap.ui.define([
 
 	QUnit.test("when the LREPSerializer.saveCommands gets called with 2 remove commands created via CommandFactory", function(assert) {
 		// then two changes are expected to be written in LREP
-		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(2, assert, "save"),
-			oRemoveCommand1, oRemoveCommand2;
+		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(2, assert, "save");
+		var oRemoveCommand1;
+		var oRemoveCommand2;
 
 		var oAddChangeSpy = sandbox.spy(PersistenceWriteAPI, "add");
 
@@ -391,8 +393,10 @@ sap.ui.define([
 
 	QUnit.test("when the LREPSerializer.saveCommands gets called with a command stack with 1 'remove' command and 2 App Descriptor 'add library' commands", function(assert) {
 		// then all changes are expected to be written in LREP
-		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(3, assert, "save"),
-			oRemoveCommand1, oAddLibraryCommand, oAddLibraryCommand2;
+		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(3, assert, "save");
+		var oRemoveCommand1;
+		var oAddLibraryCommand;
+		var oAddLibraryCommand2;
 
 		// Create commands
 		return CommandFactory.getCommandFor(this.oInput1, "Remove", {
@@ -462,8 +466,11 @@ sap.ui.define([
 
 	QUnit.test("Execute and undo a composite command with 1 'remove' command and 1 App Descriptor 'add library' command and execute another remove command", function(assert) {
 		// then one change is expected to be written in LREP
-		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(1, assert, "save"),
-			oRemoveCommand, oRemoveCommand2, oAddLibraryCommand, oCompositeCommand;
+		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(1, assert, "save");
+		var oRemoveCommand;
+		var oRemoveCommand2;
+		var oAddLibraryCommand;
+		var oCompositeCommand;
 
 		// Create commands
 		return CommandFactory.getCommandFor(this.oInput1, "Remove", {
@@ -532,8 +539,9 @@ sap.ui.define([
 
 	QUnit.test("Execute 1 'remove' command and 1 App Descriptor 'add library' command, undo the 'add library' command and call saveCommands", function(assert) {
 		// then one change is expected to be written in LREP
-		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(1, assert, "save"),
-			oRemoveCommand, oAddLibraryCommand;
+		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(1, assert, "save");
+		var oRemoveCommand;
+		var oAddLibraryCommand;
 
 		// Create commands
 		return CommandFactory.getCommandFor(this.oInput1, "Remove", {
@@ -589,8 +597,9 @@ sap.ui.define([
 
 	QUnit.test("Execute undo and redo on 1 App Descriptor 'add library' command and call saveCommands", function(assert) {
 		// then one change is expected to be written in LREP
-		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(1, assert, "save"),
-			oCreateAndStoreChangeSpy, oDeleteChangeSpy;
+		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(1, assert, "save");
+		var oCreateAndStoreChangeSpy;
+		var oDeleteChangeSpy;
 
 		// Create commands
 		return CommandFactory.getCommandFor(this.oInput1, "addLibrary", {
@@ -721,7 +730,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("when needs restart is asked for app descriptor commands and a normal commands", function(assert) {
-		var oAnyFlexCommand, oAnyAppDescriptorCommand;
+		var oAnyFlexCommand;
+		var oAnyAppDescriptorCommand;
 
 		// Create commands
 		return CommandFactory.getCommandFor(this.oInput1, "Remove", {
@@ -765,7 +775,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("when needs restart is asked for undone app descriptor commands and a normal commands", function(assert) {
-		var oAnyFlexCommand, oAnyAppDescriptorCommand;
+		var oAnyFlexCommand;
+		var oAnyAppDescriptorCommand;
 
 		// Create commands
 		return CommandFactory.getCommandFor(this.oInput1, "Remove", {
@@ -814,8 +825,9 @@ sap.ui.define([
 
 	QUnit.test("Execute 1 'Remove' command and 1 'ControlVariantSwitch' command and save commands", function(assert) {
 		// And then only one change should be saved in LREP
-		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(1, assert, "save"),
-			oControlVariantSwitchCommand, oRemoveCommand;
+		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(1, assert, "save");
+		var oControlVariantSwitchCommand;
+		var oRemoveCommand;
 
 		var oSwitchCommandData = {
 			targetVariantReference : "variantReference",
@@ -858,8 +870,9 @@ sap.ui.define([
 
 	QUnit.test("Execute 1 'Remove' command, 1 'ControlVariantSwitch' command, undo and call saveCommands", function(assert) {
 		// And then only one change should be saved in LREP
-		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(1, assert, "save"),
-			oControlVariantSwitchCommand, oRemoveCommand;
+		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(1, assert, "save");
+		var oControlVariantSwitchCommand;
+		var oRemoveCommand;
 
 		var oSwitchCommandData = {
 			targetVariantReference : "variantReference",
@@ -907,8 +920,11 @@ sap.ui.define([
 
 	QUnit.test("when changes belonging to a variant management are executed/partially undone and later saved ", function(assert) {
 		// then two changes are expected to be written in LREP -> the remove which was not undone + the variant
-		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(1, assert, "save"),
-			oRemoveCommand1, oRemoveCommand2, oAddChangeSpy, oRemoveChangeSpy;
+		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(1, assert, "save");
+		var oRemoveCommand1;
+		var oRemoveCommand2;
+		var oAddChangeSpy;
+		var oRemoveChangeSpy;
 
 		// Create commands
 		return CommandFactory.getCommandFor(this.oInput1, "Remove", {
@@ -976,8 +992,9 @@ sap.ui.define([
 
 	QUnit.test("when the LREPSerializer.clearCommandStack gets called with 2 remove commands created via CommandFactory and these are booked for a new app variant whose id is different from the id of the current running app", function(assert) {
 		// then two changes are expected to be written in LREP
-		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(2, assert, "save"),
-			oRemoveCommand1, oRemoveCommand2;
+		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(2, assert, "save");
+		var oRemoveCommand1;
+		var oRemoveCommand2;
 
 		// Create commands
 		return CommandFactory.getCommandFor(this.oInput1, "Remove", {
@@ -1082,8 +1099,11 @@ sap.ui.define([
 		sandbox.stub(oModel.oVariantController, "getVariant").returns(oVariant);
 		var done = assert.async();
 		// then five changes are expected to be written in LREP, the switch command is ignored
-		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(5, assert, "save"),
-			oControlVariantConfigureCommand, oControlVariantSwitchCommand, oControlVariantDuplicateCommand, oControlVariantSetTitleCommand;
+		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(5, assert, "save");
+		var oControlVariantConfigureCommand;
+		var oControlVariantSwitchCommand;
+		var oControlVariantDuplicateCommand;
+		var oControlVariantSetTitleCommand;
 
 		// Create control variant configure command
 		var oTitleChange = {

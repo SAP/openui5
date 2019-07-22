@@ -15,13 +15,17 @@ sap.ui.define([
 
 		onInit : function () {
 			this._sResourcePath = jQuery.sap.getResourcePath("sap/ui/rta/test/");
-			var sManifestUrl = this._sResourcePath + "/manifest.json",
-				oManifest = jQuery.sap.syncGetJSON(sManifestUrl).data,
-				oUriParameters = jQuery.sap.getUriParameters();
+			var sManifestUrl = this._sResourcePath + "/manifest.json";
+			var oManifest = jQuery.sap.syncGetJSON(sManifestUrl).data;
+			var oUriParameters = jQuery.sap.getUriParameters();
 
-			var iAutoRespond = (oUriParameters.get("serverDelay") || 1000),
-				oMockServer, dataSource, sMockServerPath, sMetadataUrl, aEntities = [],
-				oDataSources = oManifest["sap.app"]["dataSources"];
+			var iAutoRespond = (oUriParameters.get("serverDelay") || 1000);
+			var oMockServer;
+			var dataSource;
+			var sMockServerPath;
+			var sMetadataUrl;
+			var aEntities = [];
+			var oDataSources = oManifest["sap.app"]["dataSources"];
 
 			MockServer.config({
 				autoRespond: true,
@@ -52,7 +56,8 @@ sap.ui.define([
 						jQuery.sap.log.info("Running the app with mock data for " + property);
 
 						if (property === "mainService") {
-							var oModel, oView;
+							var oModel;
+							var oView;
 
 							oModel = new ODataModel(dataSource.uri, {
 								json: true,

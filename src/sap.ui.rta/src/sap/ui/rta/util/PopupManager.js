@@ -122,7 +122,8 @@ function (
 	 * @public
 	 */
 	PopupManager.prototype.getCategorizedOpenPopups = function() {
-		var aOpenDialogs, aOpenPopovers;
+		var aOpenDialogs;
+		var aOpenPopovers;
 
 		// check if dialogs are already open when RTA is started
 		aOpenDialogs = InstanceManager.getOpenDialogs();
@@ -462,7 +463,8 @@ function (
 	 * @private
 	 */
 	PopupManager.prototype._getAppComponentForControl = function(oControl) {
-		var oComponent, oAppComponent;
+		var oComponent;
+		var oAppComponent;
 
 		if (oControl instanceof Component) {
 			oComponent = oControl;
@@ -484,7 +486,9 @@ function (
 	 * @private
 	 */
 	PopupManager.prototype._getComponentForControl = function(oControl) {
-		var oComponent, oRootComponent, oParentControl;
+		var oComponent;
+		var oRootComponent;
+		var oParentControl;
 		if (oControl) {
 			oComponent = Component.getOwnerComponentFor(oControl);
 			if (
