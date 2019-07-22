@@ -1359,14 +1359,16 @@ function(
 		},
 
 		/**
-		 * Function that behaves like Promise (es6) but is synchronous. Implements 'then' and 'catch' functions.
+		 * Class that behaves like a promise (es6), but is synchronous. Implements <code>then</code> and <code>catch</code> functions.
 		 * After instantiating can be used similar to standard Promises but synchronously.
 		 * As soon as one of the callback functions returns a Promise the asynchronous Promise replaces the FakePromise in further processing.
 		 *
+		 * @class sap.ui.fl.Utils.FakePromise
 		 * @param {any} vInitialValue - value on resolve FakePromise
 		 * @param {any} vError - value on reject FakePromise
 		 * @param {string} sInitialPromiseIdentifier - value identifies previous promise in chain. If the identifier is passed to the function and don't match with the FakePromiseIdentifier then native Promise execution is used for further processing
 		 * @returns {sap.ui.fl.Utils.FakePromise|Promise} Returns instantiated FakePromise only if no Promise is passed by value parameter
+		 * @ui5-restricted
 		 */
 		FakePromise : function(vInitialValue, vError, sInitialPromiseIdentifier) {
 			Utils.FakePromise.fakePromiseIdentifier = "sap.ui.fl.Utils.FakePromise";
@@ -1388,6 +1390,12 @@ function(
 				}
 			};
 
+			/**
+			 * <code>then</code> function as for promise (es6), but without a rejection handler.
+			 * @param {function} fn - Resolve handler
+			 * @returns {sap.ui.fl.Utils.FakePromise|Promise} <code>FakePromise</code> if no promise is returned by the resolve handler
+			 * @public
+			 */
 			Utils.FakePromise.prototype.then = function(fn) {
 				if (!this.bContinueWithFakePromise) {
 					return Promise.resolve(fn(this.vValue));
@@ -1399,6 +1407,12 @@ function(
 				return this;
 			};
 
+			/**
+			 * <code>catch</code> function as for promise (es6), but without a rejection handler.
+			 * @param {function} fn - Rejection handler
+			 * @returns {sap.ui.fl.Utils.FakePromise|Promise} <code>FakePromise</code> if no promise is returned by the rejection handler
+			 * @public
+			 */
 			Utils.FakePromise.prototype.catch = function(fn) {
 				if (!this.bContinueWithFakePromise) {
 					return Promise.reject(fn(this.vError));

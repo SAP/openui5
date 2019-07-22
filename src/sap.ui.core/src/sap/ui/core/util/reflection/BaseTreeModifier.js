@@ -19,14 +19,14 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Abstract static utility class to access ManageObjects and XMLNodes that represent
-	 * ManagedObjects in a harmonized way.
+	 * Abstract static utility class to access <code>ManageObjects</code> and <code>XMLNodes</code> that represent
+	 * <code>ManagedObjects</code> in a harmonized way.
 	 *
-	 * The class mirrors the ManagedObject API so that code that needs to work with ManagedObjects
-	 * in several representations can be written in a single way. The slight differences are handled
+	 * The class mirrors the <code>ManagedObject</code> API so that code that needs to work with <code>ManagedObjects</code>
+	 * in several representations can be written in a harmonized way. The slight differences are handled
 	 * by specifying a super set of parameters that might not be needed in all use cases.
-	 * For example sap.ui.fl uses this class and its subtypes for change handlers that can be
-	 * applied on XMLViews and normal ManagedObject instances.
+	 * For example <code>sap.ui.fl</code> uses this class and its subtypes for change handlers that can be
+	 * applied on <code>XMLViews</code> and normal <code>ManagedObject</code> instances.
 	 *
 	 * @namespace sap.ui.core.util.reflection.BaseTreeModifier
 	 * @ui5-restricted sap.ui.fl, sap.ui.rta, sap.ui.model.meta, control change handler and provider
@@ -58,7 +58,7 @@ sap.ui.define([
 		* @param {boolean} oSelector.isLocalId - <code>true</code> if the ID within the selector is a local ID or a global ID
 		* @param {sap.ui.core.UIComponent} oAppComponent - Application component
 		* @returns {string} ID of the control
-		* @throws {Error} In case no control could be determined an error is thrown
+		* @throws {Error} In case no control could be determined, an error is thrown
 		* @protected
 		*/
 		getControlIdBySelector: function (oSelector, oAppComponent) {
@@ -102,12 +102,12 @@ sap.ui.define([
 		 * The function distinguishes between local IDs generated starting with 1.40 and the global IDs generated in previous versions.
 		 *
 		 * @param {sap.ui.base.ManagedObject|Element|string} vControl - Control or ID string for which the selector should be determined
-		 * @param {sap.ui.core.Component} oAppComponent - Application component, needed only if vControl is a string or XML node
+		 * @param {sap.ui.core.Component} oAppComponent - Application component, needed only if <code>vControl</code> is a string or XML node
 		 * @param {object} [mAdditionalSelectorInformation] - Additional mapped data which is added to the selector
 		 * @returns {object} oSelector
-		 * @returns {string} oSelector.id - ID used for determination of the flexibility target
-		 * @returns {boolean} oSelector.idIsLocal - <code>true</code> if the selector.id has to be concatenated with the application component ID while applying the change
-		 * @throws {Error} In case no control could be determined an error is thrown
+		 * @returns {string} oSelector.id - ID used to determine the flexibility target
+		 * @returns {boolean} oSelector.idIsLocal - <code>true</code> if the <code>selector.id</code> has to be concatenated with the application component ID while applying the change
+		 * @throws {Error} In case no control could be determined, an error is thrown
 		 * @public
 		 */
 		getSelector: function (vControl, oAppComponent, mAdditionalSelectorInformation) {
@@ -146,10 +146,10 @@ sap.ui.define([
 		},
 
 		/**
-		 * Checks if the control id is generated or maintained by the application.
+		 * Checks if the control ID is generated or maintained by the application.
 		 *
 		 * @param {sap.ui.core.Control|string} vControl - Control instance or ID
-		 * @param {sap.ui.core.Component} oAppComponent - oAppComponent application component, needed only if vControl is a string (ID)
+		 * @param {sap.ui.core.Component} oAppComponent - <code>oAppComponent</code> application component, needed only if vControl is a string (ID)
 		 * @param {boolean} [bSuppressLogging] bSuppressLogging - Flag to suppress the warning in the console
 		 * @returns {boolean} <code>true</code> if the ID is maintained by the application
 		 * @protected
@@ -176,8 +176,8 @@ sap.ui.define([
 		 * If this prefix exists, the suffix after the component ID is called the local ID.
 		 *
 		 * @param {sap.ui.core.Control|string} vControl - Control or ID to be checked if it is within the generic application
-		 * @param {sap.ui.core.UIComponent} oAppComponent - Application component, needed only if vControl is string (ID)
-		 * @returns {boolean} Whether control has a local ID
+		 * @param {sap.ui.core.UIComponent} oAppComponent - Application component, needed only if <code>vControl</code> is a string (ID)
+		 * @returns {boolean} <code>true</code> if the control has a local ID
 		 * @protected
 		 */
 		hasLocalIdSuffix: function (vControl, oAppComponent) {
@@ -193,13 +193,13 @@ sap.ui.define([
 
 		/**
 		 * This function takes the fragment, goes through all the children and adds a prefix to the control's ID.
-		 * Can also handle 'FragmentDefinition' as root node, then all the children's IDs are prefixed.
+		 * Can also handle <code>FragmentDefinition</code> as root node, then all the children's IDs are prefixed.
 		 * Adds a '.' at the end of the prefix to separate it from the original ID.
 		 * Throws an error if any one of the controls in the fragment have no ID specified.
 		 * Aggregations will be ignored and don't need an ID.
 		 *
 		 * @param {Element} oFragment - Fragment in XML
-		 * @param {string} sIdPrefix - String which will be used to prefix the IDs
+		 * @param {string} sIdPrefix - String that will be used to prefix the IDs
 		 * @returns {Element} Original fragment in XML with updated IDs
 		 */
 		_checkAndPrefixIdsInFragment: function(oFragment, sIdPrefix) {
@@ -317,10 +317,10 @@ sap.ui.define([
 
 
 		/**
-		 * Gets the ControlType of an XML control.
+		 * Gets the <code>ControlType</code> of an XML control.
 		 *
 		 * @param {Element} oControl - Control in XML
-		 * @returns {string} Control type as a string, e.g. 'sap.m.Button'
+		 * @returns {string} Control type as a string, e.g. <code>sap.m.Button</code>
 		 */
 		_getControlTypeInXml: function (oControl) {
 			var sControlType = oControl.namespaceURI;
@@ -334,7 +334,7 @@ sap.ui.define([
 		 * Recursively goes through an XML tree and calls a callback function for every control inside.
 		 * Does not call the callback function for aggregations.
 		 *
-		 * @param {function} fnCallback - Function that will be called for every control with the following arguments: fnCallback(<Element>)
+		 * @param {function} fnCallback - Function that will be called for every control with the following arguments: <code>fnCallback(<Element>)</code>
 		 * @param {Element} oRootNode - Root node from which we start traversing the tree
 		 */
 		_traverseXmlTree: function(fnCallback, oRootNode) {
@@ -400,7 +400,7 @@ sap.ui.define([
 		 * See {@link sap.ui.core.Control#getVisible} method.
 		 *
 		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
-		 * @returns {boolean} Whether the control's <code>visible</code> property is set or not
+		 * @returns {boolean} <code>true</code> if the control's <code>visible</code> property is set
 		 * @public
 		 */
 		getVisible: function (vControl) {},
@@ -418,7 +418,7 @@ sap.ui.define([
 		 * See {@link sap.ui.core.StashedControlSupport#getVisible} method.
 		 *
 		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
-		 * @returns {boolean} Whether the control is stashed or not
+		 * @returns {boolean} <code>true</code> if the control is stashed
 		 * @public
 		 */
 		getStashed: function (vControl) {},
@@ -514,7 +514,7 @@ sap.ui.define([
 		/**
 		 * Creates the control in the corresponding representation.
 		 *
-		 * @param {string} sClassName - Class name for the control (for example, <code>sap.m.Button</code>), ensure the class is loaded (no synchronous requests are called)
+		 * @param {string} sClassName - Class name for the control (for example, <code>sap.m.Button</code>), ensures that the class is loaded (no synchronous requests are called)
 		 * @param {sap.ui.core.UIComponent} [oAppComponent] - Needed to calculate the correct ID in case you provide an ID
 		 * @param {Element} [oView] - XML node of the view, required for XML case to create nodes and to find elements
 		 * @param {object} [oSelector] - Selector to calculate the ID for the control that is created
@@ -538,7 +538,7 @@ sap.ui.define([
 		applySettings: function(vControl, mSettings) {},
 
 		/**
-		 * Returns the control for the given ID. Please consider using {@link sap.ui.core.util.reflection.BaseTreeModifier.js#bySelector} instead if possible.
+		 * Returns the control for the given ID. Consider using {@link sap.ui.core.util.reflection.BaseTreeModifier.js#bySelector} instead if possible.
 		 *
 		 * @param {string} sId - Control ID
 		 * @param {Element} oView - View that the control belongs to
@@ -621,7 +621,7 @@ sap.ui.define([
 		 * @param {string} sAggregationName - Aggregation name
 		 * @param {sap.ui.base.ManagedObject|Element} oObject - XML node or element of the control that will be inserted
 		 * @param {int} iIndex - Index for <code>oObject</code> in the aggregation
-		 * @param {Element} [oView] - XML node of the view - needed in XML case to potentially create (aggregation) nodes
+		 * @param {Element} [oView] - XML node of the view, needed in XML case to potentially create (aggregation) nodes
 		 * @public
 		 */
 		insertAggregation: function (vParent, sAggregationName, oObject, iIndex, oView) {},
@@ -649,7 +649,7 @@ sap.ui.define([
 		removeAllAggregation: function (vParent, sAggregationName) {},
 
 		/**
-		 * Get the binding template from an aggregation.
+		 * Gets the binding template from an aggregation.
 		 * See {@link sap.ui.base.ManagedObject#getBindingInfo} method.
 		 *
 		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
@@ -692,7 +692,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control whose type is to be checked
 		 * @param {object} mAggregationMetadata - Aggregation info object
 		 * @param {sap.ui.base.ManagedObject|Element} vParent - Parent of the control
-		 * @param {string} sFragment - Path to the fragment that contains the control, whose type is to be checked
+		 * @param {string} sFragment - Path to the fragment that contains the control whose type is to be checked
 		 * @param {int} iIndex - Index of the current control in the parent aggregation
 		 * @returns {boolean} <code>true</code> if the type matches
 		 * @public
@@ -733,7 +733,7 @@ sap.ui.define([
 		getChangeHandlerModulePath: function(vControl) {},
 
 		/**
-		 * Attaches event on the specified ManagedObject.
+		 * Attaches event on the specified <code>ManagedObject</code>.
 		 *
 		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
 		 * @param {string} sEventName - Event name
