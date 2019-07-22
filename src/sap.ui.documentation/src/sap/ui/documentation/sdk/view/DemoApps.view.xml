@@ -68,7 +68,6 @@
 											class="actionButton headerButton sapContrast sapContrastPlus sapUiSmallMarginBegin"
 											id="readMoreButton"
 											text="{i18n>linkText}"
-											type="Ghost"
 											press=".onReadMoreButtonPress">
 										</Button>
 									</l:HorizontalLayout>

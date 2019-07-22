@@ -22,7 +22,7 @@
 							src="./resources/sap/ui/documentation/sdk/images/Explored_S_cropped_1.jpg"
 							width="100%"
 							densityAware="false"
-							class="landingImage"
+							class="welcomeImage"
 							load="handleLandingImageLoad"
 							visible="{device>/system/phone}"/>
 
@@ -30,7 +30,7 @@
 							src="./resources/sap/ui/documentation/sdk/images/Explored_M_and_L_cropped_1.jpg"
 							width="100%"
 							densityAware="false"
-							class="landingImage"
+							class="welcomeImage"
 							load="handleLandingImageLoad"
 							visible="{=!${device>/system/phone}}"/>
 

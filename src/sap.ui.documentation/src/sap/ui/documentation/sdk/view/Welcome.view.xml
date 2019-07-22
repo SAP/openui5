@@ -53,7 +53,6 @@
 									visible="{=${welcomeView>/isOpenUI5} !== undefined}"
 									id="readMoreButton"
 									text="{i18n>downloadButtonText}"
-									type="Ghost"
 									press="onDownloadButtonPress">
 								</Button>
 							</l:HorizontalLayout>

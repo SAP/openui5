@@ -12,8 +12,8 @@
 				<Image
 						src="./resources/sap/ui/documentation/sdk/images/logo_sap.png"
 						densityAware="false"
-						width="4.25rem"
-						height="2rem">
+						width="3rem"
+						height="1.5rem">
 				</Image>
 				<FlexBox
 						direction ="{= ${device>/system/phone} ? 'Column' : 'Row' }"
