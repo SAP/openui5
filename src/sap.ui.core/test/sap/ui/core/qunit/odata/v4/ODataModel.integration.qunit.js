@@ -26,7 +26,7 @@ sap.ui.define([
 		ChangeReason, Filter, FilterOperator, Sorter, OperationMode, AnnotationHelper,
 		ODataListBinding, ODataModel, TestUtils) {
 	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, no-sparse-arrays: 0 */
+	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, no-sparse-arrays: 0, camelcase: 0*/
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
@@ -14842,6 +14842,109 @@ sap.ui.define([
 				that.oView.byId("table").getItems()[1].getBindingContext().delete("$auto"),
 				that.waitForChanges(assert)
 			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Navigate to a detail page (e.g. by passing an entity key via URL parameter),
+	// delete the root element and navigate back to the master page. When navigating again to the
+	// detail page with the same entity key (e.g. via browser forward/back) no obsolte caches must
+	// be used and all bindings shall fail while trying to read the data.
+	// BCP: 1970282109
+	QUnit.test("Delete removes dependent caches", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="detail" binding="">\
+	<Text id="Team_Id" text="{Team_Id}"/>\
+	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$$ownRequest : true}}">\
+		<columns><Column/></columns>\
+		<ColumnListItem>\
+			<Text id="name" text="{Name}"/>\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("Team_Id")
+			.expectChange("name", false);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("TEAMS('TEAM_01')?$select=Team_Id", {
+					Team_Id : "TEAM_01"
+				})
+				.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name"
+					+ "&$skip=0&$top=100", {
+					value : [{
+						ID : "1",
+						Name : "Jonathan Smith"
+					}, {
+						ID : "2",
+						Name : "Frederic Fall"
+					}]
+				})
+				.expectChange("Team_Id", "TEAM_01")
+				.expectChange("name", ["Jonathan Smith", "Frederic Fall"]);
+
+			// simulate navigation to a detail page if only a key property is given
+			that.oView.byId("detail").setBindingContext(
+				that.oModel.bindContext("/TEAMS('TEAM_01')").getBoundContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "DELETE",
+					url : "TEAMS('TEAM_01')"
+				})
+				.expectChange("Team_Id", null);
+
+			return Promise.all([
+				// code under test
+				that.oView.byId("detail").getBindingContext().delete("$auto"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			// simulate failing read of data that has been deleted before
+			var oError1 = new Error("404 Not Found"),
+				oError2 = new Error("404 Not Found");
+
+			that.oLogMock.expects("error").twice()
+				.withExactArgs("Failed to read path /TEAMS('TEAM_01')/Team_Id",
+					sinon.match.string, "sap.ui.model.odata.v4.ODataPropertyBinding");
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to read path /TEAMS('TEAM_01')",
+					sinon.match.string, "sap.ui.model.odata.v4.ODataContextBinding");
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to get contexts for "
+						+ "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/TEAMS('TEAM_01')/"
+						+ "TEAM_2_EMPLOYEES with start index 0 and length 100",
+					sinon.match.string, "sap.ui.model.odata.v4.ODataListBinding");
+			that.expectRequest("TEAMS('TEAM_01')?$select=Team_Id", oError1)
+				.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name"
+					+ "&$skip=0&$top=100", oError2)
+				.expectMessages([{
+					code : undefined,
+					message : "404 Not Found",
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
+				}, {
+					code : undefined,
+					message : "404 Not Found",
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
+				}]);
+
+
+			// simulate navigation to a detail page if only a key property is given which belongs
+			// to a deleted entity; all bindings have to read data again and fail because entity is
+			// deleted
+			that.oView.byId("detail").setBindingContext(
+				that.oModel.bindContext("/TEAMS('TEAM_01')").getBoundContext());
+
+			return that.waitForChanges(assert);
 		});
 	});
 

@@ -221,18 +221,28 @@ sap.ui.define([
 	 */
 	Context.prototype.delete = function (sGroupId) {
 		var oGroupLock,
+			oModel = this.oModel,
 			that = this;
 
-		this.oModel.checkGroupId(sGroupId);
+		oModel.checkGroupId(sGroupId);
 		this.oBinding.checkSuspended();
 		if (!this.isTransient() && this.hasPendingChanges()) {
 			throw new Error("Cannot delete due to pending changes");
 		}
 
 		oGroupLock = this.oModel.lockGroup(sGroupId, true, this);
-		return this._delete(oGroupLock).catch(function (oError) {
+
+		return this._delete(oGroupLock).then(function () {
+			var sResourcePathPrefix = that.sPath.slice(1);
+
+			// Messages have been updated via _Cache#_delete; "that" is already destroyed; remove
+			// all dependent caches in all bindings
+			oModel.getAllBindings().forEach(function (oBinding) {
+				oBinding.removeCachesAndMessages(sResourcePathPrefix, true);
+			});
+		}).catch(function (oError) {
 			oGroupLock.unlock(true);
-			that.oModel.reportError("Failed to delete " + that, sClassName, oError);
+			oModel.reportError("Failed to delete " + that, sClassName, oError);
 			throw oError;
 		});
 	};
