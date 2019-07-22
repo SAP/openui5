@@ -37,7 +37,8 @@
 		  "samples": [
 			"sap.f.sample.DynamicPageFreeStyle",
 			"sap.f.sample.DynamicPageAnalyticalTable",
-			"sap.f.sample.DynamicPageWithStickySubheader"
+			"sap.f.sample.DynamicPageWithStickySubheader",
+			"sap.f.sample.DynamicPageWithWizard"
 		  ]
 		},
 		{
@@ -158,6 +159,11 @@
 		  "id": "sap.f.sample.DynamicPageWithStickySubheader",
 		  "name": "Dynamic Page with Sticky Subheader",
 		  "description": "Dynamic Page containing an sap.m.IconTabBar in the sticky subheader content area."
+		},
+		{
+		  "id": "sap.f.sample.DynamicPageWithWizard",
+		  "name": "Dynamic Page with Wizard",
+		  "description": "Dynamic Page containing a sap.m.Wizard and WizardProgressNavigator in the content area."
 		},
 		{
 		  "id": "sap.f.sample.FlexibleColumnLayoutWithOneColumnStart",
