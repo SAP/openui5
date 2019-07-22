@@ -1,0 +1,24 @@
+{
+  "1.69.0": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "c782ce9be8cbd71201e19ba3cb4c0e81e439b71f",
+        "type": "FIX",
+        "text": " All libraries: apply migration tooling again",
+        "references": []
+      },
+      {
+        "id": "f2f4e41730aa57458ebb540dbb57a3e94267e948",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.TimesRow: Now custom data is respected over locale\u0027s one",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "324698"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -31,6 +31,23 @@
         "type": "FIX",
         "text": " performance/trace/BeaconRequest: do not send empty beacon",
         "references": []
+      },
+      {
+        "id": "c782ce9be8cbd71201e19ba3cb4c0e81e439b71f",
+        "type": "FIX",
+        "text": " All libraries: apply migration tooling again",
+        "references": []
+      },
+      {
+        "id": "06393c2eaec7c8717ef276baeaef43f86738fcdc",
+        "type": "FIX",
+        "text": " v2/ODataModel: Invalidated data path invalidation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970275436"
+          }
+        ]
       }
     ]
   }

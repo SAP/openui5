@@ -13,6 +13,21 @@
         "type": "FEATURE",
         "text": " sap.f: new sap_fiori_3_hcb and sap_fiori_3_hcw themes",
         "references": []
+      },
+      {
+        "id": "4df1622db18581a22951aaa2479a2b0e61b189d4",
+        "type": "FIX",
+        "text": " sap.m.Button: correct design in Bar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970302945"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970298759"
+          }
+        ]
       }
     ]
   }

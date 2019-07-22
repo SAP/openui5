@@ -25,6 +25,17 @@
         "type": "FIX",
         "text": " sap.f.cards.BaseContent: Content of \"parameters\" model now updated",
         "references": []
+      },
+      {
+        "id": "2f663e59942f69d247a389d7a66bdccb0363450b",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Mid column does not disappear now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970341860"
+          }
+        ]
       }
     ]
   }

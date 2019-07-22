@@ -133,6 +133,137 @@
         "type": "FIX",
         "text": " sap.m.ViewSettingsDialog: checkbox aligned correctly",
         "references": []
+      },
+      {
+        "id": "c782ce9be8cbd71201e19ba3cb4c0e81e439b71f",
+        "type": "FIX",
+        "text": " All libraries: apply migration tooling again",
+        "references": []
+      },
+      {
+        "id": "9b592178fe573a4fcd20d2e0d6bc37b135940914",
+        "type": "FIX",
+        "text": " sap.m.Button: Tooltip is read when the button has special type",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980277698"
+          }
+        ]
+      },
+      {
+        "id": "4df1622db18581a22951aaa2479a2b0e61b189d4",
+        "type": "FIX",
+        "text": " sap.m.Button: correct design in Bar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970302945"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970298759"
+          }
+        ]
+      },
+      {
+        "id": "209b7054bbc2e496fc9b88a1feb6d73fbe3fe89c",
+        "type": "FIX",
+        "text": " sap.m.IconTabHeader: Tab labels reading by JAWS is imporoved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970191138"
+          }
+        ]
+      },
+      {
+        "id": "32aaff837be87f15895f67842db0a23f1b4b3ea6",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Icon size fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970336083"
+          }
+        ]
+      },
+      {
+        "id": "da3dcfc07f964eaa43a890b4a51f547ccd489dbc",
+        "type": "FIX",
+        "text": " sap.m.LightBox: Error message is now read by JAWS",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970323280"
+          }
+        ]
+      },
+      {
+        "id": "c0b97f70d9268ffc725285d1de944afd473e67fd",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Description text is now fully visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970346148"
+          }
+        ]
+      },
+      {
+        "id": "3e69ddc8811dc02a5db73dbeedc9c68da6340f25",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Handle cloning with selected items",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970185987"
+          }
+        ]
+      },
+      {
+        "id": "96d6bc27a15b4a032513cacb8680d0e886388af2",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: SVG alignment in Edge is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970319085"
+          }
+        ]
+      },
+      {
+        "id": "97816be6cad1442f894d229e3882a3f1672a461a",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: The correct count info is now read by JAWS",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980211092"
+          }
+        ]
+      },
+      {
+        "id": "03b5aabf2258369dd6052fe608ed4b3c5c34f0e8",
+        "type": "FIX",
+        "text": " sap.m.Token: ARIA description updated based on parent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970272491"
+          }
+        ]
+      },
+      {
+        "id": "db3796ecd0adfe77848b4510022d50904644f8b0",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Preserve N-more label after rerendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970239778"
+          }
+        ]
       }
     ]
   }

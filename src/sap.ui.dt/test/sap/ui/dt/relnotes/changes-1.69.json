@@ -13,6 +13,12 @@
         "type": "FIX",
         "text": " sap.ui.rta - fixed simple form ElementMover",
         "references": []
+      },
+      {
+        "id": "c782ce9be8cbd71201e19ba3cb4c0e81e439b71f",
+        "type": "FIX",
+        "text": " All libraries: apply migration tooling again",
+        "references": []
       }
     ]
   }
